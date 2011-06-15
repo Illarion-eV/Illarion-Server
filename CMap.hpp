@@ -1,0 +1,280 @@
+#ifndef CMAP_HH
+#define CMAP_HH
+
+//falls nicht auskommentiert, werden mehr Bildschirmausgaben gemacht:
+//#define CMap_DEBUG
+
+#include <string>
+
+#if __GNUC__ < 3
+#include <hash_map>
+#else
+#include <ext/hash_map>
+
+#if (__GNUC__ > 3) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1)
+using __gnu_cxx::hash_map;
+using __gnu_cxx::hash;
+#endif
+
+#if (__GNUC__ == 3 && __GNUC_MINOR__ < 1)
+using std::hash_map;
+using std::hash;
+#endif
+
+#endif
+
+#include "CMapException.hpp"
+#include "globals.h"
+#include "TableStructs.hpp"
+#include "Item.hpp"
+#include "CField.hpp"
+#include "CContainer.h"
+
+// forward declarations
+class CCommonObjectTable;
+class CNamesObjectTable;
+class CWeaponObjectTable;
+class CArmorObjectTable;
+class CArtefactObjectTable;
+class CContainerObjectTable;
+class CTilesModificatorTable;
+class CTilesTable;
+
+//! eine Tabelle mit den allgemeinen Attributen der Item
+extern CCommonObjectTable* CommonItems;
+
+//! eine Tabelle mit den Namen der Item
+extern CNamesObjectTable* ItemNames;
+
+//! eine Tabelle für Waffen - Item Daten
+extern CWeaponObjectTable* WeaponItems;
+
+//! eine Tabelle für Schutzkleidungs - Item Daten
+extern CArmorObjectTable* ArmorItems;
+
+//! eine Tabelle für Artefakt - Item Daten
+extern CArtefactObjectTable* ArtefactItems;
+
+//! eine Tabelle für Behälter - Item Daten
+extern CContainerObjectTable* ContainerItems;
+
+//! eine Tabelle mit Item welche die Eigenschaften des Feldes auf dem sie liegen modifizieren
+extern CTilesModificatorTable* TilesModItems;
+
+//! eine Tabelle mit allen Arten von Bodenplatten
+extern CTilesTable* Tiles;
+
+//! ein struct für die Allgemeinen Attribute eines Item
+extern CommonStruct tempCommon;
+
+//! ein struct für Daten von Bodenplatten
+extern TilesStruct tempTile;
+
+extern std::vector<position>* contpos;
+
+//! eine Teilkarte der Welt
+class CMap {
+
+	public:
+
+		//! Konstruktor
+		// \param sizex die Anzahl der Felder in X-Richtung
+		// \param sizey die Anzahl der Felder in Y-Richtung
+		CMap( unsigned short int sizex, unsigned short int sizey );
+
+		//! Destruktor
+		~CMap();
+
+		//! lädt eine gespeicherte Karte
+		// \param name der Name der zu ladenden Karte
+		// \param x_offs Verschiebung der zu ladenden Karte im physikalischen Feld
+		// \param y_offs Verschiebung der zu ladenden Karte im physikalischen Feld
+		// \return true falls Laden erfolgreich, false sonst
+		bool Load( std::string name, unsigned short int x_offs, unsigned short int y_offs );
+
+		//! speichert die aktuelle Karte
+		// \param name Name unter der die Karte gespeichert werden soll
+		// \return true falls Speichern erfolgreich, false sonst
+		bool Save( std::string name );
+
+		//! bereitet die Umrechnung von logischen x,y - Koordinaten in reale Feldindizes vor
+		// \param minx die kleinste X-Koordinate
+		// \param miny die kleinste Y-Koordinate
+		// \param z die Ebene auf der die Karte liegt
+		// \param disappear gibt an, ob die Karte für einen darunter stehenden Spieler ausgeblendet werden soll
+		void Init( short int minx, short int miny, short int z, bool disappear );
+
+		//! belegt die Karte Daten zum Testen
+		// \return false falls nicht genügend Speicher vorhanden
+		bool Create();
+
+		//! liefert in fip einen Zeiger auf das CField mit den entsprechenden Koordinaten zurück
+		// \param fip der Zeiger auf das CField den Koordinaten x,y,z
+		// \param x X-Koordinate
+		// \param y Y-Koordinate
+		// \return true falls das Feld existiert, false sonst
+		bool GetPToCFieldAt( CField* &fip, short int x, short int y );
+
+		//! liefert in fi eine Kopie des Feldes mit den entsprechenden Koordinaten zurück
+		// \param fi eine Kopie des CField mit den Koordinaten x,y,z
+		// \param x X-Koordinate
+		// \param y Y-Koordinate
+		// \return true falls das Feld existiert, false sonst
+		bool GetCFieldAt( CField &fi, short int x, short int y );
+
+		//! fügt eine Kopie des Feldes fi an den entsprechenden Koordinaten ein
+		// \param das CField zum Einfügen
+		// \param x X-Koordinate
+		// \param y Y-Koordinate
+		// \return true falls die x,y Koordinate existiert, false sonst
+		bool PutCFieldAt( CField &fi, short int x, short int y );
+
+		//! wendet die Funktion funct auf alle Item aller Felder der Karte
+		// mit X-Koordinate von xstart bis xend an (Koordinaten im Feld, keine logischen der Karte)
+		void DoAgeItems_XFromTo( short int xstart, short int xend, ITEM_FUNCT funct );
+
+		//! wendet die Funktion funct auf alle CField der Karte mit X-Koordinate von xstart bis xend an
+		// \param xstart kleinste bearbeitete X-Koordinate (Koordinaten im Feld, keine logischen der Karte)
+		// \param xend grösste bearbeitete X-Koordinate (Koordinaten im Feld, keine logischen der Karte)
+		// \param funct anzuwendende Funktion
+		void ApplyToCFields_XFromTo( short int xstart, short int xend, CField::CFIELD_FUNCT funct );
+
+		//! setzt das Flag welches angibt, ob ein Spieler auf dem Feld ist auf t
+		// \param x X-Koordinate
+		// \param y Y-Koordinate
+		// \param t true setzt einen Spieler auf das Feld, false löscht ihn
+		// \return true falls die x,y,z Koordinate existiert, false sonst
+		bool SetPlayerAt( short int x, short int y, bool t );
+
+		//! liefert die kleinste logisch mögliche X-Koordinate zurück
+		short GetMinX( void );
+
+		//! liefert die kleinste logisch mögliche Y-Koordinate zurück
+		short GetMinY( void );
+
+		//! liefert die größte logisch mögliche X-Koordinate zurück
+		short GetMaxX( void );
+
+		//! liefert die größte logisch mögliche Y-Koordinate zurück
+		short GetMaxY( void );
+
+		//! liefert die Anzahl der Felder in X-Richtung zurück
+		unsigned short int GetWidth();
+
+		//! liefert die Anzahl der Felder in Y-Richtung zurück
+		unsigned short int GetHeight();
+
+		//! Vergleichsfunktion für den CONTAINERMAP - key
+		struct eqmappos {
+			bool operator()( MAP_POSITION a, MAP_POSITION b ) const {
+				return ( ( a.x == b.x ) && ( a.y == b.y ) );
+			}
+		};
+
+		//! Hashfunktion für CONTAINERMAP - key
+		struct mapposhash {
+			hash < int > inthash;
+			int operator()( const MAP_POSITION a ) const {
+				int temp = ( a.x * 1000 + a.y ) * 1000;
+				return inthash( temp );
+			}
+		};
+
+
+		//! definiert eine Template-Klasse "hash_map mit key position für ITEMVECTORMAP"
+		typedef hash_map < MAP_POSITION, CContainer::CONTAINERMAP, mapposhash, eqmappos > CONTAINERHASH;
+
+		//! die Inhalte aller Container die direkt auf der Karte liegen mit der dazugehörigen Koordinate
+		CONTAINERHASH maincontainers;
+
+		//! legt ein Item auf ein Feld
+		// \param it das Item welches auf das Feld gelegt werden soll
+		// \param pos die X,Y-Koordinate des Feldes
+		// \return true falls erfolgreich
+		bool addItemToPos( Item it, MAP_POSITION pos );
+
+		//! legt einen Container auf ein Feld
+		// \param it ein Item welches einen Container darstellt
+		// \param cc der Inhalt des Containers
+		// \param pos die X,Y -Koordinate des Feldes
+		// \return true falls der Container erfolgreich auf das Feld gelegt werden konnte
+		bool addContainerToPos( Item it, CContainer* cc, MAP_POSITION pos );
+		bool addAlwaysContainerToPos( Item it, CContainer* cc, MAP_POSITION pos );
+
+		//! sucht ein betretbares Feld in der Nähe von (x,y)
+		// \param cf das gefundene Feld
+		// \param x vor Ausführung der Funktion der Startpunkt der Suche, danach die X-Koordinate des gefundenen Feldes
+		// \param y vor Ausführung der Funktion der Startpunkt der Suche, danach die Y-Koordinate des gefundenen Feldes
+		// \return true falls ein Feld gefunden wurde, false sonst
+		bool findEmptyCFieldNear( CField* &cf, short int &x, short int &y );
+
+		//! prüft, ob die CMap über der Position pos liegt
+		// \param pos die zu prüfende Position
+		// \return true falls die CMap über der Position pos liegt, false sonst
+		bool coversPositionInView( position pos );
+
+		bool isVisibleFromInView( position pos, int distancemetric );
+
+		//! prüft, ob die CMap über der Position (x,y,z) liegt
+		// \param x die zu prüfende X-Koordinate
+		// \param y die zu prüfende Y-Koordinate
+		// \param z die zu prüfende Z-Koordinate
+		// \return true falls die CMap über der Position (x,y,z) liegt, false sonst
+		bool isOverPositionInData( short int x, short int y, short int z );
+
+		//! prüft, ob die CMap über der CMap refmap liegt
+		// \param refmap die zu überprüfende CMap
+		// \return true falls die CMap über der CMap refmap liegt, false sonst
+		bool isOverMapInData( CMap* refmap );
+
+		bool isFullyCoveredBy( CMap* refmap );
+
+		//! falls true, wird die Map nicht angezeigt, falls sich der Spieler darunter befindet
+		bool disappears;
+
+		/*   private: */
+
+		//! die kleinste logisch mögliche X-Koordinate
+		short Min_X;
+
+		//! die kleinste logisch mögliche Y-Koordinate
+		short Max_X;
+
+		//! die größte logisch mögliche X-Koordinate
+		short Min_Y;
+
+		//! die größte logisch mögliche Y-Koordinate
+		short Max_Y;
+
+		//! die Anzahl der Felder in X-Richtung
+		short Width;
+
+		//! die Anzahl der Felder in Y-Richtung
+		short Height;
+
+		//! die Z-Koordinate der Karte
+		short int Z_Level;
+
+		//! true, falls die Karte schon initialisiert ist
+		// ,also Min_X, Min_Y, Max_X und Max_Y definiert sind
+		bool Map_initialized;
+
+		//! Zeiger auf die Hauptebene der Karte
+		CField** MainMap;
+
+		//! konvertiert eine logische X-Koordinate in einen Feldindex
+		// \throw Exception_CoordinateOutOfRange
+		inline unsigned short int Conv_X_Koord( short int x );
+
+		//! konvertiert eine logische Y-Koordinate in einen Feldindex
+		// \throw Exception_CoordinateOutOfRange
+		inline unsigned short int Conv_Y_Koord( short int y );
+
+		inline   short int Conv_To_X( unsigned short int x );
+
+		inline short int Conv_To_Y( unsigned short int y );
+
+		std::vector<int>::iterator ercontit;
+};
+
+#endif

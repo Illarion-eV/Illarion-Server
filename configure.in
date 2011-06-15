@@ -1,0 +1,27 @@
+# Process this file with autoconf to produce a configure script.
+AC_PREREQ(2.50)
+AC_INIT(Item.hpp)
+AM_INIT_AUTOMAKE(illarion_server, 0.1.0)
+AM_CONFIG_HEADER(config.h)
+
+# Checks for programs.
+AC_PROG_CXX(g++-4.4)
+AC_PROG_CC(gcc-4.4)
+
+# Checks for libraries.
+
+# Checks for header files.
+AC_HEADER_STDC
+AC_CHECK_HEADERS([arpa/inet.h errno.h netdb.h netinet/in.h stdlib.h string.h sys/socket.h sys/time.h sys/timeb.h unistd.h])
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+AC_C_INLINE
+AC_TYPE_SIZE_T
+AC_HEADER_TIME
+AC_STRUCT_TM
+
+# Checks for library functions.
+AC_CHECK_FUNCS([bzero ftime gethostbyname inet_ntoa memset select socket strerror strtol strtoul])
+
+AC_OUTPUT(Makefile)
