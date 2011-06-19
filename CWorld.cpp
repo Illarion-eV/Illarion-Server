@@ -783,7 +783,7 @@ void CWorld::checkMonsters() {
 					bool has_attacked=false;
 					//If we have found players which can be attacked directly and the monster can attack
 					CPlayer * foundP = 0;
-                    if (( !temp.empty() ) && ( *monsterIterator )->canAttack() && ( *monsterIterator )->fightPoints >= NP_MIN_FP ) 
+                    if (( !temp.empty() ) && ( *monsterIterator )->canAttack() ) 
 					{ //angreifen
 						//search for the target via script or the player with the lowest hp
                         if( !monStruct.script || !monStruct.script->setTarget( *monsterIterator, temp, foundP ) )
@@ -813,8 +813,10 @@ void CWorld::checkMonsters() {
 						   CLogger::writeError("Monster","cant find a monster id for checking the script!");
 						   //attack the player which we have found
 						   (*monsterIterator)->turn( foundP->pos );
-						   has_attacked = characterAttacks( *monsterIterator );
-						   // ??
+                           if( ( *monsterIterator )->fightPoints >= NP_MIN_FP )   // enough FP to fight?
+						       has_attacked = characterAttacks( *monsterIterator );
+                           else
+                               has_attacked = true;
 						}
 					}
 
