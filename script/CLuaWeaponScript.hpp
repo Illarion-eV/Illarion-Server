@@ -35,17 +35,8 @@ class CLuaWeaponScript : public CLuaScript
 
         //A character attacks another person with this weapon.
         //\param: Attacker, the person who attacks.
-        //\param: AttackWeapon, An itemstruct which holds the current weapon of the person
-        //\param: AttackWeaponStats, A weaponstruct which holds the current stats of the attackers weapon
         //\param: Defender, the person who is attacked.
-        //\param: DefendWeapon, a Itemstruct which holds the current weopon of the defending person
-        //\param: DefendWeaponSats, a weaponstruct which holds the current stats of the defenders weapon.       
-        bool onAttack(CCharacter * Attacker, CCharacter * Defender, unsigned char pos);
-        
-        //A Character is defending himself with this weapon.
-        //\param: Atacker, the person who attacks.
-        //\param: Defender, the person who defends himself.
-        bool onDefend(CCharacter * Attacker, CCharacter * Defender);
+        bool onAttack( CCharacter * Attacker, CCharacter * Defender );
         
     private:
 	CLuaWeaponScript(const CLuaWeaponScript&);

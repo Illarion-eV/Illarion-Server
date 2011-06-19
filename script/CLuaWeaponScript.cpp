@@ -32,14 +32,14 @@ CLuaWeaponScript::CLuaWeaponScript(std::string filename) throw(ScriptException)
 
 CLuaWeaponScript::~CLuaWeaponScript() throw() {}
 
-bool CLuaWeaponScript::onAttack(CCharacter * Attacker, CCharacter * Defender, unsigned char pos)
+bool CLuaWeaponScript::onAttack( CCharacter * Attacker, CCharacter * Defender )
 {
     try
     {
         CWorld::get()->setCurrentScript( this ); 
         fuse_ptr<CCharacter> fuse_Attacker(Attacker);
         fuse_ptr<CCharacter> fuse_Defender(Defender);
-        call("onAttack")( fuse_Attacker, fuse_Defender, pos );
+        call("onAttack")( fuse_Attacker, fuse_Defender );
         return true;
     }
     catch (luabind::error &e)
@@ -51,19 +51,3 @@ bool CLuaWeaponScript::onAttack(CCharacter * Attacker, CCharacter * Defender, un
     return false;
 }
 
-bool CLuaWeaponScript::onDefend(CCharacter * Attacker, CCharacter * Defender)
-{
-    try
-    {
-        CWorld::get()->setCurrentScript( this ); 
-        fuse_ptr<CCharacter> fuse_Attacker(Attacker);
-        fuse_ptr<CCharacter> fuse_Defender(Defender);
-        call("onDefend")( fuse_Attacker, fuse_Defender );
-        return true;
-    }
-    catch (luabind::error &e)
-    {
-        return false;    
-    }
-    return false;
-}

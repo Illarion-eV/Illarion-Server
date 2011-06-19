@@ -401,7 +401,6 @@ void CLuaScript::init_base_functions() {
 		.def("startMusic", &CCharacter::startMusic)
         .def("defaultMusic", &CCharacter::defaultMusic)
 		.def("callAttackScript", &CCharacter::callAttackScript)
-		.def("callDefendScript", &CCharacter::callDefendScript)
 		.def("getItemList", &CCharacter::getItemList)
 		.def_readonly("lastSpokenText", &CCharacter::lastSpokenText)
 		.def("getPlayerLanguage", &CCharacter::getPlayerLanguage)

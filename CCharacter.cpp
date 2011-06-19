@@ -1472,7 +1472,7 @@ bool CCharacter::attack( CCharacter* target, int &sound, bool &updateInv ) {
 
 //Fighting System Uses Lua Script of the Attackers Weapon
 
-//Call AttackScripts for both hands.
+//Call AttackScript once
     if ( !actionRunning() )
     {
         if ( target->IsAlive() )
@@ -1482,16 +1482,7 @@ bool CCharacter::attack( CCharacter* target, int &sound, bool &updateInv ) {
                 CPlayer * pl = dynamic_cast<CPlayer*>(target);
                 pl->ltAction->actionDisturbed(this);
             }
-            callAttackScript(RIGHT_TOOL,this,target);
-        }
-        if ( target->IsAlive() )
-        {
-            if ( target->character == player )
-            {
-                CPlayer * pl = dynamic_cast<CPlayer*>(target);
-                pl->ltAction->actionDisturbed(this);
-            }
-            callAttackScript(LEFT_TOOL,this,target);
+            callAttackScript( this, target );
         }
         updateInv = true;
     }
@@ -2915,64 +2906,21 @@ void CCharacter::changeQualityAt(unsigned char pos, short int amount) {
 	}
 }
 
-bool CCharacter::callAttackScript(unsigned char pos, CCharacter * Attacker, CCharacter * Defender)
+bool CCharacter::callAttackScript( CCharacter * Attacker, CCharacter * Defender )
 {
-    if ( pos < MAX_BELT_SLOTS + MAX_BODY_ITEMS )
+    if ( characterItems[ RIGHT_TOOL ].id != 0 )
     {
-        if ( characterItems[ pos ].id != 0 )
+        WeaponStruct tmpWeapon;
+        if ( WeaponItems->find( characterItems[ RIGHT_TOOL ].id , tmpWeapon) )
         {
-            WeaponStruct tmpWeapon;
-            if ( WeaponItems->find( characterItems[ pos ].id , tmpWeapon) )
+            if ( tmpWeapon.script )
             {
-                if ( tmpWeapon.script )
-                {
-                    if ( tmpWeapon.script->onAttack(Attacker, Defender, pos) )
-                        return true;
-                }
-            }
-        }
-        return standardFightingScript->onAttack(Attacker, Defender, pos);
-    }
-    return false;
-}
-
-bool CCharacter::callDefendScript(unsigned char pos, CCharacter * Attacker, CCharacter * Defender)
-{
-    //Weapon on defend has to be called
-    if ( pos == LEFT_TOOL || pos == RIGHT_TOOL )
-    {
-        if ( characterItems[ pos ].id != 0 )
-        {
-            WeaponStruct tmpWeapon;
-            if ( WeaponItems->find( characterItems[ pos ].id , tmpWeapon) )
-            {
-                if ( tmpWeapon.script )
-                {
-                    if ( tmpWeapon.script->onDefend(Attacker, Defender) )
-                        return true;
-                }
+                if ( tmpWeapon.script->onAttack( Attacker, Defender ) )
+                    return true;
             }
         }
     }
-
-/*    //Armor on defend has to be called
-    else if ( pos < MAX_BELT_SLOTS + MAX_BODY_ITEMS )
-    {
-        if ( characterItems[ pos ].id != 0 )
-        {
-            ArmorStruct tmpArmor;
-            if ( ArmorItems->find( characterItems[ pos ].id , tmpArmor) )
-            {
-                if ( tmpArmor.script )
-                {
-                    if ( tmpArmor.script->onDefend(Attacker, Defender) )
-                        return true;
-                }
-            }
-        }
-    }
-*/
-    return false;
+    return standardFightingScript->onAttack( Attacker, Defender );
 }
 
 void CCharacter::setQuestProgress( uint16_t questid, uint32_t progress ) throw()

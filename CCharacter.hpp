@@ -1471,21 +1471,12 @@ chicken=62
 
 		/**
         * calls an attack script for this character
-        * @param pos of the attack item
         * @param Attacker characte who attacks
         * @param Defender character who defends
         * @return a bool value (currently no usage later for destroying items and inventory update)
         */
-        bool callAttackScript(unsigned char pos, CCharacter * Attacker, CCharacter * Defender);
+        bool callAttackScript( CCharacter * Attacker, CCharacter * Defender );
 
-		/**
-        * calls a defend script for this character
-        * @param pos of the attack item
-        * @param Attacker characte who attacks
-        * @param Defender character who defends
-        * @return a bool value (currently no usage later for destroying items and inventory update)
-        */
-		bool callDefendScript(unsigned char pos, CCharacter * Attacker, CCharacter * Defender);
 
 		//===========================================In attack.cc==================================================
 
