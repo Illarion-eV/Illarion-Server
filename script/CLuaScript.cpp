@@ -420,6 +420,7 @@ void CLuaScript::init_base_functions() {
 		.def_readonly("id", &CCharacter::id)
 		.def_readwrite("activeLanguage", &CCharacter::activeLanguage)
 		.def_readwrite("movepoints", &CCharacter::actionPoints)
+        .def_readwrite("fightpoints", &CCharacter::fightPoints)
         .def_readwrite("isinvisible", &CCharacter::isinvisible)
 		.def_readonly("attackmode", &CCharacter::attackmode)
 		//.def_readonly("isTarget", &CCharacter::isTarget)

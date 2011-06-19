@@ -597,14 +597,19 @@ void CWorld::checkPlayers()
     while ( playerIterator < Players.end() ) {
         if ( ( *playerIterator )->Connection->online ) {
             temptime = tempkeepalive - ( *playerIterator )->lastkeepalive;
-            if ( (( temptime >= 0 ) && ( temptime <= 15 )) || // 15s timeout
-                    ( *playerIterator )->actionPoints < 0 )
+            if ( (( temptime >= 0 ) && ( temptime <= 15 )) ) // 15s timeout
             {
                 ( *playerIterator )->actionPoints += ap;
+                ( *playerIterator )->fightPoints += ap;
                 
                 if ( ( *playerIterator )->actionPoints > P_MAX_AP ) 
                 {
                     ( *playerIterator )->actionPoints = P_MAX_AP;
+                }
+
+                if ( ( *playerIterator )->fightPoints > P_MAX_FP )
+                {
+                    ( *playerIterator )->fightPoints = P_MAX_FP;
                 }
 
                 if ( ( *playerIterator )->actionPoints >= P_MIN_AP ) {
@@ -736,9 +741,14 @@ void CWorld::checkMonsters() {
         if ( ( *monsterIterator )->IsAlive() )
         {               // monster alive
             ( *monsterIterator )->actionPoints += ap;
+            ( *monsterIterator )->fightPoints += ap;
 
             if ( ( *monsterIterator )->actionPoints > NP_MAX_AP ) {     // too many AP
                 ( *monsterIterator )->actionPoints = NP_MAX_AP;
+            }
+
+            if ( ( *monsterIterator )->fightPoints > NP_MAX_FP ) {     // too many FP
+                ( *monsterIterator )->fightPoints = NP_MAX_FP;
             }
             
             (*monsterIterator)->effects->checkEffects();
@@ -773,7 +783,7 @@ void CWorld::checkMonsters() {
 					bool has_attacked=false;
 					//If we have found players which can be attacked directly and the monster can attack
 					CPlayer * foundP = 0;
-                    if (( !temp.empty() ) && ( *monsterIterator )->canAttack()) 
+                    if (( !temp.empty() ) && ( *monsterIterator )->canAttack() && ( *monsterIterator )->fightPoints >= NP_MIN_FP ) 
 					{ //angreifen
 						//search for the target via script or the player with the lowest hp
                         if( !monStruct.script || !monStruct.script->setTarget( *monsterIterator, temp, foundP ) )

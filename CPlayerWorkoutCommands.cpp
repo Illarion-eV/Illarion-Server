@@ -40,7 +40,7 @@ void CPlayer::workoutCommands()
 	else if ( IsAlive() )
 #endif
 	{
-		if ( attackmode ) 
+		if ( attackmode && fightPoints >= P_MIN_FP ) 
         {
             //cp->ltAction->abortAction();
 			CWorld::get()->characterAttacks( this );

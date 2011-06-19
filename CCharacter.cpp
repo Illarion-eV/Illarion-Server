@@ -788,7 +788,7 @@ int CCharacter::appearance_dead() {
 }
 
 
-CCharacter::CCharacter() : actionPoints(P_MAX_AP),waypoints(new CWaypointList(this)),death_consequences(true), _is_on_route(false),_world(CWorld::get())
+CCharacter::CCharacter() : actionPoints(P_MAX_AP),fightPoints(P_MAX_FP),waypoints(new CWaypointList(this)),death_consequences(true), _is_on_route(false),_world(CWorld::get())
 {
 #ifdef CCharacter_DEBUG
 	std::cout << "CCharacter Konstruktor Start" << std::endl;

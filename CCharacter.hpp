@@ -255,7 +255,13 @@ class CCharacter : private boost::noncopyable {
         * current action points of the character
         * <b>Lua: (r/w) [movepoints]</b>
         */
-		short int actionPoints;     
+		short int actionPoints;
+
+        /**
+        * current fight points of the character
+        * <b>Lua: (r/w) [fightpoints]</b>
+        */
+        short int fightPoints;     
         
         /**
         * current active language of the character
