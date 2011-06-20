@@ -31,11 +31,11 @@
 #define NP_MIN_AP 7
 #define NP_MAX_AP 21
 
-#define P_MIN_FP 7
-#define P_MAX_FP 25
+#define P_MIN_FP 0
+#define P_MAX_FP 0
 
-#define NP_MIN_FP 7
-#define NP_MAX_FP 25
+#define NP_MIN_FP 0
+#define NP_MAX_FP 0
 
 #define P_ATTACK_COST 15
 #define NP_ATTACK_COST 20
