@@ -48,7 +48,8 @@ class fuse_ptr
             ptr = new T*;
             *ptr = p;
             //std::cout << this << " is now fuse for " << *ptr << std::endl;
-            fusebox.insert( std::pair<T*,fuse_ptr<T> * >(p,this) );
+            if( p != 0)
+                fusebox.insert( std::pair<T*,fuse_ptr<T> * >(p,this) );
         }
 
         // copy constructor
