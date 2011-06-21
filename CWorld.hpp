@@ -1581,8 +1581,8 @@ class CWorld {
         //Erzeugt ein Monster mit der entsprechenden ID auf dem Feld
         //\ param id, das Monster welches Erzeugt werden soll
         //\ param pos, die Position des Monsters
-        //\ return bool Wert ob das erzeugen geklappt hat.
-        bool createMonster(unsigned short id, position pos, short movepoints);
+        //\ return fuse_ptr<CCharacter> Valid monster on success, invalid monster on failure
+        fuse_ptr<CCharacter> createMonster(unsigned short id, position pos, short movepoints);
 
         //Zeigt eine Grafik auf einem bestimmten Feld an
         //\gfxid, ID der anzuzeigenden Grafik

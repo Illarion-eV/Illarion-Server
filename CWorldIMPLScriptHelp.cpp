@@ -634,7 +634,7 @@ bool CWorld::createFromItem(ScriptItem item, position pos, bool allways) {
 	return false;
 }
 
-bool CWorld::createMonster(unsigned short id, position pos, short movepoints) {
+fuse_ptr<CCharacter> CWorld::createMonster(unsigned short id, position pos, short movepoints) {
 	CField * field;
 	CMonster * newMonster;
 	if ( GetPToCFieldAt( field, pos.x, pos.y, pos.z ) ) {
@@ -647,17 +647,17 @@ bool CWorld::createMonster(unsigned short id, position pos, short movepoints) {
 			newMonsters.push_back( newMonster );
 			field->setChar();
 			sendCharacterMoveToAllVisiblePlayers( newMonster, NORMALMOVE, 4 );
-			return true;
+			return fuse_ptr<CCharacter>( newMonster );
 
 		} catch (CMonster::unknownIDException) {
 			std::cerr << "CWorld::createMonster: Failed to create monster with unknown id (" << id << ")!" << std::endl;
-			return false;
+			return fuse_ptr<CCharacter>();
 		}
 	} else {
         std::cerr<<"CWorld::createMonster: Field ("<<pos.x<<", "<<pos.y<<", "<<pos.z<<") was not found!"<<std::endl;
-		return false;
+		return fuse_ptr<CCharacter>();
 	}
-	return false;
+	return fuse_ptr<CCharacter>();
 }
 
 void CWorld::gfx(unsigned short int gfxid, position pos) {
