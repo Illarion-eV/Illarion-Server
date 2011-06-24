@@ -168,12 +168,8 @@ class CLuaScript
         bool existsEntrypoint( std::string entrypoint );
 
 	protected:
-#ifndef GLOBAL_SCRIPTS           
-		lua_State* _luaState; /**< stores the current lua state*/
-#else
         static lua_State* _luaState;
         static bool initialized;
-#endif
 		static void writeErrorMsg(); /**< returns a human readable error message */
         static void writeDebugMsg( std::string msg ); /**< writes a debug message to the script log */
 

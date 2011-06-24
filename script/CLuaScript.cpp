@@ -52,20 +52,16 @@ extern "C" {
 
 extern CScriptVariablesTable * scriptVariables;
 
-#ifdef GLOBAL_SCRIPTS
 lua_State * CLuaScript::_luaState = 0;
 bool CLuaScript::initialized = false;
-#endif
 
 CLuaScript::CLuaScript(std::string filename) throw(ScriptException) {
     _filename = filename;
     boost::split( vecPath, filename, boost::is_any_of(".") );
 	
-#ifdef GLOBAL_SCRIPTS
   if( !initialized )
   {
     initialized = true;
-#endif
     // open lua and luabind
     _luaState = luaL_newstate();
     luabind::open(_luaState);
@@ -86,9 +82,7 @@ CLuaScript::CLuaScript(std::string filename) throw(ScriptException) {
     lua_pushstring( _luaState, "path" );
     lua_pushstring( _luaState, path );
     lua_settable( _luaState, -3 );
-#ifdef GLOBAL_SCRIPTS
   }
-#endif
 
 	// last but not least, open the script file
     char luafile[200];
