@@ -1911,17 +1911,8 @@ unsigned short int CCharacter::increaseAttrib( std::string name, short int amoun
 		return pos.z;
 	}
 	if ( name == "faceto" ) {
-		switch( faceto ) {
-			case north: return 0;break;
-			case northeast: return 1;break;
-			case east: return 2;break;
-			case southeast: return 3;break;
-			case south: return 4;break;
-			case southwest: return 5;break;
-			case west: return 6; break;
-			case northwest: return 7;break;
-		}
-	}
+	    return faceto;
+    }
 	if ( name == "id" ) {
 		return id;
 	}
