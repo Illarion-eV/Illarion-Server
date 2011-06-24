@@ -328,6 +328,8 @@ class CCharacter : private boost::noncopyable {
         *@ingroup Scriptfunctions
         */                
         
+        position getFrontalPosition();
+
         /**
         * checks if there is a action currently running
         * <b>Lua: [:actionRunning]</b>

@@ -983,27 +983,7 @@ void CWorld::tile_command( CPlayer* cp, const std::string& ttilenumber ) {
 
 void CWorld::setNextTile( CPlayer* cp, unsigned char tilenumber ) {
 
-	position tpos = cp->pos;
-	switch ( cp->faceto ) {
-		case CCharacter::north:
-			tpos.y--;
-			break;
-
-		case CCharacter::east:
-			tpos.x++;
-			break;
-
-		case CCharacter::south:
-			tpos.y++;
-			break;
-
-		case CCharacter::west:
-			tpos.x--;
-			break;
-
-		default:
-			break;
-	}
+	position tpos = cp->getFrontalPosition();
 
 	CField* tempf;
 	if ( GetPToCFieldAt(tempf, tpos.x, tpos.y, tpos.z) )
@@ -1049,54 +1029,31 @@ void CWorld::clippingoff_command( CPlayer* cp ) {
 
 
 void CWorld::what_command( CPlayer* cp ) {
-    if ( !cp->hasGMRight(gmr_basiccommands) )return;
+	position front = cp->getFrontalPosition();
 
-	position tpos = cp->pos;
-	switch ( cp->faceto ) {
-		case CCharacter::north:
-			tpos.y--;
-			break;
+    cp->sendMessage( "Facing:" );
+	std::stringstream message;
 
-		case CCharacter::east:
-			tpos.x++;
-			break;
-
-		case CCharacter::south:
-			tpos.y++;
-			break;
-
-		case CCharacter::west:
-			tpos.x--;
-			break;
-
-		default:
-			break;
-
-	}
-
-	std::string tmessage = "x" + stream_convert<std::string>( tpos.x );
-	tmessage = tmessage + " y" + stream_convert<std::string>( tpos.y );
-	tmessage = tmessage + " z" + stream_convert<std::string>( tpos.z );
-
+    message << "- Position (" << front.x << ", " << front.y << ", " << front.z << ")";
+    cp->sendMessage( message.str() );
 	CField* tempf;
-	if ( GetPToCFieldAt(tempf, tpos.x, tpos.y, tpos.z) ) {
-		tmessage = tmessage + " tile:" + stream_convert<std::string>( tempf->getTileId() );
-		tmessage = tmessage + " IsPassable:" + ( tempf->IsPassable() ? "true" : "false" );
-		tmessage = tmessage + " MoveToPossible:" + ( tempf->moveToPossible() ? "true" : "false" );
+	if ( GetPToCFieldAt(tempf, front) ) {
+        message.str("");
+
+		message << "- Tile " << tempf->getTileId();
+        cp->sendMessage( message.str() );
+        Item top;
+        if (tempf->ViewTopItem(top)) {
+            message.str("");
+
+            message << "- Item " << top.id;
+            if (cp->hasGMRight(gmr_basiccommands)) {
+                message << ",  Quality " << top.quality;
+                message << ",  Data " << top.data;
+            }
+            cp->sendMessage( message.str() );
+        }
 	}
-
-	MONSTERVECTOR::iterator monsterIterator;
-	for ( monsterIterator = Monsters.begin(); monsterIterator < Monsters.end(); ++monsterIterator ) {
-		if ( (*monsterIterator )->pos.x == tpos.x &&
-				(*monsterIterator )->pos.y == tpos.y &&
-				(*monsterIterator )->pos.z == tpos.z ) {
-			tmessage = tmessage + " mob id:" + stream_convert<std::string>( (*monsterIterator)->id );
-			tmessage = tmessage + " HPs:" + stream_convert<std::string>( (*monsterIterator)->battrib.hitpoints );
-		}
-	}
-
-	cp->sendMessage( tmessage );
-
 }
 
 

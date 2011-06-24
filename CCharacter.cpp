@@ -114,7 +114,40 @@ void CCharacter::ReduceAllSkills() {
 	}
 }
 
-
+position CCharacter::getFrontalPosition() {
+    position front = pos;
+    switch( faceto ) {
+        case north:
+            --front.y;
+            break;
+        case northeast:
+            --front.y;
+            ++front.x;
+            break;
+        case east:
+            ++front.x;
+            break;
+        case southeast:
+            ++front.y;
+            ++front.x;
+            break;
+        case south:
+            ++front.y;
+            break;
+        case southwest:
+            ++front.y;
+            --front.x;
+            break;
+        case west:
+            --front.x;
+            break;
+        case northwest:
+            --front.y;
+            --front.x;
+            break;
+    }
+    return front;
+}
 
 luabind::object CCharacter::getLuaStepList(position tpos, int checkrange)
 {
