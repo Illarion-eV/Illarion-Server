@@ -501,6 +501,9 @@ bool CWorld::load_from_editor(std::string filename)
             }
         }
 
+        // default value while mapeditor is out of order
+        it.quality = 333;
+
         //if ( LogOptions["World_Imports"] )
         //  CLogger::writeMessage("World_Imports", LogMessage);
 
