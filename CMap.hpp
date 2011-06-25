@@ -123,10 +123,6 @@ class CMap {
 		// \param disappear gibt an, ob die Karte für einen darunter stehenden Spieler ausgeblendet werden soll
 		void Init( short int minx, short int miny, short int z, bool disappear );
 
-		//! belegt die Karte Daten zum Testen
-		// \return false falls nicht genügend Speicher vorhanden
-		bool Create();
-
 		//! liefert in fip einen Zeiger auf das CField mit den entsprechenden Koordinaten zurück
 		// \param fip der Zeiger auf das CField den Koordinaten x,y,z
 		// \param x X-Koordinate
