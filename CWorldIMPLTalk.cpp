@@ -361,15 +361,12 @@ void CWorld::lookAtMapItem( CPlayer* cp, short int x, short int y, short int z )
 				switch ( cp->getPlayerLanguage() ) 
                 {
 					case CLanguage::german:
-						outtext +=  "Du siehst " ;
 						outtext +=  tempNames.German ;
 						break;
 					case CLanguage::english:
-						outtext +=  "You see " ;
 						outtext +=  tempNames.English ;
 						break;
 					case CLanguage::french:
-						outtext +=  "You see " ;
 						outtext +=  tempNames.French ;
 						break;
 					default:
@@ -557,15 +554,12 @@ void CWorld::lookAtShowcaseItem( CPlayer* cp, unsigned char showcase, unsigned c
 
 					switch ( cp->getPlayerLanguage()) {
 						case CLanguage::german:
-							outtext +=  "Du siehst " ;
 							outtext +=  tempNames.German ;
 							break;
 						case CLanguage::english:
-							outtext +=  "You see ";
 							outtext +=  tempNames.English ;
 							break;
 						case CLanguage::french:
-							outtext +=  "You see " ;
 							outtext +=  tempNames.French ;
 							break;
 						default:
@@ -641,15 +635,12 @@ void CWorld::lookAtInventoryItem( CPlayer* cp, unsigned char position )
 			switch ( cp->getPlayerLanguage() ) 
             {
 				case CLanguage::german:
-					outtext +=  "Du siehst " ;
 					outtext +=  tempNames.German ;
 					break;
 				case CLanguage::english:
-					outtext += "You see ";
 					outtext +=  tempNames.English ;
 					break;
 				case CLanguage::french:
-					outtext +=  "You see " ;
 					outtext +=  tempNames.French ;
 					break;
 				default:
