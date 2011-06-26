@@ -121,7 +121,13 @@ bool CLuaItemScript::LookAtItem(CCharacter * who, ScriptItem t_item) {
         CWorld::get()->setCurrentScript( this ); 
         CLogger::writeMessage("scripts","LookAtItem called for: " + CLogger::toString(_comstr.id));
     	fuse_ptr<CCharacter> fuse_who(who);
-        call("LookAtItem")( fuse_who, t_item );
+        std::pair<QuestScripts::iterator, QuestScripts::iterator> lookAtRange = questScripts.equal_range("LookAtItem");
+        QuestScripts::iterator it;
+        bool foundQuest = false;
+        for (it = lookAtRange.first; it != lookAtRange.second; ++it)
+            foundQuest = foundQuest || luabind::object_cast<bool>(it->second->call("LookAtItem")( fuse_who, t_item ));
+        if (!foundQuest)
+            call("LookAtItem")( fuse_who, t_item );
 		return true;
 	} 
     catch (luabind::error &e) 
@@ -171,4 +177,7 @@ void CLuaItemScript::CharacterOnField(CCharacter * who) {
 	}
 }
 
-
+void CLuaItemScript::addQuestScript(const std::string entrypoint, CLuaScript *script) {
+    boost::shared_ptr<CLuaScript> script_ptr(script);
+    questScripts.insert(std::pair<const std::string, boost::shared_ptr<CLuaScript> >(entrypoint, script_ptr));
+}

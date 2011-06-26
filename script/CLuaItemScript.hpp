@@ -20,6 +20,9 @@
 #ifndef CLUAITEMSCRIPT_H
 #define CLUAITEMSCRIPT_H
 
+#include <map>
+#include <string>
+#include <boost/shared_ptr.hpp>
 #include "CLuaScript.hpp"
 #include "Item.hpp"
 #include "TableStructs.hpp"
@@ -88,9 +91,12 @@ class CLuaItemScript : public CLuaScript {
 		//\ param who, Character der auf dem gleichen Feld wie das Item steht.
 		void CharacterOnField(CCharacter * who);
 
+        void addQuestScript(const std::string entrypoint, CLuaScript *script);
+
 	private:
 		CommonStruct _comstr;
-		//CLuaItemScript(const CLuaItemScript&) : CLuaScript("l") {}}
+        typedef std::multimap<const std::string, boost::shared_ptr<CLuaScript> > QuestScripts;
+        QuestScripts questScripts;
 		CLuaItemScript(const CLuaItemScript&);
 		CLuaItemScript& operator=(const CLuaItemScript&);
 		void init_functions();

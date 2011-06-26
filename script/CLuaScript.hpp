@@ -172,7 +172,7 @@ class CLuaScript
         static bool initialized;
 		static void writeErrorMsg(); /**< returns a human readable error message */
         static void writeDebugMsg( std::string msg ); /**< writes a debug message to the script log */
-
+    public:
         luabind::object call( std::string entrypoint ) throw( luabind::error ); /**< creates a lua call */ 
 
 	private:
