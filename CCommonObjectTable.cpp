@@ -25,13 +25,6 @@
 #include <boost/shared_ptr.hpp>
 #include "CLogger.hpp"
 
-/*template<class from>
-const std::string toString(const from& convert) {
-	std::stringstream stream;
-	stream << convert;
-	return stream.str();
-}*/
-
 CCommonObjectTable::CCommonObjectTable() : m_dataOK(false) 
 {
 	reload();
