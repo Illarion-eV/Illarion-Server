@@ -30,7 +30,7 @@
 #include "netinterface/NetInterface.hpp"
 #include <map>
 
-extern boost::shared_ptr<CLuaDepotScript>depotScript;
+extern boost::shared_ptr<LuaDepotScript>depotScript;
 
 //
 //   Constraints:
@@ -41,11 +41,11 @@ extern boost::shared_ptr<CLuaDepotScript>depotScript;
 //   Das Gesamtgewicht aller Items eines Character (ohne die in g_item/g_cont) steht immer in sumWeight und muss entsprechend aktualisiert werden.
 
 //  atomare Funktionen  //
-bool CWorld::putItemOnInvPos( CCharacter* cc, unsigned char pos ) 
+bool World::putItemOnInvPos( Character* cc, unsigned char pos ) 
 {
         bool gotWeapon = false;
-#ifdef CWorld_ItemMove_DEBUG
-        std::cout << "putItemOnInvPos(CCharacter.. Start" << std::endl;
+#ifdef World_ItemMove_DEBUG
+        std::cout << "putItemOnInvPos(Character.. Start" << std::endl;
 #endif
         //item is not finished so we can't move it to a body pos 
         if ( (g_item.quality < 100) && (pos < MAX_BODY_ITEMS) )
@@ -64,9 +64,9 @@ bool CWorld::putItemOnInvPos( CCharacter* cc, unsigned char pos )
                              cc->characterItems[ BACKPACK ].number = 1;
                              if ( g_cont == NULL ) 
                              {
-                                    g_cont = new CContainer(cont.ContainerVolume);
+                                    g_cont = new Container(cont.ContainerVolume);
                              } else {
-                                    CPlayer* temp = dynamic_cast<CPlayer*>(cc);
+                                    Player* temp = dynamic_cast<Player*>(cc);
                                     if (temp)
                                            closeShowcaseForOthers(temp, g_cont);
                              }
@@ -166,8 +166,8 @@ bool CWorld::putItemOnInvPos( CCharacter* cc, unsigned char pos )
                                            g_item.data = 0;
                                            g_item.data_map.clear();
                                             
-#ifdef CWorld_ItemMove_DEBUG
-                                           std::cout << "putItemOnInvPos(CCharacter.. Ende 1" << std::endl;
+#ifdef World_ItemMove_DEBUG
+                                           std::cout << "putItemOnInvPos(Character.. Ende 1" << std::endl;
 #endif
                                            cc->updateAppearanceForAll( true );
                                            return true;
@@ -229,7 +229,7 @@ bool CWorld::putItemOnInvPos( CCharacter* cc, unsigned char pos )
                                                          case FEET :
                                                                 flag = FLAG_FEET;
                                                                 break;
-                                                         case COAT :
+                                                         case OAT :
                                                                 flag = FLAG_COAT;
                                                                 break;
                                                          default :
@@ -245,8 +245,8 @@ bool CWorld::putItemOnInvPos( CCharacter* cc, unsigned char pos )
                                                          g_item.quality = 0;
                                                          g_item.data = 0;
                                                          g_item.data_map.clear();
-#ifdef CWorld_ItemMove_DEBUG
-                                                         std::cout << "putItemOnInvPos(CCharacter.. Ende 2" << std::endl;
+#ifdef World_ItemMove_DEBUG
+                                                         std::cout << "putItemOnInvPos(Character.. Ende 2" << std::endl;
 #endif
                                                          cc->updateAppearanceForAll( true ); 
                                                          return true;
@@ -272,8 +272,8 @@ bool CWorld::putItemOnInvPos( CCharacter* cc, unsigned char pos )
                              g_item.quality = 0;
                              g_item.data = 0;
                              g_item.data_map.clear();
-#ifdef CWorld_ItemMove_DEBUG
-                             std::cout << "putItemOnInvPos(CCharacter.. Ende 3" << std::endl;
+#ifdef World_ItemMove_DEBUG
+                             std::cout << "putItemOnInvPos(Character.. Ende 3" << std::endl;
 #endif
                              cc->updateAppearanceForAll( true );
                              return true;
@@ -304,8 +304,8 @@ bool CWorld::putItemOnInvPos( CCharacter* cc, unsigned char pos )
                }
         }
 
-#ifdef CWorld_ItemMove_DEBUG
-        std::cout << "putItemOnInvPos(CCharacter.. Ende 4" << std::endl;
+#ifdef World_ItemMove_DEBUG
+        std::cout << "putItemOnInvPos(Character.. Ende 4" << std::endl;
 #endif
 
         return false;
@@ -314,10 +314,10 @@ bool CWorld::putItemOnInvPos( CCharacter* cc, unsigned char pos )
 
 
 
-bool CWorld::putItemOnInvPos( CPlayer* cc, unsigned char pos ) 
+bool World::putItemOnInvPos( Player* cc, unsigned char pos ) 
 {
-#ifdef CWorld_ItemMove_DEBUG
-        std::cout << "putItemOnInvPos(CPlayer.. Start" << std::endl;
+#ifdef World_ItemMove_DEBUG
+        std::cout << "putItemOnInvPos(Player.. Start" << std::endl;
 #endif
         //item is not finished so we can't move it to a body pos only left hand, and right hand
         if ( (g_item.quality < 100) && (pos < MAX_BODY_ITEMS) )
@@ -327,7 +327,7 @@ bool CWorld::putItemOnInvPos( CPlayer* cc, unsigned char pos )
 std::cout << "UTF-8 TEST: Gegenstände" << std::endl;
             return false;
         }
-        if ( putItemOnInvPos( ( CCharacter* ) cc, pos ) ) {
+        if ( putItemOnInvPos( ( Character* ) cc, pos ) ) {
                if (pos == LEFT_TOOL) {
                       cc->sendCharacterItemAtPos( pos );
                       cc->sendCharacterItemAtPos( RIGHT_TOOL );
@@ -337,21 +337,21 @@ std::cout << "UTF-8 TEST: Gegenstände" << std::endl;
                } else {
                       cc->sendCharacterItemAtPos( pos );
                }
-#ifdef CWorld_ItemMove_DEBUG
-               std::cout << "putItemOnInvPos(CPlayer.. Ende 1" << std::endl;
+#ifdef World_ItemMove_DEBUG
+               std::cout << "putItemOnInvPos(Player.. Ende 1" << std::endl;
 #endif
                return true;
         } else {
-#ifdef CWorld_ItemMove_DEBUG
-               std::cout << "putItemOnInvPos(CPlayer.. Ende 1" << std::endl;
+#ifdef World_ItemMove_DEBUG
+               std::cout << "putItemOnInvPos(Player.. Ende 1" << std::endl;
 #endif
                return false;
         }
 }
 
-bool CWorld::takeItemFromInvPos( CCharacter* cc, unsigned char pos, unsigned char count ) {
-#ifdef CWorld_ItemMove_DEBUG
-        std::cout << "takeItemFromInvPos(CCharacter.. Start" << std::endl;
+bool World::takeItemFromInvPos( Character* cc, unsigned char pos, unsigned char count ) {
+#ifdef World_ItemMove_DEBUG
+        std::cout << "takeItemFromInvPos(Character.. Start" << std::endl;
 #endif
         //check if take the weapon to update the appearance.
         bool takeWeapon = false;
@@ -365,9 +365,9 @@ bool CWorld::takeItemFromInvPos( CCharacter* cc, unsigned char pos, unsigned cha
                       if ( g_cont == NULL ) {
                              ContainerStruct cont;
                              if ( ContainerItems->find(g_item.id, cont) )
-                                    g_cont = new CContainer(cont.ContainerVolume);
+                                    g_cont = new Container(cont.ContainerVolume);
                              else
-                                    g_cont = new CContainer(50000);
+                                    g_cont = new Container(50000);
                       }
 
                       cc->characterItems[ BACKPACK ].id = 0;
@@ -377,8 +377,8 @@ bool CWorld::takeItemFromInvPos( CCharacter* cc, unsigned char pos, unsigned cha
                       cc->characterItems[ BACKPACK ].data = 0;
                       cc->characterItems[ BACKPACK ].data_map.clear();
                       cc->backPackContents = NULL;
-#ifdef CWorld_ItemMove_DEBUG
-                      std::cout << "takeItemFromInvPos(CCharacter.. Ende 1" << std::endl;
+#ifdef World_ItemMove_DEBUG
+                      std::cout << "takeItemFromInvPos(Character.. Ende 1" << std::endl;
 #endif
                       cc->updateAppearanceForAll( true );
                       return true;
@@ -484,9 +484,9 @@ bool CWorld::takeItemFromInvPos( CCharacter* cc, unsigned char pos, unsigned cha
 
 
 
-bool CWorld::takeItemFromInvPos( CPlayer* cc, unsigned char pos, unsigned char count  ) {
-#ifdef CWorld_ItemMove_DEBUG
-        std::cout << "takeItemFromInvPos(CPlayer.. Start" << std::endl;
+bool World::takeItemFromInvPos( Player* cc, unsigned char pos, unsigned char count  ) {
+#ifdef World_ItemMove_DEBUG
+        std::cout << "takeItemFromInvPos(Player.. Start" << std::endl;
 #endif
         if ( pos == BACKPACK ) {
                if ( cc->characterItems[ BACKPACK ].id != 0 ) {
@@ -494,7 +494,7 @@ bool CWorld::takeItemFromInvPos( CPlayer* cc, unsigned char pos, unsigned char c
                              for ( int i = 0; i < MAXSHOWCASES; ++i ) {
                                     if ( cc->showcases[ i ].contains( cc->backPackContents ) ) {
                                            cc->showcases[ i ].clear();
-                                           boost::shared_ptr<CBasicServerCommand>cmd(new CClearShowCaseTC( i ) );
+                                           boost::shared_ptr<BasicServerCommand>cmd(new ClearShowCaseTC( i ) );
                                            cc->Connection->addCommand( cmd );
                                     }
                              }
@@ -502,7 +502,7 @@ bool CWorld::takeItemFromInvPos( CPlayer* cc, unsigned char pos, unsigned char c
                }
         }
 
-        if ( takeItemFromInvPos( ( CCharacter* ) cc, pos, count ) ) {
+        if ( takeItemFromInvPos( ( Character* ) cc, pos, count ) ) {
                if (pos == LEFT_TOOL) {
                       cc->sendCharacterItemAtPos( pos );
                       cc->sendCharacterItemAtPos( RIGHT_TOOL );
@@ -512,13 +512,13 @@ bool CWorld::takeItemFromInvPos( CPlayer* cc, unsigned char pos, unsigned char c
                } else {
                       cc->sendCharacterItemAtPos( pos );
                }
-#ifdef CWorld_ItemMove_DEBUG
-               std::cout << "takeItemFromInvPos(CPlayer.. Ende 1" << std::endl;
+#ifdef World_ItemMove_DEBUG
+               std::cout << "takeItemFromInvPos(Player.. Ende 1" << std::endl;
 #endif
                return true;
         } else {
-#ifdef CWorld_ItemMove_DEBUG
-               std::cout << "takeItemFromInvPos(CPlayer.. Ende 2" << std::endl;
+#ifdef World_ItemMove_DEBUG
+               std::cout << "takeItemFromInvPos(Player.. Ende 2" << std::endl;
 #endif
                return false;
         }
@@ -526,13 +526,13 @@ bool CWorld::takeItemFromInvPos( CPlayer* cc, unsigned char pos, unsigned char c
 
 
 
-bool CWorld::takeItemFromShowcase( CPlayer* cc, unsigned char showcase, unsigned char pos, unsigned char count ) {
+bool World::takeItemFromShowcase( Player* cc, unsigned char showcase, unsigned char pos, unsigned char count ) {
 
-#ifdef CWorld_ItemMove_DEBUG
-        std::cout << "takeItemFromShowcase(CPlayer.. Start" << std::endl;
+#ifdef World_ItemMove_DEBUG
+        std::cout << "takeItemFromShowcase(Player.. Start" << std::endl;
 #endif
         if ( showcase < MAXSHOWCASES ) {
-               CContainer * ps = cc->showcases[ showcase ].top();
+               Container * ps = cc->showcases[ showcase ].top();
                if ( ps != NULL ) {
                       if ( ps->TakeItemNr( pos, g_item, g_cont, count ) ) {
                              if ( g_cont != NULL ) {
@@ -540,8 +540,8 @@ bool CWorld::takeItemFromShowcase( CPlayer* cc, unsigned char showcase, unsigned
                              } else {
                                     sendChangesOfContainerContentsIM( ps );
                              }
-#ifdef CWorld_ItemMove_DEBUG
-                             std::cout << "takeItemFromShowcase(CPlayer.. Ende 1" << std::endl;
+#ifdef World_ItemMove_DEBUG
+                             std::cout << "takeItemFromShowcase(Player.. Ende 1" << std::endl;
 #endif
 
                              return true;
@@ -556,8 +556,8 @@ bool CWorld::takeItemFromShowcase( CPlayer* cc, unsigned char showcase, unsigned
         g_item.data = 0;
         g_item.data_map.clear();
         g_cont = NULL;
-#ifdef CWorld_ItemMove_DEBUG
-        std::cout << "takeItemFromShowcase(CPlayer.. Ende 2" << std::endl;
+#ifdef World_ItemMove_DEBUG
+        std::cout << "takeItemFromShowcase(Player.. Ende 2" << std::endl;
 #endif
 
         return false;
@@ -565,8 +565,8 @@ bool CWorld::takeItemFromShowcase( CPlayer* cc, unsigned char showcase, unsigned
 }
 
 
-bool CWorld::putItemInShowcase( CPlayer* cc, unsigned char showcase, unsigned char pos ) {
-#ifdef CWorld_ItemMove_DEBUG
+bool World::putItemInShowcase( Player* cc, unsigned char showcase, unsigned char pos ) {
+#ifdef World_ItemMove_DEBUG
         std::cout << "putItemInShowcase.. Start" << std::endl;
 #endif
         //Unstackable von Items
@@ -576,16 +576,16 @@ bool CWorld::putItemInShowcase( CPlayer* cc, unsigned char showcase, unsigned ch
                }
         }
         //Ende unstackable von Items
-#ifdef CWorld_BagOnlyInDepot
+#ifdef World_BagOnlyInDepot
         bool isdepot = false;
 #endif
         if ( showcase < MAXSHOWCASES ) {
-               CContainer * ps = cc->showcases[ showcase ].top();
+               Container * ps = cc->showcases[ showcase ].top();
                if ( ps != NULL ) {
                       if ( g_cont != NULL ) {
                              //Ein Container in ein Depot einfgen
-                             std::map<uint32_t,CContainer*>::iterator it;
-#ifdef CWorld_BagOnlyInDepot
+                             std::map<uint32_t,Container*>::iterator it;
+#ifdef World_BagOnlyInDepot
                              //Loop through all depots if ps is a depot if yes is depot set to true
                 for ( it = cc->depotContents.begin(); it != cc->depotContents.end(); ++it )
                              {
@@ -608,7 +608,7 @@ bool CWorld::putItemInShowcase( CPlayer* cc, unsigned char showcase, unsigned ch
                                                   g_item.data = 0;
                                                   g_item.data_map.clear();
                                                   g_cont = NULL;
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
                                                   std::cout << "putItemInShowcase.. Ende 1" << std::endl;
 #endif
                                                   if (cc->showcases[ showcase ].inInventory()) {}
@@ -627,7 +627,7 @@ bool CWorld::putItemInShowcase( CPlayer* cc, unsigned char showcase, unsigned ch
                                     g_item.quality = 0;
                                     g_item.data = 0;
                                     g_item.data_map.clear();
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
                                     std::cout << "putItemInShowcase.. Ende 2" << std::endl;
 #endif
                                     return true;
@@ -635,7 +635,7 @@ bool CWorld::putItemInShowcase( CPlayer* cc, unsigned char showcase, unsigned ch
                       }
                }
         }
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
         std::cout << "putItemInShowcase.. Ende 3" << std::endl;
 #endif
 
@@ -645,12 +645,12 @@ bool CWorld::putItemInShowcase( CPlayer* cc, unsigned char showcase, unsigned ch
 
 
 
-bool CWorld::takeItemFromMap( CCharacter* cc, short int x, short int y, short int z ) {
-#ifdef CWorld_ItemMove_DEBUG
+bool World::takeItemFromMap( Character* cc, short int x, short int y, short int z ) {
+#ifdef World_ItemMove_DEBUG
         std::cout << "takeItemFromMap.. Start" << std::endl;
 #endif
 
-        CField* tempf;
+        Field* tempf;
 
         // Feld vorhanden
         if ( GetPToCFieldAt( tempf, x, y, z, tmap ) ) {
@@ -694,10 +694,10 @@ bool CWorld::takeItemFromMap( CCharacter* cc, short int x, short int y, short in
                                            MAP_POSITION opos;
                                            opos.x = x;
                                            opos.y = y;
-                                           CMap::CONTAINERHASH::iterator conmapo = tmap->maincontainers.find( opos );
+                                           Map::ONTAINERHASH::iterator conmapo = tmap->maincontainers.find( opos );
                                            // containermap fr das Feld gefunden
                                            if ( conmapo != tmap->maincontainers.end() ) {
-                                                  CContainer::CONTAINERMAP::iterator iv = ( *conmapo ).second.find( g_item.number );
+                                                  Container::ONTAINERMAP::iterator iv = ( *conmapo ).second.find( g_item.number );
                                                   // der Inhalt des angegebenen Containers mit der id g_item.number wurde gefunden
                                                   if ( iv != ( *conmapo ).second.end() ) {
                                                          g_cont = ( *iv ).second;
@@ -709,22 +709,22 @@ bool CWorld::takeItemFromMap( CCharacter* cc, short int x, short int y, short in
                                                                 tmap->maincontainers.erase( conmapo );
                                                          }
                                                          sendRemoveItemFromMapToAllVisibleCharacters( cc->id, x, y, z, tempf );
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
                                                          std::cout << "takeItemFromMap.. Ende 1" << std::endl;
 #endif
                                                          return true;
                                                   } else {
-                                                         g_cont = new CContainer(cont.ContainerVolume);
+                                                         g_cont = new Container(cont.ContainerVolume);
                                                          sendRemoveItemFromMapToAllVisibleCharacters( cc->id, x, y, z, tempf );
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
                                                          std::cout << "takeItemFromMap.. Ende 2" << std::endl;
 #endif
                                                          return true;
                                                   }
                                            } else {
-                                                  g_cont = new CContainer(cont.ContainerVolume);
+                                                  g_cont = new Container(cont.ContainerVolume);
                                                   sendRemoveItemFromMapToAllVisibleCharacters( cc->id, x, y, z, tempf );
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
                                                   std::cout << "takeItemFromMap.. Ende 3" << std::endl;
 #endif
                                                   return true;
@@ -733,7 +733,7 @@ bool CWorld::takeItemFromMap( CCharacter* cc, short int x, short int y, short in
                                            // normales Item
                                            g_cont = NULL;
                                            sendRemoveItemFromMapToAllVisibleCharacters( cc->id, x, y, z, tempf );
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
                                            std::cout << "takeItemFromMap.. Ende 4" << std::endl;
 #endif
                                            return true;
@@ -751,7 +751,7 @@ bool CWorld::takeItemFromMap( CCharacter* cc, short int x, short int y, short in
         g_item.data_map.clear();
         g_cont = NULL;
 
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
         std::cout << "takeItemFromMap.. Ende 5" << std::endl;
 #endif
 
@@ -760,11 +760,11 @@ bool CWorld::takeItemFromMap( CCharacter* cc, short int x, short int y, short in
 }
 
 
-bool CWorld::putItemOnMap( CCharacter* cc, short int x, short int y, short int z ) {
-#ifdef CWorld_ItemMove_DEBUG
+bool World::putItemOnMap( Character* cc, short int x, short int y, short int z ) {
+#ifdef World_ItemMove_DEBUG
         std::cout << "putItemOnMap.. Start" << std::endl;
 #endif
-        CField* tempf;
+        Field* tempf;
 
         //stacking von Items verhindern
         if ( !isStackable(g_item) && !ContainerItems->find(g_item.id) ) {
@@ -781,7 +781,7 @@ bool CWorld::putItemOnMap( CCharacter* cc, short int x, short int y, short int z
 
                if ( TilesModItems->nonPassable( g_item.id ) ) { // nicht passierbares Item, zB. eine grosse Kiste
                       if ( ! tempf->moveToPossible() ) { // das Feld ist nicht betretbar
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
                              std::cout << "putItemOnMap.. Ende 1" << std::endl;
 #endif
                              return false;
@@ -791,7 +791,7 @@ bool CWorld::putItemOnMap( CCharacter* cc, short int x, short int y, short int z
                if ( ContainerItems->find( g_item.id, cont ) ) {
                       // Container
                       if ( g_cont == NULL ) {
-                             g_cont = new CContainer(cont.ContainerVolume);
+                             g_cont = new Container(cont.ContainerVolume);
                       } else
                              // close the showcase for everyone not in range
                              closeShowcaseIfNotInRange(g_cont,x,y,z);
@@ -818,7 +818,7 @@ bool CWorld::putItemOnMap( CCharacter* cc, short int x, short int y, short int z
                              g_item.data = 0;
                              g_item.data_map.clear();
                              g_cont = NULL;
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
                              std::cout << "putItemOnMap.. Ende 2" << std::endl;
 #endif
                              return true;
@@ -847,14 +847,14 @@ bool CWorld::putItemOnMap( CCharacter* cc, short int x, short int y, short int z
                              g_item.quality = 0;
                              g_item.data = 0;
                              g_item.data_map.clear();
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
                              std::cout << "putItemOnMap.. Ende 3" << std::endl;
 #endif
                              return true;
                       }
                }
         }
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
         std::cout << "putItemOnMap.. Ende 4" << std::endl;
 #endif
 
@@ -863,11 +863,11 @@ bool CWorld::putItemOnMap( CCharacter* cc, short int x, short int y, short int z
 }
 
 
-bool CWorld::putItemAlwaysOnMap( CCharacter* cc, short int x, short int y, short int z ) {
-#ifdef CWorld_ItemMove_DEBUG
+bool World::putItemAlwaysOnMap( Character* cc, short int x, short int y, short int z ) {
+#ifdef World_ItemMove_DEBUG
         std::cout << "putItemAlwaysOnMap.. Start" << std::endl;
 #endif
-        CField* tempf;
+        Field* tempf;
 
         if ( GetPToCFieldAt( tempf, x, y, z, tmap ) ) {
                MAP_POSITION npos;
@@ -877,7 +877,7 @@ bool CWorld::putItemAlwaysOnMap( CCharacter* cc, short int x, short int y, short
                if ( ContainerItems->find( g_item.id, cont ) ) {
                       // Container
                       if ( g_cont == NULL ) {
-                             g_cont = new CContainer(cont.ContainerVolume);
+                             g_cont = new Container(cont.ContainerVolume);
                       }
 
                       if ( tmap->addAlwaysContainerToPos( g_item, g_cont, npos ) ) {
@@ -902,7 +902,7 @@ bool CWorld::putItemAlwaysOnMap( CCharacter* cc, short int x, short int y, short
                              g_item.data = 0;
                              g_item.data_map.clear();
                              g_cont = NULL;
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
                              std::cout << "putItemAlwaysOnMap.. Ende 2" << std::endl;
 #endif
                              return true;
@@ -932,14 +932,14 @@ bool CWorld::putItemAlwaysOnMap( CCharacter* cc, short int x, short int y, short
                              g_item.quality = 0;
                              g_item.data = 0;
                              g_item.data_map.clear();
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
                              std::cout << "putItemAlwaysOnMap.. Ende 3" << std::endl;
 #endif
                              return true;
                       }
                }
         }
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
         std::cout << "putItemAlwaysOnMap.. Ende 4" << std::endl;
 #endif
 
@@ -949,39 +949,39 @@ bool CWorld::putItemAlwaysOnMap( CCharacter* cc, short int x, short int y, short
 
 
 
-void CWorld::checkField( CField* cfstart, short int x, short int y, short int z ) {
-#ifdef CWorld_ItemMove_DEBUG
-        std::cout << "checkField(CField* .. Start" << std::endl;
+void World::checkField( Field* cfstart, short int x, short int y, short int z ) {
+#ifdef World_ItemMove_DEBUG
+        std::cout << "checkField(Field* .. Start" << std::endl;
 #endif
         if ( cfstart != NULL ) {
                if ( cfstart->HasSpecialItem() ) {
                       if ( cfstart->IsPlayerOnField() ) {
-                             CPlayer * temp;
+                             Player * temp;
                              if ( Players.find( x, y, z, temp ) ) {
                                     checkFieldAfterMove( temp, cfstart );
                              }
                       } else if ( cfstart->IsMonsterOnField() ) {
-                             CMonster * temp2;
+                             Monster * temp2;
                              if ( Monsters.find( x, y, z, temp2 ) ) {
                                     checkFieldAfterMove( temp2, cfstart );
                              }
                       } else if ( cfstart->IsNPCOnField() ) {
-                             CNPC * temp3;
+                             NPC * temp3;
                              if ( Npc.find( x, y, z, temp3 ) ) {
                                     checkFieldAfterMove( temp3, cfstart );
                              }
                       }
                }
         }
-#ifdef CWorld_ItemMove_DEBUG
-        std::cout << "checkField(CField* .. Ende" << std::endl;
+#ifdef World_ItemMove_DEBUG
+        std::cout << "checkField(Field* .. Ende" << std::endl;
 #endif
 }
 
 
 ///////// zusammengesetzte Funktionen  ///////////////
-void CWorld::dropItemFromShowcaseOnMap( CPlayer* cp, unsigned char showcase, unsigned char pos, short int xc, short int yc, short int zc, unsigned char count ) {
-#ifdef CWorld_ItemMove_DEBUG
+void World::dropItemFromShowcaseOnMap( Player* cp, unsigned char showcase, unsigned char pos, short int xc, short int yc, short int zc, unsigned char count ) {
+#ifdef World_ItemMove_DEBUG
         std::cout << "dropItemFromShowcaseOnMap: Spieler " << cp->name << " wirft ein Item auf die Karte" << std::endl;
 #endif
         if (count == 0) return;
@@ -1000,7 +1000,7 @@ void CWorld::dropItemFromShowcaseOnMap( CPlayer* cp, unsigned char showcase, uns
                t_item.pos = position(xc, yc, zc);
                t_item.type = ScriptItem::it_field;
                t_item.owner = cp;
-               boost::shared_ptr<CLuaItemScript> script = CommonItems->findScript(t_item.id);
+               boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.id);
                
                if ( script ) 
                {
@@ -1071,17 +1071,17 @@ void CWorld::dropItemFromShowcaseOnMap( CPlayer* cp, unsigned char showcase, uns
                    }
                }
         }
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
         std::cout << "dropItemFromShowcaseOnMap: beendet" << std::endl;
 #endif
 }
 
 
 
-void CWorld::moveItemFromShowcaseToPlayer( CPlayer* cp, unsigned char showcase, unsigned char pos, unsigned char cpos, unsigned char count ) {
+void World::moveItemFromShowcaseToPlayer( Player* cp, unsigned char showcase, unsigned char pos, unsigned char cpos, unsigned char count ) {
         bool NOK = false;
         //CommonStruct com;
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
         std::cout << "moveItemFromShowcaseToPlayer: Spieler " << cp->name << " nimmt ein Item auf\n"
         << "showcase: " << ( short int ) showcase << " from position: " << ( short int ) pos << " to position: " << ( short int ) cpos << std::endl;
 #endif
@@ -1089,7 +1089,7 @@ void CWorld::moveItemFromShowcaseToPlayer( CPlayer* cp, unsigned char showcase, 
                return;
         }
         if ( takeItemFromShowcase( cp, showcase, pos, count ) ) {
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
                std::cout << "Item genommen" << std::endl;
 #endif
 
@@ -1111,7 +1111,7 @@ void CWorld::moveItemFromShowcaseToPlayer( CPlayer* cp, unsigned char showcase, 
                       t_item.type = ScriptItem::it_belt;
                t_item.owner = cp;
                //Ende Erzeugen von Source und Target Item
-               boost::shared_ptr<CLuaItemScript> script = CommonItems->findScript( t_item.id );
+               boost::shared_ptr<LuaItemScript> script = CommonItems->findScript( t_item.id );
                if ( script ) 
                {
                    if (!script->MoveItemBeforeMove(cp, s_item,t_item) ) 
@@ -1163,13 +1163,13 @@ void CWorld::moveItemFromShowcaseToPlayer( CPlayer* cp, unsigned char showcase, 
                                            cp->setEncumberedSent( true );
                                            std::string tmessage;
                                            switch ( cp->getPlayerLanguage() ) {
-                                                  case CLanguage::german:
+                                                  case Language::german:
                                                          tmessage = "Du bist überladen.";
                                                          break;
-                                                  case CLanguage::english:
+                                                  case Language::english:
                                                          tmessage = "You are encumbered.";
                                                          break;
-                                                  case CLanguage::french:
+                                                  case Language::french:
                                                          tmessage = "You are encumbered.";
                                                          break;
                                                   default:
@@ -1182,13 +1182,13 @@ void CWorld::moveItemFromShowcaseToPlayer( CPlayer* cp, unsigned char showcase, 
 
                                     std::string tmessage;
                                     switch ( cp->getPlayerLanguage() ) {
-                                           case CLanguage::german:
+                                           case Language::german:
                                                   tmessage = "Du bist nicht mehr überladen.";
                                                   break;
-                                           case CLanguage::english:
+                                           case Language::english:
                                                   tmessage = "You are no longer encumbered.";
                                                   break;
-                                           case CLanguage::french:
+                                           case Language::french:
                                                   tmessage = "You are no longer encumbered.";
                                                   break;
                                            default:
@@ -1223,15 +1223,15 @@ void CWorld::moveItemFromShowcaseToPlayer( CPlayer* cp, unsigned char showcase, 
                       }
                }
         }
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
         std::cout << "moveItemFromShowcaseToPlayer: Ende" << std::endl;
 #endif
 }
 
 
 
-void CWorld::dropItemFromPlayerOnMap( CPlayer* cp, unsigned char cpos, short int xc, short int yc, short int zc, unsigned char count ) {
-#ifdef CWorld_ItemMove_DEBUG
+void World::dropItemFromPlayerOnMap( Player* cp, unsigned char cpos, short int xc, short int yc, short int zc, unsigned char count ) {
+#ifdef World_ItemMove_DEBUG
         std::cout << "dropItemFromPlayerOnMap: Spieler " << cp->name << " wirft ein Item auf die Karte" << std::endl;
 #endif
         if (count == 0) return;
@@ -1250,7 +1250,7 @@ void CWorld::dropItemFromPlayerOnMap( CPlayer* cp, unsigned char cpos, short int
                t_item.pos = position( xc, yc, zc );
                t_item.type = ScriptItem::it_field;
                t_item.owner = cp;
-               boost::shared_ptr<CLuaItemScript> script = CommonItems->findScript( t_item.id );
+               boost::shared_ptr<LuaItemScript> script = CommonItems->findScript( t_item.id );
                if ( script )
                {
                    if ( !script->MoveItemBeforeMove(cp, s_item, t_item) ) 
@@ -1318,15 +1318,15 @@ void CWorld::dropItemFromPlayerOnMap( CPlayer* cp, unsigned char cpos, short int
                }
 
         }
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
         std::cout << "dropItemFromPlayerOnMap: Ende" << std::endl;
 #endif
 }
 
 
 
-void CWorld::dropItemFromMonsterOnMap( CMonster* cm, unsigned char cpos, char xo, char yo, char zo, unsigned char count ) {
-#ifdef CWorld_ItemMove_DEBUG
+void World::dropItemFromMonsterOnMap( Monster* cm, unsigned char cpos, char xo, char yo, char zo, unsigned char count ) {
+#ifdef World_ItemMove_DEBUG
         std::cout << "dropItemFromMonsterOnMap: Monster " << cm->name << " wirft ein Item auf die Karte" << std::endl;
 #endif
         if (count == 0) return;
@@ -1350,15 +1350,15 @@ void CWorld::dropItemFromMonsterOnMap( CMonster* cm, unsigned char cpos, char xo
                       }
                }
         }
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
         std::cout << "dropItemFromMonsterOnMap: Ende" << std::endl;
 #endif
 }
 
 
 
-void CWorld::moveItemBetweenBodyParts( CPlayer* cp, unsigned char opos, unsigned char npos, unsigned char count ) {
-#ifdef CWorld_ItemMove_DEBUG
+void World::moveItemBetweenBodyParts( Player* cp, unsigned char opos, unsigned char npos, unsigned char count ) {
+#ifdef World_ItemMove_DEBUG
         std::cout << "moveItemBetweenBodyParts: Spieler " << cp->name << " verschiebt ein Item" << std::endl;
 #endif
         //CommonStruct com;
@@ -1380,7 +1380,7 @@ void CWorld::moveItemBetweenBodyParts( CPlayer* cp, unsigned char opos, unsigned
                else
                       t_item.type = ScriptItem::it_belt;
                t_item.itempos = npos;
-               boost::shared_ptr<CLuaItemScript> script = CommonItems->findScript( t_item.id );
+               boost::shared_ptr<LuaItemScript> script = CommonItems->findScript( t_item.id );
                if ( script )
                {
                    if (!script->MoveItemBeforeMove(cp, s_item, t_item) )
@@ -1436,15 +1436,15 @@ void CWorld::moveItemBetweenBodyParts( CPlayer* cp, unsigned char opos, unsigned
                      if ( script ) script->MoveItemAfterMove(cp, s_item, t_item);
                }
         }
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
         std::cout << "moveItemBetweenBodyParts: Ende" << std::endl;
 #endif
 }
 
 
 
-void CWorld::moveItemFromPlayerIntoShowcase( CPlayer* cp, unsigned char cpos, unsigned char showcase, unsigned char pos, unsigned char count ) {
-#ifdef CWorld_ItemMove_DEBUG
+void World::moveItemFromPlayerIntoShowcase( Player* cp, unsigned char cpos, unsigned char showcase, unsigned char pos, unsigned char count ) {
+#ifdef World_ItemMove_DEBUG
         std::cout << "moveItemFromPlayerIntoShowcase: Spieler " << cp->name << " verschiebt Item von der Karte in ein showcase" << std::endl;
 #endif
       //  CommonStruct com;
@@ -1468,7 +1468,7 @@ void CWorld::moveItemFromPlayerIntoShowcase( CPlayer* cp, unsigned char cpos, un
                t_item.pos = cp->pos;
                t_item.owner = cp;
                t_item.itempos = pos;
-               boost::shared_ptr<CLuaItemScript> script = CommonItems->findScript( t_item.id );
+               boost::shared_ptr<LuaItemScript> script = CommonItems->findScript( t_item.id );
                if ( script )
                {
                     if (!script->MoveItemBeforeMove(cp, s_item, t_item) ) 
@@ -1525,19 +1525,19 @@ void CWorld::moveItemFromPlayerIntoShowcase( CPlayer* cp, unsigned char cpos, un
                       if ( script ) script->MoveItemAfterMove(cp, s_item, t_item);
                }
         }
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
         std::cout << "moveItemFromPlayerIntoShowcase: Ende" << std::endl;
 #endif
 }
 
 
 
-void CWorld::moveItemFromMapIntoShowcase( CPlayer* cp, char direction, unsigned char showcase, unsigned char pos, unsigned char count ) {
+void World::moveItemFromMapIntoShowcase( Player* cp, char direction, unsigned char showcase, unsigned char pos, unsigned char count ) {
 
         bool NOK = false;
         //CommonStruct com;
 
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
         std::cout << "moveItemFromMapIntoShowcase: Spieler " << cp->name << " verschiebt Item von der Karte in ein showcase" << std::endl;
 #endif
 
@@ -1564,7 +1564,7 @@ void CWorld::moveItemFromMapIntoShowcase( CPlayer* cp, char direction, unsigned 
                       t_item.owner = cp;
 
                       //Ausfhren eines Move Item Scriptes
-                      boost::shared_ptr<CLuaItemScript> script = CommonItems->findScript( t_item.id );
+                      boost::shared_ptr<LuaItemScript> script = CommonItems->findScript( t_item.id );
                       if ( script )
                       {
                           if (!script->MoveItemBeforeMove(cp, s_item, t_item) ) 
@@ -1622,13 +1622,13 @@ void CWorld::moveItemFromMapIntoShowcase( CPlayer* cp, char direction, unsigned 
                                            cp->setEncumberedSent( true );
                                            std::string tmessage;
                                            switch ( cp->getPlayerLanguage() ) {
-                                                  case CLanguage::german:
+                                                  case Language::german:
                                                          tmessage = "Du bist überladen.";
                                                          break;
-                                                  case CLanguage::english:
+                                                  case Language::english:
                                                          tmessage = "You are encumbered.";
                                                          break;
-                                                  case CLanguage::french:
+                                                  case Language::french:
                                                          tmessage = "You are encumbered.";
                                                          break;
                                                   default:
@@ -1640,13 +1640,13 @@ void CWorld::moveItemFromMapIntoShowcase( CPlayer* cp, char direction, unsigned 
                                     cp->setEncumberedSent( false );
                                     std::string tmessage;
                                     switch ( cp->getPlayerLanguage() ) {
-                                           case CLanguage::german:
+                                           case Language::german:
                                                   tmessage = "Du bist nicht mehr überladen.";
                                                   break;
-                                           case CLanguage::english:
+                                           case Language::english:
                                                   tmessage = "You are no longer encumbered.";
                                                   break;
-                                           case CLanguage::french:
+                                           case Language::french:
                                                   tmessage = "You are no longer encumbered.";
                                                   break;
                                            default:
@@ -1697,7 +1697,7 @@ void CWorld::moveItemFromMapIntoShowcase( CPlayer* cp, char direction, unsigned 
                       return;
                }
         }
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
         std::cout << "moveItemFromMapIntoShowcase: Ende" << std::endl;
 #endif
 
@@ -1707,11 +1707,11 @@ void CWorld::moveItemFromMapIntoShowcase( CPlayer* cp, char direction, unsigned 
 
 
 
-void CWorld::moveItemFromMapToPlayer( CPlayer* cp, char direction, unsigned char cpos, unsigned char count ) {
+void World::moveItemFromMapToPlayer( Player* cp, char direction, unsigned char cpos, unsigned char count ) {
         bool NOK = false;
         //CommonStruct com;
 
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
         std::cout << "moveItemFromMapToPlayer: Spieler " << cp->name << " verschiebt Item von der Karte an den Koerper" << std::endl;
 #endif
 
@@ -1724,7 +1724,7 @@ void CWorld::moveItemFromMapToPlayer( CPlayer* cp, char direction, unsigned char
                short int old_z = cp->pos.z + moveSteps[ (int)direction ][ 2 ];
 
                if ( takeItemFromMap( cp, old_x, old_y, old_z) ) {
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
                       std::cout << "Item genommen" << std::endl;
 #endif
                       ScriptItem s_item = g_item, t_item = g_item;
@@ -1739,7 +1739,7 @@ void CWorld::moveItemFromMapToPlayer( CPlayer* cp, char direction, unsigned char
                              t_item.type = ScriptItem::it_belt;
                       t_item.owner = cp;
                       t_item.itempos = cpos;
-                      boost::shared_ptr<CLuaItemScript> script = CommonItems->findScript( t_item.id );
+                      boost::shared_ptr<LuaItemScript> script = CommonItems->findScript( t_item.id );
                       if ( script )
                       {
                           if (!script->MoveItemBeforeMove(cp, s_item, t_item) ) 
@@ -1779,7 +1779,7 @@ void CWorld::moveItemFromMapToPlayer( CPlayer* cp, char direction, unsigned char
                       //Ende Ausfhren eines MoveItemScripts
                       Item tempitem = g_item;
                       if ( count < g_item.number ) {
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
                              std::cout << "nicht alles verschieben" << std::endl;
 #endif
                              g_item.number = count;
@@ -1800,13 +1800,13 @@ void CWorld::moveItemFromMapToPlayer( CPlayer* cp, char direction, unsigned char
                                            cp->setEncumberedSent( true );
                                            std::string tmessage;
                                            switch ( cp->getPlayerLanguage() ) {
-                                                  case CLanguage::german:
+                                                  case Language::german:
                                                          tmessage = "Du bist überladen.";
                                                          break;
-                                                  case CLanguage::english:
+                                                  case Language::english:
                                                          tmessage = "You are encumbered.";
                                                          break;
-                                                  case CLanguage::french:
+                                                  case Language::french:
                                                          tmessage = "You are encumbered.";
                                                          break;
                                                   default:
@@ -1818,13 +1818,13 @@ void CWorld::moveItemFromMapToPlayer( CPlayer* cp, char direction, unsigned char
                                     cp->setEncumberedSent( false );
                                     std::string tmessage;
                                     switch ( cp->getPlayerLanguage() ) {
-                                           case CLanguage::german:
+                                           case Language::german:
                                                   tmessage = "Du bist nicht mehr überladen.";
                                                   break;
-                                           case CLanguage::english:
+                                           case Language::english:
                                                   tmessage = "You are no longer encumbered.";
                                                   break;
-                                           case CLanguage::french:
+                                           case Language::french:
                                                   tmessage = "You are no longer encumbered.";
                                                   break;
                                            default:
@@ -1840,7 +1840,7 @@ void CWorld::moveItemFromMapToPlayer( CPlayer* cp, char direction, unsigned char
                       }
 
                       if (NOK) {
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
                              std::cout << "Item konnte nicht eingefgt werden -> zurcklegen" << std::endl;
 #endif
                              g_item = tempitem;
@@ -1876,16 +1876,16 @@ void CWorld::moveItemFromMapToPlayer( CPlayer* cp, char direction, unsigned char
                       return;
                }
         }
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
         std::cout << "moveItemFromMapToPlayer: Ende" << std::endl;
 #endif
 }
 
 
-void CWorld::moveItemBetweenShowcases( CPlayer* cp, unsigned char source, unsigned char pos, unsigned char dest, unsigned char pos2, unsigned char count ) {
+void World::moveItemBetweenShowcases( Player* cp, unsigned char source, unsigned char pos, unsigned char dest, unsigned char pos2, unsigned char count ) {
         bool NOK = false;
         //CommonStruct com;
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
         std::cout << "moveItemBetweenShowcases: Spieler " << cp->name << " verschiebt Item zwischen showcases" << std::endl;
 #endif
         if (count == 0) {
@@ -1893,7 +1893,7 @@ void CWorld::moveItemBetweenShowcases( CPlayer* cp, unsigned char source, unsign
         }
 
         if ( takeItemFromShowcase( cp, source, pos, count ) ) {
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
                std::cout << "Item genommen" << std::endl;
 #endif
                ScriptItem s_item = g_item, t_item = g_item;
@@ -1912,7 +1912,7 @@ void CWorld::moveItemBetweenShowcases( CPlayer* cp, unsigned char source, unsign
                t_item.itempos = pos2;
                t_item.owner = cp;
                //Ausfhren eines Move Item Scriptes
-               boost::shared_ptr<CLuaItemScript> script = CommonItems->findScript( t_item.id );
+               boost::shared_ptr<LuaItemScript> script = CommonItems->findScript( t_item.id );
                if ( script )
                {
                    if (!script->MoveItemBeforeMove(cp, s_item, t_item) ) 
@@ -1969,13 +1969,13 @@ void CWorld::moveItemBetweenShowcases( CPlayer* cp, unsigned char source, unsign
                                     cp->setEncumberedSent( true );
                                     std::string tmessage;
                                     switch ( cp->getPlayerLanguage() ) {
-                                           case CLanguage::german:
+                                           case Language::german:
                                                   tmessage = "Du bist überladen.";
                                                   break;
-                                           case CLanguage::english:
+                                           case Language::english:
                                                   tmessage = "You are encumbered.";
                                                   break;
-                                           case CLanguage::french:
+                                           case Language::french:
                                                   tmessage = "You are encumbered.";
                                                   break;
                                            default:
@@ -1987,13 +1987,13 @@ void CWorld::moveItemBetweenShowcases( CPlayer* cp, unsigned char source, unsign
                              cp->setEncumberedSent( false );
                              std::string tmessage;
                              switch ( cp->getPlayerLanguage() ) {
-                                    case CLanguage::german:
+                                    case Language::german:
                                            tmessage = "Du bist nicht mehr überladen.";
                                            break;
-                                    case CLanguage::english:
+                                    case Language::english:
                                            tmessage = "You are no longer encumbered.";
                                            break;
-                                    case CLanguage::french:
+                                    case Language::french:
                                            tmessage = "You are no longer encumbered.";
                                            break;
                                     default:
@@ -2023,14 +2023,14 @@ void CWorld::moveItemBetweenShowcases( CPlayer* cp, unsigned char source, unsign
                       }
                }
         }
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
         std::cout << "moveItemBetweenShowcases: Ende" << std::endl;
 #endif
 }
 
 
-bool CWorld::moveItem( CCharacter* cc, unsigned char d, short int xc, short int yc, short int zc, unsigned char count ) {
-#ifdef CWorld_ItemMove_DEBUG
+bool World::moveItem( Character* cc, unsigned char d, short int xc, short int yc, short int zc, unsigned char count ) {
+#ifdef World_ItemMove_DEBUG
         std::cout << "moveItem: Character " << cc->name << " bewegt Item" << std::endl;
 #endif
         //CommonStruct com;
@@ -2056,7 +2056,7 @@ bool CWorld::moveItem( CCharacter* cc, unsigned char d, short int xc, short int 
                       t_item.owner = cc;
 
                       //Ausfhren eines Move Item Scriptes
-                      boost::shared_ptr<CLuaItemScript> script = CommonItems->findScript( t_item.id );
+                      boost::shared_ptr<LuaItemScript> script = CommonItems->findScript( t_item.id );
                       if ( script )
                       {
                           if (!script->MoveItemBeforeMove(cc, s_item, t_item ) ) 
@@ -2147,7 +2147,7 @@ bool CWorld::moveItem( CCharacter* cc, unsigned char d, short int xc, short int 
                }
         }
 
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
         std::cout << "moveItem: Ende" << std::endl;
 #endif
 
@@ -2157,17 +2157,17 @@ bool CWorld::moveItem( CCharacter* cc, unsigned char d, short int xc, short int 
 
 
 
-void CWorld::lookIntoShowcaseContainer( CPlayer* cp, unsigned char showcase, unsigned char pos ) {
-#ifdef CWorld_ItemMove_DEBUG
+void World::lookIntoShowcaseContainer( Player* cp, unsigned char showcase, unsigned char pos ) {
+#ifdef World_ItemMove_DEBUG
         std::cout << "lookIntoShowcaseContainer: Spieler " << cp->name << " oeffnet einen Container im showcase" << std::endl;
 #endif
 
         if ( ( showcase < MAXSHOWCASES ) && ( cp != NULL ) ) {
-               CContainer * top = cp->showcases[ showcase ].top();
+               Container * top = cp->showcases[ showcase ].top();
                bool allowedToOpenContainer = false;
                
 //Loop through all depots if ps is a depot if yes is depot set to true
-        std::map<uint32_t,CContainer*>::iterator it;
+        std::map<uint32_t,Container*>::iterator it;
         for ( it = cp->depotContents.begin(); it != cp->depotContents.end(); ++it )
                {
                    if ( it->second == top )
@@ -2180,39 +2180,39 @@ void CWorld::lookIntoShowcaseContainer( CPlayer* cp, unsigned char showcase, uns
 
                
                if ( top != NULL && allowedToOpenContainer) {
-                      CContainer * tempc;
+                      Container * tempc;
                       ScriptItem tempi;
                       if ( top->viewItemNr( pos, tempi, tempc ) ) {
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
                              std::cout << "pos gefunden" << std::endl;
 #endif
                              if ( tempc != NULL ) {
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
                                     std::cout << "Container gefunden" << std::endl;
 #endif
                                     // updaten der showcases des Spielers
                                     cp->showcases[ showcase ].openContainer( tempc );
                                     // Aenderungen an den Client schicken
-                                    boost::shared_ptr<CBasicServerCommand>cmd( new CUpdateShowCaseTC( showcase, tempc->items));
+                                    boost::shared_ptr<BasicServerCommand>cmd( new UpdateShowCaseTC( showcase, tempc->items));
                                     cp->Connection->addCommand( cmd );
                              }
                       }
                }
         }
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
         std::cout << "lookIntoShowcaseContainer: Ende" << std::endl;
 #endif
 }
 
 
 
-bool CWorld::lookIntoBackPack( CPlayer* cp, unsigned char showcase ) {
-#ifdef CWorld_ItemMove_DEBUG
+bool World::lookIntoBackPack( Player* cp, unsigned char showcase ) {
+#ifdef World_ItemMove_DEBUG
         std::cout << "lookIntoBackPack: Spieler " << cp->name << " schaut in seinen Rucksack" << std::endl;
 #endif
         if ( ( showcase < MAXSHOWCASES ) && ( cp != NULL ) ) {
                if ( ( cp->characterItems[ BACKPACK ].id != 0 ) && ( cp->backPackContents != NULL ) ) {
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
                       std::cout << "Rucksackinhalt vorhanden" << std::endl;
 #endif
                       // bisher geoeffnete Container im showcase schliessen
@@ -2220,25 +2220,25 @@ bool CWorld::lookIntoBackPack( CPlayer* cp, unsigned char showcase ) {
                       // updaten des showcases des Spielers
                       cp->showcases[ showcase ].startContainer( cp->backPackContents, true );
                       // Aenderungen an den Client schicken
-                      boost::shared_ptr<CBasicServerCommand>cmd( new CUpdateShowCaseTC( showcase, cp->backPackContents->items));
+                      boost::shared_ptr<BasicServerCommand>cmd( new UpdateShowCaseTC( showcase, cp->backPackContents->items));
                       cp->Connection->addCommand(cmd);
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
                       std::cout << "lookIntoBackPack: Ende" << std::endl;
 #endif
                       return true;
                }
         }
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
         std::cout << "lookIntoBackPack: Ende" << std::endl;
 #endif
         return false;
 }
 
 
-bool CWorld::lookIntoContainerOnField( CPlayer* cp, char direction, unsigned char showcase ) {
+bool World::lookIntoContainerOnField( Player* cp, char direction, unsigned char showcase ) {
 
         
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
         std::cout << "lookIntoContainerOnField: Spieler " << cp->name << " schaut in einen Container" << std::endl;
 #endif
 
@@ -2248,53 +2248,53 @@ bool CWorld::lookIntoContainerOnField( CPlayer* cp, char direction, unsigned cha
                short int old_y = moveSteps[ (int)direction ][ 1 ] + cp->pos.y;
                short int old_z = moveSteps[ (int)direction ][ 2 ] + cp->pos.z;
 
-               CField* cfold;
+               Field* cfold;
 
                if ( GetPToCFieldAt( cfold, old_x, old_y, old_z, tmap ) ) {
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
                       std::cout << "Feld vorhanden" << std::endl;
 #endif
                       Item titem;
                       if ( cfold->ViewTopItem( titem ) ) {
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
                              std::cout << "mindesten 1 Item vorhanden" << std::endl;
 #endif
                              if ( titem.id != 321 && ContainerItems->find( titem.id, tempContainer ) ) {
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
                                     std::cout << "item ist ein Container" << std::endl;
 #endif
                                     MAP_POSITION opos;
                                     opos.x = old_x;
                                     opos.y = old_y;
-                                    CMap::CONTAINERHASH::iterator conmapo = tmap->maincontainers.find( opos );
+                                    Map::ONTAINERHASH::iterator conmapo = tmap->maincontainers.find( opos );
                                     if ( conmapo != tmap->maincontainers.end() ) {
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
                                            std::cout << "containermap fr das Feld gefunden" << std::endl;
 #endif
-                                           CContainer::CONTAINERMAP::iterator iv = ( *conmapo ).second.find( titem.number );
+                                           Container::ONTAINERMAP::iterator iv = ( *conmapo ).second.find( titem.number );
                                            if ( iv != ( *conmapo ).second.end() ) {
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
                                                   std::cout << "der Inhalt des angegebenen Items mit der id titem.number wurde gefunden" << std::endl;
 #endif
                                                   // updaten der showcases des Spielers
                                                   cp->showcases[ showcase ].startContainer( ( *iv ).second, false );
                                                   cp->mapshowcaseopen = true;
                                                   // Aenderungen an den Client schicken
-                                                  boost::shared_ptr<CBasicServerCommand>cmd(new CUpdateShowCaseTC( showcase, (*iv).second->items));
+                                                  boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC( showcase, (*iv).second->items));
                                                   cp->Connection->addCommand( cmd );
 
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
                                                   std::cout << "lookIntoContainerOnField: Ende 1" << std::endl;
 #endif
                                                   return true;
                                            } else {
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
                                                   std::cout << "lookIntoContainerOnField: kein Containerinhalt vorhanden" << std::endl;
 #endif
 
                                            }
                                     } else {
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
                                            std::cout << "lookIntoContainerOnField: kein Container vorhanden" << std::endl;
 #endif
 
@@ -2315,7 +2315,7 @@ bool CWorld::lookIntoContainerOnField( CPlayer* cp, char direction, unsigned cha
                                     } 
                                     else 
                                     {
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
                                            std::cout << "lookIntoContainerOnField: das oberste Item ist kein Container" << std::endl;
 #endif
 
@@ -2325,7 +2325,7 @@ bool CWorld::lookIntoContainerOnField( CPlayer* cp, char direction, unsigned cha
                       }
                }
         }
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
         std::cout << "lookIntoContainerOnField: Ende 2" << std::endl;
 #endif
         return false;
@@ -2333,8 +2333,8 @@ bool CWorld::lookIntoContainerOnField( CPlayer* cp, char direction, unsigned cha
 
 
 
-void CWorld::closeContainerInShowcase( CPlayer* cp, unsigned char showcase ) {
-#ifdef CWorld_ItemMove_DEBUG
+void World::closeContainerInShowcase( Player* cp, unsigned char showcase ) {
+#ifdef World_ItemMove_DEBUG
         std::cout << "closeContainerInShowcase: Spieler " << cp->name << " schliesst einen Container" << std::endl;
 #endif
 
@@ -2342,48 +2342,48 @@ void CWorld::closeContainerInShowcase( CPlayer* cp, unsigned char showcase ) {
                if ( !cp->showcases[ showcase ].closeContainer() ) 
                {
                       // Container war der letzte geoeffnete -> den showcase loeschen
-                      boost::shared_ptr<CBasicServerCommand>cmd(new CClearShowCaseTC( showcase ) );
+                      boost::shared_ptr<BasicServerCommand>cmd(new ClearShowCaseTC( showcase ) );
                       cp->Connection->addCommand( cmd );
                } else {
                       // Aenderungen an den Client schicken
-                      CContainer* temp = cp->showcases[ showcase ].top();
-                      boost::shared_ptr<CBasicServerCommand>cmd(new CUpdateShowCaseTC( showcase, temp->items));
+                      Container* temp = cp->showcases[ showcase ].top();
+                      boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC( showcase, temp->items));
                       cp->Connection->addCommand( cmd );
                }
         }
-#ifdef CWorld_ItemMove_DEBUG
+#ifdef World_ItemMove_DEBUG
         std::cout << "closeContainerInShowcase: Ende" << std::endl;
 #endif
 }
 
 
-void CWorld::sendRemoveItemFromMapToAllVisibleCharacters( TYPE_OF_ITEM_ID id, short int xo, short int yo, short int zo, CField* cfp ) {
+void World::sendRemoveItemFromMapToAllVisibleCharacters( TYPE_OF_ITEM_ID id, short int xo, short int yo, short int zo, Field* cfp ) {
         if ( cfp != NULL ) {
-               std::vector < CPlayer* > temp = Players.findAllCharactersInRangeOf(xo, yo, zo, MAXVIEW );
+               std::vector < Player* > temp = Players.findAllCharactersInRangeOf(xo, yo, zo, MAXVIEW );
 
-               std::vector < CPlayer* > ::iterator titerator;
+               std::vector < Player* > ::iterator titerator;
 
                for ( titerator = temp.begin(); titerator < temp.end(); ++titerator ) 
                {
                       // cfp->SetLevel( zoffs ); // DEAD_CODE ???
-                      boost::shared_ptr<CBasicServerCommand>cmd(new CItemRemoveTC( xo, yo, zo ));
+                      boost::shared_ptr<BasicServerCommand>cmd(new ItemRemoveTC( xo, yo, zo ));
                       ( *titerator )->Connection->addCommand( cmd );
                }
         }
 }
 
 
-void CWorld::sendSwapItemOnMapToAllVisibleCharacter( TYPE_OF_ITEM_ID id, short int xn, short int yn, short int zn, Item &it, CField* cfp)
+void World::sendSwapItemOnMapToAllVisibleCharacter( TYPE_OF_ITEM_ID id, short int xn, short int yn, short int zn, Item &it, Field* cfp)
 {
         if ( cfp != NULL ) 
         {
-               std::vector < CPlayer* > temp = Players.findAllCharactersInRangeOf(xn, yn, zn, MAXVIEW );
+               std::vector < Player* > temp = Players.findAllCharactersInRangeOf(xn, yn, zn, MAXVIEW );
 
-               std::vector < CPlayer* > ::iterator titerator;
+               std::vector < Player* > ::iterator titerator;
                for ( titerator = temp.begin(); titerator < temp.end(); ++titerator ) 
                {
                    std::cout<<"adding swap to "<<(*titerator)->name<<"("<<(*titerator)->id<<")"<<std::endl;
-                   boost::shared_ptr<CBasicServerCommand>cmd(new CItemSwapTC( xn, yn, zn, id, it) );
+                   boost::shared_ptr<BasicServerCommand>cmd(new ItemSwapTC( xn, yn, zn, id, it) );
                    ( *titerator )->Connection->addCommand( cmd );
                    std::cout<<"adding swap to "<<(*titerator)->name<<"("<<(*titerator)->id<<") ended."<<std::endl;
                       
@@ -2391,29 +2391,29 @@ void CWorld::sendSwapItemOnMapToAllVisibleCharacter( TYPE_OF_ITEM_ID id, short i
         }    
 }
 
-void CWorld::sendPutItemOnMapToAllVisibleCharacters( short int xn, short int yn, short int zn, Item &it, CField* cfp ) {
+void World::sendPutItemOnMapToAllVisibleCharacters( short int xn, short int yn, short int zn, Item &it, Field* cfp ) {
         if ( cfp != NULL ) {
-               std::vector < CPlayer* > temp = Players.findAllCharactersInRangeOf(xn, yn, zn, MAXVIEW );
+               std::vector < Player* > temp = Players.findAllCharactersInRangeOf(xn, yn, zn, MAXVIEW );
 
-               std::vector < CPlayer* > ::iterator titerator;
+               std::vector < Player* > ::iterator titerator;
 
                for ( titerator = temp.begin(); titerator < temp.end(); ++titerator ) 
                {
                       // cfp->SetLevel( zoffs ); // DEAD_CODE ???
-                      boost::shared_ptr<CBasicServerCommand>cmd( new CItemPutTC( xn, yn, zn, it ) );
+                      boost::shared_ptr<BasicServerCommand>cmd( new ItemPutTC( xn, yn, zn, it ) );
                       ( *titerator )->Connection->addCommand( cmd );
                }
         }
 }
 
 
-void CWorld::sendChangesOfContainerContentsCM( CContainer* cc, CContainer* moved )
+void World::sendChangesOfContainerContentsCM( Container* cc, Container* moved )
 {
         if ( ( cc != NULL ) && ( moved != NULL ) )
         {
                PLAYERVECTOR::iterator titerator;
 
-               CContainer* ps;
+               Container* ps;
 
                for ( titerator = Players.begin(); titerator < Players.end(); ++titerator )
                {
@@ -2422,13 +2422,13 @@ void CWorld::sendChangesOfContainerContentsCM( CContainer* cc, CContainer* moved
                              ps = ( *titerator )->showcases[ i ].top();
                              if ( ( ps == cc ) && ( ps != NULL ) ) 
                              {
-                                 boost::shared_ptr<CBasicServerCommand>cmd(new CUpdateShowCaseTC( i , ps->items) );
+                                 boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC( i , ps->items) );
                                  (*titerator)->Connection->addCommand( cmd );
                              } 
                              else if ( ( *titerator )->showcases[ i ].contains( moved ) ) 
                              {
                                     ( *titerator )->showcases[ i ].clear();
-                                    boost::shared_ptr<CBasicServerCommand>cmd(new CClearShowCaseTC( i ) );
+                                    boost::shared_ptr<BasicServerCommand>cmd(new ClearShowCaseTC( i ) );
                                     ( *titerator )->Connection->addCommand( cmd );
                              }
                       }
@@ -2438,18 +2438,18 @@ void CWorld::sendChangesOfContainerContentsCM( CContainer* cc, CContainer* moved
 
 
 
-void CWorld::sendChangesOfContainerContentsIM( CContainer* cc ) {
+void World::sendChangesOfContainerContentsIM( Container* cc ) {
         if ( cc != NULL ) {
                PLAYERVECTOR::iterator titerator;
 
-               CContainer* ps;
+               Container* ps;
 
                for ( titerator = Players.begin(); titerator < Players.end(); ++titerator ) {
                       for ( int i = 0; i < MAXSHOWCASES; ++i ) {
                              ps = ( *titerator )->showcases[ i ].top();
                              if ( ps == cc   ) 
                              {
-                                 boost::shared_ptr<CBasicServerCommand>cmd(new CUpdateShowCaseTC( i , ps->items) );
+                                 boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC( i , ps->items) );
                                  (*titerator)->Connection->addCommand( cmd );
                              }
                       }
@@ -2458,7 +2458,7 @@ void CWorld::sendChangesOfContainerContentsIM( CContainer* cc ) {
 }
 
 //! close the showcase for everyone except the person who took it...
-void CWorld::closeShowcaseForOthers( CPlayer* target, CContainer* moved ) {
+void World::closeShowcaseForOthers( Player* target, Container* moved ) {
         if ( moved != NULL ) {
                PLAYERVECTOR::iterator titerator;
 
@@ -2471,7 +2471,7 @@ void CWorld::closeShowcaseForOthers( CPlayer* target, CContainer* moved ) {
                              if ( ( *titerator )->showcases[ i ].contains( moved ) ) 
                              {
                                     ( *titerator )->showcases[ i ].clear();
-                                    boost::shared_ptr<CBasicServerCommand>cmd(new CClearShowCaseTC( i ) );
+                                    boost::shared_ptr<BasicServerCommand>cmd(new ClearShowCaseTC( i ) );
                                     ( *titerator )->Connection->addCommand( cmd );
                              }
                       }
@@ -2479,7 +2479,7 @@ void CWorld::closeShowcaseForOthers( CPlayer* target, CContainer* moved ) {
         }
 }
 
-void CWorld::closeShowcaseIfNotInRange( CContainer* moved, short int x, short int y, short int z ) {
+void World::closeShowcaseIfNotInRange( Container* moved, short int x, short int y, short int z ) {
         if ( moved != NULL ) {
                PLAYERVECTOR::iterator titerator;
 
@@ -2489,7 +2489,7 @@ void CWorld::closeShowcaseIfNotInRange( CContainer* moved, short int x, short in
                       for ( MAXCOUNTTYPE i = 0; i < MAXSHOWCASES; ++i ) {
                              if ( ( *titerator )->showcases[ i ].contains( moved ) ) {
                                     ( *titerator )->showcases[ i ].clear();
-                                     boost::shared_ptr<CBasicServerCommand>cmd(new CClearShowCaseTC( i ) );
+                                     boost::shared_ptr<BasicServerCommand>cmd(new ClearShowCaseTC( i ) );
                                     ( *titerator )->Connection->addCommand( cmd );
                              }
                       }
@@ -2497,7 +2497,7 @@ void CWorld::closeShowcaseIfNotInRange( CContainer* moved, short int x, short in
         }
 }
 
-bool CWorld::isStackable(Item item) 
+bool World::isStackable(Item item) 
 {
     CommonStruct com;
     //return false for not finished items

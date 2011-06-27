@@ -24,22 +24,22 @@
 #include "Item.hpp"
 #include "TableStructs.hpp"
 
-class CWorld;
-class CCharacter;
+class World;
+class Character;
 
-class CLuaWeaponScript : public CLuaScript
+class LuaWeaponScript : public LuaScript
 {
     public:
-        CLuaWeaponScript(std::string filename) throw(ScriptException);
-        virtual ~CLuaWeaponScript() throw ();
+        LuaWeaponScript(std::string filename) throw(ScriptException);
+        virtual ~LuaWeaponScript() throw ();
 
         //A character attacks another person with this weapon.
         //\param: Attacker, the person who attacks.
         //\param: Defender, the person who is attacked.
-        bool onAttack( CCharacter * Attacker, CCharacter * Defender );
+        bool onAttack( Character * Attacker, Character * Defender );
         
     private:
-	CLuaWeaponScript(const CLuaWeaponScript&);
-	CLuaWeaponScript& operator=(const CLuaWeaponScript&);
+	LuaWeaponScript(const LuaWeaponScript&);
+	LuaWeaponScript& operator=(const LuaWeaponScript&);
 };
 #endif

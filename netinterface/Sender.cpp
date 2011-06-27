@@ -20,7 +20,7 @@
 #include "netinterface/Sender.hpp"
 #include <boost/shared_ptr.hpp>
 
-CSender::CSender( CNetInterface * conn, boost::shared_ptr<CNetInterface::SERVERCOMMANDLIST> sQueue ) : connection( conn ) , sendQueue(sQueue)
+Sender::Sender( NetInterface * conn, boost::shared_ptr<NetInterface::SERVERCOMMANDLIST> sQueue ) : connection( conn ) , sendQueue(sQueue)
 {
     cSendActive = false;
     threadOK = false;
@@ -28,7 +28,7 @@ CSender::CSender( CNetInterface * conn, boost::shared_ptr<CNetInterface::SERVERC
     sendQueue->clear();
 }
 
-CSender::~CSender()
+Sender::~Sender()
 {
     sendQueue->clear();
     try
@@ -50,7 +50,7 @@ CSender::~CSender()
 }
 
 
-bool CSender::start()
+bool Sender::start()
 {
     pthread_attr_t pattr;
     pthread_attr_init( &pattr);
@@ -65,7 +65,7 @@ bool CSender::start()
     return true;
 }
 
-void* CSender::send_loop( CSender * sender )
+void* Sender::send_loop( Sender * sender )
 {
     try
     {
@@ -77,7 +77,7 @@ void* CSender::send_loop( CSender * sender )
          timespec lwaittime;
          lwaittime.tv_sec = 0;
          lwaittime.tv_nsec = 100000000; //50 ms
-         boost::shared_ptr<CBasicServerCommand> cmd;
+         boost::shared_ptr<BasicServerCommand> cmd;
          while (  (sender->cSendActive && sender->sendQueue) || (sender->slrunning && sender->sendQueue) )
          {
              cmd.reset();

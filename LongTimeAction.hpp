@@ -23,11 +23,11 @@
 #include <boost/shared_ptr.hpp>
 #include "script/LuaScript.hpp"
 
-class CPlayer;
-class CWorld;
-class CMilTimer;
-class CCharacter;
-class CLuaScript;
+class Player;
+class World;
+class MilTimer;
+class Character;
+class LuaScript;
 
 
 /**
@@ -35,7 +35,7 @@ class CLuaScript;
 * class which holds the last action of the player for recalling the script on success or aborting the script
 * exportet to lua as <b>action</b>
 */
-class CLongTimeAction
+class LongTimeAction
 {
     public:
         
@@ -80,7 +80,7 @@ class CLongTimeAction
         *@param player the player which is the owner of the action
         *@param world the gameworld
         */
-        CLongTimeAction(CPlayer * player, CWorld * world);
+        LongTimeAction(Player * player, World * world);
         
         /**
         *sets the last action to the new values so the script can called correctly
@@ -91,7 +91,7 @@ class CLongTimeAction
         *@param param the param value of the last action
         *@param at the type of action lastly performed (cast or use)
         */
-        void setLastAction(boost::shared_ptr<CLuaScript> script, SouTar srce, SouTar trgt, unsigned short int counter, unsigned short int param, ActionType at);
+        void setLastAction(boost::shared_ptr<LuaScript> script, SouTar srce, SouTar trgt, unsigned short int counter, unsigned short int param, ActionType at);
         
         /**
         *starts an long time action which is aborted if the player talks, is attacked ....
@@ -107,7 +107,7 @@ class CLongTimeAction
         *changes the source of the last action.
         *@param cc source is a character the pointer to this character
         */
-        void changeSource( CCharacter * cc );
+        void changeSource( Character * cc );
         
         /**
         *changes the source of the last action.
@@ -130,7 +130,7 @@ class CLongTimeAction
         *changes the Target of the last action.
         *@param cc target is a character the pointer to this character
         */
-        void changeTarget( CCharacter * cc );
+        void changeTarget( Character * cc );
         
         /**
         *changes the Target of the last action.
@@ -153,7 +153,7 @@ class CLongTimeAction
         *checks if the last action is abborted or  (Action is disturbed by another player or event)
         *@return true, if the action should be aborted
         */
-        bool actionDisturbed(CCharacter * disturber);
+        bool actionDisturbed(Character * disturber);
         
         /**
         *aborts the last action without checking 
@@ -180,7 +180,7 @@ class CLongTimeAction
         
         
    private:
-        boost::shared_ptr<CLuaScript> _script; /**< pointer to the last script*/
+        boost::shared_ptr<LuaScript> _script; /**< pointer to the last script*/
         SouTar _source; /**< source of the last script*/
         SouTar _target; /**< target of the last script*/
         
@@ -188,14 +188,14 @@ class CLongTimeAction
         TYPE_OF_CHARACTER_ID _sourceId; /**< id of the source if its an character*/
         uint8_t _sourceCharType; /**< type of the source*/
         
-        CPlayer * _owner; /**< the owner of the LongTimeAction Objectt*/
-        CWorld * _world; /**< pointer to the gameworld*/
+        Player * _owner; /**< the owner of the LongTimeAction Objectt*/
+        World * _world; /**< pointer to the gameworld*/
         
         bool _actionrunning; /**< boolean value, if true there is currently a action running*/
         
-        CMilTimer * _timetowaitTimer; /**< timer which determines how many ms the action has to wait until it is sucessfull*/
-        CMilTimer * _redoaniTimer; /**< timer which determines after how many ms the animation is shown again*/
-        CMilTimer * _redosoundTimer; /**< timer which determines how many ms the sound is played again.*/
+        MilTimer * _timetowaitTimer; /**< timer which determines how many ms the action has to wait until it is sucessfull*/
+        MilTimer * _redoaniTimer; /**< timer which determines after how many ms the animation is shown again*/
+        MilTimer * _redosoundTimer; /**< timer which determines how many ms the sound is played again.*/
         
         ActionType _at; /**< type of the action @see ActionType*/
         unsigned char _counter; /**< the counter value of the last action*/

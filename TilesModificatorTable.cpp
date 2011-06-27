@@ -21,13 +21,13 @@
 #include "TilesModificatorTable.hpp"
 #include <iostream>
 
-CTilesModificatorTable::CTilesModificatorTable() : m_dataOK(false) {
+TilesModificatorTable::TilesModificatorTable() : m_dataOK(false) {
 	reload();
 }
 
-void CTilesModificatorTable::reload() {
-#ifdef CDataConnect_DEBUG
-	std::cout << "CTilesModificatorTable: reload" << std::endl;
+void TilesModificatorTable::reload() {
+#ifdef DataConnect_DEBUG
+	std::cout << "TilesModificatorTable: reload" << std::endl;
 #endif
 
 	try {
@@ -64,8 +64,8 @@ void CTilesModificatorTable::reload() {
 		} else m_dataOK = false;
 
 
-#ifdef CDataConnect_DEBUG
-		std::cout << "loaded " << rows << " rows into CTilesModificatorTable" << std::endl;
+#ifdef DataConnect_DEBUG
+		std::cout << "loaded " << rows << " rows into TilesModificatorTable" << std::endl;
 #endif
 
 	} catch (...) {
@@ -74,7 +74,7 @@ void CTilesModificatorTable::reload() {
 
 }
 
-bool CTilesModificatorTable::find( TYPE_OF_ITEM_ID Id, TilesModificatorStruct &ret ) {
+bool TilesModificatorTable::find( TYPE_OF_ITEM_ID Id, TilesModificatorStruct &ret ) {
 	TABLE::iterator iterator;
 	iterator = m_table.find( Id );
 
@@ -86,15 +86,15 @@ bool CTilesModificatorTable::find( TYPE_OF_ITEM_ID Id, TilesModificatorStruct &r
 	}
 }
 
-void CTilesModificatorTable::clearOldTable() {
+void TilesModificatorTable::clearOldTable() {
 	m_table.clear();
 }
 
-CTilesModificatorTable::~CTilesModificatorTable() {
+TilesModificatorTable::~TilesModificatorTable() {
 	clearOldTable();
 }
 
-bool CTilesModificatorTable::nonPassable( TYPE_OF_ITEM_ID Id ) {
+bool TilesModificatorTable::nonPassable( TYPE_OF_ITEM_ID Id ) {
 	TABLE::iterator iterator;
 	iterator = m_table.find( Id );
 

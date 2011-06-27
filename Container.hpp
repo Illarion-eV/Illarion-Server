@@ -17,11 +17,11 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CCONTAINER_HH
-#define CCONTAINER_HH
+#ifndef CONTAINER_HH
+#define CONTAINER_HH
 
 //falls nicht auskommentiert, werden mehr Bildschirmausgaben gemacht:
-//#define CContainer_DEBUG
+//#define Container_DEBUG
 
 #define MAXIMALEREKURSIONSTIEFE 100
 
@@ -34,7 +34,7 @@
 #include <fstream>
 #include <sys/types.h>
 
-class CRekursionException: public std::exception {};
+class RekursionException: public std::exception {};
 
 #include "Item.hpp"
 #include "constants.hpp"
@@ -42,42 +42,42 @@ class CRekursionException: public std::exception {};
 #include "luabind/object.hpp"
 
 // forward declarations
-class CContainerObjectTable;
-class CCommonObjectTable;
+class ContainerObjectTable;
+class CommonObjectTable;
 
 
 //! eine Tabelle für Behälter - Item Daten
-extern CContainerObjectTable* ContainerItems;
+extern ContainerObjectTable* ContainerItems;
 
 //! eine Tabelle mit den allgemeinen Attributen der Item
-extern CCommonObjectTable* CommonItems;
+extern CommonObjectTable* CommonItems;
 
 //! wird von verschiedenen Funktionen als Zwischenvariable genutzt
 extern CommonStruct tempCommon;
 
 //! ein Container
-class CContainer {
+class Container {
 	public:
-		//! die Gegenstände in dem CContainer
+		//! die Gegenstände in dem Container
 		ITEMVECTOR items;
 
-		//! definiert eine Template-Klasse "map mit key unsigned char für Zeiger auf CContainer"
-		typedef std::map < MAXCOUNTTYPE , CContainer*, std::less < MAXCOUNTTYPE > > CONTAINERMAP;
+		//! definiert eine Template-Klasse "map mit key unsigned char für Zeiger auf Container"
+		typedef std::map < MAXCOUNTTYPE , Container*, std::less < MAXCOUNTTYPE > > ONTAINERMAP;
 
 		//! alle Gegenstände der Item in items, die selbst Container sind
-		CONTAINERMAP containers;
+		ONTAINERMAP containers;
 
 		//! Konstruktor
-		CContainer(uint16_t max_cont_Volume);
+		Container(uint16_t max_cont_Volume);
 
 		//! Copy-Konstruktor
-		CContainer( const CContainer& source );
+		Container( const Container& source );
 
 		//! Destruktor
-		~CContainer();
+		~Container();
 
 		//! Zuweisungsoperator
-		CContainer& operator =( const CContainer& source );
+		Container& operator =( const Container& source );
 
 		//! nimmt das Item von der Position nr
 		// \param nr die Position des Item
@@ -86,7 +86,7 @@ class CContainer {
 		// \param count Anzahl
 		// \return true, falls ein Item an der Position nr gefunden
 		// wurde, false sonst
-		bool TakeItemNr( MAXCOUNTTYPE nr, Item &it, CContainer* &cc, unsigned char count );
+		bool TakeItemNr( MAXCOUNTTYPE nr, Item &it, Container* &cc, unsigned char count );
 
 		//! liefert das Item an der Position nr
 		// \param nr die Position des Items
@@ -94,7 +94,7 @@ class CContainer {
 		// \param cc Rückgabe des Inhalts des Items, falls es ein Container ist
 		// \return true, falls ein Item an der Position nr gefunden
 		// wurde, false sonst
-		bool viewItemNr( MAXCOUNTTYPE nr, ScriptItem &it, CContainer* &cc );
+		bool viewItemNr( MAXCOUNTTYPE nr, ScriptItem &it, Container* &cc );
 
 		//Verringert die Qualität eines Items an einer bestimmten stelle
 		//\param nr, de stelle an der die Qualität verringert werden soll
@@ -112,7 +112,7 @@ class CContainer {
 		// \param it das Item zum Einfügen (sollte ID eines Container-Item haben)
 		// \param cc der Inhalt des Item
 		// \return true, falls erfolgreich, false sonst
-		bool InsertContainer( Item it, CContainer* cc );
+		bool InsertContainer( Item it, Container* cc );
         
 
 		//! fügt ein Item in den Container ein
@@ -213,7 +213,7 @@ protected:
 		bool VolOk(Item item);
 
 		//!Prüft ob das MaxVolumen eines Containers überschritten ist wenn der neue container eingefügt wird.
-		bool VolOk(Item item, CContainer * cont);
+		bool VolOk(Item item, Container * cont);
 
 		uint16_t max_Volume;
 };

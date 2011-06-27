@@ -26,14 +26,14 @@
 #include "luabind/object.hpp"
 #include "Character.hpp"
 
-class CWaypointList
+class WaypointList
 {
 	public:
 		static const uint8_t max_fields_for_waypoints = 12;
 		
 		
 	
-		CWaypointList(CCharacter * movechar);
+		WaypointList(Character * movechar);
 	
 		/**
 		* füllt wegpunktliste mit werten aus einer lua liste
@@ -68,12 +68,12 @@ class CWaypointList
 		* ab zu arbeitende Positionen
 		*/
 		std::list<position> positions;
-		CCharacter * _movechar;
+		Character * _movechar;
 		
 		/**
 		* liste mit schritten um die nächste Position zu erreichen
 		*/
-		std::list<CCharacter::direction> steplist;
+		std::list<Character::direction> steplist;
 		
 		/**
 		* Prüft ob die Zielposition erreicht wurde

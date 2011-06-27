@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CNATURALARMORTABLE
-#define CNATURALARMORTABLE
+#ifndef NATURALARMORTABLE
+#define NATURALARMORTABLE
 
 #include <string>
 #include "Character.hpp"
@@ -38,19 +38,19 @@ using std::hash_map;
 
 #endif
 
-class CNaturalArmorTable
+class NaturalArmorTable
 {
     public:
         
         //sucht einen Eintrag aus der Tabelle nach Rassentyp
         //liefert true oder false je nachdem ob ein eintrag gefunden wurde.
-        bool find(CCharacter::race_type race, MonsterArmor &ret);
+        bool find(Character::race_type race, MonsterArmor &ret);
 
         //Constructor        
-        CNaturalArmorTable();
+        NaturalArmorTable();
         
         //Destructor
-        ~CNaturalArmorTable();
+        ~NaturalArmorTable();
         
         //Lädt die Tabelle neu
         void reload();

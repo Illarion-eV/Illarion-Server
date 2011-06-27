@@ -21,12 +21,12 @@
 #include "World.hpp"
 #include "Field.hpp"
 
-CWaypointList::CWaypointList(CCharacter * movechar) : _movechar(movechar)
+WaypointList::WaypointList(Character * movechar) : _movechar(movechar)
 {
 
 }
 
-void CWaypointList::addFromList(const luabind::object &list)
+void WaypointList::addFromList(const luabind::object &list)
 {
 	if ( list.is_valid() )
 	{
@@ -41,10 +41,10 @@ void CWaypointList::addFromList(const luabind::object &list)
 	}
 }
 
-luabind::object CWaypointList::getWaypoints()
+luabind::object WaypointList::getWaypoints()
 {
 	std::cout<<"getWaypoints"<<std::endl;
-	lua_State* luaState = CWorld::get()->getCurrentScript()->getLuaState();
+	lua_State* luaState = World::get()->getCurrentScript()->getLuaState();
 	luabind::object list = luabind::newtable( luaState );
 		
 	int index = 1;
@@ -57,17 +57,17 @@ luabind::object CWaypointList::getWaypoints()
 
 }
 
-void CWaypointList::addWaypoint(position pos)
+void WaypointList::addWaypoint(position pos)
 {
 	positions.push_back(pos);
 }
 
-void CWaypointList::clear()
+void WaypointList::clear()
 {
 	positions.clear();
 }
 
-bool CWaypointList::checkPosition()
+bool WaypointList::checkPosition()
 {
 	if ( positions.empty() )return false;
 	if ( _movechar->pos == positions.front() )
@@ -77,7 +77,7 @@ bool CWaypointList::checkPosition()
 	return true;
 }
 
-bool CWaypointList::recalcStepList()
+bool WaypointList::recalcStepList()
 {
 	if ( !checkPosition() )return false;
 	steplist.clear();
@@ -85,7 +85,7 @@ bool CWaypointList::recalcStepList()
 	return ( !steplist.empty() );
 }
 
-bool CWaypointList::makeMove()
+bool WaypointList::makeMove()
 {
 	if ( steplist.empty() )
 	{

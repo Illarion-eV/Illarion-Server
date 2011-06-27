@@ -26,32 +26,32 @@
 
 extern std::map<std::string, std::string> configOptions;
 
-CLogger::LOGMAP CLogger::logs;
-CLogger::LOGACTIVATEDMAP CLogger::logact;
-CLogger::CLogger * CLogger::theLoggerInstance;
+Logger::LOGMAP Logger::logs;
+Logger::LOGACTIVATEDMAP Logger::logact;
+Logger::Logger * Logger::theLoggerInstance;
 
-CLogger::CLogger()
+Logger::Logger()
 {
 }
 
-CLogger::~CLogger()
+Logger::~Logger()
 {
 }
 
-CLogger * CLogger::get()
+Logger * Logger::get()
 {
     //proof if we have a logger instance
     if ( theLoggerInstance == NULL )
     {
         //if there is no instance create on instance
-        theLoggerInstance = new CLogger();
+        theLoggerInstance = new Logger();
     }
     
     //return the instance
     return theLoggerInstance;
 }
 
-std::string CLogger::getLogDate()
+std::string Logger::getLogDate()
 {
     //Load current timestamp
     time_t acttime = time(NULL);
@@ -62,7 +62,7 @@ std::string CLogger::getLogDate()
     return logtime;
 }
 
-void CLogger::writeError(std::string LogType, std::string Message, bool saveTime)
+void Logger::writeError(std::string LogType, std::string Message, bool saveTime)
 {
     //if ( isLogActivated(LogType) )
     {
@@ -87,7 +87,7 @@ void CLogger::writeError(std::string LogType, std::string Message, bool saveTime
     }
 }
 
-void CLogger::writeMessage(std::string LogType, std::string Message, bool saveTime)
+void Logger::writeMessage(std::string LogType, std::string Message, bool saveTime)
 {
     if (isLogActivated(LogType))
     {
@@ -111,7 +111,7 @@ void CLogger::writeMessage(std::string LogType, std::string Message, bool saveTi
     }
 }
 
-bool CLogger::createLog(std::string LogType,/*std::ofstream * pLog*/ boost::shared_ptr<std::ofstream> &pLog)
+bool Logger::createLog(std::string LogType,/*std::ofstream * pLog*/ boost::shared_ptr<std::ofstream> &pLog)
 {
     boost::shared_ptr<std::ofstream> ptheLog(new std::ofstream() );
     std::string file = configOptions["logdir"] + configOptions["starttime"] + LogType + ".log"; 
@@ -138,17 +138,17 @@ bool CLogger::createLog(std::string LogType,/*std::ofstream * pLog*/ boost::shar
     return false;
 }
 
-void CLogger::activateLog(std::string LogType)
+void Logger::activateLog(std::string LogType)
 {
     logact[LogType] = true;
 }
 
-void CLogger::deactivateLog(std::string LogType)
+void Logger::deactivateLog(std::string LogType)
 {
     logact[LogType] = false;
 }
 
-bool CLogger::isLogActivated(std::string LogType)
+bool Logger::isLogActivated(std::string LogType)
 {
     LOGACTIVATEDMAP::iterator theIterator;
     theIterator = logact.find( LogType );
@@ -163,7 +163,7 @@ bool CLogger::isLogActivated(std::string LogType)
     return false;    
 }
 
-bool CLogger::findLog(std::string LogType, /*std::ofstream * pLog*/ boost::shared_ptr<std::ofstream> &pLog)
+bool Logger::findLog(std::string LogType, /*std::ofstream * pLog*/ boost::shared_ptr<std::ofstream> &pLog)
 {
     LOGMAP::iterator theIterator;
     theIterator = logs.find( LogType );

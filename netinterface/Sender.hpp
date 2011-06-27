@@ -32,7 +32,7 @@
 #include <boost/shared_ptr.hpp>
 
 
-class CSender
+class Sender
 {
     public:
     
@@ -41,8 +41,8 @@ class CSender
         *@param conn the connection to whichthe data should be send
         *@param sQueue the sendQueue from which the commands to send should be red
         */
-        CSender( CNetInterface * conn,  boost::shared_ptr<CNetInterface::SERVERCOMMANDLIST> sQueue );
-        ~CSender();
+        Sender( NetInterface * conn,  boost::shared_ptr<NetInterface::SERVERCOMMANDLIST> sQueue );
+        ~Sender();
         
         /**
         *function which starts the send thread
@@ -70,14 +70,14 @@ class CSender
 	
     protected:
         
-        CNetInterface * connection; /*< the connection to the player*/
+        NetInterface * connection; /*< the connection to the player*/
         
     private:
     
         volatile bool cSendActive; /*<set to true if one critical command has to be sended before shutting down the connection*/
     	
         pthread_t send_thread; /*<the thread which sends the data*/
-        boost::shared_ptr<CNetInterface::SERVERCOMMANDLIST> sendQueue; /*<pointer to the queue which holds the commands which should be sended*/
+        boost::shared_ptr<NetInterface::SERVERCOMMANDLIST> sendQueue; /*<pointer to the queue which holds the commands which should be sended*/
         volatile bool threadOK; /*<true if the thread works without problems*/
         volatile bool slrunning; /*<true if the thread is running*/
         
@@ -86,7 +86,7 @@ class CSender
         *proofes if new commands are in the to send queue if yes 
         *the buffer of the command is added to the connection and the data is send
         */
-        static void* send_loop( CSender * sender );
+        static void* send_loop( Sender * sender );
    
 };
 #endif

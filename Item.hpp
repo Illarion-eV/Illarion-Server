@@ -70,8 +70,8 @@ namespace std
 #define TYPE_OF_ITEM_ID                unsigned short int
 
 
-class CCharacter;
-class CContainer;
+class Character;
+class Container;
 
 /**
 * a basic Item or more than one stackable items of the same type
@@ -245,9 +245,9 @@ public:
     * pointer to the owner of the item
     * <b>Lua: (ro) [owner]</b>
     */
-	CCharacter * owner;
-    fuse_ptr<CCharacter> getOwnerForLua(){ 
-                                           fuse_ptr<CCharacter> fuse_owner(owner);
+	Character * owner;
+    fuse_ptr<Character> getOwnerForLua(){ 
+                                           fuse_ptr<Character> fuse_owner(owner);
                                            return fuse_owner;
                                          };    
 
@@ -255,7 +255,7 @@ public:
     * stores a pointer to the container where the item is
     * <b>Lua: (ro) [inside]</b>
     */
-    CContainer * inside;
+    Container * inside;
     
     /**
     *==================================End of group scriptvariables==================

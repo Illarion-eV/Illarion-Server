@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CMONSTERATTACKTABLE
-#define CMONSTERATTACKTABLE
+#ifndef MONSTERATTACKTABLE
+#define MONSTERATTACKTABLE
 
 #include <string>
 #include "Character.hpp"
@@ -46,19 +46,19 @@ struct AttackBoni
     AttackBoni() : attackType(0), attackValue(0), actionPointsLost(0) {}
 };
 
-class CMonsterAttackTable
+class MonsterAttackTable
 {
     
     public:
     
         //Constructor
-        CMonsterAttackTable();
+        MonsterAttackTable();
     
         //Destructor; 
-        ~CMonsterAttackTable();
+        ~MonsterAttackTable();
     
         //Sucht einen Eintrag und liefert die zugehörigen Boni
-        bool find(CCharacter::race_type race, AttackBoni &ret);
+        bool find(Character::race_type race, AttackBoni &ret);
     
         //lädt die Tabelle neu
         void reload();

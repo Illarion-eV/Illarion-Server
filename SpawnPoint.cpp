@@ -33,17 +33,17 @@ template< typename To, typename From> To stream_convert( const From& from ) {
 }
 
 //! Creates a new SpawnPoint at <pos>
-CSpawnPoint::CSpawnPoint(const position& pos, int Range, uint16_t Spawnrange, uint16_t Min_Spawntime, uint16_t Max_Spawntime, bool Spawnall) : world(CWorld::get()), spawnpos(pos), range(Range), spawnrange(Spawnrange), min_spawntime(Min_Spawntime), max_spawntime(Max_Spawntime), spawnall(Spawnall)
+SpawnPoint::SpawnPoint(const position& pos, int Range, uint16_t Spawnrange, uint16_t Min_Spawntime, uint16_t Max_Spawntime, bool Spawnall) : world(World::get()), spawnpos(pos), range(Range), spawnrange(Spawnrange), min_spawntime(Min_Spawntime), max_spawntime(Max_Spawntime), spawnall(Spawnall)
 {
     nextspawntime = min_spawntime + rnd(0,max_spawntime-min_spawntime);
-    CLogger::writeMessage("Spawn","CSpawnPoint Konstruktor.");
+    Logger::writeMessage("Spawn","SpawnPoint Konstruktor.");
 }
 
 //! Destructor
-CSpawnPoint::~CSpawnPoint() {}
+SpawnPoint::~SpawnPoint() {}
 
 //! add new Monstertyp to SpawnList...
-void CSpawnPoint::addMonster(const TYPE_OF_CHARACTER_ID& typ, const short int& count) {
+void SpawnPoint::addMonster(const TYPE_OF_CHARACTER_ID& typ, const short int& count) {
 	std::list<struct SpawnEntryStruct>::iterator it;
 	for ( it = SpawnTypes.begin(); it != SpawnTypes.end(); ++it ) {
 		if ((*it).typ == typ) {
@@ -62,7 +62,7 @@ void CSpawnPoint::addMonster(const TYPE_OF_CHARACTER_ID& typ, const short int& c
 }
 
 //! do spawns if possible...
-void CSpawnPoint::spawn() 
+void SpawnPoint::spawn() 
 {
     //std::cout<<"Spawntime for Spawn at pos x="<<spawnpos.x<<" y="<<spawnpos.y<<" z="<<spawnpos.z<<"Spawntime: "<<nextspawntime<<std::endl;
     if ( nextspawntime <= 0 ) 
@@ -80,8 +80,8 @@ void CSpawnPoint::spawn()
         std::list<struct SpawnEntryStruct>::iterator it;
 
         int num;
-        CField* tempf;
-        CMonster* newmonster;
+        Field* tempf;
+        Monster* newmonster;
 
         // check all monstertyps...
         for ( it = SpawnTypes.begin(); it != SpawnTypes.end(); ++it ) {
@@ -103,7 +103,7 @@ void CSpawnPoint::spawn()
                         //end of setting the new spawnpos
                         if ( world->findEmptyCFieldNear(tempf, tempPos.x, tempPos.y, tempPos.z) ) 
                         {
-                            newmonster = new CMonster(it->typ, tempPos, this);
+                            newmonster = new Monster(it->typ, tempPos, this);
 #ifdef SpawnPoint_DEBUG
                             std::cout << "erschaffe Monster " << newmonster->name << " " << tempPos.x << " " << tempPos.y << " " << tempPos.z << std::endl;
 #endif
@@ -117,9 +117,9 @@ void CSpawnPoint::spawn()
                             std::cout<<"cant find empty field at pos ( "<<tempPos.x<<" "<<tempPos.y<<" "<<tempPos.z<<" )"<<std::endl;
                     }
                 } 
-                catch (CMonster::unknownIDException) 
+                catch (Monster::unknownIDException) 
                 {
-                    std::cerr << "couldn't create monster in CSpawnPoint.cpp: " << it->typ << std::endl;
+                    std::cerr << "couldn't create monster in SpawnPoint.cpp: " << it->typ << std::endl;
                 }
             }
         }
@@ -130,7 +130,7 @@ void CSpawnPoint::spawn()
     }
 }
 
-void CSpawnPoint::dead(const TYPE_OF_CHARACTER_ID& typ) {
+void SpawnPoint::dead(const TYPE_OF_CHARACTER_ID& typ) {
 	std::list<struct SpawnEntryStruct>::iterator it;
 	for ( it = SpawnTypes.begin(); it != SpawnTypes.end(); ++it ) {
 		if ((*it).typ == typ) {
@@ -139,7 +139,7 @@ void CSpawnPoint::dead(const TYPE_OF_CHARACTER_ID& typ) {
 	}
 }
 
-bool CSpawnPoint::load(const int& id) {
+bool SpawnPoint::load(const int& id) {
 	try {
 		ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
 

@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CSCHEDULERTASKCLASSES
-#define CSCHEDULEDTASKCLASSES
+#ifndef SCHEDULERTASKCLASSES
+#define SCHEDULEDTASKCLASSES
 
 #include "Scheduler.hpp"
 #include "types.hpp"
@@ -26,24 +26,24 @@
 #include "CommonObjectTable.hpp"
 #include "script/LuaLearnScript.hpp"
 
-extern CCommonObjectTable * CommonItems;
-extern boost::shared_ptr<CLuaLearnScript>learnScript;
+extern CommonObjectTable * CommonItems;
+extern boost::shared_ptr<LuaLearnScript>learnScript;
 
-class CSTalk : public CSchedulerObject {
+class STalk : public SchedulerObject {
 
 	public:
 
-		CSTalk(TYPE_OF_CHARACTER_ID id, std::string ntext, unsigned short int ncount, unsigned long int ncycles, unsigned long int cycle_time) {
+		STalk(TYPE_OF_CHARACTER_ID id, std::string ntext, unsigned short int ncount, unsigned long int ncycles, unsigned long int cycle_time) {
 			playerid = id;
 			text = ntext;
 			CycleTime = cycle_time;
 			nextCycle = ncycles;
 			count = ncount;
 		}
-		virtual ~CSTalk() {}
+		virtual ~STalk() {}
 
-		bool operator()( CWorld* world ) {
-			ccharactervector < CPlayer* >::iterator playerIterator;
+		bool operator()( World* world ) {
+			ccharactervector < Player* >::iterator playerIterator;
 			for ( playerIterator = world->Players.begin(); playerIterator < world->Players.end(); ++playerIterator ) {
 				if ( ( *playerIterator )->id == playerid ) {
 					//spieler noch online
@@ -65,11 +65,11 @@ class CSTalk : public CSchedulerObject {
 };
 
 //====================================================================================================
-class CSIncreaseHealtPoints : public CSchedulerObject {
+class SIncreaseHealtPoints : public SchedulerObject {
 
 	public:
 
-		CSIncreaseHealtPoints(TYPE_OF_CHARACTER_ID id, int nvalue, unsigned short int ncount, unsigned long int first_cycle, unsigned long int cycle_time) {
+		SIncreaseHealtPoints(TYPE_OF_CHARACTER_ID id, int nvalue, unsigned short int ncount, unsigned long int first_cycle, unsigned long int cycle_time) {
 			cid = id; //Characterid für spätere Überprüfung
 			value = nvalue;
 			CycleTime = cycle_time;
@@ -77,11 +77,11 @@ class CSIncreaseHealtPoints : public CSchedulerObject {
 			count = ncount;
 		}
 
-		virtual ~CSIncreaseHealtPoints() {}
+		virtual ~SIncreaseHealtPoints() {}
 
-		bool operator()( CWorld* world ) {
-			CPlayer * cp=NULL;
-			ccharactervector < CPlayer* >::iterator playerIterator;
+		bool operator()( World* world ) {
+			Player * cp=NULL;
+			ccharactervector < Player* >::iterator playerIterator;
 			for ( playerIterator = world->Players.begin(); playerIterator < world->Players.end(); ++playerIterator ) {
 				if ( ( *playerIterator )->id == cid ) {
 					cp = (*playerIterator); //Spieler gefunden
@@ -123,22 +123,22 @@ class CSIncreaseHealtPoints : public CSchedulerObject {
 
 };
 //================================================================================================================
-class CSIncreaseManaPoints : public CSchedulerObject {
+class SIncreaseManaPoints : public SchedulerObject {
 
 	public:
 
-		CSIncreaseManaPoints(TYPE_OF_CHARACTER_ID id, int nvalue, unsigned short int ncount, unsigned long int first_cycle, unsigned long int cycle_time) {
+		SIncreaseManaPoints(TYPE_OF_CHARACTER_ID id, int nvalue, unsigned short int ncount, unsigned long int first_cycle, unsigned long int cycle_time) {
 			cid = id; //Characterid für spätere Überprüfung
 			value = nvalue;
 			CycleTime = cycle_time;
 			nextCycle = first_cycle;
 			count = ncount;
 		}
-		virtual ~CSIncreaseManaPoints() {}
+		virtual ~SIncreaseManaPoints() {}
 
-		bool operator()( CWorld* world ) {
-			ccharactervector < CPlayer* >::iterator playerIterator;
-			CPlayer * cp=NULL;
+		bool operator()( World* world ) {
+			ccharactervector < Player* >::iterator playerIterator;
+			Player * cp=NULL;
 			for ( playerIterator = world->Players.begin(); playerIterator < world->Players.end(); ++playerIterator ) {
 				if ( ( *playerIterator )->id == cid ) {
 					cp = (*playerIterator); //Spieler gefunden
@@ -170,24 +170,24 @@ class CSIncreaseManaPoints : public CSchedulerObject {
 	private:
 
 		TYPE_OF_CHARACTER_ID cid;
-		CPlayer * ch;
+		Player * ch;
 		int value;
 
 };
 
 //=========================================================================================
-class CSGlobalPoison : public CSchedulerObject {
+class SGlobalPoison : public SchedulerObject {
 
 	public:
 
-		CSGlobalPoison(unsigned long int first_cycle) {
+		SGlobalPoison(unsigned long int first_cycle) {
 			nextCycle = first_cycle;
 		}
-		virtual ~CSGlobalPoison() {}
+		virtual ~SGlobalPoison() {}
 
-		bool operator()( CWorld* world ) {
+		bool operator()( World* world ) {
 			bool alivebefore=true;
-			ccharactervector < CMonster* >::iterator monsterIterator;
+			ccharactervector < Monster* >::iterator monsterIterator;
 			for ( monsterIterator = world->Monsters.begin(); monsterIterator < world->Monsters.end(); ++monsterIterator ) {
 				if ( ( *monsterIterator )->getPoisonValue() > 0 ) //Prüfen ob aktueller Spieler vergiftet ist
 				{
@@ -215,7 +215,7 @@ class CSGlobalPoison : public CSchedulerObject {
 					}
 				}
 			}
-			ccharactervector < CPlayer* >::iterator playerIterator;
+			ccharactervector < Player* >::iterator playerIterator;
 			for ( playerIterator = world->Players.begin(); playerIterator < world->Players.end(); ++playerIterator ) {
 				if ( ( *playerIterator )->getPoisonValue() > 0 ) //Prüfen ob aktueller Spieler vergiftet ist
 				{
@@ -244,7 +244,7 @@ class CSGlobalPoison : public CSchedulerObject {
 				}
 			}
 			/* Giftschaden bei NPC's deaktiviert
-			ccharactervector < CNPC* >::iterator npcIterator;
+			ccharactervector < NPC* >::iterator npcIterator;
 			for ( npcIterator = world->Npc.begin(); npcIterator < world->Npc.end(); ++npcIterator )
 			{
 			      //ToDo- Schleife einfügen um Vergifteten Spielern Schaden zu machen
@@ -257,17 +257,17 @@ class CSGlobalPoison : public CSchedulerObject {
 };
 
 
-class CSGlobalPlayerLearnrate : public CSchedulerObject {
+class SGlobalPlayerLearnrate : public SchedulerObject {
 
 	public:
 
-		CSGlobalPlayerLearnrate(unsigned long int first_cycle) {
+		SGlobalPlayerLearnrate(unsigned long int first_cycle) {
 			nextCycle = first_cycle;
 		}
-		virtual ~CSGlobalPlayerLearnrate() {}
+		virtual ~SGlobalPlayerLearnrate() {}
 
-		bool operator()( CWorld* world ) {
-			ccharactervector < CPlayer* >::iterator playerIterator;
+		bool operator()( World* world ) {
+			ccharactervector < Player* >::iterator playerIterator;
 			for ( playerIterator = world->Players.begin(); playerIterator < world->Players.end(); ++playerIterator ) {
 				if ( ( *playerIterator )->getMentalCapacity() > 0 ) //Prüfen ob aktueller Spieler MC > 0 hat
 				{
@@ -280,16 +280,16 @@ class CSGlobalPlayerLearnrate : public CSchedulerObject {
 
 };
 
-class CSGlobalMonsterLearnrate : public CSchedulerObject {
+class SGlobalMonsterLearnrate : public SchedulerObject {
 
 	public:
 
-		CSGlobalMonsterLearnrate(unsigned long int first_cycle) {
+		SGlobalMonsterLearnrate(unsigned long int first_cycle) {
 			nextCycle = first_cycle;
 		}
-		virtual ~CSGlobalMonsterLearnrate() {}
-		bool operator()( CWorld* world ) {
-			ccharactervector < CMonster* >::iterator monsterIterator;
+		virtual ~SGlobalMonsterLearnrate() {}
+		bool operator()( World* world ) {
+			ccharactervector < Monster* >::iterator monsterIterator;
 			for ( monsterIterator = world->Monsters.begin(); monsterIterator < world->Monsters.end(); ++monsterIterator ) {
 				if ( ( *monsterIterator )->getMentalCapacity() > 0 ) //Prüfen ob aktuelles Monster MC > 0 hat
 				{
@@ -297,7 +297,7 @@ class CSGlobalMonsterLearnrate : public CSchedulerObject {
 				}
 			}
 
-			ccharactervector < CNPC* >::iterator npcIterator;
+			ccharactervector < NPC* >::iterator npcIterator;
 			for ( npcIterator = world->Npc.begin(); npcIterator < world->Npc.end(); ++npcIterator ) {
 				if ( ( *npcIterator )->getMentalCapacity() > 0 ) {
 					learnScript->reduceMC( *npcIterator );
@@ -309,15 +309,15 @@ class CSGlobalMonsterLearnrate : public CSchedulerObject {
 };
 
 /*
-class CSItemScriptCycle : public CSchedulerObject
+class SItemScriptCycle : public SchedulerObject
 {
     public:
     
-        CSItemScriptCycle(unsigned long int first_cycle) { nextCycle = first_cycle; }
+        SItemScriptCycle(unsigned long int first_cycle) { nextCycle = first_cycle; }
         
-        virtual ~CSItemScriptCycle() {}
+        virtual ~SItemScriptCycle() {}
         
-        bool operator() ( CWorld* world )
+        bool operator() ( World* world )
         {
                 CommonItems->NextCycle();
                 nextCycle += 10;
@@ -326,23 +326,23 @@ class CSItemScriptCycle : public CSchedulerObject
 };
 */
 
-class CSTempAttribCycle : public CSchedulerObject
+class STempAttribCycle : public SchedulerObject
 {
     public:
  
-        CSTempAttribCycle(unsigned long int first_cycle) { nextCycle = first_cycle; }
+        STempAttribCycle(unsigned long int first_cycle) { nextCycle = first_cycle; }
         
-        virtual ~CSTempAttribCycle() {}
+        virtual ~STempAttribCycle() {}
         
-        bool operator() ( CWorld* world)
+        bool operator() ( World* world)
         {
-            ccharactervector< CMonster* >::iterator monsterIterator;
+            ccharactervector< Monster* >::iterator monsterIterator;
             for ( monsterIterator = world->Monsters.begin(); monsterIterator < world->Monsters.end(); ++monsterIterator )(*monsterIterator)->tempAttribCheck();
             
-            ccharactervector< CNPC* >::iterator npcIterator;
+            ccharactervector< NPC* >::iterator npcIterator;
             for ( npcIterator = world->Npc.begin(); npcIterator < world->Npc.end(); ++npcIterator)(*npcIterator)->tempAttribCheck();
             
-           ccharactervector < CPlayer* >::iterator playerIterator;
+           ccharactervector < Player* >::iterator playerIterator;
             for ( playerIterator = world->Players.begin(); playerIterator < world->Players.end(); ++playerIterator ) (*playerIterator )->tempAttribCheck();
             
             nextCycle += 1;

@@ -25,21 +25,21 @@
 #include "LongTimeEffectTable.hpp"
 #include "script/LuaLongTimeEffectScript.hpp"
 
-extern CLongTimeEffectTable * LongTimeEffects;
+extern LongTimeEffectTable * LongTimeEffects;
 
-CLongTimeCharacterEffects::CLongTimeCharacterEffects(CCharacter * owner) : _owner(owner)
+LongTimeCharacterEffects::LongTimeCharacterEffects(Character * owner) : _owner(owner)
 {
-    _effectTimer = new CMilTimer(100);
+    _effectTimer = new MilTimer(100);
 }
 
-CLongTimeCharacterEffects::~CLongTimeCharacterEffects()
+LongTimeCharacterEffects::~LongTimeCharacterEffects()
 {
     delete _effectTimer;
     _effectTimer = NULL;
     effectList.clear();
 }
 
-bool CLongTimeCharacterEffects::find(uint16_t effectid, CLongTimeEffect * &effect)
+bool LongTimeCharacterEffects::find(uint16_t effectid, LongTimeEffect * &effect)
 {
     for ( EFFECTLIST::iterator it = effectList.begin(); it != effectList.end(); ++it)
     {
@@ -53,7 +53,7 @@ bool CLongTimeCharacterEffects::find(uint16_t effectid, CLongTimeEffect * &effec
     return false;
 }
 
-bool CLongTimeCharacterEffects::find(std::string effectname, CLongTimeEffect * &effect)
+bool LongTimeCharacterEffects::find(std::string effectname, LongTimeEffect * &effect)
 {
 
     for ( EFFECTLIST::iterator it = effectList.begin(); it != effectList.end(); ++it)
@@ -68,9 +68,9 @@ bool CLongTimeCharacterEffects::find(std::string effectname, CLongTimeEffect * &
     return false;
 }
 
-void CLongTimeCharacterEffects::addEffect( CLongTimeEffect * effect)
+void LongTimeCharacterEffects::addEffect( LongTimeEffect * effect)
 {
-    CLongTimeEffect * foundeffect;
+    LongTimeEffect * foundeffect;
     if ( !find(effect->_effectId, foundeffect ) )
     {   
         EFFECTLIST::iterator it = effectList.begin();
@@ -117,7 +117,7 @@ void CLongTimeCharacterEffects::addEffect( CLongTimeEffect * effect)
     effect->firstAdd(); //set first add for this effect
 }
 
-bool CLongTimeCharacterEffects::removeEffect( uint16_t effectid)
+bool LongTimeCharacterEffects::removeEffect( uint16_t effectid)
 {
     for ( EFFECTLIST::iterator it = effectList.begin(); it != effectList.end(); ++it)
     {
@@ -139,7 +139,7 @@ bool CLongTimeCharacterEffects::removeEffect( uint16_t effectid)
     return false;   
 }
 
-bool CLongTimeCharacterEffects::removeEffect( std::string name )
+bool LongTimeCharacterEffects::removeEffect( std::string name )
 {
     for ( EFFECTLIST::iterator it = effectList.begin(); it != effectList.end(); ++it)
     {
@@ -161,7 +161,7 @@ bool CLongTimeCharacterEffects::removeEffect( std::string name )
     return false; 
 }
 
-bool CLongTimeCharacterEffects::removeEffect( CLongTimeEffect * effect)
+bool LongTimeCharacterEffects::removeEffect( LongTimeEffect * effect)
 {
     for ( EFFECTLIST::iterator it = effectList.begin(); it != effectList.end(); ++it)
     {
@@ -184,21 +184,21 @@ bool CLongTimeCharacterEffects::removeEffect( CLongTimeEffect * effect)
     return false; 
 }
 
-void CLongTimeCharacterEffects::checkEffects()
+void LongTimeCharacterEffects::checkEffects()
 {
 	if ( _effectTimer->Next() )
     {
-		//if (  _owner->character == CCharacter::player ) std::cout<<"checkEffect: "<<checkChar->name<<" size: "<<effectList.size()<<std::endl;
-        CLongTimeEffect * effect;
+		//if (  _owner->character == Character::player ) std::cout<<"checkEffect: "<<checkChar->name<<" size: "<<effectList.size()<<std::endl;
+        LongTimeEffect * effect;
         int emexit = 0;
         if ( !effectList.empty() && (effectList.front()->_nextCalled > 0) )
         {
             effectList.front()->_nextCalled--;
-            //if ( _owner->character == CCharacter::player ) std::cout<<"decreased nextcalled: "<<effectList.front()->_nextCalled<<std::endl;
+            //if ( _owner->character == Character::player ) std::cout<<"decreased nextcalled: "<<effectList.front()->_nextCalled<<std::endl;
         }
         else
         {
-            //if (  _owner->character == CCharacter::player ) std::cout<<"calling an effectscript"<<std::endl;
+            //if (  _owner->character == Character::player ) std::cout<<"calling an effectscript"<<std::endl;
             while ( !effectList.empty() && (emexit < 200) && ( effectList.front()->_nextCalled <= 0 ) )
             {
                 emexit++;
@@ -224,16 +224,16 @@ void CLongTimeCharacterEffects::checkEffects()
     }
 }
 
-bool CLongTimeCharacterEffects::save()
+bool LongTimeCharacterEffects::save()
 {
     //di::postgres::enable_trace_query = true;
     ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
-    if ( _owner->character != CCharacter::player )
+    if ( _owner->character != Character::player )
     {
-        std::cout<<"called save for CLongtimeCharacterEffects but owner was no player"<<std::endl;
+        std::cout<<"called save for LongtimeCharacterEffects but owner was no player"<<std::endl;
         return false;
     }
-    CPlayer * player = dynamic_cast<CPlayer*>(_owner);
+    Player * player = dynamic_cast<Player*>(_owner);
     if ( !_owner )
     {
         std::cout<<"error saving long time effects owner was NULL!"<<std::endl;
@@ -272,15 +272,15 @@ bool CLongTimeCharacterEffects::save()
     return allok;
 }
 
-bool CLongTimeCharacterEffects::load()
+bool LongTimeCharacterEffects::load()
 {
     std::cout<<"try to load effects" <<std::endl;
-    if ( _owner->character != CCharacter::player )
+    if ( _owner->character != Character::player )
     {
-        std::cout<<"called load for CLongtimeCharacterEffects but owner was no player"<<std::endl;
+        std::cout<<"called load for LongtimeCharacterEffects but owner was no player"<<std::endl;
         return false;
     }
-    CPlayer * player = dynamic_cast<CPlayer*>(_owner);
+    Player * player = dynamic_cast<Player*>(_owner);
     try
     {
         ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
@@ -298,7 +298,7 @@ bool CLongTimeCharacterEffects::load()
         {
             for ( size_t i = 0; i < rows; ++i )
             {
-                CLongTimeEffect * effect = new CLongTimeEffect(effectid[i], nextcalled[i]);
+                LongTimeEffect * effect = new LongTimeEffect(effectid[i], nextcalled[i]);
                 //set firstadd to false;
                 effect->firstAdd();
                 effect->_lastCalled = lastcalled[i];

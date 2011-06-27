@@ -55,21 +55,21 @@
 // Eine Instanz dieser Klasse wartet auf Verbindungsanfragen
 // von Clients �ber einen speziellen Port und erstellt die ben�tigten
 // Kommunikationsendpunkte (Socket).
-class CInitialConnection : public CConnection {
+class InitialConnection : public Connection {
 
 	public:
 
             
-            //! ein std::vector von CPlayer
-            //typedef tvector<CInternetConnection*> TVECTORPLAYER; // thread safe vector
-            typedef tpvector<boost::shared_ptr<CNetInterface> > TVECTORPLAYER;
-            //typedef std::vector<CPlayer*> VECTORPLAYER;
+            //! ein std::vector von Player
+            //typedef tvector<InternetConnection*> TVECTORPLAYER; // thread safe vector
+            typedef tpvector<boost::shared_ptr<NetInterface> > TVECTORPLAYER;
+            //typedef std::vector<Player*> VECTORPLAYER;
 
             //! Konstruktor
-            CInitialConnection();
+            InitialConnection();
 
             //! Destruktor
-            ~CInitialConnection();
+            ~InitialConnection();
 
             //! liefert alle neu erstellten Player zur�ck
             // \return f�r die angemeldeten Clients mit richtiger Clientversion
@@ -88,7 +88,7 @@ class CInitialConnection : public CConnection {
             //! wartet auf eine neue Verbindung (blockierend)
             // \return eine neue Verbindung oder NULL
             //CInternetConnection* accept_connection();
-            void accept_connection(boost::shared_ptr<CNetInterface> connection, const boost::system::error_code& error);
+            void accept_connection(boost::shared_ptr<NetInterface> connection, const boost::system::error_code& error);
 
             //! std::vector for new players...
             TVECTORPLAYER playerVector;

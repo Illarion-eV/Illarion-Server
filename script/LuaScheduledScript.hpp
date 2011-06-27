@@ -23,24 +23,24 @@
 #include "LuaScript.hpp"
 
 /** class definition so pointers to the class can be used **/
-class CWorld;
+class World;
 
-class CLuaScheduledScript : public CLuaScript
+class LuaScheduledScript : public LuaScript
 {
     public:
         
         /**
         *standard constructor which loads the script and adds basic functions
-        *@see CLuaScript
+        *@see LuaScript
         *@param filename the name of the script which should be loaded
         *@param world a pointer to the current gameworld
         */
-        CLuaScheduledScript(std::string filename) throw(ScriptException);
+        LuaScheduledScript(std::string filename) throw(ScriptException);
         
         /**
         *virtual destructor
         */
-        virtual ~CLuaScheduledScript() throw();
+        virtual ~LuaScheduledScript() throw();
         
         /**
         *a function which calls a special function  inside the script
@@ -54,7 +54,7 @@ class CLuaScheduledScript : public CLuaScript
     private:
         
         //bool m_dataOk; /**< if true all loading was successfully otherwise false */
-        CLuaScheduledScript(const CLuaScheduledScript&);
-	CLuaScheduledScript& operator=(CLuaScheduledScript&);
+        LuaScheduledScript(const LuaScheduledScript&);
+	LuaScheduledScript& operator=(LuaScheduledScript&);
 };
 #endif        

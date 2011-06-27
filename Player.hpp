@@ -17,11 +17,11 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CPLAYER_HPP
-#define CPLAYER_HPP
+#ifndef PLAYER_HPP
+#define PLAYER_HPP
 
 //falls nicht auskommentiert, werden mehr Bildschirmausgaben gemacht:
-//#define CPlayer_DEBUG
+//#define Player_DEBUG
 
 #include <string>
 #include <sstream>
@@ -37,9 +37,9 @@
 #include "netinterface/protocol/ServerCommands.hpp"
 
 
-class CWorld;
-class CLuaScript;
-class CNetInterface;
+class World;
+class LuaScript;
+class NetInterface;
 struct WeatherStruct;
 
 enum gm_rights
@@ -65,12 +65,12 @@ enum gm_rights
 };
 
 //! ein Spieler in newmud
-class CPlayer : public CCharacter {
+class Player : public Character {
 
     public:
 
         ////////////////////////////////////////
-        // possible Exceptions thrown by CPlayer
+        // possible Exceptions thrown by Player
         ////////////////////////////////////////
         // exception is thrown if logout of player is only possible result
         class LogoutException {
@@ -147,12 +147,12 @@ class CPlayer : public CCharacter {
 
         //! die Verbindung zum Spieler, -- Achtung ! Die Verbindung wird NICHT im Destruktor gel�cht
         // , da sie auch extern erstellt wird und durch das Einfgen in diverse
-        // Vektoren oft Destruktoren fr tempor�e CPlayer aufgerufen werden, die noch
+        // Vektoren oft Destruktoren fr tempor�e Player aufgerufen werden, die noch
         // ben�igte Verbindungen l�chen wrden!
-        boost::shared_ptr<CNetInterface> Connection;
+        boost::shared_ptr<NetInterface> Connection;
 
         //! alle "Sichtfenster" fr Containerinhalte die der Spieler �fnen kann
-        CContainerStack showcases[ MAXSHOWCASES ];
+        ContainerStack showcases[ MAXSHOWCASES ];
 
         private:
         // all visible chars
@@ -160,28 +160,28 @@ class CPlayer : public CCharacter {
 
         public:
                 // send a char appearance; always or only if char not yet visible
-        void sendCharAppearance( TYPE_OF_CHARACTER_ID id, boost::shared_ptr<CBasicServerCommand> appearance, bool always ); 
+        void sendCharAppearance( TYPE_OF_CHARACTER_ID id, boost::shared_ptr<BasicServerCommand> appearance, bool always ); 
 
             // removes a Char from sight
-        void sendCharRemove( TYPE_OF_CHARACTER_ID id, boost::shared_ptr<CBasicServerCommand> removechar );
+        void sendCharRemove( TYPE_OF_CHARACTER_ID id, boost::shared_ptr<BasicServerCommand> removechar );
 
 
         /**
         *a long time needed action for the player
         */
-        CLongTimeAction * ltAction;
+        LongTimeAction * ltAction;
         
         virtual void startAction(unsigned short int wait, unsigned short int ani=0, unsigned short int redoani=0, unsigned short int sound=0, unsigned short int redosound=0);
         virtual void abortAction();
         virtual void successAction();
-        virtual void actionDisturbed(CCharacter * disturber);
+        virtual void actionDisturbed(Character * disturber);
 
         /**
         *changes the source of the last action of this Player
         *<b>Lua: [:changeSource]</b>
         *@param cc source is a character the pointer to this character
         */
-        virtual void changeSource( CCharacter * cc );
+        virtual void changeSource( Character * cc );
         
         /**
         *changes the source of the last action for this player
@@ -208,7 +208,7 @@ class CPlayer : public CCharacter {
         *<b>Lua: [:changeTarget]</b>
         *@param cc target is a character the pointer to this character
         */
-        inline virtual void changeTarget( CCharacter * cc );
+        inline virtual void changeTarget( Character * cc );
         
         /**
         *changes the Target of the last action for this player.
@@ -253,7 +253,7 @@ class CPlayer : public CCharacter {
         virtual void sendCharDescription( TYPE_OF_CHARACTER_ID id,const std::string& desc);
         
         //! normal constructor
-        CPlayer(boost::shared_ptr<CNetInterface> newConnection) throw(LogoutException);
+        Player(boost::shared_ptr<NetInterface> newConnection) throw(LogoutException);
         
         //! check if username/password is ok
         void check_logindata() throw (LogoutException);
@@ -274,7 +274,7 @@ class CPlayer : public CCharacter {
         bool loadGMFlags() throw ();
 
         //! Destruktor
-        ~CPlayer();
+        ~Player();
 
 
         /**
@@ -333,7 +333,7 @@ class CPlayer : public CCharacter {
         //Dropt beim Sterben den alles aus Belt und Backpack
         void PlayerDeath();
 
-        //! L�st den Player Magie lernen. Fr standard Charactere keine Funktion in CPlayer berladen
+        //! L�st den Player Magie lernen. Fr standard Charactere keine Funktion in Player berladen
         //\param type Magierichtung die gelernt werden soll (0 Magier, 1 Priester, 2 Barde, 3 Druide)
         //\param flag Magieflags die gelernt werden sollen
         virtual void teachMagic(unsigned char type, unsigned char flag);
@@ -352,7 +352,7 @@ class CPlayer : public CCharacter {
         //! Returns the language which the player specified when creating the Character (german/english/french)
         virtual const unsigned short int getPlayerLanguage();
 
-        virtual void setPlayerLanguage(CLanguage::LanguageType mother_tongue);
+        virtual void setPlayerLanguage(Language::LanguageType mother_tongue);
 
         //�erladene Funktion um beim Sterben Items zu droppen
         void SetAlive( bool t );
@@ -375,7 +375,7 @@ class CPlayer : public CCharacter {
         // \see Item.hpp
         void AgeInventory( ITEM_FUNCT funct );
 
-        //! erstellt count Item mit der ID itemid im Inventory des CPlayer
+        //! erstellt count Item mit der ID itemid im Inventory des Player
         // und schickt ein Update an den Spieler
         // \param itemid die Id der zu erstellenden Item
         // \param count die Anzahl der zu erstellenden Item
@@ -401,17 +401,17 @@ class CPlayer : public CCharacter {
         // \return der neue Skillwert fr name
         virtual unsigned short int increaseSkill( unsigned char typ, std::string name, short int amount );
 
-        //! löscht alle Skills des CCharacter
+        //! löscht alle Skills des Character
         virtual void deleteAllSkills();
 
-        //! löscht count Item mit der ID itemid aus dem Inventory des CPlayer
+        //! löscht count Item mit der ID itemid aus dem Inventory des Player
         // und schickt ein Update an den Spieler
         // \param itemid die Id der zu löschenden Item
         // \param count die Anzahl der zu löschenden Item
         // \return Anzahl der Item die nicht gelöcht werden konnten
         virtual int eraseItem( TYPE_OF_ITEM_ID itemid, int count );
 
-        //! löscht count Items mit der ID itemid aus dem Inventory des CPlayer
+        //! löscht count Items mit der ID itemid aus dem Inventory des Player
         // und schickt ein Update an den Spieler
         // \param itemid die Id der zu löschenden Items
         // \param count die Anzahl der zu löschenden Items
@@ -438,7 +438,7 @@ class CPlayer : public CCharacter {
         //! schickt ein Update der Ansicht des Rucksackinhalts an den Client
         void updateBackPackView();
 
-        //! sendet alle Namen der Skills des CPlayer mit den entsprechenden Typen/Werten an den Client
+        //! sendet alle Namen der Skills des Player mit den entsprechenden Typen/Werten an den Client
         void sendAllSkills();
 
         //! sendet Magie-Flags an den Client
@@ -523,10 +523,10 @@ class CPlayer : public CCharacter {
         virtual void inform(std::string text);
 
         // player heard something
-        virtual void receiveText(talk_type tt, std::string message, CCharacter* cc);
+        virtual void receiveText(talk_type tt, std::string message, Character* cc);
 
         // receive an introduction
-        virtual void introducePerson(CCharacter* cc);
+        virtual void introducePerson(Character* cc);
 
         // Move the Player
         virtual bool move(direction dir, uint8_t mode);
@@ -566,10 +566,10 @@ class CPlayer : public CCharacter {
 
     private:
 
-    CLanguage* _player_language;
+    Language* _player_language;
 
     #ifdef _PLAYER_AUTO_SAVE_
-        CTimer * saveTimer; //save every 10 minutes 600 sec's
+        Timer * saveTimer; //save every 10 minutes 600 sec's
     #endif
     
         // Status of the player, Okay, waiting authroization, jailed, banned, etc..

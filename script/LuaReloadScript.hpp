@@ -22,16 +22,16 @@
 
 #include "LuaScript.hpp"
 
-class CLuaReloadScript : public CLuaScript
+class LuaReloadScript : public LuaScript
 {
     public:
-        CLuaReloadScript( std::string filename ) throw ( ScriptException );
-        virtual ~CLuaReloadScript() throw ();
+        LuaReloadScript( std::string filename ) throw ( ScriptException );
+        virtual ~LuaReloadScript() throw ();
 
         bool onReload();
         
     private:
-	CLuaReloadScript(const CLuaReloadScript&);
-	CLuaReloadScript& operator=(const CLuaReloadScript&);
+	LuaReloadScript(const LuaReloadScript&);
+	LuaReloadScript& operator=(const LuaReloadScript&);
 };
 #endif

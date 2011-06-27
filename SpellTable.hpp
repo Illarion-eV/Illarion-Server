@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CSPELLTABLE_HPP
-#define CSPELLTABLE_HPP
+#ifndef SPELLTABLE_HPP
+#define SPELLTABLE_HPP
 
 #include <map>
 #include <list>
@@ -41,7 +41,7 @@ using std::hash_multimap;
 
 #endif
 
-class CWorld;
+class World;
 
 struct SpellStruct {
 	//Type des aus zu führenden Zaubers.
@@ -49,14 +49,14 @@ struct SpellStruct {
 	//Name des Scriptes.
 	std::string scriptname;
 	//Shared Pointer auf das Script des Structs.
-	boost::shared_ptr<CLuaMagicScript> script;
+	boost::shared_ptr<LuaMagicScript> script;
 };
 
-class CSpellTable {
+class SpellTable {
 	public:
-		CSpellTable();
+		SpellTable();
 
-		~CSpellTable();
+		~SpellTable();
 
 		void reload();
 

@@ -28,14 +28,14 @@ const std::string toString(const from& convert) {
 	return stream.str();
 }
 
-CSpellTable::CSpellTable() : _dataOK(false) {
+SpellTable::SpellTable() : _dataOK(false) {
 	//im Constructor Daten Reloaden
 	reload();
 }
 
-void CSpellTable::reload() {
-#ifdef CDataConnect_DEBUG
-	std::cout<<"CSpellTable: reload!" <<std::endl;
+void SpellTable::reload() {
+#ifdef DataConnect_DEBUG
+	std::cout<<"SpellTable: reload!" <<std::endl;
 #endif
 	try {
 		ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
@@ -51,10 +51,10 @@ void CSpellTable::reload() {
 			if (!n_scriptname.var[i]) {
 				try {
 					// we got a script... load it
-					boost::shared_ptr<CLuaMagicScript> script(new CLuaMagicScript( scriptname[i], spellid[i] ) );
+					boost::shared_ptr<LuaMagicScript> script(new LuaMagicScript( scriptname[i], spellid[i] ) );
 					spell.script = script;
 				} catch (ScriptException &e) {
-                    CLogger::writeError( "scripts", "Error while loading script: " + scriptname[i] + ":\n" + e.what() + "\n" );
+                    Logger::writeError( "scripts", "Error while loading script: " + scriptname[i] + ":\n" + e.what() + "\n" );
 				}
 			}
 			Spells.insert(std::pair<unsigned long int, SpellStruct>(spellid[i],spell)); //Zuweisen des Spells
@@ -69,7 +69,7 @@ void CSpellTable::reload() {
 	}
 }
 
-bool CSpellTable::find(unsigned long int magicFlag,unsigned short int magic_type, SpellStruct &magicSpell) {
+bool SpellTable::find(unsigned long int magicFlag,unsigned short int magic_type, SpellStruct &magicSpell) {
 	std::pair<SpellMap::iterator, SpellMap::iterator> range = Spells.equal_range(magicFlag);
 	SpellMap::iterator iter;
 	//Liste durchlaufen und prüfen ob der Magictype stimmt.
@@ -82,11 +82,11 @@ bool CSpellTable::find(unsigned long int magicFlag,unsigned short int magic_type
 	return false;
 }
 
-void CSpellTable::clearOldTable() {
+void SpellTable::clearOldTable() {
 	Spells.clear();
 }
 
-CSpellTable::~CSpellTable() {
+SpellTable::~SpellTable() {
 	clearOldTable();
 }
 

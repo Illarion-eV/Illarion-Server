@@ -22,14 +22,14 @@
 #include "MapVector.hpp"
 #include <iostream>
 
-CNewClientView::~CNewClientView() {}
+NewClientView::~NewClientView() {}
 
-CNewClientView::CNewClientView() : viewPosition( position(0,0,0) ), exists(false), stripedir( dir_right ), maxtiles(0)
+NewClientView::NewClientView() : viewPosition( position(0,0,0) ), exists(false), stripedir( dir_right ), maxtiles(0)
 { 
 
 }
 
-void CNewClientView::fillStripe(position pos, stripedirection dir, int length, CMapVector * maps)
+void NewClientView::fillStripe(position pos, stripedirection dir, int length, MapVector * maps)
 {
     clearStripe();
     viewPosition = pos;
@@ -37,7 +37,7 @@ void CNewClientView::fillStripe(position pos, stripedirection dir, int length, C
     readFields( length, maps );
 }
 
-void CNewClientView::clearStripe()
+void NewClientView::clearStripe()
 {
     for ( int i = 0; i < 100/*<= MAP_DIMENSION+MAP_DOWN_EXTRA+6*/; ++i )
     {
@@ -50,18 +50,18 @@ void CNewClientView::clearStripe()
     maxtiles = 0;
 }
 
-void CNewClientView::readFields( int length, CMapVector * maps)
+void NewClientView::readFields( int length, MapVector * maps)
 {
     int x = viewPosition.x;
     int y = viewPosition.y;
     int x_inc = (stripedir == dir_right) ? 1 : -1;
     int tmp_maxtiles = 1;
     
-    std::vector< CMap* > good_maps;
-    std::vector< CMap* >::iterator it;
+    std::vector< Map* > good_maps;
+    std::vector< Map* >::iterator it;
     if( maps->findAllMapsInRangeOf( 0, length-1, (stripedir == dir_right) ? length-1 : 0, (stripedir == dir_right) ? 0 : length-1, viewPosition, good_maps ) )
     {
-        CMap * map = NULL;
+        Map * map = NULL;
     
         for ( int i = 0; i < length; ++i )
         {

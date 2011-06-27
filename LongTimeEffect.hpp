@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CLONGTIMEEFFECT_HPP_ 
-#define CLONGTIMEEFFECT_HPP_
+#ifndef LONGTIMEEFFECT_HPP_ 
+#define LONGTIMEEFFECT_HPP_
 
 
 #include <string>
@@ -26,20 +26,20 @@
 #include "types.hpp"
 #include <map>
 
-class CCharacter;
-class CPlayer;
+class Character;
+class Player;
 
-class CLongTimeEffect
+class LongTimeEffect
 {
     public:
     
         /**
         * destructor for the effect
         */
-        ~CLongTimeEffect();
+        ~LongTimeEffect();
 
         /**
-        * @name CLongTimeEffect Lua Functions:
+        * @name LongTimeEffect Lua Functions:
         * Functions which are exported to lua
         */
         
@@ -51,19 +51,19 @@ class CLongTimeEffect
         
         /**
         * constructor for a long time effect adds other informations like the name from the db
-        * <b>Lua: CLongTimeEffect( effectId, nextCalled )</b>
+        * <b>Lua: LongTimeEffect( effectId, nextCalled )</b>
         * @param effectId id of the effect
         * @param nextCalled how much 1/10 s it needs to recall the effect
         */
-        CLongTimeEffect(uint16_t effectId, uint32_t nextCalled);
+        LongTimeEffect(uint16_t effectId, uint32_t nextCalled);
         
         /**
         * constructor for a long time effect adds other informations like id from the db
-        * <b>Lua: CLongTimeEffect( name, nextCalled)</b>
+        * <b>Lua: LongTimeEffect( name, nextCalled)</b>
         * @param name the name of the effect
         * @param nextCalled how much 1/10s have to be passed before the effect is recalled
         */
-        CLongTimeEffect(std::string name, uint32_t nextCalled);
+        LongTimeEffect(std::string name, uint32_t nextCalled);
         
         /**
         *adds a specific value to this effect, if this value currently exists 
@@ -100,7 +100,7 @@ class CLongTimeEffect
         *@param target, the character which is victim of the effect
         *@return if true the effect has to be included again in the effect list
         */
-        bool callEffect(CCharacter * target);        
+        bool callEffect(Character * target);        
         
         /**
         *saves this effect of a player to the db
@@ -115,7 +115,7 @@ class CLongTimeEffect
         void firstAdd(){ if ( _firstadd ) _firstadd = false; }
 
         /**
-        * @name CLongTimeEffect Lua Variables:
+        * @name LongTimeEffect Lua Variables:
         * Variables which are exported to lua
         */
         

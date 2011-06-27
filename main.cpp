@@ -56,8 +56,8 @@
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
 
-extern boost::shared_ptr<CLuaLoginScript>loginScript;
-extern CScriptVariablesTable * scriptVariables;
+extern boost::shared_ptr<LuaLoginScript>loginScript;
+extern ScriptVariablesTable * scriptVariables;
 
 extern bool importmaps;
 
@@ -92,7 +92,7 @@ int main( int argc, char* argv[] ) {
     //Initialize Logging Options
     InitLogOptions();
     
-        CLogger::writeMessage("basic", "\nStarte Illarion !" );
+        Logger::writeMessage("basic", "\nStarte Illarion !" );
 
         // initialize randomizer
         initRandom();
@@ -111,15 +111,15 @@ int main( int argc, char* argv[] ) {
         if (! setup_files() )
                return 1;
     
-        CLogger::writeMessage("basic", "main: server requires clientversion: " + configOptions["clientversion"], false);
-        CLogger::writeMessage("basic", "main: listen port: " + configOptions["port"], false );
-        CLogger::writeMessage("basic", "main: data directory: " + configOptions["datadir"], false );
+        Logger::writeMessage("basic", "main: server requires clientversion: " + configOptions["clientversion"], false);
+        Logger::writeMessage("basic", "main: listen port: " + configOptions["port"], false );
+        Logger::writeMessage("basic", "main: data directory: " + configOptions["datadir"], false );
 
         // initialise DB Manager
         dbmgr = ConnectionManager::CreateConnectionManager(configOptions["postgres_user"],configOptions["postgres_pwd"], configOptions["postgres_db"],configOptions["postgres_host"]);
         accdbmgr = ConnectionManager::CreateConnectionManager(configOptions["postgres_user"],configOptions["postgres_pwd"], configOptions["accountdb"],configOptions["postgres_host"]);
         //Welt anlegen
-        CWorld * world = CWorld::create( configOptions["datadir"] , starttime);
+        World * world = World::create( configOptions["datadir"] , starttime);
 
         //Laden der Daten fr die Welt (Items, Scripte, Tabellen etc.)
         loadData();
@@ -135,9 +135,9 @@ int main( int argc, char* argv[] ) {
         }
 
 	std::cout<<"Creation the PlayerManager"<<std::endl;
-	CPlayerManager::get()->activate();
+	PlayerManager::get()->activate();
 	std::cout<<"PlayerManager activated"<<std::endl;
-        CPlayerManager::TPLAYERVECTOR & newplayers = CPlayerManager::get()->getLogInPlayers();
+        PlayerManager::TPLAYERVECTOR & newplayers = PlayerManager::get()->getLogInPlayers();
         timespec stime;
         stime.tv_sec = 0;
         stime.tv_nsec = 25000000;    //25ms
@@ -147,7 +147,7 @@ int main( int argc, char* argv[] ) {
         //run both reload scripts to initialize semi-dynamic data
         try
         {
-            boost::shared_ptr<CLuaReloadScript> tmpScript(new CLuaReloadScript( "server.reload_defs" ));
+            boost::shared_ptr<LuaReloadScript> tmpScript(new LuaReloadScript( "server.reload_defs" ));
             if (!tmpScript->onReload()) std::cerr << "server.reload_defs.onReload returned false" << std::endl;
         }
         catch (ScriptException &e)
@@ -157,7 +157,7 @@ int main( int argc, char* argv[] ) {
                 
         try
         {
-            boost::shared_ptr<CLuaReloadScript> tmpScript(new CLuaReloadScript( "server.reload_tables" ));
+            boost::shared_ptr<LuaReloadScript> tmpScript(new LuaReloadScript( "server.reload_tables" ));
             if (!tmpScript->onReload()) std::cerr << "server.reload_tables.onReload returned false" << std::endl;;
         }
         catch (ScriptException &e)
@@ -165,7 +165,7 @@ int main( int argc, char* argv[] ) {
             std::cerr << "reload_tables: " << e.what() << std::endl;
         }
 
-        CLogger::writeMessage("basic","Scheduler wird Initialisiert \n",false);
+        Logger::writeMessage("basic","Scheduler wird Initialisiert \n",false);
         //Scheduler Initialisieren
         world->initScheduler();
 
@@ -186,7 +186,7 @@ int main( int argc, char* argv[] ) {
                {
                    
                    new_players_processed++;
-                   CPlayer * newPlayer = newplayers.non_block_pop_front();
+                   Player * newPlayer = newplayers.non_block_pop_front();
                    if ( newPlayer ) 
                    {
                        login_save(newPlayer);
@@ -212,13 +212,13 @@ int main( int argc, char* argv[] ) {
                                }                               
                                world->updatePlayerList();
                            }
-                           catch ( CPlayer::LogoutException &e )
+                           catch ( Player::LogoutException &e )
                            {
                                std::cout<<"got logout Exception during login!"<<std::endl;
-                               boost::shared_ptr<CBasicServerCommand> cmd(new CLogOutTC( e.getReason() ));
+                               boost::shared_ptr<BasicServerCommand> cmd(new LogOutTC( e.getReason() ));
                                newPlayer->Connection->shutdownSend(cmd);
                                //newPlayer->Connection->closeConnection();
-                               CPlayerManager::get()->getLogOutPlayers().non_block_push_back( newPlayer );
+                               PlayerManager::get()->getLogOutPlayers().non_block_push_back( newPlayer );
                            }
                        }
                    }
@@ -233,7 +233,7 @@ int main( int argc, char* argv[] ) {
         }
     
 
-        CLogger::writeMessage("basic","Beende Illarion!");
+        Logger::writeMessage("basic","Beende Illarion!");
     
         std::cout<<"Server Shutdown:"<<std::endl;
         
@@ -242,18 +242,18 @@ int main( int argc, char* argv[] ) {
         world->forceLogoutOfAllPlayers();
 
         //saving all players which where forced logged out.
-        CPlayerManager::get()->saveAll();
+        PlayerManager::get()->saveAll();
 
         world->takeMonsterAndNPCFromMap();
     
 
-        CLogger::writeMessage("basic","Statistik aktualisieren");
-        CLogger::writeMessage("basic","OnlinePlayer-Liste aktualisieren (-> auf 0)");
+        Logger::writeMessage("basic","Statistik aktualisieren");
+        Logger::writeMessage("basic","OnlinePlayer-Liste aktualisieren (-> auf 0)");
         world->saveAllPlayerNamesToFile( configOptions["datadir"] + std::string( ONLINEPLFILE ) );
-        CLogger::writeMessage("basic","Karten speichern");
+        Logger::writeMessage("basic","Karten speichern");
         world->Save( "Illarion" );
-        CLogger::writeMessage("basic","InitialConnection beenden");
-        CLogger::writeMessage("basic", "Die in loadItems(..) angelegten Tabellen loeschen" );
+        Logger::writeMessage("basic","InitialConnection beenden");
+        Logger::writeMessage("basic", "Die in loadItems(..) angelegten Tabellen loeschen" );
         delete CommonItems;
         CommonItems = NULL;
         delete ItemNames;
@@ -274,7 +274,7 @@ int main( int argc, char* argv[] ) {
         reset_sighandlers();
 
         time( &starttime );
-        CLogger::writeMessage("basic","main: Ende " );
+        Logger::writeMessage("basic","main: Ende " );
 
         return EXIT_SUCCESS;
 }

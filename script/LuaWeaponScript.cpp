@@ -25,27 +25,27 @@
 #include "Logger.hpp"
 #include "fuse_ptr.hpp"
 
-CLuaWeaponScript::CLuaWeaponScript(std::string filename) throw(ScriptException)
-		: CLuaScript(filename)
+LuaWeaponScript::LuaWeaponScript(std::string filename) throw(ScriptException)
+		: LuaScript(filename)
 {
 }
 
-CLuaWeaponScript::~CLuaWeaponScript() throw() {}
+LuaWeaponScript::~LuaWeaponScript() throw() {}
 
-bool CLuaWeaponScript::onAttack( CCharacter * Attacker, CCharacter * Defender )
+bool LuaWeaponScript::onAttack( Character * Attacker, Character * Defender )
 {
     try
     {
-        CWorld::get()->setCurrentScript( this ); 
-        fuse_ptr<CCharacter> fuse_Attacker(Attacker);
-        fuse_ptr<CCharacter> fuse_Defender(Defender);
+        World::get()->setCurrentScript( this ); 
+        fuse_ptr<Character> fuse_Attacker(Attacker);
+        fuse_ptr<Character> fuse_Defender(Defender);
         call("onAttack")( fuse_Attacker, fuse_Defender );
         return true;
     }
     catch (luabind::error &e)
     {
          writeErrorMsg();
-         //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("Error: CLuaWeaponScript::onAttack called for: " + Attacker->name + " " + Defender->name + + e.what(),3));
+         //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("Error: LuaWeaponScript::onAttack called for: " + Attacker->name + " " + Defender->name + + e.what(),3));
 	     return false;    
     }
     return false;

@@ -21,13 +21,13 @@
 #include "NamesObjectTable.hpp"
 #include <iostream>
 
-CNamesObjectTable::CNamesObjectTable() : m_dataOK(true) {
+NamesObjectTable::NamesObjectTable() : m_dataOK(true) {
 	reload();
 }
 
-void CNamesObjectTable::reload() {
-#ifdef CDataConnect_DEBUG
-	std::cout << "CNamesObjectTable: reload" << std::endl;
+void NamesObjectTable::reload() {
+#ifdef DataConnect_DEBUG
+	std::cout << "NamesObjectTable: reload" << std::endl;
 #endif
 
 	try {
@@ -54,8 +54,8 @@ void CNamesObjectTable::reload() {
 		} else m_dataOK = false;
 
 
-#ifdef CDataConnect_DEBUG
-		std::cout << "loaded " << rows << " rows into CNamesObjectTable" << std::endl;
+#ifdef DataConnect_DEBUG
+		std::cout << "loaded " << rows << " rows into NamesObjectTable" << std::endl;
 #endif
 
 	} catch (...) {
@@ -64,7 +64,7 @@ void CNamesObjectTable::reload() {
 
 }
 
-bool CNamesObjectTable::find( TYPE_OF_ITEM_ID Id, NamesStruct &ret ) {
+bool NamesObjectTable::find( TYPE_OF_ITEM_ID Id, NamesStruct &ret ) {
 	TABLE::iterator iterator;
 	iterator = m_table.find( Id );
 
@@ -78,12 +78,12 @@ bool CNamesObjectTable::find( TYPE_OF_ITEM_ID Id, NamesStruct &ret ) {
 
 
 
-void CNamesObjectTable::clearOldTable() {
+void NamesObjectTable::clearOldTable() {
 	m_table.clear();
 }
 
 
-CNamesObjectTable::~CNamesObjectTable() {
+NamesObjectTable::~NamesObjectTable() {
 	clearOldTable();
 }
 

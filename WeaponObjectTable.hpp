@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CWEAPONOBJECTTABLE_H
-#define CWEAPONOBJECTTABLE_H
+#ifndef WEAPONOBJECTTABLE_H
+#define WEAPONOBJECTTABLE_H
 
 #include <string>
 
@@ -39,18 +39,18 @@ using std::hash_map;
 
 #include "TableStructs.hpp"
 
-class CWorld;
+class World;
 
 //! eine Tabelle für allgemeine Item-Eigenschaften
-class CWeaponObjectTable {
+class WeaponObjectTable {
 
 	public:
 
 		bool find( TYPE_OF_ITEM_ID Id, WeaponStruct &ret );
 
-		CWeaponObjectTable();
+		WeaponObjectTable();
 
-		~CWeaponObjectTable();
+		~WeaponObjectTable();
 
 		void reload();
 

@@ -23,18 +23,18 @@
 #include "Logger.hpp"
 #include "Random.hpp"
 
-CScheduledScriptsTable::CScheduledScriptsTable() : currentCycle(0), m_dataOk(false)
+ScheduledScriptsTable::ScheduledScriptsTable() : currentCycle(0), m_dataOk(false)
 {
     reload();
 }
 
-CScheduledScriptsTable::~CScheduledScriptsTable()
+ScheduledScriptsTable::~ScheduledScriptsTable()
 {
     /**@todo destructor implementatiotn*/
     m_table.clear();
 }
 
-bool CScheduledScriptsTable::nextCycle()
+bool ScheduledScriptsTable::nextCycle()
 {
     currentCycle++;
     ScriptData data; /**< holds the current task*/
@@ -66,9 +66,9 @@ bool CScheduledScriptsTable::nextCycle()
     return false;
 }
 
-bool CScheduledScriptsTable::addData(ScriptData data)
+bool ScheduledScriptsTable::addData(ScriptData data)
 {
-    CLogger::writeMessage("schedscripts","insert new Task task.nextCycle: " + CLogger::toString(data.nextCycleTime)  + " current Cycle: " + CLogger::toString(currentCycle));
+    Logger::writeMessage("schedscripts","insert new Task task.nextCycle: " + Logger::toString(data.nextCycleTime)  + " current Cycle: " + Logger::toString(currentCycle));
     std::list<ScriptData>::iterator it;
     bool inserted = false;
     if ( data.nextCycleTime <= currentCycle )
@@ -87,7 +87,7 @@ bool CScheduledScriptsTable::addData(ScriptData data)
     return true;
 }
 
-void CScheduledScriptsTable::reload()
+void ScheduledScriptsTable::reload()
 {
     try
     {
@@ -109,7 +109,7 @@ void CScheduledScriptsTable::reload()
                 size_t rows2 = di::select_all<di::Integer, di::Integer,di::Varchar>(transaction,min_cycle_time, max_cycle_time, n_functionname, "SELECT sc_mincycletime, sc_maxcycletime, sc_functionname FROM scheduledscripts WHERE sc_scriptname = '" + scriptname[i] + "'");
                 try
                 {
-                    boost::shared_ptr<CLuaScheduledScript> script(new CLuaScheduledScript( scriptname[i] ) );
+                    boost::shared_ptr<LuaScheduledScript> script(new LuaScheduledScript( scriptname[i] ) );
                     for ( size_t j = 0; j < rows2; ++j)
                     {
                         tmpRecord.minCycleTime = min_cycle_time[j];
@@ -123,7 +123,7 @@ void CScheduledScriptsTable::reload()
                 }
                 catch (ScriptException &e)
                 {
-                    CLogger::writeError( "scripts", "Error while loading script: " + scriptname[i] + ":\n" + e.what() + "\n" );
+                    Logger::writeError( "scripts", "Error while loading script: " + scriptname[i] + ":\n" + e.what() + "\n" );
                 }
             }
         }

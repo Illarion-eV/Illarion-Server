@@ -28,9 +28,9 @@
 #include "Logger.hpp"
 
 //Table with Item Descriptions for Itemscripts
-extern CCommonObjectTable * CommonItems;
+extern CommonObjectTable * CommonItems;
 
-bool CWorld::sendTextInFileToPlayer( std::string filename, CPlayer* cp ) {
+bool World::sendTextInFileToPlayer( std::string filename, Player* cp ) {
 	if ( filename.length() == 0 ) return false;
 
 	const unsigned char LINE_LENGTH = 255;
@@ -43,7 +43,7 @@ bool CWorld::sendTextInFileToPlayer( std::string filename, CPlayer* cp ) {
     {
 		while ( fgets( line, LINE_LENGTH, fp ) != NULL )
         {
-            boost::shared_ptr<CBasicServerCommand>cmd( new CSayTC( cp->pos.x, cp->pos.y, cp->pos.z, line ) );
+            boost::shared_ptr<BasicServerCommand>cmd( new SayTC( cp->pos.x, cp->pos.y, cp->pos.z, line ) );
             cp->Connection->addCommand(cmd);
 		}
 
@@ -55,28 +55,28 @@ bool CWorld::sendTextInFileToPlayer( std::string filename, CPlayer* cp ) {
 }
 
 
-void CWorld::sendMessageToPlayer( CPlayer* cp, std::string message ) 
+void World::sendMessageToPlayer( Player* cp, std::string message ) 
 {
-    //cp->Connection->addCommand( boost::shared_ptr<CBasicServerCommand>( new CSayTC( cp->pos.x, cp->pos.y, cp->pos.z, message ) ) );
+    //cp->Connection->addCommand( boost::shared_ptr<BasicServerCommand>( new SayTC( cp->pos.x, cp->pos.y, cp->pos.z, message ) ) );
     cp->sendMessage(message);
 }
 
 
-void CWorld::sendMessageToAdmin( std::string message) {
+void World::sendMessageToAdmin( std::string message) {
 	PLAYERVECTOR::iterator titerator;
 
 	for ( titerator = Players.begin(); titerator < Players.end(); ++titerator ) 
     {
 		if ( (*titerator)->hasGMRight(gmr_getgmcalls) ) 
         {
-            boost::shared_ptr<CBasicServerCommand>cmd( new CSayTC( (*titerator)->pos.x, (*titerator)->pos.y, (*titerator)->pos.z, message ) );
+            boost::shared_ptr<BasicServerCommand>cmd( new SayTC( (*titerator)->pos.x, (*titerator)->pos.y, (*titerator)->pos.z, message ) );
 			( *titerator )->Connection->addCommand(cmd);
 		}
 	}
 }
 
 
-std::string CWorld::languagePrefix(int Language) {
+std::string World::languagePrefix(int Language) {
 	if (Language==0) return "";
 	else if (Language==1) return "[hum] ";
 	else if (Language==2) return "[dwa] ";
@@ -91,7 +91,7 @@ std::string CWorld::languagePrefix(int Language) {
 	else return "";
 }
 
-std::string CWorld::languageNumberToSkillName(int languageNumber) {
+std::string World::languageNumberToSkillName(int languageNumber) {
 	switch(languageNumber) {
 		case 0:
 			return "common language";
@@ -121,19 +121,19 @@ std::string CWorld::languageNumberToSkillName(int languageNumber) {
 	}
 }
 
-void CWorld::sendMessageToAllPlayers( std::string message ) {
+void World::sendMessageToAllPlayers( std::string message ) {
 
 	PLAYERVECTOR::iterator titerator;
 
 	for ( titerator = Players.begin(); titerator < Players.end(); ++titerator ) 
     {
-        boost::shared_ptr<CBasicServerCommand>cmd( new CSayTC( (*titerator)->pos.x, (*titerator)->pos.y, (*titerator)->pos.z, message) );
+        boost::shared_ptr<BasicServerCommand>cmd( new SayTC( (*titerator)->pos.x, (*titerator)->pos.y, (*titerator)->pos.z, message) );
 		( *titerator )->Connection->addCommand(cmd);
 	}
 
 }
 
-void CWorld::sendMessageToAllPlayers_2( std::string message[ LANGUAGECOUNT ] ) {
+void World::sendMessageToAllPlayers_2( std::string message[ LANGUAGECOUNT ] ) {
 
 	PLAYERVECTOR::iterator titerator;
 
@@ -142,12 +142,12 @@ void CWorld::sendMessageToAllPlayers_2( std::string message[ LANGUAGECOUNT ] ) {
         
 		if ( ( ( *titerator )->getPlayerLanguage() < LANGUAGECOUNT ) ) 
         {
-            boost::shared_ptr<CBasicServerCommand>cmd( new CSayTC( (*titerator)->pos.x, (*titerator)->pos.y, (*titerator)->pos.z, message[ ( *titerator )->getPlayerLanguage()]) );
+            boost::shared_ptr<BasicServerCommand>cmd( new SayTC( (*titerator)->pos.x, (*titerator)->pos.y, (*titerator)->pos.z, message[ ( *titerator )->getPlayerLanguage()]) );
             ( *titerator )->Connection->addCommand(cmd);
         } 
         else 
         {
-            boost::shared_ptr<CBasicServerCommand>cmd( new CSayTC( (*titerator)->pos.x, (*titerator)->pos.y, (*titerator)->pos.z, std::string( "?") ) );
+            boost::shared_ptr<BasicServerCommand>cmd( new SayTC( (*titerator)->pos.x, (*titerator)->pos.y, (*titerator)->pos.z, std::string( "?") ) );
             (*titerator )->Connection->addCommand(cmd);
 		}
         
@@ -157,30 +157,30 @@ void CWorld::sendMessageToAllPlayers_2( std::string message[ LANGUAGECOUNT ] ) {
 }
 
 
-void CWorld::sendLanguageMessageToAllCharsInRange( std::string message, CCharacter::talk_type tt, unsigned char lang, CCharacter* cc)
+void World::sendLanguageMessageToAllCharsInRange( std::string message, Character::talk_type tt, unsigned char lang, Character* cc)
 {
 	uint16_t range = 0;
 	// how far can we be heard?
 	switch (tt) 
     {
-		case CCharacter::tt_say:
+		case Character::tt_say:
 			range = MAXVIEW;
 			break;
-		case CCharacter::tt_whisper:
+		case Character::tt_whisper:
 			range = 2;
 			break;
-		case CCharacter::tt_yell:
+		case Character::tt_yell:
 			range = 30;
 			break;
 	}
 	//determine spoken language skill
 
     // get all Players
-	std::vector<CPlayer*> players = Players.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, range);
+	std::vector<Player*> players = Players.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, range);
 	// get all NPCs
-	std::vector<CNPC*> npcs = Npc.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, range);
+	std::vector<NPC*> npcs = Npc.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, range);
 	// get all Monsters
-	std::vector<CMonster*> monsters = Monsters.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, range);
+	std::vector<Monster*> monsters = Monsters.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, range);
 
 	// alter message because of the speakers inability to speak...
 	std::string spokenMessage,tempMessage;
@@ -188,12 +188,12 @@ void CWorld::sendLanguageMessageToAllCharsInRange( std::string message, CCharact
 
 	// tell all OTHER players... (but tell them what they understand due to their inability to do so)
 	// tell the player himself what he wanted to say
-	//std::cout << "message in CWorldIMPLTalk:" << message;
+	//std::cout << "message in WorldIMPLTalk:" << message;
 	if ((message[0]=='#') && (message[1]=='m') && (message[2]=='e')) 
     {
 		for ( PLAYERVECTOR::iterator it = players.begin(); it != players.end(); ++it) 
         {
-            if ((*it)->getPlayerLanguage() == static_cast<CLanguage::LanguageType>(lang) )
+            if ((*it)->getPlayerLanguage() == static_cast<Language::LanguageType>(lang) )
             {
                 (*it)->receiveText(tt, message, cc);
             }
@@ -203,7 +203,7 @@ void CWorld::sendLanguageMessageToAllCharsInRange( std::string message, CCharact
     {
 		for ( PLAYERVECTOR::iterator it = players.begin(); it != players.end(); ++it) 
         {
-            if ( (*it)->getPlayerLanguage() == static_cast<CLanguage::LanguageType>(lang) )
+            if ( (*it)->getPlayerLanguage() == static_cast<Language::LanguageType>(lang) )
             {
                 if ((*it)->id!=cc->id) 
                 {
@@ -229,17 +229,17 @@ void CWorld::sendLanguageMessageToAllCharsInRange( std::string message, CCharact
 }
 
 
-void CWorld::sendMessageToAllCharsInRange( std::string message, CCharacter::talk_type tt, CCharacter* cc) {
+void World::sendMessageToAllCharsInRange( std::string message, Character::talk_type tt, Character* cc) {
 	uint16_t range = 0;
 	// how far can we be heard?
 	switch (tt) {
-		case CCharacter::tt_say:
+		case Character::tt_say:
 			range = MAXVIEW;
 			break;
-		case CCharacter::tt_whisper:
+		case Character::tt_whisper:
 			range = 2;
 			break;
-		case CCharacter::tt_yell:
+		case Character::tt_yell:
 			range = 30;
 			break;
 	}
@@ -250,13 +250,13 @@ void CWorld::sendMessageToAllCharsInRange( std::string message, CCharacter::talk
 
 
 	// get all Players
-	std::vector<CPlayer*> players = Players.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, range);
+	std::vector<Player*> players = Players.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, range);
 	    
 	// get all NPCs
-	std::vector<CNPC*> npcs = Npc.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, range);
+	std::vector<NPC*> npcs = Npc.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, range);
 	
 	// get all Monsters
-	std::vector<CMonster*> monsters = Monsters.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, range);
+	std::vector<Monster*> monsters = Monsters.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, range);
 
 	// alter message because of the speakers inability to speak...
 	std::string spokenMessage,tempMessage;
@@ -264,7 +264,7 @@ void CWorld::sendMessageToAllCharsInRange( std::string message, CCharacter::talk
 
 	// tell all OTHER players... (but tell them what they understand due to their inability to do so)
 	// tell the player himself what he wanted to say
-	//std::cout << "message in CWorldIMPLTalk:" << message;
+	//std::cout << "message in WorldIMPLTalk:" << message;
 	if ((message[0]=='#') && (message[1]=='m') && (message[2]=='e')) {
 		for ( PLAYERVECTOR::iterator it = players.begin(); it != players.end(); ++it) {
 			(*it)->receiveText(tt, message, cc);
@@ -290,35 +290,35 @@ void CWorld::sendMessageToAllCharsInRange( std::string message, CCharacter::talk
 }
 
 
-void CWorld::makeGFXForAllPlayersInRange( short int xc, short int yc, short int zc, int distancemetric ,unsigned short int gfx ) {
+void World::makeGFXForAllPlayersInRange( short int xc, short int yc, short int zc, int distancemetric ,unsigned short int gfx ) {
 
-	std::vector < CPlayer* > temp = Players.findAllCharactersInRangeOf( xc, yc, zc, distancemetric );
-	std::vector < CPlayer* > ::iterator titerator;
+	std::vector < Player* > temp = Players.findAllCharactersInRangeOf( xc, yc, zc, distancemetric );
+	std::vector < Player* > ::iterator titerator;
 
 	for ( titerator = temp.begin(); titerator < temp.end(); ++titerator ) 
     {
-        boost::shared_ptr<CBasicServerCommand>cmd( new CGraphicEffectTC( xc, yc, zc, gfx ) );
+        boost::shared_ptr<BasicServerCommand>cmd( new GraphicEffectTC( xc, yc, zc, gfx ) );
         (*titerator)->Connection->addCommand( cmd );
 	}
 
 }
 
 
-void CWorld::makeSoundForAllPlayersInRange( short int xc, short int yc, short int zc, int distancemetric, unsigned short int sound ) {
-	std::vector < CPlayer* > temp = Players.findAllCharactersInRangeOf( xc, yc, zc, distancemetric );
-	std::vector < CPlayer* > ::iterator titerator;
+void World::makeSoundForAllPlayersInRange( short int xc, short int yc, short int zc, int distancemetric, unsigned short int sound ) {
+	std::vector < Player* > temp = Players.findAllCharactersInRangeOf( xc, yc, zc, distancemetric );
+	std::vector < Player* > ::iterator titerator;
 
 	for ( titerator = temp.begin(); titerator < temp.end(); ++titerator ) {
-        boost::shared_ptr<CBasicServerCommand>cmd(new CSoundTC( xc, yc, zc, sound ) );
+        boost::shared_ptr<BasicServerCommand>cmd(new SoundTC( xc, yc, zc, sound ) );
 		( *titerator )->Connection->addCommand( cmd );
 	}
 }
 
 
 
-void CWorld::lookAtMapItem( CPlayer* cp, short int x, short int y, short int z ) {
+void World::lookAtMapItem( Player* cp, short int x, short int y, short int z ) {
 
-	CField* cfold;
+	Field* cfold;
 	Item titem;
 
 	if ( GetPToCFieldAt( cfold, x, y, z ) ) 
@@ -337,83 +337,83 @@ void CWorld::lookAtMapItem( CPlayer* cp, short int x, short int y, short int z )
                     n_item.type = ScriptItem::it_field;
                     n_item.pos = position( x, y, z);
                     n_item.owner = cp;
-                    // Es gibt ein Script für das Item
+                    // Es gibt ein Script fï¿½r das Item
                     if ( com.script ) {
-                        //Falls ein LookAtItem Script erfolgreich ausgeführt wurde die Funktion beenden.
+                        //Falls ein LookAtItem Script erfolgreich ausgefï¿½hrt wurde die Funktion beenden.
                         if ( com.script->LookAtItem(cp, n_item) )return;
                     }
                 }*/
-                boost::shared_ptr<CLuaItemScript> script = CommonItems->findScript( titem.id );
+                boost::shared_ptr<LuaItemScript> script = CommonItems->findScript( titem.id );
                 ScriptItem n_item = titem;
                 n_item.type = ScriptItem::it_field;
                 n_item.pos = position( x, y, z );
                 n_item.owner = cp;
-                // Es gibt ein Script für das Item
+                // Es gibt ein Script fï¿½r das Item
                 if ( script ) 
                 {
-                     //Falls ein LookAtItem Script erfolgreich ausgeführt wurde die Funktion beenden.
+                     //Falls ein LookAtItem Script erfolgreich ausgefï¿½hrt wurde die Funktion beenden.
                      if ( script->LookAtItem(cp, n_item) )return;
                 }
             }
 			if ( ItemNames->find( titem.id, tempNames ) ) 
-            { // Namen für das Item gefunden
+            { // Namen fï¿½r das Item gefunden
 				std::string outtext;
 				switch ( cp->getPlayerLanguage() ) 
                 {
-					case CLanguage::german:
+					case Language::german:
 						outtext +=  tempNames.German ;
 						break;
-					case CLanguage::english:
+					case Language::english:
 						outtext +=  tempNames.English ;
 						break;
-					case CLanguage::french:
+					case Language::french:
 						outtext +=  tempNames.French ;
 						break;
 					default:
 						outtext +=  "unknown mother tongue" ;
 				}
-                if ( titem.quality < 100 )outtext += " ( " + CLogger::toString(titem.quality) + "% )";
-                boost::shared_ptr<CBasicServerCommand>cmd( new CNameOfMapItemTC( x, y, z,  outtext ));
+                if ( titem.quality < 100 )outtext += " ( " + Logger::toString(titem.quality) + "% )";
+                boost::shared_ptr<BasicServerCommand>cmd( new NameOfMapItemTC( x, y, z,  outtext ));
 				cp->Connection->addCommand(cmd);
 			} 
             else 
             { // kein Name vorhanden, benutze Tile Namen statt dessen
 				if ( Tiles->find( cfold->getTileId(), tempTile ) ) 
-                { // Namen für die Bodenplatte gefunden
-                    boost::shared_ptr<CBasicServerCommand>cmd( new CNameOfMapItemTC( x, y, z,  tempTile.German ));
+                { // Namen fï¿½r die Bodenplatte gefunden
+                    boost::shared_ptr<BasicServerCommand>cmd( new NameOfMapItemTC( x, y, z,  tempTile.German ));
 					switch ( cp->getPlayerLanguage() ) 
                     {
-						case CLanguage::german:
+						case Language::german:
                             cp->Connection->addCommand(cmd);
 							break;
-						case CLanguage::english:
-                            cmd.reset( new CNameOfMapItemTC( x, y, z,  tempTile.English ) );
+						case Language::english:
+                            cmd.reset( new NameOfMapItemTC( x, y, z,  tempTile.English ) );
                             cp->Connection->addCommand(cmd);
 							break;
-						case CLanguage::french:
-                            cmd.reset(  new CNameOfMapItemTC( x, y, z,  tempTile.French ) );
+						case Language::french:
+                            cmd.reset(  new NameOfMapItemTC( x, y, z,  tempTile.French ) );
                             cp->Connection->addCommand(cmd);
 							break;
 						default:
-                            cmd.reset( new CNameOfMapItemTC( x, y, z,  tempTile.English ) );
+                            cmd.reset( new NameOfMapItemTC( x, y, z,  tempTile.English ) );
                             cp->Connection->addCommand(cmd);
 					}
 				} else {
 					std::cerr << "Tile Nr.: " << cfold->getTileId() << "nicht gefunden\n";
 	
 					// kein Name vorhanden
-                    boost::shared_ptr<CBasicServerCommand>cmd( new CNameOfMapItemTC( x, y, z,  "unbekannt" ));
+                    boost::shared_ptr<BasicServerCommand>cmd( new NameOfMapItemTC( x, y, z,  "unbekannt" ));
 					switch ( cp->getPlayerLanguage() ) 
                     {
-						case CLanguage::german:
+						case Language::german:
                             cp->Connection->addCommand(cmd);
 							break;
-						case CLanguage::english:
-                            cmd.reset( new CNameOfMapItemTC( x, y, z,  "unknown" ) );
+						case Language::english:
+                            cmd.reset( new NameOfMapItemTC( x, y, z,  "unknown" ) );
                             cp->Connection->addCommand(cmd);
                             break;
 						default:
-                            cmd.reset( new CNameOfMapItemTC( x, y, z,  "?" ) );
+                            cmd.reset( new NameOfMapItemTC( x, y, z,  "?" ) );
 							cp->Connection->addCommand( cmd );
 					}
 				}
@@ -422,19 +422,19 @@ void CWorld::lookAtMapItem( CPlayer* cp, short int x, short int y, short int z )
         else 
         { // Namen der Bodenplatte senden
 			if ( Tiles->find( cfold->getTileId(), tempTile ) ) 
-            { // Namen für die Bodenplatte gefunden
-                boost::shared_ptr<CBasicServerCommand>cmd( new CNameOfMapItemTC( x, y, z,  tempTile.German ));
+            { // Namen fï¿½r die Bodenplatte gefunden
+                boost::shared_ptr<BasicServerCommand>cmd( new NameOfMapItemTC( x, y, z,  tempTile.German ));
 				switch ( cp->getPlayerLanguage() ) 
                 {
-					case CLanguage::german:
+					case Language::german:
                         cp->Connection->addCommand(cmd);
 						break;
-					case CLanguage::english:
-                        cmd.reset( new CNameOfMapItemTC( x, y, z,  tempTile.English ) );
+					case Language::english:
+                        cmd.reset( new NameOfMapItemTC( x, y, z,  tempTile.English ) );
                         cp->Connection->addCommand( cmd );
 						break;
 					default:
-                        cmd.reset( new CNameOfMapItemTC( x, y, z,  "?" ) );
+                        cmd.reset( new NameOfMapItemTC( x, y, z,  "?" ) );
                         cp->Connection->addCommand( cmd );
 				}
 			} 
@@ -443,18 +443,18 @@ void CWorld::lookAtMapItem( CPlayer* cp, short int x, short int y, short int z )
 				std::cerr << "Tile Nr.: " << cfold->getTileId() << "nicht gefunden\n";
 
 				// kein Name vorhanden
-                boost::shared_ptr<CBasicServerCommand>cmd( new CNameOfMapItemTC( x, y, z,  "unbekannt" ) );
+                boost::shared_ptr<BasicServerCommand>cmd( new NameOfMapItemTC( x, y, z,  "unbekannt" ) );
 				switch ( cp->getPlayerLanguage() ) 
                 {
-					case CLanguage::german:
+					case Language::german:
                         cp->Connection->addCommand(cmd);
 						break;
-					case CLanguage::english:
-                        cmd.reset( new CNameOfMapItemTC( x, y, z,  "unknown" ) );
+					case Language::english:
+                        cmd.reset( new NameOfMapItemTC( x, y, z,  "unknown" ) );
                         cp->Connection->addCommand( cmd );
 						break;
 					default:
-                        cmd.reset( new CNameOfMapItemTC( x, y, z,  "?" ) );
+                        cmd.reset( new NameOfMapItemTC( x, y, z,  "?" ) );
                         cp->Connection->addCommand( cmd );
                         break;
 				}
@@ -464,15 +464,15 @@ void CWorld::lookAtMapItem( CPlayer* cp, short int x, short int y, short int z )
 }
 
 
-void CWorld::lookAtMenueItem( CPlayer* cp, unsigned char position, TYPE_OF_ITEM_ID itemid ) 
+void World::lookAtMenueItem( Player* cp, unsigned char position, TYPE_OF_ITEM_ID itemid ) 
 {
     std::string name="";
-	if ( ItemNames->find( itemid, tempNames ) ) { // Namen für das Item gefunden
+	if ( ItemNames->find( itemid, tempNames ) ) { // Namen fï¿½r das Item gefunden
 		switch ( cp->getPlayerLanguage() ) {
-			case CLanguage::german:
+			case Language::german:
 				name = tempNames.German;
 				break;
-			case CLanguage::english:
+			case Language::english:
 				name = tempNames.English;
 				break;
 			default:
@@ -483,36 +483,36 @@ void CWorld::lookAtMenueItem( CPlayer* cp, unsigned char position, TYPE_OF_ITEM_
     { // kein Name vorhanden
 		switch ( cp->getPlayerLanguage() ) 
         {
-			case CLanguage::german:
+			case Language::german:
 				name = std::string( "unbekannt" );
 				break;
-			case CLanguage::english:
+			case Language::english:
 				name = std::string( "unknown" );
 				break;
 			default:
 				name = std::string( "?" );
 		}
 	}
-    boost::shared_ptr<CBasicServerCommand>cmd( new CNameOfShowCaseItemTC( 2, position,name) );
+    boost::shared_ptr<BasicServerCommand>cmd( new NameOfShowCaseItemTC( 2, position,name) );
 	cp->Connection->addCommand(cmd);
 }
 
 
 
-void CWorld::lookAtShowcaseItem( CPlayer* cp, unsigned char showcase, unsigned char position ) {
+void World::lookAtShowcaseItem( Player* cp, unsigned char showcase, unsigned char position ) {
 
 	ScriptItem titem;
 
 	if ( showcase < MAXSHOWCASES ) {
-		CContainer * ps = cp->showcases[ showcase ].top();
-		if ( ps != NULL ) { // source - CContainer gefunden
-			CContainer * tc;
+		Container * ps = cp->showcases[ showcase ].top();
+		if ( ps != NULL ) { // source - Container gefunden
+			Container * tc;
 			if ( ps->viewItemNr( position, titem, tc ) ) 
             {
-				// Ausführen eines LookAt Scriptes
+				// Ausfï¿½hren eines LookAt Scriptes
                 if ( titem.quality >= 100 )
                 {
-                    boost::shared_ptr<CLuaItemScript> script = CommonItems->findScript( titem.id );
+                    boost::shared_ptr<LuaItemScript> script = CommonItems->findScript( titem.id );
                     ScriptItem n_item = titem;
                     if ( showcase == 0 )
                         n_item.type = ScriptItem::it_showcase1;
@@ -521,10 +521,10 @@ void CWorld::lookAtShowcaseItem( CPlayer* cp, unsigned char showcase, unsigned c
                     n_item.pos = cp->pos;
                     n_item.owner = cp;
                     n_item.itempos = position;
-                    // Es gibt ein Script für das Item
+                    // Es gibt ein Script fï¿½r das Item
                     if ( script ) 
                     {
-                        //falls ein LookAtItem ausgeführt werden kann die Funktion beenden
+                        //falls ein LookAtItem ausgefï¿½hrt werden kann die Funktion beenden
                         if (script->LookAtItem(cp, n_item) )return;
                     }                    
                     /*
@@ -540,45 +540,45 @@ void CWorld::lookAtShowcaseItem( CPlayer* cp, unsigned char showcase, unsigned c
                         n_item.pos = cp->pos;
                         n_item.owner = cp;
                         n_item.itempos = position;
-                        // Es gibt ein Script für das Item
+                        // Es gibt ein Script fï¿½r das Item
                         if ( com.script ) 
                         {
-                            //falls ein LookAtItem ausgeführt werden kann die Funktion beenden
+                            //falls ein LookAtItem ausgefï¿½hrt werden kann die Funktion beenden
                             if (com.script->LookAtItem(cp, n_item) )return;
                         }
                     }*/
-                    // Ende ausführen des LookAt Scriptes
+                    // Ende ausfï¿½hren des LookAt Scriptes
                 }
                 std::string outtext;
-				if ( ItemNames->find( titem.id, tempNames ) ) { // Namen für das Item gefunden
+				if ( ItemNames->find( titem.id, tempNames ) ) { // Namen fï¿½r das Item gefunden
 
 					switch ( cp->getPlayerLanguage()) {
-						case CLanguage::german:
+						case Language::german:
 							outtext +=  tempNames.German ;
 							break;
-						case CLanguage::english:
+						case Language::english:
 							outtext +=  tempNames.English ;
 							break;
-						case CLanguage::french:
+						case Language::french:
 							outtext +=  tempNames.French ;
 							break;
 						default:
 							outtext +=  "unknown mother tongue" ;
 					}
-                    if ( titem.quality < 100)outtext += " ( " + CLogger::toString(titem.quality) + "% )";
+                    if ( titem.quality < 100)outtext += " ( " + Logger::toString(titem.quality) + "% )";
                 } else { // kein Name vorhanden
 					switch ( cp->getPlayerLanguage() ) {
-						case CLanguage::german:
+						case Language::german:
 							outtext = std::string( "unbekannt" );
 							break;
-						case CLanguage::english:
+						case Language::english:
 							outtext = std::string( "unknown" );
 							break;
 						default:
 							outtext = std::string( "?" );
 					}
 				}
-                boost::shared_ptr<CBasicServerCommand>cmd( new CNameOfShowCaseItemTC( showcase, position, outtext) );
+                boost::shared_ptr<BasicServerCommand>cmd( new NameOfShowCaseItemTC( showcase, position, outtext) );
 				cp->Connection->addCommand(cmd);
 			}
 		}
@@ -587,18 +587,18 @@ void CWorld::lookAtShowcaseItem( CPlayer* cp, unsigned char showcase, unsigned c
 
 
 
-void CWorld::lookAtInventoryItem( CPlayer* cp, unsigned char position ) 
+void World::lookAtInventoryItem( Player* cp, unsigned char position ) 
 {
 	if ( cp->characterItems[ position ].id != 0 ) 
     { // Position mit Item belegt
         std::string outtext;
 		if ( ItemNames->find( cp->characterItems[ position ].id, tempNames ) ) 
-        { // Namen für das Item gefunden
+        { // Namen fï¿½r das Item gefunden
 			Item titem = cp->characterItems[ position ];
             if ( titem.quality >= 100 )
             {
-                // Ausführen eines LookAt Scriptes
-                boost::shared_ptr<CLuaItemScript> script = CommonItems->findScript( cp->characterItems[ position ].id );
+                // Ausfï¿½hren eines LookAt Scriptes
+                boost::shared_ptr<LuaItemScript> script = CommonItems->findScript( cp->characterItems[ position ].id );
                 ScriptItem n_item = cp->characterItems[ position ];
                 if ( position < MAX_BODY_ITEMS )
                     n_item.type = ScriptItem::it_inventory;
@@ -609,7 +609,7 @@ void CWorld::lookAtInventoryItem( CPlayer* cp, unsigned char position )
                     n_item.owner = cp;
                 if ( script ) 
                 {
-                    //Falls ein LookAt Script ausgeführt wurde die Funktion verlassen.
+                    //Falls ein LookAt Script ausgefï¿½hrt wurde die Funktion verlassen.
                      if ( script->LookAtItem(cp, n_item) ) return;
                 }
                 
@@ -625,70 +625,70 @@ void CWorld::lookAtInventoryItem( CPlayer* cp, unsigned char position )
                     n_item.pos = cp->pos;
                     n_item.owner = cp;
                     if ( com.script ) {
-                        //Falls ein LookAt Script ausgeführt wurde die Funktion verlassen.
+                        //Falls ein LookAt Script ausgefï¿½hrt wurde die Funktion verlassen.
                         if ( com.script->LookAtItem(cp, n_item) ) return;
                     }
                 }
                 */
-                // Ende ausführen des LookAt Scriptes
+                // Ende ausfï¿½hren des LookAt Scriptes
             }
 			switch ( cp->getPlayerLanguage() ) 
             {
-				case CLanguage::german:
+				case Language::german:
 					outtext +=  tempNames.German ;
 					break;
-				case CLanguage::english:
+				case Language::english:
 					outtext +=  tempNames.English ;
 					break;
-				case CLanguage::french:
+				case Language::french:
 					outtext +=  tempNames.French ;
 					break;
 				default:
 					outtext += "unknown mother tongue" ;
 			}
-            if ( titem.quality  < 100 )outtext += " ( " + CLogger::toString(titem.quality) + "% )";
+            if ( titem.quality  < 100 )outtext += " ( " + Logger::toString(titem.quality) + "% )";
 		} else { // kein Name vorhanden
 			switch ( cp->getPlayerLanguage() ) {
-				case CLanguage::german:
+				case Language::german:
 					outtext = std::string( "unbekannt" );
 					break;
-				case CLanguage::english:
+				case Language::english:
 					outtext = std::string( "unknown" );
 					break;
 				default:
 					outtext = std::string( "?" );
 			}
 		}
-        boost::shared_ptr<CBasicServerCommand>cmd( new CNameOfInventoryItemTC( position, outtext) );
+        boost::shared_ptr<BasicServerCommand>cmd( new NameOfInventoryItemTC( position, outtext) );
 		cp->Connection->addCommand(cmd);
 	}
 }
 
 
 
-void CWorld::message( std::string message[3], CPlayer* cp ) 
+void World::message( std::string message[3], Player* cp ) 
 {
 	if (cp != NULL) 
     {
 
         std::string out="";
 		switch ( cp->getPlayerLanguage() ) {
-			case CLanguage::german:
-				out = message[CLanguage::german];
+			case Language::german:
+				out = message[Language::german];
 				break;
-			case CLanguage::english:
-				out = message[CLanguage::english];
+			case Language::english:
+				out = message[Language::english];
 				break;
-			case CLanguage::french:
-				out = message[CLanguage::french];
+			case Language::french:
+				out = message[Language::french];
 				break;
 		}
-        boost::shared_ptr<CBasicServerCommand>cmd( new CSayTC( cp->pos.x, cp->pos.y, cp->pos.z ,out ) );
+        boost::shared_ptr<BasicServerCommand>cmd( new SayTC( cp->pos.x, cp->pos.y, cp->pos.z ,out ) );
 		cp->Connection->addCommand(cmd);
 	}
 }
 
-void CWorld::forceIntroducePlayer( CPlayer* cp, CPlayer* Admin ) 
+void World::forceIntroducePlayer( Player* cp, Player* Admin ) 
 {
 	std::string tstring = "";
 	if ( (cp->prefix != "") && (cp->prefix != "NULL") )
@@ -696,13 +696,13 @@ void CWorld::forceIntroducePlayer( CPlayer* cp, CPlayer* Admin )
 	tstring = tstring + cp->name;
 	if ( (cp->suffix != "") && (cp->suffix != "NULL") )
 		tstring = tstring + std::string( " " ) + cp->suffix;
-    boost::shared_ptr<CBasicServerCommand>cmd( new CIntroduceTC( cp->id,tstring) );    
+    boost::shared_ptr<BasicServerCommand>cmd( new IntroduceTC( cp->id,tstring) );    
 	Admin->Connection->addCommand(cmd);
 }
 
-void CWorld::introduceMyself( CPlayer* cp ) {
-	std::vector < CPlayer* > temp = Players.findAllCharactersInRangeOf( cp->pos.x, cp->pos.y, cp->pos.z, 2 );
-	std::vector < CPlayer* > ::iterator titerator;
+void World::introduceMyself( Player* cp ) {
+	std::vector < Player* > temp = Players.findAllCharactersInRangeOf( cp->pos.x, cp->pos.y, cp->pos.z, 2 );
+	std::vector < Player* > ::iterator titerator;
 
 	for ( titerator = temp.begin(); titerator < temp.end(); ++titerator ) 
     {
@@ -712,23 +712,23 @@ void CWorld::introduceMyself( CPlayer* cp ) {
 		tstring = tstring + cp->name;
 		if ( (cp->suffix != "") && (cp->suffix != "NULL") )
 			tstring = tstring + std::string( " " ) + cp->suffix;
-        boost::shared_ptr<CBasicServerCommand>cmd( new CIntroduceTC( cp->id,tstring) );
+        boost::shared_ptr<BasicServerCommand>cmd( new IntroduceTC( cp->id,tstring) );
 		( *titerator )->Connection->addCommand(cmd);
 	}
 }
 
-void CWorld::sendWeather( CPlayer* cp)
+void World::sendWeather( Player* cp)
 {
     cp->sendWeather( weather );
 }
 
-void CWorld::sendIGTime( CPlayer* cp)
+void World::sendIGTime( Player* cp)
 {
-    boost::shared_ptr<CBasicServerCommand>cmd( new CUpdateTimeTC(static_cast<unsigned char>(getTime("hour")),static_cast<unsigned char>(getTime("minute")),static_cast<unsigned char>(getTime("day")),static_cast<unsigned char>(getTime("month")), static_cast<short int>(getTime("year")) ));
+    boost::shared_ptr<BasicServerCommand>cmd( new UpdateTimeTC(static_cast<unsigned char>(getTime("hour")),static_cast<unsigned char>(getTime("minute")),static_cast<unsigned char>(getTime("day")),static_cast<unsigned char>(getTime("month")), static_cast<short int>(getTime("year")) ));
     cp->Connection->addCommand(cmd);  
 }
 
-void CWorld::sendIGTimeToAllPlayers()
+void World::sendIGTimeToAllPlayers()
 {
     PLAYERVECTOR::iterator titerator;
     for ( titerator = Players.begin(); titerator != Players.end(); ++titerator )
@@ -737,7 +737,7 @@ void CWorld::sendIGTimeToAllPlayers()
     }
 }
 
-void CWorld::sendWeatherToAllPlayers()
+void World::sendWeatherToAllPlayers()
 {
     PLAYERVECTOR::iterator titerator;
 	for ( titerator = Players.begin(); titerator != Players.end(); ++titerator ) 

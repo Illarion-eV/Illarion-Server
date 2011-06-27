@@ -92,7 +92,7 @@ enum ServerCommands
 *@ingroup Servercommands
 *sends an update of all the items on a field (rotting items)
 */
-class CItemUpdate_TC : public CBasicServerCommand
+class ItemUpdate_TC : public BasicServerCommand
 {
     public:
         /**
@@ -100,7 +100,7 @@ class CItemUpdate_TC : public CBasicServerCommand
         *@param fieldpos the position of the field which stack is sended
         *@param items the reference to the items which are on the field
         */
-        CItemUpdate_TC( position fieldpos, ITEMVECTOR & items );
+        ItemUpdate_TC( position fieldpos, ITEMVECTOR & items );
         
         /**
         *sends the whole itemstack of an field
@@ -109,7 +109,7 @@ class CItemUpdate_TC : public CBasicServerCommand
         *@param pz the z position of the field which stack is sended
         *@param items the reference to the items which are on the field
         */        
-        CItemUpdate_TC( int16_t px, int16_t py, int16_t pz, ITEMVECTOR &items ); 
+        ItemUpdate_TC( int16_t px, int16_t py, int16_t pz, ITEMVECTOR &items ); 
 
 };
 
@@ -117,7 +117,7 @@ class CItemUpdate_TC : public CBasicServerCommand
 *@ingroup Servercommands
 *command when something on a char has changed
 */
-class CCharDescription : public CBasicServerCommand
+class CharDescription : public BasicServerCommand
 {
     public:
         /**
@@ -129,16 +129,16 @@ class CCharDescription : public CBasicServerCommand
         *@param lightsource which lightsource item the player holds in his hand
         *@param attackmode 0 = unarmed, 1 = melee weapon, 2 = distance weapon, 3 = staff
         */
-        CCharDescription(TYPE_OF_CHARACTER_ID id, std::string description); 
+        CharDescription(TYPE_OF_CHARACTER_ID id, std::string description); 
 
 };
 
-class CCharacter;
+class Character;
 /**
 *@ingroup Servercommands
 *command when something on a char has changed
 */
-class CAppearanceTC : public CBasicServerCommand
+class AppearanceTC : public BasicServerCommand
 {
     public:
         /**
@@ -165,7 +165,7 @@ class CAppearanceTC : public CBasicServerCommand
         *@param attackmode 0 = unarmed, 1 = melee weapon, 2 = distance weapon, 3 = staff
         *@param deathflag
         */
-        CAppearanceTC( CCharacter* cc );
+        AppearanceTC( Character* cc );
 };
 
 
@@ -173,10 +173,10 @@ class CAppearanceTC : public CBasicServerCommand
 *@ingroup Servercommands
 *command for performing character animation
 */
-class CAnimationTC : public CBasicServerCommand
+class AnimationTC : public BasicServerCommand
 {
     public:
-        CAnimationTC( TYPE_OF_CHARACTER_ID id, uint8_t animID );
+        AnimationTC( TYPE_OF_CHARACTER_ID id, uint8_t animID );
 };
 
 
@@ -184,10 +184,10 @@ class CAnimationTC : public CBasicServerCommand
 *@ingroup Servercommands
 *command for displaying books
 */
-class CBookTC : public CBasicServerCommand
+class BookTC : public BasicServerCommand
 {
     public:
-        CBookTC( uint16_t bookID );
+        BookTC( uint16_t bookID );
 };
 
 
@@ -195,14 +195,14 @@ class CBookTC : public CBasicServerCommand
 *@ingroup Servercommands
 *command to remove a character
 */
-class CRemoveCharTC : public CBasicServerCommand
+class RemoveCharTC : public BasicServerCommand
 {
     public:
         /**
         *removes the character with given id
         *@param id of the char to be removed
         */
-        CRemoveCharTC(TYPE_OF_CHARACTER_ID id);
+        RemoveCharTC(TYPE_OF_CHARACTER_ID id);
 };
 
 
@@ -210,7 +210,7 @@ class CRemoveCharTC : public CBasicServerCommand
 *@ingroup Servercommands
 *command when the client has to log out
 */
-class CUpdateTimeTC : public CBasicServerCommand
+class UpdateTimeTC : public BasicServerCommand
 {
     public:
         /**
@@ -221,54 +221,54 @@ class CUpdateTimeTC : public CBasicServerCommand
         *@param month of the ig time
         *@param year of the ig time
         */
-        CUpdateTimeTC(unsigned char hour, unsigned char minute, unsigned char day, unsigned char month, short int year); 
+        UpdateTimeTC(unsigned char hour, unsigned char minute, unsigned char day, unsigned char month, short int year); 
 };
 
 /**
 *@ingroup Servercommands
 *command when the client has to log out
 */
-class CLogOutTC : public CBasicServerCommand
+class LogOutTC : public BasicServerCommand
 {
     public:
         /**
         *send log out command
         *@param reason for the logout
         */
-        CLogOutTC(unsigned char reason); 
+        LogOutTC(unsigned char reason); 
 };
 
 /**
 *@ingroup Servercommands
 *command when the current target is lost ( died or out of sight )
 */
-class CTargetLostTC : public CBasicServerCommand
+class TargetLostTC : public BasicServerCommand
 {
     public:
         /**
         *send attack abbort
         */
-        CTargetLostTC();
+        TargetLostTC();
 };
 
 /**
 *@ingroup Servercommands
 *command when an Attack is Ackknowledged
 */
-class CAttackAckknowledgedTC : public CBasicServerCommand
+class AttackAckknowledgedTC : public BasicServerCommand
 {
     public:
         /**
         *send ok for the attack
         */
-        CAttackAckknowledgedTC();
+        AttackAckknowledgedTC();
 };
 
 /**
 *@ingroup Servercommands
 *command when a item in inventory is watched
 */
-class CNameOfInventoryItemTC : public CBasicServerCommand
+class NameOfInventoryItemTC : public BasicServerCommand
 {
     public:
         /**
@@ -276,14 +276,14 @@ class CNameOfInventoryItemTC : public CBasicServerCommand
         *@param pos in which the name should be displayed
         *@param name which should be displayed
         */
-        CNameOfInventoryItemTC( unsigned char pos, std::string name );
+        NameOfInventoryItemTC( unsigned char pos, std::string name );
 };
 
 /**
 *@ingroup Servercommands
 *command when a item in showcase or the menu is looked
 */
-class CNameOfShowCaseItemTC : public CBasicServerCommand
+class NameOfShowCaseItemTC : public BasicServerCommand
 {
     public:
         /**
@@ -292,7 +292,7 @@ class CNameOfShowCaseItemTC : public CBasicServerCommand
         *@param pos in which the name should be displayed
         *@param name which should be displayed
         */
-        CNameOfShowCaseItemTC(unsigned char showcase, unsigned char pos, std::string name );
+        NameOfShowCaseItemTC(unsigned char showcase, unsigned char pos, std::string name );
 };
 
 
@@ -300,7 +300,7 @@ class CNameOfShowCaseItemTC : public CBasicServerCommand
 *@ingroup Servercommands
 *command when at an item on the map is looked and the name should be displayes
 */
-class CNameOfMapItemTC : public CBasicServerCommand
+class NameOfMapItemTC : public BasicServerCommand
 {
     public:
         /**
@@ -310,14 +310,14 @@ class CNameOfMapItemTC : public CBasicServerCommand
         *@param z z coordinate of the item which was removed
         *@param name name which will be sent
         */
-        CNameOfMapItemTC( short int x, short int y, short int z, std::string name );
+        NameOfMapItemTC( short int x, short int y, short int z, std::string name );
 };
 
 /**
 *@ingroup Servercommands
 *command for putting an item onto the map
 */
-class CItemPutTC : public CBasicServerCommand
+class ItemPutTC : public BasicServerCommand
 {
     public:
         /**
@@ -327,14 +327,14 @@ class CItemPutTC : public CBasicServerCommand
         *@param z z coordinate of the item which was put on the map
         *@param item the item which is putted on the map
         */
-        CItemPutTC( short int x, short int y, short int z, Item &item );
+        ItemPutTC( short int x, short int y, short int z, Item &item );
 };
 
 /**
 *@ingroup Servercommands
 *command when an item is swapped on the map (simulates only a remove and a put in fast time
 */
-class CItemSwapTC : public CBasicServerCommand
+class ItemSwapTC : public BasicServerCommand
 {
     public:
         /**
@@ -343,7 +343,7 @@ class CItemSwapTC : public CBasicServerCommand
         *@param id of the item which was removed
         *@param item the item which is putted on the map
         */
-        CItemSwapTC(position pos, unsigned short int id, Item &item);
+        ItemSwapTC(position pos, unsigned short int id, Item &item);
         
         /**
         *item is putted the map
@@ -353,14 +353,14 @@ class CItemSwapTC : public CBasicServerCommand
         *@param id of the item which was removed
         *@param item the item which is putted on the map
         */
-        CItemSwapTC(short int x, short int y, short int z, unsigned short int id, Item &item);
+        ItemSwapTC(short int x, short int y, short int z, unsigned short int id, Item &item);
 };
 
 /**
 *@ingroup Servercommands
 *command when an item is removed from the map
 */
-class CItemRemoveTC : public CBasicServerCommand
+class ItemRemoveTC : public BasicServerCommand
 {
     public:
         /**
@@ -369,7 +369,7 @@ class CItemRemoveTC : public CBasicServerCommand
         *@param y y coordinate of the item which was removed
         *@param z z coordinate of the item which was removed
         */
-        CItemRemoveTC( short int x, short int y, short int z );
+        ItemRemoveTC( short int x, short int y, short int z );
 };
 
 
@@ -377,13 +377,13 @@ class CItemRemoveTC : public CBasicServerCommand
 *@ingroup Servercommands
 *command when a admin wants all playerdata
 */
-class CAViewPlayersTC : public CBasicServerCommand
+class AViewPlayersTC : public BasicServerCommand
 {
     public:
         /**
         *admin wants all playerdata
         */
-        CAViewPlayersTC();
+        AViewPlayersTC();
 };
 
 
@@ -391,7 +391,7 @@ class CAViewPlayersTC : public CBasicServerCommand
 *@ingroup Servercommands
 *command when a sound should be played in the client
 */
-class CSoundTC : public CBasicServerCommand
+class SoundTC : public BasicServerCommand
 {
     public:
         /**
@@ -401,14 +401,14 @@ class CSoundTC : public CBasicServerCommand
         *@param z - z coordinate of the effect
         *@param id - id of the effect which should be displayed
         */
-        CSoundTC(short int x, short int y, short int z, unsigned short int id);
+        SoundTC(short int x, short int y, short int z, unsigned short int id);
 };
 
 /**
 *@ingroup Servercommands
 *command when a graphiceffect should be displayed in the client
 */
-class CGraphicEffectTC : public CBasicServerCommand
+class GraphicEffectTC : public BasicServerCommand
 {
     public:
         /**
@@ -418,14 +418,14 @@ class CGraphicEffectTC : public CBasicServerCommand
         *@param z - z coordinate of the effect
         *@param id - id of the effect which should be displayed
         */
-        CGraphicEffectTC(short int x, short int y, short int z, unsigned short int id);
+        GraphicEffectTC(short int x, short int y, short int z, unsigned short int id);
 };
 
 /**
 *@ingroup Servercommands
 *command when a player is pushed
 */
-class CPushPlayerTC : public CBasicServerCommand
+class PushPlayerTC : public BasicServerCommand
 {
     public:
         /**
@@ -436,28 +436,28 @@ class CPushPlayerTC : public CBasicServerCommand
         *@param appearance - of the character which is pushed
         *@param direction - of the character which is pushed
         */
-        CPushPlayerTC(char xoffs, char yoffs, uint32_t id, unsigned short int appearance, unsigned char direction);
+        PushPlayerTC(char xoffs, char yoffs, uint32_t id, unsigned short int appearance, unsigned char direction);
 };
 
 /**
 *@ingroup Servercommands
 *command for starting a player menu
 */
-class CStartPlayerMenuTC : public CBasicServerCommand
+class StartPlayerMenuTC : public BasicServerCommand
 {
     public:
         /**
         *sends a new playermenu to the player
         *@param menu - the menu struct with the entrys for the menu
         */
-        CStartPlayerMenuTC(UserMenuStruct menu);
+        StartPlayerMenuTC(UserMenuStruct menu);
 };
 
 /**
 *@ingroup Servercommands
 *command for looking int a showcase
 */
-class CUpdateShowCaseTC : public CBasicServerCommand
+class UpdateShowCaseTC : public BasicServerCommand
 {
     public:
         /**
@@ -465,20 +465,20 @@ class CUpdateShowCaseTC : public CBasicServerCommand
         *@param showcase which showcase is ment
         *@param items inside the showcase
         */
-        CUpdateShowCaseTC(unsigned char showcase, ITEMVECTOR &items);
+        UpdateShowCaseTC(unsigned char showcase, ITEMVECTOR &items);
 };
 
 /**
 *@ingroup Servercommands
 *send a map stripe to the client
 */
-class CMapStripeTC : public CBasicServerCommand
+class MapStripeTC : public BasicServerCommand
 {
     public:
         /**
         * send new mapstripe to the client 
         */
-        CMapStripeTC( position pos, CNewClientView::stripedirection dir ); 
+        MapStripeTC( position pos, NewClientView::stripedirection dir ); 
 };
 
 
@@ -486,13 +486,13 @@ class CMapStripeTC : public CBasicServerCommand
 *@ingroup Servercommands
 *notify the client that the map is now complete
 */
-class CMapCompleteTC : public CBasicServerCommand
+class MapCompleteTC : public BasicServerCommand
 {
     public:
         /**
         * notify the client that the map is complete 
         */
-        CMapCompleteTC(); 
+        MapCompleteTC(); 
 };
 
 
@@ -500,7 +500,7 @@ class CMapCompleteTC : public CBasicServerCommand
 *@ingroup Servercommands
 *a movement was acknowledged send the infos to the client
 */
-class CMoveAckTC : public CBasicServerCommand
+class MoveAckTC : public BasicServerCommand
 {
     public:
         /**
@@ -510,7 +510,7 @@ class CMoveAckTC : public CBasicServerCommand
         *@param mode NOMOVE, NORMALMOVE, PUSH
         *@param waitpages waitpages of the move
         */
-        CMoveAckTC( TYPE_OF_CHARACTER_ID id, position pos, unsigned char mode, unsigned char waitpages);
+        MoveAckTC( TYPE_OF_CHARACTER_ID id, position pos, unsigned char mode, unsigned char waitpages);
 };
 
 
@@ -518,7 +518,7 @@ class CMoveAckTC : public CBasicServerCommand
 *@ingroup Servercommands
 *send a introduce command
 */
-class CIntroduceTC : public CBasicServerCommand
+class IntroduceTC : public BasicServerCommand
 {
     public:
         /**
@@ -526,14 +526,14 @@ class CIntroduceTC : public CBasicServerCommand
         *@param id of the character to which i want to introduce
         *@param name of the character
         */
-        CIntroduceTC(TYPE_OF_CHARACTER_ID id, std::string name);
+        IntroduceTC(TYPE_OF_CHARACTER_ID id, std::string name);
 };
 
 /**
 *@ingroup Servercommands
 *server should send a talk command
 */
-class CShoutTC : public CBasicServerCommand
+class ShoutTC : public BasicServerCommand
 {
     public:
         /**
@@ -543,14 +543,14 @@ class CShoutTC : public CBasicServerCommand
         *@param z - coordinate of the talker
         *@param text - what was said
         */
-        CShoutTC(int16_t x, int16_t y, int16_t z, std::string text);
+        ShoutTC(int16_t x, int16_t y, int16_t z, std::string text);
 };
 
 /**
 *@ingroup Servercommands
 *server should send a talk command
 */
-class CWhisperTC : public CBasicServerCommand
+class WhisperTC : public BasicServerCommand
 {
     public:
         /**
@@ -560,14 +560,14 @@ class CWhisperTC : public CBasicServerCommand
         *@param z - coordinate of the talker
         *@param text - what was said
         */
-        CWhisperTC(int16_t x, int16_t y, int16_t z, std::string text);
+        WhisperTC(int16_t x, int16_t y, int16_t z, std::string text);
 };
 
 /**
 *@ingroup Servercommands
 *server should send a talk command
 */
-class CSayTC : public CBasicServerCommand
+class SayTC : public BasicServerCommand
 {
     public:
         /**
@@ -577,41 +577,41 @@ class CSayTC : public CBasicServerCommand
         *@param z - coordinate of the talker
         *@param text - what was said
         */
-        CSayTC(int16_t x, int16_t y, int16_t z, std::string text);
+        SayTC(int16_t x, int16_t y, int16_t z, std::string text);
 };
 
 /**
 *@ingroup Servercommands
 *client should play custom music
 */
-class CMusicTC : public CBasicServerCommand
+class MusicTC : public BasicServerCommand
 {
     public:
         /**
         *play new music
         *@param title the number of the title which should be played
         */
-        CMusicTC(short int title); 
+        MusicTC(short int title); 
 };
 
 /**
 *@ingroup Servercommands
 *client should play default music
 */
-class CMusicDefaultTC : public CBasicServerCommand
+class MusicDefaultTC : public BasicServerCommand
 {
     public:
         /**
         *play default music
         */
-        CMusicDefaultTC();
+        MusicDefaultTC();
 };
 
 /**
 *@ingroup Servercommands
 *command which sends a attrib to the client
 */
-class CUpdateAttribTC : public CBasicServerCommand
+class UpdateAttribTC : public BasicServerCommand
 {
     public:
         /**
@@ -619,7 +619,7 @@ class CUpdateAttribTC : public CBasicServerCommand
         *@param name of the attribute
         *@param value of the attribute
         */
-        CUpdateAttribTC(std::string name, short int value); 
+        UpdateAttribTC(std::string name, short int value); 
 };
 
 
@@ -627,7 +627,7 @@ class CUpdateAttribTC : public CBasicServerCommand
 *@ingroup Servercommands
 *command which sends the current magicflags to the client
 */
-class CUpdateMagicFlagsTC : public CBasicServerCommand
+class UpdateMagicFlagsTC : public BasicServerCommand
 {
     public:
         /**
@@ -635,7 +635,7 @@ class CUpdateMagicFlagsTC : public CBasicServerCommand
         *@param type of magican
         *@param flags for the magic type
         */
-        CUpdateMagicFlagsTC(unsigned char type, uint32_t flags); 
+        UpdateMagicFlagsTC(unsigned char type, uint32_t flags); 
 };
 
 
@@ -644,21 +644,21 @@ class CUpdateMagicFlagsTC : public CBasicServerCommand
 *@ingroup Servercommands
 *command that a showcase is closed 
 */
-class CClearShowCaseTC : public CBasicServerCommand
+class ClearShowCaseTC : public BasicServerCommand
 {
     public:
         /**
         *a showcase was closed, send the id of it to the client, command
         *@param id of the showcase
         */
-        CClearShowCaseTC(unsigned char id); 
+        ClearShowCaseTC(unsigned char id); 
 };
 
 /**
 *@ingroup Servercommands
 *command which sends a skill to the client
 */
-class CUpdateSkillTC : public CBasicServerCommand
+class UpdateSkillTC : public BasicServerCommand
 {
     public:
         /**
@@ -668,21 +668,21 @@ class CUpdateSkillTC : public CBasicServerCommand
         *@param major value of the skill
         *@param minor value of the skill (currently not sended)
         */
-        CUpdateSkillTC(std::string name, unsigned char type, unsigned short int major, unsigned short int minor); 
+        UpdateSkillTC(std::string name, unsigned char type, unsigned short int major, unsigned short int minor); 
 };
 
 /**
 *@ingroup Servercommands
 *command that sends new weather informations to the client
 */
-class CUpdateWeatherTC : public CBasicServerCommand
+class UpdateWeatherTC : public BasicServerCommand
 {
     public:
         /**
         *sends the current weather to the client
         *@param weather the weatherstruct with the informations
         */
-        CUpdateWeatherTC( WeatherStruct weather );
+        UpdateWeatherTC( WeatherStruct weather );
         
         /**
         *sends the current weather to the client
@@ -695,7 +695,7 @@ class CUpdateWeatherTC : public CBasicServerCommand
         *@param ts - thunderstorm
         *@param tp - temperature
         */
-        CUpdateWeatherTC( uint8_t cd, uint8_t fd, uint8_t wd, uint8_t gs, uint8_t ps, uint8_t pt, uint8_t ts, uint8_t tp );
+        UpdateWeatherTC( uint8_t cd, uint8_t fd, uint8_t wd, uint8_t gs, uint8_t ps, uint8_t pt, uint8_t ts, uint8_t tp );
 };
 
 /**
@@ -703,21 +703,21 @@ class CUpdateWeatherTC : public CBasicServerCommand
 *command which sends the current id to the client
 *normally sent after the login
 */
-class CIdTC : public CBasicServerCommand
+class IdTC : public BasicServerCommand
 {
     public:
         /**
         *sends the id and the appearance to the client
         *@param id id of the char
         */
-        CIdTC(int id);
+        IdTC(int id);
 };
 
 /**
 *@ingroup Servercommands
 *command which sends one item in the inventory to the client
 */
-class CUpdateInventoryPosTC : public CBasicServerCommand
+class UpdateInventoryPosTC : public BasicServerCommand
 {
     public:
         /**
@@ -726,21 +726,21 @@ class CUpdateInventoryPosTC : public CBasicServerCommand
         *@param id of the item in the inventory
         *@param number of the items in the inventory
         */
-        CUpdateInventoryPosTC(unsigned char pos, TYPE_OF_ITEM_ID id, unsigned char number);
+        UpdateInventoryPosTC(unsigned char pos, TYPE_OF_ITEM_ID id, unsigned char number);
 };
 
 /**
 *@ingroup Servercommands
 *command which sends the current position of a char to the client
 */
-class CSetCoordinateTC : public CBasicServerCommand
+class SetCoordinateTC : public BasicServerCommand
 {
     public:
         /**
         *sends the position to the client
         *@param pos position of the char
         */
-        CSetCoordinateTC( position pos );
+        SetCoordinateTC( position pos );
         
         /**
         *sends the position to the client
@@ -748,7 +748,7 @@ class CSetCoordinateTC : public CBasicServerCommand
         *@param y - coordinate
         *@param z - coordinate
         */
-        CSetCoordinateTC( short int x, short int y, short int z );
+        SetCoordinateTC( short int x, short int y, short int z );
 };
 
 
@@ -756,7 +756,7 @@ class CSetCoordinateTC : public CBasicServerCommand
 *@ingroup Servercommands
 *command which sends a player spin to the client
 */
-class CPlayerSpinTC : public CBasicServerCommand
+class PlayerSpinTC : public BasicServerCommand
 {
     public:
         /**
@@ -764,7 +764,7 @@ class CPlayerSpinTC : public CBasicServerCommand
         *@param faceto the direction of the character
         *@param id the id of the character
         */
-        CPlayerSpinTC( unsigned char faceto, TYPE_OF_CHARACTER_ID id );
+        PlayerSpinTC( unsigned char faceto, TYPE_OF_CHARACTER_ID id );
 };
 
 #endif

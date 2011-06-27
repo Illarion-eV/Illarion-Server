@@ -45,17 +45,17 @@
 #include "tvector.hpp"
 #include "PlayerManager.hpp"
 
-//#define CPLAYER_MOVE_DEBUG
+//#define PLAYER_MOVE_DEBUG
 
 template<> const std::string toString(const unsigned char& convertme) {
         return toString((unsigned short)convertme);
 }
 
-CPlayer::CPlayer(boost::shared_ptr<CNetInterface> newConnection) throw (LogoutException)
-               : CCharacter(), mapshowcaseopen(false), onlinetime(0), Connection(newConnection),
+Player::Player(boost::shared_ptr<NetInterface> newConnection) throw (LogoutException)
+               : Character(), mapshowcaseopen(false), onlinetime(0), Connection(newConnection),
 turtleActive(false), clippingActive(true), admin(false) {
-#ifdef CPlayer_DEBUG
-        std::cout << "CPlayer Konstruktor Start" << std::endl;
+#ifdef Player_DEBUG
+        std::cout << "Player Konstruktor Start" << std::endl;
 #endif
 
         screenwidth = 0;
@@ -68,15 +68,15 @@ turtleActive(false), clippingActive(true), admin(false) {
 
         time( &lastaction );
         
-        ltAction = new CLongTimeAction( this, _world );
+        ltAction = new LongTimeAction( this, _world );
 
         // first check if we have a valid client
 
-        boost::shared_ptr<CBasicClientCommand> cmd = Connection->getCommand();
-        if ( (cmd == NULL) || cmd->getDefinitionByte() != CC_LOGIN_TS )throw LogoutException(UNSTABLECONNECTION);
-        unsigned short int clientversion = boost::dynamic_pointer_cast<CLoginCommandTS>(cmd)->clientVersion;
-        name = boost::dynamic_pointer_cast<CLoginCommandTS>(cmd)->loginName;
-        pw = boost::dynamic_pointer_cast<CLoginCommandTS>(cmd)->passwort;
+        boost::shared_ptr<BasicClientCommand> cmd = Connection->getCommand();
+        if ( (cmd == NULL) || cmd->getDefinitionByte() != C_LOGIN_TS )throw LogoutException(UNSTABLECONNECTION);
+        unsigned short int clientversion = boost::dynamic_pointer_cast<LoginCommandTS>(cmd)->clientVersion;
+        name = boost::dynamic_pointer_cast<LoginCommandTS>(cmd)->loginName;
+        pw = boost::dynamic_pointer_cast<LoginCommandTS>(cmd)->passwort;
         // set acceptable client version...
         unsigned short acceptVersion;
         std::stringstream stream;
@@ -103,7 +103,7 @@ turtleActive(false), clippingActive(true), admin(false) {
         }
 
         // player already online? if we don't use the monitoring client
-        if ( !monitoringClient & (_world->Players.find(name) || CPlayerManager::get()->findPlayer(name) ) ) 
+        if ( !monitoringClient & (_world->Players.find(name) || PlayerManager::get()->findPlayer(name) ) ) 
         {
                std::cout << "double login by " << name  << std::endl;
                throw LogoutException(DOUBLEPLAYER);
@@ -125,9 +125,9 @@ turtleActive(false), clippingActive(true), admin(false) {
         std::cerr << "error loading gm flags" << std::endl;
         
         
-    if ( !hasGMRight(gmr_allowlogin) && configOptions["disable_login"] == "true") throw CPlayer::LogoutException(SERVERSHUTDOWN);  
+    if ( !hasGMRight(gmr_allowlogin) && configOptions["disable_login"] == "true") throw Player::LogoutException(SERVERSHUTDOWN);  
         std::cerr << "no gm rights" << std::endl;
-        if ( monitoringClient && !hasGMRight(gmr_ban) ) throw CPlayer::LogoutException(NOACCOUNT);
+        if ( monitoringClient && !hasGMRight(gmr_ban) ) throw Player::LogoutException(NOACCOUNT);
         last_ip = Connection->getIPAdress();
         std::cerr << "write last IP" << std::endl;
         //we dont want to add more if we have a monitoring client
@@ -139,21 +139,21 @@ turtleActive(false), clippingActive(true), admin(false) {
             
         // now load inventory...
         if( !load() )
-            throw LogoutException(CORRUPTDATA);
+            throw LogoutException(ORRUPTDATA);
         std::cerr << "loading inventory done" << std::endl;
 
-#ifdef CPlayer_DEBUG
-        std::cout << "CPlayer Konstruktor Ende" << std::endl;
+#ifdef Player_DEBUG
+        std::cout << "Player Konstruktor Ende" << std::endl;
 #endif
 
 }
 
-void CPlayer::login() throw(LogoutException)
+void Player::login() throw(LogoutException)
 {
         // find a position for our player...
         short int x,y,z;
         bool target_position_found;
-        CField* target_position;
+        Field* target_position;
 
         if (status == JAILED || status == JAILEDFORTIME) {
                // player is in jail...
@@ -197,7 +197,7 @@ void CPlayer::login() throw(LogoutException)
         
         //look if there is a tile over the player set the maps over the player
         _world->tmap = NULL;
-        CField *testf;
+        Field *testf;
         for ( int i = 0; i < RANGEUP; ++i ) 
         {
             if ( _world->GetPToCFieldAt( testf, pos.x, pos.y, pos.z + 1 + i, _world->tmap ) ) 
@@ -231,16 +231,16 @@ void CPlayer::login() throw(LogoutException)
         sendWeather( _world->weather );
         
         // send player login data
-        boost::shared_ptr<CBasicServerCommand> cmd(new CIdTC( id ) );
+        boost::shared_ptr<BasicServerCommand> cmd(new IdTC( id ) );
         Connection->addCommand( cmd );
         // position
-        cmd.reset( new CSetCoordinateTC( pos ) );
+        cmd.reset( new SetCoordinateTC( pos ) );
         Connection->addCommand( cmd );
 
         effects->load();
         
         //send the basic data to the monitoring client
-        cmd.reset( new CBBPlayerTC( id, name, pos.x, pos.y,pos.z ) );
+        cmd.reset( new BBPlayerTC( id, name, pos.x, pos.y,pos.z ) );
         _world->monitoringClientList->sendCommand( cmd );
         
         // send weather and time before sending the map, to display everything correctly from the start
@@ -261,7 +261,7 @@ void CPlayer::login() throw(LogoutException)
         _world->sendCharacterMoveToAllVisiblePlayers( this, NORMALMOVE, 4 );
         // additional nop info
         _world->sendSpinToAllVisiblePlayers( this );
-        cmd.reset( new CPlayerSpinTC( faceto, id ) );
+        cmd.reset( new PlayerSpinTC( faceto, id ) );
         Connection->addCommand( cmd );
 
         // update skills for client
@@ -294,7 +294,7 @@ void CPlayer::login() throw(LogoutException)
         _world->welcomePlayer( this );
 
         // send start message
-        if ( getPlayerLanguage() == CLanguage::german ) {
+        if ( getPlayerLanguage() == Language::german ) {
                _world->sendTextInFileToPlayer( configOptions["datadir"] + std::string( "startnachricht.txt" ), this);
         } else {
                _world->sendTextInFileToPlayer( configOptions["datadir"] + std::string( "startmessage.txt" ), this );
@@ -312,13 +312,13 @@ void CPlayer::login() throw(LogoutException)
                setEncumberedSent( true );
                std::string tmessage;
                switch ( getPlayerLanguage() ) {
-                      case CLanguage::german:
-                             tmessage = "Du bist überladen.";
+                      case Language::german:
+                             tmessage = "Du bist ï¿½berladen.";
                              break;
-                      case CLanguage::english:
+                      case Language::english:
                              tmessage = "You are encumbered.";
                              break;
-                      case CLanguage::french:
+                      case Language::french:
                              tmessage = "You are encumbered.";
                              break;
                       default:
@@ -331,7 +331,7 @@ void CPlayer::login() throw(LogoutException)
         time( &lastsavetime );
 }
 
-void CPlayer::closeAllShowcasesOfMapContainers() 
+void Player::closeAllShowcasesOfMapContainers() 
 {
 
         if ( mapshowcaseopen ) 
@@ -341,7 +341,7 @@ void CPlayer::closeAllShowcasesOfMapContainers()
                       if ( !(showcases[ i ].inInventory()) ) 
                       {
                              showcases[ i ].clear();
-                             boost::shared_ptr<CBasicServerCommand> cmd(new CClearShowCaseTC(i) );
+                             boost::shared_ptr<BasicServerCommand> cmd(new ClearShowCaseTC(i) );
                              Connection->addCommand( cmd );
                       }
                }
@@ -349,48 +349,48 @@ void CPlayer::closeAllShowcasesOfMapContainers()
         }
 }
 
-void CPlayer::closeAllShowcases() {
+void Player::closeAllShowcases() {
 
         for ( MAXCOUNTTYPE i = 0; i < MAXSHOWCASES; ++i ) 
         {
                showcases[ i ].clear();
-               boost::shared_ptr<CBasicServerCommand> cmd(new CClearShowCaseTC(i) );
+               boost::shared_ptr<BasicServerCommand> cmd(new ClearShowCaseTC(i) );
                Connection->addCommand( cmd );
         }
         mapshowcaseopen = false;
 
 }
 
-CPlayer::~CPlayer() {
-#ifdef CPlayer_DEBUG
-        std::cout << "CPlayer Destruktor Start/Ende" << std::endl;
+Player::~Player() {
+#ifdef Player_DEBUG
+        std::cout << "Player Destruktor Start/Ende" << std::endl;
 #endif
 }
 
-bool CPlayer::VerifyPassword( std::string chkpw ) {
+bool Player::VerifyPassword( std::string chkpw ) {
         return ( pw == chkpw );
 }
 
 
 
-void CPlayer::sendCharacterItemAtPos( unsigned char cpos ) 
+void Player::sendCharacterItemAtPos( unsigned char cpos ) 
 {
         if ( cpos < ( MAX_BELT_SLOTS + MAX_BODY_ITEMS ) ) 
         { // gltiger Wert
-            boost::shared_ptr<CBasicServerCommand>cmd( new CUpdateInventoryPosTC( cpos, characterItems[cpos].id, characterItems[ cpos].number ) );
+            boost::shared_ptr<BasicServerCommand>cmd( new UpdateInventoryPosTC( cpos, characterItems[cpos].id, characterItems[ cpos].number ) );
                Connection->addCommand( cmd );
         }
 }
 
 
-void CPlayer::sendWeather( WeatherStruct weather )
+void Player::sendWeather( WeatherStruct weather )
 {
-    boost::shared_ptr<CBasicServerCommand>cmd( new CUpdateWeatherTC( weather ) );
+    boost::shared_ptr<BasicServerCommand>cmd( new UpdateWeatherTC( weather ) );
     Connection->addCommand( cmd );
 }
 
 
-void CPlayer::AgeInventory( ITEM_FUNCT funct ) 
+void Player::AgeInventory( ITEM_FUNCT funct ) 
 {
     CommonStruct tempCommon;
     for ( unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i )
@@ -408,7 +408,7 @@ void CPlayer::AgeInventory( ITEM_FUNCT funct )
                 {
                     if ( characterItems[ i ].id != tempCommon.ObjectAfterRot ) 
                     {
-    #ifdef CCharacter_DEBUG
+    #ifdef Character_DEBUG
                         std::cout << "INV:Ein Item wird umgewandelt von: " << characterItems[ i ].id << "  nach: " << tempCommon.ObjectAfterRot << "!\n";
     #endif
                         characterItems[ i ].id = tempCommon.ObjectAfterRot;
@@ -420,7 +420,7 @@ void CPlayer::AgeInventory( ITEM_FUNCT funct )
                     } 
                     else 
                     {
-    #ifdef CCharacter_DEBUG
+    #ifdef Character_DEBUG
                         std::cout << "INV:Ein Item wird gelï¿½cht,ID:" << characterItems[ i ].id << "!\n";
     #endif
                         characterItems[ i ].id = 0;
@@ -443,7 +443,7 @@ void CPlayer::AgeInventory( ITEM_FUNCT funct )
         updateBackPackView();
     }
     
-    std::map<uint32_t, CContainer*>::iterator depotIterator;
+    std::map<uint32_t, Container*>::iterator depotIterator;
     for ( depotIterator = depotContents.begin(); depotIterator != depotContents.end(); depotIterator++ )
     {
         if ( depotIterator->second != NULL )
@@ -453,7 +453,7 @@ void CPlayer::AgeInventory( ITEM_FUNCT funct )
             {
                 if ( showcases[ i ].contains( depotIterator->second ) ) 
                 {
-                    boost::shared_ptr<CBasicServerCommand>cmd( new CUpdateShowCaseTC( i, showcases[i].top()->items) );
+                    boost::shared_ptr<BasicServerCommand>cmd( new UpdateShowCaseTC( i, showcases[i].top()->items) );
                     Connection->addCommand( cmd );
                 }
             }
@@ -462,13 +462,13 @@ void CPlayer::AgeInventory( ITEM_FUNCT funct )
 
 }
 
-void CPlayer::learn( std::string skill, uint8_t skillGroup, uint32_t actionPoints, uint8_t opponent, uint8_t leadAttrib )
+void Player::learn( std::string skill, uint8_t skillGroup, uint32_t actionPoints, uint8_t opponent, uint8_t leadAttrib )
 {
         
     uint16_t majorSkillValue = getSkill( skill );
     uint16_t minorSkillValue = getMinorSkill( skill );
 
-    CCharacter::learn( skill, skillGroup, actionPoints, opponent, leadAttrib );
+    Character::learn( skill, skillGroup, actionPoints, opponent, leadAttrib );
 
     uint16_t newMajorSkillValue = getSkill( skill );
     uint16_t newMinorSkillValue = getMinorSkill( skill );
@@ -480,8 +480,8 @@ void CPlayer::learn( std::string skill, uint8_t skillGroup, uint32_t actionPoint
 
 
 
-int CPlayer::createItem( TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali, uint32_t data ) {
-        int temp = CCharacter::createItem( itemid, count, quali, data );
+int Player::createItem( TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali, uint32_t data ) {
+        int temp = Character::createItem( itemid, count, quali, data );
         for ( unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i ) {
                if ( characterItems[ i ].id != 0 ) {
                       sendCharacterItemAtPos( i );
@@ -494,20 +494,20 @@ int CPlayer::createItem( TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali, 
 }
 
 
-//int CPlayer::createItem( TYPE_OF_ITEM_ID itemid, int count ) {
+//int Player::createItem( TYPE_OF_ITEM_ID itemid, int count ) {
 //    int tempo=5; //createItem( TYPE_OF_ITEM_ID itemid, int count, 333);
 //    return tempo;
 //}
 
-int CPlayer::_eraseItem( TYPE_OF_ITEM_ID itemid, int count, uint32_t data, bool useData ) {
+int Player::_eraseItem( TYPE_OF_ITEM_ID itemid, int count, uint32_t data, bool useData ) {
         int temp = count;
-#ifdef CPlayer_DEBUG
+#ifdef Player_DEBUG
         std::cout << "try to erase in player inventory " << count << " items of type " << itemid << "\n";
 #endif
         if ( ( characterItems[ BACKPACK ].id != 0 ) && ( backPackContents != NULL ) ) {
                temp = backPackContents->_eraseItem( itemid, temp, data, useData );
                updateBackPackView();
-#ifdef CPlayer_DEBUG
+#ifdef Player_DEBUG
                std::cout << "eraseItem: nach Lï¿½chen im Rucksack noch zu lï¿½chen: " << temp << "\n";
 #endif
 
@@ -541,38 +541,38 @@ int CPlayer::_eraseItem( TYPE_OF_ITEM_ID itemid, int count, uint32_t data, bool 
                              sendCharacterItemAtPos( i );
                       }
                }
-               if( CWorld::get()->getItemStatsFromId( itemid ).Brightness > 0 ) updateAppearanceForAll( true );
+               if( World::get()->getItemStatsFromId( itemid ).Brightness > 0 ) updateAppearanceForAll( true );
         }
-#ifdef CPlayer_DEBUG
+#ifdef Player_DEBUG
         std::cout << "eraseItem: am Ende noch zu lï¿½chen: " << temp << "\n";
 #endif
         return temp;
 }
 
 
-int CPlayer::eraseItem( TYPE_OF_ITEM_ID itemid, int count )
+int Player::eraseItem( TYPE_OF_ITEM_ID itemid, int count )
 {
     return _eraseItem( itemid, count, 0, false );
 }
 
 
-int CPlayer::eraseItem( TYPE_OF_ITEM_ID itemid, int count, uint32_t data )
+int Player::eraseItem( TYPE_OF_ITEM_ID itemid, int count, uint32_t data )
 {
     return _eraseItem( itemid, count, data, true );
 }
 
 
-int CPlayer::increaseAtPos( unsigned char pos, int count ) {
+int Player::increaseAtPos( unsigned char pos, int count ) {
         int temp = count;
 
-#ifdef CPlayer_DEBUG
+#ifdef Player_DEBUG
         std::cout << "increaseAtPos " << ( short int ) pos << " " << count << "\n";
 #endif
         if ( ( pos > 0 ) && ( pos < MAX_BELT_SLOTS + MAX_BODY_ITEMS ) ) {
                if ( weightOK( characterItems[ pos ].id, count, NULL ) ) {
 
                       temp = characterItems[ pos ].number + count;
-#ifdef CPlayer_DEBUG
+#ifdef Player_DEBUG
                       std::cout << "temp " << temp << "\n";
 #endif
 
@@ -580,7 +580,7 @@ int CPlayer::increaseAtPos( unsigned char pos, int count ) {
                              characterItems[ pos ].number = MAXITEMS;
                              temp = temp - MAXITEMS;
                       } else if ( temp <= 0 ) {
-                             bool updateBrightness = CWorld::get()->getItemStatsFromId( characterItems[ pos ].id ).Brightness > 0;
+                             bool updateBrightness = World::get()->getItemStatsFromId( characterItems[ pos ].id ).Brightness > 0;
                              temp = count + characterItems[ pos ].number;
                              characterItems[ pos ].number = 0;
                              characterItems[ pos ].id = 0;
@@ -602,15 +602,15 @@ int CPlayer::increaseAtPos( unsigned char pos, int count ) {
         return temp;
 }
 
-int CPlayer::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) {
-        int temp = CCharacter::createAtPos(pos,newid,count);
+int Player::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) {
+        int temp = Character::createAtPos(pos,newid,count);
         sendCharacterItemAtPos( pos );
         return temp;
 
 }
 
-bool CPlayer::swapAtPos( unsigned char pos, TYPE_OF_ITEM_ID newid , uint16_t newQuality) {
-        if ( CCharacter::swapAtPos( pos, newid, newQuality ) )
+bool Player::swapAtPos( unsigned char pos, TYPE_OF_ITEM_ID newid , uint16_t newQuality) {
+        if ( Character::swapAtPos( pos, newid, newQuality ) )
     {
                sendCharacterItemAtPos( pos );
                return true;
@@ -619,12 +619,12 @@ bool CPlayer::swapAtPos( unsigned char pos, TYPE_OF_ITEM_ID newid , uint16_t new
 }
 
 
-void CPlayer::updateBackPackView() {
+void Player::updateBackPackView() {
         if ( backPackContents != NULL ) {
                for ( int i = 0; i < MAXSHOWCASES; ++i ) {
                       if ( showcases[ i ].contains( backPackContents ) ) 
                       {
-                          boost::shared_ptr<CBasicServerCommand>cmd( new CUpdateShowCaseTC( i, showcases[i].top()->items) );
+                          boost::shared_ptr<BasicServerCommand>cmd( new UpdateShowCaseTC( i, showcases[i].top()->items) );
                           Connection->addCommand( cmd );                          
                       }
                }
@@ -632,16 +632,16 @@ void CPlayer::updateBackPackView() {
 }
 
 
-void CPlayer::sendSkill( std::string name, unsigned char type, unsigned short int major, unsigned short int minor ) 
+void Player::sendSkill( std::string name, unsigned char type, unsigned short int major, unsigned short int minor ) 
 {
-        boost::shared_ptr<CBasicServerCommand>cmd( new CUpdateSkillTC( name, type, major, minor ) );
+        boost::shared_ptr<BasicServerCommand>cmd( new UpdateSkillTC( name, type, major, minor ) );
         Connection->addCommand( cmd );
-        cmd.reset( new CBBSendSkillTC( id, type, name, major, minor) );
+        cmd.reset( new BBSendSkillTC( id, type, name, major, minor) );
         _world->monitoringClientList->sendCommand( cmd );
 }
 
 
-void CPlayer::sendAllSkills() 
+void Player::sendAllSkills() 
 {
     for ( SKILLMAP::const_iterator ptr = skills.begin(); ptr != skills.end(); ++ptr ) 
     {
@@ -651,28 +651,28 @@ void CPlayer::sendAllSkills()
 }
 
 
-void CPlayer::sendMagicFlags(int type) 
+void Player::sendMagicFlags(int type) 
 {
     if ((type >= 0) && (type < 4)) 
     {
-        boost::shared_ptr<CBasicServerCommand>cmd( new CUpdateMagicFlagsTC( type, magic.flags[ type ] ));
+        boost::shared_ptr<BasicServerCommand>cmd( new UpdateMagicFlagsTC( type, magic.flags[ type ] ));
         Connection->addCommand( cmd );       
     }
 }
 
 
-void CPlayer::sendAttrib( std::string name, unsigned short int value ) 
+void Player::sendAttrib( std::string name, unsigned short int value ) 
 {
-    boost::shared_ptr<CBasicServerCommand> cmd( new CUpdateAttribTC( name, value ) );
+    boost::shared_ptr<BasicServerCommand> cmd( new UpdateAttribTC( name, value ) );
     Connection->addCommand( cmd );
-    cmd.reset( new CBBSendAttribTC( id, name, value) );
+    cmd.reset( new BBSendAttribTC( id, name, value) );
     _world->monitoringClientList->sendCommand( cmd );
 }
 
 
-unsigned short int CPlayer::increaseAttrib( std::string name, short int amount ) 
+unsigned short int Player::increaseAttrib( std::string name, short int amount ) 
 {
-    unsigned short int temp = CCharacter::increaseAttrib( name, amount );
+    unsigned short int temp = Character::increaseAttrib( name, amount );
     if (amount != 0) 
     {
         sendAttrib( name, temp );
@@ -680,55 +680,55 @@ unsigned short int CPlayer::increaseAttrib( std::string name, short int amount )
     return temp;
 }
 
-void CPlayer::tempChangeAttrib( std::string name, short int amount, uint16_t time)
+void Player::tempChangeAttrib( std::string name, short int amount, uint16_t time)
 {
-    CCharacter::tempChangeAttrib( name, amount, time );
+    Character::tempChangeAttrib( name, amount, time );
     if ( amount != 0 )
     {
-        sendAttrib( name, CCharacter::increaseAttrib(name,0) );
+        sendAttrib( name, Character::increaseAttrib(name,0) );
     }
 }
 
 
-void CPlayer::startMusic( short int title ) 
+void Player::startMusic( short int title ) 
 {
-    boost::shared_ptr<CBasicServerCommand>cmd( new CMusicTC( title ) );
+    boost::shared_ptr<BasicServerCommand>cmd( new MusicTC( title ) );
     Connection->addCommand( cmd );
 }
 
 
-void CPlayer::defaultMusic()
+void Player::defaultMusic()
 {
-    boost::shared_ptr<CBasicServerCommand>cmd( new CMusicDefaultTC() );
+    boost::shared_ptr<BasicServerCommand>cmd( new MusicDefaultTC() );
     Connection->addCommand( cmd );
 }
 
 
 // Setters and Getters //
 
-unsigned char CPlayer::GetStatus() {
+unsigned char Player::GetStatus() {
         return status;
 }
 
 
-void CPlayer::SetStatus( unsigned char thisStatus ) {
+void Player::SetStatus( unsigned char thisStatus ) {
         status = thisStatus;
 }
 
 
 // What time does the status get reset?
-time_t CPlayer::GetStatusTime( ) {
+time_t Player::GetStatusTime( ) {
         return statustime;
 }
 
 
-void CPlayer::SetStatusTime( time_t thisStatustime ) {
+void Player::SetStatusTime( time_t thisStatustime ) {
         statustime = thisStatustime;
 }
 
 
 // Who banned/jailed the player?
-std::string CPlayer::GetStatusGM() {
+std::string Player::GetStatusGM() {
         ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
         std::stringstream query;
         query << "SELECT chr_name FROM chars WHERE chr_playerid = " << transaction.quote(statusgm);
@@ -741,84 +741,84 @@ std::string CPlayer::GetStatusGM() {
 }
 
 
-void CPlayer::SetStatusGM( TYPE_OF_CHARACTER_ID thisStatusgm ) {
+void Player::SetStatusGM( TYPE_OF_CHARACTER_ID thisStatusgm ) {
         statusgm = thisStatusgm;
 }
 
 
 // Why where they banned/jailed?
-std::string CPlayer::GetStatusReason() {
+std::string Player::GetStatusReason() {
         return statusreason;
 }
 
 
-void CPlayer::SetStatusReason( std::string thisStatusreason ) {
+void Player::SetStatusReason( std::string thisStatusreason ) {
         statusreason = thisStatusreason;
 }
 
 // World Map Turtle Graphics
-void CPlayer::setTurtleActive( bool tturtleActive ) {
+void Player::setTurtleActive( bool tturtleActive ) {
         turtleActive = tturtleActive;
         setClippingActive( !tturtleActive );
 }
 
 
-void CPlayer::setClippingActive( bool tclippingActive ) {
+void Player::setClippingActive( bool tclippingActive ) {
         clippingActive = tclippingActive;
 }
 
 
-bool CPlayer::getTurtleActive( ) {
+bool Player::getTurtleActive( ) {
         return turtleActive;
 }
 
 
-bool CPlayer::getClippingActive( ) {
+bool Player::getClippingActive( ) {
         return clippingActive;
 }
 
 
-void CPlayer::setTurtleTile( unsigned char tturtletile ) {
+void Player::setTurtleTile( unsigned char tturtletile ) {
         turtletile = tturtletile;
 }
 
 
-unsigned char CPlayer::getTurtleTile( ) {
+unsigned char Player::getTurtleTile( ) {
         return turtletile;
 }
 
 
-void CPlayer::setAdmin( uint32_t tAdmin ) {
+void Player::setAdmin( uint32_t tAdmin ) {
         admin = tAdmin;
 }
 
 
-bool CPlayer::isAdmin() {
+bool Player::isAdmin() {
         return (admin>0 && !hasGMRight(gmr_isnotshownasgm) );
 }
 
 
-void CPlayer::setEncumberedSent( bool tEncumberedSent ) {
+void Player::setEncumberedSent( bool tEncumberedSent ) {
         encumberedSent = tEncumberedSent;
 }
 
 
-bool CPlayer::wasEncumberedSent( ) {
+bool Player::wasEncumberedSent( ) {
         return encumberedSent;
 }
 
 
-void CPlayer::setUnconsciousSent( bool tUnconsciousSent ) {
+void Player::setUnconsciousSent( bool tUnconsciousSent ) {
 
         unconsciousSent = tUnconsciousSent;
 }
 
 
-bool CPlayer::wasUnconsciousSent( ) {
+bool Player::wasUnconsciousSent( ) {
         return unconsciousSent;
 }
 
-void CPlayer::check_logindata() throw (LogoutException) {
+void Player::check_logindata() throw (LogoutException) {
 
         try {
 
@@ -873,7 +873,7 @@ void CPlayer::check_logindata() throw (LogoutException) {
                // next we get the infos for the account and check if the account is active
                int acc_state;
 
-           CLanguage::LanguageType mother_tongue;
+           Language::LanguageType mother_tongue;
 
                rows = di::select<
                          di::Varchar, di::Integer, di::Integer
@@ -905,7 +905,7 @@ void CPlayer::check_logindata() throw (LogoutException) {
                       throw LogoutException(WRONGPWD);
                }
 
-               character = CCharacter::player;
+               character = Character::player;
 
                // get the remaining attributes from the player table
                rows = di::select<
@@ -995,15 +995,15 @@ void CPlayer::check_logindata() throw (LogoutException) {
 }
 
 struct container_struct {
-        CContainer& container;
+        Container& container;
         unsigned int id;
         unsigned int depotid;
 
-        container_struct(CContainer& cc, unsigned int aboveid, unsigned int depot = 0)
+        container_struct(Container& cc, unsigned int aboveid, unsigned int depot = 0)
                       : container(cc), id(aboveid), depotid(depot) { }}
 ;
 
-bool CPlayer::save() throw () 
+bool Player::save() throw () 
 {
         ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
 
@@ -1089,7 +1089,7 @@ bool CPlayer::save() throw ()
                              containers.push_back(container_struct(*backPackContents, BACKPACK+1));
 
                       // add depot to containerlist
-                      std::map<uint32_t, CContainer*>::iterator it;
+                      std::map<uint32_t, Container*>::iterator it;
 
                       for ( it = depotContents.begin(); it != depotContents.end(); ++it )
                       {
@@ -1154,7 +1154,7 @@ bool CPlayer::save() throw ()
                                 // if it is a container, add it to the list of containers to save...
                                 if ( ContainerItems->find( item->id ) ) 
                                 {
-                                        CContainer::CONTAINERMAP::iterator iterat = actcont.container.containers.find( item->number );
+                                        Container::ONTAINERMAP::iterator iterat = actcont.container.containers.find( item->number );
                                         if ( iterat != actcont.container.containers.end() )containers.push_back(container_struct(*(*iterat).second, linenumber));
                                 }
                            }
@@ -1179,7 +1179,7 @@ bool CPlayer::save() throw ()
         }
 }
 
-bool CPlayer::loadGMFlags() throw()
+bool Player::loadGMFlags() throw()
 {
     try
     {
@@ -1207,10 +1207,10 @@ bool CPlayer::loadGMFlags() throw()
     return false;
 }
 
-bool CPlayer::load() throw() {
+bool Player::load() throw() {
         // maps containing all depots/containers involved
-        std::map<int, CContainer*> depots, containers;
-        std::map<int, CContainer*>::iterator it;
+        std::map<int, Container*> depots, containers;
+        std::map<int, Container*>::iterator it;
 
         bool dataOK=true; //Is the data loaded correct?
 
@@ -1286,14 +1286,14 @@ bool CPlayer::load() throw() {
             {              
                 if ( depotid[ i - 1 ] != 0 )
                 {
-                    depotContents[ depotid[ i - 1 ] ] = new CContainer(depotsize);
+                    depotContents[ depotid[ i - 1 ] ] = new Container(depotsize);
                     depots[ depotid [ i - 1 ] ] = depotContents[ depotid[ i - 1] ];
                 }         
             }
 // End of initializing the depot map
 
             unsigned int tempdepot, tempincont, linenumber;
-            CContainer* tempc;
+            Container* tempc;
             Item tempi;
             unsigned int curdatalinenumber = 0;
             for ( unsigned int tuple = 0; tuple < rows; ++tuple ) 
@@ -1311,7 +1311,7 @@ bool CPlayer::load() throw() {
                 if ( ditemlinenumber[curdatalinenumber] != linenumber )
                 {
                     std::cerr << "*** player '" << name << "' has invalid itemvalues!" << std::endl;
-                    CLogger::writeError("itemload","*** player '" + name + "' has invalid itemvalues!");
+                    Logger::writeError("itemload","*** player '" + name + "' has invalid itemvalues!");
                     throw std::exception();
                 }
                 while ( curdatalinenumber < datamaplines && ditemlinenumber[curdatalinenumber] == linenumber)
@@ -1319,7 +1319,7 @@ bool CPlayer::load() throw() {
                     if ( key[curdatalinenumber] > 255 || key[curdatalinenumber] < 0 )
                     {
                         std::cerr << "*** player '" << name << "' has invalid itemvalues, key was larger than 255 or smaller than 0!" << std::endl;
-                        CLogger::writeError("itemload","*** player '" + name + "' has invalid itemvalues, key was larger than 255 or smaller than 0!");
+                        Logger::writeError("itemload","*** player '" + name + "' has invalid itemvalues, key was larger than 255 or smaller than 0!");
                     }
                     else
                     {
@@ -1334,7 +1334,7 @@ bool CPlayer::load() throw() {
                 {
                     // serious error occured! player data corrupted!
                     std::cerr << "*** player '" << name << "' has invalid depot contents!" << std::endl;
-                    CLogger::writeError("itemload","*** player '" + name + "' has invalid depot contents!");
+                    Logger::writeError("itemload","*** player '" + name + "' has invalid depot contents!");
                     throw std::exception();
                 }
                 // item is in a container?
@@ -1342,7 +1342,7 @@ bool CPlayer::load() throw() {
                 {
                     // serious error occured! player data corrupted!
                     std::cerr << "*** player '" << name << "' has invalid container contents!" << std::endl;
-                    CLogger::writeError("itemload","*** player '" + name + "' has invalid depot contents 2!");
+                    Logger::writeError("itemload","*** player '" + name + "' has invalid depot contents 2!");
                     throw std::exception();
                 }
 
@@ -1350,18 +1350,18 @@ bool CPlayer::load() throw() {
                 {
                     // serious error occured! player data corrupted!
                     std::cerr << "*** player '" << name << "' has invalid items!" << std::endl;
-                    CLogger::writeError("itemload","*** player '" + name + "' has invalid items!");
+                    Logger::writeError("itemload","*** player '" + name + "' has invalid items!");
                     throw std::exception();
                 }
                 ContainerStruct cont;
                 if ( ContainerItems->find( tempi.id, cont) ) 
                 {
-                    tempc = new CContainer(cont.ContainerVolume);
+                    tempc = new Container(cont.ContainerVolume);
                     if (linenumber > MAX_BODY_ITEMS + MAX_BELT_SLOTS )
                     {
                         if (!it->second->InsertContainer( tempi, tempc ))
                         {
-                            CLogger::writeError("itemload","*** player '" + name + "' insert Container wasn't sucessful!");
+                            Logger::writeError("itemload","*** player '" + name + "' insert Container wasn't sucessful!");
                         }
                         else
                         {
@@ -1382,14 +1382,14 @@ bool CPlayer::load() throw() {
             }
             if ((it=containers.find(BACKPACK + 1)) != containers.end() ) backPackContents = it->second;
             else backPackContents = NULL;
-            std::map<uint32_t,CContainer*>::iterator it2;
+            std::map<uint32_t,Container*>::iterator it2;
             for ( it = depots.begin(); it != depots.end(); ++it)
             {
                 if ( (it2=depotContents.find( it->first )) != depotContents.end() )it2->second = it->second;
                 else it2->second = NULL;
             }              
         }  
-        catch (std::exception e) 
+        catch (std::exception &e)
         {
             std::cerr << "exception: " << e.what() << std::endl;
             dataOK = false;
@@ -1398,8 +1398,8 @@ bool CPlayer::load() throw() {
         {
             std::cerr<<"in load(): error while loading!"<<std::endl;
             //Fehler beim laden aufgetreten
-            std::map<int, CContainer*>::reverse_iterator rit;
-            std::map<uint32_t,CContainer*>::reverse_iterator rit2;
+            std::map<int, Container*>::reverse_iterator rit;
+            std::map<uint32_t,Container*>::reverse_iterator rit2;
             // clean up...
             for (rit=containers.rbegin(); rit != containers.rend(); ++rit) delete rit->second;
             for (rit=depots.rbegin(); rit != depots.rend(); ++rit) delete rit->second;
@@ -1410,17 +1410,17 @@ bool CPlayer::load() throw() {
     return dataOK;
 }
 
-void CPlayer::increasePoisonValue( short int value ) {
+void Player::increasePoisonValue( short int value ) {
         std::string texteng="", textger="", tmessage; //string fr die unterschiedlichen Texte
         if ( (poisonvalue == 0) && value > 0) {
                switch ( getPlayerLanguage()) {
-                      case CLanguage::german:
+                      case Language::german:
                              tmessage = "Du bist vergiftet.";
                              break;
-                      case CLanguage::english:
+                      case Language::english:
                              tmessage = "You are poisoned.";
                              break;
-                      case CLanguage::french:
+                      case Language::french:
                              tmessage = "You are poisoned.";
                              break;
                       default:
@@ -1433,13 +1433,13 @@ void CPlayer::increasePoisonValue( short int value ) {
         } else if ( (poisonvalue + value) <= 0 ) {
                poisonvalue = 0;
                switch ( getPlayerLanguage()) {
-                      case CLanguage::german:
+                      case Language::german:
                              tmessage = "Du fuehlst dich auf einmal besser.";
                              break;
-                      case CLanguage::english:
+                      case Language::english:
                              tmessage = "You feel better now.";
                              break;
-                      case CLanguage::french:
+                      case Language::french:
                              tmessage = "You feel better now.";
                              break;
                       default:
@@ -1454,7 +1454,7 @@ void CPlayer::increasePoisonValue( short int value ) {
         //============================================================================
 }
 
-void CPlayer::SetAlive( bool t ) {
+void Player::SetAlive( bool t ) {
         if ( t ) 
         {
              lifestate = lifestate | 1;
@@ -1470,22 +1470,22 @@ void CPlayer::SetAlive( bool t ) {
         }
 }
 
-unsigned short int CPlayer::setSkill( unsigned char typ, std::string sname, short int major, short int minor, uint16_t firsttry )
+unsigned short int Player::setSkill( unsigned char typ, std::string sname, short int major, short int minor, uint16_t firsttry )
 {
-    CCharacter::setSkill(typ,sname,major,minor,firsttry);
+    Character::setSkill(typ,sname,major,minor,firsttry);
     sendSkill(sname,typ,major,minor);
     return major;
 }
 
-unsigned short int CPlayer::increaseSkill( unsigned char typ, std::string name, short int amount ) {
-        CCharacter::increaseSkill(typ,name,amount);
+unsigned short int Player::increaseSkill( unsigned char typ, std::string name, short int amount ) {
+        Character::increaseSkill(typ,name,amount);
         int major = getSkill(name);
         int minor = getSkill(name);
         sendSkill(name,typ,major,minor);
         return major;
 }
 
-void CPlayer::PlayerDeath() {
+void Player::PlayerDeath() {
         //Droppen aller Backpackitems und belt Items nach dem Tod
         bool isnewbie=true;
         SKILLMAP::iterator ptr;
@@ -1512,38 +1512,38 @@ void CPlayer::PlayerDeath() {
         }
 }
 
-void CPlayer::receiveText(talk_type tt, std::string message, CCharacter* cc) 
+void Player::receiveText(talk_type tt, std::string message, Character* cc) 
 {
-    boost::shared_ptr<CBasicServerCommand>cmd(new CSayTC( cc->pos.x, cc->pos.y, cc->pos.z, message )); 
+    boost::shared_ptr<BasicServerCommand>cmd(new SayTC( cc->pos.x, cc->pos.y, cc->pos.z, message )); 
     switch (tt) 
     {
         case tt_say:
             Connection->addCommand( cmd );
             break;
         case tt_whisper:
-            cmd.reset( new CWhisperTC( cc->pos.x, cc->pos.y, cc->pos.z, message ) );
+            cmd.reset( new WhisperTC( cc->pos.x, cc->pos.y, cc->pos.z, message ) );
             Connection->addCommand( cmd );
             break;
         case tt_yell:
-            cmd.reset( new CShoutTC( cc->pos.x, cc->pos.y, cc->pos.z, message ) );
+            cmd.reset( new ShoutTC( cc->pos.x, cc->pos.y, cc->pos.z, message ) );
             Connection->addCommand( cmd );
             break;
         }
 }
 
-void CPlayer::introducePerson(CCharacter* cc) 
+void Player::introducePerson(Character* cc) 
 {
-    boost::shared_ptr<CBasicServerCommand>cmd( new CIntroduceTC( cc->id, cc->name ) );
+    boost::shared_ptr<BasicServerCommand>cmd( new IntroduceTC( cc->id, cc->name ) );
     Connection->addCommand( cmd );
 }
 
-void CPlayer::deleteAllSkills() {
-        CCharacter::deleteAllSkills();
+void Player::deleteAllSkills() {
+        Character::deleteAllSkills();
         sendAllSkills();
 
 }
 
-void CPlayer::teachMagic(unsigned char type,unsigned char flag) {
+void Player::teachMagic(unsigned char type,unsigned char flag) {
         //>0 braucht nicht abgefragt werden da unsinged char immer >=0 sein muss
         if ( ( type < 4 ) ) {
                unsigned long int tflags=0;
@@ -1579,11 +1579,11 @@ void CPlayer::teachMagic(unsigned char type,unsigned char flag) {
         }
 }
 
-void CPlayer::inform(std::string message) {
+void Player::inform(std::string message) {
         receiveText(tt_say, message, this);
 }
 
-bool CPlayer::encumberance(uint16_t &movementCost) {
+bool Player::encumberance(uint16_t &movementCost) {
         // Implement Encumberance
         // ToDo: Add Encumberance
         int perEncumb = ( LoadWeight() * 100 ) / maxLoadWeight();
@@ -1594,13 +1594,13 @@ bool CPlayer::encumberance(uint16_t &movementCost) {
                       setEncumberedSent( true );
                       std::string tmessage;
                       switch ( getPlayerLanguage()) {
-                             case CLanguage::german:
-                                    tmessage = "Du bist überladen.";
+                             case Language::german:
+                                    tmessage = "Du bist ï¿½berladen.";
                                     break;
-                             case CLanguage::english:
+                             case Language::english:
                                     tmessage = "You are encumbered.";
                                     break;
-                             case CLanguage::french:
+                             case Language::french:
                                     tmessage = "You are encumbered.";
                                     break;
                              default:
@@ -1637,13 +1637,13 @@ bool CPlayer::encumberance(uint16_t &movementCost) {
                else if ( perEncumb > 95 ) {
                       std::string tmessage;
                       switch ( getPlayerLanguage()) {
-                             case CLanguage::german:
-                                    tmessage="Du kannst nicht laufen, wenn du so viel trägst.";
+                             case Language::german:
+                                    tmessage="Du kannst nicht laufen, wenn du so viel trï¿½gst.";
                                     break;
-                             case CLanguage::english:
+                             case Language::english:
                                     tmessage="You are carrying too much to move!";
                                     break;
-                             case CLanguage::french:
+                             case Language::french:
                                     tmessage="You are carrying too much to move!";
                                     break;
                              default:
@@ -1658,10 +1658,10 @@ bool CPlayer::encumberance(uint16_t &movementCost) {
         return true;
 }
 
-bool CPlayer::move(direction dir, uint8_t mode)
+bool Player::move(direction dir, uint8_t mode)
 {
-#ifdef CPLAYER_MOVE_DEBUG
-    std::cout<<"CPlayer::move position old: ";
+#ifdef PLAYER_MOVE_DEBUG
+    std::cout<<"Player::move position old: ";
     std::cout << pos.x << " " << pos.y << " " << pos.z << std::endl;
 #endif
     //Ggf Scriptausfhrung wenn der Spieler auf ein Triggerfeld tritt
@@ -1669,7 +1669,7 @@ bool CPlayer::move(direction dir, uint8_t mode)
     closeAllShowcasesOfMapContainers();
     // if we actively move we look into that direction...
     if ( mode != PUSH && dir != dir_up && dir != dir_down)
-        faceto = (CCharacter::face_to)dir;
+        faceto = (Character::face_to)dir;
 
     size_t steps;
     size_t j = 0;
@@ -1692,8 +1692,8 @@ bool CPlayer::move(direction dir, uint8_t mode)
         newpos.y += _world->moveSteps[ dir ][ 1 ];
         newpos.z += _world->moveSteps[ dir ][ 2 ];
 
-        CField * cfold=NULL;
-        CField * cfnew=NULL;
+        Field * cfold=NULL;
+        Field * cfnew=NULL;
 
         unsigned short int diffz = 0;
 
@@ -1714,22 +1714,22 @@ bool CPlayer::move(direction dir, uint8_t mode)
         if ( cfnew != NULL && fieldfound && ( cfnew->moveToPossible() || ( getClippingActive() == false && (isAdmin() || hasGMRight(gmr_isnotshownasgm) ) ) ) )
         {
                       uint16_t walkcost = getMovementCost(cfnew);
-#ifdef CPLAYER_MOVE_DEBUG
-                      std::cout<< "CPlayer::move Walkcost beforce encumberance: " << walkcost << std::endl;
+#ifdef PLAYER_MOVE_DEBUG
+                      std::cout<< "Player::move Walkcost beforce encumberance: " << walkcost << std::endl;
 #endif
                       if ( !encumberance( walkcost ) ) {
-#ifdef CPLAYER_MOVE_DEBUG
-                             std::cout<< "CPlayer::move Walkcost after encumberance Char overloadet: " << walkcost << std::endl;
+#ifdef PLAYER_MOVE_DEBUG
+                             std::cout<< "Player::move Walkcost after encumberance Char overloadet: " << walkcost << std::endl;
 #endif
                              //Char ueberladen
-                             boost::shared_ptr<CBasicServerCommand>cmd(new CMoveAckTC( id, pos, NOMOVE, 0 ) );
+                             boost::shared_ptr<BasicServerCommand>cmd(new MoveAckTC( id, pos, NOMOVE, 0 ) );
                              Connection->addCommand( cmd );
                              return false;
                       } 
                       else 
                       {
-#ifdef CPLAYER_MOVE_DEBUG
-                             std::cout<< "CPlayer::move Walkcost after Char not overloadet encumberance: " << walkcost << std::endl;
+#ifdef PLAYER_MOVE_DEBUG
+                             std::cout<< "Player::move Walkcost after Char not overloadet encumberance: " << walkcost << std::endl;
 #endif
                              int16_t diff = ( P_MIN_AP - actionPoints + walkcost) * 10;
                              // necessary to get smooth movement in client (dunno how this one is supposed to work exactly)
@@ -1738,8 +1738,8 @@ bool CPlayer::move(direction dir, uint8_t mode)
                              //if( mode != RUNNING || ( j == 1 && cont ) )
                              //    actionPoints -= walkcost; //abziehen der Movecosten
                       }
-#ifdef CPLAYER_MOVE_DEBUG
-                      std::cout << "CPlayer::move : Bewegung moeglich" << std::endl;
+#ifdef PLAYER_MOVE_DEBUG
+                      std::cout << "Player::move : Bewegung moeglich" << std::endl;
 #endif
                       // Spieler vom alten Feld nehmen
                       cfold->removeChar();
@@ -1748,12 +1748,12 @@ bool CPlayer::move(direction dir, uint8_t mode)
                       cfnew->setChar();
                       if ( newpos.z != oldpos.z )
                       {
-                          //Z Coordinate hat sich geändert komplettes update senden (Später durch teilupdate ersetzen)
+                          //Z Coordinate hat sich geï¿½ndert komplettes update senden (Spï¿½ter durch teilupdate ersetzen)
                           updatePos(newpos);
-                          boost::shared_ptr<CBasicServerCommand>cmd( new CMoveAckTC( id, pos, NOMOVE, 0 ) );
+                          boost::shared_ptr<BasicServerCommand>cmd( new MoveAckTC( id, pos, NOMOVE, 0 ) );
                           Connection->addCommand( cmd );
                           // Koordinate
-                          cmd.reset( new CSetCoordinateTC( pos ) );
+                          cmd.reset( new SetCoordinateTC( pos ) );
                           Connection->addCommand( cmd );
                           sendFullMap();
                           cont = false;
@@ -1762,7 +1762,7 @@ bool CPlayer::move(direction dir, uint8_t mode)
                       {
                           if( mode != RUNNING || ( j == 1 && cont ) )
                           {   
-                              boost::shared_ptr<CBasicServerCommand> cmd(new CMoveAckTC( id, newpos, mode, waitpages ) );
+                              boost::shared_ptr<BasicServerCommand> cmd(new MoveAckTC( id, newpos, mode, waitpages ) );
                               Connection->addCommand( cmd );
                           }
                           if( j == 1 && cont )
@@ -1781,8 +1781,8 @@ bool CPlayer::move(direction dir, uint8_t mode)
                       {  
                           _world->sendCharacterMoveToAllVisiblePlayers( this, mode, waitpages );
 
-#ifdef CPLAYER_MOVE_DEBUG
-                          std::cout << "CPlayer move position new: ";
+#ifdef PLAYER_MOVE_DEBUG
+                          std::cout << "Player move position new: ";
                           std::cout << pos.x << " " << pos.y << " " << pos.z << std::endl;
 #endif
 
@@ -1816,7 +1816,7 @@ bool CPlayer::move(direction dir, uint8_t mode)
                       //Ggf Scriptausfhrung beim Betreten eines Triggerfeldes
                       _world->TriggerFieldMove(this,true);
                       //send the move to the monitoring clients
-                      boost::shared_ptr<CBasicServerCommand>cmd(new CBBPlayerMoveTC(id, pos.x, pos.y, pos.z));
+                      boost::shared_ptr<BasicServerCommand>cmd(new BBPlayerMoveTC(id, pos.x, pos.y, pos.z));
                       _world->monitoringClientList->sendCommand( cmd );
                       if( mode != RUNNING || j == 1 )
                       {
@@ -1827,7 +1827,7 @@ bool CPlayer::move(direction dir, uint8_t mode)
         {
             if( j == 1 )
             {
-                boost::shared_ptr<CBasicServerCommand> cmd(new CMoveAckTC( id, pos, NORMALMOVE, waitpages ) );
+                boost::shared_ptr<BasicServerCommand> cmd(new MoveAckTC( id, pos, NORMALMOVE, waitpages ) );
                 Connection->addCommand( cmd );
                 _world->sendCharacterMoveToAllVisiblePlayers( this, mode, waitpages );
                 _world->sendAllVisibleCharactersToPlayer( this, true );
@@ -1835,7 +1835,7 @@ bool CPlayer::move(direction dir, uint8_t mode)
             }
             else if( j == 0 )
             {
-                boost::shared_ptr<CBasicServerCommand>cmd(new CMoveAckTC( id, pos, NOMOVE, 0 ) );
+                boost::shared_ptr<BasicServerCommand>cmd(new MoveAckTC( id, pos, NOMOVE, 0 ) );
                 Connection->addCommand( cmd );
                 return false;
             }
@@ -1843,30 +1843,30 @@ bool CPlayer::move(direction dir, uint8_t mode)
         ++j;
     } // loop (steps)
     
-#ifdef CPLAYER_MOVE_DEBUG
+#ifdef PLAYER_MOVE_DEBUG
     std::cout << "movePlayer: Bewegung nicht moeglich \n";
 #endif
-    boost::shared_ptr<CBasicServerCommand>cmd( new CMoveAckTC( id, pos, NOMOVE, 0 ) );
+    boost::shared_ptr<BasicServerCommand>cmd( new MoveAckTC( id, pos, NOMOVE, 0 ) );
     Connection->addCommand( cmd );
     return false;
 }
 
 
-void CPlayer::startPlayerMenu(UserMenuStruct menu) {
+void Player::startPlayerMenu(UserMenuStruct menu) {
         //anzahl der Items ermitteln
-        boost::shared_ptr<CBasicServerCommand>cmd( new CStartPlayerMenuTC(menu));
+        boost::shared_ptr<BasicServerCommand>cmd( new StartPlayerMenuTC(menu));
         Connection->addCommand( cmd );
 }
 
-bool CPlayer::Warp(position newPos) {
-        bool warped = CCharacter::Warp(newPos);
+bool Player::Warp(position newPos) {
+        bool warped = Character::Warp(newPos);
         if (warped) 
         {
                 //look if there is a tile over the player set the maps over the player
                 closeAllShowcasesOfMapContainers();
                 _world->tmap = NULL;
                 bool update = false;
-                CField *testf;
+                Field *testf;
                 for ( int i = 0; i < RANGEUP; ++i )
                 {
                     if ( _world->GetPToCFieldAt( testf, pos.x, pos.y, pos.z + 1 + i, _world->tmap ) ) 
@@ -1903,27 +1903,27 @@ bool CPlayer::Warp(position newPos) {
                 
             }
             if (update) sendWeather(_world->weather);   
-            boost::shared_ptr<CBasicServerCommand>cmd( new CSetCoordinateTC( pos ) );
+            boost::shared_ptr<BasicServerCommand>cmd( new SetCoordinateTC( pos ) );
           Connection->addCommand( cmd );
           sendFullMap();
           visibleChars.clear();
           _world->sendAllVisibleCharactersToPlayer( this, true );
-          cmd.reset( new CBBPlayerMoveTC(id, pos.x, pos.y, pos.z) );
+          cmd.reset( new BBPlayerMoveTC(id, pos.x, pos.y, pos.z) );
           _world->monitoringClientList->sendCommand( cmd );
           return true;
         }
         return false;
 }
 
-bool CPlayer::forceWarp(position newPos) {
-        bool warped = CCharacter::forceWarp(newPos);
+bool Player::forceWarp(position newPos) {
+        bool warped = Character::forceWarp(newPos);
         if (warped) 
         {
                 //look if there is a tile over the player set the maps over the player
                 closeAllShowcasesOfMapContainers();
                 _world->tmap = NULL;
                 bool update = false;
-                CField *testf;
+                Field *testf;
                 for ( int i = 0; i < RANGEUP; ++i )
                 {
                     if ( _world->GetPToCFieldAt( testf, pos.x, pos.y, pos.z + 1 + i, _world->tmap ) ) 
@@ -1961,42 +1961,42 @@ bool CPlayer::forceWarp(position newPos) {
             }
             
             if (update) sendWeather(_world->weather);   
-            boost::shared_ptr<CBasicServerCommand>cmd( new CSetCoordinateTC( pos ) );
+            boost::shared_ptr<BasicServerCommand>cmd( new SetCoordinateTC( pos ) );
             Connection->addCommand( cmd );
           sendFullMap();
             _world->sendAllVisibleCharactersToPlayer( this, true );
-            cmd.reset( new CBBPlayerMoveTC(id, pos.x, pos.y, pos.z));
+            cmd.reset( new BBPlayerMoveTC(id, pos.x, pos.y, pos.z));
             _world->monitoringClientList->sendCommand( cmd );
             return true;
         }
         return false;
 }
 
-void CPlayer::LTIncreaseHP(unsigned short int value, unsigned short int count, unsigned short int time) {
+void Player::LTIncreaseHP(unsigned short int value, unsigned short int count, unsigned short int time) {
         //Schedulerobject erzeugen
-        CSchedulerObject * Heal = new CSIncreaseHealtPoints(id,value,count,_world->Scheduler->GetCurrentCycle()+time,time);
+        SchedulerObject * Heal = new SIncreaseHealtPoints(id,value,count,_world->scheduler->GetCurrentCycle()+time,time);
         //Task hinzufgen
-        _world->Scheduler->AddTask(Heal);
+        _world->scheduler->AddTask(Heal);
 }
 
-void CPlayer::LTIncreaseMana(unsigned short int value, unsigned short int count, unsigned short int time) {
+void Player::LTIncreaseMana(unsigned short int value, unsigned short int count, unsigned short int time) {
         //Schedulerobject erzeugen
-        CSchedulerObject * Heal = new CSIncreaseManaPoints(id,value,count,_world->Scheduler->GetCurrentCycle()+time,time);
+        SchedulerObject * Heal = new SIncreaseManaPoints(id,value,count,_world->scheduler->GetCurrentCycle()+time,time);
         //Task hinzufgen
-        _world->Scheduler->AddTask(Heal);
+        _world->scheduler->AddTask(Heal);
 }
 
-void CPlayer::openDepot(uint16_t depotid) {
+void Player::openDepot(uint16_t depotid) {
         //_world->lookIntoDepot(this, 0 );
-#ifdef CPLAYER_PlayerDepot_DEBUG
+#ifdef PLAYER_PlayerDepot_DEBUG
         std::cout << "lookIntoDepot: Spieler " << cp->name << " schaut in sein Depot" << std::endl;
 #endif
-    //std::map<uint32_t,CContainer*>::iterator it;
+    //std::map<uint32_t,Container*>::iterator it;
     if ( depotContents.find( depotid ) != depotContents.end() )
     {
             if ( depotContents[ depotid ] != NULL )
         {
-#ifdef CPLAYER_PlayerDepot_DEBUG
+#ifdef PLAYER_PlayerDepot_DEBUG
                       std::cout << "Depotinhalt vorhanden" << std::endl;
 #endif
                       // bisher geï¿½fnete Container im showcase schlieï¿½n
@@ -2004,9 +2004,9 @@ void CPlayer::openDepot(uint16_t depotid) {
                       // updaten des showcases des Spielers
                       showcases[ 0 ].startContainer( depotContents[ depotid ], false );
                       // ï¿½derungen an den Client schicken
-                      boost::shared_ptr<CBasicServerCommand>cmd( new CUpdateShowCaseTC( 0, depotContents[depotid]->items) );
+                      boost::shared_ptr<BasicServerCommand>cmd( new UpdateShowCaseTC( 0, depotContents[depotid]->items) );
                       Connection->addCommand( cmd );                      
-#ifdef CPLAYER_PlayerDepot_DEBUG
+#ifdef PLAYER_PlayerDepot_DEBUG
                       std::cout << "lookIntoDepot: Ende" << std::endl;
 #endif
                       mapshowcaseopen = true;
@@ -2014,23 +2014,23 @@ void CPlayer::openDepot(uint16_t depotid) {
         }
         else
         {
-#ifdef CPLAYER_PlayerDepot_DEBUG
+#ifdef PLAYER_PlayerDepot_DEBUG
         std::cout << "Depot mit der ID: "<<depotid<<" wird neu erstellt!"<<std:endl
 #endif  
-        depotContents[ depotid ] = new CContainer(0);
+        depotContents[ depotid ] = new Container(0);
         showcases[ 0 ].clear();
         showcases[ 0 ].startContainer( depotContents[ depotid ], false);
-        boost::shared_ptr<CBasicServerCommand>cmd( new CUpdateShowCaseTC( 0, depotContents[ depotid]->items) );
+        boost::shared_ptr<BasicServerCommand>cmd( new UpdateShowCaseTC( 0, depotContents[ depotid]->items) );
         Connection->addCommand( cmd );
         mapshowcaseopen = true;
         }
-#ifdef CPLAYER_PlayerDepot_DEBUG
+#ifdef PLAYER_PlayerDepot_DEBUG
         std::cout << "lookIntoDepot: Ende" << std::endl;
 #endif
 }
 
-void CPlayer::changeQualityItem(TYPE_OF_ITEM_ID id, short int amount) {
-        CCharacter::changeQualityItem(id, amount);
+void Player::changeQualityItem(TYPE_OF_ITEM_ID id, short int amount) {
+        Character::changeQualityItem(id, amount);
         updateBackPackView();
         for ( unsigned char i = MAX_BELT_SLOTS + MAX_BODY_ITEMS - 1; i > 0; --i ) {
                //Update des Inventorys.
@@ -2038,21 +2038,21 @@ void CPlayer::changeQualityItem(TYPE_OF_ITEM_ID id, short int amount) {
         }
 }
 
-void CPlayer::changeQualityAt(unsigned char pos, short int amount) {
-        //std::cout<<"in CPlayer changeQualityAt!"<<std::endl;
-        CCharacter::changeQualityAt( pos, amount);
+void Player::changeQualityAt(unsigned char pos, short int amount) {
+        //std::cout<<"in Player changeQualityAt!"<<std::endl;
+        Character::changeQualityAt( pos, amount);
         //std::cout<<"ende des ccharacter ChangeQualityAt aufrufes"<<std::endl;
         sendCharacterItemAtPos( pos );
         sendCharacterItemAtPos( LEFT_TOOL ); //Item in der Linken hand nochmals senden um ggf ein gelï¿½chtes Belegt an zu zeigen.
         sendCharacterItemAtPos( RIGHT_TOOL ); //Item in der rechten Hand nochmals senden um ggf ein gelï¿½chtes Belegt an zu zeigen.
 }
 
-bool CPlayer::hasGMRight(gm_rights right)
+bool Player::hasGMRight(gm_rights right)
 {
     return ( ( right & admin ) == static_cast<uint32_t>(right) );
 }
 
-void CPlayer::setQuestProgress( uint16_t questid, uint32_t progress ) throw()
+void Player::setQuestProgress( uint16_t questid, uint32_t progress ) throw()
 {
   //Laden einer Transaktion
   ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
@@ -2094,7 +2094,7 @@ void CPlayer::setQuestProgress( uint16_t questid, uint32_t progress ) throw()
   }
 }
 
-uint32_t CPlayer::getQuestProgress( uint16_t questid ) throw()
+uint32_t Player::getQuestProgress( uint16_t questid ) throw()
 {
   try
   {
@@ -2120,9 +2120,9 @@ uint32_t CPlayer::getQuestProgress( uint16_t questid ) throw()
   return 0;
 }
 
-bool CPlayer::moveDepotContentFrom( uint32_t sourcecharid, uint32_t targetdepotid, uint32_t sourcedepotid ) throw()
+bool Player::moveDepotContentFrom( uint32_t sourcecharid, uint32_t targetdepotid, uint32_t sourcedepotid ) throw()
 {
-    CPlayer * sourcechar = _world->Players.findID(sourcecharid);
+    Player * sourcechar = _world->Players.findID(sourcecharid);
     
     if (!sourcechar) { // Player offline -> use SQL to move depot content
         //sendMessage( "moveDepotContentFrom: Player offline - INIT" );
@@ -2131,8 +2131,8 @@ bool CPlayer::moveDepotContentFrom( uint32_t sourcecharid, uint32_t targetdepoti
         {
             //Laden einer Transaktion
             ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
-            std::map<uint32_t, CContainer*> depots, containers;
-            std::map<uint32_t, CContainer*>::iterator it;
+            std::map<uint32_t, Container*> depots, containers;
+            std::map<uint32_t, Container*>::iterator it;
             std::stringstream qry;
             size_t rows;
             std::vector<uint16_t> itemlinenumber;
@@ -2163,10 +2163,10 @@ bool CPlayer::moveDepotContentFrom( uint32_t sourcecharid, uint32_t targetdepoti
             uint16_t depotsize = 0;
             if (ContainerItems->find(321,depotstruct))depotsize = depotstruct.ContainerVolume;
             
-            depots[ sourcedepotid+1 ] = new CContainer(depotsize);
+            depots[ sourcedepotid+1 ] = new Container(depotsize);
 
             unsigned int tempdepot, tempincont, linenumber;
-            CContainer* tempc;
+            Container* tempc;
             Item tempi;
             
             qry.str("");
@@ -2204,7 +2204,7 @@ bool CPlayer::moveDepotContentFrom( uint32_t sourcecharid, uint32_t targetdepoti
                     
                     ContainerStruct cont;
                     if ( ContainerItems->find( tempi.id, cont) ) {
-                            tempc = new CContainer(cont.ContainerVolume);
+                            tempc = new Container(cont.ContainerVolume);
                             it->second->InsertContainer( tempi, tempc );
                             containers[linenumber] = tempc;
                     } else {
@@ -2243,13 +2243,13 @@ bool CPlayer::moveDepotContentFrom( uint32_t sourcecharid, uint32_t targetdepoti
     } else {           // Player online  -> use internal structures to move depot content
         //sendMessage( "moveDepotContentFrom: Player online - INIT" );
 
-        std::map<uint32_t, CContainer*>::iterator it_source, it_target;
+        std::map<uint32_t, Container*>::iterator it_source, it_target;
         // source depot does not exist?
         if ( (it_source=(sourcechar->depotContents).find(sourcedepotid + 1)) == sourcechar->depotContents.end() )
             return false;
 
         // save the depot
-        CContainer * depotToMove = it_source->second;
+        Container * depotToMove = it_source->second;
 
         // remove depot from sourcechar
         sourcechar->depotContents.erase( it_source );
@@ -2271,7 +2271,7 @@ bool CPlayer::moveDepotContentFrom( uint32_t sourcecharid, uint32_t targetdepoti
     return false;
 }
 
-void CPlayer::tempAttribCheck()
+void Player::tempAttribCheck()
 {
     if ( battrib.truesex != battrib.sex )
     {
@@ -2279,7 +2279,7 @@ void CPlayer::tempAttribCheck()
         {
             battrib.time_sex = 0;
             battrib.sex = battrib.truesex;
-            sendAttrib("sex", CCharacter::increaseAttrib("sex",0));
+            sendAttrib("sex", Character::increaseAttrib("sex",0));
         }
         battrib.time_sex--;
     }
@@ -2289,7 +2289,7 @@ void CPlayer::tempAttribCheck()
         {
             battrib.time_age = 0;
             battrib.age = battrib.trueage;
-            sendAttrib("age", CCharacter::increaseAttrib("age",0));
+            sendAttrib("age", Character::increaseAttrib("age",0));
         }
         battrib.time_age--;
     }   
@@ -2299,7 +2299,7 @@ void CPlayer::tempAttribCheck()
         {
             battrib.time_weight = 0;
             battrib.weight = battrib.trueweight;
-            sendAttrib("weight", CCharacter::increaseAttrib("weight",0));
+            sendAttrib("weight", Character::increaseAttrib("weight",0));
         }
         battrib.time_weight--;
     }   
@@ -2309,7 +2309,7 @@ void CPlayer::tempAttribCheck()
         {
             battrib.time_body_height = 0;
             battrib.body_height = battrib.truebody_height;
-            sendAttrib("body_height", CCharacter::increaseAttrib("body_height",0));
+            sendAttrib("body_height", Character::increaseAttrib("body_height",0));
         }
         battrib.time_body_height--;
     }
@@ -2319,7 +2319,7 @@ void CPlayer::tempAttribCheck()
         {
             battrib.time_hitpoints = 0;
             battrib.hitpoints = battrib.truehitpoints;
-            sendAttrib("hitpoints", CCharacter::increaseAttrib("hitpoints",0));
+            sendAttrib("hitpoints", Character::increaseAttrib("hitpoints",0));
         }
         battrib.time_hitpoints--;
     }
@@ -2329,7 +2329,7 @@ void CPlayer::tempAttribCheck()
         {
             battrib.time_mana = 0;
             battrib.mana = battrib.truemana;
-            sendAttrib("mana", CCharacter::increaseAttrib("mana",0));
+            sendAttrib("mana", Character::increaseAttrib("mana",0));
         }
         battrib.time_mana--;
     }
@@ -2339,7 +2339,7 @@ void CPlayer::tempAttribCheck()
         {
             battrib.time_attitude = 0;
             battrib.attitude = battrib.trueattitude;
-            sendAttrib("attitude", CCharacter::increaseAttrib("attitude",0));
+            sendAttrib("attitude", Character::increaseAttrib("attitude",0));
         }
         battrib.time_attitude--;
     }
@@ -2349,7 +2349,7 @@ void CPlayer::tempAttribCheck()
         {
             battrib.time_luck = 0;
             battrib.luck = battrib.trueluck;
-            sendAttrib("luck", CCharacter::increaseAttrib("luck",0));
+            sendAttrib("luck", Character::increaseAttrib("luck",0));
         }
         battrib.time_luck--;
     }
@@ -2359,7 +2359,7 @@ void CPlayer::tempAttribCheck()
         {
             battrib.time_strength = 0;
             battrib.strength = battrib.truestrength;
-            sendAttrib("strenght", CCharacter::increaseAttrib("strenght",0));
+            sendAttrib("strenght", Character::increaseAttrib("strenght",0));
         }
         battrib.time_strength--;
     } 
@@ -2369,7 +2369,7 @@ void CPlayer::tempAttribCheck()
         {
             battrib.time_dexterity = 0;
             battrib.dexterity = battrib.truedexterity;
-            sendAttrib("dexterity", CCharacter::increaseAttrib("dexterity",0));
+            sendAttrib("dexterity", Character::increaseAttrib("dexterity",0));
         }
         battrib.time_dexterity--;
     } 
@@ -2379,7 +2379,7 @@ void CPlayer::tempAttribCheck()
         {
             battrib.time_constitution = 0;
             battrib.constitution = battrib.trueconstitution;
-            sendAttrib("constitution", CCharacter::increaseAttrib("constitution",0));
+            sendAttrib("constitution", Character::increaseAttrib("constitution",0));
         }
         battrib.time_constitution--;
     }    
@@ -2389,7 +2389,7 @@ void CPlayer::tempAttribCheck()
         {
             battrib.time_agility = 0;
             battrib.agility = battrib.trueagility;
-            sendAttrib("agility", CCharacter::increaseAttrib("agility",0));
+            sendAttrib("agility", Character::increaseAttrib("agility",0));
         }
         battrib.time_agility--;
     }  
@@ -2399,7 +2399,7 @@ void CPlayer::tempAttribCheck()
         {
             battrib.time_intelligence = 0;
             battrib.intelligence = battrib.trueintelligence;
-            sendAttrib("intelligence", CCharacter::increaseAttrib("inteligence",0));
+            sendAttrib("intelligence", Character::increaseAttrib("inteligence",0));
         }
         battrib.time_intelligence--;
     } 
@@ -2409,7 +2409,7 @@ void CPlayer::tempAttribCheck()
         {
             battrib.time_perception = 0;
             battrib.perception = battrib.trueperception;
-            sendAttrib("perception", CCharacter::increaseAttrib("perception",0));
+            sendAttrib("perception", Character::increaseAttrib("perception",0));
         }
         battrib.time_perception--;
     }
@@ -2419,7 +2419,7 @@ void CPlayer::tempAttribCheck()
         {
             battrib.time_willpower = 0;
             battrib.willpower = battrib.truewillpower;
-            sendAttrib("willpower", CCharacter::increaseAttrib("willpower",0));
+            sendAttrib("willpower", Character::increaseAttrib("willpower",0));
         }
         battrib.time_willpower--;
     }
@@ -2429,7 +2429,7 @@ void CPlayer::tempAttribCheck()
         {
             battrib.time_essence = 0;
             battrib.essence = battrib.trueessence;
-            sendAttrib("essence", CCharacter::increaseAttrib("essence",0));
+            sendAttrib("essence", Character::increaseAttrib("essence",0));
         }
         battrib.time_essence--;
     }    
@@ -2439,87 +2439,87 @@ void CPlayer::tempAttribCheck()
         {
             battrib.time_foodlevel = 0;
             battrib.foodlevel = battrib.truefoodlevel;
-            sendAttrib("foodlevel", CCharacter::increaseAttrib("foodlevel",0));
+            sendAttrib("foodlevel", Character::increaseAttrib("foodlevel",0));
         }
         battrib.time_foodlevel--;
     }  
 }
 
-void CPlayer::startAction(unsigned short int wait, unsigned short int ani, unsigned short int redoani, unsigned short int sound, unsigned short int redosound)
+void Player::startAction(unsigned short int wait, unsigned short int ani, unsigned short int redoani, unsigned short int sound, unsigned short int redosound)
 {
     ltAction->startLongTimeAction(wait, ani, redoani, sound, redosound);
 }
  
-void CPlayer::abortAction()
+void Player::abortAction()
 {
     ltAction->abortAction();
 }
 
-void CPlayer::successAction()
+void Player::successAction()
 {
     ltAction->successAction();
 }
 
-void CPlayer::actionDisturbed(CCharacter * disturber)
+void Player::actionDisturbed(Character * disturber)
 {
     ltAction->actionDisturbed(disturber);
 }
 
-void CPlayer::changeSource( CCharacter * cc )
+void Player::changeSource( Character * cc )
 {
     ltAction->changeSource(cc);
 }
 
-void CPlayer::changeSource( ScriptItem sI )
+void Player::changeSource( ScriptItem sI )
 {
     ltAction->changeSource( sI );
 }
 
-void CPlayer::changeSource( position pos )
+void Player::changeSource( position pos )
 {
     ltAction->changeSource( pos );
 }
 
-void CPlayer::changeSource()
+void Player::changeSource()
 {
     ltAction->changeSource();
 }
 
-void CPlayer::changeTarget( CCharacter * cc )
+void Player::changeTarget( Character * cc )
 {
     ltAction->changeTarget( cc );
 }
 
-void CPlayer::changeTarget( ScriptItem sI )
+void Player::changeTarget( ScriptItem sI )
 {
     ltAction->changeTarget( sI );
 }
 
-void CPlayer::changeTarget( position pos )
+void Player::changeTarget( position pos )
 {
     ltAction->changeTarget( pos );
 }
 
-void CPlayer::changeTarget()
+void Player::changeTarget()
 {
     ltAction->changeTarget();
 }
 
-const unsigned short int CPlayer::getPlayerLanguage() {
+const unsigned short int Player::getPlayerLanguage() {
     return _player_language->_language;
 }
 
-void CPlayer::setPlayerLanguage(CLanguage::LanguageType mother_tongue) {
-    _player_language = CLanguage::create(mother_tongue);
+void Player::setPlayerLanguage(Language::LanguageType mother_tongue) {
+    _player_language = Language::create(mother_tongue);
 }
 
-void CPlayer::sendMessage(std::string message) 
+void Player::sendMessage(std::string message) 
 {
-    boost::shared_ptr<CBasicServerCommand>cmd(new CSayTC( pos.x, pos.y, pos.z, message ));
+    boost::shared_ptr<BasicServerCommand>cmd(new SayTC( pos.x, pos.y, pos.z, message ));
     Connection->addCommand( cmd );
 }
 
-void CPlayer::sendRelativeArea(int8_t zoffs)
+void Player::sendRelativeArea(int8_t zoffs)
 {
       if( (screenwidth == 0) && (screenheight == 0) )
       {   
@@ -2535,11 +2535,11 @@ void CPlayer::sendRelativeArea(int8_t zoffs)
                 e = 0;
             }
             //schleife von 0ben nach unten durch alle tiles
-            CWorld * world = CWorld::get();
+            World * world = World::get();
             for ( int i=0; i <= (MAP_DIMENSION + MAP_DOWN_EXTRA + e) * 2; ++i )
             {
-                world->clientview.fillStripe( position(x,y,z), CNewClientView::dir_right, MAP_DIMENSION+1-(i%2), &(CWorld::get()->maps) );
-                if ( world->clientview.getExists() ) Connection->addCommand(boost::shared_ptr<CBasicServerCommand>( new CMapStripeTC(position(x,y,z), CNewClientView::dir_right) ) );
+                world->clientview.fillStripe( position(x,y,z), NewClientView::dir_right, MAP_DIMENSION+1-(i%2), &(World::get()->maps) );
+                if ( world->clientview.getExists() ) Connection->addCommand(boost::shared_ptr<BasicServerCommand>( new MapStripeTC(position(x,y,z), NewClientView::dir_right) ) );
                   if ( i % 2 == 0 )
                       y += 1;
                   else
@@ -2560,11 +2560,11 @@ void CPlayer::sendRelativeArea(int8_t zoffs)
                 e = 0;
             }
             //schleife von 0ben nach unten durch alle tiles
-            CWorld * world = CWorld::get();
+            World * world = World::get();
             for ( int i=0; i <= ( 2*screenheight + MAP_DOWN_EXTRA + e) * 2; ++i )
             {
-                world->clientview.fillStripe( position(x,y,z), CNewClientView::dir_right, 2*screenwidth+1-(i%2), &(CWorld::get()->maps) );
-                if ( world->clientview.getExists() ) Connection->addCommand(boost::shared_ptr<CBasicServerCommand>( new CMapStripeTC(position(x,y,z), CNewClientView::dir_right) ) );
+                world->clientview.fillStripe( position(x,y,z), NewClientView::dir_right, 2*screenwidth+1-(i%2), &(World::get()->maps) );
+                if ( world->clientview.getExists() ) Connection->addCommand(boost::shared_ptr<BasicServerCommand>( new MapStripeTC(position(x,y,z), NewClientView::dir_right) ) );
                   if ( i % 2 == 0 )
                       y += 1;
                   else
@@ -2573,109 +2573,109 @@ void CPlayer::sendRelativeArea(int8_t zoffs)
       }
 }
 
-void CPlayer::sendFullMap()
+void Player::sendFullMap()
 {
     for ( int8_t i = -2; i <= 2; ++i)sendRelativeArea( i );
-    Connection->addCommand( boost::shared_ptr<CBasicServerCommand>( new CMapCompleteTC() ) );
+    Connection->addCommand( boost::shared_ptr<BasicServerCommand>( new MapCompleteTC() ) );
 }
 
-void CPlayer::sendDirStripe( viewdir direction, bool extraStripeForDiagonalMove )
+void Player::sendDirStripe( viewdir direction, bool extraStripeForDiagonalMove )
 {
     if( (screenwidth == 0) && (screenheight == 0) )
     {   
         // static view
         int x,y,z,e,l;
-        CNewClientView::stripedirection dir;
+        NewClientView::stripedirection dir;
         int length = MAP_DIMENSION + 1;
         switch ( direction )
         {
             case upper:
                 x = pos.x;
                 y = pos.y - MAP_DIMENSION;
-                dir = CNewClientView::dir_right;
+                dir = NewClientView::dir_right;
                 if (extraStripeForDiagonalMove) --x;
                 break;
             case left:
                 x = pos.x;
                 y = pos.y - MAP_DIMENSION;
-                dir = CNewClientView::dir_down;
+                dir = NewClientView::dir_down;
                 length += MAP_DOWN_EXTRA;
                 if (extraStripeForDiagonalMove) ++x;
                 break;
             case right:
                 x = pos.x + MAP_DIMENSION;
                 y = pos.y;
-                dir = CNewClientView::dir_down;
+                dir = NewClientView::dir_down;
                 length += MAP_DOWN_EXTRA;
                 if (extraStripeForDiagonalMove) --y;
                 break;
             case lower:
                 x = pos.x - MAP_DIMENSION - MAP_DOWN_EXTRA;
                 y = pos.y + MAP_DOWN_EXTRA;
-                dir = CNewClientView::dir_right;
+                dir = NewClientView::dir_right;
                 if (extraStripeForDiagonalMove) --y;
                 break;
         }
-        CNewClientView * view = &(CWorld::get()->clientview);
+        NewClientView * view = &(World::get()->clientview);
         for ( z = - 2; z <= 2; ++z)
         {
             e = (direction != lower && z > 0) ? z*3 : 0; // left, right and upper stripes moved up if z>0 to provide the client with info for detecting roofs
-            l = (dir == CNewClientView::dir_down && z > 0) ? e : 0; // right and left stripes have to become longer then
+            l = (dir == NewClientView::dir_down && z > 0) ? e : 0; // right and left stripes have to become longer then
             if (extraStripeForDiagonalMove) ++l;
-            view->fillStripe( position(x-z*3+e,y+z*3-e,pos.z+z), dir, length+l, &CWorld::get()->maps );
-            if ( view->getExists() ) Connection->addCommand(boost::shared_ptr<CBasicServerCommand>( new CMapStripeTC( position(x-z*3+e,y+z*3-e,pos.z+z), dir ) ) );
+            view->fillStripe( position(x-z*3+e,y+z*3-e,pos.z+z), dir, length+l, &World::get()->maps );
+            if ( view->getExists() ) Connection->addCommand(boost::shared_ptr<BasicServerCommand>( new MapStripeTC( position(x-z*3+e,y+z*3-e,pos.z+z), dir ) ) );
         }
     }
     else
     {
         // dynamic view
         int x,y,z,e,l;
-        CNewClientView::stripedirection dir;
+        NewClientView::stripedirection dir;
         int length;
         switch ( direction )
         {
             case upper:
                 x = pos.x - screenwidth + screenheight;
                 y = pos.y - screenwidth - screenheight;
-                dir = CNewClientView::dir_right;
+                dir = NewClientView::dir_right;
                 length = 2*screenwidth + 1;
                 if (extraStripeForDiagonalMove) --x;
                 break;
             case left:
                 x = pos.x - screenwidth + screenheight;
                 y = pos.y - screenwidth - screenheight;
-                dir = CNewClientView::dir_down;
+                dir = NewClientView::dir_down;
                 length = 2*screenheight + 1 + MAP_DOWN_EXTRA;
                 if (extraStripeForDiagonalMove) ++x;
                 break;
             case right:
                 x = pos.x + screenwidth + screenheight;
                 y = pos.y + screenwidth - screenheight;
-                dir = CNewClientView::dir_down;
+                dir = NewClientView::dir_down;
                 length = 2*screenheight + 1 + MAP_DOWN_EXTRA;
                 if (extraStripeForDiagonalMove) --y;
                 break;
             case lower:
                 x = pos.x - screenwidth - screenheight - MAP_DOWN_EXTRA;
                 y = pos.y - screenwidth + screenheight + MAP_DOWN_EXTRA;
-                dir = CNewClientView::dir_right;
+                dir = NewClientView::dir_right;
                 length = 2*screenwidth + 1;
                 if (extraStripeForDiagonalMove) --y;
                 break;
         }
-        CNewClientView * view = &(CWorld::get()->clientview);
+        NewClientView * view = &(World::get()->clientview);
         for ( z = - 2; z <= 2; ++z)
         {
             e = (direction != lower && z > 0) ? z*3 : 0; // left, right and upper stripes moved up if z>0 to provide the client with info for detecting roofs
-            l = (dir == CNewClientView::dir_down && z > 0) ? e : 0; // right and left stripes have to become longer then
+            l = (dir == NewClientView::dir_down && z > 0) ? e : 0; // right and left stripes have to become longer then
             if (extraStripeForDiagonalMove) ++l;
-            view->fillStripe( position(x-z*3+e,y+z*3-e,pos.z+z), dir, length+l, &CWorld::get()->maps );
-            if ( view->getExists() ) Connection->addCommand(boost::shared_ptr<CBasicServerCommand>( new CMapStripeTC( position(x-z*3+e,y+z*3-e,pos.z+z), dir ) ) );
+            view->fillStripe( position(x-z*3+e,y+z*3-e,pos.z+z), dir, length+l, &World::get()->maps );
+            if ( view->getExists() ) Connection->addCommand(boost::shared_ptr<BasicServerCommand>( new MapStripeTC( position(x-z*3+e,y+z*3-e,pos.z+z), dir ) ) );
         }
     }
 }
 
-void CPlayer::sendStepStripes( direction dir )
+void Player::sendStepStripes( direction dir )
 {
                           switch( dir )
                           {
@@ -2725,59 +2725,59 @@ void CPlayer::sendStepStripes( direction dir )
                           }
 }
 
-void CPlayer::sendSingleStripe( viewdir direction, int8_t zoffs )
+void Player::sendSingleStripe( viewdir direction, int8_t zoffs )
 {/* NOT USED YET
     int x,y,z;
-    CNewClientView::stripedirection dir;
+    NewClientView::stripedirection dir;
     switch ( direction )
     {
         case upper:
             x = pos.x;
             y = pos.y - MAP_DIMENSION;
-            dir = CNewClientView::dir_right;
+            dir = NewClientView::dir_right;
             break;
         case left:
             x = pos.x;
             y = pos.y - MAP_DIMENSION;
-            dir = CNewClientView::dir_down;
+            dir = NewClientView::dir_down;
             break;
         case right:
             x = pos.x + MAP_DIMENSION;
             y = pos.y;
-            dir = CNewClientView::dir_down;
+            dir = NewClientView::dir_down;
             break;
         case lower:
             x = pos.x - MAP_DIMENSION;
             y = pos.y;
-            dir = CNewClientView::dir_right;
+            dir = NewClientView::dir_right;
             break;
     }
     z = pos.z + zoffs;
-    CNewClientView * view = &(CWorld::get()->clientview);
-    view->fillStripe( position(x,y,z), dir, &CWorld::get()->maps );
-    if ( view->getExists() ) Connection->addCommand(boost::shared_ptr<CBasicServerCommand>( new CMapStripeTC( position(x,y,z), dir ) ) );    
+    NewClientView * view = &(World::get()->clientview);
+    view->fillStripe( position(x,y,z), dir, &CWWorld::get()->maps );
+    if ( view->getExists() ) Connection->addCommand(boost::shared_ptr<BasicServerCommand>( new MapStripeTC( position(x,y,z), dir ) ) );    
 */}
 
-uint32_t CPlayer::idleTime()
+uint32_t Player::idleTime()
 {
     time_t now;
     time( &now );
     return now - lastaction;
 }
 
-void CPlayer::sendBook( uint16_t bookID )
+void Player::sendBook( uint16_t bookID )
 {
-    boost::shared_ptr<CBasicServerCommand>cmd( new CBookTC( bookID ) );
+    boost::shared_ptr<BasicServerCommand>cmd( new BookTC( bookID ) );
     Connection->addCommand( cmd );
 }
 
-void CPlayer::sendCharDescription( TYPE_OF_CHARACTER_ID id,const std::string& desc)
+void Player::sendCharDescription( TYPE_OF_CHARACTER_ID id,const std::string& desc)
 {
-    boost::shared_ptr<CBasicServerCommand>cmd( new CCharDescription( id, desc) );
+    boost::shared_ptr<BasicServerCommand>cmd( new CharDescription( id, desc) );
     Connection->addCommand( cmd );
 }
 
-void CPlayer::sendCharAppearance( TYPE_OF_CHARACTER_ID id, boost::shared_ptr<CBasicServerCommand> appearance, bool always )
+void Player::sendCharAppearance( TYPE_OF_CHARACTER_ID id, boost::shared_ptr<BasicServerCommand> appearance, bool always )
 {
     //send appearance always or only if the char in question just appeared
     if( always || visibleChars.insert( id ).second )
@@ -2786,7 +2786,7 @@ void CPlayer::sendCharAppearance( TYPE_OF_CHARACTER_ID id, boost::shared_ptr<CBa
     }
 }
 
-void CPlayer::sendCharRemove( TYPE_OF_CHARACTER_ID id, boost::shared_ptr<CBasicServerCommand> removechar )
+void Player::sendCharRemove( TYPE_OF_CHARACTER_ID id, boost::shared_ptr<BasicServerCommand> removechar )
 {
     if( this->id != id )
     {

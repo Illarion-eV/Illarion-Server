@@ -24,70 +24,70 @@
 #include <vector>
 #include "utility.hpp"
 
-//! eine std::vector-Template-Klasse für CCharacter-Objekte
+//! eine std::vector-Template-Klasse für Character-Objekte
 // Die Klasse erweitert die Funktionalität von std::vector um
 // ccharacter - spezifische Suchfunktionen
 template < class _Tp >
 class ccharactervector : public std::vector < _Tp > {
 	public:
-		//! sucht in dem std::vector nach dem CCharacter mit Namen n
-		// \param n der Name des CCharacter
-		// \return _Tp Zeiger auf den gefunden CCharacter, NULL falls nicht gefunden
+		//! sucht in dem std::vector nach dem Character mit Namen n
+		// \param n der Name des Character
+		// \return _Tp Zeiger auf den gefunden Character, NULL falls nicht gefunden
 		_Tp find( std::string n );
 
-		//! sucht in dem std::vector nach dem CCharacter mit der ID id
-		// \param id die id des CCharacter
-		// \return _Tp Zeiger auf den gefunden CCharacter, NULL falls nicht gefunden
+		//! sucht in dem std::vector nach dem Character mit der ID id
+		// \param id die id des Character
+		// \return _Tp Zeiger auf den gefunden Character, NULL falls nicht gefunden
 		_Tp findID( TYPE_OF_CHARACTER_ID id );
 
-		//! sucht in dem std::vector nach dem CCharacter mit den Koordinaten xc,yc,zc
-		// \param xc X-Koordinate des gesuchten CCharacter
-		// \param xc Y-Koordinate des gesuchten CCharacter
-		// \param xc Z-Koordinate des gesuchten CCharacter
-		// \return _Tp Zeiger auf den gefunden CCharacter, NULL falls nicht gefunden
+		//! sucht in dem std::vector nach dem Character mit den Koordinaten xc,yc,zc
+		// \param xc X-Koordinate des gesuchten Character
+		// \param xc Y-Koordinate des gesuchten Character
+		// \param xc Z-Koordinate des gesuchten Character
+		// \return _Tp Zeiger auf den gefunden Character, NULL falls nicht gefunden
 		_Tp find( short int xc, short int yc, short int zc );
 
-		//! sucht in dem std::vector nach dem CCharacter mit den Koordinaten xc,yc,zc
-		// \param xc X-Koordinate des gesuchten CCharacter
-		// \param xc Y-Koordinate des gesuchten CCharacter
-		// \param xc Z-Koordinate des gesuchten CCharacter
-		// \param ret Zeiger auf den gefunden CCharacter
-		// \return true falls ein CCharacter gefunden wurde, false sonst
+		//! sucht in dem std::vector nach dem Character mit den Koordinaten xc,yc,zc
+		// \param xc X-Koordinate des gesuchten Character
+		// \param xc Y-Koordinate des gesuchten Character
+		// \param xc Z-Koordinate des gesuchten Character
+		// \param ret Zeiger auf den gefunden Character
+		// \return true falls ein Character gefunden wurde, false sonst
 		bool find( short int xc, short int yc, short int zc, _Tp &ret );
 
-		//! löscht in dem std::vector den CCharacter mit den Koordinaten xc,yc,zc
-		// \param xc X-Koordinate des gesuchten CCharacter
-		// \param xc Y-Koordinate des gesuchten CCharacter
-		// \param xc Z-Koordinate des gesuchten CCharacter
-		// \return true falls ein CCharacter gelöscht wurde, false sonst
+		//! löscht in dem std::vector den Character mit den Koordinaten xc,yc,zc
+		// \param xc X-Koordinate des gesuchten Character
+		// \param xc Y-Koordinate des gesuchten Character
+		// \param xc Z-Koordinate des gesuchten Character
+		// \return true falls ein Character gelöscht wurde, false sonst
 		bool remove( short int xc, short int yc, short int zc );
 
 		//! sucht in dem std::vector nach dem Character mit der Id id
-		// \param id die ID des gesuchten CCharacter
+		// \param id die ID des gesuchten Character
 		// \param newIt falls erfolgreich der Iterator auf den Character mit der ID id
-		// \return true falls der CCharacter gefunden wurde, false sonst
+		// \return true falls der Character gefunden wurde, false sonst
 		bool getIterator( TYPE_OF_CHARACTER_ID id, typename ccharactervector::iterator &newIt );
 
-		//! sucht in dem std::vector nach CCharacter mit Koordinaten in der Nähe von (xc,yc,zc)
-		// \param rnorth maximaler Abstand der CCharacter nach Norden
-		// \param rsouth maximaler Abstand der CCharacter nach Süden
-		// \param reast maximaler Abstand der CCharacter nach Osten
-		// \param rwest maximaler Abstand der CCharacter nach Westen
-		// \param rup maximaler Abstand der CCharacter nach oben
-		// \param rdown maximaler Abstand der CCharacter nach unten
-		// \return std::vector<_Tp> Vektor mit allen CCharacter mit Koordinate (x,y,z) für die gilt:
+		//! sucht in dem std::vector nach Character mit Koordinaten in der Nähe von (xc,yc,zc)
+		// \param rnorth maximaler Abstand der Character nach Norden
+		// \param rsouth maximaler Abstand der Character nach Süden
+		// \param reast maximaler Abstand der Character nach Osten
+		// \param rwest maximaler Abstand der Character nach Westen
+		// \param rup maximaler Abstand der Character nach oben
+		// \param rdown maximaler Abstand der Character nach unten
+		// \return std::vector<_Tp> Vektor mit allen Character mit Koordinate (x,y,z) für die gilt:
 		// (zc-rup <= z <= zc+down) und (xc-rwest <= x <= xc+reast) und (yc-rnorth <= y <= yc+rwest)
 		std::vector < _Tp > findAllCharactersInRangeOf(short int xc, short int yc, short int zc, int distancemetric );
 		std::vector < _Tp > findAllCharactersInMaxRangeOf(short int xc, short int yc, short int zc, int distancemetric );
 
-		//! sucht in dem std::vector nach lebenden CCharacter mit Koordinaten in der Nähe von (xc,yc,zc)
-		// \param rnorth maximaler Abstand der CCharacter nach Norden
-		// \param rsouth maximaler Abstand der CCharacter nach Süden
-		// \param reast maximaler Abstand der CCharacter nach Osten
-		// \param rwest maximaler Abstand der CCharacter nach Westen
-		// \param rup maximaler Abstand der CCharacter nach oben
-		// \param rdown maximaler Abstand der CCharacter nach unten
-		// \return std::vector<_Tp> Vektor mit allen CCharacter mit Koordinate (x,y,z) für die gilt:
+		//! sucht in dem std::vector nach lebenden Character mit Koordinaten in der Nähe von (xc,yc,zc)
+		// \param rnorth maximaler Abstand der Character nach Norden
+		// \param rsouth maximaler Abstand der Character nach Süden
+		// \param reast maximaler Abstand der Character nach Osten
+		// \param rwest maximaler Abstand der Character nach Westen
+		// \param rup maximaler Abstand der Character nach oben
+		// \param rdown maximaler Abstand der Character nach unten
+		// \return std::vector<_Tp> Vektor mit allen Character mit Koordinate (x,y,z) für die gilt:
 		// (zc-rup <= z <= zc+down) und (xc-rwest <= x <= xc+reast) und (yc-rnorth <= y <= yc+rwest)
 		std::vector < _Tp > findAllAliveCharactersInRangeOf(short int xc, short int yc, short int zc, int distancemetric );
         
@@ -97,10 +97,10 @@ class ccharactervector : public std::vector < _Tp > {
         */
         std::vector < _Tp > findAllAliveCharactersInRangeOfOnSameMap(short int xc, short int yc, short int zc, int distancemetric );
 
-		//! sucht in dem std::vector nach CCharacter mit X-Koordinaten für die gilt startx <= x <= endx
-		// \param startx kleinste X-Koordinate für akzeptierte CCharacter
-		// \param endx größte X-Koordinate für akzeptierte CCharacter
-		// \return true falls mindestens ein CCharacter gefunden wurde
+		//! sucht in dem std::vector nach Character mit X-Koordinaten für die gilt startx <= x <= endx
+		// \param startx kleinste X-Koordinate für akzeptierte Character
+		// \param endx größte X-Koordinate für akzeptierte Character
+		// \return true falls mindestens ein Character gefunden wurde
 		bool findAllCharactersWithXInRangeOf( short int startx, short int endx, std::vector < _Tp > &ret );
 
 };

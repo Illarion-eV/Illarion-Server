@@ -25,7 +25,7 @@
 *Basic class for commands which can be sent to a client or received by the server,
 *holding a unique byte to identify the command.
 */
-class CBasicCommand
+class BasicCommand
 {
     private:
         unsigned char definitionByte; /*<Unique command id*/
@@ -34,7 +34,7 @@ class CBasicCommand
          *Constructor which sets the definition byte
          *\param defByte A unique command id
          */
-        CBasicCommand(unsigned char defByte);
+        BasicCommand(unsigned char defByte);
 
         /**
          *Provides read access to the definition byte

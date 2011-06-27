@@ -19,13 +19,13 @@
 
 #include "IdCounter.hpp"
 
-CIdCounter::CIdCounter( std::string counterf ) {
+IdCounter::IdCounter( std::string counterf ) {
 	counterfile = counterf;
 
 	std::ifstream cfile( counterfile.c_str(), std::ios::binary | std::ios::in );
 	// Destruktor schliesst Datei
 	if ( !cfile.good() ) {
-#ifdef CIdCounter_DEBUG
+#ifdef IdCounter_DEBUG
 		std::cout << "counterfile " << counterfile << " nicht gefunden, setze counter auf 0\n";
 #endif
 		counter = 0;
@@ -37,17 +37,17 @@ CIdCounter::CIdCounter( std::string counterf ) {
 	}
 }
 
-CIdCounter::CIdCounter(const std::string& counterf, const TYPE_OF_CHARACTER_ID& startid) {
+IdCounter::IdCounter(const std::string& counterf, const TYPE_OF_CHARACTER_ID& startid) {
 	counterfile = counterf;
 	set(startid);
 }
 
 
 
-CIdCounter::~CIdCounter() {}
+IdCounter::~IdCounter() {}
 
 
-TYPE_OF_CHARACTER_ID CIdCounter::nextFreeId() {
+TYPE_OF_CHARACTER_ID IdCounter::nextFreeId() {
 	std::ofstream cfile( counterfile.c_str(), std::ios::binary |
 						 std::ios::out |
 						 std::ios::trunc );
@@ -63,7 +63,7 @@ TYPE_OF_CHARACTER_ID CIdCounter::nextFreeId() {
 	}
 }
 
-bool CIdCounter::set( TYPE_OF_CHARACTER_ID lastid ) {
+bool IdCounter::set( TYPE_OF_CHARACTER_ID lastid ) {
 	std::ofstream cfile( counterfile.c_str(), std::ios::binary |
 						 std::ios::out |
 						 std::ios::trunc );
@@ -81,6 +81,6 @@ bool CIdCounter::set( TYPE_OF_CHARACTER_ID lastid ) {
 
 
 
-bool CIdCounter::reset() {
+bool IdCounter::reset() {
 	return set( 0 );
 }

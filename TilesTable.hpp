@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CTILESTABLE_H
-#define CTILESTABLE_H
+#ifndef TILESTABLE_H
+#define TILESTABLE_H
 
 #include <string>
 
@@ -40,17 +40,17 @@ using std::hash_map;
 #include "types.hpp"
 #include "TableStructs.hpp"
 
-class CDBConnect;
-class CWorld;
+class DBConnect;
+class World;
 
 //! eine Tabelle für allgemeine Item-Eigenschaften
-class CTilesTable {
+class TilesTable {
 	public:
 		bool find( TYPE_OF_ITEM_ID Id, TilesStruct &ret );
 
-		CTilesTable();
+		TilesTable();
 
-		~CTilesTable();
+		~TilesTable();
 
 		void reload();
 

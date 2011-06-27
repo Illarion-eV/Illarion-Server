@@ -22,21 +22,21 @@
 
 #include "LuaScript.hpp"
 
-class CWorld;
-class CCharacter;
+class World;
+class Character;
 
-class CLuaLearnScript : public CLuaScript
+class LuaLearnScript : public LuaScript
 {
     public:
-        CLuaLearnScript(std::string filename) throw(ScriptException);
-        virtual ~CLuaLearnScript() throw ();
+        LuaLearnScript(std::string filename) throw(ScriptException);
+        virtual ~LuaLearnScript() throw ();
 
-        void learn( CCharacter * cc, std::string skill, uint8_t skillGroup, uint32_t actionPoints, uint8_t opponent, uint8_t leadAttrib );
-        void reduceMC( CCharacter * cc );
+        void learn( Character * cc, std::string skill, uint8_t skillGroup, uint32_t actionPoints, uint8_t opponent, uint8_t leadAttrib );
+        void reduceMC( Character * cc );
         
     private:
     
-	CLuaLearnScript(const CLuaLearnScript&);
-	CLuaLearnScript& operator=(const CLuaLearnScript&);
+	LuaLearnScript(const LuaLearnScript&);
+	LuaLearnScript& operator=(const LuaLearnScript&);
 };
 #endif

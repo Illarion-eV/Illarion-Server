@@ -45,13 +45,13 @@
 
 extern std::ofstream talkfile;
 
-void set_spawn_command( CWorld*, CPlayer*, const std::string& );
-void import_maps_command( CWorld*, CPlayer*, const std::string& );
-void create_area_command( CWorld*, CPlayer*, const std::string& );
-void set_login( CWorld*, CPlayer*, const std::string& );
+void set_spawn_command( World*, Player*, const std::string& );
+void import_maps_command( World*, Player*, const std::string& );
+void create_area_command( World*, Player*, const std::string& );
+void set_login( World*, Player*, const std::string& );
 
 
-void CWorld::montool_kill_command(CPlayer * c)
+void World::montool_kill_command(Player * c)
 {
     if ( !c->hasGMRight(gmr_reload) )return;
     MONSTERVECTOR::iterator mIterator;
@@ -62,45 +62,45 @@ void CWorld::montool_kill_command(CPlayer * c)
         (*mIterator)->increaseAttrib("hitpoints",-((*mIterator)->increaseAttrib("hitpoints",0)+1) );
         ++counter;
     }
-    //monitoringClientList->sendCommand( new CSendMessageTS("Sucessfully killed: "+CLogger::toString(counter)+" monsters per nuke from: "+c->name+"("+CLogger::toString(c->id)+")",0));
+    //monitoringClientList->sendCommand( new SendMessageTS("Sucessfully killed: "+Logger::toString(counter)+" monsters per nuke from: "+c->name+"("+Logger::toString(c->id)+")",0));
 }
 
-void CWorld::montool_reload_command( CPlayer * c)
+void World::montool_reload_command( Player * c)
 {
     /*
     if ( c->hasGMRight(gmr_reload) )
     {
         if (reload_tables(c) ) 
-            //monitoringClientList->sendCommand( new CSendMessageTS("db tables loaded succesfully! from "+c->name+"("+CLogger::toString(c->id)+")",0));
+            //monitoringClientList->sendCommand( new SendMessageTS("db tables loaded succesfully! from "+c->name+"("+Logger::toString(c->id)+")",0));
         else
-            //monitoringClientList->sendCommand( new CSendMessageTS("error while loading tables! from "+c->name+"("+CLogger::toString(c->id)+")",0));
+            //monitoringClientList->sendCommand( new SendMessageTS("error while loading tables! from "+c->name+"("+Logger::toString(c->id)+")",0));
     }
     */
 }
 
-void CWorld::montool_kickall_command( CPlayer * c)
+void World::montool_kickall_command( Player * c)
 {
     if ( c->hasGMRight( gmr_forcelogout ) ) 
     {
 	    forceLogoutOfAllPlayers();
-        //monitoringClientList->sendCommand( new CSendMessageTS("all players forced to logout! from "+c->name+"("+CLogger::toString(c->id)+")",0));
+        //monitoringClientList->sendCommand( new SendMessageTS("all players forced to logout! from "+c->name+"("+Logger::toString(c->id)+")",0));
     }
 }
 
-void CWorld::montool_import_maps_command( CPlayer * c)
+void World::montool_import_maps_command( Player * c)
 {
     if ( !c->hasGMRight(gmr_import) )return;
     {
 	    load_maps();
-        //monitoringClientList->sendCommand( new CSendMessageTS("maps imported! from "+c->name+"("+CLogger::toString(c->id)+")",0));
+        //monitoringClientList->sendCommand( new SendMessageTS("maps imported! from "+c->name+"("+Logger::toString(c->id)+")",0));
     }
 }
 
-void CWorld::montool_set_login(CPlayer * c, const std::string& st) 
+void World::montool_set_login(Player * c, const std::string& st) 
 {
     if ( !c->hasGMRight(gmr_loginstate) )return;
 	configOptions["disable_login"] = st;
 	//std::cout << "nologin set to " << st << std::endl;
-	//monitoringClientList->sendCommand( new CSendMessageTS("set login set to: " + st +"! from "+c->name+"("+CLogger::toString(c->id)+")",0));
+	//monitoringClientList->sendCommand( new SendMessageTS("set login set to: " + st +"! from "+c->name+"("+Logger::toString(c->id)+")",0));
     
 }

@@ -23,15 +23,15 @@
 #include "script/LuaLongTimeEffectScript.hpp"
 #include "Logger.hpp"
 
-CLongTimeEffectTable::CLongTimeEffectTable() : m_dataOK(false)
+LongTimeEffectTable::LongTimeEffectTable() : m_dataOK(false)
 {
     reload();
 }
 
-void CLongTimeEffectTable::reload()
+void LongTimeEffectTable::reload()
 {
-#ifdef CDataConnect_DEBUG
-	std::cout << "CLongTimeEffectTable: reload" << std::endl;
+#ifdef DataConnect_DEBUG
+	std::cout << "LongTimeEffectTable: reload" << std::endl;
 #endif    
     try
     {
@@ -56,12 +56,12 @@ void CLongTimeEffectTable::reload()
                 {
                     try
                     {
-                        boost::shared_ptr<CLuaLongTimeEffectScript> script(new CLuaLongTimeEffectScript( scriptname[i], temp ) );
+                        boost::shared_ptr<LuaLongTimeEffectScript> script(new LuaLongTimeEffectScript( scriptname[i], temp ) );
                         temp.script = script;
                     }
                     catch( ScriptException &e )
                     {
-                        CLogger::writeError( "scripts", "Error while loading script: " + scriptname[i] + ":\n" + e.what() + "\n" );
+                        Logger::writeError( "scripts", "Error while loading script: " + scriptname[i] + ":\n" + e.what() + "\n" );
                     }
                 }
                 m_table[ effectid[i] ] = temp;
@@ -70,8 +70,8 @@ void CLongTimeEffectTable::reload()
         }
         else
             m_dataOK = true;
-#ifdef CDataConnect_DEBUG
-		std::cout << "loaded " << rows << " rows into CLongTimeEffectTable" << std::endl;
+#ifdef DataConnect_DEBUG
+		std::cout << "loaded " << rows << " rows into LongTimeEffectTable" << std::endl;
 #endif
     }
     catch( std::exception e )
@@ -81,7 +81,7 @@ void CLongTimeEffectTable::reload()
     }
 }
 
-bool CLongTimeEffectTable::find( uint16_t effectId, LongTimeEffectStruct &ret)
+bool LongTimeEffectTable::find( uint16_t effectId, LongTimeEffectStruct &ret)
 {
     TABLE::iterator it = m_table.find( effectId );
     if ( it != m_table.end() )
@@ -93,7 +93,7 @@ bool CLongTimeEffectTable::find( uint16_t effectId, LongTimeEffectStruct &ret)
         return false;
 }
 
-bool CLongTimeEffectTable::find( std::string effectname, LongTimeEffectStruct &ret)
+bool LongTimeEffectTable::find( std::string effectname, LongTimeEffectStruct &ret)
 {
     for ( TABLE::iterator it = m_table.begin(); it != m_table.end(); ++it )
     {
@@ -106,12 +106,12 @@ bool CLongTimeEffectTable::find( std::string effectname, LongTimeEffectStruct &r
     return false;
 }
 
-void CLongTimeEffectTable::clearOldTable()
+void LongTimeEffectTable::clearOldTable()
 {
     m_table.clear();
 }
 
-CLongTimeEffectTable::~CLongTimeEffectTable()
+LongTimeEffectTable::~LongTimeEffectTable()
 {
     clearOldTable();
 }

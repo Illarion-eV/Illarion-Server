@@ -59,11 +59,11 @@
 
 #include <list>
 
-extern CWeaponObjectTable* WeaponItems;
-extern CMonsterTable* MonsterDescriptions;
-extern CCommonObjectTable* CommonItem;
-extern CTilesTable* Tiles;
-extern boost::shared_ptr<CLuaLookAtPlayerScript>lookAtPlayerScript;
+extern WeaponObjectTable* WeaponItems;
+extern MonsterTable* MonsterDescriptions;
+extern CommonObjectTable* CommonItem;
+extern TilesTable* Tiles;
+extern boost::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
 
 /**
 *@ingroup Clientcommands
@@ -71,43 +71,43 @@ extern boost::shared_ptr<CLuaLookAtPlayerScript>lookAtPlayerScript;
 */
 enum clientcommands
 {
-    CC_LOGIN_TS = 0x0D, /*<login*/
-    CC_SCREENSIZE_TS = 0xA0,
-    CC_CHARMOVE_TS = 0x10,
-    CC_IMOVERSTART_TS = 0x20,
-    CC_IMOVEREND_TS = 0x2A,
-    CC_PSPINRSTART_TS = 0x40,
-    CC_PSPINREND_TS = 0x49,
-    CC_LOOKATMAPITEM_TS = 0xFF,
-    CC_LOOKATCHARACTER_TS = 0x18,
-    CC_USE_TS = 0xFE,
-    CC_CAST_TS = 0xFD,
-    CC_ATTACKPLAYER_TS = 0xFA,
-    CC_INTRODUCE_TS = 0xF6,
-    CC_SAY_TS = 0xF5,
-    CC_SHOUT_TS = 0xF4,
-    CC_WHISPER_TS = 0xF3,
-    CC_REFRESH_TS = 0xF2,
-    CC_LOGOUT_TS = 0xF1,
-    CC_LOOKINTOCONTAINERONFIELD_TS = 0xEC,
-    CC_LOOKINTOINVENTORY_TS = 0xEB,
-    CC_LOOKINTOSHOWCASECONTAINER_TS = 0xEA,
-    CC_CLOSECONTAINERINSHOWCASE_TS = 0xE9,
-    CC_DROPITEMFROMSHOWCASEONMAP_TS = 0xE8,
-    CC_MOVEITEMBETWEENSHOWCASES_TS = 0xE7,
-    CC_MOVEITEMFROMMAPINTOSHOWCASE_TS = 0xE6,
-    CC_MOVEITEMFROMMAPTOPLAYER_TS = 0xE5,
-    CC_DROPITEMFROMPLAYERONMAP_TS = 0xE4,
-    CC_MOVEITEMINSIDEINVENTORY_TS = 0xE3,
-    CC_MOVEITEMFROMSHOWCASETOPLAYER_TS = 0xE2,
-    CC_MOVEITEMFROMPLAYERTOSHOWCASE_TS = 0xE1,
-    CC_LOOKATSHOWCASEITEM_TS = 0xE0,
-    CC_LOOKATINVENTORYITEM_TS = 0xDF,
-    CC_ATTACKSTOP_TS = 0xDE,
-    CC_REQUESTSKILLS_TS = 0xDD,
-    CC_LOOKATMENUITEM_TS = 0xDC,
-    CC_KEEPALIVE_TS = 0xD8,
-    CC_REQUESTAPPEARANCE_TS = 0x0E
+    C_LOGIN_TS = 0x0D, /*<login*/
+    C_SCREENSIZE_TS = 0xA0,
+    C_CHARMOVE_TS = 0x10,
+    C_IMOVERSTART_TS = 0x20,
+    C_IMOVEREND_TS = 0x2A,
+    C_PSPINRSTART_TS = 0x40,
+    C_PSPINREND_TS = 0x49,
+    C_LOOKATMAPITEM_TS = 0xFF,
+    C_LOOKATCHARACTER_TS = 0x18,
+    C_USE_TS = 0xFE,
+    C_CAST_TS = 0xFD,
+    C_ATTACKPLAYER_TS = 0xFA,
+    C_INTRODUCE_TS = 0xF6,
+    C_SAY_TS = 0xF5,
+    C_SHOUT_TS = 0xF4,
+    C_WHISPER_TS = 0xF3,
+    C_REFRESH_TS = 0xF2,
+    C_LOGOUT_TS = 0xF1,
+    C_LOOKINTOCONTAINERONFIELD_TS = 0xEC,
+    C_LOOKINTOINVENTORY_TS = 0xEB,
+    C_LOOKINTOSHOWCASECONTAINER_TS = 0xEA,
+    C_CLOSECONTAINERINSHOWCASE_TS = 0xE9,
+    C_DROPITEMFROMSHOWCASEONMAP_TS = 0xE8,
+    C_MOVEITEMBETWEENSHOWCASES_TS = 0xE7,
+    C_MOVEITEMFROMMAPINTOSHOWCASE_TS = 0xE6,
+    C_MOVEITEMFROMMAPTOPLAYER_TS = 0xE5,
+    C_DROPITEMFROMPLAYERONMAP_TS = 0xE4,
+    C_MOVEITEMINSIDEINVENTORY_TS = 0xE3,
+    C_MOVEITEMFROMSHOWCASETOPLAYER_TS = 0xE2,
+    C_MOVEITEMFROMPLAYERTOSHOWCASE_TS = 0xE1,
+    C_LOOKATSHOWCASEITEM_TS = 0xE0,
+    C_LOOKATINVENTORYITEM_TS = 0xDF,
+    C_ATTACKSTOP_TS = 0xDE,
+    C_REQUESTSKILLS_TS = 0xDD,
+    C_LOOKATMENUITEM_TS = 0xDC,
+    C_KEEPALIVE_TS = 0xD8,
+    C_REQUESTAPPEARANCE_TS = 0x0E
 
 };
 
@@ -170,30 +170,30 @@ class ByteStack
 *@ingroup Clientcommands
 *client asked to send the appearance of another char
 */
-class CRequestAppearanceTS : public CBasicClientCommand
+class RequestAppearanceTS : public BasicClientCommand
 {
     public:
-        CRequestAppearanceTS() : CBasicClientCommand( CC_REQUESTAPPEARANCE_TS )
+        RequestAppearanceTS() : BasicClientCommand( C_REQUESTAPPEARANCE_TS )
         {
         }
 
-        virtual ~CRequestAppearanceTS(){};
+        virtual ~RequestAppearanceTS(){};
 
         void decodeData()
         {
             id = getIntFromBuffer();
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
             time( &(player->lastaction) );
-            CCharacter * ch = CWorld::get()->Players.findID( id );
+            Character * ch = World::get()->Players.findID( id );
             if ( ch == NULL )
             {
-                ch = CWorld::get()->Monsters.findID( id );
+                ch = World::get()->Monsters.findID( id );
                 if ( ch == NULL )
                 {
-                    ch = CWorld::get()->Npc.findID( id );
+                    ch = World::get()->Npc.findID( id );
                 }
             }
 
@@ -205,9 +205,9 @@ class CRequestAppearanceTS : public CBasicClientCommand
 
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd(new CRequestAppearanceTS());
+            boost::shared_ptr<BasicClientCommand>cmd(new RequestAppearanceTS());
             return cmd;
         }
 
@@ -218,19 +218,19 @@ class CRequestAppearanceTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *player looks at a character
 */
-class CLookAtCharacterTS : public CBasicClientCommand
+class LookAtCharacterTS : public BasicClientCommand
 {
     public:
         /**
         *a player attacked another char
         */
-        CLookAtCharacterTS() : CBasicClientCommand( CC_LOOKATCHARACTER_TS )
+        LookAtCharacterTS() : BasicClientCommand( C_LOOKATCHARACTER_TS )
         {
             id = 0;
             mode = 0;
         }
 
-        virtual ~CLookAtCharacterTS()
+        virtual ~LookAtCharacterTS()
         {
 
         }
@@ -241,12 +241,12 @@ class CLookAtCharacterTS : public CBasicClientCommand
             mode = getUnsignedCharFromBuffer();
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
              time( &(player->lastaction) );
              if ( id < MONSTER_BASE )
              {
-                 CPlayer * pl = CWorld::get()->Players.findID( id );
+                 Player * pl = World::get()->Players.findID( id );
                  if ( pl )
                  {
                      if ( lookAtPlayerScript )
@@ -258,7 +258,7 @@ class CLookAtCharacterTS : public CBasicClientCommand
              }
              else if ( id >= MONSTER_BASE && id < NPC_BASE )
              {
-                 CMonster * monster = CWorld::get()->Monsters.findID( id );
+                 Monster * monster = World::get()->Monsters.findID( id );
                  if ( monster )
                  {
                      MonsterStruct mon;
@@ -271,16 +271,16 @@ class CLookAtCharacterTS : public CBasicClientCommand
                          std::string outtext;
                          switch ( player->getPlayerLanguage() )
                          {
-                             case CLanguage::german:
+                             case Language::german:
                                  outtext = "Das ist: " + mon.name ;
                                 break;
-                             case CLanguage::english:
+                             case Language::english:
                                 outtext =  "This is: " + mon.name ;
                                 break;
                              default:
                                 outtext +=  "unknown mother tongue" ;
                          }
-                         boost::shared_ptr<CBasicServerCommand>cmd( new CCharDescription( id, outtext ) );
+                         boost::shared_ptr<BasicServerCommand>cmd( new CharDescription( id, outtext ) );
                          //player->inform( outtext );
                          player->Connection->addCommand( cmd );
                      }
@@ -288,7 +288,7 @@ class CLookAtCharacterTS : public CBasicClientCommand
              }
              else
              {
-                 CNPC * npc = CWorld::get()->Npc.findID( id );
+                 NPC * npc = World::get()->Npc.findID( id );
                  if ( npc )
                  {
                      if ( npc->getScript() )
@@ -298,16 +298,16 @@ class CLookAtCharacterTS : public CBasicClientCommand
                      std::string outtext;
                      switch ( player->getPlayerLanguage() )
                      {
-                         case CLanguage::german:
+                         case Language::german:
                              outtext = "Das ist: " + npc->name ;
                             break;
-                         case CLanguage::english:
+                         case Language::english:
                             outtext =  "This is: " + npc->name ;
                             break;
                          default:
                             outtext +=  "unknown mother tongue" ;
                      }
-                     boost::shared_ptr<CBasicServerCommand>cmd( new CCharDescription( id, outtext ) );
+                     boost::shared_ptr<BasicServerCommand>cmd( new CharDescription( id, outtext ) );
                      //player->inform( outtext );
                      player->Connection->addCommand( cmd );
 
@@ -317,9 +317,9 @@ class CLookAtCharacterTS : public CBasicClientCommand
 
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CLookAtCharacterTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new LookAtCharacterTS() );
             return cmd;
         }
 
@@ -331,10 +331,10 @@ class CLookAtCharacterTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *character casts something
 */
-class CCastTS : public CBasicClientCommand
+class CastTS : public BasicClientCommand
 {
     public:
-        CCastTS() : CBasicClientCommand( CC_CAST_TS )
+        CastTS() : BasicClientCommand( C_CAST_TS )
         {
             cid = 0;
             xc = 0;
@@ -347,7 +347,7 @@ class CCastTS : public CBasicClientCommand
 
         }
 
-        virtual ~CCastTS()
+        virtual ~CastTS()
         {
         };
 
@@ -379,28 +379,28 @@ class CCastTS : public CBasicClientCommand
             //counter = getUnsignedCharFromBuffer();
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
             time( &(player->lastaction) );
             player->ltAction->abortAction();
-            CLogger::writeMessage("CWorld_Debug", player->name + " is casting!");
-            CLogger::writeMessage("Casting", player->name + " is casting!");
+            Logger::writeMessage("World_Debug", player->name + " is casting!");
+            Logger::writeMessage("Casting", player->name + " is casting!");
 
 			bool paramOK = true;
 			//CScript* skript = NULL;
 
-			boost::shared_ptr<CLuaMagicScript> LuaMageScript;
+			boost::shared_ptr<LuaMagicScript> LuaMageScript;
 			// berprfen, ob der Spieler die Runen beherrscht
 			if ( ( spellId & player->magic.flags[ player->magic.type ] ) == spellId )
             {
                 SpellStruct CastedSpell;
 				if ( Spells->find(spellId,player->magic.type, CastedSpell ) )LuaMageScript = CastedSpell.script;
 			}
-            CLogger::writeMessage("Casting", player->name + " can't cast the spell: " + CLogger::toString(spellId) + " , flags: " + CLogger::toString(player->magic.flags[ player->magic.type ]),false);
+            Logger::writeMessage("Casting", player->name + " can't cast the spell: " + Logger::toString(spellId) + " , flags: " + Logger::toString(player->magic.flags[ player->magic.type ]),false);
 
 			//Source des Castens zuweisen
 			SouTar Source, Target;
-			Source.Character = dynamic_cast<CCharacter*>(player);
+			Source.character = dynamic_cast<Character*>(player);
 			Source.pos = player->pos;
 			Source.Type = LUA_CHARACTER;
 
@@ -408,14 +408,14 @@ class CCastTS : public CBasicClientCommand
             {
                 case UID_KOORD:
 
-                    CField * temp;
-			        CLogger::writeMessage("Casting",player->name + " trys to cast on a coordinate pos(" + CLogger::toString(xc) + "," + CLogger::toString(yc) + "," + CLogger::toString(zc)+")",false);
+                    Field * temp;
+			        Logger::writeMessage("Casting",player->name + " trys to cast on a coordinate pos(" + Logger::toString(xc) + "," + Logger::toString(yc) + "," + Logger::toString(zc)+")",false);
 
 					if ( LuaMageScript )
                     {
-						if ( !CWorld::get()->GetPToCFieldAt( temp, xc, yc, zc ) )
+						if ( !World::get()->GetPToCFieldAt( temp, xc, yc, zc ) )
                         {
-							CLogger::writeError("CWorld_Debug", "cant find field for casting at pos(" + CLogger::toString(xc) + "," + CLogger::toString(yc) + "," + CLogger::toString(zc) + ") !");
+							Logger::writeError("World_Debug", "cant find field for casting at pos(" + Logger::toString(xc) + "," + Logger::toString(yc) + "," + Logger::toString(zc) + ") !");
 					        paramOK = false;
 						}
                         else
@@ -423,38 +423,38 @@ class CCastTS : public CBasicClientCommand
 							// Feld gefunden
 							if ( temp->IsPlayerOnField() || temp->IsMonsterOnField() || temp->IsNPCOnField() )
                             {
-								CCharacter * tmpCharacter = CWorld::get()->findCharacterOnField( xc, yc, zc );
+								Character * tmpCharacter = World::get()->findCharacterOnField( xc, yc, zc );
 								if ( tmpCharacter != NULL )
                                 {
                                     //Nothing to do here
                                 }
                                 else
                                 {
-                                    CLogger::writeMessage("Casting","Character found at target field!",false);
+                                    Logger::writeMessage("Casting","Character found at target field!",false);
                                 }
 								// Character auf Feld ist ein Spieler
-								if ( ( tmpCharacter->character == CCharacter::player ) && ( LuaMageScript ) )
+								if ( ( tmpCharacter->character == Character::player ) && ( LuaMageScript ) )
                                 {
-									CLogger::writeMessage("Casting","Target Character: player",false);
+									Logger::writeMessage("Casting","Target Character: player",false);
                                     //Lua Script zuweisung
-									Target.Character = tmpCharacter;
+									Target.character = tmpCharacter;
 									Target.pos = tmpCharacter->pos;
 									Target.Type = LUA_CHARACTER;
 								}
 								// Character auf Feld ist ein NPC
-								else if ( ( tmpCharacter->character == CCharacter::npc ) && ( LuaMageScript ) )
+								else if ( ( tmpCharacter->character == Character::npc ) && ( LuaMageScript ) )
                                 {
-                                    CLogger::writeMessage("Casting","Target Character: NPC",false);
+                                    Logger::writeMessage("Casting","Target Character: NPC",false);
 									//Lua Script zuweisung
-									Target.Character = tmpCharacter;
+									Target.character = tmpCharacter;
 									Target.pos = tmpCharacter->pos;
 									Target.Type = LUA_CHARACTER;
 								}
-                                else if ( ( tmpCharacter->character == CCharacter::monster ) && ( LuaMageScript ) )
+                                else if ( ( tmpCharacter->character == Character::monster ) && ( LuaMageScript ) )
                                 {
-									CLogger::writeMessage("Casting","Target Character: monster",false);
+									Logger::writeMessage("Casting","Target Character: monster",false);
                                     //Lua Script zuweisung
-									Target.Character = tmpCharacter;
+									Target.character = tmpCharacter;
 									Target.pos = tmpCharacter->pos;
 									Target.Type = LUA_CHARACTER;
 								}
@@ -464,7 +464,7 @@ class CCastTS : public CBasicClientCommand
 								Item it;
 								if ( temp->ViewTopItem( it ) )
                                 {
-                                    CLogger::writeMessage("Casting","Item found at target field!",false);
+                                    Logger::writeMessage("Casting","Item found at target field!",false);
 									if ( LuaMageScript )
                                     {
 										//Lua Script zuweisung
@@ -478,7 +478,7 @@ class CCastTS : public CBasicClientCommand
 								}
                                 else
                                 {
-                                    CLogger::writeMessage("Casting","empty field!",false);
+                                    Logger::writeMessage("Casting","empty field!",false);
 
 									if ( LuaMageScript )
                                     {
@@ -499,26 +499,26 @@ class CCastTS : public CBasicClientCommand
 
                 case UID_SHOWC:
 
-#ifdef CWorld_DEBUG
+#ifdef World_DEBUG
 					std::cout << "showcase: " << ( int ) showcase << " pos: " << ( int ) pos << std::endl;
 #endif
 
-                    CLogger::writeMessage("Casting", player->name + " is casting in showcas: "+CLogger::toString(showcase)+" pos "+CLogger::toString(pos));
+                    Logger::writeMessage("Casting", player->name + " is casting in showcas: "+Logger::toString(showcase)+" pos "+Logger::toString(pos));
 					if ( LuaMageScript )
                     {
 						if ( showcase < MAXSHOWCASES )
                         {
-							CContainer * ps = player->showcases[ showcase ].top();
+							Container * ps = player->showcases[ showcase ].top();
 							if ( ps != NULL )
                             {
-#ifdef CWorld_DEBUG
-								std::cout << "CContainer gefunden" << std::endl;
+#ifdef World_DEBUG
+								std::cout << "Container gefunden" << std::endl;
 #endif
 								ScriptItem tempi;
-								CContainer* tempc;
+								Container* tempc;
 								if ( ps->viewItemNr( pos, tempi, tempc ) )
                                 {
-#ifdef CWorld_DEBUG
+#ifdef World_DEBUG
 									std::cout << "pos gefunden" << std::endl;
 #endif
 									if ( LuaMageScript )
@@ -555,10 +555,10 @@ class CCastTS : public CBasicClientCommand
 				case UID_MAGICWAND:
 
 				//UID_MAGICWAND wird immer gesandt wenn kein Ziel gewaehlt wird.
-#ifdef CWorld_DEBUG
+#ifdef World_DEBUG
 					std::cout << "UID_MAGICWAND" << std::endl;
 #endif
-                    CLogger::writeMessage("Casting","Cast with Wand",false);
+                    Logger::writeMessage("Casting","Cast with Wand",false);
 					if ( (player->attackmode) && ( player->enemyid != 0 ) && (  LuaMageScript ) )
                     {
 						bool zauberstab=false;
@@ -594,15 +594,15 @@ class CCastTS : public CBasicClientCommand
 
 									//Muss spaeter angepasst werden wenn es nur noch einen Charactervektor gibt.
 
-								case CCharacter::player:
-#ifdef CWorld_DEBUG
+								case Character::player:
+#ifdef World_DEBUG
 									std::cout << "Gegner ist ein Spieler" << std::endl;
 #endif
 									if ( LuaMageScript )
                                     {
 										Target.Type = LUA_CHARACTER;
-										Target.Character = CWorld::get()->findCharacter( player->enemyid );
-										if ( Target.Character != NULL ) Target.pos = Target.Character->pos;
+										Target.character = World::get()->findCharacter( player->enemyid );
+										if ( Target.character != NULL ) Target.pos = Target.character->pos;
 										else
                                         {
 											paramOK = false;
@@ -611,15 +611,15 @@ class CCastTS : public CBasicClientCommand
 									}
 									break;
 
-								case CCharacter::npc:
-#ifdef CWorld_DEBUG
+								case Character::npc:
+#ifdef World_DEBUG
 									std::cout << "Gegner ist ein NPC" << std::endl;
 #endif
 									if ( LuaMageScript )
                                     {
 										Target.Type = LUA_CHARACTER;
-										Target.Character = CWorld::get()->findCharacter( player->enemyid );
-										if ( Target.Character != NULL ) Target.pos = Target.Character->pos;
+										Target.character = World::get()->findCharacter( player->enemyid );
+										if ( Target.character != NULL ) Target.pos = Target.character->pos;
 										else
                                         {
 											paramOK = false;
@@ -628,16 +628,16 @@ class CCastTS : public CBasicClientCommand
 									}
 									break;
 
-								case CCharacter::monster:
-#ifdef CWorld_DEBUG
+								case Character::monster:
+#ifdef World_DEBUG
 									std::cout << "Gegner ist ein Monster" << std::endl;
 #endif
 
 									if ( LuaMageScript )
                                     {
 										Target.Type = LUA_CHARACTER;
-										Target.Character = CWorld::get()->findCharacter( player->enemyid );
-										if ( Target.Character != NULL ) Target.pos = Target.Character->pos;
+										Target.character = World::get()->findCharacter( player->enemyid );
+										if ( Target.character != NULL ) Target.pos = Target.character->pos;
 										else {
 											paramOK = false;
 											std::cerr << "Kein geeignetes Ziel fr Zauberstab gefunden (Target.Character == NULL)!" << std::endl;
@@ -666,19 +666,19 @@ class CCastTS : public CBasicClientCommand
 
 				case UID_INV:
 
-#ifdef CWorld_DEBUG
+#ifdef World_DEBUG
 					std::cout << "cast mit Inv" << std::endl;
 #endif
-                    CLogger::writeMessage("Casting","cast in inventory",false);
+                    Logger::writeMessage("Casting","cast in inventory",false);
 					if ( LuaMageScript )
                     {
 						if ( pos < ( MAX_BELT_SLOTS + MAX_BODY_ITEMS ) ) {
-#ifdef CWorld_DEBUG
+#ifdef World_DEBUG
 							std::cout << "gltiger Wert" << std::endl;
 #endif
 							if ( player->characterItems[ pos ].id != 0 )
                             {
-#ifdef CWorld_DEBUG
+#ifdef World_DEBUG
 								std::cout << "Position " << ( int ) pos << " am Koerper ist besetzt" << std::endl;
 #endif
 								if ( LuaMageScript )
@@ -706,14 +706,14 @@ class CCastTS : public CBasicClientCommand
 
 					break;
 
-            } // end of switch CID
+            } // end of switch ID
 
 			if ( LuaMageScript )
             {
-                CLogger::writeMessage("Casting","try to call magic script",false);
-                player->ltAction->setLastAction( LuaMageScript, Source, Target, counter , paramtemp, CLongTimeAction::AT_MAGIC);
+                Logger::writeMessage("Casting","try to call magic script",false);
+                player->ltAction->setLastAction( LuaMageScript, Source, Target, counter , paramtemp, LongTimeAction::AT_MAGIC);
                 std::string msg;
-#ifdef CWorld_DEBUG
+#ifdef World_DEBUG
 				std::cout<<"Try to call LuaMageScript with paramtemp: "<<paramtemp<<std::endl;
 				std::cout<<"paramOK: "<<paramOK<<std::endl;
 #endif
@@ -728,17 +728,17 @@ class CCastTS : public CBasicClientCommand
                     {
 						case LUA_NONE:
 							LuaMageScript->CastMagic(player,counter,paramtemp,static_cast<unsigned char>(LTS_NOLTACTION) );
-                            msg = "Casted spell: " + CLogger::toString(spellId);
+                            msg = "Casted spell: " + Logger::toString(spellId);
 							break;
 						case LUA_FIELD:
 							LuaMageScript->CastMagicOnField(player,Target.pos,counter,paramtemp,static_cast<unsigned char>(LTS_NOLTACTION));
-                            msg = "Casted spell: " + CLogger::toString(spellId) + " on field at pos(" + CLogger::toString( Target.pos.x) + "," + CLogger::toString( Target.pos.y ) + "," + CLogger::toString( Target.pos.z ) + ")";
+                            msg = "Casted spell: " + Logger::toString(spellId) + " on field at pos(" + Logger::toString( Target.pos.x) + "," + Logger::toString( Target.pos.y ) + "," + Logger::toString( Target.pos.z ) + ")";
 							break;
 						case LUA_CHARACTER:
-							LuaMageScript->CastMagicOnCharacter(player,Target.Character,counter,paramtemp,static_cast<unsigned char>(LTS_NOLTACTION));
-							if ( Target.Character->character == CCharacter::monster ) {
+							LuaMageScript->CastMagicOnCharacter(player,Target.character,counter,paramtemp,static_cast<unsigned char>(LTS_NOLTACTION));
+							if ( Target.character->character == Character::monster ) {
 								MonsterStruct monStruct;
-								CMonster * temp = dynamic_cast<CMonster*>(Target.Character);
+								Monster * temp = dynamic_cast<Monster*>(Target.character);
 								if ( MonsterDescriptions->find( temp->getType(), monStruct) ) {
 									if ( monStruct.script ) {
 										monStruct.script->onCasted(temp,player);
@@ -748,25 +748,25 @@ class CCastTS : public CBasicClientCommand
 								}
 
 							}
-                            msg = "Casted spell: " + CLogger::toString(spellId) + " on character: " + Target.Character->name + "(" + CLogger::toString(Target.Character->id) + ")";
+                            msg = "Casted spell: " + Logger::toString(spellId) + " on character: " + Target.character->name + "(" + Logger::toString(Target.character->id) + ")";
 							break;
 						case LUA_ITEM:
 							LuaMageScript->CastMagicOnItem(player,Target.item,counter,paramtemp,static_cast<unsigned char>(LTS_NOLTACTION));
-                            msg = "Casted spell: " + CLogger::toString(spellId) + " on item: " + CLogger::toString(Target.item.id);
+                            msg = "Casted spell: " + Logger::toString(spellId) + " on item: " + Logger::toString(Target.item.id);
 							break;
 						default:
 							LuaMageScript->CastMagic(player,counter,paramtemp,static_cast<unsigned char>(LTS_NOLTACTION));
-                            msg = "Casted spell: " + CLogger::toString(spellId) + " on item: " + CLogger::toString(Target.item.id);
+                            msg = "Casted spell: " + Logger::toString(spellId) + " on item: " + Logger::toString(Target.item.id);
 					} //Ende Switch
-                    //monitoringClientList->sendCommand( new CSendActionTS( player->id, player->name, 2, msg));
+                    //monitoringClientList->sendCommand( new SendActionTS( player->id, player->name, 2, msg));
                 } //ENde if player->IsAlive
-                CLogger::writeMessage("Casting","all succeeded",false);
+                Logger::writeMessage("Casting","all succeeded",false);
 			}
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd(new CCastTS() );
+            boost::shared_ptr<BasicClientCommand>cmd(new CastTS() );
             return cmd;
 
         }
@@ -785,14 +785,14 @@ class CCastTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *character uses something
 */
-class CUseTS : public CBasicClientCommand
+class UseTS : public BasicClientCommand
 {
     public:
-        CUseTS() : CBasicClientCommand( CC_USE_TS )
+        UseTS() : BasicClientCommand( C_USE_TS )
         {
         }
 
-        virtual ~CUseTS()
+        virtual ~UseTS()
         {
         };
 
@@ -802,7 +802,7 @@ class CUseTS : public CBasicClientCommand
 			bs.push( count );
             if ( count > 3 )
             {
-                CLogger::writeMessage("CWorld_Debug ", "count:" + CLogger::toString(count) + " to large, set to 3!");
+                Logger::writeMessage("World_Debug ", "count:" + Logger::toString(count) + " to large, set to 3!");
 				count = 3;
 			}
             for ( ; count > 0 ; --count)
@@ -836,7 +836,7 @@ class CUseTS : public CBasicClientCommand
             counter = getUnsignedCharFromBuffer();
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
 std::cout << "USE_PERFORM_START" << std::endl;
             time( &(player->lastaction) );
@@ -844,20 +844,20 @@ std::cout << "USE_PERFORM_START" << std::endl;
 			unsigned char count = bs.pop();
 			if ( count > 3 )
             {
-                CLogger::writeMessage("CWorld_Debug ", "count:" + CLogger::toString(count) + " to large, set to 3!");
+                Logger::writeMessage("World_Debug ", "count:" + Logger::toString(count) + " to large, set to 3!");
 				count = 3;
 			}
 
-            CLogger::writeMessage("Use", player->name + " uses something, count: " + CLogger::toString(static_cast<int>(count)));
+            Logger::writeMessage("Use", player->name + " uses something, count: " + Logger::toString(static_cast<int>(count)));
  			bool first = true;
 			bool paramOK = true;
 			//CScript* skript = NULL;
 
 			//Parameter fr Lua Item Scripte
-			boost::shared_ptr<CLuaItemScript> LuaScript;
-			boost::shared_ptr<CLuaNPCScript> LuaNPCScript;
-			boost::shared_ptr<CLuaMonsterScript> LuaMonsterScript;
-			boost::shared_ptr<CLuaTileScript> LuaTileScript;
+			boost::shared_ptr<LuaItemScript> LuaScript;
+			boost::shared_ptr<LuaNPCScript> LuaNPCScript;
+			boost::shared_ptr<LuaMonsterScript> LuaMonsterScript;
+			boost::shared_ptr<LuaTileScript> LuaTileScript;
 			SouTar Source, Target;
 			CommonStruct com;
 			TilesStruct Tile;
@@ -872,7 +872,7 @@ std::cout << "USE_PERFORM_START" << std::endl;
 			for ( ; count > 0; --count )
             {
 				unsigned char uid = bs.pop();
-                CLogger::writeMessage("Use", "use ID :" + CLogger::toString(static_cast<int>(uid)), false );
+                Logger::writeMessage("Use", "use ID :" + Logger::toString(static_cast<int>(uid)), false );
 				switch ( uid )
                 {
 					case UID_SKILL:
@@ -880,18 +880,18 @@ std::cout << "USE_PERFORM_START" << std::endl;
 
 					case UID_KOORD:
 
-						CField* temp;
+						Field* temp;
 						xc = static_cast<short int>(bs.popparam());
 						yc = static_cast<short int>(bs.popparam());
 						zc = static_cast<short int>(bs.popparam());
 
-                        CLogger::writeMessage("Use", "UID_KOORD",false);
-                        CLogger::writeMessage("Use","xc: " +CLogger::toString(static_cast<int>(xc) ) + " yc: " + CLogger::toString( static_cast<int>(yc) ) + " zc: " + CLogger::toString( static_cast<int>(zc) ), false);
+                        Logger::writeMessage("Use", "UID_KOORD",false);
+                        Logger::writeMessage("Use","xc: " +Logger::toString(static_cast<int>(xc) ) + " yc: " + Logger::toString( static_cast<int>(yc) ) + " zc: " + Logger::toString( static_cast<int>(zc) ), false);
 
-                        if ( !CWorld::get()->GetPToCFieldAt( temp, xc, yc, zc ) )
+                        if ( !World::get()->GetPToCFieldAt( temp, xc, yc, zc ) )
                         {
-							CLogger::writeError("CWorld_Debug","Use UID_KOORD field not found!");
-                            CLogger::writeMessage("Use","Use UID_KOORD field not found at pos ( " + CLogger::toString(static_cast<int>(xc) ) + "," + CLogger::toString( static_cast<int>(yc) ) + "," + CLogger::toString( static_cast<int>(zc) ) + ")");
+							Logger::writeError("World_Debug","Use UID_KOORD field not found!");
+                            Logger::writeMessage("Use","Use UID_KOORD field not found at pos ( " + Logger::toString(static_cast<int>(xc) ) + "," + Logger::toString( static_cast<int>(yc) ) + "," + Logger::toString( static_cast<int>(zc) ) + ")");
 							paramOK = false;
 						}
                         else
@@ -899,73 +899,73 @@ std::cout << "USE_PERFORM_START" << std::endl;
 							//Prfen ob sich irgendeine art Char auf dem Feld befindet (Spaeter nur noch IsCharOnField vorerst noch alle Arten pruefen
 							if ( temp->IsPlayerOnField() || temp->IsNPCOnField() || temp->IsMonsterOnField() )
                             {
-                                CLogger::writeMessage("Use", "Character on field found!", false);
-								CCharacter *tmpCharacter = CWorld::get()->findCharacterOnField(xc, yc, zc);
+                                Logger::writeMessage("Use", "Character on field found!", false);
+								Character *tmpCharacter = World::get()->findCharacterOnField(xc, yc, zc);
 								if (tmpCharacter != NULL)
                                 {
 									//Zuweisen des Targets fr LuaScripte wenn ParamOK true ist, ein LuaScriptGeladen wurden und es nicht der erste Durchgang ist
 									if ( !first && paramOK && ( LuaScript || LuaMonsterScript || LuaNPCScript || LuaTileScript ) )
                                     {
 										Target.pos = position( xc, yc, zc );
-										Target.Character = tmpCharacter;
+										Target.character = tmpCharacter;
 										Target.Type = LUA_CHARACTER;
 									} //Wenn kein Luascript geladen ist oder es der erste durchgang ist.
-									else if (tmpCharacter->character == CCharacter::player)
+									else if (tmpCharacter->character == Character::player)
                                     {
-                                        CLogger::writeMessage("Use","Character is a player!",false);
+                                        Logger::writeMessage("Use","Character is a player!",false);
 										if ( first )
                                         {
 										     //TODO Add Playerrace scripts
 										}
-									}// end tmpCharacter->type == CCharacter::player
-									else if (tmpCharacter->character == CCharacter::npc)
+									}// end tmpCharacter->type == Character::player
+									else if (tmpCharacter->character == Character::npc)
                                     {
-                                        CLogger::writeMessage("Use","Character is a NPC!", false);
+                                        Logger::writeMessage("Use","Character is a NPC!", false);
 										if ( first )
                                         {
-											CNPC * scriptNPC = dynamic_cast<CNPC*>(tmpCharacter);
+											NPC * scriptNPC = dynamic_cast<NPC*>(tmpCharacter);
 											LuaNPCScript = scriptNPC->getScript();
 											if ( LuaNPCScript )
                                             {
 												Source.pos = scriptNPC->pos;
-												Source.Character = scriptNPC;
+												Source.character = scriptNPC;
 												Source.Type = LUA_CHARACTER;
 											}
 										}
-									}// end else if ( tmpCharacter->type == CCharacter::NPC )
-									else if ( tmpCharacter->character == CCharacter::monster )
+									}// end else if ( tmpCharacter->type == Character::NPC )
+									else if ( tmpCharacter->character == Character::monster )
                                     {
-                                        CLogger::writeMessage("Use","Character is a monster!",false);
+                                        Logger::writeMessage("Use","Character is a monster!",false);
 										if ( first )
                                         {
-											CMonster * scriptMonster = dynamic_cast<CMonster*>(tmpCharacter);
+											Monster * scriptMonster = dynamic_cast<Monster*>(tmpCharacter);
 											MonsterStruct monStruct;
 											if ( MonsterDescriptions->find(scriptMonster->getType(),monStruct) )
                                             	LuaMonsterScript = monStruct.script;
 											else
                                             {
-												CLogger::writeError("CWorld_Debug","try to use Monster but id: " + CLogger::toString(scriptMonster->getType()) +" not found in database!");
-                                                CLogger::writeMessage("Use","try to use Monster but id: " + CLogger::toString(scriptMonster->getType()) +" not found in database!", false);
+												Logger::writeError("World_Debug","try to use Monster but id: " + Logger::toString(scriptMonster->getType()) +" not found in database!");
+                                                Logger::writeMessage("Use","try to use Monster but id: " + Logger::toString(scriptMonster->getType()) +" not found in database!", false);
 											}
 											if ( LuaMonsterScript )
                                             {
 												Source.pos = scriptMonster->pos;
-												Source.Character = scriptMonster;
+												Source.character = scriptMonster;
 												Source.Type = LUA_CHARACTER;
 											}
 										}
-									}//end if ( tmpCharacter->type == CCharacter::Monster )
+									}//end if ( tmpCharacter->type == Character::Monster )
 								} else {
-									CLogger::writeError("CWorld_Debug", "Character on field (" + CLogger::toString(xc) + "," + CLogger::toString(yc) + "," + CLogger::toString(zc) + ") not found!");
-                                    CLogger::writeMessage("Use", "Character on field (" + CLogger::toString(xc) + "," + CLogger::toString(yc) + "," + CLogger::toString(zc) + ") not found!", false);
+									Logger::writeError("World_Debug", "Character on field (" + Logger::toString(xc) + "," + Logger::toString(yc) + "," + Logger::toString(zc) + ") not found!");
+                                    Logger::writeMessage("Use", "Character on field (" + Logger::toString(xc) + "," + Logger::toString(yc) + "," + Logger::toString(zc) + ") not found!", false);
                                 }
 							} //end  temp->IsPlayerOnField() || temp->IsNPCOnField() || temp->IsMonsterOnField()
 							else
                             {
-                                CLogger::writeMessage("Use","no character on field!", false);
+                                Logger::writeMessage("Use","no character on field!", false);
 								Item it;
 								if ( temp->ViewTopItem( it ) ) {
-                                    CLogger::writeMessage("Use","Item on field", false);
+                                    Logger::writeMessage("Use","Item on field", false);
 									if ( first )
                                     {
 										LuaScript = CommonItems->findScript( it.id );
@@ -990,7 +990,7 @@ std::cout << "USE_PERFORM_START" << std::endl;
 										Target.pos = position(xc, yc, zc);
 									}
 								} else {
-                                    CLogger::writeMessage("Use","empty field!",false);
+                                    Logger::writeMessage("Use","empty field!",false);
                                     if ( first )
                                     {
 
@@ -1018,18 +1018,18 @@ std::cout << "USE_PERFORM_START" << std::endl;
 
 						showcase = bs.pop();
 						pos = bs.pop();
-                        CLogger::writeMessage("Use", "showcase: " + CLogger::toString(static_cast<int>(showcase) ) + " pos: " + CLogger::toString(static_cast<int>(pos) ),false);
+                        Logger::writeMessage("Use", "showcase: " + Logger::toString(static_cast<int>(showcase) ) + " pos: " + Logger::toString(static_cast<int>(pos) ),false);
 						if ( showcase < MAXSHOWCASES )
                         {
-							CContainer * ps = player->showcases[ showcase ].top();
+							Container * ps = player->showcases[ showcase ].top();
 							if ( ps != NULL )
                             {
-                                 CLogger::writeMessage("Use", "Container gefunden!", false);
+                                 Logger::writeMessage("Use", "Container gefunden!", false);
 								ScriptItem tempi;
-								CContainer* tempc;
+								Container* tempc;
 								if ( ps->viewItemNr( pos, tempi, tempc ) )
                                 {
-                                    CLogger::writeMessage("Use", "pos found item id: " + CLogger::toString(tempi.id),false);
+                                    Logger::writeMessage("Use", "pos found item id: " + Logger::toString(tempi.id),false);
 									if ( first )
                                     {
 										LuaScript = CommonItems->findScript(tempi.id);
@@ -1084,10 +1084,10 @@ std::cout << "USE_PERFORM_START" << std::endl;
 						pos = bs.pop();
 						if ( pos < ( MAX_BELT_SLOTS + MAX_BODY_ITEMS ) )
                         {
-                            CLogger::writeMessage("Use", "position approved!",false);
+                            Logger::writeMessage("Use", "position approved!",false);
 							if ( player->characterItems[ pos ].id != 0 )
                             {
-                                CLogger::writeMessage("Use","at position " + CLogger::toString(static_cast<int>(pos) ) + " on body, is an item with id: " + CLogger::toString(player->characterItems[ pos ].id),false);
+                                Logger::writeMessage("Use","at position " + Logger::toString(static_cast<int>(pos) ) + " on body, is an item with id: " + Logger::toString(player->characterItems[ pos ].id),false);
 								if ( first )
                                 {
 
@@ -1137,7 +1137,7 @@ std::cout << "USE_PERFORM_START" << std::endl;
 
 					case UID_VAR:
 						paramtemp = bs.popparam();
-                        CLogger::writeMessage("Use","received menu event " + CLogger::toString(static_cast<int>(paramtemp) ),false);
+                        Logger::writeMessage("Use","received menu event " + Logger::toString(static_cast<int>(paramtemp) ),false);
 						break;
 
 					default:
@@ -1153,29 +1153,29 @@ std::cout << "USE_PERFORM_START" << std::endl;
                 paramOK = false;
             }
 
-            CLogger::writeMessage("Use", "received counter parameter: " + CLogger::toString(static_cast<int>(counter) ),false) ;
+            Logger::writeMessage("Use", "received counter parameter: " + Logger::toString(static_cast<int>(counter) ),false) ;
 
-            CLogger::writeMessage("Use_Scripts",""); //Insert time only
-            CLogger::writeMessage("Use_Scripts","=========Use Script Start=============",false);
-            CLogger::writeMessage("Use_Scripts","Source pos (" + CLogger::toString(Source.pos.x) + "," + CLogger::toString(Source.pos.y) + "," + CLogger::toString(Source.pos.z) + ")",false);
-            CLogger::writeMessage("Use_Scripts","Source type: " + CLogger::toString(Source.Type), false);
-            CLogger::writeMessage("Use_Scripts", "Source Character: " + CLogger::toString(Source.Character),false);
-            CLogger::writeMessage("Use_Scripts","",false); //Insert blank line
-            CLogger::writeMessage("Use_Scripts","Target pos (" + CLogger::toString(Target.pos.x) + "," + CLogger::toString(Target.pos.y) + "," + CLogger::toString(Target.pos.z) + ")",false);
-            CLogger::writeMessage("Use_Scripts","Target Type: " + CLogger::toString(Target.Type),false);
-            CLogger::writeMessage("Use_Scripts","Target Character: " + CLogger::toString(Target.Character),false);
-            CLogger::writeMessage("Use_Scripts","==========Use Script End=============",false);
-            CLogger::writeMessage("Use_Scripts","",false); //Insert blank line
+            Logger::writeMessage("Use_Scripts",""); //Insert time only
+            Logger::writeMessage("Use_Scripts","=========Use Script Start=============",false);
+            Logger::writeMessage("Use_Scripts","Source pos (" + Logger::toString(Source.pos.x) + "," + Logger::toString(Source.pos.y) + "," + Logger::toString(Source.pos.z) + ")",false);
+            Logger::writeMessage("Use_Scripts","Source type: " + Logger::toString(Source.Type), false);
+            Logger::writeMessage("Use_Scripts", "Source Character: " + Logger::toString(Source.character),false);
+            Logger::writeMessage("Use_Scripts","",false); //Insert blank line
+            Logger::writeMessage("Use_Scripts","Target pos (" + Logger::toString(Target.pos.x) + "," + Logger::toString(Target.pos.y) + "," + Logger::toString(Target.pos.z) + ")",false);
+            Logger::writeMessage("Use_Scripts","Target Type: " + Logger::toString(Target.Type),false);
+            Logger::writeMessage("Use_Scripts","Target Character: " + Logger::toString(Target.character),false);
+            Logger::writeMessage("Use_Scripts","==========Use Script End=============",false);
+            Logger::writeMessage("Use_Scripts","",false); //Insert blank line
 
             std::string msg;
             if ( Source.Type == LUA_ITEM && Source.item.quality < 100)
             {
-                 if ( player->getPlayerLanguage() == 0)player->inform("Du kannst keine unfertigen Gegenstände benutzen!");
+                 if ( player->getPlayerLanguage() == 0)player->inform("Du kannst keine unfertigen Gegenstï¿½nde benutzen!");
                  else player->inform("You can't use unfinished items!");
             }
 			else if ( LuaScript )
             {
-                player->ltAction->setLastAction( LuaScript, Source, Target, counter , paramtemp, CLongTimeAction::AT_USE);
+                player->ltAction->setLastAction( LuaScript, Source, Target, counter , paramtemp, LongTimeAction::AT_USE);
 #ifdef DO_UNCONSCIOUS
 				if ( ( paramOK ) && player->IsAlive() && player->IsConscious() )
 #else
@@ -1186,24 +1186,24 @@ std::cout << "USE_PERFORM_START" << std::endl;
 					if ( Source.Type == LUA_ITEM && ( Target.Type == LUA_ITEM || Target.Type == LUA_NONE ) )
                     {
                         LuaScript->UseItem( player, Source.item, Target.item, counter, static_cast<TYPE_OF_ITEM_ID>(paramtemp), static_cast<unsigned char>(LTS_NOLTACTION) );
-                        msg = "Used Item: " + CLogger::toString(Source.item.id) + " with item: " + CLogger::toString(Target.item.id);
+                        msg = "Used Item: " + Logger::toString(Source.item.id) + " with item: " + Logger::toString(Target.item.id);
                     }
 					else if ( Source.Type == LUA_ITEM && Target.Type == LUA_CHARACTER )
                     {
 						// msg set first since character might be deleted!  --vilarion
-						msg = "Used Item: " + CLogger::toString(Source.item.id) + " with character: " + Target.Character->name + "(" +  CLogger::toString(Target.Character->id) + ")";
-						LuaScript->UseItemWithCharacter( player, Source.item, Target.Character, counter, static_cast<TYPE_OF_ITEM_ID>(paramtemp), static_cast<unsigned char>(LTS_NOLTACTION) );
+						msg = "Used Item: " + Logger::toString(Source.item.id) + " with character: " + Target.character->name + "(" +  Logger::toString(Target.character->id) + ")";
+						LuaScript->UseItemWithCharacter( player, Source.item, Target.character, counter, static_cast<TYPE_OF_ITEM_ID>(paramtemp), static_cast<unsigned char>(LTS_NOLTACTION) );
                     }
 					else if ( Source.Type == LUA_ITEM && Target.Type == LUA_FIELD )
                     {
 						LuaScript->UseItemWithField( player, Source.item, Target.pos, counter, static_cast<TYPE_OF_ITEM_ID>(paramtemp), static_cast<unsigned char>(LTS_NOLTACTION) );
-                        msg = "Used Item: " + CLogger::toString(Source.item.id) + " with empty field: Pos(" + CLogger::toString(Target.pos.x) + "," + CLogger::toString(Target.pos.y) + "," + CLogger::toString(Target.pos.z) + ")";
+                        msg = "Used Item: " + Logger::toString(Source.item.id) + " with empty field: Pos(" + Logger::toString(Target.pos.x) + "," + Logger::toString(Target.pos.y) + "," + Logger::toString(Target.pos.z) + ")";
                     }
                 }
 			}
             else if ( LuaNPCScript )
             {
-                player->ltAction->setLastAction( LuaNPCScript, Source, Target, counter , paramtemp, CLongTimeAction::AT_USE);
+                player->ltAction->setLastAction( LuaNPCScript, Source, Target, counter , paramtemp, LongTimeAction::AT_USE);
 #ifdef DO_UNCONSCIOUS
 				if ( ( paramOK ) && player->IsAlive() && cp->IsConscious() )
 #else
@@ -1213,29 +1213,29 @@ std::cout << "USE_PERFORM_START" << std::endl;
 					if ( Source.Type == LUA_CHARACTER && ( Target.Type == LUA_NONE ) )
                     {
 						LuaNPCScript->useNPC(player, counter, static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION));
-                        msg = "Used NPC: " + Source.Character->name + "(" + CLogger::toString(Source.Character->id) + ")";
+                        msg = "Used NPC: " + Source.character->name + "(" + Logger::toString(Source.character->id) + ")";
                     }
 					else if ( Source.Type == LUA_CHARACTER && Target.Type == LUA_FIELD )
                     {
 						LuaNPCScript->useNPCWithField(player, Target.pos, counter, static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION) );
-                        msg = "Used NPC: " + Source.Character->name + "(" + CLogger::toString(Source.Character->id) + ") with empty field at pos(" + CLogger::toString(Target.pos.x) + "," + CLogger::toString(Target.pos.y) + "," + CLogger::toString(Target.pos.z) + ")";
+                        msg = "Used NPC: " + Source.character->name + "(" + Logger::toString(Source.character->id) + ") with empty field at pos(" + Logger::toString(Target.pos.x) + "," + Logger::toString(Target.pos.y) + "," + Logger::toString(Target.pos.z) + ")";
                     }
 					else if ( Source.Type == LUA_CHARACTER && Target.Type == LUA_ITEM )
                     {
 						LuaNPCScript->useNPCWithItem(player, Target.item, counter, static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION) );
-                        msg = "Used NPC: " + Source.Character->name + "(" + CLogger::toString(Source.Character->id) + ") with Item: " + CLogger::toString(Target.item.id);
+                        msg = "Used NPC: " + Source.character->name + "(" + Logger::toString(Source.character->id) + ") with Item: " + Logger::toString(Target.item.id);
                     }
 					else if ( Source.Type == LUA_CHARACTER && Target.Type == LUA_CHARACTER )
                     {
-						LuaNPCScript->useNPCWithCharacter(player, Target.Character, counter, static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION) );
-                        msg = "Used NPC: " + Source.Character->name + "(" + CLogger::toString(Source.Character->id) + ") with character: " + Target.Character->name + "(" + CLogger::toString(Target.Character->id) + ")";
+						LuaNPCScript->useNPCWithCharacter(player, Target.character, counter, static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION) );
+                        msg = "Used NPC: " + Source.character->name + "(" + Logger::toString(Source.character->id) + ") with character: " + Target.character->name + "(" + Logger::toString(Target.character->id) + ")";
                     }
                 }
 
 			}
             else if ( LuaMonsterScript )
             {
-                player->ltAction->setLastAction( LuaMonsterScript, Source, Target, counter , paramtemp, CLongTimeAction::AT_USE);
+                player->ltAction->setLastAction( LuaMonsterScript, Source, Target, counter , paramtemp, LongTimeAction::AT_USE);
 #ifdef DO_UNCONSCIOUS
 				if ( ( paramOK ) && player->IsAlive() && player->IsConscious() )
 #else
@@ -1244,29 +1244,29 @@ std::cout << "USE_PERFORM_START" << std::endl;
 				{
 					if ( Source.Type == LUA_CHARACTER && ( Target.Type == LUA_NONE ) )
                     {
-						LuaMonsterScript->useMonster(Source.Character,player,counter,static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION));
-                        msg = "Used Monster: " + Source.Character->name + "(" + CLogger::toString(Source.Character->id) + ")";
+						LuaMonsterScript->useMonster(Source.character,player,counter,static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION));
+                        msg = "Used Monster: " + Source.character->name + "(" + Logger::toString(Source.character->id) + ")";
                     }
 					else if ( Source.Type == LUA_CHARACTER && Target.Type == LUA_FIELD )
                     {
-						LuaMonsterScript->useMonsterWithField(Source.Character,player,Target.pos,counter,static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION));
-                        msg = "Used Monster: " + Source.Character->name + "(" + CLogger::toString(Source.Character->id) + ") with empty field at pos(" + CLogger::toString(Target.pos.x) + "," + CLogger::toString(Target.pos.y) + "," + CLogger::toString(Target.pos.z) + ")";
+						LuaMonsterScript->useMonsterWithField(Source.character,player,Target.pos,counter,static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION));
+                        msg = "Used Monster: " + Source.character->name + "(" + Logger::toString(Source.character->id) + ") with empty field at pos(" + Logger::toString(Target.pos.x) + "," + Logger::toString(Target.pos.y) + "," + Logger::toString(Target.pos.z) + ")";
                     }
 					else if ( Source.Type == LUA_CHARACTER && Target.Type == LUA_ITEM )
                     {
-						LuaMonsterScript->useMonsterWithItem(Source.Character,player,Target.item,counter,static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION));
-                         msg = "Used Monster: " + Source.Character->name + "(" + CLogger::toString(Source.Character->id) + ") with Item: " + CLogger::toString(Target.item.id);
+						LuaMonsterScript->useMonsterWithItem(Source.character,player,Target.item,counter,static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION));
+                         msg = "Used Monster: " + Source.character->name + "(" + Logger::toString(Source.character->id) + ") with Item: " + Logger::toString(Target.item.id);
                     }
 					else if ( Source.Type == LUA_CHARACTER && Target.Type == LUA_CHARACTER )
                     {
-						LuaMonsterScript->useMonsterWithCharacter(Source.Character,player,Target.Character,counter,static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION));
-                        msg = "Used Monster: " + Source.Character->name + "(" + CLogger::toString(Source.Character->id) + ") with character: " + Target.Character->name + "(" + CLogger::toString(Target.Character->id) + ")";
+						LuaMonsterScript->useMonsterWithCharacter(Source.character,player,Target.character,counter,static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION));
+                        msg = "Used Monster: " + Source.character->name + "(" + Logger::toString(Source.character->id) + ") with character: " + Target.character->name + "(" + Logger::toString(Target.character->id) + ")";
                     }
 				}
 			}
             else if ( LuaTileScript )
             {
-                player->ltAction->setLastAction( LuaTileScript, Source, Target, counter , paramtemp, CLongTimeAction::AT_USE);
+                player->ltAction->setLastAction( LuaTileScript, Source, Target, counter , paramtemp, LongTimeAction::AT_USE);
 #ifdef DO_UNCONSCIOUS
                 if ( ( paramOK ) && player->IsAlive() && player->IsConscious() )
 #else
@@ -1280,17 +1280,17 @@ std::cout << "USE_PERFORM_START" << std::endl;
 				    else if ( Source.Type == LUA_FIELD && Target.Type == LUA_ITEM )
 					    LuaTileScript->useTileWithItem(player,Source.pos,Target.item, counter,static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION) );
 				    else if ( Source.Type == LUA_FIELD && Target.Type == LUA_CHARACTER )
-					    LuaTileScript->useTileWithCharacter(player,Source.pos,Target.Character, counter,static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION) );
+					    LuaTileScript->useTileWithCharacter(player,Source.pos,Target.character, counter,static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION) );
 				}
 			}
-            boost::shared_ptr<CBasicServerCommand>cmd( new CBBSendActionTC(player->id, player->name, 3,msg) );
-            CWorld::get()->monitoringClientList->sendCommand(cmd);
+            boost::shared_ptr<BasicServerCommand>cmd( new BBSendActionTC(player->id, player->name, 3,msg) );
+            World::get()->monitoringClientList->sendCommand(cmd);
 
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CUseTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new UseTS() );
             return cmd;
         }
 
@@ -1302,14 +1302,14 @@ std::cout << "USE_PERFORM_START" << std::endl;
 *@ingroup Clientcommands
 *character looks at an menu item
 */
-class CLookAtMenuItemTS : public CBasicClientCommand
+class LookAtMenuItemTS : public BasicClientCommand
 {
     public:
-        CLookAtMenuItemTS() : CBasicClientCommand( CC_LOOKATMENUITEM_TS )
+        LookAtMenuItemTS() : BasicClientCommand( C_LOOKATMENUITEM_TS )
         {
         }
 
-        virtual ~CLookAtMenuItemTS(){};
+        virtual ~LookAtMenuItemTS(){};
 
         void decodeData()
         {
@@ -1317,9 +1317,9 @@ class CLookAtMenuItemTS : public CBasicClientCommand
             id = getShortIntFromBuffer();
         }
 
-          void performAction( CPlayer * player )
+          void performAction( Player * player )
         {
-            CLogger::writeMessage("CWorld_Debug",player->name + "looks at an item from a menu.");
+            Logger::writeMessage("World_Debug",player->name + "looks at an item from a menu.");
             time( &(player->lastaction) );
 #ifdef DO_UNCONSCIOUS
 			if ( player->IsAlive() && player->IsConscious() )
@@ -1327,14 +1327,14 @@ class CLookAtMenuItemTS : public CBasicClientCommand
 			if ( player->IsAlive() )
 #endif
             {
-                CWorld::get()->lookAtMenueItem( player, pos, id);
+                World::get()->lookAtMenueItem( player, pos, id);
                 player->actionPoints -= P_LOOK_COST;
             }
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CLookAtMenuItemTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new LookAtMenuItemTS() );
 			return cmd;
         }
         TYPE_OF_ITEM_ID id;
@@ -1345,22 +1345,22 @@ class CLookAtMenuItemTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *client gives signal that he is ok
 */
-class CKeepAliveTS : public CBasicClientCommand
+class KeepAliveTS : public BasicClientCommand
 {
     public:
-        CKeepAliveTS() : CBasicClientCommand( CC_KEEPALIVE_TS )
+        KeepAliveTS() : BasicClientCommand( C_KEEPALIVE_TS )
         {
         }
 
-        virtual ~CKeepAliveTS(){};
+        virtual ~KeepAliveTS(){};
 
         void decodeData()
         {
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
-             CLogger::writeMessage("CWorld_Debug", "KEEPALIVE_TS von Spieler " + player->name );
+             Logger::writeMessage("World_Debug", "KEEPALIVE_TS von Spieler " + player->name );
 			// Release Jailed Players if sentance has expired
 			if ( player->GetStatus() == JAILEDFORTIME )
             {
@@ -1392,9 +1392,9 @@ class CKeepAliveTS : public CBasicClientCommand
 			time( &(player->lastkeepalive) );
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CKeepAliveTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new KeepAliveTS() );
             return cmd;
         }
 };
@@ -1403,28 +1403,28 @@ class CKeepAliveTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *client asked to send his skills
 */
-class CRequestSkillsTS : public CBasicClientCommand
+class RequestSkillsTS : public BasicClientCommand
 {
     public:
-        CRequestSkillsTS() : CBasicClientCommand( CC_REQUESTSKILLS_TS )
+        RequestSkillsTS() : BasicClientCommand( C_REQUESTSKILLS_TS )
         {
         }
 
-        virtual ~CRequestSkillsTS(){};
+        virtual ~RequestSkillsTS(){};
 
         void decodeData()
         {
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
             time( &(player->lastaction) );
             player->sendAllSkills();
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd(new CRequestSkillsTS());
+            boost::shared_ptr<BasicClientCommand>cmd(new RequestSkillsTS());
             return cmd;
         }
 };
@@ -1433,32 +1433,32 @@ class CRequestSkillsTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *char stopps an attack
 */
-class CAttackStopTS : public CBasicClientCommand
+class AttackStopTS : public BasicClientCommand
 {
     public:
-        CAttackStopTS() : CBasicClientCommand( CC_ATTACKSTOP_TS )
+        AttackStopTS() : BasicClientCommand( C_ATTACKSTOP_TS )
         {
         }
 
-        virtual ~CAttackStopTS(){};
+        virtual ~AttackStopTS(){};
 
         void decodeData()
         {
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
             time( &(player->lastaction) );
             player->ltAction->abortAction();
             player->attackmode = false;
             //hast to be changed to a command
-            boost::shared_ptr<CBasicServerCommand>cmd( new CTargetLostTC() );
+            boost::shared_ptr<BasicServerCommand>cmd( new TargetLostTC() );
             player->Connection->addCommand(cmd);
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CAttackStopTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new AttackStopTS() );
             return cmd;
         }
 };
@@ -1467,23 +1467,23 @@ class CAttackStopTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *char looks at an item in his inventory
 */
-class CLookAtInventoryItemTS : public CBasicClientCommand
+class LookAtInventoryItemTS : public BasicClientCommand
 {
     public:
-        CLookAtInventoryItemTS() : CBasicClientCommand( CC_LOOKATINVENTORYITEM_TS )
+        LookAtInventoryItemTS() : BasicClientCommand( C_LOOKATINVENTORYITEM_TS )
         {
         }
 
-        ~CLookAtInventoryItemTS(){};
+        ~LookAtInventoryItemTS(){};
 
         void decodeData()
         {
             pos = getUnsignedCharFromBuffer();
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
-            CLogger::writeMessage("CWorld_Debug",player->name + " looks at an item in the inventory." );
+            Logger::writeMessage("World_Debug",player->name + " looks at an item in the inventory." );
             time( &(player->lastaction) );
 #ifdef DO_UNCONSCIOUS
 			if ( player->IsAlive() && player->IsConscious() )
@@ -1491,14 +1491,14 @@ class CLookAtInventoryItemTS : public CBasicClientCommand
 			if ( player->IsAlive() )
 #endif
 			{
-				CWorld::get()->lookAtInventoryItem( player, pos );
+				World::get()->lookAtInventoryItem( player, pos );
 				player->actionPoints -= P_LOOK_COST;
 			}
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CLookAtInventoryItemTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new LookAtInventoryItemTS() );
             return cmd;
         }
         unsigned char pos;
@@ -1508,14 +1508,14 @@ class CLookAtInventoryItemTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *char looks at an item in his showcase
 */
-class CLookAtShowCaseItemTS : public CBasicClientCommand
+class LookAtShowCaseItemTS : public BasicClientCommand
 {
     public:
-        CLookAtShowCaseItemTS() : CBasicClientCommand( CC_LOOKATSHOWCASEITEM_TS )
+        LookAtShowCaseItemTS() : BasicClientCommand( C_LOOKATSHOWCASEITEM_TS )
         {
         }
 
-        virtual ~CLookAtShowCaseItemTS(){};
+        virtual ~LookAtShowCaseItemTS(){};
 
         void decodeData()
         {
@@ -1523,9 +1523,9 @@ class CLookAtShowCaseItemTS : public CBasicClientCommand
             pos = getUnsignedCharFromBuffer();
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
-            CLogger::writeMessage("CWorld_Debug", player->name + " looks at an item in a container.");
+            Logger::writeMessage("World_Debug", player->name + " looks at an item in a container.");
             time( &(player->lastaction) );
 #ifdef DO_UNCONSCIOUS
 			if ( player->IsAlive() && player->IsConscious() )
@@ -1533,14 +1533,14 @@ class CLookAtShowCaseItemTS : public CBasicClientCommand
 			if ( player->IsAlive() )
 #endif
 			{
-				CWorld::get()->lookAtShowcaseItem( player, showcase, pos );
+				World::get()->lookAtShowcaseItem( player, showcase, pos );
 				player->actionPoints -= P_LOOK_COST;
 			}
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CLookAtShowCaseItemTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new LookAtShowCaseItemTS() );
 			return cmd;
         }
         unsigned char showcase;
@@ -1551,14 +1551,14 @@ class CLookAtShowCaseItemTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *char moves item from inventory to a showcase
 */
-class CMoveItemFromPlayerToShowCaseTS : public CBasicClientCommand
+class MoveItemFromPlayerToShowCaseTS : public BasicClientCommand
 {
     public:
-        CMoveItemFromPlayerToShowCaseTS() : CBasicClientCommand( CC_MOVEITEMFROMPLAYERTOSHOWCASE_TS )
+        MoveItemFromPlayerToShowCaseTS() : BasicClientCommand( C_MOVEITEMFROMPLAYERTOSHOWCASE_TS )
         {
         }
 
-        virtual ~CMoveItemFromPlayerToShowCaseTS(){};
+        virtual ~MoveItemFromPlayerToShowCaseTS(){};
 
         void decodeData()
         {
@@ -1568,25 +1568,25 @@ class CMoveItemFromPlayerToShowCaseTS : public CBasicClientCommand
             count = getUnsignedCharFromBuffer();
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
             time( &(player->lastaction) );
             player->ltAction->abortAction();
-            CLogger::writeMessage("CWorld_Debug", player->name + "moves an item from the inventory to showcase!");
+            Logger::writeMessage("World_Debug", player->name + "moves an item from the inventory to showcase!");
 #ifdef DO_UNCONSCIOUS
 			if ( player->IsAlive() && player->IsConscious() )
 #else
 			if ( player->IsAlive() )
 #endif
 			{
-				CWorld::get()->moveItemFromPlayerIntoShowcase( player, cpos, showcase, pos, count );
+				World::get()->moveItemFromPlayerIntoShowcase( player, cpos, showcase, pos, count );
 				player->actionPoints -= P_ITEMMOVE_COST;
 			}
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CMoveItemFromPlayerToShowCaseTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new MoveItemFromPlayerToShowCaseTS() );
             return cmd;
         }
         unsigned char showcase;
@@ -1599,14 +1599,14 @@ class CMoveItemFromPlayerToShowCaseTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *char moves item from showcase to his inventory
 */
-class CMoveItemFromShowCaseToPlayerTS : public CBasicClientCommand
+class MoveItemFromShowCaseToPlayerTS : public BasicClientCommand
 {
     public:
-        CMoveItemFromShowCaseToPlayerTS() : CBasicClientCommand( CC_MOVEITEMFROMSHOWCASETOPLAYER_TS )
+        MoveItemFromShowCaseToPlayerTS() : BasicClientCommand( C_MOVEITEMFROMSHOWCASETOPLAYER_TS )
         {
         }
 
-        virtual ~CMoveItemFromShowCaseToPlayerTS(){};
+        virtual ~MoveItemFromShowCaseToPlayerTS(){};
 
         void decodeData()
         {
@@ -1616,25 +1616,25 @@ class CMoveItemFromShowCaseToPlayerTS : public CBasicClientCommand
             count = getUnsignedCharFromBuffer();
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
             time( &(player->lastaction) );
             player->ltAction->abortAction();
-            CLogger::writeMessage("CWorld_Debug", player->name + " moves an item from the shocase to the inventory!");
+            Logger::writeMessage("World_Debug", player->name + " moves an item from the shocase to the inventory!");
 #ifdef DO_UNCONSCIOUS
 			if ( player->IsAlive() && player->IsConscious() )
 #else
 			if ( player->IsAlive() )
 #endif
 			{
-				CWorld::get()->moveItemFromShowcaseToPlayer( player, showcase, pos, cpos, count );
+				World::get()->moveItemFromShowcaseToPlayer( player, showcase, pos, cpos, count );
 				player->actionPoints -= P_ITEMMOVE_COST;
 			}
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CMoveItemFromShowCaseToPlayerTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new MoveItemFromShowCaseToPlayerTS() );
             return cmd;
         }
         unsigned char showcase;
@@ -1647,14 +1647,14 @@ class CMoveItemFromShowCaseToPlayerTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *char moves items inside his inventory
 */
-class CMoveItemInsideInventoryTS : public CBasicClientCommand
+class MoveItemInsideInventoryTS : public BasicClientCommand
 {
     public:
-        CMoveItemInsideInventoryTS() : CBasicClientCommand( CC_MOVEITEMINSIDEINVENTORY_TS )
+        MoveItemInsideInventoryTS() : BasicClientCommand( C_MOVEITEMINSIDEINVENTORY_TS )
         {
         }
 
-        virtual ~CMoveItemInsideInventoryTS(){};
+        virtual ~MoveItemInsideInventoryTS(){};
 
         void decodeData()
         {
@@ -1663,25 +1663,25 @@ class CMoveItemInsideInventoryTS : public CBasicClientCommand
             count = getUnsignedCharFromBuffer();
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
             time( &(player->lastaction) );
             player->ltAction->abortAction();
-            CLogger::writeMessage("CWorld_Debug", player->name + "moves an item inside the inventory!");
+            Logger::writeMessage("World_Debug", player->name + "moves an item inside the inventory!");
 #ifdef DO_UNCONSCIOUS
 			if ( player->IsAlive() && player->IsConscious() )
 #else
 			if ( player->IsAlive() )
 #endif
 			{
-				CWorld::get()->moveItemBetweenBodyParts( player, opos, npos, count );
+				World::get()->moveItemBetweenBodyParts( player, opos, npos, count );
 				player->actionPoints -= P_ITEMMOVE_COST;
 			}
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CMoveItemInsideInventoryTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new MoveItemInsideInventoryTS() );
             return cmd;
         }
         unsigned char opos;
@@ -1693,14 +1693,14 @@ class CMoveItemInsideInventoryTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *char droppes a item from his inventory to the map
 */
-class CDropItemFromInventoryOnMapTS : public CBasicClientCommand
+class DropItemFromInventoryOnMapTS : public BasicClientCommand
 {
     public:
-        CDropItemFromInventoryOnMapTS() : CBasicClientCommand( CC_DROPITEMFROMPLAYERONMAP_TS )
+        DropItemFromInventoryOnMapTS() : BasicClientCommand( C_DROPITEMFROMPLAYERONMAP_TS )
         {
         }
 
-        virtual ~CDropItemFromInventoryOnMapTS(){};
+        virtual ~DropItemFromInventoryOnMapTS(){};
 
         void decodeData()
         {
@@ -1711,23 +1711,23 @@ class CDropItemFromInventoryOnMapTS : public CBasicClientCommand
             count = getUnsignedCharFromBuffer();
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
             time( &(player->lastaction) );
             player->ltAction->abortAction();
-            CLogger::writeMessage("CWorld_Debug", player->name + " throws an item from inventory on the map!");
+            Logger::writeMessage("World_Debug", player->name + " throws an item from inventory on the map!");
 #ifdef DO_UNCONSCIOUS
 			if ( player->IsConscious() )
 #endif
 			{
-				CWorld::get()->dropItemFromPlayerOnMap( player, pos, xc, yc, zc, count );
+				World::get()->dropItemFromPlayerOnMap( player, pos, xc, yc, zc, count );
 				player->actionPoints -= P_ITEMMOVE_COST;
 			}
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CDropItemFromInventoryOnMapTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new DropItemFromInventoryOnMapTS() );
             return cmd;
         }
         unsigned char pos;
@@ -1739,14 +1739,14 @@ class CDropItemFromInventoryOnMapTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *char moves item from map to his inventory
 */
-class CMoveItemFromMapToPlayerTS : public CBasicClientCommand
+class MoveItemFromMapToPlayerTS : public BasicClientCommand
 {
     public:
-        CMoveItemFromMapToPlayerTS() : CBasicClientCommand( CC_MOVEITEMFROMMAPTOPLAYER_TS )
+        MoveItemFromMapToPlayerTS() : BasicClientCommand( C_MOVEITEMFROMMAPTOPLAYER_TS )
         {
         }
 
-        virtual ~CMoveItemFromMapToPlayerTS(){};
+        virtual ~MoveItemFromMapToPlayerTS(){};
 
         void decodeData()
         {
@@ -1755,25 +1755,25 @@ class CMoveItemFromMapToPlayerTS : public CBasicClientCommand
             count = getUnsignedCharFromBuffer();
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
             time( &(player->lastaction) );
             player->ltAction->abortAction();
-            CLogger::writeMessage("CWorld_Debug", player->name + " moves an Item from the map to the inventory!");
+            Logger::writeMessage("World_Debug", player->name + " moves an Item from the map to the inventory!");
 #ifdef DO_UNCONSCIOUS
 			if ( player->IsAlive() && player->IsConscious() )
 #else
 			if ( player->IsAlive() )
 #endif
 			{
-				CWorld::get()->moveItemFromMapToPlayer( player, dir, pos, count );
+				World::get()->moveItemFromMapToPlayer( player, dir, pos, count );
 				player->actionPoints -= P_ITEMMOVE_COST;
 			}
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CMoveItemFromMapToPlayerTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new MoveItemFromMapToPlayerTS() );
             return cmd;
         }
         unsigned char dir;
@@ -1785,14 +1785,14 @@ class CMoveItemFromMapToPlayerTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *char moves item from map into a open showcase
 */
-class CMoveItemFromMapIntoShowCaseTS : public CBasicClientCommand
+class MoveItemFromMapIntoShowCaseTS : public BasicClientCommand
 {
     public:
-        CMoveItemFromMapIntoShowCaseTS() : CBasicClientCommand( CC_MOVEITEMFROMMAPINTOSHOWCASE_TS )
+        MoveItemFromMapIntoShowCaseTS() : BasicClientCommand( C_MOVEITEMFROMMAPINTOSHOWCASE_TS )
         {
         }
 
-        virtual ~CMoveItemFromMapIntoShowCaseTS(){};
+        virtual ~MoveItemFromMapIntoShowCaseTS(){};
 
         void decodeData()
         {
@@ -1802,25 +1802,25 @@ class CMoveItemFromMapIntoShowCaseTS : public CBasicClientCommand
             count = getUnsignedCharFromBuffer();
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
             time( &(player->lastaction) );
             player->ltAction->abortAction();
-            CLogger::writeMessage("CWorld_Debug", player->name + " moves an item from the map to the showcase!");
+            Logger::writeMessage("World_Debug", player->name + " moves an item from the map to the showcase!");
 #ifdef DO_UNCONSCIOUS
 			if ( player->IsAlive() && player->IsConscious() )
 #else
 			if ( player->IsAlive() )
 #endif
 			{
-				CWorld::get()->moveItemFromMapIntoShowcase( player, dir, showcase, pos, count );
+				World::get()->moveItemFromMapIntoShowcase( player, dir, showcase, pos, count );
 				player->actionPoints -= P_ITEMMOVE_COST;
 			}
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd(new CMoveItemFromMapIntoShowCaseTS());
+            boost::shared_ptr<BasicClientCommand>cmd(new MoveItemFromMapIntoShowCaseTS());
             return cmd;
         }
         unsigned char dir;
@@ -1833,14 +1833,14 @@ class CMoveItemFromMapIntoShowCaseTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *char moves item between two showcases
 */
-class CMoveItemBetweenShowCasesTS : public CBasicClientCommand
+class MoveItemBetweenShowCasesTS : public BasicClientCommand
 {
     public:
-        CMoveItemBetweenShowCasesTS() : CBasicClientCommand( CC_MOVEITEMBETWEENSHOWCASES_TS )
+        MoveItemBetweenShowCasesTS() : BasicClientCommand( C_MOVEITEMBETWEENSHOWCASES_TS )
         {
         }
 
-        virtual ~CMoveItemBetweenShowCasesTS(){};
+        virtual ~MoveItemBetweenShowCasesTS(){};
 
         void decodeData()
         {
@@ -1851,25 +1851,25 @@ class CMoveItemBetweenShowCasesTS : public CBasicClientCommand
             count = getUnsignedCharFromBuffer();
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
             time( &(player->lastaction) );
             player->ltAction->abortAction();
-            CLogger::writeMessage("CWorld_Debug",player->name + " moves an item between showcases!");
+            Logger::writeMessage("World_Debug",player->name + " moves an item between showcases!");
 #ifdef DO_UNCONSCIOUS
 			if ( player->IsAlive() && player->IsConscious() )
 #else
 			if ( player->IsAlive() )
 #endif
 			{
-				CWorld::get()->moveItemBetweenShowcases( player, source, spos, dest, dpos, count );
+				World::get()->moveItemBetweenShowcases( player, source, spos, dest, dpos, count );
 				player->actionPoints -= P_ITEMMOVE_COST;
 			}
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CMoveItemBetweenShowCasesTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new MoveItemBetweenShowCasesTS() );
             return cmd;
         }
         unsigned char source;
@@ -1883,14 +1883,14 @@ class CMoveItemBetweenShowCasesTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *char droppes a item from a showcase to the map
 */
-class CDropItemFromShowCaseOnMapTS : public CBasicClientCommand
+class DropItemFromShowCaseOnMapTS : public BasicClientCommand
 {
     public:
-        CDropItemFromShowCaseOnMapTS() : CBasicClientCommand( CC_DROPITEMFROMSHOWCASEONMAP_TS )
+        DropItemFromShowCaseOnMapTS() : BasicClientCommand( C_DROPITEMFROMSHOWCASEONMAP_TS )
         {
         }
 
-        virtual ~CDropItemFromShowCaseOnMapTS(){};
+        virtual ~DropItemFromShowCaseOnMapTS(){};
 
         void decodeData()
         {
@@ -1902,23 +1902,23 @@ class CDropItemFromShowCaseOnMapTS : public CBasicClientCommand
             count = getUnsignedCharFromBuffer();
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
             time( &(player->lastaction) );
             player->ltAction->abortAction();
-            CLogger::writeMessage("CWorld_Debug",player->name + " moves an item from showcase to the map!" );
+            Logger::writeMessage("World_Debug",player->name + " moves an item from showcase to the map!" );
 #ifdef DO_UNCONSCIOUS
 			if ( player->IsConscious() )
 #endif
 			{
-				CWorld::get()->dropItemFromShowcaseOnMap( player, showcase, pos, xc, yc, zc, count );
+				World::get()->dropItemFromShowcaseOnMap( player, showcase, pos, xc, yc, zc, count );
 				player->actionPoints -= P_ITEMMOVE_COST;
 			}
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CDropItemFromShowCaseOnMapTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new DropItemFromShowCaseOnMapTS() );
             return cmd;
         }
         unsigned char showcase;
@@ -1931,14 +1931,14 @@ class CDropItemFromShowCaseOnMapTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *char closes a showcase container
 */
-class CCloseContainerInShowCaseTS : public CBasicClientCommand
+class CloseContainerInShowCaseTS : public BasicClientCommand
 {
     public:
-        CCloseContainerInShowCaseTS() : CBasicClientCommand( CC_CLOSECONTAINERINSHOWCASE_TS )
+        CloseContainerInShowCaseTS() : BasicClientCommand( C_CLOSECONTAINERINSHOWCASE_TS )
         {
         }
 
-        virtual ~CCloseContainerInShowCaseTS(){};
+        virtual ~CloseContainerInShowCaseTS(){};
 
         void decodeData()
         {
@@ -1946,24 +1946,24 @@ class CCloseContainerInShowCaseTS : public CBasicClientCommand
             //getUnsignedCharFromBuffer();
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
             time( &(player->lastaction) );
             player->ltAction->abortAction();
-            CLogger::writeMessage("CWorld_Debug", player->name + " closes a container in the showcase");
+            Logger::writeMessage("World_Debug", player->name + " closes a container in the showcase");
 #ifdef DO_UNCONSCIOUS
 			if ( player->IsAlive() && player->IsConscious() )
 #else
 			if ( player->IsAlive() )
 #endif
 			{
-                CWorld::get()->closeContainerInShowcase( player, showcase );
+                World::get()->closeContainerInShowcase( player, showcase );
 			}
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CCloseContainerInShowCaseTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new CloseContainerInShowCaseTS() );
             return cmd;
         }
         unsigned char showcase;
@@ -1973,14 +1973,14 @@ class CCloseContainerInShowCaseTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *char looks into a showcase container
 */
-class CLookIntoShowCaseContainerTS : public CBasicClientCommand
+class LookIntoShowCaseContainerTS : public BasicClientCommand
 {
     public:
-        CLookIntoShowCaseContainerTS() : CBasicClientCommand( CC_LOOKINTOSHOWCASECONTAINER_TS )
+        LookIntoShowCaseContainerTS() : BasicClientCommand( C_LOOKINTOSHOWCASECONTAINER_TS )
         {
         }
 
-        virtual ~CLookIntoShowCaseContainerTS(){};
+        virtual ~LookIntoShowCaseContainerTS(){};
 
         void decodeData()
         {
@@ -1988,23 +1988,23 @@ class CLookIntoShowCaseContainerTS : public CBasicClientCommand
             pos = getUnsignedCharFromBuffer();
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
             time( &(player->lastaction) );
             player->ltAction->abortAction();
-            CLogger::writeMessage("CWorld_Debug", player->name + " looks into a container in a showcase!");
+            Logger::writeMessage("World_Debug", player->name + " looks into a container in a showcase!");
 #ifdef DO_UNCONSCIOUS
 			if ( player->IsConscious() )
 #endif
 			{
-				CWorld::get()->lookIntoShowcaseContainer( player, showcase, pos );
+				World::get()->lookIntoShowcaseContainer( player, showcase, pos );
 				player->actionPoints -= P_LOOK_COST;
 			}
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CLookIntoShowCaseContainerTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new LookIntoShowCaseContainerTS() );
             return cmd;
         }
         unsigned char showcase;
@@ -2015,37 +2015,37 @@ class CLookIntoShowCaseContainerTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *char looks into the inventory
 */
-class CLookIntoInventoryTS : public CBasicClientCommand
+class LookIntoInventoryTS : public BasicClientCommand
 {
     public:
-        CLookIntoInventoryTS() : CBasicClientCommand( CC_LOOKINTOINVENTORY_TS )
+        LookIntoInventoryTS() : BasicClientCommand( C_LOOKINTOINVENTORY_TS )
         {
         }
 
-        virtual ~CLookIntoInventoryTS(){};
+        virtual ~LookIntoInventoryTS(){};
 
         void decodeData()
         {
             showcase = getUnsignedCharFromBuffer();
         }
 
-          void performAction( CPlayer * player )
+          void performAction( Player * player )
         {
             time( &(player->lastaction) );
             player->ltAction->abortAction();
-            CLogger::writeMessage("CWorld_Debug", player->name + " looks into his backpack");
+            Logger::writeMessage("World_Debug", player->name + " looks into his backpack");
 #ifdef DO_UNCONSCIOUS
 			if ( player->IsConscious() )
 #endif
 			{
-				CWorld::get()->lookIntoBackPack( player, showcase );
+				World::get()->lookIntoBackPack( player, showcase );
 				player->actionPoints -= P_LOOK_COST;
 			}
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CLookIntoInventoryTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new LookIntoInventoryTS() );
             return cmd;
         }
         unsigned char showcase;
@@ -2055,14 +2055,14 @@ class CLookIntoInventoryTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *char looks into a container on a map field
 */
-class CLookIntoContainerOnFieldTS : public CBasicClientCommand
+class LookIntoContainerOnFieldTS : public BasicClientCommand
 {
     public:
-        CLookIntoContainerOnFieldTS() : CBasicClientCommand( CC_LOOKINTOCONTAINERONFIELD_TS )
+        LookIntoContainerOnFieldTS() : BasicClientCommand( C_LOOKINTOCONTAINERONFIELD_TS )
         {
         }
 
-        virtual ~CLookIntoContainerOnFieldTS(){};
+        virtual ~LookIntoContainerOnFieldTS(){};
 
         void decodeData()
         {
@@ -2070,25 +2070,25 @@ class CLookIntoContainerOnFieldTS : public CBasicClientCommand
             showcase = getUnsignedCharFromBuffer();
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
             time( &(player->lastaction) );
             player->ltAction->abortAction();
-            CLogger::writeMessage("CWorld_Debug", player->name + " looks into a container on the map");
+            Logger::writeMessage("World_Debug", player->name + " looks into a container on the map");
 #ifdef DO_UNCONSCIOUS
 			if ( player->IsAlive() && player->IsConscious() )
 #else
 			if ( player->IsAlive() )
 #endif
 			{
- 				CWorld::get()->lookIntoContainerOnField( player, direction, showcase );
+ 				World::get()->lookIntoContainerOnField( player, direction, showcase );
 				player->actionPoints -= P_LOOK_COST;
 			}
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CLookIntoContainerOnFieldTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new LookIntoContainerOnFieldTS() );
 			return cmd;
         }
         unsigned char direction;
@@ -2099,32 +2099,32 @@ class CLookIntoContainerOnFieldTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *char logged out
 */
-class CLogOutTS : public CBasicClientCommand
+class LogOutTS : public BasicClientCommand
 {
     public:
         /**
         *a client logged out
         */
-        CLogOutTS() : CBasicClientCommand( CC_LOGOUT_TS )
+        LogOutTS() : BasicClientCommand( C_LOGOUT_TS )
         {
         }
 
-        virtual ~CLogOutTS(){};
+        virtual ~LogOutTS(){};
 
         void decodeData()
         {
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
             player->ltAction->abortAction();
-            CLogger::writeMessage("CWorld_Debug", player->name + " logt aus" );
+            Logger::writeMessage("World_Debug", player->name + " logt aus" );
 			player->Connection->closeConnection();
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CLogOutTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new LogOutTS() );
 			return cmd;
         }
 };
@@ -2133,68 +2133,33 @@ class CLogOutTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *char talks to another one
 */
-class CWhisperTS : public CBasicClientCommand
+class WhisperTS : public BasicClientCommand
 {
     public:
         /**
         *a player talked
         */
-        CWhisperTS() : CBasicClientCommand( CC_WHISPER_TS )
+        WhisperTS() : BasicClientCommand( C_WHISPER_TS )
         {
         }
 
-        virtual ~CWhisperTS(){};
+        virtual ~WhisperTS(){};
 
         void decodeData()
         {
             text = getStringFromBuffer();
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
             time( &(player->lastaction) );
-            CLogger::writeMessage("CWorld_Debug", player->name + " whispers something!");
-			player->talk(CCharacter::tt_whisper, text);
+            Logger::writeMessage("World_Debug", player->name + " whispers something!");
+			player->talk(Character::tt_whisper, text);
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CWhisperTS() );
-			return cmd;
-        }
-        std::string text;
-};
-
-/**
-*@ingroup Clientcommands
-*char talks to another one
-*/
-class CShoutTS : public CBasicClientCommand
-{
-    public:
-        /**
-        *a player talked
-        */
-        CShoutTS() : CBasicClientCommand( CC_SHOUT_TS )
-        {
-        }
-
-        virtual ~CShoutTS(){};
-
-        void decodeData()
-        {
-            text = getStringFromBuffer();
-        }
-
-        void performAction( CPlayer * player )
-        {
-            time( &(player->lastaction) );
-            player->talk(CCharacter::tt_yell, text);
-        }
-
-        boost::shared_ptr<CBasicClientCommand> clone()
-        {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CShoutTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new WhisperTS() );
 			return cmd;
         }
         std::string text;
@@ -2204,37 +2169,72 @@ class CShoutTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *char talks to another one
 */
-class CSayTS : public CBasicClientCommand
+class ShoutTS : public BasicClientCommand
 {
     public:
         /**
         *a player talked
         */
-        CSayTS() : CBasicClientCommand( CC_SAY_TS )
+        ShoutTS() : BasicClientCommand( C_SHOUT_TS )
         {
         }
 
-        virtual ~CSayTS(){};
+        virtual ~ShoutTS(){};
 
         void decodeData()
         {
             text = getStringFromBuffer();
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
             time( &(player->lastaction) );
-            CLogger::writeMessage("CWorld_Debug", player->name + " whispers something!");
-			if ( ( !player->hasGMRight(gmr_isnotshownasgm) && !player->isAdmin() ) || !CWorld::get()->parseGMCommands(player, text))
+            player->talk(Character::tt_yell, text);
+        }
+
+        boost::shared_ptr<BasicClientCommand> clone()
+        {
+            boost::shared_ptr<BasicClientCommand>cmd( new ShoutTS() );
+			return cmd;
+        }
+        std::string text;
+};
+
+/**
+*@ingroup Clientcommands
+*char talks to another one
+*/
+class SayTS : public BasicClientCommand
+{
+    public:
+        /**
+        *a player talked
+        */
+        SayTS() : BasicClientCommand( C_SAY_TS )
+        {
+        }
+
+        virtual ~SayTS(){};
+
+        void decodeData()
+        {
+            text = getStringFromBuffer();
+        }
+
+        void performAction( Player * player )
+        {
+            time( &(player->lastaction) );
+            Logger::writeMessage("World_Debug", player->name + " whispers something!");
+			if ( ( !player->hasGMRight(gmr_isnotshownasgm) && !player->isAdmin() ) || !World::get()->parseGMCommands(player, text))
             {
-				if ( !CWorld::get()->parsePlayerCommands( player, text ) )  // did we issue a player command?
-					player->talk(CCharacter::tt_say, text);
+				if ( !World::get()->parsePlayerCommands( player, text ) )  // did we issue a player command?
+					player->talk(Character::tt_say, text);
 			}
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CSayTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new SayTS() );
 			return cmd;
         }
         std::string text;
@@ -2244,33 +2244,33 @@ class CSayTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *char wants a clientupdate for the map
 */
-class CRefreshTS : public CBasicClientCommand
+class RefreshTS : public BasicClientCommand
 {
     public:
         /**
         *a clientupdate should be sendet to the client
         */
-        CRefreshTS() : CBasicClientCommand( CC_REFRESH_TS )
+        RefreshTS() : BasicClientCommand( C_REFRESH_TS )
         {
         }
 
-        virtual ~CRefreshTS(){};
+        virtual ~RefreshTS(){};
 
         void decodeData()
         {
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
-            CLogger::writeMessage("CWorld_Debug", player->name + " want sended a refresh_ts, sending map!");
+            Logger::writeMessage("World_Debug", player->name + " want sended a refresh_ts, sending map!");
             //update the current mapview
             player->sendFullMap();
-			CWorld::get()->sendAllVisibleCharactersToPlayer( player, true );
+			World::get()->sendAllVisibleCharactersToPlayer( player, true );
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd(new CRefreshTS() );
+            boost::shared_ptr<BasicClientCommand>cmd(new RefreshTS() );
             return cmd;
         }
 };
@@ -2279,39 +2279,39 @@ class CRefreshTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *char introduces to another one
 */
-class CIntroduceTS : public CBasicClientCommand
+class IntroduceTS : public BasicClientCommand
 {
     public:
         /**
         *a player attacked another char
         */
-        CIntroduceTS() : CBasicClientCommand( CC_INTRODUCE_TS )
+        IntroduceTS() : BasicClientCommand( C_INTRODUCE_TS )
         {
         }
 
-        virtual ~CIntroduceTS(){};
+        virtual ~IntroduceTS(){};
 
         void decodeData()
         {
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
             time( &(player->lastaction) );
-            CLogger::writeMessage("CWorld_Debug",player->name + " introduces himself!");
+            Logger::writeMessage("World_Debug",player->name + " introduces himself!");
 #ifdef DO_UNCONSCIOUS
 			if ( player->IsAlive() && player->IsConscious() )
 #else
 			if ( player->IsAlive() )
 #endif
 			{
-				CWorld::get()->introduceMyself( player );
+				World::get()->introduceMyself( player );
 			}
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CIntroduceTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new IntroduceTS() );
             return cmd;
         }
 };
@@ -2320,25 +2320,25 @@ class CIntroduceTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *char attacks another char
 */
-class CAttackPlayerTS : public CBasicClientCommand
+class AttackPlayerTS : public BasicClientCommand
 {
     public:
         /**
         *a player attacked another char
         */
-        CAttackPlayerTS() : CBasicClientCommand( CC_ATTACKPLAYER_TS )
+        AttackPlayerTS() : BasicClientCommand( C_ATTACKPLAYER_TS )
         {
 
         }
 
-        virtual ~CAttackPlayerTS(){};
+        virtual ~AttackPlayerTS(){};
 
         void decodeData()
         {
             enemyid = getIntFromBuffer();
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
             time( &(player->lastaction) );
 #ifdef DO_UNCONSCIOUS
@@ -2352,14 +2352,14 @@ class CAttackPlayerTS : public CBasicClientCommand
                 {
                     player->enemyid = enemyid;
                     player->attackmode = true;
-                    player->enemytype = CCharacter::player;
-                    if (player->enemyid >= MONSTER_BASE)player->enemytype = CCharacter::monster;
-                    if (player->enemyid >= NPC_BASE)player->enemytype = CCharacter::npc;
-                    boost::shared_ptr<CBasicServerCommand>cmd( new CAttackAckknowledgedTC() );
+                    player->enemytype = Character::player;
+                    if (player->enemyid >= MONSTER_BASE)player->enemytype = Character::monster;
+                    if (player->enemyid >= NPC_BASE)player->enemytype = Character::npc;
+                    boost::shared_ptr<BasicServerCommand>cmd( new AttackAckknowledgedTC() );
                     player->Connection->addCommand(cmd);
                     player->startMusic(FIGHTMUSIC);
-                    //monitoringClientList->sendCommand( new CSendActionTS(player->id, player->name, 0, "Starts an attack: " + CLogger::toString(player->enemyid) ) );
-                    CWorld::get()->characterAttacks( player );
+                    //monitoringClientList->sendCommand( new SendActionTS(player->id, player->name, 0, "Starts an attack: " + Logger::toString(player->enemyid) ) );
+                    World::get()->characterAttacks( player );
                 }
                 else
                 {
@@ -2368,9 +2368,9 @@ class CAttackPlayerTS : public CBasicClientCommand
             }
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CAttackPlayerTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new AttackPlayerTS() );
             return cmd;
         }
         uint32_t enemyid;
@@ -2381,17 +2381,17 @@ class CAttackPlayerTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *char looks at a map item
 */
-class CLookAtMapItemTS : public CBasicClientCommand
+class LookAtMapItemTS : public BasicClientCommand
 {
     public:
         /**
         *a spin occured special handling to get direction which is encoded in the definition byte
         */
-        CLookAtMapItemTS() : CBasicClientCommand( CC_LOOKATMAPITEM_TS )
+        LookAtMapItemTS() : BasicClientCommand( C_LOOKATMAPITEM_TS )
         {
         }
 
-        virtual ~CLookAtMapItemTS(){};
+        virtual ~LookAtMapItemTS(){};
 
         void decodeData()
         {
@@ -2400,25 +2400,25 @@ class CLookAtMapItemTS : public CBasicClientCommand
             z = getShortIntFromBuffer();
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
             time( &(player->lastaction) );
-             CLogger::writeMessage("CWorld_Debug",player->name + " looks at a map item.");
+             Logger::writeMessage("World_Debug",player->name + " looks at a map item.");
 #ifdef DO_UNCONSCIOUS
 			if ( player->IsAlive() && player->IsConscious() )
 #else
 			if ( player->IsAlive() )
 #endif
 			{
-				CWorld::get()->lookAtMapItem( player, x, y, z );
+				World::get()->lookAtMapItem( player, x, y, z );
 				player->actionPoints -= P_LOOK_COST;
 			}
 
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CLookAtMapItemTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new LookAtMapItemTS() );
             return cmd;
         }
         short int x,y,z;
@@ -2429,43 +2429,43 @@ class CLookAtMapItemTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *char starts to spin around
 */
-class CPSpinActionTS : public CBasicClientCommand
+class PSpinActionTS : public BasicClientCommand
 {
     public:
         /**
         *a spin occured special handling to get direction which is encoded in the definition byte
         */
-        CPSpinActionTS(uint8_t dir) : CBasicClientCommand( CC_PSPINRSTART_TS )
+        PSpinActionTS(uint8_t dir) : BasicClientCommand( C_PSPINRSTART_TS )
         {
             direction = dir;
         }
 
-        virtual ~CPSpinActionTS(){};
+        virtual ~PSpinActionTS(){};
 
         void decodeData()
         {
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
             time( &(player->lastaction) );
             player->ltAction->abortAction();
-            CLogger::writeMessage("CWorld_Debug", "Player changes his dircetion: " + player->name + " temp: " + CLogger::toString(direction) );
+            Logger::writeMessage("World_Debug", "Player changes his dircetion: " + player->name + " temp: " + Logger::toString(direction) );
 
 #ifdef DO_UNCONSCIOUS
 			if ( player->IsConscious() )
 #endif
 			{
-				if ( CWorld::get()->spinPlayer( player, direction ) )
+				if ( World::get()->spinPlayer( player, direction ) )
                 {
 					player->actionPoints -= P_SPIN_COST;
 				}
 			}
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CPSpinActionTS(direction) );
+            boost::shared_ptr<BasicClientCommand>cmd( new PSpinActionTS(direction) );
             return cmd;
         }
         uint8_t direction;
@@ -2476,17 +2476,17 @@ class CPSpinActionTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *a char move has occured
 */
-class CCharMoveTS : public CBasicClientCommand
+class CharMoveTS : public BasicClientCommand
 {
     public:
         /**
         *a character has started moving
         */
-        CCharMoveTS() : CBasicClientCommand( CC_CHARMOVE_TS )
+        CharMoveTS() : BasicClientCommand( C_CHARMOVE_TS )
         {
         }
 
-        virtual ~CCharMoveTS(){};
+        virtual ~CharMoveTS(){};
 
         void decodeData()
         {
@@ -2495,29 +2495,29 @@ class CCharMoveTS : public CBasicClientCommand
 	    mode = getUnsignedCharFromBuffer();
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
             time( &(player->lastaction) );
             if ( charid == player->id && ( mode == NORMALMOVE || mode == RUNNING ) )
 	    {
 	        player->ltAction->abortAction();
-                CLogger::writeMessage("CWorld_Debug", "Playermove from Player: " + player->name );
+                Logger::writeMessage("World_Debug", "Playermove from Player: " + player->name );
 
                 if ( player->getTurtleActive() && player->hasGMRight(gmr_settiles) && mode == NORMALMOVE )
                 {
-                    CWorld::get()->setNextTile( player, player->getTurtleTile() );
-                    CLogger::writeMessage("Player_Moves","Turtle was active, new tile set at pos: " + CLogger::toString(player->pos.x) + "," + CLogger::toString(player->pos.y) + "," + CLogger::toString(player->pos.z) + " tile: " + CLogger::toString(player->getTurtleTile()));
+                    World::get()->setNextTile( player, player->getTurtleTile() );
+                    Logger::writeMessage("Player_Moves","Turtle was active, new tile set at pos: " + Logger::toString(player->pos.x) + "," + Logger::toString(player->pos.y) + "," + Logger::toString(player->pos.z) + " tile: " + Logger::toString(player->getTurtleTile()));
                 }
 
-                if ( player->move( static_cast<CCharacter::direction>(direction), mode ) )player->closeAllShowcasesOfMapContainers();
+                if ( player->move( static_cast<Character::direction>(direction), mode ) )player->closeAllShowcasesOfMapContainers();
             }
 	    else if ( mode == PUSH )
 	    {
                 player->ltAction->abortAction();
-                CLogger::writeMessage("CWorld_Debug", "Player pushes another: " + player->name);
+                Logger::writeMessage("World_Debug", "Player pushes another: " + player->name);
                 if ( player->IsAlive() )
                 {
-                    if ( CWorld::get()->pushCharacter( player, charid, direction ) )
+                    if ( World::get()->pushCharacter( player, charid, direction ) )
                     {
                         player->actionPoints -= P_PUSH_COST;
                     }
@@ -2525,9 +2525,9 @@ class CCharMoveTS : public CBasicClientCommand
             }
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CCharMoveTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new CharMoveTS() );
 			return cmd;
         }
 
@@ -2541,18 +2541,18 @@ class CCharMoveTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *char starts to move a item
 */
-class CIMoverActionTS : public CBasicClientCommand
+class IMoverActionTS : public BasicClientCommand
 {
     public:
         /**
         *a item move occured special handling to get direction which is encoded in the definition byte
         */
-        CIMoverActionTS(uint8_t dir) : CBasicClientCommand( CC_IMOVERSTART_TS )
+        IMoverActionTS(uint8_t dir) : BasicClientCommand( C_IMOVERSTART_TS )
         {
             direction = dir;
         }
 
-        virtual ~CIMoverActionTS(){};
+        virtual ~IMoverActionTS(){};
 
         void decodeData()
         {
@@ -2562,25 +2562,25 @@ class CIMoverActionTS : public CBasicClientCommand
             count = getUnsignedCharFromBuffer();
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
             time( &(player->lastaction) );
             player->ltAction->abortAction();
-            CLogger::writeMessage("CWorld_Debug", player->name + " tryes to move an Item!");
+            Logger::writeMessage("World_Debug", player->name + " tryes to move an Item!");
 #ifdef DO_UNCONSCIOUS
 			if ( player->IsAlive() && player->IsConscious() )
 #else
 			if ( player->IsAlive() )
 #endif
 			{
-				CWorld::get()->moveItem( player, direction, xc, yc, zc, count );
+				World::get()->moveItem( player, direction, xc, yc, zc, count );
 				player->actionPoints -= P_ITEMMOVE_COST;
 			}
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CIMoverActionTS(direction) );
+            boost::shared_ptr<BasicClientCommand>cmd( new IMoverActionTS(direction) );
 			return cmd;
         }
         short int xc, yc, zc;
@@ -2594,14 +2594,14 @@ class CIMoverActionTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *a player tries to login
 */
-class CLoginCommandTS : public CBasicClientCommand
+class LoginCommandTS : public BasicClientCommand
 {
     public:
-        CLoginCommandTS() : CBasicClientCommand( CC_LOGIN_TS )
+        LoginCommandTS() : BasicClientCommand( C_LOGIN_TS )
         {
         }
 
-        virtual ~CLoginCommandTS(){};
+        virtual ~LoginCommandTS(){};
 
         void decodeData()
         {
@@ -2610,14 +2610,14 @@ class CLoginCommandTS : public CBasicClientCommand
             passwort = getStringFromBuffer();
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
             time( &(player->lastaction) );
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CLoginCommandTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new LoginCommandTS() );
 			return cmd;
         }
 
@@ -2632,14 +2632,14 @@ class CLoginCommandTS : public CBasicClientCommand
 *@ingroup Clientcommands
 *a player tries to login
 */
-class CScreenSizeCommandTS : public CBasicClientCommand
+class ScreenSizeCommandTS : public BasicClientCommand
 {
     public:
-        CScreenSizeCommandTS() : CBasicClientCommand( CC_SCREENSIZE_TS )
+        ScreenSizeCommandTS() : BasicClientCommand( C_SCREENSIZE_TS )
         {
         }
 
-        virtual ~CScreenSizeCommandTS(){};
+        virtual ~ScreenSizeCommandTS(){};
 
         void decodeData()
         {
@@ -2647,7 +2647,7 @@ class CScreenSizeCommandTS : public CBasicClientCommand
             height = getUnsignedCharFromBuffer();
         }
 
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
             // Set screen width and screen height
             player->screenwidth = width;
@@ -2655,9 +2655,9 @@ class CScreenSizeCommandTS : public CBasicClientCommand
             player->sendFullMap();
         }
 
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CScreenSizeCommandTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new ScreenSizeCommandTS() );
 			return cmd;
         }
 

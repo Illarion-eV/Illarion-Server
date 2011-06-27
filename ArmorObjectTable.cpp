@@ -21,12 +21,12 @@
 #include "ArmorObjectTable.hpp"
 #include <iostream>
 
-CArmorObjectTable::CArmorObjectTable() : m_dataOK(false) {
+ArmorObjectTable::ArmorObjectTable() : m_dataOK(false) {
 	reload();
 }
 
-void CArmorObjectTable::reload() {
-#ifdef CDataConnect_DEBUG
+void ArmorObjectTable::reload() {
+#ifdef DataConnect_DEBUG
 	std::cout << "ArmorObjectTable: reload" << std::endl;
 #endif
 
@@ -62,8 +62,8 @@ void CArmorObjectTable::reload() {
 			m_dataOK = true;
 		} else m_dataOK = false;
 
-#ifdef CDataConnect_DEBUG
-		std::cout << "loaded " << rows << " rows into CArmorObjectTable" << std::endl;
+#ifdef DataConnect_DEBUG
+		std::cout << "loaded " << rows << " rows into ArmorObjectTable" << std::endl;
 #endif
 
 	} catch (...) {
@@ -71,7 +71,7 @@ void CArmorObjectTable::reload() {
 	}
 }
 
-bool CArmorObjectTable::find( TYPE_OF_ITEM_ID Id, ArmorStruct &ret ) {
+bool ArmorObjectTable::find( TYPE_OF_ITEM_ID Id, ArmorStruct &ret ) {
 	TABLE::iterator iterator;
 	iterator = m_table.find( Id );
 
@@ -85,11 +85,11 @@ bool CArmorObjectTable::find( TYPE_OF_ITEM_ID Id, ArmorStruct &ret ) {
 
 
 
-void CArmorObjectTable::clearOldTable() {
+void ArmorObjectTable::clearOldTable() {
 	m_table.clear();
 }
 
 
-CArmorObjectTable::~CArmorObjectTable() {
+ArmorObjectTable::~ArmorObjectTable() {
 	clearOldTable();
 }

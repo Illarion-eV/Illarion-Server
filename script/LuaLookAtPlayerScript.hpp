@@ -24,20 +24,20 @@
 //#include "Item.hpp"
 //#include "TableStructs.hpp"
 
-class CWorld;
-class CCharacter;
+class World;
+class Character;
 
-class CLuaLookAtPlayerScript : public CLuaScript
+class LuaLookAtPlayerScript : public LuaScript
 {
     public:
-        CLuaLookAtPlayerScript(std::string filename) throw(ScriptException);
-        virtual ~CLuaLookAtPlayerScript() throw ();
+        LuaLookAtPlayerScript(std::string filename) throw(ScriptException);
+        virtual ~LuaLookAtPlayerScript() throw ();
 
-        void lookAtPlayer(CCharacter * source, CCharacter * target, unsigned char mode);
+        void lookAtPlayer(Character * source, Character * target, unsigned char mode);
         
     private:
     
-	CLuaLookAtPlayerScript(const CLuaLookAtPlayerScript&);
-	CLuaLookAtPlayerScript& operator=(const CLuaLookAtPlayerScript&);
+	LuaLookAtPlayerScript(const LuaLookAtPlayerScript&);
+	LuaLookAtPlayerScript& operator=(const LuaLookAtPlayerScript&);
 };
 #endif

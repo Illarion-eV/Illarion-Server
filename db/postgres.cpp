@@ -44,7 +44,7 @@ con() {
 	DATABASE_INTERFACE_POSTGRES_CATCH_RETHROW
 }
 
-// in the destructor we must not rethrow -> no CATCH_RETHROW here
+// in the destructor we must not rethrow -> no ATCH_RETHROW here
 Connection::~Connection() throw() {
 	try {
 		con->deactivate();

@@ -44,16 +44,16 @@
 std::ofstream talkfile;
 
 //! eine Tabelle fr Beh�ter - Item Daten
-extern CContainerObjectTable* ContainerItems;
+extern ContainerObjectTable* ContainerItems;
 
 //! eine Tabelle mit den allgemeinen Attributen der Item
-extern CCommonObjectTable* CommonItems;
+extern CommonObjectTable* CommonItems;
 
 //! eine Tabelle fr Waffen - Item Daten
-extern CWeaponObjectTable* WeaponItems;
+extern WeaponObjectTable* WeaponItems;
 
 //! eine Tabelle fr Schutzkleidungs - Item Daten
-extern CArmorObjectTable* ArmorItems;
+extern ArmorObjectTable* ArmorItems;
 
 //! ein struct fr Daten einer Waffe
 extern WeaponStruct tempWeapon;
@@ -61,11 +61,11 @@ extern WeaponStruct tempWeapon;
 //! ein struct fr Daten einer Schutzkleidung
 extern ArmorStruct tempArmor;
 
-extern CTilesTable* Tiles;
+extern TilesTable* Tiles;
 
-extern boost::shared_ptr<CLuaLearnScript>learnScript;
+extern boost::shared_ptr<LuaLearnScript>learnScript;
 
-void CCharacter::ReduceSkills() {
+void Character::ReduceSkills() {
 	int size = skills.size();
 	if (size > 0) {
 		int which;
@@ -97,7 +97,7 @@ void CCharacter::ReduceSkills() {
 }
 
 
-void CCharacter::ReduceAllSkills() {
+void Character::ReduceAllSkills() {
 	int size = skills.size();
 	if (size > 0) {
 		int newval;
@@ -114,7 +114,7 @@ void CCharacter::ReduceAllSkills() {
 	}
 }
 
-position CCharacter::getFrontalPosition() {
+position Character::getFrontalPosition() {
     position front = pos;
     switch( faceto ) {
         case north:
@@ -149,13 +149,13 @@ position CCharacter::getFrontalPosition() {
     return front;
 }
 
-luabind::object CCharacter::getLuaStepList(position tpos, int checkrange)
+luabind::object Character::getLuaStepList(position tpos, int checkrange)
 {
-	lua_State* luaState = CWorld::get()->getCurrentScript()->getLuaState();
+	lua_State* luaState = World::get()->getCurrentScript()->getLuaState();
     luabind::object list = luabind::newtable( luaState );
     int index = 1;
-	std::list<CCharacter::direction> dirs = getStepList(tpos, checkrange);
-	for ( std::list<CCharacter::direction>::iterator it = dirs.begin(); it != dirs.end(); ++it)
+	std::list<Character::direction> dirs = getStepList(tpos, checkrange);
+	for ( std::list<Character::direction>::iterator it = dirs.begin(); it != dirs.end(); ++it)
 	{
 		list[index++] = (*it);
 	}
@@ -169,12 +169,12 @@ luabind::object CCharacter::getLuaStepList(position tpos, int checkrange)
    4) Select the tile of the open list with the lowest F (first, this will be the start node of course) and move it to the closed list
    5) Go to step 3 again etc. until you reach the Target*/
 
-std::list<CCharacter::direction> CCharacter::getStepList(position tpos, int checkrange)
+std::list<Character::direction> Character::getStepList(position tpos, int checkrange)
 {
 	bool targetOccupied=false;
-	std::list<CCharacter::direction>ret;
+	std::list<Character::direction>ret;
 	//std::cout << "called getStepList(): tpos.x=" << tpos.x << " tpos.y=" << tpos.y << " pos.x=" <<  pos.x << " pos.y=" <<  pos.y << " checkrange=" << checkrange << std::endl;
-	CField* temp5;
+	Field* temp5;
 	if (_world->GetPToCFieldAt(temp5,tpos.x,tpos.y,tpos.z))
 	{
 		//std::cout << "called getStepList(), pass 1 (" << tpos.x << "," << tpos.y << "," <<  tpos.z << ")" << std::endl;
@@ -211,7 +211,7 @@ std::list<CCharacter::direction> CCharacter::getStepList(position tpos, int chec
 	std::vector<feld*> closedList;
 
 	// For easier handling, I use this: index = (dx+1) + (dy+1)*3; note that [4] is useless yet defined (could be anything, chose dir_west)
-	CCharacter::direction returnDirection[9]={dir_northwest,dir_north, dir_northeast, dir_west, dir_west, dir_east, dir_southwest, dir_south, dir_southeast};
+	Character::direction returnDirection[9]={dir_northwest,dir_north, dir_northeast, dir_west, dir_west, dir_east, dir_southwest, dir_south, dir_southeast};
 
 	// Put the start position to the closed list
 
@@ -382,7 +382,7 @@ std::list<CCharacter::direction> CCharacter::getStepList(position tpos, int chec
 					if (dx != 0 && dy != 0) newCost=12;	// punish diagonal steps a little!
 
 					// First thing to check: Can we make a step on that field or is it blocked by something?
-					CField* temp4;
+					Field* temp4;
 					if (_world->GetPToCFieldAt(temp4,pos.x-startNode->x+closedList.back()->x+dx,pos.y-startNode->y+closedList.back()->y+dy,pos.z))
 					{
 						bool foundTarget=( (closedList.back()->x+dx == rTX) && (closedList.back()->y+dy == rTY) );
@@ -528,9 +528,9 @@ std::list<CCharacter::direction> CCharacter::getStepList(position tpos, int chec
 
 
 
-bool CCharacter::getNextStepDir(position tpos, int checkrange, CCharacter::direction& dir)
+bool Character::getNextStepDir(position tpos, int checkrange, Character::direction& dir)
 {
-	std::list<CCharacter::direction> steps=this->getStepList(tpos,checkrange);
+	std::list<Character::direction> steps=this->getStepList(tpos,checkrange);
 	//std::cout << "called getNextStep()" << std::endl;
 
 	if(!steps.empty())
@@ -546,7 +546,7 @@ bool CCharacter::getNextStepDir(position tpos, int checkrange, CCharacter::direc
 	}
 }
 
-int CCharacter::appearance_alive() {
+int Character::appearance_alive() {
 	if ( isinvisible )return 26; //Wenn Char unsichtbar ist 26 zurck liefern.
 	switch ( race ) {
 		case human:
@@ -816,15 +816,15 @@ case chicken:
 }
 
 
-int CCharacter::appearance_dead() {
+int Character::appearance_dead() {
 	return 4;
 }
 
 
-CCharacter::CCharacter() : actionPoints(P_MAX_AP),fightPoints(P_MAX_FP),waypoints(new CWaypointList(this)),death_consequences(true), _is_on_route(false),_world(CWorld::get())
+Character::Character() : actionPoints(P_MAX_AP),fightPoints(P_MAX_FP),waypoints(new WaypointList(this)),death_consequences(true), _is_on_route(false),_world(World::get())
 {
-#ifdef CCharacter_DEBUG
-	std::cout << "CCharacter Konstruktor Start" << std::endl;
+#ifdef Character_DEBUG
+	std::cout << "Character Konstruktor Start" << std::endl;
 #endif
 	name = std::string( "noname" );
 	prefix = std::string( "Sir" );
@@ -937,24 +937,24 @@ CCharacter::CCharacter() : actionPoints(P_MAX_AP),fightPoints(P_MAX_FP),waypoint
 		roofmap[ i ] = NULL;
 	}
     
-    effects = new CLongTimeCharacterEffects(this);
-#ifdef CCharacter_DEBUG
-	std::cout << "CCharacter Konstruktor Ende" << std::endl;
+    effects = new LongTimeCharacterEffects(this);
+#ifdef Character_DEBUG
+	std::cout << "Character Konstruktor Ende" << std::endl;
 #endif
 }
 
-CCharacter::~CCharacter() {
-#ifdef CCharacter_DEBUG
-	std::cout << "CCharacter Destruktor Start" << std::endl;
+Character::~Character() {
+#ifdef Character_DEBUG
+	std::cout << "Character Destruktor Start" << std::endl;
 #endif
     //blow lua fuse for this char
-    fuse_ptr<CCharacter>::blow_fuse( this );
+    fuse_ptr<Character>::blow_fuse( this );
 
 	if ( backPackContents != NULL ) {
 		delete backPackContents;
 		backPackContents = NULL;
 	}
-	std::map<uint32_t,CContainer*>::reverse_iterator rit;
+	std::map<uint32_t,Container*>::reverse_iterator rit;
 
     for ( rit = depotContents.rbegin(); rit != depotContents.rend(); ++rit)
             delete rit->second;
@@ -976,33 +976,33 @@ CCharacter::~CCharacter() {
 		depotContents = NULL;
 	}
   */
-#ifdef CCharacter_DEBUG
-	std::cout << "CCharacter Destruktor Ende" << std::endl;
+#ifdef Character_DEBUG
+	std::cout << "Character Destruktor Ende" << std::endl;
 #endif
 }
 
 
 
-int CCharacter::countItem( TYPE_OF_ITEM_ID itemid ) {
+int Character::countItem( TYPE_OF_ITEM_ID itemid ) {
 	int temp = 0;
 	for ( unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i ) {
 		if ( characterItems[ i ].id == itemid && characterItems[ i ].quality >= 100 ) {
 			temp = temp + characterItems[ i ].number;
 		}
 	}
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
 	std::cout << "std::coutItem: am K�per gefunden: " << temp << "\n";
 #endif
 
 	if ( ( characterItems[ BACKPACK ].id != 0 ) && ( backPackContents != NULL ) ) {
 		temp = temp + backPackContents->countItem( itemid );
 	}
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
 	std::cout << "std::coutItem: am K�per + Rucksack gefunden: " << temp << "\n";
 #endif
 	return temp;
 }
-int CCharacter::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid) {
+int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid) {
 	int temp = 0;
 	if (where == "all") {
 		for ( unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i ) {
@@ -1010,7 +1010,7 @@ int CCharacter::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid) {
 				temp = temp + characterItems[ i ].number;
 			}
 		}
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
 		std::cout << "std::coutItem: am K�per gefunden: " << temp << "\n";
 #endif
 
@@ -1018,7 +1018,7 @@ int CCharacter::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid) {
 		if ( ( characterItems[ BACKPACK ].id != 0 ) && ( backPackContents != NULL ) ) {
 			temp = temp + backPackContents->countItem( itemid );
 		}
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
 		std::cout << "std::coutItem: am K�per + Rucksack gefunden: " << temp << "\n";
 #endif
 		return temp;
@@ -1048,7 +1048,7 @@ int CCharacter::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid) {
 	return temp;
 }
 
-int CCharacter::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid, uint32_t data) 
+int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid, uint32_t data) 
 {
 	int temp = 0;
 	if (where == "all") {
@@ -1057,7 +1057,7 @@ int CCharacter::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid, uint32_t 
 				temp = temp + characterItems[ i ].number;
 			}
 		}
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
 		std::cout << "std::coutItem: am K�per gefunden: " << temp << "\n";
 #endif
 
@@ -1066,7 +1066,7 @@ int CCharacter::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid, uint32_t 
         {
 			temp = temp + backPackContents->countItem( itemid, data );
 		}
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
 		std::cout << "std::coutItem: am K�per + Rucksack gefunden: " << temp << "\n";
 #endif
 		return temp;
@@ -1099,7 +1099,7 @@ int CCharacter::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid, uint32_t 
 	return temp;
 }
 
-ScriptItem CCharacter::GetItemAt(unsigned char itempos)
+ScriptItem Character::GetItemAt(unsigned char itempos)
 {
 	ScriptItem item;
 	item = characterItems[ itempos ];
@@ -1112,14 +1112,14 @@ ScriptItem CCharacter::GetItemAt(unsigned char itempos)
 }
 
 
-int CCharacter::_eraseItem( TYPE_OF_ITEM_ID itemid, int count, uint32_t data, bool useData ) {
+int Character::_eraseItem( TYPE_OF_ITEM_ID itemid, int count, uint32_t data, bool useData ) {
     int temp = count;
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
     std::cout << "try to erase in inventory " << count << " items of type " << itemid << " data " << data << "\n";
 #endif
     if ( ( characterItems[ BACKPACK ].id != 0 ) && ( backPackContents != NULL ) ) {
         temp = backPackContents->_eraseItem( itemid, temp, data, useData );
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
         std::cout << "eraseItem: nach L�chen im Rucksack noch zu l�chen: " << temp << "\n";
 #endif
 
@@ -1140,9 +1140,9 @@ int CCharacter::_eraseItem( TYPE_OF_ITEM_ID itemid, int count, uint32_t data, bo
                 }
             }
         }
-        if( CWorld::get()->getItemStatsFromId( itemid ).Brightness > 0 ) updateAppearanceForAll( true );
+        if( World::get()->getItemStatsFromId( itemid ).Brightness > 0 ) updateAppearanceForAll( true );
     }
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
     std::cout << "eraseItem: am Ende noch zu loeschen: " << temp << "\n";
 #endif
 
@@ -1151,28 +1151,28 @@ int CCharacter::_eraseItem( TYPE_OF_ITEM_ID itemid, int count, uint32_t data, bo
 }
 
 
-int CCharacter::eraseItem( TYPE_OF_ITEM_ID itemid, int count ) {
+int Character::eraseItem( TYPE_OF_ITEM_ID itemid, int count ) {
 	return _eraseItem( itemid, count, 0, false );
 }
 
 
-int CCharacter::eraseItem( TYPE_OF_ITEM_ID itemid, int count, uint32_t data ) {
+int Character::eraseItem( TYPE_OF_ITEM_ID itemid, int count, uint32_t data ) {
     return _eraseItem( itemid, count, data, true );
 }
 
 
-int CCharacter::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) {
+int Character::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) {
 	int temp = count;
 	Item it;
 	if ( weightOK( newid, count, NULL ) ) {
 		ContainerStruct c;
 		CommonStruct cos;
 		if ( CommonItems->find( newid, cos ) ) {
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
 			std::cout<<"createAtPos: itemid gefunden" << std::endl;
 #endif
 			if ( ContainerItems->find( newid, c ) ) {
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
 				std::cout << "createAtPos: itemid ist ein Container" << std::endl;
 #endif
 
@@ -1207,7 +1207,7 @@ int CCharacter::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count)
 }
 
 
-int CCharacter::createItem( TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali, uint32_t data ) {
+int Character::createItem( TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali, uint32_t data ) {
 	int temp = count;
 	Item it;
 
@@ -1216,15 +1216,15 @@ int CCharacter::createItem( TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t qual
 		CommonStruct cos;
 
 		if ( CommonItems->find( itemid, cos ) ) {
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
 			std::cout << "createItem: itemid gefunden" << "\n";
 #endif
 			if ( ContainerItems->find( itemid, c ) ) {
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
 				std::cout << "createItem: itemid ist ein container" << "\n";
 #endif
 				if ( characterItems[ BACKPACK ].id == 0 ) {
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
 					std::cout << "createItem: erstelle neuen Rucksack" << "\n";
 #endif
 					characterItems[ BACKPACK ].id = itemid;
@@ -1234,7 +1234,7 @@ int CCharacter::createItem( TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t qual
 					characterItems[ BACKPACK ].number = 1;
                     characterItems[ BACKPACK].setData(data);
 					temp = temp - 1;
-					backPackContents = new CContainer(c.ContainerVolume);
+					backPackContents = new Container(c.ContainerVolume);
                     if( cos.Brightness > 0 ) updateAppearanceForAll( true );
 				}
 
@@ -1245,17 +1245,17 @@ int CCharacter::createItem( TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t qual
                 it.data = data;
                 
 				for ( int i = temp; i > 0; i-- ) {
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
 					std::cout << "createItem: erstelle neuen container im Rucksack" << std::endl;
 #endif
-					if ( !backPackContents->InsertContainer( it, new CContainer(c.ContainerVolume) ) ) {
+					if ( !backPackContents->InsertContainer( it, new Container(c.ContainerVolume) ) ) {
 						i = 0;
 					} else {
 						temp = temp - 1;
 					}
 				}
 			} else {
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
 				std::cout << "createItem: normales Item" << std::endl;
 #endif
 				for ( unsigned char i = MAX_BODY_ITEMS; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i ) {
@@ -1313,7 +1313,7 @@ int CCharacter::createItem( TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t qual
 				}
 
 				if ( ( temp > 0 ) && ( backPackContents != NULL ) ) {
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
 					std::cout << "createItem: Platz im belt nicht ausreichend, erstelle im backpack" << std::endl;
 #endif
 					bool ok = true;
@@ -1350,7 +1350,7 @@ int CCharacter::createItem( TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t qual
 				}
 			}
 		}
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
 		std::cout << "createItem: Anzahl der Item die nicht erstellt werden konnten: " << temp << std::endl;
 #endif
 
@@ -1361,10 +1361,10 @@ int CCharacter::createItem( TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t qual
 }
 
 
-int CCharacter::increaseAtPos( unsigned char pos, int count ) {
+int Character::increaseAtPos( unsigned char pos, int count ) {
 	int temp = count;
 
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
 	std::cout << "increaseAtPos " << ( short int ) pos << " " << count << "\n";
 #endif
 	if ( ( pos > 0 ) && ( pos < MAX_BELT_SLOTS + MAX_BODY_ITEMS ) ) {
@@ -1372,7 +1372,7 @@ int CCharacter::increaseAtPos( unsigned char pos, int count ) {
 
 			temp = characterItems[ pos ].number + count;
 
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
 			std::cout << "temp " << temp << "\n";
 #endif
 
@@ -1380,7 +1380,7 @@ int CCharacter::increaseAtPos( unsigned char pos, int count ) {
 				characterItems[ pos ].number = MAXITEMS;
 				temp = temp - MAXITEMS;
 			} else if ( temp <= 0 ) {
-                bool updateBrightness = CWorld::get()->getItemStatsFromId( characterItems[ pos ].id ).Brightness > 0;
+                bool updateBrightness = World::get()->getItemStatsFromId( characterItems[ pos ].id ).Brightness > 0;
 				temp = count + characterItems[ pos ].number;
 				characterItems[ pos ].number = 0;
 				characterItems[ pos ].id = 0;
@@ -1395,16 +1395,16 @@ int CCharacter::increaseAtPos( unsigned char pos, int count ) {
 }
 
 
-bool CCharacter::swapAtPos( unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t newQuality ) 
+bool Character::swapAtPos( unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t newQuality ) 
 {
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
 	std::cout << "swapAtPos " << ( short int ) pos << " newid " << newid << "\n";
 #endif
 	if ( ( pos > 0 ) && ( pos < MAX_BELT_SLOTS + MAX_BODY_ITEMS ) ) {
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
 		std::cout << "pos gefunden, alte id: " << characterItems[ pos ].id << "\n";
 #endif
-        bool updateBrightness = CWorld::get()->getItemStatsFromId( characterItems[ pos ].id ).Brightness > 0 || CWorld::get()->getItemStatsFromId( newid ).Brightness > 0;
+        bool updateBrightness = World::get()->getItemStatsFromId( characterItems[ pos ].id ).Brightness > 0 || World::get()->getItemStatsFromId( newid ).Brightness > 0;
 		characterItems[ pos ].id = newid;
         if ( updateBrightness ) updateAppearanceForAll( true );
 		if ( newQuality > 0 ) characterItems[ pos ].quality = newQuality;
@@ -1415,7 +1415,7 @@ bool CCharacter::swapAtPos( unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t n
 }
 
 
-void CCharacter::AgeInventory( ITEM_FUNCT funct ) 
+void Character::AgeInventory( ITEM_FUNCT funct ) 
 {
 	CommonStruct tempCommon;
     for ( unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i )
@@ -1433,7 +1433,7 @@ void CCharacter::AgeInventory( ITEM_FUNCT funct )
                 {
                     if ( characterItems[ i ].id != tempCommon.ObjectAfterRot ) 
                     {
-    #ifdef CCharacter_DEBUG
+    #ifdef Character_DEBUG
                         std::cout << "INV:Ein Item wird umgewandelt von: " << characterItems[ i ].id << "  nach: " << tempCommon.ObjectAfterRot << "!\n";
     #endif
                         characterItems[ i ].id = tempCommon.ObjectAfterRot;
@@ -1443,7 +1443,7 @@ void CCharacter::AgeInventory( ITEM_FUNCT funct )
                     } 
                     else 
                     {
-    #ifdef CCharacter_DEBUG
+    #ifdef Character_DEBUG
                         std::cout << "INV:Ein Item wird gel�cht,ID:" << characterItems[ i ].id << "!\n";
     #endif
                         characterItems[ i ].id = 0;
@@ -1461,14 +1461,14 @@ void CCharacter::AgeInventory( ITEM_FUNCT funct )
 		backPackContents->doAge( funct, true);
 	}
     
-    std::map<uint32_t, CContainer*>::iterator depotIterator;
+    std::map<uint32_t, Container*>::iterator depotIterator;
     for ( depotIterator = depotContents.begin(); depotIterator != depotContents.end(); depotIterator++ )
     {
         if ( depotIterator->second != NULL ) depotIterator->second->doAge( funct, true);
     }
 }
 
-void CCharacter::SetAlive( bool t ) {
+void Character::SetAlive( bool t ) {
 
 	if ( t ) 
     {
@@ -1487,7 +1487,7 @@ void CCharacter::SetAlive( bool t ) {
     {
         if ( character == player )
         {
-            CPlayer * pl = dynamic_cast<CPlayer*>(this);
+            Player * pl = dynamic_cast<Player*>(this);
             pl->ltAction->abortAction();
         }
 		lifestate = lifestate & ( 0xFFFF - 1 );
@@ -1498,7 +1498,7 @@ void CCharacter::SetAlive( bool t ) {
 }
 
 
-bool CCharacter::attack( CCharacter* target, int &sound, bool &updateInv ) {
+bool Character::attack( Character* target, int &sound, bool &updateInv ) {
 
 	if ( target != NULL && target->IsAlive())
     {
@@ -1512,7 +1512,7 @@ bool CCharacter::attack( CCharacter* target, int &sound, bool &updateInv ) {
         {
             if ( target->character == player )
             {
-                CPlayer * pl = dynamic_cast<CPlayer*>(target);
+                Player * pl = dynamic_cast<Player*>(target);
                 pl->ltAction->actionDisturbed(this);
             }
             callAttackScript( this, target );
@@ -1526,12 +1526,12 @@ bool CCharacter::attack( CCharacter* target, int &sound, bool &updateInv ) {
     {
         if ( target->IsAlive() )
         {
-            boost::shared_ptr<CBasicServerCommand>cmd( new CBBSendActionTC( id, name, 1 , "Attacks : " + target->name + "(" + CLogger::toString(target->id) + ")"));
+            boost::shared_ptr<BasicServerCommand>cmd( new BBSendActionTC( id, name, 1 , "Attacks : " + target->name + "(" + Logger::toString(target->id) + ")"));
             _world->monitoringClientList->sendCommand(cmd);
         }
         else
         {
-             boost::shared_ptr<CBasicServerCommand>cmd(new CBBSendActionTC( id, name, 1 , "Killed : " + target->name + "(" + CLogger::toString(target->id) + ")"));
+             boost::shared_ptr<BasicServerCommand>cmd(new BBSendActionTC( id, name, 1 , "Killed : " + target->name + "(" + Logger::toString(target->id) + ")"));
             _world->monitoringClientList->sendCommand(cmd);
         }
     }
@@ -1582,35 +1582,35 @@ bool CCharacter::attack( CCharacter* target, int &sound, bool &updateInv ) {
 }
 
 
-unsigned short int CCharacter::getSkill( std::string s ) {
+unsigned short int Character::getSkill( std::string s ) {
 	SKILLMAP::iterator iterator;
 	iterator = skills.find( s.c_str() );
 
 	if ( iterator == skills.end() ) {
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
 		std::cout << "getSkill: Skill " << s << " nicht gefunden!\n";
 #endif
 		return 0;
 	} else {
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
 		std::cout << "getSkill: Skill " << s << " gefunden! " << ( *iterator ).second.value << "\n";
 #endif
 		return ( *iterator ).second.major;
 	}
 }
 
-unsigned short int CCharacter::getMinorSkill( std::string s )
+unsigned short int Character::getMinorSkill( std::string s )
 {
 	SKILLMAP::iterator iterator;
 	iterator = skills.find( s.c_str() );
 
 	if ( iterator == skills.end() ) {
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
 		std::cout << "getSkill: Skill " << s << " nicht gefunden!\n";
 #endif
 		return 0;
 	} else {
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
 		std::cout << "getSkill: Skill " << s << " gefunden! " << ( *iterator ).second.value << "\n";
 #endif
 		return ( *iterator ).second.minor;
@@ -1618,7 +1618,7 @@ unsigned short int CCharacter::getMinorSkill( std::string s )
 }
 
 
-void CCharacter::setAttrib(std::string name, short int wert) {
+void Character::setAttrib(std::string name, short int wert) {
 	//if ( name == "posx")pos.x = wert;
 	//if ( name == "posy")pos.y = wert;
 	//if ( name == "posz")pos.z = wert;
@@ -1719,10 +1719,10 @@ void CCharacter::setAttrib(std::string name, short int wert) {
 	else if ( name == "intelligence" ){ battrib.intelligence = battrib.trueintelligence = wert;battrib.time_intelligence = 0; }
 	else if ( name == "perception"){ battrib.perception = battrib.trueperception = wert;battrib.time_perception = 0;
 	    if (getType() == player){
-	         CPlayer * pl = dynamic_cast<CPlayer*>(this);
-                 boost::shared_ptr<CBasicServerCommand> cmd( new CUpdateAttribTC( name, wert ) );
+	         Player * pl = dynamic_cast<Player*>(this);
+                 boost::shared_ptr<BasicServerCommand> cmd( new UpdateAttribTC( name, wert ) );
 		 pl->Connection->addCommand( cmd );
-		 cmd.reset( new CBBSendAttribTC( id, name, wert ) );
+		 cmd.reset( new BBSendAttribTC( id, name, wert ) );
 		 _world->monitoringClientList->sendCommand( cmd );
 	    }
 	}
@@ -1732,7 +1732,7 @@ void CCharacter::setAttrib(std::string name, short int wert) {
 	//makeGFXForAllPlayersInRange( pos.x, pos.y, pos.z, MAXVIEW, 13 );
 }
 
-void CCharacter::tempChangeAttrib( std::string name, short int amount, uint16_t time)
+void Character::tempChangeAttrib( std::string name, short int amount, uint16_t time)
 {
     std::cout<<"Temp Change Attrib:"<<name<<" amount: "<<amount<<" time: "<<time<<std::endl;
     if ( name == "sex" )
@@ -1930,7 +1930,7 @@ void CCharacter::tempChangeAttrib( std::string name, short int amount, uint16_t 
     }
 }
     
-unsigned short int CCharacter::increaseAttrib( std::string name, short int amount ) {
+unsigned short int Character::increaseAttrib( std::string name, short int amount ) {
 
 	int temp = amount;
 	//Diese Werte k�nen nicht angehoben werden und sind nur dazu da per Script ausgelesen zu erden
@@ -1997,7 +1997,7 @@ unsigned short int CCharacter::increaseAttrib( std::string name, short int amoun
                updateAppearanceForAll( true ); 
             }
             
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
 			std::cout << "HP == 0 \n";
 #endif
 
@@ -2127,14 +2127,14 @@ unsigned short int CCharacter::increaseAttrib( std::string name, short int amoun
 		}
 		return battrib.foodlevel;
 	} else {
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
 		std::cout << "increaseAttrib: Attrib " << name << " nicht gefunden!\n";
 #endif
 		return 0;
 	}
 }
 
-unsigned short int CCharacter::setSkill( unsigned char typ, std::string sname, short int major, short int minor, uint16_t firsttry )
+unsigned short int Character::setSkill( unsigned char typ, std::string sname, short int major, short int minor, uint16_t firsttry )
 {
     SKILLMAP::iterator iterator;
     iterator = skills.find( sname.c_str() );
@@ -2165,13 +2165,13 @@ unsigned short int CCharacter::setSkill( unsigned char typ, std::string sname, s
         
 }
 
-unsigned short int CCharacter::increaseSkill( unsigned char typ, std::string name, short int amount ) {
+unsigned short int Character::increaseSkill( unsigned char typ, std::string name, short int amount ) {
 	SKILLMAP::iterator iterator;
 	iterator = skills.find( name.c_str() );
 
 	// Skill mit entsprechendem Namen nicht gefunden -> neu anlegen
 	if ( iterator == skills.end() ) {
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
 		std::cout << "increaseSkill: Skill " << name << " nicht gefunden,lege neu an!\n";
 #endif
 
@@ -2193,7 +2193,7 @@ unsigned short int CCharacter::increaseSkill( unsigned char typ, std::string nam
 		// skills[ sname ] kein Kopie von sname erstellt
 		return ( sv.major );
 	} else {
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
 		std::cout << "increaseSkill: Skill " << name << " gefunden! " << ( *iterator ).second.value << "\n";
 #endif
 		int temp=iterator->second.major + amount;
@@ -2210,13 +2210,13 @@ unsigned short int CCharacter::increaseSkill( unsigned char typ, std::string nam
 }
 
 
-unsigned short int CCharacter::increaseMinorSkill( unsigned char typ, std::string name, short int amount ) {
+unsigned short int Character::increaseMinorSkill( unsigned char typ, std::string name, short int amount ) {
 	SKILLMAP::iterator iterator;
 	iterator = skills.find( name.c_str() );
 
 	// Skill mit entsprechendem Namen nicht gefunden -> neu anlegen
 	if ( iterator == skills.end() ) {
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
 		std::cout << "increaseSkill: Skill " << name << " nicht gefunden,lege neu an!\n";
 #endif
 
@@ -2250,7 +2250,7 @@ unsigned short int CCharacter::increaseMinorSkill( unsigned char typ, std::strin
 	} 
     else 
     {
-#ifdef CCharacter_DEBUG
+#ifdef Character_DEBUG
 		std::cout << "increaseSkill: Skill " << name << " gefunden! " << ( *iterator ).second.major << "\n";
 #endif
  		int temp=iterator->second.minor + amount;
@@ -2274,7 +2274,7 @@ unsigned short int CCharacter::increaseMinorSkill( unsigned char typ, std::strin
 	}
 }
 
-CCharacter::skillvalue * CCharacter::getSkillValue(std::string s)
+Character::skillvalue * Character::getSkillValue(std::string s)
 {
       SKILLMAP::iterator it = skills.find( s.c_str() );
       if ( it == skills.end() )
@@ -2287,9 +2287,9 @@ CCharacter::skillvalue * CCharacter::getSkillValue(std::string s)
       }
 }
 
-void CCharacter::learn( std::string skill, uint8_t skillGroup, uint32_t actionPoints, uint8_t opponent, uint8_t leadAttrib )
+void Character::learn( std::string skill, uint8_t skillGroup, uint32_t actionPoints, uint8_t opponent, uint8_t leadAttrib )
 {
-    CLogger::writeMessage("learn", "============ learn called for " + this->name + " ============");
+    Logger::writeMessage("learn", "============ learn called for " + this->name + " ============");
 
     if (learnScript)
         learnScript->learn( this, skill, skillGroup, actionPoints, opponent, leadAttrib );
@@ -2300,12 +2300,12 @@ void CCharacter::learn( std::string skill, uint8_t skillGroup, uint32_t actionPo
 }
 
 
-void CCharacter::deleteAllSkills() {
+void Character::deleteAllSkills() {
 	skills.clear();
 }
 
 
-bool CCharacter::isInRange( CCharacter* cc, unsigned short int distancemetric) {
+bool Character::isInRange( Character* cc, unsigned short int distancemetric) {
 	if ( cc != NULL ) {
 		short int pz = cc->pos.z - pos.z;
 		short int px = cc->pos.x - pos.x;
@@ -2318,7 +2318,7 @@ bool CCharacter::isInRange( CCharacter* cc, unsigned short int distancemetric) {
 	return false;
 }
 
-bool CCharacter::isInRangeToField( position m_pos, unsigned short int distancemetric) {
+bool Character::isInRangeToField( position m_pos, unsigned short int distancemetric) {
 	short int pz = m_pos.z - pos.z;
 	short int px = m_pos.x - pos.x;
 	short int py = m_pos.y - pos.y;
@@ -2327,7 +2327,7 @@ bool CCharacter::isInRangeToField( position m_pos, unsigned short int distanceme
 	else return false;
 }
 
-unsigned short int CCharacter::distanceMetricToPosition(position m_pos) {
+unsigned short int Character::distanceMetricToPosition(position m_pos) {
 	unsigned short int ret=0xFFFF;
 	short int pz = pos.z - m_pos.z;
 	short int px = pos.x - m_pos.x;
@@ -2352,7 +2352,7 @@ unsigned short int CCharacter::distanceMetricToPosition(position m_pos) {
 	return ret;
 }
 
-unsigned short int CCharacter::distanceMetric( CCharacter* cc) {
+unsigned short int Character::distanceMetric( Character* cc) {
 	unsigned short int ret=0xFFFF;
 	if ( cc != NULL ) {
 		short int pz = pos.z - cc->pos.z;
@@ -2384,19 +2384,19 @@ unsigned short int CCharacter::distanceMetric( CCharacter* cc) {
 }
 
 
-unsigned short int CCharacter::maxLiftWeigt() {
+unsigned short int Character::maxLiftWeigt() {
 	return 29999;
 }
 
 
-unsigned short int CCharacter::maxLoadWeight() {
+unsigned short int Character::maxLoadWeight() {
 	unsigned short int temp;
 	temp = battrib.strength * 500 + 3000;
 	return temp;
 }
 
 
-int CCharacter::LoadWeight() {
+int Character::LoadWeight() {
 	int load=0;
 	// alle Items bis auf den Rucksack
 	for (int i=1; i < MAX_BODY_ITEMS + MAX_BELT_SLOTS; ++i) {
@@ -2412,7 +2412,7 @@ int CCharacter::LoadWeight() {
 }
 
 
-bool CCharacter::weightOK( TYPE_OF_ITEM_ID id, int count, CContainer* tcont ) {
+bool Character::weightOK( TYPE_OF_ITEM_ID id, int count, Container* tcont ) {
 	bool ok;
 
 	int realweight = LoadWeight();
@@ -2428,7 +2428,7 @@ bool CCharacter::weightOK( TYPE_OF_ITEM_ID id, int count, CContainer* tcont ) {
 }
 
 
-int CCharacter::Abso(int value) {
+int Character::Abso(int value) {
 	if (value < 0) {
 		return (0 - value);
 	}
@@ -2436,7 +2436,7 @@ int CCharacter::Abso(int value) {
 }
 
 
-int CCharacter::weightItem( TYPE_OF_ITEM_ID id, int count) {
+int Character::weightItem( TYPE_OF_ITEM_ID id, int count) {
 	int gweight;
 
 	if ( CommonItems->find( id, tempCommon ) ) {
@@ -2453,7 +2453,7 @@ int CCharacter::weightItem( TYPE_OF_ITEM_ID id, int count) {
 }
 
 
-int CCharacter::weightContainer( TYPE_OF_ITEM_ID id, int count, CContainer* tcont ) {
+int Character::weightContainer( TYPE_OF_ITEM_ID id, int count, Container* tcont ) {
 	int temp=0;
 	if (id != 0) {
 		if ( CommonItems->find( id, tempCommon ) ) {
@@ -2472,7 +2472,7 @@ int CCharacter::weightContainer( TYPE_OF_ITEM_ID id, int count, CContainer* tcon
 				} else {
 					temp -= tcont->weight(rek);
 				}
-			} catch (CRekursionException e) {
+			} catch (RekursionException e) {
 				std::cerr << "weightContainer: maximale Rekursionstiefe " << MAXIMALEREKURSIONSTIEFE << " wurde bei Char " << name << " ueberschritten!" << std::endl;
 				return 30000;
 			}
@@ -2486,16 +2486,16 @@ int CCharacter::weightContainer( TYPE_OF_ITEM_ID id, int count, CContainer* tcon
 	}
 }
 
-CCharacter::movement_type CCharacter::GetMovement( ) {
+Character::movement_type Character::GetMovement( ) {
 	return _movement;
 }
 
 
-void CCharacter::SetMovement( movement_type tmovement ) {
+void Character::SetMovement( movement_type tmovement ) {
 	_movement = tmovement;
 }
 
-void CCharacter::increasePoisonValue(short int value) {
+void Character::increasePoisonValue(short int value) {
 	if ( (poisonvalue + value) >= MAXPOISONVALUE ) {
 		poisonvalue = MAXPOISONVALUE;
 	} else if ( (poisonvalue + value) <= 0 ) {
@@ -2505,7 +2505,7 @@ void CCharacter::increasePoisonValue(short int value) {
 	}
 }
 
-void CCharacter::increaseMentalCapacity( int value ) {
+void Character::increaseMentalCapacity( int value ) {
 	if ( (mental_capacity + value) <= 0 ) {
 		mental_capacity = 0;
 	} else {
@@ -2513,7 +2513,7 @@ void CCharacter::increaseMentalCapacity( int value ) {
 	}
 }
 //  Alters spoken messages with respect to the speakers skill
-std::string CCharacter::alterSpokenMessage(std::string message, int languageSkill) {
+std::string Character::alterSpokenMessage(std::string message, int languageSkill) {
 	int counter=0;
 	std::string alteredMessage;
 
@@ -2530,7 +2530,7 @@ std::string CCharacter::alterSpokenMessage(std::string message, int languageSkil
 
 
 //Converts a LanguageSkillNumber into the corresponding skill of that character.
-int CCharacter::getLanguageSkill(int languageSkillNumber) {
+int Character::getLanguageSkill(int languageSkillNumber) {
 	if (languageSkillNumber==0) return getSkill("common language");
 	else if (languageSkillNumber==1) return getSkill("human language");
 	else if (languageSkillNumber==2) return getSkill("dwarf language");
@@ -2545,7 +2545,7 @@ int CCharacter::getLanguageSkill(int languageSkillNumber) {
 	else return getSkill("common language");
 }
 
-void CCharacter::talk(talk_type tt, std::string message) { //only for say, whisper, shout
+void Character::talk(talk_type tt, std::string message) { //only for say, whisper, shout
 	std::string talktype;
 	uint16_t cost = 0;
 	lastSpokenText=message;
@@ -2591,7 +2591,7 @@ void CCharacter::talk(talk_type tt, std::string message) { //only for say, whisp
 		/**
 		 * create a new Talk command and send them
 		 */
-         boost::shared_ptr<CBasicServerCommand>cmd(new CBBTalkTC(id ,name, static_cast<unsigned char>(tt), message));
+         boost::shared_ptr<BasicServerCommand>cmd(new BBTalkTC(id ,name, static_cast<unsigned char>(tt), message));
 		_world->monitoringClientList->sendCommand(cmd);	
 	}
 	
@@ -2601,7 +2601,7 @@ void CCharacter::talk(talk_type tt, std::string message) { //only for say, whisp
 	actionPoints -= cost;
 }
 
-void CCharacter::talkLanguage(talk_type tt, unsigned char lang, std::string message) 
+void Character::talkLanguage(talk_type tt, unsigned char lang, std::string message) 
 { //only for say, whisper, shout
 	std::string talktype;
 	uint16_t cost = 0;
@@ -2637,36 +2637,36 @@ void CCharacter::talkLanguage(talk_type tt, unsigned char lang, std::string mess
 	actionPoints -= cost;
 }
 
-void CCharacter::turn(direction dir)
+void Character::turn(direction dir)
 {
-    if (dir != dir_up && dir != dir_down && dir != static_cast<CCharacter::direction>(faceto) )
+    if (dir != dir_up && dir != dir_down && dir != static_cast<Character::direction>(faceto) )
     {
-		faceto = (CCharacter::face_to)dir;
+		faceto = (Character::face_to)dir;
         _world->sendSpinToAllVisiblePlayers( this );
     }
 }
 
-void CCharacter::turn(position posi)
+void Character::turn(position posi)
 {
    //attack the player which we have found
    short int xoffs = posi.x - pos.x;
    short int yoffs = posi.y - pos.y;
    if ( abs(xoffs)>abs(yoffs) )
    {
-       turn(static_cast<CCharacter::direction>((xoffs>0)?2:6));
+       turn(static_cast<Character::direction>((xoffs>0)?2:6));
    }
    else
    {
-       turn(static_cast<CCharacter::direction>((yoffs>0)?4:0));
+       turn(static_cast<Character::direction>((yoffs>0)?4:0));
    }   
 }
 
-bool CCharacter::move(direction dir, bool active) {
+bool Character::move(direction dir, bool active) {
 	//Ggf Scriptausfhrung wenn man sich von einen Feld wegbewegt.
 	_world->TriggerFieldMove(this,false);
 	// if we move we look into that direction...
 	if (dir != dir_up && dir != dir_down)
-		faceto = (CCharacter::face_to)dir;
+		faceto = (Character::face_to)dir;
 
 	// check if we can move to our target field
 	position newpos = pos;
@@ -2675,7 +2675,7 @@ bool CCharacter::move(direction dir, bool active) {
 	newpos.z += _world->moveSteps[ dir ][ 2 ];
 
 	bool fieldfound = false;
-	CField *cfnew, *cfold;
+	Field *cfnew, *cfold;
 
 	// get the old tile... we need it to update the old tile as well as for the walking cost
 	_world->GetPToCFieldAt( cfold, pos.x, pos.y, pos.z );
@@ -2723,12 +2723,12 @@ bool CCharacter::move(direction dir, bool active) {
 	return false;
 }
 
-bool CCharacter::moveToPossible(const CField* field) {
+bool Character::moveToPossible(const Field* field) {
 	// for monsters/npcs we just use the field infos for now
 	return field->moveToPossible();
 }
 
-uint16_t CCharacter::getMovementCost(CField* sourcefield) {
+uint16_t Character::getMovementCost(Field* sourcefield) {
 	uint16_t walkcost = 0;
 	if ( Tiles->find(sourcefield->getTileId(), tempTile) ) {
 		switch ( _movement ) {
@@ -2752,33 +2752,33 @@ uint16_t CCharacter::getMovementCost(CField* sourcefield) {
 	return walkcost;
 }
 
-void CCharacter::updatePos(position newpos) {
+void Character::updatePos(position newpos) {
 	pos = newpos;
 }
 
-void CCharacter::receiveText(talk_type tt, std::string message, CCharacter* cc) {
+void Character::receiveText(talk_type tt, std::string message, Character* cc) {
 	// nothing to be done here...
 }
 
-void CCharacter::introducePerson(CCharacter*) {
+void Character::introducePerson(Character*) {
 	// nothing to do normally
 }
 
-void CCharacter::teachMagic(unsigned char type, unsigned char flag) {
-	//nothing to do normally overloadet at CPlayer
+void Character::teachMagic(unsigned char type, unsigned char flag) {
+	//nothing to do normally overloadet at Player
 }
 
-void CCharacter::sendMessage(std::string message) {
-	//nothing to do normally overloadet at CPlayer
+void Character::sendMessage(std::string message) {
+	//nothing to do normally overloadet at Player
 }
 
-void CCharacter::startPlayerMenu(UserMenuStruct Menu) {
-	//nothing to do normally, overloadet at CPlayer
+void Character::startPlayerMenu(UserMenuStruct Menu) {
+	//nothing to do normally, overloadet at Player
 }
 
-bool CCharacter::Warp(position newPos) {
+bool Character::Warp(position newPos) {
 	position oldpos = pos;
-	CField * fold=NULL,* fnew=NULL;
+	Field * fold=NULL,* fnew=NULL;
 	if ( _world->GetPToCFieldAt( fold, pos.x, pos.y, pos.z ) ) {
 		if ( _world->findEmptyCFieldNear( fnew, newPos.x, newPos.y, newPos.z ) ) {
 			fold->removeChar();
@@ -2798,9 +2798,9 @@ bool CCharacter::Warp(position newPos) {
 	return false;
 }
 
-bool CCharacter::forceWarp(position newPos) {
+bool Character::forceWarp(position newPos) {
 	position oldpos = pos;
-	CField * fold=NULL,* fnew=NULL;
+	Field * fold=NULL,* fnew=NULL;
 	if ( _world->GetPToCFieldAt( fold, pos.x, pos.y, pos.z ) ) {
 		if ( _world->GetPToCFieldAt( fnew, newPos.x, newPos.y, newPos.z ) ) {
 			fold->removeChar();
@@ -2820,31 +2820,31 @@ bool CCharacter::forceWarp(position newPos) {
 	return false;
 }
 
-void CCharacter::LTIncreaseHP(unsigned short int value, unsigned short int count, unsigned short int time) {
+void Character::LTIncreaseHP(unsigned short int value, unsigned short int count, unsigned short int time) {
 	//Nothing to do here, overloaded for players
 }
 
-void CCharacter::LTIncreaseMana(unsigned short int value, unsigned short int count, unsigned short int time) {
+void Character::LTIncreaseMana(unsigned short int value, unsigned short int count, unsigned short int time) {
 	//Nothing to do here, overloaded for players
 }
 
-void CCharacter::Depot() {
+void Character::Depot() {
 	//Nothing to do here, overloaded for players
 }
 
-void CCharacter::startMusic(short int title) {
+void Character::startMusic(short int title) {
 	//Nothing to do here, overloaded for players
 }
 
-void CCharacter::defaultMusic() {
+void Character::defaultMusic() {
     //Nothing to do here, overloaded for players
 }
 
-void CCharacter::inform(std::string text) {
+void Character::inform(std::string text) {
 	// override for char types that need this kind of information
 }
 
-void CCharacter::changeQualityItem(TYPE_OF_ITEM_ID id, short int amount) {
+void Character::changeQualityItem(TYPE_OF_ITEM_ID id, short int amount) {
 	if ( ( characterItems[ BACKPACK ].id != 0 ) && ( backPackContents != NULL ) ) {
 		if ( backPackContents->changeQuality( id, amount ) ) return;
 		//�dern des Items in eine untercontainer geschehen.
@@ -2884,7 +2884,7 @@ void CCharacter::changeQualityItem(TYPE_OF_ITEM_ID id, short int amount) {
 	}
 }
 
-void CCharacter::changeQualityAt(unsigned char pos, short int amount) {
+void Character::changeQualityAt(unsigned char pos, short int amount) {
 	std::cout<<"In ChangeQualityAt, pos: "<<(int)pos<<" amount: "<<amount<<" !"<<std::endl;
 	short int tmpQuality;
 	if ( pos < MAX_BODY_ITEMS + MAX_BELT_SLOTS ) {
@@ -2930,7 +2930,7 @@ void CCharacter::changeQualityAt(unsigned char pos, short int amount) {
 	}
 }
 
-bool CCharacter::callAttackScript( CCharacter * Attacker, CCharacter * Defender )
+bool Character::callAttackScript( Character * Attacker, Character * Defender )
 {
     if ( characterItems[ RIGHT_TOOL ].id != 0 )
     {
@@ -2947,24 +2947,24 @@ bool CCharacter::callAttackScript( CCharacter * Attacker, CCharacter * Defender 
     return standardFightingScript->onAttack( Attacker, Defender );
 }
 
-void CCharacter::setQuestProgress( uint16_t questid, uint32_t progress ) throw()
+void Character::setQuestProgress( uint16_t questid, uint32_t progress ) throw()
 {
     // Nothing to do here, overridden for players
 }
 
-uint32_t CCharacter::getQuestProgress( uint16_t questid ) throw()
+uint32_t Character::getQuestProgress( uint16_t questid ) throw()
 {
     // Nothing to do here, overridden for players
     return 0;
 }
 
-bool CCharacter::moveDepotContentFrom( uint32_t sourcecharid, uint32_t targetdepotid, uint32_t sourcedepotid ) throw()
+bool Character::moveDepotContentFrom( uint32_t sourcecharid, uint32_t targetdepotid, uint32_t sourcedepotid ) throw()
 {
     // Nothing to do here, overridden for players
     return false;
 }
 
-luabind::object CCharacter::getItemList(TYPE_OF_ITEM_ID id)
+luabind::object Character::getItemList(TYPE_OF_ITEM_ID id)
 {
     lua_State* _luaState = _world->getCurrentScript()->getLuaState();
     luabind::object list = luabind::newtable(_luaState);
@@ -2993,21 +2993,21 @@ luabind::object CCharacter::getItemList(TYPE_OF_ITEM_ID id)
 }
 
 
-CContainer* CCharacter::GetBackPack()
+Container* Character::GetBackPack()
 {
     return backPackContents;
 }
 
-CContainer* CCharacter::GetDepot(uint32_t depotid)
+Container* Character::GetDepot(uint32_t depotid)
 {
-    std::map<uint32_t, CContainer*>::iterator it;
+    std::map<uint32_t, Container*>::iterator it;
     if ( (it=depotContents.find(depotid + 1)) == depotContents.end() )
         return 0;
     else
         return it->second;
 }
 
-void CCharacter::tempAttribCheck()
+void Character::tempAttribCheck()
 {
     if ( battrib.truesex != battrib.sex )
     {
@@ -3166,7 +3166,7 @@ void CCharacter::tempAttribCheck()
 
 
 
-uint8_t CCharacter::getWeaponMode()
+uint8_t Character::getWeaponMode()
 {
    if ( characterItems[ RIGHT_TOOL ].id != 0 )
    {
@@ -3224,37 +3224,37 @@ uint8_t CCharacter::getWeaponMode()
 }
 
 
-uint32_t CCharacter::idleTime()
+uint32_t Character::idleTime()
 {
-    // Nothing to do here, overloaded in CPlayer
+    // Nothing to do here, overloaded in Player
     return 0;
 }
 
 
-void CCharacter::sendBook( uint16_t bookID )
+void Character::sendBook( uint16_t bookID )
 {
-    // Nothing to do here, overloaded in CPlayer
+    // Nothing to do here, overloaded in Player
 }
 
 
-void CCharacter::updateAppearanceForPlayer( CPlayer * target, bool always )
+void Character::updateAppearanceForPlayer( Player * target, bool always )
 {
     if( !isinvisible )
     {
-        boost::shared_ptr<CBasicServerCommand> cmd ( new CAppearanceTC( this ) );
+        boost::shared_ptr<BasicServerCommand> cmd ( new AppearanceTC( this ) );
         target->sendCharAppearance( id, cmd, always );
     }
 }
 
 
-void CCharacter::updateAppearanceForAll( bool always )
+void Character::updateAppearanceForAll( bool always )
 {
     if( !isinvisible )
     {
-        boost::shared_ptr<CBasicServerCommand> cmd ( new CAppearanceTC( this ) );
+        boost::shared_ptr<BasicServerCommand> cmd ( new AppearanceTC( this ) );
 
-	    std::vector < CPlayer* > temp = CWorld::get()->Players.findAllCharactersInRangeOf( pos.x, pos.y, pos.z, MAXVIEW );
-	    std::vector < CPlayer* > ::iterator titerator;
+	    std::vector < Player* > temp = World::get()->Players.findAllCharactersInRangeOf( pos.x, pos.y, pos.z, MAXVIEW );
+	    std::vector < Player* > ::iterator titerator;
 	    for ( titerator = temp.begin(); titerator < temp.end(); ++titerator ) 
         {
             ( *titerator )->sendCharAppearance( id, cmd, always );
@@ -3264,29 +3264,29 @@ void CCharacter::updateAppearanceForAll( bool always )
     //eigenes update senden
     //if ( getType() == player)
     //{
-    //    CPlayer * pl = dynamic_cast<CPlayer*>(this);
+    //    Player * pl = dynamic_cast<Player*>(this);
     //    pl->Connection->addCommand( cmd );
     //}
 }
 
-void CCharacter::forceUpdateAppearanceForAll()
+void Character::forceUpdateAppearanceForAll()
 {
     updateAppearanceForAll( true );
 }
 
-void CCharacter::sendCharDescription( TYPE_OF_CHARACTER_ID id,const std::string& desc)
+void Character::sendCharDescription( TYPE_OF_CHARACTER_ID id,const std::string& desc)
 {
-    //NOthing to do here overloaded in CPlayer
+    //NOthing to do here overloaded in Player
 }
 
-void CCharacter::performAnimation( uint8_t animID )
+void Character::performAnimation( uint8_t animID )
 {
     if( !isinvisible )
     {   
-        boost::shared_ptr<CBasicServerCommand> cmd ( new CAnimationTC( id, animID ) );
+        boost::shared_ptr<BasicServerCommand> cmd ( new AnimationTC( id, animID ) );
 
-        std::vector < CPlayer* > temp = CWorld::get()->Players.findAllCharactersInRangeOf( pos.x, pos.y, pos.z, MAXVIEW );
-        std::vector < CPlayer* > ::iterator titerator;
+        std::vector < Player* > temp = World::get()->Players.findAllCharactersInRangeOf( pos.x, pos.y, pos.z, MAXVIEW );
+        std::vector < Player* > ::iterator titerator;
         for ( titerator = temp.begin(); titerator < temp.end(); ++titerator )
         {   
             ( *titerator )->Connection->addCommand( cmd );

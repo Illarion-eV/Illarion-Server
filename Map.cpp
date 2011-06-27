@@ -26,10 +26,10 @@
 #include <vector>
 #include "netinterface/protocol/ServerCommands.hpp"
 
-CMap::CMap( unsigned short int sizex, unsigned short int sizey ) {
+Map::Map( unsigned short int sizex, unsigned short int sizey ) {
 
-#ifdef CMap_DEBUG
-	std::cout << "CMap Konstruktor Start, Width:" << sizex << " Height:" << sizey << "\n";
+#ifdef Map_DEBUG
+	std::cout << "Map Konstruktor Start, Width:" << sizex << " Height:" << sizey << "\n";
 #endif
 
 	Width = sizex;
@@ -42,9 +42,9 @@ CMap::CMap( unsigned short int sizex, unsigned short int sizey ) {
 	Map_initialized = false;
 
 	//das Array fr MainMap im Speicher anlegen
-	MainMap = new CField * [ Width ];            // SCHRITT 1: ZEILEN EINRICHTEN.
+	MainMap = new Field * [ Width ];            // SCHRITT 1: ZEILEN EINRICHTEN.
 	for ( int i = 0; i < Width; ++i ) {
-		MainMap[ i ] = new CField[ Height ];      // SCHRITT 2: SPALTEN EINRICHTEN.
+		MainMap[ i ] = new Field[ Height ];      // SCHRITT 2: SPALTEN EINRICHTEN.
 	}
 	for ( int b = 0; b < Width; ++b ) {
 		for ( int h = 0; h < Height; ++h ) {
@@ -52,16 +52,16 @@ CMap::CMap( unsigned short int sizex, unsigned short int sizey ) {
 		}
 	}
 
-#ifdef CMap_DEBUG
-	std::cout << "CMap Konstruktor Ende\n";
+#ifdef Map_DEBUG
+	std::cout << "Map Konstruktor Ende\n";
 #endif
 
 }
 
 
-CMap::~CMap() {
-#ifdef CMap_DEBUG
-	std::cout << "CMap Destruktor Start" << std::endl;
+Map::~Map() {
+#ifdef Map_DEBUG
+	std::cout << "Map Destruktor Start" << std::endl;
 #endif
 	for ( int i = 0; i < Width; ++i ) {
 		delete[] MainMap[ i ];
@@ -69,15 +69,15 @@ CMap::~CMap() {
 	}
 	delete[] MainMap;
 	MainMap = NULL;
-#ifdef CMap_DEBUG
-	std::cout << "CMap Destruktor Ende" << std::endl;
+#ifdef Map_DEBUG
+	std::cout << "Map Destruktor Ende" << std::endl;
 #endif
 }
 
 
 
-bool CMap::addItemToPos( Item it, MAP_POSITION pos ) {
-	CField * cfnew;
+bool Map::addItemToPos( Item it, MAP_POSITION pos ) {
+	Field * cfnew;
 	if ( GetPToCFieldAt( cfnew, pos.x, pos.y ) ) {
 		if ( cfnew->addTopItem( it ) ) {
 			return true;
@@ -88,20 +88,20 @@ bool CMap::addItemToPos( Item it, MAP_POSITION pos ) {
 
 
 
-bool CMap::addContainerToPos( Item it, CContainer* cc, MAP_POSITION pos ) {
+bool Map::addContainerToPos( Item it, Container* cc, MAP_POSITION pos ) {
 
-#ifdef CMap_DEBUG
+#ifdef Map_DEBUG
 	std::cout << "addContainerToPos: id: " << it.id << " x: " << pos.x << " y: " << pos.y << "\n";
 #endif
-	CField* cfnew;
+	Field* cfnew;
 	if ( GetPToCFieldAt( cfnew, pos.x, pos.y ) ) { // neues Feld vorhanden
 		if ( cfnew->IsPassable() ) { // neues Feld begehbar
 			if ( cfnew->items.size() < ( MAXITEMS - 1 ) ) { // noch Platz auf dem Feld
 				if ( ContainerItems->find( it.id ) ) { // item ist ein Container
-					CONTAINERHASH::iterator conmapn = maincontainers.find( pos );
+					ONTAINERHASH::iterator conmapn = maincontainers.find( pos );
 					MAXCOUNTTYPE count = 0;
 					if ( conmapn != maincontainers.end() ) { // containermap fr das Zielfeld gefunden
-						CContainer::CONTAINERMAP::iterator iterat;
+						Container::ONTAINERMAP::iterator iterat;
 						// n�hste freie ID fr den Container auf dem Zielfeld suchen
 						iterat = ( *conmapn ).second.find( count );
 						while ( ( iterat != ( *conmapn ).second.end() ) && ( count < ( MAXITEMS - 2 ) ) ) {
@@ -110,17 +110,17 @@ bool CMap::addContainerToPos( Item it, CContainer* cc, MAP_POSITION pos ) {
 						}
 						// den Containerinhalt hinzufgen
 						if ( count < ( MAXITEMS - 1 ) ) {
-							( *conmapn ).second.insert( iterat, CContainer::CONTAINERMAP::value_type( count, cc ) );
+							( *conmapn ).second.insert( iterat, Container::ONTAINERMAP::value_type( count, cc ) );
 						} else {
 							return false;
 						}
 					} else { // neue containermap fr das Zielfeld anlegen
-#ifdef CMap_DEBUG
+#ifdef Map_DEBUG
 						std::cout << "addContainerToPos: neue Containermap fr das Feld angelegt\n";
 #endif
-						conmapn = ( maincontainers.insert( CONTAINERHASH::value_type( pos, CContainer::CONTAINERMAP() ) ) ).first;
+						conmapn = ( maincontainers.insert( ONTAINERHASH::value_type( pos, Container::ONTAINERMAP() ) ) ).first;
 						// den Containerinhalt hinzufgen
-						( *conmapn ).second.insert( CContainer::CONTAINERMAP::value_type( count, cc ) );
+						( *conmapn ).second.insert( Container::ONTAINERMAP::value_type( count, cc ) );
 					}
 					Item titem = it;
 					titem.number = count;
@@ -128,7 +128,7 @@ bool CMap::addContainerToPos( Item it, CContainer* cc, MAP_POSITION pos ) {
 						( *conmapn ).second.erase( count );
 					} else {
 						return true;
-#ifdef CMap_DEBUG
+#ifdef Map_DEBUG
 						std::cout << "addContainerToPos: Container mit id: " << ( short int ) count << " auf das Feld gesetzt\n";
 #endif
 
@@ -141,18 +141,18 @@ bool CMap::addContainerToPos( Item it, CContainer* cc, MAP_POSITION pos ) {
 }
 
 
-bool CMap::addAlwaysContainerToPos( Item it, CContainer* cc, MAP_POSITION pos ) {
+bool Map::addAlwaysContainerToPos( Item it, Container* cc, MAP_POSITION pos ) {
 
-#ifdef CMap_DEBUG
+#ifdef Map_DEBUG
 	std::cout << "addAlwaysContainerToPos: id: " << it.id << " x: " << pos.x << " y: " << pos.y << std::endl;
 #endif
-	CField* cfnew;
+	Field* cfnew;
 	if ( GetPToCFieldAt( cfnew, pos.x, pos.y ) ) { // neues Feld vorhanden
 		if ( ContainerItems->find( it.id ) ) { // item ist ein Container
-			CONTAINERHASH::iterator conmapn = maincontainers.find( pos );
+			ONTAINERHASH::iterator conmapn = maincontainers.find( pos );
 			MAXCOUNTTYPE count = 0;
 			if ( conmapn != maincontainers.end() ) { // containermap fr das Zielfeld gefunden
-				CContainer::CONTAINERMAP::iterator iterat;
+				Container::ONTAINERMAP::iterator iterat;
 				// n�hste freie ID fr den Container auf dem Zielfeld suchen
 				iterat = ( *conmapn ).second.find( count );
 				while ( ( iterat != ( *conmapn ).second.end() ) && ( count < ( MAXITEMS - 2 ) ) ) {
@@ -161,17 +161,17 @@ bool CMap::addAlwaysContainerToPos( Item it, CContainer* cc, MAP_POSITION pos ) 
 				}
 				// den Containerinhalt hinzufgen
 				if ( count < ( MAXITEMS - 1 ) ) {
-					( *conmapn ).second.insert( iterat, CContainer::CONTAINERMAP::value_type( count, cc ) );
+					( *conmapn ).second.insert( iterat, Container::ONTAINERMAP::value_type( count, cc ) );
 				} else {
 					return false;
 				}
 			} else { // neue containermap fr das Zielfeld anlegen
-#ifdef CMap_DEBUG
+#ifdef Map_DEBUG
 				std::cout << "addAlwaysContainerToPos: neue Containermap fr das Feld angelegt\n";
 #endif
-				conmapn = ( maincontainers.insert( CONTAINERHASH::value_type( pos, CContainer::CONTAINERMAP() ) ) ).first;
+				conmapn = ( maincontainers.insert( ONTAINERHASH::value_type( pos, Container::ONTAINERMAP() ) ) ).first;
 				// den Containerinhalt hinzufgen
-				( *conmapn ).second.insert( CContainer::CONTAINERMAP::value_type( count, cc ) );
+				( *conmapn ).second.insert( Container::ONTAINERMAP::value_type( count, cc ) );
 			}
 			Item titem = it;
 			titem.number = count;
@@ -179,7 +179,7 @@ bool CMap::addAlwaysContainerToPos( Item it, CContainer* cc, MAP_POSITION pos ) 
 				( *conmapn ).second.erase( count );
 			} else {
 				return true;
-#ifdef CMap_DEBUG
+#ifdef Map_DEBUG
 				std::cout << "addAlwaysContainerToPos: Container mit id: " << ( short int ) count << " auf das Feld gesetzt\n";
 #endif
 
@@ -191,7 +191,7 @@ bool CMap::addAlwaysContainerToPos( Item it, CContainer* cc, MAP_POSITION pos ) 
 }
 
 
-void CMap::Init( short int minx, short int miny, short int z, bool disappear ) {
+void Map::Init( short int minx, short int miny, short int z, bool disappear ) {
 
 	Min_X = minx;
 	Min_Y = miny;
@@ -199,8 +199,8 @@ void CMap::Init( short int minx, short int miny, short int z, bool disappear ) {
 	Max_Y = Height + Min_Y - 1;
 	Z_Level = z;
 	disappears = disappear;
-#ifdef CMap_DEBUG
-	std::cout << "CMap: Init, Min_X:" << Min_X << " Max_X:" << Max_X
+#ifdef Map_DEBUG
+	std::cout << "Map: Init, Min_X:" << Min_X << " Max_X:" << Max_X
 	<< " Min_Y:" << Min_Y << " Max_Y:" << Max_Y << " Z:" << Z_Level << "\n";
 #endif
 
@@ -209,10 +209,10 @@ void CMap::Init( short int minx, short int miny, short int z, bool disappear ) {
 }
 
 
-bool CMap::Save( std::string name ) {
-	std::cout << "CMap: Save - start, speichere" << name << std::endl;
+bool Map::Save( std::string name ) {
+	std::cout << "Map: Save - start, speichere" << name << std::endl;
 	if ( ! Map_initialized ) {
-		std::cout << "CMap: Karte nicht gespeichert da noch nicht initialisiert" << std::endl;
+		std::cout << "Map: Karte nicht gespeichert da noch nicht initialisiert" << std::endl;
 		return false;
 	}
 
@@ -266,8 +266,8 @@ bool CMap::Save( std::string name ) {
 			}
 		}
 
-		CONTAINERHASH::iterator ptr;
-		CContainer::CONTAINERMAP::iterator citer;
+		ONTAINERHASH::iterator ptr;
+		Container::ONTAINERMAP::iterator citer;
 		unsigned long int fcount;
 		MAXCOUNTTYPE icount;
 
@@ -280,7 +280,7 @@ bool CMap::Save( std::string name ) {
 				// die Koordinate schreiben
 				all_container->write( ( char* ) & ptr->first, sizeof ptr->first );
 
-				// die Anzahl Container in der CONTAINERMAP an der aktuellen Koordinate
+				// die Anzahl Container in der ONTAINERMAP an der aktuellen Koordinate
 				icount = ptr->second.size();
 				all_container->write( ( char* ) & icount, sizeof( icount ) );
 
@@ -288,15 +288,15 @@ bool CMap::Save( std::string name ) {
 					for ( citer = ptr->second.begin(); citer != ptr->second.end(); ++citer ) {
 						// die Kennung des Container speichern
 						all_container->write( ( char* ) & ( ( *citer ).first ), sizeof( ( *citer ).first ) );
-						// jeden CContainer speichern
+						// jeden Container speichern
 						( *citer ).second->Save( all_container );
 					}
 				}
 			}
 		}
 
-#ifdef CMap_DEBUG
-		std::cout << "CMap: Save - end\n";
+#ifdef Map_DEBUG
+		std::cout << "Map: Save - end\n";
 #endif
 
 		delete main_map;
@@ -312,7 +312,7 @@ bool CMap::Save( std::string name ) {
 
 	} else {
 
-		std::cerr << "CMap: ERROR SAVING FILES \n";
+		std::cerr << "Map: ERROR SAVING FILES \n";
 
 		delete main_map;
 		main_map = NULL;
@@ -329,7 +329,7 @@ bool CMap::Save( std::string name ) {
 }
 
 
-bool CMap::GetPToCFieldAt( CField* &fip, short int x, short int y ) {
+bool Map::GetPToCFieldAt( Field* &fip, short int x, short int y ) {
 
 	unsigned short int tempx;
 	unsigned short int tempy;
@@ -347,9 +347,9 @@ bool CMap::GetPToCFieldAt( CField* &fip, short int x, short int y ) {
 }
 
 
-bool CMap::Load( std::string name, unsigned short int x_offs, unsigned short int y_offs ) {
+bool Map::Load( std::string name, unsigned short int x_offs, unsigned short int y_offs ) {
 
-	std::cout << "CMap: Load - start, lade " << name  << " position: " << x_offs << " " << y_offs << std::endl;
+	std::cout << "Map: Load - start, lade " << name  << " position: " << x_offs << " " << y_offs << std::endl;
 
 	std::ifstream* main_map;
 	std::ifstream* main_item;
@@ -418,8 +418,8 @@ bool CMap::Load( std::string name, unsigned short int x_offs, unsigned short int
 								Max_X = Width + Min_X - 1;
 								Max_Y = Height + Min_Y - 1;
 
-								CONTAINERHASH::iterator ptr;
-								CContainer::CONTAINERMAP::iterator citer;
+								ONTAINERHASH::iterator ptr;
+								Container::ONTAINERMAP::iterator citer;
 
 								if ( ! maincontainers.empty() ) {
 									for ( ptr = maincontainers.begin(); ptr != maincontainers.end(); ++ptr ) {
@@ -452,8 +452,8 @@ bool CMap::Load( std::string name, unsigned short int x_offs, unsigned short int
 								MAXCOUNTTYPE icount;
 								MAXCOUNTTYPE key;
 								MAP_POSITION pos;
-								CContainer* tempc;
-								CONTAINERHASH::iterator conmapn;
+								Container* tempc;
+								ONTAINERHASH::iterator conmapn;
 
 								// Anzahl der Felder mit Eintr�en fr Containern
 								all_container->read( ( char* ) & fcount, sizeof( fcount ) );
@@ -462,19 +462,19 @@ bool CMap::Load( std::string name, unsigned short int x_offs, unsigned short int
 									// die Koordinate lesen
 									all_container->read( ( char* ) & pos, sizeof pos );
 
-									// die Anzahl der Container in der CONTAINERMAP fr die aktuelle Koordinate lesen
+									// die Anzahl der Container in der ONTAINERMAP fr die aktuelle Koordinate lesen
 									all_container->read( ( char* ) & icount, sizeof( icount ) );
 
 									if ( icount > 0 ) {
-										// fr die Koordinate eine CONTAINERMAP anlegen
-										conmapn = ( maincontainers.insert( CONTAINERHASH::value_type( pos, CContainer::CONTAINERMAP() ) ) ).first;
+										// fr die Koordinate eine ONTAINERMAP anlegen
+										conmapn = ( maincontainers.insert( ONTAINERHASH::value_type( pos, Container::ONTAINERMAP() ) ) ).first;
 
 										for ( MAXCOUNTTYPE k = 0; k < icount; ++k ) {
 											// die Kennung des Container lesen
 											all_container->read( ( char* ) & key, sizeof( key ) );
 
 											//Suchen der ContainerItems auf den Feld
-											CField field;
+											Field field;
 											//Laden des feldes.
 											if ( GetCFieldAt(field, pos.x, pos.y) ) {
 												ITEMVECTOR::iterator iter;
@@ -485,11 +485,11 @@ bool CMap::Load( std::string name, unsigned short int x_offs, unsigned short int
 													if ( ContainerItems->find( iter->id, cont ) ) {
 														//Der Container ist unser gesuchte Container
 														if ( iter->number == key ) {
-															// CContainer laden
-															tempc = new CContainer(cont.ContainerVolume);
+															// Container laden
+															tempc = new Container(cont.ContainerVolume);
 															tempc->Load( all_container );
 															// den Containerinhalt hinzufgen
-															( *conmapn ).second.insert( CContainer::CONTAINERMAP::value_type( key, tempc ) );
+															( *conmapn ).second.insert( Container::ONTAINERMAP::value_type( key, tempc ) );
 														}
 													}
 												}
@@ -510,8 +510,8 @@ bool CMap::Load( std::string name, unsigned short int x_offs, unsigned short int
                                 main_warp = 0;
 								delete all_container;
 								all_container = NULL;
-#ifdef CMap_DEBUG
-								std::cout << "CMap: Load - end \n";
+#ifdef Map_DEBUG
+								std::cout << "Map: Load - end \n";
 #endif
 								return true;
 							}
@@ -522,7 +522,7 @@ bool CMap::Load( std::string name, unsigned short int x_offs, unsigned short int
 		}
 	}
 
-	std::cerr << "CMap: ERROR LOADING FILES \n";
+	std::cerr << "Map: ERROR LOADING FILES \n";
 
 	delete main_map;
 	delete main_item;
@@ -534,7 +534,7 @@ bool CMap::Load( std::string name, unsigned short int x_offs, unsigned short int
 }
 
 
-bool CMap::GetCFieldAt( CField &fi, short int x, short int y ) {
+bool Map::GetCFieldAt( Field &fi, short int x, short int y ) {
 
 	unsigned short int tempx;
 	unsigned short int tempy;
@@ -552,7 +552,7 @@ bool CMap::GetCFieldAt( CField &fi, short int x, short int y ) {
 }
 
 
-bool CMap::PutCFieldAt( CField &fi, short int x, short int y ) {
+bool Map::PutCFieldAt( Field &fi, short int x, short int y ) {
 
 	unsigned short int tempx;
 	unsigned short int tempy;
@@ -570,7 +570,7 @@ bool CMap::PutCFieldAt( CField &fi, short int x, short int y ) {
 }
 
 
-void CMap::DoAgeItems_XFromTo( short int xstart, short int xend, ITEM_FUNCT funct ) {
+void Map::DoAgeItems_XFromTo( short int xstart, short int xend, ITEM_FUNCT funct ) {
 
 	short int tempMinX;
 	short int tempMaxX;
@@ -593,7 +593,7 @@ void CMap::DoAgeItems_XFromTo( short int xstart, short int xend, ITEM_FUNCT func
 		for ( short int y = 0; y < Height; ++y ) 
         {
             int8_t rotstate = MainMap[x][y].DoAgeItems( funct );
-            //CLogger::writeMessage("rot_update", "aged items, rotstate: " + CLogger::toString( static_cast<int>(rotstate) ) ); 
+            //CLogger::writeMessage("rot_update", "aged items, rotstate: " + Logger::toString( static_cast<int>(rotstate) ) ); 
             if ( rotstate == -1 )
             {
                 //a container was rotted
@@ -602,9 +602,9 @@ void CMap::DoAgeItems_XFromTo( short int xstart, short int xend, ITEM_FUNCT func
 				// mindestens ein Containeritem wurde gel�cht -> mit Hilfe von erasedcontainers
 				//   die Inhalte l�chen
 				for ( ercontit = erasedcontainers->begin(); ercontit != erasedcontainers->end(); ++ercontit ) {
-					CONTAINERHASH::iterator conmapn = maincontainers.find( pos );
+					ONTAINERHASH::iterator conmapn = maincontainers.find( pos );
 					if ( conmapn != maincontainers.end() ) { // containermap fr das Zielfeld gefunden
-						CContainer::CONTAINERMAP::iterator iterat;
+						Container::ONTAINERMAP::iterator iterat;
 						iterat = ( *conmapn ).second.find( *ercontit );
 						if (iterat != ( *conmapn ).second.end()) {
 							std::cout << "Containerinhalt auf Feld wird geloescht !" << std::endl;
@@ -622,14 +622,14 @@ void CMap::DoAgeItems_XFromTo( short int xstart, short int xend, ITEM_FUNCT func
             if ( rotstate != 0 )
             {
                 position pos(Conv_To_X(x), Conv_To_Y(y), Z_Level);
-                CLogger::writeMessage("rot_update", "aged items, pos: " + CLogger::toString(pos.x) + " " + CLogger::toString(pos.y) + " " + CLogger::toString(pos.z) );
+                Logger::writeMessage("rot_update", "aged items, pos: " + Logger::toString(pos.x) + " " + Logger::toString(pos.y) + " " + Logger::toString(pos.z) );
                 //a update is needed
-                std::vector<CPlayer*> playersinview = CWorld::get()->Players.findAllCharactersInRangeOf( pos.x,pos.y, pos.z, MAXVIEW );
+                std::vector<Player*> playersinview = World::get()->Players.findAllCharactersInRangeOf( pos.x,pos.y, pos.z, MAXVIEW );
                 //iterate through all the players in range and send the update for this field
-                for ( std::vector<CPlayer*>::iterator it = playersinview.begin(); it != playersinview.end();++it)
+                for ( std::vector<Player*>::iterator it = playersinview.begin(); it != playersinview.end();++it)
                 {
-                    CLogger::writeMessage("rot_update", "aged items, update needed for: " + (*it)->name ); 
-                    boost::shared_ptr<CBasicServerCommand>cmd( new CItemUpdate_TC(pos, MainMap[x][y].items ) );
+                    Logger::writeMessage("rot_update", "aged items, update needed for: " + (*it)->name ); 
+                    boost::shared_ptr<BasicServerCommand>cmd( new ItemUpdate_TC(pos, MainMap[x][y].items ) );
                     (*it)->Connection->addCommand( cmd );
                 }
             }
@@ -641,7 +641,7 @@ void CMap::DoAgeItems_XFromTo( short int xstart, short int xend, ITEM_FUNCT func
 
 
 
-void CMap::ApplyToCFields_XFromTo( short int xstart, short int xend, CField::CFIELD_FUNCT funct ) {
+void Map::ApplyToCFields_XFromTo( short int xstart, short int xend, Field::FIELD_FUNCT funct ) {
 
 	short int tempMinX;
 	short int tempMaxX;
@@ -666,9 +666,9 @@ void CMap::ApplyToCFields_XFromTo( short int xstart, short int xend, CField::CFI
 }
 
 
-bool CMap::SetPlayerAt( short int x, short int y, bool t ) {
+bool Map::SetPlayerAt( short int x, short int y, bool t ) {
 
-	CField * temp;
+	Field * temp;
 	if ( GetPToCFieldAt( temp, x, y ) ) {
 		temp->SetPlayerOnField( t );
 		return true;
@@ -679,42 +679,42 @@ bool CMap::SetPlayerAt( short int x, short int y, bool t ) {
 }
 
 
-unsigned short int CMap::GetHeight() {
+unsigned short int Map::GetHeight() {
 
 	return Height;
 
 }
 
 
-unsigned short int CMap::GetWidth() {
+unsigned short int Map::GetWidth() {
 
 	return Width;
 
 }
 
 
-short CMap::GetMinX( void ) {
+short Map::GetMinX( void ) {
 
 	return Min_X;
 
 }
 
 
-short CMap::GetMinY( void ) {
+short Map::GetMinY( void ) {
 
 	return Min_Y;
 
 }
 
 
-short CMap::GetMaxX( void ) {
+short Map::GetMaxX( void ) {
 
 	return Max_X;
 
 }
 
 
-short CMap::GetMaxY( void ) {
+short Map::GetMaxY( void ) {
 
 	return Max_Y;
 
@@ -722,7 +722,7 @@ short CMap::GetMaxY( void ) {
 
 
 inline
-unsigned short int CMap::Conv_X_Koord( short int x ) {
+unsigned short int Map::Conv_X_Koord( short int x ) {
 
 	unsigned short int temp;
 	temp = x - Min_X;
@@ -736,7 +736,7 @@ unsigned short int CMap::Conv_X_Koord( short int x ) {
 
 
 inline
-unsigned short int CMap::Conv_Y_Koord( short int y ) {
+unsigned short int Map::Conv_Y_Koord( short int y ) {
 
 	unsigned short int temp;
 	temp = y - Min_Y;
@@ -750,7 +750,7 @@ unsigned short int CMap::Conv_Y_Koord( short int y ) {
 
 
 inline
-short int CMap::Conv_To_X( unsigned short int x ) {
+short int Map::Conv_To_X( unsigned short int x ) {
 
 	short int temp;
 	temp = x + Min_X;
@@ -761,7 +761,7 @@ short int CMap::Conv_To_X( unsigned short int x ) {
 
 
 inline
-short int CMap::Conv_To_Y( unsigned short int y ) {
+short int Map::Conv_To_Y( unsigned short int y ) {
 
 	short int temp;
 	temp = y + Min_Y;
@@ -771,7 +771,7 @@ short int CMap::Conv_To_Y( unsigned short int y ) {
 }
 
 
-bool CMap::findEmptyCFieldNear( CField* &cf, short int &x, short int &y ) {
+bool Map::findEmptyCFieldNear( Field* &cf, short int &x, short int &y ) {
 
 	short int startx = x;
 	short int starty = y;
@@ -819,7 +819,7 @@ bool CMap::findEmptyCFieldNear( CField* &cf, short int &x, short int &y ) {
 }
 
 
-bool CMap::coversPositionInView( position pos ) {
+bool Map::coversPositionInView( position pos ) {
 
 	if ( Z_Level > pos.z ) {      // Die effektiv sichtbare Mittelpunktkoordinate fr die gegeben Karte bestimmen
 		int view_X = pos.x - ( (Z_Level - pos.z) * LEVELDISTANCE );
@@ -827,7 +827,7 @@ bool CMap::coversPositionInView( position pos ) {
 
 		if ( ( Max_X >= view_X ) && ( Min_X <= view_X ) ) {
 			if ( ( Max_Y >= view_Y ) && ( Min_Y <= view_Y ) ) {
-				CField * cftemp;
+				Field * cftemp;
 				if ( GetPToCFieldAt( cftemp, view_X, view_Y ) ) {
 					if ( cftemp->getTileId() != TRANSPARENT ) return true;
 				}
@@ -840,11 +840,11 @@ bool CMap::coversPositionInView( position pos ) {
 }
 
 
-bool CMap::isOverPositionInData( short int x, short int y, short int z ) {
+bool Map::isOverPositionInData( short int x, short int y, short int z ) {
 	if ( Z_Level > z ) {
 		if ( ( Max_X >= x ) && ( Min_X <= x ) ) {
 			if ( ( Max_Y >= y ) && ( Min_Y <= y ) ) {
-				CField * cftemp;
+				Field * cftemp;
 				if ( GetPToCFieldAt( cftemp, x, y ) ) {
 					if ( cftemp->getTileId() != TRANSPARENT ) return true;
 				}
@@ -857,7 +857,7 @@ bool CMap::isOverPositionInData( short int x, short int y, short int z ) {
 }
 
 
-bool CMap::isOverMapInData( CMap* refmap ) {
+bool Map::isOverMapInData( Map* refmap ) {
 
 	if ( refmap == NULL ) {
 		return false;
@@ -876,7 +876,7 @@ bool CMap::isOverMapInData( CMap* refmap ) {
 }
 
 
-bool CMap::isFullyCoveredBy( CMap* refmap ) {
+bool Map::isFullyCoveredBy( Map* refmap ) {
 
 	if ( refmap == NULL ) {
 		return false;
@@ -897,7 +897,7 @@ bool CMap::isFullyCoveredBy( CMap* refmap ) {
 }
 
 
-bool CMap::isVisibleFromInView( position pos, int distancemetric ) {
+bool Map::isVisibleFromInView( position pos, int distancemetric ) {
 
 	return true;
 

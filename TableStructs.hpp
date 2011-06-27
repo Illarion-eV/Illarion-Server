@@ -28,10 +28,10 @@
 #include <pthread.h>
 #include <iostream>
 
-class CLuaTileScript;
-class CLuaItemScript;
-class CLuaWeaponScript;
-class CLuaLongTimeEffectScript;
+class LuaTileScript;
+class LuaItemScript;
+class LuaWeaponScript;
+class LuaLongTimeEffectScript;
 
 #define ID                 1
 
@@ -48,7 +48,7 @@ class CLuaLongTimeEffectScript;
 #define PIXELOFFSETX       11
 #define PIXELOFFSETY       12
 #define NROFANIMATIONS     13
-#define CANOVERLAP         14
+#define ANOVERLAP         14
 
 #define FOODSHARE          15
 #define DRINKSHARE         16
@@ -65,7 +65,7 @@ class CLuaLongTimeEffectScript;
 
 #define ARTEFACTS          26
 
-#define CONTAINERVOLUME    27
+#define ONTAINERVOLUME    27
 
 #define ISNOTPASSABLE      28
 #define ISNOTTRANSPARENT   29
@@ -77,7 +77,7 @@ class CLuaLongTimeEffectScript;
 #define GROUNDLEVEL        33
 #define SPECIALTILE        34
 #define SPECIALITEM        35
-#define CATEGORY           36
+#define ATEGORY           36
 
 #define AMMUNITIONTYPE     37
 #define ACTIONPOINTS       38
@@ -165,7 +165,7 @@ struct CommonStruct
 	bool rotsInInventory;
 	bool isStackable;
 	//pthread_mutex_t it_mutex;
-    //boost::shared_ptr<CLuaItemScript> script;
+    //boost::shared_ptr<LuaItemScript> script;
     
     
 	CommonStruct()
@@ -231,7 +231,7 @@ struct LongTimeEffectStruct
     uint16_t effectid;
     std::string effectname;
     std::string scriptname;
-    boost::shared_ptr<CLuaLongTimeEffectScript> script;
+    boost::shared_ptr<LuaLongTimeEffectScript> script;
     LongTimeEffectStruct()
     {
          effectid = 0;
@@ -257,7 +257,7 @@ struct WeaponStruct {
 	TYPE_OF_ACTIONPOINTS ActionPoints;
 	TYPE_OF_MAGICDISTURBANCE MagicDisturbance;
 	TYPE_OF_POISONSTRENGTH PoisonStrength;
-	boost::shared_ptr<CLuaWeaponScript> script;
+	boost::shared_ptr<LuaWeaponScript> script;
 	//Constructor
 	WeaponStruct() : Attack(0) , Defence(0) , Accuracy(0) , Range(0) , WeaponType(0) , AmmunitionType(0) , ActionPoints(0) , MagicDisturbance(0) , PoisonStrength(0) {}
 };
@@ -286,7 +286,7 @@ struct TilesStruct {
 	TYPE_OF_GERMAN German;
 	TYPE_OF_ENGLISH English;
 	TYPE_OF_FRENCH French;
-	boost::shared_ptr<CLuaTileScript> script;
+	boost::shared_ptr<LuaTileScript> script;
 };
 
 

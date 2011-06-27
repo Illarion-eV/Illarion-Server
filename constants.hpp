@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CONSTANTS_HH
-#define CONSTANTS_HH
+#ifndef ONSTANTS_HH
+#define ONSTANTS_HH
 
 #include <stdint.h>
 
@@ -48,7 +48,7 @@ const uint32_t MONSTER_BASE = 0xFE000000;
 #define FIGHTMUSIC 1
 #define SHOPMUSIC 2
 #define SURFACEMUSIC 3
-#define CAVEMUSIC 4
+#define AVEMUSIC 4
 
 #define SOUNDFIELD 1
 #define MUSICFIELD 2
@@ -153,7 +153,7 @@ const uint32_t MONSTER_BASE = 0xFE000000;
 #define READPORT_PL      3012  // testserver
 
 //! die aktuell ben�igte Clientversion
-#define CLIENTVERSION      0x0019
+#define LIENTVERSION      0x0019
 
 //! die aktuelle Serverversion (wichtig fr die Konvertierung gespeicherter Daten)
 #define SERVERVERSION      0x0010
@@ -252,7 +252,7 @@ const uint32_t MONSTER_BASE = 0xFE000000;
 #define FLAG_FEET 128
 
 //! Umhang
-#define COAT 11
+#define OAT 11
 
 #define LAST_WEARABLE 11
 
@@ -345,7 +345,7 @@ const uint32_t MONSTER_BASE = 0xFE000000;
 #define NOSKILLS 0x0C
 
 //! Grund fuer Verbindungsabbruch: Spielerdaten korrupt
-#define CORRUPTDATA 0x0D
+#define ORRUPTDATA 0x0D
 
 const unsigned char MAXTRY = 5;
 #endif

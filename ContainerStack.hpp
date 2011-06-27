@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CCONTAINERSTACK_HH
-#define CCONTAINERSTACK_HH
+#ifndef CONTAINERSTACK_HH
+#define CONTAINERSTACK_HH
 
 #include <vector>
 #include <iterator>
@@ -27,65 +27,65 @@
 
 
 //! eine Darstellung offener Container eines Spielers
-class CContainerStack {
+class ContainerStack {
 	public:
 		//! Konstruktor
-		CContainerStack();
+		ContainerStack();
 
 		//! Copy-Konstruktor
-		CContainerStack( const CContainerStack& source );
+		ContainerStack( const ContainerStack& source );
 
 		//! Destruktor
-		~CContainerStack();
+		~ContainerStack();
 
 		//! Zuweisungsoperator
-		CContainerStack& operator =( const CContainerStack& source );
+		ContainerStack& operator =( const ContainerStack& source );
 
-		//! den Start - CContainer zuweisen, in dem man arbeiten kann
+		//! den Start - Container zuweisen, in dem man arbeiten kann
 		// \param cc der Zeiger auf den Startcontainer
 		// \param carry gibt an, ob der Spieler diesen Container trägt
-		void startContainer( CContainer* cc, bool carry );
+		void startContainer( Container* cc, bool carry );
 
-		//! entfernt alle Zeiger auf CContainer aus der Datenstruktur
+		//! entfernt alle Zeiger auf Container aus der Datenstruktur
 		void clear();
 
-		//! einen neuen Zeiger auf CContainer hinzufügen
+		//! einen neuen Zeiger auf Container hinzufügen
 		//
-		// \param cc der Zeiger auf den CContainer der geöffnet werden soll
-		void openContainer( CContainer* cc );
+		// \param cc der Zeiger auf den Container der geöffnet werden soll
+		void openContainer( Container* cc );
 
-		//! entfernt den zuletzt hinzugefügten Zeiger auf CContainer
-		// \return true, falls noch Zeiger auf CContainer vorhanden sind, false sonst
+		//! entfernt den zuletzt hinzugefügten Zeiger auf Container
+		// \return true, falls noch Zeiger auf Container vorhanden sind, false sonst
 		bool closeContainer();
 
-		//! prüft, ob ein Spieler die CContainer trägt
-		// \return true, falls ein Spieler die CContainer trägt, false sonst
+		//! prüft, ob ein Spieler die Container trägt
+		// \return true, falls ein Spieler die Container trägt, false sonst
 		bool inInventory();
 
-		//! prüft, ob der übergebene Zeiger auf CContainer der zuletzt hinzugefügte ist
-		// \param cc Zeiger auf CContainer der überprüft werden soll
+		//! prüft, ob der übergebene Zeiger auf Container der zuletzt hinzugefügte ist
+		// \param cc Zeiger auf Container der überprüft werden soll
 		// \return true, falls cc zuletzt hinzugefügt wurde, false sonst
-		bool isOnTop( CContainer* cc );
+		bool isOnTop( Container* cc );
 
-		//! liefert den zuletzt hinzugefügten Zeiger auf CContainer zurück
-		// \param cc Zeiger auf CContainer der überprüft werden soll
+		//! liefert den zuletzt hinzugefügten Zeiger auf Container zurück
+		// \param cc Zeiger auf Container der überprüft werden soll
 		// \return NULL, falls kein Eintrag vorhanden
-		CContainer* top();
+		Container* top();
 
 		//! prüft, ob der übergebene Zeiger in dem Stack ist
-		// \param cc Zeiger auf CContainer der überprüft werden soll
+		// \param cc Zeiger auf Container der überprüft werden soll
 		// \return true, falls cc in dem Stack ist, false sonst
-		bool contains( CContainer* cc );
+		bool contains( Container* cc );
 
 		//! gibt an, ob ein Spieler die Container trägt
 		bool inventory;
 
 	private:
-		//! definiert eine Template-Klasse "std::vector für Zeiger auf CContainer"
-		typedef std::vector < CContainer* > CONTAINERVECTOR;
+		//! definiert eine Template-Klasse "std::vector für Zeiger auf Container"
+		typedef std::vector < Container* > ONTAINERVECTOR;
 
-		//! ein std::vector von Zeigern auf CContainer
-		CONTAINERVECTOR opencontainers;
+		//! ein std::vector von Zeigern auf Container
+		ONTAINERVECTOR opencontainers;
 };
 
 #endif

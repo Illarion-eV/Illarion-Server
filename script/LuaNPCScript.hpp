@@ -24,54 +24,54 @@
 #include "Character.hpp"
 #include "Item.hpp"
 
-class CNPC;
-class CWorld;
+class NPC;
+class World;
 
-class CLuaNPCScript : public CLuaScript {
+class LuaNPCScript : public LuaScript {
 	public:
-		CLuaNPCScript(std::string filename, CNPC* thisnpc) throw(ScriptException);
+		LuaNPCScript(std::string filename, NPC* thisnpc) throw(ScriptException);
 
-		virtual ~CLuaNPCScript() throw();
+		virtual ~LuaNPCScript() throw();
 
 		// call script function to see if we make any actions
 		void nextCycle();
 
 		// we heard <cc> say <message>
-		void receiveText(CCharacter::talk_type tt, std::string message, CCharacter* cc);
+		void receiveText(Character::talk_type tt, std::string message, Character* cc);
 
 		//! NPC is used with anoter Item
 		//\param user: User who uses the NPC
 		//\ScriptItem: the Item which is used
 		//\counter: the counter Value
 		//\param: a Param Value for Menus
-		void useNPCWithItem(CCharacter * user, ScriptItem TargetItem, unsigned short counter, unsigned short int param, unsigned char ltastate);
+		void useNPCWithItem(Character * user, ScriptItem TargetItem, unsigned short counter, unsigned short int param, unsigned char ltastate);
 
 		//! NPC is used with anoter Character
 		//\param user: The Person who used the NPC
 		//\targetChar: the Character with which the NPC is used
 		//\counter: the counter value
 		//\param: a param for menus
-		void useNPCWithCharacter(CCharacter * user, CCharacter * targetChar, unsigned short counter, unsigned short int param, unsigned char ltastate);
+		void useNPCWithCharacter(Character * user, Character * targetChar, unsigned short counter, unsigned short int param, unsigned char ltastate);
 
 		//! NPC is used with an empty Field
 		//\param user: The person who used the NPC
 		//\pos: The position of the field which is used
 		//\counter: the counter value
 		//\param: a param for menus
-		void useNPCWithField(CCharacter * user, position pos, unsigned short counter, unsigned short int param, unsigned char ltastate);
+		void useNPCWithField(Character * user, position pos, unsigned short counter, unsigned short int param, unsigned char ltastate);
 
 		//! NPC is used without any other action
 		//\param user: The person who used the NPC
 		//\counter: the counter value
 		//\param: a param for menus
-		void useNPC(CCharacter * user, unsigned short counter, unsigned short int param, unsigned char ltastate);
+		void useNPC(Character * user, unsigned short counter, unsigned short int param, unsigned char ltastate);
         
-                bool lookAtNpc(CCharacter * source, unsigned char mode);
+                bool lookAtNpc(Character * source, unsigned char mode);
         
                 /**
                  *a longtime action is disturbed by another person
                  */
-                bool actionDisturbed(CCharacter * performer, CCharacter * disturber);
+                bool actionDisturbed(Character * performer, Character * disturber);
 
                 // An NPC loses all its data during a !fr, so we will look if there is anything left to clean up
 	        void beforeReload();
@@ -80,21 +80,21 @@ class CLuaNPCScript : public CLuaScript {
 		//\param Monster: Das Monster welches den Feind entdeckt hat
 		//\param: enemy: der Spieler der als Feind fungiert
 		//\ret: true wenn der Scriptaufruf true lieferte damit wird die weitere KI steuerung bis zur nächsten runde ausgesetzt.
-		void characterOnSight(CCharacter * npc, CCharacter * enemy);
+		void characterOnSight(Character * npc, Character * enemy);
 		
 		//! Ein NPC ist auf nahkampfreichweite an einen Feind 
 		//\param Monster: das Monster welches auf nahkampfreichweite hinan ist.
 		//\param enemy: Der Gegner.
 		//\ret: true wenn der Scriptaufruf true lieferte damit wird die weitere KI steuerung bis zur nächsten runde ausgesetzt.
-		void characterNear(CCharacter * npc, CCharacter * enemy);
+		void characterNear(Character * npc, Character * enemy);
 		
-		void abortRoute(CCharacter * npc);
+		void abortRoute(Character * npc);
 
 	private:
-		CNPC* _thisnpc;
+		NPC* _thisnpc;
 
-		CLuaNPCScript(const CLuaNPCScript&);
-		CLuaNPCScript& operator=(const CLuaNPCScript&);
+		LuaNPCScript(const LuaNPCScript&);
+		LuaNPCScript& operator=(const LuaNPCScript&);
 		void init_functions();
 
 };

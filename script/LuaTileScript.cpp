@@ -24,85 +24,85 @@
 #include "Logger.hpp"
 #include "fuse_ptr.hpp"
 
-CLuaTileScript::CLuaTileScript(std::string filename, TilesStruct tile) throw (ScriptException)
-		: CLuaScript(filename), thisTile(tile) {
+LuaTileScript::LuaTileScript(std::string filename, TilesStruct tile) throw (ScriptException)
+		: LuaScript(filename), thisTile(tile) {
 	init_functions();
 }
 
-CLuaTileScript::~CLuaTileScript() throw () {}
+LuaTileScript::~LuaTileScript() throw () {}
 
-void CLuaTileScript::init_functions() {
+void LuaTileScript::init_functions() {
 	luabind::object globals = luabind::globals(_luaState);
 	globals["thisTile"] = thisTile;
 }
 
-void CLuaTileScript::useTile(CCharacter * user, position pos, unsigned short int counter, unsigned int param, unsigned char ltastate) {
+void LuaTileScript::useTile(Character * user, position pos, unsigned short int counter, unsigned int param, unsigned char ltastate) {
 	try {
-        CWorld::get()->setCurrentScript( this ); 
-        //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("CLuaTileScript::useTile called for: " + thisTile.English, 3));
-        CLogger::writeMessage("scripts","CLuaTileScript::useTile called for: " + thisTile.English);
-		fuse_ptr<CCharacter> fuse_user(user);
+        World::get()->setCurrentScript( this ); 
+        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("LuaTileScript::useTile called for: " + thisTile.English, 3));
+        Logger::writeMessage("scripts","LuaTileScript::useTile called for: " + thisTile.English);
+		fuse_ptr<Character> fuse_user(user);
         call("useTile")( fuse_user, pos, counter, param, ltastate );
 	} catch (luabind::error &e) {
          writeErrorMsg();
-        // CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("Error: CLuaTileScript::useTile called for: " + thisTile.English + " " + e.what(),3));
+        // World::get()->monitoringClientList->sendCommand( new SendMessageTS("Error: LuaTileScript::useTile called for: " + thisTile.English + " " + e.what(),3));
 	}
 }
 
-void CLuaTileScript::useTileWithCharacter(CCharacter * user, position pos, CCharacter * character,  unsigned short int counter, unsigned int param, unsigned char ltastate) {
+void LuaTileScript::useTileWithCharacter(Character * user, position pos, Character * character,  unsigned short int counter, unsigned int param, unsigned char ltastate) {
 	std::cout<<"Try to call useTileWithCharacter!"<<std::endl;
 	try {
-        CWorld::get()->setCurrentScript( this ); 
-        //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("CLuaTileScript::useTileWithCharacter called for: " + thisTile.English, 3));
-        CLogger::writeMessage("scripts","CLuaTileScript::useTileWithCharacter called for: " + thisTile.English);
-		fuse_ptr<CCharacter> fuse_user(user);
-        fuse_ptr<CCharacter> fuse_character(character);
+        World::get()->setCurrentScript( this ); 
+        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("LuaTileScript::useTileWithCharacter called for: " + thisTile.English, 3));
+        Logger::writeMessage("scripts","LuaTileScript::useTileWithCharacter called for: " + thisTile.English);
+		fuse_ptr<Character> fuse_user(user);
+        fuse_ptr<Character> fuse_character(character);
         call("useTileWithCharacter")( fuse_user, pos, fuse_character, counter, param, ltastate );
 	} catch (luabind::error &e) {
          writeErrorMsg();
-         //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("Error: CLuaTileScript::useTileWitCharacter called for: " + thisTile.English + " " + e.what(),3));
+         //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("Error: LuaTileScript::useTileWitCharacter called for: " + thisTile.English + " " + e.what(),3));
 	}
 }
 
-void CLuaTileScript::useTileWithField(CCharacter * user, position pos, position posnew,  unsigned short int counter, unsigned int param, unsigned char ltastate) {
+void LuaTileScript::useTileWithField(Character * user, position pos, position posnew,  unsigned short int counter, unsigned int param, unsigned char ltastate) {
 	try 
     {
-        CWorld::get()->setCurrentScript( this ); 
-        //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("CLuaTileScript::useTileWithField called for: " + thisTile.English, 3));
-        CLogger::writeMessage("scripts","CLuaTileScript::useTileWithField called for: " + thisTile.English);
-		fuse_ptr<CCharacter> fuse_user(user);
+        World::get()->setCurrentScript( this ); 
+        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("LuaTileScript::useTileWithField called for: " + thisTile.English, 3));
+        Logger::writeMessage("scripts","LuaTileScript::useTileWithField called for: " + thisTile.English);
+		fuse_ptr<Character> fuse_user(user);
         call("useTileWithField")( fuse_user, pos, posnew, counter, param, ltastate );
 	} 
     catch (luabind::error &e) 
     {
          writeErrorMsg();
-         //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("Error: CLuaTileScript::useTileWithField called for: " + thisTile.English + " " + e.what(),3));
+         //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("Error: LuaTileScript::useTileWithField called for: " + thisTile.English + " " + e.what(),3));
 
 	}
 }
 
-void CLuaTileScript::useTileWithItem(CCharacter * user, position pos, ScriptItem item,  unsigned short int counter, unsigned int param, unsigned char ltastate) {
+void LuaTileScript::useTileWithItem(Character * user, position pos, ScriptItem item,  unsigned short int counter, unsigned int param, unsigned char ltastate) {
 	try {
-        CWorld::get()->setCurrentScript( this ); 
-        //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("CLuaTileScript::useTileWithItem called for: " + thisTile.English, 3));
-        CLogger::writeMessage("scripts","CLuaTileScript::useTileWithItem called for: " + thisTile.English);
-		fuse_ptr<CCharacter> fuse_user(user);
+        World::get()->setCurrentScript( this ); 
+        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("LuaTileScript::useTileWithItem called for: " + thisTile.English, 3));
+        Logger::writeMessage("scripts","LuaTileScript::useTileWithItem called for: " + thisTile.English);
+		fuse_ptr<Character> fuse_user(user);
         call("useTileWithItem")( fuse_user, pos, item, counter, param, ltastate );
 	} catch (luabind::error &e) {
          writeErrorMsg();
-         //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("Error: CLuaTileScript::useTileWithItem called for: " + thisTile.English + " " + e.what(),3));
+         //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("Error: LuaTileScript::useTileWithItem called for: " + thisTile.English + " " + e.what(),3));
 	}
 }
 
-bool CLuaTileScript::actionDisturbed(CCharacter * performer, CCharacter * disturber)
+bool LuaTileScript::actionDisturbed(Character * performer, Character * disturber)
 {
     try
     {
-        CWorld::get()->setCurrentScript( this ); 
-        //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("CLuaTileScript::actionDisturbed called for: " + thisTile.English, 3));
-        CLogger::writeMessage("scripts","CLuaTileScript::actionDisturbed called for: " + thisTile.English);
-        fuse_ptr<CCharacter> fuse_performer(performer);
-        fuse_ptr<CCharacter> fuse_disturber(disturber);
+        World::get()->setCurrentScript( this ); 
+        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("LuaTileScript::actionDisturbed called for: " + thisTile.English, 3));
+        Logger::writeMessage("scripts","LuaTileScript::actionDisturbed called for: " + thisTile.English);
+        fuse_ptr<Character> fuse_performer(performer);
+        fuse_ptr<Character> fuse_disturber(disturber);
         return luabind::object_cast<bool>(call("actionDisturbed")( fuse_performer, fuse_disturber ));
     }
     catch ( luabind::error &e)

@@ -24,7 +24,7 @@
 #include "Connection.hpp"
 #include "netinterface/NetInterface.hpp"
 
-tvector<CPlayer*> players_to_save;
+tvector<Player*> players_to_save;
 std::map<std::string, int> players_tosave_map;
 
 void* player_save_loop(void*);
@@ -77,7 +77,7 @@ void* save_this_player(void* ptr) {
 	}
     try 
     {
-        if (((CPlayer*)ptr)->save()) 
+        if (((Player*)ptr)->save()) 
         {
             save_done=true;
         }
@@ -90,7 +90,7 @@ void* save_this_player(void* ptr) {
 	return NULL;
 }
 
-bool save_player(CPlayer* player) {
+bool save_player(Player* player) {
 	players_tosave_map[player->name]++;
 	pthread_attr_t pattr;
 	pthread_attr_init( &pattr );
@@ -127,7 +127,7 @@ void* player_save_loop(void*) {
 
 	while (keep_thread) {
 		while (!players_to_save.empty()) {
-			CPlayer* temp = players_to_save.pop_front();
+			Player* temp = players_to_save.pop_front();
 			if (! save_player(temp) ) {
 				if (players_tosave_map[temp->name] > 10) {
 					std::cerr << "*** player " << temp->name << " not saved!" << std::endl;

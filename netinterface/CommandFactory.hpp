@@ -37,30 +37,30 @@ using std::hash_map;
 
 #include <boost/shared_ptr.hpp>
 
-class CBasicClientCommand;
+class BasicClientCommand;
 
 /**
 *factory class which holds templates of BasicServerCommand classes 
 *an returns an empty command given by an id
 */
-class CCommandFactory
+class CommandFactory
 {
     public:
 
-    CCommandFactory();
-    ~CCommandFactory();
+    CommandFactory();
+    ~CommandFactory();
     
     /**
     *returns a pointer to an emtpy Server Command
     *@param commandId the id of the command which we want to use
     *@return a pointer to an empty command with the given commandId
     */
-    boost::shared_ptr<CBasicClientCommand> getCommand( unsigned char commandId );
+    boost::shared_ptr<BasicClientCommand> getCommand( unsigned char commandId );
     
     private:
     
-    typedef hash_map< unsigned char, CBasicClientCommand*> COMMANDLIST;
-    COMMANDLIST templateList; /*<the list which holds the templates for the concrete classes*/
+    typedef hash_map< unsigned char, BasicClientCommand*> OMMANDLIST;
+    OMMANDLIST templateList; /*<the list which holds the templates for the concrete classes*/
 
 };
 

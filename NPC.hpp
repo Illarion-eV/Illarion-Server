@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CNPC_HPP
-#define CNPC_HPP
+#ifndef NPC_HPP
+#define NPC_HPP
 
 #include "Character.hpp"
 #include "script/LuaNPCScript.hpp"
@@ -40,12 +40,12 @@ struct NPCTalk
 	std::string SpeechText_eng;
 };
 
-class CWorld;
+class World;
 
 /**
 * defines a npc
 */
-class CNPC : public CCharacter 
+class NPC : public Character 
 {
 
 	public:
@@ -60,13 +60,13 @@ class CNPC : public CCharacter
         * @param ishealer if true the npc ressurects death players
         * @param sex the sex of the npc
         */
-		CNPC(TYPE_OF_CHARACTER_ID id, std::string name, CCharacter::race_type type, position pos, CCharacter::face_to dir, bool ishealer, CCharacter::sex_type sex,
+		NPC(TYPE_OF_CHARACTER_ID id, std::string name, Character::race_type type, position pos, Character::face_to dir, bool ishealer, Character::sex_type sex,
              uint8_t hair, uint8_t beard, uint8_t hairred, uint8_t hairgreen, uint8_t hairblue, uint8_t skinred, uint8_t skingreen, uint8_t skinblue);
 
 		/**
         * the destructor 
         */
-		virtual ~CNPC();
+		virtual ~NPC();
 
 		/**
         * gets the healer state of this npc
@@ -88,7 +88,7 @@ class CNPC : public CCharacter
         * gets a pointer to the script for this npc
         * @return the pointer for the script
         */
-		boost::shared_ptr<CLuaNPCScript> getScript() {
+		boost::shared_ptr<LuaNPCScript> getScript() {
 			return _script;
 		}
         
@@ -96,7 +96,7 @@ class CNPC : public CCharacter
         * adds a script to this npac
         * @param script a pointer to a lua script for this npc
         */
-		void setScript(boost::shared_ptr<CLuaNPCScript> script) {
+		void setScript(boost::shared_ptr<LuaNPCScript> script) {
 			_script = script;
 		}
 
@@ -107,7 +107,7 @@ class CNPC : public CCharacter
         * @param message the text which is spoken
         * @param cc the character who has spokenthe text
         */
-		virtual void receiveText(talk_type tt, std::string message, CCharacter* cc);
+		virtual void receiveText(talk_type tt, std::string message, Character* cc);
 
 	protected:
 
@@ -126,7 +126,7 @@ class CNPC : public CCharacter
         /**
         * stores the pointer to the script for this npc
         */
-		boost::shared_ptr<CLuaNPCScript> _script;
+		boost::shared_ptr<LuaNPCScript> _script;
 };
 
-#endif // CNPC_HPP
+#endif // NPC_HPP

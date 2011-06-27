@@ -27,14 +27,14 @@
 #include <iostream>
 #include "Logger.hpp"
 
-CTilesTable::CTilesTable() : m_dataOK(false) {
+TilesTable::TilesTable() : m_dataOK(false) {
 	reload();
 }
 
 
-void CTilesTable::reload() {
-#ifdef CDataConnect_DEBUG
-	std::cout << "CTilesTable: reload" << std::endl;
+void TilesTable::reload() {
+#ifdef DataConnect_DEBUG
+	std::cout << "TilesTable: reload" << std::endl;
 #endif
 
 	try {
@@ -76,12 +76,12 @@ void CTilesTable::reload() {
                 {
 					try 
                     {
-						boost::shared_ptr<CLuaTileScript> script( new CLuaTileScript( scriptname[i], temprecord ) );
+						boost::shared_ptr<LuaTileScript> script( new LuaTileScript( scriptname[i], temprecord ) );
 						temprecord.script = script;
 					} 
                     catch (ScriptException &e) 
                     {
-                        CLogger::writeError( "scripts", "Error while loading script: " + scriptname[i] + ":\n" + e.what() + "\n" );
+                        Logger::writeError( "scripts", "Error while loading script: " + scriptname[i] + ":\n" + e.what() + "\n" );
 					}
 				}
 				m_table[ ids[i] ] = temprecord;
@@ -90,8 +90,8 @@ void CTilesTable::reload() {
 		} else m_dataOK = false;
 
 
-#ifdef CDataConnect_DEBUG
-		std::cout << "loaded " << rows << " rows into CTilesTable" << std::endl;
+#ifdef DataConnect_DEBUG
+		std::cout << "loaded " << rows << " rows into TilesTable" << std::endl;
 #endif
 
 	} catch (std::exception e) {
@@ -102,7 +102,7 @@ void CTilesTable::reload() {
 
 }
 
-bool CTilesTable::find( TYPE_OF_ITEM_ID Id, TilesStruct &ret ) {
+bool TilesTable::find( TYPE_OF_ITEM_ID Id, TilesStruct &ret ) {
 	TABLE::iterator iterator;
 	iterator = m_table.find( Id );
 
@@ -114,10 +114,10 @@ bool CTilesTable::find( TYPE_OF_ITEM_ID Id, TilesStruct &ret ) {
 	}
 }
 
-void CTilesTable::clearOldTable() {
+void TilesTable::clearOldTable() {
 	m_table.clear();
 }
 
-CTilesTable::~CTilesTable() {
+TilesTable::~TilesTable() {
 	clearOldTable();
 }

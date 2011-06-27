@@ -51,11 +51,11 @@ enum bbservercommands
 * @ingroup BBIWIServerCommands
 * command when a action is sendet
 */
-class CBBSendActionTC : public CBasicServerCommand
+class BBSendActionTC : public BasicServerCommand
 {
     public:
 
-        CBBSendActionTC(TYPE_OF_CHARACTER_ID id, std::string name, uint8_t type, std::string desc) : CBasicServerCommand( BB_SENDACTION_TC ) 
+        BBSendActionTC(TYPE_OF_CHARACTER_ID id, std::string name, uint8_t type, std::string desc) : BasicServerCommand( BB_SENDACTION_TC ) 
         {
             addIntToBuffer( id );
             addStringToBuffer( name );
@@ -69,11 +69,11 @@ class CBBSendActionTC : public CBasicServerCommand
 * @ingroup BBIWIServerCommands
 * command when skill is sended
 */
-class CBBSendSkillTC : public CBasicServerCommand
+class BBSendSkillTC : public BasicServerCommand
 {
     public:
 
-        CBBSendSkillTC(TYPE_OF_CHARACTER_ID id, uint8_t type, std::string name, short int value, short int minor) : CBasicServerCommand( BB_SENDSKILL_TC ) 
+        BBSendSkillTC(TYPE_OF_CHARACTER_ID id, uint8_t type, std::string name, short int value, short int minor) : BasicServerCommand( BB_SENDSKILL_TC ) 
         {
             addIntToBuffer( id );
             addUnsignedCharToBuffer( type );
@@ -87,11 +87,11 @@ class CBBSendSkillTC : public CBasicServerCommand
 * @ingroup BBIWIServerCommands
 * command when a character talks
 */
-class CBBSendAttribTC : public CBasicServerCommand
+class BBSendAttribTC : public BasicServerCommand
 {
     public:
 
-        CBBSendAttribTC(TYPE_OF_CHARACTER_ID id, std::string attr, short int value) : CBasicServerCommand( BB_SENDATTRIB_TC ) 
+        BBSendAttribTC(TYPE_OF_CHARACTER_ID id, std::string attr, short int value) : BasicServerCommand( BB_SENDATTRIB_TC ) 
         {
             addIntToBuffer( id );
             addStringToBuffer( attr );
@@ -103,11 +103,11 @@ class CBBSendAttribTC : public CBasicServerCommand
 * @ingroup BBIWIServerCommands 
 * command when a character talks
 */
-class CBBLogOutTC : public CBasicServerCommand
+class BBLogOutTC : public BasicServerCommand
 {
     public:
 
-        CBBLogOutTC(TYPE_OF_CHARACTER_ID id, std::string name) : CBasicServerCommand( BB_LOGOUT_TC ) 
+        BBLogOutTC(TYPE_OF_CHARACTER_ID id, std::string name) : BasicServerCommand( BB_LOGOUT_TC ) 
         {
             addIntToBuffer( id );
             addStringToBuffer( name );
@@ -118,11 +118,11 @@ class CBBLogOutTC : public CBasicServerCommand
 * @ingroup BBIWIServerCommands
 * command when a character talks
 */
-class CBBTalkTC : public CBasicServerCommand
+class BBTalkTC : public BasicServerCommand
 {
     public:
 
-        CBBTalkTC(TYPE_OF_CHARACTER_ID id, std::string name, uint8_t tt, std::string msg) : CBasicServerCommand( BB_TALK_TC ) 
+        BBTalkTC(TYPE_OF_CHARACTER_ID id, std::string name, uint8_t tt, std::string msg) : BasicServerCommand( BB_TALK_TC ) 
         {
             addIntToBuffer( id );
             addStringToBuffer( name );
@@ -135,10 +135,10 @@ class CBBTalkTC : public CBasicServerCommand
 * @ingroup BBIWIServerCommands
 * command when a player logged in 
 */
-class CBBPlayerTC : public CBasicServerCommand
+class BBPlayerTC : public BasicServerCommand
 {
     public:
-        CBBPlayerTC(TYPE_OF_CHARACTER_ID id, std::string name, int posx, int posy, int posz) : CBasicServerCommand( BB_PLAYER_TC ) 
+        BBPlayerTC(TYPE_OF_CHARACTER_ID id, std::string name, int posx, int posy, int posz) : BasicServerCommand( BB_PLAYER_TC ) 
         {
             addIntToBuffer( id );
             addStringToBuffer( name );
@@ -153,10 +153,10 @@ class CBBPlayerTC : public CBasicServerCommand
 * @ingroup BBIWIServerCommands
 * command when the player has moved
 */
-class CBBPlayerMoveTC : public CBasicServerCommand
+class BBPlayerMoveTC : public BasicServerCommand
 {
     public:
-        CBBPlayerMoveTC(TYPE_OF_CHARACTER_ID id, int newx, int newy, int newz) : CBasicServerCommand( BB_PLAYERMOVE_TC ) 
+        BBPlayerMoveTC(TYPE_OF_CHARACTER_ID id, int newx, int newy, int newz) : BasicServerCommand( BB_PLAYERMOVE_TC ) 
         {
             addIntToBuffer(id);
             addIntToBuffer(newx);
@@ -169,10 +169,10 @@ class CBBPlayerMoveTC : public CBasicServerCommand
 * @ingroup BBIWIServerCommands
 * command when a general message arrived from server
 */
-class CBBMessageTC : public CBasicServerCommand
+class BBMessageTC : public BasicServerCommand
 {
     public:
-        CBBMessageTC(std::string msg, uint8_t id) : CBasicServerCommand( BB_MESSAGE_TC ) 
+        BBMessageTC(std::string msg, uint8_t id) : BasicServerCommand( BB_MESSAGE_TC ) 
         {
             addStringToBuffer( msg );
             addUnsignedCharToBuffer( id );

@@ -35,21 +35,21 @@ template< typename To, typename From> To stream_convert( const From& from ) {
 }
 
 // register any Player commands here...
-void CWorld::InitPlayerCommands() {
+void World::InitPlayerCommands() {
 
-	PlayerCommands["prefix"] = new CCommand( &CWorld::prefix_command );
-	PlayerCommands["suffix"] = new CCommand( &CWorld::suffix_command );
-	PlayerCommands["prison"] = new CCommand( &CWorld::player_prison_command );
+	PlayerCommands["prefix"] = new Command( &World::prefix_command );
+	PlayerCommands["suffix"] = new Command( &World::suffix_command );
+	PlayerCommands["prison"] = new Command( &World::player_prison_command );
 	PlayerCommands["p"] = PlayerCommands["prison"];
-	PlayerCommands["gm"] = new CCommand( &CWorld::gmpage_command );
-	PlayerCommands["name"] = new CCommand( &CWorld::name_command );
-	PlayerCommands["language"] = new CCommand( &CWorld::active_language_command );
+	PlayerCommands["gm"] = new Command( &World::gmpage_command );
+	PlayerCommands["name"] = new Command( &World::name_command );
+	PlayerCommands["language"] = new Command( &World::active_language_command );
 	PlayerCommands["l"] = PlayerCommands["language"];
 }
 
 
 //! parse PlayerCommands of the form !<string1> <string2> and process them
-bool CWorld::parsePlayerCommands(CPlayer* cp, const std::string& text) {
+bool World::parsePlayerCommands(Player* cp, const std::string& text) {
 
 	// did we find a command?
 	bool done = false;
@@ -79,7 +79,7 @@ bool CWorld::parsePlayerCommands(CPlayer* cp, const std::string& text) {
 	return done;
 
 }
-void CWorld::name_command( CPlayer* cp, const std::string& ts ) {
+void World::name_command( Player* cp, const std::string& ts ) {
 	char* tokenize = new char[ ts.length() + 1 ];
 	TYPE_OF_CHARACTER_ID player;
 	std::string name;
@@ -99,7 +99,7 @@ void CWorld::name_command( CPlayer* cp, const std::string& ts ) {
 					if ( ( *playerIterator )->id == player ) {
 						std::string newname(thistoken);
 						name = "! " + newname;
-                        boost::shared_ptr<CBasicServerCommand>cmd(new CIntroduceTC( (*playerIterator)->id, name));
+                        boost::shared_ptr<BasicServerCommand>cmd(new IntroduceTC( (*playerIterator)->id, name));
 						cp->Connection->addCommand( cmd );
 					}
 				}
@@ -112,7 +112,7 @@ void CWorld::name_command( CPlayer* cp, const std::string& ts ) {
 }
 
 // GM page (!gm <text>)
-bool CWorld::gmpage_command( CPlayer* cp, const std::string& ts ) {
+bool World::gmpage_command( Player* cp, const std::string& ts ) {
 	//PLAYERVECTOR::iterator pIterator;
 	//FILE * f;
 	//CPlayer* who;
@@ -125,19 +125,19 @@ bool CWorld::gmpage_command( CPlayer* cp, const std::string& ts ) {
 		transaction.commit();
 
 		sendMessageToAdmin( tmessage );
-        boost::shared_ptr<CBasicServerCommand>cmd( new CBBMessageTC(tmessage,2));
+        boost::shared_ptr<BasicServerCommand>cmd( new BBMessageTC(tmessage,2));
 		monitoringClientList->sendCommand(cmd);
 		cp->sendMessage( "--- The message has been delivered to the GM team. ---" );
 
 		return true;
 	} catch (...) {
-		return false;
-	}
 
+	}
+    return false;
 }
 
 // !prefix <prefix>
-bool CWorld::prefix_command( CPlayer* cp, const std::string& tprefix ) {
+bool World::prefix_command( Player* cp, const std::string& tprefix ) {
 
 	cp->prefix = tprefix;
 
@@ -154,7 +154,7 @@ bool CWorld::prefix_command( CPlayer* cp, const std::string& tprefix ) {
 
 
 // !suffix <suffix>
-bool CWorld::suffix_command( CPlayer* cp, const std::string& tsuffix ) {
+bool World::suffix_command( Player* cp, const std::string& tsuffix ) {
 
 	cp->suffix = tsuffix;
 
@@ -170,7 +170,7 @@ bool CWorld::suffix_command( CPlayer* cp, const std::string& tsuffix ) {
 }
 
 // !language <language>, language=common, human, dwarfen, elven, lizard, orc, ...
-bool CWorld::active_language_command( CPlayer* cp, const std::string& language ) {
+bool World::active_language_command( Player* cp, const std::string& language ) {
 	if(strcmp(language.c_str(),"common")==0) cp->activeLanguage=0;
 	if(strcmp(language.c_str(),"human")==0) cp->activeLanguage=1;
 	if(strcmp(language.c_str(),"dwarf")==0) cp->activeLanguage=2;
@@ -189,7 +189,7 @@ bool CWorld::active_language_command( CPlayer* cp, const std::string& language )
 }
 
 // !prison <time> <player>
-bool CWorld::player_prison_command( CPlayer* cp, const std::string& timeplayer ) {
+bool World::player_prison_command( Player* cp, const std::string& timeplayer ) {
 
 	int maxtime = 0;
 	if (cp->skills.find("imprisoning") != cp->skills.end())
@@ -221,7 +221,7 @@ bool CWorld::player_prison_command( CPlayer* cp, const std::string& timeplayer )
                     std::stringstream ssz(configOptions["jail_z"]);
                     ssz >> warpto.z;
 
-					CPlayer * tempPl;
+					Player * tempPl;
 					tempPl = Players.find( tplayer );
 					if ( tempPl == NULL ) {
 						TYPE_OF_CHARACTER_ID tid;

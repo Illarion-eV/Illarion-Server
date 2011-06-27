@@ -23,7 +23,7 @@
 #include "ByteBuffer.hpp"
 #include <assert.h>
 
-CByteBuffer::CByteBuffer() : bytesAvailable(0), rBuff(0), wBuff(1), readPos(0)
+ByteBuffer::ByteBuffer() : bytesAvailable(0), rBuff(0), wBuff(1), readPos(0)
 {
     vlock = new pthread_mutex_t;
     if (pthread_mutex_init(vlock,NULL)) 
@@ -40,7 +40,7 @@ CByteBuffer::CByteBuffer() : bytesAvailable(0), rBuff(0), wBuff(1), readPos(0)
 
 }
 
-CByteBuffer::~CByteBuffer()
+ByteBuffer::~ByteBuffer()
 {
     pthread_mutex_destroy(vlock);
     delete [] recvBuffer;
@@ -48,12 +48,12 @@ CByteBuffer::~CByteBuffer()
 }
 
 
-uint16_t CByteBuffer::dataAvailable()
+uint16_t ByteBuffer::dataAvailable()
 {
     return ( bytesAvailable );    
 }
 
-unsigned char CByteBuffer::getByte()
+unsigned char ByteBuffer::getByte()
 {
     if ( bytesAvailable > 0 )
     {
@@ -83,12 +83,12 @@ unsigned char CByteBuffer::getByte()
     return 0;
 }
 
-unsigned char * CByteBuffer::writeBuff()
+unsigned char * ByteBuffer::writeBuff()
 {
      return recvBuffer[ wBuff ].buff;
 }
 
-bool CByteBuffer::getReadBuffer() 
+bool ByteBuffer::getReadBuffer() 
 {
     int error = pthread_mutex_trylock( vlock );
     if ( !error )
@@ -105,7 +105,7 @@ bool CByteBuffer::getReadBuffer()
     return false;
 }
 
-bool CByteBuffer::writeToBuf(uint16_t size)
+bool ByteBuffer::writeToBuf(uint16_t size)
 {
     pthread_mutex_lock( vlock );
     /*

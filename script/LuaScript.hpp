@@ -29,8 +29,8 @@ extern "C" {
 #include "Item.hpp"
 #include <luabind/object.hpp>
 
-class CCharacter;
-class CWorld;
+class Character;
+class World;
 
 /**
 *@defgroup Scripts Scripts
@@ -123,7 +123,7 @@ enum LtaStates
 */
 struct SouTar 
 {
-	CCharacter * Character; /**< Source or target is a character, this is the pointer to it, otherwise NULL */
+	Character * character; /**< Source or target is a character, this is the pointer to it, otherwise NULL */
 	ScriptItem item; /**< Source or target is a Item, this holds the information of the item */
 	SouTarTypes Type; /**< Source or Target Type (if its an character, field or item) */
 	position pos; /**< aboslute position of the object */
@@ -136,7 +136,7 @@ struct SouTar
 		item.id = 0;
 		item.wear = 0;
 		item.number = 0;
-		Character = NULL;
+		character = NULL;
 	}
 };
 
@@ -144,7 +144,7 @@ struct SouTar
 * @ingroup Scripttypes
 * basic Script class all other scripts are from this basic type
 */
-class CLuaScript 
+class LuaScript 
 {
 	public:
 		/**
@@ -152,9 +152,9 @@ class CLuaScript
         * @param filename the filename of the script which has to be loaded
         * @throw ScriptException if an error occurs
         */
-		CLuaScript(std::string filename) throw(ScriptException);
+		LuaScript(std::string filename) throw(ScriptException);
 
-		virtual ~CLuaScript() throw();
+		virtual ~LuaScript() throw();
         
         std::string getFileName(){ return _filename; }
         
@@ -182,8 +182,8 @@ class CLuaScript
         /**
         * no copy constructor
         */
-		CLuaScript(const CLuaScript&); 
-		CLuaScript& operator=(const CLuaScript&);
+		LuaScript(const LuaScript&); 
+		LuaScript& operator=(const LuaScript&);
         
         std::string _filename;
         std::vector<std::string> vecPath;

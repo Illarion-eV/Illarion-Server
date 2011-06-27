@@ -25,12 +25,12 @@
 
 #include "globals.hpp"
 
-class CWorld;
+class World;
 
 //! falls false beendet sich das Programm
 extern volatile bool running;
 
-// in diesen std::vector fügen CFields die numbers der gelöschten containeritems ein,
+// in diesen std::vector fügen Fields die numbers der gelöschten containeritems ein,
 // damit die zugehörige Map die containerinhalte löschen kann
 extern std::vector<int>* erasedcontainers;
 
@@ -38,11 +38,11 @@ extern std::vector<int>* erasedcontainers;
 extern std::vector<position>* contpos;
 
 // some forward declarations to not include unecessary headers
-class CPlayer;
+class Player;
 
-void logout_save( CPlayer* who, bool forced, unsigned long int thistime );
+void logout_save( Player* who, bool forced, unsigned long int thistime );
 
-void login_save( CPlayer* who );
+void login_save( Player* who );
 
 //! Das Initialisieren von Logoptionen
 void InitLogOptions();

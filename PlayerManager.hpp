@@ -23,14 +23,14 @@
 #include "boost/thread/shared_mutex.hpp"
 
 
-class CPlayer;
+class Player;
 
-class CPlayerManager
+class PlayerManager
 {
     public:
-        static CPlayerManager * get();
+        static PlayerManager * get();
         
-        ~CPlayerManager();
+        ~PlayerManager();
         
         void saveAll();
         
@@ -42,24 +42,24 @@ class CPlayerManager
         
         void setLoginLogout(bool val);
         
-        typedef tvector<CPlayer*> TPLAYERVECTOR;
+        typedef tvector<Player*> TPLAYERVECTOR;
         
         TPLAYERVECTOR &getLogOutPlayers(){ return loggedOutPlayers; }
         TPLAYERVECTOR &getLogInPlayers(){ return loggedInPlayers; }
         
         
     private:
-        CPlayerManager();    
+        PlayerManager();    
         
-        static CPlayerManager * instance; /**< pointer to current local instance of the Player Manager*/
+        static PlayerManager * instance; /**< pointer to current local instance of the Player Manager*/
     
         /**
         * loop which is threaded to get new connections
         * create players, or storing data and deleting old connections
         */
-        static void * loginLoop(CPlayerManager * pmanager);
-        static void * playerSaveLoop(CPlayerManager * pmanager);
-        //static void * deleteOldConnectionsLoop(CPlayerManager * pmanager);
+        static void * loginLoop(PlayerManager * pmanager);
+        static void * playerSaveLoop(PlayerManager * pmanager);
+        //static void * deleteOldConnectionsLoop(PlayerManager * pmanager);
         static boost::mutex mut;
         
         //Mutex der gesetzt wird beim reloaden. (Als multi read single write lock)
@@ -94,7 +94,7 @@ class CPlayerManager
         /**
         * initial connection to get the new connections
         */
-        CInitialConnection incon;
+        InitialConnection incon;
         
         pthread_t login_thread;
         pthread_t save_thread;

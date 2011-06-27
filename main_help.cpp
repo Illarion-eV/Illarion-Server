@@ -61,14 +61,14 @@ std::map<std::string, std::string> configOptions;
 bool importmaps;
 
 /*
-learn, bbiwi, basic, schedscripts, Spawn, CWorld_Debug, World_Imports, CWorld, World_Inits, Monster , Player_Moves, Casting, Use, Use_Scripts
+learn, bbiwi, basic, schedscripts, Spawn, World_Debug, World_Imports, World, World_Inits, Monster , Player_Moves, Casting, Use, Use_Scripts
 */
 void InitLogOptions()
 {
-    CLogger::activateLog("basic");
-    CLogger::activateLog("World_Inits");
-    CLogger::activateLog("CWorld");
-    //LogOptions["CWorld_Debug"] = true;
+    Logger::activateLog("basic");
+    Logger::activateLog("World_Inits");
+    Logger::activateLog("World");
+    //LogOptions["World_Debug"] = true;
 }
 
 //! file containing kill logs
@@ -113,7 +113,7 @@ bool Init( const std::string& initfile) {
 
 #include "main_help.hpp"
 
-// in diesen std::vector f�gen CFields die numbers der gel�schten containeritems ein,
+// in diesen std::vector f�gen Fields die numbers der gel�schten containeritems ein,
 //  damit die zugeh�rige Map die containerinhalte l�schen kann
 std::vector<int>* erasedcontainers;
 
@@ -121,43 +121,43 @@ std::vector<int>* erasedcontainers;
 std::vector<position>* contpos;
 
 //! eine Tabelle mit den Rassenspezifischen Angriffswerten
-CMonsterAttackTable* MonsterAttacks;
+MonsterAttackTable* MonsterAttacks;
 
 //! eine Tabelle mit Rassenspezifischen R�stwerten
-CNaturalArmorTable* NaturalArmors;
+NaturalArmorTable* NaturalArmors;
 
 //! eine Tabelle mit den allgemeinen Attributen der Item
-CCommonObjectTable* CommonItems;
+CommonObjectTable* CommonItems;
 
 //! eine Tabelle mit den Namen der Item
-CNamesObjectTable* ItemNames;
+NamesObjectTable* ItemNames;
 
 //! eine Tabelle f�r Waffen - Item Daten
-CWeaponObjectTable* WeaponItems;
+WeaponObjectTable* WeaponItems;
 
 //! eine Tabelle f�r Schutzkleidungs - Item Daten
-CArmorObjectTable* ArmorItems;
+ArmorObjectTable* ArmorItems;
 
 //! eine Tabelle f�r Beh�lter - Item Daten
-CContainerObjectTable* ContainerItems;
+ContainerObjectTable* ContainerItems;
 
 //! eine Tabelle f�r die Zauberspr�che - Spells
-CSpellTable* Spells;
+SpellTable* Spells;
 
 //! a Table with Scheduled Scripts
-CScheduledScriptsTable* ScheduledScripts;
+ScheduledScriptsTable* ScheduledScripts;
 
 //! Eine Tabelle mit Triggerfeldern
-CTriggerTable* Triggers;
+TriggerTable* Triggers;
 
 //! eine Tabelle mit Item welche die Eigenschaften des Feldes auf dem sie liegen modifizieren
-CTilesModificatorTable* TilesModItems;
+TilesModificatorTable* TilesModItems;
 
 //! eine Tabelle mit allen Arten von Bodenplatten
-CTilesTable* Tiles;
+TilesTable* Tiles;
 
 //! a table containing monster descriptions
-CMonsterTable* MonsterDescriptions;
+MonsterTable* MonsterDescriptions;
 
 //! ein struct f�r die Allgemeinen Attribute eines Item
 CommonStruct tempCommon;
@@ -183,26 +183,26 @@ TilesModificatorStruct tempModificator;
 //! ein struct f�r Daten von Bodenplatten
 TilesStruct tempTile;
 
-CScriptVariablesTable * scriptVariables;
+ScriptVariablesTable * scriptVariables;
 
-CLongTimeEffectTable * LongTimeEffects;
+LongTimeEffectTable * LongTimeEffects;
 
-CRaceSizeTable * RaceSizes;
+RaceSizeTable * RaceSizes;
 
-boost::shared_ptr<CLuaDepotScript>depotScript;
+boost::shared_ptr<LuaDepotScript>depotScript;
 
-boost::shared_ptr<CLuaLookAtPlayerScript>lookAtPlayerScript;
+boost::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
 
-boost::shared_ptr<CLuaLoginScript>loginScript;
+boost::shared_ptr<LuaLoginScript>loginScript;
 
-boost::shared_ptr<CLuaLearnScript>learnScript;
+boost::shared_ptr<LuaLearnScript>learnScript;
 
 //! Pointer auf das Standard script f�r K�mpfe falls kein spezielles vorhanden ist.
-boost::shared_ptr<CLuaWeaponScript> standardFightingScript;
+boost::shared_ptr<LuaWeaponScript> standardFightingScript;
 
-CScheduledScriptsTable * ScheduledScriptsTable; //< table witch holds the scheduled scripts
+ScheduledScriptsTable * scheduledScripts; //< table witch holds the scheduled scripts
 
-void logout_save( CPlayer* who, bool forced, unsigned long int thistime ) {
+void logout_save( Player* who, bool forced, unsigned long int thistime ) {
 	FILE * f;
 	f = fopen( configOptions["login_logfile"].c_str(), "at" );
 	time_t acttime6;
@@ -239,7 +239,7 @@ void logout_save( CPlayer* who, bool forced, unsigned long int thistime ) {
 	}
 }
 
-void login_save( CPlayer* who ) {
+void login_save( Player* who ) {
 	FILE * f;
 	f = fopen( configOptions["login_logfile"].c_str(), "at" );
 	time_t acttime7;
@@ -270,12 +270,12 @@ void checkArguments( int argc, char* argv[]) {
     { // config file specified on command line
 		if ( Init( std::string( argv[ 1 ] ) ) ) 
         {
-			std::cout << "main: USING CONFIGFILE " << argv[ 1 ] << "\n";
+			std::cout << "main: USING ONFIGFILE " << argv[ 1 ] << "\n";
 			std::cout << "main: LOADING..." << std::endl;
 		} 
         else 
         {
-			std::cout << "main: ERROR READING CONFIGFILE " << argv[ 1 ] << " ! " << std::endl;
+			std::cout << "main: ERROR READING ONFIGFILE " << argv[ 1 ] << " ! " << std::endl;
 			std::cout << "main: USAGE: " << argv[0] << " configfile" << std::endl;
 			exit( -1 );
 		}
@@ -285,12 +285,12 @@ void checkArguments( int argc, char* argv[]) {
         std::cout<<"main: 3 args for mapimport"<<std::endl;
         if ( Init( std::string( argv[ 1 ] ) ) ) 
         {
-			std::cout << "main: USING CONFIGFILE " << argv[ 1 ] << "\n";
+			std::cout << "main: USING ONFIGFILE " << argv[ 1 ] << "\n";
 			std::cout << "main: LOADING..." << std::endl;
 		} 
         else 
         {
-			std::cout << "main: ERROR READING CONFIGFILE " << argv[ 1 ] << " ! " << std::endl;
+			std::cout << "main: ERROR READING ONFIGFILE " << argv[ 1 ] << " ! " << std::endl;
 			std::cout << "main: USAGE: " << argv[0] << " configfile" << std::endl;
 			exit( -1 );
 		}
@@ -311,68 +311,68 @@ void checkArguments( int argc, char* argv[]) {
 void loadData() {
 	bool ok = true;
     
-    scriptVariables = new CScriptVariablesTable();
+    scriptVariables = new ScriptVariablesTable();
     if ( !scriptVariables->isDataOk() )
         ok = false;
     
-    RaceSizes = new CRaceSizeTable();
+    RaceSizes = new RaceSizeTable();
     if ( !RaceSizes->isDataOk() )
         ok = false;
 	
-	NaturalArmors = new CNaturalArmorTable();
+	NaturalArmors = new NaturalArmorTable();
 	if ( !NaturalArmors->isDataOk() )
 	    ok = false;
 	    
- 	MonsterAttacks = new CMonsterAttackTable();
+ 	MonsterAttacks = new MonsterAttackTable();
     if ( !MonsterAttacks->isDataOk() )
         ok = false;    
 
-	CommonItems = new CCommonObjectTable();
+	CommonItems = new CommonObjectTable();
 	if (!CommonItems->dataOK())
 		ok = false;
 
-	ItemNames = new CNamesObjectTable();
+	ItemNames = new NamesObjectTable();
 	if (!ItemNames->dataOK())
 		ok = false;
 
-	WeaponItems = new CWeaponObjectTable();
+	WeaponItems = new WeaponObjectTable();
 	if (!WeaponItems->dataOK())
 		ok = false;
 
-	ArmorItems = new CArmorObjectTable();
+	ArmorItems = new ArmorObjectTable();
 	if (!ArmorItems->dataOK())
 		ok = false;
 
-	ContainerItems = new CContainerObjectTable();
+	ContainerItems = new ContainerObjectTable();
 	if (!ContainerItems->dataOK())
 		ok = false;
 
-	TilesModItems = new CTilesModificatorTable();
+	TilesModItems = new TilesModificatorTable();
 	if (!TilesModItems->dataOK())
 		ok = false;
 
-	Tiles = new CTilesTable();
+	Tiles = new TilesTable();
 	if (!Tiles->dataOK())
 		ok = false;
 
-	Spells = new CSpellTable();
+	Spells = new SpellTable();
 	if (!Spells->isDataOK())
 		ok = false;
     
-    ScheduledScripts = new CScheduledScriptsTable();
-    ScheduledScriptsTable = ScheduledScripts;
+    ScheduledScripts = new ScheduledScriptsTable();
+    scheduledScripts = ScheduledScripts;
     if ( !ScheduledScripts->dataOK() )
         ok = false;
 
-	Triggers = new CTriggerTable();
+	Triggers = new TriggerTable();
 	if (!Triggers->isDataOK())
 		ok = false;
 
-	MonsterDescriptions = new CMonsterTable();
+	MonsterDescriptions = new MonsterTable();
 	if (!MonsterDescriptions->dataOK())
 		ok=false;
     
-    LongTimeEffects = new CLongTimeEffectTable();
+    LongTimeEffects = new LongTimeEffectTable();
     if ( !LongTimeEffects->dataOK() )
         ok = false;
 
@@ -383,51 +383,51 @@ void loadData() {
 	//Laden des standard Kampfscriptes	
 	try 
     {
-		boost::shared_ptr<CLuaWeaponScript> tmpScript(new CLuaWeaponScript( "server.standardfighting" ));
+		boost::shared_ptr<LuaWeaponScript> tmpScript(new LuaWeaponScript( "server.standardfighting" ));
 		standardFightingScript = tmpScript;
 	} 
     catch(ScriptException &e) 
     {
-        CLogger::writeError( "scripts", "Error while loading script: server.standardfighting:\n" + std::string(e.what()) + "\n" );
+        Logger::writeError( "scripts", "Error while loading script: server.standardfighting:\n" + std::string(e.what()) + "\n" );
 	}
     
     try
     {
-        boost::shared_ptr<CLuaLookAtPlayerScript>tmpScript(new CLuaLookAtPlayerScript( "server.playerlookat" ));
+        boost::shared_ptr<LuaLookAtPlayerScript>tmpScript(new LuaLookAtPlayerScript( "server.playerlookat" ));
         lookAtPlayerScript = tmpScript;
     }
     catch(ScriptException &e)
     {
-        CLogger::writeError( "scripts", "Error while loading script: server.playerlookat:\n" + std::string(e.what()) + "\n" );
+        Logger::writeError( "scripts", "Error while loading script: server.playerlookat:\n" + std::string(e.what()) + "\n" );
     }
 
     try
     {
-        boost::shared_ptr<CLuaDepotScript>tmpScript(new CLuaDepotScript( "server.depot" ));
+        boost::shared_ptr<LuaDepotScript>tmpScript(new LuaDepotScript( "server.depot" ));
         depotScript = tmpScript;
     }
     catch(ScriptException &e)
     {
-        CLogger::writeError( "scripts", "Error while loading script: server.depot:\n" + std::string(e.what()) + "\n" );
+        Logger::writeError( "scripts", "Error while loading script: server.depot:\n" + std::string(e.what()) + "\n" );
     }
     
     try
     {
-        boost::shared_ptr<CLuaLoginScript>tmpScript(new CLuaLoginScript( "server.login" ));
+        boost::shared_ptr<LuaLoginScript>tmpScript(new LuaLoginScript( "server.login" ));
         loginScript = tmpScript;
     }
     catch(ScriptException &e)
     {
-        CLogger::writeError( "scripts", "Error while loading script: server.login:\n" + std::string(e.what()) + "\n" );
+        Logger::writeError( "scripts", "Error while loading script: server.login:\n" + std::string(e.what()) + "\n" );
     } 
     try
     {
-        boost::shared_ptr<CLuaLearnScript>tmpScript(new CLuaLearnScript( "server.learn" ));
+        boost::shared_ptr<LuaLearnScript>tmpScript(new LuaLearnScript( "server.learn" ));
         learnScript = tmpScript;
     }
     catch(ScriptException &e)
     {
-        CLogger::writeError( "scripts", "Error while loading script: server.learn:\n" + std::string(e.what()) + "\n" );
+        Logger::writeError( "scripts", "Error while loading script: server.learn:\n" + std::string(e.what()) + "\n" );
     }
     
 
@@ -462,7 +462,7 @@ void sig_term( int ) {
 void sig_segv( int ) 
 {
 	std::cout << "\nSIGSEGV received !" << std::endl;
-	std::cerr <<"SEGV received! last Script: "<<CWorld::get()->currentScript->getFileName()<<std::endl;
+	std::cerr <<"SEGV received! last Script: "<<World::get()->currentScript->getFileName()<<std::endl;
     // ignore signal
 	act_segv.sa_handler = SIG_IGN;
 	if ( sigaction( SIGSEGV, &act_segv, NULL ) < 0 ) {
@@ -478,7 +478,7 @@ void sig_usr( int )
     
     std::cout<<"disable login and log out"<<std::endl;
     configOptions["disable_login"] = "true";
-    CWorld * world = CWorld::get();
+    World * world = World::get();
     world->forceLogoutOfAllPlayers(); //Alle spieler ausloggen
     world->maps.clear(); //alte Karten l�schen
     std::cout<<"importing mainland"<<std::endl;

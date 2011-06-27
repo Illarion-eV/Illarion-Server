@@ -25,12 +25,12 @@
 #include <boost/shared_ptr.hpp>
 #include "Logger.hpp"
 
-CCommonObjectTable::CCommonObjectTable() : m_dataOK(false) 
+CommonObjectTable::CommonObjectTable() : m_dataOK(false) 
 {
 	reload();
 }
 
-TYPE_OF_ITEM_ID CCommonObjectTable::calcInfiniteRot( TYPE_OF_ITEM_ID id, std::map<TYPE_OF_ITEM_ID, bool> & visited, std::map<TYPE_OF_ITEM_ID, bool> & assigned )
+TYPE_OF_ITEM_ID CommonObjectTable::calcInfiniteRot( TYPE_OF_ITEM_ID id, std::map<TYPE_OF_ITEM_ID, bool> & visited, std::map<TYPE_OF_ITEM_ID, bool> & assigned )
 {
     if (visited[ id ])
     {
@@ -55,10 +55,10 @@ TYPE_OF_ITEM_ID CCommonObjectTable::calcInfiniteRot( TYPE_OF_ITEM_ID id, std::ma
     return m_table[ id ].AfterInfiniteRot;
 }
 
-void CCommonObjectTable::reload() {
+void CommonObjectTable::reload() {
 
-#ifdef CDataConnect_DEBUG
-	std::cout << "CCommonObjectTable: reload" << std::endl;
+#ifdef DataConnect_DEBUG
+	std::cout << "CommonObjectTable: reload" << std::endl;
 #endif
 
 	try {
@@ -99,10 +99,10 @@ void CCommonObjectTable::reload() {
                 temprecord.Worth = worth[i];
 				if (!n_scriptname.var[i]) {
 					try {
-						boost::shared_ptr<CLuaItemScript> tmpScript(new CLuaItemScript( scriptname[i] , temprecord));
+						boost::shared_ptr<LuaItemScript> tmpScript(new LuaItemScript( scriptname[i] , temprecord));
                         m_scripttable[ ids[i] ] = tmpScript;
 					} catch(ScriptException &e) {
-                        CLogger::writeError( "scripts", "Error while loading script: " + scriptname[i] + ":\n" + e.what() + "\n" );
+                        Logger::writeError( "scripts", "Error while loading script: " + scriptname[i] + ":\n" + e.what() + "\n" );
 					}
 				}
 				m_table[ ids[i] ] = temprecord;
@@ -121,18 +121,18 @@ void CCommonObjectTable::reload() {
 		} else m_dataOK = false;
 
 
-#ifdef CDataConnect_DEBUG
-		std::cout << "loaded " << rows << " rows into CCommonObjectTable" << std::endl;
+#ifdef DataConnect_DEBUG
+		std::cout << "loaded " << rows << " rows into CommonObjectTable" << std::endl;
 #endif
 
-	} catch (std::exception e) {
+	} catch (std::exception &e) {
 		std::cerr << "exception: " << e.what() << std::endl;
 		m_dataOK = false;
 	}
 
 }
 
-bool CCommonObjectTable::find( TYPE_OF_ITEM_ID Id, CommonStruct &ret ) {
+bool CommonObjectTable::find( TYPE_OF_ITEM_ID Id, CommonStruct &ret ) {
 	TABLE::iterator iterator;
 	iterator = m_table.find( Id );
 
@@ -144,7 +144,7 @@ bool CCommonObjectTable::find( TYPE_OF_ITEM_ID Id, CommonStruct &ret ) {
 	}
 }
 
-boost::shared_ptr<CLuaItemScript> CCommonObjectTable::findScript( TYPE_OF_ITEM_ID Id)
+boost::shared_ptr<LuaItemScript> CommonObjectTable::findScript( TYPE_OF_ITEM_ID Id)
 {
     SCRIPTTABLE::iterator iterator;
 	iterator = m_scripttable.find( Id );
@@ -155,11 +155,11 @@ boost::shared_ptr<CLuaItemScript> CCommonObjectTable::findScript( TYPE_OF_ITEM_I
 	} 
     else 
     {
-		return boost::shared_ptr<CLuaItemScript>();
+		return boost::shared_ptr<LuaItemScript>();
 	}    
 }
 
-bool CCommonObjectTable::find( TYPE_OF_ITEM_ID Id) {
+bool CommonObjectTable::find( TYPE_OF_ITEM_ID Id) {
 	TABLE::iterator iterator;
 	iterator = m_table.find( Id );
 
@@ -172,12 +172,12 @@ bool CCommonObjectTable::find( TYPE_OF_ITEM_ID Id) {
 
 
 
-void CCommonObjectTable::clearOldTable() {
+void CommonObjectTable::clearOldTable() {
 	m_table.clear();
 }
 
 
-CCommonObjectTable::~CCommonObjectTable() {
+CommonObjectTable::~CommonObjectTable() {
 	clearOldTable();
 }
 

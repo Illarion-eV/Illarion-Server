@@ -24,12 +24,12 @@
 #include "netinterface/protocol/ClientCommands.hpp"
 
 
-void CPlayer::workoutCommands()
+void Player::workoutCommands()
 {
 #ifdef _PLAYER_AUTO_SAVE_    
     checkSave();
 #endif    
-    boost::shared_ptr<CBasicClientCommand> cmd = Connection->getCommand();
+    boost::shared_ptr<BasicClientCommand> cmd = Connection->getCommand();
     if ( cmd )
     {
         cmd->performAction( this );
@@ -43,7 +43,7 @@ void CPlayer::workoutCommands()
 		if ( attackmode && fightPoints >= P_MIN_FP ) 
         {
             //cp->ltAction->abortAction();
-			CWorld::get()->characterAttacks( this );
+			World::get()->characterAttacks( this );
 		}
     }
     cmd.reset();

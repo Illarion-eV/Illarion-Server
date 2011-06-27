@@ -23,18 +23,18 @@
 #include "CommandFactory.hpp"
 
 
-CNetInterface::CNetInterface(boost::asio::io_service &io_servicen) : online( false ), io_service(io_servicen), socket(io_servicen), inactive(0)
+NetInterface::NetInterface(boost::asio::io_service &io_servicen) : online( false ), io_service(io_servicen), socket(io_servicen), inactive(0)
 {
     cmd.reset();
 }
 
-std::string CNetInterface::getIPAdress()
+std::string NetInterface::getIPAdress()
 {
     return ipadress;
 }
 
 
-CNetInterface::~CNetInterface()
+NetInterface::~NetInterface()
 {
     try
     {
@@ -56,18 +56,18 @@ CNetInterface::~CNetInterface()
 
 
 
-void CNetInterface::closeConnection()
+void NetInterface::closeConnection()
 {
     
     //std::cerr<<getIPAdress()<<"closeConnection called"<<std::endl;
     online = false;
 }
 
-bool CNetInterface::activate()
+bool NetInterface::activate()
 {
     try
     {
-        boost::asio::async_read(socket,boost::asio::buffer(headerBuffer,6), boost::bind(&CNetInterface::handle_read_header, shared_from_this(),boost::asio::placeholders::error));
+        boost::asio::async_read(socket,boost::asio::buffer(headerBuffer,6), boost::bind(&NetInterface::handle_read_header, shared_from_this(),boost::asio::placeholders::error));
         ipadress = socket.remote_endpoint().address().to_string();
         online = true;
         return true;
@@ -80,7 +80,7 @@ bool CNetInterface::activate()
 }
 
 
-void CNetInterface::handle_read_data(const boost::system::error_code& error)
+void NetInterface::handle_read_data(const boost::system::error_code& error)
 {
     if ( !error )
     {
@@ -101,24 +101,24 @@ void CNetInterface::handle_read_data(const boost::system::error_code& error)
             }
             //std::cout<<"cmd resetted!"<<std::endl;
             cmd.reset();
-            boost::asio::async_read(socket,boost::asio::buffer(headerBuffer,6), boost::bind(&CNetInterface::handle_read_header, shared_from_this(),boost::asio::placeholders::error));
+            boost::asio::async_read(socket,boost::asio::buffer(headerBuffer,6), boost::bind(&NetInterface::handle_read_header, shared_from_this(),boost::asio::placeholders::error));
         }
     }
     else
     {
         if (online)std::cerr<<"handle_read_data error during read "<<getIPAdress()<<" "<<error.message()<<" :"<< error<<std::endl;
         closeConnection();
-        boost::asio::async_read(socket,boost::asio::buffer(headerBuffer,6), boost::bind(&CNetInterface::handle_read_header, shared_from_this(),boost::asio::placeholders::error));
+        boost::asio::async_read(socket,boost::asio::buffer(headerBuffer,6), boost::bind(&NetInterface::handle_read_header, shared_from_this(),boost::asio::placeholders::error));
     }
 }
 
-bool CNetInterface::nextInactive()
+bool NetInterface::nextInactive()
 {
     inactive++;
     return ( inactive > 1000 );
 }
 
-void CNetInterface::handle_read_header(const boost::system::error_code& error)
+void NetInterface::handle_read_header(const boost::system::error_code& error)
 {
     if ( !error )
     {
@@ -133,7 +133,7 @@ void CNetInterface::handle_read_header(const boost::system::error_code& error)
             if ( cmd )
             {
                 cmd->setHeaderData(length,checkSum);
-                boost::asio::async_read(socket,boost::asio::buffer(cmd->msg_data(),cmd->getLength()), boost::bind(&CNetInterface::handle_read_data, shared_from_this(),boost::asio::placeholders::error));
+                boost::asio::async_read(socket,boost::asio::buffer(cmd->msg_data(),cmd->getLength()), boost::bind(&NetInterface::handle_read_data, shared_from_this(),boost::asio::placeholders::error));
                 return;
             }
             else
@@ -157,12 +157,12 @@ void CNetInterface::handle_read_header(const boost::system::error_code& error)
                     headerBuffer[start++] = headerBuffer[i++];
                 }
                 //restheader empfangen
-                boost::asio::async_read(socket,boost::asio::buffer(&headerBuffer[start],6-start), boost::bind(&CNetInterface::handle_read_header, shared_from_this(),boost::asio::placeholders::error));
+                boost::asio::async_read(socket,boost::asio::buffer(&headerBuffer[start],6-start), boost::bind(&NetInterface::handle_read_header, shared_from_this(),boost::asio::placeholders::error));
                 return;
             }
         }
         //Keine Command Signature gefunden wieder 6 Byte Header auslesen
-        boost::asio::async_read(socket,boost::asio::buffer(headerBuffer,6), boost::bind(&CNetInterface::handle_read_header, shared_from_this(),boost::asio::placeholders::error));
+        boost::asio::async_read(socket,boost::asio::buffer(headerBuffer,6), boost::bind(&NetInterface::handle_read_header, shared_from_this(),boost::asio::placeholders::error));
 
     }
     else
@@ -174,7 +174,7 @@ void CNetInterface::handle_read_header(const boost::system::error_code& error)
 }
 
 
-void CNetInterface::addCommand( boost::shared_ptr<CBasicServerCommand> command )
+void NetInterface::addCommand( boost::shared_ptr<BasicServerCommand> command )
 {
     if ( online )
     {
@@ -187,7 +187,7 @@ void CNetInterface::addCommand( boost::shared_ptr<CBasicServerCommand> command )
             if (!write_in_progress && online)
             {
                 boost::asio::async_write(socket,boost::asio::buffer(sendQueue.front()->cmdData(),sendQueue.front()->getLength()),
-                    boost::bind(&CNetInterface::handle_write, shared_from_this(),boost::asio::placeholders::error));
+                    boost::bind(&NetInterface::handle_write, shared_from_this(),boost::asio::placeholders::error));
             }
         }
         catch ( std::exception ex )
@@ -200,14 +200,14 @@ void CNetInterface::addCommand( boost::shared_ptr<CBasicServerCommand> command )
 
 }
 
-void CNetInterface::shutdownSend( boost::shared_ptr<CBasicServerCommand> command )
+void NetInterface::shutdownSend( boost::shared_ptr<BasicServerCommand> command )
 {
 	try
 	{
 		command->addHeader();
 		shutdownCmd = command;
 		boost::asio::async_write(socket,boost::asio::buffer(shutdownCmd->cmdData(),shutdownCmd->getLength()),
-		boost::bind(&CNetInterface::handle_write_shutdown, shared_from_this(),boost::asio::placeholders::error));
+		boost::bind(&NetInterface::handle_write_shutdown, shared_from_this(),boost::asio::placeholders::error));
 	}
 	catch ( std::exception ex )
 	{
@@ -216,7 +216,7 @@ void CNetInterface::shutdownSend( boost::shared_ptr<CBasicServerCommand> command
 	}
 }
 
-void CNetInterface::handle_write(const boost::system::error_code& error)
+void NetInterface::handle_write(const boost::system::error_code& error)
 {
 	try
 	{
@@ -229,7 +229,7 @@ void CNetInterface::handle_write(const boost::system::error_code& error)
                 if ( !sendQueue.empty() && online)
                 {
                     boost::asio::async_write(socket,boost::asio::buffer(sendQueue.front()->cmdData(),sendQueue.front()->getLength()),
-                        boost::bind(&CNetInterface::handle_write, shared_from_this(),boost::asio::placeholders::error));
+                        boost::bind(&NetInterface::handle_write, shared_from_this(),boost::asio::placeholders::error));
                 }
                 sendQueueMutex.unlock();
                 
@@ -248,7 +248,7 @@ void CNetInterface::handle_write(const boost::system::error_code& error)
 	}
 }
 
-void CNetInterface::handle_write_shutdown(const boost::system::error_code& error)
+void NetInterface::handle_write_shutdown(const boost::system::error_code& error)
 {
     if ( !error )
     {
@@ -262,11 +262,11 @@ void CNetInterface::handle_write_shutdown(const boost::system::error_code& error
     }
 }
 
-boost::shared_ptr<CBasicClientCommand> CNetInterface::getCommand()
+boost::shared_ptr<BasicClientCommand> NetInterface::getCommand()
 {
     if ( online )
     {
-        boost::shared_ptr<CBasicClientCommand> ret;
+        boost::shared_ptr<BasicClientCommand> ret;
         receiveQueueMutex.lock();
         if ( !receiveQueue.empty() )
         {
@@ -276,6 +276,6 @@ boost::shared_ptr<CBasicClientCommand> CNetInterface::getCommand()
         receiveQueueMutex.unlock();
         return ret;
     }
-    return boost::shared_ptr<CBasicClientCommand>();
+    return boost::shared_ptr<BasicClientCommand>();
 }
 

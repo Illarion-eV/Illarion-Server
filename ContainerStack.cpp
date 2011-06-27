@@ -19,15 +19,15 @@
 
 #include "ContainerStack.hpp"
 
-CContainerStack::CContainerStack() {}
+ContainerStack::ContainerStack() {}
 
 
-CContainerStack::CContainerStack( const CContainerStack& source ) {
+ContainerStack::ContainerStack( const ContainerStack& source ) {
 	opencontainers = source.opencontainers;
 }
 
 
-CContainerStack& CContainerStack:: operator =( const CContainerStack& source ) {
+ContainerStack& ContainerStack:: operator =( const ContainerStack& source ) {
 	if ( this != &source ) {
 		opencontainers = source.opencontainers;
 	}
@@ -35,22 +35,22 @@ CContainerStack& CContainerStack:: operator =( const CContainerStack& source ) {
 }
 
 
-CContainerStack::~CContainerStack() {}
+ContainerStack::~ContainerStack() {}
 
 
-void CContainerStack::startContainer( CContainer* cc, bool carry ) {
+void ContainerStack::startContainer( Container* cc, bool carry ) {
 	clear();
 	openContainer( cc );
 	inventory = carry;
 }
 
 
-void CContainerStack::openContainer( CContainer* cc ) {
+void ContainerStack::openContainer( Container* cc ) {
 	opencontainers.push_back( cc );
 }
 
 
-bool CContainerStack::closeContainer() {
+bool ContainerStack::closeContainer() {
 	if ( opencontainers.empty() ) {
 		return false;
 	} else {
@@ -66,7 +66,7 @@ bool CContainerStack::closeContainer() {
 
 
 
-bool CContainerStack::isOnTop( CContainer* cc ) {
+bool ContainerStack::isOnTop( Container* cc ) {
 	if ( opencontainers.empty() ) {
 		return false;
 	} else {
@@ -76,7 +76,7 @@ bool CContainerStack::isOnTop( CContainer* cc ) {
 
 
 
-CContainer* CContainerStack::top() {
+Container* ContainerStack::top() {
 	if ( opencontainers.empty() ) {
 		return NULL;
 	} else {
@@ -86,8 +86,8 @@ CContainer* CContainerStack::top() {
 
 
 
-bool CContainerStack::contains( CContainer* cc ) {
-	CONTAINERVECTOR::iterator theIterator;
+bool ContainerStack::contains( Container* cc ) {
+	ONTAINERVECTOR::iterator theIterator;
 
 	for ( theIterator = opencontainers.begin(); theIterator < opencontainers.end(); ++theIterator ) {
 		if ( ( *theIterator ) == cc ) {
@@ -99,13 +99,13 @@ bool CContainerStack::contains( CContainer* cc ) {
 
 
 
-void CContainerStack::clear() {
+void ContainerStack::clear() {
 	opencontainers.clear();
 	inventory = false;
 }
 
 
 
-bool CContainerStack::inInventory() {
+bool ContainerStack::inInventory() {
 	return inventory;
 }

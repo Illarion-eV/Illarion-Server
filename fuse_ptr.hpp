@@ -66,7 +66,7 @@ class fuse_ptr
         {
             if( *ptr == 0 )
             {
-                throw std::logic_error( "Usage of invalid CCharacter! Use isCharValid( char ) to check if a CCharacter is still valid." );
+                throw std::logic_error( "Usage of invalid Character! Use isCharValid( char ) to check if a Character is still valid." );
             }
             else
             {

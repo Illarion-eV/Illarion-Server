@@ -21,20 +21,20 @@
 #include "RaceSizeTable.hpp"
 
 
-CRaceSizeTable::CRaceSizeTable() : m_dataOk(false)
+RaceSizeTable::RaceSizeTable() : m_dataOk(false)
 {
     reload();
 }
 
-CRaceSizeTable::~CRaceSizeTable()
+RaceSizeTable::~RaceSizeTable()
 {
     clearOldTable();
 }
 
-void CRaceSizeTable::reload()
+void RaceSizeTable::reload()
 {
-#ifdef CDataConnect_DEBUG
-    std::cout<<"Trying to reload CRaceSizeTable!"<<std::endl;
+#ifdef DataConnect_DEBUG
+    std::cout<<"Trying to reload RaceSizeTable!"<<std::endl;
 #endif
     
     try
@@ -56,8 +56,8 @@ void CRaceSizeTable::reload()
     
        m_dataOk = true;
                    
-#ifdef CDataConnect_DEBUG
-	   std::cout << "loaded " << rows << " rows into CRaceSizeTable" << std::endl;
+#ifdef DataConnect_DEBUG
+	   std::cout << "loaded " << rows << " rows into RaceSizeTable" << std::endl;
 #endif
     }
     catch ( ... )
@@ -66,7 +66,7 @@ void CRaceSizeTable::reload()
     }
 }
 
-uint8_t CRaceSizeTable::getRelativeSize( CCharacter::race_type race, uint16_t size )
+uint8_t RaceSizeTable::getRelativeSize( Character::race_type race, uint16_t size )
 {
     // relative size is between 50 and 120 (in percent) and a linear interploation between min and max size
     uint16_t maxsize, minsize;
@@ -89,7 +89,7 @@ uint8_t CRaceSizeTable::getRelativeSize( CCharacter::race_type race, uint16_t si
         return 100;
 }
 
-void CRaceSizeTable::clearOldTable()
+void RaceSizeTable::clearOldTable()
 {
     minsizes.clear();
     maxsizes.clear();

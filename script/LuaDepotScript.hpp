@@ -23,21 +23,21 @@
 #include "LuaScript.hpp"
 #include "Item.hpp"
 
-class CWorld;
-class CCharacter;
+class World;
+class Character;
 
-class CLuaDepotScript : public CLuaScript
+class LuaDepotScript : public LuaScript
 {
     public:
-        CLuaDepotScript(std::string filename) throw(ScriptException);
-        virtual ~CLuaDepotScript() throw ();
+        LuaDepotScript(std::string filename) throw(ScriptException);
+        virtual ~LuaDepotScript() throw ();
 
-        bool onOpenDepot(CCharacter * cc, Item itm);
+        bool onOpenDepot(Character * cc, Item itm);
         
     private:
     
-	CLuaDepotScript(const CLuaDepotScript&);
-	CLuaDepotScript& operator=(const CLuaDepotScript&);
+	LuaDepotScript(const LuaDepotScript&);
+	LuaDepotScript& operator=(const LuaDepotScript&);
     
           
 

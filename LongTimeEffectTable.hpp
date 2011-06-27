@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CLONGTIMEEFFEKTTABLE_HPP_
-#define CLONGTIMEEFFEKTTABLE_HPP_
+#ifndef LONGTIMEEFFEKTTABLE_HPP_
+#define LONGTIMEEFFEKTTABLE_HPP_
 
 #include <string>
 
@@ -39,22 +39,22 @@ using std::hash_map;
 
 #endif
 
-class CDBConnect;
-class CWorld;
-class CCharcter;
+class DBConnect;
+class World;
+class Charcter;
 
 /**
 * a table for long time effects which can have effects on each characters
 */
-class CLongTimeEffectTable {
+class LongTimeEffectTable {
 	public:
     
         bool find(uint16_t effectId, LongTimeEffectStruct &ret);
         bool find(std::string effectname, LongTimeEffectStruct &ret);
     
-		CLongTimeEffectTable();
+		LongTimeEffectTable();
 
-		~CLongTimeEffectTable();
+		~LongTimeEffectTable();
 
 		void reload();
 

@@ -26,7 +26,7 @@
 #include "Logger.hpp"
 
 //! table with item attributes
-extern CCommonObjectTable* CommonItems;
+extern CommonObjectTable* CommonItems;
 
 //! wird von verschiedenen Funktionen als Zwischenvariable genutzt
 extern CommonStruct tempCommon;
@@ -38,15 +38,15 @@ const std::string toString(const from& convert) {
 	return stream.str();
 }*/
 
-CMonsterTable::CMonsterTable() : m_dataOK(false), world(CWorld::get()) 
+MonsterTable::MonsterTable() : m_dataOK(false), world(World::get()) 
 {
 	reload();
 }
 
 
-void CMonsterTable::reload() {
-#ifdef CDataConnect_DEBUG
-	std::cout << "CMonsterTable: reload" << std::endl;
+void MonsterTable::reload() {
+#ifdef DataConnect_DEBUG
+	std::cout << "MonsterTable: reload" << std::endl;
 #endif
 
 	try {
@@ -74,24 +74,24 @@ void CMonsterTable::reload() {
 		for (size_t i = 0; i < rows; ++i) {
 			MonsterStruct temprecord;
 			temprecord.name = names[i];
-			temprecord.race = (CCharacter::race_type)races[i];
+			temprecord.race = (Character::race_type)races[i];
 			temprecord.hitpoints = hitpoints[i];
 			temprecord.canselfheal = canheal[i];
 			temprecord.canattack = canattack[i];
 			temprecord.minsize = minsizes[i];
 			temprecord.maxsize = maxsizes[i];
-			temprecord.movement = CCharacter::walk; // don't need to check for walk since it's default
+			temprecord.movement = Character::walk; // don't need to check for walk since it's default
 			if (movementtype[i] == "fly")
-				temprecord.movement = CCharacter::fly;
+				temprecord.movement = Character::fly;
 			if (movementtype[i] == "crawl")
-				temprecord.movement = CCharacter::crawl;
+				temprecord.movement = Character::crawl;
 
 			if (!n_scriptname.var[i] ) {
 				try {
-					boost::shared_ptr<CLuaMonsterScript> script(new CLuaMonsterScript( scriptname[i] ) );
+					boost::shared_ptr<LuaMonsterScript> script(new LuaMonsterScript( scriptname[i] ) );
 					temprecord.script = script;
 				} catch (ScriptException &e) {
-                    CLogger::writeError( "scripts", "Error while loading script: " + scriptname[i] + ":\n" + e.what() + "\n" );
+                    Logger::writeError( "scripts", "Error while loading script: " + scriptname[i] + ":\n" + e.what() + "\n" );
 				}
 
 			}
@@ -219,7 +219,7 @@ void CMonsterTable::reload() {
 			m_dataOK = true;
 		}
 
-#ifdef CDataConnect_DEBUG
+#ifdef DataConnect_DEBUG
 		std::cout << "loaded " << m_table.size() << " monsters!" << std::endl;
 #endif
 
@@ -230,7 +230,7 @@ void CMonsterTable::reload() {
 
 }
 
-bool CMonsterTable::find( TYPE_OF_CHARACTER_ID Id, MonsterStruct &ret ) {
+bool MonsterTable::find( TYPE_OF_CHARACTER_ID Id, MonsterStruct &ret ) {
 	TABLE::iterator iterator;
 	iterator = m_table.find( Id );
 
@@ -242,10 +242,10 @@ bool CMonsterTable::find( TYPE_OF_CHARACTER_ID Id, MonsterStruct &ret ) {
 	}
 }
 
-void CMonsterTable::clearOldTable() {
+void MonsterTable::clearOldTable() {
 	m_table.clear();
 }
 
-CMonsterTable::~CMonsterTable() {
+MonsterTable::~MonsterTable() {
 	clearOldTable();
 }

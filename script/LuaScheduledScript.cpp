@@ -23,26 +23,26 @@
 #include "Logger.hpp"
 
 
-CLuaScheduledScript::CLuaScheduledScript(std::string filename) throw(ScriptException)
-    : CLuaScript(filename)
+LuaScheduledScript::LuaScheduledScript(std::string filename) throw(ScriptException)
+    : LuaScript(filename)
 {
 }
 
-CLuaScheduledScript::~CLuaScheduledScript() throw() {}
+LuaScheduledScript::~LuaScheduledScript() throw() {}
 
-void CLuaScheduledScript::callFunction(std::string name, uint32_t currentCycle, uint32_t lastCycle, uint32_t nextCycle)
+void LuaScheduledScript::callFunction(std::string name, uint32_t currentCycle, uint32_t lastCycle, uint32_t nextCycle)
 {
     try
     {
-        CWorld::get()->setCurrentScript( this ); 
-        //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("CLuaScheduledScript::callFunction called for: " + name, 3));
-        CLogger::writeMessage("scripts","CLuaScheduledScript::callFunction called for: " + name);
+        World::get()->setCurrentScript( this ); 
+        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("LuaScheduledScript::callFunction called for: " + name, 3));
+        Logger::writeMessage("scripts","LuaScheduledScript::callFunction called for: " + name);
         call(name)( currentCycle, lastCycle, nextCycle );
     }
     catch (luabind::error &e)
     {
         writeErrorMsg();
-         //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("Error: CLuaScheduledScript::callFunction called for: " + name + " " + e.what(),3));
+         //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("Error: LuaScheduledScript::callFunction called for: " + name + " " + e.what(),3));
     }
 }
 

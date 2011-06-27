@@ -17,11 +17,11 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CIdCounter_HH
-#define CIdCounter_HH
+#ifndef IdCounter_HH
+#define IdCounter_HH
 
 //falls nicht auskommentiert, werden mehr Bildschirmausgaben gemacht:
-//#define CIdCounter_DEBUG
+//#define IdCounter_DEBUG
 
 #include <string>
 #include <fstream>
@@ -32,17 +32,17 @@
 //! Ein Zähler für bereits vergebene ID's
 // Der Zählerstand wird in eine Datei gespeichert und bei
 // Initialisierung wieder geladen.
-class CIdCounter {
+class IdCounter {
 	public:
 		//! Konstruktor
 		// \param counterfile die Datei welche für die Speicherung der
 		// zuletzt vergebenen ID genutzt wird
-		CIdCounter( std::string counterfile );
+		IdCounter( std::string counterfile );
 
 		// create a new counter with the given starting ID
-		CIdCounter(const std::string& counterfile, const TYPE_OF_CHARACTER_ID& startid);
+		IdCounter(const std::string& counterfile, const TYPE_OF_CHARACTER_ID& startid);
 		//! Destruktor
-		~CIdCounter();
+		~IdCounter();
 
 		//! liefert die nächste freie ID zurück und hält diese als bereits verwendet fest
 		// \return die nächste freie ID

@@ -57,32 +57,32 @@ enum bbclientcommands
 * @ingroup BBIWIClientcommands
 * client send a broadcast to all players
 */
-class CBBBroadCastTS : public CBasicClientCommand
+class BBBroadCastTS : public BasicClientCommand
 {
     public:
-        CBBBroadCastTS() : CBasicClientCommand( BB_BROADCAST_TS )
+        BBBroadCastTS() : BasicClientCommand( BB_BROADCAST_TS )
         {
         }
         
-        ~CBBBroadCastTS(){};
+        ~BBBroadCastTS(){};
         
         void decodeData()
         {
             msg = getStringFromBuffer();
         }
         
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
-            CWorld::get()->sendMessageToAllPlayers( msg );
-            CWorld::get()->monitoringClientList->sendCommand(boost::shared_ptr<CBasicServerCommand>(new CBBMessageTC("[Server] Broadcast:",0 ) ));
-            CWorld::get()->monitoringClientList->sendCommand(boost::shared_ptr<CBasicServerCommand>(new CBBMessageTC( msg, 0 ) ));
-            std::string message = "By: " + player->name + "(" + CLogger::toString(player->id) + ")";
-            CWorld::get()->monitoringClientList->sendCommand(boost::shared_ptr<CBasicServerCommand>( new CBBMessageTC(message,0 ) ));
+            World::get()->sendMessageToAllPlayers( msg );
+            World::get()->monitoringClientList->sendCommand(boost::shared_ptr<BasicServerCommand>(new BBMessageTC("[Server] Broadcast:",0 ) ));
+            World::get()->monitoringClientList->sendCommand(boost::shared_ptr<BasicServerCommand>(new BBMessageTC( msg, 0 ) ));
+            std::string message = "By: " + player->name + "(" + Logger::toString(player->id) + ")";
+            World::get()->monitoringClientList->sendCommand(boost::shared_ptr<BasicServerCommand>( new BBMessageTC(message,0 ) ));
         }
         
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CBBBroadCastTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new BBBroadCastTS() );
 			return cmd;
         }
         
@@ -94,14 +94,14 @@ class CBBBroadCastTS : public CBasicClientCommand
 * @ingroup BBIWIClientcommands
 * client send a special command
 */
-class CBBRequestStatTS : public CBasicClientCommand
+class BBRequestStatTS : public BasicClientCommand
 {
     public:
-        CBBRequestStatTS() : CBasicClientCommand( BB_REQUESTSTATS_TS )
+        BBRequestStatTS() : BasicClientCommand( BB_REQUESTSTATS_TS )
         {
         }
         
-        ~CBBRequestStatTS(){};
+        ~BBRequestStatTS(){};
         
         void decodeData()
         {
@@ -109,14 +109,14 @@ class CBBRequestStatTS : public CBasicClientCommand
             name = getStringFromBuffer();
         }
         
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
-            CPlayer * tempPlayer=NULL;
-            tempPlayer = CWorld::get()->Players.find(name);
+            Player * tempPlayer=NULL;
+            tempPlayer = World::get()->Players.find(name);
             if ( tempPlayer == NULL )
             {
-                CWorld::PLAYERVECTOR::iterator playerIterator;
-                for ( playerIterator = CWorld::get()->Players.begin(); playerIterator != CWorld::get()->Players.end(); ++playerIterator ) 
+                World::PLAYERVECTOR::iterator playerIterator;
+                for ( playerIterator = World::get()->Players.begin(); playerIterator != World::get()->Players.end(); ++playerIterator ) 
                 {
                     if ( ( *playerIterator )->id == id ) 
                     {
@@ -126,43 +126,43 @@ class CBBRequestStatTS : public CBasicClientCommand
             }
             if ( tempPlayer != NULL )
             {
-                boost::shared_ptr<CBasicServerCommand>cmd(new CBBSendAttribTC( tempPlayer->id, "sex", tempPlayer->increaseAttrib( "sex",0) ));
+                boost::shared_ptr<BasicServerCommand>cmd(new BBSendAttribTC( tempPlayer->id, "sex", tempPlayer->increaseAttrib( "sex",0) ));
                 player->Connection->addCommand( cmd );
-                cmd.reset( new CBBSendAttribTC( tempPlayer->id, "age", tempPlayer->increaseAttrib( "age",0) ));
+                cmd.reset( new BBSendAttribTC( tempPlayer->id, "age", tempPlayer->increaseAttrib( "age",0) ));
                 player->Connection->addCommand( cmd );
-                cmd.reset( new CBBSendAttribTC( tempPlayer->id, "weight", tempPlayer->increaseAttrib( "weight",0) ));
+                cmd.reset( new BBSendAttribTC( tempPlayer->id, "weight", tempPlayer->increaseAttrib( "weight",0) ));
                 player->Connection->addCommand( cmd );
-                cmd.reset( new CBBSendAttribTC( tempPlayer->id, "body_height", tempPlayer->increaseAttrib( "body_height",0) ));
+                cmd.reset( new BBSendAttribTC( tempPlayer->id, "body_height", tempPlayer->increaseAttrib( "body_height",0) ));
                 player->Connection->addCommand( cmd );
-                cmd.reset( new CBBSendAttribTC( tempPlayer->id, "attitude", tempPlayer->increaseAttrib( "attitude",0) ) );
+                cmd.reset( new BBSendAttribTC( tempPlayer->id, "attitude", tempPlayer->increaseAttrib( "attitude",0) ) );
                 player->Connection->addCommand( cmd );
-                cmd.reset( new CBBSendAttribTC( tempPlayer->id, "luck", tempPlayer->increaseAttrib( "luck",0) ));
+                cmd.reset( new BBSendAttribTC( tempPlayer->id, "luck", tempPlayer->increaseAttrib( "luck",0) ));
                 player->Connection->addCommand( cmd );
-                cmd.reset( new CBBSendAttribTC( tempPlayer->id, "strength", tempPlayer->increaseAttrib( "strength",0) ) );
+                cmd.reset( new BBSendAttribTC( tempPlayer->id, "strength", tempPlayer->increaseAttrib( "strength",0) ) );
                 player->Connection->addCommand( cmd );
-                cmd.reset( new CBBSendAttribTC( tempPlayer->id, "dexterity", tempPlayer->increaseAttrib( "dexterity",0) ));
+                cmd.reset( new BBSendAttribTC( tempPlayer->id, "dexterity", tempPlayer->increaseAttrib( "dexterity",0) ));
                 player->Connection->addCommand( cmd );
-                cmd.reset( new CBBSendAttribTC( tempPlayer->id, "constitution", tempPlayer->increaseAttrib( "constitution",0) ));
+                cmd.reset( new BBSendAttribTC( tempPlayer->id, "constitution", tempPlayer->increaseAttrib( "constitution",0) ));
                 player->Connection->addCommand( cmd );
-                cmd.reset( new CBBSendAttribTC( tempPlayer->id, "intelligence", tempPlayer->increaseAttrib( "intelligence",0) ));
+                cmd.reset( new BBSendAttribTC( tempPlayer->id, "intelligence", tempPlayer->increaseAttrib( "intelligence",0) ));
                 player->Connection->addCommand( cmd );
-                cmd.reset( new CBBSendAttribTC( tempPlayer->id, "perception", tempPlayer->increaseAttrib( "perception",0) ));
+                cmd.reset( new BBSendAttribTC( tempPlayer->id, "perception", tempPlayer->increaseAttrib( "perception",0) ));
                 player->Connection->addCommand( cmd );
-                cmd.reset( new CBBSendAttribTC( tempPlayer->id, "age", tempPlayer->increaseAttrib( "age",0) ));
+                cmd.reset( new BBSendAttribTC( tempPlayer->id, "age", tempPlayer->increaseAttrib( "age",0) ));
                 player->Connection->addCommand( cmd );
-                cmd.reset( new CBBSendAttribTC( tempPlayer->id, "willpower", tempPlayer->increaseAttrib( "willpower",0) )); 
+                cmd.reset( new BBSendAttribTC( tempPlayer->id, "willpower", tempPlayer->increaseAttrib( "willpower",0) )); 
                 player->Connection->addCommand( cmd );
-                cmd.reset( new CBBSendAttribTC( tempPlayer->id, "essence", tempPlayer->increaseAttrib( "essence",0) ));
+                cmd.reset( new BBSendAttribTC( tempPlayer->id, "essence", tempPlayer->increaseAttrib( "essence",0) ));
                 player->Connection->addCommand( cmd );
-                cmd.reset( new CBBSendAttribTC( tempPlayer->id, "agility", tempPlayer->increaseAttrib( "agility",0) ) );
+                cmd.reset( new BBSendAttribTC( tempPlayer->id, "agility", tempPlayer->increaseAttrib( "agility",0) ) );
                 player->Connection->addCommand( cmd );
                 
             }        
         }
         
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CBBRequestStatTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new BBRequestStatTS() );
 			return cmd;
         }
         
@@ -175,14 +175,14 @@ class CBBRequestStatTS : public CBasicClientCommand
 * @ingroup BBIWIClientcommands
 * client requests all skills of another player
 */
-class CBBRequestSkillsTS : public CBasicClientCommand
+class BBRequestSkillsTS : public BasicClientCommand
 {
     public:
-        CBBRequestSkillsTS() : CBasicClientCommand( BB_REQUESTSKILLS_TS )
+        BBRequestSkillsTS() : BasicClientCommand( BB_REQUESTSKILLS_TS )
         {
         }
         
-        ~CBBRequestSkillsTS(){};
+        ~BBRequestSkillsTS(){};
         
         void decodeData()
         {
@@ -191,14 +191,14 @@ class CBBRequestSkillsTS : public CBasicClientCommand
             type = getUnsignedCharFromBuffer();
         }
         
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
-            CPlayer * tempPlayer=NULL;
-            tempPlayer = CWorld::get()->Players.find(name);
+            Player * tempPlayer=NULL;
+            tempPlayer = World::get()->Players.find(name);
             if ( tempPlayer == NULL )
             {
-                CWorld::PLAYERVECTOR::iterator playerIterator;
-                for ( playerIterator = CWorld::get()->Players.begin(); playerIterator != CWorld::get()->Players.end(); ++playerIterator ) 
+                World::PLAYERVECTOR::iterator playerIterator;
+                for ( playerIterator = World::get()->Players.begin(); playerIterator != World::get()->Players.end(); ++playerIterator ) 
                 {
                     if ( ( *playerIterator )->id == id ) 
                     {
@@ -208,21 +208,21 @@ class CBBRequestSkillsTS : public CBasicClientCommand
             }
             if ( tempPlayer != NULL )
             {
-                CCharacter::SKILLMAP::const_iterator sIterator;
+                Character::SKILLMAP::const_iterator sIterator;
                 for ( sIterator = tempPlayer->skills.begin(); sIterator != tempPlayer->skills.end(); ++sIterator)
                 {
                     if ( type == sIterator->second.type )
                     {
-                        boost::shared_ptr<CBasicServerCommand>cmd(new CBBSendSkillTC( tempPlayer->id, sIterator->second.type, sIterator->first, sIterator->second.major, sIterator->second.minor ));
+                        boost::shared_ptr<BasicServerCommand>cmd(new BBSendSkillTC( tempPlayer->id, sIterator->second.type, sIterator->first, sIterator->second.major, sIterator->second.minor ));
                         player->Connection->addCommand( cmd );
                     }
                 }
             }            
         }
         
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CBBRequestSkillsTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new BBRequestSkillsTS() );
 			return cmd;
         }
         
@@ -237,14 +237,14 @@ class CBBRequestSkillsTS : public CBasicClientCommand
 * @ingroup BBIWIClientcommands
 * client wants to speak as a player
 */
-class CBBSpeakAsTS : public CBasicClientCommand
+class BBSpeakAsTS : public BasicClientCommand
 {
     public:
-        CBBSpeakAsTS() : CBasicClientCommand( BB_SPEAKAS_TS )
+        BBSpeakAsTS() : BasicClientCommand( BB_SPEAKAS_TS )
         {
         }
         
-        ~CBBSpeakAsTS(){};
+        ~BBSpeakAsTS(){};
         
         void decodeData()
         {
@@ -253,14 +253,14 @@ class CBBSpeakAsTS : public CBasicClientCommand
             message = getStringFromBuffer();
         }
         
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
-            CPlayer * tempPlayer=NULL;
-            tempPlayer = CWorld::get()->Players.find(name);
+            Player * tempPlayer=NULL;
+            tempPlayer = World::get()->Players.find(name);
             if ( tempPlayer == NULL )
             {
-                CWorld::PLAYERVECTOR::iterator playerIterator;
-                for ( playerIterator = CWorld::get()->Players.begin(); playerIterator != CWorld::get()->Players.end(); ++playerIterator ) 
+                World::PLAYERVECTOR::iterator playerIterator;
+                for ( playerIterator = World::get()->Players.begin(); playerIterator != World::get()->Players.end(); ++playerIterator ) 
                 {
                     if ( ( *playerIterator )->id == id ) 
                     {
@@ -270,14 +270,14 @@ class CBBSpeakAsTS : public CBasicClientCommand
             }
             if ( tempPlayer != NULL )
             {
-                tempPlayer->talk(CCharacter::tt_say,message);
+                tempPlayer->talk(Character::tt_say,message);
             }
-            CLogger::writeMessage("bbiwi", player->name + " talked as other player: " + tempPlayer->name + " with message: " + message);
+            Logger::writeMessage("bbiwi", player->name + " talked as other player: " + tempPlayer->name + " with message: " + message);
         }
         
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CBBSpeakAsTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new BBSpeakAsTS() );
 			return cmd;
         }
         
@@ -293,14 +293,14 @@ class CBBSpeakAsTS : public CBasicClientCommand
 * @ingroup BBIWIClientcommands
 * client wants a player to warp
 */
-class CBBWarpPlayerTS : public CBasicClientCommand
+class BBWarpPlayerTS : public BasicClientCommand
 {
     public:
-        CBBWarpPlayerTS() : CBasicClientCommand( BB_WARPPLAYER_TS )
+        BBWarpPlayerTS() : BasicClientCommand( BB_WARPPLAYER_TS )
         {
         }
         
-        ~CBBWarpPlayerTS(){};
+        ~BBWarpPlayerTS(){};
         
         void decodeData()
         {
@@ -311,14 +311,14 @@ class CBBWarpPlayerTS : public CBasicClientCommand
             posz = getIntFromBuffer();
         }
         
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
-            CPlayer * tempPlayer=NULL;
-            tempPlayer = CWorld::get()->Players.find(name);
+            Player * tempPlayer=NULL;
+            tempPlayer = World::get()->Players.find(name);
             if ( tempPlayer == NULL )
             {
-                CWorld::PLAYERVECTOR::iterator playerIterator;
-                for ( playerIterator = CWorld::get()->Players.begin(); playerIterator != CWorld::get()->Players.end(); ++playerIterator ) 
+                World::PLAYERVECTOR::iterator playerIterator;
+                for ( playerIterator = World::get()->Players.begin(); playerIterator != World::get()->Players.end(); ++playerIterator ) 
                 {
                     if ( ( *playerIterator )->id == id ) 
                     {
@@ -333,9 +333,9 @@ class CBBWarpPlayerTS : public CBasicClientCommand
             }        
         }
         
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CBBWarpPlayerTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new BBWarpPlayerTS() );
 			return cmd;
         }
         
@@ -349,33 +349,33 @@ class CBBWarpPlayerTS : public CBasicClientCommand
 * @ingroup BBIWIClientcommands
 * client send a special command
 */
-class CBBServerCommandTS : public CBasicClientCommand
+class BBServerCommandTS : public BasicClientCommand
 {
     public:
-        CBBServerCommandTS() : CBasicClientCommand( BB_SERVERCOMMAND_TS )
+        BBServerCommandTS() : BasicClientCommand( BB_SERVERCOMMAND_TS )
         {
         }
         
-        ~CBBServerCommandTS(){};
+        ~BBServerCommandTS(){};
         
         void decodeData()
         {
             _command = getStringFromBuffer();
         }
         
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
-            if ( _command == "nuke" ) CWorld::get()->montool_kill_command(player);
-            if ( _command == "reload" ) CWorld::get()->montool_reload_command(player);
-            if ( _command == "kickall" ) CWorld::get()->montool_kickall_command(player);
-            if ( _command == "importmaps" ) CWorld::get()->montool_import_maps_command(player);
-            if ( _command == "setloginfalse" ) CWorld::get()->montool_set_login(player,"false");
-            if ( _command == "setlogintrue" )CWorld::get()->montool_set_login(player,"true");
+            if ( _command == "nuke" ) World::get()->montool_kill_command(player);
+            if ( _command == "reload" ) World::get()->montool_reload_command(player);
+            if ( _command == "kickall" ) World::get()->montool_kickall_command(player);
+            if ( _command == "importmaps" ) World::get()->montool_import_maps_command(player);
+            if ( _command == "setloginfalse" ) World::get()->montool_set_login(player,"false");
+            if ( _command == "setlogintrue" ) World::get()->montool_set_login(player,"true");
         }
         
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CBBServerCommandTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new BBServerCommandTS() );
 			return cmd;
         }
         
@@ -387,14 +387,14 @@ class CBBServerCommandTS : public CBasicClientCommand
 * @ingroup BBIWIClientcommands
 * client wants to change skill of someone
 */
-class CBBChangeAttribTS : public CBasicClientCommand
+class BBChangeAttribTS : public BasicClientCommand
 {
     public:
-        CBBChangeAttribTS() : CBasicClientCommand( BB_CHANGEATTRIB_TS )
+        BBChangeAttribTS() : BasicClientCommand( BB_CHANGEATTRIB_TS )
         {
         }
         
-        ~CBBChangeAttribTS(){};
+        ~BBChangeAttribTS(){};
         
         void decodeData()
         {
@@ -405,14 +405,14 @@ class CBBChangeAttribTS : public CBasicClientCommand
             std::cout<<"received ChangeAttrib: "<<_plid<<" "<<_plname<<" "<<_attr<<" "<<_value<<std::endl;
         }
         
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
-            CPlayer * tempPlayer=NULL;
-            tempPlayer = CWorld::get()->Players.find(_plname);
+            Player * tempPlayer=NULL;
+            tempPlayer = World::get()->Players.find(_plname);
             if ( tempPlayer == NULL )
             {
-                CWorld::PLAYERVECTOR::iterator playerIterator;
-                for ( playerIterator = CWorld::get()->Players.begin(); playerIterator != CWorld::get()->Players.end(); ++playerIterator ) 
+                World::PLAYERVECTOR::iterator playerIterator;
+                for ( playerIterator = World::get()->Players.begin(); playerIterator != World::get()->Players.end(); ++playerIterator ) 
                 {
                     if ( ( *playerIterator )->id == _plid ) 
                     {
@@ -426,9 +426,9 @@ class CBBChangeAttribTS : public CBasicClientCommand
             }
         }
         
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CBBChangeAttribTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new BBChangeAttribTS() );
 			return cmd;
         }
         
@@ -443,14 +443,14 @@ class CBBChangeAttribTS : public CBasicClientCommand
 * @ingroup BBIWIClientcommands
 * client wants to change an attrib of someone
 */
-class CBBChangeSkillTS : public CBasicClientCommand
+class BBChangeSkillTS : public BasicClientCommand
 {
     public:
-        CBBChangeSkillTS() : CBasicClientCommand( BB_CHANGEATTRIB_TS )
+        BBChangeSkillTS() : BasicClientCommand( BB_CHANGEATTRIB_TS )
         {
         }
         
-        ~CBBChangeSkillTS(){};
+        ~BBChangeSkillTS(){};
         
         void decodeData()
         {
@@ -462,14 +462,14 @@ class CBBChangeSkillTS : public CBasicClientCommand
             std::cout<<"received ChangeSkill: "<<_plid<<" "<<_plname<<" "<<_type<<" "<<_skill<<" "<<_value<<std::endl;
         }
         
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
-            CPlayer * tempPlayer=NULL;
-            tempPlayer = CWorld::get()->Players.find(_plname);
+            Player * tempPlayer=NULL;
+            tempPlayer = World::get()->Players.find(_plname);
             if ( tempPlayer == NULL )
             {
-                CWorld::PLAYERVECTOR::iterator playerIterator;
-                for ( playerIterator = CWorld::get()->Players.begin(); playerIterator != CWorld::get()->Players.end(); ++playerIterator ) 
+                World::PLAYERVECTOR::iterator playerIterator;
+                for ( playerIterator = World::get()->Players.begin(); playerIterator != World::get()->Players.end(); ++playerIterator ) 
                 {
                     if ( ( *playerIterator )->id == _plid ) 
                     {
@@ -483,9 +483,9 @@ class CBBChangeSkillTS : public CBasicClientCommand
             }
         }
         
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CBBChangeSkillTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new BBChangeSkillTS() );
 			return cmd;
         }
         
@@ -501,14 +501,14 @@ class CBBChangeSkillTS : public CBasicClientCommand
 * @ingroup BBIWIClientcommands
 * client talks to someone
 */
-class CBBTalktoTS : public CBasicClientCommand
+class BBTalktoTS : public BasicClientCommand
 {
     public:
-        CBBTalktoTS() : CBasicClientCommand( BB_TALKTO_TS )
+        BBTalktoTS() : BasicClientCommand( BB_TALKTO_TS )
         {
         }
         
-        virtual ~CBBTalktoTS(){};
+        virtual ~BBTalktoTS(){};
         
         void decodeData()
         {
@@ -517,14 +517,14 @@ class CBBTalktoTS : public CBasicClientCommand
             msg = getStringFromBuffer();
         }
         
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
-            CPlayer * tempPlayer=NULL;
-            tempPlayer = CWorld::get()->Players.find(playername);
+            Player * tempPlayer=NULL;
+            tempPlayer = World::get()->Players.find(playername);
             if ( tempPlayer == NULL )
             {
-                CWorld::PLAYERVECTOR::iterator playerIterator;
-                for ( playerIterator =CWorld::get()->Players.begin(); playerIterator !=CWorld::get()->Players.end(); ++playerIterator ) 
+                World::PLAYERVECTOR::iterator playerIterator;
+                for ( playerIterator = World::get()->Players.begin(); playerIterator != World::get()->Players.end(); ++playerIterator )
                 {
                     if ( ( *playerIterator )->id == playerid ) 
                     {
@@ -534,13 +534,13 @@ class CBBTalktoTS : public CBasicClientCommand
             }
             if ( tempPlayer != NULL )
             {
-                CWorld::get()->sendMessageToPlayer(tempPlayer, msg);
+                World::get()->sendMessageToPlayer(tempPlayer, msg);
             }
         }
         
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CBBTalktoTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new BBTalktoTS() );
 			return cmd;
         }
         
@@ -554,30 +554,30 @@ class CBBTalktoTS : public CBasicClientCommand
 * @ingroup BBIWIClientcommands
 * client disconnects
 */
-class CBBDisconnectTS : public CBasicClientCommand
+class BBDisconnectTS : public BasicClientCommand
 {
     public:
-        CBBDisconnectTS() : CBasicClientCommand( BB_DISCONNECT_TS )
+        BBDisconnectTS() : BasicClientCommand( BB_DISCONNECT_TS )
         {
         }
         
-        virtual ~CBBDisconnectTS(){};
+        virtual ~BBDisconnectTS(){};
         
         void decodeData()
         {
 
         }
         
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
             //we want to disconnect so we close the connection
             player->Connection->closeConnection();
 
         }
         
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CBBDisconnectTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new BBDisconnectTS() );
 			return cmd;
         }
 
@@ -588,29 +588,29 @@ class CBBDisconnectTS : public CBasicClientCommand
 * @ingroup BBIWIClientcommands
 * character received a keepalive
 */
-class CBBKeepAliveTS : public CBasicClientCommand
+class BBKeepAliveTS : public BasicClientCommand
 {
     public:
-        CBBKeepAliveTS() : CBasicClientCommand( BB_KEEPALIVE_TS )
+        BBKeepAliveTS() : BasicClientCommand( BB_KEEPALIVE_TS )
         {
 
         }
         
-        ~CBBKeepAliveTS(){};
+        ~BBKeepAliveTS(){};
         
         void decodeData()
         {
 
         }
         
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
             time( &(player->lastkeepalive) );
         }
         
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CBBKeepAliveTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new BBKeepAliveTS() );
 			return cmd;
         }
 
@@ -620,14 +620,14 @@ class CBBKeepAliveTS : public CBasicClientCommand
 * @ingroup BBIWIClientcommands
 * character is banned for an amount of time
 */
-class CBBBanTS : public CBasicClientCommand
+class BBBanTS : public BasicClientCommand
 {
     public:
-        CBBBanTS() : CBasicClientCommand( BB_BAN_TS )
+        BBBanTS() : BasicClientCommand( BB_BAN_TS )
         {
         }
         
-        ~CBBBanTS(){};
+        ~BBBanTS(){};
         
         void decodeData()
         {
@@ -636,14 +636,14 @@ class CBBBanTS : public CBasicClientCommand
             time = getIntFromBuffer();
         }
         
-        void performAction( CPlayer * player )
+        void performAction( Player * player )
         {
-            CPlayer * tempPlayer=NULL;
-            tempPlayer =CWorld::get()->Players.find(name);
+            Player * tempPlayer=NULL;
+            tempPlayer = World::get()->Players.find(name);
             if ( tempPlayer == NULL )
             {
-                CWorld::PLAYERVECTOR::iterator playerIterator;
-                for ( playerIterator =CWorld::get()->Players.begin(); playerIterator !=CWorld::get()->Players.end(); ++playerIterator ) 
+                World::PLAYERVECTOR::iterator playerIterator;
+                for ( playerIterator = World::get()->Players.begin(); playerIterator != World::get()->Players.end(); ++playerIterator )
                 {
                     if ( ( *playerIterator )->id == id ) 
                     {
@@ -653,20 +653,20 @@ class CBBBanTS : public CBasicClientCommand
             }
             if ( tempPlayer != NULL )
             {
-                CWorld::get()->ban(tempPlayer, time, player->id);
-                boost::shared_ptr<CBasicServerCommand>cmd( new CBBMessageTC( "Player: " + name + "(" + CLogger::toString(id) + ")" + " banned by: " + player->name + "(" + CLogger::toString(player->id) + ")", 0) );
-                CWorld::get()->monitoringClientList->sendCommand( cmd );
+                World::get()->ban(tempPlayer, time, player->id);
+                boost::shared_ptr<BasicServerCommand>cmd( new BBMessageTC( "Player: " + name + "(" + Logger::toString(id) + ")" + " banned by: " + player->name + "(" + Logger::toString(player->id) + ")", 0) );
+                World::get()->monitoringClientList->sendCommand( cmd );
             }
             else
             {
-                boost::shared_ptr<CBasicServerCommand>cmd(new CBBMessageTC( "Cannot find the player: " + name + "(" + CLogger::toString(id) + ")",0 ));
+                boost::shared_ptr<BasicServerCommand>cmd(new BBMessageTC( "Cannot find the player: " + name + "(" + Logger::toString(id) + ")",0 ));
                 player->Connection->addCommand( cmd );
             }
         }
         
-        boost::shared_ptr<CBasicClientCommand> clone()
+        boost::shared_ptr<BasicClientCommand> clone()
         {
-            boost::shared_ptr<CBasicClientCommand>cmd( new CBBBanTS() );
+            boost::shared_ptr<BasicClientCommand>cmd( new BBBanTS() );
 			return cmd;
         }
         TYPE_OF_CHARACTER_ID id; /*<which character is banned*/

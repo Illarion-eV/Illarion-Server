@@ -17,22 +17,22 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CLUALONGTIMEEFFECTSCRIPT_HPP_
-#define CLUALONGTIMEEFFECTSCRIPT_HPP_
+#ifndef LUALONGTIMEEFFECTSCRIPT_HPP_
+#define LUALONGTIMEEFFECTSCRIPT_HPP_
 
 #include "LuaScript.hpp"
 #include "TableStructs.hpp"
 
-class CWorld;
-class CCharacter;
-class CLongTimeEffect;
-class CPlayer;
+class World;
+class Character;
+class LongTimeEffect;
+class Player;
 
-class CLuaLongTimeEffectScript : public CLuaScript 
+class LuaLongTimeEffectScript : public LuaScript 
 {
 	public:
-		CLuaLongTimeEffectScript(std::string filename, LongTimeEffectStruct effectStruct) throw(ScriptException);
-		virtual ~CLuaLongTimeEffectScript() throw();
+		LuaLongTimeEffectScript(std::string filename, LongTimeEffectStruct effectStruct) throw(ScriptException);
+		virtual ~LuaLongTimeEffectScript() throw();
 		
 		/**
         *calling the long time effect in a script
@@ -40,27 +40,27 @@ class CLuaLongTimeEffectScript : public CLuaScript
         *@param taget the character which is hidden by the effect
         *@return true if the effect should be added to the effectlist again
         */
-        bool callEffect(CLongTimeEffect * effect, CCharacter * target);
+        bool callEffect(LongTimeEffect * effect, Character * target);
 
         /**
         *invoked if a effect which exists on a player should be added again
         *@param effect the effect which is currently active
         *@param target the character which should get the effect again
         */
-        void doubleEffect(CLongTimeEffect * effect, CCharacter * target);
+        void doubleEffect(LongTimeEffect * effect, Character * target);
         
         /**
         *invoked if a effect is loaded to a player
         */
-        void loadEffect(CLongTimeEffect * effect, CPlayer * target);
+        void loadEffect(LongTimeEffect * effect, Player * target);
         
-        void addEffect(CLongTimeEffect * effect, CCharacter * target);
-        void removeEffect(CLongTimeEffect * effect, CCharacter * target);
+        void addEffect(LongTimeEffect * effect, Character * target);
+        void removeEffect(LongTimeEffect * effect, Character * target);
         
 	private:
 		LongTimeEffectStruct _effectStruct;
-		CLuaLongTimeEffectScript(const CLuaItemScript&);
-		CLuaLongTimeEffectScript& operator=(const CLuaLongTimeEffectScript&);
+		LuaLongTimeEffectScript(const LuaItemScript&);
+		LuaLongTimeEffectScript& operator=(const LuaLongTimeEffectScript&);
 		void init_functions();
 };
 #endif

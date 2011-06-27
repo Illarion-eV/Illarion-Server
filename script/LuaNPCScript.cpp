@@ -25,38 +25,38 @@
 #include "Logger.hpp"
 #include "fuse_ptr.hpp"
 
-CLuaNPCScript::CLuaNPCScript(std::string filename, CNPC* thisnpc) throw(ScriptException)
-		: CLuaScript(filename), _thisnpc(thisnpc)
+LuaNPCScript::LuaNPCScript(std::string filename, NPC* thisnpc) throw(ScriptException)
+		: LuaScript(filename), _thisnpc(thisnpc)
 {
 	init_functions();
 }
 
-CLuaNPCScript::~CLuaNPCScript() throw() {}
+LuaNPCScript::~LuaNPCScript() throw() {}
 
-void CLuaNPCScript::init_functions() 
+void LuaNPCScript::init_functions() 
 {
 	luabind::object globals = luabind::globals(_luaState);
-    fuse_ptr<CCharacter> fuse__thisnpc(_thisnpc);
+    fuse_ptr<Character> fuse__thisnpc(_thisnpc);
 	globals["thisNPC"] = fuse__thisnpc;
 }
 
-void CLuaNPCScript::nextCycle() {
+void LuaNPCScript::nextCycle() {
 	init_functions();
     try {
-        CWorld::get()->setCurrentScript( this ); 
+        World::get()->setCurrentScript( this ); 
 		call("nextCycle")();
 	} catch (luabind::error &e) {
         writeErrorMsg();
 	}
 }
 
-bool CLuaNPCScript::lookAtNpc(CCharacter * source, unsigned char mode)
+bool LuaNPCScript::lookAtNpc(Character * source, unsigned char mode)
 {
     init_functions();
     try 
     {
-        CWorld::get()->setCurrentScript( this ); 
-		fuse_ptr<CCharacter> fuse_source(source);
+        World::get()->setCurrentScript( this ); 
+		fuse_ptr<Character> fuse_source(source);
         call("lookAtNpc")( fuse_source, mode );
         return true;
 	} 
@@ -68,90 +68,90 @@ bool CLuaNPCScript::lookAtNpc(CCharacter * source, unsigned char mode)
 }
 
 // we heard <cc> say <message>
-void CLuaNPCScript::receiveText(CCharacter::talk_type tt, std::string message, CCharacter* cc) {
+void LuaNPCScript::receiveText(Character::talk_type tt, std::string message, Character* cc) {
 	init_functions();
     try {
-        CWorld::get()->setCurrentScript( this ); 
+        World::get()->setCurrentScript( this ); 
 #ifdef MAJORSCRIPTLOG
-        //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("CLuaNPCScript::receiveText called for: " + _thisnpc->name,3));
-        CLogger::writeMessage("scripts","CLuaNPCScript::receiveText called for: " + _thisnpc->name);
+        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("LuaNPCScript::receiveText called for: " + _thisnpc->name,3));
+        Logger::writeMessage("scripts","LuaNPCScript::receiveText called for: " + _thisnpc->name);
 #endif        
-        fuse_ptr<CCharacter> fuse_cc(cc);
+        fuse_ptr<Character> fuse_cc(cc);
 		call("receiveText")( (int)tt, message, fuse_cc );
 	} catch (luabind::error &e) {
         writeErrorMsg();
-        //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("Error: CLuaNPCScript::receiveText called for: " + _thisnpc->name + " " + e.what(),3));
+        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("Error: LuaNPCScript::receiveText called for: " + _thisnpc->name + " " + e.what(),3));
 	}
 }
 
-void CLuaNPCScript::useNPC(CCharacter * user, unsigned short counter, unsigned short int param, unsigned char ltastate) {
+void LuaNPCScript::useNPC(Character * user, unsigned short counter, unsigned short int param, unsigned char ltastate) {
 	init_functions();
     try {
-        CWorld::get()->setCurrentScript( this ); 
-         //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("CLuaNPCScript::useNPC called for: " + _thisnpc->name,3));
-        CLogger::writeMessage("scripts","CLuaNPCScript::useNPC called for: " + _thisnpc->name);
-		fuse_ptr<CCharacter> fuse_user(user);
+        World::get()->setCurrentScript( this ); 
+         //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("LuaNPCScript::useNPC called for: " + _thisnpc->name,3));
+        Logger::writeMessage("scripts","LuaNPCScript::useNPC called for: " + _thisnpc->name);
+		fuse_ptr<Character> fuse_user(user);
         call("useNPC")( fuse_user, counter, param, ltastate );
 	} catch (luabind::error &e) {
         writeErrorMsg();
-         //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("Error: CLuaNPCScript::useNPC called for: " + _thisnpc->name + " " + e.what(),3));
+         //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("Error: LuaNPCScript::useNPC called for: " + _thisnpc->name + " " + e.what(),3));
 	}
 }
 
-void CLuaNPCScript::useNPCWithCharacter(CCharacter * user, CCharacter * targetChar, unsigned short counter, unsigned short int param, unsigned char ltastate) {
+void LuaNPCScript::useNPCWithCharacter(Character * user, Character * targetChar, unsigned short counter, unsigned short int param, unsigned char ltastate) {
 	init_functions();
     try 
     {
-        CWorld::get()->setCurrentScript( this ); 
-        //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("CLuaNPCScript::useNPCWithCharacter called for: " + _thisnpc->name,3));
-        CLogger::writeMessage("scripts","CLuaNPCScript::useNPCWithCharacter called for: " + _thisnpc->name);
-		fuse_ptr<CCharacter> fuse_user(user);
-        fuse_ptr<CCharacter> fuse_targetChar(targetChar);
+        World::get()->setCurrentScript( this ); 
+        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("LuaNPCScript::useNPCWithCharacter called for: " + _thisnpc->name,3));
+        Logger::writeMessage("scripts","LuaNPCScript::useNPCWithCharacter called for: " + _thisnpc->name);
+		fuse_ptr<Character> fuse_user(user);
+        fuse_ptr<Character> fuse_targetChar(targetChar);
         call("useNPCWithCharacter")( fuse_user, fuse_targetChar, counter, param, ltastate  );
 	} catch (luabind::error &e) {
         writeErrorMsg();
-        //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("Error: CLuaNPCScript::useNPCWithCharacter called for: " + _thisnpc->name + " " + e.what(),3));
+        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("Error: LuaNPCScript::useNPCWithCharacter called for: " + _thisnpc->name + " " + e.what(),3));
 	}
 }
 
-void CLuaNPCScript::useNPCWithField(CCharacter * user, position pos, unsigned short counter, unsigned short int param, unsigned char ltastate) {
+void LuaNPCScript::useNPCWithField(Character * user, position pos, unsigned short counter, unsigned short int param, unsigned char ltastate) {
 	init_functions();
     try {
-        CWorld::get()->setCurrentScript( this ); 
-        //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("CLuaNPCScript::useNPCWithField called for: " + _thisnpc->name,3));
-        CLogger::writeMessage("scripts","CLuaNPCScript::useNPCWithField called for: " + _thisnpc->name);
-		fuse_ptr<CCharacter> fuse_user(user);
+        World::get()->setCurrentScript( this ); 
+        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("LuaNPCScript::useNPCWithField called for: " + _thisnpc->name,3));
+        Logger::writeMessage("scripts","LuaNPCScript::useNPCWithField called for: " + _thisnpc->name);
+		fuse_ptr<Character> fuse_user(user);
         call("useNPCWithField")( fuse_user, pos, counter, param, ltastate );
 	} catch (luabind::error &e) {
         writeErrorMsg();
-        //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("Error: CLuaNPCScript::useNPCWithField called for: " + _thisnpc->name + " " + e.what(),3));
+        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("Error: LuaNPCScript::useNPCWithField called for: " + _thisnpc->name + " " + e.what(),3));
 	}
 }
 
-void CLuaNPCScript::useNPCWithItem(CCharacter * user, ScriptItem TargetItem, unsigned short counter, unsigned short int param, unsigned char ltastate) {
+void LuaNPCScript::useNPCWithItem(Character * user, ScriptItem TargetItem, unsigned short counter, unsigned short int param, unsigned char ltastate) {
 	init_functions();
     try {
-        CWorld::get()->setCurrentScript( this ); 
-        //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("CLuaNPCScript::useNPCWithItem called for: " + _thisnpc->name,3));
-        CLogger::writeMessage("scripts","CLuaNPCScript::useNPCWithItem called for: " + _thisnpc->name);
-		fuse_ptr<CCharacter> fuse_user(user);
+        World::get()->setCurrentScript( this ); 
+        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("LuaNPCScript::useNPCWithItem called for: " + _thisnpc->name,3));
+        Logger::writeMessage("scripts","LuaNPCScript::useNPCWithItem called for: " + _thisnpc->name);
+		fuse_ptr<Character> fuse_user(user);
         call("useNPCWithItem")( fuse_user, TargetItem, counter, param, ltastate );
 	} catch (luabind::error &e) {
         writeErrorMsg();
-        //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("Error: CLuaNPCScript::useNPCWithItem called for: " + _thisnpc->name + " " + e.what(),3));
+        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("Error: LuaNPCScript::useNPCWithItem called for: " + _thisnpc->name + " " + e.what(),3));
 	}
 }
 
-bool CLuaNPCScript::actionDisturbed(CCharacter * performer, CCharacter * disturber)
+bool LuaNPCScript::actionDisturbed(Character * performer, Character * disturber)
 {
     init_functions();
     try
     {
-        CWorld::get()->setCurrentScript( this ); 
-        //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("CLuaNPCScript::actionDisturbed called for: " + _thisnpc->name,3));
-        CLogger::writeMessage("scripts","CLuaNPCScript::actionDisturbed called for: " + _thisnpc->name);
-        fuse_ptr<CCharacter> fuse_performer(performer);
-        fuse_ptr<CCharacter> fuse_disturber(disturber);
+        World::get()->setCurrentScript( this ); 
+        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("LuaNPCScript::actionDisturbed called for: " + _thisnpc->name,3));
+        Logger::writeMessage("scripts","LuaNPCScript::actionDisturbed called for: " + _thisnpc->name);
+        fuse_ptr<Character> fuse_performer(performer);
+        fuse_ptr<Character> fuse_disturber(disturber);
         return luabind::object_cast<bool>(call("actionDisturbed")( fuse_performer, fuse_disturber ));
     }
     catch ( luabind::error &e)
@@ -160,75 +160,75 @@ bool CLuaNPCScript::actionDisturbed(CCharacter * performer, CCharacter * disturb
     }
 }
 
-void CLuaNPCScript::characterOnSight(CCharacter * npc, CCharacter * enemy)
+void LuaNPCScript::characterOnSight(Character * npc, Character * enemy)
 {
     init_functions();
     try
     {
-        CWorld::get()->setCurrentScript( this ); 
+        World::get()->setCurrentScript( this ); 
 #ifdef MAJORSCRIPTLOG
-        //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("enemyOnSight called for: " + Monster->name,3));
-        CLogger::writeMessage("scripts","characterOnSight called for: " + npc->name);
+        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("enemyOnSight called for: " + Monster->name,3));
+        Logger::writeMessage("scripts","characterOnSight called for: " + npc->name);
 #endif        
-        fuse_ptr<CCharacter> fuse_npc(npc);
-        fuse_ptr<CCharacter> fuse_enemy(enemy);
+        fuse_ptr<Character> fuse_npc(npc);
+        fuse_ptr<Character> fuse_enemy(enemy);
         call("characterOnSight")( fuse_npc, fuse_enemy );
     }
     catch ( luabind::error &e)
     {
         writeErrorMsg();
-        //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("Error: enemyOnSight called for: " + Monster->name + " " + e.what(),3));
+        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("Error: enemyOnSight called for: " + Monster->name + " " + e.what(),3));
     }
 }
 
-void CLuaNPCScript::characterNear(CCharacter * npc, CCharacter * enemy)
+void LuaNPCScript::characterNear(Character * npc, Character * enemy)
 {
     init_functions();
     try
     {
-        CWorld::get()->setCurrentScript( this ); 
+        World::get()->setCurrentScript( this ); 
 #ifdef MAJORSCRIPTLOG
-        //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("enemyNear called for: " + Monster->name,3));
-        CLogger::writeMessage("scripts","characterNear called for: " + npc->name);
+        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("enemyNear called for: " + Monster->name,3));
+        Logger::writeMessage("scripts","characterNear called for: " + npc->name);
 #endif         
-        fuse_ptr<CCharacter> fuse_npc(npc);
-        fuse_ptr<CCharacter> fuse_enemy(enemy);
+        fuse_ptr<Character> fuse_npc(npc);
+        fuse_ptr<Character> fuse_enemy(enemy);
         call("characterNear")( fuse_npc, fuse_enemy );    
     }
     catch ( luabind::error &e )
     {
         writeErrorMsg();
-        //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("Error: enemyNear called for: " + Monster->name + " " + e.what(),3));
+        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("Error: enemyNear called for: " + Monster->name + " " + e.what(),3));
     }
 }
 
-void CLuaNPCScript::abortRoute(CCharacter * npc)
+void LuaNPCScript::abortRoute(Character * npc)
 {
     init_functions();
     try
     {
-        CWorld::get()->setCurrentScript( this ); 
+        World::get()->setCurrentScript( this ); 
 #ifdef MAJORSCRIPTLOG
-        //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("enemyNear called for: " + Monster->name,3));
-        CLogger::writeMessage("scripts","abortRoute called for: " + npc->name);
+        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("enemyNear called for: " + Monster->name,3));
+        Logger::writeMessage("scripts","abortRoute called for: " + npc->name);
 #endif         
-        fuse_ptr<CCharacter> fuse_npc(npc);
+        fuse_ptr<Character> fuse_npc(npc);
         call("abortRoute")( fuse_npc );    
     }
     catch ( luabind::error &e )
     {
         writeErrorMsg();
-        //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("Error: enemyNear called for: " + Monster->name + " " + e.what(),3));
+        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("Error: enemyNear called for: " + Monster->name + " " + e.what(),3));
     }
 }
 
-void CLuaNPCScript::beforeReload()
+void LuaNPCScript::beforeReload()
 {
     init_functions();
     try
     {
-        CWorld::get()->setCurrentScript( this );
-        CLogger::writeMessage("scripts","CLuaNPCScript::beforeReload called for: " + _thisnpc->name);
+        World::get()->setCurrentScript( this );
+        Logger::writeMessage("scripts","LuaNPCScript::beforeReload called for: " + _thisnpc->name);
 	call("beforeReload")();
     } catch (luabind::error &e) {
         writeErrorMsg();

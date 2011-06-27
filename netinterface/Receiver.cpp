@@ -22,13 +22,13 @@
 #include "netinterface/BasicServerCommand.hpp"
 #include "netinterface/protocol/ClientCommands.hpp"
 
-CReceiver::CReceiver( CNetInterface * conn, boost::shared_ptr<CNetInterface::CLIENTCOMMANDLIST> rQueue ) : connection( conn ), receivedQueue( rQueue )
+Receiver::Receiver( NetInterface * conn, boost::shared_ptr<NetInterface::LIENTCOMMANDLIST> rQueue ) : connection( conn ), receivedQueue( rQueue )
 {
     numtrys = 0;
     lastReadedByte = -1;
-    boost::shared_ptr<CByteBuffer>tmpBuf(new CByteBuffer());
+    boost::shared_ptr<ByteBuffer>tmpBuf(new ByteBuffer());
     buffer = tmpBuf;
-    //buffer = new CByteBuffer();
+    //buffer = new ByteBuffer();
     conn->online = false;
     rlrunning = false;
     rlOK = false;
@@ -37,7 +37,7 @@ CReceiver::CReceiver( CNetInterface * conn, boost::shared_ptr<CNetInterface::CLI
     cmd.reset();
 }
 
-CReceiver::~CReceiver()
+Receiver::~Receiver()
 {
     receivedQueue->clear();
     try
@@ -62,7 +62,7 @@ CReceiver::~CReceiver()
 
 }
 
-bool CReceiver::start()
+bool Receiver::start()
 {
     pthread_attr_t pattr;
     pthread_attr_init( &pattr);
@@ -78,7 +78,7 @@ bool CReceiver::start()
     return ok; 
 }
 
-volatile void CReceiver::checkData()
+volatile void Receiver::checkData()
 {
     while ( connection->online && (buffer != NULL ) && (buffer->dataAvailable() > 0 ))
     {
@@ -145,7 +145,7 @@ volatile void CReceiver::checkData()
     }
 }
 
-void * CReceiver::receive_loop( CReceiver * receiver )
+void * Receiver::receive_loop( Receiver * receiver )
 {
     try
     {

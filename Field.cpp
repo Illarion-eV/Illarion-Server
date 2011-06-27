@@ -25,9 +25,9 @@
 #include "TilesTable.hpp"
 #include "globals.hpp"
 
-//#define CField_DEBUG
+//#define Field_DEBUG
 
-CField::CField() {
+Field::Field() {
 
 	tile = 0;
 	music = 0;
@@ -36,17 +36,17 @@ CField::CField() {
     warptarget = new position(0,0,0);
 }
 
-void CField::setTileId( unsigned short int id )
+void Field::setTileId( unsigned short int id )
 {
 	tile = id;
 }
 
-unsigned short int CField::getTileCode()
+unsigned short int Field::getTileCode()
 {
 	return tile;
 }
 
-unsigned short int CField::getTileId()
+unsigned short int Field::getTileId()
 {
 	if( ((tile & 0xFC00) >> 10) > 0 ) // shape exists
 	{
@@ -58,17 +58,17 @@ unsigned short int CField::getTileId()
 	}
 }
 
-void CField::setMusicId( unsigned short int id )
+void Field::setMusicId( unsigned short int id )
 {
     music = id;
 }
 
-unsigned short int CField::getMusicId()
+unsigned short int Field::getMusicId()
 {
     return music;
 }
 
-ScriptItem CField::getStackItem( uint8_t spos )
+ScriptItem Field::getStackItem( uint8_t spos )
 {
     ScriptItem retItem;
     if ( items.empty() ) 
@@ -92,7 +92,7 @@ ScriptItem CField::getStackItem( uint8_t spos )
     }
 }
 
-CField::CField( const CField& source ) {
+Field::Field( const Field& source ) {
 
 	tile = source.tile;
 	clientflags = source.clientflags;
@@ -102,7 +102,7 @@ CField::CField( const CField& source ) {
 }
 
 
-CField& CField:: operator =( const CField& source ) {
+Field& Field:: operator =( const Field& source ) {
 
 	if ( this != &source ) {
 		tile = source.tile;
@@ -119,13 +119,13 @@ CField& CField:: operator =( const CField& source ) {
 }
 
 
-CField::~CField()
+Field::~Field()
 {
     delete warptarget;
 }
 
 
-bool CField::addTopItem( const Item it ) {
+bool Field::addTopItem( const Item it ) {
 
 	if ( IsPassable() ) {
 		if ( items.size() < MAXITEMS ) {
@@ -144,7 +144,7 @@ bool CField::addTopItem( const Item it ) {
 }
 
 
-bool CField::PutGroundItem( const Item it ) {
+bool Field::PutGroundItem( const Item it ) {
 
 	if ( items.size() < MAXITEMS ) {
 		if ( items.empty() ) {
@@ -166,7 +166,7 @@ bool CField::PutGroundItem( const Item it ) {
 }
 
 
-bool CField::PutTopItem( const Item it ) {
+bool Field::PutTopItem( const Item it ) {
 
 	if ( items.size() < MAXITEMS ) {
 		items.push_back( it );
@@ -183,7 +183,7 @@ bool CField::PutTopItem( const Item it ) {
 }
 
 
-bool CField::TakeTopItem( Item &it ) {
+bool Field::TakeTopItem( Item &it ) {
 
 	if ( items.empty() ) {
 		return false;
@@ -197,7 +197,7 @@ bool CField::TakeTopItem( Item &it ) {
 
 }
 
-bool CField::changeQualityOfTopItem(short int amount) {
+bool Field::changeQualityOfTopItem(short int amount) {
 	Item it;
 	short int tmpQuality;
 	if ( TakeTopItem( it ) ) {
@@ -215,19 +215,19 @@ bool CField::changeQualityOfTopItem(short int amount) {
 }
 
 
-int CField::increaseTopItem( int count, bool &erased ) {
+int Field::increaseTopItem( int count, bool &erased ) {
 
 	Item it;
 	int temp = count;
-#ifdef CField_DEBUG
+#ifdef Field_DEBUG
 	std::cout << "increaseTopItem " << count << "\n";
 #endif
 	if ( TakeTopItem( it ) ) {
 		temp = count + it.number;
-#ifdef CField_DEBUG
+#ifdef Field_DEBUG
 		std::cout << "temp " << temp << "\n";
 #endif
-#ifdef CField_DEBUG
+#ifdef Field_DEBUG
 		std::cout << "it.number:"<<it.number<<std::endl;
 #endif
 		if ( temp > MAXITEMS ) {
@@ -251,7 +251,7 @@ int CField::increaseTopItem( int count, bool &erased ) {
 }
 
 
-bool CField::swapTopItem( TYPE_OF_ITEM_ID newid, uint16_t newQuality ) {
+bool Field::swapTopItem( TYPE_OF_ITEM_ID newid, uint16_t newQuality ) {
 
 	std::cout << "swapTopItem " << std::endl;
 	Item temp;
@@ -276,7 +276,7 @@ bool CField::swapTopItem( TYPE_OF_ITEM_ID newid, uint16_t newQuality ) {
 }
 
 
-bool CField::ViewTopItem( Item &it ) {
+bool Field::ViewTopItem( Item &it ) {
 
 	if ( items.empty() ) {
 		return false;
@@ -289,14 +289,14 @@ bool CField::ViewTopItem( Item &it ) {
 }
 
 
-MAXCOUNTTYPE CField::NumberOfItems() {
+MAXCOUNTTYPE Field::NumberOfItems() {
 
 	return items.size();
 
 }
 
 
-void CField::Save( std::ostream* mapt, std::ostream* obj, std::ostream* warp ) {
+void Field::Save( std::ostream* mapt, std::ostream* obj, std::ostream* warp ) {
 
 	mapt->write( ( char* ) & tile, sizeof( tile ) );
 	mapt->write( ( char* ) & music, sizeof( music ) );
@@ -329,7 +329,7 @@ void CField::Save( std::ostream* mapt, std::ostream* obj, std::ostream* warp ) {
 }
 
 
-void CField::giveNonPassableItems( ITEMVECTOR &nonpassitems ) {
+void Field::giveNonPassableItems( ITEMVECTOR &nonpassitems ) {
 
 	ITEMVECTOR::iterator theIterator;
 
@@ -342,7 +342,7 @@ void CField::giveNonPassableItems( ITEMVECTOR &nonpassitems ) {
 }
 
 
-void CField::giveExportItems( ITEMVECTOR &nonmoveitems ) {
+void Field::giveExportItems( ITEMVECTOR &nonmoveitems ) {
 
 	ITEMVECTOR::iterator theIterator;
 
@@ -362,7 +362,7 @@ void CField::giveExportItems( ITEMVECTOR &nonmoveitems ) {
 }
 
 
-void CField::Load( std::istream* mapt, std::istream* obj, std::istream* warp ) {
+void Field::Load( std::istream* mapt, std::istream* obj, std::istream* warp ) {
 
 	mapt->read( ( char* ) & tile, sizeof( tile ) );
 	mapt->read( ( char* ) & music, sizeof( music ) );
@@ -397,7 +397,7 @@ void CField::Load( std::istream* mapt, std::istream* obj, std::istream* warp ) {
 
 }
 
-int8_t CField::DoAgeItems( ITEM_FUNCT funct ) {
+int8_t Field::DoAgeItems( ITEM_FUNCT funct ) {
 
 	int8_t ret = 0;
 	if ( ! items.empty() ) {
@@ -413,8 +413,8 @@ int8_t CField::DoAgeItems( ITEM_FUNCT funct ) {
 
 				if ( theIterator->id != tempCommon.ObjectAfterRot ) 
                 {
-#ifdef CField_DEBUG
-					std::cout << "CFIELD:Ein Item wird umgewandelt von: " << theIterator->id << "  nach: " << tempCommon.ObjectAfterRot << "!\n";
+#ifdef Field_DEBUG
+					std::cout << "FIELD:Ein Item wird umgewandelt von: " << theIterator->id << "  nach: " << tempCommon.ObjectAfterRot << "!\n";
 #endif
 					
                     //only set ret to 1 if it wasn't -1 because -1 has the highest priority (forces update of the field and rots container)
@@ -428,8 +428,8 @@ int8_t CField::DoAgeItems( ITEM_FUNCT funct ) {
 				} 
                 else 
                 {
-#ifdef CField_DEBUG
-					std::cout << "CFIELD:Ein Item wird gel�cht,ID:" << theIterator->id << "!\n";
+#ifdef Field_DEBUG
+					std::cout << "FIELD:Ein Item wird gel�cht,ID:" << theIterator->id << "!\n";
 #endif
 
 					if ( ContainerItems->find( theIterator->id ) ) 
@@ -456,7 +456,7 @@ int8_t CField::DoAgeItems( ITEM_FUNCT funct ) {
 
 }
 
-void CField::updateFlags() {
+void Field::updateFlags() {
 
 	// alle durch Items und Tiles modifizierte Flags l�chen
 	clientflags = clientflags & ( 255 - ( FLAG_GROUNDLEVEL ) );
@@ -480,7 +480,7 @@ void CField::updateFlags() {
 }
 
 
-void CField::DeleteAllItems() {
+void Field::DeleteAllItems() {
 
 	items.clear();
 	updateFlags();
@@ -488,21 +488,21 @@ void CField::DeleteAllItems() {
 }
 
 
-unsigned char CField::GroundLevel() {
+unsigned char Field::GroundLevel() {
 
 	return ( clientflags & FLAG_GROUNDLEVEL );
 
 }
 
 
-bool CField::IsMonsterOnField() {
+bool Field::IsMonsterOnField() {
 
 	return ( ( clientflags & FLAG_MONSTERONFIELD ) != 0 );
 
 }
 
 
-void CField::SetMonsterOnField( bool t ) {
+void Field::SetMonsterOnField( bool t ) {
 
 	if ( t ) {
 		clientflags = clientflags | FLAG_MONSTERONFIELD;
@@ -513,14 +513,14 @@ void CField::SetMonsterOnField( bool t ) {
 }
 
 
-bool CField::IsNPCOnField() {
+bool Field::IsNPCOnField() {
 
 	return ( ( clientflags & FLAG_NPCONFIELD ) != 0 );
 
 }
 
 
-void CField::SetNPCOnField( bool t ) {
+void Field::SetNPCOnField( bool t ) {
 
 	if ( t ) {
 		clientflags = clientflags | FLAG_NPCONFIELD;
@@ -531,14 +531,14 @@ void CField::SetNPCOnField( bool t ) {
 }
 
 
-bool CField::IsPlayerOnField() {
+bool Field::IsPlayerOnField() {
 
 	return ( ( clientflags & FLAG_PLAYERONFIELD ) != 0 );
 
 }
 
 
-void CField::SetPlayerOnField( bool t ) {
+void Field::SetPlayerOnField( bool t ) {
 
 	if ( t ) {
 		clientflags = clientflags | FLAG_PLAYERONFIELD;
@@ -550,7 +550,7 @@ void CField::SetPlayerOnField( bool t ) {
 
 
 
-void CField::SetLevel( unsigned char z ) {
+void Field::SetLevel( unsigned char z ) {
 
 	z <<= 4;     // bits an die richtige Position bringen
 	z &= FLAG_MAPLEVEL;     // andere bits l�chen
@@ -560,7 +560,7 @@ void CField::SetLevel( unsigned char z ) {
 }
 
 
-bool CField::IsWarpField() {
+bool Field::IsWarpField() {
 
 	return ( ( extraflags & FLAG_WARPFIELD ) != 0 );
 
@@ -568,7 +568,7 @@ bool CField::IsWarpField() {
 
 
 
-void CField::SetWarpField( const position & pos )
+void Field::SetWarpField( const position & pos )
 {
     warptarget->x = pos.x;
     warptarget->y = pos.y;
@@ -577,13 +577,13 @@ void CField::SetWarpField( const position & pos )
 }
 
 
-void CField::UnsetWarpField()
+void Field::UnsetWarpField()
 {
     extraflags = extraflags & ( 255 - FLAG_WARPFIELD );
 }
 
 
-void CField::GetWarpField( position & pos )
+void Field::GetWarpField( position & pos )
 {
     pos.x = warptarget->x;
     pos.y = warptarget->y;
@@ -591,14 +591,14 @@ void CField::GetWarpField( position & pos )
 }
 
 
-bool CField::HasSpecialItem() {
+bool Field::HasSpecialItem() {
 
 	return ( ( extraflags & FLAG_SPECIALITEM ) != 0 );
 
 }
 
 
-void CField::SetSpecialItem( bool t ) {
+void Field::SetSpecialItem( bool t ) {
 
 	if ( t ) {
 		extraflags = extraflags | FLAG_SPECIALITEM;
@@ -609,14 +609,14 @@ void CField::SetSpecialItem( bool t ) {
 }
 
 
-bool CField::IsSpecialField() {
+bool Field::IsSpecialField() {
 
 	return ( ( extraflags & FLAG_SPECIALTILE ) != 0 );
 
 }
 
 
-void CField::SetSpecialField( bool t ) {
+void Field::SetSpecialField( bool t ) {
 
 	if ( t ) {
 		extraflags = extraflags | FLAG_SPECIALTILE;
@@ -627,38 +627,38 @@ void CField::SetSpecialField( bool t ) {
 }
 
 
-bool CField::IsTransparent() {
+bool Field::IsTransparent() {
 
 	return ( ( extraflags & FLAG_TRANSPARENT ) == 0 );
 
 }
 
 
-bool CField::IsPassable() const {
+bool Field::IsPassable() const {
 
 	return ( ( ( extraflags & FLAG_PASSABLE ) == 0 ) || ( ( extraflags & FLAG_MAKEPASSABLE ) != 0 ) );
 
 }
 
 
-bool CField::IsPenetrateable() {
+bool Field::IsPenetrateable() {
 
 	return ( ( extraflags & FLAG_PENETRATEABLE ) == 0 );
 
 }
 
 
-bool CField::moveToPossible() const {
+bool Field::moveToPossible() const {
 	return (
 			   ( IsPassable()  &&
 				 ( ( clientflags & ( FLAG_MONSTERONFIELD | FLAG_NPCONFIELD | FLAG_PLAYERONFIELD ) ) == 0 ) )
 		   );
 }
 
-void CField::setChar() {
+void Field::setChar() {
 	clientflags |= FLAG_PLAYERONFIELD;
 }
 
-void CField::removeChar() {
+void Field::removeChar() {
 	clientflags &= ~FLAG_PLAYERONFIELD;
 }

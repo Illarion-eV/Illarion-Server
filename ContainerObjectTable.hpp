@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CCONTAINEROBJECTTABLE_H
-#define CCONTAINEROBJECTTABLE_H
+#ifndef CONTAINEROBJECTTABLE_H
+#define CONTAINEROBJECTTABLE_H
 #include <string>
 
 #if __GNUC__ < 3
@@ -39,13 +39,13 @@ using std::hash_map;
 #include "TableStructs.hpp"
 
 //! eine Tabelle für allgemeine Item-Eigenschaften
-class CContainerObjectTable {
+class ContainerObjectTable {
 	public:
 		bool find( TYPE_OF_ITEM_ID Id, ContainerStruct &ret );
 
-		CContainerObjectTable();
+		ContainerObjectTable();
 
-		~CContainerObjectTable();
+		~ContainerObjectTable();
 
 		void reload();
 

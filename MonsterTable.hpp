@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CMONSTERTABLE_H
-#define CMONSTERTABLE_H
+#ifndef MONSTERTABLE_H
+#define MONSTERTABLE_H
 
 #include <string>
 #include <map>
@@ -80,25 +80,25 @@ struct MonsterStruct {
 	typedef std::map<std::string, std::pair<unsigned short, unsigned short> > skilltype;
 	typedef std::map<unsigned short, std::list<itemdef_t> > itemtype;
 	std::string name;
-	CCharacter::race_type race;
+	Character::race_type race;
 	unsigned short hitpoints;
 	bool canselfheal; //Ob sich das Monster selbst heilen kann oder nicht.
-	CCharacter::movement_type movement;
+	Character::movement_type movement;
 	bool canattack;
 	attributedef_t  attributes;
 	skilltype skills;
 	itemtype items;
-	boost::shared_ptr<CLuaMonsterScript> script;
+	boost::shared_ptr<LuaMonsterScript> script;
 	uint16_t minsize;
 	uint16_t maxsize;
 };
 
 //! eine Tabelle für allgemeine Item-Eigenschaften
-class CMonsterTable {
+class MonsterTable {
 	public:
-		CMonsterTable();
+		MonsterTable();
 
-		~CMonsterTable();
+		~MonsterTable();
 
 		void reload();
 
@@ -120,7 +120,7 @@ class CMonsterTable {
 
 		bool m_dataOK;
 
-		CWorld * world;
+		World * world;
 
 };
 #endif

@@ -29,12 +29,12 @@
 
 
 //! eine Tabelle fuer Behaelter - Item Daten
-extern CContainerObjectTable* ContainerItems;
-extern CRaceSizeTable* RaceSizes;
+extern ContainerObjectTable* ContainerItems;
+extern RaceSizeTable* RaceSizes;
 
-        CItemUpdate_TC::CItemUpdate_TC( position fieldpos, ITEMVECTOR & items ) : CBasicServerCommand( SC_ITEMUPDATE_TC )
+        ItemUpdate_TC::ItemUpdate_TC( position fieldpos, ITEMVECTOR & items ) : BasicServerCommand( SC_ITEMUPDATE_TC )
         {
-            CLogger::writeMessage("rot_update", "sending new itemstack for pos("+CLogger::toString(fieldpos.x)+", "+CLogger::toString(fieldpos.y)+", "+CLogger::toString(fieldpos.z)+")",false);
+            Logger::writeMessage("rot_update", "sending new itemstack for pos("+Logger::toString(fieldpos.x)+", "+Logger::toString(fieldpos.y)+", "+Logger::toString(fieldpos.z)+")",false);
             addShortIntToBuffer( fieldpos.x );
             addShortIntToBuffer( fieldpos.y );
             addShortIntToBuffer( fieldpos.z );
@@ -48,12 +48,12 @@ extern CRaceSizeTable* RaceSizes;
                 if (size <= 0) break;
                 addShortIntToBuffer( it->id );
                 addUnsignedCharToBuffer( it->number );
-                CLogger::writeMessage("rot_update", "adding item id: "+CLogger::toString(it->id)+" count: "+CLogger::toString(static_cast<int>(it->number)),false);
+                Logger::writeMessage("rot_update", "adding item id: "+Logger::toString(it->id)+" count: "+Logger::toString(static_cast<int>(it->number)),false);
                 size--;
             }
         }
         
-        CItemUpdate_TC::CItemUpdate_TC( int16_t px, int16_t py, int16_t pz, ITEMVECTOR &items ) : CBasicServerCommand( SC_ITEMUPDATE_TC ) 
+        ItemUpdate_TC::ItemUpdate_TC( int16_t px, int16_t py, int16_t pz, ITEMVECTOR &items ) : BasicServerCommand( SC_ITEMUPDATE_TC ) 
         {
             addShortIntToBuffer( px );
             addShortIntToBuffer( py );
@@ -72,13 +72,13 @@ extern CRaceSizeTable* RaceSizes;
             }
         }
         
-        CCharDescription::CCharDescription(TYPE_OF_CHARACTER_ID id, std::string description) : CBasicServerCommand( SC_LOOKATCHARRESULT_TC ) 
+        CharDescription::CharDescription(TYPE_OF_CHARACTER_ID id, std::string description) : BasicServerCommand( SC_LOOKATCHARRESULT_TC ) 
         {
             addIntToBuffer(id);
             addStringToBuffer( description );
         }
         
-        CAppearanceTC::CAppearanceTC( CCharacter* cc ) : CBasicServerCommand( SC_APPEARANCE_TC )
+        AppearanceTC::AppearanceTC( Character* cc ) : BasicServerCommand( SC_APPEARANCE_TC )
         {
             addIntToBuffer( cc->id );
             addShortIntToBuffer( cc->appearance );
@@ -104,23 +104,23 @@ extern CRaceSizeTable* RaceSizes;
             addUnsignedCharToBuffer( deathflag );
         }
 
-        CAnimationTC::CAnimationTC( TYPE_OF_CHARACTER_ID id, uint8_t animID ) : CBasicServerCommand( SC_ANIMATION_TC )
+        AnimationTC::AnimationTC( TYPE_OF_CHARACTER_ID id, uint8_t animID ) : BasicServerCommand( SC_ANIMATION_TC )
         {
             addIntToBuffer(id);
             addUnsignedCharToBuffer( animID );
         }
 
-        CBookTC::CBookTC( uint16_t bookID ) : CBasicServerCommand( SC_BOOK_TC )
+        BookTC::BookTC( uint16_t bookID ) : BasicServerCommand( SC_BOOK_TC )
         {   
             addShortIntToBuffer( bookID );
         }
         
-        CRemoveCharTC::CRemoveCharTC(TYPE_OF_CHARACTER_ID id) : CBasicServerCommand( SC_REMOVECHAR_TC ) 
+        RemoveCharTC::RemoveCharTC(TYPE_OF_CHARACTER_ID id) : BasicServerCommand( SC_REMOVECHAR_TC ) 
         {
             addIntToBuffer(id);
         }
         
-        CUpdateTimeTC::CUpdateTimeTC(unsigned char hour, unsigned char minute, unsigned char day, unsigned char month, short int year) : CBasicServerCommand( SC_UPDATETIME_TC ) 
+        UpdateTimeTC::UpdateTimeTC(unsigned char hour, unsigned char minute, unsigned char day, unsigned char month, short int year) : BasicServerCommand( SC_UPDATETIME_TC ) 
         {
             addUnsignedCharToBuffer( hour );
             addUnsignedCharToBuffer( minute );
@@ -129,33 +129,33 @@ extern CRaceSizeTable* RaceSizes;
             addShortIntToBuffer( year );
         }
         
-        CLogOutTC::CLogOutTC(unsigned char reason) : CBasicServerCommand( SC_LOGOUT_TC ) 
+        LogOutTC::LogOutTC(unsigned char reason) : BasicServerCommand( SC_LOGOUT_TC ) 
         {
             addUnsignedCharToBuffer( reason );
         }
 
-        CTargetLostTC::CTargetLostTC() : CBasicServerCommand( SC_TARGETLOST_TC ) 
+        TargetLostTC::TargetLostTC() : BasicServerCommand( SC_TARGETLOST_TC ) 
         {
         }
 
-        CAttackAckknowledgedTC::CAttackAckknowledgedTC() : CBasicServerCommand( SC_ATTACKACKKNOWLEDGED_TC ) 
+        AttackAckknowledgedTC::AttackAckknowledgedTC() : BasicServerCommand( SC_ATTACKACKKNOWLEDGED_TC ) 
         {
         }
 
-        CNameOfInventoryItemTC::CNameOfInventoryItemTC( unsigned char pos, std::string name ) : CBasicServerCommand( SC_NAMEOFINVENTORYITEM_TC ) 
+        NameOfInventoryItemTC::NameOfInventoryItemTC( unsigned char pos, std::string name ) : BasicServerCommand( SC_NAMEOFINVENTORYITEM_TC ) 
         {
             addUnsignedCharToBuffer( pos );
             addStringToBuffer( name );
         }
 
-        CNameOfShowCaseItemTC::CNameOfShowCaseItemTC(unsigned char showcase, unsigned char pos, std::string name ) : CBasicServerCommand( SC_NAMEOFSHOWCASEITEM_TC ) 
+        NameOfShowCaseItemTC::NameOfShowCaseItemTC(unsigned char showcase, unsigned char pos, std::string name ) : BasicServerCommand( SC_NAMEOFSHOWCASEITEM_TC ) 
         {
             addUnsignedCharToBuffer( showcase );
             addUnsignedCharToBuffer( pos );
             addStringToBuffer( name );
         }
 
-        CNameOfMapItemTC::CNameOfMapItemTC( short int x, short int y, short int z, std::string name ) : CBasicServerCommand( SC_NAMEOFMAPITEM_TC ) 
+        NameOfMapItemTC::NameOfMapItemTC( short int x, short int y, short int z, std::string name ) : BasicServerCommand( SC_NAMEOFMAPITEM_TC ) 
         {
             addShortIntToBuffer( x );
             addShortIntToBuffer( y );
@@ -163,7 +163,7 @@ extern CRaceSizeTable* RaceSizes;
             addStringToBuffer( name );
         }
 
-        CItemPutTC::CItemPutTC( short int x, short int y, short int z, Item &item ) : CBasicServerCommand( SC_ITEMPUT_TC ) 
+        ItemPutTC::ItemPutTC( short int x, short int y, short int z, Item &item ) : BasicServerCommand( SC_ITEMPUT_TC ) 
         {
             addShortIntToBuffer( x );
             addShortIntToBuffer( y );
@@ -179,7 +179,7 @@ extern CRaceSizeTable* RaceSizes;
             }            
         }
 
-        CItemSwapTC::CItemSwapTC(position pos, unsigned short int id, Item &item) : CBasicServerCommand( SC_MAPITEMSWAP ) 
+        ItemSwapTC::ItemSwapTC(position pos, unsigned short int id, Item &item) : BasicServerCommand( SC_MAPITEMSWAP ) 
         {
             addShortIntToBuffer( pos.x );
             addShortIntToBuffer( pos.y );
@@ -198,7 +198,7 @@ extern CRaceSizeTable* RaceSizes;
             //addUnsignedCharToBuffer( flags );
         }
         
-        CItemSwapTC::CItemSwapTC(short int x, short int y, short int z, unsigned short int id, Item &item) : CBasicServerCommand( SC_MAPITEMSWAP ) 
+        ItemSwapTC::ItemSwapTC(short int x, short int y, short int z, unsigned short int id, Item &item) : BasicServerCommand( SC_MAPITEMSWAP ) 
         {
             addShortIntToBuffer( x );
             addShortIntToBuffer( y );
@@ -217,26 +217,26 @@ extern CRaceSizeTable* RaceSizes;
             //addUnsignedCharToBuffer( flags );
         }        
 
-        CItemRemoveTC::CItemRemoveTC( short int x, short int y, short int z ) : CBasicServerCommand( SC_ITEMREMOVE_TC ) 
+        ItemRemoveTC::ItemRemoveTC( short int x, short int y, short int z ) : BasicServerCommand( SC_ITEMREMOVE_TC ) 
         {
             addShortIntToBuffer( x );
             addShortIntToBuffer( y );
             addShortIntToBuffer( z );
         }
 
-        CAViewPlayersTC::CAViewPlayersTC() : CBasicServerCommand( SC_AVIEWPLAYERS_TC ) 
+        AViewPlayersTC::AViewPlayersTC() : BasicServerCommand( SC_AVIEWPLAYERS_TC ) 
         {
-            CWorld::PLAYERVECTOR::iterator titerator;
-            unsigned short int count = CWorld::get()->Players.size();
+            World::PLAYERVECTOR::iterator titerator;
+            unsigned short int count = World::get()->Players.size();
             addShortIntToBuffer( count );
-            for ( titerator = CWorld::get()->Players.begin(); titerator < CWorld::get()->Players.end(); ++titerator ) 
+            for ( titerator = World::get()->Players.begin(); titerator < World::get()->Players.end(); ++titerator ) 
             {
                 addStringToBuffer( ( *titerator )->name );
                 addStringToBuffer( ( *titerator )->last_ip );
             }            
         }
 
-        CSoundTC::CSoundTC(short int x, short int y, short int z, unsigned short int id) : CBasicServerCommand( SC_SOUND_TC ) 
+        SoundTC::SoundTC(short int x, short int y, short int z, unsigned short int id) : BasicServerCommand( SC_SOUND_TC ) 
         {
             addShortIntToBuffer( x );
             addShortIntToBuffer( y );
@@ -244,7 +244,7 @@ extern CRaceSizeTable* RaceSizes;
             addShortIntToBuffer( id );
         }
 
-        CGraphicEffectTC::CGraphicEffectTC(short int x, short int y, short int z, unsigned short int id) : CBasicServerCommand( SC_GRAPHICEFFECT_TC ) 
+        GraphicEffectTC::GraphicEffectTC(short int x, short int y, short int z, unsigned short int id) : BasicServerCommand( SC_GRAPHICEFFECT_TC ) 
         {
             addShortIntToBuffer( x );
             addShortIntToBuffer( y );
@@ -252,7 +252,7 @@ extern CRaceSizeTable* RaceSizes;
             addShortIntToBuffer( id );
         }
 
-        CStartPlayerMenuTC::CStartPlayerMenuTC(UserMenuStruct menu) : CBasicServerCommand( SC_STARTPLAYERMENU_TC ) 
+        StartPlayerMenuTC::StartPlayerMenuTC(UserMenuStruct menu) : BasicServerCommand( SC_STARTPLAYERMENU_TC ) 
         {
             int count = menu.Items.size();
     
@@ -266,7 +266,7 @@ extern CRaceSizeTable* RaceSizes;
             menu.Items.clear();
         }
 
-        CUpdateShowCaseTC::CUpdateShowCaseTC(unsigned char showcase, ITEMVECTOR &items) : CBasicServerCommand( SC_UPDATESHOWCASE_TC ) 
+        UpdateShowCaseTC::UpdateShowCaseTC(unsigned char showcase, ITEMVECTOR &items) : BasicServerCommand( SC_UPDATESHOWCASE_TC ) 
         {
             ITEMVECTOR::iterator theIterator;
             addUnsignedCharToBuffer( showcase );
@@ -287,14 +287,14 @@ extern CRaceSizeTable* RaceSizes;
             }
         }
 
-        CMapStripeTC::CMapStripeTC( position pos, CNewClientView::stripedirection dir) : CBasicServerCommand( SC_MAPSTRIPE_TC ) 
+        MapStripeTC::MapStripeTC( position pos, NewClientView::stripedirection dir) : BasicServerCommand( SC_MAPSTRIPE_TC ) 
         {
             addShortIntToBuffer( pos.x );
             addShortIntToBuffer( pos.y );
             addShortIntToBuffer( pos.z );
             addUnsignedCharToBuffer( static_cast<unsigned char>( dir ) );
-            CField ** fields =  CWorld::get()->clientview.mapStripe;
-            uint8_t numberOfTiles = CWorld::get()->clientview.getMaxTiles();
+            Field ** fields =  World::get()->clientview.mapStripe;
+            uint8_t numberOfTiles = World::get()->clientview.getMaxTiles();
             addUnsignedCharToBuffer( numberOfTiles );
             for ( int i = 0; i < numberOfTiles; ++i )
             {
@@ -326,11 +326,11 @@ extern CRaceSizeTable* RaceSizes;
             }
         }
 
-        CMapCompleteTC::CMapCompleteTC() : CBasicServerCommand( SC_MAPCOMPLETE_TC ) 
+        MapCompleteTC::MapCompleteTC() : BasicServerCommand( SC_MAPCOMPLETE_TC ) 
         {
         }
 
-        CMoveAckTC::CMoveAckTC( TYPE_OF_CHARACTER_ID id, position pos, unsigned char mode, unsigned char waitpages) : CBasicServerCommand( SC_MOVEACK_TC ) 
+        MoveAckTC::MoveAckTC( TYPE_OF_CHARACTER_ID id, position pos, unsigned char mode, unsigned char waitpages) : BasicServerCommand( SC_MOVEACK_TC ) 
         {
             addIntToBuffer( id );
             addShortIntToBuffer( pos.x );
@@ -340,13 +340,13 @@ extern CRaceSizeTable* RaceSizes;
             addUnsignedCharToBuffer( waitpages );
         }
 
-        CIntroduceTC::CIntroduceTC(TYPE_OF_CHARACTER_ID id, std::string name) : CBasicServerCommand( SC_INTRODUCE_TC ) 
+        IntroduceTC::IntroduceTC(TYPE_OF_CHARACTER_ID id, std::string name) : BasicServerCommand( SC_INTRODUCE_TC ) 
         {
             addIntToBuffer( id );
             addStringToBuffer( name ); 
         }
 
-        CShoutTC::CShoutTC(int16_t x, int16_t y, int16_t z, std::string text) : CBasicServerCommand( SC_SHOUT_TC ) 
+        ShoutTC::ShoutTC(int16_t x, int16_t y, int16_t z, std::string text) : BasicServerCommand( SC_SHOUT_TC ) 
         {
             addShortIntToBuffer( x );
             addShortIntToBuffer( y );
@@ -354,7 +354,7 @@ extern CRaceSizeTable* RaceSizes;
             addStringToBuffer( text );
         }
 
-        CWhisperTC::CWhisperTC(int16_t x, int16_t y, int16_t z, std::string text) : CBasicServerCommand( SC_WHISPER_TC ) 
+        WhisperTC::WhisperTC(int16_t x, int16_t y, int16_t z, std::string text) : BasicServerCommand( SC_WHISPER_TC ) 
         {
             addShortIntToBuffer( x );
             addShortIntToBuffer( y );
@@ -362,7 +362,7 @@ extern CRaceSizeTable* RaceSizes;
             addStringToBuffer( text );
         }
 
-        CSayTC::CSayTC(int16_t x, int16_t y, int16_t z, std::string text) : CBasicServerCommand( SC_SAY_TC ) 
+        SayTC::SayTC(int16_t x, int16_t y, int16_t z, std::string text) : BasicServerCommand( SC_SAY_TC ) 
         {
             addShortIntToBuffer( x );
             addShortIntToBuffer( y );
@@ -370,33 +370,33 @@ extern CRaceSizeTable* RaceSizes;
             addStringToBuffer( text );
         }
 
-        CMusicTC::CMusicTC(short int title) : CBasicServerCommand( SC_MUSIC_TC ) 
+        MusicTC::MusicTC(short int title) : BasicServerCommand( SC_MUSIC_TC ) 
         {
             addShortIntToBuffer( title );
         }
 
-        CMusicDefaultTC::CMusicDefaultTC() : CBasicServerCommand( SC_MUSICDEFAULT_TC )
+        MusicDefaultTC::MusicDefaultTC() : BasicServerCommand( SC_MUSICDEFAULT_TC )
         {
         }
 
-        CUpdateAttribTC::CUpdateAttribTC(std::string name, short int value) : CBasicServerCommand( SC_UPDATEATTRIB_TC ) 
+        UpdateAttribTC::UpdateAttribTC(std::string name, short int value) : BasicServerCommand( SC_UPDATEATTRIB_TC ) 
         {
             addStringToBuffer( name );
             addShortIntToBuffer( value );
         }
 
-        CUpdateMagicFlagsTC::CUpdateMagicFlagsTC(unsigned char type, uint32_t flags) : CBasicServerCommand( SC_UPDATEMAGICFLAGS_TC ) 
+        UpdateMagicFlagsTC::UpdateMagicFlagsTC(unsigned char type, uint32_t flags) : BasicServerCommand( SC_UPDATEMAGICFLAGS_TC ) 
         {
             addUnsignedCharToBuffer( type );
             addIntToBuffer( flags );
         }
 
-        CClearShowCaseTC::CClearShowCaseTC(unsigned char id) : CBasicServerCommand( SC_CLEARSHOWCASE_TC ) 
+        ClearShowCaseTC::ClearShowCaseTC(unsigned char id) : BasicServerCommand( SC_CLEARSHOWCASE_TC ) 
         {
             addUnsignedCharToBuffer( id ); 
         }
 
-        CUpdateSkillTC::CUpdateSkillTC(std::string name, unsigned char type, unsigned short int major, unsigned short int minor) : CBasicServerCommand( SC_UPDATESKILL_TC ) 
+        UpdateSkillTC::UpdateSkillTC(std::string name, unsigned char type, unsigned short int major, unsigned short int minor) : BasicServerCommand( SC_UPDATESKILL_TC ) 
         {
             addStringToBuffer( name );
             addUnsignedCharToBuffer( type );
@@ -404,7 +404,7 @@ extern CRaceSizeTable* RaceSizes;
             addShortIntToBuffer( minor );
         }
 
-        CUpdateWeatherTC::CUpdateWeatherTC( WeatherStruct weather ) : CBasicServerCommand( SC_UPDATEWEATHER_TC ) 
+        UpdateWeatherTC::UpdateWeatherTC( WeatherStruct weather ) : BasicServerCommand( SC_UPDATEWEATHER_TC ) 
         {
             addUnsignedCharToBuffer( weather.cloud_density );
             addUnsignedCharToBuffer(weather.fog_density );
@@ -416,7 +416,7 @@ extern CRaceSizeTable* RaceSizes;
             addUnsignedCharToBuffer(weather.temperature);
         }
         
-        CUpdateWeatherTC::CUpdateWeatherTC( uint8_t cd, uint8_t fd, uint8_t wd, uint8_t gs, uint8_t ps, uint8_t pt, uint8_t ts, uint8_t tp ) : CBasicServerCommand( SC_UPDATEWEATHER_TC ) 
+        UpdateWeatherTC::UpdateWeatherTC( uint8_t cd, uint8_t fd, uint8_t wd, uint8_t gs, uint8_t ps, uint8_t pt, uint8_t ts, uint8_t tp ) : BasicServerCommand( SC_UPDATEWEATHER_TC ) 
         {
             addUnsignedCharToBuffer( cd );
             addUnsignedCharToBuffer( fd );
@@ -428,33 +428,33 @@ extern CRaceSizeTable* RaceSizes;
             addUnsignedCharToBuffer( tp );
         }        
 
-        CIdTC::CIdTC(int id) : CBasicServerCommand( SC_ID_TC ) 
+        IdTC::IdTC(int id) : BasicServerCommand( SC_ID_TC ) 
         {
             addIntToBuffer(id);
         }
 
-        CUpdateInventoryPosTC::CUpdateInventoryPosTC(unsigned char pos, TYPE_OF_ITEM_ID id, unsigned char number) : CBasicServerCommand( SC_UPDATEINVENTORYPOS_TC ) 
+        UpdateInventoryPosTC::UpdateInventoryPosTC(unsigned char pos, TYPE_OF_ITEM_ID id, unsigned char number) : BasicServerCommand( SC_UPDATEINVENTORYPOS_TC ) 
         {
             addUnsignedCharToBuffer( pos );
             addShortIntToBuffer( id );
             addUnsignedCharToBuffer( number ); 
         }
 
-        CSetCoordinateTC::CSetCoordinateTC( position pos ) : CBasicServerCommand( SC_SETCOORDINATE_TC )
+        SetCoordinateTC::SetCoordinateTC( position pos ) : BasicServerCommand( SC_SETCOORDINATE_TC )
         {
             addShortIntToBuffer(pos.x);
             addShortIntToBuffer(pos.y);
             addShortIntToBuffer(pos.z);
         }
         
-        CSetCoordinateTC::CSetCoordinateTC( short int x, short int y, short int z ) : CBasicServerCommand( SC_SETCOORDINATE_TC )
+        SetCoordinateTC::SetCoordinateTC( short int x, short int y, short int z ) : BasicServerCommand( SC_SETCOORDINATE_TC )
         {
             addShortIntToBuffer(x);
             addShortIntToBuffer(y);
             addShortIntToBuffer(z);
         }
 
-        CPlayerSpinTC::CPlayerSpinTC( unsigned char faceto, TYPE_OF_CHARACTER_ID id ) : CBasicServerCommand( SC_PLAYERSPIN_TC )
+        PlayerSpinTC::PlayerSpinTC( unsigned char faceto, TYPE_OF_CHARACTER_ID id ) : BasicServerCommand( SC_PLAYERSPIN_TC )
         {
             addUnsignedCharToBuffer( faceto );
             addIntToBuffer( id );

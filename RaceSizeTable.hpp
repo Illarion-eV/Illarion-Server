@@ -38,18 +38,18 @@ using std::hash_map;
 
 #endif
 
-class CRaceSizeTable
+class RaceSizeTable
 {
     public:
-        CRaceSizeTable();
-        ~CRaceSizeTable();
+        RaceSizeTable();
+        ~RaceSizeTable();
         
         /**
         * gets the relative size of a race 
         * @param race the race for which i want to get the relative size
 	* @param size the absolute size
         */
-        uint8_t getRelativeSize(CCharacter::race_type race, uint16_t size);
+        uint8_t getRelativeSize(Character::race_type race, uint16_t size);
         
         /**
         * reloads the data

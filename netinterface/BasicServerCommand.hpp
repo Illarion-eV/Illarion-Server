@@ -24,7 +24,7 @@
 #include <string>
 #include <stdint.h>
 #include <vector>
-class CNetInterface;
+class NetInterface;
 
 
 /**
@@ -38,7 +38,7 @@ class CNetInterface;
 *
 *Once all data has been added to the command, the header needs to be finalized with addHeader()
 */
-class CBasicServerCommand : public CBasicCommand
+class BasicServerCommand : public BasicCommand
 {
     public:
     
@@ -47,19 +47,19 @@ class CBasicServerCommand : public CBasicCommand
         * In this case the internal data buffer is 1000 bytes large.
         * @param defByte The id of this command
         */
-        CBasicServerCommand( unsigned char defByte);
+        BasicServerCommand( unsigned char defByte);
         
         /**
         * Constructor which creates the server command.
         * @param defByte The id of this command
         * @param bsize The initial buffer size of this command
         */
-        CBasicServerCommand( unsigned char defByte, uint16_t bsize);
+        BasicServerCommand( unsigned char defByte, uint16_t bsize);
         
         /**
         * Standard destructor
         */
-        ~CBasicServerCommand();
+        ~BasicServerCommand();
         
         /**
         * Function which returns the data buffer of the command.

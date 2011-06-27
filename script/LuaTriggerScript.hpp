@@ -17,43 +17,43 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CLUATRIGGERSCRIPT_HPP
-#define CLUATRIGGERSCRIPT_HPP
+#ifndef LUATRIGGERSCRIPT_HPP
+#define LUATRIGGERSCRIPT_HPP
 
 #include "LuaScript.hpp"
 #include "globals.hpp"
 #include "Item.hpp"
 
-class CWorld;
+class World;
 
-class CLuaTriggerScript: public CLuaScript {
+class LuaTriggerScript: public LuaScript {
 	public:
-		CLuaTriggerScript(std::string filename, position pos) throw(ScriptException);
+		LuaTriggerScript(std::string filename, position pos) throw(ScriptException);
 
-		virtual ~CLuaTriggerScript() throw();
+		virtual ~LuaTriggerScript() throw();
 
 		//Es befindet sich ein Character auf den Feld womit ein Trigger ausgelöst wird, wird mit jeden Servertick
 		//neu ausgeführt
 		//\param Character der Character der sich auf den Feld befindet
-		void CharacterOnField(CCharacter * Character);
+		void CharacterOnField(Character * Character);
 
 		//Ein Character bewegt sich gerade auf das Feld
 		//\param Character: der Character der sich auf das Feld bewegt
-		void MoveToField(CCharacter * Character);
+		void MoveToField(Character * Character);
 
 		//Ein Character bewegt sich von dem Feld herunter
 		//\param Character: der Character der sich von dem Feld herunter bewegt
-		void MoveFromField(CCharacter * Character);
+		void MoveFromField(Character * Character);
 
 		//Ein Character legt ein Item auf das Triggerfeld
 		//\param item: Das Item welches auf das Feld gelegt wird
 		//\param Character: der Character der das Item auf das Feld legt
-		void PutItemOnField(ScriptItem item, CCharacter * Character);
+		void PutItemOnField(ScriptItem item, Character * Character);
 
 		//Ein Character Zerstört ein Item auf einen Feld, Per Script oder indem er es wegnimmt
 		//\param item: Das Item welches Zerstört oder weggenommen wird
 		//\param Character: der Character der das Item zerstört
-		void TakeItemFromField(ScriptItem item, CCharacter * Character);
+		void TakeItemFromField(ScriptItem item, Character * Character);
 
 		//Auf dem Triggerfeld Verrottet ein Gegenstand.
 		//\param oldItem: Das item welches Verrottet bevor es verottet.
@@ -64,8 +64,8 @@ class CLuaTriggerScript: public CLuaScript {
 	private:
 
 		position _pos;
-		CLuaTriggerScript(const CLuaTriggerScript&);
-		CLuaTriggerScript& operator=(const CLuaTriggerScript&);
+		LuaTriggerScript(const LuaTriggerScript&);
+		LuaTriggerScript& operator=(const LuaTriggerScript&);
 		void init_functions();
 };
 

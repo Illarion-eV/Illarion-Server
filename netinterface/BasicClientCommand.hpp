@@ -24,7 +24,7 @@
 #include <stdint.h>
 #include <iostream>
 #include <boost/shared_ptr.hpp>
-class CPlayer;
+class Player;
 
 /**
 *@ingroup Netinterface
@@ -37,18 +37,18 @@ class CPlayer;
 */
 class OverflowException {};
 
-class CBasicClientCommand : public CBasicCommand
+class BasicClientCommand : public BasicCommand
 {
     public:
         /**
         * Constructor of a basic command
         * @param defByte the initializing byte of the command
         */
-        CBasicClientCommand( unsigned char defByte);
+        BasicClientCommand( unsigned char defByte);
         
         void setHeaderData( uint16_t mlength, uint16_t mcheckSum );
         
-        virtual ~CBasicClientCommand();
+        virtual ~BasicClientCommand();
         
         /**
          * returns the data ptr for the command message
@@ -66,13 +66,13 @@ class CBasicClientCommand : public CBasicCommand
         * performs the concrete action of the command
         * @param player the player which received the command
         */
-        virtual void performAction( CPlayer * player) = 0;
+        virtual void performAction( Player * player) = 0;
         
         /**
         * a copy function which returns an empty version of the command
         * (for usage of the commandFactory class
         */
-        virtual boost::shared_ptr<CBasicClientCommand> clone() = 0;
+        virtual boost::shared_ptr<BasicClientCommand> clone() = 0;
         
         /**
         * returns if the receiving of the command was sucessfull
@@ -119,7 +119,7 @@ class CBasicClientCommand : public CBasicCommand
         uint32_t crc; /*< the checksum of the data*/
 
 	//! no copy operator for pure virtual types
-	CBasicClientCommand& operator=(const CBasicClientCommand&);
+	BasicClientCommand& operator=(const BasicClientCommand&);
 };
 
 #endif

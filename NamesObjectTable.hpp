@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CNAMESOBJECTTABLE_H
-#define CNAMESOBJECTTABLE_H
+#ifndef NAMESOBJECTTABLE_H
+#define NAMESOBJECTTABLE_H
 
 #include <string>
 
@@ -40,15 +40,15 @@ using std::hash_map;
 #include "TableStructs.hpp"
 
 //! eine Tabelle für allgemeine Item-Eigenschaften
-class CNamesObjectTable {
+class NamesObjectTable {
 
 	public:
 
 		bool find( TYPE_OF_ITEM_ID Id, NamesStruct &ret );
 
-		CNamesObjectTable();
+		NamesObjectTable();
 
-		~CNamesObjectTable();
+		~NamesObjectTable();
 
 		void reload();
 

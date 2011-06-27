@@ -32,18 +32,18 @@
 * and stores them in 12 section a 100 bytes.
 * it guaranties that the read buffer cant be in front of the write buffer
 */
-class CByteBuffer
+class ByteBuffer
 {
     public:
         /**
         * standard constructor
         */
-        CByteBuffer();
+        ByteBuffer();
         
         /**
         * standard destructor
         */
-        ~CByteBuffer();
+        ~ByteBuffer();
     
         /**
         * struct which represens the internal structur of the buffer

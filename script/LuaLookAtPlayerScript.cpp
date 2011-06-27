@@ -25,20 +25,20 @@
 #include "Logger.hpp"
 #include "fuse_ptr.hpp"
 
-CLuaLookAtPlayerScript::CLuaLookAtPlayerScript(std::string filename) throw(ScriptException)
-		: CLuaScript(filename)
+LuaLookAtPlayerScript::LuaLookAtPlayerScript(std::string filename) throw(ScriptException)
+		: LuaScript(filename)
 {
 }
 
-CLuaLookAtPlayerScript::~CLuaLookAtPlayerScript() throw() {}
+LuaLookAtPlayerScript::~LuaLookAtPlayerScript() throw() {}
 
-void CLuaLookAtPlayerScript::lookAtPlayer(CCharacter * source, CCharacter * target, unsigned char mode)
+void LuaLookAtPlayerScript::lookAtPlayer(Character * source, Character * target, unsigned char mode)
 {
     try
     {
-        CWorld::get()->setCurrentScript( this ); 
-        fuse_ptr<CCharacter> fuse_source(source);
-        fuse_ptr<CCharacter> fuse_target(target);
+        World::get()->setCurrentScript( this ); 
+        fuse_ptr<Character> fuse_source(source);
+        fuse_ptr<Character> fuse_target(target);
         call("lookAtPlayer")( fuse_source, fuse_target, mode );
     }
     catch (luabind::error &e)

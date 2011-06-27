@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CTRIGGERTABLE_HPP
-#define CTRIGGERTABLE_HPP
+#ifndef TRIGGERTABLE_HPP
+#define TRIGGERTABLE_HPP
 
 #include <map>
 #include <iostream>
@@ -45,7 +45,7 @@ using std::hash;
 #include "globals.hpp"
 #include "script/LuaTriggerScript.hpp"
 
-class CWorld;
+class World;
 
 struct TriggerStruct {
 	//Position des Triggerfelds
@@ -53,16 +53,16 @@ struct TriggerStruct {
 	//Name des Scriptes;
 	std::string scriptname;
 	//Zeiger auf das Script
-	boost::shared_ptr<CLuaTriggerScript> script;
+	boost::shared_ptr<LuaTriggerScript> script;
 };
 
 
 
-class CTriggerTable {
+class TriggerTable {
 	public:
 
-		CTriggerTable();
-		~CTriggerTable();
+		TriggerTable();
+		~TriggerTable();
 
 		void reload();
 

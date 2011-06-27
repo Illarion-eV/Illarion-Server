@@ -25,15 +25,15 @@
 #include "script/LuaWeaponScript.hpp"
 #include "Logger.hpp"
 
-CWeaponObjectTable::CWeaponObjectTable() : m_dataOK(false)
+WeaponObjectTable::WeaponObjectTable() : m_dataOK(false)
 {
 	reload();
 }
 
 
-void CWeaponObjectTable::reload() {
-#ifdef CDataConnect_DEBUG
-	std::cout << "CWeaponObjectTable: reload" << std::endl;
+void WeaponObjectTable::reload() {
+#ifdef DataConnect_DEBUG
+	std::cout << "WeaponObjectTable: reload" << std::endl;
 #endif
 
 	try {
@@ -76,12 +76,12 @@ void CWeaponObjectTable::reload() {
                 {
 					try 
                     {
-						boost::shared_ptr<CLuaWeaponScript> tmpScript(new CLuaWeaponScript( scriptname[i] ));
+						boost::shared_ptr<LuaWeaponScript> tmpScript(new LuaWeaponScript( scriptname[i] ));
 						temprecord.script = tmpScript;
 					} 
                     catch(ScriptException &e) 
                     {
-                        CLogger::writeError( "scripts", "Error while loading script: " + scriptname[i] + ":\n" + e.what() + "\n" );
+                        Logger::writeError( "scripts", "Error while loading script: " + scriptname[i] + ":\n" + e.what() + "\n" );
 					}
 				}
 				m_table[ ids[i] ] = temprecord;
@@ -90,8 +90,8 @@ void CWeaponObjectTable::reload() {
 		} else m_dataOK = false;
 
 
-#ifdef CDataConnect_DEBUG
-		std::cout << "loaded " << rows << " rows into CWeaponObjectTable" << std::endl;
+#ifdef DataConnect_DEBUG
+		std::cout << "loaded " << rows << " rows into WeaponObjectTable" << std::endl;
 #endif
 
 	} catch (...) {
@@ -100,7 +100,7 @@ void CWeaponObjectTable::reload() {
 
 }
 
-bool CWeaponObjectTable::find( TYPE_OF_ITEM_ID Id, WeaponStruct &ret ) {
+bool WeaponObjectTable::find( TYPE_OF_ITEM_ID Id, WeaponStruct &ret ) {
 	TABLE::iterator iterator;
 	iterator = m_table.find( Id );
 
@@ -114,12 +114,12 @@ bool CWeaponObjectTable::find( TYPE_OF_ITEM_ID Id, WeaponStruct &ret ) {
 
 
 
-void CWeaponObjectTable::clearOldTable() {
+void WeaponObjectTable::clearOldTable() {
 	m_table.clear();
 }
 
 
-CWeaponObjectTable::~CWeaponObjectTable() {
+WeaponObjectTable::~WeaponObjectTable() {
 	clearOldTable();
 }
 

@@ -30,21 +30,21 @@
 #include "Player.hpp"
 #include "RaceSizeTable.hpp"
 
-extern CRaceSizeTable * RaceSizes;
+extern RaceSizeTable * RaceSizes;
 
 
-bool CWorld::warpMonster( CMonster* cm, CField* cfstart ) {
+bool World::warpMonster( Monster* cm, Field* cfstart ) {
     if ( cfstart->IsWarpField() ) {
         position oldpos = cm->pos;
         cfstart->GetWarpField( cm->pos );
-        CField * cfend;
+        Field * cfend;
         if ( findEmptyCFieldNear( cfend, cm->pos.x, cm->pos.y, cm->pos.z ) ) {
             cfstart->SetMonsterOnField( false );
             cfend->SetMonsterOnField( true );
 
             // allen anderen Spielern den Warp übermitteln
             sendCharacterWarpToAllVisiblePlayers( cm, oldpos, PUSH );
-#ifdef CWorld_CharMove_DEBUG
+#ifdef World_CharMove_DEBUG
             std::cout << "warpMonster: neu " << cm->pos.x << " " << cm->pos.y << " " << ( short int ) cm->pos.z << "\n";
 #endif
             return true;
@@ -55,7 +55,7 @@ bool CWorld::warpMonster( CMonster* cm, CField* cfstart ) {
     return false;
 }
 
-void CWorld::checkFieldAfterMove( CCharacter* cc, CField* cfstart ) {
+void World::checkFieldAfterMove( Character* cc, Field* cfstart ) {
     if ( cfstart->HasSpecialItem() )
     {
         TilesModificatorStruct tmod;
@@ -65,7 +65,7 @@ void CWorld::checkFieldAfterMove( CCharacter* cc, CField* cfstart ) {
                 if ( ( tmod.Modificator & FLAG_SPECIALITEM ) != 0 )
                 {
                     
-                    boost::shared_ptr<CLuaItemScript> script = CommonItems->findScript( theIterator->id );
+                    boost::shared_ptr<LuaItemScript> script = CommonItems->findScript( theIterator->id );
                     if ( script )
                     {
                         script->CharacterOnField(cc);
@@ -97,8 +97,8 @@ void CWorld::checkFieldAfterMove( CCharacter* cc, CField* cfstart ) {
                     makeSoundForAllPlayersInRange( cc->pos.x, cc->pos.y, cc->pos.z, 3, which.flags );
                     break;
                 case MUSICFIELD:
-                    if (cc->character == CCharacter::player) {
-                        ((CPlayer*)cc)->startMusic(which.flags);
+                    if (cc->character == Character::player) {
+                        ((Player*)cc)->startMusic(which.flags);
                     }
                     break;
 
@@ -119,7 +119,7 @@ void CWorld::checkFieldAfterMove( CCharacter* cc, CField* cfstart ) {
     }
 }
 
-void CWorld::TriggerFieldMove( CCharacter* cc, bool moveto) {
+void World::TriggerFieldMove( Character* cc, bool moveto) {
     TriggerStruct trigger;
     if ( Triggers->find(cc->pos,trigger) ) {
         //Wenn ein Gültiges Triggerscript für die Position verfügbar ist CharacterOnField ausführen
@@ -132,45 +132,45 @@ void CWorld::TriggerFieldMove( CCharacter* cc, bool moveto) {
     }
 }
 
-bool CWorld::pushCharacter( CPlayer* cp, TYPE_OF_CHARACTER_ID pushedCharId, unsigned char direction ) {
-    CCharacter * pushedChar = NULL;
+bool World::pushCharacter( Player* cp, TYPE_OF_CHARACTER_ID pushedCharId, unsigned char direction ) {
+    Character * pushedChar = NULL;
     pushedChar = Players.findID( pushedCharId );
     if ( !pushedChar ) Monsters.findID( pushedCharId );
     if ( pushedChar && pushedChar->pos.z == cp->pos.z && abs(pushedChar->pos.x - cp->pos.x)<=1 && abs(pushedChar->pos.y - cp->pos.y)<=1 )
     {
-        return pushedChar->move( (CCharacter::direction)direction,false);
+        return pushedChar->move( (Character::direction)direction,false);
     }
         
     return false;
 }
 
-bool CWorld::spinPlayer( CPlayer* cp, unsigned char d ) {
+bool World::spinPlayer( Player* cp, unsigned char d ) {
 
     // die Blickrichtung ändern
     switch ( d ) {
         case 0 :
-            cp->faceto = CCharacter::north;
+            cp->faceto = Character::north;
             break;
         case 1 :
-            cp->faceto = CCharacter::northeast;
+            cp->faceto = Character::northeast;
             break;
         case 2 :
-            cp->faceto = CCharacter::east;
+            cp->faceto = Character::east;
             break;
         case 3 :
-            cp->faceto = CCharacter::southeast;
+            cp->faceto = Character::southeast;
             break;
         case 4 :
-            cp->faceto = CCharacter::south;
+            cp->faceto = Character::south;
             break;
         case 5 :
-            cp->faceto = CCharacter::southwest;
+            cp->faceto = Character::southwest;
             break;
         case 6 :
-            cp->faceto = CCharacter::west;
+            cp->faceto = Character::west;
             break;
         case 7 :
-            cp->faceto = CCharacter::northwest;
+            cp->faceto = Character::northwest;
             break;
     }
 
@@ -182,26 +182,26 @@ bool CWorld::spinPlayer( CPlayer* cp, unsigned char d ) {
 }
 
 
-void CWorld::sendSpinToAllVisiblePlayers( CCharacter* cc ) 
+void World::sendSpinToAllVisiblePlayers( Character* cc ) 
 {
 
-    std::vector < CPlayer* > temp = Players.findAllCharactersInRangeOf( cc->pos.x, cc->pos.y, cc->pos.z, MAXVIEW );
-    std::vector < CPlayer* > ::iterator titerator;
+    std::vector < Player* > temp = Players.findAllCharactersInRangeOf( cc->pos.x, cc->pos.y, cc->pos.z, MAXVIEW );
+    std::vector < Player* > ::iterator titerator;
 
     for ( titerator = temp.begin(); titerator < temp.end(); ++titerator ) 
     {
-        boost::shared_ptr<CBasicServerCommand>cmd( new CPlayerSpinTC( cc->faceto, cc->id ) );
+        boost::shared_ptr<BasicServerCommand>cmd( new PlayerSpinTC( cc->faceto, cc->id ) );
         ( *titerator )->Connection->addCommand(cmd);
     }
 
 }
 
 
-void CWorld::sendPassiveMoveToAllVisiblePlayers( CCharacter* ccp ) {
+void World::sendPassiveMoveToAllVisiblePlayers( Character* ccp ) {
 
-    std::vector < CPlayer* > temp = Players.findAllCharactersInRangeOf( ccp->pos.x, ccp->pos.y, ccp->pos.z, MAXVIEW+1 );
+    std::vector < Player* > temp = Players.findAllCharactersInRangeOf( ccp->pos.x, ccp->pos.y, ccp->pos.z, MAXVIEW+1 );
 
-    std::vector < CPlayer* >::iterator titerator;
+    std::vector < Player* >::iterator titerator;
     char xoffs;
     char yoffs;
     char zoffs;
@@ -213,7 +213,7 @@ void CWorld::sendPassiveMoveToAllVisiblePlayers( CCharacter* ccp ) {
 
         if ( ( xoffs != 0 ) || ( yoffs != 0 ) || ( zoffs != RANGEDOWN ) ) 
         {
-            boost::shared_ptr<CBasicServerCommand>cmd(new CMoveAckTC( ccp->id, ccp->pos, PUSH, 0 ) );
+            boost::shared_ptr<BasicServerCommand>cmd(new MoveAckTC( ccp->id, ccp->pos, PUSH, 0 ) );
             ( *titerator )->Connection->addCommand( cmd );
         }
     }
@@ -221,18 +221,18 @@ void CWorld::sendPassiveMoveToAllVisiblePlayers( CCharacter* ccp ) {
 }
 
 
-void CWorld::sendCharacterMoveToAllVisibleChars( CCharacter* cc, unsigned char waitpages) {
+void World::sendCharacterMoveToAllVisibleChars( Character* cc, unsigned char waitpages) {
     // for now we only send events to players... TODO change this whole command
     sendCharacterMoveToAllVisiblePlayers( cc, NORMALMOVE, waitpages);
 }
 
-void CWorld::sendCharacterMoveToAllVisiblePlayers( CCharacter* cc, unsigned char netid, unsigned char waitpages ) {
+void World::sendCharacterMoveToAllVisiblePlayers( Character* cc, unsigned char netid, unsigned char waitpages ) {
     if (!cc->isinvisible) //Nur wenn Character nicht unsichtbar ist die Bewegung übertragen
     {
 
-        std::vector < CPlayer* > temp = Players.findAllCharactersInRangeOf( cc->pos.x, cc->pos.y, cc->pos.z, MAXVIEW+1 );
+        std::vector < Player* > temp = Players.findAllCharactersInRangeOf( cc->pos.x, cc->pos.y, cc->pos.z, MAXVIEW+1 );
 
-        std::vector < CPlayer* > ::iterator titerator;
+        std::vector < Player* > ::iterator titerator;
         char xoffs;
         char yoffs;
         char zoffs;
@@ -243,7 +243,7 @@ void CWorld::sendCharacterMoveToAllVisiblePlayers( CCharacter* cc, unsigned char
 
             if ( ( xoffs != 0 ) || ( yoffs != 0 ) || ( zoffs != RANGEDOWN ) )
             {
-                boost::shared_ptr<CBasicServerCommand>cmd(new CMoveAckTC( cc->id, cc->pos, netid, waitpages) );
+                boost::shared_ptr<BasicServerCommand>cmd(new MoveAckTC( cc->id, cc->pos, netid, waitpages) );
                 ( *titerator )->Connection->addCommand(cmd);
             }
         }
@@ -251,9 +251,9 @@ void CWorld::sendCharacterMoveToAllVisiblePlayers( CCharacter* cc, unsigned char
 }
 
 
-void CWorld::sendCharacterWarpToAllVisiblePlayers( CCharacter* cc, position oldpos, unsigned char netid ) {
+void World::sendCharacterWarpToAllVisiblePlayers( Character* cc, position oldpos, unsigned char netid ) {
     if (!cc->isinvisible) {
-        std::vector < CPlayer* > ::iterator titerator;
+        std::vector < Player* > ::iterator titerator;
         char xoffs;
         char yoffs;
         char zoffs;
@@ -262,7 +262,7 @@ void CWorld::sendCharacterWarpToAllVisiblePlayers( CCharacter* cc, position oldp
         sendRemoveCharToVisiblePlayers( cc->id, oldpos );
         
         // hinwarpen
-        std::vector < CPlayer* > temp;
+        std::vector < Player* > temp;
         temp = Players.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, MAXVIEW );
         for ( titerator = temp.begin(); titerator < temp.end(); ++titerator ) 
         {
@@ -271,7 +271,7 @@ void CWorld::sendCharacterWarpToAllVisiblePlayers( CCharacter* cc, position oldp
                 xoffs = cc->pos.x - ( *titerator )->pos.x;
                 yoffs = cc->pos.y - ( *titerator )->pos.y;
                 zoffs = cc->pos.z - ( *titerator )->pos.z + RANGEDOWN;
-                boost::shared_ptr<CBasicServerCommand> cmd ( new CMoveAckTC( cc->id, cc->pos, PUSH, 0 ) );
+                boost::shared_ptr<BasicServerCommand> cmd ( new MoveAckTC( cc->id, cc->pos, PUSH, 0 ) );
                 ( *titerator )->Connection->addCommand( cmd );
             }
         }
@@ -279,20 +279,20 @@ void CWorld::sendCharacterWarpToAllVisiblePlayers( CCharacter* cc, position oldp
 }
 
 
-void CWorld::sendAllVisibleCharactersToPlayer( CPlayer* cp, bool sendSpin ) {
-    std::vector < CPlayer* > tempP = Players.findAllCharactersInRangeOf(cp->pos.x , cp->pos.y, cp->pos.z, MAXVIEW );
-    sendCharsInVector< CPlayer >( tempP, cp, sendSpin );
+void World::sendAllVisibleCharactersToPlayer( Player* cp, bool sendSpin ) {
+    std::vector < Player* > tempP = Players.findAllCharactersInRangeOf(cp->pos.x , cp->pos.y, cp->pos.z, MAXVIEW );
+    sendCharsInVector< Player >( tempP, cp, sendSpin );
 
-    std::vector < CMonster* > tempM = Monsters.findAllCharactersInRangeOf( cp->pos.x , cp->pos.y, cp->pos.z, MAXVIEW );
-    sendCharsInVector< CMonster >( tempM, cp, sendSpin );
+    std::vector < Monster* > tempM = Monsters.findAllCharactersInRangeOf( cp->pos.x , cp->pos.y, cp->pos.z, MAXVIEW );
+    sendCharsInVector< Monster >( tempM, cp, sendSpin );
 
-    std::vector < CNPC* > tempN = Npc.findAllCharactersInRangeOf( cp->pos.x , cp->pos.y, cp->pos.z, MAXVIEW );
-    sendCharsInVector< CNPC >( tempN, cp, sendSpin );
+    std::vector < NPC* > tempN = Npc.findAllCharactersInRangeOf( cp->pos.x , cp->pos.y, cp->pos.z, MAXVIEW );
+    sendCharsInVector< NPC >( tempN, cp, sendSpin );
 }
 
 
 template< class T >
-void CWorld::sendCharsInVector( std::vector < T* > &vec, CPlayer* cp, bool sendSpin ) {
+void World::sendCharsInVector( std::vector < T* > &vec, Player* cp, bool sendSpin ) {
     typename std::vector < T* > ::iterator titerator;
     char xoffs;
     char yoffs;
@@ -308,11 +308,11 @@ void CWorld::sendCharsInVector( std::vector < T* > &vec, CPlayer* cp, bool sendS
             zoffs = cc->pos.z - cp->pos.z + RANGEDOWN;
             if ( ( xoffs != 0 ) || ( yoffs != 0 ) || ( zoffs != RANGEDOWN ) ) 
             {
-                // boost::shared_ptr<CBasicServerCommand>cmd( new CAppearanceTC( cc ) );
+                // boost::shared_ptr<BasicServerCommand>cmd( new AppearanceTC( cc ) );
                 // cp->sendCharAppearance( cc->id, cmd, false );
-                boost::shared_ptr<CBasicServerCommand>cmd( new CMoveAckTC( cc->id, cc->pos, PUSH, 0 ) );
+                boost::shared_ptr<BasicServerCommand>cmd( new MoveAckTC( cc->id, cc->pos, PUSH, 0 ) );
                 cp->Connection->addCommand(cmd);
-                cmd.reset( new CPlayerSpinTC( cc->faceto, cc->id ) );
+                cmd.reset( new PlayerSpinTC( cc->faceto, cc->id ) );
                 if (sendSpin)cp->Connection->addCommand( cmd ); 
             }
         }
@@ -320,11 +320,11 @@ void CWorld::sendCharsInVector( std::vector < T* > &vec, CPlayer* cp, bool sendS
 }
 
 
-bool CWorld::addWarpField( position where, position target, unsigned short int starttilenr, TYPE_OF_ITEM_ID startitemnr ) {
-#ifdef CWorld_CharMove_DEBUG
+bool World::addWarpField( position where, position target, unsigned short int starttilenr, TYPE_OF_ITEM_ID startitemnr ) {
+#ifdef World_CharMove_DEBUG
     std::cout << "addWarpField: x: " << where.x << " y: " << where.y << " z: " << where.z << "\n";
 #endif
-    CField* cfstart;
+    Field* cfstart;
 
     // Startfeld vorhanden
     if ( GetPToCFieldAt( cfstart, where ) ) {
@@ -352,9 +352,9 @@ bool CWorld::addWarpField( position where, position target, unsigned short int s
 }
 
 
-bool CWorld::makeSpecialField( position where, s_fieldattrib which ) {
+bool World::makeSpecialField( position where, s_fieldattrib which ) {
     std::cout << "addSpecialField: x: " << where.x << " y: " << where.y << " z: " << where.z << "\n";
-    CField* cfstart;
+    Field* cfstart;
 
     // Startfeld vorhanden
     if ( GetPToCFieldAt( cfstart, where ) ) {
@@ -368,7 +368,7 @@ bool CWorld::makeSpecialField( position where, s_fieldattrib which ) {
 }
 
 
-bool CWorld::makeSpecialField( short int x, short int y, short int z, unsigned char type, unsigned long int value) {
+bool World::makeSpecialField( short int x, short int y, short int z, unsigned char type, unsigned long int value) {
 
     position where;
     s_fieldattrib which;
@@ -383,7 +383,7 @@ bool CWorld::makeSpecialField( short int x, short int y, short int z, unsigned c
 }
 
 
-bool CWorld::addWarpField( position where, position target, unsigned short int starttilenr, TYPE_OF_ITEM_ID startitemnr, unsigned short int targettilenr, TYPE_OF_ITEM_ID targetitemnr ) {
+bool World::addWarpField( position where, position target, unsigned short int starttilenr, TYPE_OF_ITEM_ID startitemnr, unsigned short int targettilenr, TYPE_OF_ITEM_ID targetitemnr ) {
 
     if ( addWarpField( where, target, starttilenr, startitemnr ) ) {
 
@@ -402,7 +402,7 @@ bool CWorld::addWarpField( position where, position target, unsigned short int s
 }
 
 
-bool CWorld::addWayUp( position where, unsigned short int starttilenr, TYPE_OF_ITEM_ID startitemnr, unsigned short int targettilenr, TYPE_OF_ITEM_ID targetitemnr ) {
+bool World::addWayUp( position where, unsigned short int starttilenr, TYPE_OF_ITEM_ID startitemnr, unsigned short int targettilenr, TYPE_OF_ITEM_ID targetitemnr ) {
 
     position target;
     target.x = where.x;
@@ -411,7 +411,7 @@ bool CWorld::addWayUp( position where, unsigned short int starttilenr, TYPE_OF_I
 
     if ( addWarpField( where, target, starttilenr, startitemnr ) ) {
         std::cout << "nach oben ist ok" << std::endl;
-        CField * cfp;
+        Field * cfp;
         if ( GetPToCFieldAt( cfp, target.x, target.y+1, target.z ) ) {
             std::cout << "Zielfeld gefunden" << std::endl;
             if ( targettilenr != 0 ) {
@@ -442,12 +442,12 @@ bool CWorld::addWayUp( position where, unsigned short int starttilenr, TYPE_OF_I
 }
 
 
-bool CWorld::removeWarpField( position where ) {
+bool World::removeWarpField( position where ) {
 
-#ifdef CWorld_CharMove_DEBUG
+#ifdef World_CharMove_DEBUG
     std::cout << "removeWarpField: x:" << where.x << " y: " << where.y << " z: " << where.z << "\n";
 #endif
-    CField* cfstart;
+    Field* cfstart;
     if ( GetPToCFieldAt( cfstart, where ) ) { // Startfeld vorhanden
         cfstart->UnsetWarpField();
         return true;
@@ -456,9 +456,9 @@ bool CWorld::removeWarpField( position where ) {
 }
 
 /*
-bool CWorld::findWarpFieldTarget( position where, const position & target ) {
+bool World::findWarpFieldTarget( position where, const position & target ) {
 
-#ifdef CMap_DEBUG
+#ifdef Map_DEBUG
     std::cout << "findWarpField: x: " << where.x << " y: " << where.y << " z: " << where.z << "\n";
 #endif
 

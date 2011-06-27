@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CLOGGER_HPP
-#define CLOGGER_HPP
+#ifndef LOGGER_HPP
+#define LOGGER_HPP
 
 #include <map>
 #include <boost/shared_ptr.hpp>
@@ -26,7 +26,7 @@
 
 
 
-class CLogger
+class Logger
 {
    //public functions/variables
     public:
@@ -52,7 +52,7 @@ class CLogger
         *@return the current Logger instance or a new instance if there was none
         *
         **/
-        static CLogger * get();
+        static Logger * get();
         
         /**
         * static function which writes an Error to a Logfile
@@ -99,12 +99,12 @@ class CLogger
         /**
         *standard constructor of the Logger class
         **/
-        CLogger();
+        Logger();
         
         /**
         *standard destructor of the Logger class
         **/
-        ~CLogger();
+        ~Logger();
         
         
         
@@ -112,7 +112,7 @@ class CLogger
     private:
     
         /**
-        * function which searches in the interna CLogger::logs list for a specific Logfile
+        * function which searches in the interna Logger::logs list for a specific Logfile
         *@param LogType a string which holds the type (name) of that log
         *@param pLog a reference to a pointer of an open ofstream
         *@return true if a file was found otherwise false
@@ -120,7 +120,7 @@ class CLogger
         static bool findLog(std::string LogType, boost::shared_ptr<std::ofstream> &pLog);
 
         /**
-        * function which creates a new Logfile and adds it to the internal CLogger::logs list
+        * function which creates a new Logfile and adds it to the internal Logger::logs list
         *@param LogType a string which holds the type (name) of that log
         *@param pLog a reference to the pointer of the ofstream objekt after it was sucessfully created
         *@return true if the log was created sucessfully otherwise false
@@ -143,7 +143,7 @@ class CLogger
         /**
         * a private variable which holds the current and only instance of the object (its a singleton class)
         **/
-        static CLogger * theLoggerInstance;
+        static Logger * theLoggerInstance;
         
         /**
         * a private map which holds the Type (name) of a log as the key and a pointer to a open ofstream 

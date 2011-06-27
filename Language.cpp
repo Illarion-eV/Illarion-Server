@@ -19,9 +19,9 @@
 
 #include "Language.hpp"
 
-CLanguage::CLanguage(CLanguage::LanguageType language)  : _language(language) {
+Language::Language(Language::LanguageType language)  : _language(language) {
 }
 
-CLanguage* CLanguage::create(LanguageType language) {
-	return new CLanguage(language);
+Language* Language::create(LanguageType language) {
+	return new Language(language);
 }

@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CARMOROBJECTTABLE_H
-#define CARMOROBJECTTABLE_H
+#ifndef ARMOROBJECTTABLE_H
+#define ARMOROBJECTTABLE_H
 
 #include <string>
 
@@ -40,13 +40,13 @@ using std::hash_map;
 #include "TableStructs.hpp"
 
 //! eine Tabelle für allgemeine Item-Eigenschaften
-class CArmorObjectTable {
+class ArmorObjectTable {
 	public:
 		bool find( TYPE_OF_ITEM_ID Id, ArmorStruct &ret );
 
-		CArmorObjectTable();
+		ArmorObjectTable();
 
-		~CArmorObjectTable();
+		~ArmorObjectTable();
 
 		void reload();
 

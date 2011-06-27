@@ -21,75 +21,75 @@
 #include "netinterface/protocol/ClientCommands.hpp"
 #include "netinterface/protocol/BBIWIClientCommands.hpp"
 
-CCommandFactory::CCommandFactory()
+CommandFactory::CommandFactory()
 {
     //TODO add the commands
-    templateList[ CC_LOGIN_TS ] = new CLoginCommandTS();
-    templateList[ CC_SCREENSIZE_TS ] = new CScreenSizeCommandTS();
-    templateList[ CC_LOOKATMAPITEM_TS ] = new CLookAtMapItemTS();
-    templateList[ CC_USE_TS ] = new CUseTS();
-    templateList[ CC_CAST_TS ] = new CCastTS();
-    templateList[ CC_ATTACKPLAYER_TS ] = new CAttackPlayerTS();
-    templateList[ CC_INTRODUCE_TS ] = new CIntroduceTS();
-    templateList[ CC_SAY_TS ] = new CSayTS();
-    templateList[ CC_SHOUT_TS ] = new CShoutTS();
-    templateList[ CC_WHISPER_TS ] = new CWhisperTS();
-    templateList[ CC_REFRESH_TS ] = new CRefreshTS();
-    templateList[ CC_LOGOUT_TS ] = new CLogOutTS();
-    templateList[ CC_LOOKINTOCONTAINERONFIELD_TS ] = new CLookIntoContainerOnFieldTS();
-    templateList[ CC_LOOKINTOINVENTORY_TS ] = new CLookIntoInventoryTS();
-    templateList[ CC_LOOKINTOSHOWCASECONTAINER_TS ] = new CLookIntoShowCaseContainerTS();
-    templateList[ CC_CLOSECONTAINERINSHOWCASE_TS ] = new CCloseContainerInShowCaseTS();
-    templateList[ CC_DROPITEMFROMSHOWCASEONMAP_TS ] = new CDropItemFromShowCaseOnMapTS();
-    templateList[ CC_MOVEITEMBETWEENSHOWCASES_TS ] = new CMoveItemBetweenShowCasesTS();
-    templateList[ CC_MOVEITEMFROMMAPINTOSHOWCASE_TS ] = new CMoveItemFromMapIntoShowCaseTS();
-    templateList[ CC_MOVEITEMFROMMAPTOPLAYER_TS ] = new CMoveItemFromMapToPlayerTS();
-    templateList[ CC_DROPITEMFROMPLAYERONMAP_TS ] = new CDropItemFromInventoryOnMapTS();
-    templateList[ CC_MOVEITEMINSIDEINVENTORY_TS ] = new CMoveItemInsideInventoryTS();
-    templateList[ CC_MOVEITEMFROMSHOWCASETOPLAYER_TS ] = new CMoveItemFromShowCaseToPlayerTS();
-    templateList[ CC_MOVEITEMFROMPLAYERTOSHOWCASE_TS ] = new CMoveItemFromPlayerToShowCaseTS();
-    templateList[ CC_LOOKATSHOWCASEITEM_TS ] = new CLookAtShowCaseItemTS();
-    templateList[ CC_LOOKATINVENTORYITEM_TS ] = new CLookAtInventoryItemTS();
-    templateList[ CC_ATTACKSTOP_TS ] = new CAttackStopTS();
-    templateList[ CC_REQUESTSKILLS_TS ] = new CRequestSkillsTS();
-    templateList[ CC_LOOKATMENUITEM_TS ] = new CLookAtMenuItemTS();
-    templateList[ CC_KEEPALIVE_TS ] = new CKeepAliveTS();
-    templateList[ BB_KEEPALIVE_TS ] = new CBBKeepAliveTS();
-    templateList[ BB_BROADCAST_TS ] = new CBBBroadCastTS();
-    templateList[ BB_DISCONNECT_TS ] = new CBBDisconnectTS();
-    templateList[ BB_BAN_TS ] = new CBBBanTS();
-    templateList[ BB_TALKTO_TS ] = new CBBTalktoTS();
-    templateList[ BB_CHANGEATTRIB_TS ] = new CBBChangeAttribTS();
-    templateList[ BB_CHANGESKILL_TS ] = new CBBChangeSkillTS();
-    templateList[ BB_SERVERCOMMAND_TS ] = new CBBServerCommandTS();
-    templateList[ BB_WARPPLAYER_TS ] = new CBBWarpPlayerTS();
-    templateList[ BB_SPEAKAS_TS ] = new CBBSpeakAsTS();
-    templateList[ BB_REQUESTSTATS_TS ] = new CBBRequestStatTS();
-    templateList[ BB_REQUESTSKILLS_TS ] = new CBBRequestSkillsTS();
-    for ( int i = CC_IMOVERSTART_TS; i <= CC_IMOVEREND_TS; ++i)templateList[i] = new CIMoverActionTS( i - CC_IMOVERSTART_TS );
-    templateList[ CC_CHARMOVE_TS ] = new CCharMoveTS();
-    for ( int i = CC_PSPINRSTART_TS; i <= CC_PSPINREND_TS; ++i)templateList[i] = new CPSpinActionTS( i - CC_PSPINRSTART_TS );
-    templateList[ CC_LOOKATCHARACTER_TS ] = new CLookAtCharacterTS();
-    templateList[ CC_REQUESTAPPEARANCE_TS ] = new CRequestAppearanceTS();
+    templateList[ C_LOGIN_TS ] = new LoginCommandTS();
+    templateList[ C_SCREENSIZE_TS ] = new ScreenSizeCommandTS();
+    templateList[ C_LOOKATMAPITEM_TS ] = new LookAtMapItemTS();
+    templateList[ C_USE_TS ] = new UseTS();
+    templateList[ C_CAST_TS ] = new CastTS();
+    templateList[ C_ATTACKPLAYER_TS ] = new AttackPlayerTS();
+    templateList[ C_INTRODUCE_TS ] = new IntroduceTS();
+    templateList[ C_SAY_TS ] = new SayTS();
+    templateList[ C_SHOUT_TS ] = new ShoutTS();
+    templateList[ C_WHISPER_TS ] = new WhisperTS();
+    templateList[ C_REFRESH_TS ] = new RefreshTS();
+    templateList[ C_LOGOUT_TS ] = new LogOutTS();
+    templateList[ C_LOOKINTOCONTAINERONFIELD_TS ] = new LookIntoContainerOnFieldTS();
+    templateList[ C_LOOKINTOINVENTORY_TS ] = new LookIntoInventoryTS();
+    templateList[ C_LOOKINTOSHOWCASECONTAINER_TS ] = new LookIntoShowCaseContainerTS();
+    templateList[ C_CLOSECONTAINERINSHOWCASE_TS ] = new CloseContainerInShowCaseTS();
+    templateList[ C_DROPITEMFROMSHOWCASEONMAP_TS ] = new DropItemFromShowCaseOnMapTS();
+    templateList[ C_MOVEITEMBETWEENSHOWCASES_TS ] = new MoveItemBetweenShowCasesTS();
+    templateList[ C_MOVEITEMFROMMAPINTOSHOWCASE_TS ] = new MoveItemFromMapIntoShowCaseTS();
+    templateList[ C_MOVEITEMFROMMAPTOPLAYER_TS ] = new MoveItemFromMapToPlayerTS();
+    templateList[ C_DROPITEMFROMPLAYERONMAP_TS ] = new DropItemFromInventoryOnMapTS();
+    templateList[ C_MOVEITEMINSIDEINVENTORY_TS ] = new MoveItemInsideInventoryTS();
+    templateList[ C_MOVEITEMFROMSHOWCASETOPLAYER_TS ] = new MoveItemFromShowCaseToPlayerTS();
+    templateList[ C_MOVEITEMFROMPLAYERTOSHOWCASE_TS ] = new MoveItemFromPlayerToShowCaseTS();
+    templateList[ C_LOOKATSHOWCASEITEM_TS ] = new LookAtShowCaseItemTS();
+    templateList[ C_LOOKATINVENTORYITEM_TS ] = new LookAtInventoryItemTS();
+    templateList[ C_ATTACKSTOP_TS ] = new AttackStopTS();
+    templateList[ C_REQUESTSKILLS_TS ] = new RequestSkillsTS();
+    templateList[ C_LOOKATMENUITEM_TS ] = new LookAtMenuItemTS();
+    templateList[ C_KEEPALIVE_TS ] = new KeepAliveTS();
+    templateList[ BB_KEEPALIVE_TS ] = new BBKeepAliveTS();
+    templateList[ BB_BROADCAST_TS ] = new BBBroadCastTS();
+    templateList[ BB_DISCONNECT_TS ] = new BBDisconnectTS();
+    templateList[ BB_BAN_TS ] = new BBBanTS();
+    templateList[ BB_TALKTO_TS ] = new BBTalktoTS();
+    templateList[ BB_CHANGEATTRIB_TS ] = new BBChangeAttribTS();
+    templateList[ BB_CHANGESKILL_TS ] = new BBChangeSkillTS();
+    templateList[ BB_SERVERCOMMAND_TS ] = new BBServerCommandTS();
+    templateList[ BB_WARPPLAYER_TS ] = new BBWarpPlayerTS();
+    templateList[ BB_SPEAKAS_TS ] = new BBSpeakAsTS();
+    templateList[ BB_REQUESTSTATS_TS ] = new BBRequestStatTS();
+    templateList[ BB_REQUESTSKILLS_TS ] = new BBRequestSkillsTS();
+    for ( int i = C_IMOVERSTART_TS; i <= C_IMOVEREND_TS; ++i)templateList[i] = new IMoverActionTS( i - C_IMOVERSTART_TS );
+    templateList[ C_CHARMOVE_TS ] = new CharMoveTS();
+    for ( int i = C_PSPINRSTART_TS; i <= C_PSPINREND_TS; ++i)templateList[i] = new PSpinActionTS( i - C_PSPINRSTART_TS );
+    templateList[ C_LOOKATCHARACTER_TS ] = new LookAtCharacterTS();
+    templateList[ C_REQUESTAPPEARANCE_TS ] = new RequestAppearanceTS();
 
 }
 
 
-CCommandFactory::~CCommandFactory()
+CommandFactory::~CommandFactory()
 {
     templateList.clear();
 }
 
-boost::shared_ptr<CBasicClientCommand>  CCommandFactory::getCommand(unsigned char commandId )
+boost::shared_ptr<BasicClientCommand>  CommandFactory::getCommand(unsigned char commandId )
 {
-    COMMANDLIST::iterator it;
+    OMMANDLIST::iterator it;
     it = templateList.find( commandId );
     if ( it != templateList.end() )
     {
-        CBasicClientCommand * cmd;
+        BasicClientCommand * cmd;
         cmd = it->second;
         return cmd->clone();
     }
-    return boost::shared_ptr<CBasicClientCommand>();
+    return boost::shared_ptr<BasicClientCommand>();
 }
     

@@ -268,7 +268,7 @@ class ConnectionManager {
 		void doneTransaction(int index) throw();
 };
 
-typedef ConnectionManager::Connection Connection;
+typedef ConnectionManager::Connection ManagerConnection;
 typedef ConnectionManager::Transaction Transaction;
 typedef ConnectionManager::TransactionHolder TransactionHolder;
 

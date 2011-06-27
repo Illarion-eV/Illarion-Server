@@ -21,19 +21,19 @@
 #include "NaturalArmorTable.hpp"
 #include <iostream>
 
-CNaturalArmorTable::CNaturalArmorTable() : m_dataOK(false)
+NaturalArmorTable::NaturalArmorTable() : m_dataOK(false)
 {
     reload();
 }
 
-CNaturalArmorTable::~CNaturalArmorTable()
+NaturalArmorTable::~NaturalArmorTable()
 {
     clearOldTable();
 }
 
-void CNaturalArmorTable::reload()
+void NaturalArmorTable::reload()
 {
-#ifdef CDataConnect_DEBUG
+#ifdef DataConnect_DEBUG
     std::cout<<"Trying to reload NaturalArmorTable!"<<std::endl;
 #endif
 
@@ -66,8 +66,8 @@ void CNaturalArmorTable::reload()
         
         m_dataOK = true;
            
-#ifdef CDataConnect_DEBUG
-	std::cout << "loaded " << rows << " rows into CNaturalArmorTable" << std::endl;
+#ifdef DataConnect_DEBUG
+	std::cout << "loaded " << rows << " rows into NaturalArmorTable" << std::endl;
 #endif         
     }
     catch ( ... )
@@ -77,7 +77,7 @@ void CNaturalArmorTable::reload()
 
 }
 
-bool CNaturalArmorTable::find( CCharacter::race_type race, MonsterArmor &ret)
+bool NaturalArmorTable::find( Character::race_type race, MonsterArmor &ret)
 {
     TABLE::iterator iterat;
     iterat = m_ArmorTable.find(static_cast<uint16_t>(race) );
@@ -92,7 +92,7 @@ bool CNaturalArmorTable::find( CCharacter::race_type race, MonsterArmor &ret)
     return false;
 }
 
-void CNaturalArmorTable::clearOldTable()
+void NaturalArmorTable::clearOldTable()
 {
     m_ArmorTable.clear();
 }

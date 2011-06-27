@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CCOMMONOBJECTTABLE_H
-#define CCOMMONOBJECTTABLE_H
+#ifndef COMMONOBJECTTABLE_H
+#define COMMONOBJECTTABLE_H
 
 #include <string>
 #include <boost/shared_ptr.hpp>
@@ -41,19 +41,19 @@ using std::hash_map;
 
 #include "TableStructs.hpp"
 
-class CWorld;
+class World;
 
 //! eine Tabelle für allgemeine Item-Eigenschaften
-class CCommonObjectTable {
+class CommonObjectTable {
 	public:
 		bool find( TYPE_OF_ITEM_ID Id, CommonStruct &ret );
 		bool find( TYPE_OF_ITEM_ID Id);
-        boost::shared_ptr<CLuaItemScript> findScript( TYPE_OF_ITEM_ID Id );
+        boost::shared_ptr<LuaItemScript> findScript( TYPE_OF_ITEM_ID Id );
 
 		//CWorld für den Constructor aufgrund der Scriptfunktionen
-		CCommonObjectTable();
+		CommonObjectTable();
 
-		~CCommonObjectTable();
+		~CommonObjectTable();
 
 		void reload();
 
@@ -65,7 +65,7 @@ class CCommonObjectTable {
 
 		//! der Datentyp der die Tabelle aufnimmt
 		typedef hash_map < TYPE_OF_ITEM_ID, CommonStruct > TABLE;
-        typedef boost::shared_ptr<CLuaItemScript> iscript;
+        typedef boost::shared_ptr<LuaItemScript> iscript;
         typedef hash_map < TYPE_OF_ITEM_ID, iscript > SCRIPTTABLE;
 
 		//! die Tabelle mit den eingelesenen Werten

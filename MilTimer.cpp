@@ -19,14 +19,14 @@
 
 #include "MilTimer.hpp"
 
-CMilTimer::CMilTimer( long milsec ) {
+MilTimer::MilTimer( long milsec ) {
 	gap = milsec;
 	ftime( &last );
 }
 
 
 
-bool CMilTimer::Next() {
+bool MilTimer::Next() {
 	timeb now;
 	ftime( &now );
 

@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CONNECTION_HH
-#define CONNECTION_HH
+#ifndef ONNECTION_HH
+#define ONNECTION_HH
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -26,7 +26,7 @@
 
 
 //! Grundelemente einer Verbindung
-class CConnection {
+class Connection {
 	public:
 		//! die ID des Empfangssockets
 		int m_read_socket;

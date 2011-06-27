@@ -23,18 +23,18 @@
 #include <iostream>
 #include "Logger.hpp"
 
-CLuaReloadScript::CLuaReloadScript(std::string filename) throw(ScriptException)
-		: CLuaScript(filename)
+LuaReloadScript::LuaReloadScript(std::string filename) throw(ScriptException)
+		: LuaScript(filename)
 {
 }
 
-CLuaReloadScript::~CLuaReloadScript() throw() {}
+LuaReloadScript::~LuaReloadScript() throw() {}
 
-bool CLuaReloadScript::onReload()
+bool LuaReloadScript::onReload()
 {
     try
     {
-        CWorld::get()->setCurrentScript( this ); 
+        World::get()->setCurrentScript( this ); 
         call("onReload")();
         return true;
     }

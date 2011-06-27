@@ -17,21 +17,21 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CLONGTIMECHARACTEREFFECTS_HPP_
-#define CLONGTIMECHARACTEREFFECTS_HPP_
+#ifndef LONGTIMECHARACTEREFFECTS_HPP_
+#define LONGTIMECHARACTEREFFECTS_HPP_
 
 #include "LongTimeEffect.hpp"
 #include <string>
 #include <list>
 
-class CMilTimer;
+class MilTimer;
 
 
 /**
 * @ingroup Scriptclasses
 * holds all the effects which are currently on a character
 */
-class CLongTimeCharacterEffects
+class LongTimeCharacterEffects
 {
     public:
         
@@ -39,15 +39,15 @@ class CLongTimeCharacterEffects
         * constructor which creates the list of effects
         * @param owner the character on which theese effects 
         */
-        CLongTimeCharacterEffects(CCharacter * owner);
+        LongTimeCharacterEffects(Character * owner);
         
         /**
         * the destructor
         */
-        ~CLongTimeCharacterEffects();
+        ~LongTimeCharacterEffects();
     
         /**
-        * @name CLongTimeCharacterEffect Lua Functions:
+        * @name LongTimeCharacterEffect Lua Functions:
         * the Functions which are exported to Lua
         */
         
@@ -62,7 +62,7 @@ class CLongTimeCharacterEffects
         * maybe starts a script entry
         * @param effect the effect which should be added
         */
-        void addEffect( CLongTimeEffect * effect);
+        void addEffect( LongTimeEffect * effect);
         
         /**
         * searches a effect on the character and returns it
@@ -70,7 +70,7 @@ class CLongTimeCharacterEffects
         * @param effect byreferece pointer to a effect, here the effect which we found is returned
         * @return true if we found a effect with effectid on the owner otherwise false
         */
-        bool find(uint16_t effectid, CLongTimeEffect * &effect);
+        bool find(uint16_t effectid, LongTimeEffect * &effect);
         
         /**
         * searches a effect on the character and returns it
@@ -78,7 +78,7 @@ class CLongTimeCharacterEffects
         * @param effect byreferece pointer to a effect, here the effect which we found is returned
         * @return true if we found a effect with name on the owner otherwise false
         */        
-        bool find(std::string effectname, CLongTimeEffect * &effect);
+        bool find(std::string effectname, LongTimeEffect * &effect);
         //luabind::object getEffectList();
         
         /**
@@ -100,7 +100,7 @@ class CLongTimeCharacterEffects
         * @param effect a pointer to the effecht which should be removed
         * @return true if there was a effect to remove otherwise false
         */        
-        bool removeEffect( CLongTimeEffect * effect);
+        bool removeEffect( LongTimeEffect * effect);
  
         /**
         *====================== end of group lua functions =====================
@@ -111,7 +111,7 @@ class CLongTimeCharacterEffects
         * adds a effect to the end of the effectlist
         * @param effect the effect which is added to the end of the list
         */
-        void push_backEffect(CLongTimeEffect * effect);        
+        void push_backEffect(LongTimeEffect * effect);        
         
         /**
         * checks if a effect should be invoked in this cycle
@@ -134,7 +134,7 @@ class CLongTimeCharacterEffects
         /**
         * defines the list which stores the effects which are currently on the character
         */
-        typedef std::list < CLongTimeEffect*> EFFECTLIST;
+        typedef std::list < LongTimeEffect*> EFFECTLIST;
         
         /**
         * stores the effects which are currently on the character
@@ -145,12 +145,12 @@ class CLongTimeCharacterEffects
         * a timer which checks if there should be invoked a new effect
         * timing rate 1/10 s
         */
-        CMilTimer * _effectTimer;
+        MilTimer * _effectTimer;
         
         /**
         * stores a pointer to the owner of the effects
         */
-        CCharacter * _owner;
+        Character * _owner;
         
 };
 

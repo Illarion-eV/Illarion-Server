@@ -27,27 +27,27 @@
 #include "LongTimeEffect.hpp"
 #include "fuse_ptr.hpp"
 
-CLuaLongTimeEffectScript::CLuaLongTimeEffectScript(std::string filename, LongTimeEffectStruct effectStruct) throw(ScriptException)
-        : CLuaScript(filename), _effectStruct(effectStruct)
+LuaLongTimeEffectScript::LuaLongTimeEffectScript(std::string filename, LongTimeEffectStruct effectStruct) throw(ScriptException)
+        : LuaScript(filename), _effectStruct(effectStruct)
 {
     init_functions();
 }
 
-CLuaLongTimeEffectScript::~CLuaLongTimeEffectScript() throw() {}
+LuaLongTimeEffectScript::~LuaLongTimeEffectScript() throw() {}
 
-void CLuaLongTimeEffectScript::init_functions()
+void LuaLongTimeEffectScript::init_functions()
 {
     luabind::object globals = luabind::globals(_luaState);
     globals["thisEffect"] = _effectStruct;
 }
 
-bool CLuaLongTimeEffectScript::callEffect(CLongTimeEffect * effect, CCharacter * target)
+bool LuaLongTimeEffectScript::callEffect(LongTimeEffect * effect, Character * target)
 {
     try
     {
-        CWorld::get()->setCurrentScript( this );
-        CLogger::writeMessage("scripts","callEffect called for: " + target->name + " effect: " + CLogger::toString( effect->_effectId));
-        fuse_ptr<CCharacter> fuse_target(target);
+        World::get()->setCurrentScript( this );
+        Logger::writeMessage("scripts","callEffect called for: " + target->name + " effect: " + Logger::toString( effect->_effectId));
+        fuse_ptr<Character> fuse_target(target);
         return luabind::object_cast<bool>(call("callEffect")( effect, fuse_target ));
     }
     catch ( luabind::error &e)
@@ -57,13 +57,13 @@ bool CLuaLongTimeEffectScript::callEffect(CLongTimeEffect * effect, CCharacter *
     }
 }
 
-void CLuaLongTimeEffectScript::doubleEffect(CLongTimeEffect * effect, CCharacter * target)
+void LuaLongTimeEffectScript::doubleEffect(LongTimeEffect * effect, Character * target)
 {
     try
     {
         //CWorld::get()->setCurrentScript( this );
-        CLogger::writeMessage("scripts","doubleEffect called for: " + target->name + " effect: " + CLogger::toString( effect->_effectId));
-        fuse_ptr<CCharacter> fuse_target(target);
+        Logger::writeMessage("scripts","doubleEffect called for: " + target->name + " effect: " + Logger::toString( effect->_effectId));
+        fuse_ptr<Character> fuse_target(target);
         call("doubleEffect")( effect, fuse_target );
     }
     catch ( luabind::error  &e)
@@ -73,13 +73,13 @@ void CLuaLongTimeEffectScript::doubleEffect(CLongTimeEffect * effect, CCharacter
     }
 }
 
-void CLuaLongTimeEffectScript::loadEffect(CLongTimeEffect * effect, CPlayer * target)
+void LuaLongTimeEffectScript::loadEffect(LongTimeEffect * effect, Player * target)
 {
     try
     {
-        CWorld::get()->setCurrentScript( this );
-        CLogger::writeMessage("scripts","loadEffect called for: " + target->name + " effect: " + CLogger::toString( effect->_effectId));
-        fuse_ptr<CCharacter> fuse_target(target);
+        World::get()->setCurrentScript( this );
+        Logger::writeMessage("scripts","loadEffect called for: " + target->name + " effect: " + Logger::toString( effect->_effectId));
+        fuse_ptr<Character> fuse_target(target);
         call("loadEffect")( effect, fuse_target );
     }
     catch ( luabind::error &e)
@@ -88,13 +88,13 @@ void CLuaLongTimeEffectScript::loadEffect(CLongTimeEffect * effect, CPlayer * ta
     }
 }
 
-void CLuaLongTimeEffectScript::addEffect(CLongTimeEffect * effect, CCharacter * target)
+void LuaLongTimeEffectScript::addEffect(LongTimeEffect * effect, Character * target)
 {
     try
     {
         //CWorld::get()->setCurrentScript( this );
-        CLogger::writeMessage("scripts","addEffect called for: " + target->name + " effect: " + CLogger::toString( effect->_effectId));
-        fuse_ptr<CCharacter> fuse_target(target);
+        Logger::writeMessage("scripts","addEffect called for: " + target->name + " effect: " + Logger::toString( effect->_effectId));
+        fuse_ptr<Character> fuse_target(target);
         call("addEffect")( effect, fuse_target );
     }
     catch ( luabind::error &e)
@@ -103,13 +103,13 @@ void CLuaLongTimeEffectScript::addEffect(CLongTimeEffect * effect, CCharacter * 
     }
 }
 
-void CLuaLongTimeEffectScript::removeEffect(CLongTimeEffect * effect, CCharacter * target)
+void LuaLongTimeEffectScript::removeEffect(LongTimeEffect * effect, Character * target)
 {
     try
     {
         //CWorld::get()->setCurrentScript( this );
-        CLogger::writeMessage("scripts","removeEffect called for: " + target->name + " effect: " + CLogger::toString( effect->_effectId));
-        fuse_ptr<CCharacter> fuse_target(target);
+        Logger::writeMessage("scripts","removeEffect called for: " + target->name + " effect: " + Logger::toString( effect->_effectId));
+        fuse_ptr<Character> fuse_target(target);
         call("removeEffect")( effect, fuse_target );
     }
     catch ( luabind::error &e)

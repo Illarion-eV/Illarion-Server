@@ -17,10 +17,10 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CFIELD_HH
-#define CFIELD_HH
+#ifndef FIELD_HH
+#define FIELD_HH
 
-// #define CField_DEBUG
+// #define Field_DEBUG
 
 #include "constants.hpp"
 #include "globals.hpp"
@@ -32,25 +32,25 @@
 #include "Item.hpp"
 
 // forward declarations
-class CCommonObjectTable;
-class CTilesModificatorTable;
-class CContainerObjectTable;
-class CTilesTable;
+class CommonObjectTable;
+class TilesModificatorTable;
+class ContainerObjectTable;
+class TilesTable;
 
 //a table with standard attributes
-extern CCommonObjectTable* CommonItems;
+extern CommonObjectTable* CommonItems;
 
 //! eine Tabelle mit Item welche die Eigenschaften des Feldes auf dem sie liegen modifizieren
-extern CTilesModificatorTable* TilesModItems;
+extern TilesModificatorTable* TilesModItems;
 
 //! eine Tabelle mit allen Arten von Bodenplatten
-extern CTilesTable* Tiles;
+extern TilesTable* Tiles;
 
 //! wird von verschiedenen Funktionen als Zwischenvariable genutzt
 extern CommonStruct tempCommon;
 
 //! eine Tabelle fr Beh�ter - Item Daten
-extern CContainerObjectTable* ContainerItems;
+extern ContainerObjectTable* ContainerItems;
 
 extern std::vector<int>* erasedcontainers;
 
@@ -59,7 +59,7 @@ extern std::vector<int>* erasedcontainers;
 * a field on the map 
 * each field has its own flags and items
 */
-class CField 
+class Field 
 {
 	private:
 
@@ -116,24 +116,24 @@ class CField
 		unsigned short int getTileCode();
 
 		/**
-        * constructor of CField
+        * constructor of Field
         */
-		CField();
+		Field();
 
 		/**
         * copy constructor
         */
-		CField( const CField& source );
+		Field( const Field& source );
 
 		/**
         * destructor
         */
-		~CField();
+		~Field();
 
 		/**
         * = operator
         */
-		CField& operator =( const CField& source );
+		Field& operator =( const Field& source );
 
         /**
         * saves the current field
@@ -241,7 +241,7 @@ class CField
     	void updateFlags();        
 
         /**
-        * @name CField Lua Functions:
+        * @name Field Lua Functions:
         * the Functions which are exported to Lua
         */
         
@@ -420,7 +420,7 @@ class CField
         /**
         * defines a type of function which takes a pointer to a field as param an returns nothing
         */
-		typedef void ( *CFIELD_FUNCT ) ( CField* );
+		typedef void ( *FIELD_FUNCT ) ( Field* );
 
 		/**
         * stores the items on this field

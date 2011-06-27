@@ -17,22 +17,22 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CTIMER_HH
-#define CTIMER_HH
+#ifndef TIMER_HH
+#define TIMER_HH
 
 #include <ctime>
 
 //! Timer für Sekundenabstände
-class CTimer {
+class Timer {
 
 	public:
 
 		//! Konstruktor
 		// \param timegap Anzahl der Sekunden zwischen zwei Timer-Ereignissen
-		CTimer( unsigned long int timegap );
+		Timer( unsigned long int timegap );
 
 		//! Destruktor
-		~CTimer();
+		~Timer();
 
 		//! prüft, ob schon genügend Zeit seit dem letzten Timer-Ereignis
 		// (bzw. dem Konstruktor) vergangen ist

@@ -21,22 +21,22 @@
 #include "db/ConnectionManager.hpp"
 #include <boost/lexical_cast.hpp>
 
-CScriptVariablesTable::CScriptVariablesTable() : m_dataOK( false )
+ScriptVariablesTable::ScriptVariablesTable() : m_dataOK( false )
 {
     reload();
 }
 
-CScriptVariablesTable::~CScriptVariablesTable()
+ScriptVariablesTable::~ScriptVariablesTable()
 {
     clearOldTable();
 }
 
-void CScriptVariablesTable::clearOldTable()
+void ScriptVariablesTable::clearOldTable()
 {
     values_table.clear();
 }
 
-void CScriptVariablesTable::reload()
+void ScriptVariablesTable::reload()
 {
 	try 
     {
@@ -59,7 +59,7 @@ void CScriptVariablesTable::reload()
 		}
         m_dataOK = true;
         
-#ifdef CDataConnect_DEBUG
+#ifdef DataConnect_DEBUG
 		std::cout << "loaded " << rows << " values for scripts" << std::endl;
 #endif   
          return;
@@ -71,7 +71,7 @@ void CScriptVariablesTable::reload()
 	}    
 }
 
-bool CScriptVariablesTable::find(std::string id, std::string &ret)
+bool ScriptVariablesTable::find(std::string id, std::string &ret)
 {
     STRINGTABLE::iterator it;
     it = values_table.find( id.c_str() );
@@ -87,7 +87,7 @@ bool CScriptVariablesTable::find(std::string id, std::string &ret)
     }
 }
 
-void CScriptVariablesTable::set( std::string id, luabind::object o)
+void ScriptVariablesTable::set( std::string id, luabind::object o)
 {
     char * vname = new char[ id.length() + 1 ];
     strcpy( vname, id.c_str() );
@@ -96,7 +96,7 @@ void CScriptVariablesTable::set( std::string id, luabind::object o)
     values_table[ vname ] = str;
 }
 
-bool CScriptVariablesTable::remove( std::string id )
+bool ScriptVariablesTable::remove( std::string id )
 {
     STRINGTABLE::iterator it = values_table.find( id.c_str() );
     if ( it != values_table.end() )
@@ -110,7 +110,7 @@ bool CScriptVariablesTable::remove( std::string id )
     }
 }
 
-void CScriptVariablesTable::save()
+void ScriptVariablesTable::save()
 {
     //Laden einer Transaktion
     ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();

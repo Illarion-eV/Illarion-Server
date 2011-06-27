@@ -26,19 +26,19 @@
 #include "Logger.hpp"
 #include "fuse_ptr.hpp"
 
-CLuaDepotScript::CLuaDepotScript(std::string filename) throw(ScriptException)
-		: CLuaScript(filename)
+LuaDepotScript::LuaDepotScript(std::string filename) throw(ScriptException)
+		: LuaScript(filename)
 {
 }
 
-CLuaDepotScript::~CLuaDepotScript() throw() {}
+LuaDepotScript::~LuaDepotScript() throw() {}
 
-bool CLuaDepotScript::onOpenDepot(CCharacter * cc, Item itm)
+bool LuaDepotScript::onOpenDepot(Character * cc, Item itm)
 {
     try
     {
-        CWorld::get()->setCurrentScript( this );
-        fuse_ptr<CCharacter> fuse_cc(cc);
+        World::get()->setCurrentScript( this );
+        fuse_ptr<Character> fuse_cc(cc);
         return luabind::object_cast<bool>(call("onOpenDepot")( fuse_cc, itm ));
     }
     catch (luabind::error &e)

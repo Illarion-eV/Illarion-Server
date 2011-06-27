@@ -19,16 +19,16 @@
 
 #include "Timer.hpp"
 
-CTimer::CTimer( unsigned long int timegap ) {
+Timer::Timer( unsigned long int timegap ) {
 	gap = timegap;
 	last = time( NULL ) - timegap;
 }
 
 
-CTimer::~CTimer() {}
+Timer::~Timer() {}
 
 
-bool CTimer::next() {
+bool Timer::next() {
 	time_t temp = time( NULL );     // liefert die Sekunden seit dem 1.1.1970
 	realgap = temp - last;
 	if ( realgap >= gap ) {

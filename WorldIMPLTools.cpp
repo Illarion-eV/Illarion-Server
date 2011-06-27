@@ -31,14 +31,14 @@
 #include <stdlib.h>
 
 //Table with data of Monsters
-extern CMonsterTable* MonsterDescriptions;
+extern MonsterTable* MonsterDescriptions;
 
-class CField;
+class Field;
 
 //function is quick and dirty, should be replaced later
-void CWorld::deleteAllLostNPC()
+void World::deleteAllLostNPC()
 {
-	CField* tempf; //alte NPC's l?chen
+	Field* tempf; //alte NPC's l?chen
 	NPCVECTOR::iterator npcIteratorOld;
     std::vector< TYPE_OF_CHARACTER_ID>::iterator npcIteratorToDelete;
     for ( npcIteratorToDelete = LostNpcs.begin(); npcIteratorToDelete != LostNpcs.end(); ++npcIteratorToDelete)
@@ -63,38 +63,38 @@ void CWorld::deleteAllLostNPC()
     LostNpcs.clear();
 }
 
-bool CWorld::findPlayersInSight(position pos, uint8_t range, std::vector<CPlayer*> &ret, CCharacter::face_to direction)
+bool World::findPlayersInSight(position pos, uint8_t range, std::vector<Player*> &ret, Character::face_to direction)
 {
     bool found = false;
-    std::vector<CPlayer*>playersinrange = Players.findAllAliveCharactersInRangeOfOnSameMap(pos.x,pos.y,pos.z,range);
-    for ( std::vector<CPlayer*>::iterator pIterator = playersinrange.begin(); pIterator != playersinrange.end(); ++pIterator)
+    std::vector<Player*>playersinrange = Players.findAllAliveCharactersInRangeOfOnSameMap(pos.x,pos.y,pos.z,range);
+    for ( std::vector<Player*>::iterator pIterator = playersinrange.begin(); pIterator != playersinrange.end(); ++pIterator)
     {
         
         bool indir = false;
         switch ( direction )
         {
-            case CCharacter::north:
+            case Character::north:
                 if ( (*pIterator)->pos.y <= pos.y ) indir = true;
                 break;
-            case CCharacter::northeast:
+            case Character::northeast:
                 if ( (*pIterator)->pos.x - pos.x >= (*pIterator)->pos.y - pos.y ) indir = true;
                 break;
-            case CCharacter::east:
+            case Character::east:
                 if ( (*pIterator)->pos.x >= pos.x ) indir = true;
                 break;
-            case CCharacter::southeast:
+            case Character::southeast:
                 if ( (*pIterator)->pos.y - pos.y >= pos.x - (*pIterator)->pos.x ) indir = true;
                 break;
-            case CCharacter::south:
+            case Character::south:
                 if ( (*pIterator)->pos.y >= pos.y ) indir = true;
                 break;
-            case CCharacter::southwest:
+            case Character::southwest:
                 if ( (*pIterator)->pos.x - pos.x <= (*pIterator)->pos.y - pos.y ) indir = true;
                 break;
-            case CCharacter::west:
+            case Character::west:
                 if ( (*pIterator)->pos.x <= pos.x ) indir = true;
                 break;
-            case CCharacter::northwest:
+            case Character::northwest:
                 if ( (*pIterator)->pos.y - pos.y >= pos.x - (*pIterator)->pos.x ) indir = true;
                 break;
             default:
@@ -114,7 +114,7 @@ bool CWorld::findPlayersInSight(position pos, uint8_t range, std::vector<CPlayer
     return found;
 }
 
-std::list<BlockingObject> CWorld::LoS(position startingpos, position endingpos)
+std::list<BlockingObject> World::LoS(position startingpos, position endingpos)
 {
     std::list<BlockingObject> ret;
     ret.clear();
@@ -158,7 +158,7 @@ std::list<BlockingObject> CWorld::LoS(position startingpos, position endingpos)
         if ( !(x == startx && y == starty ) && !(x == endx && y == endy) )
         {            
             BlockingObject bo;
-            CField * temp;
+            Field * temp;
             if (steep)
             {
                 //makeGFXForAllPlayersInRange(y,x,startingpos.z, MAXVIEW,0);
@@ -237,7 +237,7 @@ std::list<BlockingObject> CWorld::LoS(position startingpos, position endingpos)
 }
 
 //function which updates the playerlist.
-void CWorld::updatePlayerList()
+void World::updatePlayerList()
 {
     std::cout<<"Updateplayerlist start"<<std::endl;
     ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
@@ -252,7 +252,7 @@ void CWorld::updatePlayerList()
         }
         transaction.commit();
     }
-    catch (std::exception e)
+    catch (std::exception &e)
     {
         std::cerr<<"caught exception during online player save: "<<e.what()<<std::endl;
         transaction.rollback();
@@ -260,9 +260,9 @@ void CWorld::updatePlayerList()
     std::cout<<"updateplayerlist end"<<std::endl;
 }
 
-CCharacter* CWorld::findCharacterOnField(short int posx, short int posy, short int posz) 
+Character* World::findCharacterOnField(short int posx, short int posy, short int posz) 
 {
-	CCharacter* tmpChr;
+	Character* tmpChr;
 	tmpChr = Players.find(posx, posy, posz);
 	if ( tmpChr != NULL )
 		return tmpChr;
@@ -275,29 +275,29 @@ CCharacter* CWorld::findCharacterOnField(short int posx, short int posy, short i
 	return NULL;
 }
 
-CPlayer* CWorld::findPlayerOnField(short int posx, short int posy, short int posz) 
+Player* World::findPlayerOnField(short int posx, short int posy, short int posz) 
 {
 	return Players.find(posx, posy, posz);
 }
 
-CCharacter* CWorld::findCharacter(TYPE_OF_CHARACTER_ID id) {
-	CCharacter* tmpChr;
-	tmpChr = dynamic_cast<CCharacter*>(Players.findID(id));
+Character* World::findCharacter(TYPE_OF_CHARACTER_ID id) {
+	Character* tmpChr;
+	tmpChr = dynamic_cast<Character*>(Players.findID(id));
 	if ( tmpChr != NULL )
 		return tmpChr;
-	tmpChr = dynamic_cast<CCharacter*>(Monsters.findID(id));
+	tmpChr = dynamic_cast<Character*>(Monsters.findID(id));
 	if ( tmpChr != NULL )
 		return tmpChr;
-	tmpChr = dynamic_cast<CCharacter*>(Npc.findID(id));
+	tmpChr = dynamic_cast<Character*>(Npc.findID(id));
 	if ( tmpChr != NULL )
 		return tmpChr;
 	return NULL;
 }
 
 
-bool CWorld::findPlayerWithLowestHP( std::vector < CPlayer* > * ppvec, CPlayer* &found ) {
+bool World::findPlayerWithLowestHP( std::vector < Player* > * ppvec, Player* &found ) {
 	found = NULL;
-	std::vector < CPlayer* > ::iterator pIterator;
+	std::vector < Player* > ::iterator pIterator;
 	for ( pIterator = ppvec->begin(); pIterator < ppvec->end(); ++pIterator ) {
 		if ( found == NULL ) {
 			found = *pIterator;
@@ -312,8 +312,8 @@ bool CWorld::findPlayerWithLowestHP( std::vector < CPlayer* > * ppvec, CPlayer* 
 }
 
 
-void CWorld::takeMonsterAndNPCFromMap() {
-	CField* tempf;
+void World::takeMonsterAndNPCFromMap() {
+	Field* tempf;
 
 	MONSTERVECTOR::iterator monsterIterator;
 	for ( monsterIterator = Monsters.begin(); monsterIterator < Monsters.end(); ++monsterIterator ) {
@@ -339,18 +339,18 @@ void CWorld::takeMonsterAndNPCFromMap() {
 
 
 // only invoked when ATTACK***_TS is received or when a monster attacks
-bool CWorld::characterAttacks( CCharacter* cp ) {
+bool World::characterAttacks( Character* cp ) {
 
 	if (cp->enemyid != cp->id) 
     {
 		int sound = 0;
 		bool updateInv = false;
-		if ( cp->enemytype == CCharacter::player )
+		if ( cp->enemytype == Character::player )
         {
-#ifdef CWorld_DEBUG
+#ifdef World_DEBUG
 			std::cout << "attack player" << std::endl;
 #endif
-			CPlayer* temppl = Players.findID( cp->enemyid );
+			Player* temppl = Players.findID( cp->enemyid );
 
 			// Ziel gefunden
 			if ( temppl != NULL ) {
@@ -364,14 +364,14 @@ bool CWorld::characterAttacks( CCharacter* cp ) {
 // There are no yellow crosses any more, however, one might want a different message in the future.
 // Currently no message is desired.
 /* 						
-                        if (temppl->getPlayerLanguage() == CLanguage::german) 
+                        if (temppl->getPlayerLanguage() == Language::german) 
                         {
-                            boost::shared_ptr<CBasicServerCommand>cmd( new CSayTC( cp->pos.x, cp->pos.y, cp->pos.z, "Geh zum gelben Kreuz, um wiederbelebt zu werden!") );
+                            boost::shared_ptr<BasicServerCommand>cmd( new SayTC( cp->pos.x, cp->pos.y, cp->pos.z, "Geh zum gelben Kreuz, um wiederbelebt zu werden!") );
                             temppl->Connection->addCommand(cmd);
 						} 
                         else 
                         {
-                            boost::shared_ptr<CBasicServerCommand>cmd( new CSayTC( cp->pos.x, cp->pos.y, cp->pos.z, "Walk to the YELLOW CROSS to be resurrected!") );
+                            boost::shared_ptr<BasicServerCommand>cmd( new SayTC( cp->pos.x, cp->pos.y, cp->pos.z, "Walk to the YELLOW ROSS to be resurrected!") );
                             temppl->Connection->addCommand(cmd);
 						}
 */
@@ -379,22 +379,22 @@ bool CWorld::characterAttacks( CCharacter* cp ) {
 						cp->attackmode = false;
                         
                         //set lasttargetseen to false if the player who was attacked is death
-                        if ( cp->character == CCharacter::monster )
+                        if ( cp->character == Character::monster )
                         {
-                            CMonster * mon = dynamic_cast<CMonster*>(cp);
+                            Monster * mon = dynamic_cast<Monster*>(cp);
                             mon->lastTargetSeen = false;
                         }
 
 						// dead people cannot be attacked, reset counter
 						//temppl->nrOfAttackers=0;
 
-						if ( cp->character == CCharacter::player )
+						if ( cp->character == Character::player )
                         {
-                            boost::shared_ptr<CBasicServerCommand>cmd( new CTargetLostTC() );
-                            dynamic_cast<CPlayer*>(cp)->Connection->addCommand(cmd);
+                            boost::shared_ptr<BasicServerCommand>cmd( new TargetLostTC() );
+                            dynamic_cast<Player*>(cp)->Connection->addCommand(cmd);
 						}
-                        boost::shared_ptr<CBasicServerCommand>cmd( new CTargetLostTC() );
-						dynamic_cast<CPlayer*>(temppl)->Connection->addCommand(cmd);
+                        boost::shared_ptr<BasicServerCommand>cmd( new TargetLostTC() );
+						dynamic_cast<Player*>(temppl)->Connection->addCommand(cmd);
 						temppl->attackmode = false;
 					}
 #ifdef DO_UNCONSCIOUS
@@ -405,9 +405,9 @@ bool CWorld::characterAttacks( CCharacter* cp ) {
 					// player should know that he is target of an attack (of another player or NPC)
 					//temppl->nrOfAttackers++;
 
-					if ( ( cp->character == CCharacter::player ) && (updateInv) ) {
-						( ( CPlayer* ) cp )->sendCharacterItemAtPos( LEFT_TOOL );
-						( ( CPlayer* ) cp )->sendCharacterItemAtPos( RIGHT_TOOL );
+					if ( ( cp->character == Character::player ) && (updateInv) ) {
+						( ( Player* ) cp )->sendCharacterItemAtPos( LEFT_TOOL );
+						( ( Player* ) cp )->sendCharacterItemAtPos( RIGHT_TOOL );
 					}
 
 					// bewirkt nur ein Update beim Client
@@ -423,12 +423,12 @@ bool CWorld::characterAttacks( CCharacter* cp ) {
 
 				}
 			}
-		} else if ( cp->enemytype == CCharacter::monster ) {
-#ifdef CWorld_DEBUG
+		} else if ( cp->enemytype == Character::monster ) {
+#ifdef World_DEBUG
 			std::cout << "attack monster" << std::endl;
 #endif
 
-			CMonster* temppl = Monsters.findID( cp->enemyid );
+			Monster* temppl = Monsters.findID( cp->enemyid );
 
 			// Ziel gefunden
 			if ( temppl != NULL ) {
@@ -455,21 +455,21 @@ bool CWorld::characterAttacks( CCharacter* cp ) {
 					if ( !cp->attack( temppl, sound, updateInv ) ) 
                     {
 						cp->attackmode = false;
-						if ( cp->character == CCharacter::player ) 
+						if ( cp->character == Character::player ) 
                         {
-                            boost::shared_ptr<CBasicServerCommand>cmd( new CTargetLostTC());
-							dynamic_cast<CPlayer*>(cp)->Connection->addCommand(cmd);
+                            boost::shared_ptr<BasicServerCommand>cmd( new TargetLostTC());
+							dynamic_cast<Player*>(cp)->Connection->addCommand(cmd);
 						}
 					}
                     else
                     {
                         //check for turning into attackackers direction
-                        std::vector<CPlayer*>temp;
+                        std::vector<Player*>temp;
                         temp.clear();
                         findPlayersInSight( temppl->pos, static_cast<uint8_t>(9), temp, temppl->faceto);
                         //add the current attacker to the list
-                        if ( cp->character == CCharacter::player ) temp.push_back( dynamic_cast<CPlayer*>(cp) );
-                        CPlayer * foundPl;
+                        if ( cp->character == Character::player ) temp.push_back( dynamic_cast<Player*>(cp) );
+                        Player * foundPl;
                         if ( !temp.empty() && findPlayerWithLowestHP( &temp, foundPl ) )
                         {
                             temppl->turn( foundPl->pos );
@@ -477,9 +477,9 @@ bool CWorld::characterAttacks( CCharacter* cp ) {
                         
                     }
 
-					if ( ( cp->character == CCharacter::player ) && (updateInv) ) {
-						( ( CPlayer* ) cp )->sendCharacterItemAtPos( LEFT_TOOL );
-						( ( CPlayer* ) cp )->sendCharacterItemAtPos( RIGHT_TOOL );
+					if ( ( cp->character == Character::player ) && (updateInv) ) {
+						( ( Player* ) cp )->sendCharacterItemAtPos( LEFT_TOOL );
+						( ( Player* ) cp )->sendCharacterItemAtPos( RIGHT_TOOL );
 					}
 
 					if (temphp != temppl->battrib.hitpoints) {
@@ -491,13 +491,13 @@ bool CWorld::characterAttacks( CCharacter* cp ) {
 					return true;
 				}
 			}
-		} else if ( cp->enemytype == CCharacter::npc && false ) // Disable NPC attacks
+		} else if ( cp->enemytype == Character::npc && false ) // Disable NPC attacks
 		{
-#ifdef CWorld_DEBUG
+#ifdef World_DEBUG
 			std::cout << "attack npc" << std::endl;
 #endif
 
-			CNPC* temppl = Npc.findID( cp->enemyid );
+			NPC* temppl = Npc.findID( cp->enemyid );
 
 			// Ziel gefunden
 			if ( temppl != NULL ) {
@@ -506,16 +506,16 @@ bool CWorld::characterAttacks( CCharacter* cp ) {
 					// Ziel ist tot
 					if ( !cp->attack( temppl, sound, updateInv ) ) {
 						cp->attackmode = false;
-						if ( cp->character == CCharacter::player ) 
+						if ( cp->character == Character::player ) 
                         {
-                            boost::shared_ptr<CBasicServerCommand>cmd( new CTargetLostTC() );
-							dynamic_cast<CPlayer*>(cp)->Connection->addCommand(cmd);
+                            boost::shared_ptr<BasicServerCommand>cmd( new TargetLostTC() );
+							dynamic_cast<Player*>(cp)->Connection->addCommand(cmd);
 						}
 					}
 
-					if ( ( cp->character == CCharacter::player ) && (updateInv) ) {
-						dynamic_cast<CPlayer*>(cp)->sendCharacterItemAtPos( LEFT_TOOL );
-						dynamic_cast<CPlayer*>(cp)->sendCharacterItemAtPos( RIGHT_TOOL );
+					if ( ( cp->character == Character::player ) && (updateInv) ) {
+						dynamic_cast<Player*>(cp)->sendCharacterItemAtPos( LEFT_TOOL );
+						dynamic_cast<Player*>(cp)->sendCharacterItemAtPos( RIGHT_TOOL );
 					}
 
 					if (temphp != temppl->battrib.hitpoints) {
@@ -529,12 +529,12 @@ bool CWorld::characterAttacks( CCharacter* cp ) {
 			}
 		}
 
-		// Ziel nicht gefunden/außer Sichtweite
+		// Ziel nicht gefunden/auï¿½er Sichtweite
 		cp->attackmode = false;
-		if ( cp->character == CCharacter::player ) 
+		if ( cp->character == Character::player ) 
         {
-            boost::shared_ptr<CBasicServerCommand>cmd( new CTargetLostTC() );
-			dynamic_cast<CPlayer*>(cp)->Connection->addCommand(cmd);
+            boost::shared_ptr<BasicServerCommand>cmd( new TargetLostTC() );
+			dynamic_cast<Player*>(cp)->Connection->addCommand(cmd);
 		}
 
 		return false;
@@ -545,7 +545,7 @@ bool CWorld::characterAttacks( CCharacter* cp ) {
 }
 
 
-bool CWorld::killMonster( CMonster* monsterp ) {
+bool World::killMonster( Monster* monsterp ) {
 	if ( monsterp != NULL ) {
 		MONSTERVECTOR::iterator newIt;
 		if ( Monsters.getIterator( monsterp->id, newIt ) ) {
@@ -559,15 +559,15 @@ bool CWorld::killMonster( CMonster* monsterp ) {
 }
 
 
-void CWorld::killMonster( MONSTERVECTOR::iterator monsterIt, MONSTERVECTOR::iterator &newIt ) {
+void World::killMonster( MONSTERVECTOR::iterator monsterIt, MONSTERVECTOR::iterator &newIt ) {
 
 	//( *monsterIt )->SetAlive( false );
-	CField* tempf;
+	Field* tempf;
 	if ( GetPToCFieldAt( tempf, ( *monsterIt )->pos.x, ( *monsterIt )->pos.y, ( *monsterIt )->pos.z ) ) {
 		//tempf->SetMonsterOnField( false );
 		tempf->removeChar();
 	} else {
-#ifdef CWorld_DEBUG
+#ifdef World_DEBUG
 		std::cout << "Feld nicht gefunden" << std::endl;
 #endif
 
@@ -582,44 +582,45 @@ void CWorld::killMonster( MONSTERVECTOR::iterator monsterIt, MONSTERVECTOR::iter
 	// update our monster-list counts (temporary solution TODO)
 	char num;
 	switch ((*monsterIt)->race) {
-		case CCharacter::mumie:
+		case Character::mumie:
 			num = 0;
 			break;
-		case CCharacter::beholder:
+		case Character::beholder:
 			num = 1;
 			break;
-		case CCharacter::insects:
+		case Character::insects:
 			num = 2;
 			break;
-		case CCharacter::sheep:
+		case Character::sheep:
 			num = 3;
 			break;
-		case CCharacter::spider:
+		case Character::spider:
 			num = 4;
 			break;
-		case CCharacter::demonskeleton:
+		case Character::demonskeleton:
 			num = 5;
 			break;
-		case CCharacter::rotworm:
+		case Character::rotworm:
 			num = 6;
 			break;
-		case CCharacter::bigdemon:
+		case Character::bigdemon:
 			num = 7;
 			break;
-		case CCharacter::skeleton:
+		case Character::skeleton:
 			num = 8;
 			break;
-		case CCharacter::pig:
+		case Character::pig:
 			num = 9;
 			break;
-		case CCharacter::scorpion:
+		case Character::scorpion:
 			num = 10;
 			break;
-		case CCharacter::troll:
+		case Character::troll:
 			num = 11;
 			break;
 		default:
 			num = -1;
+			break;
 	}
 
 	// delete our monster
@@ -631,7 +632,7 @@ void CWorld::killMonster( MONSTERVECTOR::iterator monsterIt, MONSTERVECTOR::iter
 }
 
 
-bool CWorld::doHealing( CCharacter* cc ) {
+bool World::doHealing( Character* cc ) {
 
 #ifdef DO_UNCONSCIOUS
 	if ( cc->IsDying() ) {
@@ -645,12 +646,12 @@ bool CWorld::doHealing( CCharacter* cc ) {
 	}
 #endif
 
-	if ( cc->character == CCharacter::player ) {
+	if ( cc->character == Character::player ) {
 		/**
         if ( ( cc->battrib.truefoodlevel >= 300 ) && ( ( cc->battrib.truehitpoints < MAXHPS ) || ( cc->battrib.truemana < MAXMANA ) ) ) {
-			( ( CPlayer* ) cc )->increaseAttrib( "hitpoints", 100 );
-			( ( CPlayer* ) cc )->increaseAttrib( "mana", 100 );
-			( ( CPlayer* ) cc )->increaseAttrib( "foodlevel", -300 );
+			( ( Player* ) cc )->increaseAttrib( "hitpoints", 100 );
+			( ( Player* ) cc )->increaseAttrib( "mana", 100 );
+			( ( Player* ) cc )->increaseAttrib( "foodlevel", -300 );
 			return true;
 		} else {
 			return false;
@@ -669,9 +670,9 @@ bool CWorld::doHealing( CCharacter* cc ) {
 
 }
 
-CField* CWorld::GetField(position pos) {
-	CField * field=NULL;
-	CMap * temp=NULL;
+Field* World::GetField(position pos) {
+	Field * field=NULL;
+	Map * temp=NULL;
 	if ( maps.findMapForPos( pos, temp ) ) {
 		if ( temp->GetPToCFieldAt( field, pos.x, pos.y) ) {
 			return field;
@@ -684,9 +685,9 @@ CField* CWorld::GetField(position pos) {
 }
 
 
-bool CWorld::GetPToCFieldAt( CField* &fip, short int x, short int y, short int z ) {
+bool World::GetPToCFieldAt( Field* &fip, short int x, short int y, short int z ) {
 
-	CMap * temp;
+	Map * temp;
 	if ( maps.findMapForPos( x, y, z, temp ) ) {
 		return temp->GetPToCFieldAt( fip, x, y );
 	} else {
@@ -696,9 +697,9 @@ bool CWorld::GetPToCFieldAt( CField* &fip, short int x, short int y, short int z
 }
 
 
-bool CWorld::GetPToCFieldAt( CField* &fip, position pos ) {
+bool World::GetPToCFieldAt( Field* &fip, position pos ) {
 
-	CMap * temp;
+	Map * temp;
 	if ( maps.findMapForPos( pos, temp ) ) {
 		return temp->GetPToCFieldAt( fip, pos.x, pos.y );
 	}
@@ -708,7 +709,7 @@ bool CWorld::GetPToCFieldAt( CField* &fip, position pos ) {
 }
 
 
-bool CWorld::GetPToCFieldAt( CField* &fip, short int x, short int y, short int z, CMap* &map ) {
+bool World::GetPToCFieldAt( Field* &fip, short int x, short int y, short int z, Map* &map ) {
 
 	if ( maps.findMapForPos( x, y, z, map ) ) {
 		return map->GetPToCFieldAt( fip, x, y );
@@ -719,7 +720,7 @@ bool CWorld::GetPToCFieldAt( CField* &fip, short int x, short int y, short int z
 }
 
 
-bool CWorld::GetPToCFieldAt( CField* &fip, position pos, CMap* &map ) {
+bool World::GetPToCFieldAt( Field* &fip, position pos, Map* &map ) {
 
 	if ( maps.findMapForPos( pos, map ) ) {
 		return map->GetPToCFieldAt( fip, pos.x, pos.y );
@@ -730,10 +731,10 @@ bool CWorld::GetPToCFieldAt( CField* &fip, position pos, CMap* &map ) {
 }
 
 
-bool CWorld::findEmptyCFieldNear( CField* &cf, short int &x, short int &y, short int z ) 
+bool World::findEmptyCFieldNear( Field* &cf, short int &x, short int &y, short int z ) 
 {
 
-	CMap * temp;
+	Map * temp;
 	if ( maps.findMapForPos( x, y, z, temp ) ) {
 		return temp->findEmptyCFieldNear( cf, x, y );
 	}
@@ -743,7 +744,7 @@ bool CWorld::findEmptyCFieldNear( CField* &cf, short int &x, short int &y, short
 }
 
 
-int CWorld::getItemAttrib( std::string s, TYPE_OF_ITEM_ID ItemID ) 
+int World::getItemAttrib( std::string s, TYPE_OF_ITEM_ID ItemID ) 
 {
 
 	// Armor //
@@ -814,13 +815,13 @@ int CWorld::getItemAttrib( std::string s, TYPE_OF_ITEM_ID ItemID )
 }
 
 
-void CWorld::closeShowcasesForContainerPositions() 
+void World::closeShowcasesForContainerPositions() 
 {
 
-	std::vector < CPlayer* > temp;
+	std::vector < Player* > temp;
 	for ( std::vector < position > ::iterator posit = contpos->begin(); posit < contpos->end(); ++posit ) {
 		temp=Players.findAllCharactersInMaxRangeOf(posit->x, posit->y, posit->z, 1);
-		for ( std::vector < CPlayer* > ::iterator titerator = temp.begin(); titerator < temp.end(); ++titerator ) {
+		for ( std::vector < Player* > ::iterator titerator = temp.begin(); titerator < temp.end(); ++titerator ) {
 			( *titerator )->closeAllShowcasesOfMapContainers();
 		}
 		temp.clear();
@@ -829,15 +830,15 @@ void CWorld::closeShowcasesForContainerPositions()
 }
 
 
-void CWorld::updatePlayerView( short int startx, short int endx ) 
+void World::updatePlayerView( short int startx, short int endx ) 
 {
 
-	std::vector < CPlayer* > temp;
+	std::vector < Player* > temp;
 	if ( Players.findAllCharactersWithXInRangeOf( startx - MAXVIEW, endx + MAXVIEW, temp ) ) 
     {
-		for ( std::vector < CPlayer* > ::iterator titerator = temp.begin(); titerator < temp.end(); ++titerator ) 
+		for ( std::vector < Player* > ::iterator titerator = temp.begin(); titerator < temp.end(); ++titerator ) 
         {
-#ifdef CWorld_DEBUG
+#ifdef World_DEBUG
 			std::cout << "update view for player " << ( *titerator )->name << " " << startx << ":#" << ( *titerator )->pos.x << "#:" << endx << "\n";
 #endif
 
@@ -849,19 +850,19 @@ void CWorld::updatePlayerView( short int startx, short int endx )
 }
 
 
-void CWorld::do_LongTimeEffects( CCharacter* cc ) {
+void World::do_LongTimeEffects( Character* cc ) {
 
 	if ( cc != NULL ) 
     {
 		if ( cc->IsAlive() ) 
         {
-			if (cc->character==CCharacter::player) 
+			if (cc->character==Character::player)
             {
 				doHealing( cc );
-				//( ( CPlayer* ) cc )->sendAttrib("hitpoints", cc->increaseAttrib( "hitpoints", 0 ) );
+				//( ( Player* ) cc )->sendAttrib("hitpoints", cc->increaseAttrib( "hitpoints", 0 ) );
 			}
 
-			CField * fip;
+			Field * fip;
 			if ( GetPToCFieldAt( fip, cc->pos ) ) {
 				checkFieldAfterMove( cc, fip );
 			}
@@ -871,19 +872,19 @@ void CWorld::do_LongTimeEffects( CCharacter* cc ) {
 }
 
 
-bool CWorld::DoAge() {
+bool World::DoAge() {
 
 	if ( nextXtoage >= maps.getHighX() ) {
 		// auf allen Karten alles abgearbeitet
 		time_t temp = time( NULL );    // liefert die Sekunden seit dem 1.1.1970
 		realgap = temp - last_age;
-		// Zeit für neuen Durchlauf der Karte
+		// Zeit fï¿½r neuen Durchlauf der Karte
 		if ( realgap >= gap ) {
-#ifdef CWorld_DEBUG
-			std::cout << "CWorld.DoAge: Karte gealtert nach " << realgap << " Sekunden\n";
+#ifdef World_DEBUG
+			std::cout << "World.DoAge: Karte gealtert nach " << realgap << " Sekunden\n";
 #endif
 			++timecount;
-			// Bestimmen welche Steps gealtert werden müssen
+			// Bestimmen welche Steps gealtert werden mï¿½ssen
 			if ( timecount == STEP_7 ) {
 				AgeItem = AgeItemUpStep7;
 				timecount = 0;
@@ -908,10 +909,10 @@ bool CWorld::DoAge() {
 			AgeCharacters();
             AgeInventory(AgeItem);
 
-			CMap::CONTAINERHASH::iterator conmap;
-			CContainer::CONTAINERMAP::iterator cmi;
-			// für alle Karten die Containerinhalte altern
-			for ( CMapVector::iterator mapI = maps.begin(); mapI < maps.end(); ++mapI ) {
+			Map::ONTAINERHASH::iterator conmap;
+			Container::ONTAINERMAP::iterator cmi;
+			// fï¿½r alle Karten die Containerinhalte altern
+			for ( MapVector::iterator mapI = maps.begin(); mapI < maps.end(); ++mapI ) {
 				// alle ContainerMap auf dem Feld
 				for ( conmap = ( *mapI )->maincontainers.begin(); conmap != ( *mapI )->maincontainers.end(); ++conmap ) {
 					// Containerinhalt altern
@@ -933,9 +934,9 @@ bool CWorld::DoAge() {
 		lastXtoage = maps.getHighX();
 	}
 
-	std::vector < CMap* > mapsToage;
+	std::vector < Map* > mapsToage;
 	if ( maps.findAllMapsWithXInRangeOf( nextXtoage, lastXtoage, mapsToage ) ) {
-		for ( std::vector < CMap* > ::iterator mapI = mapsToage.begin(); mapI < mapsToage.end(); ++mapI ) {
+		for ( std::vector < Map* > ::iterator mapI = mapsToage.begin(); mapI < mapsToage.end(); ++mapI ) {
 			( *mapI )->DoAgeItems_XFromTo( nextXtoage, lastXtoage, AgeItem );
 		}
 		closeShowcasesForContainerPositions();
@@ -949,7 +950,7 @@ bool CWorld::DoAge() {
 }
 
 
-void CWorld::AgeInventory( ITEM_FUNCT funct ) {
+void World::AgeInventory( ITEM_FUNCT funct ) {
 
 	PLAYERVECTOR::iterator titerator;
 	for ( titerator = Players.begin(); titerator < Players.end(); ++titerator ) {
@@ -964,7 +965,7 @@ void CWorld::AgeInventory( ITEM_FUNCT funct ) {
 }
 
 
-void CWorld::AgeCharacters() {
+void World::AgeCharacters() {
 
 	PLAYERVECTOR::iterator titerator;
 	for ( titerator = Players.begin(); titerator < Players.end(); ++titerator ) {
@@ -975,7 +976,7 @@ void CWorld::AgeCharacters() {
 }
 
 
-void CWorld::saveAllPlayerNamesToFile( std::string name ) {
+void World::saveAllPlayerNamesToFile( std::string name ) {
 
 	PLAYERVECTOR::iterator titerator;
 	FILE* f;
@@ -997,7 +998,7 @@ void CWorld::saveAllPlayerNamesToFile( std::string name ) {
 }
 
 
-void CWorld::Save( std::string prefix ) {
+void World::Save( std::string prefix ) {
 
 	char mname[ 200 ];
 	prefix = directory + std::string( MAPDIR ) + prefix;
@@ -1005,16 +1006,16 @@ void CWorld::Save( std::string prefix ) {
 	std::ofstream mapinitfile( ( prefix + "_initmaps" ).c_str(), std::ios::binary | std::ios::out | std::ios::trunc );
 
 	if ( ! mapinitfile.good() ) {
-#ifdef CWorld_DEBUG
-		std::cerr << "CWorld::Save: Fehler beim Speichern der Karten, konnte initmaps nicht erstellen" << std::endl;
+#ifdef World_DEBUG
+		std::cerr << "World::Save: Fehler beim Speichern der Karten, konnte initmaps nicht erstellen" << std::endl;
 #endif
 
 	} else {
 		unsigned short int size = maps.size();
-		std::cout << "CWorld::Save: speichere " << size << " Karten" << std::endl;
+		std::cout << "World::Save: speichere " << size << " Karten" << std::endl;
 		mapinitfile.write( ( char* ) & size, sizeof( size ) );
 
-		for ( CMapVector::iterator mapI = maps.begin(); mapI != maps.end(); ++mapI ) {
+		for ( MapVector::iterator mapI = maps.begin(); mapI != maps.end(); ++mapI ) {
 			mapinitfile.write( ( char* ) & ( *mapI )->Z_Level, sizeof( ( *mapI )->Z_Level ) );
 			mapinitfile.write( ( char* ) & ( *mapI )->Min_X, sizeof( ( *mapI )->Min_X ) );
 			mapinitfile.write( ( char* ) & ( *mapI )->Min_Y, sizeof( ( *mapI )->Min_Y ) );
@@ -1034,14 +1035,14 @@ void CWorld::Save( std::string prefix ) {
 	std::ofstream specialfile( ( prefix + "_specialfields" ).c_str(), std::ios::binary | std::ios::out | std::ios::trunc );
 
 	if ( ! specialfile.good() ) {
-#ifdef CWorld_DEBUG
-		std::cerr << "CWorld::Save: Fehler beim Speichern der speziellen Felder, konnte _specialfields nicht erstellen" << std::endl;
+#ifdef World_DEBUG
+		std::cerr << "World::Save: Fehler beim Speichern der speziellen Felder, konnte _specialfields nicht erstellen" << std::endl;
 #endif
 
 	} else {
 		unsigned short int size = specialfields.size();
-#ifdef CWorld_DEBUG
-		std::cout << "CWorld::Save: speichere " << size << " spezielle Felder" << std::endl;
+#ifdef World_DEBUG
+		std::cout << "World::Save: speichere " << size << " spezielle Felder" << std::endl;
 #endif
 		specialfile.write( ( char* ) & size, sizeof( size ) );
 
@@ -1057,18 +1058,18 @@ void CWorld::Save( std::string prefix ) {
 }
 
 
-void CWorld::Load( std::string prefix ) {
+void World::Load( std::string prefix ) {
 	char mname[ 200 ];
 	prefix = directory + std::string( MAPDIR ) + prefix;
 
 	std::ifstream mapinitfile( ( prefix + "_initmaps" ).c_str(), std::ios::binary | std::ios::in );
 
 	if ( ! mapinitfile.good() ) {
-		std::cerr << "CWorld::Load: Fehler beim Laden der Karten, konnte initmaps nicht öffnen" << std::endl;
+		std::cerr << "World::Load: Fehler beim Laden der Karten, konnte initmaps nicht ï¿½ffnen" << std::endl;
 	} else {
 		unsigned short int size;
 		mapinitfile.read( ( char* ) & size, sizeof( size ) );
-		std::cout << "CWorld::Load: lade " << size << " Karten" << std::endl;
+		std::cout << "World::Load: lade " << size << " Karten" << std::endl;
 
 		short int tZ_Level;
 		short int tMin_X;
@@ -1079,7 +1080,7 @@ void CWorld::Load( std::string prefix ) {
 
 		bool tdisappears;
 
-		CMap* tempMap;
+		Map* tempMap;
 
 		for ( int i = 0; i < size; ++i ) {
 			mapinitfile.read( ( char* ) & tZ_Level, sizeof( tZ_Level ) );
@@ -1091,7 +1092,7 @@ void CWorld::Load( std::string prefix ) {
 
 			mapinitfile.read( ( char* ) & tdisappears, sizeof( tdisappears ) );
 
-			tempMap = new CMap( tWidth, tHeight );
+			tempMap = new Map( tWidth, tHeight );
 			tempMap->Init( tMin_X, tMin_Y, tZ_Level, tdisappears );
 
 			sprintf ( mname, "%s_%6d_%6d_%6d", prefix.c_str(), tZ_Level, tMin_X, tMin_Y );
@@ -1104,11 +1105,11 @@ void CWorld::Load( std::string prefix ) {
 
 	std::ifstream specialfile( ( prefix + "_specialfields" ).c_str(), std::ios::binary | std::ios::in );
 	if ( ! specialfile.good() ) {
-		std::cerr << "CWorld::Load: Fehler beim Laden der speziellen Felder, konnte _specialfields nicht öffnen" << std::endl;
+		std::cerr << "World::Load: Fehler beim Laden der speziellen Felder, konnte _specialfields nicht ï¿½ffnen" << std::endl;
 	} else {
 		unsigned short int size3;
 		specialfile.read( ( char* ) & size3, sizeof( size3 ) );
-		std::cout << "CWorld::Load: lade " << size3 << " spezielle Felder" << std::endl;
+		std::cout << "World::Load: lade " << size3 << " spezielle Felder" << std::endl;
 
 		position start;
 		s_fieldattrib attrib;
@@ -1125,7 +1126,7 @@ void CWorld::Load( std::string prefix ) {
 
 }
 
-int CWorld::getTime(std::string timeType) {
+int World::getTime(std::string timeType) {
     int minute,hour,day,month,year,illaTime;
     time_t curr_unixtime;
     struct tm *timestamp;
@@ -1205,9 +1206,9 @@ int CWorld::getTime(std::string timeType) {
 }
 
 
-bool CWorld::findWarpFieldsInRange( position pos, short int range, std::vector< boost::shared_ptr< position > > & warppositions ) {
+bool World::findWarpFieldsInRange( position pos, short int range, std::vector< boost::shared_ptr< position > > & warppositions ) {
 	int x,y;
-    CField * cf = 0;
+    Field * cf = 0;
     for( x=pos.x-range; x<=pos.x+range; ++x )
         for( y=pos.y-range; y<=pos.y+range; ++y )
             if( GetPToCFieldAt( cf, x, y, pos.z ) && cf->IsWarpField() )
@@ -1219,7 +1220,7 @@ bool CWorld::findWarpFieldsInRange( position pos, short int range, std::vector< 
 }
 
 
-void CWorld::setWeatherPart(std::string type, char value)
+void World::setWeatherPart(std::string type, char value)
 {
     if ( type == "cloud_density" )
         weather.cloud_density = value;
@@ -1240,11 +1241,11 @@ void CWorld::setWeatherPart(std::string type, char value)
     sendWeatherToAllPlayers();
 }
 
-void CWorld::sendRemoveCharToVisiblePlayers( TYPE_OF_CHARACTER_ID id, position & pos )
+void World::sendRemoveCharToVisiblePlayers( TYPE_OF_CHARACTER_ID id, position & pos )
 {
-    std::vector < CPlayer* > temp = Players.findAllCharactersInRangeOf( pos.x, pos.y, pos.z, MAXVIEW );
-    std::vector < CPlayer* > ::iterator titerator;
-    boost::shared_ptr<CBasicServerCommand>cmd( new CRemoveCharTC( id ) );
+    std::vector < Player* > temp = Players.findAllCharactersInRangeOf( pos.x, pos.y, pos.z, MAXVIEW );
+    std::vector < Player* > ::iterator titerator;
+    boost::shared_ptr<BasicServerCommand>cmd( new RemoveCharTC( id ) );
     for ( titerator = temp.begin(); titerator < temp.end(); ++titerator )
     {
         ( *titerator )->sendCharRemove( id, cmd );

@@ -26,19 +26,19 @@
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
 
-CPlayerManager * CPlayerManager::instance;
-boost::mutex CPlayerManager::mut;
-boost::shared_mutex CPlayerManager::reloadmutex;
+PlayerManager * PlayerManager::instance;
+boost::mutex PlayerManager::mut;
+boost::shared_mutex PlayerManager::reloadmutex;
 
-CPlayerManager * CPlayerManager::get()
+PlayerManager * PlayerManager::get()
 {
-    if ( !instance )instance = new CPlayerManager();
+    if ( !instance )instance = new PlayerManager();
     return instance;
 }
     
-void CPlayerManager::activate()
+void PlayerManager::activate()
 {
-    std::cout<<"CPlayerManager::activate called"<<std::endl;	
+    std::cout<<"PlayerManager::activate called"<<std::endl;	
     pthread_attr_t pattr;
     pthread_attr_init( &pattr );
     pthread_attr_setdetachstate( &pattr, PTHREAD_CREATE_DETACHED );
@@ -55,7 +55,7 @@ void CPlayerManager::activate()
         std::cout<<"successfull"<<std::endl;  
 }
     
-CPlayerManager::CPlayerManager()
+PlayerManager::PlayerManager()
 {
     std::cout<<"==============creating Player manager==============="<<std::endl;
     running = false;
@@ -68,7 +68,7 @@ CPlayerManager::CPlayerManager()
         std::cout<<"successfull"<<std::endl; */
 }
 
-CPlayerManager::~CPlayerManager()
+PlayerManager::~PlayerManager()
 {
     pthread_cancel( login_thread );
     pthread_cancel( save_thread );
@@ -77,7 +77,7 @@ CPlayerManager::~CPlayerManager()
     //shutdownConnections.clear();
 }
 
-void CPlayerManager::saveAll()
+void PlayerManager::saveAll()
 {
     
     if ( !loggedOutPlayers.empty() )
@@ -101,7 +101,7 @@ void CPlayerManager::saveAll()
     
 }
 
-bool CPlayerManager::findPlayer(std::string name)
+bool PlayerManager::findPlayer(std::string name)
 {
     mut.lock();
     for ( TPLAYERVECTOR::iterator pIterator = loggedOutPlayers.begin(); pIterator != loggedOutPlayers.end(); ++pIterator )
@@ -118,7 +118,7 @@ bool CPlayerManager::findPlayer(std::string name)
     return false;
 }
 
-void CPlayerManager::setLoginLogout(bool val)
+void PlayerManager::setLoginLogout(bool val)
 {
     if ( val ) 
     {
@@ -134,18 +134,18 @@ void CPlayerManager::setLoginLogout(bool val)
     }
 }
 
-void * CPlayerManager::loginLoop(CPlayerManager * pmanager)
+void * PlayerManager::loginLoop(PlayerManager * pmanager)
 {
     try
     {
-        CInitialConnection::TVECTORPLAYER& newplayers = pmanager->incon.get_Player_Vector();
+        InitialConnection::TVECTORPLAYER& newplayers = pmanager->incon.get_Player_Vector();
         TPLAYERVECTOR::iterator pIterator;
         timespec waittime;
         waittime.tv_sec = 0;
         waittime.tv_nsec = 100000000;
         pmanager->threadOk = true;
         int curconn = 0;
-        boost::shared_ptr<CNetInterface> Connection;
+        boost::shared_ptr<NetInterface> Connection;
         while ( pmanager->running )
         {
              //loop must be steered by counter so we parse every connection only one time bevor we getting to the other loop
@@ -159,14 +159,14 @@ void * CPlayerManager::loginLoop(CPlayerManager * pmanager)
                           bool isLocked = false;
                           try
                           {
-                              if ( !Connection->online)throw CPlayer::LogoutException(UNSTABLECONNECTION);
+                              if ( !Connection->online)throw Player::LogoutException(UNSTABLECONNECTION);
                               if ( Connection->receivedSize() > 0 )
                               {
                                  std::cout<<"try to login player"<<std::endl;
                                  //get shared lock
                                  reloadmutex.lock_shared();
                                  isLocked = true; 
-                                 CPlayer * newPlayer = new CPlayer(Connection);
+                                 Player * newPlayer = new Player(Connection);
                                  //release shared lock
                                  reloadmutex.unlock_shared();
                                  isLocked = false;
@@ -179,17 +179,17 @@ void * CPlayerManager::loginLoop(CPlayerManager * pmanager)
                                   if ( Connection->nextInactive() )
                                   {
                                       std::cout<<Connection->getIPAdress()<<" logged out because inactive count!"<<std::endl;
-                                      throw CPlayer::LogoutException(UNSTABLECONNECTION);
+                                      throw Player::LogoutException(UNSTABLECONNECTION);
                                   }
                                   newplayers.non_block_push_back( Connection );
                                   Connection.reset();
                               }
                          } 
-                         catch (CPlayer::LogoutException &e) 
+                         catch (Player::LogoutException &e) 
                          {   // Only unlock reloadmutex if it has actually been locked
                              if( isLocked ) reloadmutex.unlock_shared();
                              std::cout<<"got logoutException durin loading! "<<std::endl;
-                             boost::shared_ptr<CBasicServerCommand>cmd(new CLogOutTC( e.getReason() ));
+                             boost::shared_ptr<BasicServerCommand>cmd(new LogOutTC( e.getReason() ));
                              Connection->shutdownSend(cmd);
                              //Connection->closeConnection();
                              //Connection.reset();
@@ -217,22 +217,22 @@ void * CPlayerManager::loginLoop(CPlayerManager * pmanager)
     return NULL;
 }        
     
-void * CPlayerManager::playerSaveLoop(CPlayerManager * pmanager)
+void * PlayerManager::playerSaveLoop(PlayerManager * pmanager)
 {
     try
     {
-        CWorld * world = CWorld::get();
+        World * world = World::get();
         TPLAYERVECTOR::iterator pIterator;
         timespec waittime;
         waittime.tv_sec = 0;
         waittime.tv_nsec = 100000000;
         pmanager->threadOk = true;
-        CPlayer * tmpPl=NULL;
+        Player * tmpPl=NULL;
         while ( pmanager->running )
         {
                 if ( !pmanager->loggedOutPlayers.empty() )
                 {
-                    CLogger::writeMessage("basic", "Ausgelogte Spieler bearbeiten: " + CLogger::toString(pmanager->loggedOutPlayers.size()) + " players gone");
+                    Logger::writeMessage("basic", "Ausgelogte Spieler bearbeiten: " + Logger::toString(pmanager->loggedOutPlayers.size()) + " players gone");
                     std::cout<<"ausgeloggte Spieler bearbeiten:"<<std::endl;
                     while ( !pmanager->loggedOutPlayers.empty() )
                     {
@@ -247,7 +247,7 @@ void * CPlayerManager::playerSaveLoop(CPlayerManager * pmanager)
                             reloadmutex.unlock_shared(); 
                             tmpPl->Connection->closeConnection();
                             std::cout<<"removed player: "<<tmpPl->name<<std::endl;
-                            boost::shared_ptr<CBasicServerCommand> cmd(new CBBLogOutTC( tmpPl->id, tmpPl->name ));
+                            boost::shared_ptr<BasicServerCommand> cmd(new BBLogOutTC( tmpPl->id, tmpPl->name ));
                             world->monitoringClientList->sendCommand( cmd );
                             //std::cout<<"deleting player!"<<std::endl;
                             //pmanager->shutdownConnections.non_block_push_back( tmpPl->Connection);
@@ -267,13 +267,13 @@ void * CPlayerManager::playerSaveLoop(CPlayerManager * pmanager)
                             std::cout<<"player deleted"<<std::endl;
                         }
                   }
-                  CLogger::writeMessage("basic","Ausgelogte Spieler bearbeiten fertig [Begin]" );
+                  Logger::writeMessage("basic","Ausgelogte Spieler bearbeiten fertig [Begin]" );
                   std::cout<<"Ausgelogte Spieler bearbeiten fertig [Begin]"<<std::endl;
                   // Statistik aktualisieren
                   //loadlog.update( world->Players.size() );
                   //world->saveAllPlayerNamesToFile( configOptions["datadir"] + std::string( ONLINEPLFILE ) );
                   world->updatePlayerList();
-                  CLogger::writeMessage("basic", "Ausgelogte Spieler bearbeiten fertig [End]" );
+                  Logger::writeMessage("basic", "Ausgelogte Spieler bearbeiten fertig [End]" );
                   std::cout<<"Ausgelogte Spieler bearbeiten fertig [End]"<<std::endl;
                }
                nanosleep(&waittime, NULL);
@@ -291,7 +291,7 @@ void * CPlayerManager::playerSaveLoop(CPlayerManager * pmanager)
     return NULL;
 }                 
 
-//void * CPlayerManager::deleteOldConnectionsLoop(CPlayerManager * pmanager)
+//void * PlayerManager::deleteOldConnectionsLoop(PlayerManager * pmanager)
 //{
 //    try
 //    {
@@ -300,7 +300,7 @@ void * CPlayerManager::playerSaveLoop(CPlayerManager * pmanager)
 //        waittime.tv_sec = 0;
 //        waittime.tv_nsec = 100000000;
 //        pmanager->threadOk = true;
-//        boost::shared_ptr<CNetInterface> sd;
+//        boost::shared_ptr<NetInterface> sd;
 //        int size = 0;
 //        while ( pmanager->running )
 //        {

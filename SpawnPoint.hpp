@@ -17,25 +17,25 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CSPAWNPOINT_HPP
-#define CSPAWNPOINT_HPP
+#ifndef SPAWNPOINT_HPP
+#define SPAWNPOINT_HPP
 
 #include "globals.hpp"
 #include "Character.hpp"
 #include <list>
 
-// just declare a class named CWorld...
-class CWorld;
+// just declare a class named World...
+class World;
 
 //! defines a Spawnpoint
-class CSpawnPoint {
+class SpawnPoint {
 
 	public:
 		//! Creates a new SpawnPoint at <pos>
-		CSpawnPoint(const position& pos, int Range = 20, uint16_t Spawnrange = 0, uint16_t Min_Spawntime = 1, uint16_t Max_Spawntime = 1, bool Spawnall = false );
+		SpawnPoint(const position& pos, int Range = 20, uint16_t Spawnrange = 0, uint16_t Min_Spawntime = 1, uint16_t Max_Spawntime = 1, bool Spawnall = false );
 
 		//! Destructor
-		~CSpawnPoint();
+		~SpawnPoint();
 
 		void addMonster(const TYPE_OF_CHARACTER_ID& typ, const short int& count);
 
@@ -55,7 +55,7 @@ class CSpawnPoint {
 
 	private:
 		// our link to the world...
-		CWorld* world;
+		World* world;
 
 		position spawnpos;
         
@@ -84,4 +84,4 @@ class CSpawnPoint {
 		std::list<struct SpawnEntryStruct> SpawnTypes;
 };
 
-#endif // CNPC_HPP
+#endif // NPC_HPP

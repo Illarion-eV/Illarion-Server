@@ -39,7 +39,7 @@
 *class which holds the receive data thread and performs the action to receive 
 *data from the client
 */
-class CReceiver
+class Receiver
 {
     public:
     
@@ -48,8 +48,8 @@ class CReceiver
         *@param conn the connection from which the data is received
         *@param rQueue the receive queue to which the received commands should be stored
         */
-        CReceiver( CNetInterface * conn , boost::shared_ptr<CNetInterface::CLIENTCOMMANDLIST> rQueue );
-        ~CReceiver();
+        Receiver( NetInterface * conn , boost::shared_ptr<NetInterface::LIENTCOMMANDLIST> rQueue );
+        ~Receiver();
         
         /**
         *starts the current threads
@@ -73,9 +73,9 @@ class CReceiver
         
     protected:
     
-        boost::shared_ptr<CByteBuffer> buffer; /*<local buffer to the received data*/
+        boost::shared_ptr<ByteBuffer> buffer; /*<local buffer to the received data*/
         //CByteBuffer * buffer;
-        boost::shared_ptr<CBasicClientCommand> cmd; /*<command which is actuelly received*/
+        boost::shared_ptr<BasicClientCommand> cmd; /*<command which is actuelly received*/
         
         volatile void checkData(); /*<checkes the received and try to get the command data*/
         volatile uint8_t numtrys; /*< unsuccessful attemps to read data for a command*/
@@ -84,9 +84,9 @@ class CReceiver
         volatile bool rlrunning; /*<checkes if the current receive Loop is running*/
         
         int lastReadedByte; /*<stores the last byte which was red from the buffer*/
-        CNetInterface * connection; /*<the connection to the player*/
+        NetInterface * connection; /*<the connection to the player*/
         
-        boost::shared_ptr<CNetInterface::CLIENTCOMMANDLIST> receivedQueue; /*<pointer to the queue which holds the received commands*/
+        boost::shared_ptr<NetInterface::LIENTCOMMANDLIST> receivedQueue; /*<pointer to the queue which holds the received commands*/
         
         pthread_t receive_thread; /*<Thread which receives data and stores them in the buffer*/
 	
@@ -94,9 +94,9 @@ class CReceiver
         *function for the receive thread which stores data from the incoming transfer to a buffer
         *looks every x ms in the socket and stores the data in a buffer.
         */
-        static void* receive_loop( CReceiver * receiver );
+        static void* receive_loop( Receiver * receiver );
         
-        CCommandFactory commandFactory;
+        CommandFactory commandFactory;
 
 };
 

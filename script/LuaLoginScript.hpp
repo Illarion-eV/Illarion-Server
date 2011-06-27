@@ -24,20 +24,20 @@
 //#include "Item.hpp"
 //#include "TableStructs.hpp"
 
-class CWorld;
-class CCharacter;
+class World;
+class Character;
 
-class CLuaLoginScript : public CLuaScript
+class LuaLoginScript : public LuaScript
 {
     public:
-        CLuaLoginScript(std::string filename) throw(ScriptException);
-        virtual ~CLuaLoginScript() throw ();
+        LuaLoginScript(std::string filename) throw(ScriptException);
+        virtual ~LuaLoginScript() throw ();
 
-        bool onLogin(CCharacter * cc);
+        bool onLogin(Character * cc);
         
     private:
     
-	CLuaLoginScript(const CLuaLoginScript&);
-	CLuaLoginScript& operator=(const CLuaLoginScript&);
+	LuaLoginScript(const LuaLoginScript&);
+	LuaLoginScript& operator=(const LuaLoginScript&);
 };
 #endif

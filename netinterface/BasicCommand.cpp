@@ -19,7 +19,7 @@
 
 #include "BasicCommand.hpp"
 
-CBasicCommand::CBasicCommand(unsigned char defByte)
+BasicCommand::BasicCommand(unsigned char defByte)
 {
     definitionByte = defByte;
 }

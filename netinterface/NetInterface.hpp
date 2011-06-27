@@ -49,20 +49,20 @@
 *@ingroup Netinterface
 *class which holds the network interface and its thread for sending and receiving data
 */
-class CNetInterface : public boost::enable_shared_from_this<CNetInterface>
+class NetInterface : public boost::enable_shared_from_this<NetInterface>
 {
     public:
         
         /**
         * standard constructor, creates the two thread class receiver and sender
         */
-        CNetInterface(boost::asio::io_service &io_servicen);
+        NetInterface(boost::asio::io_service &io_servicen);
         
         /**
         * destructor deletes all the classes which are constructed in the constructor
         * WARNING: shoudln't be called before the threads stopped correctly
         */
-        ~CNetInterface();
+        ~NetInterface();
         
         void closeConnection(); /*<closes the connection to the client*/
         bool activate(); /*<activates the connection starts the sending and receiving threads*/
@@ -72,9 +72,9 @@ class CNetInterface : public boost::enable_shared_from_this<CNetInterface>
         * adds a command to the send queue so it will be sended correctly to the connection
         * @param command the command which should be added
         */
-        void addCommand( boost::shared_ptr<CBasicServerCommand> command );
+        void addCommand( boost::shared_ptr<BasicServerCommand> command );
         
-        void shutdownSend( boost::shared_ptr<CBasicServerCommand> command );
+        void shutdownSend( boost::shared_ptr<BasicServerCommand> command );
         
         std::string getIPAdress();
         
@@ -82,7 +82,7 @@ class CNetInterface : public boost::enable_shared_from_this<CNetInterface>
         * returns a command from the receive Queue if on is available
         * @return the command which was in the receive Queue or an empty (NULL) Command if there wasn't something in the receive Queue
         */
-        boost::shared_ptr<CBasicClientCommand> getCommand();
+        boost::shared_ptr<BasicClientCommand> getCommand();
         
         
         volatile bool online; /*< if connection is active*/
@@ -93,8 +93,8 @@ class CNetInterface : public boost::enable_shared_from_this<CNetInterface>
         */
         uint16_t receivedSize(){ return receiveQueue.size(); }
         
-        typedef std::deque< boost::shared_ptr<CBasicClientCommand> >CLIENTCOMMANDLIST;
-        typedef std::deque< boost::shared_ptr<CBasicServerCommand> >SERVERCOMMANDLIST;
+        typedef std::deque< boost::shared_ptr<BasicClientCommand> >CLIENTCOMMANDLIST;
+        typedef std::deque< boost::shared_ptr<BasicServerCommand> >SERVERCOMMANDLIST;
 
 	boost::asio::ip::tcp::socket& getSocket(){ return socket; }
 
@@ -110,9 +110,9 @@ class CNetInterface : public boost::enable_shared_from_this<CNetInterface>
         //Buffer for the header of messages
         unsigned char headerBuffer[6];
        
-        boost::shared_ptr<CBasicClientCommand> cmd;
-        boost::shared_ptr<CBasicServerCommand> shutdownCmd;
-        boost::shared_ptr<CBasicServerCommand> cmdToWrite;
+        boost::shared_ptr<BasicClientCommand> cmd;
+        boost::shared_ptr<BasicServerCommand> shutdownCmd;
+        boost::shared_ptr<BasicServerCommand> cmdToWrite;
 
 
         CLIENTCOMMANDLIST receiveQueue; /*<stores the commands which are received in a queue*/
@@ -124,7 +124,7 @@ class CNetInterface : public boost::enable_shared_from_this<CNetInterface>
         boost::asio::ip::tcp::socket socket;
                 
         //Factory für Commands vom Client
-        CCommandFactory commandFactory;
+        CommandFactory commandFactory;
         uint16_t inactive;
         boost::mutex sendQueueMutex;
         boost::mutex receiveQueueMutex;

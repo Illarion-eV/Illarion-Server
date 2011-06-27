@@ -24,12 +24,12 @@
 #include <string>
 #include <luabind/object.hpp>
 
-class CScriptVariablesTable
+class ScriptVariablesTable
 {
     public:
     
-        CScriptVariablesTable();
-        ~CScriptVariablesTable();
+        ScriptVariablesTable();
+        ~ScriptVariablesTable();
         
         /**
         * looks for a value in the scriptvariables table

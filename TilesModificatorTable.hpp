@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CTILESMODIFICATORTABLE_H
-#define CTILESMODIFICATORTABLE_H
+#ifndef TILESMODIFICATORTABLE_H
+#define TILESMODIFICATORTABLE_H
 
 
 #include <string>
@@ -42,13 +42,13 @@ using std::hash_map;
 #include "TableStructs.hpp"
 
 //! eine Tabelle fr allgemeine Item-Eigenschaften
-class CTilesModificatorTable {
+class TilesModificatorTable {
 	public:
 		bool find( TYPE_OF_ITEM_ID Id, TilesModificatorStruct &ret );
 
-		CTilesModificatorTable();
+		TilesModificatorTable();
 
-		~CTilesModificatorTable();
+		~TilesModificatorTable();
 
 		void reload();
 

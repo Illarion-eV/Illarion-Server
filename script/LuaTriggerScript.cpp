@@ -28,95 +28,95 @@
 
 #include "Logger.hpp"
 
-CLuaTriggerScript::CLuaTriggerScript(std::string filename, position pos) throw(ScriptException)
-		: CLuaScript(filename), _pos(pos)
+LuaTriggerScript::LuaTriggerScript(std::string filename, position pos) throw(ScriptException)
+		: LuaScript(filename), _pos(pos)
 {
 	init_functions();
 }
 
-CLuaTriggerScript::~CLuaTriggerScript() throw () {}
+LuaTriggerScript::~LuaTriggerScript() throw () {}
 
-void CLuaTriggerScript::init_functions() {
+void LuaTriggerScript::init_functions() {
 	luabind::object globals = luabind::globals(_luaState);
 	globals["thisField"] = _pos;
 }
 
-void CLuaTriggerScript::CharacterOnField(CCharacter * Character) {
+void LuaTriggerScript::CharacterOnField(Character * character) {
 	try 
     {
-        CWorld::get()->setCurrentScript( this ); 
-        //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("CLuaTriggerScript::CharacterOnField called for: " + CLogger::toString(_pos.x) + "," + CLogger::toString(_pos.y) + "," + CLogger::toString(_pos.z), 3));
-        CLogger::writeMessage("scripts","CLuaTriggerScript::CharacterOnField called for: " + CLogger::toString(_pos.x) + "," + CLogger::toString(_pos.y) + "," + CLogger::toString(_pos.z));
-		fuse_ptr<CCharacter> fuse_Character(Character);
+        World::get()->setCurrentScript( this ); 
+        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("LuaTriggerScript::CharacterOnField called for: " + Logger::toString(_pos.x) + "," + Logger::toString(_pos.y) + "," + Logger::toString(_pos.z), 3));
+        Logger::writeMessage("scripts","LuaTriggerScript::CharacterOnField called for: " + Logger::toString(_pos.x) + "," + Logger::toString(_pos.y) + "," + Logger::toString(_pos.z));
+		fuse_ptr<Character> fuse_Character(character);
         call("CharacterOnField")( fuse_Character );
 	} catch (luabind::error &e) {
          writeErrorMsg();
-         //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("Error: CLuaTriggerScript::CharacterOnField called for: " + CLogger::toString(_pos.x) + "," + CLogger::toString(_pos.y) + "," + CLogger::toString(_pos.z) + " " + e.what(),3));
+         //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("Error: LuaTriggerScript::CharacterOnField called for: " + Logger::toString(_pos.x) + "," + Logger::toString(_pos.y) + "," + Logger::toString(_pos.z) + " " + e.what(),3));
 	}
 }
 
-void CLuaTriggerScript::ItemRotsOnField(ScriptItem oldItem, ScriptItem newItem) {
+void LuaTriggerScript::ItemRotsOnField(ScriptItem oldItem, ScriptItem newItem) {
 	try {
-        CWorld::get()->setCurrentScript( this ); 
-        //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("CLuaTriggerScript::ItemRotsOnField called for: " + CLogger::toString(_pos.x) + "," + CLogger::toString(_pos.y) + "," + CLogger::toString(_pos.z), 3));
-        CLogger::writeMessage("scripts","CLuaTriggerScript::CharacterOnField called for: " + CLogger::toString(_pos.x) + "," + CLogger::toString(_pos.y) + "," + CLogger::toString(_pos.z));
+        World::get()->setCurrentScript( this ); 
+        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("LuaTriggerScript::ItemRotsOnField called for: " + Logger::toString(_pos.x) + "," + Logger::toString(_pos.y) + "," + Logger::toString(_pos.z), 3));
+        Logger::writeMessage("scripts","LuaTriggerScript::CharacterOnField called for: " + Logger::toString(_pos.x) + "," + Logger::toString(_pos.y) + "," + Logger::toString(_pos.z));
 		call("ItemRotsOnField")( oldItem, newItem );
 	} catch (luabind::error &e) {
          writeErrorMsg();
-         //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("Error: CLuaTriggerScript::ItemRotsOnField called for: " + CLogger::toString(_pos.x) + "," + CLogger::toString(_pos.y) + "," + CLogger::toString(_pos.z) + " " + e.what(),3));
+         //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("Error: LuaTriggerScript::ItemRotsOnField called for: " + Logger::toString(_pos.x) + "," + Logger::toString(_pos.y) + "," + Logger::toString(_pos.z) + " " + e.what(),3));
 	}
 }
 
-void CLuaTriggerScript::MoveFromField(CCharacter * Character) {
+void LuaTriggerScript::MoveFromField(Character * character) {
 	try {
-        CWorld::get()->setCurrentScript( this ); 
-         //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("CLuaTriggerScript::MoveFromField called for: " + CLogger::toString(_pos.x) + "," + CLogger::toString(_pos.y) + "," + CLogger::toString(_pos.z), 3));
-        CLogger::writeMessage("scripts","CLuaTriggerScript::MoveFromField called for: " + CLogger::toString(_pos.x) + "," + CLogger::toString(_pos.y) + "," + CLogger::toString(_pos.z));
-		fuse_ptr<CCharacter> fuse_Character(Character);
+        World::get()->setCurrentScript( this ); 
+         //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("LuaTriggerScript::MoveFromField called for: " + Logger::toString(_pos.x) + "," + Logger::toString(_pos.y) + "," + Logger::toString(_pos.z), 3));
+        Logger::writeMessage("scripts","LuaTriggerScript::MoveFromField called for: " + Logger::toString(_pos.x) + "," + Logger::toString(_pos.y) + "," + Logger::toString(_pos.z));
+		fuse_ptr<Character> fuse_Character(character);
         call("MoveFromField")( fuse_Character );
 	} catch (luabind::error &e) {
          writeErrorMsg();
-         //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("Error: CLuaTriggerScript::MoveFromField called for: " + CLogger::toString(_pos.x) + "," + CLogger::toString(_pos.y) + "," + CLogger::toString(_pos.z) + " " + e.what(),3));
+         //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("Error: LuaTriggerScript::MoveFromField called for: " + Logger::toString(_pos.x) + "," + Logger::toString(_pos.y) + "," + Logger::toString(_pos.z) + " " + e.what(),3));
 	}
 }
 
-void CLuaTriggerScript::MoveToField(CCharacter * Character) {
+void LuaTriggerScript::MoveToField(Character * character) {
 	try 
     {
-        CWorld::get()->setCurrentScript( this ); 
-        //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("CLuaTriggerScript::MoveToField called for: " + CLogger::toString(_pos.x) + "," + CLogger::toString(_pos.y) + "," + CLogger::toString(_pos.z), 3));
-        CLogger::writeMessage("scripts","CLuaTriggerScript::MoveToField called for: " + CLogger::toString(_pos.x) + "," + CLogger::toString(_pos.y) + "," + CLogger::toString(_pos.z));
-		fuse_ptr<CCharacter> fuse_Character(Character);
+        World::get()->setCurrentScript( this ); 
+        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("LuaTriggerScript::MoveToField called for: " + Logger::toString(_pos.x) + "," + Logger::toString(_pos.y) + "," + Logger::toString(_pos.z), 3));
+        Logger::writeMessage("scripts","LuaTriggerScript::MoveToField called for: " + Logger::toString(_pos.x) + "," + Logger::toString(_pos.y) + "," + Logger::toString(_pos.z));
+		fuse_ptr<Character> fuse_Character(character);
         call("MoveToField")( fuse_Character );
 	} catch (luabind::error &e) {
          writeErrorMsg();
-         //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("Error: CLuaTriggerScript::MoveToField called for: " + CLogger::toString(_pos.x) + "," + CLogger::toString(_pos.y) + "," + CLogger::toString(_pos.z) + " " + e.what(),3));
+         //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("Error: LuaTriggerScript::MoveToField called for: " + Logger::toString(_pos.x) + "," + Logger::toString(_pos.y) + "," + Logger::toString(_pos.z) + " " + e.what(),3));
 	}
 }
 
-void CLuaTriggerScript::PutItemOnField(ScriptItem item, CCharacter * Character) {
+void LuaTriggerScript::PutItemOnField(ScriptItem item, Character * character) {
 	try {
-        CWorld::get()->setCurrentScript( this ); 
-        //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("CLuaTriggerScript::PutItemOnField called for: " + CLogger::toString(_pos.x) + "," + CLogger::toString(_pos.y) + "," + CLogger::toString(_pos.z), 3));
-        CLogger::writeMessage("scripts","CLuaTriggerScript::PutItemOnField called for: " + CLogger::toString(_pos.x) + "," + CLogger::toString(_pos.y) + "," + CLogger::toString(_pos.z));
-		fuse_ptr<CCharacter> fuse_Character(Character);
+        World::get()->setCurrentScript( this ); 
+        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("LuaTriggerScript::PutItemOnField called for: " + Logger::toString(_pos.x) + "," + Logger::toString(_pos.y) + "," + Logger::toString(_pos.z), 3));
+        Logger::writeMessage("scripts","LuaTriggerScript::PutItemOnField called for: " + Logger::toString(_pos.x) + "," + Logger::toString(_pos.y) + "," + Logger::toString(_pos.z));
+		fuse_ptr<Character> fuse_Character(character);
         call("PutItemOnField")( item, fuse_Character );
 	} catch (luabind::error &e) {
 	    writeErrorMsg();
-         //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("Error: CLuaTriggerScript::PutItemOnField called for: " + CLogger::toString(_pos.x) + "," + CLogger::toString(_pos.y) + "," + CLogger::toString(_pos.z) + " " + e.what(),3));
+         //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("Error: LuaTriggerScript::PutItemOnField called for: " + Logger::toString(_pos.x) + "," + Logger::toString(_pos.y) + "," + Logger::toString(_pos.z) + " " + e.what(),3));
         }
 }
 
-void CLuaTriggerScript::TakeItemFromField(ScriptItem item, CCharacter * Character) {
+void LuaTriggerScript::TakeItemFromField(ScriptItem item, Character * character) {
 	try {
-        CWorld::get()->setCurrentScript( this ); 
-        //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("CLuaTriggerScript::TAkeItemFromField called for: " + CLogger::toString(_pos.x) + "," + CLogger::toString(_pos.y) + "," + CLogger::toString(_pos.z), 3));
-        CLogger::writeMessage("scripts","CLuaTriggerScript::TakeItemFromField called for: " + CLogger::toString(_pos.x) + "," + CLogger::toString(_pos.y) + "," + CLogger::toString(_pos.z));
-		fuse_ptr<CCharacter> fuse_Character(Character);
+        World::get()->setCurrentScript( this ); 
+        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("LuaTriggerScript::TAkeItemFromField called for: " + Logger::toString(_pos.x) + "," + Logger::toString(_pos.y) + "," + Logger::toString(_pos.z), 3));
+        Logger::writeMessage("scripts","LuaTriggerScript::TakeItemFromField called for: " + Logger::toString(_pos.x) + "," + Logger::toString(_pos.y) + "," + Logger::toString(_pos.z));
+		fuse_ptr<Character> fuse_Character(character);
         call("TakeItemFromField")( item, fuse_Character );
 	} catch (luabind::error &e) {
          writeErrorMsg();
-         //CWorld::get()->monitoringClientList->sendCommand( new CSendMessageTS("Error: CLuaTriggerScript::TakeItemFromField called for: " + CLogger::toString(_pos.x) + "," + CLogger::toString(_pos.y) + "," + CLogger::toString(_pos.z) + " " + e.what(),3));
+         //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("Error: LuaTriggerScript::TakeItemFromField called for: " + Logger::toString(_pos.x) + "," + Logger::toString(_pos.y) + "," + Logger::toString(_pos.z) + " " + e.what(),3));
 	}
 }
 

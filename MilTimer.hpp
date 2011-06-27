@@ -17,20 +17,20 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CMILTIMER_HH
-#define CMILTIMER_HH
+#ifndef MILTIMER_HH
+#define MILTIMER_HH
 
 #include <sys/timeb.h>
 
 
 //! ein Timer mit Millisekunden-Auflösung
-class CMilTimer {
+class MilTimer {
 
 	public:
 
 		//! Konstruktor
 		// \param milsec Anzahl der Millisekunden zwischen zwei Schritten
-		CMilTimer( long milsec );
+		MilTimer( long milsec );
 
 		//! dient zur Abfrage, ob die Zeit schon abgelaufen ist
 		// \return true falls die im Konstruktor angegebene Zeit seit

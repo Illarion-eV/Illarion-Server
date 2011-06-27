@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CNEWCLIENTVIEW_HPP_
-#define CNEWCLIENTVIEW_HPP_
+#ifndef NEWCLIENTVIEW_HPP_
+#define NEWCLIENTVIEW_HPP_
 
 #define MAP_DIMENSION 17 // map extends into all 4 directions for this number of tiles
 #define MAP_DOWN_EXTRA 3 // extra downwards extension
@@ -28,14 +28,14 @@
 #include "constants.hpp"
 
 // forward declarations
-class CMap;
-class CField;
-class CMapVector;
+class Map;
+class Field;
+class MapVector;
 
 /**
 * class which holds isometric view specific data
 */
-class CNewClientView {
+class NewClientView {
 
 	public:
         
@@ -51,7 +51,7 @@ class CNewClientView {
         /**
         * defines one mapstripe
         */
-		typedef CField* MAPSTRIPE[ 100 /*MAP_DIMENSION + 1 + MAP_DOWN_EXTRA + 6*/ ];
+		typedef Field* MAPSTRIPE[ 100 /*MAP_DIMENSION + 1 + MAP_DOWN_EXTRA + 6*/ ];
 
         /**
         * stores the pointers to the fields inside a specific mapstripe
@@ -106,12 +106,12 @@ class CNewClientView {
         /**
         * constructor
         */
-		CNewClientView();
+		NewClientView();
 
 		/**
         * destructor
         */
-		~CNewClientView();
+		~NewClientView();
 
         /**
         * fills the stripe with the specific isometric data
@@ -120,7 +120,7 @@ class CNewClientView {
 	* @param length number of tiles to be read
         * @param maps the maps from which we want to calculate the stripes
         */
-        void fillStripe(position pos, stripedirection dir, int length, CMapVector * maps);
+        void fillStripe(position pos, stripedirection dir, int length, MapVector * maps);
         
         /**
         * clears all current stripe infos
@@ -134,7 +134,7 @@ class CNewClientView {
 	* @param length number of tiles to be read
         * @param maps the map vector from which we want to read the fields
         */
-        void readFields( int length, CMapVector * maps);
+        void readFields( int length, MapVector * maps);
         
         /**
         * the starting position of the current view
@@ -159,7 +159,7 @@ class CNewClientView {
         /**
         * pointer to a temporary field
         */
-		CField* tempCField;
+		Field* tempCField;
 
 };
 

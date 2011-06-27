@@ -21,13 +21,13 @@
 #include "ContainerObjectTable.hpp"
 #include <iostream>
 
-CContainerObjectTable::CContainerObjectTable() : m_dataOK(false) {
+ContainerObjectTable::ContainerObjectTable() : m_dataOK(false) {
 	reload();
 }
 
-void CContainerObjectTable::reload() {
-#ifdef CDataConnect_DEBUG
-	std::cout << "CContainerObjectTable: reload" << std::endl;
+void ContainerObjectTable::reload() {
+#ifdef DataConnect_DEBUG
+	std::cout << "ContainerObjectTable: reload" << std::endl;
 #endif
 
 	try {
@@ -51,8 +51,8 @@ void CContainerObjectTable::reload() {
 			m_dataOK = true;
 		} else m_dataOK = false;
 
-#ifdef CDataConnect_DEBUG
-		std::cout << "loaded " << rows << " rows into CContainerObjectTable" << std::endl;
+#ifdef DataConnect_DEBUG
+		std::cout << "loaded " << rows << " rows into ContainerObjectTable" << std::endl;
 #endif
 
 	} catch (...) {
@@ -62,7 +62,7 @@ void CContainerObjectTable::reload() {
 
 }
 
-bool CContainerObjectTable::find( TYPE_OF_ITEM_ID Id, ContainerStruct &ret ) {
+bool ContainerObjectTable::find( TYPE_OF_ITEM_ID Id, ContainerStruct &ret ) {
 	TABLE::iterator iterator;
 	iterator = m_table.find( Id );
 
@@ -75,17 +75,17 @@ bool CContainerObjectTable::find( TYPE_OF_ITEM_ID Id, ContainerStruct &ret ) {
 }
 
 
-void CContainerObjectTable::clearOldTable() {
+void ContainerObjectTable::clearOldTable() {
 	m_table.clear();
 }
 
 
-CContainerObjectTable::~CContainerObjectTable() {
+ContainerObjectTable::~ContainerObjectTable() {
 	clearOldTable();
 }
 
 
-bool CContainerObjectTable::find( TYPE_OF_ITEM_ID Id ) {
+bool ContainerObjectTable::find( TYPE_OF_ITEM_ID Id ) {
 	TABLE::iterator iterator;
 	iterator = m_table.find( Id );
 

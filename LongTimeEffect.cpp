@@ -26,10 +26,10 @@
 #include "TableStructs.hpp"
 #include "script/LuaLongTimeEffectScript.hpp"
 
-extern CLongTimeEffectTable * LongTimeEffects;
+extern LongTimeEffectTable * LongTimeEffects;
 
 
-CLongTimeEffect::CLongTimeEffect(uint16_t effectId, uint32_t nextCalled) : _effectId(effectId), _effectName(""),  _nextCalled(nextCalled), _numberCalled(0), _lastCalled(0), _firstadd(true)
+LongTimeEffect::LongTimeEffect(uint16_t effectId, uint32_t nextCalled) : _effectId(effectId), _effectName(""),  _nextCalled(nextCalled), _numberCalled(0), _lastCalled(0), _firstadd(true)
 {
     LongTimeEffectStruct effect;
     LongTimeEffects->find(_effectId, effect);
@@ -37,7 +37,7 @@ CLongTimeEffect::CLongTimeEffect(uint16_t effectId, uint32_t nextCalled) : _effe
     _values.clear();
 }
 
-CLongTimeEffect::CLongTimeEffect(std::string name, uint32_t nextCalled) : _effectId(0), _effectName(name), _nextCalled(nextCalled), _numberCalled(0), _lastCalled(0), _firstadd(true)
+LongTimeEffect::LongTimeEffect(std::string name, uint32_t nextCalled) : _effectId(0), _effectName(name), _nextCalled(nextCalled), _numberCalled(0), _lastCalled(0), _firstadd(true)
 {
     LongTimeEffectStruct effect;
     LongTimeEffects->find(_effectId, effect);
@@ -45,12 +45,12 @@ CLongTimeEffect::CLongTimeEffect(std::string name, uint32_t nextCalled) : _effec
     _values.clear();
 }
 
-CLongTimeEffect::~CLongTimeEffect()
+LongTimeEffect::~LongTimeEffect()
 {
     _values.clear();
 }
 
-bool CLongTimeEffect::callEffect(CCharacter * target)
+bool LongTimeEffect::callEffect(Character * target)
 {
     bool ret = false;
     LongTimeEffectStruct effect;
@@ -70,7 +70,7 @@ bool CLongTimeEffect::callEffect(CCharacter * target)
     return ret;
 }
 
-void CLongTimeEffect::addValue(std::string name, uint32_t value)
+void LongTimeEffect::addValue(std::string name, uint32_t value)
 {
     VALUETABLE::iterator it = _values.find(name.c_str());
     if ( it != _values.end() )
@@ -86,7 +86,7 @@ void CLongTimeEffect::addValue(std::string name, uint32_t value)
     }
 }
 
-void CLongTimeEffect::removeValue( std::string name )
+void LongTimeEffect::removeValue( std::string name )
 {
     VALUETABLE::iterator it = _values.find(name.c_str());
     if ( it != _values.end() )
@@ -95,7 +95,7 @@ void CLongTimeEffect::removeValue( std::string name )
     }   
 }
 
-bool CLongTimeEffect::findValue(std::string name, uint32_t &ret)
+bool LongTimeEffect::findValue(std::string name, uint32_t &ret)
 {
     VALUETABLE::iterator it = _values.find(name.c_str());
     if ( it != _values.end() )
@@ -107,7 +107,7 @@ bool CLongTimeEffect::findValue(std::string name, uint32_t &ret)
         return false;
 }
 
-bool CLongTimeEffect::save( uint32_t playerid )
+bool LongTimeEffect::save( uint32_t playerid )
 {
     ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
 

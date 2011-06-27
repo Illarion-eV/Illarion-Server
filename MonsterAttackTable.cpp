@@ -21,19 +21,19 @@
 #include "MonsterAttackTable.hpp"
 #include <iostream>
 
-CMonsterAttackTable::CMonsterAttackTable() : m_dataOk(false)
+MonsterAttackTable::MonsterAttackTable() : m_dataOk(false)
 {
     reload();
 }
 
-CMonsterAttackTable::~CMonsterAttackTable()
+MonsterAttackTable::~MonsterAttackTable()
 {
     clearOldTable();
 }
 
-void CMonsterAttackTable::reload()
+void MonsterAttackTable::reload()
 {
-#ifdef CDataConnect_DEBUG
+#ifdef DataConnect_DEBUG
     std::cout<<"Trying to reload MonsterAttackTable!"<<std::endl;
 #endif
     
@@ -62,7 +62,7 @@ void CMonsterAttackTable::reload()
     
        m_dataOk = true;
                    
-#ifdef CDataConnect_DEBUG
+#ifdef DataConnect_DEBUG
 	   std::cout << "loaded " << rows << " rows into MonsterAttackTable" << std::endl;
 #endif
     }
@@ -72,7 +72,7 @@ void CMonsterAttackTable::reload()
     }
 }
 
-bool CMonsterAttackTable::find(CCharacter::race_type race, AttackBoni &ret)
+bool MonsterAttackTable::find(Character::race_type race, AttackBoni &ret)
 {
     TABLE::iterator iterat;
     iterat = raceAttackBoni.find( (int16_t)race );
@@ -87,7 +87,7 @@ bool CMonsterAttackTable::find(CCharacter::race_type race, AttackBoni &ret)
     return false;
 }
 
-void CMonsterAttackTable::clearOldTable()
+void MonsterAttackTable::clearOldTable()
 {
     raceAttackBoni.clear();
 }

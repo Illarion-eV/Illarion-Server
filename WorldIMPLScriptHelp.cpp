@@ -30,14 +30,14 @@
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
 #include "fuse_ptr.hpp"
 
-extern CCommonObjectTable * CommonItems;
-extern CNamesObjectTable* ItemNames;
-class CCharacter;
+extern CommonObjectTable * CommonItems;
+extern NamesObjectTable* ItemNames;
+class Character;
 
-bool CWorld::deleteNPC( unsigned int npcid )
+bool World::deleteNPC( unsigned int npcid )
 {   /*
 	int posx,posy,posz;
-	CField* tempf; //alte NPC's l?chen
+	Field* tempf; //alte NPC's l?chen
 	NPCVECTOR::iterator npcIterator;
 	for ( npcIterator = Npc.begin(); npcIterator < Npc.end(); ++npcIterator ) {
 	    if (( *npcIterator )->id == npcid) {
@@ -57,41 +57,41 @@ bool CWorld::deleteNPC( unsigned int npcid )
     return true;
 }
 
-bool CWorld::createDynamicNPC( std::string name, CCharacter::race_type type, position pos, /*CCharacter::face_to dir,*/ CCharacter::sex_type sex, std::string scriptname)
+bool World::createDynamicNPC( std::string name, Character::race_type type, position pos, /*CCharacter::face_to dir,*/ Character::sex_type sex, std::string scriptname)
 {
     try {
         
 		try {
-			CNPC* newNPC = new CNPC(DYNNPC_BASE, name, type, pos, (CCharacter::face_to)4/*dir*/, false, sex, 0, 0, 255, 255, 255, 255, 255, 255);
+			NPC* newNPC = new NPC(DYNNPC_BASE, name, type, pos, (Character::face_to)4/*dir*/, false, sex, 0, 0, 255, 255, 255, 255, 255, 255);
 			
 			// add npc to npc list
 			Npc.push_back(newNPC);
 			
 			// set field to occupied
-			CField* tempf;
+			Field* tempf;
 			if ( GetPToCFieldAt( tempf, pos ) ) {
 				tempf->setChar();
 			}
 
 			try {
 				// try to load the script
-				boost::shared_ptr<CLuaNPCScript> script( new CLuaNPCScript( scriptname, newNPC ) );
+				boost::shared_ptr<LuaNPCScript> script( new LuaNPCScript( scriptname, newNPC ) );
 				newNPC->setScript(script);
 			} catch (ScriptException &e) {
-				std::cerr << "CWorld::createDynamicNPC: Error while loading dynamic NPC script: " << scriptname << " : " << e.what() << std::endl;
+				std::cerr << "World::createDynamicNPC: Error while loading dynamic NPC script: " << scriptname << " : " << e.what() << std::endl;
 			}
 		} catch (NoSpace &s) {
-			std::cerr << "CWorld::createDynamicNPC: No space available for dynamic NPC: " << name << " : " << s.what() << std::endl;
+			std::cerr << "World::createDynamicNPC: No space available for dynamic NPC: " << name << " : " << s.what() << std::endl;
 		}
 
 		return true;
 	} catch (...) {
-        std::cerr << "CWorld::createDynamicNPC: Unknown error while loading dynamic NPC: " << name << std::endl;
+        std::cerr << "World::createDynamicNPC: Unknown error while loading dynamic NPC: " << name << std::endl;
 		return false;
 	}
 }
 
-luabind::object CWorld::LuaLoS(position startingpos, position endingpos)
+luabind::object World::LuaLoS(position startingpos, position endingpos)
 {
     lua_State* luaState = getCurrentScript()->getLuaState();
     luabind::object list = luabind::newtable( luaState );
@@ -102,8 +102,8 @@ luabind::object CWorld::LuaLoS(position startingpos, position endingpos)
         luabind::object innerlist = luabind::newtable( luaState );
         if ( boIterator->blockingType == BlockingObject::BT_CHARACTER )
         {
-            innerlist["TYPE"] = "CHARACTER";
-            innerlist["OBJECT"] = fuse_ptr<CCharacter>(boIterator->blockingChar);
+            innerlist["TYPE"] = "HARACTER";
+            innerlist["OBJECT"] = fuse_ptr<Character>(boIterator->blockingChar);
         }
         else if ( boIterator->blockingType == BlockingObject::BT_ITEM )
         {
@@ -116,7 +116,7 @@ luabind::object CWorld::LuaLoS(position startingpos, position endingpos)
     return list;
 }
 
-luabind::object CWorld::getPlayersOnline()
+luabind::object World::getPlayersOnline()
 {
     lua_State* luaState = getCurrentScript()->getLuaState();
     luabind::object list = luabind::newtable( luaState );
@@ -124,13 +124,13 @@ luabind::object CWorld::getPlayersOnline()
     PLAYERVECTOR::iterator pIterator;
     for ( pIterator = Players.begin(); pIterator != Players.end(); ++pIterator )
     {
-        list[index] = fuse_ptr<CCharacter>(*pIterator);
+        list[index] = fuse_ptr<Character>(*pIterator);
         index++;
     }
     return list;
 }
 
-luabind::object CWorld::getNPCS()
+luabind::object World::getNPCS()
 {
     lua_State* luaState = getCurrentScript()->getLuaState();
     luabind::object list = luabind::newtable( luaState );
@@ -138,125 +138,125 @@ luabind::object CWorld::getNPCS()
     NPCVECTOR::iterator npcIterator;
     for ( npcIterator = Npc.begin(); npcIterator != Npc.end(); ++npcIterator )
     {
-        list[index] = fuse_ptr<CCharacter>(*npcIterator);
+        list[index] = fuse_ptr<Character>(*npcIterator);
         index++;
     }
     return list;
 
 }
 
-luabind::object CWorld::getCharactersInRangeOf( position posi, uint8_t range)
+luabind::object World::getCharactersInRangeOf( position posi, uint8_t range)
 {
     lua_State* luaState = getCurrentScript()->getLuaState();
     luabind::object list = luabind::newtable( luaState );
     int index = 1;
 
-	std::vector < CPlayer* > tempP = Players.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range );
-	for ( std::vector< CPlayer*>::iterator pIterator = tempP.begin(); pIterator != tempP.end() ; ++pIterator )
+	std::vector < Player* > tempP = Players.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range );
+	for ( std::vector< Player*>::iterator pIterator = tempP.begin(); pIterator != tempP.end() ; ++pIterator )
     {
-        list[index] = fuse_ptr<CCharacter>(*pIterator);
+        list[index] = fuse_ptr<Character>(*pIterator);
         index++;
     }
     
-	std::vector < CMonster* > tempM = Monsters.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range );
-	for ( std::vector< CMonster*>::iterator mIterator = tempM.begin(); mIterator != tempM.end() ; ++mIterator )
+	std::vector < Monster* > tempM = Monsters.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range );
+	for ( std::vector< Monster*>::iterator mIterator = tempM.begin(); mIterator != tempM.end() ; ++mIterator )
     {
-        list[index] = fuse_ptr<CCharacter>(*mIterator);
+        list[index] = fuse_ptr<Character>(*mIterator);
         index++;
     }
 
-	std::vector < CNPC* > tempN = Npc.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range );
-	for ( std::vector< CNPC*>::iterator nIterator = tempN.begin(); nIterator != tempN.end() ; ++nIterator )
+	std::vector < NPC* > tempN = Npc.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range );
+	for ( std::vector< NPC*>::iterator nIterator = tempN.begin(); nIterator != tempN.end() ; ++nIterator )
     {
-        list[index] = fuse_ptr<CCharacter>(*nIterator);
+        list[index] = fuse_ptr<Character>(*nIterator);
         index++;
     }
     return list;
 }
 
-luabind::object CWorld::getPlayersInRangeOf( position posi, uint8_t range )
+luabind::object World::getPlayersInRangeOf( position posi, uint8_t range )
 {
     lua_State* luaState = getCurrentScript()->getLuaState();
     luabind::object list = luabind::newtable( luaState );
     int index = 1;
 
-	std::vector < CPlayer* > tempP = Players.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range );
-	for ( std::vector< CPlayer*>::iterator pIterator = tempP.begin(); pIterator != tempP.end() ; ++pIterator )
+	std::vector < Player* > tempP = Players.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range );
+	for ( std::vector< Player*>::iterator pIterator = tempP.begin(); pIterator != tempP.end() ; ++pIterator )
     {
-        list[index] = fuse_ptr<CCharacter>(*pIterator);
+        list[index] = fuse_ptr<Character>(*pIterator);
         index++;
     }
     return list;
 }
 
-luabind::object CWorld::getMonstersInRangeOf( position posi, uint8_t range )
+luabind::object World::getMonstersInRangeOf( position posi, uint8_t range )
 {
     lua_State* luaState = getCurrentScript()->getLuaState();
     luabind::object list = luabind::newtable( luaState );
     int index = 1;
 
-	std::vector < CMonster* > tempM = Monsters.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range );
-	for ( std::vector< CMonster*>::iterator mIterator = tempM.begin(); mIterator != tempM.end() ; ++mIterator )
+	std::vector < Monster* > tempM = Monsters.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range );
+	for ( std::vector< Monster*>::iterator mIterator = tempM.begin(); mIterator != tempM.end() ; ++mIterator )
     {
-        list[index] = fuse_ptr<CCharacter>(*mIterator);
+        list[index] = fuse_ptr<Character>(*mIterator);
         index++;
     }
     return list;
 }
 
-luabind::object CWorld::getNPCSInRangeOf( position posi, uint8_t range )
+luabind::object World::getNPCSInRangeOf( position posi, uint8_t range )
 {
     lua_State* luaState = getCurrentScript()->getLuaState();
     luabind::object list = luabind::newtable( luaState );
     int index = 1;
 
-	std::vector < CNPC* > tempN = Npc.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range );
-	for ( std::vector< CNPC*>::iterator nIterator = tempN.begin(); nIterator != tempN.end() ; ++nIterator )
+	std::vector < NPC* > tempN = Npc.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range );
+	for ( std::vector< NPC*>::iterator nIterator = tempN.begin(); nIterator != tempN.end() ; ++nIterator )
     {
-        list[index] = fuse_ptr<CCharacter>(*nIterator);
+        list[index] = fuse_ptr<Character>(*nIterator);
         index++;
     }
     return list;
 }
 
-void CWorld::ItemInform(CCharacter * user, ScriptItem item, std::string message) 
+void World::ItemInform(Character * user, ScriptItem item, std::string message) 
 {
-	if ( user->character != CCharacter::player ) 
+	if ( user->character != Character::player ) 
     {
 		return;
 	}
-	CPlayer * cp = dynamic_cast<CPlayer*>(user);
+	Player * cp = dynamic_cast<Player*>(user);
 	if ( item.type == ScriptItem::it_showcase1 ||item.type == ScriptItem::it_showcase2 ) 
         {
-		if ( item.owner->character == CCharacter::player ) 
+		if ( item.owner->character == Character::player ) 
         {
 			unsigned char showcase;
 			if ( item.type == ScriptItem::it_showcase1 ) showcase = 0;
 			else if ( item.type == ScriptItem::it_showcase2 ) showcase = 1;
-            boost::shared_ptr<CBasicServerCommand>cmd(new CNameOfShowCaseItemTC( showcase, item.itempos, message) );
+            boost::shared_ptr<BasicServerCommand>cmd(new NameOfShowCaseItemTC( showcase, item.itempos, message) );
 			cp->Connection->addCommand( cmd );
 		}
 	} 
     else if ( item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt ) 
     {
-		if ( item.owner->character == CCharacter::player ) 
+		if ( item.owner->character == Character::player ) 
         {
-            boost::shared_ptr<CBasicServerCommand>cmd(new CNameOfInventoryItemTC( item.itempos, message) );
+            boost::shared_ptr<BasicServerCommand>cmd(new NameOfInventoryItemTC( item.itempos, message) );
 			cp->Connection->addCommand( cmd );
 		}
 	} 
     else if ( item.type == ScriptItem::it_field ) 
     {
-		if ( item.owner->character == CCharacter::player ) 
+		if ( item.owner->character == Character::player ) 
         {
-            boost::shared_ptr<CBasicServerCommand>cmd(new CNameOfMapItemTC( item.pos.x, item.pos.y, item.pos.z , message) );
+            boost::shared_ptr<BasicServerCommand>cmd(new NameOfMapItemTC( item.pos.x, item.pos.y, item.pos.z , message) );
 			cp->Connection->addCommand( cmd );
 		}
 	}
 }
 
 
-void CWorld::changeQuality( ScriptItem item, short int amount ) {
+void World::changeQuality( ScriptItem item, short int amount ) {
 	short int tmpQuality = ((amount+item.quality%100)<100) ? (amount + item.quality) : (item.quality-item.quality%100 + 99);
 	if ( tmpQuality%100 > 0) {
 		item.quality = tmpQuality;
@@ -266,8 +266,8 @@ void CWorld::changeQuality( ScriptItem item, short int amount ) {
 	}
 }
 
-void CWorld::changeQualityOfItemAt( position pos, short int amount) {
-	CField * field;
+void World::changeQualityOfItemAt( position pos, short int amount) {
+	Field * field;
 	if ( GetPToCFieldAt( field, pos.x, pos.y, pos.z) ) {
 		if ( field->changeQualityOfTopItem(amount) ) {
 			sendRemoveItemFromMapToAllVisibleCharacters( 0, pos.x, pos.y, pos.z, field );
@@ -275,18 +275,18 @@ void CWorld::changeQualityOfItemAt( position pos, short int amount) {
 	}
 }
 
-bool CWorld::changeItem(ScriptItem item) 
+bool World::changeItem(ScriptItem item) 
 {
 
 		if ( item.type == ScriptItem::it_showcase1 || item.type == ScriptItem::it_showcase2 ) 
         {
-			if ( item.owner->character == CCharacter::player ) 
+			if ( item.owner->character == Character::player ) 
             {
-				CContainer * showcase;
+				Container * showcase;
 				if ( item.type == ScriptItem::it_showcase1)
-					showcase = dynamic_cast<CPlayer*>(item.owner)->showcases[ 0 ].top();
+					showcase = dynamic_cast<Player*>(item.owner)->showcases[ 0 ].top();
 				else if ( item.type == ScriptItem::it_showcase2)
-					showcase = dynamic_cast<CPlayer*>(item.owner)->showcases[ 1 ].top();
+					showcase = dynamic_cast<Player*>(item.owner)->showcases[ 1 ].top();
 				//Neues Item an der Position erzeugen
 				showcase->changeItem( item );
 				sendChangesOfContainerContentsIM( showcase );
@@ -306,14 +306,14 @@ bool CWorld::changeItem(ScriptItem item)
             item.owner->characterItems[ item.itempos ].data = item.data;
             item.owner->characterItems[ item.itempos ].data_map = item.data_map;
       		//Wenn character ein Spieler ist ein update schicken
-			if ( item.owner->character == CCharacter::player )
-				dynamic_cast<CPlayer*>(item.owner)->sendCharacterItemAtPos(item.itempos);
+			if ( item.owner->character == Character::player )
+				dynamic_cast<Player*>(item.owner)->sendCharacterItemAtPos(item.itempos);
             item.owner->updateAppearanceForAll( true );
 			return true;
 		} 
         else if ( item.type == ScriptItem::it_field ) 
         {
-			CField *field;
+			Field *field;
 			Item dummy;
 			if ( GetPToCFieldAt(field, item.pos.x, item.pos.y, item.pos.z) ) 
             {
@@ -345,7 +345,7 @@ bool CWorld::changeItem(ScriptItem item)
 	return false;
 }
 
-std::string CWorld::getItemName(TYPE_OF_ITEM_ID itemid, uint8_t language)
+std::string World::getItemName(TYPE_OF_ITEM_ID itemid, uint8_t language)
 {
     NamesStruct name;
     if ( ItemNames->find(itemid, name) )
@@ -357,7 +357,7 @@ std::string CWorld::getItemName(TYPE_OF_ITEM_ID itemid, uint8_t language)
 }
 
 
-CommonStruct CWorld::getItemStats(ScriptItem item) {
+CommonStruct World::getItemStats(ScriptItem item) {
 	CommonStruct data;
 	if ( CommonItems->find(item.id,data ) ) {
 		return data;
@@ -367,7 +367,7 @@ CommonStruct CWorld::getItemStats(ScriptItem item) {
 	}
 }
 
-CommonStruct CWorld::getItemStatsFromId(TYPE_OF_ITEM_ID id) {
+CommonStruct World::getItemStatsFromId(TYPE_OF_ITEM_ID id) {
 	CommonStruct data;
 	if ( CommonItems->find(id,data ) ) {
 		return data;
@@ -377,18 +377,18 @@ CommonStruct CWorld::getItemStatsFromId(TYPE_OF_ITEM_ID id) {
 	}
 }
 
-bool CWorld::isCharacterOnField(position pos)
+bool World::isCharacterOnField(position pos)
 {
 	if ( findCharacterOnField(pos.x, pos.y, pos.z) ) return true;
 	else return false;
 }
 
-fuse_ptr<CCharacter> CWorld::getCharacterOnField(position pos) 
+fuse_ptr<Character> World::getCharacterOnField(position pos) 
 {
-	return fuse_ptr<CCharacter>( findCharacterOnField(pos.x, pos.y, pos.z) );
+	return fuse_ptr<Character>( findCharacterOnField(pos.x, pos.y, pos.z) );
 }
 
-bool CWorld::erase(ScriptItem item, int amount) 
+bool World::erase(ScriptItem item, int amount) 
 {
 	/*if (amount==0) {
 		if ( item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt || item.type == ScriptItem::it_field )
@@ -403,13 +403,13 @@ bool CWorld::erase(ScriptItem item, int amount)
 	//Item befindet sich in einen der beiden Showcases
 	if ( item.type == ScriptItem::it_showcase1 || item.type == ScriptItem::it_showcase2 ) 
     {
-		if ( item.owner->character == CCharacter::player ) 
+		if ( item.owner->character == Character::player ) 
         {
-			CContainer * showcase;
+			Container * showcase;
 			if (item.type == ScriptItem::it_showcase1)
-				showcase = dynamic_cast<CPlayer*>(item.owner)->showcases[ 0 ].top();
+				showcase = dynamic_cast<Player*>(item.owner)->showcases[ 0 ].top();
 			else
-				showcase = dynamic_cast<CPlayer*>(item.owner)->showcases[ 1 ].top();
+				showcase = dynamic_cast<Player*>(item.owner)->showcases[ 1 ].top();
 			showcase->increaseAtPos( item.itempos, -amount );
 			sendChangesOfContainerContentsIM( showcase );
 
@@ -433,7 +433,7 @@ bool CWorld::erase(ScriptItem item, int amount)
 	//Item befindet sich auf einen Feld am Boden liegend.
 	else if ( item.type == ScriptItem::it_field ) 
     {
-		CField *field;
+		Field *field;
 		Item dummy;
 		if ( GetPToCFieldAt(field, item.pos.x, item.pos.y, item.pos.z) ) 
         {
@@ -445,7 +445,7 @@ bool CWorld::erase(ScriptItem item, int amount)
 		} 
         else 
         {
-			std::cerr<<"CWorld::erase: Field ("<<item.pos.x<<", "<<item.pos.y<<", "<<item.pos.z<<") was not found!"<<std::endl;
+			std::cerr<<"World::erase: Field ("<<item.pos.x<<", "<<item.pos.y<<", "<<item.pos.z<<") was not found!"<<std::endl;
 			return false;
 		}
 	}
@@ -466,15 +466,15 @@ bool CWorld::erase(ScriptItem item, int amount)
 }
 
 
-bool CWorld::increase(ScriptItem item, short int count) {
+bool World::increase(ScriptItem item, short int count) {
 	//Item befindet sich in einen der beiden Showcases
 	if ( item.type == ScriptItem::it_showcase1 || item.type == ScriptItem::it_showcase2 ) {
-		if ( item.owner->character == CCharacter::player ) {
-			CContainer * showcase;
+		if ( item.owner->character == Character::player ) {
+			Container * showcase;
 			if (item.type == ScriptItem::it_showcase1)
-				showcase = dynamic_cast<CPlayer*>(item.owner)->showcases[ 0 ].top();
+				showcase = dynamic_cast<Player*>(item.owner)->showcases[ 0 ].top();
 			else
-				showcase = dynamic_cast<CPlayer*>(item.owner)->showcases[ 1 ].top();
+				showcase = dynamic_cast<Player*>(item.owner)->showcases[ 1 ].top();
 			showcase->increaseAtPos( item.itempos, count );
 			sendChangesOfContainerContentsIM( showcase );
 			return true;
@@ -489,7 +489,7 @@ bool CWorld::increase(ScriptItem item, short int count) {
 	}
 	//Item befindet sich auf einen Feld am Boden liegend.
 	else if ( item.type == ScriptItem::it_field ) {
-		CField *field;
+		Field *field;
 		if ( GetPToCFieldAt(field, item.pos.x, item.pos.y, item.pos.z) ) {
 			bool erased=false;
 			field->increaseTopItem( count, erased );
@@ -497,7 +497,7 @@ bool CWorld::increase(ScriptItem item, short int count) {
 				sendRemoveItemFromMapToAllVisibleCharacters( 0, item.pos.x, item.pos.y, item.pos.z, field );
 			return true;
 		} else {
-            std::cerr<<"CWorld::increase: Field ("<<item.pos.x<<", "<<item.pos.y<<", "<<item.pos.z<<") was not found!"<<std::endl;
+            std::cerr<<"World::increase: Field ("<<item.pos.x<<", "<<item.pos.y<<", "<<item.pos.z<<") was not found!"<<std::endl;
 			return false;
 		}
 	}
@@ -518,15 +518,15 @@ bool CWorld::increase(ScriptItem item, short int count) {
 	return false;
 }
 
-bool CWorld::swap(ScriptItem item, TYPE_OF_ITEM_ID newitem, unsigned short int newQuality) {
+bool World::swap(ScriptItem item, TYPE_OF_ITEM_ID newitem, unsigned short int newQuality) {
 	//Item befindet sich in einen der beiden Showcases
 	if ( item.type == ScriptItem::it_showcase1 || item.type == ScriptItem::it_showcase2 ) {
-		if ( item.owner->character == CCharacter::player ) {
-			CContainer * showcase;
+		if ( item.owner->character == Character::player ) {
+			Container * showcase;
 			if (item.type == ScriptItem::it_showcase1)
-				showcase = dynamic_cast<CPlayer*>(item.owner)->showcases[ 0 ].top();
+				showcase = dynamic_cast<Player*>(item.owner)->showcases[ 0 ].top();
 			else
-				showcase = dynamic_cast<CPlayer*>(item.owner)->showcases[ 1 ].top();
+				showcase = dynamic_cast<Player*>(item.owner)->showcases[ 1 ].top();
 			showcase->swapAtPos( item.itempos, newitem, newQuality );
 			sendChangesOfContainerContentsIM( showcase );
 			return true;
@@ -541,7 +541,7 @@ bool CWorld::swap(ScriptItem item, TYPE_OF_ITEM_ID newitem, unsigned short int n
 	}
 	//Item befindet sich auf einen Feld am Boden liegend.
 	else if ( item.type == ScriptItem::it_field ) {
-		CField *field;
+		Field *field;
 		if ( GetPToCFieldAt(field, item.pos.x, item.pos.y, item.pos.z) ) {
 			bool ok;
 			Item it;
@@ -554,12 +554,12 @@ bool CWorld::swap(ScriptItem item, TYPE_OF_ITEM_ID newitem, unsigned short int n
                     dummy.number = it.number;
 					if ( it.id != newitem ) sendSwapItemOnMapToAllVisibleCharacter( it.id, item.pos.x, item.pos.y, item.pos.z, dummy, field );
 				} else {
-                    std::cerr<<"CWorld::swap: Swapping item on Field ("<<item.pos.x<<", "<<item.pos.y<<", "<<item.pos.z<<") failed!"<<std::endl;
+                    std::cerr<<"World::swap: Swapping item on Field ("<<item.pos.x<<", "<<item.pos.y<<", "<<item.pos.z<<") failed!"<<std::endl;
 					return false;
 				}
 			}
 		} else {
-            std::cerr<<"CWorld::swap: Field ("<<item.pos.x<<", "<<item.pos.y<<", "<<item.pos.z<<") was not found!"<<std::endl;
+            std::cerr<<"World::swap: Field ("<<item.pos.x<<", "<<item.pos.y<<", "<<item.pos.z<<") was not found!"<<std::endl;
 			return false;
 		}
 	}
@@ -582,8 +582,8 @@ bool CWorld::swap(ScriptItem item, TYPE_OF_ITEM_ID newitem, unsigned short int n
 	return false;
 }
 
-ScriptItem CWorld::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, position pos, bool allways, int quali, int data) {
-	CField * field;
+ScriptItem World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, position pos, bool allways, int quali, int data) {
+	Field * field;
     ScriptItem sItem;
 	if ( GetPToCFieldAt( field, pos.x, pos.y, pos.z ) ) {
 		CommonStruct com;
@@ -606,19 +606,19 @@ ScriptItem CWorld::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, po
 				putItemOnMap(NULL,pos.x,pos.y,pos.z);
 			return sItem;
 		} else {
-			std::cerr<<"CWorld::createFromId: Item "<<id<<" was not found in CommonItems!"<<std::endl;
+			std::cerr<<"World::createFromId: Item "<<id<<" was not found in CommonItems!"<<std::endl;
             return sItem;
 		}
 	} else {
-        std::cerr<<"CWorld::createFromId: Field ("<<pos.x<<", "<<pos.y<<", "<<pos.z<<") was not found!"<<std::endl;
+        std::cerr<<"World::createFromId: Field ("<<pos.x<<", "<<pos.y<<", "<<pos.z<<") was not found!"<<std::endl;
 		return sItem;
 	}
 	return sItem;
 
 }
 
-bool CWorld::createFromItem(ScriptItem item, position pos, bool allways) {
-	CField * field;
+bool World::createFromItem(ScriptItem item, position pos, bool allways) {
+	Field * field;
 	if ( GetPToCFieldAt( field, pos.x, pos.y, pos.z ) ) {
 		g_item = static_cast<Item>(item);
 		g_cont = NULL;
@@ -628,59 +628,59 @@ bool CWorld::createFromItem(ScriptItem item, position pos, bool allways) {
 			putItemOnMap(NULL,pos.x,pos.y,pos.z);
 		return true;
 	} else {
-		std::cerr<<"CWorld::createFromItem: Field ("<<pos.x<<", "<<pos.y<<", "<<pos.z<<") was not found!"<<std::endl;
+		std::cerr<<"World::createFromItem: Field ("<<pos.x<<", "<<pos.y<<", "<<pos.z<<") was not found!"<<std::endl;
 		return false;
 	}
 	return false;
 }
 
-fuse_ptr<CCharacter> CWorld::createMonster(unsigned short id, position pos, short movepoints) {
-	CField * field;
-	CMonster * newMonster;
+fuse_ptr<Character> World::createMonster(unsigned short id, position pos, short movepoints) {
+	Field * field;
+	Monster * newMonster;
 	if ( GetPToCFieldAt( field, pos.x, pos.y, pos.z ) ) {
 		try {
-			newMonster = new CMonster(id, pos);
-#ifdef CLUASCRIPT_DEBUG
+			newMonster = new Monster(id, pos);
+#ifdef LUASCRIPT_DEBUG
 			std::cout<<"Erschaffe neues Monster: " << newMonster->name << " an Position (x,y,z) " << pos.x << " " << pos.y << " " << pos.z << std::endl;
 #endif
 			newMonster->actionPoints = movepoints;
 			newMonsters.push_back( newMonster );
 			field->setChar();
 			sendCharacterMoveToAllVisiblePlayers( newMonster, NORMALMOVE, 4 );
-			return fuse_ptr<CCharacter>( newMonster );
+			return fuse_ptr<Character>( newMonster );
 
-		} catch (CMonster::unknownIDException) {
-			std::cerr << "CWorld::createMonster: Failed to create monster with unknown id (" << id << ")!" << std::endl;
-			return fuse_ptr<CCharacter>();
+		} catch (Monster::unknownIDException) {
+			std::cerr << "World::createMonster: Failed to create monster with unknown id (" << id << ")!" << std::endl;
+			return fuse_ptr<Character>();
 		}
 	} else {
-        std::cerr<<"CWorld::createMonster: Field ("<<pos.x<<", "<<pos.y<<", "<<pos.z<<") was not found!"<<std::endl;
-		return fuse_ptr<CCharacter>();
+        std::cerr<<"World::createMonster: Field ("<<pos.x<<", "<<pos.y<<", "<<pos.z<<") was not found!"<<std::endl;
+		return fuse_ptr<Character>();
 	}
-	return fuse_ptr<CCharacter>();
+	return fuse_ptr<Character>();
 }
 
-void CWorld::gfx(unsigned short int gfxid, position pos) {
+void World::gfx(unsigned short int gfxid, position pos) {
 	makeGFXForAllPlayersInRange( pos.x, pos.y, pos.z, MAXVIEW, gfxid );
 }
 
-void CWorld::makeSound( unsigned short int soundid, position pos ) {
+void World::makeSound( unsigned short int soundid, position pos ) {
        makeSoundForAllPlayersInRange( pos.x, pos.y, pos.z, MAXVIEW, soundid );
 }
 
-bool CWorld::isItemOnField(position pos) {
-	CField * field;
+bool World::isItemOnField(position pos) {
+	Field * field;
 	if ( GetPToCFieldAt( field, pos.x, pos.y, pos.z) ) {
 		Item dummy;
 		return field->ViewTopItem( dummy );
 	} else {
-        std::cerr<<"CWorld::isItemOnField: Field ("<<pos.x<<", "<<pos.y<<", "<<pos.z<<") was not found!"<<std::endl;
+        std::cerr<<"World::isItemOnField: Field ("<<pos.x<<", "<<pos.y<<", "<<pos.z<<") was not found!"<<std::endl;
 	}
 	return false;
 }
 
-ScriptItem CWorld::getItemOnField(position pos) {
-	CField * field;
+ScriptItem World::getItemOnField(position pos) {
+	Field * field;
 	ScriptItem item;
 	if ( GetPToCFieldAt( field, pos.x, pos.y, pos.z) ) {
 		Item It;
@@ -691,14 +691,14 @@ ScriptItem CWorld::getItemOnField(position pos) {
 			return item;
 		}
 	} else {
-        std::cerr<<"CWorld::getItemOnField: Field ("<<pos.x<<", "<<pos.y<<", "<<pos.z<<") was not found!"<<std::endl;
+        std::cerr<<"World::getItemOnField: Field ("<<pos.x<<", "<<pos.y<<", "<<pos.z<<") was not found!"<<std::endl;
 	}
 	return item;
 }
 
-void CWorld::changeTile(short int tileid, position pos)
+void World::changeTile(short int tileid, position pos)
 {
-    CField* field;
+    Field* field;
 	if (GetPToCFieldAt(field, pos.x, pos.y, pos.z))
 	{
 		field->setTileId( tileid );
@@ -707,10 +707,10 @@ void CWorld::changeTile(short int tileid, position pos)
 }
 
 
-void CWorld::sendMapUpdate(position pos, uint8_t range)
+void World::sendMapUpdate(position pos, uint8_t range)
 {
-    std::vector<CPlayer*> temp;
-	std::vector<CPlayer*>::iterator pIterator;
+    std::vector<Player*> temp;
+	std::vector<Player*>::iterator pIterator;
 	temp=Players.findAllCharactersInRangeOf(pos.x,pos.y,pos.z, range );//getPlayersInRange(pos.x,pos.y,pos.z,MAXVIEW);
 		
 	for ( pIterator = temp.begin(); pIterator != temp.end(); ++pIterator ) 
@@ -720,10 +720,10 @@ void CWorld::sendMapUpdate(position pos, uint8_t range)
 	}
 }
 
-bool CWorld::createSavedArea(uint16_t tileid, position pos, uint16_t height, uint16_t width)
+bool World::createSavedArea(uint16_t tileid, position pos, uint16_t height, uint16_t width)
 {
     //Schleife durch alle spalten
-    CMap* dummy;
+    Map* dummy;
     for ( time_t akt_x = pos.x; akt_x < pos.x+width; ++akt_x)
     {
         for ( time_t akt_y = pos.y; akt_y < pos.y+height; ++akt_y)
@@ -731,24 +731,24 @@ bool CWorld::createSavedArea(uint16_t tileid, position pos, uint16_t height, uin
                 //Prüfen ob auf der position ein gültiges Feld ist, wenn ja false zurück liefern
                 if ( maps.findMapForPos( akt_x, akt_y, pos.z, dummy ) )
                 {
-                    std::cerr<<"CWorld::createSavedArea: Aborted map insertion, map for field at ("<<akt_x <<", "<<akt_y<<", "<<pos.z<<") found!"<<std::endl;
+                    std::cerr<<"World::createSavedArea: Aborted map insertion, map for field at ("<<akt_x <<", "<<akt_y<<", "<<pos.z<<") found!"<<std::endl;
                     return false;
                 }
         }
     }
        
-   	CMap* tempmap = new CMap(width,height);
+   	Map* tempmap = new Map(width,height);
 	bool disappear=true;
 	tempmap->Init(pos.x, pos.y, pos.z, disappear);
 
-	CField* tempf;
+	Field* tempf;
 
 	for (int _x=0; _x<width; ++_x)
 		for (int _y=0; _y<height; ++_y) {
 			if (tempmap->GetPToCFieldAt(tempf, _x+pos.x, _y+pos.y)) {
 				tempf->setTileId( tileid );
 				tempf->updateFlags();
-			} else std::cerr << "CWorld::createSavedArea: For map inserted at (" << pos.x << ", " << pos.y << ", " << pos.z << ") no Field was found for offset (" << _x << ", " << _y << ")!" << std::endl;
+			} else std::cerr << "World::createSavedArea: For map inserted at (" << pos.x << ", " << pos.y << ", " << pos.z << ") no Field was found for offset (" << _x << ", " << _y << ")!" << std::endl;
 
 		}
 
@@ -758,7 +758,7 @@ bool CWorld::createSavedArea(uint16_t tileid, position pos, uint16_t height, uin
 }
 
 
-bool CWorld::getArmorStruct(TYPE_OF_ITEM_ID id, ArmorStruct &ret)
+bool World::getArmorStruct(TYPE_OF_ITEM_ID id, ArmorStruct &ret)
 {
     //Has to be an own function cant give a pointer of Armor items to the script
     ArmorStruct as;
@@ -773,7 +773,7 @@ bool CWorld::getArmorStruct(TYPE_OF_ITEM_ID id, ArmorStruct &ret)
     
 }
 
-bool CWorld::getWeaponStruct(TYPE_OF_ITEM_ID id, WeaponStruct &ret)
+bool World::getWeaponStruct(TYPE_OF_ITEM_ID id, WeaponStruct &ret)
 {
     //Has to be an own function cant give a pointer of Armor items to the script
     WeaponStruct ws;
@@ -786,7 +786,7 @@ bool CWorld::getWeaponStruct(TYPE_OF_ITEM_ID id, WeaponStruct &ret)
         return WeaponItems->find(id, ret);
 }
 
-bool CWorld::getNaturalArmor(CCharacter::race_type id, MonsterArmor &ret)
+bool World::getNaturalArmor(Character::race_type id, MonsterArmor &ret)
 {
     MonsterArmor ma;
     if ( id == 0 )
@@ -798,14 +798,14 @@ bool CWorld::getNaturalArmor(CCharacter::race_type id, MonsterArmor &ret)
         return NaturalArmors->find(id, ret);
 }
 
-bool CWorld::getMonsterAttack(CCharacter::race_type id, AttackBoni &ret)
+bool World::getMonsterAttack(Character::race_type id, AttackBoni &ret)
 {
     return MonsterAttacks->find(id, ret);
 }
 
-void CWorld::sendMonitoringMessage(std::string msg, unsigned char id)
+void World::sendMonitoringMessage(std::string msg, unsigned char id)
 {
     //send this Command to all Monitoring Clients
-    boost::shared_ptr<CBasicServerCommand>cmd(new CBBMessageTC(msg, id) );
+    boost::shared_ptr<BasicServerCommand>cmd(new BBMessageTC(msg, id) );
     monitoringClientList->sendCommand(cmd);
 }

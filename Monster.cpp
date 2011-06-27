@@ -27,16 +27,16 @@
 #include "script/LuaMonsterScript.hpp"
 #include "World.hpp"
 
-std::auto_ptr<CIdCounter> CMonster::monsteridc;
+std::auto_ptr<IdCounter> Monster::monsteridc;
 
 // the table with monster descriptions
-extern CMonsterTable* MonsterDescriptions;
+extern MonsterTable* MonsterDescriptions;
 
-CMonster::CMonster(const TYPE_OF_CHARACTER_ID& type, const position& newpos, CSpawnPoint* spawnpoint) throw(unknownIDException)
-		: CCharacter(),lastTargetPosition(position(0,0,0)),lastTargetSeen(false), spawn(spawnpoint), monstertype(type) {
+Monster::Monster(const TYPE_OF_CHARACTER_ID& type, const position& newpos, SpawnPoint* spawnpoint) throw(unknownIDException)
+		: Character(),lastTargetPosition(position(0,0,0)),lastTargetSeen(false), spawn(spawnpoint), monstertype(type) {
 
 	if (monsteridc.get() == 0)
-		monsteridc.reset(new CIdCounter(configOptions["monsteridc"], MONSTER_BASE)); // reset monster id to 0xBB000000
+		monsteridc.reset(new IdCounter(configOptions["monsteridc"], MONSTER_BASE)); // reset monster id to 0xBB000000
 
 	character = monster;
 	actionPoints = NP_MAX_AP;
@@ -45,9 +45,9 @@ CMonster::CMonster(const TYPE_OF_CHARACTER_ID& type, const position& newpos, CSp
 	pos=newpos;
 }
 
-void CMonster::performStep( position targetpos )
+void Monster::performStep( position targetpos )
 {
-	CCharacter::direction dir;
+	Character::direction dir;
 	if (getNextStepDir(targetpos, MAX_PATH_FIND, dir) )
 	{
 		std::cout << "performStep here!   " << dir << std::endl;
@@ -56,7 +56,7 @@ void CMonster::performStep( position targetpos )
 	}
 	else
 	{
-		dir = static_cast<CCharacter::direction>(unsignedShortRandom( 0, 7));
+		dir = static_cast<Character::direction>(unsignedShortRandom( 0, 7));
 		move( dir );
 	}
     // unsigned char direction = 0;
@@ -74,7 +74,7 @@ void CMonster::performStep( position targetpos )
         // bool karte[MAX_PATH_FIND * 2 + 1][MAX_PATH_FIND * 2 + 1];
 		// char distances[MAX_PATH_FIND * 2 + 1][MAX_PATH_FIND * 2 + 1];
 		// SuchFeldListe Wertungen;
-		// CField* temp4;
+		// Field* temp4;
 		// for ( int x = 0; x < MAX_PATH_FIND * 2 + 1; ++x ) 
         // {
 			// for ( int y = 0; y < MAX_PATH_FIND * 2 + 1; ++y ) 
@@ -207,10 +207,10 @@ void CMonster::performStep( position targetpos )
 			// direction = (yoffs>0)?4:0;
 		// }
 	// }
-	//move( (CCharacter::direction)direction );    
+	//move( (Character::direction)direction );    
 }
 
-void CMonster::setType( const TYPE_OF_CHARACTER_ID& type ) throw(unknownIDException) {
+void Monster::setType( const TYPE_OF_CHARACTER_ID& type ) throw(unknownIDException) {
 	deleteAllSkills();
 
 
@@ -267,29 +267,29 @@ void CMonster::setType( const TYPE_OF_CHARACTER_ID& type ) throw(unknownIDExcept
 	appearance = appearance_alive();
 }
 
-void CMonster::setSpawn(CSpawnPoint* sp) {
+void Monster::setSpawn(SpawnPoint* sp) {
 	spawn = sp;
 }
 
-CMonster::~CMonster() {
-#ifdef CCharacter_DEBUG
-	std::cout << "CMonster Destruktor Start" << std::endl;
+Monster::~Monster() {
+#ifdef Character_DEBUG
+	std::cout << "Monster Destruktor Start" << std::endl;
 #endif
 	if (spawn) spawn->dead(monstertype);
-#ifdef CCharacter_DEBUG
-	std::cout << "CMonster Destruktor Ende" << std::endl;
+#ifdef Character_DEBUG
+	std::cout << "Monster Destruktor Ende" << std::endl;
 #endif
 }
 
-void CMonster::remove()
+void Monster::remove()
 {
     battrib.truehitpoints = 0;
     battrib.hitpoints = battrib.truehitpoints;
-    CCharacter::SetAlive(false);
+    Character::SetAlive(false);
     
 }
 
-void CMonster::SetAlive( bool t) {
+void Monster::SetAlive( bool t) {
 	if ( !t ) {
 		
 		MonsterStruct monStruct;
@@ -303,10 +303,10 @@ void CMonster::SetAlive( bool t) {
 			std::cerr<<"Can't finde Description for Monster: " << getType() << " on Death not called!"<<std::endl;
 		}
 	}
-	CCharacter::SetAlive(t);
+	Character::SetAlive(t);
 }
 
-bool CMonster::attack(CCharacter* target, int &sound, bool &updateInv)
+bool Monster::attack(Character* target, int &sound, bool &updateInv)
 {
 
     MonsterStruct monStruct;
@@ -319,10 +319,10 @@ bool CMonster::attack(CCharacter* target, int &sound, bool &updateInv)
     }
     else
         std::cerr<<"Can't find Description for Monster: " << getType() << " onAttack not called!" << std::endl;
-    return CCharacter::attack(target,sound,updateInv);
+    return Character::attack(target,sound,updateInv);
 }
 
-void CMonster::receiveText(talk_type tt, std::string message, CCharacter* cc) {
+void Monster::receiveText(talk_type tt, std::string message, Character* cc) {
 	MonsterStruct monStruct;
 	if ( MonsterDescriptions->find(getType(), monStruct) ) {
 		if ( monStruct.script!=NULL && monStruct.script->existsEntrypoint("receiveText") )

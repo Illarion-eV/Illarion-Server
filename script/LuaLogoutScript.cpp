@@ -25,19 +25,19 @@
 #include "Logger.hpp"
 #include "fuse_ptr.hpp"
 
-CLuaLogoutScript::CLuaLogoutScript(std::string filename) throw(ScriptException)
-		: CLuaScript(filename)
+LuaLogoutScript::LuaLogoutScript(std::string filename) throw(ScriptException)
+		: LuaScript(filename)
 {
 }
 
-CLuaLogoutScript::~CLuaLogoutScript() throw() {}
+LuaLogoutScript::~LuaLogoutScript() throw() {}
 
-bool CLuaLogoutScript::onLogout(CCharacter * cc)
+bool LuaLogoutScript::onLogout(Character * cc)
 {
     try
     {
-        CWorld::get()->setCurrentScript( this ); 
-        fuse_ptr<CCharacter> fuse_cc(cc);
+        World::get()->setCurrentScript( this ); 
+        fuse_ptr<Character> fuse_cc(cc);
         call("onLogout")( fuse_cc );
         return true;
     }

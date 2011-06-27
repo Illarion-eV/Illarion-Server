@@ -26,7 +26,7 @@
 #include "Connection.hpp"
 #include "netinterface/NetInterface.hpp"
 
-CBasicServerCommand::CBasicServerCommand( unsigned char defByte ) : CBasicCommand(defByte)
+BasicServerCommand::BasicServerCommand( unsigned char defByte ) : BasicCommand(defByte)
 {
     STDBUFFERSIZE = 1000;
     bufferPos=0;
@@ -41,7 +41,7 @@ CBasicServerCommand::CBasicServerCommand( unsigned char defByte ) : CBasicComman
 }
 
 
-CBasicServerCommand::CBasicServerCommand( unsigned char defByte , uint16_t bsize) : CBasicCommand(defByte)
+BasicServerCommand::BasicServerCommand( unsigned char defByte , uint16_t bsize) : BasicCommand(defByte)
 {
     STDBUFFERSIZE = bsize;
     bufferPos=0;
@@ -55,13 +55,13 @@ CBasicServerCommand::CBasicServerCommand( unsigned char defByte , uint16_t bsize
     checkSum = 0;
 }
 
-CBasicServerCommand::~CBasicServerCommand()
+BasicServerCommand::~BasicServerCommand()
 {
     delete[] buffer;
     buffer = NULL;
 }
 
-void CBasicServerCommand::addHeader()
+void BasicServerCommand::addHeader()
 {
     //at place 2 and 3 add the length
     if ( bufferPos >= 6 ) //check if the buffer is large enough to add the data
@@ -74,18 +74,18 @@ void CBasicServerCommand::addHeader()
     }
 }
 
-int CBasicServerCommand::getLength()
+int BasicServerCommand::getLength()
 {
     return bufferPos;
 }
 
-char * CBasicServerCommand::cmdData()
+char * BasicServerCommand::cmdData()
 {
     return buffer;
 
 }
 
-void CBasicServerCommand::addStringToBuffer( std::string data )
+void BasicServerCommand::addStringToBuffer( std::string data )
 {
     unsigned short int count = data.length();
     
@@ -98,7 +98,7 @@ void CBasicServerCommand::addStringToBuffer( std::string data )
     }
 }
 
-void CBasicServerCommand::addIntToBuffer( int data )
+void BasicServerCommand::addIntToBuffer( int data )
 {
     addUnsignedCharToBuffer( (data >> 24) );
     addUnsignedCharToBuffer( ((data >> 16) & 255) );
@@ -106,13 +106,13 @@ void CBasicServerCommand::addIntToBuffer( int data )
     addUnsignedCharToBuffer( (data & 255) );    
 }
     
-void CBasicServerCommand::addShortIntToBuffer( short int data )
+void BasicServerCommand::addShortIntToBuffer( short int data )
 {
     addUnsignedCharToBuffer( (data >> 8) );
     addUnsignedCharToBuffer( (data & 255) );
 }
 
-void CBasicServerCommand::addUnsignedCharToBuffer( unsigned char data )
+void BasicServerCommand::addUnsignedCharToBuffer( unsigned char data )
 {
     //resize the buffer if there is not enough place to store
     if ( (bufferPos+1) >= (bufferSizeMod*STDBUFFERSIZE) ) resizeBuffer();
@@ -122,7 +122,7 @@ void CBasicServerCommand::addUnsignedCharToBuffer( unsigned char data )
     bufferPos++;
 }
 
-void CBasicServerCommand::resizeBuffer()
+void BasicServerCommand::resizeBuffer()
 {
     std::cout<<"not enough memory resizing the sendbuffer"<<std::endl;
     //increase the buffer size modifikator

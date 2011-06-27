@@ -20,19 +20,19 @@
 #include "MapVector.hpp"
 #include "Map.hpp"
 
-CMapVector::CMapVector() : std::vector < CMap* > () {
+MapVector::MapVector() : std::vector < Map* > () {
 	lowX = 32767;
 	highX = -32768;
 }
 
-void CMapVector::clear()
-{   std::vector < CMap* >::clear();
+void MapVector::clear()
+{   std::vector < Map* >::clear();
     lowX = 32767;
     highX = -32768;
 }
 
-bool CMapVector::mapInRangeOf( short int upperleft_X, short int upperleft_Y, unsigned short int sizex, unsigned short int sizey, short int z ) {
-	CMapVector::iterator thisIterator;
+bool MapVector::mapInRangeOf( short int upperleft_X, short int upperleft_Y, unsigned short int sizex, unsigned short int sizey, short int z ) {
+	MapVector::iterator thisIterator;
 
 	short int downright_X = upperleft_X + sizex - 1;
 	short int downright_Y = upperleft_Y + sizey - 1;
@@ -59,8 +59,8 @@ bool CMapVector::mapInRangeOf( short int upperleft_X, short int upperleft_Y, uns
 
 
 
-bool CMapVector::findAllMapsInRangeOf( char rnorth, char rsouth, char reast, char rwest, position pos, std::vector < CMap* > &ret ) {
-	CMapVector::iterator thisIterator;
+bool MapVector::findAllMapsInRangeOf( char rnorth, char rsouth, char reast, char rwest, position pos, std::vector < Map* > &ret ) {
+	MapVector::iterator thisIterator;
 	bool found_one = false;
 
 	short int upperleft_X = pos.x - rwest;
@@ -85,8 +85,8 @@ bool CMapVector::findAllMapsInRangeOf( char rnorth, char rsouth, char reast, cha
 
 
 
-bool CMapVector::findAllMapsWithXInRangeOf( short int start, short int end, std::vector < CMap* > &ret ) {
-	CMapVector::iterator thisIterator;
+bool MapVector::findAllMapsWithXInRangeOf( short int start, short int end, std::vector < Map* > &ret ) {
+	MapVector::iterator thisIterator;
 	bool found_one = false;
 
 	for ( thisIterator = this->begin(); thisIterator < this->end(); ++thisIterator ) {
@@ -101,8 +101,8 @@ bool CMapVector::findAllMapsWithXInRangeOf( short int start, short int end, std:
 
 
 
-bool CMapVector::findMapForPos( short int x, short int y, short int z, CMap* &map ) {
-	CMapVector::iterator thisIterator;
+bool MapVector::findMapForPos( short int x, short int y, short int z, Map* &map ) {
+	MapVector::iterator thisIterator;
 
 	for ( thisIterator = this->begin(); thisIterator < this->end(); ++thisIterator ) {
 		if ( z == ( *thisIterator )->Z_Level ) {
@@ -121,14 +121,14 @@ bool CMapVector::findMapForPos( short int x, short int y, short int z, CMap* &ma
 
 
 
-bool CMapVector::findMapForPos( position pos, CMap* &map ) {
+bool MapVector::findMapForPos( position pos, Map* &map ) {
 	return findMapForPos( pos.x, pos.y, pos.z, map );
 }
 
 
 
-bool CMapVector::findLowestMapOverCharacter( position pos, CMap* &lowmap ) {
-	CMapVector::iterator thisIterator;
+bool MapVector::findLowestMapOverCharacter( position pos, Map* &lowmap ) {
+	MapVector::iterator thisIterator;
 	bool found_one = false;
 
 	int ret = NOTHING;
@@ -146,9 +146,9 @@ bool CMapVector::findLowestMapOverCharacter( position pos, CMap* &lowmap ) {
 }
 
 
-bool CMapVector::InsertMap( CMap* newMap ) {
+bool MapVector::InsertMap( Map* newMap ) {
 	if ( newMap != NULL ) {
-		for ( CMapVector::iterator thisIterator = this->begin(); thisIterator < this->end(); ++thisIterator ) {
+		for ( MapVector::iterator thisIterator = this->begin(); thisIterator < this->end(); ++thisIterator ) {
 			if ( ( *thisIterator ) == newMap ) {
 				return false;
 			}

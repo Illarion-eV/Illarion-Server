@@ -17,14 +17,14 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CWORLD_HH
-#define CWORLD_HH
+#ifndef WORLD_HH
+#define WORLD_HH
 
 //falls nicht auskommentiert, werden mehr Bildschirmausgaben gemacht:
 /*
-#define CWorld_DEBUG
-#define CWorld_ItemMove_DEBUG
-#define CWorld_CharMove_DEBUG
+#define World_DEBUG
+#define World_ItemMove_DEBUG
+#define World_CharMove_DEBUG
 */
 
 //falls nicht auskommentiert, werden die Gespraeche der Player gespeichert
@@ -61,25 +61,25 @@
 #include "luabind/object.hpp"
 #include <exception>
 
-extern CCommonObjectTable* CommonItems; /**< a extern table for ItemAttributes @see CCommonObjectTable* CommonItems **/ 
+extern CommonObjectTable* CommonItems; /**< a extern table for ItemAttributes @see CommonObjectTable* CommonItems **/ 
 
-extern CNamesObjectTable* ItemNames; /**< a extern table for Itemnames @see CNamesObjectTable* ItemNames **/
+extern NamesObjectTable* ItemNames; /**< a extern table for Itemnames @see NamesObjectTable* ItemNames **/
 
-extern CWeaponObjectTable* WeaponItems;
+extern WeaponObjectTable* WeaponItems;
 
-extern CArmorObjectTable* ArmorItems;
+extern ArmorObjectTable* ArmorItems;
 
 //! eine Tabelle fuer Artefakt - Item Daten
-extern CArtefactObjectTable* ArtefactItems;
+extern ArtefactObjectTable* ArtefactItems;
 
 //! eine Tabelle fuer Behaelter - Item Daten
-extern CContainerObjectTable* ContainerItems;
+extern ContainerObjectTable* ContainerItems;
 
 //! eine Tabelle mit Item welche die Eigenschaften des Feldes auf dem sie liegen modifizieren
-extern CTilesModificatorTable* TilesModItems;
+extern TilesModificatorTable* TilesModItems;
 
 //! eine Tabelle mit allen Arten von Bodenplatten
-extern CTilesTable* Tiles;
+extern TilesTable* Tiles;
 
 //! ein struct fuer die Allgemeinen Attribute eines Item
 extern CommonStruct tempCommon;
@@ -106,38 +106,38 @@ extern ContainerStruct tempContainer;
 extern TilesModificatorStruct tempModificator;
 
 //! ein struct fuer Zaubersprche
-extern CSpellTable* Spells;
+extern SpellTable* Spells;
 
 //! ein Struct fuer Trigger
-extern CTriggerTable* Triggers;
+extern TriggerTable* Triggers;
 
 //! Eine Tabelle mit MonsterRstungen
-extern CNaturalArmorTable* NaturalArmors;
+extern NaturalArmorTable* NaturalArmors;
 
 //! Eine Tabelle mit Bonis fuer Monsterangriffe
-extern CMonsterAttackTable* MonsterAttacks;
+extern MonsterAttackTable* MonsterAttacks;
 
-extern CScheduledScriptsTable* ScheduledScriptsTable;
+extern ScheduledScriptsTable* scheduledScripts;
 
 //! Ein zeiger auf das Standard Kampfscript
-extern boost::shared_ptr<CLuaWeaponScript> standardFightingScript;
+extern boost::shared_ptr<LuaWeaponScript> standardFightingScript;
 
 // typedef for gm commands...
 /** 
 * a class for holding gm or player commands
 */
-class CCommandType 
+class CommandType 
 {
 
     public:
         /**
         * pure virtual operator overloading
         */
-        virtual bool operator() ( CWorld*, CPlayer*, const std::string& ) = 0;
-    virtual ~CCommandType() {}
+        virtual bool operator() ( World*, Player*, const std::string& ) = 0;
+    virtual ~CommandType() {}
 
     private:
-        CCommandType& operator=(const CCommandType&);
+        CommandType& operator=(const CommandType&);
 };
 
 /**
@@ -208,7 +208,7 @@ struct BlockingObject
 {
     enum BlockingType { BT_ITEM = 0, BT_CHARACTER = 1, BT_NONE = 2};
     BlockingType blockingType;
-    CCharacter * blockingChar;
+    Character * blockingChar;
     ScriptItem blockingItem;
     BlockingObject()
     {
@@ -222,48 +222,48 @@ struct BlockingObject
 *this class contains the world of the gameserver
 *here is the main point for monsters, player, maps and npc's
 */
-class CWorld {
+class World {
     
     public:
         //////////////////////////
         void AgeCharacters();
-        CNewClientView clientview;
+        NewClientView clientview;
         ////////////////////////////
 
         /**
         *a typedef for holding Players
-        *@todo: change the three vectors @see PLAYERVECTOR, @see MONSTERVECTOR, @see NPCVECTOR so there is only one CHARVECTOR
+        *@todo: change the three vectors @see PLAYERVECTOR, @see MONSTERVECTOR, @see NPCVECTOR so there is only one HARVECTOR
         */
-        typedef ccharactervector < CPlayer* > PLAYERVECTOR;
+        typedef ccharactervector < Player* > PLAYERVECTOR;
 
         /**
         *a typedef for holding monsters 
-        *@todo: change the three vectors @see PLAYERVECTOR, @see MONSTERVECTOR, @see NPCVECTOR so there is only one CHARVECTOR
+        *@todo: change the three vectors @see PLAYERVECTOR, @see MONSTERVECTOR, @see NPCVECTOR so there is only one HARVECTOR
         */
-        typedef ccharactervector < CMonster* > MONSTERVECTOR;
+        typedef ccharactervector < Monster* > MONSTERVECTOR;
 
         /**
         *a typedef for holding npc's
-        *@todo: change the three vectors @see PLAYERVECTOR, @see MONSTERVECTOR, @see NPCVECTOR so there is only one CHARVECTOR
+        *@todo: change the three vectors @see PLAYERVECTOR, @see MONSTERVECTOR, @see NPCVECTOR so there is only one HARVECTOR
         */        
-        typedef ccharactervector < CNPC* > NPCVECTOR;
+        typedef ccharactervector < NPC* > NPCVECTOR;
         
         /**
         *  a typedef for holding players which have logged out in a thread save 
         * vector
         */
-        typedef tvector<CPlayer*> TSPLAYERVECTOR;       
+        typedef tvector<Player*> TSPLAYERVECTOR;       
 
         /**
         *holds all active player on the world
-        *@todo: change the three vectors @see PLAYERVECTOR, @see MONSTERVECTOR, @see NPCVECTOR so there is only one CHARVECTOR
+        *@todo: change the three vectors @see PLAYERVECTOR, @see MONSTERVECTOR, @see NPCVECTOR so there is only one HARVECTOR
         */
         PLAYERVECTOR Players;
         
     /**
     *sets a new tile on the map
     */
-        void setNextTile( CPlayer* cp, unsigned char tilenumber );
+        void setNextTile( Player* cp, unsigned char tilenumber );
 
 
         /**
@@ -273,7 +273,7 @@ class CWorld {
 
         /**
         *holds all monsters on the world
-        *@todo: change the three vectors @see PLAYERVECTOR, @see MONSTERVECTOR, @see NPCVECTOR so there is only one CHARVECTOR
+        *@todo: change the three vectors @see PLAYERVECTOR, @see MONSTERVECTOR, @see NPCVECTOR so there is only one HARVECTOR
         **/        
         MONSTERVECTOR Monsters;
 		
@@ -284,7 +284,7 @@ class CWorld {
 
         /**
         *holds all npc's on the world
-        *@todo: change the three vectors @see PLAYERVECTOR, @see MONSTERVECTOR, @see NPCVECTOR so there is only one CHARVECTOR
+        *@todo: change the three vectors @see PLAYERVECTOR, @see MONSTERVECTOR, @see NPCVECTOR so there is only one HARVECTOR
         **/        
         NPCVECTOR Npc;
         
@@ -296,7 +296,7 @@ class CWorld {
         /**
          * holds the monitoring clients on the World
          */
-         CMonitoringClients * monitoringClientList;
+         MonitoringClients * monitoringClientList;
 
         timeb start; /**< starting time of the server **/
 
@@ -306,13 +306,13 @@ class CWorld {
 
         short int ap; /**< actionpoints since the last loop call **/
 
-        CIdCounter* npcidc; /**< a counter for npc id's **/
+        IdCounter* npcidc; /**< a counter for npc id's **/
 
-        CMapVector maps; /**< a vector which holds all the maps*/
+        MapVector maps; /**< a vector which holds all the maps*/
 
-        CMap* tmap; /**< a temporary pointer to a map, used from different methods @see CMap*/
+        Map* tmap; /**< a temporary pointer to a map, used from different methods @see Map*/
 
-        CScheduler* Scheduler;/**< a pointer to the scheduler object @see CScheduler*/
+        Scheduler* scheduler;/**< a pointer to the scheduler object @see Scheduler*/
 
         WeatherStruct weather;/**< a struct to the weather @see WeatherStruct */
         
@@ -346,9 +346,9 @@ class CWorld {
         };
         
         //! parse GMCommands of the Form !<string1> <string2> and process them
-        bool parseGMCommands(CPlayer* cp, const std::string& text);
+        bool parseGMCommands(Player* cp, const std::string& text);
         //! parse PlayerCommands of the Form !<string1> <string2> and process them
-        bool parsePlayerCommands(CPlayer* cp, const std::string& text);
+        bool parsePlayerCommands(Player* cp, const std::string& text);
 
 
         /**
@@ -379,13 +379,13 @@ class CWorld {
         /**
         *the current script which is called
         */
-        CLuaScript * currentScript;
+        LuaScript * currentScript;
 
-        ///////// in CWorld.cpp ///////
+        ///////// in World.cpp ///////
         /**
         *the standard destructor of the server
         */
-        ~CWorld();
+        ~World();
 
         /**
         *main loop for the world
@@ -448,22 +448,22 @@ class CWorld {
         *checks the command list of one player and put them into practize
         *@param cp the player which buffer is currently processed
         */
-        void workout_CommandBuffer( CPlayer* &cp);
+        void workout_CommandBuffer( Player* &cp);
         
         
-        static CWorld * create( std::string dir, time_t starttime );
-        static CWorld * get() throw(std::runtime_error); 
+        static World * create( std::string dir, time_t starttime );
+        static World * get() throw(std::runtime_error); 
 
 
         
         /**=============CWorldIMPLMonCommands.cpp===============*/
-        void montool_kill_command(CPlayer * c);
-        void montool_reload_command( CPlayer * c);
-        void montool_kickall_command( CPlayer * c);
-        void montool_import_maps_command( CPlayer * c);
-        void montool_set_login(CPlayer * c, const std::string& st);
+        void montool_kill_command(Player * c);
+        void montool_reload_command( Player * c);
+        void montool_kickall_command( Player * c);
+        void montool_import_maps_command( Player * c);
+        void montool_set_login(Player * c, const std::string& st);
        
-        /**============ CWorldIMPLTools.cpp ==================*/
+        /**============ WorldIMPLTools.cpp ==================*/
         
         /**
         * checks the list of LostNpcs and deletes all the npcs which are in this and the normal npc list
@@ -478,10 +478,10 @@ class CWorld {
         *@param call by reference, returns the player which was found
         *@return if true there was a player found otherwise false
         */
-        bool findPlayerWithLowestHP( std::vector < CPlayer* > * ppvec, CPlayer* &found );
+        bool findPlayerWithLowestHP( std::vector < Player* > * ppvec, Player* &found );
 
-        inline CLuaScript * getCurrentScript() { return currentScript; }
-        inline void setCurrentScript( CLuaScript * script ) { currentScript = script; }
+        inline LuaScript * getCurrentScript() { return currentScript; }
+        inline void setCurrentScript( LuaScript * script ) { currentScript = script; }
         
         
         /**
@@ -491,7 +491,7 @@ class CWorld {
         
         /**
         * finds all warpfields in a given range
-        * can be found in CWorldIMPLTools.cpp
+        * can be found in WorldIMPLTools.cpp
         * @param pos the position from which the warpfields should be found
         * @param range the roung around pos which should be searched for warpfields
         * @param call by reference, returns a hashmap with the warpfields which where found
@@ -507,47 +507,47 @@ class CWorld {
         std::list<BlockingObject> LoS(position startingpos, position endingpos);
         
         
-        bool findPlayersInSight(position pos, uint8_t range, std::vector<CPlayer*> &ret, CCharacter::face_to direction);
+        bool findPlayersInSight(position pos, uint8_t range, std::vector<Player*> &ret, Character::face_to direction);
         
 
         /**
         * searches for a special character
         * looks into all three vectors ( player, monster, npc ) for a character on the given field
-        * can be found in CWorldIMPLTools.cpp        
+        * can be found in WorldIMPLTools.cpp        
         * @param posx the x coordinate of the field
         * @param posy the y coordinate of the field
         * @param posz the z coordinate of the field
         * @return a pointer to a character, NULL if no character was found
         * @todo has to be changed for only one charactervector
         */
-        CCharacter* findCharacterOnField(short int posx, short int posy, short int posz);
+        Character* findCharacterOnField(short int posx, short int posy, short int posz);
 
     /**
         * searches for a special player
         * looks for a player on the given field
-        * can be found in CWorldIMPLTools.cpp        
+        * can be found in WorldIMPLTools.cpp        
         * @param posx the x coordinate of the field
         * @param posy the y coordinate of the field
         * @param posz the z coordinate of the field
         * @return a pointer to a player, NULL if no player was found
         */
-        CPlayer* findPlayerOnField(short int posx, short int posy, short int posz);
+        Player* findPlayerOnField(short int posx, short int posy, short int posz);
 
 
         /**
         * searches for a special character
-        * can be found in CWorldIMPLTools.cpp        
+        * can be found in WorldIMPLTools.cpp        
         * looks into all three vectors ( player, monster, npc )  for a character with the given id
         * @param id the id of the character which should be found
         * @return a pointer to the character, NULL if the character wasn't found
         * @todo has to be changed for only one charactervetor
         */
-        CCharacter* findCharacter(TYPE_OF_CHARACTER_ID id);
+        Character* findCharacter(TYPE_OF_CHARACTER_ID id);
 
          /**
         *deletes all monsters and npcs from the map and emptys the lists
-        * can be found in CWorldIMPLTools.cpp        
-        *@see CWorld::Monsters @see CWorld::Npc
+        * can be found in WorldIMPLTools.cpp        
+        *@see World::Monsters @see World::Npc
         */
         void takeMonsterAndNPCFromMap();
 
@@ -555,16 +555,16 @@ class CWorld {
         * a player attacks
         * @param cp the player who is attacking
         */
-        bool characterAttacks( CCharacter* cp );
+        bool characterAttacks( Character* cp );
 
         /**
         * kills one monster and drops his inventory on the map
-        * can be found in CWorldIMPLTools.cpp        
+        * can be found in WorldIMPLTools.cpp        
         * @warning iterators on the monsters becomes invalid
         * @param monsterp a pointer to the monster which should be killed
         * @ true if the monster was deleted succesfully otherwise false
         */
-        bool killMonster( CMonster* monsterp );
+        bool killMonster( Monster* monsterp );
 
         /**
         * kills one monster
@@ -581,7 +581,7 @@ class CWorld {
         * @param cc the character which should be healed
         * @return true if there was some healing, otherwise false
         */
-        bool doHealing( CCharacter* cc );
+        bool doHealing( Character* cc );
 
         /**
         * looks for a field on the map
@@ -589,7 +589,7 @@ class CWorld {
         * @param pos the position where the field has to be found
         * @return true if the field was found otherwise false
         */
-        bool GetPToCFieldAt( CField* &fip, position pos );
+        bool GetPToCFieldAt( Field* &fip, position pos );
 
         /** 
         * looks for a field on the map
@@ -597,7 +597,7 @@ class CWorld {
         * @return a pointer to the field, NULL if there is no field at this position
         * @see GetPToCFieldAt()
         */
-        CField * GetField(position pos);
+        Field * GetField(position pos);
 
         /**
         * looks for a field and the special map where it lies on
@@ -605,7 +605,7 @@ class CWorld {
         * @param map call by reference, pointer to the map on which the field lies
         * @return true if the field was found otherwise false
         */
-        bool GetPToCFieldAt( CField* &fip, position pos, CMap* &map );
+        bool GetPToCFieldAt( Field* &fip, position pos, Map* &map );
 
         /**
         * looks for a field on the current map
@@ -615,7 +615,7 @@ class CWorld {
         * @param z the z-coordinate
         * @return true if the field was found otherwise false
         */
-        bool GetPToCFieldAt( CField* &fip, short int x, short int y, short int z );
+        bool GetPToCFieldAt( Field* &fip, short int x, short int y, short int z );
 
         /**
         * looks for a field and the special map where it lies on
@@ -626,7 +626,7 @@ class CWorld {
         * @param map call by reference, pointer to the map on which the field lies
         * @return true if the field was found otherwise false
         */        
-        bool GetPToCFieldAt( CField* &fip, short int x, short int y, short int z, CMap* &map );
+        bool GetPToCFieldAt( Field* &fip, short int x, short int y, short int z, Map* &map );
 
         /**
         * looks for an empty field in the near of a given pos
@@ -636,7 +636,7 @@ class CWorld {
         * @param z z-coordinate of the field
         * @return true if there was an empty field near the given coordinates otherwise false
         */
-        bool findEmptyCFieldNear( CField* &cf, short int &x, short int &y, short int z );
+        bool findEmptyCFieldNear( Field* &cf, short int &x, short int &y, short int z );
 
         /**
         *returns for a item of the given id the value of an attrib back
@@ -744,7 +744,7 @@ class CWorld {
 
         void sendRemoveCharToVisiblePlayers( TYPE_OF_CHARACTER_ID id, position & pos );
 
-        /**============in CWorldIMPLCharacterMoves.cpp==================*/
+        /**============in WorldIMPLCharacterMoves.cpp==================*/
 
         /**
         *sends all character to a client which the player sees
@@ -752,7 +752,7 @@ class CWorld {
         *@param cp pointer to the player which should recive the data
         *@param sendSpin if true the direction of the chars is also sendet
         */
-        void sendAllVisibleCharactersToPlayer( CPlayer* cp, bool sendSpin );
+        void sendAllVisibleCharactersToPlayer( Player* cp, bool sendSpin );
 
         /**
         *adds a warpfield to a specific groundtile
@@ -839,7 +839,7 @@ class CWorld {
         *@param cc the character which is moving
         *@param true if the char is moving to the field, false if he is moving away from the field
         */
-        void TriggerFieldMove(CCharacter * cc, bool moveto);
+        void TriggerFieldMove(Character * cc, bool moveto);
 
         /**
         *moves a player to the direction d
@@ -862,9 +862,9 @@ class CWorld {
         *@param active true if the walking should be animated otherwise false
         *@param pushSelf true if the player was pushing himself otherwise false
         *@return true if the movement was succesful otherwise false
-        *@todo CPlayer->move was implemented this function can be deleted
+        *@todo Player->move was implemented this function can be deleted
         **/
-        bool pushPlayer( CPlayer* cp, unsigned char d, short int &walkcost );
+        bool pushPlayer( Player* cp, unsigned char d, short int &walkcost );
 
         /**
         *warps a Player through a warpfield
@@ -873,7 +873,7 @@ class CWorld {
         *@param cfstart the field which should be proofed if it is a warpfield 
         *@return true if the warp was succesfull otherwise false
         */
-        //bool warpPlayer( CPlayer* cp, CField* cfstart );
+        //bool warpPlayer( Player* cp, Field* cfstart );
 
         /**
         *warps a player to the next free field in the near of a given position
@@ -882,7 +882,7 @@ class CWorld {
         *@param pos the position to which the player should be warped
         *@return true if the warp was succesfull otherwise false
         */
-        //bool warpPlayer( CPlayer* cp, position pos );
+        //bool warpPlayer( Player* cp, position pos );
 
         /**
         *checks a field for special actions and activates this actions (Specielfield or items)
@@ -890,7 +890,7 @@ class CWorld {
         *@param cp a pointer to the character which walked on the field
         *@param cfstart a pointer to the field which should be checked for special actions
         */
-        void checkFieldAfterMove( CCharacter* cp, CField* cfstart );
+        void checkFieldAfterMove( Character* cp, Field* cfstart );
 
         /**
         * a Player pushes a character 
@@ -914,71 +914,71 @@ class CWorld {
         * 
         *@return true if the pushing action was succesfull otherwise false
         */
-        bool pushCharacter( CPlayer* cp, TYPE_OF_CHARACTER_ID pushedCharId, unsigned char direction );
+        bool pushCharacter( Player* cp, TYPE_OF_CHARACTER_ID pushedCharId, unsigned char direction );
 
 #if 0
         //! bewegt das Monster in die durch d angegebene Richtung
         // \param cp Zeiger auf das Monster das bewegt werden soll
         // \param d Richtung der Bewegung: 0->Norden bis 7->NO im Uhrzeigersinn, 8 nach oben, 9 nach unten
         // \return true falls Bewegung ausgefhrt werden konnte, false sonst
-        bool moveMonster( CMonster* cp, unsigned char d, bool active );
+        bool moveMonster( Monster* cp, unsigned char d, bool active );
 
         //! bewegt den NPC in die durch d angegebene Richtung
         // \param cn Zeiger auf den NPC der bewegt werden soll
         // \param d Richtung der Bewegung: 0->Norden bis 7->NO im Uhrzeigersinn, 8 nach oben, 9 nach unten
         // \return true falls Bewegung ausgefhrt werden konnte, false sonst
-        bool moveNPC( CNPC* cn, unsigned char d, bool active );
+        bool moveNPC( NPC* cn, unsigned char d, bool active );
 #endif 
 
         //! teleportiert cm, falls cfstart ein WarpFeld ist
         // \param cp Zeiger auf das Monster das bewegt werden soll
         // \param cfstart das zu prfende Feld
         // \return true falls Bewegung ausgefhrt werden konnte, false sonst
-        bool warpMonster( CMonster* cm, CField* cfstart );
+        bool warpMonster( Monster* cm, Field* cfstart );
 
         //! dreht den Spieler in die durch d angegebene Richtung
         // \param cp Zeiger auf den Spieler der gedreht werden soll
         // \param d neue Blickrichtung : 0->Norden bis 7->NO im Uhrzeigersinn, 8 nach oben, 9 nach unten
         // \return true falls Drehung ausgefhrt werden konnte, false sonst
-        bool spinPlayer( CPlayer* cp, unsigned char d );
+        bool spinPlayer( Player* cp, unsigned char d );
 
         //! schickt eine Verschiebungsmeldung (Player/NPC/Monster) an alle Player im Sichtbereich
         // \param ccp der bewegte Character
-        void sendPassiveMoveToAllVisiblePlayers( CCharacter* ccp );
+        void sendPassiveMoveToAllVisiblePlayers( Character* ccp );
 
         //! schickt eine Character-Drehung an alle Player im Sichtbereich von cc
         // \param cc der Character der sich gedreht hat
-        void sendSpinToAllVisiblePlayers( CCharacter* cc );
+        void sendSpinToAllVisiblePlayers( Character* cc );
 
-        //! schickt eine CCharacter-Bewegungsmeldung an alle CPlayer im Sichtbereich der Position
+        //! schickt eine Character-Bewegungsmeldung an alle Player im Sichtbereich der Position
         // von cc (alt und neu) ausser an cc selbst
         // \param cc der bewegte Character
         // \param direction Richtung der Bewegung
         // \param netid PLAYERMOVE_TC, MONSTERMOVE_TC oder NPCMOVE_TC
         // \param waitpages Anzahl der Animationen fr die Bewegung
-        void sendCharacterMoveToAllVisiblePlayers( CCharacter* cc, unsigned char netid, unsigned char waitpages );
+        void sendCharacterMoveToAllVisiblePlayers( Character* cc, unsigned char netid, unsigned char waitpages );
 
         //! send movement to all chars in range
         // \param cc the moved player
         // \param waitpages number of animations for movement
-        void sendCharacterMoveToAllVisibleChars( CCharacter* cc, unsigned char waitpages);
+        void sendCharacterMoveToAllVisibleChars( Character* cc, unsigned char waitpages);
 
-        //! schickt eine CCharacter-Warpmeldung an alle CPlayer im Sichtbereich der Position
+        //! schickt eine Character-Warpmeldung an alle Player im Sichtbereich der Position
         // von cc (alt und neu) ausser an cc selbst
-        // \param cc der bewegte CCharacter
+        // \param cc der bewegte Character
         // \param oldpos die alte Position
         // \param netid PLAYERMOVE_TC, MONSTERMOVE_TC oder NPCMOVE_TC
-        void sendCharacterWarpToAllVisiblePlayers( CCharacter* cc, position oldpos, unsigned char netid );
+        void sendCharacterWarpToAllVisiblePlayers( Character* cc, position oldpos, unsigned char netid );
 
         //! sendet die Daten aller Chars in dem std::vector an cp
         // fuer jeden Eintrag muss gelten: (cp->pos.z - RANGEDOWN) >= eintr->pos.z
-        // \param vec der std::vector mit den CCharacter
-        // \param cp CPlayer an den verschickt wird
+        // \param vec der std::vector mit den Character
+        // \param cp Player an den verschickt wird
         // \param sendSpin falls true, wird auch die Blickrichtung mit verschickt
-        template< class T > void sendCharsInVector( std::vector < T* > &vec, CPlayer* cp, bool sendSpin );
+        template< class T > void sendCharsInVector( std::vector < T* > &vec, Player* cp, bool sendSpin );
 
-        //////////// in CWorldIMPLTalk.cpp /////////////////
-        bool sendTextInFileToPlayer( std::string filename, CPlayer* cp );
+        //////////// in WorldIMPLTalk.cpp /////////////////
+        bool sendTextInFileToPlayer( std::string filename, Player* cp );
 
         //! sendet an den Spieler den Namen des obersten Item auf einem Feld
         //  bzw. den Namen des Feldes
@@ -986,24 +986,24 @@ class CWorld {
         // \param xo X-Abstand des Item zu cp
         // \param yo Y-Abstand des Item zu cp
         // \param zo Z-Abstand des Item zu cp
-        void lookAtMapItem( CPlayer* cp, short int x, short int y, short int z );
+        void lookAtMapItem( Player* cp, short int x, short int y, short int z );
 
         //! sendet an den Spieler den Namen des Item an einer Position im showcase
         // \param cp der Spieler der benachrichtigt werden soll
         // \param showcase der showcase in dem das Item liegt
         // \param position die Position des Item im showcase
-        void lookAtShowcaseItem( CPlayer* cp, unsigned char showcase, unsigned char position );
+        void lookAtShowcaseItem( Player* cp, unsigned char showcase, unsigned char position );
 
         //! sendet an den Spieler den Namen des Item an einer Position im Men
         // \param cp der Spieler der benachrichtigt werden soll
         // \param position die Position des Item im showcase
         // \param itemid ID des Item
-        void lookAtMenueItem( CPlayer* cp, unsigned char position, unsigned short int itemid );
+        void lookAtMenueItem( Player* cp, unsigned char position, unsigned short int itemid );
 
         //! sendet an den Spieler den Namen des Item an einer Position im Inventory
         // \param cp der Spieler der benachrichtigt werden soll
         // \param position die Position des Item im Inventory       
-        void lookAtInventoryItem( CPlayer* cp, unsigned char position );
+        void lookAtInventoryItem( Player* cp, unsigned char position );
 
         //! erzeugt fuer alle Spieler in der Naehe von xc,yc,zc einen Soundeffekt
         // \param xc X-Koordinate des Mittelpunktes
@@ -1051,7 +1051,7 @@ class CWorld {
         //! \param message what the char says
         //! \param tt did he shout/talk/whisper?
         //! \param the talking char
-        void sendMessageToAllCharsInRange( std::string message, CCharacter::talk_type tt, CCharacter* cc);
+        void sendMessageToAllCharsInRange( std::string message, Character::talk_type tt, Character* cc);
         
         /**
         *Sends a message in a specific language to all chars in range with this language
@@ -1060,9 +1060,9 @@ class CWorld {
         *@param lang the language to which players the message is send
         *@param cc the talking char
         */
-        void sendLanguageMessageToAllCharsInRange( std::string message, CCharacter::talk_type tt, unsigned char lang, CCharacter* cc);
+        void sendLanguageMessageToAllCharsInRange( std::string message, Character::talk_type tt, unsigned char lang, Character* cc);
 
-        void sendMessageToPlayer( CPlayer* cp, std::string message );
+        void sendMessageToPlayer( Player* cp, std::string message );
 
         //! schickt an alle Player eine Nachricht
         // \param message die Nachricht die geschickt werden soll
@@ -1082,102 +1082,102 @@ class CWorld {
         std::string languagePrefix(int Language);
 
         //! schickt an alle Spieler auf den Nachbarfeldern von cp dessen Namen
-        // \param cp der CPlayer der sich den anderen bekannt macht
-        void introduceMyself( CPlayer* cp );
+        // \param cp der Player der sich den anderen bekannt macht
+        void introduceMyself( Player* cp );
 
         //Stellt den Player dem entsprechenden Admin vor
-        void forceIntroducePlayer( CPlayer* cp, CPlayer* admin );
+        void forceIntroducePlayer( Player* cp, Player* admin );
 
         //GM Funktion um eine Vorstellen zu erzwingen.
-        void ForceIntroduce(CPlayer* cp, const std::string& ts  );
+        void ForceIntroduce(Player* cp, const std::string& ts  );
         
         //GM Funktion um ein Vorstellen aller Personen im Sichtbereich zu erzwingen
-        void ForceIntroduceAll(CPlayer* cp);
+        void ForceIntroduceAll(Player* cp);
 
-        void message( std::string message[3], CPlayer* cp );
+        void message( std::string message[3], Player* cp );
         
         //Sends the current weather to one player
-        void sendWeather( CPlayer* cp );
+        void sendWeather( Player* cp );
         
         //Sends the current IG time to all players online
         void sendIGTimeToAllPlayers();
         
         //Sends the current IG Time to one player
-        void sendIGTime( CPlayer* cp );
+        void sendIGTime( Player* cp );
 
         /**
         *sends the current weather to all players online
         */
         void sendWeatherToAllPlayers();        
         
-        ////////// in CWorldIMPLAdmin.cpp /////////////
+        ////////// in WorldIMPLAdmin.cpp /////////////
         
         //Sendet eine Message an alle Spieler
         //param cp: der Spieler der die Message sendet
         //param message: die nachricht die geschickt wird
-        void broadcast_command(CPlayer * cp, const std::string & message);
+        void broadcast_command(Player * cp, const std::string & message);
         
         //Kickt alle Spieler aus dem Spiel
         //param cp: der Spieler welche alle Spieler kickt
-        void kickall_command( CPlayer * cp);
+        void kickall_command( Player * cp);
         
         //Kickt einen einzelnen Spieler aus dem Spiel
         //param cp: der Spieler welcher jemanden kickt
         //param player: der Spieler welcher gekickt wird
-        void kickplayer_command(CPlayer * cp, const std::string & player);
+        void kickplayer_command(Player * cp, const std::string & player);
         
         //Zeigt dem Spieler nutzerdaten (IP's) an
-        void showIPS_Command(CPlayer * cp);
+        void showIPS_Command(Player * cp);
         
         /**
         *creates an item in the inventory of the gm
         */
-        void create_command( CPlayer* cp, const std::string &itemid);
+        void create_command( Player* cp, const std::string &itemid);
 		
-		void spawn_command( CPlayer* cp, const std::string &monsterid);
+		void spawn_command( Player* cp, const std::string &monsterid);
         
         /**
         * activates a specific logfile
         */
-        void logon_command( CPlayer * cp, const std::string &log);
+        void logon_command( Player * cp, const std::string &log);
         
         /**
         * deactivates a specific logfile
         */
-        void logoff_command( CPlayer * cp, const std::string &log);       
+        void logoff_command( Player * cp, const std::string &log);       
         
         //! teleportiert einen Player zu einem anderen
         // \param cp der zu teleportierende Player
         // \param ts der Name des Ziel - Player
-        void teleportPlayerToOther( CPlayer* cp, const std::string ts );
+        void teleportPlayerToOther( Player* cp, const std::string ts );
 
         //! toetet alles auf der Karte befindlichen Monster
-        void kill_command( CPlayer* cp);
+        void kill_command( Player* cp);
 
         //! sets the informCharacter-flag
         // \param cp the corresponding Player to be informed
-        void informChar(CPlayer* cp);
+        void informChar(Player* cp);
         
         //! resambles the former #r command, reloads all tables, definitions and scripts
         // \param cp is the GM performing this full reload
-        void reload_command(CPlayer* cp);
+        void reload_command(Player* cp);
         
         //! substitutes #j <name>, jump to a player of a given name
         // \param cp is the jumping GM
         // \param ts name of the player to jump to
-        void jumpto_command( CPlayer* cp, const std::string& ts );
+        void jumpto_command( Player* cp, const std::string& ts );
         
         //! resambles the former #mapsave command, saves the map
         // \param cp the corresponding GM with correct rights who initiates this mapsave
-        void save_command(CPlayer* cp);
+        void save_command(Player* cp);
 
         //! Macht spieler cp unsichtbar
-        void makeInvisible( CPlayer* cp );
+        void makeInvisible( Player* cp );
         
-        void talkto_command( CPlayer* cp, const std::string& ts);
+        void talkto_command( Player* cp, const std::string& ts);
 
         //! Macht spieler cp sichtbar
-        void makeVisible( CPlayer* cp );
+        void makeVisible( Player* cp );
 
         //! wirft alle Player aus dem Spiel
         void forceLogoutOfAllPlayers();
@@ -1189,114 +1189,114 @@ class CWorld {
 
         //! sendet einem Admin die Daten aller aktiven Player
         // \param admin der Admin an den die Daten gesandt werden sollen
-        void sendAdminAllPlayerData( CPlayer* &admin );
+        void sendAdminAllPlayerData( Player* &admin );
 
-        void welcomePlayer( CPlayer* cp );
+        void welcomePlayer( Player* cp );
 
         // ! Server side implemented !warp_to x y z
-        void warpto_command( CPlayer* cp, const std::string& ts );
+        void warpto_command( Player* cp, const std::string& ts );
 
         // ! Server side implemented !summon Player
-        void summon_command( CPlayer* cp, const std::string& ts );
+        void summon_command( Player* cp, const std::string& ts );
 
         // ! Server side implemented !prison Player
-        void prison_command( CPlayer* cp, const std::string& tplayer );
+        void prison_command( Player* cp, const std::string& tplayer );
 
         // ! relaods only the definition from the db no Monsterspawns and no NPC's are loaded.
-        bool reload_defs( CPlayer* cp );
+        bool reload_defs( Player* cp );
 
         // ! adds Warpfields to map from textfile
-        bool importWarpFields( CPlayer * cp,const std::string &filename);
+        bool importWarpFields( Player * cp,const std::string &filename);
 
         // ! Deletes a Warpfield
-        void removeTeleporter( CPlayer* cp, const std::string& ts );
+        void removeTeleporter( Player* cp, const std::string& ts );
 
         // ! Shows a list of Warpfields
-        void showWarpFieldsInRange( CPlayer* cp, const std::string& ts );
+        void showWarpFieldsInRange( Player* cp, const std::string& ts );
         //////////////////////////////////////////////////////////////////
 
-        //////////// in CWorldIMPLItemMoves.cpp ////////////////
+        //////////// in WorldIMPLItemMoves.cpp ////////////////
 
         //! wird von den takeItem* und putItem* -Funktionen als Zwischenablage genutzt
         Item g_item;
 
         //! wird von den takeItem* und putItem* -Funktionen als Zwischenablage genutzt
-        CContainer* g_cont;
+        Container* g_cont;
 
         //! nimmt ein Item von der Karte und speichert es in g_item und ggf. g_cont
-        // \param cc der CCharacter der das Item anhebt
+        // \param cc der Character der das Item anhebt
         // \param x alte X-Koordinate des Item
         // \param y alte Y-Koordinate des Item
         // \param z alte Z-Koordinate des Item
         // \return true falls erfolgreich, false sonst
-        bool takeItemFromMap( CCharacter* cc, short int x, short int y, short int z );
+        bool takeItemFromMap( Character* cc, short int x, short int y, short int z );
 
         //! wirft das Item aus g_item und ggf. g_cont auf Karte
-        // \param cc der CCharacter der das Item wegwirft
+        // \param cc der Character der das Item wegwirft
         // \param x neue X-Koordinate des Item
         // \param y neue Y-Koordinate des Item
         // \param z neue Z-Koordinate des Item
         // \return true falls erfolgreich, false sonst
-        bool putItemOnMap( CCharacter* cc, short int x, short int y, short int z );
-        bool putItemAlwaysOnMap( CCharacter* cc, short int x, short int y, short int z );
+        bool putItemOnMap( Character* cc, short int x, short int y, short int z );
+        bool putItemAlwaysOnMap( Character* cc, short int x, short int y, short int z );
 
         //! nimmt ein Item aus dem Inventory von cc und speichert es in g_item und ggf. g_cont
-        // \param cc der CCharacter von dem das Item genommen wird
+        // \param cc der Character von dem das Item genommen wird
         // \param pos Position des Item im Inventory
         // \param count Anzahl
         // \return true falls erfolgreich, false sonst
-        bool takeItemFromInvPos( CCharacter* cc, unsigned char pos, unsigned char count );
+        bool takeItemFromInvPos( Character* cc, unsigned char pos, unsigned char count );
 
         //! legt das Item aus g_item und ggf. g_cont an eine Inventoryposition
-        // \param cc der CCharacter der das Item bekommt
+        // \param cc der Character der das Item bekommt
         // \param pos Position des Item im Inventory
         // \return true falls erfolgreich, false sonst
-        bool putItemOnInvPos( CCharacter* cc, unsigned char pos );
+        bool putItemOnInvPos( Character* cc, unsigned char pos );
 
         //! nimmt ein Item aus dem Inventory von cc und speichert es in g_item und ggf. g_cont
         // und schickt ein Update an cc
-        // \param cc der CPlayer von dem das Item genommen wird
+        // \param cc der Player von dem das Item genommen wird
         // \param pos Position des Item im Inventory
         // \param count Anzahl
         // \return true falls erfolgreich, false sonst
-        bool takeItemFromInvPos( CPlayer* cc, unsigned char pos, unsigned char count );
+        bool takeItemFromInvPos( Player* cc, unsigned char pos, unsigned char count );
 
         //! legt das Item aus g_item und ggf. g_cont an eine Inventoryposition
         // und schickt ein Update an cc
-        // \param cc der CPlayer der das Item bekommt
+        // \param cc der Player der das Item bekommt
         // \param pos Position des Item im Inventory
         // \return true falls erfolgreich, false sonst
-        bool putItemOnInvPos( CPlayer* cc, unsigned char pos );
+        bool putItemOnInvPos( Player* cc, unsigned char pos );
 
         //! close showcases of this container for other player
-        void closeShowcaseForOthers( CPlayer* target, CContainer* moved );
+        void closeShowcaseForOthers( Player* target, Container* moved );
 
         //! close showcases for container for everyone not in range
-        void closeShowcaseIfNotInRange( CContainer* moved, short int x, short int y, short int z );
+        void closeShowcaseIfNotInRange( Container* moved, short int x, short int y, short int z );
 
         //! nimmt ein Item aus einem Schaukaste von cc und speichert es in g_item und ggf. g_cont
         // und schickt ein Update an cc
-        // \param cc der CPlayer von dem das Item genommen wird
+        // \param cc der Player von dem das Item genommen wird
         // \param showcase die Nummer das Schaukastens
         // \param pos Position des Item im showcase
         // \param count Anzahl
         // \return true falls erfolgreich, false sonst
-        bool takeItemFromShowcase( CPlayer* cc, unsigned char showcase, unsigned char pos, unsigned char count  );
+        bool takeItemFromShowcase( Player* cc, unsigned char showcase, unsigned char pos, unsigned char count  );
 
         //! legt das Item aus g_item und ggf. g_cont in einen Schaukasten
         // und schickt ein Update an cc
-        // \param cc der CPlayer der das Item bekommt
+        // \param cc der Player der das Item bekommt
         // \param showcase die Nummer das Schaukastens
         // \param die bevorzugte Position (um das Item mit einem auf der Position zusammenzufassen)
         // \return true falls erfolgreich, false sonst
-        bool putItemInShowcase( CPlayer* cc, unsigned char showcase, unsigned char pos );
+        bool putItemInShowcase( Player* cc, unsigned char showcase, unsigned char pos );
 
         //! berprft ein Feld auf besondere Item und WarpFelder und fhrt entsprechende Aktionen aus
         // \param cfstart das zu berprfende Feld
         // \param x die X-Koordinate von cfstart
         // \param y die Y-Koordinate von cfstart
         // \param z die Z-Koordinate von cfstart
-        void checkField( CField* cfstart, short int x, short int y, short int z );
+        void checkField( Field* cfstart, short int x, short int y, short int z );
 
         //! verschiebt das oberste Item des Feldes,welches in der durch d angegebene Richtung vom cp aus gesehen liegt,
         //  um das durch xo,yo,zo gegebene Offset
@@ -1307,151 +1307,151 @@ class CWorld {
         // \param zc Z-Zielkoordinate
         // \param count Anzahl
         // \return true falls Verschiebung ausgefhrt werden konnte, false sonst
-        bool moveItem( CCharacter* cc, unsigned char d, short int xc, short int yc, short int zc, unsigned char count );
+        bool moveItem( Character* cc, unsigned char d, short int xc, short int yc, short int zc, unsigned char count );
 
         //! ein Spieler verschiebt ein Item von der Karte in ein showcase
-        // \param cp CPlayer der verschiebt
+        // \param cp Player der verschiebt
         // \param direction Richtung in der das Item relativ zum Spieler liegt
         // \param showcase das showcase in welches das Item verschoben werden soll
         // \param pos Zielposition
         // \param count Anzahl
-        void moveItemFromMapIntoShowcase( CPlayer* cp, char direction, unsigned char showcase, unsigned char pos, unsigned char count );
+        void moveItemFromMapIntoShowcase( Player* cp, char direction, unsigned char showcase, unsigned char pos, unsigned char count );
 
         //! ein Spieler verschiebt ein Item von der Karte an seine Koerper
-        // \param cp CPlayer der verschiebt
+        // \param cp Player der verschiebt
         // \param direction Richtung in der das Item relativ zum Spieler liegt
         // \param cpos Position am Koerper an welche das Item verschoben werden soll
         // \param count Anzahl
-        void moveItemFromMapToPlayer( CPlayer* cp, char direction, unsigned char cpos, unsigned char count );
+        void moveItemFromMapToPlayer( Player* cp, char direction, unsigned char cpos, unsigned char count );
 
         //! ein Spieler verschiebt ein Item zwischen showcases
-        // \param cp CPlayer der verschiebt
+        // \param cp Player der verschiebt
         // \param source die Ansicht, aus welcher das Item verschoben wird
         // \param pos die Position (Nummer) des Item welches verschoben wird
         // \param dest die Ansicht, in welche das Item verschoben wird
         // \param pos2 die Position auf welches das Item verschoben werden soll
         // \parm count Anzahl
-        void moveItemBetweenShowcases( CPlayer* cp, unsigned char source, unsigned char pos, unsigned char dest, unsigned char pos2, unsigned char count );
+        void moveItemBetweenShowcases( Player* cp, unsigned char source, unsigned char pos, unsigned char dest, unsigned char pos2, unsigned char count );
 
         //! wirft ein Item aus einem showcase auf die Karte
-        // \param cp CPlayer der das Item wirft
+        // \param cp Player der das Item wirft
         // \param showcase die Ansicht, aus welcher das Item verschoben wird
         // \param pos die Position (Nummer) des Item welches verschoben wird
         // \param xc X-Koordinate der neuen Itemposition
         // \param yc Y-Koordinate der neuen Itemposition
         // \param zc Z-Koordinate der neuen Itemposition
         // \parm count Anzahl
-        void dropItemFromShowcaseOnMap( CPlayer* cp, unsigned char showcase, unsigned char pos, short int xc, short int yc, short int zc, unsigned char count );
+        void dropItemFromShowcaseOnMap( Player* cp, unsigned char showcase, unsigned char pos, short int xc, short int yc, short int zc, unsigned char count );
 
-        //! verschiebt ein Item aus einem showcase an den Koerper des CPlayer
-        // \param cp CPlayer der das Item verschiebt
+        //! verschiebt ein Item aus einem showcase an den Koerper des Player
+        // \param cp Player der das Item verschiebt
         // \param showcase die Ansicht, aus der das Item verschoben werden soll
         // \param pos die Position des Item in der Ansicht
         // \param cpos die Position am Koerper wohin das Item verschoben wird
         // \param count Anzahl
-        void moveItemFromShowcaseToPlayer( CPlayer* cp, unsigned char showcase, unsigned char pos, unsigned char cpos, unsigned char count );
+        void moveItemFromShowcaseToPlayer( Player* cp, unsigned char showcase, unsigned char pos, unsigned char cpos, unsigned char count );
 
         //! verschiebt ein Item von einem Koerperteil zu einem anderen
-        // \param cp CPlayer der das Item verschiebt
+        // \param cp Player der das Item verschiebt
         // \param opos die Position des Item welches verschoben wird
         // \param npos die neue Position des Item
         // \parm count Anzahl
-        void moveItemBetweenBodyParts( CPlayer* cp, unsigned char opos, unsigned char npos, unsigned char count );
+        void moveItemBetweenBodyParts( Player* cp, unsigned char opos, unsigned char npos, unsigned char count );
 
-        //! wirft eines der Item vom Koerper des CPlayer auf die Karte
-        // \param cp CPlayer der das Item wirft
+        //! wirft eines der Item vom Koerper des Player auf die Karte
+        // \param cp Player der das Item wirft
         // \param cpos die Position des Item welches verschoben wird
         // \param xc X-Koordinate der neuen Itemposition
         // \param yc Y-Koordinate der neuen Itemposition
         // \param zc Z-Koordinate der neuen Itemposition
         // \param count Anza
-      void dropItemFromPlayerOnMap( CPlayer* cp, unsigned char cpos, short int xc, short int yc, short int zc, unsigned char count );
+      void dropItemFromPlayerOnMap( Player* cp, unsigned char cpos, short int xc, short int yc, short int zc, unsigned char count );
 
-        //! wirft eines der Item vom Koerper des CMonster auf die Karte
-        // \param cm CMonster der das Item wirft
+        //! wirft eines der Item vom Koerper des Monster auf die Karte
+        // \param cm Monster der das Item wirft
         // \param cpos die Position des Item welches verschoben wird
         // \param xo X-Offset der neuen Itemposition relativ zum Monster
         // \param yo Y-Offset der neuen Itemposition relativ zum Monster
         // \param zo Z-Offset der neuen Itemposition relativ zum Monster
         // \param count Anzahl
-        void dropItemFromMonsterOnMap( CMonster* cm, unsigned char cpos, char xo, char yo, char zo, unsigned char count  );
+        void dropItemFromMonsterOnMap( Monster* cm, unsigned char cpos, char xo, char yo, char zo, unsigned char count  );
 
         //! ein Spieler verschiebt ein Item vom Koerper in ein showcase
-        // \param cp CPlayer der verschiebt
+        // \param cp Player der verschiebt
         // \param cpos die Position des Item welches verschoben wird
         // \param showcase das showcase in welches das Item verschoben werden soll
         // \param pos die Position auf welche das Item verschoben werden soll
         // \param count Anzahl
-        void moveItemFromPlayerIntoShowcase( CPlayer* cp, unsigned char cpos, unsigned char showcase, unsigned char pos, unsigned char count );
+        void moveItemFromPlayerIntoShowcase( Player* cp, unsigned char cpos, unsigned char showcase, unsigned char pos, unsigned char count );
 
         //! schickt eine 'Item entfernt' - Meldung an alle Player im Sichtbereich der Koordinate xo,yo,zo
         // \param id die Identifikationsnummer des durchfhrenden Player
         // \param xo X-Koordinate der alten Position des verschonbenen Item
         // \param yo Y-Koordinate der alten Position des verschonbenen Item
         // \param zo Z-Koordinate der alten Position des verschonbenen Item
-        void sendRemoveItemFromMapToAllVisibleCharacters( TYPE_OF_ITEM_ID id, short int xo, short int yo, short int zo, CField* cfp );
+        void sendRemoveItemFromMapToAllVisibleCharacters( TYPE_OF_ITEM_ID id, short int xo, short int yo, short int zo, Field* cfp );
 
         //! schickt eine 'neues Item auf der Karte' - Meldung an alle Player im Sichtbereich der Koordinate xn,yn,zn
         // \param xn X-Koordinate der Position des neuen Items
         // \param yn Y-Koordinate der Position des neuen Items
         // \param zn Z-Koordinate der Position des neuen Items
         // \param it Item welches auf die Karte gelegt wird
-        void sendPutItemOnMapToAllVisibleCharacters( short int xn, short int yn, short int zn, Item &it, CField* cfp );
+        void sendPutItemOnMapToAllVisibleCharacters( short int xn, short int yn, short int zn, Item &it, Field* cfp );
         
         /** 
         *simulates a swap on a field (sends put and delete in fast time)
         */
-        void sendSwapItemOnMapToAllVisibleCharacter( TYPE_OF_ITEM_ID id, short int xn, short int yn, short int zn, Item &it, CField* cfp);
+        void sendSwapItemOnMapToAllVisibleCharacter( TYPE_OF_ITEM_ID id, short int xn, short int yn, short int zn, Item &it, Field* cfp);
 
 
         //! benachrichtigt alle betroffenen Spieler von der Verschiebung des
-        // CContainer moved aus dem CContainer cc
-        // \param cc der CContainer dessen Inhalt sich aendert
-        // \param moved der CContainer der verschoben wird
-        void sendChangesOfContainerContentsCM( CContainer* cc, CContainer* moved );
+        // Container moved aus dem Container cc
+        // \param cc der Container dessen Inhalt sich aendert
+        // \param moved der Container der verschoben wird
+        void sendChangesOfContainerContentsCM( Container* cc, Container* moved );
 
         //! benachrichtigt alle betroffenen Spieler von der Aenderung des
-        // Inhaltes des CContainer cc
-        // \param cc der CContainer dessen Inhalt sich aendert
-        void sendChangesOfContainerContentsIM( CContainer* cc );
+        // Inhaltes des Container cc
+        // \param cc der Container dessen Inhalt sich aendert
+        void sendChangesOfContainerContentsIM( Container* cc );
 
-        //! ein Spieler schaut in einen CContainer auf einem Feld
-        // \param cp CPlayer der sich den Inhalt ansieht
+        //! ein Spieler schaut in einen Container auf einem Feld
+        // \param cp Player der sich den Inhalt ansieht
         // \param direction die Richtung in der der Container relativ zum Spieler liegt
-        // \param showcase die Ansicht, in welcher der Inhalt des CContainer dargestellt werden soll
-        // \return true, falls ein CContainer gefunden wurde
-        bool lookIntoContainerOnField( CPlayer* cp, char direction, unsigned char showcase );
+        // \param showcase die Ansicht, in welcher der Inhalt des Container dargestellt werden soll
+        // \return true, falls ein Container gefunden wurde
+        bool lookIntoContainerOnField( Player* cp, char direction, unsigned char showcase );
 
         //! ein Spieler schaut in seinen Rucksack
-        // \param cp CPlayer der sich den Inhalt ansieht
-        // \param showcase die Ansicht, in welcher der Inhalt des CContainer dargestellt werden soll
-        // \return true, falls ein CContainer gefunden wurde
-        bool lookIntoBackPack( CPlayer* cp, unsigned char showcase );
+        // \param cp Player der sich den Inhalt ansieht
+        // \param showcase die Ansicht, in welcher der Inhalt des Container dargestellt werden soll
+        // \return true, falls ein Container gefunden wurde
+        bool lookIntoBackPack( Player* cp, unsigned char showcase );
 
-        //deactivated, function is now in CPlayer
-        //bool lookIntoDepot( CPlayer* cp, unsigned char showcase );
+        //deactivated, function is now in Player
+        //bool lookIntoDepot( Player* cp, unsigned char showcase );
 
-        //! ein Spieler schaut in einen CContainer in einem showcase
-        // \param cp CPlayer der sich den Inhalt ansieht
-        // \param showcase die Ansicht, in welcher der Inhalt des CContainer dargestellt werden soll
-        // \param pos die Position des CContainer im CContainer
-        // \return true, falls ein CContainer gefunden wurde
-        void lookIntoShowcaseContainer( CPlayer* cp, unsigned char showcase, unsigned char pos );
+        //! ein Spieler schaut in einen Container in einem showcase
+        // \param cp Player der sich den Inhalt ansieht
+        // \param showcase die Ansicht, in welcher der Inhalt des Container dargestellt werden soll
+        // \param pos die Position des Container im Container
+        // \return true, falls ein Container gefunden wurde
+        void lookIntoShowcaseContainer( Player* cp, unsigned char showcase, unsigned char pos );
 
         //! Prft ob ein Item stackable ist oder nicht
         //\param item das Item welches geprft werden soll
         //\return true, falls das Item Stapelbar ist.
         bool isStackable(Item item);
 
-        //! ein Spieler schliesst einen CContainer in einem showcase
-        // \param cp CPlayer schliessender Spieler
-        // \param showcase die Ansicht, in welcher der Inhalt des CContainer dargestellt werden soll
-        void closeContainerInShowcase( CPlayer* cp, unsigned char showcase );
+        //! ein Spieler schliesst einen Container in einem showcase
+        // \param cp Player schliessender Spieler
+        // \param showcase die Ansicht, in welcher der Inhalt des Container dargestellt werden soll
+        void closeContainerInShowcase( Player* cp, unsigned char showcase );
 
         //! Array mit der Definition der Bewegung fr move
         char moveSteps[ 11 ][ 3 ]; // TODO move this to a better location
 
-        //////////////////////////////////////In CWorldIMPLScriptHelp.cpp//////////////////////////////////////////
+        //////////////////////////////////////In WorldIMPLScriptHelp.cpp//////////////////////////////////////////
         
         /**
         *deletes an NPC
@@ -1471,7 +1471,7 @@ class CWorld {
         *@param scriptname scriptname
         *@return success of creation
         */
-        bool createDynamicNPC( std::string name, CCharacter::race_type type, position pos, /*CCharacter::face_to dir,*/ CCharacter::sex_type sex, std::string scriptname);
+        bool createDynamicNPC( std::string name, Character::race_type type, position pos, /*CCharacter::face_to dir,*/ Character::sex_type sex, std::string scriptname);
 
         
         /**
@@ -1522,7 +1522,7 @@ class CWorld {
         //\param user: Der Spieler an dem die nachricht geschickt wird.
         //\param item: das Item zu dem die Nachricht angezeigt werden soll.
         //\param message: die Nachricht die Angezeigt werden soll.
-        void ItemInform( CCharacter * user, ScriptItem item, std::string message);
+        void ItemInform( Character * user, ScriptItem item, std::string message);
         
         //Liefert den Namen eines Items mit einer bestimmten id zurck
         //\param itemid, id des items zu dem der Name geliefert werden soll
@@ -1543,7 +1543,7 @@ class CWorld {
         //Liefert einen Zeiger auf einen Character
         //\param pos, die Position auf der sich der Character befinden soll
         //\return Zeiger auf den Character
-        fuse_ptr<CCharacter> getCharacterOnField(position pos);
+        fuse_ptr<Character> getCharacterOnField(position pos);
 
         //Loescht ein ScriptItem
         //\ param Item, das Item welches geloescht werden soll
@@ -1581,8 +1581,8 @@ class CWorld {
         //Erzeugt ein Monster mit der entsprechenden ID auf dem Feld
         //\ param id, das Monster welches Erzeugt werden soll
         //\ param pos, die Position des Monsters
-        //\ return fuse_ptr<CCharacter> Valid monster on success, invalid monster on failure
-        fuse_ptr<CCharacter> createMonster(unsigned short id, position pos, short movepoints);
+        //\ return fuse_ptr<Character> Valid monster on success, invalid monster on failure
+        fuse_ptr<Character> createMonster(unsigned short id, position pos, short movepoints);
 
         //Zeigt eine Grafik auf einem bestimmten Feld an
         //\gfxid, ID der anzuzeigenden Grafik
@@ -1633,11 +1633,11 @@ class CWorld {
         
         //! Laedt ein MonsterRst Struct anhand einer id.
         //\return true false der Struct gefunden wurde.
-        bool getNaturalArmor(CCharacter::race_type id, MonsterArmor &ret);
+        bool getNaturalArmor(Character::race_type id, MonsterArmor &ret);
         
         //! Laedt ein Attack Boni struct anhand einer id
         //\return true wenn das Struct gefunden wurde
-        bool getMonsterAttack(CCharacter::race_type id, AttackBoni &ret);
+        bool getMonsterAttack(Character::race_type id, AttackBoni &ret);
         
         /**
         *sends a Message to All Monitoring Clients
@@ -1652,22 +1652,22 @@ class CWorld {
          * @param bantime in seconds
          * @gmid the id of the gm which has banned the player
          */
-        void ban( CPlayer* cp, int bantime, TYPE_OF_CHARACTER_ID gmid);
+        void ban( Player* cp, int bantime, TYPE_OF_CHARACTER_ID gmid);
 
 
     private:
     
         /**
-        * the constructor of CWorld, private because of singleton pattern
+        * the constructor of World, private because of singleton pattern
         *
         *@param dir the main directory of the server
         *@param time_t the starting time of the server
         */
-        CWorld( std::string dir, time_t starttime );
-        CWorld& operator = (const CWorld& other) {return *_self;}
-        CWorld (const CWorld& other) {}
+        World( std::string dir, time_t starttime );
+        World& operator = (const World& other) {return *_self;}
+        World (const World& other) {}
         
-        static CWorld * _self;
+        static World * _self;
 
         std::string buy[ 3 ];
         std::string sell[ 3 ];
@@ -1678,23 +1678,23 @@ class CWorld {
         int lastTurnIGDay;
 
         //! Timer fr die Monster - Respawn
-        CTimer* monstertimer;
+        Timer* monstertimer;
 
         //! Timer fr Effekte auf Feldern
-        CTimer* fieldtimer[ 3 ];
+        Timer* fieldtimer[ 3 ];
 
         //! Timer fr die NPC
-        CMilTimer* npctimer;
+        MilTimer* npctimer;
 
         //! Timer fr den Scheduler
-        CTimer* schedulertimer;
+        Timer* schedulertimer;
         
-         CTimer* ScriptTimer; //< Tuner for scheduled scripts.
+         Timer* ScriptTimer; //< Tuner for scheduled scripts.
 
-        CMilTimer* monitoringclienttimer;
+        MilTimer* monitoringclienttimer;
 
         //! zur durchfhrung aller Langzeiteffekte
-        void do_LongTimeEffects( CCharacter* cc );
+        void do_LongTimeEffects( Character* cc );
 
         //! das home-Verzeichnis des Servers
         std::string directory;
@@ -1909,7 +1909,7 @@ class CWorld {
         std::string scriptDir;
 
         // spawnplaces...
-        std::list<CSpawnPoint> SpawnList;
+        std::list<SpawnPoint> SpawnList;
 
         // initmethod for spawn places...
         bool initRespawns();
@@ -1920,56 +1920,56 @@ class CWorld {
         bool ReadField( const char* inp, signed long int &outp );
 
         // hashmap containing all GM Commands
-        std::map< std::string, CCommandType* > GMCommands;
+        std::map< std::string, CommandType* > GMCommands;
         // hashmap containing all Player Commands
-        std::map< std::string, CCommandType* > PlayerCommands;
+        std::map< std::string, CommandType* > PlayerCommands;
 
-        typedef std::map< std::string, CCommandType* >::iterator CommandIterator;
+        typedef std::map< std::string, CommandType* >::iterator CommandIterator;
 
         // Send player information to GMs
-        void who_command( CPlayer* cp, const std::string& tplayer );
+        void who_command( Player* cp, const std::string& tplayer );
 
         // Ban a player
-        void ban_command( CPlayer* cp, const std::string& timeplayer );
-        void banbyname( CPlayer* cp, short int banhours, std::string tplayer );
-        void banbynumber( CPlayer* cp, short int banhours, TYPE_OF_CHARACTER_ID tid );
+        void ban_command( Player* cp, const std::string& timeplayer );
+        void banbyname( Player* cp, short int banhours, std::string tplayer );
+        void banbynumber( Player* cp, short int banhours, TYPE_OF_CHARACTER_ID tid );
 
 
         // Change tile in front of admin
-        void tile_command( CPlayer* cp, const std::string& ttilenumber );
+        void tile_command( Player* cp, const std::string& ttilenumber );
 
         // Turtle tile commands
-        void turtleon_command( CPlayer* cp, const std::string& ttilenumber );
-        void turtleoff_command( CPlayer* cp );
+        void turtleon_command( Player* cp, const std::string& ttilenumber );
+        void turtleoff_command( Player* cp );
 
         // Clipping on/off command
-        void clippingon_command( CPlayer* cp );
-        void clippingoff_command( CPlayer* cp );
+        void clippingon_command( Player* cp );
+        void clippingoff_command( Player* cp );
 
         // Describe to admin tile in front of them
-        void what_command( CPlayer* cp );
+        void what_command( Player* cp );
 
         // Save all online players
-        void playersave_command( CPlayer* cp );
+        void playersave_command( Player* cp );
 
         // Create telport warp on current tile to x, y, z
-        void teleport_command( CPlayer* cp, const std::string& tplayer );
+        void teleport_command( Player* cp, const std::string& tplayer );
 
         // Give help for GM commands
-        void gmhelp_command( CPlayer* cp );
+        void gmhelp_command( Player* cp );
         //Sendet eine Nachricht an alle GM's
-        bool gmpage_command( CPlayer* cp, const std::string& gmpage );
+        bool gmpage_command( Player* cp, const std::string& gmpage );
 
-        bool active_language_command( CPlayer* cp, const std::string& language );
+        bool active_language_command( Player* cp, const std::string& language );
 
         //Fgt einen Spieler unter falschen namen in die Eigene Namensliste hinzu
-        void name_command( CPlayer* cp, const std::string& ts );
+        void name_command( Player* cp, const std::string& ts );
 
         // Allow players to change title prefix and suffix
-        bool prefix_command( CPlayer* cp, const std::string& tprefix );
-        bool suffix_command( CPlayer* cp, const std::string& tprefix );
+        bool prefix_command( Player* cp, const std::string& tprefix );
+        bool suffix_command( Player* cp, const std::string& tprefix );
         // prison command for players
-        bool player_prison_command(CPlayer* cp, const std::string& input);
+        bool player_prison_command(Player* cp, const std::string& input);
 
         // register any GM commands here...
         void InitGMCommands();
@@ -1977,10 +1977,10 @@ class CWorld {
         void InitPlayerCommands();
 
         // export maps to mapdir/export
-        bool exportMaps(CPlayer* cp);
+        bool exportMaps(Player* cp);
 
         //! reload all tables
-        bool reload_tables( CPlayer* cp );
+        bool reload_tables( Player* cp );
 };
 
 

@@ -29,13 +29,13 @@ const std::string toString(const from& convert) {
 }
 
 
-CTriggerTable::CTriggerTable():  _dataOK(false) {
+TriggerTable::TriggerTable():  _dataOK(false) {
 	reload();
 }
 
-void CTriggerTable::reload() {
-#ifdef CDataConnect_DEBUG
-	std::cout<<"CTriggerTable: reload!" <<std::endl;
+void TriggerTable::reload() {
+#ifdef DataConnect_DEBUG
+	std::cout<<"TriggerTable: reload!" <<std::endl;
 #endif
 	try {
 		ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
@@ -50,10 +50,10 @@ void CTriggerTable::reload() {
 			if (!n_scriptname.var[i]) {
 				try {
 					// we got a script... load it
-					boost::shared_ptr<CLuaTriggerScript> script( new CLuaTriggerScript( scriptname[i], Trigger.pos ) );
+					boost::shared_ptr<LuaTriggerScript> script( new LuaTriggerScript( scriptname[i], Trigger.pos ) );
 					Trigger.script = script;
 				} catch (ScriptException &e) {
-                    CLogger::writeError( "scripts", "Error while loading script: " + scriptname[i] + ":\n" + e.what() + "\n" );
+                    Logger::writeError( "scripts", "Error while loading script: " + scriptname[i] + ":\n" + e.what() + "\n" );
 				}
 			}
 			Triggers.insert(std::pair<position, TriggerStruct>(Trigger.pos,Trigger)); //Zuweisen des Spells
@@ -67,7 +67,7 @@ void CTriggerTable::reload() {
 	}
 }
 
-bool CTriggerTable::find(position pos, TriggerStruct &data) {
+bool TriggerTable::find(position pos, TriggerStruct &data) {
 	TriggerMap::iterator iterator;
 	iterator = Triggers.find(pos);
 	if ( iterator == Triggers.end() ) {
@@ -79,11 +79,11 @@ bool CTriggerTable::find(position pos, TriggerStruct &data) {
 
 }
 
-void CTriggerTable::clearOldTable() {
+void TriggerTable::clearOldTable() {
 	Triggers.clear();
 }
 
-CTriggerTable::~CTriggerTable() {
+TriggerTable::~TriggerTable() {
 	clearOldTable();
 }
 

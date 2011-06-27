@@ -46,49 +46,49 @@
 #include <regex.h>
 #include <algorithm>
 
-//#define CWorld_DEBUG
+//#define World_DEBUG
 // a map storing configuration options from a config file...
 extern std::map<std::string, std::string> configOptions;
 //Table with data of Monsters
-extern CMonsterTable* MonsterDescriptions;
+extern MonsterTable* MonsterDescriptions;
 //Table with Item Descriptions
-extern CCommonObjectTable * CommonItems;
+extern CommonObjectTable * CommonItems;
 //Table with Tile Descriptions
-extern CTilesTable * Tiles;
+extern TilesTable * Tiles;
 //Map with opitions which messages are logged or not
 //! eine Tabelle fr Waffen - Item Daten
-extern CWeaponObjectTable* WeaponItems;
+extern WeaponObjectTable* WeaponItems;
 
 extern std::ofstream talkfile;
 
-CWorld::CWorld * CWorld::_self;
+World::World * World::_self;
 
-CWorld * CWorld::create( std::string dir, time_t starttime)
+World * World::create( std::string dir, time_t starttime)
 {
     if ( !(_self) ) 
     {
-        _self = new CWorld(dir,starttime);
+        _self = new World(dir,starttime);
         // init spawnlocations...
         _self->initRespawns();
         // initialise list of GM Commands
         _self->InitGMCommands();
         // initialise list of Player Commands
         _self->InitPlayerCommands();
-        _self->monitoringClientList = new CMonitoringClients( _self );
+        _self->monitoringClientList = new MonitoringClients( _self );
         
     }
     return _self;
 }
 
-CWorld * CWorld::get() throw(std::runtime_error) 
+World * World::get() throw(std::runtime_error) 
 {
     if ( !(_self) )throw std::runtime_error("world was not created");
     return _self; 
 } 
 
-CWorld::CWorld( std::string dir, time_t starttime ) {
+World::World( std::string dir, time_t starttime ) {
 
-    CLogger::writeMessage("CWorld_Debug","CWorld Konstruktor Start");
+    Logger::writeMessage("World_Debug","World Konstruktor Start");
     start.time=starttime;
     start.millitm=0;
     nextXtoage = 0;
@@ -102,19 +102,19 @@ CWorld::CWorld( std::string dir, time_t starttime ) {
     directory = dir;
     scriptDir = dir + std::string( SCRIPTSDIR );
 
-    fieldtimer[ 0 ] = new CTimer( 5 );     // 5 s
-    fieldtimer[ 1 ] = new CTimer( 5 );     // 5 s
-    fieldtimer[ 2 ] = new CTimer( 5 );     // 5 s
+    fieldtimer[ 0 ] = new Timer( 5 );     // 5 s
+    fieldtimer[ 1 ] = new Timer( 5 );     // 5 s
+    fieldtimer[ 2 ] = new Timer( 5 );     // 5 s
 
-    monstertimer = new CTimer( 10 );     // 60 s
+    monstertimer = new Timer( 10 );     // 60 s
 
-    schedulertimer = new CTimer( 1 );    // 1 s
+    schedulertimer = new Timer( 1 );    // 1 s
     
-    ScriptTimer = new CTimer( 1 ); //1 s
+    ScriptTimer = new Timer( 1 ); //1 s
 
-    npctimer = new CMilTimer( 2000 );       // 2 s
+    npctimer = new MilTimer( 2000 );       // 2 s
     
-    monitoringclienttimer = new CMilTimer( 250 );
+    monitoringclienttimer = new MilTimer( 250 );
 
     gap = TIMEGAP;
     timecount = 1;
@@ -179,23 +179,23 @@ CWorld::CWorld( std::string dir, time_t starttime ) {
     moveSteps[ 10 ][ 1 ] = 0;
     moveSteps[ 10 ][ 2 ] = 0;
 
-    npcidc   = new CIdCounter( dir + std::string( NPCDIR ) + std::string( NPCCOUNTERNAME ), NPC_BASE);
+    npcidc   = new IdCounter( dir + std::string( NPCDIR ) + std::string( NPCCOUNTERNAME ), NPC_BASE);
 
-    buy[ CLanguage::german ] = "[NPC] Benutze mich, um etwas zu kaufen.";
-    buy[ CLanguage::english ] = "[NPC] Use me to buy something.";
-    buy[ CLanguage::french ] = "[NPC] Employez-moi pour acheter quelque chose.";
+    buy[ Language::german ] = "[NPC] Benutze mich, um etwas zu kaufen.";
+    buy[ Language::english ] = "[NPC] Use me to buy something.";
+    buy[ Language::french ] = "[NPC] Employez-moi pour acheter quelque chose.";
 
-    sell[ CLanguage::german ] = "[NPC] Benutze mich mit einem Gegenstand, um diesen zu verkaufen.";
-    sell[ CLanguage::english ] = "[NPC] Use me with an item to sell it.";
-    sell[ CLanguage::french ] = "[NPC] Employez-moi avec un article pour le vendre.";
+    sell[ Language::german ] = "[NPC] Benutze mich mit einem Gegenstand, um diesen zu verkaufen.";
+    sell[ Language::english ] = "[NPC] Use me with an item to sell it.";
+    sell[ Language::french ] = "[NPC] Employez-moi avec un article pour le vendre.";
 
-    welcome[ CLanguage::german ] = ":) Willkommen in Illarion, es sind %i andere Spieler online.";
-    welcome[ CLanguage::english ] = ":) Welcome to Illarion. There are %i other players online.";
-    welcome[ CLanguage::french ] = ":) Bienvenue �Illarion.  Il y a %i autres joueurs en ligne.";
+    welcome[ Language::german ] = ":) Willkommen in Illarion, es sind %i andere Spieler online.";
+    welcome[ Language::english ] = ":) Welcome to Illarion. There are %i other players online.";
+    welcome[ Language::french ] = ":) Bienvenue �Illarion.  Il y a %i autres joueurs en ligne.";
 
-    zuschwer[ CLanguage::german ] = "Du kannst nicht so viel tragen!";
-    zuschwer[ CLanguage::english ] = "You can't carry that much!";
-    zuschwer[ CLanguage::french ] = "Vous ne pouvez pas porter que beaucoup!";
+    zuschwer[ Language::german ] = "Du kannst nicht so viel tragen!";
+    zuschwer[ Language::english ] = "You can't carry that much!";
+    zuschwer[ Language::french ] = "Vous ne pouvez pas porter que beaucoup!";
 
     unsigned int templi = starttime;
     char temparr[ 80 ];
@@ -205,7 +205,7 @@ CWorld::CWorld( std::string dir, time_t starttime ) {
     talkfile.open( ( dir + std::string( TALKDIR ) + std::string ( temparr ) + std::string( ".talk" ) ).c_str() , std::ios::out | std::ios::app );
     talkfile  << "Start " << ctime( &starttime ) << " ----------------------------------" << std::endl;
     //-----------------------------------------------------------------------------
-    CLogger::writeMessage("CWorld_Debug", "CWorld Konstruktor Ende");
+    Logger::writeMessage("World_Debug", "World Konstruktor Ende");
 }
 
 
@@ -220,7 +220,7 @@ int mapfilter(const struct dirent *d) {
     return (0 == strstr(d->d_name, ".tiles.txt"))?0:1;
 }
 
-bool CWorld::load_maps() 
+bool World::load_maps() 
 {
     // get all tiles files
     struct dirent** maplist;
@@ -240,7 +240,7 @@ bool CWorld::load_maps()
 
         // strip .tiles.txt from filename
         strstr(maplist[numfiles]->d_name, ".tiles.txt")[0] = '\0';
-        CLogger::writeMessage("World_Imports", "importing: " +  configOptions["datadir"] + "map/import/" + maplist[numfiles]->d_name);
+        Logger::writeMessage("World_Imports", "importing: " +  configOptions["datadir"] + "map/import/" + maplist[numfiles]->d_name);
 
         if ( std::string(maplist[numfiles]->d_name).compare("oberwelt_0") )
         ok &= load_from_editor(configOptions["datadir"] + "map/import/" + maplist[numfiles]->d_name);
@@ -252,13 +252,13 @@ bool CWorld::load_maps()
 }
 
 //! create a new world from editor files (new format)
-bool CWorld::load_from_editor(std::string filename)
+bool World::load_from_editor(std::string filename)
 {
     // first try to open mapfile
-    CLogger::writeMessage("World_Imports", "try to Import map: " + filename);
+    Logger::writeMessage("World_Imports", "try to Import map: " + filename);
     std::ifstream maptilesfile((filename + ".tiles.txt").c_str());
     if (!maptilesfile.good()) {
-        CLogger::writeError("World_Imports", "could not open file: " + filename + ".tiles.txt");
+        Logger::writeError("World_Imports", "could not open file: " + filename + ".tiles.txt");
         return false;
     }
 
@@ -285,53 +285,53 @@ bool CWorld::load_from_editor(std::string filename)
     maptilesfile >> h_height;  //read int (height)
     oldy = -1;
     
-    CLogger::writeMessage("World_Imports", "try to Import tiles: " + filename );
+    Logger::writeMessage("World_Imports", "try to Import tiles: " + filename );
     // load all tiles from the file
     maptilesfile >> temp_tile.x;  // read an int.
     while (maptilesfile.good()) {
         if (mapstartx == -1)
             mapstartx = temp_tile.x;
         temp_tile.x -= mapstartx;
-        std::string LogMessage="x: " + CLogger::toString(temp_tile.x) + " ";
+        std::string LogMessage="x: " + Logger::toString(temp_tile.x) + " ";
 
         maptilesfile >> dummy;   // read a char (;)
         if (dummy != ';') {
-            CLogger::writeError("World_Imports","maptile file contains errors! : " + CLogger::toString(dummy));
+            Logger::writeError("World_Imports","maptile file contains errors! : " + Logger::toString(dummy));
             return false;
         }
 
         maptilesfile >> temp_tile.y;    //read next int
         if (oldy != temp_tile.y) //log if we have read one complete line of the map
         {
-            CLogger::writeMessage("World_Imports","currently reading the y lines for tiles : " + CLogger::toString(temp_tile.y),false);
+            Logger::writeMessage("World_Imports","currently reading the y lines for tiles : " + Logger::toString(temp_tile.y),false);
             oldy = temp_tile.y;
         }
         if (mapstarty == -1)
             mapstarty = temp_tile.y;
         temp_tile.y -= mapstarty;
-        LogMessage += "y: " + CLogger::toString(temp_tile.y) + " ";
+        LogMessage += "y: " + Logger::toString(temp_tile.y) + " ";
 
         maptilesfile >> dummy;          // read a char (;)
         if (dummy != ';') {
-            CLogger::writeError("World_Imports","maptile file contains errors! : " + CLogger::toString(dummy));
+            Logger::writeError("World_Imports","maptile file contains errors! : " + Logger::toString(dummy));
             return false;
         }
 
         maptilesfile >> temp_tile.fieldID;      // read an int (tile-id)
-        LogMessage += "id: " + CLogger::toString(temp_tile.fieldID);
+        LogMessage += "id: " + Logger::toString(temp_tile.fieldID);
 
         maptilesfile >> dummy;          // read a char (;)
         if (dummy != ';') {
-            CLogger::writeError("World_Imports","maptile file contains errors! : " + CLogger::toString(dummy));
+            Logger::writeError("World_Imports","maptile file contains errors! : " + Logger::toString(dummy));
             return false;
         }
 
         maptilesfile >> temp_tile.musicID;      // read a short uint (music-id)
-        LogMessage += "musicID: " + CLogger::toString(temp_tile.musicID);
+        LogMessage += "musicID: " + Logger::toString(temp_tile.musicID);
 
         maptilesfile >> dummy;          // read a char (;)
         if (dummy != ';') {
-            CLogger::writeError("World_Imports","maptile file contains errors! : " + CLogger::toString(dummy));
+            Logger::writeError("World_Imports","maptile file contains errors! : " + Logger::toString(dummy));
             return false;
         }
 
@@ -344,15 +344,15 @@ bool CWorld::load_from_editor(std::string filename)
 
         maptilesfile >> temp_tile.x;    // read next x (int); if there is none, while will end
     }
-    CLogger::writeMessage("World_Imports","maptilesfile was bad at x=" + CLogger::toString(temp_tile.x) + " y=" + CLogger::toString(temp_tile.y));
+    Logger::writeMessage("World_Imports","maptilesfile was bad at x=" + Logger::toString(temp_tile.x) + " y=" + Logger::toString(temp_tile.y));
 
 
     // generate new map
-    CMap* tempmap = new CMap(h_width, h_height);
+    Map* tempmap = new Map(h_width, h_height);
     bool disappear=true;
     tempmap->Init(h_x, h_y, h_level, disappear);
 
-    CField* tempf;
+    Field* tempf;
     int index_start;
     for (int x=0; x<h_width; ++x) {
         index_start = x << 16;
@@ -365,8 +365,8 @@ bool CWorld::load_from_editor(std::string filename)
             } 
             else 
             { 
-                CLogger::writeError("CWorld", "could not get field for: " + CLogger::toString(x) + " " + CLogger::toString(y), false);
-                CLogger::writeError("World_Imports", "could not get field for: " + CLogger::toString(x) + " " + CLogger::toString(y), false);
+                Logger::writeError("World", "could not get field for: " + Logger::toString(x) + " " + Logger::toString(y), false);
+                Logger::writeError("World_Imports", "could not get field for: " + Logger::toString(x) + " " + Logger::toString(y), false);
             }
         }
     }
@@ -377,7 +377,7 @@ bool CWorld::load_from_editor(std::string filename)
     std::ifstream warpfile((filename + ".warps.txt").c_str());
     if( !warpfile.good() )
     {
-        CLogger::writeError("World_Imports","could not open file: " + filename + ".warps.txt");
+        Logger::writeError("World_Imports","could not open file: " + filename + ".warps.txt");
         return true;    // warps are not crucial
     }
     position start, target;
@@ -387,25 +387,25 @@ bool CWorld::load_from_editor(std::string filename)
     {
         warpfile >> dummy;
         if (dummy != ';') {
-            CLogger::writeError("World_Imports","warp file contains errors! : " + CLogger::toString(dummy));
+            Logger::writeError("World_Imports","warp file contains errors! : " + Logger::toString(dummy));
             return false; 
         }
         warpfile >> start.y;
         warpfile >> dummy;
         if (dummy != ';') {
-            CLogger::writeError("World_Imports","warp file contains errors! : " + CLogger::toString(dummy));
+            Logger::writeError("World_Imports","warp file contains errors! : " + Logger::toString(dummy));
             return false;
         }
         warpfile >> target.x;
         warpfile >> dummy;
         if (dummy != ';') {
-            CLogger::writeError("World_Imports","warp file contains errors! : " + CLogger::toString(dummy));
+            Logger::writeError("World_Imports","warp file contains errors! : " + Logger::toString(dummy));
             return false;
         }
         warpfile >> target.y;
         warpfile >> dummy;
         if (dummy != ';') {
-            CLogger::writeError("World_Imports","warp file contains errors! : " + CLogger::toString(dummy));
+            Logger::writeError("World_Imports","warp file contains errors! : " + Logger::toString(dummy));
             return false;
         }
         warpfile >> target.z;
@@ -420,7 +420,7 @@ bool CWorld::load_from_editor(std::string filename)
     // next we try to load the items for the map
     std::ifstream mapitemsfile((filename + ".items.txt").c_str());
     if (!mapitemsfile.good()) {
-        CLogger::writeError("World_Imports","could not open file: " + filename + ".items.txt");
+        Logger::writeError("World_Imports","could not open file: " + filename + ".items.txt");
         return true;    // items are not crucial
     }
 
@@ -432,7 +432,7 @@ bool CWorld::load_from_editor(std::string filename)
     //CField* cfp;
     Item it;
     oldy = -1;
-    CLogger::writeMessage("World_Imports", "try to import items: " + filename);
+    Logger::writeMessage("World_Imports", "try to import items: " + filename);
     mapitemsfile >> x;
     while (mapitemsfile.good()) {
         it.quality = 333;
@@ -440,24 +440,24 @@ bool CWorld::load_from_editor(std::string filename)
         it.number = 1;
         x -= mapstartx;
         x += h_x;
-        std::string LogMessage =  "item: x: " + CLogger::toString(x) +  " ";
+        std::string LogMessage =  "item: x: " + Logger::toString(x) +  " ";
         mapitemsfile >> dummy;
         if (dummy != ';') {
-            CLogger::writeError("World_Imports", "mapitem file contains errors! : " + CLogger::toString(dummy));
+            Logger::writeError("World_Imports", "mapitem file contains errors! : " + Logger::toString(dummy));
             return false;
         }
         mapitemsfile >> y;
         if (oldy != y) //log if we have read one complete line of the map
         {
-            CLogger::writeMessage("World_Imports","currently reading the y lines for items : " + CLogger::toString(y),false);
+            Logger::writeMessage("World_Imports","currently reading the y lines for items : " + Logger::toString(y),false);
             oldy = y;
         }
         y -= mapstarty;
         y += h_y;
-        LogMessage += "y: " + CLogger::toString(y) + " ";
+        LogMessage += "y: " + Logger::toString(y) + " ";
         mapitemsfile >> dummy;
         if (dummy != ';') {
-            CLogger::writeError("World_Imports", "mapitem file contains errors! : " + CLogger::toString(dummy));
+            Logger::writeError("World_Imports", "mapitem file contains errors! : " + Logger::toString(dummy));
             return false;
         }
         if (lastx==x && lasty==y) {
@@ -468,19 +468,19 @@ bool CWorld::load_from_editor(std::string filename)
         lastx=x; lasty=y;
 
         mapitemsfile >> dummy_specialflags;
-        LogMessage += "specialflags: " + CLogger::toString(z) + " ";
+        LogMessage += "specialflags: " + Logger::toString(z) + " ";
         mapitemsfile >> dummy;
         if (dummy != ';') {
-            CLogger::writeError("World_Imports", "mapitem file contains errors! : " + CLogger::toString(dummy));
+            Logger::writeError("World_Imports", "mapitem file contains errors! : " + Logger::toString(dummy));
             return false;
         }
 
         mapitemsfile >> it.id;
-        LogMessage += "id: " + CLogger::toString(it.id) + " ";
+        LogMessage += "id: " + Logger::toString(it.id) + " ";
 
         mapitemsfile >> dummy;
         if (dummy != ';') {
-            CLogger::writeError("World_Imports", "mapitem file contains errors! : " + CLogger::toString(dummy));
+            Logger::writeError("World_Imports", "mapitem file contains errors! : " + Logger::toString(dummy));
             return false;
         }
         
@@ -490,12 +490,12 @@ bool CWorld::load_from_editor(std::string filename)
         
         it.setData(datatmp);
         
-        LogMessage += "data: " + CLogger::toString(datatmp) + " ";
+        LogMessage += "data: " + Logger::toString(datatmp) + " ";
 
         if (mapitemsfile.good()) {
             if (mapitemsfile.get() == ';') {
                         mapitemsfile >> it.quality;
-                        LogMessage += "quality: " + CLogger::toString(it.quality) + " ";
+                        LogMessage += "quality: " + Logger::toString(it.quality) + " ";
             } else {
                 mapitemsfile.unget();
             }
@@ -505,25 +505,25 @@ bool CWorld::load_from_editor(std::string filename)
         it.quality = 333;
 
         //if ( LogOptions["World_Imports"] )
-        //  CLogger::writeMessage("World_Imports", LogMessage);
+        //  Logger::writeMessage("World_Imports", LogMessage);
 
         // store the item in our map
         g_item = it;
         g_cont = NULL;
         if (!putItemAlwaysOnMap(NULL, x, y, h_level))
-            CLogger::writeMessage("World_Imports", "could not put item");
+            Logger::writeMessage("World_Imports", "could not put item");
         mapitemsfile >> x;
     }
     mapitemsfile.close();
-    CLogger::writeMessage("World_Imports", "Import map: " + filename + " was successful!");
+    Logger::writeMessage("World_Imports", "Import map: " + filename + " was successful!");
 
     return true;
 }
 
-CWorld::~CWorld() {
-     CLogger::writeMessage("CWorld_Debug","CWorld Destruktor Start");
+World::~World() {
+     Logger::writeMessage("World_Debug","World Destruktor Start");
 
-    for ( CMapVector::iterator mapit = maps.begin(); mapit != maps.end(); ++mapit ) {
+    for ( MapVector::iterator mapit = maps.begin(); mapit != maps.end(); ++mapit ) {
         delete ( *mapit );
         ( *mapit ) = NULL;
     }
@@ -548,19 +548,19 @@ CWorld::~CWorld() {
     time( &acttime4 );
     talkfile << "Ende  " << ctime( &acttime4 ) << " ----------------------------------" << std::endl;
 
-    delete Scheduler;
-    CLogger::writeMessage("CWorld_Debug", "CWorld Destruktor Ende");
+    delete scheduler;
+    Logger::writeMessage("World_Debug", "World Destruktor Ende");
 }
 
 
-void CWorld::turntheworld() {
+void World::turntheworld() {
     ftime( &now );
 
     unsigned long temp = ( ( now.time - start.time ) * 1000 ) + ( now.millitm - start.millitm );
     int thisIGDay = getTime("day");
     if (lastTurnIGDay!=thisIGDay) {
         sendIGTimeToAllPlayers();
-        CLogger::writeMessage("CWorld_Debug", "lastTurnIGDay=" + CLogger::toString(lastTurnIGDay) + " thisIGDay= "+CLogger::toString(thisIGDay));
+        Logger::writeMessage("World_Debug", "lastTurnIGDay=" + Logger::toString(lastTurnIGDay) + " thisIGDay= "+Logger::toString(thisIGDay));
         lastTurnIGDay=thisIGDay;
     }
     ap = (temp / 100) - last;     // 1 actionPoint == 1/10 s
@@ -574,8 +574,8 @@ void CWorld::turntheworld() {
         if ( monitoringclienttimer->Next() ) monitoringClientList->CheckClients();
         //N�hsten Scheduler Cycle einleiten nur zu Testzwecke
         //Der Scheduler soll in einen eigenen Thread laufen.
-        if( schedulertimer->next() ) Scheduler->NextCycle();
-        if (ScriptTimer->next() ) ScheduledScriptsTable->nextCycle();
+        if( schedulertimer->next() ) scheduler->NextCycle();
+        if (ScriptTimer->next() ) scheduledScripts->nextCycle();
     }
 
     DoAge();
@@ -583,9 +583,9 @@ void CWorld::turntheworld() {
 
 
 
-void CWorld::checkPlayers() 
+void World::checkPlayers() 
 {
-    static boost::shared_ptr<CLuaLogoutScript>logoutScript( new CLuaLogoutScript( "server.logout" ) );
+    static boost::shared_ptr<LuaLogoutScript>logoutScript( new LuaLogoutScript( "server.logout" ) );
     
     bool effect = false;
     if ( fieldtimer[ 0 ]->next() ) {
@@ -626,8 +626,8 @@ void CWorld::checkPlayers()
             }
             // User timed out.
             else {
-                CLogger::writeMessage("CWorld",  "Player " + ( *playerIterator )->name + " Timed Out " + CLogger::toString(temptime));
-                boost::shared_ptr<CBasicServerCommand>cmd( new CLogOutTC(UNSTABLECONNECTION) );
+                Logger::writeMessage("World",  "Player " + ( *playerIterator )->name + " Timed Out " + Logger::toString(temptime));
+                boost::shared_ptr<BasicServerCommand>cmd( new LogOutTC(UNSTABLECONNECTION) );
                 ( *playerIterator )->Connection->shutdownSend( cmd );
             }
             playerIterator++;
@@ -637,8 +637,8 @@ void CWorld::checkPlayers()
 
             position temp_pos = ( *playerIterator )->pos;
 
-            CLogger::writeMessage("CWorld", "Player " + temp_name + " is offline");
-            CField* tempf;
+            Logger::writeMessage("World", "Player " + temp_name + " is offline");
+            Field* tempf;
             if ( GetPToCFieldAt( tempf, ( *playerIterator )->pos.x, ( *playerIterator )->pos.y, ( *playerIterator )->pos.z ) ) {
                 tempf->SetPlayerOnField( false );
             }
@@ -654,7 +654,7 @@ void CWorld::checkPlayers()
                 std::cerr<<"Logout Script: Failure on calling on logout!"<<std::endl;
             }            
             
-            CPlayerManager::get()->getLogOutPlayers().non_block_push_back( *playerIterator );
+            PlayerManager::get()->getLogOutPlayers().non_block_push_back( *playerIterator );
             playerIterator = Players.erase( playerIterator );
             sendRemoveCharToVisiblePlayers( temp_id, temp_pos );
         }
@@ -662,7 +662,7 @@ void CWorld::checkPlayers()
 }
 
 // init the respawn locations... for now still hardcoded...
-bool CWorld::initRespawns() {
+bool World::initRespawns() {
     // if we have monsters, we need to delete their spawnpoints...
     for ( MONSTERVECTOR::iterator monsterIterator = Monsters.begin(); monsterIterator != Monsters.end(); ++monsterIterator) {
         // if the spawn is set to NULL it is regarded as no spawnpoint.
@@ -693,11 +693,11 @@ bool CWorld::initRespawns() {
             for (size_t i = 0; i < rows; ++i) 
             {
                 position the_pos(pos[0][i], pos[1][i], pos[2][i]);
-                CSpawnPoint newSpawn( the_pos , range[i], spawnrange[i], min_spawntime[i], max_spawntime[i], spawnall[i]);
-                CLogger::writeMessage("World_Inits", "load spawnpoint: " + CLogger::toString(ids[i]));
+                SpawnPoint newSpawn( the_pos , range[i], spawnrange[i], min_spawntime[i], max_spawntime[i], spawnall[i]);
+                Logger::writeMessage("World_Inits", "load spawnpoint: " + Logger::toString(ids[i]));
                 newSpawn.load(ids[i]);
                 SpawnList.push_back(newSpawn);
-                CLogger::writeMessage("World_Inits", "added spawnpoint " + CLogger::toString(pos[0][i]) + "," + CLogger::toString(pos[1][i]) + "," + CLogger::toString(pos[2][i]));
+                Logger::writeMessage("World_Inits", "added spawnpoint " + Logger::toString(pos[0][i]) + "," + Logger::toString(pos[1][i]) + "," + Logger::toString(pos[2][i]));
             }
 
         } else {
@@ -706,25 +706,25 @@ bool CWorld::initRespawns() {
 
         return true; // everything went well
     } catch (std::exception e) {
-        CLogger::writeError("World_Inits","got exception in load SpawnPoints: " + CLogger::toString(e.what()) );
+        Logger::writeError("World_Inits","got exception in load SpawnPoints: " + Logger::toString(e.what()) );
             return false;
     }
 
 }
 
-void CWorld::checkMonsters() {
+void World::checkMonsters() {
 
     // respawn ?
     if ( monstertimer->next() ) 
     {
-        std::list<CSpawnPoint>::iterator it;
+        std::list<SpawnPoint>::iterator it;
         if (configOptions["do_spawn"] != "false") {
             for ( it = SpawnList.begin(); it != SpawnList.end(); ++it ) 
             {
                 it->spawn();
             }
         } else {
-            CLogger::writeMessage("Monster","CWorld::checkMonsters() spawning disabled!");
+            Logger::writeMessage("Monster","World::checkMonsters() spawning disabled!");
         }
     }
 
@@ -733,7 +733,7 @@ void CWorld::checkMonsters() {
         effect = true;
     }
 
-    std::vector < CPlayer* > temp;
+    std::vector < Player* > temp;
     MONSTERVECTOR::iterator monsterIterator = Monsters.begin();
 
     if (ap > 1) {
@@ -785,7 +785,7 @@ void CWorld::checkMonsters() {
 					findPlayersInSight( (*monsterIterator)->pos, static_cast<uint8_t>(range), temp, (*monsterIterator)->faceto);
 					bool has_attacked=false;
 					//If we have found players which can be attacked directly and the monster can attack
-					CPlayer * foundP = 0;
+					Player * foundP = 0;
                     if (( !temp.empty() ) && ( *monsterIterator )->canAttack() ) 
 					{ //angreifen
 						//search for the target via script or the player with the lowest hp
@@ -797,7 +797,7 @@ void CWorld::checkMonsters() {
 						{
 							//let the monster attack the player with the lowest hp->assigned this player as target
 							( *monsterIterator )->enemyid = foundP->id;
-							( *monsterIterator )->enemytype = CCharacter::player;
+							( *monsterIterator )->enemytype = Character::player;
 							( *monsterIterator )->lastTargetPosition = foundP->pos;
 							( *monsterIterator )->lastTargetSeen = true;
 							if ( foundMonster )
@@ -813,7 +813,7 @@ void CWorld::checkMonsters() {
 							   }                 
 						   }
 						   else
-						   CLogger::writeError("Monster","cant find a monster id for checking the script!");
+						   Logger::writeError("Monster","cant find a monster id for checking the script!");
 						   //attack the player which we have found
 						   (*monsterIterator)->turn( foundP->pos );
                            if( ( *monsterIterator )->fightPoints >= NP_MIN_FP )   // enough FP to fight?
@@ -831,7 +831,7 @@ void CWorld::checkMonsters() {
 						bool makeRandomStep=true;
 						
 						if ( ( !temp.empty() ) && (( *monsterIterator )->canAttack()) ) {
-						    CPlayer * foundP2 = 0;
+						    Player * foundP2 = 0;
                             //search for the target via script or the player with the lowest hp
                             if( !monStruct.script || !monStruct.script->setTarget( *monsterIterator, temp, foundP2 ) )
                             {   
@@ -856,7 +856,7 @@ void CWorld::checkMonsters() {
 								   (*monsterIterator)->performStep( foundP2->pos );
 							   }
 							   else
-								   CLogger::writeMessage("Monster","cant find the monster id for calling a script!");
+								   Logger::writeMessage("Monster","cant find the monster id for calling a script!");
 							   
 							}
 						}
@@ -882,11 +882,11 @@ void CWorld::checkMonsters() {
 									}
 								} 
 								else 
-									CLogger::writeError("Monster","Data for Healing not Found for monsterrace: " + CLogger::toString((*monsterIterator)->getType()));
+									Logger::writeError("Monster","Data for Healing not Found for monsterrace: " + Logger::toString((*monsterIterator)->getType()));
 							} 
                             else
                             {
-								CSpawnPoint* spawn = (*monsterIterator)->getSpawn();
+								SpawnPoint* spawn = (*monsterIterator)->getSpawn();
 								// is the monster created by a spawnpoint or summoned?
 								if (spawn) 
                                 {
@@ -929,7 +929,7 @@ void CWorld::checkMonsters() {
 
 									for ( uint8_t i = 0; i < 8; ++i ) {
 										if (tempr < movedir[i]) {
-											( *monsterIterator)->move((CCharacter::direction)i);
+											( *monsterIterator)->move((Character::direction)i);
 											break;
 										} else {
 											tempr -= movedir[i];
@@ -938,7 +938,7 @@ void CWorld::checkMonsters() {
 								} 
                                 if ( !spawn)
                                 {
-                                     ( *monsterIterator)->move((CCharacter::direction)unsignedShortRandom(0,7));
+                                     ( *monsterIterator)->move((Character::direction)unsignedShortRandom(0,7));
 								}
 
 								// movementrate below normal if noone is near
@@ -965,12 +965,12 @@ void CWorld::checkMonsters() {
 					//If we have found players which can be attacked directly and the monster can attack
 					if ( !temp.empty() ) 
 					{ //angreifen
-						CPlayer * foundP;
+						Player * foundP;
 						//search for the player with the lowes hp
 						if ( findPlayerWithLowestHP( &temp, foundP ) ) 
 						{
 							if ( foundMonster && monStruct.script )monStruct.script->enemyNear( (*monsterIterator) ,foundP);
-						   else CLogger::writeError("Monster","cant find a monster id for checking the script!");
+						   else Logger::writeError("Monster","cant find a monster id for checking the script!");
 						
 						}
 					}
@@ -980,19 +980,19 @@ void CWorld::checkMonsters() {
 					findPlayersInSight( (*monsterIterator)->pos, static_cast<uint8_t>(9), temp, (*monsterIterator)->faceto);
 					if ( !temp.empty() )
 					{
-						CPlayer * foundP;
+						Player * foundP;
 						if ( findPlayerWithLowestHP( &temp, foundP ) ) 
 						{
 						   //Call enemyNear Script when enemy found
 						   if ( foundMonster && monStruct.script )monStruct.script->enemyOnSight( (*monsterIterator) ,foundP);
-						   //else CLogger::writeMessage("Monster","cant find the monster id for calling a script!");
+						   //else Logger::writeMessage("Monster","cant find the monster id for calling a script!");
 						}
 					}
 					if (!(*monsterIterator)->waypoints->makeMove())
 					{
 						(*monsterIterator)->setOnRoute(false);
 						if ( foundMonster && monStruct.script)monStruct.script->abortRoute( (*monsterIterator) );
-						else CLogger::writeMessage("Monster","cant find the monster id for calling a script!");
+						else Logger::writeMessage("Monster","cant find the monster id for calling a script!");
 					}
 				}
             } // ausreichend actionpoints
@@ -1025,7 +1025,7 @@ void CWorld::checkMonsters() {
 
 
 
-void CWorld::checkNPC() 
+void World::checkNPC() 
 {
     deleteAllLostNPC();
     bool effect = false;
@@ -1034,8 +1034,8 @@ void CWorld::checkNPC()
         effect = true;
     }
 
-    std::vector < CPlayer* > temp;
-    std::vector < CPlayer* > ::iterator tpit;
+    std::vector < Player* > temp;
+    std::vector < Player* > ::iterator tpit;
     NPCVECTOR::iterator npcIterator = Npc.begin();
     while ( npcIterator < Npc.end() ) {
 
@@ -1053,7 +1053,7 @@ void CWorld::checkNPC()
             if ( ( *npcIterator )->actionPoints > NP_MIN_AP && !(*npcIterator)->getScript()) 
 			{
                 // Wiederbeleber definieren
-                if ( (( *npcIterator )->race == CCharacter::healer) || ( ( *npcIterator )->getHealer() ) )
+                if ( (( *npcIterator )->race == Character::healer) || ( ( *npcIterator )->getHealer() ) )
 				{
                     temp = Players.findAllCharactersInRangeOf(( *npcIterator )->pos.x, ( *npcIterator )->pos.y, ( *npcIterator )->pos.z, 2 );
                     for ( tpit = temp.begin(); tpit < temp.end(); ++tpit ) {
@@ -1075,13 +1075,13 @@ void CWorld::checkNPC()
 			{
                 // we have a script...
                 // let's execute the command for this cycle
-                boost::shared_ptr<CLuaNPCScript> npcscript = (*npcIterator)->getScript();
+                boost::shared_ptr<LuaNPCScript> npcscript = (*npcIterator)->getScript();
                 npcscript->nextCycle();
 				temp.clear();
 				findPlayersInSight( (*npcIterator)->pos, static_cast<uint8_t>(1), temp, (*npcIterator)->faceto);
 				if ( !temp.empty() ) 
 				{ //angreifen
-					CPlayer * foundP;
+					Player * foundP;
 					//search for the player with the lowes hp
 					if ( findPlayerWithLowestHP( &temp, foundP ) ) 
 					{
@@ -1092,7 +1092,7 @@ void CWorld::checkNPC()
 				findPlayersInSight( (*npcIterator)->pos, static_cast<uint8_t>(9), temp, (*npcIterator)->faceto);
 				if ( !temp.empty() )
 				{
-					CPlayer * foundP;
+					Player * foundP;
 					if ( findPlayerWithLowestHP( &temp, foundP ) ) 
 					{
 						npcscript->characterOnSight( (*npcIterator) ,foundP);
@@ -1119,14 +1119,14 @@ void CWorld::checkNPC()
 }
 
 
-void CWorld::workout_CommandBuffer( CPlayer* &cp) 
+void World::workout_CommandBuffer( Player* &cp) 
 {
     
 
 }
 
 
-bool CWorld::ReadField( const char* inp, signed short int &outp ) {
+bool World::ReadField( const char* inp, signed short int &outp ) {
     char** error = NULL;
     long int temp=strtol(inp,error,10);
     if (error != NULL) {
@@ -1143,7 +1143,7 @@ bool CWorld::ReadField( const char* inp, signed short int &outp ) {
     return false;
 }
 
-bool CWorld::ReadField( const char* inp, signed long int &outp ) {
+bool World::ReadField( const char* inp, signed long int &outp ) {
     char** error=NULL;
     signed long int temp=strtol(inp,error,10);
     if (error != NULL) {
@@ -1158,7 +1158,7 @@ bool CWorld::ReadField( const char* inp, signed long int &outp ) {
 
 
 // Init method for NPC's
-void CWorld::initNPC() {
+void World::initNPC() {
     NPCVECTOR::iterator npcIterator;
 /*
     for ( npcIterator = Npc.begin(); npcIterator < Npc.end(); ++npcIterator ) {
@@ -1171,7 +1171,7 @@ void CWorld::initNPC() {
 */
     std::cout<<" Lade und setze NPC's neu: \n";
     npcidc->set(NPC_BASE); //Counter wieder auf Basis setzen.
-    CField* tempf; //alte NPC's l�chen
+    Field* tempf; //alte NPC's l�chen
     for ( npcIterator = Npc.begin(); npcIterator < Npc.end(); ++npcIterator ) {
         if ( GetPToCFieldAt( tempf, ( *npcIterator )->pos.x, ( *npcIterator )->pos.y, ( *npcIterator )->pos.z ) ) {
             //tempf->SetNPCOnField( false );
@@ -1182,30 +1182,30 @@ void CWorld::initNPC() {
         *npcIterator = NULL;
     }
     Npc.clear(); //Ende des L�chens der alten NPC's
-    CNPCTable * NPCTbl;
-    NPCTbl = new CNPCTable();
+    NPCTable * NPCTbl;
+    NPCTbl = new NPCTable();
     delete NPCTbl;
     std::cout<<"Laden der NPC's beendet! \n";
 }
-void CWorld::initScheduler() {
+void World::initScheduler() {
     std::cout<<"Scheduler init \n";
-    Scheduler = new CScheduler(this);
+    scheduler = new Scheduler(this);
     //===========Globale Tasks wie Wetter Gezeiteneffekte etc einfgen=========
     //CSchedulerObject * globalPoisonTask; //neuen Task anlegen
-    //globalPoisonTask = new CSGlobalPoison(Scheduler->GetCurrentCycle()+2); //erster Zyklus in 2 sec
+    //globalPoisonTask = new SGlobalPoison(Scheduler->GetCurrentCycle()+2); //erster Zyklus in 2 sec
     //Scheduler->AddTask(globalPoisonTask); //Task hinzufgen
-    CSchedulerObject * globalPlLearning; //Task anlegen der die Geistige Aufnahmef�igkeit aller 10 sec bei Spielern wieder senkt
-    globalPlLearning = new CSGlobalPlayerLearnrate(Scheduler->GetCurrentCycle()+5);
-    Scheduler->AddTask(globalPlLearning);
-    CSchedulerObject * globalMonLearning; //Task anlegen der die Geistige Aufnahmef�igkeit aller 30 sec bei Monstern wieder senkt
-    globalMonLearning = new CSGlobalMonsterLearnrate(Scheduler->GetCurrentCycle()+10);
-    Scheduler->AddTask(globalMonLearning);
+    SchedulerObject * globalPlLearning; //Task anlegen der die Geistige Aufnahmef�igkeit aller 10 sec bei Spielern wieder senkt
+    globalPlLearning = new SGlobalPlayerLearnrate(scheduler->GetCurrentCycle()+5);
+    scheduler->AddTask(globalPlLearning);
+    SchedulerObject * globalMonLearning; //Task anlegen der die Geistige Aufnahmef�igkeit aller 30 sec bei Monstern wieder senkt
+    globalMonLearning = new SGlobalMonsterLearnrate(scheduler->GetCurrentCycle()+10);
+    scheduler->AddTask(globalMonLearning);
     //CSchedulerObject * ItemNextCycleScript; //Task anlegen der nextCycle bei Scripts ausfhrt
-    //ItemNextCycleScript = new CSItemScriptCycle(Scheduler->GetCurrentCycle()+10);
+    //ItemNextCycleScript = new SItemScriptCycle(Scheduler->GetCurrentCycle()+10);
     //Scheduler->AddTask(ItemNextCycleScript);
-    CSchedulerObject * globalTempAttribTask;
-    globalTempAttribTask = new CSTempAttribCycle(Scheduler->GetCurrentCycle()+2);
-    Scheduler->AddTask(globalTempAttribTask);
+    SchedulerObject * globalTempAttribTask;
+    globalTempAttribTask = new STempAttribCycle(scheduler->GetCurrentCycle()+2);
+    scheduler->AddTask(globalTempAttribTask);
     //=========================================================================
     std::cout<<"Scheduler init end \n";
 }

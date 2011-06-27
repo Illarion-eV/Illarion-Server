@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CMONSTER_HPP
-#define CMONSTER_HPP
+#ifndef MONSTER_HPP
+#define MONSTER_HPP
 
 #include "Character.hpp"
 #include "SpawnPoint.hpp"
@@ -29,7 +29,7 @@
 * @ingroup Scriptclasses
 * a monster in the game world
 */
-class CMonster : public CCharacter {
+class Monster : public Character {
 
 	public:
 
@@ -44,7 +44,7 @@ class CMonster : public CCharacter {
         * @param newpos the position where the monster should be spawned
         * @param spawnpoint the spawnpoint from which the monster was spawned ( 0 if there is no spawnpoint )
         */
-		CMonster(const TYPE_OF_CHARACTER_ID& type, const position& newpos, CSpawnPoint* spawnpoint=0) throw(unknownIDException);
+		Monster(const TYPE_OF_CHARACTER_ID& type, const position& newpos, SpawnPoint* spawnpoint=0) throw(unknownIDException);
 
         /**
         * sets the type of the monster and changes
@@ -58,7 +58,7 @@ class CMonster : public CCharacter {
         * sets the spawnpoint for thins monster to a new one
         * @param sp the pointer to the new spawnpoint
         */
-		void setSpawn(CSpawnPoint* sp);
+		void setSpawn(SpawnPoint* sp);
         
         /**
         * sets the alive state of the monster
@@ -76,13 +76,13 @@ class CMonster : public CCharacter {
         * @param message the message which is spoken
         * @param cc the character who has spoken the message
         */
-		void receiveText(talk_type tt, std::string message, CCharacter* cc);
+		void receiveText(talk_type tt, std::string message, Character* cc);
 
 		/**
         * returns the spawnpoint of the monster
         * @return the spawnpoint of this monster
         */
-		inline CSpawnPoint* getSpawn() const { return spawn; }
+		inline SpawnPoint* getSpawn() const { return spawn; }
 
         /**
         * returns the type of this monster
@@ -97,7 +97,7 @@ class CMonster : public CCharacter {
         * @param updateInv if the inventory should be updated ( not neccessary here inherited from ccharacter)
         * @return no usage at this time anything can be returned
         */
-        bool attack( CCharacter* target, int &sound, bool &updateInv );
+        bool attack( Character* target, int &sound, bool &updateInv );
         
         /**
         *trys to find a path to the the targetposition and performs a step
@@ -109,7 +109,7 @@ class CMonster : public CCharacter {
 		/**
         * destructor
         */
-		~CMonster();
+		virtual ~Monster();
         
         position lastTargetPosition; /**< last position of the last seen target */
         bool lastTargetSeen; /**< if true the monster trys to reach the last targetposition if there is no other enemy*/
@@ -124,12 +124,12 @@ class CMonster : public CCharacter {
         /**
         * pointer to the spawnpoint of this monster
         */
-		CSpawnPoint* spawn;
+		SpawnPoint* spawn;
         
         /**
         *pointer to the id counter which gives new unique id's to the monsters
         */
-		static std::auto_ptr<CIdCounter> monsteridc;
+		static std::auto_ptr<IdCounter> monsteridc;
 		
         /**
         * stores the type of the monster
@@ -144,4 +144,4 @@ class CMonster : public CCharacter {
 
 };
 
-#endif // CMONSTER_HPP
+#endif // MONSTER_HPP

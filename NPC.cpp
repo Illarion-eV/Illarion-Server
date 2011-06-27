@@ -26,16 +26,16 @@
 #include "World.hpp"
 
 //! eine Tabelle mit den allgemeinen Attributen der Item
-extern CCommonObjectTable* CommonItems;
+extern CommonObjectTable* CommonItems;
 
 //! wird von verschiedenen Funktionen als Zwischenvariable genutzt
 extern CommonStruct tempCommon;
 
-CNPC::CNPC(TYPE_OF_CHARACTER_ID _id, std::string _name, CCharacter::race_type _race, position _pos, CCharacter::face_to dir, bool ishealer, CCharacter::sex_type sex,
-           uint8_t _hair, uint8_t _beard, uint8_t _hairred, uint8_t _hairgreen, uint8_t _hairblue, uint8_t _skinred, uint8_t _skingreen, uint8_t _skinblue) : CCharacter(),
+NPC::NPC(TYPE_OF_CHARACTER_ID _id, std::string _name, Character::race_type _race, position _pos, Character::face_to dir, bool ishealer, Character::sex_type sex,
+           uint8_t _hair, uint8_t _beard, uint8_t _hairred, uint8_t _hairgreen, uint8_t _hairblue, uint8_t _skinred, uint8_t _skingreen, uint8_t _skinblue) : Character(),
           _ishealer(ishealer), _startpos(_pos) {
-#ifdef CCharacter_DEBUG
-	cout << "CNPC Konstruktor Start" << endl;
+#ifdef Character_DEBUG
+	cout << "NPC Konstruktor Start" << endl;
 #endif
 	name = _name;
 	pos=_pos;
@@ -59,7 +59,7 @@ CNPC::CNPC(TYPE_OF_CHARACTER_ID _id, std::string _name, CCharacter::race_type _r
     else
         id = NPC_BASE + _id; // _world->npcidc->nextFreeId();
 
-	CField* tmpField;
+	Field* tmpField;
 
 	if (!_world->findEmptyCFieldNear(tmpField,pos.x, pos.y, pos.z))
 	    throw NoSpace();
@@ -73,19 +73,19 @@ CNPC::CNPC(TYPE_OF_CHARACTER_ID _id, std::string _name, CCharacter::race_type _r
 
 	SetAlive( true );
 
-#ifdef CCharacter_DEBUG
-	cout << "CNPC Konstruktor Ende" << endl;
+#ifdef Character_DEBUG
+	cout << "NPC Konstruktor Ende" << endl;
 #endif
 }
 
 
-CNPC::~CNPC() {
-#ifdef CCharacter_DEBUG
-	cout << "CNPC Destruktor Start/Ende" << endl;
+NPC::~NPC() {
+#ifdef Character_DEBUG
+	cout << "NPC Destruktor Start/Ende" << endl;
 #endif
 }
 
-void CNPC::receiveText(talk_type tt, std::string message, CCharacter* cc) {
+void NPC::receiveText(talk_type tt, std::string message, Character* cc) {
 	if ( _script && cc != this && _script->existsEntrypoint("receiveText") ) {
 		// since we have a script, we tell it we got a message
 		_script->receiveText(tt, message, cc);

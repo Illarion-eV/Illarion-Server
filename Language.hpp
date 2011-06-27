@@ -17,10 +17,10 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CLANGUAGE_HPP
-#define CLANGUAGE_HPP
+#ifndef LANGUAGE_HPP
+#define LANGUAGE_HPP
 
-class CLanguage {
+class Language {
 
 	public:
 		enum LanguageType {  
@@ -29,12 +29,12 @@ class CLanguage {
 			french = 2
 		};
 
-	static CLanguage* create(LanguageType);
+	static Language* create(LanguageType);
 
 	LanguageType _language;
 
 	protected:
-		CLanguage(LanguageType);
+		Language(LanguageType);
 };
 
 #endif

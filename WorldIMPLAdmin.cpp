@@ -54,20 +54,20 @@
 
 #include <iostream>
 
-extern CLongTimeEffectTable * LongTimeEffects;
-extern CRaceSizeTable * RaceSizes;
-extern CScriptVariablesTable * scriptVariables;
+extern LongTimeEffectTable * LongTimeEffects;
+extern RaceSizeTable * RaceSizes;
+extern ScriptVariablesTable * scriptVariables;
 extern std::ofstream talkfile;
-extern boost::shared_ptr<CLuaLookAtPlayerScript>lookAtPlayerScript;
-extern boost::shared_ptr<CLuaDepotScript>depotScript;
-extern boost::shared_ptr<CLuaLoginScript>loginScript;
-extern boost::shared_ptr<CLuaLearnScript>learnScript;
+extern boost::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
+extern boost::shared_ptr<LuaDepotScript>depotScript;
+extern boost::shared_ptr<LuaLoginScript>loginScript;
+extern boost::shared_ptr<LuaLearnScript>learnScript;
 
 
-void set_spawn_command( CWorld*, CPlayer*, const std::string& );
-void import_maps_command( CWorld*, CPlayer*, const std::string& );
-void create_area_command( CWorld*, CPlayer*, const std::string& );
-void set_login( CWorld*, CPlayer*, const std::string& );
+void set_spawn_command( World*, Player*, const std::string& );
+void import_maps_command( World*, Player*, const std::string& );
+void create_area_command( World*, Player*, const std::string& );
+void set_login( World*, Player*, const std::string& );
 
 template< typename To, typename From> To stream_convert( const From& from ) {
 	std::stringstream stream;
@@ -78,125 +78,125 @@ template< typename To, typename From> To stream_convert( const From& from ) {
 }
 
 // register any gm commands here...
-void CWorld::InitGMCommands() {
+void World::InitGMCommands() {
 
-	GMCommands["what"] = new CCommand(&CWorld::what_command);
+	GMCommands["what"] = new Command(&World::what_command);
 
-	GMCommands["?"] = new CCommand(&CWorld::gmhelp_command);
+	GMCommands["?"] = new Command(&World::gmhelp_command);
 
-	GMCommands["warp_to"] = new CCommand(&CWorld::warpto_command);
+	GMCommands["warp_to"] = new Command(&World::warpto_command);
 	GMCommands["w"] = GMCommands["warp_to"];
 
-	GMCommands["summon"] = new CCommand(&CWorld::summon_command);
+	GMCommands["summon"] = new Command(&World::summon_command);
 	GMCommands["s"] = GMCommands["summon"];
 
-	GMCommands["prison"] = new CCommand(&CWorld::prison_command);
+	GMCommands["prison"] = new Command(&World::prison_command);
 	GMCommands["p"] = GMCommands["prison"];
 
-	GMCommands["ban"] = new CCommand(&CWorld::ban_command);
+	GMCommands["ban"] = new Command(&World::ban_command);
 	GMCommands["b"] = GMCommands["ban"];
 
-	GMCommands["tile"] = new CCommand(&CWorld::tile_command);
+	GMCommands["tile"] = new Command(&World::tile_command);
 	GMCommands["t"] = GMCommands["tile"];
 
-	GMCommands["who"] = new CCommand(&CWorld::who_command);
+	GMCommands["who"] = new Command(&World::who_command);
 
-	GMCommands["turtleon"] = new CCommand( &CWorld::turtleon_command );
+	GMCommands["turtleon"] = new Command( &World::turtleon_command );
 	GMCommands["ton"] = GMCommands["turtleon"];
-	GMCommands["turtleoff"] = new CCommand( &CWorld::turtleoff_command );
+	GMCommands["turtleoff"] = new Command( &World::turtleoff_command );
 	GMCommands["toff"] = GMCommands["turtleoff"];
 
-    GMCommands["logon"] = new CCommand( &CWorld::logon_command );
-    GMCommands["logoff"] = new CCommand( &CWorld::logoff_command );
+    GMCommands["logon"] = new Command( &World::logon_command );
+    GMCommands["logoff"] = new Command( &World::logoff_command );
 
-	GMCommands["clippingon"] = new CCommand( &CWorld::clippingon_command );
+	GMCommands["clippingon"] = new Command( &World::clippingon_command );
 	GMCommands["con"] = GMCommands["clippingon"];
-	GMCommands["clippingoff"] = new CCommand( &CWorld::clippingoff_command );
+	GMCommands["clippingoff"] = new Command( &World::clippingoff_command );
 	GMCommands["coff"] = GMCommands["clippingoff"];
 
-	GMCommands["playersave"] = new CCommand( &CWorld::playersave_command );
+	GMCommands["playersave"] = new Command( &World::playersave_command );
 	GMCommands["ps"] = GMCommands["playersave"];
 
-	GMCommands["add_teleport"] = new CCommand( &CWorld::teleport_command );
+	GMCommands["add_teleport"] = new Command( &World::teleport_command );
 
-	GMCommands["set_spawn"] = new CCommand( &set_spawn_command );
+	GMCommands["set_spawn"] = new Command( &set_spawn_command );
 
-	GMCommands["importmaps"] = new CCommand( &import_maps_command );
+	GMCommands["importmaps"] = new Command( &import_maps_command );
 
-	GMCommands["create_area"] = new CCommand( &create_area_command );
+	GMCommands["create_area"] = new Command( &create_area_command );
 
-	GMCommands["nologin"] = new CCommand( &set_login );
+	GMCommands["nologin"] = new Command( &set_login );
 
-	GMCommands["forceintroduce"] = new CCommand( &CWorld::ForceIntroduce );
+	GMCommands["forceintroduce"] = new Command( &World::ForceIntroduce );
 	GMCommands["fi"] = GMCommands["forceintroduce"];
-    GMCommands["forceintroduceall"] = new CCommand( &CWorld::ForceIntroduceAll);
+    GMCommands["forceintroduceall"] = new Command( &World::ForceIntroduceAll);
     GMCommands["fia"] = GMCommands["forceintroduceall"];
 
-	GMCommands["exportmaps"] = new CCommand( &CWorld::exportMaps );
+	GMCommands["exportmaps"] = new Command( &World::exportMaps );
 
-	GMCommands["makeinvisible"] = new CCommand( &CWorld::makeInvisible );
+	GMCommands["makeinvisible"] = new Command( &World::makeInvisible );
 	GMCommands["mi"] = GMCommands["makeinvisible"];
 
-	GMCommands["makevisible"] = new CCommand( &CWorld::makeVisible );
+	GMCommands["makevisible"] = new Command( &World::makeVisible );
 	GMCommands["mv"] = GMCommands["makevisible"];
 
-	//GMCommands["reloaddefinitions"] = new CCommand( &CWorld::reload_defs );
+	//GMCommands["reloaddefinitions"] = new Command( &World::reload_defs );
 	//GMCommands["rd"] = GMCommands["reloaddefinitions"];
 
-	GMCommands["showwarpfields"] = new CCommand( &CWorld::showWarpFieldsInRange );
+	GMCommands["showwarpfields"] = new Command( &World::showWarpFieldsInRange );
 
-	GMCommands["removewarpfield"] = new CCommand( &CWorld::removeTeleporter );
+	GMCommands["removewarpfield"] = new Command( &World::removeTeleporter );
 
-	GMCommands["inform"] = new CCommand( &CWorld::informChar );
+	GMCommands["inform"] = new Command( &World::informChar );
 
-    GMCommands["talkto"] = new CCommand( &CWorld::talkto_command );
+    GMCommands["talkto"] = new Command( &World::talkto_command );
     GMCommands["tt"] = GMCommands["talkto"];
 
-    GMCommands["nuke"] = new CCommand( &CWorld::kill_command );
+    GMCommands["nuke"] = new Command( &World::kill_command );
 
-    GMCommands["fullreload"] = new CCommand( &CWorld::reload_command );
+    GMCommands["fullreload"] = new Command( &World::reload_command );
     GMCommands["fr"] = GMCommands["fullreload"];
 
-    GMCommands["mapsave"] = new CCommand( &CWorld::save_command );
+    GMCommands["mapsave"] = new Command( &World::save_command );
 
-    GMCommands["jumpto"] = new CCommand( &CWorld::jumpto_command );
+    GMCommands["jumpto"] = new Command( &World::jumpto_command );
     GMCommands["j"] = GMCommands["jumpto"];
 
-    GMCommands["broadcast"] = new CCommand( &CWorld::broadcast_command );
+    GMCommands["broadcast"] = new Command( &World::broadcast_command );
     GMCommands["bc"] = GMCommands["broadcast"];
 
-    GMCommands["kickall"] = new CCommand( &CWorld::kickall_command );
+    GMCommands["kickall"] = new Command( &World::kickall_command );
     GMCommands["ka"] = GMCommands["kickall"];
 
-    GMCommands["kick"] = new CCommand( &CWorld::kickplayer_command);
+    GMCommands["kick"] = new Command( &World::kickplayer_command);
     GMCommands["k"] = GMCommands["kick"];
 
-    GMCommands["showips"] = new CCommand( &CWorld::showIPS_Command);
-    GMCommands["create"] = new CCommand( &CWorld::create_command);
+    GMCommands["showips"] = new Command( &World::showIPS_Command);
+    GMCommands["create"] = new Command( &World::create_command);
 
-	GMCommands["spawn"] = new CCommand( &CWorld::spawn_command);
+	GMCommands["spawn"] = new Command( &World::spawn_command);
 
 }
 
-void CWorld::logon_command( CPlayer* cp, const std::string &log)
+void World::logon_command( Player* cp, const std::string &log)
 {
     if ( cp->hasGMRight( gmr_reload ) )
     {
-        CLogger::activateLog( log );
+        Logger::activateLog( log );
     }
 
 }
 
-void CWorld::logoff_command( CPlayer* cp, const std::string &log)
+void World::logoff_command( Player* cp, const std::string &log)
 {
     if ( cp->hasGMRight( gmr_reload ) )
     {
-        CLogger::deactivateLog( log );
+        Logger::deactivateLog( log );
     }
 
 }
 
-void CWorld::spawn_command( CPlayer* cp, const std::string &monid)
+void World::spawn_command( Player* cp, const std::string &monid)
 {
     if ( cp->hasGMRight( gmr_basiccommands ) )
     {
@@ -210,7 +210,7 @@ void CWorld::spawn_command( CPlayer* cp, const std::string &monid)
 	}
 }
 
-void CWorld::create_command( CPlayer* cp, const std::string &itemid)
+void World::create_command( Player* cp, const std::string &itemid)
 {
     if ( cp->hasGMRight( gmr_basiccommands ) )
     {
@@ -227,7 +227,7 @@ void CWorld::create_command( CPlayer* cp, const std::string &itemid)
 
 }
 
-void CWorld::kill_command( CPlayer* cp)
+void World::kill_command( Player* cp)
 {
     if ( !cp->hasGMRight(gmr_reload) )return;
     std::cout<<" GM "<<cp->name<<" used Nuke command";
@@ -242,21 +242,21 @@ void CWorld::kill_command( CPlayer* cp)
     std::cout<<" and killed "<<counter<<" monsters!"<<std::endl;
 }
 
-void CWorld::reload_command( CPlayer* cp)
+void World::reload_command( Player* cp)
 {
     if ( cp->hasGMRight(gmr_reload) )
     {
         if (reload_tables(cp) )
             cp->sendMessage("DB tables loaded successfully!");
         else
-            cp->sendMessage("CRITICAL ERROR: Failure while loading DB tables!");
+            cp->sendMessage("RITICAL ERROR: Failure while loading DB tables!");
     }
 }
 
-void CWorld::broadcast_command( CPlayer* cp,const std::string &message)
+void World::broadcast_command( Player* cp,const std::string &message)
 {
-#ifdef CWorld_DEBUG
-	std::cout << "CWorld: Admin " << cp->name << " sagt: " << message << std::endl;
+#ifdef World_DEBUG
+	std::cout << "World: Admin " << cp->name << " sagt: " << message << std::endl;
 #endif
 			if ( cp->hasGMRight( gmr_broadcast )  )
             {
@@ -272,42 +272,42 @@ void CWorld::broadcast_command( CPlayer* cp,const std::string &message)
 			}
 }
 
-void CWorld::kickall_command( CPlayer* cp)
+void World::kickall_command( Player* cp)
 {
     if ( cp->hasGMRight( gmr_forcelogout ) )
     {
-#ifdef CWorld_DEBUG
-	std::cout << "CWorld: Admin " << cp->name << " wirft alle Player aus dem Spiel" << std::endl;
+#ifdef World_DEBUG
+	std::cout << "World: Admin " << cp->name << " wirft alle Player aus dem Spiel" << std::endl;
 #endif
 	forceLogoutOfAllPlayers();
     }
 }
 
-void CWorld::kickplayer_command( CPlayer * cp,const std::string &player)
+void World::kickplayer_command( Player * cp,const std::string &player)
 {
     if ( cp->hasGMRight( gmr_forcelogout ) )
     {
         if ( forceLogoutOfPlayer( player ) )
         {
-#ifdef CWorld_DEBUG
-            std::cout << "CWorld: Admin " << cp->name << " wirft Player " << player << " aus dem Spiel!" <<std::endl;
+#ifdef World_DEBUG
+            std::cout << "World: Admin " << cp->name << " wirft Player " << player << " aus dem Spiel!" <<std::endl;
 #endif
         }
     }
 }
 
-void CWorld::showIPS_Command( CPlayer * cp)
+void World::showIPS_Command( Player * cp)
 {
     if ( cp->hasGMRight(gmr_basiccommands) )
     {
-#ifdef CWorld_DEBUG
-		std::cout << "CWorld: Admin " << cp->name << " l�t sich alle Spieler anzeigen!" << std::endl;
+#ifdef World_DEBUG
+		std::cout << "World: Admin " << cp->name << " l�t sich alle Spieler anzeigen!" << std::endl;
 #endif
 		sendAdminAllPlayerData( cp );
 	}
 }
 
-void CWorld::jumpto_command( CPlayer * cp,const std::string & player )
+void World::jumpto_command( Player * cp,const std::string & player )
 {
     if ( cp->hasGMRight(gmr_warp) )
     {
@@ -316,16 +316,16 @@ void CWorld::jumpto_command( CPlayer * cp,const std::string & player )
 	}
 }
 
-void CWorld::save_command( CPlayer* cp)
+void World::save_command( Player* cp)
 {
     if ( !cp->hasGMRight(gmr_save) ) return;
 
-#ifdef CWorld_DEBUG
-    std::cout << "CWorld: Admin " << cp->name << " Server speichern " << std::endl;
+#ifdef World_DEBUG
+    std::cout << "World: Admin " << cp->name << " Server speichern " << std::endl;
 #endif
 
     PLAYERVECTOR::iterator pIterator;
-    CField* tempf;
+    Field* tempf;
     for ( pIterator = Players.begin(); pIterator < Players.end(); ++pIterator ) {
         // Felder auf denen Spieler stehen als frei markieren, damit die flags richtig gespeichert werden
         if ( GetPToCFieldAt( tempf, ( *pIterator )->pos.x, ( *pIterator )->pos.y, ( *pIterator )->pos.z ) ) {
@@ -347,7 +347,7 @@ void CWorld::save_command( CPlayer* cp)
     cp->sendMessage( tmessage );
 }
 
-void CWorld::talkto_command( CPlayer* cp, const std::string& ts)
+void World::talkto_command( Player* cp, const std::string& ts)
 {
     if ( !cp->hasGMRight(gmr_basiccommands) )return; //quit if the player hasn't the right
     char* tokenize = new char[ ts.length() + 1 ]; //Neuen char mit gr�e des strings anlegen
@@ -363,7 +363,7 @@ void CWorld::talkto_command( CPlayer* cp, const std::string& ts)
 #ifdef AdminCommands_DEBUG
             std::cout<<"Try to find Player: "<<player<<std::endl;
 #endif
-            CPlayer * tempPl = Players.find( player );
+            Player * tempPl = Players.find( player );
             if ( tempPl != NULL )
             {
 #ifdef AdminCommands_DEBUG
@@ -400,13 +400,13 @@ void CWorld::talkto_command( CPlayer* cp, const std::string& ts)
     } //end of ( token = strtok( tokenize , ",")
 }
 
-void CWorld::makeInvisible( CPlayer* cp ) {
+void World::makeInvisible( Player* cp ) {
 	if ( !cp->hasGMRight(gmr_visible) )return;
     cp->isinvisible = true;
     sendRemoveCharToVisiblePlayers( cp->id, cp->pos );
 }
 
-void CWorld::makeVisible( CPlayer* cp )
+void World::makeVisible( Player* cp )
 {
     if ( !cp->hasGMRight(gmr_visible) )return;
 	cp->isinvisible = false;
@@ -418,24 +418,24 @@ void CWorld::makeVisible( CPlayer* cp )
             cp->appearance = cp->appearance_alive();
         else
             cp->appearance = cp->appearance_dead();
-	std::vector < CPlayer* > ::iterator titerator;
+	std::vector < Player* > ::iterator titerator;
 
-	std::vector < CPlayer* > temp = Players.findAllCharactersInRangeOf(cp->pos.x, cp->pos.y, cp->pos.z, MAXVIEW );
+	std::vector < Player* > temp = Players.findAllCharactersInRangeOf(cp->pos.x, cp->pos.y, cp->pos.z, MAXVIEW );
 	for ( titerator = temp.begin(); titerator < temp.end(); ++titerator )
     { //Fr alle anderen Sichtbar machen
 		if ( cp != ( *titerator ) )
         {
-	        boost::shared_ptr<CBasicServerCommand>cmd( new CMoveAckTC( cp->id, cp->pos, PUSH, 0 ));
+	        boost::shared_ptr<BasicServerCommand>cmd( new MoveAckTC( cp->id, cp->pos, PUSH, 0 ));
             ( *titerator)->Connection->addCommand( cmd );
 		}
 	}
-    boost::shared_ptr<CBasicServerCommand>cmd( new CAppearanceTC( cp ) );
+    boost::shared_ptr<BasicServerCommand>cmd( new AppearanceTC( cp ) );
     cp->Connection->addCommand( cmd );
 }
 
-void CWorld::ForceIntroduce(CPlayer * cp, const std::string& ts ) {
+void World::ForceIntroduce(Player * cp, const std::string& ts ) {
     if ( !cp->hasGMRight(gmr_basiccommands) )return;
-	CPlayer * tempPl;
+	Player * tempPl;
 	tempPl = Players.find( ts );
 	if ( tempPl != NULL ) {
 		forceIntroducePlayer( tempPl, cp );
@@ -459,11 +459,11 @@ void CWorld::ForceIntroduce(CPlayer * cp, const std::string& ts ) {
 	}
 }
 
-void CWorld::ForceIntroduceAll(CPlayer * cp)
+void World::ForceIntroduceAll(Player * cp)
 {
     if ( !cp->hasGMRight(gmr_basiccommands) )return;
-    std::vector < CPlayer* > temp = Players.findAllCharactersInRangeOf( cp->pos.x, cp->pos.y, cp->pos.z, MAXVIEW );
-	std::vector < CPlayer* > ::iterator titerator;
+    std::vector < Player* > temp = Players.findAllCharactersInRangeOf( cp->pos.x, cp->pos.y, cp->pos.z, MAXVIEW );
+	std::vector < Player* > ::iterator titerator;
     for ( titerator = temp.begin(); titerator < temp.end(); ++titerator )
     { //Schleife durch alle Spieler in Sichtweise
 		if ( cp != ( *titerator ) )
@@ -473,7 +473,7 @@ void CWorld::ForceIntroduceAll(CPlayer * cp)
     }
 }
 
-void CWorld::informChar(CPlayer* cp) {
+void World::informChar(Player* cp) {
     if ( !cp->hasGMRight(gmr_basiccommands) )return;
 	if (cp->informCharacter) {
 		cp->setInformChar(false);
@@ -482,9 +482,9 @@ void CWorld::informChar(CPlayer* cp) {
 	}
 }
 
-void CWorld::teleportPlayerToOther( CPlayer* cp, std::string ts ) {
+void World::teleportPlayerToOther( Player* cp, std::string ts ) {
     if ( !cp->hasGMRight(gmr_warp) )return;
-	CPlayer * tempPl;
+	Player * tempPl;
 	tempPl = Players.find( ts );
 	if ( tempPl != NULL ) {
 		cp->Warp(tempPl->pos);
@@ -511,29 +511,29 @@ void CWorld::teleportPlayerToOther( CPlayer* cp, std::string ts ) {
 }
 
 
-void CWorld::forceLogoutOfAllPlayers() {
-   	CField* tempf;
+void World::forceLogoutOfAllPlayers() {
+   	Field* tempf;
 	PLAYERVECTOR::iterator playerIterator;
 
 	for ( playerIterator = Players.begin(); playerIterator < Players.end(); ++playerIterator ) {
 		if ( GetPToCFieldAt( tempf, ( *playerIterator )->pos.x, ( *playerIterator )->pos.y, ( *playerIterator )->pos.z ) ) {
 			tempf->SetPlayerOnField( false );
 		}
-        boost::shared_ptr<CBasicServerCommand>cmd( new CLogOutTC( SERVERSHUTDOWN ) );
+        boost::shared_ptr<BasicServerCommand>cmd( new LogOutTC( SERVERSHUTDOWN ) );
         (*playerIterator)->Connection->shutdownSend(cmd);
 		//( *playerIterator )->Connection->closeConnection();
-		CPlayerManager::get()->getLogOutPlayers().non_block_push_back( *playerIterator );
+		PlayerManager::get()->getLogOutPlayers().non_block_push_back( *playerIterator );
     }
 	Players.clear();
 }
 
 
-bool CWorld::forceLogoutOfPlayer(std::string name )
+bool World::forceLogoutOfPlayer(std::string name )
 {
- 	CPlayer * temp = Players.find( name );
+ 	Player * temp = Players.find( name );
 	if ( temp != NULL )
     {
-        boost::shared_ptr<CBasicServerCommand>cmd( new CLogOutTC( BYGAMEMASTER ) );
+        boost::shared_ptr<BasicServerCommand>cmd( new LogOutTC( BYGAMEMASTER ) );
         temp->Connection->shutdownSend(cmd);
 	//temp->Connection->closeConnection();
      	return true;
@@ -545,16 +545,16 @@ bool CWorld::forceLogoutOfPlayer(std::string name )
 }
 
 
-void CWorld::sendAdminAllPlayerData( CPlayer* &admin )
+void World::sendAdminAllPlayerData( Player* &admin )
 {
     if ( !admin->hasGMRight(gmr_basiccommands) )return;
-    boost::shared_ptr<CBasicServerCommand>cmd(new CAViewPlayersTC() );
+    boost::shared_ptr<BasicServerCommand>cmd(new AViewPlayersTC() );
     admin->Connection->addCommand( cmd );
 
 }
 
 
-void CWorld::welcomePlayer( CPlayer* cp )
+void World::welcomePlayer( Player* cp )
 {
 	if ( cp != NULL )
     {
@@ -565,7 +565,7 @@ void CWorld::welcomePlayer( CPlayer* cp )
 			for (PLAYERVECTOR::iterator it = Players.begin(); it!= Players.end(); it++)
 				if (!(*it)->isAdmin()) count++;
 			sprintf ( tempstring, welcome[ cp->getPlayerLanguage() ].c_str(), count );
-            boost::shared_ptr<CBasicServerCommand>cmd( new CSayTC( cp->pos.x, cp->pos.y, cp->pos.z, std::string(tempstring) ));
+            boost::shared_ptr<BasicServerCommand>cmd( new SayTC( cp->pos.x, cp->pos.y, cp->pos.z, std::string(tempstring) ));
             cp->Connection->addCommand(cmd);
 #ifdef LOG_TALK
 			talkfile << "Admin sagt: " << std::string( tempstring ) << std::endl;
@@ -576,7 +576,7 @@ void CWorld::welcomePlayer( CPlayer* cp )
 }
 
 // !warp_to X<,| >Y[<,| >Z] || !warp_to Z
-void CWorld::warpto_command( CPlayer* cp, const std::string& ts )
+void World::warpto_command( Player* cp, const std::string& ts )
 {
     if ( !cp->hasGMRight(gmr_warp) )return;
 	position warpto;
@@ -619,11 +619,11 @@ void CWorld::warpto_command( CPlayer* cp, const std::string& ts )
 
 
 // !summon <player>
-void CWorld::summon_command( CPlayer* cp, const std::string& tplayer ) {
+void World::summon_command( Player* cp, const std::string& tplayer ) {
     if ( !cp->hasGMRight(gmr_summon) )return;
 
 	std::cout << "Summoning player: " << tplayer << std::endl;
-	CPlayer * tempPl;
+	Player * tempPl;
 	tempPl = Players.find( tplayer );
 	if ( tempPl != NULL ) {
 		std::cout << "Warping player: " << tempPl->name << std::endl;
@@ -656,7 +656,7 @@ void CWorld::summon_command( CPlayer* cp, const std::string& tplayer ) {
 
 
 // !prison <time> <player>
-void CWorld::prison_command( CPlayer* cp, const std::string& timeplayer ) {
+void World::prison_command( Player* cp, const std::string& timeplayer ) {
     if ( !cp->hasGMRight(gmr_prison) )return;
 
 	std::cout << cp->name << " prisoning player: " << timeplayer << std::endl;
@@ -680,7 +680,7 @@ void CWorld::prison_command( CPlayer* cp, const std::string& timeplayer ) {
                 std::stringstream ssz(configOptions["jail_z"]);
                 ssz >> warpto.z;
 
-				CPlayer * tempPl;
+				Player * tempPl;
 				tempPl = Players.find( tplayer );
 				if ( tempPl == NULL ) {
 					TYPE_OF_CHARACTER_ID tid;
@@ -737,7 +737,7 @@ void CWorld::prison_command( CPlayer* cp, const std::string& timeplayer ) {
 
 
 // !ban <time> [m|h|d] <player>
-void CWorld::ban_command( CPlayer* cp, const std::string& timeplayer ) {
+void World::ban_command( Player* cp, const std::string& timeplayer ) {
     if ( !cp->hasGMRight(gmr_ban) )return;
 
 	std::cout << cp->name << " banning player: " << timeplayer << std::endl;
@@ -779,7 +779,7 @@ void CWorld::ban_command( CPlayer* cp, const std::string& timeplayer ) {
 					multiplier = 86400;
 				}
 
-				CPlayer * tempPl;
+				Player * tempPl;
 				tempPl = Players.find( tplayer );
 				if ( tempPl == NULL ) {
 					TYPE_OF_CHARACTER_ID tid;
@@ -821,10 +821,10 @@ void CWorld::ban_command( CPlayer* cp, const std::string& timeplayer ) {
 
 }
 
-void CWorld::banbyname( CPlayer* cp, short int banhours, std::string tplayer ) {
+void World::banbyname( Player* cp, short int banhours, std::string tplayer ) {
     if ( !cp->hasGMRight(gmr_ban) )return;
 
-	CPlayer * tempPl;
+	Player * tempPl;
 	tempPl = Players.find( tplayer );
 
 	if ( tempPl != NULL ) {
@@ -843,9 +843,9 @@ void CWorld::banbyname( CPlayer* cp, short int banhours, std::string tplayer ) {
 
 }
 
-void CWorld::banbynumber( CPlayer* cp, short int banhours, TYPE_OF_CHARACTER_ID tid ) {
+void World::banbynumber( Player* cp, short int banhours, TYPE_OF_CHARACTER_ID tid ) {
     if ( !cp->hasGMRight(gmr_ban) )return;
-	CPlayer * tempPl = NULL;
+	Player * tempPl = NULL;
 
 	PLAYERVECTOR::iterator playerIterator;
 
@@ -873,7 +873,7 @@ void CWorld::banbynumber( CPlayer* cp, short int banhours, TYPE_OF_CHARACTER_ID 
 }
 
 
-void CWorld::ban( CPlayer* cp, int bantime, TYPE_OF_CHARACTER_ID gmid ) {
+void World::ban( Player* cp, int bantime, TYPE_OF_CHARACTER_ID gmid ) {
     if ( bantime >= 0 ) {
 		if ( bantime > 0 ) {
 			cp->SetStatus( BANNEDFORTIME );       // Banned for time
@@ -896,7 +896,7 @@ void CWorld::ban( CPlayer* cp, int bantime, TYPE_OF_CHARACTER_ID gmid ) {
 
 
 // !who [player]
-void CWorld::who_command( CPlayer* cp, const std::string& tplayer ) {
+void World::who_command( Player* cp, const std::string& tplayer ) {
     if ( !cp->hasGMRight(gmr_basiccommands) )return;
 
 	if (tplayer == "") {
@@ -920,7 +920,7 @@ void CWorld::who_command( CPlayer* cp, const std::string& tplayer ) {
 		}
 	} else {
 
-		CPlayer * tempPl;
+		Player * tempPl;
 		tempPl = Players.find( tplayer );
 		if ( tempPl == NULL ) {
 			TYPE_OF_CHARACTER_ID tid;
@@ -971,7 +971,7 @@ void CWorld::who_command( CPlayer* cp, const std::string& tplayer ) {
 }
 
 
-void CWorld::tile_command( CPlayer* cp, const std::string& ttilenumber ) {
+void World::tile_command( Player* cp, const std::string& ttilenumber ) {
     if ( !cp->hasGMRight(gmr_settiles) )return;
 	short int tilenumber = 0;
 	if ( ReadField( ttilenumber.c_str(), tilenumber ) ) {
@@ -981,11 +981,11 @@ void CWorld::tile_command( CPlayer* cp, const std::string& ttilenumber ) {
 }
 
 
-void CWorld::setNextTile( CPlayer* cp, unsigned char tilenumber ) {
+void World::setNextTile( Player* cp, unsigned char tilenumber ) {
 
 	position tpos = cp->getFrontalPosition();
 
-	CField* tempf;
+	Field* tempf;
 	if ( GetPToCFieldAt(tempf, tpos.x, tpos.y, tpos.z) )
     {
 		tempf->setTileId( tilenumber );
@@ -999,7 +999,7 @@ void CWorld::setNextTile( CPlayer* cp, unsigned char tilenumber ) {
 }
 
 
-void CWorld::turtleon_command( CPlayer* cp, const std::string& ttilenumber ) {
+void World::turtleon_command( Player* cp, const std::string& ttilenumber ) {
     if ( !cp->hasGMRight(gmr_settiles) )return;
 	short int tilenumber = 0;
 
@@ -1010,25 +1010,25 @@ void CWorld::turtleon_command( CPlayer* cp, const std::string& ttilenumber ) {
 }
 
 
-void CWorld::turtleoff_command( CPlayer* cp ) {
+void World::turtleoff_command( Player* cp ) {
     if ( !cp->hasGMRight(gmr_settiles) )return;
 	cp->setTurtleActive( false );
 }
 
 
-void CWorld::clippingon_command( CPlayer* cp ) {
+void World::clippingon_command( Player* cp ) {
     if ( !cp->hasGMRight(gmr_clipping) )return;
 	cp->setClippingActive( true );
 }
 
 
-void CWorld::clippingoff_command( CPlayer* cp ) {
+void World::clippingoff_command( Player* cp ) {
     if ( !cp->hasGMRight(gmr_clipping) )return;
 	cp->setClippingActive( false );
 }
 
 
-void CWorld::what_command( CPlayer* cp ) {
+void World::what_command( Player* cp ) {
 	position front = cp->getFrontalPosition();
 
     cp->sendMessage( "Facing:" );
@@ -1036,7 +1036,7 @@ void CWorld::what_command( CPlayer* cp ) {
 
     message << "- Position (" << front.x << ", " << front.y << ", " << front.z << ")";
     cp->sendMessage( message.str() );
-	CField* tempf;
+	Field* tempf;
 	if ( GetPToCFieldAt(tempf, front) ) {
         message.str("");
 
@@ -1057,7 +1057,7 @@ void CWorld::what_command( CPlayer* cp ) {
 }
 
 
-void CWorld::playersave_command( CPlayer* cp ) {
+void World::playersave_command( Player* cp ) {
     if ( !cp->hasGMRight(gmr_save) )return;
 
 	PLAYERVECTOR::iterator pIterator;
@@ -1078,7 +1078,7 @@ void CWorld::playersave_command( CPlayer* cp ) {
 
 
 // !teleport X<,| >Y[<,| >Z]
-void CWorld::teleport_command( CPlayer* cp, const std::string& ts ) {
+void World::teleport_command( Player* cp, const std::string& ts ) {
 
     if ( !cp->hasGMRight(gmr_warp) )return;
 
@@ -1112,7 +1112,7 @@ void CWorld::teleport_command( CPlayer* cp, const std::string& ts ) {
 }
 
 
-void CWorld::gmhelp_command( CPlayer* cp ) {
+void World::gmhelp_command( Player* cp ) {
     if ( !cp->hasGMRight(gmr_basiccommands) )return;
 
 	std::string tmessage = " <> - parameter.  [] - optional.  | = choice.  () = shortcut";
@@ -1230,7 +1230,7 @@ void CWorld::gmhelp_command( CPlayer* cp ) {
 }
 
 //! parse GMCommands of the form !<string1> <string2> and process them
-bool CWorld::parseGMCommands(CPlayer* cp, const std::string& text) {
+bool World::parseGMCommands(Player* cp, const std::string& text) {
 
 	// did we find a command?
 	bool done = false;
@@ -1262,26 +1262,26 @@ bool CWorld::parseGMCommands(CPlayer* cp, const std::string& text) {
 
 }
 
-extern CMonsterTable* MonsterDescriptions;
+extern MonsterTable* MonsterDescriptions;
 
-void reportError( CPlayer* cp, std::string msg )
+void reportError( Player* cp, std::string msg )
 {
     std::cerr << "ERROR: " << msg << std::endl;
     cp->sendMessage( "ERROR: " + msg );
 }
 
-void reportScriptError( CPlayer* cp, std::string serverscript, std::string what )
+void reportScriptError( Player* cp, std::string serverscript, std::string what )
 {
     reportError( cp, "Failed to reload server." + serverscript + ": " + what );
 }
 
-void reportTableError( CPlayer* cp, std::string dbtable )
+void reportTableError( Player* cp, std::string dbtable )
 {
     reportError( cp, "Failed to reload DB table: " + dbtable );
 }
 
 
-bool CWorld::reload_defs( CPlayer * cp ) {
+bool World::reload_defs( Player * cp ) {
     if ( !cp->hasGMRight(gmr_reload) ) return false;
 
     sendMessageToAllPlayers( "### The server is reloading, this may cause some lag ###" );
@@ -1289,23 +1289,23 @@ bool CWorld::reload_defs( CPlayer * cp ) {
 	std::string server;
 	bool ok = true;
 
-	CCommonObjectTable* CommonItems_temp = 0;
-	CNamesObjectTable* ItemNames_temp = 0;
-	CWeaponObjectTable* WeaponItems_temp = 0;
-	CArmorObjectTable* ArmorItems_temp = 0;
-	CContainerObjectTable* ContainerItems_temp = 0;
-	CTilesModificatorTable* TilesModItems_temp = 0;
-	CMonsterTable* MonsterDescriptions_temp = 0;
-	CTilesTable* Tiles_temp = 0;
-	CSpellTable* Spells_temp = 0;
-	CTriggerTable* Trigger_temp = 0;
-	CMonsterAttackTable* MonsterAttacks_temp = 0;
-	CNaturalArmorTable* NaturalArmors_temp = 0;
-    CScheduledScriptsTable* ScheduledScriptsTable_temp = 0;
-    CLongTimeEffectTable * LongTimeEffects_temp = 0;
-    CRaceSizeTable * RaceSizes_temp = 0;
+	CommonObjectTable* CommonItems_temp = 0;
+	NamesObjectTable* ItemNames_temp = 0;
+	WeaponObjectTable* WeaponItems_temp = 0;
+	ArmorObjectTable* ArmorItems_temp = 0;
+	ContainerObjectTable* ContainerItems_temp = 0;
+	TilesModificatorTable* TilesModItems_temp = 0;
+	MonsterTable* MonsterDescriptions_temp = 0;
+	TilesTable* Tiles_temp = 0;
+	SpellTable* Spells_temp = 0;
+	TriggerTable* Trigger_temp = 0;
+	MonsterAttackTable* MonsterAttacks_temp = 0;
+	NaturalArmorTable* NaturalArmors_temp = 0;
+    ScheduledScriptsTable* ScheduledScripts_temp = 0;
+    LongTimeEffectTable * LongTimeEffects_temp = 0;
+    RaceSizeTable * RaceSizes_temp = 0;
 
-	CommonItems_temp = new CCommonObjectTable();
+	CommonItems_temp = new CommonObjectTable();
 	if (CommonItems_temp == NULL || !CommonItems_temp->dataOK())
     {
         reportTableError( cp, "common" );
@@ -1313,7 +1313,7 @@ bool CWorld::reload_defs( CPlayer * cp ) {
     }
 
 	if (ok) {
-		ItemNames_temp = new CNamesObjectTable();
+		ItemNames_temp = new NamesObjectTable();
 		if (ItemNames_temp == NULL || !ItemNames_temp->dataOK())
         {
             reportTableError( cp, "itemname" );
@@ -1322,7 +1322,7 @@ bool CWorld::reload_defs( CPlayer * cp ) {
 	}
 
     if (ok) {
-		RaceSizes_temp = new CRaceSizeTable();
+		RaceSizes_temp = new RaceSizeTable();
 		if (RaceSizes_temp == NULL || !RaceSizes_temp->isDataOk())
         {
             reportTableError( cp, "raceattr" );
@@ -1331,7 +1331,7 @@ bool CWorld::reload_defs( CPlayer * cp ) {
 	}
 
 	if (ok) {
-		WeaponItems_temp = new CWeaponObjectTable();
+		WeaponItems_temp = new WeaponObjectTable();
 		if (WeaponItems_temp == NULL || !WeaponItems_temp->dataOK())
         {
             reportTableError( cp, "weapon" );
@@ -1340,7 +1340,7 @@ bool CWorld::reload_defs( CPlayer * cp ) {
 	}
 
 	if (ok) {
-		ArmorItems_temp = new CArmorObjectTable();
+		ArmorItems_temp = new ArmorObjectTable();
 		if (ArmorItems_temp == NULL || !ArmorItems_temp->dataOK())
         {
             reportTableError( cp, "armor" );
@@ -1349,7 +1349,7 @@ bool CWorld::reload_defs( CPlayer * cp ) {
 	}
 
 	if (ok) {
-		ContainerItems_temp = new CContainerObjectTable();
+		ContainerItems_temp = new ContainerObjectTable();
 		if (ContainerItems_temp == NULL || !ContainerItems_temp->dataOK())
         {
             reportTableError( cp, "container" );
@@ -1358,7 +1358,7 @@ bool CWorld::reload_defs( CPlayer * cp ) {
 	}
 
 	if (ok) {
-		TilesModItems_temp = new CTilesModificatorTable();
+		TilesModItems_temp = new TilesModificatorTable();
 		if (TilesModItems_temp == NULL || !TilesModItems_temp->dataOK())
         {
             reportTableError( cp, "tilesmodificators" );
@@ -1367,7 +1367,7 @@ bool CWorld::reload_defs( CPlayer * cp ) {
 	}
 
 	if (ok) {
-		Tiles_temp = new   CTilesTable();
+		Tiles_temp = new   TilesTable();
 		if (Tiles_temp == NULL || !Tiles_temp->dataOK())
         {
             reportTableError( cp, "tiles" );
@@ -1376,7 +1376,7 @@ bool CWorld::reload_defs( CPlayer * cp ) {
 	}
 
 	if (ok) {
-		MonsterDescriptions_temp = new CMonsterTable();
+		MonsterDescriptions_temp = new MonsterTable();
 		if (MonsterDescriptions_temp == NULL || !MonsterDescriptions_temp->dataOK())
         {
             reportTableError( cp, "monster" );
@@ -1385,7 +1385,7 @@ bool CWorld::reload_defs( CPlayer * cp ) {
 	}
 
 	if (ok) {
-		Spells_temp = new CSpellTable();
+		Spells_temp = new SpellTable();
 		if (Spells_temp == NULL || !Spells_temp->isDataOK() )
         {
             reportTableError( cp, "spells" );
@@ -1394,7 +1394,7 @@ bool CWorld::reload_defs( CPlayer * cp ) {
 	}
 
 	if (ok) {
-		Trigger_temp = new CTriggerTable();
+		Trigger_temp = new TriggerTable();
 		if (Trigger_temp == NULL || !Trigger_temp->isDataOK() )
         {
             reportTableError( cp, "triggerfields" );
@@ -1404,7 +1404,7 @@ bool CWorld::reload_defs( CPlayer * cp ) {
 
     if (ok)
     {
-        LongTimeEffects_temp = new CLongTimeEffectTable();
+        LongTimeEffects_temp = new LongTimeEffectTable();
         if ( LongTimeEffects_temp == NULL || !LongTimeEffects->dataOK() )
         {
             reportTableError( cp, "longtimeeffects" );
@@ -1413,7 +1413,7 @@ bool CWorld::reload_defs( CPlayer * cp ) {
     }
 
 	if (ok) {
-	    MonsterAttacks_temp = new CMonsterAttackTable();
+	    MonsterAttacks_temp = new MonsterAttackTable();
 	    if (MonsterAttacks_temp == NULL || !MonsterAttacks_temp->isDataOk() )
         {
             reportTableError( cp, "monsterattack" );
@@ -1422,7 +1422,7 @@ bool CWorld::reload_defs( CPlayer * cp ) {
     }
 
     if (ok) {
-        NaturalArmors_temp = new CNaturalArmorTable();
+        NaturalArmors_temp = new NaturalArmorTable();
         if (NaturalArmors_temp == NULL || !NaturalArmors_temp->isDataOk() )
         {
             reportTableError( cp, "naturalarmor" );
@@ -1432,9 +1432,9 @@ bool CWorld::reload_defs( CPlayer * cp ) {
 
     if (ok) {
         std::cerr << "Attempting to reload Scheduler" << std::endl;
-        ScheduledScriptsTable_temp = new CScheduledScriptsTable();
+        ScheduledScripts_temp = new ScheduledScriptsTable();
         std::cerr << "Created new Scheduler" << std::endl;
-        if (ScheduledScriptsTable_temp == NULL || !ScheduledScriptsTable_temp->dataOK() )
+        if (ScheduledScripts_temp == NULL || !ScheduledScripts_temp->dataOK() )
         {
             reportTableError( cp, "scheduledscripts" );
 		    ok = false;
@@ -1467,8 +1467,8 @@ bool CWorld::reload_defs( CPlayer * cp ) {
 		    delete NaturalArmors_temp;
 		if (MonsterAttacks_temp != NULL)
             delete MonsterAttacks_temp;
-        if (ScheduledScriptsTable_temp != NULL)
-            delete ScheduledScriptsTable_temp;
+        if (ScheduledScripts_temp != NULL)
+            delete ScheduledScripts_temp;
         if (LongTimeEffects_temp != NULL)
             delete LongTimeEffects_temp;
         if (RaceSizes_temp != NULL)
@@ -1479,7 +1479,7 @@ bool CWorld::reload_defs( CPlayer * cp ) {
 	} else {
 		// if everything went well, delete old tables and set up new tables
         //Mutex für login logout sperren so das aktuell keiner mehr einloggen kann
-        CPlayerManager::get()->setLoginLogout(true);
+        PlayerManager::get()->setLoginLogout(true);
 		delete CommonItems;
 		CommonItems = CommonItems_temp;
 		delete ItemNames;
@@ -1504,8 +1504,8 @@ bool CWorld::reload_defs( CPlayer * cp ) {
 		NaturalArmors = NaturalArmors_temp;
 		delete MonsterAttacks;
 		MonsterAttacks = MonsterAttacks_temp;
-        delete ScheduledScriptsTable;
-        ScheduledScriptsTable = ScheduledScriptsTable_temp;
+        delete scheduledScripts;
+        scheduledScripts = ScheduledScripts_temp;
         delete RaceSizes;
         RaceSizes = RaceSizes_temp;
         delete LongTimeEffects;
@@ -1513,11 +1513,11 @@ bool CWorld::reload_defs( CPlayer * cp ) {
         // delete scriptVariables;
         // scriptVariables = ScriptVar_temp;
         //Mutex entsperren.
-        CPlayerManager::get()->setLoginLogout(false);
+        PlayerManager::get()->setLoginLogout(false);
 		//Reload the standard Fighting script
         try
         {
-			boost::shared_ptr<CLuaWeaponScript> tmpScript(new CLuaWeaponScript( "server.standardfighting" ));
+			boost::shared_ptr<LuaWeaponScript> tmpScript(new LuaWeaponScript( "server.standardfighting" ));
 			standardFightingScript = tmpScript;
         }
         catch (ScriptException &e)
@@ -1528,7 +1528,7 @@ bool CWorld::reload_defs( CPlayer * cp ) {
 
         try
         {
-            boost::shared_ptr<CLuaLookAtPlayerScript>tmpScript(new CLuaLookAtPlayerScript( "server.playerlookat" ));
+            boost::shared_ptr<LuaLookAtPlayerScript>tmpScript(new LuaLookAtPlayerScript( "server.playerlookat" ));
             lookAtPlayerScript = tmpScript;
         }
         catch(ScriptException &e)
@@ -1539,7 +1539,7 @@ bool CWorld::reload_defs( CPlayer * cp ) {
 
         try
         {
-            boost::shared_ptr<CLuaLoginScript>tmpScript(new CLuaLoginScript( "server.login" ));
+            boost::shared_ptr<LuaLoginScript>tmpScript(new LuaLoginScript( "server.login" ));
             loginScript = tmpScript;
         }
         catch(ScriptException &e)
@@ -1550,7 +1550,7 @@ bool CWorld::reload_defs( CPlayer * cp ) {
 
         try
         {
-            boost::shared_ptr<CLuaLearnScript>tmpScript(new CLuaLearnScript( "server.learn" ));
+            boost::shared_ptr<LuaLearnScript>tmpScript(new LuaLearnScript( "server.learn" ));
             learnScript = tmpScript;
         }
         catch(ScriptException &e)
@@ -1562,7 +1562,7 @@ bool CWorld::reload_defs( CPlayer * cp ) {
 
         try
         {
-			boost::shared_ptr<CLuaReloadScript> tmpScript(new CLuaReloadScript( "server.reload_defs" ));
+			boost::shared_ptr<LuaReloadScript> tmpScript(new LuaReloadScript( "server.reload_defs" ));
 			bool onReloadOk = tmpScript->onReload();
             if (!onReloadOk) reportError( cp, "server.reload_defs.onReload returned false" );
             ok = ok && onReloadOk;
@@ -1575,7 +1575,7 @@ bool CWorld::reload_defs( CPlayer * cp ) {
 
         try
         {
-            boost::shared_ptr<CLuaDepotScript>tmpScript(new CLuaDepotScript( "server.depot" ));
+            boost::shared_ptr<LuaDepotScript>tmpScript(new LuaDepotScript( "server.depot" ));
             depotScript = tmpScript;
         }
         catch(ScriptException &e)
@@ -1588,16 +1588,16 @@ bool CWorld::reload_defs( CPlayer * cp ) {
 
 
 	if (ok) cp->sendMessage( " *** Definitions reloaded *** " );
-	else cp->sendMessage( "CRITICAL ERROR: Failure while reloading definitions" );
+	else cp->sendMessage( "RITICAL ERROR: Failure while reloading definitions" );
 	return ok;
 }
 
 
-bool CWorld::reload_tables( CPlayer * cp ) {
+bool World::reload_tables( Player * cp ) {
 
     scriptVariables->save();
 
-    CLuaScript::shutdownLua();
+    LuaScript::shutdownLua();
 
     bool ok = reload_defs( cp );
 
@@ -1610,7 +1610,7 @@ bool CWorld::reload_tables( CPlayer * cp ) {
 
 		try
 	        {
-			boost::shared_ptr<CLuaReloadScript> tmpScript(new CLuaReloadScript( "server.reload_tables" ));
+			boost::shared_ptr<LuaReloadScript> tmpScript(new LuaReloadScript( "server.reload_tables" ));
 			ok = tmpScript->onReload();
 	        }
 	        catch (ScriptException &e)
@@ -1626,21 +1626,21 @@ bool CWorld::reload_tables( CPlayer * cp ) {
 
 
 // enable/disable spawnpoints
-void set_spawn_command( CWorld*, CPlayer* player, const std::string& in) {
+void set_spawn_command( World*, Player* player, const std::string& in) {
     if ( !player->hasGMRight(gmr_reload) )return;
 	std::cout << "set spawn to '" << in << "' by: " << player->name << std::endl;
 	configOptions["do_spawn"] = in;
 }
 
 
-void import_maps_command( CWorld* world, CPlayer* player, const std::string& param )
+void import_maps_command( World* world, Player* player, const std::string& param )
 {
     if ( !player->hasGMRight(gmr_import) )return;
 	world->load_maps();
 }
 
 // create a new area starting at x,y,z with dimension w,h, filltile ft (create_area x y z w h ft)
-void create_area_command( CWorld* world, CPlayer* player,const std::string& params) {
+void create_area_command( World* world, Player* player,const std::string& params) {
     if ( !player->hasGMRight(gmr_import) )return;
 	std::stringstream ss(params);
 	int x,y,z,w,h, filltile;
@@ -1658,11 +1658,11 @@ void create_area_command( CWorld* world, CPlayer* player,const std::string& para
 		return;
 	}
 
-	CMap* tempmap = new CMap(w,h);
+	Map* tempmap = new Map(w,h);
 	bool disappear=true;
 	tempmap->Init(x, y, z, disappear);
 
-	CField* tempf;
+	Field* tempf;
 
 	for (int _x=0; _x<w; ++_x)
 		for (int _y=0; _y<h; ++_y) {
@@ -1681,7 +1681,7 @@ void create_area_command( CWorld* world, CPlayer* player,const std::string& para
 
 }
 
-void set_login( CWorld* world, CPlayer* player, const std::string& st) {
+void set_login( World* world, Player* player, const std::string& st) {
     if ( !player->hasGMRight(gmr_loginstate) )return;
 	configOptions["disable_login"] = st;
 	std::cout << "nologin set to " << st << std::endl;
@@ -1689,11 +1689,11 @@ void set_login( CWorld* world, CPlayer* player, const std::string& st) {
 	player->sendMessage( tmessage );
 }
 
-bool CWorld::exportMaps(CPlayer* cp) {
+bool World::exportMaps(Player* cp) {
     if ( !cp->hasGMRight(gmr_import) )return false;
 	std::string exportdir = directory + std::string( MAPDIR ) + "export/";
     int16_t minX, minY;
-	for (CMapVector::iterator mapIt = maps.begin(); mapIt != maps.end(); ++mapIt) {
+	for (MapVector::iterator mapIt = maps.begin(); mapIt != maps.end(); ++mapIt) {
         minX = (*mapIt)->GetMinX();
         minY = (*mapIt)->GetMinY();
 		// create base filename
@@ -1723,7 +1723,7 @@ bool CWorld::exportMaps(CPlayer* cp) {
         short int x, y;
 		for (y = minY; y <= (*mapIt)->GetMaxY(); ++y) {
 			for (x = minX; x <= (*mapIt)->GetMaxX(); ++x) {
-				CField field;
+				Field field;
 				if ((*mapIt)->GetCFieldAt(field, x, y)) {
 					fieldsf << x-minX << ";" << y-minY << ";" << field.getTileCode() << ";" << field.getMusicId() << ";0" << std::endl;
                     if( field.IsWarpField() )
@@ -1754,7 +1754,7 @@ bool CWorld::exportMaps(CPlayer* cp) {
 	return true;
 }
 
-void CWorld::removeTeleporter( CPlayer* cp, const std::string& ts ) {
+void World::removeTeleporter( Player* cp, const std::string& ts ) {
     if ( !cp->hasGMRight(gmr_warpfields) )return;
 	position teleport;
 	char* tokenize = new char[ ts.length() + 1 ];
@@ -1784,7 +1784,7 @@ void CWorld::removeTeleporter( CPlayer* cp, const std::string& ts ) {
 	delete [] tokenize;
 }
 
-void CWorld::showWarpFieldsInRange( CPlayer* cp, const std::string& ts ) {
+void World::showWarpFieldsInRange( Player* cp, const std::string& ts ) {
     if ( !cp->hasGMRight(gmr_warpfields) )return;
 	short int range = 0;
 	if ( ReadField( ts.c_str(), range ) ) {

@@ -17,13 +17,13 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CCHARACTER_HPP
-#define CCHARACTER_HPP
+#ifndef CHARACTER_HPP
+#define CHARACTER_HPP
 
 #include <stdexcept>
 
-class CWaypointList;
-class CField;
+class WaypointList;
+class Field;
 
 /**
 * thrown if a creature can't be set due to space problems
@@ -40,7 +40,7 @@ class NoSpace : public std::runtime_error
 /**
 * forward declarations
 */
-class CWorld;
+class World;
 
 /**
 * enum which defines the magic type of an character
@@ -55,7 +55,7 @@ enum magic_type
 };
 
 //falls nicht auskommentiert, werden mehr Bildschirmausgaben gemacht:
-/* #define CCharacter_DEBUG */
+/* #define Character_DEBUG */
 
 #include <string>
 #include <fstream>
@@ -72,17 +72,17 @@ enum magic_type
 #include "LongTimeCharacterEffects.hpp"
 
 // some forward declarations for classes used exclusively as pointers to save compilation time
-class CContainer;
+class Container;
 
 
 /**
 * @ingroup Scriptclasses
 * the definition of an character
 * is noncopyable 
-* cnpc, CMonster, CPlayer are from this type
+* cnpc, Monster, Player are from this type
 * exported to lua
 */
-class CCharacter : private boost::noncopyable {
+class Character : private boost::noncopyable {
 
 	public:
         
@@ -103,9 +103,9 @@ class CCharacter : private boost::noncopyable {
         */
 		enum character_type 
         { 
-            player = 0, /**< the character is from type CPlayer */
-            monster = 1, /**< the character is from type CMonster */
-			npc = 2 /**< the character is from Type CNPC */ 
+            player = 0, /**< the character is from type Player */
+            monster = 1, /**< the character is from type Monster */
+			npc = 2 /**< the character is from Type NPC */ 
         };
         
 
@@ -307,9 +307,9 @@ class CCharacter : private boost::noncopyable {
         /**
         *the effects which are currently working on the character
         */
-        CLongTimeCharacterEffects * effects;
+        LongTimeCharacterEffects * effects;
 		
-		CWaypointList * waypoints;
+		WaypointList * waypoints;
         
         /**
         *======================end of group Lua Variables===================
@@ -393,7 +393,7 @@ class CCharacter : private boost::noncopyable {
 		inline unsigned short get_face_to() { return faceto; }
 
         /**
-        * determines if the current char is a admin or not (use only in CPlayer)
+        * determines if the current char is a admin or not (use only in Player)
         * <b>Lua: [:isAdmin]</b> 
         * @return true if the char is an admin otherwise false
         */                                                       
@@ -443,7 +443,7 @@ class CCharacter : private boost::noncopyable {
         inline void setPoisonValue(short int value) { poisonvalue = value; }
         
         /**
-        * starts a new longtime action for this character (overloaded in CPlayer)
+        * starts a new longtime action for this character (overloaded in Player)
         * <b>Lua: [:startAction]</b>         
         * @param wait time to wait until the action is successfull
         * @param ani the animation which should be shown for this action, if not set this value is 0
@@ -454,32 +454,32 @@ class CCharacter : private boost::noncopyable {
         inline virtual void startAction(unsigned short int wait, unsigned short int ani=0, unsigned short int redoani=0, unsigned short int sound=0, unsigned short int redosound=0) { /**nothing to do here**/ }
         
         /**
-        * aborts the last long time action (overloaded in CPlayer)
+        * aborts the last long time action (overloaded in Player)
         * <b>Lua: [:abortAction]</b>         
         */
         inline virtual void abortAction() {/**nothing to do only for players**/ }
         
         /**
         * lets sucessfull complete a long time action for this character
-        * overloaded in CPlayer
+        * overloaded in Player
         * <b>Lua: [:successAction]</b>         
         */
         inline virtual void successAction() { /**nothing to do only for player**/}
         
         /**
         * a long time action was disturbed by someone
-        * overloaded in CPlayer
+        * overloaded in Player
         * <b>Lua: [:actionDisturbed]</b>         
         * @param disturber the character which has dirsturbed this action
         */
-        inline virtual void actionDisturbed(CCharacter * disturber) { /**nothing to do only for player**/ }
+        inline virtual void actionDisturbed(Character * disturber) { /**nothing to do only for player**/ }
         
         /**
         *changes the source of the last action of this character
         *<b>Lua: [:changeSource]</b>
         *@param cc source is a character the pointer to this character
         */
-        inline virtual void changeSource( CCharacter * cc ){ /**nothing to do only for player**/ }
+        inline virtual void changeSource( Character * cc ){ /**nothing to do only for player**/ }
         
         /**
         *changes the source of the last action for this character
@@ -506,7 +506,7 @@ class CCharacter : private boost::noncopyable {
         *<b>Lua: [:changeTarget]</b>
         *@param cc target is a character the pointer to this character
         */
-        inline virtual void changeTarget( CCharacter * cc ){ /**nothing to do only for player**/ }
+        inline virtual void changeTarget( Character * cc ){ /**nothing to do only for player**/ }
         
         /**
         *changes the Target of the last action for this character.
@@ -652,7 +652,7 @@ class CCharacter : private boost::noncopyable {
         * <b>Lua: [:getBackPack]</b>        
         * @return pointer to the current backpack of the character
         */
-        CContainer* GetBackPack();
+        Container* GetBackPack();
         
         /**
         * returns a pointer to a depot of the character
@@ -660,7 +660,7 @@ class CCharacter : private boost::noncopyable {
         * @param depotid the id of the depot from which we want the pointer
         * @return pointer to this depot
         */
-        CContainer* GetDepot(uint32_t depotid);
+        Container* GetDepot(uint32_t depotid);
 
         /**
         * returns a list of all items which the char has with a specific id
@@ -807,7 +807,7 @@ class CCharacter : private boost::noncopyable {
         * @param distancemetric the number of fields around the character which we want to check
         * @return true if cc is < distancemetric fields away from this character otherwise false
         */
-		bool isInRange( CCharacter* cc, unsigned short int distancemetric);
+		bool isInRange( Character* cc, unsigned short int distancemetric);
 
         /**
         * returns the distance of this character and another character in fields
@@ -815,7 +815,7 @@ class CCharacter : private boost::noncopyable {
         * @param cc the character to which we want to get the distance
         * @return the number of fields between cc and this character
         */
-		unsigned short int distanceMetric( CCharacter* cc);
+		unsigned short int distanceMetric( Character* cc);
 
         /**
         * checks if the character is in range to a position
@@ -898,14 +898,14 @@ class CCharacter : private boost::noncopyable {
 		* @param checkrange the range which should be checked (large numbers will decrease server speed dramatically)
 		* @return true if there ist a possible step otherwise false.
 		*/
-		bool getNextStepDir(position tpos, int checkrange, CCharacter::direction& dir);
+		bool getNextStepDir(position tpos, int checkrange, Character::direction& dir);
 		
-		std::list<CCharacter::direction> getStepList(position tpos, int checkrange);
+		std::list<Character::direction> getStepList(position tpos, int checkrange);
 		
 		luabind::object getLuaStepList(position tpos, int checkrange);
         
 		/**
-        * starts a menu for this character (overloaded in CPlayer)
+        * starts a menu for this character (overloaded in Player)
         * <b>Lua: [:startPlayerMenu]</b>        
         * @param menu a menu struct which holds all the menu entrys
         */
@@ -1032,7 +1032,7 @@ class CCharacter : private boost::noncopyable {
         * @param target the player to which the appreance should be sended
         * @param always if false only send the appearance if the char is not known to the client
         */
-        void updateAppearanceForPlayer(CPlayer * target, bool always);
+        void updateAppearanceForPlayer(Player * target, bool always);
         
         void performAnimation( uint8_t animID );
 
@@ -1180,8 +1180,8 @@ chicken=62
         */        
 		struct base_attributes
         {
-			CCharacter::sex_type truesex; /**< true sex of the character */
-			CCharacter::sex_type sex; /**< current (temporary) sex of the character */
+			Character::sex_type truesex; /**< true sex of the character */
+			Character::sex_type sex; /**< current (temporary) sex of the character */
             uint16_t time_sex; /**< time value in seconds before sex is changed back to the true value */
 
             unsigned short int trueage; /**< true age of the character */
@@ -1284,24 +1284,24 @@ chicken=62
 		/**
         * pointer to the items in the backpack of the character 
         */
-		CContainer* backPackContents;
+		Container* backPackContents;
 
 		/**
         * map to the different depots
         * first param is the depot id 
         * second param is the pointer to the container which stores the items in this depot
         */
-		std::map<uint32_t, CContainer*> depotContents;
+		std::map<uint32_t, Container*> depotContents;
 
 		/**
         *standard constructor which initializes all lokal variables
         */
-		CCharacter();
+		Character();
 
 		/**
         * virtual destructor 
         */
-		virtual ~CCharacter();
+		virtual ~Character();
 
 		bool isinvisible; /**< shows if a character is invisible*/
         
@@ -1365,7 +1365,7 @@ chicken=62
         * @param sound reference to a sound which should be played
         * @param updateInv returns true if the inventory should be updated (currently evertime true)
         */
-		virtual	bool attack( CCharacter* target, int &sound, bool &updateInv );
+		virtual	bool attack( Character* target, int &sound, bool &updateInv );
 
         /**
         *checks all attribs if the time base is smaller 0 and sets them back to the default value
@@ -1413,7 +1413,7 @@ chicken=62
 		bool under[ RANGEUP ]; 
 
         /**
-        * checks if a character is under a CMap
+        * checks if a character is under a Map
         */
 		void* roofmap[ RANGEUP ];
 
@@ -1439,7 +1439,7 @@ chicken=62
         * @param tcont the container from which we want to get the weight
         * @return the +/- weight of the container
         */
-        int weightContainer( unsigned short int id, int count, CContainer* tcont );
+        int weightContainer( unsigned short int id, int count, Container* tcont );
 
         /**
         * checks if in tcont is enough place for count items with id
@@ -1448,7 +1448,7 @@ chicken=62
         * @param tcont pointer to the container (items inside the container)
         * @return true if count items of id can be added otherwise false
         */
-		bool weightOK( TYPE_OF_ITEM_ID id, int count, CContainer* tcont );
+		bool weightOK( TYPE_OF_ITEM_ID id, int count, Container* tcont );
         
         
         /**
@@ -1469,13 +1469,13 @@ chicken=62
         * @param message which was spoken
         * @param cc the character which has spoken the message
         */
-		virtual void receiveText(talk_type tt, std::string message, CCharacter* cc);
+		virtual void receiveText(talk_type tt, std::string message, Character* cc);
 
         /**
         * introduces the character to another one
         * @param cc the character to which we want to introduce
         */
-		virtual void introducePerson(CCharacter* cc);
+		virtual void introducePerson(Character* cc);
 
 		/**
         * calls an attack script for this character
@@ -1483,7 +1483,7 @@ chicken=62
         * @param Defender character who defends
         * @return a bool value (currently no usage later for destroying items and inventory update)
         */
-        bool callAttackScript( CCharacter * Attacker, CCharacter * Defender );
+        bool callAttackScript( Character * Attacker, Character * Defender );
 
 
 		//===========================================In attack.cc==================================================
@@ -1542,9 +1542,9 @@ chicken=62
 		
 		short int poisonvalue; /**< current poison value of the character*/
 		int mental_capacity; /**< current mental capacity of the character */
-		CWorld* _world; /**< pointer to the game world */
+		World* _world; /**< pointer to the game world */
 
-		virtual bool moveToPossible(const CField* field); /**< checks if moving to a field is possible*/
+		virtual bool moveToPossible(const Field* field); /**< checks if moving to a field is possible*/
 
 		virtual void updatePos(position newpos); /**< sets the character to a new position*/
 
@@ -1553,7 +1553,7 @@ chicken=62
         * @param sourcefield from which we want to get the movement cost
         * @return the movement costs
         */
-		virtual uint16_t getMovementCost(CField* sourcefield);
+		virtual uint16_t getMovementCost(Field* sourcefield);
 
         // shared code for public eraseItem methods
         virtual int _eraseItem( TYPE_OF_ITEM_ID itemid, int count, uint32_t data, bool useData );
@@ -1564,4 +1564,4 @@ chicken=62
 
 };
 
-#endif // CCHARACTER_HHP
+#endif // CHARACTER_HHP

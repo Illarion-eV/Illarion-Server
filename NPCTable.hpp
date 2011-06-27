@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CNPCTABLE_H
-#define CNPCTABLE_H
+#ifndef NPCTABLE_H
+#define NPCTABLE_H
 
 #include <string>
 #include <list>
@@ -28,30 +28,30 @@
 #include "NPC.hpp"
 #include "Field.hpp"
 
-class CWorld;
+class World;
 
 struct NPCStruct {
 
 	position NPCPos; //Pos des NPC
 	std::string Name; //Name des NPC
-	CCharacter::race_type type; //type des NPC's
-	CCharacter::face_to faceto; //richtung des Chars 0 Nord, 2 Ost, 4 Süd, 6 West
+	Character::race_type type; //type des NPC's
+	Character::face_to faceto; //richtung des Chars 0 Nord, 2 Ost, 4 Süd, 6 West
 	std::vector<struct NPCTalk> speechTexts; //Texte welche der NPC sagen kann;
 	unsigned short int walk_range; //Bereich in dem sich der NPC bewegen darf. 0 für keine Bewegung.
 	bool ishealer;
 };
 
 
-class CNPCTable {
+class NPCTable {
 	public:
 
-		CNPCTable(); //Constructor
-		~CNPCTable(); //Destructor
+		NPCTable(); //Constructor
+		~NPCTable(); //Destructor
 
 		bool LoadData(); //Function welche die Daten aus der Datenbank lädt liefert false wenn das laden nicht klappt
 
 	private:
-        CWorld * _world;
+        World * _world;
 		std::list<struct NPCStruct> NPCList; //List zum aufnehmen aller Werte aus der DB
 };
 

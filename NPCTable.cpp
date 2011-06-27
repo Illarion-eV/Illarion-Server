@@ -29,15 +29,15 @@ template< typename To, typename From> To stream_convert( const From& from ) {
 	return to;
 }
 
-CNPCTable::CNPCTable() : _world(CWorld::get())
+NPCTable::NPCTable() : _world(World::get())
 {
 	//Constructor welche die Funktion Loaddata auslöst
 	LoadData();
 }
 
-CNPCTable::~CNPCTable() {}
+NPCTable::~NPCTable() {}
 
-bool CNPCTable::LoadData() {
+bool NPCTable::LoadData() {
 	try {
 		ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
 
@@ -72,14 +72,14 @@ bool CNPCTable::LoadData() {
 
 		for (size_t i = 0; i < rows; ++i) {
 			try {
-				CNPC* newNPC = new CNPC(ids[i], name[i], (CCharacter::race_type)type[i], position(pos[0][i],pos[1][i], pos[2][i]),
-										(CCharacter::face_to)direction[i], healer[i],(CCharacter::sex_type)sex[i],
+				NPC* newNPC = new NPC(ids[i], name[i], (Character::race_type)type[i], position(pos[0][i],pos[1][i], pos[2][i]),
+										(Character::face_to)direction[i], healer[i],(Character::sex_type)sex[i],
                                         hair[i], beard[i], hairred[i], hairgreen[i], hairblue[i], skinred[i], skingreen[i], skinblue[i]);
 				// add npc to npc list
 				_world->Npc.push_back(newNPC);
 
 				// set field to occupied
-				CField* tempf;
+				Field* tempf;
 				if ( _world->GetPToCFieldAt( tempf, pos[0][i], pos[1][i], pos[2][i] ) ) {
 					tempf->setChar();
 				}
@@ -87,10 +87,10 @@ bool CNPCTable::LoadData() {
 				if (!n_scriptname.var[i]) {
 					try {
 						// we got a script... load it
-						boost::shared_ptr<CLuaNPCScript> script(new CLuaNPCScript( scriptname[i], newNPC ));
+						boost::shared_ptr<LuaNPCScript> script(new LuaNPCScript( scriptname[i], newNPC ));
 						newNPC->setScript(script);
 					} catch (ScriptException &e) {
-                        CLogger::writeError( "scripts", "Error while loading script: " + scriptname[i] + ":\n" + e.what() + "\n" );
+                        Logger::writeError( "scripts", "Error while loading script: " + scriptname[i] + ":\n" + e.what() + "\n" );
 					}
 				}
 			} catch (NoSpace &s) {

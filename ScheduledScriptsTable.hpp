@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CSCHEDULED_SCRIPTS_TABLE_HPP
-#define CSCHEDULED_SCRIPTS_TABLE_HPP
+#ifndef SCHEDULED_SCRIPTS_TABLE_HPP
+#define SCHEDULED_SCRIPTS_TABLE_HPP
 
 #include <string>
 #include <map>
@@ -41,8 +41,8 @@ using std::hash_map;
 
 #endif
 
-//class defination of CWorld so we can use a CWorld pointer
-class CWorld; 
+//class defination of World so we can use a World pointer
+class World; 
 
 /**
 *this struct holds the information for the scripts which should be called
@@ -55,7 +55,7 @@ struct ScriptData
     uint32_t lastCycleTime; /**< the time of the last function call */
     std::string functionName; /**< the name of the function which should be called */
     std::string scriptName; /**< the correct filename of the script for the function */
-    boost::shared_ptr<CLuaScheduledScript>scriptptr; /**< the pointer to the script */
+    boost::shared_ptr<LuaScheduledScript>scriptptr; /**< the pointer to the script */
     
     /**
     *a small standard constructor
@@ -85,7 +85,7 @@ struct ScriptData
 *this class loads a table with scripts
 *and calls the scriptfunctions in different time intervalls
 */
-class CScheduledScriptsTable
+class ScheduledScriptsTable
 {
     
     public:
@@ -96,12 +96,12 @@ class CScheduledScriptsTable
         *loads the data from the table on construction
         *@param cw a pointer to the current gameworld
         */
-        CScheduledScriptsTable();
+        ScheduledScriptsTable();
         
         /**
         *the destructor, deletes the maps with data
         */
-        ~CScheduledScriptsTable();
+        ~ScheduledScriptsTable();
         
         /**
         *reloads all the tables

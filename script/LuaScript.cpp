@@ -50,12 +50,12 @@ extern "C" {
 #include "WaypointList.hpp"
 #include "fuse_ptr.hpp"
 
-extern CScriptVariablesTable * scriptVariables;
+extern ScriptVariablesTable * scriptVariables;
 
-lua_State * CLuaScript::_luaState = 0;
-bool CLuaScript::initialized = false;
+lua_State * LuaScript::_luaState = 0;
+bool LuaScript::initialized = false;
 
-CLuaScript::CLuaScript(std::string filename) throw(ScriptException) {
+LuaScript::LuaScript(std::string filename) throw(ScriptException) {
     _filename = filename;
     boost::split( vecPath, filename, boost::is_any_of(".") );
 	
@@ -68,7 +68,7 @@ CLuaScript::CLuaScript(std::string filename) throw(ScriptException) {
         
         // use another error function to surpress errors from
 	// non-existant entry points and to display a backtrace
-	luabind::set_pcall_callback(CLuaScript::add_backtrace);
+	luabind::set_pcall_callback(LuaScript::add_backtrace);
 
 	// next we initialise the objects/functions exports
 	init_base_functions();
@@ -99,10 +99,10 @@ CLuaScript::CLuaScript(std::string filename) throw(ScriptException) {
     }
 }
 
-CLuaScript::~CLuaScript() throw() {
+LuaScript::~LuaScript() throw() {
 }
 
-void CLuaScript::shutdownLua()
+void LuaScript::shutdownLua()
 {
     // shutdown lua
     if( initialized )
@@ -113,7 +113,7 @@ void CLuaScript::shutdownLua()
     }
 }
 
-int CLuaScript::add_backtrace(lua_State* L)
+int LuaScript::add_backtrace(lua_State* L)
 {
    lua_Debug d;
    std::stringstream msg;
@@ -141,24 +141,24 @@ int CLuaScript::add_backtrace(lua_State* L)
    return 1;
 }
 
-void CLuaScript::writeErrorMsg()
+void LuaScript::writeErrorMsg()
 {
     std::string err = lua_tostring(_luaState, -1);
     lua_pop(_luaState, 1);    
     if ( err.length() > 1 )
-        CLogger::writeError( "scripts", err );
+        Logger::writeError( "scripts", err );
 }
 
-void CLuaScript::writeDebugMsg( std::string msg )
+void LuaScript::writeDebugMsg( std::string msg )
 {
     lua_pushstring( _luaState, ("Debug Message: " + msg).c_str() );
     add_backtrace( _luaState );
     std::string backtrace = lua_tostring(_luaState, -1);
     lua_pop(_luaState, 1);
-    CLogger::writeError( "scripts", backtrace );
+    Logger::writeError( "scripts", backtrace );
 }
 
-luabind::object CLuaScript::call( std::string entrypoint ) throw( luabind::error )
+luabind::object LuaScript::call( std::string entrypoint ) throw( luabind::error )
 {
     luabind::object obj = luabind::globals( _luaState );
     std::string currentpath = "";
@@ -178,7 +178,7 @@ luabind::object CLuaScript::call( std::string entrypoint ) throw( luabind::error
     return callee;
 }
 
-bool CLuaScript::existsEntrypoint( std::string entrypoint )
+bool LuaScript::existsEntrypoint( std::string entrypoint )
 {
     luabind::object obj = luabind::globals( _luaState );
     for( std::vector<std::string>::iterator it = vecPath.begin(); it != vecPath.end(); ++it )
@@ -248,22 +248,22 @@ uint64_t LuaLShift64(uint64_t value, unsigned char bits)
     return value << bits;
 }
 
-CCharacter * getCharForId(TYPE_OF_CHARACTER_ID id)
+Character * getCharForId(TYPE_OF_CHARACTER_ID id)
 {
-    CCharacter * ret = NULL;
+    Character * ret = NULL;
     if ( id < MONSTER_BASE )
     {
         //player
-        ret = CWorld::get()->Players.findID( id );
+        ret = World::get()->Players.findID( id );
     }
     else if ( id >= MONSTER_BASE && id < NPC_BASE )
     {
         //monster
-        ret = CWorld::get()->Monsters.findID( id );
+        ret = World::get()->Monsters.findID( id );
     }
     else
     {
-        ret = CWorld::get()->Npc.findID( id );
+        ret = World::get()->Npc.findID( id );
     }
     return ret;
 }
@@ -272,7 +272,7 @@ CCharacter * getCharForId(TYPE_OF_CHARACTER_ID id)
 * initializes the base functions of the script
 * opens mathlib, strlib, baselib,tablib,iolib
 */ 
-void CLuaScript::init_base_functions() {
+void LuaScript::init_base_functions() {
 	static const luaL_Reg lualibs[] = {
         {"", luaopen_base},
         {LUA_LOADLIBNAME, luaopen_package},
@@ -293,7 +293,7 @@ void CLuaScript::init_base_functions() {
 
     luabind::module(_luaState)
 	[
-        luabind::class_<CLongTimeAction>("Action")
+        luabind::class_<LongTimeAction>("Action")
         .enum_("state")
         [
             luabind::value("none",0), /**< no action */
@@ -318,106 +318,106 @@ void CLuaScript::init_base_functions() {
         .def_readwrite("percipitation_type",&WeatherStruct::per_type)
         .def_readwrite("thunderstorm", &WeatherStruct::thunderstorm)
         .def_readwrite("temperature", &WeatherStruct::temperature),
-        luabind::class_<CCharacter>("CCharacter")
-        .property("death_consequences", &CCharacter::getDeathConsequences, &CCharacter::setDeathConsequences)
-        .def("idleTime", &CCharacter::idleTime)
-        .def("sendBook", &CCharacter::sendBook)
-        .def("updateAppearance", &CCharacter::forceUpdateAppearanceForAll)
-        .def("performAnimation", &CCharacter::performAnimation)
-        .def("moveDepotContentFrom", &CCharacter::moveDepotContentFrom)
-        .def("tempChangeAttrib", &CCharacter::tempChangeAttrib)
-		.def("alterSpokenMessage", &CCharacter::alterSpokenMessage)
-        .def("actionRunning", &CCharacter::actionRunning)
-		.def("changeQualityAt", &CCharacter::changeQualityAt)
-		.def("changeQualityItem", &CCharacter::changeQualityItem)
-		.def("isAdmin", &CCharacter::isAdmin)
-		.def("talk", &CCharacter::talk)
-        .def("sendCharDescription", &CCharacter::sendCharDescription )
-        .def("talkLanguage", &CCharacter::talkLanguage)
-        .def("startAction", &CCharacter::startAction)
-        .def("abortAction", &CCharacter::abortAction)
-        .def("successAction", &CCharacter::successAction)
-        .def("disturbAction", &CCharacter::actionDisturbed)
-        .def("changeSource", (void(CCharacter::*)(CCharacter*))&CCharacter::changeSource)
-        .def("changeSource", (void(CCharacter::*)(ScriptItem))&CCharacter::changeSource)
-        .def("changeSource", (void(CCharacter::*)(position))&CCharacter::changeSource)
-        .def("changeSource", (void(CCharacter::*)(void))&CCharacter::changeSource)
-        .def("changeTarget", (void(CCharacter::*)(CCharacter*))&CCharacter::changeTarget)
-        .def("changeTarget", (void(CCharacter::*)(ScriptItem))&CCharacter::changeTarget)
-        .def("changeTarget", (void(CCharacter::*)(position))&CCharacter::changeTarget)
-        .def("changeTarget", (void(CCharacter::*)(void))&CCharacter::changeTarget)        
-		.def("inform", &CCharacter::inform)
-		.def("introduce", &CCharacter::introducePerson)
-		.def("move", &CCharacter::move)
-		.def("getNextStepDir", &CCharacter::getNextStepDir, luabind::pure_out_value(_4))
-		.def("getStepList",&CCharacter::getLuaStepList)
-		.def("get_race", &CCharacter::get_race)
-		.def("get_face_to", &CCharacter::get_face_to)
-		.def("get_type", &CCharacter::get_character)
-		.def("createItem", &CCharacter::createItem)
-		.def("increasePoisonValue", &CCharacter::increasePoisonValue)
-		.def("getPoisonValue", &CCharacter::getPoisonValue)
-		.def("setPoisonValue", &CCharacter::setPoisonValue)
-		.def("getMentalCapacity", &CCharacter::getMentalCapacity)
-		.def("setMentalCapacity", &CCharacter::setMentalCapacity)
-		.def("increaseMentalCapacity", &CCharacter::increaseMentalCapacity)
-		.def("setClippingActive", &CCharacter::setClippingActive)
-		.def("getClippingActive", &CCharacter::getClippingActive)
-		.def("countItem", &CCharacter::countItem)
-		.def("countItemAt", (int(CCharacter::*)(std::string, TYPE_OF_ITEM_ID, uint32_t))&CCharacter::countItemAt)
-		.def("countItemAt", (int(CCharacter::*)(std::string, TYPE_OF_ITEM_ID))&CCharacter::countItemAt)
-        .def("eraseItem", (int(CCharacter::*)(TYPE_OF_ITEM_ID, int, uint32_t))&CCharacter::eraseItem)
-		.def("eraseItem", (int(CCharacter::*)(TYPE_OF_ITEM_ID, int))&CCharacter::eraseItem)
-		.def("increaseAtPos", &CCharacter::increaseAtPos)
-		.def("swapAtPos", &CCharacter::swapAtPos)
-		.def("createAtPos", &CCharacter::createAtPos)
-		.def("getItemAt", &CCharacter::GetItemAt)
-		.def("getSkill", &CCharacter::getSkill)
-        .def("getMinorSkill", &CCharacter::getMinorSkill)
-		.def("increaseAttrib", &CCharacter::increaseAttrib)
-		.def("setAttrib", &CCharacter::setAttrib)
-		.def("increaseSkill", &CCharacter::increaseSkill)
-        .def("increaseMinorSkill", &CCharacter::increaseMinorSkill)
-        .def("setSkill", &CCharacter::setSkill)
-		.def("learn", &CCharacter::learn)
-        .def("getSkillValue",&CCharacter::getSkillValue)
-		.def("teachMagic", &CCharacter::teachMagic)
-		.def("isInRange", &CCharacter::isInRange)
-		.def("isInRangeToPosition", &CCharacter::isInRangeToField)
-		.def("distanceMetric", &CCharacter::distanceMetric)
-		.def("distanceMetricToPosition", &CCharacter::distanceMetricToPosition)
-		.def("getMagicType", &CCharacter::get_magic_type)
-		.def("setMagicType", &CCharacter::set_magic_type)
-		.def("getMagicFlags", &CCharacter::get_magic_flags)
-		.def("warp", &CCharacter::Warp)
-		.def("forceWarp", &CCharacter::forceWarp)
-		.def("sendMenu", &CCharacter::startPlayerMenu)
-		.def("startMusic", &CCharacter::startMusic)
-        .def("defaultMusic", &CCharacter::defaultMusic)
-		.def("callAttackScript", &CCharacter::callAttackScript)
-		.def("getItemList", &CCharacter::getItemList)
-		.def_readonly("lastSpokenText", &CCharacter::lastSpokenText)
-		.def("getPlayerLanguage", &CCharacter::getPlayerLanguage)
-		.def("getBackPack", &CCharacter::GetBackPack)
-        .def("getDepot", &CCharacter::GetDepot)
-        .def("setQuestProgress", &CCharacter::setQuestProgress)
-        .def("getQuestProgress", &CCharacter::getQuestProgress)
-        .def("LTIncreaseHP", &CCharacter::LTIncreaseHP)
-        .def("LTIncreaseMana", &CCharacter::LTIncreaseMana)
-		.def("getOnRoute",&CCharacter::getOnRoute)
-		.def("setOnRoute",&CCharacter::setOnRoute)
-        .def("get_mon_type", &CCharacter::getType)
-        .def_readonly("effects", &CCharacter::effects)
-		.def_readonly("waypoints", &CCharacter::waypoints)
-		.def_readonly("pos", &CCharacter::pos)
-		.def_readonly("name", &CCharacter::name)
-		.def_readonly("id", &CCharacter::id)
-		.def_readwrite("activeLanguage", &CCharacter::activeLanguage)
-		.def_readwrite("movepoints", &CCharacter::actionPoints)
-        .def_readwrite("fightpoints", &CCharacter::fightPoints)
-        .def_readwrite("isinvisible", &CCharacter::isinvisible)
-		.def_readonly("attackmode", &CCharacter::attackmode)
-		//.def_readonly("isTarget", &CCharacter::isTarget)
+        luabind::class_<Character>("Character")
+        .property("death_consequences", &Character::getDeathConsequences, &Character::setDeathConsequences)
+        .def("idleTime", &Character::idleTime)
+        .def("sendBook", &Character::sendBook)
+        .def("updateAppearance", &Character::forceUpdateAppearanceForAll)
+        .def("performAnimation", &Character::performAnimation)
+        .def("moveDepotContentFrom", &Character::moveDepotContentFrom)
+        .def("tempChangeAttrib", &Character::tempChangeAttrib)
+		.def("alterSpokenMessage", &Character::alterSpokenMessage)
+        .def("actionRunning", &Character::actionRunning)
+		.def("changeQualityAt", &Character::changeQualityAt)
+		.def("changeQualityItem", &Character::changeQualityItem)
+		.def("isAdmin", &Character::isAdmin)
+		.def("talk", &Character::talk)
+        .def("sendCharDescription", &Character::sendCharDescription )
+        .def("talkLanguage", &Character::talkLanguage)
+        .def("startAction", &Character::startAction)
+        .def("abortAction", &Character::abortAction)
+        .def("successAction", &Character::successAction)
+        .def("disturbAction", &Character::actionDisturbed)
+        .def("changeSource", (void(Character::*)(Character*))&Character::changeSource)
+        .def("changeSource", (void(Character::*)(ScriptItem))&Character::changeSource)
+        .def("changeSource", (void(Character::*)(position))&Character::changeSource)
+        .def("changeSource", (void(Character::*)(void))&Character::changeSource)
+        .def("changeTarget", (void(Character::*)(Character*))&Character::changeTarget)
+        .def("changeTarget", (void(Character::*)(ScriptItem))&Character::changeTarget)
+        .def("changeTarget", (void(Character::*)(position))&Character::changeTarget)
+        .def("changeTarget", (void(Character::*)(void))&Character::changeTarget)
+		.def("inform", &Character::inform)
+		.def("introduce", &Character::introducePerson)
+		.def("move", &Character::move)
+		.def("getNextStepDir", &Character::getNextStepDir, luabind::pure_out_value(_4))
+		.def("getStepList",&Character::getLuaStepList)
+		.def("get_race", &Character::get_race)
+		.def("get_face_to", &Character::get_face_to)
+		.def("get_type", &Character::get_character)
+		.def("createItem", &Character::createItem)
+		.def("increasePoisonValue", &Character::increasePoisonValue)
+		.def("getPoisonValue", &Character::getPoisonValue)
+		.def("setPoisonValue", &Character::setPoisonValue)
+		.def("getMentalCapacity", &Character::getMentalCapacity)
+		.def("setMentalCapacity", &Character::setMentalCapacity)
+		.def("increaseMentalCapacity", &Character::increaseMentalCapacity)
+		.def("setClippingActive", &Character::setClippingActive)
+		.def("getClippingActive", &Character::getClippingActive)
+		.def("countItem", &Character::countItem)
+		.def("countItemAt", (int(Character::*)(std::string, TYPE_OF_ITEM_ID, uint32_t))&Character::countItemAt)
+		.def("countItemAt", (int(Character::*)(std::string, TYPE_OF_ITEM_ID))&Character::countItemAt)
+        .def("eraseItem", (int(Character::*)(TYPE_OF_ITEM_ID, int, uint32_t))&Character::eraseItem)
+		.def("eraseItem", (int(Character::*)(TYPE_OF_ITEM_ID, int))&Character::eraseItem)
+		.def("increaseAtPos", &Character::increaseAtPos)
+		.def("swapAtPos", &Character::swapAtPos)
+		.def("createAtPos", &Character::createAtPos)
+		.def("getItemAt", &Character::GetItemAt)
+		.def("getSkill", &Character::getSkill)
+        .def("getMinorSkill", &Character::getMinorSkill)
+		.def("increaseAttrib", &Character::increaseAttrib)
+		.def("setAttrib", &Character::setAttrib)
+		.def("increaseSkill", &Character::increaseSkill)
+        .def("increaseMinorSkill", &Character::increaseMinorSkill)
+        .def("setSkill", &Character::setSkill)
+		.def("learn", &Character::learn)
+        .def("getSkillValue",&Character::getSkillValue)
+		.def("teachMagic", &Character::teachMagic)
+		.def("isInRange", &Character::isInRange)
+		.def("isInRangeToPosition", &Character::isInRangeToField)
+		.def("distanceMetric", &Character::distanceMetric)
+		.def("distanceMetricToPosition", &Character::distanceMetricToPosition)
+		.def("getMagicType", &Character::get_magic_type)
+		.def("setMagicType", &Character::set_magic_type)
+		.def("getMagicFlags", &Character::get_magic_flags)
+		.def("warp", &Character::Warp)
+		.def("forceWarp", &Character::forceWarp)
+		.def("sendMenu", &Character::startPlayerMenu)
+		.def("startMusic", &Character::startMusic)
+        .def("defaultMusic", &Character::defaultMusic)
+		.def("callAttackScript", &Character::callAttackScript)
+		.def("getItemList", &Character::getItemList)
+		.def_readonly("lastSpokenText", &Character::lastSpokenText)
+		.def("getPlayerLanguage", &Character::getPlayerLanguage)
+		.def("getBackPack", &Character::GetBackPack)
+        .def("getDepot", &Character::GetDepot)
+        .def("setQuestProgress", &Character::setQuestProgress)
+        .def("getQuestProgress", &Character::getQuestProgress)
+        .def("LTIncreaseHP", &Character::LTIncreaseHP)
+        .def("LTIncreaseMana", &Character::LTIncreaseMana)
+		.def("getOnRoute",&Character::getOnRoute)
+		.def("setOnRoute",&Character::setOnRoute)
+        .def("get_mon_type", &Character::getType)
+        .def_readonly("effects", &Character::effects)
+		.def_readonly("waypoints", &Character::waypoints)
+		.def_readonly("pos", &Character::pos)
+		.def_readonly("name", &Character::name)
+		.def_readonly("id", &Character::id)
+		.def_readwrite("activeLanguage", &Character::activeLanguage)
+		.def_readwrite("movepoints", &Character::actionPoints)
+        .def_readwrite("fightpoints", &Character::fightPoints)
+        .def_readwrite("isinvisible", &Character::isinvisible)
+		.def_readonly("attackmode", &Character::attackmode)
+		//.def_readonly("isTarget", &Character::isTarget)
 		.enum_("body_pos")
 		[
 			luabind::value("backpack", 0),
@@ -528,39 +528,39 @@ void CLuaScript::init_base_functions() {
 			luabind::value("fdrow",35),
 			luabind::value("lesserdemon",36)
 		],
-        luabind::class_<CCharacter::skillvalue>("skillvalue")
+        luabind::class_<Character::skillvalue>("skillvalue")
         .def(luabind::constructor<>())
-        .def_readwrite("type",&CCharacter::skillvalue::type)
-        .def_readwrite("major",&CCharacter::skillvalue::major)
-        .def_readwrite("minor",&CCharacter::skillvalue::minor)
-        .def_readwrite("firsttry",&CCharacter::skillvalue::firsttry),
-		luabind::class_<CNPC, CCharacter>("CNPC"),
-        luabind::class_<CMonster, CCharacter>("CMonster"),
-		luabind::class_<CWaypointList>("CWaypointList")
-		.def("addFromList", &CWaypointList::addFromList)
-		.def("getWaypoints",&CWaypointList::getWaypoints)
-		.def("addWaypoint",&CWaypointList::addWaypoint)
-		.def("clear",&CWaypointList::clear),
-		luabind::class_<CLongTimeCharacterEffects>("CLongTimeCharacterEffects")
-        .def("addEffect",&CLongTimeCharacterEffects::addEffect, luabind::adopt(_2))
-        .def("removeEffect", (bool(CLongTimeCharacterEffects::*)(uint16_t))&CLongTimeCharacterEffects::removeEffect)
-        .def("removeEffect", (bool(CLongTimeCharacterEffects::*)(std::string))&CLongTimeCharacterEffects::removeEffect)
-        .def("removeEffect", (bool(CLongTimeCharacterEffects::*)(CLongTimeEffect*))&CLongTimeCharacterEffects::removeEffect)
-        .def("find", (bool(CLongTimeCharacterEffects::*)(uint16_t,CLongTimeEffect*&))&CLongTimeCharacterEffects::find,luabind::pure_out_value(_3))
-        .def("find", (bool(CLongTimeCharacterEffects::*)(std::string,CLongTimeEffect*&))&CLongTimeCharacterEffects::find,luabind::pure_out_value(_3)),
-		luabind::class_<CField>("Field")
-		.def("tile", &CField::getTileId)
-		//.def("changeQualityOfTopItem", &CField::changeQualityOfTopItem)
-        .def("getStackItem", &CField::getStackItem)
-		.def("createItemAlways", &CField::PutTopItem)
-		.def("createItem", &CField::addTopItem)
-		.def("createItemGround", &CField::PutGroundItem)
-		.def("takeTopItem", &CField::TakeTopItem, luabind::pure_out_value(_2) )
-		.def("increaseTopItem", &CField::increaseTopItem, luabind::pure_out_value(_3) )
-		.def("swapTopItem", &CField::swapTopItem)
-		.def("viewTopItem", &CField::ViewTopItem)
-        .def("countItems", &CField::NumberOfItems)
-		.def("deleteAllItems", &CField::DeleteAllItems),
+        .def_readwrite("type",&Character::skillvalue::type)
+        .def_readwrite("major",&Character::skillvalue::major)
+        .def_readwrite("minor",&Character::skillvalue::minor)
+        .def_readwrite("firsttry",&Character::skillvalue::firsttry),
+		luabind::class_<NPC, Character>("NPC"),
+        luabind::class_<Monster, Character>("Monster"),
+		luabind::class_<WaypointList>("WaypointList")
+		.def("addFromList", &WaypointList::addFromList)
+		.def("getWaypoints",&WaypointList::getWaypoints)
+		.def("addWaypoint",&WaypointList::addWaypoint)
+		.def("clear",&WaypointList::clear),
+		luabind::class_<LongTimeCharacterEffects>("LongTimeCharacterEffects")
+        .def("addEffect",&LongTimeCharacterEffects::addEffect, luabind::adopt(_2))
+        .def("removeEffect", (bool(LongTimeCharacterEffects::*)(uint16_t))&LongTimeCharacterEffects::removeEffect)
+        .def("removeEffect", (bool(LongTimeCharacterEffects::*)(std::string))&LongTimeCharacterEffects::removeEffect)
+        .def("removeEffect", (bool(LongTimeCharacterEffects::*)(LongTimeEffect*))&LongTimeCharacterEffects::removeEffect)
+        .def("find", (bool(LongTimeCharacterEffects::*)(uint16_t,LongTimeEffect*&))&LongTimeCharacterEffects::find,luabind::pure_out_value(_3))
+        .def("find", (bool(LongTimeCharacterEffects::*)(std::string,LongTimeEffect*&))&LongTimeCharacterEffects::find,luabind::pure_out_value(_3)),
+		luabind::class_<Field>("Field")
+		.def("tile", &Field::getTileId)
+		//.def("changeQualityOfTopItem", &Field::changeQualityOfTopItem)
+        .def("getStackItem", &Field::getStackItem)
+		.def("createItemAlways", &Field::PutTopItem)
+		.def("createItem", &Field::addTopItem)
+		.def("createItemGround", &Field::PutGroundItem)
+		.def("takeTopItem", &Field::TakeTopItem, luabind::pure_out_value(_2) )
+		.def("increaseTopItem", &Field::increaseTopItem, luabind::pure_out_value(_3) )
+		.def("swapTopItem", &Field::swapTopItem)
+		.def("viewTopItem", &Field::ViewTopItem)
+        .def("countItems", &Field::NumberOfItems)
+		.def("deleteAllItems", &Field::DeleteAllItems),
 		luabind::class_<UserMenuStruct>("MenuStruct")
 		.def(luabind::constructor<>())
 		.def("addItem", &UserMenuStruct::AddItem),
@@ -592,74 +592,74 @@ void CLuaScript::init_base_functions() {
 			luabind::value("belt",5),
             luabind::value("container",6)
 		],
-        luabind::class_<CLongTimeEffect>("CLongTimeEffect")
+        luabind::class_<LongTimeEffect>("LongTimeEffect")
         .def(luabind::constructor<uint16_t,uint32_t>() )
         .def(luabind::constructor<std::string,uint32_t>() )
-        .def("addValue",&CLongTimeEffect::addValue)
-        .def("removeValue",&CLongTimeEffect::removeValue)
-        .def("findValue",&CLongTimeEffect::findValue, luabind::pure_out_value(_3) )
-        .def_readonly("effectId",&CLongTimeEffect::_effectId)
-        .def_readonly("effectName",&CLongTimeEffect::_effectName)
-        .def_readwrite("nextCalled",&CLongTimeEffect::_nextCalled)
-        .def_readonly("numberCalled",&CLongTimeEffect::_numberCalled)
-        .def_readonly("lastCalled",&CLongTimeEffect::_lastCalled),
+        .def("addValue",&LongTimeEffect::addValue)
+        .def("removeValue",&LongTimeEffect::removeValue)
+        .def("findValue",&LongTimeEffect::findValue, luabind::pure_out_value(_3) )
+        .def_readonly("effectId",&LongTimeEffect::_effectId)
+        .def_readonly("effectName",&LongTimeEffect::_effectName)
+        .def_readwrite("nextCalled",&LongTimeEffect::_nextCalled)
+        .def_readonly("numberCalled",&LongTimeEffect::_numberCalled)
+        .def_readonly("lastCalled",&LongTimeEffect::_lastCalled),
         luabind::class_<LongTimeEffectStruct>("LongTimeEffectStruct")
         .def(luabind::constructor<>() )
         .def_readonly("effectId",&LongTimeEffectStruct::effectid)
         .def_readonly("effectName", &LongTimeEffectStruct::effectname)
         .def_readonly("scriptName", &LongTimeEffectStruct::scriptname),
-		luabind::class_<CPlayer, CCharacter>("CPlayer")
+		luabind::class_<Player, Character>("Player")
         .enum_("player_language")
         [
             luabind::value("german",0),
             luabind::value("english",1)
         ],
-		luabind::class_<CWorld>("CWorld")
-        .def("LoS", &CWorld::LuaLoS)
-        .def("deleteNPC", &CWorld::deleteNPC)
-        .def("createDynamicNPC", &CWorld::createDynamicNPC )
-        .def("getPlayersOnline", &CWorld::getPlayersOnline )
-        .def("getNPCS", &CWorld::getNPCS )
-        .def("getCharactersInRangeOf", &CWorld::getCharactersInRangeOf )
-        .def("getPlayersInRangeOf", &CWorld::getPlayersInRangeOf )
-        .def("getMonstersInRangeOf", &CWorld::getMonstersInRangeOf )
-        .def("getNPCSInRangeOf", &CWorld::getNPCSInRangeOf )
-		.def("getArmorStruct", &CWorld::getArmorStruct, luabind::pure_out_value(_3) )
-		.def("getWeaponStruct", &CWorld::getWeaponStruct, luabind::pure_out_value(_3))
-		.def("getNaturalArmor", &CWorld::getNaturalArmor, luabind::pure_out_value(_3) )
-        .def("getMonsterAttack", &CWorld::getMonsterAttack, luabind::pure_out_value(_3) )
-		.def("changeQualityOfTopItem", &CWorld::changeQualityOfItemAt)
-		.def("changeQuality", &CWorld::changeQuality)
-		.def("itemInform", &CWorld::ItemInform)
-		.def("changeItem", &CWorld::changeItem)
-		.def("isCharacterOnField", &CWorld::isCharacterOnField)
-		.def("getCharacterOnField", &CWorld::getCharacterOnField)
-		.def("putItemOnMap", &CWorld::putItemOnMap)
-		.def("putItemAlwaysOnMap", &CWorld::putItemAlwaysOnMap)
-		.def("getField", &CWorld::GetField)
-		.def("getTime", &CWorld::getTime)
-		.def("erase", &CWorld::erase)
-		.def("increase", &CWorld::increase)
-		.def("swap", &CWorld::swap)
-		.def("createItemFromId", &CWorld::createFromId)
-		.def("createItemFromItem", &CWorld::createFromItem)
-		.def("createMonster", &CWorld::createMonster)
-		.def("gfx", &CWorld::gfx)
-        .def("makeSound", &CWorld::makeSound)
-		.def("getItemStats", &CWorld::getItemStats)
-		.def("getItemStatsFromId", &CWorld::getItemStatsFromId)
-        .def("sendWeatherToAllPlayers", &CWorld::sendWeatherToAllPlayers)
-        .def("setWeatherPart", &CWorld::setWeatherPart)
-        .def("setWeather", &CWorld::setWeather)
-		.def("isItemOnField", &CWorld::isItemOnField)
-		.def("getItemOnField", &CWorld::getItemOnField)
-		.def("changeTile", &CWorld::changeTile)
-		.def("sendMapUpdate", &CWorld::sendMapUpdate)
-		.def("getItemName", &CWorld::getItemName)
-		.def("createSavedArea", &CWorld::createSavedArea)
-        .def("sendMonitoringMessage", &CWorld::sendMonitoringMessage)
-		.def_readwrite("g_item", &CWorld::g_item)
-        .def_readwrite("weather", &CWorld::weather),
+		luabind::class_<World>("World")
+        .def("LoS", &World::LuaLoS)
+        .def("deleteNPC", &World::deleteNPC)
+        .def("createDynamicNPC", &World::createDynamicNPC )
+        .def("getPlayersOnline", &World::getPlayersOnline )
+        .def("getNPCS", &World::getNPCS )
+        .def("getCharactersInRangeOf", &World::getCharactersInRangeOf )
+        .def("getPlayersInRangeOf", &World::getPlayersInRangeOf )
+        .def("getMonstersInRangeOf", &World::getMonstersInRangeOf )
+        .def("getNPCSInRangeOf", &World::getNPCSInRangeOf )
+		.def("getArmorStruct", &World::getArmorStruct, luabind::pure_out_value(_3) )
+		.def("getWeaponStruct", &World::getWeaponStruct, luabind::pure_out_value(_3))
+		.def("getNaturalArmor", &World::getNaturalArmor, luabind::pure_out_value(_3) )
+        .def("getMonsterAttack", &World::getMonsterAttack, luabind::pure_out_value(_3) )
+		.def("changeQualityOfTopItem", &World::changeQualityOfItemAt)
+		.def("changeQuality", &World::changeQuality)
+		.def("itemInform", &World::ItemInform)
+		.def("changeItem", &World::changeItem)
+		.def("isCharacterOnField", &World::isCharacterOnField)
+		.def("getCharacterOnField", &World::getCharacterOnField)
+		.def("putItemOnMap", &World::putItemOnMap)
+		.def("putItemAlwaysOnMap", &World::putItemAlwaysOnMap)
+		.def("getField", &World::GetField)
+		.def("getTime", &World::getTime)
+		.def("erase", &World::erase)
+		.def("increase", &World::increase)
+		.def("swap", &World::swap)
+		.def("createItemFromId", &World::createFromId)
+		.def("createItemFromItem", &World::createFromItem)
+		.def("createMonster", &World::createMonster)
+		.def("gfx", &World::gfx)
+        .def("makeSound", &World::makeSound)
+		.def("getItemStats", &World::getItemStats)
+		.def("getItemStatsFromId", &World::getItemStatsFromId)
+        .def("sendWeatherToAllPlayers", &World::sendWeatherToAllPlayers)
+        .def("setWeatherPart", &World::setWeatherPart)
+        .def("setWeather", &World::setWeather)
+		.def("isItemOnField", &World::isItemOnField)
+		.def("getItemOnField", &World::getItemOnField)
+		.def("changeTile", &World::changeTile)
+		.def("sendMapUpdate", &World::sendMapUpdate)
+		.def("getItemName", &World::getItemName)
+		.def("createSavedArea", &World::createSavedArea)
+        .def("sendMonitoringMessage", &World::sendMonitoringMessage)
+		.def_readwrite("g_item", &World::g_item)
+        .def_readwrite("weather", &World::weather),
 	        luabind::def("dofile", &dofile, luabind::raw(_1)),
 		luabind::def("printerr", printerr),
 		luabind::def("equapos", equapos),
@@ -714,34 +714,34 @@ void CLuaScript::init_base_functions() {
         .def_readonly("attackType",&AttackBoni::attackType)
         .def_readonly("attackValue",&AttackBoni::attackValue)
         .def_readonly("actionPointsLost",&AttackBoni::actionPointsLost),
-        luabind::class_<CContainer>("Container")
+        luabind::class_<Container>("Container")
         .def(luabind::constructor<uint16_t>() )
-        .def("takeItemNr", &CContainer::TakeItemNr, luabind::pure_out_value(_3) + luabind::pure_out_value(_4) )
-        .def("viewItemNr", &CContainer::viewItemNr, luabind::pure_out_value(_3) + luabind::pure_out_value(_4) )
-        .def("changeQualityAt", &CContainer::changeQualityAt)
-        .def("changeQuality", &CContainer::changeQuality)
-        .def("insertContainer", &CContainer::InsertContainer)
-        .def("insertItem", (bool(CContainer::*)(Item,bool))&CContainer::InsertItem) 
-        .def("insertItem", (bool(CContainer::*)(Item,unsigned char))&CContainer::InsertItem)
-        .def("insertItem", (bool(CContainer::*)(Item))&CContainer::InsertItem)
-        .def("countItem",(int(CContainer::*)(TYPE_OF_ITEM_ID,uint32_t))&CContainer::countItem)
-        .def("countItem",(int(CContainer::*)(TYPE_OF_ITEM_ID))&CContainer::countItem)            
-        .def("eraseItem", (int(CContainer::*)(TYPE_OF_ITEM_ID, int, uint32_t))&CContainer::eraseItem)
-        .def("eraseItem", (int(CContainer::*)(TYPE_OF_ITEM_ID, int))&CContainer::eraseItem)
-        .def("increaseAtPos", &CContainer::increaseAtPos)
-        .def("swapAtPos", &CContainer::swapAtPos)
-        .def("weight", &CContainer::weight)
-        .def("Volume", &CContainer::Volume),
-        luabind::class_<CScriptVariablesTable>("ScriptVariables")
-        .def("find", &CScriptVariablesTable::find, luabind::pure_out_value(_3) )
-        .def("set", &CScriptVariablesTable::set)
-        .def("remove", &CScriptVariablesTable::remove )
-        .def("save" , &CScriptVariablesTable::save ),
-        luabind::def("isValidChar", &isValid<CCharacter> ),
-        luabind::def("debug", &CLuaScript::writeDebugMsg )
+        .def("takeItemNr", &Container::TakeItemNr, luabind::pure_out_value(_3) + luabind::pure_out_value(_4) )
+        .def("viewItemNr", &Container::viewItemNr, luabind::pure_out_value(_3) + luabind::pure_out_value(_4) )
+        .def("changeQualityAt", &Container::changeQualityAt)
+        .def("changeQuality", &Container::changeQuality)
+        .def("insertContainer", &Container::InsertContainer)
+        .def("insertItem", (bool(Container::*)(Item,bool))&Container::InsertItem)
+        .def("insertItem", (bool(Container::*)(Item,unsigned char))&Container::InsertItem)
+        .def("insertItem", (bool(Container::*)(Item))&Container::InsertItem)
+        .def("countItem",(int(Container::*)(TYPE_OF_ITEM_ID,uint32_t))&Container::countItem)
+        .def("countItem",(int(Container::*)(TYPE_OF_ITEM_ID))&Container::countItem)
+        .def("eraseItem", (int(Container::*)(TYPE_OF_ITEM_ID, int, uint32_t))&Container::eraseItem)
+        .def("eraseItem", (int(Container::*)(TYPE_OF_ITEM_ID, int))&Container::eraseItem)
+        .def("increaseAtPos", &Container::increaseAtPos)
+        .def("swapAtPos", &Container::swapAtPos)
+        .def("weight", &Container::weight)
+        .def("Volume", &Container::Volume),
+        luabind::class_<ScriptVariablesTable>("ScriptVariables")
+        .def("find", &ScriptVariablesTable::find, luabind::pure_out_value(_3) )
+        .def("set", &ScriptVariablesTable::set)
+        .def("remove", &ScriptVariablesTable::remove )
+        .def("save" , &ScriptVariablesTable::save ),
+        luabind::def("isValidChar", &isValid<Character> ),
+        luabind::def("debug", &LuaScript::writeDebugMsg )
 	];
 
 	luabind::object globals = luabind::globals(_luaState);
-    globals["world"] = CWorld::get();
+    globals["world"] = World::get();
     globals["ScriptVars"] = scriptVariables;
 }

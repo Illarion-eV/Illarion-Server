@@ -17,25 +17,25 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef CSHEDULER_H
-#define CSHEDULER_H
+#ifndef SHEDULER_H
+#define SHEDULER_H
 
 #include <list>
 
-class CWorld;
+class World;
 
-class CSchedulerObject {
+class SchedulerObject {
 
 	public:
 		//überladung für den Operator ()
-		virtual bool operator() (CWorld * world) = 0;
+		virtual bool operator() (World * world) = 0;
 		inline unsigned long int GetNextCycle() { return nextCycle; }
 		inline void SetNextCycle(unsigned long int nCycle) { nextCycle = nCycle; }
 		inline short int GetCount() { return count; }
 		inline void SetCount(unsigned short int nCount) { count = nCount; }
 		inline unsigned long int GetCycleTime() { return CycleTime; }
 		inline void SetCycleTime( unsigned long int nCycleTime) { CycleTime = nCycleTime; }
-		virtual ~CSchedulerObject() {}
+		virtual ~SchedulerObject() {}
 
 	protected:
 
@@ -45,20 +45,20 @@ class CSchedulerObject {
 
 	private:
 		//! no copy operator for pure virtual classes
-		CSchedulerObject& operator=(const CSchedulerObject&);
+		SchedulerObject& operator=(const SchedulerObject&);
 };
 
 
-class CScheduler {
+class Scheduler {
 
 	public:
 		//constructor welcher den Thread erstellt
 		// \param Zeiger auf das World objekt in dem der Scheduler läuft
-		CScheduler(CWorld * pworld);
+		Scheduler(World * pworld);
 		//Destructor welcher den Thread beendet.
-		~CScheduler();
+		~Scheduler();
 		//Funktion um einen Task in die Liste hinzu zu fügen
-		void AddTask(CSchedulerObject* sobject);
+		void AddTask(SchedulerObject* sobject);
 		//Funktion welche den nächsten Zyklus einleitet.
 		void NextCycle();
 		//Funktion welche den Aktuellen Zyklus zurück liefert.
@@ -66,11 +66,11 @@ class CScheduler {
 
 	private:
 		//Liste für die Sheduler objekte
-		std::list<CSchedulerObject*> Tasks;
+		std::list<SchedulerObject*> Tasks;
 		//Aktueller Zyklus
 		unsigned long int cycle;
 		//verbindung zur Spielwelt
-		CWorld * world;
+		World * world;
 };
 
 #endif

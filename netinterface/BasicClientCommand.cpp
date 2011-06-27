@@ -20,25 +20,25 @@
 #include "BasicClientCommand.hpp"
 #include "BasicCommand.hpp"
 
-CBasicClientCommand::CBasicClientCommand( unsigned char defByte ) : CBasicCommand( defByte ), dataOk( true ), length(0), bytesRetrieved(0), checkSum(0), crc(0)
+BasicClientCommand::BasicClientCommand( unsigned char defByte ) : BasicCommand( defByte ), dataOk( true ), length(0), bytesRetrieved(0), checkSum(0), crc(0)
 {
     msg_buffer = NULL;
 }
 
 
-void CBasicClientCommand::setHeaderData(uint16_t mlength, uint16_t mcheckSum)
+void BasicClientCommand::setHeaderData(uint16_t mlength, uint16_t mcheckSum)
 {
     length = mlength;
     checkSum = mcheckSum;
     msg_buffer = new unsigned char[length];
 }
 
-CBasicClientCommand::~CBasicClientCommand()
+BasicClientCommand::~BasicClientCommand()
 {
     delete[] msg_buffer;
 }
 
-unsigned char * CBasicClientCommand::msg_data()
+unsigned char * BasicClientCommand::msg_data()
 {
     return msg_buffer;
 }
@@ -46,7 +46,7 @@ unsigned char * CBasicClientCommand::msg_data()
 
 
 /*
-volatile bool CBasicClientCommand::getData( CByteBuffer * recvBuffer )
+volatile bool BasicClientCommand::getData( ByteBuffer * recvBuffer )
 {
     if ( !headerComplete )
     {
@@ -83,7 +83,7 @@ volatile bool CBasicClientCommand::getData( CByteBuffer * recvBuffer )
     return false;
 }*/
 
-unsigned char CBasicClientCommand::getUnsignedCharFromBuffer() throw (OverflowException)
+unsigned char BasicClientCommand::getUnsignedCharFromBuffer() throw (OverflowException)
 {
     unsigned char ret = 0;
     //no buffer available but we want to read from it
@@ -104,7 +104,7 @@ unsigned char CBasicClientCommand::getUnsignedCharFromBuffer() throw (OverflowEx
     return ret;
 }
 
-std::string CBasicClientCommand::getStringFromBuffer()
+std::string BasicClientCommand::getStringFromBuffer()
 {
     unsigned char len = getUnsignedCharFromBuffer();
     if (len>250) len = 250;
@@ -118,7 +118,7 @@ std::string CBasicClientCommand::getStringFromBuffer()
     return ret;
 }
 
-int CBasicClientCommand::getIntFromBuffer()
+int BasicClientCommand::getIntFromBuffer()
 {
     int ret = getUnsignedCharFromBuffer() << 24;
     ret = ret | (getUnsignedCharFromBuffer() << 16);
@@ -127,14 +127,14 @@ int CBasicClientCommand::getIntFromBuffer()
     return ret;
 }
 
-short int CBasicClientCommand::getShortIntFromBuffer()
+short int BasicClientCommand::getShortIntFromBuffer()
 {
     short int ret = getUnsignedCharFromBuffer() << 8;
     ret = ret | getUnsignedCharFromBuffer();
     return ret;
 }
 
-bool CBasicClientCommand::isDataOk()
+bool BasicClientCommand::isDataOk()
 { 
     uint16_t crcCheck = static_cast<uint16_t>( crc % 0xFFFF);
     return (dataOk && (length == bytesRetrieved) && (crcCheck==checkSum)); 
