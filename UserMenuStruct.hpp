@@ -33,7 +33,7 @@ extern "C"
 */
 #include <list>
 #include <stdarg.h>
-#include "types.h"
+#include "types.hpp"
 
 /**
 *@ingroup Scriptclasses

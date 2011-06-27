@@ -17,15 +17,15 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "globals.h"
+#include "globals.hpp"
 #include "Item.hpp"
-#include "CWorld.hpp"
-#include "CContainerObjectTable.h"
-#include "CLogger.hpp"
-#include "CRaceSizeTable.hpp"
+#include "World.hpp"
+#include "ContainerObjectTable.hpp"
+#include "Logger.hpp"
+#include "RaceSizeTable.hpp"
 #include "ServerCommands.hpp"
-#include "netinterface/CBasicServerCommand.hpp"
-#include "netinterface/CNetInterface.hpp"
+#include "netinterface/BasicServerCommand.hpp"
+#include "netinterface/NetInterface.hpp"
 
 
 //! eine Tabelle fuer Behaelter - Item Daten

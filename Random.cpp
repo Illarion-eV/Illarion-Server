@@ -17,7 +17,7 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "Random.h"
+#include "Random.hpp"
 
 #include <cstdlib>   // für rand(..)
 #include <iostream> // für cout

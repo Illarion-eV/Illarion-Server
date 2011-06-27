@@ -20,8 +20,8 @@
 #ifndef _BBIWI_SERVER_COMMANDS_HPP
 #define _BBIWI_SERVER_COMMANDS_HPP
 
-#include "netinterface/CBasicServerCommand.hpp"
-#include "types.h"
+#include "netinterface/BasicServerCommand.hpp"
+#include "types.hpp"
 #include <string>
 
 

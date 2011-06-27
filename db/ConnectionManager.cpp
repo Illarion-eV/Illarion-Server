@@ -17,7 +17,7 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "ConnectionManager.h"
+#include "ConnectionManager.hpp"
 
 #include <stdexcept>
 #include <algorithm>

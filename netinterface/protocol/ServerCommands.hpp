@@ -20,14 +20,14 @@
 #ifndef _SERVERCOMMANDS_HPP_
 #define _SERVERCOMMANDS_HPP_
 
-#include "CNewClientView.hpp"
-#include "netinterface/CBasicServerCommand.hpp"
-//#include "netinterface/CNetInterface.hpp"
-//#include "globals.h"
+#include "NewClientView.hpp"
+#include "netinterface/BasicServerCommand.hpp"
+//#include "netinterface/NetInterface.hpp"
+//#include "globals.hpp"
 //#include "Item.hpp"
-//#include "CWorld.hpp"
-//#include "CContainerObjectTable.h"
-//#include "CLogger.hpp"
+//#include "World.hpp"
+//#include "ContainerObjectTable.hpp"
+//#include "Logger.hpp"
 
 struct WeatherStruct;
 struct UserMenuStruct;

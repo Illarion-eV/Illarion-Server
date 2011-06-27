@@ -20,47 +20,47 @@
 AUTOMAKE_OPTIONS = foreign 
 noinst_PROGRAMS = testserver
 
-testserver_SOURCES = fuse_ptr.hpp CArmorObjectTable.cpp \
-CArmorObjectTable.h \
-CNewClientView.hpp CNewClientView.cpp CCommonObjectTable.cpp CCommonObjectTable.h \
-CContainer.cpp CContainer.h CContainerObjectTable.cpp CContainerObjectTable.h \
-CContainerStack.cpp CContainerStack.h \
-CField.cpp \
-CField.hpp CIdCounter.cpp \
-CNaturalArmorTable.hpp CNaturalArmorTable.cpp CMonsterAttackTable.hpp CMonsterAttackTable.cpp\
-CRaceSizeTable.hpp CRaceSizeTable.cpp CIdCounter.h \
-CLongTimeEffect.cpp CLongTimeEffect.hpp CMap.cpp CMap.hpp \
-CMapException.hpp CMapVector.cpp CMapVector.hpp CMilTimer.cpp CMilTimer.hpp \
-CNamesObjectTable.cpp CNamesObjectTable.h CNPCTable.h CNPCTable.cpp \
-CSpawnPoint.cpp CSpawnPoint.hpp CMonsterTable.hpp CMonsterTable.cpp \
-CTilesModificatorTable.cpp CTilesModificatorTable.h CTilesTable.cpp \
-CTilesTable.h CTimer.cpp CTimer.h CWeaponObjectTable.cpp CWeaponObjectTable.h \
-CScriptVariablesTable.hpp CScriptVariablesTable.cpp \
-CWorld.cpp CWorld.hpp CWorldIMPLAdmin.cpp \
-CPlayer.cpp CPlayerWorkoutCommands.cpp CPlayer.hpp \
-CWorldIMPLCharacterMoves.cpp CWorldIMPLItemMoves.cpp CWorldIMPLTalk.cpp \
-CWorldIMPLTools.cpp CWorldIMPLScriptHelp.cpp Connection.h InitialConnection.cpp InitialConnection.h \
-Item.hpp Item.cpp Random.cpp Random.h TableStructs.hpp TccharacterVector.hpp \
-CCharacter.cpp CCharacter.hpp CMonster.cpp CMonster.hpp \
-CNPC.cpp CNPC.hpp constants.h globals.h main.cpp main_help.h \
-tuningConstants.h tvector.hh CMonitoringClients.cpp CMonitoringClients.hpp\
-tvector.hpp utility.cpp utility.hpp main_help.cpp CWorldIMPLPlayer.cpp CWorldIMPLMonCommands.cpp \
-playersave.hh playersave.cpp CLongTimeAction.hpp CLongTimeAction.cpp CLongTimeCharacterEffects.hpp CLongTimeCharacterEffects.cpp \
-CLogger.hpp CLogger.cpp CScheduler.h CScheduler.cpp CLongTimeEffectTable.hpp CLongTimeEffectTable.cpp \
-Db/di.h db/ConnectionManager.h db/ConnectionManager.cpp db/postgres.h db/postgres.cpp \
-script/CLuaScript.hpp script/CLuaScript.cpp script/CLuaNPCScript.hpp script/CLuaNPCScript.cpp script/CLuaItemScript.hpp script/CLuaItemScript.cpp \
-script/CLuaMonsterScript.hpp script/CLuaMonsterScript.cpp CTriggerTable.cpp  CTriggerTable.hpp script/CLuaMagicScript.cpp script/CLuaMagicScript.hpp \
-script/CLuaTileScript.cpp script/CLuaTileScript.hpp script/CLuaTriggerScript.cpp script/CLuaTriggerScript.hpp script/CLuaWeaponScript.hpp \
-script/CLuaWeaponScript.cpp script/CLuaScheduledScript.hpp script/CLuaScheduledScript.cpp script/CLuaLongTimeEffectScript.hpp script/CLuaLongTimeEffectScript.cpp script/CLuaReloadScript.cpp script/CLuaReloadScript.hpp \
-script/CLuaLoginScript.cpp script/CLuaLoginScript.hpp script/CLuaLogoutScript.cpp script/CLuaLogoutScript.hpp script/CLuaDepotScript.hpp script/CLuaDepotScript.cpp \
-script/CLuaLookAtPlayerScript.cpp script/CLuaLookAtPlayerScript.hpp script/CLuaLearnScript.hpp script/CLuaLearnScript.cpp \
-CScheduledScriptsTable.hpp CScheduledScriptsTable.cpp CSpellTable.cpp  CSpellTable.hpp \
-netinterface/CNetInterface.hpp netinterface/CNetInterface.cpp \
-netinterface/CCommandFactory.hpp netinterface/CCommandFactory.cpp netinterface/CBasicCommand.cpp netinterface/CBasicCommand.hpp netinterface/CBasicServerCommand.hpp \
-netinterface/CBasicServerCommand.cpp netinterface/CBasicClientCommand.hpp netinterface/CBasicClientCommand.cpp \
-netinterface/protocol/ClientCommands.hpp netinterface/protocol/ServerCommands.cpp netinterface/protocol/ServerCommands.hpp netinterface/CByteBuffer.cpp netinterface/CByteBuffer.hpp \
-CPlayerManager.hpp CPlayerManager.cpp CWaypointList.hpp CWaypointList.cpp\
-CLanguage.hpp CLanguage.cpp
+testserver_SOURCES = fuse_ptr.hpp ArmorObjectTable.cpp \
+ArmorObjectTable.hpp \
+NewClientView.hpp NewClientView.cpp CommonObjectTable.cpp CommonObjectTable.hpp \
+Container.cpp Container.hpp ContainerObjectTable.cpp ContainerObjectTable.hpp \
+ContainerStack.cpp ContainerStack.hpp \
+Field.cpp \
+Field.hpp IdCounter.cpp \
+NaturalArmorTable.hpp NaturalArmorTable.cpp MonsterAttackTable.hpp MonsterAttackTable.cpp\
+RaceSizeTable.hpp RaceSizeTable.cpp IdCounter.hpp \
+LongTimeEffect.cpp LongTimeEffect.hpp Map.cpp Map.hpp \
+MapException.hpp MapVector.cpp MapVector.hpp MilTimer.cpp MilTimer.hpp \
+ScriptVariablesTable.cpp ScriptVariablesTable.hpp \
+NamesObjectTable.cpp NamesObjectTable.hpp NPCTable.hpp NPCTable.cpp \
+SpawnPoint.cpp SpawnPoint.hpp MonsterTable.hpp MonsterTable.cpp \
+TilesModificatorTable.cpp TilesModificatorTable.hpp TilesTable.cpp \
+TilesTable.hpp Timer.cpp Timer.hpp WeaponObjectTable.cpp WeaponObjectTable.hpp \
+World.cpp World.hpp WorldIMPLAdmin.cpp \
+Player.cpp PlayerWorkoutCommands.cpp Player.hpp \
+WorldIMPLCharacterMoves.cpp WorldIMPLItemMoves.cpp WorldIMPLTalk.cpp \
+WorldIMPLTools.cpp WorldIMPLScriptHelp.cpp Connection.hpp InitialConnection.cpp InitialConnection.hpp \
+Item.hpp Item.cpp Random.cpp Random.hpp TableStructs.hpp CharacterVector.hpp \
+Character.cpp Character.hpp Monster.cpp Monster.hpp \
+NPC.cpp NPC.hpp constants.hpp globals.hpp main.cpp main_help.hpp \
+tuningConstants.h tvector.hpp MonitoringClients.cpp MonitoringClients.hpp\
+tvector.hpp utility.cpp utility.hpp main_help.cpp WorldIMPLPlayer.cpp WorldIMPLMonCommands.cpp \
+playersave.hpp playersave.cpp LongTimeAction.hpp LongTimeAction.cpp LongTimeCharacterEffects.hpp LongTimeCharacterEffects.cpp \
+Logger.hpp Logger.cpp Scheduler.hpp Scheduler.cpp LongTimeEffectTable.hpp LongTimeEffectTable.cpp \
+db/di.hpp db/ConnectionManager.hpp db/ConnectionManager.cpp db/postgres.hpp db/postgres.cpp \
+script/LuaScript.hpp script/LuaScript.cpp script/LuaNPCScript.hpp script/LuaNPCScript.cpp script/LuaItemScript.hpp script/LuaItemScript.cpp \
+script/LuaMonsterScript.hpp script/LuaMonsterScript.cpp TriggerTable.cpp  TriggerTable.hpp script/LuaMagicScript.cpp script/LuaMagicScript.hpp \
+script/LuaTileScript.cpp script/LuaTileScript.hpp script/LuaTriggerScript.cpp script/LuaTriggerScript.hpp script/LuaWeaponScript.hpp \
+script/LuaWeaponScript.cpp script/LuaScheduledScript.hpp script/LuaScheduledScript.cpp script/LuaLongTimeEffectScript.hpp script/LuaLongTimeEffectScript.cpp script/LuaReloadScript.cpp script/LuaReloadScript.hpp \
+script/LuaLoginScript.cpp script/LuaLoginScript.hpp script/LuaLogoutScript.cpp script/LuaLogoutScript.hpp script/LuaDepotScript.hpp script/LuaDepotScript.cpp \
+script/LuaLookAtPlayerScript.cpp script/LuaLookAtPlayerScript.hpp script/LuaLearnScript.hpp script/LuaLearnScript.cpp \
+ScheduledScriptsTable.hpp ScheduledScriptsTable.cpp SpellTable.cpp SpellTable.hpp \
+netinterface/NetInterface.hpp netinterface/NetInterface.cpp \
+netinterface/CommandFactory.hpp netinterface/CommandFactory.cpp netinterface/BasicCommand.cpp netinterface/BasicCommand.hpp netinterface/BasicServerCommand.hpp \
+netinterface/BasicServerCommand.cpp netinterface/BasicClientCommand.hpp netinterface/BasicClientCommand.cpp \
+netinterface/protocol/ClientCommands.hpp netinterface/protocol/ServerCommands.cpp netinterface/protocol/ServerCommands.hpp netinterface/ByteBuffer.cpp netinterface/ByteBuffer.hpp \
+PlayerManager.hpp PlayerManager.cpp WaypointList.hpp WaypointList.cpp\
+Language.hpp Language.cpp
 
 
 testserver_LDADD = -lpthread -lssl -lcrypto -lpqxx -lpq -llua5.1 -lboost_thread -lboost_system -lluabind

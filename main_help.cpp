@@ -28,32 +28,32 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#include "CNamesObjectTable.h"
-#include "CWeaponObjectTable.h"
-#include "CArmorObjectTable.h"
-#include "CCommonObjectTable.h"
-#include "CTilesModificatorTable.h"
-#include "CTilesTable.h"
-#include "CContainerObjectTable.h"
-#include "CMonsterTable.hpp"
-#include "CSpellTable.hpp"
-#include "CTriggerTable.hpp"
-#include "CMonsterAttackTable.hpp"
-#include "CNaturalArmorTable.hpp"
-#include "CScheduledScriptsTable.hpp"
+#include "NamesObjectTable.hpp"
+#include "WeaponObjectTable.hpp"
+#include "ArmorObjectTable.hpp"
+#include "CommonObjectTable.hpp"
+#include "TilesModificatorTable.hpp"
+#include "TilesTable.hpp"
+#include "ContainerObjectTable.hpp"
+#include "MonsterTable.hpp"
+#include "SpellTable.hpp"
+#include "TriggerTable.hpp"
+#include "MonsterAttackTable.hpp"
+#include "NaturalArmorTable.hpp"
+#include "ScheduledScriptsTable.hpp"
+#include "ScriptVariablesTable.hpp"
 #include <boost/shared_ptr.hpp>
-#include "script/CLuaWeaponScript.hpp" //For standard fighting script.
-#include "script/CLuaLookAtPlayerScript.hpp"
-#include "script/CLuaDepotScript.hpp"
-#include "script/CLuaLoginScript.hpp"
-#include "script/CLuaLearnScript.hpp"
-#include "CLongTimeEffectTable.hpp"
-#include "Connection.h"
-#include "netinterface/CNetInterface.hpp"
-#include "CRaceSizeTable.hpp"
-#include "CLogger.hpp"
-#include "CScriptVariablesTable.hpp"
-#include "CWorld.hpp"
+#include "script/LuaWeaponScript.hpp" //For standard fighting script.
+#include "script/LuaLookAtPlayerScript.hpp"
+#include "script/LuaDepotScript.hpp"
+#include "script/LuaLoginScript.hpp"
+#include "script/LuaLearnScript.hpp"
+#include "LongTimeEffectTable.hpp"
+#include "Connection.hpp"
+#include "netinterface/NetInterface.hpp"
+#include "RaceSizeTable.hpp"
+#include "Logger.hpp"
+#include "World.hpp"
 
 
 // a map storing configuration options from a config file...
@@ -109,21 +109,21 @@ bool Init( const std::string& initfile) {
 	return true;
 }
 
-#include "CPlayer.hpp"
+#include "Player.hpp"
 
-#include "main_help.h"
+#include "main_help.hpp"
 
-// in diesen std::vector fügen CFields die numbers der gelöschten containeritems ein,
-//  damit die zugehörige Map die containerinhalte löschen kann
+// in diesen std::vector fï¿½gen CFields die numbers der gelï¿½schten containeritems ein,
+//  damit die zugehï¿½rige Map die containerinhalte lï¿½schen kann
 std::vector<int>* erasedcontainers;
 
-// Koordinaten von gelöschten Containern, benötigt zum Schließen offener Showcases
+// Koordinaten von gelï¿½schten Containern, benï¿½tigt zum Schlieï¿½en offener Showcases
 std::vector<position>* contpos;
 
 //! eine Tabelle mit den Rassenspezifischen Angriffswerten
 CMonsterAttackTable* MonsterAttacks;
 
-//! eine Tabelle mit Rassenspezifischen Rüstwerten
+//! eine Tabelle mit Rassenspezifischen Rï¿½stwerten
 CNaturalArmorTable* NaturalArmors;
 
 //! eine Tabelle mit den allgemeinen Attributen der Item
@@ -132,16 +132,16 @@ CCommonObjectTable* CommonItems;
 //! eine Tabelle mit den Namen der Item
 CNamesObjectTable* ItemNames;
 
-//! eine Tabelle für Waffen - Item Daten
+//! eine Tabelle fï¿½r Waffen - Item Daten
 CWeaponObjectTable* WeaponItems;
 
-//! eine Tabelle für Schutzkleidungs - Item Daten
+//! eine Tabelle fï¿½r Schutzkleidungs - Item Daten
 CArmorObjectTable* ArmorItems;
 
-//! eine Tabelle für Behälter - Item Daten
+//! eine Tabelle fï¿½r Behï¿½lter - Item Daten
 CContainerObjectTable* ContainerItems;
 
-//! eine Tabelle für die Zaubersprüche - Spells
+//! eine Tabelle fï¿½r die Zaubersprï¿½che - Spells
 CSpellTable* Spells;
 
 //! a Table with Scheduled Scripts
@@ -159,28 +159,28 @@ CTilesTable* Tiles;
 //! a table containing monster descriptions
 CMonsterTable* MonsterDescriptions;
 
-//! ein struct für die Allgemeinen Attribute eines Item
+//! ein struct fï¿½r die Allgemeinen Attribute eines Item
 CommonStruct tempCommon;
 
-//! ein struct für die Namen eines Item
+//! ein struct fï¿½r die Namen eines Item
 NamesStruct tempNames;
 
-//! ein struct für Daten einer Waffe
+//! ein struct fï¿½r Daten einer Waffe
 WeaponStruct tempWeapon;
 
-//! ein struct für Daten einer Schutzkleidung
+//! ein struct fï¿½r Daten einer Schutzkleidung
 ArmorStruct tempArmor;
 
-//! ein struct für Daten eines Artefakts
+//! ein struct fï¿½r Daten eines Artefakts
 ArtefactStruct tempArtefact;
 
-//! ein struct für Daten eines Behälters
+//! ein struct fï¿½r Daten eines Behï¿½lters
 ContainerStruct tempContainer;
 
-//! ein struct für Daten von Item
+//! ein struct fï¿½r Daten von Item
 TilesModificatorStruct tempModificator;
 
-//! ein struct für Daten von Bodenplatten
+//! ein struct fï¿½r Daten von Bodenplatten
 TilesStruct tempTile;
 
 CScriptVariablesTable * scriptVariables;
@@ -197,7 +197,7 @@ boost::shared_ptr<CLuaLoginScript>loginScript;
 
 boost::shared_ptr<CLuaLearnScript>learnScript;
 
-//! Pointer auf das Standard script für Kämpfe falls kein spezielles vorhanden ist.
+//! Pointer auf das Standard script fï¿½r Kï¿½mpfe falls kein spezielles vorhanden ist.
 boost::shared_ptr<CLuaWeaponScript> standardFightingScript;
 
 CScheduledScriptsTable * ScheduledScriptsTable; //< table witch holds the scheduled scripts
@@ -264,7 +264,7 @@ void login_save( CPlayer* who ) {
 	}
 }
 
-//! zur Prüfung der Kommandozeilenargumente
+//! zur Prï¿½fung der Kommandozeilenargumente
 void checkArguments( int argc, char* argv[]) {
 	if ( argc == 2 ) 
     { // config file specified on command line
@@ -458,7 +458,7 @@ void sig_term( int ) {
 	running = false;
 }
 
-//! die Signalbehandlung für SIGSEGV
+//! die Signalbehandlung fï¿½r SIGSEGV
 void sig_segv( int ) 
 {
 	std::cout << "\nSIGSEGV received !" << std::endl;
@@ -480,7 +480,7 @@ void sig_usr( int )
     configOptions["disable_login"] = "true";
     CWorld * world = CWorld::get();
     world->forceLogoutOfAllPlayers(); //Alle spieler ausloggen
-    world->maps.clear(); //alte Karten löschen
+    world->maps.clear(); //alte Karten lï¿½schen
     std::cout<<"importing mainland"<<std::endl;
     world->load_from_editor(configOptions["datadir"] + std::string("map/import/oberwelt_0"));
     std::cout<<"loading maps"<<std::endl;

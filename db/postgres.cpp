@@ -21,7 +21,7 @@
 #include <sstream>
 #include <locale>
 
-#include "postgres.h"
+#include "postgres.hpp"
 
 namespace di {
 namespace postgres {

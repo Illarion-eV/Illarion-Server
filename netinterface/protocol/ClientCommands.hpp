@@ -34,26 +34,26 @@
 *holds the implementation + definition of all the client commands
 */
 
-#include "CPlayer.hpp"
-#include "CWorld.hpp"
-#include "CCharacter.hpp"
+#include "Player.hpp"
+#include "World.hpp"
+#include "Character.hpp"
 #include <string>
-#include "types.h"
-#include "CLogger.hpp"
-#include "CWeaponObjectTable.h"
-#include "CCommonObjectTable.h"
-#include "CMonsterTable.hpp"
-#include "CTilesTable.h"
+#include "types.hpp"
+#include "Logger.hpp"
+#include "WeaponObjectTable.hpp"
+#include "CommonObjectTable.hpp"
+#include "MonsterTable.hpp"
+#include "TilesTable.hpp"
 #include <boost/shared_ptr.hpp>
-#include "script/CLuaNPCScript.hpp"
-#include "script/CLuaScript.hpp"
-#include "script/CLuaItemScript.hpp"
-#include "script/CLuaMagicScript.hpp"
-#include "script/CLuaMonsterScript.hpp"
-#include "script/CLuaTileScript.hpp"
-#include "script/CLuaLookAtPlayerScript.hpp"
+#include "script/LuaNPCScript.hpp"
+#include "script/LuaScript.hpp"
+#include "script/LuaItemScript.hpp"
+#include "script/LuaMagicScript.hpp"
+#include "script/LuaMonsterScript.hpp"
+#include "script/LuaTileScript.hpp"
+#include "script/LuaLookAtPlayerScript.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
-#include "netinterface/CBasicClientCommand.hpp"
+#include "netinterface/BasicClientCommand.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
 
 

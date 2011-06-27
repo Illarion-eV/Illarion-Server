@@ -17,7 +17,7 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "InitialConnection.h"
+#include "InitialConnection.hpp"
 #include <boost/thread.hpp>
 #include <sstream>
 #define InitialConnection_DEBUG

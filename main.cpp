@@ -21,7 +21,7 @@
 #include <config.h>
 #endif
 
-#include "db/ConnectionManager.h"
+#include "db/ConnectionManager.hpp"
 
 #include <sys/types.h>  // include this before any other sys headers
 #include <sys/resource.h>
@@ -32,27 +32,27 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <sstream>
-#include "script/CLuaLoginScript.hpp"
-#include "script/CLuaReloadScript.hpp"
-#include "CField.hpp"
-#include "CPlayer.hpp"
-#include "CWorld.hpp"
-#include "CMapException.hpp"
-#include "constants.h"
-#include "CCommonObjectTable.h"
-#include "CWeaponObjectTable.h"
-#include "CNamesObjectTable.h"
-#include "CArmorObjectTable.h"
-#include "CContainerObjectTable.h"
-#include "CTilesModificatorTable.h"
-#include "CTilesTable.h"
-#include "CLogger.hpp"
-#include "main_help.h"
-#include "Random.h"
-#include "playersave.hh"
-#include "CPlayerManager.hpp"
-#include "CScriptVariablesTable.hpp"
-#include "InitialConnection.h"
+#include "script/LuaLoginScript.hpp"
+#include "script/LuaReloadScript.hpp"
+#include "Field.hpp"
+#include "Player.hpp"
+#include "World.hpp"
+#include "MapException.hpp"
+#include "constants.hpp"
+#include "CommonObjectTable.hpp"
+#include "WeaponObjectTable.hpp"
+#include "NamesObjectTable.hpp"
+#include "ArmorObjectTable.hpp"
+#include "ContainerObjectTable.hpp"
+#include "TilesModificatorTable.hpp"
+#include "TilesTable.hpp"
+#include "Logger.hpp"
+#include "main_help.hpp"
+#include "Random.hpp"
+#include "playersave.hpp"
+#include "PlayerManager.hpp"
+#include "ScriptVariablesTable.hpp"
+#include "InitialConnection.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
 

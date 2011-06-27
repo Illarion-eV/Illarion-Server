@@ -17,12 +17,12 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "playersave.hh"
-#include "CPlayer.hpp"
+#include "playersave.hpp"
+#include "Player.hpp"
 #include <unistd.h>
 #include <signal.h>
-#include "Connection.h"
-#include "netinterface/CNetInterface.hpp"
+#include "Connection.hpp"
+#include "netinterface/NetInterface.hpp"
 
 tvector<CPlayer*> players_to_save;
 std::map<std::string, int> players_tosave_map;

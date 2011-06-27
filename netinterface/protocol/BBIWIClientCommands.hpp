@@ -27,10 +27,10 @@
 */
 
 
-#include "CWorld.hpp"
-#include "CLogger.hpp"
+#include "World.hpp"
+#include "Logger.hpp"
 #include <boost/shared_ptr.hpp>
-#include "netinterface/CBasicClientCommand.hpp"
+#include "netinterface/BasicClientCommand.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
 
 /**

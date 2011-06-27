@@ -6,7 +6,6 @@ install-sh
 Makefile.in
 config.h
 config.h.in
-.deps
 Makefile
 testserver
 configure
@@ -14,3 +13,5 @@ stamp-h1
 autom4te.cache
 missing
 depcomp
+.*
+!.gitignore

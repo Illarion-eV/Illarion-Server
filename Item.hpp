@@ -25,7 +25,7 @@
 #include <vector>
 #include <string>
 #include <boost/shared_ptr.hpp>
-#include "globals.h"
+#include "globals.hpp"
 #if __GNUC__ < 3
 #include <hash_map>
 #else
