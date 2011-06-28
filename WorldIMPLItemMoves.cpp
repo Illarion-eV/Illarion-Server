@@ -18,11 +18,11 @@
 
 
 #include "World.hpp"
-#include "ContainerObjectTable.hpp"
-#include "WeaponObjectTable.hpp"
-#include "ArmorObjectTable.hpp"
-#include "CommonObjectTable.hpp"
-#include "TilesModificatorTable.hpp"
+#include "data/ContainerObjectTable.hpp"
+#include "data/WeaponObjectTable.hpp"
+#include "data/ArmorObjectTable.hpp"
+#include "data/CommonObjectTable.hpp"
+#include "data/TilesModificatorTable.hpp"
 #include "script/LuaItemScript.hpp"
 #include "script/LuaTriggerScript.hpp"
 #include "script/LuaDepotScript.hpp"

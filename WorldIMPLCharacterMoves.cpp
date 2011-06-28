@@ -19,16 +19,16 @@
 
 #include "World.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
-#include "TilesTable.hpp"
-#include "TilesModificatorTable.hpp"
-#include "CommonObjectTable.hpp"
+#include "data/TilesTable.hpp"
+#include "data/TilesModificatorTable.hpp"
+#include "data/CommonObjectTable.hpp"
 #include "script/LuaItemScript.hpp"
 #include "Logger.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
 #include "netinterface/NetInterface.hpp"
 #include "netinterface/BasicServerCommand.hpp"
 #include "Player.hpp"
-#include "RaceSizeTable.hpp"
+#include "data/RaceSizeTable.hpp"
 
 extern RaceSizeTable * RaceSizes;
 

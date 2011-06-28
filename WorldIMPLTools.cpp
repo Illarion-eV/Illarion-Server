@@ -19,12 +19,12 @@
 
 #include "db/ConnectionManager.hpp"
 #include "World.hpp"
-#include "WeaponObjectTable.hpp"
-#include "TilesModificatorTable.hpp"
-#include "ContainerObjectTable.hpp"
-#include "CommonObjectTable.hpp"
-#include "ArmorObjectTable.hpp"
-#include "MonsterTable.hpp"
+#include "data/WeaponObjectTable.hpp"
+#include "data/TilesModificatorTable.hpp"
+#include "data/ContainerObjectTable.hpp"
+#include "data/CommonObjectTable.hpp"
+#include "data/ArmorObjectTable.hpp"
+#include "data/MonsterTable.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
 #include <list>
 //#include <algorith>

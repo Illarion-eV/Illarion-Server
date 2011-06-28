@@ -20,9 +20,9 @@
 #include "Monster.hpp"
 #include "Random.hpp"
 #include "tuningConstants.hpp"
-#include "CommonObjectTable.hpp"
+#include "data/CommonObjectTable.hpp"
 #include <iostream>
-#include "MonsterTable.hpp"
+#include "data/MonsterTable.hpp"
 #include <boost/shared_ptr.hpp>
 #include "script/LuaMonsterScript.hpp"
 #include "World.hpp"

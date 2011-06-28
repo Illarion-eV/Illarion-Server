@@ -24,10 +24,10 @@ testserver_SOURCES = \
 \
 main.cpp main_help.cpp utility.cpp IdCounter.cpp Logger.cpp Random.cpp \
 \
-ArmorObjectTable.cpp CommonObjectTable.cpp ContainerObjectTable.cpp RaceSizeTable.cpp \
-MonsterAttackTable.cpp ScheduledScriptsTable.cpp LongTimeEffectTable.cpp NaturalArmorTable.cpp \
-SpellTable.cpp ScriptVariablesTable.cpp NamesObjectTable.cpp NPCTable.cpp TriggerTable.cpp \
-MonsterTable.cpp TilesModificatorTable.cpp TilesTable.cpp WeaponObjectTable.cpp \
+data/ArmorObjectTable.cpp data/CommonObjectTable.cpp data/ContainerObjectTable.cpp data/RaceSizeTable.cpp \
+data/MonsterAttackTable.cpp data/ScheduledScriptsTable.cpp data/LongTimeEffectTable.cpp data/NaturalArmorTable.cpp \
+data/SpellTable.cpp data/ScriptVariablesTable.cpp data/NamesObjectTable.cpp data/NPCTable.cpp data/TriggerTable.cpp \
+data/MonsterTable.cpp data/TilesModificatorTable.cpp data/TilesTable.cpp data/WeaponObjectTable.cpp \
 \
 Map.cpp \
 MapVector.cpp Container.cpp NewClientView.cpp Item.cpp ContainerStack.cpp Field.cpp SpawnPoint.cpp \
@@ -40,8 +40,7 @@ Timer.cpp MilTimer.cpp \
 LongTimeEffect.cpp LongTimeAction.cpp LongTimeCharacterEffects.cpp Scheduler.cpp \
 \
 Character.cpp \
-Player.cpp PlayerWorkoutCommands.cpp Monster.cpp NPC.cpp \
-PlayerManager.cpp playersave.cpp WaypointList.cpp Language.cpp \
+Player.cpp PlayerWorkoutCommands.cpp Monster.cpp NPC.cpp PlayerManager.cpp playersave.cpp WaypointList.cpp Language.cpp \
 \
 db/ConnectionManager.cpp db/postgres.cpp \
 \

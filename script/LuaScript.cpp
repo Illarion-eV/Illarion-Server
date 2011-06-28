@@ -45,7 +45,7 @@ extern "C" {
 #include "LongTimeAction.hpp"
 #include "LongTimeEffect.hpp"
 #include "LongTimeCharacterEffects.hpp"
-#include "ScriptVariablesTable.hpp"
+#include "data/ScriptVariablesTable.hpp"
 #include "Logger.hpp"
 #include "WaypointList.hpp"
 #include "fuse_ptr.hpp"

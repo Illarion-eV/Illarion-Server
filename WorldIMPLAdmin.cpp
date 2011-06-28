@@ -22,35 +22,35 @@
 #include <sstream>
 #include <regex.h>
 #include <list>
-#include "TilesModificatorTable.hpp"
-#include "TilesTable.hpp"
-#include "ArmorObjectTable.hpp"
-#include "WeaponObjectTable.hpp"
-#include "ContainerObjectTable.hpp"
+#include "data/TilesModificatorTable.hpp"
+#include "data/TilesTable.hpp"
+#include "data/ArmorObjectTable.hpp"
+#include "data/WeaponObjectTable.hpp"
+#include "data/ContainerObjectTable.hpp"
 #include "script/LuaLookAtPlayerScript.hpp"
 #include "script/LuaDepotScript.hpp"
-#include "CommonObjectTable.hpp"
-#include "NamesObjectTable.hpp"
-#include "MonsterTable.hpp"
-#include "SpellTable.hpp"
-#include "TriggerTable.hpp"
-#include "MonsterAttackTable.hpp"
-#include "NaturalArmorTable.hpp"
-#include "ScheduledScriptsTable.hpp"
+#include "data/CommonObjectTable.hpp"
+#include "data/NamesObjectTable.hpp"
+#include "data/MonsterTable.hpp"
+#include "data/SpellTable.hpp"
+#include "data/TriggerTable.hpp"
+#include "data/MonsterAttackTable.hpp"
+#include "data/NaturalArmorTable.hpp"
+#include "data/ScheduledScriptsTable.hpp"
 //We need this for the standard Fighting Script.
 #include "script/LuaWeaponScript.hpp"
 //For the reload scripts
 #include "script/LuaReloadScript.hpp"
 #include "script/LuaLearnScript.hpp"
 #include <boost/shared_ptr.hpp>
-#include "LongTimeEffectTable.hpp"
+#include "data/LongTimeEffectTable.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "netinterface/NetInterface.hpp"
 #include "script/LuaLoginScript.hpp"
 #include "PlayerManager.hpp"
-#include "RaceSizeTable.hpp"
+#include "data/RaceSizeTable.hpp"
 #include "Logger.hpp"
-#include "ScriptVariablesTable.hpp"
+#include "data/ScriptVariablesTable.hpp"
 
 #include <iostream>
 

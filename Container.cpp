@@ -18,8 +18,8 @@
 
 
 #include "Container.hpp"
-#include "ContainerObjectTable.hpp"
-#include "CommonObjectTable.hpp"
+#include "data/ContainerObjectTable.hpp"
+#include "data/CommonObjectTable.hpp"
 #include "World.hpp"
 
 Container::Container(uint16_t max_cont_Volume) : max_Volume(max_cont_Volume) {

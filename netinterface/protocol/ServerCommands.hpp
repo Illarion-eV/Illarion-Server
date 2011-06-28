@@ -26,7 +26,7 @@
 //#include "globals.hpp"
 //#include "Item.hpp"
 //#include "World.hpp"
-//#include "ContainerObjectTable.hpp"
+//#include "data/ContainerObjectTable.hpp"
 //#include "Logger.hpp"
 
 struct WeatherStruct;

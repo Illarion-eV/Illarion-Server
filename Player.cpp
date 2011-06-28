@@ -25,8 +25,8 @@
 #include <sstream>
 #include <memory>
 #include "tuningConstants.hpp"
-#include "ContainerObjectTable.hpp"
-#include "CommonObjectTable.hpp"
+#include "data/ContainerObjectTable.hpp"
+#include "data/CommonObjectTable.hpp"
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>

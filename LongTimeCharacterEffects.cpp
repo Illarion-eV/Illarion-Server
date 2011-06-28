@@ -22,7 +22,7 @@
 #include "MilTimer.hpp"
 #include "Player.hpp"
 #include "LongTimeEffect.hpp"
-#include "LongTimeEffectTable.hpp"
+#include "data/LongTimeEffectTable.hpp"
 #include "script/LuaLongTimeEffectScript.hpp"
 
 extern LongTimeEffectTable * LongTimeEffects;

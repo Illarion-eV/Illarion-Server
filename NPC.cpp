@@ -21,7 +21,7 @@
 #include "NPC.hpp"
 #include "tuningConstants.hpp"
 #include "Random.hpp"
-#include "CommonObjectTable.hpp"
+#include "data/CommonObjectTable.hpp"
 #include <iostream>
 #include "World.hpp"
 

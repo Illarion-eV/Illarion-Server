@@ -22,7 +22,7 @@
 #include "Character.hpp"
 #include "Player.hpp"
 #include "World.hpp"
-#include "LongTimeEffectTable.hpp"
+#include "data/LongTimeEffectTable.hpp"
 #include "TableStructs.hpp"
 #include "script/LuaLongTimeEffectScript.hpp"
 

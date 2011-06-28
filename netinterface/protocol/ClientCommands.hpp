@@ -40,10 +40,10 @@
 #include <string>
 #include "types.hpp"
 #include "Logger.hpp"
-#include "WeaponObjectTable.hpp"
-#include "CommonObjectTable.hpp"
-#include "MonsterTable.hpp"
-#include "TilesTable.hpp"
+#include "data/WeaponObjectTable.hpp"
+#include "data/CommonObjectTable.hpp"
+#include "data/MonsterTable.hpp"
+#include "data/TilesTable.hpp"
 #include <boost/shared_ptr.hpp>
 #include "script/LuaNPCScript.hpp"
 #include "script/LuaScript.hpp"

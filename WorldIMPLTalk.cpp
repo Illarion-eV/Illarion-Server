@@ -18,9 +18,9 @@
 
 
 #include "World.hpp"
-#include "NamesObjectTable.hpp"
-#include "TilesTable.hpp"
-#include "CommonObjectTable.hpp"
+#include "data/NamesObjectTable.hpp"
+#include "data/TilesTable.hpp"
+#include "data/CommonObjectTable.hpp"
 #include "script/LuaItemScript.hpp"
 #include "TableStructs.hpp"
 #include "Player.hpp"

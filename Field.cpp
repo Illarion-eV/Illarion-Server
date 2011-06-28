@@ -19,10 +19,10 @@
 
 #include "Field.hpp"
 
-#include "TilesModificatorTable.hpp"
-#include "CommonObjectTable.hpp"
-#include "ContainerObjectTable.hpp"
-#include "TilesTable.hpp"
+#include "data/TilesModificatorTable.hpp"
+#include "data/CommonObjectTable.hpp"
+#include "data/ContainerObjectTable.hpp"
+#include "data/TilesTable.hpp"
 #include "globals.hpp"
 
 //#define Field_DEBUG

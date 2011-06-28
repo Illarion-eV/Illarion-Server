@@ -23,7 +23,7 @@
 #include "Scheduler.hpp"
 #include "types.hpp"
 #include "TableStructs.hpp"
-#include "CommonObjectTable.hpp"
+#include "data/CommonObjectTable.hpp"
 #include "script/LuaLearnScript.hpp"
 
 extern CommonObjectTable * CommonItems;
