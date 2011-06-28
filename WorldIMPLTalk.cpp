@@ -371,6 +371,7 @@ void World::lookAtMapItem( Player* cp, short int x, short int y, short int z ) {
 						break;
 					default:
 						outtext +=  "unknown mother tongue" ;
+						break;
 				}
                 if ( titem.quality < 100 )outtext += " ( " + Logger::toString(titem.quality) + "% )";
                 boost::shared_ptr<BasicServerCommand>cmd( new NameOfMapItemTC( x, y, z,  outtext ));
@@ -397,6 +398,7 @@ void World::lookAtMapItem( Player* cp, short int x, short int y, short int z ) {
 						default:
                             cmd.reset( new NameOfMapItemTC( x, y, z,  tempTile.English ) );
                             cp->Connection->addCommand(cmd);
+                            break;
 					}
 				} else {
 					std::cerr << "Tile Nr.: " << cfold->getTileId() << "nicht gefunden\n";
@@ -415,6 +417,7 @@ void World::lookAtMapItem( Player* cp, short int x, short int y, short int z ) {
 						default:
                             cmd.reset( new NameOfMapItemTC( x, y, z,  "?" ) );
 							cp->Connection->addCommand( cmd );
+							break;
 					}
 				}
 			}
@@ -436,6 +439,7 @@ void World::lookAtMapItem( Player* cp, short int x, short int y, short int z ) {
 					default:
                         cmd.reset( new NameOfMapItemTC( x, y, z,  "?" ) );
                         cp->Connection->addCommand( cmd );
+                        break;
 				}
 			} 
             else 
@@ -477,6 +481,7 @@ void World::lookAtMenueItem( Player* cp, unsigned char position, TYPE_OF_ITEM_ID
 				break;
 			default:
 				name = std::string( "unknown mother tongue" );
+				break;
 		}
 	}
     else 
@@ -491,6 +496,7 @@ void World::lookAtMenueItem( Player* cp, unsigned char position, TYPE_OF_ITEM_ID
 				break;
 			default:
 				name = std::string( "?" );
+				break;
 		}
 	}
     boost::shared_ptr<BasicServerCommand>cmd( new NameOfShowCaseItemTC( 2, position,name) );
@@ -564,6 +570,7 @@ void World::lookAtShowcaseItem( Player* cp, unsigned char showcase, unsigned cha
 							break;
 						default:
 							outtext +=  "unknown mother tongue" ;
+							break;
 					}
                     if ( titem.quality < 100)outtext += " ( " + Logger::toString(titem.quality) + "% )";
                 } else { // kein Name vorhanden
@@ -576,6 +583,7 @@ void World::lookAtShowcaseItem( Player* cp, unsigned char showcase, unsigned cha
 							break;
 						default:
 							outtext = std::string( "?" );
+							break;
 					}
 				}
                 boost::shared_ptr<BasicServerCommand>cmd( new NameOfShowCaseItemTC( showcase, position, outtext) );
@@ -645,6 +653,7 @@ void World::lookAtInventoryItem( Player* cp, unsigned char position )
 					break;
 				default:
 					outtext += "unknown mother tongue" ;
+					break;
 			}
             if ( titem.quality  < 100 )outtext += " ( " + Logger::toString(titem.quality) + "% )";
 		} else { // kein Name vorhanden
@@ -657,6 +666,7 @@ void World::lookAtInventoryItem( Player* cp, unsigned char position )
 					break;
 				default:
 					outtext = std::string( "?" );
+					break;
 			}
 		}
         boost::shared_ptr<BasicServerCommand>cmd( new NameOfInventoryItemTC( position, outtext) );

@@ -108,7 +108,7 @@ void SpawnPoint::spawn()
                             std::cout << "erschaffe Monster " << newmonster->name << " " << tempPos.x << " " << tempPos.y << " " << tempPos.z << std::endl;
 #endif
                             (*it).akt_count++;
-                            // Monster in die Liste der aktiven Monster einfügen
+                            // Monster in die Liste der aktiven Monster einfï¿½gen
                             world->newMonsters.push_back( newmonster );
                             tempf->SetPlayerOnField( true );
     			            world->sendCharacterMoveToAllVisiblePlayers( newmonster, NORMALMOVE, 4 );
@@ -117,7 +117,7 @@ void SpawnPoint::spawn()
                             std::cout<<"cant find empty field at pos ( "<<tempPos.x<<" "<<tempPos.y<<" "<<tempPos.z<<" )"<<std::endl;
                     }
                 } 
-                catch (Monster::unknownIDException) 
+                catch (Monster::unknownIDException&)
                 {
                     std::cerr << "couldn't create monster in SpawnPoint.cpp: " << it->typ << std::endl;
                 }
@@ -154,7 +154,7 @@ bool SpawnPoint::load(const int& id) {
 
 		for (size_t i = 0; i < rows; ++i)
 			addMonster(race[i], count[i]);
-	} catch (std::exception e) {
+	} catch (std::exception &e) {
 		std::cerr << "exception: " << e.what() << std::endl;
 		return false;
 	}

@@ -48,7 +48,7 @@ class Receiver
         *@param conn the connection from which the data is received
         *@param rQueue the receive queue to which the received commands should be stored
         */
-        Receiver( NetInterface * conn , boost::shared_ptr<NetInterface::LIENTCOMMANDLIST> rQueue );
+        Receiver( NetInterface * conn , boost::shared_ptr<NetInterface::CLIENTCOMMANDLIST> rQueue );
         ~Receiver();
         
         /**
@@ -86,7 +86,7 @@ class Receiver
         int lastReadedByte; /*<stores the last byte which was red from the buffer*/
         NetInterface * connection; /*<the connection to the player*/
         
-        boost::shared_ptr<NetInterface::LIENTCOMMANDLIST> receivedQueue; /*<pointer to the queue which holds the received commands*/
+        boost::shared_ptr<NetInterface::CLIENTCOMMANDLIST> receivedQueue; /*<pointer to the queue which holds the received commands*/
         
         pthread_t receive_thread; /*<Thread which receives data and stores them in the buffer*/
 	

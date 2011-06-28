@@ -420,11 +420,11 @@ bool World::erase(ScriptItem item, int amount)
 			return false;
 		}
 	}
-	//Item befindet sich am Körper oder im Gürtel
+	//Item befindet sich am Kï¿½rper oder im Gï¿½rtel
 	else if 
     ( item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt ) 
     {
-		//Wenn Item rechts belegt und links ein Belegt ist [Zweihanditem] das Belegt mit löschen
+		//Wenn Item rechts belegt und links ein Belegt ist [Zweihanditem] das Belegt mit lï¿½schen
 		if ( item.itempos == RIGHT_TOOL && (item.owner->GetItemAt(LEFT_TOOL)).id == BLOCKEDITEM ) item.owner->increaseAtPos( LEFT_TOOL, -255);
         else if ( item.itempos == LEFT_TOOL && (item.owner->GetItemAt(RIGHT_TOOL)).id == BLOCKEDITEM ) item.owner->increaseAtPos( RIGHT_TOOL, -255);
         item.owner->increaseAtPos( item.itempos, -amount );
@@ -482,7 +482,7 @@ bool World::increase(ScriptItem item, short int count) {
 			return false;
 		}
 	}
-	//Item befindet sich am Körper oder im Rucksack
+	//Item befindet sich am Kï¿½rper oder im Rucksack
 	else if ( item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt ) {
 		item.owner->increaseAtPos( item.itempos, count );
 		return true;
@@ -534,7 +534,7 @@ bool World::swap(ScriptItem item, TYPE_OF_ITEM_ID newitem, unsigned short int ne
 			return false;
 		}
 	}
-	//Item befindet sich am Körper oder im Rucksack
+	//Item befindet sich am Kï¿½rper oder im Rucksack
 	else if ( item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt ) {
 		item.owner->swapAtPos( item.itempos, newitem, newQuality );
 		return true;
@@ -649,7 +649,7 @@ fuse_ptr<Character> World::createMonster(unsigned short id, position pos, short 
 			sendCharacterMoveToAllVisiblePlayers( newMonster, NORMALMOVE, 4 );
 			return fuse_ptr<Character>( newMonster );
 
-		} catch (Monster::unknownIDException) {
+		} catch (Monster::unknownIDException&) {
 			std::cerr << "World::createMonster: Failed to create monster with unknown id (" << id << ")!" << std::endl;
 			return fuse_ptr<Character>();
 		}
@@ -728,7 +728,7 @@ bool World::createSavedArea(uint16_t tileid, position pos, uint16_t height, uint
     {
         for ( time_t akt_y = pos.y; akt_y < pos.y+height; ++akt_y)
         {
-                //Prüfen ob auf der position ein gültiges Feld ist, wenn ja false zurück liefern
+                //Prï¿½fen ob auf der position ein gï¿½ltiges Feld ist, wenn ja false zurï¿½ck liefern
                 if ( maps.findMapForPos( akt_x, akt_y, pos.z, dummy ) )
                 {
                     std::cerr<<"World::createSavedArea: Aborted map insertion, map for field at ("<<akt_x <<", "<<akt_y<<", "<<pos.z<<") found!"<<std::endl;

@@ -134,7 +134,7 @@ class CommandType
         * pure virtual operator overloading
         */
         virtual bool operator() ( World*, Player*, const std::string& ) = 0;
-    virtual ~CommandType() {}
+        virtual ~CommandType() {}
 
     private:
         CommandType& operator=(const CommandType&);

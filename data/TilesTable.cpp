@@ -94,7 +94,7 @@ void TilesTable::reload() {
 		std::cout << "loaded " << rows << " rows into TilesTable" << std::endl;
 #endif
 
-	} catch (std::exception e) {
+	} catch (std::exception &e) {
 		std::cout << "exception in tiles loading: " << e.what() << std::endl;
 		m_dataOK = false;
 	}

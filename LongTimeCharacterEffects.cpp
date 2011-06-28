@@ -254,7 +254,7 @@ bool LongTimeCharacterEffects::save()
         }
         transaction.commit();
     }
-    catch ( std::exception e)
+    catch ( std::exception &e)
     {
         std::cerr << "caught exception during saving LongTimeCharacterEffects effects: " << e.what() << std::endl;
         transaction.rollback();
@@ -341,7 +341,7 @@ bool LongTimeCharacterEffects::load()
 
         return true;
     }
-    catch ( std::exception e)
+    catch ( std::exception &e)
     {
         std::cerr << "Error while loading longtimeeffects for player: " << player->name << "(" << player->id << ") what: " << e.what() << std::endl;
         return false;

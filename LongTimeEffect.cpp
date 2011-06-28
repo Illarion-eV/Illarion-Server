@@ -122,7 +122,7 @@ bool LongTimeEffect::save( uint32_t playerid )
         transaction.commit();
         return true;
     }
-    catch ( std::exception e)
+    catch ( std::exception &e)
     {
         std::cerr << "caught exception during saving lt effects: " << e.what() << std::endl;
         transaction.rollback();

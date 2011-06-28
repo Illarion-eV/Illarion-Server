@@ -223,7 +223,7 @@ void MonsterTable::reload() {
 		std::cout << "loaded " << m_table.size() << " monsters!" << std::endl;
 #endif
 
-	} catch (std::exception e) {
+	} catch (std::exception &e) {
 		std::cerr << "exception: " << e.what() << std::endl;
 		m_dataOK = false;
 	}

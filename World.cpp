@@ -51,10 +51,6 @@
 extern std::map<std::string, std::string> configOptions;
 //Table with data of Monsters
 extern MonsterTable* MonsterDescriptions;
-//Table with Item Descriptions
-extern CommonObjectTable * CommonItems;
-//Table with Tile Descriptions
-extern TilesTable * Tiles;
 //Map with opitions which messages are logged or not
 //! eine Tabelle fr Waffen - Item Daten
 extern WeaponObjectTable* WeaponItems;
@@ -705,7 +701,7 @@ bool World::initRespawns() {
         }
 
         return true; // everything went well
-    } catch (std::exception e) {
+    } catch (std::exception &e) {
         Logger::writeError("World_Inits","got exception in load SpawnPoints: " + Logger::toString(e.what()) );
             return false;
     }

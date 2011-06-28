@@ -111,7 +111,7 @@ void* Sender::send_loop( Sender * sender )
          pthread_exit( 0 );
          return NULL;
     }
-    catch ( std::exception e)
+    catch ( std::exception &e)
     {
         //std::cerr<<e.what()<<std::endl;
     }

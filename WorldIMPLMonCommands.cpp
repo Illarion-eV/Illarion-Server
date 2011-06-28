@@ -43,14 +43,6 @@
 
 #include <iostream>
 
-extern std::ofstream talkfile;
-
-void set_spawn_command( World*, Player*, const std::string& );
-void import_maps_command( World*, Player*, const std::string& );
-void create_area_command( World*, Player*, const std::string& );
-void set_login( World*, Player*, const std::string& );
-
-
 void World::montool_kill_command(Player * c)
 {
     if ( !c->hasGMRight(gmr_reload) )return;

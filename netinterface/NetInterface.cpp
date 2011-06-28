@@ -45,7 +45,7 @@ NetInterface::~NetInterface()
 		socket.close();   
         //std::cout<<"destruction done"<<std::endl;
     }
-    catch (std::exception e)
+    catch (std::exception &e)
     {
         std::cerr << e.what () << std::endl;
     }
@@ -72,7 +72,7 @@ bool NetInterface::activate()
         online = true;
         return true;
     } 
-    catch( std::exception ex )
+    catch( std::exception &ex )
     {
         std::cerr<<"error during activate: "<<ex.what()<<std::endl;
         return false;
@@ -190,7 +190,7 @@ void NetInterface::addCommand( boost::shared_ptr<BasicServerCommand> command )
                     boost::bind(&NetInterface::handle_write, shared_from_this(),boost::asio::placeholders::error));
             }
         }
-        catch ( std::exception ex )
+        catch ( std::exception &ex )
         {
             std::cerr<<"addCommand error during write: "<<ex.what()<<std::endl;
             closeConnection();
@@ -209,7 +209,7 @@ void NetInterface::shutdownSend( boost::shared_ptr<BasicServerCommand> command )
 		boost::asio::async_write(socket,boost::asio::buffer(shutdownCmd->cmdData(),shutdownCmd->getLength()),
 		boost::bind(&NetInterface::handle_write_shutdown, shared_from_this(),boost::asio::placeholders::error));
 	}
-	catch ( std::exception ex )
+	catch ( std::exception &ex )
 	{
 		std::cerr<<"Exception beim Schreiben von Daten:"<<ex.what()<<std::endl;
 		closeConnection();
@@ -241,7 +241,7 @@ void NetInterface::handle_write(const boost::system::error_code& error)
 			closeConnection();
 		}
 	}
-	catch ( std::exception ex )
+	catch ( std::exception &ex )
 	{
         std::cout<<"caugth Exception on handle_write"<<ex.what()<<std::endl;
 		closeConnection();

@@ -336,7 +336,7 @@ bool Map::GetPToCFieldAt( Field* &fip, short int x, short int y ) {
 	try {
 		tempx = Conv_X_Koord( x );
 		tempy = Conv_Y_Koord( y );
-	} catch ( Exception_CoordinateOutOfRange e ) {
+	} catch ( Exception_CoordinateOutOfRange &e ) {
 		return false;
 	}
 
@@ -541,7 +541,7 @@ bool Map::GetCFieldAt( Field &fi, short int x, short int y ) {
 	try {
 		tempx = Conv_X_Koord( x );
 		tempy = Conv_Y_Koord( y );
-	} catch ( Exception_CoordinateOutOfRange e ) {
+	} catch ( Exception_CoordinateOutOfRange &e ) {
 		return false;
 	}
 
@@ -559,7 +559,7 @@ bool Map::PutCFieldAt( Field &fi, short int x, short int y ) {
 	try {
 		tempx = Conv_X_Koord( x );
 		tempy = Conv_Y_Koord( y );
-	} catch ( Exception_CoordinateOutOfRange e ) {
+	} catch ( Exception_CoordinateOutOfRange &e ) {
 		return false;
 	}
 
@@ -577,13 +577,13 @@ void Map::DoAgeItems_XFromTo( short int xstart, short int xend, ITEM_FUNCT funct
 	position posZ;
 	try {
 		tempMinX = Conv_X_Koord( xstart );
-	} catch ( Exception_CoordinateOutOfRange e ) {
+	} catch ( Exception_CoordinateOutOfRange &e ) {
 		tempMinX = 0;
 	}
 
 	try {
 		tempMaxX = Conv_X_Koord( xend );
-	} catch ( Exception_CoordinateOutOfRange e ) {
+	} catch ( Exception_CoordinateOutOfRange &e ) {
 		tempMaxX = Width - 1;
 	}
 
@@ -648,13 +648,13 @@ void Map::ApplyToCFields_XFromTo( short int xstart, short int xend, Field::FIELD
 
 	try {
 		tempMinX = Conv_X_Koord( xstart );
-	} catch ( Exception_CoordinateOutOfRange e ) {
+	} catch ( Exception_CoordinateOutOfRange &e ) {
 		tempMinX = 0;
 	}
 
 	try {
 		tempMaxX = Conv_X_Koord( xend );
-	} catch ( Exception_CoordinateOutOfRange e ) {
+	} catch ( Exception_CoordinateOutOfRange &e ) {
 		tempMaxX = Width - 1;
 	}
 

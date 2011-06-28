@@ -179,7 +179,7 @@ class RequestAppearanceTS : public BasicClientCommand
 
         virtual ~RequestAppearanceTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
             id = getIntFromBuffer();
         }
@@ -235,7 +235,7 @@ class LookAtCharacterTS : public BasicClientCommand
 
         }
 
-        void decodeData()
+        virtual void decodeData()
         {
             id = getIntFromBuffer();
             mode = getUnsignedCharFromBuffer();
@@ -279,6 +279,7 @@ class LookAtCharacterTS : public BasicClientCommand
                                 break;
                              default:
                                 outtext +=  "unknown mother tongue" ;
+                                break;
                          }
                          boost::shared_ptr<BasicServerCommand>cmd( new CharDescription( id, outtext ) );
                          //player->inform( outtext );
@@ -306,6 +307,7 @@ class LookAtCharacterTS : public BasicClientCommand
                             break;
                          default:
                             outtext +=  "unknown mother tongue" ;
+                            break;
                      }
                      boost::shared_ptr<BasicServerCommand>cmd( new CharDescription( id, outtext ) );
                      //player->inform( outtext );
@@ -351,7 +353,7 @@ class CastTS : public BasicClientCommand
         {
         };
 
-        void decodeData()
+        virtual void decodeData()
         {
             spellId = static_cast<unsigned long int>(getIntFromBuffer() );
             cid = getUnsignedCharFromBuffer();
@@ -757,6 +759,7 @@ class CastTS : public BasicClientCommand
 						default:
 							LuaMageScript->CastMagic(player,counter,paramtemp,static_cast<unsigned char>(LTS_NOLTACTION));
                             msg = "Casted spell: " + Logger::toString(spellId) + " on item: " + Logger::toString(Target.item.id);
+                            break;
 					} //Ende Switch
                     //monitoringClientList->sendCommand( new SendActionTS( player->id, player->name, 2, msg));
                 } //ENde if player->IsAlive
@@ -796,7 +799,7 @@ class UseTS : public BasicClientCommand
         {
         };
 
-        void decodeData()
+        virtual void decodeData()
         {
             unsigned char count = getUnsignedCharFromBuffer();
 			bs.push( count );
@@ -1311,7 +1314,7 @@ class LookAtMenuItemTS : public BasicClientCommand
 
         virtual ~LookAtMenuItemTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
             pos = getUnsignedCharFromBuffer();
             id = getShortIntFromBuffer();
@@ -1354,7 +1357,7 @@ class KeepAliveTS : public BasicClientCommand
 
         virtual ~KeepAliveTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
         }
 
@@ -1412,7 +1415,7 @@ class RequestSkillsTS : public BasicClientCommand
 
         virtual ~RequestSkillsTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
         }
 
@@ -1442,7 +1445,7 @@ class AttackStopTS : public BasicClientCommand
 
         virtual ~AttackStopTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
         }
 
@@ -1474,9 +1477,9 @@ class LookAtInventoryItemTS : public BasicClientCommand
         {
         }
 
-        ~LookAtInventoryItemTS(){};
+        virtual ~LookAtInventoryItemTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
             pos = getUnsignedCharFromBuffer();
         }
@@ -1517,7 +1520,7 @@ class LookAtShowCaseItemTS : public BasicClientCommand
 
         virtual ~LookAtShowCaseItemTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
             showcase = getUnsignedCharFromBuffer();
             pos = getUnsignedCharFromBuffer();
@@ -1560,7 +1563,7 @@ class MoveItemFromPlayerToShowCaseTS : public BasicClientCommand
 
         virtual ~MoveItemFromPlayerToShowCaseTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
             cpos = getUnsignedCharFromBuffer();
             showcase = getUnsignedCharFromBuffer();
@@ -1608,7 +1611,7 @@ class MoveItemFromShowCaseToPlayerTS : public BasicClientCommand
 
         virtual ~MoveItemFromShowCaseToPlayerTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
             showcase = getUnsignedCharFromBuffer();
             pos = getUnsignedCharFromBuffer();
@@ -1656,7 +1659,7 @@ class MoveItemInsideInventoryTS : public BasicClientCommand
 
         virtual ~MoveItemInsideInventoryTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
             opos = getUnsignedCharFromBuffer();
             npos = getUnsignedCharFromBuffer();
@@ -1702,7 +1705,7 @@ class DropItemFromInventoryOnMapTS : public BasicClientCommand
 
         virtual ~DropItemFromInventoryOnMapTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
             pos = getUnsignedCharFromBuffer();
             xc = static_cast<short int>( getShortIntFromBuffer() );
@@ -1748,7 +1751,7 @@ class MoveItemFromMapToPlayerTS : public BasicClientCommand
 
         virtual ~MoveItemFromMapToPlayerTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
             dir = getUnsignedCharFromBuffer();
             pos = getUnsignedCharFromBuffer();
@@ -1794,7 +1797,7 @@ class MoveItemFromMapIntoShowCaseTS : public BasicClientCommand
 
         virtual ~MoveItemFromMapIntoShowCaseTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
             dir = getUnsignedCharFromBuffer();
             showcase = getUnsignedCharFromBuffer();
@@ -1842,7 +1845,7 @@ class MoveItemBetweenShowCasesTS : public BasicClientCommand
 
         virtual ~MoveItemBetweenShowCasesTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
             source = getUnsignedCharFromBuffer();
             spos = getUnsignedCharFromBuffer();
@@ -1892,7 +1895,7 @@ class DropItemFromShowCaseOnMapTS : public BasicClientCommand
 
         virtual ~DropItemFromShowCaseOnMapTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
             showcase = getUnsignedCharFromBuffer();
             pos = getUnsignedCharFromBuffer();
@@ -1940,7 +1943,7 @@ class CloseContainerInShowCaseTS : public BasicClientCommand
 
         virtual ~CloseContainerInShowCaseTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
             showcase = getUnsignedCharFromBuffer();
             //getUnsignedCharFromBuffer();
@@ -1982,7 +1985,7 @@ class LookIntoShowCaseContainerTS : public BasicClientCommand
 
         virtual ~LookIntoShowCaseContainerTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
             showcase = getUnsignedCharFromBuffer();
             pos = getUnsignedCharFromBuffer();
@@ -2024,7 +2027,7 @@ class LookIntoInventoryTS : public BasicClientCommand
 
         virtual ~LookIntoInventoryTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
             showcase = getUnsignedCharFromBuffer();
         }
@@ -2064,7 +2067,7 @@ class LookIntoContainerOnFieldTS : public BasicClientCommand
 
         virtual ~LookIntoContainerOnFieldTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
             direction = getUnsignedCharFromBuffer();
             showcase = getUnsignedCharFromBuffer();
@@ -2111,7 +2114,7 @@ class LogOutTS : public BasicClientCommand
 
         virtual ~LogOutTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
         }
 
@@ -2145,7 +2148,7 @@ class WhisperTS : public BasicClientCommand
 
         virtual ~WhisperTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
             text = getStringFromBuffer();
         }
@@ -2181,7 +2184,7 @@ class ShoutTS : public BasicClientCommand
 
         virtual ~ShoutTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
             text = getStringFromBuffer();
         }
@@ -2216,7 +2219,7 @@ class SayTS : public BasicClientCommand
 
         virtual ~SayTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
             text = getStringFromBuffer();
         }
@@ -2256,7 +2259,7 @@ class RefreshTS : public BasicClientCommand
 
         virtual ~RefreshTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
         }
 
@@ -2291,7 +2294,7 @@ class IntroduceTS : public BasicClientCommand
 
         virtual ~IntroduceTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
         }
 
@@ -2333,7 +2336,7 @@ class AttackPlayerTS : public BasicClientCommand
 
         virtual ~AttackPlayerTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
             enemyid = getIntFromBuffer();
         }
@@ -2393,7 +2396,7 @@ class LookAtMapItemTS : public BasicClientCommand
 
         virtual ~LookAtMapItemTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
             x = getShortIntFromBuffer();
             y = getShortIntFromBuffer();
@@ -2442,7 +2445,7 @@ class PSpinActionTS : public BasicClientCommand
 
         virtual ~PSpinActionTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
         }
 
@@ -2488,7 +2491,7 @@ class CharMoveTS : public BasicClientCommand
 
         virtual ~CharMoveTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
 	    charid = getIntFromBuffer();
 	    direction = getUnsignedCharFromBuffer();
@@ -2554,7 +2557,7 @@ class IMoverActionTS : public BasicClientCommand
 
         virtual ~IMoverActionTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
             xc = static_cast<char>( getShortIntFromBuffer() );
             yc = static_cast<char>( getShortIntFromBuffer() );
@@ -2603,7 +2606,7 @@ class LoginCommandTS : public BasicClientCommand
 
         virtual ~LoginCommandTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
             clientVersion = getUnsignedCharFromBuffer();
             loginName = getStringFromBuffer();
@@ -2641,7 +2644,7 @@ class ScreenSizeCommandTS : public BasicClientCommand
 
         virtual ~ScreenSizeCommandTS(){};
 
-        void decodeData()
+        virtual void decodeData()
         {
             width = getUnsignedCharFromBuffer();
             height = getUnsignedCharFromBuffer();

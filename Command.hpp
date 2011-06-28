@@ -82,6 +82,8 @@ class Command : public CommandType {
 			return false;
 		}
 
+		virtual ~Command() {}
+
 	private:
 
 		bool first;

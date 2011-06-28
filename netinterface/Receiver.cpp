@@ -22,7 +22,7 @@
 #include "netinterface/BasicServerCommand.hpp"
 #include "netinterface/protocol/ClientCommands.hpp"
 
-Receiver::Receiver( NetInterface * conn, boost::shared_ptr<NetInterface::LIENTCOMMANDLIST> rQueue ) : connection( conn ), receivedQueue( rQueue )
+Receiver::Receiver( NetInterface * conn, boost::shared_ptr<NetInterface::CLIENTCOMMANDLIST> rQueue ) : connection( conn ), receivedQueue( rQueue )
 {
     numtrys = 0;
     lastReadedByte = -1;
@@ -202,7 +202,7 @@ void * Receiver::receive_loop( Receiver * receiver )
             pthread_exit( 0 );
             return NULL;
     }
-    catch ( std::exception e)
+    catch ( std::exception &e)
     {
         //std::cerr<<e.what()<<std::endl;
     }

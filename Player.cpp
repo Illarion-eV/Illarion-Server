@@ -51,7 +51,7 @@ template<> const std::string toString(const unsigned char& convertme) {
         return toString((unsigned short)convertme);
 }
 
-Player::Player(boost::shared_ptr<NetInterface> newConnection) throw (LogoutException)
+Player::Player(boost::shared_ptr<NetInterface> newConnection) throw (Player::LogoutException)
                : Character(), mapshowcaseopen(false), onlinetime(0), Connection(newConnection),
 turtleActive(false), clippingActive(true), admin(false) {
 #ifdef Player_DEBUG
@@ -148,7 +148,7 @@ turtleActive(false), clippingActive(true), admin(false) {
 
 }
 
-void Player::login() throw(LogoutException)
+void Player::login() throw(Player::LogoutException)
 {
         // find a position for our player...
         short int x,y,z;
@@ -323,6 +323,7 @@ void Player::login() throw(LogoutException)
                              break;
                       default:
                              tmessage = "You are encumbered.";
+                             break;
                }
                sendMessage( tmessage );
         } else {
@@ -818,7 +819,7 @@ bool Player::wasUnconsciousSent( ) {
         return unconsciousSent;
 }
 
-void Player::check_logindata() throw (LogoutException) {
+void Player::check_logindata() throw (Player::LogoutException) {
 
         try {
 
@@ -1171,7 +1172,7 @@ bool Player::save() throw ()
 
                return true;
         } 
-        catch (std::exception e) 
+        catch (std::exception &e)
         {
                std::cerr << "Playersave caught exception: " << e.what() << std::endl;
                transaction.rollback();
@@ -1425,6 +1426,7 @@ void Player::increasePoisonValue( short int value ) {
                              break;
                       default:
                              tmessage = "You are poisoned.";
+                             break;
                }
                sendMessage(tmessage);
         }
@@ -1444,6 +1446,7 @@ void Player::increasePoisonValue( short int value ) {
                              break;
                       default:
                              tmessage = "You feel better now.";
+                             break;
                }
                sendMessage(tmessage);
         } else {
@@ -1569,6 +1572,7 @@ void Player::teachMagic(unsigned char type,unsigned char flag) {
                                     break;
                              default:
                                     magic.type = MAGE;
+                                    break;
                       }
                }
                unsigned long int temp = 1;
@@ -1605,6 +1609,7 @@ bool Player::encumberance(uint16_t &movementCost) {
                                     break;
                              default:
                                     tmessage = "You are encumbered.";
+                                    break;
                       }
                       inform(tmessage);
                }
@@ -1648,6 +1653,7 @@ bool Player::encumberance(uint16_t &movementCost) {
                                     break;
                              default:
                                     tmessage="You are carrying too much to move!";
+                                    break;
                       }
                       inform(tmessage);
                       return false;

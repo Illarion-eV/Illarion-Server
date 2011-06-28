@@ -45,11 +45,11 @@ Container& Container:: operator =( const Container& source ) {
 	std::cout << "Container Zuweisungsoperator Start" << std::endl;
 #endif
 	if ( this != &source ) {
-		// alte Item löschen
+		// alte Item lï¿½schen
 		items.clear();
 		// Item kopieren
 		items = source.items;
-		// alte ONTAINERMAP löschen (rekursiv alle Container)
+		// alte ONTAINERMAP lï¿½schen (rekursiv alle Container)
 		if ( !containers.empty() ) {
 			ONTAINERMAP::iterator theIterator;
 			for ( theIterator = containers.begin(); theIterator != containers.end(); ++theIterator ) {
@@ -225,9 +225,9 @@ bool Container::InsertContainer( Item it, Container* cc ) {
 			}
 			// dem Container seine neue ID zuweisen
 			titem.number = count;
-			// den Container in die Itemliste einfügen
+			// den Container in die Itemliste einfï¿½gen
 			items.push_back( titem );
-			// den Inhalt des Containers in die Containermap mit der entsprechenden ID einfügen
+			// den Inhalt des Containers in die Containermap mit der entsprechenden ID einfï¿½gen
 			containers.insert( ONTAINERMAP::value_type( count, cc ) );
 			return true;
 		}
@@ -287,7 +287,7 @@ bool Container::changeQualityAt(MAXCOUNTTYPE nr, short int amount) {
 			theIterator->quality = tmpQuality;
 			return true;
 		} else {
-			//Falls Item ein Tasche den Inhalt löschen
+			//Falls Item ein Tasche den Inhalt lï¿½schen
 			if ( ContainerItems->find( theIterator->id ) ) {
 				ONTAINERMAP::iterator iterat = containers.find( (*theIterator).number );
 				if ( iterat != containers.end() ) containers.erase( iterat );
@@ -322,7 +322,7 @@ bool Container::TakeItemNr( MAXCOUNTTYPE nr, Item &it, Container* &cc, unsigned 
 		it = *theIterator;
 		ContainerStruct cont;
 		if ( ContainerItems->find( it.id, cont ) ) {
-			// das Item aus dem Vektor löschen
+			// das Item aus dem Vektor lï¿½schen
 			items.erase( theIterator );
 			ONTAINERMAP::iterator iterat = containers.find( it.number );
 			if ( iterat != containers.end() ) {
@@ -330,7 +330,7 @@ bool Container::TakeItemNr( MAXCOUNTTYPE nr, Item &it, Container* &cc, unsigned 
 				std::cout << "Inhalt des Containers gefunden\n";
 #endif
 				cc = ( *iterat ).second;
-				// Inhalt löschen
+				// Inhalt lï¿½schen
 				containers.erase( iterat );
 			} else {
 				cc = new Container(cont.ContainerVolume);
@@ -547,7 +547,7 @@ int Container::increaseAtPos( unsigned char pos, int count ) {
 
 	if ( theIterator != items.end() ) { // das Item wurde gefunden
 		if ( ContainerItems->find( ( *theIterator ).id ) ) {
-			return count;     // container nicht verändern
+			return count;     // container nicht verï¿½ndern
 		} else {
 			temp = ( *theIterator ).number + count;
 #ifdef Container_DEBUG
@@ -586,14 +586,14 @@ bool Container::changeItem( ScriptItem it)
 
 	if ( theIterator != items.end() ) { // das Item wurde gefunden
 		if ( !ContainerItems->find( theIterator->id ) )
-        {// container nicht verändern
+        {// container nicht verï¿½ndern
 			theIterator->id = it.id;
             theIterator->quality = it.quality;
             //theIterator->data = it.data;
             //theIterator->setData(it.data);
             theIterator->number = it.number;
             theIterator->data_map = it.data_map;
-			//Wenn ein Qualitätswert angegeben ist neue Qualität setzen
+			//Wenn ein Qualitï¿½tswert angegeben ist neue Qualitï¿½t setzen
 			return true;
 		}
 	}
@@ -617,9 +617,9 @@ bool Container::swapAtPos( unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t ne
 	}
 
 	if ( theIterator != items.end() ) { // das Item wurde gefunden
-		if ( !ContainerItems->find( ( *theIterator ).id ) ) {// container nicht verändern
+		if ( !ContainerItems->find( ( *theIterator ).id ) ) {// container nicht verï¿½ndern
 			( *theIterator ).id = newid;
-			//Wenn ein Qualitätswert angegeben ist neue Qualität setzen
+			//Wenn ein Qualitï¿½tswert angegeben ist neue Qualitï¿½t setzen
 			if ( newQuality > 0 )  (*theIterator).quality = newQuality;
 			return true;
 		}
@@ -797,7 +797,7 @@ int Container::weight(int rekt) {
 			tempCommon.Weight = 0;
 		}
 
-		if ( ContainerItems->find( theIterator->id ) ) { // Item ist ein Container -> number ist nur die ID für den Containerinhalt
+		if ( ContainerItems->find( theIterator->id ) ) { // Item ist ein Container -> number ist nur die ID fï¿½r den Containerinhalt
 			ONTAINERMAP::iterator iterat = containers.find( theIterator->number );
 			if ( iterat != containers.end() ) { // Inhalt des Containers gefunden
 				// rekursiv verarbeiten
@@ -905,7 +905,7 @@ void Container::doAge( ITEM_FUNCT funct, bool inventory )
                     else 
                     {
                         #ifdef Container_DEBUG
-                        std::cout << "Container:Ein Item wird gelöscht,ID:" << theIterator->id << "!\n";
+                        std::cout << "Container:Ein Item wird gelï¿½scht,ID:" << theIterator->id << "!\n";
                         #endif
                         if ( ContainerItems->find( theIterator->id ) ) 
                         {
@@ -915,11 +915,11 @@ void Container::doAge( ITEM_FUNCT funct, bool inventory )
                                 #ifdef Container_DEBUG
                                 std::cout << "Inhalt des Containers gefunden\n";
                                 #endif
-                                // Inhalt löschen
+                                // Inhalt lï¿½schen
                                 containers.erase( iterat );
                             }
                         }
-                        // das Item aus dem Vektor löschen
+                        // das Item aus dem Vektor lï¿½schen
                         theIterator = items.erase( theIterator );
                     }
                 }
@@ -962,12 +962,12 @@ bool Container::VolOk(Item item) {
 #endif
 	CommonStruct com;
 	if ( CommonItems->find(item.id, com) )
-		//true zurück liefern wenn das max Volumen unterschritten ist bzw. max Volumen == 0 (unendlich volumen bei Depot)
+		//true zurï¿½ck liefern wenn das max Volumen unterschritten ist bzw. max Volumen == 0 (unendlich volumen bei Depot)
 		try
 		{
 		     return ( ( max_Volume == 0 ) || ( (com.Volume * item.number + Volume(0)) <= max_Volume) ) ;
         }
-        catch ( RekursionException e)
+        catch ( RekursionException &e)
         {
             std::cerr<<"VolOk(Item item) maximale Rekursionstiefe: "<<MAXIMALEREKURSIONSTIEFE<<" wurde erreicht!"<<std::endl;
             return false;
@@ -990,12 +990,12 @@ bool Container::VolOk(Item item, Container * cont)
 	std::cout << "Volume of the items inside the container ="<<Volume(0)<<std::endl;
 	std::cout << "Volume of the new inserterd container = "<<cont->Volume(0)<<std::endl;
 #endif
-		//true zurück liefern wenn das max Volumen unterschritten ist bzw. max Volumen == 0 (unendlich volumen bei Depot)
+		//true zurï¿½ck liefern wenn das max Volumen unterschritten ist bzw. max Volumen == 0 (unendlich volumen bei Depot)
 		try
 		{
             return ( ( max_Volume == 0 ) || ( (com.Volume + Volume(0) + cont->Volume(0) ) <= max_Volume) ) ;
         }
-        catch ( RekursionException e)
+        catch ( RekursionException &e)
         {
             std::cerr<<"VolOk(Item item) maximale Rekursionstiefe: "<<MAXIMALEREKURSIONSTIEFE<<" wurde erreicht!"<<std::endl;
             return false;

@@ -52,15 +52,6 @@ extern CommonObjectTable* CommonItems;
 //! eine Tabelle fr Waffen - Item Daten
 extern WeaponObjectTable* WeaponItems;
 
-//! eine Tabelle fr Schutzkleidungs - Item Daten
-extern ArmorObjectTable* ArmorItems;
-
-//! ein struct fr Daten einer Waffe
-extern WeaponStruct tempWeapon;
-
-//! ein struct fr Daten einer Schutzkleidung
-extern ArmorStruct tempArmor;
-
 extern TilesTable* Tiles;
 
 extern boost::shared_ptr<LuaLearnScript>learnScript;
@@ -2472,7 +2463,7 @@ int Character::weightContainer( TYPE_OF_ITEM_ID id, int count, Container* tcont 
 				} else {
 					temp -= tcont->weight(rek);
 				}
-			} catch (RekursionException e) {
+			} catch (RekursionException &e) {
 				std::cerr << "weightContainer: maximale Rekursionstiefe " << MAXIMALEREKURSIONSTIEFE << " wurde bei Char " << name << " ueberschritten!" << std::endl;
 				return 30000;
 			}

@@ -25,12 +25,6 @@
 #include <iostream>
 #include "World.hpp"
 
-//! eine Tabelle mit den allgemeinen Attributen der Item
-extern CommonObjectTable* CommonItems;
-
-//! wird von verschiedenen Funktionen als Zwischenvariable genutzt
-extern CommonStruct tempCommon;
-
 NPC::NPC(TYPE_OF_CHARACTER_ID _id, std::string _name, Character::race_type _race, position _pos, Character::face_to dir, bool ishealer, Character::sex_type sex,
            uint8_t _hair, uint8_t _beard, uint8_t _hairred, uint8_t _hairgreen, uint8_t _hairblue, uint8_t _skinred, uint8_t _skingreen, uint8_t _skinblue) : Character(),
           _ishealer(ishealer), _startpos(_pos) {

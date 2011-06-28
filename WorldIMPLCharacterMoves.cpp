@@ -30,9 +30,6 @@
 #include "Player.hpp"
 #include "data/RaceSizeTable.hpp"
 
-extern RaceSizeTable * RaceSizes;
-
-
 bool World::warpMonster( Monster* cm, Field* cfstart ) {
     if ( cfstart->IsWarpField() ) {
         position oldpos = cm->pos;
@@ -42,7 +39,7 @@ bool World::warpMonster( Monster* cm, Field* cfstart ) {
             cfstart->SetMonsterOnField( false );
             cfend->SetMonsterOnField( true );
 
-            // allen anderen Spielern den Warp übermitteln
+            // allen anderen Spielern den Warp ï¿½bermitteln
             sendCharacterWarpToAllVisiblePlayers( cm, oldpos, PUSH );
 #ifdef World_CharMove_DEBUG
             std::cout << "warpMonster: neu " << cm->pos.x << " " << cm->pos.y << " " << ( short int ) cm->pos.z << "\n";
@@ -73,7 +70,7 @@ void World::checkFieldAfterMove( Character* cc, Field* cfstart ) {
                     }
                         
                     /*
-                    if ( CommonItems->find( theIterator->id, com) ) //Script finden für das Item
+                    if ( CommonItems->find( theIterator->id, com) ) //Script finden fï¿½r das Item
                     {
                         if ( com.script ) {
                             com.script->CharacterOnField(cc);
@@ -101,18 +98,14 @@ void World::checkFieldAfterMove( Character* cc, Field* cfstart ) {
                         ((Player*)cc)->startMusic(which.flags);
                     }
                     break;
-
-                default:
-                    ;
-
             }
         }
     }
-    //Struct für Scriptdaten
+    //Struct fï¿½r Scriptdaten
     TriggerStruct trigger;
-    //Schauen ob für die Position auf die der Char gegangen ist ein Triggerscript ausgeführt werden soll
+    //Schauen ob fï¿½r die Position auf die der Char gegangen ist ein Triggerscript ausgefï¿½hrt werden soll
     if ( Triggers->find(cc->pos,trigger) ) {
-        //Wenn ein Gültiges Triggerscript für die Position verfügbar ist CharacterOnField ausführen
+        //Wenn ein Gï¿½ltiges Triggerscript fï¿½r die Position verfï¿½gbar ist CharacterOnField ausfï¿½hren
         if ( trigger.script ) {
             trigger.script->CharacterOnField(cc);
         }
@@ -122,7 +115,7 @@ void World::checkFieldAfterMove( Character* cc, Field* cfstart ) {
 void World::TriggerFieldMove( Character* cc, bool moveto) {
     TriggerStruct trigger;
     if ( Triggers->find(cc->pos,trigger) ) {
-        //Wenn ein Gültiges Triggerscript für die Position verfügbar ist CharacterOnField ausführen
+        //Wenn ein Gï¿½ltiges Triggerscript fï¿½r die Position verfï¿½gbar ist CharacterOnField ausfï¿½hren
         if ( trigger.script ) {
             if ( moveto )
                 trigger.script->MoveToField(cc);
@@ -146,7 +139,7 @@ bool World::pushCharacter( Player* cp, TYPE_OF_CHARACTER_ID pushedCharId, unsign
 
 bool World::spinPlayer( Player* cp, unsigned char d ) {
 
-    // die Blickrichtung ändern
+    // die Blickrichtung ï¿½ndern
     switch ( d ) {
         case 0 :
             cp->faceto = Character::north;
@@ -174,7 +167,7 @@ bool World::spinPlayer( Player* cp, unsigned char d ) {
             break;
     }
 
-    // allen sichtbaren Spielern die Drehung übermitteln
+    // allen sichtbaren Spielern die Drehung ï¿½bermitteln
     sendSpinToAllVisiblePlayers( cp );
 
     return true;
@@ -227,7 +220,7 @@ void World::sendCharacterMoveToAllVisibleChars( Character* cc, unsigned char wai
 }
 
 void World::sendCharacterMoveToAllVisiblePlayers( Character* cc, unsigned char netid, unsigned char waitpages ) {
-    if (!cc->isinvisible) //Nur wenn Character nicht unsichtbar ist die Bewegung übertragen
+    if (!cc->isinvisible) //Nur wenn Character nicht unsichtbar ist die Bewegung ï¿½bertragen
     {
 
         std::vector < Player* > temp = Players.findAllCharactersInRangeOf( cc->pos.x, cc->pos.y, cc->pos.z, MAXVIEW+1 );

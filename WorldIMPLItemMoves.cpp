@@ -322,9 +322,9 @@ bool World::putItemOnInvPos( Player* cc, unsigned char pos )
         //item is not finished so we can't move it to a body pos only left hand, and right hand
         if ( (g_item.quality < 100) && (pos < MAX_BODY_ITEMS) )
         {
-            if ( cc->getPlayerLanguage() == 0)cc->inform("Du kannst keine unfertigen Gegenstände anlegen!");
+            if ( cc->getPlayerLanguage() == 0)cc->inform("Du kannst keine unfertigen Gegenstï¿½nde anlegen!");
             else cc->inform("You can't wear unfinished items!");
-std::cout << "UTF-8 TEST: Gegenstände" << std::endl;
+std::cout << "UTF-8 TEST: Gegenstï¿½nde" << std::endl;
             return false;
         }
         if ( putItemOnInvPos( ( Character* ) cc, pos ) ) {
@@ -1164,7 +1164,7 @@ void World::moveItemFromShowcaseToPlayer( Player* cp, unsigned char showcase, un
                                            std::string tmessage;
                                            switch ( cp->getPlayerLanguage() ) {
                                                   case Language::german:
-                                                         tmessage = "Du bist überladen.";
+                                                         tmessage = "Du bist ï¿½berladen.";
                                                          break;
                                                   case Language::english:
                                                          tmessage = "You are encumbered.";
@@ -1174,6 +1174,7 @@ void World::moveItemFromShowcaseToPlayer( Player* cp, unsigned char showcase, un
                                                          break;
                                                   default:
                                                          tmessage = "You are encumbered.";
+                                                         break;
                                            }
                                            cp->sendMessage( tmessage );
                                     }
@@ -1183,7 +1184,7 @@ void World::moveItemFromShowcaseToPlayer( Player* cp, unsigned char showcase, un
                                     std::string tmessage;
                                     switch ( cp->getPlayerLanguage() ) {
                                            case Language::german:
-                                                  tmessage = "Du bist nicht mehr überladen.";
+                                                  tmessage = "Du bist nicht mehr ï¿½berladen.";
                                                   break;
                                            case Language::english:
                                                   tmessage = "You are no longer encumbered.";
@@ -1193,6 +1194,7 @@ void World::moveItemFromShowcaseToPlayer( Player* cp, unsigned char showcase, un
                                                   break;
                                            default:
                                                   tmessage = "You are no longer encumbered.";
+                                                  break;
                                     }
 
                                     cp->sendMessage( tmessage );
@@ -1623,7 +1625,7 @@ void World::moveItemFromMapIntoShowcase( Player* cp, char direction, unsigned ch
                                            std::string tmessage;
                                            switch ( cp->getPlayerLanguage() ) {
                                                   case Language::german:
-                                                         tmessage = "Du bist überladen.";
+                                                         tmessage = "Du bist ï¿½berladen.";
                                                          break;
                                                   case Language::english:
                                                          tmessage = "You are encumbered.";
@@ -1633,6 +1635,7 @@ void World::moveItemFromMapIntoShowcase( Player* cp, char direction, unsigned ch
                                                          break;
                                                   default:
                                                          tmessage = "You are encumbered.";
+                                                         break;
                                            }
                                            cp->sendMessage( tmessage );
                                     }
@@ -1641,7 +1644,7 @@ void World::moveItemFromMapIntoShowcase( Player* cp, char direction, unsigned ch
                                     std::string tmessage;
                                     switch ( cp->getPlayerLanguage() ) {
                                            case Language::german:
-                                                  tmessage = "Du bist nicht mehr überladen.";
+                                                  tmessage = "Du bist nicht mehr ï¿½berladen.";
                                                   break;
                                            case Language::english:
                                                   tmessage = "You are no longer encumbered.";
@@ -1651,6 +1654,7 @@ void World::moveItemFromMapIntoShowcase( Player* cp, char direction, unsigned ch
                                                   break;
                                            default:
                                                   tmessage = "You are no longer encumbered.";
+                                                  break;
                                     }
                                            cp->sendMessage( tmessage );
                              }
@@ -1801,7 +1805,7 @@ void World::moveItemFromMapToPlayer( Player* cp, char direction, unsigned char c
                                            std::string tmessage;
                                            switch ( cp->getPlayerLanguage() ) {
                                                   case Language::german:
-                                                         tmessage = "Du bist überladen.";
+                                                         tmessage = "Du bist ï¿½berladen.";
                                                          break;
                                                   case Language::english:
                                                          tmessage = "You are encumbered.";
@@ -1811,6 +1815,7 @@ void World::moveItemFromMapToPlayer( Player* cp, char direction, unsigned char c
                                                          break;
                                                   default:
                                                          tmessage = "You are encumbered.";
+                                                         break;
                                            }
                                            cp->sendMessage( tmessage );
                                     }
@@ -1819,7 +1824,7 @@ void World::moveItemFromMapToPlayer( Player* cp, char direction, unsigned char c
                                     std::string tmessage;
                                     switch ( cp->getPlayerLanguage() ) {
                                            case Language::german:
-                                                  tmessage = "Du bist nicht mehr überladen.";
+                                                  tmessage = "Du bist nicht mehr ï¿½berladen.";
                                                   break;
                                            case Language::english:
                                                   tmessage = "You are no longer encumbered.";
@@ -1829,6 +1834,7 @@ void World::moveItemFromMapToPlayer( Player* cp, char direction, unsigned char c
                                                   break;
                                            default:
                                                   tmessage = "You are no longer encumbered.";
+                                                  break;
                                     }
                                            cp->sendMessage( tmessage );
                              }
@@ -1970,7 +1976,7 @@ void World::moveItemBetweenShowcases( Player* cp, unsigned char source, unsigned
                                     std::string tmessage;
                                     switch ( cp->getPlayerLanguage() ) {
                                            case Language::german:
-                                                  tmessage = "Du bist überladen.";
+                                                  tmessage = "Du bist ï¿½berladen.";
                                                   break;
                                            case Language::english:
                                                   tmessage = "You are encumbered.";
@@ -1980,6 +1986,7 @@ void World::moveItemBetweenShowcases( Player* cp, unsigned char source, unsigned
                                                   break;
                                            default:
                                                   tmessage = "You are encumbered.";
+                                                  break;
                                     }
                                            cp->sendMessage( tmessage );
                              }
@@ -1988,7 +1995,7 @@ void World::moveItemBetweenShowcases( Player* cp, unsigned char source, unsigned
                              std::string tmessage;
                              switch ( cp->getPlayerLanguage() ) {
                                     case Language::german:
-                                           tmessage = "Du bist nicht mehr überladen.";
+                                           tmessage = "Du bist nicht mehr ï¿½berladen.";
                                            break;
                                     case Language::english:
                                            tmessage = "You are no longer encumbered.";
@@ -1998,6 +2005,7 @@ void World::moveItemBetweenShowcases( Player* cp, unsigned char source, unsigned
                                            break;
                                     default:
                                            tmessage = "You are no longer encumbered.";
+                                           break;
                              }
                                            cp->sendMessage( tmessage );
                       }

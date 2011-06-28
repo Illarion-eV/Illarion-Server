@@ -74,7 +74,7 @@ void LongTimeEffectTable::reload()
 		std::cout << "loaded " << rows << " rows into LongTimeEffectTable" << std::endl;
 #endif
     }
-    catch( std::exception e )
+    catch( std::exception &e )
     {
         std::cerr<<"exception in LongTimeEffect loading: " << e.what() << std::endl;
         m_dataOK = false;

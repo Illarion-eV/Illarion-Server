@@ -64,9 +64,9 @@ class BBBroadCastTS : public BasicClientCommand
         {
         }
         
-        ~BBBroadCastTS(){};
+        virtual ~BBBroadCastTS(){};
         
-        void decodeData()
+        virtual void decodeData()
         {
             msg = getStringFromBuffer();
         }
@@ -101,9 +101,9 @@ class BBRequestStatTS : public BasicClientCommand
         {
         }
         
-        ~BBRequestStatTS(){};
+        virtual ~BBRequestStatTS(){};
         
-        void decodeData()
+        virtual void decodeData()
         {
             id = getIntFromBuffer();
             name = getStringFromBuffer();
@@ -182,9 +182,9 @@ class BBRequestSkillsTS : public BasicClientCommand
         {
         }
         
-        ~BBRequestSkillsTS(){};
+        virtual ~BBRequestSkillsTS(){};
         
-        void decodeData()
+        virtual void decodeData()
         {
             id = getIntFromBuffer();
             name = getStringFromBuffer();
@@ -244,9 +244,9 @@ class BBSpeakAsTS : public BasicClientCommand
         {
         }
         
-        ~BBSpeakAsTS(){};
+        virtual ~BBSpeakAsTS(){};
         
-        void decodeData()
+        virtual void decodeData()
         {
             id = getIntFromBuffer();
             name = getStringFromBuffer();
@@ -300,9 +300,9 @@ class BBWarpPlayerTS : public BasicClientCommand
         {
         }
         
-        ~BBWarpPlayerTS(){};
+        virtual ~BBWarpPlayerTS(){};
         
-        void decodeData()
+        virtual void decodeData()
         {
             id = getIntFromBuffer();
             name = getStringFromBuffer();
@@ -356,9 +356,9 @@ class BBServerCommandTS : public BasicClientCommand
         {
         }
         
-        ~BBServerCommandTS(){};
+        virtual ~BBServerCommandTS(){};
         
-        void decodeData()
+        virtual void decodeData()
         {
             _command = getStringFromBuffer();
         }
@@ -394,9 +394,9 @@ class BBChangeAttribTS : public BasicClientCommand
         {
         }
         
-        ~BBChangeAttribTS(){};
+        virtual ~BBChangeAttribTS(){};
         
-        void decodeData()
+        virtual void decodeData()
         {
             _plid = getIntFromBuffer();
             _plname = getStringFromBuffer();
@@ -450,9 +450,9 @@ class BBChangeSkillTS : public BasicClientCommand
         {
         }
         
-        ~BBChangeSkillTS(){};
+        virtual ~BBChangeSkillTS(){};
         
-        void decodeData()
+        virtual void decodeData()
         {
             _plid = getIntFromBuffer();
             _plname = getStringFromBuffer();
@@ -510,7 +510,7 @@ class BBTalktoTS : public BasicClientCommand
         
         virtual ~BBTalktoTS(){};
         
-        void decodeData()
+        virtual void decodeData()
         {
             playerid = getIntFromBuffer();
             playername = getStringFromBuffer();
@@ -563,7 +563,7 @@ class BBDisconnectTS : public BasicClientCommand
         
         virtual ~BBDisconnectTS(){};
         
-        void decodeData()
+        virtual void decodeData()
         {
 
         }
@@ -596,9 +596,9 @@ class BBKeepAliveTS : public BasicClientCommand
 
         }
         
-        ~BBKeepAliveTS(){};
+        virtual ~BBKeepAliveTS(){};
         
-        void decodeData()
+        virtual void decodeData()
         {
 
         }
@@ -627,9 +627,9 @@ class BBBanTS : public BasicClientCommand
         {
         }
         
-        ~BBBanTS(){};
+        virtual ~BBBanTS(){};
         
-        void decodeData()
+        virtual void decodeData()
         {
             id = getIntFromBuffer();
             name = getStringFromBuffer();

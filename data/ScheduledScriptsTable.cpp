@@ -129,7 +129,7 @@ void ScheduledScriptsTable::reload()
         }
         m_dataOk = true;
     }
-    catch ( std::exception e )
+    catch ( std::exception &e )
     {
         std::cerr << "exception: " << e.what() << std::endl;
         m_dataOk = false;
