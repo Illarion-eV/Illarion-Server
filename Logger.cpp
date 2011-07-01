@@ -28,7 +28,7 @@ extern std::map<std::string, std::string> configOptions;
 
 Logger::LOGMAP Logger::logs;
 Logger::LOGACTIVATEDMAP Logger::logact;
-Logger::Logger * Logger::theLoggerInstance;
+Logger * Logger::theLoggerInstance;
 
 Logger::Logger()
 {
