@@ -57,7 +57,7 @@ extern WeaponObjectTable* WeaponItems;
 
 extern std::ofstream talkfile;
 
-World::World * World::_self;
+World * World::_self;
 
 World * World::create( std::string dir, time_t starttime)
 {
