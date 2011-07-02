@@ -21,60 +21,57 @@
 
 #include <string>
 
+#include <dbng/Connection.hpp>
+
 #include <boost/cstdint.hpp>
-#include <pqxx/connection.hxx>
 
-namespace Database 
-{
-    class ConnectionManager;
-    
-    typedef ConnectionManager *PConnectionManager;
-    typedef pqxx::connection Connection;
-    typedef pqxx::connection *PConnection;
-    
-    class ConnectionManager
-    {
-    private:
-        /* Singleton instance */
-        static ConnectionManager instance;
+namespace Database {
+class ConnectionManager;
 
-        /* Connection String that is used to establish a connection to the
-         * postgre DB.
-         */
-        std::string* connectString;
+typedef ConnectionManager *PConnectionManager;
 
-        /* Ready flag. This is set true once the connection informations are
-         * set.
-         */
-        bool isReady;
-            
-    public:
-        /* Get the singleton instance of this class. */
-	    static PConnectionManager getInstance(void);
+class ConnectionManager {
+private:
+    /* Singleton instance */
+    static ConnectionManager instance;
 
-        /* Get a new connection. This function throws a std::domain_error in
-         * case the informations for the connection are not set yet.
-         */
-	    PConnection getConnection(void);
+    /* Connection String that is used to establish a connection to the
+     * postgre DB.
+     */
+    std::string *connectString;
 
-        /* Release a connection. After this call the connection instance must
-         * not be used anymore. Else a crash is certain.
-         */
-        void releaseConnection(const PConnection conn);
+    /* Ready flag. This is set true once the connection informations are
+     * set.
+     */
+    bool isReady;
 
-        /* Setup the connection informations to the postgre database. Once this
-         * data is set its possible to establish connections to the database.
-         */
-        void setupManager(const std::string& user, const std::string& password,
-            const std::string& database, const std::string& host);
-        void setupManager(const std::string& user, const std::string& password,
-            const std::string& database, const std::string& host,
-	        const int32_t port);
-    private:
-	    ConnectionManager(void);
-	    ConnectionManager(const ConnectionManager& org);
+public:
+    /* Get the singleton instance of this class. */
+    static PConnectionManager getInstance(void);
 
-    };
+    /* Get a new connection. This function throws a std::domain_error in
+     * case the informations for the connection are not set yet.
+     */
+    PConnection getConnection(void);
+
+    /* Release a connection. After this call the connection instance must
+     * not be used anymore. Else a crash is certain.
+     */
+    void releaseConnection(const PConnection conn);
+
+    /* Setup the connection informations to the postgre database. Once this
+     * data is set its possible to establish connections to the database.
+     */
+    void setupManager(const std::string &user, const std::string &password,
+                      const std::string &database, const std::string &host);
+    void setupManager(const std::string &user, const std::string &password,
+                      const std::string &database, const std::string &host,
+                      const int32_t port);
+private:
+    ConnectionManager(void);
+    ConnectionManager(const ConnectionManager &org);
+
+};
 }
 
 #endif // _CONNECTION_MANAGER_HPP_

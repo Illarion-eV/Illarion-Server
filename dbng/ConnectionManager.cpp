@@ -16,7 +16,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "dbng/connection-manager.hpp"
+#include "dbng/ConnectionManager.hpp"
+#include "dbng/Connection.hpp"
 
 #include <sstream>
 #include <string>
@@ -29,22 +30,19 @@ using namespace Database;
 
 ConnectionManager ConnectionManager::instance;
 
-PConnectionManager ConnectionManager::getInstance()
-{
-	return &ConnectionManager::instance;
+PConnectionManager ConnectionManager::getInstance() {
+    return &ConnectionManager::instance;
 }
 
-PConnection ConnectionManager::getConnection()
-{
+PConnection ConnectionManager::getConnection() {
     if (!this->isReady) {
         throw new std::domain_error("Connection Manager is yet not setup");
     }
 
-	return new pqxx::connection(*(this->connectString));
+    return new Connection(new pqxx::connection(*(this->connectString)));
 }
 
 void ConnectionManager::releaseConnection(const PConnection conn) {
-    conn->disconnect();
     delete conn;
 }
 
@@ -52,35 +50,40 @@ ConnectionManager::ConnectionManager() {
     this->isReady = false;
 };
 
-ConnectionManager::ConnectionManager(const ConnectionManager::ConnectionManager& org) {
+ConnectionManager::ConnectionManager(const ConnectionManager &org) {
     throw new std::domain_error("Copy constructor not supported.");
 }
 
-void ConnectionManager::setupManager(const std::string& user, const std::string& password,
-            const std::string& database, const std::string& host) {
+void ConnectionManager::setupManager(const std::string &user, const std::string &password,
+                                     const std::string &database, const std::string &host) {
     this->setupManager(user, password, database, host, -1);
 }
 
-void ConnectionManager::setupManager(const std::string& user, const std::string& password,
-            const std::string& database, const std::string& host,
-	        const int32_t port) {
+void ConnectionManager::setupManager(const std::string &user, const std::string &password,
+                                     const std::string &database, const std::string &host,
+                                     const int32_t port) {
     std::stringstream ss;
-	if( user.size() > 0 ) {
-		ss << " user=" << user << " ";
-	}
-	if( password.size() > 0 ) {
-		ss << " password=" << password << " ";
-	}
-	if( database.size() > 0 ) {
-		ss << " dbname=" << database << " ";
-	}
-	if( host.size() > 0 ) {
-		ss << " host=" << host << " ";
-	}
-    if( port >= 0 ) {
-	    ss << " port=" << port << " ";
+
+    if (user.size() > 0) {
+        ss << " user=" << user << " ";
     }
-                
+
+    if (password.size() > 0) {
+        ss << " password=" << password << " ";
+    }
+
+    if (database.size() > 0) {
+        ss << " dbname=" << database << " ";
+    }
+
+    if (host.size() > 0) {
+        ss << " host=" << host << " ";
+    }
+
+    if (port >= 0) {
+        ss << " port=" << port << " ";
+    }
+
     this->connectString = new std::string(ss.str());
     this->isReady = true;
 }
