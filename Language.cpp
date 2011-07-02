@@ -22,6 +22,6 @@
 Language::Language(Language::LanguageType language)  : _language(language) {
 }
 
-Language* Language::create(LanguageType language) {
-	return new Language(language);
+Language *Language::create(LanguageType language) {
+    return new Language(language);
 }

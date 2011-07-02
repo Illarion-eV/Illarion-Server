@@ -26,24 +26,20 @@
 #include "fuse_ptr.hpp"
 
 LuaLogoutScript::LuaLogoutScript(std::string filename) throw(ScriptException)
-		: LuaScript(filename)
-{
+    : LuaScript(filename) {
 }
 
 LuaLogoutScript::~LuaLogoutScript() throw() {}
 
-bool LuaLogoutScript::onLogout(Character * cc)
-{
-    try
-    {
-        World::get()->setCurrentScript( this ); 
+bool LuaLogoutScript::onLogout(Character *cc) {
+    try {
+        World::get()->setCurrentScript(this);
         fuse_ptr<Character> fuse_cc(cc);
-        call("onLogout")( fuse_cc );
+        call("onLogout")(fuse_cc);
         return true;
+    } catch (luabind::error &e) {
+        writeErrorMsg();
     }
-    catch (luabind::error &e)
-    {
-        writeErrorMsg();    
-    }
+
     return false;
 }

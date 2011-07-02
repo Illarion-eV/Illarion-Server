@@ -24,25 +24,20 @@
 
 
 LuaScheduledScript::LuaScheduledScript(std::string filename) throw(ScriptException)
-    : LuaScript(filename)
-{
+    : LuaScript(filename) {
 }
 
 LuaScheduledScript::~LuaScheduledScript() throw() {}
 
-void LuaScheduledScript::callFunction(std::string name, uint32_t currentCycle, uint32_t lastCycle, uint32_t nextCycle)
-{
-    try
-    {
-        World::get()->setCurrentScript( this ); 
+void LuaScheduledScript::callFunction(std::string name, uint32_t currentCycle, uint32_t lastCycle, uint32_t nextCycle) {
+    try {
+        World::get()->setCurrentScript(this);
         //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("LuaScheduledScript::callFunction called for: " + name, 3));
         Logger::writeMessage("scripts","LuaScheduledScript::callFunction called for: " + name);
-        call(name)( currentCycle, lastCycle, nextCycle );
-    }
-    catch (luabind::error &e)
-    {
+        call(name)(currentCycle, lastCycle, nextCycle);
+    } catch (luabind::error &e) {
         writeErrorMsg();
-         //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("Error: LuaScheduledScript::callFunction called for: " + name + " " + e.what(),3));
+        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("Error: LuaScheduledScript::callFunction called for: " + name + " " + e.what(),3));
     }
 }
 

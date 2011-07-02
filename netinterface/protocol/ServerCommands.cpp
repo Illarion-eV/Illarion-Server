@@ -29,434 +29,395 @@
 
 
 //! eine Tabelle fuer Behaelter - Item Daten
-extern ContainerObjectTable* ContainerItems;
-extern RaceSizeTable* RaceSizes;
+extern ContainerObjectTable *ContainerItems;
+extern RaceSizeTable *RaceSizes;
 
-        ItemUpdate_TC::ItemUpdate_TC( position fieldpos, ITEMVECTOR & items ) : BasicServerCommand( SC_ITEMUPDATE_TC )
-        {
-            Logger::writeMessage("rot_update", "sending new itemstack for pos("+Logger::toString(fieldpos.x)+", "+Logger::toString(fieldpos.y)+", "+Logger::toString(fieldpos.z)+")",false);
-            addShortIntToBuffer( fieldpos.x );
-            addShortIntToBuffer( fieldpos.y );
-            addShortIntToBuffer( fieldpos.z );
-            int16_t size = static_cast<unsigned char>(items.size());
-            if ( size > 255 ) size = 255;
-            addUnsignedCharToBuffer( static_cast<uint8_t>(size) );
-            ITEMVECTOR::iterator it;
-            for ( it = items.begin(); it != items.end(); ++it)
-            {
-                //we added 255 items
-                if (size <= 0) break;
-                addShortIntToBuffer( it->id );
-                addUnsignedCharToBuffer( it->number );
-                Logger::writeMessage("rot_update", "adding item id: "+Logger::toString(it->id)+" count: "+Logger::toString(static_cast<int>(it->number)),false);
-                size--;
-            }
-        }
-        
-        ItemUpdate_TC::ItemUpdate_TC( int16_t px, int16_t py, int16_t pz, ITEMVECTOR &items ) : BasicServerCommand( SC_ITEMUPDATE_TC ) 
-        {
-            addShortIntToBuffer( px );
-            addShortIntToBuffer( py );
-            addShortIntToBuffer( pz );
-            int16_t size = static_cast<unsigned char>(items.size());
-            if ( size > 255 ) size = 255;
-            addUnsignedCharToBuffer(static_cast<uint8_t>(size) );
-            ITEMVECTOR::iterator it;
-            for ( it = items.begin(); it != items.end(); ++it)
-            {
-                //we added 255 items
-                if (size <= 0) break;
-                addShortIntToBuffer( it->id );
-                addUnsignedCharToBuffer( it->number );
-                size--;
-            }
-        }
-        
-        CharDescription::CharDescription(TYPE_OF_CHARACTER_ID id, std::string description) : BasicServerCommand( SC_LOOKATCHARRESULT_TC ) 
-        {
-            addIntToBuffer(id);
-            addStringToBuffer( description );
-        }
-        
-        AppearanceTC::AppearanceTC( Character* cc ) : BasicServerCommand( SC_APPEARANCE_TC )
-        {
-            addIntToBuffer( cc->id );
-            addShortIntToBuffer( cc->appearance );
-            addUnsignedCharToBuffer( RaceSizes->getRelativeSize( cc->race, cc->battrib.body_height ) );
-            addUnsignedCharToBuffer( static_cast<unsigned char>( 0 ) );
-            addUnsignedCharToBuffer( cc->hair );
-            addUnsignedCharToBuffer( cc->beard );
-            addUnsignedCharToBuffer( cc->hairred );
-            addUnsignedCharToBuffer( cc->hairgreen );
-            addUnsignedCharToBuffer( cc->hairblue );
-            addUnsignedCharToBuffer( cc->skinred );
-            addUnsignedCharToBuffer( cc->skingreen );
-            addUnsignedCharToBuffer( cc->skinblue );
-            addShortIntToBuffer( cc->GetItemAt(1).id );
-            addShortIntToBuffer( cc->GetItemAt(3).id );
-            addShortIntToBuffer( cc->GetItemAt(11).id );
-            addShortIntToBuffer( cc->GetItemAt(5).id );
-            addShortIntToBuffer( cc->GetItemAt(6).id );
-            addShortIntToBuffer( cc->GetItemAt(9).id );
-            addShortIntToBuffer( cc->GetItemAt(10).id );
-            addUnsignedCharToBuffer( cc->getWeaponMode() );
-            uint8_t deathflag = cc->IsAlive() ? 0 : 1;
-            addUnsignedCharToBuffer( deathflag );
+ItemUpdate_TC::ItemUpdate_TC(position fieldpos, ITEMVECTOR &items) : BasicServerCommand(SC_ITEMUPDATE_TC) {
+    Logger::writeMessage("rot_update", "sending new itemstack for pos("+Logger::toString(fieldpos.x)+", "+Logger::toString(fieldpos.y)+", "+Logger::toString(fieldpos.z)+")",false);
+    addShortIntToBuffer(fieldpos.x);
+    addShortIntToBuffer(fieldpos.y);
+    addShortIntToBuffer(fieldpos.z);
+    int16_t size = static_cast<unsigned char>(items.size());
+
+    if (size > 255) {
+        size = 255;
+    }
+
+    addUnsignedCharToBuffer(static_cast<uint8_t>(size));
+    ITEMVECTOR::iterator it;
+
+    for (it = items.begin(); it != items.end(); ++it) {
+        //we added 255 items
+        if (size <= 0) {
+            break;
         }
 
-        AnimationTC::AnimationTC( TYPE_OF_CHARACTER_ID id, uint8_t animID ) : BasicServerCommand( SC_ANIMATION_TC )
-        {
-            addIntToBuffer(id);
-            addUnsignedCharToBuffer( animID );
+        addShortIntToBuffer(it->id);
+        addUnsignedCharToBuffer(it->number);
+        Logger::writeMessage("rot_update", "adding item id: "+Logger::toString(it->id)+" count: "+Logger::toString(static_cast<int>(it->number)),false);
+        size--;
+    }
+}
+
+ItemUpdate_TC::ItemUpdate_TC(int16_t px, int16_t py, int16_t pz, ITEMVECTOR &items) : BasicServerCommand(SC_ITEMUPDATE_TC) {
+    addShortIntToBuffer(px);
+    addShortIntToBuffer(py);
+    addShortIntToBuffer(pz);
+    int16_t size = static_cast<unsigned char>(items.size());
+
+    if (size > 255) {
+        size = 255;
+    }
+
+    addUnsignedCharToBuffer(static_cast<uint8_t>(size));
+    ITEMVECTOR::iterator it;
+
+    for (it = items.begin(); it != items.end(); ++it) {
+        //we added 255 items
+        if (size <= 0) {
+            break;
         }
 
-        BookTC::BookTC( uint16_t bookID ) : BasicServerCommand( SC_BOOK_TC )
-        {   
-            addShortIntToBuffer( bookID );
-        }
-        
-        RemoveCharTC::RemoveCharTC(TYPE_OF_CHARACTER_ID id) : BasicServerCommand( SC_REMOVECHAR_TC ) 
-        {
-            addIntToBuffer(id);
-        }
-        
-        UpdateTimeTC::UpdateTimeTC(unsigned char hour, unsigned char minute, unsigned char day, unsigned char month, short int year) : BasicServerCommand( SC_UPDATETIME_TC ) 
-        {
-            addUnsignedCharToBuffer( hour );
-            addUnsignedCharToBuffer( minute );
-            addUnsignedCharToBuffer( day );
-            addUnsignedCharToBuffer( month );
-            addShortIntToBuffer( year );
-        }
-        
-        LogOutTC::LogOutTC(unsigned char reason) : BasicServerCommand( SC_LOGOUT_TC ) 
-        {
-            addUnsignedCharToBuffer( reason );
-        }
+        addShortIntToBuffer(it->id);
+        addUnsignedCharToBuffer(it->number);
+        size--;
+    }
+}
 
-        TargetLostTC::TargetLostTC() : BasicServerCommand( SC_TARGETLOST_TC ) 
-        {
-        }
+CharDescription::CharDescription(TYPE_OF_CHARACTER_ID id, std::string description) : BasicServerCommand(SC_LOOKATCHARRESULT_TC) {
+    addIntToBuffer(id);
+    addStringToBuffer(description);
+}
 
-        AttackAckknowledgedTC::AttackAckknowledgedTC() : BasicServerCommand( SC_ATTACKACKKNOWLEDGED_TC ) 
-        {
-        }
+AppearanceTC::AppearanceTC(Character *cc) : BasicServerCommand(SC_APPEARANCE_TC) {
+    addIntToBuffer(cc->id);
+    addShortIntToBuffer(cc->appearance);
+    addUnsignedCharToBuffer(RaceSizes->getRelativeSize(cc->race, cc->battrib.body_height));
+    addUnsignedCharToBuffer(static_cast<unsigned char>(0));
+    addUnsignedCharToBuffer(cc->hair);
+    addUnsignedCharToBuffer(cc->beard);
+    addUnsignedCharToBuffer(cc->hairred);
+    addUnsignedCharToBuffer(cc->hairgreen);
+    addUnsignedCharToBuffer(cc->hairblue);
+    addUnsignedCharToBuffer(cc->skinred);
+    addUnsignedCharToBuffer(cc->skingreen);
+    addUnsignedCharToBuffer(cc->skinblue);
+    addShortIntToBuffer(cc->GetItemAt(1).id);
+    addShortIntToBuffer(cc->GetItemAt(3).id);
+    addShortIntToBuffer(cc->GetItemAt(11).id);
+    addShortIntToBuffer(cc->GetItemAt(5).id);
+    addShortIntToBuffer(cc->GetItemAt(6).id);
+    addShortIntToBuffer(cc->GetItemAt(9).id);
+    addShortIntToBuffer(cc->GetItemAt(10).id);
+    addUnsignedCharToBuffer(cc->getWeaponMode());
+    uint8_t deathflag = cc->IsAlive() ? 0 : 1;
+    addUnsignedCharToBuffer(deathflag);
+}
 
-        NameOfInventoryItemTC::NameOfInventoryItemTC( unsigned char pos, std::string name ) : BasicServerCommand( SC_NAMEOFINVENTORYITEM_TC ) 
-        {
-            addUnsignedCharToBuffer( pos );
-            addStringToBuffer( name );
-        }
+AnimationTC::AnimationTC(TYPE_OF_CHARACTER_ID id, uint8_t animID) : BasicServerCommand(SC_ANIMATION_TC) {
+    addIntToBuffer(id);
+    addUnsignedCharToBuffer(animID);
+}
 
-        NameOfShowCaseItemTC::NameOfShowCaseItemTC(unsigned char showcase, unsigned char pos, std::string name ) : BasicServerCommand( SC_NAMEOFSHOWCASEITEM_TC ) 
-        {
-            addUnsignedCharToBuffer( showcase );
-            addUnsignedCharToBuffer( pos );
-            addStringToBuffer( name );
-        }
+BookTC::BookTC(uint16_t bookID) : BasicServerCommand(SC_BOOK_TC) {
+    addShortIntToBuffer(bookID);
+}
 
-        NameOfMapItemTC::NameOfMapItemTC( short int x, short int y, short int z, std::string name ) : BasicServerCommand( SC_NAMEOFMAPITEM_TC ) 
-        {
-            addShortIntToBuffer( x );
-            addShortIntToBuffer( y );
-            addShortIntToBuffer( z );
-            addStringToBuffer( name );
-        }
+RemoveCharTC::RemoveCharTC(TYPE_OF_CHARACTER_ID id) : BasicServerCommand(SC_REMOVECHAR_TC) {
+    addIntToBuffer(id);
+}
 
-        ItemPutTC::ItemPutTC( short int x, short int y, short int z, Item &item ) : BasicServerCommand( SC_ITEMPUT_TC ) 
-        {
-            addShortIntToBuffer( x );
-            addShortIntToBuffer( y );
-            addShortIntToBuffer( z );
-            addShortIntToBuffer( item.id );
-            if ( ContainerItems->find( item.id ) ) 
-            {
-                addUnsignedCharToBuffer( 1 );
-            } 
-            else 
-            {
-                addUnsignedCharToBuffer( item.number );
-            }            
-        }
+UpdateTimeTC::UpdateTimeTC(unsigned char hour, unsigned char minute, unsigned char day, unsigned char month, short int year) : BasicServerCommand(SC_UPDATETIME_TC) {
+    addUnsignedCharToBuffer(hour);
+    addUnsignedCharToBuffer(minute);
+    addUnsignedCharToBuffer(day);
+    addUnsignedCharToBuffer(month);
+    addShortIntToBuffer(year);
+}
 
-        ItemSwapTC::ItemSwapTC(position pos, unsigned short int id, Item &item) : BasicServerCommand( SC_MAPITEMSWAP ) 
-        {
-            addShortIntToBuffer( pos.x );
-            addShortIntToBuffer( pos.y );
-            addShortIntToBuffer( pos.z );
-            addShortIntToBuffer( id ); /**no id is sended*/
-            addShortIntToBuffer( item.id );
-            //addUnsignedCharToBuffer( flags ); /**no flags are sended and needed*/
-             if ( ContainerItems->find( item.id ) ) 
-            {
-                addUnsignedCharToBuffer( 1 );
-            } 
-            else 
-            {
-                addUnsignedCharToBuffer( item.number );
-            }            
-            //addUnsignedCharToBuffer( flags );
-        }
-        
-        ItemSwapTC::ItemSwapTC(short int x, short int y, short int z, unsigned short int id, Item &item) : BasicServerCommand( SC_MAPITEMSWAP ) 
-        {
-            addShortIntToBuffer( x );
-            addShortIntToBuffer( y );
-            addShortIntToBuffer( z );
-            addShortIntToBuffer( id );
-            addShortIntToBuffer( item.id );
-            //addUnsignedCharToBuffer( flags );
-            if ( ContainerItems->find( item.id ) ) 
-            {
-                addUnsignedCharToBuffer( 1 );
-            } 
-            else 
-            {
-                addUnsignedCharToBuffer( item.number );
-            }            
-            //addUnsignedCharToBuffer( flags );
-        }        
+LogOutTC::LogOutTC(unsigned char reason) : BasicServerCommand(SC_LOGOUT_TC) {
+    addUnsignedCharToBuffer(reason);
+}
 
-        ItemRemoveTC::ItemRemoveTC( short int x, short int y, short int z ) : BasicServerCommand( SC_ITEMREMOVE_TC ) 
-        {
-            addShortIntToBuffer( x );
-            addShortIntToBuffer( y );
-            addShortIntToBuffer( z );
-        }
+TargetLostTC::TargetLostTC() : BasicServerCommand(SC_TARGETLOST_TC) {
+}
 
-        AViewPlayersTC::AViewPlayersTC() : BasicServerCommand( SC_AVIEWPLAYERS_TC ) 
-        {
-            World::PLAYERVECTOR::iterator titerator;
-            unsigned short int count = World::get()->Players.size();
-            addShortIntToBuffer( count );
-            for ( titerator = World::get()->Players.begin(); titerator < World::get()->Players.end(); ++titerator ) 
-            {
-                addStringToBuffer( ( *titerator )->name );
-                addStringToBuffer( ( *titerator )->last_ip );
-            }            
-        }
+AttackAckknowledgedTC::AttackAckknowledgedTC() : BasicServerCommand(SC_ATTACKACKKNOWLEDGED_TC) {
+}
 
-        SoundTC::SoundTC(short int x, short int y, short int z, unsigned short int id) : BasicServerCommand( SC_SOUND_TC ) 
-        {
-            addShortIntToBuffer( x );
-            addShortIntToBuffer( y );
-            addShortIntToBuffer( z );
-            addShortIntToBuffer( id );
-        }
+NameOfInventoryItemTC::NameOfInventoryItemTC(unsigned char pos, std::string name) : BasicServerCommand(SC_NAMEOFINVENTORYITEM_TC) {
+    addUnsignedCharToBuffer(pos);
+    addStringToBuffer(name);
+}
 
-        GraphicEffectTC::GraphicEffectTC(short int x, short int y, short int z, unsigned short int id) : BasicServerCommand( SC_GRAPHICEFFECT_TC ) 
-        {
-            addShortIntToBuffer( x );
-            addShortIntToBuffer( y );
-            addShortIntToBuffer( z );
-            addShortIntToBuffer( id );
-        }
+NameOfShowCaseItemTC::NameOfShowCaseItemTC(unsigned char showcase, unsigned char pos, std::string name) : BasicServerCommand(SC_NAMEOFSHOWCASEITEM_TC) {
+    addUnsignedCharToBuffer(showcase);
+    addUnsignedCharToBuffer(pos);
+    addStringToBuffer(name);
+}
 
-        StartPlayerMenuTC::StartPlayerMenuTC(UserMenuStruct menu) : BasicServerCommand( SC_STARTPLAYERMENU_TC ) 
-        {
-            int count = menu.Items.size();
-    
-            addUnsignedCharToBuffer( count );
-            std::list<TYPE_OF_ITEM_ID>::iterator it;
-            for ( int i = 0; i < count; ++i ) 
-            {
-                   addShortIntToBuffer( menu.Items.front() );
-                   menu.Items.pop_front();
-            }
-            menu.Items.clear();
-        }
+NameOfMapItemTC::NameOfMapItemTC(short int x, short int y, short int z, std::string name) : BasicServerCommand(SC_NAMEOFMAPITEM_TC) {
+    addShortIntToBuffer(x);
+    addShortIntToBuffer(y);
+    addShortIntToBuffer(z);
+    addStringToBuffer(name);
+}
 
-        UpdateShowCaseTC::UpdateShowCaseTC(unsigned char showcase, ITEMVECTOR &items) : BasicServerCommand( SC_UPDATESHOWCASE_TC ) 
-        {
+ItemPutTC::ItemPutTC(short int x, short int y, short int z, Item &item) : BasicServerCommand(SC_ITEMPUT_TC) {
+    addShortIntToBuffer(x);
+    addShortIntToBuffer(y);
+    addShortIntToBuffer(z);
+    addShortIntToBuffer(item.id);
+
+    if (ContainerItems->find(item.id)) {
+        addUnsignedCharToBuffer(1);
+    } else {
+        addUnsignedCharToBuffer(item.number);
+    }
+}
+
+ItemSwapTC::ItemSwapTC(position pos, unsigned short int id, Item &item) : BasicServerCommand(SC_MAPITEMSWAP) {
+    addShortIntToBuffer(pos.x);
+    addShortIntToBuffer(pos.y);
+    addShortIntToBuffer(pos.z);
+    addShortIntToBuffer(id);   /**no id is sended*/
+    addShortIntToBuffer(item.id);
+
+    //addUnsignedCharToBuffer( flags ); /**no flags are sended and needed*/
+    if (ContainerItems->find(item.id)) {
+        addUnsignedCharToBuffer(1);
+    } else {
+        addUnsignedCharToBuffer(item.number);
+    }
+
+    //addUnsignedCharToBuffer( flags );
+}
+
+ItemSwapTC::ItemSwapTC(short int x, short int y, short int z, unsigned short int id, Item &item) : BasicServerCommand(SC_MAPITEMSWAP) {
+    addShortIntToBuffer(x);
+    addShortIntToBuffer(y);
+    addShortIntToBuffer(z);
+    addShortIntToBuffer(id);
+    addShortIntToBuffer(item.id);
+
+    //addUnsignedCharToBuffer( flags );
+    if (ContainerItems->find(item.id)) {
+        addUnsignedCharToBuffer(1);
+    } else {
+        addUnsignedCharToBuffer(item.number);
+    }
+
+    //addUnsignedCharToBuffer( flags );
+}
+
+ItemRemoveTC::ItemRemoveTC(short int x, short int y, short int z) : BasicServerCommand(SC_ITEMREMOVE_TC) {
+    addShortIntToBuffer(x);
+    addShortIntToBuffer(y);
+    addShortIntToBuffer(z);
+}
+
+AViewPlayersTC::AViewPlayersTC() : BasicServerCommand(SC_AVIEWPLAYERS_TC) {
+    World::PLAYERVECTOR::iterator titerator;
+    unsigned short int count = World::get()->Players.size();
+    addShortIntToBuffer(count);
+
+    for (titerator = World::get()->Players.begin(); titerator < World::get()->Players.end(); ++titerator) {
+        addStringToBuffer((*titerator)->name);
+        addStringToBuffer((*titerator)->last_ip);
+    }
+}
+
+SoundTC::SoundTC(short int x, short int y, short int z, unsigned short int id) : BasicServerCommand(SC_SOUND_TC) {
+    addShortIntToBuffer(x);
+    addShortIntToBuffer(y);
+    addShortIntToBuffer(z);
+    addShortIntToBuffer(id);
+}
+
+GraphicEffectTC::GraphicEffectTC(short int x, short int y, short int z, unsigned short int id) : BasicServerCommand(SC_GRAPHICEFFECT_TC) {
+    addShortIntToBuffer(x);
+    addShortIntToBuffer(y);
+    addShortIntToBuffer(z);
+    addShortIntToBuffer(id);
+}
+
+StartPlayerMenuTC::StartPlayerMenuTC(UserMenuStruct menu) : BasicServerCommand(SC_STARTPLAYERMENU_TC) {
+    int count = menu.Items.size();
+
+    addUnsignedCharToBuffer(count);
+    std::list<TYPE_OF_ITEM_ID>::iterator it;
+
+    for (int i = 0; i < count; ++i) {
+        addShortIntToBuffer(menu.Items.front());
+        menu.Items.pop_front();
+    }
+
+    menu.Items.clear();
+}
+
+UpdateShowCaseTC::UpdateShowCaseTC(unsigned char showcase, ITEMVECTOR &items) : BasicServerCommand(SC_UPDATESHOWCASE_TC) {
+    ITEMVECTOR::iterator theIterator;
+    addUnsignedCharToBuffer(showcase);
+
+    MAXCOUNTTYPE size = items.size();
+    addUnsignedCharToBuffer(size);
+
+    for (theIterator = items.begin(); theIterator < items.end(); ++theIterator) {
+        addShortIntToBuffer(theIterator->id);
+
+        if (ContainerItems->find(theIterator->id)) {
+            addUnsignedCharToBuffer(1);
+        } else {
+            addUnsignedCharToBuffer(theIterator->number);
+        }
+    }
+}
+
+MapStripeTC::MapStripeTC(position pos, NewClientView::stripedirection dir) : BasicServerCommand(SC_MAPSTRIPE_TC) {
+    addShortIntToBuffer(pos.x);
+    addShortIntToBuffer(pos.y);
+    addShortIntToBuffer(pos.z);
+    addUnsignedCharToBuffer(static_cast<unsigned char>(dir));
+    Field **fields =  World::get()->clientview.mapStripe;
+    uint8_t numberOfTiles = World::get()->clientview.getMaxTiles();
+    addUnsignedCharToBuffer(numberOfTiles);
+
+    for (int i = 0; i < numberOfTiles; ++i) {
+        if (fields[i]) {
+            addShortIntToBuffer(fields[i]->getTileCode());
+            addShortIntToBuffer(fields[i]->getMusicId());
+            addUnsignedCharToBuffer(static_cast<unsigned char>(fields[i]->items.size()));
             ITEMVECTOR::iterator theIterator;
-            addUnsignedCharToBuffer( showcase );
-        
-            MAXCOUNTTYPE size = items.size();
-            addUnsignedCharToBuffer( size );
-            for ( theIterator = items.begin(); theIterator < items.end(); ++theIterator ) 
-            {
-                addShortIntToBuffer( theIterator->id );
-                if ( ContainerItems->find( theIterator->id ) ) 
-                {
-                    addUnsignedCharToBuffer( 1 );
-                } 
-                else 
-                {
-                    addUnsignedCharToBuffer( theIterator->number );
+
+            for (theIterator = fields[i]->items.begin(); theIterator < fields[i]->items.end(); ++theIterator) {
+                addShortIntToBuffer(theIterator->id);
+
+                if (ContainerItems->find(theIterator->id)) {
+                    addUnsignedCharToBuffer(1);
+                } else {
+                    addUnsignedCharToBuffer(static_cast<unsigned char>(theIterator->number));
                 }
             }
+        } else {
+            addShortIntToBuffer(-1);
+            addShortIntToBuffer(0);
+            addUnsignedCharToBuffer(0);
         }
+    }
+}
 
-        MapStripeTC::MapStripeTC( position pos, NewClientView::stripedirection dir) : BasicServerCommand( SC_MAPSTRIPE_TC ) 
-        {
-            addShortIntToBuffer( pos.x );
-            addShortIntToBuffer( pos.y );
-            addShortIntToBuffer( pos.z );
-            addUnsignedCharToBuffer( static_cast<unsigned char>( dir ) );
-            Field ** fields =  World::get()->clientview.mapStripe;
-            uint8_t numberOfTiles = World::get()->clientview.getMaxTiles();
-            addUnsignedCharToBuffer( numberOfTiles );
-            for ( int i = 0; i < numberOfTiles; ++i )
-            {
-                if( fields[i] )
-                {
-                    addShortIntToBuffer( fields[i]->getTileCode() );
-                    addShortIntToBuffer( fields[i]->getMusicId() );
-                    addUnsignedCharToBuffer( static_cast<unsigned char>( fields[i]->items.size()) );
-                    ITEMVECTOR::iterator theIterator;    
-                    for ( theIterator = fields[i]->items.begin(); theIterator < fields[i]->items.end(); ++theIterator ) 
-                    {
-                        addShortIntToBuffer( theIterator->id );
-                        if ( ContainerItems->find( theIterator->id ) ) 
-                        {
-                            addUnsignedCharToBuffer( 1 );
-                        } 
-                        else 
-                        {
-                            addUnsignedCharToBuffer( static_cast<unsigned char>( theIterator->number ) );
-                        }
-                    }
-                }
-                else
-                {
-                    addShortIntToBuffer( -1 );
-                    addShortIntToBuffer( 0 );
-                    addUnsignedCharToBuffer( 0 );
-                }
-            }
-        }
+MapCompleteTC::MapCompleteTC() : BasicServerCommand(SC_MAPCOMPLETE_TC) {
+}
 
-        MapCompleteTC::MapCompleteTC() : BasicServerCommand( SC_MAPCOMPLETE_TC ) 
-        {
-        }
+MoveAckTC::MoveAckTC(TYPE_OF_CHARACTER_ID id, position pos, unsigned char mode, unsigned char waitpages) : BasicServerCommand(SC_MOVEACK_TC) {
+    addIntToBuffer(id);
+    addShortIntToBuffer(pos.x);
+    addShortIntToBuffer(pos.y);
+    addShortIntToBuffer(pos.z);
+    addUnsignedCharToBuffer(mode);
+    addUnsignedCharToBuffer(waitpages);
+}
 
-        MoveAckTC::MoveAckTC( TYPE_OF_CHARACTER_ID id, position pos, unsigned char mode, unsigned char waitpages) : BasicServerCommand( SC_MOVEACK_TC ) 
-        {
-            addIntToBuffer( id );
-            addShortIntToBuffer( pos.x );
-            addShortIntToBuffer( pos.y );
-            addShortIntToBuffer( pos.z );
-            addUnsignedCharToBuffer( mode );
-            addUnsignedCharToBuffer( waitpages );
-        }
+IntroduceTC::IntroduceTC(TYPE_OF_CHARACTER_ID id, std::string name) : BasicServerCommand(SC_INTRODUCE_TC) {
+    addIntToBuffer(id);
+    addStringToBuffer(name);
+}
 
-        IntroduceTC::IntroduceTC(TYPE_OF_CHARACTER_ID id, std::string name) : BasicServerCommand( SC_INTRODUCE_TC ) 
-        {
-            addIntToBuffer( id );
-            addStringToBuffer( name ); 
-        }
+ShoutTC::ShoutTC(int16_t x, int16_t y, int16_t z, std::string text) : BasicServerCommand(SC_SHOUT_TC) {
+    addShortIntToBuffer(x);
+    addShortIntToBuffer(y);
+    addShortIntToBuffer(z);
+    addStringToBuffer(text);
+}
 
-        ShoutTC::ShoutTC(int16_t x, int16_t y, int16_t z, std::string text) : BasicServerCommand( SC_SHOUT_TC ) 
-        {
-            addShortIntToBuffer( x );
-            addShortIntToBuffer( y );
-            addShortIntToBuffer( z );
-            addStringToBuffer( text );
-        }
+WhisperTC::WhisperTC(int16_t x, int16_t y, int16_t z, std::string text) : BasicServerCommand(SC_WHISPER_TC) {
+    addShortIntToBuffer(x);
+    addShortIntToBuffer(y);
+    addShortIntToBuffer(z);
+    addStringToBuffer(text);
+}
 
-        WhisperTC::WhisperTC(int16_t x, int16_t y, int16_t z, std::string text) : BasicServerCommand( SC_WHISPER_TC ) 
-        {
-            addShortIntToBuffer( x );
-            addShortIntToBuffer( y );
-            addShortIntToBuffer( z );
-            addStringToBuffer( text );
-        }
+SayTC::SayTC(int16_t x, int16_t y, int16_t z, std::string text) : BasicServerCommand(SC_SAY_TC) {
+    addShortIntToBuffer(x);
+    addShortIntToBuffer(y);
+    addShortIntToBuffer(z);
+    addStringToBuffer(text);
+}
 
-        SayTC::SayTC(int16_t x, int16_t y, int16_t z, std::string text) : BasicServerCommand( SC_SAY_TC ) 
-        {
-            addShortIntToBuffer( x );
-            addShortIntToBuffer( y );
-            addShortIntToBuffer( z );
-            addStringToBuffer( text );
-        }
+MusicTC::MusicTC(short int title) : BasicServerCommand(SC_MUSIC_TC) {
+    addShortIntToBuffer(title);
+}
 
-        MusicTC::MusicTC(short int title) : BasicServerCommand( SC_MUSIC_TC ) 
-        {
-            addShortIntToBuffer( title );
-        }
+MusicDefaultTC::MusicDefaultTC() : BasicServerCommand(SC_MUSICDEFAULT_TC) {
+}
 
-        MusicDefaultTC::MusicDefaultTC() : BasicServerCommand( SC_MUSICDEFAULT_TC )
-        {
-        }
+UpdateAttribTC::UpdateAttribTC(std::string name, short int value) : BasicServerCommand(SC_UPDATEATTRIB_TC) {
+    addStringToBuffer(name);
+    addShortIntToBuffer(value);
+}
 
-        UpdateAttribTC::UpdateAttribTC(std::string name, short int value) : BasicServerCommand( SC_UPDATEATTRIB_TC ) 
-        {
-            addStringToBuffer( name );
-            addShortIntToBuffer( value );
-        }
+UpdateMagicFlagsTC::UpdateMagicFlagsTC(unsigned char type, uint32_t flags) : BasicServerCommand(SC_UPDATEMAGICFLAGS_TC) {
+    addUnsignedCharToBuffer(type);
+    addIntToBuffer(flags);
+}
 
-        UpdateMagicFlagsTC::UpdateMagicFlagsTC(unsigned char type, uint32_t flags) : BasicServerCommand( SC_UPDATEMAGICFLAGS_TC ) 
-        {
-            addUnsignedCharToBuffer( type );
-            addIntToBuffer( flags );
-        }
+ClearShowCaseTC::ClearShowCaseTC(unsigned char id) : BasicServerCommand(SC_CLEARSHOWCASE_TC) {
+    addUnsignedCharToBuffer(id);
+}
 
-        ClearShowCaseTC::ClearShowCaseTC(unsigned char id) : BasicServerCommand( SC_CLEARSHOWCASE_TC ) 
-        {
-            addUnsignedCharToBuffer( id ); 
-        }
+UpdateSkillTC::UpdateSkillTC(std::string name, unsigned char type, unsigned short int major, unsigned short int minor) : BasicServerCommand(SC_UPDATESKILL_TC) {
+    addStringToBuffer(name);
+    addUnsignedCharToBuffer(type);
+    addShortIntToBuffer(major);
+    addShortIntToBuffer(minor);
+}
 
-        UpdateSkillTC::UpdateSkillTC(std::string name, unsigned char type, unsigned short int major, unsigned short int minor) : BasicServerCommand( SC_UPDATESKILL_TC ) 
-        {
-            addStringToBuffer( name );
-            addUnsignedCharToBuffer( type );
-            addShortIntToBuffer( major );
-            addShortIntToBuffer( minor );
-        }
+UpdateWeatherTC::UpdateWeatherTC(WeatherStruct weather) : BasicServerCommand(SC_UPDATEWEATHER_TC) {
+    addUnsignedCharToBuffer(weather.cloud_density);
+    addUnsignedCharToBuffer(weather.fog_density);
+    addUnsignedCharToBuffer(weather.wind_dir);
+    addUnsignedCharToBuffer(weather.gust_strength);
+    addUnsignedCharToBuffer(weather.percipitation_strength);
+    addUnsignedCharToBuffer(static_cast<unsigned char>(weather.per_type));
+    addUnsignedCharToBuffer(weather.thunderstorm);
+    addUnsignedCharToBuffer(weather.temperature);
+}
 
-        UpdateWeatherTC::UpdateWeatherTC( WeatherStruct weather ) : BasicServerCommand( SC_UPDATEWEATHER_TC ) 
-        {
-            addUnsignedCharToBuffer( weather.cloud_density );
-            addUnsignedCharToBuffer(weather.fog_density );
-            addUnsignedCharToBuffer(weather.wind_dir);
-            addUnsignedCharToBuffer(weather.gust_strength);
-            addUnsignedCharToBuffer(weather.percipitation_strength);
-            addUnsignedCharToBuffer(static_cast<unsigned char>(weather.per_type));
-            addUnsignedCharToBuffer(weather.thunderstorm);
-            addUnsignedCharToBuffer(weather.temperature);
-        }
-        
-        UpdateWeatherTC::UpdateWeatherTC( uint8_t cd, uint8_t fd, uint8_t wd, uint8_t gs, uint8_t ps, uint8_t pt, uint8_t ts, uint8_t tp ) : BasicServerCommand( SC_UPDATEWEATHER_TC ) 
-        {
-            addUnsignedCharToBuffer( cd );
-            addUnsignedCharToBuffer( fd );
-            addUnsignedCharToBuffer( wd );
-            addUnsignedCharToBuffer( gs );
-            addUnsignedCharToBuffer( ps );
-            addUnsignedCharToBuffer( pt );
-            addUnsignedCharToBuffer( ts );
-            addUnsignedCharToBuffer( tp );
-        }        
+UpdateWeatherTC::UpdateWeatherTC(uint8_t cd, uint8_t fd, uint8_t wd, uint8_t gs, uint8_t ps, uint8_t pt, uint8_t ts, uint8_t tp) : BasicServerCommand(SC_UPDATEWEATHER_TC) {
+    addUnsignedCharToBuffer(cd);
+    addUnsignedCharToBuffer(fd);
+    addUnsignedCharToBuffer(wd);
+    addUnsignedCharToBuffer(gs);
+    addUnsignedCharToBuffer(ps);
+    addUnsignedCharToBuffer(pt);
+    addUnsignedCharToBuffer(ts);
+    addUnsignedCharToBuffer(tp);
+}
 
-        IdTC::IdTC(int id) : BasicServerCommand( SC_ID_TC ) 
-        {
-            addIntToBuffer(id);
-        }
+IdTC::IdTC(int id) : BasicServerCommand(SC_ID_TC) {
+    addIntToBuffer(id);
+}
 
-        UpdateInventoryPosTC::UpdateInventoryPosTC(unsigned char pos, TYPE_OF_ITEM_ID id, unsigned char number) : BasicServerCommand( SC_UPDATEINVENTORYPOS_TC ) 
-        {
-            addUnsignedCharToBuffer( pos );
-            addShortIntToBuffer( id );
-            addUnsignedCharToBuffer( number ); 
-        }
+UpdateInventoryPosTC::UpdateInventoryPosTC(unsigned char pos, TYPE_OF_ITEM_ID id, unsigned char number) : BasicServerCommand(SC_UPDATEINVENTORYPOS_TC) {
+    addUnsignedCharToBuffer(pos);
+    addShortIntToBuffer(id);
+    addUnsignedCharToBuffer(number);
+}
 
-        SetCoordinateTC::SetCoordinateTC( position pos ) : BasicServerCommand( SC_SETCOORDINATE_TC )
-        {
-            addShortIntToBuffer(pos.x);
-            addShortIntToBuffer(pos.y);
-            addShortIntToBuffer(pos.z);
-        }
-        
-        SetCoordinateTC::SetCoordinateTC( short int x, short int y, short int z ) : BasicServerCommand( SC_SETCOORDINATE_TC )
-        {
-            addShortIntToBuffer(x);
-            addShortIntToBuffer(y);
-            addShortIntToBuffer(z);
-        }
+SetCoordinateTC::SetCoordinateTC(position pos) : BasicServerCommand(SC_SETCOORDINATE_TC) {
+    addShortIntToBuffer(pos.x);
+    addShortIntToBuffer(pos.y);
+    addShortIntToBuffer(pos.z);
+}
 
-        PlayerSpinTC::PlayerSpinTC( unsigned char faceto, TYPE_OF_CHARACTER_ID id ) : BasicServerCommand( SC_PLAYERSPIN_TC )
-        {
-            addUnsignedCharToBuffer( faceto );
-            addIntToBuffer( id );
-        }
+SetCoordinateTC::SetCoordinateTC(short int x, short int y, short int z) : BasicServerCommand(SC_SETCOORDINATE_TC) {
+    addShortIntToBuffer(x);
+    addShortIntToBuffer(y);
+    addShortIntToBuffer(z);
+}
+
+PlayerSpinTC::PlayerSpinTC(unsigned char faceto, TYPE_OF_CHARACTER_ID id) : BasicServerCommand(SC_PLAYERSPIN_TC) {
+    addUnsignedCharToBuffer(faceto);
+    addIntToBuffer(id);
+}
 

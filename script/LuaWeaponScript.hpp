@@ -27,19 +27,18 @@
 class World;
 class Character;
 
-class LuaWeaponScript : public LuaScript
-{
-    public:
-        LuaWeaponScript(std::string filename) throw(ScriptException);
-        virtual ~LuaWeaponScript() throw ();
+class LuaWeaponScript : public LuaScript {
+public:
+    LuaWeaponScript(std::string filename) throw(ScriptException);
+    virtual ~LuaWeaponScript() throw();
 
-        //A character attacks another person with this weapon.
-        //\param: Attacker, the person who attacks.
-        //\param: Defender, the person who is attacked.
-        bool onAttack( Character * Attacker, Character * Defender );
-        
-    private:
-	LuaWeaponScript(const LuaWeaponScript&);
-	LuaWeaponScript& operator=(const LuaWeaponScript&);
+    //A character attacks another person with this weapon.
+    //\param: Attacker, the person who attacks.
+    //\param: Defender, the person who is attacked.
+    bool onAttack(Character *Attacker, Character *Defender);
+
+private:
+    LuaWeaponScript(const LuaWeaponScript &);
+    LuaWeaponScript &operator=(const LuaWeaponScript &);
 };
 #endif

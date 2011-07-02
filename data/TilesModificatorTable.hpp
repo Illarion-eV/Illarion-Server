@@ -43,35 +43,35 @@ using std::hash_map;
 
 //! eine Tabelle fr allgemeine Item-Eigenschaften
 class TilesModificatorTable {
-	public:
-		bool find( TYPE_OF_ITEM_ID Id, TilesModificatorStruct &ret );
+public:
+    bool find(TYPE_OF_ITEM_ID Id, TilesModificatorStruct &ret);
 
-		TilesModificatorTable();
+    TilesModificatorTable();
 
-		~TilesModificatorTable();
+    ~TilesModificatorTable();
 
-		void reload();
+    void reload();
 
-		inline bool dataOK() {
-			return m_dataOK;
-		}
+    inline bool dataOK() {
+        return m_dataOK;
+    }
 
-		//! prft, ob das Item mit der ID Id passierbar ist
-		// \param Id eine Item-Id
-		// \return true falls das Item mit der ID Id nicht passierbar ist
-		bool nonPassable( TYPE_OF_ITEM_ID Id );
+    //! prft, ob das Item mit der ID Id passierbar ist
+    // \param Id eine Item-Id
+    // \return true falls das Item mit der ID Id nicht passierbar ist
+    bool nonPassable(TYPE_OF_ITEM_ID Id);
 
-	protected:
+protected:
 
-		//! der Datentyp der die Tabelle aufnimmt
-		typedef hash_map < TYPE_OF_ITEM_ID, TilesModificatorStruct > TABLE;
+    //! der Datentyp der die Tabelle aufnimmt
+    typedef hash_map < TYPE_OF_ITEM_ID, TilesModificatorStruct > TABLE;
 
-		//! die Tabelle mit den eingelesenen Werten
-		TABLE m_table;
+    //! die Tabelle mit den eingelesenen Werten
+    TABLE m_table;
 
-		void clearOldTable();
+    void clearOldTable();
 
-		bool m_dataOK;
+    bool m_dataOK;
 
 };
 

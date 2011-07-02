@@ -21,79 +21,70 @@
 #include "NaturalArmorTable.hpp"
 #include <iostream>
 
-NaturalArmorTable::NaturalArmorTable() : m_dataOK(false)
-{
+NaturalArmorTable::NaturalArmorTable() : m_dataOK(false) {
     reload();
 }
 
-NaturalArmorTable::~NaturalArmorTable()
-{
+NaturalArmorTable::~NaturalArmorTable() {
     clearOldTable();
 }
 
-void NaturalArmorTable::reload()
-{
+void NaturalArmorTable::reload() {
 #ifdef DataConnect_DEBUG
     std::cout<<"Trying to reload NaturalArmorTable!"<<std::endl;
 #endif
 
-    try
-    {
-        //LAden einer Connection    
+    try {
+        //LAden einer Connection
         ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
-        
+
         std::vector<uint16_t> raceTyp;
         std::vector<int16_t> strokeArmor;
         std::vector<int16_t> punctureArmor;
         std::vector<int16_t> thrustArmor;
-        
+
         //Laden der Daten in die Vectoren
         size_t rows = di::select_all<di::Integer, di::Integer, di::Integer, di::Integer>
-        (transaction, raceTyp, strokeArmor, punctureArmor, thrustArmor, "SELECT nar_race, nar_strokeArmor, nar_punctureArmor, nar_thrustArmor FROM NaturalArmor");
-        
+                      (transaction, raceTyp, strokeArmor, punctureArmor, thrustArmor, "SELECT nar_race, nar_strokeArmor, nar_punctureArmor, nar_thrustArmor FROM NaturalArmor");
+
         //Löschen der alten Daten
         clearOldTable();
-        
-        //Schleife durch Tuples        
-        for ( size_t i = 0; i < rows; ++i )
-        {
-             MonsterArmor Armor;
-             Armor.strokeArmor = strokeArmor[i];
-             Armor.punctureArmor = punctureArmor[i];
-             Armor.thrustArmor = thrustArmor[i];        
-             m_ArmorTable[ raceTyp[i] ] = Armor;          
-        }   
-        
+
+        //Schleife durch Tuples
+        for (size_t i = 0; i < rows; ++i) {
+            MonsterArmor Armor;
+            Armor.strokeArmor = strokeArmor[i];
+            Armor.punctureArmor = punctureArmor[i];
+            Armor.thrustArmor = thrustArmor[i];
+            m_ArmorTable[ raceTyp[i] ] = Armor;
+        }
+
         m_dataOK = true;
-           
+
 #ifdef DataConnect_DEBUG
-	std::cout << "loaded " << rows << " rows into NaturalArmorTable" << std::endl;
-#endif         
-    }
-    catch ( ... )
-    {
+        std::cout << "loaded " << rows << " rows into NaturalArmorTable" << std::endl;
+#endif
+    } catch (...) {
         m_dataOK = false;
     }
 
 }
 
-bool NaturalArmorTable::find( Character::race_type race, MonsterArmor &ret)
-{
+bool NaturalArmorTable::find(Character::race_type race, MonsterArmor &ret) {
     TABLE::iterator iterat;
-    iterat = m_ArmorTable.find(static_cast<uint16_t>(race) );
-    
-    if ( iterat == m_ArmorTable.end() )
+    iterat = m_ArmorTable.find(static_cast<uint16_t>(race));
+
+    if (iterat == m_ArmorTable.end()) {
         return false;
-    else
-    {
+    } else {
         ret = (*iterat).second;
         return true;
     }
+
     return false;
 }
 
-void NaturalArmorTable::clearOldTable()
-{
+void NaturalArmorTable::clearOldTable() {
     m_ArmorTable.clear();
 }
 

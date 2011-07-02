@@ -21,73 +21,64 @@
 #include "MonsterAttackTable.hpp"
 #include <iostream>
 
-MonsterAttackTable::MonsterAttackTable() : m_dataOk(false)
-{
+MonsterAttackTable::MonsterAttackTable() : m_dataOk(false) {
     reload();
 }
 
-MonsterAttackTable::~MonsterAttackTable()
-{
+MonsterAttackTable::~MonsterAttackTable() {
     clearOldTable();
 }
 
-void MonsterAttackTable::reload()
-{
+void MonsterAttackTable::reload() {
 #ifdef DataConnect_DEBUG
     std::cout<<"Trying to reload MonsterAttackTable!"<<std::endl;
 #endif
-    
-    try
-    {
-       std::vector<int16_t>raceType; 
-       std::vector<uint8_t>attackType; 
-       std::vector<int16_t>attackValue;
-       std::vector<int16_t>actionPointsLost;
-       
-       ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
-       size_t rows = di::select_all<di::Integer, di::Integer, di::Integer, di::Integer>
-       ( transaction, raceType, attackType, attackValue, actionPointsLost,
-           "SELECT mat_race_type, mat_attack_type, mat_attack_value, mat_actionpointslost FROM MonsterAttack");
-       
-       //Zeilenweises laden der Daten
-       for ( size_t i = 0; i < rows; ++i )
-       {
+
+    try {
+        std::vector<int16_t>raceType;
+        std::vector<uint8_t>attackType;
+        std::vector<int16_t>attackValue;
+        std::vector<int16_t>actionPointsLost;
+
+        ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
+        size_t rows = di::select_all<di::Integer, di::Integer, di::Integer, di::Integer>
+                      (transaction, raceType, attackType, attackValue, actionPointsLost,
+                       "SELECT mat_race_type, mat_attack_type, mat_attack_value, mat_actionpointslost FROM MonsterAttack");
+
+        //Zeilenweises laden der Daten
+        for (size_t i = 0; i < rows; ++i) {
             AttackBoni data;
             data.attackType = attackType[i];
             data.attackValue = attackValue[i];
             data.actionPointsLost = actionPointsLost[i];
             raceAttackBoni[ raceType[i] ] = data;
-       }       
-    
-    
-       m_dataOk = true;
-                   
+        }
+
+
+        m_dataOk = true;
+
 #ifdef DataConnect_DEBUG
-	   std::cout << "loaded " << rows << " rows into MonsterAttackTable" << std::endl;
+        std::cout << "loaded " << rows << " rows into MonsterAttackTable" << std::endl;
 #endif
-    }
-    catch ( ... )
-    {
+    } catch (...) {
         m_dataOk = false;
     }
 }
 
-bool MonsterAttackTable::find(Character::race_type race, AttackBoni &ret)
-{
+bool MonsterAttackTable::find(Character::race_type race, AttackBoni &ret) {
     TABLE::iterator iterat;
-    iterat = raceAttackBoni.find( (int16_t)race );
-    
-    if ( iterat == raceAttackBoni.end() )
+    iterat = raceAttackBoni.find((int16_t)race);
+
+    if (iterat == raceAttackBoni.end()) {
         return false;
-    else
-    {
+    } else {
         ret = (*iterat).second;
         return true;
     }
+
     return false;
 }
 
-void MonsterAttackTable::clearOldTable()
-{
+void MonsterAttackTable::clearOldTable() {
     raceAttackBoni.clear();
 }

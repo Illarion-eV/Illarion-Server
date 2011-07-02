@@ -21,8 +21,7 @@
 #include "netinterface/protocol/ClientCommands.hpp"
 #include "netinterface/protocol/BBIWIClientCommands.hpp"
 
-CommandFactory::CommandFactory()
-{
+CommandFactory::CommandFactory() {
     //TODO add the commands
     templateList[ C_LOGIN_TS ] = new LoginCommandTS();
     templateList[ C_SCREENSIZE_TS ] = new ScreenSizeCommandTS();
@@ -66,30 +65,37 @@ CommandFactory::CommandFactory()
     templateList[ BB_SPEAKAS_TS ] = new BBSpeakAsTS();
     templateList[ BB_REQUESTSTATS_TS ] = new BBRequestStatTS();
     templateList[ BB_REQUESTSKILLS_TS ] = new BBRequestSkillsTS();
-    for ( int i = C_IMOVERSTART_TS; i <= C_IMOVEREND_TS; ++i)templateList[i] = new IMoverActionTS( i - C_IMOVERSTART_TS );
+
+    for (int i = C_IMOVERSTART_TS; i <= C_IMOVEREND_TS; ++i) {
+        templateList[i] = new IMoverActionTS(i - C_IMOVERSTART_TS);
+    }
+
     templateList[ C_CHARMOVE_TS ] = new CharMoveTS();
-    for ( int i = C_PSPINRSTART_TS; i <= C_PSPINREND_TS; ++i)templateList[i] = new PSpinActionTS( i - C_PSPINRSTART_TS );
+
+    for (int i = C_PSPINRSTART_TS; i <= C_PSPINREND_TS; ++i) {
+        templateList[i] = new PSpinActionTS(i - C_PSPINRSTART_TS);
+    }
+
     templateList[ C_LOOKATCHARACTER_TS ] = new LookAtCharacterTS();
     templateList[ C_REQUESTAPPEARANCE_TS ] = new RequestAppearanceTS();
 
 }
 
 
-CommandFactory::~CommandFactory()
-{
+CommandFactory::~CommandFactory() {
     templateList.clear();
 }
 
-boost::shared_ptr<BasicClientCommand>  CommandFactory::getCommand(unsigned char commandId )
-{
+boost::shared_ptr<BasicClientCommand>  CommandFactory::getCommand(unsigned char commandId) {
     OMMANDLIST::iterator it;
-    it = templateList.find( commandId );
-    if ( it != templateList.end() )
-    {
-        BasicClientCommand * cmd;
+    it = templateList.find(commandId);
+
+    if (it != templateList.end()) {
+        BasicClientCommand *cmd;
         cmd = it->second;
         return cmd->clone();
     }
+
     return boost::shared_ptr<BasicClientCommand>();
 }
-    
+

@@ -29,152 +29,137 @@
 #include "fuse_ptr.hpp"
 
 LuaItemScript::LuaItemScript(std::string filename, CommonStruct comstr) throw(ScriptException)
-		: LuaScript(filename) , _comstr(comstr) {
-	init_functions();
+    : LuaScript(filename) , _comstr(comstr) {
+    init_functions();
 }
 
 LuaItemScript::~LuaItemScript() throw() {}
 
 void LuaItemScript::init_functions() {
-	luabind::object globals = luabind::globals(_luaState);
-	globals["thisItem"] = _comstr;
+    luabind::object globals = luabind::globals(_luaState);
+    globals["thisItem"] = _comstr;
 }
 
-void LuaItemScript::UseItem(Character * User, ScriptItem SourceItem, ScriptItem TargetItem, unsigned short counter, unsigned short int param, unsigned char ltastate ) 
-{
-	try 
-    {
-        World::get()->setCurrentScript( this );        
+void LuaItemScript::UseItem(Character *User, ScriptItem SourceItem, ScriptItem TargetItem, unsigned short counter, unsigned short int param, unsigned char ltastate) {
+    try {
+        World::get()->setCurrentScript(this);
         Logger::writeMessage("scripts","UseItem called for: " + Logger::toString(_comstr.id));
-		fuse_ptr<Character> fuse_User(User);
-        call("UseItem")( fuse_User, SourceItem, TargetItem, counter, param, ltastate );
-        
-	} catch (luabind::error &e) 
-    {
-	writeErrorMsg();
-	}
+        fuse_ptr<Character> fuse_User(User);
+        call("UseItem")(fuse_User, SourceItem, TargetItem, counter, param, ltastate);
+
+    } catch (luabind::error &e) {
+        writeErrorMsg();
+    }
 }
 
-bool LuaItemScript::NextCycle()
-{
-    try 
-    {
-        World::get()->setCurrentScript( this ); 
+bool LuaItemScript::NextCycle() {
+    try {
+        World::get()->setCurrentScript(this);
         Logger::writeMessage("scripts","Nextcycle called for: " + Logger::toString(_comstr.id));
         call("NextCycle")();
         return true;
-    }
-    catch ( luabind::error &e)
-    {
+    } catch (luabind::error &e) {
         writeErrorMsg();
         return false;
     }
+
     return false;
 }
 
-void LuaItemScript::UseItemWithCharacter(Character * User, ScriptItem SourceItem, Character * character, unsigned short counter, unsigned short int param, unsigned char ltastate ) {
-	try 
-    {
-        World::get()->setCurrentScript( this ); 
+void LuaItemScript::UseItemWithCharacter(Character *User, ScriptItem SourceItem, Character *character, unsigned short counter, unsigned short int param, unsigned char ltastate) {
+    try {
+        World::get()->setCurrentScript(this);
         Logger::writeMessage("scripts","UseItemWithCharacter called for: " + Logger::toString(_comstr.id));
-		fuse_ptr<Character> fuse_User(User);
+        fuse_ptr<Character> fuse_User(User);
         fuse_ptr<Character> fuse_character(character);
-        call("UseItemWithCharacter")( fuse_User, SourceItem, fuse_character, counter, param, ltastate );
-	} catch (luabind::error &e) {
+        call("UseItemWithCharacter")(fuse_User, SourceItem, fuse_character, counter, param, ltastate);
+    } catch (luabind::error &e) {
         writeErrorMsg();
-	}
+    }
 }
 
-void LuaItemScript::UseItemWithField(Character * User, ScriptItem SourceItem, position TargetPos, unsigned short counter, unsigned short param, unsigned char ltastate) {
-	try 
-    {
-        World::get()->setCurrentScript( this ); 
+void LuaItemScript::UseItemWithField(Character *User, ScriptItem SourceItem, position TargetPos, unsigned short counter, unsigned short param, unsigned char ltastate) {
+    try {
+        World::get()->setCurrentScript(this);
         Logger::writeMessage("scripts","UseItemWithField called for: " + Logger::toString(_comstr.id));
-		fuse_ptr<Character> fuse_User(User);
-        call("UseItemWithField")( fuse_User, SourceItem, TargetPos, counter, param, ltastate );
-	} 
-    catch (luabind::error &e) 
-    {
+        fuse_ptr<Character> fuse_User(User);
+        call("UseItemWithField")(fuse_User, SourceItem, TargetPos, counter, param, ltastate);
+    } catch (luabind::error &e) {
         writeErrorMsg();
-	}
+    }
 }
 
-bool LuaItemScript::actionDisturbed(Character * performer, Character * disturber)
-{
-    try
-    {
-        World::get()->setCurrentScript( this ); 
+bool LuaItemScript::actionDisturbed(Character *performer, Character *disturber) {
+    try {
+        World::get()->setCurrentScript(this);
         Logger::writeMessage("scripts","actionDisturbed called for: " + Logger::toString(_comstr.id));
         fuse_ptr<Character> fuse_performer(performer);
         fuse_ptr<Character> fuse_disturber(disturber);
-        return luabind::object_cast<bool>(call("actionDisturbed")( fuse_performer, fuse_disturber ));
-    }
-    catch ( luabind::error &e)
-    {
+        return luabind::object_cast<bool>(call("actionDisturbed")(fuse_performer, fuse_disturber));
+    } catch (luabind::error &e) {
         return true;
     }
 }
 
-bool LuaItemScript::LookAtItem(Character * who, ScriptItem t_item) {
-	try 
-    {
-        World::get()->setCurrentScript( this ); 
+bool LuaItemScript::LookAtItem(Character *who, ScriptItem t_item) {
+    try {
+        World::get()->setCurrentScript(this);
         Logger::writeMessage("scripts","LookAtItem called for: " + Logger::toString(_comstr.id));
-    	fuse_ptr<Character> fuse_who(who);
+        fuse_ptr<Character> fuse_who(who);
         std::pair<QuestScripts::iterator, QuestScripts::iterator> lookAtRange = questScripts.equal_range("LookAtItem");
         QuestScripts::iterator it;
         bool foundQuest = false;
-        for (it = lookAtRange.first; it != lookAtRange.second; ++it)
-            foundQuest = foundQuest || luabind::object_cast<bool>(it->second->call("LookAtItem")( fuse_who, t_item ));
-        if (!foundQuest)
-            call("LookAtItem")( fuse_who, t_item );
-		return true;
-	} 
-    catch (luabind::error &e) 
-    {
+
+        for (it = lookAtRange.first; it != lookAtRange.second; ++it) {
+            foundQuest = foundQuest || luabind::object_cast<bool>(it->second->call("LookAtItem")(fuse_who, t_item));
+        }
+
+        if (!foundQuest) {
+            call("LookAtItem")(fuse_who, t_item);
+        }
+
+        return true;
+    } catch (luabind::error &e) {
         writeErrorMsg();
         return false;
-	}
-	return false;
+    }
+
+    return false;
 }
 
-bool LuaItemScript::MoveItemBeforeMove(Character * who, ScriptItem sourceItem,ScriptItem targetItem) {
-	try 
-    {
-        World::get()->setCurrentScript( this ); 
-        Logger::writeMessage("scripts","MoveItemBeforeMove called for: " + Logger::toString(_comstr.id));        
+bool LuaItemScript::MoveItemBeforeMove(Character *who, ScriptItem sourceItem,ScriptItem targetItem) {
+    try {
+        World::get()->setCurrentScript(this);
+        Logger::writeMessage("scripts","MoveItemBeforeMove called for: " + Logger::toString(_comstr.id));
         fuse_ptr<Character> fuse_who(who);
-		return luabind::object_cast<bool>(call("MoveItemBeforeMove")( fuse_who, sourceItem, targetItem ));
-	} catch (luabind::error &e) {
+        return luabind::object_cast<bool>(call("MoveItemBeforeMove")(fuse_who, sourceItem, targetItem));
+    } catch (luabind::error &e) {
         writeErrorMsg();
-	}
-	return true;
+    }
+
+    return true;
 }
 
-void LuaItemScript::MoveItemAfterMove(Character * who, ScriptItem sourceItem, ScriptItem targetItem) {
-	try 
-    {
-        World::get()->setCurrentScript( this ); 
+void LuaItemScript::MoveItemAfterMove(Character *who, ScriptItem sourceItem, ScriptItem targetItem) {
+    try {
+        World::get()->setCurrentScript(this);
         Logger::writeMessage("scripts","MoveItemAfterMove called for: " + Logger::toString(_comstr.id));
-		fuse_ptr<Character> fuse_who(who);
-        call("MoveItemAfterMove")( fuse_who, sourceItem, targetItem );
-	} 
-    catch (luabind::error &e) 
-    {
-        writeErrorMsg();        
-	}
+        fuse_ptr<Character> fuse_who(who);
+        call("MoveItemAfterMove")(fuse_who, sourceItem, targetItem);
+    } catch (luabind::error &e) {
+        writeErrorMsg();
+    }
 }
 
-void LuaItemScript::CharacterOnField(Character * who) {
-	try 
-    {
-        World::get()->setCurrentScript( this ); 
+void LuaItemScript::CharacterOnField(Character *who) {
+    try {
+        World::get()->setCurrentScript(this);
         Logger::writeMessage("scripts","CharacterOnField called for: " + Logger::toString(_comstr.id));
-		fuse_ptr<Character> fuse_who(who);
-        call("CharacterOnField")( fuse_who );
-	} catch (luabind::error &e) {
-        writeErrorMsg(); 
-	}
+        fuse_ptr<Character> fuse_who(who);
+        call("CharacterOnField")(fuse_who);
+    } catch (luabind::error &e) {
+        writeErrorMsg();
+    }
 }
 
 void LuaItemScript::addQuestScript(const std::string entrypoint, LuaScript *script) {

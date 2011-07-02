@@ -25,30 +25,30 @@
 //! Timer für Sekundenabstände
 class Timer {
 
-	public:
+public:
 
-		//! Konstruktor
-		// \param timegap Anzahl der Sekunden zwischen zwei Timer-Ereignissen
-		Timer( unsigned long int timegap );
+    //! Konstruktor
+    // \param timegap Anzahl der Sekunden zwischen zwei Timer-Ereignissen
+    Timer(unsigned long int timegap);
 
-		//! Destruktor
-		~Timer();
+    //! Destruktor
+    ~Timer();
 
-		//! prüft, ob schon genügend Zeit seit dem letzten Timer-Ereignis
-		// (bzw. dem Konstruktor) vergangen ist
-		// \return true, falls das nächste Ereignis anliegt, false sonst
-		bool next();
+    //! prüft, ob schon genügend Zeit seit dem letzten Timer-Ereignis
+    // (bzw. dem Konstruktor) vergangen ist
+    // \return true, falls das nächste Ereignis anliegt, false sonst
+    bool next();
 
-	private:
+private:
 
-		//! Zeitpunkt der letzten Alterung (Anzahl der Sekunden seit 1.1.1970)
-		time_t last;     //(32 Bit Integer)
+    //! Zeitpunkt der letzten Alterung (Anzahl der Sekunden seit 1.1.1970)
+    time_t last;     //(32 Bit Integer)
 
-		//! Anzahl der Sekunden zwischen den Schritten
-		long gap;
+    //! Anzahl der Sekunden zwischen den Schritten
+    long gap;
 
-		//! Sekunden seit dem letzten Ereignis
-		long realgap;
+    //! Sekunden seit dem letzten Ereignis
+    long realgap;
 };
 #endif
 

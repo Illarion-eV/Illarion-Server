@@ -45,37 +45,37 @@ class World;
 
 //! eine Tabelle für allgemeine Item-Eigenschaften
 class CommonObjectTable {
-	public:
-		bool find( TYPE_OF_ITEM_ID Id, CommonStruct &ret );
-		bool find( TYPE_OF_ITEM_ID Id);
-        boost::shared_ptr<LuaItemScript> findScript( TYPE_OF_ITEM_ID Id );
+public:
+    bool find(TYPE_OF_ITEM_ID Id, CommonStruct &ret);
+    bool find(TYPE_OF_ITEM_ID Id);
+    boost::shared_ptr<LuaItemScript> findScript(TYPE_OF_ITEM_ID Id);
 
-		//CWorld für den Constructor aufgrund der Scriptfunktionen
-		CommonObjectTable();
+    //CWorld für den Constructor aufgrund der Scriptfunktionen
+    CommonObjectTable();
 
-		~CommonObjectTable();
+    ~CommonObjectTable();
 
-		void reload();
+    void reload();
 
-		inline bool dataOK() {
-			return m_dataOK;
-		}
-		
-	protected:
+    inline bool dataOK() {
+        return m_dataOK;
+    }
 
-		//! der Datentyp der die Tabelle aufnimmt
-		typedef hash_map < TYPE_OF_ITEM_ID, CommonStruct > TABLE;
-        typedef boost::shared_ptr<LuaItemScript> iscript;
-        typedef hash_map < TYPE_OF_ITEM_ID, iscript > SCRIPTTABLE;
+protected:
 
-		//! die Tabelle mit den eingelesenen Werten
-		TABLE m_table;
-        SCRIPTTABLE m_scripttable;
+    //! der Datentyp der die Tabelle aufnimmt
+    typedef hash_map < TYPE_OF_ITEM_ID, CommonStruct > TABLE;
+    typedef boost::shared_ptr<LuaItemScript> iscript;
+    typedef hash_map < TYPE_OF_ITEM_ID, iscript > SCRIPTTABLE;
 
-		void clearOldTable();
-        TYPE_OF_ITEM_ID calcInfiniteRot( TYPE_OF_ITEM_ID id, std::map<TYPE_OF_ITEM_ID, bool> & visited, std::map<TYPE_OF_ITEM_ID, bool> & assigned );
+    //! die Tabelle mit den eingelesenen Werten
+    TABLE m_table;
+    SCRIPTTABLE m_scripttable;
 
-		bool m_dataOK;
+    void clearOldTable();
+    TYPE_OF_ITEM_ID calcInfiniteRot(TYPE_OF_ITEM_ID id, std::map<TYPE_OF_ITEM_ID, bool> & visited, std::map<TYPE_OF_ITEM_ID, bool> & assigned);
+
+    bool m_dataOK;
 
 };
 

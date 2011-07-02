@@ -27,46 +27,46 @@
 class World;
 
 class LuaTriggerScript: public LuaScript {
-	public:
-		LuaTriggerScript(std::string filename, position pos) throw(ScriptException);
+public:
+    LuaTriggerScript(std::string filename, position pos) throw(ScriptException);
 
-		virtual ~LuaTriggerScript() throw();
+    virtual ~LuaTriggerScript() throw();
 
-		//Es befindet sich ein Character auf den Feld womit ein Trigger ausgelöst wird, wird mit jeden Servertick
-		//neu ausgeführt
-		//\param Character der Character der sich auf den Feld befindet
-		void CharacterOnField(Character * Character);
+    //Es befindet sich ein Character auf den Feld womit ein Trigger ausgelöst wird, wird mit jeden Servertick
+    //neu ausgeführt
+    //\param Character der Character der sich auf den Feld befindet
+    void CharacterOnField(Character *Character);
 
-		//Ein Character bewegt sich gerade auf das Feld
-		//\param Character: der Character der sich auf das Feld bewegt
-		void MoveToField(Character * Character);
+    //Ein Character bewegt sich gerade auf das Feld
+    //\param Character: der Character der sich auf das Feld bewegt
+    void MoveToField(Character *Character);
 
-		//Ein Character bewegt sich von dem Feld herunter
-		//\param Character: der Character der sich von dem Feld herunter bewegt
-		void MoveFromField(Character * Character);
+    //Ein Character bewegt sich von dem Feld herunter
+    //\param Character: der Character der sich von dem Feld herunter bewegt
+    void MoveFromField(Character *Character);
 
-		//Ein Character legt ein Item auf das Triggerfeld
-		//\param item: Das Item welches auf das Feld gelegt wird
-		//\param Character: der Character der das Item auf das Feld legt
-		void PutItemOnField(ScriptItem item, Character * Character);
+    //Ein Character legt ein Item auf das Triggerfeld
+    //\param item: Das Item welches auf das Feld gelegt wird
+    //\param Character: der Character der das Item auf das Feld legt
+    void PutItemOnField(ScriptItem item, Character *Character);
 
-		//Ein Character Zerstört ein Item auf einen Feld, Per Script oder indem er es wegnimmt
-		//\param item: Das Item welches Zerstört oder weggenommen wird
-		//\param Character: der Character der das Item zerstört
-		void TakeItemFromField(ScriptItem item, Character * Character);
+    //Ein Character Zerstört ein Item auf einen Feld, Per Script oder indem er es wegnimmt
+    //\param item: Das Item welches Zerstört oder weggenommen wird
+    //\param Character: der Character der das Item zerstört
+    void TakeItemFromField(ScriptItem item, Character *Character);
 
-		//Auf dem Triggerfeld Verrottet ein Gegenstand.
-		//\param oldItem: Das item welches Verrottet bevor es verottet.
-		//\param newItem: Das Item was nach dem Verotten entstanden ist.
-		//ACHTUNG Scriptzugriffe nur über das newitem.
-		void ItemRotsOnField(ScriptItem oldItem, ScriptItem newItem);
+    //Auf dem Triggerfeld Verrottet ein Gegenstand.
+    //\param oldItem: Das item welches Verrottet bevor es verottet.
+    //\param newItem: Das Item was nach dem Verotten entstanden ist.
+    //ACHTUNG Scriptzugriffe nur über das newitem.
+    void ItemRotsOnField(ScriptItem oldItem, ScriptItem newItem);
 
-	private:
+private:
 
-		position _pos;
-		LuaTriggerScript(const LuaTriggerScript&);
-		LuaTriggerScript& operator=(const LuaTriggerScript&);
-		void init_functions();
+    position _pos;
+    LuaTriggerScript(const LuaTriggerScript &);
+    LuaTriggerScript &operator=(const LuaTriggerScript &);
+    void init_functions();
 };
 
 #endif

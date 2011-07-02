@@ -41,29 +41,29 @@ using std::hash_map;
 
 //! eine Tabelle für allgemeine Item-Eigenschaften
 class ArmorObjectTable {
-	public:
-		bool find( TYPE_OF_ITEM_ID Id, ArmorStruct &ret );
+public:
+    bool find(TYPE_OF_ITEM_ID Id, ArmorStruct &ret);
 
-		ArmorObjectTable();
+    ArmorObjectTable();
 
-		~ArmorObjectTable();
+    ~ArmorObjectTable();
 
-		void reload();
+    void reload();
 
-		inline bool dataOK() {
-			return m_dataOK;
-		}
+    inline bool dataOK() {
+        return m_dataOK;
+    }
 
-	protected:
-		//! der Datentyp der die Tabelle aufnimmt
-		typedef hash_map < TYPE_OF_ITEM_ID, ArmorStruct > TABLE;
+protected:
+    //! der Datentyp der die Tabelle aufnimmt
+    typedef hash_map < TYPE_OF_ITEM_ID, ArmorStruct > TABLE;
 
-		//! die Tabelle mit den eingelesenen Werten
-		TABLE m_table;
+    //! die Tabelle mit den eingelesenen Werten
+    TABLE m_table;
 
-		void clearOldTable();
+    void clearOldTable();
 
-		bool m_dataOK;
+    bool m_dataOK;
 
 };
 

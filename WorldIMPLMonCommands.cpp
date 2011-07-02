@@ -43,26 +43,28 @@
 
 #include <iostream>
 
-void World::montool_kill_command(Player * c)
-{
-    if ( !c->hasGMRight(gmr_reload) )return;
+void World::montool_kill_command(Player *c) {
+    if (!c->hasGMRight(gmr_reload)) {
+        return;
+    }
+
     MONSTERVECTOR::iterator mIterator;
     uint32_t counter = 0;
-    for ( mIterator = Monsters.begin() ; mIterator != Monsters.end(); ++mIterator)
-    {
+
+    for (mIterator = Monsters.begin() ; mIterator != Monsters.end(); ++mIterator) {
         //Kill the monster we have found
-        (*mIterator)->increaseAttrib("hitpoints",-((*mIterator)->increaseAttrib("hitpoints",0)+1) );
+        (*mIterator)->increaseAttrib("hitpoints",-((*mIterator)->increaseAttrib("hitpoints",0)+1));
         ++counter;
     }
+
     //monitoringClientList->sendCommand( new SendMessageTS("Sucessfully killed: "+Logger::toString(counter)+" monsters per nuke from: "+c->name+"("+Logger::toString(c->id)+")",0));
 }
 
-void World::montool_reload_command( Player * c)
-{
+void World::montool_reload_command(Player *c) {
     /*
     if ( c->hasGMRight(gmr_reload) )
     {
-        if (reload_tables(c) ) 
+        if (reload_tables(c) )
             //monitoringClientList->sendCommand( new SendMessageTS("db tables loaded succesfully! from "+c->name+"("+Logger::toString(c->id)+")",0));
         else
             //monitoringClientList->sendCommand( new SendMessageTS("error while loading tables! from "+c->name+"("+Logger::toString(c->id)+")",0));
@@ -70,29 +72,31 @@ void World::montool_reload_command( Player * c)
     */
 }
 
-void World::montool_kickall_command( Player * c)
-{
-    if ( c->hasGMRight( gmr_forcelogout ) ) 
-    {
-	    forceLogoutOfAllPlayers();
+void World::montool_kickall_command(Player *c) {
+    if (c->hasGMRight(gmr_forcelogout)) {
+        forceLogoutOfAllPlayers();
         //monitoringClientList->sendCommand( new SendMessageTS("all players forced to logout! from "+c->name+"("+Logger::toString(c->id)+")",0));
     }
 }
 
-void World::montool_import_maps_command( Player * c)
-{
-    if ( !c->hasGMRight(gmr_import) )return;
+void World::montool_import_maps_command(Player *c) {
+    if (!c->hasGMRight(gmr_import)) {
+        return;
+    }
+
     {
-	    load_maps();
+        load_maps();
         //monitoringClientList->sendCommand( new SendMessageTS("maps imported! from "+c->name+"("+Logger::toString(c->id)+")",0));
     }
 }
 
-void World::montool_set_login(Player * c, const std::string& st) 
-{
-    if ( !c->hasGMRight(gmr_loginstate) )return;
-	configOptions["disable_login"] = st;
-	//std::cout << "nologin set to " << st << std::endl;
-	//monitoringClientList->sendCommand( new SendMessageTS("set login set to: " + st +"! from "+c->name+"("+Logger::toString(c->id)+")",0));
-    
+void World::montool_set_login(Player *c, const std::string &st) {
+    if (!c->hasGMRight(gmr_loginstate)) {
+        return;
+    }
+
+    configOptions["disable_login"] = st;
+    //std::cout << "nologin set to " << st << std::endl;
+    //monitoringClientList->sendCommand( new SendMessageTS("set login set to: " + st +"! from "+c->name+"("+Logger::toString(c->id)+")",0));
+
 }

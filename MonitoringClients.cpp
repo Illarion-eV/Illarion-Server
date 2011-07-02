@@ -29,104 +29,93 @@
 #include "netinterface/protocol/BBIWIClientCommands.hpp"
 
 
-MonitoringClients::MonitoringClients(World * world) : _world(world)
-{
+MonitoringClients::MonitoringClients(World *world) : _world(world) {
 }
 
-MonitoringClients::~MonitoringClients()
-{
-	client_list.clear();
+MonitoringClients::~MonitoringClients() {
+    client_list.clear();
 }
 
-void MonitoringClients::clientConnect( Player * player )
-{
+void MonitoringClients::clientConnect(Player *player) {
 #ifdef _MONITORINGCLIENTS_DEBUG
-	std::cout<<"a new client connects ( "<< player->name<<" )"<<std::endl;
+    std::cout<<"a new client connects ( "<< player->name<<" )"<<std::endl;
 #endif
-    Logger::writeMessage("bbiwi","New Client connects: " + player->name + " active clients online: " + Logger::toString( client_list.size() ));
-	//create new Monitoring Client
-	client_list.push_back(player); /*<add a new client to the list*/
-	//setup the keepalive
-    time( &(player->lastkeepalive) );
-	//Send all player infos to the new connected client
-	ccharactervector < Player* >::iterator pIterator;
-	
-	for ( pIterator = _world->Players.begin(); pIterator != _world->Players.end(); ++pIterator)
-	{
-        boost::shared_ptr<BasicServerCommand>cmd( new BBPlayerTC( (*pIterator)->id, (*pIterator)->name, (*pIterator)->pos.x, (*pIterator)->pos.y, (*pIterator)->pos.z ) );
-        player->Connection->addCommand( cmd );
-        cmd.reset( new BBSendAttribTC( (*pIterator)->id, "hitpoints", (*pIterator)->increaseAttrib("hitpoints",0) ) );
-        player->Connection->addCommand( cmd );
-        cmd.reset( new BBSendAttribTC( (*pIterator)->id, "mana", (*pIterator)->increaseAttrib("mana",0) ) );
-        player->Connection->addCommand( cmd );
-        cmd.reset( new BBSendAttribTC( (*pIterator)->id, "foodlevel", (*pIterator)->increaseAttrib("foodlevel",0) ) );
-        player->Connection->addCommand( cmd );
-	}
-	
+    Logger::writeMessage("bbiwi","New Client connects: " + player->name + " active clients online: " + Logger::toString(client_list.size()));
+    //create new Monitoring Client
+    client_list.push_back(player); /*<add a new client to the list*/
+    //setup the keepalive
+    time(&(player->lastkeepalive));
+    //Send all player infos to the new connected client
+    ccharactervector < Player * >::iterator pIterator;
+
+    for (pIterator = _world->Players.begin(); pIterator != _world->Players.end(); ++pIterator) {
+        boost::shared_ptr<BasicServerCommand>cmd(new BBPlayerTC((*pIterator)->id, (*pIterator)->name, (*pIterator)->pos.x, (*pIterator)->pos.y, (*pIterator)->pos.z));
+        player->Connection->addCommand(cmd);
+        cmd.reset(new BBSendAttribTC((*pIterator)->id, "hitpoints", (*pIterator)->increaseAttrib("hitpoints",0)));
+        player->Connection->addCommand(cmd);
+        cmd.reset(new BBSendAttribTC((*pIterator)->id, "mana", (*pIterator)->increaseAttrib("mana",0)));
+        player->Connection->addCommand(cmd);
+        cmd.reset(new BBSendAttribTC((*pIterator)->id, "foodlevel", (*pIterator)->increaseAttrib("foodlevel",0)));
+        player->Connection->addCommand(cmd);
+    }
+
 #ifdef _MONITORINGCLIENTS_DEBUG
-	std::cout<<"connection sucessfully ( "<< player->name<<" )"<<std::endl;
-#endif	
+    std::cout<<"connection sucessfully ( "<< player->name<<" )"<<std::endl;
+#endif
 }
 
-void MonitoringClients::sendCommand( boost::shared_ptr<BasicServerCommand> command )
-{
-	std::list<Player*>::iterator iterator;
-	//Loop through all onl clients
-	for ( iterator = client_list.begin(); iterator != client_list.end(); ++iterator )
-	{
-		//Send this command to all players
-		 (*iterator)->Connection->addCommand( command );
-	}
+void MonitoringClients::sendCommand(boost::shared_ptr<BasicServerCommand> command) {
+    std::list<Player *>::iterator iterator;
+
+    //Loop through all onl clients
+    for (iterator = client_list.begin(); iterator != client_list.end(); ++iterator) {
+        //Send this command to all players
+        (*iterator)->Connection->addCommand(command);
+    }
 
 }
 
 
-void MonitoringClients::CheckClients()
-{
-	std::list<Player*>::iterator iterator;
-    
-	if ( !client_list.empty() )
-	{
-        for ( iterator = client_list.begin(); iterator != client_list.end(); ++iterator )
-		{
+void MonitoringClients::CheckClients() {
+    std::list<Player *>::iterator iterator;
+
+    if (!client_list.empty()) {
+        for (iterator = client_list.begin(); iterator != client_list.end(); ++iterator) {
             time_t thetime;
-            time( &thetime );
+            time(&thetime);
+
             //sendCommand( new SendMessageTS("CheckClients begin " + Logger::toString(thetime),0));
-            if ( (*iterator)->Connection->online )
-            {
+            if ((*iterator)->Connection->online) {
                 /**
                 * get the current time
                 */
                 time_t tempkeepalive;
-                time( &tempkeepalive );
+                time(&tempkeepalive);
                 int temptime;
                 temptime = tempkeepalive - (*iterator)->lastkeepalive;
+
                 //check if we have a timeout
-                if ( (temptime >= 0) && (temptime < 20 ))
-                {     
+                if ((temptime >= 0) && (temptime < 20)) {
                     (*iterator)->workoutCommands();
-                }
-                else
-                {
+                } else {
                     //timeout so we have to disconnect
                     Logger::writeMessage("bbiwi","Client Timed out: " + (*iterator)->name);
                     (*iterator)->Connection->closeConnection();
                 }
-            }
-            else
-            {
+            } else {
                 std::cout<<(*iterator)->name<<" connection inactive!"<<std::endl;
-                PlayerManager::get()->getLogOutPlayers().non_block_push_back( (*iterator) );
-                iterator = client_list.erase( iterator );
-                iterator--;	
+                PlayerManager::get()->getLogOutPlayers().non_block_push_back((*iterator));
+                iterator = client_list.erase(iterator);
+                iterator--;
                 std::cout<<"added him to lostplayers!"<<std::endl;
             }
-            time( &thetime );
+
+            time(&thetime);
             //sendCommand( new SendMessageTS("CheckClients end " + Logger::toString(thetime),0));
-		
+
         }
-        
-	}
+
+    }
 }
 
 

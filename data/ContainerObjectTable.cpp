@@ -22,76 +22,80 @@
 #include <iostream>
 
 ContainerObjectTable::ContainerObjectTable() : m_dataOK(false) {
-	reload();
+    reload();
 }
 
 void ContainerObjectTable::reload() {
 #ifdef DataConnect_DEBUG
-	std::cout << "ContainerObjectTable: reload" << std::endl;
+    std::cout << "ContainerObjectTable: reload" << std::endl;
 #endif
 
-	try {
-		ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
+    try {
+        ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
 
-		std::vector<TYPE_OF_ITEM_ID> ids;
-		std::vector<TYPE_OF_CONTAINERVOLUME> volume;
+        std::vector<TYPE_OF_ITEM_ID> ids;
+        std::vector<TYPE_OF_CONTAINERVOLUME> volume;
 
-		size_t rows = di::select_all<
-					  di::Integer, di::Integer
-					  >(transaction, ids, volume,
-						"SELECT con_itemid, con_volume FROM container");
+        size_t rows = di::select_all<
+                      di::Integer, di::Integer
+                      >(transaction, ids, volume,
+                        "SELECT con_itemid, con_volume FROM container");
 
-		if (rows > 0) {
-			clearOldTable();
-			ContainerStruct temprecord;
-			for (size_t i = 0; i < rows; ++i) {
-				temprecord.ContainerVolume = volume[i];
-				m_table[ ids[i] ] = temprecord;
-			}
-			m_dataOK = true;
-		} else m_dataOK = false;
+        if (rows > 0) {
+            clearOldTable();
+            ContainerStruct temprecord;
+
+            for (size_t i = 0; i < rows; ++i) {
+                temprecord.ContainerVolume = volume[i];
+                m_table[ ids[i] ] = temprecord;
+            }
+
+            m_dataOK = true;
+        } else {
+            m_dataOK = false;
+        }
 
 #ifdef DataConnect_DEBUG
-		std::cout << "loaded " << rows << " rows into ContainerObjectTable" << std::endl;
+        std::cout << "loaded " << rows << " rows into ContainerObjectTable" << std::endl;
 #endif
 
-	} catch (...) {
-		m_dataOK = false;
-	}
+    } catch (...) {
+        m_dataOK = false;
+    }
 
 
 }
 
-bool ContainerObjectTable::find( TYPE_OF_ITEM_ID Id, ContainerStruct &ret ) {
-	TABLE::iterator iterator;
-	iterator = m_table.find( Id );
+bool ContainerObjectTable::find(TYPE_OF_ITEM_ID Id, ContainerStruct &ret) {
+    TABLE::iterator iterator;
+    iterator = m_table.find(Id);
 
-	if ( iterator == m_table.end() ) {
-		return false;
-	} else {
-		ret = ( *iterator ).second;
-		return true;
-	}
+    if (iterator == m_table.end()) {
+        return false;
+    } else {
+        ret = (*iterator).second;
+        return true;
+    }
 }
 
 
 void ContainerObjectTable::clearOldTable() {
-	m_table.clear();
+    m_table.clear();
 }
 
 
 ContainerObjectTable::~ContainerObjectTable() {
-	clearOldTable();
+    clearOldTable();
 }
 
 
-bool ContainerObjectTable::find( TYPE_OF_ITEM_ID Id ) {
-	TABLE::iterator iterator;
-	iterator = m_table.find( Id );
+bool ContainerObjectTable::find(TYPE_OF_ITEM_ID Id) {
+    TABLE::iterator iterator;
+    iterator = m_table.find(Id);
 
-	if ( iterator == m_table.end() ) {
-		return false;
-	} else {
-		return true;
-	}
+    if (iterator == m_table.end()) {
+        return false;
+    } else {
+        return true;
+    }
 }

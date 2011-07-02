@@ -28,64 +28,64 @@
 
 //! eine Darstellung offener Container eines Spielers
 class ContainerStack {
-	public:
-		//! Konstruktor
-		ContainerStack();
+public:
+    //! Konstruktor
+    ContainerStack();
 
-		//! Copy-Konstruktor
-		ContainerStack( const ContainerStack& source );
+    //! Copy-Konstruktor
+    ContainerStack(const ContainerStack &source);
 
-		//! Destruktor
-		~ContainerStack();
+    //! Destruktor
+    ~ContainerStack();
 
-		//! Zuweisungsoperator
-		ContainerStack& operator =( const ContainerStack& source );
+    //! Zuweisungsoperator
+    ContainerStack &operator =(const ContainerStack &source);
 
-		//! den Start - Container zuweisen, in dem man arbeiten kann
-		// \param cc der Zeiger auf den Startcontainer
-		// \param carry gibt an, ob der Spieler diesen Container trägt
-		void startContainer( Container* cc, bool carry );
+    //! den Start - Container zuweisen, in dem man arbeiten kann
+    // \param cc der Zeiger auf den Startcontainer
+    // \param carry gibt an, ob der Spieler diesen Container trägt
+    void startContainer(Container *cc, bool carry);
 
-		//! entfernt alle Zeiger auf Container aus der Datenstruktur
-		void clear();
+    //! entfernt alle Zeiger auf Container aus der Datenstruktur
+    void clear();
 
-		//! einen neuen Zeiger auf Container hinzufügen
-		//
-		// \param cc der Zeiger auf den Container der geöffnet werden soll
-		void openContainer( Container* cc );
+    //! einen neuen Zeiger auf Container hinzufügen
+    //
+    // \param cc der Zeiger auf den Container der geöffnet werden soll
+    void openContainer(Container *cc);
 
-		//! entfernt den zuletzt hinzugefügten Zeiger auf Container
-		// \return true, falls noch Zeiger auf Container vorhanden sind, false sonst
-		bool closeContainer();
+    //! entfernt den zuletzt hinzugefügten Zeiger auf Container
+    // \return true, falls noch Zeiger auf Container vorhanden sind, false sonst
+    bool closeContainer();
 
-		//! prüft, ob ein Spieler die Container trägt
-		// \return true, falls ein Spieler die Container trägt, false sonst
-		bool inInventory();
+    //! prüft, ob ein Spieler die Container trägt
+    // \return true, falls ein Spieler die Container trägt, false sonst
+    bool inInventory();
 
-		//! prüft, ob der übergebene Zeiger auf Container der zuletzt hinzugefügte ist
-		// \param cc Zeiger auf Container der überprüft werden soll
-		// \return true, falls cc zuletzt hinzugefügt wurde, false sonst
-		bool isOnTop( Container* cc );
+    //! prüft, ob der übergebene Zeiger auf Container der zuletzt hinzugefügte ist
+    // \param cc Zeiger auf Container der überprüft werden soll
+    // \return true, falls cc zuletzt hinzugefügt wurde, false sonst
+    bool isOnTop(Container *cc);
 
-		//! liefert den zuletzt hinzugefügten Zeiger auf Container zurück
-		// \param cc Zeiger auf Container der überprüft werden soll
-		// \return NULL, falls kein Eintrag vorhanden
-		Container* top();
+    //! liefert den zuletzt hinzugefügten Zeiger auf Container zurück
+    // \param cc Zeiger auf Container der überprüft werden soll
+    // \return NULL, falls kein Eintrag vorhanden
+    Container *top();
 
-		//! prüft, ob der übergebene Zeiger in dem Stack ist
-		// \param cc Zeiger auf Container der überprüft werden soll
-		// \return true, falls cc in dem Stack ist, false sonst
-		bool contains( Container* cc );
+    //! prüft, ob der übergebene Zeiger in dem Stack ist
+    // \param cc Zeiger auf Container der überprüft werden soll
+    // \return true, falls cc in dem Stack ist, false sonst
+    bool contains(Container *cc);
 
-		//! gibt an, ob ein Spieler die Container trägt
-		bool inventory;
+    //! gibt an, ob ein Spieler die Container trägt
+    bool inventory;
 
-	private:
-		//! definiert eine Template-Klasse "std::vector für Zeiger auf Container"
-		typedef std::vector < Container* > ONTAINERVECTOR;
+private:
+    //! definiert eine Template-Klasse "std::vector für Zeiger auf Container"
+    typedef std::vector < Container * > ONTAINERVECTOR;
 
-		//! ein std::vector von Zeigern auf Container
-		ONTAINERVECTOR opencontainers;
+    //! ein std::vector von Zeigern auf Container
+    ONTAINERVECTOR opencontainers;
 };
 
 #endif

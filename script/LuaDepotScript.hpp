@@ -26,20 +26,19 @@
 class World;
 class Character;
 
-class LuaDepotScript : public LuaScript
-{
-    public:
-        LuaDepotScript(std::string filename) throw(ScriptException);
-        virtual ~LuaDepotScript() throw ();
+class LuaDepotScript : public LuaScript {
+public:
+    LuaDepotScript(std::string filename) throw(ScriptException);
+    virtual ~LuaDepotScript() throw();
 
-        bool onOpenDepot(Character * cc, Item itm);
-        
-    private:
-    
-	LuaDepotScript(const LuaDepotScript&);
-	LuaDepotScript& operator=(const LuaDepotScript&);
-    
-          
+    bool onOpenDepot(Character *cc, Item itm);
+
+private:
+
+    LuaDepotScript(const LuaDepotScript &);
+    LuaDepotScript &operator=(const LuaDepotScript &);
+
+
 
 };
 #endif

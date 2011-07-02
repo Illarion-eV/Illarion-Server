@@ -29,43 +29,43 @@ class World;
 class Character;
 
 class LuaTileScript : public LuaScript {
-	public:
-		LuaTileScript(std::string filename,TilesStruct tile) throw(ScriptException);
-		virtual ~LuaTileScript() throw();
+public:
+    LuaTileScript(std::string filename,TilesStruct tile) throw(ScriptException);
+    virtual ~LuaTileScript() throw();
 
-		//Character uses an Tile
-		//\param user: the Character which is using the tile
-		//\param pos: the Position at which the tile is used
-		void useTile(Character * user, position pos, unsigned short int counter, unsigned int param, unsigned char ltastate);
+    //Character uses an Tile
+    //\param user: the Character which is using the tile
+    //\param pos: the Position at which the tile is used
+    void useTile(Character *user, position pos, unsigned short int counter, unsigned int param, unsigned char ltastate);
 
-		//Character uses a tile with a item
-		//\param user: The Character which is using the tile
-		//\param pos: the position at which the tile is used
-		//\param item: the ScriptItem whith which the field is used
-		void useTileWithItem(Character * user, position pos, ScriptItem item, unsigned short int counter, unsigned int param, unsigned char ltastate);
+    //Character uses a tile with a item
+    //\param user: The Character which is using the tile
+    //\param pos: the position at which the tile is used
+    //\param item: the ScriptItem whith which the field is used
+    void useTileWithItem(Character *user, position pos, ScriptItem item, unsigned short int counter, unsigned int param, unsigned char ltastate);
 
-		//Character uses a tile with another tile
-		//\param user: the Character which is using the tile
-		//\param pos: the position at which the tile is used
-		//\param posnew: the other position
-		void useTileWithField(Character * user, position pos, position posnew, unsigned short int counter, unsigned int param, unsigned char ltastate);
+    //Character uses a tile with another tile
+    //\param user: the Character which is using the tile
+    //\param pos: the position at which the tile is used
+    //\param posnew: the other position
+    void useTileWithField(Character *user, position pos, position posnew, unsigned short int counter, unsigned int param, unsigned char ltastate);
 
-		//Character uses a tile with another character
-		//\param user: the Character which is using the tile
-		//\param pos: the position at which the tile is used
-		//\param targetchar: the character whith which the field is used.
-		void useTileWithCharacter(Character * user, position pos, Character * character, unsigned short int counter, unsigned int param, unsigned char ltastate);
-        
-        /**
-        *a longtime action is disturbed by another person
-        */
-        bool actionDisturbed(Character * performer, Character * disturber);
+    //Character uses a tile with another character
+    //\param user: the Character which is using the tile
+    //\param pos: the position at which the tile is used
+    //\param targetchar: the character whith which the field is used.
+    void useTileWithCharacter(Character *user, position pos, Character *character, unsigned short int counter, unsigned int param, unsigned char ltastate);
 
-	private:
+    /**
+    *a longtime action is disturbed by another person
+    */
+    bool actionDisturbed(Character *performer, Character *disturber);
 
-		LuaTileScript(const LuaTileScript&);
-		LuaTileScript& operator=(const LuaTileScript&);
-		TilesStruct thisTile;
-		void init_functions();
+private:
+
+    LuaTileScript(const LuaTileScript &);
+    LuaTileScript &operator=(const LuaTileScript &);
+    TilesStruct thisTile;
+    void init_functions();
 };
 #endif

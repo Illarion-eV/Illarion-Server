@@ -26,18 +26,18 @@
 #include "World.hpp"
 
 NPC::NPC(TYPE_OF_CHARACTER_ID _id, std::string _name, Character::race_type _race, position _pos, Character::face_to dir, bool ishealer, Character::sex_type sex,
-           uint8_t _hair, uint8_t _beard, uint8_t _hairred, uint8_t _hairgreen, uint8_t _hairblue, uint8_t _skinred, uint8_t _skingreen, uint8_t _skinblue) : Character(),
-          _ishealer(ishealer), _startpos(_pos) {
+         uint8_t _hair, uint8_t _beard, uint8_t _hairred, uint8_t _hairgreen, uint8_t _hairblue, uint8_t _skinred, uint8_t _skingreen, uint8_t _skinblue) : Character(),
+    _ishealer(ishealer), _startpos(_pos) {
 #ifdef Character_DEBUG
-	cout << "NPC Konstruktor Start" << endl;
+    cout << "NPC Konstruktor Start" << endl;
 #endif
-	name = _name;
-	pos=_pos;
-	faceto=dir;
-	race=_race;
+    name = _name;
+    pos=_pos;
+    faceto=dir;
+    race=_race;
     battrib.sex = sex;
-	character = npc;
-	actionPoints = NP_MAX_AP;
+    character = npc;
+    actionPoints = NP_MAX_AP;
     hair = _hair;
     beard = _beard;
     hairred = _hairred;
@@ -47,41 +47,43 @@ NPC::NPC(TYPE_OF_CHARACTER_ID _id, std::string _name, Character::race_type _race
     skingreen = _skingreen;
     skinblue = _skinblue;
 
-	// take database id as npc id with appropriate offset so that npc ids are constant
-	if (_id == DYNNPC_BASE)
+    // take database id as npc id with appropriate offset so that npc ids are constant
+    if (_id == DYNNPC_BASE) {
         id = DYNNPC_BASE + _world->Npc.size();
-    else
-        id = NPC_BASE + _id; // _world->npcidc->nextFreeId();
+    } else {
+        id = NPC_BASE + _id;    // _world->npcidc->nextFreeId();
+    }
 
-	Field* tmpField;
+    Field *tmpField;
 
-	if (!_world->findEmptyCFieldNear(tmpField,pos.x, pos.y, pos.z))
-	    throw NoSpace();
+    if (!_world->findEmptyCFieldNear(tmpField,pos.x, pos.y, pos.z)) {
+        throw NoSpace();
+    }
 
-	_startpos = pos;
-	std::cout << "NewNPC spwaned: pos: " << pos.x << " " << pos.y << " " << pos.z << " type: " << _race << " Name: " << _name<< " is_healer: " << _ishealer << " sex: " << battrib.sex << std::endl;
+    _startpos = pos;
+    std::cout << "NewNPC spwaned: pos: " << pos.x << " " << pos.y << " " << pos.z << " type: " << _race << " Name: " << _name<< " is_healer: " << _ishealer << " sex: " << battrib.sex << std::endl;
 
-	tmpField->setChar();
+    tmpField->setChar();
 
-	_world->sendCharacterMoveToAllVisiblePlayers(this,NORMALMOVE,4);
+    _world->sendCharacterMoveToAllVisiblePlayers(this,NORMALMOVE,4);
 
-	SetAlive( true );
+    SetAlive(true);
 
 #ifdef Character_DEBUG
-	cout << "NPC Konstruktor Ende" << endl;
+    cout << "NPC Konstruktor Ende" << endl;
 #endif
 }
 
 
 NPC::~NPC() {
 #ifdef Character_DEBUG
-	cout << "NPC Destruktor Start/Ende" << endl;
+    cout << "NPC Destruktor Start/Ende" << endl;
 #endif
 }
 
-void NPC::receiveText(talk_type tt, std::string message, Character* cc) {
-	if ( _script && cc != this && _script->existsEntrypoint("receiveText") ) {
-		// since we have a script, we tell it we got a message
-		_script->receiveText(tt, message, cc);
-	}
+void NPC::receiveText(talk_type tt, std::string message, Character *cc) {
+    if (_script && cc != this && _script->existsEntrypoint("receiveText")) {
+        // since we have a script, we tell it we got a message
+        _script->receiveText(tt, message, cc);
+    }
 }

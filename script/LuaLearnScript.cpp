@@ -27,36 +27,27 @@
 #include "fuse_ptr.hpp"
 
 LuaLearnScript::LuaLearnScript(std::string filename) throw(ScriptException)
-		: LuaScript(filename)
-{
+    : LuaScript(filename) {
 }
 
 LuaLearnScript::~LuaLearnScript() throw() {}
 
-void LuaLearnScript::learn( Character * cc, std::string skill, uint8_t skillGroup, uint32_t actionPoints, uint8_t opponent, uint8_t leadAttrib )
-{
-    try
-    {
-        World::get()->setCurrentScript( this );
+void LuaLearnScript::learn(Character *cc, std::string skill, uint8_t skillGroup, uint32_t actionPoints, uint8_t opponent, uint8_t leadAttrib) {
+    try {
+        World::get()->setCurrentScript(this);
         fuse_ptr<Character> fuse_cc(cc);
-        call("learn")( fuse_cc, skill, skillGroup, actionPoints, opponent, leadAttrib );
-    }
-    catch (luabind::error &e)
-    {
+        call("learn")(fuse_cc, skill, skillGroup, actionPoints, opponent, leadAttrib);
+    } catch (luabind::error &e) {
         writeErrorMsg();
     }
 }
 
-void LuaLearnScript::reduceMC( Character * cc )
-{
-    try
-    {  
-        World::get()->setCurrentScript( this );
+void LuaLearnScript::reduceMC(Character *cc) {
+    try {
+        World::get()->setCurrentScript(this);
         fuse_ptr<Character> fuse_cc(cc);
-        call("reduceMC")( fuse_cc );
-    }
-    catch (luabind::error &e)
-    {  
+        call("reduceMC")(fuse_cc);
+    } catch (luabind::error &e) {
         writeErrorMsg();
     }
 }

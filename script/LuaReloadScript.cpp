@@ -24,25 +24,21 @@
 #include "Logger.hpp"
 
 LuaReloadScript::LuaReloadScript(std::string filename) throw(ScriptException)
-		: LuaScript(filename)
-{
+    : LuaScript(filename) {
 }
 
 LuaReloadScript::~LuaReloadScript() throw() {}
 
-bool LuaReloadScript::onReload()
-{
-    try
-    {
-        World::get()->setCurrentScript( this ); 
+bool LuaReloadScript::onReload() {
+    try {
+        World::get()->setCurrentScript(this);
         call("onReload")();
         return true;
+    } catch (luabind::error &e) {
+        std::cerr << "ERROR: " << lua_tostring(_luaState, -1) << std::endl;
+        writeErrorMsg();
+        return false;
     }
-    catch (luabind::error &e)
-    {
-         std::cerr << "ERROR: " << lua_tostring( _luaState, -1 ) << std::endl;
-         writeErrorMsg();
-         return false;    
-    }
+
     return false;
 }

@@ -40,33 +40,33 @@ using std::hash_map;
 
 //! eine Tabelle für allgemeine Item-Eigenschaften
 class ContainerObjectTable {
-	public:
-		bool find( TYPE_OF_ITEM_ID Id, ContainerStruct &ret );
+public:
+    bool find(TYPE_OF_ITEM_ID Id, ContainerStruct &ret);
 
-		ContainerObjectTable();
+    ContainerObjectTable();
 
-		~ContainerObjectTable();
+    ~ContainerObjectTable();
 
-		void reload();
+    void reload();
 
-		inline bool dataOK() {
-			return m_dataOK;
-		}
+    inline bool dataOK() {
+        return m_dataOK;
+    }
 
-		//! sucht in der Tabelle nach einem Eintrag mit der ID Id
-		// \return true falls Id gefunden wurde
-		bool find( TYPE_OF_ITEM_ID Id );
+    //! sucht in der Tabelle nach einem Eintrag mit der ID Id
+    // \return true falls Id gefunden wurde
+    bool find(TYPE_OF_ITEM_ID Id);
 
-	protected:
-		//! der Datentyp der die Tabelle aufnimmt
-		typedef hash_map< TYPE_OF_ITEM_ID, ContainerStruct > TABLE;
+protected:
+    //! der Datentyp der die Tabelle aufnimmt
+    typedef hash_map< TYPE_OF_ITEM_ID, ContainerStruct > TABLE;
 
-		//! die Tabelle mit den eingelesenen Werten
-		TABLE m_table;
+    //! die Tabelle mit den eingelesenen Werten
+    TABLE m_table;
 
-		void clearOldTable();
+    void clearOldTable();
 
-		bool m_dataOK;
+    bool m_dataOK;
 
 };
 

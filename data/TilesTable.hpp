@@ -45,35 +45,35 @@ class World;
 
 //! eine Tabelle für allgemeine Item-Eigenschaften
 class TilesTable {
-	public:
-		bool find( TYPE_OF_ITEM_ID Id, TilesStruct &ret );
+public:
+    bool find(TYPE_OF_ITEM_ID Id, TilesStruct &ret);
 
-		TilesTable();
+    TilesTable();
 
-		~TilesTable();
+    ~TilesTable();
 
-		void reload();
+    void reload();
 
-		inline bool dataOK() {
-			return m_dataOK;
-		}
+    inline bool dataOK() {
+        return m_dataOK;
+    }
 
-		//! prüft, ob das Item mit der ID Id passierbar ist
-		// \param Id eine Item-Id
-		// \return true falls das Item mit der ID Id nicht passierbar ist
-		bool nonPassable( TYPE_OF_ITEM_ID Id );
+    //! prüft, ob das Item mit der ID Id passierbar ist
+    // \param Id eine Item-Id
+    // \return true falls das Item mit der ID Id nicht passierbar ist
+    bool nonPassable(TYPE_OF_ITEM_ID Id);
 
-	protected:
+protected:
 
-		//! der Datentyp der die Tabelle aufnimmt
-		typedef hash_map < TYPE_OF_ITEM_ID, TilesStruct > TABLE;
+    //! der Datentyp der die Tabelle aufnimmt
+    typedef hash_map < TYPE_OF_ITEM_ID, TilesStruct > TABLE;
 
-		//! die Tabelle mit den eingelesenen Werten
-		TABLE m_table;
+    //! die Tabelle mit den eingelesenen Werten
+    TABLE m_table;
 
-		void clearOldTable();
+    void clearOldTable();
 
-		bool m_dataOK;
+    bool m_dataOK;
 
 };
 #endif

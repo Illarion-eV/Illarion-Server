@@ -23,95 +23,85 @@
 #include "script/LuaLongTimeEffectScript.hpp"
 #include "Logger.hpp"
 
-LongTimeEffectTable::LongTimeEffectTable() : m_dataOK(false)
-{
+LongTimeEffectTable::LongTimeEffectTable() : m_dataOK(false) {
     reload();
 }
 
-void LongTimeEffectTable::reload()
-{
+void LongTimeEffectTable::reload() {
 #ifdef DataConnect_DEBUG
-	std::cout << "LongTimeEffectTable: reload" << std::endl;
-#endif    
-    try
-    {
-		ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
+    std::cout << "LongTimeEffectTable: reload" << std::endl;
+#endif
+
+    try {
+        ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
         std::vector<uint16_t> effectid;
         std::vector<std::string> effectname;
         std::vector<std::string> scriptname;
-        
+
         size_t rows = di::select_all<di::Integer, di::Varchar, di::Varchar>
-        (transaction, effectid, effectname, scriptname, "SELECT lte_effectid, lte_effectname, lte_scriptname FROM longtimeeffects");
-        
-        if ( rows > 0 )
-        {
+                      (transaction, effectid, effectname, scriptname, "SELECT lte_effectid, lte_effectname, lte_scriptname FROM longtimeeffects");
+
+        if (rows > 0) {
             clearOldTable();
             LongTimeEffectStruct temp;
-            for ( size_t i = 0; i < rows; ++i)
-            {
+
+            for (size_t i = 0; i < rows; ++i) {
                 temp.effectid = effectid[i];
                 temp.effectname = effectname[i];
                 temp.scriptname = scriptname[i];
-                if ( scriptname[i] != "" )
-                {
-                    try
-                    {
-                        boost::shared_ptr<LuaLongTimeEffectScript> script(new LuaLongTimeEffectScript( scriptname[i], temp ) );
+
+                if (scriptname[i] != "") {
+                    try {
+                        boost::shared_ptr<LuaLongTimeEffectScript> script(new LuaLongTimeEffectScript(scriptname[i], temp));
                         temp.script = script;
-                    }
-                    catch( ScriptException &e )
-                    {
-                        Logger::writeError( "scripts", "Error while loading script: " + scriptname[i] + ":\n" + e.what() + "\n" );
+                    } catch (ScriptException &e) {
+                        Logger::writeError("scripts", "Error while loading script: " + scriptname[i] + ":\n" + e.what() + "\n");
                     }
                 }
+
                 m_table[ effectid[i] ] = temp;
             }
+
+            m_dataOK = true;
+        } else {
             m_dataOK = true;
         }
-        else
-            m_dataOK = true;
+
 #ifdef DataConnect_DEBUG
-		std::cout << "loaded " << rows << " rows into LongTimeEffectTable" << std::endl;
+        std::cout << "loaded " << rows << " rows into LongTimeEffectTable" << std::endl;
 #endif
-    }
-    catch( std::exception &e )
-    {
+    } catch (std::exception &e) {
         std::cerr<<"exception in LongTimeEffect loading: " << e.what() << std::endl;
         m_dataOK = false;
     }
 }
 
-bool LongTimeEffectTable::find( uint16_t effectId, LongTimeEffectStruct &ret)
-{
-    TABLE::iterator it = m_table.find( effectId );
-    if ( it != m_table.end() )
-    {
+bool LongTimeEffectTable::find(uint16_t effectId, LongTimeEffectStruct &ret) {
+    TABLE::iterator it = m_table.find(effectId);
+
+    if (it != m_table.end()) {
         ret = it->second;
         return true;
-    }
-    else
+    } else {
         return false;
+    }
 }
 
-bool LongTimeEffectTable::find( std::string effectname, LongTimeEffectStruct &ret)
-{
-    for ( TABLE::iterator it = m_table.begin(); it != m_table.end(); ++it )
-    {
-        if ( it->second.scriptname == effectname )
-        {
+bool LongTimeEffectTable::find(std::string effectname, LongTimeEffectStruct &ret) {
+    for (TABLE::iterator it = m_table.begin(); it != m_table.end(); ++it) {
+        if (it->second.scriptname == effectname) {
             ret = it->second;
             return true;
         }
     }
+
     return false;
 }
 
-void LongTimeEffectTable::clearOldTable()
-{
+void LongTimeEffectTable::clearOldTable() {
     m_table.clear();
 }
 
-LongTimeEffectTable::~LongTimeEffectTable()
-{
+LongTimeEffectTable::~LongTimeEffectTable() {
     clearOldTable();
 }

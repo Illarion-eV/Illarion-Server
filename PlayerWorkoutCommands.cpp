@@ -24,27 +24,27 @@
 #include "netinterface/protocol/ClientCommands.hpp"
 
 
-void Player::workoutCommands()
-{
-#ifdef _PLAYER_AUTO_SAVE_    
+void Player::workoutCommands() {
+#ifdef _PLAYER_AUTO_SAVE_
     checkSave();
-#endif    
-    boost::shared_ptr<BasicClientCommand> cmd = Connection->getCommand();
-    if ( cmd )
-    {
-        cmd->performAction( this );
-    }
-#ifdef DO_UNCONSCIOUS
-	else if ( IsAlive() && IsConscious() )
-#else
-	else if ( IsAlive() )
 #endif
-	{
-		if ( attackmode && fightPoints >= P_MIN_FP ) 
-        {
-            //cp->ltAction->abortAction();
-			World::get()->characterAttacks( this );
-		}
+    boost::shared_ptr<BasicClientCommand> cmd = Connection->getCommand();
+
+    if (cmd) {
+        cmd->performAction(this);
     }
+
+#ifdef DO_UNCONSCIOUS
+    else if (IsAlive() && IsConscious())
+#else
+    else if (IsAlive())
+#endif
+    {
+        if (attackmode && fightPoints >= P_MIN_FP) {
+            //cp->ltAction->abortAction();
+            World::get()->characterAttacks(this);
+        }
+    }
+
     cmd.reset();
 }
