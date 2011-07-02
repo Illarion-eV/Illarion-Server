@@ -45,15 +45,16 @@ Connection::~Connection() {
         delete internalConnection;
     }
 }
-    
+
 void Connection::beginTransaction() {
     if (internalConnection == 0) {
         throw new std::domain_error(
             "Transaction not possible while internal connection is not set.");
     }
+
     rollbackTransaction();
     transaction = new pqxx::transaction<>(*internalConnection);
-    
+
 };
 
 void Connection::commitTransaction() {
@@ -71,3 +72,7 @@ void Connection::rollbackTransaction() {
         transaction = 0;
     }
 };
+
+pqxx::transaction_base *Connection::getTransaction() {
+    return transaction;
+}

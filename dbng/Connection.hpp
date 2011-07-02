@@ -32,22 +32,32 @@ private:
     /* The libpgxx representation of the connection to the database. */
     pqxx::connection *internalConnection;
 
-    pqxx::transaction<> *transaction;
+    pqxx::transaction_base *transaction;
 
 public:
-    ~Connection(void);
-    
+
     void beginTransaction(void);
     void commitTransaction(void);
     void rollbackTransaction(void);
 
-    
+    inline bool transactionActive() {
+        return (transaction != 0);
+    }
 private:
+    /* The construction and destruction of the connections is handled by the
+     * connection manager.
+     */
     Connection(void);
     Connection(const Connection &org);
     Connection(pqxx::connection *connection);
-
+    ~Connection(void);
     friend class ConnectionManager;
+
+    /* The current transaction is required by the query class in order to
+     * execute the query properly.
+     */
+    pqxx::transaction_base *getTransaction(void);
+    friend class Query;
 };
 }
 
