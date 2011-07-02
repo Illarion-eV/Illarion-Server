@@ -49,88 +49,91 @@
 *@ingroup Netinterface
 *class which holds the network interface and its thread for sending and receiving data
 */
-class NetInterface : public boost::enable_shared_from_this<NetInterface>
-{
-    public:
-        
-        /**
-        * standard constructor, creates the two thread class receiver and sender
-        */
-        NetInterface(boost::asio::io_service &io_servicen);
-        
-        /**
-        * destructor deletes all the classes which are constructed in the constructor
-        * WARNING: shoudln't be called before the threads stopped correctly
-        */
-        ~NetInterface();
-        
-        void closeConnection(); /*<closes the connection to the client*/
-        bool activate(); /*<activates the connection starts the sending and receiving threads*/
-        bool nextInactive();
-        
-        /**
-        * adds a command to the send queue so it will be sended correctly to the connection
-        * @param command the command which should be added
-        */
-        void addCommand( boost::shared_ptr<BasicServerCommand> command );
-        
-        void shutdownSend( boost::shared_ptr<BasicServerCommand> command );
-        
-        std::string getIPAdress();
-        
-        /**
-        * returns a command from the receive Queue if on is available
-        * @return the command which was in the receive Queue or an empty (NULL) Command if there wasn't something in the receive Queue
-        */
-        boost::shared_ptr<BasicClientCommand> getCommand();
-        
-        
-        volatile bool online; /*< if connection is active*/
-        
-        /**
-        * gets the number of received Commands
-        * @return the number of commands which are currently in the received queue
-        */
-        uint16_t receivedSize(){ return receiveQueue.size(); }
-        
-        typedef std::deque< boost::shared_ptr<BasicClientCommand> >CLIENTCOMMANDLIST;
-        typedef std::deque< boost::shared_ptr<BasicServerCommand> >SERVERCOMMANDLIST;
+class NetInterface : public boost::enable_shared_from_this<NetInterface> {
+public:
 
-	boost::asio::ip::tcp::socket& getSocket(){ return socket; }
+    /**
+    * standard constructor, creates the two thread class receiver and sender
+    */
+    NetInterface(boost::asio::io_service &io_servicen);
 
-    private:
-        
-        
-        void handle_read_header(const boost::system::error_code& error);
-        void handle_read_data(const boost::system::error_code& error);
-        
-        void handle_write(const boost::system::error_code& error);
-        void handle_write_shutdown(const boost::system::error_code& error);
-        
-        //Buffer for the header of messages
-        unsigned char headerBuffer[6];
-       
-        boost::shared_ptr<BasicClientCommand> cmd;
-        boost::shared_ptr<BasicServerCommand> shutdownCmd;
-        boost::shared_ptr<BasicServerCommand> cmdToWrite;
+    /**
+    * destructor deletes all the classes which are constructed in the constructor
+    * WARNING: shoudln't be called before the threads stopped correctly
+    */
+    ~NetInterface();
+
+    void closeConnection(); /*<closes the connection to the client*/
+    bool activate(); /*<activates the connection starts the sending and receiving threads*/
+    bool nextInactive();
+
+    /**
+    * adds a command to the send queue so it will be sended correctly to the connection
+    * @param command the command which should be added
+    */
+    void addCommand(boost::shared_ptr<BasicServerCommand> command);
+
+    void shutdownSend(boost::shared_ptr<BasicServerCommand> command);
+
+    std::string getIPAdress();
+
+    /**
+    * returns a command from the receive Queue if on is available
+    * @return the command which was in the receive Queue or an empty (NULL) Command if there wasn't something in the receive Queue
+    */
+    boost::shared_ptr<BasicClientCommand> getCommand();
 
 
-        CLIENTCOMMANDLIST receiveQueue; /*<stores the commands which are received in a queue*/
-        SERVERCOMMANDLIST sendQueue;
-        
-        std::string ipadress;
+    volatile bool online; /*< if connection is active*/
 
-        boost::asio::io_service &io_service;
-        boost::asio::ip::tcp::socket socket;
-                
-        //Factory für Commands vom Client
-        CommandFactory commandFactory;
-        uint16_t inactive;
-        boost::mutex sendQueueMutex;
-        boost::mutex receiveQueueMutex;
-        
+    /**
+    * gets the number of received Commands
+    * @return the number of commands which are currently in the received queue
+    */
+    uint16_t receivedSize() {
+        return receiveQueue.size();
+    }
 
-       
+    typedef std::deque< boost::shared_ptr<BasicClientCommand> >CLIENTCOMMANDLIST;
+    typedef std::deque< boost::shared_ptr<BasicServerCommand> >SERVERCOMMANDLIST;
+
+    boost::asio::ip::tcp::socket &getSocket() {
+        return socket;
+    }
+
+private:
+
+
+    void handle_read_header(const boost::system::error_code &error);
+    void handle_read_data(const boost::system::error_code &error);
+
+    void handle_write(const boost::system::error_code &error);
+    void handle_write_shutdown(const boost::system::error_code &error);
+
+    //Buffer for the header of messages
+    unsigned char headerBuffer[6];
+
+    boost::shared_ptr<BasicClientCommand> cmd;
+    boost::shared_ptr<BasicServerCommand> shutdownCmd;
+    boost::shared_ptr<BasicServerCommand> cmdToWrite;
+
+
+    CLIENTCOMMANDLIST receiveQueue; /*<stores the commands which are received in a queue*/
+    SERVERCOMMANDLIST sendQueue;
+
+    std::string ipadress;
+
+    boost::asio::io_service &io_service;
+    boost::asio::ip::tcp::socket socket;
+
+    //Factory für Commands vom Client
+    CommandFactory commandFactory;
+    uint16_t inactive;
+    boost::mutex sendQueueMutex;
+    boost::mutex receiveQueueMutex;
+
+
+
 };
 
 

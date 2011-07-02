@@ -30,782 +30,797 @@
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
 #include "fuse_ptr.hpp"
 
-extern CommonObjectTable * CommonItems;
-extern NamesObjectTable* ItemNames;
+extern CommonObjectTable *CommonItems;
+extern NamesObjectTable *ItemNames;
 class Character;
 
-bool World::deleteNPC( unsigned int npcid )
-{   /*
-	int posx,posy,posz;
-	Field* tempf; //alte NPC's l?chen
-	NPCVECTOR::iterator npcIterator;
-	for ( npcIterator = Npc.begin(); npcIterator < Npc.end(); ++npcIterator ) {
-	    if (( *npcIterator )->id == npcid) {
-    		if ( GetPToCFieldAt( tempf, ( *npcIterator )->pos.x, ( *npcIterator )->pos.y, ( *npcIterator )->pos.z ) ) {
-    			//tempf->SetNPCOnField( false );
-    			tempf->removeChar();
-    		}
-    		
+bool World::deleteNPC(unsigned int npcid) {
+    /*
+    int posx,posy,posz;
+    Field* tempf; //alte NPC's l?chen
+    NPCVECTOR::iterator npcIterator;
+    for ( npcIterator = Npc.begin(); npcIterator < Npc.end(); ++npcIterator ) {
+        if (( *npcIterator )->id == npcid) {
+            if ( GetPToCFieldAt( tempf, ( *npcIterator )->pos.x, ( *npcIterator )->pos.y, ( *npcIterator )->pos.z ) ) {
+                //tempf->SetNPCOnField( false );
+                tempf->removeChar();
+            }
+
             sendRemoveCharToVisiblePlayers( ( *npcIterator )->id, ( *npcIterator )->pos );
-    		delete( *npcIterator );
-    		Npc.erase( npcIterator );
-    		return true;
-    	}
-	}
-	return false;*/
+            delete( *npcIterator );
+            Npc.erase( npcIterator );
+            return true;
+        }
+    }
+    return false;*/
     LostNpcs.push_back(npcid);
     return true;
 }
 
-bool World::createDynamicNPC( std::string name, Character::race_type type, position pos, /*CCharacter::face_to dir,*/ Character::sex_type sex, std::string scriptname)
-{
+bool World::createDynamicNPC(std::string name, Character::race_type type, position pos, /*CCharacter::face_to dir,*/ Character::sex_type sex, std::string scriptname) {
     try {
-        
-		try {
-			NPC* newNPC = new NPC(DYNNPC_BASE, name, type, pos, (Character::face_to)4/*dir*/, false, sex, 0, 0, 255, 255, 255, 255, 255, 255);
-			
-			// add npc to npc list
-			Npc.push_back(newNPC);
-			
-			// set field to occupied
-			Field* tempf;
-			if ( GetPToCFieldAt( tempf, pos ) ) {
-				tempf->setChar();
-			}
 
-			try {
-				// try to load the script
-				boost::shared_ptr<LuaNPCScript> script( new LuaNPCScript( scriptname, newNPC ) );
-				newNPC->setScript(script);
-			} catch (ScriptException &e) {
-				std::cerr << "World::createDynamicNPC: Error while loading dynamic NPC script: " << scriptname << " : " << e.what() << std::endl;
-			}
-		} catch (NoSpace &s) {
-			std::cerr << "World::createDynamicNPC: No space available for dynamic NPC: " << name << " : " << s.what() << std::endl;
-		}
+        try {
+            NPC *newNPC = new NPC(DYNNPC_BASE, name, type, pos, (Character::face_to)4/*dir*/, false, sex, 0, 0, 255, 255, 255, 255, 255, 255);
 
-		return true;
-	} catch (...) {
+            // add npc to npc list
+            Npc.push_back(newNPC);
+
+            // set field to occupied
+            Field *tempf;
+
+            if (GetPToCFieldAt(tempf, pos)) {
+                tempf->setChar();
+            }
+
+            try {
+                // try to load the script
+                boost::shared_ptr<LuaNPCScript> script(new LuaNPCScript(scriptname, newNPC));
+                newNPC->setScript(script);
+            } catch (ScriptException &e) {
+                std::cerr << "World::createDynamicNPC: Error while loading dynamic NPC script: " << scriptname << " : " << e.what() << std::endl;
+            }
+        } catch (NoSpace &s) {
+            std::cerr << "World::createDynamicNPC: No space available for dynamic NPC: " << name << " : " << s.what() << std::endl;
+        }
+
+        return true;
+    } catch (...) {
         std::cerr << "World::createDynamicNPC: Unknown error while loading dynamic NPC: " << name << std::endl;
-		return false;
-	}
+        return false;
+    }
 }
 
-luabind::object World::LuaLoS(position startingpos, position endingpos)
-{
-    lua_State* luaState = getCurrentScript()->getLuaState();
-    luabind::object list = luabind::newtable( luaState );
+luabind::object World::LuaLoS(position startingpos, position endingpos) {
+    lua_State *luaState = getCurrentScript()->getLuaState();
+    luabind::object list = luabind::newtable(luaState);
     int index = 1;
     std::list<BlockingObject> objects = LoS(startingpos, endingpos);
-    for ( std::list<BlockingObject>::iterator boIterator = objects.begin(); boIterator != objects.end(); boIterator++ )
-    {
-        luabind::object innerlist = luabind::newtable( luaState );
-        if ( boIterator->blockingType == BlockingObject::BT_CHARACTER )
-        {
+
+    for (std::list<BlockingObject>::iterator boIterator = objects.begin(); boIterator != objects.end(); boIterator++) {
+        luabind::object innerlist = luabind::newtable(luaState);
+
+        if (boIterator->blockingType == BlockingObject::BT_CHARACTER) {
             innerlist["TYPE"] = "HARACTER";
             innerlist["OBJECT"] = fuse_ptr<Character>(boIterator->blockingChar);
-        }
-        else if ( boIterator->blockingType == BlockingObject::BT_ITEM )
-        {
+        } else if (boIterator->blockingType == BlockingObject::BT_ITEM) {
             innerlist["TYPE"] = "ITEM";
             innerlist["OBJECT"] = boIterator->blockingItem;
         }
+
         list[index] = innerlist;
         index++;
     }
+
     return list;
 }
 
-luabind::object World::getPlayersOnline()
-{
-    lua_State* luaState = getCurrentScript()->getLuaState();
-    luabind::object list = luabind::newtable( luaState );
+luabind::object World::getPlayersOnline() {
+    lua_State *luaState = getCurrentScript()->getLuaState();
+    luabind::object list = luabind::newtable(luaState);
     int index = 1;
     PLAYERVECTOR::iterator pIterator;
-    for ( pIterator = Players.begin(); pIterator != Players.end(); ++pIterator )
-    {
+
+    for (pIterator = Players.begin(); pIterator != Players.end(); ++pIterator) {
         list[index] = fuse_ptr<Character>(*pIterator);
         index++;
     }
+
     return list;
 }
 
-luabind::object World::getNPCS()
-{
-    lua_State* luaState = getCurrentScript()->getLuaState();
-    luabind::object list = luabind::newtable( luaState );
+luabind::object World::getNPCS() {
+    lua_State *luaState = getCurrentScript()->getLuaState();
+    luabind::object list = luabind::newtable(luaState);
     int index = 1;
     NPCVECTOR::iterator npcIterator;
-    for ( npcIterator = Npc.begin(); npcIterator != Npc.end(); ++npcIterator )
-    {
+
+    for (npcIterator = Npc.begin(); npcIterator != Npc.end(); ++npcIterator) {
         list[index] = fuse_ptr<Character>(*npcIterator);
         index++;
     }
+
     return list;
 
 }
 
-luabind::object World::getCharactersInRangeOf( position posi, uint8_t range)
-{
-    lua_State* luaState = getCurrentScript()->getLuaState();
-    luabind::object list = luabind::newtable( luaState );
+luabind::object World::getCharactersInRangeOf(position posi, uint8_t range) {
+    lua_State *luaState = getCurrentScript()->getLuaState();
+    luabind::object list = luabind::newtable(luaState);
     int index = 1;
 
-	std::vector < Player* > tempP = Players.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range );
-	for ( std::vector< Player*>::iterator pIterator = tempP.begin(); pIterator != tempP.end() ; ++pIterator )
-    {
+    std::vector < Player * > tempP = Players.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range);
+
+    for (std::vector< Player *>::iterator pIterator = tempP.begin(); pIterator != tempP.end() ; ++pIterator) {
         list[index] = fuse_ptr<Character>(*pIterator);
         index++;
     }
-    
-	std::vector < Monster* > tempM = Monsters.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range );
-	for ( std::vector< Monster*>::iterator mIterator = tempM.begin(); mIterator != tempM.end() ; ++mIterator )
-    {
+
+    std::vector < Monster * > tempM = Monsters.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range);
+
+    for (std::vector< Monster *>::iterator mIterator = tempM.begin(); mIterator != tempM.end() ; ++mIterator) {
         list[index] = fuse_ptr<Character>(*mIterator);
         index++;
     }
 
-	std::vector < NPC* > tempN = Npc.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range );
-	for ( std::vector< NPC*>::iterator nIterator = tempN.begin(); nIterator != tempN.end() ; ++nIterator )
-    {
+    std::vector < NPC * > tempN = Npc.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range);
+
+    for (std::vector< NPC *>::iterator nIterator = tempN.begin(); nIterator != tempN.end() ; ++nIterator) {
         list[index] = fuse_ptr<Character>(*nIterator);
         index++;
     }
+
     return list;
 }
 
-luabind::object World::getPlayersInRangeOf( position posi, uint8_t range )
-{
-    lua_State* luaState = getCurrentScript()->getLuaState();
-    luabind::object list = luabind::newtable( luaState );
+luabind::object World::getPlayersInRangeOf(position posi, uint8_t range) {
+    lua_State *luaState = getCurrentScript()->getLuaState();
+    luabind::object list = luabind::newtable(luaState);
     int index = 1;
 
-	std::vector < Player* > tempP = Players.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range );
-	for ( std::vector< Player*>::iterator pIterator = tempP.begin(); pIterator != tempP.end() ; ++pIterator )
-    {
+    std::vector < Player * > tempP = Players.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range);
+
+    for (std::vector< Player *>::iterator pIterator = tempP.begin(); pIterator != tempP.end() ; ++pIterator) {
         list[index] = fuse_ptr<Character>(*pIterator);
         index++;
     }
+
     return list;
 }
 
-luabind::object World::getMonstersInRangeOf( position posi, uint8_t range )
-{
-    lua_State* luaState = getCurrentScript()->getLuaState();
-    luabind::object list = luabind::newtable( luaState );
+luabind::object World::getMonstersInRangeOf(position posi, uint8_t range) {
+    lua_State *luaState = getCurrentScript()->getLuaState();
+    luabind::object list = luabind::newtable(luaState);
     int index = 1;
 
-	std::vector < Monster* > tempM = Monsters.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range );
-	for ( std::vector< Monster*>::iterator mIterator = tempM.begin(); mIterator != tempM.end() ; ++mIterator )
-    {
+    std::vector < Monster * > tempM = Monsters.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range);
+
+    for (std::vector< Monster *>::iterator mIterator = tempM.begin(); mIterator != tempM.end() ; ++mIterator) {
         list[index] = fuse_ptr<Character>(*mIterator);
         index++;
     }
+
     return list;
 }
 
-luabind::object World::getNPCSInRangeOf( position posi, uint8_t range )
-{
-    lua_State* luaState = getCurrentScript()->getLuaState();
-    luabind::object list = luabind::newtable( luaState );
+luabind::object World::getNPCSInRangeOf(position posi, uint8_t range) {
+    lua_State *luaState = getCurrentScript()->getLuaState();
+    luabind::object list = luabind::newtable(luaState);
     int index = 1;
 
-	std::vector < NPC* > tempN = Npc.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range );
-	for ( std::vector< NPC*>::iterator nIterator = tempN.begin(); nIterator != tempN.end() ; ++nIterator )
-    {
+    std::vector < NPC * > tempN = Npc.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range);
+
+    for (std::vector< NPC *>::iterator nIterator = tempN.begin(); nIterator != tempN.end() ; ++nIterator) {
         list[index] = fuse_ptr<Character>(*nIterator);
         index++;
     }
+
     return list;
 }
 
-void World::ItemInform(Character * user, ScriptItem item, std::string message) 
-{
-	if ( user->character != Character::player ) 
-    {
-		return;
-	}
-	Player * cp = dynamic_cast<Player*>(user);
-	if ( item.type == ScriptItem::it_showcase1 ||item.type == ScriptItem::it_showcase2 ) 
-        {
-		if ( item.owner->character == Character::player ) 
-        {
-			unsigned char showcase;
-			if ( item.type == ScriptItem::it_showcase1 ) showcase = 0;
-			else if ( item.type == ScriptItem::it_showcase2 ) showcase = 1;
-            boost::shared_ptr<BasicServerCommand>cmd(new NameOfShowCaseItemTC( showcase, item.itempos, message) );
-			cp->Connection->addCommand( cmd );
-		}
-	} 
-    else if ( item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt ) 
-    {
-		if ( item.owner->character == Character::player ) 
-        {
-            boost::shared_ptr<BasicServerCommand>cmd(new NameOfInventoryItemTC( item.itempos, message) );
-			cp->Connection->addCommand( cmd );
-		}
-	} 
-    else if ( item.type == ScriptItem::it_field ) 
-    {
-		if ( item.owner->character == Character::player ) 
-        {
-            boost::shared_ptr<BasicServerCommand>cmd(new NameOfMapItemTC( item.pos.x, item.pos.y, item.pos.z , message) );
-			cp->Connection->addCommand( cmd );
-		}
-	}
-}
+void World::ItemInform(Character *user, ScriptItem item, std::string message) {
+    if (user->character != Character::player) {
+        return;
+    }
 
+    Player *cp = dynamic_cast<Player *>(user);
 
-void World::changeQuality( ScriptItem item, short int amount ) {
-	short int tmpQuality = ((amount+item.quality%100)<100) ? (amount + item.quality) : (item.quality-item.quality%100 + 99);
-	if ( tmpQuality%100 > 0) {
-		item.quality = tmpQuality;
-		changeItem(item);
-	} else {
-		erase(item,MAXITEMS);
-	}
-}
+    if (item.type == ScriptItem::it_showcase1 ||item.type == ScriptItem::it_showcase2) {
+        if (item.owner->character == Character::player) {
+            unsigned char showcase;
 
-void World::changeQualityOfItemAt( position pos, short int amount) {
-	Field * field;
-	if ( GetPToCFieldAt( field, pos.x, pos.y, pos.z) ) {
-		if ( field->changeQualityOfTopItem(amount) ) {
-			sendRemoveItemFromMapToAllVisibleCharacters( 0, pos.x, pos.y, pos.z, field );
-		}
-	}
-}
-
-bool World::changeItem(ScriptItem item) 
-{
-
-		if ( item.type == ScriptItem::it_showcase1 || item.type == ScriptItem::it_showcase2 ) 
-        {
-			if ( item.owner->character == Character::player ) 
-            {
-				Container * showcase;
-				if ( item.type == ScriptItem::it_showcase1)
-					showcase = dynamic_cast<Player*>(item.owner)->showcases[ 0 ].top();
-				else if ( item.type == ScriptItem::it_showcase2)
-					showcase = dynamic_cast<Player*>(item.owner)->showcases[ 1 ].top();
-				//Neues Item an der Position erzeugen
-				showcase->changeItem( item );
-				sendChangesOfContainerContentsIM( showcase );
-				return true;
-			} 
-            else 
-            {
-				return false;
-			}
-		} 
-        else if ( item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt ) 
-        {
-            item.owner->characterItems[ item.itempos ].id = item.id;
-			item.owner->characterItems[ item.itempos ].wear = item.wear;
-			item.owner->characterItems[ item.itempos ].number = item.number;
-			item.owner->characterItems[ item.itempos ].quality = item.quality;
-            item.owner->characterItems[ item.itempos ].data = item.data;
-            item.owner->characterItems[ item.itempos ].data_map = item.data_map;
-      		//Wenn character ein Spieler ist ein update schicken
-			if ( item.owner->character == Character::player )
-				dynamic_cast<Player*>(item.owner)->sendCharacterItemAtPos(item.itempos);
-            item.owner->updateAppearanceForAll( true );
-			return true;
-		} 
-        else if ( item.type == ScriptItem::it_field ) 
-        {
-			Field *field;
-			Item dummy;
-			if ( GetPToCFieldAt(field, item.pos.x, item.pos.y, item.pos.z) ) 
-            {
-                Item it;
-                if ( field->TakeTopItem( it ) )
-                {
-                    field->PutTopItem( static_cast<Item>(item) );
-                    if ( item.id != it.id || it.number != item.number ) 
-                    {
-                        sendSwapItemOnMapToAllVisibleCharacter( it.id, item.pos.x, item.pos.y, item.pos.z, item, field );
-                    }
-                }
-                return true;
-			} 
-            else 
-            {
-				return false;
-			}
-		}
-        else if ( item.type == ScriptItem::it_container )
-        {
-            if ( item.inside )
-            {
-                item.inside->changeItem(item);
-                sendChangesOfContainerContentsIM( item.inside );
-                return true;
+            if (item.type == ScriptItem::it_showcase1) {
+                showcase = 0;
+            } else if (item.type == ScriptItem::it_showcase2) {
+                showcase = 1;
             }
+
+            boost::shared_ptr<BasicServerCommand>cmd(new NameOfShowCaseItemTC(showcase, item.itempos, message));
+            cp->Connection->addCommand(cmd);
         }
-	return false;
+    } else if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
+        if (item.owner->character == Character::player) {
+            boost::shared_ptr<BasicServerCommand>cmd(new NameOfInventoryItemTC(item.itempos, message));
+            cp->Connection->addCommand(cmd);
+        }
+    } else if (item.type == ScriptItem::it_field) {
+        if (item.owner->character == Character::player) {
+            boost::shared_ptr<BasicServerCommand>cmd(new NameOfMapItemTC(item.pos.x, item.pos.y, item.pos.z , message));
+            cp->Connection->addCommand(cmd);
+        }
+    }
 }
 
-std::string World::getItemName(TYPE_OF_ITEM_ID itemid, uint8_t language)
-{
+
+void World::changeQuality(ScriptItem item, short int amount) {
+    short int tmpQuality = ((amount+item.quality%100)<100) ? (amount + item.quality) : (item.quality-item.quality%100 + 99);
+
+    if (tmpQuality%100 > 0) {
+        item.quality = tmpQuality;
+        changeItem(item);
+    } else {
+        erase(item,MAXITEMS);
+    }
+}
+
+void World::changeQualityOfItemAt(position pos, short int amount) {
+    Field *field;
+
+    if (GetPToCFieldAt(field, pos.x, pos.y, pos.z)) {
+        if (field->changeQualityOfTopItem(amount)) {
+            sendRemoveItemFromMapToAllVisibleCharacters(0, pos.x, pos.y, pos.z, field);
+        }
+    }
+}
+
+bool World::changeItem(ScriptItem item) {
+
+    if (item.type == ScriptItem::it_showcase1 || item.type == ScriptItem::it_showcase2) {
+        if (item.owner->character == Character::player) {
+            Container *showcase;
+
+            if (item.type == ScriptItem::it_showcase1) {
+                showcase = dynamic_cast<Player *>(item.owner)->showcases[ 0 ].top();
+            } else if (item.type == ScriptItem::it_showcase2) {
+                showcase = dynamic_cast<Player *>(item.owner)->showcases[ 1 ].top();
+            }
+
+            //Neues Item an der Position erzeugen
+            showcase->changeItem(item);
+            sendChangesOfContainerContentsIM(showcase);
+            return true;
+        } else {
+            return false;
+        }
+    } else if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
+        item.owner->characterItems[ item.itempos ].id = item.id;
+        item.owner->characterItems[ item.itempos ].wear = item.wear;
+        item.owner->characterItems[ item.itempos ].number = item.number;
+        item.owner->characterItems[ item.itempos ].quality = item.quality;
+        item.owner->characterItems[ item.itempos ].data = item.data;
+        item.owner->characterItems[ item.itempos ].data_map = item.data_map;
+
+        //Wenn character ein Spieler ist ein update schicken
+        if (item.owner->character == Character::player) {
+            dynamic_cast<Player *>(item.owner)->sendCharacterItemAtPos(item.itempos);
+        }
+
+        item.owner->updateAppearanceForAll(true);
+        return true;
+    } else if (item.type == ScriptItem::it_field) {
+        Field *field;
+        Item dummy;
+
+        if (GetPToCFieldAt(field, item.pos.x, item.pos.y, item.pos.z)) {
+            Item it;
+
+            if (field->TakeTopItem(it)) {
+                field->PutTopItem(static_cast<Item>(item));
+
+                if (item.id != it.id || it.number != item.number) {
+                    sendSwapItemOnMapToAllVisibleCharacter(it.id, item.pos.x, item.pos.y, item.pos.z, item, field);
+                }
+            }
+
+            return true;
+        } else {
+            return false;
+        }
+    } else if (item.type == ScriptItem::it_container) {
+        if (item.inside) {
+            item.inside->changeItem(item);
+            sendChangesOfContainerContentsIM(item.inside);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+std::string World::getItemName(TYPE_OF_ITEM_ID itemid, uint8_t language) {
     NamesStruct name;
-    if ( ItemNames->find(itemid, name) )
-    {
-        if ( language == 0 ) return name.German;
-        else return name.English;
-    }    
+
+    if (ItemNames->find(itemid, name)) {
+        if (language == 0) {
+            return name.German;
+        } else {
+            return name.English;
+        }
+    }
+
     return "notfound";
 }
 
 
 CommonStruct World::getItemStats(ScriptItem item) {
-	CommonStruct data;
-	if ( CommonItems->find(item.id,data ) ) {
-		return data;
-	} else {
-		data.id = 0;
-		return data;
-	}
+    CommonStruct data;
+
+    if (CommonItems->find(item.id,data)) {
+        return data;
+    } else {
+        data.id = 0;
+        return data;
+    }
 }
 
 CommonStruct World::getItemStatsFromId(TYPE_OF_ITEM_ID id) {
-	CommonStruct data;
-	if ( CommonItems->find(id,data ) ) {
-		return data;
-	} else {
-		data.id = 0;
-		return data;
-	}
+    CommonStruct data;
+
+    if (CommonItems->find(id,data)) {
+        return data;
+    } else {
+        data.id = 0;
+        return data;
+    }
 }
 
-bool World::isCharacterOnField(position pos)
-{
-	if ( findCharacterOnField(pos.x, pos.y, pos.z) ) return true;
-	else return false;
+bool World::isCharacterOnField(position pos) {
+    if (findCharacterOnField(pos.x, pos.y, pos.z)) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
-fuse_ptr<Character> World::getCharacterOnField(position pos) 
-{
-	return fuse_ptr<Character>( findCharacterOnField(pos.x, pos.y, pos.z) );
+fuse_ptr<Character> World::getCharacterOnField(position pos) {
+    return fuse_ptr<Character>(findCharacterOnField(pos.x, pos.y, pos.z));
 }
 
-bool World::erase(ScriptItem item, int amount) 
-{
-	/*if (amount==0) {
-		if ( item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt || item.type == ScriptItem::it_field )
-			amount=item.number;
-		else
-			amount=showcase->increaseAtPos(item.itempos,0);
-	}*/
-    if ( amount > item.number ) amount = item.number;
-
-	//unsigned char amount=1;
-
-	//Item befindet sich in einen der beiden Showcases
-	if ( item.type == ScriptItem::it_showcase1 || item.type == ScriptItem::it_showcase2 ) 
-    {
-		if ( item.owner->character == Character::player ) 
-        {
-			Container * showcase;
-			if (item.type == ScriptItem::it_showcase1)
-				showcase = dynamic_cast<Player*>(item.owner)->showcases[ 0 ].top();
-			else
-				showcase = dynamic_cast<Player*>(item.owner)->showcases[ 1 ].top();
-			showcase->increaseAtPos( item.itempos, -amount );
-			sendChangesOfContainerContentsIM( showcase );
-
-			return true;
-		} 
-        else 
-        {
-			return false;
-		}
-	}
-	//Item befindet sich am K�rper oder im G�rtel
-	else if 
-    ( item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt ) 
-    {
-		//Wenn Item rechts belegt und links ein Belegt ist [Zweihanditem] das Belegt mit l�schen
-		if ( item.itempos == RIGHT_TOOL && (item.owner->GetItemAt(LEFT_TOOL)).id == BLOCKEDITEM ) item.owner->increaseAtPos( LEFT_TOOL, -255);
-        else if ( item.itempos == LEFT_TOOL && (item.owner->GetItemAt(RIGHT_TOOL)).id == BLOCKEDITEM ) item.owner->increaseAtPos( RIGHT_TOOL, -255);
-        item.owner->increaseAtPos( item.itempos, -amount );
-		return true;
-	}
-	//Item befindet sich auf einen Feld am Boden liegend.
-	else if ( item.type == ScriptItem::it_field ) 
-    {
-		Field *field;
-		Item dummy;
-		if ( GetPToCFieldAt(field, item.pos.x, item.pos.y, item.pos.z) ) 
-        {
-			bool erased=false;
-			field->increaseTopItem( -amount, erased );
-			if ( erased )
-				sendRemoveItemFromMapToAllVisibleCharacters( 0, item.pos.x, item.pos.y, item.pos.z, field );
-			return true;
-		} 
-        else 
-        {
-			std::cerr<<"World::erase: Field ("<<item.pos.x<<", "<<item.pos.y<<", "<<item.pos.z<<") was not found!"<<std::endl;
-			return false;
-		}
-	}
-    else if ( item.type == ScriptItem::it_container )
-    {
-        if ( item.inside )
-        {
-            item.inside->increaseAtPos( item.itempos, -amount);
-            sendChangesOfContainerContentsIM( item.inside );
-            return true;
-        }
+bool World::erase(ScriptItem item, int amount) {
+    /*if (amount==0) {
+        if ( item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt || item.type == ScriptItem::it_field )
+            amount=item.number;
         else
-        {
+            amount=showcase->increaseAtPos(item.itempos,0);
+    }*/
+    if (amount > item.number) {
+        amount = item.number;
+    }
+
+    //unsigned char amount=1;
+
+    //Item befindet sich in einen der beiden Showcases
+    if (item.type == ScriptItem::it_showcase1 || item.type == ScriptItem::it_showcase2) {
+        if (item.owner->character == Character::player) {
+            Container *showcase;
+
+            if (item.type == ScriptItem::it_showcase1) {
+                showcase = dynamic_cast<Player *>(item.owner)->showcases[ 0 ].top();
+            } else {
+                showcase = dynamic_cast<Player *>(item.owner)->showcases[ 1 ].top();
+            }
+
+            showcase->increaseAtPos(item.itempos, -amount);
+            sendChangesOfContainerContentsIM(showcase);
+
+            return true;
+        } else {
             return false;
         }
     }
+    //Item befindet sich am K�rper oder im G�rtel
+    else if
+    (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
+        //Wenn Item rechts belegt und links ein Belegt ist [Zweihanditem] das Belegt mit l�schen
+        if (item.itempos == RIGHT_TOOL && (item.owner->GetItemAt(LEFT_TOOL)).id == BLOCKEDITEM) {
+            item.owner->increaseAtPos(LEFT_TOOL, -255);
+        } else if (item.itempos == LEFT_TOOL && (item.owner->GetItemAt(RIGHT_TOOL)).id == BLOCKEDITEM) {
+            item.owner->increaseAtPos(RIGHT_TOOL, -255);
+        }
+
+        item.owner->increaseAtPos(item.itempos, -amount);
+        return true;
+    }
+    //Item befindet sich auf einen Feld am Boden liegend.
+    else if (item.type == ScriptItem::it_field) {
+        Field *field;
+        Item dummy;
+
+        if (GetPToCFieldAt(field, item.pos.x, item.pos.y, item.pos.z)) {
+            bool erased=false;
+            field->increaseTopItem(-amount, erased);
+
+            if (erased) {
+                sendRemoveItemFromMapToAllVisibleCharacters(0, item.pos.x, item.pos.y, item.pos.z, field);
+            }
+
+            return true;
+        } else {
+            std::cerr<<"World::erase: Field ("<<item.pos.x<<", "<<item.pos.y<<", "<<item.pos.z<<") was not found!"<<std::endl;
+            return false;
+        }
+    } else if (item.type == ScriptItem::it_container) {
+        if (item.inside) {
+            item.inside->increaseAtPos(item.itempos, -amount);
+            sendChangesOfContainerContentsIM(item.inside);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     return false;
 }
 
 
 bool World::increase(ScriptItem item, short int count) {
-	//Item befindet sich in einen der beiden Showcases
-	if ( item.type == ScriptItem::it_showcase1 || item.type == ScriptItem::it_showcase2 ) {
-		if ( item.owner->character == Character::player ) {
-			Container * showcase;
-			if (item.type == ScriptItem::it_showcase1)
-				showcase = dynamic_cast<Player*>(item.owner)->showcases[ 0 ].top();
-			else
-				showcase = dynamic_cast<Player*>(item.owner)->showcases[ 1 ].top();
-			showcase->increaseAtPos( item.itempos, count );
-			sendChangesOfContainerContentsIM( showcase );
-			return true;
-		} else {
-			return false;
-		}
-	}
-	//Item befindet sich am K�rper oder im Rucksack
-	else if ( item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt ) {
-		item.owner->increaseAtPos( item.itempos, count );
-		return true;
-	}
-	//Item befindet sich auf einen Feld am Boden liegend.
-	else if ( item.type == ScriptItem::it_field ) {
-		Field *field;
-		if ( GetPToCFieldAt(field, item.pos.x, item.pos.y, item.pos.z) ) {
-			bool erased=false;
-			field->increaseTopItem( count, erased );
-			if ( erased )
-				sendRemoveItemFromMapToAllVisibleCharacters( 0, item.pos.x, item.pos.y, item.pos.z, field );
-			return true;
-		} else {
-            std::cerr<<"World::increase: Field ("<<item.pos.x<<", "<<item.pos.y<<", "<<item.pos.z<<") was not found!"<<std::endl;
-			return false;
-		}
-	}
-    
-    else if ( item.type == ScriptItem::it_container )
-    {
-        if ( item.inside )
-        {
-            item.inside->increaseAtPos( item.itempos, count);
-            sendChangesOfContainerContentsIM( item.inside );
+    //Item befindet sich in einen der beiden Showcases
+    if (item.type == ScriptItem::it_showcase1 || item.type == ScriptItem::it_showcase2) {
+        if (item.owner->character == Character::player) {
+            Container *showcase;
+
+            if (item.type == ScriptItem::it_showcase1) {
+                showcase = dynamic_cast<Player *>(item.owner)->showcases[ 0 ].top();
+            } else {
+                showcase = dynamic_cast<Player *>(item.owner)->showcases[ 1 ].top();
+            }
+
+            showcase->increaseAtPos(item.itempos, count);
+            sendChangesOfContainerContentsIM(showcase);
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
-	return false;
+    //Item befindet sich am K�rper oder im Rucksack
+    else if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
+        item.owner->increaseAtPos(item.itempos, count);
+        return true;
+    }
+    //Item befindet sich auf einen Feld am Boden liegend.
+    else if (item.type == ScriptItem::it_field) {
+        Field *field;
+
+        if (GetPToCFieldAt(field, item.pos.x, item.pos.y, item.pos.z)) {
+            bool erased=false;
+            field->increaseTopItem(count, erased);
+
+            if (erased) {
+                sendRemoveItemFromMapToAllVisibleCharacters(0, item.pos.x, item.pos.y, item.pos.z, field);
+            }
+
+            return true;
+        } else {
+            std::cerr<<"World::increase: Field ("<<item.pos.x<<", "<<item.pos.y<<", "<<item.pos.z<<") was not found!"<<std::endl;
+            return false;
+        }
+    }
+
+    else if (item.type == ScriptItem::it_container) {
+        if (item.inside) {
+            item.inside->increaseAtPos(item.itempos, count);
+            sendChangesOfContainerContentsIM(item.inside);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    return false;
 }
 
 bool World::swap(ScriptItem item, TYPE_OF_ITEM_ID newitem, unsigned short int newQuality) {
-	//Item befindet sich in einen der beiden Showcases
-	if ( item.type == ScriptItem::it_showcase1 || item.type == ScriptItem::it_showcase2 ) {
-		if ( item.owner->character == Character::player ) {
-			Container * showcase;
-			if (item.type == ScriptItem::it_showcase1)
-				showcase = dynamic_cast<Player*>(item.owner)->showcases[ 0 ].top();
-			else
-				showcase = dynamic_cast<Player*>(item.owner)->showcases[ 1 ].top();
-			showcase->swapAtPos( item.itempos, newitem, newQuality );
-			sendChangesOfContainerContentsIM( showcase );
-			return true;
-		} else {
-			return false;
-		}
-	}
-	//Item befindet sich am K�rper oder im Rucksack
-	else if ( item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt ) {
-		item.owner->swapAtPos( item.itempos, newitem, newQuality );
-		return true;
-	}
-	//Item befindet sich auf einen Feld am Boden liegend.
-	else if ( item.type == ScriptItem::it_field ) {
-		Field *field;
-		if ( GetPToCFieldAt(field, item.pos.x, item.pos.y, item.pos.z) ) {
-			bool ok;
-			Item it;
-			if ( field->ViewTopItem( it ) ) {
-				ok = field->swapTopItem( newitem, newQuality );
-				if ( ok ) 
-                {
-                    Item dummy;
-                    dummy.id = newitem;
-                    dummy.number = it.number;
-					if ( it.id != newitem ) sendSwapItemOnMapToAllVisibleCharacter( it.id, item.pos.x, item.pos.y, item.pos.z, dummy, field );
-				} else {
-                    std::cerr<<"World::swap: Swapping item on Field ("<<item.pos.x<<", "<<item.pos.y<<", "<<item.pos.z<<") failed!"<<std::endl;
-					return false;
-				}
-			}
-		} else {
-            std::cerr<<"World::swap: Field ("<<item.pos.x<<", "<<item.pos.y<<", "<<item.pos.z<<") was not found!"<<std::endl;
-			return false;
-		}
-	}
-    
-    else if ( item.type == ScriptItem::it_container )
-    {
-        if ( item.inside )
-        {
-            item.inside->swapAtPos( item.itempos, newitem, newQuality);
-            sendChangesOfContainerContentsIM( item.inside );
+    //Item befindet sich in einen der beiden Showcases
+    if (item.type == ScriptItem::it_showcase1 || item.type == ScriptItem::it_showcase2) {
+        if (item.owner->character == Character::player) {
+            Container *showcase;
+
+            if (item.type == ScriptItem::it_showcase1) {
+                showcase = dynamic_cast<Player *>(item.owner)->showcases[ 0 ].top();
+            } else {
+                showcase = dynamic_cast<Player *>(item.owner)->showcases[ 1 ].top();
+            }
+
+            showcase->swapAtPos(item.itempos, newitem, newQuality);
+            sendChangesOfContainerContentsIM(showcase);
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
-    
-    
-	return false;
+    //Item befindet sich am K�rper oder im Rucksack
+    else if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
+        item.owner->swapAtPos(item.itempos, newitem, newQuality);
+        return true;
+    }
+    //Item befindet sich auf einen Feld am Boden liegend.
+    else if (item.type == ScriptItem::it_field) {
+        Field *field;
+
+        if (GetPToCFieldAt(field, item.pos.x, item.pos.y, item.pos.z)) {
+            bool ok;
+            Item it;
+
+            if (field->ViewTopItem(it)) {
+                ok = field->swapTopItem(newitem, newQuality);
+
+                if (ok) {
+                    Item dummy;
+                    dummy.id = newitem;
+                    dummy.number = it.number;
+
+                    if (it.id != newitem) {
+                        sendSwapItemOnMapToAllVisibleCharacter(it.id, item.pos.x, item.pos.y, item.pos.z, dummy, field);
+                    }
+                } else {
+                    std::cerr<<"World::swap: Swapping item on Field ("<<item.pos.x<<", "<<item.pos.y<<", "<<item.pos.z<<") failed!"<<std::endl;
+                    return false;
+                }
+            }
+        } else {
+            std::cerr<<"World::swap: Field ("<<item.pos.x<<", "<<item.pos.y<<", "<<item.pos.z<<") was not found!"<<std::endl;
+            return false;
+        }
+    }
+
+    else if (item.type == ScriptItem::it_container) {
+        if (item.inside) {
+            item.inside->swapAtPos(item.itempos, newitem, newQuality);
+            sendChangesOfContainerContentsIM(item.inside);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    return false;
 }
 
 ScriptItem World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, position pos, bool allways, int quali, int data) {
-	Field * field;
+    Field *field;
     ScriptItem sItem;
-	if ( GetPToCFieldAt( field, pos.x, pos.y, pos.z ) ) {
-		CommonStruct com;
-		if ( CommonItems->find(id, com) ) {
-			g_item.id = id;
-			g_item.number = count;
-			g_item.wear = com.AgeingSpeed;
-			g_item.quality = quali;
-			g_item.data = data;
+
+    if (GetPToCFieldAt(field, pos.x, pos.y, pos.z)) {
+        CommonStruct com;
+
+        if (CommonItems->find(id, com)) {
+            g_item.id = id;
+            g_item.number = count;
+            g_item.wear = com.AgeingSpeed;
+            g_item.quality = quali;
+            g_item.data = data;
             g_item.setData(data);
-			g_cont = NULL;
+            g_cont = NULL;
             sItem = g_item;
             sItem.pos = pos;
             sItem.type = ScriptItem::it_field;
             sItem.itempos = 255;
             sItem.owner = NULL;
-            if ( allways )
-				putItemAlwaysOnMap(NULL,pos.x,pos.y,pos.z);
-			else
-				putItemOnMap(NULL,pos.x,pos.y,pos.z);
-			return sItem;
-		} else {
-			std::cerr<<"World::createFromId: Item "<<id<<" was not found in CommonItems!"<<std::endl;
+
+            if (allways) {
+                putItemAlwaysOnMap(NULL,pos.x,pos.y,pos.z);
+            } else {
+                putItemOnMap(NULL,pos.x,pos.y,pos.z);
+            }
+
             return sItem;
-		}
-	} else {
+        } else {
+            std::cerr<<"World::createFromId: Item "<<id<<" was not found in CommonItems!"<<std::endl;
+            return sItem;
+        }
+    } else {
         std::cerr<<"World::createFromId: Field ("<<pos.x<<", "<<pos.y<<", "<<pos.z<<") was not found!"<<std::endl;
-		return sItem;
-	}
-	return sItem;
+        return sItem;
+    }
+
+    return sItem;
 
 }
 
 bool World::createFromItem(ScriptItem item, position pos, bool allways) {
-	Field * field;
-	if ( GetPToCFieldAt( field, pos.x, pos.y, pos.z ) ) {
-		g_item = static_cast<Item>(item);
-		g_cont = NULL;
-		if ( allways )
-			putItemAlwaysOnMap(NULL,pos.x,pos.y,pos.z);
-		else
-			putItemOnMap(NULL,pos.x,pos.y,pos.z);
-		return true;
-	} else {
-		std::cerr<<"World::createFromItem: Field ("<<pos.x<<", "<<pos.y<<", "<<pos.z<<") was not found!"<<std::endl;
-		return false;
-	}
-	return false;
+    Field *field;
+
+    if (GetPToCFieldAt(field, pos.x, pos.y, pos.z)) {
+        g_item = static_cast<Item>(item);
+        g_cont = NULL;
+
+        if (allways) {
+            putItemAlwaysOnMap(NULL,pos.x,pos.y,pos.z);
+        } else {
+            putItemOnMap(NULL,pos.x,pos.y,pos.z);
+        }
+
+        return true;
+    } else {
+        std::cerr<<"World::createFromItem: Field ("<<pos.x<<", "<<pos.y<<", "<<pos.z<<") was not found!"<<std::endl;
+        return false;
+    }
+
+    return false;
 }
 
 fuse_ptr<Character> World::createMonster(unsigned short id, position pos, short movepoints) {
-	Field * field;
-	Monster * newMonster;
-	if ( GetPToCFieldAt( field, pos.x, pos.y, pos.z ) ) {
-		try {
-			newMonster = new Monster(id, pos);
-#ifdef LUASCRIPT_DEBUG
-			std::cout<<"Erschaffe neues Monster: " << newMonster->name << " an Position (x,y,z) " << pos.x << " " << pos.y << " " << pos.z << std::endl;
-#endif
-			newMonster->actionPoints = movepoints;
-			newMonsters.push_back( newMonster );
-			field->setChar();
-			sendCharacterMoveToAllVisiblePlayers( newMonster, NORMALMOVE, 4 );
-			return fuse_ptr<Character>( newMonster );
+    Field *field;
+    Monster *newMonster;
 
-		} catch (Monster::unknownIDException&) {
-			std::cerr << "World::createMonster: Failed to create monster with unknown id (" << id << ")!" << std::endl;
-			return fuse_ptr<Character>();
-		}
-	} else {
+    if (GetPToCFieldAt(field, pos.x, pos.y, pos.z)) {
+        try {
+            newMonster = new Monster(id, pos);
+#ifdef LUASCRIPT_DEBUG
+            std::cout<<"Erschaffe neues Monster: " << newMonster->name << " an Position (x,y,z) " << pos.x << " " << pos.y << " " << pos.z << std::endl;
+#endif
+            newMonster->actionPoints = movepoints;
+            newMonsters.push_back(newMonster);
+            field->setChar();
+            sendCharacterMoveToAllVisiblePlayers(newMonster, NORMALMOVE, 4);
+            return fuse_ptr<Character>(newMonster);
+
+        } catch (Monster::unknownIDException &) {
+            std::cerr << "World::createMonster: Failed to create monster with unknown id (" << id << ")!" << std::endl;
+            return fuse_ptr<Character>();
+        }
+    } else {
         std::cerr<<"World::createMonster: Field ("<<pos.x<<", "<<pos.y<<", "<<pos.z<<") was not found!"<<std::endl;
-		return fuse_ptr<Character>();
-	}
-	return fuse_ptr<Character>();
+        return fuse_ptr<Character>();
+    }
+
+    return fuse_ptr<Character>();
 }
 
 void World::gfx(unsigned short int gfxid, position pos) {
-	makeGFXForAllPlayersInRange( pos.x, pos.y, pos.z, MAXVIEW, gfxid );
+    makeGFXForAllPlayersInRange(pos.x, pos.y, pos.z, MAXVIEW, gfxid);
 }
 
-void World::makeSound( unsigned short int soundid, position pos ) {
-       makeSoundForAllPlayersInRange( pos.x, pos.y, pos.z, MAXVIEW, soundid );
+void World::makeSound(unsigned short int soundid, position pos) {
+    makeSoundForAllPlayersInRange(pos.x, pos.y, pos.z, MAXVIEW, soundid);
 }
 
 bool World::isItemOnField(position pos) {
-	Field * field;
-	if ( GetPToCFieldAt( field, pos.x, pos.y, pos.z) ) {
-		Item dummy;
-		return field->ViewTopItem( dummy );
-	} else {
+    Field *field;
+
+    if (GetPToCFieldAt(field, pos.x, pos.y, pos.z)) {
+        Item dummy;
+        return field->ViewTopItem(dummy);
+    } else {
         std::cerr<<"World::isItemOnField: Field ("<<pos.x<<", "<<pos.y<<", "<<pos.z<<") was not found!"<<std::endl;
-	}
-	return false;
+    }
+
+    return false;
 }
 
 ScriptItem World::getItemOnField(position pos) {
-	Field * field;
-	ScriptItem item;
-	if ( GetPToCFieldAt( field, pos.x, pos.y, pos.z) ) {
-		Item It;
-		if ( field->ViewTopItem( It ) ) {
-			item = It;
-			item.pos = pos;
-			item.type = ScriptItem::it_field;
-			return item;
-		}
-	} else {
+    Field *field;
+    ScriptItem item;
+
+    if (GetPToCFieldAt(field, pos.x, pos.y, pos.z)) {
+        Item It;
+
+        if (field->ViewTopItem(It)) {
+            item = It;
+            item.pos = pos;
+            item.type = ScriptItem::it_field;
+            return item;
+        }
+    } else {
         std::cerr<<"World::getItemOnField: Field ("<<pos.x<<", "<<pos.y<<", "<<pos.z<<") was not found!"<<std::endl;
-	}
-	return item;
+    }
+
+    return item;
 }
 
-void World::changeTile(short int tileid, position pos)
-{
-    Field* field;
-	if (GetPToCFieldAt(field, pos.x, pos.y, pos.z))
-	{
-		field->setTileId( tileid );
-		field->updateFlags();
-	}
+void World::changeTile(short int tileid, position pos) {
+    Field *field;
+
+    if (GetPToCFieldAt(field, pos.x, pos.y, pos.z)) {
+        field->setTileId(tileid);
+        field->updateFlags();
+    }
 }
 
 
-void World::sendMapUpdate(position pos, uint8_t range)
-{
-    std::vector<Player*> temp;
-	std::vector<Player*>::iterator pIterator;
-	temp=Players.findAllCharactersInRangeOf(pos.x,pos.y,pos.z, range );//getPlayersInRange(pos.x,pos.y,pos.z,MAXVIEW);
-		
-	for ( pIterator = temp.begin(); pIterator != temp.end(); ++pIterator ) 
-	{
+void World::sendMapUpdate(position pos, uint8_t range) {
+    std::vector<Player *> temp;
+    std::vector<Player *>::iterator pIterator;
+    temp=Players.findAllCharactersInRangeOf(pos.x,pos.y,pos.z, range); //getPlayersInRange(pos.x,pos.y,pos.z,MAXVIEW);
+
+    for (pIterator = temp.begin(); pIterator != temp.end(); ++pIterator) {
         (*pIterator)->sendFullMap();
-		sendAllVisibleCharactersToPlayer( ( *pIterator ), true );
-	}
+        sendAllVisibleCharactersToPlayer((*pIterator), true);
+    }
 }
 
-bool World::createSavedArea(uint16_t tileid, position pos, uint16_t height, uint16_t width)
-{
+bool World::createSavedArea(uint16_t tileid, position pos, uint16_t height, uint16_t width) {
     //Schleife durch alle spalten
-    Map* dummy;
-    for ( time_t akt_x = pos.x; akt_x < pos.x+width; ++akt_x)
-    {
-        for ( time_t akt_y = pos.y; akt_y < pos.y+height; ++akt_y)
-        {
-                //Pr�fen ob auf der position ein g�ltiges Feld ist, wenn ja false zur�ck liefern
-                if ( maps.findMapForPos( akt_x, akt_y, pos.z, dummy ) )
-                {
-                    std::cerr<<"World::createSavedArea: Aborted map insertion, map for field at ("<<akt_x <<", "<<akt_y<<", "<<pos.z<<") found!"<<std::endl;
-                    return false;
-                }
+    Map *dummy;
+
+    for (time_t akt_x = pos.x; akt_x < pos.x+width; ++akt_x) {
+        for (time_t akt_y = pos.y; akt_y < pos.y+height; ++akt_y) {
+            //Pr�fen ob auf der position ein g�ltiges Feld ist, wenn ja false zur�ck liefern
+            if (maps.findMapForPos(akt_x, akt_y, pos.z, dummy)) {
+                std::cerr<<"World::createSavedArea: Aborted map insertion, map for field at ("<<akt_x <<", "<<akt_y<<", "<<pos.z<<") found!"<<std::endl;
+                return false;
+            }
         }
     }
-       
-   	Map* tempmap = new Map(width,height);
-	bool disappear=true;
-	tempmap->Init(pos.x, pos.y, pos.z, disappear);
 
-	Field* tempf;
+    Map *tempmap = new Map(width,height);
+    bool disappear=true;
+    tempmap->Init(pos.x, pos.y, pos.z, disappear);
 
-	for (int _x=0; _x<width; ++_x)
-		for (int _y=0; _y<height; ++_y) {
-			if (tempmap->GetPToCFieldAt(tempf, _x+pos.x, _y+pos.y)) {
-				tempf->setTileId( tileid );
-				tempf->updateFlags();
-			} else std::cerr << "World::createSavedArea: For map inserted at (" << pos.x << ", " << pos.y << ", " << pos.z << ") no Field was found for offset (" << _x << ", " << _y << ")!" << std::endl;
+    Field *tempf;
 
-		}
+    for (int _x=0; _x<width; ++_x)
+        for (int _y=0; _y<height; ++_y) {
+            if (tempmap->GetPToCFieldAt(tempf, _x+pos.x, _y+pos.y)) {
+                tempf->setTileId(tileid);
+                tempf->updateFlags();
+            } else {
+                std::cerr << "World::createSavedArea: For map inserted at (" << pos.x << ", " << pos.y << ", " << pos.z << ") no Field was found for offset (" << _x << ", " << _y << ")!" << std::endl;
+            }
 
-	maps.InsertMap(tempmap);
-	std::cout<<" Map Created by createSavedArea command at x: "<<pos.x<<" y: "<<pos.y<<" z: "<<pos.z<<" height: "<<height<<" width: "<<width<<" standard tile: "<<tileid<<"!"<<std::endl;
-	return true;
+        }
+
+    maps.InsertMap(tempmap);
+    std::cout<<" Map Created by createSavedArea command at x: "<<pos.x<<" y: "<<pos.y<<" z: "<<pos.z<<" height: "<<height<<" width: "<<width<<" standard tile: "<<tileid<<"!"<<std::endl;
+    return true;
 }
 
 
-bool World::getArmorStruct(TYPE_OF_ITEM_ID id, ArmorStruct &ret)
-{
+bool World::getArmorStruct(TYPE_OF_ITEM_ID id, ArmorStruct &ret) {
     //Has to be an own function cant give a pointer of Armor items to the script
     ArmorStruct as;
-    if ( id == 0 )
-    {
+
+    if (id == 0) {
         ret = as;
         return false;
-    }
-    else
+    } else {
         return ArmorItems->find(id, ret);
+    }
+
     //return armor;
-    
+
 }
 
-bool World::getWeaponStruct(TYPE_OF_ITEM_ID id, WeaponStruct &ret)
-{
+bool World::getWeaponStruct(TYPE_OF_ITEM_ID id, WeaponStruct &ret) {
     //Has to be an own function cant give a pointer of Armor items to the script
     WeaponStruct ws;
-    if ( id == 0 )
-    {
+
+    if (id == 0) {
         ret = ws;
         return false;
-    }
-    else
+    } else {
         return WeaponItems->find(id, ret);
+    }
 }
 
-bool World::getNaturalArmor(Character::race_type id, MonsterArmor &ret)
-{
+bool World::getNaturalArmor(Character::race_type id, MonsterArmor &ret) {
     MonsterArmor ma;
-    if ( id == 0 )
-    {
+
+    if (id == 0) {
         ret = ma;
         return false;
-    }
-    else
+    } else {
         return NaturalArmors->find(id, ret);
+    }
 }
 
-bool World::getMonsterAttack(Character::race_type id, AttackBoni &ret)
-{
+bool World::getMonsterAttack(Character::race_type id, AttackBoni &ret) {
     return MonsterAttacks->find(id, ret);
 }
 
-void World::sendMonitoringMessage(std::string msg, unsigned char id)
-{
+void World::sendMonitoringMessage(std::string msg, unsigned char id) {
     //send this Command to all Monitoring Clients
-    boost::shared_ptr<BasicServerCommand>cmd(new BBMessageTC(msg, id) );
+    boost::shared_ptr<BasicServerCommand>cmd(new BBMessageTC(msg, id));
     monitoringClientList->sendCommand(cmd);
 }

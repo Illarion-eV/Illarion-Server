@@ -26,7 +26,7 @@
 
 class Player;
 
-extern tvector<Player*> players_to_save;
+extern tvector<Player *> players_to_save;
 extern std::map<std::string, int> players_tosave_map;
 
 bool start_savethread();

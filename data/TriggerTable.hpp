@@ -48,52 +48,54 @@ using std::hash;
 class World;
 
 struct TriggerStruct {
-	//Position des Triggerfelds
-	position pos;
-	//Name des Scriptes;
-	std::string scriptname;
-	//Zeiger auf das Script
-	boost::shared_ptr<LuaTriggerScript> script;
+    //Position des Triggerfelds
+    position pos;
+    //Name des Scriptes;
+    std::string scriptname;
+    //Zeiger auf das Script
+    boost::shared_ptr<LuaTriggerScript> script;
 };
 
 
 
 class TriggerTable {
-	public:
+public:
 
-		TriggerTable();
-		~TriggerTable();
+    TriggerTable();
+    ~TriggerTable();
 
-		void reload();
+    void reload();
 
-		inline bool isDataOK() { return _dataOK; }
+    inline bool isDataOK() {
+        return _dataOK;
+    }
 
-		bool find(position pos, TriggerStruct &data);
+    bool find(position pos, TriggerStruct &data);
 
-	protected:
+protected:
 
-		//! Vergleichsfunktion für position
-		struct eqpos {
-			bool operator()( position a, position b ) const {
-				return ( ( a.x == b.x ) && ( a.y == b.y ) && ( a.z == b.z ) );
-			}
-		};
+    //! Vergleichsfunktion für position
+    struct eqpos {
+        bool operator()(position a, position b) const {
+            return ((a.x == b.x) && (a.y == b.y) && (a.z == b.z));
+        }
+    };
 
-		//! Hashfunktion für position
-		struct poshash {
-			hash < int > inthash;
-			int operator()( const position a ) const {
-				int temp = ( a.x * 1000 + a.y ) * 1000 + a.z;
-				return inthash( temp );
-			}
-		};
+    //! Hashfunktion für position
+    struct poshash {
+        hash < int > inthash;
+        int operator()(const position a) const {
+            int temp = (a.x * 1000 + a.y) * 1000 + a.z;
+            return inthash(temp);
+        }
+    };
 
-		typedef hash_map <position, TriggerStruct, poshash, eqpos> TriggerMap;
-		TriggerMap Triggers;
+    typedef hash_map <position, TriggerStruct, poshash, eqpos> TriggerMap;
+    TriggerMap Triggers;
 
-		void clearOldTable();
+    void clearOldTable();
 
-		bool _dataOK;
+    bool _dataOK;
 };
 
 #endif

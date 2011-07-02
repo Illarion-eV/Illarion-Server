@@ -27,17 +27,16 @@
 class World;
 class Character;
 
-class LuaLoginScript : public LuaScript
-{
-    public:
-        LuaLoginScript(std::string filename) throw(ScriptException);
-        virtual ~LuaLoginScript() throw ();
+class LuaLoginScript : public LuaScript {
+public:
+    LuaLoginScript(std::string filename) throw(ScriptException);
+    virtual ~LuaLoginScript() throw();
 
-        bool onLogin(Character * cc);
-        
-    private:
-    
-	LuaLoginScript(const LuaLoginScript&);
-	LuaLoginScript& operator=(const LuaLoginScript&);
+    bool onLogin(Character *cc);
+
+private:
+
+    LuaLoginScript(const LuaLoginScript &);
+    LuaLoginScript &operator=(const LuaLoginScript &);
 };
 #endif

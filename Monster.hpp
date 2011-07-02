@@ -31,115 +31,121 @@
 */
 class Monster : public Character {
 
-	public:
+public:
 
-        /**
-        * an exception which is thrown if a id for the monster is unknown
-        */
-		class unknownIDException { }; 
-		
-        /**
-        * the constructor which creates the monster on the map
-        * @param type the monster type of this monster
-        * @param newpos the position where the monster should be spawned
-        * @param spawnpoint the spawnpoint from which the monster was spawned ( 0 if there is no spawnpoint )
-        */
-		Monster(const TYPE_OF_CHARACTER_ID& type, const position& newpos, SpawnPoint* spawnpoint=0) throw(unknownIDException);
+    /**
+    * an exception which is thrown if a id for the monster is unknown
+    */
+    class unknownIDException { };
 
-        /**
-        * sets the type of the monster and changes
-        * so the attributes etc for this monster
-        * @param type the new type of the monster
-        * @throw unknownIDException
-        */
-        void setType(const TYPE_OF_CHARACTER_ID& type ) throw(unknownIDException);
+    /**
+    * the constructor which creates the monster on the map
+    * @param type the monster type of this monster
+    * @param newpos the position where the monster should be spawned
+    * @param spawnpoint the spawnpoint from which the monster was spawned ( 0 if there is no spawnpoint )
+    */
+    Monster(const TYPE_OF_CHARACTER_ID &type, const position &newpos, SpawnPoint *spawnpoint=0) throw(unknownIDException);
 
-		/**
-        * sets the spawnpoint for thins monster to a new one
-        * @param sp the pointer to the new spawnpoint
-        */
-		void setSpawn(SpawnPoint* sp);
-        
-        /**
-        * sets the alive state of the monster
-        * if a monster is killed it will be removed from his spawnpoint 
-        * @param t the new lifestate true = alive false = death
-        */
-		void SetAlive( bool t );
-        
-        void remove();
+    /**
+    * sets the type of the monster and changes
+    * so the attributes etc for this monster
+    * @param type the new type of the monster
+    * @throw unknownIDException
+    */
+    void setType(const TYPE_OF_CHARACTER_ID &type) throw(unknownIDException);
 
-         
-        /**
-        * the monster gets a talked text from a character near starts a script entry point
-        * @param tt how loudly the text is spoken
-        * @param message the message which is spoken
-        * @param cc the character who has spoken the message
-        */
-		void receiveText(talk_type tt, std::string message, Character* cc);
+    /**
+    * sets the spawnpoint for thins monster to a new one
+    * @param sp the pointer to the new spawnpoint
+    */
+    void setSpawn(SpawnPoint *sp);
 
-		/**
-        * returns the spawnpoint of the monster
-        * @return the spawnpoint of this monster
-        */
-		inline SpawnPoint* getSpawn() const { return spawn; }
+    /**
+    * sets the alive state of the monster
+    * if a monster is killed it will be removed from his spawnpoint
+    * @param t the new lifestate true = alive false = death
+    */
+    void SetAlive(bool t);
 
-        /**
-        * returns the type of this monster
-        * @return the type
-        */
-		inline TYPE_OF_CHARACTER_ID getType() { return monstertype; }
-		
-		/**
-        * the monster is attacking another character starts a script entry
-        * @param target the character which is attacked
-        * @param sound which should be played ( not neccessary here inherited from ccharacter)
-        * @param updateInv if the inventory should be updated ( not neccessary here inherited from ccharacter)
-        * @return no usage at this time anything can be returned
-        */
-        bool attack( Character* target, int &sound, bool &updateInv );
-        
-        /**
-        *trys to find a path to the the targetposition and performs a step
-        *in the direction
-        *@param targetpos targetposition for the move;
-        */
-        void performStep(position targetpos);
-        
-		/**
-        * destructor
-        */
-		virtual ~Monster();
-        
-        position lastTargetPosition; /**< last position of the last seen target */
-        bool lastTargetSeen; /**< if true the monster trys to reach the last targetposition if there is no other enemy*/
-        
-        /**
-        * checks if the monster can attack onther one or it is a peacefull monster
-        * @return true if the monster is aggresive otherwise false
-        */
-		inline const bool canAttack() { return _canAttack; }
-	private:
-        
-        /**
-        * pointer to the spawnpoint of this monster
-        */
-		SpawnPoint* spawn;
-        
-        /**
-        *pointer to the id counter which gives new unique id's to the monsters
-        */
-		static std::auto_ptr<IdCounter> monsteridc;
-		
-        /**
-        * stores the type of the monster
-        */
-        TYPE_OF_CHARACTER_ID monstertype;
-        
-        /**
-        * stores if the monster can attack or not
-        */
-		bool _canAttack;
+    void remove();
+
+
+    /**
+    * the monster gets a talked text from a character near starts a script entry point
+    * @param tt how loudly the text is spoken
+    * @param message the message which is spoken
+    * @param cc the character who has spoken the message
+    */
+    void receiveText(talk_type tt, std::string message, Character *cc);
+
+    /**
+    * returns the spawnpoint of the monster
+    * @return the spawnpoint of this monster
+    */
+    inline SpawnPoint *getSpawn() const {
+        return spawn;
+    }
+
+    /**
+    * returns the type of this monster
+    * @return the type
+    */
+    inline TYPE_OF_CHARACTER_ID getType() {
+        return monstertype;
+    }
+
+    /**
+    * the monster is attacking another character starts a script entry
+    * @param target the character which is attacked
+    * @param sound which should be played ( not neccessary here inherited from ccharacter)
+    * @param updateInv if the inventory should be updated ( not neccessary here inherited from ccharacter)
+    * @return no usage at this time anything can be returned
+    */
+    bool attack(Character *target, int &sound, bool &updateInv);
+
+    /**
+    *trys to find a path to the the targetposition and performs a step
+    *in the direction
+    *@param targetpos targetposition for the move;
+    */
+    void performStep(position targetpos);
+
+    /**
+    * destructor
+    */
+    virtual ~Monster();
+
+    position lastTargetPosition; /**< last position of the last seen target */
+    bool lastTargetSeen; /**< if true the monster trys to reach the last targetposition if there is no other enemy*/
+
+    /**
+    * checks if the monster can attack onther one or it is a peacefull monster
+    * @return true if the monster is aggresive otherwise false
+    */
+    inline const bool canAttack() {
+        return _canAttack;
+    }
+private:
+
+    /**
+    * pointer to the spawnpoint of this monster
+    */
+    SpawnPoint *spawn;
+
+    /**
+    *pointer to the id counter which gives new unique id's to the monsters
+    */
+    static std::auto_ptr<IdCounter> monsteridc;
+
+    /**
+    * stores the type of the monster
+    */
+    TYPE_OF_CHARACTER_ID monstertype;
+
+    /**
+    * stores if the monster can attack or not
+    */
+    bool _canAttack;
 
 
 };

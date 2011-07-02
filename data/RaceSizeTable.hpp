@@ -38,37 +38,38 @@ using std::hash_map;
 
 #endif
 
-class RaceSizeTable
-{
-    public:
-        RaceSizeTable();
-        ~RaceSizeTable();
-        
-        /**
-        * gets the relative size of a race 
-        * @param race the race for which i want to get the relative size
-	* @param size the absolute size
-        */
-        uint8_t getRelativeSize(Character::race_type race, uint16_t size);
-        
-        /**
-        * reloads the data
-        */
-        void reload();
-        
-        /**
-        * checks if all loading works well
-        * @return true if loading successfully otherwise false
-        */
-        inline bool isDataOk(){ return m_dataOk; }
-        
-    private:
-        bool m_dataOk;
-        void clearOldTable();
-        
-        typedef hash_map<uint16_t, uint16_t>TABLE;
-        TABLE minsizes;
-	TABLE maxsizes;
+class RaceSizeTable {
+public:
+    RaceSizeTable();
+    ~RaceSizeTable();
+
+    /**
+    * gets the relative size of a race
+    * @param race the race for which i want to get the relative size
+        * @param size the absolute size
+    */
+    uint8_t getRelativeSize(Character::race_type race, uint16_t size);
+
+    /**
+    * reloads the data
+    */
+    void reload();
+
+    /**
+    * checks if all loading works well
+    * @return true if loading successfully otherwise false
+    */
+    inline bool isDataOk() {
+        return m_dataOk;
+    }
+
+private:
+    bool m_dataOk;
+    void clearOldTable();
+
+    typedef hash_map<uint16_t, uint16_t>TABLE;
+    TABLE minsizes;
+    TABLE maxsizes;
 
 };
 

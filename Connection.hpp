@@ -27,15 +27,15 @@
 
 //! Grundelemente einer Verbindung
 class Connection {
-	public:
-		//! die ID des Empfangssockets
-		int m_read_socket;
+public:
+    //! die ID des Empfangssockets
+    int m_read_socket;
 
-		//! Empfangs - Adresse innerhalb des Kommunikations-Adressraumes
-		struct sockaddr_in m_read_addr;
+    //! Empfangs - Adresse innerhalb des Kommunikations-Adressraumes
+    struct sockaddr_in m_read_addr;
 
-		//! Sende - Adresse innerhalb des Kommunikations-Adressraumes
-		struct sockaddr_in m_write_addr;
+    //! Sende - Adresse innerhalb des Kommunikations-Adressraumes
+    struct sockaddr_in m_write_addr;
 };
 
 #endif

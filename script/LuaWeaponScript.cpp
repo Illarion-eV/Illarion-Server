@@ -26,28 +26,24 @@
 #include "fuse_ptr.hpp"
 
 LuaWeaponScript::LuaWeaponScript(std::string filename) throw(ScriptException)
-		: LuaScript(filename)
-{
+    : LuaScript(filename) {
 }
 
 LuaWeaponScript::~LuaWeaponScript() throw() {}
 
-bool LuaWeaponScript::onAttack( Character * Attacker, Character * Defender )
-{
-    try
-    {
-        World::get()->setCurrentScript( this ); 
+bool LuaWeaponScript::onAttack(Character *Attacker, Character *Defender) {
+    try {
+        World::get()->setCurrentScript(this);
         fuse_ptr<Character> fuse_Attacker(Attacker);
         fuse_ptr<Character> fuse_Defender(Defender);
-        call("onAttack")( fuse_Attacker, fuse_Defender );
+        call("onAttack")(fuse_Attacker, fuse_Defender);
         return true;
+    } catch (luabind::error &e) {
+        writeErrorMsg();
+        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("Error: LuaWeaponScript::onAttack called for: " + Attacker->name + " " + Defender->name + + e.what(),3));
+        return false;
     }
-    catch (luabind::error &e)
-    {
-         writeErrorMsg();
-         //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("Error: LuaWeaponScript::onAttack called for: " + Attacker->name + " " + Defender->name + + e.what(),3));
-	     return false;    
-    }
+
     return false;
 }
 

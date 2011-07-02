@@ -32,31 +32,30 @@ class Player;
  * class which holds all the monitoring clients on the gameserver
  * and sends all the important server informations to them
  */
-class MonitoringClients 
-{
-	public:
-		MonitoringClients( World * world);
-		~MonitoringClients();
-		
-		/**
-		 * a new Monitoring client connects to the server
-		 * @param player a pointer to the player which connects with the monitoring client
-		 */
-		void clientConnect( Player * player );
-		
-		/**
-		 * sends a new Command to all the connected clients
-		 * @param command the command which should be sended 
-		 */
-		void sendCommand( boost::shared_ptr<BasicServerCommand> command );
-		
-		/**
-		 * function which checks if new commands from clients are arrived and handels them
-		 */
-		void CheckClients();
-	
-	private:
-		std::list<Player*> client_list;
-		World * _world; /*< pointer to the gameworld*/
+class MonitoringClients {
+public:
+    MonitoringClients(World *world);
+    ~MonitoringClients();
+
+    /**
+     * a new Monitoring client connects to the server
+     * @param player a pointer to the player which connects with the monitoring client
+     */
+    void clientConnect(Player *player);
+
+    /**
+     * sends a new Command to all the connected clients
+     * @param command the command which should be sended
+     */
+    void sendCommand(boost::shared_ptr<BasicServerCommand> command);
+
+    /**
+     * function which checks if new commands from clients are arrived and handels them
+     */
+    void CheckClients();
+
+private:
+    std::list<Player *> client_list;
+    World *_world;  /*< pointer to the gameworld*/
 };
 #endif //_CMONITORINGCLIENTS_

@@ -27,17 +27,16 @@
 class World;
 class Character;
 
-class LuaLookAtPlayerScript : public LuaScript
-{
-    public:
-        LuaLookAtPlayerScript(std::string filename) throw(ScriptException);
-        virtual ~LuaLookAtPlayerScript() throw ();
+class LuaLookAtPlayerScript : public LuaScript {
+public:
+    LuaLookAtPlayerScript(std::string filename) throw(ScriptException);
+    virtual ~LuaLookAtPlayerScript() throw();
 
-        void lookAtPlayer(Character * source, Character * target, unsigned char mode);
-        
-    private:
-    
-	LuaLookAtPlayerScript(const LuaLookAtPlayerScript&);
-	LuaLookAtPlayerScript& operator=(const LuaLookAtPlayerScript&);
+    void lookAtPlayer(Character *source, Character *target, unsigned char mode);
+
+private:
+
+    LuaLookAtPlayerScript(const LuaLookAtPlayerScript &);
+    LuaLookAtPlayerScript &operator=(const LuaLookAtPlayerScript &);
 };
 #endif

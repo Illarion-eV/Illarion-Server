@@ -34,33 +34,27 @@
 
 #if (__GNUC__ > 3) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1)
 using __gnu_cxx::hash_map;
-namespace __gnu_cxx
-{
-	template<>
-	struct hash<std::string> 
-	{
-		hash<char*> h;
-		size_t operator()(const std::string &s) const 
-		{
-			return h(s.c_str());
-		};
-	};
+namespace __gnu_cxx {
+template<>
+struct hash<std::string> {
+    hash<char *> h;
+    size_t operator()(const std::string &s) const {
+        return h(s.c_str());
+    };
+};
 };
 #endif
 
 #if (__GNUC__ == 3 && __GNUC_MINOR__ < 1)
 using std::hash_map;
 /** BEGIN FIX **/
-namespace std                                                                                 
-{                                                                                             
-	template<> struct hash< std::string >                                                       
-	{                                                                                           
-		size_t operator()( const std::string& x ) const                                           
-		{                                                                                         
-			return hash< const char* >()( x.c_str() );                                              
-		};                                                                                     
-	};                                                                                          
-};          
+namespace std {
+template<> struct hash< std::string > {
+    size_t operator()(const std::string &x) const {
+        return hash< const char * >()(x.c_str());
+    };
+};
+};
 /** END FIX **/
 
 #endif
@@ -76,73 +70,72 @@ class Container;
 /**
 * a basic Item or more than one stackable items of the same type
 */
-class Item 
-{
+class Item {
 public:
     /**
     *@name Item Lua Variables:
     *Variables which are exported to lua
     */
-        
+
     //@{
     /**
     *======================start grouping Lua Variables===================
     *@ingroup Scriptvariables
     */
-    
 
-	
+
+
     /**
     * the id of the item(s)
     * <b>Lua: (r/w) [id]</b>
     */
-	TYPE_OF_ITEM_ID id;
+    TYPE_OF_ITEM_ID id;
 
     /**
     * the number of the item(s)
     * <b>Lua: (r/w) [number]</b>
     */
-	uint8_t number;
+    uint8_t number;
 
     /**
     * the age of the item(s)
     * <b>Lua: (r/w) [wear]</b>
     */
-	uint8_t wear;
+    uint8_t wear;
 
     /**
-    * the quality of the item(s) < 100 not finished items 
+    * the quality of the item(s) < 100 not finished items
     * <b>Lua: (r/w) id</b>
     */
-	uint16_t quality;
-	
+    uint16_t quality;
+
     /**
     * the data of the item(s) for different use
     * for example keys, or storing item specific informations
     * <b>Lua: (r/w) id</b>
     */
-	uint32_t data;
-    
+    uint32_t data;
+
     /**
     *======================end grouping Lua Variables===================
     */
-    //@}    
-    
+    //@}
+
     /**
     *@name Item Lua Fucntions:
     *Functions which are exported to lua
     */
-        
+
     //@{
     /**
     *======================start grouping Lua Functions===================
     *@ingroup Scriptvariables
-    */  
+    */
 
     /**
     * constructor initializes all values with null except quality, quality is initialized with 333
     */
-	Item() : id(0), number(0), wear(0),quality(333),data(0),data_map(1){}
+    Item() : id(0), number(0), wear(0),quality(333),data(0),data_map(1) {}
 
     /**
     * constructor which initializes all values
@@ -152,26 +145,26 @@ public:
     * @param _quality the quality of the items
     * @param _data the data value of the items
     */
-	Item(TYPE_OF_ITEM_ID _id, unsigned char _number, unsigned char _wear, uint16_t _quality = 333, uint32_t _data = 0) :
-	id(_id), number(_number), wear(_wear), quality(_quality), data(_data),data_map(1) {}
+    Item(TYPE_OF_ITEM_ID _id, unsigned char _number, unsigned char _wear, uint16_t _quality = 333, uint32_t _data = 0) :
+        id(_id), number(_number), wear(_wear), quality(_quality), data(_data),data_map(1) {}
 
-    
-    uint32_t getData() const; 
+
+    uint32_t getData() const;
     void setData(uint32_t newdata);
     std::string getValue(uint8_t key);
-	void setValue(uint8_t,std::string val);
-	void save(std::ostream* obj);
-	void load(std::istream* obj);
-    
+    void setValue(uint8_t,std::string val);
+    void save(std::ostream *obj);
+    void load(std::istream *obj);
+
     /**
     Simulate a deep copy by copying the pointer to the map
-    the boost::shared_ptr here aren't threadsave !!! If a copy over different 
+    the boost::shared_ptr here aren't threadsave !!! If a copy over different
     thread is necessary there must be some synchronisation implemented
     */
-	typedef hash_map<uint8_t,std::string> DATA_MAP;	
+    typedef hash_map<uint8_t,std::string> DATA_MAP;
     DATA_MAP data_map;
 
-	
+
 
 
 };
@@ -180,25 +173,23 @@ public:
 * @ingroup Scriptclasses
 * a script item, modified basic items for scripts which knows it exact position or owner
 */
-class ScriptItem : public Item 
-{
-public:  
+class ScriptItem : public Item {
+public:
     /**
     *@name ScriptItem Lua Defintions:
     *definitions which are exported to lua like enums
     */
-        
+
     //@{
     /**
     *======================start grouping Lua Definitions===================
     *@ingroup Scriptenums
     */
-    
+
     /**
     * which type (where the item) is
     */
-	enum itemtype
-    { 
+    enum itemtype {
         notdefined = 0, /**< not defined, we don't know it exactly*/
         it_showcase1 = 1, /**< item is shown in the left showcase*/
         it_showcase2 = 2, /**< item is shown in the right showcase*/
@@ -207,56 +198,56 @@ public:
         it_belt = 5,  /**< item is in the belt of the owner*/
         it_container = 6 /**< item is inside a container*/
     };
-    
+
     /**
     *========================end grouping lua definitions====================
     */
     //@}
-    
+
     /**
     * stores the type of item (showcase, field @see itemtype)
     */
-	itemtype type;    
-    
+    itemtype type;
+
     /**
     *@name ScriptItem Lua Variables:
     *Variables which are exported to lua
     */
-        
+
     //@{
     /**
     *======================start grouping Lua Variables===================
     *@ingroup Scriptvariables
-    */    
+    */
 
     /**
     * position coordinates of the item
     * <b>Lua: (ro) [pos]</b>
     */
-	position pos; 
-    
+    position pos;
+
     /**
     * position at the body inside the container where the item is
     * <b>Lua: (ro) [itempos]</b>
     */
-	unsigned char itempos;
+    unsigned char itempos;
 
     /**
     * pointer to the owner of the item
     * <b>Lua: (ro) [owner]</b>
     */
-	Character * owner;
-    fuse_ptr<Character> getOwnerForLua(){ 
-                                           fuse_ptr<Character> fuse_owner(owner);
-                                           return fuse_owner;
-                                         };    
+    Character *owner;
+    fuse_ptr<Character> getOwnerForLua() {
+        fuse_ptr<Character> fuse_owner(owner);
+        return fuse_owner;
+    };
 
     /**
     * stores a pointer to the container where the item is
     * <b>Lua: (ro) [inside]</b>
     */
-    Container * inside;
-    
+    Container *inside;
+
     /**
     *==================================End of group scriptvariables==================
     */
@@ -266,43 +257,44 @@ public:
     *@name ScriptItem Lua Functions:
     *Functions which are exported to lua
     */
-        
+
     //@{
     /**
     *======================start grouping Lua Functions===================
     *@ingroup Scripfunctions
-    */ 
-    
-	/**
+    */
+
+    /**
     * Constructor which initializes all variables with 0
     * <b>Lua: ScriptItem()</b>
     */
-	ScriptItem() : Item(0,0,0), type(notdefined), pos(position(0,0,0)), itempos(255), owner(NULL), inside(NULL) {}
+    ScriptItem() : Item(0,0,0), type(notdefined), pos(position(0,0,0)), itempos(255), owner(NULL), inside(NULL) {}
 
     /**
     * gets the type of the item
     * @return the type of this item
     */
-	unsigned char getType() { return type; }
-    
-    
-    
+    unsigned char getType() {
+        return type;
+    }
+
+
+
     /**
     *======================end grouping lua Functions=====================
     */
     //@}
-    
-	/**
+
+    /**
     * copy constructor for script item
     */
-	ScriptItem( const Item & source) : Item(source) 
-    {
-		itempos = 0;
-		pos = position(0,0,0);
+    ScriptItem(const Item &source) : Item(source) {
+        itempos = 0;
+        pos = position(0,0,0);
         type = notdefined;
-		owner = NULL;
+        owner = NULL;
         inside = NULL;
-	}
+    }
 
 } ;
 
@@ -313,8 +305,8 @@ public:
 typedef std::vector < Item > ITEMVECTOR;
 
 /**
-* defines a type of functions which takes a pointer to a item 
+* defines a type of functions which takes a pointer to a item
 */
-typedef bool ( *ITEM_FUNCT ) ( Item* );
+typedef bool (*ITEM_FUNCT)(Item *);
 
 #endif

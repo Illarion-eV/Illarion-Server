@@ -38,394 +38,393 @@ class ContainerObjectTable;
 class TilesTable;
 
 //a table with standard attributes
-extern CommonObjectTable* CommonItems;
+extern CommonObjectTable *CommonItems;
 
 //! eine Tabelle mit Item welche die Eigenschaften des Feldes auf dem sie liegen modifizieren
-extern TilesModificatorTable* TilesModItems;
+extern TilesModificatorTable *TilesModItems;
 
 //! eine Tabelle mit allen Arten von Bodenplatten
-extern TilesTable* Tiles;
+extern TilesTable *Tiles;
 
 //! wird von verschiedenen Funktionen als Zwischenvariable genutzt
 extern CommonStruct tempCommon;
 
 //! eine Tabelle fr Beh�ter - Item Daten
-extern ContainerObjectTable* ContainerItems;
+extern ContainerObjectTable *ContainerItems;
 
 extern std::vector<int>* erasedcontainers;
 
 /**
 * @ingroup Scriptclasses
-* a field on the map 
+* a field on the map
 * each field has its own flags and items
 */
-class Field 
-{
-	private:
+class Field {
+private:
 
-		/**
-        * the id of the tile
-        */
-		unsigned short int tile;
+    /**
+    * the id of the tile
+    */
+    unsigned short int tile;
 
-        /**
-        * the music id of the tile
-        */
-        unsigned short int music;
+    /**
+    * the music id of the tile
+    */
+    unsigned short int music;
 
-        /**
-        * stores the flags of this field which are sended to the client
-        */
-        unsigned char clientflags;
+    /**
+    * stores the flags of this field which are sended to the client
+    */
+    unsigned char clientflags;
 
-        /**
-        * stores  the flags for this field which have usage in the server
-        */
-        unsigned char extraflags;
+    /**
+    * stores  the flags for this field which have usage in the server
+    */
+    unsigned char extraflags;
 
-        /**
-        * holds the warp destination if the field is a warp field
-        */
-        position * warptarget;
+    /**
+    * holds the warp destination if the field is a warp field
+    */
+    position *warptarget;
 
-	public:
+public:
 
-		/**
-        * changes the tile id of the field
-        * @param id the new id of the field
-        */
-		void setTileId( unsigned short int id );
+    /**
+    * changes the tile id of the field
+    * @param id the new id of the field
+    */
+    void setTileId(unsigned short int id);
 
-        /**
-        * changes the music id of the field
-        * @param id the new music id of the field
-        */
-        void setMusicId( unsigned short int id );
+    /**
+    * changes the music id of the field
+    * @param id the new music id of the field
+    */
+    void setMusicId(unsigned short int id);
 
-        /**
-        * returns the music id of the field
-        * @param the music id of the field
-        */
-        unsigned short int getMusicId();
+    /**
+    * returns the music id of the field
+    * @param the music id of the field
+    */
+    unsigned short int getMusicId();
 
-		/**
-        * reads the tile code of the field
-        * the tile code is a special version of the id to create overblended tiles
-        * @return the tile code
-        */
-		unsigned short int getTileCode();
+    /**
+    * reads the tile code of the field
+    * the tile code is a special version of the id to create overblended tiles
+    * @return the tile code
+    */
+    unsigned short int getTileCode();
 
-		/**
-        * constructor of Field
-        */
-		Field();
+    /**
+    * constructor of Field
+    */
+    Field();
 
-		/**
-        * copy constructor
-        */
-		Field( const Field& source );
+    /**
+    * copy constructor
+    */
+    Field(const Field &source);
 
-		/**
-        * destructor
-        */
-		~Field();
+    /**
+    * destructor
+    */
+    ~Field();
 
-		/**
-        * = operator
-        */
-		Field& operator =( const Field& source );
+    /**
+    * = operator
+    */
+    Field &operator =(const Field &source);
 
-        /**
-        * saves the current field
-        * @param mapt tile id and flags are written to this file
-        * @param obj the number of items on this tile and the values of these items are written to this file
-        * @param warp the warpfield of this tile is written to this file
-        */
-		void Save( std::ostream* mapt, std::ostream* obj, std::ostream* warp );
+    /**
+    * saves the current field
+    * @param mapt tile id and flags are written to this file
+    * @param obj the number of items on this tile and the values of these items are written to this file
+    * @param warp the warpfield of this tile is written to this file
+    */
+    void Save(std::ostream *mapt, std::ostream *obj, std::ostream *warp);
 
-        /**
-        * changes the quality of the top item on this field
-        * @return true if the item was deleted because of low quality
-        */
-       	bool changeQualityOfTopItem( short int amount );
+    /**
+    * changes the quality of the top item on this field
+    * @return true if the item was deleted because of low quality
+    */
+    bool changeQualityOfTopItem(short int amount);
 
-        /**
-        * finds all non passable items on a field
-        * @param nonpassitems byreference here the items are returned which are non passable
-        */
-		void giveNonPassableItems( ITEMVECTOR &nonpassitems );
-		
-		/**
-        * finds all non movable items on a field
-        * @param nonmoveitems byreference here the items are returned which are non movable
-        */
-		void giveExportItems( ITEMVECTOR &nonmoveitems );
+    /**
+    * finds all non passable items on a field
+    * @param nonpassitems byreference here the items are returned which are non passable
+    */
+    void giveNonPassableItems(ITEMVECTOR &nonpassitems);
 
-		/**
-        * loads this field from files
-        * @param mapt mapfile where the tile id and the flags are loaded from
-        * @param obj the itemfile where the items are loaded from
-        * @param warp the file where the warpfield is loaded from
-        */
-		void Load( std::istream* mapt, std::istream* obj, std::istream* warp );
+    /**
+    * finds all non movable items on a field
+    * @param nonmoveitems byreference here the items are returned which are non movable
+    */
+    void giveExportItems(ITEMVECTOR &nonmoveitems);
 
-		/**
-        * checks if a field is passable for characters
-        * @return true if it is passable otherwise false
-        */
-		bool IsPassable() const;
+    /**
+    * loads this field from files
+    * @param mapt mapfile where the tile id and the flags are loaded from
+    * @param obj the itemfile where the items are loaded from
+    * @param warp the file where the warpfield is loaded from
+    */
+    void Load(std::istream *mapt, std::istream *obj, std::istream *warp);
 
-		/**
-        * checks if you can look through a tile 
-        * @return true if the tile is transparent otherwise false
-        */
-		bool IsTransparent();
+    /**
+    * checks if a field is passable for characters
+    * @return true if it is passable otherwise false
+    */
+    bool IsPassable() const;
 
-		/**
-        * checks if you can fall through a tile
-        * @return if a character can fall through this tile otherwise false
-        */
-		bool IsPenetrateable();
+    /**
+    * checks if you can look through a tile
+    * @return true if the tile is transparent otherwise false
+    */
+    bool IsTransparent();
 
-		/**
-        * checks if a character is on this field (earlier the players etc where seperated)
-        * @return true if there is a character on this field
-        */
-		bool IsPlayerOnField();
+    /**
+    * checks if you can fall through a tile
+    * @return if a character can fall through this tile otherwise false
+    */
+    bool IsPenetrateable();
 
-		/**
-        * checks if a npc is on field 
-        * @return true if there is a npc on this field
-        */
-		bool IsNPCOnField();
+    /**
+    * checks if a character is on this field (earlier the players etc where seperated)
+    * @return true if there is a character on this field
+    */
+    bool IsPlayerOnField();
 
-		/**
-        * checks if a Monster is on a field
-        * @return true if there is a monster on this field otherwise false
-        */
-		bool IsMonsterOnField();
+    /**
+    * checks if a npc is on field
+    * @return true if there is a npc on this field
+    */
+    bool IsNPCOnField();
 
-		/**
-        * checks if the field is a warpfield
-        * @return true if the field is a warpfield otherwise false
-        */
-		bool IsWarpField();
+    /**
+    * checks if a Monster is on a field
+    * @return true if there is a monster on this field otherwise false
+    */
+    bool IsMonsterOnField();
 
-        /**
-        * checks if there lies a special item on this field
-        * @return true if there is a special item on this field otherwise false
-        */
-		bool HasSpecialItem();
-        
-        /**
-        * checks if the field is a special field (triggerfield for example)
-        * @return true if the field is a special field otherwise false
-        */
-		bool IsSpecialField();
+    /**
+    * checks if the field is a warpfield
+    * @return true if the field is a warpfield otherwise false
+    */
+    bool IsWarpField();
 
-		/**
-        * check if a move to this field is possible or not ( for example another character stands at it)
-        * @return true if a move to the field is possible otherwise false
-        */
-		bool moveToPossible() const;
+    /**
+    * checks if there lies a special item on this field
+    * @return true if there is a special item on this field otherwise false
+    */
+    bool HasSpecialItem();
 
-		/**
-        * finds the height level of the field
-        * @return the height level of this field
-        */
-		unsigned char GroundLevel();
-        
-        /**
-        * calculates the flags for this field new
-        */
-    	void updateFlags();        
+    /**
+    * checks if the field is a special field (triggerfield for example)
+    * @return true if the field is a special field otherwise false
+    */
+    bool IsSpecialField();
 
-        /**
-        * @name Field Lua Functions:
-        * the Functions which are exported to Lua
-        */
-        
-        //@{
-        /**
-        *=========================start grouping script functions===================
-        * @ingroup Scriptfunctions
-        */
-        
-        /**
-        * reads the true tile id of the field
-        * <b>Lua: [:tile]</b>
-        * @return the id of the field
-        */
-		unsigned short int getTileId();
-        
-		/**
-        * adds a item to the stack of this field but not if the field is not passable
-        * <b>Lua: [:createItem]</b>
-        * @param it the item which should be added to this field
-        * @return true if the item was added false if the maximum number of items is reached or the field is not passable
-        */
-		bool addTopItem( const Item it );
-        
-        /**
-        * adds a item on the stack of this field
-        * <b>Lua: [:createItemAlways]</b>
-        * @param it the item which should be added to this field
-        * @return true if the item is added or false if the maximum number of items on this field is reached
-        */
-        bool PutTopItem( const Item it );
+    /**
+    * check if a move to this field is possible or not ( for example another character stands at it)
+    * @return true if a move to the field is possible otherwise false
+    */
+    bool moveToPossible() const;
 
-		/**
-        * adds an item to the bottom of the stack on a field
-        * <b>Lua: [:createItemGround]</b>
-        * @param it the item which should be added
-        * @return true if the item is added or false if the maximum number of items on this field is reached
-        */
-		bool PutGroundItem( const Item it );
+    /**
+    * finds the height level of the field
+    * @return the height level of this field
+    */
+    unsigned char GroundLevel();
 
-		/**
-        * takes the top item from this field
-        * <b>Lua: [:takeTopItem]</b>
-        * @param it byreference returns the item from this field which was the top item
-        * @return true if there was a item on this field otherwise false
-        */
-        bool TakeTopItem( Item &it );
+    /**
+    * calculates the flags for this field new
+    */
+    void updateFlags();
 
-		/**
-        * increases/decreases the number of the top item on this field
-        * <b>Lua: [:increaseTopItem]</b>
-        * @param count the +/- value which should be added
-        * @param erased by reference is true if the top item was deleted because the number of items where smaller then the number which should be erased
-        * @return the number of which cant be processed for example if count + items on the filed > maximum items
-        */
-		int increaseTopItem( int count, bool &erased );
+    /**
+    * @name Field Lua Functions:
+    * the Functions which are exported to Lua
+    */
 
-		/**
-        * changes the id and quality of the top item
-        * <b>Lua: [:swapTopItem]</b>
-        * @param newid the new id if the top item
-        * @param newQuality the new Quality of the top item
-        * @return true if there is a top item otherwise false
-        */
-		bool swapTopItem( TYPE_OF_ITEM_ID newid, uint16_t newQuality = 0 );
+    //@{
+    /**
+    *=========================start grouping script functions===================
+    * @ingroup Scriptfunctions
+    */
 
-		/**
-        * gets the top item of this field
-        * <b>Lua: [:viewTopItem]</b>
-        * @param it byreference returns the top item on the field
-        * @return true if there is at least one item on this field which can be returned otherwise false
-        */
-		bool ViewTopItem( Item &it );
+    /**
+    * reads the true tile id of the field
+    * <b>Lua: [:tile]</b>
+    * @return the id of the field
+    */
+    unsigned short int getTileId();
 
-        /**
-        * deletes all Items from this field
-        * <b>Lua: [:deleteAllItems]</b>
-        */
-        void DeleteAllItems();
-        
-        /**
-        * returns the script item on a specific position inside the stack of items
-        * <b>Lua: [:getStackItem]</b>
-        * @param spos the position inside the item stack on this field
-        * @return the scriptitem struct of the item on spos
-        */
-        ScriptItem getStackItem( uint8_t spos );
+    /**
+    * adds a item to the stack of this field but not if the field is not passable
+    * <b>Lua: [:createItem]</b>
+    * @param it the item which should be added to this field
+    * @return true if the item was added false if the maximum number of items is reached or the field is not passable
+    */
+    bool addTopItem(const Item it);
 
-		/**
-        * returns the number of items which are inside the item stack of this field
-        * @return the number of items on this field
-        */
-		MAXCOUNTTYPE NumberOfItems();        
-        
-        /**
-        *=================================end of grouping script functions================
-        */
-        //@}
+    /**
+    * adds a item on the stack of this field
+    * <b>Lua: [:createItemAlways]</b>
+    * @param it the item which should be added to this field
+    * @return true if the item is added or false if the maximum number of items on this field is reached
+    */
+    bool PutTopItem(const Item it);
 
-		/**
-        * ages all items on this field calls funct for all Items on the field
-        * @param funct a function which takes a item as parameter
-        * @return -1 if a container was deleted (update needed), 0 if nothing has changed, 1 an item changed (update needed) 
-        */
-        int8_t DoAgeItems( ITEM_FUNCT funct );
+    /**
+    * adds an item to the bottom of the stack on a field
+    * <b>Lua: [:createItemGround]</b>
+    * @param it the item which should be added
+    * @return true if the item is added or false if the maximum number of items on this field is reached
+    */
+    bool PutGroundItem(const Item it);
 
-		/**
-        * sets the player on this field state
-        * if true  no other character can move to this field
-        * @param t the new state ( true if a character is on the field )
-        */
-		void SetPlayerOnField( bool t );
+    /**
+    * takes the top item from this field
+    * <b>Lua: [:takeTopItem]</b>
+    * @param it byreference returns the item from this field which was the top item
+    * @return true if there was a item on this field otherwise false
+    */
+    bool TakeTopItem(Item &it);
 
-		/**
-        * sets the npc on this field state
-        * if true  no other character can move to this field
-        * @param t the new state ( true if a character is on the field )
-        */
-		void SetNPCOnField( bool t );
+    /**
+    * increases/decreases the number of the top item on this field
+    * <b>Lua: [:increaseTopItem]</b>
+    * @param count the +/- value which should be added
+    * @param erased by reference is true if the top item was deleted because the number of items where smaller then the number which should be erased
+    * @return the number of which cant be processed for example if count + items on the filed > maximum items
+    */
+    int increaseTopItem(int count, bool &erased);
 
-		/**
-        * sets the monster on this field state
-        * if true  no other character can move to this field
-        * @param t the new state ( true if a character is on the field )
-        */
-		void SetMonsterOnField( bool t );
+    /**
+    * changes the id and quality of the top item
+    * <b>Lua: [:swapTopItem]</b>
+    * @param newid the new id if the top item
+    * @param newQuality the new Quality of the top item
+    * @return true if there is a top item otherwise false
+    */
+    bool swapTopItem(TYPE_OF_ITEM_ID newid, uint16_t newQuality = 0);
 
-		/**
-        * sets a char to this field so the field is occupied by a char
-        */
-		void setChar();
+    /**
+    * gets the top item of this field
+    * <b>Lua: [:viewTopItem]</b>
+    * @param it byreference returns the top item on the field
+    * @return true if there is at least one item on this field which can be returned otherwise false
+    */
+    bool ViewTopItem(Item &it);
 
-		/**
-        * removes a char fro this field so the field is no longer occupied by a char
-        */
-		void removeChar();
+    /**
+    * deletes all Items from this field
+    * <b>Lua: [:deleteAllItems]</b>
+    */
+    void DeleteAllItems();
 
-		/**
-        * sets the flag which shows if the field is a warpfield
-        * if true the field is a warpfield
-        * @param pos the new position of a warp destination
-        */
-		void SetWarpField( const position & pos );
+    /**
+    * returns the script item on a specific position inside the stack of items
+    * <b>Lua: [:getStackItem]</b>
+    * @param spos the position inside the item stack on this field
+    * @return the scriptitem struct of the item on spos
+    */
+    ScriptItem getStackItem(uint8_t spos);
 
-        /**
-        * unsets the field's warpfield property
-        */
-        void UnsetWarpField();
+    /**
+    * returns the number of items which are inside the item stack of this field
+    * @return the number of items on this field
+    */
+    MAXCOUNTTYPE NumberOfItems();
 
-        /**
-        * delivers the position of the warp destination
-        * @param pos the position of the warp destination
-        */
-        void GetWarpField( position & pos );
+    /**
+    *=================================end of grouping script functions================
+    */
+    //@}
 
-		/**
-        * sets the flag which shows if there is a special item on this field
-        * if true there is a special item on the field otherwise its only a normal field
-        * @param t the new state of the flag
-        */
-		void SetSpecialItem( bool t );
-		
-        /**
-        * sets the flag which shows if the field is a special field
-        * if true the field is a special field otherwise its only a normal field
-        * @param t the new state of the flag
-        */        
-		void SetSpecialField( bool t );
+    /**
+    * ages all items on this field calls funct for all Items on the field
+    * @param funct a function which takes a item as parameter
+    * @return -1 if a container was deleted (update needed), 0 if nothing has changed, 1 an item changed (update needed)
+    */
+    int8_t DoAgeItems(ITEM_FUNCT funct);
 
-		/**
-        * sets the height level of the field
-        * @param z the new heightlevel with 0 <= z <= 3
-        */
-		void SetLevel( unsigned char z );
-        
-        /**
-        * defines a type of function which takes a pointer to a field as param an returns nothing
-        */
-		typedef void ( *FIELD_FUNCT ) ( Field* );
+    /**
+    * sets the player on this field state
+    * if true  no other character can move to this field
+    * @param t the new state ( true if a character is on the field )
+    */
+    void SetPlayerOnField(bool t);
 
-		/**
-        * stores the items on this field
-        */
-		ITEMVECTOR items;
+    /**
+    * sets the npc on this field state
+    * if true  no other character can move to this field
+    * @param t the new state ( true if a character is on the field )
+    */
+    void SetNPCOnField(bool t);
+
+    /**
+    * sets the monster on this field state
+    * if true  no other character can move to this field
+    * @param t the new state ( true if a character is on the field )
+    */
+    void SetMonsterOnField(bool t);
+
+    /**
+    * sets a char to this field so the field is occupied by a char
+    */
+    void setChar();
+
+    /**
+    * removes a char fro this field so the field is no longer occupied by a char
+    */
+    void removeChar();
+
+    /**
+    * sets the flag which shows if the field is a warpfield
+    * if true the field is a warpfield
+    * @param pos the new position of a warp destination
+    */
+    void SetWarpField(const position &pos);
+
+    /**
+    * unsets the field's warpfield property
+    */
+    void UnsetWarpField();
+
+    /**
+    * delivers the position of the warp destination
+    * @param pos the position of the warp destination
+    */
+    void GetWarpField(position &pos);
+
+    /**
+    * sets the flag which shows if there is a special item on this field
+    * if true there is a special item on the field otherwise its only a normal field
+    * @param t the new state of the flag
+    */
+    void SetSpecialItem(bool t);
+
+    /**
+    * sets the flag which shows if the field is a special field
+    * if true the field is a special field otherwise its only a normal field
+    * @param t the new state of the flag
+    */
+    void SetSpecialField(bool t);
+
+    /**
+    * sets the height level of the field
+    * @param z the new heightlevel with 0 <= z <= 3
+    */
+    void SetLevel(unsigned char z);
+
+    /**
+    * defines a type of function which takes a pointer to a field as param an returns nothing
+    */
+    typedef void (*FIELD_FUNCT)(Field *);
+
+    /**
+    * stores the items on this field
+    */
+    ITEMVECTOR items;
 };
 
 #endif

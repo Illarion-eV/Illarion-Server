@@ -26,109 +26,96 @@
 #include "TableStructs.hpp"
 #include "script/LuaLongTimeEffectScript.hpp"
 
-extern LongTimeEffectTable * LongTimeEffects;
+extern LongTimeEffectTable *LongTimeEffects;
 
 
-LongTimeEffect::LongTimeEffect(uint16_t effectId, uint32_t nextCalled) : _effectId(effectId), _effectName(""),  _nextCalled(nextCalled), _numberCalled(0), _lastCalled(0), _firstadd(true)
-{
+LongTimeEffect::LongTimeEffect(uint16_t effectId, uint32_t nextCalled) : _effectId(effectId), _effectName(""),  _nextCalled(nextCalled), _numberCalled(0), _lastCalled(0), _firstadd(true) {
     LongTimeEffectStruct effect;
     LongTimeEffects->find(_effectId, effect);
     _effectName = effect.effectname;
     _values.clear();
 }
 
-LongTimeEffect::LongTimeEffect(std::string name, uint32_t nextCalled) : _effectId(0), _effectName(name), _nextCalled(nextCalled), _numberCalled(0), _lastCalled(0), _firstadd(true)
-{
+LongTimeEffect::LongTimeEffect(std::string name, uint32_t nextCalled) : _effectId(0), _effectName(name), _nextCalled(nextCalled), _numberCalled(0), _lastCalled(0), _firstadd(true) {
     LongTimeEffectStruct effect;
     LongTimeEffects->find(_effectId, effect);
     _effectId = effect.effectid;
     _values.clear();
 }
 
-LongTimeEffect::~LongTimeEffect()
-{
+LongTimeEffect::~LongTimeEffect() {
     _values.clear();
 }
 
-bool LongTimeEffect::callEffect(Character * target)
-{
+bool LongTimeEffect::callEffect(Character *target) {
     bool ret = false;
     LongTimeEffectStruct effect;
-    if (LongTimeEffects->find(_effectId, effect) )
-    {
-        if ( effect.script )
-        {
+
+    if (LongTimeEffects->find(_effectId, effect)) {
+        if (effect.script) {
             ret = effect.script->callEffect(this, target);
             _lastCalled = _nextCalled;
             _numberCalled++;
         }
-    }
-    else
-    {
+    } else {
         std::cout<<"can't find effect with id: "<<_effectId<<" to call the script."<<std::endl;
     }
+
     return ret;
 }
 
-void LongTimeEffect::addValue(std::string name, uint32_t value)
-{
+void LongTimeEffect::addValue(std::string name, uint32_t value) {
     VALUETABLE::iterator it = _values.find(name.c_str());
-    if ( it != _values.end() )
-    {
+
+    if (it != _values.end()) {
         it->second = value;
-    }
-    else
-    {
-        char* sname = new char[name.length() + 1];
-        strcpy( sname, name.c_str() );
-        sname[ name.length() ] = 0;
+    } else {
+        char *sname = new char[name.length() + 1];
+        strcpy(sname, name.c_str());
+        sname[ name.length()] = 0;
         _values[ sname ] = value;
     }
 }
 
-void LongTimeEffect::removeValue( std::string name )
-{
+void LongTimeEffect::removeValue(std::string name) {
     VALUETABLE::iterator it = _values.find(name.c_str());
-    if ( it != _values.end() )
-    {
+
+    if (it != _values.end()) {
         _values.erase(it);
-    }   
+    }
 }
 
-bool LongTimeEffect::findValue(std::string name, uint32_t &ret)
-{
+bool LongTimeEffect::findValue(std::string name, uint32_t &ret) {
     VALUETABLE::iterator it = _values.find(name.c_str());
-    if ( it != _values.end() )
-    {
+
+    if (it != _values.end()) {
         ret = it->second;
         return true;
-    } 
-    else 
+    } else {
         return false;
+    }
 }
 
-bool LongTimeEffect::save( uint32_t playerid )
-{
+bool LongTimeEffect::save(uint32_t playerid) {
     ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
 
-    try 
-    {
+    try {
         di::insert(transaction, static_cast<uint32_t>(playerid), static_cast<uint16_t>(_effectId), static_cast<int32_t>(_nextCalled), static_cast<uint32_t>(_lastCalled),static_cast<uint32_t>(_numberCalled), "INSERT INTO playerlteffects (plte_playerid, plte_effectid, plte_nextcalled, plte_lastcalled, plte_numberCalled)");
-		for ( VALUETABLE::iterator it = _values.begin(); it != _values.end(); ++it)
-        {
-			std::cout<<"inserting effektdata("<<_effectId<<") name: "<<it->first<<" value: "<<static_cast<uint32_t>(it->second)<<std::endl;
+
+        for (VALUETABLE::iterator it = _values.begin(); it != _values.end(); ++it) {
+            std::cout<<"inserting effektdata("<<_effectId<<") name: "<<it->first<<" value: "<<static_cast<uint32_t>(it->second)<<std::endl;
             di::insert(transaction, static_cast<uint32_t>(playerid), static_cast<uint16_t>(_effectId), it->first, static_cast<uint32_t>(it->second), "INSERT INTO playerlteffectvalues (pev_playerid, pev_effectid, pev_name, pev_value)");
         }
+
         transaction.commit();
         return true;
-    }
-    catch ( std::exception &e)
-    {
+    } catch (std::exception &e) {
         std::cerr << "caught exception during saving lt effects: " << e.what() << std::endl;
         transaction.rollback();
         return false;
     }
+
     return true;
 }
 
-    
+

@@ -38,44 +38,44 @@ using std::hash_map;
 
 #endif
 
-struct AttackBoni
-{
+struct AttackBoni {
     uint8_t attackType;
     int16_t attackValue;
     int16_t actionPointsLost;
     AttackBoni() : attackType(0), attackValue(0), actionPointsLost(0) {}
 };
 
-class MonsterAttackTable
-{
-    
-    public:
-    
-        //Constructor
-        MonsterAttackTable();
-    
-        //Destructor; 
-        ~MonsterAttackTable();
-    
-        //Sucht einen Eintrag und liefert die zugehörigen Boni
-        bool find(Character::race_type race, AttackBoni &ret);
-    
-        //lädt die Tabelle neu
-        void reload();
-    
-        //get für m_dataOk (Zeigt an ob das Laden erfolgreich war)
-        inline bool isDataOk() { return m_dataOk; }
-    
-    private:
-    
-        //Gibt an ob Laden der Daten erfolgreich war
-        bool m_dataOk;
-    
-        //leert die alte Tabelle beim neuladen
-        void clearOldTable();
-    
-        typedef hash_map<uint16_t, AttackBoni>TABLE;
-        TABLE raceAttackBoni;
+class MonsterAttackTable {
+
+public:
+
+    //Constructor
+    MonsterAttackTable();
+
+    //Destructor;
+    ~MonsterAttackTable();
+
+    //Sucht einen Eintrag und liefert die zugehörigen Boni
+    bool find(Character::race_type race, AttackBoni &ret);
+
+    //lädt die Tabelle neu
+    void reload();
+
+    //get für m_dataOk (Zeigt an ob das Laden erfolgreich war)
+    inline bool isDataOk() {
+        return m_dataOk;
+    }
+
+private:
+
+    //Gibt an ob Laden der Daten erfolgreich war
+    bool m_dataOk;
+
+    //leert die alte Tabelle beim neuladen
+    void clearOldTable();
+
+    typedef hash_map<uint16_t, AttackBoni>TABLE;
+    TABLE raceAttackBoni;
 
 };
 #endif

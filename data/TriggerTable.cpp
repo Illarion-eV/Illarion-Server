@@ -22,68 +22,74 @@
 #include "Logger.hpp"
 
 template<class from>
-const std::string toString(const from& convert) {
-	std::stringstream stream;
-	stream << convert;
-	return stream.str();
+const std::string toString(const from &convert) {
+    std::stringstream stream;
+    stream << convert;
+    return stream.str();
 }
 
 
 TriggerTable::TriggerTable():  _dataOK(false) {
-	reload();
+    reload();
 }
 
 void TriggerTable::reload() {
 #ifdef DataConnect_DEBUG
-	std::cout<<"TriggerTable: reload!" <<std::endl;
+    std::cout<<"TriggerTable: reload!" <<std::endl;
 #endif
-	try {
-		ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
-		std::vector<int16_t> posx,posy,posz;
-		std::vector<std::string> scriptname;
-		di::isnull_vector<std::vector<std::string> > n_scriptname(scriptname);
-		size_t rows = di::select_all<di::Integer, di::Integer, di::Integer, di::Varchar>(transaction,posx,posy,posz,n_scriptname,
-					  "SELECT tgf_posx, tgf_posy, tgf_posz, tgf_script FROM triggerfields");
-		for ( size_t i = 0; i < rows; ++i) {
-			TriggerStruct Trigger; //new Trigger
-			Trigger.pos = position(posx[i],posy[i],posz[i]);
-			if (!n_scriptname.var[i]) {
-				try {
-					// we got a script... load it
-					boost::shared_ptr<LuaTriggerScript> script( new LuaTriggerScript( scriptname[i], Trigger.pos ) );
-					Trigger.script = script;
-				} catch (ScriptException &e) {
-                    Logger::writeError( "scripts", "Error while loading script: " + scriptname[i] + ":\n" + e.what() + "\n" );
-				}
-			}
-			Triggers.insert(std::pair<position, TriggerStruct>(Trigger.pos,Trigger)); //Zuweisen des Spells
-		}
-		std::cout << " loadet " << rows << " Triggerfields! " << std::endl;
-		_dataOK = true;
-	} catch (std::exception &e) {
 
-		std::cerr << "exception: " << e.what() << std::endl;
-		_dataOK = false;
-	}
+    try {
+        ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
+        std::vector<int16_t> posx,posy,posz;
+        std::vector<std::string> scriptname;
+        di::isnull_vector<std::vector<std::string> > n_scriptname(scriptname);
+        size_t rows = di::select_all<di::Integer, di::Integer, di::Integer, di::Varchar>(transaction,posx,posy,posz,n_scriptname,
+                      "SELECT tgf_posx, tgf_posy, tgf_posz, tgf_script FROM triggerfields");
+
+        for (size_t i = 0; i < rows; ++i) {
+            TriggerStruct Trigger; //new Trigger
+            Trigger.pos = position(posx[i],posy[i],posz[i]);
+
+            if (!n_scriptname.var[i]) {
+                try {
+                    // we got a script... load it
+                    boost::shared_ptr<LuaTriggerScript> script(new LuaTriggerScript(scriptname[i], Trigger.pos));
+                    Trigger.script = script;
+                } catch (ScriptException &e) {
+                    Logger::writeError("scripts", "Error while loading script: " + scriptname[i] + ":\n" + e.what() + "\n");
+                }
+            }
+
+            Triggers.insert(std::pair<position, TriggerStruct>(Trigger.pos,Trigger)); //Zuweisen des Spells
+        }
+
+        std::cout << " loadet " << rows << " Triggerfields! " << std::endl;
+        _dataOK = true;
+    } catch (std::exception &e) {
+
+        std::cerr << "exception: " << e.what() << std::endl;
+        _dataOK = false;
+    }
 }
 
 bool TriggerTable::find(position pos, TriggerStruct &data) {
-	TriggerMap::iterator iterator;
-	iterator = Triggers.find(pos);
-	if ( iterator == Triggers.end() ) {
-		return false;
-	} else {
-		data = (*iterator).second;
-		return true;
-	}
+    TriggerMap::iterator iterator;
+    iterator = Triggers.find(pos);
+
+    if (iterator == Triggers.end()) {
+        return false;
+    } else {
+        data = (*iterator).second;
+        return true;
+    }
 
 }
 
 void TriggerTable::clearOldTable() {
-	Triggers.clear();
+    Triggers.clear();
 }
 
 TriggerTable::~TriggerTable() {
-	clearOldTable();
+    clearOldTable();
 }
 

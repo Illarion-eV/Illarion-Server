@@ -27,23 +27,19 @@
 #include "fuse_ptr.hpp"
 
 LuaDepotScript::LuaDepotScript(std::string filename) throw(ScriptException)
-		: LuaScript(filename)
-{
+    : LuaScript(filename) {
 }
 
 LuaDepotScript::~LuaDepotScript() throw() {}
 
-bool LuaDepotScript::onOpenDepot(Character * cc, Item itm)
-{
-    try
-    {
-        World::get()->setCurrentScript( this );
+bool LuaDepotScript::onOpenDepot(Character *cc, Item itm) {
+    try {
+        World::get()->setCurrentScript(this);
         fuse_ptr<Character> fuse_cc(cc);
-        return luabind::object_cast<bool>(call("onOpenDepot")( fuse_cc, itm ));
-    }
-    catch (luabind::error &e)
-    {
+        return luabind::object_cast<bool>(call("onOpenDepot")(fuse_cc, itm));
+    } catch (luabind::error &e) {
         return true;
     }
+
     return true;
 }

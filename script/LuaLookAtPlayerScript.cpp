@@ -26,24 +26,19 @@
 #include "fuse_ptr.hpp"
 
 LuaLookAtPlayerScript::LuaLookAtPlayerScript(std::string filename) throw(ScriptException)
-		: LuaScript(filename)
-{
+    : LuaScript(filename) {
 }
 
 LuaLookAtPlayerScript::~LuaLookAtPlayerScript() throw() {}
 
-void LuaLookAtPlayerScript::lookAtPlayer(Character * source, Character * target, unsigned char mode)
-{
-    try
-    {
-        World::get()->setCurrentScript( this ); 
+void LuaLookAtPlayerScript::lookAtPlayer(Character *source, Character *target, unsigned char mode) {
+    try {
+        World::get()->setCurrentScript(this);
         fuse_ptr<Character> fuse_source(source);
         fuse_ptr<Character> fuse_target(target);
-        call("lookAtPlayer")( fuse_source, fuse_target, mode );
-    }
-    catch (luabind::error &e)
-    {
-        writeErrorMsg();    
+        call("lookAtPlayer")(fuse_source, fuse_target, mode);
+    } catch (luabind::error &e) {
+        writeErrorMsg();
     }
 
 }

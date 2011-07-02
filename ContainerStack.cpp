@@ -22,90 +22,93 @@
 ContainerStack::ContainerStack() {}
 
 
-ContainerStack::ContainerStack( const ContainerStack& source ) {
-	opencontainers = source.opencontainers;
+ContainerStack::ContainerStack(const ContainerStack &source) {
+    opencontainers = source.opencontainers;
 }
 
 
-ContainerStack& ContainerStack:: operator =( const ContainerStack& source ) {
-	if ( this != &source ) {
-		opencontainers = source.opencontainers;
-	}
-	return *this;
+ContainerStack &ContainerStack:: operator =(const ContainerStack &source) {
+    if (this != &source) {
+        opencontainers = source.opencontainers;
+    }
+
+    return *this;
 }
 
 
 ContainerStack::~ContainerStack() {}
 
 
-void ContainerStack::startContainer( Container* cc, bool carry ) {
-	clear();
-	openContainer( cc );
-	inventory = carry;
+void ContainerStack::startContainer(Container *cc, bool carry) {
+    clear();
+    openContainer(cc);
+    inventory = carry;
 }
 
 
-void ContainerStack::openContainer( Container* cc ) {
-	opencontainers.push_back( cc );
+void ContainerStack::openContainer(Container *cc) {
+    opencontainers.push_back(cc);
 }
 
 
 bool ContainerStack::closeContainer() {
-	if ( opencontainers.empty() ) {
-		return false;
-	} else {
-		opencontainers.pop_back();
-		if ( !opencontainers.empty() ) {
-			return true;
-		} else {
-			inventory = false;
-			return false;
-		}
-	}
+    if (opencontainers.empty()) {
+        return false;
+    } else {
+        opencontainers.pop_back();
+
+        if (!opencontainers.empty()) {
+            return true;
+        } else {
+            inventory = false;
+            return false;
+        }
+    }
 }
 
 
 
-bool ContainerStack::isOnTop( Container* cc ) {
-	if ( opencontainers.empty() ) {
-		return false;
-	} else {
-		return ( opencontainers.back() == cc );
-	}
+bool ContainerStack::isOnTop(Container *cc) {
+    if (opencontainers.empty()) {
+        return false;
+    } else {
+        return (opencontainers.back() == cc);
+    }
 }
 
 
 
-Container* ContainerStack::top() {
-	if ( opencontainers.empty() ) {
-		return NULL;
-	} else {
-		return opencontainers.back();
-	}
+Container *ContainerStack::top() {
+    if (opencontainers.empty()) {
+        return NULL;
+    } else {
+        return opencontainers.back();
+    }
 }
 
 
 
-bool ContainerStack::contains( Container* cc ) {
-	ONTAINERVECTOR::iterator theIterator;
+bool ContainerStack::contains(Container *cc) {
+    ONTAINERVECTOR::iterator theIterator;
 
-	for ( theIterator = opencontainers.begin(); theIterator < opencontainers.end(); ++theIterator ) {
-		if ( ( *theIterator ) == cc ) {
-			return true;
-		}
-	}
-	return false;
+    for (theIterator = opencontainers.begin(); theIterator < opencontainers.end(); ++theIterator) {
+        if ((*theIterator) == cc) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 
 
 void ContainerStack::clear() {
-	opencontainers.clear();
-	inventory = false;
+    opencontainers.clear();
+    inventory = false;
 }
 
 
 
 bool ContainerStack::inInventory() {
-	return inventory;
+    return inventory;
 }

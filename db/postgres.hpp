@@ -71,9 +71,9 @@
 // implements the deactivateable query tracing
 #ifdef DATABASE_INTERFACE_ENABLE_TRACE_QUERY
 # define DATABASE_INTERFACE_TRACE_QUERY(something) \
-	if( ::di::postgres::enable_trace_query ) { \
-		std::cerr << "POSTGRES_TRACE_QUERY:'" << something << "'" << std::endl; \
-	}
+    if( ::di::postgres::enable_trace_query ) { \
+        std::cerr << "POSTGRES_TRACE_QUERY:'" << something << "'" << std::endl; \
+    }
 #else
 # define DATABASE_INTERFACE_TRACE_QUERY(something)
 #endif
@@ -81,60 +81,59 @@
 // implement the deactivateable fatal null storages
 #ifdef FATAL_NULL_STORAGE
 # define UNRESOLVABLE_NULL_STORAGE \
-	throw std::runtime_error("tried to store NULL value into non-null-holder")
+    throw std::runtime_error("tried to store NULL value into non-null-holder")
 #else
 # define UNRESOLVABLE_NULL_STORAGE \
-	std::cerr << "tried to store NULL value into non-null-holder at:" <<  __PRETTY_FUNCTION__ << std::endl
+    std::cerr << "tried to store NULL value into non-null-holder at:" <<  __PRETTY_FUNCTION__ << std::endl
 #endif
 
 // implements the deactivateable conversion tracing
 #ifdef DATABASE_INTERFACE_ENABLE_TRACE_CONVERSION
 # define DATABASE_INTERFACE_TRACE_CONVERSION(something) \
-	if( ::di::postgres::enable_trace_conversion ) { \
-		std::cerr << "POSTGRES_TRACE_CONVERSION:'" << something << "'" << std::endl; \
-	}
+    if( ::di::postgres::enable_trace_conversion ) { \
+        std::cerr << "POSTGRES_TRACE_CONVERSION:'" << something << "'" << std::endl; \
+    }
 #else
 # define DATABASE_INTERFACE_TRACE_CONVERSION(something)
 #endif
 
 // try/catch for postgres exception -> di::exception transformation
 #define DATABASE_INTERFACE_POSTGRES_TRY \
-	try {
+    try {
 #define DATABASE_INTERFACE_POSTGRES_CATCH_RETHROW \
-	} catch(const pqxx::broken_connection& e) { \
-		throw di::connection_exception(e.what()); \
-	} catch(const pqxx::sql_error& e) { \
-		throw di::exception(e.what(), e.query()); \
-	} catch(const std::exception& e) { \
-		throw di::exception(e.what()); \
-	}
+    } catch(const pqxx::broken_connection& e) { \
+        throw di::connection_exception(e.what()); \
+    } catch(const pqxx::sql_error& e) { \
+        throw di::exception(e.what(), e.query()); \
+    } catch(const std::exception& e) { \
+        throw di::exception(e.what()); \
+    }
 
 //! \brief old pqxx sqlesc, needs to be replaced once we use pqxx3 properly
-inline std::string oldsqlesc( std::string s )
-{
+inline std::string oldsqlesc(std::string s) {
     std::string result;
-    for( size_t i=0; i<s.length(); ++i )
-    {   
+
+    for (size_t i=0; i<s.length(); ++i) {
         const unsigned char c(s[i]);
-        if (c & 0x80)
-        { 
-          throw std::runtime_error("non-ASCII text passed to sqlesc(); "
-              "the libpq version that libpqxx was built with does not support this "
-              "yet (minimum is postgres 7.2)");
-        }
-        else if (isprint(c))
-        { 
-          if (c=='\\' || c=='\'') result += c;
-          result += c;
-        }
-        else
-        {   
+
+        if (c & 0x80) {
+            throw std::runtime_error("non-ASCII text passed to sqlesc(); "
+                                     "the libpq version that libpqxx was built with does not support this "
+                                     "yet (minimum is postgres 7.2)");
+        } else if (isprint(c)) {
+            if (c=='\\' || c=='\'') {
+                result += c;
+            }
+
+            result += c;
+        } else {
             char s[8];
             // TODO: Number may be formatted according to locale!  :-(
             sprintf(s, "\\%03o", static_cast<unsigned int>(c));
             result.append(s, 4);
         }
     }
+
     return result;
 }
 
@@ -143,26 +142,26 @@ namespace di {
 namespace postgres {
 
 namespace hidden {
-template< typename T > std::string quote(const T& val);
+template< typename T > std::string quote(const T &val);
 template< typename T > std::string quote(const isnull<T>& val);
-template<> inline std::string quote(const int64_t& val);
-template<> inline std::string quote(const UnquotedSQL& val);
-template<> inline std::string quote(const Date& _cv);
-template<> inline std::string quote(const Time& _cv);
-template<> inline std::string quote(const Timestamp& _cv);
-template<> inline std::string quote(const Blob& blob);
+template<> inline std::string quote(const int64_t &val);
+template<> inline std::string quote(const UnquotedSQL &val);
+template<> inline std::string quote(const Date &_cv);
+template<> inline std::string quote(const Time &_cv);
+template<> inline std::string quote(const Timestamp &_cv);
+template<> inline std::string quote(const Blob &blob);
 }
 
 ////
 //// postgres specific types
 ////
-typedef di::SmallInt					Int2;
-typedef di::Integer						Int4;
-typedef di::BigInt						Int8;
-typedef di::Varchar						Text;
-typedef di::Blob							Bytea;
-typedef di::DoublePrecision		Float;
-typedef uint32_t							Oid;
+typedef di::SmallInt                    Int2;
+typedef di::Integer                     Int4;
+typedef di::BigInt                      Int8;
+typedef di::Varchar                     Text;
+typedef di::Blob                            Bytea;
+typedef di::DoublePrecision     Float;
+typedef uint32_t                            Oid;
 
 ////
 //// postgres-specific connection and transaction
@@ -174,20 +173,20 @@ extern bool enable_trace_result;
 //! \brief postgres specific connection
 class Transaction;
 class Connection: public ::di::Connection {
-		friend class di::postgres::Transaction;
-	public:
-		Connection(const ConnectionInfo& _con_info);
-		virtual ~Connection() throw();
+    friend class di::postgres::Transaction;
+public:
+    Connection(const ConnectionInfo &_con_info);
+    virtual ~Connection() throw();
 
-		virtual std::string createConString();
+    virtual std::string createConString();
 
-		virtual int execImmediate(const std::string& query);
+    virtual int execImmediate(const std::string &query);
 
-		virtual bool isGood();
+    virtual bool isGood();
 
-	protected:
-		const std::string con_string;
-		boost::shared_ptr<pqxx::connection> con;
+protected:
+    const std::string con_string;
+    boost::shared_ptr<pqxx::connection> con;
 };
 
 // this type is used in all ::di::postgres::exec functions
@@ -198,34 +197,36 @@ typedef pqxx::transaction<pqxx::read_committed> pqxx_transaction;
 
 //! \brief postgres specific transaction
 class Transaction: public ::di::Transaction {
-	public:
-		Transaction(Connection& _con);
-		virtual ~Transaction() throw();
+public:
+    Transaction(Connection &_con);
+    virtual ~Transaction() throw();
 
-		virtual void commit();
-		virtual void rollback();
+    virtual void commit();
+    virtual void rollback();
 
-		virtual operator pqxx_transaction&() { return *trns; }
+    virtual operator pqxx_transaction&() {
+        return *trns;
+    }
 
-	public:
-		//! \brief common 'gateway' to global functions
-		template< typename T > std::string quote(const T& val) {
-			return ::di::postgres::hidden::quote(val);
-		}
+public:
+    //! \brief common 'gateway' to global functions
+    template< typename T > std::string quote(const T &val) {
+        return ::di::postgres::hidden::quote(val);
+    }
 
-		//! \brief common 'gateway' with naming the quoteholder
-		template< typename T > std::string quote(
-			const di::NamedData<T>& container) {
-			return ::di::postgres::hidden::quote(container.var);
-		}
+    //! \brief common 'gateway' with naming the quoteholder
+    template< typename T > std::string quote(
+        const di::NamedData<T>& container) {
+        return ::di::postgres::hidden::quote(container.var);
+    }
 
-		//! \brief wrapper for selecting next value from sequence
-		std::string inline formatNextval(const std::string& seqName) {
-			return std::string("nextval('") + seqName + std::string("')");
-		}
+    //! \brief wrapper for selecting next value from sequence
+    std::string inline formatNextval(const std::string &seqName) {
+        return std::string("nextval('") + seqName + std::string("')");
+    }
 
-		Connection& pqxxCon;
-		boost::shared_ptr<pqxx_transaction> trns;
+    Connection &pqxxCon;
+    boost::shared_ptr<pqxx_transaction> trns;
 };
 
 ////
@@ -234,8 +235,8 @@ class Transaction: public ::di::Transaction {
 namespace hidden {
 
 //! \brief quoting with the simplest possible method via pqxx
-template< typename T > std::string quote(const T& val) {
-	std::stringstream ss;
+template< typename T > std::string quote(const T &val) {
+    std::stringstream ss;
     ss << val;
     std::stringstream ss2;
     ss2 << "'" << oldsqlesc(ss.str()) << "'";
@@ -243,54 +244,56 @@ template< typename T > std::string quote(const T& val) {
 }
 //! \brief quoting NULL values
 template< typename T > std::string quote(const isnull<T>& val) {
-	if( val.var == true ) {
-		return "NULL";
-	} else {
-		return quote(val.ref);
-	}
+    if (val.var == true) {
+        return "NULL";
+    } else {
+        return quote(val.ref);
+    }
 }
 //! \brief quoting special: int64_t (long long from ice)
-template<> inline std::string quote(const int64_t& val) {
-	std::stringstream ss;
-        ss << static_cast<int32_t>(val);
-        return oldsqlesc(ss.str());
+template<> inline std::string quote(const int64_t &val) {
+    std::stringstream ss;
+    ss << static_cast<int32_t>(val);
+    return oldsqlesc(ss.str());
 }
 //! \brief quoting special: unquoted sql
-template<> inline std::string quote(const UnquotedSQL& val) {
-	return val.str;
+template<> inline std::string quote(const UnquotedSQL &val) {
+    return val.str;
 }
 //! \brief quoting special: date
-template<> inline std::string quote(const Date& _cv) {
-	std::stringstream ss;
-	ss << "'" << _cv.year << "-" << _cv.month << "-" << _cv.day << "'";
-	return ss.str();
+template<> inline std::string quote(const Date &_cv) {
+    std::stringstream ss;
+    ss << "'" << _cv.year << "-" << _cv.month << "-" << _cv.day << "'";
+    return ss.str();
 }
 //! \brief quoting special: time
-template<> inline std::string quote(const Time& _cv) {
-	std::stringstream ss;
-	ss << "'" << _cv.hour << ":" << _cv.minute << ":" << _cv.second << "." <<
-	static_cast<int>(floor(_cv.fraction*DATABASE_INTERFACE_TIME_PRECISION + 0.5)) << "'";
-	return ss.str();
+template<> inline std::string quote(const Time &_cv) {
+    std::stringstream ss;
+    ss << "'" << _cv.hour << ":" << _cv.minute << ":" << _cv.second << "." <<
+       static_cast<int>(floor(_cv.fraction*DATABASE_INTERFACE_TIME_PRECISION + 0.5)) << "'";
+    return ss.str();
 }
 //! \brief quoting special: timestamp
-template<> inline std::string quote(const Timestamp& _cv) {
-	std::stringstream ss;
-	ss << "'" << _cv.d.year << "-" << _cv.d.month << "-" << _cv.d.day << " " <<
-	_cv.t.hour << ":" << _cv.t.minute << ":" << _cv.t.second << "." <<
-	static_cast<int>(floor(_cv.t.fraction*DATABASE_INTERFACE_TIME_PRECISION + 0.5)) << "'";
-	return ss.str();
+template<> inline std::string quote(const Timestamp &_cv) {
+    std::stringstream ss;
+    ss << "'" << _cv.d.year << "-" << _cv.d.month << "-" << _cv.d.day << " " <<
+       _cv.t.hour << ":" << _cv.t.minute << ":" << _cv.t.second << "." <<
+       static_cast<int>(floor(_cv.t.fraction*DATABASE_INTERFACE_TIME_PRECISION + 0.5)) << "'";
+    return ss.str();
 }
 //! \brief quoting Blob
-template<> inline std::string quote(const Blob& blob) {
-	const std::vector< uint8_t >& data = blob.data;
-	std::stringstream ss;
-	ss.fill('0');
-	ss << "decode('";
-	for( size_t l = 0; l < data.size(); l++ ) {
-		ss << std::setw(2) << std::hex << (unsigned int)(data[l]);
-	}
-	ss << "','hex')";
-	return ss.str();
+template<> inline std::string quote(const Blob &blob) {
+    const std::vector< uint8_t >& data = blob.data;
+    std::stringstream ss;
+    ss.fill('0');
+    ss << "decode('";
+
+    for (size_t l = 0; l < data.size(); l++) {
+        ss << std::setw(2) << std::hex << (unsigned int)(data[l]);
+    }
+
+    ss << "','hex')";
+    return ss.str();
 }
 
 } // namespace ::di::postgres::hidden
@@ -301,240 +304,250 @@ template<> inline std::string quote(const Blob& blob) {
 
 //! \brief extracting data: the simple and sometimes working default (use pqxx)
 template< typename SOURCE >
-void ExtractField(const pqxx::result::field& f, SOURCE& var) {
-	f.to(var);
+void ExtractField(const pqxx::result::field &f, SOURCE &var) {
+    f.to(var);
 }
 
 //! \brief extracting data: 64bit (important for ::Ice::Long values)
 template<> inline
-void ExtractField(const pqxx::result::field& f, int64_t& var) {
-	std::stringstream ss;
-	std::string s;
-	f.to(s);
-	ss << s;
-	ss >> var;
+void ExtractField(const pqxx::result::field &f, int64_t &var) {
+    std::stringstream ss;
+    std::string s;
+    f.to(s);
+    ss << s;
+    ss >> var;
 }
 
 //! \brief extracting data: char
 //! (important for single chars, they are not supported by pqxx)
 template<> inline
-void ExtractField(const pqxx::result::field& f, char& var) {
-	std::string s;
-	f.to(s);
-	if( s.size() > 0 )
-		var = s[0];
+void ExtractField(const pqxx::result::field &f, char &var) {
+    std::string s;
+    f.to(s);
+
+    if (s.size() > 0) {
+        var = s[0];
+    }
 }
 
 //! \brief extracting data: Date
 template<> inline
-void ExtractField<Date>(const pqxx::result::field& f, Date& var) {
-	std::string s;
-	bool isnull = !f.to(s);
+void ExtractField<Date>(const pqxx::result::field &f, Date &var) {
+    std::string s;
+    bool isnull = !f.to(s);
 
-	if( isnull ) {
-		UNRESOLVABLE_NULL_STORAGE;
-	} else {
-		var.year = boost::lexical_cast<int>(s.substr(0,4));
-		var.month = boost::lexical_cast<int>(s.substr(5,2));
-		var.day = boost::lexical_cast<int>(s.substr(8,2));
-	}
+    if (isnull) {
+        UNRESOLVABLE_NULL_STORAGE;
+    } else {
+        var.year = boost::lexical_cast<int>(s.substr(0,4));
+        var.month = boost::lexical_cast<int>(s.substr(5,2));
+        var.day = boost::lexical_cast<int>(s.substr(8,2));
+    }
 }
 
 //! \brief extracting data: Timestamp
 template<> inline
-void ExtractField<Timestamp>(const pqxx::result::field& f, Timestamp& var) {
-	std::string s;
-	bool isnull = !f.to(s);
+void ExtractField<Timestamp>(const pqxx::result::field &f, Timestamp &var) {
+    std::string s;
+    bool isnull = !f.to(s);
 
-	if( isnull ) {
-		UNRESOLVABLE_NULL_STORAGE;
-	} else {
-		var.d.year = boost::lexical_cast<int>(s.substr(0,4));
-		var.d.month = boost::lexical_cast<int>(s.substr(5,2));
-		var.d.day = boost::lexical_cast<int>(s.substr(8,2));
-		var.t.hour = boost::lexical_cast<int>(s.substr(11,2));
-		var.t.minute = boost::lexical_cast<int>(s.substr(14,2));
-		var.t.second = boost::lexical_cast<int>(s.substr(17,2));
-		std::string str;
-		if( s.find("+") >= s.size() ) {
-			str = s.substr(19,s.size()-19);
-		} else {
-			str = s.substr(19,s.size()-22);
-		}
-		if( str.size() > 0 ) {
-			var.t.fraction = boost::lexical_cast<float>(str);
-		} else {
-			var.t.fraction = 0;
-		}
-	}
+    if (isnull) {
+        UNRESOLVABLE_NULL_STORAGE;
+    } else {
+        var.d.year = boost::lexical_cast<int>(s.substr(0,4));
+        var.d.month = boost::lexical_cast<int>(s.substr(5,2));
+        var.d.day = boost::lexical_cast<int>(s.substr(8,2));
+        var.t.hour = boost::lexical_cast<int>(s.substr(11,2));
+        var.t.minute = boost::lexical_cast<int>(s.substr(14,2));
+        var.t.second = boost::lexical_cast<int>(s.substr(17,2));
+        std::string str;
+
+        if (s.find("+") >= s.size()) {
+            str = s.substr(19,s.size()-19);
+        } else {
+            str = s.substr(19,s.size()-22);
+        }
+
+        if (str.size() > 0) {
+            var.t.fraction = boost::lexical_cast<float>(str);
+        } else {
+            var.t.fraction = 0;
+        }
+    }
 }
 
 //! \brief extracting data: Time
 template<> inline
-void ExtractField<Time>(const pqxx::result::field& f, Time& var) {
-	std::string s;
-	bool isnull = !f.to(s);
+void ExtractField<Time>(const pqxx::result::field &f, Time &var) {
+    std::string s;
+    bool isnull = !f.to(s);
 
-	if( isnull ) {
-		UNRESOLVABLE_NULL_STORAGE;
-	} else {
-		var.hour = boost::lexical_cast<int>(s.substr(0,2));
-		var.minute = boost::lexical_cast<int>(s.substr(3,2));
-		var.second = boost::lexical_cast<int>(s.substr(6,2));
-		std::string str = s.substr(9,s.size()-12);
-		var.fraction = boost::lexical_cast<float>(str);
-	}
+    if (isnull) {
+        UNRESOLVABLE_NULL_STORAGE;
+    } else {
+        var.hour = boost::lexical_cast<int>(s.substr(0,2));
+        var.minute = boost::lexical_cast<int>(s.substr(3,2));
+        var.second = boost::lexical_cast<int>(s.substr(6,2));
+        std::string str = s.substr(9,s.size()-12);
+        var.fraction = boost::lexical_cast<float>(str);
+    }
 }
 
 //! \brief extracting data: Blob
 template<> inline
-void ExtractField<Blob>(const pqxx::result::field& f, Blob& var) {
-	std::string s;
-	bool isnull = !f.to(s);
+void ExtractField<Blob>(const pqxx::result::field &f, Blob &var) {
+    std::string s;
+    bool isnull = !f.to(s);
 
-	if( isnull ) {
-		UNRESOLVABLE_NULL_STORAGE;
-	} else {
-		std::stringstream ss;
-		unsigned int i;
-		for( i = 0; i < s.size(); ++i ) {
-			ss << s[i];
-			if( (i % 2) == 1 )
-				ss << ' ';
-		}
-		unsigned int c;
-		const unsigned int size = s.size()/2;
-		var.data.reserve(size); // allocate all memory at once (saves much time!)
-		for( i = 0; i < size; ++i ) {
-			ss >> std::setw(2) >> std::hex >> c;
-			var.data.push_back(c);
-		}
-	}
+    if (isnull) {
+        UNRESOLVABLE_NULL_STORAGE;
+    } else {
+        std::stringstream ss;
+        unsigned int i;
+
+        for (i = 0; i < s.size(); ++i) {
+            ss << s[i];
+
+            if ((i % 2) == 1) {
+                ss << ' ';
+            }
+        }
+
+        unsigned int c;
+        const unsigned int size = s.size()/2;
+        var.data.reserve(size); // allocate all memory at once (saves much time!)
+
+        for (i = 0; i < size; ++i) {
+            ss >> std::setw(2) >> std::hex >> c;
+            var.data.push_back(c);
+        }
+    }
 }
 
 
 //! \brief extracting data into variables: different types between column
-//! 	source and target reference (no null storage)
+//!     source and target reference (no null storage)
 //!
 //! extract value and copy-construct to target type
 template< typename SOURCE, typename TARGET >
 struct StoreField {
-	static void store( const pqxx::result::field& f, TARGET& target) {
-		DATABASE_INTERFACE_TRACE_CONVERSION(f.c_str());
+    static void store(const pqxx::result::field &f, TARGET &target) {
+        DATABASE_INTERFACE_TRACE_CONVERSION(f.c_str());
 
-		if( f.is_null() ) {
-			UNRESOLVABLE_NULL_STORAGE;
-		}
+        if (f.is_null()) {
+            UNRESOLVABLE_NULL_STORAGE;
+        }
 
-		SOURCE temp;
-		ExtractField(f, temp);
+        SOURCE temp;
+        ExtractField(f, temp);
 
-		target = TARGET(temp);
-	}
+        target = TARGET(temp);
+    }
 };
 //! \brief extracting data into variables: different types between column
-//! 	source and target reference (with null storage)
+//!     source and target reference (with null storage)
 //!
 //! extract value and copy-construct to target type
 template< typename SOURCE, typename TARGET >
 struct StoreField< SOURCE, isnull<TARGET> > {
-	static void store( const pqxx::result::field& f, isnull<TARGET>& target) {
-		DATABASE_INTERFACE_TRACE_CONVERSION(f.c_str());
+    static void store(const pqxx::result::field &f, isnull<TARGET>& target) {
+        DATABASE_INTERFACE_TRACE_CONVERSION(f.c_str());
 
-		if( f.is_null() ) {
-			target.var = true;
-		} else {
-			target.var = false;
-			SOURCE temp;
-			ExtractField(f, temp);
+        if (f.is_null()) {
+            target.var = true;
+        } else {
+            target.var = false;
+            SOURCE temp;
+            ExtractField(f, temp);
 
-			target.ref = TARGET(temp);
-		}
-	}
+            target.ref = TARGET(temp);
+        }
+    }
 };
 //! \brief extracting data into variables: same types between column
-//! 	source and target reference (without null storage)
+//!     source and target reference (without null storage)
 template< typename TARGET >
 struct StoreField< TARGET, TARGET> {
-	static void store( const pqxx::result::field& f, TARGET& target) {
-		DATABASE_INTERFACE_TRACE_CONVERSION(f.c_str());
+    static void store(const pqxx::result::field &f, TARGET &target) {
+        DATABASE_INTERFACE_TRACE_CONVERSION(f.c_str());
 
-		if( f.is_null() ) {
-			UNRESOLVABLE_NULL_STORAGE;
-		}
-		ExtractField(f, target);
-	}
+        if (f.is_null()) {
+            UNRESOLVABLE_NULL_STORAGE;
+        }
+
+        ExtractField(f, target);
+    }
 };
 
 
 //! \brief extracting data into variables: different types between column
-//! 	source and target reference (no null storage)
+//!     source and target reference (no null storage)
 //!
 //! extract value and copy-construct to target type
 template< typename SOURCE, typename TARGET, typename VALUETYPE >
 struct StoreFieldAppend {
-	static void store( const pqxx::result::field& f, TARGET& target) {
-		DATABASE_INTERFACE_TRACE_CONVERSION(f.c_str());
+    static void store(const pqxx::result::field &f, TARGET &target) {
+        DATABASE_INTERFACE_TRACE_CONVERSION(f.c_str());
 
-		if( f.is_null() ) {
-			UNRESOLVABLE_NULL_STORAGE;
-		}
+        if (f.is_null()) {
+            UNRESOLVABLE_NULL_STORAGE;
+        }
 
-		SOURCE temp;
-		std::back_insert_iterator<TARGET> it(target);
-		ExtractField(f, temp);
+        SOURCE temp;
+        std::back_insert_iterator<TARGET> it(target);
+        ExtractField(f, temp);
 
-		*it = VALUETYPE(temp);
-	}
+        *it = VALUETYPE(temp);
+    }
 };
 //! \brief extracting data into variables: different types between column
-//! 	source and target reference (with null storage)
+//!     source and target reference (with null storage)
 //!
 //! extract value and copy-construct to target type
 template< typename SOURCE, typename TARGET, typename VALUETYPE >
 struct StoreFieldAppend< SOURCE, isnull_vector<TARGET>, VALUETYPE > {
-	static void store( const pqxx::result::field& f, isnull_vector<TARGET>& target) {
-		DATABASE_INTERFACE_TRACE_CONVERSION(f.c_str());
+    static void store(const pqxx::result::field &f, isnull_vector<TARGET>& target) {
+        DATABASE_INTERFACE_TRACE_CONVERSION(f.c_str());
 
-		if( f.is_null() ) {
-			target.var.push_back(true);
-			target.ref.push_back(VALUETYPE());
-		} else {
-			target.var.push_back(false);
+        if (f.is_null()) {
+            target.var.push_back(true);
+            target.ref.push_back(VALUETYPE());
+        } else {
+            target.var.push_back(false);
 
-			SOURCE temp;
-			std::back_insert_iterator<TARGET> it(target.ref);
-			ExtractField(f, temp);
+            SOURCE temp;
+            std::back_insert_iterator<TARGET> it(target.ref);
+            ExtractField(f, temp);
 
-			*it = VALUETYPE(temp);
-		}
-	}
+            *it = VALUETYPE(temp);
+        }
+    }
 };
 
 //! \brief debugging function
-void trace_result(pqxx::result& res);
+void trace_result(pqxx::result &res);
 
 //! \brief termination function for ApplyResultOne
 template< int field >
-void ApplyResultOne(pqxx::result& res) {}
+void ApplyResultOne(pqxx::result &res) {}
 
 //! \brief apply the current field of the result
 //!    to the first destination storage variable
 #define DATABASE_INTERFACE_CREATE_TEMPLATE_SOURCE(z,para,data) \
-	, SOURCE ## para
+    , SOURCE ## para
 #define DATABASE_INTERFACE_CREATE_TEMPLATE_PARAM(z,para,data) \
-	, target ## para
+    , target ## para
 #define DATABASE_INTERFACE_CREATE_TEMPLATE(z,params,data) \
-	template< int field, \
-	BOOST_PP_ENUM_PARAMS(params, typename SOURCE), \
-	BOOST_PP_ENUM_PARAMS(params, typename TARGET) > \
-	void ApplyResultOne(pqxx::result& res, \
-	                    BOOST_PP_ENUM_BINARY_PARAMS(params, TARGET, & target)) { \
-		StoreField< SOURCE0, TARGET0 >::store(res.at(0).at(field), target0); \
-		ApplyResultOne<field+1 \
-		BOOST_PP_REPEAT_FROM_TO(1,params,DATABASE_INTERFACE_CREATE_TEMPLATE_SOURCE,0) \
-		>(res BOOST_PP_REPEAT_FROM_TO(1,params,DATABASE_INTERFACE_CREATE_TEMPLATE_PARAM,0)); \
-	}
+    template< int field, \
+    BOOST_PP_ENUM_PARAMS(params, typename SOURCE), \
+    BOOST_PP_ENUM_PARAMS(params, typename TARGET) > \
+    void ApplyResultOne(pqxx::result& res, \
+                        BOOST_PP_ENUM_BINARY_PARAMS(params, TARGET, & target)) { \
+        StoreField< SOURCE0, TARGET0 >::store(res.at(0).at(field), target0); \
+        ApplyResultOne<field+1 \
+        BOOST_PP_REPEAT_FROM_TO(1,params,DATABASE_INTERFACE_CREATE_TEMPLATE_SOURCE,0) \
+        >(res BOOST_PP_REPEAT_FROM_TO(1,params,DATABASE_INTERFACE_CREATE_TEMPLATE_PARAM,0)); \
+    }
 BOOST_PP_REPEAT_FROM_TO(1, DATABASE_INTERFACE_SELECT_MAX_ARITY, DATABASE_INTERFACE_CREATE_TEMPLATE, 0)
 #undef DATABASE_INTERFACE_CREATE_TEMPLATE
 #undef DATABASE_INTERFACE_CREATE_TEMPLATE_SOURCE
@@ -546,50 +559,50 @@ BOOST_PP_REPEAT_FROM_TO(1, DATABASE_INTERFACE_SELECT_MAX_ARITY, DATABASE_INTERFA
 //! select< coltype1, coltype2 >( trns, targetref1, targetref2, query )
 //!
 //! \returns
-//! 	number of rows in result
+//!     number of rows in result
 #define DATABASE_INTERFACE_CREATE_TEMPLATE(z,params,data) \
-	template< \
-	BOOST_PP_ENUM_PARAMS(params, typename SOURCE), \
-	BOOST_PP_ENUM_PARAMS(params, typename TARGET) > \
-	int select( \
-	            ::di::postgres::transaction_parent& trns, \
-	            BOOST_PP_ENUM_BINARY_PARAMS(params, TARGET, & _param), \
-	            std::string& query) { \
-		DATABASE_INTERFACE_TRACE_QUERY(query); \
-		pqxx::result res = trns.exec(query); \
-		trace_result(res); \
-		if( res.size() > 0 ) \
-			ApplyResultOne< 0, BOOST_PP_ENUM_PARAMS(params, SOURCE) >( \
-			        res, \
-			        BOOST_PP_ENUM_PARAMS(params, _param)); \
-		return res.size(); \
-	}
+    template< \
+    BOOST_PP_ENUM_PARAMS(params, typename SOURCE), \
+    BOOST_PP_ENUM_PARAMS(params, typename TARGET) > \
+    int select( \
+                ::di::postgres::transaction_parent& trns, \
+                BOOST_PP_ENUM_BINARY_PARAMS(params, TARGET, & _param), \
+                std::string& query) { \
+        DATABASE_INTERFACE_TRACE_QUERY(query); \
+        pqxx::result res = trns.exec(query); \
+        trace_result(res); \
+        if( res.size() > 0 ) \
+            ApplyResultOne< 0, BOOST_PP_ENUM_PARAMS(params, SOURCE) >( \
+                    res, \
+                    BOOST_PP_ENUM_PARAMS(params, _param)); \
+        return res.size(); \
+    }
 BOOST_PP_REPEAT_FROM_TO(1, DATABASE_INTERFACE_SELECT_MAX_ARITY, DATABASE_INTERFACE_CREATE_TEMPLATE, 0)
 #undef DATABASE_INTERFACE_CREATE_TEMPLATE
 
 //! \brief termination function for ApplyResultAll
 template< int field >
-void ApplyResultAll(pqxx::result& res) {}
+void ApplyResultAll(pqxx::result &res) {}
 
 //! \brief apppend the current fields of the result
 //!    to the first destination storage variable array
 #define DATABASE_INTERFACE_CREATE_TEMPLATE_SOURCE(z,para,data) \
-	, SOURCE ## para
+    , SOURCE ## para
 #define DATABASE_INTERFACE_CREATE_TEMPLATE_PARAM(z,para,data) \
-	, target ## para
+    , target ## para
 #define DATABASE_INTERFACE_CREATE_TEMPLATE(z,params,data) \
-	template< int field, \
-	BOOST_PP_ENUM_PARAMS(params, typename SOURCE), \
-	BOOST_PP_ENUM_PARAMS(params, typename TARGET) > \
-	void ApplyResultAll(pqxx::result& res, \
-	                    BOOST_PP_ENUM_BINARY_PARAMS(params, TARGET, & target)) { \
-		for( pqxx::result::const_iterator it = res.begin(); it != res.end(); ++it ) { \
-			StoreFieldAppend< SOURCE0, TARGET0, typename TARGET0::value_type >::store(it->at(field), target0); \
-		} \
-		ApplyResultAll<field+1 \
-		BOOST_PP_REPEAT_FROM_TO(1,params,DATABASE_INTERFACE_CREATE_TEMPLATE_SOURCE,0) \
-		>(res BOOST_PP_REPEAT_FROM_TO(1,params,DATABASE_INTERFACE_CREATE_TEMPLATE_PARAM,0)); \
-	}
+    template< int field, \
+    BOOST_PP_ENUM_PARAMS(params, typename SOURCE), \
+    BOOST_PP_ENUM_PARAMS(params, typename TARGET) > \
+    void ApplyResultAll(pqxx::result& res, \
+                        BOOST_PP_ENUM_BINARY_PARAMS(params, TARGET, & target)) { \
+        for( pqxx::result::const_iterator it = res.begin(); it != res.end(); ++it ) { \
+            StoreFieldAppend< SOURCE0, TARGET0, typename TARGET0::value_type >::store(it->at(field), target0); \
+        } \
+        ApplyResultAll<field+1 \
+        BOOST_PP_REPEAT_FROM_TO(1,params,DATABASE_INTERFACE_CREATE_TEMPLATE_SOURCE,0) \
+        >(res BOOST_PP_REPEAT_FROM_TO(1,params,DATABASE_INTERFACE_CREATE_TEMPLATE_PARAM,0)); \
+    }
 BOOST_PP_REPEAT_FROM_TO(1, DATABASE_INTERFACE_SELECT_MAX_ARITY, DATABASE_INTERFACE_CREATE_TEMPLATE, 0)
 #undef DATABASE_INTERFACE_CREATE_TEMPLATE
 #undef DATABASE_INTERFACE_CREATE_TEMPLATE_SOURCE
@@ -601,48 +614,48 @@ BOOST_PP_REPEAT_FROM_TO(1, DATABASE_INTERFACE_SELECT_MAX_ARITY, DATABASE_INTERFA
 //! select< coltype1, coltype2 >( trns, targetlistref1, targetlistref2, query )
 //!
 //! \returns
-//! 	number of rows in result
+//!     number of rows in result
 #define DATABASE_INTERFACE_CREATE_TEMPLATE(z,params,data) \
-	template< \
-	BOOST_PP_ENUM_PARAMS(params, typename SOURCE), \
-	BOOST_PP_ENUM_PARAMS(params, typename TARGET) > \
-	int select_all( \
-	                ::di::postgres::transaction_parent& trns, \
-	                BOOST_PP_ENUM_BINARY_PARAMS(params, TARGET, & _param), \
-	                std::string& query) { \
-		DATABASE_INTERFACE_TRACE_QUERY(query); \
-		pqxx::result res = trns.exec(query); \
-		trace_result(res); \
-		if( res.size() > 0 ) \
-			ApplyResultAll< 0, BOOST_PP_ENUM_PARAMS(params, SOURCE) >( \
-			        res, \
-			        BOOST_PP_ENUM_PARAMS(params, _param)); \
-		return res.size(); \
-	}
+    template< \
+    BOOST_PP_ENUM_PARAMS(params, typename SOURCE), \
+    BOOST_PP_ENUM_PARAMS(params, typename TARGET) > \
+    int select_all( \
+                    ::di::postgres::transaction_parent& trns, \
+                    BOOST_PP_ENUM_BINARY_PARAMS(params, TARGET, & _param), \
+                    std::string& query) { \
+        DATABASE_INTERFACE_TRACE_QUERY(query); \
+        pqxx::result res = trns.exec(query); \
+        trace_result(res); \
+        if( res.size() > 0 ) \
+            ApplyResultAll< 0, BOOST_PP_ENUM_PARAMS(params, SOURCE) >( \
+                    res, \
+                    BOOST_PP_ENUM_PARAMS(params, _param)); \
+        return res.size(); \
+    }
 BOOST_PP_REPEAT_FROM_TO(1, DATABASE_INTERFACE_SELECT_MAX_ARITY, DATABASE_INTERFACE_CREATE_TEMPLATE, 0)
 #undef DATABASE_INTERFACE_CREATE_TEMPLATE
 
 
 //! \brief termination function for InsertColumns
 template< int field >
-std::string InsertColumns(di::postgres::Transaction& trns) {
-	return "";
+std::string InsertColumns(di::postgres::Transaction &trns) {
+    return "";
 }
 
 //! \brief postgres specific insert query builder
 //!
 //! build query for first column and call recursively
 #define DATABASE_INTERFACE_CREATE_TEMPLATE_PARAM(z,para,data) \
-	, target ## para
+    , target ## para
 #define DATABASE_INTERFACE_CREATE_TEMPLATE(z,params,data) \
-	template< int field, \
-	BOOST_PP_ENUM_PARAMS(params, typename SOURCE) > \
-	std::string InsertColumns(di::postgres::Transaction& trns, BOOST_PP_ENUM_BINARY_PARAMS(params, const SOURCE,& target) ) { \
-		std::string ret; \
-		if( field != 0 ) ret += ", "; \
-		ret += trns.quote(target0); \
-		return ret + InsertColumns<field+1>(trns BOOST_PP_REPEAT_FROM_TO(1,params,DATABASE_INTERFACE_CREATE_TEMPLATE_PARAM,0) ); \
-	}
+    template< int field, \
+    BOOST_PP_ENUM_PARAMS(params, typename SOURCE) > \
+    std::string InsertColumns(di::postgres::Transaction& trns, BOOST_PP_ENUM_BINARY_PARAMS(params, const SOURCE,& target) ) { \
+        std::string ret; \
+        if( field != 0 ) ret += ", "; \
+        ret += trns.quote(target0); \
+        return ret + InsertColumns<field+1>(trns BOOST_PP_REPEAT_FROM_TO(1,params,DATABASE_INTERFACE_CREATE_TEMPLATE_PARAM,0) ); \
+    }
 BOOST_PP_REPEAT_FROM_TO(1, DATABASE_INTERFACE_SELECT_MAX_ARITY, DATABASE_INTERFACE_CREATE_TEMPLATE, 0)
 #undef DATABASE_INTERFACE_CREATE_TEMPLATE
 #undef DATABASE_INTERFACE_CREATE_TEMPLATE_SOURCE
@@ -655,20 +668,20 @@ BOOST_PP_REPEAT_FROM_TO(1, DATABASE_INTERFACE_SELECT_MAX_ARITY, DATABASE_INTERFA
 //! insert( trns, srcval1, srcval2, query )
 //!
 //! \returns
-//! 	number of rows affected
+//!     number of rows affected
 #define DATABASE_INTERFACE_CREATE_TEMPLATE(z,params,data) \
-	template< BOOST_PP_ENUM_PARAMS(params, typename SOURCE) > \
-	int insert( \
-	            ::di::postgres::Transaction& trns, \
-	            BOOST_PP_ENUM_BINARY_PARAMS(params, const SOURCE, & _param), \
-	            std::string& query) { \
-		query += " VALUES (" + ::di::postgres::InsertColumns<0>(trns, \
-		         BOOST_PP_ENUM_PARAMS(params, _param)) + ")"; \
-		DATABASE_INTERFACE_TRACE_QUERY(query); \
-		pqxx::result res = trns.trns->exec(query); \
-		trace_result(res); \
-		return res.affected_rows(); \
-	}
+    template< BOOST_PP_ENUM_PARAMS(params, typename SOURCE) > \
+    int insert( \
+                ::di::postgres::Transaction& trns, \
+                BOOST_PP_ENUM_BINARY_PARAMS(params, const SOURCE, & _param), \
+                std::string& query) { \
+        query += " VALUES (" + ::di::postgres::InsertColumns<0>(trns, \
+                 BOOST_PP_ENUM_PARAMS(params, _param)) + ")"; \
+        DATABASE_INTERFACE_TRACE_QUERY(query); \
+        pqxx::result res = trns.trns->exec(query); \
+        trace_result(res); \
+        return res.affected_rows(); \
+    }
 BOOST_PP_REPEAT_FROM_TO(1, DATABASE_INTERFACE_SELECT_MAX_ARITY, DATABASE_INTERFACE_CREATE_TEMPLATE, 0)
 #undef DATABASE_INTERFACE_CREATE_TEMPLATE
 
@@ -680,18 +693,18 @@ BOOST_PP_REPEAT_FROM_TO(1, DATABASE_INTERFACE_SELECT_MAX_ARITY, DATABASE_INTERFA
 //! allows transparent ::di::select(trns,...,qry)
 //! and easy exchange of transaction (different dbms)
 #define DATABASE_INTERFACE_CREATE_TEMPLATE(z,params,data) \
-	template< \
-	BOOST_PP_ENUM_PARAMS(params, typename SOURCE), \
-	BOOST_PP_ENUM_PARAMS(params, typename TARGET) > \
-	int select( \
-	            ::di::postgres::Transaction& trns, \
-	            BOOST_PP_ENUM_BINARY_PARAMS(params, TARGET, & _param), \
-	            std::string query) { \
-		return ::di::postgres::select< BOOST_PP_ENUM_PARAMS(params, SOURCE) >( \
-		        trns, \
-		        BOOST_PP_ENUM_PARAMS(params, _param), \
-		        query); \
-	}
+    template< \
+    BOOST_PP_ENUM_PARAMS(params, typename SOURCE), \
+    BOOST_PP_ENUM_PARAMS(params, typename TARGET) > \
+    int select( \
+                ::di::postgres::Transaction& trns, \
+                BOOST_PP_ENUM_BINARY_PARAMS(params, TARGET, & _param), \
+                std::string query) { \
+        return ::di::postgres::select< BOOST_PP_ENUM_PARAMS(params, SOURCE) >( \
+                trns, \
+                BOOST_PP_ENUM_PARAMS(params, _param), \
+                query); \
+    }
 BOOST_PP_REPEAT_FROM_TO(1, DATABASE_INTERFACE_SELECT_MAX_ARITY, DATABASE_INTERFACE_CREATE_TEMPLATE, 0)
 #undef DATABASE_INTERFACE_CREATE_TEMPLATE
 
@@ -700,18 +713,18 @@ BOOST_PP_REPEAT_FROM_TO(1, DATABASE_INTERFACE_SELECT_MAX_ARITY, DATABASE_INTERFA
 //! allows transparent ::di::select_all(trns,...,qry)
 //! and easy exchange of transaction (different dbms)
 #define DATABASE_INTERFACE_CREATE_TEMPLATE(z,params,data) \
-	template< \
-	BOOST_PP_ENUM_PARAMS(params, typename SOURCE), \
-	BOOST_PP_ENUM_PARAMS(params, typename TARGET) > \
-	int select_all( \
-	                ::di::postgres::Transaction& trns, \
-	                BOOST_PP_ENUM_BINARY_PARAMS(params, TARGET, & _param), \
-	                std::string query) { \
-		return ::di::postgres::select_all< BOOST_PP_ENUM_PARAMS(params, SOURCE) >( \
-		        trns, \
-		        BOOST_PP_ENUM_PARAMS(params, _param), \
-		        query); \
-	}
+    template< \
+    BOOST_PP_ENUM_PARAMS(params, typename SOURCE), \
+    BOOST_PP_ENUM_PARAMS(params, typename TARGET) > \
+    int select_all( \
+                    ::di::postgres::Transaction& trns, \
+                    BOOST_PP_ENUM_BINARY_PARAMS(params, TARGET, & _param), \
+                    std::string query) { \
+        return ::di::postgres::select_all< BOOST_PP_ENUM_PARAMS(params, SOURCE) >( \
+                trns, \
+                BOOST_PP_ENUM_PARAMS(params, _param), \
+                query); \
+    }
 BOOST_PP_REPEAT_FROM_TO(1, DATABASE_INTERFACE_SELECT_MAX_ARITY, DATABASE_INTERFACE_CREATE_TEMPLATE, 0)
 #undef DATABASE_INTERFACE_CREATE_TEMPLATE
 
@@ -720,17 +733,17 @@ BOOST_PP_REPEAT_FROM_TO(1, DATABASE_INTERFACE_SELECT_MAX_ARITY, DATABASE_INTERFA
 //! allows transparent ::di::insert(trns,...,qry)
 //! and easy exchange of transaction (different dbms)
 #define DATABASE_INTERFACE_CREATE_TEMPLATE(z,params,data) \
-	template< \
-	BOOST_PP_ENUM_PARAMS(params, typename SOURCE) > \
-	int insert( \
-	            ::di::postgres::Transaction& trns, \
-	            BOOST_PP_ENUM_BINARY_PARAMS(params, const SOURCE, & _param), \
-	            std::string query) { \
-		return ::di::postgres::insert( \
-		                               trns, \
-		                               BOOST_PP_ENUM_PARAMS(params, _param), \
-		                               query); \
-	}
+    template< \
+    BOOST_PP_ENUM_PARAMS(params, typename SOURCE) > \
+    int insert( \
+                ::di::postgres::Transaction& trns, \
+                BOOST_PP_ENUM_BINARY_PARAMS(params, const SOURCE, & _param), \
+                std::string query) { \
+        return ::di::postgres::insert( \
+                                       trns, \
+                                       BOOST_PP_ENUM_PARAMS(params, _param), \
+                                       query); \
+    }
 BOOST_PP_REPEAT_FROM_TO(1, DATABASE_INTERFACE_SELECT_MAX_ARITY, DATABASE_INTERFACE_CREATE_TEMPLATE, 0)
 #undef DATABASE_INTERFACE_CREATE_TEMPLATE
 
@@ -738,12 +751,12 @@ BOOST_PP_REPEAT_FROM_TO(1, DATABASE_INTERFACE_SELECT_MAX_ARITY, DATABASE_INTERFA
 //!
 //! allows transparent ::di::exec(trns,qry)
 //! and easy exchange of transaction (different dbms)
-int inline exec(::di::postgres::Transaction& trns, const std::string& query) {
-	DATABASE_INTERFACE_TRACE_QUERY(query);
-	::di::postgres::transaction_parent& trn = trns;
-	pqxx::result res = trn.exec(query);
-	::di::postgres::trace_result(res);
-	return res.affected_rows();
+int inline exec(::di::postgres::Transaction &trns, const std::string &query) {
+    DATABASE_INTERFACE_TRACE_QUERY(query);
+    ::di::postgres::transaction_parent &trn = trns;
+    pqxx::result res = trn.exec(query);
+    ::di::postgres::trace_result(res);
+    return res.affected_rows();
 }
 
 } // namespace ::di

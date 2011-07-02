@@ -22,25 +22,22 @@
 #include <sstream>
 #define InitialConnection_DEBUG
 
-InitialConnection::InitialConnection() 
-{
+InitialConnection::InitialConnection() {
 #ifdef InitialConnection_DEBUG
-	std::cout << "InternetConnection Konstruktor Start\n";
+    std::cout << "InternetConnection Konstruktor Start\n";
 #endif
-        boost::thread servicethread(boost::bind(&InitialConnection::run_service,this));
+    boost::thread servicethread(boost::bind(&InitialConnection::run_service,this));
 #ifdef InitialConnection_DEBUG
-	std::cout << "InternetConnection Konstruktor Ende\n";
+    std::cout << "InternetConnection Konstruktor Ende\n";
 #endif
 }
 
 
-InitialConnection::TVECTORPLAYER& InitialConnection::get_Player_Vector()
-{
-	return playerVector;
+InitialConnection::TVECTORPLAYER &InitialConnection::get_Player_Vector() {
+    return playerVector;
 }
 
-void InitialConnection::run_service()
-{
+void InitialConnection::run_service() {
     int port;
     std::stringstream ss;
     ss << configOptions["port"];
@@ -55,39 +52,33 @@ void InitialConnection::run_service()
 }
 
 //CInternetConnection* InitialConnection::accept_connection() {
-void InitialConnection::accept_connection(boost::shared_ptr<NetInterface> connection, const boost::system::error_code& error)
-{
-    if (!error)
-    {
-        if (connection->activate())
-        {
+void InitialConnection::accept_connection(boost::shared_ptr<NetInterface> connection, const boost::system::error_code &error) {
+    if (!error) {
+        if (connection->activate()) {
             //Verbindung in die Liste aufnehmen
             playerVector.push_back(connection);
-        }
-        else
-        {
+        } else {
             std::cerr<<"Fehler bei Aktivierung der Connection"<<std::endl;
         }
+
         boost::shared_ptr<NetInterface> newConnection(new NetInterface(io_service));
         acceptor->async_accept(newConnection->getSocket(),boost::bind(&InitialConnection::accept_connection, this, newConnection, boost::asio::placeholders::error));
-    }
-    else
-    {
+    } else {
         std::cerr<<"Fehler im Accept:" << error.message() << ": " <<error.value() <<std::endl;
     }
-        
+
 }
 
 
 
 InitialConnection::~InitialConnection() {
 #ifdef InitialConnection_DEBUG
-	std::cout << "InternetConnection Destruktor Start" << std::endl;
+    std::cout << "InternetConnection Destruktor Start" << std::endl;
 #endif
-        io_service.stop();
-        delete acceptor;
-        acceptor = NULL;
+    io_service.stop();
+    delete acceptor;
+    acceptor = NULL;
 #ifdef InitialConnection_DEBUG
-	std::cout << "InternetConnection Destruktor Ende" << std::endl;
+    std::cout << "InternetConnection Destruktor Ende" << std::endl;
 #endif
 }

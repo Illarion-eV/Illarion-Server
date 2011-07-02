@@ -25,18 +25,17 @@
 class World;
 class Character;
 
-class LuaLearnScript : public LuaScript
-{
-    public:
-        LuaLearnScript(std::string filename) throw(ScriptException);
-        virtual ~LuaLearnScript() throw ();
+class LuaLearnScript : public LuaScript {
+public:
+    LuaLearnScript(std::string filename) throw(ScriptException);
+    virtual ~LuaLearnScript() throw();
 
-        void learn( Character * cc, std::string skill, uint8_t skillGroup, uint32_t actionPoints, uint8_t opponent, uint8_t leadAttrib );
-        void reduceMC( Character * cc );
-        
-    private:
-    
-	LuaLearnScript(const LuaLearnScript&);
-	LuaLearnScript& operator=(const LuaLearnScript&);
+    void learn(Character *cc, std::string skill, uint8_t skillGroup, uint32_t actionPoints, uint8_t opponent, uint8_t leadAttrib);
+    void reduceMC(Character *cc);
+
+private:
+
+    LuaLearnScript(const LuaLearnScript &);
+    LuaLearnScript &operator=(const LuaLearnScript &);
 };
 #endif

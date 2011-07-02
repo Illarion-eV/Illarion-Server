@@ -22,19 +22,19 @@
 
 class Language {
 
-	public:
-		enum LanguageType {  
-			german = 0,
-			english = 1,
-			french = 2
-		};
+public:
+    enum LanguageType {
+        german = 0,
+        english = 1,
+        french = 2
+    };
 
-	static Language* create(LanguageType);
+    static Language *create(LanguageType);
 
-	LanguageType _language;
+    LanguageType _language;
 
-	protected:
-		Language(LanguageType);
+protected:
+    Language(LanguageType);
 };
 
 #endif

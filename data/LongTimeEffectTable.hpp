@@ -47,33 +47,32 @@ class Charcter;
 * a table for long time effects which can have effects on each characters
 */
 class LongTimeEffectTable {
-	public:
-    
-        bool find(uint16_t effectId, LongTimeEffectStruct &ret);
-        bool find(std::string effectname, LongTimeEffectStruct &ret);
-    
-		LongTimeEffectTable();
+public:
 
-		~LongTimeEffectTable();
+    bool find(uint16_t effectId, LongTimeEffectStruct &ret);
+    bool find(std::string effectname, LongTimeEffectStruct &ret);
 
-		void reload();
+    LongTimeEffectTable();
 
-		inline bool dataOK() 
-        {
-			return m_dataOK;
-		}
+    ~LongTimeEffectTable();
 
-	protected:
+    void reload();
 
-		//! der Datentyp der die Tabelle aufnimmt
-		typedef hash_map < uint16_t, LongTimeEffectStruct > TABLE;
+    inline bool dataOK() {
+        return m_dataOK;
+    }
 
-		//! die Tabelle mit den eingelesenen Werten
-		TABLE m_table;
+protected:
 
-		void clearOldTable();
+    //! der Datentyp der die Tabelle aufnimmt
+    typedef hash_map < uint16_t, LongTimeEffectStruct > TABLE;
 
-		bool m_dataOK;
+    //! die Tabelle mit den eingelesenen Werten
+    TABLE m_table;
+
+    void clearOldTable();
+
+    bool m_dataOK;
 
 };
 #endif

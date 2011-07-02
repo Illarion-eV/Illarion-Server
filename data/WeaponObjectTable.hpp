@@ -44,31 +44,31 @@ class World;
 //! eine Tabelle für allgemeine Item-Eigenschaften
 class WeaponObjectTable {
 
-	public:
+public:
 
-		bool find( TYPE_OF_ITEM_ID Id, WeaponStruct &ret );
+    bool find(TYPE_OF_ITEM_ID Id, WeaponStruct &ret);
 
-		WeaponObjectTable();
+    WeaponObjectTable();
 
-		~WeaponObjectTable();
+    ~WeaponObjectTable();
 
-		void reload();
+    void reload();
 
-		inline bool dataOK() {
-			return m_dataOK;
-		}
+    inline bool dataOK() {
+        return m_dataOK;
+    }
 
-	protected:
+protected:
 
-		//! der Datentyp der die Tabelle aufnimmt
-		typedef hash_map < TYPE_OF_ITEM_ID, WeaponStruct > TABLE;
+    //! der Datentyp der die Tabelle aufnimmt
+    typedef hash_map < TYPE_OF_ITEM_ID, WeaponStruct > TABLE;
 
-		//! die Tabelle mit den eingelesenen Werten
-		TABLE m_table;
+    //! die Tabelle mit den eingelesenen Werten
+    TABLE m_table;
 
-		void clearOldTable();
+    void clearOldTable();
 
-		bool m_dataOK;
+    bool m_dataOK;
 };
 
 #endif

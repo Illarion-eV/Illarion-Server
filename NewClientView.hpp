@@ -37,129 +37,132 @@ class MapVector;
 */
 class NewClientView {
 
-	public:
-        
-        /**
-        * in which direction is the stripe
-        */
-        enum stripedirection
-        {
-            dir_right,
-	    dir_down
-        };
+public:
 
-        /**
-        * defines one mapstripe
-        */
-		typedef Field* MAPSTRIPE[ 100 /*MAP_DIMENSION + 1 + MAP_DOWN_EXTRA + 6*/ ];
+    /**
+    * in which direction is the stripe
+    */
+    enum stripedirection {
+        dir_right,
+        dir_down
+    };
 
-        /**
-        * stores the pointers to the fields inside a specific mapstripe
-        */
-        MAPSTRIPE mapStripe;
-        
-        /**
-        * returns the initial position of this stripe
-        * @return the starting position of the stripe
-        */
-        position getViewPosition(){ return viewPosition; }
-        
-        /**
-        * returns if the stripe exists
-        * @return true if the stripe exists otherwise false
-        */
-        bool getExists(){ return exists; }
-        
-        /**
-        * returns the number of tiles in the view
-        * @return the number of maximal tiles in the view
-        */
-        uint8_t getMaxTiles(){ return maxtiles; }
-        
-        /**
-        * reduces the tiles which should be sended (for smaller areas )
-        * @param number the number which should be reduced
-        */
-        inline void removeLastTiles( uint8_t number )
-        {
-	    number -= (MAP_DIMENSION + 2 - maxtiles) < number ? (MAP_DIMENSION + 2 - maxtiles) : number;
-            if ( number > 0 )
-	    {
-                if ( maxtiles <= number )
-                {
-                    maxtiles = 0;
-                    exists = false;
-                }
-                else
-                {
-                    maxtiles -= number;
-                }
+    /**
+    * defines one mapstripe
+    */
+    typedef Field *MAPSTRIPE[ 100 /*MAP_DIMENSION + 1 + MAP_DOWN_EXTRA + 6*/ ];
+
+    /**
+    * stores the pointers to the fields inside a specific mapstripe
+    */
+    MAPSTRIPE mapStripe;
+
+    /**
+    * returns the initial position of this stripe
+    * @return the starting position of the stripe
+    */
+    position getViewPosition() {
+        return viewPosition;
+    }
+
+    /**
+    * returns if the stripe exists
+    * @return true if the stripe exists otherwise false
+    */
+    bool getExists() {
+        return exists;
+    }
+
+    /**
+    * returns the number of tiles in the view
+    * @return the number of maximal tiles in the view
+    */
+    uint8_t getMaxTiles() {
+        return maxtiles;
+    }
+
+    /**
+    * reduces the tiles which should be sended (for smaller areas )
+    * @param number the number which should be reduced
+    */
+    inline void removeLastTiles(uint8_t number) {
+        number -= (MAP_DIMENSION + 2 - maxtiles) < number ? (MAP_DIMENSION + 2 - maxtiles) : number;
+
+        if (number > 0) {
+            if (maxtiles <= number) {
+                maxtiles = 0;
+                exists = false;
+            } else {
+                maxtiles -= number;
             }
         }
-        
-        /**
-        * the stripedirection, in which direction the mapstripe shows
-        * @return the current direction of the mapstripe
-        */
-        stripedirection getStripeDirection(){ return stripedir; }
-        
-        /**
-        * constructor
-        */
-		NewClientView();
+    }
 
-		/**
-        * destructor
-        */
-		~NewClientView();
+    /**
+    * the stripedirection, in which direction the mapstripe shows
+    * @return the current direction of the mapstripe
+    */
+    stripedirection getStripeDirection() {
+        return stripedir;
+    }
 
-        /**
-        * fills the stripe with the specific isometric data
-        * @param pos the starting position of the stripe
-        * @param dir the direction in which the stipe looks
-	* @param length number of tiles to be read
-        * @param maps the maps from which we want to calculate the stripes
-        */
-        void fillStripe(position pos, stripedirection dir, int length, MapVector * maps);
-        
-        /**
-        * clears all current stripe infos
-        */
-		void clearStripe();
+    /**
+    * constructor
+    */
+    NewClientView();
 
-	private:
-    
-        /**
-        * reads all fields for the current stripe on a specific map from startingpos towards direction stripedir 
-	* @param length number of tiles to be read
-        * @param maps the map vector from which we want to read the fields
-        */
-        void readFields( int length, MapVector * maps);
-        
-        /**
-        * the starting position of the current view
-        */
-        position viewPosition;
-        
-        /**
-        * if there is a view stripe
-        */
-        bool exists;
-        
-        /**
-        * which direction do we read
-        */
-        stripedirection stripedir;
-        
-        /**
-        * how many tiles are stored
-        */
-        uint8_t maxtiles;
-        
-        /**
-        * pointer to a temporary field
-        */
-		Field* tempCField;
+    /**
+    * destructor
+    */
+    ~NewClientView();
+
+    /**
+    * fills the stripe with the specific isometric data
+    * @param pos the starting position of the stripe
+    * @param dir the direction in which the stipe looks
+        * @param length number of tiles to be read
+    * @param maps the maps from which we want to calculate the stripes
+    */
+    void fillStripe(position pos, stripedirection dir, int length, MapVector *maps);
+
+    /**
+    * clears all current stripe infos
+    */
+    void clearStripe();
+
+private:
+
+    /**
+    * reads all fields for the current stripe on a specific map from startingpos towards direction stripedir
+        * @param length number of tiles to be read
+    * @param maps the map vector from which we want to read the fields
+    */
+    void readFields(int length, MapVector *maps);
+
+    /**
+    * the starting position of the current view
+    */
+    position viewPosition;
+
+    /**
+    * if there is a view stripe
+    */
+    bool exists;
+
+    /**
+    * which direction do we read
+    */
+    stripedirection stripedir;
+
+    /**
+    * how many tiles are stored
+    */
+    uint8_t maxtiles;
+
+    /**
+    * pointer to a temporary field
+    */
+    Field *tempCField;
 
 };
 

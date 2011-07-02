@@ -40,26 +40,25 @@ using std::hash_map;
 class BasicClientCommand;
 
 /**
-*factory class which holds templates of BasicServerCommand classes 
+*factory class which holds templates of BasicServerCommand classes
 *an returns an empty command given by an id
 */
-class CommandFactory
-{
-    public:
+class CommandFactory {
+public:
 
     CommandFactory();
     ~CommandFactory();
-    
+
     /**
     *returns a pointer to an emtpy Server Command
     *@param commandId the id of the command which we want to use
     *@return a pointer to an empty command with the given commandId
     */
-    boost::shared_ptr<BasicClientCommand> getCommand( unsigned char commandId );
-    
-    private:
-    
-    typedef hash_map< unsigned char, BasicClientCommand*> OMMANDLIST;
+    boost::shared_ptr<BasicClientCommand> getCommand(unsigned char commandId);
+
+private:
+
+    typedef hash_map< unsigned char, BasicClientCommand *> OMMANDLIST;
     OMMANDLIST templateList; /*<the list which holds the templates for the concrete classes*/
 
 };

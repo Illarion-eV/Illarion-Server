@@ -26,8 +26,7 @@
 #include "Connection.hpp"
 #include "netinterface/NetInterface.hpp"
 
-BasicServerCommand::BasicServerCommand( unsigned char defByte ) : BasicCommand(defByte)
-{
+BasicServerCommand::BasicServerCommand(unsigned char defByte) : BasicCommand(defByte) {
     STDBUFFERSIZE = 1000;
     bufferPos=0;
     bufferSizeMod=1;
@@ -35,14 +34,13 @@ BasicServerCommand::BasicServerCommand( unsigned char defByte ) : BasicCommand(d
     buffer = new char[STDBUFFERSIZE];
     this->addUnsignedCharToBuffer(getDefinitionByte());
     this->addUnsignedCharToBuffer(getDefinitionByte() xor static_cast<unsigned char>(255));
-    this->addShortIntToBuffer( 0 ); //<- dummy for the length
-    this->addShortIntToBuffer( 0 ); //<- dummy for the checksum
+    this->addShortIntToBuffer(0);   //<- dummy for the length
+    this->addShortIntToBuffer(0);   //<- dummy for the checksum
     checkSum = 0;
 }
 
 
-BasicServerCommand::BasicServerCommand( unsigned char defByte , uint16_t bsize) : BasicCommand(defByte)
-{
+BasicServerCommand::BasicServerCommand(unsigned char defByte , uint16_t bsize) : BasicCommand(defByte) {
     STDBUFFERSIZE = bsize;
     bufferPos=0;
     bufferSizeMod=1;
@@ -50,92 +48,88 @@ BasicServerCommand::BasicServerCommand( unsigned char defByte , uint16_t bsize) 
     buffer = new char[STDBUFFERSIZE];
     this->addUnsignedCharToBuffer(getDefinitionByte());
     this->addUnsignedCharToBuffer(getDefinitionByte() xor static_cast<unsigned char>(255));
-    this->addShortIntToBuffer( 0 ); //<- dummy for the length
-    this->addShortIntToBuffer( 0 ); //<- dummy for the checksum  
+    this->addShortIntToBuffer(0);   //<- dummy for the length
+    this->addShortIntToBuffer(0);   //<- dummy for the checksum
     checkSum = 0;
 }
 
-BasicServerCommand::~BasicServerCommand()
-{
+BasicServerCommand::~BasicServerCommand() {
     delete[] buffer;
     buffer = NULL;
 }
 
-void BasicServerCommand::addHeader()
-{
+void BasicServerCommand::addHeader() {
     //at place 2 and 3 add the length
-    if ( bufferPos >= 6 ) //check if the buffer is large enough to add the data
-    {
-        int16_t crc = static_cast<int16_t>( checkSum % 0xFFFF );
-        buffer[2] = ( (bufferPos-6) >> 8 );
-        buffer[3] = ( (bufferPos-6) & 255 );
-        buffer[4] = ( crc >> 8 );
-        buffer[5] = ( crc & 255 );
+    if (bufferPos >= 6) { //check if the buffer is large enough to add the data
+        int16_t crc = static_cast<int16_t>(checkSum % 0xFFFF);
+        buffer[2] = ((bufferPos-6) >> 8);
+        buffer[3] = ((bufferPos-6) & 255);
+        buffer[4] = (crc >> 8);
+        buffer[5] = (crc & 255);
     }
 }
 
-int BasicServerCommand::getLength()
-{
+int BasicServerCommand::getLength() {
     return bufferPos;
 }
 
-char * BasicServerCommand::cmdData()
-{
+char *BasicServerCommand::cmdData() {
     return buffer;
 
 }
 
-void BasicServerCommand::addStringToBuffer( std::string data )
-{
+void BasicServerCommand::addStringToBuffer(std::string data) {
     unsigned short int count = data.length();
-    
-    if ( count > 254 ) count = 254; 
-    addUnsignedCharToBuffer( static_cast<unsigned char>(count) );
-    
-    for ( unsigned short int i = 0; i < count; ++i)
-    {
-        addUnsignedCharToBuffer( data.at(i) );
+
+    if (count > 254) {
+        count = 254;
+    }
+
+    addUnsignedCharToBuffer(static_cast<unsigned char>(count));
+
+    for (unsigned short int i = 0; i < count; ++i) {
+        addUnsignedCharToBuffer(data.at(i));
     }
 }
 
-void BasicServerCommand::addIntToBuffer( int data )
-{
-    addUnsignedCharToBuffer( (data >> 24) );
-    addUnsignedCharToBuffer( ((data >> 16) & 255) );
-    addUnsignedCharToBuffer( ((data >> 8) & 255) );
-    addUnsignedCharToBuffer( (data & 255) );    
-}
-    
-void BasicServerCommand::addShortIntToBuffer( short int data )
-{
-    addUnsignedCharToBuffer( (data >> 8) );
-    addUnsignedCharToBuffer( (data & 255) );
+void BasicServerCommand::addIntToBuffer(int data) {
+    addUnsignedCharToBuffer((data >> 24));
+    addUnsignedCharToBuffer(((data >> 16) & 255));
+    addUnsignedCharToBuffer(((data >> 8) & 255));
+    addUnsignedCharToBuffer((data & 255));
 }
 
-void BasicServerCommand::addUnsignedCharToBuffer( unsigned char data )
-{
+void BasicServerCommand::addShortIntToBuffer(short int data) {
+    addUnsignedCharToBuffer((data >> 8));
+    addUnsignedCharToBuffer((data & 255));
+}
+
+void BasicServerCommand::addUnsignedCharToBuffer(unsigned char data) {
     //resize the buffer if there is not enough place to store
-    if ( (bufferPos+1) >= (bufferSizeMod*STDBUFFERSIZE) ) resizeBuffer();
-    assert( bufferPos < (bufferSizeMod*STDBUFFERSIZE) );
+    if ((bufferPos+1) >= (bufferSizeMod*STDBUFFERSIZE)) {
+        resizeBuffer();
+    }
+
+    assert(bufferPos < (bufferSizeMod*STDBUFFERSIZE));
     buffer[ bufferPos ] = data;
     checkSum+=data; //add the data to the checksum
     bufferPos++;
 }
 
-void BasicServerCommand::resizeBuffer()
-{
+void BasicServerCommand::resizeBuffer() {
     std::cout<<"not enough memory resizing the sendbuffer"<<std::endl;
     //increase the buffer size modifikator
     bufferSizeMod++;
     //store old data in temp
-    char * temp = buffer;
+    char *temp = buffer;
     //resize buffer
     buffer = new char[bufferSizeMod*STDBUFFERSIZE];
+
     //save data back to the buffer
-    for ( uint32_t i = 0; i<bufferPos; ++i)
-    {
+    for (uint32_t i = 0; i<bufferPos; ++i) {
         buffer[i] = temp[i];
     }
+
     //delete the temp buffer;
     delete[] temp;
     temp = NULL;

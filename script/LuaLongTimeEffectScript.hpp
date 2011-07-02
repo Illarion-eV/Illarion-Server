@@ -28,39 +28,38 @@ class Character;
 class LongTimeEffect;
 class Player;
 
-class LuaLongTimeEffectScript : public LuaScript 
-{
-	public:
-		LuaLongTimeEffectScript(std::string filename, LongTimeEffectStruct effectStruct) throw(ScriptException);
-		virtual ~LuaLongTimeEffectScript() throw();
-		
-		/**
-        *calling the long time effect in a script
-        *@param effect the current effect 
-        *@param taget the character which is hidden by the effect
-        *@return true if the effect should be added to the effectlist again
-        */
-        bool callEffect(LongTimeEffect * effect, Character * target);
+class LuaLongTimeEffectScript : public LuaScript {
+public:
+    LuaLongTimeEffectScript(std::string filename, LongTimeEffectStruct effectStruct) throw(ScriptException);
+    virtual ~LuaLongTimeEffectScript() throw();
 
-        /**
-        *invoked if a effect which exists on a player should be added again
-        *@param effect the effect which is currently active
-        *@param target the character which should get the effect again
-        */
-        void doubleEffect(LongTimeEffect * effect, Character * target);
-        
-        /**
-        *invoked if a effect is loaded to a player
-        */
-        void loadEffect(LongTimeEffect * effect, Player * target);
-        
-        void addEffect(LongTimeEffect * effect, Character * target);
-        void removeEffect(LongTimeEffect * effect, Character * target);
-        
-	private:
-		LongTimeEffectStruct _effectStruct;
-		LuaLongTimeEffectScript(const LuaItemScript&);
-		LuaLongTimeEffectScript& operator=(const LuaLongTimeEffectScript&);
-		void init_functions();
+    /**
+    *calling the long time effect in a script
+    *@param effect the current effect
+    *@param taget the character which is hidden by the effect
+    *@return true if the effect should be added to the effectlist again
+    */
+    bool callEffect(LongTimeEffect *effect, Character *target);
+
+    /**
+    *invoked if a effect which exists on a player should be added again
+    *@param effect the effect which is currently active
+    *@param target the character which should get the effect again
+    */
+    void doubleEffect(LongTimeEffect *effect, Character *target);
+
+    /**
+    *invoked if a effect is loaded to a player
+    */
+    void loadEffect(LongTimeEffect *effect, Player *target);
+
+    void addEffect(LongTimeEffect *effect, Character *target);
+    void removeEffect(LongTimeEffect *effect, Character *target);
+
+private:
+    LongTimeEffectStruct _effectStruct;
+    LuaLongTimeEffectScript(const LuaItemScript &);
+    LuaLongTimeEffectScript &operator=(const LuaLongTimeEffectScript &);
+    void init_functions();
 };
 #endif

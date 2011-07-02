@@ -63,8 +63,7 @@ bool importmaps;
 /*
 learn, bbiwi, basic, schedscripts, Spawn, World_Debug, World_Imports, World, World_Inits, Monster , Player_Moves, Casting, Use, Use_Scripts
 */
-void InitLogOptions()
-{
+void InitLogOptions() {
     Logger::activateLog("basic");
     Logger::activateLog("World_Inits");
     Logger::activateLog("World");
@@ -75,38 +74,41 @@ void InitLogOptions()
 std::ofstream kill_log;
 
 //! Die Initialisierung des Servers mit Daten aus einer Datei
-bool Init( const std::string& initfile) {
-	// first we try to open the file
-	std::ifstream configfile(initfile.c_str());
+bool Init(const std::string &initfile) {
+    // first we try to open the file
+    std::ifstream configfile(initfile.c_str());
 
-	// can't read config file
-	if ( !configfile.good() )
-		return false;
+    // can't read config file
+    if (!configfile.good()) {
+        return false;
+    }
 
-	std::string temp;
-	char buf[255];
+    std::string temp;
+    char buf[255];
 
-	// read first token of a line while there are any tokens left...
-	while ( configfile >> temp && ! configfile.eof() ) {
+    // read first token of a line while there are any tokens left...
+    while (configfile >> temp && ! configfile.eof()) {
 
-		if (temp[0] == '#') {
-			// we found a comment... skip line
-			configfile.ignore(255,'\n'); // ignore up to 255 chars until \n is found
-			continue;
-		}
+        if (temp[0] == '#') {
+            // we found a comment... skip line
+            configfile.ignore(255,'\n'); // ignore up to 255 chars until \n is found
+            continue;
+        }
 
-		// store config options in map
-		configfile.ignore(1); // ignore the blank char following the token
-		configfile.getline(buf, 255, '\n');
-		configOptions[temp] = buf;
-		if ( !configfile.good() )
-			return false;
+        // store config options in map
+        configfile.ignore(1); // ignore the blank char following the token
+        configfile.getline(buf, 255, '\n');
+        configOptions[temp] = buf;
 
-		std::stringstream stream;
+        if (!configfile.good()) {
+            return false;
+        }
 
-	}
+        std::stringstream stream;
 
-	return true;
+    }
+
+    return true;
 }
 
 #include "Player.hpp"
@@ -121,43 +123,43 @@ std::vector<int>* erasedcontainers;
 std::vector<position>* contpos;
 
 //! eine Tabelle mit den Rassenspezifischen Angriffswerten
-MonsterAttackTable* MonsterAttacks;
+MonsterAttackTable *MonsterAttacks;
 
 //! eine Tabelle mit Rassenspezifischen R�stwerten
-NaturalArmorTable* NaturalArmors;
+NaturalArmorTable *NaturalArmors;
 
 //! eine Tabelle mit den allgemeinen Attributen der Item
-CommonObjectTable* CommonItems;
+CommonObjectTable *CommonItems;
 
 //! eine Tabelle mit den Namen der Item
-NamesObjectTable* ItemNames;
+NamesObjectTable *ItemNames;
 
 //! eine Tabelle f�r Waffen - Item Daten
-WeaponObjectTable* WeaponItems;
+WeaponObjectTable *WeaponItems;
 
 //! eine Tabelle f�r Schutzkleidungs - Item Daten
-ArmorObjectTable* ArmorItems;
+ArmorObjectTable *ArmorItems;
 
 //! eine Tabelle f�r Beh�lter - Item Daten
-ContainerObjectTable* ContainerItems;
+ContainerObjectTable *ContainerItems;
 
 //! eine Tabelle f�r die Zauberspr�che - Spells
-SpellTable* Spells;
+SpellTable *Spells;
 
 //! a Table with Scheduled Scripts
-ScheduledScriptsTable* ScheduledScripts;
+ScheduledScriptsTable *ScheduledScripts;
 
 //! Eine Tabelle mit Triggerfeldern
-TriggerTable* Triggers;
+TriggerTable *Triggers;
 
 //! eine Tabelle mit Item welche die Eigenschaften des Feldes auf dem sie liegen modifizieren
-TilesModificatorTable* TilesModItems;
+TilesModificatorTable *TilesModItems;
 
 //! eine Tabelle mit allen Arten von Bodenplatten
-TilesTable* Tiles;
+TilesTable *Tiles;
 
 //! a table containing monster descriptions
-MonsterTable* MonsterDescriptions;
+MonsterTable *MonsterDescriptions;
 
 //! ein struct f�r die Allgemeinen Attribute eines Item
 CommonStruct tempCommon;
@@ -183,11 +185,11 @@ TilesModificatorStruct tempModificator;
 //! ein struct f�r Daten von Bodenplatten
 TilesStruct tempTile;
 
-ScriptVariablesTable * scriptVariables;
+ScriptVariablesTable *scriptVariables;
 
-LongTimeEffectTable * LongTimeEffects;
+LongTimeEffectTable *LongTimeEffects;
 
-RaceSizeTable * RaceSizes;
+RaceSizeTable *RaceSizes;
 
 boost::shared_ptr<LuaDepotScript>depotScript;
 
@@ -200,240 +202,251 @@ boost::shared_ptr<LuaLearnScript>learnScript;
 //! Pointer auf das Standard script f�r K�mpfe falls kein spezielles vorhanden ist.
 boost::shared_ptr<LuaWeaponScript> standardFightingScript;
 
-ScheduledScriptsTable * scheduledScripts; //< table witch holds the scheduled scripts
+ScheduledScriptsTable *scheduledScripts;  //< table witch holds the scheduled scripts
 
-void logout_save( Player* who, bool forced, unsigned long int thistime ) {
-	FILE * f;
-	f = fopen( configOptions["login_logfile"].c_str(), "at" );
-	time_t acttime6;
-	time( &acttime6 );
+void logout_save(Player *who, bool forced, unsigned long int thistime) {
+    FILE *f;
+    f = fopen(configOptions["login_logfile"].c_str(), "at");
+    time_t acttime6;
+    time(&acttime6);
 
-	thistime = acttime6 - who->lastsavetime;
-	who->onlinetime += thistime;
+    thistime = acttime6 - who->lastsavetime;
+    who->onlinetime += thistime;
 
-	unsigned int th = thistime / 3600;
-	unsigned int tm = (thistime % 3600) / 60;
-	unsigned int ts = (thistime % 3600) % 60;
+    unsigned int th = thistime / 3600;
+    unsigned int tm = (thistime % 3600) / 60;
+    unsigned int ts = (thistime % 3600) % 60;
 
-	unsigned int oh = who->onlinetime / 3600;
-	unsigned int om = (who->onlinetime % 3600) / 60;
-	unsigned int os = (who->onlinetime % 3600) % 60;
+    unsigned int oh = who->onlinetime / 3600;
+    unsigned int om = (who->onlinetime % 3600) / 60;
+    unsigned int os = (who->onlinetime % 3600) % 60;
 
-	if ( f != NULL ) {
-		if ( forced ) {
-			if ( who->isAdmin() ) {
-			} else {
-				fprintf( f, "forced logout: %-15s Player %-20s on %s", who->Connection->getIPAdress().c_str(), who->name.c_str(), ctime( &acttime6 ) );
-			}
-		} else {
-			if ( who->isAdmin() ) {
-				fprintf( f, "logout: %-15s Admin  %-20s on %s", who->Connection->getIPAdress().c_str(), who->name.c_str(), ctime( &acttime6 ) );
-			} else {
-				fprintf( f, "logout: %-15s Player %-20s on %s", who->Connection->getIPAdress().c_str(), who->name.c_str(), ctime( &acttime6 ) );
-			}
-		}
-		fprintf( f, "----- after %5uh %2um %2us, onlinetime %5uh %2um %2us -----\n\n", th, tm, ts, oh, om, os );
-		fclose( f );
-	} else {
-		std::cerr << "main: Konnte nicht in das " << configOptions["login_logfile"] << " File schreiben" << std::endl;
-	}
+    if (f != NULL) {
+        if (forced) {
+            if (who->isAdmin()) {
+            } else {
+                fprintf(f, "forced logout: %-15s Player %-20s on %s", who->Connection->getIPAdress().c_str(), who->name.c_str(), ctime(&acttime6));
+            }
+        } else {
+            if (who->isAdmin()) {
+                fprintf(f, "logout: %-15s Admin  %-20s on %s", who->Connection->getIPAdress().c_str(), who->name.c_str(), ctime(&acttime6));
+            } else {
+                fprintf(f, "logout: %-15s Player %-20s on %s", who->Connection->getIPAdress().c_str(), who->name.c_str(), ctime(&acttime6));
+            }
+        }
+
+        fprintf(f, "----- after %5uh %2um %2us, onlinetime %5uh %2um %2us -----\n\n", th, tm, ts, oh, om, os);
+        fclose(f);
+    } else {
+        std::cerr << "main: Konnte nicht in das " << configOptions["login_logfile"] << " File schreiben" << std::endl;
+    }
 }
 
-void login_save( Player* who ) {
-	FILE * f;
-	f = fopen( configOptions["login_logfile"].c_str(), "at" );
-	time_t acttime7;
-	time( &acttime7 );
+void login_save(Player *who) {
+    FILE *f;
+    f = fopen(configOptions["login_logfile"].c_str(), "at");
+    time_t acttime7;
+    time(&acttime7);
 
-	unsigned int oh = who->onlinetime / 3600;
-	unsigned int om = (who->onlinetime % 3600) / 60;
-	unsigned int os = (who->onlinetime % 3600) % 60;
+    unsigned int oh = who->onlinetime / 3600;
+    unsigned int om = (who->onlinetime % 3600) / 60;
+    unsigned int os = (who->onlinetime % 3600) % 60;
 
-	if ( f != NULL ) {
-		if ( who->isAdmin() ) {
-			std::cout << "main: login Admin, IP: " << who->Connection->getIPAdress() << " Name: " << who->name << " erfolgreich\n" << std::endl;
-			fprintf( f, "login:  %-15s Admin  %-20s on %s", who->Connection->getIPAdress().c_str(), who->name.c_str(), ctime( &acttime7 ) );
-		} else {
-			std::cout << "main: login Player, IP: " << who->Connection->getIPAdress() << " Name: " << who->name << " erfolgreich\n" << std::endl;
-			fprintf( f, "login:  %-15s Player %-20s on %s", who->Connection->getIPAdress().c_str(), who->name.c_str(), ctime( &acttime7 ) );
-		}
-		fprintf( f, "----- onlinetime till now: %5uh %2um %2us -----\n\n", oh, om, os );
-		fclose( f );
-	} else {
-		std::cerr << "main: Konnte nicht in das " << configOptions["login_logfile"] << " File schreiben" << std::endl;
-	}
+    if (f != NULL) {
+        if (who->isAdmin()) {
+            std::cout << "main: login Admin, IP: " << who->Connection->getIPAdress() << " Name: " << who->name << " erfolgreich\n" << std::endl;
+            fprintf(f, "login:  %-15s Admin  %-20s on %s", who->Connection->getIPAdress().c_str(), who->name.c_str(), ctime(&acttime7));
+        } else {
+            std::cout << "main: login Player, IP: " << who->Connection->getIPAdress() << " Name: " << who->name << " erfolgreich\n" << std::endl;
+            fprintf(f, "login:  %-15s Player %-20s on %s", who->Connection->getIPAdress().c_str(), who->name.c_str(), ctime(&acttime7));
+        }
+
+        fprintf(f, "----- onlinetime till now: %5uh %2um %2us -----\n\n", oh, om, os);
+        fclose(f);
+    } else {
+        std::cerr << "main: Konnte nicht in das " << configOptions["login_logfile"] << " File schreiben" << std::endl;
+    }
 }
 
 //! zur Pr�fung der Kommandozeilenargumente
-void checkArguments( int argc, char* argv[]) {
-	if ( argc == 2 ) 
-    { // config file specified on command line
-		if ( Init( std::string( argv[ 1 ] ) ) ) 
-        {
-			std::cout << "main: USING ONFIGFILE " << argv[ 1 ] << "\n";
-			std::cout << "main: LOADING..." << std::endl;
-		} 
-        else 
-        {
-			std::cout << "main: ERROR READING ONFIGFILE " << argv[ 1 ] << " ! " << std::endl;
-			std::cout << "main: USAGE: " << argv[0] << " configfile" << std::endl;
-			exit( -1 );
-		}
-   	} 
-    else if ( argc == 3 ) 
-    {
+void checkArguments(int argc, char *argv[]) {
+    if (argc == 2) {
+        // config file specified on command line
+        if (Init(std::string(argv[ 1 ]))) {
+            std::cout << "main: USING ONFIGFILE " << argv[ 1 ] << "\n";
+            std::cout << "main: LOADING..." << std::endl;
+        } else {
+            std::cout << "main: ERROR READING ONFIGFILE " << argv[ 1 ] << " ! " << std::endl;
+            std::cout << "main: USAGE: " << argv[0] << " configfile" << std::endl;
+            exit(-1);
+        }
+    } else if (argc == 3) {
         std::cout<<"main: 3 args for mapimport"<<std::endl;
-        if ( Init( std::string( argv[ 1 ] ) ) ) 
-        {
-			std::cout << "main: USING ONFIGFILE " << argv[ 1 ] << "\n";
-			std::cout << "main: LOADING..." << std::endl;
-		} 
-        else 
-        {
-			std::cout << "main: ERROR READING ONFIGFILE " << argv[ 1 ] << " ! " << std::endl;
-			std::cout << "main: USAGE: " << argv[0] << " configfile" << std::endl;
-			exit( -1 );
-		}
-        if ( std::string(argv[ 2 ]) == "-MAPIMPORT" ) 
-        {
+
+        if (Init(std::string(argv[ 1 ]))) {
+            std::cout << "main: USING ONFIGFILE " << argv[ 1 ] << "\n";
+            std::cout << "main: LOADING..." << std::endl;
+        } else {
+            std::cout << "main: ERROR READING ONFIGFILE " << argv[ 1 ] << " ! " << std::endl;
+            std::cout << "main: USAGE: " << argv[0] << " configfile" << std::endl;
+            exit(-1);
+        }
+
+        if (std::string(argv[ 2 ]) == "-MAPIMPORT") {
             std::cout << "main: IMPORTING MAPS NEW "<<std::endl;
             importmaps = true;
         }
+    } else {
+        std::cout << "main: USAGE: " << argv[0] << " configfile" << std::endl;
+        exit(-1);
     }
-    else 
-    {
-		std::cout << "main: USAGE: " << argv[0] << " configfile" << std::endl;
-		exit( -1 );
-	}
 }
 
 // Itemdefinitionen laden
 void loadData() {
-	bool ok = true;
-    
+    bool ok = true;
+
     scriptVariables = new ScriptVariablesTable();
-    if ( !scriptVariables->isDataOk() )
+
+    if (!scriptVariables->isDataOk()) {
         ok = false;
-    
+    }
+
     RaceSizes = new RaceSizeTable();
-    if ( !RaceSizes->isDataOk() )
+
+    if (!RaceSizes->isDataOk()) {
         ok = false;
-	
-	NaturalArmors = new NaturalArmorTable();
-	if ( !NaturalArmors->isDataOk() )
-	    ok = false;
-	    
- 	MonsterAttacks = new MonsterAttackTable();
-    if ( !MonsterAttacks->isDataOk() )
-        ok = false;    
+    }
 
-	CommonItems = new CommonObjectTable();
-	if (!CommonItems->dataOK())
-		ok = false;
+    NaturalArmors = new NaturalArmorTable();
 
-	ItemNames = new NamesObjectTable();
-	if (!ItemNames->dataOK())
-		ok = false;
+    if (!NaturalArmors->isDataOk()) {
+        ok = false;
+    }
 
-	WeaponItems = new WeaponObjectTable();
-	if (!WeaponItems->dataOK())
-		ok = false;
+    MonsterAttacks = new MonsterAttackTable();
 
-	ArmorItems = new ArmorObjectTable();
-	if (!ArmorItems->dataOK())
-		ok = false;
+    if (!MonsterAttacks->isDataOk()) {
+        ok = false;
+    }
 
-	ContainerItems = new ContainerObjectTable();
-	if (!ContainerItems->dataOK())
-		ok = false;
+    CommonItems = new CommonObjectTable();
 
-	TilesModItems = new TilesModificatorTable();
-	if (!TilesModItems->dataOK())
-		ok = false;
+    if (!CommonItems->dataOK()) {
+        ok = false;
+    }
 
-	Tiles = new TilesTable();
-	if (!Tiles->dataOK())
-		ok = false;
+    ItemNames = new NamesObjectTable();
 
-	Spells = new SpellTable();
-	if (!Spells->isDataOK())
-		ok = false;
-    
+    if (!ItemNames->dataOK()) {
+        ok = false;
+    }
+
+    WeaponItems = new WeaponObjectTable();
+
+    if (!WeaponItems->dataOK()) {
+        ok = false;
+    }
+
+    ArmorItems = new ArmorObjectTable();
+
+    if (!ArmorItems->dataOK()) {
+        ok = false;
+    }
+
+    ContainerItems = new ContainerObjectTable();
+
+    if (!ContainerItems->dataOK()) {
+        ok = false;
+    }
+
+    TilesModItems = new TilesModificatorTable();
+
+    if (!TilesModItems->dataOK()) {
+        ok = false;
+    }
+
+    Tiles = new TilesTable();
+
+    if (!Tiles->dataOK()) {
+        ok = false;
+    }
+
+    Spells = new SpellTable();
+
+    if (!Spells->isDataOK()) {
+        ok = false;
+    }
+
     ScheduledScripts = new ScheduledScriptsTable();
     scheduledScripts = ScheduledScripts;
-    if ( !ScheduledScripts->dataOK() )
+
+    if (!ScheduledScripts->dataOK()) {
         ok = false;
+    }
 
-	Triggers = new TriggerTable();
-	if (!Triggers->isDataOK())
-		ok = false;
+    Triggers = new TriggerTable();
 
-	MonsterDescriptions = new MonsterTable();
-	if (!MonsterDescriptions->dataOK())
-		ok=false;
-    
+    if (!Triggers->isDataOK()) {
+        ok = false;
+    }
+
+    MonsterDescriptions = new MonsterTable();
+
+    if (!MonsterDescriptions->dataOK()) {
+        ok=false;
+    }
+
     LongTimeEffects = new LongTimeEffectTable();
-    if ( !LongTimeEffects->dataOK() )
+
+    if (!LongTimeEffects->dataOK()) {
         ok = false;
+    }
 
-	erasedcontainers = new std::vector<int>;
+    erasedcontainers = new std::vector<int>;
 
-	contpos= new std::vector<position>;
+    contpos= new std::vector<position>;
 
-	//Laden des standard Kampfscriptes	
-	try 
-    {
-		boost::shared_ptr<LuaWeaponScript> tmpScript(new LuaWeaponScript( "server.standardfighting" ));
-		standardFightingScript = tmpScript;
-	} 
-    catch(ScriptException &e) 
-    {
-        Logger::writeError( "scripts", "Error while loading script: server.standardfighting:\n" + std::string(e.what()) + "\n" );
-	}
-    
-    try
-    {
-        boost::shared_ptr<LuaLookAtPlayerScript>tmpScript(new LuaLookAtPlayerScript( "server.playerlookat" ));
+    //Laden des standard Kampfscriptes
+    try {
+        boost::shared_ptr<LuaWeaponScript> tmpScript(new LuaWeaponScript("server.standardfighting"));
+        standardFightingScript = tmpScript;
+    } catch (ScriptException &e) {
+        Logger::writeError("scripts", "Error while loading script: server.standardfighting:\n" + std::string(e.what()) + "\n");
+    }
+
+    try {
+        boost::shared_ptr<LuaLookAtPlayerScript>tmpScript(new LuaLookAtPlayerScript("server.playerlookat"));
         lookAtPlayerScript = tmpScript;
-    }
-    catch(ScriptException &e)
-    {
-        Logger::writeError( "scripts", "Error while loading script: server.playerlookat:\n" + std::string(e.what()) + "\n" );
+    } catch (ScriptException &e) {
+        Logger::writeError("scripts", "Error while loading script: server.playerlookat:\n" + std::string(e.what()) + "\n");
     }
 
-    try
-    {
-        boost::shared_ptr<LuaDepotScript>tmpScript(new LuaDepotScript( "server.depot" ));
+    try {
+        boost::shared_ptr<LuaDepotScript>tmpScript(new LuaDepotScript("server.depot"));
         depotScript = tmpScript;
+    } catch (ScriptException &e) {
+        Logger::writeError("scripts", "Error while loading script: server.depot:\n" + std::string(e.what()) + "\n");
     }
-    catch(ScriptException &e)
-    {
-        Logger::writeError( "scripts", "Error while loading script: server.depot:\n" + std::string(e.what()) + "\n" );
-    }
-    
-    try
-    {
-        boost::shared_ptr<LuaLoginScript>tmpScript(new LuaLoginScript( "server.login" ));
-        loginScript = tmpScript;
-    }
-    catch(ScriptException &e)
-    {
-        Logger::writeError( "scripts", "Error while loading script: server.login:\n" + std::string(e.what()) + "\n" );
-    } 
-    try
-    {
-        boost::shared_ptr<LuaLearnScript>tmpScript(new LuaLearnScript( "server.learn" ));
-        learnScript = tmpScript;
-    }
-    catch(ScriptException &e)
-    {
-        Logger::writeError( "scripts", "Error while loading script: server.learn:\n" + std::string(e.what()) + "\n" );
-    }
-    
 
-	if (!ok) {
-		std::cerr << "could not load tables from database!" << std::endl;
-	}
+    try {
+        boost::shared_ptr<LuaLoginScript>tmpScript(new LuaLoginScript("server.login"));
+        loginScript = tmpScript;
+    } catch (ScriptException &e) {
+        Logger::writeError("scripts", "Error while loading script: server.login:\n" + std::string(e.what()) + "\n");
+    }
+
+    try {
+        boost::shared_ptr<LuaLearnScript>tmpScript(new LuaLearnScript("server.learn"));
+        learnScript = tmpScript;
+    } catch (ScriptException &e) {
+        Logger::writeError("scripts", "Error while loading script: server.learn:\n" + std::string(e.what()) + "\n");
+    }
+
+
+    if (!ok) {
+        std::cerr << "could not load tables from database!" << std::endl;
+    }
 }
 
 
@@ -447,38 +460,39 @@ volatile bool running;
 struct sigaction act_segv, act_segv_o , act_pipe, act_pipe_o, act_term, act_term_o, act_usr;
 
 //! die signal handler for SIGTERM
-void sig_term( int ) {
-	std::cout << "\nSIGTERM received !" << std::endl;
-	//  ignore signal
-	act_term.sa_handler = SIG_IGN;
-	if ( sigaction( SIGTERM, &act_term, NULL ) < 0 ) {
-		std::cerr << "SIGTERM: sigaction failed" << std::endl;
-	}
-	configOptions["disable_login"] = "false";
-	running = false;
+void sig_term(int) {
+    std::cout << "\nSIGTERM received !" << std::endl;
+    //  ignore signal
+    act_term.sa_handler = SIG_IGN;
+
+    if (sigaction(SIGTERM, &act_term, NULL) < 0) {
+        std::cerr << "SIGTERM: sigaction failed" << std::endl;
+    }
+
+    configOptions["disable_login"] = "false";
+    running = false;
 }
 
 //! die Signalbehandlung f�r SIGSEGV
-void sig_segv( int ) 
-{
-	std::cout << "\nSIGSEGV received !" << std::endl;
-	std::cerr <<"SEGV received! last Script: "<<World::get()->currentScript->getFileName()<<std::endl;
+void sig_segv(int) {
+    std::cout << "\nSIGSEGV received !" << std::endl;
+    std::cerr <<"SEGV received! last Script: "<<World::get()->currentScript->getFileName()<<std::endl;
     // ignore signal
-	act_segv.sa_handler = SIG_IGN;
-	if ( sigaction( SIGSEGV, &act_segv, NULL ) < 0 ) {
-		std::cerr << "SIGSEGV: sigaction failed" << std::endl;
-	}
-    
+    act_segv.sa_handler = SIG_IGN;
+
+    if (sigaction(SIGSEGV, &act_segv, NULL) < 0) {
+        std::cerr << "SIGSEGV: sigaction failed" << std::endl;
+    }
+
 }
 
-void sig_usr( int )
-{
+void sig_usr(int) {
     std::cout<<"SIGUSR received Importing maps new !" <<std::endl;
     act_usr.sa_handler = sig_usr;
-    
+
     std::cout<<"disable login and log out"<<std::endl;
     configOptions["disable_login"] = "true";
-    World * world = World::get();
+    World *world = World::get();
     world->forceLogoutOfAllPlayers(); //Alle spieler ausloggen
     world->maps.clear(); //alte Karten l�schen
     std::cout<<"importing mainland"<<std::endl;
@@ -487,107 +501,105 @@ void sig_usr( int )
     world->load_maps();
     //alles importiert also noch ein save machen
     std::cout<<"save world"<<std::endl;
-    world->Save( "Illarion" );
+    world->Save("Illarion");
     configOptions["disable_login"] = "false";
     std::cout<<"...all done"<<std::endl;
-    
-    if ( sigaction( SIGUSR1, &act_usr, NULL ) < 0 ) 
-    {
-		std::cerr << "SIGUSR1: sigaction failed" << std::endl;
-	}
-    
+
+    if (sigaction(SIGUSR1, &act_usr, NULL) < 0) {
+        std::cerr << "SIGUSR1: sigaction failed" << std::endl;
+    }
+
 }
 
 bool init_sighandlers() {
 
-	// ignore all signals while installing signal handlers
-	if ( sigfillset( &act_pipe.sa_mask ) < 0 ) {
-		std::cerr << "main: sig..set failed" << std::endl;
-		return false;
-	}
+    // ignore all signals while installing signal handlers
+    if (sigfillset(&act_pipe.sa_mask) < 0) {
+        std::cerr << "main: sig..set failed" << std::endl;
+        return false;
+    }
 
-	// ignore signals
-	act_pipe.sa_handler = SIG_IGN;
-	act_pipe.sa_flags = SA_RESTART;
+    // ignore signals
+    act_pipe.sa_handler = SIG_IGN;
+    act_pipe.sa_flags = SA_RESTART;
 
-	// install signal handlers
-	if ( sigaction( SIGPIPE, &act_pipe, &act_pipe_o ) < 0 ) {
-		std::cerr << "main: sigaction failed" << std::endl;
-		return false;
-	}
+    // install signal handlers
+    if (sigaction(SIGPIPE, &act_pipe, &act_pipe_o) < 0) {
+        std::cerr << "main: sigaction failed" << std::endl;
+        return false;
+    }
 
-	if ( sigaction( SIGCHLD, &act_pipe, NULL ) < 0 ) {
-		std::cerr << "main: sigaction failed" << std::endl;
-		return false;
-	}
-
-
-	if ( sigaction( SIGINT, &act_pipe, NULL ) < 0 ) {
-		std::cerr << "main: sigaction failed" << std::endl;
-		return false;
-	}
+    if (sigaction(SIGCHLD, &act_pipe, NULL) < 0) {
+        std::cerr << "main: sigaction failed" << std::endl;
+        return false;
+    }
 
 
-	if ( sigaction( SIGQUIT, &act_pipe, NULL ) < 0 ) {
-		std::cerr << "main: sigaction failed" << std::endl;
-		return false;
-	}
+    if (sigaction(SIGINT, &act_pipe, NULL) < 0) {
+        std::cerr << "main: sigaction failed" << std::endl;
+        return false;
+    }
 
-	// ignore all signals while installing signal handlers
-	if ( sigfillset( &act_term.sa_mask ) < 0 ) {
-		std::cerr << "main: sig..set failed" << std::endl;
-		return false;
-	}
 
-	act_term.sa_handler = sig_term;
-	act_term.sa_flags = SA_RESTART;
+    if (sigaction(SIGQUIT, &act_pipe, NULL) < 0) {
+        std::cerr << "main: sigaction failed" << std::endl;
+        return false;
+    }
 
-	if ( sigaction( SIGTERM, &act_term, &act_term_o ) < 0 ) {
-		std::cerr << "main: sigaction SIGTERM failed" << std::endl;
-		return false;
-	}
+    // ignore all signals while installing signal handlers
+    if (sigfillset(&act_term.sa_mask) < 0) {
+        std::cerr << "main: sig..set failed" << std::endl;
+        return false;
+    }
 
-	if ( sigfillset( &act_segv.sa_mask ) < 0 ) {
-		std::cerr << "main: sig..set failed" << std::endl;
-		return false;
-	}
+    act_term.sa_handler = sig_term;
+    act_term.sa_flags = SA_RESTART;
 
-	act_segv.sa_handler = sig_segv;
-	act_segv.sa_flags = SA_RESTART;
+    if (sigaction(SIGTERM, &act_term, &act_term_o) < 0) {
+        std::cerr << "main: sigaction SIGTERM failed" << std::endl;
+        return false;
+    }
 
-	if ( sigaction( SIGSEGV, &act_segv, &act_segv_o ) < 0 ) {
-		std::cerr << "main: sigaction SIGSEGV failed" << std::endl;
-		return false;
-	}
-    
-    if ( sigfillset( &act_usr.sa_mask ) < 0 )
-    {
+    if (sigfillset(&act_segv.sa_mask) < 0) {
+        std::cerr << "main: sig..set failed" << std::endl;
+        return false;
+    }
+
+    act_segv.sa_handler = sig_segv;
+    act_segv.sa_flags = SA_RESTART;
+
+    if (sigaction(SIGSEGV, &act_segv, &act_segv_o) < 0) {
+        std::cerr << "main: sigaction SIGSEGV failed" << std::endl;
+        return false;
+    }
+
+    if (sigfillset(&act_usr.sa_mask) < 0) {
         std::cerr << "main: sig..set failed" <<std::endl;
         return false;
     }
-    
+
     act_usr.sa_handler = sig_usr;
     act_usr.sa_flags = SA_RESTART;
-    
-    if ( sigaction( SIGUSR1, &act_usr, NULL ) < 0 ) {
-		std::cerr << "main: sigaction SIGUSR1 failed" << std::endl;
-		return false;
-	}
-    
 
-	return true;
+    if (sigaction(SIGUSR1, &act_usr, NULL) < 0) {
+        std::cerr << "main: sigaction SIGUSR1 failed" << std::endl;
+        return false;
+    }
+
+
+    return true;
 }
 
 void reset_sighandlers() {
-	std::cout << "reset of signal handlers...";
+    std::cout << "reset of signal handlers...";
 
-	sigaction( SIGPIPE, &act_pipe_o, NULL );
+    sigaction(SIGPIPE, &act_pipe_o, NULL);
 
-	sigaction( SIGTERM, &act_term_o, NULL );
+    sigaction(SIGTERM, &act_term_o, NULL);
 
-	sigaction( SIGSEGV, &act_segv_o, NULL );
+    sigaction(SIGSEGV, &act_segv_o, NULL);
 
-	std::cout << " done.";
+    std::cout << " done.";
 }
 
 ////////////////////////////////////////
@@ -599,39 +611,40 @@ std::ofstream coutfile, cerrfile;
 
 bool setup_files() {
 
-	configOptions["login_logfile"] = configOptions["logdir"] + configOptions["starttime"] + std::string( ".log" );
-	configOptions["kill_logfile"] = configOptions["logdir"] + configOptions["starttime"] + std::string( ".kills" );
-	configOptions["cout_logfile"] =  configOptions["coutdir"] + configOptions["starttime"] + std::string( ".out" );
-	configOptions["cerr_logfile"] =  configOptions["coutdir"] + configOptions["starttime"] + std::string( ".err" );
+    configOptions["login_logfile"] = configOptions["logdir"] + configOptions["starttime"] + std::string(".log");
+    configOptions["kill_logfile"] = configOptions["logdir"] + configOptions["starttime"] + std::string(".kills");
+    configOptions["cout_logfile"] =  configOptions["coutdir"] + configOptions["starttime"] + std::string(".out");
+    configOptions["cerr_logfile"] =  configOptions["coutdir"] + configOptions["starttime"] + std::string(".err");
 
-	std::cout << "redirecting all further output to file: " << configOptions["cout_logfile"] << std::endl;
-	std::cout << "redirecting error output to file: " << configOptions["cerr_logfile"] << std::endl;
+    std::cout << "redirecting all further output to file: " << configOptions["cout_logfile"] << std::endl;
+    std::cout << "redirecting error output to file: " << configOptions["cerr_logfile"] << std::endl;
 
-	// open files for redirectings stdout/stderr
-	coutfile.open(  configOptions["cout_logfile"].c_str(), std::ios::out | std::ios::trunc );
-	cerrfile.open(  configOptions["cerr_logfile"].c_str(), std::ios::out | std::ios::trunc );
+    // open files for redirectings stdout/stderr
+    coutfile.open(configOptions["cout_logfile"].c_str(), std::ios::out | std::ios::trunc);
+    cerrfile.open(configOptions["cerr_logfile"].c_str(), std::ios::out | std::ios::trunc);
 
-	// check if files are ok
-	if (!coutfile.good()) {
-		std::cerr << "Could not open stdout log file for writing: " << configOptions["cout_logfile"] << std::endl;
-		return false;
-	}
-	if (!cerrfile.good()) {
-		std::cerr << "Could not open stderr log file for writing: " << configOptions["cerr_logfile"] << std::endl;
-		return false;
-	}
+    // check if files are ok
+    if (!coutfile.good()) {
+        std::cerr << "Could not open stdout log file for writing: " << configOptions["cout_logfile"] << std::endl;
+        return false;
+    }
 
-	// redirect stdout/stderr
-	std::cout.rdbuf ( coutfile.rdbuf() );
-	std::cerr.rdbuf ( cerrfile.rdbuf() );
+    if (!cerrfile.good()) {
+        std::cerr << "Could not open stderr log file for writing: " << configOptions["cerr_logfile"] << std::endl;
+        return false;
+    }
 
-	kill_log.open(configOptions["kill_logfile"].c_str());
+    // redirect stdout/stderr
+    std::cout.rdbuf(coutfile.rdbuf());
+    std::cerr.rdbuf(cerrfile.rdbuf());
 
-	if (!kill_log.good()) {
-		std::cerr << "Could not open kill log file for writing: " << configOptions["kill_logfile"] << std::endl;
-		return false;
-	}
+    kill_log.open(configOptions["kill_logfile"].c_str());
 
-	return true;
+    if (!kill_log.good()) {
+        std::cerr << "Could not open kill log file for writing: " << configOptions["kill_logfile"] << std::endl;
+        return false;
+    }
+
+    return true;
 
 }

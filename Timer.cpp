@@ -19,9 +19,9 @@
 
 #include "Timer.hpp"
 
-Timer::Timer( unsigned long int timegap ) {
-	gap = timegap;
-	last = time( NULL ) - timegap;
+Timer::Timer(unsigned long int timegap) {
+    gap = timegap;
+    last = time(NULL) - timegap;
 }
 
 
@@ -29,12 +29,13 @@ Timer::~Timer() {}
 
 
 bool Timer::next() {
-	time_t temp = time( NULL );     // liefert die Sekunden seit dem 1.1.1970
-	realgap = temp - last;
-	if ( realgap >= gap ) {
-		last = temp;
-		return true;
-	} else {
-		return false;
-	}
+    time_t temp = time(NULL);       // liefert die Sekunden seit dem 1.1.1970
+    realgap = temp - last;
+
+    if (realgap >= gap) {
+        last = temp;
+        return true;
+    } else {
+        return false;
+    }
 }

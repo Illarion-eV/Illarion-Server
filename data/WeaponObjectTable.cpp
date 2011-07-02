@@ -25,102 +25,103 @@
 #include "script/LuaWeaponScript.hpp"
 #include "Logger.hpp"
 
-WeaponObjectTable::WeaponObjectTable() : m_dataOK(false)
-{
-	reload();
+WeaponObjectTable::WeaponObjectTable() : m_dataOK(false) {
+    reload();
 }
 
 
 void WeaponObjectTable::reload() {
 #ifdef DataConnect_DEBUG
-	std::cout << "WeaponObjectTable: reload" << std::endl;
+    std::cout << "WeaponObjectTable: reload" << std::endl;
 #endif
 
-	try {
-		ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
+    try {
+        ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
 
-		std::vector<TYPE_OF_ITEM_ID> ids;
-		std::vector<TYPE_OF_ATTACK> attack;
-		std::vector<TYPE_OF_DEFENCE> defence;
-		std::vector<TYPE_OF_ACCURACY> accuracy;
-		std::vector<TYPE_OF_RANGE> range;
-		std::vector<TYPE_OF_WEAPONTYPE> weapontype;
-		std::vector<TYPE_OF_AMMUNITIONTYPE> ammunitiontype;
-		std::vector<TYPE_OF_ACTIONPOINTS> actionpoints;
-		std::vector<TYPE_OF_MAGICDISTURBANCE> magicdisturbance;
-		std::vector<TYPE_OF_POISONSTRENGTH> poison;
-		std::vector<std::string> scriptname;
-		di::isnull_vector<std::vector<std::string> > n_scriptname(scriptname);
+        std::vector<TYPE_OF_ITEM_ID> ids;
+        std::vector<TYPE_OF_ATTACK> attack;
+        std::vector<TYPE_OF_DEFENCE> defence;
+        std::vector<TYPE_OF_ACCURACY> accuracy;
+        std::vector<TYPE_OF_RANGE> range;
+        std::vector<TYPE_OF_WEAPONTYPE> weapontype;
+        std::vector<TYPE_OF_AMMUNITIONTYPE> ammunitiontype;
+        std::vector<TYPE_OF_ACTIONPOINTS> actionpoints;
+        std::vector<TYPE_OF_MAGICDISTURBANCE> magicdisturbance;
+        std::vector<TYPE_OF_POISONSTRENGTH> poison;
+        std::vector<std::string> scriptname;
+        di::isnull_vector<std::vector<std::string> > n_scriptname(scriptname);
 
-		size_t rows = di::select_all<
-					  di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Varchar
-					  >(transaction, ids, attack, defence, accuracy, range, weapontype,
-						ammunitiontype, actionpoints, magicdisturbance, poison, n_scriptname,
-						"SELECT wp_itemid, wp_attack, wp_defence, wp_accuracy, wp_range, wp_weapontype,"
-						"wp_ammunitiontype, wp_actionpoints, wp_magicdisturbance, wp_poison, wp_fightingscript FROM weapon");
+        size_t rows = di::select_all<
+                      di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Varchar
+                      >(transaction, ids, attack, defence, accuracy, range, weapontype,
+                        ammunitiontype, actionpoints, magicdisturbance, poison, n_scriptname,
+                        "SELECT wp_itemid, wp_attack, wp_defence, wp_accuracy, wp_range, wp_weapontype,"
+                        "wp_ammunitiontype, wp_actionpoints, wp_magicdisturbance, wp_poison, wp_fightingscript FROM weapon");
 
-		if (rows > 0) {
-			clearOldTable();
-			for (size_t i = 0; i < rows; ++i) {
+        if (rows > 0) {
+            clearOldTable();
+
+            for (size_t i = 0; i < rows; ++i) {
                 WeaponStruct temprecord;
-				temprecord.Attack = attack[i];
-				temprecord.Defence = defence[i];
-				temprecord.Accuracy = accuracy[i];
-				temprecord.Range = range[i];
-				temprecord.WeaponType = weapontype[i];
-				temprecord.AmmunitionType = ammunitiontype[i];
-				temprecord.ActionPoints = actionpoints[i];
-				temprecord.MagicDisturbance = magicdisturbance[i];
-				temprecord.PoisonStrength = poison[i];
-				if (!n_scriptname.var[i]) 
-                {
-					try 
-                    {
-						boost::shared_ptr<LuaWeaponScript> tmpScript(new LuaWeaponScript( scriptname[i] ));
-						temprecord.script = tmpScript;
-					} 
-                    catch(ScriptException &e) 
-                    {
-                        Logger::writeError( "scripts", "Error while loading script: " + scriptname[i] + ":\n" + e.what() + "\n" );
-					}
-				}
-				m_table[ ids[i] ] = temprecord;
-			}
-			m_dataOK = true;
-		} else m_dataOK = false;
+                temprecord.Attack = attack[i];
+                temprecord.Defence = defence[i];
+                temprecord.Accuracy = accuracy[i];
+                temprecord.Range = range[i];
+                temprecord.WeaponType = weapontype[i];
+                temprecord.AmmunitionType = ammunitiontype[i];
+                temprecord.ActionPoints = actionpoints[i];
+                temprecord.MagicDisturbance = magicdisturbance[i];
+                temprecord.PoisonStrength = poison[i];
+
+                if (!n_scriptname.var[i]) {
+                    try {
+                        boost::shared_ptr<LuaWeaponScript> tmpScript(new LuaWeaponScript(scriptname[i]));
+                        temprecord.script = tmpScript;
+                    } catch (ScriptException &e) {
+                        Logger::writeError("scripts", "Error while loading script: " + scriptname[i] + ":\n" + e.what() + "\n");
+                    }
+                }
+
+                m_table[ ids[i] ] = temprecord;
+            }
+
+            m_dataOK = true;
+        } else {
+            m_dataOK = false;
+        }
 
 
 #ifdef DataConnect_DEBUG
-		std::cout << "loaded " << rows << " rows into WeaponObjectTable" << std::endl;
+        std::cout << "loaded " << rows << " rows into WeaponObjectTable" << std::endl;
 #endif
 
-	} catch (...) {
-		m_dataOK = false;
-	}
+    } catch (...) {
+        m_dataOK = false;
+    }
 
 }
 
-bool WeaponObjectTable::find( TYPE_OF_ITEM_ID Id, WeaponStruct &ret ) {
-	TABLE::iterator iterator;
-	iterator = m_table.find( Id );
+bool WeaponObjectTable::find(TYPE_OF_ITEM_ID Id, WeaponStruct &ret) {
+    TABLE::iterator iterator;
+    iterator = m_table.find(Id);
 
-	if ( iterator == m_table.end() ) {
-		return false;
-	} else {
-		ret = ( *iterator ).second;
-		return true;
-	}
+    if (iterator == m_table.end()) {
+        return false;
+    } else {
+        ret = (*iterator).second;
+        return true;
+    }
 }
 
 
 
 void WeaponObjectTable::clearOldTable() {
-	m_table.clear();
+    m_table.clear();
 }
 
 
 WeaponObjectTable::~WeaponObjectTable() {
-	clearOldTable();
+    clearOldTable();
 }
 
 

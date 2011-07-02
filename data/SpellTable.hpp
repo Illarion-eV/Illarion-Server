@@ -44,34 +44,36 @@ using std::hash_multimap;
 class World;
 
 struct SpellStruct {
-	//Type des aus zu führenden Zaubers.
-	unsigned short magictype;
-	//Name des Scriptes.
-	std::string scriptname;
-	//Shared Pointer auf das Script des Structs.
-	boost::shared_ptr<LuaMagicScript> script;
+    //Type des aus zu führenden Zaubers.
+    unsigned short magictype;
+    //Name des Scriptes.
+    std::string scriptname;
+    //Shared Pointer auf das Script des Structs.
+    boost::shared_ptr<LuaMagicScript> script;
 };
 
 class SpellTable {
-	public:
-		SpellTable();
+public:
+    SpellTable();
 
-		~SpellTable();
+    ~SpellTable();
 
-		void reload();
+    void reload();
 
-		inline bool isDataOK() { return _dataOK; }
+    inline bool isDataOK() {
+        return _dataOK;
+    }
 
-		bool find( unsigned long int magicfFlag,unsigned short int magic_type, SpellStruct &magicSpell);
+    bool find(unsigned long int magicfFlag,unsigned short int magic_type, SpellStruct &magicSpell);
 
-	protected:
+protected:
 
-		typedef hash_multimap<unsigned long int,SpellStruct> SpellMap;
-		SpellMap Spells;
+    typedef hash_multimap<unsigned long int,SpellStruct> SpellMap;
+    SpellMap Spells;
 
-		void clearOldTable();
+    void clearOldTable();
 
-		bool _dataOK;
+    bool _dataOK;
 
 };
 #endif
