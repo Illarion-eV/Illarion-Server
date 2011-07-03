@@ -16,8 +16,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "dbng/ConnectionManager.hpp"
-#include "dbng/Connection.hpp"
+#include "db/ConnectionManager.hpp"
+#include "db/Connection.hpp"
 
 #include <sstream>
 #include <string>
@@ -56,14 +56,30 @@ ConnectionManager::ConnectionManager(const ConnectionManager &org) {
 
 void ConnectionManager::setupManager(const std::string &user, const std::string &password,
                                      const std::string &database, const std::string &host) {
-    this->setupManager(user, password, database, host, -1);
+    this->setupManager(user, password, database, host, "");
 }
 
 void ConnectionManager::setupManager(const std::string &user, const std::string &password,
                                      const std::string &database, const std::string &host,
                                      const int32_t port) {
-    std::stringstream ss;
+    std::string portString;
+    if (port >= 0) {
+        portString = "";
+    } else {
+        std::stringstream ss;
+        ss << port;
+        portString = ss.str();
+    }
 
+    this->setupManager(user, password, database, host, portString);
+}
+
+void ConnectionManager::setupManager(const std::string &user,
+    const std::string &password, const std::string &database,
+    const std::string &host, const std::string &port) {
+
+    std::stringstream ss;
+        
     if (user.size() > 0) {
         ss << " user=" << user << " ";
     }
@@ -80,10 +96,11 @@ void ConnectionManager::setupManager(const std::string &user, const std::string 
         ss << " host=" << host << " ";
     }
 
-    if (port >= 0) {
+    if (port.size() > 0) {
         ss << " port=" << port << " ";
     }
 
     this->connectString = new std::string(ss.str());
     this->isReady = true;
+}
 }

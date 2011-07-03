@@ -21,7 +21,7 @@
 
 #include <string>
 
-#include <dbng/Connection.hpp>
+#include <db/Connection.hpp>
 
 #include <boost/cstdint.hpp>
 
@@ -64,6 +64,9 @@ public:
      */
     void setupManager(const std::string &user, const std::string &password,
                       const std::string &database, const std::string &host);
+    void setupManager(const std::string &user, const std::string &password,
+                      const std::string &database, const std::string &host,
+                      const std::string &port);
     void setupManager(const std::string &user, const std::string &password,
                       const std::string &database, const std::string &host,
                       const int32_t port);

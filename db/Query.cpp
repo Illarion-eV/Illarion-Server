@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "dbng/Query.hpp"
+#include "db/Query.hpp"
 
 #include <stdexcept>
 

@@ -16,34 +16,42 @@
 //  You should have received a copy of the GNU General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _QUERY_HPP_
-#define _QUERY_HPP_
+#ifndef _SCHEMA_HELPER_HPP_
+#define _SCHEMA_HELPER_HPP_
 
 #include <string>
 
-#include "db/Connection.hpp"
-#include "db/Result.hpp"
-
 namespace Database {
-class Query;
-
-typedef Query *PQuery;
-
-class Query {
+class SchemaHelper {
 private:
-    PConnection dbConnection;
-    std::string *dbQuery;
+    static std::string serverSchema;
+    static std::string accountSchema;
 
 public:
-    ~Query(void);
+    static inline void setSchemata(const std::string &server,
+        const std::string &account) {
+        serverSchema += "\"";
+        serverSchema += server;
+        serverSchema += "\"";
 
-    Result execute();
+        accountSchema += "\"";
+        accountSchema += account;
+        accountSchema += "\"";
+    }
 
-    Query(const Query &org);
-    Query(PConnection connection, const std::string &query);
+    static inline std::string getServerSchema(void) {
+        return serverSchema;
+    }
+
+    static inline std::string getAccountSchema(void) {
+        return accountSchema;
+    }
+    
 private:
-    Query(void);
+    SchemaHelper(void);
+    SchemaHelper(const SchemaHelper &org);
+    virtual ~SchemaHelper(void);
 };
 }
 
-#endif // _QUERY_HPP_
+#endif // _SCHEMA_HELPER_HPP_
