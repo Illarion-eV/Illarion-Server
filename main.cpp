@@ -22,6 +22,7 @@
 #endif
 
 #include "db/ConnectionManager.hpp"
+#include "db/SchemaHelper.hpp"
 
 #include <sys/types.h>  // include this before any other sys headers
 #include <sys/resource.h>
@@ -118,8 +119,14 @@ int main(int argc, char *argv[]) {
     Logger::writeMessage("basic", "main: data directory: " + configOptions["datadir"], false);
 
     // initialise DB Manager
-    dbmgr = ConnectionManager::CreateConnectionManager(configOptions["postgres_user"],configOptions["postgres_pwd"], configOptions["postgres_db"],configOptions["postgres_host"]);
-    accdbmgr = ConnectionManager::CreateConnectionManager(configOptions["postgres_user"],configOptions["postgres_pwd"], configOptions["accountdb"],configOptions["postgres_host"]);
+    Database::ConnectionManager::getInstance()->setupManager(
+        configOptions["postgres_user"],configOptions["postgres_pwd"],
+        configOptions["postgres_db"],configOptions["postgres_host"],
+        configOptions["postgres_port"]
+    );
+    Database::SchemaHelper::setSchemata(configOptions["postgres_schema_server"],
+        configOptions["postgres_schema_account"]);
+    
     //Welt anlegen
     World *world = World::create(configOptions["datadir"] , starttime);
 
