@@ -18,6 +18,10 @@
 
 
 #include "db/ConnectionManager.hpp"
+#include "db/SchemaHelper.hpp"
+#include "db/Query.hpp"
+#include "db/Result.hpp"
+
 #include "CommonObjectTable.hpp"
 #include <iostream>
 #include "World.hpp"
@@ -64,64 +68,58 @@ void CommonObjectTable::reload() {
 #endif
 
     try {
-        ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
+        Database::PConnection connection =
+            Database::ConnectionManager::getInstance()->getConnection();
 
-        std::vector<TYPE_OF_ITEM_ID> ids;
-        std::vector<TYPE_OF_WEIGHT> weights;
-        std::vector<TYPE_OF_VOLUME> volumes;
-        std::vector<TYPE_OF_AGEINGSPEED> agingspeeds;
-        std::vector<TYPE_OF_ITEM_ID> objectafterrot;
-        std::vector<bool> isStackable;
-        std::vector<bool> rotsininventory;
-        std::vector<TYPE_OF_BRIGHTNESS> brightnesses;
-        std::vector<TYPE_OF_WORTH> worth;
-        std::vector<std::string> scriptname;
-        di::isnull_vector<std::vector<std::string> > n_scriptname(scriptname);
+        std::stringstream ss;
+        ss << "SELECT ";
+        ss << "\"com_itemid\", \"com_volume\", \"com_weight\", ";
+        ss << "\"com_agingspeed\", \"com_objectafterrot\", \"com_script\", ";
+        ss << "\"com_stackable\", \"com_rotsininventory\", ";
+        ss << "\"com_brightness\", \"com_worth\" ";
+        ss << "FROM ";
+        ss << Database::SchemaHelper::getServerSchema() << ".\"common\";";
+        
+        Database::PQuery query = new Database::Query(connection, ss.str());
+        Database::Result results = query->execute();
 
         std::map<TYPE_OF_ITEM_ID, bool> assigned; // map item id to whether an infinite rot has been assigned
         std::map<TYPE_OF_ITEM_ID, bool> visited;  // map item id to whether it has been visited already in calcInfiniteRot
 
-        size_t rows = di::select_all<
-                      di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Varchar, di::Boolean, di::Boolean, di::Integer, di::Integer
-                      >(transaction, ids, volumes, weights, agingspeeds, objectafterrot, n_scriptname, isStackable, rotsininventory, brightnesses, worth,
-                        "SELECT com_itemid, com_volume, com_weight, com_agingspeed, com_objectafterrot, com_script, com_stackable, com_rotsininventory, com_brightness, com_worth FROM common");
-
-        if (rows > 0) {
+        if (!results.empty()) {
             clearOldTable();
+            CommonStruct temprecord;
+            
+            for (Database::Result::ConstIterator itr = results.begin();
+                itr != results.end(); ++itr) {
 
-            for (size_t i = 0; i < rows; ++i) {
-                CommonStruct temprecord;
-                temprecord.id = ids[i];
-                temprecord.Weight = weights[i];
-                temprecord.Volume = volumes[i];
-                temprecord.AgeingSpeed = agingspeeds[i];
-                temprecord.ObjectAfterRot = objectafterrot[i];
-                temprecord.isStackable = isStackable[i];
-                temprecord.rotsInInventory = rotsininventory[i];
-                temprecord.Brightness = brightnesses[i];
-                temprecord.Worth = worth[i];
+                TYPE_OF_ITEM_ID itemID;
+                itemID = (TYPE_OF_ITEM_ID) ((*itr)["com_itemid"].as<int16_t>());
+                temprecord.id = itemID;
+                temprecord.Weight = (TYPE_OF_WEIGHT) ((*itr)["com_weight"].as<int16_t>());
+                temprecord.Volume = (TYPE_OF_VOLUME) ((*itr)["com_volume"].as<int16_t>());
+                temprecord.AgeingSpeed = (TYPE_OF_AGEINGSPEED) ((*itr)["com_agingspeed"].as<int16_t>());
+                temprecord.ObjectAfterRot = (TYPE_OF_ITEM_ID) (*itr)["com_objectafterrot"].as<TYPE_OF_ITEM_ID>();
+                temprecord.isStackable = (*itr)["com_stackable"].as<bool>();
+                temprecord.rotsInInventory = (*itr)["com_rotsininventory"].as<bool>();
+                temprecord.Brightness = (TYPE_OF_BRIGHTNESS) ((*itr)["com_brightness"].as<int16_t>());
+                temprecord.Worth = (TYPE_OF_WORTH) ((*itr)["com_worth"].as<int16_t>());
 
-                if (!n_scriptname.var[i]) {
+                if (!((*itr)["com_worth"].is_null())) {
+                    std::string scriptname = ((*itr)["com_worth"].as<std::string>());
                     try {
-                        boost::shared_ptr<LuaItemScript> tmpScript(new LuaItemScript(scriptname[i] , temprecord));
-                        m_scripttable[ ids[i] ] = tmpScript;
+                        boost::shared_ptr<LuaItemScript> tmpScript(new LuaItemScript(scriptname, temprecord));
+                        m_scripttable[itemID] = tmpScript;
                     } catch (ScriptException &e) {
-                        Logger::writeError("scripts", "Error while loading script: " + scriptname[i] + ":\n" + e.what() + "\n");
+                        Logger::writeError("scripts", "Error while loading script: " + scriptname + ":\n" + e.what() + "\n");
                     }
                 }
+                    
+                m_table[itemID] = temprecord;
 
-                m_table[ ids[i] ] = temprecord;
-                visited.insert(std::pair<TYPE_OF_ITEM_ID, bool>(ids[i],false));
-                assigned.insert(std::pair<TYPE_OF_ITEM_ID, bool>(ids[i],false));
+                visited.insert(std::pair<TYPE_OF_ITEM_ID, bool>(itemID,false));
+                assigned.insert(std::pair<TYPE_OF_ITEM_ID, bool>(itemID,false));
             }
-
-            // calculate infinite rot for map export
-            for (size_t i = 0; i < rows; ++i) {
-                if (!assigned[ ids[i] ]) {
-                    calcInfiniteRot(ids[i], visited, assigned);
-                }
-            }
-
             m_dataOK = true;
         } else {
             m_dataOK = false;
