@@ -21,7 +21,7 @@
 
 #include <string>
 
-#include <db/Connection.hpp>
+#include <Connection.hpp>
 
 #include <boost/cstdint.hpp>
 
