@@ -52,18 +52,18 @@ public:
         string database;
         string user;
         string password;
-        Login(string database, string user, string password) : 
+        Login(string database, string user, string password) :
             database(database), user(user), password(password) {};
     };
     struct Server {
         string host;
         uint16_t port;
         Server(string host) : host(host), port(0) {};
-        Server(string host, uint16_t port) : host(host), port(port) {}; 
+        Server(string host, uint16_t port) : host(host), port(port) {};
     };
 
     /* Get the singleton instance of this class. */
-    static PConnectionManager getInstance();
+    static ConnectionManager &getInstance();
 
     /* Get a new connection. This function throws a std::domain_error in
      * case the informations for the connection are not set yet.
@@ -77,7 +77,7 @@ public:
     /* Setup the connection informations to the postgre database. Once this
      * data is set its possible to establish connections to the database.
      */
-    void setupManager(const Login &login, const Server &server); 
+    void setupManager(const Login &login, const Server &server);
 private:
     ConnectionManager();
     ConnectionManager(const ConnectionManager &org);

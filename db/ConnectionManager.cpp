@@ -31,8 +31,8 @@ using std::string;
 
 ConnectionManager ConnectionManager::instance;
 
-PConnectionManager ConnectionManager::getInstance() {
-    return &ConnectionManager::instance;
+ConnectionManager &ConnectionManager::getInstance() {
+    return ConnectionManager::instance;
 }
 
 PConnection ConnectionManager::getConnection() {
@@ -67,14 +67,14 @@ void ConnectionManager::setupManager(const Login &login, const Server &server) {
 }
 
 void ConnectionManager::addValidConnectionParameter(const string &param,
-                                                    const string &value) {
+        const string &value) {
     if (value.size() > 0) {
         connectionString += " " + param + "=" + value;
     }
 }
 
 void ConnectionManager::addValidConnectionParameter(const string &param,
-                                                    const uint16_t value) {
+        const uint16_t value) {
     if (value > 0) {
         std::stringstream valuestring;
         valuestring << value;
