@@ -38,7 +38,7 @@ private:
     /* Connection String that is used to establish a connection to the
      * postgre DB.
      */
-    std::string *connectString;
+    std::string *connectionString;
 
     /* Ready flag. This is set true once the connection informations are
      * set.
@@ -65,14 +65,13 @@ public:
                       const std::string &database, const std::string &host);
     void setupManager(const std::string &user, const std::string &password,
                       const std::string &database, const std::string &host,
-                      const std::string &port);
-    void setupManager(const std::string &user, const std::string &password,
-                      const std::string &database, const std::string &host,
                       const uint16_t port);
 private:
     ConnectionManager(void);
     ConnectionManager(const ConnectionManager &org);
-
+    void buildConnectionString(const std::string &user, const std::string &password,
+                      const std::string &database, const std::string &host,
+                      const std::string &port);
 };
 }
 
