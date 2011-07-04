@@ -25,6 +25,8 @@
 
 #include <boost/cstdint.hpp>
 
+using std::string;
+
 namespace Database {
 class ConnectionManager;
 
@@ -38,7 +40,7 @@ private:
     /* Connection String that is used to establish a connection to the
      * postgre DB.
      */
-    std::string *connectionString;
+    string connectionString;
 
     /* Ready flag. This is set true once the connection informations are
      * set.
@@ -46,13 +48,27 @@ private:
     bool isReady;
 
 public:
+    struct Login {
+        string database;
+        string user;
+        string password;
+        Login(string database, string user, string password) : 
+            database(database), user(user), password(password) {};
+    };
+    struct Server {
+        string host;
+        uint16_t port;
+        Server(string host) : host(host), port(0) {};
+        Server(string host, uint16_t port) : host(host), port(port) {}; 
+    };
+
     /* Get the singleton instance of this class. */
-    static PConnectionManager getInstance(void);
+    static PConnectionManager getInstance();
 
     /* Get a new connection. This function throws a std::domain_error in
      * case the informations for the connection are not set yet.
      */
-    PConnection getConnection(void);
+    PConnection getConnection();
 
     /* Release a connection.std::string portString;
      */
@@ -61,17 +77,12 @@ public:
     /* Setup the connection informations to the postgre database. Once this
      * data is set its possible to establish connections to the database.
      */
-    void setupManager(const std::string &user, const std::string &password,
-                      const std::string &database, const std::string &host);
-    void setupManager(const std::string &user, const std::string &password,
-                      const std::string &database, const std::string &host,
-                      const uint16_t port);
+    void setupManager(const Login &login, const Server &server); 
 private:
-    ConnectionManager(void);
+    ConnectionManager();
     ConnectionManager(const ConnectionManager &org);
-    void buildConnectionString(const std::string &user, const std::string &password,
-                      const std::string &database, const std::string &host,
-                      const std::string &port);
+    void addValidConnectionParameter(const string &param, const string &value);
+    void addValidConnectionParameter(const string &param, const uint16_t value);
 };
 }
 

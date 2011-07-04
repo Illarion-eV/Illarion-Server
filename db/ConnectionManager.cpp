@@ -27,6 +27,7 @@
 #include <pqxx/connection.hxx>
 
 using namespace Database;
+using std::string;
 
 ConnectionManager ConnectionManager::instance;
 
@@ -55,48 +56,31 @@ ConnectionManager::ConnectionManager(const ConnectionManager &org) {
     throw new std::domain_error("Copy constructor not supported.");
 }
 
-void ConnectionManager::setupManager(const std::string &user, const std::string &password,
-                                     const std::string &database, const std::string &host) {
-    buildConnectionString(user, password, database, host, "");
-}
-
-void ConnectionManager::setupManager(const std::string &user, const std::string &password,
-                                     const std::string &database, const std::string &hos^t,
-                                     const uint16_t port) {
-    std::stringstream ss;
-    ss << port;
-    std::string portString;
-    portString = ss.str();
-    buildConnectionString(user, password, database, host, portString);
-}
-
-void ConnectionManager::buildConnectionString(const std::string &user,
-    const std::string &password, const std::string &database,
-    const std::string &host, const std::string &port) {
-
-    std::stringstream ss;
-        
-    if (user.size() > 0) {
-        ss << " user=" << user << " ";
-    }
-
-    if (password.size() > 0) {
-        ss << " password=" << password << " ";
-    }
-
-    if (database.size() > 0) {
-        ss << " dbname=" << database << " ";
-    }
-
-    if (host.size() > 0) {
-        ss << " host=" << host << " ";
-    }
-
-    if (port.size() > 0) {
-        ss << " port=" << port << " ";
-    }
-
-    connectionString = new std::string(ss.str());
+void ConnectionManager::setupManager(const Login &login, const Server &server) {
+    connectionString = "";
+    addValidConnectionParameter("user", login.user);
+    addValidConnectionParameter("password", login.password);
+    addValidConnectionParameter("dbname", login.database);
+    addValidConnectionParameter("host", server.host);
+    addValidConnectionParameter("port", server.port);
     isReady = true;
 }
+
+void ConnectionManager::addValidConnectionParameter(const string &param,
+                                                    const string &value) {
+    if (value.size() > 0) {
+        connectionString += " " + param + "=" + value;
+    }
 }
+
+void ConnectionManager::addValidConnectionParameter(const string &param,
+                                                    const uint16_t value) {
+    if (value > 0) {
+        std::stringstream valuestring;
+        valuestring << value;
+        connectionString += " " + param + "=" + valuestring.str();
+    }
+}
+
+}
+
