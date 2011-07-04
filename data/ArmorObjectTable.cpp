@@ -39,7 +39,7 @@ void ArmorObjectTable::reload() {
 
     try {
         Database::PConnection connection =
-            Database::ConnectionManager::getInstance()->getConnection();
+            Database::ConnectionManager::getInstance().getConnection();
 
         std::stringstream ss;
         ss << "SELECT ";
@@ -51,6 +51,7 @@ void ArmorObjectTable::reload() {
         
         Database::PQuery query = new Database::Query(connection, ss.str());
         Database::Result results = query->execute();
+        Database::ConnectionManager::getInstance().releaseConnection(connection);
 
         if (!results.empty()) {
             clearOldTable();

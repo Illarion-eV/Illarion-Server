@@ -73,12 +73,3 @@ void ConnectionManager::addConnectionParameterIfValid(const string &param,
     }
 }
 
-void ConnectionManager::addConnectionParameterIfValid(const string &param,
-        const uint16_t value) {
-    if (value > 0) {
-        std::stringstream valuestring;
-        valuestring << value;
-        connectionString += " " + param + "=" + valuestring.str();
-    }
-}
-
