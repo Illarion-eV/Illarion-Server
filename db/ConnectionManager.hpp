@@ -59,8 +59,8 @@ public:
 private:
     ConnectionManager();
     ConnectionManager(const ConnectionManager &org);
-    void addValidConnectionParameter(const string &param, const string &value);
-    void addValidConnectionParameter(const string &param, const uint16_t value);
+    void addConnectionParameterIfValid(const string &param, const string &value);
+    void addConnectionParameterIfValid(const string &param, const uint16_t value);
 };
 }
 
