@@ -54,10 +54,9 @@ public:
      */
     PConnection getConnection(void);
 
-    /* Release a connection. After this call the connection instance must
-     * not be used anymore. Else a crash is certain.
+    /* Release a connection.std::string portString;
      */
-    void releaseConnection(const PConnection conn);
+    void releaseConnection(PConnection &conn);
 
     /* Setup the connection informations to the postgre database. Once this
      * data is set its possible to establish connections to the database.

@@ -42,8 +42,9 @@ PConnection ConnectionManager::getConnection() {
     return new Connection(new pqxx::connection(*(connectString)));
 }
 
-void ConnectionManager::releaseConnection(const PConnection conn) {
+void ConnectionManager::releaseConnection(PConnection &conn) {
     delete conn;
+    conn = 0;
 }
 
 ConnectionManager::ConnectionManager() {
