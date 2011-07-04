@@ -39,7 +39,7 @@ PConnection ConnectionManager::getConnection() {
         throw new std::domain_error("Connection Manager is yet not setup");
     }
 
-    return new Connection(new pqxx::connection(*(connectString)));
+    return new Connection(new pqxx::connection(*(connectionString)));
 }
 
 void ConnectionManager::releaseConnection(PConnection &conn) {
@@ -57,20 +57,20 @@ ConnectionManager::ConnectionManager(const ConnectionManager &org) {
 
 void ConnectionManager::setupManager(const std::string &user, const std::string &password,
                                      const std::string &database, const std::string &host) {
-    setupManager(user, password, database, host, "");
+    buildConnectionString(user, password, database, host, "");
 }
 
 void ConnectionManager::setupManager(const std::string &user, const std::string &password,
-                                     const std::string &database, const std::string &host,
+                                     const std::string &database, const std::string &hos^t,
                                      const uint16_t port) {
     std::stringstream ss;
     ss << port;
     std::string portString;
     portString = ss.str();
-    setupManager(user, password, database, host, portString);
+    buildConnectionString(user, password, database, host, portString);
 }
 
-void ConnectionManager::setupManager(const std::string &user,
+void ConnectionManager::buildConnectionString(const std::string &user,
     const std::string &password, const std::string &database,
     const std::string &host, const std::string &port) {
 
@@ -96,7 +96,7 @@ void ConnectionManager::setupManager(const std::string &user,
         ss << " port=" << port << " ";
     }
 
-    connectString = new std::string(ss.str());
+    connectionString = new std::string(ss.str());
     isReady = true;
 }
 }
