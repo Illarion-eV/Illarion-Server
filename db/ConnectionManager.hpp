@@ -41,14 +41,10 @@ public:
         string database;
         string user;
         string password;
-        Login(string database, string user, string password) :
-            database(database), user(user), password(password) {};
     };
     struct Server {
         string host;
-        uint16_t port;
-        Server(string host) : host(host), port(0) {};
-        Server(string host, uint16_t port) : host(host), port(port) {};
+        string port;
     };
 
     static ConnectionManager &getInstance();
@@ -60,7 +56,6 @@ private:
     ConnectionManager();
     ConnectionManager(const ConnectionManager &org);
     void addConnectionParameterIfValid(const string &param, const string &value);
-    void addConnectionParameterIfValid(const string &param, const uint16_t value);
 };
 }
 

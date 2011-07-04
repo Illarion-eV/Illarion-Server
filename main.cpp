@@ -119,11 +119,14 @@ int main(int argc, char *argv[]) {
     Logger::writeMessage("basic", "main: data directory: " + configOptions["datadir"], false);
 
     // initialise DB Manager
-    Database::ConnectionManager::getInstance()->setupManager(
-        configOptions["postgres_user"],configOptions["postgres_pwd"],
-        configOptions["postgres_db"],configOptions["postgres_host"],
-        configOptions["postgres_port"]
-    );
+    Database::ConnectionManager::Login login;
+    Database::ConnectionManager::Server server;
+    login.database = configOptions["postgres_db"];
+    login.user = configOptions["postgres_user"];
+    login.password = configOptions["postgres_pwd"];
+    server.host = configOptions["postgres_host"];
+    server.port = configOptions["postgres_port"];
+    Database::ConnectionManager::getInstance().setupManager(login, server);
     Database::SchemaHelper::setSchemata(configOptions["postgres_schema_server"],
         configOptions["postgres_schema_account"]);
     
