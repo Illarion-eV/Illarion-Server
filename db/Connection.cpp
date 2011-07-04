@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "db/Connection.hpp"
+#include "Connection.hpp"
 
 #include <stdexcept>
 

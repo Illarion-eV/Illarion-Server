@@ -16,8 +16,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "db/ConnectionManager.hpp"
-#include "db/Connection.hpp"
+#include "ConnectionManager.hpp"
+#include "Connection.hpp"
 
 #include <sstream>
 #include <string>
