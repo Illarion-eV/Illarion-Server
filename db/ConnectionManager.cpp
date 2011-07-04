@@ -37,15 +37,15 @@ ConnectionManager &ConnectionManager::getInstance() {
 
 void ConnectionManager::setupManager(const Login &login, const Server &server) {
     connectionString = "";
-    addValidConnectionParameter("user", login.user);
-    addValidConnectionParameter("password", login.password);
-    addValidConnectionParameter("dbname", login.database);
-    addValidConnectionParameter("host", server.host);
-    addValidConnectionParameter("port", server.port);
+    addConnectionParameterIfValid("user", login.user);
+    addConnectionParameterIfValid("password", login.password);
+    addConnectionParameterIfValid("dbname", login.database);
+    addConnectionParameterIfValid("host", server.host);
+    addConnectionParameterIfValid("port", server.port);
     isOperational = true;
 }
 
-PConnection ConnectionManager::getConnection() {
+PConnection ConnectionManager::getConnection() throw(std::logic_error) {
     if (!isOperational) {
         throw new std::logic_error("Connection Manager is not set up yet");
     }
@@ -80,7 +80,5 @@ void ConnectionManager::addConnectionParameterIfValid(const string &param,
         valuestring << value;
         connectionString += " " + param + "=" + valuestring.str();
     }
-}
-
 }
 
