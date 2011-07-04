@@ -47,10 +47,10 @@ void ConnectionManager::setupManager(const Login &login, const Server &server) {
 
 PConnection ConnectionManager::getConnection() {
     if (!isOperational) {
-        throw new std::domain_error("Connection Manager is yet not setup");
+        throw new std::logic_error("Connection Manager is not set up yet");
     }
 
-    return new Connection(new pqxx::connection(*(connectionString)));
+    return new Connection(new pqxx::connection(connectionString));
 }
 
 void ConnectionManager::releaseConnection(PConnection &conn) {
@@ -66,14 +66,14 @@ ConnectionManager::ConnectionManager(const ConnectionManager &org) {
     throw new std::domain_error("Copy constructor not supported.");
 }
 
-void ConnectionManager::addValidConnectionParameter(const string &param,
+void ConnectionManager::addConnectionParameterIfValid(const string &param,
         const string &value) {
     if (value.size() > 0) {
         connectionString += " " + param + "=" + value;
     }
 }
 
-void ConnectionManager::addValidConnectionParameter(const string &param,
+void ConnectionManager::addConnectionParameterIfValid(const string &param,
         const uint16_t value) {
     if (value > 0) {
         std::stringstream valuestring;
