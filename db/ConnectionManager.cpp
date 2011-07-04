@@ -61,17 +61,12 @@ void ConnectionManager::setupManager(const std::string &user, const std::string 
 
 void ConnectionManager::setupManager(const std::string &user, const std::string &password,
                                      const std::string &database, const std::string &host,
-                                     const int32_t port) {
+                                     const uint16_t port) {
+    std::stringstream ss;
+    ss << port;
     std::string portString;
-    if (port >= 0) {
-        portString = "";
-    } else {
-        std::stringstream ss;
-        ss << port;
-        portString = ss.str();
-    }
-
-    this->setupManager(user, password, database, host, portString);
+    portString = ss.str();
+    setupManager(user, password, database, host, portString);
 }
 
 void ConnectionManager::setupManager(const std::string &user,

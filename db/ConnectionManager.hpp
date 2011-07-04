@@ -69,7 +69,7 @@ public:
                       const std::string &port);
     void setupManager(const std::string &user, const std::string &password,
                       const std::string &database, const std::string &host,
-                      const int32_t port);
+                      const uint16_t port);
 private:
     ConnectionManager(void);
     ConnectionManager(const ConnectionManager &org);
