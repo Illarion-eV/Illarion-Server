@@ -21,7 +21,7 @@
 
 #include <string>
 
-#include <Connection.hpp>
+#include "Connection.hpp"
 
 #include <boost/cstdint.hpp>
 
@@ -53,7 +53,7 @@ public:
 
     static ConnectionManager &getInstance();
     void setupManager(const Login &login, const Server &server);
-    PConnection getConnection() throw(std::domain_error);
+    PConnection getConnection() throw(std::logic_error);
     void releaseConnection(PConnection &conn);
 
 private:
