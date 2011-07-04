@@ -30,22 +30,11 @@ using std::string;
 namespace Database {
 class ConnectionManager;
 
-typedef ConnectionManager *PConnectionManager;
-
 class ConnectionManager {
 private:
-    /* Singleton instance */
     static ConnectionManager instance;
-
-    /* Connection String that is used to establish a connection to the
-     * postgre DB.
-     */
     string connectionString;
-
-    /* Ready flag. This is set true once the connection informations are
-     * set.
-     */
-    bool isReady;
+    bool isOperational;
 
 public:
     struct Login {
@@ -62,22 +51,11 @@ public:
         Server(string host, uint16_t port) : host(host), port(port) {};
     };
 
-    /* Get the singleton instance of this class. */
     static ConnectionManager &getInstance();
-
-    /* Get a new connection. This function throws a std::domain_error in
-     * case the informations for the connection are not set yet.
-     */
-    PConnection getConnection();
-
-    /* Release a connection.std::string portString;
-     */
+    void setupManager(const Login &login, const Server &server);
+    PConnection getConnection() throw(std::domain_error);
     void releaseConnection(PConnection &conn);
 
-    /* Setup the connection informations to the postgre database. Once this
-     * data is set its possible to establish connections to the database.
-     */
-    void setupManager(const Login &login, const Server &server);
 private:
     ConnectionManager();
     ConnectionManager(const ConnectionManager &org);
@@ -86,4 +64,4 @@ private:
 };
 }
 
-#endif // _CONNECTION_MANAGER_HPP_
+#endif

@@ -35,8 +35,18 @@ ConnectionManager &ConnectionManager::getInstance() {
     return ConnectionManager::instance;
 }
 
+void ConnectionManager::setupManager(const Login &login, const Server &server) {
+    connectionString = "";
+    addValidConnectionParameter("user", login.user);
+    addValidConnectionParameter("password", login.password);
+    addValidConnectionParameter("dbname", login.database);
+    addValidConnectionParameter("host", server.host);
+    addValidConnectionParameter("port", server.port);
+    isOperational = true;
+}
+
 PConnection ConnectionManager::getConnection() {
-    if (!isReady) {
+    if (!isOperational) {
         throw new std::domain_error("Connection Manager is yet not setup");
     }
 
@@ -49,21 +59,11 @@ void ConnectionManager::releaseConnection(PConnection &conn) {
 }
 
 ConnectionManager::ConnectionManager() {
-    isReady = false;
+    isOperational = false;
 };
 
 ConnectionManager::ConnectionManager(const ConnectionManager &org) {
     throw new std::domain_error("Copy constructor not supported.");
-}
-
-void ConnectionManager::setupManager(const Login &login, const Server &server) {
-    connectionString = "";
-    addValidConnectionParameter("user", login.user);
-    addValidConnectionParameter("password", login.password);
-    addValidConnectionParameter("dbname", login.database);
-    addValidConnectionParameter("host", server.host);
-    addValidConnectionParameter("port", server.port);
-    isReady = true;
 }
 
 void ConnectionManager::addValidConnectionParameter(const string &param,
