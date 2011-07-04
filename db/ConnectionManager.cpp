@@ -35,11 +35,11 @@ PConnectionManager ConnectionManager::getInstance() {
 }
 
 PConnection ConnectionManager::getConnection() {
-    if (!this->isReady) {
+    if (!isReady) {
         throw new std::domain_error("Connection Manager is yet not setup");
     }
 
-    return new Connection(new pqxx::connection(*(this->connectString)));
+    return new Connection(new pqxx::connection(*(connectString)));
 }
 
 void ConnectionManager::releaseConnection(const PConnection conn) {
@@ -47,7 +47,7 @@ void ConnectionManager::releaseConnection(const PConnection conn) {
 }
 
 ConnectionManager::ConnectionManager() {
-    this->isReady = false;
+    isReady = false;
 };
 
 ConnectionManager::ConnectionManager(const ConnectionManager &org) {
@@ -56,7 +56,7 @@ ConnectionManager::ConnectionManager(const ConnectionManager &org) {
 
 void ConnectionManager::setupManager(const std::string &user, const std::string &password,
                                      const std::string &database, const std::string &host) {
-    this->setupManager(user, password, database, host, "");
+    setupManager(user, password, database, host, "");
 }
 
 void ConnectionManager::setupManager(const std::string &user, const std::string &password,
@@ -95,7 +95,7 @@ void ConnectionManager::setupManager(const std::string &user,
         ss << " port=" << port << " ";
     }
 
-    this->connectString = new std::string(ss.str());
-    this->isReady = true;
+    connectString = new std::string(ss.str());
+    isReady = true;
 }
 }
