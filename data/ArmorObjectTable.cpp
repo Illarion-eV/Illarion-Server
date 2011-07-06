@@ -51,7 +51,7 @@ void ArmorObjectTable::reload() {
         query.addColumn("armor", "arm_absorb");
         query.addColumn("armor", "arm_stiffness");
         query.addServerTable("armor");
-        
+
         Database::Result results = query.execute();
         Database::ConnectionManager::getInstance().releaseConnection(connection);
 

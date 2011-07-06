@@ -32,48 +32,48 @@
 namespace Database {
 class SelectQuery;
 typedef SelectQuery *PSelectQuery;
-    
+
 class SelectQuery : public Query {
-    private:
-        std::stack<std::string*> conditionsList;
-        std::string conditions;
-        std::string columns;
-        std::string tables;
-    public:
-        SelectQuery(const SelectQuery &org);
-        SelectQuery(const Connection &connection);
-        virtual ~SelectQuery();
-        
-        void addColumn(const std::string &column);
-        void addColumn(const std::string &table, const std::string &column);
+private:
+    std::stack<std::string *> conditionsStack;
+    std::string conditions;
+    std::string columns;
+    std::string tables;
+public:
+    SelectQuery(const SelectQuery &org);
+    SelectQuery(const Connection &connection);
+    virtual ~SelectQuery();
 
-        void addServerTable(const std::string &table);
-        void addAccountTable(const std::string &table);
+    void addColumn(const std::string &column);
+    void addColumn(const std::string &table, const std::string &column);
 
-        void addEqualCondition(const std::string &column, const std::string &value);
-        void addEqualCondition(const std::string &table, const std::string &column, const std::string &value);
-        void addEqualCondition(const std::string &column, const uint32_t &value);
-        void addEqualCondition(const std::string &table, const std::string &column, const uint32_t &value);
-        void addEqualCondition(const std::string &column, const int32_t &value);
-        void addEqualCondition(const std::string &table, const std::string &column, const int32_t &value);
+    void addServerTable(const std::string &table);
+    void addAccountTable(const std::string &table);
 
-        void addNotEqualCondition(const std::string &column, const std::string &value);
-        void addNotEqualCondition(const std::string &table, const std::string &column, const std::string &value);
-        void addNotEqualCondition(const std::string &column, const uint32_t &value);
-        void addNotEqualCondition(const std::string &table, const std::string &column, const uint32_t &value);
-        void addNotEqualCondition(const std::string &column, const int32_t &value);
-        void addNotEqualCondition(const std::string &table, const std::string &column, const int32_t &value);
+    void addEqualCondition(const std::string &column, const std::string &value);
+    void addEqualCondition(const std::string &table, const std::string &column, const std::string &value);
+    void addEqualCondition(const std::string &column, const uint32_t &value);
+    void addEqualCondition(const std::string &table, const std::string &column, const uint32_t &value);
+    void addEqualCondition(const std::string &column, const int32_t &value);
+    void addEqualCondition(const std::string &table, const std::string &column, const int32_t &value);
 
-        void andConditions();
-        void orConditions();
+    void addNotEqualCondition(const std::string &column, const std::string &value);
+    void addNotEqualCondition(const std::string &table, const std::string &column, const std::string &value);
+    void addNotEqualCondition(const std::string &column, const uint32_t &value);
+    void addNotEqualCondition(const std::string &table, const std::string &column, const uint32_t &value);
+    void addNotEqualCondition(const std::string &column, const int32_t &value);
+    void addNotEqualCondition(const std::string &table, const std::string &column, const int32_t &value);
 
-        Result execute();
-    private:
-        static std::string &escapeKey(const std::string &key);
-        static std::string &escapeAndChainKeys(const std::string &key1, const std::string &key2);
-        static void addToCsvList(std::string &list, const std::string &newEntry);
+    void andConditions();
+    void orConditions();
 
-        void mergeNextConditions(const std::string &operation);
+    Result execute();
+private:
+    static std::string &escapeKey(const std::string &key);
+    static std::string &escapeAndChainKeys(const std::string &key1, const std::string &key2);
+    static void appendToStringList(std::string &list, const std::string &newEntry);
+
+    void mergeNextConditions(const std::string &operation);
 };
 
 }
