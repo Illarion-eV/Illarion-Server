@@ -26,8 +26,8 @@
 
 #include <boost/cstdint.hpp>
 
-#include "Result.hpp"
-#include "Query.hpp"
+#include "db/Result.hpp"
+#include "db/Query.hpp"
 
 namespace Database {
 class SelectQuery;

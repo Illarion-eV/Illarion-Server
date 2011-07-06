@@ -18,10 +18,10 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "SchemaHelper.hpp"
+#include "db/SchemaHelper.hpp"
 
-namespace Database {
-namespace SchemaHelper {
+using namespace Database::SchemaHelper;
+
 static std::string serverSchema;
 static std::string accountSchema;
 
@@ -36,6 +36,4 @@ std::string &getServerSchema() {
 
 std::string &getAccountSchema() {
     return accountSchema;
-}
-}
 }

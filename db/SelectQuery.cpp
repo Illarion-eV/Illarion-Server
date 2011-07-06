@@ -18,11 +18,11 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "SelectQuery.hpp"
-
-#include "Connection.hpp"
+#include "db/SelectQuery.hpp"
 
 #include <sstream>
+
+#include "db/Connection.hpp"
 
 using namespace Database;
 
@@ -35,6 +35,13 @@ SelectQuery::SelectQuery(const SelectQuery &org) {
 
 SelectQuery::SelectQuery(const Connection &connection) {
     Query(connection);
+}
+
+SelectQuery::~SelectQuery() {
+    while (!conditions.empty()) {
+        delete conditions.top();
+        conditions.pop();
+    }
 }
 
 void SelectQuery::addColumn(const std::string &column) {
