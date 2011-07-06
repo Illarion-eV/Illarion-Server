@@ -18,17 +18,29 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _SCHEMA_HELPER_HPP_
-#define _SCHEMA_HELPER_HPP_
-
-#include <string>
+#include "SchemaHelper.hpp"
 
 namespace Database {
 namespace SchemaHelper {
-void setSchemata(const std::string &server, const std::string &account);
-std::string &getServerSchema();
-std::string &getAccountSchema();
-}
+static std::string serverSchema;
+static std::string accountSchema;
+
+void setSchemata(const std::string &server, const std::string &account) {
+    serverSchema += "\"";
+    serverSchema += server;
+    serverSchema += "\"";
+
+    accountSchema += "\"";
+    accountSchema += account;
+    accountSchema += "\"";
 }
 
-#endif // _SCHEMA_HELPER_HPP_
+std::string &getServerSchema() {
+    return serverSchema;
+}
+
+std::string &getAccountSchema() {
+    return accountSchema;
+}
+}
+}
