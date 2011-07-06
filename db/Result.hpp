@@ -19,19 +19,21 @@
 #ifndef _RESULT_HPP_
 #define _RESULT_HPP_
 
+#include <pqxx/result.hxx>
+
 namespace Database {
 /* This file contains just some namespaces that hide the pqxx implementation
  * of the SQL Query result handling.
  */
-    class Result : public pqxx::result {
-        public:
-        typedef pqxx::result::tuple Tuple;
-        typedef Tuple *PTuple;
+class Result : public pqxx::result {
+public:
+    typedef pqxx::result::tuple Tuple;
+    typedef Tuple *PTuple;
 
-        typedef pqxx::result::const_iterator ConstIterator;
-        typedef ConstIterator *PConstIterator;
-    };
-    typedef Result *PResult;
+    typedef pqxx::result::const_iterator ConstIterator;
+    typedef ConstIterator *PConstIterator;
+};
+typedef Result *PResult;
 }
 
 #endif // _RESULT_HPP_

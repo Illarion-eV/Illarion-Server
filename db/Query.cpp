@@ -16,31 +16,24 @@
 //  You should have received a copy of the GNU General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "db/Query.hpp"
+#include "Query.hpp"
 
 #include <stdexcept>
 
 using namespace Database;
 
-Query::Query() {
-    dbConnection = 0;
-    dbQuery = 0;
-}
-
 Query::Query(const Query &org) {
     dbConnection = org.dbConnection;
-    dbQuery = new std::string(*org.dbQuery);
+    dbQuery = org.dbQuery;
 }
 
-Query::Query(PConnection connection, const std::string &query) {
+Query::Query(const Connection &connection) {
     dbConnection = connection;
-    dbQuery = new std::string(query);
 }
 
-Query::~Query() {
-    if (dbQuery != 0) {
-        delete dbQuery;
-    }
+Query::Query(const Connection &connection, const std::string &query) {
+    dbConnection = connection;
+    dbQuery = query;
 }
 
 Result Query::execute() {
@@ -63,4 +56,12 @@ Result Query::execute() {
     }
 
     return (Result) result;
+}
+
+void Query::setQuery(const std::string &query) {
+    dbQuery = query;
+}
+
+Connection &getConnection() {
+    return dbConnection;
 }

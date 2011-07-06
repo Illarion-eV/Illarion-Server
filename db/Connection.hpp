@@ -35,10 +35,13 @@ private:
     pqxx::transaction_base *transaction;
 
 public:
-
     void beginTransaction(void);
     void commitTransaction(void);
     void rollbackTransaction(void);
+
+    template<typename T> inline std::string quote(const T &t) {
+        return internalConnection->quote(t);
+    }
 
     inline bool transactionActive() {
         return (transaction != 0);

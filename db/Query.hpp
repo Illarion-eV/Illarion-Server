@@ -21,8 +21,8 @@
 
 #include <string>
 
-#include "db/Connection.hpp"
-#include "db/Result.hpp"
+#include "Connection.hpp"
+#include "Result.hpp"
 
 namespace Database {
 class Query;
@@ -31,18 +31,23 @@ typedef Query *PQuery;
 
 class Query {
 private:
-    PConnection dbConnection;
-    std::string *dbQuery;
+    const Connection dbConnection;
+    std::string dbQuery;
 
 public:
-    ~Query(void);
+    Query(const Query &org);
+    Query(const Connection &connection, const std::string &query);
+    virtual ~Query();
 
     Result execute();
 
-    Query(const Query &org);
-    Query(PConnection connection, const std::string &query);
+protected:
+    Query(const Connection &connection);
+
+    void setQuery(const std::string &query);
+    Connection &getConnection();
 private:
-    Query(void);
+    Query() {};
 };
 }
 

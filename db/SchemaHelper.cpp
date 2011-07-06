@@ -4,7 +4,7 @@
  *
  * This file is part of Illarionserver.
  *
- * Illarionserver is free software:     you can redistribute it and/or modify it
+ * Illarionserver  is  free  software:  you can redistribute it and/or modify it
  * under the terms of the  GNU  General  Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any
  * later version.
@@ -26,13 +26,8 @@ static std::string serverSchema;
 static std::string accountSchema;
 
 void setSchemata(const std::string &server, const std::string &account) {
-    serverSchema += "\"";
-    serverSchema += server;
-    serverSchema += "\"";
-
-    accountSchema += "\"";
-    accountSchema += account;
-    accountSchema += "\"";
+    serverSchema = "\"" + server + "\"";
+    accountSchema = "\"" + account + "\"";
 }
 
 std::string &getServerSchema() {
