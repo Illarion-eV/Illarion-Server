@@ -19,7 +19,7 @@
 
 #include "db/ConnectionManager.hpp"
 #include "db/SchemaHelper.hpp"
-#include "db/Query.hpp"
+#include "db/SelectQuery.hpp"
 #include "db/Result.hpp"
 
 #include "ArmorObjectTable.hpp"
@@ -41,35 +41,38 @@ void ArmorObjectTable::reload() {
         Database::PConnection connection =
             Database::ConnectionManager::getInstance().getConnection();
 
-        std::stringstream ss;
-        ss << "SELECT ";
-        ss << "\"arm_itemid\", \"arm_bodyparts\", \"arm_puncture\", ";
-        ss << "\"arm_stroke\", \"arm_thrust\", \"arm_magicdisturbance\", ";
-        ss << "\"arm_absorb\", \"arm_stiffness\" ";
-        ss << "FROM ";
-        ss << Database::SchemaHelper::getServerSchema() << ".\"armor\";";
+        Database::SelectQuery query(*connection);
+        query.addColumn("armor", "arm_itemid");
+        query.addColumn("armor", "arm_bodyparts");
+        query.addColumn("armor", "arm_puncture");
+        query.addColumn("armor", "arm_stroke");
+        query.addColumn("armor", "arm_thrust");
+        query.addColumn("armor", "arm_magicdisturbance");
+        query.addColumn("armor", "arm_absorb");
+        query.addColumn("armor", "arm_stiffness");
+        query.addServerTable("armor");
         
-        Database::PQuery query = new Database::Query(connection, ss.str());
-        Database::Result results = query->execute();
+        Database::Result results = query.execute();
         Database::ConnectionManager::getInstance().releaseConnection(connection);
 
         if (!results.empty()) {
             clearOldTable();
             ArmorStruct temprecord;
-            
+
             for (Database::Result::ConstIterator itr = results.begin();
                  itr != results.end(); ++itr) {
-                     
-                temprecord.BodyParts = (TYPE_OF_BODYPARTS) ((*itr)["arm_bodyparts"].as<int16_t>());
-                temprecord.PunctureArmor = (TYPE_OF_PUNCTUREARMOR) ((*itr)["arm_puncture"].as<int16_t>());
-                temprecord.StrokeArmor = (TYPE_OF_STROKEARMOR) ((*itr)["arm_stroke"].as<int16_t>());
-                temprecord.ThrustArmor = (TYPE_OF_THRUSTARMOR) ((*itr)["arm_thrust"].as<int16_t>());
-                temprecord.MagicDisturbance = (TYPE_OF_MAGICDISTURBANCE) (*itr)["arm_magicdisturbance"].as<int32_t>();
+
+                temprecord.BodyParts = (TYPE_OF_BODYPARTS)((*itr)["arm_bodyparts"].as<int16_t>());
+                temprecord.PunctureArmor = (TYPE_OF_PUNCTUREARMOR)((*itr)["arm_puncture"].as<int16_t>());
+                temprecord.StrokeArmor = (TYPE_OF_STROKEARMOR)((*itr)["arm_stroke"].as<int16_t>());
+                temprecord.ThrustArmor = (TYPE_OF_THRUSTARMOR)((*itr)["arm_thrust"].as<int16_t>());
+                temprecord.MagicDisturbance = (TYPE_OF_MAGICDISTURBANCE)(*itr)["arm_magicdisturbance"].as<int32_t>();
                 temprecord.Absorb = (*itr)["arm_absorb"].as<int16_t>();
                 temprecord.Stiffness = (*itr)["arm_stiffness"].as<int16_t>();
 
-                m_table[(TYPE_OF_ITEM_ID) ((*itr)["arm_itemid"].as<TYPE_OF_ITEM_ID>())] = temprecord;
+                m_table[(TYPE_OF_ITEM_ID)((*itr)["arm_itemid"].as<TYPE_OF_ITEM_ID>())] = temprecord;
             }
+
             m_dataOK = true;
         } else {
             m_dataOK = false;
