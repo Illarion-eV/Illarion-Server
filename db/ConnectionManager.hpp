@@ -48,12 +48,10 @@ public:
         string host;
         string port;
     };
-
     static ConnectionManager &getInstance();
     void setupManager(const Login &login, const Server &server);
     PConnection getConnection() throw(std::logic_error);
     void releaseConnection(PConnection &conn);
-
 private:
     ConnectionManager();
     ConnectionManager(const ConnectionManager &org);

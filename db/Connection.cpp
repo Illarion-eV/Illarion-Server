@@ -18,7 +18,7 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "db/Connection.hpp"
+#include "Connection.hpp"
 
 #include <stdexcept>
 
