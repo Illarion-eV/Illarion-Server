@@ -16,13 +16,13 @@
 //  You should have received a copy of the GNU General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "ArmorObjectTable.hpp"
 
 #include "db/ConnectionManager.hpp"
 #include "db/SchemaHelper.hpp"
 #include "db/SelectQuery.hpp"
 #include "db/Result.hpp"
 
-#include "ArmorObjectTable.hpp"
 #include "types.hpp"
 
 #include <iostream>
