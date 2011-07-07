@@ -853,7 +853,7 @@ bool World::putItemOnMap(Character *cc, short int x, short int y, short int z) {
                 //Dies prft nicht nach ob ggf das entfernen des Items nicht geklappt hat
                 TriggerStruct Trigger;
 
-                if (Triggers->find(position(x,y,z),Trigger)) {
+                if (cc && Triggers->find(position(x,y,z),Trigger)) {
                     if (Trigger.script) {
                         ScriptItem sItem = g_item;
                         sItem.pos = position(x,y,z);
@@ -884,7 +884,7 @@ bool World::putItemOnMap(Character *cc, short int x, short int y, short int z) {
                 //Dies prft nicht nach ob ggf das entfernen des Items nicht geklappt hat
                 TriggerStruct Trigger;
 
-                if (Triggers->find(position(x,y,z),Trigger)) {
+                if (cc && Triggers->find(position(x,y,z),Trigger)) {
                     if (Trigger.script) {
                         ScriptItem sItem = g_item;
                         sItem.pos = position(x,y,z);
