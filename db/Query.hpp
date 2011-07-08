@@ -40,18 +40,18 @@ private:
 
 public:
     Query(const Query &org);
-    Query(const boost::shared_ptr<Connection> &connection, const std::string &query);
+    Query(const std::string &query);
+    Query(const boost::shared_ptr<Connection> connection, const std::string &query);
     virtual ~Query();
 
-    Result execute();
+    virtual Result execute();
 
 protected:
-    Query(const boost::shared_ptr<Connection> &connection);
+    Query();
+    Query(const boost::shared_ptr<Connection> connection);
 
     void setQuery(const std::string &query);
-    boost::shared_ptr<Connection> &getConnection();
-private:
-    Query() {};
+    boost::shared_ptr<Connection> getConnection();
 };
 }
 

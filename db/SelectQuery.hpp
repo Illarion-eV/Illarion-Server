@@ -41,8 +41,9 @@ private:
     std::string columns;
     std::string tables;
 public:
+    SelectQuery();
     SelectQuery(const SelectQuery &org);
-    SelectQuery(const boost::shared_ptr<Connection> &connection);
+    SelectQuery(const boost::shared_ptr<Connection> connection);
     ~SelectQuery();
 
     void addColumn(const std::string &column);
@@ -68,7 +69,7 @@ public:
     void andConditions();
     void orConditions();
 
-    Result execute();
+    virtual Result execute();
 private:
     static std::string &escapeKey(const std::string &key);
     static std::string &escapeAndChainKeys(const std::string &key1, const std::string &key2);

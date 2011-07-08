@@ -20,20 +20,30 @@
 
 #include "db/Query.hpp"
 
+#include "db/ConnectionManager.hpp"
+
 #include <stdexcept>
 
 using namespace Database;
+
+Query::Query() {
+    Query(ConnectionManager::getInstance().getConnection());
+}
 
 Query::Query(const Query &org) {
     dbConnection = org.dbConnection;
     dbQuery = org.dbQuery;
 }
 
-Query::Query(const boost::shared_ptr<Connection> &connection) {
+Query::Query(const boost::shared_ptr<Connection> connection) {
     dbConnection = connection;
 }
 
-Query::Query(const boost::shared_ptr<Connection> &connection, const std::string &query) {
+Query(const std::string &query) {
+    Query(ConnectionManager::getInstance().getConnection(), query);
+}
+
+Query::Query(const boost::shared_ptr<Connection> connection, const std::string &query) {
     dbConnection = connection;
     dbQuery = query;
 }
@@ -64,6 +74,6 @@ void Query::setQuery(const std::string &query) {
     dbQuery = query;
 }
 
-Connection &getConnection() {
+Connection getConnection() {
     return dbConnection;
 }

@@ -18,15 +18,10 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "CommonObjectTable.hpp"
+#include "data/CommonObjectTable.hpp"
 
 #include <iostream>
 
-#include <boost/shared_ptr.hpp>
-
-#include "db/Connection.hpp"
-#include "db/ConnectionManager.hpp"
-#include "db/SchemaHelper.hpp"
 #include "db/SelectQuery.hpp"
 #include "db/Result.hpp"
 
@@ -74,10 +69,7 @@ void CommonObjectTable::reload() {
 #endif
 
     try {
-        boost::shared_ptr<Database::Connection> connection;
-        Database::ConnectionManager::getInstance().getConnection(connection);
-
-        Database::SelectQuery query(connection);
+        Database::SelectQuery query;
         query.addColumn("common", "com_itemid");
         query.addColumn("common", "com_volume");
         query.addColumn("common", "com_weight");

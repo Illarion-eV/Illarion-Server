@@ -22,7 +22,7 @@
 
 #include <sstream>
 
-#include "db/Connection.hpp"
+#include "db/ConnectionManager.hpp"
 
 using namespace Database;
 
@@ -33,7 +33,11 @@ SelectQuery::SelectQuery(const SelectQuery &org) {
     tables = org.tables;
 }
 
-SelectQuery::SelectQuery(const boost::shared_ptr<Connection> &connection) {
+SelectQuery::SelectQuery() {
+    SelectQuery(ConnectionManager::getInstance().getConnection());
+}
+
+SelectQuery::SelectQuery(const boost::shared_ptr<Connection> connection) {
     Query(connection);
 }
 

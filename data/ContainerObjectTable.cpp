@@ -18,15 +18,10 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ContainerObjectTable.hpp"
+#include "data/ContainerObjectTable.hpp"
 
 #include <iostream>
 
-#include <boost/shared_ptr.hpp>
-
-#include "db/Connection.hpp"
-#include "db/ConnectionManager.hpp"
-#include "db/SchemaHelper.hpp"
 #include "db/SelectQuery.hpp"
 #include "db/Result.hpp"
 
@@ -40,10 +35,7 @@ void ContainerObjectTable::reload() {
 #endif
 
     try {
-        boost::shared_ptr<Database::Connection> connection;
-        Database::ConnectionManager::getInstance().getConnection(connection);
-
-        Database::SelectQuery query(connection);
+        Database::SelectQuery query;
         query.addColumn("container", "con_itemid");
         query.addColumn("container", "con_volume");
         query.addServerTable("container");

@@ -48,12 +48,14 @@ void ConnectionManager::setupManager(const Login &login, const Server &server) {
     isOperational = true;
 }
 
-void getConnection(boost::shared_ptr<Connection> &targetPtr) throw(std::logic_error) {
+boost::shared_ptr<Connection> getConnection() throw(std::logic_error) {
     if (!isOperational) {
         throw new std::logic_error("Connection Manager is not set up yet");
     }
 
-    targetPtr = new Connection(new pqxx::connection(connectionString));
+    boost::shared_ptr<Connection> connPtr(new Connection(
+        new pqxx::connection(connectionString)));
+    return connPtr;
 }
 
 ConnectionManager::ConnectionManager() {

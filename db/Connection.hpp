@@ -27,7 +27,7 @@
 namespace Database {
 class Connection;
 
-typedef Connection *PConnection;
+typedef Connection *PConnection;  
 
 class Connection {
 private:

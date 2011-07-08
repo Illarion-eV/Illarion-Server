@@ -1,24 +1,29 @@
-//  illarionserver - server for the game Illarion
-//  Copyright 2011 Illarion e.V.
-//
-//  This file is part of illarionserver.
-//
-//  illarionserver is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  illarionserver is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * Illarionserver - server for the game Illarion
+ * Copyright 2011 Illarion e.V.
+ *
+ * This file is part of Illarionserver.
+ *
+ * Illarionserver  is  free  software:  you can redistribute it and/or modify it
+ * under the terms of the  GNU  General  Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * Illarionserver is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY;  without  even  the  implied  warranty  of  MERCHANTABILITY  or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU  General Public License along with
+ * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
+ */
 
+#include "data/RaceSizeTable.hpp"
 
-#include "db/ConnectionManager.hpp"
-#include "RaceSizeTable.hpp"
+#include "db/SelectQuery.hpp"
+#include "db/Result.hpp"
+
+#include "types.hpp"
 
 
 RaceSizeTable::RaceSizeTable() : m_dataOk(false) {
@@ -35,17 +40,26 @@ void RaceSizeTable::reload() {
 #endif
 
     try {
+        Database::SelectQuery query;
+        query.addColumn("raceattr", "id");
+        query.addColumn("raceattr", "minbodyheight");
+        query.addColumn("raceattr", "maxbodyheight");
+        query.addAccountTable("raceattr");
+
+        Database::Result results = query.execute();
         std::vector<uint16_t>minheight;
         std::vector<uint16_t>maxheight;
         std::vector<uint16_t>raceid;
 
-        ConnectionManager::TransactionHolder transaction = accdbmgr->getTransaction();
-        size_t rows = di::select_all<di::Integer, di::Integer, di::Integer>(transaction,raceid, minheight, maxheight,"SELECT id, minbodyheight, maxbodyheight FROM raceattr");
+        if (!results.empty()) {
+            uint16_t currentID;
+            for (Database::Result::ConstIterator itr = results.begin();
+                 itr != results.end(); ++itr) {
 
-        //Zeilenweises laden der Daten
-        for (size_t i = 0; i < rows; ++i) {
-            minsizes[ raceid[i] ] = minheight[i];
-            maxsizes[ raceid[i] ] = maxheight[i];
+                currentID = (uint16_t)((*itr)["id"].as<int32_t>());
+                minsizes[currentID] = (uint16_t)((*itr)["minbodyheight"].as<int32_t>());
+                maxsizes[currentID] = (uint16_t)((*itr)["maxbodyheight"].as<int32_t>());
+            }
         }
 
 

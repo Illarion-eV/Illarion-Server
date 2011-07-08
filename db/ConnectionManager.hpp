@@ -51,7 +51,7 @@ public:
     };
     static ConnectionManager &getInstance();
     void setupManager(const Login &login, const Server &server);
-    void getConnection(boost::shared_ptr<Connection> &targetPtr) throw(std::logic_error);
+    boost::shared_ptr<Connection> getConnection() throw(std::logic_error);
 private:
     ConnectionManager();
     ConnectionManager(const ConnectionManager &org);
