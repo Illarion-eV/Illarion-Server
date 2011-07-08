@@ -24,6 +24,7 @@
 #include <string>
 
 #include <boost/cstdint.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include "db/Connection.hpp"
 
@@ -50,8 +51,7 @@ public:
     };
     static ConnectionManager &getInstance();
     void setupManager(const Login &login, const Server &server);
-    PConnection getConnection() throw(std::logic_error);
-    void releaseConnection(PConnection &conn);
+    void getConnection(boost::shared_ptr<Connection> &targetPtr) throw(std::logic_error);
 private:
     ConnectionManager();
     ConnectionManager(const ConnectionManager &org);

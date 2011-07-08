@@ -1,32 +1,37 @@
-//  illarionserver - server for the game Illarion
-//  Copyright 2011 Illarion e.V.
-//
-//  This file is part of illarionserver.
-//
-//  illarionserver is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  illarionserver is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * Illarionserver - server for the game Illarion
+ * Copyright 2011 Illarion e.V.
+ *
+ * This file is part of Illarionserver.
+ *
+ * Illarionserver  is  free  software:  you can redistribute it and/or modify it
+ * under the terms of the  GNU  General  Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * Illarionserver is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY;  without  even  the  implied  warranty  of  MERCHANTABILITY  or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU  General Public License along with
+ * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "ArmorObjectTable.hpp"
 
+#include <iostream>
+#include <sstream>
+
+#include <boost/shared_ptr.hpp>
+
+#include "db/Connection.hpp"
 #include "db/ConnectionManager.hpp"
 #include "db/SchemaHelper.hpp"
 #include "db/SelectQuery.hpp"
 #include "db/Result.hpp"
 
 #include "types.hpp"
-
-#include <iostream>
-#include <sstream>
 
 ArmorObjectTable::ArmorObjectTable() : m_dataOK(false) {
     reload();
@@ -38,10 +43,10 @@ void ArmorObjectTable::reload() {
 #endif
 
     try {
-        Database::PConnection connection =
-            Database::ConnectionManager::getInstance().getConnection();
+        boost::shared_ptr<Database::Connection> connection;
+        Database::ConnectionManager::getInstance().getConnection(connection);
 
-        Database::SelectQuery query(*connection);
+        Database::SelectQuery query(connection);
         query.addColumn("armor", "arm_itemid");
         query.addColumn("armor", "arm_bodyparts");
         query.addColumn("armor", "arm_puncture");
@@ -53,7 +58,6 @@ void ArmorObjectTable::reload() {
         query.addServerTable("armor");
 
         Database::Result results = query.execute();
-        Database::ConnectionManager::getInstance().releaseConnection(connection);
 
         if (!results.empty()) {
             clearOldTable();

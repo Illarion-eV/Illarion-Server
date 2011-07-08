@@ -1,27 +1,30 @@
-//  illarionserver - server for the game Illarion
-//  Copyright 2011 Illarion e.V.
-//
-//  This file is part of illarionserver.
-//
-//  illarionserver is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  illarionserver is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
-
+/*
+ * Illarionserver - server for the game Illarion
+ * Copyright 2011 Illarion e.V.
+ *
+ * This file is part of Illarionserver.
+ *
+ * Illarionserver  is  free  software:  you can redistribute it and/or modify it
+ * under the terms of the  GNU  General  Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * Illarionserver is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY;  without  even  the  implied  warranty  of  MERCHANTABILITY  or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU  General Public License along with
+ * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "CommonObjectTable.hpp"
 
 #include <iostream>
+
 #include <boost/shared_ptr.hpp>
 
+#include "db/Connection.hpp"
 #include "db/ConnectionManager.hpp"
 #include "db/SchemaHelper.hpp"
 #include "db/SelectQuery.hpp"
@@ -71,10 +74,10 @@ void CommonObjectTable::reload() {
 #endif
 
     try {
-        Database::PConnection connection =
-            Database::ConnectionManager::getInstance().getConnection();
+        boost::shared_ptr<Database::Connection> connection;
+        Database::ConnectionManager::getInstance().getConnection(connection);
 
-        Database::SelectQuery query(*connection);
+        Database::SelectQuery query(connection);
         query.addColumn("common", "com_itemid");
         query.addColumn("common", "com_volume");
         query.addColumn("common", "com_weight");
@@ -86,7 +89,6 @@ void CommonObjectTable::reload() {
         query.addServerTable("common");
 
         Database::Result results = query.execute();
-        Database::ConnectionManager::getInstance().releaseConnection(connection);
 
         std::map<TYPE_OF_ITEM_ID, bool> assigned; // map item id to whether an infinite rot has been assigned
         std::map<TYPE_OF_ITEM_ID, bool> visited;  // map item id to whether it has been visited already in calcInfiniteRot

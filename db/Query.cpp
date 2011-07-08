@@ -29,17 +29,17 @@ Query::Query(const Query &org) {
     dbQuery = org.dbQuery;
 }
 
-Query::Query(const Connection &connection) {
+Query::Query(const boost::shared_ptr<Connection> &connection) {
     dbConnection = connection;
 }
 
-Query::Query(const Connection &connection, const std::string &query) {
+Query::Query(const boost::shared_ptr<Connection> &connection, const std::string &query) {
     dbConnection = connection;
     dbQuery = query;
 }
 
 Result Query::execute() {
-    if (dbConnection == 0 || dbQuery == 0) {
+    if (dbConnection.get() == 0 || dbQuery.empty()) {
         throw new std::domain_error(
             "Connection and query is required to execute the query.");
     }

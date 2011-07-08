@@ -25,6 +25,7 @@
 #include <stack>
 
 #include <boost/cstdint.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include "db/Result.hpp"
 #include "db/Query.hpp"
@@ -41,8 +42,8 @@ private:
     std::string tables;
 public:
     SelectQuery(const SelectQuery &org);
-    SelectQuery(const Connection &connection);
-    virtual ~SelectQuery();
+    SelectQuery(const boost::shared_ptr<Connection> &connection);
+    ~SelectQuery();
 
     void addColumn(const std::string &column);
     void addColumn(const std::string &table, const std::string &column);

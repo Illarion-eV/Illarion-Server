@@ -33,7 +33,7 @@ SelectQuery::SelectQuery(const SelectQuery &org) {
     tables = org.tables;
 }
 
-SelectQuery::SelectQuery(const Connection &connection) {
+SelectQuery::SelectQuery(const boost::shared_ptr<Connection> &connection) {
     Query(connection);
 }
 

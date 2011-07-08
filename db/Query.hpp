@@ -23,6 +23,8 @@
 
 #include <string>
 
+#include <boost/shared_ptr.hpp>
+
 #include "db/Connection.hpp"
 #include "db/Result.hpp"
 
@@ -33,21 +35,21 @@ typedef Query *PQuery;
 
 class Query {
 private:
-    const Connection dbConnection;
+    const boost::shared_ptr<Connection> dbConnection;
     std::string dbQuery;
 
 public:
     Query(const Query &org);
-    Query(const Connection &connection, const std::string &query);
+    Query(const boost::shared_ptr<Connection> &connection, const std::string &query);
     virtual ~Query();
 
     Result execute();
 
 protected:
-    Query(const Connection &connection);
+    Query(const boost::shared_ptr<Connection> &connection);
 
     void setQuery(const std::string &query);
-    Connection &getConnection();
+    boost::shared_ptr<Connection> &getConnection();
 private:
     Query() {};
 };
