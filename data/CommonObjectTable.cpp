@@ -104,8 +104,8 @@ void CommonObjectTable::reload() {
                 temprecord.Brightness = (TYPE_OF_BRIGHTNESS)((*itr)["com_brightness"].as<int16_t>());
                 temprecord.Worth = (TYPE_OF_WORTH)((*itr)["com_worth"].as<int16_t>());
 
-                if (!((*itr)["com_worth"].is_null())) {
-                    std::string scriptname = ((*itr)["com_worth"].as<std::string>());
+                if (!((*itr)["com_script"].is_null())) {
+                    std::string scriptname = ((*itr)["com_script"].as<std::string>());
 
                     try {
                         boost::shared_ptr<LuaItemScript> tmpScript(new LuaItemScript(scriptname, temprecord));

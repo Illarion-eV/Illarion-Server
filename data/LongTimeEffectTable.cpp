@@ -52,7 +52,7 @@ void LongTimeEffectTable::reload() {
 
             for (Database::Result::ConstIterator itr = results.begin();
                  itr != results.end(); ++itr) {
-                     
+
                 temp.effectid = (uint16_t)((*itr)["lte_effectid"].as<int32_t>());
                 temp.effectname = (std::string)((*itr)["lte_effectid"].as<std::string>());
                 temp.scriptname = (std::string)((*itr)["lte_effectid"].as<std::string>());
@@ -69,8 +69,6 @@ void LongTimeEffectTable::reload() {
                 m_table[temp.effectid] = temp;
             }
 
-            m_dataOK = true;
-        } else {
             m_dataOK = true;
         }
 

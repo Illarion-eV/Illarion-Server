@@ -45,7 +45,7 @@ void NaturalArmorTable::reload() {
         query.addColumn("naturalarmor", "nar_punctureArmor");
         query.addColumn("naturalarmor", "nar_thrustArmor");
         query.addServerTable("naturalarmor");
-        
+
         Database::Result results = query.execute();
 
         if (!results.empty()) {
@@ -64,6 +64,7 @@ void NaturalArmorTable::reload() {
         } else {
             m_dataOK = false;
         }
+
 #ifdef DataConnect_DEBUG
         std::cout << "loaded " << rows << " rows into NaturalArmorTable" << std::endl;
 #endif

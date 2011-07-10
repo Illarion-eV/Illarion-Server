@@ -53,6 +53,7 @@ void RaceSizeTable::reload() {
 
         if (!results.empty()) {
             uint16_t currentID;
+
             for (Database::Result::ConstIterator itr = results.begin();
                  itr != results.end(); ++itr) {
 

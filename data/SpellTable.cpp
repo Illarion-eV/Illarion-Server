@@ -1,24 +1,30 @@
-//  illarionserver - server for the game Illarion
-//  Copyright 2011 Illarion e.V.
-//
-//  This file is part of illarionserver.
-//
-//  illarionserver is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  illarionserver is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * Illarionserver - server for the game Illarion
+ * Copyright 2011 Illarion e.V.
+ *
+ * This file is part of Illarionserver.
+ *
+ * Illarionserver  is  free  software:  you can redistribute it and/or modify it
+ * under the terms of the  GNU  General  Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * Illarionserver is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY;  without  even  the  implied  warranty  of  MERCHANTABILITY  or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU  General Public License along with
+ * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
+ */
 
+#include "data/SpellTable.hpp"
 
-#include "db/ConnectionManager.hpp"
-#include "SpellTable.hpp"
+#include "db/SelectQuery.hpp"
+#include "db/Result.hpp"
+
+#include "script/LuaMagicScript.hpp"
+
 #include "Logger.hpp"
 
 template<class from>
@@ -39,33 +45,39 @@ void SpellTable::reload() {
 #endif
 
     try {
-        ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
-        std::vector<uint32_t> spellid;
-        std::vector<uint8_t> magictype;
-        std::vector<std::string> scriptname;
-        di::isnull_vector<std::vector<std::string> > n_scriptname(scriptname);
-        size_t rows = di::select_all<di::Integer, di::Integer, di::Varchar>(transaction,spellid,magictype,n_scriptname,
-                      "SELECT spl_spellid, spl_magictype, spl_scriptname FROM spells");
+        Database::SelectQuery query;
+        query.addColumn("spells", "spl_spellid");
+        query.addColumn("spells", "spl_magictype");
+        query.addColumn("spells", "spl_scriptname");
+        query.addServerTable("spells");
 
-        for (size_t i = 0; i < rows; ++i) {
-            SpellStruct spell; //new Spell
-            spell.magictype = magictype[i];
+        Database::Result results = query.execute();
 
-            if (!n_scriptname.var[i]) {
-                try {
-                    // we got a script... load it
-                    boost::shared_ptr<LuaMagicScript> script(new LuaMagicScript(scriptname[i], spellid[i]));
-                    spell.script = script;
-                } catch (ScriptException &e) {
-                    Logger::writeError("scripts", "Error while loading script: " + scriptname[i] + ":\n" + e.what() + "\n");
+        if (!results.empty()) {
+            clearOldTable();
+            SpellStruct spell;
+            uint32_t spellid;
+
+            for (Database::Result::ConstIterator itr = results.begin();
+                 itr != results.end(); ++itr) {
+                spellid = (uint32_t)((*itr)["spl_spellid"].as<uint32_t>());
+                spell.magictype = (uint8_t)((*itr)["spl_magictype"].as<int16_t>());
+                spell.scriptname = (*itr)["spl_magictype"].as<std::string>();
+
+                if (!spell.scriptname.empty()) {
+                    try {
+                        boost::shared_ptr<LuaMagicScript> script(new LuaMagicScript(spell.scriptname, spellid));
+                        spell.script = script;
+                    } catch (ScriptException &e) {
+                        Logger::writeError("scripts", "Error while loading script: " + spell.scriptname + ":\n" + e.what() + "\n");
+                    }
                 }
+
+                Spells[spellid] = spell;
             }
-
-            Spells.insert(std::pair<unsigned long int, SpellStruct>(spellid[i],spell)); //Zuweisen des Spells
-
         }
 
-        std::cout << " loadet " << rows << " magic Scripts! " << std::endl;
+        std::cout << " loadet magic Scripts! " << std::endl;
         _dataOK = true;
     } catch (std::exception &e) {
 

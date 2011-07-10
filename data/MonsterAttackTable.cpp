@@ -1,25 +1,31 @@
-//  illarionserver - server for the game Illarion
-//  Copyright 2011 Illarion e.V.
-//
-//  This file is part of illarionserver.
-//
-//  illarionserver is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  illarionserver is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * Illarionserver - server for the game Illarion
+ * Copyright 2011 Illarion e.V.
+ *
+ * This file is part of Illarionserver.
+ *
+ * Illarionserver  is  free  software:  you can redistribute it and/or modify it
+ * under the terms of the  GNU  General  Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * Illarionserver is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY;  without  even  the  implied  warranty  of  MERCHANTABILITY  or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU  General Public License along with
+ * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
+ */
 
+#include "data/MonsterAttackTable.hpp"
 
-#include "db/ConnectionManager.hpp"
-#include "MonsterAttackTable.hpp"
 #include <iostream>
+
+#include "db/SelectQuery.hpp"
+#include "db/Result.hpp"
+
+#include "types.hpp"
 
 MonsterAttackTable::MonsterAttackTable() : m_dataOk(false) {
     reload();
@@ -35,25 +41,27 @@ void MonsterAttackTable::reload() {
 #endif
 
     try {
-        std::vector<int16_t>raceType;
-        std::vector<uint8_t>attackType;
-        std::vector<int16_t>attackValue;
-        std::vector<int16_t>actionPointsLost;
+        Database::SelectQuery query;
+        query.addColumn("monsterattack", "mat_race_type");
+        query.addColumn("monsterattack", "mat_attack_type");
+        query.addColumn("monsterattack", "mat_attack_value");
+        query.addColumn("monsterattack", "mat_actionpointslost");
+        query.addServerTable("monsterattack");
 
-        ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
-        size_t rows = di::select_all<di::Integer, di::Integer, di::Integer, di::Integer>
-                      (transaction, raceType, attackType, attackValue, actionPointsLost,
-                       "SELECT mat_race_type, mat_attack_type, mat_attack_value, mat_actionpointslost FROM MonsterAttack");
+        Database::Result results = query.execute();
 
-        //Zeilenweises laden der Daten
-        for (size_t i = 0; i < rows; ++i) {
+        if (!results.empty()) {
+            clearOldTable();
             AttackBoni data;
-            data.attackType = attackType[i];
-            data.attackValue = attackValue[i];
-            data.actionPointsLost = actionPointsLost[i];
-            raceAttackBoni[ raceType[i] ] = data;
-        }
 
+            for (Database::Result::ConstIterator itr = results.begin();
+                 itr != results.end(); ++itr) {
+                data.attackType = (uint8_t)((*itr)["mat_attack_type"].as<int16_t>());
+                data.attackValue = (int16_t)((*itr)["mat_attack_value"].as<int16_t>());
+                data.actionPointsLost = (int16_t)((*itr)["mat_actionpointslost"].as<int16_t>());
+                raceAttackBoni[(int16_t)((*itr)["mat_race_type"].as<int16_t>())] = data;
+            }
+        }
 
         m_dataOk = true;
 

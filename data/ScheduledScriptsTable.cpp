@@ -1,25 +1,30 @@
-//  illarionserver - server for the game Illarion
-//  Copyright 2011 Illarion e.V.
-//
-//  This file is part of illarionserver.
-//
-//  illarionserver is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  illarionserver is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * Illarionserver - server for the game Illarion
+ * Copyright 2011 Illarion e.V.
+ *
+ * This file is part of Illarionserver.
+ *
+ * Illarionserver  is  free  software:  you can redistribute it and/or modify it
+ * under the terms of the  GNU  General  Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * Illarionserver is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY;  without  even  the  implied  warranty  of  MERCHANTABILITY  or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU  General Public License along with
+ * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
+ */
 
+#include "data/ScheduledScriptsTable.hpp"
 
-#include "db/ConnectionManager.hpp"
-#include "ScheduledScriptsTable.hpp"
 #include <iostream>
+
+#include "db/SelectQuery.hpp"
+#include "db/Result.hpp"
+
 #include "Logger.hpp"
 #include "Random.hpp"
 
@@ -72,7 +77,7 @@ bool ScheduledScriptsTable::addData(ScriptData data) {
     bool inserted = false;
 
     if (data.nextCycleTime <= currentCycle) {
-        data.nextCycleTime = currentCycle + 1;
+        data.nextCycleTime = currentCycle + rnd(data.minCycleTime, data.maxCycleTime);
     }
 
     for (it = m_table.begin(); it != m_table.end(); ++it) {
@@ -91,37 +96,41 @@ bool ScheduledScriptsTable::addData(ScriptData data) {
 }
 
 void ScheduledScriptsTable::reload() {
+#ifdef DataConnect_DEBUG
+    std::cout << "ScheduledScriptsTable: reload" << std::endl;
+#endif
+
     try {
-        ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
+        Database::SelectQuery query;
+        query.addColumn("scheduledscripts", "sc_scriptname");
+        query.addColumn("scheduledscripts", "sc_mincycletime");
+        query.addColumn("scheduledscripts", "sc_maxcycletime");
+        query.addColumn("scheduledscripts", "sc_functionname");
+        query.addServerTable("scheduledscripts");
 
-        std::vector<std::string> scriptname;
-        di::isnull_vector<std::vector<std::string> > n_scriptname(scriptname);
+        Database::Result results = query.execute();
 
-        size_t rows = di::select_all<di::Varchar>(transaction, n_scriptname, "SELECT DISTINCT sc_scriptname FROM scheduledscripts");
+        if (!results.empty()) {
+            clearOldTable();
+            ScriptData tmpRecord;
 
-        for (size_t i = 0; i < rows; ++i) {
-            if (!n_scriptname.var[i]) {
-                ScriptData tmpRecord;
-                std::vector<uint32_t> min_cycle_time;
-                std::vector<uint32_t> max_cycle_time;
-                std::vector<std::string> functionname;
-                di::isnull_vector<std::vector<std::string> > n_functionname(functionname);
-                size_t rows2 = di::select_all<di::Integer, di::Integer,di::Varchar>(transaction,min_cycle_time, max_cycle_time, n_functionname, "SELECT sc_mincycletime, sc_maxcycletime, sc_functionname FROM scheduledscripts WHERE sc_scriptname = '" + scriptname[i] + "'");
+            for (Database::Result::ConstIterator itr = results.begin();
+                 itr != results.end(); ++itr) {
+                tmpRecord.minCycleTime = (uint32_t)((*itr)["sc_mincycletime"].as<uint32_t>());
+                tmpRecord.maxCycleTime = (uint32_t)((*itr)["sc_maxcycletime"].as<uint32_t>());
+                tmpRecord.nextCycleTime = 0;
 
-                try {
-                    boost::shared_ptr<LuaScheduledScript> script(new LuaScheduledScript(scriptname[i]));
+                if (!((*itr)["sc_scriptname"].is_null()) && !((*itr)["sc_functionname"].is_null())) {
+                    tmpRecord.functionName = ((*itr)["sc_scriptname"].as<std::string>());
+                    tmpRecord.scriptName = ((*itr)["sc_functionname"].as<std::string>());
 
-                    for (size_t j = 0; j < rows2; ++j) {
-                        tmpRecord.minCycleTime = min_cycle_time[j];
-                        tmpRecord.maxCycleTime = max_cycle_time[j];
-                        tmpRecord.nextCycleTime = rnd(currentCycle + min_cycle_time[j], currentCycle + max_cycle_time[j]);
-                        tmpRecord.functionName = functionname[j];
-                        tmpRecord.scriptName = scriptname[i];
-                        tmpRecord.scriptptr = script;
+                    try {
+                        boost::shared_ptr<LuaScheduledScript> tmpScript(new LuaScheduledScript(tmpRecord.scriptName));
+                        tmpRecord.scriptptr = tmpScript;
                         addData(tmpRecord);
+                    } catch (ScriptException &e) {
+                        Logger::writeError("scripts", "Error while loading script: " + tmpRecord.scriptName + ":\n" + e.what() + "\n");
                     }
-                } catch (ScriptException &e) {
-                    Logger::writeError("scripts", "Error while loading script: " + scriptname[i] + ":\n" + e.what() + "\n");
                 }
             }
         }
@@ -132,3 +141,8 @@ void ScheduledScriptsTable::reload() {
         m_dataOk = false;
     }
 }
+
+void ScheduledScriptsTable::clearOldTable() {
+    m_table.clear();
+}
+
