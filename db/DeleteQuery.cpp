@@ -18,7 +18,7 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "db/SelectQuery.hpp"
+#include "db/DeleteQuery.hpp"
 
 #include <sstream>
 
@@ -26,49 +26,37 @@
 
 using namespace Database;
 
-SelectQuery::SelectQuery(const SelectQuery &org) {
+DeleteQuery::DeleteQuery(const DeleteQuery &org) {
     Query(org);
     WhereQuery(org);
-    columns = org.columns;
-    tables = org.tables;
+    table = org.table;
 }
 
-SelectQuery::SelectQuery() {
-    SelectQuery(ConnectionManager::getInstance().getConnection());
+DeleteQuery::DeleteQuery() {
+    DeleteQuery(ConnectionManager::getInstance().getConnection());
 }
 
-SelectQuery::SelectQuery(const PConnection connection) {
+DeleteQuery::DeleteQuery(const PConnection connection) {
     Query(connection);
 }
 
-SelectQuery::~SelectQuery() {
+DeleteQuery::~SelectQuery() {
     ~WhereQuery();
 }
 
-void SelectQuery::addColumn(const std::string &column) {
-    appendToStringList(columns, escapeKey(column));
+void DeleteQuery::setServerTable(const std::string &table) {
+    this.table = escapeAndChainKeys(Database::SchemaHelper::getServerSchema(), table);
 }
 
-void SelectQuery::addColumn(const std::string &table, const std::string &column) {
-    appendToStringList(columns, escapeAndChainKeys(table, column));
+void DeleteQuery::setAccountTable(const std::string &table) {
+    this.table = escapeAndChainKeys(Database::SchemaHelper::getAccountSchema(), table);
 }
 
-void SelectQuery::addServerTable(const std::string &table) {
-    appendToStringList(tables, escapeAndChainKeys(Database::SchemaHelper::getServerSchema(), table));
-}
-
-void SelectQuery::addAccountTable(const std::string &table) {
-    appendToStringList(tables, escapeAndChainKeys(Database::SchemaHelper::getAccountSchema(), table));
-}
-
-Result SelectQuery::execute() {
+Result DeleteQuery::execute() {
     std::stringstream ss;
-    ss << "SELECT ";
-    ss << columns;
-    ss << " FROM ";
-    ss << tables;
+    ss << "DELETE FROM ";
+    ss << table;
     ss << QueryWhere::buildQuerySegment()
-
     ss << ";";
 
     setQuery(ss.str());

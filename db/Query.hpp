@@ -23,35 +23,35 @@
 
 #include <string>
 
-#include <boost/shared_ptr.hpp>
-
 #include "db/Connection.hpp"
 #include "db/Result.hpp"
 
 namespace Database {
-class Query;
-
-typedef Query *PQuery;
-
 class Query {
 private:
-    const boost::shared_ptr<Connection> dbConnection;
+    const PConnection dbConnection;
     std::string dbQuery;
 
 public:
     Query(const Query &org);
     Query(const std::string &query);
-    Query(const boost::shared_ptr<Connection> connection, const std::string &query);
+    Query(const PConnection connection, const std::string &query);
     virtual ~Query();
 
     virtual Result execute();
 
 protected:
     Query();
-    Query(const boost::shared_ptr<Connection> connection);
+    Query(const PConnection connection);
+    
+    static std::string &escapeKey(const std::string &key);
+    static std::string &escapeAndChainKeys(const std::string &key1, const std::string &key2);
+    static void appendToStringList(std::string &list, const std::string &newEntry);
 
     void setQuery(const std::string &query);
-    boost::shared_ptr<Connection> getConnection();
+    PConnection getConnection();
+
+    template <typename T> std::string quote(T value);
 };
 }
 

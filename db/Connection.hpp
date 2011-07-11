@@ -21,13 +21,15 @@
 #ifndef _CONNECTION_HPP_
 #define _CONNECTION_HPP_
 
+#include <boost/shared_ptr.hpp>
+
 #include <pqxx/connection.hxx>
 #include <pqxx/transaction.hxx>
 
 namespace Database {
 class Connection;
 
-typedef Connection *PConnection;  
+typedef boost::shared_ptr<Connection> PConnection;  
 
 class Connection {
 private:

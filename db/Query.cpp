@@ -35,7 +35,7 @@ Query::Query(const Query &org) {
     dbQuery = org.dbQuery;
 }
 
-Query::Query(const boost::shared_ptr<Connection> connection) {
+Query::Query(const PConnection connection) {
     dbConnection = connection;
 }
 
@@ -43,7 +43,7 @@ Query(const std::string &query) {
     Query(ConnectionManager::getInstance().getConnection(), query);
 }
 
-Query::Query(const boost::shared_ptr<Connection> connection, const std::string &query) {
+Query::Query(const PConnection connection, const std::string &query) {
     dbConnection = connection;
     dbQuery = query;
 }
@@ -74,6 +74,38 @@ void Query::setQuery(const std::string &query) {
     dbQuery = query;
 }
 
-Connection getConnection() {
+PConnection getConnection() {
     return dbConnection;
+}
+
+template <typename T> std::string quote(T value) {
+    return dbConnection<T>.quote(value);
+}
+
+std::string &SelectQuery::escapeKey(const std::string &key) {
+    if (key.at(0) == '"' && key.at(key.length() - 1) == '"' && !key.empty()) {
+        return key;
+    }
+
+    return "\"" + key + "\"";
+}
+
+std::string &SelectQuery::escapeAndChainKeys(const std::string &key1, const std::string &key2) {
+    if (!key1.empty() && !key2.empty()) {
+        return escapeKey(key1) + "." + escapeKey(key2);
+    } else if (key1.empty()) {
+        return escapeKey(key2);
+    } else if (key2.empty()) {
+        return escapeKey(key1);
+    }
+
+    return "";
+}
+
+void SelectQuery::appendToStringList(std::string &list, const std::string &newEntry) {
+    if (list.empty()) {
+        list += ", ";
+    }
+
+    list += newEntry;
 }

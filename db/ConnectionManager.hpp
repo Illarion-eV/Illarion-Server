@@ -24,15 +24,12 @@
 #include <string>
 
 #include <boost/cstdint.hpp>
-#include <boost/shared_ptr.hpp>
 
 #include "db/Connection.hpp"
 
 using std::string;
 
 namespace Database {
-class ConnectionManager;
-
 class ConnectionManager {
 private:
     static ConnectionManager instance;
@@ -51,7 +48,7 @@ public:
     };
     static ConnectionManager &getInstance();
     void setupManager(const Login &login, const Server &server);
-    boost::shared_ptr<Connection> getConnection() throw(std::logic_error);
+    PConnection getConnection() throw(std::logic_error);
 private:
     ConnectionManager();
     ConnectionManager(const ConnectionManager &org);

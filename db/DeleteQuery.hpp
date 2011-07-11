@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _SELECT_QUERY_HPP_
-#define _SELECT_QUERY_HPP_
+#ifndef _DELETE_QUERY_HPP_
+#define _DELETE_QUERY_HPP_
 
 #include <string>
 #include <stack>
@@ -32,25 +32,21 @@
 #include "db/QueryWhere.hpp"
 
 namespace Database {
-class SelectQuery : public QueryWhere {
+class DeleteQuery : public QueryWhere {
 private:
-    std::string columns;
-    std::string tables;
+    std::string table;
 public:
-    SelectQuery();
-    SelectQuery(const SelectQuery &org);
-    SelectQuery(const PConnection connection);
-    ~SelectQuery();
+    DeleteQuery();
+    DeleteQuery(const SelectQuery &org);
+    DeleteQuery(const PConnection connection);
+    ~DeleteQuery();
 
-    void addColumn(const std::string &column);
-    void addColumn(const std::string &table, const std::string &column);
-
-    void addServerTable(const std::string &table);
-    void addAccountTable(const std::string &table);
+    void setServerTable(const std::string &table);
+    void setAccountTable(const std::string &table);
 
     virtual Result execute();
 };
 
 }
 
-#endif // _SELECT_QUERY_HPP_
+#endif // _DELETE_QUERY_HPP_
