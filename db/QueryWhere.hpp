@@ -22,13 +22,15 @@
 #define _QUERY_WHERE_HPP_
 
 #include <string>
+#include <stack>
+
+#include <boost/cstdint.hpp>
 
 #include "db/Connection.hpp"
-#include "db/Result.hpp"
 #include "db/Query.hpp"
 
 namespace Database {
-class QueryWhere : public Query {
+class QueryWhere : public virtual Query {
 private:
     std::stack<std::string *> conditionsStack;
     std::string conditions;
@@ -53,10 +55,11 @@ public:
 protected:
     QueryWhere();
     QueryWhere(const QueryWhere &org);
+    QueryWhere(const PConnection connection);
 
     virtual ~QueryWhere();
 
-    std::string buildQuerySegment();
+    std::string &buildQuerySegment();
 private:
     void mergeConditions(const std::string &operation);
 };

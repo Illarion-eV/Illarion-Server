@@ -43,7 +43,7 @@ public:
 protected:
     Query();
     Query(const PConnection connection);
-    
+
     static std::string &escapeKey(const std::string &key);
     static std::string &escapeAndChainKeys(const std::string &key1, const std::string &key2);
     static void appendToStringList(std::string &list, const std::string &newEntry);

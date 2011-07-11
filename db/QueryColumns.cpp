@@ -18,30 +18,26 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _SELECT_QUERY_HPP_
-#define _SELECT_QUERY_HPP_
-
-#include <string>
-
-#include <boost/cstdint.hpp>
-
-#include "db/Connection.hpp"
-#include "db/Result.hpp"
-#include "db/Query.hpp"
 #include "db/QueryColumns.hpp"
-#include "db/QueryTables.hpp"
-#include "db/QueryWhere.hpp"
 
-namespace Database {
-class SelectQuery : public QueryColumns, public QueryTables, public QueryWhere {
-public:
-    SelectQuery();
-    SelectQuery(const SelectQuery &org);
-    SelectQuery(const PConnection connection);
-    virtual ~SelectQuery();
+using namespace Database;
 
-    virtual Result execute();
-};
+QueryColumns::QueryColumns() : Query();
+
+QueryColumns::QueryColumns(const QueryColumns &org) : Query(org) {
+    columns = org.columns;
 }
 
-#endif // _SELECT_QUERY_HPP_
+QueryColumns::QueryColumns(const PConnection connection) : Query(connection);
+
+void QueryColumns::addColumn(const std::string &column) {
+    appendToStringList(columns, escapeKey(column));
+}
+
+void QueryColumns::addColumn(const std::string &table, const std::string &column) {
+    appendToStringList(columns, escapeAndChainKeys(table, column));
+}
+
+std::string &QueryColumns::buildQuerySegment() {
+    return columns;
+}

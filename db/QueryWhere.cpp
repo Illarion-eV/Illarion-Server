@@ -22,12 +22,14 @@
 
 using namespace Database;
 
-QueryWhere::QueryWhere(const QueryWhere &org) {
+QueryWhere() : Query();
+
+QueryWhere::QueryWhere(const QueryWhere &org) : Query(org) {
     conditionsStack(org.conditionsStack);
     conditions = org.conditions;
-    columns = org.columns;
-    tables = org.tables;
 }
+
+QueryWhere(const PConnection connection) : Query(connection);
 
 QueryWhere::~QueryWhere() {
     while (!conditionsStack.empty()) {
@@ -92,13 +94,15 @@ void QueryWhere::orConditions() {
     mergeConditions("OR");
 }
 
-std::string QueryWhere::buildQuerySegment() {
+std::string &QueryWhere::buildQuerySegment() {
     while (!conditionsStack.empty()) {
         andConditions();
     }
+
     if (!conditions.empty()) {
         return " WHERE " + conditions;
     }
+
     return "";
 }
 

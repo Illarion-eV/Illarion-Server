@@ -26,49 +26,26 @@
 
 using namespace Database;
 
-SelectQuery::SelectQuery(const SelectQuery &org) {
-    Query(org);
-    WhereQuery(org);
-    columns = org.columns;
-    tables = org.tables;
-}
-
 SelectQuery::SelectQuery() {
     SelectQuery(ConnectionManager::getInstance().getConnection());
 }
 
-SelectQuery::SelectQuery(const PConnection connection) {
-    Query(connection);
+SelectQuery::SelectQuery(const SelectQuery &org) : QueryColumns(org), QueryTables(org), QueryWhere(org) {
+    tables = org.tables;
 }
 
-SelectQuery::~SelectQuery() {
-    ~WhereQuery();
-}
-
-void SelectQuery::addColumn(const std::string &column) {
-    appendToStringList(columns, escapeKey(column));
-}
-
-void SelectQuery::addColumn(const std::string &table, const std::string &column) {
-    appendToStringList(columns, escapeAndChainKeys(table, column));
-}
-
-void SelectQuery::addServerTable(const std::string &table) {
-    appendToStringList(tables, escapeAndChainKeys(Database::SchemaHelper::getServerSchema(), table));
-}
-
-void SelectQuery::addAccountTable(const std::string &table) {
-    appendToStringList(tables, escapeAndChainKeys(Database::SchemaHelper::getAccountSchema(), table));
-}
+SelectQuery::SelectQuery(const PConnection connection) : QueryColumns(connection),
+    QueryTables(connection), QueryWhere(connection) {
+    setOnlyOneTable(false);
+};
 
 Result SelectQuery::execute() {
     std::stringstream ss;
     ss << "SELECT ";
-    ss << columns;
+    ss << QueryColumns::buildQuerySegment();
     ss << " FROM ";
-    ss << tables;
-    ss << QueryWhere::buildQuerySegment()
-
+    ss << QueryTables::buildQuerySegment();
+    ss << QueryWhere::buildQuerySegment();
     ss << ";";
 
     setQuery(ss.str());

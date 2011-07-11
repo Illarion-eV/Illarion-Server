@@ -18,30 +18,37 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _SELECT_QUERY_HPP_
-#define _SELECT_QUERY_HPP_
+#ifndef _QUERY_TABLES_HPP_
+#define _QUERY_TABLES_HPP_
 
 #include <string>
-
-#include <boost/cstdint.hpp>
+#include <stdexcept>
 
 #include "db/Connection.hpp"
-#include "db/Result.hpp"
 #include "db/Query.hpp"
-#include "db/QueryColumns.hpp"
-#include "db/QueryTables.hpp"
-#include "db/QueryWhere.hpp"
 
 namespace Database {
-class SelectQuery : public QueryColumns, public QueryTables, public QueryWhere {
-public:
-    SelectQuery();
-    SelectQuery(const SelectQuery &org);
-    SelectQuery(const PConnection connection);
-    virtual ~SelectQuery();
+class QueryTables : public virtual Query {
+private:
+    std::string tables;
+    bool oneTable;
 
-    virtual Result execute();
+public:
+    void addServerTable(const std::string &table) throw(std::logic_error);
+    void addAccountTable(const std::string &table) throw(std::logic_error);
+
+    void setServerTable(const std::string &table);
+    void setAccountTable(const std::string &table);
+protected:
+    QueryTables();
+    QueryTables(const QueryTables &org);
+    QueryTables(const PConnection connection);
+
+    virtual ~QueryTables();
+
+    void setOnlyOneTable(const bool &enabled);
+    std::string &buildQuerySegment();
 };
 }
 
-#endif // _SELECT_QUERY_HPP_
+#endif // _QUERY_TABLES_HPP_

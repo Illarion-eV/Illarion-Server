@@ -21,28 +21,18 @@
 #ifndef _DELETE_QUERY_HPP_
 #define _DELETE_QUERY_HPP_
 
-#include <string>
-#include <stack>
-
-#include <boost/cstdint.hpp>
-
 #include "db/Connection.hpp"
 #include "db/Result.hpp"
-#include "db/Query.hpp"
+#include "db/QueryTables.hpp"
 #include "db/QueryWhere.hpp"
 
 namespace Database {
-class DeleteQuery : public QueryWhere {
-private:
-    std::string table;
+class DeleteQuery : public QueryTables, public QueryWhere {
 public:
     DeleteQuery();
-    DeleteQuery(const SelectQuery &org);
+    DeleteQuery(const DeleteQuery &org);
     DeleteQuery(const PConnection connection);
     ~DeleteQuery();
-
-    void setServerTable(const std::string &table);
-    void setAccountTable(const std::string &table);
 
     virtual Result execute();
 };

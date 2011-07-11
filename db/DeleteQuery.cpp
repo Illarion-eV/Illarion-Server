@@ -26,38 +26,24 @@
 
 using namespace Database;
 
-DeleteQuery::DeleteQuery(const DeleteQuery &org) {
-    Query(org);
-    WhereQuery(org);
-    table = org.table;
-}
-
 DeleteQuery::DeleteQuery() {
     DeleteQuery(ConnectionManager::getInstance().getConnection());
 }
 
-DeleteQuery::DeleteQuery(const PConnection connection) {
-    Query(connection);
+DeleteQuery::DeleteQuery(const DeleteQuery &org) : QueryTables(org), QueryWhere(org) {
+    table = org.table;
 }
 
-DeleteQuery::~SelectQuery() {
-    ~WhereQuery();
-}
-
-void DeleteQuery::setServerTable(const std::string &table) {
-    this.table = escapeAndChainKeys(Database::SchemaHelper::getServerSchema(), table);
-}
-
-void DeleteQuery::setAccountTable(const std::string &table) {
-    this.table = escapeAndChainKeys(Database::SchemaHelper::getAccountSchema(), table);
+DeleteQuery::DeleteQuery(const PConnection connection) : QueryTables(connection), QueryWhere(connection) {
+    setOnlyOneTable(true);
 }
 
 Result DeleteQuery::execute() {
     std::stringstream ss;
     ss << "DELETE FROM ";
-    ss << table;
+    ss << QueryTables::buildQuerySegment();
     ss << QueryWhere::buildQuerySegment()
-    ss << ";";
+       ss << ";";
 
     setQuery(ss.str());
     Query::execute();

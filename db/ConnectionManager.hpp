@@ -22,6 +22,7 @@
 #define _CONNECTION_MANAGER_HPP_
 
 #include <string>
+#include <stdexcept>
 
 #include <boost/cstdint.hpp>
 

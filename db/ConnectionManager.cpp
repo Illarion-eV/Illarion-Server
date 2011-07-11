@@ -22,7 +22,6 @@
 
 #include <sstream>
 #include <string>
-#include <stdexcept>
 
 #include <boost/cstdint.hpp>
 #include <pqxx/connection.hxx>
@@ -54,7 +53,7 @@ PConnection getConnection() throw(std::logic_error) {
     }
 
     boost::shared_ptr<Connection> connPtr(new Connection(
-        new pqxx::connection(connectionString)));
+            new pqxx::connection(connectionString)));
     return connPtr;
 }
 

@@ -29,7 +29,7 @@
 namespace Database {
 class Connection;
 
-typedef boost::shared_ptr<Connection> PConnection;  
+typedef boost::shared_ptr<Connection> PConnection;
 
 class Connection {
 private:
