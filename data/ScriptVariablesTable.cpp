@@ -57,6 +57,7 @@ void ScriptVariablesTable::reload() {
         query.addServerTable("scriptvariables");
 
         Database::Result results = query.execute();
+
         if (!results.empty()) {
             values_table.clear();
             std::string key;
@@ -125,7 +126,7 @@ void ScriptVariablesTable::save() {
         using namespace Database;
         PConnection connection = ConnectionManager::getInstance().getConnection();
         connection->beginTransaction();
-        
+
         DeleteQuery delQuery(connection);
         delQuery.setServerTable("scriptvariables");
         delQuery.execute();
@@ -134,7 +135,7 @@ void ScriptVariablesTable::save() {
         insQuery.setServerTable("scriptvariables");
         const InsertQuery::columnIndex column = insQuery.addColumn("svt_ids");
         insQuery.addColumn("svt_string");
-        insQuery.addValues<const char*, std::string, ltstr>(column, values_table, InsertQuery::keysAndValues);
+        insQuery.addValues<const char *, std::string, ltstr>(column, values_table, InsertQuery::keysAndValues);
 
         connection->commitTransaction();
     } catch (std::exception &e) {
