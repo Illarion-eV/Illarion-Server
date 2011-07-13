@@ -30,12 +30,9 @@ SelectQuery::SelectQuery() {
     SelectQuery(ConnectionManager::getInstance().getConnection());
 }
 
-SelectQuery::SelectQuery(const SelectQuery &org) : QueryColumns(org), QueryTables(org), QueryWhere(org) {
-    tables = org.tables;
-}
+SelectQuery::SelectQuery(const SelectQuery &org) : QueryColumns(org), QueryTables(org), QueryWhere(org);
 
-SelectQuery::SelectQuery(const PConnection connection) : QueryColumns(connection),
-    QueryTables(connection), QueryWhere(connection) {
+SelectQuery::SelectQuery(const PConnection connection) : QueryColumns(connection), QueryTables(connection), QueryWhere(connection) {
     setOnlyOneTable(false);
 };
 

@@ -28,12 +28,18 @@
 
 namespace Database {
 class QueryColumns : public virtual Query {
+public:
+    typedef uint_fast8_t columnIndex;
+    
 private:
     std::string columns;
+    bool hideTable;
+    columnIndex nextColumn;
 
 public:
-    virtual void addColumn(const std::string &column);
-    virtual void addColumn(const std::string &table, const std::string &column);
+    
+    virtual columnIndex addColumn(const std::string &column);
+    virtual columnIndex addColumn(const std::string &table, const std::string &column);
 
 protected:
     QueryColumns();
@@ -43,6 +49,9 @@ protected:
     virtual ~QueryColumns();
 
     std::string &buildQuerySegment();
+    uint32_t &getColumnCount();
+
+    void setHideTable(const bool &hide);
 };
 }
 

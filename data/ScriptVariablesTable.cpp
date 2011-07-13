@@ -1,25 +1,41 @@
-//  illarionserver - server for the game Illarion
-//  Copyright 2011 Illarion e.V.
-//
-//  This file is part of illarionserver.
-//
-//  illarionserver is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  illarionserver is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * Illarionserver - server for the game Illarion
+ * Copyright 2011 Illarion e.V.
+ *
+ * This file is part of Illarionserver.
+ *
+ * Illarionserver  is  free  software:  you can redistribute it and/or modify it
+ * under the terms of the  GNU  General  Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * Illarionserver is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY;  without  even  the  implied  warranty  of  MERCHANTABILITY  or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU  General Public License along with
+ * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
+ */
+/*
+ * TODO: This file contains some insane bogus conversation stuff between C and
+ *       C++ strings. Should be fixed to a proper usage of C++ strings.
+ * TODO: This file possibly contains a memory leak when loading the variables
+ *       a second time. Should be checked.
+ */
 
+#include "data/ScriptVariablesTable.hpp"
 
-#include "ScriptVariablesTable.hpp"
-#include "db/ConnectionManager.hpp"
+#include <iostream>
+
 #include <boost/lexical_cast.hpp>
+
+#include "db/Connection.hpp"
+#include "db/ConnectionManager.hpp"
+#include "db/DeleteQuery.hpp"
+#include "db/InsertQuery.hpp"
+#include "db/SelectQuery.hpp"
+#include "db/Result.hpp"
 
 ScriptVariablesTable::ScriptVariablesTable() : m_dataOK(false) {
     reload();
@@ -35,21 +51,28 @@ void ScriptVariablesTable::clearOldTable() {
 
 void ScriptVariablesTable::reload() {
     try {
-        ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
-        //Loading strings
-        std::vector<std::string> id;
-        std::vector<std::string> sv_strings;
-        size_t rows = di::select_all<
-                      di::Varchar, di::Varchar>(transaction, id, sv_strings,"SELECT svt_ids, svt_string FROM scriptvariables");
+        Database::SelectQuery query;
+        query.addColumn("scriptvariables", "svt_ids");
+        query.addColumn("scriptvariables", "svt_string");
+        query.addServerTable("scriptvariables");
 
-        if (rows > 0) {
+        Database::Result results = query.execute();
+        if (!results.empty()) {
             values_table.clear();
+            std::string key;
+            std::string value;
 
-            for (size_t i = 0; i < rows; ++i) {
-                char *vname = new char[ id[i].length() + 1 ];
-                strcpy(vname, id[i].c_str());
-                vname[ id[i].length()] = 0;
-                values_table[ vname ] = sv_strings[i];
+            for (Database::Result::ConstIterator itr = results.begin();
+                 itr != results.end(); ++itr) {
+
+                key = (*itr)["svt_ids"].as<std::string>();
+                value = (*itr)["svt_string"].as<std::string>();
+
+                // The following lines are crappy:
+                char *vname = new char[ value.length() + 1 ];
+                strcpy(vname, value.c_str());
+                vname[ value.length()] = 0;
+                values_table[ vname ] = value;
             }
         }
 
@@ -98,25 +121,24 @@ bool ScriptVariablesTable::remove(std::string id) {
 }
 
 void ScriptVariablesTable::save() {
-    //Laden einer Transaktion
-    ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
-
     try {
-        //Deleting old values
-        std::stringstream query;
-        query << "DELETE FROM scriptvariables";
-        di::exec(transaction, query.str());
+        using namespace Database;
+        PConnection connection = ConnectionManager::getInstance().getConnection();
+        connection->beginTransaction();
+        
+        DeleteQuery delQuery(connection);
+        delQuery.setServerTable("scriptvariables");
+        delQuery.execute();
 
-        //Inserting new ones
-        for (STRINGTABLE::iterator it = values_table.begin(); it != values_table.end(); ++it) {
-            std::string id = std::string(it->first);
-            di::insert(transaction, id, it->second, "INSERT INTO scriptvariables (svt_ids, svt_string)");
-        }
+        InsertQuery insQuery(connection);
+        insQuery.setServerTable("scriptvariables");
+        const InsertQuery::columnIndex column = insQuery.addColumn("svt_ids");
+        insQuery.addColumn("svt_string");
+        insQuery.addValues<const char*, std::string, ltstr>(column, values_table, InsertQuery::keysAndValues);
 
-        transaction.commit();
+        connection->commitTransaction();
     } catch (std::exception &e) {
         std::cerr<<"exception: "<<e.what()<<" while saving Scriptvariables!"<<std::endl;
-        transaction.rollback();
     }
 }
 
