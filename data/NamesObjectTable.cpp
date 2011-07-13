@@ -1,25 +1,32 @@
-//  illarionserver - server for the game Illarion
-//  Copyright 2011 Illarion e.V.
-//
-//  This file is part of illarionserver.
-//
-//  illarionserver is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  illarionserver is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * Illarionserver - server for the game Illarion
+ * Copyright 2011 Illarion e.V.
+ *
+ * This file is part of Illarionserver.
+ *
+ * Illarionserver  is  free  software:  you can redistribute it and/or modify it
+ * under the terms of the  GNU  General  Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * Illarionserver is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY;  without  even  the  implied  warranty  of  MERCHANTABILITY  or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU  General Public License along with
+ * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
+ */
 
+#include "data/NamesObjectTable.hpp"
 
-#include "db/ConnectionManager.hpp"
-#include "NamesObjectTable.hpp"
 #include <iostream>
+
+#include "db/SelectQuery.hpp"
+#include "db/Result.hpp"
+
+#include "TableStructs.hpp"
+#include "types.hpp"
 
 NamesObjectTable::NamesObjectTable() : m_dataOK(true) {
     reload();
@@ -31,25 +38,25 @@ void NamesObjectTable::reload() {
 #endif
 
     try {
-        ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
+        Database::SelectQuery query;
+        query.addColumn("itemname", "itn_itemid");
+        query.addColumn("itemname", "itn_german");
+        query.addColumn("itemname", "itn_english");
+        query.addColumn("itemname", "itn_french");
+        query.addServerTable("itemname");
 
-        std::vector<TYPE_OF_ITEM_ID> ids;
-        std::vector<std::string> languages[3];
+        Database::Result results = query.execute();
 
-        size_t rows = di::select_all<
-                      di::Integer, di::Varchar, di::Varchar, di::Varchar
-                      >(transaction, ids, languages[0], languages[1], languages[2],
-                        "SELECT itn_itemid, itn_german, itn_english, itn_french FROM itemname");
-
-        if (rows > 0) {
+        if (!results.empty()) {
             clearOldTable();
             NamesStruct temprecord;
 
-            for (size_t i = 0; i < rows; ++i) {
-                temprecord.German = languages[0][i];
-                temprecord.English = languages[1][i];
-                temprecord.French = languages[2][i];
-                m_table[ ids[i] ] = temprecord;
+            for (Database::Result::ConstIterator itr = results.begin();
+                 itr != results.end(); ++itr) {
+                temprecord.German = (TYPE_OF_GERMAN)((*itr)["itn_german"].as<std::string>());
+                temprecord.English = (TYPE_OF_ENGLISH)((*itr)["itn_english"].as<std::string>());
+                temprecord.French = (TYPE_OF_FRENCH)((*itr)["itn_french"].as<std::string>());
+                m_table[(TYPE_OF_ITEM_ID)((*itr)["itn_itemid"].as<int32_t>())] = temprecord;
             }
 
             m_dataOK = true;
