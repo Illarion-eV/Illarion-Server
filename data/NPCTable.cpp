@@ -117,8 +117,8 @@ bool NPCTable::LoadData() {
                         tempf->setChar();
                     }
 
-                    if (!((*itr)["npc_script"].is_null()) {
-                    scriptname = ((*itr)["npc_script"].as<std::string>());
+                    if (!((*itr)["npc_script"].is_null())) {
+                        scriptname = ((*itr)["npc_script"].as<std::string>());
 
                         try {
                             boost::shared_ptr<LuaNPCScript> script(new LuaNPCScript(scriptname, newNPC));

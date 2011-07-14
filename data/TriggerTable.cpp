@@ -61,13 +61,14 @@ void TriggerTable::reload() {
             TriggerStruct Trigger;
             std::string scriptname;
 
-            for (size_t i = 0; i < rows; ++i) {
+            for (Database::Result::ConstIterator itr = results.begin();
+                 itr != results.end(); ++itr) {
                 Trigger.pos = position(((*itr)["tgf_posx"].as<int32_t>()),
                                        ((*itr)["tgf_posy"].as<int32_t>()),
                                        ((*itr)["tgf_posz"].as<int32_t>()));
 
-                if (!((*itr)["tgf_script"].is_null()) {
-                scriptname = ((*itr)["tgf_script"].as<std::string>());
+                if (!((*itr)["tgf_script"].is_null())) {
+                    scriptname = ((*itr)["tgf_script"].as<std::string>());
 
                     try {
                         boost::shared_ptr<LuaTriggerScript> script(new LuaTriggerScript(scriptname, Trigger.pos));
@@ -79,35 +80,35 @@ void TriggerTable::reload() {
 
                 Triggers.insert(std::pair<position, TriggerStruct>(Trigger.pos,Trigger)); //Zuweisen des Spells
             }
-
-            std::cout << " loadet " << rows << " Triggerfields! " << std::endl;
-            _dataOK = true;
-        }
-        catch (std::exception &e) {
-
-            std::cerr << "exception: " << e.what() << std::endl;
-            _dataOK = false;
-        }
-    }
-
-    bool TriggerTable::find(position pos, TriggerStruct &data) {
-        TriggerMap::iterator iterator;
-        iterator = Triggers.find(pos);
-
-        if (iterator == Triggers.end()) {
-            return false;
-        } else {
-            data = (*iterator).second;
-            return true;
         }
 
+        std::cout << " loadet Triggerfields! " << std::endl;
+        _dataOK = true;
+    } catch (std::exception &e) {
+
+        std::cerr << "exception: " << e.what() << std::endl;
+        _dataOK = false;
+    }
+}
+
+bool TriggerTable::find(position pos, TriggerStruct &data) {
+    TriggerMap::iterator iterator;
+    iterator = Triggers.find(pos);
+
+    if (iterator == Triggers.end()) {
+        return false;
+    } else {
+        data = (*iterator).second;
+        return true;
     }
 
-    void TriggerTable::clearOldTable() {
-        Triggers.clear();
-    }
+}
 
-    TriggerTable::~TriggerTable() {
-        clearOldTable();
-    }
+void TriggerTable::clearOldTable() {
+    Triggers.clear();
+}
+
+TriggerTable::~TriggerTable() {
+    clearOldTable();
+}
 
