@@ -90,7 +90,6 @@ bool NPCTable::LoadData() {
                     posz = ((*itr)["npc_posz"].as<int32_t>());
 
                     npcName = ((*itr)["npc_name"].as<std::string>());
-                    scriptname = ((*itr)["npc_script"].as<std::string>());
 
                     newNPC = new NPC(
                         npcID, npcName,
@@ -118,7 +117,9 @@ bool NPCTable::LoadData() {
                         tempf->setChar();
                     }
 
-                    if (!scriptname.empty()) {
+                    if (!((*itr)["npc_script"].is_null()) {
+                    scriptname = ((*itr)["npc_script"].as<std::string>());
+
                         try {
                             boost::shared_ptr<LuaNPCScript> script(new LuaNPCScript(scriptname, newNPC));
                             newNPC->setScript(script);
