@@ -23,6 +23,7 @@
 #include <iostream>
 
 #include <boost/cstdint.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include "db/SelectQuery.hpp"
 #include "db/Result.hpp"
