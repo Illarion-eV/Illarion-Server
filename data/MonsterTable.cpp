@@ -261,6 +261,7 @@ void MonsterTable::reload() {
             } // for (Database::Result::ConstIterator itr = monresults...
         } // if (!monresults.empty())
 
+        connection->commitTransaction();
 #ifdef DataConnect_DEBUG
         std::cout << "loaded " << m_table.size() << " monsters!" << std::endl;
 #endif
