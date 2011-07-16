@@ -39,7 +39,8 @@ private:
 public:
     enum OrderDirection {
         ASC, DESC
-    }
+    };
+
     SelectQuery();
     SelectQuery(const SelectQuery &org);
     SelectQuery(const PConnection connection);

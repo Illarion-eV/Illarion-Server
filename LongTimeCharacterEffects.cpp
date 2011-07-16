@@ -1,29 +1,40 @@
-//  illarionserver - server for the game Illarion
-//  Copyright 2011 Illarion e.V.
-//
-//  This file is part of illarionserver.
-//
-//  illarionserver is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  illarionserver is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * Illarionserver - server for the game Illarion
+ * Copyright 2011 Illarion e.V.
+ *
+ * This file is part of Illarionserver.
+ *
+ * Illarionserver  is  free  software:  you can redistribute it and/or modify it
+ * under the terms of the  GNU  General  Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * Illarionserver is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY;  without  even  the  implied  warranty  of  MERCHANTABILITY  or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU  General Public License along with
+ * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-
-#include "db/ConnectionManager.hpp"
 #include "LongTimeCharacterEffects.hpp"
+
+#include <string>
+
+#include "data/LongTimeEffectTable.hpp"
+
+#include "db/Connection.hpp"
+#include "db/ConnectionManager.hpp"
+#include "db/DeleteQuery.hpp"
+#include "db/Result.hpp"
+#include "db/SelectQuery.hpp"
+
+#include "script/LuaLongTimeEffectScript.hpp"
+
+#include "LongTimeEffect.hpp"
 #include "MilTimer.hpp"
 #include "Player.hpp"
-#include "LongTimeEffect.hpp"
-#include "data/LongTimeEffectTable.hpp"
-#include "script/LuaLongTimeEffectScript.hpp"
 
 extern LongTimeEffectTable *LongTimeEffects;
 
@@ -199,8 +210,7 @@ void LongTimeCharacterEffects::checkEffects() {
 }
 
 bool LongTimeCharacterEffects::save() {
-    //di::postgres::enable_trace_query = true;
-    ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
+    using namespace Database;
 
     if (_owner->character != Character::player) {
         std::cout<<"called save for LongtimeCharacterEffects but owner was no player"<<std::endl;
@@ -211,26 +221,29 @@ bool LongTimeCharacterEffects::save() {
 
     if (!_owner) {
         std::cout<<"error saving long time effects owner was NULL!"<<std::endl;
-        //di::postgres::enable_trace_query = false;
         return false;
     }
 
+    PConnection connection = ConnectionManager::getInstance().getConnection();
+    connection->beginTransaction();
+
     try {
         {
-            std::stringstream query;
-            query << "DELETE FROM playerlteffects WHERE plte_playerid = " << transaction.quote(player->id);
-            di::exec(transaction, query.str());
+            DeleteQuery query(connection);
+            query.addEqualCondition("playerlteffects", "plte_playerid", player->id);
+            query.setServerTable("playerlteffects");
+            query.execute();
         }
         {
-            std::stringstream query;
-            query << "DELETE FROM playerlteffectvalues WHERE pev_playerid = " << transaction.quote(player->id);
-            di::exec(transaction, query.str());
+            DeleteQuery query(connection);
+            query.addEqualCondition("playerlteffectvalues", "pev_playerid", player->id);
+            query.setServerTable("playerlteffectvalues");
+            query.execute();
         }
-        transaction.commit();
+        connection->commitTransaction();
     } catch (std::exception &e) {
         std::cerr << "caught exception during saving LongTimeCharacterEffects effects: " << e.what() << std::endl;
-        transaction.rollback();
-        //di::postgres::enable_trace_query = false;
+        connection->rollbackTransaction();
         return false;
     }
 
@@ -247,6 +260,7 @@ bool LongTimeCharacterEffects::save() {
 }
 
 bool LongTimeCharacterEffects::load() {
+    using namespace Database;
     std::cout<<"try to load effects" <<std::endl;
 
     if (_owner->character != Character::player) {
@@ -256,48 +270,51 @@ bool LongTimeCharacterEffects::load() {
 
     Player *player = dynamic_cast<Player *>(_owner);
 
+    PConnection connection = ConnectionManager::getInstance().getConnection();
+    connection->beginTransaction();
+
     try {
-        ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
-        std::vector<uint16_t>effectid;
-        std::vector<uint32_t>nextcalled;
-        std::vector<uint32_t>lastcalled;
-        std::vector<uint32_t>numbercalled;
+        SelectQuery query(connection);
+        query.addColumn("playerlteffects", "plte_effectid");
+        query.addColumn("playerlteffects", "plte_nextcalled");
+        query.addColumn("playerlteffects", "plte_lastcalled");
+        query.addColumn("playerlteffects", "plte_numberCalled");
+        query.addEqualCondition("playerlteffects", "plte_playerid", player->id);
+        query.addServerTable("playerlteffects");
+        query.addOrderBy("playerlteffects", "plte_nextcalled", SelectQuery::ASC);
 
-        //Load the effect
-        std::stringstream Query;
-        Query << "SELECT plte_effectid, plte_nextcalled, plte_lastcalled, plte_numberCalled FROM playerlteffects WHERE plte_playerid = " <<transaction.quote(player->id)<<" ORDER BY plte_nextcalled ASC";
-        size_t rows = di::select_all<di::Integer, di::Integer, di::Integer, di::Integer>
-                      (transaction, effectid, nextcalled, lastcalled, numbercalled, Query.str());
+        Result results = query.execute();
 
-        if (rows > 0) {
-            for (size_t i = 0; i < rows; ++i) {
-                LongTimeEffect *effect = new LongTimeEffect(effectid[i], nextcalled[i]);
-                //set firstadd to false;
+        if (!results.empty()) {
+            for (Result::ConstIterator itr = results.begin();
+                 itr != results.end(); ++itr) {
+                LongTimeEffect *effect = new LongTimeEffect(
+                    (*itr)["plte_effectid"].as<uint16_t>(),
+                    (*itr)["plte_nextcalled"].as<uint32_t>());
+
                 effect->firstAdd();
-                effect->_lastCalled = lastcalled[i];
-                effect->_numberCalled = numbercalled[i];
+                effect->_lastCalled = (*itr)["plte_lastcalled"].as<uint32_t>();
+                effect->_numberCalled = (*itr)["plte_numberCalled"].as<uint32_t>();
 
-                //Loading the values to the effect
-                Query.str("");
-                Query.clear();
+                SelectQuery valuesQuery(connection);
+                valuesQuery.addColumn("playerlteffectvalues", "pev_name");
+                valuesQuery.addColumn("playerlteffectvalues", "pev_value");
+                valuesQuery.addEqualCondition("playerlteffectvalues", "pev_playerid", player->id);
+                valuesQuery.addEqualCondition("playerlteffectvalues", "pev_effectid", effect->_effectId);
+                valuesQuery.addServerTable("playerlteffectvalues");
 
-                Query << "SELECT pev_name, pev_value FROM playerlteffectvalues WHERE pev_playerid = " << transaction.quote(player->id) << " and pev_effectid = " << transaction.quote(effect->_effectId);
+                Result valuesResults = valuesQuery.execute();
 
-                std::vector<std::string>name;
-                std::vector<uint32_t>value;
-
-                size_t rows2 = di::select_all<di::Varchar, di::Integer>
-                               (transaction, name, value, Query.str());
-
-                if (rows2 > 0) {
-                    for (size_t y = 0; y < rows2; ++y) {
-                        effect->addValue(name[y],value[y]);
+                if (!valuesResults.empty()) {
+                    for (Result::ConstIterator itr2 = valuesResults.begin();
+                         itr2 != valuesResults.end(); ++itr2) {
+                        effect->addValue(
+                            (*itr)["pev_name"].as<std::string>(),
+                            (*itr)["pev_value"].as<uint32_t>());
                     }
                 }
 
-
                 effectList.push_back(effect);
-                //call the load script
                 LongTimeEffectStruct effectStr;
 
                 if (LongTimeEffects->find(effect->_effectId, effectStr)) {
