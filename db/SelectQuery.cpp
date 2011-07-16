@@ -36,6 +36,26 @@ SelectQuery::SelectQuery(const PConnection connection) : QueryColumns(connection
     setOnlyOneTable(false);
 };
 
+void addOrderBy(const std::string &column, const OrderDirection &dir) {
+    addOrderBy("", column, dir);
+}
+
+void addOrderBy(const std::string &table, const std::string &column, const OrderDirection &dir) {
+    if (!orderBy.empty()) {
+        orderBy += ", ";
+    }
+
+    orderBy += escapeAndChainKeys(table, column);
+    orderBy += " ";
+
+    switch (dir) {
+    case ASC:
+        orderBy += "ASC";
+    case DESC:
+        orderBy += "DESC";
+    }
+}
+
 Result SelectQuery::execute() {
     std::stringstream ss;
     ss << "SELECT ";
@@ -43,6 +63,11 @@ Result SelectQuery::execute() {
     ss << " FROM ";
     ss << QueryTables::buildQuerySegment();
     ss << QueryWhere::buildQuerySegment();
+
+    if (!orderBy.empty()) {
+        ss << " ORDER BY " << orderBy;
+    }
+
     ss << ";";
 
     setQuery(ss.str());
