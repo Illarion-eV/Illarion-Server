@@ -44,6 +44,7 @@ typedef std::string TYPE_OF_FRENCH;
 
 #define TYPE_OF_BODYPARTS              unsigned char
 #define TYPE_OF_STROKEARMOR            unsigned char
+#define TYPE_OF_PUNCTUREARMOR          unsigned char
 #define TYPE_OF_THRUSTARMOR            unsigned char
 #define TYPE_OF_MAGICDISTURBANCE       unsigned short int
 
@@ -59,6 +60,5 @@ typedef std::string TYPE_OF_FRENCH;
 #define TYPE_OF_CATEGORY               unsigned short
 #define TYPE_OF_AMMUNITIONTYPE         unsigned char
 #define TYPE_OF_ACTIONPOINTS           unsigned char
-#define TYPE_OF_PUNCTUREARMOR          unsigned char
 
 #endif

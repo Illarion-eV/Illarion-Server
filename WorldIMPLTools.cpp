@@ -1,34 +1,41 @@
-//  illarionserver - server for the game Illarion
-//  Copyright 2011 Illarion e.V.
-//
-//  This file is part of illarionserver.
-//
-//  illarionserver is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  illarionserver is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * Illarionserver - server for the game Illarion
+ * Copyright 2011 Illarion e.V.
+ *
+ * This file is part of Illarionserver.
+ *
+ * Illarionserver  is  free  software:  you can redistribute it and/or modify it
+ * under the terms of the  GNU  General  Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * Illarionserver is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY;  without  even  the  implied  warranty  of  MERCHANTABILITY  or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU  General Public License along with
+ * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-
-#include "db/ConnectionManager.hpp"
 #include "World.hpp"
-#include "data/WeaponObjectTable.hpp"
-#include "data/TilesModificatorTable.hpp"
-#include "data/ContainerObjectTable.hpp"
-#include "data/CommonObjectTable.hpp"
-#include "data/ArmorObjectTable.hpp"
-#include "data/MonsterTable.hpp"
-#include "netinterface/protocol/ServerCommands.hpp"
+
 #include <list>
-//#include <algorith>
 #include <stdlib.h>
+
+#include "data/ArmorObjectTable.hpp"
+#include "data/CommonObjectTable.hpp"
+#include "data/ContainerObjectTable.hpp"
+#include "data/MonsterTable.hpp"
+#include "data/TilesModificatorTable.hpp"
+#include "data/WeaponObjectTable.hpp"
+
+#include "db/Connection.hpp"
+#include "db/ConnectionManager.hpp"
+#include "db/DeleteQuery.hpp"
+#include "db/InsertQuery.hpp"
+
+#include "netinterface/protocol/ServerCommands.hpp"
 
 //Table with data of Monsters
 extern MonsterTable *MonsterDescriptions;
@@ -285,22 +292,34 @@ std::list<BlockingObject> World::LoS(position startingpos, position endingpos) {
 
 //function which updates the playerlist.
 void World::updatePlayerList() {
+    using namespace Database;
     std::cout<<"Updateplayerlist start"<<std::endl;
-    ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
+
+    PConnection connection = ConnectionManager::getInstance().getConnection();
 
     try {
-        //empty the list
-        di::exec(transaction, "DELETE FROM onlineplayer");
+        connection->beginTransaction();
+
+        DeleteQuery delQuery(connection);
+        delQuery.setServerTable("onlineplayer");
+        delQuery.execute();
+
+        InsertQuery insQuery(connection);
+        insQuery.setServerTable("onlineplayer");
+        const InsertQuery::columnIndex column = insQuery.addColumn("on_playerid");
+
         PLAYERVECTOR::iterator plIterator;
 
         for (plIterator = Players.begin(); plIterator != Players.end(); ++plIterator) {
-            di::insert(transaction, (*plIterator)->id, "INSERT INTO onlineplayer (on_playerid)");
+            insQuery.addValue<TYPE_OF_CHARACTER_ID>(column, (*plIterator)->id);
         }
 
-        transaction.commit();
+        insQuery.execute();
+
+        connection->commitTransaction();
     } catch (std::exception &e) {
         std::cerr<<"caught exception during online player save: "<<e.what()<<std::endl;
-        transaction.rollback();
+        connection->rollbackTransaction();
     }
 
     std::cout<<"updateplayerlist end"<<std::endl;

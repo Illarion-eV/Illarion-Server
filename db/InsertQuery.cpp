@@ -37,32 +37,54 @@ InsertQuery::InsertQuery(const PConnection connection) : QueryColumns(connection
     hideTable(true);
 };
 
-template <typename T> void InsertQuery::addValue(const columnIndex &column, const T &value) throw (std::invalid_argument) {
+template <typename T> void InsertQuery::addValue(const columnIndex &column, const T &value) throw(std::invalid_argument) {
+    addValues(column, value, 1);
+}
+
+template <typename T> void addValues(const columnIndex &column, const T &value, const uint32_t count) throw(std::invalid_argument) {
+    if (count == 0) {
+        return;
+    }
+
     uint32_t columns = getColumnCount();
 
     if (columns <= column) {
         throw new std::invalid_argument("Column index out of range.");
     }
-    
+
     std::string strValue = quote<T>(value);
     std::vector<std::string *> *dataRow;
+
     if (!dataStorage.empty()) {
         for (std::vector<std::vector<std::string *> *>::iterator itr = dataStorage.begin(); itr < dataStorage.end(); it++) {
             dataRow = *itr;
             dataRow.reserve(columns);
+
             if (!dataRow->at(columnIndex)) {
                 dataRow->at(columnIndex) = new std::string(strValue);
-                return;
+
+                if (count <= 1) {
+                    ;
+                    return;
+                } else if (count != FILL) {
+                    count--;
+                }
             }
         }
     }
 
-    dataRow = new std::vector<std::string *>(columns, 0);
-    dataStorage.push_back(dataRow);
-    dataRow->at(columnIndex) = new std::string(strValue);
+    if (count == FILL) {
+        return;
+    }
+
+    while (count-- > 0) {
+        dataRow = new std::vector<std::string *>(columns, 0);
+        dataStorage.push_back(dataRow);
+        dataRow->at(columnIndex) = new std::string(strValue);
+    }
 }
 
-template <typename T> void InsertQuery::addValues(const columnIndex &column, std::vector<T> &values) throw (std::invalid_argument) {
+template <typename T> void InsertQuery::addValues(const columnIndex &column, std::vector<T> &values) throw(std::invalid_argument) {
     for (std::vector<T>::iterator itr = values.begin(); itr < values.end(); itr++) {
         addValue<T>(column, *itr);
     }
@@ -71,20 +93,20 @@ template <typename T> void InsertQuery::addValues(const columnIndex &column, std
 template <typename Key, typename T, class Compare, class Allocator>
 void addValues(const columnIndex &column,
                std::map<Key, T, Compare, Allocator> &values,
-               MapInsertMode mode = keysAndValues) throw (std::invalid_argument) {
+               MapInsertMode mode = keysAndValues) throw(std::invalid_argument) {
     for (std::map<Key, T, Compare, Allocator>::iterator itr = values.begin();
          itr < values.end(); itr++) {
         switch (mode) {
-            case onlyKeys:
-                addValue<Key>(column, itr->first);
-                break;
-            case onlyValues:
-                addValue<T>(column, itr->second);
-                break;
-            case keysAndValues:
-                addValue<Key>(column, itr->first);
-                addValue<T>(column + 1, itr->second);
-                break;
+        case onlyKeys:
+            addValue<Key>(column, itr->first);
+            break;
+        case onlyValues:
+            addValue<T>(column, itr->second);
+            break;
+        case keysAndValues:
+            addValue<Key>(column, itr->first);
+            addValue<T>(column + 1, itr->second);
+            break;
         }
     }
 }
@@ -92,14 +114,14 @@ void addValues(const columnIndex &column,
 template <typename Key, typename T, class Compare>
 void addValues(const columnIndex &column,
                std::map<Key, T, Compare> &values,
-               MapInsertMode mode = keysAndValues) throw (std::invalid_argument) {
+               MapInsertMode mode = keysAndValues) throw(std::invalid_argument) {
     addValues<Key, T, Compare, std::allocator<std::pair<const Key, T> > >(column, values);
 }
 
 template <typename Key, typename T>
 void addValues(const columnIndex &column,
                std::map<Key, T> &values,
-               MapInsertMode mode = keysAndValues) throw (std::invalid_argument) {
+               MapInsertMode mode = keysAndValues) throw(std::invalid_argument) {
     addValues<Key, T, std::less<Key> >(column, values);
 }
 
@@ -119,13 +141,14 @@ Result InsertQuery::execute() {
     uint32_t columns = getColumnCount();
     bool firstDone = false;
     std::vector<std::string *> *dataRow;;
+
     for (std::vector<std::vector<std::string *> *>::iterator itr = dataStorage.begin(); itr < dataStorage.end(); it++) {
         if (firstDone) {
             ss << "), ("
         } else {
             firstDone = true;
         }
-        
+
         dataRow = *itr;
 
         if (columns != dataRow->size()) {
@@ -134,17 +157,20 @@ Result InsertQuery::execute() {
 
         for (uint32_t column = 0; column < columns; column++) {
             ss << dataRow->at(column);
+
             if (column < columns-1) {
                 ss << ", ";
             }
+
             delete dataRow->at(column);
             dataRow->at(column) = 0;
         }
 
         delete dataRow;
     }
+
     dataStorage.clear();
-    
+
     ss << ");";
 
     setQuery(ss.str());

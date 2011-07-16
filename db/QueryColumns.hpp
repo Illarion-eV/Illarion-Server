@@ -30,14 +30,14 @@ namespace Database {
 class QueryColumns : public virtual Query {
 public:
     typedef uint_fast8_t columnIndex;
-    
+
 private:
     std::string columns;
     bool hideTable;
     columnIndex nextColumn;
 
 public:
-    
+
     virtual columnIndex addColumn(const std::string &column);
     virtual columnIndex addColumn(const std::string &table, const std::string &column);
 

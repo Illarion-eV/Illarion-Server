@@ -1,29 +1,34 @@
-//  illarionserver - server for the game Illarion
-//  Copyright 2011 Illarion e.V.
-//
-//  This file is part of illarionserver.
-//
-//  illarionserver is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  illarionserver is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * Illarionserver - server for the game Illarion
+ * Copyright 2011 Illarion e.V.
+ *
+ * This file is part of Illarionserver.
+ *
+ * Illarionserver  is  free  software:  you can redistribute it and/or modify it
+ * under the terms of the  GNU  General  Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * Illarionserver is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY;  without  even  the  implied  warranty  of  MERCHANTABILITY  or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU  General Public License along with
+ * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-
-#include "db/ConnectionManager.hpp"
 #include "World.hpp"
-#include "Command.hpp"
+
 #include <sstream>
 #include <regex.h>
+
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
+
+#include "db/InsertQuery.hpp"
+
+#include "Command.hpp"
 
 
 template< typename To, typename From> To stream_convert(const From &from) {
@@ -122,10 +127,15 @@ bool World::gmpage_command(Player *cp, const std::string &ts) {
     std::string tmessage = "Page from " + cp->name + ": " + ts;
 
     try {
-        ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
+        using namespace Database;
+        InsertQuery insQuery;
+        insQuery.setServerTable("gmpager");
+        const InsertQuery::columnIndex userColumn = insQuery.addColumn("pager_user");
+        const InsertQuery::columnIndex textColumn = insQuery.addColumn("pager_text");
+        insQuery.addValue(userColumn, cp->id);
+        insQuery.addValue(textColumn, ts);
 
-        di::insert(transaction, cp->id, di::UnquotedSQL("now()"), ts, "INSERT INTO gmpager ( pager_user, pager_time, pager_text )");
-        transaction.commit();
+        insQuery.execute();
 
         sendMessageToAdmin(tmessage);
         boost::shared_ptr<BasicServerCommand>cmd(new BBMessageTC(tmessage,2));

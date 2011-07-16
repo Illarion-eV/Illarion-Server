@@ -36,32 +36,35 @@
 namespace Database {
 class InsertQuery : public QueryColumns, public QueryTables {
 private:
-    std::vector<std::vector<std::string*>*> dataStorage;
-    
+    std::vector<std::vector<std::string *>*> dataStorage;
+
 public:
     enum MapInsertMode {
         onlyKeys, onlyValues, keysAndValues
     };
-    
+
+    static const uint32_t FILL = UINT32_C(0xFFFFFFFF);
+
     InsertQuery();
     InsertQuery(const InsertQuery &org);
     InsertQuery(const PConnection connection);
     virtual ~InsertQuery();
 
-    template <typename T> void addValue(const columnIndex &column, const T &value) throw (std::invalid_argument);
-    template <typename T> void addValues(const columnIndex &column, std::vector<T> &values) throw (std::invalid_argument);
+    template <typename T> void addValue(const columnIndex &column, const T &value) throw(std::invalid_argument);
+    template <typename T> void addValues(const columnIndex &column, const T &value, const uint32_t count) throw(std::invalid_argument);
+    template <typename T> void addValues(const columnIndex &column, std::vector<T> &values) throw(std::invalid_argument);
     template <typename Key, typename T>
-        void addValues(const columnIndex &column, std::map<Key,T> &values,
-                       MapInsertMode mode = keysAndValues) throw (std::invalid_argument);
+    void addValues(const columnIndex &column, std::map<Key,T> &values,
+                   MapInsertMode mode = keysAndValues) throw(std::invalid_argument);
     template <typename Key, typename T, class Compare>
-        void addValues(const columnIndex &column,
-                       std::map<Key,T,Compare> &values,
-                       MapInsertMode mode = keysAndValues) throw (std::invalid_argument);
+    void addValues(const columnIndex &column,
+                   std::map<Key,T,Compare> &values,
+                   MapInsertMode mode = keysAndValues) throw(std::invalid_argument);
     template <typename Key, typename T, class Compare,class Allocator>
-        void addValues(const columnIndex &column,
-                       std::map<Key,T,Compare, Allocator> &values,
-                       MapInsertMode mode = keysAndValues) throw (std::invalid_argument);
-    
+    void addValues(const columnIndex &column,
+                   std::map<Key,T,Compare, Allocator> &values,
+                   MapInsertMode mode = keysAndValues) throw(std::invalid_argument);
+
     virtual Result execute();
 };
 }

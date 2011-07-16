@@ -47,6 +47,7 @@ QueryColumns::columnIndex QueryColumns::addColumn(const std::string &table, cons
     if (hideTable) {
         return addColumn(column);
     }
+
     appendToStringList(columns, escapeAndChainKeys(table, column));
     return nextColumn++;
 }

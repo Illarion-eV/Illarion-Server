@@ -128,8 +128,8 @@ int main(int argc, char *argv[]) {
     server.port = configOptions["postgres_port"];
     Database::ConnectionManager::getInstance().setupManager(login, server);
     Database::SchemaHelper::setSchemata(configOptions["postgres_schema_server"],
-        configOptions["postgres_schema_account"]);
-    
+                                        configOptions["postgres_schema_account"]);
+
     //Welt anlegen
     World *world = World::create(configOptions["datadir"] , starttime);
 
