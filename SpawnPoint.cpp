@@ -1,26 +1,33 @@
-//  illarionserver - server for the game Illarion
-//  Copyright 2011 Illarion e.V.
-//
-//  This file is part of illarionserver.
-//
-//  illarionserver is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  illarionserver is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * Illarionserver - server for the game Illarion
+ * Copyright 2011 Illarion e.V.
+ *
+ * This file is part of Illarionserver.
+ *
+ * Illarionserver  is  free  software:  you can redistribute it and/or modify it
+ * under the terms of the  GNU  General  Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * Illarionserver is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY;  without  even  the  implied  warranty  of  MERCHANTABILITY  or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU  General Public License along with
+ * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-
-#include "db/ConnectionManager.hpp"
 #include "SpawnPoint.hpp"
-#include "World.hpp"
+
 #include <sstream>
+
+#include <boost/cstdint.hpp>
+
+#include "db/SelectQuery.hpp"
+#include "db/Result.hpp"
+
+#include "World.hpp"
 #include "Random.hpp"
 #include "Logger.hpp"
 
@@ -136,19 +143,22 @@ void SpawnPoint::dead(const TYPE_OF_CHARACTER_ID &typ) {
 
 bool SpawnPoint::load(const int &id) {
     try {
-        ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
+        Database::SelectQuery query;
+        query.addColumn("spawnpoint_monster", "spm_race");
+        query.addColumn("spawnpoint_monster", "spm_count");
+        query.addEqualCondition("spawnpoint_monster", "spm_id", id);
+        query.addServerTable("spawnpoint_monster");
 
-        std::vector<TYPE_OF_CHARACTER_ID> race;
-        std::vector<short> count;
+        Database::Result results = query.execute();
 
-        size_t rows = di::select_all<
-                      di::Integer, di::Integer
-                      >(transaction, race, count,
-                        "SELECT spm_race, spm_count FROM spawnpoint_monster WHERE spm_id=" +
-                        stream_convert<std::string>(id));
+        if (!results.empty()) {
+            SpawnTypes.clear();
 
-        for (size_t i = 0; i < rows; ++i) {
-            addMonster(race[i], count[i]);
+            for (Database::Result::ConstIterator itr = results.begin();
+                 itr != results.end(); ++itr) {
+                addMonster((*itr)["spm_race"].as<TYPE_OF_CHARACTER_ID>(),
+                           (*itr)["spm_count"].as<int16_t>());
+            }
         }
     } catch (std::exception &e) {
         std::cerr << "exception: " << e.what() << std::endl;
