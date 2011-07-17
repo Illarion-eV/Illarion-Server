@@ -28,12 +28,17 @@ using namespace Database;
 
 SelectQuery::SelectQuery() {
     SelectQuery(ConnectionManager::getInstance().getConnection());
+    isDistinct = false;
 }
 
-SelectQuery::SelectQuery(const SelectQuery &org) : QueryColumns(org), QueryTables(org), QueryWhere(org);
+SelectQuery::SelectQuery(const SelectQuery &org) : QueryColumns(org), QueryTables(org), QueryWhere(org) {
+    orderBy = org.orderBy;
+    isDistinct = org.isDistinct;
+}
 
 SelectQuery::SelectQuery(const PConnection connection) : QueryColumns(connection), QueryTables(connection), QueryWhere(connection) {
     setOnlyOneTable(false);
+    isDistinct = false;
 };
 
 void SelectQuery::addOrderBy(const std::string &column, const OrderDirection &dir) {
@@ -56,9 +61,16 @@ void SelectQuery::addOrderBy(const std::string &table, const std::string &column
     }
 }
 
+void SelectQuery::setDistinct(const bool &distinct) {
+    isDistinct = distinct;
+}
+
 Result SelectQuery::execute() {
     std::stringstream ss;
     ss << "SELECT ";
+    if (isDistinct) {
+        ss << "DISTINCT ";
+    }
     ss << QueryColumns::buildQuerySegment();
     ss << " FROM ";
     ss << QueryTables::buildQuerySegment();

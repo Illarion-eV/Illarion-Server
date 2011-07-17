@@ -36,6 +36,7 @@ namespace Database {
 class SelectQuery : public virtual QueryColumns, public virtual QueryTables, public virtual QueryWhere {
 private:
     std::string orderBy;
+    bool isDistinct;
 public:
     enum OrderDirection {
         ASC, DESC
@@ -48,6 +49,8 @@ public:
 
     void addOrderBy(const std::string &column, const OrderDirection &dir);
     void addOrderBy(const std::string &table, const std::string &column, const OrderDirection &dir);
+
+    void setDistinct(const bool &distinct);
 
     virtual Result execute();
 };
