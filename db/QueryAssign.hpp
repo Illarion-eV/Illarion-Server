@@ -32,9 +32,11 @@ private:
     std::string assignColumns;
 
 public:
-    template<typename T> void QueryAssign::addAssignColumn(const std::string &column, const T &value);
-    template<typename T> void QueryAssign::addAssignColumn(const std::string &table, const std::string &column, const T &value);
+    template<typename T> void addAssignColumn(const std::string &column, const T &value);
+    template<typename T> void addAssignColumn(const std::string &table, const std::string &column, const T &value);
 
+    void addAssignColumnNull(const std::string &column);
+    void addAssignColumnNull(const std::string &table, const std::string &column);
 protected:
     QueryAssign();
     QueryAssign(const QueryAssign &org);
