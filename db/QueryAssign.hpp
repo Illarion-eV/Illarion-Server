@@ -18,42 +18,32 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _QUERY_WHERE_HPP_
-#define _QUERY_WHERE_HPP_
+#ifndef _QUERY_ASSIGN_HPP_
+#define _QUERY_ASSIGN_HPP_
 
 #include <string>
-#include <stack>
-
-#include <boost/cstdint.hpp>
 
 #include "db/Connection.hpp"
 #include "db/Query.hpp"
 
 namespace Database {
-class QueryWhere : public virtual Query {
+class QueryAssign : public virtual Query {
 private:
-    std::stack<std::string *> conditionsStack;
-    std::string conditions;
+    std::string assignColumns;
 
 public:
-    template<typename T> void addEqualCondition(const std::string &column, const T &value);
-    template<typename T> void addEqualCondition(const std::string &table, const std::string &column, const T &value);
-    template<typename T> void addNotEqualCondition(const std::string &column, const T &value);
-    template<typename T> void addNotEqualCondition(const std::string &table, const std::string &column, const T &value);
+    template<typename T> void QueryAssign::addAssignColumn(const std::string &column, const T &value);
+    template<typename T> void QueryAssign::addAssignColumn(const std::string &table, const std::string &column, const T &value);
 
-    void andConditions();
-    void orConditions();
 protected:
-    QueryWhere();
-    QueryWhere(const QueryWhere &org);
-    QueryWhere(const PConnection connection);
+    QueryAssign();
+    QueryAssign(const QueryAssign &org);
+    QueryAssign(const PConnection connection);
 
     virtual ~QueryWhere();
 
     std::string &buildQuerySegment();
-private:
-    void mergeConditions(const std::string &operation);
 };
 }
 
-#endif // _QUERY_WHERE_HPP_
+#endif // _QUERY_ASSIGN_HPP_

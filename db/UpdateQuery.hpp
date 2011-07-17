@@ -18,22 +18,30 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _RESULT_HPP_
-#define _RESULT_HPP_
+#ifndef _UPDATE_QUERY_HPP_
+#define _UPDATE_QUERY_HPP_
 
-#include <pqxx/result.hxx>
+#include <string>
+
+#include <boost/cstdint.hpp>
+
+#include "db/Connection.hpp"
+#include "db/Result.hpp"
+#include "db/Query.hpp"
+#include "db/QueryAssign.hpp"
+#include "db/QueryTables.hpp"
+#include "db/QueryWhere.hpp"
 
 namespace Database {
-/* This file contains just some namespaces that hide the pqxx implementation
- * of the SQL Query result handling.
- */
-class Result : public pqxx::result {
+class UpdateQuery : public virtual QueryAssign, public virtual QueryTables, public virtual QueryWhere {
 public:
-    typedef pqxx::result::tuple Tuple;
-    typedef pqxx::result::const_iterator ConstIterator;
-    typedef pqxx::result::tuple::reference Field;
+    UpdateQuery();
+    UpdateQuery(const SelectQuery &org);
+    UpdateQuery(const PConnection connection);
+    virtual ~UpdateQuery();
+
+    virtual Result execute();
 };
-typedef Result *PResult;
 }
 
-#endif // _RESULT_HPP_
+#endif // _UPDATE_QUERY_HPP_

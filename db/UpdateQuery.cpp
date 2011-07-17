@@ -18,7 +18,7 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "db/SelectQuery.hpp"
+#include "db/UpdateQuery.hpp"
 
 #include <sstream>
 
@@ -26,48 +26,23 @@
 
 using namespace Database;
 
-SelectQuery::SelectQuery() {
-    SelectQuery(ConnectionManager::getInstance().getConnection());
+UpdateQuery::UpdateQuery() {
+    UpdateQuery(ConnectionManager::getInstance().getConnection());
 }
 
-SelectQuery::SelectQuery(const SelectQuery &org) : QueryColumns(org), QueryTables(org), QueryWhere(org);
+UpdateQuery::UpdateQuery(const UpdateQuery &org) : QueryAssign(org), QueryTables(org), QueryWhere(org);
 
-SelectQuery::SelectQuery(const PConnection connection) : QueryColumns(connection), QueryTables(connection), QueryWhere(connection) {
-    setOnlyOneTable(false);
+UpdateQuery::UpdateQuery(const PConnection connection) : QueryAssign(connection), QueryTables(connection), QueryWhere(connection) {
+    setOnlyOneTable(true);
 };
-
-void SelectQuery::addOrderBy(const std::string &column, const OrderDirection &dir) {
-    addOrderBy("", column, dir);
-}
-
-void SelectQuery::addOrderBy(const std::string &table, const std::string &column, const OrderDirection &dir) {
-    if (!orderBy.empty()) {
-        orderBy += ", ";
-    }
-
-    orderBy += escapeAndChainKeys(table, column);
-    orderBy += " ";
-
-    switch (dir) {
-    case ASC:
-        orderBy += "ASC";
-    case DESC:
-        orderBy += "DESC";
-    }
-}
 
 Result SelectQuery::execute() {
     std::stringstream ss;
-    ss << "SELECT ";
-    ss << QueryColumns::buildQuerySegment();
-    ss << " FROM ";
+    ss << "UPDATE ";
     ss << QueryTables::buildQuerySegment();
+    ss << " SET ";
+    ss << QueryAssign::buildQuerySegment();
     ss << QueryWhere::buildQuerySegment();
-
-    if (!orderBy.empty()) {
-        ss << " ORDER BY " << orderBy;
-    }
-
     ss << ";";
 
     setQuery(ss.str());

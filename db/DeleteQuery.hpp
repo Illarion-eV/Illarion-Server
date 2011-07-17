@@ -27,7 +27,7 @@
 #include "db/QueryWhere.hpp"
 
 namespace Database {
-class DeleteQuery : public QueryTables, public QueryWhere {
+class DeleteQuery : public virtual QueryTables, public virtual QueryWhere {
 public:
     DeleteQuery();
     DeleteQuery(const DeleteQuery &org);

@@ -33,7 +33,7 @@
 #include "db/QueryWhere.hpp"
 
 namespace Database {
-class SelectQuery : public QueryColumns, public QueryTables, public QueryWhere {
+class SelectQuery : public virtual QueryColumns, public virtual QueryTables, public virtual QueryWhere {
 private:
     std::string orderBy;
 public:

@@ -34,7 +34,7 @@
 #include "db/QueryTables.hpp"
 
 namespace Database {
-class InsertQuery : public QueryColumns, public QueryTables {
+class InsertQuery : public virtual QueryColumns, public virtual QueryTables {
 private:
     std::vector<std::vector<std::string *>*> dataStorage;
 

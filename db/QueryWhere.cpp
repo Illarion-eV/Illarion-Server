@@ -38,52 +38,24 @@ QueryWhere::~QueryWhere() {
     }
 }
 
-void QueryWhere::addEqualCondition(const std::string &column, const std::string &value) {
-    addEqualCondition("", column, value);
+template<typename T>
+void QueryWhere::addEqualCondition(const std::string &column, const T &value) {
+    addEqualCondition<T>("", column, value);
 }
 
-void QueryWhere::addEqualCondition(const std::string &table, const std::string &column, const std::string &value) {
-    conditions.push(new std::string(escapeAndChainKeys(table, column) + " = " + quote<std::string>(value)));
+template<typename T>
+void QueryWhere::addEqualCondition(const std::string &table, const std::string &column, const T &value) {
+    conditions.push(new std::string(escapeAndChainKeys(table, column) + " = " + quote<T>(value)));
 }
 
-void QueryWhere::addEqualCondition(const std::string &column, const uint32_t &value) {
-    addEqualCondition("", column, value);
+template<typename T>
+void QueryWhere::addNotEqualCondition(const std::string &column, const T &value) {
+    addNotEqualCondition<T>("", column, value);
 }
 
-void QueryWhere::addEqualCondition(const std::string &table, const std::string &column, const uint32_t &value) {
-    conditions.push(new std::string(escapeAndChainKeys(table, column) + " = " + quote<uint32_t>(value)));
-}
-
-void QueryWhere::addEqualCondition(const std::string &column, const int32_t &value) {
-    addEqualCondition("", column, value);
-}
-
-void QueryWhere::addEqualCondition(const std::string &table, const std::string &column, const int32_t &value) {
-    conditions.push(new std::string(escapeAndChainKeys(table, column) + " = " + quote<int32_t>(value)));
-}
-
-void QueryWhere::addNotEqualCondition(const std::string &column, const std::string &value) {
-    addNotEqualCondition("", column, value);
-}
-
-void QueryWhere::addNotEqualCondition(const std::string &table, const std::string &column, const std::string &value) {
-    conditions.push(new std::string(escapeAndChainKeys(table, column) + " != " + quote<std::string>(value)));
-}
-
-void QueryWhere::addNotEqualCondition(const std::string &column, const uint32_t &value) {
-    addNotEqualCondition("", column, value);
-}
-
-void QueryWhere::addNotEqualCondition(const std::string &table, const std::string &column, const uint32_t &value) {
-    conditions.push(new std::string(escapeAndChainKeys(table, column) + " != " + quote<uint32_t>(value)));
-}
-
-void QueryWhere::addNotEqualCondition(const std::string &column, const int32_t &value) {
-    addNotEqualCondition("", column, value);
-}
-
-void QueryWhere::addNotEqualCondition(const std::string &table, const std::string &column, const int32_t &value) {
-    conditions.push(new std::string(escapeAndChainKeys(table, column) + " != " + quote<int32_t>(value)));
+template<typename T>
+void QueryWhere::addNotEqualCondition(const std::string &table, const std::string &column, const T &value) {
+    conditions.push(new std::string(escapeAndChainKeys(table, column) + " != " + quote<T>(value)));
 }
 
 void QueryWhere::andConditions() {

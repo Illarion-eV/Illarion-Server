@@ -18,22 +18,28 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _RESULT_HPP_
-#define _RESULT_HPP_
+#include "db/QueryAssign.hpp"
 
-#include <pqxx/result.hxx>
+using namespace Database;
 
-namespace Database {
-/* This file contains just some namespaces that hide the pqxx implementation
- * of the SQL Query result handling.
- */
-class Result : public pqxx::result {
-public:
-    typedef pqxx::result::tuple Tuple;
-    typedef pqxx::result::const_iterator ConstIterator;
-    typedef pqxx::result::tuple::reference Field;
-};
-typedef Result *PResult;
+QueryAssign() : Query();
+
+QueryAssign::QueryAssign(const QueryAssign &org) : Query(org) {
+    assignColumns = org.assignColumns;
 }
 
-#endif // _RESULT_HPP_
+QueryAssign(const PConnection connection) : Query(connection);
+
+template<typename T>
+void QueryAssign::addAssignColumn(const std::string &column, const T &value) {
+    addAssignColumn<T>("", column, value);
+}
+
+template<typename T>
+void QueryAssign::addAssignColumn(const std::string &table, const std::string &column, const T &value) {
+    appendToStringList(assignColumns, escapeAndChainKeys(table, column) + " = " + quote<T>(value));
+}
+
+std::string &QueryAssign::buildQuerySegment() {
+    return assignColumns;
+}
