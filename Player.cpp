@@ -2227,64 +2227,73 @@ bool Player::hasGMRight(gm_rights right) {
 }
 
 void Player::setQuestProgress(uint16_t questid, uint32_t progress) throw() {
-    //Laden einer Transaktion
-    ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
-
+    using namespace Database;
+    PConnection connection = ConnectionManager::getInstance().getConnection();
+    
     try {
-        
-        std::stringstream Query;
-        Query << "SELECT qpg_progress FROM questprogress WHERE qpg_userid = " << transaction.quote(id) << " AND qpg_questid = " << transaction.quote(questid);
-        uint32_t oldprogress;
-        size_t rows = di::select<di::Integer>(transaction, oldprogress, Query.str());
+        connection->beginTransaction();
 
-        if (rows > 0) { // Update
-            if (oldprogress != progress) { // Only update when the progress has changed
-                save(); // mandatory to avoid loss of integrity in case of server crash/kill
+        SelectQuery query(connection);
+        query.addColumn("questprogress", "qpg_progress");
+        query.addEqualCondition<TYPE_OF_CHARACTER_ID>("questprogress", "qpg_userid", id);
+        query.addEqualCondition<uint16_t>("questprogress", "qpg_userid", questid);
+        query.addServerTable("questprogress");
 
-                std::stringstream qry;
+        Result results = query.execute();
 
-                qry << "UPDATE questprogress SET qpg_progress = " << transaction.quote(progress);
-                qry << " WHERE qpg_userid = " << transaction.quote(id);
-                qry << " AND qpg_questid = " << transaction.quote(questid);
+        save();
+        if (results.empty()) {
+            InsertQuery insQuery;
+            const InsertQuery::columnIndex userColumn = insQuery.addColumn("qpg_userid");
+            const InsertQuery::columnIndex questColumn = insQuery.addColumn("qpg_questid");
+            const InsertQuery::columnIndex progressColumn = insQuery.addColumn("qpg_progress");
+            insQuery.addServerTable("questprogress");
 
-                di::exec(transaction, qry.str());
-                transaction.commit();
-            }
-        } else {        // Insert
-            save(); // mandatory to avoid loss of integrity in case of server crash/kill
+            insQuery.addValue<TYPE_OF_CHARACTER_ID>(userColumn, id);
+            insQuery.addValue<uint16_t>(questColumn, questid);
+            insQuery.addValue<uint32_t>(progressColumn, progress);
 
-            di::insert(transaction, id, questid, progress, "INSERT INTO questprogress (qpg_userid, qpg_questid, qpg_progress)");
-            transaction.commit();
+            insQuery.execute();
+        } else {
+            UpdateQuery updQuery;
+            updQuery.addAssignColumn<uint32_t>("questprogress", "qpg_progress", progress);
+            updQuery.addEqualCondition<TYPE_OF_CHARACTER_ID>("questprogress", "qpg_userid", id);
+            updQuery.addEqualCondition<uint16_t>("questprogress", "qpg_userid", questid);
+            updQuery.setServerTable("questprogress");
+            
+            updQuery.execute();
         }
+
+        connection->commitTransaction();
     } catch (std::exception &e) {
         std::cerr<<"exception: "<<e.what()<<" while setting QuestProgress!"<<std::endl;
-        transaction.rollback();
+        connection->rollbackTransaction();
     }
 }
 
 uint32_t Player::getQuestProgress(uint16_t questid) throw() {
     try {
-        //Laden einer Transaktion
-        ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
-        std::stringstream Query;
-        Query << "SELECT qpg_progress FROM questprogress WHERE qpg_userid = " << transaction.quote(id) << " AND qpg_questid = " << transaction.quote(questid);
-        uint32_t progress;
-        size_t rows = di::select<di::Integer>(transaction, progress, Query.str());
+        using namespace Database;
 
-        if (rows > 1) {
-            std::cerr<<" Too many QuestProgress Entries for char with id: "<<id<<" and quest: "<<questid<<" !"<<std::endl;
-            return 0;
-        } else if (rows == 1) {
-            return progress;
+        SelectQuery query;
+        query.addColumn("questprogress", "qpg_progress");
+        query.addEqualCondition<TYPE_OF_CHARACTER_ID>("questprogress", "qpg_userid", id);
+        query.addEqualCondition<uint16_t>("questprogress", "qpg_userid", questid);
+        query.addServerTable("questprogress");
+
+        Result results = query.execute();
+
+        if (results.empty()) {
+            return UINT32_C(0);
         } else {
-            return 0;    //No Progress so far for that quest
+            return results.front()["qpg_progress"].as<uint32_t>();
         }
     } catch (std::exception &e) {
         std::cerr<<"exception: "<<e.what()<<" while getting QuestProgress!"<<std::endl;
-        return 0;
+        return UINT32_C(0);
     }
 
-    return 0;
+    return UINT32_C(0);
 }
 
 bool Player::moveDepotContentFrom(uint32_t sourcecharid, uint32_t targetdepotid, uint32_t sourcedepotid) throw() {
