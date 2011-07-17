@@ -21,6 +21,7 @@
 #include "db/UpdateQuery.hpp"
 
 #include <sstream>
+#include <stdexcept>
 
 #include "db/ConnectionManager.hpp"
 
@@ -36,13 +37,20 @@ UpdateQuery::UpdateQuery(const PConnection connection) : QueryAssign(connection)
     setOnlyOneTable(true);
 };
 
-Result SelectQuery::execute() {
+Result UpdateQuery::execute() {
     std::stringstream ss;
     ss << "UPDATE ";
     ss << QueryTables::buildQuerySegment();
     ss << " SET ";
     ss << QueryAssign::buildQuerySegment();
-    ss << QueryWhere::buildQuerySegment();
+
+    const std::string whereSegment = QueryWhere::buildQuerySegment();
+#if !defined(UPDATE_QUERY_NO_WHERE_CHECK)
+    if (whereSegment.empty()) {
+        throw new std::logic_error("Update Query without WHERE is not acceptable");
+    }
+#endif
+    ss << whereSegment;
     ss << ";";
 
     setQuery(ss.str());

@@ -45,6 +45,14 @@
 #include "tvector.hpp"
 #include "PlayerManager.hpp"
 
+#include "db/Connection.hpp"
+#include "db/ConnectionManager.hpp"
+#include "db/DeleteQuery.hpp"
+#include "db/InsertQuery.hpp"
+#include "db/SelectQuery.hpp"
+#include "db/UpdateQuery.hpp"
+#include "db/Result.hpp"
+
 //#define PLAYER_MOVE_DEBUG
 
 template<> const std::string toString(const unsigned char &convertme) {
@@ -729,13 +737,21 @@ void Player::SetStatusTime(time_t thisStatustime) {
 
 // Who banned/jailed the player?
 std::string Player::GetStatusGM() {
-    ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
-    std::stringstream query;
-    query << "SELECT chr_name FROM chars WHERE chr_playerid = " << transaction.quote(statusgm);
+    using namespace Database;
+    SelectQuery query;
+    query.addColumn("chars", "chr_playerid");
+    query.addEqualCondition<TYPE_OF_CHARACTER_ID>("chars", "chr_playerid", statusgm);
+    query.addServerTable("chars");
+
+    Result result = query.execute();
 
     std::string statusgmstring;
-
-    di::select<di::Varchar>(transaction, statusgmstring, query.str());
+    if (!result.empty()) {
+        const Result::Field field = result.front()["chr_playerid"];
+        if (!field.is_null()) {
+            statusgmstring = field.as<std::string>();
+        }
+    }
 
     return statusgmstring;
 }
@@ -819,34 +835,49 @@ bool Player::wasUnconsciousSent() {
 }
 
 void Player::check_logindata() throw(Player::LogoutException) {
-
+    Database::PConnection connection = Database::ConnectionManager::getInstance().getConnection();
     try {
+        connection->beginTransaction();
 
-        ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
-        ConnectionManager::TransactionHolder account_transaction = accdbmgr->getTransaction();
+        Database::SelectQuery charQuery(connection);
+        charQuery.addColumn("chars", "chr_playerid");
+        charQuery.addColumn("chars", "chr_accid");
+        charQuery.addColumn("chars", "chr_status");
+        charQuery.addColumn("chars", "chr_statustime");
+        charQuery.addColumn("chars", "chr_onlinetime");
+        charQuery.addColumn("chars", "chr_lastsavetime");
+        charQuery.addColumn("chars", "chr_sex");
+        charQuery.addColumn("chars", "chr_race");
+        charQuery.addColumn("chars", "chr_prefix");
+        charQuery.addColumn("chars", "chr_suffix");
+        charQuery.addEqualCondition<std::string>("chars", "chr_name", name);
+        charQuery.addServerTable("chars");
 
-        std::string real_pwd;
+        Database::Result charResult = charQuery.execute();
 
+        if (charResult.empty()) {
+            throw LogoutException(NOCHARACTERFOUND);
+        }
+
+        Database::Result::Tuple charRow = charResult.front();
+        
         TYPE_OF_CHARACTER_ID account_id;
 
-        std::stringstream query;
-        query << "SELECT chr_playerid, chr_accid, chr_status, chr_statustime, chr_onlinetime,";
-        query << "chr_lastsavetime, chr_sex, chr_race, chr_prefix, chr_suffix FROM chars ";
-        query << "where chr_name = " << transaction.quote(name);
-
-        di::isnull<time_t> isnull_statustime(statustime);
-        di::isnull<std::string> n_prefix(prefix), n_suffix(suffix);
-
-        int rows = di::select<
-                   di::Integer, di::Integer, di::Integer, di::Integer, di::Integer,
-                   di::Integer, di::Integer, di::Integer, di::Varchar, di::Varchar
-                   >(transaction, id, account_id, status, isnull_statustime, onlinetime,
-                     lastsavetime, battrib.truesex, race, n_prefix, n_suffix,
-                     query.str());
-
-        // no char found?
-        if (rows != 1) {
-            throw LogoutException(NOCHARACTERFOUND);
+        id = charRow["chr_playerid"].as<TYPE_OF_CHARACTER_ID>();
+        account_id = charRow["chr_accid"].as<TYPE_OF_CHARACTER_ID>();
+        status = charRow["chr_status"].as<uint16_t>();
+        if (!charRow["chr_status"].is_null()) {
+            statustime = charRow["chr_statustime"].as<time_t>();
+        }
+        onlinetime = charRow["chr_onlinetime"].as<time_t>();
+        lastsavetime = charRow["chr_lastsavetime"].as<time_t>();
+        battrib.truesex = (Character::sex_type) charRow["chr_sex"].as<uint16_t>();
+        race = (Character::race_type) charRow["chr_race"].as<uint16_t>();
+        if (!charRow["chr_prefix"].is_null()) {
+            prefix = charRow["chr_prefix"].as<uint16_t>();
+        }
+        if (!charRow["chr_suffix"].is_null()) {
+            suffix = charRow["chr_suffix"].as<uint16_t>();
         }
 
         // first we check the status since we already retrieved it
@@ -875,18 +906,29 @@ void Player::check_logindata() throw(Player::LogoutException) {
         }
 
         // next we get the infos for the account and check if the account is active
-        int acc_state;
 
-        Language::LanguageType mother_tongue;
+        Database::SelectQuery accQuery(connection);
+        accQuery.addColumn("account", "acc_passwd");
+        accQuery.addColumn("account", "acc_lang");
+        accQuery.addColumn("account", "acc_state");
+        accQuery.addEqualCondition("account", "acc_id", account_id);
+        accQuery.addAccountTable("account");
 
-        rows = di::select<
-               di::Varchar, di::Integer, di::Integer
-               >(account_transaction, real_pwd, mother_tongue, acc_state,
-                 "SELECT acc_passwd, acc_lang, acc_state FROM account where acc_id =" + toString(account_id));
+        Database::Result accResult = accQuery.execute();
 
-        if (rows != 1) {
+        if (accResult.empty()) {
             throw LogoutException(NOACCOUNT);
         }
+
+        Database::Result::Tuple accRow = accResult.front();
+
+        int acc_state;
+        Language::LanguageType mother_tongue;
+        std::string real_pwd;
+
+        real_pwd = accRow["acc_passwd"].as<std::string>();
+        mother_tongue = (Language::LanguageType) (accRow["acc_lang"].as<uint16_t>());
+        acc_state = accRow["acc_state"].as<uint16_t>();
 
         setPlayerLanguage(mother_tongue);
 
@@ -915,88 +957,112 @@ void Player::check_logindata() throw(Player::LogoutException) {
 
         character = Character::player;
 
-        // get the remaining attributes from the player table
-        rows = di::select<
-               di::Integer, di::Integer, di::Integer, di::Integer,
-               di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Integer,
-               di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Integer,
-               di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Integer,
-               di::Integer, di::BigInt, di::BigInt, di::BigInt, di::BigInt,
-               di::Integer, di::Integer, di::Integer, di::Integer, di::Integer,
-               di::Integer, di::Integer, di::Integer, di::Integer, di::Integer
-               >(transaction, pos.x, pos.y, pos.z, faceto,
-                 battrib.trueage, battrib.trueweight, battrib.truebody_height, battrib.truehitpoints, battrib.truemana, battrib.trueattitude,
-                 battrib.trueluck, battrib.truestrength, battrib.truedexterity, battrib.trueconstitution, battrib.trueagility, battrib.trueintelligence,
-                 battrib.trueperception, battrib.truewillpower, battrib.trueessence, battrib.truefoodlevel, appearance, lifestate,
-                 magic.type,  magic.flags[ MAGE ], magic.flags[ PRIEST ], magic.flags[ BARD ], magic.flags[ DRUID ],
-                 poisonvalue, mental_capacity, hair, beard, hairred, hairgreen, hairblue, skinred, skingreen, skinblue,
-                 "SELECT ply_posx, ply_posy, ply_posz, ply_faceto,"
-                 "ply_age, ply_weight, ply_body_height, ply_hitpoints, ply_mana, ply_attitude,"
-                 "ply_luck, ply_strength, ply_dexterity, ply_constitution, ply_agility, ply_intelligence,"
-                 "ply_perception, ply_willpower, ply_essence, ply_foodlevel, ply_appearance, ply_lifestate,"
-                 "ply_magictype, ply_magicflagsmage, ply_magicflagspriest, ply_magicflagsbard, ply_magicflagsdruid,"
-                 "ply_poison, ply_mental_capacity, ply_hair, ply_beard, ply_hairred, ply_hairgreen,"
-                 "ply_hairblue, ply_skinred, ply_skingreen, ply_skinblue "
-                 "from player where ply_playerid = " + toString(id));
+        Database::SelectQuery playerQuery(connection);
+        playerQuery.addColumn("player", "ply_posx");
+        playerQuery.addColumn("player", "ply_posy");
+        playerQuery.addColumn("player", "ply_posz");
+        playerQuery.addColumn("player", "ply_faceto");
+        playerQuery.addColumn("player", "ply_age");
+        playerQuery.addColumn("player", "ply_weight");
+        playerQuery.addColumn("player", "ply_body_height");
+        playerQuery.addColumn("player", "ply_hitpoints");
+        playerQuery.addColumn("player", "ply_mana");
+        playerQuery.addColumn("player", "ply_attitude");
+        playerQuery.addColumn("player", "ply_luck");
+        playerQuery.addColumn("player", "ply_strength");
+        playerQuery.addColumn("player", "ply_dexterity");
+        playerQuery.addColumn("player", "ply_constitution");
+        playerQuery.addColumn("player", "ply_agility");
+        playerQuery.addColumn("player", "ply_intelligence");
+        playerQuery.addColumn("player", "ply_perception");
+        playerQuery.addColumn("player", "ply_willpower");
+        playerQuery.addColumn("player", "ply_essence");
+        playerQuery.addColumn("player", "ply_foodlevel");
+        playerQuery.addColumn("player", "ply_appearance");
+        playerQuery.addColumn("player", "ply_lifestate");
+        playerQuery.addColumn("player", "ply_magictype");
+        playerQuery.addColumn("player", "ply_magicflagsmage");
+        playerQuery.addColumn("player", "ply_magicflagspriest");
+        playerQuery.addColumn("player", "ply_magicflagsbard");
+        playerQuery.addColumn("player", "ply_magicflagsdruid");
+        playerQuery.addColumn("player", "ply_poison");
+        playerQuery.addColumn("player", "ply_mental_capacity");
+        playerQuery.addColumn("player", "ply_hair");
+        playerQuery.addColumn("player", "ply_beard");
+        playerQuery.addColumn("player", "ply_hairred");
+        playerQuery.addColumn("player", "ply_hairgreen");
+        playerQuery.addColumn("player", "ply_hairblue");
+        playerQuery.addColumn("player", "ply_skinred");
+        playerQuery.addColumn("player", "ply_skingreen");
+        playerQuery.addColumn("player", "ply_skinblue");
+        playerQuery.addEqualCondition("player", "ply_playerid", id);
+        playerQuery.addServerTable("player");
 
-        if (rows != 1) {
+        Database::Result playerResult = playerQuery.execute();
+
+        if (playerResult.empty()) {
             throw LogoutException(NOACCOUNT);
         }
+        
+        Database::Result::Tuple playerRow = playerResult.front();
 
-        //now set the temp values from the attributes to the true values
+        pos.x = playerRow["ply_posx"].as<int32_t>();
+        pos.y = playerRow["ply_posy"].as<int32_t>();
+        pos.z = playerRow["ply_posz"].as<int32_t>();
+        faceto = (Character::face_to) playerRow["ply_faceto"].as<uint16_t>();
 
+        battrib.age = battrib.trueage = playerRow["ply_age"].as<uint16_t>();
+        battrib.time_age = 0;
         battrib.sex = battrib.truesex;
         battrib.time_sex = 0;
-
-        battrib.age = battrib.trueage;
-        battrib.time_age = 0;
-
-        battrib.weight = battrib.trueweight;
+        battrib.weight = battrib.trueweight = playerRow["ply_weight"].as<uint16_t>();
         battrib.time_weight = 0;
-
-        battrib.body_height = battrib.truebody_height;
+        battrib.body_height = battrib.truebody_height = playerRow["ply_body_height"].as<uint16_t>();
         battrib.time_body_height = 0;
-
-        battrib.hitpoints = battrib.truehitpoints;
+        battrib.hitpoints = battrib.truehitpoints = playerRow["ply_hitpoints"].as<uint16_t>();
         battrib.time_hitpoints = 0;
-
-        battrib.mana = battrib.truemana;
+        battrib.mana = battrib.truemana = playerRow["ply_mana"].as<uint16_t>();
         battrib.time_mana = 0;
-
-        battrib.attitude = battrib.trueattitude;
+        battrib.attitude = battrib.trueattitude = playerRow["ply_attitude"].as<uint16_t>();
         battrib.time_attitude = 0;
-
-        battrib.luck = battrib.trueluck;
+        battrib.luck = battrib.trueluck = playerRow["ply_luck"].as<uint16_t>();
         battrib.time_luck = 0;
-
-        battrib.strength = battrib.truestrength;
+        battrib.strength = battrib.truestrength = playerRow["ply_strength"].as<uint16_t>();
         battrib.time_strength = 0;
-
-        battrib.dexterity = battrib.truedexterity;
+        battrib.dexterity = battrib.truedexterity = playerRow["ply_dexterity"].as<uint16_t>();
         battrib.time_dexterity = 0;
-
-        battrib.constitution = battrib.trueconstitution;
+        battrib.constitution = battrib.trueconstitution = playerRow["ply_constitution"].as<uint16_t>();
         battrib.time_constitution = 0;
-
-        battrib.agility = battrib.trueagility;
+        battrib.agility = battrib.trueagility = playerRow["ply_agility"].as<uint16_t>();
         battrib.time_agility = 0;
-
-        battrib.intelligence = battrib.trueintelligence;
+        battrib.intelligence = battrib.trueintelligence = playerRow["ply_intelligence"].as<uint16_t>();
         battrib.time_intelligence = 0;
-
-        battrib.perception = battrib.trueperception;
+        battrib.perception = battrib.trueperception = playerRow["ply_perception"].as<uint16_t>();
         battrib.time_perception = 0;
-
-        battrib.willpower = battrib.truewillpower;
+        battrib.willpower = battrib.truewillpower = playerRow["ply_willpower"].as<uint16_t>();
         battrib.time_willpower = 0;
-
-        battrib.essence = battrib.trueessence;
+        battrib.essence = battrib.trueessence = playerRow["ply_essence"].as<uint16_t>();
         battrib.time_essence = 0;
-
-        battrib.foodlevel = battrib.truefoodlevel;
+        battrib.foodlevel = battrib.truefoodlevel = playerRow["ply_foodlevel"].as<uint32_t>();
         battrib.time_foodlevel = 0;
-
-
+                 
+        appearance = playerRow["ply_appearance"].as<uint16_t>();
+        lifestate = playerRow["ply_lifestate"].as<uint16_t>();
+        magic.type = (magic_type) playerRow["ply_magictype"].as<uint16_t>();
+        magic.flags[MAGE] = playerRow["ply_magicflagsmage"].as<uint64_t>();
+        magic.flags[PRIEST] = playerRow["ply_magicflagspriest"].as<uint64_t>();
+        magic.flags[BARD] = playerRow["ply_magicflagsbard"].as<uint64_t>();
+        magic.flags[DRUID] = playerRow["ply_magicflagsdruid"].as<uint64_t>();
+        poisonvalue = playerRow["ply_poison"].as<uint16_t>();
+        mental_capacity = playerRow["ply_mental_capacity"].as<uint32_t>();
+        hair = playerRow["ply_hair"].as<uint16_t>();
+        beard = playerRow["ply_beard"].as<uint16_t>();
+        hairred = playerRow["ply_hairred"].as<uint16_t>();
+        hairgreen = playerRow["ply_hairgreen"].as<uint16_t>();
+        hairblue = playerRow["ply_hairblue"].as<uint16_t>();
+        skinred = playerRow["ply_skinred"].as<uint16_t>();
+        skingreen = playerRow["ply_skingreen"].as<uint16_t>();
+        skinblue = playerRow["ply_skinblue"].as<uint16_t>();
     } catch (std::exception &e) {
         std::cerr << "exception on load player: " << e.what() << std::endl;
         throw LogoutException(NOCHARACTERFOUND);
@@ -1013,83 +1079,102 @@ struct container_struct {
 ;
 
 bool Player::save() throw() {
-    ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
+    using namespace Database;
+    
+    PConnection connection = ConnectionManager::getInstance().getConnection();
 
     try {
+        connection->beginTransaction();
+        
         time(&lastsavetime);
-
         {
-            // first we save the last login, ip, ban status
-            std::stringstream query;
-            query << "UPDATE chars SET chr_status = " << transaction.quote((int)status);
+            UpdateQuery query(connection);
+            query.addAssignColumn<uint16_t>("chars", "chr_status", (uint16_t) status);
+            query.addAssignColumn<std::string>("chars", "chr_lastip", last_ip);
+            query.addAssignColumn<uint32_t>("chars", "chr_onlinetime", onlinetime);
+            query.addAssignColumn<std::string>("chars", "chr_prefix", prefix);
+            query.addAssignColumn<std::string>("chars", "chr_suffix", suffix);
+            query.addAssignColumn<time_t>("chars", "chr_lastsavetime", lastsavetime);
 
             if (status != 0) {
-                query << ", chr_statustime = " << transaction.quote(statustime);
-                query << ", chr_statusgm = " << transaction.quote(statusgm);
-                query << ", chr_statusreason = " << transaction.quote(statusreason);
+                query.addAssignColumn<time_t>("chars", "chr_statustime", statustime);
+                query.addAssignColumn<TYPE_OF_CHARACTER_ID>("chars", "chr_statusgm", statusgm);
+                query.addAssignColumn<std::string>("chars", "chr_statusreason", statusreason);
             } else {
-                query << ", chr_statustime = NULL, chr_statusgm = NULL, chr_statusreason = NULL";
+                query.addAssignColumnNull("chars", "chr_statustime");
+                query.addAssignColumnNull("chars", "chr_statusgm");
+                query.addAssignColumnNull("chars", "chr_statusreason");
             }
 
-            query << ", chr_lastip = " << transaction.quote(last_ip);
-            query << ", chr_onlinetime = " << transaction.quote(onlinetime);
-            query << ", chr_prefix = " << transaction.quote(prefix);
-            query << ", chr_suffix = " << transaction.quote(suffix);
-            query << ", chr_lastsavetime = " << transaction.quote(lastsavetime);
-            query << " WHERE chr_playerid = " << transaction.quote(id);
+            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("chars", "chr_playerid", id);
+            query.setServerTable("chars");
 
-            di::exec(transaction, query.str());
+            query.execute();
         }
 
         {
-            // next we store attributes
-            std::stringstream query;
-            query << "UPDATE player SET ply_posx = " << transaction.quote(pos.x);
-            query << ", ply_posy = " << transaction.quote(pos.y);
-            query << ", ply_posz = " << transaction.quote(pos.z);
-            query << ", ply_faceto = " << transaction.quote((int)faceto);
-            query << ", ply_hitpoints = " << transaction.quote(battrib.hitpoints);
-            query << ", ply_mana = " << transaction.quote(battrib.mana);
-            query << ", ply_foodlevel = " << transaction.quote(battrib.foodlevel);
-            query << ", ply_appearance = " << transaction.quote(appearance);
-            query << ", ply_lifestate = " << transaction.quote(lifestate);
-            query << ", ply_magictype = " << transaction.quote((int)magic.type);
-            query << ", ply_magicflagsmage = " << transaction.quote(magic.flags[ MAGE ]);
-            query << ", ply_magicflagspriest = " << transaction.quote(magic.flags[ PRIEST ]);
-            query << ", ply_magicflagsbard = " << transaction.quote(magic.flags[ BARD ]);
-            query << ", ply_magicflagsdruid = " << transaction.quote(magic.flags[ DRUID ]);
-            query << ", ply_poison = " << transaction.quote(poisonvalue);
-            query << ", ply_mental_capacity = " << transaction.quote(mental_capacity);
-            query << " WHERE ply_playerid = " << transaction.quote(id);
-
-            di::exec(transaction, query.str());
+            UpdateQuery query(connection);
+            query.addAssignColumn<int32_t>("player", "ply_posx", pos.x);
+            query.addAssignColumn<int32_t>("player", "ply_posy", pos.y);
+            query.addAssignColumn<int32_t>("player", "ply_posz", pos.z);
+            query.addAssignColumn<uint16_t>("player", "ply_faceto", (uint16_t) faceto);
+            query.addAssignColumn<uint16_t>("player", "ply_hitpoints", battrib.hitpoints);
+            query.addAssignColumn<uint16_t>("player", "ply_mana", battrib.mana);
+            query.addAssignColumn<uint32_t>("player", "ply_foodlevel", battrib.foodlevel);
+            query.addAssignColumn<uint32_t>("player", "ply_appearance", appearance);
+            query.addAssignColumn<uint32_t>("player", "ply_lifestate", lifestate);
+            query.addAssignColumn<uint32_t>("player", "ply_magictype", (uint32_t) magic.type);
+            query.addAssignColumn<uint64_t>("player", "ply_magicflagsmage", magic.flags[MAGE]);
+            query.addAssignColumn<uint64_t>("player", "ply_magicflagspriest", magic.flags[PRIEST]);
+            query.addAssignColumn<uint64_t>("player", "ply_magicflagsbard", magic.flags[BARD]);
+            query.addAssignColumn<uint64_t>("player", "ply_magicflagsdruid", magic.flags[DRUID]);
+            query.addAssignColumn<uint16_t>("player", "ply_poison", poisonvalue);
+            query.addAssignColumn<uint16_t>("player", "ply_mental_capacity", mental_capacity);
+            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("player", "ply_playerid", id);
+            query.addServerTable("player");
+            query.execute();
         }
 
         {
-            // get rid of the old skills
-            std::stringstream query;
-            query << "DELETE FROM playerskills WHERE psk_playerid = " << transaction.quote(id);
-            di::exec(transaction, query.str());
+            DeleteQuery query(connection);
+            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playerskills", "psk_playerid", id);
+            query.setServerTable("playerskills");
+            query.execute();
+        }
+
+        {
+            InsertQuery query(connection);
+            const InsertQuery::columnIndex idColumn = query.addColumn("psk_playerid");
+            const InsertQuery::columnIndex nameColumn = query.addColumn("psk_name");
+            const InsertQuery::columnIndex typeColumn = query.addColumn("psk_type");
+            const InsertQuery::columnIndex valueColumn = query.addColumn("psk_value");
+            const InsertQuery::columnIndex firstTryColumn = query.addColumn("psk_firsttry");
+            const InsertQuery::columnIndex minorColumn = query.addColumn("psk_minor");
 
             // now store the skills
             for (SKILLMAP::iterator skillptr = skills.begin(); skillptr != skills.end(); ++skillptr) {
-                di::insert(transaction, id, skillptr->first, (uint16_t)skillptr->second.type, (uint16_t)skillptr->second.major, (uint16_t)skillptr->second.firsttry, (uint16_t)skillptr->second.minor, "INSERT INTO playerskills (psk_playerid, psk_name, psk_type, psk_value, psk_firsttry,  psk_minor)");
+                query.addValue<std::string>(nameColumn, skillptr->first);
+                query.addValue<uint16_t>(typeColumn, (uint16_t) skillptr->second.type);
+                query.addValue<uint16_t>(valueColumn, (uint16_t) skillptr->second.major);
+                query.addValue<uint16_t>(firstTryColumn, (uint16_t) skillptr->second.firsttry);
+                query.addValue<uint16_t>(minorColumn, (uint16_t) skillptr->second.minor);
             }
+            query.addValues<TYPE_OF_CHARACTER_ID>(idColumn, id, InsertQuery::FILL);
+            query.execute();
         }
 
         {
-            // last but not least: the inventory
-
-            // get rid of the old inventory
-            std::stringstream query;
-            query << "DELETE FROM playeritems WHERE pit_playerid = " << transaction.quote(id);
-            di::exec(transaction, query.str());
+            DeleteQuery query(connection);
+            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playeritems", "pit_playerid", id);
+            query.setServerTable("playeritems");
+            query.execute();
         }
 
         {
-            std::stringstream query;
-            query << "DELETE FROM playeritem_datavalues WHERE idv_playerid = " << transaction.quote(id);
-            di::exec(transaction, query.str());
+            DeleteQuery query(connection);
+            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playeritem_datavalues", "idv_playerid", id);
+            query.setServerTable("playeritem_datavalues");
+            query.execute();
         }
 
         {
@@ -1106,11 +1191,26 @@ bool Player::save() throw() {
             for (it = depotContents.begin(); it != depotContents.end(); ++it) {
                 containers.push_back(container_struct(*it->second, 0, it->first));
             }
-
-            /*                    if (depotContents != NULL)
-                                         containers.push_back(container_struct(*depotContents, 0, 1));
-            */
             int linenumber = 0;
+
+            InsertQuery itemsQuery(connection);
+            const InsertQuery::columnIndex itemsPlyIdColumn = itemsQuery.addColumn("pit_playerid");
+            const InsertQuery::columnIndex itemsLineColumn = itemsQuery.addColumn("pit_linenumber");
+            const InsertQuery::columnIndex itemsContainerColumn = itemsQuery.addColumn("pit_in_container");
+            const InsertQuery::columnIndex itemsDepotColumn = itemsQuery.addColumn("pit_depot");
+            const InsertQuery::columnIndex itemsItmIdColumn = itemsQuery.addColumn("pit_itemid");
+            const InsertQuery::columnIndex itemsWearColumn = itemsQuery.addColumn("pit_wear");
+            const InsertQuery::columnIndex itemsNumberColumn = itemsQuery.addColumn("pit_number");
+            const InsertQuery::columnIndex itemsQualColumn = itemsQuery.addColumn("pit_quality");
+            const InsertQuery::columnIndex itemsDataColumn = itemsQuery.addColumn("pit_data");
+            itemsQuery.setServerTable("playeritems");
+
+            InsertQuery dataQuery(connection);
+            const InsertQuery::columnIndex dataPlyIdColumn = dataQuery.addColumn("idv_playerid");
+            const InsertQuery::columnIndex dataLineColumn = dataQuery.addColumn("idv_linenumber");
+            const InsertQuery::columnIndex dataKeyColumn = dataQuery.addColumn("idv_key");
+            const InsertQuery::columnIndex dataValueColumn = dataQuery.addColumn("idv_value");
+            dataQuery.setServerTable("playeritem_datavalues");
 
             // save all items directly on the body...
             for (int thisItemSlot = 0; thisItemSlot < MAX_BODY_ITEMS + MAX_BELT_SLOTS; ++thisItemSlot) {
@@ -1123,19 +1223,25 @@ bool Player::save() throw() {
                     characterItems[ thisItemSlot ].data_map.clear();
                 }
 
-                di::insert(transaction, (int32_t)id, (int32_t)(++linenumber), 0, 0, (int32_t)characterItems[ thisItemSlot ].id,
-                           (int16_t)characterItems[ thisItemSlot ].wear, (int16_t)characterItems[ thisItemSlot ].number, (int16_t)characterItems[ thisItemSlot ].quality, (int32_t)characterItems[ thisItemSlot ].data,
-                           "INSERT INTO playeritems (pit_playerid, pit_linenumber, pit_in_container, pit_depot, pit_itemid, pit_wear, pit_number, pit_quality, pit_data)");
+                itemsQuery.addValue<int32_t>(itemsLineColumn, (int32_t) (++linenumber));
+                itemsQuery.addValue<int16_t>(itemsContainerColumn, 0);
+                itemsQuery.addValue<int32_t>(itemsDepotColumn, 0);
+                itemsQuery.addValue<TYPE_OF_ITEM_ID>(itemsItmIdColumn, characterItems[thisItemSlot].id);
+                itemsQuery.addValue<uint16_t>(itemsWearColumn, characterItems[thisItemSlot].wear);
+                itemsQuery.addValue<uint16_t>(itemsNumberColumn, characterItems[thisItemSlot].number);
+                itemsQuery.addValue<uint16_t>(itemsQualColumn, characterItems[thisItemSlot].quality);
+                itemsQuery.addValue<uint32_t>(itemsDataColumn, characterItems[thisItemSlot].data);
 
                 //Insert Datavalues for the maps
                 if (characterItems[ thisItemSlot ].id == 0 || characterItems[ thisItemSlot ].data_map.empty()) {
-                    //Leeren Datamapeintrag speichern
-                    di::insert(transaction, static_cast<int32_t>(id), static_cast<int32_t>(linenumber), static_cast<int16_t>(0), 0,
-                               "INSERT INTO playeritem_datavalues (idv_playerid, idv_linenumber, idv_key, idv_value)");
+                    dataQuery.addValue<int32_t>(dataLineColumn, (int32_t) linenumber);
+                    dataQuery.addValue<int16_t>(dataKeyColumn, (int16_t) 0);
+                    dataQuery.addValue<std::string>(dataValueColumn, "0");
                 } else {
                     for (Item::DATA_MAP::iterator it = characterItems[ thisItemSlot ].data_map.begin(); it != characterItems[ thisItemSlot ].data_map.end(); ++it) {
-                        di::insert(transaction, static_cast<int32_t>(id), static_cast<int32_t>(linenumber), static_cast<int16_t>(it->first), it->second,
-                                   "INSERT INTO playeritem_datavalues (idv_playerid, idv_linenumber, idv_key, idv_value)");
+                        dataQuery.addValue<int32_t>(dataLineColumn, (int32_t) linenumber);
+                        dataQuery.addValue<int16_t>(dataKeyColumn, (int16_t) it->first);
+                        dataQuery.addValue<std::string>(dataValueColumn, it->second);
                     }
                 }
             }
@@ -1147,14 +1253,19 @@ bool Player::save() throw() {
                 containers.pop_front();
 
                 for (ITEMVECTOR::iterator item = actcont.container.items.begin(); item != actcont.container.items.end(); ++item) {
-                    di::insert(transaction, (int32_t)id, (int32_t)(++linenumber), (int16_t)actcont.id, (int32_t)actcont.depotid,
-                               (int32_t)item->id, (int16_t)item->wear, (int16_t)item->number, (int16_t)item->quality, (int32_t)item->data,
-                               "INSERT INTO playeritems (pit_playerid, pit_linenumber, pit_in_container, pit_depot, pit_itemid, pit_wear, pit_number, pit_quality, pit_data)");
-                    std::cerr<<"saving datamap2"<<std::endl;
+                    itemsQuery.addValue<int32_t>(itemsLineColumn, (int32_t) (++linenumber));
+                    itemsQuery.addValue<int16_t>(itemsContainerColumn, (int16_t) actcont.id);
+                    itemsQuery.addValue<int32_t>(itemsDepotColumn, (int32_t) actcont.depotid);
+                    itemsQuery.addValue<TYPE_OF_ITEM_ID>(itemsItmIdColumn, item->id);
+                    itemsQuery.addValue<uint16_t>(itemsWearColumn, item->wear);
+                    itemsQuery.addValue<uint16_t>(itemsNumberColumn, item->number);
+                    itemsQuery.addValue<uint16_t>(itemsQualColumn, item->quality);
+                    itemsQuery.addValue<uint32_t>(itemsDataColumn, item->data);
 
                     for (Item::DATA_MAP::iterator it = item->data_map.begin(); it != item->data_map.end(); ++it) {
-                        di::insert(transaction,static_cast<int32_t>(id), static_cast<int32_t>(linenumber), static_cast<int16_t>(it->first), it->second,
-                                   "INSERT INTO playeritem_datavalues (idv_playerid, idv_linenumber, idv_key, idv_value)");
+                        dataQuery.addValue<int32_t>(dataLineColumn, (int32_t) linenumber);
+                        dataQuery.addValue<int16_t>(dataKeyColumn, (int16_t) it->first);
+                        dataQuery.addValue<std::string>(dataValueColumn, it->second);
                     }
 
                     std::cerr<<"datamap saving 2 done"<<std::endl;
@@ -1170,9 +1281,14 @@ bool Player::save() throw() {
                 }
             }
 
+            itemsQuery.addValues(itemsPlyIdColumn, id, InsertQuery::FILL);
+            dataQuery.addValues(dataPlyIdColumn, id, InsertQuery::FILL);
+
+            itemsQuery.execute();
+            dataQuery.execute();
         }
 
-        transaction.commit();
+        connection->commitTransaction();
 
         if (!effects->save()) {
             std::cerr<<"error while saving lteffects for player"<<name<<std::endl;
@@ -1181,28 +1297,25 @@ bool Player::save() throw() {
         return true;
     } catch (std::exception &e) {
         std::cerr << "Playersave caught exception: " << e.what() << std::endl;
-        transaction.rollback();
+        connection->rollbackTransaction();
         return false;
     }
 }
 
 bool Player::loadGMFlags() throw() {
     try {
-        //Laden einer Transaktion
-        ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
-        std::stringstream Query;
-        Query << "SELECT gm_rights_server, gm_charid FROM gms, player WHERE ply_playerid = gm_charid AND ply_playerid = " << transaction.quote(id);
-        uint32_t gmrights;
-        uint32_t id;
-        size_t rows = di::select<di::Integer,di::Integer>(transaction,gmrights,id,Query.str());
+        using namespace Database;
+        SelectQuery query;
+        query.addColumn("gms", "gm_rights_server");
+        query.addEqualCondition<TYPE_OF_CHARACTER_ID>("gms", "gm_charid", id);
+        query.addServerTable("gms");
 
-        if (rows > 1) {
-            std::cerr<<" Too much GM right enterys for char with id: "<<id<<" !"<<std::endl;
-            return false;
-        } else if (rows == 1) {
-            setAdmin(gmrights);
+        Result results = query.execute();
+
+        if (results.empty()) {
+            setAdmin(0);
         } else {
-            setAdmin(0);    //No GM state
+            setAdmin(results.front()["gm_rights_server"].as<uint32_t>());
         }
 
         return true;
@@ -1221,26 +1334,38 @@ bool Player::load() throw() {
 
     bool dataOK=true; //Is the data loaded correct?
 
+    using namespace Database;
+    PConnection connection = ConnectionManager::getInstance().getConnection();
     try {
-        // load the skills first...
-        ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
-        std::stringstream Query;
+        connection->beginTransaction();
 
-        Query << "SELECT psk_name, psk_type, psk_value, psk_minor, psk_firsttry FROM playerskills where psk_playerid = " << transaction.quote(id);
-        std::vector<std::string> skillname;
-        std::vector<uint8_t> skilltype;
-        std::vector<uint16_t> skillvalue;
-        std::vector<uint16_t> skillminor;
-        std::vector<uint16_t> skillft;
-        size_t rows = di::select_all<di::Varchar, di::Integer, di::Integer,di::Integer,di::Integer>
-                      (transaction, skillname, skilltype, skillvalue, skillminor, skillft,  Query.str());
+        {
+            // Scripts
+            SelectQuery query;
+            query.addColumn("playerskills", "psk_name");
+            query.addColumn("playerskills", "psk_type");
+            query.addColumn("playerskills", "psk_value");
+            query.addColumn("playerskills", "psk_minor");
+            query.addColumn("playerskills", "psk_firsttry");
+            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playerskills", "psk_playerid", id);
+            query.addServerTable("playerskills");
 
-        if (rows > 0) {
-            for (unsigned int tuple = 0; tuple < rows; ++tuple) {
-                setSkill(skilltype[tuple] , skillname[tuple] , skillvalue[tuple], skillminor[tuple], skillft[tuple]);
+            Result results = query.execute();
+
+            if (!results.empty()) {
+                for (Result::ConstIterator itr = results.begin(); 
+                     itr != results.end(); ++itr) {
+                    setSkill(
+                        (*itr)["psk_type"].as<uint16_t>(),
+                        (*itr)["psk_name"].as<std::string>(),
+                        (*itr)["psk_value"].as<uint16_t>(),
+                        (*itr)["psk_minor"].as<uint16_t>(),
+                        (*itr)["psk_firsttry"].as<uint16_t>()
+                    );
+                }
+            } else {
+                std::cout<<"No Skills to load for "<<name<<"("<<id<<")"<<std::endl;
             }
-        } else {
-            std::cout<<"No Skills to load for "<<name<<"("<<id<<")"<<std::endl;
         }
 
         std::vector<uint16_t> ditemlinenumber;
@@ -1484,7 +1609,7 @@ void Player::SetAlive(bool t) {
         lifestate = lifestate & (0xFFFF - 1);
 
         if (death_consequences) {
-            PlayerDeath(); //Einzige �derung zum Orginal um Inventar zu droppen
+            PlayerDeath(); //Einzige Änderung zum Orginal um Inventar zu droppen
             ReduceSkills();
         }
     }
@@ -2106,6 +2231,7 @@ void Player::setQuestProgress(uint16_t questid, uint32_t progress) throw() {
     ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
 
     try {
+        
         std::stringstream Query;
         Query << "SELECT qpg_progress FROM questprogress WHERE qpg_userid = " << transaction.quote(id) << " AND qpg_questid = " << transaction.quote(questid);
         uint32_t oldprogress;
@@ -2162,6 +2288,9 @@ uint32_t Player::getQuestProgress(uint16_t questid) throw() {
 }
 
 bool Player::moveDepotContentFrom(uint32_t sourcecharid, uint32_t targetdepotid, uint32_t sourcedepotid) throw() {
+    std::cerr << "Move depot content from function disabled." <<std::endl;
+    return false;
+    /*
     Player *sourcechar = _world->Players.findID(sourcecharid);
 
     if (!sourcechar) { // Player offline -> use SQL to move depot content
@@ -2315,6 +2444,7 @@ bool Player::moveDepotContentFrom(uint32_t sourcecharid, uint32_t targetdepotid,
     }
 
     return false;
+    */
 }
 
 void Player::tempAttribCheck() {

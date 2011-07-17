@@ -230,13 +230,13 @@ bool LongTimeCharacterEffects::save() {
     try {
         {
             DeleteQuery query(connection);
-            query.addEqualCondition("playerlteffects", "plte_playerid", player->id);
+            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playerlteffects", "plte_playerid", player->id);
             query.setServerTable("playerlteffects");
             query.execute();
         }
         {
             DeleteQuery query(connection);
-            query.addEqualCondition("playerlteffectvalues", "pev_playerid", player->id);
+            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playerlteffectvalues", "pev_playerid", player->id);
             query.setServerTable("playerlteffectvalues");
             query.execute();
         }
@@ -279,7 +279,7 @@ bool LongTimeCharacterEffects::load() {
         query.addColumn("playerlteffects", "plte_nextcalled");
         query.addColumn("playerlteffects", "plte_lastcalled");
         query.addColumn("playerlteffects", "plte_numberCalled");
-        query.addEqualCondition("playerlteffects", "plte_playerid", player->id);
+        query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playerlteffects", "plte_playerid", player->id);
         query.addServerTable("playerlteffects");
         query.addOrderBy("playerlteffects", "plte_nextcalled", SelectQuery::ASC);
 
@@ -299,8 +299,8 @@ bool LongTimeCharacterEffects::load() {
                 SelectQuery valuesQuery(connection);
                 valuesQuery.addColumn("playerlteffectvalues", "pev_name");
                 valuesQuery.addColumn("playerlteffectvalues", "pev_value");
-                valuesQuery.addEqualCondition("playerlteffectvalues", "pev_playerid", player->id);
-                valuesQuery.addEqualCondition("playerlteffectvalues", "pev_effectid", effect->_effectId);
+                valuesQuery.addEqualCondition<TYPE_OF_CHARACTER_ID>("playerlteffectvalues", "pev_playerid", player->id);
+                valuesQuery.addEqualCondition<uint16_t>("playerlteffectvalues", "pev_effectid", effect->_effectId);
                 valuesQuery.addServerTable("playerlteffectvalues");
 
                 Result valuesResults = valuesQuery.execute();

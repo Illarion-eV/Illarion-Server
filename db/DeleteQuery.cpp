@@ -42,8 +42,14 @@ Result DeleteQuery::execute() {
     std::stringstream ss;
     ss << "DELETE FROM ";
     ss << QueryTables::buildQuerySegment();
-    ss << QueryWhere::buildQuerySegment()
-       ss << ";";
+    const std::string whereSegment = QueryWhere::buildQuerySegment();
+#if !defined(UPDATE_QUERY_NO_WHERE_CHECK)
+    if (whereSegment.empty()) {
+        throw new std::logic_error("Update Query without WHERE is not acceptable");
+    }
+#endif
+    ss << whereSegment;
+    ss << ";";
 
     setQuery(ss.str());
     Query::execute();

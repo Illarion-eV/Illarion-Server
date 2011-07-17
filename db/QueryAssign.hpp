@@ -42,7 +42,7 @@ protected:
     QueryAssign(const QueryAssign &org);
     QueryAssign(const PConnection connection);
 
-    virtual ~QueryWhere();
+    virtual ~QueryAssign();
 
     std::string &buildQuerySegment();
 };
