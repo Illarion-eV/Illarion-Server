@@ -17,3 +17,5 @@ depcomp
 *.*~
 *.log
 !.gitignore
+
+/Debug
