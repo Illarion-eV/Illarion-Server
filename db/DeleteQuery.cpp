@@ -31,7 +31,6 @@ DeleteQuery::DeleteQuery() {
 }
 
 DeleteQuery::DeleteQuery(const DeleteQuery &org) : QueryTables(org), QueryWhere(org) {
-    table = org.table;
 }
 
 DeleteQuery::DeleteQuery(const PConnection connection) : QueryTables(connection), QueryWhere(connection) {
@@ -52,5 +51,5 @@ Result DeleteQuery::execute() {
     ss << ";";
 
     setQuery(ss.str());
-    Query::execute();
+    return Query::execute();
 }
