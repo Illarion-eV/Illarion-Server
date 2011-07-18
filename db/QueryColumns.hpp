@@ -22,7 +22,7 @@
 #define _QUERY_COLUMNS_HPP_
 
 #include <string>
-#include <stdint.h>
+#include <boost/cstdint.hpp>
 
 #include "db/Connection.hpp"
 #include "db/Query.hpp"
