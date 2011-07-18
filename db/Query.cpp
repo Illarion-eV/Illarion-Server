@@ -31,8 +31,6 @@ Query::Query() {
 }
 
 Query::Query(const Query &org) {
-    dbConnection = org.dbConnection;
-    dbQuery = org.dbQuery;
 }
 
 Query::Query(const PConnection connection) {

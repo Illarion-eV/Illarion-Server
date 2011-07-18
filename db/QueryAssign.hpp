@@ -39,12 +39,11 @@ public:
     void addAssignColumnNull(const std::string &table, const std::string &column);
 protected:
     QueryAssign();
-    QueryAssign(const QueryAssign &org);
     QueryAssign(const PConnection connection);
 
-    virtual ~QueryAssign();
-
     std::string &buildQuerySegment();
+private:
+    QueryAssign(const QueryAssign &org);
 };
 }
 

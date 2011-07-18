@@ -33,10 +33,8 @@ private:
     std::string dbQuery;
 
 public:
-    Query(const Query &org);
     Query(const std::string &query);
     Query(const PConnection connection, const std::string &query);
-    virtual ~Query();
 
     virtual Result execute();
 
@@ -51,6 +49,8 @@ protected:
     void setQuery(const std::string &query);
     PConnection getConnection();
     template <typename T> std::string quote(T value);
+private:
+    Query(const Query &org);
 };
 }
 

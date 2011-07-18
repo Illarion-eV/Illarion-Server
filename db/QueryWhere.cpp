@@ -22,19 +22,19 @@
 
 using namespace Database;
 
-QueryWhere() : Query();
+QueryWhere::QueryWhere() : Query() {
+};
 
-QueryWhere::QueryWhere(const QueryWhere &org) : Query(org) {
-    conditionsStack(org.conditionsStack);
-    conditions = org.conditions;
+QueryWhere::QueryWhere(const QueryWhere &org) {
 }
 
-QueryWhere(const PConnection connection) : Query(connection);
+QueryWhere::QueryWhere(const PConnection connection) : Query(connection) {
+};
 
 QueryWhere::~QueryWhere() {
     while (!conditionsStack.empty()) {
-        delete conditions.top();
-        conditions.pop();
+        delete conditionsStack.top();
+        conditionsStack.pop();
     }
 }
 
@@ -45,7 +45,7 @@ void QueryWhere::addEqualCondition(const std::string &column, const T &value) {
 
 template<typename T>
 void QueryWhere::addEqualCondition(const std::string &table, const std::string &column, const T &value) {
-    conditions.push(new std::string(escapeAndChainKeys(table, column) + " = " + quote<T>(value)));
+    conditionsStack.push(new std::string(escapeAndChainKeys(table, column) + " = " + quote<T>(value)));
 }
 
 template<typename T>
@@ -55,7 +55,7 @@ void QueryWhere::addNotEqualCondition(const std::string &column, const T &value)
 
 template<typename T>
 void QueryWhere::addNotEqualCondition(const std::string &table, const std::string &column, const T &value) {
-    conditions.push(new std::string(escapeAndChainKeys(table, column) + " != " + quote<T>(value)));
+    conditionsStack.push(new std::string(escapeAndChainKeys(table, column) + " != " + quote<T>(value)));
 }
 
 void QueryWhere::andConditions() {
@@ -66,7 +66,7 @@ void QueryWhere::orConditions() {
     mergeConditions("OR");
 }
 
-std::string &QueryWhere::buildQuerySegment() {
+std::string QueryWhere::buildQuerySegment() {
     while (!conditionsStack.empty()) {
         andConditions();
     }
@@ -109,7 +109,7 @@ void QueryWhere::mergeConditions(const std::string &operation) {
     cond2 = conditionsStack.top();
     conditionsStack.pop();
 
-    conditions =  "(" + cond1 + " " + operation + " " + cond2 + ")";
+    conditions = "(" + *cond1 + " " + operation + " " + *cond2 + ")";
 
     if (removeFirst) {
         delete cond1;

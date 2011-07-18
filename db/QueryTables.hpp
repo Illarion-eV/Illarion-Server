@@ -41,13 +41,12 @@ public:
     void setAccountTable(const std::string &table);
 protected:
     QueryTables();
-    QueryTables(const QueryTables &org);
     QueryTables(const PConnection connection);
-
-    virtual ~QueryTables();
 
     void setOnlyOneTable(const bool &enabled);
     std::string &buildQuerySegment();
+private:
+    QueryTables(const QueryTables &org);
 };
 }
 

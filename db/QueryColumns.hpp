@@ -22,6 +22,7 @@
 #define _QUERY_COLUMNS_HPP_
 
 #include <string>
+#include <stdint.h>
 
 #include "db/Connection.hpp"
 #include "db/Query.hpp"
@@ -29,7 +30,7 @@
 namespace Database {
 class QueryColumns : public virtual Query {
 public:
-    typedef uint_fast8_t columnIndex;
+    typedef uint8_t columnIndex;
 
 private:
     std::string columns;
@@ -43,15 +44,14 @@ public:
 
 protected:
     QueryColumns();
-    QueryColumns(const QueryColumns &org);
     QueryColumns(const PConnection connection);
 
-    virtual ~QueryColumns();
-
     std::string &buildQuerySegment();
-    uint32_t &getColumnCount();
+    uint32_t getColumnCount();
 
-    void setHideTable(const bool &hide);
+    void setHideTable(const bool hide);
+private:
+    QueryColumns(const QueryColumns &org);
 };
 }
 

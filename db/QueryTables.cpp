@@ -19,16 +19,15 @@
  */
 
 #include "db/QueryTables.hpp"
+#include "db/SchemaHelper.hpp"
 
 using namespace Database;
 
-QueryTables() : Query() {
+QueryTables::QueryTables() : Query() {
     oneTable = false;
 };
 
-QueryTables::QueryTables(const QueryTables &org) : Query(org) {
-    tables = org.tables;
-    oneTable = org.oneTable;
+QueryTables::QueryTables(const QueryTables &org) {
 }
 
 QueryTables::QueryTables(const PConnection connection) : Query(connection) {
@@ -63,6 +62,6 @@ void QueryTables::setOnlyOneTable(const bool &enabled) {
     oneTable = enabled;
 }
 
-std::string &buildQuerySegment() {
+std::string &QueryTables::buildQuerySegment() {
     return tables;
 }

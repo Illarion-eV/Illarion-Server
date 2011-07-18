@@ -25,8 +25,7 @@ using namespace Database;
 QueryAssign::QueryAssign() : Query() {
 };
 
-QueryAssign::QueryAssign(const QueryAssign &org) : Query(org) {
-    assignColumns = org.assignColumns;
+QueryAssign::QueryAssign(const QueryAssign &org) {
 }
 
 QueryAssign::QueryAssign(const PConnection connection) : Query(connection) {

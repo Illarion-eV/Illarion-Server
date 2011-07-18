@@ -30,7 +30,7 @@ DeleteQuery::DeleteQuery() {
     DeleteQuery(ConnectionManager::getInstance().getConnection());
 }
 
-DeleteQuery::DeleteQuery(const DeleteQuery &org) : QueryTables(org), QueryWhere(org) {
+DeleteQuery::DeleteQuery(const DeleteQuery &org) {
 }
 
 DeleteQuery::DeleteQuery(const PConnection connection) : QueryTables(connection), QueryWhere(connection) {

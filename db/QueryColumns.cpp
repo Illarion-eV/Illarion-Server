@@ -27,10 +27,7 @@ QueryColumns::QueryColumns() : Query() {
     nextColumn = 0;
 };
 
-QueryColumns::QueryColumns(const QueryColumns &org) : Query(org) {
-    columns = org.columns;
-    hideTable = org.hideTable;
-    nextColumn = nextColumn;
+QueryColumns::QueryColumns(const QueryColumns &org) {
 }
 
 QueryColumns::QueryColumns(const PConnection connection) : Query(connection) {
@@ -56,10 +53,10 @@ std::string &QueryColumns::buildQuerySegment() {
     return columns;
 }
 
-uint32_t &QueryColumns::getColumnCount() {
+uint32_t QueryColumns::getColumnCount() {
     return (uint32_t) nextColumn;
 }
 
-void setHideTable(const bool &hide) {
+void QueryColumns::setHideTable(const bool hide) {
     hideTable = hide;
 }

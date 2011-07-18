@@ -45,14 +45,14 @@ public:
     void orConditions();
 protected:
     QueryWhere();
-    QueryWhere(const QueryWhere &org);
     QueryWhere(const PConnection connection);
 
     virtual ~QueryWhere();
 
-    std::string &buildQuerySegment();
+    std::string buildQuerySegment();
 private:
     void mergeConditions(const std::string &operation);
+    QueryWhere(const QueryWhere &org);
 };
 }
 

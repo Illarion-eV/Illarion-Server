@@ -36,11 +36,11 @@ namespace Database {
 class UpdateQuery : public virtual QueryAssign, public virtual QueryTables, public virtual QueryWhere {
 public:
     UpdateQuery();
-    UpdateQuery(const UpdateQuery &org);
     UpdateQuery(const PConnection connection);
-    virtual ~UpdateQuery();
 
     virtual Result execute();
+private:
+    UpdateQuery(const UpdateQuery &org);
 };
 }
 

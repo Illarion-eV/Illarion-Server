@@ -30,13 +30,24 @@ InsertQuery::InsertQuery() {
     InsertQuery(ConnectionManager::getInstance().getConnection());
 }
 
-InsertQuery::InsertQuery(const InsertQuery &org) : QueryColumns(org), QueryTables(org) {
-};
+InsertQuery::InsertQuery(const InsertQuery &org) {
+}
 
 InsertQuery::InsertQuery(const PConnection connection) : QueryColumns(connection), QueryTables(connection) {
     setOnlyOneTable(true);
     setHideTable(true);
-};
+}
+
+InsertQuery::~InsertQuery() {
+    std::vector<std::vector<std::string *> *>::iterator it; 
+    for (it = dataStorage.begin(); it < dataStorage.end(); it++) {
+        std::vector<std::string *>::iterator it2;
+        for (it2 = (*it)->begin(); it2 < (*it)->end(); it2++) {
+            delete *it2;
+        }
+        delete *it;
+    } 
+}
 
 template <typename T> void InsertQuery::addValue(const QueryColumns::columnIndex &column, const T &value) throw(std::invalid_argument) {
     addValues(column, value, 1);

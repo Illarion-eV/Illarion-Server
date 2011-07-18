@@ -30,11 +30,11 @@ namespace Database {
 class DeleteQuery : public virtual QueryTables, public virtual QueryWhere {
 public:
     DeleteQuery();
-    DeleteQuery(const DeleteQuery &org);
     DeleteQuery(const PConnection connection);
-    ~DeleteQuery();
 
     virtual Result execute();
+private:
+    DeleteQuery(const DeleteQuery &org);
 };
 
 }

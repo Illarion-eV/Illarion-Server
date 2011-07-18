@@ -56,6 +56,7 @@
 #include "InitialConnection.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
+#include "db/SchemaHelper.hpp"
 
 extern boost::shared_ptr<LuaLoginScript>loginScript;
 extern ScriptVariablesTable *scriptVariables;

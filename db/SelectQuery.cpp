@@ -31,9 +31,7 @@ SelectQuery::SelectQuery() {
     isDistinct = false;
 }
 
-SelectQuery::SelectQuery(const SelectQuery &org) : QueryColumns(org), QueryTables(org), QueryWhere(org) {
-    orderBy = org.orderBy;
-    isDistinct = org.isDistinct;
+SelectQuery::SelectQuery(const SelectQuery &org) {
 }
 
 SelectQuery::SelectQuery(const PConnection connection) : QueryColumns(connection), QueryTables(connection), QueryWhere(connection) {

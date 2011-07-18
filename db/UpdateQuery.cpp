@@ -31,7 +31,7 @@ UpdateQuery::UpdateQuery() {
     UpdateQuery(ConnectionManager::getInstance().getConnection());
 }
 
-UpdateQuery::UpdateQuery(const UpdateQuery &org) : QueryAssign(org), QueryTables(org), QueryWhere(org) {
+UpdateQuery::UpdateQuery(const UpdateQuery &org) {
 };
 
 UpdateQuery::UpdateQuery(const PConnection connection) : QueryAssign(connection), QueryTables(connection), QueryWhere(connection) {

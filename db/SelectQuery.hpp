@@ -43,9 +43,7 @@ public:
     };
 
     SelectQuery();
-    SelectQuery(const SelectQuery &org);
     SelectQuery(const PConnection connection);
-    virtual ~SelectQuery();
 
     void addOrderBy(const std::string &column, const OrderDirection &dir);
     void addOrderBy(const std::string &table, const std::string &column, const OrderDirection &dir);
@@ -53,6 +51,8 @@ public:
     void setDistinct(const bool &distinct);
 
     virtual Result execute();
+private:
+    SelectQuery(const SelectQuery &org);
 };
 }
 

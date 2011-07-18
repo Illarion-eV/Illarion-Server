@@ -61,3 +61,4 @@ testserver_LDADD = -lpthread -lssl -lcrypto -lpqxx -lpq -llua5.1 -lboost_thread 
 testserver_LDFLAGS = 
 CXXFLAGS = -ggdb -pipe -Wall -Werror -Wno-deprecated -D_THREAD_SAFE -D_REENTRANT -DCDataConnect_DEBUG -DAdminCommands_DEBUG
 INCLUDES = -I/usr/include/postgresql -I/usr/include/lua5.1 -I/opt/include
+LIBS = -L/opt/lib

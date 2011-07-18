@@ -46,7 +46,6 @@ public:
     static const uint32_t FILL = UINT32_C(0xFFFFFFFF);
 
     InsertQuery();
-    InsertQuery(const InsertQuery &org);
     InsertQuery(const PConnection connection);
     virtual ~InsertQuery();
 
@@ -66,6 +65,8 @@ public:
                    MapInsertMode mode = keysAndValues) throw(std::invalid_argument);
 
     virtual Result execute();
+private:
+    InsertQuery(const InsertQuery &org);
 };
 }
 
