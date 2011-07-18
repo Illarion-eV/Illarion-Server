@@ -39,7 +39,7 @@ Query::Query(const PConnection connection) {
     dbConnection = connection;
 }
 
-Query(const std::string &query) {
+Query::Query(const std::string &query) {
     Query(ConnectionManager::getInstance().getConnection(), query);
 }
 

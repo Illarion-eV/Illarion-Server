@@ -29,7 +29,7 @@
 namespace Database {
 class Query {
 private:
-    const PConnection dbConnection;
+    PConnection dbConnection;
     std::string dbQuery;
 
 public:
