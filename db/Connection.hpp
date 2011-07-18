@@ -22,6 +22,7 @@
 #define _CONNECTION_HPP_
 
 #include <boost/shared_ptr.hpp>
+#include <boost/checked_delete.hpp>
 
 #include <pqxx/connection.hxx>
 #include <pqxx/transaction.hxx>
@@ -58,6 +59,13 @@ private:
     Connection(const Connection &org);
     Connection(pqxx::connection *connection);
     ~Connection(void);
+    struct deleter {
+        void operator()(Connection *p) {
+            delete p;
+            p = 0;
+        };
+    };
+
     friend class ConnectionManager;
 
     /* The current transaction is required by the query class in order to
