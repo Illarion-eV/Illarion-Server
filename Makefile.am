@@ -43,6 +43,8 @@ Character.cpp \
 Player.cpp PlayerWorkoutCommands.cpp Monster.cpp NPC.cpp PlayerManager.cpp playersave.cpp WaypointList.cpp Language.cpp \
 \
 db/ConnectionManager.cpp db/Connection.cpp db/Query.cpp \
+db/SelectQuery.cpp db/InsertQuery.cpp db/UpdateQuery.cpp db/DeleteQuery.cpp \
+db/QueryAssign.cpp db/QueryWhere.cpp db/QueryColumns.cpp db/QueryTables.cpp db/SchemaHelper.cpp \
 \
 script/LuaScript.cpp \
 script/LuaNPCScript.cpp script/LuaItemScript.cpp script/LuaMonsterScript.cpp \
