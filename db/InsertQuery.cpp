@@ -30,18 +30,19 @@ InsertQuery::InsertQuery() {
     InsertQuery(ConnectionManager::getInstance().getConnection());
 }
 
-InsertQuery::InsertQuery(const InsertQuery &org) : QueryColumns(org), QueryTables(org);
+InsertQuery::InsertQuery(const InsertQuery &org) : QueryColumns(org), QueryTables(org) {
+};
 
 InsertQuery::InsertQuery(const PConnection connection) : QueryColumns(connection), QueryTables(connection) {
     setOnlyOneTable(true);
-    hideTable(true);
+    setHideTable(true);
 };
 
-template <typename T> void InsertQuery::addValue(const columnIndex &column, const T &value) throw(std::invalid_argument) {
+template <typename T> void InsertQuery::addValue(const QueryColumns::columnIndex &column, const T &value) throw(std::invalid_argument) {
     addValues(column, value, 1);
 }
 
-template <typename T> void addValues(const columnIndex &column, const T &value, const uint32_t count) throw(std::invalid_argument) {
+template <typename T> void InsertQuery::addValues(const QueryColumns::columnIndex &column, const T &value, uint32_t count) throw(std::invalid_argument) {
     if (count == 0) {
         return;
     }
@@ -56,12 +57,12 @@ template <typename T> void addValues(const columnIndex &column, const T &value, 
     std::vector<std::string *> *dataRow;
 
     if (!dataStorage.empty()) {
-        for (std::vector<std::vector<std::string *> *>::iterator itr = dataStorage.begin(); itr < dataStorage.end(); it++) {
+        for (std::vector<std::vector<std::string *> *>::iterator itr = dataStorage.begin(); itr < dataStorage.end(); itr++) {
             dataRow = *itr;
-            dataRow.reserve(columns);
+            dataRow->reserve(columns);
 
-            if (!dataRow->at(columnIndex)) {
-                dataRow->at(columnIndex) = new std::string(strValue);
+            if (!dataRow->at(column)) {
+                dataRow->at(column) = new std::string(strValue);
 
                 if (count <= 1) {
                     ;
@@ -80,22 +81,23 @@ template <typename T> void addValues(const columnIndex &column, const T &value, 
     while (count-- > 0) {
         dataRow = new std::vector<std::string *>(columns, 0);
         dataStorage.push_back(dataRow);
-        dataRow->at(columnIndex) = new std::string(strValue);
+        dataRow->at(column) = new std::string(strValue);
     }
 }
 
-template <typename T> void InsertQuery::addValues(const columnIndex &column, std::vector<T> &values) throw(std::invalid_argument) {
-    for (std::vector<T>::iterator itr = values.begin(); itr < values.end(); itr++) {
+template <typename T> void InsertQuery::addValues(const QueryColumns::columnIndex &column, std::vector<T> &values) throw(std::invalid_argument) {
+    typename std::vector<T>::iterator itr;
+    for (itr = values.begin(); itr < values.end(); itr++) {
         addValue<T>(column, *itr);
     }
 }
 
 template <typename Key, typename T, class Compare, class Allocator>
-void addValues(const columnIndex &column,
+void InsertQuery::addValues(const QueryColumns::columnIndex &column,
                std::map<Key, T, Compare, Allocator> &values,
-               MapInsertMode mode = keysAndValues) throw(std::invalid_argument) {
-    for (std::map<Key, T, Compare, Allocator>::iterator itr = values.begin();
-         itr < values.end(); itr++) {
+               MapInsertMode mode) throw(std::invalid_argument) {
+    typename std::map<Key, T, Compare, Allocator>::iterator itr;
+    for (itr = values.begin(); itr < values.end(); itr++) {
         switch (mode) {
         case onlyKeys:
             addValue<Key>(column, itr->first);
@@ -112,16 +114,16 @@ void addValues(const columnIndex &column,
 }
 
 template <typename Key, typename T, class Compare>
-void addValues(const columnIndex &column,
+void InsertQuery::addValues(const QueryColumns::columnIndex &column,
                std::map<Key, T, Compare> &values,
-               MapInsertMode mode = keysAndValues) throw(std::invalid_argument) {
+               MapInsertMode mode) throw(std::invalid_argument) {
     addValues<Key, T, Compare, std::allocator<std::pair<const Key, T> > >(column, values);
 }
 
 template <typename Key, typename T>
-void addValues(const columnIndex &column,
+void InsertQuery::addValues(const QueryColumns::columnIndex &column,
                std::map<Key, T> &values,
-               MapInsertMode mode = keysAndValues) throw(std::invalid_argument) {
+               MapInsertMode mode) throw(std::invalid_argument) {
     addValues<Key, T, std::less<Key> >(column, values);
 }
 
@@ -142,9 +144,10 @@ Result InsertQuery::execute() {
     bool firstDone = false;
     std::vector<std::string *> *dataRow;;
 
-    for (std::vector<std::vector<std::string *> *>::iterator itr = dataStorage.begin(); itr < dataStorage.end(); it++) {
+    std::vector<std::vector<std::string *> *>::iterator itr;
+    for (itr = dataStorage.begin(); itr < dataStorage.end(); itr++) {
         if (firstDone) {
-            ss << "), ("
+            ss << "), (";
         } else {
             firstDone = true;
         }
@@ -174,5 +177,5 @@ Result InsertQuery::execute() {
     ss << ");";
 
     setQuery(ss.str());
-    Query::execute();
+    return Query::execute();
 }

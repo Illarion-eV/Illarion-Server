@@ -50,18 +50,18 @@ public:
     InsertQuery(const PConnection connection);
     virtual ~InsertQuery();
 
-    template <typename T> void addValue(const columnIndex &column, const T &value) throw(std::invalid_argument);
-    template <typename T> void addValues(const columnIndex &column, const T &value, const uint32_t count) throw(std::invalid_argument);
-    template <typename T> void addValues(const columnIndex &column, std::vector<T> &values) throw(std::invalid_argument);
+    template <typename T> void addValue(const QueryColumns::columnIndex &column, const T &value) throw(std::invalid_argument);
+    template <typename T> void addValues(const QueryColumns::columnIndex &column, const T &value, uint32_t count) throw(std::invalid_argument);
+    template <typename T> void addValues(const QueryColumns::columnIndex &column, std::vector<T> &values) throw(std::invalid_argument);
     template <typename Key, typename T>
-    void addValues(const columnIndex &column, std::map<Key,T> &values,
+    void addValues(const QueryColumns::columnIndex &column, std::map<Key,T> &values,
                    MapInsertMode mode = keysAndValues) throw(std::invalid_argument);
     template <typename Key, typename T, class Compare>
-    void addValues(const columnIndex &column,
+    void addValues(const QueryColumns::columnIndex &column,
                    std::map<Key,T,Compare> &values,
                    MapInsertMode mode = keysAndValues) throw(std::invalid_argument);
     template <typename Key, typename T, class Compare,class Allocator>
-    void addValues(const columnIndex &column,
+    void addValues(const QueryColumns::columnIndex &column,
                    std::map<Key,T,Compare, Allocator> &values,
                    MapInsertMode mode = keysAndValues) throw(std::invalid_argument);
 
