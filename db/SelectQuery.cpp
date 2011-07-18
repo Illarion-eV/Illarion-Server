@@ -83,5 +83,5 @@ Result SelectQuery::execute() {
     ss << ";";
 
     setQuery(ss.str());
-    Query::execute();
+    return Query::execute();
 }
