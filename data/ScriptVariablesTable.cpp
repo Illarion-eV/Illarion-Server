@@ -63,7 +63,7 @@ void ScriptVariablesTable::reload() {
             std::string key;
             std::string value;
 
-            for (Database::Result::ConstIterator itr = results.begin();
+            for (Database::ResultConstIterator itr = results.begin();
                  itr != results.end(); ++itr) {
 
                 key = (*itr)["svt_ids"].as<std::string>();

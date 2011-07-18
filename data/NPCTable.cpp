@@ -80,7 +80,7 @@ bool NPCTable::LoadData() {
             std::string npcName;
             std::string scriptname;
 
-            for (Database::Result::ConstIterator itr = results.begin();
+            for (Database::ResultConstIterator itr = results.begin();
                  itr != results.end(); ++itr) {
                 try {
                     npcID = ((*itr)["npc_id"].as<TYPE_OF_CHARACTER_ID>());

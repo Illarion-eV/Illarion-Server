@@ -743,7 +743,7 @@ bool World::initRespawns() {
         if (!results.empty()) {
             uint32_t spawnId;
 
-            for (Database::Result::ConstIterator itr = results.begin();
+            for (Database::ResultConstIterator itr = results.begin();
                  itr != results.end(); ++itr) {
                 spawnId = (*itr)["spp_id"].as<uint32_t>();
                 position the_pos((*itr)["spp_x"].as<int32_t>(),

@@ -54,7 +54,7 @@ void MonsterAttackTable::reload() {
             clearOldTable();
             AttackBoni data;
 
-            for (Database::Result::ConstIterator itr = results.begin();
+            for (Database::ResultConstIterator itr = results.begin();
                  itr != results.end(); ++itr) {
                 data.attackType = (uint8_t)((*itr)["mat_attack_type"].as<int16_t>());
                 data.attackValue = (int16_t)((*itr)["mat_attack_value"].as<int16_t>());

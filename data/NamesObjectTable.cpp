@@ -51,7 +51,7 @@ void NamesObjectTable::reload() {
             clearOldTable();
             NamesStruct temprecord;
 
-            for (Database::Result::ConstIterator itr = results.begin();
+            for (Database::ResultConstIterator itr = results.begin();
                  itr != results.end(); ++itr) {
                 temprecord.German = (TYPE_OF_GERMAN)((*itr)["itn_german"].as<std::string>());
                 temprecord.English = (TYPE_OF_ENGLISH)((*itr)["itn_english"].as<std::string>());

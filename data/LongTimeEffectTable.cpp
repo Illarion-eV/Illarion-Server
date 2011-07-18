@@ -50,7 +50,7 @@ void LongTimeEffectTable::reload() {
             clearOldTable();
             LongTimeEffectStruct temp;
 
-            for (Database::Result::ConstIterator itr = results.begin();
+            for (Database::ResultConstIterator itr = results.begin();
                  itr != results.end(); ++itr) {
 
                 temp.effectid = (uint16_t)((*itr)["lte_effectid"].as<int32_t>());

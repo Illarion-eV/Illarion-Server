@@ -27,12 +27,10 @@ namespace Database {
 /* This file contains just some namespaces that hide the pqxx implementation
  * of the SQL Query result handling.
  */
-class Result : public pqxx::result {
-public:
-    typedef pqxx::result::tuple Tuple;
-    typedef pqxx::result::const_iterator ConstIterator;
-    typedef pqxx::result::tuple::reference Field;
-};
+typedef pqxx::result Result;
+typedef pqxx::result::tuple ResultTuple;
+typedef pqxx::result::const_iterator ResultConstIterator;
+typedef pqxx::result::tuple::reference ResultField;
 typedef Result *PResult;
 }
 

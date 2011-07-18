@@ -77,7 +77,7 @@ void MonsterTable::reload() {
             std::string scriptname;
             uint32_t id;
 
-            for (Database::Result::ConstIterator itr = monresults.begin();
+            for (Database::ResultConstIterator itr = monresults.begin();
                  itr != monresults.end(); ++itr) {
                 id = (*itr)["mob_monsterid"].as<uint32_t>();
                 temprecord.name = (*itr)["mob_name"].as<std::string>();
@@ -127,7 +127,7 @@ void MonsterTable::reload() {
                     std::string attribute;
                     uint16_t minValue, maxValue;
 
-                    for (Database::Result::ConstIterator itr2 = monAttrResults.begin();
+                    for (Database::ResultConstIterator itr2 = monAttrResults.begin();
                          itr2 != monAttrResults.end(); ++itr2) {
                         attribute = (*itr2)["mobattr_name"].as<std::string>();
                         minValue = (*itr2)["mobattr_min"].as<uint16_t>();
@@ -154,7 +154,7 @@ void MonsterTable::reload() {
                         } else {
                             std::cerr << "unknown attribute type: "<< attribute << std::endl;
                         }
-                    } // for (Database::Result::ConstIterator itr2 = monAttrResults...
+                    } // for (Database::ResultConstIterator itr2 = monAttrResults...
                 } // if (!monAttrResults.empty())
 
                 SelectQuery monSkillQuery(connection);
@@ -170,14 +170,14 @@ void MonsterTable::reload() {
                     std::string skill;
                     uint16_t minValue, maxValue;
 
-                    for (Database::Result::ConstIterator itr2 = monSkillResults.begin();
+                    for (Database::ResultConstIterator itr2 = monSkillResults.begin();
                          itr2 != monSkillResults.end(); ++itr2) {
                         skill = (*itr2)["mobsk_name"].as<std::string>();
                         minValue = (*itr2)["mobsk_minvalue"].as<uint16_t>();
                         maxValue = (*itr2)["mobsk_maxvalue"].as<uint16_t>();
 
                         temprecord.skills[skill] = std::make_pair(minValue, maxValue);
-                    } // for (Database::Result::ConstIterator itr2 = monSkillResults...
+                    } // for (Database::ResultConstIterator itr2 = monSkillResults...
                 } // if (!monSkillResults.empty())
 
                 SelectQuery monItemQuery(connection);
@@ -196,7 +196,7 @@ void MonsterTable::reload() {
                     uint16_t location;
                     std::string position;
 
-                    for (Database::Result::ConstIterator itr2 = monItemResults.begin();
+                    for (Database::ResultConstIterator itr2 = monItemResults.begin();
                          itr2 != monItemResults.end(); ++itr2) {
                         tempitem.itemid = (*itr2)["mobit_itemid"].as<TYPE_OF_ITEM_ID>();
                         tempitem.propability = (*itr2)["mobit_propability"].as<uint16_t>();
@@ -253,12 +253,12 @@ void MonsterTable::reload() {
                         } else if (location < 99) {
                             std::cerr << "couldn't find item: " <<  tempitem.itemid << " for monster " << temprecord.name << std::endl;
                         }
-                    } // for (Database::Result::ConstIterator itr2 = monItemResults...
+                    } // for (Database::ResultConstIterator itr2 = monItemResults...
                 } // if (!monItemResults.empty())
 
                 m_table[id] = temprecord;
                 m_dataOK = true;
-            } // for (Database::Result::ConstIterator itr = monresults...
+            } // for (Database::ResultConstIterator itr = monresults...
         } // if (!monresults.empty())
 
         connection->commitTransaction();

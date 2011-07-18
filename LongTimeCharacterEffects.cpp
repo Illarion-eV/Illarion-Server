@@ -286,7 +286,7 @@ bool LongTimeCharacterEffects::load() {
         Result results = query.execute();
 
         if (!results.empty()) {
-            for (Result::ConstIterator itr = results.begin();
+            for (ResultConstIterator itr = results.begin();
                  itr != results.end(); ++itr) {
                 LongTimeEffect *effect = new LongTimeEffect(
                     (*itr)["plte_effectid"].as<uint16_t>(),
@@ -306,7 +306,7 @@ bool LongTimeCharacterEffects::load() {
                 Result valuesResults = valuesQuery.execute();
 
                 if (!valuesResults.empty()) {
-                    for (Result::ConstIterator itr2 = valuesResults.begin();
+                    for (ResultConstIterator itr2 = valuesResults.begin();
                          itr2 != valuesResults.end(); ++itr2) {
                         effect->addValue(
                             (*itr)["pev_name"].as<std::string>(),

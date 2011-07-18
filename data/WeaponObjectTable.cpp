@@ -66,7 +66,7 @@ void WeaponObjectTable::reload() {
             std::string scriptname;
             TYPE_OF_ITEM_ID weaponId;
 
-            for (Database::Result::ConstIterator itr = results.begin();
+            for (Database::ResultConstIterator itr = results.begin();
                  itr != results.end(); ++itr) {
                 weaponId = (*itr)["wp_itemid"].as<TYPE_OF_ITEM_ID>();
                 temprecord.Attack = (TYPE_OF_ATTACK)((*itr)["wp_attack"].as<uint16_t>());

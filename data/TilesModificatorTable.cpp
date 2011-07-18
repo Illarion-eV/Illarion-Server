@@ -57,7 +57,7 @@ void TilesModificatorTable::reload() {
             clearOldTable();
             TilesModificatorStruct temprecord;
 
-            for (Database::Result::ConstIterator itr = results.begin();
+            for (Database::ResultConstIterator itr = results.begin();
                  itr != results.end(); ++itr) {
                 temprecord.Modificator = (uint8_t)((*itr)["tim_groundlevel"].as<uint16_t>());
                 temprecord.Modificator |= (*itr)["tim_isnotpassable"].as<bool>() ? FLAG_PASSABLE : 0;

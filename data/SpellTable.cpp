@@ -58,7 +58,7 @@ void SpellTable::reload() {
             SpellStruct spell;
             uint32_t spellid;
 
-            for (Database::Result::ConstIterator itr = results.begin();
+            for (Database::ResultConstIterator itr = results.begin();
                  itr != results.end(); ++itr) {
                 spellid = (uint32_t)((*itr)["spl_spellid"].as<uint32_t>());
                 spell.magictype = (uint8_t)((*itr)["spl_magictype"].as<int16_t>());

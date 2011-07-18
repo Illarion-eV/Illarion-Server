@@ -54,7 +54,7 @@ void ArmorObjectTable::reload() {
             clearOldTable();
             ArmorStruct temprecord;
 
-            for (Database::Result::ConstIterator itr = results.begin();
+            for (Database::ResultConstIterator itr = results.begin();
                  itr != results.end(); ++itr) {
 
                 temprecord.BodyParts = (TYPE_OF_BODYPARTS)((*itr)["arm_bodyparts"].as<int16_t>());

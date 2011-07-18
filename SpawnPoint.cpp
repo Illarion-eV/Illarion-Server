@@ -154,7 +154,7 @@ bool SpawnPoint::load(const int &id) {
         if (!results.empty()) {
             SpawnTypes.clear();
 
-            for (Database::Result::ConstIterator itr = results.begin();
+            for (Database::ResultConstIterator itr = results.begin();
                  itr != results.end(); ++itr) {
                 addMonster((*itr)["spm_race"].as<TYPE_OF_CHARACTER_ID>(),
                            (*itr)["spm_count"].as<int16_t>());

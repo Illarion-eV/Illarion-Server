@@ -747,7 +747,7 @@ std::string Player::GetStatusGM() {
 
     std::string statusgmstring;
     if (!result.empty()) {
-        const Result::Field field = result.front()["chr_playerid"];
+        const ResultField field = result.front()["chr_playerid"];
         if (!field.is_null()) {
             statusgmstring = field.as<std::string>();
         }
@@ -859,7 +859,7 @@ void Player::check_logindata() throw(Player::LogoutException) {
             throw LogoutException(NOCHARACTERFOUND);
         }
 
-        Database::Result::Tuple charRow = charResult.front();
+        Database::ResultTuple charRow = charResult.front();
         
         TYPE_OF_CHARACTER_ID account_id;
 
@@ -920,7 +920,7 @@ void Player::check_logindata() throw(Player::LogoutException) {
             throw LogoutException(NOACCOUNT);
         }
 
-        Database::Result::Tuple accRow = accResult.front();
+        Database::ResultTuple accRow = accResult.front();
 
         int acc_state;
         Language::LanguageType mother_tongue;
@@ -1004,7 +1004,7 @@ void Player::check_logindata() throw(Player::LogoutException) {
             throw LogoutException(NOACCOUNT);
         }
         
-        Database::Result::Tuple playerRow = playerResult.front();
+        Database::ResultTuple playerRow = playerResult.front();
 
         pos.x = playerRow["ply_posx"].as<int32_t>();
         pos.y = playerRow["ply_posy"].as<int32_t>();
@@ -1353,7 +1353,7 @@ bool Player::load() throw() {
             Result results = query.execute();
 
             if (!results.empty()) {
-                for (Result::ConstIterator itr = results.begin(); 
+                for (ResultConstIterator itr = results.begin(); 
                      itr != results.end(); ++itr) {
                     setSkill(
                         (*itr)["psk_type"].as<uint16_t>(),
@@ -1383,7 +1383,7 @@ bool Player::load() throw() {
 
             Result results = query.execute();
             
-            for (Result::ConstIterator itr = results.begin(); itr != results.end(); ++itr) {
+            for (ResultConstIterator itr = results.begin(); itr != results.end(); ++itr) {
                 ditemlinenumber.push_back((*itr)["idv_linenumber"].as<uint16_t>());
                 key.push_back((*itr)["idv_key"].as<int16_t>());
                 value.push_back((*itr)["idv_value"].as<std::string>());
@@ -1416,7 +1416,7 @@ bool Player::load() throw() {
             
             Result results = query.execute();
 
-            for (Result::ConstIterator itr = results.begin(); itr != results.end(); ++itr) {
+            for (ResultConstIterator itr = results.begin(); itr != results.end(); ++itr) {
                 itemlinenumber.push_back((*itr)["pit_linenumber"].as<uint16_t>());
                 itemincontainer.push_back((*itr)["pit_in_container"].as<uint16_t>());
                 itemdepot.push_back((*itr)["pit_depot"].as<uint32_t>());
@@ -1440,7 +1440,7 @@ bool Player::load() throw() {
 
             Result results = query.execute();
         
-            for (Result::ConstIterator itr = results.begin(); itr != results.end(); ++itr) {
+            for (ResultConstIterator itr = results.begin(); itr != results.end(); ++itr) {
                 depotid.push_back((*itr)["pit_depot"].as<uint32_t>());
             }
         }

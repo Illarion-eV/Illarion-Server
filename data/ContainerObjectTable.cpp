@@ -46,7 +46,7 @@ void ContainerObjectTable::reload() {
             clearOldTable();
             ContainerStruct temprecord;
 
-            for (Database::Result::ConstIterator itr = results.begin();
+            for (Database::ResultConstIterator itr = results.begin();
                  itr != results.end(); ++itr) {
                 temprecord.ContainerVolume = (TYPE_OF_VOLUME)((*itr)["con_volume"].as<int32_t>());
                 m_table[(TYPE_OF_ITEM_ID)((*itr)["con_itemid"].as<TYPE_OF_ITEM_ID>())] = temprecord;

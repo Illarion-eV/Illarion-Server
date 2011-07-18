@@ -89,7 +89,7 @@ void CommonObjectTable::reload() {
             clearOldTable();
             CommonStruct temprecord;
 
-            for (Database::Result::ConstIterator itr = results.begin();
+            for (Database::ResultConstIterator itr = results.begin();
                  itr != results.end(); ++itr) {
 
                 TYPE_OF_ITEM_ID itemID;

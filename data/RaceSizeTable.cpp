@@ -54,7 +54,7 @@ void RaceSizeTable::reload() {
         if (!results.empty()) {
             uint16_t currentID;
 
-            for (Database::Result::ConstIterator itr = results.begin();
+            for (Database::ResultConstIterator itr = results.begin();
                  itr != results.end(); ++itr) {
 
                 currentID = (uint16_t)((*itr)["id"].as<int32_t>());

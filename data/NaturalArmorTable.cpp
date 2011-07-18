@@ -52,7 +52,7 @@ void NaturalArmorTable::reload() {
             clearOldTable();
             MonsterArmor armor;
 
-            for (Database::Result::ConstIterator itr = results.begin();
+            for (Database::ResultConstIterator itr = results.begin();
                  itr != results.end(); ++itr) {
                 armor.strokeArmor = (TYPE_OF_STROKEARMOR)((*itr)["nar_strokeArmor"].as<int16_t>());
                 armor.punctureArmor = (TYPE_OF_PUNCTUREARMOR)((*itr)["nar_punctureArmor"].as<int16_t>());

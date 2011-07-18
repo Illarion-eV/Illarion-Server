@@ -62,7 +62,7 @@ void TriggerTable::reload() {
             TriggerStruct Trigger;
             std::string scriptname;
 
-            for (Database::Result::ConstIterator itr = results.begin();
+            for (Database::ResultConstIterator itr = results.begin();
                  itr != results.end(); ++itr) {
                 Trigger.pos = position(((*itr)["tgf_posx"].as<int32_t>()),
                                        ((*itr)["tgf_posy"].as<int32_t>()),

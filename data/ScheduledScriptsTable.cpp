@@ -114,7 +114,7 @@ void ScheduledScriptsTable::reload() {
             clearOldTable();
             ScriptData tmpRecord;
 
-            for (Database::Result::ConstIterator itr = results.begin();
+            for (Database::ResultConstIterator itr = results.begin();
                  itr != results.end(); ++itr) {
                 tmpRecord.minCycleTime = (uint32_t)((*itr)["sc_mincycletime"].as<uint32_t>());
                 tmpRecord.maxCycleTime = (uint32_t)((*itr)["sc_maxcycletime"].as<uint32_t>());

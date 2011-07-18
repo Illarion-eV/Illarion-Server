@@ -65,7 +65,7 @@ void TilesTable::reload() {
             std::string scriptname;
             TYPE_OF_ITEM_ID tileId;
 
-            for (Database::Result::ConstIterator itr = results.begin();
+            for (Database::ResultConstIterator itr = results.begin();
                  itr != results.end(); ++itr) {
                 tileId = (*itr)["til_id"].as<TYPE_OF_ITEM_ID>();
                 temprecord.flags = (uint8_t)((*itr)["til_groundlevel"].as<uint16_t>());
