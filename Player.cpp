@@ -1368,14 +1368,28 @@ bool Player::load() throw() {
             }
         }
 
+        // load data values
         std::vector<uint16_t> ditemlinenumber;
         std::vector<int16_t> key;
         std::vector<std::string> value;
-        //Query leeren
-        Query.str("");
-        Query.clear();
-        Query << "SELECT idv_linenumber,  idv_key, idv_value FROM playeritem_datavalues where idv_playerid = "<< transaction.quote(id) << " ORDER BY idv_linenumber";
-        size_t datamaplines = di::select_all<di::Integer, di::Integer, di::Varchar>(transaction, ditemlinenumber, key, value, Query.str());
+        {
+            SelectQuery query;
+            query.addColumn("playeritem_datavalues", "idv_linenumber");
+            query.addColumn("playeritem_datavalues", "idv_key");
+            query.addColumn("playeritem_datavalues", "idv_value");
+            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playeritem_datavalues", "idv_playerid", id);
+            query.addOrderBy("playeritem_datavalues", "idv_linenumber", SelectQuery::ASC);
+            query.addServerTable("playeritem_datavalues");
+
+            Result results = query.execute();
+            
+            for (Result::ConstIterator itr = results.begin(); itr != results.end(); ++itr) {
+                ditemlinenumber.push_back((*itr)["idv_linenumber"].as<uint16_t>());
+                key.push_back((*itr)["idv_key"].as<int16_t>());
+                value.push_back((*itr)["idv_value"].as<std::string>());
+            }
+        }
+        size_t datamaplines = ditemlinenumber.size();
 
         // load inventory
         std::vector<uint16_t> itemlinenumber;
@@ -1386,25 +1400,52 @@ bool Player::load() throw() {
         std::vector<uint8_t> itemnumber;
         std::vector<uint16_t> itemquality;
         std::vector<uint32_t> itemdata;
-        //Query leeren
-        Query.str("");
-        Query.clear();
-        //neue Abfrage einfgen
-        Query << "SELECT pit_linenumber,  pit_in_container, pit_depot, pit_itemid, pit_wear, pit_number, pit_quality, pit_data FROM playeritems where pit_playerid = "
-              << transaction.quote(id) << " ORDER BY pit_linenumber";
-        rows = di::select_all<di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Integer>
-               (transaction, itemlinenumber, itemincontainer, itemdepot, itemid, itemwear, itemnumber, itemquality, itemdata, Query.str());
+        {
+            SelectQuery query;
+            query.addColumn("playeritems", "pit_linenumber");
+            query.addColumn("playeritems", "pit_in_container");
+            query.addColumn("playeritems", "pit_depot");
+            query.addColumn("playeritems", "pit_itemid");
+            query.addColumn("playeritems", "pit_wear");
+            query.addColumn("playeritems", "pit_number");
+            query.addColumn("playeritems", "pit_quality");
+            query.addColumn("playeritems", "pit_data");
+            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playeritems", "pit_playerid", id);
+            query.addOrderBy("playeritems", "pit_linenumber", SelectQuery::ASC);
+            query.addServerTable("playeritems");
+            
+            Result results = query.execute();
 
-        //Initialize the depot map
-        // create a new (empty) depot
-        Query.str("");
-        Query.clear();
-        //Neue Abfrage zum laden der Depotids die belegt sind
-        Query << "SELECT DISTINCT pit_depot FROM playeritems WHERE pit_playerid = " << transaction.quote(id);
-        //Laden der Depotids die belegt sind
+            for (Result::ConstIterator itr = results.begin(); itr != results.end(); ++itr) {
+                itemlinenumber.push_back((*itr)["pit_linenumber"].as<uint16_t>());
+                itemincontainer.push_back((*itr)["pit_in_container"].as<uint16_t>());
+                itemdepot.push_back((*itr)["pit_depot"].as<uint32_t>());
+                itemid.push_back((*itr)["pit_itemid"].as<TYPE_OF_ITEM_ID>());
+                itemwear.push_back((uint8_t)((*itr)["pit_wear"].as<uint16_t>()));
+                itemnumber.push_back((uint8_t)((*itr)["pit_number"].as<uint16_t>()));
+                itemquality.push_back((*itr)["pit_quality"].as<uint16_t>());
+                itemdata.push_back((*itr)["pit_data"].as<uint32_t>());
+            }
+        }
+        size_t rows = itemlinenumber.size();
+
+        // load depots
         std::vector<uint32_t> depotid;
-        size_t zeilen = di::select_all<di::Integer>(transaction,depotid,Query.str());
-        //Laden des Depotvolumens
+        {
+            SelectQuery query;
+            query.setDistinct(true);
+            query.addColumn("playeritems", "pit_depot");
+            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playeritems", "pit_playerid", id);
+            query.addServerTable("playeritems");
+
+            Result results = query.execute();
+        
+            for (Result::ConstIterator itr = results.begin(); itr != results.end(); ++itr) {
+                depotid.push_back((*itr)["pit_depot"].as<uint32_t>());
+            }
+        }
+        size_t zeilen = depotid.size();
+
         ContainerStruct depotstruct;
         uint16_t depotsize = 0;
 
@@ -1420,8 +1461,6 @@ bool Player::load() throw() {
                 depots[ depotid [ i - 1 ] ] = depotContents[ depotid[ i - 1] ];
             }
         }
-
-// End of initializing the depot map
 
         unsigned int tempdepot, tempincont, linenumber;
         Container *tempc;
