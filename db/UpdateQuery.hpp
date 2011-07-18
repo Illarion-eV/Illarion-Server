@@ -36,7 +36,7 @@ namespace Database {
 class UpdateQuery : public virtual QueryAssign, public virtual QueryTables, public virtual QueryWhere {
 public:
     UpdateQuery();
-    UpdateQuery(const SelectQuery &org);
+    UpdateQuery(const UpdateQuery &org);
     UpdateQuery(const PConnection connection);
     virtual ~UpdateQuery();
 

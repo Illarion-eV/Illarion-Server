@@ -31,7 +31,8 @@ UpdateQuery::UpdateQuery() {
     UpdateQuery(ConnectionManager::getInstance().getConnection());
 }
 
-UpdateQuery::UpdateQuery(const UpdateQuery &org) : QueryAssign(org), QueryTables(org), QueryWhere(org);
+UpdateQuery::UpdateQuery(const UpdateQuery &org) : QueryAssign(org), QueryTables(org), QueryWhere(org) {
+};
 
 UpdateQuery::UpdateQuery(const PConnection connection) : QueryAssign(connection), QueryTables(connection), QueryWhere(connection) {
     setOnlyOneTable(true);
@@ -54,5 +55,5 @@ Result UpdateQuery::execute() {
     ss << ";";
 
     setQuery(ss.str());
-    Query::execute();
+    return Query::execute();
 }
