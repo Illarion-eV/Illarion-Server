@@ -22,13 +22,15 @@
 
 using namespace Database;
 
-QueryAssign() : Query();
+QueryAssign::QueryAssign() : Query() {
+};
 
 QueryAssign::QueryAssign(const QueryAssign &org) : Query(org) {
     assignColumns = org.assignColumns;
 }
 
-QueryAssign(const PConnection connection) : Query(connection);
+QueryAssign::QueryAssign(const PConnection connection) : Query(connection) {
+};
 
 template<typename T>
 void QueryAssign::addAssignColumn(const std::string &column, const T &value) {
