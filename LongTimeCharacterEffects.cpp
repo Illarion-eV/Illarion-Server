@@ -277,7 +277,7 @@ bool LongTimeCharacterEffects::load() {
         query.addColumn("playerlteffects", "plte_effectid");
         query.addColumn("playerlteffects", "plte_nextcalled");
         query.addColumn("playerlteffects", "plte_lastcalled");
-        query.addColumn("playerlteffects", "plte_numberCalled");
+        query.addColumn("playerlteffects", "plte_numbercalled");
         query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playerlteffects", "plte_playerid", player->id);
         query.addServerTable("playerlteffects");
         query.addOrderBy("playerlteffects", "plte_nextcalled", SelectQuery::ASC);
