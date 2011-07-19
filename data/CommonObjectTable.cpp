@@ -75,6 +75,8 @@ void CommonObjectTable::reload() {
         query.addColumn("common", "com_weight");
         query.addColumn("common", "com_agingspeed");
         query.addColumn("common", "com_objectafterrot");
+        query.addColumn("common", "com_stackable");
+        query.addColumn("common", "com_rotsininventory");
         query.addColumn("common", "com_script");
         query.addColumn("common", "com_brightness");
         query.addColumn("common", "com_worth");
