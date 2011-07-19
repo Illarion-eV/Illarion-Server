@@ -33,15 +33,10 @@ private:
 
 public:
     template<typename T> void addAssignColumn(const std::string &column, const T &value) {
-        addAssignColumn<T>("", column, value);
-    };
-
-    template<typename T> void addAssignColumn(const std::string &table, const std::string &column, const T &value) {
-        appendToStringList(assignColumns, escapeAndChainKeys(table, column) + " = " + quote<T>(value));
+        appendToStringList(assignColumns, escapeAndChainKeys("", column) + " = " + quote<T>(value));
     };
 
     void addAssignColumnNull(const std::string &column);
-    void addAssignColumnNull(const std::string &table, const std::string &column);
 protected:
     QueryAssign();
     QueryAssign(const PConnection connection);

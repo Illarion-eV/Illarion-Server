@@ -1087,21 +1087,21 @@ bool Player::save() throw() {
         time(&lastsavetime);
         {
             UpdateQuery query(connection);
-            query.addAssignColumn<uint16_t>("chars", "chr_status", (uint16_t) status);
-            query.addAssignColumn<std::string>("chars", "chr_lastip", last_ip);
-            query.addAssignColumn<uint32_t>("chars", "chr_onlinetime", onlinetime);
-            query.addAssignColumn<std::string>("chars", "chr_prefix", prefix);
-            query.addAssignColumn<std::string>("chars", "chr_suffix", suffix);
-            query.addAssignColumn<time_t>("chars", "chr_lastsavetime", lastsavetime);
+            query.addAssignColumn<uint16_t>("chr_status", (uint16_t) status);
+            query.addAssignColumn<std::string>("chr_lastip", last_ip);
+            query.addAssignColumn<uint32_t>("chr_onlinetime", onlinetime);
+            query.addAssignColumn<std::string>("chr_prefix", prefix);
+            query.addAssignColumn<std::string>("chr_suffix", suffix);
+            query.addAssignColumn<time_t>("chr_lastsavetime", lastsavetime);
 
             if (status != 0) {
-                query.addAssignColumn<time_t>("chars", "chr_statustime", statustime);
-                query.addAssignColumn<TYPE_OF_CHARACTER_ID>("chars", "chr_statusgm", statusgm);
-                query.addAssignColumn<std::string>("chars", "chr_statusreason", statusreason);
+                query.addAssignColumn<time_t>("chr_statustime", statustime);
+                query.addAssignColumn<TYPE_OF_CHARACTER_ID>("chr_statusgm", statusgm);
+                query.addAssignColumn<std::string>("chr_statusreason", statusreason);
             } else {
-                query.addAssignColumnNull("chars", "chr_statustime");
-                query.addAssignColumnNull("chars", "chr_statusgm");
-                query.addAssignColumnNull("chars", "chr_statusreason");
+                query.addAssignColumnNull("chr_statustime");
+                query.addAssignColumnNull("chr_statusgm");
+                query.addAssignColumnNull("chr_statusreason");
             }
 
             query.addEqualCondition<TYPE_OF_CHARACTER_ID>("chars", "chr_playerid", id);
@@ -1112,22 +1112,22 @@ bool Player::save() throw() {
 
         {
             UpdateQuery query(connection);
-            query.addAssignColumn<int32_t>("player", "ply_posx", pos.x);
-            query.addAssignColumn<int32_t>("player", "ply_posy", pos.y);
-            query.addAssignColumn<int32_t>("player", "ply_posz", pos.z);
-            query.addAssignColumn<uint16_t>("player", "ply_faceto", (uint16_t) faceto);
-            query.addAssignColumn<uint16_t>("player", "ply_hitpoints", battrib.hitpoints);
-            query.addAssignColumn<uint16_t>("player", "ply_mana", battrib.mana);
-            query.addAssignColumn<uint32_t>("player", "ply_foodlevel", battrib.foodlevel);
-            query.addAssignColumn<uint32_t>("player", "ply_appearance", appearance);
-            query.addAssignColumn<uint32_t>("player", "ply_lifestate", lifestate);
-            query.addAssignColumn<uint32_t>("player", "ply_magictype", (uint32_t) magic.type);
-            query.addAssignColumn<uint64_t>("player", "ply_magicflagsmage", magic.flags[MAGE]);
-            query.addAssignColumn<uint64_t>("player", "ply_magicflagspriest", magic.flags[PRIEST]);
-            query.addAssignColumn<uint64_t>("player", "ply_magicflagsbard", magic.flags[BARD]);
-            query.addAssignColumn<uint64_t>("player", "ply_magicflagsdruid", magic.flags[DRUID]);
-            query.addAssignColumn<uint16_t>("player", "ply_poison", poisonvalue);
-            query.addAssignColumn<uint16_t>("player", "ply_mental_capacity", mental_capacity);
+            query.addAssignColumn<int32_t>("ply_posx", pos.x);
+            query.addAssignColumn<int32_t>("ply_posy", pos.y);
+            query.addAssignColumn<int32_t>("ply_posz", pos.z);
+            query.addAssignColumn<uint16_t>("ply_faceto", (uint16_t) faceto);
+            query.addAssignColumn<uint16_t>("ply_hitpoints", battrib.hitpoints);
+            query.addAssignColumn<uint16_t>("ply_mana", battrib.mana);
+            query.addAssignColumn<uint32_t>("ply_foodlevel", battrib.foodlevel);
+            query.addAssignColumn<uint32_t>("ply_appearance", appearance);
+            query.addAssignColumn<uint32_t>("ply_lifestate", lifestate);
+            query.addAssignColumn<uint32_t>("ply_magictype", (uint32_t) magic.type);
+            query.addAssignColumn<uint64_t>("ply_magicflagsmage", magic.flags[MAGE]);
+            query.addAssignColumn<uint64_t>("ply_magicflagspriest", magic.flags[PRIEST]);
+            query.addAssignColumn<uint64_t>("ply_magicflagsbard", magic.flags[BARD]);
+            query.addAssignColumn<uint64_t>("ply_magicflagsdruid", magic.flags[DRUID]);
+            query.addAssignColumn<uint16_t>("ply_poison", poisonvalue);
+            query.addAssignColumn<uint16_t>("ply_mental_capacity", mental_capacity);
             query.addEqualCondition<TYPE_OF_CHARACTER_ID>("player", "ply_playerid", id);
             query.addServerTable("player");
             query.execute();
@@ -2292,7 +2292,7 @@ void Player::setQuestProgress(uint16_t questid, uint32_t progress) throw() {
             insQuery.execute();
         } else {
             UpdateQuery updQuery;
-            updQuery.addAssignColumn<uint32_t>("questprogress", "qpg_progress", progress);
+            updQuery.addAssignColumn<uint32_t>("qpg_progress", progress);
             updQuery.addEqualCondition<TYPE_OF_CHARACTER_ID>("questprogress", "qpg_userid", id);
             updQuery.addEqualCondition<uint16_t>("questprogress", "qpg_userid", questid);
             updQuery.setServerTable("questprogress");
