@@ -837,8 +837,6 @@ bool Player::wasUnconsciousSent() {
 void Player::check_logindata() throw(Player::LogoutException) {
     Database::PConnection connection = Database::ConnectionManager::getInstance().getConnection();
     try {
-        connection->beginTransaction();
-
         Database::SelectQuery charQuery(connection);
         charQuery.addColumn("chars", "chr_playerid");
         charQuery.addColumn("chars", "chr_accid");
@@ -866,7 +864,7 @@ void Player::check_logindata() throw(Player::LogoutException) {
         id = charRow["chr_playerid"].as<TYPE_OF_CHARACTER_ID>();
         account_id = charRow["chr_accid"].as<TYPE_OF_CHARACTER_ID>();
         status = charRow["chr_status"].as<uint16_t>();
-        if (!charRow["chr_status"].is_null()) {
+        if (!charRow["chr_statustime"].is_null()) {
             statustime = charRow["chr_statustime"].as<time_t>();
         }
         onlinetime = charRow["chr_onlinetime"].as<time_t>();
@@ -874,10 +872,10 @@ void Player::check_logindata() throw(Player::LogoutException) {
         battrib.truesex = (Character::sex_type) charRow["chr_sex"].as<uint16_t>();
         race = (Character::race_type) charRow["chr_race"].as<uint16_t>();
         if (!charRow["chr_prefix"].is_null()) {
-            prefix = charRow["chr_prefix"].as<uint16_t>();
+            prefix = charRow["chr_prefix"].as<std::string>();
         }
         if (!charRow["chr_suffix"].is_null()) {
-            suffix = charRow["chr_suffix"].as<uint16_t>();
+            suffix = charRow["chr_suffix"].as<std::string>();
         }
 
         // first we check the status since we already retrieved it
@@ -1337,7 +1335,6 @@ bool Player::load() throw() {
     using namespace Database;
     PConnection connection = ConnectionManager::getInstance().getConnection();
     try {
-        connection->beginTransaction();
 
         {
             // Scripts

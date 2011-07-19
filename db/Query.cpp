@@ -97,7 +97,7 @@ std::string Query::escapeAndChainKeys(const std::string &key1, const std::string
 }
 
 void Query::appendToStringList(std::string &list, const std::string &newEntry) {
-    if (list.empty()) {
+    if (!list.empty()) {
         list += ", ";
     }
 

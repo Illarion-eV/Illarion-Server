@@ -271,7 +271,6 @@ bool LongTimeCharacterEffects::load() {
     Player *player = dynamic_cast<Player *>(_owner);
 
     PConnection connection = ConnectionManager::getInstance().getConnection();
-    connection->beginTransaction();
 
     try {
         SelectQuery query(connection);

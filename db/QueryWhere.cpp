@@ -71,7 +71,7 @@ void QueryWhere::mergeConditions(const std::string &operation) {
         cond1 = conditionsStack.top();
         conditionsStack.pop();
 
-        if (conditionsStack.size() == 1) {
+        if (conditionsStack.empty()) {
             conditions = *cond1;
             delete cond1;
             return;
@@ -79,10 +79,6 @@ void QueryWhere::mergeConditions(const std::string &operation) {
 
         removeFirst = true;
     } else {
-        if (conditionsStack.size() < 1) {
-            return;
-        }
-
         cond1 = &conditions;
     }
 
