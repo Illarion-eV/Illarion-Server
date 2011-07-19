@@ -27,7 +27,8 @@
 using namespace Database;
 
 SelectQuery::SelectQuery() {
-    SelectQuery(ConnectionManager::getInstance().getConnection());
+    setConnection(ConnectionManager::getInstance().getConnection());
+    setOnlyOneTable(false);
     isDistinct = false;
 }
 

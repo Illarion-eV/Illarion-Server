@@ -27,7 +27,8 @@
 using namespace Database;
 
 DeleteQuery::DeleteQuery() {
-    DeleteQuery(ConnectionManager::getInstance().getConnection());
+    setConnection(ConnectionManager::getInstance().getConnection());
+    setOnlyOneTable(true);
 }
 
 DeleteQuery::DeleteQuery(const DeleteQuery &org) {

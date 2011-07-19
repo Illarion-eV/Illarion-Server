@@ -48,6 +48,7 @@ protected:
 
     void setQuery(const std::string &query);
     PConnection getConnection();
+    void setConnection(PConnection conn);
     template <typename T> std::string quote(T value) {
         return dbConnection->quote<T>(value);
     };

@@ -28,7 +28,8 @@
 using namespace Database;
 
 UpdateQuery::UpdateQuery() {
-    UpdateQuery(ConnectionManager::getInstance().getConnection());
+    setConnection(ConnectionManager::getInstance().getConnection());
+    setOnlyOneTable(true);
 }
 
 UpdateQuery::UpdateQuery(const UpdateQuery &org) {

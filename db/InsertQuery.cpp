@@ -27,7 +27,9 @@
 using namespace Database;
 
 InsertQuery::InsertQuery() {
-    InsertQuery(ConnectionManager::getInstance().getConnection());
+    setConnection(ConnectionManager::getInstance().getConnection());
+    setOnlyOneTable(true);
+    setHideTable(true);
 }
 
 InsertQuery::InsertQuery(const InsertQuery &org) {

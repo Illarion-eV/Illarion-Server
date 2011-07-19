@@ -27,7 +27,7 @@
 using namespace Database;
 
 Query::Query() {
-    Query(ConnectionManager::getInstance().getConnection());
+    dbConnection = ConnectionManager::getInstance().getConnection();
 }
 
 Query::Query(const Query &org) {
@@ -74,6 +74,10 @@ void Query::setQuery(const std::string &query) {
 
 PConnection Query::getConnection() {
     return dbConnection;
+}
+
+void Query::setConnection(PConnection conn) {
+    dbConnection = conn;
 }
 
 std::string Query::escapeKey(const std::string &key) {
