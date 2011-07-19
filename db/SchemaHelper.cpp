@@ -20,20 +20,20 @@
 
 #include "db/SchemaHelper.hpp"
 
-using namespace Database::SchemaHelper;
+using namespace Database;
 
-static std::string serverSchema;
-static std::string accountSchema;
+std::string SchemaHelper::serverSchema;
+std::string SchemaHelper::accountSchema;
 
-void setSchemata(const std::string &server, const std::string &account) {
+void SchemaHelper::setSchemata(const std::string &server, const std::string &account) {
     serverSchema = "\"" + server + "\"";
     accountSchema = "\"" + account + "\"";
 }
 
-std::string &getServerSchema() {
+const std::string &SchemaHelper::getServerSchema() {
     return serverSchema;
 }
 
-std::string &getAccountSchema() {
+const std::string &SchemaHelper::getAccountSchema() {
     return accountSchema;
 }

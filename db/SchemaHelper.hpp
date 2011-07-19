@@ -24,11 +24,15 @@
 #include <string>
 
 namespace Database {
-namespace SchemaHelper {
-void setSchemata(const std::string &server, const std::string &account);
-std::string &getServerSchema();
-std::string &getAccountSchema();
-}
+class SchemaHelper {
+private:
+    static std::string serverSchema;
+    static std::string accountSchema;
+public:
+    static void setSchemata(const std::string &server, const std::string &account);
+    static const std::string &getServerSchema();
+    static const std::string &getAccountSchema();
+};
 }
 
 #endif // _SCHEMA_HELPER_HPP_
