@@ -38,26 +38,6 @@ QueryWhere::~QueryWhere() {
     }
 }
 
-template<typename T>
-void QueryWhere::addEqualCondition(const std::string &column, const T &value) {
-    addEqualCondition<T>("", column, value);
-}
-
-template<typename T>
-void QueryWhere::addEqualCondition(const std::string &table, const std::string &column, const T &value) {
-    conditionsStack.push(new std::string(escapeAndChainKeys(table, column) + " = " + quote<T>(value)));
-}
-
-template<typename T>
-void QueryWhere::addNotEqualCondition(const std::string &column, const T &value) {
-    addNotEqualCondition<T>("", column, value);
-}
-
-template<typename T>
-void QueryWhere::addNotEqualCondition(const std::string &table, const std::string &column, const T &value) {
-    conditionsStack.push(new std::string(escapeAndChainKeys(table, column) + " != " + quote<T>(value)));
-}
-
 void QueryWhere::andConditions() {
     mergeConditions("AND");
 }

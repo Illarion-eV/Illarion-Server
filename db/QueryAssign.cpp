@@ -31,16 +31,6 @@ QueryAssign::QueryAssign(const QueryAssign &org) {
 QueryAssign::QueryAssign(const PConnection connection) : Query(connection) {
 };
 
-template<typename T>
-void QueryAssign::addAssignColumn(const std::string &column, const T &value) {
-    addAssignColumn<T>("", column, value);
-}
-
-template<typename T>
-void QueryAssign::addAssignColumn(const std::string &table, const std::string &column, const T &value) {
-    appendToStringList(assignColumns, escapeAndChainKeys(table, column) + " = " + quote<T>(value));
-}
-
 void QueryAssign::addAssignColumnNull(const std::string &column) {
     addAssignColumnNull("", column);
 }

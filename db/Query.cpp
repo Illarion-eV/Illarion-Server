@@ -76,10 +76,6 @@ PConnection Query::getConnection() {
     return dbConnection;
 }
 
-template <typename T> std::string Query::quote(T value) {
-    return dbConnection.quote<T>(value);
-}
-
 std::string Query::escapeKey(const std::string &key) {
     if (key.at(0) == '"' && key.at(key.length() - 1) == '"' && !key.empty()) {
         return key;

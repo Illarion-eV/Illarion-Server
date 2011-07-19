@@ -49,20 +49,93 @@ public:
     InsertQuery(const PConnection connection);
     virtual ~InsertQuery();
 
-    template <typename T> void addValue(const QueryColumns::columnIndex &column, const T &value) throw(std::invalid_argument);
-    template <typename T> void addValues(const QueryColumns::columnIndex &column, const T &value, uint32_t count) throw(std::invalid_argument);
-    template <typename T> void addValues(const QueryColumns::columnIndex &column, std::vector<T> &values) throw(std::invalid_argument);
+    template <typename T> void addValue(const QueryColumns::columnIndex &column, const T &value) throw(std::invalid_argument) {
+        addValues(column, value, 1);
+    };
+
+    template <typename T> void addValues(const QueryColumns::columnIndex &column, const T &value, uint32_t count) throw(std::invalid_argument)  {
+        if (count == 0) {
+            return;
+        }
+
+        uint32_t columns = getColumnCount();
+
+        if (columns <= column) {
+            throw new std::invalid_argument("Column index out of range.");
+        }
+
+        std::string strValue = quote<T>(value);
+        std::vector<std::string *> *dataRow;
+
+        if (!dataStorage.empty()) {
+            for (std::vector<std::vector<std::string *> *>::iterator itr = dataStorage.begin(); itr < dataStorage.end(); itr++) {
+                dataRow = *itr;
+                dataRow->reserve(columns);
+
+                if (!dataRow->at(column)) {
+                    dataRow->at(column) = new std::string(strValue);
+
+                    if (count <= 1) {
+                        ;
+                        return;
+                    } else if (count != FILL) {
+                        count--;
+                    }
+                }
+            }
+        }
+
+        if (count == FILL) {
+            return;
+        }
+
+        while (count-- > 0) {
+            dataRow = new std::vector<std::string *>(columns, 0);
+            dataStorage.push_back(dataRow);
+            dataRow->at(column) = new std::string(strValue);
+        }
+    };
+
+    template <typename T> void addValues(const QueryColumns::columnIndex &column, std::vector<T> &values) throw(std::invalid_argument) {
+        typename std::vector<T>::iterator itr;
+        for (itr = values.begin(); itr < values.end(); itr++) {
+            addValue<T>(column, *itr);
+        }
+    };
+
     template <typename Key, typename T>
     void addValues(const QueryColumns::columnIndex &column, std::map<Key,T> &values,
-                   MapInsertMode mode = keysAndValues) throw(std::invalid_argument);
+                   MapInsertMode mode = keysAndValues) throw(std::invalid_argument) {
+        addValues<Key, T, std::less<Key> >(column, values);
+    };
+    
     template <typename Key, typename T, class Compare>
     void addValues(const QueryColumns::columnIndex &column,
                    std::map<Key,T,Compare> &values,
-                   MapInsertMode mode = keysAndValues) throw(std::invalid_argument);
+                   MapInsertMode mode = keysAndValues) throw(std::invalid_argument) {
+        addValues<Key, T, Compare, std::allocator<std::pair<const Key, T> > >(column, values);
+    };
+    
     template <typename Key, typename T, class Compare,class Allocator>
     void addValues(const QueryColumns::columnIndex &column,
                    std::map<Key,T,Compare, Allocator> &values,
-                   MapInsertMode mode = keysAndValues) throw(std::invalid_argument);
+                   MapInsertMode mode = keysAndValues) throw(std::invalid_argument) {
+        typename std::map<Key, T, Compare, Allocator>::iterator itr;
+        for (itr = values.begin(); itr != values.end(); itr++) {
+            switch (mode) {
+            case onlyKeys:
+                addValue<Key>(column, itr->first);
+                break;
+            case onlyValues:
+                addValue<T>(column, itr->second);
+                break;
+            case keysAndValues:
+                addValue<Key>(column, itr->first);
+                addValue<T>(column + 1, itr->second);
+                break;
+            }
+        }
+    };
 
     virtual Result execute();
 private:
