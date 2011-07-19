@@ -1158,6 +1158,7 @@ bool Player::save() throw() {
                 query.addValue<uint16_t>(minorColumn, (uint16_t) skillptr->second.minor);
             }
             query.addValues<TYPE_OF_CHARACTER_ID>(idColumn, id, InsertQuery::FILL);
+            query.addServerTable("playerskills");
             query.execute();
         }
 
