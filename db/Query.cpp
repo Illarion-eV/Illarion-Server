@@ -52,7 +52,7 @@ Result Query::execute() {
             "Connection and query string are required to execute the query.");
     }
 
-    bool ownTransaction = dbConnection->transactionActive();
+    bool ownTransaction = ! dbConnection->transactionActive();
 
     if (ownTransaction) {
         dbConnection->beginTransaction();
@@ -74,10 +74,6 @@ void Query::setQuery(const std::string &query) {
 
 PConnection Query::getConnection() {
     return dbConnection;
-}
-
-void Query::setConnection(PConnection conn) {
-    dbConnection = conn;
 }
 
 std::string Query::escapeKey(const std::string &key) {

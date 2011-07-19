@@ -28,7 +28,6 @@
 using namespace Database;
 
 UpdateQuery::UpdateQuery() {
-    setConnection(ConnectionManager::getInstance().getConnection());
     setOnlyOneTable(true);
 }
 

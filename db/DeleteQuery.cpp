@@ -27,7 +27,6 @@
 using namespace Database;
 
 DeleteQuery::DeleteQuery() {
-    setConnection(ConnectionManager::getInstance().getConnection());
     setOnlyOneTable(true);
 }
 

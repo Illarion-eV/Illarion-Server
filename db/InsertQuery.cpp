@@ -27,7 +27,6 @@
 using namespace Database;
 
 InsertQuery::InsertQuery() {
-    setConnection(ConnectionManager::getInstance().getConnection());
     setOnlyOneTable(true);
     setHideTable(true);
 }
