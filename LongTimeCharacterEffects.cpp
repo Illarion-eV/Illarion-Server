@@ -308,8 +308,8 @@ bool LongTimeCharacterEffects::load() {
                     for (ResultConstIterator itr2 = valuesResults.begin();
                          itr2 != valuesResults.end(); ++itr2) {
                         effect->addValue(
-                            (*itr)["pev_name"].as<std::string>(),
-                            (*itr)["pev_value"].as<uint32_t>());
+                            (*itr2)["pev_name"].as<std::string>(),
+                            (*itr2)["pev_value"].as<uint32_t>());
                     }
                 }
 
