@@ -1651,6 +1651,8 @@ public:
      */
     void ban(Player *cp, int bantime, TYPE_OF_CHARACTER_ID gmid);
 
+private:
+    void logMissingField(const std::string &function, const position &field);
 
 private:
 
