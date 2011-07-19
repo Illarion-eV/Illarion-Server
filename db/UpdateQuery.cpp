@@ -46,11 +46,6 @@ Result UpdateQuery::execute() {
     ss << QueryAssign::buildQuerySegment();
 
     const std::string whereSegment = QueryWhere::buildQuerySegment();
-#if !defined(UPDATE_QUERY_NO_WHERE_CHECK)
-    if (whereSegment.empty()) {
-        throw new std::logic_error("Update Query without WHERE is not acceptable");
-    }
-#endif
     ss << whereSegment;
     ss << ";";
 
