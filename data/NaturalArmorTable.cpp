@@ -41,9 +41,9 @@ void NaturalArmorTable::reload() {
     try {
         Database::SelectQuery query;
         query.addColumn("naturalarmor", "nar_race");
-        query.addColumn("naturalarmor", "nar_strokeArmor");
-        query.addColumn("naturalarmor", "nar_punctureArmor");
-        query.addColumn("naturalarmor", "nar_thrustArmor");
+        query.addColumn("naturalarmor", "nar_strokearmor");
+        query.addColumn("naturalarmor", "nar_puncturearmor");
+        query.addColumn("naturalarmor", "nar_thrustarmor");
         query.addServerTable("naturalarmor");
 
         Database::Result results = query.execute();
@@ -54,10 +54,10 @@ void NaturalArmorTable::reload() {
 
             for (Database::ResultConstIterator itr = results.begin();
                  itr != results.end(); ++itr) {
-                armor.strokeArmor = (TYPE_OF_STROKEARMOR)((*itr)["nar_strokeArmor"].as<int16_t>());
-                armor.punctureArmor = (TYPE_OF_PUNCTUREARMOR)((*itr)["nar_punctureArmor"].as<int16_t>());
-                armor.thrustArmor = (TYPE_OF_THRUSTARMOR)((*itr)["arm_thrust"].as<int16_t>());
-                m_ArmorTable[(uint16_t)((*itr)["nar_strokeArmor"].as<int32_t>())] = armor;
+                armor.strokeArmor = (TYPE_OF_STROKEARMOR)((*itr)["nar_strokearmor"].as<int16_t>());
+                armor.punctureArmor = (TYPE_OF_PUNCTUREARMOR)((*itr)["nar_puncturearmor"].as<int16_t>());
+                armor.thrustArmor = (TYPE_OF_THRUSTARMOR)((*itr)["nar_thrustarmor"].as<int16_t>());
+                m_ArmorTable[(uint16_t)((*itr)["nar_race"].as<int32_t>())] = armor;
             }
 
             m_dataOK = true;
