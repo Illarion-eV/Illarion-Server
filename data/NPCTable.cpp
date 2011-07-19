@@ -103,9 +103,9 @@ bool NPCTable::LoadData() {
                         (uint8_t)((*itr)["npc_hairred"].as<int16_t>()),
                         (uint8_t)((*itr)["npc_hairgreen"].as<int16_t>()),
                         (uint8_t)((*itr)["npc_hairblue"].as<int16_t>()),
-                        (uint8_t)((*itr)["npc_beardred"].as<int16_t>()),
-                        (uint8_t)((*itr)["npc_beardgreen"].as<int16_t>()),
-                        (uint8_t)((*itr)["npc_beardblue"].as<int16_t>()));
+                        (uint8_t)((*itr)["npc_skinred"].as<int16_t>()),
+                        (uint8_t)((*itr)["npc_skingreen"].as<int16_t>()),
+                        (uint8_t)((*itr)["npc_skinblue"].as<int16_t>()));
 
                     // add npc to npc list
                     _world->Npc.push_back(newNPC);
