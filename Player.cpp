@@ -1140,7 +1140,7 @@ bool Player::save() throw() {
             query.execute();
         }
 
-        {
+        if (!skills.empty()) {
             InsertQuery query(connection);
             const InsertQuery::columnIndex idColumn = query.addColumn("psk_playerid");
             const InsertQuery::columnIndex nameColumn = query.addColumn("psk_name");
