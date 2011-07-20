@@ -82,7 +82,7 @@ Result InsertQuery::execute() {
         }
 
         for (uint32_t column = 0; column < columns; column++) {
-            ss << dataRow->at(column);
+            ss << *(dataRow->at(column));
 
             if (column < columns-1) {
                 ss << ", ";
