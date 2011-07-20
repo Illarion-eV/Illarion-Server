@@ -62,9 +62,9 @@ void SpellTable::reload() {
                  itr != results.end(); ++itr) {
                 spellid = (uint32_t)((*itr)["spl_spellid"].as<uint32_t>());
                 spell.magictype = (uint8_t)((*itr)["spl_magictype"].as<int16_t>());
-                spell.scriptname = (*itr)["spl_magictype"].as<std::string>();
 
-                if (!spell.scriptname.empty()) {
+                if (!((*itr)["spl_scriptname"].is_null())) {
+                    spell.scriptname = (*itr)["spl_scriptname"].as<std::string>();
                     try {
                         boost::shared_ptr<LuaMagicScript> script(new LuaMagicScript(spell.scriptname, spellid));
                         spell.script = script;
