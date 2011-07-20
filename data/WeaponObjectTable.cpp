@@ -87,7 +87,7 @@ void WeaponObjectTable::reload() {
                             boost::shared_ptr<LuaWeaponScript> tmpScript(new LuaWeaponScript(scriptname));
                             temprecord.script = tmpScript;
                         } catch (ScriptException &e) {
-                            Logger::writeError("scripts", "Error while loading script: " + scriptname + ":\n" + e.what() + "\n");
+                            Logger::writeError("scripts", "Error while loading weapon script: " + scriptname + ":\n" + e.what() + "\n");
                         }
                     }
                 }

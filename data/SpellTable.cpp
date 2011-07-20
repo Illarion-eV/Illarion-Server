@@ -69,7 +69,7 @@ void SpellTable::reload() {
                         boost::shared_ptr<LuaMagicScript> script(new LuaMagicScript(spell.scriptname, spellid));
                         spell.script = script;
                     } catch (ScriptException &e) {
-                        Logger::writeError("scripts", "Error while loading script: " + spell.scriptname + ":\n" + e.what() + "\n");
+                        Logger::writeError("scripts", "Error while loading magic script: " + spell.scriptname + ":\n" + e.what() + "\n");
                     }
                 }
 

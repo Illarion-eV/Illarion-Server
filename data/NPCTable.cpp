@@ -124,7 +124,7 @@ bool NPCTable::LoadData() {
                             boost::shared_ptr<LuaNPCScript> script(new LuaNPCScript(scriptname, newNPC));
                             newNPC->setScript(script);
                         } catch (ScriptException &e) {
-                            Logger::writeError("scripts", "Error while loading script: " + scriptname + ":\n" + e.what() + "\n");
+                            Logger::writeError("scripts", "Error while loading npc script: " + scriptname + ":\n" + e.what() + "\n");
                         }
                     }
 

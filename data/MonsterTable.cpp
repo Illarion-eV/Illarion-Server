@@ -109,7 +109,7 @@ void MonsterTable::reload() {
                             boost::shared_ptr<LuaMonsterScript> script(new LuaMonsterScript(scriptname));
                             temprecord.script = script;
                         } catch (ScriptException &e) {
-                            Logger::writeError("scripts", "Error while loading script: " + scriptname + ":\n" + e.what() + "\n");
+                            Logger::writeError("scripts", "Error while loading monster script: " + scriptname + ":\n" + e.what() + "\n");
                         }
                     }
                 }

@@ -129,7 +129,7 @@ void ScheduledScriptsTable::reload() {
                         tmpRecord.scriptptr = tmpScript;
                         addData(tmpRecord);
                     } catch (ScriptException &e) {
-                        Logger::writeError("scripts", "Error while loading script: " + tmpRecord.scriptName + ":\n" + e.what() + "\n");
+                        Logger::writeError("scripts", "Error while loading scheduled script: " + tmpRecord.scriptName + ":\n" + e.what() + "\n");
                     }
                 }
             }

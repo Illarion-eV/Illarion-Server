@@ -113,7 +113,7 @@ void CommonObjectTable::reload() {
                         boost::shared_ptr<LuaItemScript> tmpScript(new LuaItemScript(scriptname, temprecord));
                         m_scripttable[itemID] = tmpScript;
                     } catch (ScriptException &e) {
-                        Logger::writeError("scripts", "Error while loading script: " + scriptname + ":\n" + e.what() + "\n");
+                        Logger::writeError("scripts", "Error while loading item script: " + scriptname + ":\n" + e.what() + "\n");
                     }
                 }
 

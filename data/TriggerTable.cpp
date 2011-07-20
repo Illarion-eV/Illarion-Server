@@ -75,7 +75,7 @@ void TriggerTable::reload() {
                         boost::shared_ptr<LuaTriggerScript> script(new LuaTriggerScript(scriptname, Trigger.pos));
                         Trigger.script = script;
                     } catch (ScriptException &e) {
-                        Logger::writeError("scripts", "Error while loading script: " + scriptname + ":\n" + e.what() + "\n");
+                        Logger::writeError("scripts", "Error while loading trigger script: " + scriptname + ":\n" + e.what() + "\n");
                     }
                 }
 

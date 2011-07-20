@@ -86,7 +86,7 @@ void TilesTable::reload() {
                             boost::shared_ptr<LuaTileScript> script(new LuaTileScript(scriptname, temprecord));
                             temprecord.script = script;
                         } catch (ScriptException &e) {
-                            Logger::writeError("scripts", "Error while loading script: " + scriptname + ":\n" + e.what() + "\n");
+                            Logger::writeError("scripts", "Error while loading tiles script: " + scriptname + ":\n" + e.what() + "\n");
                         }
                     }
                 }
