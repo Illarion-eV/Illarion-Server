@@ -121,7 +121,7 @@ bool LongTimeEffect::save(uint32_t playerid) {
             const InsertQuery::columnIndex effectColumn = insQuery.addColumn("plte_effectid");
             const InsertQuery::columnIndex nextCalledColumn = insQuery.addColumn("plte_nextcalled");
             const InsertQuery::columnIndex lastCalledColumn = insQuery.addColumn("plte_lastcalled");
-            const InsertQuery::columnIndex numberCalledColumn = insQuery.addColumn("plte_numberCalled");
+            const InsertQuery::columnIndex numberCalledColumn = insQuery.addColumn("plte_numbercalled");
             insQuery.addValue(userColumn, playerid);
             insQuery.addValue(effectColumn, _effectId);
             insQuery.addValue(nextCalledColumn, _nextCalled);
