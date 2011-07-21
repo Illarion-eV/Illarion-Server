@@ -42,7 +42,9 @@ LongTimeEffect.cpp LongTimeAction.cpp LongTimeCharacterEffects.cpp Scheduler.cpp
 Character.cpp \
 Player.cpp PlayerWorkoutCommands.cpp Monster.cpp NPC.cpp PlayerManager.cpp playersave.cpp WaypointList.cpp Language.cpp \
 \
-db/ConnectionManager.cpp db/postgres.cpp \
+db/ConnectionManager.cpp db/Connection.cpp db/Query.cpp \
+db/SelectQuery.cpp db/InsertQuery.cpp db/UpdateQuery.cpp db/DeleteQuery.cpp \
+db/QueryAssign.cpp db/QueryWhere.cpp db/QueryColumns.cpp db/QueryTables.cpp db/SchemaHelper.cpp \
 \
 script/LuaScript.cpp \
 script/LuaNPCScript.cpp script/LuaItemScript.cpp script/LuaMonsterScript.cpp \
@@ -58,4 +60,5 @@ netinterface/protocol/ServerCommands.cpp netinterface/ByteBuffer.cpp MonitoringC
 testserver_LDADD = -lpthread -lssl -lcrypto -lpqxx -lpq -llua5.1 -lboost_thread -lboost_system -lluabind
 testserver_LDFLAGS = 
 CXXFLAGS = -ggdb -pipe -Wall -Werror -Wno-deprecated -D_THREAD_SAFE -D_REENTRANT -DCDataConnect_DEBUG -DAdminCommands_DEBUG
-INCLUDES = -I/usr/include/postgresql -I/usr/include/lua5.1
+INCLUDES = -I/usr/include/postgresql -I/usr/include/lua5.1 -I/opt/include
+LIBS = -L/opt/lib

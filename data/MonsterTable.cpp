@@ -1,27 +1,35 @@
-//  illarionserver - server for the game Illarion
-//  Copyright 2011 Illarion e.V.
-//
-//  This file is part of illarionserver.
-//
-//  illarionserver is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  illarionserver is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * Illarionserver - server for the game Illarion
+ * Copyright 2011 Illarion e.V.
+ *
+ * This file is part of Illarionserver.
+ *
+ * Illarionserver  is  free  software:  you can redistribute it and/or modify it
+ * under the terms of the  GNU  General  Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * Illarionserver is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY;  without  even  the  implied  warranty  of  MERCHANTABILITY  or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU  General Public License along with
+ * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
+ */
 
+#include "data/MonsterTable.hpp"
 
-#include "db/ConnectionManager.hpp"
-#include "MonsterTable.hpp"
 #include <iostream>
 #include <sstream>
-#include "CommonObjectTable.hpp"
+
+#include "data/CommonObjectTable.hpp"
+
+#include "db/Connection.hpp"
+#include "db/ConnectionManager.hpp"
+#include "db/SelectQuery.hpp"
+#include "db/Result.hpp"
+
 #include "World.hpp"
 #include "Logger.hpp"
 
@@ -30,13 +38,6 @@ extern CommonObjectTable *CommonItems;
 
 //! wird von verschiedenen Funktionen als Zwischenvariable genutzt
 extern CommonStruct tempCommon;
-/*
-template<class from>
-const std::string toString(const from& convert) {
-    std::stringstream stream;
-    stream << convert;
-    return stream.str();
-}*/
 
 MonsterTable::MonsterTable() : m_dataOK(false), world(World::get()) {
     reload();
@@ -49,187 +50,221 @@ void MonsterTable::reload() {
 #endif
 
     try {
-        ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
+        using namespace Database;
+        PConnection connection = ConnectionManager::getInstance().getConnection();
+        connection->beginTransaction();
 
-        std::vector<TYPE_OF_ITEM_ID> ids;
-        std::vector<std::string> names;
-        std::vector<uint16_t> races;
-        std::vector<uint16_t> hitpoints;
-        std::vector<std::string> movementtype;
-        std::vector<bool> canattack;
-        std::vector<bool> canheal;
-        std::vector<std::string> scriptname;
-        di::isnull_vector<std::vector<std::string> > n_scriptname(scriptname);
-        std::vector<uint16_t> minsizes;
-        std::vector<uint16_t> maxsizes;
+        SelectQuery monquery(connection);
+        monquery.addColumn("monster", "mob_monsterid");
+        monquery.addColumn("monster", "mob_name");
+        monquery.addColumn("monster", "mob_race");
+        monquery.addColumn("monster", "mob_hitpoints");
+        monquery.addColumn("monster", "mob_movementtype");
+        monquery.addColumn("monster", "mob_canattack");
+        monquery.addColumn("monster", "mob_canhealself");
+        monquery.addColumn("monster", "script");
+        monquery.addColumn("monster", "mob_minsize");
+        monquery.addColumn("monster", "mob_maxsize");
+        monquery.addServerTable("monster");
 
-        size_t rows = di::select_all<
-                      di::Integer, di::Varchar, di::Integer, di::Integer, di::Varchar, di::Boolean, di::Boolean, di::Varchar, di::Integer, di::Integer
-                      >(transaction, ids, names, races, hitpoints, movementtype, canattack, canheal, n_scriptname, minsizes, maxsizes,
-                        "SELECT mob_monsterid, mob_name, mob_race, mob_hitpoints, mob_movementtype,"
-                        "mob_canattack, mob_canhealself, script, mob_minsize, mob_maxsize FROM monster");
+        Database::Result monresults = monquery.execute();
 
-        // load data for each of the monsters
-        for (size_t i = 0; i < rows; ++i) {
+        if (!monresults.empty()) {
+            clearOldTable();
             MonsterStruct temprecord;
-            temprecord.name = names[i];
-            temprecord.race = (Character::race_type)races[i];
-            temprecord.hitpoints = hitpoints[i];
-            temprecord.canselfheal = canheal[i];
-            temprecord.canattack = canattack[i];
-            temprecord.minsize = minsizes[i];
-            temprecord.maxsize = maxsizes[i];
-            temprecord.movement = Character::walk; // don't need to check for walk since it's default
 
-            if (movementtype[i] == "fly") {
-                temprecord.movement = Character::fly;
-            }
+            std::string movementType;
+            std::string scriptname;
+            uint32_t id;
 
-            if (movementtype[i] == "crawl") {
-                temprecord.movement = Character::crawl;
-            }
+            for (Database::ResultConstIterator itr = monresults.begin();
+                 itr != monresults.end(); ++itr) {
+                id = (*itr)["mob_monsterid"].as<uint32_t>();
+                temprecord.name = (*itr)["mob_name"].as<std::string>();
+                temprecord.race = (Character::race_type)((*itr)["mob_race"].as<uint16_t>());
+                temprecord.hitpoints = (*itr)["mob_hitpoints"].as<uint16_t>();
+                temprecord.canselfheal = (*itr)["mob_canhealself"].as<bool>();
+                temprecord.canattack = (*itr)["mob_canattack"].as<bool>();
+                temprecord.minsize = (*itr)["mob_minsize"].as<uint16_t>();
+                temprecord.maxsize = (*itr)["mob_maxsize"].as<uint16_t>();
 
-            if (!n_scriptname.var[i]) {
-                try {
-                    boost::shared_ptr<LuaMonsterScript> script(new LuaMonsterScript(scriptname[i]));
-                    temprecord.script = script;
-                } catch (ScriptException &e) {
-                    Logger::writeError("scripts", "Error while loading script: " + scriptname[i] + ":\n" + e.what() + "\n");
-                }
+                movementType = (*itr)["mob_movementtype"].as<std::string>();
 
-            }
-
-            // load attributes
-            std::string query = "SELECT mobattr_name, mobattr_min, mobattr_max FROM monster_attributes WHERE mobattr_monsterid=";
-            query += toString(ids[i]);
-
-            std::vector<std::string> attrname;
-            std::vector<uint16_t> minmax[2];
-
-            size_t rows2 = di::select_all<
-                           di::Varchar, di::Integer, di::Integer
-                           >(transaction, attrname, minmax[0], minmax[1], query);
-
-            for (size_t j = 0; j < rows2; ++j) {
-
-                if (attrname[j] == "luck") {
-                    temprecord.attributes.luck = std::make_pair(minmax[0][j], minmax[1][j]);
-                } else if (attrname[j] == "strength") {
-                    temprecord.attributes.strength = std::make_pair(minmax[0][j], minmax[1][j]);
-                } else if (attrname[j] == "dexterity") {
-                    temprecord.attributes.dexterity = std::make_pair(minmax[0][j], minmax[1][j]);
-                } else if (attrname[j] == "constitution") {
-                    temprecord.attributes.constitution = std::make_pair(minmax[0][j], minmax[1][j]);
-                } else if (attrname[j] == "agility") {
-                    temprecord.attributes.agility = std::make_pair(minmax[0][j], minmax[1][j]);
-                } else if (attrname[j] == "intelligence") {
-                    temprecord.attributes.intelligence = std::make_pair(minmax[0][j], minmax[1][j]);
-                } else if (attrname[j] == "perception") {
-                    temprecord.attributes.perception = std::make_pair(minmax[0][j], minmax[1][j]);
-                } else if (attrname[j] == "willpower") {
-                    temprecord.attributes.willpower = std::make_pair(minmax[0][j], minmax[1][j]);
-                } else if (attrname[j] == "essence") {
-                    temprecord.attributes.essence = std::make_pair(minmax[0][j], minmax[1][j]);
+                if (movementType == "walk") {
+                    temprecord.movement = Character::walk;
+                } else if (movementType == "fly") {
+                    temprecord.movement = Character::fly;
+                } else if (movementType == "crawl") {
+                    temprecord.movement = Character::crawl;
                 } else {
-                    std::cerr << "unknown attribute type: "<< attrname[j] << std::endl;
-                }
-            }
-
-            // load skills
-            std::vector<std::string> skillname;
-            minmax[0].clear();
-            minmax[1].clear();
-
-            query = "SELECT mobsk_name, mobsk_minvalue, mobsk_maxvalue FROM monster_skills WHERE mobsk_monsterid=";
-            query += toString(ids[i]);
-
-            rows2 = di::select_all<
-                    di::Varchar, di::Integer, di::Integer
-                    >(transaction, skillname, minmax[0], minmax[1], query);
-
-            for (size_t j = 0; j < rows2; ++j) {
-                temprecord.skills[skillname[j]] = std::make_pair(minmax[0][j], minmax[1][j]);
-            }
-
-            // load items
-            query = "SELECT mobit_position, mobit_itemid, mobit_mincount, mobit_maxcount, mobit_propability ";
-            query += "FROM monster_items WHERE mobit_monsterid=" + toString(ids[i]);
-
-            std::vector<std::string> positions;
-            std::vector<TYPE_OF_ITEM_ID> itemids;
-            std::vector<uint16_t> propability;
-            minmax[0].clear();
-            minmax[1].clear();
-
-            rows2 = di::select_all<
-                    di::Varchar, di::Integer, di::Integer, di::Integer, di::Integer
-                    >(transaction, positions, itemids, minmax[0], minmax[1], propability, query);
-
-            itemdef_t tempitem;
-            uint16_t temp;
-
-            for (size_t j = 0; j < rows2; ++j) {
-                tempitem.itemid = itemids[j];
-                tempitem.propability = propability[j];
-                tempitem.amount = std::make_pair(minmax[0][j], minmax[1][j]);
-
-                // get position
-                if (positions[j] == "head") {
-                    temp = 1;
-                } else if (positions[j] == "neck") {
-                    temp = 2;
-                } else if (positions[j] == "breast") {
-                    temp = 3;
-                } else if (positions[j] == "hands") {
-                    temp = 4;
-                } else if (positions[j] == "left hand") {
-                    temp = 5;
-                } else if (positions[j] == "right hand") {
-                    temp = 6;
-                } else if (positions[j] == "left finger") {
-                    temp = 7;
-                } else if (positions[j] == "right finger") {
-                    temp = 8;
-                } else if (positions[j] == "legs") {
-                    temp = 9;
-                } else if (positions[j] == "feet") {
-                    temp = 10;
-                } else if (positions[j] == "coat") {
-                    temp = 11;
-                } else if (positions[j] == "belt1") {
-                    temp = 12;
-                } else if (positions[j] == "belt2") {
-                    temp = 13;
-                } else if (positions[j] == "belt3") {
-                    temp = 14;
-                } else if (positions[j] == "belt4") {
-                    temp = 15;
-                } else if (positions[j] == "belt5") {
-                    temp = 16;
-                } else if (positions[j] == "belt6") {
-                    temp = 17;
-                } else {
-                    std::cerr << "specified invalid itemslot: " <<  temp << " for monster " << temprecord.name << std::endl;
-                    temp = 99;
+                    //TODO: Some proper error handling for invalid data
+                    temprecord.movement = Character::walk;
                 }
 
-                if (temp < 99 && CommonItems->find(tempitem.itemid, tempCommon)) {
-                    tempitem.AgeingSpeed = tempCommon.AgeingSpeed;
-                    temprecord.items[temp].push_back(tempitem);
-                } else if (temp < 99) {
-                    std::cerr << "couldn't find item: " <<  tempitem.itemid << " for monster " << temprecord.name << std::endl;
+                if (!(*itr)["script"].is_null()) {
+                    scriptname = (*itr)["script"].as<std::string>();
+
+                    if (!scriptname.empty()) {
+                        try {
+                            boost::shared_ptr<LuaMonsterScript> script(new LuaMonsterScript(scriptname));
+                            temprecord.script = script;
+                        } catch (ScriptException &e) {
+                            Logger::writeError("scripts", "Error while loading monster script: " + scriptname + ":\n" + e.what() + "\n");
+                        }
+                    }
                 }
 
-            }
+                SelectQuery monAttrQuery(connection);
+                monAttrQuery.addColumn("monster_attributes", "mobattr_name");
+                monAttrQuery.addColumn("monster_attributes", "mobattr_min");
+                monAttrQuery.addColumn("monster_attributes", "mobattr_max");
+                monAttrQuery.addEqualCondition("monster_attributes", "mobattr_monsterid", id);
+                monAttrQuery.addServerTable("monster_attributes");
 
-            m_table[ ids[i] ] = temprecord;
-            m_dataOK = true;
-        }
+                Database::Result monAttrResults = monAttrQuery.execute();
 
+                if (!monAttrResults.empty()) {
+                    std::string attribute;
+                    uint16_t minValue, maxValue;
+
+                    for (Database::ResultConstIterator itr2 = monAttrResults.begin();
+                         itr2 != monAttrResults.end(); ++itr2) {
+                        attribute = (*itr2)["mobattr_name"].as<std::string>();
+                        minValue = (*itr2)["mobattr_min"].as<uint16_t>();
+                        maxValue = (*itr2)["mobattr_max"].as<uint16_t>();
+
+                        if (attribute == "luck") {
+                            temprecord.attributes.luck = std::make_pair(minValue, maxValue);
+                        } else if (attribute == "strength") {
+                            temprecord.attributes.strength = std::make_pair(minValue, maxValue);
+                        } else if (attribute == "dexterity") {
+                            temprecord.attributes.dexterity = std::make_pair(minValue, maxValue);
+                        } else if (attribute == "constitution") {
+                            temprecord.attributes.constitution = std::make_pair(minValue, maxValue);
+                        } else if (attribute == "agility") {
+                            temprecord.attributes.agility = std::make_pair(minValue, maxValue);
+                        } else if (attribute == "intelligence") {
+                            temprecord.attributes.intelligence = std::make_pair(minValue, maxValue);
+                        } else if (attribute == "perception") {
+                            temprecord.attributes.perception = std::make_pair(minValue, maxValue);
+                        } else if (attribute == "willpower") {
+                            temprecord.attributes.willpower = std::make_pair(minValue, maxValue);
+                        } else if (attribute == "essence") {
+                            temprecord.attributes.essence = std::make_pair(minValue, maxValue);
+                        } else {
+                            std::cerr << "unknown attribute type: "<< attribute << std::endl;
+                        }
+                    } // for (Database::ResultConstIterator itr2 = monAttrResults...
+                } // if (!monAttrResults.empty())
+
+                SelectQuery monSkillQuery(connection);
+                monSkillQuery.addColumn("monster_skills", "mobsk_name");
+                monSkillQuery.addColumn("monster_skills", "mobsk_minvalue");
+                monSkillQuery.addColumn("monster_skills", "mobsk_maxvalue");
+                monSkillQuery.addEqualCondition("monster_skills", "mobsk_monsterid", id);
+                monSkillQuery.addServerTable("monster_skills");
+
+                Database::Result monSkillResults = monSkillQuery.execute();
+
+                if (!monSkillResults.empty()) {
+                    std::string skill;
+                    uint16_t minValue, maxValue;
+
+                    for (Database::ResultConstIterator itr2 = monSkillResults.begin();
+                         itr2 != monSkillResults.end(); ++itr2) {
+                        skill = (*itr2)["mobsk_name"].as<std::string>();
+                        minValue = (*itr2)["mobsk_minvalue"].as<uint16_t>();
+                        maxValue = (*itr2)["mobsk_maxvalue"].as<uint16_t>();
+
+                        temprecord.skills[skill] = std::make_pair(minValue, maxValue);
+                    } // for (Database::ResultConstIterator itr2 = monSkillResults...
+                } // if (!monSkillResults.empty())
+
+                SelectQuery monItemQuery(connection);
+                monItemQuery.addColumn("monster_items", "mobit_itemid");
+                monItemQuery.addColumn("monster_items", "mobit_position");
+                monItemQuery.addColumn("monster_items", "mobit_mincount");
+                monItemQuery.addColumn("monster_items", "mobit_maxcount");
+                monItemQuery.addColumn("monster_items", "mobit_propability");
+                monItemQuery.addEqualCondition("monster_items", "mobit_monsterid", id);
+                monItemQuery.addServerTable("monster_items");
+
+                Database::Result monItemResults = monItemQuery.execute();
+
+                if (!monItemResults.empty()) {
+                    itemdef_t tempitem;
+                    uint16_t location;
+                    std::string position;
+
+                    for (Database::ResultConstIterator itr2 = monItemResults.begin();
+                         itr2 != monItemResults.end(); ++itr2) {
+                        tempitem.itemid = (*itr2)["mobit_itemid"].as<TYPE_OF_ITEM_ID>();
+                        tempitem.propability = (*itr2)["mobit_propability"].as<uint16_t>();
+                        tempitem.amount = std::make_pair(
+                                              (*itr2)["mobit_mincount"].as<uint16_t>(),
+                                              (*itr2)["mobit_maxcount"].as<uint16_t>());
+
+                        position = (*itr2)["mobit_position"].as<std::string>();
+
+                        if (position == "head") {
+                            location = 1;
+                        } else if (position == "neck") {
+                            location = 2;
+                        } else if (position == "breast") {
+                            location = 3;
+                        } else if (position == "hands") {
+                            location = 4;
+                        } else if (position == "left hand") {
+                            location = 5;
+                        } else if (position == "right hand") {
+                            location = 6;
+                        } else if (position == "left finger") {
+                            location = 7;
+                        } else if (position == "right finger") {
+                            location = 8;
+                        } else if (position == "legs") {
+                            location = 9;
+                        } else if (position == "feet") {
+                            location = 10;
+                        } else if (position == "coat") {
+                            location = 11;
+                        } else if (position == "belt1") {
+                            location = 12;
+                        } else if (position == "belt2") {
+                            location = 13;
+                        } else if (position == "belt3") {
+                            location = 14;
+                        } else if (position == "belt4") {
+                            location = 15;
+                        } else if (position == "belt5") {
+                            location = 16;
+                        } else if (position == "belt6") {
+                            location = 17;
+                        } else {
+                            std::cerr << "specified invalid itemslot: " <<  position << " for monster " << temprecord.name << std::endl;
+                            location = 99;
+                        }
+
+                        CommonStruct tempCommon;
+
+                        if (location < 99 && CommonItems->find(tempitem.itemid, tempCommon)) {
+                            tempitem.AgeingSpeed = tempCommon.AgeingSpeed;
+                            temprecord.items[location].push_back(tempitem);
+                        } else if (location < 99) {
+                            std::cerr << "couldn't find item: " <<  tempitem.itemid << " for monster " << temprecord.name << std::endl;
+                        }
+                    } // for (Database::ResultConstIterator itr2 = monItemResults...
+                } // if (!monItemResults.empty())
+
+                m_table[id] = temprecord;
+                m_dataOK = true;
+            } // for (Database::ResultConstIterator itr = monresults...
+        } // if (!monresults.empty())
+
+        connection->commitTransaction();
 #ifdef DataConnect_DEBUG
         std::cout << "loaded " << m_table.size() << " monsters!" << std::endl;
 #endif
-
     } catch (std::exception &e) {
         std::cerr << "exception: " << e.what() << std::endl;
         m_dataOK = false;

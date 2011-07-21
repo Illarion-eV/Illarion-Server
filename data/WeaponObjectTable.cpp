@@ -1,29 +1,37 @@
-//  illarionserver - server for the game Illarion
-//  Copyright 2011 Illarion e.V.
-//
-//  This file is part of illarionserver.
-//
-//  illarionserver is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  illarionserver is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * Illarionserver - server for the game Illarion
+ * Copyright 2011 Illarion e.V.
+ *
+ * This file is part of Illarionserver.
+ *
+ * Illarionserver  is  free  software:  you can redistribute it and/or modify it
+ * under the terms of the  GNU  General  Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * Illarionserver is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY;  without  even  the  implied  warranty  of  MERCHANTABILITY  or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU  General Public License along with
+ * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
+ */
 
+#include "data/WeaponObjectTable.hpp"
 
-#include "db/ConnectionManager.hpp"
-#include <boost/shared_ptr.hpp>
-#include "World.hpp"
 #include <iostream>
-#include "WeaponObjectTable.hpp"
+#include <string>
+
+#include <boost/shared_ptr.hpp>
+
+#include "db/SelectQuery.hpp"
+#include "db/Result.hpp"
+
 #include "script/LuaWeaponScript.hpp"
+
 #include "Logger.hpp"
+#include "types.hpp"
 
 WeaponObjectTable::WeaponObjectTable() : m_dataOK(false) {
     reload();
@@ -36,53 +44,55 @@ void WeaponObjectTable::reload() {
 #endif
 
     try {
-        ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
+        Database::SelectQuery query;
+        query.addColumn("weapon", "wp_itemid");
+        query.addColumn("weapon", "wp_attack");
+        query.addColumn("weapon", "wp_defence");
+        query.addColumn("weapon", "wp_accuracy");
+        query.addColumn("weapon", "wp_range");
+        query.addColumn("weapon", "wp_weapontype");
+        query.addColumn("weapon", "wp_ammunitiontype");
+        query.addColumn("weapon", "wp_actionpoints");
+        query.addColumn("weapon", "wp_magicdisturbance");
+        query.addColumn("weapon", "wp_poison");
+        query.addColumn("weapon", "wp_fightingscript");
+        query.addServerTable("weapon");
 
-        std::vector<TYPE_OF_ITEM_ID> ids;
-        std::vector<TYPE_OF_ATTACK> attack;
-        std::vector<TYPE_OF_DEFENCE> defence;
-        std::vector<TYPE_OF_ACCURACY> accuracy;
-        std::vector<TYPE_OF_RANGE> range;
-        std::vector<TYPE_OF_WEAPONTYPE> weapontype;
-        std::vector<TYPE_OF_AMMUNITIONTYPE> ammunitiontype;
-        std::vector<TYPE_OF_ACTIONPOINTS> actionpoints;
-        std::vector<TYPE_OF_MAGICDISTURBANCE> magicdisturbance;
-        std::vector<TYPE_OF_POISONSTRENGTH> poison;
-        std::vector<std::string> scriptname;
-        di::isnull_vector<std::vector<std::string> > n_scriptname(scriptname);
+        Database::Result results = query.execute();
 
-        size_t rows = di::select_all<
-                      di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Varchar
-                      >(transaction, ids, attack, defence, accuracy, range, weapontype,
-                        ammunitiontype, actionpoints, magicdisturbance, poison, n_scriptname,
-                        "SELECT wp_itemid, wp_attack, wp_defence, wp_accuracy, wp_range, wp_weapontype,"
-                        "wp_ammunitiontype, wp_actionpoints, wp_magicdisturbance, wp_poison, wp_fightingscript FROM weapon");
-
-        if (rows > 0) {
+        if (!results.empty()) {
             clearOldTable();
+            WeaponStruct temprecord;
+            std::string scriptname;
+            TYPE_OF_ITEM_ID weaponId;
 
-            for (size_t i = 0; i < rows; ++i) {
-                WeaponStruct temprecord;
-                temprecord.Attack = attack[i];
-                temprecord.Defence = defence[i];
-                temprecord.Accuracy = accuracy[i];
-                temprecord.Range = range[i];
-                temprecord.WeaponType = weapontype[i];
-                temprecord.AmmunitionType = ammunitiontype[i];
-                temprecord.ActionPoints = actionpoints[i];
-                temprecord.MagicDisturbance = magicdisturbance[i];
-                temprecord.PoisonStrength = poison[i];
+            for (Database::ResultConstIterator itr = results.begin();
+                 itr != results.end(); ++itr) {
+                weaponId = (*itr)["wp_itemid"].as<TYPE_OF_ITEM_ID>();
+                temprecord.Attack = (TYPE_OF_ATTACK)((*itr)["wp_attack"].as<uint16_t>());
+                temprecord.Defence = (TYPE_OF_DEFENCE)((*itr)["wp_defence"].as<uint16_t>());
+                temprecord.Accuracy = (TYPE_OF_ACCURACY)((*itr)["wp_accuracy"].as<uint16_t>());
+                temprecord.Range = (TYPE_OF_RANGE)((*itr)["wp_range"].as<uint16_t>());
+                temprecord.WeaponType = (TYPE_OF_WEAPONTYPE)((*itr)["wp_weapontype"].as<uint16_t>());
+                temprecord.AmmunitionType = (TYPE_OF_AMMUNITIONTYPE)((*itr)["wp_ammunitiontype"].as<uint16_t>());
+                temprecord.ActionPoints = (TYPE_OF_ACTIONPOINTS)((*itr)["wp_actionpoints"].as<uint16_t>());
+                temprecord.MagicDisturbance = (TYPE_OF_MAGICDISTURBANCE)((*itr)["wp_magicdisturbance"].as<uint16_t>());
+                temprecord.PoisonStrength = (TYPE_OF_POISONSTRENGTH)((*itr)["wp_poison"].as<uint16_t>());
 
-                if (!n_scriptname.var[i]) {
-                    try {
-                        boost::shared_ptr<LuaWeaponScript> tmpScript(new LuaWeaponScript(scriptname[i]));
-                        temprecord.script = tmpScript;
-                    } catch (ScriptException &e) {
-                        Logger::writeError("scripts", "Error while loading script: " + scriptname[i] + ":\n" + e.what() + "\n");
+                if (!(*itr)["wp_fightingscript"].is_null()) {
+                    scriptname = (*itr)["wp_fightingscript"].as<std::string>();
+
+                    if (!scriptname.empty()) {
+                        try {
+                            boost::shared_ptr<LuaWeaponScript> tmpScript(new LuaWeaponScript(scriptname));
+                            temprecord.script = tmpScript;
+                        } catch (ScriptException &e) {
+                            Logger::writeError("scripts", "Error while loading weapon script: " + scriptname + ":\n" + e.what() + "\n");
+                        }
                     }
                 }
 
-                m_table[ ids[i] ] = temprecord;
+                m_table[weaponId] = temprecord;
             }
 
             m_dataOK = true;

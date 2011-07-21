@@ -19,8 +19,8 @@
 
 # Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.50)
-AC_INIT(Item.hpp)
-AM_INIT_AUTOMAKE(illarion_server, 0.1.0)
+AC_INIT(Illarion Server, 0.9, http://illarion.org)
+AM_INIT_AUTOMAKE(illarion_server, 0.9)
 AC_CONFIG_HEADERS(config.h)
 
 # Checks for programs.

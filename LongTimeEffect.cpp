@@ -1,33 +1,44 @@
-//  illarionserver - server for the game Illarion
-//  Copyright 2011 Illarion e.V.
-//
-//  This file is part of illarionserver.
-//
-//  illarionserver is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  illarionserver is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * Illarionserver - server for the game Illarion
+ * Copyright 2011 Illarion e.V.
+ *
+ * This file is part of Illarionserver.
+ *
+ * Illarionserver  is  free  software:  you can redistribute it and/or modify it
+ * under the terms of the  GNU  General  Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * Illarionserver is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY;  without  even  the  implied  warranty  of  MERCHANTABILITY  or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU  General Public License along with
+ * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-
-#include "db/ConnectionManager.hpp"
 #include "LongTimeEffect.hpp"
-#include "Character.hpp"
-#include "Player.hpp"
-#include "World.hpp"
+
+#include <sstream>
+#include <iostream>
+
+#include <boost/cstdint.hpp>
+
 #include "data/LongTimeEffectTable.hpp"
-#include "TableStructs.hpp"
+
+#include "db/Connection.hpp"
+#include "db/ConnectionManager.hpp"
+#include "db/InsertQuery.hpp"
+
 #include "script/LuaLongTimeEffectScript.hpp"
 
-extern LongTimeEffectTable *LongTimeEffects;
+#include "Character.hpp"
+#include "Player.hpp"
+#include "TableStructs.hpp"
+#include "World.hpp"
 
+extern LongTimeEffectTable *LongTimeEffects;
 
 LongTimeEffect::LongTimeEffect(uint16_t effectId, uint32_t nextCalled) : _effectId(effectId), _effectName(""),  _nextCalled(nextCalled), _numberCalled(0), _lastCalled(0), _firstadd(true) {
     LongTimeEffectStruct effect;
@@ -97,21 +108,47 @@ bool LongTimeEffect::findValue(std::string name, uint32_t &ret) {
 }
 
 bool LongTimeEffect::save(uint32_t playerid) {
-    ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
+    using namespace Database;
+    PConnection connection = ConnectionManager::getInstance().getConnection();
 
     try {
-        di::insert(transaction, static_cast<uint32_t>(playerid), static_cast<uint16_t>(_effectId), static_cast<int32_t>(_nextCalled), static_cast<uint32_t>(_lastCalled),static_cast<uint32_t>(_numberCalled), "INSERT INTO playerlteffects (plte_playerid, plte_effectid, plte_nextcalled, plte_lastcalled, plte_numberCalled)");
+        connection->beginTransaction();
 
-        for (VALUETABLE::iterator it = _values.begin(); it != _values.end(); ++it) {
-            std::cout<<"inserting effektdata("<<_effectId<<") name: "<<it->first<<" value: "<<static_cast<uint32_t>(it->second)<<std::endl;
-            di::insert(transaction, static_cast<uint32_t>(playerid), static_cast<uint16_t>(_effectId), it->first, static_cast<uint32_t>(it->second), "INSERT INTO playerlteffectvalues (pev_playerid, pev_effectid, pev_name, pev_value)");
+        {
+            InsertQuery insQuery(connection);
+            insQuery.setServerTable("playerlteffects");
+            const InsertQuery::columnIndex userColumn = insQuery.addColumn("plte_playerid");
+            const InsertQuery::columnIndex effectColumn = insQuery.addColumn("plte_effectid");
+            const InsertQuery::columnIndex nextCalledColumn = insQuery.addColumn("plte_nextcalled");
+            const InsertQuery::columnIndex lastCalledColumn = insQuery.addColumn("plte_lastcalled");
+            const InsertQuery::columnIndex numberCalledColumn = insQuery.addColumn("plte_numbercalled");
+            insQuery.addValue(userColumn, playerid);
+            insQuery.addValue(effectColumn, _effectId);
+            insQuery.addValue(nextCalledColumn, _nextCalled);
+            insQuery.addValue(lastCalledColumn, _lastCalled);
+            insQuery.addValue(numberCalledColumn, _numberCalled);
+            insQuery.execute();
         }
 
-        transaction.commit();
+        {
+            InsertQuery insQuery(connection);
+            insQuery.setServerTable("playerlteffectvalues");
+            const InsertQuery::columnIndex userColumn = insQuery.addColumn("pev_playerid");
+            const InsertQuery::columnIndex effectColumn = insQuery.addColumn("pev_effectid");
+            const InsertQuery::columnIndex nameColumn = insQuery.addColumn("pev_name");
+            insQuery.addColumn("pev_value");
+
+            insQuery.addValues<const char *, uint32_t, ltstr >(nameColumn, _values, InsertQuery::keysAndValues);
+            insQuery.addValues(userColumn, playerid, InsertQuery::FILL);
+            insQuery.addValues(effectColumn, _effectId, InsertQuery::FILL);
+            insQuery.execute();
+        }
+
+        connection->commitTransaction();
         return true;
     } catch (std::exception &e) {
         std::cerr << "caught exception during saving lt effects: " << e.what() << std::endl;
-        transaction.rollback();
+        connection->rollbackTransaction();
         return false;
     }
 

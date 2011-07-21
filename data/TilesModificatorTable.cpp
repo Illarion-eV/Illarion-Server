@@ -1,25 +1,35 @@
-//  illarionserver - server for the game Illarion
-//  Copyright 2011 Illarion e.V.
-//
-//  This file is part of illarionserver.
-//
-//  illarionserver is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  illarionserver is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * Illarionserver - server for the game Illarion
+ * Copyright 2011 Illarion e.V.
+ *
+ * This file is part of Illarionserver.
+ *
+ * Illarionserver  is  free  software:  you can redistribute it and/or modify it
+ * under the terms of the  GNU  General  Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * Illarionserver is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY;  without  even  the  implied  warranty  of  MERCHANTABILITY  or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU  General Public License along with
+ * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
+ */
+/*
+ * TODO: The handling of the tile modificators is extremly unsafe. Errors in the
+ *       database will corrupt the data easily und uncontrolable.
+ */
 
+#include "data/TilesModificatorTable.hpp"
 
-#include "db/ConnectionManager.hpp"
-#include "TilesModificatorTable.hpp"
 #include <iostream>
+
+#include "db/SelectQuery.hpp"
+#include "db/Result.hpp"
+
+#include "types.hpp"
 
 TilesModificatorTable::TilesModificatorTable() : m_dataOK(false) {
     reload();
@@ -31,35 +41,32 @@ void TilesModificatorTable::reload() {
 #endif
 
     try {
-        ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
+        Database::SelectQuery query;
+        query.addColumn("tilesmodificators", "tim_itemid");
+        query.addColumn("tilesmodificators", "tim_isnotpassable");
+        query.addColumn("tilesmodificators", "tim_isnottransparent");
+        query.addColumn("tilesmodificators", "tim_isnotpenetrateable");
+        query.addColumn("tilesmodificators", "tim_specialitem");
+        query.addColumn("tilesmodificators", "tim_groundlevel");
+        query.addColumn("tilesmodificators", "tim_makepassable");
+        query.addServerTable("tilesmodificators");
 
-        std::vector<TYPE_OF_ITEM_ID> ids;
-        std::vector<uint8_t> notpassable;
-        std::vector<uint8_t> nottransparent;
-        std::vector<uint8_t> notpenetrateable;
-        std::vector<uint8_t> specialitem;
-        std::vector<uint8_t> groundlevel;
-        std::vector<uint8_t> makepassable;
+        Database::Result results = query.execute();
 
-        size_t rows = di::select_all<
-                      di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Integer
-                      >(transaction, ids, notpassable, nottransparent, notpenetrateable, specialitem, groundlevel, makepassable,
-                        "SELECT tim_itemid, tim_isnotpassable, tim_isnottransparent, tim_isnotpenetrateable,"
-                        "tim_specialitem, tim_groundlevel, tim_makepassable FROM tilesmodificators");
-
-        if (rows > 0) {
+        if (!results.empty()) {
             clearOldTable();
             TilesModificatorStruct temprecord;
 
-            for (size_t i = 0; i < rows; ++i) {
-                temprecord.Modificator = groundlevel[i];
-                temprecord.Modificator |= makepassable[i] ? FLAG_MAKEPASSABLE : 0;
-                temprecord.Modificator |= notpassable[i] ? FLAG_PASSABLE : 0;
-                temprecord.Modificator |= nottransparent[i] ? FLAG_TRANSPARENT : 0;
-                temprecord.Modificator |= notpenetrateable[i] ? FLAG_TRANSPARENT : 0;
-                temprecord.Modificator |= specialitem[i]? FLAG_SPECIALITEM : 0;
+            for (Database::ResultConstIterator itr = results.begin();
+                 itr != results.end(); ++itr) {
+                temprecord.Modificator = (uint8_t)((*itr)["tim_groundlevel"].as<uint16_t>());
+                temprecord.Modificator |= (*itr)["tim_isnotpassable"].as<bool>() ? FLAG_PASSABLE : 0;
+                temprecord.Modificator |= (*itr)["tim_isnottransparent"].as<bool>() ? FLAG_TRANSPARENT : 0;
+                temprecord.Modificator |= (*itr)["tim_isnotpenetrateable"].as<bool>() ? FLAG_TRANSPARENT : 0;
+                temprecord.Modificator |= (*itr)["tim_specialitem"].as<bool>() ? FLAG_SPECIALITEM : 0;
+                temprecord.Modificator |= (*itr)["tim_makepassable"].as<bool>() ? FLAG_MAKEPASSABLE : 0;
 
-                m_table[ ids[i] ] = temprecord;
+                m_table[(*itr)["tim_itemid"].as<TYPE_OF_ITEM_ID>()] = temprecord;
             }
 
             m_dataOK = true;

@@ -28,6 +28,7 @@
 #include "data/NaturalArmorTable.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
+#include "Logger.hpp"
 #include "fuse_ptr.hpp"
 
 extern CommonObjectTable *CommonItems;
@@ -78,10 +79,10 @@ bool World::createDynamicNPC(std::string name, Character::race_type type, positi
                 boost::shared_ptr<LuaNPCScript> script(new LuaNPCScript(scriptname, newNPC));
                 newNPC->setScript(script);
             } catch (ScriptException &e) {
-                std::cerr << "World::createDynamicNPC: Error while loading dynamic NPC script: " << scriptname << " : " << e.what() << std::endl;
+                Logger::writeError("scripts", "World::createDynamicNPC: Error while loading dynamic NPC script: " + scriptname + ":\n" + std::string(e.what()) + "\n");
             }
         } catch (NoSpace &s) {
-            std::cerr << "World::createDynamicNPC: No space available for dynamic NPC: " << name << " : " << s.what() << std::endl;
+            Logger::writeError("scripts", "World::createDynamicNPC: No space available for dynamic NPC: " + name + ":\n" + std::string(s.what()) + "\n");
         }
 
         return true;
@@ -446,7 +447,7 @@ bool World::erase(ScriptItem item, int amount) {
 
             return true;
         } else {
-            std::cerr<<"World::erase: Field ("<<item.pos.x<<", "<<item.pos.y<<", "<<item.pos.z<<") was not found!"<<std::endl;
+            logMissingField("erase", item.pos);
             return false;
         }
     } else if (item.type == ScriptItem::it_container) {
@@ -501,7 +502,7 @@ bool World::increase(ScriptItem item, short int count) {
 
             return true;
         } else {
-            std::cerr<<"World::increase: Field ("<<item.pos.x<<", "<<item.pos.y<<", "<<item.pos.z<<") was not found!"<<std::endl;
+            logMissingField("increase", item.pos);
             return false;
         }
     }
@@ -563,12 +564,14 @@ bool World::swap(ScriptItem item, TYPE_OF_ITEM_ID newitem, unsigned short int ne
                         sendSwapItemOnMapToAllVisibleCharacter(it.id, item.pos.x, item.pos.y, item.pos.z, dummy, field);
                     }
                 } else {
-                    std::cerr<<"World::swap: Swapping item on Field ("<<item.pos.x<<", "<<item.pos.y<<", "<<item.pos.z<<") failed!"<<std::endl;
+                    std::stringstream ss;
+                    ss << "World::swap: Swapping item on Field (" << item.pos.x << ", " << item.pos.y << ", " << item.pos.z << ") failed!\n";
+                    Logger::writeError("scripts", ss.str());
                     return false;
                 }
             }
         } else {
-            std::cerr<<"World::swap: Field ("<<item.pos.x<<", "<<item.pos.y<<", "<<item.pos.z<<") was not found!"<<std::endl;
+            logMissingField("swap", item.pos);
             return false;
         }
     }
@@ -616,11 +619,13 @@ ScriptItem World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, pos
 
             return sItem;
         } else {
-            std::cerr<<"World::createFromId: Item "<<id<<" was not found in CommonItems!"<<std::endl;
+            std::stringstream ss;
+            ss << "World::createFromId: Item " << id << " was not found in CommonItems!\n";
+            Logger::writeError("scripts", ss.str());
             return sItem;
         }
     } else {
-        std::cerr<<"World::createFromId: Field ("<<pos.x<<", "<<pos.y<<", "<<pos.z<<") was not found!"<<std::endl;
+        logMissingField("createFromId", pos);
         return sItem;
     }
 
@@ -643,7 +648,7 @@ bool World::createFromItem(ScriptItem item, position pos, bool allways) {
 
         return true;
     } else {
-        std::cerr<<"World::createFromItem: Field ("<<pos.x<<", "<<pos.y<<", "<<pos.z<<") was not found!"<<std::endl;
+        logMissingField("createFromItem", pos);
         return false;
     }
 
@@ -667,11 +672,13 @@ fuse_ptr<Character> World::createMonster(unsigned short id, position pos, short 
             return fuse_ptr<Character>(newMonster);
 
         } catch (Monster::unknownIDException &) {
-            std::cerr << "World::createMonster: Failed to create monster with unknown id (" << id << ")!" << std::endl;
+            std::stringstream ss;
+            ss << "World::createMonster: Failed to create monster with unknown id " << id << "!\n";
+            Logger::writeError("scripts", ss.str());
             return fuse_ptr<Character>();
         }
     } else {
-        std::cerr<<"World::createMonster: Field ("<<pos.x<<", "<<pos.y<<", "<<pos.z<<") was not found!"<<std::endl;
+        logMissingField("createMonster", pos);
         return fuse_ptr<Character>();
     }
 
@@ -693,7 +700,7 @@ bool World::isItemOnField(position pos) {
         Item dummy;
         return field->ViewTopItem(dummy);
     } else {
-        std::cerr<<"World::isItemOnField: Field ("<<pos.x<<", "<<pos.y<<", "<<pos.z<<") was not found!"<<std::endl;
+        logMissingField("isItemOnField", pos);
     }
 
     return false;
@@ -713,7 +720,7 @@ ScriptItem World::getItemOnField(position pos) {
             return item;
         }
     } else {
-        std::cerr<<"World::getItemOnField: Field ("<<pos.x<<", "<<pos.y<<", "<<pos.z<<") was not found!"<<std::endl;
+        logMissingField("getItemOnField", pos);
     }
 
     return item;
@@ -824,3 +831,10 @@ void World::sendMonitoringMessage(std::string msg, unsigned char id) {
     boost::shared_ptr<BasicServerCommand>cmd(new BBMessageTC(msg, id));
     monitoringClientList->sendCommand(cmd);
 }
+
+void World::logMissingField(const std::string &function, const position &field) {
+    std::stringstream ss;
+    ss << "World::" << function << ": Field (" << field.x << ", " << field.y << ", " << field.z << ") was not found!\n";
+    Logger::writeError("scripts", ss.str());
+}
+

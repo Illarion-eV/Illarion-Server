@@ -1,50 +1,49 @@
-//  illarionserver - server for the game Illarion
-//  Copyright 2011 Illarion e.V.
-//
-//  This file is part of illarionserver.
-//
-//  illarionserver is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  illarionserver is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
-
-
-#include "db/ConnectionManager.hpp"
+/*
+ * Illarionserver - server for the game Illarion
+ * Copyright 2011 Illarion e.V.
+ *
+ * This file is part of Illarionserver.
+ *
+ * Illarionserver  is  free  software:  you can redistribute it and/or modify it
+ * under the terms of the  GNU  General  Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * Illarionserver is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY;  without  even  the  implied  warranty  of  MERCHANTABILITY  or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU  General Public License along with
+ * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "World.hpp"
-//#include "netinterface/ClientCommands.hpp"
-#include "data/WeaponObjectTable.hpp"
-#include "data/TilesTable.hpp"
-#include "Random.hpp"
-#include "SchedulerTaskClasses.hpp"
-#include "data/MonsterTable.hpp"
-#include "TableStructs.hpp"
-#include "data/CommonObjectTable.hpp"
-#include "Logger.hpp"
-//#include "MonitoringClients.hpp"
-//#include "mtprotocol/CServerCommands.hpp"
-#include "netinterface/BasicCommand.hpp"
-#include "LongTimeAction.hpp"
-#include "netinterface/NetInterface.hpp"
-#include "netinterface/protocol/ServerCommands.hpp"
-#include "PlayerManager.hpp"
-#include "WaypointList.hpp"
-
-
-
 
 #include <dirent.h>
-#include <sys/types.h>
 #include <regex.h>
 #include <algorithm>
+#include <sys/types.h>
+
+#include "data/CommonObjectTable.hpp"
+#include "data/MonsterTable.hpp"
+#include "data/TilesTable.hpp"
+#include "data/WeaponObjectTable.hpp"
+
+#include "db/SelectQuery.hpp"
+#include "db/Result.hpp"
+
+#include "netinterface/BasicCommand.hpp"
+#include "netinterface/NetInterface.hpp"
+#include "netinterface/protocol/ServerCommands.hpp"
+
+#include "Logger.hpp"
+#include "LongTimeAction.hpp"
+#include "PlayerManager.hpp"
+#include "Random.hpp"
+#include "SchedulerTaskClasses.hpp"
+#include "TableStructs.hpp"
+#include "WaypointList.hpp"
 
 //#define World_DEBUG
 // a map storing configuration options from a config file...
@@ -727,29 +726,39 @@ bool World::initRespawns() {
     // read spawnpoints from db
 
     try {
-        ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
+        Database::SelectQuery query;
+        query.addColumn("spawnpoint", "spp_id");
+        query.addColumn("spawnpoint", "spp_x");
+        query.addColumn("spawnpoint", "spp_y");
+        query.addColumn("spawnpoint", "spp_z");
+        query.addColumn("spawnpoint", "spp_range");
+        query.addColumn("spawnpoint", "spp_spawnrange");
+        query.addColumn("spawnpoint", "spp_minspawntime");
+        query.addColumn("spawnpoint", "spp_maxspawntime");
+        query.addColumn("spawnpoint", "spp_spawnall");
+        query.addServerTable("spawnpoint");
 
-        std::vector<TYPE_OF_ITEM_ID> ids;
-        std::vector<int> pos[3];
-        std::vector<uint16_t> range;
-        std::vector<uint16_t> spawnrange;
-        std::vector<uint16_t> min_spawntime;
-        std::vector<uint16_t> max_spawntime;
-        std::vector<bool> spawnall;
+        Database::Result results = query.execute();
 
-        size_t rows = di::select_all<
-                      di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Boolean
-                      >(transaction, ids, pos[0], pos[1], pos[2], range, spawnrange, min_spawntime, max_spawntime,spawnall,
-                        "SELECT spp_id, spp_x, spp_y, spp_z, spp_range, spp_spawnrange, spp_minspawntime, spp_maxspawntime, spp_spawnall FROM spawnpoint");
+        if (!results.empty()) {
+            uint32_t spawnId;
 
-        if (rows > 0) {
-            for (size_t i = 0; i < rows; ++i) {
-                position the_pos(pos[0][i], pos[1][i], pos[2][i]);
-                SpawnPoint newSpawn(the_pos , range[i], spawnrange[i], min_spawntime[i], max_spawntime[i], spawnall[i]);
-                Logger::writeMessage("World_Inits", "load spawnpoint: " + Logger::toString(ids[i]));
-                newSpawn.load(ids[i]);
+            for (Database::ResultConstIterator itr = results.begin();
+                 itr != results.end(); ++itr) {
+                spawnId = (*itr)["spp_id"].as<uint32_t>();
+                position the_pos((*itr)["spp_x"].as<int32_t>(),
+                                 (*itr)["spp_y"].as<int32_t>(),
+                                 (*itr)["spp_z"].as<int32_t>());
+                SpawnPoint newSpawn(the_pos,
+                                    (*itr)["spp_range"].as<int>(),
+                                    (*itr)["spp_spawnrange"].as<uint16_t>(),
+                                    (*itr)["spp_minspawntime"].as<uint16_t>(),
+                                    (*itr)["spp_maxspawntime"].as<uint16_t>(),
+                                    (*itr)["spp_spawnall"].as<bool>());
+                Logger::writeMessage("World_Inits", "load spawnpoint: " + Logger::toString(spawnId));
+                newSpawn.load(spawnId);
                 SpawnList.push_back(newSpawn);
-                Logger::writeMessage("World_Inits", "added spawnpoint " + Logger::toString(pos[0][i]) + "," + Logger::toString(pos[1][i]) + "," + Logger::toString(pos[2][i]));
+                Logger::writeMessage("World_Inits", "added spawnpoint " + Logger::toString(the_pos.x) + "," + Logger::toString(the_pos.y) + "," + Logger::toString(the_pos.z));
             }
 
         } else {

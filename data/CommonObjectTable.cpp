@@ -1,29 +1,34 @@
-//  illarionserver - server for the game Illarion
-//  Copyright 2011 Illarion e.V.
-//
-//  This file is part of illarionserver.
-//
-//  illarionserver is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  illarionserver is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * Illarionserver - server for the game Illarion
+ * Copyright 2011 Illarion e.V.
+ *
+ * This file is part of Illarionserver.
+ *
+ * Illarionserver  is  free  software:  you can redistribute it and/or modify it
+ * under the terms of the  GNU  General  Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * Illarionserver is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY;  without  even  the  implied  warranty  of  MERCHANTABILITY  or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU  General Public License along with
+ * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
+ */
 
+#include "data/CommonObjectTable.hpp"
 
-#include "db/ConnectionManager.hpp"
-#include "CommonObjectTable.hpp"
 #include <iostream>
-#include "World.hpp"
+
+#include "db/SelectQuery.hpp"
+#include "db/Result.hpp"
+
 #include "script/LuaItemScript.hpp"
-#include <boost/shared_ptr.hpp>
+
 #include "Logger.hpp"
+#include "World.hpp"
 
 CommonObjectTable::CommonObjectTable() : m_dataOK(false) {
     reload();
@@ -64,62 +69,58 @@ void CommonObjectTable::reload() {
 #endif
 
     try {
-        ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
+        Database::SelectQuery query;
+        query.addColumn("common", "com_itemid");
+        query.addColumn("common", "com_volume");
+        query.addColumn("common", "com_weight");
+        query.addColumn("common", "com_agingspeed");
+        query.addColumn("common", "com_objectafterrot");
+        query.addColumn("common", "com_stackable");
+        query.addColumn("common", "com_rotsininventory");
+        query.addColumn("common", "com_script");
+        query.addColumn("common", "com_brightness");
+        query.addColumn("common", "com_worth");
+        query.addServerTable("common");
 
-        std::vector<TYPE_OF_ITEM_ID> ids;
-        std::vector<TYPE_OF_WEIGHT> weights;
-        std::vector<TYPE_OF_VOLUME> volumes;
-        std::vector<TYPE_OF_AGEINGSPEED> agingspeeds;
-        std::vector<TYPE_OF_ITEM_ID> objectafterrot;
-        std::vector<bool> isStackable;
-        std::vector<bool> rotsininventory;
-        std::vector<TYPE_OF_BRIGHTNESS> brightnesses;
-        std::vector<TYPE_OF_WORTH> worth;
-        std::vector<std::string> scriptname;
-        di::isnull_vector<std::vector<std::string> > n_scriptname(scriptname);
+        Database::Result results = query.execute();
 
         std::map<TYPE_OF_ITEM_ID, bool> assigned; // map item id to whether an infinite rot has been assigned
         std::map<TYPE_OF_ITEM_ID, bool> visited;  // map item id to whether it has been visited already in calcInfiniteRot
 
-        size_t rows = di::select_all<
-                      di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Varchar, di::Boolean, di::Boolean, di::Integer, di::Integer
-                      >(transaction, ids, volumes, weights, agingspeeds, objectafterrot, n_scriptname, isStackable, rotsininventory, brightnesses, worth,
-                        "SELECT com_itemid, com_volume, com_weight, com_agingspeed, com_objectafterrot, com_script, com_stackable, com_rotsininventory, com_brightness, com_worth FROM common");
-
-        if (rows > 0) {
+        if (!results.empty()) {
             clearOldTable();
+            CommonStruct temprecord;
 
-            for (size_t i = 0; i < rows; ++i) {
-                CommonStruct temprecord;
-                temprecord.id = ids[i];
-                temprecord.Weight = weights[i];
-                temprecord.Volume = volumes[i];
-                temprecord.AgeingSpeed = agingspeeds[i];
-                temprecord.ObjectAfterRot = objectafterrot[i];
-                temprecord.isStackable = isStackable[i];
-                temprecord.rotsInInventory = rotsininventory[i];
-                temprecord.Brightness = brightnesses[i];
-                temprecord.Worth = worth[i];
+            for (Database::ResultConstIterator itr = results.begin();
+                 itr != results.end(); ++itr) {
 
-                if (!n_scriptname.var[i]) {
+                TYPE_OF_ITEM_ID itemID;
+                itemID = (TYPE_OF_ITEM_ID)((*itr)["com_itemid"].as<int16_t>());
+                temprecord.id = itemID;
+                temprecord.Weight = (TYPE_OF_WEIGHT)((*itr)["com_weight"].as<int16_t>());
+                temprecord.Volume = (TYPE_OF_VOLUME)((*itr)["com_volume"].as<int16_t>());
+                temprecord.AgeingSpeed = (TYPE_OF_AGEINGSPEED)((*itr)["com_agingspeed"].as<int16_t>());
+                temprecord.ObjectAfterRot = (TYPE_OF_ITEM_ID)(*itr)["com_objectafterrot"].as<TYPE_OF_ITEM_ID>();
+                temprecord.isStackable = (*itr)["com_stackable"].as<bool>();
+                temprecord.rotsInInventory = (*itr)["com_rotsininventory"].as<bool>();
+                temprecord.Brightness = (TYPE_OF_BRIGHTNESS)((*itr)["com_brightness"].as<int16_t>());
+                temprecord.Worth = (TYPE_OF_WORTH)((*itr)["com_worth"].as<int16_t>());
+
+                if (!((*itr)["com_script"].is_null())) {
+                    std::string scriptname = ((*itr)["com_script"].as<std::string>());
+
                     try {
-                        boost::shared_ptr<LuaItemScript> tmpScript(new LuaItemScript(scriptname[i] , temprecord));
-                        m_scripttable[ ids[i] ] = tmpScript;
+                        boost::shared_ptr<LuaItemScript> tmpScript(new LuaItemScript(scriptname, temprecord));
+                        m_scripttable[itemID] = tmpScript;
                     } catch (ScriptException &e) {
-                        Logger::writeError("scripts", "Error while loading script: " + scriptname[i] + ":\n" + e.what() + "\n");
+                        Logger::writeError("scripts", "Error while loading item script: " + scriptname + ":\n" + e.what() + "\n");
                     }
                 }
 
-                m_table[ ids[i] ] = temprecord;
-                visited.insert(std::pair<TYPE_OF_ITEM_ID, bool>(ids[i],false));
-                assigned.insert(std::pair<TYPE_OF_ITEM_ID, bool>(ids[i],false));
-            }
+                m_table[itemID] = temprecord;
 
-            // calculate infinite rot for map export
-            for (size_t i = 0; i < rows; ++i) {
-                if (!assigned[ ids[i] ]) {
-                    calcInfiniteRot(ids[i], visited, assigned);
-                }
+                visited.insert(std::pair<TYPE_OF_ITEM_ID, bool>(itemID,false));
+                assigned.insert(std::pair<TYPE_OF_ITEM_ID, bool>(itemID,false));
             }
 
             m_dataOK = true;

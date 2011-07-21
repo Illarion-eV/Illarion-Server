@@ -14,4 +14,8 @@ autom4te.cache
 missing
 depcomp
 .*
+*.*~
+*.log
 !.gitignore
+
+/Debug

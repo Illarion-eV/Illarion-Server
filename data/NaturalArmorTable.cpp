@@ -1,25 +1,29 @@
-//  illarionserver - server for the game Illarion
-//  Copyright 2011 Illarion e.V.
-//
-//  This file is part of illarionserver.
-//
-//  illarionserver is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  illarionserver is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * Illarionserver - server for the game Illarion
+ * Copyright 2011 Illarion e.V.
+ *
+ * This file is part of Illarionserver.
+ *
+ * Illarionserver  is  free  software:  you can redistribute it and/or modify it
+ * under the terms of the  GNU  General  Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * Illarionserver is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY;  without  even  the  implied  warranty  of  MERCHANTABILITY  or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU  General Public License along with
+ * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
+ */
 
+#include "data/NaturalArmorTable.hpp"
 
-#include "db/ConnectionManager.hpp"
-#include "NaturalArmorTable.hpp"
-#include <iostream>
+#include "db/SelectQuery.hpp"
+#include "db/Result.hpp"
+
+#include "types.hpp"
 
 NaturalArmorTable::NaturalArmorTable() : m_dataOK(false) {
     reload();
@@ -35,31 +39,31 @@ void NaturalArmorTable::reload() {
 #endif
 
     try {
-        //LAden einer Connection
-        ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
+        Database::SelectQuery query;
+        query.addColumn("naturalarmor", "nar_race");
+        query.addColumn("naturalarmor", "nar_strokearmor");
+        query.addColumn("naturalarmor", "nar_puncturearmor");
+        query.addColumn("naturalarmor", "nar_thrustarmor");
+        query.addServerTable("naturalarmor");
 
-        std::vector<uint16_t> raceTyp;
-        std::vector<int16_t> strokeArmor;
-        std::vector<int16_t> punctureArmor;
-        std::vector<int16_t> thrustArmor;
+        Database::Result results = query.execute();
 
-        //Laden der Daten in die Vectoren
-        size_t rows = di::select_all<di::Integer, di::Integer, di::Integer, di::Integer>
-                      (transaction, raceTyp, strokeArmor, punctureArmor, thrustArmor, "SELECT nar_race, nar_strokeArmor, nar_punctureArmor, nar_thrustArmor FROM NaturalArmor");
+        if (!results.empty()) {
+            clearOldTable();
+            MonsterArmor armor;
 
-        //Löschen der alten Daten
-        clearOldTable();
+            for (Database::ResultConstIterator itr = results.begin();
+                 itr != results.end(); ++itr) {
+                armor.strokeArmor = (TYPE_OF_STROKEARMOR)((*itr)["nar_strokearmor"].as<int16_t>());
+                armor.punctureArmor = (TYPE_OF_PUNCTUREARMOR)((*itr)["nar_puncturearmor"].as<int16_t>());
+                armor.thrustArmor = (TYPE_OF_THRUSTARMOR)((*itr)["nar_thrustarmor"].as<int16_t>());
+                m_ArmorTable[(uint16_t)((*itr)["nar_race"].as<int32_t>())] = armor;
+            }
 
-        //Schleife durch Tuples
-        for (size_t i = 0; i < rows; ++i) {
-            MonsterArmor Armor;
-            Armor.strokeArmor = strokeArmor[i];
-            Armor.punctureArmor = punctureArmor[i];
-            Armor.thrustArmor = thrustArmor[i];
-            m_ArmorTable[ raceTyp[i] ] = Armor;
+            m_dataOK = true;
+        } else {
+            m_dataOK = false;
         }
-
-        m_dataOK = true;
 
 #ifdef DataConnect_DEBUG
         std::cout << "loaded " << rows << " rows into NaturalArmorTable" << std::endl;

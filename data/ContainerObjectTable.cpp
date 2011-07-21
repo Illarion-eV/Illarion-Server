@@ -1,25 +1,29 @@
-//  illarionserver - server for the game Illarion
-//  Copyright 2011 Illarion e.V.
-//
-//  This file is part of illarionserver.
-//
-//  illarionserver is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  illarionserver is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * Illarionserver - server for the game Illarion
+ * Copyright 2011 Illarion e.V.
+ *
+ * This file is part of Illarionserver.
+ *
+ * Illarionserver  is  free  software:  you can redistribute it and/or modify it
+ * under the terms of the  GNU  General  Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * Illarionserver is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY;  without  even  the  implied  warranty  of  MERCHANTABILITY  or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU  General Public License along with
+ * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
+ */
 
+#include "data/ContainerObjectTable.hpp"
 
-#include "db/ConnectionManager.hpp"
-#include "ContainerObjectTable.hpp"
 #include <iostream>
+
+#include "db/SelectQuery.hpp"
+#include "db/Result.hpp"
 
 ContainerObjectTable::ContainerObjectTable() : m_dataOK(false) {
     reload();
@@ -31,23 +35,21 @@ void ContainerObjectTable::reload() {
 #endif
 
     try {
-        ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
+        Database::SelectQuery query;
+        query.addColumn("container", "con_itemid");
+        query.addColumn("container", "con_volume");
+        query.addServerTable("container");
 
-        std::vector<TYPE_OF_ITEM_ID> ids;
-        std::vector<TYPE_OF_CONTAINERVOLUME> volume;
+        Database::Result results = query.execute();
 
-        size_t rows = di::select_all<
-                      di::Integer, di::Integer
-                      >(transaction, ids, volume,
-                        "SELECT con_itemid, con_volume FROM container");
-
-        if (rows > 0) {
+        if (!results.empty()) {
             clearOldTable();
             ContainerStruct temprecord;
 
-            for (size_t i = 0; i < rows; ++i) {
-                temprecord.ContainerVolume = volume[i];
-                m_table[ ids[i] ] = temprecord;
+            for (Database::ResultConstIterator itr = results.begin();
+                 itr != results.end(); ++itr) {
+                temprecord.ContainerVolume = (TYPE_OF_VOLUME)((*itr)["con_volume"].as<int32_t>());
+                m_table[(TYPE_OF_ITEM_ID)((*itr)["con_itemid"].as<TYPE_OF_ITEM_ID>())] = temprecord;
             }
 
             m_dataOK = true;
