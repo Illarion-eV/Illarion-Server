@@ -98,6 +98,7 @@ public:
 
     template <typename T> void addValues(const QueryColumns::columnIndex &column, std::vector<T> &values) throw(std::invalid_argument) {
         typename std::vector<T>::iterator itr;
+
         for (itr = values.begin(); itr < values.end(); itr++) {
             addValue<T>(column, *itr);
         }
@@ -108,19 +109,20 @@ public:
                    MapInsertMode mode = keysAndValues) throw(std::invalid_argument) {
         addValues<Key, T, std::less<Key> >(column, values);
     };
-    
+
     template <typename Key, typename T, class Compare>
     void addValues(const QueryColumns::columnIndex &column,
                    std::map<Key,T,Compare> &values,
                    MapInsertMode mode = keysAndValues) throw(std::invalid_argument) {
         addValues<Key, T, Compare, std::allocator<std::pair<const Key, T> > >(column, values);
     };
-    
+
     template <typename Key, typename T, class Compare,class Allocator>
     void addValues(const QueryColumns::columnIndex &column,
                    std::map<Key,T,Compare, Allocator> &values,
                    MapInsertMode mode = keysAndValues) throw(std::invalid_argument) {
         typename std::map<Key, T, Compare, Allocator>::iterator itr;
+
         for (itr = values.begin(); itr != values.end(); itr++) {
             switch (mode) {
             case onlyKeys:

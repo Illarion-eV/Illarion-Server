@@ -58,6 +58,7 @@ void LongTimeEffectTable::reload() {
 
                 if (!(*itr)["lte_scriptname"].is_null()) {
                     temp.scriptname = (std::string)((*itr)["lte_scriptname"].as<std::string>());
+
                     try {
                         boost::shared_ptr<LuaLongTimeEffectScript> script(new LuaLongTimeEffectScript(temp.scriptname, temp));
                         temp.script = script;

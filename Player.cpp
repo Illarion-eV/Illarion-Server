@@ -746,8 +746,10 @@ std::string Player::GetStatusGM() {
     Result result = query.execute();
 
     std::string statusgmstring;
+
     if (!result.empty()) {
         const ResultField field = result.front()["chr_playerid"];
+
         if (!field.is_null()) {
             statusgmstring = field.as<std::string>();
         }
@@ -836,6 +838,7 @@ bool Player::wasUnconsciousSent() {
 
 void Player::check_logindata() throw(Player::LogoutException) {
     Database::PConnection connection = Database::ConnectionManager::getInstance().getConnection();
+
     try {
         Database::SelectQuery charQuery(connection);
         charQuery.addColumn("chars", "chr_playerid");
@@ -858,22 +861,26 @@ void Player::check_logindata() throw(Player::LogoutException) {
         }
 
         Database::ResultTuple charRow = charResult.front();
-        
+
         TYPE_OF_CHARACTER_ID account_id;
 
         id = charRow["chr_playerid"].as<TYPE_OF_CHARACTER_ID>();
         account_id = charRow["chr_accid"].as<TYPE_OF_CHARACTER_ID>();
         status = charRow["chr_status"].as<uint16_t>();
+
         if (!charRow["chr_statustime"].is_null()) {
             statustime = charRow["chr_statustime"].as<time_t>();
         }
+
         onlinetime = charRow["chr_onlinetime"].as<time_t>();
         lastsavetime = charRow["chr_lastsavetime"].as<time_t>();
         battrib.truesex = (Character::sex_type) charRow["chr_sex"].as<uint16_t>();
         race = (Character::race_type) charRow["chr_race"].as<uint16_t>();
+
         if (!charRow["chr_prefix"].is_null()) {
             prefix = charRow["chr_prefix"].as<std::string>();
         }
+
         if (!charRow["chr_suffix"].is_null()) {
             suffix = charRow["chr_suffix"].as<std::string>();
         }
@@ -925,7 +932,7 @@ void Player::check_logindata() throw(Player::LogoutException) {
         std::string real_pwd;
 
         real_pwd = accRow["acc_passwd"].as<std::string>();
-        mother_tongue = (Language::LanguageType) (accRow["acc_lang"].as<uint16_t>());
+        mother_tongue = (Language::LanguageType)(accRow["acc_lang"].as<uint16_t>());
         acc_state = accRow["acc_state"].as<uint16_t>();
 
         setPlayerLanguage(mother_tongue);
@@ -1001,7 +1008,7 @@ void Player::check_logindata() throw(Player::LogoutException) {
         if (playerResult.empty()) {
             throw LogoutException(NOACCOUNT);
         }
-        
+
         Database::ResultTuple playerRow = playerResult.front();
 
         pos.x = playerRow["ply_posx"].as<int32_t>();
@@ -1043,7 +1050,7 @@ void Player::check_logindata() throw(Player::LogoutException) {
         battrib.time_essence = 0;
         battrib.foodlevel = battrib.truefoodlevel = playerRow["ply_foodlevel"].as<uint32_t>();
         battrib.time_foodlevel = 0;
-                 
+
         appearance = playerRow["ply_appearance"].as<uint16_t>();
         lifestate = playerRow["ply_lifestate"].as<uint16_t>();
         magic.type = (magic_type) playerRow["ply_magictype"].as<uint16_t>();
@@ -1078,12 +1085,12 @@ struct container_struct {
 
 bool Player::save() throw() {
     using namespace Database;
-    
+
     PConnection connection = ConnectionManager::getInstance().getConnection();
 
     try {
         connection->beginTransaction();
-        
+
         time(&lastsavetime);
         {
             UpdateQuery query(connection);
@@ -1157,6 +1164,7 @@ bool Player::save() throw() {
                 query.addValue<uint16_t>(firstTryColumn, (uint16_t) skillptr->second.firsttry);
                 query.addValue<uint16_t>(minorColumn, (uint16_t) skillptr->second.minor);
             }
+
             query.addValues<TYPE_OF_CHARACTER_ID>(idColumn, id, InsertQuery::FILL);
             query.addServerTable("playerskills");
             query.execute();
@@ -1190,6 +1198,7 @@ bool Player::save() throw() {
             for (it = depotContents.begin(); it != depotContents.end(); ++it) {
                 containers.push_back(container_struct(*it->second, 0, it->first));
             }
+
             int linenumber = 0;
 
             InsertQuery itemsQuery(connection);
@@ -1222,7 +1231,7 @@ bool Player::save() throw() {
                     characterItems[ thisItemSlot ].data_map.clear();
                 }
 
-                itemsQuery.addValue<int32_t>(itemsLineColumn, (int32_t) (++linenumber));
+                itemsQuery.addValue<int32_t>(itemsLineColumn, (int32_t)(++linenumber));
                 itemsQuery.addValue<int16_t>(itemsContainerColumn, 0);
                 itemsQuery.addValue<int32_t>(itemsDepotColumn, 0);
                 itemsQuery.addValue<TYPE_OF_ITEM_ID>(itemsItmIdColumn, characterItems[thisItemSlot].id);
@@ -1252,7 +1261,7 @@ bool Player::save() throw() {
                 containers.pop_front();
 
                 for (ITEMVECTOR::iterator item = actcont.container.items.begin(); item != actcont.container.items.end(); ++item) {
-                    itemsQuery.addValue<int32_t>(itemsLineColumn, (int32_t) (++linenumber));
+                    itemsQuery.addValue<int32_t>(itemsLineColumn, (int32_t)(++linenumber));
                     itemsQuery.addValue<int16_t>(itemsContainerColumn, (int16_t) actcont.id);
                     itemsQuery.addValue<int32_t>(itemsDepotColumn, (int32_t) actcont.depotid);
                     itemsQuery.addValue<TYPE_OF_ITEM_ID>(itemsItmIdColumn, item->id);
@@ -1335,6 +1344,7 @@ bool Player::load() throw() {
 
     using namespace Database;
     PConnection connection = ConnectionManager::getInstance().getConnection();
+
     try {
 
         {
@@ -1351,7 +1361,7 @@ bool Player::load() throw() {
             Result results = query.execute();
 
             if (!results.empty()) {
-                for (ResultConstIterator itr = results.begin(); 
+                for (ResultConstIterator itr = results.begin();
                      itr != results.end(); ++itr) {
                     setSkill(
                         (*itr)["psk_type"].as<uint16_t>(),
@@ -1380,7 +1390,7 @@ bool Player::load() throw() {
             query.addServerTable("playeritem_datavalues");
 
             Result results = query.execute();
-            
+
             for (ResultConstIterator itr = results.begin(); itr != results.end(); ++itr) {
                 ditemlinenumber.push_back((*itr)["idv_linenumber"].as<uint16_t>());
                 key.push_back((*itr)["idv_key"].as<int16_t>());
@@ -1411,7 +1421,7 @@ bool Player::load() throw() {
             query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playeritems", "pit_playerid", id);
             query.addOrderBy("playeritems", "pit_linenumber", SelectQuery::ASC);
             query.addServerTable("playeritems");
-            
+
             Result results = query.execute();
 
             for (ResultConstIterator itr = results.begin(); itr != results.end(); ++itr) {
@@ -1437,7 +1447,7 @@ bool Player::load() throw() {
             query.addServerTable("playeritems");
 
             Result results = query.execute();
-        
+
             for (ResultConstIterator itr = results.begin(); itr != results.end(); ++itr) {
                 depotid.push_back((*itr)["pit_depot"].as<uint32_t>());
             }
@@ -2266,7 +2276,7 @@ bool Player::hasGMRight(gm_rights right) {
 void Player::setQuestProgress(uint16_t questid, uint32_t progress) throw() {
     using namespace Database;
     PConnection connection = ConnectionManager::getInstance().getConnection();
-    
+
     try {
         connection->beginTransaction();
 
@@ -2279,6 +2289,7 @@ void Player::setQuestProgress(uint16_t questid, uint32_t progress) throw() {
         Result results = query.execute();
 
         save();
+
         if (results.empty()) {
             InsertQuery insQuery;
             const InsertQuery::columnIndex userColumn = insQuery.addColumn("qpg_userid");
@@ -2297,7 +2308,7 @@ void Player::setQuestProgress(uint16_t questid, uint32_t progress) throw() {
             updQuery.addEqualCondition<TYPE_OF_CHARACTER_ID>("questprogress", "qpg_userid", id);
             updQuery.addEqualCondition<uint16_t>("questprogress", "qpg_userid", questid);
             updQuery.setServerTable("questprogress");
-            
+
             updQuery.execute();
         }
 

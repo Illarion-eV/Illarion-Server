@@ -53,8 +53,8 @@ PConnection ConnectionManager::getConnection() throw(std::logic_error) {
     }
 
     boost::shared_ptr<Connection> connPtr(
-            new Connection(new pqxx::connection(connectionString)),
-            Connection::deleter()
+        new Connection(new pqxx::connection(connectionString)),
+        Connection::deleter()
     );
     return connPtr;
 }

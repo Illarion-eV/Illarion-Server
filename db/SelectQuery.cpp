@@ -68,9 +68,11 @@ void SelectQuery::setDistinct(const bool &distinct) {
 Result SelectQuery::execute() {
     std::stringstream ss;
     ss << "SELECT ";
+
     if (isDistinct) {
         ss << "DISTINCT ";
     }
+
     ss << QueryColumns::buildQuerySegment();
     ss << " FROM ";
     ss << QueryTables::buildQuerySegment();

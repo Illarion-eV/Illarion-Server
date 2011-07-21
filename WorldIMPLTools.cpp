@@ -304,7 +304,7 @@ void World::updatePlayerList() {
         delQuery.setServerTable("onlineplayer");
         delQuery.execute();
 
-        if(!Players.empty()) {
+        if (!Players.empty()) {
             InsertQuery insQuery(connection);
             insQuery.setServerTable("onlineplayer");
             const InsertQuery::columnIndex column = insQuery.addColumn("on_playerid");
