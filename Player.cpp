@@ -2283,7 +2283,7 @@ void Player::setQuestProgress(uint16_t questid, uint32_t progress) throw() {
         SelectQuery query(connection);
         query.addColumn("questprogress", "qpg_progress");
         query.addEqualCondition<TYPE_OF_CHARACTER_ID>("questprogress", "qpg_userid", id);
-        query.addEqualCondition<uint16_t>("questprogress", "qpg_userid", questid);
+        query.addEqualCondition<uint16_t>("questprogress", "qpg_questid", questid);
         query.addServerTable("questprogress");
 
         Result results = query.execute();
