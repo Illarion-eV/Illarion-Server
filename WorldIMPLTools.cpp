@@ -304,17 +304,19 @@ void World::updatePlayerList() {
         delQuery.setServerTable("onlineplayer");
         delQuery.execute();
 
-        InsertQuery insQuery(connection);
-        insQuery.setServerTable("onlineplayer");
-        const InsertQuery::columnIndex column = insQuery.addColumn("on_playerid");
+        if(!Players.empty()) {
+            InsertQuery insQuery(connection);
+            insQuery.setServerTable("onlineplayer");
+            const InsertQuery::columnIndex column = insQuery.addColumn("on_playerid");
 
-        PLAYERVECTOR::iterator plIterator;
+            PLAYERVECTOR::iterator plIterator;
 
-        for (plIterator = Players.begin(); plIterator != Players.end(); ++plIterator) {
-            insQuery.addValue<TYPE_OF_CHARACTER_ID>(column, (*plIterator)->id);
+            for (plIterator = Players.begin(); plIterator != Players.end(); ++plIterator) {
+                insQuery.addValue<TYPE_OF_CHARACTER_ID>(column, (*plIterator)->id);
+            }
+
+            insQuery.execute();
         }
-
-        insQuery.execute();
 
         connection->commitTransaction();
     } catch (std::exception &e) {
