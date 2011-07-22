@@ -1243,12 +1243,12 @@ bool Player::save() throw() {
                 //Insert Datavalues for the maps
                 if (characterItems[ thisItemSlot ].id == 0 || characterItems[ thisItemSlot ].data_map.empty()) {
                     dataQuery.addValue<int32_t>(dataLineColumn, (int32_t) linenumber);
-                    dataQuery.addValue<int16_t>(dataKeyColumn, (int16_t) 0);
+                    dataQuery.addValue<std::string>(dataKeyColumn, "0");
                     dataQuery.addValue<std::string>(dataValueColumn, "0");
                 } else {
                     for (Item::DATA_MAP::iterator it = characterItems[ thisItemSlot ].data_map.begin(); it != characterItems[ thisItemSlot ].data_map.end(); ++it) {
                         dataQuery.addValue<int32_t>(dataLineColumn, (int32_t) linenumber);
-                        dataQuery.addValue<int16_t>(dataKeyColumn, (int16_t) it->first);
+                        dataQuery.addValue<std::string>(dataKeyColumn, it->first);
                         dataQuery.addValue<std::string>(dataValueColumn, it->second);
                     }
                 }
@@ -1272,7 +1272,7 @@ bool Player::save() throw() {
 
                     for (Item::DATA_MAP::iterator it = item->data_map.begin(); it != item->data_map.end(); ++it) {
                         dataQuery.addValue<int32_t>(dataLineColumn, (int32_t) linenumber);
-                        dataQuery.addValue<int16_t>(dataKeyColumn, (int16_t) it->first);
+                        dataQuery.addValue<std::string>(dataKeyColumn, it->first);
                         dataQuery.addValue<std::string>(dataValueColumn, it->second);
                     }
 
@@ -1378,7 +1378,7 @@ bool Player::load() throw() {
 
         // load data values
         std::vector<uint16_t> ditemlinenumber;
-        std::vector<int16_t> key;
+        std::vector<std::string> key;
         std::vector<std::string> value;
         {
             SelectQuery query;
@@ -1393,7 +1393,7 @@ bool Player::load() throw() {
 
             for (ResultConstIterator itr = results.begin(); itr != results.end(); ++itr) {
                 ditemlinenumber.push_back((*itr)["idv_linenumber"].as<uint16_t>());
-                key.push_back((*itr)["idv_key"].as<int16_t>());
+                key.push_back((*itr)["idv_key"].as<std::string>());
                 value.push_back((*itr)["idv_value"].as<std::string>());
             }
         }
@@ -1493,14 +1493,7 @@ bool Player::load() throw() {
             }
 
             while (curdatalinenumber < datamaplines && ditemlinenumber[curdatalinenumber] == linenumber) {
-                if (key[curdatalinenumber] > 255 || key[curdatalinenumber] < 0) {
-                    std::cerr << "*** player '" << name << "' has invalid itemvalues, key was larger than 255 or smaller than 0!" << std::endl;
-                    Logger::writeError("itemload","*** player '" + name + "' has invalid itemvalues, key was larger than 255 or smaller than 0!");
-                } else {
-                    uint8_t nkey = static_cast<uint8_t>(key[curdatalinenumber]);
-                    tempi.setValue(nkey, value[curdatalinenumber]);
-                }
-
+                tempi.setData(key[curdatalinenumber], value[curdatalinenumber]);
                 curdatalinenumber++;
             }
 

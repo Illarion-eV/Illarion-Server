@@ -1083,7 +1083,7 @@ int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid, uint32_t d
 
     if (where == "all") {
         for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
-            if (characterItems[ i ].id == itemid && characterItems[ i ].quality >= 100 && characterItems[i].getData() == data) {
+            if (characterItems[ i ].id == itemid && characterItems[ i ].quality >= 100 && characterItems[i].data == data) {
                 temp = temp + characterItems[ i ].number;
             }
         }
@@ -1105,7 +1105,7 @@ int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid, uint32_t d
 
     if (where == "belt") {
         for (unsigned char i = MAX_BODY_ITEMS; i < MAX_BODY_ITEMS + MAX_BELT_SLOTS; ++i) {
-            if (characterItems[ i ].id == itemid && characterItems[ i ].quality >= 100 && characterItems[i].getData() == data) {
+            if (characterItems[ i ].id == itemid && characterItems[ i ].quality >= 100 && characterItems[i].data == data) {
                 temp = temp + characterItems[ i ].number;
             }
         }
@@ -1115,7 +1115,7 @@ int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid, uint32_t d
 
     if (where == "body") {
         for (unsigned char i = 0; i < MAX_BODY_ITEMS; ++i) {
-            if (characterItems[ i ].id == itemid && characterItems[ i ].quality >= 100 && characterItems[i].getData() == data) {
+            if (characterItems[ i ].id == itemid && characterItems[ i ].quality >= 100 && characterItems[i].data == data) {
                 temp = temp + characterItems[ i ].number;
             }
         }
@@ -1285,7 +1285,6 @@ int Character::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali,
                     characterItems[ BACKPACK ].quality = quali;
                     characterItems[ BACKPACK ].data = data;
                     characterItems[ BACKPACK ].number = 1;
-                    characterItems[ BACKPACK].setData(data);
                     temp = temp - 1;
                     backPackContents = new Container(c.ContainerVolume);
 
@@ -1325,7 +1324,6 @@ int Character::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali,
                                 characterItems[ i ].quality = quali;
                                 characterItems[ i ].number = 1;
                                 characterItems[ i ].data = data;
-                                characterItems[ i ].setData(data);
 
                                 if (cos.Brightness > 0) {
                                     updateAppearanceForAll(true);
@@ -1343,7 +1341,6 @@ int Character::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali,
                                     characterItems[ i ].quality = quali;
                                     characterItems[ i ].number = MAXITEMS;
                                     characterItems[ i ].data = data;
-                                    characterItems[ i ].setData(data);
                                     temp = temp - MAXITEMS;
                                 } else {
                                     characterItems[ i ].id = itemid;
@@ -1351,11 +1348,10 @@ int Character::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali,
                                     characterItems[ i ].quality = quali;
                                     characterItems[ i ].number = temp;
                                     characterItems[ i ].data = data;
-                                    characterItems[ i ].setData(data);
                                     temp = 0;
                                 }
                             }
-                        } else if (cos.isStackable && quali > 99 && data == characterItems[ i ].getData()) {
+                        } else if (cos.isStackable && quali > 99 && data == characterItems[ i ].data) {
                             // only not stacking unfinished items and those of different data
                             temp += characterItems[ i ].number;
 
@@ -1385,7 +1381,6 @@ int Character::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali,
                     it.quality = quali;
                     it.wear = cos.AgeingSpeed;
                     it.data = data;
-                    it.setData(data);
 
                     if (cos.isStackable && quali > 99) {
                         while ((ok) && (temp > 0)) {

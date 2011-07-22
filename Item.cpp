@@ -20,37 +20,13 @@
 #include "Item.hpp"
 #include <sstream>
 
-uint32_t Item::getData() const {
-    DATA_MAP::const_iterator it = data_map.find(0);
-
-    if (it == data_map.end()) {
-        return 0;
-    }
-
-    std::istringstream myStream(it->second);
-    uint32_t ret;
-
-    if (myStream>>ret) {
-        return ret;
-    } else {
-        return 0;
-    }
-}
-
-
-void Item::setData(uint32_t newdata) {
-    std::stringstream stream;
-    stream << newdata;
-    data_map[0] = stream.str();
-}
-
-std::string Item::getValue(uint8_t key) {
+std::string Item::getData(std::string key) {
     return data_map[key];
 }
 
 
-void Item::setValue(uint8_t key,std::string val) {
-    data_map[key] = val;
+void Item::setData(std::string key, std::string value) {
+    data_map[key] = value;
 }
 
 
@@ -64,11 +40,11 @@ void Item::save(std::ostream *obj) {
     obj->write((char *) &mapsize, sizeof(uint8_t));
 
     for (DATA_MAP::iterator it = data_map.begin(); it != data_map.end(); ++it) {
-        //uint8_t sz = static_cast<uint8_t>(it->first.size());
-        //obj->write( ( char* ) &sz , sizeof( uint8_t ) );
-        obj->write((char *) &it->first , sizeof(uint8_t));
+        uint8_t sz1 = static_cast<uint8_t>(it->first.size());
         uint8_t sz2 = static_cast<uint8_t>(it->second.size());
+        obj->write((char *) &sz1 , sizeof(uint8_t));
         obj->write((char *) &sz2 , sizeof(uint8_t));
+        obj->write((char *) it->first.data() , sz1);
         obj->write((char *) it->second.data() , sz2);
     }
 }
@@ -84,15 +60,14 @@ void Item::load(std::istream *obj) {
     char readStr[255];
 
     for (int i = 0; i < tempsize; ++i) {
-        uint8_t sz = 0;
-        //obj->read( (char*) &sz , sizeof( uint8_t ) );
-        //obj->read( (char*) readStr, sz );
-        //std::string key(readStr,sz);
-        uint8_t key;
-        obj->read((char *) &key, sizeof(uint8_t));
-        obj->read((char *) &sz , sizeof(uint8_t));
-        obj->read((char *) readStr, sz);
-        std::string value(key,sz);
+        uint8_t sz1 = 0;
+        uint8_t sz2 = 0;
+        obj->read((char *) &sz1, sizeof(uint8_t));
+        obj->read((char *) &sz2, sizeof(uint8_t));
+        obj->read((char *) readStr, sz1);
+        std::string key(readStr,sz1);
+        obj->read((char *) readStr, sz2);
+        std::string value(readStr,sz2);
         data_map[key] = value;
     }
 }

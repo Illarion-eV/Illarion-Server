@@ -516,13 +516,8 @@ bool World::load_from_editor(std::string filename) {
             return false;
         }
 
-        //mapitemsfile >> it.data;
-        uint32_t datatmp;
-        mapitemsfile >> datatmp;
-
-        it.setData(datatmp);
-
-        LogMessage += "data: " + Logger::toString(datatmp) + " ";
+        mapitemsfile >> it.data;
+        LogMessage += "data: " + Logger::toString(it.data) + " ";
 
         if (mapitemsfile.good()) {
             if (mapitemsfile.get() == ';') {

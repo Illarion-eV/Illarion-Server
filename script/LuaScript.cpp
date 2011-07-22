@@ -601,10 +601,10 @@ void LuaScript::init_base_functions() {
         .def_readwrite("wear", &Item::wear)
         .def_readwrite("number", &Item::number)
         .def_readwrite("quality", &Item::quality)
-        //.def_readwrite("data", &Item::data),
-        .def("setValue", &Item::setValue)
-        .def("getValue", &Item::getValue)
-        .property("data", &Item::getData, &Item::setData),
+        .def_readwrite("data", &Item::data)
+        .def("setData", &Item::setData)
+        .def("getData", &Item::getData),
+        //.property("data", &Item::getData, &Item::setData),
         luabind::class_<ScriptItem,Item>("scriptItem") //Spezielle Itemklasse fr Scripte die auch die Position des Items und den eigentmer kennt.
         .def(luabind::constructor<>())
         .def_readonly("owner", &ScriptItem::getOwnerForLua)

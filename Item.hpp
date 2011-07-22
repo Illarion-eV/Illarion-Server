@@ -149,10 +149,8 @@ public:
         id(_id), number(_number), wear(_wear), quality(_quality), data(_data),data_map(1) {}
 
 
-    uint32_t getData() const;
-    void setData(uint32_t newdata);
-    std::string getValue(uint8_t key);
-    void setValue(uint8_t,std::string val);
+    std::string getData(std::string key);
+    void setData(std::string key, std::string value);
     void save(std::ostream *obj);
     void load(std::istream *obj);
 
@@ -161,7 +159,7 @@ public:
     the boost::shared_ptr here aren't threadsave !!! If a copy over different
     thread is necessary there must be some synchronisation implemented
     */
-    typedef hash_map<uint8_t,std::string> DATA_MAP;
+    typedef hash_map<std::string,std::string> DATA_MAP;
     DATA_MAP data_map;
 
 

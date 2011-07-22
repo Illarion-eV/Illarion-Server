@@ -603,7 +603,6 @@ ScriptItem World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, pos
             g_item.wear = com.AgeingSpeed;
             g_item.quality = quali;
             g_item.data = data;
-            g_item.setData(data);
             g_cont = NULL;
             sItem = g_item;
             sItem.pos = pos;

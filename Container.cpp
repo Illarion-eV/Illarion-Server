@@ -142,7 +142,7 @@ bool Container::InsertItem(Item it, bool merge) {
                 int temp;
 
                 while ((theIterator < items.end()) && (it.number > 0)) {
-                    if (theIterator->id == it.id && theIterator->getData() == it.getData() && theIterator->quality >= 100 && it.quality >= 100) {
+                    if (theIterator->id == it.id && theIterator->data == it.data && theIterator->quality >= 100 && it.quality >= 100) {
                         temp = theIterator->number + it.number;
 
                         if (temp <= MAXITEMS) {
@@ -202,7 +202,7 @@ bool Container::InsertItem(Item it, unsigned char pos) {
         //Itemstacking deaktivieren
         if (isItemStackable(it)) {
             if (theIterator < items.end()) {
-                if (theIterator->id == it.id && theIterator->getData() == it.getData() && theIterator->quality >= 100 && it.quality >= 100) {
+                if (theIterator->id == it.id && theIterator->data == it.data && theIterator->quality >= 100 && it.quality >= 100) {
                     int temp = theIterator->number + it.number;
 
                     if (temp <= MAXITEMS) {
