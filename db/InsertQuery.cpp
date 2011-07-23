@@ -54,17 +54,16 @@ InsertQuery::~InsertQuery() {
 }
 
 Result InsertQuery::execute() {
+    if (dataStorage.empty()) {
+        Result result;
+        return result;
+    }
     std::stringstream ss;
     ss << "INSERT INTO ";
     ss << QueryTables::buildQuerySegment();
     ss << " (";
     ss << QueryColumns::buildQuerySegment();
     ss << ") VALUES ";
-
-    if (dataStorage.empty()) {
-        throw new std::logic_error("There is no data to insert!");
-    }
-
     ss << "(";
     uint32_t columns = getColumnCount();
     bool firstDone = false;
