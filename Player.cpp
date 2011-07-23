@@ -1240,17 +1240,10 @@ bool Player::save() throw() {
                 itemsQuery.addValue<uint16_t>(itemsQualColumn, characterItems[thisItemSlot].quality);
                 itemsQuery.addValue<uint32_t>(itemsDataColumn, characterItems[thisItemSlot].data);
 
-                //Insert Datavalues for the maps
-                if (characterItems[ thisItemSlot ].id == 0 || characterItems[ thisItemSlot ].data_map.empty()) {
+                for (Item::DATA_MAP::iterator it = characterItems[ thisItemSlot ].data_map.begin(); it != characterItems[ thisItemSlot ].data_map.end(); ++it) {
                     dataQuery.addValue<int32_t>(dataLineColumn, (int32_t) linenumber);
-                    dataQuery.addValue<std::string>(dataKeyColumn, "0");
-                    dataQuery.addValue<std::string>(dataValueColumn, "0");
-                } else {
-                    for (Item::DATA_MAP::iterator it = characterItems[ thisItemSlot ].data_map.begin(); it != characterItems[ thisItemSlot ].data_map.end(); ++it) {
-                        dataQuery.addValue<int32_t>(dataLineColumn, (int32_t) linenumber);
-                        dataQuery.addValue<std::string>(dataKeyColumn, it->first);
-                        dataQuery.addValue<std::string>(dataValueColumn, it->second);
-                    }
+                    dataQuery.addValue<std::string>(dataKeyColumn, it->first);
+                    dataQuery.addValue<std::string>(dataValueColumn, it->second);
                 }
             }
 
@@ -1275,8 +1268,6 @@ bool Player::save() throw() {
                         dataQuery.addValue<std::string>(dataKeyColumn, it->first);
                         dataQuery.addValue<std::string>(dataValueColumn, it->second);
                     }
-
-                    std::cerr<<"datamap saving 2 done"<<std::endl;
 
                     // if it is a container, add it to the list of containers to save...
                     if (ContainerItems->find(item->id)) {
@@ -1485,12 +1476,6 @@ bool Player::load() throw() {
             tempi.number = itemnumber[tuple];
             tempi.quality = itemquality[tuple];
             tempi.data = itemdata[tuple];
-
-            if (ditemlinenumber[curdatalinenumber] != linenumber) {
-                std::cerr << "*** player '" << name << "' has invalid itemvalues!" << std::endl;
-                Logger::writeError("itemload","*** player '" + name + "' has invalid itemvalues!");
-                throw std::exception();
-            }
 
             while (curdatalinenumber < datamaplines && ditemlinenumber[curdatalinenumber] == linenumber) {
                 tempi.setData(key[curdatalinenumber], value[curdatalinenumber]);
