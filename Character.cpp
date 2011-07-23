@@ -558,48 +558,6 @@ int Character::appearance_alive() {
         return 7;
         break;
 
-    case mumie:
-        return 2;
-        break;
-
-    case skeleton:
-        return 5;
-        break;
-
-    case beholder:
-        return 6;
-        break;
-
-    case cloud:
-        return 4;
-        break;
-
-    case healer:
-        return 3;
-
-    case buyer:
-        return 1;
-
-    case seller:
-        return 7;
-        break;
-
-    case insects:
-        return 8;
-        break;
-
-    case sheep:
-        return 9;
-        break;
-
-    case spider:
-        return 10;
-        break;
-
-    case demonskeleton:
-        return 11;
-        break;
-
     case dwarf:
 
         if (battrib.sex == male) {
@@ -620,14 +578,6 @@ int Character::appearance_alive() {
 
         break;
 
-    case rotworm:
-        return 14;
-        break;
-
-    case bigdemon:
-        return 15;
-        break;
-
     case elf:
 
         if (battrib.sex == male) {
@@ -636,18 +586,6 @@ int Character::appearance_alive() {
             return 19;
         }
 
-        break;
-
-    case pig:
-        return 23;
-        break;
-
-    case troll:
-        return 21;
-        break;
-
-    case scorpion:
-        return 22;
         break;
 
     case halfling:
@@ -660,175 +598,286 @@ int Character::appearance_alive() {
 
         break;
 
-    case unknown1:
-        return 26;
+    case troll:
+        return 21;
         break;
-
-    case skull:
+    case mumie:
+        return 2;
+        break;
+    case skeleton:
+        return 5;
+        break;
+    case beholder:
+        return 6;
+        break;
+    case blackbeholder:
+        return 8;
+        break;
+    case transparentbeholder:
+        return 14;
+        break;
+    case brownmummy:
+        return 3;
+        break;
+    case bluemummy:
+        return 4;
+        break;
+    case sheep:
+        return 9;
+        break;
+    case spider:
+        return 10;
+        break;
+    case demonskeleton:
+        return 11;
+        break;
+    case redspider:
+        return 14;
+        break;
+    case greenspider:
+        return 15;
+        break;
+    case bluespider:
+        return 22;
+        break;
+    case pig:
+        return 23;
+        break;
+    case boar:
+        return 47;
+        break;
+    case transparentspider:
         return 27;
         break;
-
     case wasp:
         return 28;
         break;
-
-    case foresttroll:
+    case redwasp:
         return 29;
         break;
-
-    case shadowskelleton:
-        return 30;
-        break;
-
     case stonegolem:
         return 31;
         break;
-
-    case mgoblin:
+    case brownstonegolem:
         return 32;
         break;
-
-    case gnoll:
+    case redstonegolem:
         return 33;
         break;
-
-    case dragon:
+    case silverstonegolem:
+        return 34;
+        break;
+    case transparentstonegolem:
         return 35;
         break;
-
-    case mdrow:
-        return 37;
-        break;
-
-    case fdrow:
-        return 38;
-        break;
-
-    case lesserdemon:
-        return 39;
-        break;
-
     case cow:
         return 40;
         break;
-
-    case deer:
-        return 41;
+    case bull:
+        return 36;
         break;
-
     case wolf:
         return 42;
         break;
-
-    case panther:
+    case transparentwolf:
+        return 37;
+        break;
+    case blackwolf:
+        return 38;
+        break;
+    case greywolf:
+        return 39;
+        break;
+    case redwolf:
         return 43;
         break;
-
-    case rabbit:
-        return 44;
-        break;
-
-    case fgoblin:
-        return 49;
-        break;
-
-    case goblin:
-
-        if (battrib.sex == male) {
-            return 32;
-        } else {
-            return 49;
-        }
-
-        break;
-
-    case ffairy:
-        return 45;
-        break;
-
-    case fairy:
-        //if (battrib.sex == male )
-        //    return XX;
-        //else
-        return 45;
-        break;
-
-    case mgnome:
-        return 47;
-        break;
-
-    case fgnome:
+    case redraptor:
         return 46;
         break;
-
-    case gnome:
-
-        if (battrib.sex == male) {
-            return 47;
-        } else {
-            return 46;
-        }
-
+    case silverbear:
+        return 44;
         break;
-
-    case fallen:
-        return 48;
+    case blackbear:
+        return 45;
         break;
-
-    case mule:
-        return 50;
-        break;
-
     case bear:
         return 51;
         break;
-
     case raptor:
         return 52;
         break;
-
     case zombie:
         return 53;
         break;
-
     case hellhound:
         return 54;
         break;
-
     case imp:
         return 55;
         break;
-
     case iron_golem:
         return 56;
         break;
-
     case ratman:
         return 57;
         break;
-
     case dog:
         return 58;
         break;
-
     case beetle:
         return 59;
         break;
-
     case fox:
         return 60;
         break;
-
     case slime:
         return 61;
         break;
-
     case chicken:
         return 62;
         break;
+    case bonedragon:
+        return 63;
+        break;
+    case blackbonedragon:
+        return 64;
+        break;
+    case redbonedragon:
+        return 65;
+        break;
+    case transparentbonedragon:
+        return 66;
+        break;
+    case greenbonedragon:
+        return 67;
+        break;
+    case bluebonedragon:
+        return 68;
+        break;
+    case goldbonedragon:
+        return 69;
+        break;
+    case redmummy:
+        return 70;
+        break;
+    case greymummy:
+        return 71;
+        break;
+    case blackmummy:
+        return 72;
+        break;
+    case goldmummy:
+        return 73;
+        break;
+    case transparentskeleton:
+        return 74;
+        break;
+    case blueskeleton:
+        return 75;
+        break;
+    case greenskeleton:
+        return 76;
+        break;
+    case goldgolem:
+        return 91;
+        break;
+    case goldskeleton:
+        return 77;
+        break;
+    case bluetroll:
+        return 78;
+        break;
+    case blacktroll:
+        return 79;
+        break;
+    case redtroll:
+        return 80;
+        break;
+    case blackzombie:
+        return 81;
+        break;
+    case transparentzombie:
+        return 82;
+        break;
+    case redzombie:
+        return 83;
+        break;
+    case blackhellhound:
+        return 84;
+        break;
+    case transparenthellhound:
+        return 85;
+        break;
+    case greenhellhound:
+        return 86;
+        break;
+    case redhellhound:
+        return 87;
+        break;
+    case redimp:
+        return 88;
+        break;
+    case blackimp:
+        return 89;
+        break;
+    case blueirongolem:
+        return 90;
+        break;
+    case redratman:
+        return 92;
+        break;
+    case greenratman:
+        return 93;
+        break;
+    case blueratman:
+        return 94;
+        break;
+    case reddog:
+        return 95;
+        break;
+    case greydog:
+        return 96;
+        break;
+    case blackdog:
+        return 97;
+        break;
+    case greenbeetle:
+        return 98;
+        break;
+    case copperbeetle:
+        return 99;
+        break;
+    case redbeetle:
+        return 100;
+        break;
+    case goldbeetle:
+        return 101;
+        break;
+    case greyfox:
+        return 102;
+        break;
+    case redslime:
+        return 103;
+        break;
+    case blackslime:
+        return 104;
+        break;
+    case transparentslime:
+        return 105;
+        break;
+    case brownchicken:
+        return 106;
+        break;
+    case redchicken:
+        return 107;
+        break;
+    case blackchicken:
+        return 108;
+        break;
     default:
         return 1;
-    }
+    } 
+
 }
 
 
@@ -1690,197 +1739,10 @@ void Character::setAttrib(std::string name, short int wert) {
     if (name == "faceto") {
         turn((direction)wert);
     } else if (name == "racetyp") {
-        switch (wert) {
-        case 0:
-            race = human;
-            break;
-        case 1:
-            race = dwarf;
-            break;
-        case 2:
-            race = halfling;
-            break;
-        case 3:
-            race = elf;
-            break;
-        case 4:
-            race = orc;
-            break;
-        case 5:
-            race = lizardman;
-            break;
-        case 6:
-            race = gnome;
-            break;
-        case 7:
-            race = fairy;
-            break;
-        case 8:
-            race = goblin;
-            break;
-        case 9:
-            race = troll;
-            break;
-        case 10:
-            race = mumie;
-            break;
-        case 11:
-            race = skeleton;
-            break;
-        case 12:
-            race = beholder;
-            break;
-        case 13:
-            race = cloud;
-            break;
-        case 14:
-            race = healer;
-            break;
-        case 15:
-            race = buyer;
-            break;
-        case 16:
-            race = seller;
-            break;
-        case 17:
-            race = insects;
-            break;
-        case 18:
-            race = sheep;
-            break;
-        case 19:
-            race = spider;
-            break;
-        case 20:
-            race = demonskeleton;
-            break;
-        case 21:
-            race = rotworm;
-            break;
-        case 22:
-            race = bigdemon;
-            break;
-        case 23:
-            race = scorpion;
-            break;
-        case 24:
-            race = pig;
-            break;
-        case 25:
-            race = unknown1;
-            break;
-        case 26:
-            race = skull;
-            break;
-        case 27:
-            race = wasp;
-            break;
-        case 28:
-            race = foresttroll;
-            break;
-        case 29:
-            race = shadowskelleton;
-            break;
-        case 30:
-            race = stonegolem;
-            break;
-        case 31:
-            race = mgoblin;
-            break;
-        case 32:
-            race = gnoll;
-            break;
-        case 33:
-            race = dragon;
-            break;
-        case 34:
-            race = mdrow;
-            break;
-        case 35:
-            race = fdrow;
-            break;
-        case 36:
-            race = lesserdemon;
-            break;
-        case 37:
-            race = cow;
-            break;
-        case 38:
-            race = deer;
-            break;
-        case 39:
-            race = wolf;
-            break;
-        case 40:
-            race = panther;
-            break;
-        case 41:
-            race = rabbit;
-            break;
-        case 42:
-            race = fgoblin;
-            break;
-        case 43:
-            race = ffairy;
-            break;
-        case 44:
-            race = mgnome;
-            break;
-        case 45:
-            race = fgnome;
-            break;
-        case 46:
-            race = fallen;
-            break;
-        case 50:
-            race = mule;
-            break;
-        case 51:
-            race = bear;
-            break;
-        case 52:
-            race = raptor;
-            break;
-        case 53:
-            race = zombie;
-            break;
-        case 54:
-            race = hellhound;
-            break;
-        case 55:
-            race = imp;
-            break;
-        case 56:
-            race = iron_golem;
-            break;
-        case 57:
-            race = ratman;
-            break;
-        case 58:
-            race = dog;
-            break;
-        case 59:
-            race = beetle;
-            break;
-        case 60:
-            race = fox;
-            break;
-        case 61:
-            race = slime;
-            break;
-        case 62:
-            race = chicken;
-            break;
-        default:
-            race = human;
-            break;
-        }
-
+        race = (race_type)wert;
         appearance = appearance_alive();
         updateAppearanceForAll(true);
-    }
-
-    if (name == "sex") {
+    } else if (name == "sex") {
         switch (wert) {
         case 0:
             battrib.sex = male;

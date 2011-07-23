@@ -666,55 +666,6 @@ void World::killMonster(MONSTERVECTOR::iterator monsterIt, MONSTERVECTOR::iterat
 
     sendRemoveCharToVisiblePlayers((*monsterIt)->id, (*monsterIt)->pos);
 
-    /*for ( int i = MAX_BELT_SLOTS + MAX_BODY_ITEMS - 1; i >= 0; --i ) {
-        dropItemFromMonsterOnMap( ( *monsterIt ), i, 0, 0, 0, MAXITEMS );
-    }*/
-
-    // update our monster-list counts (temporary solution TODO)
-    char num;
-
-    switch ((*monsterIt)->race) {
-    case Character::mumie:
-        num = 0;
-        break;
-    case Character::beholder:
-        num = 1;
-        break;
-    case Character::insects:
-        num = 2;
-        break;
-    case Character::sheep:
-        num = 3;
-        break;
-    case Character::spider:
-        num = 4;
-        break;
-    case Character::demonskeleton:
-        num = 5;
-        break;
-    case Character::rotworm:
-        num = 6;
-        break;
-    case Character::bigdemon:
-        num = 7;
-        break;
-    case Character::skeleton:
-        num = 8;
-        break;
-    case Character::pig:
-        num = 9;
-        break;
-    case Character::scorpion:
-        num = 10;
-        break;
-    case Character::troll:
-        num = 11;
-        break;
-    default:
-        num = -1;
-        break;
-    }
-
     // delete our monster
     if (*monsterIt) {
         delete *monsterIt;

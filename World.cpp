@@ -1119,28 +1119,7 @@ void World::checkNPC() {
 
             (*npcIterator)->effects->checkEffects();
 
-            if ((*npcIterator)->actionPoints > NP_MIN_AP && !(*npcIterator)->getScript()) {
-                // Wiederbeleber definieren
-                if (((*npcIterator)->race == Character::healer) || ((*npcIterator)->getHealer())) {
-                    temp = Players.findAllCharactersInRangeOf((*npcIterator)->pos.x, (*npcIterator)->pos.y, (*npcIterator)->pos.z, 2);
-
-                    for (tpit = temp.begin(); tpit < temp.end(); ++tpit) {
-                        if (!(*tpit)->IsAlive()) {
-#ifdef DO_UNCONSCIOUS
-                            (*tpit)->increaseAttrib("hitpoints", UNCONSCIOUS + 100);
-#else
-                            (*tpit)->increaseAttrib("hitpoints", 100);
-#endif
-                            //sendSpinToAllVisiblePlayers( ( *tpit ), PLAYERSPIN_TC );
-                        }
-
-                        (*npcIterator)->actionPoints -= 10;
-                    }
-                }
-
-
-            } // AP && !script
-            else if ((*npcIterator)->actionPoints > NP_MIN_AP) {
+            if ((*npcIterator)->actionPoints > NP_MIN_AP && (*npcIterator)->getScript()) {
                 // we have a script...
                 // let's execute the command for this cycle
                 boost::shared_ptr<LuaNPCScript> npcscript = (*npcIterator)->getScript();
