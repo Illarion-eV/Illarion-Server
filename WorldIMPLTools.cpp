@@ -973,8 +973,8 @@ bool World::DoAge() {
             AgeCharacters();
             AgeInventory(AgeItem);
 
-            Map::ONTAINERHASH::iterator conmap;
-            Container::ONTAINERMAP::iterator cmi;
+            Map::CONTAINERHASH::iterator conmap;
+            Container::CONTAINERMAP::iterator cmi;
 
             // f�r alle Karten die Containerinhalte altern
             for (MapVector::iterator mapI = maps.begin(); mapI < maps.end(); ++mapI) {

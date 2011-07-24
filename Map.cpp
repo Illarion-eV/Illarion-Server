@@ -105,11 +105,11 @@ bool Map::addContainerToPos(Item it, Container *cc, MAP_POSITION pos) {
         if (cfnew->IsPassable()) {   // neues Feld begehbar
             if (cfnew->items.size() < (MAXITEMS - 1)) {     // noch Platz auf dem Feld
                 if (ContainerItems->find(it.id)) {     // item ist ein Container
-                    ONTAINERHASH::iterator conmapn = maincontainers.find(pos);
+                    CONTAINERHASH::iterator conmapn = maincontainers.find(pos);
                     MAXCOUNTTYPE count = 0;
 
                     if (conmapn != maincontainers.end()) {   // containermap fr das Zielfeld gefunden
-                        Container::ONTAINERMAP::iterator iterat;
+                        Container::CONTAINERMAP::iterator iterat;
                         // n�hste freie ID fr den Container auf dem Zielfeld suchen
                         iterat = (*conmapn).second.find(count);
 
@@ -120,7 +120,7 @@ bool Map::addContainerToPos(Item it, Container *cc, MAP_POSITION pos) {
 
                         // den Containerinhalt hinzufgen
                         if (count < (MAXITEMS - 1)) {
-                            (*conmapn).second.insert(iterat, Container::ONTAINERMAP::value_type(count, cc));
+                            (*conmapn).second.insert(iterat, Container::CONTAINERMAP::value_type(count, cc));
                         } else {
                             return false;
                         }
@@ -128,9 +128,9 @@ bool Map::addContainerToPos(Item it, Container *cc, MAP_POSITION pos) {
 #ifdef Map_DEBUG
                         std::cout << "addContainerToPos: neue Containermap fr das Feld angelegt\n";
 #endif
-                        conmapn = (maincontainers.insert(ONTAINERHASH::value_type(pos, Container::ONTAINERMAP()))).first;
+                        conmapn = (maincontainers.insert(CONTAINERHASH::value_type(pos, Container::CONTAINERMAP()))).first;
                         // den Containerinhalt hinzufgen
-                        (*conmapn).second.insert(Container::ONTAINERMAP::value_type(count, cc));
+                        (*conmapn).second.insert(Container::CONTAINERMAP::value_type(count, cc));
                     }
 
                     Item titem = it;
@@ -163,11 +163,11 @@ bool Map::addAlwaysContainerToPos(Item it, Container *cc, MAP_POSITION pos) {
 
     if (GetPToCFieldAt(cfnew, pos.x, pos.y)) {     // neues Feld vorhanden
         if (ContainerItems->find(it.id)) {     // item ist ein Container
-            ONTAINERHASH::iterator conmapn = maincontainers.find(pos);
+            CONTAINERHASH::iterator conmapn = maincontainers.find(pos);
             MAXCOUNTTYPE count = 0;
 
             if (conmapn != maincontainers.end()) {   // containermap fr das Zielfeld gefunden
-                Container::ONTAINERMAP::iterator iterat;
+                Container::CONTAINERMAP::iterator iterat;
                 // n�hste freie ID fr den Container auf dem Zielfeld suchen
                 iterat = (*conmapn).second.find(count);
 
@@ -178,7 +178,7 @@ bool Map::addAlwaysContainerToPos(Item it, Container *cc, MAP_POSITION pos) {
 
                 // den Containerinhalt hinzufgen
                 if (count < (MAXITEMS - 1)) {
-                    (*conmapn).second.insert(iterat, Container::ONTAINERMAP::value_type(count, cc));
+                    (*conmapn).second.insert(iterat, Container::CONTAINERMAP::value_type(count, cc));
                 } else {
                     return false;
                 }
@@ -186,9 +186,9 @@ bool Map::addAlwaysContainerToPos(Item it, Container *cc, MAP_POSITION pos) {
 #ifdef Map_DEBUG
                 std::cout << "addAlwaysContainerToPos: neue Containermap fr das Feld angelegt\n";
 #endif
-                conmapn = (maincontainers.insert(ONTAINERHASH::value_type(pos, Container::ONTAINERMAP()))).first;
+                conmapn = (maincontainers.insert(CONTAINERHASH::value_type(pos, Container::CONTAINERMAP()))).first;
                 // den Containerinhalt hinzufgen
-                (*conmapn).second.insert(Container::ONTAINERMAP::value_type(count, cc));
+                (*conmapn).second.insert(Container::CONTAINERMAP::value_type(count, cc));
             }
 
             Item titem = it;
@@ -287,8 +287,8 @@ bool Map::Save(std::string name) {
             }
         }
 
-        ONTAINERHASH::iterator ptr;
-        Container::ONTAINERMAP::iterator citer;
+        CONTAINERHASH::iterator ptr;
+        Container::CONTAINERMAP::iterator citer;
         unsigned long int fcount;
         MAXCOUNTTYPE icount;
 
@@ -301,7 +301,7 @@ bool Map::Save(std::string name) {
                 // die Koordinate schreiben
                 all_container->write((char *) & ptr->first, sizeof ptr->first);
 
-                // die Anzahl Container in der ONTAINERMAP an der aktuellen Koordinate
+                // die Anzahl Container in der CONTAINERMAP an der aktuellen Koordinate
                 icount = ptr->second.size();
                 all_container->write((char *) & icount, sizeof(icount));
 
@@ -441,8 +441,8 @@ bool Map::Load(std::string name, unsigned short int x_offs, unsigned short int y
                                 Max_X = Width + Min_X - 1;
                                 Max_Y = Height + Min_Y - 1;
 
-                                ONTAINERHASH::iterator ptr;
-                                Container::ONTAINERMAP::iterator citer;
+                                CONTAINERHASH::iterator ptr;
+                                Container::CONTAINERMAP::iterator citer;
 
                                 if (! maincontainers.empty()) {
                                     for (ptr = maincontainers.begin(); ptr != maincontainers.end(); ++ptr) {
@@ -476,7 +476,7 @@ bool Map::Load(std::string name, unsigned short int x_offs, unsigned short int y
                                 MAXCOUNTTYPE key;
                                 MAP_POSITION pos;
                                 Container *tempc;
-                                ONTAINERHASH::iterator conmapn;
+                                CONTAINERHASH::iterator conmapn;
 
                                 // Anzahl der Felder mit Eintr�en fr Containern
                                 all_container->read((char *) & fcount, sizeof(fcount));
@@ -485,12 +485,12 @@ bool Map::Load(std::string name, unsigned short int x_offs, unsigned short int y
                                     // die Koordinate lesen
                                     all_container->read((char *) & pos, sizeof pos);
 
-                                    // die Anzahl der Container in der ONTAINERMAP fr die aktuelle Koordinate lesen
+                                    // die Anzahl der Container in der CONTAINERMAP fr die aktuelle Koordinate lesen
                                     all_container->read((char *) & icount, sizeof(icount));
 
                                     if (icount > 0) {
-                                        // fr die Koordinate eine ONTAINERMAP anlegen
-                                        conmapn = (maincontainers.insert(ONTAINERHASH::value_type(pos, Container::ONTAINERMAP()))).first;
+                                        // fr die Koordinate eine CONTAINERMAP anlegen
+                                        conmapn = (maincontainers.insert(CONTAINERHASH::value_type(pos, Container::CONTAINERMAP()))).first;
 
                                         for (MAXCOUNTTYPE k = 0; k < icount; ++k) {
                                             // die Kennung des Container lesen
@@ -515,7 +515,7 @@ bool Map::Load(std::string name, unsigned short int x_offs, unsigned short int y
                                                             tempc = new Container(cont.ContainerVolume);
                                                             tempc->Load(all_container);
                                                             // den Containerinhalt hinzufgen
-                                                            (*conmapn).second.insert(Container::ONTAINERMAP::value_type(key, tempc));
+                                                            (*conmapn).second.insert(Container::CONTAINERMAP::value_type(key, tempc));
                                                         }
                                                     }
                                                 }
@@ -632,10 +632,10 @@ void Map::DoAgeItems_XFromTo(short int xstart, short int xend, ITEM_FUNCT funct)
                 // mindestens ein Containeritem wurde gel�cht -> mit Hilfe von erasedcontainers
                 //   die Inhalte l�chen
                 for (ercontit = erasedcontainers->begin(); ercontit != erasedcontainers->end(); ++ercontit) {
-                    ONTAINERHASH::iterator conmapn = maincontainers.find(pos);
+                    CONTAINERHASH::iterator conmapn = maincontainers.find(pos);
 
                     if (conmapn != maincontainers.end()) {   // containermap fr das Zielfeld gefunden
-                        Container::ONTAINERMAP::iterator iterat;
+                        Container::CONTAINERMAP::iterator iterat;
                         iterat = (*conmapn).second.find(*ercontit);
 
                         if (iterat != (*conmapn).second.end()) {

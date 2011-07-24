@@ -200,7 +200,7 @@ public:
     typedef hash_map < MAP_POSITION, Container::CONTAINERMAP, mapposhash, eqmappos > CONTAINERHASH;
 
     //! die Inhalte aller Container die direkt auf der Karte liegen mit der dazugehörigen Koordinate
-    ONTAINERHASH maincontainers;
+    CONTAINERHASH maincontainers;
 
     //! legt ein Item auf ein Feld
     // \param it das Item welches auf das Feld gelegt werden soll

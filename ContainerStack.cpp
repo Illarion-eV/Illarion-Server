@@ -89,7 +89,7 @@ Container *ContainerStack::top() {
 
 
 bool ContainerStack::contains(Container *cc) {
-    ONTAINERVECTOR::iterator theIterator;
+    CONTAINERVECTOR::iterator theIterator;
 
     for (theIterator = opencontainers.begin(); theIterator < opencontainers.end(); ++theIterator) {
         if ((*theIterator) == cc) {

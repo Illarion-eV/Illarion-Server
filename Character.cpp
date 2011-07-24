@@ -1739,7 +1739,7 @@ void Character::setSkinColor(uint8_t red, uint8_t green, uint8_t blue) {
 }
 
 
-void Character::getSkinColor(uint8_t &red, unit8_t &green, unit8_t &blue) {
+void Character::getSkinColor(uint8_t &red, uint8_t &green, uint8_t &blue) {
     red=skinred;
     green=skingreen;
     blue=skinblue;   
@@ -1754,7 +1754,7 @@ void Character::setHairColor(uint8_t red, uint8_t green, uint8_t blue) {
 }
 
 
-void Character::getHairColor(uint8_t &red, unit8_t &green, unit8_t &blue) {
+void Character::getHairColor(uint8_t &red, uint8_t &green, uint8_t &blue) {
     red=hairred;
     green=hairgreen;
     blue=hairblue;   

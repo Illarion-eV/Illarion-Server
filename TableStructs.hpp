@@ -65,7 +65,7 @@ class LuaLongTimeEffectScript;
 
 #define ARTEFACTS          26
 
-#define ONTAINERVOLUME    27
+#define CONTAINERVOLUME    27
 
 #define ISNOTPASSABLE      28
 #define ISNOTTRANSPARENT   29

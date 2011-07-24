@@ -1271,7 +1271,7 @@ bool Player::save() throw() {
 
                     // if it is a container, add it to the list of containers to save...
                     if (ContainerItems->find(item->id)) {
-                        Container::ONTAINERMAP::iterator iterat = actcont.container.containers.find(item->number);
+                        Container::CONTAINERMAP::iterator iterat = actcont.container.containers.find(item->number);
 
                         if (iterat != actcont.container.containers.end()) {
                             containers.push_back(container_struct(*(*iterat).second, linenumber));
@@ -2304,7 +2304,7 @@ uint32_t Player::getQuestProgress(uint16_t questid) throw() {
         SelectQuery query;
         query.addColumn("questprogress", "qpg_progress");
         query.addEqualCondition<TYPE_OF_CHARACTER_ID>("questprogress", "qpg_userid", id);
-        query.addEqualCondition<uint16_t>("questprogress", "qpg_userid", questid);
+        query.addEqualCondition<uint16_t>("questprogress", "qpg_questid", questid);
         query.addServerTable("questprogress");
 
         Result results = query.execute();

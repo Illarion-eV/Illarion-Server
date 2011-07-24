@@ -783,6 +783,29 @@ public:
     */
     unsigned short int getMinorSkill(std::string s);
 
+    void setSkinColor(uint8_t red, uint8_t green, uint8_t blue);
+    
+    
+    void getSkinColor(uint8_t &red, uint8_t &green, uint8_t &blue);
+    
+    
+    void setHairColor(uint8_t red, uint8_t green, uint8_t blue);
+    
+    
+    void getHairColor(uint8_t &red, uint8_t &green, uint8_t &blue);
+    
+    
+    void setHair(uint8_t hairID);
+    
+    
+    uint8_t getHair();
+    
+    void setBeard(uint8_t beardID);
+    
+    uint8_t getBeard();
+
+
+
     /**
     * changes the value of an attribute
     * <b>Lua: [:increaseAttrib]</b>

@@ -736,11 +736,11 @@ bool World::takeItemFromMap(Character *cc, short int x, short int y, short int z
                         MAP_POSITION opos;
                         opos.x = x;
                         opos.y = y;
-                        Map::ONTAINERHASH::iterator conmapo = tmap->maincontainers.find(opos);
+                        Map::CONTAINERHASH::iterator conmapo = tmap->maincontainers.find(opos);
 
                         // containermap fr das Feld gefunden
                         if (conmapo != tmap->maincontainers.end()) {
-                            Container::ONTAINERMAP::iterator iv = (*conmapo).second.find(g_item.number);
+                            Container::CONTAINERMAP::iterator iv = (*conmapo).second.find(g_item.number);
 
                             // der Inhalt des angegebenen Containers mit der id g_item.number wurde gefunden
                             if (iv != (*conmapo).second.end()) {
@@ -2464,13 +2464,13 @@ bool World::lookIntoContainerOnField(Player *cp, char direction, unsigned char s
                     MAP_POSITION opos;
                     opos.x = old_x;
                     opos.y = old_y;
-                    Map::ONTAINERHASH::iterator conmapo = tmap->maincontainers.find(opos);
+                    Map::CONTAINERHASH::iterator conmapo = tmap->maincontainers.find(opos);
 
                     if (conmapo != tmap->maincontainers.end()) {
 #ifdef World_ItemMove_DEBUG
                         std::cout << "containermap fr das Feld gefunden" << std::endl;
 #endif
-                        Container::ONTAINERMAP::iterator iv = (*conmapo).second.find(titem.number);
+                        Container::CONTAINERMAP::iterator iv = (*conmapo).second.find(titem.number);
 
                         if (iv != (*conmapo).second.end()) {
 #ifdef World_ItemMove_DEBUG

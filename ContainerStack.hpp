@@ -82,10 +82,10 @@ public:
 
 private:
     //! definiert eine Template-Klasse "std::vector für Zeiger auf Container"
-    typedef std::vector < Container * > ONTAINERVECTOR;
+    typedef std::vector < Container * > CONTAINERVECTOR;
 
     //! ein std::vector von Zeigern auf Container
-    ONTAINERVECTOR opencontainers;
+    CONTAINERVECTOR opencontainers;
 };
 
 #endif
