@@ -1463,7 +1463,6 @@ bool Player::load() throw() {
 
         unsigned int tempdepot, tempincont, linenumber;
         Container *tempc;
-        Item tempi;
         unsigned int curdatalinenumber = 0;
 
         for (unsigned int tuple = 0; tuple < rows; ++tuple) {
@@ -1471,6 +1470,7 @@ bool Player::load() throw() {
             tempdepot = itemdepot[tuple];
             linenumber = itemlinenumber[tuple];
 
+            Item tempi;
             tempi.id = itemid[tuple];
             tempi.wear = itemwear[tuple];;
             tempi.number = itemnumber[tuple];
@@ -2284,7 +2284,7 @@ void Player::setQuestProgress(uint16_t questid, uint32_t progress) throw() {
             UpdateQuery updQuery;
             updQuery.addAssignColumn<uint32_t>("qpg_progress", progress);
             updQuery.addEqualCondition<TYPE_OF_CHARACTER_ID>("questprogress", "qpg_userid", id);
-            updQuery.addEqualCondition<uint16_t>("questprogress", "qpg_userid", questid);
+            updQuery.addEqualCondition<uint16_t>("questprogress", "qpg_questid", questid);
             updQuery.setServerTable("questprogress");
 
             updQuery.execute();
