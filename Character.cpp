@@ -1048,7 +1048,6 @@ Character::~Character() {
 }
 
 
-
 int Character::countItem(TYPE_OF_ITEM_ID itemid) {
     int temp = 0;
 
@@ -1729,6 +1728,58 @@ unsigned short int Character::getMinorSkill(std::string s) {
 #endif
         return (*iterator).second.minor;
     }
+}
+
+
+void Character::setSkinColor(uint8_t red, uint8_t green, uint8_t blue) {
+    skinred=red;
+    skingreen=green;
+    skinblue=blue;
+    updateAppearanceForAll(true);
+}
+
+
+void Character::getSkinColor(uint8_t &red, unit8_t &green, unit8_t &blue) {
+    red=skinred;
+    green=skingreen;
+    blue=skinblue;   
+}
+
+
+void Character::setHairColor(uint8_t red, uint8_t green, uint8_t blue) {
+    hairred=red;
+    hairgreen=green;
+    hairblue=blue;
+    updateAppearanceForAll(true);
+}
+
+
+void Character::getHairColor(uint8_t &red, unit8_t &green, unit8_t &blue) {
+    red=hairred;
+    green=hairgreen;
+    blue=hairblue;   
+}
+
+
+void Character::setHair(uint8_t hairID) {
+    hair=hairID;
+    updateAppearanceForAll(true);
+}
+
+
+uint8_t Character::getHair() {
+    return hair;
+}
+
+
+void Character::setBeard(uint8_t beardID) {
+    beard=beardID;
+    updateAppearanceForAll(true);
+}
+
+
+uint8_t Character::getBeard() {
+    return beard;
 }
 
 

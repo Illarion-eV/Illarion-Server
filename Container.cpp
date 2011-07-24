@@ -562,7 +562,7 @@ bool Container::viewItemNr(MAXCOUNTTYPE nr, ScriptItem &it, Container* &cc) {
         ContainerStruct cont;
 
         if (ContainerItems->find(it.id, cont)) {
-            ONTAINERMAP::iterator iterat = containers.find(it.number);
+            CONTAINERMAP::iterator iterat = containers.find(it.number);
 
             if (iterat != containers.end()) {   // Inhalt des Containers gefunden
                 cc = (*iterat).second;
