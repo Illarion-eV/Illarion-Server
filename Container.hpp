@@ -62,10 +62,10 @@ public:
     ITEMVECTOR items;
 
     //! definiert eine Template-Klasse "map mit key unsigned char für Zeiger auf Container"
-    typedef std::map < MAXCOUNTTYPE , Container *, std::less < MAXCOUNTTYPE > > ONTAINERMAP;
+    typedef std::map < MAXCOUNTTYPE , Container *, std::less < MAXCOUNTTYPE > > CONTAINERMAP;
 
     //! alle Gegenstände der Item in items, die selbst Container sind
-    ONTAINERMAP containers;
+    CONTAINERMAP containers;
 
     //! Konstruktor
     Container(uint16_t max_cont_Volume);

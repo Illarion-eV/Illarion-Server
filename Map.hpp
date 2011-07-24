@@ -179,14 +179,14 @@ public:
     //! liefert die Anzahl der Felder in Y-Richtung zurück
     unsigned short int GetHeight();
 
-    //! Vergleichsfunktion für den ONTAINERMAP - key
+    //! Vergleichsfunktion für den CONTAINERMAP - key
     struct eqmappos {
         bool operator()(MAP_POSITION a, MAP_POSITION b) const {
             return ((a.x == b.x) && (a.y == b.y));
         }
     };
 
-    //! Hashfunktion für ONTAINERMAP - key
+    //! Hashfunktion für CONTAINERMAP - key
     struct mapposhash {
         hash < int > inthash;
         int operator()(const MAP_POSITION a) const {
@@ -197,7 +197,7 @@ public:
 
 
     //! definiert eine Template-Klasse "hash_map mit key position für ITEMVECTORMAP"
-    typedef hash_map < MAP_POSITION, Container::ONTAINERMAP, mapposhash, eqmappos > ONTAINERHASH;
+    typedef hash_map < MAP_POSITION, Container::CONTAINERMAP, mapposhash, eqmappos > CONTAINERHASH;
 
     //! die Inhalte aller Container die direkt auf der Karte liegen mit der dazugehörigen Koordinate
     ONTAINERHASH maincontainers;

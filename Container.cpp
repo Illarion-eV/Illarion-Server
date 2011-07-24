@@ -51,9 +51,9 @@ Container &Container:: operator =(const Container &source) {
         // Item kopieren
         items = source.items;
 
-        // alte ONTAINERMAP l�schen (rekursiv alle Container)
+        // alte CONTAINERMAP l�schen (rekursiv alle Container)
         if (!containers.empty()) {
-            ONTAINERMAP::iterator theIterator;
+            CONTAINERMAP::iterator theIterator;
 
             for (theIterator = containers.begin(); theIterator != containers.end(); ++theIterator) {
                 delete(*theIterator).second;
@@ -65,10 +65,10 @@ Container &Container:: operator =(const Container &source) {
 
         // alle Container kopieren (rekursiv)
         if (!source.containers.empty()) {
-            ONTAINERMAP::const_iterator theIterator;
+            CONTAINERMAP::const_iterator theIterator;
 
             for (theIterator = source.containers.begin(); theIterator != source.containers.end(); ++theIterator) {
-                containers.insert(ONTAINERMAP::value_type((*theIterator).first, new Container(*((*theIterator).second))));
+                containers.insert(CONTAINERMAP::value_type((*theIterator).first, new Container(*((*theIterator).second))));
             }
         }
 
@@ -90,7 +90,7 @@ Container::~Container() {
     items.clear();
 
     if (!containers.empty()) {
-        ONTAINERMAP::iterator theIterator;
+        CONTAINERMAP::iterator theIterator;
 
         for (theIterator = containers.begin(); theIterator != containers.end(); ++theIterator) {
             delete(*theIterator).second;
@@ -240,8 +240,8 @@ bool Container::InsertContainer(Item it, Container *cc) {
         Item titem = it;
 
         if (items.size() < MAXITEMS) {   // es ist noch Platz frei
-            ONTAINERMAP::iterator iterat;
-            ONTAINERMAP::key_type count = 0;
+            CONTAINERMAP::iterator iterat;
+            CONTAINERMAP::key_type count = 0;
             // freie Container-ID finden
             iterat = containers.find(0);
 
@@ -255,7 +255,7 @@ bool Container::InsertContainer(Item it, Container *cc) {
             // den Container in die Itemliste einf�gen
             items.push_back(titem);
             // den Inhalt des Containers in die Containermap mit der entsprechenden ID einf�gen
-            containers.insert(ONTAINERMAP::value_type(count, cc));
+            containers.insert(CONTAINERMAP::value_type(count, cc));
             return true;
         }
     }
@@ -272,7 +272,7 @@ bool Container::changeQuality(TYPE_OF_ITEM_ID id, short int amount) {
     while (theIterator < items.end()) {
         if (ContainerItems->find(theIterator->id)) {
             // Item ist ein Container
-            ONTAINERMAP::iterator iterat = containers.find(theIterator->number);
+            CONTAINERMAP::iterator iterat = containers.find(theIterator->number);
 
             if (iterat != containers.end()) {
                 // Inhalt des Containers gefunden
@@ -323,7 +323,7 @@ bool Container::changeQualityAt(MAXCOUNTTYPE nr, short int amount) {
         } else {
             //Falls Item ein Tasche den Inhalt l�schen
             if (ContainerItems->find(theIterator->id)) {
-                ONTAINERMAP::iterator iterat = containers.find((*theIterator).number);
+                CONTAINERMAP::iterator iterat = containers.find((*theIterator).number);
 
                 if (iterat != containers.end()) {
                     containers.erase(iterat);
@@ -365,7 +365,7 @@ bool Container::TakeItemNr(MAXCOUNTTYPE nr, Item &it, Container* &cc, unsigned c
         if (ContainerItems->find(it.id, cont)) {
             // das Item aus dem Vektor l�schen
             items.erase(theIterator);
-            ONTAINERMAP::iterator iterat = containers.find(it.number);
+            CONTAINERMAP::iterator iterat = containers.find(it.number);
 
             if (iterat != containers.end()) {
 #ifdef Container_DEBUG
@@ -437,7 +437,7 @@ luabind::object Container::getItemList() {
 
         if (ContainerItems->find(theIterator->id)) {
             // Item ist ein Container
-            ONTAINERMAP::iterator iterat = containers.find(theIterator->number);
+            CONTAINERMAP::iterator iterat = containers.find(theIterator->number);
 
             if (iterat != containers.end()) {
                 // rekursiv verarbeiten
@@ -472,7 +472,7 @@ luabind::object Container::getItemList(TYPE_OF_ITEM_ID itemid) {
 
         if (ContainerItems->find(theIterator->id)) {
             // Item ist ein Container
-            ONTAINERMAP::iterator iterat = containers.find(theIterator->number);
+            CONTAINERMAP::iterator iterat = containers.find(theIterator->number);
 
             if (iterat != containers.end()) {
                 // rekursiv verarbeiten
@@ -504,7 +504,7 @@ void Container::increaseItemList(TYPE_OF_ITEM_ID itemid, luabind::object &list, 
 
         if (ContainerItems->find(theIterator->id)) {
             // Item ist ein Container
-            ONTAINERMAP::iterator iterat = containers.find(theIterator->number);
+            CONTAINERMAP::iterator iterat = containers.find(theIterator->number);
 
             if (iterat != containers.end()) {
                 // rekursiv verarbeiten
@@ -531,7 +531,7 @@ void Container::increaseItemList(luabind::object &list, int &index) {
 
         if (ContainerItems->find(theIterator->id)) {
             // Item ist ein Container
-            ONTAINERMAP::iterator iterat = containers.find(theIterator->number);
+            CONTAINERMAP::iterator iterat = containers.find(theIterator->number);
 
             if (iterat != containers.end()) {
                 // rekursiv verarbeiten
@@ -702,7 +702,7 @@ void Container::Save(std::ofstream *where) {
 
         // Item ist ein Container
         if (ContainerItems->find(theIterator->id)) {
-            ONTAINERMAP::iterator iterat = containers.find(theIterator->number);
+            CONTAINERMAP::iterator iterat = containers.find(theIterator->number);
 
             // Inhalt des Containers gefunden
             if (iterat != containers.end()) {
@@ -723,7 +723,7 @@ void Container::Save(std::ofstream *where) {
 void Container::Load(std::istream *where) {
 
     if (!containers.empty()) {
-        ONTAINERMAP::iterator theIterator;
+        CONTAINERMAP::iterator theIterator;
 
         for (theIterator = containers.begin(); theIterator != containers.end(); ++theIterator) {
             delete(*theIterator).second;
@@ -767,7 +767,7 @@ int Container::countItem(TYPE_OF_ITEM_ID itemid) {
         }
 
         if (ContainerItems->find(theIterator->id)) {     // Item ist ein Container
-            ONTAINERMAP::iterator iterat = containers.find(theIterator->number);
+            CONTAINERMAP::iterator iterat = containers.find(theIterator->number);
 
             if (iterat != containers.end()) {   // Inhalt des Containers gefunden
                 // rekursiv verarbeiten
@@ -790,7 +790,7 @@ int Container::countItem(TYPE_OF_ITEM_ID itemid, uint32_t data) {
 
         if (ContainerItems->find(theIterator->id)) {
             // Item ist ein Container
-            ONTAINERMAP::iterator iterat = containers.find(theIterator->number);
+            CONTAINERMAP::iterator iterat = containers.find(theIterator->number);
 
             if (iterat != containers.end()) {
                 // Inhalt des Containers gefunden, rekursiv verarbeiten
@@ -824,7 +824,7 @@ uint16_t Container::Volume(int rekt) {
         }
 
         if (ContainerItems->find(theIterator->id)) {
-            ONTAINERMAP::iterator iterat = containers.find(theIterator->number);
+            CONTAINERMAP::iterator iterat = containers.find(theIterator->number);
 
             if (iterat != containers.end()) {
 #ifdef Container_DEBUG
@@ -863,7 +863,7 @@ int Container::weight(int rekt) {
         }
 
         if (ContainerItems->find(theIterator->id)) {     // Item ist ein Container -> number ist nur die ID f�r den Containerinhalt
-            ONTAINERMAP::iterator iterat = containers.find(theIterator->number);
+            CONTAINERMAP::iterator iterat = containers.find(theIterator->number);
 
             if (iterat != containers.end()) {   // Inhalt des Containers gefunden
                 // rekursiv verarbeiten
@@ -895,7 +895,7 @@ int Container::_eraseItem(TYPE_OF_ITEM_ID itemid, int count, uint32_t data, bool
 
     while (theIterator < items.end()) {
         if ((ContainerItems->find(theIterator->id)) && (temp > 0)) {         // Item ist ein Container
-            ONTAINERMAP::iterator iterat = containers.find(theIterator->number);
+            CONTAINERMAP::iterator iterat = containers.find(theIterator->number);
 
             if (iterat != containers.end()) {   // Inhalt des Containers gefunden
                 // rekursiv verarbeiten
@@ -974,7 +974,7 @@ void Container::doAge(ITEM_FUNCT funct, bool inventory) {
 #endif
 
                         if (ContainerItems->find(theIterator->id)) {
-                            ONTAINERMAP::iterator iterat = containers.find(theIterator->number);
+                            CONTAINERMAP::iterator iterat = containers.find(theIterator->number);
 
                             if (iterat != containers.end()) {
 #ifdef Container_DEBUG
@@ -997,7 +997,7 @@ void Container::doAge(ITEM_FUNCT funct, bool inventory) {
         }
     }
 
-    ONTAINERMAP::iterator iterat;
+    CONTAINERMAP::iterator iterat;
 
     if (!containers.empty()) {
         for (iterat = containers.begin(); iterat != containers.end(); ++iterat) {
