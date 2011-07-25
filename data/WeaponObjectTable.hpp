@@ -18,53 +18,31 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WEAPONOBJECTTABLE_H
-#define WEAPONOBJECTTABLE_H
+#ifndef _WEAPON_OBJECT_TABLE_HPP_
+#define _WEAPON_OBJECT_TABLE_HPP_
 
 #include <string>
-
-#if __GNUC__ < 3
-#include <hash_map>
-#else
-#include <ext/hash_map>
-
-#if (__GNUC__ > 3) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1)
-using __gnu_cxx::hash_map;
-#endif
-
-#if (__GNUC__ == 3 && __GNUC_MINOR__ < 1)
-using std::hash_map;
-#endif
-
-#endif
-
+#include <boost/unordered_map.hpp>
+#include "data/Table.hpp"
 #include "TableStructs.hpp"
 
 class World;
 
-//! eine Tabelle für allgemeine Item-Eigenschaften
-class WeaponObjectTable {
-
+class WeaponObjectTable: public Table {
 public:
-
     bool find(TYPE_OF_ITEM_ID Id, WeaponStruct &ret);
 
     WeaponObjectTable();
-
     ~WeaponObjectTable();
-
-    void reload();
 
     inline bool dataOK() {
         return m_dataOK;
     }
 
-protected:
+private:
+    virtual void reload();
 
-    //! der Datentyp der die Tabelle aufnimmt
-    typedef hash_map < TYPE_OF_ITEM_ID, WeaponStruct > TABLE;
-
-    //! die Tabelle mit den eingelesenen Werten
+    typedef boost::unordered_map<TYPE_OF_ITEM_ID, WeaponStruct> TABLE;
     TABLE m_table;
 
     void clearOldTable();
@@ -73,3 +51,4 @@ protected:
 };
 
 #endif
+

@@ -18,30 +18,16 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MONSTERTABLE_H
-#define MONSTERTABLE_H
+#ifndef _MONSTER_TABLE_HPP_
+#define _MONSTER_TABLE_HPP_
 
 #include <string>
 #include <map>
 #include <list>
 #include <boost/shared_ptr.hpp>
+#include <boost/unordered_map.hpp>
+#include "data/Table.hpp"
 #include "script/LuaMonsterScript.hpp"
-
-#if __GNUC__ < 3
-#include <hash_map>
-#else
-#include <ext/hash_map>
-
-#if (__GNUC__ > 3) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1)
-using __gnu_cxx::hash_map;
-#endif
-
-#if (__GNUC__ == 3 && __GNUC_MINOR__ < 1)
-using std::hash_map;
-#endif
-
-#endif
-
 #include "types.hpp"
 #include "Character.hpp"
 
@@ -83,7 +69,7 @@ struct MonsterStruct {
     std::string name;
     Character::race_type race;
     unsigned short hitpoints;
-    bool canselfheal; //Ob sich das Monster selbst heilen kann oder nicht.
+    bool canselfheal;
     Character::movement_type movement;
     bool canattack;
     attributedef_t  attributes;
@@ -94,14 +80,10 @@ struct MonsterStruct {
     uint16_t maxsize;
 };
 
-//! eine Tabelle für allgemeine Item-Eigenschaften
-class MonsterTable {
+class MonsterTable: public Table {
 public:
     MonsterTable();
-
     ~MonsterTable();
-
-    void reload();
 
     inline bool dataOK() {
         return m_dataOK;
@@ -109,19 +91,16 @@ public:
 
     bool find(TYPE_OF_CHARACTER_ID Id, MonsterStruct &ret);
 
-protected:
-
-    //! der Datentyp der die Tabelle aufnimmt
-    typedef hash_map < TYPE_OF_CHARACTER_ID, MonsterStruct> TABLE;
-
-    //! die Tabelle mit den eingelesenen Werten
+private:
+    typedef boost::unordered_map<TYPE_OF_CHARACTER_ID, MonsterStruct> TABLE;
     TABLE m_table;
 
     void clearOldTable();
 
+    virtual void reload();
     bool m_dataOK;
 
     World *world;
-
 };
 #endif
+

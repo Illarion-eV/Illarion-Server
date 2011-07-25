@@ -18,34 +18,13 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _LONG_TIME_EFFECT_TABLE_HPP_
-#define _LONG_TIME_EFFECT_TABLE_HPP_
+#ifndef _TABLE_HPP_
+#define _TABLE_HPP_
 
-#include <string>
-#include <boost/unordered_map.hpp>
-#include "data/Table.hpp"
-#include "TableStructs.hpp"
-
-class LongTimeEffectTable: public Table {
-public:
-    bool find(uint16_t effectId, LongTimeEffectStruct &ret);
-    bool find(std::string effectname, LongTimeEffectStruct &ret);
-
-    LongTimeEffectTable();
-    ~LongTimeEffectTable();
-
-    inline bool dataOK() {
-        return m_dataOK;
-    }
-
-private:
-    typedef boost::unordered_map<uint16_t, LongTimeEffectStruct> TABLE;
-    TABLE m_table;
-
-    void clearOldTable();
-
-    virtual void reload();
-    bool m_dataOK;
+class Table {
+protected:
+    virtual void reload()=0;
 };
+
 #endif
 

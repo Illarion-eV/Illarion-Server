@@ -18,48 +18,29 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SPELLTABLE_HPP
-#define SPELLTABLE_HPP
+#ifndef _SPELL_TABLE_HPP_
+#define _SPELL_TABLE_HPP_
 
 #include <map>
 #include <list>
 #include <iostream>
 #include <boost/shared_ptr.hpp>
+#include <boost/unordered_map.hpp>
+#include "data/Table.hpp"
 #include "script/LuaMagicScript.hpp"
-
-#if __GNUC__ < 3
-#include <hash_map>
-#else
-#include <ext/hash_map>
-
-#if (__GNUC__ > 3) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1)
-using __gnu_cxx::hash_map;
-#endif
-
-#if (__GNUC__ == 3 && __GNUC_MINOR__ < 1)
-using std::hash_map;
-#endif
-
-#endif
 
 class World;
 
 struct SpellStruct {
-    //Type des aus zu führenden Zaubers.
     unsigned short magictype;
-    //Name des Scriptes.
     std::string scriptname;
-    //Shared Pointer auf das Script des Structs.
     boost::shared_ptr<LuaMagicScript> script;
 };
 
-class SpellTable {
+class SpellTable: public Table {
 public:
     SpellTable();
-
     ~SpellTable();
-
-    void reload();
 
     inline bool isDataOK() {
         return _dataOK;
@@ -67,14 +48,15 @@ public:
 
     bool find(unsigned long int magicfFlag,unsigned short int magic_type, SpellStruct &magicSpell);
 
-protected:
+private:
+    virtual void reload();
 
-    typedef hash_map<unsigned long int,SpellStruct> SpellMap;
+    typedef boost::unordered_map<unsigned long int, SpellStruct> SpellMap;
     SpellMap Spells;
 
     void clearOldTable();
 
     bool _dataOK;
-
 };
 #endif
+

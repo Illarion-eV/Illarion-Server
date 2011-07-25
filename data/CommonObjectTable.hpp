@@ -18,58 +18,38 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef COMMONOBJECTTABLE_H
-#define COMMONOBJECTTABLE_H
+#ifndef _COMMON_OBJECT_TABLE_HPP_
+#define _COMMON_OBJECT_TABLE_HPP_
 
 #include <string>
 #include <boost/shared_ptr.hpp>
 #include "script/LuaItemScript.hpp"
-
-#if __GNUC__ < 3
-#include <hash_map>
-#else
-#include <ext/hash_map>
-
-#if (__GNUC__ > 3) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1)
-using __gnu_cxx::hash_map;
-#endif
-
-#if (__GNUC__ == 3 && __GNUC_MINOR__ < 1)
-using std::hash_map;
-#endif
-
-#endif
-
+#include <boost/unordered_map.hpp>
+#include "data/Table.hpp"
 #include "TableStructs.hpp"
 
 class World;
 
-//! eine Tabelle für allgemeine Item-Eigenschaften
-class CommonObjectTable {
+class CommonObjectTable: public Table {
 public:
     bool find(TYPE_OF_ITEM_ID Id, CommonStruct &ret);
     bool find(TYPE_OF_ITEM_ID Id);
     boost::shared_ptr<LuaItemScript> findScript(TYPE_OF_ITEM_ID Id);
 
-    //CWorld für den Constructor aufgrund der Scriptfunktionen
     CommonObjectTable();
-
     ~CommonObjectTable();
-
-    void reload();
 
     inline bool dataOK() {
         return m_dataOK;
     }
 
-protected:
+private:
+    virtual void reload();
 
-    //! der Datentyp der die Tabelle aufnimmt
-    typedef hash_map < TYPE_OF_ITEM_ID, CommonStruct > TABLE;
+    typedef boost::unordered_map<TYPE_OF_ITEM_ID, CommonStruct> TABLE;
     typedef boost::shared_ptr<LuaItemScript> iscript;
-    typedef hash_map < TYPE_OF_ITEM_ID, iscript > SCRIPTTABLE;
+    typedef boost::unordered_map<TYPE_OF_ITEM_ID, iscript> SCRIPTTABLE;
 
-    //! die Tabelle mit den eingelesenen Werten
     TABLE m_table;
     SCRIPTTABLE m_scripttable;
 
@@ -81,3 +61,4 @@ protected:
 };
 
 #endif
+

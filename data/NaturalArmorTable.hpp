@@ -18,59 +18,34 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NATURALARMORTABLE
-#define NATURALARMORTABLE
+#ifndef _NATURAL_ARMOR_TABLE_HPP_
+#define _NATURAL_ARMOR_TABLE_HPP_
 
 #include <string>
+#include <boost/unordered_map.hpp>
+#include "data/Table.hpp"
 #include "Character.hpp"
 
-#if __GNUC__ < 3
-#include <hash_map>
-#else
-#include <ext/hash_map>
-
-#if (__GNUC__ > 3) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1)
-using __gnu_cxx::hash_map;
-#endif
-
-#if (__GNUC__ == 3 && __GNUC_MINOR__ < 1)
-using std::hash_map;
-#endif
-
-#endif
-
-class NaturalArmorTable {
+class NaturalArmorTable: public Table {
 public:
-
-    //sucht einen Eintrag aus der Tabelle nach Rassentyp
-    //liefert true oder false je nachdem ob ein eintrag gefunden wurde.
     bool find(Character::race_type race, MonsterArmor &ret);
 
-    //Constructor
     NaturalArmorTable();
-
-    //Destructor
     ~NaturalArmorTable();
 
-    //Lädt die Tabelle neu
-    void reload();
-
-    //liefert den Wert der Privat Variable m_dataOK zurück
     inline bool isDataOk() {
         return m_dataOK;
     }
 
-protected:
+private:
 
-    //Tabelle zum aufnehmen der eigentlichen Daten
-    typedef hash_map<uint16_t, MonsterArmor> TABLE;
+    typedef boost::unordered_map<uint16_t, MonsterArmor> TABLE;
     TABLE m_ArmorTable;
 
-    //Bool Wert der enthält ob das Laden der Daten geklappt hat bzw alles IO mit der Tabelle ist
+    virtual void reload();
     bool m_dataOK;
 
-    //leer die alte Tabelle (löscht deren Inhalt)
     void clearOldTable();
-
 };
 #endif
+

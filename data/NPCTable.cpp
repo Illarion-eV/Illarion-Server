@@ -41,13 +41,12 @@ template< typename To, typename From> To stream_convert(const From &from) {
 }
 
 NPCTable::NPCTable() : _world(World::get()) {
-    //Constructor welche die Funktion Loaddata auslöst
-    LoadData();
+    reload();
 }
 
 NPCTable::~NPCTable() {}
 
-bool NPCTable::LoadData() {
+void NPCTable::reload() {
     try {
         Database::SelectQuery query;
         query.addColumn("npc", "npc_id");
@@ -138,9 +137,9 @@ bool NPCTable::LoadData() {
 
         }
 
-        return true;
+        m_dataOK = true;
     } catch (...) {
         std::cerr << "error while loading npcs" << std::endl;
-        return false;
+        m_dataOK = false;
     }
 }

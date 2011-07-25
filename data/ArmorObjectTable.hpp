@@ -18,54 +18,32 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ARMOROBJECTTABLE_H
-#define ARMOROBJECTTABLE_H
+#ifndef _ARMOR_OBJECT_TABLE_HPP_
+#define _ARMOR_OBJECT_TABLE_HPP_
 
 #include <string>
-
-#if __GNUC__ < 3
-#include <hash_map>
-#else
-#include <ext/hash_map>
-
-#if (__GNUC__ > 3) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1)
-using __gnu_cxx::hash_map;
-#endif
-
-#if (__GNUC__ == 3 && __GNUC_MINOR__ < 1)
-using std::hash_map;
-#endif
-
-#endif
-
+#include <boost/unordered_map.hpp>
+#include "data/Table.hpp"
 #include "TableStructs.hpp"
 
-//! eine Tabelle für allgemeine Item-Eigenschaften
-class ArmorObjectTable {
+class ArmorObjectTable: public Table {
 public:
     bool find(TYPE_OF_ITEM_ID Id, ArmorStruct &ret);
 
     ArmorObjectTable();
-
     ~ArmorObjectTable();
-
-    void reload();
 
     inline bool dataOK() {
         return m_dataOK;
     }
 
-protected:
-    //! der Datentyp der die Tabelle aufnimmt
-    typedef hash_map < TYPE_OF_ITEM_ID, ArmorStruct > TABLE;
-
-    //! die Tabelle mit den eingelesenen Werten
+private:
+    virtual void reload();
+    typedef boost::unordered_map<TYPE_OF_ITEM_ID, ArmorStruct> TABLE;
     TABLE m_table;
-
     void clearOldTable();
-
     bool m_dataOK;
-
 };
 
 #endif
+

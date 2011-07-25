@@ -18,12 +18,13 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NPCTABLE_H
-#define NPCTABLE_H
+#ifndef _NPC_TABLE_HPP_
+#define _NPC_TABLE_HPP_
 
 #include <string>
 #include <list>
 
+#include "data/Table.hpp"
 #include "globals.hpp"
 #include "World.hpp"
 #include "NPC.hpp"
@@ -32,28 +33,32 @@
 class World;
 
 struct NPCStruct {
-
-    position NPCPos; //Pos des NPC
-    std::string Name; //Name des NPC
-    Character::race_type type; //type des NPC's
-    Character::face_to faceto; //richtung des Chars 0 Nord, 2 Ost, 4 Süd, 6 West
-    std::vector<struct NPCTalk> speechTexts; //Texte welche der NPC sagen kann;
-    unsigned short int walk_range; //Bereich in dem sich der NPC bewegen darf. 0 für keine Bewegung.
+    position NPCPos;
+    std::string Name;
+    Character::race_type type;
+    Character::face_to faceto;
+    std::vector<struct NPCTalk> speechTexts;
+    unsigned short int walk_range;
     bool ishealer;
 };
 
 
-class NPCTable {
+class NPCTable: public Table {
 public:
+    NPCTable();
+    ~NPCTable();
 
-    NPCTable(); //Constructor
-    ~NPCTable(); //Destructor
-
-    bool LoadData(); //Function welche die Daten aus der Datenbank lädt liefert false wenn das laden nicht klappt
+    bool dataOK() {
+        return m_dataOK;
+    };
 
 private:
+    virtual void reload();
+    bool m_dataOK;
+
     World *_world;
     std::list<struct NPCStruct> NPCList; //List zum aufnehmen aller Werte aus der DB
 };
 
 #endif
+

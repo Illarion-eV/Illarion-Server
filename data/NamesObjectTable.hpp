@@ -18,57 +18,35 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NAMESOBJECTTABLE_H
-#define NAMESOBJECTTABLE_H
+#ifndef _NAMES_OBJECT_TABLE_HPP_
+#define _NAMES_OBJECT_TABLE_HPP_
 
 #include <string>
-
-#if __GNUC__ < 3
-#include <hash_map>
-#else
-#include <ext/hash_map>
-
-#if (__GNUC__ > 3) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1)
-using __gnu_cxx::hash_map;
-#endif
-
-#if (__GNUC__ == 3 && __GNUC_MINOR__ < 1)
-using std::hash_map;
-#endif
-
-#endif
-
+#include <boost/unordered_map.hpp>
+#include "data/Table.hpp"
 #include "TableStructs.hpp"
 
-//! eine Tabelle für allgemeine Item-Eigenschaften
-class NamesObjectTable {
-
+class NamesObjectTable: public Table {
 public:
-
     bool find(TYPE_OF_ITEM_ID Id, NamesStruct &ret);
 
     NamesObjectTable();
-
     ~NamesObjectTable();
-
-    void reload();
 
     inline bool dataOK() {
         return m_dataOK;
     }
 
-protected:
+private:
 
-    //! der Datentyp der die Tabelle aufnimmt
-    typedef hash_map < TYPE_OF_ITEM_ID, NamesStruct > TABLE;
-
-    //! die Tabelle mit den eingelesenen Werten
+    typedef boost::unordered_map<TYPE_OF_ITEM_ID, NamesStruct> TABLE;
     TABLE m_table;
 
     void clearOldTable();
 
+    virtual void reload();
     bool m_dataOK;
-
 };
 
 #endif
+

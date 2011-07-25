@@ -18,26 +18,13 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MONSTERATTACKTABLE
-#define MONSTERATTACKTABLE
+#ifndef _MONSTER_ATTACK_TABLE_
+#define _MONSTER_ATTACK_TABLE_
 
 #include <string>
+#include <boost/unordered_map.hpp>
+#include "data/Table.hpp"
 #include "Character.hpp"
-
-#if __GNUC__ < 3
-#include <hash_map>
-#else
-#include <ext/hash_map>
-
-#if (__GNUC__ > 3) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1)
-using __gnu_cxx::hash_map;
-#endif
-
-#if (__GNUC__ == 3 && __GNUC_MINOR__ < 1)
-using std::hash_map;
-#endif
-
-#endif
 
 struct AttackBoni {
     uint8_t attackType;
@@ -46,38 +33,25 @@ struct AttackBoni {
     AttackBoni() : attackType(0), attackValue(0), actionPointsLost(0) {}
 };
 
-class MonsterAttackTable {
-
+class MonsterAttackTable: public Table {
 public:
-
-    //Constructor
     MonsterAttackTable();
-
-    //Destructor;
     ~MonsterAttackTable();
 
-    //Sucht einen Eintrag und liefert die zugehörigen Boni
     bool find(Character::race_type race, AttackBoni &ret);
 
-    //lädt die Tabelle neu
-    void reload();
-
-    //get für m_dataOk (Zeigt an ob das Laden erfolgreich war)
     inline bool isDataOk() {
         return m_dataOk;
     }
 
 private:
-
-    //Gibt an ob Laden der Daten erfolgreich war
+    virtual void reload();
     bool m_dataOk;
 
-    //leert die alte Tabelle beim neuladen
     void clearOldTable();
 
-    typedef hash_map<uint16_t, AttackBoni>TABLE;
+    typedef boost::unordered_map<uint16_t, AttackBoni> TABLE;
     TABLE raceAttackBoni;
-
 };
 #endif
 

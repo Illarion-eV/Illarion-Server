@@ -18,63 +18,41 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TILESTABLE_H
-#define TILESTABLE_H
+#ifndef _TILES_TABLE_HPP_
+#define _TILES_TABLE_HPP_
 
 #include <string>
-
-#if __GNUC__ < 3
-#include <hash_map>
-#else
-#include <ext/hash_map>
-
-#if (__GNUC__ > 3) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1)
-using __gnu_cxx::hash_map;
-#endif
-
-#if (__GNUC__ == 3 && __GNUC_MINOR__ < 1)
-using std::hash_map;
-#endif
-
-#endif
-
+#include <boost/unordered_map.hpp>
+#include "data/Table.hpp"
 #include "types.hpp"
 #include "TableStructs.hpp"
 
 class DBConnect;
 class World;
 
-//! eine Tabelle für allgemeine Item-Eigenschaften
-class TilesTable {
+class TilesTable: public Table {
 public:
     bool find(TYPE_OF_ITEM_ID Id, TilesStruct &ret);
 
     TilesTable();
-
     ~TilesTable();
-
-    void reload();
 
     inline bool dataOK() {
         return m_dataOK;
     }
 
-    //! prüft, ob das Item mit der ID Id passierbar ist
-    // \param Id eine Item-Id
-    // \return true falls das Item mit der ID Id nicht passierbar ist
     bool nonPassable(TYPE_OF_ITEM_ID Id);
 
-protected:
+private:
+    virtual void reload();
 
-    //! der Datentyp der die Tabelle aufnimmt
-    typedef hash_map < TYPE_OF_ITEM_ID, TilesStruct > TABLE;
+    typedef boost::unordered_map<TYPE_OF_ITEM_ID, TilesStruct> TABLE;
 
-    //! die Tabelle mit den eingelesenen Werten
     TABLE m_table;
 
     void clearOldTable();
 
     bool m_dataOK;
-
 };
 #endif
+
