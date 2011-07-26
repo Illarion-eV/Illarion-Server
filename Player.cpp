@@ -1935,8 +1935,8 @@ bool Player::move(direction dir, uint8_t mode) {
                     waitpages = (diff * 667) / 10000;
                 }
 
-                //if( mode != RUNNING || ( j == 1 && cont ) )
-                //    actionPoints -= walkcost; //abziehen der Movecosten
+                if( mode != RUNNING || ( j == 1 && cont ) )
+                    actionPoints -= walkcost;
             }
 
 #ifdef PLAYER_MOVE_DEBUG
