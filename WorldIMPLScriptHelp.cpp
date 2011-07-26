@@ -102,7 +102,7 @@ luabind::object World::LuaLoS(position startingpos, position endingpos) {
         luabind::object innerlist = luabind::newtable(luaState);
 
         if (boIterator->blockingType == BlockingObject::BT_CHARACTER) {
-            innerlist["TYPE"] = "HARACTER";
+            innerlist["TYPE"] = "CHARACTER";
             innerlist["OBJECT"] = fuse_ptr<Character>(boIterator->blockingChar);
         } else if (boIterator->blockingType == BlockingObject::BT_ITEM) {
             innerlist["TYPE"] = "ITEM";
