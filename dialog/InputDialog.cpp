@@ -20,6 +20,32 @@
 
 #include "dialog/InputDialog.hpp"
 
-InputDialog::InputDialog(std::string title, unsigned short maxlines, unsigned short maxchars)
-    :title(title), maxlines(maxlines), maxchars(maxchars) {}
+InputDialog::InputDialog(std::string title, bool multiline, unsigned short maxchars)
+    :title(title), multiline(multiline), maxChars(maxChars) {
+    input = "";
+}
+
+std::string InputDialog::getTitle() const {
+    return title;
+}
+
+bool InputDialog::isMultiline() const {
+    return multiline;
+}
+
+unsigned short InputDialog::getMaxChars() const {
+    return maxChars;
+}
+
+std::string InputDialog::getInput() const {
+    return input;
+}
+
+void InputDialog::setInput(std::string input) {
+    if (maxChars > 0)
+        input = input.substr(0, maxChars);
+    if (!multiline)
+        input = input.substr(0, input.find('\n', 0));
+    this->input = input;
+}
 

@@ -16,23 +16,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
-#ifndef _CLIENTCOMMANDS_HPP_
-#define _CLIENTCOMMANDS_HPP_
-
-
-
-/**
-*@defgroup Clientcommands Clientcommands
-*@ingroup Netinterface
-*commands which are sent by the client
-*/
-
-/**
-*@ingroup Clientcommands
-*@file ClientCommands.hpp
-*holds the implementation + definition of all the client commands
-*/
+#ifndef _CLIENT_COMMANDS_HPP_
+#define _CLIENT_COMMANDS_HPP_
 
 #include "Player.hpp"
 #include "World.hpp"
@@ -44,6 +29,7 @@
 #include "data/CommonObjectTable.hpp"
 #include "data/MonsterTable.hpp"
 #include "data/TilesTable.hpp"
+#include "dialog/InputDialog.hpp"
 #include <boost/shared_ptr.hpp>
 #include "script/LuaNPCScript.hpp"
 #include "script/LuaScript.hpp"
@@ -55,8 +41,6 @@
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "netinterface/BasicClientCommand.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
-
-
 #include <list>
 
 extern WeaponObjectTable *WeaponItems;
@@ -65,10 +49,6 @@ extern CommonObjectTable *CommonItem;
 extern TilesTable *Tiles;
 extern boost::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
 
-/**
-*@ingroup Clientcommands
-*defines the definition bytes of the different client commands
-*/
 enum clientcommands {
     C_LOGIN_TS = 0x0D, /*<login*/
     C_SCREENSIZE_TS = 0xA0,
@@ -106,12 +86,11 @@ enum clientcommands {
     C_REQUESTSKILLS_TS = 0xDD,
     C_LOOKATMENUITEM_TS = 0xDC,
     C_KEEPALIVE_TS = 0xD8,
-    C_REQUESTAPPEARANCE_TS = 0x0E
-
+    C_REQUESTAPPEARANCE_TS = 0x0E,
+    C_INPUTDIALOG_TS = 0x50
 };
 
 /**
-*@ingroup Netinterface
 *simple class for storing data in a fifo implemented stack for the use commands
 */
 class ByteStack {
@@ -159,10 +138,35 @@ private:
     std::list<short int>paramstack;
 };
 
-/**
-*@ingroup Clientcommands
-*client asked to send the appearance of another char
-*/
+class InputDialogTS : public BasicClientCommand {
+private:
+    unsigned int dialogId;
+    bool success;
+    std::string input;
+
+public:
+    InputDialogTS() : BasicClientCommand(C_INPUTDIALOG_TS) {
+    }
+
+    virtual ~InputDialogTS() {};
+
+    virtual void decodeData() {
+        dialogId = getIntFromBuffer();
+        success = getUnsignedCharFromBuffer() > 0;
+        input = getStringFromBuffer();
+    }
+
+    void performAction(Player *player) {
+        time(&(player->lastaction));
+        player->executeInputDialog(dialogId, success, input);
+    }
+
+    boost::shared_ptr<BasicClientCommand> clone() {
+        boost::shared_ptr<BasicClientCommand>cmd(new InputDialogTS());
+        return cmd;
+    }
+};
+
 class RequestAppearanceTS : public BasicClientCommand {
 public:
     RequestAppearanceTS() : BasicClientCommand(C_REQUESTAPPEARANCE_TS) {

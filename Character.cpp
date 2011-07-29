@@ -3450,6 +3450,9 @@ void Character::sendBook(uint16_t bookID) {
     // Nothing to do here, overloaded in Player
 }
 
+void Character::requestInputDialog(InputDialog *inputDialog) {
+    // Nothing to do here, overloaded in Player
+}
 
 void Character::updateAppearanceForPlayer(Player *target, bool always) {
     if (!isinvisible) {

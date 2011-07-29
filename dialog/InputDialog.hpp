@@ -27,11 +27,17 @@
 class InputDialog: public Dialog {
 private:
     std::string title;
-    unsigned short maxlines;
-    unsigned short maxchars;
+    bool  multiline;
+    unsigned short maxChars;
+    std::string input;
 
 public:
-    InputDialog(std::string title, unsigned short maxlines, unsigned short maxchars);
+    InputDialog(std::string title, bool multiline, unsigned short maxChars);
+    std::string getTitle() const;
+    bool isMultiline() const;
+    unsigned short getMaxChars() const;
+    std::string getInput() const;
+    void setInput(std::string input);
 };
 
 #endif

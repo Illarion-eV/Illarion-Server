@@ -53,6 +53,8 @@
 #include "db/UpdateQuery.hpp"
 #include "db/Result.hpp"
 
+#include "dialog/InputDialog.hpp"
+
 //#define PLAYER_MOVE_DEBUG
 
 template<> const std::string toString(const unsigned char &convertme) {
@@ -61,7 +63,7 @@ template<> const std::string toString(const unsigned char &convertme) {
 
 Player::Player(boost::shared_ptr<NetInterface> newConnection) throw(Player::LogoutException)
     : Character(), mapshowcaseopen(false), onlinetime(0), Connection(newConnection),
-      turtleActive(false), clippingActive(true), admin(false) {
+      turtleActive(false), clippingActive(true), admin(false), dialogCounter(0) {
 #ifdef Player_DEBUG
     std::cout << "Player Konstruktor Start" << std::endl;
 #endif
@@ -381,6 +383,8 @@ Player::~Player() {
 #ifdef Player_DEBUG
     std::cout << "Player Destruktor Start/Ende" << std::endl;
 #endif
+    for (DialogMap::iterator it=dialogs.begin(); it!=dialogs.end(); ++it)
+        delete it->second;
 }
 
 bool Player::VerifyPassword(std::string chkpw) {
@@ -3034,5 +3038,21 @@ void Player::sendCharRemove(TYPE_OF_CHARACTER_ID id, boost::shared_ptr<BasicServ
         visibleChars.erase(id);
         Connection->addCommand(removechar);
     }
+}
+
+void Player::requestInputDialog(InputDialog *inputDialog) {
+     unsigned int dialogId = dialogCounter++;
+     dialogs[dialogId] = inputDialog;
+     boost::shared_ptr<BasicServerCommand>cmd(new InputDialogTC(*inputDialog, dialogId));
+}
+
+void Player::executeInputDialog(unsigned int dialogId, bool success, std::string input) {
+    InputDialog *inputDialog = (InputDialog*)dialogs[dialogId];
+    if (success && (inputDialog != 0)) {
+        inputDialog->setInput(input);
+        std::cerr << "Missing callback call for InputDialog #" << dialogId << " with input: " << input << std::endl; 
+    }
+    delete inputDialog;
+    dialogs.erase(dialogId);
 }
 

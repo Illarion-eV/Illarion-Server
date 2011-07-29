@@ -49,6 +49,7 @@ extern "C" {
 #include "Logger.hpp"
 #include "WaypointList.hpp"
 #include "fuse_ptr.hpp"
+#include "dialog/InputDialog.hpp"
 
 extern ScriptVariablesTable *scriptVariables;
 
@@ -323,6 +324,9 @@ void LuaScript::init_base_functions() {
 
     luabind::module(_luaState)
     [
+        luabind::class_<InputDialog>("InputDialog")
+        .def(luabind::constructor<std::string, bool, unsigned short>())
+        .def("getInput", &InputDialog::getInput),
         luabind::class_<LongTimeAction>("Action")
         .enum_("state")
         [
@@ -349,6 +353,7 @@ void LuaScript::init_base_functions() {
         .def_readwrite("thunderstorm", &WeatherStruct::thunderstorm)
         .def_readwrite("temperature", &WeatherStruct::temperature),
         luabind::class_<Character>("Character")
+        .def("requestInputDialog", &Character::requestInputDialog)
         .property("death_consequences", &Character::getDeathConsequences, &Character::setDeathConsequences)
         .def("idleTime", &Character::idleTime)
         .def("sendBook", &Character::sendBook)

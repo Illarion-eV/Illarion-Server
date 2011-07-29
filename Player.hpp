@@ -35,12 +35,13 @@
 #include <boost/shared_ptr.hpp>
 #include "Language.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
-
+#include "boost/unordered_map.hpp"
 
 class World;
 class LuaScript;
 class NetInterface;
 struct WeatherStruct;
+class Dialog;
 
 enum gm_rights {
     gmr_allowlogin = 1, //GM is allowed to login if nologin is true
@@ -562,6 +563,9 @@ public:
     void checkSave();
 #endif
 
+    virtual void requestInputDialog(InputDialog *inputDialog);
+    void executeInputDialog(unsigned int dialogId, bool success, std::string input);
+
 protected:
 
     // shared code for all eraseItem methods
@@ -606,6 +610,9 @@ private:
 
     bool monitoringClient;
 
+    unsigned int dialogCounter;
+    typedef boost::unordered_map<unsigned int, Dialog*> DialogMap;
+    DialogMap dialogs;
 };
 
 // Binary to std::string conversions

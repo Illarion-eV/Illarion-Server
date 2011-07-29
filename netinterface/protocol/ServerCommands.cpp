@@ -26,11 +26,18 @@
 #include "ServerCommands.hpp"
 #include "netinterface/BasicServerCommand.hpp"
 #include "netinterface/NetInterface.hpp"
-
+#include "dialog/InputDialog.hpp"
 
 //! eine Tabelle fuer Behaelter - Item Daten
 extern ContainerObjectTable *ContainerItems;
 extern RaceSizeTable *RaceSizes;
+
+InputDialogTC::InputDialogTC(InputDialog &inputDialog, unsigned int dialogId) : BasicServerCommand(SC_INPUTDIALOG_TC) {
+    addStringToBuffer(inputDialog.getTitle());
+    addUnsignedCharToBuffer(inputDialog.isMultiline() ? 1 : 0);
+    addShortIntToBuffer(inputDialog.getMaxChars());
+    addIntToBuffer(dialogId);
+}
 
 ItemUpdate_TC::ItemUpdate_TC(position fieldpos, ITEMVECTOR &items) : BasicServerCommand(SC_ITEMUPDATE_TC) {
     Logger::writeMessage("rot_update", "sending new itemstack for pos("+Logger::toString(fieldpos.x)+", "+Logger::toString(fieldpos.y)+", "+Logger::toString(fieldpos.z)+")",false);
