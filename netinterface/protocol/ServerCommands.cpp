@@ -142,7 +142,7 @@ LogOutTC::LogOutTC(unsigned char reason) : BasicServerCommand(SC_LOGOUT_TC) {
 TargetLostTC::TargetLostTC() : BasicServerCommand(SC_TARGETLOST_TC) {
 }
 
-AttackAckknowledgedTC::AttackAckknowledgedTC() : BasicServerCommand(SC_ATTACKACKKNOWLEDGED_TC) {
+AttackAcknowledgedTC::AttackAcknowledgedTC() : BasicServerCommand(SC_ATTACKACKNOWLEDGED_TC) {
 }
 
 NameOfInventoryItemTC::NameOfInventoryItemTC(unsigned char pos, std::string name) : BasicServerCommand(SC_NAMEOFINVENTORYITEM_TC) {
@@ -216,7 +216,7 @@ ItemRemoveTC::ItemRemoveTC(short int x, short int y, short int z) : BasicServerC
     addShortIntToBuffer(z);
 }
 
-AViewPlayersTC::AViewPlayersTC() : BasicServerCommand(SC_AVIEWPLAYERS_TC) {
+AdminViewPlayersTC::AdminViewPlayersTC() : BasicServerCommand(SC_ADMINVIEWPLAYERS_TC) {
     World::PLAYERVECTOR::iterator titerator;
     unsigned short int count = World::get()->Players.size();
     addShortIntToBuffer(count);

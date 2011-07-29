@@ -556,7 +556,7 @@ void World::sendAdminAllPlayerData(Player* &admin) {
         return;
     }
 
-    boost::shared_ptr<BasicServerCommand>cmd(new AViewPlayersTC());
+    boost::shared_ptr<BasicServerCommand>cmd(new AdminViewPlayersTC());
     admin->Connection->addCommand(cmd);
 
 }

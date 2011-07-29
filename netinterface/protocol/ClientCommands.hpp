@@ -2188,7 +2188,7 @@ public:
                     player->enemytype = Character::npc;
                 }
 
-                boost::shared_ptr<BasicServerCommand>cmd(new AttackAckknowledgedTC());
+                boost::shared_ptr<BasicServerCommand>cmd(new AttackAcknowledgedTC());
                 player->Connection->addCommand(cmd);
                 player->startMusic(FIGHTMUSIC);
                 //monitoringClientList->sendCommand( new SendActionTS(player->id, player->name, 0, "Starts an attack: " + Logger::toString(player->enemyid) ) );
