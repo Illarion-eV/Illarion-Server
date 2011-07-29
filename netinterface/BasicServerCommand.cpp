@@ -80,12 +80,7 @@ char *BasicServerCommand::cmdData() {
 
 void BasicServerCommand::addStringToBuffer(std::string data) {
     unsigned short int count = data.length();
-
-    if (count > 254) {
-        count = 254;
-    }
-
-    addUnsignedCharToBuffer(static_cast<unsigned char>(count));
+    addShortIntToBuffer(count);
 
     for (unsigned short int i = 0; i < count; ++i) {
         addUnsignedCharToBuffer(data.at(i));

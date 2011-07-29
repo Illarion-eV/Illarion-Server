@@ -102,18 +102,14 @@ unsigned char BasicClientCommand::getUnsignedCharFromBuffer() throw(OverflowExce
 }
 
 std::string BasicClientCommand::getStringFromBuffer() {
-    unsigned char len = getUnsignedCharFromBuffer();
-
-    if (len>250) {
-        len = 250;
-    }
+    unsigned short int len = getShortIntFromBuffer();
 
     std::string ret="";
-    unsigned char resolved;
+    unsigned char character;
 
     for (int i = 0; i < len; ++i) {
-        resolved = getUnsignedCharFromBuffer();
-        ret.append(1, resolved);
+        character = getUnsignedCharFromBuffer();
+        ret.append(1, character);
     }
 
     return ret;
