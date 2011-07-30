@@ -383,8 +383,6 @@ Player::~Player() {
 #ifdef Player_DEBUG
     std::cout << "Player Destruktor Start/Ende" << std::endl;
 #endif
-    for (DialogMap::iterator it=dialogs.begin(); it!=dialogs.end(); ++it)
-        delete it->second;
 }
 
 bool Player::VerifyPassword(std::string chkpw) {
@@ -3042,8 +3040,10 @@ void Player::sendCharRemove(TYPE_OF_CHARACTER_ID id, boost::shared_ptr<BasicServ
 
 void Player::requestInputDialog(InputDialog *inputDialog) {
      unsigned int dialogId = dialogCounter++;
-     dialogs[dialogId] = inputDialog;
+     InputDialog *dialog = new InputDialog(*inputDialog);
+     dialogs[dialogId] = dialog;
      boost::shared_ptr<BasicServerCommand>cmd(new InputDialogTC(*inputDialog, dialogId));
+     // executeInputDialog(dialogId, true, "This is a response\nto an InputDialog");
 }
 
 void Player::executeInputDialog(unsigned int dialogId, bool success, std::string input) {

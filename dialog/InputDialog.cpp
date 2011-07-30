@@ -25,6 +25,13 @@ InputDialog::InputDialog(std::string title, bool multiline, unsigned short maxch
     input = "";
 }
 
+InputDialog::InputDialog(const InputDialog& inputDialog) {
+    title = inputDialog.title;
+    multiline = inputDialog.multiline;
+    maxChars = inputDialog.maxChars;
+    input = inputDialog.input;
+}
+
 std::string InputDialog::getTitle() const {
     return title;
 }
