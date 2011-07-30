@@ -325,7 +325,7 @@ void LuaScript::init_base_functions() {
     luabind::module(_luaState)
     [
         luabind::class_<InputDialog>("InputDialog")
-        .def(luabind::constructor<std::string, bool, unsigned short>())
+        .def(luabind::constructor<std::string, bool, unsigned short, luabind::object>())
         .def("getInput", &InputDialog::getInput),
         luabind::class_<LongTimeAction>("Action")
         .enum_("state")

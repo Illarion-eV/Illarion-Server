@@ -19,9 +19,12 @@
  */
 
 #include "dialog/InputDialog.hpp"
+#include <luabind/luabind.hpp>
+#include "Logger.hpp"
 
-InputDialog::InputDialog(std::string title, bool multiline, unsigned short maxchars)
-    :title(title), multiline(multiline), maxChars(maxChars) {
+InputDialog::InputDialog(std::string title, bool multiline,
+    unsigned short maxchars, luabind::object callback)
+    :title(title), multiline(multiline), maxChars(maxChars), callback(callback) {
     input = "";
 }
 
@@ -30,6 +33,7 @@ InputDialog::InputDialog(const InputDialog& inputDialog) {
     multiline = inputDialog.multiline;
     maxChars = inputDialog.maxChars;
     input = inputDialog.input;
+    callback = inputDialog.callback;
 }
 
 std::string InputDialog::getTitle() const {
@@ -54,5 +58,17 @@ void InputDialog::setInput(std::string input) {
     if (!multiline)
         input = input.substr(0, input.find('\n', 0));
     this->input = input;
+}
+
+void InputDialog::executeCallback() {
+    try {
+        callback(*this);
+    } catch (luabind::error &e) {
+        lua_State *L = e.state();
+        std::string err = "Exception in InputDialog callback";
+        err += ": " + std::string(lua_tostring(L, -1));
+        lua_pop(L, 1);
+        Logger::writeError("scripts", err);
+    }
 }
 

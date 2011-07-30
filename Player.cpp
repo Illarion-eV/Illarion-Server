@@ -3043,14 +3043,14 @@ void Player::requestInputDialog(InputDialog *inputDialog) {
      InputDialog *dialog = new InputDialog(*inputDialog);
      dialogs[dialogId] = dialog;
      boost::shared_ptr<BasicServerCommand>cmd(new InputDialogTC(*inputDialog, dialogId));
-     // executeInputDialog(dialogId, true, "This is a response\nto an InputDialog");
+     Connection->addCommand(cmd);
 }
 
 void Player::executeInputDialog(unsigned int dialogId, bool success, std::string input) {
     InputDialog *inputDialog = (InputDialog*)dialogs[dialogId];
     if (success && (inputDialog != 0)) {
         inputDialog->setInput(input);
-        std::cerr << "Missing callback call for InputDialog #" << dialogId << " with input: " << input << std::endl; 
+        inputDialog->executeCallback();
     }
     delete inputDialog;
     dialogs.erase(dialogId);

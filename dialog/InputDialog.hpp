@@ -23,6 +23,7 @@
 
 #include "dialog/Dialog.hpp"
 #include <string>
+#include <luabind/object.hpp>
 
 class InputDialog: public Dialog {
 private:
@@ -30,15 +31,17 @@ private:
     bool  multiline;
     unsigned short maxChars;
     std::string input;
+    luabind::object callback;
 
 public:
-    InputDialog(std::string title, bool multiline, unsigned short maxChars);
+    InputDialog(std::string title, bool multiline, unsigned short maxChars, luabind::object callback);
     InputDialog(const InputDialog& inputDialog);
     std::string getTitle() const;
     bool isMultiline() const;
     unsigned short getMaxChars() const;
     std::string getInput() const;
     void setInput(std::string input);
+    void executeCallback();
 };
 
 #endif
