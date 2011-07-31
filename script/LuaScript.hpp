@@ -168,10 +168,11 @@ public:
 protected:
     static lua_State *_luaState;
     static bool initialized;
-    static void writeErrorMsg(); /**< returns a human readable error message */
-    static void writeDebugMsg(std::string msg);   /**< writes a debug message to the script log */
+    static void writeErrorMsg();
+    static void writeCastErrorMsg(std::string entryPoint, std::string expectedType);
+    static void writeDebugMsg(std::string msg);
 public:
-    luabind::object call(std::string entrypoint) throw(luabind::error);     /**< creates a lua call */
+    luabind::object call(std::string entrypoint) throw(luabind::error);
 
 private:
     void init_base_functions(); /**< initialize basic functions of scripts */

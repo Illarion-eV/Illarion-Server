@@ -37,9 +37,11 @@ bool LuaDepotScript::onOpenDepot(Character *cc, Item itm) {
         World::get()->setCurrentScript(this);
         fuse_ptr<Character> fuse_cc(cc);
         return luabind::object_cast<bool>(call("onOpenDepot")(fuse_cc, itm));
+    } catch (luabind::cast_failed &e) {
+        writeCastErrorMsg("onOpenDepot", "bool");
     } catch (luabind::error &e) {
-        return true;
+        writeErrorMsg();
     }
-
     return true;
 }
+

@@ -178,6 +178,13 @@ void LuaScript::writeErrorMsg() {
     }
 }
 
+void LuaScript::writeCastErrorMsg(std::string entryPoint, std::string expectedType) {
+    std::string script = World::get()->getCurrentScript()->getFileName();
+    std::string err = "Invalid return type in " + script + "." + entryPoint + ":\n";
+    err += "Expected type " + expectedType + "\n";
+    Logger::writeError("scripts", err);
+}
+
 void LuaScript::writeDebugMsg(std::string msg) {
     lua_pushstring(_luaState, ("Debug Message: " + msg).c_str());
     add_backtrace(_luaState);

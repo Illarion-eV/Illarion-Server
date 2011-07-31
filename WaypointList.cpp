@@ -20,6 +20,7 @@
 #include "WaypointList.hpp"
 #include "World.hpp"
 #include "Field.hpp"
+#include "Logger.hpp"
 
 WaypointList::WaypointList(Character *movechar) : _movechar(movechar) {
 
@@ -29,8 +30,15 @@ void WaypointList::addFromList(const luabind::object &list) {
     if (list.is_valid()) {
         if (luabind::type(list) == LUA_TTABLE) {
             for (luabind::iterator it(list), end; it != end; ++it) {
-                position pos = luabind::object_cast<position>(*it);
-                positions.push_back(pos);
+                try {
+                    position pos = luabind::object_cast<position>(*it);
+                    positions.push_back(pos);
+                } catch (luabind::cast_failed &e) {
+                    std::string script = World::get()->getCurrentScript()->getFileName();
+                    std::string err = "Invalid type in parameter list of WaypointList:addFromList in " + script + ":\n";
+                    err += "Expected type position\n";
+                    Logger::writeError("scripts", err);
+                }
             }
         }
     }

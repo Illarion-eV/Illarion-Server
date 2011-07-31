@@ -45,10 +45,12 @@ bool LuaLongTimeEffectScript::callEffect(LongTimeEffect *effect, Character *targ
         Logger::writeMessage("scripts","callEffect called for: " + target->name + " effect: " + Logger::toString(effect->_effectId));
         fuse_ptr<Character> fuse_target(target);
         return luabind::object_cast<bool>(call("callEffect")(effect, fuse_target));
+    } catch (luabind::cast_failed &e) {
+        writeCastErrorMsg("callEffect", "bool");
     } catch (luabind::error &e) {
         writeErrorMsg();
-        return false;
     }
+    return false;
 }
 
 void LuaLongTimeEffectScript::doubleEffect(LongTimeEffect *effect, Character *target) {

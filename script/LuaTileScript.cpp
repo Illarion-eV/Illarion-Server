@@ -100,8 +100,11 @@ bool LuaTileScript::actionDisturbed(Character *performer, Character *disturber) 
         fuse_ptr<Character> fuse_performer(performer);
         fuse_ptr<Character> fuse_disturber(disturber);
         return luabind::object_cast<bool>(call("actionDisturbed")(fuse_performer, fuse_disturber));
+    } catch (luabind::cast_failed &e) {
+        writeCastErrorMsg("actionDisturbed", "bool");
     } catch (luabind::error &e) {
-        return true;
+        writeErrorMsg();
     }
+    return true;
 }
 

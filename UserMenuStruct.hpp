@@ -77,22 +77,6 @@ struct UserMenuStruct {
     ~UserMenuStruct() {
         Items.clear();
     }
-
-
-    /*
-    void AddItems( luabind::object list )
-    {
-        if ( list.isvalid() )
-        {
-              if ( list.type() == luabind::LUA_LIST )
-              {
-                    for (luabind::object::iterator it = liste.begin(); it != liste.end(); ++it)
-                    {
-                         TYPE_OF_ITEM_ID Item = luabind::object_cast<TYPE_OF_ITEM_ID>(*it);
-                         Items.push_back(Item);
-                    }
-              }
-        }
-    }*/
 };
 #endif
+

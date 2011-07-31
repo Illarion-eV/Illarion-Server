@@ -173,10 +173,12 @@ bool LuaMonsterScript::actionDisturbed(Character *performer, Character *disturbe
         fuse_ptr<Character> fuse_performer(performer);
         fuse_ptr<Character> fuse_disturber(disturber);
         return luabind::object_cast<bool>(call("actionDisturbed")(fuse_performer, fuse_disturber));
+    } catch (luabind::cast_failed &e) {
+        writeCastErrorMsg("actionDisturbed", "bool");
     } catch (luabind::error &e) {
         writeErrorMsg();
-        return true;
     }
+    return true;
 }
 
 void LuaMonsterScript::onAttack(Character *Monster, Character *target) {
@@ -205,9 +207,10 @@ bool LuaMonsterScript::enemyOnSight(Character *Monster, Character *enemy) {
         fuse_ptr<Character> fuse_Monster(Monster);
         fuse_ptr<Character> fuse_enemy(enemy);
         return luabind::object_cast<bool>(call("enemyOnSight")(fuse_Monster, fuse_enemy));
+    } catch (luabind::cast_failed &e) {
+        writeCastErrorMsg("enemyOnSight", "bool");
     } catch (luabind::error &e) {
         writeErrorMsg();
-        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("Error: enemyOnSight called for: " + Monster->name + " " + e.what(),3));
     }
 
     return false;
@@ -223,6 +226,8 @@ bool LuaMonsterScript::enemyNear(Character *Monster, Character *enemy) {
         fuse_ptr<Character> fuse_Monster(Monster);
         fuse_ptr<Character> fuse_enemy(enemy);
         return luabind::object_cast<bool>(call("enemyNear")(fuse_Monster, fuse_enemy));
+    } catch (luabind::cast_failed &e) {
+        writeCastErrorMsg("enemyNear", "bool");
     } catch (luabind::error &e) {
         writeErrorMsg();
         //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("Error: enemyNear called for: " + Monster->name + " " + e.what(),3));
@@ -288,6 +293,8 @@ bool LuaMonsterScript::setTarget(Character *Monster, std::vector<Player *> & Can
         if (index >= 0 && index < (int)CandidateList.size()) {
             Target =  CandidateList[index];
         }
+    } catch (luabind::cast_failed &e) {
+        writeCastErrorMsg("setTarget", "int");
     } catch (luabind::error &e) {
         writeErrorMsg();
     }
