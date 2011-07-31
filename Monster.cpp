@@ -238,17 +238,17 @@ void Monster::setType(const TYPE_OF_CHARACTER_ID &type) throw(unknownIDException
     }
 
     // add items
-    int itempropability;
+    int itemprobability;
     bool found;
 
     for (MonsterStruct::itemtype::iterator it = monsterdef.items.begin(); it != monsterdef.items.end(); ++it) {
         // check if we should equip the item...
         found = false;
-        itempropability = rnd(1,1000);
+        itemprobability = rnd(1,1000);
 
         for (std::list<itemdef_t>::iterator itemit = it->second.begin(); !found && itemit != it->second.end(); ++itemit) {
-            //std::cout<<"Itemprop for item: "<< itemit->itemid<<" prob: "<<itempropability<<" Itemit prob="<<itemit->propability<<"\n";
-            if (itemit->propability <= itempropability) {
+            //std::cout<<"Itemprop for item: "<< itemit->itemid<<" prob: "<<itemprobability<<" Itemit prob="<<itemit->probability<<"\n";
+            if (itemit->probability <= itemprobability) {
                 //std::cout<<"Added Item:"<<itemit->itemid<<"\n";
                 characterItems[ it->first ].id = itemit->itemid;     // Eingeweide
                 characterItems[ it->first ].number = rnd(itemit->amount);
@@ -256,7 +256,7 @@ void Monster::setType(const TYPE_OF_CHARACTER_ID &type) throw(unknownIDException
                 found = true;
             }
 
-            itempropability += itemit->propability;
+            itemprobability += itemit->probability;
         }
     }
 
