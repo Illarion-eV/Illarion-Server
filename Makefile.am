@@ -59,8 +59,8 @@ netinterface/NetInterface.cpp InitialConnection.cpp netinterface/CommandFactory.
 netinterface/BasicCommand.cpp netinterface/BasicServerCommand.cpp netinterface/BasicClientCommand.cpp \
 netinterface/protocol/ServerCommands.cpp netinterface/ByteBuffer.cpp MonitoringClients.cpp
 
-testserver_LDADD = -lpthread -lssl -lcrypto -lpqxx -lpq -llua5.1 -lboost_thread -lboost_system -lluabind
-testserver_LDFLAGS = 
-CXXFLAGS = -ggdb -pipe -Wall -Werror -Wno-deprecated -D_THREAD_SAFE -D_REENTRANT -DCDataConnect_DEBUG -DAdminCommands_DEBUG
-INCLUDES = -I/usr/include/postgresql -I/usr/include/lua5.1 -I/opt/include
-LIBS = -L/opt/lib
+testserver_LDADD = -L/usr/local/lib -lpthread -lssl -lcrypto -lpqxx -lpq -llua5.1 -lboost_thread -lboost_system -lluabind
+testserver_LDFLAGS =
+CXXFLAGS = -ggdb -pipe -Wall -Werror -Wno-deprecated -std=c++0x -D_THREAD_SAFE -D_REENTRANT -DCDataConnect_DEBUG -DAdminCommands_DEBUG
+INCLUDES = -I/usr/include/postgresql -I/usr/include/lua5.1
+LIBS = -Xlinker -R /usr/local/lib
