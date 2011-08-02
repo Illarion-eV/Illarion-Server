@@ -98,7 +98,8 @@ protected:
         setCurrentWorldScript();
 
         try {
-            call(entrypoint)(args...);
+            auto luaEntrypoint = buildEntrypoint(entrypoint);
+            luaEntrypoint(args...);
         } catch (luabind::error &e) {
             writeErrorMsg();
         }
@@ -108,7 +109,9 @@ protected:
         setCurrentWorldScript();
 
         try {
-            return luabind::object_cast<T>(call(entrypoint)(args...));
+            auto luaEntrypoint = buildEntrypoint(entrypoint);
+            auto result = luaEntrypoint(args...);
+            return luabind::object_cast<T>(result);
         } catch (luabind::cast_failed &e) {
             writeCastErrorMsg(entrypoint, e);
         } catch (luabind::error &e) {
@@ -117,13 +120,13 @@ protected:
 
         return T();
     };
-    luabind::object call(std::string entrypoint) throw(luabind::error);
 
 private:
     void init_base_functions(); /**< initialize basic functions of scripts */
     static int add_backtrace(lua_State *L); /**< adding a backtrace to script errors */
     void writeCastErrorMsg(const std::string &entryPoint, const luabind::cast_failed &e);
     void setCurrentWorldScript();
+    luabind::object buildEntrypoint(std::string entrypoint) throw(luabind::error);
 
     LuaScript(const LuaScript &);
     LuaScript &operator=(const LuaScript &);

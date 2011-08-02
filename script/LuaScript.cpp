@@ -204,7 +204,7 @@ void LuaScript::writeDebugMsg(std::string msg) {
     Logger::writeError("scripts", backtrace);
 }
 
-luabind::object LuaScript::call(std::string entrypoint) throw(luabind::error) {
+luabind::object LuaScript::buildEntrypoint(std::string entrypoint) throw(luabind::error) {
     luabind::object obj = luabind::globals(_luaState);
     std::string currentpath = "";
 
