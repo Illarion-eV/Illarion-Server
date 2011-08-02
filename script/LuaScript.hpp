@@ -30,6 +30,7 @@ extern "C" {
 #include "Item.hpp"
 #include <luabind/object.hpp>
 #include "fuse_ptr.hpp"
+#include <map>
 
 class Character;
 class World;
@@ -84,20 +85,49 @@ public:
     }
 
     static void shutdownLua();
-    bool existsEntrypoint(std::string entrypoint);
+    bool existsEntrypoint(const std::string &entrypoint);
 
 protected:
     static lua_State *_luaState;
     static bool initialized;
-    static void writeErrorMsg();
-    static void writeCastErrorMsg(const std::string &entryPoint, const std::string &expectedType);
-    static void writeDebugMsg(std::string msg);
 
     template<typename... Args>
     void callEntrypoint(const std::string &entrypoint, const Args &... args) {
         setCurrentWorldScript();
+        if (!callQuestEntrypoint(entrypoint, args...))
+            safeCall(entrypoint, args...);
+    };
+    template<typename T, typename... Args>
+    T callEntrypoint(const std::string &entrypoint, const Args &... args) {
+        setCurrentWorldScript();
+        callQuestEntrypoint(entrypoint, args...);
+        return safeCall<T>(entrypoint, args...);
+    };
 
-        try {
+private:
+    void init_base_functions(); /**< initialize basic functions of scripts */
+    static int add_backtrace(lua_State *L); /**< adding a backtrace to script errors */
+    void writeErrorMsg();
+    void writeCastErrorMsg(const std::string &entryPoint, const luabind::cast_failed &e);
+    void writeDebugMsg(const std::string &msg);
+    void setCurrentWorldScript();
+    luabind::object buildEntrypoint(const std::string &entrypoint) throw(luabind::error);
+    void addQuestScript(const std::string &entrypoint, LuaScript *script);
+
+    template<typename... Args>
+    bool callQuestEntrypoint(const std::string &entrypoint, const Args &... args) {
+        auto entrypointRange = questScripts.equal_range(entrypoint);
+        bool foundQuest = false;
+
+        for (auto it = entrypointRange.first; it != entrypointRange.second; ++it) {
+            foundQuest = foundQuest || it->second->safeCall<bool>(entrypoint, args...);
+        }
+        return foundQuest;
+    }
+
+    template<typename... Args>
+    void safeCall(const std::string &entrypoint, const Args &... args) {
+         try {
             auto luaEntrypoint = buildEntrypoint(entrypoint);
             luaEntrypoint(args...);
         } catch (luabind::error &e) {
@@ -105,9 +135,7 @@ protected:
         }
     };
     template<typename T, typename... Args>
-    T callEntrypoint(std::string entrypoint, const Args &... args) {
-        setCurrentWorldScript();
-
+    T safeCall(const std::string &entrypoint, const Args &... args) {
         try {
             auto luaEntrypoint = buildEntrypoint(entrypoint);
             auto result = luaEntrypoint(args...);
@@ -121,18 +149,13 @@ protected:
         return T();
     };
 
-private:
-    void init_base_functions(); /**< initialize basic functions of scripts */
-    static int add_backtrace(lua_State *L); /**< adding a backtrace to script errors */
-    void writeCastErrorMsg(const std::string &entryPoint, const luabind::cast_failed &e);
-    void setCurrentWorldScript();
-    luabind::object buildEntrypoint(std::string entrypoint) throw(luabind::error);
-
     LuaScript(const LuaScript &);
     LuaScript &operator=(const LuaScript &);
 
     std::string _filename;
     std::vector<std::string> vecPath;
+    typedef std::multimap<const std::string, boost::shared_ptr<LuaScript> > QuestScripts;
+    QuestScripts questScripts;
 };
 
 #endif

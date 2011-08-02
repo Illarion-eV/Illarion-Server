@@ -180,13 +180,6 @@ void LuaScript::writeErrorMsg() {
     }
 }
 
-void LuaScript::writeCastErrorMsg(const std::string &entryPoint, const std::string &expectedType) {
-    std::string script = World::get()->getCurrentScript()->getFileName();
-    std::string err = "Invalid return type in " + script + "." + entryPoint + ":\n";
-    err += "Expected type " + expectedType + "\n";
-    Logger::writeError("scripts", err);
-}
-
 void LuaScript::writeCastErrorMsg(const std::string &entryPoint, const luabind::cast_failed &e) {
     std::string script = getFileName();
     char *expectedType = abi::__cxa_demangle(e.info().name(), 0, 0, 0);
@@ -196,7 +189,7 @@ void LuaScript::writeCastErrorMsg(const std::string &entryPoint, const luabind::
     Logger::writeError("scripts", err);
 }
 
-void LuaScript::writeDebugMsg(std::string msg) {
+void LuaScript::writeDebugMsg(const std::string &msg) {
     lua_pushstring(_luaState, ("Debug Message: " + msg).c_str());
     add_backtrace(_luaState);
     std::string backtrace = lua_tostring(_luaState, -1);
@@ -204,7 +197,7 @@ void LuaScript::writeDebugMsg(std::string msg) {
     Logger::writeError("scripts", backtrace);
 }
 
-luabind::object LuaScript::buildEntrypoint(std::string entrypoint) throw(luabind::error) {
+luabind::object LuaScript::buildEntrypoint(const std::string &entrypoint) throw(luabind::error) {
     luabind::object obj = luabind::globals(_luaState);
     std::string currentpath = "";
 
@@ -224,11 +217,16 @@ luabind::object LuaScript::buildEntrypoint(std::string entrypoint) throw(luabind
     return callee;
 }
 
+void LuaScript::addQuestScript(const std::string &entrypoint, LuaScript *script) {
+    boost::shared_ptr<LuaScript> script_ptr(script);
+    questScripts.insert(std::pair<const std::string, boost::shared_ptr<LuaScript> >(entrypoint, script_ptr));
+}
+
 void LuaScript::setCurrentWorldScript() {
     World::get()->setCurrentScript(this);
 }
 
-bool LuaScript::existsEntrypoint(std::string entrypoint) {
+bool LuaScript::existsEntrypoint(const std::string &entrypoint) {
     luabind::object obj = luabind::globals(_luaState);
 
     for (std::vector<std::string>::iterator it = vecPath.begin(); it != vecPath.end(); ++it) {
