@@ -58,6 +58,7 @@ Result InsertQuery::execute() {
         Result result;
         return result;
     }
+
     std::stringstream ss;
     ss << "INSERT INTO ";
     ss << QueryTables::buildQuerySegment();

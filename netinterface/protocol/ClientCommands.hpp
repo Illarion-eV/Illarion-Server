@@ -248,10 +248,9 @@ public:
                 MonsterStruct mon;
 
                 if (MonsterDescriptions->find(monster->getType(), mon)) {
-                    if (mon.script) {
-                        if (mon.script->lookAtMonster(player, monster, mode)) {
-                            return;
-                        }
+                    if (mon.script && mon.script->existsEntrypoint("lookAtMonster")) {
+                        mon.script->lookAtMonster(player, monster, mode);
+                        return;
                     }
 
                     std::string outtext;
@@ -277,10 +276,9 @@ public:
             NPC *npc = World::get()->Npc.findID(id);
 
             if (npc) {
-                if (npc->getScript()) {
-                    if (npc->getScript()->lookAtNpc(player, mode)) {
-                        return;
-                    }
+                if (npc->getScript() && npc->getScript()->existsEntrypoint("lookAtNpc")) {
+                    npc->getScript()->lookAtNpc(player, mode);
+                    return;
                 }
 
                 std::string outtext;
@@ -1145,13 +1143,6 @@ public:
                 if (Source.Type == LUA_ITEM && (Target.Type == LUA_ITEM || Target.Type == LUA_NONE)) {
                     LuaScript->UseItem(player, Source.item, Target.item, counter, static_cast<TYPE_OF_ITEM_ID>(paramtemp), static_cast<unsigned char>(LTS_NOLTACTION));
                     msg = "Used Item: " + Logger::toString(Source.item.id) + " with item: " + Logger::toString(Target.item.id);
-                } else if (Source.Type == LUA_ITEM && Target.Type == LUA_CHARACTER) {
-                    // msg set first since character might be deleted!  --vilarion
-                    msg = "Used Item: " + Logger::toString(Source.item.id) + " with character: " + Target.character->name + "(" +  Logger::toString(Target.character->id) + ")";
-                    LuaScript->UseItemWithCharacter(player, Source.item, Target.character, counter, static_cast<TYPE_OF_ITEM_ID>(paramtemp), static_cast<unsigned char>(LTS_NOLTACTION));
-                } else if (Source.Type == LUA_ITEM && Target.Type == LUA_FIELD) {
-                    LuaScript->UseItemWithField(player, Source.item, Target.pos, counter, static_cast<TYPE_OF_ITEM_ID>(paramtemp), static_cast<unsigned char>(LTS_NOLTACTION));
-                    msg = "Used Item: " + Logger::toString(Source.item.id) + " with empty field: Pos(" + Logger::toString(Target.pos.x) + "," + Logger::toString(Target.pos.y) + "," + Logger::toString(Target.pos.z) + ")";
                 }
             }
         } else if (LuaNPCScript) {

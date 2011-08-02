@@ -611,7 +611,7 @@ private:
     bool monitoringClient;
 
     unsigned int dialogCounter;
-    typedef boost::unordered_map<unsigned int, Dialog*> DialogMap;
+    typedef boost::unordered_map<unsigned int, Dialog *> DialogMap;
     DialogMap dialogs;
 };
 

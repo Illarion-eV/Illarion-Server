@@ -1,21 +1,22 @@
-//  illarionserver - server for the game Illarion
-//  Copyright 2011 Illarion e.V.
-//
-//  This file is part of illarionserver.
-//
-//  illarionserver is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  illarionserver is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
-
+/*
+ *  illarionserver - server for the game Illarion
+ *  Copyright 2011 Illarion e.V.
+ *
+ *  This file is part of illarionserver.
+ *
+ *  illarionserver is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  illarionserver is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -63,7 +64,6 @@ extern ScriptVariablesTable *scriptVariables;
 
 extern bool importmaps;
 
-//! Die Hauptfunktion zum Testen //
 int main(int argc, char *argv[]) {
 
     int res;
@@ -150,27 +150,19 @@ int main(int argc, char *argv[]) {
     PlayerManager::TPLAYERVECTOR &newplayers = PlayerManager::get()->getLogInPlayers();
     timespec stime;
     stime.tv_sec = 0;
-    stime.tv_nsec = 25000000;    //25ms
-    //NPC's erschaffen
+    stime.tv_nsec = 25000000;
     world->initNPC();
 
-    //run both reload scripts to initialize semi-dynamic data
     try {
         boost::shared_ptr<LuaReloadScript> tmpScript(new LuaReloadScript("server.reload_defs"));
-
-        if (!tmpScript->onReload()) {
-            std::cerr << "server.reload_defs.onReload returned false" << std::endl;
-        }
+        tmpScript->onReload();
     } catch (ScriptException &e) {
         std::cerr << "reload_defs: " << e.what() << std::endl;
     }
 
     try {
         boost::shared_ptr<LuaReloadScript> tmpScript(new LuaReloadScript("server.reload_tables"));
-
-        if (!tmpScript->onReload()) {
-            std::cerr << "server.reload_tables.onReload returned false" << std::endl;
-        };
+        std::cerr << "server.reload_tables.onReload returned false" << std::endl;
     } catch (ScriptException &e) {
         std::cerr << "reload_tables: " << e.what() << std::endl;
     }
@@ -204,17 +196,10 @@ int main(int argc, char *argv[]) {
                     world->monitoringClientList->clientConnect(newPlayer);
                 } else {
                     try {
-                        std::cout<<"login sucessully from: "<<newPlayer->name<<" "<<newPlayer->id<<std::endl;
+                        std::cout<<"login successful by: "<<newPlayer->name<<" "<<newPlayer->id<<std::endl;
                         world->Players.push_back(newPlayer);
                         newPlayer->login();
-
-                        try {
-                            std::cout<<"calling onlogin"<<std::endl;
-                            loginScript->onLogin(newPlayer);
-                        } catch (ScriptException &e) {
-                            std::cerr<<"Login Script: Failed to load scripts/login.lua !"<<std::endl;
-                        }
-
+                        loginScript->onLogin(newPlayer);
                         world->updatePlayerList();
                     } catch (Player::LogoutException &e) {
                         std::cout<<"got logout Exception during login!"<<std::endl;

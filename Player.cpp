@@ -1937,8 +1937,9 @@ bool Player::move(direction dir, uint8_t mode) {
                     waitpages = (diff * 667) / 10000;
                 }
 
-                if( mode != RUNNING || ( j == 1 && cont ) )
+                if (mode != RUNNING || (j == 1 && cont)) {
                     actionPoints -= walkcost;
+                }
             }
 
 #ifdef PLAYER_MOVE_DEBUG
@@ -3039,19 +3040,21 @@ void Player::sendCharRemove(TYPE_OF_CHARACTER_ID id, boost::shared_ptr<BasicServ
 }
 
 void Player::requestInputDialog(InputDialog *inputDialog) {
-     unsigned int dialogId = dialogCounter++;
-     InputDialog *dialog = new InputDialog(*inputDialog);
-     dialogs[dialogId] = dialog;
-     boost::shared_ptr<BasicServerCommand>cmd(new InputDialogTC(*inputDialog, dialogId));
-     Connection->addCommand(cmd);
+    unsigned int dialogId = dialogCounter++;
+    InputDialog *dialog = new InputDialog(*inputDialog);
+    dialogs[dialogId] = dialog;
+    boost::shared_ptr<BasicServerCommand>cmd(new InputDialogTC(*inputDialog, dialogId));
+    Connection->addCommand(cmd);
 }
 
 void Player::executeInputDialog(unsigned int dialogId, bool success, std::string input) {
-    InputDialog *inputDialog = (InputDialog*)dialogs[dialogId];
+    InputDialog *inputDialog = (InputDialog *)dialogs[dialogId];
+
     if (success && (inputDialog != 0)) {
         inputDialog->setInput(input);
         inputDialog->executeCallback();
     }
+
     delete inputDialog;
     dialogs.erase(dialogId);
 }

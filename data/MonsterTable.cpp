@@ -73,7 +73,7 @@ void MonsterTable::reload() {
             clearOldTable();
 
             for (Database::ResultConstIterator itr = monresults.begin();
-                itr != monresults.end(); ++itr) {
+                 itr != monresults.end(); ++itr) {
                 MonsterStruct temprecord;
                 std::string movementType;
                 std::string scriptname;

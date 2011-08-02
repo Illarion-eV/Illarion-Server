@@ -1,29 +1,26 @@
-//  illarionserver - server for the game Illarion
-//  Copyright 2011 Illarion e.V.
-//
-//  This file is part of illarionserver.
-//
-//  illarionserver is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  illarionserver is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
-
+/*
+ *  illarionserver - server for the game Illarion
+ *  Copyright 2011 Illarion e.V.
+ *
+ *  This file is part of illarionserver.
+ *
+ *  illarionserver is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  illarionserver is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "LuaMagicScript.hpp"
-
-#include "luabind/luabind.hpp"
-#include <iostream>
-
-#include "World.hpp"
-#include "Logger.hpp"
+#include "Character.hpp"
+#include "Item.hpp"
 #include "fuse_ptr.hpp"
 
 LuaMagicScript::LuaMagicScript(std::string filename, unsigned long int MagicFlag) throw(ScriptException)
@@ -39,74 +36,29 @@ void LuaMagicScript::init_functions() {
 }
 
 void LuaMagicScript::CastMagic(Character *caster, unsigned short counter, unsigned short int param, unsigned char ltastate) {
-    // ToDo Script Calling
-    try {
-        World::get()->setCurrentScript(this);
-        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("CastMagic called for: " + Logger::toString(_MagicFlag ),3));
-        Logger::writeMessage("scripts","CastMagic called for: " + Logger::toString(_MagicFlag));
-        fuse_ptr<Character> fuse_caster(caster);
-        call("CastMagic")(fuse_caster, counter, param, ltastate);
-    } catch (luabind::error &e) {
-        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("Error: CastMagic called for: " + Logger::toString(_MagicFlag ) + " " + e.what(),3));
-        writeErrorMsg();
-    }
+    fuse_ptr<Character> fuse_caster(caster);
+    callEntrypoint("CastMagic", fuse_caster, counter, param, ltastate);
 }
 
 void LuaMagicScript::CastMagicOnCharacter(Character *caster, Character *target, unsigned short counter, unsigned short int param, unsigned char ltastate) {
-    // ToDo Script Calling
-    try {
-        World::get()->setCurrentScript(this);
-        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("CastMagicOnCharacter called for: " + Logger::toString(_MagicFlag ),3));
-        Logger::writeMessage("scripts","CastMagicOnCharacter called for: " + Logger::toString(_MagicFlag));
-        fuse_ptr<Character> fuse_caster(caster);
-        fuse_ptr<Character> fuse_target(target);
-        call("CastMagicOnCharacter")(fuse_caster, fuse_target, counter, param, ltastate);
-    } catch (luabind::error &e) {
-        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("Error: CastMagicOnCharacter called for: " + Logger::toString(_MagicFlag ) + " " + e.what(),3));
-        writeErrorMsg();
-    }
+    fuse_ptr<Character> fuse_caster(caster);
+    fuse_ptr<Character> fuse_target(target);
+    callEntrypoint("CastMagicOnCharacter", fuse_caster, fuse_target, counter, param, ltastate);
 }
 
 void LuaMagicScript::CastMagicOnField(Character *caster, position pos, unsigned short counter, unsigned short int param, unsigned char ltastate) {
-    // ToDo Script Calling
-    try {
-        World::get()->setCurrentScript(this);
-        // World::get()->monitoringClientList->sendCommand( new SendMessageTS("CastMagicOnField called for: " + Logger::toString(_MagicFlag ),3));
-        Logger::writeMessage("scripts","CastMagicOnField called for: " + Logger::toString(_MagicFlag));
-        fuse_ptr<Character> fuse_caster(caster);
-        call("CastMagicOnField")(fuse_caster, pos, counter, param, ltastate);
-    } catch (luabind::error &e) {
-        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("Error: CastMagicOnField called for: " + Logger::toString(_MagicFlag ) + " " + e.what(),3));
-        writeErrorMsg();
-    }
+    fuse_ptr<Character> fuse_caster(caster);
+    callEntrypoint("CastMagicOnField", fuse_caster, pos, counter, param, ltastate);
 }
 
 void LuaMagicScript::CastMagicOnItem(Character *caster, ScriptItem TargetItem, unsigned short counter, unsigned short int param, unsigned char ltastate) {
-    // ToDo Script Calling
-    try {
-        World::get()->setCurrentScript(this);
-        // World::get()->monitoringClientList->sendCommand( new SendMessageTS("CastMagicOnItem called for: " + Logger::toString(_MagicFlag ),3));
-        Logger::writeMessage("scripts","CastMagicOnItem called for: " + Logger::toString(_MagicFlag));
-        fuse_ptr<Character> fuse_caster(caster);
-        call("CastMagicOnItem")(fuse_caster, TargetItem, counter, param, ltastate);
-    } catch (luabind::error &e) {
-        //CWorld::get()->monitoringClientList->sendCommand( new SendMessageTS("Error: CastMagicOnItem called for: " + Logger::toString(_MagicFlag ) + " " + e.what(),3));
-        writeErrorMsg();
-    }
+    fuse_ptr<Character> fuse_caster(caster);
+    callEntrypoint("CastMagicOnItem", fuse_caster, TargetItem, counter, param, ltastate);
 }
 
 bool LuaMagicScript::actionDisturbed(Character *performer, Character *disturber) {
-    try {
-        World::get()->setCurrentScript(this);
-        // World::get()->monitoringClientList->sendCommand( new SendMessageTS("actionDisturbed called for: " + Logger::toString(_MagicFlag ),3));
-        Logger::writeMessage("scripts","actionDisturbed called for: " + Logger::toString(_MagicFlag));
-        fuse_ptr<Character> fuse_performer(performer);
-        fuse_ptr<Character> fuse_disturber(disturber);
-        return luabind::object_cast<bool>(call("actionDisturbed")(fuse_performer, fuse_disturber));
-    } catch (luabind::cast_failed &e) {
-        writeCastErrorMsg("actionDisturbed", "bool");
-    } catch (luabind::error &e) {
-        writeErrorMsg();
-    }
-    return true;
+    fuse_ptr<Character> fuse_performer(performer);
+    fuse_ptr<Character> fuse_disturber(disturber);
+    return callEntrypoint<bool>("actionDisturbed", fuse_performer, fuse_disturber);
 }
+

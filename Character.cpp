@@ -1,21 +1,22 @@
-//  illarionserver - server for the game Illarion
-//  Copyright 2011 Illarion e.V.
-//
-//  This file is part of illarionserver.
-//
-//  illarionserver is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  illarionserver is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
-
+/*
+ *  illarionserver - server for the game Illarion
+ *  Copyright 2011 Illarion e.V.
+ *
+ *  This file is part of illarionserver.
+ *
+ *  illarionserver is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  illarionserver is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "Character.hpp"
 #include "tuningConstants.hpp"
@@ -43,17 +44,10 @@
 
 std::ofstream talkfile;
 
-//! eine Tabelle fr Beh�ter - Item Daten
 extern ContainerObjectTable *ContainerItems;
-
-//! eine Tabelle mit den allgemeinen Attributen der Item
 extern CommonObjectTable *CommonItems;
-
-//! eine Tabelle fr Waffen - Item Daten
 extern WeaponObjectTable *WeaponItems;
-
 extern TilesTable *Tiles;
-
 extern boost::shared_ptr<LuaLearnScript>learnScript;
 
 void Character::ReduceSkills() {
@@ -876,7 +870,7 @@ int Character::appearance_alive() {
         break;
     default:
         return 1;
-    } 
+    }
 
 }
 
@@ -1621,9 +1615,6 @@ bool Character::attack(Character *target, int &sound, bool &updateInv) {
 
     if (target != NULL && target->IsAlive()) {
 
-//Fighting System Uses Lua Script of the Attackers Weapon
-
-//Call AttackScript once
         if (!actionRunning()) {
             if (target->IsAlive()) {
                 if (target->character == player) {
@@ -1636,8 +1627,6 @@ bool Character::attack(Character *target, int &sound, bool &updateInv) {
 
             updateInv = true;
         }
-
-//=====================End of Fighting System Lua Script Usage============
 
         if (character == player) {
             if (target->IsAlive()) {
@@ -1742,7 +1731,7 @@ void Character::setSkinColor(uint8_t red, uint8_t green, uint8_t blue) {
 void Character::getSkinColor(uint8_t &red, uint8_t &green, uint8_t &blue) {
     red=skinred;
     green=skingreen;
-    blue=skinblue;   
+    blue=skinblue;
 }
 
 
@@ -1757,7 +1746,7 @@ void Character::setHairColor(uint8_t red, uint8_t green, uint8_t blue) {
 void Character::getHairColor(uint8_t &red, uint8_t &green, uint8_t &blue) {
     red=hairred;
     green=hairgreen;
-    blue=hairblue;   
+    blue=hairblue;
 }
 
 
@@ -2657,7 +2646,7 @@ void Character::increaseMentalCapacity(int value) {
         mental_capacity += value;
     }
 }
-//  Alters spoken messages with respect to the speakers skill
+
 std::string Character::alterSpokenMessage(std::string message, int languageSkill) {
     int counter=0;
     std::string alteredMessage;
@@ -2677,8 +2666,6 @@ std::string Character::alterSpokenMessage(std::string message, int languageSkill
     return alteredMessage;
 }
 
-
-//Converts a LanguageSkillNumber into the corresponding skill of that character.
 int Character::getLanguageSkill(int languageSkillNumber) {
     if (languageSkillNumber==0) {
         return getSkill("common language");
@@ -3152,20 +3139,18 @@ void Character::changeQualityAt(unsigned char pos, short int amount) {
     }
 }
 
-bool Character::callAttackScript(Character *Attacker, Character *Defender) {
+void Character::callAttackScript(Character *Attacker, Character *Defender) {
     if (characterItems[ RIGHT_TOOL ].id != 0) {
         WeaponStruct tmpWeapon;
 
         if (WeaponItems->find(characterItems[ RIGHT_TOOL ].id , tmpWeapon)) {
-            if (tmpWeapon.script) {
-                if (tmpWeapon.script->onAttack(Attacker, Defender)) {
-                    return true;
-                }
+            if (tmpWeapon.script && tmpWeapon.script->existsEntrypoint("onAttack")) {
+                tmpWeapon.script->onAttack(Attacker, Defender);
             }
         }
     }
 
-    return standardFightingScript->onAttack(Attacker, Defender);
+    standardFightingScript->onAttack(Attacker, Defender);
 }
 
 void Character::setQuestProgress(uint16_t questid, uint32_t progress) throw() {

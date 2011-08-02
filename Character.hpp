@@ -785,24 +785,24 @@ public:
     unsigned short int getMinorSkill(std::string s);
 
     void setSkinColor(uint8_t red, uint8_t green, uint8_t blue);
-    
-    
+
+
     void getSkinColor(uint8_t &red, uint8_t &green, uint8_t &blue);
-    
-    
+
+
     void setHairColor(uint8_t red, uint8_t green, uint8_t blue);
-    
-    
+
+
     void getHairColor(uint8_t &red, uint8_t &green, uint8_t &blue);
-    
-    
+
+
     void setHair(uint8_t hairID);
-    
-    
+
+
     uint8_t getHair();
-    
+
     void setBeard(uint8_t beardID);
-    
+
     uint8_t getBeard();
 
 
@@ -1168,7 +1168,7 @@ public:
     /**
     *the race type of this character
     */
-    
+
     enum race_type {  human = 0,
                       dwarf = 1,
                       halfling = 2,
@@ -1268,7 +1268,7 @@ public:
                       brownchicken = 106,
                       redchicken = 107,
                       blackchicken = 108,
-    }; 
+                   };
 
     race_type race;
 
@@ -1589,13 +1589,7 @@ public:
     */
     virtual void introducePerson(Character *cc);
 
-    /**
-    * calls an attack script for this character
-    * @param Attacker characte who attacks
-    * @param Defender character who defends
-    * @return a bool value (currently no usage later for destroying items and inventory update)
-    */
-    bool callAttackScript(Character *Attacker, Character *Defender);
+    void callAttackScript(Character *Attacker, Character *Defender);
 
     virtual void requestInputDialog(InputDialog *inputDialog);
 

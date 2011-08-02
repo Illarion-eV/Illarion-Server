@@ -1651,13 +1651,7 @@ bool World::reload_defs(Player *cp) {
 
         try {
             boost::shared_ptr<LuaReloadScript> tmpScript(new LuaReloadScript("server.reload_defs"));
-            bool onReloadOk = tmpScript->onReload();
-
-            if (!onReloadOk) {
-                reportError(cp, "server.reload_defs.onReload returned false");
-            }
-
-            ok = ok && onReloadOk;
+            tmpScript->onReload();
         } catch (ScriptException &e) {
             reportScriptError(cp, "reload_defs", e.what());
             ok = false;
@@ -1701,7 +1695,7 @@ bool World::reload_tables(Player *cp) {
 
         try {
             boost::shared_ptr<LuaReloadScript> tmpScript(new LuaReloadScript("server.reload_tables"));
-            ok = tmpScript->onReload();
+            tmpScript->onReload();
         } catch (ScriptException &e) {
             reportScriptError(cp, "reload_tables", e.what());
             ok = false;

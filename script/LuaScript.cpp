@@ -1,21 +1,22 @@
-//  illarionserver - server for the game Illarion
-//  Copyright 2011 Illarion e.V.
-//
-//  This file is part of illarionserver.
-//
-//  illarionserver is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  illarionserver is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
-
+/*
+ *  illarionserver - server for the game Illarion
+ *  Copyright 2011 Illarion e.V.
+ *
+ *  This file is part of illarionserver.
+ *
+ *  illarionserver is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  illarionserver is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "LuaScript.hpp"
 
@@ -50,6 +51,7 @@ extern "C" {
 #include "WaypointList.hpp"
 #include "fuse_ptr.hpp"
 #include "dialog/InputDialog.hpp"
+#include <cxxabi.h>
 
 extern ScriptVariablesTable *scriptVariables;
 
@@ -62,7 +64,6 @@ LuaScript::LuaScript(std::string filename) throw(ScriptException) {
 
     if (!initialized) {
         initialized = true;
-        // open lua and luabind
         _luaState = luaL_newstate();
         luabind::open(_luaState);
 
@@ -70,10 +71,8 @@ LuaScript::LuaScript(std::string filename) throw(ScriptException) {
         // non-existant entry points and to display a backtrace
         luabind::set_pcall_callback(LuaScript::add_backtrace);
 
-        // next we initialise the objects/functions exports
         init_base_functions();
 
-        // set package.path = configOptions["scriptdir"] + "?.lua"
         char path[100];
         strcpy(path, configOptions["scriptdir"].c_str());
         strcat(path, "?.lua");
@@ -84,14 +83,15 @@ LuaScript::LuaScript(std::string filename) throw(ScriptException) {
         lua_settable(_luaState, -3);
     }
 
-    // last but not least, open the script file
     char luafile[200];
     strcpy(luafile, configOptions["scriptdir"].c_str());
     std::replace(filename.begin(), filename.end(), '.', '/');
     strcat(luafile, (filename + ".lua").c_str());
     int err = luaL_loadfile(_luaState, luafile);
+
     if (err != 0) {
         std::string errstr(luafile);
+
         switch (err) {
         case LUA_ERRFILE:
             throw ScriptException("Could not access script file: " + errstr);
@@ -107,9 +107,12 @@ LuaScript::LuaScript(std::string filename) throw(ScriptException) {
             break;
         }
     }
+
     err = lua_pcall(_luaState, 0, LUA_MULTRET, 0);
+
     if (err != 0) {
         std::string errstr(luafile);
+
         switch (err) {
         case LUA_ERRRUN:
             throw ScriptException("Runtime error in script file: " + errstr);
@@ -128,7 +131,6 @@ LuaScript::~LuaScript() throw() {
 }
 
 void LuaScript::shutdownLua() {
-    // shutdown lua
     if (initialized) {
         initialized = false;
         lua_close(_luaState);
@@ -178,10 +180,19 @@ void LuaScript::writeErrorMsg() {
     }
 }
 
-void LuaScript::writeCastErrorMsg(std::string entryPoint, std::string expectedType) {
+void LuaScript::writeCastErrorMsg(const std::string &entryPoint, const std::string &expectedType) {
     std::string script = World::get()->getCurrentScript()->getFileName();
     std::string err = "Invalid return type in " + script + "." + entryPoint + ":\n";
     err += "Expected type " + expectedType + "\n";
+    Logger::writeError("scripts", err);
+}
+
+void LuaScript::writeCastErrorMsg(const std::string &entryPoint, const luabind::cast_failed &e) {
+    std::string script = getFileName();
+    char *expectedType = abi::__cxa_demangle(e.info().name(), 0, 0, 0);
+    std::string err = "Invalid return type in " + script + "." + entryPoint + ":\n";
+    err += "Expected type " + std::string(expectedType) + "\n";
+    free(expectedType);
     Logger::writeError("scripts", err);
 }
 
@@ -211,6 +222,10 @@ luabind::object LuaScript::call(std::string entrypoint) throw(luabind::error) {
 
     luabind::object callee = obj[entrypoint];
     return callee;
+}
+
+void LuaScript::setCurrentWorldScript() {
+    World::get()->setCurrentScript(this);
 }
 
 bool LuaScript::existsEntrypoint(std::string entrypoint) {
@@ -305,10 +320,6 @@ Character *getCharForId(TYPE_OF_CHARACTER_ID id) {
     return ret;
 }
 
-/**
-* initializes the base functions of the script
-* opens mathlib, strlib, baselib,tablib,iolib
-*/
 void LuaScript::init_base_functions() {
     static const luaL_Reg lualibs[] = {
         {"", luaopen_base},
@@ -795,3 +806,4 @@ void LuaScript::init_base_functions() {
     globals["world"] = World::get();
     globals["ScriptVars"] = scriptVariables;
 }
+

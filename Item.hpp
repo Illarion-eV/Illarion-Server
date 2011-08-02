@@ -42,7 +42,7 @@ public:
     uint8_t wear;
     uint16_t quality;
     uint32_t data;
-    
+
     Item(): id(0), number(0), wear(0), quality(333), data(0), data_map(1) {}
     Item(TYPE_OF_ITEM_ID _id, unsigned char _number, unsigned char _wear, uint16_t _quality = 333, uint32_t _data = 0) :
         id(_id), number(_number), wear(_wear), quality(_quality), data(_data),data_map(1) {}

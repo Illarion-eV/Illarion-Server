@@ -332,24 +332,6 @@ public:
     }
 };
 
-/*
-class SItemScriptCycle : public SchedulerObject
-{
-    public:
-
-        SItemScriptCycle(unsigned long int first_cycle) { nextCycle = first_cycle; }
-
-        virtual ~SItemScriptCycle() {}
-
-        bool operator() ( World* world )
-        {
-                CommonItems->NextCycle();
-                nextCycle += 10;
-                return true;
-        }
-};
-*/
-
 class STempAttribCycle : public SchedulerObject {
 public:
 
@@ -384,3 +366,4 @@ public:
     }
 };
 #endif
+

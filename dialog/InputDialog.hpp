@@ -35,7 +35,7 @@ private:
 
 public:
     InputDialog(std::string title, bool multiline, unsigned short maxChars, luabind::object callback);
-    InputDialog(const InputDialog& inputDialog);
+    InputDialog(const InputDialog &inputDialog);
     std::string getTitle() const;
     bool isMultiline() const;
     unsigned short getMaxChars() const;

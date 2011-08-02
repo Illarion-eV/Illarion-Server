@@ -23,12 +23,12 @@
 #include "Logger.hpp"
 
 InputDialog::InputDialog(std::string title, bool multiline,
-    unsigned short maxchars, luabind::object callback)
+                         unsigned short maxchars, luabind::object callback)
     :title(title), multiline(multiline), maxChars(maxChars), callback(callback) {
     input = "";
 }
 
-InputDialog::InputDialog(const InputDialog& inputDialog) {
+InputDialog::InputDialog(const InputDialog &inputDialog) {
     title = inputDialog.title;
     multiline = inputDialog.multiline;
     maxChars = inputDialog.maxChars;
@@ -53,10 +53,14 @@ std::string InputDialog::getInput() const {
 }
 
 void InputDialog::setInput(std::string input) {
-    if (maxChars > 0)
+    if (maxChars > 0) {
         input = input.substr(0, maxChars);
-    if (!multiline)
+    }
+
+    if (!multiline) {
         input = input.substr(0, input.find('\n', 0));
+    }
+
     this->input = input;
 }
 

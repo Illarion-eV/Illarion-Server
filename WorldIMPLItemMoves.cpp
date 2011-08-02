@@ -1076,9 +1076,8 @@ void World::dropItemFromShowcaseOnMap(Player *cp, unsigned char showcase, unsign
         t_item.owner = cp;
         boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.id);
 
-        if (script) {
+        if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
-                //Script verhindert das Item weg gelegt wird. Item wird zurck gegelgt
                 if (!putItemInShowcase(cp, showcase,0)) {
                     std::cerr<<"DropItemFromShowcase wurde von Script unterbunden. Datenverlust beim zurcklegen! Spieler: "<<cp->name<<std::endl;
                     g_cont = NULL;
@@ -1094,26 +1093,6 @@ void World::dropItemFromShowcaseOnMap(Player *cp, unsigned char showcase, unsign
             }
         }
 
-        /*
-        if ( CommonItems->find(t_item.id, com) )
-        {
-               if ( com.script ) {
-                      if ( !com.script->MoveItemBeforeMove(cp, s_item, t_item) ) {
-                             //Script verhindert das Item weg gelegt wird. Item wird zurck gegelgt
-                             if ( !putItemInShowcase(cp, showcase,0) ) {
-                                    std::cerr<<"DropItemFromShowcase wurde von Script unterbunden. Datenverlust beim zurcklegen! Spieler: "<<cp->name<<std::endl;
-                                    g_cont = NULL;
-                                    g_item.id = 0;
-                                    g_item.number = 0;
-                                    g_item.wear = 0;
-                 g_item.data = 0;
-                 g_item.quality = 0;
-                             }
-                             return;
-                      }
-               }
-        }*/
-        //Ende Ausfhren eines MoveItemScripts
         short int new_x = xc;
         short int new_y = yc;
         short int new_z = zc;
@@ -1132,11 +1111,6 @@ void World::dropItemFromShowcaseOnMap(Player *cp, unsigned char showcase, unsign
                 g_item.data_map.clear();
             }
         } else {
-            /*
-               if ( com.script ) {
-                      com.script->MoveItemAfterMove(cp, s_item, t_item);
-               }
-               */
 
             if (script) {
                 script->MoveItemAfterMove(cp, s_item, t_item);
@@ -1194,7 +1168,7 @@ void World::moveItemFromShowcaseToPlayer(Player *cp, unsigned char showcase, uns
         //Ende Erzeugen von Source und Target Item
         boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.id);
 
-        if (script) {
+        if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item,t_item)) {
                 if (!putItemInShowcase(cp, showcase,0)) {
                     std::cerr<<"MoveItemFromShowcaseToPlayer wurde von Script unterbunden. Datenverlust beim zurcklegen! Spieler: "<<cp->name<<std::endl;
@@ -1211,24 +1185,6 @@ void World::moveItemFromShowcaseToPlayer(Player *cp, unsigned char showcase, uns
             }
         }
 
-        /*
-        if ( CommonItems->find(t_item.id, com) ) {
-               if ( com.script ) {
-                      if (!com.script->MoveItemBeforeMove(cp, s_item,t_item) ) {
-                             if ( !putItemInShowcase(cp, showcase,0) ) {
-                                    std::cerr<<"MoveItemFromShowcaseToPlayer wurde von Script unterbunden. Datenverlust beim zurcklegen! Spieler: "<<cp->name<<std::endl;
-                                    g_cont = NULL;
-                                    g_item.id = 0;
-                                    g_item.number = 0;
-                                    g_item.wear = 0;
-                 g_item.quality = 0;
-                 g_item.data = 0;
-                             }
-                             return;
-                      }
-               }
-        } */
-        //Ende Ausfhren eines MoveItemScripts
         if (! cp->weightOK(g_item.id, g_item.number, g_cont)) {
             message(zuschwer, cp);
             NOK = true;
@@ -1347,7 +1303,7 @@ void World::dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, short int xc
         t_item.owner = cp;
         boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.id);
 
-        if (script) {
+        if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
                 //std::cout<<"Legen des Items vom Spieler auf Karte vom Script unterbunden, zurck legen"<<std::endl;
                 if (!putItemOnInvPos(cp, cpos)) {
@@ -1365,27 +1321,6 @@ void World::dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, short int xc
             }
         }
 
-
-        //Ende Definieren der Source und TargetItems
-        /*
-        if ( CommonItems->find(t_item.id, com) ) {
-               if ( com.script ) {
-                      if ( !com.script->MoveItemBeforeMove(cp, s_item, t_item) ) {
-                             //std::cout<<"Legen des Items vom Spieler auf Karte vom Script unterbunden, zurck legen"<<std::endl;
-                             if ( !putItemOnInvPos(cp, cpos) ) {
-                                    std::cerr<<"MoveItemFromPlayerOnMap wurde von Script unterbunden. Datenverlust beim zurcklegen! Spieler: "<<cp->name<<std::endl;
-                                    g_cont = NULL;
-                                    g_item.id = 0;
-                                    g_item.number = 0;
-                                    g_item.wear = 0;
-                 g_item.quality = 0;
-                 g_item.data = 0;
-                             }
-                             return;
-                      }
-               }
-        }*/
-        //Ende Ausfhren eines MoveItemScripts
         short int new_x = xc;
         short int new_y = yc;
         short int new_z = zc;
@@ -1403,12 +1338,7 @@ void World::dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, short int xc
                 g_item.data = 0;
                 g_item.data_map.clear();
             }
-        }
-        /*
-        else if ( com.script ) {
-               com.script->MoveItemAfterMove(cp, s_item, t_item);
-        }*/
-        else if (script) {
+        } else if (script) {
             script->MoveItemAfterMove(cp, s_item, t_item);
         }
 
@@ -1494,7 +1424,7 @@ void World::moveItemBetweenBodyParts(Player *cp, unsigned char opos, unsigned ch
         t_item.itempos = npos;
         boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.id);
 
-        if (script) {
+        if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
                 if (!putItemOnInvPos(cp, opos)) {
                     std::cerr<<"MoveItemFromPlayerOnMap wurde von Script unterbunden. Datenverlust beim zurcklegen! Spieler: "<<cp->name<<std::endl;
@@ -1509,24 +1439,6 @@ void World::moveItemBetweenBodyParts(Player *cp, unsigned char opos, unsigned ch
                 return;
             }
         }
-
-        /*
-        if ( CommonItems->find(t_item.id, com) ) {
-               if ( com.script ) {
-                      if (!com.script->MoveItemBeforeMove(cp, s_item, t_item) ) {
-                             if ( !putItemOnInvPos(cp, opos) ) {
-                                    std::cerr<<"MoveItemFromPlayerOnMap wurde von Script unterbunden. Datenverlust beim zurcklegen! Spieler: "<<cp->name<<std::endl;
-                                    g_cont = NULL;
-                                    g_item.id = 0;
-                                    g_item.number = 0;
-                                    g_item.wear = 0;
-                 g_item.quality = 0;
-                             }
-                             return;
-                      }
-               }
-        }*/
-        //Ende Ausfhren eines MoveItemScripts
 
         if (!putItemOnInvPos(cp, npos)) {
             std::cout << "Item konnte nicht verschoben werden -> zurcklegen" << std::endl;
@@ -1592,7 +1504,7 @@ void World::moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, unsig
         t_item.itempos = pos;
         boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.id);
 
-        if (script) {
+        if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
                 if (!putItemOnInvPos(cp, cpos)) {
                     std::cerr<<"MoveItemFromPlayerOnMap wurde von Script unterbunden. Datenverlust beim zurcklegen! Spieler: "<<cp->name<<std::endl;
@@ -1609,25 +1521,6 @@ void World::moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, unsig
             }
         }
 
-        /*
-        if ( CommonItems->find(t_item.id, com) ) {
-               if ( com.script ) {
-
-                      if (!com.script->MoveItemBeforeMove(cp, s_item, t_item) ) {
-                             if ( !putItemOnInvPos(cp, cpos) ) {
-                                    std::cerr<<"MoveItemFromPlayerOnMap wurde von Script unterbunden. Datenverlust beim zurcklegen! Spieler: "<<cp->name<<std::endl;
-                                    g_cont = NULL;
-                                    g_item.id = 0;
-                                    g_item.number = 0;
-                                    g_item.wear = 0;
-                 g_item.quality = 0;
-                 g_item.data = 0;
-                             }
-                             return;
-                      }
-               }
-        }*/
-        //Ende Ausfhren eines MoveItemScripts
         if (!putItemInShowcase(cp, showcase, pos)) {
             std::cout << "Item konnte nicht eingefgt werden -> zurcklegen" << std::endl;
 
@@ -1642,7 +1535,6 @@ void World::moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, unsig
                 g_item.data_map.clear();
             }
         } else {
-            //if ( com.script ) com.script->MoveItemAfterMove(cp, s_item, t_item);
             if (script) {
                 script->MoveItemAfterMove(cp, s_item, t_item);
             }
@@ -1694,7 +1586,7 @@ void World::moveItemFromMapIntoShowcase(Player *cp, char direction, unsigned cha
             //Ausfhren eines Move Item Scriptes
             boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.id);
 
-            if (script) {
+            if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
                 if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
                     if (!putItemOnMap(cp, old_x, old_y, old_z)) {
                         std::cerr<<"MoveItemFromMapIntoShowcase wurde von Script unterbunden. Datenverlust beim zurcklegen! Spieler: "<<cp->name<<std::endl;
@@ -1711,24 +1603,6 @@ void World::moveItemFromMapIntoShowcase(Player *cp, char direction, unsigned cha
                 }
             }
 
-            /*
-            if ( CommonItems->find(t_item.id, com) ) {
-                   if ( com.script ) {
-                          if (!com.script->MoveItemBeforeMove(cp, s_item, t_item) ) {
-                                 if ( !putItemOnMap(cp, old_x, old_y, old_z) ) {
-                                        std::cerr<<"MoveItemFromMapIntoShowcase wurde von Script unterbunden. Datenverlust beim zurcklegen! Spieler: "<<cp->name<<std::endl;
-                                        g_cont = NULL;
-                                        g_item.id = 0;
-                                        g_item.number = 0;
-                                        g_item.wear = 0;
-                  g_item.quality = 0;
-                  g_item.data = 0;
-                                 }
-                                 return;
-                          }
-                   }
-            }*/
-            //Ende Ausfhren eines MoveItemScripts
             Item tempitem = g_item;
 
             if (count < g_item.number) {
@@ -1888,7 +1762,7 @@ void World::moveItemFromMapToPlayer(Player *cp, char direction, unsigned char cp
             t_item.itempos = cpos;
             boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.id);
 
-            if (script) {
+            if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
                 if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
                     if (!putItemOnMap(cp, old_x, old_y, old_z)) {
                         std::cerr<<"MoveItemFromMapToPlayer wurde von Script unterbunden. Datenverlust beim zurcklegen! Spieler: "<<cp->name<<std::endl;
@@ -1905,25 +1779,6 @@ void World::moveItemFromMapToPlayer(Player *cp, char direction, unsigned char cp
                 }
             }
 
-            /*
-            if ( CommonItems->find(t_item.id, com) ) {
-                   if ( com.script ) {
-                          if (!com.script->MoveItemBeforeMove(cp, s_item, t_item) ) {
-                                 if ( !putItemOnMap(cp, old_x, old_y, old_z) ) {
-                                        std::cerr<<"MoveItemFromMapToPlayer wurde von Script unterbunden. Datenverlust beim zurcklegen! Spieler: "<<cp->name<<std::endl;
-                                        g_cont = NULL;
-                                        g_item.id = 0;
-                                        g_item.number = 0;
-                                        g_item.wear = 0;
-                  g_item.quality = 0;
-                  g_item.data = 0;
-                                 }
-                                 return;
-                          }
-                   }
-            }
-            */
-            //Ende Ausfhren eines MoveItemScripts
             Item tempitem = g_item;
 
             if (count < g_item.number) {
@@ -2082,7 +1937,7 @@ void World::moveItemBetweenShowcases(Player *cp, unsigned char source, unsigned 
         //Ausfhren eines Move Item Scriptes
         boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.id);
 
-        if (script) {
+        if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
                 if (!putItemInShowcase(cp, dest, pos2)) {
                     std::cerr<<"MoveItemBetweenShowcases wurde von Script unterbunden. Datenverlust beim zurcklegen! Spieler: "<<cp->name<<std::endl;
@@ -2098,25 +1953,6 @@ void World::moveItemBetweenShowcases(Player *cp, unsigned char source, unsigned 
                 return;
             }
         }
-
-        /*
-        if ( CommonItems->find(t_item.id, com) ) {
-               if ( com.script ) {
-                      if (!com.script->MoveItemBeforeMove(cp, s_item, t_item) ) {
-                             if ( !putItemInShowcase(cp, dest, pos2 ) ) {
-                                    std::cerr<<"MoveItemBetweenShowcases wurde von Script unterbunden. Datenverlust beim zurcklegen! Spieler: "<<cp->name<<std::endl;
-                                    g_cont = NULL;
-                                    g_item.id = 0;
-                                    g_item.number = 0;
-                                    g_item.wear = 0;
-                 g_item.quality = 0;
-                 g_item.data = 0;
-                             }
-                             return;
-                      }
-               }
-        }*/
-        //Ende Ausfhren eines MoveItemScripts
 
         if (dest < MAXSHOWCASES) {
             if (cp->showcases[ dest ].inInventory()) {
@@ -2239,7 +2075,7 @@ bool World::moveItem(Character *cc, unsigned char d, short int xc, short int yc,
             //Ausfhren eines Move Item Scriptes
             boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.id);
 
-            if (script) {
+            if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
                 if (!script->MoveItemBeforeMove(cc, s_item, t_item)) {
                     if (!putItemOnMap(cc, old_x, old_y, old_z)) {
                         std::cerr<<"MoveItemOnMap wurde von Script unterbunden. Datenverlust beim zurcklegen! Spieler: "<<cc->name<<std::endl;
@@ -2255,26 +2091,6 @@ bool World::moveItem(Character *cc, unsigned char d, short int xc, short int yc,
                     return false;
                 }
             }
-
-            /*
-            if ( CommonItems->find(t_item.id, com) ) {
-                   if ( com.script ) {
-                          if (!com.script->MoveItemBeforeMove(cc, s_item, t_item ) ) {
-                                 if ( !putItemOnMap(cc, old_x, old_y, old_z ) ) {
-                                        std::cerr<<"MoveItemOnMap wurde von Script unterbunden. Datenverlust beim zurcklegen! Spieler: "<<cc->name<<std::endl;
-                                        g_cont = NULL;
-                                        g_item.id = 0;
-                                        g_item.number = 0;
-                                        g_item.wear = 0;
-                  g_item.quality = 0;
-                  g_item.data = 0;
-                                 }
-                                 return false;
-                          }
-                   }
-            }
-            */
-            //Ende Ausfhren eines MoveItemScripts
 
             Item tempitem=g_item;
 
@@ -2503,7 +2319,7 @@ bool World::lookIntoContainerOnField(Player *cp, char direction, unsigned char s
                     // check if we got a depot there...
                     if (titem.id == 321) {
                         //titem.data + 1 so no 0 depot is used.
-                        if (depotScript) {
+                        if (depotScript && depotScript->existsEntrypoint("onOpenDepot")) {
                             if (depotScript->onOpenDepot(cp, titem)) {
                                 cp->openDepot(titem.data+1);
                             }

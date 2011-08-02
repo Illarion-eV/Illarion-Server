@@ -261,8 +261,8 @@ class UpdateWeatherTC : public BasicServerCommand {
 public:
     UpdateWeatherTC(WeatherStruct weather);
     UpdateWeatherTC(uint8_t cloudDensity, uint8_t fogDensity,
-        uint8_t windDirection, uint8_t windForce, uint8_t precipitationStrength,
-        uint8_t precipitationType, uint8_t thunderstorm, uint8_t temperature);
+                    uint8_t windDirection, uint8_t windForce, uint8_t precipitationStrength,
+                    uint8_t precipitationType, uint8_t thunderstorm, uint8_t temperature);
 };
 
 class IdTC : public BasicServerCommand {

@@ -353,17 +353,13 @@ void World::lookAtMapItem(Player *cp, short int x, short int y, short int z) {
                 n_item.pos = position(x, y, z);
                 n_item.owner = cp;
 
-                // Es gibt ein Script f�r das Item
-                if (script) {
-                    //Falls ein LookAtItem Script erfolgreich ausgef�hrt wurde die Funktion beenden.
-                    if (script->LookAtItem(cp, n_item)) {
-                        return;
-                    }
+                if (script && script->existsEntrypoint("LookAtItem")) {
+                    script->LookAtItem(cp, n_item);
+                    return;
                 }
             }
 
             if (ItemNames->find(titem.id, tempNames)) {
-                // Namen f�r das Item gefunden
                 std::string outtext;
 
                 switch (cp->getPlayerLanguage()) {
@@ -518,11 +514,10 @@ void World::lookAtShowcaseItem(Player *cp, unsigned char showcase, unsigned char
     if (showcase < MAXSHOWCASES) {
         Container *ps = cp->showcases[ showcase ].top();
 
-        if (ps != NULL) {   // source - Container gefunden
+        if (ps != NULL) {
             Container *tc;
 
             if (ps->viewItemNr(position, titem, tc)) {
-                // Ausf�hren eines LookAt Scriptes
                 if (titem.quality >= 100) {
                     boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(titem.id);
                     ScriptItem n_item = titem;
@@ -537,40 +532,15 @@ void World::lookAtShowcaseItem(Player *cp, unsigned char showcase, unsigned char
                     n_item.owner = cp;
                     n_item.itempos = position;
 
-                    // Es gibt ein Script f�r das Item
-                    if (script) {
-                        //falls ein LookAtItem ausgef�hrt werden kann die Funktion beenden
-                        if (script->LookAtItem(cp, n_item)) {
-                            return;
-                        }
+                    if (script && script->existsEntrypoint("LookAtItem")) {
+                        script->LookAtItem(cp, n_item);
+                        return;
                     }
-
-                    /*
-
-                    CommonStruct com;
-                    if ( CommonItems->find( titem.id, com) )
-                    {
-                        ScriptItem n_item = titem;
-                        if ( showcase == 0 )
-                            n_item.type = ScriptItem::it_showcase1;
-                        else
-                            n_item.type = ScriptItem::it_showcase2;
-                        n_item.pos = cp->pos;
-                        n_item.owner = cp;
-                        n_item.itempos = position;
-                        // Es gibt ein Script f�r das Item
-                        if ( com.script )
-                        {
-                            //falls ein LookAtItem ausgef�hrt werden kann die Funktion beenden
-                            if (com.script->LookAtItem(cp, n_item) )return;
-                        }
-                    }*/
-                    // Ende ausf�hren des LookAt Scriptes
                 }
 
                 std::string outtext;
 
-                if (ItemNames->find(titem.id, tempNames)) {     // Namen f�r das Item gefunden
+                if (ItemNames->find(titem.id, tempNames)) {
 
                     switch (cp->getPlayerLanguage()) {
                     case Language::german:
@@ -615,15 +585,12 @@ void World::lookAtShowcaseItem(Player *cp, unsigned char showcase, unsigned char
 
 void World::lookAtInventoryItem(Player *cp, unsigned char position) {
     if (cp->characterItems[ position ].id != 0) {
-        // Position mit Item belegt
         std::string outtext;
 
         if (ItemNames->find(cp->characterItems[ position ].id, tempNames)) {
-            // Namen f�r das Item gefunden
             Item titem = cp->characterItems[ position ];
 
             if (titem.quality >= 100) {
-                // Ausf�hren eines LookAt Scriptes
                 boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(cp->characterItems[ position ].id);
                 ScriptItem n_item = cp->characterItems[ position ];
 
@@ -637,31 +604,10 @@ void World::lookAtInventoryItem(Player *cp, unsigned char position) {
                 n_item.pos = cp->pos;
                 n_item.owner = cp;
 
-                if (script) {
-                    //Falls ein LookAt Script ausgef�hrt wurde die Funktion verlassen.
-                    if (script->LookAtItem(cp, n_item)) {
-                        return;
-                    }
+                if (script && script->existsEntrypoint("LookAtItem")) {
+                    script->LookAtItem(cp, n_item);
+                    return;
                 }
-
-                /*
-                CommonStruct com;
-                if ( CommonItems->find( cp->characterItems[ position ].id, com) ) {
-                    ScriptItem n_item = cp->characterItems[ position ];
-                    if ( position < MAX_BODY_ITEMS )
-                        n_item.type = ScriptItem::it_inventory;
-                    else
-                        n_item.type = ScriptItem::it_belt;
-                    n_item.itempos = position;
-                    n_item.pos = cp->pos;
-                    n_item.owner = cp;
-                    if ( com.script ) {
-                        //Falls ein LookAt Script ausgef�hrt wurde die Funktion verlassen.
-                        if ( com.script->LookAtItem(cp, n_item) ) return;
-                    }
-                }
-                */
-                // Ende ausf�hren des LookAt Scriptes
             }
 
             switch (cp->getPlayerLanguage()) {

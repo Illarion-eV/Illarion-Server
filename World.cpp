@@ -693,12 +693,7 @@ void World::checkPlayers() {
 
             std::cout<<"logout of "<<(*playerIterator)->name<<std::endl;
 
-            try {
-                std::cout<<"calling on logout!"<<std::endl;
-                logoutScript->onLogout((*playerIterator));
-            } catch (ScriptException &e) {
-                std::cerr<<"Logout Script: Failure on calling on logout!"<<std::endl;
-            }
+            logoutScript->onLogout(*playerIterator);
 
             PlayerManager::get()->getLogOutPlayers().non_block_push_back(*playerIterator);
             playerIterator = Players.erase(playerIterator);
@@ -1255,12 +1250,10 @@ void World::initScheduler() {
     SchedulerObject *globalMonLearning;  //Task anlegen der die Geistige Aufnahmef�igkeit aller 30 sec bei Monstern wieder senkt
     globalMonLearning = new SGlobalMonsterLearnrate(scheduler->GetCurrentCycle()+10);
     scheduler->AddTask(globalMonLearning);
-    //CSchedulerObject * ItemNextCycleScript; //Task anlegen der nextCycle bei Scripts ausfhrt
-    //ItemNextCycleScript = new SItemScriptCycle(Scheduler->GetCurrentCycle()+10);
-    //Scheduler->AddTask(ItemNextCycleScript);
     SchedulerObject *globalTempAttribTask;
     globalTempAttribTask = new STempAttribCycle(scheduler->GetCurrentCycle()+2);
     scheduler->AddTask(globalTempAttribTask);
     //=========================================================================
     std::cout<<"Scheduler init end \n";
 }
+

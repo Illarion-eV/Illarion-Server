@@ -125,33 +125,39 @@ bool LongTimeAction::actionDisturbed(Character *disturber) {
     if (_actionrunning) {
         if (_script) {
             if ((_at == AT_USE)) {
-                //a itemscript
                 if (_source.Type == LUA_ITEM) {
-                    boost::shared_ptr<LuaItemScript>itScript = boost::dynamic_pointer_cast<LuaItemScript>(_script);
-                    disturbed = itScript->actionDisturbed(_owner, disturber);
-                }
-                //a tilescript
-                else if (_source.Type == LUA_FIELD) {
-                    boost::shared_ptr<LuaTileScript>tiScript = boost::dynamic_pointer_cast<LuaTileScript>(_script);
-                    disturbed = tiScript->actionDisturbed(_owner, disturber);
+                    boost::shared_ptr<LuaItemScript>itemScript = boost::dynamic_pointer_cast<LuaItemScript>(_script);
 
-                }
-                //a character
-                else if (_source.Type == LUA_CHARACTER) {
+                    if (itemScript->existsEntrypoint("actionDisturbed")) {
+                        disturbed = itemScript->actionDisturbed(_owner, disturber);
+                    }
+                } else if (_source.Type == LUA_FIELD) {
+                    boost::shared_ptr<LuaTileScript>tileScript = boost::dynamic_pointer_cast<LuaTileScript>(_script);
+
+                    if (tileScript->existsEntrypoint("actionDisturbed")) {
+                        disturbed = tileScript->actionDisturbed(_owner, disturber);
+                    }
+                } else if (_source.Type == LUA_CHARACTER) {
                     if (_sourceCharType == Character::monster) {
-                        boost::shared_ptr<LuaMonsterScript>monScript = boost::dynamic_pointer_cast<LuaMonsterScript>(_script);
-                        disturbed = monScript->actionDisturbed(_owner, disturber);
-                    }
-                    //a npc
-                    else if (_sourceCharType == Character::npc) {
-                        boost::shared_ptr<LuaNPCScript>npcScript = boost::dynamic_pointer_cast<LuaNPCScript>(_script);
-                        disturbed = npcScript->actionDisturbed(_owner, disturber);
-                    }
+                        boost::shared_ptr<LuaMonsterScript>monsterScript = boost::dynamic_pointer_cast<LuaMonsterScript>(_script);
 
+                        if (monsterScript->existsEntrypoint("actionDisturbed")) {
+                            disturbed = monsterScript->actionDisturbed(_owner, disturber);
+                        }
+                    } else if (_sourceCharType == Character::npc) {
+                        boost::shared_ptr<LuaNPCScript>npcScript = boost::dynamic_pointer_cast<LuaNPCScript>(_script);
+
+                        if (npcScript->existsEntrypoint("actionDisturbed")) {
+                            disturbed = npcScript->actionDisturbed(_owner, disturber);
+                        }
+                    }
                 }
             } else if ((_at == AT_MAGIC)) {
-                boost::shared_ptr<LuaMagicScript>mgScript = boost::dynamic_pointer_cast<LuaMagicScript>(_script);
-                disturbed = mgScript->actionDisturbed(_owner, disturber);
+                boost::shared_ptr<LuaMagicScript>magicScript = boost::dynamic_pointer_cast<LuaMagicScript>(_script);
+
+                if (magicScript->existsEntrypoint("actionDisturbed")) {
+                    disturbed = magicScript->actionDisturbed(_owner, disturber);
+                }
             }
 
             if (disturbed) {
@@ -181,10 +187,6 @@ void LongTimeAction::abortAction() {
 
                     if (_target.Type == LUA_ITEM || _target.Type == LUA_NONE) {
                         itScript->UseItem(_owner, _source.item, _target.item, _counter, static_cast<TYPE_OF_ITEM_ID>(_param), static_cast<unsigned char>(LTS_ACTIONABORTED));
-                    } else if (_target.Type == LUA_CHARACTER) {
-                        itScript->UseItemWithCharacter(_owner, _source.item, _target.character, _counter, static_cast<TYPE_OF_ITEM_ID>(_param), static_cast<unsigned char>(LTS_ACTIONABORTED));
-                    } else if (_target.Type == LUA_FIELD) {
-                        itScript->UseItemWithField(_owner, _source.item, _target.pos, _counter, static_cast<TYPE_OF_ITEM_ID>(_param), static_cast<unsigned char>(LTS_ACTIONABORTED));
                     }
                 }
                 //a tilescript
@@ -281,10 +283,6 @@ void LongTimeAction::successAction() {
 
                         if (_target.Type == LUA_ITEM || _target.Type == LUA_NONE) {
                             itScript->UseItem(_owner, _source.item, _target.item, _counter, static_cast<TYPE_OF_ITEM_ID>(_param), static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
-                        } else if (_target.Type == LUA_CHARACTER) {
-                            itScript->UseItemWithCharacter(_owner, _source.item, _target.character, _counter, static_cast<TYPE_OF_ITEM_ID>(_param), static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
-                        } else if (_target.Type == LUA_FIELD) {
-                            itScript->UseItemWithField(_owner, _source.item, _target.pos, _counter, static_cast<TYPE_OF_ITEM_ID>(_param), static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
                         }
                     }
                 }
