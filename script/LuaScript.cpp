@@ -737,6 +737,9 @@ void LuaScript::init_base_functions() {
         .def_readonly("Weight", &CommonStruct::Weight)
         .def_readonly("Volume", &CommonStruct::Volume)
         .def_readonly("ObjectAfterRot", &CommonStruct::ObjectAfterRot)
+        .def_readonly("isStackable", &CommonStruct::isStackable)
+        .def_readonly("rotsInInventory", &CommonStruct::rotsInInventory)
+        .def_readonly("Brightness", &CommonStruct::Brightness)
         .def_readonly("Worth", &CommonStruct::Worth),
         luabind::class_<TilesStruct>("TilesStruct")
         .def_readonly("flags", &TilesStruct::flags)
