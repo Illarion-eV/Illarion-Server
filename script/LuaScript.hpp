@@ -110,7 +110,7 @@ private:
     static int add_backtrace(lua_State *L); /**< adding a backtrace to script errors */
     void writeErrorMsg();
     void writeCastErrorMsg(const std::string &entryPoint, const luabind::cast_failed &e);
-    void writeDebugMsg(const std::string &msg);
+    static void writeDebugMsg(const std::string &msg);
     void setCurrentWorldScript();
     luabind::object buildEntrypoint(const std::string &entrypoint) throw(luabind::error);
 
