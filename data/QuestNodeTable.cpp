@@ -32,8 +32,10 @@
 QuestNodeTable *QuestNodeTable::instance = 0;
 
 QuestNodeTable *QuestNodeTable::getInstance() {
-    if (instance == 0)
+    if (instance == 0) {
         instance = new QuestNodeTable();
+    }
+
     return instance;
 }
 
@@ -61,7 +63,7 @@ void QuestNodeTable::reload() {
             path filePath(itr->path() / filename);
 
             if (exists(filePath)) {
-                ifstream questFile (filePath);
+                ifstream questFile(filePath);
 
                 if (questFile.is_open()) {
                     path questPath(itr->path());
@@ -75,25 +77,33 @@ void QuestNodeTable::reload() {
 
 void QuestNodeTable::readQuest(boost::filesystem::ifstream &questFile, boost::filesystem::path &questPath) {
     std::string line;
+
     while (std::getline(questFile,line)) {
-        if (line.empty())
+        if (line.empty()) {
             continue;
+        }
+
         std::vector<std::string> entries;
         boost::split(entries, line, boost::is_any_of(","));
+
         if (entries.size() != 4) {
             Logger::writeError("scripts", "Syntax error while loading quest file: " + questPath.string() + "/quest.txt\n");
             return;
         }
+
         unsigned int id;
+
         try {
             id = boost::lexical_cast<unsigned int>(entries[1]);
         } catch (boost::bad_lexical_cast &) {
             Logger::writeError("scripts", "Conversion error while loading quest file: " + entries[1] + " is not an ID\n");
             return;
         }
+
         NodeStruct node;
         node.entrypoint = entries[2];
         std::string scriptPath = "questsystem." + questPath.filename() + "." + entries[3];
+
         try {
             node.script = boost::shared_ptr<LuaScript>(new LuaScript(scriptPath));
         } catch (ScriptException &e) {

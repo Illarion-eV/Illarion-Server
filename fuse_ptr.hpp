@@ -27,10 +27,10 @@
 template<class T>
 class fuse_ptr {
 private:
-    typedef std::pair<T*, fuse_ptr<T>*> Fuse;
+    typedef std::pair<T *, fuse_ptr<T>*> Fuse;
 
     T **ptr;
-    static std::multimap<T*, fuse_ptr<T>*> fusebox;
+    static std::multimap<T *, fuse_ptr<T>*> fusebox;
 
 public:
     fuse_ptr() {
@@ -101,7 +101,7 @@ public:
 };
 
 template<class T>
-std::multimap<T*, fuse_ptr<T>*> fuse_ptr<T>::fusebox;
+std::multimap<T *, fuse_ptr<T>*> fuse_ptr<T>::fusebox;
 
 template<class T>
 T *get_pointer(fuse_ptr<T> const &p) {

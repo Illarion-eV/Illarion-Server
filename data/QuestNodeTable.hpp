@@ -53,7 +53,7 @@ private:
 
     QuestNodeTable();
     ~QuestNodeTable();
-    QuestNodeTable(const QuestNodeTable&);
+    QuestNodeTable(const QuestNodeTable &);
 };
 
 #endif

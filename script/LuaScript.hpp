@@ -95,8 +95,10 @@ protected:
     template<typename... Args>
     void callEntrypoint(const std::string &entrypoint, const Args &... args) {
         setCurrentWorldScript();
-        if (!callQuestEntrypoint(entrypoint, args...))
+
+        if (!callQuestEntrypoint(entrypoint, args...)) {
             safeCall(entrypoint, args...);
+        }
     };
     template<typename T, typename... Args>
     T callEntrypoint(const std::string &entrypoint, const Args &... args) {
@@ -122,12 +124,13 @@ private:
         for (auto it = entrypointRange.first; it != entrypointRange.second; ++it) {
             foundQuest = foundQuest || it->second->safeCall<bool>(entrypoint, args...);
         }
+
         return foundQuest;
     }
 
     template<typename... Args>
     void safeCall(const std::string &entrypoint, const Args &... args) {
-         try {
+        try {
             auto luaEntrypoint = buildEntrypoint(entrypoint);
             luaEntrypoint(args...);
         } catch (luabind::error &e) {
