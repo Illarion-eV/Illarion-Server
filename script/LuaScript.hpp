@@ -86,6 +86,7 @@ public:
 
     static void shutdownLua();
     bool existsEntrypoint(const std::string &entrypoint);
+    void addQuestScript(const std::string &entrypoint, boost::shared_ptr<LuaScript> script);
 
 protected:
     static lua_State *_luaState;
@@ -112,7 +113,6 @@ private:
     void writeDebugMsg(const std::string &msg);
     void setCurrentWorldScript();
     luabind::object buildEntrypoint(const std::string &entrypoint) throw(luabind::error);
-    void addQuestScript(const std::string &entrypoint, LuaScript *script);
 
     template<typename... Args>
     bool callQuestEntrypoint(const std::string &entrypoint, const Args &... args) {

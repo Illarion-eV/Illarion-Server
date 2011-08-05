@@ -51,6 +51,7 @@
 #include "data/RaceSizeTable.hpp"
 #include "Logger.hpp"
 #include "data/ScriptVariablesTable.hpp"
+#include "data/QuestNodeTable.hpp"
 
 #include <iostream>
 
@@ -1360,6 +1361,8 @@ bool World::reload_defs(Player *cp) {
 
     std::string server;
     bool ok = true;
+
+    QuestNodeTable::getInstance()->reload();
 
     CommonObjectTable *CommonItems_temp = 0;
     NamesObjectTable *ItemNames_temp = 0;

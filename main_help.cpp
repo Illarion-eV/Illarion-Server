@@ -273,10 +273,10 @@ void checkArguments(int argc, char *argv[]) {
     if (argc == 2) {
         // config file specified on command line
         if (Init(std::string(argv[ 1 ]))) {
-            std::cout << "main: USING ONFIGFILE " << argv[ 1 ] << "\n";
+            std::cout << "main: USING CONFIGFILE " << argv[ 1 ] << "\n";
             std::cout << "main: LOADING..." << std::endl;
         } else {
-            std::cout << "main: ERROR READING ONFIGFILE " << argv[ 1 ] << " ! " << std::endl;
+            std::cout << "main: ERROR READING CONFIGFILE " << argv[ 1 ] << " ! " << std::endl;
             std::cout << "main: USAGE: " << argv[0] << " configfile" << std::endl;
             exit(-1);
         }
@@ -284,10 +284,10 @@ void checkArguments(int argc, char *argv[]) {
         std::cout<<"main: 3 args for mapimport"<<std::endl;
 
         if (Init(std::string(argv[ 1 ]))) {
-            std::cout << "main: USING ONFIGFILE " << argv[ 1 ] << "\n";
+            std::cout << "main: USING CONFIGFILE " << argv[ 1 ] << "\n";
             std::cout << "main: LOADING..." << std::endl;
         } else {
-            std::cout << "main: ERROR READING ONFIGFILE " << argv[ 1 ] << " ! " << std::endl;
+            std::cout << "main: ERROR READING CONFIGFILE " << argv[ 1 ] << " ! " << std::endl;
             std::cout << "main: USAGE: " << argv[0] << " configfile" << std::endl;
             exit(-1);
         }

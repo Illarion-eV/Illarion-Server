@@ -29,6 +29,7 @@
 
 #include "Logger.hpp"
 #include "World.hpp"
+#include "data/QuestNodeTable.hpp"
 
 CommonObjectTable::CommonObjectTable() : m_dataOK(false) {
     reload();
@@ -81,6 +82,7 @@ void CommonObjectTable::reload() {
         query.addColumn("common", "com_brightness");
         query.addColumn("common", "com_worth");
         query.addServerTable("common");
+        query.addOrderBy("common", "com_itemid", Database::SelectQuery::ASC);
 
         Database::Result results = query.execute();
 
@@ -90,6 +92,9 @@ void CommonObjectTable::reload() {
         if (!results.empty()) {
             clearOldTable();
             CommonStruct temprecord;
+            auto questNodes = QuestNodeTable::getInstance()->getItemNodes();
+            auto questItr = questNodes.first;
+            auto questEnd = questNodes.second;
 
             for (Database::ResultConstIterator itr = results.begin();
                  itr != results.end(); ++itr) {
@@ -111,6 +116,12 @@ void CommonObjectTable::reload() {
 
                     try {
                         boost::shared_ptr<LuaItemScript> tmpScript(new LuaItemScript(scriptname, temprecord));
+
+                        while (questItr != questEnd && questItr->first == itemID) {
+                            tmpScript->addQuestScript(questItr->second.entrypoint, questItr->second.script);
+                            ++questItr;
+                        }
+
                         m_scripttable[itemID] = tmpScript;
                     } catch (ScriptException &e) {
                         Logger::writeError("scripts", "Error while loading item script: " + scriptname + ":\n" + e.what() + "\n");

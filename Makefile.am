@@ -24,6 +24,7 @@ testserver_SOURCES = \
 \
 main.cpp main_help.cpp utility.cpp IdCounter.cpp Logger.cpp Random.cpp \
 \
+data/QuestNodeTable.cpp \
 data/ArmorObjectTable.cpp data/CommonObjectTable.cpp data/ContainerObjectTable.cpp data/RaceSizeTable.cpp \
 data/MonsterAttackTable.cpp data/ScheduledScriptsTable.cpp data/LongTimeEffectTable.cpp data/NaturalArmorTable.cpp \
 data/SpellTable.cpp data/ScriptVariablesTable.cpp data/NamesObjectTable.cpp data/NPCTable.cpp data/TriggerTable.cpp \
@@ -59,7 +60,7 @@ netinterface/NetInterface.cpp InitialConnection.cpp netinterface/CommandFactory.
 netinterface/BasicCommand.cpp netinterface/BasicServerCommand.cpp netinterface/BasicClientCommand.cpp \
 netinterface/protocol/ServerCommands.cpp netinterface/ByteBuffer.cpp MonitoringClients.cpp
 
-testserver_LDADD = -L/usr/local/lib -lpthread -lssl -lcrypto -lpqxx -lpq -llua5.1 -lboost_thread -lboost_system -lluabind
+testserver_LDADD = -L/usr/local/lib -lpthread -lssl -lcrypto -lpqxx -lpq -llua5.1 -lboost_thread -lboost_system -lboost_filesystem -lluabind
 testserver_LDFLAGS =
 CXXFLAGS = -ggdb -pipe -Wall -Werror -Wno-deprecated -std=c++0x -D_THREAD_SAFE -D_REENTRANT -DCDataConnect_DEBUG -DAdminCommands_DEBUG
 INCLUDES = -I/usr/include/postgresql -I/usr/include/lua5.1

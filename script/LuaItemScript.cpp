@@ -65,8 +65,3 @@ void LuaItemScript::CharacterOnField(Character *who) {
     callEntrypoint("CharacterOnField", fuse_who);
 }
 
-void LuaItemScript::addQuestScript(const std::string entrypoint, LuaScript *script) {
-    boost::shared_ptr<LuaScript> script_ptr(script);
-    questScripts.insert(std::pair<const std::string, boost::shared_ptr<LuaScript> >(entrypoint, script_ptr));
-}
-

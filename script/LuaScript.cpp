@@ -217,9 +217,8 @@ luabind::object LuaScript::buildEntrypoint(const std::string &entrypoint) throw(
     return callee;
 }
 
-void LuaScript::addQuestScript(const std::string &entrypoint, LuaScript *script) {
-    boost::shared_ptr<LuaScript> script_ptr(script);
-    questScripts.insert(std::pair<const std::string, boost::shared_ptr<LuaScript> >(entrypoint, script_ptr));
+void LuaScript::addQuestScript(const std::string &entrypoint, boost::shared_ptr<LuaScript> script) {
+    questScripts.insert(std::pair<const std::string, boost::shared_ptr<LuaScript> >(entrypoint, script));
 }
 
 void LuaScript::setCurrentWorldScript() {

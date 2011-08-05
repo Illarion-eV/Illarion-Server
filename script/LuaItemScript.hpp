@@ -44,12 +44,8 @@ public:
     void MoveItemAfterMove(Character *who, ScriptItem sourceItem, ScriptItem targetItem);
     void CharacterOnField(Character *who);
 
-    void addQuestScript(const std::string entrypoint, LuaScript *script);
-
 private:
     CommonStruct _comstr;
-    typedef std::multimap<const std::string, boost::shared_ptr<LuaScript> > QuestScripts;
-    QuestScripts questScripts;
     LuaItemScript(const LuaItemScript &);
     LuaItemScript &operator=(const LuaItemScript &);
     void init_functions();
