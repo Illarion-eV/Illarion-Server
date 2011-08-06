@@ -23,6 +23,7 @@
  */
 
 #include "data/NPCTable.hpp"
+#include "data/QuestNodeTable.hpp"
 
 #include <iostream>
 
@@ -78,6 +79,9 @@ void NPCTable::reload() {
             int32_t posx, posy, posz;
             std::string npcName;
             std::string scriptname;
+            auto questNodes = QuestNodeTable::getInstance()->getNpcNodes();
+            auto questItr = questNodes.first;
+            auto questEnd = questNodes.second;
 
             for (Database::ResultConstIterator itr = results.begin();
                  itr != results.end(); ++itr) {
@@ -121,6 +125,12 @@ void NPCTable::reload() {
 
                         try {
                             boost::shared_ptr<LuaNPCScript> script(new LuaNPCScript(scriptname, newNPC));
+
+                            while (questItr != questEnd && questItr->first == npcID) {
+                                script->addQuestScript(questItr->second.entrypoint, questItr->second.script);
+                                ++questItr;
+                            }
+
                             newNPC->setScript(script);
                         } catch (ScriptException &e) {
                             Logger::writeError("scripts", "Error while loading npc script: " + scriptname + ":\n" + e.what() + "\n");

@@ -49,6 +49,10 @@ QuestNodeTable::TABLE_ITRS QuestNodeTable::getItemNodes() {
     return QuestNodeTable::TABLE_ITRS(itemNodes.cbegin(), itemNodes.cend());
 }
 
+QuestNodeTable::TABLE_ITRS QuestNodeTable::getNpcNodes() {
+    return QuestNodeTable::TABLE_ITRS(npcNodes.cbegin(), npcNodes.cend());
+}
+
 void QuestNodeTable::reload() {
     using namespace boost::filesystem;
     path dirPath = path("/usr/share/servers/testserver/scripts/questsystem");
@@ -113,11 +117,14 @@ void QuestNodeTable::readQuest(boost::filesystem::ifstream &questFile, boost::fi
 
         if (entries[0] == "item") {
             itemNodes.insert(std::pair<unsigned int, NodeStruct>(id, node));
+        } else if (entries[0] == "npc") {
+            npcNodes.insert(std::pair<unsigned int, NodeStruct>(id, node));
         }
     }
 }
 
 void QuestNodeTable::clear() {
     itemNodes.clear();
+    npcNodes.clear();
 }
 
