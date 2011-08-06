@@ -69,6 +69,7 @@ void NPCTable::reload() {
         query.addColumn("npc", "npc_skingreen");
         query.addColumn("npc", "npc_skinblue");
         query.addServerTable("npc");
+        query.addOrderBy("npc", "npc_id", Database::SelectQuery::ASC);
 
         Database::Result results = query.execute();
 
