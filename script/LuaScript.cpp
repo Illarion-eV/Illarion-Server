@@ -265,6 +265,11 @@ void printerr(std::string err) {
     std::cout << "script error: " << err << std::endl;
 }
 
+std::ostream& operator<<(std::ostream &stream, const position &pos) {
+    stream << "(" << pos.x << ", " << pos.y << ", " << pos.z << ")";
+    return stream;
+}
+
 bool equapos(position pos1, position pos2) {
     return (pos1.x == pos2.x && pos1.y == pos2.y && pos1.z == pos2.z);
 }
@@ -353,6 +358,7 @@ void LuaScript::init_base_functions() {
         .def(luabind::constructor<>())
         .def(luabind::constructor<int, int, int>())
         .def(luabind::self == luabind::const_self)
+        .def(luabind::tostring(luabind::const_self))
         .def_readwrite("x",&position::x)
         .def_readwrite("y",&position::y)
         .def_readwrite("z",&position::z),
