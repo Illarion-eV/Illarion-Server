@@ -101,7 +101,7 @@ struct position {
     /**
     * overloaded == operator which determines if one position is equal to another one
     */
-    bool operator == (const position pos) {
+    bool operator == (const position &pos) {
         return (x == pos.x && y == pos.y && z == pos.z);
     }
 };
