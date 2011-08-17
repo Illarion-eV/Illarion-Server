@@ -938,57 +938,33 @@ void World::checkMonsters() {
                             } else {
                                 SpawnPoint *spawn = (*monsterIterator)->getSpawn();
 
-                                // is the monster created by a spawnpoint or summoned?
-                                if (spawn) {
+                                Character::direction dir = (Character::direction)unsignedShortRandom(0,7);
 
-                                    char movedir[4];
+                                if (spawn) {
                                     int yoffs = (*monsterIterator)->pos.y - spawn->get_y();
                                     int xoffs = (*monsterIterator)->pos.x - spawn->get_x();
 
-                                    //Monster nicht mehr ins spawn reichweite daher den spawnpunkt entfernen
-                                    if (abs(xoffs) >= spawn->getRange() || abs(yoffs) >= spawn->getRange()) {
-                                        //Monster ausserhalb der Spawn reichweiter daher vom Spawn entfernen
+                                    if (abs(xoffs) > spawn->getRange() || abs(yoffs) > spawn->getRange()) {
+                                        // monster out of spawn range, remove it from spawn
                                         (*monsterIterator)->setSpawn(NULL);
                                         unsigned int type = (*monsterIterator)->getType();
                                         spawn->dead(type);
                                     }
 
-                                    // monster north of spawnpoint?
-                                    movedir[0] = (yoffs < 0) ? spawn->getRange() + yoffs : spawn->getRange();
-                                    // monster northeast of spawnpoint?
-                                    movedir[1] = (yoffs < 0 || xoffs > 0) ? spawn->getRange() - std::max(-yoffs,xoffs) : spawn->getRange();
-                                    // monster east of spawnpoint?
-                                    movedir[2] = (xoffs > 0) ? spawn->getRange() - xoffs : spawn->getRange();
-                                    // monster southeast of spawnpoint?
-                                    movedir[3] = (yoffs > 0 || xoffs > 0) ? spawn->getRange() - std::max(yoffs,xoffs) : spawn->getRange();
-                                    // monster south of spawnpoint?
-                                    movedir[4] = (yoffs > 0) ? spawn->getRange() - yoffs : spawn->getRange();
-                                    // monster southwest of spawnpoint?
-                                    movedir[5] = (yoffs > 0 || xoffs < 0) ? spawn->getRange() - std::max(yoffs,-xoffs) : spawn->getRange();
-                                    // monster west of spawnpoint?
-                                    movedir[6] = (xoffs < 0) ? spawn->getRange() + xoffs : spawn->getRange();
-                                    // monster northwest of spawnpoint?
-                                    movedir[7] = (yoffs < 0 || xoffs < 0) ? spawn->getRange() + std::min(yoffs,xoffs) : spawn->getRange();
+                                    position newpos = (*monsterIterator)->pos;
+                                    newpos.x += moveSteps[ dir ][ 0 ];
+                                    newpos.y += moveSteps[ dir ][ 1 ];
+                                    newpos.z += moveSteps[ dir ][ 2 ];
+                                    yoffs = (*monsterIterator)->pos.y - newpos.y;
+                                    xoffs = (*monsterIterator)->pos.x - newpos.x;
 
-                                    // each direction has chance of movedir[direction] / sum_movedir[i]
-                                    tempr = unsignedShortRandom(1,
-                                                                movedir[0] + movedir[1] + movedir[2] + movedir[3]
-                                                                + movedir[4] + movedir[5] + movedir[6] + movedir[7]);
-                                    // maybe we want to make no move at all?
-
-                                    for (uint8_t i = 0; i < 8; ++i) {
-                                        if (tempr < movedir[i]) {
-                                            (*monsterIterator)->move((Character::direction)i);
-                                            break;
-                                        } else {
-                                            tempr -= movedir[i];
-                                        }
+                                    // if walking out of range, walking into opp. dir. stays in range with L_inf metric
+                                    if (abs(xoffs) > spawn->getRange() || abs(yoffs) > spawn->getRange()) {
+                                        dir = (Character::direction)(((int)dir+4)%8);
                                     }
                                 }
 
-                                if (!spawn) {
-                                    (*monsterIterator)->move((Character::direction)unsignedShortRandom(0,7));
-                                }
+                                (*monsterIterator)->move(dir);
 
                                 // movementrate below normal if noone is near
                                 (*monsterIterator)->actionPoints -= 20;
