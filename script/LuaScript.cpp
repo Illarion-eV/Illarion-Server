@@ -265,7 +265,7 @@ void printerr(std::string err) {
     std::cout << "script error: " << err << std::endl;
 }
 
-std::ostream& operator<<(std::ostream &stream, const position &pos) {
+std::ostream &operator<<(std::ostream &stream, const position &pos) {
     stream << "(" << pos.x << ", " << pos.y << ", " << pos.z << ")";
     return stream;
 }
