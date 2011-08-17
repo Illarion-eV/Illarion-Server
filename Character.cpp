@@ -958,23 +958,20 @@ Character::Character() : actionPoints(P_MAX_AP),fightPoints(P_MAX_FP),waypoints(
     battrib.constitution = battrib.trueconstitution = 8;
     battrib.time_constitution = 0;
 
-    battrib.dexterity = 10;
+    battrib.dexterity = battrib.truedexterity = 10;
     battrib.time_dexterity = 0;
 
-    battrib.essence = 10;
+    battrib.essence = battrib.trueessence = 10;
     battrib.time_essence = 0;
 
-    battrib.willpower = 10;
+    battrib.willpower = battrib.truewillpower = 10;
     battrib.time_willpower = 0;
 
-    battrib.perception = 12;
+    battrib.perception = battrib.trueperception = 12;
     battrib.time_perception = 0;
 
-    battrib.intelligence = 14;
+    battrib.intelligence = battrib.trueintelligence = 14;
     battrib.time_intelligence = 0;
-
-    battrib.essence = 10;
-    battrib.time_essence = 0;
 
     faceto = north;
     backPackContents = NULL;
