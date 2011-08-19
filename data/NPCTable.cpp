@@ -74,7 +74,7 @@ void NPCTable::reload() {
         Database::Result results = query.execute();
 
         if (!results.empty()) {
-            NPC *newNPC;
+            NPC *newNPC = 0;
 
             TYPE_OF_CHARACTER_ID npcID;
             int32_t posx, posy, posz;
