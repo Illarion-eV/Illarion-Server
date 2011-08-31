@@ -52,6 +52,7 @@
 #include "Logger.hpp"
 #include "data/ScriptVariablesTable.hpp"
 #include "data/QuestNodeTable.hpp"
+#include "constants.hpp"
 
 #include <iostream>
 
@@ -1118,6 +1119,22 @@ void World::what_command(Player *cp) {
                 message << ",  Data " << top.data;
             }
 
+            cp->sendMessage(message.str());
+        }
+
+        Character *character = findCharacterOnField(front.x, front.y, front.z);
+        if (character != 0) {
+            message.str("");
+            uint32_t id = character->id;
+            if (id >= DYNNPC_BASE) {
+                message << "- Dynamic NPC";
+            } else if (id >= NPC_BASE) {
+                message << "- NPC " << id-NPC_BASE;
+            } else if (id >= MONSTER_BASE) {
+                message << "- Monster " << ((Monster*)character)->getType();
+            } else {
+                 message << "- Player";
+            }
             cp->sendMessage(message.str());
         }
     }
