@@ -24,6 +24,7 @@
 #include <sstream>
 
 #include "data/CommonObjectTable.hpp"
+#include "data/QuestNodeTable.hpp"
 
 #include "db/Connection.hpp"
 #include "db/ConnectionManager.hpp"
@@ -72,6 +73,10 @@ void MonsterTable::reload() {
         if (!monresults.empty()) {
             clearOldTable();
 
+            auto questNodes = QuestNodeTable::getInstance()->getMonsterNodes();
+            auto questItr = questNodes.first;
+            auto questEnd = questNodes.second;
+
             for (Database::ResultConstIterator itr = monresults.begin();
                  itr != monresults.end(); ++itr) {
                 MonsterStruct temprecord;
@@ -107,6 +112,12 @@ void MonsterTable::reload() {
                     if (!scriptname.empty()) {
                         try {
                             boost::shared_ptr<LuaMonsterScript> script(new LuaMonsterScript(scriptname));
+
+                            while (questItr != questEnd && questItr->first == id) {
+                                script->addQuestScript(questItr->second.entrypoint, questItr->second.script);
+                                ++questItr;
+                            }
+
                             temprecord.script = script;
                         } catch (ScriptException &e) {
                             Logger::writeError("scripts", "Error while loading monster script: " + scriptname + ":\n" + e.what() + "\n");

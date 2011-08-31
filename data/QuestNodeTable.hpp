@@ -42,12 +42,14 @@ private:
     static QuestNodeTable *instance;
     TABLE itemNodes;
     TABLE npcNodes;
+    TABLE monsterNodes;
 
 public:
     static QuestNodeTable *getInstance();
     void reload();
     TABLE_ITRS getItemNodes();
     TABLE_ITRS getNpcNodes();
+    TABLE_ITRS getMonsterNodes();
 
 private:
     void readQuest(boost::filesystem::ifstream &questFile, boost::filesystem::path &questPath);
