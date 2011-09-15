@@ -207,7 +207,10 @@ luabind::object LuaScript::buildEntrypoint(const std::string &entrypoint) throw(
 
         if (luabind::type(obj) != LUA_TTABLE) {
             lua_pushstring(_luaState, (
-                               "Error while loading entrypoint '" + entrypoint + "': " + currentpath.erase(0,1) + " is not a table, but is used with an index!"
+                               "Error while loading entrypoint '" + entrypoint
+                               + "': " + currentpath.erase(0,1)
+                               + " does not exist! Check module statement in "
+                               + _filename + "!"
                            ).c_str());
             throw luabind::error(_luaState);
         }
