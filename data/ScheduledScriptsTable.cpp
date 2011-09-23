@@ -121,8 +121,8 @@ void ScheduledScriptsTable::reload() {
                 tmpRecord.nextCycleTime = 0;
 
                 if (!((*itr)["sc_scriptname"].is_null()) && !((*itr)["sc_functionname"].is_null())) {
-                    tmpRecord.functionName = ((*itr)["sc_scriptname"].as<std::string>());
-                    tmpRecord.scriptName = ((*itr)["sc_functionname"].as<std::string>());
+                    tmpRecord.functionName = ((*itr)["sc_functionname"].as<std::string>());
+                    tmpRecord.scriptName = ((*itr)["sc_scriptname"].as<std::string>());
 
                     try {
                         boost::shared_ptr<LuaScheduledScript> tmpScript(new LuaScheduledScript(tmpRecord.scriptName));
