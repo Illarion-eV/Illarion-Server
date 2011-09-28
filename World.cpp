@@ -955,12 +955,31 @@ void World::checkMonsters() {
                                     newpos.x += moveSteps[ dir ][ 0 ];
                                     newpos.y += moveSteps[ dir ][ 1 ];
                                     newpos.z += moveSteps[ dir ][ 2 ];
-                                    yoffs = (*monsterIterator)->pos.y - newpos.y;
-                                    xoffs = (*monsterIterator)->pos.x - newpos.x;
+                                    yoffs = spawn->get_y() - newpos.y;
+                                    xoffs = spawn->get_x() - newpos.x;
 
-                                    // if walking out of range, walking into opp. dir. stays in range with L_inf metric
-                                    if (abs(xoffs) > spawn->getRange() || abs(yoffs) > spawn->getRange()) {
-                                        dir = (Character::direction)(((int)dir+4)%8);
+                                    // if walking out of range, mirroring dir. at spawn area border lets the char stay in range with L_inf metric
+                                    if (abs(xoffs) > spawn->getRange()) {
+                                        switch (dir) {
+                                            case Character::dir_northeast: dir = Character::dir_northwest; break;
+                                            case Character::dir_east:      dir = Character::dir_west;      break;
+                                            case Character::dir_southeast: dir = Character::dir_southwest; break;
+                                            case Character::dir_southwest: dir = Character::dir_southeast; break;
+                                            case Character::dir_west:      dir = Character::dir_east;      break;
+                                            case Character::dir_northwest: dir = Character::dir_northeast; break;
+                                            default: break;
+                                        }
+                                    }
+                                    if (abs(yoffs) > spawn->getRange()) {
+                                        switch (dir) {
+                                            case Character::dir_north:     dir = Character::dir_south;     break;
+                                            case Character::dir_northeast: dir = Character::dir_southeast; break;
+                                            case Character::dir_southeast: dir = Character::dir_northeast; break;
+                                            case Character::dir_south:     dir = Character::dir_north;     break;
+                                            case Character::dir_southwest: dir = Character::dir_northwest; break;
+                                            case Character::dir_northwest: dir = Character::dir_southwest; break;
+                                            default: break;
+                                        }
                                     }
                                 }
 
