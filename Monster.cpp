@@ -297,7 +297,10 @@ void Monster::remove() {
 }
 
 void Monster::SetAlive(bool t) {
-    if (!t) {
+    bool wasAlive = Character::IsAlive();
+    Character::SetAlive(t);
+
+    if (!t && wasAlive) {
 
         MonsterStruct monStruct;
 
@@ -311,8 +314,6 @@ void Monster::SetAlive(bool t) {
             std::cerr<<"Can't finde Description for Monster: " << getType() << " on Death not called!"<<std::endl;
         }
     }
-
-    Character::SetAlive(t);
 }
 
 bool Monster::attack(Character *target, int &sound, bool &updateInv) {
