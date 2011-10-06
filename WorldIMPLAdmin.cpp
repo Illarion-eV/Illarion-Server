@@ -1123,18 +1123,21 @@ void World::what_command(Player *cp) {
         }
 
         Character *character = findCharacterOnField(front.x, front.y, front.z);
+
         if (character != 0) {
             message.str("");
             uint32_t id = character->id;
+
             if (id >= DYNNPC_BASE) {
                 message << "- Dynamic NPC";
             } else if (id >= NPC_BASE) {
                 message << "- NPC " << id-NPC_BASE;
             } else if (id >= MONSTER_BASE) {
-                message << "- Monster " << ((Monster*)character)->getType();
+                message << "- Monster " << ((Monster *)character)->getType();
             } else {
-                 message << "- Player";
+                message << "- Player";
             }
+
             cp->sendMessage(message.str());
         }
     }

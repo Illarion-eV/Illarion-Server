@@ -121,8 +121,8 @@ void CommonObjectTable::reload() {
                         Logger::writeError("scripts", "Error while loading item script: " + scriptname + ":\n" + e.what() + "\n");
                     }
                 } else if (questItr != questEnd && questItr->first == itemID) {
-                     boost::shared_ptr<LuaItemScript> tmpScript(new LuaItemScript(temprecord));
-                     m_scripttable[itemID] = tmpScript;
+                    boost::shared_ptr<LuaItemScript> tmpScript(new LuaItemScript(temprecord));
+                    m_scripttable[itemID] = tmpScript;
                 }
 
                 try {
