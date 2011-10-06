@@ -22,6 +22,10 @@
 #include "Item.hpp"
 #include "Character.hpp"
 
+LuaItemScript::LuaItemScript(CommonStruct comstr) : LuaScript(), _comstr(comstr) {
+    init_functions();
+}
+
 LuaItemScript::LuaItemScript(std::string filename, CommonStruct comstr) throw(ScriptException)
     : LuaScript(filename) , _comstr(comstr) {
     init_functions();

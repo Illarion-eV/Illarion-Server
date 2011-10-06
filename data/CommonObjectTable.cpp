@@ -116,17 +116,24 @@ void CommonObjectTable::reload() {
 
                     try {
                         boost::shared_ptr<LuaItemScript> tmpScript(new LuaItemScript(scriptname, temprecord));
-
-                        while (questItr != questEnd && questItr->first == itemID) {
-                            tmpScript->addQuestScript(questItr->second.entrypoint, questItr->second.script);
-                            ++questItr;
-                        }
-
                         m_scripttable[itemID] = tmpScript;
                     } catch (ScriptException &e) {
                         Logger::writeError("scripts", "Error while loading item script: " + scriptname + ":\n" + e.what() + "\n");
                     }
+                } else if (questItr != questEnd && questItr->first == itemID) {
+                     boost::shared_ptr<LuaItemScript> tmpScript(new LuaItemScript(temprecord));
+                     m_scripttable[itemID] = tmpScript;
                 }
+
+                try {
+                    while (questItr != questEnd && questItr->first == itemID) {
+                        m_scripttable[itemID]->addQuestScript(questItr->second.entrypoint, questItr->second.script);
+                        ++questItr;
+                    }
+                } catch (ScriptException &e) {
+                    Logger::writeError("scripts", "Error while loading item quest script: " + questItr->second.script->getFileName() + ":\n" + e.what() + "\n");
+                }
+
 
                 m_table[itemID] = temprecord;
 

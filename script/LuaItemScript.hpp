@@ -34,6 +34,7 @@ class ScriptItem;
 
 class LuaItemScript : public LuaScript {
 public:
+    LuaItemScript(CommonStruct comstr);
     LuaItemScript(std::string filename, CommonStruct comstr) throw(ScriptException);
     virtual ~LuaItemScript() throw();
 

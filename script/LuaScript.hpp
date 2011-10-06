@@ -72,6 +72,7 @@ struct SouTar {
 
 class LuaScript {
 public:
+    LuaScript();
     LuaScript(std::string filename) throw(ScriptException);
 
     virtual ~LuaScript() throw();
@@ -108,8 +109,9 @@ protected:
     };
 
 private:
-    void init_base_functions(); /**< initialize basic functions of scripts */
-    static int add_backtrace(lua_State *L); /**< adding a backtrace to script errors */
+    void initialize();
+    void init_base_functions();
+    static int add_backtrace(lua_State *L);
     void writeErrorMsg();
     void writeCastErrorMsg(const std::string &entryPoint, const luabind::cast_failed &e);
     static void writeDebugMsg(const std::string &msg);

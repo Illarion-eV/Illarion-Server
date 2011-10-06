@@ -58,30 +58,17 @@ extern ScriptVariablesTable *scriptVariables;
 lua_State *LuaScript::_luaState = 0;
 bool LuaScript::initialized = false;
 
+LuaScript::LuaScript() {
+    initialize();
+
+    _filename = "";
+}
+
 LuaScript::LuaScript(std::string filename) throw(ScriptException) {
+    initialize();
+
     _filename = filename;
     boost::split(vecPath, filename, boost::is_any_of("."));
-
-    if (!initialized) {
-        initialized = true;
-        _luaState = luaL_newstate();
-        luabind::open(_luaState);
-
-        // use another error function to surpress errors from
-        // non-existant entry points and to display a backtrace
-        luabind::set_pcall_callback(LuaScript::add_backtrace);
-
-        init_base_functions();
-
-        char path[100];
-        strcpy(path, configOptions["scriptdir"].c_str());
-        strcat(path, "?.lua");
-        lua_pushstring(_luaState, "package");
-        lua_gettable(_luaState, LUA_GLOBALSINDEX);
-        lua_pushstring(_luaState, "path");
-        lua_pushstring(_luaState, path);
-        lua_settable(_luaState, -3);
-    }
 
     char luafile[200];
     strcpy(luafile, configOptions["scriptdir"].c_str());
@@ -124,6 +111,29 @@ LuaScript::LuaScript(std::string filename) throw(ScriptException) {
             throw ScriptException("Could not load script file: " + errstr);
             break;
         }
+    }
+}
+
+void LuaScript::initialize() {
+    if (!initialized) {
+        initialized = true;
+        _luaState = luaL_newstate();
+        luabind::open(_luaState);
+
+        // use another error function to surpress errors from
+        // non-existant entry points and to display a backtrace
+        luabind::set_pcall_callback(LuaScript::add_backtrace);
+
+        init_base_functions();
+
+        char path[100];
+        strcpy(path, configOptions["scriptdir"].c_str());
+        strcat(path, "?.lua");
+        lua_pushstring(_luaState, "package");
+        lua_gettable(_luaState, LUA_GLOBALSINDEX);
+        lua_pushstring(_luaState, "path");
+        lua_pushstring(_luaState, path);
+        lua_settable(_luaState, -3);
     }
 }
 
