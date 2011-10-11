@@ -1188,8 +1188,6 @@ public:
     // \param admin der Admin an den die Daten gesandt werden sollen
     void sendAdminAllPlayerData(Player* &admin);
 
-    void welcomePlayer(Player *cp);
-
     // ! Server side implemented !warp_to x y z
     void warpto_command(Player *cp, const std::string &ts);
 
@@ -1670,9 +1668,6 @@ private:
 
     static World *_self;
 
-    std::string buy[ 3 ];
-    std::string sell[ 3 ];
-    std::string welcome[ 3 ];
     std::string zuschwer[ 3 ];
 
     //! IG day of last turntheworld

@@ -177,18 +177,6 @@ World::World(std::string dir, time_t starttime) {
 
     npcidc   = new IdCounter(dir + std::string(NPCDIR) + std::string(NPCCOUNTERNAME), NPC_BASE);
 
-    buy[ Language::german ] = "[NPC] Benutze mich, um etwas zu kaufen.";
-    buy[ Language::english ] = "[NPC] Use me to buy something.";
-    buy[ Language::french ] = "[NPC] Employez-moi pour acheter quelque chose.";
-
-    sell[ Language::german ] = "[NPC] Benutze mich mit einem Gegenstand, um diesen zu verkaufen.";
-    sell[ Language::english ] = "[NPC] Use me with an item to sell it.";
-    sell[ Language::french ] = "[NPC] Employez-moi avec un article pour le vendre.";
-
-    welcome[ Language::german ] = ":) Willkommen in Illarion, es sind %i andere Spieler online.";
-    welcome[ Language::english ] = ":) Welcome to Illarion. There are %i other players online.";
-    welcome[ Language::french ] = ":) Bienvenue �Illarion.  Il y a %i autres joueurs en ligne.";
-
     zuschwer[ Language::german ] = "Du kannst nicht so viel tragen!";
     zuschwer[ Language::english ] = "You can't carry that much!";
     zuschwer[ Language::french ] = "Vous ne pouvez pas porter que beaucoup!";

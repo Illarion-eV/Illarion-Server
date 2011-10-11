@@ -564,28 +564,6 @@ void World::sendAdminAllPlayerData(Player* &admin) {
 }
 
 
-void World::welcomePlayer(Player *cp) {
-    if (cp != NULL) {
-        if ((cp->getPlayerLanguage() < LANGUAGECOUNT)) {
-            char tempstring[ 80 ];
-            int count=0;
-
-            for (PLAYERVECTOR::iterator it = Players.begin(); it!= Players.end(); it++)
-                if (!(*it)->isAdmin()) {
-                    count++;
-                }
-
-            sprintf(tempstring, welcome[ cp->getPlayerLanguage()].c_str(), count);
-            boost::shared_ptr<BasicServerCommand>cmd(new SayTC(cp->pos.x, cp->pos.y, cp->pos.z, std::string(tempstring)));
-            cp->Connection->addCommand(cmd);
-#ifdef LOG_TALK
-            talkfile << "Admin sagt: " << std::string(tempstring) << std::endl;
-#endif
-
-        }
-    }
-}
-
 // !warp_to X<,| >Y[<,| >Z] || !warp_to Z
 void World::warpto_command(Player *cp, const std::string &ts) {
     if (!cp->hasGMRight(gmr_warp)) {

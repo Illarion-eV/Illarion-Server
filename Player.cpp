@@ -307,8 +307,6 @@ void Player::login() throw(Player::LogoutException) {
     // send magic skills
     sendMagicFlags(magic.type);
 
-    _world->welcomePlayer(this);
-
     // send start message
     if (getPlayerLanguage() == Language::german) {
         _world->sendTextInFileToPlayer(configOptions["datadir"] + std::string("startnachricht.txt"), this);
