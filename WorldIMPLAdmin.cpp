@@ -47,6 +47,7 @@
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "netinterface/NetInterface.hpp"
 #include "script/LuaLoginScript.hpp"
+#include "script/LuaLogoutScript.hpp"
 #include "PlayerManager.hpp"
 #include "data/RaceSizeTable.hpp"
 #include "Logger.hpp"
@@ -63,6 +64,7 @@ extern std::ofstream talkfile;
 extern boost::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
 extern boost::shared_ptr<LuaDepotScript>depotScript;
 extern boost::shared_ptr<LuaLoginScript>loginScript;
+extern boost::shared_ptr<LuaLogoutScript>logoutScript;
 extern boost::shared_ptr<LuaLearnScript>learnScript;
 
 
@@ -1638,6 +1640,14 @@ bool World::reload_defs(Player *cp) {
             loginScript = tmpScript;
         } catch (ScriptException &e) {
             reportScriptError(cp, "login", e.what());
+            ok = false;
+        }
+
+        try {
+            boost::shared_ptr<LuaLogoutScript>tmpScript(new LuaLogoutScript("server.logout"));
+            logoutScript = tmpScript;
+        } catch (ScriptException &e) {
+            reportScriptError(cp, "logout", e.what());
             ok = false;
         }
 

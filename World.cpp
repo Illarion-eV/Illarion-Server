@@ -30,6 +30,8 @@
 #include "data/TilesTable.hpp"
 #include "data/WeaponObjectTable.hpp"
 
+#include "script/LuaLogoutScript.hpp"
+
 #include "db/SelectQuery.hpp"
 #include "db/Result.hpp"
 
@@ -53,6 +55,8 @@ extern MonsterTable *MonsterDescriptions;
 //Map with opitions which messages are logged or not
 //! eine Tabelle fr Waffen - Item Daten
 extern WeaponObjectTable *WeaponItems;
+
+extern boost::shared_ptr<LuaLogoutScript>logoutScript;
 
 extern std::ofstream talkfile;
 
@@ -615,8 +619,6 @@ void World::turntheworld() {
 
 
 void World::checkPlayers() {
-    static boost::shared_ptr<LuaLogoutScript>logoutScript(new LuaLogoutScript("server.logout"));
-
     bool effect = false;
 
     if (fieldtimer[ 0 ]->next()) {

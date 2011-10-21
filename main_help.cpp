@@ -47,6 +47,7 @@
 #include "script/LuaLookAtPlayerScript.hpp"
 #include "script/LuaDepotScript.hpp"
 #include "script/LuaLoginScript.hpp"
+#include "script/LuaLogoutScript.hpp"
 #include "script/LuaLearnScript.hpp"
 #include "data/LongTimeEffectTable.hpp"
 #include "Connection.hpp"
@@ -192,14 +193,10 @@ LongTimeEffectTable *LongTimeEffects;
 RaceSizeTable *RaceSizes;
 
 boost::shared_ptr<LuaDepotScript>depotScript;
-
 boost::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
-
 boost::shared_ptr<LuaLoginScript>loginScript;
-
+boost::shared_ptr<LuaLogoutScript>logoutScript;
 boost::shared_ptr<LuaLearnScript>learnScript;
-
-//! Pointer auf das Standard script f�r K�mpfe falls kein spezielles vorhanden ist.
 boost::shared_ptr<LuaWeaponScript> standardFightingScript;
 
 ScheduledScriptsTable *scheduledScripts;  //< table witch holds the scheduled scripts
@@ -434,6 +431,13 @@ void loadData() {
         loginScript = tmpScript;
     } catch (ScriptException &e) {
         Logger::writeError("scripts", "Error while loading script: server.login:\n" + std::string(e.what()) + "\n");
+    }
+
+    try {
+        boost::shared_ptr<LuaLogoutScript>tmpScript(new LuaLogoutScript("server.logout"));
+        logoutScript = tmpScript;
+    } catch (ScriptException &e) {
+        Logger::writeError("scripts", "Error while loading script: server.logout:\n" + std::string(e.what()) + "\n");
     }
 
     try {
