@@ -23,7 +23,7 @@
 // how many players to process each turn (maximum)
 #define MAXPLAYERSPROCESSED 5
 
-#define MIN_AP_UPDATE 0
+#define MIN_AP_UPDATE 100
 
 #define P_MIN_AP 7
 #define P_MAX_AP 21

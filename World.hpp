@@ -293,11 +293,10 @@ public:
      */
     MonitoringClients *monitoringClientList;
 
-    timeb start; /**< starting time of the server **/
-
     timeb now; /**< current time of the server used in @see turntheworld() **/
 
-    unsigned long int last; /**< actionpoints since the last serverstart from the last call of turntheworld() **/
+    unsigned long int timeStart;
+    unsigned long int usedAP;
 
     short int ap; /**< actionpoints since the last loop call **/
 

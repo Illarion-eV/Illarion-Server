@@ -89,13 +89,12 @@ World *World::get() throw(std::runtime_error) {
 World::World(std::string dir, time_t starttime) {
 
     Logger::writeMessage("World_Debug","World Konstruktor Start");
-    start.time=starttime;
-    start.millitm=0;
     nextXtoage = 0;
 
     lastTurnIGDay=getTime("day");
 
-    last= 0;
+    usedAP = 0;
+    timeStart = starttime*1000;
 
     currentScript = NULL;
 
@@ -579,8 +578,8 @@ World::~World() {
 
 void World::turntheworld() {
     ftime(&now);
+    unsigned long timeNow = now.time*1000 + now.millitm;
 
-    unsigned long temp = ((now.time - start.time) * 1000) + (now.millitm - start.millitm);
     int thisIGDay = getTime("day");
 
     if (lastTurnIGDay!=thisIGDay) {
@@ -589,10 +588,10 @@ void World::turntheworld() {
         lastTurnIGDay=thisIGDay;
     }
 
-    ap = (temp / 100) - last;     // 1 actionPoint == 1/10 s
+    ap = timeNow/MIN_AP_UPDATE - timeStart/MIN_AP_UPDATE - usedAP;
 
-    if (ap > MIN_AP_UPDATE) {
-        last = temp /100;
+    if (ap > 0) {
+        usedAP += ap;
 
         checkPlayers();
         checkMonsters();
