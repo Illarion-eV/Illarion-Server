@@ -142,12 +142,6 @@ private:
     EFFECTLIST effectList;
 
     /**
-    * a timer which checks if there should be invoked a new effect
-    * timing rate 1/10 s
-    */
-    MilTimer *_effectTimer;
-
-    /**
     * stores a pointer to the owner of the effects
     */
     Character *_owner;

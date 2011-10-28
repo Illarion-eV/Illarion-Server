@@ -39,12 +39,9 @@
 extern LongTimeEffectTable *LongTimeEffects;
 
 LongTimeCharacterEffects::LongTimeCharacterEffects(Character *owner) : _owner(owner) {
-    _effectTimer = new MilTimer(100);
 }
 
 LongTimeCharacterEffects::~LongTimeCharacterEffects() {
-    delete _effectTimer;
-    _effectTimer = NULL;
     effectList.clear();
 }
 
@@ -178,30 +175,28 @@ bool LongTimeCharacterEffects::removeEffect(LongTimeEffect *effect) {
 }
 
 void LongTimeCharacterEffects::checkEffects() {
-    if (_effectTimer->Next()) {
-        //if (  _owner->character == Character::player ) std::cout<<"checkEffect: "<<checkChar->name<<" size: "<<effectList.size()<<std::endl;
-        LongTimeEffect *effect;
-        int emexit = 0;
+    //if (  _owner->character == Character::player ) std::cout<<"checkEffect: "<<checkChar->name<<" size: "<<effectList.size()<<std::endl;
+    LongTimeEffect *effect;
+    int emexit = 0;
 
-        if (!effectList.empty() && (effectList.front()->_nextCalled > 0)) {
-            effectList.front()->_nextCalled--;
-            //if ( _owner->character == Character::player ) std::cout<<"decreased nextcalled: "<<effectList.front()->_nextCalled<<std::endl;
-        } else {
-            //if (  _owner->character == Character::player ) std::cout<<"calling an effectscript"<<std::endl;
-            while (!effectList.empty() && (emexit < 200) && (effectList.front()->_nextCalled <= 0)) {
-                emexit++;
-                effect = effectList.front();
-                effectList.pop_front();
+    if (!effectList.empty() && (effectList.front()->_nextCalled > 0)) {
+        effectList.front()->_nextCalled--;
+        //if ( _owner->character == Character::player ) std::cout<<"decreased nextcalled: "<<effectList.front()->_nextCalled<<std::endl;
+    } else {
+        //if (  _owner->character == Character::player ) std::cout<<"calling an effectscript"<<std::endl;
+        while (!effectList.empty() && (emexit < 200) && (effectList.front()->_nextCalled <= 0)) {
+            emexit++;
+            effect = effectList.front();
+            effectList.pop_front();
 
-                if (effect->callEffect(_owner)) {
-                    addEffect(effect);
-                } else {
-                    LongTimeEffectStruct effectStr;
+            if (effect->callEffect(_owner)) {
+                addEffect(effect);
+            } else {
+                LongTimeEffectStruct effectStr;
 
-                    if (LongTimeEffects->find(effect->_effectId, effectStr)) {
-                        if (effectStr.script) {
-                            effectStr.script->removeEffect(effect, _owner);
-                        }
+                if (LongTimeEffects->find(effect->_effectId, effectStr)) {
+                    if (effectStr.script) {
+                        effectStr.script->removeEffect(effect, _owner);
                     }
                 }
             }
