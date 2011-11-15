@@ -319,7 +319,6 @@ void Player::login() throw(Player::LogoutException) {
         _world->sendTextInFileToPlayer(configOptions["datadir"] + std::string("adminmessage.txt"), this);
     }
 
-    time_t logintime;
     time(&logintime);
     time(&lastkeepalive);
 
@@ -1096,7 +1095,7 @@ bool Player::save() throw() {
             UpdateQuery query(connection);
             query.addAssignColumn<uint16_t>("chr_status", (uint16_t) status);
             query.addAssignColumn<std::string>("chr_lastip", last_ip);
-            query.addAssignColumn<uint32_t>("chr_onlinetime", onlinetime);
+            query.addAssignColumn<uint32_t>("chr_onlinetime", onlinetime + lastsavetime - logintime);
             query.addAssignColumn<std::string>("chr_prefix", prefix);
             query.addAssignColumn<std::string>("chr_suffix", suffix);
             query.addAssignColumn<time_t>("chr_lastsavetime", lastsavetime);

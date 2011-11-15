@@ -120,12 +120,10 @@ public:
     std::string email;
 
     //! Zeit (in Sekunden) die der Spieler insgesamt online war
-    // In den Speicherfunktionen wird die Differenz zwischen aktueller Systemzeit
-    // und lastsavetime zu onlinetime addiert.
-    // Der Konstruktor, die Speicherfunktionen, die Ladefunktionen und setPlayerData setzen lastsavetime immer
-    // auf die jeweils aktuelle Systemzeit.
     unsigned long int onlinetime;
 
+    time_t logintime;
+    
     //! Zeitpunkt zu dem die Klasseninstanz erstellt bzw. das letzte mal gespeichert wurde
     time_t lastsavetime;
 
