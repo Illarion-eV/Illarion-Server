@@ -538,6 +538,10 @@ int Character::appearance_alive() {
     }
 
     switch (race) {
+    case healer:
+        return 3;
+        break;
+
     case human:
 
         if (battrib.sex == male) {

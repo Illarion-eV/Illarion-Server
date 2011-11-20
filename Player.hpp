@@ -123,7 +123,7 @@ public:
     unsigned long int onlinetime;
 
     time_t logintime;
-    
+
     //! Zeitpunkt zu dem die Klasseninstanz erstellt bzw. das letzte mal gespeichert wurde
     time_t lastsavetime;
 

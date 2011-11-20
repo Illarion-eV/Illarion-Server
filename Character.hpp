@@ -1176,6 +1176,7 @@ public:
                       orc = 4,
                       lizardman = 5,
                       gnome = 6,
+                      healer = 7,
                       troll = 9,
                       mumie = 10,
                       skeleton = 11,
