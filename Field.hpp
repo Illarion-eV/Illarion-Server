@@ -257,6 +257,8 @@ public:
     */
     unsigned short int getTileId();
 
+    unsigned short int getSecondaryTileId();
+
     /**
     * adds a item to the stack of this field but not if the field is not passable
     * <b>Lua: [:createItem]</b>

@@ -52,6 +52,14 @@ unsigned short int Field::getTileId() {
     }
 }
 
+unsigned short int Field::getSecondaryTileId() {
+    if (((tile & 0xFC00) >> 10) > 0) { // shape exists
+        return (tile & 0x03E0) >> 5;
+    } else {
+        return tile;
+    }
+}
+
 void Field::setMusicId(unsigned short int id) {
     music = id;
 }

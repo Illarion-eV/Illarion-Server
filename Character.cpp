@@ -2928,28 +2928,39 @@ bool Character::moveToPossible(const Field *field) {
 
 uint16_t Character::getMovementCost(Field *sourcefield) {
     uint16_t walkcost = 0;
+    auto tileId = sourcefield->getTileId();
 
-    if (Tiles->find(sourcefield->getTileId(), tempTile)) {
-        switch (_movement) {
-        case walk:
-            walkcost += tempTile.walkingCost;
-            break;
-        case fly: // walking cost independent of source field
-            walkcost += NP_STANDARDFLYCOST;
-            break;
-        case crawl: // just double the ap necessary for walking
-            walkcost += 2 * tempTile.walkingCost;
-            break;
-        }
-
-        if (character != player) {
-            walkcost += STANDARD_MONSTER_WALKING_COST;
-        }
-
-        walkcost = (walkcost * P_MOVECOSTFORMULA_walkingCost_MULTIPLIER) / (battrib.agility + P_MOVECOSTFORMULA_agility_ADD);
-    } else {
-        std::cout<<"move cost for tile: " << sourcefield->getTileId() << std::endl;
+    if (!Tiles->find(tileId, tempTile)) {
+        std::cerr<<"no move cost for tile: " << tileId << std::endl;
+        return walkcost;
     }
+
+    if (tempTile.flags & FLAG_PASSABLE) {
+        tileId = sourcefield->getSecondaryTileId();
+    }
+
+    if (!Tiles->find(tileId, tempTile)) {
+        std::cerr<<"no move cost for tile: " << tileId << std::endl;
+        return walkcost;
+    }
+        
+    switch (_movement) {
+    case walk:
+        walkcost += tempTile.walkingCost;
+        break;
+    case fly: // walking cost independent of source field
+        walkcost += NP_STANDARDFLYCOST;
+        break;
+    case crawl: // just double the ap necessary for walking
+        walkcost += 2 * tempTile.walkingCost;
+        break;
+    }
+
+    if (character != player) {
+        walkcost += STANDARD_MONSTER_WALKING_COST;
+    }
+
+    walkcost = (walkcost * P_MOVECOSTFORMULA_walkingCost_MULTIPLIER) / (battrib.agility + P_MOVECOSTFORMULA_agility_ADD);
 
     return walkcost;
 }
