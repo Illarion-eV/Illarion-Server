@@ -72,7 +72,6 @@ void CommonObjectTable::reload() {
     try {
         Database::SelectQuery query;
         query.addColumn("common", "com_itemid");
-        query.addColumn("common", "com_volume");
         query.addColumn("common", "com_weight");
         query.addColumn("common", "com_agingspeed");
         query.addColumn("common", "com_objectafterrot");
@@ -103,7 +102,6 @@ void CommonObjectTable::reload() {
                 itemID = (TYPE_OF_ITEM_ID)((*itr)["com_itemid"].as<int16_t>());
                 temprecord.id = itemID;
                 temprecord.Weight = (TYPE_OF_WEIGHT)((*itr)["com_weight"].as<int16_t>());
-                temprecord.Volume = (TYPE_OF_VOLUME)((*itr)["com_volume"].as<int16_t>());
                 temprecord.AgeingSpeed = (TYPE_OF_AGEINGSPEED)((*itr)["com_agingspeed"].as<int16_t>());
                 temprecord.ObjectAfterRot = (TYPE_OF_ITEM_ID)(*itr)["com_objectafterrot"].as<TYPE_OF_ITEM_ID>();
                 temprecord.isStackable = (*itr)["com_stackable"].as<bool>();

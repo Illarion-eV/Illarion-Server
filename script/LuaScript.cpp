@@ -753,7 +753,6 @@ void LuaScript::init_base_functions() {
         .def_readonly("id", &CommonStruct::id)
         .def_readonly("AgeingSpeed", &CommonStruct::AgeingSpeed)
         .def_readonly("Weight", &CommonStruct::Weight)
-        .def_readonly("Volume", &CommonStruct::Volume)
         .def_readonly("ObjectAfterRot", &CommonStruct::ObjectAfterRot)
         .def_readonly("isStackable", &CommonStruct::isStackable)
         .def_readonly("rotsInInventory", &CommonStruct::rotsInInventory)
@@ -795,7 +794,7 @@ void LuaScript::init_base_functions() {
         .def_readonly("attackValue",&AttackBoni::attackValue)
         .def_readonly("actionPointsLost",&AttackBoni::actionPointsLost),
         luabind::class_<Container>("Container")
-        .def(luabind::constructor<uint16_t>())
+        .def(luabind::constructor<>())
         .def("takeItemNr", &Container::TakeItemNr, luabind::pure_out_value(_3) + luabind::pure_out_value(_4))
         .def("viewItemNr", &Container::viewItemNr, luabind::pure_out_value(_3) + luabind::pure_out_value(_4))
         .def("changeQualityAt", &Container::changeQualityAt)
@@ -810,8 +809,7 @@ void LuaScript::init_base_functions() {
         .def("eraseItem", (int(Container:: *)(TYPE_OF_ITEM_ID, int))&Container::eraseItem)
         .def("increaseAtPos", &Container::increaseAtPos)
         .def("swapAtPos", &Container::swapAtPos)
-        .def("weight", &Container::weight)
-        .def("Volume", &Container::Volume),
+        .def("weight", &Container::weight),
         luabind::class_<ScriptVariablesTable>("ScriptVariables")
         .def("find", &ScriptVariablesTable::find, luabind::pure_out_value(_3))
         .def("set", &ScriptVariablesTable::set)

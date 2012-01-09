@@ -823,10 +823,6 @@ int World::getItemAttrib(std::string s, TYPE_OF_ITEM_ID ItemID) {
         if (CommonItems->find(ItemID, tempCommon)) {
             return tempCommon.ObjectAfterRot;
         }
-    } else if (s == "volume") {
-        if (CommonItems->find(ItemID, tempCommon)) {
-            return tempCommon.Volume;
-        }
     } else if (s == "weight") {
         if (CommonItems->find(ItemID, tempCommon)) {
             return tempCommon.Weight;
@@ -864,13 +860,6 @@ int World::getItemAttrib(std::string s, TYPE_OF_ITEM_ID ItemID) {
     } else if (s == "weaponmagicdisturbance") {
         if (WeaponItems->find(ItemID, tempWeapon)) {
             return tempWeapon.MagicDisturbance;
-        }
-    }
-
-    // Container //
-    else if (s == "containervolume") {
-        if (ContainerItems->find(ItemID, tempContainer)) {
-            return tempContainer.ContainerVolume;
         }
     }
 

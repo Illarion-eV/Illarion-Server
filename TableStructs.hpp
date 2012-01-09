@@ -88,7 +88,6 @@ struct AllObjectsTableStruct {
     std::string Id;
 
     std::string Weight;
-    std::string Volume;
     std::string AgeingSpeed;
     std::string ObjectAfterRot;
 
@@ -117,8 +116,6 @@ struct AllObjectsTableStruct {
     std::string ThrustArmor;
 
     std::string Artefacts;
-
-    std::string ContainerVolume;
 
     std::string isNotPassable;
     std::string isNotTransparent;
@@ -155,7 +152,6 @@ struct AllTilesTableStruct {
 struct CommonStruct {
     TYPE_OF_ITEM_ID id;
     TYPE_OF_WEIGHT Weight;
-    TYPE_OF_VOLUME Volume;
     TYPE_OF_AGEINGSPEED AgeingSpeed;
     TYPE_OF_ITEM_ID ObjectAfterRot;
     TYPE_OF_ITEM_ID AfterInfiniteRot;
@@ -170,7 +166,6 @@ struct CommonStruct {
     CommonStruct() {
         id = 0;
         Weight = 0;
-        Volume = 0;
         AgeingSpeed = 0;
         ObjectAfterRot = 0;
         AfterInfiniteRot = 0;
@@ -182,7 +177,6 @@ struct CommonStruct {
     CommonStruct(const CommonStruct &source) {
         id = source.id;
         Weight = source.Weight;
-        Volume = source.Volume;
         AgeingSpeed = source.AgeingSpeed;
         ObjectAfterRot = source.ObjectAfterRot;
         AfterInfiniteRot = source.AfterInfiniteRot;
@@ -199,7 +193,6 @@ struct CommonStruct {
             //( ( CommonStruct ) * this ) = ( ( CommonStruct ) source );
             id = source.id;
             Weight = source.Weight;
-            Volume = source.Volume;
             AgeingSpeed = source.AgeingSpeed;
             ObjectAfterRot = source.ObjectAfterRot;
             AfterInfiniteRot = source.AfterInfiniteRot;
@@ -266,11 +259,6 @@ struct ArmorStruct {
     int16_t Absorb;
     int16_t Stiffness;
     ArmorStruct() : BodyParts(0) , PunctureArmor(0), StrokeArmor(0), ThrustArmor(0),MagicDisturbance(0),Absorb(0), Stiffness(0) {}
-};
-
-
-struct ContainerStruct {
-    TYPE_OF_CONTAINERVOLUME ContainerVolume;
 };
 
 

@@ -177,9 +177,6 @@ ArmorStruct tempArmor;
 //! ein struct f�r Daten eines Artefakts
 ArtefactStruct tempArtefact;
 
-//! ein struct f�r Daten eines Beh�lters
-ContainerStruct tempContainer;
-
 //! ein struct f�r Daten von Item
 TilesModificatorStruct tempModificator;
 

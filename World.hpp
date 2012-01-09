@@ -100,9 +100,6 @@ extern ArmorStruct tempArmor;
 //! ein struct fuer Daten eines Artefakts
 extern ArtefactStruct tempArtefact;
 
-//! ein struct fuer Daten eines Behaelters
-extern ContainerStruct tempContainer;
-
 //! ein struct fuer Daten von Item
 extern TilesModificatorStruct tempModificator;
 

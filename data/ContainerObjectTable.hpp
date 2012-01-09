@@ -22,14 +22,12 @@
 #define _CONTAINER_OBJECT_TABLE_HPP_
 
 #include <string>
-#include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
 #include "data/Table.hpp"
-#include "TableStructs.hpp"
+#include "types.hpp"
 
 class ContainerObjectTable: public Table {
 public:
-    bool find(TYPE_OF_ITEM_ID Id, ContainerStruct &ret);
-
     ContainerObjectTable();
     ~ContainerObjectTable();
 
@@ -37,10 +35,10 @@ public:
         return m_dataOK;
     }
 
-    bool find(TYPE_OF_ITEM_ID Id);
+    bool find(TYPE_OF_ITEM_ID id);
 
 private:
-    typedef boost::unordered_map<TYPE_OF_ITEM_ID, ContainerStruct> TABLE;
+    typedef boost::unordered_set<TYPE_OF_ITEM_ID> TABLE;
     TABLE m_table;
 
     void clearOldTable();

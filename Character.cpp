@@ -1253,7 +1253,6 @@ int Character::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) 
     Item it;
 
     if (weightOK(newid, count, NULL)) {
-        ContainerStruct c;
         CommonStruct cos;
 
         if (CommonItems->find(newid, cos)) {
@@ -1261,7 +1260,7 @@ int Character::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) 
             std::cout<<"createAtPos: itemid gefunden" << std::endl;
 #endif
 
-            if (ContainerItems->find(newid, c)) {
+            if (ContainerItems->find(newid)) {
 #ifdef Character_DEBUG
                 std::cout << "createAtPos: itemid ist ein Container" << std::endl;
 #endif
@@ -1306,7 +1305,6 @@ int Character::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali,
     Item it;
 
     if (weightOK(itemid, count, NULL)) {
-        ContainerStruct c;
         CommonStruct cos;
 
         if (CommonItems->find(itemid, cos)) {
@@ -1314,7 +1312,7 @@ int Character::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali,
             std::cout << "createItem: itemid gefunden" << "\n";
 #endif
 
-            if (ContainerItems->find(itemid, c)) {
+            if (ContainerItems->find(itemid)) {
 #ifdef Character_DEBUG
                 std::cout << "createItem: itemid ist ein container" << "\n";
 #endif
@@ -1329,7 +1327,7 @@ int Character::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali,
                     characterItems[ BACKPACK ].data = data;
                     characterItems[ BACKPACK ].number = 1;
                     temp = temp - 1;
-                    backPackContents = new Container(c.ContainerVolume);
+                    backPackContents = new Container();
 
                     if (cos.Brightness > 0) {
                         updateAppearanceForAll(true);
@@ -1347,7 +1345,7 @@ int Character::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali,
                     std::cout << "createItem: erstelle neuen container im Rucksack" << std::endl;
 #endif
 
-                    if (!backPackContents->InsertContainer(it, new Container(c.ContainerVolume))) {
+                    if (!backPackContents->InsertContainer(it, new Container())) {
                         i = 0;
                     } else {
                         temp = temp - 1;
@@ -2943,7 +2941,7 @@ uint16_t Character::getMovementCost(Field *sourcefield) {
         std::cerr<<"no move cost for tile: " << tileId << std::endl;
         return walkcost;
     }
-        
+
     switch (_movement) {
     case walk:
         walkcost += tempTile.walkingCost;

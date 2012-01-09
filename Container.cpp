@@ -22,7 +22,7 @@
 #include "data/CommonObjectTable.hpp"
 #include "World.hpp"
 
-Container::Container(uint16_t max_cont_Volume) : max_Volume(max_cont_Volume) {
+Container::Container() {
 #ifdef Container_DEBUG
     std::cout << "Container Konstruktor Start/Ende" << std::endl;
 #endif
@@ -130,11 +130,10 @@ bool Container::InsertItem(Item it, bool merge) {
 #ifdef Container_DEBUG
     std::cout << "Container: neues InsertItem" << std::endl;
 #endif
-    ContainerStruct cont;
 
-    if (items.size() < MAXITEMS && VolOk(it)) {
-        if (ContainerItems->find(it.id, cont)) {
-            return InsertContainer(it, new Container(cont.ContainerVolume));
+    if (items.size() < MAXITEMS) {
+        if (ContainerItems->find(it.id)) {
+            return InsertContainer(it, new Container());
         } else if (merge) {
             //Unstackable von Items
             if (isItemStackable(it)) {
@@ -182,11 +181,10 @@ bool Container::InsertItem(Item it, unsigned char pos) {
 #ifdef Container_DEBUG
     std::cout << "Container: neues InsertItem mit pos" << std::endl;
 #endif
-    ContainerStruct cont;
 
-    if (items.size() < MAXCONTAINERITEMS && VolOk(it)) {
-        if (ContainerItems->find(it.id, cont)) {
-            return InsertContainer(it, new Container(cont.ContainerVolume));
+    if (items.size() < MAXCONTAINERITEMS) {
+        if (ContainerItems->find(it.id)) {
+            return InsertContainer(it, new Container());
         }
 
         ITEMVECTOR::iterator theIterator;
@@ -236,7 +234,7 @@ bool Container::InsertItem(Item it, unsigned char pos) {
 
 bool Container::InsertContainer(Item it, Container *cc) {
 
-    if ((this != cc) && (items.size() < MAXCONTAINERITEMS) && VolOk(it, cc)) {
+    if ((this != cc) && (items.size() < MAXCONTAINERITEMS)) {
         Item titem = it;
 
         if (items.size() < MAXITEMS) {   // es ist noch Platz frei
@@ -360,10 +358,8 @@ bool Container::TakeItemNr(MAXCOUNTTYPE nr, Item &it, Container* &cc, unsigned c
         std::cout << "das Item wurde gefunden,id: " << it.id << " number: " << it.number << "\n";
 #endif
         it = *theIterator;
-        ContainerStruct cont;
 
-        if (ContainerItems->find(it.id, cont)) {
-            // das Item aus dem Vektor l�schen
+        if (ContainerItems->find(it.id)) {
             items.erase(theIterator);
             CONTAINERMAP::iterator iterat = containers.find(it.number);
 
@@ -372,10 +368,9 @@ bool Container::TakeItemNr(MAXCOUNTTYPE nr, Item &it, Container* &cc, unsigned c
                 std::cout << "Inhalt des Containers gefunden\n";
 #endif
                 cc = (*iterat).second;
-                // Inhalt l�schen
                 containers.erase(iterat);
             } else {
-                cc = new Container(cont.ContainerVolume);
+                cc = new Container();
             }
 
             return true;
@@ -559,15 +554,14 @@ bool Container::viewItemNr(MAXCOUNTTYPE nr, ScriptItem &it, Container* &cc) {
         it.type = ScriptItem::it_container;
         it.itempos = nr;
         it.inside = this;
-        ContainerStruct cont;
 
-        if (ContainerItems->find(it.id, cont)) {
+        if (ContainerItems->find(it.id)) {
             CONTAINERMAP::iterator iterat = containers.find(it.number);
 
             if (iterat != containers.end()) {   // Inhalt des Containers gefunden
                 cc = (*iterat).second;
             } else {
-                cc = new Container(cont.ContainerVolume);
+                cc = new Container();
             }
         } else {
             cc = NULL;
@@ -738,7 +732,6 @@ void Container::Load(std::istream *where) {
     where->read((char *) & size, sizeof(size));
 
     Container *tempc;
-    ContainerStruct cont;
 
     Item tempi;
 
@@ -746,8 +739,8 @@ void Container::Load(std::istream *where) {
         where->read((char *) & tempi, sizeof(tempi));
 
         // das Item ist ein Container
-        if (ContainerItems->find(tempi.id, cont)) {
-            tempc = new Container(cont.ContainerVolume);
+        if (ContainerItems->find(tempi.id)) {
+            tempc = new Container();
             tempc->Load(where);
             InsertContainer(tempi, tempc);
         } else {
@@ -800,50 +793,6 @@ int Container::countItem(TYPE_OF_ITEM_ID itemid, uint32_t data) {
     }
 
     return temp;
-}
-
-uint16_t Container::Volume(int rekt) {
-#ifdef Container_DEBUG
-    std::cout << "in Container::Volume rekt: "<<rekt<< std::endl;
-#endif
-    int temprekt = rekt + 1;
-#ifdef Container_DEBUG
-    std::cout << "temprekt: "<<temprekt<< std::endl;
-#endif
-
-    if (rekt > MAXIMALEREKURSIONSTIEFE) {
-        throw RekursionException();
-    }
-
-    uint32_t temp = 0;
-    ITEMVECTOR::iterator theIterator;
-
-    for (theIterator = items.begin(); theIterator < items.end(); ++theIterator) {
-        if (!CommonItems->find(theIterator->id, tempCommon)) {
-            tempCommon.Volume = 0;
-        }
-
-        if (ContainerItems->find(theIterator->id)) {
-            CONTAINERMAP::iterator iterat = containers.find(theIterator->number);
-
-            if (iterat != containers.end()) {
-#ifdef Container_DEBUG
-                std::cout << "found another container inside the first one" << std::endl;
-#endif          //rekursiv verarbeiten
-                temp += (*iterat).second->Volume(temprekt);
-            }
-
-            temp += tempCommon.Volume;
-        } else {
-            temp += (tempCommon.Volume * theIterator->number);
-        }
-    }
-
-    if (temp > 65000) {
-        return 65000;
-    } else {
-        return temp;
-    }
 }
 
 
@@ -1020,51 +969,3 @@ bool Container::isItemStackable(Item item) {
     return false;
 }
 
-bool Container::VolOk(Item item) {
-#ifdef Container_DEBUG
-    std::cout << "in Container::VolOk(Item item)" << std::endl;
-#endif
-    CommonStruct com;
-
-    if (CommonItems->find(item.id, com))
-
-        //true zur�ck liefern wenn das max Volumen unterschritten ist bzw. max Volumen == 0 (unendlich volumen bei Depot)
-        try {
-            return ((max_Volume == 0) || ((com.Volume * item.number + Volume(0)) <= max_Volume)) ;
-        } catch (RekursionException &e) {
-            std::cerr<<"VolOk(Item item) maximale Rekursionstiefe: "<<MAXIMALEREKURSIONSTIEFE<<" wurde erreicht!"<<std::endl;
-            return false;
-        }
-    else {
-        return false;
-    }
-
-    return false;
-}
-
-bool Container::VolOk(Item item, Container *cont) {
-#ifdef Container_DEBUG
-    std::cout << "in Container::VolOk(Item item, Container * cont)" << std::endl;
-#endif
-    CommonStruct com;
-
-    if (CommonItems->find(item.id, com)) {
-#ifdef Container_DEBUG
-        std::cout << "Volume of the Container ="<<com.Volume<< std::endl;
-        std::cout << "Volume of the items inside the container ="<<Volume(0)<<std::endl;
-        std::cout << "Volume of the new inserterd container = "<<cont->Volume(0)<<std::endl;
-#endif
-
-        //true zur�ck liefern wenn das max Volumen unterschritten ist bzw. max Volumen == 0 (unendlich volumen bei Depot)
-        try {
-            return ((max_Volume == 0) || ((com.Volume + Volume(0) + cont->Volume(0)) <= max_Volume)) ;
-        } catch (RekursionException &e) {
-            std::cerr<<"VolOk(Item item) maximale Rekursionstiefe: "<<MAXIMALEREKURSIONSTIEFE<<" wurde erreicht!"<<std::endl;
-            return false;
-        }
-    } else {
-        return false;
-    }
-
-    return false;
-}

@@ -41,42 +41,25 @@ class RekursionException: public std::exception {};
 #include "luabind/luabind.hpp"
 #include "luabind/object.hpp"
 
-// forward declarations
 class ContainerObjectTable;
 class CommonObjectTable;
 
-
-//! eine Tabelle für Behälter - Item Daten
 extern ContainerObjectTable *ContainerItems;
-
-//! eine Tabelle mit den allgemeinen Attributen der Item
 extern CommonObjectTable *CommonItems;
-
-//! wird von verschiedenen Funktionen als Zwischenvariable genutzt
 extern CommonStruct tempCommon;
 
-//! ein Container
 class Container {
 public:
-    //! die Gegenstände in dem Container
     ITEMVECTOR items;
 
     //! definiert eine Template-Klasse "map mit key unsigned char für Zeiger auf Container"
     typedef std::map < MAXCOUNTTYPE , Container *, std::less < MAXCOUNTTYPE > > CONTAINERMAP;
 
-    //! alle Gegenstände der Item in items, die selbst Container sind
     CONTAINERMAP containers;
 
-    //! Konstruktor
-    Container(uint16_t max_cont_Volume);
-
-    //! Copy-Konstruktor
+    Container();
     Container(const Container &source);
-
-    //! Destruktor
     ~Container();
-
-    //! Zuweisungsoperator
     Container &operator =(const Container &source);
 
     //! nimmt das Item von der Position nr
@@ -194,10 +177,6 @@ public:
     // \return das Gesamtgewicht des Containers
     int weight(int rekt);
 
-    //! liefert das Volumen des inhaltes des Containers
-    // \return das Volumen
-    uint16_t Volume(int rekt);
-
     //! called by both eraseItem variants to prevent multiple instances of the same code
     int _eraseItem(TYPE_OF_ITEM_ID itemid, int count, uint32_t data, bool useData);
 
@@ -208,14 +187,6 @@ protected:
     //\item das Item welches geprüft werden soll
     //\return true wenn das Item Stapelbar ist
     bool isItemStackable(Item item);
-
-    //!Prüft ob das Max Volumen eines Containers überschritten ist wenn item hinzu gefügt wird.
-    bool VolOk(Item item);
-
-    //!Prüft ob das MaxVolumen eines Containers überschritten ist wenn der neue container eingefügt wird.
-    bool VolOk(Item item, Container *cont);
-
-    uint16_t max_Volume;
 };
 
 #endif

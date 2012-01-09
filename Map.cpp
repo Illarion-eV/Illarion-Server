@@ -506,13 +506,11 @@ bool Map::Load(std::string name, unsigned short int x_offs, unsigned short int y
                                                 //Schleife durch alle Items auf dem Feld
                                                 for (iter = field.items.begin(); iter != field.items.end(); iter++) {
                                                     //das Item ist ein Containeritem
-                                                    ContainerStruct cont;
 
-                                                    if (ContainerItems->find(iter->id, cont)) {
-                                                        //Der Container ist unser gesuchte Container
+                                                    if (ContainerItems->find(iter->id)) {
                                                         if (iter->number == key) {
                                                             // Container laden
-                                                            tempc = new Container(cont.ContainerVolume);
+                                                            tempc = new Container();
                                                             tempc->Load(all_container);
                                                             // den Containerinhalt hinzufgen
                                                             (*conmapn).second.insert(Container::CONTAINERMAP::value_type(key, tempc));

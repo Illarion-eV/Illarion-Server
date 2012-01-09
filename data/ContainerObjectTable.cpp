@@ -37,19 +37,16 @@ void ContainerObjectTable::reload() {
     try {
         Database::SelectQuery query;
         query.addColumn("container", "con_itemid");
-        query.addColumn("container", "con_volume");
         query.addServerTable("container");
 
         Database::Result results = query.execute();
 
         if (!results.empty()) {
             clearOldTable();
-            ContainerStruct temprecord;
 
             for (Database::ResultConstIterator itr = results.begin();
                  itr != results.end(); ++itr) {
-                temprecord.ContainerVolume = (TYPE_OF_VOLUME)((*itr)["con_volume"].as<int32_t>());
-                m_table[(TYPE_OF_ITEM_ID)((*itr)["con_itemid"].as<TYPE_OF_ITEM_ID>())] = temprecord;
+                m_table.insert((TYPE_OF_ITEM_ID)((*itr)["con_itemid"].as<TYPE_OF_ITEM_ID>()));
             }
 
             m_dataOK = true;
@@ -68,19 +65,6 @@ void ContainerObjectTable::reload() {
 
 }
 
-bool ContainerObjectTable::find(TYPE_OF_ITEM_ID Id, ContainerStruct &ret) {
-    TABLE::iterator iterator;
-    iterator = m_table.find(Id);
-
-    if (iterator == m_table.end()) {
-        return false;
-    } else {
-        ret = (*iterator).second;
-        return true;
-    }
-}
-
-
 void ContainerObjectTable::clearOldTable() {
     m_table.clear();
 }
@@ -91,13 +75,6 @@ ContainerObjectTable::~ContainerObjectTable() {
 }
 
 
-bool ContainerObjectTable::find(TYPE_OF_ITEM_ID Id) {
-    TABLE::iterator iterator;
-    iterator = m_table.find(Id);
-
-    if (iterator == m_table.end()) {
-        return false;
-    } else {
-        return true;
-    }
+bool ContainerObjectTable::find(TYPE_OF_ITEM_ID id) {
+    return m_table.find(id) != m_table.end();
 }
