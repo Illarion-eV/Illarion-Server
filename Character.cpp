@@ -2515,9 +2515,7 @@ unsigned short int Character::maxLiftWeigt() {
 
 
 unsigned short int Character::maxLoadWeight() {
-    unsigned short int temp;
-    temp = battrib.strength * 500 + 3000;
-    return temp;
+    return battrib.strength * 500 + 5000;
 }
 
 

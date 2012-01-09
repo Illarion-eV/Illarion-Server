@@ -322,7 +322,7 @@ void Player::login() throw(Player::LogoutException) {
     time(&logintime);
     time(&lastkeepalive);
 
-    if ((LoadWeight() * 100) / maxLoadWeight() >= 50) {
+    if ((LoadWeight() * 100) / maxLoadWeight() > 75) {
         setEncumberedSent(true);
         std::string tmessage;
 
@@ -1760,15 +1760,9 @@ void Player::inform(std::string message) {
 }
 
 bool Player::encumberance(uint16_t &movementCost) {
-    // Implement Encumberance
-    // ToDo: Add Encumberance
     int perEncumb = (LoadWeight() * 100) / maxLoadWeight();
 
-    if (!IsAlive()) {
-        perEncumb += 20;
-    }
-
-    if (perEncumb > 50) {
+    if (perEncumb > 75) {
         if (!wasEncumberedSent()) {
             setEncumberedSent(true);
             std::string tmessage;
@@ -1791,33 +1785,7 @@ bool Player::encumberance(uint16_t &movementCost) {
             inform(tmessage);
         }
 
-        if (perEncumb >= 50 && perEncumb < 55) {
-            movementCost = (short int)(movementCost * 1.1);
-        } else if (perEncumb >= 55 && perEncumb < 60) {
-            movementCost = (short int)(movementCost * 1.3);
-        } else if (perEncumb >= 60 && perEncumb < 65) {
-            movementCost = (short int)(movementCost * 1.5);
-        } else if (perEncumb >= 65 && perEncumb < 70) {
-            movementCost = (short int)(movementCost * 1.7);
-        } else if (perEncumb >= 70 && perEncumb < 75) {
-            movementCost = (short int)(movementCost * 1.8);
-        } else if (perEncumb >= 75 && perEncumb < 84) {
-            movementCost = movementCost * 2;
-        } else if (perEncumb >= 84 && perEncumb < 87) {
-            movementCost = movementCost * 3;
-        } else if (perEncumb >= 87 && perEncumb < 90) {
-            movementCost = movementCost * 4;
-        } else if (perEncumb >= 90 && perEncumb < 92) {
-            movementCost = movementCost * 5;
-        } else if (perEncumb == 92) {
-            movementCost = movementCost * 6;
-        } else if (perEncumb == 93) {
-            movementCost = movementCost * 7;
-        } else if (perEncumb == 94) {
-            movementCost = movementCost * 8;
-        } else if (perEncumb == 95) {
-            movementCost = movementCost * 9;
-        } else if (perEncumb > 95) {
+        if (perEncumb > 100) {
             std::string tmessage;
 
             switch (getPlayerLanguage()) {
@@ -1837,10 +1805,12 @@ bool Player::encumberance(uint16_t &movementCost) {
 
             inform(tmessage);
             return false;
-        } else {
-            setEncumberedSent(false);
         }
-    } //perEncumb > 50
+
+        setEncumberedSent(false);
+
+        movementCost += movementCost * 3 * (perEncumb-75) / 25;
+    }
 
     return true;
 }
