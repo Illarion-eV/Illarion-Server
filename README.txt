@@ -19,7 +19,7 @@ Requirements
    GNU Make 3.81
    Automake 1.11.1
    Boost 1.42.0
-   PostgreSQL 8.4.9
+   PostgreSQL 8.4.10
    libpqxx 3.1
    Lua 5.1.4
    Luabind 0.9.1
