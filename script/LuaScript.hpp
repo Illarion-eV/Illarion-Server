@@ -117,6 +117,7 @@ private:
     static void writeDebugMsg(const std::string &msg);
     void setCurrentWorldScript();
     luabind::object buildEntrypoint(const std::string &entrypoint) throw(luabind::error);
+    bool existsQuestEntrypoint(const std::string &entrypoint);
 
     template<typename... Args>
     bool callQuestEntrypoint(const std::string &entrypoint, const Args &... args) {

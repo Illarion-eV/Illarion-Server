@@ -238,21 +238,25 @@ void LuaScript::setCurrentWorldScript() {
     World::get()->setCurrentScript(this);
 }
 
+bool LuaScript::existsQuestEntrypoint(const std::string &entrypoint) {
+    return questScripts.find(entrypoint) != questScripts.end();
+}
+
 bool LuaScript::existsEntrypoint(const std::string &entrypoint) {
     luabind::object obj = luabind::globals(_luaState);
 
-    for (std::vector<std::string>::iterator it = vecPath.begin(); it != vecPath.end(); ++it) {
+    for (auto it = vecPath.begin(); it != vecPath.end(); ++it) {
         obj = obj[*it];
 
         if (luabind::type(obj) != LUA_TTABLE) {
-            return false;
+            return existsQuestEntrypoint(entrypoint);
         }
     }
 
     obj = obj[entrypoint];
 
     if (luabind::type(obj) != LUA_TFUNCTION) {
-        return false;
+        return existsQuestEntrypoint(entrypoint);
     }
 
     return true;
