@@ -25,6 +25,10 @@
 #include "Player.hpp"
 #include "fuse_ptr.hpp"
 
+LuaMonsterScript::LuaMonsterScript() throw(ScriptException)
+    : LuaScript() {
+}
+
 LuaMonsterScript::LuaMonsterScript(std::string filename) throw(ScriptException)
     : LuaScript(filename) {
 }

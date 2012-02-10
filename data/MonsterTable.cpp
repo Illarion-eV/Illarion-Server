@@ -67,6 +67,7 @@ void MonsterTable::reload() {
         monquery.addColumn("monster", "mob_minsize");
         monquery.addColumn("monster", "mob_maxsize");
         monquery.addServerTable("monster");
+        monquery.addOrderBy("monster", "mob_monsterid", Database::SelectQuery::ASC);
 
         Database::Result monresults = monquery.execute();
 
@@ -109,20 +110,20 @@ void MonsterTable::reload() {
                 if (!(*itr)["script"].is_null()) {
                     scriptname = (*itr)["script"].as<std::string>();
 
-                    if (!scriptname.empty()) {
-                        try {
-                            boost::shared_ptr<LuaMonsterScript> script(new LuaMonsterScript(scriptname));
-
-                            while (questItr != questEnd && questItr->first == id) {
-                                script->addQuestScript(questItr->second.entrypoint, questItr->second.script);
-                                ++questItr;
-                            }
-
-                            temprecord.script = script;
-                        } catch (ScriptException &e) {
-                            Logger::writeError("scripts", "Error while loading monster script: " + scriptname + ":\n" + e.what() + "\n");
-                        }
+                    try {
+                        boost::shared_ptr<LuaMonsterScript> script(new LuaMonsterScript(scriptname));
+                        temprecord.script = script;
+                    } catch (ScriptException &e) {
+                        Logger::writeError("scripts", "Error while loading monster script: " + scriptname + ":\n" + e.what() + "\n");
                     }
+                } else if (questItr != questEnd && questItr->first == id) {
+                    boost::shared_ptr<LuaMonsterScript> tmpScript(new LuaMonsterScript());
+                    temprecord.script = tmpScript;
+                }
+
+                while (questItr != questEnd && questItr->first == id) {
+                    temprecord.script->addQuestScript(questItr->second.entrypoint, questItr->second.script);
+                    ++questItr;
                 }
 
                 SelectQuery monAttrQuery(connection);

@@ -30,6 +30,7 @@ class World;
 
 class LuaMonsterScript : public LuaScript {
 public:
+    LuaMonsterScript() throw(ScriptException);
     LuaMonsterScript(std::string filename) throw(ScriptException);
 
     virtual ~LuaMonsterScript() throw();
