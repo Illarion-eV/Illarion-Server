@@ -22,6 +22,11 @@
 #include "Character.hpp"
 #include "fuse_ptr.hpp"
 
+LuaTriggerScript::LuaTriggerScript(position pos) throw(ScriptException)
+    : LuaScript(), _pos(pos) {
+    init_functions();
+}
+
 LuaTriggerScript::LuaTriggerScript(std::string filename, position pos) throw(ScriptException)
     : LuaScript(filename), _pos(pos) {
     init_functions();

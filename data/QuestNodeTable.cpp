@@ -57,6 +57,10 @@ QuestNodeTable::TABLE_ITRS QuestNodeTable::getMonsterNodes() {
     return QuestNodeTable::TABLE_ITRS(monsterNodes.cbegin(), monsterNodes.cend());
 }
 
+QuestNodeTable::TRIGGERVECTOR_ITRS QuestNodeTable::getTriggerNodes() {
+    return QuestNodeTable::TRIGGERVECTOR_ITRS(triggerNodes.cbegin(), triggerNodes.cend());
+}
+
 void QuestNodeTable::reload() {
     using namespace boost::filesystem;
     path dirPath = path("/usr/share/servers/testserver/scripts/questsystem");
@@ -94,37 +98,79 @@ void QuestNodeTable::readQuest(boost::filesystem::ifstream &questFile, boost::fi
         std::vector<std::string> entries;
         boost::split(entries, line, boost::is_any_of(","));
 
-        if (entries.size() != 4) {
+        if ((entries[0] != "triggerfield" && entries.size() != 4) || (entries[0] == "triggerfield" && entries.size() != 6)) {
             Logger::writeError("scripts", "Syntax error while loading quest file: " + questPath.string() + "/quest.txt\n");
             return;
         }
 
-        unsigned int id;
+        if (entries[0] == "triggerfield") {
 
-        try {
-            id = boost::lexical_cast<unsigned int>(entries[1]);
-        } catch (boost::bad_lexical_cast &) {
-            Logger::writeError("scripts", "Conversion error while loading quest file: " + entries[1] + " is not an ID\n");
-            return;
-        }
+            position pos;
 
-        NodeStruct node;
-        node.entrypoint = entries[2];
-        std::string scriptPath = "questsystem." + questPath.filename() + "." + entries[3];
+            try {
+                pos.x = boost::lexical_cast<signed short>(entries[1]);
+            } catch (boost::bad_lexical_cast &) {
+                Logger::writeError("scripts", "Conversion error while loading quest file: " + entries[1] + " is not a map coordinate\n");
+                return;
+            }
 
-        try {
-            node.script = boost::shared_ptr<LuaScript>(new LuaScript(scriptPath));
-        } catch (ScriptException &e) {
-            Logger::writeError("scripts", "Error while loading quest script: " + std::string(e.what()) + "\n");
-            return;
-        }
+            try {
+                pos.y = boost::lexical_cast<signed short>(entries[2]);
+            } catch (boost::bad_lexical_cast &) {
+                Logger::writeError("scripts", "Conversion error while loading quest file: " + entries[2] + " is not a map coordinate\n");
+                return;
+            }
 
-        if (entries[0] == "item") {
-            itemNodes.insert(std::pair<unsigned int, NodeStruct>(id, node));
-        } else if (entries[0] == "npc") {
-            npcNodes.insert(std::pair<unsigned int, NodeStruct>(id, node));
-        } else if (entries[0] == "monster") {
-            monsterNodes.insert(std::pair<unsigned int, NodeStruct>(id, node));
+            try {
+                pos.z = boost::lexical_cast<signed short>(entries[3]);
+            } catch (boost::bad_lexical_cast &) {
+                Logger::writeError("scripts", "Conversion error while loading quest file: " + entries[3] + " is not a map coordinate\n");
+                return;
+            }
+
+            TriggerNodeStruct node;
+            node.pos = pos;
+            node.entrypoint = entries[4];
+            std::string scriptPath = "questsystem." + questPath.filename() + "." + entries[5];
+
+            try {
+                node.script = boost::shared_ptr<LuaScript>(new LuaScript(scriptPath));
+            } catch (ScriptException &e) {
+                Logger::writeError("scripts", "Error while loading quest script: " + std::string(e.what()) + "\n");
+                return;
+            }
+
+            triggerNodes.push_back(node);
+
+        } else {
+
+            unsigned int id;
+
+            try {
+                id = boost::lexical_cast<unsigned int>(entries[1]);
+            } catch (boost::bad_lexical_cast &) {
+                Logger::writeError("scripts", "Conversion error while loading quest file: " + entries[1] + " is not an ID\n");
+                return;
+            }
+
+            NodeStruct node;
+            node.entrypoint = entries[2];
+            std::string scriptPath = "questsystem." + questPath.filename() + "." + entries[3];
+
+            try {
+                node.script = boost::shared_ptr<LuaScript>(new LuaScript(scriptPath));
+            } catch (ScriptException &e) {
+                Logger::writeError("scripts", "Error while loading quest script: " + std::string(e.what()) + "\n");
+                return;
+            }
+
+            if (entries[0] == "item") {
+                itemNodes.insert(std::pair<unsigned int, NodeStruct>(id, node));
+            } else if (entries[0] == "npc") {
+                npcNodes.insert(std::pair<unsigned int, NodeStruct>(id, node));
+            } else if (entries[0] == "monster") {
+                monsterNodes.insert(std::pair<unsigned int, NodeStruct>(id, node));
+            }
         }
     }
 }
@@ -133,5 +179,6 @@ void QuestNodeTable::clear() {
     itemNodes.clear();
     npcNodes.clear();
     monsterNodes.clear();
+    triggerNodes.clear();
 }
 

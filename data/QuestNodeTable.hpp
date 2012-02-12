@@ -22,6 +22,7 @@
 #define _QUEST_NODE_TABLE_HPP_
 
 #include <string>
+#include <vector>
 #include "script/LuaScript.hpp"
 #include "data/Table.hpp"
 #include <boost/shared_ptr.hpp>
@@ -33,16 +34,26 @@ struct NodeStruct {
     boost::shared_ptr<LuaScript> script;
 };
 
+struct TriggerNodeStruct {
+    position pos;
+    std::string entrypoint;
+    boost::shared_ptr<LuaScript> script;
+};
+
 class QuestNodeTable {
 private:
     typedef std::multimap<unsigned int, NodeStruct> TABLE;
     typedef TABLE::const_iterator TABLE_ITR;
     typedef std::pair<TABLE_ITR, TABLE_ITR> TABLE_ITRS;
+    typedef std::vector<TriggerNodeStruct> TRIGGERVECTOR;
+    typedef TRIGGERVECTOR::const_iterator TRIGGERVECTOR_ITR;
+    typedef std::pair<TRIGGERVECTOR_ITR, TRIGGERVECTOR_ITR> TRIGGERVECTOR_ITRS;
 
     static QuestNodeTable *instance;
     TABLE itemNodes;
     TABLE npcNodes;
     TABLE monsterNodes;
+    TRIGGERVECTOR triggerNodes;
 
 public:
     static QuestNodeTable *getInstance();
@@ -50,6 +61,7 @@ public:
     TABLE_ITRS getItemNodes();
     TABLE_ITRS getNpcNodes();
     TABLE_ITRS getMonsterNodes();
+    TRIGGERVECTOR_ITRS getTriggerNodes();
 
 private:
     void readQuest(boost::filesystem::ifstream &questFile, boost::filesystem::path &questPath);

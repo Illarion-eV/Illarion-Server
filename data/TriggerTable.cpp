@@ -28,6 +28,8 @@
 #include "db/SelectQuery.hpp"
 #include "db/Result.hpp"
 
+#include "data/QuestNodeTable.hpp"
+
 #include "Logger.hpp"
 
 template<class from>
@@ -79,11 +81,26 @@ void TriggerTable::reload() {
                     }
                 }
 
-                Triggers.insert(std::pair<position, TriggerStruct>(Trigger.pos,Trigger)); //Zuweisen des Spells
+                Triggers.insert(std::pair<position, TriggerStruct>(Trigger.pos, Trigger));
             }
         }
 
-        std::cout << " loadet Triggerfields! " << std::endl;
+        auto questNodes = QuestNodeTable::getInstance()->getTriggerNodes();
+        TriggerStruct trigger;
+        for (auto questItr = questNodes.first; questItr != questNodes.second; ++questItr) {
+            if (find(questItr->pos, trigger)) {
+                trigger.script->addQuestScript(questItr->entrypoint, questItr->script);
+            } else {
+                trigger.pos = questItr->pos;
+                boost::shared_ptr<LuaTriggerScript> script(new LuaTriggerScript(trigger.pos));
+                trigger.scriptname = "";
+                trigger.script = script;
+                trigger.script->addQuestScript(questItr->entrypoint, questItr->script);
+                Triggers.insert(std::pair<position, TriggerStruct>(trigger.pos, trigger));
+            }
+        }
+
+        std::cout << " loaded trigger fields! " << std::endl;
         _dataOK = true;
     } catch (std::exception &e) {
 
