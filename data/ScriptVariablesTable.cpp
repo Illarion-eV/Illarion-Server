@@ -70,10 +70,10 @@ void ScriptVariablesTable::reload() {
                 value = (*itr)["svt_string"].as<std::string>();
 
                 // The following lines are crappy:
-                char *vname = new char[ value.length() + 1 ];
-                strcpy(vname, value.c_str());
-                vname[ value.length()] = 0;
-                values_table[ vname ] = value;
+                char *ckey = new char[ key.length() + 1 ];
+                strcpy(ckey, key.c_str());
+                ckey[key.length()] = 0;
+                values_table[ ckey ] = value;
             }
         }
 
@@ -136,6 +136,7 @@ void ScriptVariablesTable::save() {
         const InsertQuery::columnIndex column = insQuery.addColumn("svt_ids");
         insQuery.addColumn("svt_string");
         insQuery.addValues<const char *, std::string, ltstr>(column, values_table, InsertQuery::keysAndValues);
+        insQuery.execute();
 
         connection->commitTransaction();
     } catch (std::exception &e) {
