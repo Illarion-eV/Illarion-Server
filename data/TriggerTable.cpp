@@ -87,6 +87,7 @@ void TriggerTable::reload() {
 
         auto questNodes = QuestNodeTable::getInstance()->getTriggerNodes();
         TriggerStruct trigger;
+
         for (auto questItr = questNodes.first; questItr != questNodes.second; ++questItr) {
             if (find(questItr->pos, trigger)) {
                 trigger.script->addQuestScript(questItr->entrypoint, questItr->script);
