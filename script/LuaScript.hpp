@@ -93,8 +93,12 @@ public:
     
     template<typename T>
     static void executeDialogCallback(T &dialog) {
+        luabind::object callback = dialog.getCallback();
+        if (luabind::type(callback) != LUA_TFUNCTION) {
+            return;
+        }
         try {
-            dialog.getCallback()(dialog);
+            callback(dialog);
         } catch (luabind::error &e) {
             lua_State *L = e.state();
             std::string err = "Exception in " + dialog.getClassName() + " callback";
