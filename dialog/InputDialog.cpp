@@ -24,20 +24,14 @@
 
 InputDialog::InputDialog(std::string title, bool multiline,
                          unsigned short maxchars, luabind::object callback)
-    :title(title), multiline(multiline), maxChars(maxChars), callback(callback) {
+    :Dialog(title, "InputDialog", callback), multiline(multiline), maxChars(maxChars) {
     input = "";
 }
 
-InputDialog::InputDialog(const InputDialog &inputDialog) {
-    title = inputDialog.title;
+InputDialog::InputDialog(const InputDialog &inputDialog) : Dialog(inputDialog) {
     multiline = inputDialog.multiline;
     maxChars = inputDialog.maxChars;
     input = inputDialog.input;
-    callback = inputDialog.callback;
-}
-
-std::string InputDialog::getTitle() const {
-    return title;
 }
 
 bool InputDialog::isMultiline() const {
@@ -62,17 +56,5 @@ void InputDialog::setInput(std::string input) {
     }
 
     this->input = input;
-}
-
-void InputDialog::executeCallback() {
-    try {
-        callback(*this);
-    } catch (luabind::error &e) {
-        lua_State *L = e.state();
-        std::string err = "Exception in InputDialog callback";
-        err += ": " + std::string(lua_tostring(L, -1));
-        lua_pop(L, 1);
-        Logger::writeError("scripts", err);
-    }
 }
 

@@ -28,12 +28,14 @@ extern "C" {
 #include <stdexcept>
 #include "globals.hpp"
 #include "Item.hpp"
+#include "Logger.hpp"
 #include <luabind/object.hpp>
 #include "fuse_ptr.hpp"
 #include <map>
 
 class Character;
 class World;
+class Dialog;
 
 class ScriptException : public std::runtime_error {
 public:
@@ -88,6 +90,20 @@ public:
     static void shutdownLua();
     bool existsEntrypoint(const std::string &entrypoint);
     void addQuestScript(const std::string &entrypoint, boost::shared_ptr<LuaScript> script);
+    
+    template<typename T>
+    static void executeDialogCallback(T &dialog) {
+        try {
+            dialog.getCallback()(dialog);
+        } catch (luabind::error &e) {
+            lua_State *L = e.state();
+            std::string err = "Exception in " + dialog.getClassName() + " callback";
+            err += ": " + std::string(lua_tostring(L, -1));
+            lua_pop(L, 1);
+            Logger::writeError("scripts", err);
+        }
+    }
+
 
 protected:
     static lua_State *_luaState;

@@ -21,7 +21,21 @@
 #ifndef _DIALOG_HPP_
 #define _DIALOG_HPP_
 
+#include <string>
+#include <luabind/object.hpp>
+
 class Dialog {
+private:
+    std::string title;
+    std::string className;
+    luabind::object callback;
+
+public:
+    Dialog(std::string title, std::string className, luabind::object callback);
+    Dialog(const Dialog &dialog);
+    std::string getTitle() const;
+    std::string getClassName() const;
+    luabind::object getCallback() const;
 };
 
 #endif

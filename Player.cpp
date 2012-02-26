@@ -3017,7 +3017,7 @@ void Player::executeInputDialog(unsigned int dialogId, bool success, std::string
 
     if (success && (inputDialog != 0)) {
         inputDialog->setInput(input);
-        inputDialog->executeCallback();
+        LuaScript::executeDialogCallback(*inputDialog);
     }
 
     delete inputDialog;

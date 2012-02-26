@@ -50,6 +50,7 @@ extern "C" {
 #include "Logger.hpp"
 #include "WaypointList.hpp"
 #include "fuse_ptr.hpp"
+#include "dialog/Dialog.hpp"
 #include "dialog/InputDialog.hpp"
 #include <cxxabi.h>
 

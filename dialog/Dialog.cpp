@@ -18,26 +18,29 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _INPUT_DIALOG_HPP_
-#define _INPUT_DIALOG_HPP_
-
 #include "dialog/Dialog.hpp"
-#include <string>
+#include <luabind/luabind.hpp>
+#include "Logger.hpp"
 
-class InputDialog: public Dialog {
-private:
-    bool  multiline;
-    unsigned short maxChars;
-    std::string input;
+Dialog::Dialog(std::string title, std::string className, luabind::object callback)
+    : title(title), className(className), callback(callback) {
+}
 
-public:
-    InputDialog(std::string title, bool multiline, unsigned short maxChars, luabind::object callback);
-    InputDialog(const InputDialog &inputDialog);
-    bool isMultiline() const;
-    unsigned short getMaxChars() const;
-    std::string getInput() const;
-    void setInput(std::string input);
-};
+Dialog::Dialog(const Dialog &dialog) {
+    title = dialog.title;
+    className = dialog.className;
+    callback = dialog.callback;
+}
 
-#endif
+std::string Dialog::getClassName() const {
+    return className;
+}
+
+std::string Dialog::getTitle() const {
+    return title;
+}
+
+luabind::object Dialog::getCallback() const {
+    return callback;
+}
 
