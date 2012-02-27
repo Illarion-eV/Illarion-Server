@@ -29,7 +29,6 @@
 #include "data/CommonObjectTable.hpp"
 #include "data/MonsterTable.hpp"
 #include "data/TilesTable.hpp"
-#include "dialog/InputDialog.hpp"
 #include <boost/shared_ptr.hpp>
 #include "script/LuaNPCScript.hpp"
 #include "script/LuaScript.hpp"
@@ -87,7 +86,8 @@ enum clientcommands {
     C_LOOKATMENUITEM_TS = 0xDC,
     C_KEEPALIVE_TS = 0xD8,
     C_REQUESTAPPEARANCE_TS = 0x0E,
-    C_INPUTDIALOG_TS = 0x50
+    C_INPUTDIALOG_TS = 0x50,
+    C_MESSAGEDIALOG_TS = 0x51
 };
 
 /**
@@ -163,6 +163,31 @@ public:
 
     boost::shared_ptr<BasicClientCommand> clone() {
         boost::shared_ptr<BasicClientCommand>cmd(new InputDialogTS());
+        return cmd;
+    }
+};
+
+class MessageDialogTS : public BasicClientCommand {
+private:
+    unsigned int dialogId;
+
+public:
+    MessageDialogTS() : BasicClientCommand(C_MESSAGEDIALOG_TS) {
+    }
+
+    virtual ~MessageDialogTS() {};
+
+    virtual void decodeData() {
+        dialogId = getIntFromBuffer();
+    }
+
+    void performAction(Player *player) {
+        time(&(player->lastaction));
+        player->executeMessageDialog(dialogId);
+    }
+
+    boost::shared_ptr<BasicClientCommand> clone() {
+        boost::shared_ptr<BasicClientCommand>cmd(new MessageDialogTS());
         return cmd;
     }
 };

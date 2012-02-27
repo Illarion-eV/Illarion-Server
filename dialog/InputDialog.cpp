@@ -19,8 +19,6 @@
  */
 
 #include "dialog/InputDialog.hpp"
-#include <luabind/luabind.hpp>
-#include "Logger.hpp"
 
 InputDialog::InputDialog(std::string title, bool multiline,
                          unsigned short maxchars, luabind::object callback)

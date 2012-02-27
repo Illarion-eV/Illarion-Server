@@ -43,7 +43,7 @@ LongTimeEffect.cpp LongTimeAction.cpp LongTimeCharacterEffects.cpp Scheduler.cpp
 Character.cpp \
 Player.cpp PlayerWorkoutCommands.cpp Monster.cpp NPC.cpp PlayerManager.cpp playersave.cpp WaypointList.cpp Language.cpp \
 \
-dialog/Dialog.cpp dialog/InputDialog.cpp \
+dialog/Dialog.cpp dialog/InputDialog.cpp dialog/MessageDialog.cpp \
 \
 db/ConnectionManager.cpp db/Connection.cpp db/Query.cpp \
 db/SelectQuery.cpp db/InsertQuery.cpp db/UpdateQuery.cpp db/DeleteQuery.cpp \

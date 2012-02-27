@@ -69,13 +69,20 @@ enum ServerCommands {
     SC_REMOVECHAR_TC = 0xE2,
     SC_LOOKATCHARRESULT_TC = 0x18,
     SC_ITEMUPDATE_TC = 0x19,
-    SC_INPUTDIALOG_TC = 0x50
+    SC_INPUTDIALOG_TC = 0x50,
+    SC_MESSAGEDIALOG_TC = 0x51
 };
 
 class InputDialog;
 class InputDialogTC : public BasicServerCommand {
 public:
     InputDialogTC(InputDialog &inputDialog, unsigned int dialogId);
+};
+
+class MessageDialog;
+class MessageDialogTC : public BasicServerCommand {
+public:
+    MessageDialogTC(MessageDialog &messageDialog, unsigned int dialogId);
 };
 
 class ItemUpdate_TC : public BasicServerCommand {

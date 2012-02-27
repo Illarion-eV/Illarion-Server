@@ -27,6 +27,7 @@
 #include "netinterface/BasicServerCommand.hpp"
 #include "netinterface/NetInterface.hpp"
 #include "dialog/InputDialog.hpp"
+#include "dialog/MessageDialog.hpp"
 
 //! eine Tabelle fuer Behaelter - Item Daten
 extern ContainerObjectTable *ContainerItems;
@@ -36,6 +37,12 @@ InputDialogTC::InputDialogTC(InputDialog &inputDialog, unsigned int dialogId) : 
     addStringToBuffer(inputDialog.getTitle());
     addUnsignedCharToBuffer(inputDialog.isMultiline() ? 1 : 0);
     addShortIntToBuffer(inputDialog.getMaxChars());
+    addIntToBuffer(dialogId);
+}
+
+MessageDialogTC::MessageDialogTC(MessageDialog &messageDialog, unsigned int dialogId) : BasicServerCommand(SC_MESSAGEDIALOG_TC) {
+    addStringToBuffer(messageDialog.getTitle());
+    addStringToBuffer(messageDialog.getText());
     addIntToBuffer(dialogId);
 }
 

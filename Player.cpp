@@ -54,6 +54,7 @@
 #include "db/Result.hpp"
 
 #include "dialog/InputDialog.hpp"
+#include "dialog/MessageDialog.hpp"
 
 //#define PLAYER_MOVE_DEBUG
 
@@ -3024,6 +3025,25 @@ void Player::executeInputDialog(unsigned int dialogId, bool success, std::string
     }
 
     delete inputDialog;
+    dialogs.erase(dialogId);
+}
+
+void Player::requestMessageDialog(MessageDialog *messageDialog) {
+    unsigned int dialogId = dialogCounter++;
+    MessageDialog *dialog = new MessageDialog(*messageDialog);
+    dialogs[dialogId] = dialog;
+    boost::shared_ptr<BasicServerCommand>cmd(new MessageDialogTC(*messageDialog, dialogId));
+    Connection->addCommand(cmd);
+}
+
+void Player::executeMessageDialog(unsigned int dialogId) {
+    MessageDialog *messageDialog = (MessageDialog *)dialogs[dialogId];
+
+    if (messageDialog != 0) {
+        LuaScript::executeDialogCallback(*messageDialog);
+    }
+
+    delete messageDialog;
     dialogs.erase(dialogId);
 }
 

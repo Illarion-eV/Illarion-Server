@@ -25,6 +25,7 @@
 class WaypointList;
 class Field;
 class InputDialog;
+class MessageDialog;
 
 /**
 * thrown if a creature can't be set due to space problems
@@ -1593,6 +1594,7 @@ public:
     void callAttackScript(Character *Attacker, Character *Defender);
 
     virtual void requestInputDialog(InputDialog *inputDialog);
+    virtual void requestMessageDialog(MessageDialog *messageDialog);
 
     //===========================================In attack.cc==================================================
 

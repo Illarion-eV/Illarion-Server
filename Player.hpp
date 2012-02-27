@@ -564,6 +564,9 @@ public:
     virtual void requestInputDialog(InputDialog *inputDialog);
     void executeInputDialog(unsigned int dialogId, bool success, std::string input);
 
+    virtual void requestMessageDialog(MessageDialog *messageDialog);
+    void executeMessageDialog(unsigned int dialogId);
+
 protected:
 
     // shared code for all eraseItem methods
