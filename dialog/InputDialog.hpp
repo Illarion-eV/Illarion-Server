@@ -28,6 +28,7 @@ class InputDialog: public Dialog {
 private:
     bool  multiline;
     unsigned short maxChars;
+    bool success;
     std::string input;
 
 public:
@@ -35,6 +36,8 @@ public:
     InputDialog(const InputDialog &inputDialog);
     bool isMultiline() const;
     unsigned short getMaxChars() const;
+    bool getSuccess() const;
+    void setSuccess(bool success);
     std::string getInput() const;
     void setInput(std::string input);
 };

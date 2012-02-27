@@ -3015,8 +3015,11 @@ void Player::requestInputDialog(InputDialog *inputDialog) {
 void Player::executeInputDialog(unsigned int dialogId, bool success, std::string input) {
     InputDialog *inputDialog = (InputDialog *)dialogs[dialogId];
 
-    if (success && (inputDialog != 0)) {
-        inputDialog->setInput(input);
+    if (inputDialog != 0) {
+        inputDialog->setSuccess(success);
+        if (success) {
+            inputDialog->setInput(input);
+        }
         LuaScript::executeDialogCallback(*inputDialog);
     }
 

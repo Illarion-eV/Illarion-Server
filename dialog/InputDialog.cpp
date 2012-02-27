@@ -25,6 +25,7 @@
 InputDialog::InputDialog(std::string title, bool multiline,
                          unsigned short maxchars, luabind::object callback)
     :Dialog(title, "InputDialog", callback), multiline(multiline), maxChars(maxChars) {
+    success = false;
     input = "";
 }
 
@@ -40,6 +41,14 @@ bool InputDialog::isMultiline() const {
 
 unsigned short InputDialog::getMaxChars() const {
     return maxChars;
+}
+
+bool InputDialog::getSuccess() const {
+    return success;
+}
+
+void InputDialog::setSuccess(bool success) {
+    this->success = success;
 }
 
 std::string InputDialog::getInput() const {
