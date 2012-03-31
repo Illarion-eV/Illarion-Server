@@ -23,6 +23,7 @@
 
 CommandFactory::CommandFactory() {
     //TODO add the commands
+    templateList[ C_MESSAGEDIALOG_TS ] = new MessageDialogTS();
     templateList[ C_INPUTDIALOG_TS ] = new InputDialogTS();
     templateList[ C_LOGIN_TS ] = new LoginCommandTS();
     templateList[ C_SCREENSIZE_TS ] = new ScreenSizeCommandTS();
