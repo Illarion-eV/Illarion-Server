@@ -3006,11 +3006,7 @@ void Player::sendCharRemove(TYPE_OF_CHARACTER_ID id, boost::shared_ptr<BasicServ
 }
 
 void Player::requestInputDialog(InputDialog *inputDialog) {
-    unsigned int dialogId = dialogCounter++;
-    InputDialog *dialog = new InputDialog(*inputDialog);
-    dialogs[dialogId] = dialog;
-    boost::shared_ptr<BasicServerCommand>cmd(new InputDialogTC(*inputDialog, dialogId));
-    Connection->addCommand(cmd);
+    requestDialog<InputDialog, InputDialogTC>(inputDialog);
 }
 
 void Player::executeInputDialog(unsigned int dialogId, bool success, std::string input) {
@@ -3029,11 +3025,7 @@ void Player::executeInputDialog(unsigned int dialogId, bool success, std::string
 }
 
 void Player::requestMessageDialog(MessageDialog *messageDialog) {
-    unsigned int dialogId = dialogCounter++;
-    MessageDialog *dialog = new MessageDialog(*messageDialog);
-    dialogs[dialogId] = dialog;
-    boost::shared_ptr<BasicServerCommand>cmd(new MessageDialogTC(*messageDialog, dialogId));
-    Connection->addCommand(cmd);
+    requestDialog<MessageDialog, MessageDialogTC>(messageDialog);
 }
 
 void Player::executeMessageDialog(unsigned int dialogId) {

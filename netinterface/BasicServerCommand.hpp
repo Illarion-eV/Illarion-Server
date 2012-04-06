@@ -24,7 +24,6 @@
 #include <string>
 #include <stdint.h>
 #include <vector>
-class NetInterface;
 
 
 /**

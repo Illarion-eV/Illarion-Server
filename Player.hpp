@@ -34,12 +34,13 @@
 #include "LongTimeAction.hpp"
 #include <boost/shared_ptr.hpp>
 #include "Language.hpp"
+#include "netinterface/NetInterface.hpp"
+#include "netinterface/BasicServerCommand.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "boost/unordered_map.hpp"
 
 class World;
 class LuaScript;
-class NetInterface;
 struct WeatherStruct;
 class Dialog;
 
@@ -561,6 +562,17 @@ public:
     void checkSave();
 #endif
 
+private:
+    template<class DialogType, class DialogCommandType>
+    void requestDialog(DialogType *dialog) {
+        unsigned int dialogId = dialogCounter++;
+        DialogType *d = new DialogType(*dialog);
+        dialogs[dialogId] = d;
+        boost::shared_ptr<BasicServerCommand>cmd(new DialogCommandType(*dialog, dialogId));
+        Connection->addCommand(cmd);
+    }
+
+public:
     virtual void requestInputDialog(InputDialog *inputDialog);
     void executeInputDialog(unsigned int dialogId, bool success, std::string input);
 
