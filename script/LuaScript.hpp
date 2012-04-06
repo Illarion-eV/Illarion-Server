@@ -108,6 +108,7 @@ public:
         }
     }
 
+    static void triggerScriptError(const std::string &msg) throw(luabind::error);
 
 protected:
     static lua_State *_luaState;
@@ -132,7 +133,6 @@ private:
     void initialize();
     void init_base_functions();
     static int add_backtrace(lua_State *L);
-    static void triggerScriptError(const std::string &msg) throw(luabind::error);
     void writeErrorMsg();
     void writeCastErrorMsg(const std::string &entryPoint, const luabind::cast_failed &e);
     static void writeDebugMsg(const std::string &msg);
