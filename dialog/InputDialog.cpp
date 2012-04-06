@@ -21,7 +21,7 @@
 #include "dialog/InputDialog.hpp"
 
 InputDialog::InputDialog(std::string title, bool multiline,
-                         unsigned short maxchars, luabind::object callback)
+                         unsigned short maxChars, luabind::object callback)
     :Dialog(title, "InputDialog", callback), multiline(multiline), maxChars(maxChars) {
     success = false;
     input = "";
