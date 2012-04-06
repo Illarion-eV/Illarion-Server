@@ -182,6 +182,11 @@ int LuaScript::add_backtrace(lua_State *L) {
     return 1;
 }
 
+void LuaScript::triggerScriptError(const std::string &msg) throw(luabind::error) {
+    lua_pushstring(_luaState, msg.c_str());
+    throw luabind::error(_luaState);
+}
+
 void LuaScript::writeErrorMsg() {
     std::string err = lua_tostring(_luaState, -1);
     lua_pop(_luaState, 1);
@@ -217,13 +222,11 @@ luabind::object LuaScript::buildEntrypoint(const std::string &entrypoint) throw(
         currentpath = currentpath + "." + *it;
 
         if (luabind::type(obj) != LUA_TTABLE) {
-            lua_pushstring(_luaState, (
-                               "Error while loading entrypoint '" + entrypoint
+            triggerScriptError("Error while loading entrypoint '" + entrypoint
                                + "': " + currentpath.erase(0,1)
                                + " does not exist! Check module statement in "
                                + _filename + "!"
-                           ).c_str());
-            throw luabind::error(_luaState);
+            );
         }
     }
 
