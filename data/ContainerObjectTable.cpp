@@ -37,6 +37,7 @@ void ContainerObjectTable::reload() {
     try {
         Database::SelectQuery query;
         query.addColumn("container", "con_itemid");
+        query.addColumn("container", "con_slots");
         query.addServerTable("container");
 
         Database::Result results = query.execute();
@@ -46,7 +47,8 @@ void ContainerObjectTable::reload() {
 
             for (Database::ResultConstIterator itr = results.begin();
                  itr != results.end(); ++itr) {
-                m_table.insert((TYPE_OF_ITEM_ID)((*itr)["con_itemid"].as<TYPE_OF_ITEM_ID>()));
+                m_table[(TYPE_OF_ITEM_ID)((*itr)["con_itemid"].as<TYPE_OF_ITEM_ID>())]
+                    = (TYPE_OF_CONTAINERSLOTS)((*itr)["con_slots"].as<TYPE_OF_CONTAINERSLOTS>());
             }
 
             m_dataOK = true;
@@ -75,6 +77,14 @@ ContainerObjectTable::~ContainerObjectTable() {
 }
 
 
-bool ContainerObjectTable::find(TYPE_OF_ITEM_ID id) {
-    return m_table.find(id) != m_table.end();
+TYPE_OF_CONTAINERSLOTS ContainerObjectTable::find(TYPE_OF_ITEM_ID id) {
+    TABLE::iterator iterator;
+    iterator = m_table.find(id);
+
+    if (iterator == m_table.end()) {
+        return 0;
+    } else {
+        return (*iterator).second;
+    }
 }
+

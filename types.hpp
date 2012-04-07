@@ -49,7 +49,7 @@ typedef std::string TYPE_OF_FRENCH;
 
 #define TYPE_OF_ARTEFACTS              unsigned char
 
-#define TYPE_OF_CONTAINERVOLUME        unsigned short int
+#define TYPE_OF_CONTAINERSLOTS         unsigned short int
 
 #define TYPE_OF_WALKINGCOST            unsigned char
 

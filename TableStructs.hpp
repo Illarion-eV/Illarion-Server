@@ -80,7 +80,7 @@ class LuaLongTimeEffectScript;
 #define ATEGORY           36
 
 #define AMMUNITIONTYPE     37
-#define ACTIONPOINTS       38
+#define ACTIniONPOINTS       38
 #define PUNCTUREARMOR      39
 
 
@@ -144,7 +144,6 @@ struct CommonStruct {
 
     }
 } ;
-
 
 struct TilesModificatorStruct {
     unsigned char Modificator;
