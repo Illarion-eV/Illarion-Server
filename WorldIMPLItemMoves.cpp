@@ -61,7 +61,7 @@ bool World::putItemOnInvPos(Character *cc, unsigned char pos) {
                 cc->characterItems[ BACKPACK ].number = 1;
 
                 if (g_cont == NULL) {
-                    g_cont = new Container();
+                    g_cont = new Container(g_item.id);
                 } else {
                     Player *temp = dynamic_cast<Player *>(cc);
 
@@ -376,7 +376,7 @@ bool World::takeItemFromInvPos(Character *cc, unsigned char pos, unsigned char c
             g_cont = cc->backPackContents;
 
             if (g_cont == NULL) {
-                g_cont = new Container();
+                g_cont = new Container(g_item.id);
             }
 
             cc->characterItems[ BACKPACK ].id = 0;
@@ -748,7 +748,7 @@ bool World::takeItemFromMap(Character *cc, short int x, short int y, short int z
 #endif
                                 return true;
                             } else {
-                                g_cont = new Container();
+                                g_cont = new Container(g_item.id);
                                 sendRemoveItemFromMapToAllVisibleCharacters(cc->id, x, y, z, tempf);
 #ifdef World_ItemMove_DEBUG
                                 std::cout << "takeItemFromMap.. Ende 2" << std::endl;
@@ -756,7 +756,7 @@ bool World::takeItemFromMap(Character *cc, short int x, short int y, short int z
                                 return true;
                             }
                         } else {
-                            g_cont = new Container();
+                            g_cont = new Container(g_item.id);
                             sendRemoveItemFromMapToAllVisibleCharacters(cc->id, x, y, z, tempf);
 #ifdef World_ItemMove_DEBUG
                             std::cout << "takeItemFromMap.. Ende 3" << std::endl;
@@ -826,7 +826,7 @@ bool World::putItemOnMap(Character *cc, short int x, short int y, short int z) {
         if (ContainerItems->find(g_item.id)) {
             // Container
             if (g_cont == NULL) {
-                g_cont = new Container();
+                g_cont = new Container(g_item.id);
             } else
                 // close the showcase for everyone not in range
             {
@@ -919,7 +919,7 @@ bool World::putItemAlwaysOnMap(Character *cc, short int x, short int y, short in
         if (ContainerItems->find(g_item.id)) {
             // Container
             if (g_cont == NULL) {
-                g_cont = new Container();
+                g_cont = new Container(g_item.id);
             }
 
             if (tmap->addAlwaysContainerToPos(g_item, g_cont, npos)) {
@@ -2258,7 +2258,7 @@ bool World::lookIntoContainerOnField(Player *cp, char direction, unsigned char s
                 std::cout << "mindesten 1 Item vorhanden" << std::endl;
 #endif
 
-                if (titem.id != 321 && ContainerItems->find(titem.id)) {
+                if (titem.id != DEPOTITEM && ContainerItems->find(titem.id)) {
 #ifdef World_ItemMove_DEBUG
                     std::cout << "item ist ein Container" << std::endl;
 #endif
@@ -2302,7 +2302,7 @@ bool World::lookIntoContainerOnField(Player *cp, char direction, unsigned char s
                     }
                 } else {
                     // check if we got a depot there...
-                    if (titem.id == 321) {
+                    if (titem.id == DEPOTITEM) {
                         //titem.data + 1 so no 0 depot is used.
                         if (depotScript && depotScript->existsEntrypoint("onOpenDepot")) {
                             if (depotScript->onOpenDepot(cp, titem)) {

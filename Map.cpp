@@ -510,7 +510,7 @@ bool Map::Load(std::string name, unsigned short int x_offs, unsigned short int y
                                                     if (ContainerItems->find(iter->id)) {
                                                         if (iter->number == key) {
                                                             // Container laden
-                                                            tempc = new Container();
+                                                            tempc = new Container(iter->id);
                                                             tempc->Load(all_container);
                                                             // den Containerinhalt hinzufgen
                                                             (*conmapn).second.insert(Container::CONTAINERMAP::value_type(key, tempc));

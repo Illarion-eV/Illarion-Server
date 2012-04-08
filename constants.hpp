@@ -53,6 +53,7 @@ const uint32_t MONSTER_BASE = 0xFE000000;
 #define SOUNDFIELD 1
 #define MUSICFIELD 2
 
+#define DEPOTITEM 321
 #define BLOCKEDITEM 228
 
 #define LANGUAGECOUNT 3
@@ -187,9 +188,6 @@ const uint32_t MONSTER_BASE = 0xFE000000;
 
 //! Die maximale Anzahl von Item auf einem Feld
 #define MAXITEMS 250 // max 255 da oft als BYTE verwendet
-
-//! Die Maximale Anzahl an Items in einen Container.
-#define MAXCONTAINERITEMS 100
 
 //! die maximale Anzahl von Item am Grtel
 #define MAX_BELT_SLOTS 6

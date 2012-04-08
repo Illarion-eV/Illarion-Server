@@ -22,36 +22,33 @@
 #include "data/CommonObjectTable.hpp"
 #include "World.hpp"
 
-Container::Container() {
+Container::Container(TYPE_OF_ITEM_ID itemId): itemId(itemId) {
 #ifdef Container_DEBUG
-    std::cout << "Container Konstruktor Start/Ende" << std::endl;
+    std::cout << "Container constructor" << std::endl;
 #endif
 }
 
 
 Container::Container(const Container &source) {
 #ifdef Container_DEBUG
-    std::cout << "Container Copy Konstruktor Start" << std::endl;
+    std::cout << "Container copy constructor start" << std::endl;
 #endif
     *this = source;
 #ifdef Container_DEBUG
-    std::cout << "Container Copy Konstruktor Ende" << std::endl;
+    std::cout << "Container copy constructor end" << std::endl;
 #endif
 }
 
 
-Container &Container:: operator =(const Container &source) {
+Container &Container::operator=(const Container &source) {
 #ifdef Container_DEBUG
-    std::cout << "Container Zuweisungsoperator Start" << std::endl;
+    std::cout << "Container assign operator start" << std::endl;
 #endif
 
     if (this != &source) {
-        // alte Item l�schen
         items.clear();
-        // Item kopieren
         items = source.items;
 
-        // alte CONTAINERMAP l�schen (rekursiv alle Container)
         if (!containers.empty()) {
             CONTAINERMAP::iterator theIterator;
 
@@ -63,7 +60,6 @@ Container &Container:: operator =(const Container &source) {
             containers.clear();
         }
 
-        // alle Container kopieren (rekursiv)
         if (!source.containers.empty()) {
             CONTAINERMAP::const_iterator theIterator;
 
@@ -75,7 +71,7 @@ Container &Container:: operator =(const Container &source) {
     }
 
 #ifdef Container_DEBUG
-    std::cout << "Container Zuweisungsoperator Ende" << std::endl;
+    std::cout << "Container assign operator end" << std::endl;
 #endif
 
     return *this;
@@ -85,7 +81,7 @@ Container &Container:: operator =(const Container &source) {
 
 Container::~Container() {
 #ifdef Container_DEBUG
-    std::cout << "Container Destruktor Start" << std::endl;
+    std::cout << "Container destructor start" << std::endl;
 #endif
     items.clear();
 
@@ -101,7 +97,7 @@ Container::~Container() {
     }
 
 #ifdef Container_DEBUG
-    std::cout << "Container Destruktor Ende" << std::endl;
+    std::cout << "Container destructor end" << std::endl;
 #endif
 }
 
@@ -109,7 +105,7 @@ Container::~Container() {
 bool Container::InsertItem(Item it) {
 
 #ifdef Container_DEBUG
-    std::cout << "Container: altes InsertItem" << std::endl;
+    std::cout << "Container: old InsertItem" << std::endl;
 #endif
 
     return InsertItem(it, false);
@@ -118,7 +114,7 @@ bool Container::InsertItem(Item it) {
 
 bool Container::InsertItemOnLoad(Item it) {
 #ifdef Container_DEBUG
-    std::cout << "Container: neues InsertItem" << std::endl;
+    std::cout << "Container: new InsertItem" << std::endl;
 #endif
     items.push_back(it);
     return false;
@@ -133,7 +129,7 @@ bool Container::InsertItem(Item it, bool merge) {
 
     if (items.size() < MAXITEMS) {
         if (ContainerItems->find(it.id)) {
-            return InsertContainer(it, new Container());
+            return InsertContainer(it, new Container(it.id));
         } else if (merge) {
             //Unstackable von Items
             if (isItemStackable(it)) {
@@ -182,9 +178,9 @@ bool Container::InsertItem(Item it, unsigned char pos) {
     std::cout << "Container: neues InsertItem mit pos" << std::endl;
 #endif
 
-    if (items.size() < MAXCONTAINERITEMS) {
+    if (items.size() < getSlotCount()) {
         if (ContainerItems->find(it.id)) {
-            return InsertContainer(it, new Container());
+            return InsertContainer(it, new Container(it.id));
         }
 
         ITEMVECTOR::iterator theIterator;
@@ -234,7 +230,7 @@ bool Container::InsertItem(Item it, unsigned char pos) {
 
 bool Container::InsertContainer(Item it, Container *cc) {
 
-    if ((this != cc) && (items.size() < MAXCONTAINERITEMS)) {
+    if ((this != cc) && (items.size() < getSlotCount())) {
         Item titem = it;
 
         if (items.size() < MAXITEMS) {   // es ist noch Platz frei
@@ -370,7 +366,7 @@ bool Container::TakeItemNr(MAXCOUNTTYPE nr, Item &it, Container* &cc, unsigned c
                 cc = (*iterat).second;
                 containers.erase(iterat);
             } else {
-                cc = new Container();
+                cc = new Container(it.id);
             }
 
             return true;
@@ -561,7 +557,7 @@ bool Container::viewItemNr(MAXCOUNTTYPE nr, ScriptItem &it, Container* &cc) {
             if (iterat != containers.end()) {   // Inhalt des Containers gefunden
                 cc = (*iterat).second;
             } else {
-                cc = new Container();
+                cc = new Container(it.id);
             }
         } else {
             cc = NULL;
@@ -740,7 +736,7 @@ void Container::Load(std::istream *where) {
 
         // das Item ist ein Container
         if (ContainerItems->find(tempi.id)) {
-            tempc = new Container();
+            tempc = new Container(tempi.id);
             tempc->Load(where);
             InsertContainer(tempi, tempc);
         } else {
@@ -954,6 +950,10 @@ void Container::doAge(ITEM_FUNCT funct, bool inventory) {
         }
     }
 
+}
+
+TYPE_OF_CONTAINERSLOTS Container::getSlotCount() {
+    return ContainerItems->find(itemId);
 }
 
 bool Container::isItemStackable(Item item) {

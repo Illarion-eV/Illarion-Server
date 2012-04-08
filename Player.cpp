@@ -1456,7 +1456,7 @@ bool Player::load() throw() {
 
         for (size_t i = 1; i <= zeilen; ++i) {
             if (depotid[ i - 1 ] != 0) {
-                depotContents[ depotid[ i - 1 ] ] = new Container();
+                depotContents[ depotid[ i - 1 ] ] = new Container(DEPOTITEM);
                 depots[ depotid [ i - 1 ] ] = depotContents[ depotid[ i - 1] ];
             }
         }
@@ -1506,7 +1506,7 @@ bool Player::load() throw() {
             }
 
             if (ContainerItems->find(tempi.id)) {
-                tempc = new Container();
+                tempc = new Container(tempi.id);
 
                 if (linenumber > MAX_BODY_ITEMS + MAX_BELT_SLOTS) {
                     if (!it->second->InsertContainer(tempi, tempc)) {
@@ -2184,7 +2184,7 @@ void Player::openDepot(uint16_t depotid) {
 std::cout << "Depot mit der ID: "<<depotid<<" wird neu erstellt!"<<std:
                   endl
 #endif
-                  depotContents[ depotid ] = new Container();
+                  depotContents[ depotid ] = new Container(DEPOTITEM);
         showcases[ 0 ].clear();
         showcases[ 0 ].startContainer(depotContents[ depotid ], false);
         boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(0, depotContents[ depotid]->items));
@@ -2337,7 +2337,7 @@ bool Player::moveDepotContentFrom(uint32_t sourcecharid, uint32_t targetdepotid,
             ContainerStruct depotstruct;
             uint16_t depotsize = 0;
 
-            if (ContainerItems->find(321,depotstruct)) {
+            if (ContainerItems->find(DEPOTITEM, depotstruct)) {
                 depotsize = depotstruct.ContainerVolume;
             }
 

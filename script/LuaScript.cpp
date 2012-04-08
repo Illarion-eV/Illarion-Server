@@ -806,7 +806,7 @@ void LuaScript::init_base_functions() {
         .def_readonly("attackValue",&AttackBoni::attackValue)
         .def_readonly("actionPointsLost",&AttackBoni::actionPointsLost),
         luabind::class_<Container>("Container")
-        .def(luabind::constructor<>())
+        .def(luabind::constructor<TYPE_OF_ITEM_ID>())
         .def("takeItemNr", &Container::TakeItemNr, luabind::pure_out_value(_3) + luabind::pure_out_value(_4))
         .def("viewItemNr", &Container::viewItemNr, luabind::pure_out_value(_3) + luabind::pure_out_value(_4))
         .def("changeQualityAt", &Container::changeQualityAt)

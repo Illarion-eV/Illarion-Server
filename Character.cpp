@@ -1327,7 +1327,7 @@ int Character::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali,
                     characterItems[ BACKPACK ].data = data;
                     characterItems[ BACKPACK ].number = 1;
                     temp = temp - 1;
-                    backPackContents = new Container();
+                    backPackContents = new Container(itemid);
 
                     if (cos.Brightness > 0) {
                         updateAppearanceForAll(true);
@@ -1345,7 +1345,7 @@ int Character::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali,
                     std::cout << "createItem: erstelle neuen container im Rucksack" << std::endl;
 #endif
 
-                    if (!backPackContents->InsertContainer(it, new Container())) {
+                    if (!backPackContents->InsertContainer(it, new Container(it.id))) {
                         i = 0;
                     } else {
                         temp = temp - 1;
