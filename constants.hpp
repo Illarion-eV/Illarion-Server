@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef ONSTANTS_HH
-#define ONSTANTS_HH
+#ifndef _CONSTANTS_HPP_
+#define _CONSTANTS_HPP_
 
 #include <stdint.h>
 

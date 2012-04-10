@@ -54,7 +54,7 @@ private:
 public:
     ITEMVECTOR items;
 
-    typedef std::map < MAXCOUNTTYPE , Container *, std::less < MAXCOUNTTYPE > > CONTAINERMAP;
+    typedef std::map<TYPE_OF_CONTAINERSLOTS, Container *, std::less<TYPE_OF_CONTAINERSLOTS> > CONTAINERMAP;
     CONTAINERMAP containers;
 
     Container(TYPE_OF_ITEM_ID itemId);
@@ -62,9 +62,9 @@ public:
     ~Container();
     Container &operator =(const Container &source);
 
-    bool TakeItemNr(MAXCOUNTTYPE nr, Item &it, Container* &cc, unsigned char count);
-    bool viewItemNr(MAXCOUNTTYPE nr, ScriptItem &it, Container* &cc);
-    bool changeQualityAt(MAXCOUNTTYPE nr, short int amount);
+    bool TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &it, Container* &cc, unsigned char count);
+    bool viewItemNr(TYPE_OF_CONTAINERSLOTS nr, ScriptItem &it, Container* &cc);
+    bool changeQualityAt(TYPE_OF_CONTAINERSLOTS nr, short int amount);
     bool changeQuality(TYPE_OF_ITEM_ID id, short int amount);
     bool InsertContainer(Item it, Container *cc);
     bool InsertItem(Item it, bool merge);

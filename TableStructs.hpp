@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef TABLESTRUCTS_HPP
-#define TABLESTRUCTS_HPP
+#ifndef _TABLESTRUCTS_HPP_
+#define _TABLESTRUCTS_HPP_
 
 #define BOOST_HAS_THREADS
 
@@ -33,57 +33,6 @@ class LuaItemScript;
 class LuaWeaponScript;
 class LuaLongTimeEffectScript;
 
-#define ID                 1
-
-#define WEIGHT             2
-#define VOLUME             3
-#define AGEINGSPEED        4
-#define OBJECTAFTERROT     5
-
-#define GERMAN             7
-#define ENGLISH            8
-#define FRENCH             9
-
-#define IMAGEFILENAME      10
-#define PIXELOFFSETX       11
-#define PIXELOFFSETY       12
-#define NROFANIMATIONS     13
-#define ANOVERLAP         14
-
-#define FOODSHARE          15
-#define DRINKSHARE         16
-
-#define ATTACK             17
-#define DEFENCE            18
-#define ACCURACY           19
-#define RANGE              20
-#define WEAPONTYPE         21
-
-#define BODYPARTS          23
-#define STROKEARMOR        24
-#define THRUSTARMOR        25
-
-#define ARTEFACTS          26
-
-#define CONTAINERVOLUME    27
-
-#define ISNOTPASSABLE      28
-#define ISNOTTRANSPARENT   29
-#define ISNOTPENETRATEABLE 30
-#define WALKINGCOST        31
-
-#define AUTOMAPCOLOR       32
-
-#define GROUNDLEVEL        33
-#define SPECIALTILE        34
-#define SPECIALITEM        35
-#define ATEGORY           36
-
-#define AMMUNITIONTYPE     37
-#define ACTIniONPOINTS       38
-#define PUNCTUREARMOR      39
-
-
 struct CommonStruct {
     TYPE_OF_ITEM_ID id;
     TYPE_OF_WEIGHT Weight;
@@ -94,9 +43,6 @@ struct CommonStruct {
     TYPE_OF_WORTH Worth;
     bool rotsInInventory;
     bool isStackable;
-    //pthread_mutex_t it_mutex;
-    //boost::shared_ptr<LuaItemScript> script;
-
 
     CommonStruct() {
         id = 0;
@@ -118,9 +64,6 @@ struct CommonStruct {
         Brightness = source.Brightness;
         rotsInInventory = source.rotsInInventory;
         isStackable = source.isStackable;
-        //pthread_mutex_lock( &it_mutex );
-        //script = source.script;
-        //pthread_mutex_unlock( &it_mutex );
     }
 
     CommonStruct &operator=(const CommonStruct &source) {
@@ -134,16 +77,11 @@ struct CommonStruct {
             Brightness = source.Brightness;
             rotsInInventory = source.rotsInInventory;
             isStackable = source.isStackable;
-            //pthread_mutex_lock( &it_mutex );
-            //script = source.script;
-            //pthread_mutex_unlock( &it_mutex );
-
         }
 
         return *this;
-
     }
-} ;
+};
 
 struct TilesModificatorStruct {
     unsigned char Modificator;
@@ -203,11 +141,6 @@ struct TilesStruct {
     TYPE_OF_ENGLISH English;
     TYPE_OF_FRENCH French;
     boost::shared_ptr<LuaTileScript> script;
-};
-
-
-struct ArtefactStruct {
-    TYPE_OF_ARTEFACTS Artefacts;
 };
 
 

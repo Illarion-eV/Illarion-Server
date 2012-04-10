@@ -17,47 +17,45 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef ILLA_TYPES_H
-#define ILLA_TYPES_H
+#ifndef _TYPES_HPP_
+#define _TYPES_HPP_
 
 #include <stdint.h>
 
 typedef uint16_t TYPE_OF_ITEM_ID;
 typedef uint32_t TYPE_OF_CHARACTER_ID;
 
-typedef unsigned short TYPE_OF_WEIGHT;
-typedef unsigned char  TYPE_OF_AGEINGSPEED;
-typedef unsigned char  TYPE_OF_BRIGHTNESS;
+typedef uint16_t TYPE_OF_WEIGHT;
+typedef uint8_t  TYPE_OF_AGEINGSPEED;
+typedef uint8_t  TYPE_OF_BRIGHTNESS;
 typedef uint32_t TYPE_OF_WORTH;
+
+typedef uint8_t  TYPE_OF_ATTACK;
+typedef uint8_t  TYPE_OF_DEFENCE;
+typedef uint8_t  TYPE_OF_ACCURACY;
+typedef uint8_t  TYPE_OF_RANGE;
+typedef uint8_t  TYPE_OF_WEAPONTYPE;
+typedef uint8_t  TYPE_OF_POISONSTRENGTH;
+
+typedef uint8_t  TYPE_OF_BODYPARTS;
+typedef uint8_t  TYPE_OF_STROKEARMOR;
+typedef uint8_t  TYPE_OF_PUNCTUREARMOR;
+typedef uint8_t  TYPE_OF_THRUSTARMOR;
+typedef uint16_t TYPE_OF_MAGICDISTURBANCE;
+
+typedef uint16_t TYPE_OF_CONTAINERSLOTS;
+
+typedef uint8_t  TYPE_OF_WALKINGCOST;
+
+typedef uint8_t  TYPE_OF_GROUNDLEVEL;
+typedef uint8_t  TYPE_OF_SPECIALTILE;
+typedef uint8_t  TYPE_OF_SPECIALITEM;
+typedef uint16_t TYPE_OF_CATEGORY;
+typedef uint8_t  TYPE_OF_AMMUNITIONTYPE;
+typedef uint8_t  TYPE_OF_ACTIONPOINTS;
 
 typedef std::string TYPE_OF_GERMAN;
 typedef std::string TYPE_OF_ENGLISH;
 typedef std::string TYPE_OF_FRENCH;
-
-#define TYPE_OF_ATTACK                 unsigned char
-#define TYPE_OF_DEFENCE                unsigned char
-#define TYPE_OF_ACCURACY               unsigned char
-#define TYPE_OF_RANGE                  unsigned char
-#define TYPE_OF_WEAPONTYPE             unsigned char
-#define TYPE_OF_POISONSTRENGTH         unsigned char
-
-#define TYPE_OF_BODYPARTS              unsigned char
-#define TYPE_OF_STROKEARMOR            unsigned char
-#define TYPE_OF_PUNCTUREARMOR          unsigned char
-#define TYPE_OF_THRUSTARMOR            unsigned char
-#define TYPE_OF_MAGICDISTURBANCE       unsigned short int
-
-#define TYPE_OF_ARTEFACTS              unsigned char
-
-#define TYPE_OF_CONTAINERSLOTS         unsigned short int
-
-#define TYPE_OF_WALKINGCOST            unsigned char
-
-#define TYPE_OF_GROUNDLEVEL            unsigned char
-#define TYPE_OF_SPECIALTILE            unsigned char
-#define TYPE_OF_SPECIALITEM            unsigned char
-#define TYPE_OF_CATEGORY               unsigned short
-#define TYPE_OF_AMMUNITIONTYPE         unsigned char
-#define TYPE_OF_ACTIONPOINTS           unsigned char
 
 #endif

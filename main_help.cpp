@@ -174,9 +174,6 @@ WeaponStruct tempWeapon;
 //! ein struct f�r Daten einer Schutzkleidung
 ArmorStruct tempArmor;
 
-//! ein struct f�r Daten eines Artefakts
-ArtefactStruct tempArtefact;
-
 //! ein struct f�r Daten von Item
 TilesModificatorStruct tempModificator;
 

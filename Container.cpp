@@ -16,7 +16,6 @@
 //  You should have received a copy of the GNU General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "Container.hpp"
 #include "data/ContainerObjectTable.hpp"
 #include "data/CommonObjectTable.hpp"
@@ -28,7 +27,6 @@ Container::Container(TYPE_OF_ITEM_ID itemId): itemId(itemId) {
 #endif
 }
 
-
 Container::Container(const Container &source) {
 #ifdef Container_DEBUG
     std::cout << "Container copy constructor start" << std::endl;
@@ -38,7 +36,6 @@ Container::Container(const Container &source) {
     std::cout << "Container copy constructor end" << std::endl;
 #endif
 }
-
 
 Container &Container::operator=(const Container &source) {
 #ifdef Container_DEBUG
@@ -78,7 +75,6 @@ Container &Container::operator=(const Container &source) {
 
 }
 
-
 Container::~Container() {
 #ifdef Container_DEBUG
     std::cout << "Container destructor start" << std::endl;
@@ -101,7 +97,6 @@ Container::~Container() {
 #endif
 }
 
-
 bool Container::InsertItem(Item it) {
 
 #ifdef Container_DEBUG
@@ -119,7 +114,6 @@ bool Container::InsertItemOnLoad(Item it) {
     items.push_back(it);
     return false;
 }
-
 
 bool Container::InsertItem(Item it, bool merge) {
 
@@ -171,7 +165,6 @@ bool Container::InsertItem(Item it, bool merge) {
     return false;
 
 }
-
 
 bool Container::InsertItem(Item it, unsigned char pos) {
 #ifdef Container_DEBUG
@@ -227,7 +220,6 @@ bool Container::InsertItem(Item it, unsigned char pos) {
 
 }
 
-
 bool Container::InsertContainer(Item it, Container *cc) {
 
     if ((this != cc) && (items.size() < getSlotCount())) {
@@ -257,7 +249,6 @@ bool Container::InsertContainer(Item it, Container *cc) {
     return false;
 
 }
-
 
 bool Container::changeQuality(TYPE_OF_ITEM_ID id, short int amount) {
     ITEMVECTOR::iterator theIterator = items.begin();
@@ -295,7 +286,7 @@ bool Container::changeQuality(TYPE_OF_ITEM_ID id, short int amount) {
     return false;
 }
 
-bool Container::changeQualityAt(MAXCOUNTTYPE nr, short int amount) {
+bool Container::changeQualityAt(TYPE_OF_CONTAINERSLOTS nr, short int amount) {
     ITEMVECTOR::iterator theIterator;
     MAXCOUNTTYPE count2 = 0;
     theIterator = items.begin();
@@ -332,8 +323,7 @@ bool Container::changeQualityAt(MAXCOUNTTYPE nr, short int amount) {
     return false;
 }
 
-
-bool Container::TakeItemNr(MAXCOUNTTYPE nr, Item &it, Container* &cc, unsigned char count) {
+bool Container::TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &it, Container* &cc, unsigned char count) {
 
     ITEMVECTOR::iterator theIterator;
     MAXCOUNTTYPE count2 = 0;
@@ -533,8 +523,7 @@ void Container::increaseItemList(luabind::object &list, int &index) {
     }
 }
 
-
-bool Container::viewItemNr(MAXCOUNTTYPE nr, ScriptItem &it, Container* &cc) {
+bool Container::viewItemNr(TYPE_OF_CONTAINERSLOTS nr, ScriptItem &it, Container* &cc) {
     ITEMVECTOR::iterator theIterator;
     MAXCOUNTTYPE count = 0;
     theIterator = items.begin();
@@ -572,7 +561,6 @@ bool Container::viewItemNr(MAXCOUNTTYPE nr, ScriptItem &it, Container* &cc) {
         return false;
     }
 }
-
 
 int Container::increaseAtPos(unsigned char pos, int count) {
 
@@ -709,7 +697,6 @@ void Container::Save(std::ofstream *where) {
 
 }
 
-
 void Container::Load(std::istream *where) {
 
     if (!containers.empty()) {
@@ -744,7 +731,6 @@ void Container::Load(std::istream *where) {
         }
     }
 }
-
 
 int Container::countItem(TYPE_OF_ITEM_ID itemid) {
     int temp = 0;
@@ -791,7 +777,6 @@ int Container::countItem(TYPE_OF_ITEM_ID itemid, uint32_t data) {
     return temp;
 }
 
-
 int Container::weight(int rekt) {
     int temprekt = rekt + 1;
 
@@ -827,7 +812,6 @@ int Container::weight(int rekt) {
         return temp;
     }
 }
-
 
 int Container::_eraseItem(TYPE_OF_ITEM_ID itemid, int count, uint32_t data, bool useData) {
 
@@ -877,16 +861,13 @@ int Container::_eraseItem(TYPE_OF_ITEM_ID itemid, int count, uint32_t data, bool
     return temp;
 }
 
-
 int Container::eraseItem(TYPE_OF_ITEM_ID itemid, int count) {
     return _eraseItem(itemid, count, 0, false);
 }
 
-
 int Container::eraseItem(TYPE_OF_ITEM_ID itemid, int count, uint32_t data) {
     return _eraseItem(itemid, count, data, true);
 }
-
 
 void Container::doAge(ITEM_FUNCT funct, bool inventory) {
     if (!items.empty()) {
@@ -968,4 +949,3 @@ bool Container::isItemStackable(Item item) {
 
     return false;
 }
-
