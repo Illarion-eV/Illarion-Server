@@ -372,11 +372,7 @@ public:
     */
     void sendWeather(WeatherStruct weather);
 
-    //! Fhrt die Alterung der Item im Inventory des Player durch
-    // und schickt ggf. ein Update an den Spieler
-    // \param funct
-    // \see Item.hpp
-    void AgeInventory(ITEM_FUNCT funct);
+    void ageInventory();
 
     //! erstellt count Item mit der ID itemid im Inventory des Player
     // und schickt ein Update an den Spieler
@@ -553,8 +549,6 @@ public:
     virtual void setQuestProgress(uint16_t questid, uint32_t progress) throw();
 
     virtual uint32_t getQuestProgress(uint16_t questid) throw();
-
-    virtual bool moveDepotContentFrom(uint32_t sourcecharid, uint32_t targetdepotid, uint32_t sourcedepotid) throw();
 
     void sendMessage(std::string Message);
 

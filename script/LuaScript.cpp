@@ -405,7 +405,6 @@ void LuaScript::init_base_functions() {
         .def("sendBook", &Character::sendBook)
         .def("updateAppearance", &Character::forceUpdateAppearanceForAll)
         .def("performAnimation", &Character::performAnimation)
-        .def("moveDepotContentFrom", &Character::moveDepotContentFrom)
         .def("tempChangeAttrib", &Character::tempChangeAttrib)
         .def("alterSpokenMessage", &Character::alterSpokenMessage)
         .def("actionRunning", &Character::actionRunning)
@@ -655,16 +654,15 @@ void LuaScript::init_base_functions() {
         .def("addItem", &UserMenuStruct::AddItem),
         luabind::class_<Item>("Item")
         .def(luabind::constructor<>())
-        .def(luabind::constructor<TYPE_OF_ITEM_ID,unsigned char, unsigned char>())
-        .def_readwrite("id", &Item::id)
-        .def_readwrite("wear", &Item::wear)
-        .def_readwrite("number", &Item::number)
-        .def_readwrite("quality", &Item::quality)
-        .def_readwrite("data", &Item::data)
-        .def("setData", &Item::setData)
-        .def("getData", &Item::getData),
-        //.property("data", &Item::getData, &Item::setData),
-        luabind::class_<ScriptItem,Item>("scriptItem") //Spezielle Itemklasse fr Scripte die auch die Position des Items und den eigentmer kennt.
+        .def(luabind::constructor<Item::id_type, Item::number_type, Item::wear_type, Item::quality_type, Item::data_type>())
+        .property("id", &Item::getId, &Item::setId)
+        .property("wear", &Item::getWear, &Item::setWear)
+        .property("number", &Item::getNumber, &Item::setNumber)
+        .property("quality", &Item::getQuality, &Item::setQuality)
+        .property("data", &Item::getOldData, &Item::setOldData)
+        .def("setData", (void(Item:: *)(std::string, std::string))&Item::setData)
+        .def("getData", (std::string(Item:: *)(std::string))&Item::getData),
+        luabind::class_<ScriptItem,Item>("scriptItem")
         .def(luabind::constructor<>())
         .def_readonly("owner", &ScriptItem::getOwnerForLua)
         .def_readonly("pos", &ScriptItem::pos)
@@ -817,8 +815,8 @@ void LuaScript::init_base_functions() {
         .def("insertItem", (bool(Container:: *)(Item))&Container::InsertItem)
         .def("countItem",(int(Container:: *)(TYPE_OF_ITEM_ID,uint32_t))&Container::countItem)
         .def("countItem",(int(Container:: *)(TYPE_OF_ITEM_ID))&Container::countItem)
-        .def("eraseItem", (int(Container:: *)(TYPE_OF_ITEM_ID, int, uint32_t))&Container::eraseItem)
-        .def("eraseItem", (int(Container:: *)(TYPE_OF_ITEM_ID, int))&Container::eraseItem)
+        .def("eraseItem", (int(Container:: *)(Item::id_type, Item::number_type, Item::data_type))&Container::eraseItem)
+        .def("eraseItem", (int(Container:: *)(Item::id_type, Item::number_type))&Container::eraseItem)
         .def("increaseAtPos", &Container::increaseAtPos)
         .def("swapAtPos", &Container::swapAtPos)
         .def("weight", &Container::weight),

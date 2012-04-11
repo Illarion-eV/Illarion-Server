@@ -20,7 +20,6 @@
 #include "globals.hpp"
 #include "Item.hpp"
 #include "World.hpp"
-#include "data/ContainerObjectTable.hpp"
 #include "Logger.hpp"
 #include "data/RaceSizeTable.hpp"
 #include "ServerCommands.hpp"
@@ -29,8 +28,6 @@
 #include "dialog/InputDialog.hpp"
 #include "dialog/MessageDialog.hpp"
 
-//! eine Tabelle fuer Behaelter - Item Daten
-extern ContainerObjectTable *ContainerItems;
 extern RaceSizeTable *RaceSizes;
 
 InputDialogTC::InputDialogTC(InputDialog &inputDialog, unsigned int dialogId) : BasicServerCommand(SC_INPUTDIALOG_TC) {
@@ -58,17 +55,16 @@ ItemUpdate_TC::ItemUpdate_TC(position fieldpos, ITEMVECTOR &items) : BasicServer
     }
 
     addUnsignedCharToBuffer(static_cast<uint8_t>(size));
-    ITEMVECTOR::iterator it;
 
-    for (it = items.begin(); it != items.end(); ++it) {
+    for (auto it = items.begin(); it != items.end(); ++it) {
         //we added 255 items
         if (size <= 0) {
             break;
         }
 
-        addShortIntToBuffer(it->id);
-        addUnsignedCharToBuffer(it->number);
-        Logger::writeMessage("rot_update", "adding item id: "+Logger::toString(it->id)+" count: "+Logger::toString(static_cast<int>(it->number)),false);
+        addShortIntToBuffer(it->getId());
+        addUnsignedCharToBuffer(it->getNumber());
+        Logger::writeMessage("rot_update", "adding item id: "+Logger::toString(it->getId())+" count: "+Logger::toString(static_cast<int>(it->getNumber())),false);
         size--;
     }
 }
@@ -84,16 +80,15 @@ ItemUpdate_TC::ItemUpdate_TC(int16_t px, int16_t py, int16_t pz, ITEMVECTOR &ite
     }
 
     addUnsignedCharToBuffer(static_cast<uint8_t>(size));
-    ITEMVECTOR::iterator it;
 
-    for (it = items.begin(); it != items.end(); ++it) {
+    for (auto it = items.begin(); it != items.end(); ++it) {
         //we added 255 items
         if (size <= 0) {
             break;
         }
 
-        addShortIntToBuffer(it->id);
-        addUnsignedCharToBuffer(it->number);
+        addShortIntToBuffer(it->getId());
+        addUnsignedCharToBuffer(it->getNumber());
         size--;
     }
 }
@@ -116,13 +111,13 @@ AppearanceTC::AppearanceTC(Character *cc) : BasicServerCommand(SC_APPEARANCE_TC)
     addUnsignedCharToBuffer(cc->skinred);
     addUnsignedCharToBuffer(cc->skingreen);
     addUnsignedCharToBuffer(cc->skinblue);
-    addShortIntToBuffer(cc->GetItemAt(1).id);
-    addShortIntToBuffer(cc->GetItemAt(3).id);
-    addShortIntToBuffer(cc->GetItemAt(11).id);
-    addShortIntToBuffer(cc->GetItemAt(5).id);
-    addShortIntToBuffer(cc->GetItemAt(6).id);
-    addShortIntToBuffer(cc->GetItemAt(9).id);
-    addShortIntToBuffer(cc->GetItemAt(10).id);
+    addShortIntToBuffer(cc->GetItemAt(1).getId());
+    addShortIntToBuffer(cc->GetItemAt(3).getId());
+    addShortIntToBuffer(cc->GetItemAt(11).getId());
+    addShortIntToBuffer(cc->GetItemAt(5).getId());
+    addShortIntToBuffer(cc->GetItemAt(6).getId());
+    addShortIntToBuffer(cc->GetItemAt(9).getId());
+    addShortIntToBuffer(cc->GetItemAt(10).getId());
     addUnsignedCharToBuffer(cc->getWeaponMode());
     uint8_t deathflag = cc->IsAlive() ? 0 : 1;
     addUnsignedCharToBuffer(deathflag);
@@ -181,12 +176,12 @@ ItemPutTC::ItemPutTC(short int x, short int y, short int z, Item &item) : BasicS
     addShortIntToBuffer(x);
     addShortIntToBuffer(y);
     addShortIntToBuffer(z);
-    addShortIntToBuffer(item.id);
+    addShortIntToBuffer(item.getId());
 
-    if (ContainerItems->find(item.id)) {
+    if (item.isContainer()) {
         addUnsignedCharToBuffer(1);
     } else {
-        addUnsignedCharToBuffer(item.number);
+        addUnsignedCharToBuffer(item.getNumber());
     }
 }
 
@@ -194,17 +189,14 @@ ItemSwapTC::ItemSwapTC(position pos, unsigned short int id, Item &item) : BasicS
     addShortIntToBuffer(pos.x);
     addShortIntToBuffer(pos.y);
     addShortIntToBuffer(pos.z);
-    addShortIntToBuffer(id);   /**no id is sended*/
-    addShortIntToBuffer(item.id);
+    addShortIntToBuffer(id);
+    addShortIntToBuffer(item.getId());
 
-    //addUnsignedCharToBuffer( flags ); /**no flags are sended and needed*/
-    if (ContainerItems->find(item.id)) {
+    if (item.isContainer()) {
         addUnsignedCharToBuffer(1);
     } else {
-        addUnsignedCharToBuffer(item.number);
+        addUnsignedCharToBuffer(item.getNumber());
     }
-
-    //addUnsignedCharToBuffer( flags );
 }
 
 ItemSwapTC::ItemSwapTC(short int x, short int y, short int z, unsigned short int id, Item &item) : BasicServerCommand(SC_MAPITEMSWAP) {
@@ -212,16 +204,13 @@ ItemSwapTC::ItemSwapTC(short int x, short int y, short int z, unsigned short int
     addShortIntToBuffer(y);
     addShortIntToBuffer(z);
     addShortIntToBuffer(id);
-    addShortIntToBuffer(item.id);
+    addShortIntToBuffer(item.getId());
 
-    //addUnsignedCharToBuffer( flags );
-    if (ContainerItems->find(item.id)) {
+    if (item.isContainer()) {
         addUnsignedCharToBuffer(1);
     } else {
-        addUnsignedCharToBuffer(item.number);
+        addUnsignedCharToBuffer(item.getNumber());
     }
-
-    //addUnsignedCharToBuffer( flags );
 }
 
 ItemRemoveTC::ItemRemoveTC(short int x, short int y, short int z) : BasicServerCommand(SC_ITEMREMOVE_TC) {
@@ -270,19 +259,19 @@ StartPlayerMenuTC::StartPlayerMenuTC(UserMenuStruct menu) : BasicServerCommand(S
 }
 
 UpdateShowCaseTC::UpdateShowCaseTC(unsigned char showcase, ITEMVECTOR &items) : BasicServerCommand(SC_UPDATESHOWCASE_TC) {
-    ITEMVECTOR::iterator theIterator;
     addUnsignedCharToBuffer(showcase);
 
     MAXCOUNTTYPE size = items.size();
     addUnsignedCharToBuffer(size);
 
-    for (theIterator = items.begin(); theIterator < items.end(); ++theIterator) {
-        addShortIntToBuffer(theIterator->id);
+    for (auto it = items.begin(); it < items.end(); ++it) {
+        Item &item = *it;
+        addShortIntToBuffer(item.getId());
 
-        if (ContainerItems->find(theIterator->id)) {
+        if (item.isContainer()) {
             addUnsignedCharToBuffer(1);
         } else {
-            addUnsignedCharToBuffer(theIterator->number);
+            addUnsignedCharToBuffer(item.getNumber());
         }
     }
 }
@@ -301,15 +290,15 @@ MapStripeTC::MapStripeTC(position pos, NewClientView::stripedirection dir) : Bas
             addShortIntToBuffer(fields[i]->getTileCode());
             addShortIntToBuffer(fields[i]->getMusicId());
             addUnsignedCharToBuffer(static_cast<unsigned char>(fields[i]->items.size()));
-            ITEMVECTOR::iterator theIterator;
 
-            for (theIterator = fields[i]->items.begin(); theIterator < fields[i]->items.end(); ++theIterator) {
-                addShortIntToBuffer(theIterator->id);
+            for (auto it = fields[i]->items.begin(); it < fields[i]->items.end(); ++it) {
+                Item &item = *it;
+                addShortIntToBuffer(item.getId());
 
-                if (ContainerItems->find(theIterator->id)) {
+                if (item.isContainer()) {
                     addUnsignedCharToBuffer(1);
                 } else {
-                    addUnsignedCharToBuffer(static_cast<unsigned char>(theIterator->number));
+                    addUnsignedCharToBuffer(static_cast<unsigned char>(item.getNumber()));
                 }
             }
         } else {

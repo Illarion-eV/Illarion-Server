@@ -937,30 +937,11 @@ bool World::DoAge() {
 #endif
             ++timecount;
 
-            // Bestimmen welche Steps gealtert werden m�ssen
-            if (timecount == STEP_7) {
-                AgeItem = AgeItemUpStep7;
-                timecount = 0;
-            } else if (timecount % STEP_6 == 0) {
-                AgeItem = AgeItemUpStep6;
-            } else if (timecount % STEP_5 == 0) {
-                AgeItem = AgeItemUpStep5;
-            } else if (timecount % STEP_4 == 0) {
-                AgeItem = AgeItemUpStep4;
-            } else if (timecount % STEP_3 == 0) {
-                AgeItem = AgeItemUpStep3;
-            } else if (timecount % STEP_2 == 0) {
-                AgeItem = AgeItemUpStep2;
-            } else {
-                AgeItem = AgeItemUpStep1;
-            }
-
             last_age = temp;
             nextXtoage = maps.getLowX();
 
-            //  Item im Inventory sollen nicht mehr altern, darum ist AgeInv.. auskommentiert
             AgeCharacters();
-            AgeInventory(AgeItem);
+            AgeInventory();
 
             Map::CONTAINERHASH::iterator conmap;
             Container::CONTAINERMAP::iterator cmi;
@@ -972,7 +953,7 @@ bool World::DoAge() {
                     // Containerinhalt altern
                     for (cmi = (*conmap).second.begin(); cmi != (*conmap).second.end(); ++cmi) {
                         if ((*cmi).second != NULL) {
-                            (*cmi).second->doAge(AgeItem);
+                            (*cmi).second->doAge();
                         }
                     }
                 }
@@ -994,7 +975,7 @@ bool World::DoAge() {
 
     if (maps.findAllMapsWithXInRangeOf(nextXtoage, lastXtoage, mapsToage)) {
         for (std::vector < Map * > ::iterator mapI = mapsToage.begin(); mapI < mapsToage.end(); ++mapI) {
-            (*mapI)->DoAgeItems_XFromTo(nextXtoage, lastXtoage, AgeItem);
+            (*mapI)->ageItemsInHorizontalRange(nextXtoage, lastXtoage);
         }
 
         closeShowcasesForContainerPositions();
@@ -1008,18 +989,18 @@ bool World::DoAge() {
 }
 
 
-void World::AgeInventory(ITEM_FUNCT funct) {
+void World::AgeInventory() {
 
     PLAYERVECTOR::iterator titerator;
 
     for (titerator = Players.begin(); titerator < Players.end(); ++titerator) {
-        (*titerator)->AgeInventory(funct);
+        (*titerator)->ageInventory();
     }
 
     MONSTERVECTOR::iterator monsterIterator;
 
     for (monsterIterator = Monsters.begin(); monsterIterator < Monsters.end(); ++monsterIterator) {
-        (*monsterIterator)->AgeInventory(funct);
+        (*monsterIterator)->ageInventory();
     }
 
 }

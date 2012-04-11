@@ -278,7 +278,7 @@ void LongTimeAction::successAction() {
             if ((_at == AT_USE)) {
                 //a itemscript
                 if (_source.Type == LUA_ITEM) {
-                    if (_source.item.quality >= 100) {
+                    if (_source.item.isComplete()) {
                         boost::shared_ptr<LuaItemScript>itScript = boost::dynamic_pointer_cast<LuaItemScript>(_script);
 
                         if (_target.Type == LUA_ITEM || _target.Type == LUA_NONE) {

@@ -1059,16 +1059,6 @@ public:
     virtual void sendCharDescription(TYPE_OF_CHARACTER_ID id,const std::string &desc);
 
     /**
-    * moves the content of depot sourcedepotid of char sourcecharid to depot targetdepotid of this char regardless of char sourcecharid being online or offline
-    * <b>Lua: [:moveDepotContentFrom]</b>
-    * @param sourcecharid the char acting as source
-    * @param targetdepotid the depot acting as target
-    * @param sourcedepotid the depot acting as source
-    * @return success of action
-    */
-    virtual bool moveDepotContentFrom(uint32_t sourcecharid, uint32_t targetdepotid, uint32_t sourcedepotid) throw();
-
-    /**
     *======================end of grouping Lua Functions===================
     */
     //@}
@@ -1425,11 +1415,7 @@ public:
 
     int appearance_dead(); /**< returns the id of the graphic if this character is dead*/
 
-    /**
-    * ages the items in the inventory of this character
-    * @param funct a item age function pointer
-    */
-    virtual void AgeInventory(ITEM_FUNCT funct);
+    virtual void ageInventory();
 
     /**
     * current lifestate of the character (alive or death)

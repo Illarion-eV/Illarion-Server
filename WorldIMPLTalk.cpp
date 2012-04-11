@@ -27,7 +27,6 @@
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "Logger.hpp"
 
-//Table with Item Descriptions for Itemscripts
 extern CommonObjectTable *CommonItems;
 
 bool World::sendTextInFileToPlayer(std::string filename, Player *cp) {
@@ -330,24 +329,8 @@ void World::lookAtMapItem(Player *cp, short int x, short int y, short int z) {
     if (GetPToCFieldAt(cfold, x, y, z)) {
         // Feld vorhanden
         if (cfold->ViewTopItem(titem)) {
-            if (titem.quality >= 100) {
-                // mindesten 1 Item vorhanden auf dem alten Feld
-                //CommonStrut to find a Item
-                /*
-                CommonStruct com;
-                if ( CommonItems->find( titem.id, com) )
-                {
-                    ScriptItem n_item = titem;
-                    n_item.type = ScriptItem::it_field;
-                    n_item.pos = position( x, y, z);
-                    n_item.owner = cp;
-                    // Es gibt ein Script f�r das Item
-                    if ( com.script ) {
-                        //Falls ein LookAtItem Script erfolgreich ausgef�hrt wurde die Funktion beenden.
-                        if ( com.script->LookAtItem(cp, n_item) )return;
-                    }
-                }*/
-                boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(titem.id);
+            if (titem.isComplete()) {
+                boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(titem.getId());
                 ScriptItem n_item = titem;
                 n_item.type = ScriptItem::it_field;
                 n_item.pos = position(x, y, z);
@@ -359,7 +342,7 @@ void World::lookAtMapItem(Player *cp, short int x, short int y, short int z) {
                 }
             }
 
-            if (ItemNames->find(titem.id, tempNames)) {
+            if (ItemNames->find(titem.getId(), tempNames)) {
                 std::string outtext;
 
                 switch (cp->getPlayerLanguage()) {
@@ -377,8 +360,8 @@ void World::lookAtMapItem(Player *cp, short int x, short int y, short int z) {
                     break;
                 }
 
-                if (titem.quality < 100) {
-                    outtext += " ( " + Logger::toString(titem.quality) + "% )";
+                if (!titem.isComplete()) {
+                    outtext += " ( " + Logger::toString(titem.getQuality()) + "% )";
                 }
 
                 boost::shared_ptr<BasicServerCommand>cmd(new NameOfMapItemTC(x, y, z,  outtext));
@@ -518,8 +501,8 @@ void World::lookAtShowcaseItem(Player *cp, unsigned char showcase, unsigned char
             Container *tc;
 
             if (ps->viewItemNr(position, titem, tc)) {
-                if (titem.quality >= 100) {
-                    boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(titem.id);
+                if (titem.isComplete()) {
+                    boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(titem.getId());
                     ScriptItem n_item = titem;
 
                     if (showcase == 0) {
@@ -540,7 +523,7 @@ void World::lookAtShowcaseItem(Player *cp, unsigned char showcase, unsigned char
 
                 std::string outtext;
 
-                if (ItemNames->find(titem.id, tempNames)) {
+                if (ItemNames->find(titem.getId(), tempNames)) {
 
                     switch (cp->getPlayerLanguage()) {
                     case Language::german:
@@ -557,8 +540,8 @@ void World::lookAtShowcaseItem(Player *cp, unsigned char showcase, unsigned char
                         break;
                     }
 
-                    if (titem.quality < 100) {
-                        outtext += " ( " + Logger::toString(titem.quality) + "% )";
+                    if (!titem.isComplete()) {
+                        outtext += " ( " + Logger::toString(titem.getQuality()) + "% )";
                     }
                 } else { // kein Name vorhanden
                     switch (cp->getPlayerLanguage()) {
@@ -584,14 +567,14 @@ void World::lookAtShowcaseItem(Player *cp, unsigned char showcase, unsigned char
 
 
 void World::lookAtInventoryItem(Player *cp, unsigned char position) {
-    if (cp->characterItems[ position ].id != 0) {
+    if (cp->characterItems[ position ].getId() != 0) {
         std::string outtext;
 
-        if (ItemNames->find(cp->characterItems[ position ].id, tempNames)) {
+        if (ItemNames->find(cp->characterItems[ position ].getId(), tempNames)) {
             Item titem = cp->characterItems[ position ];
 
-            if (titem.quality >= 100) {
-                boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(cp->characterItems[ position ].id);
+            if (titem.isComplete()) {
+                boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(cp->characterItems[ position ].getId());
                 ScriptItem n_item = cp->characterItems[ position ];
 
                 if (position < MAX_BODY_ITEMS) {
@@ -625,8 +608,8 @@ void World::lookAtInventoryItem(Player *cp, unsigned char position) {
                 break;
             }
 
-            if (titem.quality  < 100) {
-                outtext += " ( " + Logger::toString(titem.quality) + "% )";
+            if (!titem.isComplete()) {
+                outtext += " ( " + Logger::toString(titem.getQuality()) + "% )";
             }
         } else { // kein Name vorhanden
             switch (cp->getPlayerLanguage()) {

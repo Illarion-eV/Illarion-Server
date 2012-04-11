@@ -933,9 +933,7 @@ Character::Character() : actionPoints(P_MAX_AP),fightPoints(P_MAX_FP),waypoints(
     pos.z = 0;
 
     for (int i = 0; i < MAX_BODY_ITEMS + MAX_BELT_SLOTS; ++i) {
-        characterItems[ i ].id = 0;
-        characterItems[ i ].number = 0;
-        characterItems[ i ].wear = 0;
+        characterItems[ i ].reset();
     }
 
     battrib.hitpoints = battrib.truehitpoints = MAXHPS;
@@ -1047,8 +1045,8 @@ int Character::countItem(TYPE_OF_ITEM_ID itemid) {
     int temp = 0;
 
     for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
-        if (characterItems[ i ].id == itemid && characterItems[ i ].quality >= 100) {
-            temp = temp + characterItems[ i ].number;
+        if (characterItems[ i ].getId() == itemid && characterItems[ i ].isComplete()) {
+            temp = temp + characterItems[ i ].getNumber();
         }
     }
 
@@ -1056,7 +1054,7 @@ int Character::countItem(TYPE_OF_ITEM_ID itemid) {
     std::cout << "std::coutItem: am K�per gefunden: " << temp << "\n";
 #endif
 
-    if ((characterItems[ BACKPACK ].id != 0) && (backPackContents != NULL)) {
+    if ((characterItems[ BACKPACK ].getId() != 0) && (backPackContents != NULL)) {
         temp = temp + backPackContents->countItem(itemid);
     }
 
@@ -1070,8 +1068,8 @@ int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid) {
 
     if (where == "all") {
         for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
-            if (characterItems[ i ].id == itemid && characterItems[ i ].quality >= 100) {
-                temp = temp + characterItems[ i ].number;
+            if (characterItems[ i ].getId() == itemid && characterItems[ i ].isComplete()) {
+                temp = temp + characterItems[ i ].getNumber();
             }
         }
 
@@ -1080,7 +1078,7 @@ int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid) {
 #endif
 
 
-        if ((characterItems[ BACKPACK ].id != 0) && (backPackContents != NULL)) {
+        if ((characterItems[ BACKPACK ].getId() != 0) && (backPackContents != NULL)) {
             temp = temp + backPackContents->countItem(itemid);
         }
 
@@ -1092,8 +1090,8 @@ int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid) {
 
     if (where == "belt") {
         for (unsigned char i = MAX_BODY_ITEMS; i < MAX_BODY_ITEMS + MAX_BELT_SLOTS; ++i) {
-            if (characterItems[ i ].id == itemid && characterItems[ i ].quality >= 100) {
-                temp = temp + characterItems[ i ].number;
+            if (characterItems[ i ].getId() == itemid && characterItems[ i ].isComplete()) {
+                temp = temp + characterItems[ i ].getNumber();
             }
         }
 
@@ -1102,8 +1100,8 @@ int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid) {
 
     if (where == "body") {
         for (unsigned char i = 0; i < MAX_BODY_ITEMS; ++i) {
-            if (characterItems[ i ].id == itemid && characterItems[ i ].quality >= 100) {
-                temp = temp + characterItems[ i ].number;
+            if (characterItems[ i ].getId() == itemid && characterItems[ i ].isComplete()) {
+                temp = temp + characterItems[ i ].getNumber();
             }
         }
 
@@ -1111,7 +1109,7 @@ int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid) {
     }
 
     if (where == "backpack") {
-        if ((characterItems[ BACKPACK ].id != 0) && (backPackContents != NULL)) {
+        if ((characterItems[ BACKPACK ].getId() != 0) && (backPackContents != NULL)) {
             temp = temp + backPackContents->countItem(itemid);
         }
 
@@ -1126,8 +1124,8 @@ int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid, uint32_t d
 
     if (where == "all") {
         for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
-            if (characterItems[ i ].id == itemid && characterItems[ i ].quality >= 100 && characterItems[i].data == data) {
-                temp = temp + characterItems[ i ].number;
+            if (characterItems[ i ].getId() == itemid && characterItems[ i ].isComplete() && characterItems[i].getData() == data) {
+                temp = temp + characterItems[ i ].getNumber();
             }
         }
 
@@ -1136,7 +1134,7 @@ int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid, uint32_t d
 #endif
 
 
-        if ((characterItems[ BACKPACK ].id != 0) && (backPackContents != NULL)) {
+        if ((characterItems[ BACKPACK ].getId() != 0) && (backPackContents != NULL)) {
             temp = temp + backPackContents->countItem(itemid, data);
         }
 
@@ -1148,8 +1146,8 @@ int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid, uint32_t d
 
     if (where == "belt") {
         for (unsigned char i = MAX_BODY_ITEMS; i < MAX_BODY_ITEMS + MAX_BELT_SLOTS; ++i) {
-            if (characterItems[ i ].id == itemid && characterItems[ i ].quality >= 100 && characterItems[i].data == data) {
-                temp = temp + characterItems[ i ].number;
+            if (characterItems[ i ].getId() == itemid && characterItems[ i ].isComplete() && characterItems[i].getData() == data) {
+                temp = temp + characterItems[ i ].getNumber();
             }
         }
 
@@ -1158,8 +1156,8 @@ int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid, uint32_t d
 
     if (where == "body") {
         for (unsigned char i = 0; i < MAX_BODY_ITEMS; ++i) {
-            if (characterItems[ i ].id == itemid && characterItems[ i ].quality >= 100 && characterItems[i].data == data) {
-                temp = temp + characterItems[ i ].number;
+            if (characterItems[ i ].getId() == itemid && characterItems[ i ].isComplete() && characterItems[i].getData() == data) {
+                temp = temp + characterItems[ i ].getNumber();
             }
         }
 
@@ -1167,7 +1165,7 @@ int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid, uint32_t d
     }
 
     if (where == "backpack") {
-        if ((characterItems[ BACKPACK ].id != 0) && (backPackContents != NULL)) {
+        if ((characterItems[ BACKPACK ].getId() != 0) && (backPackContents != NULL)) {
             temp = temp + backPackContents->countItem(itemid , data);
         }
 
@@ -1200,7 +1198,7 @@ int Character::_eraseItem(TYPE_OF_ITEM_ID itemid, int count, uint32_t data, bool
     std::cout << "try to erase in inventory " << count << " items of type " << itemid << " data " << data << "\n";
 #endif
 
-    if ((characterItems[ BACKPACK ].id != 0) && (backPackContents != NULL)) {
+    if ((characterItems[ BACKPACK ].getId() != 0) && (backPackContents != NULL)) {
         temp = backPackContents->_eraseItem(itemid, temp, data, useData);
 #ifdef Character_DEBUG
         std::cout << "eraseItem: nach L�chen im Rucksack noch zu l�chen: " << temp << "\n";
@@ -1211,14 +1209,12 @@ int Character::_eraseItem(TYPE_OF_ITEM_ID itemid, int count, uint32_t data, bool
     if (temp > 0) {
         // BACKPACK als Item erstmal auslassen
         for (unsigned char i = MAX_BELT_SLOTS + MAX_BODY_ITEMS - 1; i > 0; --i) {
-            if ((characterItems[ i ].id == itemid && (!useData || characterItems[ i ].data == data) && characterItems[ i ].quality >= 100) && (temp > 0)) {
-                if (temp >= characterItems[ i ].number) {
-                    temp = temp - characterItems[ i ].number;
-                    characterItems[ i ].id = 0;
-                    characterItems[ i ].number = 0;
-                    characterItems[ i ].wear = 0;
+            if ((characterItems[ i ].getId() == itemid && (!useData || characterItems[ i ].getData() == data) && characterItems[ i ].isComplete()) && (temp > 0)) {
+                if (temp >= characterItems[ i ].getNumber()) {
+                    temp = temp - characterItems[ i ].getNumber();
+                    characterItems[ i ].reset();
                 } else {
-                    characterItems[ i ].number = characterItems[ i ].number - temp;
+                    characterItems[ i ].setNumber(characterItems[ i ].getNumber() - temp);
                     temp = 0;
                 }
             }
@@ -1266,23 +1262,23 @@ int Character::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) 
 #endif
 
             } else {
-                if (characterItems[ pos ].id == 0) {
+                if (characterItems[ pos ].getId() == 0) {
                     //Unstackable von Items
                     if (!cos.isStackable) {
-                        characterItems[ pos ].id = newid;
-                        characterItems[ pos ].wear = cos.AgeingSpeed;
-                        characterItems[ pos ].number = 1;
+                        characterItems[ pos ].setId(newid);
+                        characterItems[ pos ].setWear(cos.AgeingSpeed);
+                        characterItems[ pos ].setNumber(1);
                         temp -= 1;
                     } else {
                         if (temp > MAXITEMS) {
-                            characterItems[ pos ].id = newid;
-                            characterItems[ pos ].wear = cos.AgeingSpeed;
-                            characterItems[ pos ].number = MAXITEMS;
+                            characterItems[ pos ].setId(newid);
+                            characterItems[ pos ].setWear(cos.AgeingSpeed);
+                            characterItems[ pos ].setNumber(MAXITEMS);
                             temp -= MAXITEMS;
                         } else {
-                            characterItems[ pos ].id = newid;
-                            characterItems[ pos ].wear = cos.AgeingSpeed;
-                            characterItems[ pos ].number = temp;
+                            characterItems[ pos ].setId(newid);
+                            characterItems[ pos ].setWear(cos.AgeingSpeed);
+                            characterItems[ pos ].setNumber(temp);
                             temp = 0;
                         }
 
@@ -1317,15 +1313,15 @@ int Character::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali,
                 std::cout << "createItem: itemid ist ein container" << "\n";
 #endif
 
-                if (characterItems[ BACKPACK ].id == 0) {
+                if (characterItems[ BACKPACK ].getId() == 0) {
 #ifdef Character_DEBUG
                     std::cout << "createItem: erstelle neuen Rucksack" << "\n";
 #endif
-                    characterItems[ BACKPACK ].id = itemid;
-                    characterItems[ BACKPACK ].wear = cos.AgeingSpeed;
-                    characterItems[ BACKPACK ].quality = quali;
-                    characterItems[ BACKPACK ].data = data;
-                    characterItems[ BACKPACK ].number = 1;
+                    characterItems[ BACKPACK ].setId(itemid);
+                    characterItems[ BACKPACK ].setWear(cos.AgeingSpeed);
+                    characterItems[ BACKPACK ].setQuality(quali);
+                    characterItems[ BACKPACK ].setData(data);
+                    characterItems[ BACKPACK ].setNumber(1);
                     temp = temp - 1;
                     backPackContents = new Container(itemid);
 
@@ -1334,18 +1330,18 @@ int Character::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali,
                     }
                 }
 
-                it.id = itemid;
-                it.wear = cos.AgeingSpeed;
-                it.quality=quali;
-                it.number = 1;
-                it.data = data;
+                it.setId(itemid);
+                it.setWear(cos.AgeingSpeed);
+                it.setQuality(quali);
+                it.setNumber(1);
+                it.setData(data);
 
                 for (int i = temp; i > 0; i--) {
 #ifdef Character_DEBUG
                     std::cout << "createItem: erstelle neuen container im Rucksack" << std::endl;
 #endif
 
-                    if (!backPackContents->InsertContainer(it, new Container(it.id))) {
+                    if (!backPackContents->InsertContainer(it, new Container(it.getId()))) {
                         i = 0;
                     } else {
                         temp = temp - 1;
@@ -1357,14 +1353,14 @@ int Character::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali,
 #endif
 
                 for (unsigned char i = MAX_BODY_ITEMS; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
-                    if (((characterItems[ i ].id == 0) || (characterItems[ i ].id == itemid)) && (temp > 0)) {
-                        if (characterItems[ i ].id == 0) {
+                    if (((characterItems[ i ].getId() == 0) || (characterItems[ i ].getId() == itemid)) && (temp > 0)) {
+                        if (characterItems[ i ].getId() == 0) {
                             if (!cos.isStackable) {
-                                characterItems[ i ].id = itemid;
-                                characterItems[ i ].wear = cos.AgeingSpeed;
-                                characterItems[ i ].quality = quali;
-                                characterItems[ i ].number = 1;
-                                characterItems[ i ].data = data;
+                                characterItems[ i ].setId(itemid);
+                                characterItems[ i ].setWear(cos.AgeingSpeed);
+                                characterItems[ i ].setQuality(quali);
+                                characterItems[ i ].setNumber(1);
+                                characterItems[ i ].setData(data);
 
                                 if (cos.Brightness > 0) {
                                     updateAppearanceForAll(true);
@@ -1372,41 +1368,41 @@ int Character::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali,
 
                                 temp = temp - 1;
                             } else {
-                                if (characterItems[ i ].id != 0) {
-                                    temp += characterItems[ i ].number;
+                                if (characterItems[ i ].getId() != 0) {
+                                    temp += characterItems[ i ].getNumber();
                                 }
 
                                 if (temp >= MAXITEMS) {
-                                    characterItems[ i ].id = itemid;
-                                    characterItems[ i ].wear = cos.AgeingSpeed;
-                                    characterItems[ i ].quality = quali;
-                                    characterItems[ i ].number = MAXITEMS;
-                                    characterItems[ i ].data = data;
+                                    characterItems[ i ].setId(itemid);
+                                    characterItems[ i ].setWear(cos.AgeingSpeed);
+                                    characterItems[ i ].setQuality(quali);
+                                    characterItems[ i ].setNumber(MAXITEMS);
+                                    characterItems[ i ].setData(data);
                                     temp = temp - MAXITEMS;
                                 } else {
-                                    characterItems[ i ].id = itemid;
-                                    characterItems[ i ].wear = cos.AgeingSpeed;
-                                    characterItems[ i ].quality = quali;
-                                    characterItems[ i ].number = temp;
-                                    characterItems[ i ].data = data;
+                                    characterItems[ i ].setId(itemid);
+                                    characterItems[ i ].setWear(cos.AgeingSpeed);
+                                    characterItems[ i ].setQuality(quali);
+                                    characterItems[ i ].setNumber(temp);
+                                    characterItems[ i ].setData(data);
                                     temp = 0;
                                 }
                             }
-                        } else if (cos.isStackable && quali > 99 && data == characterItems[ i ].data) {
+                        } else if (cos.isStackable && quali > 99 && data == characterItems[ i ].getData()) {
                             // only not stacking unfinished items and those of different data
-                            temp += characterItems[ i ].number;
+                            temp += characterItems[ i ].getNumber();
 
                             if (temp >= MAXITEMS) {
-                                characterItems[ i ].id = itemid;
-                                characterItems[ i ].wear = cos.AgeingSpeed;
-                                characterItems[ i ].quality = quali;
-                                characterItems[ i ].number = MAXITEMS;
+                                characterItems[ i ].setId(itemid);
+                                characterItems[ i ].setWear(cos.AgeingSpeed);
+                                characterItems[ i ].setQuality(quali);
+                                characterItems[ i ].setNumber(MAXITEMS);
                                 temp = temp - MAXITEMS;
                             } else {
-                                characterItems[ i ].id = itemid;
-                                characterItems[ i ].wear = cos.AgeingSpeed;
-                                characterItems[ i ].quality = quali;
-                                characterItems[ i ].number = temp;
+                                characterItems[ i ].setId(itemid);
+                                characterItems[ i ].setWear(cos.AgeingSpeed);
+                                characterItems[ i ].setQuality(quali);
+                                characterItems[ i ].setNumber(temp);
                                 temp = 0;
                             }
                         }
@@ -1418,28 +1414,28 @@ int Character::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali,
                     std::cout << "createItem: Platz im belt nicht ausreichend, erstelle im backpack" << std::endl;
 #endif
                     bool ok = true;
-                    it.id = itemid;
-                    it.quality = quali;
-                    it.wear = cos.AgeingSpeed;
-                    it.data = data;
+                    it.setId(itemid);
+                    it.setQuality(quali);
+                    it.setWear(cos.AgeingSpeed);
+                    it.setData(data);
 
                     if (cos.isStackable && quali > 99) {
                         while ((ok) && (temp > 0)) {
                             if (temp >= MAXITEMS) {
-                                it.number = MAXITEMS;
+                                it.setNumber(MAXITEMS);
                             } else {
-                                it.number = temp;
+                                it.setNumber(temp);
                             }
 
                             if (!backPackContents->InsertItem(it, true)) {
                                 ok = false;
                             } else {
-                                temp = temp - it.number;
+                                temp = temp - it.getNumber();
                             }
                         }
                     } else { //nicht stapelbar
                         while ((ok) && (temp > 0)) {
-                            it.number = 1;
+                            it.setNumber(1);
 
                             if (!backPackContents->InsertItem(it, true)) {
                                 ok = false;
@@ -1471,28 +1467,27 @@ int Character::increaseAtPos(unsigned char pos, int count) {
 #endif
 
     if ((pos > 0) && (pos < MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
-        if (weightOK(characterItems[ pos ].id, count, NULL)) {
+        if (weightOK(characterItems[ pos ].getId(), count, NULL)) {
 
-            temp = characterItems[ pos ].number + count;
+            temp = characterItems[ pos ].getNumber() + count;
 
 #ifdef Character_DEBUG
             std::cout << "temp " << temp << "\n";
 #endif
 
             if (temp > MAXITEMS) {
-                characterItems[ pos ].number = MAXITEMS;
+                characterItems[ pos ].setNumber(MAXITEMS);
                 temp = temp - MAXITEMS;
             } else if (temp <= 0) {
-                bool updateBrightness = World::get()->getItemStatsFromId(characterItems[ pos ].id).Brightness > 0;
-                temp = count + characterItems[ pos ].number;
-                characterItems[ pos ].number = 0;
-                characterItems[ pos ].id = 0;
+                bool updateBrightness = World::get()->getItemStatsFromId(characterItems[ pos ].getId()).Brightness > 0;
+                temp = count + characterItems[ pos ].getNumber();
+                characterItems[ pos ].reset();
 
                 if (updateBrightness) {
                     updateAppearanceForAll(true);
                 }
             } else {
-                characterItems[ pos ].number = temp;
+                characterItems[ pos ].setNumber(temp);
                 temp = 0;
             }
         }
@@ -1509,17 +1504,17 @@ bool Character::swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t new
 
     if ((pos > 0) && (pos < MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
 #ifdef Character_DEBUG
-        std::cout << "pos gefunden, alte id: " << characterItems[ pos ].id << "\n";
+        std::cout << "pos gefunden, alte id: " << characterItems[ pos ].getId() << "\n";
 #endif
-        bool updateBrightness = World::get()->getItemStatsFromId(characterItems[ pos ].id).Brightness > 0 || World::get()->getItemStatsFromId(newid).Brightness > 0;
-        characterItems[ pos ].id = newid;
+        bool updateBrightness = World::get()->getItemStatsFromId(characterItems[ pos ].getId()).Brightness > 0 || World::get()->getItemStatsFromId(newid).Brightness > 0;
+        characterItems[ pos ].setId(newid);
 
         if (updateBrightness) {
             updateAppearanceForAll(true);
         }
 
         if (newQuality > 0) {
-            characterItems[ pos ].quality = newQuality;
+            characterItems[ pos ].setQuality(newQuality);
         }
 
         return true;
@@ -1529,34 +1524,32 @@ bool Character::swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t new
 }
 
 
-void Character::AgeInventory(ITEM_FUNCT funct) {
+void Character::ageInventory() {
     CommonStruct tempCommon;
 
     for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
-        if (characterItems[ i ].id != 0) {
-            if (!CommonItems->find(characterItems[ i ].id, tempCommon)) {
+        if (characterItems[ i ].getId() != 0) {
+            if (!CommonItems->find(characterItems[ i ].getId(), tempCommon)) {
                 tempCommon.rotsInInventory=false;
-                tempCommon.ObjectAfterRot = characterItems[ i ].id;
+                tempCommon.ObjectAfterRot = characterItems[ i ].getId();
             }
 
             if (tempCommon.rotsInInventory) {
-                if (!funct(&characterItems[ i ])) {
-                    if (characterItems[ i ].id != tempCommon.ObjectAfterRot) {
+                if (!characterItems[ i ].survivesAging()) {
+                    if (characterItems[ i ].getId() != tempCommon.ObjectAfterRot) {
 #ifdef Character_DEBUG
-                        std::cout << "INV:Ein Item wird umgewandelt von: " << characterItems[ i ].id << "  nach: " << tempCommon.ObjectAfterRot << "!\n";
+                        std::cout << "INV:Ein Item wird umgewandelt von: " << characterItems[ i ].getId() << "  nach: " << tempCommon.ObjectAfterRot << "!\n";
 #endif
-                        characterItems[ i ].id = tempCommon.ObjectAfterRot;
+                        characterItems[ i ].setId(tempCommon.ObjectAfterRot);
 
                         if (CommonItems->find(tempCommon.ObjectAfterRot, tempCommon)) {
-                            characterItems[ i ].wear = tempCommon.AgeingSpeed;
+                            characterItems[ i ].setWear(tempCommon.AgeingSpeed);
                         }
                     } else {
 #ifdef Character_DEBUG
-                        std::cout << "INV:Ein Item wird gel�cht,ID:" << characterItems[ i ].id << "!\n";
+                        std::cout << "INV:Ein Item wird gel�cht,ID:" << characterItems[ i ].getId() << "!\n";
 #endif
-                        characterItems[ i ].id = 0;
-                        characterItems[ i ].number = 0;
-                        characterItems[ i ].wear = 0;
+                        characterItems[ i ].reset();
                     }
                 }
             }
@@ -1564,15 +1557,15 @@ void Character::AgeInventory(ITEM_FUNCT funct) {
     }
 
     // Inhalt des Rucksacks altern
-    if ((characterItems[ BACKPACK ].id != 0) && (backPackContents != NULL)) {
-        backPackContents->doAge(funct, true);
+    if ((characterItems[ BACKPACK ].getId() != 0) && (backPackContents != NULL)) {
+        backPackContents->doAge(true);
     }
 
     std::map<uint32_t, Container *>::iterator depotIterator;
 
     for (depotIterator = depotContents.begin(); depotIterator != depotContents.end(); depotIterator++) {
         if (depotIterator->second != NULL) {
-            depotIterator->second->doAge(funct, true);
+            depotIterator->second->doAge(true);
         }
     }
 }
@@ -2524,11 +2517,11 @@ int Character::LoadWeight() {
 
     // alle Items bis auf den Rucksack
     for (int i=1; i < MAX_BODY_ITEMS + MAX_BELT_SLOTS; ++i) {
-        load += weightItem(characterItems[i].id,characterItems[i].number);
+        load += weightItem(characterItems[i].getId(),characterItems[i].getNumber());
     }
 
     // Rucksack
-    load += weightContainer(characterItems[0].id, 1, backPackContents);
+    load += weightContainer(characterItems[0].getId(), 1, backPackContents);
 
     if (load > 30000) {
         return 30000;
@@ -3058,7 +3051,7 @@ void Character::inform(std::string text) {
 }
 
 void Character::changeQualityItem(TYPE_OF_ITEM_ID id, short int amount) {
-    if ((characterItems[ BACKPACK ].id != 0) && (backPackContents != NULL)) {
+    if ((characterItems[ BACKPACK ].getId() != 0) && (backPackContents != NULL)) {
         if (backPackContents->changeQuality(id, amount)) {
             return;
         }
@@ -3069,32 +3062,23 @@ void Character::changeQualityItem(TYPE_OF_ITEM_ID id, short int amount) {
     short int tmpQuality;
 
     for (unsigned char i = MAX_BELT_SLOTS + MAX_BODY_ITEMS - 1; i > 0; --i) {
-        if (characterItems[ i ].id == id) {
+        if (characterItems[ i ].getId() == id) {
             // don't increase the class of the item, but allow decrease of the item class
-            tmpQuality = ((amount+characterItems[i].quality%100)<100) ? (amount + characterItems[i].quality) : (characterItems[i].quality-characterItems[i].quality%100 + 99);
+            tmpQuality = ((amount+characterItems[i].getDurability())<100) ? (amount + characterItems[i].getQuality()) : (characterItems[i].getQuality() - characterItems[i].getDurability() + 99);
 
             if (tmpQuality%100 > 1) {
-                characterItems[i].quality = tmpQuality;
+                characterItems[i].setQuality(tmpQuality);
                 return;
             } else {
-                if (i == RIGHT_TOOL && characterItems[LEFT_TOOL].id == BLOCKEDITEM) {
+                if (i == RIGHT_TOOL && characterItems[LEFT_TOOL].getId() == BLOCKEDITEM) {
                     //Belegt aus linker hand l�chen wenn item in rechter hand ein zweih�deritem war
-                    characterItems[LEFT_TOOL].quality = 0;
-                    characterItems[LEFT_TOOL].id = 0;
-                    characterItems[LEFT_TOOL].wear = 0;
-                    characterItems[LEFT_TOOL].number = 0;
-                } else if (i == LEFT_TOOL && characterItems[RIGHT_TOOL].id == BLOCKEDITEM) {
+                    characterItems[LEFT_TOOL].reset();
+                } else if (i == LEFT_TOOL && characterItems[RIGHT_TOOL].getId() == BLOCKEDITEM) {
                     //Belegt aus rechter hand l�chen wenn item in linker hand ein zweih�der ist
-                    characterItems[RIGHT_TOOL].id = 0;
-                    characterItems[RIGHT_TOOL].wear = 0;
-                    characterItems[RIGHT_TOOL].quality = 0;
-                    characterItems[RIGHT_TOOL].number = 0;
+                    characterItems[RIGHT_TOOL].reset();
                 }
 
-                characterItems[i].quality = 0;
-                characterItems[i].id = 0;
-                characterItems[i].wear = 0;
-                characterItems[i].number = 0;
+                characterItems[i].reset();
                 return;
             }
         }
@@ -3107,51 +3091,42 @@ void Character::changeQualityAt(unsigned char pos, short int amount) {
 
     if (pos < MAX_BODY_ITEMS + MAX_BELT_SLOTS) {
         //Prfen ob berhaupt ein Item an der Stelle ist oder ein belegt
-        if ((characterItems[ pos ].id == 0) || (characterItems[pos].id == BLOCKEDITEM)) {
+        if ((characterItems[ pos ].getId() == 0) || (characterItems[pos].getId() == BLOCKEDITEM)) {
             std::cerr<<"changeQualityAt, kein Item oder belegt an der position: "<<(int)pos<<" !"<<std::endl;
             return;
         }
 
 
-        tmpQuality = ((amount+characterItems[pos].quality%100)<100) ? (amount + characterItems[pos].quality) : (characterItems[pos].quality-characterItems[pos].quality%100 + 99);
+        tmpQuality = ((amount+characterItems[pos].getDurability())<100) ? (amount + characterItems[pos].getQuality()) : (characterItems[pos].getQuality() - characterItems[pos].getDurability() + 99);
 
         if (tmpQuality%100 > 1) {
             std::cout<<"Qualit� des Items > 0"<<std::endl;
-            characterItems[ pos ].quality = tmpQuality;
-            std::cout<<"Akt Qualit�: "<<characterItems[ pos ].quality<<std::endl;
+            characterItems[ pos ].setQuality(tmpQuality);
+            std::cout<<"Akt Qualit�: "<<characterItems[ pos ].getQuality()<<std::endl;
             return;
         }
         //L�chen falls qualit� zu gering
         else {
 
-            if (pos == RIGHT_TOOL && characterItems[LEFT_TOOL].id == BLOCKEDITEM) {
+            if (pos == RIGHT_TOOL && characterItems[LEFT_TOOL].getId() == BLOCKEDITEM) {
                 //Belegt aus linker hand l�chen wenn item in rechter hand ein zweih�deritem war
-                characterItems[LEFT_TOOL].quality = 0;
-                characterItems[LEFT_TOOL].id = 0;
-                characterItems[LEFT_TOOL].wear = 0;
-                characterItems[LEFT_TOOL].number = 0;
-            } else if (pos == LEFT_TOOL && characterItems[RIGHT_TOOL].id == BLOCKEDITEM) {
+                characterItems[LEFT_TOOL].reset();
+            } else if (pos == LEFT_TOOL && characterItems[RIGHT_TOOL].getId() == BLOCKEDITEM) {
                 //Belegt aus rechter hand l�chen wenn item in linker hand ein zweih�der ist
-                characterItems[RIGHT_TOOL].id = 0;
-                characterItems[RIGHT_TOOL].wear = 0;
-                characterItems[RIGHT_TOOL].quality = 0;
-                characterItems[RIGHT_TOOL].number = 0;
+                characterItems[RIGHT_TOOL].reset();
             }
 
-            characterItems[ pos ].quality = 0;
-            characterItems[ pos ].id = 0;
-            characterItems[ pos ].wear = 0;
-            characterItems[ pos ].number = 0;
+            characterItems[ pos ].reset();
             return;
         }
     }
 }
 
 void Character::callAttackScript(Character *Attacker, Character *Defender) {
-    if (characterItems[ RIGHT_TOOL ].id != 0) {
+    if (characterItems[ RIGHT_TOOL ].getId() != 0) {
         WeaponStruct tmpWeapon;
 
-        if (WeaponItems->find(characterItems[ RIGHT_TOOL ].id , tmpWeapon)) {
+        if (WeaponItems->find(characterItems[ RIGHT_TOOL ].getId() , tmpWeapon)) {
             if (tmpWeapon.script && tmpWeapon.script->existsEntrypoint("onAttack")) {
                 tmpWeapon.script->onAttack(Attacker, Defender);
             }
@@ -3170,18 +3145,13 @@ uint32_t Character::getQuestProgress(uint16_t questid) throw() {
     return 0;
 }
 
-bool Character::moveDepotContentFrom(uint32_t sourcecharid, uint32_t targetdepotid, uint32_t sourcedepotid) throw() {
-    // Nothing to do here, overridden for players
-    return false;
-}
-
 luabind::object Character::getItemList(TYPE_OF_ITEM_ID id) {
     lua_State *_luaState = _world->getCurrentScript()->getLuaState();
     luabind::object list = luabind::newtable(_luaState);
     int index = 1;
 
     for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
-        if (characterItems[ i ].id == id) {
+        if (characterItems[ i ].getId() == id) {
             ScriptItem item = characterItems[ i ];
 
             if (i < MAX_BODY_ITEMS) {
@@ -3199,7 +3169,7 @@ luabind::object Character::getItemList(TYPE_OF_ITEM_ID id) {
     }
 
     // Inhalt des Rucksacks altern
-    if ((characterItems[ BACKPACK ].id != 0) && (backPackContents != NULL)) {
+    if ((characterItems[ BACKPACK ].getId() != 0) && (backPackContents != NULL)) {
         backPackContents->increaseItemList(id, list, index);
     }
 
@@ -3379,10 +3349,10 @@ void Character::tempAttribCheck() {
 
 
 uint8_t Character::getWeaponMode() {
-    if (characterItems[ RIGHT_TOOL ].id != 0) {
+    if (characterItems[ RIGHT_TOOL ].getId() != 0) {
         WeaponStruct tmpWeapon;
 
-        if (WeaponItems->find(characterItems[ RIGHT_TOOL ].id , tmpWeapon)) {
+        if (WeaponItems->find(characterItems[ RIGHT_TOOL ].getId() , tmpWeapon)) {
             switch (tmpWeapon.WeaponType) {
             case 1:
             case 2:
@@ -3403,10 +3373,10 @@ uint8_t Character::getWeaponMode() {
     }
 
     //if no weapon in right hand look in left hand
-    if (characterItems[ LEFT_TOOL ].id != 0) {
+    if (characterItems[ LEFT_TOOL ].getId() != 0) {
         WeaponStruct tmpWeapon;
 
-        if (WeaponItems->find(characterItems[ LEFT_TOOL ].id , tmpWeapon)) {
+        if (WeaponItems->find(characterItems[ LEFT_TOOL ].getId() , tmpWeapon)) {
             switch (tmpWeapon.WeaponType) {
             case 1:
             case 2:

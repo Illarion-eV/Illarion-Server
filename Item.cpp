@@ -18,28 +18,60 @@
 
 
 #include "Item.hpp"
+#include "data/ContainerObjectTable.hpp"
 #include <sstream>
 
+extern ContainerObjectTable *ContainerItems;
+
+/*
+number_type Item::increaseNumber(number_type number) {
+    
+}
+
+
+number_type Item::reduceNumber(number_type number) {
+    
+}
+*/
+
+void Item::setMinQuality(const Item &item) {
+    quality_type minQuality = (quality < item.quality) ? quality : item.quality;
+    minQuality /= 100;
+    quality_type minDurability = (getDurability() < item.getDurability()) ? getDurability() : item.getDurability();
+    quality = minQuality * 100 + minDurability;
+}
+
+
 std::string Item::getData(std::string key) {
-    return data_map[key];
+    return datamap[key];
 }
 
 
 void Item::setData(std::string key, std::string value) {
-    data_map[key] = value;
+    datamap[key] = value;
 }
 
 
-void Item::save(std::ostream *obj) {
-    obj->write((char *) &id, sizeof(TYPE_OF_ITEM_ID));
-    obj->write((char *) &number, sizeof(unsigned char));
-    obj->write((char *) &wear, sizeof(unsigned char));
-    obj->write((char *) &quality, sizeof(uint16_t));
-    obj->write((char *) &data, sizeof(uint32_t));
-    uint8_t mapsize = static_cast<uint8_t>(data_map.size());
+void Item::reset() {
+    id = 0;
+    number = 0;
+    wear = 0;
+    quality = 333;
+    data = 0;
+    datamap.clear();
+}
+
+
+void Item::save(std::ostream *obj) const {
+    obj->write((char *) &id, sizeof(id_type));
+    obj->write((char *) &number, sizeof(number_type));
+    obj->write((char *) &wear, sizeof(wear_type));
+    obj->write((char *) &quality, sizeof(quality_type));
+    obj->write((char *) &data, sizeof(data_type));
+    uint8_t mapsize = static_cast<uint8_t>(datamap.size());
     obj->write((char *) &mapsize, sizeof(uint8_t));
 
-    for (DATA_MAP::iterator it = data_map.begin(); it != data_map.end(); ++it) {
+    for (auto it = datamap.begin(); it != datamap.end(); ++it) {
         uint8_t sz1 = static_cast<uint8_t>(it->first.size());
         uint8_t sz2 = static_cast<uint8_t>(it->second.size());
         obj->write((char *) &sz1 , sizeof(uint8_t));
@@ -49,12 +81,13 @@ void Item::save(std::ostream *obj) {
     }
 }
 
+
 void Item::load(std::istream *obj) {
-    obj->read((char *) &id, sizeof(TYPE_OF_ITEM_ID));
-    obj->read((char *) &number, sizeof(unsigned char));
-    obj->read((char *) &wear, sizeof(unsigned char));
-    obj->read((char *) &quality, sizeof(uint16_t));
-    obj->read((char *) &data, sizeof(uint32_t));
+    obj->read((char *) &id, sizeof(id_type));
+    obj->read((char *) &number, sizeof(number_type));
+    obj->read((char *) &wear, sizeof(wear_type));
+    obj->read((char *) &quality, sizeof(quality_type));
+    obj->read((char *) &data, sizeof(data_type));
     uint8_t tempsize;
     obj->read((char *) &tempsize, sizeof(uint8_t));
     char readStr[255];
@@ -68,6 +101,30 @@ void Item::load(std::istream *obj) {
         std::string key(readStr,sz1);
         obj->read((char *) readStr, sz2);
         std::string value(readStr,sz2);
-        data_map[key] = value;
+        datamap[key] = value;
     }
+}
+
+
+bool Item::survivesAging() {
+    if (wear != 255 && wear != 0) {
+        --wear;
+    }
+    return wear > 0;
+}
+
+bool Item::isContainer() const {
+    return ContainerItems->find(id);
+}
+
+bool Item::isComplete() const {
+    return quality >= 100;
+}
+
+bool Item::isPermanent() const {
+    return wear == 255;
+}
+
+void Item::makePermanent() {
+    wear = 255;
 }

@@ -31,115 +31,38 @@
 
 #include "Item.hpp"
 
-// forward declarations
 class CommonObjectTable;
 class TilesModificatorTable;
 class ContainerObjectTable;
 class TilesTable;
 
-//a table with standard attributes
 extern CommonObjectTable *CommonItems;
-
-//! eine Tabelle mit Item welche die Eigenschaften des Feldes auf dem sie liegen modifizieren
 extern TilesModificatorTable *TilesModItems;
-
-//! eine Tabelle mit allen Arten von Bodenplatten
 extern TilesTable *Tiles;
-
-//! wird von verschiedenen Funktionen als Zwischenvariable genutzt
 extern CommonStruct tempCommon;
-
-//! eine Tabelle fr Beh�ter - Item Daten
 extern ContainerObjectTable *ContainerItems;
-
 extern std::vector<int>* erasedcontainers;
 
-/**
-* @ingroup Scriptclasses
-* a field on the map
-* each field has its own flags and items
-*/
+
 class Field {
 private:
-
-    /**
-    * the id of the tile
-    */
     unsigned short int tile;
-
-    /**
-    * the music id of the tile
-    */
     unsigned short int music;
-
-    /**
-    * stores the flags of this field which are sended to the client
-    */
     unsigned char clientflags;
-
-    /**
-    * stores  the flags for this field which have usage in the server
-    */
     unsigned char extraflags;
-
-    /**
-    * holds the warp destination if the field is a warp field
-    */
     position *warptarget;
 
 public:
-
-    /**
-    * changes the tile id of the field
-    * @param id the new id of the field
-    */
     void setTileId(unsigned short int id);
-
-    /**
-    * changes the music id of the field
-    * @param id the new music id of the field
-    */
     void setMusicId(unsigned short int id);
-
-    /**
-    * returns the music id of the field
-    * @param the music id of the field
-    */
     unsigned short int getMusicId();
-
-    /**
-    * reads the tile code of the field
-    * the tile code is a special version of the id to create overblended tiles
-    * @return the tile code
-    */
     unsigned short int getTileCode();
 
-    /**
-    * constructor of Field
-    */
     Field();
-
-    /**
-    * copy constructor
-    */
     Field(const Field &source);
-
-    /**
-    * destructor
-    */
     ~Field();
-
-    /**
-    * = operator
-    */
     Field &operator =(const Field &source);
 
-    /**
-    * saves the current field
-    * @param mapt tile id and flags are written to this file
-    * @param obj the number of items on this tile and the values of these items are written to this file
-    * @param warp the warpfield of this tile is written to this file
-    */
     void Save(std::ostream *mapt, std::ostream *obj, std::ostream *warp);
 
     /**
@@ -347,7 +270,7 @@ public:
     * @param funct a function which takes a item as parameter
     * @return -1 if a container was deleted (update needed), 0 if nothing has changed, 1 an item changed (update needed)
     */
-    int8_t DoAgeItems(ITEM_FUNCT funct);
+    int8_t DoAgeItems();
 
     /**
     * sets the player on this field state

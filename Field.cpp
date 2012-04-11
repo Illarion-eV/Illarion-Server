@@ -28,7 +28,6 @@
 //#define Field_DEBUG
 
 Field::Field() {
-
     tile = 0;
     music = 0;
     clientflags = 0;
@@ -45,7 +44,7 @@ unsigned short int Field::getTileCode() {
 }
 
 unsigned short int Field::getTileId() {
-    if (((tile & 0xFC00) >> 10) > 0) { // shape exists
+    if (((tile & 0xFC00) >> 10) > 0) {
         return tile & 0x001F;
     } else {
         return tile;
@@ -53,7 +52,7 @@ unsigned short int Field::getTileId() {
 }
 
 unsigned short int Field::getSecondaryTileId() {
-    if (((tile & 0xFC00) >> 10) > 0) { // shape exists
+    if (((tile & 0xFC00) >> 10) > 0) {
         return (tile & 0x03E0) >> 5;
     } else {
         return tile;
@@ -74,12 +73,11 @@ ScriptItem Field::getStackItem(uint8_t spos) {
     if (items.empty()) {
         return retItem;
     } else {
-        ITEMVECTOR::iterator theIterator;
         uint8_t counter = 0;
 
-        for (theIterator = items.begin(); theIterator < items.end(); ++theIterator) {
+        for (auto it = items.begin(); it < items.end(); ++it) {
             if (counter >= spos) {
-                retItem = (*theIterator);
+                retItem = *it;
                 retItem.type = ScriptItem::it_field;
                 retItem.itempos = counter;
                 return retItem;
@@ -131,7 +129,7 @@ bool Field::addTopItem(const Item it) {
             items.push_back(it);
             TilesModificatorStruct temp;
 
-            if (TilesModItems->find(it.id, temp)) {
+            if (TilesModItems->find(it.getId(), temp)) {
                 clientflags = clientflags | (temp.Modificator & (FLAG_GROUNDLEVEL));
                 extraflags = extraflags | (temp.Modificator & (FLAG_SPECIALITEM + FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_MAKEPASSABLE));
             }
@@ -157,7 +155,7 @@ bool Field::PutGroundItem(const Item it) {
 
         TilesModificatorStruct temp;
 
-        if (TilesModItems->find(it.id, temp)) {
+        if (TilesModItems->find(it.getId(), temp)) {
             clientflags   = clientflags | (temp.Modificator & (FLAG_GROUNDLEVEL));
             extraflags   = extraflags | (temp.Modificator & (FLAG_SPECIALITEM + FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_MAKEPASSABLE));
         }
@@ -176,7 +174,7 @@ bool Field::PutTopItem(const Item it) {
         items.push_back(it);
         TilesModificatorStruct temp;
 
-        if (TilesModItems->find(it.id, temp)) {
+        if (TilesModItems->find(it.getId(), temp)) {
             clientflags   = clientflags | (temp.Modificator & (FLAG_GROUNDLEVEL));
             extraflags   = extraflags | (temp.Modificator & (FLAG_SPECIALITEM + FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_MAKEPASSABLE));
         }
@@ -208,11 +206,10 @@ bool Field::changeQualityOfTopItem(short int amount) {
     short int tmpQuality;
 
     if (TakeTopItem(it)) {
-        // don't increase the class of the item, but allow decrease of the item class
-        tmpQuality = ((amount+it.quality%100)<100) ? (amount + it.quality) : (it.quality-it.quality%100 + 99);
+        tmpQuality = ((amount+it.getDurability())<100) ? (amount + it.getQuality()) : (it.getQuality() - it.getDurability() + 99);
 
         if (tmpQuality%100 > 1) {
-            it.quality = tmpQuality;
+            it.setQuality(tmpQuality);
             PutTopItem(it);
             return false;
         } else {
@@ -233,24 +230,24 @@ int Field::increaseTopItem(int count, bool &erased) {
 #endif
 
     if (TakeTopItem(it)) {
-        temp = count + it.number;
+        temp = count + it.getNumber();
 #ifdef Field_DEBUG
         std::cout << "temp " << temp << "\n";
 #endif
 #ifdef Field_DEBUG
-        std::cout << "it.number:"<<it.number<<std::endl;
+        std::cout << "it.number:"<<it.getNumber()<<std::endl;
 #endif
 
         if (temp > MAXITEMS) {
-            it.number = MAXITEMS;
+            it.setNumber(MAXITEMS);
             temp = temp - MAXITEMS;
             PutTopItem(it);
             erased = false;
         } else if (temp <= 0) {
-            temp = count + it.number;
+            temp = count + it.getNumber();
             erased = true;
         } else {
-            it.number = temp;
+            it.setNumber(temp);
             temp = 0;
             PutTopItem(it);
             erased = false;
@@ -258,38 +255,28 @@ int Field::increaseTopItem(int count, bool &erased) {
     }
 
     return temp;
-
 }
 
 
 bool Field::swapTopItem(TYPE_OF_ITEM_ID newid, uint16_t newQuality) {
-
-    std::cout << "swapTopItem " << std::endl;
     Item temp;
 
     if (TakeTopItem(temp)) {
-        std::cout << "old ID " << (int)temp.id << " old wear " << (int)temp.wear << std::endl;
-        temp.id = newid;
+        temp.setId(newid);
 
         if (newQuality > 0) {
-            temp.quality = newQuality;
+            temp.setQuality(newQuality);
         }
 
         if (CommonItems->find(newid, tempCommon)) {
-            temp.wear=tempCommon.AgeingSpeed;
-            std::cout << "new ID " << (int)temp.id << " new wear " << (int)temp.wear << std::endl;
-        } else {
-            std::cout << "new ID " << (int)temp.id << " new wear not found" << std::endl;
+            temp.setWear(tempCommon.AgeingSpeed);
         }
 
         PutTopItem(temp);
         return true;
     }
 
-    std::cout << "no item found to swap" << std::endl;
-
     return false;
-
 }
 
 
@@ -302,14 +289,11 @@ bool Field::ViewTopItem(Item &it) {
     it = items.back();
 
     return true;
-
 }
 
 
 MAXCOUNTTYPE Field::NumberOfItems() {
-
     return items.size();
-
 }
 
 
@@ -320,13 +304,11 @@ void Field::Save(std::ostream *mapt, std::ostream *obj, std::ostream *warp) {
     mapt->write((char *) & clientflags, sizeof(clientflags));
     mapt->write((char *) & extraflags, sizeof(extraflags));
 
-    ITEMVECTOR::iterator theIterator;
-
     unsigned char size = items.size();
     obj->write((char *) & size, sizeof(size));
 
-    for (theIterator = items.begin(); theIterator < items.end(); ++theIterator) {
-        theIterator->save(obj);
+    for (auto it = items.begin(); it < items.end(); ++it) {
+        it->save(obj);
     }
 
     if (IsWarpField()) {
@@ -343,31 +325,24 @@ void Field::Save(std::ostream *mapt, std::ostream *obj, std::ostream *warp) {
 
 
 void Field::giveNonPassableItems(ITEMVECTOR &nonpassitems) {
-
-    ITEMVECTOR::iterator theIterator;
-
-    for (theIterator = items.begin(); theIterator < items.end(); ++theIterator) {
-        if (TilesModItems->nonPassable(theIterator->id)) {
-            nonpassitems.push_back(*theIterator);
+    for (auto it = items.cbegin(); it < items.cend(); ++it) {
+        if (TilesModItems->nonPassable(it->getId())) {
+            nonpassitems.push_back(*it);
         }
     }
-
 }
 
 
 void Field::giveExportItems(ITEMVECTOR &nonmoveitems) {
-
-    ITEMVECTOR::iterator theIterator;
-
-    for (theIterator = items.begin(); theIterator < items.end(); ++theIterator) {
-        if (theIterator->wear == 255) {
-            nonmoveitems.push_back(*theIterator);
+    for (auto it = items.cbegin(); it < items.cend(); ++it) {
+        if (it->isPermanent()) {
+            nonmoveitems.push_back(*it);
         } else {
-            if (CommonItems->find(theIterator->id, tempCommon) && tempCommon.AfterInfiniteRot > 0) {
-                Item rottedItem = *theIterator;
-                rottedItem.id = tempCommon.AfterInfiniteRot;
-                rottedItem.wear = 255;
-                nonmoveitems.push_back(rottedItem);
+            if (CommonItems->find(it->getId(), tempCommon) && tempCommon.AfterInfiniteRot > 0) {
+                Item rottenItem = *it;
+                rottenItem.setId(tempCommon.AfterInfiniteRot);
+                rottenItem.makePermanent();
+                nonmoveitems.push_back(rottenItem);
             }
         }
     }
@@ -409,48 +384,48 @@ void Field::Load(std::istream *mapt, std::istream *obj, std::istream *warp) {
 
 }
 
-int8_t Field::DoAgeItems(ITEM_FUNCT funct) {
+int8_t Field::DoAgeItems() {
 
     int8_t ret = 0;
 
-    if (! items.empty()) {
-        ITEMVECTOR::iterator theIterator = items.begin();
+    if (!items.empty()) {
+        auto it = items.begin();
 
-        while (theIterator < items.end()) {
-            if (! funct(&(*theIterator))) {
-                if (!CommonItems->find(theIterator->id, tempCommon)) {
-                    tempCommon.ObjectAfterRot = theIterator->id;
+        while (it < items.end()) {
+            Item &item = *it;
+            if (!item.survivesAging()) {
+                if (!CommonItems->find(item.getId(), tempCommon)) {
+                    tempCommon.ObjectAfterRot = item.getId();
                 }
 
-                if (theIterator->id != tempCommon.ObjectAfterRot) {
+                if (item.getId() != tempCommon.ObjectAfterRot) {
 #ifdef Field_DEBUG
-                    std::cout << "FIELD:Ein Item wird umgewandelt von: " << theIterator->id << "  nach: " << tempCommon.ObjectAfterRot << "!\n";
+                    std::cout << "FIELD:Ein Item wird umgewandelt von: " << item.getId() << "  nach: " << tempCommon.ObjectAfterRot << "!\n";
 #endif
 
                     //only set ret to 1 if it wasn't -1 because -1 has the highest priority (forces update of the field and rots container)
-                    if (theIterator->id != tempCommon.ObjectAfterRot && ret != -1) {
+                    if (item.getId() != tempCommon.ObjectAfterRot && ret != -1) {
                         ret = 1;
                     }
 
-                    theIterator->id = tempCommon.ObjectAfterRot;
+                    item.setId(tempCommon.ObjectAfterRot);
 
                     if (CommonItems->find(tempCommon.ObjectAfterRot, tempCommon)) {
-                        theIterator->wear = tempCommon.AgeingSpeed;
+                        item.setWear(tempCommon.AgeingSpeed);
                     }
 
-                    theIterator++;
+                    ++it;
                 } else {
 #ifdef Field_DEBUG
-                    std::cout << "FIELD:Ein Item wird gel�cht,ID:" << theIterator->id << "!\n";
+                    std::cout << "FIELD:Ein Item wird gel�cht,ID:" << item.getId() << "!\n";
 #endif
 
-                    if (ContainerItems->find(theIterator->id)) {
-                        std::cout << "Ein Container auf einem Feld soll gel�cht werden!" << std::endl;
-                        erasedcontainers->push_back(theIterator->number);
+                    if (item.isContainer()) {
+                        erasedcontainers->push_back(item.getNumber());
                         ret = -1;
                     }
 
-                    theIterator = items.erase(theIterator);
+                    it = items.erase(it);
 
                     if (ret != -1) {
                         ret = 1;
@@ -458,7 +433,7 @@ int8_t Field::DoAgeItems(ITEM_FUNCT funct) {
 
                 }
             } else {
-                ++theIterator;
+                ++it;
             }
         }
     }
@@ -483,102 +458,80 @@ void Field::updateFlags() {
     }
 
     TilesModificatorStruct tmod;
-    ITEMVECTOR::iterator theIterator;
 
-    for (theIterator = items.begin(); theIterator < items.end(); ++theIterator) {
-        if (TilesModItems->find(theIterator->id, tmod)) {
-            clientflags   = clientflags | (tmod.Modificator & (FLAG_GROUNDLEVEL));
-            extraflags   = extraflags | (tmod.Modificator & (FLAG_SPECIALITEM + FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_MAKEPASSABLE));
+    for (auto it = items.begin(); it < items.end(); ++it) {
+        if (TilesModItems->find(it->getId(), tmod)) {
+            clientflags = clientflags | (tmod.Modificator & (FLAG_GROUNDLEVEL));
+            extraflags = extraflags | (tmod.Modificator & (FLAG_SPECIALITEM + FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_MAKEPASSABLE));
         }
     }
-
 }
 
 
 void Field::DeleteAllItems() {
-
     items.clear();
     updateFlags();
-
 }
 
 
 unsigned char Field::GroundLevel() {
-
     return (clientflags & FLAG_GROUNDLEVEL);
-
 }
 
 
 bool Field::IsMonsterOnField() {
-
     return ((clientflags & FLAG_MONSTERONFIELD) != 0);
-
 }
 
 
 void Field::SetMonsterOnField(bool t) {
-
     if (t) {
         clientflags = clientflags | FLAG_MONSTERONFIELD;
     } else {
         clientflags = clientflags & (255 - FLAG_MONSTERONFIELD);
     }
-
 }
 
 
 bool Field::IsNPCOnField() {
-
     return ((clientflags & FLAG_NPCONFIELD) != 0);
-
 }
 
 
 void Field::SetNPCOnField(bool t) {
-
     if (t) {
         clientflags = clientflags | FLAG_NPCONFIELD;
     } else {
         clientflags = clientflags & (255 - FLAG_NPCONFIELD);
     }
-
 }
 
 
 bool Field::IsPlayerOnField() {
-
     return ((clientflags & FLAG_PLAYERONFIELD) != 0);
-
 }
 
 
 void Field::SetPlayerOnField(bool t) {
-
     if (t) {
         clientflags = clientflags | FLAG_PLAYERONFIELD;
     } else {
         clientflags = clientflags & (255 - FLAG_PLAYERONFIELD);
     }
-
 }
 
 
 
 void Field::SetLevel(unsigned char z) {
-
     z <<= 4;     // bits an die richtige Position bringen
     z &= FLAG_MAPLEVEL;     // andere bits l�chen
     clientflags &= (255 - FLAG_MAPLEVEL);       // maplevel - bits l�chen
     clientflags |= z;     // maplevel - bits setzen
-
 }
 
 
 bool Field::IsWarpField() {
-
     return ((extraflags & FLAG_WARPFIELD) != 0);
-
 }
 
 
@@ -604,59 +557,45 @@ void Field::GetWarpField(position &pos) {
 
 
 bool Field::HasSpecialItem() {
-
     return ((extraflags & FLAG_SPECIALITEM) != 0);
-
 }
 
 
 void Field::SetSpecialItem(bool t) {
-
     if (t) {
         extraflags = extraflags | FLAG_SPECIALITEM;
     } else {
         extraflags = extraflags & (255 - FLAG_SPECIALITEM);
     }
-
 }
 
 
 bool Field::IsSpecialField() {
-
     return ((extraflags & FLAG_SPECIALTILE) != 0);
-
 }
 
 
 void Field::SetSpecialField(bool t) {
-
     if (t) {
         extraflags = extraflags | FLAG_SPECIALTILE;
     } else {
         extraflags = extraflags & (255 - FLAG_SPECIALTILE);
     }
-
 }
 
 
 bool Field::IsTransparent() {
-
     return ((extraflags & FLAG_TRANSPARENT) == 0);
-
 }
 
 
 bool Field::IsPassable() const {
-
     return (((extraflags & FLAG_PASSABLE) == 0) || ((extraflags & FLAG_MAKEPASSABLE) != 0));
-
 }
 
 
 bool Field::IsPenetrateable() {
-
     return ((extraflags & FLAG_PENETRATEABLE) == 0);
-
 }
 
 

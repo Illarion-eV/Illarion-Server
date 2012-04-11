@@ -40,16 +40,14 @@ class RekursionException: public std::exception {};
 #include "luabind/luabind.hpp"
 #include "luabind/object.hpp"
 
-class ContainerObjectTable;
 class CommonObjectTable;
 
-extern ContainerObjectTable *ContainerItems;
 extern CommonObjectTable *CommonItems;
 extern CommonStruct tempCommon;
 
 class Container {
 private:
-    TYPE_OF_ITEM_ID itemId;
+    Item::id_type itemId;
 
 public:
     ITEMVECTOR items;
@@ -57,15 +55,15 @@ public:
     typedef std::map<TYPE_OF_CONTAINERSLOTS, Container *, std::less<TYPE_OF_CONTAINERSLOTS> > CONTAINERMAP;
     CONTAINERMAP containers;
 
-    Container(TYPE_OF_ITEM_ID itemId);
+    Container(Item::id_type itemId);
     Container(const Container &source);
     ~Container();
     Container &operator =(const Container &source);
 
-    bool TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &it, Container* &cc, unsigned char count);
+    bool TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &it, Container* &cc, Item::number_type count);
     bool viewItemNr(TYPE_OF_CONTAINERSLOTS nr, ScriptItem &it, Container* &cc);
     bool changeQualityAt(TYPE_OF_CONTAINERSLOTS nr, short int amount);
-    bool changeQuality(TYPE_OF_ITEM_ID id, short int amount);
+    bool changeQuality(Item::id_type id, short int amount);
     bool InsertContainer(Item it, Container *cc);
     bool InsertItem(Item it, bool merge);
     bool InsertItem(Item it, unsigned char pos);
@@ -75,29 +73,29 @@ public:
     void Save(std::ofstream *where);
     void Load(std::istream *where);
 
-    void doAge(ITEM_FUNCT funct, bool inventory = false);
+    void doAge(bool inventory = false);
 
-    int countItem(TYPE_OF_ITEM_ID itemid);
-    int countItem(TYPE_OF_ITEM_ID itemid, uint32_t data);
+    int countItem(Item::id_type itemid);
+    int countItem(Item::id_type itemid, uint32_t data);
 
-    void increaseItemList(TYPE_OF_ITEM_ID itemid, luabind::object &list,int &index);
+    void increaseItemList(Item::id_type itemid, luabind::object &list,int &index);
     void increaseItemList(luabind::object &list,int &index);
 
-    luabind::object getItemList(TYPE_OF_ITEM_ID itemid);
+    luabind::object getItemList(Item::id_type itemid);
     luabind::object getItemList();
 
-    int eraseItem(TYPE_OF_ITEM_ID itemid, int count);
-    int eraseItem(TYPE_OF_ITEM_ID itemid, int count, uint32_t data);
+    int eraseItem(Item::id_type itemid, Item::number_type count);
+    int eraseItem(Item::id_type itemid, Item::number_type, Item::data_type data);
 
-    int increaseAtPos(unsigned char pos, int count);
+    int increaseAtPos(unsigned char pos, Item::number_type count);
 
-    bool swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t newQuality = 0);
+    bool swapAtPos(unsigned char pos, Item::id_type newid, Item::quality_type newQuality = 0);
 
-    bool changeItem(ScriptItem It);
+    bool changeItem(ScriptItem &it);
 
     int weight(int rekt);
 
-    int _eraseItem(TYPE_OF_ITEM_ID itemid, int count, uint32_t data, bool useData);
+    int _eraseItem(Item::id_type itemid, Item::number_type count, Item::data_type data, bool useData);
 
     TYPE_OF_CONTAINERSLOTS getSlotCount();
 

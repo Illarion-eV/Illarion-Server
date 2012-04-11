@@ -17,11 +17,13 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Container.hpp"
-#include "data/ContainerObjectTable.hpp"
 #include "data/CommonObjectTable.hpp"
+#include "data/ContainerObjectTable.hpp"
 #include "World.hpp"
 
-Container::Container(TYPE_OF_ITEM_ID itemId): itemId(itemId) {
+extern ContainerObjectTable *ContainerItems;
+
+Container::Container(Item::id_type itemId): itemId(itemId) {
 #ifdef Container_DEBUG
     std::cout << "Container constructor" << std::endl;
 #endif
@@ -47,21 +49,18 @@ Container &Container::operator=(const Container &source) {
         items = source.items;
 
         if (!containers.empty()) {
-            CONTAINERMAP::iterator theIterator;
-
-            for (theIterator = containers.begin(); theIterator != containers.end(); ++theIterator) {
-                delete(*theIterator).second;
-                (*theIterator).second = NULL;
+            for (auto it = containers.begin(); it != containers.end(); ++it) {
+                delete it->second;
+                it->second = NULL;
             }
 
             containers.clear();
         }
 
         if (!source.containers.empty()) {
-            CONTAINERMAP::const_iterator theIterator;
 
-            for (theIterator = source.containers.begin(); theIterator != source.containers.end(); ++theIterator) {
-                containers.insert(CONTAINERMAP::value_type((*theIterator).first, new Container(*((*theIterator).second))));
+            for (auto it = source.containers.cbegin(); it != source.containers.cend(); ++it) {
+                containers.insert(CONTAINERMAP::value_type(it->first, new Container(*(it->second))));
             }
         }
 
@@ -82,11 +81,10 @@ Container::~Container() {
     items.clear();
 
     if (!containers.empty()) {
-        CONTAINERMAP::iterator theIterator;
 
-        for (theIterator = containers.begin(); theIterator != containers.end(); ++theIterator) {
-            delete(*theIterator).second;
-            (*theIterator).second = NULL;
+        for (auto it = containers.begin(); it != containers.end(); ++it) {
+            delete it->second;
+            it->second = NULL;
         }
 
         containers.clear();
@@ -115,49 +113,47 @@ bool Container::InsertItemOnLoad(Item it) {
     return false;
 }
 
-bool Container::InsertItem(Item it, bool merge) {
+bool Container::InsertItem(Item item, bool merge) {
 
 #ifdef Container_DEBUG
     std::cout << "Container: neues InsertItem" << std::endl;
 #endif
 
     if (items.size() < MAXITEMS) {
-        if (ContainerItems->find(it.id)) {
-            return InsertContainer(it, new Container(it.id));
+        if (ContainerItems->find(item.getId())) {
+            return InsertContainer(item, new Container(item.getId()));
         } else if (merge) {
-            //Unstackable von Items
-            if (isItemStackable(it)) {
-                ITEMVECTOR::iterator theIterator = items.begin();
+
+            if (isItemStackable(item)) {
+                auto it = items.begin();
                 int temp;
 
-                while ((theIterator < items.end()) && (it.number > 0)) {
-                    if (theIterator->id == it.id && theIterator->data == it.data && theIterator->quality >= 100 && it.quality >= 100) {
-                        temp = theIterator->number + it.number;
+                while ((it < items.end()) && (item.getNumber() > 0)) {
+                    if (it->getId() == item.getId() && it->getData() == item.getData() && it->isComplete() && item.isComplete()) {
+                        temp = it->getNumber() + item.getNumber();
 
                         if (temp <= MAXITEMS) {
-                            theIterator->number=temp;
-                            it.number=0;
+                            it->setNumber(temp);
+                            item.setNumber(0);
                         } else {
-                            it.number-=(MAXITEMS - theIterator->number);
-                            theIterator->number=MAXITEMS;
+                            item.setNumber(item.getNumber() - MAXITEMS + it->getNumber());
+                            it->setNumber(MAXITEMS);
                         }
 
-                        if (it.quality < theIterator->quality) {
-                            theIterator->quality = it.quality;
-                        }
+                        it->setMinQuality(item);
                     }
 
-                    theIterator++;
+                    ++it;
                 }
             }
 
-            if (it.number > 0) {
-                items.push_back(it);
+            if (item.getNumber() > 0) {
+                items.push_back(item);
             }
 
             return true;
         } else {
-            items.push_back(it);
+            items.push_back(item);
             return true;
         }
     }
@@ -166,62 +162,56 @@ bool Container::InsertItem(Item it, bool merge) {
 
 }
 
-bool Container::InsertItem(Item it, unsigned char pos) {
+bool Container::InsertItem(Item item, unsigned char pos) {
 #ifdef Container_DEBUG
     std::cout << "Container: neues InsertItem mit pos" << std::endl;
 #endif
-
     if (items.size() < getSlotCount()) {
-        if (ContainerItems->find(it.id)) {
-            return InsertContainer(it, new Container(it.id));
+        if (item.isContainer()) {
+            return InsertContainer(item, new Container(item.getId()));
         }
 
-        ITEMVECTOR::iterator theIterator;
         MAXCOUNTTYPE count2 = 0;
-        theIterator = items.begin();
+        auto it = items.begin();
 
         // das Item Nummer pos in dem Vektor finden
-        while ((theIterator < items.end()) && (count2 != pos)) {
-            count2++;
-            theIterator++;
+        while ((it < items.end()) && (count2 != pos)) {
+            ++count2;
+            ++it;
         }
 
         //Itemstacking deaktivieren
-        if (isItemStackable(it)) {
-            if (theIterator < items.end()) {
-                if (theIterator->id == it.id && theIterator->data == it.data && theIterator->quality >= 100 && it.quality >= 100) {
-                    int temp = theIterator->number + it.number;
+        if (isItemStackable(item)) {
+            if (it < items.end()) {
+                if (it->getId() == item.getId() && it->getData() == item.getData() && it->isComplete() && item.isComplete()) {
+                    int temp = it->getNumber() + item.getNumber();
 
                     if (temp <= MAXITEMS) {
-                        theIterator->number=temp;
-                        it.number=0;
+                        it->setNumber(temp);
+                        item.setNumber(0);
                     } else {
-                        it.number-=(MAXITEMS - theIterator->number);
-                        theIterator->number=MAXITEMS;
+                        item.setNumber(item.getNumber() - MAXITEMS + it->getNumber());
+                        it->setNumber(MAXITEMS);
                     }
 
-                    if (it.quality < theIterator->quality) {
-                        theIterator->quality = it.quality;
-                    }
+                    it->setMinQuality(item);
                 }
             }
         }
 
         //Ende Itemstacking deaktivieren.
 
-        if (it.number > 0) {
-            items.push_back(it);
+        if (item.getNumber() > 0) {
+            items.push_back(item);
         }
 
         return true;
     }
-
     return false;
 
 }
 
 bool Container::InsertContainer(Item it, Container *cc) {
-
     if ((this != cc) && (items.size() < getSlotCount())) {
         Item titem = it;
 
@@ -237,7 +227,7 @@ bool Container::InsertContainer(Item it, Container *cc) {
             }
 
             // dem Container seine neue ID zuweisen
-            titem.number = count;
+            titem.setNumber(count);
             // den Container in die Itemliste einf�gen
             items.push_back(titem);
             // den Inhalt des Containers in die Containermap mit der entsprechenden ID einf�gen
@@ -245,41 +235,40 @@ bool Container::InsertContainer(Item it, Container *cc) {
             return true;
         }
     }
-
     return false;
 
 }
 
-bool Container::changeQuality(TYPE_OF_ITEM_ID id, short int amount) {
-    ITEMVECTOR::iterator theIterator = items.begin();
+bool Container::changeQuality(Item::id_type id, short int amount) {
     short int tmpQuality;
 
-    while (theIterator < items.end()) {
-        if (ContainerItems->find(theIterator->id)) {
-            // Item ist ein Container
-            CONTAINERMAP::iterator iterat = containers.find(theIterator->number);
+    auto it = items.begin();
+    while (it != items.end()) {
+        Item &item = *it;
+
+        if (item.isContainer()) {
+            auto iterat = containers.find(item.getNumber());
 
             if (iterat != containers.end()) {
-                // Inhalt des Containers gefunden
-                // rekursiv verarbeiten
+
                 if ((*iterat).second->changeQuality(id, amount)) {
                     return true;
                 }
             }
 
-            theIterator++;
-        } else if (theIterator->id == id) {      // Container als Items erstmal auslassen
-            tmpQuality = ((amount+theIterator->quality%100)<100) ? (amount + theIterator->quality) : (theIterator->quality-theIterator->quality%100 + 99);
+            ++it;
+        } else if (item.getId() == id) {
+            tmpQuality = ((amount+item.getDurability())<100) ? (amount + item.getQuality()) : (item.getQuality()-item.getDurability() + 99);
 
             if (tmpQuality%100 > 1) {
-                theIterator->quality = tmpQuality;
+                item.setQuality(tmpQuality);
                 return true;
             } else {
-                items.erase(theIterator);
+                items.erase(it);
                 return true;
             }
         } else {
-            theIterator++;
+            ++it;
         }
     }
 
@@ -287,35 +276,31 @@ bool Container::changeQuality(TYPE_OF_ITEM_ID id, short int amount) {
 }
 
 bool Container::changeQualityAt(TYPE_OF_CONTAINERSLOTS nr, short int amount) {
-    ITEMVECTOR::iterator theIterator;
     MAXCOUNTTYPE count2 = 0;
-    theIterator = items.begin();
-    Item it;
-    short int tmpQuality;
+    auto it = items.begin();
 
-    // das Item Nummer nr in dem Vektor finden
-    while ((theIterator < items.end()) && (count2 != nr)) {
-        count2++;
-        theIterator++;
+    while ((it < items.end()) && (count2 != nr)) {
+        ++count2;
+        ++it;
     }
 
-    if (theIterator < items.end()) {
-        tmpQuality = ((amount+theIterator->quality%100)<100) ? (amount + theIterator->quality) : (theIterator->quality-theIterator->quality%100 + 99);
+    if (it < items.end()) {
+        Item &item = *it;
+        Item::quality_type tmpQuality = ((amount+item.getDurability())<100) ? (amount + item.getQuality()) : (item.getQuality() - item.getDurability() + 99);
 
         if (tmpQuality%100 > 1) {
-            theIterator->quality = tmpQuality;
+            item.setQuality(tmpQuality);
             return true;
         } else {
-            //Falls Item ein Tasche den Inhalt l�schen
-            if (ContainerItems->find(theIterator->id)) {
-                CONTAINERMAP::iterator iterat = containers.find((*theIterator).number);
+            if (item.isContainer()) {
+                auto iterat = containers.find(item.getNumber());
 
                 if (iterat != containers.end()) {
                     containers.erase(iterat);
                 }
             }
 
-            items.erase(theIterator);
+            items.erase(it);
             return true;
         }
     }
@@ -323,31 +308,29 @@ bool Container::changeQualityAt(TYPE_OF_CONTAINERSLOTS nr, short int amount) {
     return false;
 }
 
-bool Container::TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &it, Container* &cc, unsigned char count) {
-
-    ITEMVECTOR::iterator theIterator;
+bool Container::TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &item, Container* &cc, Item::number_type count) {
     MAXCOUNTTYPE count2 = 0;
-    theIterator = items.begin();
+    auto it = items.begin();
 
     // das Item Nummer nr in dem Vektor finden
-    while ((theIterator < items.end()) && (count2 != nr)) {
-        count2++;
-        theIterator++;
+    while ((it < items.end()) && (count2 != nr)) {
+        ++count2;
+        ++it;
     }
 
 #ifdef Container_DEBUG
     std::cout << "nr: " << nr << " count2: " << count2 << "\n";
 #endif
 
-    if (theIterator < items.end()) {
+    if (it < items.end()) {
 #ifdef Container_DEBUG
-        std::cout << "das Item wurde gefunden,id: " << it.id << " number: " << it.number << "\n";
+        std::cout << "das Item wurde gefunden,id: " << item.getId() << " number: " << item.getNumber() << "\n";
 #endif
-        it = *theIterator;
+        item = *it;
 
-        if (ContainerItems->find(it.id)) {
-            items.erase(theIterator);
-            CONTAINERMAP::iterator iterat = containers.find(it.number);
+        if (item.isContainer()) {
+            items.erase(it);
+            auto iterat = containers.find(item.getNumber());
 
             if (iterat != containers.end()) {
 #ifdef Container_DEBUG
@@ -356,7 +339,7 @@ bool Container::TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &it, Container* &cc, 
                 cc = (*iterat).second;
                 containers.erase(iterat);
             } else {
-                cc = new Container(it.id);
+                cc = new Container(item.getId());
             }
 
             return true;
@@ -365,19 +348,19 @@ bool Container::TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &it, Container* &cc, 
             cc = NULL;
 
             //Itemstacking deaktivieren
-            if (isItemStackable(it) && count > 1) {
-                if (theIterator->number > count) {
-                    theIterator->number-=count;
-                    it.number=count;
+            if (isItemStackable(item) && count > 1) {
+                if (it->getNumber() > count) {
+                    it->setNumber(it->getNumber() - count);
+                    item.setNumber(count);
                 } else {
-                    items.erase(theIterator);
+                    items.erase(it);
                 }
             } else {
-                if (theIterator->number > 1) {
-                    theIterator->number-=1;
-                    it.number=1;
+                if (it->getNumber() > 1) {
+                    it->setNumber(it->getNumber() - 1);
+                    item.setNumber(1);
                 } else {
-                    items.erase(theIterator);
+                    items.erase(it);
                 }
             }
 
@@ -390,13 +373,10 @@ bool Container::TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &it, Container* &cc, 
 
     // das Item wurde nicht gefunden
     else {
-        it.id = 0;
-        it.number = 0;
-        it.wear = 0;
+        item.reset();
         cc = NULL;
         return false;
     }
-
 }
 
 luabind::object Container::getItemList() {
@@ -404,24 +384,21 @@ luabind::object Container::getItemList() {
     luabind::object list = luabind::newtable(_luaState);
     int index = 1;
     MAXCOUNTTYPE pos = 0;
-    ITEMVECTOR::iterator theIterator;
 
-    for (theIterator = items.begin(); theIterator != items.end(); ++theIterator) {
+    for (auto it = items.begin(); it != items.end(); ++it) {
 
-        ScriptItem item=*theIterator;
+        ScriptItem item = *it;
         item.type = ScriptItem::it_container;
         item.itempos = pos;
         item.inside = this;
         list[index] = item;
-        index++;
+        ++index;
         ++pos;
 
-        if (ContainerItems->find(theIterator->id)) {
-            // Item ist ein Container
-            CONTAINERMAP::iterator iterat = containers.find(theIterator->number);
+        if (item.isContainer()) {
+            auto iterat = containers.find(item.getNumber());
 
             if (iterat != containers.end()) {
-                // rekursiv verarbeiten
                 iterat->second->increaseItemList(list, index);
             }
         }
@@ -431,17 +408,17 @@ luabind::object Container::getItemList() {
     return list;
 }
 
-luabind::object Container::getItemList(TYPE_OF_ITEM_ID itemid) {
+luabind::object Container::getItemList(Item::id_type itemid) {
     lua_State *_luaState = World::get()->getCurrentScript()->getLuaState();
     luabind::object list = luabind::newtable(_luaState);
     int index = 1;
     MAXCOUNTTYPE pos = 0;
-    ITEMVECTOR::iterator theIterator;
 
-    for (theIterator = items.begin(); theIterator != items.end(); ++theIterator) {
-
-        if (theIterator->id == itemid) {
-            ScriptItem item=*theIterator;
+    for (auto it = items.begin(); it != items.end(); ++it) {
+        Item &item = *it;
+        
+        if (item.getId() == itemid) {
+            ScriptItem item = *it;
             item.type = ScriptItem::it_container;
             item.itempos = pos;
             item.inside = this;
@@ -451,12 +428,10 @@ luabind::object Container::getItemList(TYPE_OF_ITEM_ID itemid) {
 
         ++pos;
 
-        if (ContainerItems->find(theIterator->id)) {
-            // Item ist ein Container
-            CONTAINERMAP::iterator iterat = containers.find(theIterator->number);
+        if (item.isContainer()) {
+            auto iterat = containers.find(item.getNumber());
 
             if (iterat != containers.end()) {
-                // rekursiv verarbeiten
                 iterat->second->increaseItemList(itemid , list, index);
             }
         }
@@ -466,14 +441,14 @@ luabind::object Container::getItemList(TYPE_OF_ITEM_ID itemid) {
     return list;
 }
 
-void Container::increaseItemList(TYPE_OF_ITEM_ID itemid, luabind::object &list, int &index) {
-    ITEMVECTOR::iterator theIterator;
+void Container::increaseItemList(Item::id_type itemid, luabind::object &list, int &index) {
     MAXCOUNTTYPE pos = 0;
 
-    for (theIterator = items.begin(); theIterator != items.end(); ++theIterator) {
-
-        if (theIterator->id == itemid) {
-            ScriptItem item=*theIterator;
+    for (auto it = items.begin(); it != items.end(); ++it) {
+        Item &item = *it;
+        
+        if (item.getId() == itemid) {
+            ScriptItem item = *it;
             item.type = ScriptItem::it_container;
             item.itempos = pos;
             item.inside = this;
@@ -483,12 +458,10 @@ void Container::increaseItemList(TYPE_OF_ITEM_ID itemid, luabind::object &list, 
 
         ++pos;
 
-        if (ContainerItems->find(theIterator->id)) {
-            // Item ist ein Container
-            CONTAINERMAP::iterator iterat = containers.find(theIterator->number);
+        if (item.isContainer()) {
+            auto iterat = containers.find(item.getNumber());
 
             if (iterat != containers.end()) {
-                // rekursiv verarbeiten
                 iterat->second->increaseItemList(itemid , list, index);
             }
         }
@@ -497,22 +470,20 @@ void Container::increaseItemList(TYPE_OF_ITEM_ID itemid, luabind::object &list, 
 }
 
 void Container::increaseItemList(luabind::object &list, int &index) {
-    ITEMVECTOR::iterator theIterator;
     MAXCOUNTTYPE pos = 0;
 
-    for (theIterator = items.begin(); theIterator != items.end(); ++theIterator) {
+    for (auto it = items.begin(); it != items.end(); ++it) {
 
-        ScriptItem item=*theIterator;
+        ScriptItem item = *it;
         item.type = ScriptItem::it_container;
         item.itempos = pos;
         item.inside = this;
         list[index] = item;
-        index++;
+        ++index;
         ++pos;
 
-        if (ContainerItems->find(theIterator->id)) {
-            // Item ist ein Container
-            CONTAINERMAP::iterator iterat = containers.find(theIterator->number);
+        if (item.isContainer()) {
+            auto iterat = containers.find(item.getNumber());
 
             if (iterat != containers.end()) {
                 // rekursiv verarbeiten
@@ -523,141 +494,121 @@ void Container::increaseItemList(luabind::object &list, int &index) {
     }
 }
 
-bool Container::viewItemNr(TYPE_OF_CONTAINERSLOTS nr, ScriptItem &it, Container* &cc) {
-    ITEMVECTOR::iterator theIterator;
+bool Container::viewItemNr(TYPE_OF_CONTAINERSLOTS nr, ScriptItem &item, Container* &cc) {
     MAXCOUNTTYPE count = 0;
-    theIterator = items.begin();
+    auto it = items.begin();
 
-    // das Item Nummer nr in dem Vektor finden
-    while ((theIterator < items.end()) && (count != nr)) {
-        count++;
-        theIterator++;
+    while ((it < items.end()) && (count != nr)) {
+        ++count;
+        ++it;
     }
 
-    if (theIterator < items.end()) {   // das Item wurde gefunden
-        it = *theIterator;
-        it.type = ScriptItem::it_container;
-        it.itempos = nr;
-        it.inside = this;
+    if (it < items.end()) {
+        item = *it;
+        item.type = ScriptItem::it_container;
+        item.itempos = nr;
+        item.inside = this;
 
-        if (ContainerItems->find(it.id)) {
-            CONTAINERMAP::iterator iterat = containers.find(it.number);
+        if (item.isContainer()) {
+            auto iterat = containers.find(item.getNumber());
 
-            if (iterat != containers.end()) {   // Inhalt des Containers gefunden
-                cc = (*iterat).second;
+            if (iterat != containers.end()) {
+                cc = iterat->second;
             } else {
-                cc = new Container(it.id);
+                cc = new Container(item.getId());
             }
         } else {
             cc = NULL;
         }
 
         return true;
-    } else { // das Item wurde nicht gefunden
-        it.id = 0;
-        it.number = 0;
-        it.wear = 0;
+    } else {
+        item.reset();
         cc = NULL;
         return false;
     }
 }
 
-int Container::increaseAtPos(unsigned char pos, int count) {
-
+int Container::increaseAtPos(unsigned char pos, Item::number_type count) {
     int temp = count;
 #ifdef Container_DEBUG
     std::cout << "increaseAtPos " << (short int) pos << " " << count << "\n";
 #endif
-    ITEMVECTOR::iterator theIterator;
     MAXCOUNTTYPE tcount = 0;
-    theIterator = items.begin();
+    auto it = items.begin();
 
-    // das Item Nummer nr in dem Vektor finden
-    while ((theIterator != items.end()) && (tcount != pos)) {
+    while ((it != items.end()) && (tcount != pos)) {
         tcount++;
-        theIterator++;
+        it++;
     }
 
-    if (theIterator != items.end()) {   // das Item wurde gefunden
-        if (ContainerItems->find((*theIterator).id)) {
-            return count;     // container nicht ver�ndern
+    if (it != items.end()) {
+        Item &item = *it;
+        if (item.isContainer()) {
+            return count;
         } else {
-            temp = (*theIterator).number + count;
+            temp = item.getNumber() + count;
 #ifdef Container_DEBUG
             std::cout << "temp " << temp << "\n";
 #endif
 
             if (temp > 255) {
-                (*theIterator).number = 255;
+                item.setNumber(255);
                 temp = temp - 255;
             } else if (temp <= 0) {
-                temp = count + (*theIterator).number;
-                items.erase(theIterator);
+                temp = count + item.getNumber();
+                items.erase(it);
             } else {
-                (*theIterator).number = temp;
+                item.setNumber(temp);
                 temp = 0;
             }
         }
     }
 
     return temp;
-
 }
 
-bool Container::changeItem(ScriptItem it) {
+bool Container::changeItem(ScriptItem &item) {
 #ifdef Container_DEBUG
     std::cout << "swapAtPos " << (short int) pos << " " << newid << "\n";
 #endif
-    ITEMVECTOR::iterator theIterator;
     MAXCOUNTTYPE tcount = 0;
-    theIterator = items.begin();
+    auto it = items.begin();
 
-    // das Item Nummer nr in dem Vektor finden
-    while ((theIterator != items.end()) && (tcount != it.itempos)) {
-        tcount++;
-        theIterator++;
+    while ((it != items.end()) && (tcount != item.itempos)) {
+        ++tcount;
+        ++it;
     }
 
-    if (theIterator != items.end()) {   // das Item wurde gefunden
-        if (!ContainerItems->find(theIterator->id)) {
-            // container nicht ver�ndern
-            theIterator->id = it.id;
-            theIterator->quality = it.quality;
-            //theIterator->data = it.data;
-            //theIterator->setData(it.data);
-            theIterator->number = it.number;
-            theIterator->data_map = it.data_map;
-            //Wenn ein Qualit�tswert angegeben ist neue Qualit�t setzen
+    if (it != items.end()) {
+        if (!it->isContainer()) {
+            *it = item;
             return true;
         }
     }
 
     return false;
-
 }
 
-bool Container::swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t newQuality) {
-
+bool Container::swapAtPos(unsigned char pos, Item::id_type newid, Item::quality_type newQuality) {
 #ifdef Container_DEBUG
     std::cout << "swapAtPos " << (short int) pos << " " << newid << "\n";
 #endif
-    ITEMVECTOR::iterator theIterator;
     MAXCOUNTTYPE tcount = 0;
-    theIterator = items.begin();
+    auto it = items.begin();
 
-    // das Item Nummer nr in dem Vektor finden
-    while ((theIterator != items.end()) && (tcount != pos)) {
-        tcount++;
-        theIterator++;
+    while ((it != items.end()) && (tcount != pos)) {
+        ++tcount;
+        ++it;
     }
 
-    if (theIterator != items.end()) {   // das Item wurde gefunden
-        if (!ContainerItems->find((*theIterator).id)) {      // container nicht ver�ndern
-            (*theIterator).id = newid;
+    if (it != items.end()) {
+        Item &item = *it;
+        if (!item.isContainer()) {
+            item.setId(newid);
 
-            //Wenn ein Qualit�tswert angegeben ist neue Qualit�t setzen
             if (newQuality > 0) {
-                (*theIterator).quality = newQuality;
+                item.setQuality(newQuality);
             }
 
             return true;
@@ -665,46 +616,35 @@ bool Container::swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t new
     }
 
     return false;
-
 }
 
 void Container::Save(std::ofstream *where) {
-
-    ITEMVECTOR::iterator theIterator;
-
     MAXCOUNTTYPE size = items.size();
     where->write((char *) & size, sizeof(size));
 
-    for (theIterator = items.begin(); theIterator != items.end(); ++theIterator) {
-        where->write((char *) &(*theIterator), sizeof(Item));
+    for (auto it = items.begin(); it != items.end(); ++it) {
+        where->write((char *) &(*it), sizeof(Item));
 
-        // Item ist ein Container
-        if (ContainerItems->find(theIterator->id)) {
-            CONTAINERMAP::iterator iterat = containers.find(theIterator->number);
+        if (it->isContainer()) {
+            auto iterat = containers.find(it->getNumber());
 
-            // Inhalt des Containers gefunden
             if (iterat != containers.end()) {
-                // rekursiv Abspeichern
                 (*iterat).second->Save(where);
-            }
-            // leerer Container
-            else {
+            } else {
                 size = 0;
                 where->write((char *) & size, sizeof(size));
             }
         }
     }
-
 }
 
 void Container::Load(std::istream *where) {
 
     if (!containers.empty()) {
-        CONTAINERMAP::iterator theIterator;
 
-        for (theIterator = containers.begin(); theIterator != containers.end(); ++theIterator) {
-            delete(*theIterator).second;
-            (*theIterator).second = NULL;
+        for (auto it = containers.begin(); it != containers.end(); ++it) {
+            delete it->second;
+            it->second = NULL;
         }
     }
 
@@ -721,9 +661,8 @@ void Container::Load(std::istream *where) {
     for (int i = 0; i < size; ++i) {
         where->read((char *) & tempi, sizeof(tempi));
 
-        // das Item ist ein Container
-        if (ContainerItems->find(tempi.id)) {
-            tempc = new Container(tempi.id);
+        if (tempi.isContainer()) {
+            tempc = new Container(tempi.getId());
             tempc->Load(where);
             InsertContainer(tempi, tempc);
         } else {
@@ -732,21 +671,20 @@ void Container::Load(std::istream *where) {
     }
 }
 
-int Container::countItem(TYPE_OF_ITEM_ID itemid) {
+int Container::countItem(Item::id_type itemid) {
     int temp = 0;
-    ITEMVECTOR::iterator theIterator;
 
-    for (theIterator = items.begin(); theIterator < items.end(); ++theIterator) {
-        if (theIterator->id == itemid && theIterator->quality >= 100) {
-            temp = temp + theIterator->number;
+    for (auto it = items.begin(); it < items.end(); ++it) {
+        Item &item = *it;
+        if (item.getId() == itemid && item.isComplete()) {
+            temp = temp + item.getNumber();
         }
 
-        if (ContainerItems->find(theIterator->id)) {     // Item ist ein Container
-            CONTAINERMAP::iterator iterat = containers.find(theIterator->number);
+        if (item.isContainer()) {
+            auto iterat = containers.find(item.getNumber());
 
-            if (iterat != containers.end()) {   // Inhalt des Containers gefunden
-                // rekursiv verarbeiten
-                temp = temp + (*iterat).second->countItem(itemid);
+            if (iterat != containers.end()) {
+                temp = temp + iterat->second->countItem(itemid);
             }
         }
     }
@@ -754,22 +692,20 @@ int Container::countItem(TYPE_OF_ITEM_ID itemid) {
     return temp;
 }
 
-int Container::countItem(TYPE_OF_ITEM_ID itemid, uint32_t data) {
+int Container::countItem(Item::id_type itemid, Item::data_type data) {
     int temp = 0;
-    ITEMVECTOR::iterator theIterator;
 
-    for (theIterator = items.begin(); theIterator < items.end(); ++theIterator) {
-        if (theIterator->id == itemid && theIterator->data == data && theIterator->quality >= 100) {
-            temp = temp + theIterator->number;
+    for (auto it = items.begin(); it < items.end(); ++it) {
+        Item &item = *it;
+        if (item.getId() == itemid && item.getData() == data && item.isComplete()) {
+            temp = temp + item.getNumber();
         }
 
-        if (ContainerItems->find(theIterator->id)) {
-            // Item ist ein Container
-            CONTAINERMAP::iterator iterat = containers.find(theIterator->number);
+        if (item.isContainer()) {
+            auto iterat = containers.find(item.getNumber());
 
             if (iterat != containers.end()) {
-                // Inhalt des Containers gefunden, rekursiv verarbeiten
-                temp = temp + (*iterat).second->countItem(itemid , data);
+                temp = temp + iterat->second->countItem(itemid, data);
             }
         }
     }
@@ -785,24 +721,23 @@ int Container::weight(int rekt) {
     }
 
     uint32_t temp = 0;
-    ITEMVECTOR::iterator theIterator;
 
-    for (theIterator = items.begin(); theIterator < items.end(); ++theIterator) {
-        if (!CommonItems->find(theIterator->id, tempCommon)) {
+    for (auto it = items.begin(); it < items.end(); ++it) {
+        Item &item = *it;
+        if (!CommonItems->find(item.getId(), tempCommon)) {
             tempCommon.Weight = 0;
         }
 
-        if (ContainerItems->find(theIterator->id)) {     // Item ist ein Container -> number ist nur die ID f�r den Containerinhalt
-            CONTAINERMAP::iterator iterat = containers.find(theIterator->number);
+        if (item.isContainer()) {
+            auto iterat = containers.find(item.getNumber());
 
-            if (iterat != containers.end()) {   // Inhalt des Containers gefunden
-                // rekursiv verarbeiten
-                temp += (*iterat).second->weight(temprekt);
+            if (iterat != containers.end()) {
+                temp += iterat->second->weight(temprekt);
             }
 
             temp += tempCommon.Weight;
-        } else { // kein Container -> Anzahl mit Gewicht multiplizieren
-            temp += (tempCommon.Weight * theIterator->number);
+        } else {
+            temp += (tempCommon.Weight * item.getNumber());
         }
     }
 
@@ -813,47 +748,46 @@ int Container::weight(int rekt) {
     }
 }
 
-int Container::_eraseItem(TYPE_OF_ITEM_ID itemid, int count, uint32_t data, bool useData) {
+int Container::_eraseItem(Item::id_type itemid, Item::number_type count, Item::data_type data, bool useData) {
 
 #ifdef Container_DEBUG
     std::cout << "in Container::eraseItem" << std::endl;
 #endif
     int temp = count;
 
-    ITEMVECTOR::iterator theIterator = items.begin();
+    auto it = items.begin();
 
-    while (theIterator < items.end()) {
-        if ((ContainerItems->find(theIterator->id)) && (temp > 0)) {         // Item ist ein Container
-            CONTAINERMAP::iterator iterat = containers.find(theIterator->number);
+    while (it < items.end()) {
+        Item &item = *it;
+        if (item.isContainer() && (temp > 0)) {
+            auto iterat = containers.find(item.getNumber());
 
-            if (iterat != containers.end()) {   // Inhalt des Containers gefunden
-                // rekursiv verarbeiten
+            if (iterat != containers.end()) {
                 temp = (*iterat).second->_eraseItem(itemid, temp, data, useData);
             }
-
-            theIterator++;
-        } else if ((theIterator->id == itemid && (!useData || theIterator->data == data) && theIterator->quality >=100) && (temp > 0)) {         // Container als Items erstmal auslassen
+            ++it;
+        } else if ((item.getId() == itemid && (!useData || item.getData() == data) && item.isComplete()) && (temp > 0)) {
 #ifdef Container_DEBUG
             std::cout << "Item mit Anzahl " << (unsigned short) theIterator->number << " gefunden!\n";
 #endif
 
-            if (temp >= theIterator->number) {
-                temp = temp - theIterator->number;
-                theIterator = items.erase(theIterator);
+            if (temp >= item.getNumber()) {
+                temp = temp - item.getNumber();
+                it = items.erase(it);
 #ifdef Container_DEBUG
                 std::cout << "Anzahl zu gering, noch " << temp << "zu loeschen!\n";
 #endif
 
             } else {
-                theIterator->number = theIterator->number - temp;
+                item.setNumber(item.getNumber() - temp);
                 temp = 0;
 #ifdef Container_DEBUG
                 std::cout << "Anzahl ausreichend\n";
 #endif
-                theIterator++;
+                ++it;
             }
         } else {
-            theIterator++;
+            ++it;
         }
     }
 
@@ -861,73 +795,70 @@ int Container::_eraseItem(TYPE_OF_ITEM_ID itemid, int count, uint32_t data, bool
     return temp;
 }
 
-int Container::eraseItem(TYPE_OF_ITEM_ID itemid, int count) {
+int Container::eraseItem(Item::id_type itemid, Item::number_type count) {
     return _eraseItem(itemid, count, 0, false);
 }
 
-int Container::eraseItem(TYPE_OF_ITEM_ID itemid, int count, uint32_t data) {
+int Container::eraseItem(Item::id_type itemid, Item::number_type count, Item::data_type data) {
     return _eraseItem(itemid, count, data, true);
 }
 
-void Container::doAge(ITEM_FUNCT funct, bool inventory) {
+void Container::doAge(bool inventory) {
     if (!items.empty()) {
-        ITEMVECTOR::iterator theIterator = items.begin();
+        auto it = items.begin();
 
-        while (theIterator < items.end()) {
-            if (!CommonItems->find(theIterator->id, tempCommon)) {
-                tempCommon.ObjectAfterRot = theIterator->id;
+        while (it < items.end()) {
+            Item &item = *it;
+            if (!CommonItems->find(item.getId(), tempCommon)) {
+                tempCommon.ObjectAfterRot = item.getId();
                 tempCommon.rotsInInventory = false;
             }
 
-            if (!(inventory) || (inventory && tempCommon.rotsInInventory)) {
-                if (!funct(&(*theIterator))) {
-                    tempCommon.ObjectAfterRot = theIterator->id;
+            if (!inventory || (inventory && tempCommon.rotsInInventory)) {
+                if (!item.survivesAging()) {
+                    tempCommon.ObjectAfterRot = item.getId();
 
-                    if (theIterator->id != tempCommon.ObjectAfterRot) {
+                    if (item.getId() != tempCommon.ObjectAfterRot) {
 #ifdef Container_DEBUG
                         std::cout << "Container:Ein Item wird umgewandelt von: " << theIterator->id << "  nach: " << tempCommon.ObjectAfterRot << "!\n";
 #endif
-                        theIterator->id = tempCommon.ObjectAfterRot;
+                        item.setId(tempCommon.ObjectAfterRot);
 
                         if (CommonItems->find(tempCommon.ObjectAfterRot, tempCommon)) {
-                            theIterator->wear = tempCommon.AgeingSpeed;
+                            item.setWear(tempCommon.AgeingSpeed);
                         }
 
-                        theIterator++;
+                        ++it;
                     } else {
 #ifdef Container_DEBUG
                         std::cout << "Container:Ein Item wird gel�scht,ID:" << theIterator->id << "!\n";
 #endif
 
-                        if (ContainerItems->find(theIterator->id)) {
-                            CONTAINERMAP::iterator iterat = containers.find(theIterator->number);
+                        if (item.isContainer()) {
+                            auto iterat = containers.find(item.getNumber());
 
                             if (iterat != containers.end()) {
 #ifdef Container_DEBUG
                                 std::cout << "Inhalt des Containers gefunden\n";
 #endif
-                                // Inhalt l�schen
                                 containers.erase(iterat);
                             }
                         }
 
-                        // das Item aus dem Vektor l�schen
-                        theIterator = items.erase(theIterator);
+                        it = items.erase(it);
                     }
                 } else {
-                    theIterator++;
+                    ++it;
                 }
             } else {
-                theIterator++;
+                ++it;
             }
         }
     }
 
-    CONTAINERMAP::iterator iterat;
-
     if (!containers.empty()) {
-        for (iterat = containers.begin(); iterat != containers.end(); ++iterat) {
-            (*iterat).second->doAge(funct, inventory);
+        for (auto it = containers.begin(); it != containers.end(); ++it) {
+            it->second->doAge(inventory);
         }
     }
 
@@ -940,10 +871,10 @@ TYPE_OF_CONTAINERSLOTS Container::getSlotCount() {
 bool Container::isItemStackable(Item item) {
     CommonStruct com;
 
-    if (CommonItems->find(item.id, com)) {
+    if (CommonItems->find(item.getId(), com)) {
         return com.isStackable;
     } else {
-        std::cerr<<"Item mit folgender id konnte nicht gefunden werden in Funktion isItemStackable(Item item): "<<item.id<<" !" <<std::endl;
+        std::cerr<<"Item mit folgender id konnte nicht gefunden werden in Funktion isItemStackable(Item item): "<<item.getId()<<" !" <<std::endl;
         return false;
     }
 

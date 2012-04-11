@@ -254,10 +254,10 @@ void World::ItemInform(Character *user, ScriptItem item, std::string message) {
 
 
 void World::changeQuality(ScriptItem item, short int amount) {
-    short int tmpQuality = ((amount+item.quality%100)<100) ? (amount + item.quality) : (item.quality-item.quality%100 + 99);
+    short int tmpQuality = ((amount+item.getDurability())<100) ? (amount + item.getQuality()) : (item.getQuality() - item.getDurability() + 99);
 
     if (tmpQuality%100 > 0) {
-        item.quality = tmpQuality;
+        item.setQuality(tmpQuality);
         changeItem(item);
     } else {
         erase(item,MAXITEMS);
@@ -294,12 +294,7 @@ bool World::changeItem(ScriptItem item) {
             return false;
         }
     } else if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
-        item.owner->characterItems[ item.itempos ].id = item.id;
-        item.owner->characterItems[ item.itempos ].wear = item.wear;
-        item.owner->characterItems[ item.itempos ].number = item.number;
-        item.owner->characterItems[ item.itempos ].quality = item.quality;
-        item.owner->characterItems[ item.itempos ].data = item.data;
-        item.owner->characterItems[ item.itempos ].data_map = item.data_map;
+        item.owner->characterItems[ item.itempos ] = (Item)item;
 
         //Wenn character ein Spieler ist ein update schicken
         if (item.owner->character == Character::player) {
@@ -318,8 +313,8 @@ bool World::changeItem(ScriptItem item) {
             if (field->TakeTopItem(it)) {
                 field->PutTopItem(static_cast<Item>(item));
 
-                if (item.id != it.id || it.number != item.number) {
-                    sendSwapItemOnMapToAllVisibleCharacter(it.id, item.pos.x, item.pos.y, item.pos.z, item, field);
+                if (item.getId() != it.getId() || it.getNumber() != item.getNumber()) {
+                    sendSwapItemOnMapToAllVisibleCharacter(it.getId(), item.pos.x, item.pos.y, item.pos.z, item, field);
                 }
             }
 
@@ -356,7 +351,7 @@ std::string World::getItemName(TYPE_OF_ITEM_ID itemid, uint8_t language) {
 CommonStruct World::getItemStats(ScriptItem item) {
     CommonStruct data;
 
-    if (CommonItems->find(item.id,data)) {
+    if (CommonItems->find(item.getId(),data)) {
         return data;
     } else {
         data.id = 0;
@@ -388,17 +383,9 @@ fuse_ptr<Character> World::getCharacterOnField(position pos) {
 }
 
 bool World::erase(ScriptItem item, int amount) {
-    /*if (amount==0) {
-        if ( item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt || item.type == ScriptItem::it_field )
-            amount=item.number;
-        else
-            amount=showcase->increaseAtPos(item.itempos,0);
-    }*/
-    if (amount > item.number) {
-        amount = item.number;
+    if (amount > item.getNumber()) {
+        amount = item.getNumber();
     }
-
-    //unsigned char amount=1;
 
     //Item befindet sich in einen der beiden Showcases
     if (item.type == ScriptItem::it_showcase1 || item.type == ScriptItem::it_showcase2) {
@@ -423,9 +410,9 @@ bool World::erase(ScriptItem item, int amount) {
     else if
     (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
         //Wenn Item rechts belegt und links ein Belegt ist [Zweihanditem] das Belegt mit l�schen
-        if (item.itempos == RIGHT_TOOL && (item.owner->GetItemAt(LEFT_TOOL)).id == BLOCKEDITEM) {
+        if (item.itempos == RIGHT_TOOL && (item.owner->GetItemAt(LEFT_TOOL)).getId() == BLOCKEDITEM) {
             item.owner->increaseAtPos(LEFT_TOOL, -255);
-        } else if (item.itempos == LEFT_TOOL && (item.owner->GetItemAt(RIGHT_TOOL)).id == BLOCKEDITEM) {
+        } else if (item.itempos == LEFT_TOOL && (item.owner->GetItemAt(RIGHT_TOOL)).getId() == BLOCKEDITEM) {
             item.owner->increaseAtPos(RIGHT_TOOL, -255);
         }
 
@@ -557,11 +544,11 @@ bool World::swap(ScriptItem item, TYPE_OF_ITEM_ID newitem, unsigned short int ne
 
                 if (ok) {
                     Item dummy;
-                    dummy.id = newitem;
-                    dummy.number = it.number;
+                    dummy.setId(newitem);
+                    dummy.setNumber(it.getNumber());
 
-                    if (it.id != newitem) {
-                        sendSwapItemOnMapToAllVisibleCharacter(it.id, item.pos.x, item.pos.y, item.pos.z, dummy, field);
+                    if (it.getId() != newitem) {
+                        sendSwapItemOnMapToAllVisibleCharacter(it.getId(), item.pos.x, item.pos.y, item.pos.z, dummy, field);
                     }
                 } else {
                     std::stringstream ss;
@@ -598,11 +585,11 @@ ScriptItem World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, pos
         CommonStruct com;
 
         if (CommonItems->find(id, com)) {
-            g_item.id = id;
-            g_item.number = count;
-            g_item.wear = com.AgeingSpeed;
-            g_item.quality = quali;
-            g_item.data = data;
+            g_item.setId(id);
+            g_item.setNumber(count);
+            g_item.setWear(com.AgeingSpeed);
+            g_item.setQuality(quali);
+            g_item.setData(data);
             g_cont = NULL;
             sItem = g_item;
             sItem.pos = pos;

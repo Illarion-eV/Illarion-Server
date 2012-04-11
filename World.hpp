@@ -754,7 +754,7 @@ public:
     *@param startitemnr the id of a new item which should be placed at the start position. 0 for no changes
     *@return true if the adding of the warpfield was succesfull otherwise false
     */
-    bool addWarpField(position where, position target, unsigned short int starttilenr, unsigned short int startitemnr);
+    bool addWarpField(position where, position target, unsigned short int starttilenr, Item::id_type startitemnr);
 
     /**
     *adds a two way warpfield to the map
@@ -769,7 +769,7 @@ public:
     *@param targetitemnr the id of a new item which should be added at the target pos. 0 for no changes
     *@return true if the adding of the warpfield was succesfull otherwise false
     */
-    bool addWarpField(position where, position target, unsigned short int starttilenr, unsigned short int startitemnr, unsigned short int targettilenr, unsigned short int targetitemnr);
+    bool addWarpField(position where, position target, unsigned short int starttilenr, Item::id_type startitemnr, unsigned short int targettilenr, Item::id_type targetitemnr);
 
     /**
     *adds a special field to a specific position
@@ -804,7 +804,7 @@ public:
     *@param tergetitemnr tje od of an item which should be placed at the targetfield. 0 for no changes
     *@return true if the adding of the warpfield was successfully otherwise false
     */
-    bool addWayUp(position where, unsigned short int starttilenr, unsigned short int startitemnr, unsigned short int targettilenr, unsigned short int targetitemnr);
+    bool addWayUp(position where, unsigned short int starttilenr, Item::id_type startitemnr, unsigned short int targettilenr, Item::id_type targetitemnr);
 
     /**
     *removes a warpfield at a given position
@@ -1688,152 +1688,11 @@ private:
     //! das home-Verzeichnis des Servers
     std::string directory;
 
-    //! Alterungsfunktion fr alle Item bis einschliesslich Stufe 7
-    static bool AgeItemUpStep7(Item *it) {
-        switch (it->wear) {
-        case 255:
-            return true;     // 255 altert nicht
-            //      case 128:return false;
-            //      case 64:return false;
-            //      case 32:return false;
-            //      case 16:return false;
-            //      case 8:return false;
-            //      case 4:return false;
-        case 0:
-            return false;
-        default:
-            it->wear--;     // eins abziehen
-            return true;
-        }
-    }
-
-    //! Alterungsfunktion fr alle Item bis einschliesslich Stufe 6
-    static bool AgeItemUpStep6(Item *it) {
-        switch (it->wear) {
-        case 255:
-            return true;     // 255 altert nicht
-            //      case 64:return false;
-            //      case 32:return false;
-            //      case 16:return false;
-            //      case 8:return false;
-            //      case 4:return false;
-        case 0:
-            return false;
-        default :
-
-            if (it->wear < 128) {
-                it->wear--;
-            }
-
-            return true;
-        }
-    }
-
-    //! Alterungsfunktion fr alle Item bis einschliesslich Stufe 5
-    static bool AgeItemUpStep5(Item *it) {
-        switch (it->wear) {
-        case 255:
-            return true;     // 255 altert nicht
-            //      case 32:return false;
-            //      case 16:return false;
-            //      case 8:return false;
-            //      case 4:return false;
-        case 0:
-            return false;
-        default :
-
-            if (it->wear < 64) {
-                it->wear--;
-            }
-
-            return true;
-        }
-    }
-
-    //! Alterungsfunktion fr alle Item bis einschliesslich Stufe 4
-    static bool AgeItemUpStep4(Item *it) {
-        switch (it->wear) {
-        case 255:
-            return true;     // 255 altert nicht
-            //      case 16:return false;
-            //      case 8:return false;
-            //      case 4:return false;
-        case 0:
-            return false;
-        default :
-
-            if (it->wear < 32) {
-                it->wear--;
-            }
-
-            return true;
-        }
-    }
-
-    //! Alterungsfunktion fr alle Item bis einschliesslich Stufe 3
-    static bool AgeItemUpStep3(Item *it) {
-        switch (it->wear) {
-        case 255:
-            return true;     // 255 altert nicht
-            //      case 8:return false;
-            //      case 4:return false;
-        case 0:
-            return false;
-        default :
-
-            if (it->wear < 16) {
-                it->wear--;
-            }
-
-            return true;
-        }
-    }
-
-    //! Alterungsfunktion fr alle Item bis einschliesslich Stufe 2
-    static bool AgeItemUpStep2(Item *it) {
-        switch (it->wear) {
-        case 255:
-            return true;     // 255 altert nicht
-            //      case 4:return false;
-        case 0:
-            return false;
-        default :
-
-            if (it->wear < 8) {
-                --(it->wear);
-            }
-
-            return true;
-        }
-    }
-
-
-
-    //! Alterungsfunktion fr alle Item der Stufe 1
-    static bool AgeItemUpStep1(Item *it) {
-        switch (it->wear) {
-        case 255:
-            return true;     // 255 altert nicht
-        case 0:
-            return false;
-        default :
-
-            if (it->wear < 4) {
-                --(it->wear);
-            }
-
-            return true;
-        }
-    }
-
     //! Zeitpunkt der letzten Alterung (Anzahl der Sekunden seit 1.1.1970)
     time_t last_age;     //(32 Bit Integer)
 
-    //! von DoAge benoetigt
-    ITEM_FUNCT AgeItem;
-
     //! Anzahl der Sekunden zwischen den Alterungsschritten
-    long gap;
+    static const long gap = 180;
 
     //! X-Koordinate bei der die Alterung fortgesetzt wird
     short int nextXtoage;
@@ -1856,62 +1715,15 @@ private:
     //! Anzahl der kommpletten Durchlaeufe durch die Karte, seit die altersresistentesten Items gealtert wurden
     unsigned short int timecount;
 
-    //! Zeit zwischen zwei Alterungsdurchlaeufen der Karten in Sekunden
-#define TIMEGAP 150
-
-    //! Stufe 2 der Alterung in erfolgten Durchlaeufen durch die Karte
-#define STEP_2 2
-
-    //! Stufe 3 der Alterung in erfolgten Durchlaeufen durch die Karte
-#define STEP_3 3
-
-    //! Stufe 4 der Alterung in erfolgten Durchlaeufen durch die Karte
-#define STEP_4 32
-
-    //! Stufe 5 der Alterung in erfolgten Durchlaeufen durch die Karte
-#define STEP_5 128
-
-    //! Stufe 6 der Alterung in erfolgten Durchlaeufen durch die Karte
-#define STEP_6 1024
-
-    //! Stufe 7 der Alterung in erfolgten Durchlaeufen durch die Karte
-#define STEP_7 16384
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    //
-    // * das Verhaeltnis Spielzeit zu realer Zeit errechnet sich mit TIMEGAP ( in Sekunden )
-    // * und STEP_2 .. STEP_7, den Stufen der Alterung in erfolgten Durchlaeufen durch die Karte,
-    // * nach folgender Tabelle :
-    //
-    // Lebensdauer in realen Sekunden
-    //
-    // (   0 <= wear <   4 ) : (wear + 1)   * TIMEGAP - X
-    // (   4 <= wear <   8 ) : (wear - 3)   * TIMEGAP * STEP_2 - X + MAX_LAST
-    // (   8 <= wear <  16 ) : (wear - 7)   * TIMEGAP * STEP_3 - X + MAX_LAST
-    // (  16 <= wear <  32 ) : (wear - 15)  * TIMEGAP * STEP_4 - X + MAX_LAST
-    // (  32 <= wear <  64 ) : (wear - 31)  * TIMEGAP * STEP_5 - X + MAX_LAST
-    // (  64 <= wear < 128 ) : (wear - 63)  * TIMEGAP * STEP_6 - X + MAX_LAST
-    // ( 128 <= wear < 255 ) : (wear - 127) * TIMEGAP * STEP_7 - X + MAX_LAST
-    // ( 255 == wear )       : unendlich
-    //
-    // X entspricht der Zeit die seit der letzten Alterung der Stufe vergangen ist
-    //
-    // MAX_LAST entspricht der laengsten "Lebenszeit" eines Items in der um eins
-    // niedrigeren Stufe
-    //
-    // STEP_x muss so gewaehlt werden, dass alle STEP_y mit y < x Teiler von Step_x sind
-    //
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    //! laedt alle items der Welt altern, falls seit dem letzten Aufruf mindestens gap Sekunden vergangen sind
-    // \return true falls die Alterung durchgefhrt wurde, false sonst
+    //! ages all world items if necessary
+    // \return true iff any aging was done
     bool DoAge();
 
     //! Fhrt die Alterung der Item im Inventory aller Player durch
     // und schickt ggf. ein Update an die Spieler
     // \param funct
     // \see Item.h
-    void AgeInventory(ITEM_FUNCT funct);
+    void AgeInventory();
 
     //! das Verzeichnis mit den Skripten
     std::string scriptDir;

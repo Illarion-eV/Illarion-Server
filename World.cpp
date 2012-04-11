@@ -48,16 +48,11 @@
 #include "WaypointList.hpp"
 
 //#define World_DEBUG
-// a map storing configuration options from a config file...
+
 extern std::map<std::string, std::string> configOptions;
-//Table with data of Monsters
 extern MonsterTable *MonsterDescriptions;
-//Map with opitions which messages are logged or not
-//! eine Tabelle fr Waffen - Item Daten
 extern WeaponObjectTable *WeaponItems;
-
 extern boost::shared_ptr<LuaLogoutScript>logoutScript;
-
 extern std::ofstream talkfile;
 
 World *World::_self;
@@ -115,11 +110,9 @@ World::World(std::string dir, time_t starttime) {
 
     monitoringclienttimer = new MilTimer(250);
 
-    gap = TIMEGAP;
     timecount = 1;
     last_age = time(NULL);
     ammount = 50;
-    AgeItem = AgeItemUpStep1;
 
     srand((unsigned) time(NULL));
 
@@ -442,16 +435,17 @@ bool World::load_from_editor(std::string filename) {
     int x,y,z;
     z = 0;
     int lastx=-1, lasty=-1;
-    //CField* cfp;
     Item it;
+    Item::id_type itemId;
+    Item::data_type itemData;
+    Item::quality_type itemQuality;
     oldy = -1;
     Logger::writeMessage("World_Imports", "try to import items: " + filename);
     mapitemsfile >> x;
 
     while (mapitemsfile.good()) {
-        it.quality = 333;
-        it.wear = 255;
-        it.number = 1;
+        it.makePermanent();
+        it.setNumber(1);
         x -= mapstartx;
         x += h_x;
         std::string LogMessage =  "item: x: " + Logger::toString(x) +  " ";
@@ -497,8 +491,9 @@ bool World::load_from_editor(std::string filename) {
             return false;
         }
 
-        mapitemsfile >> it.id;
-        LogMessage += "id: " + Logger::toString(it.id) + " ";
+        mapitemsfile >> itemId;
+        it.setId(itemId);
+        LogMessage += "id: " + Logger::toString(itemId) + " ";
 
         mapitemsfile >> dummy;
 
@@ -507,20 +502,22 @@ bool World::load_from_editor(std::string filename) {
             return false;
         }
 
-        mapitemsfile >> it.data;
-        LogMessage += "data: " + Logger::toString(it.data) + " ";
+        mapitemsfile >> itemData;
+        it.setData(itemData);
+        LogMessage += "data: " + Logger::toString(itemData) + " ";
 
         if (mapitemsfile.good()) {
             if (mapitemsfile.get() == ';') {
-                mapitemsfile >> it.quality;
-                LogMessage += "quality: " + Logger::toString(it.quality) + " ";
+                mapitemsfile >> itemQuality;
+                it.setQuality(itemQuality);
+                LogMessage += "quality: " + Logger::toString(itemQuality) + " ";
             } else {
                 mapitemsfile.unget();
             }
         }
 
         // default value while mapeditor is out of order
-        it.quality = 333;
+        it.setQuality(333);
 
         //if ( LogOptions["World_Imports"] )
         //  Logger::writeMessage("World_Imports", LogMessage);
@@ -774,7 +771,7 @@ void World::checkMonsters() {
     }
 
     std::vector < Player * > temp;
-    MONSTERVECTOR::iterator monsterIterator = Monsters.begin();
+    auto monsterIterator = Monsters.begin();
 
     if (ap > 1) {
         --ap;
@@ -816,9 +813,9 @@ void World::checkMonsters() {
                     WeaponStruct theWeapon;
                     uint16_t range=1;
 
-                    if (WeaponItems->find(itr.id, theWeapon)) {
+                    if (WeaponItems->find(itr.getId(), theWeapon)) {
                         range=theWeapon.Range;
-                    } else if (WeaponItems->find(itl.id, theWeapon)) {
+                    } else if (WeaponItems->find(itl.getId(), theWeapon)) {
                         range=theWeapon.Range;
                     }
 
@@ -1015,9 +1012,9 @@ void World::checkMonsters() {
                     WeaponStruct theWeapon;
                     uint16_t range=1;
 
-                    if (WeaponItems->find(itr.id, theWeapon)) {
+                    if (WeaponItems->find(itr.getId(), theWeapon)) {
                         range=theWeapon.Range;
-                    } else if (WeaponItems->find(itl.id, theWeapon)) {
+                    } else if (WeaponItems->find(itl.getId(), theWeapon)) {
                         range=theWeapon.Range;
                     }
 

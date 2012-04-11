@@ -392,7 +392,7 @@ bool Player::VerifyPassword(std::string chkpw) {
 void Player::sendCharacterItemAtPos(unsigned char cpos) {
     if (cpos < (MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
         // gltiger Wert
-        boost::shared_ptr<BasicServerCommand>cmd(new UpdateInventoryPosTC(cpos, characterItems[cpos].id, characterItems[ cpos].number));
+        boost::shared_ptr<BasicServerCommand>cmd(new UpdateInventoryPosTC(cpos, characterItems[cpos].getId(), characterItems[cpos].getNumber()));
         Connection->addCommand(cmd);
     }
 }
@@ -404,36 +404,34 @@ void Player::sendWeather(WeatherStruct weather) {
 }
 
 
-void Player::AgeInventory(ITEM_FUNCT funct) {
+void Player::ageInventory() {
     CommonStruct tempCommon;
 
     for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
-        if (characterItems[ i ].id != 0) {
-            if (!CommonItems->find(characterItems[ i ].id, tempCommon)) {
+        if (characterItems[ i ].getId() != 0) {
+            if (!CommonItems->find(characterItems[ i ].getId(), tempCommon)) {
                 tempCommon.rotsInInventory=false;
-                tempCommon.ObjectAfterRot = characterItems[ i ].id;
+                tempCommon.ObjectAfterRot = characterItems[ i ].getId();
             }
 
             if (tempCommon.rotsInInventory) {
-                if (!funct(&characterItems[ i ])) {
-                    if (characterItems[ i ].id != tempCommon.ObjectAfterRot) {
+                if (!characterItems[ i ].survivesAging()) {
+                    if (characterItems[ i ].getId() != tempCommon.ObjectAfterRot) {
 #ifdef Character_DEBUG
-                        std::cout << "INV:Ein Item wird umgewandelt von: " << characterItems[ i ].id << "  nach: " << tempCommon.ObjectAfterRot << "!\n";
+                        std::cout << "INV:Ein Item wird umgewandelt von: " << characterItems[ i ].getId() << "  nach: " << tempCommon.ObjectAfterRot << "!\n";
 #endif
-                        characterItems[ i ].id = tempCommon.ObjectAfterRot;
+                        characterItems[ i ].setId(tempCommon.ObjectAfterRot);
 
                         if (CommonItems->find(tempCommon.ObjectAfterRot, tempCommon)) {
-                            characterItems[ i ].wear = tempCommon.AgeingSpeed;
+                            characterItems[ i ].setWear(tempCommon.AgeingSpeed);
                         }
 
                         sendCharacterItemAtPos(i);
                     } else {
 #ifdef Character_DEBUG
-                        std::cout << "INV:Ein Item wird gel�cht,ID:" << characterItems[ i ].id << "!\n";
+                        std::cout << "INV:Ein Item wird gel�cht,ID:" << characterItems[ i ].getId() << "!\n";
 #endif
-                        characterItems[ i ].id = 0;
-                        characterItems[ i ].number = 0;
-                        characterItems[ i ].wear = 0;
+                        characterItems[ i ].reset();
                         sendCharacterItemAtPos(i);
                     }
 
@@ -445,8 +443,8 @@ void Player::AgeInventory(ITEM_FUNCT funct) {
     }
 
     // Inhalt des Rucksacks altern
-    if ((characterItems[ BACKPACK ].id != 0) && (backPackContents != NULL)) {
-        backPackContents->doAge(funct, true);
+    if ((characterItems[ BACKPACK ].getId() != 0) && (backPackContents != NULL)) {
+        backPackContents->doAge(true);
         updateBackPackView();
     }
 
@@ -454,7 +452,7 @@ void Player::AgeInventory(ITEM_FUNCT funct) {
 
     for (depotIterator = depotContents.begin(); depotIterator != depotContents.end(); depotIterator++) {
         if (depotIterator->second != NULL) {
-            depotIterator->second->doAge(funct, true);
+            depotIterator->second->doAge(true);
 
             for (int i = 0; i < MAXSHOWCASES; ++i) {
                 if (showcases[ i ].contains(depotIterator->second)) {
@@ -488,7 +486,7 @@ int Player::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali, ui
     int temp = Character::createItem(itemid, count, quali, data);
 
     for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
-        if (characterItems[ i ].id != 0) {
+        if (characterItems[ i ].getId() != 0) {
             sendCharacterItemAtPos(i);
         }
     }
@@ -510,7 +508,7 @@ int Player::_eraseItem(TYPE_OF_ITEM_ID itemid, int count, uint32_t data, bool us
     std::cout << "try to erase in player inventory " << count << " items of type " << itemid << "\n";
 #endif
 
-    if ((characterItems[ BACKPACK ].id != 0) && (backPackContents != NULL)) {
+    if ((characterItems[ BACKPACK ].getId() != 0) && (backPackContents != NULL)) {
         temp = backPackContents->_eraseItem(itemid, temp, data, useData);
         updateBackPackView();
 #ifdef Player_DEBUG
@@ -522,28 +520,24 @@ int Player::_eraseItem(TYPE_OF_ITEM_ID itemid, int count, uint32_t data, bool us
     if (temp > 0) {
         // BACKPACK als Item erstmal auslassen
         for (unsigned char i = MAX_BELT_SLOTS + MAX_BODY_ITEMS - 1; i > 0; --i) {
-            if ((characterItems[ i ].id == itemid) && (!useData || characterItems[ i ].data == data) && (temp > 0)) {
-                if (temp >= characterItems[ i ].number) {
-                    temp = temp - characterItems[ i ].number;
-                    characterItems[ i ].id = 0;
-                    characterItems[ i ].number = 0;
-                    characterItems[ i ].wear = 0;
+            if ((characterItems[ i ].getId() == itemid) && (!useData || characterItems[ i ].getData() == data) && (temp > 0)) {
+                if (temp >= characterItems[ i ].getNumber()) {
+                    temp = temp - characterItems[ i ].getNumber();
+                    characterItems[ i ].reset();
 
                     //std::cout<<"Try to find out if it was a two hander!"<<std::endl;
                     if (i == LEFT_TOOL || i == RIGHT_TOOL) {
                         unsigned char offhand = (i==LEFT_TOOL)?RIGHT_TOOL:LEFT_TOOL;
 
-                        if (characterItems[ offhand ].id == 228) {
+                        if (characterItems[ offhand ].getId() == BLOCKEDITEM) {
                             // delete the occupied slot if the item was a two hander...
                             //std::cout<<"Item was two hander try to delete occopied slot"<<std::endl;
-                            characterItems[ offhand ].id=0;
-                            characterItems[ offhand ].number=0;
-                            characterItems[ offhand ].wear=0;
+                            characterItems[ offhand ].reset();
                             sendCharacterItemAtPos(offhand);
                         }
                     }
                 } else {
-                    characterItems[ i ].number = characterItems[ i ].number - temp;
+                    characterItems[ i ].setNumber(characterItems[ i ].getNumber() - temp);
                     temp = 0;
                 }
 
@@ -581,27 +575,24 @@ int Player::increaseAtPos(unsigned char pos, int count) {
 #endif
 
     if ((pos > 0) && (pos < MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
-        if (weightOK(characterItems[ pos ].id, count, NULL)) {
+        if (weightOK(characterItems[ pos ].getId(), count, NULL)) {
 
-            temp = characterItems[ pos ].number + count;
+            temp = characterItems[ pos ].getNumber() + count;
 #ifdef Player_DEBUG
             std::cout << "temp " << temp << "\n";
 #endif
 
             if (temp > MAXITEMS) {
-                characterItems[ pos ].number = MAXITEMS;
+                characterItems[ pos ].setNumber(MAXITEMS);
                 temp = temp - MAXITEMS;
             } else if (temp <= 0) {
-                bool updateBrightness = World::get()->getItemStatsFromId(characterItems[ pos ].id).Brightness > 0;
-                temp = count + characterItems[ pos ].number;
-                characterItems[ pos ].number = 0;
-                characterItems[ pos ].id = 0;
+                bool updateBrightness = World::get()->getItemStatsFromId(characterItems[ pos ].getId()).Brightness > 0;
+                temp = count + characterItems[ pos ].getNumber();
+                characterItems[ pos ].reset();
 
                 //L�chen des Occopied Slots
-                if (pos == RIGHT_TOOL && characterItems[LEFT_TOOL].id == BLOCKEDITEM) {
-                    characterItems[LEFT_TOOL].id = 0;
-                    characterItems[LEFT_TOOL].number = 0;
-                    characterItems[LEFT_TOOL].wear = 0;
+                if (pos == RIGHT_TOOL && characterItems[LEFT_TOOL].getId() == BLOCKEDITEM) {
+                    characterItems[LEFT_TOOL].reset();
                     sendCharacterItemAtPos(LEFT_TOOL);
                 }
 
@@ -609,7 +600,7 @@ int Player::increaseAtPos(unsigned char pos, int count) {
                     updateAppearanceForAll(true);
                 }
             } else {
-                characterItems[ pos ].number = temp;
+                characterItems[ pos ].setNumber(temp);
                 temp = 0;
             }
         }
@@ -1196,7 +1187,7 @@ bool Player::save() throw() {
             std::list<container_struct> containers;
 
             // add backpack to containerlist
-            if (characterItems[ BACKPACK ].id != 0 && backPackContents != NULL) {
+            if (characterItems[ BACKPACK ].getId() != 0 && backPackContents != NULL) {
                 containers.push_back(container_struct(*backPackContents, BACKPACK+1));
             }
 
@@ -1231,24 +1222,20 @@ bool Player::save() throw() {
             // save all items directly on the body...
             for (int thisItemSlot = 0; thisItemSlot < MAX_BODY_ITEMS + MAX_BELT_SLOTS; ++thisItemSlot) {
                 //if there is no item on this place, set all other values to 0
-                if (characterItems[ thisItemSlot ].id == 0) {
-                    characterItems[ thisItemSlot ].wear = 0;
-                    characterItems[ thisItemSlot ].number = 0;
-                    characterItems[ thisItemSlot ].quality = 0;
-                    characterItems[ thisItemSlot ].data = 0;
-                    characterItems[ thisItemSlot ].data_map.clear();
+                if (characterItems[ thisItemSlot ].getId() == 0) {
+                    characterItems[ thisItemSlot ].reset();
                 }
 
                 itemsQuery.addValue<int32_t>(itemsLineColumn, (int32_t)(++linenumber));
                 itemsQuery.addValue<int16_t>(itemsContainerColumn, 0);
                 itemsQuery.addValue<int32_t>(itemsDepotColumn, 0);
-                itemsQuery.addValue<TYPE_OF_ITEM_ID>(itemsItmIdColumn, characterItems[thisItemSlot].id);
-                itemsQuery.addValue<uint16_t>(itemsWearColumn, characterItems[thisItemSlot].wear);
-                itemsQuery.addValue<uint16_t>(itemsNumberColumn, characterItems[thisItemSlot].number);
-                itemsQuery.addValue<uint16_t>(itemsQualColumn, characterItems[thisItemSlot].quality);
-                itemsQuery.addValue<uint32_t>(itemsDataColumn, characterItems[thisItemSlot].data);
+                itemsQuery.addValue<TYPE_OF_ITEM_ID>(itemsItmIdColumn, characterItems[thisItemSlot].getId());
+                itemsQuery.addValue<uint16_t>(itemsWearColumn, characterItems[thisItemSlot].getWear());
+                itemsQuery.addValue<uint16_t>(itemsNumberColumn, characterItems[thisItemSlot].getNumber());
+                itemsQuery.addValue<uint16_t>(itemsQualColumn, characterItems[thisItemSlot].getQuality());
+                itemsQuery.addValue<uint32_t>(itemsDataColumn, characterItems[thisItemSlot].getData());
 
-                for (Item::DATA_MAP::iterator it = characterItems[ thisItemSlot ].data_map.begin(); it != characterItems[ thisItemSlot ].data_map.end(); ++it) {
+                for (auto it = characterItems[ thisItemSlot ].getDataBegin(); it != characterItems[ thisItemSlot ].getDataEnd(); ++it) {
                     dataQuery.addValue<int32_t>(dataLineColumn, (int32_t) linenumber);
                     dataQuery.addValue<std::string>(dataKeyColumn, it->first);
                     dataQuery.addValue<std::string>(dataValueColumn, it->second);
@@ -1265,21 +1252,21 @@ bool Player::save() throw() {
                     itemsQuery.addValue<int32_t>(itemsLineColumn, (int32_t)(++linenumber));
                     itemsQuery.addValue<int16_t>(itemsContainerColumn, (int16_t) actcont.id);
                     itemsQuery.addValue<int32_t>(itemsDepotColumn, (int32_t) actcont.depotid);
-                    itemsQuery.addValue<TYPE_OF_ITEM_ID>(itemsItmIdColumn, item->id);
-                    itemsQuery.addValue<uint16_t>(itemsWearColumn, item->wear);
-                    itemsQuery.addValue<uint16_t>(itemsNumberColumn, item->number);
-                    itemsQuery.addValue<uint16_t>(itemsQualColumn, item->quality);
-                    itemsQuery.addValue<uint32_t>(itemsDataColumn, item->data);
+                    itemsQuery.addValue<TYPE_OF_ITEM_ID>(itemsItmIdColumn, item->getId());
+                    itemsQuery.addValue<uint16_t>(itemsWearColumn, item->getWear());
+                    itemsQuery.addValue<uint16_t>(itemsNumberColumn, item->getNumber());
+                    itemsQuery.addValue<uint16_t>(itemsQualColumn, item->getQuality());
+                    itemsQuery.addValue<uint32_t>(itemsDataColumn, item->getData());
 
-                    for (Item::DATA_MAP::iterator it = item->data_map.begin(); it != item->data_map.end(); ++it) {
+                    for (auto it = item->getDataBegin(); it != item->getDataEnd(); ++it) {
                         dataQuery.addValue<int32_t>(dataLineColumn, (int32_t) linenumber);
                         dataQuery.addValue<std::string>(dataKeyColumn, it->first);
                         dataQuery.addValue<std::string>(dataValueColumn, it->second);
                     }
 
                     // if it is a container, add it to the list of containers to save...
-                    if (ContainerItems->find(item->id)) {
-                        Container::CONTAINERMAP::iterator iterat = actcont.container.containers.find(item->number);
+                    if (item->isContainer()) {
+                        Container::CONTAINERMAP::iterator iterat = actcont.container.containers.find(item->getNumber());
 
                         if (iterat != actcont.container.containers.end()) {
                             containers.push_back(container_struct(*(*iterat).second, linenumber));
@@ -1470,12 +1457,12 @@ bool Player::load() throw() {
             tempdepot = itemdepot[tuple];
             linenumber = itemlinenumber[tuple];
 
-            Item tempi;
-            tempi.id = itemid[tuple];
-            tempi.wear = itemwear[tuple];;
-            tempi.number = itemnumber[tuple];
-            tempi.quality = itemquality[tuple];
-            tempi.data = itemdata[tuple];
+            Item tempi(itemid[tuple],
+                       itemwear[tuple],
+                       itemnumber[tuple],
+                       itemquality[tuple],
+                       itemdata[tuple]
+            );
 
             while (curdatalinenumber < datamaplines && ditemlinenumber[curdatalinenumber] == linenumber) {
                 tempi.setData(key[curdatalinenumber], value[curdatalinenumber]);
@@ -1505,8 +1492,8 @@ bool Player::load() throw() {
                 throw std::exception();
             }
 
-            if (ContainerItems->find(tempi.id)) {
-                tempc = new Container(tempi.id);
+            if (tempi.isContainer()) {
+                tempc = new Container(tempi.getId());
 
                 if (linenumber > MAX_BODY_ITEMS + MAX_BELT_SLOTS) {
                     if (!it->second->InsertContainer(tempi, tempc)) {
@@ -1665,21 +1652,21 @@ void Player::PlayerDeath() {
     }
 
     if ((!admin) && (!isnewbie)) {
-        if (characterItems[ BACKPACK ].id != 0) {
-            _world->dropItemFromPlayerOnMap(this, BACKPACK, pos.x, pos.y, pos.z, characterItems[ BACKPACK ].number);    //Droppen vom Backpack
+        if (characterItems[ BACKPACK ].getId() != 0) {
+            _world->dropItemFromPlayerOnMap(this, BACKPACK, pos.x, pos.y, pos.z, characterItems[ BACKPACK ].getNumber());    //Droppen vom Backpack
         }
 
         for (unsigned char i = MAX_BODY_ITEMS; i <= MAX_BODY_ITEMS + MAX_BELT_SLOTS; ++i) {
-            if (characterItems[ i ].id != 0) {
-                _world->dropItemFromPlayerOnMap(this, i, pos.x, pos.y, pos.z, characterItems[ i ].number);    //Droppen des Grtels
+            if (characterItems[ i ].getId() != 0) {
+                _world->dropItemFromPlayerOnMap(this, i, pos.x, pos.y, pos.z, characterItems[ i ].getNumber());    //Droppen des Grtels
             }
         }
 
         for (char c = 0; c < 2; ++c) { //Droppen von zwei zufaelligen Char items
             unsigned char pos = rnd(1,MAX_BODY_ITEMS);
 
-            if (characterItems[ pos ].id != 0) {
-                _world->dropItemFromPlayerOnMap(this, pos, this->pos.x, this->pos.y, this->pos.z, characterItems[ pos ].number);
+            if (characterItems[ pos ].getId() != 0) {
+                _world->dropItemFromPlayerOnMap(this, pos, this->pos.x, this->pos.y, this->pos.z, characterItems[ pos ].getNumber());
             }
         }
     } else {
@@ -2289,166 +2276,6 @@ uint32_t Player::getQuestProgress(uint16_t questid) throw() {
     }
 
     return UINT32_C(0);
-}
-
-bool Player::moveDepotContentFrom(uint32_t sourcecharid, uint32_t targetdepotid, uint32_t sourcedepotid) throw() {
-    std::cerr << "Move depot content from function disabled." <<std::endl;
-    return false;
-    /*
-    Player *sourcechar = _world->Players.findID(sourcecharid);
-
-    if (!sourcechar) { // Player offline -> use SQL to move depot content
-        //sendMessage( "moveDepotContentFrom: Player offline - INIT" );
-
-        try {
-            //Laden einer Transaktion
-            ConnectionManager::TransactionHolder transaction = dbmgr->getTransaction();
-            std::map<uint32_t, Container *> depots, containers;
-            std::map<uint32_t, Container *>::iterator it;
-            std::stringstream qry;
-            size_t rows;
-            std::vector<uint16_t> itemlinenumber;
-            std::vector<uint16_t> itemincontainer;
-            std::vector<uint32_t> itemdepot;
-            std::vector<TYPE_OF_ITEM_ID> itemid;
-            std::vector<uint8_t> itemwear;
-            std::vector<uint8_t> itemnumber;
-            std::vector<uint16_t> itemquality;
-            std::vector<uint32_t> itemdata;
-
-            qry << "SELECT pit_linenumber,  pit_in_container, pit_depot, pit_itemid, pit_wear, pit_number, pit_quality, pit_data FROM playeritems";
-            qry << " WHERE pit_playerid = " << transaction.quote(sourcecharid) << " ORDER BY pit_linenumber";
-
-            rows = di::select_all<di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Integer, di::Integer>(transaction, itemlinenumber, itemincontainer, itemdepot, itemid, itemwear, itemnumber, itemquality, itemdata, qry.str());
-
-            qry.str("");
-            qry.clear();
-
-            // testing whether depot exists
-            qry << "SELECT DISTINCT pit_depot FROM playeritems WHERE pit_playerid = " << transaction.quote(sourcecharid);
-            qry << " AND pit_depot = " << transaction.quote(sourcedepotid+1);
-            std::vector<uint32_t> depotid;
-
-            if (! di::select_all<di::Integer>(transaction, depotid, qry.str())) {
-                return false;
-            }
-
-            // load volume
-            ContainerStruct depotstruct;
-            uint16_t depotsize = 0;
-
-            if (ContainerItems->find(DEPOTITEM, depotstruct)) {
-                depotsize = depotstruct.ContainerVolume;
-            }
-
-            depots[ sourcedepotid+1 ] = new Container(depotsize);
-
-            unsigned int tempdepot, tempincont, linenumber;
-            Container *tempc;
-            Item tempi;
-
-            qry.str("");
-            qry.clear();
-            qry << "DELETE FROM playeritems WHERE pit_playerid = " << transaction.quote(sourcecharid);
-            qry << " AND pit_linenumber IN (";
-
-            for (unsigned int tuple = 0; tuple < rows; ++tuple) {
-                tempincont = itemincontainer[tuple];
-                tempdepot = itemdepot[tuple];
-                linenumber = itemlinenumber[tuple];
-
-                tempi.id = itemid[tuple];
-                tempi.wear = itemwear[tuple];
-                tempi.number = itemnumber[tuple];
-                tempi.quality = itemquality[tuple];
-                tempi.data = itemdata[tuple];
-
-                // item is in a depot?
-                if (tempdepot && (it = depots.find(tempdepot)) == depots.end()) {
-                    // item not needed since it is in a wrong depot
-                    continue;
-                }
-
-                // item is in a container?
-                if (tempincont && (it = containers.find(tempincont)) == containers.end()) {
-                    // item not needed since it is in a wrong container
-                    continue;
-                }
-
-                if (!tempincont && !tempdepot) {
-                    // item not needed since it is in no container and no depot
-                    continue;
-                }
-
-                ContainerStruct cont;
-
-                if (ContainerItems->find(tempi.id, cont)) {
-                    tempc = new Container(cont.ContainerVolume);
-                    it->second->InsertContainer(tempi, tempc);
-                    containers[linenumber] = tempc;
-                } else {
-                    it->second->InsertItem(tempi, false);
-                }
-
-                qry << transaction.quote(linenumber) << ",";
-            }
-
-            qry << transaction.quote(linenumber) << ")";
-
-
-            if ((it=depotContents.find(targetdepotid + 1)) == depotContents.end()) {
-                depotContents[targetdepotid+1] = depots[ sourcedepotid+1 ];
-            } else {
-                delete it->second;
-                it->second = depots[ sourcedepotid+1 ];
-            }
-
-            di::exec(transaction, qry.str());
-            qry.str("");
-            qry.clear();
-            qry << "SELECT resort_items(" << transaction.quote(sourcecharid) << ")";
-            di::exec(transaction, qry.str());
-            transaction.commit();
-
-            closeAllShowcases();
-            //sendMessage( "moveDepotContentFrom: Player offline - SUCCESS" );
-            return true;
-        } catch (std::exception &e) {
-            std::cerr<<"exception: "<<e.what()<<" while moving offline depot!"<<std::endl;
-            return false;
-        }
-    } else {           // Player online  -> use internal structures to move depot content
-        //sendMessage( "moveDepotContentFrom: Player online - INIT" );
-
-        std::map<uint32_t, Container *>::iterator it_source, it_target;
-
-        // source depot does not exist?
-        if ((it_source=(sourcechar->depotContents).find(sourcedepotid + 1)) == sourcechar->depotContents.end()) {
-            return false;
-        }
-
-        // save the depot
-        Container *depotToMove = it_source->second;
-
-        // remove depot from sourcechar
-        sourcechar->depotContents.erase(it_source);
-
-        // target depot does not exist?
-        if ((it_target=depotContents.find(targetdepotid + 1)) == depotContents.end()) {
-            depotContents[targetdepotid+1] = depotToMove;
-        } else {
-            delete it_target->second;
-            it_target->second = depotToMove;
-        }
-
-        closeAllShowcases();
-        sourcechar->closeAllShowcases();
-        //sendMessage( "moveDepotContentFrom: Player online - SUCCESS" );
-        return true;
-    }
-
-    return false;
-    */
 }
 
 void Player::tempAttribCheck() {

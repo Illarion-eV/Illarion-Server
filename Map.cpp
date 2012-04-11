@@ -104,7 +104,7 @@ bool Map::addContainerToPos(Item it, Container *cc, MAP_POSITION pos) {
     if (GetPToCFieldAt(cfnew, pos.x, pos.y)) {     // neues Feld vorhanden
         if (cfnew->IsPassable()) {   // neues Feld begehbar
             if (cfnew->items.size() < (MAXITEMS - 1)) {     // noch Platz auf dem Feld
-                if (ContainerItems->find(it.id)) {     // item ist ein Container
+                if (ContainerItems->find(it.getId())) {     // item ist ein Container
                     CONTAINERHASH::iterator conmapn = maincontainers.find(pos);
                     MAXCOUNTTYPE count = 0;
 
@@ -134,7 +134,7 @@ bool Map::addContainerToPos(Item it, Container *cc, MAP_POSITION pos) {
                     }
 
                     Item titem = it;
-                    titem.number = count;
+                    titem.setNumber(count);
 
                     if (!cfnew->addTopItem(titem)) {
                         (*conmapn).second.erase(count);
@@ -162,7 +162,7 @@ bool Map::addAlwaysContainerToPos(Item it, Container *cc, MAP_POSITION pos) {
     Field *cfnew;
 
     if (GetPToCFieldAt(cfnew, pos.x, pos.y)) {     // neues Feld vorhanden
-        if (ContainerItems->find(it.id)) {     // item ist ein Container
+        if (ContainerItems->find(it.getId())) {     // item ist ein Container
             CONTAINERHASH::iterator conmapn = maincontainers.find(pos);
             MAXCOUNTTYPE count = 0;
 
@@ -192,7 +192,7 @@ bool Map::addAlwaysContainerToPos(Item it, Container *cc, MAP_POSITION pos) {
             }
 
             Item titem = it;
-            titem.number = count;
+            titem.setNumber(count);
 
             if (!cfnew->PutTopItem(titem)) {
                 (*conmapn).second.erase(count);
@@ -507,10 +507,10 @@ bool Map::Load(std::string name, unsigned short int x_offs, unsigned short int y
                                                 for (iter = field.items.begin(); iter != field.items.end(); iter++) {
                                                     //das Item ist ein Containeritem
 
-                                                    if (ContainerItems->find(iter->id)) {
-                                                        if (iter->number == key) {
+                                                    if (ContainerItems->find(iter->getId())) {
+                                                        if (iter->getNumber() == key) {
                                                             // Container laden
-                                                            tempc = new Container(iter->id);
+                                                            tempc = new Container(iter->getId());
                                                             tempc->Load(all_container);
                                                             // den Containerinhalt hinzufgen
                                                             (*conmapn).second.insert(Container::CONTAINERMAP::value_type(key, tempc));
@@ -597,7 +597,7 @@ bool Map::PutCFieldAt(Field &fi, short int x, short int y) {
 }
 
 
-void Map::DoAgeItems_XFromTo(short int xstart, short int xend, ITEM_FUNCT funct) {
+void Map::ageItemsInHorizontalRange(short int xstart, short int xend) {
 
     short int tempMinX;
     short int tempMaxX;
@@ -619,7 +619,7 @@ void Map::DoAgeItems_XFromTo(short int xstart, short int xend, ITEM_FUNCT funct)
 
     for (short int x = tempMinX; x <= tempMaxX; ++x) {
         for (short int y = 0; y < Height; ++y) {
-            int8_t rotstate = MainMap[x][y].DoAgeItems(funct);
+            int8_t rotstate = MainMap[x][y].DoAgeItems();
 
             //CLogger::writeMessage("rot_update", "aged items, rotstate: " + Logger::toString( static_cast<int>(rotstate) ) );
             if (rotstate == -1) {

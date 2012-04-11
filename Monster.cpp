@@ -57,156 +57,6 @@ void Monster::performStep(position targetpos) {
         dir = static_cast<Character::direction>(unsignedShortRandom(0, 7));
         move(dir);
     }
-
-    // unsigned char direction = 0;
-    // short int xoffs;
-    // short int yoffs;
-    // short int zoffs;
-
-    // xoffs = targetpos.x - pos.x;
-    // yoffs = targetpos.y - pos.y;
-    // zoffs = targetpos.z - pos.z;
-    // if ( ( abs(xoffs) <= MAX_PATH_FIND ) && ( abs(yoffs) <= MAX_PATH_FIND ) )
-    // {
-    // // player near... start breadth-first search to find a way towards...
-    // // should be replaced by A* search later...
-    // bool karte[MAX_PATH_FIND * 2 + 1][MAX_PATH_FIND * 2 + 1];
-    // char distances[MAX_PATH_FIND * 2 + 1][MAX_PATH_FIND * 2 + 1];
-    // SuchFeldListe Wertungen;
-    // Field* temp4;
-    // for ( int x = 0; x < MAX_PATH_FIND * 2 + 1; ++x )
-    // {
-    // for ( int y = 0; y < MAX_PATH_FIND * 2 + 1; ++y )
-    // {
-    // if (_world->GetPToCFieldAt(temp4,pos.x-MAX_PATH_FIND+x,pos.y-MAX_PATH_FIND+y,pos.z))
-    // {
-    // karte[x][y]=!(temp4->moveToPossible());
-    // }
-    // else
-    // {
-    // karte[x][y]=true;
-    // }
-    // }
-    // }
-    // karte[MAX_PATH_FIND][MAX_PATH_FIND] = false;
-    // karte[MAX_PATH_FIND+xoffs][MAX_PATH_FIND+yoffs] = false; // we want to move to our target...
-    // feld aktFeld, neuFeld;
-    // for ( int x = 0; x < MAX_PATH_FIND * 2 + 1; ++x )
-    // for ( int y = 0; y < MAX_PATH_FIND * 2 + 1; ++y )
-    // distances[x][y] = 127;
-    // aktFeld.x=MAX_PATH_FIND;
-    // aktFeld.y=MAX_PATH_FIND;
-    // aktFeld.distance=0;
-    // Wertungen.push_back(aktFeld);
-
-    // while (!Wertungen.empty())
-    // {
-    // aktFeld = Wertungen[0];
-    // Wertungen.erase(Wertungen.begin());
-    // if ( distances[aktFeld.x][aktFeld.y] > aktFeld.distance )
-    // distances[aktFeld.x][aktFeld.y] = aktFeld.distance;
-    // if ( ! karte[aktFeld.x][aktFeld.y] )//Karte frei
-    // {
-    // neuFeld.distance = aktFeld.distance + 1;
-    // neuFeld.x = aktFeld.x;
-    // if ( aktFeld.y > 0 )
-    // {
-    // neuFeld.y = aktFeld.y-1;
-    // if ( ( distances[neuFeld.x][neuFeld.y] > neuFeld.distance ) && ( ! karte[neuFeld.x][neuFeld.y] ) )
-    // {
-    // distances[neuFeld.x][neuFeld.y] = neuFeld.distance;
-    // Wertungen.push_back(neuFeld);
-    // }
-    // }
-    // if ( aktFeld.y < MAX_PATH_FIND * 2 )
-    // {
-    // neuFeld.y = aktFeld.y + 1;
-    // if ( ( distances[neuFeld.x][neuFeld.y] > neuFeld.distance ) && ( ! karte[neuFeld.x][neuFeld.y] ) )
-    // {
-    // distances[neuFeld.x][neuFeld.y] = neuFeld.distance;
-    // Wertungen.push_back(neuFeld);
-    // }
-    // }
-    // neuFeld.y = aktFeld.y;
-    // if ( aktFeld.x > 0 )
-    // {
-    // neuFeld.x = aktFeld.x - 1;
-    // if ( ( distances[neuFeld.x][neuFeld.y] > neuFeld.distance ) && ( ! karte[neuFeld.x][neuFeld.y] ) )
-    // {
-    // distances[neuFeld.x][neuFeld.y] = neuFeld.distance;
-    // Wertungen.push_back(neuFeld);
-    // }
-    // }
-    // if ( aktFeld.x < MAX_PATH_FIND * 2 )
-    // {
-    // neuFeld.x = aktFeld.x + 1;
-    // if ( ( distances[neuFeld.x][neuFeld.y] > neuFeld.distance ) && ( ! karte[neuFeld.x][neuFeld.y] ) )
-    // {
-    // distances[neuFeld.x][neuFeld.y] = neuFeld.distance;
-    // Wertungen.push_back(neuFeld);
-    // }
-    // }
-    // }
-    // }
-    // feld path;
-    // // starting from our target...
-    // path.x = MAX_PATH_FIND + xoffs;
-    // path.y = MAX_PATH_FIND + yoffs;
-    // path.distance = distances[path.x][path.y];
-    // while (path.distance > 1 && path.distance < 127)
-    // {
-    // // find out which field to go to...
-    // if (path.x > 0 && distances[path.x-1][path.y] < path.distance)
-    // {
-    // path.x--;
-    // path.distance = distances[path.x][path.y];
-    // continue;
-    // }
-    // else if (path.x <2*MAX_PATH_FIND  && distances[path.x+1][path.y] < path.distance)
-    // {
-    // path.x++;
-    // path.distance = distances[path.x][path.y];
-    // continue;
-    // }
-    // else if (path.y >0 && distances[path.x][path.y-1] < path.distance)
-    // {
-    // path.y--;
-    // path.distance = distances[path.x][path.y];
-    // continue;
-    // }
-    // else if (path.y <2*MAX_PATH_FIND  && distances[path.x][path.y+1] < path.distance)
-    // {
-    // path.y++;
-    // path.distance = distances[path.x][path.y];
-    // continue;
-    // }
-    // }
-    // if (path.x > MAX_PATH_FIND) // east
-    // direction = 2;
-    // if (path.x < MAX_PATH_FIND) // west
-    // direction = 6;
-    // if (path.y > MAX_PATH_FIND) // south
-    // direction = 4;
-    // if (path.y < MAX_PATH_FIND) // north
-    // direction = 0;
-
-    // // if we can't reach our target... just make a random move... some movement is better then none at all :)
-    // if (path.distance == 127)
-    // direction = 2 * unsignedShortRandom( 0, 3);
-
-    // }
-    // else //Nur in die richtung laufen
-    // {
-    // if (abs(xoffs) > abs(yoffs) )
-    // {
-    // direction = (xoffs>0)?6:2;
-    // }
-    // else
-    // {
-    // direction = (yoffs>0)?4:0;
-    // }
-    // }
-    //move( (Character::direction)direction );
 }
 
 void Monster::setType(const TYPE_OF_CHARACTER_ID &type) throw(unknownIDException) {
@@ -250,9 +100,9 @@ void Monster::setType(const TYPE_OF_CHARACTER_ID &type) throw(unknownIDException
             //std::cout<<"Itemprop for item: "<< itemit->itemid<<" prob: "<<itemprobability<<" Itemit prob="<<itemit->probability<<"\n";
             if (itemit->probability <= itemprobability) {
                 //std::cout<<"Added Item:"<<itemit->itemid<<"\n";
-                characterItems[ it->first ].id = itemit->itemid;     // Eingeweide
-                characterItems[ it->first ].number = rnd(itemit->amount);
-                characterItems[ it->first ].wear = itemit->AgeingSpeed;
+                characterItems[ it->first ].setId(itemit->itemid);     // Eingeweide
+                characterItems[ it->first ].setNumber(rnd(itemit->amount));
+                characterItems[ it->first ].setWear(itemit->AgeingSpeed);
                 found = true;
             }
 
@@ -338,7 +188,7 @@ void Monster::receiveText(talk_type tt, std::string message, Character *cc) {
 
     if (MonsterDescriptions->find(getType(), monStruct)) {
         if (monStruct.script!=NULL && monStruct.script->existsEntrypoint("receiveText")) {
-            //Nur Script aufrufen wenn man sich nicht selber hört.
+            //Nur Script aufrufen wenn man sich nicht selber hï¿½rt.
             if (this != cc) {
                 monStruct.script->receiveText(this,tt,message,cc);
             }

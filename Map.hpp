@@ -144,9 +144,7 @@ public:
     // \return true falls die x,y Koordinate existiert, false sonst
     bool PutCFieldAt(Field &fi, short int x, short int y);
 
-    //! wendet die Funktion funct auf alle Item aller Felder der Karte
-    // mit X-Koordinate von xstart bis xend an (Koordinaten im Feld, keine logischen der Karte)
-    void DoAgeItems_XFromTo(short int xstart, short int xend, ITEM_FUNCT funct);
+    void ageItemsInHorizontalRange(short int xstart, short int xend);
 
     //! wendet die Funktion funct auf alle Field der Karte mit X-Koordinate von xstart bis xend an
     // \param xstart kleinste bearbeitete X-Koordinate (Koordinaten im Feld, keine logischen der Karte)

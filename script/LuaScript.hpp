@@ -65,9 +65,6 @@ struct SouTar {
     */
     SouTar() {
         Type = LUA_NONE;
-        item.id = 0;
-        item.wear = 0;
-        item.number = 0;
         character = NULL;
     }
 };

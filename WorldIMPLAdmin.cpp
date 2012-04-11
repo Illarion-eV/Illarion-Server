@@ -1092,11 +1092,12 @@ void World::what_command(Player *cp) {
         if (tempf->ViewTopItem(top)) {
             message.str("");
 
-            message << "- Item " << top.id;
+            message << "- Item " << top.getId();
 
             if (cp->hasGMRight(gmr_basiccommands)) {
-                message << ",  Quality " << top.quality;
-                message << ",  Data " << top.data;
+                message << ", Quality " << top.getQuality();
+                message << ", Data " << top.getData();
+                message << ", Wear " << top.getWear();
             }
 
             cp->sendMessage(message.str());
@@ -1849,13 +1850,12 @@ bool World::exportMaps(Player *cp) {
                     ITEMVECTOR itemsv;
                     field.giveExportItems(itemsv);
                     unsigned short itemnum = 0;
-                    ITEMVECTOR::iterator it;
 
-                    for (it = itemsv.begin(); it != itemsv.end(); ++it, ++itemnum) {
-                        itemsf << x-minX << ";" << y-minY << ";" << itemnum << ";" << it->id << ";" << it->data;
+                    for (auto it = itemsv.cbegin(); it != itemsv.cend(); ++it, ++itemnum) {
+                        itemsf << x-minX << ";" << y-minY << ";" << itemnum << ";" << it->getId() << ";" << it->getData();
 
-                        if (it->quality != 333) {
-                            itemsf << ";" << it->quality;
+                        if (it->getQuality() != 333) {
+                            itemsf << ";" << it->getQuality();
                         }
 
                         itemsf << std::endl;

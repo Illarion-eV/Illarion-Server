@@ -558,8 +558,8 @@ public:
             if ((player->attackmode) && (player->enemyid != 0) && (LuaMageScript)) {
                 bool zauberstab=false;
 
-                if ((player->characterItems[ LEFT_TOOL ].id != 0) && (player->characterItems[ LEFT_TOOL ].id != BLOCKEDITEM)) {
-                    if (WeaponItems->find(player->characterItems[ LEFT_TOOL ].id, tempWeapon)) {
+                if ((player->characterItems[ LEFT_TOOL ].getId() != 0) && (player->characterItems[ LEFT_TOOL ].getId() != BLOCKEDITEM)) {
+                    if (WeaponItems->find(player->characterItems[ LEFT_TOOL ].getId(), tempWeapon)) {
                         if (tempWeapon.WeaponType == 13) {
                             zauberstab = true;
                             std::cout << "Zauberstab in der Hand -> OK" << std::endl;
@@ -567,8 +567,8 @@ public:
                     }
                 }
 
-                if ((player->characterItems[ RIGHT_TOOL ].id != 0) && (player->characterItems[ RIGHT_TOOL ].id != BLOCKEDITEM)) {
-                    if (WeaponItems->find(player->characterItems[ RIGHT_TOOL ].id, tempWeapon)) {
+                if ((player->characterItems[ RIGHT_TOOL ].getId() != 0) && (player->characterItems[ RIGHT_TOOL ].getId() != BLOCKEDITEM)) {
+                    if (WeaponItems->find(player->characterItems[ RIGHT_TOOL ].getId(), tempWeapon)) {
                         if (tempWeapon.WeaponType == 13) {
                             zauberstab = true;
                             std::cout << "Zauberstab in der Hand -> OK" << std::endl;
@@ -669,7 +669,7 @@ public:
                     std::cout << "gltiger Wert" << std::endl;
 #endif
 
-                    if (player->characterItems[ pos ].id != 0) {
+                    if (player->characterItems[ pos ].getId() != 0) {
 #ifdef World_DEBUG
                         std::cout << "Position " << (int) pos << " am Koerper ist besetzt" << std::endl;
 #endif
@@ -690,7 +690,7 @@ public:
                             Target.pos = player->pos;
                         }
                     } else {
-                        std::cerr<<"cp->characterItems[pos].id != 0 false, paramOK = false!"<<std::endl;
+                        std::cerr<<"cp->characterItems[pos].getId() != 0 false, paramOK = false!"<<std::endl;
                         paramOK = false;
                     }
                 } else {
@@ -748,11 +748,11 @@ public:
                     break;
                 case LUA_ITEM:
                     LuaMageScript->CastMagicOnItem(player,Target.item,counter,paramtemp,static_cast<unsigned char>(LTS_NOLTACTION));
-                    msg = "Casted spell: " + Logger::toString(spellId) + " on item: " + Logger::toString(Target.item.id);
+                    msg = "Casted spell: " + Logger::toString(spellId) + " on item: " + Logger::toString(Target.item.getId());
                     break;
                 default:
                     LuaMageScript->CastMagic(player,counter,paramtemp,static_cast<unsigned char>(LTS_NOLTACTION));
-                    msg = "Casted spell: " + Logger::toString(spellId) + " on item: " + Logger::toString(Target.item.id);
+                    msg = "Casted spell: " + Logger::toString(spellId) + " on item: " + Logger::toString(Target.item.getId());
                     break;
                 } //Ende Switch
 
@@ -954,7 +954,7 @@ public:
                             Logger::writeMessage("Use","Item on field", false);
 
                             if (first) {
-                                LuaScript = CommonItems->findScript(it.id);
+                                LuaScript = CommonItems->findScript(it.getId());
 
                                 if (LuaScript) {
                                     Source.Type = LUA_ITEM;
@@ -1012,10 +1012,10 @@ public:
                         Container *tempc;
 
                         if (ps->viewItemNr(pos, tempi, tempc)) {
-                            Logger::writeMessage("Use", "pos found item id: " + Logger::toString(tempi.id),false);
+                            Logger::writeMessage("Use", "pos found item id: " + Logger::toString(tempi.getId()),false);
 
                             if (first) {
-                                LuaScript = CommonItems->findScript(tempi.id);
+                                LuaScript = CommonItems->findScript(tempi.getId());
 
                                 if (LuaScript) {
                                     Source.Type = LUA_ITEM;
@@ -1067,12 +1067,12 @@ public:
                 if (pos < (MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
                     Logger::writeMessage("Use", "position approved!",false);
 
-                    if (player->characterItems[ pos ].id != 0) {
-                        Logger::writeMessage("Use","at position " + Logger::toString(static_cast<int>(pos)) + " on body, is an item with id: " + Logger::toString(player->characterItems[ pos ].id),false);
+                    if (player->characterItems[ pos ].getId() != 0) {
+                        Logger::writeMessage("Use","at position " + Logger::toString(static_cast<int>(pos)) + " on body, is an item with id: " + Logger::toString(player->characterItems[ pos ].getId()),false);
 
                         if (first) {
 
-                            LuaScript = CommonItems->findScript(player->characterItems[ pos ].id) ;
+                            LuaScript = CommonItems->findScript(player->characterItems[ pos ].getId()) ;
 
                             if (LuaScript) {
                                 Source.Type = LUA_ITEM;
@@ -1149,7 +1149,7 @@ public:
 
         std::string msg;
 
-        if (Source.Type == LUA_ITEM && Source.item.quality < 100) {
+        if (Source.Type == LUA_ITEM && !Source.item.isComplete()) {
             if (player->getPlayerLanguage() == 0) {
                 player->inform("Du kannst keine unfertigen Gegenst�nde benutzen!");
             } else {
@@ -1167,7 +1167,7 @@ public:
 
                 if (Source.Type == LUA_ITEM && (Target.Type == LUA_ITEM || Target.Type == LUA_NONE)) {
                     LuaScript->UseItem(player, Source.item, Target.item, counter, static_cast<TYPE_OF_ITEM_ID>(paramtemp), static_cast<unsigned char>(LTS_NOLTACTION));
-                    msg = "Used Item: " + Logger::toString(Source.item.id) + " with item: " + Logger::toString(Target.item.id);
+                    msg = "Used Item: " + Logger::toString(Source.item.getId()) + " with item: " + Logger::toString(Target.item.getId());
                 }
             }
         } else if (LuaNPCScript) {
@@ -1187,7 +1187,7 @@ public:
                     msg = "Used NPC: " + Source.character->name + "(" + Logger::toString(Source.character->id) + ") with empty field at pos(" + Logger::toString(Target.pos.x) + "," + Logger::toString(Target.pos.y) + "," + Logger::toString(Target.pos.z) + ")";
                 } else if (Source.Type == LUA_CHARACTER && Target.Type == LUA_ITEM) {
                     LuaNPCScript->useNPCWithItem(player, Target.item, counter, static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION));
-                    msg = "Used NPC: " + Source.character->name + "(" + Logger::toString(Source.character->id) + ") with Item: " + Logger::toString(Target.item.id);
+                    msg = "Used NPC: " + Source.character->name + "(" + Logger::toString(Source.character->id) + ") with Item: " + Logger::toString(Target.item.getId());
                 } else if (Source.Type == LUA_CHARACTER && Target.Type == LUA_CHARACTER) {
                     LuaNPCScript->useNPCWithCharacter(player, Target.character, counter, static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION));
                     msg = "Used NPC: " + Source.character->name + "(" + Logger::toString(Source.character->id) + ") with character: " + Target.character->name + "(" + Logger::toString(Target.character->id) + ")";
@@ -1211,7 +1211,7 @@ public:
                     msg = "Used Monster: " + Source.character->name + "(" + Logger::toString(Source.character->id) + ") with empty field at pos(" + Logger::toString(Target.pos.x) + "," + Logger::toString(Target.pos.y) + "," + Logger::toString(Target.pos.z) + ")";
                 } else if (Source.Type == LUA_CHARACTER && Target.Type == LUA_ITEM) {
                     LuaMonsterScript->useMonsterWithItem(Source.character,player,Target.item,counter,static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION));
-                    msg = "Used Monster: " + Source.character->name + "(" + Logger::toString(Source.character->id) + ") with Item: " + Logger::toString(Target.item.id);
+                    msg = "Used Monster: " + Source.character->name + "(" + Logger::toString(Source.character->id) + ") with Item: " + Logger::toString(Target.item.getId());
                 } else if (Source.Type == LUA_CHARACTER && Target.Type == LUA_CHARACTER) {
                     LuaMonsterScript->useMonsterWithCharacter(Source.character,player,Target.character,counter,static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION));
                     msg = "Used Monster: " + Source.character->name + "(" + Logger::toString(Source.character->id) + ") with character: " + Target.character->name + "(" + Logger::toString(Target.character->id) + ")";

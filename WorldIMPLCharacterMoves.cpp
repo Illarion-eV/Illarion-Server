@@ -57,13 +57,12 @@ bool World::warpMonster(Monster *cm, Field *cfstart) {
 void World::checkFieldAfterMove(Character *cc, Field *cfstart) {
     if (cfstart->HasSpecialItem()) {
         TilesModificatorStruct tmod;
-        ITEMVECTOR::iterator theIterator;
 
-        for (theIterator = cfstart->items.begin(); theIterator < cfstart->items.end(); ++theIterator) {
-            if (TilesModItems->find(theIterator->id, tmod)) {
+        for (auto it = cfstart->items.begin(); it < cfstart->items.end(); ++it) {
+            if (TilesModItems->find(it->getId(), tmod)) {
                 if ((tmod.Modificator & FLAG_SPECIALITEM) != 0) {
 
-                    boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(theIterator->id);
+                    boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(it->getId());
 
                     if (script) {
                         script->CharacterOnField(cc);
@@ -71,7 +70,7 @@ void World::checkFieldAfterMove(Character *cc, Field *cfstart) {
                     }
 
                     /*
-                    if ( CommonItems->find( theIterator->id, com) ) //Script finden f�r das Item
+                    if ( CommonItems->find( it->getId(), com) ) //Script finden f�r das Item
                     {
                         if ( com.script ) {
                             com.script->CharacterOnField(cc);
@@ -323,7 +322,7 @@ void World::sendCharsInVector(std::vector < T * > &vec, Player *cp, bool sendSpi
 }
 
 
-bool World::addWarpField(position where, position target, unsigned short int starttilenr, TYPE_OF_ITEM_ID startitemnr) {
+bool World::addWarpField(position where, position target, unsigned short int starttilenr, Item::id_type startitemnr) {
 #ifdef World_CharMove_DEBUG
     std::cout << "addWarpField: x: " << where.x << " y: " << where.y << " z: " << where.z << "\n";
 #endif
@@ -338,9 +337,9 @@ bool World::addWarpField(position where, position target, unsigned short int sta
 
         if (startitemnr != 0) {
             Item warpfi;
-            warpfi.id = startitemnr;
-            warpfi.number = 1;
-            warpfi.wear = 255;
+            warpfi.setId(startitemnr);
+            warpfi.setNumber(1);
+            warpfi.makePermanent();
             cfstart->PutTopItem(warpfi);
         }
 
@@ -386,7 +385,7 @@ bool World::makeSpecialField(short int x, short int y, short int z, unsigned cha
 }
 
 
-bool World::addWarpField(position where, position target, unsigned short int starttilenr, TYPE_OF_ITEM_ID startitemnr, unsigned short int targettilenr, TYPE_OF_ITEM_ID targetitemnr) {
+bool World::addWarpField(position where, position target, unsigned short int starttilenr, Item::id_type startitemnr, unsigned short int targettilenr, Item::id_type targetitemnr) {
 
     if (addWarpField(where, target, starttilenr, startitemnr)) {
 
@@ -405,7 +404,7 @@ bool World::addWarpField(position where, position target, unsigned short int sta
 }
 
 
-bool World::addWayUp(position where, unsigned short int starttilenr, TYPE_OF_ITEM_ID startitemnr, unsigned short int targettilenr, TYPE_OF_ITEM_ID targetitemnr) {
+bool World::addWayUp(position where, unsigned short int starttilenr, Item::id_type startitemnr, unsigned short int targettilenr, Item::id_type targetitemnr) {
 
     position target;
     target.x = where.x;
@@ -425,9 +424,9 @@ bool World::addWayUp(position where, unsigned short int starttilenr, TYPE_OF_ITE
 
             if (targetitemnr != 0) {
                 Item trapdoor;
-                trapdoor.id = targetitemnr;
-                trapdoor.number = 1;
-                trapdoor.wear = 255;
+                trapdoor.setId(targetitemnr);
+                trapdoor.setNumber(1);
+                trapdoor.makePermanent();
                 std::cout << "vor PutItem" << std::endl;
                 cfp->PutTopItem(trapdoor);
                 std::cout << "nach PutItem" << std::endl;
