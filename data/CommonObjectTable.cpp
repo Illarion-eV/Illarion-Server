@@ -47,7 +47,7 @@ TYPE_OF_ITEM_ID CommonObjectTable::calcInfiniteRot(TYPE_OF_ITEM_ID id, std::map<
     visited[ id ] = true;
 
     if (id == m_table[ id ].ObjectAfterRot) {
-        if (m_table[ id ].AgeingSpeed >= 255) {
+        if (m_table[ id ].AgingSpeed >= 255) {
             m_table[ id ].AfterInfiniteRot = id;
             assigned[ id ] = true;
             return id;
@@ -102,7 +102,7 @@ void CommonObjectTable::reload() {
                 itemID = (TYPE_OF_ITEM_ID)((*itr)["com_itemid"].as<int16_t>());
                 temprecord.id = itemID;
                 temprecord.Weight = (TYPE_OF_WEIGHT)((*itr)["com_weight"].as<int16_t>());
-                temprecord.AgeingSpeed = (TYPE_OF_AGEINGSPEED)((*itr)["com_agingspeed"].as<int16_t>());
+                temprecord.AgingSpeed = (TYPE_OF_AGINGSPEED)((*itr)["com_agingspeed"].as<int16_t>());
                 temprecord.ObjectAfterRot = (TYPE_OF_ITEM_ID)(*itr)["com_objectafterrot"].as<TYPE_OF_ITEM_ID>();
                 temprecord.isStackable = (*itr)["com_stackable"].as<bool>();
                 temprecord.rotsInInventory = (*itr)["com_rotsininventory"].as<bool>();

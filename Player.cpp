@@ -423,7 +423,7 @@ void Player::ageInventory() {
                         characterItems[ i ].setId(tempCommon.ObjectAfterRot);
 
                         if (CommonItems->find(tempCommon.ObjectAfterRot, tempCommon)) {
-                            characterItems[ i ].setWear(tempCommon.AgeingSpeed);
+                            characterItems[ i ].setWear(tempCommon.AgingSpeed);
                         }
 
                         sendCharacterItemAtPos(i);

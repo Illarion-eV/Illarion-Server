@@ -648,7 +648,7 @@ public:
     *
     * for commons:
     * <ul>
-    * <li> "ageingspeed" </li>
+    * <li> "agingspeed" </li>
     * <li> "objectafterrot" </li>
     * <li> "volume" </li>
     * <li> "weight" </li>

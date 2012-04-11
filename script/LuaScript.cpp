@@ -761,7 +761,7 @@ void LuaScript::init_base_functions() {
         luabind::def("LuaLShift64",LuaLShift64),
         luabind::class_<CommonStruct>("CommonStruct")
         .def_readonly("id", &CommonStruct::id)
-        .def_readonly("AgeingSpeed", &CommonStruct::AgeingSpeed)
+        .def_readonly("AgingSpeed", &CommonStruct::AgingSpeed)
         .def_readonly("Weight", &CommonStruct::Weight)
         .def_readonly("ObjectAfterRot", &CommonStruct::ObjectAfterRot)
         .def_readonly("isStackable", &CommonStruct::isStackable)

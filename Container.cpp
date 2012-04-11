@@ -825,7 +825,7 @@ void Container::doAge(bool inventory) {
                         item.setId(tempCommon.ObjectAfterRot);
 
                         if (CommonItems->find(tempCommon.ObjectAfterRot, tempCommon)) {
-                            item.setWear(tempCommon.AgeingSpeed);
+                            item.setWear(tempCommon.AgingSpeed);
                         }
 
                         ++it;

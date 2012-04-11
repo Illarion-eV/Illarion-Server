@@ -269,7 +269,7 @@ bool Field::swapTopItem(TYPE_OF_ITEM_ID newid, uint16_t newQuality) {
         }
 
         if (CommonItems->find(newid, tempCommon)) {
-            temp.setWear(tempCommon.AgeingSpeed);
+            temp.setWear(tempCommon.AgingSpeed);
         }
 
         PutTopItem(temp);
@@ -411,7 +411,7 @@ int8_t Field::DoAgeItems() {
                     item.setId(tempCommon.ObjectAfterRot);
 
                     if (CommonItems->find(tempCommon.ObjectAfterRot, tempCommon)) {
-                        item.setWear(tempCommon.AgeingSpeed);
+                        item.setWear(tempCommon.AgingSpeed);
                     }
 
                     ++it;

@@ -260,7 +260,7 @@ void MonsterTable::reload() {
                         CommonStruct tempCommon;
 
                         if (location < 99 && CommonItems->find(tempitem.itemid, tempCommon)) {
-                            tempitem.AgeingSpeed = tempCommon.AgeingSpeed;
+                            tempitem.AgingSpeed = tempCommon.AgingSpeed;
                             temprecord.items[location].push_back(tempitem);
                         } else if (location < 99) {
                             std::cerr << "couldn't find item: " <<  tempitem.itemid << " for monster " << temprecord.name << std::endl;

@@ -587,7 +587,7 @@ ScriptItem World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, pos
         if (CommonItems->find(id, com)) {
             g_item.setId(id);
             g_item.setNumber(count);
-            g_item.setWear(com.AgeingSpeed);
+            g_item.setWear(com.AgingSpeed);
             g_item.setQuality(quali);
             g_item.setData(data);
             g_cont = NULL;

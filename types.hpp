@@ -26,7 +26,7 @@ typedef uint16_t TYPE_OF_ITEM_ID;
 typedef uint32_t TYPE_OF_CHARACTER_ID;
 
 typedef uint16_t TYPE_OF_WEIGHT;
-typedef uint8_t  TYPE_OF_AGEINGSPEED;
+typedef uint8_t  TYPE_OF_AGINGSPEED;
 typedef uint8_t  TYPE_OF_BRIGHTNESS;
 typedef uint32_t TYPE_OF_WORTH;
 

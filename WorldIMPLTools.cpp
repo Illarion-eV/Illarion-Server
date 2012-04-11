@@ -817,7 +817,7 @@ int World::getItemAttrib(std::string s, TYPE_OF_ITEM_ID ItemID) {
     // Common //
     else if (s == "agingspeed") {
         if (CommonItems->find(ItemID, tempCommon)) {
-            return tempCommon.AgeingSpeed;
+            return tempCommon.AgingSpeed;
         }
     } else if (s == "objectafterrot") {
         if (CommonItems->find(ItemID, tempCommon)) {
