@@ -122,9 +122,9 @@ bool Item::isComplete() const {
 }
 
 bool Item::isPermanent() const {
-    return wear == 255;
+    return wear == PERMANENT_WEAR;
 }
 
 void Item::makePermanent() {
-    wear = 255;
+    wear = PERMANENT_WEAR;
 }
