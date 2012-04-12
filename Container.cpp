@@ -120,7 +120,7 @@ bool Container::InsertItem(Item item, bool merge) {
 #endif
 
     if (items.size() < MAXITEMS) {
-        if (ContainerItems->find(item.getId())) {
+        if (item.isContainer()) {
             return InsertContainer(item, new Container(item.getId()));
         } else if (merge) {
 

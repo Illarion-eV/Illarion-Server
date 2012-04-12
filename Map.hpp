@@ -55,43 +55,22 @@ class NamesObjectTable;
 class WeaponObjectTable;
 class ArmorObjectTable;
 class ArtefactObjectTable;
-class ContainerObjectTable;
 class TilesModificatorTable;
 class TilesTable;
 
-//! eine Tabelle mit den allgemeinen Attributen der Item
 extern CommonObjectTable *CommonItems;
-
-//! eine Tabelle mit den Namen der Item
 extern NamesObjectTable *ItemNames;
-
-//! eine Tabelle für Waffen - Item Daten
 extern WeaponObjectTable *WeaponItems;
-
-//! eine Tabelle für Schutzkleidungs - Item Daten
 extern ArmorObjectTable *ArmorItems;
-
-//! eine Tabelle für Artefakt - Item Daten
 extern ArtefactObjectTable *ArtefactItems;
-
-//! eine Tabelle für Behälter - Item Daten
-extern ContainerObjectTable *ContainerItems;
-
-//! eine Tabelle mit Item welche die Eigenschaften des Feldes auf dem sie liegen modifizieren
 extern TilesModificatorTable *TilesModItems;
-
-//! eine Tabelle mit allen Arten von Bodenplatten
 extern TilesTable *Tiles;
 
-//! ein struct für die Allgemeinen Attribute eines Item
 extern CommonStruct tempCommon;
-
-//! ein struct für Daten von Bodenplatten
 extern TilesStruct tempTile;
-
 extern std::vector<position>* contpos;
 
-//! eine Teilkarte der Welt
+
 class Map {
 
 public:
@@ -104,7 +83,7 @@ public:
     //! Destruktor
     ~Map();
 
-    //! lädt eine gespeicherte Karte
+    //! lï¿½dt eine gespeicherte Karte
     // \param name der Name der zu ladenden Karte
     // \param x_offs Verschiebung der zu ladenden Karte im physikalischen Feld
     // \param y_offs Verschiebung der zu ladenden Karte im physikalischen Feld
@@ -120,25 +99,25 @@ public:
     // \param minx die kleinste X-Koordinate
     // \param miny die kleinste Y-Koordinate
     // \param z die Ebene auf der die Karte liegt
-    // \param disappear gibt an, ob die Karte für einen darunter stehenden Spieler ausgeblendet werden soll
+    // \param disappear gibt an, ob die Karte fï¿½r einen darunter stehenden Spieler ausgeblendet werden soll
     void Init(short int minx, short int miny, short int z, bool disappear);
 
-    //! liefert in fip einen Zeiger auf das Field mit den entsprechenden Koordinaten zurück
+    //! liefert in fip einen Zeiger auf das Field mit den entsprechenden Koordinaten zurï¿½ck
     // \param fip der Zeiger auf das Field den Koordinaten x,y,z
     // \param x X-Koordinate
     // \param y Y-Koordinate
     // \return true falls das Feld existiert, false sonst
     bool GetPToCFieldAt(Field* &fip, short int x, short int y);
 
-    //! liefert in fi eine Kopie des Feldes mit den entsprechenden Koordinaten zurück
+    //! liefert in fi eine Kopie des Feldes mit den entsprechenden Koordinaten zurï¿½ck
     // \param fi eine Kopie des Field mit den Koordinaten x,y,z
     // \param x X-Koordinate
     // \param y Y-Koordinate
     // \return true falls das Feld existiert, false sonst
     bool GetCFieldAt(Field &fi, short int x, short int y);
 
-    //! fügt eine Kopie des Feldes fi an den entsprechenden Koordinaten ein
-    // \param das Field zum Einfügen
+    //! fï¿½gt eine Kopie des Feldes fi an den entsprechenden Koordinaten ein
+    // \param das Field zum Einfï¿½gen
     // \param x X-Koordinate
     // \param y Y-Koordinate
     // \return true falls die x,y Koordinate existiert, false sonst
@@ -148,43 +127,43 @@ public:
 
     //! wendet die Funktion funct auf alle Field der Karte mit X-Koordinate von xstart bis xend an
     // \param xstart kleinste bearbeitete X-Koordinate (Koordinaten im Feld, keine logischen der Karte)
-    // \param xend grösste bearbeitete X-Koordinate (Koordinaten im Feld, keine logischen der Karte)
+    // \param xend grï¿½sste bearbeitete X-Koordinate (Koordinaten im Feld, keine logischen der Karte)
     // \param funct anzuwendende Funktion
     void ApplyToCFields_XFromTo(short int xstart, short int xend, Field::FIELD_FUNCT funct);
 
     //! setzt das Flag welches angibt, ob ein Spieler auf dem Feld ist auf t
     // \param x X-Koordinate
     // \param y Y-Koordinate
-    // \param t true setzt einen Spieler auf das Feld, false löscht ihn
+    // \param t true setzt einen Spieler auf das Feld, false lï¿½scht ihn
     // \return true falls die x,y,z Koordinate existiert, false sonst
     bool SetPlayerAt(short int x, short int y, bool t);
 
-    //! liefert die kleinste logisch mögliche X-Koordinate zurück
+    //! liefert die kleinste logisch mï¿½gliche X-Koordinate zurï¿½ck
     short GetMinX(void);
 
-    //! liefert die kleinste logisch mögliche Y-Koordinate zurück
+    //! liefert die kleinste logisch mï¿½gliche Y-Koordinate zurï¿½ck
     short GetMinY(void);
 
-    //! liefert die größte logisch mögliche X-Koordinate zurück
+    //! liefert die grï¿½ï¿½te logisch mï¿½gliche X-Koordinate zurï¿½ck
     short GetMaxX(void);
 
-    //! liefert die größte logisch mögliche Y-Koordinate zurück
+    //! liefert die grï¿½ï¿½te logisch mï¿½gliche Y-Koordinate zurï¿½ck
     short GetMaxY(void);
 
-    //! liefert die Anzahl der Felder in X-Richtung zurück
+    //! liefert die Anzahl der Felder in X-Richtung zurï¿½ck
     unsigned short int GetWidth();
 
-    //! liefert die Anzahl der Felder in Y-Richtung zurück
+    //! liefert die Anzahl der Felder in Y-Richtung zurï¿½ck
     unsigned short int GetHeight();
 
-    //! Vergleichsfunktion für den CONTAINERMAP - key
+    //! Vergleichsfunktion fï¿½r den CONTAINERMAP - key
     struct eqmappos {
         bool operator()(MAP_POSITION a, MAP_POSITION b) const {
             return ((a.x == b.x) && (a.y == b.y));
         }
     };
 
-    //! Hashfunktion für CONTAINERMAP - key
+    //! Hashfunktion fï¿½r CONTAINERMAP - key
     struct mapposhash {
         hash < int > inthash;
         int operator()(const MAP_POSITION a) const {
@@ -194,10 +173,10 @@ public:
     };
 
 
-    //! definiert eine Template-Klasse "hash_map mit key position für ITEMVECTORMAP"
+    //! definiert eine Template-Klasse "hash_map mit key position fï¿½r ITEMVECTORMAP"
     typedef hash_map < MAP_POSITION, Container::CONTAINERMAP, mapposhash, eqmappos > CONTAINERHASH;
 
-    //! die Inhalte aller Container die direkt auf der Karte liegen mit der dazugehörigen Koordinate
+    //! die Inhalte aller Container die direkt auf der Karte liegen mit der dazugehï¿½rigen Koordinate
     CONTAINERHASH maincontainers;
 
     //! legt ein Item auf ein Feld
@@ -214,30 +193,30 @@ public:
     bool addContainerToPos(Item it, Container *cc, MAP_POSITION pos);
     bool addAlwaysContainerToPos(Item it, Container *cc, MAP_POSITION pos);
 
-    //! sucht ein betretbares Feld in der Nähe von (x,y)
+    //! sucht ein betretbares Feld in der Nï¿½he von (x,y)
     // \param cf das gefundene Feld
-    // \param x vor Ausführung der Funktion der Startpunkt der Suche, danach die X-Koordinate des gefundenen Feldes
-    // \param y vor Ausführung der Funktion der Startpunkt der Suche, danach die Y-Koordinate des gefundenen Feldes
+    // \param x vor Ausfï¿½hrung der Funktion der Startpunkt der Suche, danach die X-Koordinate des gefundenen Feldes
+    // \param y vor Ausfï¿½hrung der Funktion der Startpunkt der Suche, danach die Y-Koordinate des gefundenen Feldes
     // \return true falls ein Feld gefunden wurde, false sonst
     bool findEmptyCFieldNear(Field* &cf, short int &x, short int &y);
 
-    //! prüft, ob die Map über der Position pos liegt
-    // \param pos die zu prüfende Position
-    // \return true falls die Map über der Position pos liegt, false sonst
+    //! prï¿½ft, ob die Map ï¿½ber der Position pos liegt
+    // \param pos die zu prï¿½fende Position
+    // \return true falls die Map ï¿½ber der Position pos liegt, false sonst
     bool coversPositionInView(position pos);
 
     bool isVisibleFromInView(position pos, int distancemetric);
 
-    //! prüft, ob die Map über der Position (x,y,z) liegt
-    // \param x die zu prüfende X-Koordinate
-    // \param y die zu prüfende Y-Koordinate
-    // \param z die zu prüfende Z-Koordinate
-    // \return true falls die Map über der Position (x,y,z) liegt, false sonst
+    //! prï¿½ft, ob die Map ï¿½ber der Position (x,y,z) liegt
+    // \param x die zu prï¿½fende X-Koordinate
+    // \param y die zu prï¿½fende Y-Koordinate
+    // \param z die zu prï¿½fende Z-Koordinate
+    // \return true falls die Map ï¿½ber der Position (x,y,z) liegt, false sonst
     bool isOverPositionInData(short int x, short int y, short int z);
 
-    //! prüft, ob die Map über der Map refmap liegt
-    // \param refmap die zu überprüfende Map
-    // \return true falls die Map über der Map refmap liegt, false sonst
+    //! prï¿½ft, ob die Map ï¿½ber der Map refmap liegt
+    // \param refmap die zu ï¿½berprï¿½fende Map
+    // \return true falls die Map ï¿½ber der Map refmap liegt, false sonst
     bool isOverMapInData(Map *refmap);
 
     bool isFullyCoveredBy(Map *refmap);
@@ -247,16 +226,16 @@ public:
 
     /*   private: */
 
-    //! die kleinste logisch mögliche X-Koordinate
+    //! die kleinste logisch mï¿½gliche X-Koordinate
     short Min_X;
 
-    //! die kleinste logisch mögliche Y-Koordinate
+    //! die kleinste logisch mï¿½gliche Y-Koordinate
     short Max_X;
 
-    //! die größte logisch mögliche X-Koordinate
+    //! die grï¿½ï¿½te logisch mï¿½gliche X-Koordinate
     short Min_Y;
 
-    //! die größte logisch mögliche Y-Koordinate
+    //! die grï¿½ï¿½te logisch mï¿½gliche Y-Koordinate
     short Max_Y;
 
     //! die Anzahl der Felder in X-Richtung

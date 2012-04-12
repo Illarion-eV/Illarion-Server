@@ -19,7 +19,6 @@
 
 #include "Map.hpp"
 #include "data/CommonObjectTable.hpp"
-#include "data/ContainerObjectTable.hpp"
 #include "Logger.hpp"
 #include "World.hpp"
 #include "Player.hpp"
@@ -104,7 +103,7 @@ bool Map::addContainerToPos(Item it, Container *cc, MAP_POSITION pos) {
     if (GetPToCFieldAt(cfnew, pos.x, pos.y)) {     // neues Feld vorhanden
         if (cfnew->IsPassable()) {   // neues Feld begehbar
             if (cfnew->items.size() < (MAXITEMS - 1)) {     // noch Platz auf dem Feld
-                if (ContainerItems->find(it.getId())) {     // item ist ein Container
+                if (it.isContainer()) {     // item ist ein Container
                     CONTAINERHASH::iterator conmapn = maincontainers.find(pos);
                     MAXCOUNTTYPE count = 0;
 
@@ -161,12 +160,12 @@ bool Map::addAlwaysContainerToPos(Item it, Container *cc, MAP_POSITION pos) {
 #endif
     Field *cfnew;
 
-    if (GetPToCFieldAt(cfnew, pos.x, pos.y)) {     // neues Feld vorhanden
-        if (ContainerItems->find(it.getId())) {     // item ist ein Container
+    if (GetPToCFieldAt(cfnew, pos.x, pos.y)) {
+        if (it.isContainer()) {
             CONTAINERHASH::iterator conmapn = maincontainers.find(pos);
             MAXCOUNTTYPE count = 0;
 
-            if (conmapn != maincontainers.end()) {   // containermap fr das Zielfeld gefunden
+            if (conmapn != maincontainers.end()) {
                 Container::CONTAINERMAP::iterator iterat;
                 // n�hste freie ID fr den Container auf dem Zielfeld suchen
                 iterat = (*conmapn).second.find(count);
@@ -496,18 +495,12 @@ bool Map::Load(std::string name, unsigned short int x_offs, unsigned short int y
                                             // die Kennung des Container lesen
                                             all_container->read((char *) & key, sizeof(key));
 
-                                            //Suchen der ContainerItems auf den Feld
                                             Field field;
-
-                                            //Laden des feldes.
                                             if (GetCFieldAt(field, pos.x, pos.y)) {
-                                                ITEMVECTOR::iterator iter;
 
-                                                //Schleife durch alle Items auf dem Feld
-                                                for (iter = field.items.begin(); iter != field.items.end(); iter++) {
-                                                    //das Item ist ein Containeritem
+                                                for (auto iter = field.items.begin(); iter != field.items.end(); iter++) {
 
-                                                    if (ContainerItems->find(iter->getId())) {
+                                                    if (iter->isContainer()) {
                                                         if (iter->getNumber() == key) {
                                                             // Container laden
                                                             tempc = new Container(iter->getId());
