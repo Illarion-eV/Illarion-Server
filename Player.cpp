@@ -456,7 +456,7 @@ void Player::ageInventory() {
 
             for (int i = 0; i < MAXSHOWCASES; ++i) {
                 if (showcases[ i ].contains(depotIterator->second)) {
-                    boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(i, showcases[i].top()->items));
+                    boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(i, showcases[i].top()->getItems()));
                     Connection->addCommand(cmd);
                 }
             }
@@ -631,7 +631,7 @@ void Player::updateBackPackView() {
     if (backPackContents != NULL) {
         for (int i = 0; i < MAXSHOWCASES; ++i) {
             if (showcases[ i ].contains(backPackContents)) {
-                boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(i, showcases[i].top()->items));
+                boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(i, showcases[i].top()->getItems()));
                 Connection->addCommand(cmd);
             }
         }
@@ -1245,13 +1245,16 @@ bool Player::save() throw() {
             // add backpack contents...
             while (!containers.empty()) {
                 // get container to save...
-                const container_struct actcont = containers.front();
+                auto currentContainerStruct = containers.front();
+                auto currentContainer = currentContainerStruct.container;
                 containers.pop_front();
+                
+                auto containedItems = currentContainer.getItems();
 
-                for (ITEMVECTOR::iterator item = actcont.container.items.begin(); item != actcont.container.items.end(); ++item) {
+                for (auto item = containedItems.cbegin(); item != containedItems.cend(); ++item) {
                     itemsQuery.addValue<int32_t>(itemsLineColumn, (int32_t)(++linenumber));
-                    itemsQuery.addValue<int16_t>(itemsContainerColumn, (int16_t) actcont.id);
-                    itemsQuery.addValue<int32_t>(itemsDepotColumn, (int32_t) actcont.depotid);
+                    itemsQuery.addValue<int16_t>(itemsContainerColumn, (int16_t) currentContainerStruct.id);
+                    itemsQuery.addValue<int32_t>(itemsDepotColumn, (int32_t) currentContainerStruct.depotid);
                     itemsQuery.addValue<TYPE_OF_ITEM_ID>(itemsItmIdColumn, item->getId());
                     itemsQuery.addValue<uint16_t>(itemsWearColumn, item->getWear());
                     itemsQuery.addValue<uint16_t>(itemsNumberColumn, item->getNumber());
@@ -1266,9 +1269,10 @@ bool Player::save() throw() {
 
                     // if it is a container, add it to the list of containers to save...
                     if (item->isContainer()) {
-                        Container::CONTAINERMAP::iterator iterat = actcont.container.containers.find(item->getNumber());
+                        auto containedContainers = currentContainer.getContainers();
+                        auto iterat = containedContainers.find(item->getNumber());
 
-                        if (iterat != actcont.container.containers.end()) {
+                        if (iterat != containedContainers.end()) {
                             containers.push_back(container_struct(*(*iterat).second, linenumber));
                         }
                     }
@@ -1322,11 +1326,10 @@ bool Player::loadGMFlags() throw() {
 }
 
 bool Player::load() throw() {
-    // maps containing all depots/containers involved
     std::map<int, Container *> depots, containers;
     std::map<int, Container *>::iterator it;
 
-    bool dataOK=true; //Is the data loaded correct?
+    bool dataOK=true;
 
     using namespace Database;
     PConnection connection = ConnectionManager::getInstance().getConnection();
@@ -1334,7 +1337,6 @@ bool Player::load() throw() {
     try {
 
         {
-            // Scripts
             SelectQuery query;
             query.addColumn("playerskills", "psk_name");
             query.addColumn("playerskills", "psk_type");
@@ -1383,17 +1385,17 @@ bool Player::load() throw() {
                 value.push_back((*itr)["idv_value"].as<std::string>());
             }
         }
-        size_t datamaplines = ditemlinenumber.size();
+        size_t dataRows = ditemlinenumber.size();
 
         // load inventory
         std::vector<uint16_t> itemlinenumber;
         std::vector<uint16_t> itemincontainer;
         std::vector<uint32_t> itemdepot;
-        std::vector<TYPE_OF_ITEM_ID> itemid;
-        std::vector<uint8_t> itemwear;
-        std::vector<uint8_t> itemnumber;
-        std::vector<uint16_t> itemquality;
-        std::vector<uint32_t> itemdata;
+        std::vector<Item::id_type> itemid;
+        std::vector<Item::wear_type> itemwear;
+        std::vector<Item::number_type> itemnumber;
+        std::vector<Item::quality_type> itemquality;
+        std::vector<Item::data_type> itemdata;
         {
             SelectQuery query;
             query.addColumn("playeritems", "pit_linenumber");
@@ -1414,14 +1416,14 @@ bool Player::load() throw() {
                 itemlinenumber.push_back((*itr)["pit_linenumber"].as<uint16_t>());
                 itemincontainer.push_back((*itr)["pit_in_container"].as<uint16_t>());
                 itemdepot.push_back((*itr)["pit_depot"].as<uint32_t>());
-                itemid.push_back((*itr)["pit_itemid"].as<TYPE_OF_ITEM_ID>());
-                itemwear.push_back((uint8_t)((*itr)["pit_wear"].as<uint16_t>()));
-                itemnumber.push_back((uint8_t)((*itr)["pit_number"].as<uint16_t>()));
-                itemquality.push_back((*itr)["pit_quality"].as<uint16_t>());
-                itemdata.push_back((*itr)["pit_data"].as<uint32_t>());
+                itemid.push_back((*itr)["pit_itemid"].as<Item::id_type>());
+                itemwear.push_back((Item::wear_type)((*itr)["pit_wear"].as<uint16_t>()));
+                itemnumber.push_back((Item::number_type)((*itr)["pit_number"].as<uint16_t>()));
+                itemquality.push_back((*itr)["pit_quality"].as<Item::quality_type>());
+                itemdata.push_back((*itr)["pit_data"].as<Item::data_type>());
             }
         }
-        size_t rows = itemlinenumber.size();
+        size_t itemRows = itemlinenumber.size();
 
         // load depots
         std::vector<uint32_t> depotid;
@@ -1439,12 +1441,12 @@ bool Player::load() throw() {
             }
         }
 
-        size_t zeilen = depotid.size();
+        size_t depotRows = depotid.size();
 
-        for (size_t i = 1; i <= zeilen; ++i) {
-            if (depotid[ i - 1 ] != 0) {
-                depotContents[ depotid[ i - 1 ] ] = new Container(DEPOTITEM);
-                depots[ depotid [ i - 1 ] ] = depotContents[ depotid[ i - 1] ];
+        for (size_t i = 0; i < depotRows; ++i) {
+            if (depotid[i] != 0) {
+                depotContents[depotid[i]] = new Container(DEPOTITEM);
+                depots[depotid[i]] = depotContents[depotid[i]];
             }
         }
 
@@ -1452,7 +1454,7 @@ bool Player::load() throw() {
         Container *tempc;
         unsigned int curdatalinenumber = 0;
 
-        for (unsigned int tuple = 0; tuple < rows; ++tuple) {
+        for (unsigned int tuple = 0; tuple < itemRows; ++tuple) {
             tempincont = itemincontainer[tuple];
             tempdepot = itemdepot[tuple];
             linenumber = itemlinenumber[tuple];
@@ -1464,7 +1466,7 @@ bool Player::load() throw() {
                        itemdata[tuple]
             );
 
-            while (curdatalinenumber < datamaplines && ditemlinenumber[curdatalinenumber] == linenumber) {
+            while (curdatalinenumber < dataRows && ditemlinenumber[curdatalinenumber] == linenumber) {
                 tempi.setData(key[curdatalinenumber], value[curdatalinenumber]);
                 curdatalinenumber++;
             }
@@ -2159,7 +2161,7 @@ void Player::openDepot(uint16_t depotid) {
             // updaten des showcases des Spielers
             showcases[ 0 ].startContainer(depotContents[ depotid ], false);
             // �derungen an den Client schicken
-            boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(0, depotContents[depotid]->items));
+            boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(0, depotContents[depotid]->getItems()));
             Connection->addCommand(cmd);
 #ifdef PLAYER_PlayerDepot_DEBUG
             std::cout << "lookIntoDepot: Ende" << std::endl;
@@ -2174,7 +2176,7 @@ std::cout << "Depot mit der ID: "<<depotid<<" wird neu erstellt!"<<std:
                   depotContents[ depotid ] = new Container(DEPOTITEM);
         showcases[ 0 ].clear();
         showcases[ 0 ].startContainer(depotContents[ depotid ], false);
-        boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(0, depotContents[ depotid]->items));
+        boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(0, depotContents[ depotid]->getItems()));
         Connection->addCommand(cmd);
         mapshowcaseopen = true;
     }

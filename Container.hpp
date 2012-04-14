@@ -46,15 +46,16 @@ extern CommonObjectTable *CommonItems;
 extern CommonStruct tempCommon;
 
 class Container {
+public:
+    typedef std::map<TYPE_OF_CONTAINERSLOTS, Container *, std::less<TYPE_OF_CONTAINERSLOTS> > CONTAINERMAP;
+    
 private:
     Item::id_type itemId;
 
-public:
     ITEMVECTOR items;
-
-    typedef std::map<TYPE_OF_CONTAINERSLOTS, Container *, std::less<TYPE_OF_CONTAINERSLOTS> > CONTAINERMAP;
     CONTAINERMAP containers;
 
+public:
     Container(Item::id_type itemId);
     Container(const Container &source);
     ~Container();
@@ -98,6 +99,9 @@ public:
     int _eraseItem(Item::id_type itemid, Item::number_type count, Item::data_type data, bool useData);
 
     TYPE_OF_CONTAINERSLOTS getSlotCount();
+    
+    inline const ITEMVECTOR &getItems() const {return items;}
+    inline const CONTAINERMAP &getContainers() const {return containers;}
 
 private:
 

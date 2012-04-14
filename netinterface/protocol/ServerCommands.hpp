@@ -196,7 +196,7 @@ public:
 
 class UpdateShowCaseTC : public BasicServerCommand {
 public:
-    UpdateShowCaseTC(unsigned char showcase, ITEMVECTOR &items);
+    UpdateShowCaseTC(unsigned char showcase, const ITEMVECTOR &items);
 };
 
 class MapStripeTC : public BasicServerCommand {

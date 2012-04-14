@@ -258,14 +258,14 @@ StartPlayerMenuTC::StartPlayerMenuTC(UserMenuStruct menu) : BasicServerCommand(S
     menu.Items.clear();
 }
 
-UpdateShowCaseTC::UpdateShowCaseTC(unsigned char showcase, ITEMVECTOR &items) : BasicServerCommand(SC_UPDATESHOWCASE_TC) {
+UpdateShowCaseTC::UpdateShowCaseTC(unsigned char showcase, const ITEMVECTOR &items) : BasicServerCommand(SC_UPDATESHOWCASE_TC) {
     addUnsignedCharToBuffer(showcase);
 
     MAXCOUNTTYPE size = items.size();
     addUnsignedCharToBuffer(size);
 
     for (auto it = items.begin(); it < items.end(); ++it) {
-        Item &item = *it;
+        const Item &item = *it;
         addShortIntToBuffer(item.getId());
 
         if (item.isContainer()) {

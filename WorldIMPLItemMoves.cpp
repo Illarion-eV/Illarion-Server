@@ -1800,7 +1800,7 @@ void World::lookIntoShowcaseContainer(Player *cp, unsigned char showcase, unsign
                     // updaten der showcases des Spielers
                     cp->showcases[ showcase ].openContainer(tempc);
                     // Aenderungen an den Client schicken
-                    boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(showcase, tempc->items));
+                    boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(showcase, tempc->getItems()));
                     cp->Connection->addCommand(cmd);
                 }
             }
@@ -1829,7 +1829,7 @@ bool World::lookIntoBackPack(Player *cp, unsigned char showcase) {
             // updaten des showcases des Spielers
             cp->showcases[ showcase ].startContainer(cp->backPackContents, true);
             // Aenderungen an den Client schicken
-            boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(showcase, cp->backPackContents->items));
+            boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(showcase, cp->backPackContents->getItems()));
             cp->Connection->addCommand(cmd);
 #ifdef World_ItemMove_DEBUG
             std::cout << "lookIntoBackPack: Ende" << std::endl;
@@ -1894,7 +1894,7 @@ bool World::lookIntoContainerOnField(Player *cp, char direction, unsigned char s
                             cp->showcases[ showcase ].startContainer((*iv).second, false);
                             cp->mapshowcaseopen = true;
                             // Aenderungen an den Client schicken
-                            boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(showcase, (*iv).second->items));
+                            boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(showcase, (*iv).second->getItems()));
                             cp->Connection->addCommand(cmd);
 
 #ifdef World_ItemMove_DEBUG
@@ -1959,7 +1959,7 @@ void World::closeContainerInShowcase(Player *cp, unsigned char showcase) {
         } else {
             // Aenderungen an den Client schicken
             Container *temp = cp->showcases[ showcase ].top();
-            boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(showcase, temp->items));
+            boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(showcase, temp->getItems()));
             cp->Connection->addCommand(cmd);
         }
     }
@@ -2027,7 +2027,7 @@ void World::sendChangesOfContainerContentsCM(Container *cc, Container *moved) {
                 ps = (*titerator)->showcases[ i ].top();
 
                 if ((ps == cc) && (ps != NULL)) {
-                    boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(i , ps->items));
+                    boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(i , ps->getItems()));
                     (*titerator)->Connection->addCommand(cmd);
                 } else if ((*titerator)->showcases[ i ].contains(moved)) {
                     (*titerator)->showcases[ i ].clear();
@@ -2052,7 +2052,7 @@ void World::sendChangesOfContainerContentsIM(Container *cc) {
                 ps = (*titerator)->showcases[ i ].top();
 
                 if (ps == cc) {
-                    boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(i , ps->items));
+                    boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(i , ps->getItems()));
                     (*titerator)->Connection->addCommand(cmd);
                 }
             }

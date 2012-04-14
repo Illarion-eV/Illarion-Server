@@ -73,8 +73,8 @@ public:
 
     std::string getData(std::string key);
     void setData(std::string key, std::string value);
-    inline datamap_type::const_iterator getDataBegin() {return datamap.cbegin();}
-    inline datamap_type::const_iterator getDataEnd() {return datamap.cend();}
+    inline datamap_type::const_iterator getDataBegin() const {return datamap.cbegin();}
+    inline datamap_type::const_iterator getDataEnd() const {return datamap.cend();}
 
     void reset();
     
