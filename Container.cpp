@@ -235,7 +235,7 @@ bool Container::changeQualityAt(TYPE_OF_CONTAINERSLOTS nr, short int amount) {
                 }
             }
 
-            item.reset();
+            items.erase(nr);
             return true;
         }
     }
@@ -249,7 +249,7 @@ bool Container::TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &item, Container* &cc
         item = selectedItem;
 
         if (item.isContainer()) {
-            selectedItem.reset();
+            items.erase(nr);
             auto iterat = containers.find(item.getNumber());
 
             if (iterat != containers.end()) {
@@ -269,21 +269,21 @@ bool Container::TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &item, Container* &cc
                     selectedItem.setNumber(selectedItem.getNumber() - count);
                     item.setNumber(count);
                 } else {
-                    selectedItem.reset();
+                    items.erase(nr);
                 }
             } else {
                 if (selectedItem.getNumber() > 1) {
                     selectedItem.setNumber(selectedItem.getNumber() - 1);
                     item.setNumber(1);
                 } else {
-                    selectedItem.reset();
+                    items.erase(nr);
                 }
             }
         }
 
         return true;
     } else {
-        item.reset();
+        items.erase(nr);
         cc = NULL;
         return false;
     }
@@ -427,7 +427,7 @@ bool Container::viewItemNr(TYPE_OF_CONTAINERSLOTS nr, ScriptItem &item, Containe
 
         return true;
     } else {
-        item.reset();
+        items.erase(nr);
         cc = NULL;
         return false;
     }
@@ -448,7 +448,7 @@ int Container::increaseAtPos(unsigned char pos, Item::number_type count) {
                 temp = temp - 255;
             } else if (temp <= 0) {
                 temp = count + item.getNumber();
-                item.reset();
+                items.erase(pos);
             } else {
                 item.setNumber(temp);
                 temp = 0;
@@ -647,7 +647,7 @@ int Container::_eraseItem(Item::id_type itemid, Item::number_type count, Item::d
 
             if (temp >= item.getNumber()) {
                 temp = temp - item.getNumber();
-                item.reset();
+                it = items.erase(it);
 
             } else {
                 item.setNumber(item.getNumber() - temp);
@@ -703,7 +703,7 @@ void Container::doAge(bool inventory) {
                             }
                         }
 
-                        item.reset();
+                        it = items.erase(it);
                     }
                 } else {
                     ++it;
