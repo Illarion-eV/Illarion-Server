@@ -45,6 +45,8 @@ Container &Container::operator=(const Container &source) {
 #endif
 
     if (this != &source) {
+        itemId = source.itemId;
+        
         items.clear();
         items = source.items;
 
