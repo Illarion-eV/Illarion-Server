@@ -419,7 +419,7 @@ bool World::takeItemFromShowcase(Player *cc, unsigned char showcase, unsigned ch
 }
 
 
-bool World::putItemInShowcase(Player *cc, unsigned char showcase, unsigned char pos) {
+bool World::putItemInShowcase(Player *cc, unsigned char showcase, TYPE_OF_CONTAINERSLOTS pos) {
     if (!isStackable(g_item) && !g_item.isContainer()) {
         if (g_item.getNumber() > 1) {
             return false;

@@ -26,8 +26,7 @@
 
 #include "TableStructs.hpp"
 
-#include <vector>
-#include <map>
+#include <boost/unordered_map.hpp>
 #include <iterator>
 #include <iostream>
 #include <fstream>
@@ -47,12 +46,13 @@ extern CommonStruct tempCommon;
 
 class Container {
 public:
-    typedef std::map<TYPE_OF_CONTAINERSLOTS, Container *, std::less<TYPE_OF_CONTAINERSLOTS> > CONTAINERMAP;
+    typedef boost::unordered_map<TYPE_OF_CONTAINERSLOTS, Item> ITEMMAP;
+    typedef boost::unordered_map<TYPE_OF_CONTAINERSLOTS, Container *> CONTAINERMAP;
     
 private:
     Item::id_type itemId;
 
-    ITEMVECTOR items;
+    ITEMMAP items;
     CONTAINERMAP containers;
 
 public:
@@ -67,8 +67,7 @@ public:
     bool changeQuality(Item::id_type id, short int amount);
     bool InsertContainer(Item it, Container *cc);
     bool InsertItem(Item it, bool merge);
-    bool InsertItem(Item it, unsigned char pos);
-    bool InsertItemOnLoad(Item it);
+    bool InsertItem(Item it, TYPE_OF_CONTAINERSLOTS);
     bool InsertItem(Item it);
 
     void Save(std::ofstream *where);
@@ -100,12 +99,12 @@ public:
 
     TYPE_OF_CONTAINERSLOTS getSlotCount();
     
-    inline const ITEMVECTOR &getItems() const {return items;}
+    inline const ITEMMAP &getItems() const {return items;}
     inline const CONTAINERMAP &getContainers() const {return containers;}
 
 private:
-
     bool isItemStackable(Item item);
+    void insertIntoFirstFreeSlot(Item &item);
 };
 
 #endif

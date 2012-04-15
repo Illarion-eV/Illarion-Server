@@ -811,7 +811,7 @@ void LuaScript::init_base_functions() {
         .def("changeQuality", &Container::changeQuality)
         .def("insertContainer", &Container::InsertContainer)
         .def("insertItem", (bool(Container:: *)(Item,bool))&Container::InsertItem)
-        .def("insertItem", (bool(Container:: *)(Item,unsigned char))&Container::InsertItem)
+        .def("insertItem", (bool(Container:: *)(Item,TYPE_OF_CONTAINERSLOTS))&Container::InsertItem)
         .def("insertItem", (bool(Container:: *)(Item))&Container::InsertItem)
         .def("countItem",(int(Container:: *)(TYPE_OF_ITEM_ID,uint32_t))&Container::countItem)
         .def("countItem",(int(Container:: *)(TYPE_OF_ITEM_ID))&Container::countItem)

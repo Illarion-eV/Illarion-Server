@@ -1251,26 +1251,27 @@ bool Player::save() throw() {
                 
                 auto containedItems = currentContainer.getItems();
 
-                for (auto item = containedItems.cbegin(); item != containedItems.cend(); ++item) {
+                for (auto it = containedItems.cbegin(); it != containedItems.cend(); ++it) {
+                    const Item &item = it->second;
                     itemsQuery.addValue<int32_t>(itemsLineColumn, (int32_t)(++linenumber));
                     itemsQuery.addValue<int16_t>(itemsContainerColumn, (int16_t) currentContainerStruct.id);
                     itemsQuery.addValue<int32_t>(itemsDepotColumn, (int32_t) currentContainerStruct.depotid);
-                    itemsQuery.addValue<TYPE_OF_ITEM_ID>(itemsItmIdColumn, item->getId());
-                    itemsQuery.addValue<uint16_t>(itemsWearColumn, item->getWear());
-                    itemsQuery.addValue<uint16_t>(itemsNumberColumn, item->getNumber());
-                    itemsQuery.addValue<uint16_t>(itemsQualColumn, item->getQuality());
-                    itemsQuery.addValue<uint32_t>(itemsDataColumn, item->getData());
+                    itemsQuery.addValue<TYPE_OF_ITEM_ID>(itemsItmIdColumn, item.getId());
+                    itemsQuery.addValue<uint16_t>(itemsWearColumn, item.getWear());
+                    itemsQuery.addValue<uint16_t>(itemsNumberColumn, item.getNumber());
+                    itemsQuery.addValue<uint16_t>(itemsQualColumn, item.getQuality());
+                    itemsQuery.addValue<uint32_t>(itemsDataColumn, item.getData());
 
-                    for (auto it = item->getDataBegin(); it != item->getDataEnd(); ++it) {
+                    for (auto it = item.getDataBegin(); it != item.getDataEnd(); ++it) {
                         dataQuery.addValue<int32_t>(dataLineColumn, (int32_t) linenumber);
                         dataQuery.addValue<std::string>(dataKeyColumn, it->first);
                         dataQuery.addValue<std::string>(dataValueColumn, it->second);
                     }
 
                     // if it is a container, add it to the list of containers to save...
-                    if (item->isContainer()) {
+                    if (item.isContainer()) {
                         auto containedContainers = currentContainer.getContainers();
-                        auto iterat = containedContainers.find(item->getNumber());
+                        auto iterat = containedContainers.find(item.getNumber());
 
                         if (iterat != containedContainers.end()) {
                             containers.push_back(container_struct(*(*iterat).second, linenumber));
@@ -1510,7 +1511,7 @@ bool Player::load() throw() {
                 containers[linenumber] = tempc;
             } else {
                 if (linenumber >= MAX_BODY_ITEMS + MAX_BELT_SLOTS + 1) {
-                    it->second->InsertItemOnLoad(tempi);
+                    it->second->InsertItem(tempi);
                 } else {
                     characterItems[ linenumber - 1 ] = tempi;
                 }

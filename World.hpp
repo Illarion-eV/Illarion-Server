@@ -1277,7 +1277,7 @@ public:
     // \param showcase die Nummer das Schaukastens
     // \param die bevorzugte Position (um das Item mit einem auf der Position zusammenzufassen)
     // \return true falls erfolgreich, false sonst
-    bool putItemInShowcase(Player *cc, unsigned char showcase, unsigned char pos);
+    bool putItemInShowcase(Player *cc, unsigned char showcase, TYPE_OF_CONTAINERSLOTS pos);
 
     //! berprft ein Feld auf besondere Item und WarpFelder und fhrt entsprechende Aktionen aus
     // \param cfstart das zu berprfende Feld
