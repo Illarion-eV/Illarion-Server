@@ -48,7 +48,7 @@ void ContainerObjectTable::reload() {
             for (Database::ResultConstIterator itr = results.begin();
                  itr != results.end(); ++itr) {
                 m_table[(TYPE_OF_ITEM_ID)((*itr)["con_itemid"].as<TYPE_OF_ITEM_ID>())]
-                    = (TYPE_OF_CONTAINERSLOTS)((*itr)["con_slots"].as<TYPE_OF_CONTAINERSLOTS>());
+                = (TYPE_OF_CONTAINERSLOTS)((*itr)["con_slots"].as<TYPE_OF_CONTAINERSLOTS>());
             }
 
             m_dataOK = true;

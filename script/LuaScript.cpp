@@ -226,7 +226,7 @@ luabind::object LuaScript::buildEntrypoint(const std::string &entrypoint) throw(
                                + "': " + currentpath.erase(0,1)
                                + " does not exist! Check module statement in "
                                + _filename + "!"
-            );
+                              );
         }
     }
 

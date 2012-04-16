@@ -392,6 +392,7 @@ int8_t Field::DoAgeItems() {
 
         while (it < items.end()) {
             Item &item = *it;
+
             if (!item.survivesAging()) {
                 if (!CommonItems->find(item.getId(), tempCommon)) {
                     tempCommon.ObjectAfterRot = item.getId();

@@ -25,12 +25,12 @@ extern ContainerObjectTable *ContainerItems;
 
 /*
 number_type Item::increaseNumber(number_type number) {
-    
+
 }
 
 
 number_type Item::reduceNumber(number_type number) {
-    
+
 }
 */
 
@@ -110,6 +110,7 @@ bool Item::survivesAging() {
     if (wear != 255 && wear != 0) {
         --wear;
     }
+
     return wear > 0;
 }
 

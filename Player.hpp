@@ -562,6 +562,7 @@ private:
         if (dialog == 0) {
             LuaScript::triggerScriptError("Dialog must not be nil!");
         }
+
         unsigned int dialogId = dialogCounter++;
         DialogType *d = new DialogType(*dialog);
         dialogs[dialogId] = d;

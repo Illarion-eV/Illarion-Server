@@ -26,6 +26,7 @@
 Dialog::Dialog(std::string title, std::string className, luabind::object callback)
     : title(title), className(className), callback(callback) {
     auto type = luabind::type(callback);
+
     if (type != LUA_TFUNCTION && type != LUA_TNIL) {
         throw std::logic_error("Usage of invalid callback type. Dialog callbacks must be functions or nil.");
     }

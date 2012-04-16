@@ -33,7 +33,7 @@ Container::Container(const Container &source) {
 Container &Container::operator=(const Container &source) {
     if (this != &source) {
         itemId = source.itemId;
-        
+
         items.clear();
         items = source.items;
 
@@ -54,6 +54,7 @@ Container &Container::operator=(const Container &source) {
         }
 
     }
+
     return *this;
 }
 
@@ -87,6 +88,7 @@ bool Container::InsertItem(Item item, bool merge) {
 
                 while ((it != items.end()) && (item.getNumber() > 0)) {
                     Item &selectedItem = it->second;
+
                     if (selectedItem.getId() == item.getId() && selectedItem.getData() == item.getData() && selectedItem.isComplete() && item.isComplete()) {
                         temp = selectedItem.getNumber() + item.getNumber();
 
@@ -151,6 +153,7 @@ bool Container::InsertItem(Item item, TYPE_OF_CONTAINERSLOTS pos) {
             return true;
         }
     }
+
     return false;
 }
 
@@ -178,6 +181,7 @@ bool Container::InsertContainer(Item it, Container *cc) {
             return true;
         }
     }
+
     return false;
 
 }
@@ -186,6 +190,7 @@ bool Container::changeQuality(Item::id_type id, short int amount) {
     short int tmpQuality;
 
     auto it = items.begin();
+
     while (it != items.end()) {
         Item &item = it->second;
 
@@ -220,6 +225,7 @@ bool Container::changeQuality(Item::id_type id, short int amount) {
 
 bool Container::changeQualityAt(TYPE_OF_CONTAINERSLOTS nr, short int amount) {
     Item &item = items[nr];
+
     if (item.getId() != 0) {
         Item::quality_type tmpQuality = ((amount+item.getDurability())<100) ? (amount + item.getQuality()) : (item.getQuality() - item.getDurability() + 99);
 
@@ -245,6 +251,7 @@ bool Container::changeQualityAt(TYPE_OF_CONTAINERSLOTS nr, short int amount) {
 
 bool Container::TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &item, Container* &cc, Item::number_type count) {
     Item &selectedItem = items[nr];
+
     if (selectedItem.getId() != 0) {
         item = selectedItem;
 
@@ -326,7 +333,7 @@ luabind::object Container::getItemList(Item::id_type itemid) {
 
     for (auto it = items.begin(); it != items.end(); ++it) {
         Item &item = it->second;
-        
+
         if (item.getId() == itemid) {
             ScriptItem item = it->second;
             item.type = ScriptItem::it_container;
@@ -356,7 +363,7 @@ void Container::increaseItemList(Item::id_type itemid, luabind::object &list, in
 
     for (auto it = items.begin(); it != items.end(); ++it) {
         Item &item = it->second;
-        
+
         if (item.getId() == itemid) {
             ScriptItem item = it->second;
             item.type = ScriptItem::it_container;
@@ -480,6 +487,7 @@ bool Container::changeItem(ScriptItem &item) {
 
 bool Container::swapAtPos(unsigned char pos, Item::id_type newid, Item::quality_type newQuality) {
     Item &item = items[pos];
+
     if (item.getId() != 0) {
         if (!item.isContainer()) {
             item.setId(newid);
@@ -557,6 +565,7 @@ int Container::countItem(Item::id_type itemid) {
 
     for (auto it = items.begin(); it != items.end(); ++it) {
         Item &item = it->second;
+
         if (item.getId() == itemid && item.isComplete()) {
             temp = temp + item.getNumber();
         }
@@ -578,6 +587,7 @@ int Container::countItem(Item::id_type itemid, Item::data_type data) {
 
     for (auto it = items.begin(); it != items.end(); ++it) {
         Item &item = it->second;
+
         if (item.getId() == itemid && item.getData() == data && item.isComplete()) {
             temp = temp + item.getNumber();
         }
@@ -605,6 +615,7 @@ int Container::weight(int rekt) {
 
     for (auto it = items.begin(); it != items.end(); ++it) {
         Item &item = it->second;
+
         if (!CommonItems->find(item.getId(), tempCommon)) {
             tempCommon.Weight = 0;
         }
@@ -636,12 +647,14 @@ int Container::_eraseItem(Item::id_type itemid, Item::number_type count, Item::d
 
     while (it != items.end()) {
         Item &item = it->second;
+
         if (item.isContainer() && (temp > 0)) {
             auto iterat = containers.find(item.getNumber());
 
             if (iterat != containers.end()) {
                 temp = (*iterat).second->_eraseItem(itemid, temp, data, useData);
             }
+
             ++it;
         } else if ((item.getId() == itemid && (!useData || item.getData() == data) && item.isComplete()) && (temp > 0)) {
 
@@ -676,6 +689,7 @@ void Container::doAge(bool inventory) {
 
         while (it != items.end()) {
             Item &item = it->second;
+
             if (!CommonItems->find(item.getId(), tempCommon)) {
                 tempCommon.ObjectAfterRot = item.getId();
                 tempCommon.rotsInInventory = false;
@@ -741,6 +755,7 @@ bool Container::isItemStackable(Item item) {
 
 void Container::insertIntoFirstFreeSlot(Item &item) {
     uint32_t firstFreeSlot = getSlotCount();
+
     for (auto it = items.begin(); it != items.end(); ++it) {
         if (it->second.getId() == 0 && it->first < firstFreeSlot) {
             firstFreeSlot = it->first;

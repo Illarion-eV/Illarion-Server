@@ -48,7 +48,7 @@ class Container {
 public:
     typedef boost::unordered_map<TYPE_OF_CONTAINERSLOTS, Item> ITEMMAP;
     typedef boost::unordered_map<TYPE_OF_CONTAINERSLOTS, Container *> CONTAINERMAP;
-    
+
 private:
     Item::id_type itemId;
 
@@ -98,9 +98,13 @@ public:
     int _eraseItem(Item::id_type itemid, Item::number_type count, Item::data_type data, bool useData);
 
     TYPE_OF_CONTAINERSLOTS getSlotCount();
-    
-    inline const ITEMMAP &getItems() const {return items;}
-    inline const CONTAINERMAP &getContainers() const {return containers;}
+
+    inline const ITEMMAP &getItems() const {
+        return items;
+    }
+    inline const CONTAINERMAP &getContainers() const {
+        return containers;
+    }
 
 private:
     bool isItemStackable(Item item);

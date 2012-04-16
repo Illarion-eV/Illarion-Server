@@ -496,6 +496,7 @@ bool Map::Load(std::string name, unsigned short int x_offs, unsigned short int y
                                             all_container->read((char *) & key, sizeof(key));
 
                                             Field field;
+
                                             if (GetCFieldAt(field, pos.x, pos.y)) {
 
                                                 for (auto iter = field.items.begin(); iter != field.items.end(); iter++) {

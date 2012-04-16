@@ -1248,7 +1248,7 @@ bool Player::save() throw() {
                 auto currentContainerStruct = containers.front();
                 auto currentContainer = currentContainerStruct.container;
                 containers.pop_front();
-                
+
                 auto containedItems = currentContainer.getItems();
 
                 for (auto it = containedItems.cbegin(); it != containedItems.cend(); ++it) {
@@ -1465,7 +1465,7 @@ bool Player::load() throw() {
                        itemnumber[tuple],
                        itemquality[tuple],
                        itemdata[tuple]
-            );
+                      );
 
             while (curdatalinenumber < dataRows && ditemlinenumber[curdatalinenumber] == linenumber) {
                 tempi.setData(key[curdatalinenumber], value[curdatalinenumber]);
@@ -2844,9 +2844,11 @@ void Player::executeInputDialog(unsigned int dialogId, bool success, std::string
 
     if (inputDialog != 0) {
         inputDialog->setSuccess(success);
+
         if (success) {
             inputDialog->setInput(input);
         }
+
         LuaScript::executeDialogCallback(*inputDialog);
     }
 

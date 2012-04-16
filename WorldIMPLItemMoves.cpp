@@ -203,13 +203,13 @@ bool World::putItemOnInvPos(Character *cc, unsigned char pos) {
             }
         } else if (pos < MAX_BODY_ITEMS + MAX_BELT_SLOTS) {
             if (cc->characterItems[ pos ].getId() == 0) {
-                
+
                 if (!isStackable(g_item) && !g_item.isContainer()) {
                     if (g_item.getNumber() > 1) {
                         return false;
                     }
                 }
-                
+
                 cc->characterItems[ pos ] = g_item;
                 g_item.reset();
                 cc->updateAppearanceForAll(true);
@@ -385,7 +385,7 @@ bool World::takeItemFromInvPos(Player *cc, unsigned char pos, unsigned char coun
         } else {
             cc->sendCharacterItemAtPos(pos);
         }
-        
+
         return true;
     } else {
         return false;
@@ -433,6 +433,7 @@ bool World::putItemInShowcase(Player *cc, unsigned char showcase, TYPE_OF_CONTAI
             if (g_cont != NULL) {
 
 #ifdef World_BagOnlyInDepot
+
                 for (auto it = cc->depotContents.begin(); it != cc->depotContents.end(); ++it) {
                     if (it->second == ps) {
                         isdepot = true;

@@ -87,13 +87,15 @@ public:
     static void shutdownLua();
     bool existsEntrypoint(const std::string &entrypoint);
     void addQuestScript(const std::string &entrypoint, boost::shared_ptr<LuaScript> script);
-    
+
     template<typename T>
     static void executeDialogCallback(T &dialog) {
         luabind::object callback = dialog.getCallback();
+
         if (luabind::type(callback) != LUA_TFUNCTION) {
             return;
         }
+
         try {
             callback(dialog);
         } catch (luabind::error &e) {
