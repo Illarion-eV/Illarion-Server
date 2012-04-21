@@ -258,11 +258,13 @@ StartPlayerMenuTC::StartPlayerMenuTC(UserMenuStruct menu) : BasicServerCommand(S
     menu.Items.clear();
 }
 
-UpdateShowCaseTC::UpdateShowCaseTC(unsigned char showcase, const Container::ITEMMAP &items) : BasicServerCommand(SC_UPDATESHOWCASE_TC) {
+UpdateShowCaseTC::UpdateShowCaseTC(unsigned char showcase, const TYPE_OF_CONTAINERSLOTS volume, const Container::ITEMMAP &items) : BasicServerCommand(SC_UPDATESHOWCASE_TC) {
     addUnsignedCharToBuffer(showcase);
 
-    MAXCOUNTTYPE size = items.size();
-    addUnsignedCharToBuffer(size);
+    addShortIntToBuffer(volume);
+
+    TYPE_OF_CONTAINERSLOTS size = items.size();
+    addShortIntToBuffer(size);
 
     for (auto it = items.begin(); it != items.end(); ++it) {
         const Item &item = it->second;
