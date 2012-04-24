@@ -196,7 +196,7 @@ public:
 
 class UpdateShowCaseTC : public BasicServerCommand {
 public:
-    UpdateShowCaseTC(unsigned char showcase, const Container::ITEMMAP &items);
+    UpdateShowCaseTC(unsigned char showcase, const TYPE_OF_CONTAINERSLOTS volume, const Container::ITEMMAP &items);
 };
 
 class MapStripeTC : public BasicServerCommand {

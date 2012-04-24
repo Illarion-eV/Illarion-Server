@@ -54,6 +54,7 @@ const uint32_t MONSTER_BASE = 0xFE000000;
 #define MUSICFIELD 2
 
 #define DEPOTITEM 321
+#define DEPOTSIZE 100
 #define BLOCKEDITEM 228
 
 #define LANGUAGECOUNT 3
