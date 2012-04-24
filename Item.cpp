@@ -66,6 +66,7 @@ void Item::reset() {
 
 void Item::resetWear() {
     CommonStruct common;
+
     if (CommonItems->find(id, common)) {
         if (!common.rotsInInventory && common.AgingSpeed > wear) {
             wear = common.AgingSpeed;
