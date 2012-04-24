@@ -456,7 +456,7 @@ void Player::ageInventory() {
 
             for (int i = 0; i < MAXSHOWCASES; ++i) {
                 if (showcases[ i ].contains(depotIterator->second)) {
-                    boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(i, showcases[i].top()->getItems()));
+                    boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(i, depotIterator->second->getSlotCount(), showcases[i].top()->getItems()));
                     Connection->addCommand(cmd);
                 }
             }
@@ -631,7 +631,7 @@ void Player::updateBackPackView() {
     if (backPackContents != NULL) {
         for (int i = 0; i < MAXSHOWCASES; ++i) {
             if (showcases[ i ].contains(backPackContents)) {
-                boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(i, showcases[i].top()->getItems()));
+                boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(i, backPackContents->getSlotCount(), showcases[i].top()->getItems()));
                 Connection->addCommand(cmd);
             }
         }
@@ -2162,7 +2162,7 @@ void Player::openDepot(uint16_t depotid) {
             // updaten des showcases des Spielers
             showcases[ 0 ].startContainer(depotContents[ depotid ], false);
             // �derungen an den Client schicken
-            boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(0, depotContents[depotid]->getItems()));
+            boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(0, DEPOTSIZE, depotContents[depotid]->getItems()));
             Connection->addCommand(cmd);
 #ifdef PLAYER_PlayerDepot_DEBUG
             std::cout << "lookIntoDepot: Ende" << std::endl;
@@ -2177,7 +2177,7 @@ std::cout << "Depot mit der ID: "<<depotid<<" wird neu erstellt!"<<std:
                   depotContents[ depotid ] = new Container(DEPOTITEM);
         showcases[ 0 ].clear();
         showcases[ 0 ].startContainer(depotContents[ depotid ], false);
-        boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(0, depotContents[ depotid]->getItems()));
+        boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(0, DEPOTSIZE, depotContents[ depotid]->getItems()));
         Connection->addCommand(cmd);
         mapshowcaseopen = true;
     }

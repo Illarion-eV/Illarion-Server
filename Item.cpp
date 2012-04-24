@@ -18,9 +18,11 @@
 
 
 #include "Item.hpp"
+#include "data/CommonObjectTable.hpp"
 #include "data/ContainerObjectTable.hpp"
 #include <sstream>
 
+extern CommonObjectTable *CommonItems;
 extern ContainerObjectTable *ContainerItems;
 
 /*
@@ -59,6 +61,17 @@ void Item::reset() {
     quality = 333;
     data = 0;
     datamap.clear();
+}
+
+
+void Item::resetWear() {
+    CommonStruct common;
+
+    if (CommonItems->find(id, common)) {
+        if (!common.rotsInInventory && common.AgingSpeed > wear) {
+            wear = common.AgingSpeed;
+        }
+    }
 }
 
 
