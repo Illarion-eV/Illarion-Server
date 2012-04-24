@@ -513,6 +513,8 @@ bool World::takeItemFromMap(Character *cc, short int x, short int y, short int z
                         }
                     }
 
+                    g_item.resetWear();
+
                     if (g_item.isContainer()) {
                         MAP_POSITION opos;
                         opos.x = x;
