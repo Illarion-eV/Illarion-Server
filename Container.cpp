@@ -128,9 +128,10 @@ bool Container::InsertItem(Item item, TYPE_OF_CONTAINERSLOTS pos) {
             return InsertContainer(item, new Container(item.getId()));
         }
 
-        Item &selectedItem = items[pos];
+        auto it = items.find(pos);
 
-        if (selectedItem.getId() != 0) {
+        if (it != items.end()) {
+            Item &selectedItem = it->second;
             if (isItemStackable(item)) {
                 if (selectedItem.getId() == item.getId() && selectedItem.getData() == item.getData() && selectedItem.isComplete() && item.isComplete()) {
                     int temp = selectedItem.getNumber() + item.getNumber();
@@ -149,7 +150,7 @@ bool Container::InsertItem(Item item, TYPE_OF_CONTAINERSLOTS pos) {
                 }
             }
         } else if (items.size() < getSlotCount()) {
-            insertIntoFirstFreeSlot(item);
+            items[pos] = item;
             return true;
         }
     }
@@ -224,9 +225,10 @@ bool Container::changeQuality(Item::id_type id, short int amount) {
 }
 
 bool Container::changeQualityAt(TYPE_OF_CONTAINERSLOTS nr, short int amount) {
-    Item &item = items[nr];
+    auto it = items.find(nr);
 
-    if (item.getId() != 0) {
+    if (it != items.end()) {
+        Item &item = it->second;
         Item::quality_type tmpQuality = ((amount+item.getDurability())<100) ? (amount + item.getQuality()) : (item.getQuality() - item.getDurability() + 99);
 
         if (tmpQuality%100 > 1) {
@@ -250,9 +252,10 @@ bool Container::changeQualityAt(TYPE_OF_CONTAINERSLOTS nr, short int amount) {
 }
 
 bool Container::TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &item, Container* &cc, Item::number_type count) {
-    Item &selectedItem = items[nr];
+    auto it = items.find(nr);
 
-    if (selectedItem.getId() != 0) {
+    if (it != items.end()) {
+        Item &selectedItem = it->second;
         item = selectedItem;
 
         if (item.isContainer()) {
@@ -412,10 +415,10 @@ void Container::increaseItemList(luabind::object &list, int &index) {
 }
 
 bool Container::viewItemNr(TYPE_OF_CONTAINERSLOTS nr, ScriptItem &item, Container* &cc) {
-    Item &selectedItem = items[nr];
+    auto it = items.find(nr);
 
-    if (selectedItem.getId() != 0) {
-        item = selectedItem;
+    if (it != items.end()) {
+        item = it->second;
         item.type = ScriptItem::it_container;
         item.itempos = nr;
         item.inside = this;
@@ -441,10 +444,12 @@ bool Container::viewItemNr(TYPE_OF_CONTAINERSLOTS nr, ScriptItem &item, Containe
 }
 
 int Container::increaseAtPos(unsigned char pos, Item::number_type count) {
-    Item &item = items[pos];
+    auto it = items.find(pos);
     int temp = 0;
 
-    if (item.getId() != 0) {
+    if (it != items.end()) {
+        Item &item = it->second;
+
         if (item.isContainer()) {
             return count;
         } else {
@@ -486,9 +491,10 @@ bool Container::changeItem(ScriptItem &item) {
 }
 
 bool Container::swapAtPos(unsigned char pos, Item::id_type newid, Item::quality_type newQuality) {
-    Item &item = items[pos];
+    auto it = items.find(pos);
 
-    if (item.getId() != 0) {
+    if (it != items.end()) {
+        Item &item = it->second;
         if (!item.isContainer()) {
             item.setId(newid);
 

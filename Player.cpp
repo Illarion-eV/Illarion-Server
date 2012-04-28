@@ -1210,6 +1210,7 @@ bool Player::save() throw() {
             const InsertQuery::columnIndex itemsNumberColumn = itemsQuery.addColumn("pit_number");
             const InsertQuery::columnIndex itemsQualColumn = itemsQuery.addColumn("pit_quality");
             const InsertQuery::columnIndex itemsDataColumn = itemsQuery.addColumn("pit_data");
+            const InsertQuery::columnIndex itemsSlotColumn = itemsQuery.addColumn("pit_containerslot");
             itemsQuery.setServerTable("playeritems");
 
             InsertQuery dataQuery(connection);
@@ -1234,6 +1235,7 @@ bool Player::save() throw() {
                 itemsQuery.addValue<uint16_t>(itemsNumberColumn, characterItems[thisItemSlot].getNumber());
                 itemsQuery.addValue<uint16_t>(itemsQualColumn, characterItems[thisItemSlot].getQuality());
                 itemsQuery.addValue<uint32_t>(itemsDataColumn, characterItems[thisItemSlot].getData());
+                itemsQuery.addValue<TYPE_OF_CONTAINERSLOTS>(itemsSlotColumn, 0);
 
                 for (auto it = characterItems[ thisItemSlot ].getDataBegin(); it != characterItems[ thisItemSlot ].getDataEnd(); ++it) {
                     dataQuery.addValue<int32_t>(dataLineColumn, (int32_t) linenumber);
@@ -1261,6 +1263,7 @@ bool Player::save() throw() {
                     itemsQuery.addValue<uint16_t>(itemsNumberColumn, item.getNumber());
                     itemsQuery.addValue<uint16_t>(itemsQualColumn, item.getQuality());
                     itemsQuery.addValue<uint32_t>(itemsDataColumn, item.getData());
+                    itemsQuery.addValue<TYPE_OF_CONTAINERSLOTS>(itemsSlotColumn, it->first);
 
                     for (auto it = item.getDataBegin(); it != item.getDataEnd(); ++it) {
                         dataQuery.addValue<int32_t>(dataLineColumn, (int32_t) linenumber);
@@ -1397,6 +1400,7 @@ bool Player::load() throw() {
         std::vector<Item::number_type> itemnumber;
         std::vector<Item::quality_type> itemquality;
         std::vector<Item::data_type> itemdata;
+        std::vector<TYPE_OF_CONTAINERSLOTS> itemcontainerslot;
         {
             SelectQuery query;
             query.addColumn("playeritems", "pit_linenumber");
@@ -1407,6 +1411,7 @@ bool Player::load() throw() {
             query.addColumn("playeritems", "pit_number");
             query.addColumn("playeritems", "pit_quality");
             query.addColumn("playeritems", "pit_data");
+            query.addColumn("playeritems", "pit_containerslot");
             query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playeritems", "pit_playerid", id);
             query.addOrderBy("playeritems", "pit_linenumber", SelectQuery::ASC);
             query.addServerTable("playeritems");
@@ -1422,6 +1427,7 @@ bool Player::load() throw() {
                 itemnumber.push_back((Item::number_type)((*itr)["pit_number"].as<uint16_t>()));
                 itemquality.push_back((*itr)["pit_quality"].as<Item::quality_type>());
                 itemdata.push_back((*itr)["pit_data"].as<Item::data_type>());
+                itemcontainerslot.push_back((*itr)["pit_containerslot"].as<TYPE_OF_CONTAINERSLOTS>());
             }
         }
         size_t itemRows = itemlinenumber.size();
@@ -1511,7 +1517,7 @@ bool Player::load() throw() {
                 containers[linenumber] = tempc;
             } else {
                 if (linenumber >= MAX_BODY_ITEMS + MAX_BELT_SLOTS + 1) {
-                    it->second->InsertItem(tempi);
+                    it->second->InsertItem(tempi, itemcontainerslot[tuple]);
                 } else {
                     characterItems[ linenumber - 1 ] = tempi;
                 }
