@@ -754,16 +754,15 @@ bool Container::isItemStackable(Item item) {
 }
 
 void Container::insertIntoFirstFreeSlot(Item &item) {
-    uint32_t firstFreeSlot = getSlotCount();
+    TYPE_OF_CONTAINERSLOTS slotCount = getSlotCount();
+    TYPE_OF_CONTAINERSLOTS i = 0;
 
-    for (auto it = items.begin(); it != items.end(); ++it) {
-        if (it->second.getId() == 0 && it->first < firstFreeSlot) {
-            firstFreeSlot = it->first;
-        }
+    while (i < slotCount && items.find(i) != items.end()) {
+        ++i;
     }
 
-    if (firstFreeSlot < getSlotCount()) {
-        items[firstFreeSlot] = item;
+    if (i < slotCount) {
+        items[i] = item;
     }
 }
 
