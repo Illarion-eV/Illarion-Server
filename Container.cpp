@@ -132,6 +132,7 @@ bool Container::InsertItem(Item item, TYPE_OF_CONTAINERSLOTS pos) {
 
         if (it != items.end()) {
             Item &selectedItem = it->second;
+
             if (isItemStackable(item)) {
                 if (selectedItem.getId() == item.getId() && selectedItem.getData() == item.getData() && selectedItem.isComplete() && item.isComplete()) {
                     int temp = selectedItem.getNumber() + item.getNumber();
@@ -495,6 +496,7 @@ bool Container::swapAtPos(unsigned char pos, Item::id_type newid, Item::quality_
 
     if (it != items.end()) {
         Item &item = it->second;
+
         if (!item.isContainer()) {
             item.setId(newid);
 
