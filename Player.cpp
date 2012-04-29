@@ -1467,8 +1467,8 @@ bool Player::load() throw() {
             linenumber = itemlinenumber[tuple];
 
             Item tempi(itemid[tuple],
-                       itemwear[tuple],
                        itemnumber[tuple],
+                       itemwear[tuple],
                        itemquality[tuple],
                        itemdata[tuple]
                       );
