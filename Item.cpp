@@ -131,6 +131,16 @@ bool Item::isContainer() const {
     return ContainerItems->find(id);
 }
 
+TYPE_OF_WORTH Item::getWorth() const {
+    CommonStruct common;
+
+    if (CommonItems->find(id, common)) {
+        return common.Worth;
+    }
+
+    return 0;
+}
+
 bool Item::isComplete() const {
     return quality >= 100;
 }

@@ -454,42 +454,6 @@ void World::lookAtMapItem(Player *cp, short int x, short int y, short int z) {
 }
 
 
-void World::lookAtMenueItem(Player *cp, unsigned char position, TYPE_OF_ITEM_ID itemid) {
-    std::string name="";
-
-    if (ItemNames->find(itemid, tempNames)) {     // Namen f�r das Item gefunden
-        switch (cp->getPlayerLanguage()) {
-        case Language::german:
-            name = tempNames.German;
-            break;
-        case Language::english:
-            name = tempNames.English;
-            break;
-        default:
-            name = std::string("unknown mother tongue");
-            break;
-        }
-    } else {
-        // kein Name vorhanden
-        switch (cp->getPlayerLanguage()) {
-        case Language::german:
-            name = std::string("unbekannt");
-            break;
-        case Language::english:
-            name = std::string("unknown");
-            break;
-        default:
-            name = std::string("?");
-            break;
-        }
-    }
-
-    boost::shared_ptr<BasicServerCommand>cmd(new NameOfShowCaseItemTC(2, position,name));
-    cp->Connection->addCommand(cmd);
-}
-
-
-
 void World::lookAtShowcaseItem(Player *cp, unsigned char showcase, unsigned char position) {
 
     ScriptItem titem;
@@ -557,7 +521,7 @@ void World::lookAtShowcaseItem(Player *cp, unsigned char showcase, unsigned char
                     }
                 }
 
-                boost::shared_ptr<BasicServerCommand>cmd(new NameOfShowCaseItemTC(showcase, position, outtext));
+                boost::shared_ptr<BasicServerCommand>cmd(new NameOfShowCaseItemTC(showcase, position, outtext, titem.getWorth()));
                 cp->Connection->addCommand(cmd);
             }
         }
@@ -569,6 +533,7 @@ void World::lookAtShowcaseItem(Player *cp, unsigned char showcase, unsigned char
 void World::lookAtInventoryItem(Player *cp, unsigned char position) {
     if (cp->characterItems[ position ].getId() != 0) {
         std::string outtext;
+        TYPE_OF_WORTH worth = 0;
 
         if (ItemNames->find(cp->characterItems[ position ].getId(), tempNames)) {
             Item titem = cp->characterItems[ position ];
@@ -591,6 +556,8 @@ void World::lookAtInventoryItem(Player *cp, unsigned char position) {
                     script->LookAtItem(cp, n_item);
                     return;
                 }
+
+                worth = titem.getWorth();
             }
 
             switch (cp->getPlayerLanguage()) {
@@ -625,7 +592,7 @@ void World::lookAtInventoryItem(Player *cp, unsigned char position) {
             }
         }
 
-        boost::shared_ptr<BasicServerCommand>cmd(new NameOfInventoryItemTC(position, outtext));
+        boost::shared_ptr<BasicServerCommand>cmd(new NameOfInventoryItemTC(position, outtext, worth));
         cp->Connection->addCommand(cmd);
     }
 }

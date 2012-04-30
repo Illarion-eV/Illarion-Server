@@ -984,12 +984,6 @@ public:
     // \param position die Position des Item im showcase
     void lookAtShowcaseItem(Player *cp, unsigned char showcase, unsigned char position);
 
-    //! sendet an den Spieler den Namen des Item an einer Position im Men
-    // \param cp der Spieler der benachrichtigt werden soll
-    // \param position die Position des Item im showcase
-    // \param itemid ID des Item
-    void lookAtMenueItem(Player *cp, unsigned char position, unsigned short int itemid);
-
     //! sendet an den Spieler den Namen des Item an einer Position im Inventory
     // \param cp der Spieler der benachrichtigt werden soll
     // \param position die Position des Item im Inventory

@@ -83,7 +83,6 @@ enum clientcommands {
     C_LOOKATINVENTORYITEM_TS = 0xDF,
     C_ATTACKSTOP_TS = 0xDE,
     C_REQUESTSKILLS_TS = 0xDD,
-    C_LOOKATMENUITEM_TS = 0xDC,
     C_KEEPALIVE_TS = 0xD8,
     C_REQUESTAPPEARANCE_TS = 0x0E,
     C_INPUTDIALOG_TS = 0x50,
@@ -1250,45 +1249,6 @@ public:
 
     unsigned char counter;
     ByteStack bs;
-};
-
-/**
-*@ingroup Clientcommands
-*character looks at an menu item
-*/
-class LookAtMenuItemTS : public BasicClientCommand {
-public:
-    LookAtMenuItemTS() : BasicClientCommand(C_LOOKATMENUITEM_TS) {
-    }
-
-    virtual ~LookAtMenuItemTS() {};
-
-    virtual void decodeData() {
-        pos = getUnsignedCharFromBuffer();
-        id = getShortIntFromBuffer();
-    }
-
-    void performAction(Player *player) {
-        Logger::writeMessage("World_Debug",player->name + "looks at an item from a menu.");
-        time(&(player->lastaction));
-#ifdef DO_UNCONSCIOUS
-
-        if (player->IsAlive() && player->IsConscious())
-#else
-        if (player->IsAlive())
-#endif
-        {
-            World::get()->lookAtMenueItem(player, pos, id);
-            player->actionPoints -= P_LOOK_COST;
-        }
-    }
-
-    boost::shared_ptr<BasicClientCommand> clone() {
-        boost::shared_ptr<BasicClientCommand>cmd(new LookAtMenuItemTS());
-        return cmd;
-    }
-    TYPE_OF_ITEM_ID id;
-    unsigned char pos;
 };
 
 /**

@@ -140,12 +140,12 @@ public:
 
 class NameOfInventoryItemTC : public BasicServerCommand {
 public:
-    NameOfInventoryItemTC(unsigned char pos, std::string name);
+    NameOfInventoryItemTC(unsigned char pos, std::string name, TYPE_OF_WORTH worth);
 };
 
 class NameOfShowCaseItemTC : public BasicServerCommand {
 public:
-    NameOfShowCaseItemTC(unsigned char showcase, unsigned char pos, std::string name);
+    NameOfShowCaseItemTC(unsigned char showcase, unsigned char pos, std::string name, TYPE_OF_WORTH worth);
 };
 
 class NameOfMapItemTC : public BasicServerCommand {

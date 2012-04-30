@@ -154,15 +154,17 @@ TargetLostTC::TargetLostTC() : BasicServerCommand(SC_TARGETLOST_TC) {
 AttackAcknowledgedTC::AttackAcknowledgedTC() : BasicServerCommand(SC_ATTACKACKNOWLEDGED_TC) {
 }
 
-NameOfInventoryItemTC::NameOfInventoryItemTC(unsigned char pos, std::string name) : BasicServerCommand(SC_NAMEOFINVENTORYITEM_TC) {
+NameOfInventoryItemTC::NameOfInventoryItemTC(unsigned char pos, std::string name, TYPE_OF_WORTH worth) : BasicServerCommand(SC_NAMEOFINVENTORYITEM_TC) {
     addUnsignedCharToBuffer(pos);
     addStringToBuffer(name);
+    addIntToBuffer(worth);
 }
 
-NameOfShowCaseItemTC::NameOfShowCaseItemTC(unsigned char showcase, unsigned char pos, std::string name) : BasicServerCommand(SC_NAMEOFSHOWCASEITEM_TC) {
+NameOfShowCaseItemTC::NameOfShowCaseItemTC(unsigned char showcase, unsigned char pos, std::string name, TYPE_OF_WORTH worth) : BasicServerCommand(SC_NAMEOFSHOWCASEITEM_TC) {
     addUnsignedCharToBuffer(showcase);
     addUnsignedCharToBuffer(pos);
     addStringToBuffer(name);
+    addIntToBuffer(worth);
 }
 
 NameOfMapItemTC::NameOfMapItemTC(short int x, short int y, short int z, std::string name) : BasicServerCommand(SC_NAMEOFMAPITEM_TC) {

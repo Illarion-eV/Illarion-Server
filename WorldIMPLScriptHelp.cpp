@@ -236,12 +236,12 @@ void World::ItemInform(Character *user, ScriptItem item, std::string message) {
                 showcase = 1;
             }
 
-            boost::shared_ptr<BasicServerCommand>cmd(new NameOfShowCaseItemTC(showcase, item.itempos, message));
+            boost::shared_ptr<BasicServerCommand>cmd(new NameOfShowCaseItemTC(showcase, item.itempos, message, item.getWorth()));
             cp->Connection->addCommand(cmd);
         }
     } else if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
         if (item.owner->character == Character::player) {
-            boost::shared_ptr<BasicServerCommand>cmd(new NameOfInventoryItemTC(item.itempos, message));
+            boost::shared_ptr<BasicServerCommand>cmd(new NameOfInventoryItemTC(item.itempos, message, item.getWorth()));
             cp->Connection->addCommand(cmd);
         }
     } else if (item.type == ScriptItem::it_field) {

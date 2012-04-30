@@ -53,7 +53,6 @@ CommandFactory::CommandFactory() {
     templateList[ C_LOOKATINVENTORYITEM_TS ] = new LookAtInventoryItemTS();
     templateList[ C_ATTACKSTOP_TS ] = new AttackStopTS();
     templateList[ C_REQUESTSKILLS_TS ] = new RequestSkillsTS();
-    templateList[ C_LOOKATMENUITEM_TS ] = new LookAtMenuItemTS();
     templateList[ C_KEEPALIVE_TS ] = new KeepAliveTS();
     templateList[ BB_KEEPALIVE_TS ] = new BBKeepAliveTS();
     templateList[ BB_BROADCAST_TS ] = new BBBroadCastTS();
