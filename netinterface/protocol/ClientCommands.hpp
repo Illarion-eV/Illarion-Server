@@ -86,7 +86,8 @@ enum clientcommands {
     C_KEEPALIVE_TS = 0xD8,
     C_REQUESTAPPEARANCE_TS = 0x0E,
     C_INPUTDIALOG_TS = 0x50,
-    C_MESSAGEDIALOG_TS = 0x51
+    C_MESSAGEDIALOG_TS = 0x51,
+    C_MERCHANTDIALOG_TS = 0x52
 };
 
 /**
@@ -187,6 +188,63 @@ public:
 
     boost::shared_ptr<BasicClientCommand> clone() {
         boost::shared_ptr<BasicClientCommand>cmd(new MessageDialogTS());
+        return cmd;
+    }
+};
+
+class MerchantDialogTS : public BasicClientCommand {
+private:
+    unsigned int dialogId;
+    uint8_t result;
+    uint8_t purchaseIndex;
+    uint8_t purchaseAmount;
+    uint8_t saleLocation;
+    uint16_t saleSlot;
+    uint8_t saleAmount;
+
+public:
+    MerchantDialogTS() : BasicClientCommand(C_MERCHANTDIALOG_TS) {
+    }
+
+    virtual ~MerchantDialogTS() {};
+
+    virtual void decodeData() {
+        dialogId = getIntFromBuffer();
+        result = getUnsignedCharFromBuffer();
+
+        switch (result) {
+        case 0:
+            break;
+        case 1:
+            saleLocation = getUnsignedCharFromBuffer();
+            saleSlot = getShortIntFromBuffer();
+            saleAmount = getUnsignedCharFromBuffer();
+            break;
+        case 2:
+            purchaseIndex = getUnsignedCharFromBuffer();
+            purchaseAmount = getUnsignedCharFromBuffer();
+            break;
+        }
+    }
+
+    void performAction(Player *player) {
+        time(&(player->lastaction));
+
+        switch (result) {
+        case 0:
+            player->executeMerchantDialogAbort(dialogId);
+            break;
+        case 1:
+            player->executeMerchantDialogSell(dialogId, saleLocation, saleSlot, saleAmount);
+            break;
+        case 2:
+            player->executeMerchantDialogBuy(dialogId, purchaseIndex, purchaseAmount);
+            break;
+        }
+    }
+
+    boost::shared_ptr<BasicClientCommand> clone() {
+        boost::shared_ptr<BasicClientCommand>cmd(new MerchantDialogTS());
         return cmd;
     }
 };

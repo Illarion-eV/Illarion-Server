@@ -27,6 +27,7 @@
 #include "netinterface/NetInterface.hpp"
 #include "dialog/InputDialog.hpp"
 #include "dialog/MessageDialog.hpp"
+#include "dialog/MerchantDialog.hpp"
 
 extern RaceSizeTable *RaceSizes;
 
@@ -40,6 +41,20 @@ InputDialogTC::InputDialogTC(InputDialog &inputDialog, unsigned int dialogId) : 
 MessageDialogTC::MessageDialogTC(MessageDialog &messageDialog, unsigned int dialogId) : BasicServerCommand(SC_MESSAGEDIALOG_TC) {
     addStringToBuffer(messageDialog.getTitle());
     addStringToBuffer(messageDialog.getText());
+    addIntToBuffer(dialogId);
+}
+
+MerchantDialogTC::MerchantDialogTC(MerchantDialog &merchantDialog, unsigned int dialogId) : BasicServerCommand(SC_MERCHANTDIALOG_TC) {
+    addStringToBuffer(merchantDialog.getTitle());
+    MerchantDialog::index_type size = merchantDialog.getProductsSize();
+    addUnsignedCharToBuffer(size);
+
+    for (auto it = merchantDialog.getProductsBegin(); it != merchantDialog.getProductsEnd(); ++it) {
+        addShortIntToBuffer((*it)->item);
+        addStringToBuffer((*it)->name);
+        addIntToBuffer((*it)->price);
+    }
+
     addIntToBuffer(dialogId);
 }
 

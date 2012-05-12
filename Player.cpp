@@ -55,6 +55,7 @@
 
 #include "dialog/InputDialog.hpp"
 #include "dialog/MessageDialog.hpp"
+#include "dialog/MerchantDialog.hpp"
 
 //#define PLAYER_MOVE_DEBUG
 
@@ -2875,5 +2876,61 @@ void Player::executeMessageDialog(unsigned int dialogId) {
 
     delete messageDialog;
     dialogs.erase(dialogId);
+}
+
+void Player::requestMerchantDialog(MerchantDialog *merchantDialog) {
+    requestDialog<MerchantDialog, MerchantDialogTC>(merchantDialog);
+}
+
+void Player::executeMerchantDialogAbort(unsigned int dialogId) {
+    MerchantDialog *merchantDialog = (MerchantDialog *)dialogs[dialogId];
+
+    if (merchantDialog != 0) {
+        merchantDialog->setResult(MerchantDialog::playerAborts);
+        merchantDialog->setPurchaseIndex(0);
+        merchantDialog->setPurchaseAmount(0);
+        ScriptItem item;
+        merchantDialog->setSaleItem(item);
+        LuaScript::executeDialogCallback(*merchantDialog);
+    }
+
+    delete merchantDialog;
+    dialogs.erase(dialogId);
+}
+
+void Player::executeMerchantDialogBuy(unsigned int dialogId, MerchantDialog::index_type index, Item::number_type amount) {
+    MerchantDialog *merchantDialog = (MerchantDialog *)dialogs[dialogId];
+
+    if (merchantDialog != 0) {
+        merchantDialog->setResult(MerchantDialog::playerBuys);
+        merchantDialog->setPurchaseIndex(index);
+        merchantDialog->setPurchaseAmount(amount);
+        ScriptItem item;
+        merchantDialog->setSaleItem(item);
+        LuaScript::executeDialogCallback(*merchantDialog);
+    }
+}
+
+void Player::executeMerchantDialogSell(unsigned int dialogId, uint8_t location, TYPE_OF_CONTAINERSLOTS slot, Item::number_type amount) {
+    MerchantDialog *merchantDialog = (MerchantDialog *)dialogs[dialogId];
+
+    if (merchantDialog != 0) {
+        merchantDialog->setResult(MerchantDialog::playerSells);
+        merchantDialog->setPurchaseIndex(0);
+        merchantDialog->setPurchaseAmount(0);
+        ScriptItem item;
+
+        if (location == 0) {
+            item = GetItemAt(slot);
+        } else {
+            Container *container = 0;
+            showcases[location-1].top()->viewItemNr(slot, item, container);
+        }
+
+        item.setNumber(amount);
+
+        merchantDialog->setSaleItem(item);
+        LuaScript::executeDialogCallback(*merchantDialog);
+    }
 }
 

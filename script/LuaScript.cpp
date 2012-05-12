@@ -52,6 +52,7 @@ extern "C" {
 #include "fuse_ptr.hpp"
 #include "dialog/InputDialog.hpp"
 #include "dialog/MessageDialog.hpp"
+#include "dialog/MerchantDialog.hpp"
 #include <cxxabi.h>
 
 extern ScriptVariablesTable *scriptVariables;
@@ -371,6 +372,18 @@ void LuaScript::init_base_functions() {
         .def("getInput", &InputDialog::getInput),
         luabind::class_<MessageDialog>("MessageDialog")
         .def(luabind::constructor<std::string, std::string, luabind::object>()),
+        luabind::class_<MerchantDialog>("MerchantDialog")
+        .enum_("Result")
+        [
+            luabind::value("playerAborts",0),
+            luabind::value("playerSells",1),
+            luabind::value("playerBuys",2)
+        ]
+        .def(luabind::constructor<std::string, luabind::object>())
+        .def("getResult", &MerchantDialog::getResult)
+        .def("getPurchaseIndex", &MerchantDialog::getPurchaseIndex)
+        .def("getPurchaseAmount", &MerchantDialog::getPurchaseAmount)
+        .def("getSaleItem", &MerchantDialog::getSaleItem),
         luabind::class_<LongTimeAction>("Action")
         .enum_("state")
         [

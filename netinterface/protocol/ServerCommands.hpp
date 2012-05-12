@@ -70,7 +70,8 @@ enum ServerCommands {
     SC_LOOKATCHARRESULT_TC = 0x18,
     SC_ITEMUPDATE_TC = 0x19,
     SC_INPUTDIALOG_TC = 0x50,
-    SC_MESSAGEDIALOG_TC = 0x51
+    SC_MESSAGEDIALOG_TC = 0x51,
+    SC_MERCHANTDIALOG_TC = 0x52
 };
 
 class InputDialog;
@@ -83,6 +84,12 @@ class MessageDialog;
 class MessageDialogTC : public BasicServerCommand {
 public:
     MessageDialogTC(MessageDialog &messageDialog, unsigned int dialogId);
+};
+
+class MerchantDialog;
+class MerchantDialogTC : public BasicServerCommand {
+public:
+    MerchantDialogTC(MerchantDialog &merchantDialog, unsigned int dialogId);
 };
 
 class ItemUpdate_TC : public BasicServerCommand {
