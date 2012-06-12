@@ -51,6 +51,7 @@ struct CommonStruct {
         ObjectAfterRot = 0;
         AfterInfiniteRot = 0;
         Brightness = 0;
+        Worth = 0;
         rotsInInventory = false;
         isStackable = false;
     }
@@ -62,6 +63,7 @@ struct CommonStruct {
         ObjectAfterRot = source.ObjectAfterRot;
         AfterInfiniteRot = source.AfterInfiniteRot;
         Brightness = source.Brightness;
+        Worth = source.Worth;
         rotsInInventory = source.rotsInInventory;
         isStackable = source.isStackable;
     }
@@ -75,6 +77,7 @@ struct CommonStruct {
             ObjectAfterRot = source.ObjectAfterRot;
             AfterInfiniteRot = source.AfterInfiniteRot;
             Brightness = source.Brightness;
+            Worth = source.Worth;
             rotsInInventory = source.rotsInInventory;
             isStackable = source.isStackable;
         }
