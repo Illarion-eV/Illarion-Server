@@ -159,6 +159,8 @@ private:
     std::set<uint32_t> visibleChars;
 
 public:
+    virtual bool pageGM(std::string ticket);
+
     // send a char appearance; always or only if char not yet visible
     void sendCharAppearance(TYPE_OF_CHARACTER_ID id, boost::shared_ptr<BasicServerCommand> appearance, bool always);
 

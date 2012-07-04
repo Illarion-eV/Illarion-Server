@@ -1771,9 +1771,14 @@ private:
 
     // Give help for GM commands
     void gmhelp_command(Player *cp);
-    //Sendet eine Nachricht an alle GM's
-    bool gmpage_command(Player *cp, const std::string &gmpage);
 
+    //Sendet eine Nachricht an alle GM's
+    bool gmpage_command(Player *player, const std::string &ticket);
+
+public:
+    void logGMTicket(Player *Player, const std::string &ticket, const std::string &prefix);
+
+private:
     bool active_language_command(Player *cp, const std::string &language);
 
     //Fgt einen Spieler unter falschen namen in die Eigene Namensliste hinzu

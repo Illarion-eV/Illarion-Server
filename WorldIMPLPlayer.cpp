@@ -120,34 +120,33 @@ void World::name_command(Player *cp, const std::string &ts) {
 }
 
 // GM page (!gm <text>)
-bool World::gmpage_command(Player *cp, const std::string &ts) {
-    //PLAYERVECTOR::iterator pIterator;
-    //FILE * f;
-    //CPlayer* who;
-    std::string tmessage = "Page from " + cp->name + ": " + ts;
-
+bool World::gmpage_command(Player *player, const std::string &ticket) {
     try {
-        using namespace Database;
-        InsertQuery insQuery;
-        insQuery.setServerTable("gmpager");
-        const InsertQuery::columnIndex userColumn = insQuery.addColumn("pager_user");
-        const InsertQuery::columnIndex textColumn = insQuery.addColumn("pager_text");
-        insQuery.addValue(userColumn, cp->id);
-        insQuery.addValue(textColumn, ts);
-
-        insQuery.execute();
-
-        sendMessageToAdmin(tmessage);
-        boost::shared_ptr<BasicServerCommand>cmd(new BBMessageTC(tmessage,2));
-        monitoringClientList->sendCommand(cmd);
-        cp->sendMessage("--- The message has been delivered to the GM team. ---");
-
+        logGMTicket(player, ticket, "Page from " + player->name + ": ");
+        player->sendMessage("--- The message has been delivered to the GM team. ---");
         return true;
     } catch (...) {
-
     }
 
     return false;
+}
+
+void World::logGMTicket(Player *player, const std::string &ticket, const std::string &prefix) {
+    using namespace Database;
+
+    InsertQuery insQuery;
+    insQuery.setServerTable("gmpager");
+    const InsertQuery::columnIndex userColumn = insQuery.addColumn("pager_user");
+    const InsertQuery::columnIndex textColumn = insQuery.addColumn("pager_text");
+    insQuery.addValue(userColumn, player->id);
+    insQuery.addValue(textColumn, ticket);
+
+    insQuery.execute();
+
+    std::string message = prefix + ticket;
+    sendMessageToAdmin(message);
+    boost::shared_ptr<BasicServerCommand>cmd(new BBMessageTC(message,2));
+    monitoringClientList->sendCommand(cmd);
 }
 
 // !prefix <prefix>

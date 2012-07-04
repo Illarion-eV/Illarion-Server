@@ -3454,7 +3454,7 @@ void Character::forceUpdateAppearanceForAll() {
 }
 
 void Character::sendCharDescription(TYPE_OF_CHARACTER_ID id,const std::string &desc) {
-    //NOthing to do here overloaded in Player
+    //Nothing to do here, overloaded in Player
 }
 
 void Character::performAnimation(uint8_t animID) {
@@ -3468,4 +3468,10 @@ void Character::performAnimation(uint8_t animID) {
             (*titerator)->Connection->addCommand(cmd);
         }
     }
+}
+
+bool Character::pageGM(std::string ticket) {
+    //Nothing to do here, overloaded in Player
+
+    return false;
 }

@@ -1058,6 +1058,8 @@ public:
     */
     virtual void sendCharDescription(TYPE_OF_CHARACTER_ID id,const std::string &desc);
 
+    virtual bool pageGM(std::string ticket);
+
     /**
     *======================end of grouping Lua Functions===================
     */

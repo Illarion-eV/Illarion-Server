@@ -2823,6 +2823,17 @@ void Player::sendBook(uint16_t bookID) {
     Connection->addCommand(cmd);
 }
 
+bool Player::pageGM(std::string ticket) {
+    try {
+        _world->logGMTicket(this, "[Auto] " + ticket, "Automatic page about " + name + ": ");
+        return true;
+    } catch (...) {
+    }
+
+    return false;
+}
+
+
 void Player::sendCharDescription(TYPE_OF_CHARACTER_ID id,const std::string &desc) {
     boost::shared_ptr<BasicServerCommand>cmd(new CharDescription(id, desc));
     Connection->addCommand(cmd);

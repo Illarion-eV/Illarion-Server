@@ -412,6 +412,7 @@ void LuaScript::init_base_functions() {
         .def_readwrite("thunderstorm", &WeatherStruct::thunderstorm)
         .def_readwrite("temperature", &WeatherStruct::temperature),
         luabind::class_<Character>("Character")
+        .def("pageGM", &Character::pageGM)
         .def("requestInputDialog", &Character::requestInputDialog)
         .def("requestMessageDialog", &Character::requestMessageDialog)
         .property("death_consequences", &Character::getDeathConsequences, &Character::setDeathConsequences)
