@@ -39,7 +39,6 @@ extern "C" {
 #include "Item.hpp"
 #include "Player.hpp"
 #include "World.hpp"
-#include "UserMenuStruct.hpp"
 #include "globals.hpp"
 #include "TableStructs.hpp"
 #include "Container.hpp"
@@ -494,7 +493,6 @@ void LuaScript::init_base_functions() {
         .def("getMagicFlags", &Character::get_magic_flags)
         .def("warp", &Character::Warp)
         .def("forceWarp", &Character::forceWarp)
-        .def("sendMenu", &Character::startPlayerMenu)
         .def("startMusic", &Character::startMusic)
         .def("defaultMusic", &Character::defaultMusic)
         .def("callAttackScript", &Character::callAttackScript)
@@ -664,9 +662,6 @@ void LuaScript::init_base_functions() {
         .def("viewTopItem", &Field::ViewTopItem)
         .def("countItems", &Field::NumberOfItems)
         .def("deleteAllItems", &Field::DeleteAllItems),
-        luabind::class_<UserMenuStruct>("MenuStruct")
-        .def(luabind::constructor<>())
-        .def("addItem", &UserMenuStruct::AddItem),
         luabind::class_<Item>("Item")
         .def(luabind::constructor<>())
         .def(luabind::constructor<Item::id_type, Item::number_type, Item::wear_type, Item::quality_type, Item::data_type>())

@@ -25,7 +25,6 @@
 #include "netinterface/BasicServerCommand.hpp"
 
 struct WeatherStruct;
-struct UserMenuStruct;
 class Item;
 typedef std::vector < Item > ITEMVECTOR;
 
@@ -49,7 +48,6 @@ enum ServerCommands {
     SC_INTRODUCE_TC = 0xD4,
     SC_MOVEACK_TC = 0xDF,
     SC_UPDATESHOWCASE_TC = 0xC5,
-    SC_STARTPLAYERMENU_TC = 0xBC,
     SC_MAPITEMSWAP = 0xD9,
     SC_GRAPHICEFFECT_TC = 0xC9,
     SC_SOUND_TC = 0xC7,
@@ -194,11 +192,6 @@ public:
 class PushPlayerTC : public BasicServerCommand {
 public:
     PushPlayerTC(char xoffs, char yoffs, uint32_t id, unsigned short int appearance, unsigned char direction);
-};
-
-class StartPlayerMenuTC : public BasicServerCommand {
-public:
-    StartPlayerMenuTC(UserMenuStruct menu);
 };
 
 class UpdateShowCaseTC : public BasicServerCommand {

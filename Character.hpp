@@ -65,8 +65,6 @@ enum magic_type {
 #include "constants.hpp"
 #include "TableStructs.hpp"
 #include "Item.hpp"
-#include "UserMenuStruct.hpp"
-//hier ggf weitere includes
 #include "luabind/luabind.hpp"
 #include "luabind/object.hpp"
 #include "LongTimeCharacterEffects.hpp"
@@ -979,13 +977,6 @@ public:
     std::list<Character::direction> getStepList(position tpos, int checkrange);
 
     luabind::object getLuaStepList(position tpos, int checkrange);
-
-    /**
-    * starts a menu for this character (overloaded in Player)
-    * <b>Lua: [:startPlayerMenu]</b>
-    * @param menu a menu struct which holds all the menu entrys
-    */
-    virtual void startPlayerMenu(UserMenuStruct menu);
 
     /**
     * warps the character to another position

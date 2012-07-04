@@ -537,8 +537,6 @@ public:
     // \return true if walking possible else false
     virtual bool encumberance(uint16_t &movementCost);
 
-    virtual void startPlayerMenu(UserMenuStruct menu);
-
     virtual bool Warp(position newPos);
 
     virtual bool forceWarp(position newPos);

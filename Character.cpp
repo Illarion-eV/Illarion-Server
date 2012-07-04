@@ -2974,10 +2974,6 @@ void Character::sendMessage(std::string message) {
     //nothing to do normally overloadet at Player
 }
 
-void Character::startPlayerMenu(UserMenuStruct Menu) {
-    //nothing to do normally, overloadet at Player
-}
-
 bool Character::Warp(position newPos) {
     position oldpos = pos;
     Field *fold=NULL,* fnew=NULL;

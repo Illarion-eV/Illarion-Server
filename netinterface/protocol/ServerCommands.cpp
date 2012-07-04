@@ -261,20 +261,6 @@ GraphicEffectTC::GraphicEffectTC(short int x, short int y, short int z, unsigned
     addShortIntToBuffer(id);
 }
 
-StartPlayerMenuTC::StartPlayerMenuTC(UserMenuStruct menu) : BasicServerCommand(SC_STARTPLAYERMENU_TC) {
-    int count = menu.Items.size();
-
-    addUnsignedCharToBuffer(count);
-    std::list<TYPE_OF_ITEM_ID>::iterator it;
-
-    for (int i = 0; i < count; ++i) {
-        addShortIntToBuffer(menu.Items.front());
-        menu.Items.pop_front();
-    }
-
-    menu.Items.clear();
-}
-
 UpdateShowCaseTC::UpdateShowCaseTC(unsigned char showcase, const TYPE_OF_CONTAINERSLOTS volume, const Container::ITEMMAP &items) : BasicServerCommand(SC_UPDATESHOWCASE_TC) {
     addUnsignedCharToBuffer(showcase);
 

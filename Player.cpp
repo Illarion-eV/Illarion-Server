@@ -2019,12 +2019,6 @@ bool Player::move(direction dir, uint8_t mode) {
 }
 
 
-void Player::startPlayerMenu(UserMenuStruct menu) {
-    //anzahl der Items ermitteln
-    boost::shared_ptr<BasicServerCommand>cmd(new StartPlayerMenuTC(menu));
-    Connection->addCommand(cmd);
-}
-
 bool Player::Warp(position newPos) {
     bool warped = Character::Warp(newPos);
 
