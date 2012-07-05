@@ -114,6 +114,7 @@ public:
 
     bool survivesAging();
     bool isContainer() const;
+    TYPE_OF_WEIGHT getWeight() const;
     TYPE_OF_WORTH getWorth() const;
     bool isComplete() const;
     bool isPermanent() const;

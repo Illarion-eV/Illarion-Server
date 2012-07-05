@@ -574,6 +574,14 @@ bool World::takeItemFromMap(Character *cc, short int x, short int y, short int z
 bool World::putItemOnMap(Character *cc, short int x, short int y, short int z) {
     Field *tempf;
 
+    //only permit throwing within certain range and weight limits
+    position pos(x, y, z);
+    if (cc->pos.z != z ||
+            !cc->isInRangeToField(pos, MAXTHROWDISTANCE) ||
+            (!cc->isInRangeToField(pos, MAXDROPDISTANCE) && g_item.getNumber() * g_item.getWeight() > MAXTHROWWEIGHT)) { 
+       return false;
+    }
+
     //stacking von Items verhindern
     if (!isStackable(g_item) && !g_item.isContainer()) {
         if (g_item.getNumber() > 1) {

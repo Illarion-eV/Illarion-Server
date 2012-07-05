@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef TUNINGCONSTANTS_HH
-#define TUNINGCONSTANTS_HH
+#ifndef TUNINGCONSTANTS_HPP
+#define TUNINGCONSTANTS_HPP
 
 // how many players to process each turn (maximum)
 #define MAXPLAYERSPROCESSED 5
@@ -74,5 +74,9 @@
 #define NP_STANDARDWALKCOST 30
 
 #define NP_STANDARDFLYCOST 20
+
+#define MAXTHROWDISTANCE 10
+#define MAXTHROWWEIGHT 99
+#define MAXDROPDISTANCE 2
 
 #endif

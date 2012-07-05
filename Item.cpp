@@ -131,6 +131,16 @@ bool Item::isContainer() const {
     return ContainerItems->find(id);
 }
 
+TYPE_OF_WEIGHT Item::getWeight() const {
+    CommonStruct common;
+
+    if (CommonItems->find(id, common)) {
+        return common.Weight;
+    }
+
+    return 0;
+}
+
 TYPE_OF_WORTH Item::getWorth() const {
     CommonStruct common;
 
