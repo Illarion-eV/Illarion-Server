@@ -1758,6 +1758,10 @@ void Player::inform(std::string message, informType type) {
     Connection->addCommand(cmd);
 }
 
+void Player::informLua(std::string message) {
+    inform(message, informScriptMediumPriority);
+}
+
 void Player::informLua(std::string message, informType type) {
     switch (type) {
     case informScriptLowPriority:
@@ -1766,7 +1770,7 @@ void Player::informLua(std::string message, informType type) {
         inform(message, type);
         break;
     default:
-        inform(message, informScriptMediumPriority);
+        informLua(message);
         break;
     }
 }
@@ -1794,7 +1798,7 @@ bool Player::encumberance(uint16_t &movementCost) {
                 break;
             }
 
-            inform(tmessage);
+            informLua(tmessage);
         }
 
         if (perEncumb > 100) {

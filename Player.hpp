@@ -523,7 +523,8 @@ public:
 
     // player gets informed about something
     virtual void inform(std::string text, informType type = informServer);
-    virtual void informLua(std::string text, informType type = informScriptMediumPriority);
+    virtual void informLua(std::string text);
+    virtual void informLua(std::string text, informType type);
 
     // player heard something
     virtual void receiveText(talk_type tt, std::string message, Character *cc);

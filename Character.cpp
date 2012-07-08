@@ -3042,6 +3042,10 @@ void Character::inform(std::string text, informType type) {
     // override for char types that need this kind of information
 }
 
+void Character::informLua(std::string text) {
+    // override for char types that need this kind of information
+}
+
 void Character::informLua(std::string text, informType type) {
     // override for char types that need this kind of information
 }

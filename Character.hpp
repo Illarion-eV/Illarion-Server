@@ -958,7 +958,8 @@ public:
     * @param message which should be sended to this character
     */
     virtual void inform(std::string message, informType type = informServer);
-    virtual void informLua(std::string message, informType type = informScriptMediumPriority);
+    virtual void informLua(std::string message);
+    virtual void informLua(std::string message, informType type);
 
     /**
     * moves this character in a direction
