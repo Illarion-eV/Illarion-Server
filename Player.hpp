@@ -522,7 +522,8 @@ public:
     bool wasUnconsciousSent();
 
     // player gets informed about something
-    virtual void inform(std::string text);
+    virtual void inform(std::string text, informType type = informServer);
+    virtual void informLua(std::string text, informType type = informScriptMediumPriority);
 
     // player heard something
     virtual void receiveText(talk_type tt, std::string message, Character *cc);
@@ -550,8 +551,6 @@ public:
     virtual void setQuestProgress(uint16_t questid, uint32_t progress) throw();
 
     virtual uint32_t getQuestProgress(uint16_t questid) throw();
-
-    void sendMessage(std::string Message);
 
 #ifdef _PLAYER_AUTO_SAVE_
     void checkSave();

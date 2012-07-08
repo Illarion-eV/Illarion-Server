@@ -353,6 +353,11 @@ SayTC::SayTC(int16_t x, int16_t y, int16_t z, std::string text) : BasicServerCom
     addStringToBuffer(text);
 }
 
+InformTC::InformTC(Character::informType type, std::string text) : BasicServerCommand(SC_INFORM_TC) {
+    addUnsignedCharToBuffer(type);
+    addStringToBuffer(text);
+}
+
 MusicTC::MusicTC(short int title) : BasicServerCommand(SC_MUSIC_TC) {
     addShortIntToBuffer(title);
 }

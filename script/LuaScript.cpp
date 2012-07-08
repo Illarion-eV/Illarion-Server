@@ -440,7 +440,7 @@ void LuaScript::init_base_functions() {
         .def("changeTarget", (void(Character:: *)(ScriptItem))&Character::changeTarget)
         .def("changeTarget", (void(Character:: *)(position))&Character::changeTarget)
         .def("changeTarget", (void(Character:: *)(void))&Character::changeTarget)
-        .def("inform", &Character::inform)
+        .def("inform", &Character::informLua)
         .def("introduce", &Character::introducePerson)
         .def("move", &Character::move)
         .def("getNextStepDir", &Character::getNextStepDir, luabind::pure_out_value(_4))
@@ -628,6 +628,12 @@ void LuaScript::init_base_functions() {
             luabind::value("mdrow",34),
             luabind::value("fdrow",35),
             luabind::value("lesserdemon",36)
+        ]
+        .enum_("inform_type")
+        [
+            luabind::value("lowPriority",100),
+            luabind::value("mediumPriority",101),
+            luabind::value("highPriority",102)
         ],
         luabind::class_<Character::skillvalue>("skillvalue")
         .def(luabind::constructor<>())

@@ -576,10 +576,11 @@ bool World::putItemOnMap(Character *cc, short int x, short int y, short int z) {
 
     //only permit throwing within certain range and weight limits
     position pos(x, y, z);
+
     if (cc->pos.z != z ||
-            !cc->isInRangeToField(pos, MAXTHROWDISTANCE) ||
-            (!cc->isInRangeToField(pos, MAXDROPDISTANCE) && g_item.getNumber() * g_item.getWeight() > MAXTHROWWEIGHT)) { 
-       return false;
+        !cc->isInRangeToField(pos, MAXTHROWDISTANCE) ||
+        (!cc->isInRangeToField(pos, MAXDROPDISTANCE) && g_item.getNumber() * g_item.getWeight() > MAXTHROWWEIGHT)) {
+        return false;
     }
 
     //stacking von Items verhindern
@@ -917,7 +918,7 @@ void World::moveItemFromShowcaseToPlayer(Player *cp, unsigned char showcase, uns
                             break;
                         }
 
-                        cp->sendMessage(tmessage);
+                        cp->informLua(tmessage);
                     }
                 } else if (cp->wasEncumberedSent()) {
                     cp->setEncumberedSent(false);
@@ -939,7 +940,7 @@ void World::moveItemFromShowcaseToPlayer(Player *cp, unsigned char showcase, uns
                         break;
                     }
 
-                    cp->sendMessage(tmessage);
+                    cp->informLua(tmessage);
                 }
 
                 //Script nach erfolgreichen Ausfhren des Moves ausfhren
@@ -1299,7 +1300,7 @@ void World::moveItemFromMapIntoShowcase(Player *cp, char direction, unsigned cha
                             break;
                         }
 
-                        cp->sendMessage(tmessage);
+                        cp->informLua(tmessage);
                     }
                 } else if (cp->wasEncumberedSent()) {
                     cp->setEncumberedSent(false);
@@ -1320,7 +1321,7 @@ void World::moveItemFromMapIntoShowcase(Player *cp, char direction, unsigned cha
                         break;
                     }
 
-                    cp->sendMessage(tmessage);
+                    cp->informLua(tmessage);
                 }
 
                 /*
@@ -1462,7 +1463,7 @@ void World::moveItemFromMapToPlayer(Player *cp, char direction, unsigned char cp
                             break;
                         }
 
-                        cp->sendMessage(tmessage);
+                        cp->informLua(tmessage);
                     }
                 } else if (cp->wasEncumberedSent()) {
                     cp->setEncumberedSent(false);
@@ -1483,7 +1484,7 @@ void World::moveItemFromMapToPlayer(Player *cp, char direction, unsigned char cp
                         break;
                     }
 
-                    cp->sendMessage(tmessage);
+                    cp->informLua(tmessage);
                 }
 
                 /*
@@ -1617,7 +1618,7 @@ void World::moveItemBetweenShowcases(Player *cp, unsigned char source, unsigned 
                         break;
                     }
 
-                    cp->sendMessage(tmessage);
+                    cp->informLua(tmessage);
                 }
             } else if (cp->wasEncumberedSent()) {
                 cp->setEncumberedSent(false);
@@ -1638,7 +1639,7 @@ void World::moveItemBetweenShowcases(Player *cp, unsigned char source, unsigned 
                     break;
                 }
 
-                cp->sendMessage(tmessage);
+                cp->informLua(tmessage);
             }
 
             /*

@@ -244,9 +244,9 @@ void World::kill_command(Player *cp) {
 void World::reload_command(Player *cp) {
     if (cp->hasGMRight(gmr_reload)) {
         if (reload_tables(cp)) {
-            cp->sendMessage("DB tables loaded successfully!");
+            cp->inform("DB tables loaded successfully!");
         } else {
-            cp->sendMessage("RITICAL ERROR: Failure while loading DB tables!");
+            cp->inform("CRITICAL ERROR: Failure while loading DB tables!");
         }
     }
 }
@@ -334,7 +334,7 @@ void World::save_command(Player *cp) {
     }
 
     std::string tmessage = "*** Maps saved! ***";
-    cp->sendMessage(tmessage);
+    cp->inform(tmessage);
 }
 
 void World::talkto_command(Player *cp, const std::string &ts) {
@@ -706,7 +706,7 @@ void World::prison_command(Player *cp, const std::string &timeplayer) {
 
                 if (tempPl != NULL) {
                     std::string tmessage = "*** Jailed " + tempPl->name;
-                    cp->sendMessage(tmessage);
+                    cp->inform(tmessage);
 
                     std::cout << cp->name << " jailed player: " << tempPl->name << " for " << jailtime << std::endl;
 
@@ -722,14 +722,14 @@ void World::prison_command(Player *cp, const std::string &timeplayer) {
                         }
 
                         tmessage = cp->name + " jailed you for " + (jailtime == 0 ? "eternity" : stream_convert<std::string>((short int &) jailtime) + " minutes");
-                        tempPl->sendMessage(tmessage);
+                        tempPl->inform(tmessage);
                         //warpPlayer( tempPl, warpto );
                         tempPl->Warp(warpto);
                     }
                 } else {
                     std::string tmessage = "*** Could not find " + tplayer;
                     std::cout << tmessage << std::endl;
-                    cp->sendMessage(tmessage);
+                    cp->inform(tmessage);
                 }
             }
         }
@@ -819,12 +819,12 @@ void World::ban_command(Player *cp, const std::string &timeplayer) {
 
                     std::cout << cp->name << " banned player: " << tempPl->name << " for " << jailtime << timescale << std::endl;
                     std::string tmessage = "*** Banned " + tempPl->name;
-                    cp->sendMessage(tmessage);
+                    cp->inform(tmessage);
 
                 } else {
                     std::string tmessage = "*** Could not find " + tplayer;
                     std::cout << tmessage << std::endl;
-                    cp->sendMessage(tmessage);
+                    cp->inform(tmessage);
                 }
             }
         }
@@ -848,12 +848,12 @@ void World::banbyname(Player *cp, short int banhours, std::string tplayer) {
 
         std::cout << cp->name << " banned player: " << tempPl->name << " for " << banhours << " hours" << std::endl;
         std::string tmessage = "*** Banned " + tempPl->name;
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
 
     } else {
         std::string tmessage = "*** Could not find " + tplayer;
         std::cout << tmessage << std::endl;
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
     }
 
 }
@@ -879,12 +879,12 @@ void World::banbynumber(Player *cp, short int banhours, TYPE_OF_CHARACTER_ID tid
 
         std::cout << cp->name << " banned player: " << tempPl->name << " for " << banhours << " hours" << std::endl;
         std::string tmessage = "*** Banned " + tempPl->name;
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
 
     } else {
         std::string tmessage = "*** Could not find " + stream_convert<std::string>(tid);
         std::cout << tmessage << std::endl;
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
     }
 
 
@@ -926,7 +926,7 @@ void World::who_command(Player *cp, const std::string &tplayer) {
 
         for (playerIterator = Players.begin(); playerIterator < Players.end(); ++playerIterator) {
             if (tmessage.length() > 0 && tmessage.length() + 10 + (*playerIterator)->name.length() > 104) {
-                cp->sendMessage(tmessage);
+                cp->inform(tmessage);
                 tmessage = "";
             }
 
@@ -939,7 +939,7 @@ void World::who_command(Player *cp, const std::string &tplayer) {
         }
 
         if (tmessage.length() > 0) {
-            cp->sendMessage(tmessage);
+            cp->inform(tmessage);
         }
     } else {
 
@@ -993,7 +993,7 @@ void World::who_command(Player *cp, const std::string &tplayer) {
 #endif
             tmessage = tmessage + ((tempPl->getPlayerLanguage() == 0) ? " German" : " English");
 
-            cp->sendMessage(tmessage);
+            cp->inform(tmessage);
         }
     }
 }
@@ -1075,18 +1075,18 @@ void World::clippingoff_command(Player *cp) {
 void World::what_command(Player *cp) {
     position front = cp->getFrontalPosition();
 
-    cp->sendMessage("Facing:");
+    cp->inform("Facing:");
     std::stringstream message;
 
     message << "- Position (" << front.x << ", " << front.y << ", " << front.z << ")";
-    cp->sendMessage(message.str());
+    cp->inform(message.str());
     Field *tempf;
 
     if (GetPToCFieldAt(tempf, front)) {
         message.str("");
 
         message << "- Tile " << tempf->getTileId();
-        cp->sendMessage(message.str());
+        cp->inform(message.str());
         Item top;
 
         if (tempf->ViewTopItem(top)) {
@@ -1097,10 +1097,10 @@ void World::what_command(Player *cp) {
             if (cp->hasGMRight(gmr_basiccommands)) {
                 message << ", Quality " << top.getQuality();
                 message << ", Data " << top.getData();
-                message << ", Wear " << top.getWear();
+                message << ", Wear " << (uint16_t)top.getWear();
             }
 
-            cp->sendMessage(message.str());
+            cp->inform(message.str());
         }
 
         Character *character = findCharacterOnField(front.x, front.y, front.z);
@@ -1119,7 +1119,7 @@ void World::what_command(Player *cp) {
                 message << "- Player";
             }
 
-            cp->sendMessage(message.str());
+            cp->inform(message.str());
         }
     }
 }
@@ -1142,7 +1142,7 @@ void World::playersave_command(Player *cp) {
     }
 
     std::string tmessage = "*** All online players saved! ***";
-    cp->sendMessage(tmessage);
+    cp->inform(tmessage);
 
 }
 
@@ -1169,10 +1169,10 @@ void World::teleport_command(Player *cp, const std::string &ts) {
                         if (ReadField(thistoken, teleportto.z)) {
                             if (addWarpField(cp->pos, teleportto, 0, 0)) {
                                 std::string tmessage = "*** Warp Field Added! ***";
-                                cp->sendMessage(tmessage);
+                                cp->inform(tmessage);
                             } else {
                                 std::string tmessage = "*** Warp Field *NOT* Added! ***";
-                                cp->sendMessage(tmessage);
+                                cp->inform(tmessage);
                             };
                         }
                     }
@@ -1191,116 +1191,116 @@ void World::gmhelp_command(Player *cp) {
     }
 
     std::string tmessage = " <> - parameter.  [] - optional.  | = choice.  () = shortcut";
-    cp->sendMessage(tmessage);
+    cp->inform(tmessage);
 
     if (cp->hasGMRight(gmr_basiccommands)) {
         tmessage = "!what - sends different informations of the field or the character in front of you.";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
         tmessage = "!who [player] - List all players online or a single player if specified.";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
         tmessage = "!forceintroduce <char id|char name> - (!fi) introduces the char to all gms in range.";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
         tmessage = "!forceintroduceall - (!fia) introduces all chars in sight to you.";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
         tmessage = "!inform - gives you some more informations while fighting.";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
         tmessage = "!talkto <playername|id>, <message> - (!tt) sends a message to a specific player important is the , after the id or name!";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
         tmessage = "!broadcast <message> - (!bc) Broadcasts the message <message> to all players IG.";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
         tmessage = "!create id [quality [data]] creates an item in your inventory.";
 
     }
 
     if (cp->hasGMRight(gmr_warp)) {
         tmessage = "!warp <x> <y> [z] - (!w) to x, y, z location.";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
         tmessage = "!add_teleport <x> <y> <z> - Adds a teleportfield in front of you to the field <x> <y> <z>.";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
         tmessage = "!showwarpfields <range> - Shows all warpfields in the range <range>.";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
         tmessage = "!removewarpfield <x> <y> <z> - Removes the warpfield at the position <x> <y> <z>.";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
         tmessage = "!jumpto <playerid|name> - (!j) teleports you to the player.";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
 
     }
 
     if (cp->hasGMRight(gmr_summon)) {
         tmessage = "!summon <player> - (!s) Summons a player to you.";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
     }
 
     if (cp->hasGMRight(gmr_prison)) {
         tmessage = "!prison <time> <player> - (!p) Jails the player <player> for <time> amount minutes. 0 is forever.";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
     }
 
     if (cp->hasGMRight(gmr_ban)) {
         tmessage = "!ban <time> [m|h|d] <player> - (!b) Bans the player <player> for <time> [m]inutes/[h]ours/[d]ays.";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
     }
 
     if (cp->hasGMRight(gmr_settiles)) {
         tmessage = "!tile <tilenumber> - (!t) changes the tile in front of you to the tile with id <tilenumber>.";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
         tmessage = "!turtleon <tile number> - (!ton) Change tiles to tile # when you walk (advanced)";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
         tmessage = "!turtleoff - (!toff) Stop changing tiles as you walk.";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
     }
 
     if (cp->hasGMRight(gmr_clipping)) {
         tmessage = "!clippingon - (!con) Turn clipping on (Can't walk through walls)";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
         tmessage = "!clippingoff - (!coff) Turn clipping off (Walk anywhere)";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
     }
 
     if (cp->hasGMRight(gmr_save)) {
         tmessage = "!playersave - (!ps) saves all players to the database.";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
         tmessage = "!mapsave - Saves the map after changes where made.";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
     }
 
     if (cp->hasGMRight(gmr_reload)) {
         tmessage = "!set_spawn <true|false> - activates/deactivates the spawning of monsters.";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
         tmessage = "!reloaddefinitions - (!rd) reloads all datas without spawnpoints, so no new monsters are spawned. (deactivated)";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
         tmessage = "!nuke - kills all Monster on the map (to clean the map after a spawn reload).";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
         tmessage = "!fullreload - (!fr) reloads all database tables";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
     }
 
     if (cp->hasGMRight(gmr_import)) {
         tmessage = "!importmaps <x> <y> <z> - Imports new maps from the Editor to the location.";
-        cp->sendMessage(tmessage);
-        tmessage = "create_area <x> <y> <z> <with> <height> <filltile> - Creates a new map at <x> <y> <z> with the dimensions <heigt> <with> and the tile <fillile>.";
-        cp->sendMessage(tmessage);
-        tmessage = "!exportmaps - Exports the current maps (dunno if that works?).";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
+        tmessage = "create_area <x> <y> <z> <width> <height> <tile> - Creates a new map at <x> <y> <z> with the dimensions <height> <width> and filled with <tile>.";
+        cp->inform(tmessage);
+        tmessage = "!exportmaps - Exports the current maps.";
+        cp->inform(tmessage);
     }
 
     if (cp->hasGMRight(gmr_loginstate)) {
         tmessage = "!nologin <true|false> - changes the login state, with true only gm's can log in.";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
     }
 
     if (cp->hasGMRight(gmr_visible)) {
         tmessage = "!makeinvisible - (!mi) makes you invisible for other chars. NOT FOR MONSTERS.";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
         tmessage = "!makevisible - (!mv) makes you visible if you are invisible.";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
     }
 
     if (cp->hasGMRight(gmr_forcelogout)) {
         tmessage = "!kickall - Kicks all players out of the game.";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
         tmessage = "!kick <playerid> - Kicks the player with the id out of the game.";
-        cp->sendMessage(tmessage);
+        cp->inform(tmessage);
     }
 }
 
@@ -1341,7 +1341,7 @@ extern MonsterTable *MonsterDescriptions;
 
 void reportError(Player *cp, std::string msg) {
     std::cerr << "ERROR: " << msg << std::endl;
-    cp->sendMessage("ERROR: " + msg);
+    cp->inform("ERROR: " + msg);
 }
 
 void reportScriptError(Player *cp, std::string serverscript, std::string what) {
@@ -1681,9 +1681,9 @@ bool World::reload_defs(Player *cp) {
 
 
     if (ok) {
-        cp->sendMessage(" *** Definitions reloaded *** ");
+        cp->inform(" *** Definitions reloaded *** ");
     } else {
-        cp->sendMessage("RITICAL ERROR: Failure while reloading definitions");
+        cp->inform("CRITICAL ERROR: Failure while reloading definitions");
     }
 
     return ok;
@@ -1780,7 +1780,7 @@ void create_area_command(World *world, Player *player,const std::string &params)
     world->maps.InsertMap(tempmap);
 
     std::string tmessage = "map inserted.";
-    player->sendMessage(tmessage);
+    player->inform(tmessage);
     std::cerr << "Map created by " << player->name << " on " << x << " - " << y << " - " << z << " with w: " << w << " h: " << h << "ft: " << filltile << std::endl;
 
 }
@@ -1793,7 +1793,7 @@ void set_login(World *world, Player *player, const std::string &st) {
     configOptions["disable_login"] = st;
     std::cout << "nologin set to " << st << std::endl;
     std::string tmessage = "nologin set to: " + st;
-    player->sendMessage(tmessage);
+    player->inform(tmessage);
 }
 
 bool World::exportMaps(Player *cp) {
@@ -1893,10 +1893,10 @@ void World::removeTeleporter(Player *cp, const std::string &ts) {
                         if (ReadField(thistoken, teleport.z)) {
                             if (removeWarpField(teleport)) {
                                 std::string tmessage = "*** Warp Field deleted! ***";
-                                cp->sendMessage(tmessage);
+                                cp->inform(tmessage);
                             } else {
                                 std::string tmessage = "*** Warp Field *NOT* deleted! ***";
-                                cp->sendMessage(tmessage);
+                                cp->inform(tmessage);
                             };
                         }
                     }
@@ -1921,16 +1921,16 @@ void World::showWarpFieldsInRange(Player *cp, const std::string &ts) {
         if (findWarpFieldsInRange(cp->pos, range, warpfieldsinrange)) {
             std::vector< boost::shared_ptr< position > >::iterator it;
             std::string message;
-            cp->sendMessage("Start list of warpfields:");
+            cp->inform("Start list of warpfields:");
 
             for (it = warpfieldsinrange.begin(); it != warpfieldsinrange.end(); ++it) {
                 position target;
                 GetField(**it)->GetWarpField(target);
                 message = "Warpfield at (x,y,z) " + stream_convert<std::string>((*it)->x) + "," + stream_convert<std::string> ((*it)->y) + "," + stream_convert<std::string>((*it)->z) + " Target (x,y,z) : " + stream_convert<std::string>(target.x) + "," + stream_convert<std::string>(target.y) + "," + stream_convert<std::string>(target.z);
-                cp->sendMessage(message);
+                cp->inform(message);
             }
 
-            cp->sendMessage("End list of warpfields.");
+            cp->inform("End list of warpfields.");
         }
     }
 }

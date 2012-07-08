@@ -56,12 +56,6 @@ bool World::sendTextInFileToPlayer(std::string filename, Player *cp) {
 }
 
 
-void World::sendMessageToPlayer(Player *cp, std::string message) {
-    //cp->Connection->addCommand( boost::shared_ptr<BasicServerCommand>( new SayTC( cp->pos.x, cp->pos.y, cp->pos.z, message ) ) );
-    cp->sendMessage(message);
-}
-
-
 void World::sendMessageToAdmin(std::string message) {
     PLAYERVECTOR::iterator titerator;
 
@@ -133,35 +127,12 @@ std::string World::languageNumberToSkillName(int languageNumber) {
 }
 
 void World::sendMessageToAllPlayers(std::string message) {
-
     PLAYERVECTOR::iterator titerator;
 
     for (titerator = Players.begin(); titerator < Players.end(); ++titerator) {
-        boost::shared_ptr<BasicServerCommand>cmd(new SayTC((*titerator)->pos.x, (*titerator)->pos.y, (*titerator)->pos.z, message));
-        (*titerator)->Connection->addCommand(cmd);
+        (*titerator)->inform(message, Player::informBroadcast);
     }
-
 }
-
-void World::sendMessageToAllPlayers_2(std::string message[ LANGUAGECOUNT ]) {
-
-    PLAYERVECTOR::iterator titerator;
-
-    for (titerator = Players.begin(); titerator < Players.end(); ++titerator) {
-
-        if (((*titerator)->getPlayerLanguage() < LANGUAGECOUNT)) {
-            boost::shared_ptr<BasicServerCommand>cmd(new SayTC((*titerator)->pos.x, (*titerator)->pos.y, (*titerator)->pos.z, message[(*titerator)->getPlayerLanguage()]));
-            (*titerator)->Connection->addCommand(cmd);
-        } else {
-            boost::shared_ptr<BasicServerCommand>cmd(new SayTC((*titerator)->pos.x, (*titerator)->pos.y, (*titerator)->pos.z, std::string("?")));
-            (*titerator)->Connection->addCommand(cmd);
-        }
-
-
-    }
-
-}
-
 
 void World::sendLanguageMessageToAllCharsInRange(std::string message, Character::talk_type tt, unsigned char lang, Character *cc) {
     uint16_t range = 0;

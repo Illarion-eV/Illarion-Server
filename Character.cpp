@@ -2970,10 +2970,6 @@ void Character::teachMagic(unsigned char type, unsigned char flag) {
     //nothing to do normally overloadet at Player
 }
 
-void Character::sendMessage(std::string message) {
-    //nothing to do normally overloadet at Player
-}
-
 bool Character::Warp(position newPos) {
     position oldpos = pos;
     Field *fold=NULL,* fnew=NULL;
@@ -3042,7 +3038,11 @@ void Character::defaultMusic() {
     //Nothing to do here, overloaded for players
 }
 
-void Character::inform(std::string text) {
+void Character::inform(std::string text, informType type) {
+    // override for char types that need this kind of information
+}
+
+void Character::informLua(std::string text, informType type) {
     // override for char types that need this kind of information
 }
 

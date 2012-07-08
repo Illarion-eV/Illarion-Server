@@ -123,7 +123,7 @@ void World::name_command(Player *cp, const std::string &ts) {
 bool World::gmpage_command(Player *player, const std::string &ticket) {
     try {
         logGMTicket(player, ticket, "Page from " + player->name + ": ");
-        player->sendMessage("--- The message has been delivered to the GM team. ---");
+        player->inform("--- The message has been delivered to the GM team. ---");
         return true;
     } catch (...) {
     }
@@ -166,7 +166,7 @@ bool World::prefix_command(Player *cp, const std::string &tprefix) {
         tstring = tstring + std::string(" ") + cp->suffix;
     }
 
-    cp->sendMessage(tstring);
+    cp->inform(tstring);
     return true;
 
 }
@@ -189,7 +189,7 @@ bool World::suffix_command(Player *cp, const std::string &tsuffix) {
         tstring = tstring + std::string(" ") + cp->suffix;
     }
 
-    cp->sendMessage(tstring);
+    cp->inform(tstring);
     return true;
 
 }
@@ -308,7 +308,7 @@ bool World::player_prison_command(Player *cp, const std::string &timeplayer) {
 
                     if (tempPl != NULL) {
                         std::string tmessage = "*** Jailed " + tempPl->name;
-                        cp->sendMessage(tmessage);
+                        cp->inform(tmessage);
 
                         std::cout << cp->name << " jailed player: " << tempPl->name << " for " << jailtime << std::endl;
 
@@ -324,7 +324,7 @@ bool World::player_prison_command(Player *cp, const std::string &timeplayer) {
                             }
 
                             tmessage = cp->name + " jailed you for " + (jailtime == 0 ? "eternity" : stream_convert<std::string>((short int &) jailtime) + " minutes");
-                            tempPl->sendMessage(tmessage);
+                            tempPl->inform(tmessage);
                             //warpPlayer( tempPl, warpto );
                             tempPl->Warp(warpto);
                             returnval= true;
@@ -332,7 +332,7 @@ bool World::player_prison_command(Player *cp, const std::string &timeplayer) {
                     } else {
                         std::string tmessage = "*** Could not find " + tplayer;
                         std::cout << tmessage << std::endl;
-                        cp->sendMessage(tmessage);
+                        cp->inform(tmessage);
                     }
                 }
             }

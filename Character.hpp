@@ -158,6 +158,15 @@ public:
         dir_down = 9
     };
 
+    enum informType {
+        informServer = 0,
+        informBroadcast = 1,
+        informGM = 2,
+        informScriptLowPriority = 100,
+        informScriptMediumPriority = 101,
+        informScriptHighPriority = 102
+    };
+
     /**
     * @ingroup Scriptclasses
     * one skill entry in the skillmap
@@ -948,7 +957,8 @@ public:
     * <b>Lua: [:inform]</b>
     * @param message which should be sended to this character
     */
-    virtual void inform(std::string message);
+    virtual void inform(std::string message, informType type = informServer);
+    virtual void informLua(std::string message, informType type = informScriptMediumPriority);
 
     /**
     * moves this character in a direction
@@ -957,13 +967,6 @@ public:
     * @param active (if the move is active or if he is pushed)
     */
     virtual bool move(direction dir, bool active=true);
-
-    /**
-    * sends a message only to this character
-    * <b>Lua: [:sendMessage]</b>
-    * @param message which is sended
-    */
-    virtual void sendMessage(std::string message);
 
     /**
     * gets the direction of a step toward a possible position

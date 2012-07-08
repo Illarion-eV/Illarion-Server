@@ -499,7 +499,7 @@ public:
         }
 
         if (tempPlayer != NULL) {
-            World::get()->sendMessageToPlayer(tempPlayer, msg);
+            tempPlayer->inform(msg, Player::informGM);
         }
     }
 

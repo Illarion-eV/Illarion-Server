@@ -45,6 +45,7 @@ enum ServerCommands {
     SC_SAY_TC = 0xD7,
     SC_WHISPER_TC = 0xD5,
     SC_SHOUT_TC = 0xD6,
+    SC_INFORM_TC = 0xD8,
     SC_INTRODUCE_TC = 0xD4,
     SC_MOVEACK_TC = 0xDF,
     SC_UPDATESHOWCASE_TC = 0xC5,
@@ -232,6 +233,11 @@ public:
 class SayTC : public BasicServerCommand {
 public:
     SayTC(int16_t x, int16_t y, int16_t z, std::string text);
+};
+
+class InformTC : public BasicServerCommand {
+public:
+    InformTC(Character::informType type, std::string text);
 };
 
 class MusicTC : public BasicServerCommand {

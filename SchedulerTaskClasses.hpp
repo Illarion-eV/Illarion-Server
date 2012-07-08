@@ -29,47 +29,6 @@
 extern CommonObjectTable *CommonItems;
 extern boost::shared_ptr<LuaLearnScript>learnScript;
 
-class STalk : public SchedulerObject {
-
-public:
-
-    STalk(TYPE_OF_CHARACTER_ID id, std::string ntext, unsigned short int ncount, unsigned long int ncycles, unsigned long int cycle_time) {
-        playerid = id;
-        text = ntext;
-        CycleTime = cycle_time;
-        nextCycle = ncycles;
-        count = ncount;
-    }
-    virtual ~STalk() {}
-
-    bool operator()(World *world) {
-        ccharactervector < Player * >::iterator playerIterator;
-
-        for (playerIterator = world->Players.begin(); playerIterator < world->Players.end(); ++playerIterator) {
-            if ((*playerIterator)->id == playerid) {
-                //spieler noch online
-                (*playerIterator)->sendMessage(text);
-            }
-        }
-
-        count--;
-
-        if (count > 0) {
-            nextCycle += CycleTime;
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-private:
-
-    TYPE_OF_CHARACTER_ID playerid;
-    std::string text;
-
-};
-
-//====================================================================================================
 class SIncreaseHealtPoints : public SchedulerObject {
 
 public:

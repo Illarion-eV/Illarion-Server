@@ -343,7 +343,7 @@ void Player::login() throw(Player::LogoutException) {
             break;
         }
 
-        sendMessage(tmessage);
+        informLua(tmessage);
     } else {
         setEncumberedSent(false);
     }
@@ -1590,7 +1590,7 @@ void Player::increasePoisonValue(short int value) {
             break;
         }
 
-        sendMessage(tmessage);
+        informLua(tmessage);
     }
 
     if ((poisonvalue + value) >= MAXPOISONVALUE) {
@@ -1613,7 +1613,7 @@ void Player::increasePoisonValue(short int value) {
             break;
         }
 
-        sendMessage(tmessage);
+        informLua(tmessage);
     } else {
         poisonvalue += value;
     }
@@ -1753,8 +1753,22 @@ void Player::teachMagic(unsigned char type,unsigned char flag) {
     }
 }
 
-void Player::inform(std::string message) {
-    receiveText(tt_say, message, this);
+void Player::inform(std::string message, informType type) {
+    boost::shared_ptr<BasicServerCommand>cmd(new InformTC(type, message));
+    Connection->addCommand(cmd);
+}
+
+void Player::informLua(std::string message, informType type) {
+    switch (type) {
+    case informScriptLowPriority:
+    case informScriptMediumPriority:
+    case informScriptHighPriority:
+        inform(message, type);
+        break;
+    default:
+        inform(message, informScriptMediumPriority);
+        break;
+    }
 }
 
 bool Player::encumberance(uint16_t &movementCost) {
@@ -2508,11 +2522,6 @@ const unsigned short int Player::getPlayerLanguage() {
 
 void Player::setPlayerLanguage(Language::LanguageType mother_tongue) {
     _player_language = Language::create(mother_tongue);
-}
-
-void Player::sendMessage(std::string message) {
-    boost::shared_ptr<BasicServerCommand>cmd(new SayTC(pos.x, pos.y, pos.z, message));
-    Connection->addCommand(cmd);
 }
 
 void Player::sendRelativeArea(int8_t zoffs) {
