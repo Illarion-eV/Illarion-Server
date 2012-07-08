@@ -898,57 +898,8 @@ void World::moveItemFromShowcaseToPlayer(Player *cp, unsigned char showcase, uns
             if (!putItemOnInvPos(cp, cpos)) {
                 NOK = true;
             } else {
-                if ((cp->LoadWeight() * 100) / cp->maxLoadWeight() >= 50) {
-                    if (! cp->wasEncumberedSent()) {
-                        cp->setEncumberedSent(true);
-                        std::string tmessage;
+                cp->checkBurden();
 
-                        switch (cp->getPlayerLanguage()) {
-                        case Language::german:
-                            tmessage = "Du bist �berladen.";
-                            break;
-                        case Language::english:
-                            tmessage = "You are encumbered.";
-                            break;
-                        case Language::french:
-                            tmessage = "You are encumbered.";
-                            break;
-                        default:
-                            tmessage = "You are encumbered.";
-                            break;
-                        }
-
-                        cp->informLua(tmessage);
-                    }
-                } else if (cp->wasEncumberedSent()) {
-                    cp->setEncumberedSent(false);
-
-                    std::string tmessage;
-
-                    switch (cp->getPlayerLanguage()) {
-                    case Language::german:
-                        tmessage = "Du bist nicht mehr �berladen.";
-                        break;
-                    case Language::english:
-                        tmessage = "You are no longer encumbered.";
-                        break;
-                    case Language::french:
-                        tmessage = "You are no longer encumbered.";
-                        break;
-                    default:
-                        tmessage = "You are no longer encumbered.";
-                        break;
-                    }
-
-                    cp->informLua(tmessage);
-                }
-
-                //Script nach erfolgreichen Ausfhren des Moves ausfhren
-
-                /*
-                if ( com.script ) {
-                       com.script->MoveItemAfterMove(cp, s_item, t_item);
-                }*/
                 if (script) {
                     script->MoveItemAfterMove(cp, s_item, t_item);
                 }
@@ -1280,54 +1231,8 @@ void World::moveItemFromMapIntoShowcase(Player *cp, char direction, unsigned cha
                     NOK =true;
                 }
 
-                if ((cp->LoadWeight() * 100) / cp->maxLoadWeight() >= 50) {
-                    if (! cp->wasEncumberedSent()) {
-                        cp->setEncumberedSent(true);
-                        std::string tmessage;
+                cp->checkBurden();
 
-                        switch (cp->getPlayerLanguage()) {
-                        case Language::german:
-                            tmessage = "Du bist �berladen.";
-                            break;
-                        case Language::english:
-                            tmessage = "You are encumbered.";
-                            break;
-                        case Language::french:
-                            tmessage = "You are encumbered.";
-                            break;
-                        default:
-                            tmessage = "You are encumbered.";
-                            break;
-                        }
-
-                        cp->informLua(tmessage);
-                    }
-                } else if (cp->wasEncumberedSent()) {
-                    cp->setEncumberedSent(false);
-                    std::string tmessage;
-
-                    switch (cp->getPlayerLanguage()) {
-                    case Language::german:
-                        tmessage = "Du bist nicht mehr �berladen.";
-                        break;
-                    case Language::english:
-                        tmessage = "You are no longer encumbered.";
-                        break;
-                    case Language::french:
-                        tmessage = "You are no longer encumbered.";
-                        break;
-                    default:
-                        tmessage = "You are no longer encumbered.";
-                        break;
-                    }
-
-                    cp->informLua(tmessage);
-                }
-
-                /*
-                if ( com.script ) {
-                       com.script->MoveItemAfterMove(cp, s_item, t_item);
-                }*/
                 if (script) {
                     script->MoveItemAfterMove(cp, s_item, t_item);
                 }
@@ -1443,54 +1348,8 @@ void World::moveItemFromMapToPlayer(Player *cp, char direction, unsigned char cp
                     NOK = true;
                 }
 
-                if ((cp->LoadWeight() * 100) / cp->maxLoadWeight() >= 50) {
-                    if (! cp->wasEncumberedSent()) {
-                        cp->setEncumberedSent(true);
-                        std::string tmessage;
+                cp->checkBurden();
 
-                        switch (cp->getPlayerLanguage()) {
-                        case Language::german:
-                            tmessage = "Du bist �berladen.";
-                            break;
-                        case Language::english:
-                            tmessage = "You are encumbered.";
-                            break;
-                        case Language::french:
-                            tmessage = "You are encumbered.";
-                            break;
-                        default:
-                            tmessage = "You are encumbered.";
-                            break;
-                        }
-
-                        cp->informLua(tmessage);
-                    }
-                } else if (cp->wasEncumberedSent()) {
-                    cp->setEncumberedSent(false);
-                    std::string tmessage;
-
-                    switch (cp->getPlayerLanguage()) {
-                    case Language::german:
-                        tmessage = "Du bist nicht mehr �berladen.";
-                        break;
-                    case Language::english:
-                        tmessage = "You are no longer encumbered.";
-                        break;
-                    case Language::french:
-                        tmessage = "You are no longer encumbered.";
-                        break;
-                    default:
-                        tmessage = "You are no longer encumbered.";
-                        break;
-                    }
-
-                    cp->informLua(tmessage);
-                }
-
-                /*
-                if ( com.script ) {
-                       com.script->MoveItemAfterMove(cp, s_item, t_item);
-                }*/
                 if (script) {
                     script->MoveItemAfterMove(cp, s_item, t_item);
                 }
@@ -1598,54 +1457,8 @@ void World::moveItemBetweenShowcases(Player *cp, unsigned char source, unsigned 
                 NOK=true;
             }
 
-            if ((cp->LoadWeight() * 100) / cp->maxLoadWeight() >= 50) {
-                if (! cp->wasEncumberedSent()) {
-                    cp->setEncumberedSent(true);
-                    std::string tmessage;
+            cp->checkBurden();
 
-                    switch (cp->getPlayerLanguage()) {
-                    case Language::german:
-                        tmessage = "Du bist �berladen.";
-                        break;
-                    case Language::english:
-                        tmessage = "You are encumbered.";
-                        break;
-                    case Language::french:
-                        tmessage = "You are encumbered.";
-                        break;
-                    default:
-                        tmessage = "You are encumbered.";
-                        break;
-                    }
-
-                    cp->informLua(tmessage);
-                }
-            } else if (cp->wasEncumberedSent()) {
-                cp->setEncumberedSent(false);
-                std::string tmessage;
-
-                switch (cp->getPlayerLanguage()) {
-                case Language::german:
-                    tmessage = "Du bist nicht mehr �berladen.";
-                    break;
-                case Language::english:
-                    tmessage = "You are no longer encumbered.";
-                    break;
-                case Language::french:
-                    tmessage = "You are no longer encumbered.";
-                    break;
-                default:
-                    tmessage = "You are no longer encumbered.";
-                    break;
-                }
-
-                cp->informLua(tmessage);
-            }
-
-            /*
-            if ( com.script ) {
-                   com.script->MoveItemAfterMove(cp, s_item, t_item);
-            }*/
             if (script) {
                 script->MoveItemAfterMove(cp, s_item, t_item);
             }

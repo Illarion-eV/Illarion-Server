@@ -159,6 +159,9 @@ private:
     std::set<uint32_t> visibleChars;
 
 public:
+    std::string &nls(std::string &german, std::string &english);
+    void checkBurden();
+
     virtual bool pageGM(std::string ticket);
 
     // send a char appearance; always or only if char not yet visible

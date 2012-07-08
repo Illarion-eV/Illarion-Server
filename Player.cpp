@@ -309,41 +309,14 @@ void Player::login() throw(Player::LogoutException) {
     // send magic skills
     sendMagicFlags(magic.type);
 
-    // send start message
-    if (getPlayerLanguage() == Language::german) {
-        _world->sendTextInFileToPlayer(configOptions["datadir"] + std::string("startnachricht.txt"), this);
-    } else {
-        _world->sendTextInFileToPlayer(configOptions["datadir"] + std::string("startmessage.txt"), this);
-    }
-
-    // Send admin message if admin
-    if (isAdmin() || hasGMRight(gmr_isnotshownasgm)) {
-        _world->sendTextInFileToPlayer(configOptions["datadir"] + std::string("adminmessage.txt"), this);
-    }
-
     time(&logintime);
     time(&lastkeepalive);
 
     if ((LoadWeight() * 100) / maxLoadWeight() > 75) {
         setEncumberedSent(true);
-        std::string tmessage;
-
-        switch (getPlayerLanguage()) {
-        case Language::german:
-            tmessage = "Du bist �berladen.";
-            break;
-        case Language::english:
-            tmessage = "You are encumbered.";
-            break;
-        case Language::french:
-            tmessage = "You are encumbered.";
-            break;
-        default:
-            tmessage = "You are encumbered.";
-            break;
-        }
-
-        informLua(tmessage);
+        std::string german = "Deine Last bremst dich.";
+        std::string english = "Your burden slows you down.";
+        informLua(nls(german, english));
     } else {
         setEncumberedSent(false);
     }
@@ -1781,45 +1754,15 @@ bool Player::encumberance(uint16_t &movementCost) {
     if (perEncumb > 75) {
         if (!wasEncumberedSent()) {
             setEncumberedSent(true);
-            std::string tmessage;
-
-            switch (getPlayerLanguage()) {
-            case Language::german:
-                tmessage = "Du bist �berladen.";
-                break;
-            case Language::english:
-                tmessage = "You are encumbered.";
-                break;
-            case Language::french:
-                tmessage = "You are encumbered.";
-                break;
-            default:
-                tmessage = "You are encumbered.";
-                break;
-            }
-
-            informLua(tmessage);
+            std::string german = "Deine Last bremst dich.";
+            std::string english = "Your burden slows you down.";
+            informLua(nls(german, english));
         }
 
         if (perEncumb > 100) {
-            std::string tmessage;
-
-            switch (getPlayerLanguage()) {
-            case Language::german:
-                tmessage="Du kannst nicht laufen, wenn du so viel tr�gst.";
-                break;
-            case Language::english:
-                tmessage="You are carrying too much to move!";
-                break;
-            case Language::french:
-                tmessage="You are carrying too much to move!";
-                break;
-            default:
-                tmessage="You are carrying too much to move!";
-                break;
-            }
-
-            inform(tmessage);
+            std::string german = "Deine Last hindert dich daran zu laufen.";
+            std::string english = "Your burden keeps you from moving.";
+            informLua(nls(german, english));
             return false;
         }
 
@@ -2828,6 +2771,33 @@ uint32_t Player::idleTime() {
 void Player::sendBook(uint16_t bookID) {
     boost::shared_ptr<BasicServerCommand>cmd(new BookTC(bookID));
     Connection->addCommand(cmd);
+}
+
+std::string &Player::nls(std::string &german, std::string &english) {
+    switch (getPlayerLanguage()) {
+    case Language::german:
+        return german;
+    case Language::english:
+        return english;
+    default:
+        return english;
+    }
+}
+
+void Player::checkBurden() {
+    if (LoadWeight() * 100 / maxLoadWeight() > 75) {
+        if (!wasEncumberedSent()) {
+            setEncumberedSent(true);
+            std::string german = "Deine Last bremst dich.";
+            std::string english = "Your burden slows you down.";
+            informLua(nls(german, english));
+        }
+    } else if (wasEncumberedSent()) {
+        setEncumberedSent(false);
+        std::string german = "Eine schwere Last ist von deinen Schultern genommen.";
+        std::string english = "A heavy burden has been lifted from your shoulders.";
+        informLua(nls(german, english));
+    }
 }
 
 bool Player::pageGM(std::string ticket) {
