@@ -185,18 +185,21 @@ void World::sendLanguageMessageToAllCharsInRange(std::string message, Character:
         }
     }
 
+    // NPCs talking to other NPCs will mess up thisNPC, so only let players talk to NPCs and monsters for now
+    if (cc->character == Character::player) {
 
-    // tell all npcs
-    for (NPCVECTOR::iterator it = npcs.begin(); it != npcs.end(); ++it) {
-        tempMessage=languagePrefix(cc->activeLanguage)+(*it)->alterSpokenMessage(spokenMessage,(*it)->getLanguageSkill(cc->activeLanguage));
-        (*it)->receiveText(tt, tempMessage, cc);
+        // tell all npcs
+        for (NPCVECTOR::iterator it = npcs.begin(); it != npcs.end(); ++it) {
+            tempMessage=languagePrefix(cc->activeLanguage)+(*it)->alterSpokenMessage(spokenMessage,(*it)->getLanguageSkill(cc->activeLanguage));
+            (*it)->receiveText(tt, tempMessage, cc);
+        }
+
+        // tell all monsters
+        for (MONSTERVECTOR::iterator it = monsters.begin(); it != monsters.end(); ++it) {
+            (*it)->receiveText(tt, message, cc);
+        }
+
     }
-
-    // tell all monsters
-    for (MONSTERVECTOR::iterator it = monsters.begin(); it != monsters.end(); ++it) {
-        (*it)->receiveText(tt, message, cc);
-    }
-
 }
 
 
