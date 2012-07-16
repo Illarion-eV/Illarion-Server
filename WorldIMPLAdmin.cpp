@@ -353,15 +353,15 @@ void World::talkto_command(Player *cp, const std::string &ts) {
         if ((token = strtok(NULL, "\\")) != NULL) {
             std::string message = token;
 #ifdef AdminCommands_DEBUG
-            std::cout<<"Try to find Player: "<<player<<std::endl;
+            std::cout<<"Try to find player by name: "<<player<<std::endl;
 #endif
             Player *tempPl = Players.find(player);
 
             if (tempPl != NULL) {
 #ifdef AdminCommands_DEBUG
-                std::cout<<"found Player about name, sending message:"<<message<<std::endl;
+                std::cout<<"Found player by name, sending message: "<<message<<std::endl;
 #endif
-                tempPl->inform(message);
+                tempPl->inform(message, Player::informGM);
                 return;
             } else {
                 TYPE_OF_CHARACTER_ID tid;
@@ -371,16 +371,16 @@ void World::talkto_command(Player *cp, const std::string &ts) {
                 ss >> tid;
 
 #ifdef AdminCommands_DEBUG
-                std::cout<<"try to find player about id: "<<tid<<std::endl;
+                std::cout<<"Try to find player by id: "<<tid<<std::endl;
 #endif
                 PLAYERVECTOR::iterator plIterator;
 
                 for (plIterator = Players.begin(); plIterator != Players.end(); ++plIterator) {
                     if ((*plIterator)->id == tid) {
 #ifdef AdminCommands_DEBUG
-                        std::cout<<"found player about id, sending message: "<<message<<std::endl;
+                        std::cout<<"Found player by id, sending message: "<<message<<std::endl;
 #endif
-                        (*plIterator)->inform(message);
+                        (*plIterator)->inform(message, Player::informGM);
                         return; //Break the loop because we sen our message
                     }
                 } //end of for ( plIter..)
