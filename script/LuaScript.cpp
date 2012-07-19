@@ -414,7 +414,6 @@ void LuaScript::init_base_functions() {
         .def("pageGM", &Character::pageGM)
         .def("requestInputDialog", &Character::requestInputDialog)
         .def("requestMessageDialog", &Character::requestMessageDialog)
-        .property("death_consequences", &Character::getDeathConsequences, &Character::setDeathConsequences)
         .def("idleTime", &Character::idleTime)
         .def("sendBook", &Character::sendBook)
         .def("updateAppearance", &Character::forceUpdateAppearanceForAll)

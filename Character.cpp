@@ -884,7 +884,7 @@ int Character::appearance_dead() {
 }
 
 
-Character::Character() : actionPoints(P_MAX_AP),fightPoints(P_MAX_FP),waypoints(new WaypointList(this)),death_consequences(true), _is_on_route(false),_world(World::get()) {
+Character::Character() : actionPoints(P_MAX_AP),fightPoints(P_MAX_FP),waypoints(new WaypointList(this)),_is_on_route(false),_world(World::get()) {
 #ifdef Character_DEBUG
     std::cout << "Character Konstruktor Start" << std::endl;
 #endif
@@ -1594,11 +1594,6 @@ void Character::SetAlive(bool t) {
 
         lifestate = lifestate & (0xFFFF - 1);
         appearance = appearance_dead();
-
-        //nur wenn todes konsequenzen da sind, diese durchsetzen
-        if (death_consequences) {
-            ReduceSkills();
-        }
     }
 }
 

@@ -339,9 +339,6 @@ public:
         return monitoringClient;
     }
 
-    //Dropt beim Sterben den alles aus Belt und Backpack
-    void PlayerDeath();
-
     //! L�st den Player Magie lernen. Fr standard Charactere keine Funktion in Player berladen
     //\param type Magierichtung die gelernt werden soll (0 Magier, 1 Priester, 2 Barde, 3 Druide)
     //\param flag Magieflags die gelernt werden sollen
@@ -362,9 +359,6 @@ public:
     virtual const unsigned short int getPlayerLanguage();
 
     virtual void setPlayerLanguage(Language::LanguageType mother_tongue);
-
-    //�erladene Funktion um beim Sterben Items zu droppen
-    void SetAlive(bool t);
 
     //! schickt an den Spieler die Daten des Items an
     // einer Positon des K�pers

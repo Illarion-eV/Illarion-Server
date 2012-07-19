@@ -1595,19 +1595,6 @@ void Player::increasePoisonValue(short int value) {
     //============================================================================
 }
 
-void Player::SetAlive(bool t) {
-    if (t) {
-        lifestate = lifestate | 1;
-    } else if (lifestate & 1) {
-        lifestate = lifestate & (0xFFFF - 1);
-
-        if (death_consequences) {
-            PlayerDeath(); //Einzige Änderung zum Orginal um Inventar zu droppen
-            ReduceSkills();
-        }
-    }
-}
-
 unsigned short int Player::setSkill(unsigned char typ, std::string sname, short int major, short int minor, uint16_t firsttry) {
     Character::setSkill(typ,sname,major,minor,firsttry);
     sendSkill(sname,typ,major,minor);
@@ -1620,41 +1607,6 @@ unsigned short int Player::increaseSkill(unsigned char typ, std::string name, sh
     int minor = getSkill(name);
     sendSkill(name,typ,major,minor);
     return major;
-}
-
-void Player::PlayerDeath() {
-    //Droppen aller Backpackitems und belt Items nach dem Tod
-    bool isnewbie=true;
-    SKILLMAP::iterator ptr;
-
-    for (ptr = skills.begin(); ptr!=skills.end(); ++ptr) { //Schleife durch alle Skills um zu prfen ob es ein Newbie ist.
-        if ((ptr->second.major>15) && (ptr->second.type!=1)) { //Prfen ob ein Skill > 15 der nicht Sprachskill ist.
-            isnewbie=false;
-            break;
-        }
-    }
-
-    if ((!admin) && (!isnewbie)) {
-        if (characterItems[ BACKPACK ].getId() != 0) {
-            _world->dropItemFromPlayerOnMap(this, BACKPACK, pos.x, pos.y, pos.z, characterItems[ BACKPACK ].getNumber());    //Droppen vom Backpack
-        }
-
-        for (unsigned char i = MAX_BODY_ITEMS; i <= MAX_BODY_ITEMS + MAX_BELT_SLOTS; ++i) {
-            if (characterItems[ i ].getId() != 0) {
-                _world->dropItemFromPlayerOnMap(this, i, pos.x, pos.y, pos.z, characterItems[ i ].getNumber());    //Droppen des Grtels
-            }
-        }
-
-        for (char c = 0; c < 2; ++c) { //Droppen von zwei zufaelligen Char items
-            unsigned char pos = rnd(1,MAX_BODY_ITEMS);
-
-            if (characterItems[ pos ].getId() != 0) {
-                _world->dropItemFromPlayerOnMap(this, pos, this->pos.x, this->pos.y, this->pos.z, characterItems[ pos ].getNumber());
-            }
-        }
-    } else {
-        std::cout<<"Itemdrop by death char: "<<name<<"("<<id<<") was GM or Newbie \n";
-    }
 }
 
 void Player::receiveText(talk_type tt, std::string message, Character *cc) {

@@ -672,13 +672,6 @@ public:
     */
     virtual int increaseAtPos(unsigned char pos, int count);
 
-    virtual void setDeathConsequences(bool dc) {
-        death_consequences = dc;
-    }
-    virtual bool getDeathConsequences() const {
-        return death_consequences;
-    }
-
     /**
     * creates a amount of items at a specific pos on the character
     * <b>Lua: [:increaseAtPos]</b>
@@ -1598,8 +1591,6 @@ public:
 
 
 protected:
-
-    bool death_consequences;
 
     //! ein Datentyp in dem einige Werte fr die verschiedenen Rassen gespeichert werden k�nen
     struct RaceStruct {
