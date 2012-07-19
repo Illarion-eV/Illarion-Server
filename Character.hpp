@@ -1135,9 +1135,6 @@ public:
     void AddWeight();
     void SubWeight();
 
-    void ReduceSkills();
-    void ReduceAllSkills();
-
     /**
     * magic abilitys
     */

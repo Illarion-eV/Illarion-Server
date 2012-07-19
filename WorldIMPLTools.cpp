@@ -940,7 +940,6 @@ bool World::DoAge() {
             last_age = temp;
             nextXtoage = maps.getLowX();
 
-            AgeCharacters();
             AgeInventory();
 
             Map::CONTAINERHASH::iterator conmap;
@@ -1003,18 +1002,6 @@ void World::AgeInventory() {
         (*monsterIterator)->ageInventory();
     }
 
-}
-
-
-void World::AgeCharacters() {
-
-    PLAYERVECTOR::iterator titerator;
-
-    for (titerator = Players.begin(); titerator < Players.end(); ++titerator) {
-        if (!((*titerator)-> IsAlive())) {
-            (*titerator)->ReduceSkills();
-        }
-    }
 }
 
 

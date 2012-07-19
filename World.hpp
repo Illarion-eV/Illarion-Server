@@ -214,10 +214,9 @@ struct BlockingObject {
 class World {
 
 public:
-    //////////////////////////
-    void AgeCharacters();
+    /////////////////////////
     NewClientView clientview;
-    ////////////////////////////
+    /////////////////////////
 
     /**
     *a typedef for holding Players

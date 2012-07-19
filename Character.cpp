@@ -52,61 +52,6 @@ extern TilesTable *Tiles;
 extern boost::shared_ptr<LuaLearnScript>learnScript;
 extern boost::shared_ptr<LuaPlayerDeathScript>playerDeathScript;
 
-void Character::ReduceSkills() {
-    int size = skills.size();
-
-    if (size > 0) {
-        int which;
-        int k;
-        SKILLMAP::iterator ptr;
-
-        k = 2;
-
-        if (k > size) {
-            k = size;
-        }
-
-        int j = 0;
-        int attempt = 0;
-
-        while (j<k && attempt<10) {
-            which = rnd_2(1, size);
-            ptr = skills.begin();
-
-            for (int i = 1; i < which; ++i) {
-                ptr++;
-            }
-
-            if (ptr->second.major > 30 && ptr->second.type != 1) {
-                ptr->second.major = ptr->second.major - 1;
-                ++j;
-            }
-
-            ++attempt;
-        }
-    }
-}
-
-
-void Character::ReduceAllSkills() {
-    int size = skills.size();
-
-    if (size > 0) {
-        int newval;
-
-        for (SKILLMAP::iterator ptr = skills.begin(); ptr != skills.end(); ++ptr) {
-            if (ptr->second.type != 1) {
-                newval = ptr->second.major - 1;
-
-                if (newval > 0) {
-                    ptr->second.major = newval;
-                } else {
-                    ptr->second.major = 0;
-                }
-            }
-        }
-    }
-}
 
 position Character::getFrontalPosition() {
     position front = pos;
