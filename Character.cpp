@@ -35,6 +35,7 @@
 #include <algorithm>
 #include <boost/shared_ptr.hpp>
 #include "script/LuaLearnScript.hpp"
+#include "script/LuaPlayerDeathScript.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "fuse_ptr.hpp"
@@ -49,6 +50,7 @@ extern CommonObjectTable *CommonItems;
 extern WeaponObjectTable *WeaponItems;
 extern TilesTable *Tiles;
 extern boost::shared_ptr<LuaLearnScript>learnScript;
+extern boost::shared_ptr<LuaPlayerDeathScript>playerDeathScript;
 
 void Character::ReduceSkills() {
     int size = skills.size();
@@ -1590,6 +1592,9 @@ void Character::SetAlive(bool t) {
         if (character == player) {
             Player *pl = dynamic_cast<Player *>(this);
             pl->ltAction->abortAction();
+            if (playerDeathScript) {
+                playerDeathScript->playerDeath(pl);
+            }
         }
 
         lifestate = lifestate & (0xFFFF - 1);
