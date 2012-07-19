@@ -55,6 +55,7 @@ script/LuaMagicScript.cpp script/LuaTileScript.cpp script/LuaTriggerScript.cpp \
 script/LuaWeaponScript.cpp script/LuaScheduledScript.cpp script/LuaLongTimeEffectScript.cpp \
 script/LuaReloadScript.cpp script/LuaLoginScript.cpp script/LuaLogoutScript.cpp \
 script/LuaDepotScript.cpp script/LuaLookAtPlayerScript.cpp script/LuaLearnScript.cpp \
+script/LuaPlayerDeathScript.cpp \
 \
 netinterface/NetInterface.cpp InitialConnection.cpp netinterface/CommandFactory.cpp \
 netinterface/BasicCommand.cpp netinterface/BasicServerCommand.cpp netinterface/BasicClientCommand.cpp \

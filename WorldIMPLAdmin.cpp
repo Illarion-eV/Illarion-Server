@@ -28,6 +28,7 @@
 #include "data/WeaponObjectTable.hpp"
 #include "data/ContainerObjectTable.hpp"
 #include "script/LuaLookAtPlayerScript.hpp"
+#include "script/LuaPlayerDeathScript.hpp"
 #include "script/LuaDepotScript.hpp"
 #include "data/CommonObjectTable.hpp"
 #include "data/NamesObjectTable.hpp"
@@ -62,6 +63,7 @@ extern RaceSizeTable *RaceSizes;
 extern ScriptVariablesTable *scriptVariables;
 extern std::ofstream talkfile;
 extern boost::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
+extern boost::shared_ptr<LuaPlayerDeathScript>playerDeathScript;
 extern boost::shared_ptr<LuaDepotScript>depotScript;
 extern boost::shared_ptr<LuaLoginScript>loginScript;
 extern boost::shared_ptr<LuaLogoutScript>logoutScript;
@@ -1633,6 +1635,14 @@ bool World::reload_defs(Player *cp) {
             lookAtPlayerScript = tmpScript;
         } catch (ScriptException &e) {
             reportScriptError(cp, "playerlookat", e.what());
+            ok = false;
+        }
+
+        try {
+            boost::shared_ptr<LuaPlayerDeathScript>tmpScript(new LuaPlayerDeathScript("server.playerdeath"));
+            playerDeathScript = tmpScript;
+        } catch (ScriptException &e) {
+            reportScriptError(cp, "playerdeath", e.what());
             ok = false;
         }
 
