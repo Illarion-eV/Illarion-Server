@@ -1534,14 +1534,6 @@ void Character::SetAlive(bool t) {
 #endif
 
     } else {
-        if (character == player) {
-            Player *pl = dynamic_cast<Player *>(this);
-            pl->ltAction->abortAction();
-            if (playerDeathScript) {
-                playerDeathScript->playerDeath(pl);
-            }
-        }
-
         lifestate = lifestate & (0xFFFF - 1);
         appearance = appearance_dead();
     }
@@ -2051,6 +2043,13 @@ unsigned short int Character::increaseAttrib(std::string name, short int amount)
             //changes for sending an update
             if (wasalive && (character == player)) {
                 updateAppearanceForAll(true);
+
+                Player *pl = dynamic_cast<Player *>(this);
+                pl->ltAction->abortAction();
+
+                if (playerDeathScript) {
+                    playerDeathScript->playerDeath(pl);
+                }
             }
 
 #ifdef Character_DEBUG
