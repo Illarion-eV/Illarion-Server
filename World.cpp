@@ -1136,7 +1136,7 @@ void World::checkNPC() {
 
                     //search for the player with the lowes hp
                     if (findPlayerWithLowestHP(&temp, foundP)) {
-                        npcscript->characterNear((*npcIterator) ,foundP);
+                        npcscript->characterNear(foundP);
                     }
                 }
 
@@ -1147,13 +1147,13 @@ void World::checkNPC() {
                     Player *foundP;
 
                     if (findPlayerWithLowestHP(&temp, foundP)) {
-                        npcscript->characterOnSight((*npcIterator) ,foundP);
+                        npcscript->characterOnSight(foundP);
                     }
                 }
 
                 if ((*npcIterator)->getOnRoute() && !(*npcIterator)->waypoints->makeMove()) {
                     (*npcIterator)->setOnRoute(false);
-                    npcscript->abortRoute((*npcIterator));
+                    npcscript->abortRoute();
                 }
             }
 

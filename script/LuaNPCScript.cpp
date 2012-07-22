@@ -24,88 +24,78 @@
 
 LuaNPCScript::LuaNPCScript(std::string filename, NPC *thisnpc) throw(ScriptException)
     : LuaScript(filename), _thisnpc(thisnpc) {
-    init_functions();
 }
 
 LuaNPCScript::~LuaNPCScript() throw() {}
 
-void LuaNPCScript::init_functions() {
-    luabind::object globals = luabind::globals(_luaState);
-    fuse_ptr<Character> fuse__thisnpc(_thisnpc);
-    globals["thisNPC"] = fuse__thisnpc;
-}
-
 void LuaNPCScript::nextCycle() {
-    init_functions();
-    callEntrypoint("nextCycle");
+    fuse_ptr<Character> fuse_thisnpc(_thisnpc);
+    callEntrypoint("nextCycle", fuse_thisnpc);
 }
 
 void LuaNPCScript::lookAtNpc(Character *source, unsigned char mode) {
-    init_functions();
+    fuse_ptr<Character> fuse_thisnpc(_thisnpc);
     fuse_ptr<Character> fuse_source(source);
-    callEntrypoint("lookAtNpc", fuse_source, mode);
+    callEntrypoint("lookAtNpc", fuse_thisnpc, fuse_source, mode);
 }
 
 void LuaNPCScript::receiveText(Character::talk_type tt, std::string message, Character *cc) {
-    init_functions();
+    fuse_ptr<Character> fuse_thisnpc(_thisnpc);
     fuse_ptr<Character> fuse_cc(cc);
-    callEntrypoint("receiveText", (int)tt, message, fuse_cc);
+    callEntrypoint("receiveText", fuse_thisnpc, (int)tt, message, fuse_cc);
 }
 
 void LuaNPCScript::useNPC(Character *user, unsigned short counter, unsigned short int param, unsigned char ltastate) {
-    init_functions();
+    fuse_ptr<Character> fuse_thisnpc(_thisnpc);
     fuse_ptr<Character> fuse_user(user);
-    callEntrypoint("useNPC", fuse_user, counter, param, ltastate);
+    callEntrypoint("useNPC", fuse_thisnpc, fuse_user, counter, param, ltastate);
 }
 
 void LuaNPCScript::useNPCWithCharacter(Character *user, Character *targetChar, unsigned short counter, unsigned short int param, unsigned char ltastate) {
-    init_functions();
+    fuse_ptr<Character> fuse_thisnpc(_thisnpc);
     fuse_ptr<Character> fuse_user(user);
     fuse_ptr<Character> fuse_targetChar(targetChar);
-    callEntrypoint("useNPCWithCharacter", fuse_user, fuse_targetChar, counter, param, ltastate);
+    callEntrypoint("useNPCWithCharacter", fuse_thisnpc, fuse_user, fuse_targetChar, counter, param, ltastate);
 }
 
 void LuaNPCScript::useNPCWithField(Character *user, position pos, unsigned short counter, unsigned short int param, unsigned char ltastate) {
-    init_functions();
+    fuse_ptr<Character> fuse_thisnpc(_thisnpc);
     fuse_ptr<Character> fuse_user(user);
-    callEntrypoint("useNPCWithField", fuse_user, pos, counter, param, ltastate);
+    callEntrypoint("useNPCWithField", fuse_thisnpc, fuse_user, pos, counter, param, ltastate);
 }
 
 void LuaNPCScript::useNPCWithItem(Character *user, ScriptItem TargetItem, unsigned short counter, unsigned short int param, unsigned char ltastate) {
-    init_functions();
+    fuse_ptr<Character> fuse_thisnpc(_thisnpc);
     fuse_ptr<Character> fuse_user(user);
-    callEntrypoint("useNPCWithItem", fuse_user, TargetItem, counter, param, ltastate);
+    callEntrypoint("useNPCWithItem", fuse_thisnpc, fuse_user, TargetItem, counter, param, ltastate);
 }
 
 bool LuaNPCScript::actionDisturbed(Character *performer, Character *disturber) {
-    init_functions();
+    fuse_ptr<Character> fuse_thisnpc(_thisnpc);
     fuse_ptr<Character> fuse_performer(performer);
     fuse_ptr<Character> fuse_disturber(disturber);
-    return callEntrypoint<bool>("actionDisturbed", fuse_performer, fuse_disturber);
+    return callEntrypoint<bool>("actionDisturbed", fuse_thisnpc, fuse_performer, fuse_disturber);
 }
 
-void LuaNPCScript::characterOnSight(Character *npc, Character *enemy) {
-    init_functions();
-    fuse_ptr<Character> fuse_npc(npc);
+void LuaNPCScript::characterOnSight(Character *enemy) {
+    fuse_ptr<Character> fuse_thisnpc(_thisnpc);
     fuse_ptr<Character> fuse_enemy(enemy);
-    callEntrypoint("characterOnSight", fuse_npc, fuse_enemy);
+    callEntrypoint("characterOnSight", fuse_thisnpc, fuse_enemy);
 }
 
-void LuaNPCScript::characterNear(Character *npc, Character *enemy) {
-    init_functions();
-    fuse_ptr<Character> fuse_npc(npc);
+void LuaNPCScript::characterNear(Character *enemy) {
+    fuse_ptr<Character> fuse_thisnpc(_thisnpc);
     fuse_ptr<Character> fuse_enemy(enemy);
-    callEntrypoint("characterNear", fuse_npc, fuse_enemy);
+    callEntrypoint("characterNear", fuse_thisnpc, fuse_enemy);
 }
 
-void LuaNPCScript::abortRoute(Character *npc) {
-    init_functions();
-    fuse_ptr<Character> fuse_npc(npc);
-    callEntrypoint("abortRoute", fuse_npc);
+void LuaNPCScript::abortRoute() {
+    fuse_ptr<Character> fuse_thisnpc(_thisnpc);
+    callEntrypoint("abortRoute", fuse_thisnpc);
 }
 
 void LuaNPCScript::beforeReload() {
-    init_functions();
-    callEntrypoint("beforeReload");
+    fuse_ptr<Character> fuse_thisnpc(_thisnpc);
+    callEntrypoint("beforeReload", fuse_thisnpc);
 }
 
