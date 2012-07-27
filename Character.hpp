@@ -26,6 +26,7 @@ class WaypointList;
 class Field;
 class InputDialog;
 class MessageDialog;
+class MerchantDialog;
 
 /**
 * thrown if a creature can't be set due to space problems
@@ -1568,6 +1569,7 @@ public:
 
     virtual void requestInputDialog(InputDialog *inputDialog);
     virtual void requestMessageDialog(MessageDialog *messageDialog);
+    virtual void requestMerchantDialog(MerchantDialog *merchantDialog);
 
     //===========================================In attack.cc==================================================
 

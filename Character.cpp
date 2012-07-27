@@ -3365,6 +3365,10 @@ void Character::requestMessageDialog(MessageDialog *messageDialog) {
     // Nothing to do here, overloaded in Player
 }
 
+void Character::requestMerchantDialog(MerchantDialog *merchantDialog) {
+    // Nothing to do here, overloaded in Player
+}
+
 void Character::updateAppearanceForPlayer(Player *target, bool always) {
     if (!isinvisible) {
         boost::shared_ptr<BasicServerCommand> cmd(new AppearanceTC(this));
