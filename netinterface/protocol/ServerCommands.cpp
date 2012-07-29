@@ -28,6 +28,7 @@
 #include "dialog/InputDialog.hpp"
 #include "dialog/MessageDialog.hpp"
 #include "dialog/MerchantDialog.hpp"
+#include "dialog/SelectionDialog.hpp"
 
 extern RaceSizeTable *RaceSizes;
 
@@ -53,6 +54,19 @@ MerchantDialogTC::MerchantDialogTC(MerchantDialog &merchantDialog, unsigned int 
         addShortIntToBuffer((*it)->item);
         addStringToBuffer((*it)->name);
         addIntToBuffer((*it)->price);
+    }
+
+    addIntToBuffer(dialogId);
+}
+
+SelectionDialogTC::SelectionDialogTC(SelectionDialog &selectionDialog, unsigned int dialogId) : BasicServerCommand(SC_SELECTIONDIALOG_TC) {
+    addStringToBuffer(selectionDialog.getTitle());
+    SelectionDialog::index_type size = selectionDialog.getOptionsSize();
+    addUnsignedCharToBuffer(size);
+
+    for (auto it = selectionDialog.getOptionsBegin(); it != selectionDialog.getOptionsEnd(); ++it) {
+        addShortIntToBuffer((*it)->item);
+        addStringToBuffer((*it)->name);
     }
 
     addIntToBuffer(dialogId);

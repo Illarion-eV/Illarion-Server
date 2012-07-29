@@ -87,7 +87,8 @@ enum clientcommands {
     C_REQUESTAPPEARANCE_TS = 0x0E,
     C_INPUTDIALOG_TS = 0x50,
     C_MESSAGEDIALOG_TS = 0x51,
-    C_MERCHANTDIALOG_TS = 0x52
+    C_MERCHANTDIALOG_TS = 0x52,
+    C_SELECTIONDIALOG_TS = 0x53
 };
 
 /**
@@ -245,6 +246,35 @@ public:
 
     boost::shared_ptr<BasicClientCommand> clone() {
         boost::shared_ptr<BasicClientCommand>cmd(new MerchantDialogTS());
+        return cmd;
+    }
+};
+
+class SelectionDialogTS : public BasicClientCommand {
+private:
+    unsigned int dialogId;
+    bool success;
+    uint8_t selectedIndex;
+
+public:
+    SelectionDialogTS() : BasicClientCommand(C_SELECTIONDIALOG_TS) {
+    }
+
+    virtual ~SelectionDialogTS() {};
+
+    virtual void decodeData() {
+        dialogId = getIntFromBuffer();
+        success = getUnsignedCharFromBuffer() > 0;
+        selectedIndex = getUnsignedCharFromBuffer();
+    }
+
+    void performAction(Player *player) {
+        time(&(player->lastaction));
+        player->executeSelectionDialog(dialogId, success, selectedIndex);
+    }
+
+    boost::shared_ptr<BasicClientCommand> clone() {
+        boost::shared_ptr<BasicClientCommand>cmd(new SelectionDialogTS());
         return cmd;
     }
 };

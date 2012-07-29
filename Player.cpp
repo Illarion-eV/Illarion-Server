@@ -56,6 +56,7 @@
 #include "dialog/InputDialog.hpp"
 #include "dialog/MessageDialog.hpp"
 #include "dialog/MerchantDialog.hpp"
+#include "dialog/SelectionDialog.hpp"
 
 //#define PLAYER_MOVE_DEBUG
 
@@ -2872,5 +2873,26 @@ void Player::executeMerchantDialogSell(unsigned int dialogId, uint8_t location, 
         merchantDialog->setSaleItem(item);
         LuaScript::executeDialogCallback(*merchantDialog);
     }
+}
+
+void Player::requestSelectionDialog(SelectionDialog *selectionDialog) {
+    requestDialog<SelectionDialog, SelectionDialogTC>(selectionDialog);
+}
+
+void Player::executeSelectionDialog(unsigned int dialogId, bool success, SelectionDialog::index_type index) {
+    SelectionDialog *selectionDialog = (SelectionDialog *)dialogs[dialogId];
+
+    if (selectionDialog != 0) {
+        selectionDialog->setSuccess(success);
+
+        if (success) {
+            selectionDialog->setSelectedIndex(index);
+        }
+
+        LuaScript::executeDialogCallback(*selectionDialog);
+    }
+
+    delete selectionDialog;
+    dialogs.erase(dialogId);
 }
 

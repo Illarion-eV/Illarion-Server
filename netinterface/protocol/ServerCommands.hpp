@@ -70,7 +70,8 @@ enum ServerCommands {
     SC_ITEMUPDATE_TC = 0x19,
     SC_INPUTDIALOG_TC = 0x50,
     SC_MESSAGEDIALOG_TC = 0x51,
-    SC_MERCHANTDIALOG_TC = 0x52
+    SC_MERCHANTDIALOG_TC = 0x52,
+    SC_SELECTIONDIALOG_TC = 0x53
 };
 
 class InputDialog;
@@ -89,6 +90,12 @@ class MerchantDialog;
 class MerchantDialogTC : public BasicServerCommand {
 public:
     MerchantDialogTC(MerchantDialog &merchantDialog, unsigned int dialogId);
+};
+
+class SelectionDialog;
+class SelectionDialogTC : public BasicServerCommand {
+public:
+    SelectionDialogTC(SelectionDialog &selectionDialog, unsigned int dialogId);
 };
 
 class ItemUpdate_TC : public BasicServerCommand {

@@ -39,6 +39,7 @@
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "boost/unordered_map.hpp"
 #include "dialog/MerchantDialog.hpp"
+#include "dialog/SelectionDialog.hpp"
 
 class World;
 class LuaScript;
@@ -579,6 +580,9 @@ public:
     void executeMerchantDialogAbort(unsigned int dialogId);
     void executeMerchantDialogBuy(unsigned int dialogId, MerchantDialog::index_type index, Item::number_type amount);
     void executeMerchantDialogSell(unsigned int dialogId, uint8_t location, TYPE_OF_CONTAINERSLOTS slot, Item::number_type amount);
+
+    virtual void requestSelectionDialog(SelectionDialog *selectionDialog);
+    void executeSelectionDialog(unsigned int dialogId, bool success, SelectionDialog::index_type index);
 
 protected:
 

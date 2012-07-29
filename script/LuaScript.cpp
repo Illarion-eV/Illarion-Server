@@ -52,6 +52,7 @@ extern "C" {
 #include "dialog/InputDialog.hpp"
 #include "dialog/MessageDialog.hpp"
 #include "dialog/MerchantDialog.hpp"
+#include "dialog/SelectionDialog.hpp"
 #include <cxxabi.h>
 
 extern ScriptVariablesTable *scriptVariables;
@@ -384,6 +385,11 @@ void LuaScript::init_base_functions() {
         .def("getPurchaseIndex", &MerchantDialog::getPurchaseIndex)
         .def("getPurchaseAmount", &MerchantDialog::getPurchaseAmount)
         .def("getSaleItem", &MerchantDialog::getSaleItem),
+        luabind::class_<SelectionDialog>("SelectionDialog")
+        .def(luabind::constructor<std::string, luabind::object>())
+        .def("addOption", &SelectionDialog::addOption)
+        .def("getSuccess", &SelectionDialog::getSuccess)
+        .def("getSelectedIndex", &SelectionDialog::getSelectedIndex),
         luabind::class_<LongTimeAction>("Action")
         .enum_("state")
         [
