@@ -28,7 +28,9 @@ MerchantDialog::MerchantDialog(std::string title, luabind::object callback)
 }
 
 MerchantDialog::MerchantDialog(const MerchantDialog &merchantDialog) : Dialog(merchantDialog) {
-    wares = merchantDialog.wares;
+    offers = merchantDialog.offers;
+    primaryRequests = merchantDialog.primaryRequests;
+    secondaryRequests = merchantDialog.secondaryRequests;
     result = merchantDialog.result;
     purchaseIndex = merchantDialog.purchaseIndex;
     purchaseAmount = merchantDialog.purchaseAmount;
@@ -36,32 +38,67 @@ MerchantDialog::MerchantDialog(const MerchantDialog &merchantDialog) : Dialog(me
 }
 
 MerchantDialog::~MerchantDialog() {
-    for (auto it = wares.begin(); it != wares.end(); ++it) {
+    for (auto it = offers.begin(); it != offers.end(); ++it) {
+        delete *it;
+    }
+
+    for (auto it = primaryRequests.begin(); it != primaryRequests.end(); ++it) {
+        delete *it;
+    }
+
+    for (auto it = secondaryRequests.begin(); it != secondaryRequests.end(); ++it) {
         delete *it;
     }
 }
 
-MerchantDialog::index_type MerchantDialog::getProductsSize() const {
-    return wares.size();
+MerchantDialog::index_type MerchantDialog::getOffersSize() const {
+    return getProductsSize(offers);
 }
 
-vector<Product *>::const_iterator MerchantDialog::getProductsBegin() const {
-    return wares.cbegin();
+MerchantDialog::product_list::const_iterator MerchantDialog::getOffersBegin() const {
+    return getProductsBegin(offers);
 }
 
-vector<Product *>::const_iterator MerchantDialog::getProductsEnd() const {
-    return wares.cend();
+MerchantDialog::product_list::const_iterator MerchantDialog::getOffersEnd() const {
+    return getProductsEnd(offers);
 }
 
-void MerchantDialog::addProduct(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price) {
-    if (wares.size() < MAXWARES) {
-        Product *product = new Product();
-        product->item = item;
-        product->name = name;
-        product->price = price;
-        wares.push_back(product);
-    }
+void MerchantDialog::addOffer(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price) {
+    addProduct(offers, item, name, price);
 }
+
+MerchantDialog::index_type MerchantDialog::getPrimaryRequestsSize() const {
+    return getProductsSize(primaryRequests);
+}
+
+MerchantDialog::product_list::const_iterator MerchantDialog::getPrimaryRequestsBegin() const {
+    return getProductsBegin(primaryRequests);
+}
+
+MerchantDialog::product_list::const_iterator MerchantDialog::getPrimaryRequestsEnd() const {
+    return getProductsEnd(primaryRequests);
+}
+
+void MerchantDialog::addPrimaryRequest(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price) {
+    addProduct(primaryRequests, item, name, price);
+}
+
+MerchantDialog::index_type MerchantDialog::getSecondaryRequestsSize() const {
+    return getProductsSize(secondaryRequests);
+}
+
+MerchantDialog::product_list::const_iterator MerchantDialog::getSecondaryRequestsBegin() const {
+    return getProductsBegin(secondaryRequests);
+}
+
+MerchantDialog::product_list::const_iterator MerchantDialog::getSecondaryRequestsEnd() const {
+    return getProductsEnd(secondaryRequests);
+}
+
+void MerchantDialog::addSecondaryRequest(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price) {
+    addProduct(secondaryRequests, item, name, price);
+}
+
 
 MerchantDialog::Result MerchantDialog::getResult() const {
     return result;
@@ -93,5 +130,27 @@ ScriptItem MerchantDialog::getSaleItem() const {
 
 void MerchantDialog::setSaleItem(const ScriptItem &item) {
     saleItem = item;
+}
+
+MerchantDialog::index_type MerchantDialog::getProductsSize(const MerchantDialog::product_list &products) const {
+    return products.size();
+}
+
+MerchantDialog::product_list::const_iterator MerchantDialog::getProductsBegin(const product_list &products) const {
+    return products.cbegin();
+}
+
+MerchantDialog::product_list::const_iterator MerchantDialog::getProductsEnd(const product_list &products) const {
+    return products.cend();
+}
+
+void MerchantDialog::addProduct(MerchantDialog::product_list &products, TYPE_OF_ITEM_ID item, string &name, TYPE_OF_WORTH price) {
+    if (products.size() < MAXPRODUCTS) {
+        Product *product = new Product();
+        product->item = item;
+        product->name = name;
+        product->price = price;
+        products.push_back(product);
+    }
 }
 

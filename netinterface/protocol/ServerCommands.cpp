@@ -47,10 +47,28 @@ MessageDialogTC::MessageDialogTC(MessageDialog &messageDialog, unsigned int dial
 
 MerchantDialogTC::MerchantDialogTC(MerchantDialog &merchantDialog, unsigned int dialogId) : BasicServerCommand(SC_MERCHANTDIALOG_TC) {
     addStringToBuffer(merchantDialog.getTitle());
-    MerchantDialog::index_type size = merchantDialog.getProductsSize();
+    MerchantDialog::index_type size = merchantDialog.getOffersSize();
     addUnsignedCharToBuffer(size);
 
-    for (auto it = merchantDialog.getProductsBegin(); it != merchantDialog.getProductsEnd(); ++it) {
+    for (auto it = merchantDialog.getOffersBegin(); it != merchantDialog.getOffersEnd(); ++it) {
+        addShortIntToBuffer((*it)->item);
+        addStringToBuffer((*it)->name);
+        addIntToBuffer((*it)->price);
+    }
+
+    size = merchantDialog.getPrimaryRequestsSize();
+    addUnsignedCharToBuffer(size);
+
+    for (auto it = merchantDialog.getPrimaryRequestsBegin(); it != merchantDialog.getPrimaryRequestsEnd(); ++it) {
+        addShortIntToBuffer((*it)->item);
+        addStringToBuffer((*it)->name);
+        addIntToBuffer((*it)->price);
+    }
+
+    size = merchantDialog.getSecondaryRequestsSize();
+    addUnsignedCharToBuffer(size);
+
+    for (auto it = merchantDialog.getSecondaryRequestsBegin(); it != merchantDialog.getSecondaryRequestsEnd(); ++it) {
         addShortIntToBuffer((*it)->item);
         addStringToBuffer((*it)->name);
         addIntToBuffer((*it)->price);

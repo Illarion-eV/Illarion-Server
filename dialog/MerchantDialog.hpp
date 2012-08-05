@@ -38,6 +38,7 @@ struct Product {
 class MerchantDialog: public Dialog {
 public:
     typedef uint8_t index_type;
+    typedef vector<Product *> product_list;
     enum Result {
         playerAborts = 0,
         playerSells = 1,
@@ -45,8 +46,10 @@ public:
     };
 
 private:
-    static const uint32_t MAXWARES = 256;
-    vector<Product *> wares;
+    static const uint32_t MAXPRODUCTS = 256;
+    product_list offers;
+    product_list primaryRequests;
+    product_list secondaryRequests;
 
     Result result;
 
@@ -60,10 +63,20 @@ public:
     MerchantDialog(const MerchantDialog &merchantDialog);
     ~MerchantDialog();
 
-    index_type getProductsSize() const;
-    vector<Product *>::const_iterator getProductsBegin() const;
-    vector<Product *>::const_iterator getProductsEnd() const;
-    void addProduct(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price);
+    index_type getOffersSize() const;
+    product_list::const_iterator getOffersBegin() const;
+    product_list::const_iterator getOffersEnd() const;
+    void addOffer(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price);
+
+    index_type getPrimaryRequestsSize() const;
+    product_list::const_iterator getPrimaryRequestsBegin() const;
+    product_list::const_iterator getPrimaryRequestsEnd() const;
+    void addPrimaryRequest(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price);
+
+    index_type getSecondaryRequestsSize() const;
+    product_list::const_iterator getSecondaryRequestsBegin() const;
+    product_list::const_iterator getSecondaryRequestsEnd() const;
+    void addSecondaryRequest(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price);
 
     Result getResult() const;
     void setResult(Result result);
@@ -75,6 +88,12 @@ public:
 
     ScriptItem getSaleItem() const;
     void setSaleItem(const ScriptItem &item);
+
+private:
+    index_type getProductsSize(const product_list &products) const;
+    product_list::const_iterator getProductsBegin(const product_list &products) const;
+    product_list::const_iterator getProductsEnd(const product_list &products) const;
+    void addProduct(product_list &products, TYPE_OF_ITEM_ID item, string &name, TYPE_OF_WORTH price);
 };
 
 #endif
