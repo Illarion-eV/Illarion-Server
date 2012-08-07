@@ -28,9 +28,21 @@ MerchantDialog::MerchantDialog(std::string title, luabind::object callback)
 }
 
 MerchantDialog::MerchantDialog(const MerchantDialog &merchantDialog) : Dialog(merchantDialog) {
-    offers = merchantDialog.offers;
-    primaryRequests = merchantDialog.primaryRequests;
-    secondaryRequests = merchantDialog.secondaryRequests;
+    for (auto it = merchantDialog.offers.begin(); it != merchantDialog.offers.end(); ++it) {
+        Product &product = **it;
+        addProduct(offers, product.item, product.name, product.price);
+    }
+
+    for (auto it = merchantDialog.primaryRequests.begin(); it != merchantDialog.primaryRequests.end(); ++it) {
+        Product &product = **it;
+        addProduct(primaryRequests, product.item, product.name, product.price);
+    }
+
+    for (auto it = merchantDialog.secondaryRequests.begin(); it != merchantDialog.secondaryRequests.end(); ++it) {
+        Product &product = **it;
+        addProduct(secondaryRequests, product.item, product.name, product.price);
+    }
+
     result = merchantDialog.result;
     purchaseIndex = merchantDialog.purchaseIndex;
     purchaseAmount = merchantDialog.purchaseAmount;
