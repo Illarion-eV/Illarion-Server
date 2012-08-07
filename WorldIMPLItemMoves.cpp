@@ -577,10 +577,12 @@ bool World::putItemOnMap(Character *cc, short int x, short int y, short int z) {
     //only permit throwing within certain range and weight limits
     position pos(x, y, z);
 
-    if (cc->pos.z != z ||
-        !cc->isInRangeToField(pos, MAXTHROWDISTANCE) ||
-        (!cc->isInRangeToField(pos, MAXDROPDISTANCE) && g_item.getNumber() * g_item.getWeight() > MAXTHROWWEIGHT)) {
-        return false;
+    if (cc) {
+        if (cc->pos.z != z ||
+            !cc->isInRangeToField(pos, MAXTHROWDISTANCE) ||
+            (!cc->isInRangeToField(pos, MAXDROPDISTANCE) && g_item.getNumber() * g_item.getWeight() > MAXTHROWWEIGHT)) {
+            return false;
+        }
     }
 
     //stacking von Items verhindern
