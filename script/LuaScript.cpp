@@ -687,6 +687,7 @@ void LuaScript::init_base_functions() {
         .property("quality", &Item::getQuality, &Item::setQuality)
         .property("data", &Item::getOldData, &Item::setOldData)
         .def("setData", (void(Item:: *)(std::string, std::string))&Item::setData)
+        .def("setData", (void(Item:: *)(std::string, int32_t))&Item::setData)
         .def("getData", (std::string(Item:: *)(std::string))&Item::getData),
         luabind::class_<ScriptItem,Item>("scriptItem")
         .def(luabind::constructor<>())

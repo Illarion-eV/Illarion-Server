@@ -99,6 +99,7 @@ public:
 
     std::string getData(std::string key);
     void setData(std::string key, std::string value);
+    void setData(std::string key, int32_t value);
     inline datamap_type::const_iterator getDataBegin() const {
         return datamap.cbegin();
     }

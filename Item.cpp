@@ -54,6 +54,12 @@ void Item::setData(std::string key, std::string value) {
 }
 
 
+void Item::setData(std::string key, int32_t value) {
+    std::stringstream ss;
+    ss << value;
+    setData(key, ss.str());
+}
+
 void Item::reset() {
     id = 0;
     number = 0;
