@@ -481,7 +481,7 @@ bool Character::getNextStepDir(position tpos, int checkrange, Character::directi
 
 int Character::appearance_alive() {
     if (isinvisible) {
-        return 26;    //Wenn Char unsichtbar ist 26 zurck liefern.
+        return 26;
     }
 
     switch (race) {
