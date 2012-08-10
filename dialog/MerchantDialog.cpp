@@ -29,18 +29,18 @@ MerchantDialog::MerchantDialog(std::string title, luabind::object callback)
 
 MerchantDialog::MerchantDialog(const MerchantDialog &merchantDialog) : Dialog(merchantDialog) {
     for (auto it = merchantDialog.offers.begin(); it != merchantDialog.offers.end(); ++it) {
-        Product &product = **it;
-        addProduct(offers, product.item, product.name, product.price);
+        OfferProduct &product = *(OfferProduct *)*it;
+        addProduct(offers, product.getItem(), product.getName(), product.getPrice(), product.getStack());
     }
 
     for (auto it = merchantDialog.primaryRequests.begin(); it != merchantDialog.primaryRequests.end(); ++it) {
         Product &product = **it;
-        addProduct(primaryRequests, product.item, product.name, product.price);
+        addProduct(primaryRequests, product.getItem(), product.getName(), product.getPrice());
     }
 
     for (auto it = merchantDialog.secondaryRequests.begin(); it != merchantDialog.secondaryRequests.end(); ++it) {
         Product &product = **it;
-        addProduct(secondaryRequests, product.item, product.name, product.price);
+        addProduct(secondaryRequests, product.getItem(), product.getName(), product.getPrice());
     }
 
     result = merchantDialog.result;
@@ -75,8 +75,8 @@ MerchantDialog::product_list::const_iterator MerchantDialog::getOffersEnd() cons
     return getProductsEnd(offers);
 }
 
-void MerchantDialog::addOffer(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price) {
-    addProduct(offers, item, name, price);
+void MerchantDialog::addOffer(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price, TYPE_OF_BUY_STACK stack) {
+    addProduct(offers, item, name, price, stack);
 }
 
 MerchantDialog::index_type MerchantDialog::getPrimaryRequestsSize() const {
@@ -157,12 +157,20 @@ MerchantDialog::product_list::const_iterator MerchantDialog::getProductsEnd(cons
 }
 
 void MerchantDialog::addProduct(MerchantDialog::product_list &products, TYPE_OF_ITEM_ID item, string &name, TYPE_OF_WORTH price) {
-    if (products.size() < MAXPRODUCTS) {
-        Product *product = new Product();
-        product->item = item;
-        product->name = name;
-        product->price = price;
+    if (canAddProduct(products)) {
+        Product *product = new Product(item, name, price);
         products.push_back(product);
     }
+}
+
+void MerchantDialog::addProduct(MerchantDialog::product_list &products, TYPE_OF_ITEM_ID item, string &name, TYPE_OF_WORTH price, TYPE_OF_BUY_STACK stack) {
+    if (canAddProduct(products)) {
+        Product *product = new OfferProduct(item, name, price, stack);
+        products.push_back(product);
+    }
+}
+
+bool MerchantDialog::canAddProduct(MerchantDialog::product_list &products) {
+    return products.size() < MAXPRODUCTS;
 }
 

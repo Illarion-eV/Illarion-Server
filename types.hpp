@@ -29,6 +29,7 @@ typedef uint16_t TYPE_OF_WEIGHT;
 typedef uint8_t  TYPE_OF_AGINGSPEED;
 typedef uint8_t  TYPE_OF_BRIGHTNESS;
 typedef uint32_t TYPE_OF_WORTH;
+typedef uint16_t TYPE_OF_BUY_STACK;
 
 typedef uint8_t  TYPE_OF_ATTACK;
 typedef uint8_t  TYPE_OF_DEFENCE;

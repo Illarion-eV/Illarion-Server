@@ -26,14 +26,34 @@
 #include <string>
 #include <vector>
 
+
 using std::string;
 using std::vector;
 
-struct Product {
+
+class Product {
+private:
     TYPE_OF_ITEM_ID item;
     string name;
     TYPE_OF_WORTH price;
+
+public:
+    Product(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price): item(item), name(name), price(price) {};
+    TYPE_OF_ITEM_ID getItem() {return item;};
+    string& getName() {return name;};
+    TYPE_OF_WORTH getPrice() {return price;};
 };
+
+
+class OfferProduct: public Product {
+private:
+    TYPE_OF_BUY_STACK stack;
+
+public:
+    OfferProduct(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price, TYPE_OF_BUY_STACK stack): Product(item, name, price), stack(stack) {};
+    TYPE_OF_BUY_STACK getStack() {return stack;};
+};
+
 
 class MerchantDialog: public Dialog {
 public:
@@ -66,7 +86,7 @@ public:
     index_type getOffersSize() const;
     product_list::const_iterator getOffersBegin() const;
     product_list::const_iterator getOffersEnd() const;
-    void addOffer(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price);
+    void addOffer(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price, TYPE_OF_BUY_STACK stack);
 
     index_type getPrimaryRequestsSize() const;
     product_list::const_iterator getPrimaryRequestsBegin() const;
@@ -94,6 +114,8 @@ private:
     product_list::const_iterator getProductsBegin(const product_list &products) const;
     product_list::const_iterator getProductsEnd(const product_list &products) const;
     void addProduct(product_list &products, TYPE_OF_ITEM_ID item, string &name, TYPE_OF_WORTH price);
+    void addProduct(product_list &products, TYPE_OF_ITEM_ID item, string &name, TYPE_OF_WORTH price, TYPE_OF_BUY_STACK stack);
+    bool canAddProduct(product_list &products);
 };
 
 #endif

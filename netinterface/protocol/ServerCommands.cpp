@@ -51,27 +51,29 @@ MerchantDialogTC::MerchantDialogTC(MerchantDialog &merchantDialog, unsigned int 
     addUnsignedCharToBuffer(size);
 
     for (auto it = merchantDialog.getOffersBegin(); it != merchantDialog.getOffersEnd(); ++it) {
-        addShortIntToBuffer((*it)->item);
-        addStringToBuffer((*it)->name);
-        addIntToBuffer((*it)->price);
+        OfferProduct &product = *(OfferProduct *)*it;
+        addShortIntToBuffer(product.getItem());
+        addStringToBuffer(product.getName());
+        addIntToBuffer(product.getPrice());
+        addShortIntToBuffer(product.getStack());
     }
 
     size = merchantDialog.getPrimaryRequestsSize();
     addUnsignedCharToBuffer(size);
 
     for (auto it = merchantDialog.getPrimaryRequestsBegin(); it != merchantDialog.getPrimaryRequestsEnd(); ++it) {
-        addShortIntToBuffer((*it)->item);
-        addStringToBuffer((*it)->name);
-        addIntToBuffer((*it)->price);
+        addShortIntToBuffer((*it)->getItem());
+        addStringToBuffer((*it)->getName());
+        addIntToBuffer((*it)->getPrice());
     }
 
     size = merchantDialog.getSecondaryRequestsSize();
     addUnsignedCharToBuffer(size);
 
     for (auto it = merchantDialog.getSecondaryRequestsBegin(); it != merchantDialog.getSecondaryRequestsEnd(); ++it) {
-        addShortIntToBuffer((*it)->item);
-        addStringToBuffer((*it)->name);
-        addIntToBuffer((*it)->price);
+        addShortIntToBuffer((*it)->getItem());
+        addStringToBuffer((*it)->getName());
+        addIntToBuffer((*it)->getPrice());
     }
 
     addIntToBuffer(dialogId);
