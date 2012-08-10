@@ -41,6 +41,7 @@ struct CommonStruct {
     TYPE_OF_ITEM_ID AfterInfiniteRot;
     TYPE_OF_BRIGHTNESS Brightness;
     TYPE_OF_WORTH Worth;
+    TYPE_OF_BUY_STACK BuyStack;
     bool rotsInInventory;
     bool isStackable;
 
@@ -52,6 +53,7 @@ struct CommonStruct {
         AfterInfiniteRot = 0;
         Brightness = 0;
         Worth = 0;
+        BuyStack = 1;
         rotsInInventory = false;
         isStackable = false;
     }
@@ -64,6 +66,7 @@ struct CommonStruct {
         AfterInfiniteRot = source.AfterInfiniteRot;
         Brightness = source.Brightness;
         Worth = source.Worth;
+        BuyStack = source.BuyStack;
         rotsInInventory = source.rotsInInventory;
         isStackable = source.isStackable;
     }
@@ -78,6 +81,7 @@ struct CommonStruct {
             AfterInfiniteRot = source.AfterInfiniteRot;
             Brightness = source.Brightness;
             Worth = source.Worth;
+            BuyStack = source.BuyStack;
             rotsInInventory = source.rotsInInventory;
             isStackable = source.isStackable;
         }

@@ -80,6 +80,7 @@ void CommonObjectTable::reload() {
         query.addColumn("common", "com_script");
         query.addColumn("common", "com_brightness");
         query.addColumn("common", "com_worth");
+        query.addColumn("common", "com_buystack");
         query.addServerTable("common");
         query.addOrderBy("common", "com_itemid", Database::SelectQuery::ASC);
 
@@ -107,7 +108,8 @@ void CommonObjectTable::reload() {
                 temprecord.isStackable = (*itr)["com_stackable"].as<bool>();
                 temprecord.rotsInInventory = (*itr)["com_rotsininventory"].as<bool>();
                 temprecord.Brightness = (TYPE_OF_BRIGHTNESS)((*itr)["com_brightness"].as<int16_t>());
-                temprecord.Worth = (TYPE_OF_WORTH)((*itr)["com_worth"].as<int16_t>());
+                temprecord.Worth = (TYPE_OF_WORTH)((*itr)["com_worth"].as<TYPE_OF_WORTH>());
+                temprecord.BuyStack = (TYPE_OF_BUY_STACK)((*itr)["com_buystack"].as<TYPE_OF_BUY_STACK>());
 
                 if (!((*itr)["com_script"].is_null())) {
                     std::string scriptname = ((*itr)["com_script"].as<std::string>());
