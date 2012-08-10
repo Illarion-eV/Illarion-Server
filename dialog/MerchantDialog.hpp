@@ -39,9 +39,15 @@ private:
 
 public:
     Product(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price): item(item), name(name), price(price) {};
-    TYPE_OF_ITEM_ID getItem() {return item;};
-    string& getName() {return name;};
-    TYPE_OF_WORTH getPrice() {return price;};
+    TYPE_OF_ITEM_ID getItem() {
+        return item;
+    };
+    string &getName() {
+        return name;
+    };
+    TYPE_OF_WORTH getPrice() {
+        return price;
+    };
 };
 
 
@@ -51,7 +57,9 @@ private:
 
 public:
     OfferProduct(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price, TYPE_OF_BUY_STACK stack): Product(item, name, price), stack(stack) {};
-    TYPE_OF_BUY_STACK getStack() {return stack;};
+    TYPE_OF_BUY_STACK getStack() {
+        return stack;
+    };
 };
 
 
@@ -86,6 +94,7 @@ public:
     index_type getOffersSize() const;
     product_list::const_iterator getOffersBegin() const;
     product_list::const_iterator getOffersEnd() const;
+    void addOffer(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price);
     void addOffer(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price, TYPE_OF_BUY_STACK stack);
 
     index_type getPrimaryRequestsSize() const;

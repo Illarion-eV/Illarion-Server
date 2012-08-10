@@ -380,7 +380,8 @@ void LuaScript::init_base_functions() {
             luabind::value("playerBuys",2)
         ]
         .def(luabind::constructor<std::string, luabind::object>())
-        .def("addOffer", &MerchantDialog::addOffer)
+        .def("addOffer", (void(MerchantDialog:: *)(TYPE_OF_ITEM_ID, std::string, TYPE_OF_WORTH))&MerchantDialog::addOffer)
+        .def("addOffer", (void(MerchantDialog:: *)(TYPE_OF_ITEM_ID, std::string, TYPE_OF_WORTH, TYPE_OF_BUY_STACK))&MerchantDialog::addOffer)
         .def("addPrimaryRequest", &MerchantDialog::addPrimaryRequest)
         .def("addSecondaryRequest", &MerchantDialog::addSecondaryRequest)
         .def("getResult", &MerchantDialog::getResult)
