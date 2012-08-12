@@ -26,6 +26,11 @@ SelectionDialog::SelectionDialog(std::string title, luabind::object callback)
 }
 
 SelectionDialog::SelectionDialog(const SelectionDialog &selectionDialog) : Dialog(selectionDialog) {
+    for (auto it = selectionDialog.options.begin(); it != selectionDialog.options.end(); ++it) {
+        Option &option = **it;
+        addOption(option.getItem(), option.getName());
+    }
+
     success = selectionDialog.success;
     selectedIndex = selectionDialog.selectedIndex;
 }
@@ -50,9 +55,7 @@ vector<Option *>::const_iterator SelectionDialog::getOptionsEnd() const {
 
 void SelectionDialog::addOption(TYPE_OF_ITEM_ID item, string name) {
     if (options.size() < MAXOPTIONS) {
-        Option *option = new Option();
-        option->item = item;
-        option->name = name;
+        Option *option = new Option(item, name);
         options.push_back(option);
     }
 }

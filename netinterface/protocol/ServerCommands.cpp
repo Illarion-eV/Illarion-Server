@@ -85,8 +85,8 @@ SelectionDialogTC::SelectionDialogTC(SelectionDialog &selectionDialog, unsigned 
     addUnsignedCharToBuffer(size);
 
     for (auto it = selectionDialog.getOptionsBegin(); it != selectionDialog.getOptionsEnd(); ++it) {
-        addShortIntToBuffer((*it)->item);
-        addStringToBuffer((*it)->name);
+        addShortIntToBuffer((*it)->getItem());
+        addStringToBuffer((*it)->getName());
     }
 
     addIntToBuffer(dialogId);

@@ -29,9 +29,19 @@
 using std::string;
 using std::vector;
 
-struct Option {
+class Option {
+private:
     TYPE_OF_ITEM_ID item;
     string name;
+
+public:
+    Option(TYPE_OF_ITEM_ID item, string name): item(item), name(name) {};
+    TYPE_OF_ITEM_ID getItem() {
+        return item;
+    };
+    string &getName() {
+        return name;
+    };
 };
 
 class SelectionDialog: public Dialog {
