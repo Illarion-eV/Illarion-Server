@@ -2868,7 +2868,9 @@ void Player::executeMerchantDialogSell(unsigned int dialogId, uint8_t location, 
             showcases[location-1].top()->viewItemNr(slot, item, container);
         }
 
-        item.setNumber(amount);
+        if (amount < item.getNumber()) {
+            item.setNumber(amount);
+        }
 
         merchantDialog->setSaleItem(item);
         LuaScript::executeDialogCallback(*merchantDialog);
