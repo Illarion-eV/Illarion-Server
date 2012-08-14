@@ -104,7 +104,7 @@ LuaScript::LuaScript(std::string filename) throw(ScriptException) {
 
         switch (err) {
         case LUA_ERRRUN:
-            throw ScriptException("Runtime error in script file: " + errstr);
+            writeErrorMsg();
             break;
         case LUA_ERRMEM:
             throw ScriptException("Insufficient memory for running script file: " + errstr);
