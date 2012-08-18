@@ -42,9 +42,9 @@ public:
     void lookAtNpc(Character *source, unsigned char mode);
     bool actionDisturbed(Character *performer, Character *disturber);
     void beforeReload();
-    void characterOnSight(Character *npc, Character *enemy);
-    void characterNear(Character *npc, Character *enemy);
-    void abortRoute(Character *npc);
+    void characterOnSight(Character *enemy);
+    void characterNear(Character *enemy);
+    void abortRoute();
 
 private:
     NPC *_thisnpc;
