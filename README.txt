@@ -10,8 +10,10 @@ Objectives
 Details
 
    The application in this repository is the Illarion Server. The official
-   repository is https://github.com/vilarion/Illarion-Server. It works together
-   with the Illarion Client found at https://github.com/mkaring/Illarion-Java.
+   repository is https://github.com/Illarion-eV/Illarion-Server. The lead
+   developer's repository is https://github.com/vilarion/Illarion-Server. 
+   It works together with the Illarion Client found at
+   https://github.com/Illarion-eV/Illarion-Java.
 
 Requirements
 
@@ -35,4 +37,4 @@ Build
    make
      ______________________________________________________________________
 
-   Last modified: Jan 27, 2012
+   Last modified: Aug 18, 2012
