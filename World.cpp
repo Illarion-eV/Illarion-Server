@@ -1107,8 +1107,6 @@ void World::checkNPC() {
         effect = true;
     }
 
-    std::vector < Player * > temp;
-    std::vector < Player * > ::iterator tpit;
     NPCVECTOR::iterator npcIterator = Npc.begin();
 
     while (npcIterator < Npc.end()) {
@@ -1127,29 +1125,6 @@ void World::checkNPC() {
                 // let's execute the command for this cycle
                 boost::shared_ptr<LuaNPCScript> npcscript = (*npcIterator)->getScript();
                 npcscript->nextCycle();
-                temp.clear();
-                findPlayersInSight((*npcIterator)->pos, static_cast<uint8_t>(1), temp, (*npcIterator)->faceto);
-
-                if (!temp.empty()) {
-                    //angreifen
-                    Player *foundP;
-
-                    //search for the player with the lowes hp
-                    if (findPlayerWithLowestHP(&temp, foundP)) {
-                        npcscript->characterNear(foundP);
-                    }
-                }
-
-                temp.clear();
-                findPlayersInSight((*npcIterator)->pos, static_cast<uint8_t>(9), temp, (*npcIterator)->faceto);
-
-                if (!temp.empty()) {
-                    Player *foundP;
-
-                    if (findPlayerWithLowestHP(&temp, foundP)) {
-                        npcscript->characterOnSight(foundP);
-                    }
-                }
 
                 if ((*npcIterator)->getOnRoute() && !(*npcIterator)->waypoints->makeMove()) {
                     (*npcIterator)->setOnRoute(false);
