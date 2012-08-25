@@ -581,6 +581,12 @@ bool World::putItemOnMap(Character *cc, short int x, short int y, short int z) {
         if (cc->pos.z != z ||
             !cc->isInRangeToField(pos, MAXTHROWDISTANCE) ||
             (!cc->isInRangeToField(pos, MAXDROPDISTANCE) && g_item.getNumber() * g_item.getWeight() > MAXTHROWWEIGHT)) {
+            if (cc->getPlayerLanguage() == 0) {
+                cc->inform("Dies ist zu schwer um so weit geworfen zu werden.", Character::informScriptLowPriority);
+            } else {
+                cc->inform("This is too heavy to be thrown this far.", Character::informScriptLowPriority);
+            }
+
             return false;
         }
     }
