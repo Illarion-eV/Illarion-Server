@@ -130,6 +130,7 @@ protected:
 
 private:
     void initialize();
+    void loadIntoLuaState();
     void init_base_functions();
     static int add_backtrace(lua_State *L);
     void writeErrorMsg();
@@ -180,6 +181,7 @@ private:
 
     std::string _filename;
     std::vector<std::string> vecPath;
+    char luafile[200];
     typedef std::multimap<const std::string, boost::shared_ptr<LuaScript> > QuestScripts;
     QuestScripts questScripts;
 };
