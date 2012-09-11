@@ -131,7 +131,7 @@ protected:
 private:
     void initialize();
     void loadIntoLuaState();
-    void init_base_functions();
+    static void init_base_functions();
     static int add_backtrace(lua_State *L);
     void writeErrorMsg();
     void writeCastErrorMsg(const std::string &entryPoint, const luabind::cast_failed &e);
