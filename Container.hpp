@@ -93,7 +93,7 @@ public:
 
     bool changeItem(ScriptItem &it);
 
-    int weight(int rekt);
+    int weight();
 
     int _eraseItem(Item::id_type itemid, Item::number_type count, Item::data_type data, bool useData);
 
@@ -109,6 +109,7 @@ public:
 private:
     bool isItemStackable(Item item);
     void insertIntoFirstFreeSlot(Item &item);
+    int recursiveWeight(int rekt);
 };
 
 #endif

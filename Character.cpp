@@ -2532,13 +2532,11 @@ int Character::weightContainer(TYPE_OF_ITEM_ID id, int count, Container *tcont) 
         }
 
         if (tcont != NULL) {
-            int rek=0;
-
             try {
                 if (count > 0) {
-                    temp += tcont->weight(rek);
+                    temp += tcont->weight();
                 } else {
-                    temp -= tcont->weight(rek);
+                    temp -= tcont->weight();
                 }
             } catch (RekursionException &e) {
                 std::cerr << "weightContainer: maximale Rekursionstiefe " << MAXIMALEREKURSIONSTIEFE << " wurde bei Char " << name << " ueberschritten!" << std::endl;

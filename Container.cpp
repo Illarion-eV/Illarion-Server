@@ -612,7 +612,11 @@ int Container::countItem(Item::id_type itemid, Item::data_type data) {
     return temp;
 }
 
-int Container::weight(int rekt) {
+int Container::weight() {
+    return recursiveWeight(0);
+}
+
+int Container::recursiveWeight(int rekt) {
     int temprekt = rekt + 1;
 
     if (rekt > MAXIMALEREKURSIONSTIEFE) {
@@ -632,7 +636,7 @@ int Container::weight(int rekt) {
             auto iterat = containers.find(item.getNumber());
 
             if (iterat != containers.end()) {
-                temp += iterat->second->weight(temprekt);
+                temp += iterat->second->recursiveWeight(temprekt);
             }
 
             temp += tempCommon.Weight;
