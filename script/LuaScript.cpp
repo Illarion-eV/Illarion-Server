@@ -833,6 +833,7 @@ void LuaScript::init_base_functions() {
         .def_readonly("actionPointsLost",&AttackBoni::actionPointsLost),
         luabind::class_<Container>("Container")
         .def(luabind::constructor<TYPE_OF_ITEM_ID>())
+        .def("getSlotCount", &Container::getSlotCount)
         .def("takeItemNr", &Container::TakeItemNr, luabind::pure_out_value(_3) + luabind::pure_out_value(_4))
         .def("viewItemNr", &Container::viewItemNr, luabind::pure_out_value(_3) + luabind::pure_out_value(_4))
         .def("changeQualityAt", &Container::changeQualityAt)
