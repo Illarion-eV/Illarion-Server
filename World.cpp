@@ -631,7 +631,7 @@ void World::checkPlayers() {
         if ((*playerIterator)->Connection->online) {
             temptime = tempkeepalive - (*playerIterator)->lastkeepalive;
 
-            if (((temptime >= 0) && (temptime <= 15))) {     // 15s timeout
+            if (((temptime >= 0) && (temptime <= CLIENT_TIMEOUT))) {
                 (*playerIterator)->actionPoints += ap;
                 (*playerIterator)->fightPoints += ap;
 
