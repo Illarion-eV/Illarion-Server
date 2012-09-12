@@ -807,7 +807,8 @@ void LuaScript::init_base_functions() {
         .def_readonly("isStackable", &CommonStruct::isStackable)
         .def_readonly("rotsInInventory", &CommonStruct::rotsInInventory)
         .def_readonly("Brightness", &CommonStruct::Brightness)
-        .def_readonly("Worth", &CommonStruct::Worth),
+        .def_readonly("Worth", &CommonStruct::Worth)
+        .def_readonly("BuyStack", &CommonStruct::BuyStack),
         luabind::class_<TilesStruct>("TilesStruct")
         .def_readonly("flags", &TilesStruct::flags)
         .def_readonly("German", &TilesStruct::German)
