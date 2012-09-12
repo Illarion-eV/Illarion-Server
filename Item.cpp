@@ -67,18 +67,20 @@ void Item::setData(const luabind::object &datamap) {
             try {
                 key = object_cast<std::string>(it.key());
             } catch (cast_failed &e) {
-                throw std::logic_error("Usage of invalid data map key. Data map keys must be numbers or strings.");
+                throw std::logic_error("Usage of invalid data map key. Data map keys must be strings.");
             }
-
-            std::string value;
 
             try {
-                value = object_cast<std::string>(*it);
+                std::string value = object_cast<std::string>(*it);
+                setData(key, value);
             } catch (cast_failed &e) {
-                throw std::logic_error("Usage of invalid data map value. Data map values must be numbers or strings.");
+                try {
+                    int32_t intValue = object_cast<int32_t>(*it);
+                    setData(key, intValue);
+                } catch (cast_failed &e) {
+                    throw std::logic_error("Usage of invalid data map value. Data map values must be numbers or strings.");
+                }
             }
-
-            setData(key, value);
         }
     } else if (mapType == LUA_TNUMBER) {
         setOldData(object_cast<uint32_t>(datamap));
@@ -101,7 +103,7 @@ bool Item::hasData(const luabind::object &datamap) {
             try {
                 key = object_cast<std::string>(it.key());
             } catch (cast_failed &e) {
-                throw std::logic_error("Usage of invalid data map key. Data map keys must be numbers or strings.");
+                throw std::logic_error("Usage of invalid data map key. Data map keys must be strings.");
             }
 
             std::string value;
@@ -109,7 +111,14 @@ bool Item::hasData(const luabind::object &datamap) {
             try {
                 value = object_cast<std::string>(*it);
             } catch (cast_failed &e) {
-                throw std::logic_error("Usage of invalid data map value. Data map values must be numbers or strings.");
+                try {
+                    int32_t intValue = object_cast<int32_t>(*it);
+                    std::stringstream ss;
+                    ss << intValue;
+                    value = ss.str();
+                } catch (cast_failed &e) {
+                    throw std::logic_error("Usage of invalid data map value. Data map values must be numbers or strings.");
+                }
             }
 
             isSameData = (getData(key) == value);
