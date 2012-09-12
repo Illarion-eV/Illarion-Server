@@ -448,20 +448,6 @@ bool World::characterAttacks(Character *cp) {
                     // Ziel ist tot
                     if (!cp->attack(temppl, sound, updateInv)) {
                         sendSpinToAllVisiblePlayers(temppl);
-// There are no yellow crosses any more, however, one might want a different message in the future.
-// Currently no message is desired.
-                        /*
-                                                if (temppl->getPlayerLanguage() == Language::german)
-                                                {
-                                                    boost::shared_ptr<BasicServerCommand>cmd( new SayTC( cp->pos.x, cp->pos.y, cp->pos.z, "Geh zum gelben Kreuz, um wiederbelebt zu werden!") );
-                                                    temppl->Connection->addCommand(cmd);
-                                                }
-                                                else
-                                                {
-                                                    boost::shared_ptr<BasicServerCommand>cmd( new SayTC( cp->pos.x, cp->pos.y, cp->pos.z, "Walk to the YELLOW ROSS to be resurrected!") );
-                                                    temppl->Connection->addCommand(cmd);
-                                                }
-                        */
 
                         cp->attackmode = false;
 

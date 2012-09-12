@@ -248,12 +248,9 @@ bool World::putItemOnInvPos(Character *cc, unsigned char pos) {
 
 bool World::putItemOnInvPos(Player *cc, unsigned char pos) {
     if (!g_item.isComplete() && (pos < MAX_BODY_ITEMS)) {
-        if (cc->getPlayerLanguage() == 0) {
-            cc->inform("Du kannst keine unfertigen Gegenst�nde anlegen!");
-        } else {
-            cc->inform("You cannot wear unfinished items!");
-        }
-
+        std::string german = "Du kannst keine unfertigen Dinge anlegen!";
+        std::string english = "You cannot wear unfinished items!";
+        cc->informLua(german, english);
         return false;
     }
 
@@ -581,12 +578,9 @@ bool World::putItemOnMap(Character *cc, short int x, short int y, short int z) {
         if (cc->pos.z != z ||
             !cc->isInRangeToField(pos, MAXTHROWDISTANCE) ||
             (!cc->isInRangeToField(pos, MAXDROPDISTANCE) && g_item.getNumber() * g_item.getWeight() > MAXTHROWWEIGHT)) {
-            if (cc->getPlayerLanguage() == 0) {
-                cc->inform("Dies ist zu schwer um so weit geworfen zu werden.", Character::informScriptLowPriority);
-            } else {
-                cc->inform("This is too heavy to be thrown this far.", Character::informScriptLowPriority);
-            }
-
+            std::string german = "Dies ist zu schwer um so weit geworfen zu werden.";
+            std::string english = "This is too heavy to be thrown this far.";
+            cc->informLua(german, english);
             return false;
         }
     }

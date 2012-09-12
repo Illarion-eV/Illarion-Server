@@ -1005,7 +1005,9 @@ void World::who_command(Player *cp, const std::string &tplayer) {
             }
 
 #endif
-            tmessage = tmessage + ((tempPl->getPlayerLanguage() == 0) ? " German" : " English");
+            std::string german = " German";
+            std::string english = " English";
+            tmessage = tmessage + tempPl->nls(german, english);
 
             cp->inform(tmessage);
         }

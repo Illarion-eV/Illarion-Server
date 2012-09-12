@@ -317,7 +317,7 @@ void Player::login() throw(Player::LogoutException) {
         setEncumberedSent(true);
         std::string german = "Deine Last bremst dich.";
         std::string english = "Your burden slows you down.";
-        informLua(nls(german, english));
+        informLua(german, english);
     } else {
         setEncumberedSent(false);
     }
@@ -1541,48 +1541,19 @@ bool Player::load() throw() {
 }
 
 void Player::increasePoisonValue(short int value) {
-    std::string texteng="", textger="", tmessage; //string fr die unterschiedlichen Texte
-
     if ((poisonvalue == 0) && value > 0) {
-        switch (getPlayerLanguage()) {
-        case Language::german:
-            tmessage = "Du bist vergiftet.";
-            break;
-        case Language::english:
-            tmessage = "You are poisoned.";
-            break;
-        case Language::french:
-            tmessage = "You are poisoned.";
-            break;
-        default:
-            tmessage = "You are poisoned.";
-            break;
-        }
-
-        informLua(tmessage);
+        std::string german = "Du bist vergiftet.";
+        std::string english = "You are poisoned.";
+        informLua(german, english);
     }
 
     if ((poisonvalue + value) >= MAXPOISONVALUE) {
         poisonvalue = MAXPOISONVALUE;
     } else if ((poisonvalue + value) <= 0) {
         poisonvalue = 0;
-
-        switch (getPlayerLanguage()) {
-        case Language::german:
-            tmessage = "Du fuehlst dich auf einmal besser.";
-            break;
-        case Language::english:
-            tmessage = "You feel better now.";
-            break;
-        case Language::french:
-            tmessage = "You feel better now.";
-            break;
-        default:
-            tmessage = "You feel better now.";
-            break;
-        }
-
-        informLua(tmessage);
+        std::string german = "Es geht dir auf einmal besser.";
+        std::string english = "You suddenly feel better.";
+        informLua(german, english);
     } else {
         poisonvalue += value;
     }
@@ -1683,6 +1654,10 @@ void Player::informLua(std::string message) {
     inform(message, informScriptMediumPriority);
 }
 
+void Player::informLua(std::string german, std::string english) {
+    informLua(nls(german, english));
+}
+
 void Player::informLua(std::string message, informType type) {
     switch (type) {
     case informScriptLowPriority:
@@ -1694,6 +1669,10 @@ void Player::informLua(std::string message, informType type) {
         informLua(message);
         break;
     }
+}
+
+void Player::informLua(std::string german, std::string english, informType type) {
+    informLua(nls(german, english), type);
 }
 
 bool Player::encumberance(uint16_t &movementCost) {

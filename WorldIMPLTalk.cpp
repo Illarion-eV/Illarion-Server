@@ -317,22 +317,7 @@ void World::lookAtMapItem(Player *cp, short int x, short int y, short int z) {
             }
 
             if (ItemNames->find(titem.getId(), tempNames)) {
-                std::string outtext;
-
-                switch (cp->getPlayerLanguage()) {
-                case Language::german:
-                    outtext +=  tempNames.German ;
-                    break;
-                case Language::english:
-                    outtext +=  tempNames.English ;
-                    break;
-                case Language::french:
-                    outtext +=  tempNames.French ;
-                    break;
-                default:
-                    outtext +=  "unknown mother tongue" ;
-                    break;
-                }
+                std::string outtext = cp->nls(tempNames.German, tempNames.English);
 
                 if (!titem.isComplete()) {
                     outtext += " ( " + Logger::toString(titem.getQuality()) + "% )";
@@ -341,87 +326,28 @@ void World::lookAtMapItem(Player *cp, short int x, short int y, short int z) {
                 boost::shared_ptr<BasicServerCommand>cmd(new NameOfMapItemTC(x, y, z,  outtext));
                 cp->Connection->addCommand(cmd);
             } else {
-                // kein Name vorhanden, benutze Tile Namen statt dessen
+                // no item name found -> use tile name
                 if (Tiles->find(cfold->getTileId(), tempTile)) {
-                    // Namen f�r die Bodenplatte gefunden
-                    boost::shared_ptr<BasicServerCommand>cmd(new NameOfMapItemTC(x, y, z,  tempTile.German));
-
-                    switch (cp->getPlayerLanguage()) {
-                    case Language::german:
-                        cp->Connection->addCommand(cmd);
-                        break;
-                    case Language::english:
-                        cmd.reset(new NameOfMapItemTC(x, y, z,  tempTile.English));
-                        cp->Connection->addCommand(cmd);
-                        break;
-                    case Language::french:
-                        cmd.reset(new NameOfMapItemTC(x, y, z,  tempTile.French));
-                        cp->Connection->addCommand(cmd);
-                        break;
-                    default:
-                        cmd.reset(new NameOfMapItemTC(x, y, z,  tempTile.English));
-                        cp->Connection->addCommand(cmd);
-                        break;
-                    }
+                    boost::shared_ptr<BasicServerCommand>cmd(new NameOfMapItemTC(x, y, z, cp->nls(tempTile.German, tempTile.English)));
+                    cp->Connection->addCommand(cmd);
                 } else {
-                    std::cerr << "Tile Nr.: " << cfold->getTileId() << "nicht gefunden\n";
-
-                    // kein Name vorhanden
-                    boost::shared_ptr<BasicServerCommand>cmd(new NameOfMapItemTC(x, y, z,  "unbekannt"));
-
-                    switch (cp->getPlayerLanguage()) {
-                    case Language::german:
-                        cp->Connection->addCommand(cmd);
-                        break;
-                    case Language::english:
-                        cmd.reset(new NameOfMapItemTC(x, y, z,  "unknown"));
-                        cp->Connection->addCommand(cmd);
-                        break;
-                    default:
-                        cmd.reset(new NameOfMapItemTC(x, y, z,  "?"));
-                        cp->Connection->addCommand(cmd);
-                        break;
-                    }
+                    std::cerr << "Tile no. " << cfold->getTileId() << " not found\n";
+                    std::string german = "unbekannt";
+                    std::string english = "unknown";
+                    boost::shared_ptr<BasicServerCommand>cmd(new NameOfMapItemTC(x, y, z, cp->nls(german, english)));
+                    cp->Connection->addCommand(cmd);
                 }
             }
         } else {
-            // Namen der Bodenplatte senden
             if (Tiles->find(cfold->getTileId(), tempTile)) {
-                // Namen f�r die Bodenplatte gefunden
-                boost::shared_ptr<BasicServerCommand>cmd(new NameOfMapItemTC(x, y, z,  tempTile.German));
-
-                switch (cp->getPlayerLanguage()) {
-                case Language::german:
-                    cp->Connection->addCommand(cmd);
-                    break;
-                case Language::english:
-                    cmd.reset(new NameOfMapItemTC(x, y, z,  tempTile.English));
-                    cp->Connection->addCommand(cmd);
-                    break;
-                default:
-                    cmd.reset(new NameOfMapItemTC(x, y, z,  "?"));
-                    cp->Connection->addCommand(cmd);
-                    break;
-                }
+                boost::shared_ptr<BasicServerCommand>cmd(new NameOfMapItemTC(x, y, z, cp->nls(tempTile.German, tempTile.English)));
+                cp->Connection->addCommand(cmd);
             } else {
-                std::cerr << "Tile Nr.: " << cfold->getTileId() << "nicht gefunden\n";
-
-                // kein Name vorhanden
-                boost::shared_ptr<BasicServerCommand>cmd(new NameOfMapItemTC(x, y, z,  "unbekannt"));
-
-                switch (cp->getPlayerLanguage()) {
-                case Language::german:
-                    cp->Connection->addCommand(cmd);
-                    break;
-                case Language::english:
-                    cmd.reset(new NameOfMapItemTC(x, y, z,  "unknown"));
-                    cp->Connection->addCommand(cmd);
-                    break;
-                default:
-                    cmd.reset(new NameOfMapItemTC(x, y, z,  "?"));
-                    cp->Connection->addCommand(cmd);
-                    break;
-                }
+                std::cerr << "Tile no. " << cfold->getTileId() << " not found\n";
+                std::string german = "unbekannt";
+                std::string english = "unknown";
+                boost::shared_ptr<BasicServerCommand>cmd(new NameOfMapItemTC(x, y, z, cp->nls(german, english)));
+                cp->Connection->addCommand(cmd);
             }
         }
     }
@@ -463,36 +389,15 @@ void World::lookAtShowcaseItem(Player *cp, unsigned char showcase, unsigned char
 
                 if (ItemNames->find(titem.getId(), tempNames)) {
 
-                    switch (cp->getPlayerLanguage()) {
-                    case Language::german:
-                        outtext +=  tempNames.German ;
-                        break;
-                    case Language::english:
-                        outtext +=  tempNames.English ;
-                        break;
-                    case Language::french:
-                        outtext +=  tempNames.French ;
-                        break;
-                    default:
-                        outtext +=  "unknown mother tongue" ;
-                        break;
-                    }
+                    outtext = cp->nls(tempNames.German, tempNames.English);
 
                     if (!titem.isComplete()) {
                         outtext += " ( " + Logger::toString(titem.getQuality()) + "% )";
                     }
-                } else { // kein Name vorhanden
-                    switch (cp->getPlayerLanguage()) {
-                    case Language::german:
-                        outtext = std::string("unbekannt");
-                        break;
-                    case Language::english:
-                        outtext = std::string("unknown");
-                        break;
-                    default:
-                        outtext = std::string("?");
-                        break;
-                    }
+                } else {
+                    std::string german = "unbekannt";
+                    std::string english = "unknown";
+                    outtext = cp->nls(german, english);
                 }
 
                 boost::shared_ptr<BasicServerCommand>cmd(new NameOfShowCaseItemTC(showcase, position, outtext, titem.getWorth()));
@@ -534,36 +439,15 @@ void World::lookAtInventoryItem(Player *cp, unsigned char position) {
                 worth = titem.getWorth();
             }
 
-            switch (cp->getPlayerLanguage()) {
-            case Language::german:
-                outtext +=  tempNames.German ;
-                break;
-            case Language::english:
-                outtext +=  tempNames.English ;
-                break;
-            case Language::french:
-                outtext +=  tempNames.French ;
-                break;
-            default:
-                outtext += "unknown mother tongue" ;
-                break;
-            }
+            outtext = cp->nls(tempNames.German, tempNames.English);
 
             if (!titem.isComplete()) {
                 outtext += " ( " + Logger::toString(titem.getQuality()) + "% )";
             }
-        } else { // kein Name vorhanden
-            switch (cp->getPlayerLanguage()) {
-            case Language::german:
-                outtext = std::string("unbekannt");
-                break;
-            case Language::english:
-                outtext = std::string("unknown");
-                break;
-            default:
-                outtext = std::string("?");
-                break;
-            }
+        } else {
+            std::string german = "unbekannt";
+            std::string english = "unknown";
+            outtext = cp->nls(german, english);
         }
 
         boost::shared_ptr<BasicServerCommand>cmd(new NameOfInventoryItemTC(position, outtext, worth));
@@ -575,21 +459,7 @@ void World::lookAtInventoryItem(Player *cp, unsigned char position) {
 
 void World::message(std::string message[3], Player *cp) {
     if (cp != NULL) {
-
-        std::string out="";
-
-        switch (cp->getPlayerLanguage()) {
-        case Language::german:
-            out = message[Language::german];
-            break;
-        case Language::english:
-            out = message[Language::english];
-            break;
-        case Language::french:
-            out = message[Language::french];
-            break;
-        }
-
+        std::string out = cp->nls(message[Language::german], message[Language::english]);
         boost::shared_ptr<BasicServerCommand>cmd(new SayTC(cp->pos.x, cp->pos.y, cp->pos.z ,out));
         cp->Connection->addCommand(cmd);
     }

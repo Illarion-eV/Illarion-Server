@@ -365,22 +365,10 @@ public:
                         return;
                     }
 
-                    std::string outtext;
+                    std::string german = "Das ist: " + mon.name;
+                    std::string english = "This is: " + mon.name;
 
-                    switch (player->getPlayerLanguage()) {
-                    case Language::german:
-                        outtext = "Das ist: " + mon.name ;
-                        break;
-                    case Language::english:
-                        outtext =  "This is: " + mon.name ;
-                        break;
-                    default:
-                        outtext +=  "unknown mother tongue" ;
-                        break;
-                    }
-
-                    boost::shared_ptr<BasicServerCommand>cmd(new CharDescription(id, outtext));
-                    //player->inform( outtext );
+                    boost::shared_ptr<BasicServerCommand>cmd(new CharDescription(id, player->nls(german, english)));
                     player->Connection->addCommand(cmd);
                 }
             }
@@ -393,22 +381,10 @@ public:
                     return;
                 }
 
-                std::string outtext;
+                std::string german = "Das ist: " + npc->name;
+                std::string english = "This is: " + npc->name;
 
-                switch (player->getPlayerLanguage()) {
-                case Language::german:
-                    outtext = "Das ist: " + npc->name ;
-                    break;
-                case Language::english:
-                    outtext =  "This is: " + npc->name ;
-                    break;
-                default:
-                    outtext +=  "unknown mother tongue" ;
-                    break;
-                }
-
-                boost::shared_ptr<BasicServerCommand>cmd(new CharDescription(id, outtext));
-                //player->inform( outtext );
+                boost::shared_ptr<BasicServerCommand>cmd(new CharDescription(id, player->nls(german, english)));
                 player->Connection->addCommand(cmd);
 
             }
@@ -1237,11 +1213,9 @@ public:
         std::string msg;
 
         if (Source.Type == LUA_ITEM && !Source.item.isComplete()) {
-            if (player->getPlayerLanguage() == 0) {
-                player->inform("Du kannst keine unfertigen Gegenst�nde benutzen!");
-            } else {
-                player->inform("You can't use unfinished items!");
-            }
+            std::string german = "Du kannst keine unfertigen Dinge benutzen!";
+            std::string english = "You can't use unfinished items!";
+            player->informLua(german, english);
         } else if (LuaScript) {
             player->ltAction->setLastAction(LuaScript, Source, Target, counter , paramtemp, LongTimeAction::AT_USE);
 #ifdef DO_UNCONSCIOUS

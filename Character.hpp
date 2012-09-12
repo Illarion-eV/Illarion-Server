@@ -954,7 +954,9 @@ public:
     */
     virtual void inform(std::string message, informType type = informServer);
     virtual void informLua(std::string message);
+    virtual void informLua(std::string german, std::string english);
     virtual void informLua(std::string message, informType type);
+    virtual void informLua(std::string german, std::string english, informType type);
 
     /**
     * moves this character in a direction

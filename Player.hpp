@@ -516,7 +516,9 @@ public:
     // player gets informed about something
     virtual void inform(std::string text, informType type = informServer);
     virtual void informLua(std::string text);
+    virtual void informLua(std::string german, std::string english);
     virtual void informLua(std::string text, informType type);
+    virtual void informLua(std::string german, std::string english, informType type);
 
     // player heard something
     virtual void receiveText(talk_type tt, std::string message, Character *cc);
