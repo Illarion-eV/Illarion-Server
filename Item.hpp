@@ -30,6 +30,7 @@
 #include "types.hpp"
 #include "globals.hpp"
 #include "fuse_ptr.hpp"
+#include <luabind/object.hpp>
 
 class Character;
 class Container;
@@ -49,6 +50,7 @@ public:
     Item(): id(0), number(0), wear(0), quality(333), data(0), datamap(1) {}
     Item(id_type id, number_type number, wear_type wear, quality_type quality = 333, data_type data = 0) :
         id(id), number(number), wear(wear), quality(quality), data(data),datamap(1) {}
+    Item(id_type id, number_type number, wear_type wear, quality_type quality, const luabind::object &datamap);
 
     inline id_type getId() const {
         return id;
@@ -63,8 +65,6 @@ public:
     inline void setNumber(number_type number) {
         this->number = number;
     }
-//    bool increaseNumber(number_type number);
-//    bool reduceNumber(number_type number);
 
     inline wear_type getWear() const {
         return wear;
@@ -84,19 +84,12 @@ public:
     }
     void setMinQuality(const Item &item);
 
-    inline data_type getData() const {
-        return data;
-    }
-    inline void setData(data_type data) {
-        this->data = data;
-    }
-    inline data_type getOldData() const {
-        return getData();
-    }
-    inline void setOldData(data_type data) {
-        setData(data);
-    }
-
+    data_type getData() const;
+    void setData(data_type data);
+    data_type getOldData() const;
+    void setOldData(data_type data);
+    void setData(const luabind::object &datamap);
+    bool hasData(const luabind::object &datamap);
     std::string getData(std::string key);
     void setData(std::string key, std::string value);
     void setData(std::string key, int32_t value);

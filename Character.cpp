@@ -1066,12 +1066,12 @@ int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid) {
     return temp;
 }
 
-int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid, uint32_t data) {
+int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid, const luabind::object &data) {
     int temp = 0;
 
     if (where == "all") {
         for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
-            if (characterItems[ i ].getId() == itemid && characterItems[ i ].isComplete() && characterItems[i].getData() == data) {
+            if (characterItems[ i ].getId() == itemid && characterItems[ i ].isComplete() && characterItems[i].hasData(data)) {
                 temp = temp + characterItems[ i ].getNumber();
             }
         }
@@ -1093,7 +1093,7 @@ int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid, uint32_t d
 
     if (where == "belt") {
         for (unsigned char i = MAX_BODY_ITEMS; i < MAX_BODY_ITEMS + MAX_BELT_SLOTS; ++i) {
-            if (characterItems[ i ].getId() == itemid && characterItems[ i ].isComplete() && characterItems[i].getData() == data) {
+            if (characterItems[ i ].getId() == itemid && characterItems[ i ].isComplete() && characterItems[i].hasData(data)) {
                 temp = temp + characterItems[ i ].getNumber();
             }
         }
@@ -1103,7 +1103,7 @@ int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid, uint32_t d
 
     if (where == "body") {
         for (unsigned char i = 0; i < MAX_BODY_ITEMS; ++i) {
-            if (characterItems[ i ].getId() == itemid && characterItems[ i ].isComplete() && characterItems[i].getData() == data) {
+            if (characterItems[ i ].getId() == itemid && characterItems[ i ].isComplete() && characterItems[i].hasData(data)) {
                 temp = temp + characterItems[ i ].getNumber();
             }
         }
@@ -1139,7 +1139,7 @@ ScriptItem Character::GetItemAt(unsigned char itempos) {
 }
 
 
-int Character::_eraseItem(TYPE_OF_ITEM_ID itemid, int count, uint32_t data, bool useData) {
+int Character::_eraseItem(TYPE_OF_ITEM_ID itemid, int count, const luabind::object &data, bool useData) {
     int temp = count;
 #ifdef Character_DEBUG
     std::cout << "try to erase in inventory " << count << " items of type " << itemid << " data " << data << "\n";
@@ -1156,7 +1156,7 @@ int Character::_eraseItem(TYPE_OF_ITEM_ID itemid, int count, uint32_t data, bool
     if (temp > 0) {
         // BACKPACK als Item erstmal auslassen
         for (unsigned char i = MAX_BELT_SLOTS + MAX_BODY_ITEMS - 1; i > 0; --i) {
-            if ((characterItems[ i ].getId() == itemid && (!useData || characterItems[ i ].getData() == data) && characterItems[ i ].isComplete()) && (temp > 0)) {
+            if ((characterItems[ i ].getId() == itemid && (!useData || characterItems[ i ].hasData(data)) && characterItems[ i ].isComplete()) && (temp > 0)) {
                 if (temp >= characterItems[ i ].getNumber()) {
                     temp = temp - characterItems[ i ].getNumber();
                     characterItems[ i ].reset();
@@ -1182,11 +1182,12 @@ int Character::_eraseItem(TYPE_OF_ITEM_ID itemid, int count, uint32_t data, bool
 
 
 int Character::eraseItem(TYPE_OF_ITEM_ID itemid, int count) {
-    return _eraseItem(itemid, count, 0, false);
+    const luabind::object nothing;
+    return _eraseItem(itemid, count, nothing, false);
 }
 
 
-int Character::eraseItem(TYPE_OF_ITEM_ID itemid, int count, uint32_t data) {
+int Character::eraseItem(TYPE_OF_ITEM_ID itemid, int count, const luabind::object &data) {
     return _eraseItem(itemid, count, data, true);
 }
 
@@ -1243,7 +1244,7 @@ int Character::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) 
 }
 
 
-int Character::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali, uint32_t data) {
+int Character::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali, const luabind::object &data) {
     int temp = count;
     Item it;
 

@@ -214,13 +214,25 @@ void World::create_command(Player *cp, const std::string &itemid) {
     if (cp->hasGMRight(gmr_basiccommands)) {
         TYPE_OF_ITEM_ID item;
         uint16_t quality = 333;
-        uint32_t data = 0;
+        std::string data;
+        lua_State *luaState = LuaScript::getLuaState();
+        luabind::object dataList = luabind::newtable(luaState);
+
         std::stringstream ss;
         ss.str(itemid);
         ss >> item;
         ss >> quality;
-        ss >> data;
-        cp->createItem(item, 1, quality, data);
+
+        while (ss.good()) {
+            ss >> data;
+            size_t found = data.find('=');
+
+            if (found != string::npos) {
+                dataList[data.substr(0, int(found))] = data.substr(int(found) + 1);
+            }
+        }
+
+        cp->createItem(item, 1, quality, dataList);
     }
 
 }
@@ -1210,7 +1222,7 @@ void World::gmhelp_command(Player *cp) {
         cp->inform(tmessage);
         tmessage = "!broadcast <message> - (!bc) Broadcasts the message <message> to all players IG.";
         cp->inform(tmessage);
-        tmessage = "!create id [quality [data]] creates an item in your inventory.";
+        tmessage = "!create id [quality [[data_key=data_value] ...]] creates an item in your inventory.";
 
     }
 

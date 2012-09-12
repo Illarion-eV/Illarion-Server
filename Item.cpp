@@ -25,22 +25,104 @@
 extern CommonObjectTable *CommonItems;
 extern ContainerObjectTable *ContainerItems;
 
-/*
-number_type Item::increaseNumber(number_type number) {
-
+Item::Item(id_type id, number_type number, wear_type wear, quality_type quality, const luabind::object &datamap):
+    id(id), number(number), wear(wear), quality(quality), datamap(1) {
+    setData(datamap);
 }
-
-
-number_type Item::reduceNumber(number_type number) {
-
-}
-*/
 
 void Item::setMinQuality(const Item &item) {
     quality_type minQuality = (quality < item.quality) ? quality : item.quality;
     minQuality /= 100;
     quality_type minDurability = (getDurability() < item.getDurability()) ? getDurability() : item.getDurability();
     quality = minQuality * 100 + minDurability;
+}
+
+Item::data_type Item::getData() const {
+    LuaScript::writeDeprecatedMsg("Item.data");
+    return data;
+}
+
+void Item::setData(data_type data) {
+    LuaScript::writeDeprecatedMsg("Item.data");
+    this->data = data;
+}
+
+Item::data_type Item::getOldData() const {
+    return getData();
+}
+
+void Item::setOldData(data_type data) {
+    setData(data);
+}
+
+
+void Item::setData(const luabind::object &datamap) {
+    using namespace luabind;
+    auto mapType = type(datamap);
+
+    if (mapType == LUA_TTABLE) {
+        for (iterator it(datamap), end; it != end; ++it) {
+            std::string key;
+
+            try {
+                key = object_cast<std::string>(it.key());
+            } catch (cast_failed &e) {
+                throw std::logic_error("Usage of invalid data map key. Data map keys must be numbers or strings.");
+            }
+
+            std::string value;
+
+            try {
+                value = object_cast<std::string>(*it);
+            } catch (cast_failed &e) {
+                throw std::logic_error("Usage of invalid data map value. Data map values must be numbers or strings.");
+            }
+
+            setData(key, value);
+        }
+    } else if (mapType == LUA_TNUMBER) {
+        setOldData(object_cast<uint32_t>(datamap));
+    } else if (mapType != LUA_TNIL) {
+        throw std::logic_error("Usage of invalid data map type. Data maps must be tables or nil.");
+    }
+}
+
+
+bool Item::hasData(const luabind::object &datamap) {
+    using namespace luabind;
+    auto mapType = type(datamap);
+
+    if (mapType == LUA_TTABLE) {
+        bool isSameData = true;
+
+        for (iterator it(datamap), end; it != end && isSameData; ++it) {
+            std::string key;
+
+            try {
+                key = object_cast<std::string>(it.key());
+            } catch (cast_failed &e) {
+                throw std::logic_error("Usage of invalid data map key. Data map keys must be numbers or strings.");
+            }
+
+            std::string value;
+
+            try {
+                value = object_cast<std::string>(*it);
+            } catch (cast_failed &e) {
+                throw std::logic_error("Usage of invalid data map value. Data map values must be numbers or strings.");
+            }
+
+            isSameData = (getData(key) == value);
+        }
+
+        return isSameData;
+    } else if (mapType == LUA_TNUMBER) {
+        return getOldData() == object_cast<uint32_t>(datamap);
+    } else if (mapType != LUA_TNIL) {
+        throw std::logic_error("Usage of invalid data map type. Data maps must be tables or nil.");
+    }
+
+    return true;
 }
 
 

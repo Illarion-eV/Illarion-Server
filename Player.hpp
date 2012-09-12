@@ -375,13 +375,7 @@ public:
 
     void ageInventory();
 
-    //! erstellt count Item mit der ID itemid im Inventory des Player
-    // und schickt ein Update an den Spieler
-    // \param itemid die Id der zu erstellenden Item
-    // \param count die Anzahl der zu erstellenden Item
-    // \return Anzahl der Item die nicht erstellt werden konnten
-    //virtual int createItem( TYPE_OF_ITEM_ID itemid, int count );
-    virtual int createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali, uint32_t data);
+    virtual int createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali, const luabind::object &data);
 
     /**
     * try to learn a skill
@@ -417,7 +411,7 @@ public:
     // \param count die Anzahl der zu löschenden Items
     // \oaram data Datawert der zu löschenden Items
     // \return Anzahl der Items, die nicht gelöscht werden konnten
-    virtual int eraseItem(TYPE_OF_ITEM_ID itemid, int count, uint32_t data);
+    virtual int eraseItem(TYPE_OF_ITEM_ID itemid, int count, const luabind::object &data);
 
     //! ver�dert die Anzahl des Item an der Position pos um count
     // und schickt ein Update an den Spieler
@@ -587,7 +581,7 @@ public:
 protected:
 
     // shared code for all eraseItem methods
-    virtual int _eraseItem(TYPE_OF_ITEM_ID itemid, int count, uint32_t data, bool useData);
+    virtual int _eraseItem(TYPE_OF_ITEM_ID itemid, int count, const luabind::object &data, bool useData);
 
 private:
 

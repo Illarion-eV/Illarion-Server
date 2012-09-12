@@ -590,13 +590,13 @@ int Container::countItem(Item::id_type itemid) {
     return temp;
 }
 
-int Container::countItem(Item::id_type itemid, Item::data_type data) {
+int Container::countItem(Item::id_type itemid, const luabind::object &data) {
     int temp = 0;
 
     for (auto it = items.begin(); it != items.end(); ++it) {
         Item &item = it->second;
 
-        if (item.getId() == itemid && item.getData() == data && item.isComplete()) {
+        if (item.getId() == itemid && item.hasData(data) && item.isComplete()) {
             temp = temp + item.getNumber();
         }
 
@@ -652,7 +652,7 @@ int Container::recursiveWeight(int rekt) {
     }
 }
 
-int Container::_eraseItem(Item::id_type itemid, Item::number_type count, Item::data_type data, bool useData) {
+int Container::_eraseItem(Item::id_type itemid, Item::number_type count, const luabind::object &data, bool useData) {
     int temp = count;
 
     auto it = items.begin();
@@ -668,7 +668,7 @@ int Container::_eraseItem(Item::id_type itemid, Item::number_type count, Item::d
             }
 
             ++it;
-        } else if ((item.getId() == itemid && (!useData || item.getData() == data) && item.isComplete()) && (temp > 0)) {
+        } else if ((item.getId() == itemid && (!useData || item.hasData(data)) && item.isComplete()) && (temp > 0)) {
 
             if (temp >= item.getNumber()) {
                 temp = temp - item.getNumber();
@@ -688,10 +688,11 @@ int Container::_eraseItem(Item::id_type itemid, Item::number_type count, Item::d
 }
 
 int Container::eraseItem(Item::id_type itemid, Item::number_type count) {
-    return _eraseItem(itemid, count, 0, false);
+    const luabind::object nothing;
+    return _eraseItem(itemid, count, nothing, false);
 }
 
-int Container::eraseItem(Item::id_type itemid, Item::number_type count, Item::data_type data) {
+int Container::eraseItem(Item::id_type itemid, Item::number_type count, const luabind::object &data) {
     return _eraseItem(itemid, count, data, true);
 }
 

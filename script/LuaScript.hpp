@@ -80,7 +80,7 @@ public:
         return _filename;
     }
 
-    lua_State *getLuaState() {
+    static lua_State *getLuaState() {
         return _luaState;
     }
 
@@ -108,6 +108,7 @@ public:
     }
 
     static void triggerScriptError(const std::string &msg) throw(luabind::error);
+    static void writeDeprecatedMsg(const std::string &deprecatedEntity);
 
 protected:
     static lua_State *_luaState;

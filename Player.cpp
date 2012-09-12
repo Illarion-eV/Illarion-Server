@@ -456,8 +456,7 @@ void Player::learn(std::string skill, uint8_t skillGroup, uint32_t actionPoints,
 }
 
 
-
-int Player::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali, uint32_t data) {
+int Player::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali, const luabind::object &data) {
     int temp = Character::createItem(itemid, count, quali, data);
 
     for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
@@ -472,12 +471,7 @@ int Player::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali, ui
 }
 
 
-//int Player::createItem( TYPE_OF_ITEM_ID itemid, int count ) {
-//    int tempo=5; //createItem( TYPE_OF_ITEM_ID itemid, int count, 333);
-//    return tempo;
-//}
-
-int Player::_eraseItem(TYPE_OF_ITEM_ID itemid, int count, uint32_t data, bool useData) {
+int Player::_eraseItem(TYPE_OF_ITEM_ID itemid, int count, const luabind::object &data, bool useData) {
     int temp = count;
 #ifdef Player_DEBUG
     std::cout << "try to erase in player inventory " << count << " items of type " << itemid << "\n";
@@ -495,7 +489,7 @@ int Player::_eraseItem(TYPE_OF_ITEM_ID itemid, int count, uint32_t data, bool us
     if (temp > 0) {
         // BACKPACK als Item erstmal auslassen
         for (unsigned char i = MAX_BELT_SLOTS + MAX_BODY_ITEMS - 1; i > 0; --i) {
-            if ((characterItems[ i ].getId() == itemid) && (!useData || characterItems[ i ].getData() == data) && (temp > 0)) {
+            if ((characterItems[ i ].getId() == itemid) && (!useData || characterItems[ i ].hasData(data)) && (temp > 0)) {
                 if (temp >= characterItems[ i ].getNumber()) {
                     temp = temp - characterItems[ i ].getNumber();
                     characterItems[ i ].reset();
@@ -533,11 +527,12 @@ int Player::_eraseItem(TYPE_OF_ITEM_ID itemid, int count, uint32_t data, bool us
 
 
 int Player::eraseItem(TYPE_OF_ITEM_ID itemid, int count) {
-    return _eraseItem(itemid, count, 0, false);
+    const luabind::object nothing;
+    return _eraseItem(itemid, count, nothing, false);
 }
 
 
-int Player::eraseItem(TYPE_OF_ITEM_ID itemid, int count, uint32_t data) {
+int Player::eraseItem(TYPE_OF_ITEM_ID itemid, int count, const luabind::object &data) {
     return _eraseItem(itemid, count, data, true);
 }
 

@@ -633,7 +633,7 @@ public:
     * @param data the date of the item
     * @return number of the items with itemid the character carries at the specific place
     */
-    int countItemAt(std::string where, TYPE_OF_ITEM_ID itemid, uint32_t data);
+    int countItemAt(std::string where, TYPE_OF_ITEM_ID itemid, const luabind::object &data);
 
     /**
     * deletes x elements of an Item with a specific id
@@ -652,7 +652,7 @@ public:
     * @param data the data value of items which should be deleted
     * @return the number of item which where sucessfully deleted (can be smaller than count)
     */
-    virtual int eraseItem(TYPE_OF_ITEM_ID itemid, int count, uint32_t data);
+    virtual int eraseItem(TYPE_OF_ITEM_ID itemid, int count, const luabind::object &data);
 
     /**
     * creates count items with a specific id in the inventory of the character
@@ -663,7 +663,7 @@ public:
     * @param data the data value of the new created items
     * @return the number of items which where created sucessfully
     */
-    virtual int createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali, uint32_t data);
+    virtual int createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali, const luabind::object &data);
 
     /**
     * changes the amount of items at a specific position
@@ -1641,7 +1641,7 @@ protected:
     virtual uint16_t getMovementCost(Field *sourcefield);
 
     // shared code for public eraseItem methods
-    virtual int _eraseItem(TYPE_OF_ITEM_ID itemid, int count, uint32_t data, bool useData);
+    virtual int _eraseItem(TYPE_OF_ITEM_ID itemid, int count, const luabind::object &data, bool useData);
 
 private:
 

@@ -76,7 +76,7 @@ public:
     void doAge(bool inventory = false);
 
     int countItem(Item::id_type itemid);
-    int countItem(Item::id_type itemid, uint32_t data);
+    int countItem(Item::id_type itemid, const luabind::object &data);
 
     void increaseItemList(Item::id_type itemid, luabind::object &list,int &index);
     void increaseItemList(luabind::object &list,int &index);
@@ -85,7 +85,7 @@ public:
     luabind::object getItemList();
 
     int eraseItem(Item::id_type itemid, Item::number_type count);
-    int eraseItem(Item::id_type itemid, Item::number_type, Item::data_type data);
+    int eraseItem(Item::id_type itemid, Item::number_type, const luabind::object &data);
 
     int increaseAtPos(unsigned char pos, Item::number_type count);
 
@@ -95,7 +95,7 @@ public:
 
     int weight();
 
-    int _eraseItem(Item::id_type itemid, Item::number_type count, Item::data_type data, bool useData);
+    int _eraseItem(Item::id_type itemid, Item::number_type count,  const luabind::object &data, bool useData);
 
     TYPE_OF_CONTAINERSLOTS getSlotCount();
 

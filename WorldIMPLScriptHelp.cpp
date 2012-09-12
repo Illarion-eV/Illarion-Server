@@ -577,7 +577,7 @@ bool World::swap(ScriptItem item, TYPE_OF_ITEM_ID newitem, unsigned short int ne
     return false;
 }
 
-ScriptItem World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, position pos, bool allways, int quali, int data) {
+ScriptItem World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, position pos, bool always, int quality, const luabind::object &data) {
     Field *field;
     ScriptItem sItem;
 
@@ -588,7 +588,7 @@ ScriptItem World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, pos
             g_item.setId(id);
             g_item.setNumber(count);
             g_item.setWear(com.AgingSpeed);
-            g_item.setQuality(quali);
+            g_item.setQuality(quality);
             g_item.setData(data);
             g_cont = NULL;
             sItem = g_item;
@@ -597,7 +597,7 @@ ScriptItem World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, pos
             sItem.itempos = 255;
             sItem.owner = NULL;
 
-            if (allways) {
+            if (always) {
                 putItemAlwaysOnMap(NULL,pos.x,pos.y,pos.z);
             } else {
                 putItemOnMap(NULL,pos.x,pos.y,pos.z);
@@ -619,14 +619,14 @@ ScriptItem World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, pos
 
 }
 
-bool World::createFromItem(ScriptItem item, position pos, bool allways) {
+bool World::createFromItem(ScriptItem item, position pos, bool always) {
     Field *field;
 
     if (GetPToCFieldAt(field, pos.x, pos.y, pos.z)) {
         g_item = static_cast<Item>(item);
         g_cont = NULL;
 
-        if (allways) {
+        if (always) {
             putItemAlwaysOnMap(NULL,pos.x,pos.y,pos.z);
         } else {
             putItemOnMap(NULL,pos.x,pos.y,pos.z);

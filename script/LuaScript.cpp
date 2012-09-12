@@ -218,6 +218,14 @@ void LuaScript::writeDebugMsg(const std::string &msg) {
     Logger::writeError("scripts", backtrace);
 }
 
+void LuaScript::writeDeprecatedMsg(const std::string &deprecatedEntity) {
+    lua_pushstring(_luaState, ("Use of DEPRECATED " + deprecatedEntity).c_str());
+    add_backtrace(_luaState);
+    std::string backtrace = lua_tostring(_luaState, -1);
+    lua_pop(_luaState, 1);
+    Logger::writeError("scripts", backtrace);
+}
+
 luabind::object LuaScript::buildEntrypoint(const std::string &entrypoint) throw(luabind::error) {
     luabind::object obj = luabind::globals(_luaState);
     std::string currentpath = "";
@@ -473,9 +481,9 @@ void LuaScript::init_base_functions() {
         .def("setClippingActive", &Character::setClippingActive)
         .def("getClippingActive", &Character::getClippingActive)
         .def("countItem", &Character::countItem)
-        .def("countItemAt", (int(Character:: *)(std::string, TYPE_OF_ITEM_ID, uint32_t))&Character::countItemAt)
+        .def("countItemAt", (int(Character:: *)(std::string, TYPE_OF_ITEM_ID, const luabind::object &))&Character::countItemAt)
         .def("countItemAt", (int(Character:: *)(std::string, TYPE_OF_ITEM_ID))&Character::countItemAt)
-        .def("eraseItem", (int(Character:: *)(TYPE_OF_ITEM_ID, int, uint32_t))&Character::eraseItem)
+        .def("eraseItem", (int(Character:: *)(TYPE_OF_ITEM_ID, int, const luabind::object &))&Character::eraseItem)
         .def("eraseItem", (int(Character:: *)(TYPE_OF_ITEM_ID, int))&Character::eraseItem)
         .def("increaseAtPos", &Character::increaseAtPos)
         .def("swapAtPos", &Character::swapAtPos)
@@ -846,9 +854,9 @@ void LuaScript::init_base_functions() {
         .def("insertItem", (bool(Container:: *)(Item,bool))&Container::InsertItem)
         .def("insertItem", (bool(Container:: *)(Item,TYPE_OF_CONTAINERSLOTS))&Container::InsertItem)
         .def("insertItem", (bool(Container:: *)(Item))&Container::InsertItem)
-        .def("countItem",(int(Container:: *)(TYPE_OF_ITEM_ID,uint32_t))&Container::countItem)
+        .def("countItem",(int(Container:: *)(TYPE_OF_ITEM_ID, const luabind::object &))&Container::countItem)
         .def("countItem",(int(Container:: *)(TYPE_OF_ITEM_ID))&Container::countItem)
-        .def("eraseItem", (int(Container:: *)(Item::id_type, Item::number_type, Item::data_type))&Container::eraseItem)
+        .def("eraseItem", (int(Container:: *)(Item::id_type, Item::number_type, const luabind::object &))&Container::eraseItem)
         .def("eraseItem", (int(Container:: *)(Item::id_type, Item::number_type))&Container::eraseItem)
         .def("increaseAtPos", &Container::increaseAtPos)
         .def("swapAtPos", &Container::swapAtPos)
