@@ -297,12 +297,12 @@ void World::makeSoundForAllPlayersInRange(short int xc, short int yc, short int 
 
 void World::lookAtMapItem(Player *cp, short int x, short int y, short int z) {
 
-    Field *cfold;
+    Field *field;
     Item titem;
 
-    if (GetPToCFieldAt(cfold, x, y, z)) {
+    if (GetPToCFieldAt(field, x, y, z)) {
         // Feld vorhanden
-        if (cfold->ViewTopItem(titem)) {
+        if (field->ViewTopItem(titem)) {
             boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(titem.getId());
             ScriptItem n_item = titem;
             n_item.type = ScriptItem::it_field;
@@ -318,30 +318,25 @@ void World::lookAtMapItem(Player *cp, short int x, short int y, short int z) {
                 boost::shared_ptr<BasicServerCommand>cmd(new NameOfMapItemTC(x, y, z, cp->nls(tempNames.German, tempNames.English)));
                 cp->Connection->addCommand(cmd);
             } else {
-                // no item name found -> use tile name
-                if (Tiles->find(cfold->getTileId(), tempTile)) {
-                    boost::shared_ptr<BasicServerCommand>cmd(new NameOfMapItemTC(x, y, z, cp->nls(tempTile.German, tempTile.English)));
-                    cp->Connection->addCommand(cmd);
-                } else {
-                    std::cerr << "Tile no. " << cfold->getTileId() << " not found\n";
-                    std::string german = "unbekannt";
-                    std::string english = "unknown";
-                    boost::shared_ptr<BasicServerCommand>cmd(new NameOfMapItemTC(x, y, z, cp->nls(german, english)));
-                    cp->Connection->addCommand(cmd);
-                }
+                lookAtTile(cp, field->getTileId(), x, y, z);
             }
         } else {
-            if (Tiles->find(cfold->getTileId(), tempTile)) {
-                boost::shared_ptr<BasicServerCommand>cmd(new NameOfMapItemTC(x, y, z, cp->nls(tempTile.German, tempTile.English)));
-                cp->Connection->addCommand(cmd);
-            } else {
-                std::cerr << "Tile no. " << cfold->getTileId() << " not found\n";
-                std::string german = "unbekannt";
-                std::string english = "unknown";
-                boost::shared_ptr<BasicServerCommand>cmd(new NameOfMapItemTC(x, y, z, cp->nls(german, english)));
-                cp->Connection->addCommand(cmd);
-            }
+            lookAtTile(cp, field->getTileId(), x, y, z);
         }
+    }
+}
+
+
+void World::lookAtTile(Player *cp, unsigned short int tile, short int x, short int y, short int z) {
+    if (Tiles->find(tile, tempTile)) {
+        boost::shared_ptr<BasicServerCommand>cmd(new NameOfMapItemTC(x, y, z, cp->nls(tempTile.German, tempTile.English)));
+        cp->Connection->addCommand(cmd);
+    } else {
+        std::cerr << "Tile no. " << tile << " not found\n";
+        std::string german = "unbekannt";
+        std::string english = "unknown";
+        boost::shared_ptr<BasicServerCommand>cmd(new NameOfMapItemTC(x, y, z, cp->nls(german, english)));
+        cp->Connection->addCommand(cmd);
     }
 }
 

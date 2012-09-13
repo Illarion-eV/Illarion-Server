@@ -977,6 +977,10 @@ public:
     // \param zo Z-Abstand des Item zu cp
     void lookAtMapItem(Player *cp, short int x, short int y, short int z);
 
+private:
+    void lookAtTile(Player *cp, short int x, short int y, short int z);
+
+public:
     //! sendet an den Spieler den Namen des Item an einer Position im showcase
     // \param cp der Spieler der benachrichtigt werden soll
     // \param showcase der showcase in dem das Item liegt
