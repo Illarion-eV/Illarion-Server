@@ -303,27 +303,19 @@ void World::lookAtMapItem(Player *cp, short int x, short int y, short int z) {
     if (GetPToCFieldAt(cfold, x, y, z)) {
         // Feld vorhanden
         if (cfold->ViewTopItem(titem)) {
-            if (titem.isComplete()) {
-                boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(titem.getId());
-                ScriptItem n_item = titem;
-                n_item.type = ScriptItem::it_field;
-                n_item.pos = position(x, y, z);
-                n_item.owner = cp;
+            boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(titem.getId());
+            ScriptItem n_item = titem;
+            n_item.type = ScriptItem::it_field;
+            n_item.pos = position(x, y, z);
+            n_item.owner = cp;
 
-                if (script && script->existsEntrypoint("LookAtItem")) {
-                    script->LookAtItem(cp, n_item);
-                    return;
-                }
+            if (script && script->existsEntrypoint("LookAtItem")) {
+                script->LookAtItem(cp, n_item);
+                return;
             }
 
             if (ItemNames->find(titem.getId(), tempNames)) {
-                std::string outtext = cp->nls(tempNames.German, tempNames.English);
-
-                if (!titem.isComplete()) {
-                    outtext += " ( " + Logger::toString(titem.getQuality()) + "% )";
-                }
-
-                boost::shared_ptr<BasicServerCommand>cmd(new NameOfMapItemTC(x, y, z,  outtext));
+                boost::shared_ptr<BasicServerCommand>cmd(new NameOfMapItemTC(x, y, z, cp->nls(tempNames.German, tempNames.English)));
                 cp->Connection->addCommand(cmd);
             } else {
                 // no item name found -> use tile name
@@ -365,35 +357,28 @@ void World::lookAtShowcaseItem(Player *cp, unsigned char showcase, unsigned char
             Container *tc;
 
             if (ps->viewItemNr(position, titem, tc)) {
-                if (titem.isComplete()) {
-                    boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(titem.getId());
-                    ScriptItem n_item = titem;
+                boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(titem.getId());
+                ScriptItem n_item = titem;
 
-                    if (showcase == 0) {
-                        n_item.type = ScriptItem::it_showcase1;
-                    } else {
-                        n_item.type = ScriptItem::it_showcase2;
-                    }
+                if (showcase == 0) {
+                    n_item.type = ScriptItem::it_showcase1;
+                } else {
+                    n_item.type = ScriptItem::it_showcase2;
+                }
 
-                    n_item.pos = cp->pos;
-                    n_item.owner = cp;
-                    n_item.itempos = position;
+                n_item.pos = cp->pos;
+                n_item.owner = cp;
+                n_item.itempos = position;
 
-                    if (script && script->existsEntrypoint("LookAtItem")) {
-                        script->LookAtItem(cp, n_item);
-                        return;
-                    }
+                if (script && script->existsEntrypoint("LookAtItem")) {
+                    script->LookAtItem(cp, n_item);
+                    return;
                 }
 
                 std::string outtext;
 
                 if (ItemNames->find(titem.getId(), tempNames)) {
-
                     outtext = cp->nls(tempNames.German, tempNames.English);
-
-                    if (!titem.isComplete()) {
-                        outtext += " ( " + Logger::toString(titem.getQuality()) + "% )";
-                    }
                 } else {
                     std::string german = "unbekannt";
                     std::string english = "unknown";
@@ -417,33 +402,27 @@ void World::lookAtInventoryItem(Player *cp, unsigned char position) {
         if (ItemNames->find(cp->characterItems[ position ].getId(), tempNames)) {
             Item titem = cp->characterItems[ position ];
 
-            if (titem.isComplete()) {
-                boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(cp->characterItems[ position ].getId());
-                ScriptItem n_item = cp->characterItems[ position ];
+            boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(cp->characterItems[ position ].getId());
+            ScriptItem n_item = cp->characterItems[ position ];
 
-                if (position < MAX_BODY_ITEMS) {
-                    n_item.type = ScriptItem::it_inventory;
-                } else {
-                    n_item.type = ScriptItem::it_belt;
-                }
-
-                n_item.itempos = position;
-                n_item.pos = cp->pos;
-                n_item.owner = cp;
-
-                if (script && script->existsEntrypoint("LookAtItem")) {
-                    script->LookAtItem(cp, n_item);
-                    return;
-                }
-
-                worth = titem.getWorth();
+            if (position < MAX_BODY_ITEMS) {
+                n_item.type = ScriptItem::it_inventory;
+            } else {
+                n_item.type = ScriptItem::it_belt;
             }
+
+            n_item.itempos = position;
+            n_item.pos = cp->pos;
+            n_item.owner = cp;
+
+            if (script && script->existsEntrypoint("LookAtItem")) {
+                script->LookAtItem(cp, n_item);
+                return;
+            }
+
+            worth = titem.getWorth();
 
             outtext = cp->nls(tempNames.German, tempNames.English);
-
-            if (!titem.isComplete()) {
-                outtext += " ( " + Logger::toString(titem.getQuality()) + "% )";
-            }
         } else {
             std::string german = "unbekannt";
             std::string english = "unknown";

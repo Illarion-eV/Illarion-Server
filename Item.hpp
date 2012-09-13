@@ -99,6 +99,9 @@ public:
     inline datamap_type::const_iterator getDataEnd() const {
         return datamap.cend();
     }
+    inline bool equalData(const Item &item) const {
+        return datamap == item.datamap;
+    }
 
     void reset();
     void resetWear();
@@ -110,7 +113,6 @@ public:
     bool isContainer() const;
     TYPE_OF_WEIGHT getWeight() const;
     TYPE_OF_WORTH getWorth() const;
-    bool isComplete() const;
     bool isPermanent() const;
     void makePermanent();
 

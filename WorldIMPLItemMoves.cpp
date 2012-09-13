@@ -44,11 +44,6 @@ extern boost::shared_ptr<LuaDepotScript>depotScript;
 bool World::putItemOnInvPos(Character *cc, unsigned char pos) {
     bool gotWeapon = false;
 
-    if ((!g_item.isComplete()) && (pos < MAX_BODY_ITEMS)) {
-        cc->inform("you can't wear unfinished items!");
-        return false;
-    }
-
     if (pos == BACKPACK) {
         if (cc->characterItems[ BACKPACK ].getId() == 0) {
 
@@ -135,11 +130,7 @@ bool World::putItemOnInvPos(Character *cc, unsigned char pos) {
                             return false;
                         }
 
-                        if (g_item.getData() != cc->characterItems[pos].getData()) {
-                            return false;
-                        }
-
-                        if (!g_item.isComplete() || !cc->characterItems[pos].isComplete()) {
+                        if (!cc->characterItems[pos].equalData(g_item)) {
                             return false;
                         }
 
@@ -220,11 +211,7 @@ bool World::putItemOnInvPos(Character *cc, unsigned char pos) {
                     return false;
                 }
 
-                if (g_item.getData() != cc->characterItems[pos].getData()) {
-                    return false;
-                }
-
-                if (!g_item.isComplete() || !cc->characterItems[pos].isComplete()) {
+                if (!cc->characterItems[pos].equalData(g_item)) {
                     return false;
                 }
 
@@ -247,13 +234,6 @@ bool World::putItemOnInvPos(Character *cc, unsigned char pos) {
 
 
 bool World::putItemOnInvPos(Player *cc, unsigned char pos) {
-    if (!g_item.isComplete() && (pos < MAX_BODY_ITEMS)) {
-        std::string german = "Du kannst keine unfertigen Dinge anlegen!";
-        std::string english = "You cannot wear unfinished items!";
-        cc->informLua(german, english);
-        return false;
-    }
-
     if (putItemOnInvPos((Character *) cc, pos)) {
         if (pos == LEFT_TOOL) {
             cc->sendCharacterItemAtPos(pos);
@@ -1930,11 +1910,6 @@ void World::closeShowcaseIfNotInRange(Container *moved, short int x, short int y
 
 bool World::isStackable(Item item) {
     CommonStruct com;
-
-    //return false for not finished items
-    if (!item.isComplete()) {
-        return false;
-    }
 
     if (CommonItems->find(item.getId(), com)) {
         return com.isStackable;

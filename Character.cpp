@@ -992,7 +992,7 @@ int Character::countItem(TYPE_OF_ITEM_ID itemid) {
     int temp = 0;
 
     for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
-        if (characterItems[ i ].getId() == itemid && characterItems[ i ].isComplete()) {
+        if (characterItems[ i ].getId() == itemid) {
             temp = temp + characterItems[ i ].getNumber();
         }
     }
@@ -1015,7 +1015,7 @@ int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid) {
 
     if (where == "all") {
         for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
-            if (characterItems[ i ].getId() == itemid && characterItems[ i ].isComplete()) {
+            if (characterItems[ i ].getId() == itemid) {
                 temp = temp + characterItems[ i ].getNumber();
             }
         }
@@ -1037,7 +1037,7 @@ int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid) {
 
     if (where == "belt") {
         for (unsigned char i = MAX_BODY_ITEMS; i < MAX_BODY_ITEMS + MAX_BELT_SLOTS; ++i) {
-            if (characterItems[ i ].getId() == itemid && characterItems[ i ].isComplete()) {
+            if (characterItems[ i ].getId() == itemid) {
                 temp = temp + characterItems[ i ].getNumber();
             }
         }
@@ -1047,7 +1047,7 @@ int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid) {
 
     if (where == "body") {
         for (unsigned char i = 0; i < MAX_BODY_ITEMS; ++i) {
-            if (characterItems[ i ].getId() == itemid && characterItems[ i ].isComplete()) {
+            if (characterItems[ i ].getId() == itemid) {
                 temp = temp + characterItems[ i ].getNumber();
             }
         }
@@ -1071,7 +1071,7 @@ int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid, const luab
 
     if (where == "all") {
         for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
-            if (characterItems[ i ].getId() == itemid && characterItems[ i ].isComplete() && characterItems[i].hasData(data)) {
+            if (characterItems[ i ].getId() == itemid && characterItems[i].hasData(data)) {
                 temp = temp + characterItems[ i ].getNumber();
             }
         }
@@ -1093,7 +1093,7 @@ int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid, const luab
 
     if (where == "belt") {
         for (unsigned char i = MAX_BODY_ITEMS; i < MAX_BODY_ITEMS + MAX_BELT_SLOTS; ++i) {
-            if (characterItems[ i ].getId() == itemid && characterItems[ i ].isComplete() && characterItems[i].hasData(data)) {
+            if (characterItems[ i ].getId() == itemid && characterItems[i].hasData(data)) {
                 temp = temp + characterItems[ i ].getNumber();
             }
         }
@@ -1103,7 +1103,7 @@ int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid, const luab
 
     if (where == "body") {
         for (unsigned char i = 0; i < MAX_BODY_ITEMS; ++i) {
-            if (characterItems[ i ].getId() == itemid && characterItems[ i ].isComplete() && characterItems[i].hasData(data)) {
+            if (characterItems[ i ].getId() == itemid && characterItems[i].hasData(data)) {
                 temp = temp + characterItems[ i ].getNumber();
             }
         }
@@ -1156,7 +1156,7 @@ int Character::_eraseItem(TYPE_OF_ITEM_ID itemid, int count, const luabind::obje
     if (temp > 0) {
         // BACKPACK als Item erstmal auslassen
         for (unsigned char i = MAX_BELT_SLOTS + MAX_BODY_ITEMS - 1; i > 0; --i) {
-            if ((characterItems[ i ].getId() == itemid && (!useData || characterItems[ i ].hasData(data)) && characterItems[ i ].isComplete()) && (temp > 0)) {
+            if ((characterItems[ i ].getId() == itemid && (!useData || characterItems[ i ].hasData(data))) && (temp > 0)) {
                 if (temp >= characterItems[ i ].getNumber()) {
                     temp = temp - characterItems[ i ].getNumber();
                     characterItems[ i ].reset();

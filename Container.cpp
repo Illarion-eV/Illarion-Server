@@ -89,7 +89,7 @@ bool Container::InsertItem(Item item, bool merge) {
                 while ((it != items.end()) && (item.getNumber() > 0)) {
                     Item &selectedItem = it->second;
 
-                    if (selectedItem.getId() == item.getId() && selectedItem.getData() == item.getData() && selectedItem.isComplete() && item.isComplete()) {
+                    if (selectedItem.getId() == item.getId() && selectedItem.equalData(item)) {
                         temp = selectedItem.getNumber() + item.getNumber();
 
                         if (temp <= MAXITEMS) {
@@ -134,7 +134,7 @@ bool Container::InsertItem(Item item, TYPE_OF_CONTAINERSLOTS pos) {
             Item &selectedItem = it->second;
 
             if (isItemStackable(item)) {
-                if (selectedItem.getId() == item.getId() && selectedItem.getData() == item.getData() && selectedItem.isComplete() && item.isComplete()) {
+                if (selectedItem.getId() == item.getId() && selectedItem.equalData(item)) {
                     int temp = selectedItem.getNumber() + item.getNumber();
 
                     if (temp <= MAXITEMS) {
@@ -574,7 +574,7 @@ int Container::countItem(Item::id_type itemid) {
     for (auto it = items.begin(); it != items.end(); ++it) {
         Item &item = it->second;
 
-        if (item.getId() == itemid && item.isComplete()) {
+        if (item.getId() == itemid) {
             temp = temp + item.getNumber();
         }
 
@@ -596,7 +596,7 @@ int Container::countItem(Item::id_type itemid, const luabind::object &data) {
     for (auto it = items.begin(); it != items.end(); ++it) {
         Item &item = it->second;
 
-        if (item.getId() == itemid && item.hasData(data) && item.isComplete()) {
+        if (item.getId() == itemid && item.hasData(data)) {
             temp = temp + item.getNumber();
         }
 
@@ -668,7 +668,7 @@ int Container::_eraseItem(Item::id_type itemid, Item::number_type count, const l
             }
 
             ++it;
-        } else if ((item.getId() == itemid && (!useData || item.hasData(data)) && item.isComplete()) && (temp > 0)) {
+        } else if ((item.getId() == itemid && (!useData || item.hasData(data))) && (temp > 0)) {
 
             if (temp >= item.getNumber()) {
                 temp = temp - item.getNumber();

@@ -248,10 +248,6 @@ TYPE_OF_WORTH Item::getWorth() const {
     return 0;
 }
 
-bool Item::isComplete() const {
-    return quality >= 100;
-}
-
 bool Item::isPermanent() const {
     return wear == PERMANENT_WEAR;
 }

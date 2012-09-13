@@ -1212,11 +1212,7 @@ public:
 
         std::string msg;
 
-        if (Source.Type == LUA_ITEM && !Source.item.isComplete()) {
-            std::string german = "Du kannst keine unfertigen Dinge benutzen!";
-            std::string english = "You can't use unfinished items!";
-            player->informLua(german, english);
-        } else if (LuaScript) {
+        if (LuaScript) {
             player->ltAction->setLastAction(LuaScript, Source, Target, counter , paramtemp, LongTimeAction::AT_USE);
 #ifdef DO_UNCONSCIOUS
 

@@ -278,12 +278,10 @@ void LongTimeAction::successAction() {
             if ((_at == AT_USE)) {
                 //a itemscript
                 if (_source.Type == LUA_ITEM) {
-                    if (_source.item.isComplete()) {
-                        boost::shared_ptr<LuaItemScript>itScript = boost::dynamic_pointer_cast<LuaItemScript>(_script);
+                    boost::shared_ptr<LuaItemScript>itScript = boost::dynamic_pointer_cast<LuaItemScript>(_script);
 
-                        if (_target.Type == LUA_ITEM || _target.Type == LUA_NONE) {
-                            itScript->UseItem(_owner, _source.item, _target.item, _counter, static_cast<TYPE_OF_ITEM_ID>(_param), static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
-                        }
+                    if (_target.Type == LUA_ITEM || _target.Type == LUA_NONE) {
+                        itScript->UseItem(_owner, _source.item, _target.item, _counter, static_cast<TYPE_OF_ITEM_ID>(_param), static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
                     }
                 }
                 //a tilescript
