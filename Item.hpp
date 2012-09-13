@@ -35,6 +35,176 @@
 class Character;
 class Container;
 
+class ItemLookAt {
+public:
+    static const uint8_t MAX_GEM_LEVEL = 10;
+    static const uint8_t MAX_DURABILITY = 100;
+    enum Rareness {
+        commonItem = 1,
+        uncommonItem = 2,
+        rareItem = 3,
+        epicItem = 4,
+    };
+
+    ItemLookAt(): rareness(commonItem), weight(0), worth(0), durabilityValue(0),
+        diamondLevel(0), emeraldLevel(0), rubyLevel(0), sapphireLevel(0),
+        amethystLevel(0), obsidianLevel(0), topazLevel(0), bonus(0) {}
+
+    void setName(std::string name) {
+        this->name = name;
+    }
+    const std::string &getName() const {
+        return name;
+    }
+
+    void setRareness(Rareness rareness) {
+        this->rareness = rareness;
+    }
+    Rareness getRareness() const {
+        return rareness;
+    }
+
+    void setDescription(std::string description) {
+        this->description = description;
+    }
+    const std::string &getDescription() const {
+        return description;
+    }
+
+    void setCraftedBy(std::string craftedBy) {
+        this->craftedBy = craftedBy;
+    }
+    const std::string &getCraftedBy() const {
+        return craftedBy;
+    }
+
+    void setWeight(TYPE_OF_WEIGHT weight) {
+        this->weight = weight;
+    }
+    TYPE_OF_WEIGHT getWeight() const {
+        return weight;
+    }
+
+    void setWorth(TYPE_OF_WORTH worth) {
+        this->worth = worth;
+    }
+    TYPE_OF_WORTH getWorth() const {
+        return worth;
+    }
+
+    void setQualityText(std::string qualityText) {
+        this->qualityText = qualityText;
+    }
+    const std::string &getQualityText() const {
+        return qualityText;
+    }
+
+    void setDurabilityText(std::string durabilityText) {
+        this->durabilityText = durabilityText;
+    }
+    const std::string &getDurabilityText() const {
+        return durabilityText;
+    }
+
+    void setDurabilityValue(uint8_t durabilityValue) {
+        if (durabilityValue <= MAX_DURABILITY) {
+            this->durabilityValue = durabilityValue;
+        }
+    }
+    uint8_t getDurabilityValue() const {
+        return durabilityValue;
+    }
+
+    void setDiamondLevel(uint8_t diamondLevel) {
+        if (diamondLevel <= MAX_GEM_LEVEL) {
+            this->diamondLevel = diamondLevel;
+        }
+    }
+    uint8_t getDiamondLevel() const {
+        return diamondLevel;
+    }
+
+    void setEmeraldLevel(uint8_t emeraldLevel) {
+        if (emeraldLevel <= MAX_GEM_LEVEL) {
+            this->emeraldLevel = emeraldLevel;
+        }
+    }
+    uint8_t getEmeraldLevel() const {
+        return emeraldLevel;
+    }
+
+    void setRubyLevel(uint8_t rubyLevel) {
+        if (rubyLevel <= MAX_GEM_LEVEL) {
+            this->rubyLevel = rubyLevel;
+        }
+    }
+    uint8_t getRubyLevel() const {
+        return rubyLevel;
+    }
+
+    void setSapphireLevel(uint8_t sapphireLevel) {
+        if (sapphireLevel <= MAX_GEM_LEVEL) {
+            this->sapphireLevel = sapphireLevel;
+        }
+    }
+    uint8_t getSapphireLevel() const {
+        return sapphireLevel;
+    }
+
+    void setAmethystLevel(uint8_t amethystLevel) {
+        if (amethystLevel <= MAX_GEM_LEVEL) {
+            this->amethystLevel = amethystLevel;
+        }
+    }
+    uint8_t getAmethystLevel() const {
+        return amethystLevel;
+    }
+
+    void setObsidianLevel(uint8_t obsidianLevel) {
+        if (obsidianLevel <= MAX_GEM_LEVEL) {
+            this->obsidianLevel = obsidianLevel;
+        }
+    }
+    uint8_t getObsidianLevel() const {
+        return obsidianLevel;
+    }
+
+    void setTopazLevel(uint8_t topazLevel) {
+        if (topazLevel <= MAX_GEM_LEVEL) {
+            this->topazLevel = topazLevel;
+        }
+    }
+    uint8_t getTopazLevel() const {
+        return topazLevel;
+    }
+
+    void setBonus(uint8_t bonus) {
+        this->bonus = bonus;
+    }
+    uint8_t getBonus() const {
+        return bonus;
+    }
+
+private:
+    std::string name;
+    Rareness rareness;
+    std::string description;
+    std::string craftedBy;
+    TYPE_OF_WEIGHT weight;
+    TYPE_OF_WORTH worth;
+    std::string qualityText;
+    std::string durabilityText;
+    uint8_t durabilityValue;
+    uint8_t diamondLevel;
+    uint8_t emeraldLevel;;
+    uint8_t rubyLevel;
+    uint8_t sapphireLevel;
+    uint8_t amethystLevel;
+    uint8_t obsidianLevel;
+    uint8_t topazLevel;
+    uint8_t bonus;
+};
+
 class Item {
 public:
     typedef uint16_t id_type;
@@ -109,7 +279,7 @@ public:
     void save(std::ostream *obj) const;
     void load(std::istream *obj);
 
-    bool survivesAging();
+    bool survivesAgeing();
     bool isContainer() const;
     TYPE_OF_WEIGHT getWeight() const;
     TYPE_OF_WORTH getWorth() const;

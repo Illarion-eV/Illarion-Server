@@ -219,7 +219,7 @@ luabind::object World::getNPCSInRangeOf(position posi, uint8_t range) {
     return list;
 }
 
-void World::ItemInform(Character *user, ScriptItem item, std::string message) {
+void World::itemInform(Character *user, ScriptItem item, ItemLookAt lookAt) {
     if (user->character != Character::player) {
         return;
     }
@@ -236,17 +236,17 @@ void World::ItemInform(Character *user, ScriptItem item, std::string message) {
                 showcase = 1;
             }
 
-            boost::shared_ptr<BasicServerCommand>cmd(new NameOfShowCaseItemTC(showcase, item.itempos, message, item.getWorth()));
+            boost::shared_ptr<BasicServerCommand>cmd(new LookAtShowCaseItemTC(showcase, item.itempos, lookAt));
             cp->Connection->addCommand(cmd);
         }
     } else if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
         if (item.owner->character == Character::player) {
-            boost::shared_ptr<BasicServerCommand>cmd(new NameOfInventoryItemTC(item.itempos, message, item.getWorth()));
+            boost::shared_ptr<BasicServerCommand>cmd(new LookAtInventoryItemTC(item.itempos, lookAt));
             cp->Connection->addCommand(cmd);
         }
     } else if (item.type == ScriptItem::it_field) {
         if (item.owner->character == Character::player) {
-            boost::shared_ptr<BasicServerCommand>cmd(new NameOfMapItemTC(item.pos.x, item.pos.y, item.pos.z , message));
+            boost::shared_ptr<BasicServerCommand>cmd(new LookAtMapItemTC(item.pos.x, item.pos.y, item.pos.z, lookAt));
             cp->Connection->addCommand(cmd);
         }
     }
@@ -587,7 +587,7 @@ ScriptItem World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, pos
         if (CommonItems->find(id, com)) {
             g_item.setId(id);
             g_item.setNumber(count);
-            g_item.setWear(com.AgingSpeed);
+            g_item.setWear(com.AgeingSpeed);
             g_item.setQuality(quality);
             g_item.setData(data);
             g_cont = NULL;

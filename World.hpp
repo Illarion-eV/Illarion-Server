@@ -978,7 +978,7 @@ public:
     void lookAtMapItem(Player *cp, short int x, short int y, short int z);
 
 private:
-    void lookAtTile(Player *cp, short int x, short int y, short int z);
+    void lookAtTile(Player *cp, unsigned short int tile, short int x, short int y, short int z);
 
 public:
     //! sendet an den Spieler den Namen des Item an einer Position im showcase
@@ -1500,11 +1500,7 @@ public:
     //param amount, der Wert um den die Qualitaet geaendert werden soll
     void changeQuality(ScriptItem item, short int amount);
 
-    //Schickt an den user eine Nachricht mit Iteminformationen.
-    //\param user: Der Spieler an dem die nachricht geschickt wird.
-    //\param item: das Item zu dem die Nachricht angezeigt werden soll.
-    //\param message: die Nachricht die Angezeigt werden soll.
-    void ItemInform(Character *user, ScriptItem item, std::string message);
+    void itemInform(Character *user, ScriptItem item, ItemLookAt lookAt);
 
     //Liefert den Namen eines Items mit einer bestimmten id zurck
     //\param itemid, id des items zu dem der Name geliefert werden soll

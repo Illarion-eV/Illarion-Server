@@ -22,12 +22,14 @@
 #include "data/TilesTable.hpp"
 #include "data/CommonObjectTable.hpp"
 #include "script/LuaItemScript.hpp"
+#include "script/LuaLookAtItemScript.hpp"
 #include "TableStructs.hpp"
 #include "Player.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "Logger.hpp"
 
 extern CommonObjectTable *CommonItems;
+extern boost::shared_ptr<LuaLookAtItemScript>lookAtItemScript;
 
 bool World::sendTextInFileToPlayer(std::string filename, Player *cp) {
     if (filename.length() == 0) {
@@ -314,10 +316,7 @@ void World::lookAtMapItem(Player *cp, short int x, short int y, short int z) {
                 return;
             }
 
-            if (ItemNames->find(titem.getId(), tempNames)) {
-                boost::shared_ptr<BasicServerCommand>cmd(new NameOfMapItemTC(x, y, z, cp->nls(tempNames.German, tempNames.English)));
-                cp->Connection->addCommand(cmd);
-            } else {
+            if (!lookAtItemScript->lookAtItem(cp, n_item)) {
                 lookAtTile(cp, field->getTileId(), x, y, z);
             }
         } else {
@@ -329,13 +328,13 @@ void World::lookAtMapItem(Player *cp, short int x, short int y, short int z) {
 
 void World::lookAtTile(Player *cp, unsigned short int tile, short int x, short int y, short int z) {
     if (Tiles->find(tile, tempTile)) {
-        boost::shared_ptr<BasicServerCommand>cmd(new NameOfMapItemTC(x, y, z, cp->nls(tempTile.German, tempTile.English)));
+        boost::shared_ptr<BasicServerCommand>cmd(new LookAtTileTC(x, y, z, cp->nls(tempTile.German, tempTile.English)));
         cp->Connection->addCommand(cmd);
     } else {
         std::cerr << "Tile no. " << tile << " not found\n";
         std::string german = "unbekannt";
         std::string english = "unknown";
-        boost::shared_ptr<BasicServerCommand>cmd(new NameOfMapItemTC(x, y, z, cp->nls(german, english)));
+        boost::shared_ptr<BasicServerCommand>cmd(new LookAtTileTC(x, y, z, cp->nls(german, english)));
         cp->Connection->addCommand(cmd);
     }
 }
@@ -370,18 +369,7 @@ void World::lookAtShowcaseItem(Player *cp, unsigned char showcase, unsigned char
                     return;
                 }
 
-                std::string outtext;
-
-                if (ItemNames->find(titem.getId(), tempNames)) {
-                    outtext = cp->nls(tempNames.German, tempNames.English);
-                } else {
-                    std::string german = "unbekannt";
-                    std::string english = "unknown";
-                    outtext = cp->nls(german, english);
-                }
-
-                boost::shared_ptr<BasicServerCommand>cmd(new NameOfShowCaseItemTC(showcase, position, outtext, titem.getWorth()));
-                cp->Connection->addCommand(cmd);
+                lookAtItemScript->lookAtItem(cp, n_item);
             }
         }
     }
@@ -391,41 +379,28 @@ void World::lookAtShowcaseItem(Player *cp, unsigned char showcase, unsigned char
 
 void World::lookAtInventoryItem(Player *cp, unsigned char position) {
     if (cp->characterItems[ position ].getId() != 0) {
-        std::string outtext;
-        TYPE_OF_WORTH worth = 0;
 
-        if (ItemNames->find(cp->characterItems[ position ].getId(), tempNames)) {
-            Item titem = cp->characterItems[ position ];
+        Item titem = cp->characterItems[ position ];
 
-            boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(cp->characterItems[ position ].getId());
-            ScriptItem n_item = cp->characterItems[ position ];
+        boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(cp->characterItems[ position ].getId());
+        ScriptItem n_item = cp->characterItems[ position ];
 
-            if (position < MAX_BODY_ITEMS) {
-                n_item.type = ScriptItem::it_inventory;
-            } else {
-                n_item.type = ScriptItem::it_belt;
-            }
-
-            n_item.itempos = position;
-            n_item.pos = cp->pos;
-            n_item.owner = cp;
-
-            if (script && script->existsEntrypoint("LookAtItem")) {
-                script->LookAtItem(cp, n_item);
-                return;
-            }
-
-            worth = titem.getWorth();
-
-            outtext = cp->nls(tempNames.German, tempNames.English);
+        if (position < MAX_BODY_ITEMS) {
+            n_item.type = ScriptItem::it_inventory;
         } else {
-            std::string german = "unbekannt";
-            std::string english = "unknown";
-            outtext = cp->nls(german, english);
+            n_item.type = ScriptItem::it_belt;
         }
 
-        boost::shared_ptr<BasicServerCommand>cmd(new NameOfInventoryItemTC(position, outtext, worth));
-        cp->Connection->addCommand(cmd);
+        n_item.itempos = position;
+        n_item.pos = cp->pos;
+        n_item.owner = cp;
+
+        if (script && script->existsEntrypoint("LookAtItem")) {
+            script->LookAtItem(cp, n_item);
+            return;
+        }
+
+        lookAtItemScript->lookAtItem(cp, n_item);
     }
 }
 

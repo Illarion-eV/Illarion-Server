@@ -1214,18 +1214,18 @@ int Character::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) 
                     //Unstackable von Items
                     if (!cos.isStackable) {
                         characterItems[ pos ].setId(newid);
-                        characterItems[ pos ].setWear(cos.AgingSpeed);
+                        characterItems[ pos ].setWear(cos.AgeingSpeed);
                         characterItems[ pos ].setNumber(1);
                         temp -= 1;
                     } else {
                         if (temp > MAXITEMS) {
                             characterItems[ pos ].setId(newid);
-                            characterItems[ pos ].setWear(cos.AgingSpeed);
+                            characterItems[ pos ].setWear(cos.AgeingSpeed);
                             characterItems[ pos ].setNumber(MAXITEMS);
                             temp -= MAXITEMS;
                         } else {
                             characterItems[ pos ].setId(newid);
-                            characterItems[ pos ].setWear(cos.AgingSpeed);
+                            characterItems[ pos ].setWear(cos.AgeingSpeed);
                             characterItems[ pos ].setNumber(temp);
                             temp = 0;
                         }
@@ -1266,7 +1266,7 @@ int Character::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali,
                     std::cout << "createItem: erstelle neuen Rucksack" << "\n";
 #endif
                     characterItems[ BACKPACK ].setId(itemid);
-                    characterItems[ BACKPACK ].setWear(cos.AgingSpeed);
+                    characterItems[ BACKPACK ].setWear(cos.AgeingSpeed);
                     characterItems[ BACKPACK ].setQuality(quali);
                     characterItems[ BACKPACK ].setData(data);
                     characterItems[ BACKPACK ].setNumber(1);
@@ -1279,7 +1279,7 @@ int Character::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali,
                 }
 
                 it.setId(itemid);
-                it.setWear(cos.AgingSpeed);
+                it.setWear(cos.AgeingSpeed);
                 it.setQuality(quali);
                 it.setNumber(1);
                 it.setData(data);
@@ -1305,7 +1305,7 @@ int Character::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali,
                         if (characterItems[ i ].getId() == 0) {
                             if (!cos.isStackable) {
                                 characterItems[ i ].setId(itemid);
-                                characterItems[ i ].setWear(cos.AgingSpeed);
+                                characterItems[ i ].setWear(cos.AgeingSpeed);
                                 characterItems[ i ].setQuality(quali);
                                 characterItems[ i ].setNumber(1);
                                 characterItems[ i ].setData(data);
@@ -1322,14 +1322,14 @@ int Character::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali,
 
                                 if (temp >= MAXITEMS) {
                                     characterItems[ i ].setId(itemid);
-                                    characterItems[ i ].setWear(cos.AgingSpeed);
+                                    characterItems[ i ].setWear(cos.AgeingSpeed);
                                     characterItems[ i ].setQuality(quali);
                                     characterItems[ i ].setNumber(MAXITEMS);
                                     characterItems[ i ].setData(data);
                                     temp = temp - MAXITEMS;
                                 } else {
                                     characterItems[ i ].setId(itemid);
-                                    characterItems[ i ].setWear(cos.AgingSpeed);
+                                    characterItems[ i ].setWear(cos.AgeingSpeed);
                                     characterItems[ i ].setQuality(quali);
                                     characterItems[ i ].setNumber(temp);
                                     characterItems[ i ].setData(data);
@@ -1342,13 +1342,13 @@ int Character::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali,
 
                             if (temp >= MAXITEMS) {
                                 characterItems[ i ].setId(itemid);
-                                characterItems[ i ].setWear(cos.AgingSpeed);
+                                characterItems[ i ].setWear(cos.AgeingSpeed);
                                 characterItems[ i ].setQuality(quali);
                                 characterItems[ i ].setNumber(MAXITEMS);
                                 temp = temp - MAXITEMS;
                             } else {
                                 characterItems[ i ].setId(itemid);
-                                characterItems[ i ].setWear(cos.AgingSpeed);
+                                characterItems[ i ].setWear(cos.AgeingSpeed);
                                 characterItems[ i ].setQuality(quali);
                                 characterItems[ i ].setNumber(temp);
                                 temp = 0;
@@ -1364,7 +1364,7 @@ int Character::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali,
                     bool ok = true;
                     it.setId(itemid);
                     it.setQuality(quali);
-                    it.setWear(cos.AgingSpeed);
+                    it.setWear(cos.AgeingSpeed);
                     it.setData(data);
 
                     if (cos.isStackable && quali > 99) {
@@ -1483,7 +1483,7 @@ void Character::ageInventory() {
             }
 
             if (tempCommon.rotsInInventory) {
-                if (!characterItems[ i ].survivesAging()) {
+                if (!characterItems[ i ].survivesAgeing()) {
                     if (characterItems[ i ].getId() != tempCommon.ObjectAfterRot) {
 #ifdef Character_DEBUG
                         std::cout << "INV:Ein Item wird umgewandelt von: " << characterItems[ i ].getId() << "  nach: " << tempCommon.ObjectAfterRot << "!\n";
@@ -1491,7 +1491,7 @@ void Character::ageInventory() {
                         characterItems[ i ].setId(tempCommon.ObjectAfterRot);
 
                         if (CommonItems->find(tempCommon.ObjectAfterRot, tempCommon)) {
-                            characterItems[ i ].setWear(tempCommon.AgingSpeed);
+                            characterItems[ i ].setWear(tempCommon.AgeingSpeed);
                         }
                     } else {
 #ifdef Character_DEBUG

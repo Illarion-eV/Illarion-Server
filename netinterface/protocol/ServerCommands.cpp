@@ -203,24 +203,49 @@ TargetLostTC::TargetLostTC() : BasicServerCommand(SC_TARGETLOST_TC) {
 AttackAcknowledgedTC::AttackAcknowledgedTC() : BasicServerCommand(SC_ATTACKACKNOWLEDGED_TC) {
 }
 
-NameOfInventoryItemTC::NameOfInventoryItemTC(unsigned char pos, std::string name, TYPE_OF_WORTH worth) : BasicServerCommand(SC_NAMEOFINVENTORYITEM_TC) {
-    addUnsignedCharToBuffer(pos);
-    addStringToBuffer(name);
-    addIntToBuffer(worth);
+void addItemLookAt(BasicServerCommand *cmd, const ItemLookAt &lookAt) {
+    cmd->addStringToBuffer(lookAt.getName());
+    cmd->addUnsignedCharToBuffer((uint8_t)lookAt.getRareness());
+    cmd->addStringToBuffer(lookAt.getDescription());
+    cmd->addStringToBuffer(lookAt.getCraftedBy());
+    cmd->addShortIntToBuffer(lookAt.getWeight());
+    cmd->addIntToBuffer(lookAt.getWorth());
+    cmd->addStringToBuffer(lookAt.getQualityText());
+    cmd->addStringToBuffer(lookAt.getDurabilityText());
+    cmd->addUnsignedCharToBuffer(lookAt.getDurabilityValue());
+    cmd->addUnsignedCharToBuffer(lookAt.getDiamondLevel());
+    cmd->addUnsignedCharToBuffer(lookAt.getEmeraldLevel());
+    cmd->addUnsignedCharToBuffer(lookAt.getRubyLevel());
+    cmd->addUnsignedCharToBuffer(lookAt.getSapphireLevel());
+    cmd->addUnsignedCharToBuffer(lookAt.getAmethystLevel());
+    cmd->addUnsignedCharToBuffer(lookAt.getObsidianLevel());
+    cmd->addUnsignedCharToBuffer(lookAt.getTopazLevel());
+    cmd->addUnsignedCharToBuffer(lookAt.getBonus());
 }
 
-NameOfShowCaseItemTC::NameOfShowCaseItemTC(unsigned char showcase, unsigned char pos, std::string name, TYPE_OF_WORTH worth) : BasicServerCommand(SC_NAMEOFSHOWCASEITEM_TC) {
+LookAtInventoryItemTC::LookAtInventoryItemTC(unsigned char pos, const ItemLookAt &lookAt) : BasicServerCommand(SC_LOOKATINVENTORYITEM_TC) {
+    addUnsignedCharToBuffer(pos);
+    addItemLookAt(this, lookAt);
+}
+
+LookAtShowCaseItemTC::LookAtShowCaseItemTC(unsigned char showcase, unsigned char pos, const ItemLookAt &lookAt) : BasicServerCommand(SC_LOOKATSHOWCASEITEM_TC) {
     addUnsignedCharToBuffer(showcase);
     addUnsignedCharToBuffer(pos);
-    addStringToBuffer(name);
-    addIntToBuffer(worth);
+    addItemLookAt(this, lookAt);
 }
 
-NameOfMapItemTC::NameOfMapItemTC(short int x, short int y, short int z, std::string name) : BasicServerCommand(SC_NAMEOFMAPITEM_TC) {
+LookAtMapItemTC::LookAtMapItemTC(short int x, short int y, short int z, const ItemLookAt &lookAt) : BasicServerCommand(SC_LOOKATMAPITEM_TC) {
     addShortIntToBuffer(x);
     addShortIntToBuffer(y);
     addShortIntToBuffer(z);
-    addStringToBuffer(name);
+    addItemLookAt(this, lookAt);
+}
+
+LookAtTileTC::LookAtTileTC(short int x, short int y, short int z, const std::string &lookAt) : BasicServerCommand(SC_LOOKATTILE_TC) {
+    addShortIntToBuffer(x);
+    addShortIntToBuffer(y);
+    addShortIntToBuffer(z);
+    addStringToBuffer(lookAt);
 }
 
 ItemPutTC::ItemPutTC(short int x, short int y, short int z, Item &item) : BasicServerCommand(SC_ITEMPUT_TC) {

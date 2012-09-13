@@ -390,7 +390,7 @@ void Player::ageInventory() {
             }
 
             if (tempCommon.rotsInInventory) {
-                if (!characterItems[ i ].survivesAging()) {
+                if (!characterItems[ i ].survivesAgeing()) {
                     if (characterItems[ i ].getId() != tempCommon.ObjectAfterRot) {
 #ifdef Character_DEBUG
                         std::cout << "INV:Ein Item wird umgewandelt von: " << characterItems[ i ].getId() << "  nach: " << tempCommon.ObjectAfterRot << "!\n";
@@ -398,7 +398,7 @@ void Player::ageInventory() {
                         characterItems[ i ].setId(tempCommon.ObjectAfterRot);
 
                         if (CommonItems->find(tempCommon.ObjectAfterRot, tempCommon)) {
-                            characterItems[ i ].setWear(tempCommon.AgingSpeed);
+                            characterItems[ i ].setWear(tempCommon.AgeingSpeed);
                         }
 
                         sendCharacterItemAtPos(i);

@@ -26,6 +26,7 @@
 
 struct WeatherStruct;
 class Item;
+class ItemLookAt;
 typedef std::vector < Item > ITEMVECTOR;
 
 enum ServerCommands {
@@ -57,9 +58,10 @@ enum ServerCommands {
     SC_ADMINVIEWPLAYERS_TC = 0xC6,
     SC_ITEMREMOVE_TC = 0xC3,
     SC_ITEMPUT_TC = 0xC2,
-    SC_NAMEOFMAPITEM_TC = 0xC0,
-    SC_NAMEOFSHOWCASEITEM_TC = 0xBF,
-    SC_NAMEOFINVENTORYITEM_TC = 0xBE,
+    SC_LOOKATMAPITEM_TC = 0xC0,
+    SC_LOOKATTILE_TC = 0xBC,
+    SC_LOOKATSHOWCASEITEM_TC = 0xBF,
+    SC_LOOKATINVENTORYITEM_TC = 0xBE,
     SC_ATTACKACKNOWLEDGED_TC = 0xBB,
     SC_TARGETLOST_TC = 0xBA,
     SC_LOGOUT_TC = 0xCC,
@@ -151,19 +153,26 @@ public:
     AttackAcknowledgedTC();
 };
 
-class NameOfInventoryItemTC : public BasicServerCommand {
+void addItemLookAt(const ItemLookAt &lookAt);
+
+class LookAtInventoryItemTC : public BasicServerCommand {
 public:
-    NameOfInventoryItemTC(unsigned char pos, std::string name, TYPE_OF_WORTH worth);
+    LookAtInventoryItemTC(unsigned char pos, const ItemLookAt &lookAt);
 };
 
-class NameOfShowCaseItemTC : public BasicServerCommand {
+class LookAtShowCaseItemTC : public BasicServerCommand {
 public:
-    NameOfShowCaseItemTC(unsigned char showcase, unsigned char pos, std::string name, TYPE_OF_WORTH worth);
+    LookAtShowCaseItemTC(unsigned char showcase, unsigned char pos, const ItemLookAt &lookAt);
 };
 
-class NameOfMapItemTC : public BasicServerCommand {
+class LookAtMapItemTC : public BasicServerCommand {
 public:
-    NameOfMapItemTC(short int x, short int y, short int z, std::string name);
+    LookAtMapItemTC(short int x, short int y, short int z, const ItemLookAt &lookAt);
+};
+
+class LookAtTileTC : public BasicServerCommand {
+public:
+    LookAtTileTC(short int x, short int y, short int z, const std::string &lookAt);
 };
 
 class ItemPutTC : public BasicServerCommand {

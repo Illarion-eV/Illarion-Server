@@ -693,6 +693,32 @@ void LuaScript::init_base_functions() {
         .def("viewTopItem", &Field::ViewTopItem)
         .def("countItems", &Field::NumberOfItems)
         .def("deleteAllItems", &Field::DeleteAllItems),
+        luabind::class_<ItemLookAt>("ItemLookAt")
+        .def(luabind::constructor<>())
+        .enum_("Rareness")
+        [
+            luabind::value("commonItem", ItemLookAt::commonItem),
+            luabind::value("uncommonItem", ItemLookAt::uncommonItem),
+            luabind::value("rareItem", ItemLookAt::rareItem),
+            luabind::value("epicItem", ItemLookAt::epicItem)
+        ]
+        .property("name", &ItemLookAt::getName, &ItemLookAt::setName)
+        .property("rareness", &ItemLookAt::getRareness, &ItemLookAt::setRareness)
+        .property("description", &ItemLookAt::getDescription, &ItemLookAt::setDescription)
+        .property("craftedBy", &ItemLookAt::getCraftedBy, &ItemLookAt::setCraftedBy)
+        .property("weight", &ItemLookAt::getWeight, &ItemLookAt::setWeight)
+        .property("worth", &ItemLookAt::getWorth, &ItemLookAt::setWorth)
+        .property("qualityText", &ItemLookAt::getQualityText, &ItemLookAt::setQualityText)
+        .property("durabilityText", &ItemLookAt::getDurabilityText, &ItemLookAt::setDurabilityText)
+        .property("durabilityValue", &ItemLookAt::getDurabilityValue, &ItemLookAt::setDurabilityValue)
+        .property("diamondLevel", &ItemLookAt::getDiamondLevel, &ItemLookAt::setDiamondLevel)
+        .property("emeraldLevel", &ItemLookAt::getEmeraldLevel, &ItemLookAt::setEmeraldLevel)
+        .property("rubyLevel", &ItemLookAt::getRubyLevel, &ItemLookAt::setRubyLevel)
+        .property("sapphireLevel", &ItemLookAt::getSapphireLevel, &ItemLookAt::setSapphireLevel)
+        .property("amethystLevel", &ItemLookAt::getAmethystLevel, &ItemLookAt::setAmethystLevel)
+        .property("obsidianLevel", &ItemLookAt::getObsidianLevel, &ItemLookAt::setObsidianLevel)
+        .property("topazLevel", &ItemLookAt::getTopazLevel, &ItemLookAt::setTopazLevel)
+        .property("bonus", &ItemLookAt::getBonus, &ItemLookAt::setBonus),
         luabind::class_<Item>("Item")
         .def(luabind::constructor<>())
         .def(luabind::constructor<Item::id_type, Item::number_type, Item::wear_type, Item::quality_type, Item::data_type>())
@@ -759,7 +785,7 @@ void LuaScript::init_base_functions() {
         .def("getMonsterAttack", &World::getMonsterAttack, luabind::pure_out_value(_3))
         .def("changeQualityOfTopItem", &World::changeQualityOfItemAt)
         .def("changeQuality", &World::changeQuality)
-        .def("itemInform", &World::ItemInform)
+        .def("itemInform", &World::itemInform)
         .def("changeItem", &World::changeItem)
         .def("isCharacterOnField", &World::isCharacterOnField)
         .def("getCharacterOnField", &World::getCharacterOnField)
@@ -803,7 +829,7 @@ void LuaScript::init_base_functions() {
         luabind::def("LuaLShift64",LuaLShift64),
         luabind::class_<CommonStruct>("CommonStruct")
         .def_readonly("id", &CommonStruct::id)
-        .def_readonly("AgingSpeed", &CommonStruct::AgingSpeed)
+        .def_readonly("AgeingSpeed", &CommonStruct::AgeingSpeed)
         .def_readonly("Weight", &CommonStruct::Weight)
         .def_readonly("ObjectAfterRot", &CommonStruct::ObjectAfterRot)
         .def_readonly("isStackable", &CommonStruct::isStackable)

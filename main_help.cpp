@@ -45,6 +45,7 @@
 #include <boost/shared_ptr.hpp>
 #include "script/LuaWeaponScript.hpp" //For standard fighting script.
 #include "script/LuaLookAtPlayerScript.hpp"
+#include "script/LuaLookAtItemScript.hpp"
 #include "script/LuaPlayerDeathScript.hpp"
 #include "script/LuaDepotScript.hpp"
 #include "script/LuaLoginScript.hpp"
@@ -189,6 +190,7 @@ RaceSizeTable *RaceSizes;
 
 boost::shared_ptr<LuaDepotScript>depotScript;
 boost::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
+boost::shared_ptr<LuaLookAtItemScript>lookAtItemScript;
 boost::shared_ptr<LuaPlayerDeathScript>playerDeathScript;
 boost::shared_ptr<LuaLoginScript>loginScript;
 boost::shared_ptr<LuaLogoutScript>logoutScript;
@@ -412,6 +414,13 @@ void loadData() {
         lookAtPlayerScript = tmpScript;
     } catch (ScriptException &e) {
         Logger::writeError("scripts", "Error while loading script: server.playerlookat:\n" + std::string(e.what()) + "\n");
+    }
+
+    try {
+        boost::shared_ptr<LuaLookAtItemScript>tmpScript(new LuaLookAtItemScript("server.itemlookat"));
+        lookAtItemScript = tmpScript;
+    } catch (ScriptException &e) {
+        Logger::writeError("scripts", "Error while loading script: server.itemlookat:\n" + std::string(e.what()) + "\n");
     }
 
     try {

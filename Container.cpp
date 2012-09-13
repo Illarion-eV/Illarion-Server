@@ -709,14 +709,14 @@ void Container::doAge(bool inventory) {
             }
 
             if (!inventory || (inventory && tempCommon.rotsInInventory)) {
-                if (!item.survivesAging()) {
+                if (!item.survivesAgeing()) {
                     tempCommon.ObjectAfterRot = item.getId();
 
                     if (item.getId() != tempCommon.ObjectAfterRot) {
                         item.setId(tempCommon.ObjectAfterRot);
 
                         if (CommonItems->find(tempCommon.ObjectAfterRot, tempCommon)) {
-                            item.setWear(tempCommon.AgingSpeed);
+                            item.setWear(tempCommon.AgeingSpeed);
                         }
 
                         ++it;

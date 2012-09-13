@@ -35,7 +35,7 @@ struct itemdef_t {
     TYPE_OF_ITEM_ID itemid;
     std::pair<unsigned short, unsigned short> amount;
     unsigned short probability;
-    TYPE_OF_AGINGSPEED AgingSpeed;
+    TYPE_OF_AGINGSPEED AgeingSpeed;
 };
 
 struct attributedef_t {

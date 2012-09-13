@@ -102,7 +102,7 @@ void Monster::setType(const TYPE_OF_CHARACTER_ID &type) throw(unknownIDException
                 //std::cout<<"Added Item:"<<itemit->itemid<<"\n";
                 characterItems[ it->first ].setId(itemit->itemid);     // Eingeweide
                 characterItems[ it->first ].setNumber(rnd(itemit->amount));
-                characterItems[ it->first ].setWear(itemit->AgingSpeed);
+                characterItems[ it->first ].setWear(itemit->AgeingSpeed);
                 found = true;
             }
 

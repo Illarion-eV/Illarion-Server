@@ -36,7 +36,7 @@ class LuaLongTimeEffectScript;
 struct CommonStruct {
     TYPE_OF_ITEM_ID id;
     TYPE_OF_WEIGHT Weight;
-    TYPE_OF_AGINGSPEED AgingSpeed;
+    TYPE_OF_AGINGSPEED AgeingSpeed;
     TYPE_OF_ITEM_ID ObjectAfterRot;
     TYPE_OF_ITEM_ID AfterInfiniteRot;
     TYPE_OF_BRIGHTNESS Brightness;
@@ -48,7 +48,7 @@ struct CommonStruct {
     CommonStruct() {
         id = 0;
         Weight = 0;
-        AgingSpeed = 0;
+        AgeingSpeed = 0;
         ObjectAfterRot = 0;
         AfterInfiniteRot = 0;
         Brightness = 0;
@@ -61,7 +61,7 @@ struct CommonStruct {
     CommonStruct(const CommonStruct &source) {
         id = source.id;
         Weight = source.Weight;
-        AgingSpeed = source.AgingSpeed;
+        AgeingSpeed = source.AgeingSpeed;
         ObjectAfterRot = source.ObjectAfterRot;
         AfterInfiniteRot = source.AfterInfiniteRot;
         Brightness = source.Brightness;
@@ -76,7 +76,7 @@ struct CommonStruct {
             //( ( CommonStruct ) * this ) = ( ( CommonStruct ) source );
             id = source.id;
             Weight = source.Weight;
-            AgingSpeed = source.AgingSpeed;
+            AgeingSpeed = source.AgeingSpeed;
             ObjectAfterRot = source.ObjectAfterRot;
             AfterInfiniteRot = source.AfterInfiniteRot;
             Brightness = source.Brightness;

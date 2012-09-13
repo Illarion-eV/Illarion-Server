@@ -165,8 +165,8 @@ void Item::resetWear() {
     CommonStruct common;
 
     if (CommonItems->find(id, common)) {
-        if (!common.rotsInInventory && common.AgingSpeed > wear) {
-            wear = common.AgingSpeed;
+        if (!common.rotsInInventory && common.AgeingSpeed > wear) {
+            wear = common.AgeingSpeed;
         }
     }
 }
@@ -216,7 +216,7 @@ void Item::load(std::istream *obj) {
 }
 
 
-bool Item::survivesAging() {
+bool Item::survivesAgeing() {
     if (wear != 255 && wear != 0) {
         --wear;
     }
