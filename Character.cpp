@@ -1211,25 +1211,16 @@ int Character::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) 
 
             } else {
                 if (characterItems[ pos ].getId() == 0) {
-                    //Unstackable von Items
-                    if (!cos.isStackable) {
+                    if (temp > cos.MaxStack) {
                         characterItems[ pos ].setId(newid);
                         characterItems[ pos ].setWear(cos.AgeingSpeed);
-                        characterItems[ pos ].setNumber(1);
-                        temp -= 1;
+                        characterItems[ pos ].setNumber(cos.MaxStack);
+                        temp -= cos.MaxStack;
                     } else {
-                        if (temp > MAXITEMS) {
-                            characterItems[ pos ].setId(newid);
-                            characterItems[ pos ].setWear(cos.AgeingSpeed);
-                            characterItems[ pos ].setNumber(MAXITEMS);
-                            temp -= MAXITEMS;
-                        } else {
-                            characterItems[ pos ].setId(newid);
-                            characterItems[ pos ].setWear(cos.AgeingSpeed);
-                            characterItems[ pos ].setNumber(temp);
-                            temp = 0;
-                        }
-
+                        characterItems[ pos ].setId(newid);
+                        characterItems[ pos ].setWear(cos.AgeingSpeed);
+                        characterItems[ pos ].setNumber(temp);
+                        temp = 0;
                     }
 
                     if (cos.Brightness > 0) {
@@ -1299,62 +1290,24 @@ int Character::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali,
 #ifdef Character_DEBUG
                 std::cout << "createItem: normales Item" << std::endl;
 #endif
+                int old_temp = temp;
 
-                for (unsigned char i = MAX_BODY_ITEMS; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
-                    if (((characterItems[ i ].getId() == 0) || (characterItems[ i ].getId() == itemid)) && (temp > 0)) {
-                        if (characterItems[ i ].getId() == 0) {
-                            if (!cos.isStackable) {
-                                characterItems[ i ].setId(itemid);
-                                characterItems[ i ].setWear(cos.AgeingSpeed);
-                                characterItems[ i ].setQuality(quali);
-                                characterItems[ i ].setNumber(1);
-                                characterItems[ i ].setData(data);
-
-                                if (cos.Brightness > 0) {
-                                    updateAppearanceForAll(true);
-                                }
-
-                                temp = temp - 1;
-                            } else {
-                                if (characterItems[ i ].getId() != 0) {
-                                    temp += characterItems[ i ].getNumber();
-                                }
-
-                                if (temp >= MAXITEMS) {
-                                    characterItems[ i ].setId(itemid);
-                                    characterItems[ i ].setWear(cos.AgeingSpeed);
-                                    characterItems[ i ].setQuality(quali);
-                                    characterItems[ i ].setNumber(MAXITEMS);
-                                    characterItems[ i ].setData(data);
-                                    temp = temp - MAXITEMS;
-                                } else {
-                                    characterItems[ i ].setId(itemid);
-                                    characterItems[ i ].setWear(cos.AgeingSpeed);
-                                    characterItems[ i ].setQuality(quali);
-                                    characterItems[ i ].setNumber(temp);
-                                    characterItems[ i ].setData(data);
-                                    temp = 0;
-                                }
-                            }
-                        } else if (cos.isStackable && quali > 99 && data == characterItems[ i ].getData()) {
-                            // only not stacking unfinished items and those of different data
-                            temp += characterItems[ i ].getNumber();
-
-                            if (temp >= MAXITEMS) {
-                                characterItems[ i ].setId(itemid);
-                                characterItems[ i ].setWear(cos.AgeingSpeed);
-                                characterItems[ i ].setQuality(quali);
-                                characterItems[ i ].setNumber(MAXITEMS);
-                                temp = temp - MAXITEMS;
-                            } else {
-                                characterItems[ i ].setId(itemid);
-                                characterItems[ i ].setWear(cos.AgeingSpeed);
-                                characterItems[ i ].setQuality(quali);
-                                characterItems[ i ].setNumber(temp);
-                                temp = 0;
-                            }
-                        }
+                for (unsigned char i = MAX_BODY_ITEMS; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS && temp > 0; ++i) {
+                    if (characterItems[ i ].getId() == 0) {
+                        characterItems[ i ].setId(itemid);
+                        characterItems[ i ].setWear(cos.AgeingSpeed);
+                        characterItems[ i ].setQuality(quali);
+                        characterItems[ i ].setData(data);
+                        temp = characterItems[ i ].increaseNumberBy(temp);                            
+                    } else if ((characterItems[ i ].getId() == itemid) && (characterItems[ i ].equalData(data))) {
+                        characterItems[ i ].setWear(cos.AgeingSpeed);
+                        characterItems[ i ].setQuality(quali);
+                        temp = characterItems[ i ].increaseNumberBy(temp);
                     }
+                }
+
+                if (temp != old_temp && cos.Brightness > 0) {
+                    updateAppearanceForAll(true);
                 }
 
                 if ((temp > 0) && (backPackContents != NULL)) {
@@ -1367,29 +1320,17 @@ int Character::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali,
                     it.setWear(cos.AgeingSpeed);
                     it.setData(data);
 
-                    if (cos.isStackable && quali > 99) {
-                        while ((ok) && (temp > 0)) {
-                            if (temp >= MAXITEMS) {
-                                it.setNumber(MAXITEMS);
-                            } else {
-                                it.setNumber(temp);
-                            }
-
-                            if (!backPackContents->InsertItem(it, true)) {
-                                ok = false;
-                            } else {
-                                temp = temp - it.getNumber();
-                            }
+                    while ((ok) && (temp > 0)) {
+                        if (temp >= cos.MaxStack) {
+                            it.setNumber(cos.MaxStack);
+                        } else {
+                            it.setNumber(temp);
                         }
-                    } else { //nicht stapelbar
-                        while ((ok) && (temp > 0)) {
-                            it.setNumber(1);
 
-                            if (!backPackContents->InsertItem(it, true)) {
-                                ok = false;
-                            } else {
-                                --temp;
-                            }
+                        if (!backPackContents->InsertItem(it, true)) {
+                            ok = false;
+                        } else {
+                            temp -= it.getNumber();
                         }
                     }
                 }

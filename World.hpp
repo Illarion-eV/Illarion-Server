@@ -1227,7 +1227,7 @@ public:
     // \param pos Position des Item im Inventory
     // \param count Anzahl
     // \return true falls erfolgreich, false sonst
-    bool takeItemFromInvPos(Character *cc, unsigned char pos, unsigned char count);
+    bool takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_type count);
 
     //! legt das Item aus g_item und ggf. g_cont an eine Inventoryposition
     // \param cc der Character der das Item bekommt
@@ -1241,7 +1241,7 @@ public:
     // \param pos Position des Item im Inventory
     // \param count Anzahl
     // \return true falls erfolgreich, false sonst
-    bool takeItemFromInvPos(Player *cc, unsigned char pos, unsigned char count);
+    bool takeItemFromInvPos(Player *cc, unsigned char pos, Item::number_type count);
 
     //! legt das Item aus g_item und ggf. g_cont an eine Inventoryposition
     // und schickt ein Update an cc
@@ -1263,7 +1263,7 @@ public:
     // \param pos Position des Item im showcase
     // \param count Anzahl
     // \return true falls erfolgreich, false sonst
-    bool takeItemFromShowcase(Player *cc, unsigned char showcase, unsigned char pos, unsigned char count);
+    bool takeItemFromShowcase(Player *cc, unsigned char showcase, unsigned char pos, Item::number_type count);
 
     //! legt das Item aus g_item und ggf. g_cont in einen Schaukasten
     // und schickt ein Update an cc
@@ -1289,7 +1289,7 @@ public:
     // \param zc Z-Zielkoordinate
     // \param count Anzahl
     // \return true falls Verschiebung ausgefhrt werden konnte, false sonst
-    bool moveItem(Character *cc, unsigned char d, short int xc, short int yc, short int zc, unsigned char count);
+    bool moveItem(Character *cc, unsigned char d, short int xc, short int yc, short int zc, Item::number_type count);
 
     //! ein Spieler verschiebt ein Item von der Karte in ein showcase
     // \param cp Player der verschiebt
@@ -1297,14 +1297,14 @@ public:
     // \param showcase das showcase in welches das Item verschoben werden soll
     // \param pos Zielposition
     // \param count Anzahl
-    void moveItemFromMapIntoShowcase(Player *cp, char direction, unsigned char showcase, unsigned char pos, unsigned char count);
+    void moveItemFromMapIntoShowcase(Player *cp, char direction, unsigned char showcase, unsigned char pos, Item::number_type count);
 
     //! ein Spieler verschiebt ein Item von der Karte an seine Koerper
     // \param cp Player der verschiebt
     // \param direction Richtung in der das Item relativ zum Spieler liegt
     // \param cpos Position am Koerper an welche das Item verschoben werden soll
     // \param count Anzahl
-    void moveItemFromMapToPlayer(Player *cp, char direction, unsigned char cpos, unsigned char count);
+    void moveItemFromMapToPlayer(Player *cp, char direction, unsigned char cpos, Item::number_type count);
 
     //! ein Spieler verschiebt ein Item zwischen showcases
     // \param cp Player der verschiebt
@@ -1313,7 +1313,7 @@ public:
     // \param dest die Ansicht, in welche das Item verschoben wird
     // \param pos2 die Position auf welches das Item verschoben werden soll
     // \parm count Anzahl
-    void moveItemBetweenShowcases(Player *cp, unsigned char source, unsigned char pos, unsigned char dest, unsigned char pos2, unsigned char count);
+    void moveItemBetweenShowcases(Player *cp, unsigned char source, unsigned char pos, unsigned char dest, unsigned char pos2, Item::number_type count);
 
     //! wirft ein Item aus einem showcase auf die Karte
     // \param cp Player der das Item wirft
@@ -1323,7 +1323,7 @@ public:
     // \param yc Y-Koordinate der neuen Itemposition
     // \param zc Z-Koordinate der neuen Itemposition
     // \parm count Anzahl
-    void dropItemFromShowcaseOnMap(Player *cp, unsigned char showcase, unsigned char pos, short int xc, short int yc, short int zc, unsigned char count);
+    void dropItemFromShowcaseOnMap(Player *cp, unsigned char showcase, unsigned char pos, short int xc, short int yc, short int zc, Item::number_type count);
 
     //! verschiebt ein Item aus einem showcase an den Koerper des Player
     // \param cp Player der das Item verschiebt
@@ -1331,14 +1331,14 @@ public:
     // \param pos die Position des Item in der Ansicht
     // \param cpos die Position am Koerper wohin das Item verschoben wird
     // \param count Anzahl
-    void moveItemFromShowcaseToPlayer(Player *cp, unsigned char showcase, unsigned char pos, unsigned char cpos, unsigned char count);
+    void moveItemFromShowcaseToPlayer(Player *cp, unsigned char showcase, unsigned char pos, unsigned char cpos, Item::number_type count);
 
     //! verschiebt ein Item von einem Koerperteil zu einem anderen
     // \param cp Player der das Item verschiebt
     // \param opos die Position des Item welches verschoben wird
     // \param npos die neue Position des Item
     // \parm count Anzahl
-    void moveItemBetweenBodyParts(Player *cp, unsigned char opos, unsigned char npos, unsigned char count);
+    void moveItemBetweenBodyParts(Player *cp, unsigned char opos, unsigned char npos, Item::number_type count);
 
     //! wirft eines der Item vom Koerper des Player auf die Karte
     // \param cp Player der das Item wirft
@@ -1347,7 +1347,7 @@ public:
     // \param yc Y-Koordinate der neuen Itemposition
     // \param zc Z-Koordinate der neuen Itemposition
     // \param count Anza
-    void dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, short int xc, short int yc, short int zc, unsigned char count);
+    void dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, short int xc, short int yc, short int zc, Item::number_type count);
 
     //! wirft eines der Item vom Koerper des Monster auf die Karte
     // \param cm Monster der das Item wirft
@@ -1356,7 +1356,7 @@ public:
     // \param yo Y-Offset der neuen Itemposition relativ zum Monster
     // \param zo Z-Offset der neuen Itemposition relativ zum Monster
     // \param count Anzahl
-    void dropItemFromMonsterOnMap(Monster *cm, unsigned char cpos, char xo, char yo, char zo, unsigned char count);
+    void dropItemFromMonsterOnMap(Monster *cm, unsigned char cpos, char xo, char yo, char zo, Item::number_type count);
 
     //! ein Spieler verschiebt ein Item vom Koerper in ein showcase
     // \param cp Player der verschiebt
@@ -1364,7 +1364,7 @@ public:
     // \param showcase das showcase in welches das Item verschoben werden soll
     // \param pos die Position auf welche das Item verschoben werden soll
     // \param count Anzahl
-    void moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, unsigned char showcase, unsigned char pos, unsigned char count);
+    void moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, unsigned char showcase, unsigned char pos, Item::number_type count);
 
     //! schickt eine 'Item entfernt' - Meldung an alle Player im Sichtbereich der Koordinate xo,yo,zo
     // \param id die Identifikationsnummer des durchfhrenden Player

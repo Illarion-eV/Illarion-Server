@@ -301,7 +301,7 @@ public:
 
 class UpdateInventoryPosTC : public BasicServerCommand {
 public:
-    UpdateInventoryPosTC(unsigned char pos, TYPE_OF_ITEM_ID id, unsigned char number);
+    UpdateInventoryPosTC(unsigned char pos, TYPE_OF_ITEM_ID id, Item::number_type number);
 };
 
 class SetCoordinateTC : public BasicServerCommand {

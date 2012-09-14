@@ -757,7 +757,7 @@ bool Container::isItemStackable(Item item) {
     CommonStruct com;
 
     if (CommonItems->find(item.getId(), com)) {
-        return com.isStackable;
+        return com.MaxStack > 1;
     } else {
         std::cerr<<"Item mit folgender id konnte nicht gefunden werden in Funktion isItemStackable(Item item): "<<item.getId()<<" !" <<std::endl;
         return false;

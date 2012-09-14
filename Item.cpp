@@ -30,6 +30,23 @@ Item::Item(id_type id, number_type number, wear_type wear, quality_type quality,
     setData(datamap);
 }
 
+Item::number_type Item::increaseNumberBy(Item::number_type count) {
+    CommonStruct common;
+
+    if (CommonItems->find(id, common)) {
+        count += getNumber();
+        if (count >= common.MaxStack) {
+            setNumber(common.MaxStack);
+            count -= common.MaxStack;
+        } else {
+            setNumber(count);
+            count = 0;
+        }
+    }
+        
+    return count;
+}
+
 void Item::setMinQuality(const Item &item) {
     quality_type minQuality = (quality < item.quality) ? quality : item.quality;
     minQuality /= 100;

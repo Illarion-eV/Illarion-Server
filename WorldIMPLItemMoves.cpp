@@ -251,7 +251,7 @@ bool World::putItemOnInvPos(Player *cc, unsigned char pos) {
     }
 }
 
-bool World::takeItemFromInvPos(Character *cc, unsigned char pos, unsigned char count) {
+bool World::takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_type count) {
     bool takeWeapon = false;
 
     if (pos == BACKPACK) {
@@ -337,7 +337,7 @@ bool World::takeItemFromInvPos(Character *cc, unsigned char pos, unsigned char c
 
 
 
-bool World::takeItemFromInvPos(Player *cc, unsigned char pos, unsigned char count) {
+bool World::takeItemFromInvPos(Player *cc, unsigned char pos, Item::number_type count) {
     if (pos == BACKPACK) {
         if (cc->characterItems[ BACKPACK ].getId() != 0) {
             if (cc->backPackContents != NULL) {
@@ -371,7 +371,7 @@ bool World::takeItemFromInvPos(Player *cc, unsigned char pos, unsigned char coun
 
 
 
-bool World::takeItemFromShowcase(Player *cc, unsigned char showcase, unsigned char pos, unsigned char count) {
+bool World::takeItemFromShowcase(Player *cc, unsigned char showcase, unsigned char pos, Item::number_type count) {
     if (showcase < MAXSHOWCASES) {
         Container *ps = cc->showcases[ showcase ].top();
 
@@ -748,7 +748,7 @@ void World::checkField(Field *cfstart, short int x, short int y, short int z) {
 
 
 ///////// zusammengesetzte Funktionen  ///////////////
-void World::dropItemFromShowcaseOnMap(Player *cp, unsigned char showcase, unsigned char pos, short int xc, short int yc, short int zc, unsigned char count) {
+void World::dropItemFromShowcaseOnMap(Player *cp, unsigned char showcase, unsigned char pos, short int xc, short int yc, short int zc, Item::number_type count) {
 #ifdef World_ItemMove_DEBUG
     std::cout << "dropItemFromShowcaseOnMap: Spieler " << cp->name << " wirft ein Item auf die Karte" << std::endl;
 #endif
@@ -816,7 +816,7 @@ void World::dropItemFromShowcaseOnMap(Player *cp, unsigned char showcase, unsign
 
 
 
-void World::moveItemFromShowcaseToPlayer(Player *cp, unsigned char showcase, unsigned char pos, unsigned char cpos, unsigned char count) {
+void World::moveItemFromShowcaseToPlayer(Player *cp, unsigned char showcase, unsigned char pos, unsigned char cpos, Item::number_type count) {
     bool NOK = false;
     //CommonStruct com;
 #ifdef World_ItemMove_DEBUG
@@ -906,7 +906,7 @@ void World::moveItemFromShowcaseToPlayer(Player *cp, unsigned char showcase, uns
 
 
 
-void World::dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, short int xc, short int yc, short int zc, unsigned char count) {
+void World::dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, short int xc, short int yc, short int zc, Item::number_type count) {
 #ifdef World_ItemMove_DEBUG
     std::cout << "dropItemFromPlayerOnMap: Spieler " << cp->name << " wirft ein Item auf die Karte" << std::endl;
 #endif
@@ -973,7 +973,7 @@ void World::dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, short int xc
 
 
 
-void World::dropItemFromMonsterOnMap(Monster *cm, unsigned char cpos, char xo, char yo, char zo, unsigned char count) {
+void World::dropItemFromMonsterOnMap(Monster *cm, unsigned char cpos, char xo, char yo, char zo, Item::number_type count) {
 #ifdef World_ItemMove_DEBUG
     std::cout << "dropItemFromMonsterOnMap: Monster " << cm->name << " wirft ein Item auf die Karte" << std::endl;
 #endif
@@ -1006,7 +1006,7 @@ void World::dropItemFromMonsterOnMap(Monster *cm, unsigned char cpos, char xo, c
 
 
 
-void World::moveItemBetweenBodyParts(Player *cp, unsigned char opos, unsigned char npos, unsigned char count) {
+void World::moveItemBetweenBodyParts(Player *cp, unsigned char opos, unsigned char npos, Item::number_type count) {
 #ifdef World_ItemMove_DEBUG
     std::cout << "moveItemBetweenBodyParts: Spieler " << cp->name << " verschiebt ein Item" << std::endl;
 #endif
@@ -1076,7 +1076,7 @@ void World::moveItemBetweenBodyParts(Player *cp, unsigned char opos, unsigned ch
 
 
 
-void World::moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, unsigned char showcase, unsigned char pos, unsigned char count) {
+void World::moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, unsigned char showcase, unsigned char pos, Item::number_type count) {
 #ifdef World_ItemMove_DEBUG
     std::cout << "moveItemFromPlayerIntoShowcase: Spieler " << cp->name << " verschiebt Item von der Karte in ein showcase" << std::endl;
 #endif
@@ -1146,7 +1146,7 @@ void World::moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, unsig
 
 
 
-void World::moveItemFromMapIntoShowcase(Player *cp, char direction, unsigned char showcase, unsigned char pos, unsigned char count) {
+void World::moveItemFromMapIntoShowcase(Player *cp, char direction, unsigned char showcase, unsigned char pos, Item::number_type count) {
 
     bool NOK = false;
     //CommonStruct com;
@@ -1261,7 +1261,7 @@ void World::moveItemFromMapIntoShowcase(Player *cp, char direction, unsigned cha
 
 
 
-void World::moveItemFromMapToPlayer(Player *cp, char direction, unsigned char cpos, unsigned char count) {
+void World::moveItemFromMapToPlayer(Player *cp, char direction, unsigned char cpos, Item::number_type count) {
     bool NOK = false;
     //CommonStruct com;
 
@@ -1374,7 +1374,7 @@ void World::moveItemFromMapToPlayer(Player *cp, char direction, unsigned char cp
 }
 
 
-void World::moveItemBetweenShowcases(Player *cp, unsigned char source, unsigned char pos, unsigned char dest, unsigned char pos2, unsigned char count) {
+void World::moveItemBetweenShowcases(Player *cp, unsigned char source, unsigned char pos, unsigned char dest, unsigned char pos2, Item::number_type count) {
     bool NOK = false;
     //CommonStruct com;
 #ifdef World_ItemMove_DEBUG
@@ -1464,7 +1464,7 @@ void World::moveItemBetweenShowcases(Player *cp, unsigned char source, unsigned 
 }
 
 
-bool World::moveItem(Character *cc, unsigned char d, short int xc, short int yc, short int zc, unsigned char count) {
+bool World::moveItem(Character *cc, unsigned char d, short int xc, short int yc, short int zc, Item::number_type count) {
 #ifdef World_ItemMove_DEBUG
     std::cout << "moveItem: Character " << cc->name << " bewegt Item" << std::endl;
 #endif
@@ -1912,7 +1912,7 @@ bool World::isStackable(Item item) {
     CommonStruct com;
 
     if (CommonItems->find(item.getId(), com)) {
-        return com.isStackable;
+        return com.MaxStack > 1;
     } else {
         std::cerr<<"Item mit folgender Id konnte bei isStackable(Item item) nicht gefunden werden: "<<item.getId()<<"!"<<std::endl;
         return false;

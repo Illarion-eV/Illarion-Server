@@ -198,10 +198,10 @@ private:
     unsigned int dialogId;
     uint8_t result;
     uint8_t purchaseIndex;
-    uint8_t purchaseAmount;
+    uint16_t purchaseAmount;
     uint8_t saleLocation;
     uint16_t saleSlot;
-    uint8_t saleAmount;
+    uint16_t saleAmount;
 
 public:
     MerchantDialogTS() : BasicClientCommand(C_MERCHANTDIALOG_TS) {
@@ -219,11 +219,11 @@ public:
         case 1:
             saleLocation = getUnsignedCharFromBuffer();
             saleSlot = getShortIntFromBuffer();
-            saleAmount = getUnsignedCharFromBuffer();
+            saleAmount = getShortIntFromBuffer();
             break;
         case 2:
             purchaseIndex = getUnsignedCharFromBuffer();
-            purchaseAmount = getUnsignedCharFromBuffer();
+            purchaseAmount = getShortIntFromBuffer();
             break;
         }
     }
@@ -1505,7 +1505,7 @@ public:
         cpos = getUnsignedCharFromBuffer();
         showcase = getUnsignedCharFromBuffer();
         pos = getUnsignedCharFromBuffer();
-        count = getUnsignedCharFromBuffer();
+        count = getShortIntFromBuffer();
     }
 
     void performAction(Player *player) {
@@ -1531,7 +1531,7 @@ public:
     unsigned char showcase;
     unsigned char pos;
     unsigned char cpos;
-    unsigned char count;
+    unsigned short count;
 };
 
 /**
@@ -1549,7 +1549,7 @@ public:
         showcase = getUnsignedCharFromBuffer();
         pos = getUnsignedCharFromBuffer();
         cpos = getUnsignedCharFromBuffer();
-        count = getUnsignedCharFromBuffer();
+        count = getShortIntFromBuffer();
     }
 
     void performAction(Player *player) {
@@ -1575,7 +1575,7 @@ public:
     unsigned char showcase;
     unsigned char pos;
     unsigned char cpos;
-    unsigned char count;
+    unsigned short count;
 };
 
 /**
@@ -1592,7 +1592,7 @@ public:
     virtual void decodeData() {
         opos = getUnsignedCharFromBuffer();
         npos = getUnsignedCharFromBuffer();
-        count = getUnsignedCharFromBuffer();
+        count = getShortIntFromBuffer();
     }
 
     void performAction(Player *player) {
@@ -1617,7 +1617,7 @@ public:
     }
     unsigned char opos;
     unsigned char npos;
-    unsigned char count;
+    unsigned short count;
 };
 
 /**
@@ -1636,7 +1636,7 @@ public:
         xc = static_cast<short int>(getShortIntFromBuffer());
         yc = static_cast<short int>(getShortIntFromBuffer());
         zc = static_cast<short int>(getShortIntFromBuffer());
-        count = getUnsignedCharFromBuffer();
+        count = getShortIntFromBuffer();
     }
 
     void performAction(Player *player) {
@@ -1659,7 +1659,7 @@ public:
     }
     unsigned char pos;
     short int xc,yc,zc;
-    unsigned char count;
+    unsigned short count;
 };
 
 /**
@@ -1676,7 +1676,7 @@ public:
     virtual void decodeData() {
         dir = getUnsignedCharFromBuffer();
         pos = getUnsignedCharFromBuffer();
-        count = getUnsignedCharFromBuffer();
+        count = getShortIntFromBuffer();
     }
 
     void performAction(Player *player) {
@@ -1701,7 +1701,7 @@ public:
     }
     unsigned char dir;
     unsigned char pos;
-    unsigned char count;
+    unsigned short count;
 };
 
 /**
@@ -1719,7 +1719,7 @@ public:
         dir = getUnsignedCharFromBuffer();
         showcase = getUnsignedCharFromBuffer();
         pos = getUnsignedCharFromBuffer();
-        count = getUnsignedCharFromBuffer();
+        count = getShortIntFromBuffer();
     }
 
     void performAction(Player *player) {
@@ -1745,7 +1745,7 @@ public:
     unsigned char dir;
     unsigned char showcase;
     unsigned char pos;
-    unsigned char count;
+    unsigned short count;
 };
 
 /**
@@ -1764,7 +1764,7 @@ public:
         spos = getUnsignedCharFromBuffer();
         dest = getUnsignedCharFromBuffer();
         dpos = getUnsignedCharFromBuffer();
-        count = getUnsignedCharFromBuffer();
+        count = getShortIntFromBuffer();
     }
 
     void performAction(Player *player) {
@@ -1791,7 +1791,7 @@ public:
     unsigned char spos;
     unsigned char dest;
     unsigned char dpos;
-    unsigned char count;
+    unsigned short count;
 };
 
 /**
@@ -1811,7 +1811,7 @@ public:
         xc = static_cast<short int>(getShortIntFromBuffer());
         yc = static_cast<short int>(getShortIntFromBuffer());
         zc = static_cast<short int>(getShortIntFromBuffer());
-        count = getUnsignedCharFromBuffer();
+        count = getShortIntFromBuffer();
     }
 
     void performAction(Player *player) {
@@ -1835,7 +1835,7 @@ public:
     unsigned char showcase;
     unsigned char pos;
     short int xc,yc,zc;
-    unsigned char count;
+    unsigned short count;
 };
 
 /**
@@ -1851,7 +1851,6 @@ public:
 
     virtual void decodeData() {
         showcase = getUnsignedCharFromBuffer();
-        //getUnsignedCharFromBuffer();
     }
 
     void performAction(Player *player) {
@@ -2408,7 +2407,7 @@ public:
         xc = static_cast<char>(getShortIntFromBuffer());
         yc = static_cast<char>(getShortIntFromBuffer());
         zc = static_cast<char>(getShortIntFromBuffer());
-        count = getUnsignedCharFromBuffer();
+        count = getShortIntFromBuffer();
     }
 
     void performAction(Player *player) {
@@ -2432,7 +2431,7 @@ public:
         return cmd;
     }
     short int xc, yc, zc;
-    uint8_t count;
+    uint16_t count;
     uint8_t direction;
 };
 

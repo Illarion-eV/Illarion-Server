@@ -832,10 +832,10 @@ void LuaScript::init_base_functions() {
         .def_readonly("AgeingSpeed", &CommonStruct::AgeingSpeed)
         .def_readonly("Weight", &CommonStruct::Weight)
         .def_readonly("ObjectAfterRot", &CommonStruct::ObjectAfterRot)
-        .def_readonly("isStackable", &CommonStruct::isStackable)
         .def_readonly("rotsInInventory", &CommonStruct::rotsInInventory)
         .def_readonly("Brightness", &CommonStruct::Brightness)
         .def_readonly("Worth", &CommonStruct::Worth)
+        .def_readonly("MaxStack", &CommonStruct::MaxStack)
         .def_readonly("BuyStack", &CommonStruct::BuyStack),
         luabind::class_<TilesStruct>("TilesStruct")
         .def_readonly("flags", &TilesStruct::flags)

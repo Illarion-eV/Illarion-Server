@@ -75,12 +75,12 @@ void CommonObjectTable::reload() {
         query.addColumn("common", "com_weight");
         query.addColumn("common", "com_agingspeed");
         query.addColumn("common", "com_objectafterrot");
-        query.addColumn("common", "com_stackable");
         query.addColumn("common", "com_rotsininventory");
         query.addColumn("common", "com_script");
         query.addColumn("common", "com_brightness");
         query.addColumn("common", "com_worth");
         query.addColumn("common", "com_buystack");
+        query.addColumn("common", "com_maxstack");
         query.addServerTable("common");
         query.addOrderBy("common", "com_itemid", Database::SelectQuery::ASC);
 
@@ -105,11 +105,11 @@ void CommonObjectTable::reload() {
                 temprecord.Weight = (TYPE_OF_WEIGHT)((*itr)["com_weight"].as<int16_t>());
                 temprecord.AgeingSpeed = (TYPE_OF_AGINGSPEED)((*itr)["com_agingspeed"].as<int16_t>());
                 temprecord.ObjectAfterRot = (TYPE_OF_ITEM_ID)(*itr)["com_objectafterrot"].as<TYPE_OF_ITEM_ID>();
-                temprecord.isStackable = (*itr)["com_stackable"].as<bool>();
                 temprecord.rotsInInventory = (*itr)["com_rotsininventory"].as<bool>();
                 temprecord.Brightness = (TYPE_OF_BRIGHTNESS)((*itr)["com_brightness"].as<int16_t>());
                 temprecord.Worth = (TYPE_OF_WORTH)((*itr)["com_worth"].as<TYPE_OF_WORTH>());
                 temprecord.BuyStack = (TYPE_OF_BUY_STACK)((*itr)["com_buystack"].as<TYPE_OF_BUY_STACK>());
+                temprecord.MaxStack = (TYPE_OF_MAX_STACK)((*itr)["com_maxstack"].as<TYPE_OF_MAX_STACK>());
 
                 if (!((*itr)["com_script"].is_null())) {
                     std::string scriptname = ((*itr)["com_script"].as<std::string>());

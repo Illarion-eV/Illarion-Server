@@ -208,7 +208,7 @@ private:
 class Item {
 public:
     typedef uint16_t id_type;
-    typedef uint8_t  number_type;
+    typedef uint16_t number_type;
     typedef uint8_t  wear_type;
     typedef uint16_t quality_type;
     typedef uint32_t data_type;
@@ -235,6 +235,7 @@ public:
     inline void setNumber(number_type number) {
         this->number = number;
     }
+    number_type increaseNumberBy(number_type number);
 
     inline wear_type getWear() const {
         return wear;
@@ -268,6 +269,11 @@ public:
     }
     inline datamap_type::const_iterator getDataEnd() const {
         return datamap.cend();
+    }
+    inline bool equalData(const luabind::object &data) const {
+        Item item;
+        item.setData(data);
+        return equalData(item);
     }
     inline bool equalData(const Item &item) const {
         return datamap == item.datamap;

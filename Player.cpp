@@ -1396,7 +1396,7 @@ bool Player::load() throw() {
                 itemdepot.push_back((*itr)["pit_depot"].as<uint32_t>());
                 itemid.push_back((*itr)["pit_itemid"].as<Item::id_type>());
                 itemwear.push_back((Item::wear_type)((*itr)["pit_wear"].as<uint16_t>()));
-                itemnumber.push_back((Item::number_type)((*itr)["pit_number"].as<uint16_t>()));
+                itemnumber.push_back((*itr)["pit_number"].as<Item::number_type>());
                 itemquality.push_back((*itr)["pit_quality"].as<Item::quality_type>());
                 itemdata.push_back((*itr)["pit_data"].as<Item::data_type>());
                 itemcontainerslot.push_back((*itr)["pit_containerslot"].as<TYPE_OF_CONTAINERSLOTS>());

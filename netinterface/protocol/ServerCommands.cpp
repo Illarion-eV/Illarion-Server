@@ -112,7 +112,7 @@ ItemUpdate_TC::ItemUpdate_TC(position fieldpos, ITEMVECTOR &items) : BasicServer
         }
 
         addShortIntToBuffer(it->getId());
-        addUnsignedCharToBuffer(it->getNumber());
+        addShortIntToBuffer(it->getNumber());
         Logger::writeMessage("rot_update", "adding item id: "+Logger::toString(it->getId())+" count: "+Logger::toString(static_cast<int>(it->getNumber())),false);
         size--;
     }
@@ -137,7 +137,7 @@ ItemUpdate_TC::ItemUpdate_TC(int16_t px, int16_t py, int16_t pz, ITEMVECTOR &ite
         }
 
         addShortIntToBuffer(it->getId());
-        addUnsignedCharToBuffer(it->getNumber());
+        addShortIntToBuffer(it->getNumber());
         size--;
     }
 }
@@ -255,9 +255,9 @@ ItemPutTC::ItemPutTC(short int x, short int y, short int z, Item &item) : BasicS
     addShortIntToBuffer(item.getId());
 
     if (item.isContainer()) {
-        addUnsignedCharToBuffer(1);
+        addShortIntToBuffer(1);
     } else {
-        addUnsignedCharToBuffer(item.getNumber());
+        addShortIntToBuffer(item.getNumber());
     }
 }
 
@@ -269,9 +269,9 @@ ItemSwapTC::ItemSwapTC(position pos, unsigned short int id, Item &item) : BasicS
     addShortIntToBuffer(item.getId());
 
     if (item.isContainer()) {
-        addUnsignedCharToBuffer(1);
+        addShortIntToBuffer(1);
     } else {
-        addUnsignedCharToBuffer(item.getNumber());
+        addShortIntToBuffer(item.getNumber());
     }
 }
 
@@ -285,7 +285,7 @@ ItemSwapTC::ItemSwapTC(short int x, short int y, short int z, unsigned short int
     if (item.isContainer()) {
         addUnsignedCharToBuffer(1);
     } else {
-        addUnsignedCharToBuffer(item.getNumber());
+        addShortIntToBuffer(item.getNumber());
     }
 }
 
@@ -334,9 +334,9 @@ UpdateShowCaseTC::UpdateShowCaseTC(unsigned char showcase, const TYPE_OF_CONTAIN
         addShortIntToBuffer(item.getId());
 
         if (item.isContainer()) {
-            addUnsignedCharToBuffer(1);
+            addShortIntToBuffer(1);
         } else {
-            addUnsignedCharToBuffer(item.getNumber());
+            addShortIntToBuffer(item.getNumber());
         }
     }
 }
@@ -361,9 +361,9 @@ MapStripeTC::MapStripeTC(position pos, NewClientView::stripedirection dir) : Bas
                 addShortIntToBuffer(item.getId());
 
                 if (item.isContainer()) {
-                    addUnsignedCharToBuffer(1);
+                    addShortIntToBuffer(1);
                 } else {
-                    addUnsignedCharToBuffer(static_cast<unsigned char>(item.getNumber()));
+                    addShortIntToBuffer(item.getNumber());
                 }
             }
         } else {
@@ -471,10 +471,10 @@ IdTC::IdTC(int id) : BasicServerCommand(SC_ID_TC) {
     addIntToBuffer(id);
 }
 
-UpdateInventoryPosTC::UpdateInventoryPosTC(unsigned char pos, TYPE_OF_ITEM_ID id, unsigned char number) : BasicServerCommand(SC_UPDATEINVENTORYPOS_TC) {
+UpdateInventoryPosTC::UpdateInventoryPosTC(unsigned char pos, TYPE_OF_ITEM_ID id, Item::number_type number) : BasicServerCommand(SC_UPDATEINVENTORYPOS_TC) {
     addUnsignedCharToBuffer(pos);
     addShortIntToBuffer(id);
-    addUnsignedCharToBuffer(number);
+    addShortIntToBuffer(number);
 }
 
 SetCoordinateTC::SetCoordinateTC(position pos) : BasicServerCommand(SC_SETCOORDINATE_TC) {

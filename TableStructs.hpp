@@ -41,9 +41,9 @@ struct CommonStruct {
     TYPE_OF_ITEM_ID AfterInfiniteRot;
     TYPE_OF_BRIGHTNESS Brightness;
     TYPE_OF_WORTH Worth;
+    TYPE_OF_MAX_STACK MaxStack;
     TYPE_OF_BUY_STACK BuyStack;
     bool rotsInInventory;
-    bool isStackable;
 
     CommonStruct() {
         id = 0;
@@ -53,9 +53,9 @@ struct CommonStruct {
         AfterInfiniteRot = 0;
         Brightness = 0;
         Worth = 0;
+        MaxStack = 1;
         BuyStack = 1;
         rotsInInventory = false;
-        isStackable = false;
     }
 
     CommonStruct(const CommonStruct &source) {
@@ -66,9 +66,9 @@ struct CommonStruct {
         AfterInfiniteRot = source.AfterInfiniteRot;
         Brightness = source.Brightness;
         Worth = source.Worth;
+        MaxStack = source.MaxStack;
         BuyStack = source.BuyStack;
         rotsInInventory = source.rotsInInventory;
-        isStackable = source.isStackable;
     }
 
     CommonStruct &operator=(const CommonStruct &source) {
@@ -81,9 +81,9 @@ struct CommonStruct {
             AfterInfiniteRot = source.AfterInfiniteRot;
             Brightness = source.Brightness;
             Worth = source.Worth;
+            MaxStack = source.MaxStack;
             BuyStack = source.BuyStack;
             rotsInInventory = source.rotsInInventory;
-            isStackable = source.isStackable;
         }
 
         return *this;
