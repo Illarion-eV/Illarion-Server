@@ -1208,9 +1208,11 @@ bool Player::save() throw() {
                 itemsQuery.addValue<TYPE_OF_CONTAINERSLOTS>(itemsSlotColumn, 0);
 
                 for (auto it = characterItems[ thisItemSlot ].getDataBegin(); it != characterItems[ thisItemSlot ].getDataEnd(); ++it) {
-                    dataQuery.addValue<int32_t>(dataLineColumn, (int32_t) linenumber);
-                    dataQuery.addValue<std::string>(dataKeyColumn, it->first);
-                    dataQuery.addValue<std::string>(dataValueColumn, it->second);
+                    if (it->second.length() > 0) {
+                        dataQuery.addValue<int32_t>(dataLineColumn, (int32_t) linenumber);
+                        dataQuery.addValue<std::string>(dataKeyColumn, it->first);
+                        dataQuery.addValue<std::string>(dataValueColumn, it->second);
+                    }
                 }
             }
 
