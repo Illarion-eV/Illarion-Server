@@ -30,6 +30,7 @@ InputDialog::InputDialog(std::string title, bool multiline,
 InputDialog::InputDialog(const InputDialog &inputDialog) : Dialog(inputDialog) {
     multiline = inputDialog.multiline;
     maxChars = inputDialog.maxChars;
+    success = inputDialog.success;
     input = inputDialog.input;
 }
 
