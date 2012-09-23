@@ -73,6 +73,10 @@ bool LongTimeCharacterEffects::find(std::string effectname, LongTimeEffect * &ef
 void LongTimeCharacterEffects::addEffect(LongTimeEffect *effect) {
     LongTimeEffect *foundeffect;
 
+    if (effect == 0) {
+        LuaScript::triggerScriptError("LTE must not be nil!");
+    }
+
     if (!find(effect->_effectId, foundeffect)) {
         EFFECTLIST::iterator it = effectList.begin();
         bool inserted = false;
