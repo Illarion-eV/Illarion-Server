@@ -117,8 +117,6 @@ void Monster::setType(const TYPE_OF_CHARACTER_ID &type) throw(unknownIDException
     char mname[ 80 ];
     sprintf(mname, "%0#6X %s", id, monsterdef.name.c_str());
     name=mname;
-
-    appearance = appearance_alive();
 }
 
 void Monster::setSpawn(SpawnPoint *sp) {

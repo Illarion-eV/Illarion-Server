@@ -149,7 +149,8 @@ CharDescription::CharDescription(TYPE_OF_CHARACTER_ID id, std::string descriptio
 
 AppearanceTC::AppearanceTC(Character *cc) : BasicServerCommand(SC_APPEARANCE_TC) {
     addIntToBuffer(cc->id);
-    addShortIntToBuffer(cc->appearance);
+    addShortIntToBuffer(cc->race);
+    addUnsignedCharToBuffer(cc->battrib.sex);
     addUnsignedCharToBuffer(RaceSizes->getRelativeSize(cc->race, cc->battrib.body_height));
     addUnsignedCharToBuffer(static_cast<unsigned char>(0));
     addUnsignedCharToBuffer(cc->hair);

@@ -944,7 +944,6 @@ void Player::check_logindata() throw(Player::LogoutException) {
         playerQuery.addColumn("player", "ply_willpower");
         playerQuery.addColumn("player", "ply_essence");
         playerQuery.addColumn("player", "ply_foodlevel");
-        playerQuery.addColumn("player", "ply_appearance");
         playerQuery.addColumn("player", "ply_lifestate");
         playerQuery.addColumn("player", "ply_magictype");
         playerQuery.addColumn("player", "ply_magicflagsmage");
@@ -1012,7 +1011,6 @@ void Player::check_logindata() throw(Player::LogoutException) {
         battrib.foodlevel = battrib.truefoodlevel = playerRow["ply_foodlevel"].as<uint32_t>();
         battrib.time_foodlevel = 0;
 
-        appearance = playerRow["ply_appearance"].as<uint16_t>();
         lifestate = playerRow["ply_lifestate"].as<uint16_t>();
         magic.type = (magic_type) playerRow["ply_magictype"].as<uint16_t>();
         magic.flags[MAGE] = playerRow["ply_magicflagsmage"].as<uint64_t>();
@@ -1087,7 +1085,6 @@ bool Player::save() throw() {
             query.addAssignColumn<uint16_t>("ply_hitpoints", battrib.hitpoints);
             query.addAssignColumn<uint16_t>("ply_mana", battrib.mana);
             query.addAssignColumn<uint32_t>("ply_foodlevel", battrib.foodlevel);
-            query.addAssignColumn<uint32_t>("ply_appearance", appearance);
             query.addAssignColumn<uint32_t>("ply_lifestate", lifestate);
             query.addAssignColumn<uint32_t>("ply_magictype", (uint32_t) magic.type);
             query.addAssignColumn<uint64_t>("ply_magicflagsmage", magic.flags[MAGE]);

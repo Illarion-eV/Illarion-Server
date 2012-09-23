@@ -420,16 +420,6 @@ void World::makeVisible(Player *cp) {
     }
 
     cp->isinvisible = false;
-#ifdef DO_UNCONSCIOUS
-
-    if ((cp->lifestate | 1) && cp->battrib.hitpoints > UNCONSCIOUS)
-#else
-    if (cp->lifestate | 1)
-#endif
-        cp->appearance = cp->appearance_alive();
-    else {
-        cp->appearance = cp->appearance_dead();
-    }
 
     std::vector < Player * > ::iterator titerator;
 

@@ -1401,19 +1401,12 @@ public:
 
     bool isinvisible; /**< shows if a character is invisible*/
 
-    int appearance_alive(); /**< returns the id of graphic if the character is alive*/
-
-
-    int appearance_dead(); /**< returns the id of the graphic if this character is dead*/
-
     virtual void ageInventory();
 
     /**
     * current lifestate of the character (alive or death)
     */
     unsigned short int lifestate;
-
-    unsigned short int appearance; /**< appearance of this character */
 
     /**
     * checks if a character is alive
