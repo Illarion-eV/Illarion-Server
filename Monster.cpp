@@ -83,30 +83,32 @@ void Monster::setType(const TYPE_OF_CHARACTER_ID &type) throw(unknownIDException
     battrib.body_height = battrib.truebody_height = rand()%(monsterdef.maxsize-monsterdef.minsize+1) + monsterdef.minsize;
 
     // set skills
-    for (MonsterStruct::skilltype::iterator it = monsterdef.skills.begin(); it != monsterdef.skills.end(); ++it) {
+    for (auto it = monsterdef.skills.begin(); it != monsterdef.skills.end(); ++it) {
         increaseSkill(5, it->first, rnd(it->second));
     }
 
     // add items
-    int itemprobability;
-    bool found;
+    for (auto it = monsterdef.items.begin(); it != monsterdef.items.end(); ++it) {
 
-    for (MonsterStruct::itemtype::iterator it = monsterdef.items.begin(); it != monsterdef.items.end(); ++it) {
-        // check if we should equip the item...
-        found = false;
-        itemprobability = rnd(1,1000);
+        auto inventorySlot = it->first;
+        auto possibleItems = it->second;
+        int numberOfPossibleItems = possibleItems.size();
 
-        for (std::list<itemdef_t>::iterator itemit = it->second.begin(); !found && itemit != it->second.end(); ++itemit) {
-            //std::cout<<"Itemprop for item: "<< itemit->itemid<<" prob: "<<itemprobability<<" Itemit prob="<<itemit->probability<<"\n";
-            if (itemit->probability <= itemprobability) {
-                //std::cout<<"Added Item:"<<itemit->itemid<<"\n";
-                characterItems[ it->first ].setId(itemit->itemid);     // Eingeweide
-                characterItems[ it->first ].setNumber(rnd(itemit->amount));
-                characterItems[ it->first ].setWear(itemit->AgeingSpeed);
-                found = true;
+        if (numberOfPossibleItems > 0) {
+
+            int selectedItemIndex;
+
+            if (numberOfPossibleItems == 1) {
+                selectedItemIndex = 0;
+            } else {
+                selectedItemIndex = rnd(0, numberOfPossibleItems - 1);
             }
 
-            itemprobability += itemit->probability;
+            auto &selectedItem = possibleItems[selectedItemIndex];
+
+            characterItems[inventorySlot].setId(selectedItem.itemid);
+            characterItems[inventorySlot].setNumber(rnd(selectedItem.amount));
+            characterItems[inventorySlot].setWear(selectedItem.AgeingSpeed);
         }
     }
 

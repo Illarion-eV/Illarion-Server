@@ -23,7 +23,7 @@
 
 #include <string>
 #include <map>
-#include <list>
+#include <vector>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
 #include "data/Table.hpp"
@@ -34,7 +34,6 @@
 struct itemdef_t {
     TYPE_OF_ITEM_ID itemid;
     std::pair<unsigned short, unsigned short> amount;
-    unsigned short probability;
     TYPE_OF_AGINGSPEED AgeingSpeed;
 };
 
@@ -65,7 +64,7 @@ struct attributedef_t {
 
 struct MonsterStruct {
     typedef std::map<std::string, std::pair<unsigned short, unsigned short> > skilltype;
-    typedef std::map<unsigned short, std::list<itemdef_t> > itemtype;
+    typedef std::map<unsigned short, std::vector<itemdef_t> > itemtype;
     std::string name;
     Character::race_type race;
     unsigned short hitpoints;

@@ -197,7 +197,6 @@ void MonsterTable::reload() {
                 monItemQuery.addColumn("monster_items", "mobit_position");
                 monItemQuery.addColumn("monster_items", "mobit_mincount");
                 monItemQuery.addColumn("monster_items", "mobit_maxcount");
-                monItemQuery.addColumn("monster_items", "mobit_probability");
                 monItemQuery.addEqualCondition("monster_items", "mobit_monsterid", id);
                 monItemQuery.addServerTable("monster_items");
 
@@ -211,7 +210,6 @@ void MonsterTable::reload() {
                     for (Database::ResultConstIterator itr2 = monItemResults.begin();
                          itr2 != monItemResults.end(); ++itr2) {
                         tempitem.itemid = (*itr2)["mobit_itemid"].as<TYPE_OF_ITEM_ID>();
-                        tempitem.probability = (*itr2)["mobit_probability"].as<uint16_t>();
                         tempitem.amount = std::make_pair(
                                               (*itr2)["mobit_mincount"].as<uint16_t>(),
                                               (*itr2)["mobit_maxcount"].as<uint16_t>());
