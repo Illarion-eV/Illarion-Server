@@ -35,6 +35,7 @@ Item::number_type Item::increaseNumberBy(Item::number_type count) {
 
     if (CommonItems->find(id, common)) {
         count += getNumber();
+
         if (count >= common.MaxStack) {
             setNumber(common.MaxStack);
             count -= common.MaxStack;
@@ -43,7 +44,7 @@ Item::number_type Item::increaseNumberBy(Item::number_type count) {
             count = 0;
         }
     }
-        
+
     return count;
 }
 

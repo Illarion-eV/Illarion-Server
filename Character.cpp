@@ -947,7 +947,7 @@ int Character::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali,
                         characterItems[ i ].setWear(cos.AgeingSpeed);
                         characterItems[ i ].setQuality(quali);
                         characterItems[ i ].setData(data);
-                        temp = characterItems[ i ].increaseNumberBy(temp);                            
+                        temp = characterItems[ i ].increaseNumberBy(temp);
                     } else if ((characterItems[ i ].getId() == itemid) && (characterItems[ i ].equalData(data))) {
                         characterItems[ i ].setWear(cos.AgeingSpeed);
                         characterItems[ i ].setQuality(quali);
