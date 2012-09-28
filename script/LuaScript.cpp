@@ -698,7 +698,8 @@ void LuaScript::init_base_functions() {
         .def("swapTopItem", &Field::swapTopItem)
         .def("viewTopItem", &Field::ViewTopItem)
         .def("countItems", &Field::NumberOfItems)
-        .def("deleteAllItems", &Field::DeleteAllItems),
+        .def("deleteAllItems", &Field::DeleteAllItems)
+        .def("isPassable", &Field::IsPassable),
         luabind::class_<ItemLookAt>("ItemLookAt")
         .def(luabind::constructor<>())
         .enum_("Rareness")
