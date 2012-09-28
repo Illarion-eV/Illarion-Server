@@ -152,7 +152,6 @@ AppearanceTC::AppearanceTC(Character *cc) : BasicServerCommand(SC_APPEARANCE_TC)
     addShortIntToBuffer(cc->race);
     addUnsignedCharToBuffer(cc->battrib.sex);
     addUnsignedCharToBuffer(RaceSizes->getRelativeSize(cc->race, cc->battrib.body_height));
-    addUnsignedCharToBuffer(static_cast<unsigned char>(0));
     addUnsignedCharToBuffer(cc->hair);
     addUnsignedCharToBuffer(cc->beard);
     addUnsignedCharToBuffer(cc->hairred);
@@ -161,13 +160,9 @@ AppearanceTC::AppearanceTC(Character *cc) : BasicServerCommand(SC_APPEARANCE_TC)
     addUnsignedCharToBuffer(cc->skinred);
     addUnsignedCharToBuffer(cc->skingreen);
     addUnsignedCharToBuffer(cc->skinblue);
-    addShortIntToBuffer(cc->GetItemAt(1).getId());
-    addShortIntToBuffer(cc->GetItemAt(3).getId());
-    addShortIntToBuffer(cc->GetItemAt(11).getId());
-    addShortIntToBuffer(cc->GetItemAt(5).getId());
-    addShortIntToBuffer(cc->GetItemAt(6).getId());
-    addShortIntToBuffer(cc->GetItemAt(9).getId());
-    addShortIntToBuffer(cc->GetItemAt(10).getId());
+    for (unsigned char i = 0; i < MAX_BODY_ITEMS + MAX_BELT_SLOTS; ++i) {
+        addShortIntToBuffer(cc->GetItemAt(i).getId());
+    }
     addUnsignedCharToBuffer(cc->getWeaponMode());
     uint8_t deathflag = cc->IsAlive() ? 0 : 1;
     addUnsignedCharToBuffer(deathflag);
