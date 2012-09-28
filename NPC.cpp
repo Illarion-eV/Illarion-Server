@@ -35,6 +35,7 @@ NPC::NPC(TYPE_OF_CHARACTER_ID _id, std::string _name, Character::race_type _race
     pos=_pos;
     faceto=dir;
     race=_race;
+    battrib.truesex = sex;
     battrib.sex = sex;
     character = npc;
     actionPoints = NP_MAX_AP;
