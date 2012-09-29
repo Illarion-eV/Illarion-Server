@@ -194,11 +194,11 @@ void LuaScript::triggerScriptError(const std::string &msg) throw(luabind::error)
 
 void LuaScript::writeErrorMsg() {
     const char *cerr = lua_tostring(_luaState, -1);
+    lua_pop(_luaState, 1);
 
     std::string err;
     if (cerr) {
         err = cerr;
-        lua_pop(_luaState, 1);
     } else {
         err = "UNKNOWN ERROR, CONTACT SERVER DEVELOPER";
         lua_pushstring(_luaState, err.c_str());
