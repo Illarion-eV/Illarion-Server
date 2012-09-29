@@ -635,7 +635,7 @@ void Player::sendMagicFlags(int type) {
 
 
 void Player::sendAttrib(std::string name, unsigned short int value) {
-    boost::shared_ptr<BasicServerCommand> cmd(new UpdateAttribTC(name, value));
+    boost::shared_ptr<BasicServerCommand> cmd(new UpdateAttribTC(id, name, value));
     Connection->addCommand(cmd);
     cmd.reset(new BBSendAttribTC(id, name, value));
     _world->monitoringClientList->sendCommand(cmd);

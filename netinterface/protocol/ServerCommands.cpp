@@ -420,7 +420,8 @@ MusicTC::MusicTC(short int title) : BasicServerCommand(SC_MUSIC_TC) {
 MusicDefaultTC::MusicDefaultTC() : BasicServerCommand(SC_MUSICDEFAULT_TC) {
 }
 
-UpdateAttribTC::UpdateAttribTC(std::string name, short int value) : BasicServerCommand(SC_UPDATEATTRIB_TC) {
+UpdateAttribTC::UpdateAttribTC(TYPE_OF_CHARACTER_ID id, std::string name, short int value) : BasicServerCommand(SC_UPDATEATTRIB_TC) {
+    addIntToBuffer(id);    
     addStringToBuffer(name);
     addShortIntToBuffer(value);
 }

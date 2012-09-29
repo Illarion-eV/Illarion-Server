@@ -268,7 +268,7 @@ public:
 
 class UpdateAttribTC : public BasicServerCommand {
 public:
-    UpdateAttribTC(std::string name, short int value);
+    UpdateAttribTC(TYPE_OF_CHARACTER_ID id, std::string name, short int value);
 };
 
 class UpdateMagicFlagsTC : public BasicServerCommand {

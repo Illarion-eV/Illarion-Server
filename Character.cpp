@@ -1342,7 +1342,7 @@ void Character::setAttrib(std::string name, short int wert) {
 
         if (getType() == player) {
             Player *pl = dynamic_cast<Player *>(this);
-            boost::shared_ptr<BasicServerCommand> cmd(new UpdateAttribTC(name, wert));
+            boost::shared_ptr<BasicServerCommand> cmd(new UpdateAttribTC(id, name, wert));
             pl->Connection->addCommand(cmd);
             cmd.reset(new BBSendAttribTC(id, name, wert));
             _world->monitoringClientList->sendCommand(cmd);
