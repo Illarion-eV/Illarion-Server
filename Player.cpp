@@ -283,15 +283,13 @@ void Player::login() throw(Player::LogoutException) {
     cmd.reset(new PlayerSpinTC(faceto, id));
     Connection->addCommand(cmd);
 
-    // update skills for client
+    // send attributes
     sendAttrib("hitpoints", increaseAttrib("hitpoints", 0));
     sendAttrib("mana", increaseAttrib("mana", 0));
     sendAttrib("foodlevel", increaseAttrib("mana", 0));
-    //changes
     sendAttrib("sex", increaseAttrib("sex",0));
     sendAttrib("age", increaseAttrib("age",0));
     sendAttrib("weight", increaseAttrib("weight",0));
-    sendAttrib("age", increaseAttrib("age",0));
     sendAttrib("body_height", increaseAttrib("body_height",0));
     sendAttrib("attitude", increaseAttrib("attitude",0));
     sendAttrib("luck", increaseAttrib("luck",0));
@@ -300,7 +298,6 @@ void Player::login() throw(Player::LogoutException) {
     sendAttrib("constitution", increaseAttrib("constitution",0));
     sendAttrib("intelligence", increaseAttrib("intelligence",0));
     sendAttrib("perception", increaseAttrib("perception",0));
-    sendAttrib("age", increaseAttrib("age",0));
     sendAttrib("willpower", increaseAttrib("willpower",0));
     sendAttrib("essence", increaseAttrib("essence",0));
     sendAttrib("agility", increaseAttrib("agility",0));
