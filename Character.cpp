@@ -34,6 +34,7 @@
 #include <map>
 #include <algorithm>
 #include <boost/shared_ptr.hpp>
+#include <boost/assign/list_of.hpp>
 #include "script/LuaLearnScript.hpp"
 #include "script/LuaPlayerDeathScript.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
@@ -52,6 +53,43 @@ extern TilesTable *Tiles;
 extern boost::shared_ptr<LuaLearnScript>learnScript;
 extern boost::shared_ptr<LuaPlayerDeathScript>playerDeathScript;
 
+boost::unordered_map<std::string, Character::attributeIndex> Character::attributeMap = boost::assign::map_list_of
+        ("strength", strength)
+        ("dexterity", dexterity)
+        ("constitution", constitution)
+        ("agility", agility)
+        ("intelligence", intelligence)
+        ("perception", perception)
+        ("willpower", willpower)
+        ("essence", essence)
+        ("hitpoints", hitpoints)
+        ("mana", mana)
+        ("foodlevel", foodlevel)
+        ("sex", sex)
+        ("age", age)
+        ("weight", weight)
+        ("height", height)
+        ("attitude", attitude)
+        ("luck", luck);
+
+boost::unordered_map<Character::attributeIndex, std::string> Character::attributeStringMap = boost::assign::map_list_of
+        (strength, "strength")
+        (dexterity, "dexterity")
+        (constitution, "constitution")
+        (agility, "agility")
+        (intelligence, "intelligence")
+        (perception, "perception")
+        (willpower, "willpower")
+        (essence, "essence")
+        (hitpoints, "hitpoints")
+        (mana, "mana")
+        (foodlevel, "foodlevel")
+        (sex, "sex")
+        (age, "age")
+        (weight, "weight")
+        (height, "height")
+        (attitude, "attitude")
+        (luck, "luck");
 
 position Character::getFrontalPosition() {
     position front = pos;
@@ -490,20 +528,7 @@ Character::Character() : actionPoints(P_MAX_AP),fightPoints(P_MAX_FP),waypoints(
     race = human;
     character = player;
 
-    battrib.sex = battrib.truesex = male;
-    battrib.time_sex = 0;
-
-    battrib.age = battrib.trueage = 20;
-    battrib.time_age = 0;
-
-    battrib.weight = battrib.trueweight = 80;
-    battrib.time_weight = 0;
-
-    battrib.body_height = battrib.truebody_height = 100;
-    battrib.time_body_height = 0;
-
     isinvisible=false;
-    lifestate = 0;
     SetAlive(true);
     attackmode = false;
     poisonvalue = 0;
@@ -532,44 +557,24 @@ Character::Character() : actionPoints(P_MAX_AP),fightPoints(P_MAX_FP),waypoints(
         characterItems[ i ].reset();
     }
 
-    battrib.hitpoints = battrib.truehitpoints = MAXHPS;
-    battrib.time_hitpoints = 0;
+    attributes[strength] = new Attribute(0, MAXATTRIB);
+    attributes[dexterity] = new Attribute(0, MAXATTRIB);
+    attributes[constitution] = new Attribute(0, MAXATTRIB);
+    attributes[agility] = new Attribute(0, MAXATTRIB);
+    attributes[intelligence] = new Attribute(0, MAXATTRIB);
+    attributes[perception] = new Attribute(0, MAXATTRIB);
+    attributes[willpower] = new Attribute(0, MAXATTRIB);
+    attributes[essence] = new Attribute(0, MAXATTRIB);
+    attributes[hitpoints] = new Attribute(0, MAXHPS);
+    attributes[mana] = new Attribute(0, MAXMANA);
+    attributes[foodlevel] = new Attribute(0, MAXFOOD);
+    attributes[sex] = new Attribute(0);
+    attributes[age] = new Attribute(0);
+    attributes[weight] = new Attribute(0);
+    attributes[height] = new Attribute(0);
+    attributes[attitude] = new Attribute(0);
+    attributes[luck] = new Attribute(0);
 
-    battrib.mana = battrib.truemana = MAXMANA;
-    battrib.time_mana = 0;
-
-    battrib.attitude = battrib.trueattitude = 0;
-    battrib.time_attitude = 0;
-
-    battrib.foodlevel = battrib.truefoodlevel = 0;
-    battrib.time_foodlevel = 0;
-
-    battrib.luck = battrib.trueluck = 20;
-    battrib.time_luck = 0;
-
-    battrib.agility = battrib.trueagility = 10;
-    battrib.time_agility = 0;
-
-    battrib.strength = battrib.truestrength = 15;
-    battrib.time_strength = 0;
-
-    battrib.constitution = battrib.trueconstitution = 8;
-    battrib.time_constitution = 0;
-
-    battrib.dexterity = battrib.truedexterity = 10;
-    battrib.time_dexterity = 0;
-
-    battrib.essence = battrib.trueessence = 10;
-    battrib.time_essence = 0;
-
-    battrib.willpower = battrib.truewillpower = 10;
-    battrib.time_willpower = 0;
-
-    battrib.perception = battrib.trueperception = 12;
-    battrib.time_perception = 0;
-
-    battrib.intelligence = battrib.trueintelligence = 14;
-    battrib.time_intelligence = 0;
 
     faceto = north;
     backPackContents = NULL;
@@ -602,6 +607,11 @@ Character::~Character() {
 #endif
     //blow lua fuse for this char
     fuse_ptr<Character>::blow_fuse(this);
+
+    for (int i = 0; i < Character::ATTRIBUTECOUNT; ++i) {
+        delete attributes[i];
+        attributes[i] = NULL;
+    }
 
     if (backPackContents != NULL) {
         delete backPackContents;
@@ -1109,12 +1119,7 @@ void Character::ageInventory() {
 }
 
 void Character::SetAlive(bool t) {
-
-    if (t) {
-        lifestate = lifestate | 1;
-    } else {
-        lifestate = lifestate & (0xFFFF - 1);
-    }
+    alive = t;
 }
 
 
@@ -1278,284 +1283,58 @@ uint8_t Character::getBeard() {
     return beard;
 }
 
+void Character::setAttribute(Character::attributeIndex attribute, Attribute::attribute_t value) {
+    auto &attrib = *(attributes[attribute]);
+    auto oldValue = attrib.getValue();
+    attrib.setValue(value);
+    auto newValue = attrib.getValue();
 
-void Character::setAttrib(std::string name, short int wert) {
-    //if ( name == "posx")pos.x = wert;
-    //if ( name == "posy")pos.y = wert;
-    //if ( name == "posz")pos.z = wert;
+    if (newValue != oldValue) {
+        handleAttributeChange(attribute);
+    }
+}
+
+Attribute::attribute_t Character::getAttribute(Character::attributeIndex attribute) const {
+    return attributes[attribute]->getValue();
+}
+
+Attribute::attribute_t Character::increaseAttribute(Character::attributeIndex attribute, int amount) {
+    auto &attrib = *(attributes[attribute]);
+    auto oldValue = attrib.getValue();
+    attrib.increaseValue(amount);
+    auto newValue = attrib.getValue();
+
+    if (newValue != oldValue) {
+        handleAttributeChange(attribute);
+    }
+
+    return newValue;
+}
+
+void Character::handleAttributeChange(Character::attributeIndex attribute) {
+    if (attribute == Character::hitpoints) {
+        SetAlive(getAttribute(hitpoints) > 0);
+        _world->sendHealthToAllVisiblePlayers(this, getAttribute(hitpoints));
+    }
+}
+
+void Character::setAttrib(std::string name, Attribute::attribute_t value) {
     if (name == "faceto") {
-        turn((direction)wert);
+        turn((direction)value);
     } else if (name == "racetyp") {
-        race = (race_type)wert;
+        race = (race_type)value;
         updateAppearanceForAll(true);
-    } else if (name == "sex") {
-        switch (wert) {
-        case 0:
-            battrib.sex = male;
-            break;
-        case 1:
-            battrib.sex = female;
-            break;
-        case 2:
-            battrib.sex = neuter;
-            break;
-        default:
-            battrib.sex = male;
-            break;
+    } else {
+        try {
+            Character::attributeIndex attribute = attributeMap.at(name);
+            setAttribute(attribute, value);
+        } catch (...) {
+
         }
-
-        updateAppearanceForAll(true);
-    } else if (name == "age") {
-        battrib.age = battrib.trueage = wert;
-        battrib.time_age = 0;
-    } else if (name == "weight") {
-        battrib.weight = battrib.trueweight = wert;
-        battrib.time_weight = 0;
-    } else if (name == "body_height") {
-        battrib.body_height = battrib.truebody_height = wert;
-        battrib.time_body_height = 0;
-        updateAppearanceForAll(true);
-    } else if (name == "attitude") {
-        battrib.attitude = battrib.trueattitude = wert;
-        battrib.time_attitude = 0;
-    } else if (name == "luck") {
-        battrib.luck = battrib.trueluck = wert;
-        battrib.time_luck = 0;
-    } else if (name == "strength") {
-        battrib.strength = battrib.truestrength = wert;
-        battrib.time_strength = 0;
-    } else if (name == "dexterity") {
-        battrib.dexterity = battrib.truedexterity = wert;
-        battrib.time_dexterity = 0;
-    } else if (name == "constitution") {
-        battrib.constitution = battrib.trueconstitution = wert;
-        battrib.time_constitution = 0;
-    } else if (name == "agility") {
-        battrib.agility = battrib.trueagility = wert;
-        battrib.time_agility = 0;
-    } else if (name == "intelligence") {
-        battrib.intelligence = battrib.trueintelligence = wert;
-        battrib.time_intelligence = 0;
-    } else if (name == "perception") {
-        battrib.perception = battrib.trueperception = wert;
-        battrib.time_perception = 0;
-
-        if (getType() == player) {
-            Player *pl = dynamic_cast<Player *>(this);
-            boost::shared_ptr<BasicServerCommand> cmd(new UpdateAttribTC(id, name, wert));
-            pl->Connection->addCommand(cmd);
-            cmd.reset(new BBSendAttribTC(id, name, wert));
-            _world->monitoringClientList->sendCommand(cmd);
-        }
-    } else if (name == "willpower") {
-        battrib.willpower = battrib.truewillpower = wert;
-        battrib.time_willpower = 0;
-    } else if (name == "essence") {
-        battrib.essence = battrib.trueessence = wert;
-        battrib.time_essence = 0;
-    } else if (name == "foodlevel") {
-        battrib.foodlevel = battrib.truefoodlevel = wert;
-        battrib.time_foodlevel = 0;
-    }
-
-    //makeGFXForAllPlayersInRange( pos.x, pos.y, pos.z, MAXVIEW, 13 );
-}
-
-void Character::tempChangeAttrib(std::string name, short int amount, uint16_t time) {
-    std::cout<<"Temp Change Attrib:"<<name<<" amount: "<<amount<<" time: "<<time<<std::endl;
-
-    if (name == "sex") {
-        switch (amount) {
-        case 0:
-            battrib.sex = male;
-            break;
-        case 1:
-            battrib.sex = female;
-            break;
-        case 2:
-            battrib.sex = neuter;
-            break;
-        default:
-            battrib.sex = male;
-            break;
-        }
-
-        battrib.time_sex = time;
-    } else if (name == "age") {
-        if (battrib.trueage + amount >= 0) {
-            battrib.age = battrib.trueage + amount;
-        } else {
-            battrib.age = 0;
-        }
-
-        battrib.time_age = time;
-    } else if (name == "weight") {
-        if (battrib.trueage + amount >= 0) {
-            battrib.weight = battrib.trueage + amount;
-        } else {
-            battrib.weight = 0;
-        }
-
-        battrib.time_weight = time;
-    } else if (name == "body_height") {
-        if (battrib.truebody_height + amount >= 0) {
-            battrib.body_height = battrib.truebody_height + amount;
-        } else {
-            battrib.body_height = 0;
-        }
-
-        battrib.time_body_height = time;
-    } else if (name == "hitpoints") {
-        if ((battrib.truehitpoints + amount >= 0) && (battrib.truehitpoints + amount <= MAXHPS)) {
-            battrib.hitpoints = battrib.truehitpoints + amount;
-        } else if (battrib.truehitpoints + amount <= 0) {
-            battrib.hitpoints = 0;
-        } else if (battrib.truehitpoints + amount >= MAXHPS) {
-            battrib.hitpoints = MAXHPS;
-        }
-
-        battrib.time_hitpoints = time;
-    } else if (name == "mana") {
-        if ((battrib.truemana + amount >= 0) && (battrib.truemana + amount <= MAXMANA)) {
-            battrib.mana = battrib.truemana + amount;
-        } else if (battrib.truemana + amount <= 0) {
-            battrib.mana = 0;
-        } else if (battrib.truemana + amount >= MAXMANA) {
-            battrib.mana = MAXMANA;
-        }
-
-        battrib.time_mana = time;
-    } else if (name == "attitude") {
-        //have to cast because of overflow/underrun
-        if ((static_cast<int>((battrib.trueattitude + amount)) >= 0) && (static_cast<int>((battrib.trueattitude + amount)) <= 255)) {
-            battrib.attitude = battrib.trueattitude + amount;
-        } else if (static_cast<int>((battrib.trueattitude + amount)) <= 0) {
-            battrib.attitude = 0;
-        } else if (static_cast<int>((battrib.trueattitude + amount)) >= 255) {
-            battrib.attitude = 255;
-        }
-
-        battrib.time_attitude = time;
-    } else if (name == "luck") {
-        //have to cast because of overflow/underrun
-        if ((static_cast<int>((battrib.trueluck + amount)) >= 0) && (static_cast<int>((battrib.trueluck + amount)) <= 255)) {
-            battrib.luck = battrib.trueluck + amount;
-        } else if (static_cast<int>((battrib.trueluck + amount)) <= 0) {
-            battrib.luck = 0;
-        } else if (static_cast<int>((battrib.trueluck + amount)) >= 255) {
-            battrib.luck = 255;
-        }
-
-        battrib.time_luck = time;
-    } else if (name == "strength") {
-        //have to cast because of overflow/underrun
-        if ((static_cast<int>((battrib.truestrength + amount)) >= 0) && (static_cast<int>((battrib.truestrength + amount)) <= 255)) {
-            battrib.strength = battrib.truestrength + amount;
-        } else if (static_cast<int>((battrib.truestrength + amount)) <= 0) {
-            battrib.strength = 0;
-        } else if (static_cast<int>((battrib.truestrength + amount)) >= 255) {
-            battrib.strength = 255;
-        }
-
-        battrib.time_strength = time;
-    } else if (name == "dexterity") {
-        //have to cast because of overflow/underrun
-        if ((static_cast<int>((battrib.truedexterity + amount)) >= 0) && (static_cast<int>((battrib.truedexterity + amount)) <= 255)) {
-            battrib.dexterity = battrib.truedexterity + amount;
-        } else if (static_cast<int>((battrib.truedexterity + amount)) <= 0) {
-            battrib.dexterity = 0;
-        } else if (static_cast<int>((battrib.truedexterity + amount)) >= 255) {
-            battrib.dexterity = 255;
-        }
-
-        battrib.time_dexterity = time;
-    } else if (name == "constitution") {
-        //have to cast because of overflow/underrun
-        if ((static_cast<int>((battrib.trueconstitution + amount)) >= 0) && (static_cast<int>((battrib.trueconstitution + amount)) <= 255)) {
-            battrib.constitution = battrib.trueconstitution + amount;
-        } else if (static_cast<int>((battrib.trueconstitution + amount)) <= 0) {
-            battrib.constitution = 0;
-        } else if (static_cast<int>((battrib.trueconstitution + amount)) >= 255) {
-            battrib.constitution = 255;
-        }
-
-        battrib.time_constitution = time;
-    } else if (name == "agility") {
-        //have to cast because of overflow/underrun
-        if ((static_cast<int>((battrib.trueagility + amount)) >= 0) && (static_cast<int>((battrib.trueagility + amount)) <= 255)) {
-            battrib.agility = battrib.trueagility + amount;
-        } else if (static_cast<int>((battrib.trueagility + amount)) <= 0) {
-            battrib.agility = 0;
-        } else if (static_cast<int>((battrib.trueagility + amount)) >= 255) {
-            battrib.agility = 255;
-        }
-
-        battrib.time_agility = time;
-    } else if (name == "intelligence") {
-        //have to cast because of overflow/underrun
-        if ((static_cast<int>((battrib.trueintelligence + amount)) >= 0) && (static_cast<int>((battrib.trueintelligence + amount)) <= 255)) {
-            battrib.intelligence = battrib.trueintelligence + amount;
-        } else if (static_cast<int>((battrib.trueintelligence + amount)) <= 0) {
-            battrib.intelligence = 0;
-        } else if (static_cast<int>((battrib.trueintelligence + amount)) >= 255) {
-            battrib.intelligence = 255;
-        }
-
-        battrib.time_intelligence = time;
-    } else if (name == "perception") {
-        //have to cast because of overflow/underrun
-        if ((static_cast<int>((battrib.trueperception + amount)) >= 0) && (static_cast<int>((battrib.trueperception + amount)) <= 255)) {
-            battrib.perception = battrib.trueperception + amount;
-        } else if (static_cast<int>((battrib.trueperception + amount)) <= 0) {
-            battrib.perception = 0;
-        } else if (static_cast<int>((battrib.trueperception + amount)) >= 255) {
-            battrib.perception = 255;
-        }
-
-        battrib.time_perception = time;
-    } else if (name == "willpower") {
-        //have to cast because of overflow/underrun
-        if ((static_cast<int>((battrib.truewillpower + amount)) >= 0) && (static_cast<int>((battrib.truewillpower + amount)) <= 255)) {
-            battrib.willpower = battrib.truewillpower + amount;
-        } else if (static_cast<int>((battrib.truewillpower + amount)) <= 0) {
-            battrib.willpower = 0;
-        } else if (static_cast<int>((battrib.truewillpower + amount)) >= 255) {
-            battrib.willpower = 255;
-        }
-
-        battrib.time_willpower = time;
-    } else if (name == "essence") {
-        //have to cast because of overflow/underrun
-        if ((static_cast<int>((battrib.trueessence + amount)) >= 0) && (static_cast<int>((battrib.trueessence + amount)) <= 255)) {
-            battrib.essence = battrib.trueessence + amount;
-        } else if (static_cast<int>((battrib.trueessence + amount)) <= 0) {
-            battrib.essence = 0;
-        } else if (static_cast<int>((battrib.trueessence + amount)) >= 255) {
-            battrib.essence = 255;
-        }
-
-        battrib.time_essence = time;
-    } else if (name == "foodlevel") {
-        std::cout<<"try to change foodlevel"<<std::endl;
-
-        //have to cast because of overflow/underrun
-        if ((static_cast<long>(battrib.foodlevel + amount) >= 0) && (static_cast<long>(battrib.truefoodlevel + amount) <= 65000)) {
-            battrib.foodlevel = battrib.truefoodlevel + amount;
-        } else if (static_cast<long>(battrib.truefoodlevel + amount) <= 0) {
-            battrib.foodlevel = 0;
-        } else if (static_cast<long>(battrib.truefoodlevel + amount) >= 65000) {
-            battrib.foodlevel = 65000;
-        }
-
-        battrib.time_foodlevel = time;
     }
 }
 
-unsigned short int Character::increaseAttrib(std::string name, short int amount) {
-
-    int temp = amount;
-
-    //Diese Werte k�nen nicht angehoben werden und sind nur dazu da per Script ausgelesen zu erden
+Attribute::attribute_t Character::increaseAttrib(std::string name, int amount) {
     if (name == "posx") {
         return pos.x;
     }
@@ -1581,182 +1360,21 @@ unsigned short int Character::increaseAttrib(std::string name, short int amount)
     }
 
     if (name == "sex") {
-        return battrib.sex;
+        return getAttribute(Character::sex);
     }
 
     if (name == "magictype") {
         return magic.type;
     }
 
-    //=====================Ab hier k�nen die Attribute auch erh�t werden===========
+    try {
+        Character::attributeIndex attribute = attributeMap.at(name);
+        return increaseAttribute(attribute, amount);
+    } catch (...) {
 
-    if (name == "age") {
-        battrib.trueage += temp;
-        battrib.age = battrib.trueage;
-        battrib.time_age = 0;
-        return battrib.age;
-    } else if (name == "weight") {
-        battrib.trueweight += temp;
-        battrib.weight = battrib.trueweight;
-        battrib.time_weight = 0;
-        return battrib.weight;
-    } else if (name == "body_height") {
-        battrib.truebody_height += temp;
-        battrib.body_height = battrib.truebody_height;
-        battrib.time_body_height = 0;
-        updateAppearanceForAll(true);
-        return battrib.body_height;
-    } else if (name == "hitpoints") {
-        bool wasalive = (battrib.truehitpoints>0);
-        temp += battrib.truehitpoints;
-
-
-        if (temp <= 0) {
-            battrib.truehitpoints = 0;
-            battrib.hitpoints = battrib.truehitpoints;
-            battrib.time_hitpoints = 0;
-            SetAlive(false);
-
-            //changes for sending an update
-            if (wasalive && (character == player)) {
-                updateAppearanceForAll(true);
-
-                Player *pl = dynamic_cast<Player *>(this);
-                pl->ltAction->abortAction();
-
-                if (playerDeathScript) {
-                    playerDeathScript->playerDeath(pl);
-                }
-            }
-
-#ifdef Character_DEBUG
-            std::cout << "HP == 0 \n";
-#endif
-
-        } else {
-            if (temp > MAXHPS) {
-                battrib.truehitpoints = MAXHPS;
-                battrib.hitpoints = battrib.truehitpoints;
-                battrib.time_hitpoints = 0;
-            } else {
-                battrib.truehitpoints = temp;
-                battrib.hitpoints = battrib.truehitpoints;
-                battrib.time_hitpoints = 0;
-            }
-
-            if (!wasalive) {
-                SetAlive(true);
-                updateAppearanceForAll(true);
-            }
-        }
-
-#ifdef DO_UNCONSCIOUS
-
-        if (battrib.hitpoints > UNCONSCIOUS) {
-            return battrib.hitpoints - UNCONSCIOUS;
-        } else {
-            return battrib.hitpoints * 2;
-        }
-
-#endif
-        return battrib.hitpoints;
-
-    } else if (name == "mana") {
-        temp += battrib.mana;
-
-        if (temp <= 0) {
-            battrib.truemana = 0;
-            battrib.mana = battrib.truemana;
-            battrib.time_mana = 0;
-        } else {
-            if (temp > MAXMANA) {
-                battrib.truemana = MAXMANA;
-                battrib.mana = battrib.truemana;
-                battrib.time_mana = 0;
-            } else {
-                battrib.truemana = temp;
-                battrib.mana = battrib.truemana;
-                battrib.time_mana = 0;
-            }
-        }
-
-        return battrib.mana;
-    } else if (name == "attitude") {
-        battrib.trueattitude += temp;
-        battrib.attitude = battrib.trueattitude;
-        battrib.time_attitude = 0;
-        return battrib.attitude;
-    } else if (name == "luck") {
-        battrib.trueluck += temp;
-        battrib.luck = battrib.trueluck;
-        battrib.time_luck = 0;
-        return battrib.luck;
-    } else if (name == "strength") {
-        battrib.truestrength += temp;
-        battrib.strength = battrib.truestrength;
-        battrib.time_strength = 0;
-        return battrib.strength;
-    } else if (name == "dexterity") {
-        battrib.truedexterity += temp;
-        battrib.dexterity = battrib.truedexterity;
-        battrib.time_dexterity = 0;
-        return battrib.dexterity;
-    } else if (name == "constitution") {
-        battrib.trueconstitution += temp;
-        battrib.constitution = battrib.trueconstitution;
-        battrib.time_constitution = 0;
-        return battrib.constitution;
-    } else if (name == "agility") {
-        battrib.trueagility += temp;
-        battrib.agility = battrib.trueagility;
-        battrib.time_agility = 0;
-        return battrib.agility;
-    } else if (name == "intelligence") {
-        battrib.trueintelligence += temp;
-        battrib.intelligence = battrib.trueintelligence;
-        battrib.time_intelligence = 0;
-        return battrib.intelligence;
-    } else if (name == "perception") {
-        battrib.trueperception += temp;
-        battrib.perception = battrib.trueperception;
-        battrib.time_perception = 0;
-        return battrib.perception;
-    } else if (name == "willpower") {
-        battrib.truewillpower += temp;
-        battrib.willpower = battrib.truewillpower;
-        battrib.time_willpower = 0;
-        return battrib.willpower;
-    } else if (name == "essence") {
-        battrib.trueessence += temp;
-        battrib.essence = battrib.trueessence;
-        battrib.time_essence = 0;
-        return battrib.essence;
-    } else if (name == "foodlevel") {
-        long temp2 = temp + battrib.truefoodlevel;
-
-        if (temp2 <= 0) {
-            battrib.truefoodlevel = 0;
-            battrib.foodlevel = battrib.truefoodlevel;
-            battrib.time_foodlevel = 0;
-        } else {
-            if (temp2 > 60000) {
-                battrib.truefoodlevel = 60000;
-                battrib.foodlevel = battrib.truefoodlevel;
-                battrib.time_foodlevel = 0;
-            } else {
-                battrib.truefoodlevel = temp2;
-                battrib.foodlevel = battrib.truefoodlevel;
-                battrib.time_foodlevel = 0;
-            }
-        }
-
-        return battrib.foodlevel;
-    } else {
-#ifdef Character_DEBUG
-        std::cout << "increaseAttrib: Attrib " << name << " nicht gefunden!\n";
-#endif
-        return 0;
     }
+
+    return 0;
 }
 
 unsigned short int Character::setSkill(unsigned char typ, std::string sname, short int major, short int minor, uint16_t firsttry) {
@@ -2029,7 +1647,7 @@ unsigned short int Character::maxLiftWeigt() {
 
 
 unsigned short int Character::maxLoadWeight() {
-    return battrib.strength * 500 + 5000;
+    return getAttribute(Character::strength) * 500 + 5000;
 }
 
 
@@ -2468,7 +2086,7 @@ uint16_t Character::getMovementCost(Field *sourcefield) {
         walkcost += STANDARD_MONSTER_WALKING_COST;
     }
 
-    walkcost = (walkcost * P_MOVECOSTFORMULA_walkingCost_MULTIPLIER) / (battrib.agility + P_MOVECOSTFORMULA_agility_ADD);
+    walkcost = (walkcost * P_MOVECOSTFORMULA_walkingCost_MULTIPLIER) / (getAttribute(Character::agility) + P_MOVECOSTFORMULA_agility_ADD);
 
     return walkcost;
 }
@@ -2717,162 +2335,6 @@ Container *Character::GetDepot(uint32_t depotid) {
         return it->second;
     }
 }
-
-void Character::tempAttribCheck() {
-    if (battrib.truesex != battrib.sex) {
-        if (battrib.time_sex <= 0) {
-            battrib.time_sex = 0;
-            battrib.sex = battrib.truesex;
-        }
-
-        battrib.time_sex--;
-    }
-
-    if (battrib.trueage != battrib.age) {
-        if (battrib.time_age <= 0) {
-            battrib.time_age = 0;
-            battrib.age = battrib.trueage;
-        }
-
-        battrib.time_age--;
-    }
-
-    if (battrib.trueweight != battrib.weight) {
-        if (battrib.time_weight <= 0) {
-            battrib.time_weight = 0;
-            battrib.weight = battrib.trueweight;
-        }
-
-        battrib.time_weight--;
-    }
-
-    if (battrib.truebody_height != battrib.body_height) {
-        if (battrib.time_body_height <= 0) {
-            battrib.time_body_height = 0;
-            battrib.body_height = battrib.truebody_height;
-        }
-
-        battrib.time_body_height--;
-    }
-
-    if (battrib.truehitpoints != battrib.hitpoints) {
-        if (battrib.time_hitpoints <= 0) {
-            battrib.time_hitpoints = 0;
-            battrib.hitpoints = battrib.truehitpoints;
-        }
-
-        battrib.time_hitpoints--;
-    }
-
-    if (battrib.truemana != battrib.mana) {
-        if (battrib.time_mana <= 0) {
-            battrib.time_mana = 0;
-            battrib.mana = battrib.truemana;
-        }
-
-        battrib.time_mana--;
-    }
-
-    if (battrib.trueattitude != battrib.attitude) {
-        if (battrib.time_attitude <= 0) {
-            battrib.time_attitude = 0;
-            battrib.attitude = battrib.trueattitude;
-        }
-
-        battrib.time_attitude--;
-    }
-
-    if (battrib.trueluck != battrib.luck) {
-        if (battrib.time_luck <= 0) {
-            battrib.time_luck = 0;
-            battrib.luck = battrib.trueluck;
-        }
-
-        battrib.time_luck--;
-    }
-
-    if (battrib.truestrength != battrib.strength) {
-        if (battrib.time_strength <= 0) {
-            battrib.time_strength = 0;
-            battrib.strength = battrib.truestrength;
-        }
-
-        battrib.time_strength--;
-    }
-
-    if (battrib.truedexterity != battrib.dexterity) {
-        if (battrib.time_dexterity <= 0) {
-            battrib.time_dexterity = 0;
-            battrib.dexterity = battrib.truedexterity;
-        }
-
-        battrib.time_dexterity--;
-    }
-
-    if (battrib.trueconstitution != battrib.constitution) {
-        if (battrib.time_constitution <= 0) {
-            battrib.time_constitution = 0;
-            battrib.constitution = battrib.trueconstitution;
-        }
-
-        battrib.time_constitution--;
-    }
-
-    if (battrib.trueagility != battrib.agility) {
-        if (battrib.time_agility <= 0) {
-            battrib.time_agility = 0;
-            battrib.agility = battrib.trueagility;
-        }
-
-        battrib.time_agility--;
-    }
-
-    if (battrib.trueintelligence != battrib.intelligence) {
-        if (battrib.time_intelligence <= 0) {
-            battrib.time_intelligence = 0;
-            battrib.intelligence = battrib.trueintelligence;
-        }
-
-        battrib.time_intelligence--;
-    }
-
-    if (battrib.trueperception != battrib.perception) {
-        if (battrib.time_perception <= 0) {
-            battrib.time_perception = 0;
-            battrib.perception = battrib.trueperception;
-        }
-
-        battrib.time_perception--;
-    }
-
-    if (battrib.truewillpower != battrib.willpower) {
-        if (battrib.time_willpower <= 0) {
-            battrib.time_willpower = 0;
-            battrib.willpower = battrib.truewillpower;
-        }
-
-        battrib.time_willpower--;
-    }
-
-    if (battrib.trueessence != battrib.essence) {
-        if (battrib.time_essence <= 0) {
-            battrib.time_essence = 0;
-            battrib.essence = battrib.trueessence;
-        }
-
-        battrib.time_essence--;
-    }
-
-    if (battrib.truefoodlevel != battrib.foodlevel) {
-        if (battrib.time_foodlevel <= 0) {
-            battrib.time_foodlevel = 0;
-            battrib.foodlevel = battrib.truefoodlevel;
-        }
-
-        battrib.time_foodlevel--;
-    }
-}
-
 
 
 uint8_t Character::getWeaponMode() {

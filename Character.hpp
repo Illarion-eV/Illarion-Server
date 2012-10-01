@@ -21,6 +21,8 @@
 #define CHARACTER_HPP
 
 #include <stdexcept>
+#include <boost/unordered_map.hpp>
+#include "Attribute.hpp"
 
 class WaypointList;
 class Field;
@@ -107,6 +109,29 @@ public:
         npc = 2 /**< the character is from Type NPC */
     };
 
+    enum attributeIndex {
+        strength,
+        dexterity,
+        constitution,
+        agility,
+        intelligence,
+        perception,
+        willpower,
+        essence,
+        hitpoints,
+        mana,
+        foodlevel,
+        sex,
+        age,
+        weight,
+        height,
+        attitude,
+        luck,
+        ATTRIBUTECOUNT
+    };
+
+    static boost::unordered_map<std::string, attributeIndex> attributeMap;
+    static boost::unordered_map<attributeIndex, std::string> attributeStringMap;
 
     /**
     * shows how loud the character talks
@@ -808,7 +833,10 @@ public:
 
     uint8_t getBeard();
 
-
+    void setAttribute(Character::attributeIndex attribute, Attribute::attribute_t value);
+    Attribute::attribute_t getAttribute(Character::attributeIndex attribute) const;
+    Attribute::attribute_t increaseAttribute(Character::attributeIndex attribute, int amount);
+    virtual void handleAttributeChange(Character::attributeIndex attribute);
 
     /**
     * changes the value of an attribute
@@ -817,26 +845,15 @@ public:
     * @param amount how much this attribute should be changed
     * @return the attribute value after the change
     */
-    virtual unsigned short int increaseAttrib(std::string name, short int amount);
-
-
-    /**
-    * changes one attrib temporary
-    * <b>Lua: [:tempChangeAttrib]</b>
-    *@param name name of the attrib which should be changed
-    *@param amount how much this attrib should be changed
-    *@param time how much seconds the temporary changing should hold
-    */
-    virtual void tempChangeAttrib(std::string name, short int amount, uint16_t time);
-
+    Attribute::attribute_t increaseAttrib(std::string name, int amount);
 
     /**
     * changes a attribute aboslute
     * <b>Lua: [:setAttrib]</b>
     * @param name of the attribute which should be changed
-    * @param wert the new value of this attribute
+    * @param value the new value of this attribute
     */
-    void setAttrib(std::string name, short int wert);
+    void setAttrib(std::string name, Attribute::attribute_t value);
 
     /**
     * changes the major value of a skill or adds this skill to the skillmap of the character
@@ -1267,83 +1284,10 @@ public:
     */
     face_to faceto;
 
+private:
+    Attribute *attributes[ATTRIBUTECOUNT];
 
-    /**
-    * stores the basic attributes of the character
-    */
-    struct base_attributes {
-        Character::sex_type truesex; /**< true sex of the character */
-        Character::sex_type sex; /**< current (temporary) sex of the character */
-        uint16_t time_sex; /**< time value in seconds before sex is changed back to the true value */
-
-        unsigned short int trueage; /**< true age of the character */
-        unsigned short int age; /**<  (temporary) age of the character */
-        uint16_t time_age; /**< time value in seconds before age is changed back to the true value */
-
-        unsigned short int trueweight; /**< true weight of the character */
-        unsigned short int weight; /**< (temporary) weight of the character */
-        uint16_t time_weight; /**< time value in seconds before weight is changed back to the true value */
-
-        uint16_t truebody_height; /**< true height of the character */
-        uint16_t body_height; /**< (temporary) height of the character */
-        uint16_t time_body_height; /**< time value in seconds before sex is changed back to the true value */
-
-        unsigned short int truehitpoints; /**< true hitpoints of the character */
-        unsigned short int hitpoints; /**< (temporary) hitpoint of the character */
-        uint16_t time_hitpoints; /**< time value in seconds before hitpoints is changed back to the true value */
-
-        unsigned short int truemana; /**< true mana of the character */
-        unsigned short int mana; /**< (temporary) mana of the character */
-        uint16_t time_mana; /**< time value in seconds before mana is changed back to the true value */
-
-        unsigned char attitude; /**<  (temporary) attitude of the character */
-        unsigned char trueattitude; /**< true attitude of the character*/
-        uint16_t time_attitude; /**< time value in seconds before attitude is changed back to the true value */
-
-        unsigned char luck; /**<  (temporary) luck of the character */
-        unsigned char trueluck; /**< true luck of the character */
-        uint16_t time_luck; /**< time value in seconds before luck is changed back to the true value */
-
-        unsigned char strength; /**<  (temporary) strength of the character */
-        unsigned char truestrength; /**< true strength of the character */
-        uint16_t time_strength; /**< time value in seconds before strength is changed back to the true value */
-
-        unsigned char dexterity; /**< (temporary) dexterity of the character */
-        unsigned char truedexterity; /**< true dexterity of the character */
-        uint16_t time_dexterity; /**< time value in seconds before dexterity is changed back to the true value */
-
-        unsigned char constitution; /**< (temporary) constitution of the character */
-        unsigned char trueconstitution; /**< true constitution of the character */
-        uint16_t time_constitution; /**< time value in seconds before dexterity is changed back to the true value */
-
-        unsigned char agility; /**< (temporary) agility of the character */
-        unsigned char trueagility; /**< true aglitiy of the character */
-        uint16_t time_agility; /**< time value in seconds before agility is changed back to the true value */
-
-        unsigned char intelligence; /**< (temporary)intelligence of the character */
-        unsigned char trueintelligence; /**< true intelligence of the character */
-        uint16_t time_intelligence; /**< time value in seconds before intelligence is changed back to the true value */
-
-        unsigned char perception; /**< (temporary) perception of the character */
-        unsigned char trueperception; /**< true perception of the character */
-        uint16_t time_perception; /**< time value in seconds before sex is changed back to the true value */
-
-        unsigned char willpower; /**< (temporary) willpower of the character */
-        unsigned char truewillpower; /**< true willpower of the character */
-        uint16_t time_willpower; /**< time value in seconds before willpower is changed back to the true value */
-
-        unsigned char essence; /**< (temporary) essence of the character */
-        unsigned char trueessence; /**< true essencee of the character */
-        uint16_t time_essence; /**< time value in seconds before essence is changed back to the true value */
-
-        unsigned short int foodlevel; /**< (temporary) foodlevel of the character */
-        unsigned short int truefoodlevel; /**< true foodlevel of the character */
-        uint16_t time_foodlevel; /**< time value in seconds before foodlevel is changed back to true values*/
-
-    };
-
-    base_attributes battrib; /**< the basic attributes of the character*/
-
+public:
     bool informCharacter; /**< if true the character gets more debug informations*/
 
     inline virtual void setClippingActive(bool tclippingActive) {}
@@ -1403,17 +1347,19 @@ public:
 
     virtual void ageInventory();
 
+private:
     /**
     * current lifestate of the character (alive or death)
     */
-    unsigned short int lifestate;
+    bool alive;
 
+public:
     /**
     * checks if a character is alive
     * @return true if the character is alive otherwise false
     */
     inline bool IsAlive() {
-        return ((lifestate & 1) != 0);
+        return alive;
     }
 
 #ifdef DO_UNCONSCIOUS
@@ -1450,11 +1396,6 @@ public:
     * @param updateInv returns true if the inventory should be updated (currently evertime true)
     */
     virtual bool attack(Character *target, int &sound, bool &updateInv);
-
-    /**
-    *checks all attribs if the time base is smaller 0 and sets them back to the default value
-    */
-    virtual void tempAttribCheck();
 
     /**
     * changes the values of a skill comepletly

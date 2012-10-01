@@ -35,8 +35,7 @@ NPC::NPC(TYPE_OF_CHARACTER_ID _id, std::string _name, Character::race_type _race
     pos=_pos;
     faceto=dir;
     race=_race;
-    battrib.truesex = sex;
-    battrib.sex = sex;
+    setAttribute(Character::sex, sex);
     character = npc;
     actionPoints = NP_MAX_AP;
     hair = _hair;
@@ -62,7 +61,7 @@ NPC::NPC(TYPE_OF_CHARACTER_ID _id, std::string _name, Character::race_type _race
     }
 
     _startpos = pos;
-    std::cout << "NewNPC spwaned: pos: " << pos.x << " " << pos.y << " " << pos.z << " type: " << _race << " Name: " << _name<< " is_healer: " << _ishealer << " sex: " << battrib.sex << std::endl;
+    std::cout << "NewNPC spwaned: pos: " << pos.x << " " << pos.y << " " << pos.z << " type: " << _race << " Name: " << _name<< " is_healer: " << _ishealer << " sex: " << getAttribute(Character::sex) << std::endl;
 
     tmpField->setChar();
 

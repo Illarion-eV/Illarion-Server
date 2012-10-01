@@ -615,12 +615,6 @@ void World::turntheworld() {
 
 
 void World::checkPlayers() {
-    bool effect = false;
-
-    if (fieldtimer[ 0 ]->next()) {
-        effect = true;
-    }
-
     time_t tempkeepalive;
     time(&tempkeepalive);
     int temptime;
@@ -649,12 +643,6 @@ void World::checkPlayers() {
 
                 (*playerIterator)->ltAction->checkAction();
                 (*playerIterator)->effects->checkEffects();
-
-                if (effect) {
-                    do_LongTimeEffects(*playerIterator);
-                }
-
-
             }
             // User timed out.
             else {
@@ -762,12 +750,6 @@ void World::checkMonsters() {
         } else {
             Logger::writeMessage("Monster","World::checkMonsters() spawning disabled!");
         }
-    }
-
-    bool effect = false;
-
-    if (fieldtimer[ 1 ]->next()) {
-        effect = true;
     }
 
     std::vector < Player * > temp;
@@ -913,10 +895,8 @@ void World::checkMonsters() {
 
                                 //Monsterdefinition suchen
                                 if (MonsterDescriptions->find((*monsterIterator)->getType() , monsterdef)) {
-                                    if (monsterdef.canselfheal) { //Prfen ob Monster sich selbst heilen kann
-                                        if (doHealing(*monsterIterator)) {   //Heilen
-                                            (*monsterIterator)->actionPoints -= NP_REGENERATE_COST;
-                                        }
+                                    if (monsterdef.canselfheal) {
+                                        (*monsterIterator)->heal();
                                     }
                                 } else {
                                     Logger::writeError("Monster","Data for Healing not Found for monsterrace: " + Logger::toString((*monsterIterator)->getType()));
@@ -1067,10 +1047,6 @@ void World::checkMonsters() {
                 }
             } // ausreichend actionpoints
 
-            if (effect) {
-                do_LongTimeEffects(*monsterIterator);
-            }
-
             monsterIterator++;
         } //alive ?
         else {
@@ -1101,11 +1077,6 @@ void World::checkMonsters() {
 
 void World::checkNPC() {
     deleteAllLostNPC();
-    bool effect = false;
-
-    if (fieldtimer[ 2 ]->next()) {
-        effect = true;
-    }
 
     NPCVECTOR::iterator npcIterator = Npc.begin();
 
@@ -1130,10 +1101,6 @@ void World::checkNPC() {
                     (*npcIterator)->setOnRoute(false);
                     npcscript->abortRoute();
                 }
-            }
-
-            if (effect) {
-                do_LongTimeEffects(*npcIterator);
             }
 
             npcIterator++;
@@ -1224,18 +1191,12 @@ void World::initScheduler() {
     std::cout<<"Scheduler init \n";
     scheduler = new Scheduler(this);
     //===========Globale Tasks wie Wetter Gezeiteneffekte etc einfgen=========
-    //CSchedulerObject * globalPoisonTask; //neuen Task anlegen
-    //globalPoisonTask = new SGlobalPoison(Scheduler->GetCurrentCycle()+2); //erster Zyklus in 2 sec
-    //Scheduler->AddTask(globalPoisonTask); //Task hinzufgen
     SchedulerObject *globalPlLearning;  //Task anlegen der die Geistige Aufnahmef�igkeit aller 10 sec bei Spielern wieder senkt
     globalPlLearning = new SGlobalPlayerLearnrate(scheduler->GetCurrentCycle()+5);
     scheduler->AddTask(globalPlLearning);
     SchedulerObject *globalMonLearning;  //Task anlegen der die Geistige Aufnahmef�igkeit aller 30 sec bei Monstern wieder senkt
     globalMonLearning = new SGlobalMonsterLearnrate(scheduler->GetCurrentCycle()+10);
     scheduler->AddTask(globalMonLearning);
-    SchedulerObject *globalTempAttribTask;
-    globalTempAttribTask = new STempAttribCycle(scheduler->GetCurrentCycle()+2);
-    scheduler->AddTask(globalTempAttribTask);
     //=========================================================================
     std::cout<<"Scheduler init end \n";
 }

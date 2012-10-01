@@ -28,14 +28,9 @@ const uint32_t MONSTER_BASE = 0xFE000000;
 
 #define MAXPOISONVALUE     400
 #define MAXMANA            10000
-#ifdef DO_UNCONSCIOUS
-#define MAXHPS             15000
-#define UNCONSCIOUS        5000
-#define DYING              2500
-#define UNCONSCIOUSHPGAIN  100
-#else
 #define MAXHPS 10000
-#endif
+#define MAXFOOD 65000
+#define MAXATTRIB 255
 
 #define WAITINGVALIDATION 1
 #define JAILED 20

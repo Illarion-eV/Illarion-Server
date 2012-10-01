@@ -565,14 +565,6 @@ public:
     void killMonster(MONSTERVECTOR::iterator monsterIt, MONSTERVECTOR::iterator &newIt);
 
     /**
-    * heals a character
-    * depending on his foodlevel
-    * @param cc the character which should be healed
-    * @return true if there was some healing, otherwise false
-    */
-    bool doHealing(Character *cc);
-
-    /**
     * looks for a field on the map
     * @param fip call by reference, the pointer to the field which was found
     * @param pos the position where the field has to be found
@@ -732,6 +724,8 @@ public:
     void setWeatherPart(std::string type, char value);
 
     void sendRemoveCharToVisiblePlayers(TYPE_OF_CHARACTER_ID id, position &pos);
+
+    void sendHealthToAllVisiblePlayers(Character *cc, Attribute::attribute_t health);
 
     /**============in WorldIMPLCharacterMoves.cpp==================*/
 
@@ -1671,9 +1665,6 @@ private:
     Timer *ScriptTimer; //< Tuner for scheduled scripts.
 
     MilTimer *monitoringclienttimer;
-
-    //! zur durchfhrung aller Langzeiteffekte
-    void do_LongTimeEffects(Character *cc);
 
     //! das home-Verzeichnis des Servers
     std::string directory;

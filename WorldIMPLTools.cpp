@@ -386,7 +386,7 @@ bool World::findPlayerWithLowestHP(std::vector < Player * > * ppvec, Player* &fo
         if (found == NULL) {
             found = *pIterator;
         } else {
-            if (found->battrib.hitpoints > (*pIterator)->battrib.hitpoints) {
+            if (found->getAttribute(Character::hitpoints) > (*pIterator)->getAttribute(Character::hitpoints)) {
                 found = (*pIterator);
             }
         }
@@ -443,7 +443,7 @@ bool World::characterAttacks(Character *cp) {
             if (temppl != NULL) {
                 // Ziel sichtbar
                 if (cp->isInRange(temppl, MAXVIEW)) {
-                    int temphp = temppl->battrib.hitpoints;
+                    int temphp = temppl->getAttribute(Character::hitpoints);
 
                     // Ziel ist tot
                     if (!cp->attack(temppl, sound, updateInv)) {
@@ -485,8 +485,8 @@ bool World::characterAttacks(Character *cp) {
                     }
 
                     // bewirkt nur ein Update beim Client
-                    if (temphp != temppl->battrib.hitpoints) {
-                        temppl->sendAttrib("hitpoints",temppl->increaseAttrib("hitpoints", 0));
+                    if (temphp != temppl->getAttribute(Character::hitpoints)) {
+                        temppl->sendAttrib(Character::hitpoints);
                         makeGFXForAllPlayersInRange(temppl->pos.x, temppl->pos.y, temppl->pos.z, MAXVIEW, 13);
                     }
 
@@ -508,7 +508,7 @@ bool World::characterAttacks(Character *cp) {
             // Ziel gefunden
             if (temppl != NULL) {
                 if (cp->isInRange(temppl, MAXVIEW)) {
-                    int temphp = temppl->battrib.hitpoints;
+                    int temphp = temppl->getAttribute(Character::hitpoints);
                     MonsterStruct monStruct;
 
                     if (MonsterDescriptions->find(temppl->getType(), monStruct)) {
@@ -553,7 +553,7 @@ bool World::characterAttacks(Character *cp) {
                         ((Player *) cp)->sendCharacterItemAtPos(RIGHT_TOOL);
                     }
 
-                    if (temphp != temppl->battrib.hitpoints) {
+                    if (temphp != temppl->getAttribute(Character::hitpoints)) {
                         makeGFXForAllPlayersInRange(temppl->pos.x, temppl->pos.y, temppl->pos.z, MAXVIEW, 13);
                     }
 
@@ -574,7 +574,7 @@ bool World::characterAttacks(Character *cp) {
             // Ziel gefunden
             if (temppl != NULL) {
                 if (cp->isInRange(temppl, MAXVIEW)) {
-                    int temphp=temppl->battrib.hitpoints;
+                    int temphp=temppl->getAttribute(Character::hitpoints);
 
                     // Ziel ist tot
                     if (!cp->attack(temppl, sound, updateInv)) {
@@ -591,7 +591,7 @@ bool World::characterAttacks(Character *cp) {
                         dynamic_cast<Player *>(cp)->sendCharacterItemAtPos(RIGHT_TOOL);
                     }
 
-                    if (temphp != temppl->battrib.hitpoints) {
+                    if (temphp != temppl->getAttribute(Character::hitpoints)) {
                         makeGFXForAllPlayersInRange(temppl->pos.x, temppl->pos.y, temppl->pos.z, MAXVIEW, 13);
                     }
 
@@ -661,46 +661,6 @@ void World::killMonster(MONSTERVECTOR::iterator monsterIt, MONSTERVECTOR::iterat
 
 }
 
-
-bool World::doHealing(Character *cc) {
-
-#ifdef DO_UNCONSCIOUS
-
-    if (cc->IsDying()) {
-        cc->increaseAttrib("hitpoints", -UNCONSCIOUSHPGAIN);
-        return true;
-    }
-
-    if (! cc->IsConscious()) {
-        cc->increaseAttrib("hitpoints", UNCONSCIOUSHPGAIN);
-        return true;
-    }
-
-#endif
-
-    if (cc->character == Character::player) {
-        /**
-        if ( ( cc->battrib.truefoodlevel >= 300 ) && ( ( cc->battrib.truehitpoints < MAXHPS ) || ( cc->battrib.truemana < MAXMANA ) ) ) {
-            ( ( Player* ) cc )->increaseAttrib( "hitpoints", 100 );
-            ( ( Player* ) cc )->increaseAttrib( "mana", 100 );
-            ( ( Player* ) cc )->increaseAttrib( "foodlevel", -300 );
-            return true;
-        } else {
-            return false;
-        }
-        */
-        return false;
-    } else {
-        if ((cc->battrib.hitpoints < MAXHPS) || (cc->battrib.mana < MAXMANA)) {
-            cc->increaseAttrib("hitpoints", 150);
-            cc->increaseAttrib("mana", 150);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-}
 
 Field *World::GetField(position pos) {
     Field *field=NULL;
@@ -883,26 +843,6 @@ void World::updatePlayerView(short int startx, short int endx) {
 
             (*titerator)->sendFullMap();
             sendAllVisibleCharactersToPlayer((*titerator), true);
-        }
-    }
-
-}
-
-
-void World::do_LongTimeEffects(Character *cc) {
-
-    if (cc != NULL) {
-        if (cc->IsAlive()) {
-            if (cc->character==Character::player) {
-                doHealing(cc);
-                //( ( Player* ) cc )->sendAttrib("hitpoints", cc->increaseAttrib( "hitpoints", 0 ) );
-            }
-
-            Field *fip;
-
-            if (GetPToCFieldAt(fip, cc->pos)) {
-                checkFieldAfterMove(cc, fip);
-            }
         }
     }
 
@@ -1293,6 +1233,29 @@ void World::sendRemoveCharToVisiblePlayers(TYPE_OF_CHARACTER_ID id, position &po
 
     for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
         (*titerator)->sendCharRemove(id, cmd);
+    }
+}
+
+void World::sendHealthToAllVisiblePlayers(Character *cc, Attribute::attribute_t health) {
+    if (!cc->isinvisible) {
+
+        std::vector < Player * > temp = Players.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, MAXVIEW+1);
+
+        std::vector < Player * > ::iterator titerator;
+        char xoffs;
+        char yoffs;
+        char zoffs;
+
+        for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
+            xoffs = cc->pos.x - (*titerator)->pos.x;
+            yoffs = cc->pos.y - (*titerator)->pos.y;
+            zoffs = cc->pos.z - (*titerator)->pos.z + RANGEDOWN;
+
+            if ((xoffs != 0) || (yoffs != 0) || (zoffs != RANGEDOWN)) {
+                boost::shared_ptr<BasicServerCommand>cmd(new UpdateAttribTC(cc->id, "hitpoints", health));
+                (*titerator)->Connection->addCommand(cmd);
+            }
+        }
     }
 }
 

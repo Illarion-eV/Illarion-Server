@@ -450,26 +450,9 @@ public:
     //! sendet ein Attributupdate an den Client
     // \param name der Name des Attributs
     // \param value der Wert des Attributs
-    void sendAttrib(std::string name, unsigned short int value);
+    void sendAttrib(Character::attributeIndex attribute);
 
-    //! ver�dert einen Attributwert und schickt ein Update an den Spieler
-    // \param name der Name des Attributs
-    // \param amount die �derung
-    // \return der neuen Wert des Attributs
-    unsigned short int increaseAttrib(std::string name, short int amount);
-
-    /**
-    * changes one attrib temporary
-    *@param name name of the attrib which should be changed
-    *@param amount how much this attrib should be changed
-    *@param time how much seconds the temporary changing should hold
-    */
-    void tempChangeAttrib(std::string name, short int amount, uint16_t time);
-
-    /**
-    *checks all attribs if the time base is smaller 0 and sets them back to the default value
-    */
-    void tempAttribCheck();
+    virtual void handleAttributeChange(Character::attributeIndex attribute);
 
 
     void startMusic(short int which);
@@ -536,10 +519,6 @@ public:
     virtual bool Warp(position newPos);
 
     virtual bool forceWarp(position newPos);
-
-    virtual void LTIncreaseHP(unsigned short int value, unsigned short int count, unsigned short int time);
-
-    virtual void LTIncreaseMana(unsigned short int value, unsigned short int count, unsigned short int time);
 
     virtual void openDepot(uint16_t depotid);
 

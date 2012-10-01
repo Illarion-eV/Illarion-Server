@@ -284,23 +284,23 @@ void Player::login() throw(Player::LogoutException) {
     Connection->addCommand(cmd);
 
     // send attributes
-    sendAttrib("hitpoints", increaseAttrib("hitpoints", 0));
-    sendAttrib("mana", increaseAttrib("mana", 0));
-    sendAttrib("foodlevel", increaseAttrib("mana", 0));
-    sendAttrib("sex", increaseAttrib("sex",0));
-    sendAttrib("age", increaseAttrib("age",0));
-    sendAttrib("weight", increaseAttrib("weight",0));
-    sendAttrib("body_height", increaseAttrib("body_height",0));
-    sendAttrib("attitude", increaseAttrib("attitude",0));
-    sendAttrib("luck", increaseAttrib("luck",0));
-    sendAttrib("strength", increaseAttrib("strength",0));
-    sendAttrib("dexterity", increaseAttrib("dexterity",0));
-    sendAttrib("constitution", increaseAttrib("constitution",0));
-    sendAttrib("intelligence", increaseAttrib("intelligence",0));
-    sendAttrib("perception", increaseAttrib("perception",0));
-    sendAttrib("willpower", increaseAttrib("willpower",0));
-    sendAttrib("essence", increaseAttrib("essence",0));
-    sendAttrib("agility", increaseAttrib("agility",0));
+    sendAttrib(hitpoints);
+    sendAttrib(mana);
+    sendAttrib(foodlevel);
+    sendAttrib(sex);
+    sendAttrib(age);
+    sendAttrib(weight);
+    sendAttrib(height);
+    sendAttrib(attitude);
+    sendAttrib(luck);
+    sendAttrib(strength);
+    sendAttrib(dexterity);
+    sendAttrib(constitution);
+    sendAttrib(intelligence);
+    sendAttrib(perception);
+    sendAttrib(willpower);
+    sendAttrib(essence);
+    sendAttrib(agility);
     //end of changes
 
 
@@ -631,30 +631,18 @@ void Player::sendMagicFlags(int type) {
 }
 
 
-void Player::sendAttrib(std::string name, unsigned short int value) {
-    boost::shared_ptr<BasicServerCommand> cmd(new UpdateAttribTC(id, name, value));
+void Player::sendAttrib(Character::attributeIndex attribute) {
+    auto value = getAttribute(attribute);
+    boost::shared_ptr<BasicServerCommand> cmd(new UpdateAttribTC(id, attributeStringMap[attribute], value));
     Connection->addCommand(cmd);
-    cmd.reset(new BBSendAttribTC(id, name, value));
+    cmd.reset(new BBSendAttribTC(id, attributeStringMap[attribute], value));
     _world->monitoringClientList->sendCommand(cmd);
 }
 
 
-unsigned short int Player::increaseAttrib(std::string name, short int amount) {
-    unsigned short int temp = Character::increaseAttrib(name, amount);
-
-    if (amount != 0) {
-        sendAttrib(name, temp);
-    }
-
-    return temp;
-}
-
-void Player::tempChangeAttrib(std::string name, short int amount, uint16_t time) {
-    Character::tempChangeAttrib(name, amount, time);
-
-    if (amount != 0) {
-        sendAttrib(name, Character::increaseAttrib(name,0));
-    }
+void Player::handleAttributeChange(Character::attributeIndex attribute) {
+    Character::handleAttributeChange(attribute);
+    sendAttrib(attribute);
 }
 
 
@@ -832,7 +820,7 @@ void Player::check_logindata() throw(Player::LogoutException) {
 
         onlinetime = charRow["chr_onlinetime"].as<time_t>();
         lastsavetime = charRow["chr_lastsavetime"].as<time_t>();
-        battrib.truesex = (Character::sex_type) charRow["chr_sex"].as<uint16_t>();
+        setAttribute(Character::sex, charRow["chr_sex"].as<uint16_t>());
         race = (Character::race_type) charRow["chr_race"].as<uint16_t>();
 
         if (!charRow["chr_prefix"].is_null()) {
@@ -973,42 +961,24 @@ void Player::check_logindata() throw(Player::LogoutException) {
         pos.z = playerRow["ply_posz"].as<int32_t>();
         faceto = (Character::face_to) playerRow["ply_faceto"].as<uint16_t>();
 
-        battrib.age = battrib.trueage = playerRow["ply_age"].as<uint16_t>();
-        battrib.time_age = 0;
-        battrib.sex = battrib.truesex;
-        battrib.time_sex = 0;
-        battrib.weight = battrib.trueweight = playerRow["ply_weight"].as<uint16_t>();
-        battrib.time_weight = 0;
-        battrib.body_height = battrib.truebody_height = playerRow["ply_body_height"].as<uint16_t>();
-        battrib.time_body_height = 0;
-        battrib.hitpoints = battrib.truehitpoints = playerRow["ply_hitpoints"].as<uint16_t>();
-        battrib.time_hitpoints = 0;
-        battrib.mana = battrib.truemana = playerRow["ply_mana"].as<uint16_t>();
-        battrib.time_mana = 0;
-        battrib.attitude = battrib.trueattitude = playerRow["ply_attitude"].as<uint16_t>();
-        battrib.time_attitude = 0;
-        battrib.luck = battrib.trueluck = playerRow["ply_luck"].as<uint16_t>();
-        battrib.time_luck = 0;
-        battrib.strength = battrib.truestrength = playerRow["ply_strength"].as<uint16_t>();
-        battrib.time_strength = 0;
-        battrib.dexterity = battrib.truedexterity = playerRow["ply_dexterity"].as<uint16_t>();
-        battrib.time_dexterity = 0;
-        battrib.constitution = battrib.trueconstitution = playerRow["ply_constitution"].as<uint16_t>();
-        battrib.time_constitution = 0;
-        battrib.agility = battrib.trueagility = playerRow["ply_agility"].as<uint16_t>();
-        battrib.time_agility = 0;
-        battrib.intelligence = battrib.trueintelligence = playerRow["ply_intelligence"].as<uint16_t>();
-        battrib.time_intelligence = 0;
-        battrib.perception = battrib.trueperception = playerRow["ply_perception"].as<uint16_t>();
-        battrib.time_perception = 0;
-        battrib.willpower = battrib.truewillpower = playerRow["ply_willpower"].as<uint16_t>();
-        battrib.time_willpower = 0;
-        battrib.essence = battrib.trueessence = playerRow["ply_essence"].as<uint16_t>();
-        battrib.time_essence = 0;
-        battrib.foodlevel = battrib.truefoodlevel = playerRow["ply_foodlevel"].as<uint32_t>();
-        battrib.time_foodlevel = 0;
+        setAttribute(Character::age, playerRow["ply_age"].as<uint16_t>());
+        setAttribute(Character::weight, playerRow["ply_weight"].as<uint16_t>());
+        setAttribute(Character::height, playerRow["ply_body_height"].as<uint16_t>());
+        setAttribute(Character::hitpoints, playerRow["ply_hitpoints"].as<uint16_t>());
+        setAttribute(Character::mana, playerRow["ply_mana"].as<uint16_t>());
+        setAttribute(Character::attitude, playerRow["ply_attitude"].as<uint16_t>());
+        setAttribute(Character::luck, playerRow["ply_luck"].as<uint16_t>());
+        setAttribute(Character::strength, playerRow["ply_strength"].as<uint16_t>());
+        setAttribute(Character::dexterity, playerRow["ply_dexterity"].as<uint16_t>());
+        setAttribute(Character::constitution, playerRow["ply_constitution"].as<uint16_t>());
+        setAttribute(Character::agility, playerRow["ply_agility"].as<uint16_t>());
+        setAttribute(Character::intelligence, playerRow["ply_intelligence"].as<uint16_t>());
+        setAttribute(Character::perception, playerRow["ply_perception"].as<uint16_t>());
+        setAttribute(Character::willpower, playerRow["ply_willpower"].as<uint16_t>());
+        setAttribute(Character::essence, playerRow["ply_essence"].as<uint16_t>());
+        setAttribute(Character::foodlevel, playerRow["ply_foodlevel"].as<uint32_t>());
 
-        lifestate = playerRow["ply_lifestate"].as<uint16_t>();
+        SetAlive(playerRow["ply_lifestate"].as<uint16_t>() != 0);
         magic.type = (magic_type) playerRow["ply_magictype"].as<uint16_t>();
         magic.flags[MAGE] = playerRow["ply_magicflagsmage"].as<uint64_t>();
         magic.flags[PRIEST] = playerRow["ply_magicflagspriest"].as<uint64_t>();
@@ -1079,10 +1049,10 @@ bool Player::save() throw() {
             query.addAssignColumn<int32_t>("ply_posy", pos.y);
             query.addAssignColumn<int32_t>("ply_posz", pos.z);
             query.addAssignColumn<uint16_t>("ply_faceto", (uint16_t) faceto);
-            query.addAssignColumn<uint16_t>("ply_hitpoints", battrib.hitpoints);
-            query.addAssignColumn<uint16_t>("ply_mana", battrib.mana);
-            query.addAssignColumn<uint32_t>("ply_foodlevel", battrib.foodlevel);
-            query.addAssignColumn<uint32_t>("ply_lifestate", lifestate);
+            query.addAssignColumn<uint16_t>("ply_hitpoints", getAttribute(Character::hitpoints));
+            query.addAssignColumn<uint16_t>("ply_mana", getAttribute(Character::mana));
+            query.addAssignColumn<uint32_t>("ply_foodlevel", getAttribute(Character::foodlevel));
+            query.addAssignColumn<uint32_t>("ply_lifestate", IsAlive() ? 1 : 0);
             query.addAssignColumn<uint32_t>("ply_magictype", (uint32_t) magic.type);
             query.addAssignColumn<uint64_t>("ply_magicflagsmage", magic.flags[MAGE]);
             query.addAssignColumn<uint64_t>("ply_magicflagspriest", magic.flags[PRIEST]);
@@ -1840,7 +1810,7 @@ bool Player::move(direction dir, uint8_t mode) {
 
             if (oldpos.z - newpos.z > 0) {
                 int perEncumb = (LoadWeight() * 100) / maxLoadWeight();
-                int damagePerLevel = (500 * perEncumb) / (battrib.agility / 2);
+                int damagePerLevel = (500 * perEncumb) / (getAttribute(Character::agility) / 2);
                 int damage = damagePerLevel;
 
                 // Take half again as much damage for falling 2nd level
@@ -2016,20 +1986,6 @@ bool Player::forceWarp(position newPos) {
     return false;
 }
 
-void Player::LTIncreaseHP(unsigned short int value, unsigned short int count, unsigned short int time) {
-    //Schedulerobject erzeugen
-    SchedulerObject *Heal = new SIncreaseHealtPoints(id,value,count,_world->scheduler->GetCurrentCycle()+time,time);
-    //Task hinzufgen
-    _world->scheduler->AddTask(Heal);
-}
-
-void Player::LTIncreaseMana(unsigned short int value, unsigned short int count, unsigned short int time) {
-    //Schedulerobject erzeugen
-    SchedulerObject *Heal = new SIncreaseManaPoints(id,value,count,_world->scheduler->GetCurrentCycle()+time,time);
-    //Task hinzufgen
-    _world->scheduler->AddTask(Heal);
-}
-
 void Player::openDepot(uint16_t depotid) {
     //_world->lookIntoDepot(this, 0 );
 #ifdef PLAYER_PlayerDepot_DEBUG
@@ -2164,178 +2120,6 @@ uint32_t Player::getQuestProgress(uint16_t questid) throw() {
     }
 
     return UINT32_C(0);
-}
-
-void Player::tempAttribCheck() {
-    if (battrib.truesex != battrib.sex) {
-        if (battrib.time_sex <= 0) {
-            battrib.time_sex = 0;
-            battrib.sex = battrib.truesex;
-            sendAttrib("sex", Character::increaseAttrib("sex",0));
-        }
-
-        battrib.time_sex--;
-    }
-
-    if (battrib.trueage != battrib.age) {
-        if (battrib.time_age <= 0) {
-            battrib.time_age = 0;
-            battrib.age = battrib.trueage;
-            sendAttrib("age", Character::increaseAttrib("age",0));
-        }
-
-        battrib.time_age--;
-    }
-
-    if (battrib.trueweight != battrib.weight) {
-        if (battrib.time_weight <= 0) {
-            battrib.time_weight = 0;
-            battrib.weight = battrib.trueweight;
-            sendAttrib("weight", Character::increaseAttrib("weight",0));
-        }
-
-        battrib.time_weight--;
-    }
-
-    if (battrib.truebody_height != battrib.body_height) {
-        if (battrib.time_body_height <= 0) {
-            battrib.time_body_height = 0;
-            battrib.body_height = battrib.truebody_height;
-            sendAttrib("body_height", Character::increaseAttrib("body_height",0));
-        }
-
-        battrib.time_body_height--;
-    }
-
-    if (battrib.truehitpoints != battrib.hitpoints) {
-        if (battrib.time_hitpoints <= 0) {
-            battrib.time_hitpoints = 0;
-            battrib.hitpoints = battrib.truehitpoints;
-            sendAttrib("hitpoints", Character::increaseAttrib("hitpoints",0));
-        }
-
-        battrib.time_hitpoints--;
-    }
-
-    if (battrib.truemana != battrib.mana) {
-        if (battrib.time_mana <= 0) {
-            battrib.time_mana = 0;
-            battrib.mana = battrib.truemana;
-            sendAttrib("mana", Character::increaseAttrib("mana",0));
-        }
-
-        battrib.time_mana--;
-    }
-
-    if (battrib.trueattitude != battrib.attitude) {
-        if (battrib.time_attitude <= 0) {
-            battrib.time_attitude = 0;
-            battrib.attitude = battrib.trueattitude;
-            sendAttrib("attitude", Character::increaseAttrib("attitude",0));
-        }
-
-        battrib.time_attitude--;
-    }
-
-    if (battrib.trueluck != battrib.luck) {
-        if (battrib.time_luck <= 0) {
-            battrib.time_luck = 0;
-            battrib.luck = battrib.trueluck;
-            sendAttrib("luck", Character::increaseAttrib("luck",0));
-        }
-
-        battrib.time_luck--;
-    }
-
-    if (battrib.truestrength != battrib.strength) {
-        if (battrib.time_strength <= 0) {
-            battrib.time_strength = 0;
-            battrib.strength = battrib.truestrength;
-            sendAttrib("strenght", Character::increaseAttrib("strenght",0));
-        }
-
-        battrib.time_strength--;
-    }
-
-    if (battrib.truedexterity != battrib.dexterity) {
-        if (battrib.time_dexterity <= 0) {
-            battrib.time_dexterity = 0;
-            battrib.dexterity = battrib.truedexterity;
-            sendAttrib("dexterity", Character::increaseAttrib("dexterity",0));
-        }
-
-        battrib.time_dexterity--;
-    }
-
-    if (battrib.trueconstitution != battrib.constitution) {
-        if (battrib.time_constitution <= 0) {
-            battrib.time_constitution = 0;
-            battrib.constitution = battrib.trueconstitution;
-            sendAttrib("constitution", Character::increaseAttrib("constitution",0));
-        }
-
-        battrib.time_constitution--;
-    }
-
-    if (battrib.trueagility != battrib.agility) {
-        if (battrib.time_agility <= 0) {
-            battrib.time_agility = 0;
-            battrib.agility = battrib.trueagility;
-            sendAttrib("agility", Character::increaseAttrib("agility",0));
-        }
-
-        battrib.time_agility--;
-    }
-
-    if (battrib.trueintelligence != battrib.intelligence) {
-        if (battrib.time_intelligence <= 0) {
-            battrib.time_intelligence = 0;
-            battrib.intelligence = battrib.trueintelligence;
-            sendAttrib("intelligence", Character::increaseAttrib("inteligence",0));
-        }
-
-        battrib.time_intelligence--;
-    }
-
-    if (battrib.trueperception != battrib.perception) {
-        if (battrib.time_perception <= 0) {
-            battrib.time_perception = 0;
-            battrib.perception = battrib.trueperception;
-            sendAttrib("perception", Character::increaseAttrib("perception",0));
-        }
-
-        battrib.time_perception--;
-    }
-
-    if (battrib.truewillpower != battrib.willpower) {
-        if (battrib.time_willpower <= 0) {
-            battrib.time_willpower = 0;
-            battrib.willpower = battrib.truewillpower;
-            sendAttrib("willpower", Character::increaseAttrib("willpower",0));
-        }
-
-        battrib.time_willpower--;
-    }
-
-    if (battrib.trueessence != battrib.essence) {
-        if (battrib.time_essence <= 0) {
-            battrib.time_essence = 0;
-            battrib.essence = battrib.trueessence;
-            sendAttrib("essence", Character::increaseAttrib("essence",0));
-        }
-
-        battrib.time_essence--;
-    }
-
-    if (battrib.truefoodlevel != battrib.foodlevel) {
-        if (battrib.time_foodlevel <= 0) {
-            battrib.time_foodlevel = 0;
-            battrib.foodlevel = battrib.truefoodlevel;
-            sendAttrib("foodlevel", Character::increaseAttrib("foodlevel",0));
-        }
-
-        battrib.time_foodlevel--;
-    }
 }
 
 void Player::startAction(unsigned short int wait, unsigned short int ani, unsigned short int redoani, unsigned short int sound, unsigned short int redosound) {

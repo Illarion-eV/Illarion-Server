@@ -70,17 +70,17 @@ void Monster::setType(const TYPE_OF_CHARACTER_ID &type) throw(unknownIDException
     }
 
     // set attributes
-    battrib.luck = battrib.trueluck = rnd(monsterdef.attributes.luck);
-    battrib.strength = battrib.truestrength = rnd(monsterdef.attributes.strength);
-    battrib.dexterity = battrib.truedexterity = rnd(monsterdef.attributes.dexterity);
-    battrib.constitution = battrib.trueconstitution = rnd(monsterdef.attributes.constitution);
-    battrib.agility = battrib.trueagility = rnd(monsterdef.attributes.agility);
-    battrib.intelligence = battrib.trueintelligence = rnd(monsterdef.attributes.intelligence);
-    battrib.perception = battrib.trueperception = rnd(monsterdef.attributes.perception);
-    battrib.willpower = battrib.truewillpower = rnd(monsterdef.attributes.willpower);
-    battrib.essence = battrib.trueessence = rnd(monsterdef.attributes.essence);
-    battrib.hitpoints = battrib.truehitpoints = monsterdef.hitpoints; //Setzen der Hitpoints
-    battrib.body_height = battrib.truebody_height = rand()%(monsterdef.maxsize-monsterdef.minsize+1) + monsterdef.minsize;
+    setAttribute(Character::luck, rnd(monsterdef.attributes.luck));
+    setAttribute(Character::strength, rnd(monsterdef.attributes.strength));
+    setAttribute(Character::dexterity, rnd(monsterdef.attributes.dexterity));
+    setAttribute(Character::constitution, rnd(monsterdef.attributes.constitution));
+    setAttribute(Character::agility, rnd(monsterdef.attributes.agility));
+    setAttribute(Character::intelligence, rnd(monsterdef.attributes.intelligence));
+    setAttribute(Character::perception, rnd(monsterdef.attributes.perception));
+    setAttribute(Character::willpower, rnd(monsterdef.attributes.willpower));
+    setAttribute(Character::essence, rnd(monsterdef.attributes.essence));
+    setAttribute(Character::hitpoints, monsterdef.hitpoints); //Setzen der Hitpoints
+    setAttribute(Character::height, rand()%(monsterdef.maxsize-monsterdef.minsize+1) + monsterdef.minsize);
 
     // set skills
     for (auto it = monsterdef.skills.begin(); it != monsterdef.skills.end(); ++it) {
@@ -140,10 +140,8 @@ Monster::~Monster() {
 }
 
 void Monster::remove() {
-    battrib.truehitpoints = 0;
-    battrib.hitpoints = battrib.truehitpoints;
+    setAttribute(Character::hitpoints, 0);
     Character::SetAlive(false);
-
 }
 
 void Monster::SetAlive(bool t) {
@@ -181,6 +179,11 @@ bool Monster::attack(Character *target, int &sound, bool &updateInv) {
     }
 
     return Character::attack(target,sound,updateInv);
+}
+
+void Monster::heal() {
+    increaseAttrib("hitpoints", 150);
+    increaseAttrib("mana", 150);
 }
 
 void Monster::receiveText(talk_type tt, std::string message, Character *cc) {

@@ -197,6 +197,7 @@ void LuaScript::writeErrorMsg() {
     lua_pop(_luaState, 1);
 
     std::string err;
+
     if (cerr) {
         err = cerr;
     } else {
@@ -458,7 +459,6 @@ void LuaScript::init_base_functions() {
         .def("sendBook", &Character::sendBook)
         .def("updateAppearance", &Character::forceUpdateAppearanceForAll)
         .def("performAnimation", &Character::performAnimation)
-        .def("tempChangeAttrib", &Character::tempChangeAttrib)
         .def("alterSpokenMessage", &Character::alterSpokenMessage)
         .def("actionRunning", &Character::actionRunning)
         .def("changeQualityAt", &Character::changeQualityAt)
@@ -545,8 +545,6 @@ void LuaScript::init_base_functions() {
         .def("getDepot", &Character::GetDepot)
         .def("setQuestProgress", &Character::setQuestProgress)
         .def("getQuestProgress", &Character::getQuestProgress)
-        .def("LTIncreaseHP", &Character::LTIncreaseHP)
-        .def("LTIncreaseMana", &Character::LTIncreaseMana)
         .def("getOnRoute",&Character::getOnRoute)
         .def("setOnRoute",&Character::setOnRoute)
         .def("getMonsterType", &Character::getType)

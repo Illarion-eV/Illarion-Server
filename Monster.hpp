@@ -103,6 +103,8 @@ public:
     */
     bool attack(Character *target, int &sound, bool &updateInv);
 
+    void heal();
+
     /**
     *trys to find a path to the the targetposition and performs a step
     *in the direction

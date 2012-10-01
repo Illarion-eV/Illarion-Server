@@ -40,7 +40,7 @@ WorldIMPLTools.cpp WorldIMPLScriptHelp.cpp WorldIMPLPlayer.cpp WorldIMPLMonComma
 Timer.cpp MilTimer.cpp \
 LongTimeEffect.cpp LongTimeAction.cpp LongTimeCharacterEffects.cpp Scheduler.cpp \
 \
-Character.cpp \
+Attribute.cpp Character.cpp \
 Player.cpp PlayerWorkoutCommands.cpp Monster.cpp NPC.cpp PlayerManager.cpp playersave.cpp WaypointList.cpp Language.cpp \
 \
 dialog/Dialog.cpp dialog/InputDialog.cpp dialog/MessageDialog.cpp dialog/MerchantDialog.cpp \
