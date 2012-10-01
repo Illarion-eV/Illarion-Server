@@ -1392,10 +1392,8 @@ public:
     /**
     * the character attacks another character
     * @param target pointer to the character which is attacked
-    * @param sound reference to a sound which should be played
-    * @param updateInv returns true if the inventory should be updated (currently evertime true)
     */
-    virtual bool attack(Character *target, int &sound, bool &updateInv);
+    virtual bool attack(Character *target);
 
     /**
     * changes the values of a skill comepletly

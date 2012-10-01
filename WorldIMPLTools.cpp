@@ -430,8 +430,6 @@ void World::takeMonsterAndNPCFromMap() {
 bool World::characterAttacks(Character *cp) {
 
     if (cp->enemyid != cp->id) {
-        int sound = 0;
-        bool updateInv = false;
 
         if (cp->enemytype == Character::player) {
 #ifdef World_DEBUG
@@ -443,10 +441,9 @@ bool World::characterAttacks(Character *cp) {
             if (temppl != NULL) {
                 // Ziel sichtbar
                 if (cp->isInRange(temppl, MAXVIEW)) {
-                    int temphp = temppl->getAttribute(Character::hitpoints);
 
                     // Ziel ist tot
-                    if (!cp->attack(temppl, sound, updateInv)) {
+                    if (!cp->attack(temppl)) {
                         sendSpinToAllVisiblePlayers(temppl);
 
                         cp->attackmode = false;
@@ -470,32 +467,7 @@ bool World::characterAttacks(Character *cp) {
                         temppl->attackmode = false;
                     }
 
-#ifdef DO_UNCONSCIOUS
-                    else if (! temppl->IsConscious()) {
-                        sendSpinToAllVisiblePlayers(temppl, PLAYERSPIN_TC);
-                    }
-
-#endif
-                    // player should know that he is target of an attack (of another player or NPC)
-                    //temppl->nrOfAttackers++;
-
-                    if ((cp->character == Character::player) && (updateInv)) {
-                        ((Player *) cp)->sendCharacterItemAtPos(LEFT_TOOL);
-                        ((Player *) cp)->sendCharacterItemAtPos(RIGHT_TOOL);
-                    }
-
-                    // bewirkt nur ein Update beim Client
-                    if (temphp != temppl->getAttribute(Character::hitpoints)) {
-                        temppl->sendAttrib(Character::hitpoints);
-                        makeGFXForAllPlayersInRange(temppl->pos.x, temppl->pos.y, temppl->pos.z, MAXVIEW, 13);
-                    }
-
-                    if (sound != 0) {
-                        makeSoundForAllPlayersInRange(temppl->pos.x, temppl->pos.y, temppl->pos.z, MAXVIEW, sound);
-                    }
-
                     return true;
-
                 }
             }
         } else if (cp->enemytype == Character::monster) {
@@ -508,7 +480,6 @@ bool World::characterAttacks(Character *cp) {
             // Ziel gefunden
             if (temppl != NULL) {
                 if (cp->isInRange(temppl, MAXVIEW)) {
-                    int temphp = temppl->getAttribute(Character::hitpoints);
                     MonsterStruct monStruct;
 
                     if (MonsterDescriptions->find(temppl->getType(), monStruct)) {
@@ -522,7 +493,7 @@ bool World::characterAttacks(Character *cp) {
                     }
 
                     // Ziel ist tot
-                    if (!cp->attack(temppl, sound, updateInv)) {
+                    if (!cp->attack(temppl)) {
                         cp->attackmode = false;
 
                         if (cp->character == Character::player) {
@@ -546,57 +517,6 @@ bool World::characterAttacks(Character *cp) {
                             temppl->turn(foundPl->pos);
                         }
 
-                    }
-
-                    if ((cp->character == Character::player) && (updateInv)) {
-                        ((Player *) cp)->sendCharacterItemAtPos(LEFT_TOOL);
-                        ((Player *) cp)->sendCharacterItemAtPos(RIGHT_TOOL);
-                    }
-
-                    if (temphp != temppl->getAttribute(Character::hitpoints)) {
-                        makeGFXForAllPlayersInRange(temppl->pos.x, temppl->pos.y, temppl->pos.z, MAXVIEW, 13);
-                    }
-
-                    if (sound != 0) {
-                        makeSoundForAllPlayersInRange(temppl->pos.x, temppl->pos.y, temppl->pos.z, MAXVIEW, sound);
-                    }
-
-                    return true;
-                }
-            }
-        } else if (cp->enemytype == Character::npc && false) { // Disable NPC attacks
-#ifdef World_DEBUG
-            std::cout << "attack npc" << std::endl;
-#endif
-
-            NPC *temppl = Npc.findID(cp->enemyid);
-
-            // Ziel gefunden
-            if (temppl != NULL) {
-                if (cp->isInRange(temppl, MAXVIEW)) {
-                    int temphp=temppl->getAttribute(Character::hitpoints);
-
-                    // Ziel ist tot
-                    if (!cp->attack(temppl, sound, updateInv)) {
-                        cp->attackmode = false;
-
-                        if (cp->character == Character::player) {
-                            boost::shared_ptr<BasicServerCommand>cmd(new TargetLostTC());
-                            dynamic_cast<Player *>(cp)->Connection->addCommand(cmd);
-                        }
-                    }
-
-                    if ((cp->character == Character::player) && (updateInv)) {
-                        dynamic_cast<Player *>(cp)->sendCharacterItemAtPos(LEFT_TOOL);
-                        dynamic_cast<Player *>(cp)->sendCharacterItemAtPos(RIGHT_TOOL);
-                    }
-
-                    if (temphp != temppl->getAttribute(Character::hitpoints)) {
-                        makeGFXForAllPlayersInRange(temppl->pos.x, temppl->pos.y, temppl->pos.z, MAXVIEW, 13);
-                    }
-
-                    if (sound != 0) {
-                        makeSoundForAllPlayersInRange(temppl->pos.x, temppl->pos.y, temppl->pos.z, MAXVIEW, sound);
                     }
 
                     return true;

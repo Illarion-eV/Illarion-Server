@@ -97,11 +97,9 @@ public:
     /**
     * the monster is attacking another character starts a script entry
     * @param target the character which is attacked
-    * @param sound which should be played ( not neccessary here inherited from ccharacter)
-    * @param updateInv if the inventory should be updated ( not neccessary here inherited from ccharacter)
     * @return no usage at this time anything can be returned
     */
-    bool attack(Character *target, int &sound, bool &updateInv);
+    bool attack(Character *target);
 
     void heal();
 

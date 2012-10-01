@@ -1123,7 +1123,7 @@ void Character::SetAlive(bool t) {
 }
 
 
-bool Character::attack(Character *target, int &sound, bool &updateInv) {
+bool Character::attack(Character *target) {
 
     if (target != NULL && target->IsAlive()) {
 
@@ -1136,8 +1136,6 @@ bool Character::attack(Character *target, int &sound, bool &updateInv) {
 
                 callAttackScript(this, target);
             }
-
-            updateInv = true;
         }
 
         if (character == player) {

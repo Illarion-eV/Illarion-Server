@@ -164,7 +164,7 @@ void Monster::SetAlive(bool t) {
     }
 }
 
-bool Monster::attack(Character *target, int &sound, bool &updateInv) {
+bool Monster::attack(Character *target) {
 
     MonsterStruct monStruct;
 
@@ -178,7 +178,7 @@ bool Monster::attack(Character *target, int &sound, bool &updateInv) {
         std::cerr<<"Can't find Description for Monster: " << getType() << " onAttack not called!" << std::endl;
     }
 
-    return Character::attack(target,sound,updateInv);
+    return Character::attack(target);
 }
 
 void Monster::heal() {
