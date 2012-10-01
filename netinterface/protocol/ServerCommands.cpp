@@ -151,6 +151,7 @@ AppearanceTC::AppearanceTC(Character *cc) : BasicServerCommand(SC_APPEARANCE_TC)
     addIntToBuffer(cc->id);
     addShortIntToBuffer(cc->race);
     addUnsignedCharToBuffer(cc->getAttribute(Character::sex));
+    addShortIntToBuffer(cc->getAttribute(Character::hitpoints));
     addUnsignedCharToBuffer(RaceSizes->getRelativeSize(cc->race, cc->getAttribute(Character::height)));
     addUnsignedCharToBuffer(cc->hair);
     addUnsignedCharToBuffer(cc->beard);
