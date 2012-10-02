@@ -397,7 +397,7 @@ void LuaScript::init_base_functions() {
     luabind::module(_luaState)
     [
         luabind::class_<InputDialog>("InputDialog")
-        .def(luabind::constructor<std::string, bool, unsigned short, luabind::object>())
+        .def(luabind::constructor<std::string, std::string, bool, unsigned short, luabind::object>())
         .def("getSuccess", &InputDialog::getSuccess)
         .def("getInput", &InputDialog::getInput),
         luabind::class_<MessageDialog>("MessageDialog")

@@ -34,6 +34,7 @@ extern RaceSizeTable *RaceSizes;
 
 InputDialogTC::InputDialogTC(InputDialog &inputDialog, unsigned int dialogId) : BasicServerCommand(SC_INPUTDIALOG_TC) {
     addStringToBuffer(inputDialog.getTitle());
+    addStringToBuffer(inputDialog.getDescription());
     addUnsignedCharToBuffer(inputDialog.isMultiline() ? 1 : 0);
     addShortIntToBuffer(inputDialog.getMaxChars());
     addIntToBuffer(dialogId);

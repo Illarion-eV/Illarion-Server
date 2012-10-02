@@ -20,18 +20,23 @@
 
 #include "dialog/InputDialog.hpp"
 
-InputDialog::InputDialog(std::string title, bool multiline,
+InputDialog::InputDialog(std::string title, std::string description, bool multiline,
                          unsigned short maxChars, luabind::object callback)
-    :Dialog(title, "InputDialog", callback), multiline(multiline), maxChars(maxChars) {
+    :Dialog(title, "InputDialog", callback), description(description), multiline(multiline), maxChars(maxChars) {
     success = false;
     input = "";
 }
 
 InputDialog::InputDialog(const InputDialog &inputDialog) : Dialog(inputDialog) {
+    description = inputDialog.description;
     multiline = inputDialog.multiline;
     maxChars = inputDialog.maxChars;
     success = inputDialog.success;
     input = inputDialog.input;
+}
+
+std::string InputDialog::getDescription() const {
+    return description;
 }
 
 bool InputDialog::isMultiline() const {
