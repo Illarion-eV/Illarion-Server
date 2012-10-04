@@ -29,6 +29,7 @@
 #include "dialog/MessageDialog.hpp"
 #include "dialog/MerchantDialog.hpp"
 #include "dialog/SelectionDialog.hpp"
+#include "dialog/CraftingDialog.hpp"
 
 extern RaceSizeTable *RaceSizes;
 
@@ -88,6 +89,39 @@ SelectionDialogTC::SelectionDialogTC(SelectionDialog &selectionDialog, unsigned 
     for (auto it = selectionDialog.getOptionsBegin(); it != selectionDialog.getOptionsEnd(); ++it) {
         addShortIntToBuffer((*it)->getItem());
         addStringToBuffer((*it)->getName());
+    }
+
+    addIntToBuffer(dialogId);
+}
+
+CraftingDialogTC::CraftingDialogTC(CraftingDialog &craftingDialog, unsigned int dialogId) : BasicServerCommand(SC_CRAFTINGDIALOG_TC) {
+    addStringToBuffer(craftingDialog.getTitle());
+    CraftingDialog::index_t numberOfGroups = craftingDialog.getGroupsSize();
+    addUnsignedCharToBuffer(numberOfGroups);
+
+    for (auto it = craftingDialog.getGroupsBegin(); it != craftingDialog.getGroupsEnd(); ++it) {
+        addStringToBuffer(*it);
+    }
+
+    CraftingDialog::index_t numberOfCraftables = craftingDialog.getCraftablesSize();
+    addUnsignedCharToBuffer(numberOfCraftables);
+
+    for (auto it = craftingDialog.getCraftablesBegin(); it != craftingDialog.getCraftablesEnd(); ++it) {
+        Craftable &craftable = **it;
+        addUnsignedCharToBuffer(craftable.getGroup());
+        addShortIntToBuffer(craftable.getItem());
+        addStringToBuffer(craftable.getName());
+        addUnsignedCharToBuffer(craftable.getSecondsToCraft());
+        addUnsignedCharToBuffer(craftable.getCraftedStackSize());
+
+        Craftable::index_t numberOfIngredients = craftable.getIngredientsSize();
+        addUnsignedCharToBuffer(numberOfIngredients);
+
+        for (auto it2 = craftable.getIngredientsBegin(); it2 != craftable.getIngredientsEnd(); ++it2) {
+            Ingredient &ingredient = **it2;
+            addShortIntToBuffer(ingredient.getItem());
+            addUnsignedCharToBuffer(ingredient.getNumber());
+        }
     }
 
     addIntToBuffer(dialogId);

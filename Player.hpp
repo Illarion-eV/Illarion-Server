@@ -40,6 +40,7 @@
 #include "boost/unordered_map.hpp"
 #include "dialog/MerchantDialog.hpp"
 #include "dialog/SelectionDialog.hpp"
+#include "dialog/CraftingDialog.hpp"
 
 class World;
 class LuaScript;
@@ -558,6 +559,8 @@ public:
 
     virtual void requestSelectionDialog(SelectionDialog *selectionDialog);
     void executeSelectionDialog(unsigned int dialogId, bool success, SelectionDialog::index_type index);
+
+    virtual void requestCraftingDialog(CraftingDialog *craftingDialog);
 
 protected:
 

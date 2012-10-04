@@ -30,6 +30,7 @@ class InputDialog;
 class MessageDialog;
 class MerchantDialog;
 class SelectionDialog;
+class CraftingDialog;
 
 /**
 * thrown if a creature can't be set due to space problems
@@ -1506,6 +1507,7 @@ public:
     virtual void requestMessageDialog(MessageDialog *messageDialog);
     virtual void requestMerchantDialog(MerchantDialog *merchantDialog);
     virtual void requestSelectionDialog(SelectionDialog *selectionDialog);
+    virtual void requestCraftingDialog(CraftingDialog *craftingDIalog);
 
     //===========================================In attack.cc==================================================
 

@@ -53,6 +53,7 @@ extern "C" {
 #include "dialog/MessageDialog.hpp"
 #include "dialog/MerchantDialog.hpp"
 #include "dialog/SelectionDialog.hpp"
+#include "dialog/CraftingDialog.hpp"
 #include <cxxabi.h>
 
 extern ScriptVariablesTable *scriptVariables;
@@ -423,6 +424,16 @@ void LuaScript::init_base_functions() {
         .def("addOption", &SelectionDialog::addOption)
         .def("getSuccess", &SelectionDialog::getSuccess)
         .def("getSelectedIndex", &SelectionDialog::getSelectedIndex),
+        luabind::class_<CraftingDialog>("CraftingDialog")
+        .def(luabind::constructor<std::string, luabind::object>())
+        .def("addGroup", &CraftingDialog::addGroup)
+        .def("addCraftable", (void(CraftingDialog:: *)(uint8_t, TYPE_OF_ITEM_ID, std::string, uint8_t))&CraftingDialog::addCraftable)
+        .def("addCraftable", (void(CraftingDialog:: *)(uint8_t, TYPE_OF_ITEM_ID, std::string, uint8_t, uint8_t))&CraftingDialog::addCraftable)
+        .def("addCraftableIngredient", (void(CraftingDialog:: *)(TYPE_OF_ITEM_ID))&CraftingDialog::addCraftableIngredient)
+        .def("addCraftableIngredient", (void(CraftingDialog:: *)(TYPE_OF_ITEM_ID, uint8_t))&CraftingDialog::addCraftableIngredient)
+        .def("getResult", &CraftingDialog::getResult)
+        .def("getCraftableIndex", &CraftingDialog::getCraftableIndex)
+        .def("getCraftableAmount", &CraftingDialog::getCraftableAmount),
         luabind::class_<LongTimeAction>("Action")
         .enum_("state")
         [
@@ -455,6 +466,7 @@ void LuaScript::init_base_functions() {
         .def("requestMessageDialog", &Character::requestMessageDialog, luabind::adopt(_2))
         .def("requestMerchantDialog", &Character::requestMerchantDialog, luabind::adopt(_2))
         .def("requestSelectionDialog", &Character::requestSelectionDialog, luabind::adopt(_2))
+        .def("requestCraftingDialog", &Character::requestCraftingDialog, luabind::adopt(_2))
         .def("idleTime", &Character::idleTime)
         .def("sendBook", &Character::sendBook)
         .def("updateAppearance", &Character::forceUpdateAppearanceForAll)

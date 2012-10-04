@@ -2652,3 +2652,7 @@ void Player::executeSelectionDialog(unsigned int dialogId, bool success, Selecti
     dialogs.erase(dialogId);
 }
 
+void Player::requestCraftingDialog(CraftingDialog *craftingDialog) {
+    requestDialog<CraftingDialog, CraftingDialogTC>(craftingDialog);
+}
+
