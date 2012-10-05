@@ -67,7 +67,7 @@ NPC::NPC(TYPE_OF_CHARACTER_ID _id, std::string _name, Character::race_type _race
 
     _world->sendCharacterMoveToAllVisiblePlayers(this,NORMALMOVE,4);
 
-    SetAlive(true);
+    setAttribute(Character::hitpoints, MAXHPS);
 
 #ifdef Character_DEBUG
     cout << "NPC Konstruktor Ende" << endl;
