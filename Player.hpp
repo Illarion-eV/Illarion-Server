@@ -561,6 +561,10 @@ public:
     void executeSelectionDialog(unsigned int dialogId, bool success, SelectionDialog::index_type index);
 
     virtual void requestCraftingDialog(CraftingDialog *craftingDialog);
+    void executeCraftingDialogAbort(unsigned int dialogId);
+    void executeCraftingDialogCraft(unsigned int dialogId, uint8_t craftIndex, uint8_t craftAmount);
+    void executeCraftingDialogLookAtCraftable(unsigned int dialogId, uint8_t craftIndex);
+    void executeCraftingDialogLookAtIngredient(unsigned int dialogId, uint8_t craftIndex, uint8_t craftIngredient);
 
 protected:
 

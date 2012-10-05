@@ -52,26 +52,25 @@ class Craftable {
 public:
     typedef uint8_t index_t;
     typedef vector<Ingredient *> ingredients_t;
-
+    
 private:
     static const uint32_t MAXINGREDIENTS = 256;
     uint8_t group;
     TYPE_OF_ITEM_ID item;
     string name;
     ingredients_t ingredients;
-    uint8_t secondsToCraft;
+    uint16_t decisecondsToCraft;
     uint8_t craftedStackSize;
 
 public:
-    Craftable(uint8_t group, TYPE_OF_ITEM_ID item, string name, uint8_t secondsToCraft): item(item), name(name), secondsToCraft(secondsToCraft), craftedStackSize(1) {};
-    Craftable(uint8_t group, TYPE_OF_ITEM_ID item, string name, uint8_t secondsToCraft, uint8_t craftedStackSize): item(item), name(name), secondsToCraft(secondsToCraft), craftedStackSize(craftedStackSize) {};
+    Craftable(uint8_t group, TYPE_OF_ITEM_ID item, string name, uint16_t decisecondsToCraft): item(item), name(name), decisecondsToCraft(decisecondsToCraft), craftedStackSize(1) {};
+    Craftable(uint8_t group, TYPE_OF_ITEM_ID item, string name, uint16_t decisecondsToCraft, uint8_t craftedStackSize): item(item), name(name), decisecondsToCraft(decisecondsToCraft), craftedStackSize(craftedStackSize) {};
     Craftable(const Craftable &craftable) {
         group = craftable.group;
         item = craftable.item;
         name = craftable.name;
-        secondsToCraft = craftable.secondsToCraft;
+        decisecondsToCraft = craftable.decisecondsToCraft;
         craftedStackSize = craftable.craftedStackSize;
-
         for (auto it = craftable.getIngredientsBegin(); it != craftable.getIngredientsEnd(); ++it) {
             Ingredient &ingredient = **it;
             addIngredient(ingredient.getItem(), ingredient.getNumber());
@@ -92,21 +91,17 @@ public:
     string &getName() {
         return name;
     };
-    uint8_t getSecondsToCraft() {
-        return secondsToCraft;
+    uint16_t getDecisecondsToCraft() {
+        return decisecondsToCraft;
     };
     uint8_t getCraftedStackSize() {
         return craftedStackSize;
     };
     void addIngredient(TYPE_OF_ITEM_ID item) {
-        if (ingredients.size() < MAXINGREDIENTS) {
-            ingredients.push_back(new Ingredient(item));
-        }
+        if (ingredients.size() < MAXINGREDIENTS) ingredients.push_back(new Ingredient(item));
     };
     void addIngredient(TYPE_OF_ITEM_ID item, uint8_t number) {
-        if (ingredients.size() < MAXINGREDIENTS) {
-            ingredients.push_back(new Ingredient(item, number));
-        }
+        if (ingredients.size() < MAXINGREDIENTS) ingredients.push_back(new Ingredient(item, number));
     };
     index_t getIngredientsSize() {
         return ingredients.size();
@@ -155,8 +150,8 @@ public:
     index_t getCraftablesSize() const;
     craftables_t::const_iterator getCraftablesBegin() const;
     craftables_t::const_iterator getCraftablesEnd() const;
-    void addCraftable(uint8_t group, TYPE_OF_ITEM_ID item, string name, uint8_t secondsToCraft);
-    void addCraftable(uint8_t group, TYPE_OF_ITEM_ID item, string name, uint8_t secondsToCraft, uint8_t craftedStackSize);
+    void addCraftable(uint8_t group, TYPE_OF_ITEM_ID item, string name, uint16_t decisecondsToCraft);
+    void addCraftable(uint8_t group, TYPE_OF_ITEM_ID item, string name, uint16_t decisecondsToCraft, uint8_t craftedStackSize);
     void addCraftableIngredient(TYPE_OF_ITEM_ID item);
     void addCraftableIngredient(TYPE_OF_ITEM_ID item, uint8_t number);
 

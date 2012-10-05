@@ -88,7 +88,8 @@ enum clientcommands {
     C_INPUTDIALOG_TS = 0x50,
     C_MESSAGEDIALOG_TS = 0x51,
     C_MERCHANTDIALOG_TS = 0x52,
-    C_SELECTIONDIALOG_TS = 0x53
+    C_SELECTIONDIALOG_TS = 0x53,
+    C_CRAFTINGDIALOG_TS = 0x54
 };
 
 /**
@@ -275,6 +276,64 @@ public:
 
     boost::shared_ptr<BasicClientCommand> clone() {
         boost::shared_ptr<BasicClientCommand>cmd(new SelectionDialogTS());
+        return cmd;
+    }
+};
+
+class CraftingDialogTS : public BasicClientCommand {
+private:
+    unsigned int dialogId;
+    uint8_t result;
+    uint8_t craftIndex;
+    uint8_t craftAmount;
+    uint8_t craftIngredient;
+
+public:
+    CraftingDialogTS() : BasicClientCommand(C_CRAFTINGDIALOG_TS) {
+    }
+
+    virtual ~CraftingDialogTS() {};
+
+    virtual void decodeData() {
+        dialogId = getIntFromBuffer();
+        result = getUnsignedCharFromBuffer();
+        switch (result) {
+        case 0:
+            break;
+        case 1:
+            craftIndex = getUnsignedCharFromBuffer();
+            craftAmount = getUnsignedCharFromBuffer();
+            break;
+        case 2:
+            craftIndex = getUnsignedCharFromBuffer();
+            break;
+        case 3:
+            craftIndex = getUnsignedCharFromBuffer();
+            craftIngredient = getUnsignedCharFromBuffer();
+            break;
+        }
+    }
+
+    void performAction(Player *player) {
+        time(&(player->lastaction));
+        switch (result) {
+        case 0:
+            player->executeCraftingDialogAbort(dialogId);
+            break;
+        case 1:
+            player->executeCraftingDialogCraft(dialogId, craftIndex, craftAmount);
+            break;
+        case 2:
+            player->executeCraftingDialogLookAtCraftable(dialogId, craftIndex);
+            break;
+        case 3:
+            player->executeCraftingDialogLookAtIngredient(dialogId, craftIndex, craftIngredient);
+            break;
+        }
+    }
+
+    boost::shared_ptr<BasicClientCommand> clone() {
+        boost::shared_ptr<BasicClientCommand>cmd(new CraftingDialogTS());
         return cmd;
     }
 };

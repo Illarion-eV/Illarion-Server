@@ -27,6 +27,7 @@ CommandFactory::CommandFactory() {
     templateList[ C_INPUTDIALOG_TS ] = new InputDialogTS();
     templateList[ C_MERCHANTDIALOG_TS ] = new MerchantDialogTS();
     templateList[ C_SELECTIONDIALOG_TS ] = new SelectionDialogTS();
+    templateList[ C_CRAFTINGDIALOG_TS ] = new CraftingDialogTS();
     templateList[ C_LOGIN_TS ] = new LoginCommandTS();
     templateList[ C_SCREENSIZE_TS ] = new ScreenSizeCommandTS();
     templateList[ C_LOOKATMAPITEM_TS ] = new LookAtMapItemTS();

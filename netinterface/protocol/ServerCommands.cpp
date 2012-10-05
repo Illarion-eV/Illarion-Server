@@ -111,7 +111,7 @@ CraftingDialogTC::CraftingDialogTC(CraftingDialog &craftingDialog, unsigned int 
         addUnsignedCharToBuffer(craftable.getGroup());
         addShortIntToBuffer(craftable.getItem());
         addStringToBuffer(craftable.getName());
-        addUnsignedCharToBuffer(craftable.getSecondsToCraft());
+        addShortIntToBuffer(craftable.getDecisecondsToCraft());
         addUnsignedCharToBuffer(craftable.getCraftedStackSize());
 
         Craftable::index_t numberOfIngredients = craftable.getIngredientsSize();

@@ -2656,3 +2656,19 @@ void Player::requestCraftingDialog(CraftingDialog *craftingDialog) {
     requestDialog<CraftingDialog, CraftingDialogTC>(craftingDialog);
 }
 
+void Player::executeCraftingDialogAbort(unsigned int dialogId) {
+
+}
+
+void Player::executeCraftingDialogCraft(unsigned int dialogId, uint8_t craftIndex, uint8_t craftAmount) {
+
+}
+
+void Player::executeCraftingDialogLookAtCraftable(unsigned int dialogId, uint8_t craftIndex) {
+
+}
+
+void Player::executeCraftingDialogLookAtIngredient(unsigned int dialogId, uint8_t craftIndex, uint8_t craftIngredient) {
+
+}
+

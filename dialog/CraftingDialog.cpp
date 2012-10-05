@@ -74,15 +74,15 @@ CraftingDialog::craftables_t::const_iterator CraftingDialog::getCraftablesEnd() 
     return craftables.cend();
 }
 
-void CraftingDialog::addCraftable(uint8_t group, TYPE_OF_ITEM_ID item, string name, uint8_t secondsToCraft) {
+void CraftingDialog::addCraftable(uint8_t group, TYPE_OF_ITEM_ID item, string name, uint16_t decisecondsToCraft) {
     if (canAddCraftable(group)) {
-        craftables.push_back(new Craftable(group, item, name, secondsToCraft));
+        craftables.push_back(new Craftable(group, item, name, decisecondsToCraft));
     }
 }
 
-void CraftingDialog::addCraftable(uint8_t group, TYPE_OF_ITEM_ID item, string name, uint8_t secondsToCraft, uint8_t craftedStackSize) {
+void CraftingDialog::addCraftable(uint8_t group, TYPE_OF_ITEM_ID item, string name, uint16_t decisecondsToCraft, uint8_t craftedStackSize) {
     if (canAddCraftable(group)) {
-        craftables.push_back(new Craftable(group, item, name, secondsToCraft, craftedStackSize));
+        craftables.push_back(new Craftable(group, item, name, decisecondsToCraft, craftedStackSize));
     }
 }
 
