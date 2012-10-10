@@ -62,6 +62,7 @@ enum ServerCommands {
     SC_LOOKATTILE_TC = 0xBC,
     SC_LOOKATSHOWCASEITEM_TC = 0xBF,
     SC_LOOKATINVENTORYITEM_TC = 0xBE,
+    SC_LOOKATDIALOGITEM_TC = 0xB5,
     SC_ATTACKACKNOWLEDGED_TC = 0xBB,
     SC_TARGETLOST_TC = 0xBA,
     SC_LOGOUT_TC = 0xCC,
@@ -175,6 +176,16 @@ public:
 class LookAtMapItemTC : public BasicServerCommand {
 public:
     LookAtMapItemTC(short int x, short int y, short int z, const ItemLookAt &lookAt);
+};
+
+class LookAtDialogItemTC : public BasicServerCommand {
+public:
+    LookAtDialogItemTC(unsigned int dialogId, uint8_t itemIndex, const ItemLookAt &lookAt);
+};
+
+class LookAtCraftingDialogIngredientTC : public BasicServerCommand {
+public:
+    LookAtCraftingDialogIngredientTC(unsigned int dialogId, uint8_t itemIndex, uint8_t ingredientIndex, const ItemLookAt &lookAt);
 };
 
 class LookAtTileTC : public BasicServerCommand {

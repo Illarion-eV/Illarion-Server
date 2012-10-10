@@ -1508,6 +1508,8 @@ public:
     virtual void requestMerchantDialog(MerchantDialog *merchantDialog);
     virtual void requestSelectionDialog(SelectionDialog *selectionDialog);
     virtual void requestCraftingDialog(CraftingDialog *craftingDIalog);
+    virtual void requestCraftingLookAt(unsigned int dialogId, ItemLookAt &lookAt);
+    virtual void requestCraftingLookAtIngredient(unsigned int dialogId, ItemLookAt &lookAt);
 
     //===========================================In attack.cc==================================================
 

@@ -136,6 +136,7 @@ private:
 
     index_t craftableIndex;
     Item::number_type craftableAmount;
+    index_t ingredientIndex;
 
 public:
     CraftingDialog(string title, luabind::object callback);
@@ -162,6 +163,8 @@ public:
     void setCraftableIndex(index_t index);
     Item::number_type getCraftableAmount() const;
     void setCraftableAmount(Item::number_type amount);
+    index_t getIngredientIndex() const;
+    void setIngredientIndex(index_t index);
 
 private:
     bool canAddCraftable(uint8_t group);

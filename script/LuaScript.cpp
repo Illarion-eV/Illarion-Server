@@ -425,6 +425,13 @@ void LuaScript::init_base_functions() {
         .def("getSuccess", &SelectionDialog::getSuccess)
         .def("getSelectedIndex", &SelectionDialog::getSelectedIndex),
         luabind::class_<CraftingDialog>("CraftingDialog")
+        .enum_("Result")
+        [
+            luabind::value("playerAborts",0),
+            luabind::value("playerCrafts",1),
+            luabind::value("playerLooksAtItem",2),
+            luabind::value("playerLooksAtIngredient",3)
+        ]
         .def(luabind::constructor<std::string, luabind::object>())
         .def("addGroup", &CraftingDialog::addGroup)
         .def("addCraftable", (void(CraftingDialog:: *)(uint8_t, TYPE_OF_ITEM_ID, std::string, uint16_t))&CraftingDialog::addCraftable)
@@ -433,7 +440,8 @@ void LuaScript::init_base_functions() {
         .def("addCraftableIngredient", (void(CraftingDialog:: *)(TYPE_OF_ITEM_ID, uint8_t))&CraftingDialog::addCraftableIngredient)
         .def("getResult", &CraftingDialog::getResult)
         .def("getCraftableIndex", &CraftingDialog::getCraftableIndex)
-        .def("getCraftableAmount", &CraftingDialog::getCraftableAmount),
+        .def("getCraftableAmount", &CraftingDialog::getCraftableAmount)
+        .def("getIngredientIndex", &CraftingDialog::getIngredientIndex),
         luabind::class_<LongTimeAction>("Action")
         .enum_("state")
         [
@@ -467,6 +475,8 @@ void LuaScript::init_base_functions() {
         .def("requestMerchantDialog", &Character::requestMerchantDialog, luabind::adopt(_2))
         .def("requestSelectionDialog", &Character::requestSelectionDialog, luabind::adopt(_2))
         .def("requestCraftingDialog", &Character::requestCraftingDialog, luabind::adopt(_2))
+        .def("requestCraftingLookAt", &Character::requestCraftingLookAt)
+        .def("requestCraftingLookAtIngredient", &Character::requestCraftingLookAtIngredient)
         .def("idleTime", &Character::idleTime)
         .def("sendBook", &Character::sendBook)
         .def("updateAppearance", &Character::forceUpdateAppearanceForAll)

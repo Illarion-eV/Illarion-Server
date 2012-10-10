@@ -275,6 +275,21 @@ LookAtMapItemTC::LookAtMapItemTC(short int x, short int y, short int z, const It
     addItemLookAt(this, lookAt);
 }
 
+LookAtDialogItemTC::LookAtDialogItemTC(unsigned int dialogId, uint8_t itemIndex, const ItemLookAt &lookAt) : BasicServerCommand(SC_LOOKATDIALOGITEM_TC) {
+    addIntToBuffer(dialogId);
+    addUnsignedCharToBuffer(0);
+    addUnsignedCharToBuffer(itemIndex);
+    addItemLookAt(this, lookAt);
+}
+
+LookAtCraftingDialogIngredientTC::LookAtCraftingDialogIngredientTC(unsigned int dialogId, uint8_t itemIndex, uint8_t ingredientIndex, const ItemLookAt &lookAt) : BasicServerCommand(SC_LOOKATDIALOGITEM_TC) {
+    addIntToBuffer(dialogId);
+    addUnsignedCharToBuffer(1);
+    addUnsignedCharToBuffer(itemIndex);
+    addUnsignedCharToBuffer(ingredientIndex);
+    addItemLookAt(this, lookAt);
+}
+
 LookAtTileTC::LookAtTileTC(short int x, short int y, short int z, const std::string &lookAt) : BasicServerCommand(SC_LOOKATTILE_TC) {
     addShortIntToBuffer(x);
     addShortIntToBuffer(y);

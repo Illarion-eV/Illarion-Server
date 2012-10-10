@@ -2657,18 +2657,58 @@ void Player::requestCraftingDialog(CraftingDialog *craftingDialog) {
 }
 
 void Player::executeCraftingDialogAbort(unsigned int dialogId) {
+    CraftingDialog *craftingDialog = (CraftingDialog *)dialogs[dialogId];
 
+    if (craftingDialog != 0) {
+        craftingDialog->setResult(CraftingDialog::playerAborts);
+        LuaScript::executeDialogCallback(*craftingDialog);
+    }
+
+    delete craftingDialog;
+    dialogs.erase(dialogId);
 }
 
 void Player::executeCraftingDialogCraft(unsigned int dialogId, uint8_t craftIndex, uint8_t craftAmount) {
+    CraftingDialog *craftingDialog = (CraftingDialog *)dialogs[dialogId];
 
+    if (craftingDialog != 0) {
+        craftingDialog->setResult(CraftingDialog::playerCrafts);
+        craftingDialog->setCraftableIndex(craftIndex);
+        craftingDialog->setCraftableAmount(craftAmount);
+        LuaScript::executeDialogCallback(*craftingDialog);
+    }
 }
 
 void Player::executeCraftingDialogLookAtCraftable(unsigned int dialogId, uint8_t craftIndex) {
+    CraftingDialog *craftingDialog = (CraftingDialog *)dialogs[dialogId];
 
+    if (craftingDialog != 0) {
+        craftingDialog->setResult(CraftingDialog::playerLooksAtCraftable);
+        craftingDialog->setCraftableIndex(craftIndex);
+        LuaScript::executeDialogCallback(*craftingDialog);
+    }
 }
 
 void Player::executeCraftingDialogLookAtIngredient(unsigned int dialogId, uint8_t craftIndex, uint8_t craftIngredient) {
+    CraftingDialog *craftingDialog = (CraftingDialog *)dialogs[dialogId];
 
+    if (craftingDialog != 0) {
+        craftingDialog->setResult(CraftingDialog::playerLooksAtIngredient);
+        craftingDialog->setCraftableIndex(craftIndex);
+        craftingDialog->setIngredientIndex(craftIngredient);
+        LuaScript::executeDialogCallback(*craftingDialog);
+    }
+}
+
+void Player::requestCraftingLookAt(unsigned int dialogId, ItemLookAt &lookAt) {
+    CraftingDialog *craftingDialog = (CraftingDialog *)dialogs[dialogId];
+    boost::shared_ptr<BasicServerCommand> cmd(new LookAtDialogItemTC(dialogId, craftingDialog->getCraftableIndex(), lookAt));
+    Connection->addCommand(cmd);
+}
+
+void Player::requestCraftingLookAtIngredient(unsigned int dialogId, ItemLookAt &lookAt) {
+    CraftingDialog *craftingDialog = (CraftingDialog *)dialogs[dialogId];
+    boost::shared_ptr<BasicServerCommand> cmd(new LookAtCraftingDialogIngredientTC(dialogId, craftingDialog->getCraftableIndex(), craftingDialog->getIngredientIndex(), lookAt));
+    Connection->addCommand(cmd);
 }
 

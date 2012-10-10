@@ -565,6 +565,8 @@ public:
     void executeCraftingDialogCraft(unsigned int dialogId, uint8_t craftIndex, uint8_t craftAmount);
     void executeCraftingDialogLookAtCraftable(unsigned int dialogId, uint8_t craftIndex);
     void executeCraftingDialogLookAtIngredient(unsigned int dialogId, uint8_t craftIndex, uint8_t craftIngredient);
+    virtual void requestCraftingLookAt(unsigned int dialogId, ItemLookAt &lookAt);
+    virtual void requestCraftingLookAtIngredient(unsigned int dialogId, ItemLookAt &lookAt);
 
 protected:
 

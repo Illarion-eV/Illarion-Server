@@ -2420,6 +2420,14 @@ void Character::requestCraftingDialog(CraftingDialog *craftingDialog) {
     // Nothing to do here, overloaded in Player
 }
 
+void Character::requestCraftingLookAt(unsigned int dialogId, ItemLookAt &lookAt) {
+    // Nothing to do here, overloaded in Player
+}
+
+void Character::requestCraftingLookAtIngredient(unsigned int dialogId, ItemLookAt &lookAt) {
+    // Nothing to do here, overloaded in Player
+}
+
 void Character::updateAppearanceForPlayer(Player *target, bool always) {
     if (!isinvisible) {
         boost::shared_ptr<BasicServerCommand> cmd(new AppearanceTC(this));

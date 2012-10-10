@@ -122,6 +122,14 @@ void CraftingDialog::setCraftableAmount(Item::number_type amount) {
     this->craftableAmount = amount;
 }
 
+CraftingDialog::index_t CraftingDialog::getIngredientIndex() const {
+    return ingredientIndex;
+}
+
+void CraftingDialog::setIngredientIndex(CraftingDialog::index_t index) {
+    ingredientIndex = index;
+}
+
 bool CraftingDialog::canAddCraftable(uint8_t group) {
     return (groups.size()-1 >= group) && (craftables.size() < MAXCRAFTABLES);
 }
