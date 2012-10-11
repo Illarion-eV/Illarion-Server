@@ -2685,7 +2685,8 @@ void Player::executeCraftingDialogLookAtCraftable(unsigned int dialogId, uint8_t
     if (craftingDialog != 0) {
         craftingDialog->setResult(CraftingDialog::playerLooksAtCraftable);
         craftingDialog->setCraftableIndex(craftIndex);
-        LuaScript::executeDialogCallback(*craftingDialog);
+        ItemLookAt lookAt = LuaScript::executeDialogCallback<ItemLookAt>(*craftingDialog);
+        requestCraftingLookAt(dialogId, lookAt);
     }
 }
 
@@ -2696,7 +2697,8 @@ void Player::executeCraftingDialogLookAtIngredient(unsigned int dialogId, uint8_
         craftingDialog->setResult(CraftingDialog::playerLooksAtIngredient);
         craftingDialog->setCraftableIndex(craftIndex);
         craftingDialog->setIngredientIndex(craftIngredient);
-        LuaScript::executeDialogCallback(*craftingDialog);
+        ItemLookAt lookAt = LuaScript::executeDialogCallback<ItemLookAt>(*craftingDialog);
+        requestCraftingLookAtIngredient(dialogId, lookAt);
     }
 }
 

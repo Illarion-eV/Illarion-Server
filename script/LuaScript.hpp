@@ -32,6 +32,7 @@ extern "C" {
 #include <luabind/object.hpp>
 #include "fuse_ptr.hpp"
 #include <map>
+#include <cxxabi.h>
 
 class Character;
 class World;
@@ -105,6 +106,33 @@ public:
             lua_pop(L, 1);
             Logger::writeError("scripts", err);
         }
+    }
+
+    template<typename U, typename T>
+    static U executeDialogCallback(T &dialog) {
+        luabind::object callback = dialog.getCallback();
+
+        if (luabind::type(callback) != LUA_TFUNCTION) {
+            return U();
+        }
+
+        try {
+            return luabind::object_cast<U>(callback(dialog));
+        } catch (luabind::cast_failed &e) {
+            char *expectedType = abi::__cxa_demangle(e.info().name(), 0, 0, 0);
+            std::string err = "Invalid return type in " + dialog.getClassName() + " callback:\n";
+            err += "Expected type " + std::string(expectedType) + "\n";
+            free(expectedType);
+            Logger::writeError("scripts", err);
+        } catch (luabind::error &e) {
+            lua_State *L = e.state();
+            std::string err = "Exception in " + dialog.getClassName() + " callback";
+            err += ": " + std::string(lua_tostring(L, -1));
+            lua_pop(L, 1);
+            Logger::writeError("scripts", err);
+        }
+
+        return U();
     }
 
     static void triggerScriptError(const std::string &msg) throw(luabind::error);
