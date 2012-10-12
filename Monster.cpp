@@ -54,7 +54,7 @@ void Monster::performStep(position targetpos) {
         move(dir);
         std::cout << "performStep here! pass 1" << std::endl;
     } else {
-        dir = static_cast<Character::direction>(unsignedShortRandom(0, 7));
+        dir = static_cast<Character::direction>(Random::uniform(0, 7));
         move(dir);
     }
 }
@@ -70,21 +70,21 @@ void Monster::setType(const TYPE_OF_CHARACTER_ID &type) throw(unknownIDException
     }
 
     // set attributes
-    setAttribute(Character::luck, rnd(monsterdef.attributes.luck));
-    setAttribute(Character::strength, rnd(monsterdef.attributes.strength));
-    setAttribute(Character::dexterity, rnd(monsterdef.attributes.dexterity));
-    setAttribute(Character::constitution, rnd(monsterdef.attributes.constitution));
-    setAttribute(Character::agility, rnd(monsterdef.attributes.agility));
-    setAttribute(Character::intelligence, rnd(monsterdef.attributes.intelligence));
-    setAttribute(Character::perception, rnd(monsterdef.attributes.perception));
-    setAttribute(Character::willpower, rnd(monsterdef.attributes.willpower));
-    setAttribute(Character::essence, rnd(monsterdef.attributes.essence));
-    setAttribute(Character::hitpoints, monsterdef.hitpoints); //Setzen der Hitpoints
-    setAttribute(Character::height, rand()%(monsterdef.maxsize-monsterdef.minsize+1) + monsterdef.minsize);
+    setAttribute(Character::luck, Random::uniform(monsterdef.attributes.luck.first, monsterdef.attributes.luck.second));
+    setAttribute(Character::strength, Random::uniform(monsterdef.attributes.strength.first, monsterdef.attributes.strength.second));
+    setAttribute(Character::dexterity, Random::uniform(monsterdef.attributes.dexterity.first, monsterdef.attributes.dexterity.second));
+    setAttribute(Character::constitution, Random::uniform(monsterdef.attributes.constitution.first, monsterdef.attributes.constitution.second));
+    setAttribute(Character::agility, Random::uniform(monsterdef.attributes.agility.first, monsterdef.attributes.agility.second));
+    setAttribute(Character::intelligence, Random::uniform(monsterdef.attributes.intelligence.first, monsterdef.attributes.intelligence.second));
+    setAttribute(Character::perception, Random::uniform(monsterdef.attributes.perception.first, monsterdef.attributes.perception.second));
+    setAttribute(Character::willpower, Random::uniform(monsterdef.attributes.willpower.first, monsterdef.attributes.willpower.second));
+    setAttribute(Character::essence, Random::uniform(monsterdef.attributes.essence.first, monsterdef.attributes.essence.second));
+    setAttribute(Character::hitpoints, monsterdef.hitpoints);
+    setAttribute(Character::height, Random::uniform(monsterdef.minsize, monsterdef.maxsize));
 
     // set skills
     for (auto it = monsterdef.skills.begin(); it != monsterdef.skills.end(); ++it) {
-        increaseSkill(5, it->first, rnd(it->second));
+        increaseSkill(5, it->first, Random::uniform(it->second.first, it->second.second));
     }
 
     // add items
@@ -101,13 +101,13 @@ void Monster::setType(const TYPE_OF_CHARACTER_ID &type) throw(unknownIDException
             if (numberOfPossibleItems == 1) {
                 selectedItemIndex = 0;
             } else {
-                selectedItemIndex = rnd(0, numberOfPossibleItems - 1);
+                selectedItemIndex = Random::uniform(0, numberOfPossibleItems - 1);
             }
 
             auto &selectedItem = possibleItems[selectedItemIndex];
 
             characterItems[inventorySlot].setId(selectedItem.itemid);
-            characterItems[inventorySlot].setNumber(rnd(selectedItem.amount));
+            characterItems[inventorySlot].setNumber(Random::uniform(selectedItem.amount.first, selectedItem.amount.second));
             characterItems[inventorySlot].setWear(selectedItem.AgeingSpeed);
         }
     }

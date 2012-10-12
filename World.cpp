@@ -888,7 +888,7 @@ void World::checkMonsters() {
 
                         if (makeRandomStep) {
                             // No player in range or pig/sheep OR we didn't find anything in getTarget...
-                            int tempr=unsignedShortRandom(1, 25);
+                            int tempr = Random::uniform(1, 25);
 
                             if (tempr <= 5) {
                                 MonsterStruct monsterdef;
@@ -904,7 +904,7 @@ void World::checkMonsters() {
                             } else {
                                 SpawnPoint *spawn = (*monsterIterator)->getSpawn();
 
-                                Character::direction dir = (Character::direction)unsignedShortRandom(0,7);
+                                Character::direction dir = (Character::direction)Random::uniform(0,7);
 
                                 if (spawn) {
                                     int yoffs = (*monsterIterator)->pos.y - spawn->get_y();

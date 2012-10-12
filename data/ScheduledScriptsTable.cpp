@@ -55,7 +55,7 @@ bool ScheduledScriptsTable::nextCycle() {
 
             if (data.scriptptr) {
                 /**calculate the next time where the script is invoked */
-                data.nextCycleTime = currentCycle + rnd(data.minCycleTime,data.maxCycleTime);
+                data.nextCycleTime = currentCycle + Random::uniform(data.minCycleTime, data.maxCycleTime);
 
                 /**call the script function */
                 data.scriptptr->callFunction(data.functionName,currentCycle,data.lastCycleTime,data.nextCycleTime);
@@ -77,7 +77,7 @@ bool ScheduledScriptsTable::addData(ScriptData data) {
     bool inserted = false;
 
     if (data.nextCycleTime <= currentCycle) {
-        data.nextCycleTime = currentCycle + rnd(data.minCycleTime, data.maxCycleTime);
+        data.nextCycleTime = currentCycle + Random::uniform(data.minCycleTime, data.maxCycleTime);
     }
 
     for (it = m_table.begin(); it != m_table.end(); ++it) {

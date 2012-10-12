@@ -41,7 +41,7 @@ template< typename To, typename From> To stream_convert(const From &from) {
 
 //! Creates a new SpawnPoint at <pos>
 SpawnPoint::SpawnPoint(const position &pos, int Range, uint16_t Spawnrange, uint16_t Min_Spawntime, uint16_t Max_Spawntime, bool Spawnall) : world(World::get()), spawnpos(pos), range(Range), spawnrange(Spawnrange), min_spawntime(Min_Spawntime), max_spawntime(Max_Spawntime), spawnall(Spawnall) {
-    nextspawntime = min_spawntime + rnd(0,max_spawntime-min_spawntime);
+    nextspawntime = Random::uniform(min_spawntime, max_spawntime);
     Logger::writeMessage("Spawn","SpawnPoint Konstruktor.");
 }
 
@@ -73,7 +73,7 @@ void SpawnPoint::spawn() {
     //std::cout<<"Spawntime for Spawn at pos x="<<spawnpos.x<<" y="<<spawnpos.y<<" z="<<spawnpos.z<<"Spawntime: "<<nextspawntime<<std::endl;
     if (nextspawntime <= 0) {
         //set new spawntime
-        nextspawntime = min_spawntime + rnd(0,max_spawntime-min_spawntime);
+        nextspawntime = Random::uniform(min_spawntime, max_spawntime);
 
         //std::cout<<"time to spawn new monster: new spawntime = "<<nextspawntime<<std::endl;
         // do we want monsters to spawn?
@@ -95,14 +95,14 @@ void SpawnPoint::spawn() {
                 try {
                     // spawn some new baddies :)
                     if (!spawnall) {
-                        num = rnd(1, num);
+                        num = Random::uniform(1, num);
                     }
 
                     for (int i = 0; i < num; ++i) {
                         position tempPos;
                         //set the new spawnpos in the range of the spawnrange around the spawnpoint
-                        tempPos.x = (spawnpos.x - spawnrange) + (rnd(0,(2 * spawnrange)));
-                        tempPos.y = (spawnpos.y - spawnrange) + (rnd(0,(2 * spawnrange)));
+                        tempPos.x = (spawnpos.x - spawnrange) + Random::uniform(0, 2 * spawnrange);
+                        tempPos.y = (spawnpos.y - spawnrange) + Random::uniform(0, 2 * spawnrange);
                         tempPos.z = spawnpos.z;
 
                         //std::cout<<"spawned new monster at pos: "<<tempPos.x<<" "<<tempPos.y<<" "<<tempPos.z<<std::endl;

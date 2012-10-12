@@ -1779,7 +1779,7 @@ std::string Character::alterSpokenMessage(std::string message, int languageSkill
     alteredMessage=message;
 
     while (message[counter]!=0) {
-        if (rnd(0,70)>languageSkill) {
+        if (Random::uniform(0,70)>languageSkill) {
             alteredMessage[counter]='*';
         }
 

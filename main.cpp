@@ -51,7 +51,6 @@
 #include "data/ScriptVariablesTable.hpp"
 #include "Logger.hpp"
 #include "main_help.hpp"
-#include "Random.hpp"
 #include "playersave.hpp"
 #include "PlayerManager.hpp"
 #include "InitialConnection.hpp"
@@ -95,9 +94,6 @@ int main(int argc, char *argv[]) {
     InitLogOptions();
 
     Logger::writeMessage("basic", "\nStarte Illarion !");
-
-    // initialize randomizer
-    initRandom();
 
     // initialize signalhandlers
     if (! init_sighandlers()) {
