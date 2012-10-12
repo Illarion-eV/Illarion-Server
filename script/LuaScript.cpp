@@ -54,6 +54,7 @@ extern "C" {
 #include "dialog/MerchantDialog.hpp"
 #include "dialog/SelectionDialog.hpp"
 #include "dialog/CraftingDialog.hpp"
+#include "Random.hpp"
 #include <cxxabi.h>
 
 extern ScriptVariablesTable *scriptVariables;
@@ -933,6 +934,10 @@ void LuaScript::init_base_functions() {
         .def("set", &ScriptVariablesTable::set)
         .def("remove", &ScriptVariablesTable::remove)
         .def("save" , &ScriptVariablesTable::save),
+        luabind::class_<Random>("Random")
+        .def("uniform", (double(*)()) &Random::uniform)
+        .def("uniform", (int(*)(int, int)) &Random::uniform)
+        .def("normal", &Random::normal),
         luabind::def("isValidChar", &isValid<Character>),
         luabind::def("debug", &LuaScript::writeDebugMsg)
     ];
