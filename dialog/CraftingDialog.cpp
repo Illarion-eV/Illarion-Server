@@ -24,12 +24,14 @@ CraftingDialog::CraftingDialog(string title, luabind::object callback): Dialog(t
     result = playerAborts;
     craftableIndex = 0;
     craftableAmount = 0;
+    ingredientIndex = 0;
 }
 
 CraftingDialog::CraftingDialog(const CraftingDialog &craftingDialog): Dialog(craftingDialog) {
     result = craftingDialog.result;
     craftableIndex = craftingDialog.craftableIndex;
     craftableAmount = craftingDialog.craftableAmount;
+    ingredientIndex = craftingDialog.ingredientIndex;
     groups = craftingDialog.groups;
 
     for (auto it = craftingDialog.getCraftablesBegin(); it != craftingDialog.getCraftablesEnd(); ++it) {
