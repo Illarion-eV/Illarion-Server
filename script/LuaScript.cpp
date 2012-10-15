@@ -935,9 +935,12 @@ void LuaScript::init_base_functions() {
         .def("remove", &ScriptVariablesTable::remove)
         .def("save" , &ScriptVariablesTable::save),
         luabind::class_<Random>("Random")
-        .def("uniform", (double(*)()) &Random::uniform)
-        .def("uniform", (int(*)(int, int)) &Random::uniform)
-        .def("normal", &Random::normal),
+        .scope
+        [
+            luabind::def("uniform", (double(*)()) &Random::uniform),
+            luabind::def("uniform", (int(*)(int, int)) &Random::uniform),
+            luabind::def("normal", &Random::normal)
+        ],
         luabind::def("isValidChar", &isValid<Character>),
         luabind::def("debug", &LuaScript::writeDebugMsg)
     ];
