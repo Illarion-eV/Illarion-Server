@@ -113,7 +113,7 @@ CraftingDialog::index_t CraftingDialog::getCraftableIndex() const {
 }
 
 void CraftingDialog::setCraftableIndex(CraftingDialog::index_t index) {
-    this->craftableIndex = craftableIndex;
+    this->craftableIndex = index;
 }
 
 Item::number_type CraftingDialog::getCraftableAmount() const {
