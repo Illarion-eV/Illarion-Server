@@ -30,11 +30,6 @@ QueryColumns::QueryColumns() : Query() {
 QueryColumns::QueryColumns(const QueryColumns &org) {
 }
 
-QueryColumns::QueryColumns(const PConnection connection) : Query(connection) {
-    hideTable = false;
-    nextColumn = 0;
-}
-
 QueryColumns::columnIndex QueryColumns::addColumn(const std::string &column) {
     appendToStringList(columns, escapeKey(column));
     return nextColumn++;

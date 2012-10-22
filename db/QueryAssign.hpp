@@ -39,7 +39,6 @@ public:
     void addAssignColumnNull(const std::string &column);
 protected:
     QueryAssign();
-    QueryAssign(const PConnection connection);
 
     std::string &buildQuerySegment();
 private:

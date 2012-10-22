@@ -28,9 +28,6 @@ QueryAssign::QueryAssign() : Query() {
 QueryAssign::QueryAssign(const QueryAssign &org) {
 }
 
-QueryAssign::QueryAssign(const PConnection connection) : Query(connection) {
-};
-
 void QueryAssign::addAssignColumnNull(const std::string &column) {
     appendToStringList(assignColumns, escapeAndChainKeys("", column) + " = NULL");
 }

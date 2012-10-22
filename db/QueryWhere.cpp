@@ -28,9 +28,6 @@ QueryWhere::QueryWhere() : Query() {
 QueryWhere::QueryWhere(const QueryWhere &org) {
 }
 
-QueryWhere::QueryWhere(const PConnection connection) : Query(connection) {
-};
-
 QueryWhere::~QueryWhere() {
     while (!conditionsStack.empty()) {
         delete conditionsStack.top();

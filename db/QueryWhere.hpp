@@ -56,7 +56,6 @@ public:
     void orConditions();
 protected:
     QueryWhere();
-    QueryWhere(const PConnection connection);
 
     virtual ~QueryWhere();
 

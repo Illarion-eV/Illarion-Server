@@ -33,7 +33,7 @@ DeleteQuery::DeleteQuery() {
 DeleteQuery::DeleteQuery(const DeleteQuery &org) {
 }
 
-DeleteQuery::DeleteQuery(const PConnection connection) : QueryTables(connection), QueryWhere(connection) {
+DeleteQuery::DeleteQuery(const PConnection connection) : Query(connection), QueryTables(), QueryWhere() {
     setOnlyOneTable(true);
 }
 

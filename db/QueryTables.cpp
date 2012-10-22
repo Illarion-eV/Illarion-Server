@@ -30,10 +30,6 @@ QueryTables::QueryTables() : Query() {
 QueryTables::QueryTables(const QueryTables &org) {
 }
 
-QueryTables::QueryTables(const PConnection connection) : Query(connection) {
-    oneTable = false;
-}
-
 void QueryTables::addServerTable(const std::string &table) throw(std::logic_error) {
     if (oneTable && !tables.empty()) {
         throw new std::logic_error("Only one table is allowed for this query.");

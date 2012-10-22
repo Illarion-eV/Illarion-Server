@@ -34,7 +34,7 @@ UpdateQuery::UpdateQuery() {
 UpdateQuery::UpdateQuery(const UpdateQuery &org) {
 };
 
-UpdateQuery::UpdateQuery(const PConnection connection) : QueryAssign(connection), QueryTables(connection), QueryWhere(connection) {
+UpdateQuery::UpdateQuery(const PConnection connection) : Query(connection), QueryAssign(), QueryTables(), QueryWhere() {
     setOnlyOneTable(true);
 };
 

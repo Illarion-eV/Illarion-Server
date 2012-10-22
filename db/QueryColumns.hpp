@@ -44,7 +44,6 @@ public:
 
 protected:
     QueryColumns();
-    QueryColumns(const PConnection connection);
 
     std::string &buildQuerySegment();
     uint32_t getColumnCount();

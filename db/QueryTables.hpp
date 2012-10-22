@@ -41,7 +41,6 @@ public:
     void setAccountTable(const std::string &table);
 protected:
     QueryTables();
-    QueryTables(const PConnection connection);
 
     void setOnlyOneTable(const bool &enabled);
     std::string &buildQuerySegment();
