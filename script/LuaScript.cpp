@@ -700,7 +700,6 @@ void LuaScript::init_base_functions() {
         ],
         luabind::class_<Character::skillvalue>("skillvalue")
         .def(luabind::constructor<>())
-        .def_readwrite("type",&Character::skillvalue::type)
         .def_readwrite("major",&Character::skillvalue::major)
         .def_readwrite("minor",&Character::skillvalue::minor)
         .def_readwrite("firsttry",&Character::skillvalue::firsttry),

@@ -179,38 +179,26 @@ void Player::login() throw(Player::LogoutException) {
     bool target_position_found;
     Field *target_position;
 
-    if (status == JAILED || status == JAILEDFORTIME) {
-        // player is in jail...
-        std::stringstream ssx(configOptions["jail_x"]);
+    // try to find a targetposition near the logout place...
+    x = pos.x;
+    y = pos.y;
+    z = pos.z;
+    target_position_found = _world->findEmptyCFieldNear(target_position, x, y, z);
+
+    if (!target_position_found) {
+        // move player to startingpoint...
+        std::stringstream ssx(configOptions["playerstart_x"]);
         ssx >> x;
-        std::stringstream ssy(configOptions["jail_y"]);
+        std::stringstream ssy(configOptions["playerstart_y"]);
         ssy >> y;
-        std::stringstream ssz(configOptions["jail_z"]);
+        std::stringstream ssz(configOptions["playerstart_z"]);
         ssz >> z;
+
         target_position_found = _world->findEmptyCFieldNear(target_position, x, y, z);
-    } else {
-        // try to find a targetposition near the logout place...
-        x = pos.x;
-        y = pos.y;
-        z = pos.z;
-        target_position_found = _world->findEmptyCFieldNear(target_position, x, y, z);
+    }
 
-        if (!target_position_found) {
-            // move player to startingpoint...
-            std::stringstream ssx(configOptions["playerstart_x"]);
-            ssx >> x;
-            std::stringstream ssy(configOptions["playerstart_y"]);
-            ssy >> y;
-            std::stringstream ssz(configOptions["playerstart_z"]);
-            ssz >> z;
-
-            target_position_found = _world->findEmptyCFieldNear(target_position, x, y, z);
-        }
-
-        if (!target_position_found) {
-            throw LogoutException(NOPLACE);
-        }
-
+    if (!target_position_found) {
+        throw LogoutException(NOPLACE);
     }
 
     // set player on target field...
@@ -437,18 +425,18 @@ void Player::ageInventory() {
 
 }
 
-void Player::learn(std::string skill, uint8_t skillGroup, uint32_t actionPoints, uint8_t opponent, uint8_t leadAttrib) {
+void Player::learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opponent) {
 
     uint16_t majorSkillValue = getSkill(skill);
     uint16_t minorSkillValue = getMinorSkill(skill);
 
-    Character::learn(skill, skillGroup, actionPoints, opponent, leadAttrib);
+    Character::learn(skill, actionPoints, opponent);
 
     uint16_t newMajorSkillValue = getSkill(skill);
     uint16_t newMinorSkillValue = getMinorSkill(skill);
 
     if (newMinorSkillValue != minorSkillValue || newMajorSkillValue != majorSkillValue) {
-        sendSkill(skill, skillGroup, newMajorSkillValue, newMinorSkillValue);
+        sendSkill(skill, newMajorSkillValue, newMinorSkillValue);
     }
 }
 
@@ -606,10 +594,10 @@ void Player::updateBackPackView() {
 }
 
 
-void Player::sendSkill(std::string name, unsigned char type, unsigned short int major, unsigned short int minor) {
-    boost::shared_ptr<BasicServerCommand>cmd(new UpdateSkillTC(name, type, major, minor));
+void Player::sendSkill(TYPE_OF_SKILL_ID skill, unsigned short int major, unsigned short int minor) {
+    boost::shared_ptr<BasicServerCommand>cmd(new UpdateSkillTC(skill, major, minor));
     Connection->addCommand(cmd);
-    cmd.reset(new BBSendSkillTC(id, type, name, major, minor));
+    cmd.reset(new BBSendSkillTC(id, skill, major, minor));
     _world->monitoringClientList->sendCommand(cmd);
 }
 
@@ -617,7 +605,7 @@ void Player::sendSkill(std::string name, unsigned char type, unsigned short int 
 void Player::sendAllSkills() {
     for (SKILLMAP::const_iterator ptr = skills.begin(); ptr != skills.end(); ++ptr) {
         if (ptr->second.major>0) {
-            sendSkill(ptr->first, ptr->second.type, ptr->second.major, ptr->second.minor);
+            sendSkill(ptr->first, ptr->second.major, ptr->second.minor);
         }
     }
 }
@@ -1082,23 +1070,21 @@ bool Player::save() throw() {
 
         if (!skills.empty()) {
             InsertQuery query(connection);
-            const InsertQuery::columnIndex idColumn = query.addColumn("psk_playerid");
-            const InsertQuery::columnIndex nameColumn = query.addColumn("psk_name");
-            const InsertQuery::columnIndex typeColumn = query.addColumn("psk_type");
+            const InsertQuery::columnIndex playerIdColumn = query.addColumn("psk_playerid");
+            const InsertQuery::columnIndex skillIdColumn = query.addColumn("psk_skillid");
             const InsertQuery::columnIndex valueColumn = query.addColumn("psk_value");
             const InsertQuery::columnIndex firstTryColumn = query.addColumn("psk_firsttry");
             const InsertQuery::columnIndex minorColumn = query.addColumn("psk_minor");
 
             // now store the skills
             for (SKILLMAP::iterator skillptr = skills.begin(); skillptr != skills.end(); ++skillptr) {
-                query.addValue<std::string>(nameColumn, skillptr->first);
-                query.addValue<uint16_t>(typeColumn, (uint16_t) skillptr->second.type);
+                query.addValue<uint16_t>(skillIdColumn, skillptr->first);
                 query.addValue<uint16_t>(valueColumn, (uint16_t) skillptr->second.major);
                 query.addValue<uint16_t>(firstTryColumn, (uint16_t) skillptr->second.firsttry);
                 query.addValue<uint16_t>(minorColumn, (uint16_t) skillptr->second.minor);
             }
 
-            query.addValues<TYPE_OF_CHARACTER_ID>(idColumn, id, InsertQuery::FILL);
+            query.addValues<TYPE_OF_CHARACTER_ID>(playerIdColumn, id, InsertQuery::FILL);
             query.addServerTable("playerskills");
             query.execute();
         }
@@ -1278,8 +1264,7 @@ bool Player::load() throw() {
 
         {
             SelectQuery query;
-            query.addColumn("playerskills", "psk_name");
-            query.addColumn("playerskills", "psk_type");
+            query.addColumn("playerskills", "psk_skillid");
             query.addColumn("playerskills", "psk_value");
             query.addColumn("playerskills", "psk_minor");
             query.addColumn("playerskills", "psk_firsttry");
@@ -1292,8 +1277,7 @@ bool Player::load() throw() {
                 for (ResultConstIterator itr = results.begin();
                      itr != results.end(); ++itr) {
                     setSkill(
-                        (*itr)["psk_type"].as<uint16_t>(),
-                        (*itr)["psk_name"].as<std::string>(),
+                        (TYPE_OF_SKILL_ID)((*itr)["psk_id"].as<uint16_t>()),
                         (*itr)["psk_value"].as<uint16_t>(),
                         (*itr)["psk_minor"].as<uint16_t>(),
                         (*itr)["psk_firsttry"].as<uint16_t>()
@@ -1528,17 +1512,17 @@ void Player::increasePoisonValue(short int value) {
     //============================================================================
 }
 
-unsigned short int Player::setSkill(unsigned char typ, std::string sname, short int major, short int minor, uint16_t firsttry) {
-    Character::setSkill(typ,sname,major,minor,firsttry);
-    sendSkill(sname,typ,major,minor);
+unsigned short int Player::setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor, uint16_t firsttry) {
+    Character::setSkill(skill, major, minor, firsttry);
+    sendSkill(skill, major, minor);
     return major;
 }
 
-unsigned short int Player::increaseSkill(unsigned char typ, std::string name, short int amount) {
-    Character::increaseSkill(typ,name,amount);
-    int major = getSkill(name);
-    int minor = getSkill(name);
-    sendSkill(name,typ,major,minor);
+unsigned short int Player::increaseSkill(TYPE_OF_SKILL_ID skill, short int amount) {
+    Character::increaseSkill(skill, amount);
+    int major = getSkill(skill);
+    int minor = getMinorSkill(skill);
+    sendSkill(skill, major, minor);
     return major;
 }
 

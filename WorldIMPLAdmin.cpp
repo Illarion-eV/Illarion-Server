@@ -24,6 +24,7 @@
 #include <list>
 #include "data/TilesModificatorTable.hpp"
 #include "data/TilesTable.hpp"
+#include "data/SkillTable.hpp"
 #include "data/ArmorObjectTable.hpp"
 #include "data/WeaponObjectTable.hpp"
 #include "data/ContainerObjectTable.hpp"
@@ -97,9 +98,6 @@ void World::InitGMCommands() {
 
     GMCommands["summon"] = new Command(&World::summon_command);
     GMCommands["s"] = GMCommands["summon"];
-
-    GMCommands["prison"] = new Command(&World::prison_command);
-    GMCommands["p"] = GMCommands["prison"];
 
     GMCommands["ban"] = new Command(&World::ban_command);
     GMCommands["b"] = GMCommands["ban"];
@@ -658,94 +656,6 @@ void World::summon_command(Player *cp, const std::string &tplayer) {
 }
 
 
-// !prison <time> <player>
-void World::prison_command(Player *cp, const std::string &timeplayer) {
-    if (!cp->hasGMRight(gmr_prison)) {
-        return;
-    }
-
-    std::cout << cp->name << " prisoning player: " << timeplayer << std::endl;
-
-    char *tokenize = new char[ timeplayer.length() + 1 ];
-    short int jailtime = 0;
-
-    strcpy(tokenize, timeplayer.c_str());
-    std::cout << "Tokenizing " << tokenize << std::endl;
-    char *thistoken;
-
-    if ((thistoken = strtok(tokenize, " ")) != NULL) {
-        if (ReadField(thistoken, jailtime)) {
-            char *tcharp = strtok(NULL, "\\");
-
-            if (tcharp != NULL) {
-                std::string tplayer = tcharp;
-                position warpto;
-                std::stringstream ssx(configOptions["jail_x"]);
-                ssx >> warpto.x;
-                std::stringstream ssy(configOptions["jail_y"]);
-                ssy >> warpto.y;
-                std::stringstream ssz(configOptions["jail_z"]);
-                ssz >> warpto.z;
-
-                Player *tempPl;
-                tempPl = Players.find(tplayer);
-
-                if (tempPl == NULL) {
-                    TYPE_OF_CHARACTER_ID tid;
-
-                    // convert arg to digit and try again...
-                    std::stringstream ss;
-                    ss.str(tplayer);
-                    ss >> tid;
-
-                    if (tid) {
-                        PLAYERVECTOR::iterator playerIterator;
-
-                        for (playerIterator = Players.begin(); playerIterator < Players.end(); ++playerIterator) {
-                            if ((*playerIterator)->id == tid) {
-                                tempPl = (*playerIterator);
-                            }
-                        }
-
-                    }
-                }
-
-                if (tempPl != NULL) {
-                    std::string tmessage = "*** Jailed " + tempPl->name;
-                    cp->inform(tmessage);
-
-                    std::cout << cp->name << " jailed player: " << tempPl->name << " for " << jailtime << std::endl;
-
-                    if (jailtime >= 0) {
-                        if (jailtime > 0) {
-                            tempPl->SetStatus(JAILEDFORTIME);         // Jailed for time
-                            tempPl->SetStatusTime(jailtime * 60);     // Jailed for seconds
-                            tempPl->SetStatusGM(cp->id);            // Jailed by who
-                        } else if (jailtime == 0) {
-                            tempPl->SetStatus(JAILED);                // Jailed indefinately
-                            tempPl->SetStatusTime(0);                 // Jailed for seconds
-                            tempPl->SetStatusGM(cp->id);            // Jailed by who
-                        }
-
-                        tmessage = cp->name + " jailed you for " + (jailtime == 0 ? "eternity" : stream_convert<std::string>((short int &) jailtime) + " minutes");
-                        tempPl->inform(tmessage);
-                        //warpPlayer( tempPl, warpto );
-                        tempPl->Warp(warpto);
-                    }
-                } else {
-                    std::string tmessage = "*** Could not find " + tplayer;
-                    std::cout << tmessage << std::endl;
-                    cp->inform(tmessage);
-                }
-            }
-        }
-    }
-
-    delete [] tokenize;
-
-}
-
-
 // !ban <time> [m|h|d] <player>
 void World::ban_command(Player *cp, const std::string &timeplayer) {
     if (!cp->hasGMRight(gmr_ban)) {
@@ -974,15 +884,6 @@ void World::who_command(Player *cp, const std::string &tplayer) {
         if (tempPl != NULL) {
             std::string tmessage = tempPl->name +
                                    "(" + stream_convert<std::string>(tempPl->id) + ")";
-
-            if (tempPl->GetStatus() == 20) {
-                tmessage = tmessage + " JAILED FOREVER by " + tempPl->GetStatusGM();
-            } else if (tempPl->GetStatus() == 21) {
-                tmessage = tmessage + " JAILED for " +
-                           stream_convert<std::string>(tempPl->GetStatusTime()) +
-                           " seconds by " + tempPl->GetStatusGM();
-
-            }
 
             tmessage = tmessage + " x" + stream_convert<std::string>(tempPl->pos.x);
             tmessage = tmessage + " y" + stream_convert<std::string>(tempPl->pos.y);
@@ -1239,11 +1140,6 @@ void World::gmhelp_command(Player *cp) {
         cp->inform(tmessage);
     }
 
-    if (cp->hasGMRight(gmr_prison)) {
-        tmessage = "!prison <time> <player> - (!p) Jails the player <player> for <time> amount minutes. 0 is forever.";
-        cp->inform(tmessage);
-    }
-
     if (cp->hasGMRight(gmr_ban)) {
         tmessage = "!ban <time> [m|h|d] <player> - (!b) Bans the player <player> for <time> [m]inutes/[h]ours/[d]ays.";
         cp->inform(tmessage);
@@ -1381,6 +1277,7 @@ bool World::reload_defs(Player *cp) {
     TilesModificatorTable *TilesModItems_temp = 0;
     MonsterTable *MonsterDescriptions_temp = 0;
     TilesTable *Tiles_temp = 0;
+    SkillTable *Skills_temp = 0;
     SpellTable *Spells_temp = 0;
     TriggerTable *Trigger_temp = 0;
     MonsterAttackTable *MonsterAttacks_temp = 0;
@@ -1451,10 +1348,19 @@ bool World::reload_defs(Player *cp) {
     }
 
     if (ok) {
-        Tiles_temp = new   TilesTable();
+        Tiles_temp = new TilesTable();
 
         if (Tiles_temp == NULL || !Tiles_temp->dataOK()) {
             reportTableError(cp, "tiles");
+            ok = false;
+        }
+    }
+
+    if (ok) {
+        Skills_temp = new SkillTable();
+
+        if (Skills_temp == NULL || !Skills_temp->dataOK()) {
+            reportTableError(cp, "skills");
             ok = false;
         }
     }
@@ -1553,6 +1459,10 @@ bool World::reload_defs(Player *cp) {
             delete Tiles_temp;
         }
 
+        if (Skills_temp != NULL) {
+            delete Skills_temp;
+        }
+
         if (MonsterDescriptions_temp != NULL) {
             delete MonsterDescriptions_temp;
         }
@@ -1606,6 +1516,8 @@ bool World::reload_defs(Player *cp) {
         TilesModItems = TilesModItems_temp;
         delete Tiles;
         Tiles = Tiles_temp;
+       delete Skills;
+       Skills = Skills_temp;
         delete MonsterDescriptions;
         MonsterDescriptions = MonsterDescriptions_temp;
         delete Spells;

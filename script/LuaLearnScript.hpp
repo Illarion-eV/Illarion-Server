@@ -31,7 +31,7 @@ public:
     LuaLearnScript(std::string filename) throw(ScriptException);
     virtual ~LuaLearnScript() throw();
 
-    void learn(Character *cc, std::string skill, uint8_t skillGroup, uint32_t actionPoints, uint8_t opponent, uint8_t leadAttrib);
+    void learn(Character *cc, TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opponent);
     void reduceMC(Character *cc);
 
 private:

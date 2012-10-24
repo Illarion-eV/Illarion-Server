@@ -29,9 +29,9 @@ LuaLearnScript::LuaLearnScript(std::string filename) throw(ScriptException)
 
 LuaLearnScript::~LuaLearnScript() throw() {}
 
-void LuaLearnScript::learn(Character *cc, std::string skill, uint8_t skillGroup, uint32_t actionPoints, uint8_t opponent, uint8_t leadAttrib) {
+void LuaLearnScript::learn(Character *cc, TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opponent) {
     fuse_ptr<Character> fuse_cc(cc);
-    callEntrypoint("learn", fuse_cc, skill, skillGroup, actionPoints, opponent, leadAttrib);
+    callEntrypoint("learn", fuse_cc, skill, actionPoints, opponent);
 }
 
 void LuaLearnScript::reduceMC(Character *cc) {

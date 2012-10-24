@@ -488,9 +488,8 @@ ClearShowCaseTC::ClearShowCaseTC(unsigned char id) : BasicServerCommand(SC_CLEAR
     addUnsignedCharToBuffer(id);
 }
 
-UpdateSkillTC::UpdateSkillTC(std::string name, unsigned char type, unsigned short int major, unsigned short int minor) : BasicServerCommand(SC_UPDATESKILL_TC) {
-    addStringToBuffer(name);
-    addUnsignedCharToBuffer(type);
+UpdateSkillTC::UpdateSkillTC(TYPE_OF_SKILL_ID skill, unsigned short int major, unsigned short int minor) : BasicServerCommand(SC_UPDATESKILL_TC) {
+    addUnsignedCharToBuffer(skill);
     addShortIntToBuffer(major);
     addShortIntToBuffer(minor);
 }

@@ -1383,33 +1383,7 @@ public:
     }
 
     void performAction(Player *player) {
-        Logger::writeMessage("World_Debug", "KEEPALIVE_TS von Spieler " + player->name);
-
-        // Release Jailed Players if sentance has expired
-        if (player->GetStatus() == JAILEDFORTIME) {
-            time_t tempkeepalive;
-            time(&tempkeepalive);
-            int temptime = tempkeepalive - player->lastkeepalive;
-
-            if ((player->GetStatusTime() - temptime) <= 0) {
-                player->SetStatus(0);
-                player->SetStatusTime(0);
-
-                position warpto;
-                std::stringstream ssx(configOptions["release_x"]);
-                ssx >> warpto.x;
-                std::stringstream ssy(configOptions["release_y"]);
-                ssy >> warpto.y;
-                std::stringstream ssz(configOptions["release_z"]);
-                ssz >> warpto.z;
-
-                player->Warp(warpto);
-                //CWorld::get()->warpPlayer( player, warpto );
-            } else {
-                player->SetStatusTime(player->GetStatusTime() - temptime);
-            }
-        }
-
+        Logger::writeMessage("World_Debug", "KEEPALIVE_TS from player " + player->name);
         time(&(player->lastkeepalive));
     }
 

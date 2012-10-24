@@ -212,13 +212,6 @@ public:
         */
 
         /**
-        *type of the skill (working, fighting, magic ... )
-        * @see constants.h
-        *<b>Lua: [type]</b>
-        */
-        unsigned char type;
-
-        /**
         * larger value of this skill
         * <b>Lua: [major]</b>
         */
@@ -241,7 +234,6 @@ public:
         *<b>Lua</b>
         */
         skillvalue() {
-            type = 0;
             major = 0;
             minor = 0;
             firsttry = 0;
@@ -789,29 +781,9 @@ public:
     */
     //luabind::object getItemListContainer(ScriptItem item);
 
-    /**
-    * returns the major skill value of a specific skill
-    * <b>Lua: [:getSkill]</b>
-    * @param s the name of the skill where the value should be returned
-    * @return 0 if there exist no skill with name s otherwise the skillvalue of this skill
-    */
-    unsigned short int getSkill(std::string s);
-
-    /**
-    * returns the skillvalue of a specific skill
-    * <b>Lua: [:getSkillValue]</b>
-    * @param s the name of the skill where the value should be returned
-    * @return nil if there exist no skill with name s otherwise the skillvalue of this skill
-    */
-    skillvalue *getSkillValue(std::string s);
-
-    /**
-    * returns the minor skill value of a specific skill
-    * <b>Lua: [:getMinorSkill]</b>
-    * @param s the name of the skill where the value should be returned
-    * @return 0 if there exist no skill with name s otherwise the skillvalue of this skill
-    */
-    unsigned short int getMinorSkill(std::string s);
+    unsigned short int getSkill(TYPE_OF_SKILL_ID s);
+    skillvalue *getSkillValue(TYPE_OF_SKILL_ID s);
+    unsigned short int getMinorSkill(TYPE_OF_SKILL_ID s);
 
     void setSkinColor(uint8_t red, uint8_t green, uint8_t blue);
 
@@ -856,37 +828,10 @@ public:
     */
     void setAttrib(std::string name, Attribute::attribute_t value);
 
-    /**
-    * changes the major value of a skill or adds this skill to the skillmap of the character
-    * <b>Lua: [:increaseSkill]</b>
-    * @param typ the type of the skill which should be added/increased/decreased
-    * @param name of the skill which should be added/increased/decreased
-    * @param amount how much should be added/decreased to the skill
-    * @return the major value after the changes
-    */
-    virtual unsigned short int increaseSkill(unsigned char typ, std::string name, short int amount);
+    virtual unsigned short int increaseSkill(TYPE_OF_SKILL_ID skill, short int amount);
+    virtual unsigned short int increaseMinorSkill(TYPE_OF_SKILL_ID skill, short int amount);
 
-    /**
-    * changes the minor value of a skill or adds this skill to the skillmap of the character
-    * <b>Lua: [:increaseMinorSkill]</b>
-    * @param typ the type of the skill which should be added/increased/decreased
-    * @param name of the skill which should be added/increased/decreased
-    * @param amount how much should be added/decreased to the skill
-    * @return the major value after the changes
-    */
-    virtual unsigned short int increaseMinorSkill(unsigned char typ, std::string name, short int amount);
-
-
-    /**
-    * try to learn a skill
-    * <b>Lua: [:learn]</b>
-    * @param skill name of the skill the user tries to learn
-    * @param skillGroup group of the given skill
-    * @param actionPoints cost of learning
-    * @param opponent gives information until which skill level learning may be successful
-    * @param leadAttrib value of the lead attribute responsible for how successful learning the given skill is
-    */
-    virtual void learn(std::string skill, uint8_t skillGroup, uint32_t actionPoints, uint8_t opponent, uint8_t leadAttrib);
+    virtual void learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opponent);
 
     /**
     * the character learns a new magical rune
@@ -939,13 +884,6 @@ public:
     */
     std::string alterSpokenMessage(std::string message, int languageSkill);
 
-    /**
-    * gets the language skill of a specific language
-    * <b>Lua: [:getLanguageSkill]</b>
-    * @param languageSkillNumber number of the language from which we want to get the skill
-    * 0 = common...
-    * @return the value of the language skill
-    */
     int getLanguageSkill(int languageSkillNumber);
 
     /**
@@ -1130,7 +1068,7 @@ public:
     /**
     * defines the type of the skills for the character
     */
-    typedef std::map < const char *, skillvalue, ltstr > SKILLMAP;
+    typedef std::map<TYPE_OF_SKILL_ID, skillvalue> SKILLMAP;
 
     /**
     * the type of movement which this char uses
@@ -1405,7 +1343,7 @@ public:
     * @param firsttry the number of unsuccesfull tries to increase this skill
     * @return the major value after the changes
     */
-    virtual unsigned short int setSkill(unsigned char typ, std::string sname, short int major, short int minor, uint16_t firsttry);
+    virtual unsigned short int setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor, uint16_t firsttry);
 
 
     /**
