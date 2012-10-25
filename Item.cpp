@@ -21,6 +21,7 @@
 #include "data/CommonObjectTable.hpp"
 #include "data/ContainerObjectTable.hpp"
 #include <sstream>
+#include <boost/lexical_cast.hpp>
 
 extern CommonObjectTable *CommonItems;
 extern ContainerObjectTable *ContainerItems;
@@ -55,25 +56,6 @@ void Item::setMinQuality(const Item &item) {
     quality = minQuality * 100 + minDurability;
 }
 
-Item::data_type Item::getData() const {
-    LuaScript::writeDeprecatedMsg("Item.data");
-    return data;
-}
-
-void Item::setData(data_type data) {
-    LuaScript::writeDeprecatedMsg("Item.data");
-    this->data = data;
-}
-
-Item::data_type Item::getOldData() const {
-    return getData();
-}
-
-void Item::setOldData(data_type data) {
-    setData(data);
-}
-
-
 void Item::setData(const luabind::object &datamap) {
     using namespace luabind;
     auto mapType = type(datamap);
@@ -100,9 +82,9 @@ void Item::setData(const luabind::object &datamap) {
                 }
             }
         }
-    } else if (mapType == LUA_TNUMBER) {
-        setOldData(object_cast<uint32_t>(datamap));
-    } else if (mapType != LUA_TNIL) {
+    } else if (mapType == LUA_TNIL) {
+        this->datamap.clear();
+    } else {
         throw std::logic_error("Usage of invalid data map type. Data maps must be tables or nil.");
     }
 }
@@ -143,8 +125,6 @@ bool Item::hasData(const luabind::object &datamap) {
         }
 
         return isSameData;
-    } else if (mapType == LUA_TNUMBER) {
-        return getOldData() == object_cast<uint32_t>(datamap);
     } else if (mapType != LUA_TNIL) {
         throw std::logic_error("Usage of invalid data map type. Data maps must be tables or nil.");
     }
@@ -169,12 +149,22 @@ void Item::setData(std::string key, int32_t value) {
     setData(key, ss.str());
 }
 
+uint16_t Item::getDepot() {
+    uint16_t depotId;
+    try {
+        depotId = boost::lexical_cast<uint16_t>(getData("depot"));
+    } catch (boost::bad_lexical_cast) {
+        depotId = 1;
+    }
+
+    return depotId;
+}
+
 void Item::reset() {
     id = 0;
     number = 0;
     wear = 0;
     quality = 333;
-    data = 0;
     datamap.clear();
 }
 
@@ -195,7 +185,6 @@ void Item::save(std::ostream *obj) const {
     obj->write((char *) &number, sizeof(number_type));
     obj->write((char *) &wear, sizeof(wear_type));
     obj->write((char *) &quality, sizeof(quality_type));
-    obj->write((char *) &data, sizeof(data_type));
     uint8_t mapsize = static_cast<uint8_t>(datamap.size());
     obj->write((char *) &mapsize, sizeof(uint8_t));
 
@@ -215,7 +204,6 @@ void Item::load(std::istream *obj) {
     obj->read((char *) &number, sizeof(number_type));
     obj->read((char *) &wear, sizeof(wear_type));
     obj->read((char *) &quality, sizeof(quality_type));
-    obj->read((char *) &data, sizeof(data_type));
     uint8_t tempsize;
     obj->read((char *) &tempsize, sizeof(uint8_t));
     char readStr[255];

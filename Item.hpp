@@ -211,15 +211,14 @@ public:
     typedef uint16_t number_type;
     typedef uint8_t  wear_type;
     typedef uint16_t quality_type;
-    typedef uint32_t data_type;
     typedef boost::unordered_map<std::string, std::string> datamap_type;
 
     static const number_type MAX_NUMBER = 250;
     static const wear_type PERMANENT_WEAR = 255;
 
-    Item(): id(0), number(0), wear(0), quality(333), data(0), datamap(1) {}
-    Item(id_type id, number_type number, wear_type wear, quality_type quality = 333, data_type data = 0) :
-        id(id), number(number), wear(wear), quality(quality), data(data),datamap(1) {}
+    Item(): id(0), number(0), wear(0), quality(333), datamap(1) {}
+    Item(id_type id, number_type number, wear_type wear, quality_type quality = 333) :
+        id(id), number(number), wear(wear), quality(quality), datamap(1) {}
     Item(id_type id, number_type number, wear_type wear, quality_type quality, const luabind::object &datamap);
 
     inline id_type getId() const {
@@ -255,10 +254,6 @@ public:
     }
     void setMinQuality(const Item &item);
 
-    data_type getData() const;
-    void setData(data_type data);
-    data_type getOldData() const;
-    void setOldData(data_type data);
     void setData(const luabind::object &datamap);
     bool hasData(const luabind::object &datamap);
     std::string getData(std::string key);
@@ -279,6 +274,8 @@ public:
         return datamap == item.datamap;
     }
 
+    uint16_t getDepot();
+
     void reset();
     void resetWear();
 
@@ -297,7 +294,6 @@ private:
     number_type number;
     wear_type wear;
     quality_type quality;
-    data_type data;
     datamap_type datamap;
 };
 

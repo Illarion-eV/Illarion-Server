@@ -437,7 +437,6 @@ bool World::load_from_editor(std::string filename) {
     int lastx=-1, lasty=-1;
     Item it;
     Item::id_type itemId;
-    Item::data_type itemData;
     Item::quality_type itemQuality;
     oldy = -1;
     Logger::writeMessage("World_Imports", "try to import items: " + filename);
@@ -502,9 +501,9 @@ bool World::load_from_editor(std::string filename) {
             return false;
         }
 
+        //TODO: implement new map protocol
+        uint32_t itemData;
         mapitemsfile >> itemData;
-        it.setData(itemData);
-        LogMessage += "data: " + Logger::toString(itemData) + " ";
 
         if (mapitemsfile.good()) {
             if (mapitemsfile.get() == ';') {

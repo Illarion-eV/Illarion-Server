@@ -1143,7 +1143,6 @@ bool Player::save() throw() {
             const InsertQuery::columnIndex itemsWearColumn = itemsQuery.addColumn("pit_wear");
             const InsertQuery::columnIndex itemsNumberColumn = itemsQuery.addColumn("pit_number");
             const InsertQuery::columnIndex itemsQualColumn = itemsQuery.addColumn("pit_quality");
-            const InsertQuery::columnIndex itemsDataColumn = itemsQuery.addColumn("pit_data");
             const InsertQuery::columnIndex itemsSlotColumn = itemsQuery.addColumn("pit_containerslot");
             itemsQuery.setServerTable("playeritems");
 
@@ -1168,7 +1167,6 @@ bool Player::save() throw() {
                 itemsQuery.addValue<uint16_t>(itemsWearColumn, characterItems[thisItemSlot].getWear());
                 itemsQuery.addValue<uint16_t>(itemsNumberColumn, characterItems[thisItemSlot].getNumber());
                 itemsQuery.addValue<uint16_t>(itemsQualColumn, characterItems[thisItemSlot].getQuality());
-                itemsQuery.addValue<uint32_t>(itemsDataColumn, characterItems[thisItemSlot].getData());
                 itemsQuery.addValue<TYPE_OF_CONTAINERSLOTS>(itemsSlotColumn, 0);
 
                 for (auto it = characterItems[ thisItemSlot ].getDataBegin(); it != characterItems[ thisItemSlot ].getDataEnd(); ++it) {
@@ -1198,7 +1196,6 @@ bool Player::save() throw() {
                     itemsQuery.addValue<uint16_t>(itemsWearColumn, item.getWear());
                     itemsQuery.addValue<uint16_t>(itemsNumberColumn, item.getNumber());
                     itemsQuery.addValue<uint16_t>(itemsQualColumn, item.getQuality());
-                    itemsQuery.addValue<uint32_t>(itemsDataColumn, item.getData());
                     itemsQuery.addValue<TYPE_OF_CONTAINERSLOTS>(itemsSlotColumn, it->first);
 
                     for (auto it = item.getDataBegin(); it != item.getDataEnd(); ++it) {
@@ -1335,7 +1332,6 @@ bool Player::load() throw() {
         std::vector<Item::wear_type> itemwear;
         std::vector<Item::number_type> itemnumber;
         std::vector<Item::quality_type> itemquality;
-        std::vector<Item::data_type> itemdata;
         std::vector<TYPE_OF_CONTAINERSLOTS> itemcontainerslot;
         {
             SelectQuery query;
@@ -1346,7 +1342,6 @@ bool Player::load() throw() {
             query.addColumn("playeritems", "pit_wear");
             query.addColumn("playeritems", "pit_number");
             query.addColumn("playeritems", "pit_quality");
-            query.addColumn("playeritems", "pit_data");
             query.addColumn("playeritems", "pit_containerslot");
             query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playeritems", "pit_playerid", id);
             query.addOrderBy("playeritems", "pit_linenumber", SelectQuery::ASC);
@@ -1362,7 +1357,6 @@ bool Player::load() throw() {
                 itemwear.push_back((Item::wear_type)((*itr)["pit_wear"].as<uint16_t>()));
                 itemnumber.push_back((*itr)["pit_number"].as<Item::number_type>());
                 itemquality.push_back((*itr)["pit_quality"].as<Item::quality_type>());
-                itemdata.push_back((*itr)["pit_data"].as<Item::data_type>());
                 itemcontainerslot.push_back((*itr)["pit_containerslot"].as<TYPE_OF_CONTAINERSLOTS>());
             }
         }
@@ -1405,8 +1399,7 @@ bool Player::load() throw() {
             Item tempi(itemid[tuple],
                        itemnumber[tuple],
                        itemwear[tuple],
-                       itemquality[tuple],
-                       itemdata[tuple]
+                       itemquality[tuple]
                       );
 
             while (curdatalinenumber < dataRows && ditemlinenumber[curdatalinenumber] == linenumber) {

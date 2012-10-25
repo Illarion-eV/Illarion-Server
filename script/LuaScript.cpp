@@ -760,12 +760,11 @@ void LuaScript::init_base_functions() {
         .property("bonus", &ItemLookAt::getBonus, &ItemLookAt::setBonus),
         luabind::class_<Item>("Item")
         .def(luabind::constructor<>())
-        .def(luabind::constructor<Item::id_type, Item::number_type, Item::wear_type, Item::quality_type, Item::data_type>())
+        .def(luabind::constructor<Item::id_type, Item::number_type, Item::wear_type, Item::quality_type>())
         .property("id", &Item::getId, &Item::setId)
         .property("wear", &Item::getWear, &Item::setWear)
         .property("number", &Item::getNumber, &Item::setNumber)
         .property("quality", &Item::getQuality, &Item::setQuality)
-        .property("data", &Item::getOldData, &Item::setOldData)
         .def("setData", (void(Item:: *)(std::string, std::string))&Item::setData)
         .def("setData", (void(Item:: *)(std::string, int32_t))&Item::setData)
         .def("getData", (std::string(Item:: *)(std::string))&Item::getData),

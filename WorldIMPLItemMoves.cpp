@@ -1726,10 +1726,10 @@ bool World::lookIntoContainerOnField(Player *cp, char direction, unsigned char s
                         //titem.data + 1 so no 0 depot is used.
                         if (depotScript && depotScript->existsEntrypoint("onOpenDepot")) {
                             if (depotScript->onOpenDepot(cp, titem)) {
-                                cp->openDepot(titem.getData()+1);
+                                cp->openDepot(titem.getDepot());
                             }
                         } else {
-                            cp->openDepot(titem.getData()+1);
+                            cp->openDepot(titem.getDepot());
                         }
 
                         //lookIntoDepot(cp, showcase);

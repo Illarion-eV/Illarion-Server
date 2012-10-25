@@ -1104,7 +1104,14 @@ void World::what_command(Player *cp) {
 
             if (cp->hasGMRight(gmr_basiccommands)) {
                 message << ", Quality " << top.getQuality();
-                message << ", Data " << top.getData();
+
+                if (top.getDataBegin() != top.getDataEnd()) {
+                    message << ", Data";
+                    for (auto it = top.getDataBegin(); it != top.getDataEnd(); ++it) {
+                        message << " '" << it->first << "'='" << it->second << "'";
+                    }
+                }
+
                 message << ", Wear " << (uint16_t)top.getWear();
             }
 
@@ -1876,7 +1883,7 @@ bool World::exportMaps(Player *cp) {
                     unsigned short itemnum = 0;
 
                     for (auto it = itemsv.cbegin(); it != itemsv.cend(); ++it, ++itemnum) {
-                        itemsf << x-minX << ";" << y-minY << ";" << itemnum << ";" << it->getId() << ";" << it->getData();
+                        itemsf << x-minX << ";" << y-minY << ";" << itemnum << ";" << it->getId() << ";0"; //TODO: implement new map protocol
 
                         if (it->getQuality() != 333) {
                             itemsf << ";" << it->getQuality();
