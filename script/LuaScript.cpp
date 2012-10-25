@@ -931,7 +931,8 @@ void LuaScript::init_base_functions() {
         .def("weight", &Container::weight),
         luabind::class_<ScriptVariablesTable>("ScriptVariables")
         .def("find", &ScriptVariablesTable::find, luabind::pure_out_value(_3))
-        .def("set", &ScriptVariablesTable::set)
+        .def("set", (void(ScriptVariablesTable:: *)(std::string, std::string))&ScriptVariablesTable::set)
+        .def("set", (void(ScriptVariablesTable:: *)(std::string, int32_t))&ScriptVariablesTable::set)
         .def("remove", &ScriptVariablesTable::remove)
         .def("save" , &ScriptVariablesTable::save),
         luabind::class_<Random>("Random")

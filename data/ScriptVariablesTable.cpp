@@ -17,12 +17,6 @@
  * You should have received a copy of the GNU  General Public License along with
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
-/*
- * TODO: This file contains some insane bogus conversation stuff between C and
- *       C++ strings. Should be fixed to a proper usage of C++ strings.
- * TODO: This file possibly contains a memory leak when loading the variables
- *       a second time. Should be checked.
- */
 
 #include "data/ScriptVariablesTable.hpp"
 
@@ -60,20 +54,13 @@ void ScriptVariablesTable::reload() {
 
         if (!results.empty()) {
             values_table.clear();
-            std::string key;
-            std::string value;
 
-            for (Database::ResultConstIterator itr = results.begin();
-                 itr != results.end(); ++itr) {
+            for (auto it = results.begin(); it != results.end(); ++it) {
 
-                key = (*itr)["svt_ids"].as<std::string>();
-                value = (*itr)["svt_string"].as<std::string>();
+                std::string key = (*it)["svt_ids"].as<std::string>();
+                std::string value = (*it)["svt_string"].as<std::string>();
 
-                // The following lines are crappy:
-                char *ckey = new char[ key.length() + 1 ];
-                strcpy(ckey, key.c_str());
-                ckey[key.length()] = 0;
-                values_table[ ckey ] = value;
+                values_table[key] = value;
             }
         }
 
@@ -102,12 +89,14 @@ bool ScriptVariablesTable::find(std::string id, std::string &ret) {
     }
 }
 
-void ScriptVariablesTable::set(std::string id, luabind::object o) {
-    char *vname = new char[ id.length() + 1 ];
-    strcpy(vname, id.c_str());
-    vname[ id.length()] = 0;
-    std::string str = boost::lexical_cast<std::string>(o);
-    values_table[ vname ] = str;
+void ScriptVariablesTable::set(std::string id, std::string value) {
+    values_table[id] = value;
+}
+
+void ScriptVariablesTable::set(std::string id, int32_t value) {
+    std::stringstream ss;
+    ss << value;
+    set(id, ss.str());
 }
 
 bool ScriptVariablesTable::remove(std::string id) {
@@ -133,9 +122,16 @@ void ScriptVariablesTable::save() {
 
         InsertQuery insQuery(connection);
         insQuery.setServerTable("scriptvariables");
-        const InsertQuery::columnIndex column = insQuery.addColumn("svt_ids");
-        insQuery.addColumn("svt_string");
-        insQuery.addValues<const char *, std::string, ltstr>(column, values_table, InsertQuery::keysAndValues);
+        const InsertQuery::columnIndex idColumn = insQuery.addColumn("svt_ids");
+        const InsertQuery::columnIndex valueColumn = insQuery.addColumn("svt_string");
+        
+        for (auto it = values_table.cbegin(); it != values_table.cend(); ++it) {
+            if (it->second.length() > 0) {
+                insQuery.addValue<std::string>(idColumn, it->first);
+                insQuery.addValue<std::string>(valueColumn, it->second);
+            }
+        }
+        
         insQuery.execute();
 
         connection->commitTransaction();

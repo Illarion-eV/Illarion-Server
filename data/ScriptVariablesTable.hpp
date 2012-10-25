@@ -21,7 +21,7 @@
 #ifndef _SCRIPT_VARIABLES_TABLE_HPP_
 #define _SCRIPT_VARIABLES_TABLE_HPP_
 
-#include <map>
+#include <boost/unordered_map.hpp>
 #include <string>
 #include <luabind/object.hpp>
 #include "data/Table.hpp"
@@ -33,7 +33,8 @@ public:
     ~ScriptVariablesTable();
 
     bool find(std::string id, std::string &ret);
-    void set(std::string id, luabind::object value);
+    void set(std::string id, std::string value);
+    void set(std::string id, int32_t value);
     bool remove(std::string id);
 
     void save();
@@ -43,16 +44,8 @@ public:
     }
 
 private:
-    struct ltstr {
-        /**
-        * overloading of the () operator to see if two strings have the same structure
-        */
-        bool operator()(const char *s1, const char *s2) const {
-            return strcmp(s1, s2) < 0;
-        }
-    };
 
-    typedef std::map <const char *,std::string, ltstr> STRINGTABLE;
+    typedef boost::unordered_map<std::string, std::string> STRINGTABLE;
     STRINGTABLE values_table;
 
     void clearOldTable();
