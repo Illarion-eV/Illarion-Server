@@ -99,6 +99,14 @@ bool SkillTable::find(TYPE_OF_SKILL_ID Id, std::string &ret) {
     }
 }
 
+SkillTable::TABLE::const_iterator SkillTable::begin() const {
+    return m_table.cbegin();
+}
+
+SkillTable::TABLE::const_iterator SkillTable::end() const {
+    return m_table.cend();
+}
+
 void SkillTable::clearOldTable() {
     m_table.clear();
 }

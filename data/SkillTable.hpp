@@ -30,8 +30,13 @@ class World;
 
 class SkillTable: public Table {
 public:
+    typedef boost::unordered_map<TYPE_OF_SKILL_ID, std::string> TABLE;
+
     bool find(TYPE_OF_SKILL_ID Id);
     bool find(TYPE_OF_SKILL_ID Id, std::string &ret);
+
+    TABLE::const_iterator begin() const;
+    TABLE::const_iterator end() const;
 
     SkillTable();
     ~SkillTable();
@@ -42,8 +47,6 @@ public:
 
 private:
     virtual void reload();
-
-    typedef boost::unordered_map<TYPE_OF_SKILL_ID, std::string> TABLE;
 
     TABLE m_table;
 
