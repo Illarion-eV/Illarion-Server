@@ -45,6 +45,7 @@
 #include "script/LuaReloadScript.hpp"
 #include "script/LuaLearnScript.hpp"
 #include <boost/shared_ptr.hpp>
+#include <boost/algorithm/string/replace.hpp>
 #include "data/LongTimeEffectTable.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "netinterface/NetInterface.hpp"
@@ -1857,6 +1858,7 @@ bool World::exportMaps(Player *cp) {
         }
 
         // export tiles header
+        fieldsf << "V: 2" << std::endl;
         fieldsf << "L: " << (*mapIt)->Z_Level << std::endl;
         fieldsf << "X: " << minX << std::endl;
         fieldsf << "Y: " << minY << std::endl;
@@ -1871,7 +1873,7 @@ bool World::exportMaps(Player *cp) {
                 Field field;
 
                 if ((*mapIt)->GetCFieldAt(field, x, y)) {
-                    fieldsf << x-minX << ";" << y-minY << ";" << field.getTileCode() << ";" << field.getMusicId() << ";0" << std::endl;
+                    fieldsf << x-minX << ";" << y-minY << ";" << field.getTileCode() << ";" << field.getMusicId() << std::endl;
 
                     if (field.IsWarpField()) {
                         position target;
@@ -1881,13 +1883,24 @@ bool World::exportMaps(Player *cp) {
 
                     ITEMVECTOR itemsv;
                     field.giveExportItems(itemsv);
-                    unsigned short itemnum = 0;
 
-                    for (auto it = itemsv.cbegin(); it != itemsv.cend(); ++it, ++itemnum) {
-                        itemsf << x-minX << ";" << y-minY << ";" << itemnum << ";" << it->getId() << ";0"; //TODO: implement new map protocol
+                    for (auto it = itemsv.cbegin(); it != itemsv.cend(); ++it) {
+                        itemsf << x-minX << ";" << y-minY << ";" << it->getId() << ";" << it->getQuality();
 
-                        if (it->getQuality() != 333) {
-                            itemsf << ";" << it->getQuality();
+                        for (auto dataIt = it->getDataBegin(); dataIt != it->getDataEnd(); ++dataIt) {
+                            using boost::algorithm::replace_all;
+
+                            std::string key = dataIt->first;
+                            std::string value = dataIt->second;
+
+                            replace_all(key, "\\", "\\\\");
+                            replace_all(key, "=", "\\=");
+                            replace_all(key, ";", "\\;");
+                            replace_all(value, "\\", "\\\\");
+                            replace_all(value, "=", "\\=");
+                            replace_all(value, ";", "\\;");
+
+                            itemsf << ";" << key << "=" << value;
                         }
 
                         itemsf << std::endl;
