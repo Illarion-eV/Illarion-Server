@@ -297,6 +297,7 @@ public:
     virtual void decodeData() {
         dialogId = getIntFromBuffer();
         result = getUnsignedCharFromBuffer();
+
         switch (result) {
         case 0:
             break;
@@ -316,6 +317,7 @@ public:
 
     void performAction(Player *player) {
         time(&(player->lastaction));
+
         switch (result) {
         case 0:
             player->executeCraftingDialogAbort(dialogId);

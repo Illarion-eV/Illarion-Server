@@ -151,6 +151,7 @@ void Item::setData(std::string key, int32_t value) {
 
 uint16_t Item::getDepot() {
     uint16_t depotId;
+
     try {
         depotId = boost::lexical_cast<uint16_t>(getData("depot"));
     } catch (boost::bad_lexical_cast) {

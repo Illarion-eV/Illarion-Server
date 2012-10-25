@@ -1107,6 +1107,7 @@ void World::what_command(Player *cp) {
 
                 if (top.getDataBegin() != top.getDataEnd()) {
                     message << ", Data";
+
                     for (auto it = top.getDataBegin(); it != top.getDataEnd(); ++it) {
                         message << " '" << it->first << "'='" << it->second << "'";
                     }

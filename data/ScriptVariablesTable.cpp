@@ -124,14 +124,14 @@ void ScriptVariablesTable::save() {
         insQuery.setServerTable("scriptvariables");
         const InsertQuery::columnIndex idColumn = insQuery.addColumn("svt_ids");
         const InsertQuery::columnIndex valueColumn = insQuery.addColumn("svt_string");
-        
+
         for (auto it = values_table.cbegin(); it != values_table.cend(); ++it) {
             if (it->second.length() > 0) {
                 insQuery.addValue<std::string>(idColumn, it->first);
                 insQuery.addValue<std::string>(valueColumn, it->second);
             }
         }
-        
+
         insQuery.execute();
 
         connection->commitTransaction();

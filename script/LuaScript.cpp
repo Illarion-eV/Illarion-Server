@@ -937,8 +937,8 @@ void LuaScript::init_base_functions() {
         luabind::class_<Random>("Random")
         .scope
         [
-            luabind::def("uniform", (double(*)()) &Random::uniform),
-            luabind::def("uniform", (int(*)(int, int)) &Random::uniform),
+            luabind::def("uniform", (double( *)()) &Random::uniform),
+            luabind::def("uniform", (int( *)(int, int)) &Random::uniform),
             luabind::def("normal", &Random::normal)
         ],
         luabind::def("isValidChar", &isValid<Character>),

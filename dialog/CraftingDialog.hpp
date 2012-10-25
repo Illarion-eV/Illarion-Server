@@ -52,7 +52,7 @@ class Craftable {
 public:
     typedef uint8_t index_t;
     typedef vector<Ingredient *> ingredients_t;
-    
+
 private:
     static const uint32_t MAXINGREDIENTS = 256;
     uint8_t group;
@@ -71,6 +71,7 @@ public:
         name = craftable.name;
         decisecondsToCraft = craftable.decisecondsToCraft;
         craftedStackSize = craftable.craftedStackSize;
+
         for (auto it = craftable.getIngredientsBegin(); it != craftable.getIngredientsEnd(); ++it) {
             Ingredient &ingredient = **it;
             addIngredient(ingredient.getItem(), ingredient.getNumber());
@@ -98,10 +99,14 @@ public:
         return craftedStackSize;
     };
     void addIngredient(TYPE_OF_ITEM_ID item) {
-        if (ingredients.size() < MAXINGREDIENTS) ingredients.push_back(new Ingredient(item));
+        if (ingredients.size() < MAXINGREDIENTS) {
+            ingredients.push_back(new Ingredient(item));
+        }
     };
     void addIngredient(TYPE_OF_ITEM_ID item, uint8_t number) {
-        if (ingredients.size() < MAXINGREDIENTS) ingredients.push_back(new Ingredient(item, number));
+        if (ingredients.size() < MAXINGREDIENTS) {
+            ingredients.push_back(new Ingredient(item, number));
+        }
     };
     index_t getIngredientsSize() {
         return ingredients.size();

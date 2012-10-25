@@ -25,7 +25,7 @@
 class Random {
 private:
     static boost::mt19937 rng;
-    Random(){};
+    Random() {};
 public:
     static double uniform();
     static int uniform(int min, int max);
