@@ -250,8 +250,23 @@ bool World::load_from_editor(std::string filename) {
 
     int h_level, h_x, h_y, h_width, h_height, oldy;
 
+    bool V2 = false;
+
     // load map file header information
     maptilesfile >> dummy;
+
+    if (dummy == 'V') {
+        maptilesfile >> dummy;
+        int version;
+        maptilesfile >> version;
+
+        if (version == 2) {
+            V2 = true;
+        }
+
+        maptilesfile >> dummy;
+    }
+
     maptilesfile >> dummy;  // read 'L: '
     maptilesfile >> h_level;  //read int (level)
     maptilesfile >> dummy;
@@ -321,17 +336,18 @@ bool World::load_from_editor(std::string filename) {
         maptilesfile >> temp_tile.musicID;      // read a short uint (music-id)
         LogMessage += "musicID: " + Logger::toString(temp_tile.musicID);
 
-        maptilesfile >> dummy;          // read a char (;)
+        if (!V2) {
+            maptilesfile >> dummy;          // read a char (;)
 
-        if (dummy != ';') {
-            Logger::writeError("World_Imports","maptile file contains errors! : " + Logger::toString(dummy));
-            return false;
+            if (dummy != ';') {
+                Logger::writeError("World_Imports","maptile file contains errors! : " + Logger::toString(dummy));
+                return false;
+            }
+
+            unsigned short int dummyvalue;
+            maptilesfile >> dummyvalue;      // read a short uint (dummy)
         }
 
-        unsigned short int dummyvalue;
-        maptilesfile >> dummyvalue;      // read a short uint (dummy)
-
-        //CLogger::writeMessage("World_Imports",LogMessage, false);
         // store the tile in our map
         maptiles[temp_tile.x<<16|temp_tile.y] = temp_tile;
 
@@ -432,9 +448,7 @@ bool World::load_from_editor(std::string filename) {
 
     unsigned short dummy_specialflags;
 
-    int x,y,z;
-    z = 0;
-    int lastx=-1, lasty=-1;
+    int x,y;
     Item it;
     Item::id_type itemId;
     Item::quality_type itemQuality;
@@ -443,6 +457,7 @@ bool World::load_from_editor(std::string filename) {
     mapitemsfile >> x;
 
     while (mapitemsfile.good()) {
+        it.reset();
         it.makePermanent();
         it.setNumber(1);
         x -= mapstartx;
@@ -467,23 +482,15 @@ bool World::load_from_editor(std::string filename) {
         LogMessage += "y: " + Logger::toString(y) + " ";
         mapitemsfile >> dummy;
 
-        if (dummy != ';') {
-            Logger::writeError("World_Imports", "mapitem file contains errors! : " + Logger::toString(dummy));
-            return false;
+        if (!V2) {
+            if (dummy != ';') {
+                Logger::writeError("World_Imports", "mapitem file contains errors! : " + Logger::toString(dummy));
+                return false;
+            }
+
+            mapitemsfile >> dummy_specialflags;
+            mapitemsfile >> dummy;
         }
-
-        if (lastx==x && lasty==y) {
-            ++z;
-        } else {
-            z=0;
-        }
-
-        lastx=x;
-        lasty=y;
-
-        mapitemsfile >> dummy_specialflags;
-        LogMessage += "specialflags: " + Logger::toString(z) + " ";
-        mapitemsfile >> dummy;
 
         if (dummy != ';') {
             Logger::writeError("World_Imports", "mapitem file contains errors! : " + Logger::toString(dummy));
@@ -501,22 +508,74 @@ bool World::load_from_editor(std::string filename) {
             return false;
         }
 
-        //TODO: implement new map protocol
-        uint32_t itemData;
-        mapitemsfile >> itemData;
+        if (!V2) {
+            uint32_t itemData;
+            mapitemsfile >> itemData;
 
-        if (mapitemsfile.good()) {
-            if (mapitemsfile.get() == ';') {
-                mapitemsfile >> itemQuality;
-                it.setQuality(itemQuality);
-                LogMessage += "quality: " + Logger::toString(itemQuality) + " ";
-            } else {
-                mapitemsfile.unget();
+            if (mapitemsfile.good()) {
+                if (mapitemsfile.get() == ';') {
+                    mapitemsfile >> itemQuality;
+                    it.setQuality(itemQuality);
+                    LogMessage += "quality: " + Logger::toString(itemQuality) + " ";
+                } else {
+                    mapitemsfile.unget();
+                }
+            }
+
+            // default value while mapeditor is out of order
+            it.setQuality(333);
+        } else {
+            mapitemsfile >> itemQuality;
+            it.setQuality(itemQuality);
+            LogMessage += "quality: " + Logger::toString(itemQuality) + " ";
+
+            if (mapitemsfile.good()) {
+                if (mapitemsfile.get() == ';') {
+                    std::string dataSequence;
+                    std::getline(mapitemsfile, dataSequence);
+                    std::string key, value;
+                    bool isKey = true;
+
+                    for (size_t i = 0; i < dataSequence.length(); ++i) {
+                        char c = dataSequence[i];
+
+                        switch (c) {
+                        case ';':
+                            it.setData(key, value);
+                            key = "";
+                            value = "";
+                            isKey = true;
+                            break;
+
+                        case '=':
+                            isKey = false;
+                            break;
+
+                        case '\\':
+                            ++i;
+
+                            if (i == dataSequence.length()) {
+                                return false;
+                            }
+
+                            c = dataSequence[i];
+
+                        default:
+
+                            if (isKey) {
+                                key = key + c;
+                            } else {
+                                value = value + c;
+                            }
+                        }
+                    }
+
+                    it.setData(key, value);
+                } else {
+                    mapitemsfile.unget();
+                }
             }
         }
-
-        // default value while mapeditor is out of order
-        it.setQuality(333);
 
         //if ( LogOptions["World_Imports"] )
         //  Logger::writeMessage("World_Imports", LogMessage);
