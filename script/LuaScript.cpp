@@ -324,10 +324,6 @@ std::ostream &operator<<(std::ostream &stream, const position &pos) {
     return stream;
 }
 
-bool equapos(position pos1, position pos2) {
-    return (pos1.x == pos2.x && pos1.y == pos2.y && pos1.z == pos2.z);
-}
-
 unsigned int LuaAnd(unsigned int operand1, unsigned int operand2) {
     return (operand1 & operand2);
 }
@@ -855,7 +851,6 @@ void LuaScript::init_base_functions() {
         .def_readwrite("weather", &World::weather),
         luabind::def("dofile", &dofile, luabind::raw(_1)),
         luabind::def("printerr", printerr),
-        luabind::def("equapos", equapos),
         luabind::def("LuaAnd", LuaAnd),
         luabind::def("getCharForId",getCharForId),
         luabind::def("LuaOr", LuaOr),
