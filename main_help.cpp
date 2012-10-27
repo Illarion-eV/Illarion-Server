@@ -304,6 +304,12 @@ void checkArguments(int argc, char *argv[]) {
 void loadData() {
     bool ok = true;
 
+    Skills = new SkillTable();
+
+    if (!Skills->dataOK()) {
+        ok = false;
+    }
+
     scriptVariables = new ScriptVariablesTable();
 
     if (!scriptVariables->isDataOk()) {
@@ -367,12 +373,6 @@ void loadData() {
     Tiles = new TilesTable();
 
     if (!Tiles->dataOK()) {
-        ok = false;
-    }
-
-    Skills = new SkillTable();
-
-    if (!Skills->dataOK()) {
         ok = false;
     }
 

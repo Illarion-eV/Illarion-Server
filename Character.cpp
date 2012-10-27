@@ -1375,7 +1375,7 @@ Attribute::attribute_t Character::increaseAttrib(std::string name, int amount) {
     return 0;
 }
 
-unsigned short int Character::setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor, uint16_t firsttry) {
+unsigned short int Character::setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor) {
     if (!Skills->find(skill)) {
         return 0;
     }
@@ -1387,13 +1387,11 @@ unsigned short int Character::setSkill(TYPE_OF_SKILL_ID skill, short int major, 
             skillvalue sv;
             sv.major = major;
             sv.minor = minor;
-            sv.firsttry = firsttry;
             skills[skill] = sv;
             return sv.major;
         } else {
             iterator->second.major = major;
             iterator->second.minor = minor;
-            iterator->second.firsttry = firsttry;
             return iterator->second.major;
         }
     }
@@ -1409,7 +1407,6 @@ unsigned short int Character::increaseSkill(TYPE_OF_SKILL_ID skill, short int am
 
     if (iterator == skills.end()) {
         skillvalue sv;
-        sv.firsttry = 0;
 
         if (amount <= 0) {
             return 0; //Don't add new skill if value <= 0
@@ -1448,7 +1445,6 @@ unsigned short int Character::increaseMinorSkill(TYPE_OF_SKILL_ID skill, short i
 
     if (iterator == skills.end()) {
         skillvalue sv;
-        sv.firsttry = 0;
 
         if (amount <= 0) {
             return 0; //Don't add new skill if value <= 0

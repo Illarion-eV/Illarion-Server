@@ -427,7 +427,7 @@ public:
 
     void sendSkill(TYPE_OF_SKILL_ID skill, unsigned short int major, unsigned short int minor);
 
-    unsigned short int setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor, uint16_t firsttry);
+    unsigned short int setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor);
 
     //! sendet ein Attributupdate an den Client
     // \param name der Name des Attributs

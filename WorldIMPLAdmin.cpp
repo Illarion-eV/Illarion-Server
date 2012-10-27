@@ -1292,11 +1292,22 @@ bool World::reload_defs(Player *cp) {
     LongTimeEffectTable *LongTimeEffects_temp = 0;
     RaceSizeTable *RaceSizes_temp = 0;
 
-    CommonItems_temp = new CommonObjectTable();
+    if (ok) {
+        Skills_temp = new SkillTable();
 
-    if (CommonItems_temp == NULL || !CommonItems_temp->dataOK()) {
-        reportTableError(cp, "common");
-        ok = false;
+        if (Skills_temp == NULL || !Skills_temp->dataOK()) {
+            reportTableError(cp, "skills");
+            ok = false;
+        }
+    }
+
+    if (ok) {
+        CommonItems_temp = new CommonObjectTable();
+
+        if (CommonItems_temp == NULL || !CommonItems_temp->dataOK()) {
+            reportTableError(cp, "common");
+            ok = false;
+        }
     }
 
     if (ok) {
@@ -1358,15 +1369,6 @@ bool World::reload_defs(Player *cp) {
 
         if (Tiles_temp == NULL || !Tiles_temp->dataOK()) {
             reportTableError(cp, "tiles");
-            ok = false;
-        }
-    }
-
-    if (ok) {
-        Skills_temp = new SkillTable();
-
-        if (Skills_temp == NULL || !Skills_temp->dataOK()) {
-            reportTableError(cp, "skills");
             ok = false;
         }
     }

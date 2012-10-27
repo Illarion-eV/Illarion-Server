@@ -224,19 +224,12 @@ public:
         unsigned short int minor;
 
         /**
-        * number of unsuccessfull trys increasing this skil
-        * <b>Lua: [firsttry]</b>
-        */
-        uint16_t firsttry; /**< number of unsuccesful first trys*/
-
-        /**
         * constructor initializes all values with 0
         *<b>Lua</b>
         */
         skillvalue() {
             major = 0;
             minor = 0;
-            firsttry = 0;
         }
 
         /**
@@ -1340,10 +1333,9 @@ public:
     * @param sname the name of the skill which should be changed
     * @param major the major skill value
     * @param minor the minor skill value
-    * @param firsttry the number of unsuccesfull tries to increase this skill
     * @return the major value after the changes
     */
-    virtual unsigned short int setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor, uint16_t firsttry);
+    virtual unsigned short int setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor);
 
 
     /**

@@ -708,8 +708,7 @@ void LuaScript::init_base_functions() {
         luabind::class_<Character::skillvalue>("skillvalue")
         .def(luabind::constructor<>())
         .def_readwrite("major",&Character::skillvalue::major)
-        .def_readwrite("minor",&Character::skillvalue::minor)
-        .def_readwrite("firsttry",&Character::skillvalue::firsttry),
+        .def_readwrite("minor",&Character::skillvalue::minor),
         luabind::class_<NPC, Character>("NPC"),
         luabind::class_<Monster, Character>("Monster"),
         luabind::class_<WaypointList>("WaypointList")

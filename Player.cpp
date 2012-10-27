@@ -1073,14 +1073,12 @@ bool Player::save() throw() {
             const InsertQuery::columnIndex playerIdColumn = query.addColumn("psk_playerid");
             const InsertQuery::columnIndex skillIdColumn = query.addColumn("psk_skill_id");
             const InsertQuery::columnIndex valueColumn = query.addColumn("psk_value");
-            const InsertQuery::columnIndex firstTryColumn = query.addColumn("psk_firsttry");
             const InsertQuery::columnIndex minorColumn = query.addColumn("psk_minor");
 
             // now store the skills
             for (SKILLMAP::iterator skillptr = skills.begin(); skillptr != skills.end(); ++skillptr) {
                 query.addValue<uint16_t>(skillIdColumn, skillptr->first);
                 query.addValue<uint16_t>(valueColumn, (uint16_t) skillptr->second.major);
-                query.addValue<uint16_t>(firstTryColumn, (uint16_t) skillptr->second.firsttry);
                 query.addValue<uint16_t>(minorColumn, (uint16_t) skillptr->second.minor);
             }
 
@@ -1264,7 +1262,6 @@ bool Player::load() throw() {
             query.addColumn("playerskills", "psk_skill_id");
             query.addColumn("playerskills", "psk_value");
             query.addColumn("playerskills", "psk_minor");
-            query.addColumn("playerskills", "psk_firsttry");
             query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playerskills", "psk_playerid", id);
             query.addServerTable("playerskills");
 
@@ -1276,8 +1273,7 @@ bool Player::load() throw() {
                     setSkill(
                         (TYPE_OF_SKILL_ID)((*itr)["psk_id"].as<uint16_t>()),
                         (*itr)["psk_value"].as<uint16_t>(),
-                        (*itr)["psk_minor"].as<uint16_t>(),
-                        (*itr)["psk_firsttry"].as<uint16_t>()
+                        (*itr)["psk_minor"].as<uint16_t>()
                     );
                 }
             } else {
@@ -1505,8 +1501,8 @@ void Player::increasePoisonValue(short int value) {
     //============================================================================
 }
 
-unsigned short int Player::setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor, uint16_t firsttry) {
-    Character::setSkill(skill, major, minor, firsttry);
+unsigned short int Player::setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor) {
+    Character::setSkill(skill, major, minor);
     sendSkill(skill, major, minor);
     return major;
 }
