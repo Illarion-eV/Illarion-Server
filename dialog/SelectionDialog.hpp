@@ -49,6 +49,8 @@ public:
     typedef uint8_t index_type;
 
 private:
+    string text;
+
     static const uint32_t MAXOPTIONS = 256;
     vector<Option *> options;
 
@@ -57,9 +59,11 @@ private:
     index_type selectedIndex;
 
 public:
-    SelectionDialog(string title, luabind::object callback);
+    SelectionDialog(string title, string text, luabind::object callback);
     SelectionDialog(const SelectionDialog &selectionDialog);
     ~SelectionDialog();
+
+    string getText() const;
 
     index_type getOptionsSize() const;
     vector<Option *>::const_iterator getOptionsBegin() const;

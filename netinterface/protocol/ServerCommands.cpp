@@ -83,6 +83,7 @@ MerchantDialogTC::MerchantDialogTC(MerchantDialog &merchantDialog, unsigned int 
 
 SelectionDialogTC::SelectionDialogTC(SelectionDialog &selectionDialog, unsigned int dialogId) : BasicServerCommand(SC_SELECTIONDIALOG_TC) {
     addStringToBuffer(selectionDialog.getTitle());
+    addStringToBuffer(selectionDialog.getText());
     SelectionDialog::index_type size = selectionDialog.getOptionsSize();
     addUnsignedCharToBuffer(size);
 

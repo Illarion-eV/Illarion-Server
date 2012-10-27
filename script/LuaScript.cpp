@@ -421,7 +421,7 @@ void LuaScript::init_base_functions() {
         .def("getPurchaseAmount", &MerchantDialog::getPurchaseAmount)
         .def("getSaleItem", &MerchantDialog::getSaleItem),
         luabind::class_<SelectionDialog>("SelectionDialog")
-        .def(luabind::constructor<std::string, luabind::object>())
+        .def(luabind::constructor<std::string, std::string, luabind::object>())
         .def("addOption", &SelectionDialog::addOption)
         .def("getSuccess", &SelectionDialog::getSuccess)
         .def("getSelectedIndex", &SelectionDialog::getSelectedIndex),

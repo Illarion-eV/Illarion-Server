@@ -20,12 +20,14 @@
 
 #include "dialog/SelectionDialog.hpp"
 
-SelectionDialog::SelectionDialog(std::string title, luabind::object callback)
-    :Dialog(title, "SelectionDialog", callback) {
+SelectionDialog::SelectionDialog(std::string title, std::string text, luabind::object callback)
+    :Dialog(title, "SelectionDialog", callback), text(text) {
     success = false;
 }
 
 SelectionDialog::SelectionDialog(const SelectionDialog &selectionDialog) : Dialog(selectionDialog) {
+    text = selectionDialog.text;
+    
     for (auto it = selectionDialog.options.begin(); it != selectionDialog.options.end(); ++it) {
         Option &option = **it;
         addOption(option.getItem(), option.getName());
@@ -39,6 +41,10 @@ SelectionDialog::~SelectionDialog() {
     for (auto it = options.begin(); it != options.end(); ++it) {
         delete *it;
     }
+}
+
+std::string SelectionDialog::getText() const {
+    return text;
 }
 
 SelectionDialog::index_type SelectionDialog::getOptionsSize() const {
