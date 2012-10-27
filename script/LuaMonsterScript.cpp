@@ -70,25 +70,6 @@ void LuaMonsterScript::useMonster(Character *Monster, Character *user, unsigned 
     callEntrypoint("useMonster", fuse_Monster, fuse_user, counter, param, ltastate);
 }
 
-void LuaMonsterScript::useMonsterWithCharacter(Character *Monster, Character *user, Character *targetChar, unsigned short int counter, unsigned short param, unsigned char ltastate) {
-    fuse_ptr<Character> fuse_Monster(Monster);
-    fuse_ptr<Character> fuse_user(user);
-    fuse_ptr<Character> fuse_targetChar(targetChar);
-    callEntrypoint("useMonsterWithCharacter", fuse_Monster, fuse_user, fuse_targetChar, counter, param, ltastate);
-}
-
-void LuaMonsterScript::useMonsterWithField(Character *Monster, Character *user, position pos, unsigned short int counter, unsigned short param, unsigned char ltastate) {
-    fuse_ptr<Character> fuse_Monster(Monster);
-    fuse_ptr<Character> fuse_user(user);
-    callEntrypoint("useMonsterWithField", fuse_Monster, fuse_user, pos, counter, param, ltastate);
-}
-
-void LuaMonsterScript::useMonsterWithItem(Character *Monster, Character *user, ScriptItem item, unsigned short int counter, unsigned short param, unsigned char ltastate) {
-    fuse_ptr<Character> fuse_Monster(Monster);
-    fuse_ptr<Character> fuse_user(user);
-    callEntrypoint("useMonsterWithItem", fuse_Monster, fuse_user, item, counter, param, ltastate);
-}
-
 bool LuaMonsterScript::actionDisturbed(Character *performer, Character *disturber) {
     fuse_ptr<Character> fuse_performer(performer);
     fuse_ptr<Character> fuse_disturber(disturber);

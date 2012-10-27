@@ -51,25 +51,6 @@ void LuaNPCScript::useNPC(Character *user, unsigned short counter, unsigned shor
     callEntrypoint("useNPC", fuse_thisnpc, fuse_user, counter, param, ltastate);
 }
 
-void LuaNPCScript::useNPCWithCharacter(Character *user, Character *targetChar, unsigned short counter, unsigned short int param, unsigned char ltastate) {
-    fuse_ptr<Character> fuse_thisnpc(_thisnpc);
-    fuse_ptr<Character> fuse_user(user);
-    fuse_ptr<Character> fuse_targetChar(targetChar);
-    callEntrypoint("useNPCWithCharacter", fuse_thisnpc, fuse_user, fuse_targetChar, counter, param, ltastate);
-}
-
-void LuaNPCScript::useNPCWithField(Character *user, position pos, unsigned short counter, unsigned short int param, unsigned char ltastate) {
-    fuse_ptr<Character> fuse_thisnpc(_thisnpc);
-    fuse_ptr<Character> fuse_user(user);
-    callEntrypoint("useNPCWithField", fuse_thisnpc, fuse_user, pos, counter, param, ltastate);
-}
-
-void LuaNPCScript::useNPCWithItem(Character *user, ScriptItem TargetItem, unsigned short counter, unsigned short int param, unsigned char ltastate) {
-    fuse_ptr<Character> fuse_thisnpc(_thisnpc);
-    fuse_ptr<Character> fuse_user(user);
-    callEntrypoint("useNPCWithItem", fuse_thisnpc, fuse_user, TargetItem, counter, param, ltastate);
-}
-
 bool LuaNPCScript::actionDisturbed(Character *performer, Character *disturber) {
     fuse_ptr<Character> fuse_thisnpc(_thisnpc);
     fuse_ptr<Character> fuse_performer(performer);

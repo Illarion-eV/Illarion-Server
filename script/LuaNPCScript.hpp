@@ -35,9 +35,6 @@ public:
 
     void nextCycle();
     void receiveText(Character::talk_type tt, std::string message, Character *cc);
-    void useNPCWithItem(Character *user, ScriptItem TargetItem, unsigned short counter, unsigned short int param, unsigned char ltastate);
-    void useNPCWithCharacter(Character *user, Character *targetChar, unsigned short counter, unsigned short int param, unsigned char ltastate);
-    void useNPCWithField(Character *user, position pos, unsigned short counter, unsigned short int param, unsigned char ltastate);
     void useNPC(Character *user, unsigned short counter, unsigned short int param, unsigned char ltastate);
     void lookAtNpc(Character *source, unsigned char mode);
     bool actionDisturbed(Character *performer, Character *disturber);

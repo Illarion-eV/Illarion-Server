@@ -195,12 +195,6 @@ void LongTimeAction::abortAction() {
 
                     if (_target.Type == LUA_NONE) {
                         tiScript->useTile(_owner, _source.pos, _counter,static_cast<TYPE_OF_ITEM_ID>(_param),static_cast<unsigned char>(LTS_ACTIONABORTED));
-                    } else if (_target.Type == LUA_FIELD) {
-                        tiScript->useTileWithField(_owner , _source.pos, _target.pos, _counter , static_cast<TYPE_OF_ITEM_ID>(_param), static_cast<unsigned char>(LTS_ACTIONABORTED));
-                    } else if (_target.Type == LUA_ITEM) {
-                        tiScript->useTileWithItem(_owner, _source.pos, _target.item, _counter,static_cast<TYPE_OF_ITEM_ID>(_param),static_cast<unsigned char>(LTS_ACTIONABORTED));
-                    } else if (_target.Type == LUA_CHARACTER) {
-                        tiScript->useTileWithCharacter(_owner, _source.pos, _target.character, _counter, static_cast<TYPE_OF_ITEM_ID>(_param),static_cast<unsigned char>(LTS_ACTIONABORTED));
                     }
                 }
                 //a character
@@ -211,12 +205,6 @@ void LongTimeAction::abortAction() {
 
                         if (_target.Type == LUA_NONE) {
                             monScript->useMonster(_source.character,_owner,_counter,static_cast<TYPE_OF_ITEM_ID>(_param),static_cast<unsigned char>(LTS_ACTIONABORTED));
-                        } else if (_target.Type == LUA_FIELD) {
-                            monScript->useMonsterWithField(_source.character,_owner,_target.pos,_counter,static_cast<TYPE_OF_ITEM_ID>(_param),static_cast<unsigned char>(LTS_ACTIONABORTED));
-                        } else if (_target.Type == LUA_ITEM) {
-                            monScript->useMonsterWithItem(_source.character,_owner,_target.item,_counter,static_cast<TYPE_OF_ITEM_ID>(_param),static_cast<unsigned char>(LTS_ACTIONABORTED));
-                        } else if (_target.Type == LUA_CHARACTER) {
-                            monScript->useMonsterWithCharacter(_source.character,_owner,_target.character,_counter,static_cast<TYPE_OF_ITEM_ID>(_param),static_cast<unsigned char>(LTS_ACTIONABORTED));
                         }
                     }
                     //a npc
@@ -225,12 +213,6 @@ void LongTimeAction::abortAction() {
 
                         if (_target.Type == LUA_NONE) {
                             npcScript->useNPC(_owner, _counter, static_cast<TYPE_OF_ITEM_ID>(_param),static_cast<unsigned char>(LTS_ACTIONABORTED));
-                        } else if (_target.Type == LUA_FIELD) {
-                            npcScript->useNPCWithField(_owner, _target.pos, _counter, static_cast<TYPE_OF_ITEM_ID>(_param),static_cast<unsigned char>(LTS_ACTIONABORTED));
-                        } else if (_target.Type == LUA_ITEM) {
-                            npcScript->useNPCWithItem(_owner, _target.item, _counter, static_cast<TYPE_OF_ITEM_ID>(_param),static_cast<unsigned char>(LTS_ACTIONABORTED));
-                        } else if (_target.Type == LUA_CHARACTER) {
-                            npcScript->useNPCWithCharacter(_owner, _target.character, _counter, static_cast<TYPE_OF_ITEM_ID>(_param),static_cast<unsigned char>(LTS_ACTIONABORTED));
                         }
                     }
 
@@ -290,12 +272,6 @@ void LongTimeAction::successAction() {
 
                     if (_target.Type == LUA_NONE) {
                         tiScript->useTile(_owner, _source.pos, _counter,static_cast<TYPE_OF_ITEM_ID>(_param),static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
-                    } else if (_target.Type == LUA_FIELD) {
-                        tiScript->useTileWithField(_owner , _source.pos, _target.pos, _counter , static_cast<TYPE_OF_ITEM_ID>(_param), static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
-                    } else if (_target.Type == LUA_ITEM) {
-                        tiScript->useTileWithItem(_owner, _source.pos, _target.item, _counter,static_cast<TYPE_OF_ITEM_ID>(_param),static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
-                    } else if (_target.Type == LUA_CHARACTER) {
-                        tiScript->useTileWithCharacter(_owner, _source.pos, _target.character, _counter, static_cast<TYPE_OF_ITEM_ID>(_param),static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
                     }
                 }
                 //a character
@@ -306,12 +282,6 @@ void LongTimeAction::successAction() {
 
                         if (_target.Type == LUA_NONE) {
                             monScript->useMonster(_source.character,_owner,_counter,static_cast<TYPE_OF_ITEM_ID>(_param),static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
-                        } else if (_target.Type == LUA_FIELD) {
-                            monScript->useMonsterWithField(_source.character,_owner,_target.pos,_counter,static_cast<TYPE_OF_ITEM_ID>(_param),static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
-                        } else if (_target.Type == LUA_ITEM) {
-                            monScript->useMonsterWithItem(_source.character,_owner,_target.item,_counter,static_cast<TYPE_OF_ITEM_ID>(_param),static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
-                        } else if (_target.Type == LUA_CHARACTER) {
-                            monScript->useMonsterWithCharacter(_source.character,_owner,_target.character,_counter,static_cast<TYPE_OF_ITEM_ID>(_param),static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
                         }
                     }
                     //a npc
@@ -320,12 +290,6 @@ void LongTimeAction::successAction() {
 
                         if (_target.Type == LUA_NONE) {
                             npcScript->useNPC(_owner, _counter, static_cast<TYPE_OF_ITEM_ID>(_param),static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
-                        } else if (_target.Type == LUA_FIELD) {
-                            npcScript->useNPCWithField(_owner, _target.pos, _counter, static_cast<TYPE_OF_ITEM_ID>(_param),static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
-                        } else if (_target.Type == LUA_ITEM) {
-                            npcScript->useNPCWithItem(_owner, _target.item, _counter, static_cast<TYPE_OF_ITEM_ID>(_param),static_cast<unsigned char>(LTS_ACTIONSUCCESSFULL));
-                        } else if (_target.Type == LUA_CHARACTER) {
-                            npcScript->useNPCWithCharacter(_owner, _target.character, _counter, static_cast<TYPE_OF_ITEM_ID>(_param),static_cast<unsigned char>(LTS_ACTIONABORTED));
                         }
                     }
                 }

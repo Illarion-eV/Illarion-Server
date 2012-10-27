@@ -39,9 +39,6 @@ public:
     void onDeath(Character *Monster);
     void onAttacked(Character *Monster, Character *attacker);
     void onCasted(Character *Monster, Character *caster);
-    void useMonsterWithItem(Character *Monster, Character *user, ScriptItem item, unsigned short int counter, unsigned short param, unsigned char ltastate);
-    void useMonsterWithCharacter(Character *Monster, Character *user, Character *targetChar, unsigned short int counter, unsigned short param, unsigned char ltastate);
-    void useMonsterWithField(Character *Monster, Character *user, position pos, unsigned short int counter, unsigned short param, unsigned char ltastate);
     void useMonster(Character *Monster, Character *user, unsigned short int counter, unsigned short int param, unsigned char ltastate);
     void lookAtMonster(Character *source, Character *target, unsigned char mode);
     bool actionDisturbed(Character *performer, Character *disturber);

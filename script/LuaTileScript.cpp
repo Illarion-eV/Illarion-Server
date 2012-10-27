@@ -39,22 +39,6 @@ void LuaTileScript::useTile(Character *user, position pos, unsigned short int co
     callEntrypoint("useTile", fuse_user, pos, counter, param, ltastate);
 }
 
-void LuaTileScript::useTileWithCharacter(Character *user, position pos, Character *character,  unsigned short int counter, unsigned int param, unsigned char ltastate) {
-    fuse_ptr<Character> fuse_user(user);
-    fuse_ptr<Character> fuse_character(character);
-    callEntrypoint("useTileWithCharacter", fuse_user, pos, fuse_character, counter, param, ltastate);
-}
-
-void LuaTileScript::useTileWithField(Character *user, position pos, position posnew,  unsigned short int counter, unsigned int param, unsigned char ltastate) {
-    fuse_ptr<Character> fuse_user(user);
-    callEntrypoint("useTileWithField", fuse_user, pos, posnew, counter, param, ltastate);
-}
-
-void LuaTileScript::useTileWithItem(Character *user, position pos, ScriptItem item,  unsigned short int counter, unsigned int param, unsigned char ltastate) {
-    fuse_ptr<Character> fuse_user(user);
-    callEntrypoint("useTileWithItem", fuse_user, pos, item, counter, param, ltastate);
-}
-
 bool LuaTileScript::actionDisturbed(Character *performer, Character *disturber) {
     fuse_ptr<Character> fuse_performer(performer);
     fuse_ptr<Character> fuse_disturber(disturber);

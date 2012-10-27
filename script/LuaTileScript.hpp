@@ -34,9 +34,6 @@ public:
     virtual ~LuaTileScript() throw();
 
     void useTile(Character *user, position pos, unsigned short int counter, unsigned int param, unsigned char ltastate);
-    void useTileWithItem(Character *user, position pos, ScriptItem item, unsigned short int counter, unsigned int param, unsigned char ltastate);
-    void useTileWithField(Character *user, position pos, position posnew, unsigned short int counter, unsigned int param, unsigned char ltastate);
-    void useTileWithCharacter(Character *user, position pos, Character *character, unsigned short int counter, unsigned int param, unsigned char ltastate);
     bool actionDisturbed(Character *performer, Character *disturber);
 
 private:

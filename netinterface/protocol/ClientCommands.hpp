@@ -1300,15 +1300,6 @@ public:
                 if (Source.Type == LUA_CHARACTER && (Target.Type == LUA_NONE)) {
                     LuaNPCScript->useNPC(player, counter, static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION));
                     msg = "Used NPC: " + Source.character->name + "(" + Logger::toString(Source.character->id) + ")";
-                } else if (Source.Type == LUA_CHARACTER && Target.Type == LUA_FIELD) {
-                    LuaNPCScript->useNPCWithField(player, Target.pos, counter, static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION));
-                    msg = "Used NPC: " + Source.character->name + "(" + Logger::toString(Source.character->id) + ") with empty field at pos(" + Logger::toString(Target.pos.x) + "," + Logger::toString(Target.pos.y) + "," + Logger::toString(Target.pos.z) + ")";
-                } else if (Source.Type == LUA_CHARACTER && Target.Type == LUA_ITEM) {
-                    LuaNPCScript->useNPCWithItem(player, Target.item, counter, static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION));
-                    msg = "Used NPC: " + Source.character->name + "(" + Logger::toString(Source.character->id) + ") with Item: " + Logger::toString(Target.item.getId());
-                } else if (Source.Type == LUA_CHARACTER && Target.Type == LUA_CHARACTER) {
-                    LuaNPCScript->useNPCWithCharacter(player, Target.character, counter, static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION));
-                    msg = "Used NPC: " + Source.character->name + "(" + Logger::toString(Source.character->id) + ") with character: " + Target.character->name + "(" + Logger::toString(Target.character->id) + ")";
                 }
             }
 
@@ -1324,15 +1315,6 @@ public:
                 if (Source.Type == LUA_CHARACTER && (Target.Type == LUA_NONE)) {
                     LuaMonsterScript->useMonster(Source.character,player,counter,static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION));
                     msg = "Used Monster: " + Source.character->name + "(" + Logger::toString(Source.character->id) + ")";
-                } else if (Source.Type == LUA_CHARACTER && Target.Type == LUA_FIELD) {
-                    LuaMonsterScript->useMonsterWithField(Source.character,player,Target.pos,counter,static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION));
-                    msg = "Used Monster: " + Source.character->name + "(" + Logger::toString(Source.character->id) + ") with empty field at pos(" + Logger::toString(Target.pos.x) + "," + Logger::toString(Target.pos.y) + "," + Logger::toString(Target.pos.z) + ")";
-                } else if (Source.Type == LUA_CHARACTER && Target.Type == LUA_ITEM) {
-                    LuaMonsterScript->useMonsterWithItem(Source.character,player,Target.item,counter,static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION));
-                    msg = "Used Monster: " + Source.character->name + "(" + Logger::toString(Source.character->id) + ") with Item: " + Logger::toString(Target.item.getId());
-                } else if (Source.Type == LUA_CHARACTER && Target.Type == LUA_CHARACTER) {
-                    LuaMonsterScript->useMonsterWithCharacter(Source.character,player,Target.character,counter,static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION));
-                    msg = "Used Monster: " + Source.character->name + "(" + Logger::toString(Source.character->id) + ") with character: " + Target.character->name + "(" + Logger::toString(Target.character->id) + ")";
                 }
             }
         } else if (LuaTileScript) {
@@ -1346,12 +1328,6 @@ public:
             {
                 if (Source.Type == LUA_FIELD && Target.Type == LUA_NONE) {
                     LuaTileScript->useTile(player,Source.pos,counter,static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION));
-                } else if (Source.Type == LUA_FIELD && Target.Type == LUA_FIELD) {
-                    LuaTileScript->useTileWithField(player,Source.pos,Target.pos,counter,static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION));
-                } else if (Source.Type == LUA_FIELD && Target.Type == LUA_ITEM) {
-                    LuaTileScript->useTileWithItem(player,Source.pos,Target.item, counter,static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION));
-                } else if (Source.Type == LUA_FIELD && Target.Type == LUA_CHARACTER) {
-                    LuaTileScript->useTileWithCharacter(player,Source.pos,Target.character, counter,static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION));
                 }
             }
         }
