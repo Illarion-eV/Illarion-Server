@@ -150,17 +150,10 @@ int main(int argc, char *argv[]) {
     world->initNPC();
 
     try {
-        boost::shared_ptr<LuaReloadScript> tmpScript(new LuaReloadScript("server.reload_defs"));
+        boost::shared_ptr<LuaReloadScript> tmpScript(new LuaReloadScript("server.reload"));
         tmpScript->onReload();
     } catch (ScriptException &e) {
-        std::cerr << "reload_defs: " << e.what() << std::endl;
-    }
-
-    try {
-        boost::shared_ptr<LuaReloadScript> tmpScript(new LuaReloadScript("server.reload_tables"));
-        std::cerr << "server.reload_tables.onReload returned false" << std::endl;
-    } catch (ScriptException &e) {
-        std::cerr << "reload_tables: " << e.what() << std::endl;
+        std::cerr << "reload: " << e.what() << std::endl;
     }
 
     Logger::writeMessage("basic","Scheduler wird Initialisiert \n",false);

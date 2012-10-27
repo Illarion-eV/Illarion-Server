@@ -149,9 +149,6 @@ void World::InitGMCommands() {
     GMCommands["makevisible"] = new Command(&World::makeVisible);
     GMCommands["mv"] = GMCommands["makevisible"];
 
-    //GMCommands["reloaddefinitions"] = new Command( &World::reload_defs );
-    //GMCommands["rd"] = GMCommands["reloaddefinitions"];
-
     GMCommands["showwarpfields"] = new Command(&World::showWarpFieldsInRange);
 
     GMCommands["removewarpfield"] = new Command(&World::removeTeleporter);
@@ -1693,15 +1690,6 @@ bool World::reload_defs(Player *cp) {
             ok = false;
         }
 
-
-        try {
-            boost::shared_ptr<LuaReloadScript> tmpScript(new LuaReloadScript("server.reload_defs"));
-            tmpScript->onReload();
-        } catch (ScriptException &e) {
-            reportScriptError(cp, "reload_defs", e.what());
-            ok = false;
-        }
-
         try {
             boost::shared_ptr<LuaDepotScript>tmpScript(new LuaDepotScript("server.depot"));
             depotScript = tmpScript;
@@ -1739,11 +1727,10 @@ bool World::reload_tables(Player *cp) {
         initNPC();
 
         try {
-            boost::shared_ptr<LuaReloadScript> tmpScript(new LuaReloadScript("server.reload_tables"));
+            boost::shared_ptr<LuaReloadScript> tmpScript(new LuaReloadScript("server.reload"));
             tmpScript->onReload();
         } catch (ScriptException &e) {
-            reportScriptError(cp, "reload_tables", e.what());
-            ok = false;
+            reportScriptError(cp, "reload", e.what());
         }
 
     }
