@@ -84,7 +84,7 @@ void Monster::setType(const TYPE_OF_CHARACTER_ID &type) throw(unknownIDException
 
     // set skills
     for (auto it = monsterdef.skills.begin(); it != monsterdef.skills.end(); ++it) {
-        increaseSkill(5, it->first, Random::uniform(it->second.first, it->second.second));
+        increaseSkill(it->first, Random::uniform(it->second.first, it->second.second));
     }
 
     // add items

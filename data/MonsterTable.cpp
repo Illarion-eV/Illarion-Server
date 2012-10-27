@@ -170,7 +170,7 @@ void MonsterTable::reload() {
                 } // if (!monAttrResults.empty())
 
                 SelectQuery monSkillQuery(connection);
-                monSkillQuery.addColumn("monster_skills", "mobsk_name");
+                monSkillQuery.addColumn("monster_skills", "mobsk_skillid");
                 monSkillQuery.addColumn("monster_skills", "mobsk_minvalue");
                 monSkillQuery.addColumn("monster_skills", "mobsk_maxvalue");
                 monSkillQuery.addEqualCondition("monster_skills", "mobsk_monsterid", id);
@@ -179,12 +179,12 @@ void MonsterTable::reload() {
                 Database::Result monSkillResults = monSkillQuery.execute();
 
                 if (!monSkillResults.empty()) {
-                    std::string skill;
+                    TYPE_OF_SKILL_ID skill;
                     uint16_t minValue, maxValue;
 
                     for (Database::ResultConstIterator itr2 = monSkillResults.begin();
                          itr2 != monSkillResults.end(); ++itr2) {
-                        skill = (*itr2)["mobsk_name"].as<std::string>();
+                        skill = (TYPE_OF_SKILL_ID)((*itr2)["mobsk_name"].as<uint16_t>());
                         minValue = (*itr2)["mobsk_minvalue"].as<uint16_t>();
                         maxValue = (*itr2)["mobsk_maxvalue"].as<uint16_t>();
 

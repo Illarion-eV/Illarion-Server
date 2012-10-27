@@ -56,6 +56,8 @@ typedef uint16_t TYPE_OF_CATEGORY;
 typedef uint8_t  TYPE_OF_AMMUNITIONTYPE;
 typedef uint8_t  TYPE_OF_ACTIONPOINTS;
 
+typedef uint8_t  TYPE_OF_SKILL_ID;
+
 typedef std::string TYPE_OF_GERMAN;
 typedef std::string TYPE_OF_ENGLISH;
 typedef std::string TYPE_OF_FRENCH;

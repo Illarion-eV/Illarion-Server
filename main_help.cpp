@@ -34,6 +34,7 @@
 #include "data/CommonObjectTable.hpp"
 #include "data/TilesModificatorTable.hpp"
 #include "data/TilesTable.hpp"
+#include "data/SkillTable.hpp"
 #include "data/ContainerObjectTable.hpp"
 #include "data/MonsterTable.hpp"
 #include "data/SpellTable.hpp"
@@ -160,6 +161,8 @@ TilesModificatorTable *TilesModItems;
 
 //! eine Tabelle mit allen Arten von Bodenplatten
 TilesTable *Tiles;
+
+SkillTable *Skills;
 
 //! a table containing monster descriptions
 MonsterTable *MonsterDescriptions;
@@ -364,6 +367,12 @@ void loadData() {
     Tiles = new TilesTable();
 
     if (!Tiles->dataOK()) {
+        ok = false;
+    }
+
+    Skills = new SkillTable();
+
+    if (!Skills->dataOK()) {
         ok = false;
     }
 

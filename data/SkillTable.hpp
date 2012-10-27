@@ -18,34 +18,35 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _TILES_TABLE_HPP_
-#define _TILES_TABLE_HPP_
+#ifndef _SKILL_TABLE_HPP_
+#define _SKILL_TABLE_HPP_
 
 #include <string>
 #include <boost/unordered_map.hpp>
 #include "data/Table.hpp"
 #include "types.hpp"
-#include "TableStructs.hpp"
 
 class World;
 
-class TilesTable: public Table {
+class SkillTable: public Table {
 public:
-    bool find(TYPE_OF_ITEM_ID Id, TilesStruct &ret);
+    typedef boost::unordered_map<TYPE_OF_SKILL_ID, std::string> TABLE;
 
-    TilesTable();
-    ~TilesTable();
+    bool find(TYPE_OF_SKILL_ID Id);
+    bool find(TYPE_OF_SKILL_ID Id, std::string &ret);
+
+    TABLE::const_iterator begin() const;
+    TABLE::const_iterator end() const;
+
+    SkillTable();
+    ~SkillTable();
 
     inline bool dataOK() {
         return m_dataOK;
     }
 
-    bool nonPassable(TYPE_OF_ITEM_ID Id);
-
 private:
     virtual void reload();
-
-    typedef boost::unordered_map<TYPE_OF_ITEM_ID, TilesStruct> TABLE;
 
     TABLE m_table;
 

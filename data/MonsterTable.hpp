@@ -63,7 +63,7 @@ struct attributedef_t {
 };
 
 struct MonsterStruct {
-    typedef std::map<std::string, std::pair<unsigned short, unsigned short> > skilltype;
+    typedef std::map<TYPE_OF_SKILL_ID, std::pair<unsigned short, unsigned short> > skilltype;
     typedef std::map<unsigned short, std::vector<itemdef_t> > itemtype;
     std::string name;
     Character::race_type race;

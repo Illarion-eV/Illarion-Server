@@ -52,7 +52,7 @@ enum gm_rights {
     gmr_basiccommands = 2, //Basic Commands like !who !what !? !fi and !inform
     gmr_warp = 4, //GM is allowed to Warp (includes #jump_to)
     gmr_summon = 8, // GM is allowed to Summon
-    gmr_prison = 16, //GM is allowed to put people in prisons
+    gmr_undef = 16,
     gmr_settiles = 32, //GM is allowed to change tiles (includes ton and toff command)
     gmr_clipping = 64, //GM is allowed to change his clipping state (Walk trough walls)
     gmr_warpfields = 128, //GM is allowed to manipulate Warpfields
@@ -378,25 +378,10 @@ public:
 
     virtual int createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali, const luabind::object &data);
 
-    /**
-    * try to learn a skill
-    * <b>Lua: [:learn]</b>
-    * @param skill name of the skill the user tries to learn
-    * @param skillGroup group of the given skill
-    * @param actionPoints cost of learning
-    * @param opponent gives information until which skill level learning may be successful
-    * @param leadAttrib value of the lead attribute responsible for how successful learning the given skill is
-    */
-    virtual void learn(std::string skill, uint8_t skillGroup, uint32_t actionPoints, uint8_t opponent, uint8_t leadAttrib);
+    virtual void learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opponent);
 
-    //! verändert den Wert eines Skills bzw. legt einen neuen Skill an
-    // \param typ der Typ des Skills
-    // \param name der Name des Skills
-    // \param amount �derung
-    // \return der neue Skillwert fr name
-    virtual unsigned short int increaseSkill(unsigned char typ, std::string name, short int amount);
+    virtual unsigned short int increaseSkill(TYPE_OF_SKILL_ID skill, short int amount);
 
-    //! löscht alle Skills des Character
     virtual void deleteAllSkills();
 
     //! löscht count Item mit der ID itemid aus dem Inventory des Player
@@ -440,13 +425,9 @@ public:
     // \param der Magietyp fr den die Flags an den Client gechickt werden sollen
     void sendMagicFlags(int type);
 
-    //! sendet ein Skillupdate an den Client
-    // \param name der Name des Skills
-    // \param type der Typ des Skills
-    // \param value der Wert des Skills
-    void sendSkill(std::string name, unsigned char type, unsigned short int major, unsigned short int minor);
+    void sendSkill(TYPE_OF_SKILL_ID skill, unsigned short int major, unsigned short int minor);
 
-    unsigned short int setSkill(unsigned char typ, std::string sname, short int major, short int minor, uint16_t firsttry);
+    unsigned short int setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor, uint16_t firsttry);
 
     //! sendet ein Attributupdate an den Client
     // \param name der Name des Attributs

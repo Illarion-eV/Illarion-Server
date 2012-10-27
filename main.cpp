@@ -48,6 +48,7 @@
 #include "data/ContainerObjectTable.hpp"
 #include "data/TilesModificatorTable.hpp"
 #include "data/TilesTable.hpp"
+#include "data/SkillTable.hpp"
 #include "data/ScriptVariablesTable.hpp"
 #include "Logger.hpp"
 #include "main_help.hpp"
@@ -245,6 +246,8 @@ int main(int argc, char *argv[]) {
     TilesModItems = NULL;
     delete Tiles;
     Tiles = NULL;
+    delete Skills;
+    Skills = NULL;
     delete world;
     world = NULL;
 

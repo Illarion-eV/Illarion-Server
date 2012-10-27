@@ -50,6 +50,7 @@
 #include "Scheduler.hpp"
 #include "data/SpellTable.hpp"
 #include "data/TriggerTable.hpp"
+#include "data/SkillTable.hpp"
 #include "TableStructs.hpp"
 #include "data/NaturalArmorTable.hpp"
 #include "data/MonsterAttackTable.hpp"
@@ -81,6 +82,8 @@ extern TilesModificatorTable *TilesModItems;
 
 //! eine Tabelle mit allen Arten von Bodenplatten
 extern TilesTable *Tiles;
+
+extern SkillTable *Skills;
 
 //! ein struct fuer die Allgemeinen Attribute eines Item
 extern CommonStruct tempCommon;
@@ -1175,9 +1178,6 @@ public:
     // ! Server side implemented !summon Player
     void summon_command(Player *cp, const std::string &ts);
 
-    // ! Server side implemented !prison Player
-    void prison_command(Player *cp, const std::string &tplayer);
-
     // ! relaods only the definition from the db no Monsterspawns and no NPC's are loaded.
     bool reload_defs(Player *cp);
 
@@ -1774,8 +1774,6 @@ private:
     // Allow players to change title prefix and suffix
     bool prefix_command(Player *cp, const std::string &tprefix);
     bool suffix_command(Player *cp, const std::string &tprefix);
-    // prison command for players
-    bool player_prison_command(Player *cp, const std::string &input);
 
     // register any GM commands here...
     void InitGMCommands();

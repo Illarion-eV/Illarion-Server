@@ -28,6 +28,7 @@
 #include "data/CommonObjectTable.hpp"
 #include "data/MonsterTable.hpp"
 #include "data/TilesTable.hpp"
+#include "data/SkillTable.hpp"
 #include "data/WeaponObjectTable.hpp"
 
 #include "script/LuaLogoutScript.hpp"

@@ -46,6 +46,7 @@ extern "C" {
 #include "LongTimeEffect.hpp"
 #include "LongTimeCharacterEffects.hpp"
 #include "data/ScriptVariablesTable.hpp"
+#include "data/SkillTable.hpp"
 #include "Logger.hpp"
 #include "WaypointList.hpp"
 #include "fuse_ptr.hpp"
@@ -58,6 +59,7 @@ extern "C" {
 #include <cxxabi.h>
 
 extern ScriptVariablesTable *scriptVariables;
+extern SkillTable *Skills;
 
 lua_State *LuaScript::_luaState = 0;
 bool LuaScript::initialized = false;
@@ -392,6 +394,11 @@ void LuaScript::init_base_functions() {
         lua_call(_luaState, 1, 0);
     }
 
+    luabind::value_vector skills;
+    for (auto it = Skills->begin(); it != Skills->end(); ++it) {
+        skills.push_back(luabind::value(it->second.c_str(), it->first));
+    }
+
     luabind::module(_luaState)
     [
         luabind::class_<InputDialog>("InputDialog")
@@ -527,6 +534,10 @@ void LuaScript::init_base_functions() {
         .def("swapAtPos", &Character::swapAtPos)
         .def("createAtPos", &Character::createAtPos)
         .def("getItemAt", &Character::GetItemAt)
+        .enum_("skills")
+        [
+            skills
+        ]
         .def("getSkill", &Character::getSkill)
         .def("getMinorSkill", &Character::getMinorSkill)
         .def("increaseAttrib", &Character::increaseAttrib)
@@ -696,7 +707,6 @@ void LuaScript::init_base_functions() {
         ],
         luabind::class_<Character::skillvalue>("skillvalue")
         .def(luabind::constructor<>())
-        .def_readwrite("type",&Character::skillvalue::type)
         .def_readwrite("major",&Character::skillvalue::major)
         .def_readwrite("minor",&Character::skillvalue::minor)
         .def_readwrite("firsttry",&Character::skillvalue::firsttry),

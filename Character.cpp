@@ -1195,35 +1195,35 @@ bool Character::attack(Character *target) {
 }
 
 
-unsigned short int Character::getSkill(std::string s) {
+unsigned short int Character::getSkill(TYPE_OF_SKILL_ID s) {
     SKILLMAP::iterator iterator;
-    iterator = skills.find(s.c_str());
+    iterator = skills.find(s);
 
     if (iterator == skills.end()) {
 #ifdef Character_DEBUG
-        std::cout << "getSkill: Skill " << s << " nicht gefunden!\n";
+        std::cout << "getSkill: Skill " << s << " not found!\n";
 #endif
         return 0;
     } else {
 #ifdef Character_DEBUG
-        std::cout << "getSkill: Skill " << s << " gefunden! " << (*iterator).second.value << "\n";
+        std::cout << "getSkill: Skill " << s << " found! " << (*iterator).second.value << "\n";
 #endif
         return (*iterator).second.major;
     }
 }
 
-unsigned short int Character::getMinorSkill(std::string s) {
+unsigned short int Character::getMinorSkill(TYPE_OF_SKILL_ID s) {
     SKILLMAP::iterator iterator;
-    iterator = skills.find(s.c_str());
+    iterator = skills.find(s);
 
     if (iterator == skills.end()) {
 #ifdef Character_DEBUG
-        std::cout << "getSkill: Skill " << s << " nicht gefunden!\n";
+        std::cout << "getMinorSkill: Skill " << s << " not found!\n";
 #endif
         return 0;
     } else {
 #ifdef Character_DEBUG
-        std::cout << "getSkill: Skill " << s << " gefunden! " << (*iterator).second.value << "\n";
+        std::cout << "getMinorSkill: Skill " << s << " found! " << (*iterator).second.value << "\n";
 #endif
         return (*iterator).second.minor;
     }
@@ -1375,66 +1375,53 @@ Attribute::attribute_t Character::increaseAttrib(std::string name, int amount) {
     return 0;
 }
 
-unsigned short int Character::setSkill(unsigned char typ, std::string sname, short int major, short int minor, uint16_t firsttry) {
+unsigned short int Character::setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor, uint16_t firsttry) {
+    if (!Skills->find(skill)) {
+        return 0;
+    }
+
     SKILLMAP::iterator iterator;
-    iterator = skills.find(sname.c_str());
+    iterator = skills.find(skill);
     {
         if (iterator == skills.end()) {
-            char *name = new char[ sname.length() + 1 ];
-            strcpy(name, sname.c_str());
-            name[ sname.length()] = 0;
             skillvalue sv;
-            sv.type = typ;
             sv.major = major;
             sv.minor = minor;
             sv.firsttry = firsttry;
-            skills[ name ] = sv;
+            skills[skill] = sv;
             return sv.major;
         } else {
-
-            iterator->second.type = typ;
             iterator->second.major = major;
             iterator->second.minor = minor;
             iterator->second.firsttry = firsttry;
             return iterator->second.major;
         }
     }
-
 }
 
-unsigned short int Character::increaseSkill(unsigned char typ, std::string name, short int amount) {
+unsigned short int Character::increaseSkill(TYPE_OF_SKILL_ID skill, short int amount) {
+    if (!Skills->find(skill)) {
+        return 0;
+    }
+
     SKILLMAP::iterator iterator;
-    iterator = skills.find(name.c_str());
+    iterator = skills.find(skill);
 
-    // Skill mit entsprechendem Namen nicht gefunden -> neu anlegen
     if (iterator == skills.end()) {
-#ifdef Character_DEBUG
-        std::cout << "increaseSkill: Skill " << name << " nicht gefunden,lege neu an!\n";
-#endif
-
-        char *sname = new char[ name.length() + 1 ];
-        strcpy(sname, name.c_str());
-        sname[ name.length()] = 0;
         skillvalue sv;
         sv.firsttry = 0;
-        sv.type = typ;
 
         if (amount <= 0) {
-            return 0; //Dont add new skill if value <= 0
+            return 0; //Don't add new skill if value <= 0
         } else if (amount > MAJOR_SKILL_GAP) {
             sv.major = MAJOR_SKILL_GAP;
         } else {
             sv.major = amount;
         }
 
-        skills[ sname ] = sv;
-        // sname darf nicht mit delete gel�cht werden, da
-        // skills[ sname ] kein Kopie von sname erstellt
-        return (sv.major);
+        skills[skill] = sv;
+        return sv.major;
     } else {
-#ifdef Character_DEBUG
-        std::cout << "increaseSkill: Skill " << name << " gefunden! " << (*iterator).second.value << "\n";
-#endif
         int temp=iterator->second.major + amount;
 
         if (temp <= 0) {
@@ -1451,25 +1438,20 @@ unsigned short int Character::increaseSkill(unsigned char typ, std::string name,
 }
 
 
-unsigned short int Character::increaseMinorSkill(unsigned char typ, std::string name, short int amount) {
+unsigned short int Character::increaseMinorSkill(TYPE_OF_SKILL_ID skill, short int amount) {
+    if (!Skills->find(skill)) {
+        return 0;
+    }
+    
     SKILLMAP::iterator iterator;
-    iterator = skills.find(name.c_str());
+    iterator = skills.find(skill);
 
-    // Skill mit entsprechendem Namen nicht gefunden -> neu anlegen
     if (iterator == skills.end()) {
-#ifdef Character_DEBUG
-        std::cout << "increaseSkill: Skill " << name << " nicht gefunden,lege neu an!\n";
-#endif
-
-        char *sname = new char[ name.length() + 1 ];
-        strcpy(sname, name.c_str());
-        sname[ name.length()] = 0;
         skillvalue sv;
         sv.firsttry = 0;
-        sv.type = typ;
 
         if (amount <= 0) {
-            return 0; //Dont add new skill if value <= 0
+            return 0; //Don't add new skill if value <= 0
         } else if (amount > 10000) {
             sv.minor = 10000;
         } else {
@@ -1481,14 +1463,9 @@ unsigned short int Character::increaseMinorSkill(unsigned char typ, std::string 
             sv.major++;
         }
 
-        skills[ sname ] = sv;
-        // sname darf nicht mit delete gel�cht werden, da
-        // skills[ sname ] kein Kopie von sname erstellt
+        skills[ skill ] = sv;
         return (sv.major);
     } else {
-#ifdef Character_DEBUG
-        std::cout << "increaseSkill: Skill " << name << " gefunden! " << (*iterator).second.major << "\n";
-#endif
         int temp=iterator->second.minor + amount;
 
         if (temp <= 0) {
@@ -1513,8 +1490,8 @@ unsigned short int Character::increaseMinorSkill(unsigned char typ, std::string 
     }
 }
 
-Character::skillvalue *Character::getSkillValue(std::string s) {
-    SKILLMAP::iterator it = skills.find(s.c_str());
+Character::skillvalue *Character::getSkillValue(TYPE_OF_SKILL_ID s) {
+    SKILLMAP::iterator it = skills.find(s);
 
     if (it == skills.end()) {
         return NULL;
@@ -1523,11 +1500,13 @@ Character::skillvalue *Character::getSkillValue(std::string s) {
     }
 }
 
-void Character::learn(std::string skill, uint8_t skillGroup, uint32_t actionPoints, uint8_t opponent, uint8_t leadAttrib) {
-    Logger::writeMessage("learn", "============ learn called for " + this->name + " ============");
+void Character::learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opponent) {
+    if (!Skills->find(skill)) {
+        return;
+    }
 
     if (learnScript) {
-        learnScript->learn(this, skill, skillGroup, actionPoints, opponent, leadAttrib);
+        learnScript->learn(this, skill, actionPoints, opponent);
     } else {
         std::cerr<<"learn called but script was not initialized"<<std::endl;
     }
@@ -1792,31 +1771,7 @@ std::string Character::alterSpokenMessage(std::string message, int languageSkill
 }
 
 int Character::getLanguageSkill(int languageSkillNumber) {
-    if (languageSkillNumber==0) {
-        return getSkill("common language");
-    } else if (languageSkillNumber==1) {
-        return getSkill("human language");
-    } else if (languageSkillNumber==2) {
-        return getSkill("dwarf language");
-    } else if (languageSkillNumber==3) {
-        return getSkill("elf language");
-    } else if (languageSkillNumber==4) {
-        return getSkill("lizard language");
-    } else if (languageSkillNumber==5) {
-        return getSkill("orc language");
-    } else if (languageSkillNumber==6) {
-        return getSkill("halfling language");
-    } else if (languageSkillNumber==7) {
-        return getSkill("fairy language");
-    } else if (languageSkillNumber==8) {
-        return getSkill("gnome language");
-    } else if (languageSkillNumber==9) {
-        return getSkill("goblin language");
-    } else if (languageSkillNumber==10) {
-        return getSkill("ancient language");
-    } else {
-        return getSkill("common language");
-    }
+    return 100;
 }
 
 void Character::talk(talk_type tt, std::string message) { //only for say, whisper, shout
@@ -1893,7 +1848,7 @@ void Character::talk(talk_type tt, std::string message) { //only for say, whispe
 
 
 
-    _world->sendMessageToAllCharsInRange(message,tt,this);  //alterSpokenMessage(message,getLanguageSkill(activeLanguage)), tt, this);
+    _world->sendMessageToAllCharsInRange(message,tt,this);
     actionPoints -= cost;
 }
 
@@ -1949,7 +1904,7 @@ void Character::talkLanguage(talk_type tt, unsigned char lang, std::string messa
         break;
     }
 
-    _world->sendLanguageMessageToAllCharsInRange(message,tt,lang,this);  //alterSpokenMessage(message,getLanguageSkill(activeLanguage)), tt, this);
+    _world->sendLanguageMessageToAllCharsInRange(message,tt,lang,this);
     actionPoints -= cost;
 }
 

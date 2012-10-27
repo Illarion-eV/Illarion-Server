@@ -173,7 +173,6 @@ public:
     virtual void decodeData() {
         id = getIntFromBuffer();
         name = getStringFromBuffer();
-        type = getUnsignedCharFromBuffer();
     }
 
     void performAction(Player *player) {
@@ -194,10 +193,8 @@ public:
             Character::SKILLMAP::const_iterator sIterator;
 
             for (sIterator = tempPlayer->skills.begin(); sIterator != tempPlayer->skills.end(); ++sIterator) {
-                if (type == sIterator->second.type) {
-                    boost::shared_ptr<BasicServerCommand>cmd(new BBSendSkillTC(tempPlayer->id, sIterator->second.type, sIterator->first, sIterator->second.major, sIterator->second.minor));
-                    player->Connection->addCommand(cmd);
-                }
+                boost::shared_ptr<BasicServerCommand>cmd(new BBSendSkillTC(tempPlayer->id, sIterator->first, sIterator->second.major, sIterator->second.minor));
+                player->Connection->addCommand(cmd);
             }
         }
     }
@@ -209,8 +206,6 @@ public:
 
     TYPE_OF_CHARACTER_ID id;
     std::string name;
-    uint8_t type;
-
 };
 
 
@@ -429,10 +424,9 @@ public:
     virtual void decodeData() {
         _plid = getIntFromBuffer();
         _plname = getStringFromBuffer();
-        _type = getUnsignedCharFromBuffer();
-        _skill = getStringFromBuffer();
+        _skill = getUnsignedCharFromBuffer();
         _value = getShortIntFromBuffer();
-        std::cout<<"received ChangeSkill: "<<_plid<<" "<<_plname<<" "<<_type<<" "<<_skill<<" "<<_value<<std::endl;
+        std::cout<<"received ChangeSkill: "<<_plid<<" "<<_plname<<" "<<_skill<<" "<<_value<<std::endl;
     }
 
     void performAction(Player *player) {
@@ -450,7 +444,7 @@ public:
         }
 
         if (tempPlayer != NULL) {
-            tempPlayer->increaseSkill(_type, _skill, _value);
+            tempPlayer->increaseSkill(_skill, _value);
         }
     }
 
@@ -461,8 +455,7 @@ public:
 
     TYPE_OF_CHARACTER_ID _plid;
     std::string _plname;
-    uint8_t _type;
-    std::string _skill;
+    TYPE_OF_SKILL_ID _skill;
     short int _value;
 
 };

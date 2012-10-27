@@ -69,10 +69,9 @@ public:
 class BBSendSkillTC : public BasicServerCommand {
 public:
 
-    BBSendSkillTC(TYPE_OF_CHARACTER_ID id, uint8_t type, std::string name, short int value, short int minor) : BasicServerCommand(BB_SENDSKILL_TC) {
+    BBSendSkillTC(TYPE_OF_CHARACTER_ID id, TYPE_OF_SKILL_ID skill, short int value, short int minor) : BasicServerCommand(BB_SENDSKILL_TC) {
         addIntToBuffer(id);
-        addUnsignedCharToBuffer(type);
-        addStringToBuffer(name);
+        addUnsignedCharToBuffer(skill);
         addShortIntToBuffer(value);
         addShortIntToBuffer(minor);
     }

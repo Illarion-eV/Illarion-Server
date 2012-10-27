@@ -44,8 +44,6 @@ void World::InitPlayerCommands() {
 
     PlayerCommands["prefix"] = new Command(&World::prefix_command);
     PlayerCommands["suffix"] = new Command(&World::suffix_command);
-    PlayerCommands["prison"] = new Command(&World::player_prison_command);
-    PlayerCommands["p"] = PlayerCommands["prison"];
     PlayerCommands["gm"] = new Command(&World::gmpage_command);
     PlayerCommands["name"] = new Command(&World::name_command);
     PlayerCommands["language"] = new Command(&World::active_language_command);
@@ -243,105 +241,5 @@ bool World::active_language_command(Player *cp, const std::string &language) {
     //std::cout << cp->name << "switched language to " << cp->activeLanguage << "with " << language << "\n";
 
     return true;
-}
-
-// !prison <time> <player>
-bool World::player_prison_command(Player *cp, const std::string &timeplayer) {
-
-    int maxtime = 0;
-
-    if (cp->skills.find("imprisoning") != cp->skills.end()) {
-        maxtime = cp->skills["imprisoning"].major;
-    } else {
-        std::cout << "no skill imprisoning." << std::endl;
-    }
-
-    bool returnval=false;
-
-    std::cout << cp->name << " prisoning player: " << timeplayer << " maxtime: " << maxtime << std::endl;
-
-    char *tokenize = new char[ timeplayer.length() + 1 ];
-    short int jailtime = 0;
-
-    strcpy(tokenize, timeplayer.c_str());
-    char *thistoken;
-
-    if ((thistoken = strtok(tokenize, " ")) != NULL) {
-        if (ReadField(thistoken, jailtime)) {
-            if (((double)jailtime/60.0) > maxtime || jailtime < 1) {
-                std::cout << cp->name << " tried to jail for " << jailtime << " minutes but may only jail for " << maxtime << " hours!" << std::endl;
-            } else {
-                char *tcharp = strtok(NULL, "\\");
-
-                if (tcharp != NULL) {
-                    std::string tplayer = tcharp;
-                    position warpto;
-                    std::stringstream ssx(configOptions["jail_x"]);
-                    ssx >> warpto.x;
-                    std::stringstream ssy(configOptions["jail_y"]);
-                    ssy >> warpto.y;
-                    std::stringstream ssz(configOptions["jail_z"]);
-                    ssz >> warpto.z;
-
-                    Player *tempPl;
-                    tempPl = Players.find(tplayer);
-
-                    if (tempPl == NULL) {
-                        TYPE_OF_CHARACTER_ID tid;
-
-                        // convert arg to digit and try again...
-                        std::stringstream ss;
-                        ss.str(tplayer);
-                        ss >> tid;
-
-                        if (tid) {
-                            PLAYERVECTOR::iterator playerIterator;
-
-                            for (playerIterator = Players.begin(); playerIterator < Players.end(); ++playerIterator) {
-                                if ((*playerIterator)->id == tid) {
-                                    tempPl = (*playerIterator);
-                                }
-                            }
-
-                        }
-                    }
-
-                    if (tempPl != NULL) {
-                        std::string tmessage = "*** Jailed " + tempPl->name;
-                        cp->inform(tmessage);
-
-                        std::cout << cp->name << " jailed player: " << tempPl->name << " for " << jailtime << std::endl;
-
-                        if (jailtime >= 0) {
-                            if (jailtime > 0) {
-                                tempPl->SetStatus(JAILEDFORTIME);         // Jailed for time
-                                tempPl->SetStatusTime(jailtime * 60);     // Jailed for seconds
-                                tempPl->SetStatusGM(cp->id);           // Jailed by who
-                            } else if (jailtime == 0) {
-                                tempPl->SetStatus(JAILED);                // Jailed indefinately
-                                tempPl->SetStatusTime(0);                 // Jailed for seconds
-                                tempPl->SetStatusGM(cp->id);           // Jailed by who
-                            }
-
-                            tmessage = cp->name + " jailed you for " + (jailtime == 0 ? "eternity" : stream_convert<std::string>((short int &) jailtime) + " minutes");
-                            tempPl->inform(tmessage);
-                            //warpPlayer( tempPl, warpto );
-                            tempPl->Warp(warpto);
-                            returnval= true;
-                        }
-                    } else {
-                        std::string tmessage = "*** Could not find " + tplayer;
-                        std::cout << tmessage << std::endl;
-                        cp->inform(tmessage);
-                    }
-                }
-            }
-        }
-    }
-
-
-    delete [] tokenize;
-
-    return returnval;
 }
 
