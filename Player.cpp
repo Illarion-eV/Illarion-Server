@@ -1071,7 +1071,7 @@ bool Player::save() throw() {
         if (!skills.empty()) {
             InsertQuery query(connection);
             const InsertQuery::columnIndex playerIdColumn = query.addColumn("psk_playerid");
-            const InsertQuery::columnIndex skillIdColumn = query.addColumn("psk_skillid");
+            const InsertQuery::columnIndex skillIdColumn = query.addColumn("psk_skill_id");
             const InsertQuery::columnIndex valueColumn = query.addColumn("psk_value");
             const InsertQuery::columnIndex firstTryColumn = query.addColumn("psk_firsttry");
             const InsertQuery::columnIndex minorColumn = query.addColumn("psk_minor");
@@ -1261,7 +1261,7 @@ bool Player::load() throw() {
 
         {
             SelectQuery query;
-            query.addColumn("playerskills", "psk_skillid");
+            query.addColumn("playerskills", "psk_skill_id");
             query.addColumn("playerskills", "psk_value");
             query.addColumn("playerskills", "psk_minor");
             query.addColumn("playerskills", "psk_firsttry");

@@ -170,7 +170,7 @@ void MonsterTable::reload() {
                 } // if (!monAttrResults.empty())
 
                 SelectQuery monSkillQuery(connection);
-                monSkillQuery.addColumn("monster_skills", "mobsk_skillid");
+                monSkillQuery.addColumn("monster_skills", "mobsk_skill_id");
                 monSkillQuery.addColumn("monster_skills", "mobsk_minvalue");
                 monSkillQuery.addColumn("monster_skills", "mobsk_maxvalue");
                 monSkillQuery.addEqualCondition("monster_skills", "mobsk_monsterid", id);
