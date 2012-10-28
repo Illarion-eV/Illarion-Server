@@ -1439,6 +1439,10 @@ bool World::reload_defs(Player *cp) {
     }
 
     if (!ok) {
+        if (Skills_temp != NULL) {
+            delete Skills_temp;
+        }
+
         if (CommonItems_temp != NULL) {
             delete CommonItems_temp;
         }
@@ -1510,6 +1514,8 @@ bool World::reload_defs(Player *cp) {
         // if everything went well, delete old tables and set up new tables
         //Mutex für login logout sperren so das aktuell keiner mehr einloggen kann
         PlayerManager::get()->setLoginLogout(true);
+        delete Skills;
+        Skills = Skills_temp;
         delete CommonItems;
         CommonItems = CommonItems_temp;
         delete ItemNames;
