@@ -27,7 +27,7 @@ SelectionDialog::SelectionDialog(std::string title, std::string text, luabind::o
 
 SelectionDialog::SelectionDialog(const SelectionDialog &selectionDialog) : Dialog(selectionDialog) {
     text = selectionDialog.text;
-    
+
     for (auto it = selectionDialog.options.begin(); it != selectionDialog.options.end(); ++it) {
         Option &option = **it;
         addOption(option.getItem(), option.getName());

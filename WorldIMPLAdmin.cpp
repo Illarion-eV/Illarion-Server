@@ -1530,8 +1530,8 @@ bool World::reload_defs(Player *cp) {
         TilesModItems = TilesModItems_temp;
         delete Tiles;
         Tiles = Tiles_temp;
-       delete Skills;
-       Skills = Skills_temp;
+        delete Skills;
+        Skills = Skills_temp;
         delete MonsterDescriptions;
         MonsterDescriptions = MonsterDescriptions_temp;
         delete Spells;

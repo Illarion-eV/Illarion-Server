@@ -1439,7 +1439,7 @@ unsigned short int Character::increaseMinorSkill(TYPE_OF_SKILL_ID skill, short i
     if (!Skills->find(skill)) {
         return 0;
     }
-    
+
     SKILLMAP::iterator iterator;
     iterator = skills.find(skill);
 

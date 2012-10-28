@@ -395,6 +395,7 @@ void LuaScript::init_base_functions() {
     }
 
     luabind::value_vector skills;
+
     for (auto it = Skills->begin(); it != Skills->end(); ++it) {
         skills.push_back(luabind::value(it->second.c_str(), it->first));
     }
