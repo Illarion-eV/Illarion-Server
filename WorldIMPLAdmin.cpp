@@ -1273,8 +1273,6 @@ bool World::reload_defs(Player *cp) {
     std::string server;
     bool ok = true;
 
-    QuestNodeTable::getInstance()->reload();
-
     CommonObjectTable *CommonItems_temp = 0;
     NamesObjectTable *ItemNames_temp = 0;
     WeaponObjectTable *WeaponItems_temp = 0;
@@ -1283,7 +1281,7 @@ bool World::reload_defs(Player *cp) {
     TilesModificatorTable *TilesModItems_temp = 0;
     MonsterTable *MonsterDescriptions_temp = 0;
     TilesTable *Tiles_temp = 0;
-    SkillTable *Skills_temp = 0;
+    //SkillTable *Skills_temp = 0;
     SpellTable *Spells_temp = 0;
     TriggerTable *Trigger_temp = 0;
     MonsterAttackTable *MonsterAttacks_temp = 0;
@@ -1292,6 +1290,7 @@ bool World::reload_defs(Player *cp) {
     LongTimeEffectTable *LongTimeEffects_temp = 0;
     RaceSizeTable *RaceSizes_temp = 0;
 
+    /*
     if (ok) {
         Skills_temp = new SkillTable();
 
@@ -1299,6 +1298,20 @@ bool World::reload_defs(Player *cp) {
             reportTableError(cp, "skills");
             ok = false;
         }
+    }
+    */
+
+    if (ok) {
+        RaceSizes_temp = new RaceSizeTable();
+
+        if (RaceSizes_temp == NULL || !RaceSizes_temp->isDataOk()) {
+            reportTableError(cp, "raceattr");
+            ok = false;
+        }
+    }
+
+    if (ok) {
+        QuestNodeTable::getInstance()->reload();
     }
 
     if (ok) {
@@ -1315,15 +1328,6 @@ bool World::reload_defs(Player *cp) {
 
         if (ItemNames_temp == NULL || !ItemNames_temp->dataOK()) {
             reportTableError(cp, "itemname");
-            ok = false;
-        }
-    }
-
-    if (ok) {
-        RaceSizes_temp = new RaceSizeTable();
-
-        if (RaceSizes_temp == NULL || !RaceSizes_temp->isDataOk()) {
-            reportTableError(cp, "raceattr");
             ok = false;
         }
     }
@@ -1439,9 +1443,11 @@ bool World::reload_defs(Player *cp) {
     }
 
     if (!ok) {
+        /*
         if (Skills_temp != NULL) {
             delete Skills_temp;
         }
+        */
 
         if (CommonItems_temp != NULL) {
             delete CommonItems_temp;
@@ -1469,10 +1475,6 @@ bool World::reload_defs(Player *cp) {
 
         if (Tiles_temp != NULL) {
             delete Tiles_temp;
-        }
-
-        if (Skills_temp != NULL) {
-            delete Skills_temp;
         }
 
         if (MonsterDescriptions_temp != NULL) {
@@ -1514,8 +1516,6 @@ bool World::reload_defs(Player *cp) {
         // if everything went well, delete old tables and set up new tables
         //Mutex für login logout sperren so das aktuell keiner mehr einloggen kann
         PlayerManager::get()->setLoginLogout(true);
-        delete Skills;
-        Skills = Skills_temp;
         delete CommonItems;
         CommonItems = CommonItems_temp;
         delete ItemNames;
@@ -1530,8 +1530,8 @@ bool World::reload_defs(Player *cp) {
         TilesModItems = TilesModItems_temp;
         delete Tiles;
         Tiles = Tiles_temp;
-        delete Skills;
-        Skills = Skills_temp;
+        // delete Skills;
+        // Skills = Skills_temp;
         delete MonsterDescriptions;
         MonsterDescriptions = MonsterDescriptions_temp;
         delete Spells;

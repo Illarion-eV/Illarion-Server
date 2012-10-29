@@ -48,13 +48,11 @@ void SkillTable::reload() {
 
         if (!results.empty()) {
             clearOldTable();
-            TYPE_OF_SKILL_ID skillId;
-            std::string skillName;
 
             for (Database::ResultConstIterator itr = results.begin();
                  itr != results.end(); ++itr) {
-                skillId = (TYPE_OF_SKILL_ID)((*itr)["skl_skill_id"].as<uint16_t>());
-                skillName = (*itr)["skl_name"].as<std::string>();
+                TYPE_OF_SKILL_ID skillId = (TYPE_OF_SKILL_ID)((*itr)["skl_skill_id"].as<uint16_t>());
+                std::string skillName = (*itr)["skl_name"].as<std::string>();
 
                 m_table[skillId] = skillName;
             }
@@ -76,8 +74,8 @@ void SkillTable::reload() {
 
 }
 
-bool SkillTable::find(TYPE_OF_SKILL_ID Id) {
-    TABLE::iterator iterator;
+bool SkillTable::find(TYPE_OF_SKILL_ID Id) const {
+    TABLE::const_iterator iterator;
     iterator = m_table.find(Id);
 
     if (iterator == m_table.end()) {
@@ -87,8 +85,8 @@ bool SkillTable::find(TYPE_OF_SKILL_ID Id) {
     }
 }
 
-bool SkillTable::find(TYPE_OF_SKILL_ID Id, std::string &ret) {
-    TABLE::iterator iterator;
+bool SkillTable::find(TYPE_OF_SKILL_ID Id, std::string &ret) const {
+    TABLE::const_iterator iterator;
     iterator = m_table.find(Id);
 
     if (iterator == m_table.end()) {
@@ -112,6 +110,5 @@ void SkillTable::clearOldTable() {
 }
 
 SkillTable::~SkillTable() {
-    clearOldTable();
 }
 

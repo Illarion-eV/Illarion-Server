@@ -32,8 +32,8 @@ class SkillTable: public Table {
 public:
     typedef boost::unordered_map<TYPE_OF_SKILL_ID, std::string> TABLE;
 
-    bool find(TYPE_OF_SKILL_ID Id);
-    bool find(TYPE_OF_SKILL_ID Id, std::string &ret);
+    bool find(TYPE_OF_SKILL_ID Id) const;
+    bool find(TYPE_OF_SKILL_ID Id, std::string &ret) const;
 
     TABLE::const_iterator begin() const;
     TABLE::const_iterator end() const;
