@@ -829,7 +829,7 @@ public:
 
         if (LuaMageScript) {
             Logger::writeMessage("Casting","try to call magic script",false);
-            player->ltAction->setLastAction(LuaMageScript, Source, Target, counter , paramtemp, LongTimeAction::AT_MAGIC);
+            player->ltAction->setLastAction(LuaMageScript, Source, Target, counter , paramtemp, LongTimeAction::ACTION_MAGIC);
             std::string msg;
 #ifdef World_DEBUG
             std::cout<<"Try to call LuaMageScript with paramtemp: "<<paramtemp<<std::endl;
@@ -1274,7 +1274,7 @@ public:
         std::string msg;
 
         if (LuaScript) {
-            player->ltAction->setLastAction(LuaScript, Source, Target, counter , paramtemp, LongTimeAction::AT_USE);
+            player->ltAction->setLastAction(LuaScript, Source, Target, counter , paramtemp, LongTimeAction::ACTION_USE);
 #ifdef DO_UNCONSCIOUS
 
             if ((paramOK) && player->IsAlive() && player->IsConscious())
@@ -1289,7 +1289,7 @@ public:
                 }
             }
         } else if (LuaNPCScript) {
-            player->ltAction->setLastAction(LuaNPCScript, Source, Target, counter , paramtemp, LongTimeAction::AT_USE);
+            player->ltAction->setLastAction(LuaNPCScript, Source, Target, counter , paramtemp, LongTimeAction::ACTION_USE);
 #ifdef DO_UNCONSCIOUS
 
             if ((paramOK) && player->IsAlive() && cp->IsConscious())
@@ -1304,7 +1304,7 @@ public:
             }
 
         } else if (LuaMonsterScript) {
-            player->ltAction->setLastAction(LuaMonsterScript, Source, Target, counter , paramtemp, LongTimeAction::AT_USE);
+            player->ltAction->setLastAction(LuaMonsterScript, Source, Target, counter , paramtemp, LongTimeAction::ACTION_USE);
 #ifdef DO_UNCONSCIOUS
 
             if ((paramOK) && player->IsAlive() && player->IsConscious())
@@ -1318,7 +1318,7 @@ public:
                 }
             }
         } else if (LuaTileScript) {
-            player->ltAction->setLastAction(LuaTileScript, Source, Target, counter , paramtemp, LongTimeAction::AT_USE);
+            player->ltAction->setLastAction(LuaTileScript, Source, Target, counter , paramtemp, LongTimeAction::ACTION_USE);
 #ifdef DO_UNCONSCIOUS
 
             if ((paramOK) && player->IsAlive() && player->IsConscious())

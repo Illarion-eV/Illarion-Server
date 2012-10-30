@@ -103,9 +103,21 @@ public:
 };
 
 class CraftingDialog;
-class CraftingDialogTC :public BasicServerCommand {
+class CraftingDialogTC : public BasicServerCommand {
 public:
     CraftingDialogTC(CraftingDialog &craftingDialog, unsigned int dialogId);
+};
+class CraftingDialogCraftTC : public BasicServerCommand {
+public:
+    CraftingDialogCraftTC(uint16_t craftingTime, unsigned int dialogId);
+};
+class CraftingDialogCraftingCompleteTC : public BasicServerCommand {
+public:
+    CraftingDialogCraftingCompleteTC(unsigned int dialogId);
+};
+class CraftingDialogCraftingAbortedTC : public BasicServerCommand {
+public:
+    CraftingDialogCraftingAbortedTC(unsigned int dialogId);
 };
 
 class ItemUpdate_TC : public BasicServerCommand {

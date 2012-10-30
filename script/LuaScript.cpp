@@ -432,10 +432,12 @@ void LuaScript::init_base_functions() {
         luabind::class_<CraftingDialog>("CraftingDialog")
         .enum_("Result")
         [
-            luabind::value("playerAborts",0),
-            luabind::value("playerCrafts",1),
-            luabind::value("playerLooksAtItem",2),
-            luabind::value("playerLooksAtIngredient",3)
+            luabind::value("playerAborts", 0),
+            luabind::value("playerCrafts", 1),
+            luabind::value("playerLooksAtItem", 2),
+            luabind::value("playerLooksAtIngredient", 3),
+            luabind::value("playerCraftingComplete", 4),
+            luabind::value("playerCraftingAborted", 5)
         ]
         .def(luabind::constructor<std::string, luabind::object>())
         .def("addGroup", &CraftingDialog::addGroup)

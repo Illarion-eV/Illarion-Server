@@ -96,6 +96,7 @@ SelectionDialogTC::SelectionDialogTC(SelectionDialog &selectionDialog, unsigned 
 }
 
 CraftingDialogTC::CraftingDialogTC(CraftingDialog &craftingDialog, unsigned int dialogId) : BasicServerCommand(SC_CRAFTINGDIALOG_TC) {
+    addUnsignedCharToBuffer(0);
     addStringToBuffer(craftingDialog.getTitle());
     CraftingDialog::index_t numberOfGroups = craftingDialog.getGroupsSize();
     addUnsignedCharToBuffer(numberOfGroups);
@@ -125,6 +126,22 @@ CraftingDialogTC::CraftingDialogTC(CraftingDialog &craftingDialog, unsigned int 
         }
     }
 
+    addIntToBuffer(dialogId);
+}
+
+CraftingDialogCraftTC::CraftingDialogCraftTC(uint16_t craftingTime, unsigned int dialogId) : BasicServerCommand(SC_CRAFTINGDIALOG_TC) {
+    addUnsignedCharToBuffer(1);
+    addShortIntToBuffer(craftingTime);
+    addIntToBuffer(dialogId);
+}
+
+CraftingDialogCraftingCompleteTC::CraftingDialogCraftingCompleteTC(unsigned int dialogId) : BasicServerCommand(SC_CRAFTINGDIALOG_TC) {
+    addUnsignedCharToBuffer(2);
+    addIntToBuffer(dialogId);
+}
+
+CraftingDialogCraftingAbortedTC::CraftingDialogCraftingAbortedTC(unsigned int dialogId) : BasicServerCommand(SC_CRAFTINGDIALOG_TC) {
+    addUnsignedCharToBuffer(3);
     addIntToBuffer(dialogId);
 }
 

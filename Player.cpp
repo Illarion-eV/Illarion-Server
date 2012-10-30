@@ -2648,7 +2648,45 @@ void Player::executeCraftingDialogCraft(unsigned int dialogId, uint8_t craftInde
         craftingDialog->setResult(CraftingDialog::playerCrafts);
         craftingDialog->setCraftableIndex(craftIndex);
         craftingDialog->setCraftableAmount(craftAmount);
+        bool startCrafting = LuaScript::executeDialogCallback<bool>(*craftingDialog);
+
+        if (startCrafting) {
+            abortAction();
+            SouTar source;
+            source.Type = LUA_DIALOG;
+            source.dialog = dialogId;
+            SouTar target;
+            ltAction->setLastAction(boost::shared_ptr<LuaScript>(), source, target, 0, 0, LongTimeAction::ACTION_CRAFT);
+            auto craftableTime = craftingDialog->getCraftableTime();
+            startAction(craftableTime, 0, 0, 0, 0);
+
+            boost::shared_ptr<BasicServerCommand> cmd(new CraftingDialogCraftTC(craftableTime, dialogId));
+            Connection->addCommand(cmd);
+        }
+    }
+}
+
+void Player::executeCraftingDialogCraftingComplete(unsigned int dialogId) {
+    CraftingDialog *craftingDialog = (CraftingDialog *)dialogs[dialogId];
+
+    if (craftingDialog != 0) {
+        craftingDialog->setResult(CraftingDialog::playerCraftingComplete);
         LuaScript::executeDialogCallback(*craftingDialog);
+
+        boost::shared_ptr<BasicServerCommand> cmd(new CraftingDialogCraftingCompleteTC(dialogId));
+        Connection->addCommand(cmd);
+    }
+}
+
+void Player::executeCraftingDialogCraftingAborted(unsigned int dialogId) {
+    CraftingDialog *craftingDialog = (CraftingDialog *)dialogs[dialogId];
+
+    if (craftingDialog != 0) {
+        craftingDialog->setResult(CraftingDialog::playerCraftingAborted);
+        LuaScript::executeDialogCallback(*craftingDialog);
+
+        boost::shared_ptr<BasicServerCommand> cmd(new CraftingDialogCraftingAbortedTC(dialogId));
+        Connection->addCommand(cmd);
     }
 }
 

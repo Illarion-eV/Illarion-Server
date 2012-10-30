@@ -42,8 +42,9 @@ public:
     * what type of action was invoked
     */
     enum ActionType {
-        AT_USE = 0, /**< a magic Action*/
-        AT_MAGIC = 1 /**< a normal use action*/
+        ACTION_USE = 0,
+        ACTION_MAGIC = 1,
+        ACTION_CRAFT = 2
     };
 
     /**

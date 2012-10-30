@@ -113,7 +113,9 @@ CraftingDialog::index_t CraftingDialog::getCraftableIndex() const {
 }
 
 void CraftingDialog::setCraftableIndex(CraftingDialog::index_t index) {
-    this->craftableIndex = index;
+    if (index < craftables.size()) {
+        craftableIndex = index;
+    }
 }
 
 Item::number_type CraftingDialog::getCraftableAmount() const {
@@ -121,7 +123,7 @@ Item::number_type CraftingDialog::getCraftableAmount() const {
 }
 
 void CraftingDialog::setCraftableAmount(Item::number_type amount) {
-    this->craftableAmount = amount;
+    craftableAmount = amount;
 }
 
 CraftingDialog::index_t CraftingDialog::getIngredientIndex() const {
@@ -130,6 +132,14 @@ CraftingDialog::index_t CraftingDialog::getIngredientIndex() const {
 
 void CraftingDialog::setIngredientIndex(CraftingDialog::index_t index) {
     ingredientIndex = index;
+}
+
+uint16_t CraftingDialog::getCraftableTime() const {
+    if (craftableIndex < craftables.size()) {
+        return craftables[craftableIndex]->getDecisecondsToCraft();
+    } else {
+        return 0;
+    }
 }
 
 bool CraftingDialog::canAddCraftable(uint8_t group) {

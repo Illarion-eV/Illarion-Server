@@ -47,7 +47,8 @@ enum SouTarTypes {
     LUA_NONE = 0, /**< not a correct type (only for initialisation) */
     LUA_FIELD = 1,  /**< target was a field */
     LUA_ITEM = 2, /**< target was a item */
-    LUA_CHARACTER = 3 /**< target was character*/
+    LUA_CHARACTER = 3, /**< target was character*/
+    LUA_DIALOG = 4
 };
 
 enum LtaStates {
@@ -61,6 +62,7 @@ struct SouTar {
     ScriptItem item; /**< Source or target is a Item, this holds the information of the item */
     SouTarTypes Type; /**< Source or Target Type (if its an character, field or item) */
     position pos; /**< aboslute position of the object */
+    unsigned int dialog;
     /**
     * constructor which intializes the values
     */

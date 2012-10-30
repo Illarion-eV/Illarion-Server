@@ -129,7 +129,9 @@ public:
         playerAborts = 0,
         playerCrafts = 1,
         playerLooksAtCraftable = 2,
-        playerLooksAtIngredient = 3
+        playerLooksAtIngredient = 3,
+        playerCraftingComplete = 4,
+        playerCraftingAborted = 5
     };
 
 private:
@@ -170,6 +172,7 @@ public:
     void setCraftableAmount(Item::number_type amount);
     index_t getIngredientIndex() const;
     void setIngredientIndex(index_t index);
+    uint16_t getCraftableTime() const;
 
 private:
     bool canAddCraftable(uint8_t group);
