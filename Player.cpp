@@ -1271,7 +1271,7 @@ bool Player::load() throw() {
                 for (ResultConstIterator itr = results.begin();
                      itr != results.end(); ++itr) {
                     setSkill(
-                        (TYPE_OF_SKILL_ID)((*itr)["psk_id"].as<uint16_t>()),
+                        (TYPE_OF_SKILL_ID)((*itr)["psk_skill_id"].as<uint16_t>()),
                         (*itr)["psk_value"].as<uint16_t>(),
                         (*itr)["psk_minor"].as<uint16_t>()
                     );
