@@ -114,7 +114,7 @@ public:
 };
 class CraftingDialogCraftingCompleteTC : public BasicServerCommand {
 public:
-    CraftingDialogCraftingCompleteTC(unsigned int dialogId);
+    CraftingDialogCraftingCompleteTC(uint8_t stillToCraft, unsigned int dialogId);
 };
 class CraftingDialogCraftingAbortedTC : public BasicServerCommand {
 public:

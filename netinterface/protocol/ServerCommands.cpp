@@ -134,8 +134,9 @@ CraftingDialogCraftTC::CraftingDialogCraftTC(uint16_t craftingTime, unsigned int
     addIntToBuffer(dialogId);
 }
 
-CraftingDialogCraftingCompleteTC::CraftingDialogCraftingCompleteTC(unsigned int dialogId) : BasicServerCommand(SC_CRAFTINGDIALOGUPDATE_TC) {
+CraftingDialogCraftingCompleteTC::CraftingDialogCraftingCompleteTC(uint8_t stillToCraft, unsigned int dialogId) : BasicServerCommand(SC_CRAFTINGDIALOGUPDATE_TC) {
     addUnsignedCharToBuffer(1);
+    addUnsignedCharToBuffer(stillToCraft);
     addIntToBuffer(dialogId);
 }
 

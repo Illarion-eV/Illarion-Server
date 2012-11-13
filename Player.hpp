@@ -551,6 +551,9 @@ public:
     virtual void requestCraftingLookAt(unsigned int dialogId, ItemLookAt &lookAt);
     virtual void requestCraftingLookAtIngredient(unsigned int dialogId, ItemLookAt &lookAt);
 
+private:
+    void startCrafting(uint16_t craftingTime, uint32_t dialogId);
+
 protected:
 
     // shared code for all eraseItem methods
