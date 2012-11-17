@@ -20,7 +20,9 @@
 
 #include "dialog/CraftingDialog.hpp"
 
-CraftingDialog::CraftingDialog(string title, luabind::object callback): Dialog(title, "CraftingDialog", callback) {
+CraftingDialog::CraftingDialog(string title, uint16_t sfx, uint16_t sfxDuration, luabind::object callback): Dialog(title, "CraftingDialog", callback) {
+    this->sfx = sfx;
+    this->sfxDuration = sfxDuration;
     result = playerAborts;
     craftableIndex = 0;
     craftableAmount = 0;
@@ -28,6 +30,8 @@ CraftingDialog::CraftingDialog(string title, luabind::object callback): Dialog(t
 }
 
 CraftingDialog::CraftingDialog(const CraftingDialog &craftingDialog): Dialog(craftingDialog) {
+    sfx = craftingDialog.sfx;
+    sfxDuration = craftingDialog.sfxDuration;
     result = craftingDialog.result;
     craftableIndex = craftingDialog.craftableIndex;
     craftableAmount = craftingDialog.craftableAmount;
@@ -44,6 +48,14 @@ CraftingDialog::~CraftingDialog() {
         delete *it;
         *it = 0;
     }
+}
+
+uint16_t CraftingDialog::getSfx() const {
+    return sfx;
+}
+
+uint16_t CraftingDialog::getSfxDuration() const {
+    return sfxDuration;
 }
 
 CraftingDialog::index_t CraftingDialog::getGroupsSize() const {

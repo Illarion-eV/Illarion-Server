@@ -439,7 +439,7 @@ void LuaScript::init_base_functions() {
             luabind::value("playerCraftingComplete", 4),
             luabind::value("playerCraftingAborted", 5)
         ]
-        .def(luabind::constructor<std::string, luabind::object>())
+        .def(luabind::constructor<std::string, uint16_t, uint16_t, luabind::object>())
         .def("addGroup", &CraftingDialog::addGroup)
         .def("addCraftable", (void(CraftingDialog:: *)(uint8_t, TYPE_OF_ITEM_ID, std::string, uint16_t))&CraftingDialog::addCraftable)
         .def("addCraftable", (void(CraftingDialog:: *)(uint8_t, TYPE_OF_ITEM_ID, std::string, uint16_t, uint8_t))&CraftingDialog::addCraftable)

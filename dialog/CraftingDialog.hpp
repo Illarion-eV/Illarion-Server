@@ -136,6 +136,8 @@ public:
 
 private:
     static const uint32_t MAXCRAFTABLES = 256;
+    uint16_t sfx;
+    uint16_t sfxDuration;
     groups_t groups;
     craftables_t craftables;
 
@@ -146,9 +148,12 @@ private:
     index_t ingredientIndex;
 
 public:
-    CraftingDialog(string title, luabind::object callback);
+    CraftingDialog(string title, uint16_t sfx, uint16_t sfxDuration, luabind::object callback);
     CraftingDialog(const CraftingDialog &craftingDialog);
     ~CraftingDialog();
+
+    uint16_t getSfx() const;
+    uint16_t getSfxDuration() const;
 
     index_t getGroupsSize() const;
     groups_t::const_iterator getGroupsBegin() const;

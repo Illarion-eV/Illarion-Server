@@ -552,7 +552,7 @@ public:
     virtual void requestCraftingLookAtIngredient(unsigned int dialogId, ItemLookAt &lookAt);
 
 private:
-    void startCrafting(uint16_t craftingTime, uint32_t dialogId);
+    void startCrafting(uint16_t craftingTime, uint16_t sfx, uint16_t sfxDuration, uint32_t dialogId);
 
 protected:
 
