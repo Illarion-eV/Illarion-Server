@@ -97,7 +97,13 @@ bool Item::hasData(const luabind::object &datamap) {
     if (mapType == LUA_TTABLE) {
         bool isSameData = true;
 
-        for (iterator it(datamap), end; it != end && isSameData; ++it) {
+        iterator it(datamap), end;
+
+        if (it == end) {
+            return hasNoData();
+        }
+
+        for (; it != end && isSameData; ++it) {
             std::string key;
 
             try {
@@ -132,6 +138,9 @@ bool Item::hasData(const luabind::object &datamap) {
     return true;
 }
 
+bool Item::hasNoData() const {
+    return datamap.size() == 0;
+}
 
 std::string Item::getData(std::string key) {
     return datamap[key];

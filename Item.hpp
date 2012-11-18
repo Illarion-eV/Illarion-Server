@@ -256,6 +256,7 @@ public:
 
     void setData(const luabind::object &datamap);
     bool hasData(const luabind::object &datamap);
+    bool hasNoData() const;
     std::string getData(std::string key);
     void setData(std::string key, std::string value);
     void setData(std::string key, int32_t value);
