@@ -551,6 +551,7 @@ public:
     virtual void requestCraftingLookAt(unsigned int dialogId, ItemLookAt &lookAt);
     virtual void requestCraftingLookAtIngredient(unsigned int dialogId, ItemLookAt &lookAt);
 
+    void invalidateDialogs();
 private:
     void startCrafting(uint16_t craftingTime, uint16_t sfx, uint16_t sfxDuration, uint32_t dialogId);
 

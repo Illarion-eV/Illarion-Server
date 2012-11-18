@@ -151,6 +151,8 @@ LuaScript::~LuaScript() throw() {
 }
 
 void LuaScript::shutdownLua() {
+    World::get()->invalidatePlayerDialogs();
+
     if (initialized) {
         initialized = false;
         lua_close(_luaState);

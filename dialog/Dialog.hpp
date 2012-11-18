@@ -33,6 +33,7 @@ private:
 public:
     Dialog(std::string title, std::string className, luabind::object callback);
     Dialog(const Dialog &dialog);
+    virtual ~Dialog() {};
     std::string getTitle() const;
     std::string getClassName() const;
     luabind::object getCallback() const;

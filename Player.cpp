@@ -2721,14 +2721,20 @@ void Player::executeCraftingDialogLookAtIngredient(unsigned int dialogId, uint8_
 
 void Player::requestCraftingLookAt(unsigned int dialogId, ItemLookAt &lookAt) {
     CraftingDialog *craftingDialog = (CraftingDialog *)dialogs[dialogId];
-    boost::shared_ptr<BasicServerCommand> cmd(new LookAtDialogItemTC(dialogId, craftingDialog->getCraftableIndex(), lookAt));
-    Connection->addCommand(cmd);
+
+    if (craftingDialog != 0) {
+        boost::shared_ptr<BasicServerCommand> cmd(new LookAtDialogItemTC(dialogId, craftingDialog->getCraftableIndex(), lookAt));
+        Connection->addCommand(cmd);
+    }
 }
 
 void Player::requestCraftingLookAtIngredient(unsigned int dialogId, ItemLookAt &lookAt) {
     CraftingDialog *craftingDialog = (CraftingDialog *)dialogs[dialogId];
-    boost::shared_ptr<BasicServerCommand> cmd(new LookAtCraftingDialogIngredientTC(dialogId, craftingDialog->getCraftableIndex(), craftingDialog->getIngredientIndex(), lookAt));
-    Connection->addCommand(cmd);
+
+    if (craftingDialog != 0) {
+        boost::shared_ptr<BasicServerCommand> cmd(new LookAtCraftingDialogIngredientTC(dialogId, craftingDialog->getCraftableIndex(), craftingDialog->getIngredientIndex(), lookAt));
+        Connection->addCommand(cmd);
+    }
 }
 
 void Player::startCrafting(uint16_t craftingTime, uint16_t sfx, uint16_t sfxDuration, uint32_t dialogId) {
@@ -2739,5 +2745,12 @@ void Player::startCrafting(uint16_t craftingTime, uint16_t sfx, uint16_t sfxDura
     SouTar target;
     ltAction->setLastAction(boost::shared_ptr<LuaScript>(), source, target, 0, 0, LongTimeAction::ACTION_CRAFT);
     startAction(craftingTime, 0, 0, sfx, sfxDuration);
+}
+
+void Player::invalidateDialogs() {
+    for (auto it = dialogs.begin(); it != dialogs.end(); ++it) {
+        delete it->second;
+        it->second = 0;
+    }
 }
 

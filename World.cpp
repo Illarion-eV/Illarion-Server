@@ -735,6 +735,12 @@ void World::checkPlayers() {
     }
 }
 
+void World::invalidatePlayerDialogs() {
+    for (auto it = Players.begin(); it != Players.end(); ++it) {
+        (*it)->invalidateDialogs();
+    }
+}
+
 // init the respawn locations... for now still hardcoded...
 bool World::initRespawns() {
     // if we have monsters, we need to delete their spawnpoints...

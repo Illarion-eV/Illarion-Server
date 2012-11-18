@@ -385,6 +385,8 @@ public:
     */
     void checkPlayers();
 
+    void invalidatePlayerDialogs();
+
     /**
     *checks all actions of the monsters and updates them
     */
