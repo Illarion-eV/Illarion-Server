@@ -49,6 +49,7 @@ std::ofstream talkfile;
 extern ContainerObjectTable *ContainerItems;
 extern CommonObjectTable *CommonItems;
 extern WeaponObjectTable *WeaponItems;
+extern SkillTable *Skills;
 extern TilesTable *Tiles;
 extern boost::shared_ptr<LuaLearnScript>learnScript;
 extern boost::shared_ptr<LuaPlayerDeathScript>playerDeathScript;
@@ -1194,6 +1195,15 @@ bool Character::attack(Character *target) {
     return false;
 }
 
+std::string Character::getSkillName(TYPE_OF_SKILL_ID s) {
+    SkillStruct skillStruct;
+
+    if (Skills->find(s, skillStruct)) {
+        return skillStruct.englishName;
+    } else {
+        return "unknown skill";
+    }
+}
 
 unsigned short int Character::getSkill(TYPE_OF_SKILL_ID s) {
     SKILLMAP::iterator iterator;

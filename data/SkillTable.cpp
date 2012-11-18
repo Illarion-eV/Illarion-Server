@@ -42,19 +42,24 @@ void SkillTable::reload() {
         Database::SelectQuery query;
         query.addColumn("skills", "skl_skill_id");
         query.addColumn("skills", "skl_name");
+        query.addColumn("skills", "skl_name_english");
+        query.addColumn("skills", "skl_name_german");
         query.addServerTable("skills");
 
         Database::Result results = query.execute();
 
         if (!results.empty()) {
             clearOldTable();
+            SkillStruct tempRecord;
 
             for (Database::ResultConstIterator itr = results.begin();
                  itr != results.end(); ++itr) {
                 TYPE_OF_SKILL_ID skillId = (TYPE_OF_SKILL_ID)((*itr)["skl_skill_id"].as<uint16_t>());
-                std::string skillName = (*itr)["skl_name"].as<std::string>();
+                tempRecord.serverName = (*itr)["skl_name"].as<std::string>();
+                tempRecord.englishName = (*itr)["skl_name_english"].as<std::string>();
+                tempRecord.germanName = (*itr)["skl_name_german"].as<std::string>();
 
-                m_table[skillId] = skillName;
+                m_table[skillId] = tempRecord;
             }
 
             m_dataOK = true;
@@ -85,7 +90,7 @@ bool SkillTable::find(TYPE_OF_SKILL_ID Id) const {
     }
 }
 
-bool SkillTable::find(TYPE_OF_SKILL_ID Id, std::string &ret) const {
+bool SkillTable::find(TYPE_OF_SKILL_ID Id, SkillStruct &ret) const {
     TABLE::const_iterator iterator;
     iterator = m_table.find(Id);
 

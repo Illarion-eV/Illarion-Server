@@ -2143,6 +2143,18 @@ void Player::changeTarget() {
     ltAction->changeTarget();
 }
 
+std::string Player::getSkillName(TYPE_OF_SKILL_ID s) {
+    SkillStruct skillStruct;
+
+    if (Skills->find(s, skillStruct)) {
+        return nls(skillStruct.germanName, skillStruct.englishName);
+    } else {
+        std::string german("unbekannter Skill");
+        std::string english("unknown skill");
+        return nls(german, english);
+    }
+}
+
 const unsigned short int Player::getPlayerLanguage() {
     return _player_language->_language;
 }

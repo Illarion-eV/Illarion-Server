@@ -141,6 +141,13 @@ struct ArmorStruct {
 };
 
 
+struct SkillStruct {
+    std::string serverName;
+    TYPE_OF_ENGLISH englishName;
+    TYPE_OF_GERMAN germanName;
+};
+
+
 struct TilesStruct {
     unsigned char flags;
     TYPE_OF_WALKINGCOST walkingCost;

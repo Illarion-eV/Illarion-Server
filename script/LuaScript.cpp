@@ -399,7 +399,7 @@ void LuaScript::init_base_functions() {
     luabind::value_vector skills;
 
     for (auto it = Skills->begin(); it != Skills->end(); ++it) {
-        skills.push_back(luabind::value(it->second.c_str(), it->first));
+        skills.push_back(luabind::value(it->second.serverName.c_str(), it->first));
     }
 
     luabind::module(_luaState)
@@ -543,6 +543,7 @@ void LuaScript::init_base_functions() {
         [
             skills
         ]
+        .def("getSkillName", &Character::getSkillName)
         .def("getSkill", &Character::getSkill)
         .def("getMinorSkill", &Character::getMinorSkill)
         .def("increaseAttrib", &Character::increaseAttrib)

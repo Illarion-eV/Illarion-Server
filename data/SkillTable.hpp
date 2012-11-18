@@ -24,16 +24,17 @@
 #include <string>
 #include <boost/unordered_map.hpp>
 #include "data/Table.hpp"
+#include "TableStructs.hpp"
 #include "types.hpp"
 
 class World;
 
 class SkillTable: public Table {
 public:
-    typedef boost::unordered_map<TYPE_OF_SKILL_ID, std::string> TABLE;
+    typedef boost::unordered_map<TYPE_OF_SKILL_ID, SkillStruct> TABLE;
 
     bool find(TYPE_OF_SKILL_ID Id) const;
-    bool find(TYPE_OF_SKILL_ID Id, std::string &ret) const;
+    bool find(TYPE_OF_SKILL_ID Id, SkillStruct &ret) const;
 
     TABLE::const_iterator begin() const;
     TABLE::const_iterator end() const;

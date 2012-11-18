@@ -774,6 +774,7 @@ public:
     */
     //luabind::object getItemListContainer(ScriptItem item);
 
+    virtual std::string getSkillName(TYPE_OF_SKILL_ID s);
     unsigned short int getSkill(TYPE_OF_SKILL_ID s);
     skillvalue *getSkillValue(TYPE_OF_SKILL_ID s);
     unsigned short int getMinorSkill(TYPE_OF_SKILL_ID s);
