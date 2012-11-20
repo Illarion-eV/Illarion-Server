@@ -155,6 +155,8 @@ public:
     uint16_t getSfx() const;
     uint16_t getSfxDuration() const;
 
+    void clearGroupsAndProducts();
+
     index_t getGroupsSize() const;
     groups_t::const_iterator getGroupsBegin() const;
     groups_t::const_iterator getGroupsEnd() const;

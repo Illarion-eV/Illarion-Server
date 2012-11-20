@@ -58,6 +58,16 @@ uint16_t CraftingDialog::getSfxDuration() const {
     return sfxDuration;
 }
 
+void CraftingDialog::clearGroupsAndProducts() {
+    groups.clear();
+
+    for (auto it = craftables.begin(); it != craftables.end(); ++it) {
+        delete *it;
+    }
+
+    craftables.clear();
+}
+
 CraftingDialog::index_t CraftingDialog::getGroupsSize() const {
     return groups.size();
 }
