@@ -52,7 +52,6 @@ void TilesTable::reload() {
         query.addColumn("tiles", "til_groundlevel");
         query.addColumn("tiles", "til_german");
         query.addColumn("tiles", "til_english");
-        query.addColumn("tiles", "til_french");
         query.addColumn("tiles", "til_walkingcost");
         query.addColumn("tiles", "til_script");
         query.addServerTable("tiles");
@@ -75,7 +74,6 @@ void TilesTable::reload() {
                 temprecord.flags |= (*itr)["til_specialtile"].as<bool>() ? FLAG_SPECIALITEM : 0;
                 temprecord.German = (*itr)["til_german"].as<std::string>();
                 temprecord.English = (*itr)["til_english"].as<std::string>();
-                temprecord.French = (*itr)["til_french"].as<std::string>();
                 temprecord.walkingCost = (TYPE_OF_WALKINGCOST)((*itr)["til_walkingcost"].as<int16_t>());
 
                 if (!(*itr)["til_script"].is_null()) {

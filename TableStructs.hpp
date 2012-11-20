@@ -109,7 +109,6 @@ struct LongTimeEffectStruct {
 struct NamesStruct {
     TYPE_OF_GERMAN German;
     TYPE_OF_ENGLISH English;
-    TYPE_OF_FRENCH French;
 };
 
 
@@ -153,7 +152,6 @@ struct TilesStruct {
     TYPE_OF_WALKINGCOST walkingCost;
     TYPE_OF_GERMAN German;
     TYPE_OF_ENGLISH English;
-    TYPE_OF_FRENCH French;
     boost::shared_ptr<LuaTileScript> script;
 };
 

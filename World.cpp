@@ -176,7 +176,6 @@ World::World(std::string dir, time_t starttime) {
 
     zuschwer[ Language::german ] = "Du kannst nicht so viel tragen!";
     zuschwer[ Language::english ] = "You can't carry that much!";
-    zuschwer[ Language::french ] = "Vous ne pouvez pas porter que beaucoup!";
 
     unsigned int templi = starttime;
     char temparr[ 80 ];

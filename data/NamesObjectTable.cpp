@@ -42,7 +42,6 @@ void NamesObjectTable::reload() {
         query.addColumn("itemname", "itn_itemid");
         query.addColumn("itemname", "itn_german");
         query.addColumn("itemname", "itn_english");
-        query.addColumn("itemname", "itn_french");
         query.addServerTable("itemname");
 
         Database::Result results = query.execute();
@@ -55,7 +54,6 @@ void NamesObjectTable::reload() {
                  itr != results.end(); ++itr) {
                 temprecord.German = (TYPE_OF_GERMAN)((*itr)["itn_german"].as<std::string>());
                 temprecord.English = (TYPE_OF_ENGLISH)((*itr)["itn_english"].as<std::string>());
-                temprecord.French = (TYPE_OF_FRENCH)((*itr)["itn_french"].as<std::string>());
                 m_table[(TYPE_OF_ITEM_ID)((*itr)["itn_itemid"].as<int32_t>())] = temprecord;
             }
 

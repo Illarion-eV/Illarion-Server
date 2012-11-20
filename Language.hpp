@@ -25,8 +25,7 @@ class Language {
 public:
     enum LanguageType {
         german = 0,
-        english = 1,
-        french = 2
+        english = 1
     };
 
     static Language *create(LanguageType);
