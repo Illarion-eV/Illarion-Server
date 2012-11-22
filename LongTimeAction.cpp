@@ -86,7 +86,7 @@ void LongTimeAction::startLongTimeAction(unsigned short int timetowait, unsigned
     if (_timetowaitTimer) {
         delete _timetowaitTimer;
     }
-
+    std::cout << "WAIT: " << timetowait << std::endl;
     _timetowaitTimer = new MilTimer(timetowait * 100);
 
     if (_redoaniTimer) {
@@ -125,6 +125,7 @@ bool LongTimeAction::actionDisturbed(Character *disturber) {
     if (_actionrunning) {
         if (_at == ACTION_CRAFT) {
             if (_source.Type == LUA_DIALOG) {
+                _actionrunning = false;
                 _owner->executeCraftingDialogCraftingAborted(_source.dialog);
             }
         } else if (_script) {
@@ -267,6 +268,7 @@ void LongTimeAction::successAction() {
         if (_at == ACTION_CRAFT) {
             if (_source.Type == LUA_DIALOG) {
                 _owner->executeCraftingDialogCraftingComplete(_source.dialog);
+                return;
             }
         } else if (_script) {
             if ((_at == ACTION_USE)) {

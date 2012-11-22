@@ -2663,6 +2663,8 @@ void Player::executeCraftingDialogCraft(unsigned int dialogId, uint8_t craftInde
         bool craftingPossible = LuaScript::executeDialogCallback<bool>(*craftingDialog);
 
         if (craftingPossible) {
+            abortAction();
+            
             auto craftingTime = craftingDialog->getCraftableTime();
             auto sfx = craftingDialog->getSfx();
             auto sfxDuration = craftingDialog->getSfxDuration();
@@ -2755,7 +2757,6 @@ void Player::requestCraftingLookAtIngredient(unsigned int dialogId, ItemLookAt &
 }
 
 void Player::startCrafting(uint16_t craftingTime, uint16_t sfx, uint16_t sfxDuration, uint32_t dialogId) {
-    abortAction();
     SouTar source;
     source.Type = LUA_DIALOG;
     source.dialog = dialogId;
