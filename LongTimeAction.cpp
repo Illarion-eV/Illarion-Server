@@ -86,7 +86,7 @@ void LongTimeAction::startLongTimeAction(unsigned short int timetowait, unsigned
     if (_timetowaitTimer) {
         delete _timetowaitTimer;
     }
-    std::cout << "WAIT: " << timetowait << std::endl;
+
     _timetowaitTimer = new MilTimer(timetowait * 100);
 
     if (_redoaniTimer) {

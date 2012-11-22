@@ -2664,7 +2664,7 @@ void Player::executeCraftingDialogCraft(unsigned int dialogId, uint8_t craftInde
 
         if (craftingPossible) {
             abortAction();
-            
+
             auto craftingTime = craftingDialog->getCraftableTime();
             auto sfx = craftingDialog->getSfx();
             auto sfxDuration = craftingDialog->getSfxDuration();
