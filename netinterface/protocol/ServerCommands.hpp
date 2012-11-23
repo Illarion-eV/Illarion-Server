@@ -110,11 +110,11 @@ public:
 };
 class CraftingDialogCraftTC : public BasicServerCommand {
 public:
-    CraftingDialogCraftTC(uint16_t craftingTime, unsigned int dialogId);
+    CraftingDialogCraftTC(uint8_t stillToCraft, uint16_t craftingTime, unsigned int dialogId);
 };
 class CraftingDialogCraftingCompleteTC : public BasicServerCommand {
 public:
-    CraftingDialogCraftingCompleteTC(uint8_t stillToCraft, unsigned int dialogId);
+    CraftingDialogCraftingCompleteTC(unsigned int dialogId);
 };
 class CraftingDialogCraftingAbortedTC : public BasicServerCommand {
 public:

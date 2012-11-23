@@ -554,7 +554,7 @@ public:
 
     void invalidateDialogs();
 private:
-    void startCrafting(uint16_t craftingTime, uint16_t sfx, uint16_t sfxDuration, uint32_t dialogId);
+    void startCrafting(uint8_t stillToCraft, uint16_t craftingTime, uint16_t sfx, uint16_t sfxDuration, uint32_t dialogId);
 
 protected:
 
