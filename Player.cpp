@@ -1047,7 +1047,7 @@ bool Player::save() throw() {
             query.addAssignColumn<uint64_t>("ply_magicflagsbard", magic.flags[BARD]);
             query.addAssignColumn<uint64_t>("ply_magicflagsdruid", magic.flags[DRUID]);
             query.addAssignColumn<uint16_t>("ply_poison", poisonvalue);
-            query.addAssignColumn<uint16_t>("ply_mental_capacity", mental_capacity);
+            query.addAssignColumn<uint32_t>("ply_mental_capacity", mental_capacity);
             query.addAssignColumn<uint16_t>("ply_hair", hair);
             query.addAssignColumn<uint16_t>("ply_beard", beard);
             query.addAssignColumn<uint16_t>("ply_hairred", hairred);
