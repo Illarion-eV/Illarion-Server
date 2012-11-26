@@ -25,6 +25,7 @@
 #include "Item.hpp"
 #include <string>
 #include <vector>
+#include <boost/unordered_map.hpp>
 
 
 using std::string;
@@ -124,7 +125,7 @@ class CraftingDialog: public Dialog {
 public:
     typedef uint8_t index_t;
     typedef vector<string> groups_t;
-    typedef vector<Craftable *> craftables_t;
+    typedef boost::unordered_map<uint8_t, Craftable *> craftables_t;
     enum Result {
         playerAborts = 0,
         playerCrafts = 1,
@@ -143,9 +144,11 @@ private:
 
     Result result;
 
-    index_t craftableIndex;
+    uint8_t craftableId;
     Item::number_type craftableAmount;
     index_t ingredientIndex;
+
+    uint8_t lastAddedCraftableId;
 
 public:
     CraftingDialog(string title, uint16_t sfx, uint16_t sfxDuration, luabind::object callback);
@@ -165,16 +168,16 @@ public:
     index_t getCraftablesSize() const;
     craftables_t::const_iterator getCraftablesBegin() const;
     craftables_t::const_iterator getCraftablesEnd() const;
-    void addCraftable(uint8_t group, TYPE_OF_ITEM_ID item, string name, uint16_t decisecondsToCraft);
-    void addCraftable(uint8_t group, TYPE_OF_ITEM_ID item, string name, uint16_t decisecondsToCraft, uint8_t craftedStackSize);
+    void addCraftable(uint8_t id, uint8_t group, TYPE_OF_ITEM_ID item, string name, uint16_t decisecondsToCraft);
+    void addCraftable(uint8_t id, uint8_t group, TYPE_OF_ITEM_ID item, string name, uint16_t decisecondsToCraft, uint8_t craftedStackSize);
     void addCraftableIngredient(TYPE_OF_ITEM_ID item);
     void addCraftableIngredient(TYPE_OF_ITEM_ID item, uint8_t number);
 
     Result getResult() const;
     void setResult(Result result);
 
-    index_t getCraftableIndex() const;
-    void setCraftableIndex(index_t index);
+    uint8_t getCraftableId() const;
+    void setCraftableId(uint8_t index);
     Item::number_type getCraftableAmount() const;
     void setCraftableAmount(Item::number_type amount);
     index_t getIngredientIndex() const;

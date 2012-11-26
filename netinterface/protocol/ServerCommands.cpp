@@ -108,7 +108,9 @@ CraftingDialogTC::CraftingDialogTC(CraftingDialog &craftingDialog, unsigned int 
     addUnsignedCharToBuffer(numberOfCraftables);
 
     for (auto it = craftingDialog.getCraftablesBegin(); it != craftingDialog.getCraftablesEnd(); ++it) {
-        Craftable &craftable = **it;
+        uint8_t craftableId = it->first;
+        Craftable &craftable = *it->second;
+        addUnsignedCharToBuffer(craftableId);
         addUnsignedCharToBuffer(craftable.getGroup());
         addShortIntToBuffer(craftable.getItem());
         addStringToBuffer(craftable.getName());

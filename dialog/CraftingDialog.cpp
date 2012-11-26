@@ -24,29 +24,31 @@ CraftingDialog::CraftingDialog(string title, uint16_t sfx, uint16_t sfxDuration,
     this->sfx = sfx;
     this->sfxDuration = sfxDuration;
     result = playerAborts;
-    craftableIndex = 0;
+    craftableId = 0;
     craftableAmount = 0;
     ingredientIndex = 0;
+    lastAddedCraftableId = 0;
 }
 
 CraftingDialog::CraftingDialog(const CraftingDialog &craftingDialog): Dialog(craftingDialog) {
     sfx = craftingDialog.sfx;
     sfxDuration = craftingDialog.sfxDuration;
     result = craftingDialog.result;
-    craftableIndex = craftingDialog.craftableIndex;
+    craftableId = craftingDialog.craftableId;
     craftableAmount = craftingDialog.craftableAmount;
     ingredientIndex = craftingDialog.ingredientIndex;
     groups = craftingDialog.groups;
+    lastAddedCraftableId = craftingDialog.lastAddedCraftableId;
 
     for (auto it = craftingDialog.getCraftablesBegin(); it != craftingDialog.getCraftablesEnd(); ++it) {
-        craftables.push_back(new Craftable(**it));
+        craftables[it->first] = new Craftable(*it->second);
     }
 }
 
 CraftingDialog::~CraftingDialog() {
     for (auto it = craftables.begin(); it != craftables.end(); ++it) {
-        delete *it;
-        *it = 0;
+        delete it->second;
+        it->second = 0;
     }
 }
 
@@ -62,7 +64,7 @@ void CraftingDialog::clearGroupsAndProducts() {
     groups.clear();
 
     for (auto it = craftables.begin(); it != craftables.end(); ++it) {
-        delete *it;
+        delete it->second;
     }
 
     craftables.clear();
@@ -98,27 +100,29 @@ CraftingDialog::craftables_t::const_iterator CraftingDialog::getCraftablesEnd() 
     return craftables.cend();
 }
 
-void CraftingDialog::addCraftable(uint8_t group, TYPE_OF_ITEM_ID item, string name, uint16_t decisecondsToCraft) {
+void CraftingDialog::addCraftable(uint8_t id, uint8_t group, TYPE_OF_ITEM_ID item, string name, uint16_t decisecondsToCraft) {
     if (canAddCraftable(group)) {
-        craftables.push_back(new Craftable(group, item, name, decisecondsToCraft));
+        craftables[id] = new Craftable(group, item, name, decisecondsToCraft);
+        lastAddedCraftableId = id;
     }
 }
 
-void CraftingDialog::addCraftable(uint8_t group, TYPE_OF_ITEM_ID item, string name, uint16_t decisecondsToCraft, uint8_t craftedStackSize) {
+void CraftingDialog::addCraftable(uint8_t id, uint8_t group, TYPE_OF_ITEM_ID item, string name, uint16_t decisecondsToCraft, uint8_t craftedStackSize) {
     if (canAddCraftable(group)) {
-        craftables.push_back(new Craftable(group, item, name, decisecondsToCraft, craftedStackSize));
+        craftables[id] = new Craftable(group, item, name, decisecondsToCraft, craftedStackSize);
+        lastAddedCraftableId = id;
     }
 }
 
 void CraftingDialog::addCraftableIngredient(TYPE_OF_ITEM_ID item) {
     if (!craftables.empty()) {
-        craftables.back()->addIngredient(item);
+        craftables[lastAddedCraftableId]->addIngredient(item);
     }
 }
 
 void CraftingDialog::addCraftableIngredient(TYPE_OF_ITEM_ID item, uint8_t number) {
     if (!craftables.empty()) {
-        craftables.back()->addIngredient(item, number);
+        craftables[lastAddedCraftableId]->addIngredient(item, number);
     }
 }
 
@@ -130,13 +134,15 @@ void CraftingDialog::setResult(Result result) {
     this->result = result;
 }
 
-CraftingDialog::index_t CraftingDialog::getCraftableIndex() const {
-    return craftableIndex;
+uint8_t CraftingDialog::getCraftableId() const {
+    return craftableId;
 }
 
-void CraftingDialog::setCraftableIndex(CraftingDialog::index_t index) {
-    if (index < craftables.size()) {
-        craftableIndex = index;
+void CraftingDialog::setCraftableId(uint8_t id) {
+    if (craftables.find(id) != craftables.end()) {
+        craftableId = id;
+    } else {
+        craftableId = 0;
     }
 }
 
@@ -157,9 +163,9 @@ void CraftingDialog::setIngredientIndex(CraftingDialog::index_t index) {
 }
 
 uint16_t CraftingDialog::getCraftableTime() const {
-    if (craftableIndex < craftables.size()) {
-        return craftables[craftableIndex]->getDecisecondsToCraft();
-    } else {
+    try {
+        return craftables.at(craftableId)->getDecisecondsToCraft();
+    } catch (std::out_of_range &) {
         return 0;
     }
 }
