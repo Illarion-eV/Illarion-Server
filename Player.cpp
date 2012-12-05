@@ -2682,7 +2682,6 @@ void Player::executeCraftingDialogCraftingComplete(unsigned int dialogId) {
         bool renewProductList = LuaScript::executeDialogCallback<bool>(*craftingDialog);
 
         auto stillToCraft = craftingDialog->getCraftableAmount() - 1;
-        craftingDialog->setCraftableAmount(stillToCraft);
 
         if (stillToCraft == 0) {
             boost::shared_ptr<BasicServerCommand> cmd(new CraftingDialogCraftingCompleteTC(dialogId));
@@ -2695,10 +2694,8 @@ void Player::executeCraftingDialogCraftingComplete(unsigned int dialogId) {
         }
 
         if (stillToCraft > 0) {
-            auto craftingTime = craftingDialog->getCraftableTime();
-            auto sfx = craftingDialog->getSfx();
-            auto sfxDuration = craftingDialog->getSfxDuration();
-            startCrafting(stillToCraft, craftingTime, sfx, sfxDuration, dialogId);
+            auto craftId = craftingDialog->getCraftableId();
+            executeCraftingDialogCraft(dialogId, craftId, stillToCraft);
         }
     }
 }
