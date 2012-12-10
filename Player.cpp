@@ -441,8 +441,8 @@ void Player::learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t oppone
 }
 
 
-int Player::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali, const luabind::object &data) {
-    int temp = Character::createItem(itemid, count, quali, data);
+int Player::createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, const luabind::object &data) {
+    int temp = Character::createItem(id, number, quality, data);
 
     for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
         if (characterItems[ i ].getId() != 0) {

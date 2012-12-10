@@ -674,7 +674,7 @@ public:
     * @param data the data value of the new created items
     * @return the number of items which where created sucessfully
     */
-    virtual int createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali, const luabind::object &data);
+    virtual int createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, const luabind::object &data);
 
     /**
     * changes the amount of items at a specific position

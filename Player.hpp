@@ -377,7 +377,7 @@ public:
 
     void ageInventory();
 
-    virtual int createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali, const luabind::object &data);
+    virtual int createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, const luabind::object &data);
 
     virtual void learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opponent);
 

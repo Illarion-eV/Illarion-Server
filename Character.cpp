@@ -895,19 +895,19 @@ int Character::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) 
 }
 
 
-int Character::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali, const luabind::object &data) {
-    int temp = count;
+int Character::createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, const luabind::object &data) {
+    int temp = number;
     Item it;
 
-    if (weightOK(itemid, count, NULL)) {
+    if (weightOK(id, number, NULL)) {
         CommonStruct cos;
 
-        if (CommonItems->find(itemid, cos)) {
+        if (CommonItems->find(id, cos)) {
 #ifdef Character_DEBUG
             std::cout << "createItem: itemid gefunden" << "\n";
 #endif
 
-            if (ContainerItems->find(itemid)) {
+            if (ContainerItems->find(id)) {
 #ifdef Character_DEBUG
                 std::cout << "createItem: itemid ist ein container" << "\n";
 #endif
@@ -916,22 +916,22 @@ int Character::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali,
 #ifdef Character_DEBUG
                     std::cout << "createItem: erstelle neuen Rucksack" << "\n";
 #endif
-                    characterItems[ BACKPACK ].setId(itemid);
+                    characterItems[ BACKPACK ].setId(id);
                     characterItems[ BACKPACK ].setWear(cos.AgeingSpeed);
-                    characterItems[ BACKPACK ].setQuality(quali);
+                    characterItems[ BACKPACK ].setQuality(quality);
                     characterItems[ BACKPACK ].setData(data);
                     characterItems[ BACKPACK ].setNumber(1);
                     temp = temp - 1;
-                    backPackContents = new Container(itemid);
+                    backPackContents = new Container(id);
 
                     if (cos.Brightness > 0) {
                         updateAppearanceForAll(true);
                     }
                 }
 
-                it.setId(itemid);
+                it.setId(id);
                 it.setWear(cos.AgeingSpeed);
-                it.setQuality(quali);
+                it.setQuality(quality);
                 it.setNumber(1);
                 it.setData(data);
 
@@ -954,14 +954,14 @@ int Character::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali,
 
                 for (unsigned char i = MAX_BODY_ITEMS; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS && temp > 0; ++i) {
                     if (characterItems[ i ].getId() == 0) {
-                        characterItems[ i ].setId(itemid);
+                        characterItems[ i ].setId(id);
                         characterItems[ i ].setWear(cos.AgeingSpeed);
-                        characterItems[ i ].setQuality(quali);
+                        characterItems[ i ].setQuality(quality);
                         characterItems[ i ].setData(data);
                         temp = characterItems[ i ].increaseNumberBy(temp);
-                    } else if ((characterItems[ i ].getId() == itemid) && (characterItems[ i ].equalData(data))) {
+                    } else if ((characterItems[ i ].getId() == id) && (characterItems[ i ].equalData(data))) {
                         characterItems[ i ].setWear(cos.AgeingSpeed);
-                        characterItems[ i ].setQuality(quali);
+                        characterItems[ i ].setQuality(quality);
                         temp = characterItems[ i ].increaseNumberBy(temp);
                     }
                 }
@@ -975,8 +975,8 @@ int Character::createItem(TYPE_OF_ITEM_ID itemid, uint8_t count, uint16_t quali,
                     std::cout << "createItem: Platz im belt nicht ausreichend, erstelle im backpack" << std::endl;
 #endif
                     bool ok = true;
-                    it.setId(itemid);
-                    it.setQuality(quali);
+                    it.setId(id);
+                    it.setQuality(quality);
                     it.setWear(cos.AgeingSpeed);
                     it.setData(data);
 
