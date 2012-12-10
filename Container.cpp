@@ -84,22 +84,12 @@ bool Container::InsertItem(Item item, bool merge) {
 
             if (isItemStackable(item)) {
                 auto it = items.begin();
-                int temp;
 
                 while ((it != items.end()) && (item.getNumber() > 0)) {
                     Item &selectedItem = it->second;
 
                     if (selectedItem.getId() == item.getId() && selectedItem.equalData(item)) {
-                        temp = selectedItem.getNumber() + item.getNumber();
-
-                        if (temp <= MAXITEMS) {
-                            selectedItem.setNumber(temp);
-                            item.setNumber(0);
-                        } else {
-                            item.setNumber(item.getNumber() - MAXITEMS + selectedItem.getNumber());
-                            selectedItem.setNumber(MAXITEMS);
-                        }
-
+                        item.setNumber(selectedItem.increaseNumberBy(item.getNumber()));
                         selectedItem.setMinQuality(item);
                     }
 
