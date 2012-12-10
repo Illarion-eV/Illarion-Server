@@ -260,7 +260,7 @@ void World::changeQuality(ScriptItem item, short int amount) {
         item.setQuality(tmpQuality);
         changeItem(item);
     } else {
-        erase(item,MAXITEMS);
+        erase(item, item.getNumber());
     }
 }
 

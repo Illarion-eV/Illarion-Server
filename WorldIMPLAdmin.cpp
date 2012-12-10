@@ -209,7 +209,7 @@ void World::spawn_command(Player *cp, const std::string &monid) {
 }
 
 void World::create_command(Player *cp, const std::string &itemid) {
-    if (cp->hasGMRight(gmr_basiccommands)) {
+    // if (cp->hasGMRight(gmr_basiccommands)) {
         TYPE_OF_ITEM_ID item;
         uint16_t quantity = 1;
         uint16_t quality = 333;
@@ -233,7 +233,7 @@ void World::create_command(Player *cp, const std::string &itemid) {
         }
 
         cp->createItem(item, quantity, quality, dataList);
-    }
+    // }
 
 }
 

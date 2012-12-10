@@ -1023,10 +1023,11 @@ int Character::increaseAtPos(unsigned char pos, int count) {
 #ifdef Character_DEBUG
             std::cout << "temp " << temp << "\n";
 #endif
+            auto maxStack = characterItems[pos].getMaxStack();
 
-            if (temp > MAXITEMS) {
-                characterItems[ pos ].setNumber(MAXITEMS);
-                temp = temp - MAXITEMS;
+            if (temp > maxStack) {
+                characterItems[ pos ].setNumber(maxStack);
+                temp = temp - maxStack;
             } else if (temp <= 0) {
                 bool updateBrightness = World::get()->getItemStatsFromId(characterItems[ pos ].getId()).Brightness > 0;
                 temp = count + characterItems[ pos ].getNumber();

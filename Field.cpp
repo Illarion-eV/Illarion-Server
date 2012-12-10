@@ -236,10 +236,11 @@ int Field::increaseTopItem(int count, bool &erased) {
 #ifdef Field_DEBUG
         std::cout << "it.number:"<<it.getNumber()<<std::endl;
 #endif
+        auto maxStack = it.getMaxStack();
 
-        if (temp > MAXITEMS) {
-            it.setNumber(MAXITEMS);
-            temp = temp - MAXITEMS;
+        if (temp > maxStack) {
+            it.setNumber(maxStack);
+            temp = temp - maxStack;
             PutTopItem(it);
             erased = false;
         } else if (temp <= 0) {

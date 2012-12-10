@@ -2112,7 +2112,7 @@ public:
         time(&(player->lastaction));
         Logger::writeMessage("World_Debug", player->name + " whispers something!");
 
-        if ((!player->hasGMRight(gmr_isnotshownasgm) && !player->isAdmin()) || !World::get()->parseGMCommands(player, text)) {
+        if (!World::get()->parseGMCommands(player, text)) {
             if (!World::get()->parsePlayerCommands(player, text)) {    // did we issue a player command?
                 player->talk(Character::tt_say, text);
             }

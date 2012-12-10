@@ -217,7 +217,7 @@ bool World::putItemOnInvPos(Character *cc, unsigned char pos) {
 
                 int temp = cc->characterItems[ pos ].getNumber() + g_item.getNumber();
 
-                if (temp <= MAXITEMS) {
+                if (temp <= g_item.getMaxStack()) {
                     cc->characterItems[ pos ].setNumber(temp);
                     cc->characterItems[ pos ].setMinQuality(g_item);
                     g_item.reset();

@@ -127,14 +127,16 @@ bool Container::InsertItem(Item item, TYPE_OF_CONTAINERSLOTS pos) {
                 if (selectedItem.getId() == item.getId() && selectedItem.equalData(item)) {
                     int temp = selectedItem.getNumber() + item.getNumber();
 
-                    if (temp <= MAXITEMS) {
+                    auto maxStack = item.getMaxStack();
+
+                    if (temp <= maxStack) {
                         selectedItem.setMinQuality(item);
                         selectedItem.setNumber(temp);
                         return true;
                     } else if (items.size() < getSlotCount()) {
-                        item.setNumber(item.getNumber() - MAXITEMS + selectedItem.getNumber());
+                        item.setNumber(item.getNumber() - maxStack + selectedItem.getNumber());
                         selectedItem.setMinQuality(item);
-                        selectedItem.setNumber(MAXITEMS);
+                        selectedItem.setNumber(maxStack);
                         insertIntoFirstFreeSlot(item);
                         return true;
                     }
@@ -153,25 +155,20 @@ bool Container::InsertContainer(Item it, Container *cc) {
     if ((this != cc) && (items.size() < getSlotCount())) {
         Item titem = it;
 
-        if (items.size() < MAXITEMS) {   // es ist noch Platz frei
-            CONTAINERMAP::iterator iterat;
-            CONTAINERMAP::key_type count = 0;
-            // freie Container-ID finden
-            iterat = containers.find(0);
+        CONTAINERMAP::iterator iterat;
+        CONTAINERMAP::key_type count = 0;
+        iterat = containers.find(0);
 
-            while ((iterat != containers.end()) && (count < (MAXITEMS - 1))) {
-                count = count + 1;
-                iterat = containers.find(count);
-            }
-
-            // dem Container seine neue ID zuweisen
-            titem.setNumber(count);
-            // den Container in die Itemliste einf�gen
-            insertIntoFirstFreeSlot(titem);
-            // den Inhalt des Containers in die Containermap mit der entsprechenden ID einf�gen
-            containers.insert(CONTAINERMAP::value_type(count, cc));
-            return true;
+        while ((iterat != containers.end()) && (count + 1 < getSlotCount())) {
+            count = count + 1;
+            iterat = containers.find(count);
         }
+
+        // dem Container seine neue ID zuweisen
+        titem.setNumber(count);
+        insertIntoFirstFreeSlot(titem);
+        containers.insert(CONTAINERMAP::value_type(count, cc));
+        return true;
     }
 
     return false;

@@ -264,6 +264,16 @@ TYPE_OF_WORTH Item::getWorth() const {
     return 0;
 }
 
+Item::number_type Item::getMaxStack() const {
+    CommonStruct common;
+
+    if (CommonItems->find(id, common)) {
+        return common.MaxStack;
+    }
+
+    return 0;
+}
+
 bool Item::isPermanent() const {
     return wear == PERMANENT_WEAR;
 }
