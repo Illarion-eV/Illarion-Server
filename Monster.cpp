@@ -40,6 +40,7 @@ Monster::Monster(const TYPE_OF_CHARACTER_ID &type, const position &newpos, Spawn
     }
 
     character = monster;
+    id = monsteridc->nextFreeId();
     actionPoints = NP_MAX_AP;
     SetAlive(true);
     setType(type);
@@ -115,7 +116,6 @@ void Monster::setType(const TYPE_OF_CHARACTER_ID &type) throw(unknownIDException
     SetMovement(monsterdef.movement);
     race = monsterdef.race;
     _canAttack = monsterdef.canattack;
-    id=monsteridc->nextFreeId();
     char mname[ 80 ];
     sprintf(mname, "%0#6X %s", id, monsterdef.name.c_str());
     name=mname;
