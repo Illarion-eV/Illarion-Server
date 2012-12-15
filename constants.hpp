@@ -38,11 +38,6 @@ const uint32_t MONSTER_BASE = 0xFE000000;
 
 #define LEFTHANDMODIFIER 2
 
-#define FIGHTMUSIC 1
-#define SHOPMUSIC 2
-#define SURFACEMUSIC 3
-#define AVEMUSIC 4
-
 #define SOUNDFIELD 1
 #define MUSICFIELD 2
 
