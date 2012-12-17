@@ -204,10 +204,8 @@ std::list<BlockingObject> World::LoS(position startingpos, position endingpos) {
             Field *temp;
 
             if (steep) {
-                //makeGFXForAllPlayersInRange(y,x,startingpos.z, MAXVIEW,0);
                 if (GetPToCFieldAt(temp,y,x,startingpos.z)) {
                     if (temp->IsPlayerOnField()) {
-                        //makeGFXForAllPlayersInRange(y,x,startingpos.z, MAXVIEW,effekt);
                         bo.blockingType = BlockingObject::BT_CHARACTER;
                         bo.blockingChar = findCharacterOnField(y,x,startingpos.z);
 
@@ -217,7 +215,6 @@ std::list<BlockingObject> World::LoS(position startingpos, position endingpos) {
                             ret.push_front(bo);
                         }
                     } else if (!temp->IsPassable()) {
-                        //makeGFXForAllPlayersInRange(y,x,startingpos.z, MAXVIEW,effekt);
                         ScriptItem it;
 
                         if (temp->ViewTopItem(it)) {
@@ -233,16 +230,10 @@ std::list<BlockingObject> World::LoS(position startingpos, position endingpos) {
                             }
                         }
                     }
-
-                    //else
-                    //    makeGFXForAllPlayersInRange(y,x,startingpos.z, MAXVIEW,0);
-
                 }
             } else {
-                //makeGFXForAllPlayersInRange(x,y,startingpos.z, MAXVIEW,0);
                 if (GetPToCFieldAt(temp,x,y,startingpos.z)) {
                     if (temp->IsPlayerOnField()) {
-                        //makeGFXForAllPlayersInRange(x,y,startingpos.z, MAXVIEW,effekt);
                         bo.blockingType = BlockingObject::BT_CHARACTER;
                         bo.blockingChar = findCharacterOnField(x,y,startingpos.z);
 
@@ -252,7 +243,6 @@ std::list<BlockingObject> World::LoS(position startingpos, position endingpos) {
                             ret.push_front(bo);
                         }
                     } else if (!temp->IsPassable()) {
-                        //makeGFXForAllPlayersInRange(x,y,startingpos.z, MAXVIEW,effekt);
                         ScriptItem it;
 
                         if (temp->ViewTopItem(it)) {
@@ -268,10 +258,6 @@ std::list<BlockingObject> World::LoS(position startingpos, position endingpos) {
                             }
                         }
                     }
-
-                    //else
-                    //    makeGFXForAllPlayersInRange(x,y,startingpos.z, MAXVIEW,0);
-
                 }
             }
         }
@@ -440,7 +426,7 @@ bool World::characterAttacks(Character *cp) {
             // Ziel gefunden
             if (temppl != NULL) {
                 // Ziel sichtbar
-                if (cp->isInRange(temppl, MAXVIEW)) {
+                if (cp->isInRange(temppl, temppl->getScreenRange())) {
 
                     // Ziel ist tot
                     if (!cp->attack(temppl)) {
@@ -479,7 +465,7 @@ bool World::characterAttacks(Character *cp) {
 
             // Ziel gefunden
             if (temppl != NULL) {
-                if (cp->isInRange(temppl, MAXVIEW)) {
+                if (cp->isInRange(temppl, temppl->getScreenRange())) {
                     MonsterStruct monStruct;
 
                     if (MonsterDescriptions->find(temppl->getType(), monStruct)) {
@@ -755,7 +741,7 @@ void World::updatePlayerView(short int startx, short int endx) {
 
     std::vector < Player * > temp;
 
-    if (Players.findAllCharactersWithXInRangeOf(startx - MAXVIEW, endx + MAXVIEW, temp)) {
+    if (Players.findAllCharactersWithXInRangeOf(startx - 20, endx + 20, temp)) {
         for (std::vector < Player * > ::iterator titerator = temp.begin(); titerator < temp.end(); ++titerator) {
 #ifdef World_DEBUG
             std::cout << "update view for player " << (*titerator)->name << " " << startx << ":#" << (*titerator)->pos.x << "#:" << endx << "\n";
@@ -1147,7 +1133,7 @@ void World::setWeatherPart(std::string type, char value) {
 }
 
 void World::sendRemoveCharToVisiblePlayers(TYPE_OF_CHARACTER_ID id, position &pos) {
-    std::vector < Player * > temp = Players.findAllCharactersInRangeOf(pos.x, pos.y, pos.z, MAXVIEW);
+    std::vector < Player * > temp = Players.findAllCharactersInScreen(pos.x, pos.y, pos.z);
     std::vector < Player * > ::iterator titerator;
     boost::shared_ptr<BasicServerCommand>cmd(new RemoveCharTC(id));
 
@@ -1159,7 +1145,7 @@ void World::sendRemoveCharToVisiblePlayers(TYPE_OF_CHARACTER_ID id, position &po
 void World::sendHealthToAllVisiblePlayers(Character *cc, Attribute::attribute_t health) {
     if (!cc->isinvisible) {
 
-        std::vector < Player * > temp = Players.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, MAXVIEW+1);
+        std::vector < Player * > temp = Players.findAllCharactersInScreen(cc->pos.x, cc->pos.y, cc->pos.z);
 
         std::vector < Player * > ::iterator titerator;
         char xoffs;

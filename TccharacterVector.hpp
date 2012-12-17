@@ -80,6 +80,8 @@ public:
     std::vector < _Tp > findAllCharactersInRangeOf(short int xc, short int yc, short int zc, int distancemetric);
     std::vector < _Tp > findAllCharactersInMaxRangeOf(short int xc, short int yc, short int zc, int distancemetric);
 
+    std::vector < _Tp > findAllCharactersInScreen(short int xc, short int yc, short int zc);
+
     //! sucht in dem std::vector nach lebenden Character mit Koordinaten in der Nähe von (xc,yc,zc)
     // \param rnorth maximaler Abstand der Character nach Norden
     // \param rsouth maximaler Abstand der Character nach Süden
@@ -225,6 +227,32 @@ template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllCha
             py = (*thisIterator)->pos.y - yc;
 
             if ((abs(px) + abs(py)) <= distancemetric) {
+                temp.push_back(*thisIterator);
+            }
+        }// z
+    }// iterator
+
+    return temp;
+
+}
+
+
+template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllCharactersInScreen(short int xc, short int yc, short int zc) {
+
+    std::vector < _Tp > temp;
+    typename ccharactervector::iterator thisIterator;
+    short int px;
+    short int py;
+    short int pz;
+
+    for (thisIterator = this->begin(); thisIterator < this->end(); ++thisIterator) {
+        pz = (*thisIterator)->pos.z - zc;
+
+        if ((-RANGEDOWN <= pz) && (pz <= RANGEUP)) {
+            px = (*thisIterator)->pos.x - xc;
+            py = (*thisIterator)->pos.y - yc;
+
+            if ((abs(px) + abs(py)) <= (*thisIterator)->getScreenRange()) {
                 temp.push_back(*thisIterator);
             }
         }// z

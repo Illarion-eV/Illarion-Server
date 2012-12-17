@@ -23,7 +23,6 @@
 #define MAP_DIMENSION 17 // map extends into all 4 directions for this number of tiles
 #define MAP_DOWN_EXTRA 3 // extra downwards extension
 
-#define MAXVIEW 14
 #include "globals.hpp"
 #include "constants.hpp"
 

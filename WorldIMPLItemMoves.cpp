@@ -1779,7 +1779,7 @@ void World::closeContainerInShowcase(Player *cp, unsigned char showcase) {
 
 void World::sendRemoveItemFromMapToAllVisibleCharacters(TYPE_OF_ITEM_ID id, short int xo, short int yo, short int zo, Field *cfp) {
     if (cfp != NULL) {
-        std::vector < Player * > temp = Players.findAllCharactersInRangeOf(xo, yo, zo, MAXVIEW);
+        std::vector < Player * > temp = Players.findAllCharactersInScreen(xo, yo, zo);
 
         std::vector < Player * > ::iterator titerator;
 
@@ -1794,7 +1794,7 @@ void World::sendRemoveItemFromMapToAllVisibleCharacters(TYPE_OF_ITEM_ID id, shor
 
 void World::sendSwapItemOnMapToAllVisibleCharacter(TYPE_OF_ITEM_ID id, short int xn, short int yn, short int zn, Item &it, Field *cfp) {
     if (cfp != NULL) {
-        std::vector < Player * > temp = Players.findAllCharactersInRangeOf(xn, yn, zn, MAXVIEW);
+        std::vector < Player * > temp = Players.findAllCharactersInScreen(xn, yn, zn);
 
         std::vector < Player * > ::iterator titerator;
 
@@ -1810,7 +1810,7 @@ void World::sendSwapItemOnMapToAllVisibleCharacter(TYPE_OF_ITEM_ID id, short int
 
 void World::sendPutItemOnMapToAllVisibleCharacters(short int xn, short int yn, short int zn, Item &it, Field *cfp) {
     if (cfp != NULL) {
-        std::vector < Player * > temp = Players.findAllCharactersInRangeOf(xn, yn, zn, MAXVIEW);
+        std::vector < Player * > temp = Players.findAllCharactersInScreen(xn, yn, zn);
 
         std::vector < Player * > ::iterator titerator;
 

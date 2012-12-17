@@ -672,11 +672,23 @@ fuse_ptr<Character> World::createMonster(unsigned short id, position pos, short 
 }
 
 void World::gfx(unsigned short int gfxid, position pos) {
-    makeGFXForAllPlayersInRange(pos.x, pos.y, pos.z, MAXVIEW, gfxid);
+    std::vector < Player * > temp = Players.findAllCharactersInScreen(pos.x, pos.y, pos.z);
+    std::vector < Player * > ::iterator titerator;
+
+    for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
+        boost::shared_ptr<BasicServerCommand>cmd(new GraphicEffectTC(pos.x, pos.y, pos.z, gfxid));
+        (*titerator)->Connection->addCommand(cmd);
+    }
 }
 
 void World::makeSound(unsigned short int soundid, position pos) {
-    makeSoundForAllPlayersInRange(pos.x, pos.y, pos.z, MAXVIEW, soundid);
+    std::vector < Player * > temp = Players.findAllCharactersInScreen(pos.x, pos.y, pos.z);
+    std::vector < Player * > ::iterator titerator;
+
+    for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
+        boost::shared_ptr<BasicServerCommand>cmd(new SoundTC(pos.x, pos.y, pos.z, soundid));
+        (*titerator)->Connection->addCommand(cmd);
+    }
 }
 
 bool World::isItemOnField(position pos) {
@@ -725,7 +737,7 @@ void World::changeTile(short int tileid, position pos) {
 void World::sendMapUpdate(position pos, uint8_t range) {
     std::vector<Player *> temp;
     std::vector<Player *>::iterator pIterator;
-    temp=Players.findAllCharactersInRangeOf(pos.x,pos.y,pos.z, range); //getPlayersInRange(pos.x,pos.y,pos.z,MAXVIEW);
+    temp=Players.findAllCharactersInRangeOf(pos.x,pos.y,pos.z, range);
 
     for (pIterator = temp.begin(); pIterator != temp.end(); ++pIterator) {
         (*pIterator)->sendFullMap();

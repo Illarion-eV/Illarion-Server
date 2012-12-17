@@ -147,6 +147,8 @@ public:
     uint8_t screenwidth;
     uint8_t screenheight;
 
+    virtual unsigned short int getScreenRange() const;
+
     //! die Verbindung zum Spieler, -- Achtung ! Die Verbindung wird NICHT im Destruktor gel�cht
     // , da sie auch extern erstellt wird und durch das Einfgen in diverse
     // Vektoren oft Destruktoren fr tempor�e Player aufgerufen werden, die noch

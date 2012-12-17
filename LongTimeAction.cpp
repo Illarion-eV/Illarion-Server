@@ -66,11 +66,11 @@ bool LongTimeAction::checkAction() {
         }
 
         if ((_redoaniTimer) && (_redoaniTimer->Next()) && (_ani != 0)) {
-            _world->makeGFXForAllPlayersInRange(_owner->pos.x, _owner->pos.y, _owner->pos.z, MAXVIEW, _ani);
+            _world->gfx(_ani, _owner->pos);
         }
 
         if ((_redosoundTimer) && (_redosoundTimer->Next()) && (_sound != 0)) {
-            _world->makeSoundForAllPlayersInRange(_owner->pos.x, _owner->pos.y, _owner->pos.z, MAXVIEW, _sound);
+            _world->makeSound(_sound, _owner->pos);
         }
     }
 
@@ -108,11 +108,11 @@ void LongTimeAction::startLongTimeAction(unsigned short int timetowait, unsigned
     }
 
     if (_sound != 0) {
-        _world->makeSoundForAllPlayersInRange(_owner->pos.x, _owner->pos.y, _owner->pos.z, MAXVIEW, _sound);
+        _world->makeSound(_sound, _owner->pos);
     }
 
     if (_ani != 0) {
-        _world->makeGFXForAllPlayersInRange(_owner->pos.x, _owner->pos.y, _owner->pos.z, MAXVIEW, _ani);
+        _world->gfx(_ani, _owner->pos);
     }
 
 }

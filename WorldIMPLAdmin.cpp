@@ -421,7 +421,7 @@ void World::makeVisible(Player *cp) {
 
     std::vector < Player * > ::iterator titerator;
 
-    std::vector < Player * > temp = Players.findAllCharactersInRangeOf(cp->pos.x, cp->pos.y, cp->pos.z, MAXVIEW);
+    std::vector < Player * > temp = Players.findAllCharactersInScreen(cp->pos.x, cp->pos.y, cp->pos.z);
 
     for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
         //Fr alle anderen Sichtbar machen
@@ -470,7 +470,7 @@ void World::ForceIntroduceAll(Player *cp) {
         return;
     }
 
-    std::vector < Player * > temp = Players.findAllCharactersInRangeOf(cp->pos.x, cp->pos.y, cp->pos.z, MAXVIEW);
+    std::vector < Player * > temp = Players.findAllCharactersInRangeOf(cp->pos.x, cp->pos.y, cp->pos.z, cp->getScreenRange());
     std::vector < Player * > ::iterator titerator;
 
     for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {

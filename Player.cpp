@@ -310,6 +310,10 @@ void Player::login() throw(Player::LogoutException) {
     time(&lastsavetime);
 }
 
+unsigned short int Player::getScreenRange() const {
+    return (screenwidth > screenheight) ? screenwidth : screenheight;
+}
+
 void Player::closeAllShowcasesOfMapContainers() {
 
     if (mapshowcaseopen) {

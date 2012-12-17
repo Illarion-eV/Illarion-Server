@@ -1539,6 +1539,10 @@ bool Character::isInRange(Character *cc, unsigned short int distancemetric) {
     return false;
 }
 
+unsigned short int Character::getScreenRange() const {
+    return 14;
+}
+
 bool Character::isInRangeToField(position m_pos, unsigned short int distancemetric) {
     short int pz = m_pos.z - pos.z;
     short int px = m_pos.x - pos.x;
@@ -2401,7 +2405,7 @@ void Character::updateAppearanceForAll(bool always) {
     if (!isinvisible) {
         boost::shared_ptr<BasicServerCommand> cmd(new AppearanceTC(this));
 
-        std::vector < Player * > temp = World::get()->Players.findAllCharactersInRangeOf(pos.x, pos.y, pos.z, MAXVIEW);
+        std::vector < Player * > temp = World::get()->Players.findAllCharactersInScreen(pos.x, pos.y, pos.z);
         std::vector < Player * > ::iterator titerator;
 
         for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
@@ -2429,7 +2433,7 @@ void Character::performAnimation(uint8_t animID) {
     if (!isinvisible) {
         boost::shared_ptr<BasicServerCommand> cmd(new AnimationTC(id, animID));
 
-        std::vector < Player * > temp = World::get()->Players.findAllCharactersInRangeOf(pos.x, pos.y, pos.z, MAXVIEW);
+        std::vector < Player * > temp = World::get()->Players.findAllCharactersInScreen(pos.x, pos.y, pos.z);
         std::vector < Player * > ::iterator titerator;
 
         for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {

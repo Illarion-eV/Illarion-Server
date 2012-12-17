@@ -142,7 +142,7 @@ void World::sendLanguageMessageToAllCharsInRange(std::string message, Character:
     // how far can we be heard?
     switch (tt) {
     case Character::tt_say:
-        range = MAXVIEW;
+        range = 14;
         break;
     case Character::tt_whisper:
         range = 2;
@@ -211,7 +211,7 @@ void World::sendMessageToAllCharsInRange(std::string message, Character::talk_ty
     // how far can we be heard?
     switch (tt) {
     case Character::tt_say:
-        range = MAXVIEW;
+        range = 14;
         break;
     case Character::tt_whisper:
         range = 2;
@@ -273,7 +273,6 @@ void World::sendMessageToAllCharsInRange(std::string message, Character::talk_ty
 
 
 void World::makeGFXForAllPlayersInRange(short int xc, short int yc, short int zc, int distancemetric ,unsigned short int gfx) {
-
     std::vector < Player * > temp = Players.findAllCharactersInRangeOf(xc, yc, zc, distancemetric);
     std::vector < Player * > ::iterator titerator;
 
@@ -281,7 +280,6 @@ void World::makeGFXForAllPlayersInRange(short int xc, short int yc, short int zc
         boost::shared_ptr<BasicServerCommand>cmd(new GraphicEffectTC(xc, yc, zc, gfx));
         (*titerator)->Connection->addCommand(cmd);
     }
-
 }
 
 

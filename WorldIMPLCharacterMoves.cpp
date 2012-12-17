@@ -188,7 +188,7 @@ bool World::spinPlayer(Player *cp, unsigned char d) {
 
 void World::sendSpinToAllVisiblePlayers(Character *cc) {
 
-    std::vector < Player * > temp = Players.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, MAXVIEW);
+    std::vector < Player * > temp = Players.findAllCharactersInScreen(cc->pos.x, cc->pos.y, cc->pos.z);
     std::vector < Player * > ::iterator titerator;
 
     for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
@@ -201,7 +201,7 @@ void World::sendSpinToAllVisiblePlayers(Character *cc) {
 
 void World::sendPassiveMoveToAllVisiblePlayers(Character *ccp) {
 
-    std::vector < Player * > temp = Players.findAllCharactersInRangeOf(ccp->pos.x, ccp->pos.y, ccp->pos.z, MAXVIEW+1);
+    std::vector < Player * > temp = Players.findAllCharactersInScreen(ccp->pos.x, ccp->pos.y, ccp->pos.z);
 
     std::vector < Player * >::iterator titerator;
     char xoffs;
@@ -230,7 +230,7 @@ void World::sendCharacterMoveToAllVisibleChars(Character *cc, unsigned char wait
 void World::sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char netid, unsigned char waitpages) {
     if (!cc->isinvisible) { //Nur wenn Character nicht unsichtbar ist die Bewegung �bertragen
 
-        std::vector < Player * > temp = Players.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, MAXVIEW+1);
+        std::vector < Player * > temp = Players.findAllCharactersInScreen(cc->pos.x, cc->pos.y, cc->pos.z);
 
         std::vector < Player * > ::iterator titerator;
         char xoffs;
@@ -263,7 +263,7 @@ void World::sendCharacterWarpToAllVisiblePlayers(Character *cc, position oldpos,
 
         // hinwarpen
         std::vector < Player * > temp;
-        temp = Players.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, MAXVIEW);
+        temp = Players.findAllCharactersInScreen(cc->pos.x, cc->pos.y, cc->pos.z);
 
         for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
             if (cc != (*titerator)) {
@@ -279,13 +279,13 @@ void World::sendCharacterWarpToAllVisiblePlayers(Character *cc, position oldpos,
 
 
 void World::sendAllVisibleCharactersToPlayer(Player *cp, bool sendSpin) {
-    std::vector < Player * > tempP = Players.findAllCharactersInRangeOf(cp->pos.x , cp->pos.y, cp->pos.z, MAXVIEW);
+    std::vector < Player * > tempP = Players.findAllCharactersInRangeOf(cp->pos.x , cp->pos.y, cp->pos.z, cp->getScreenRange());
     sendCharsInVector< Player >(tempP, cp, sendSpin);
 
-    std::vector < Monster * > tempM = Monsters.findAllCharactersInRangeOf(cp->pos.x , cp->pos.y, cp->pos.z, MAXVIEW);
+    std::vector < Monster * > tempM = Monsters.findAllCharactersInRangeOf(cp->pos.x , cp->pos.y, cp->pos.z, cp->getScreenRange());
     sendCharsInVector< Monster >(tempM, cp, sendSpin);
 
-    std::vector < NPC * > tempN = Npc.findAllCharactersInRangeOf(cp->pos.x , cp->pos.y, cp->pos.z, MAXVIEW);
+    std::vector < NPC * > tempN = Npc.findAllCharactersInRangeOf(cp->pos.x , cp->pos.y, cp->pos.z, cp->getScreenRange());
     sendCharsInVector< NPC >(tempN, cp, sendSpin);
 }
 

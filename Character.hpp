@@ -844,6 +844,8 @@ public:
     */
     bool isInRange(Character *cc, unsigned short int distancemetric);
 
+    virtual unsigned short int getScreenRange() const;
+
     /**
     * returns the distance of this character and another character in fields
     * <b>Lua: [:distanceMetric]</b>

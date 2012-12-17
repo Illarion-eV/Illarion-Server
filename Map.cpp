@@ -650,7 +650,7 @@ void Map::ageItemsInHorizontalRange(short int xstart, short int xend) {
                 position pos(Conv_To_X(x), Conv_To_Y(y), Z_Level);
                 Logger::writeMessage("rot_update", "aged items, pos: " + Logger::toString(pos.x) + " " + Logger::toString(pos.y) + " " + Logger::toString(pos.z));
                 //a update is needed
-                std::vector<Player *> playersinview = World::get()->Players.findAllCharactersInRangeOf(pos.x,pos.y, pos.z, MAXVIEW);
+                std::vector<Player *> playersinview = World::get()->Players.findAllCharactersInScreen(pos.x,pos.y, pos.z);
 
                 //iterate through all the players in range and send the update for this field
                 for (std::vector<Player *>::iterator it = playersinview.begin(); it != playersinview.end(); ++it) {
