@@ -1450,7 +1450,7 @@ void World::moveItemBetweenShowcases(Player *cp, unsigned char source, unsigned 
         if (NOK) {
             std::cout << "Item konnte nicht eingefgt werden -> zurcklegen" << std::endl;
 
-            if (! putItemInShowcase(cp, source,0)) {
+            if (! putItemInShowcase(cp, source, pos)) {
                 std::cerr << "moveItemBetweenShowcases: Datenverlust beim Zurcklegen, Spieler " << cp->name << std::endl;
                 g_cont = NULL;
                 g_item.reset();
