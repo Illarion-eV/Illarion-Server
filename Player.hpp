@@ -522,11 +522,20 @@ private:
             LuaScript::triggerScriptError("Dialog must not be nil!");
         }
 
-        unsigned int dialogId = dialogCounter++;
-        DialogType *d = new DialogType(*dialog);
-        dialogs[dialogId] = d;
-        boost::shared_ptr<BasicServerCommand>cmd(new DialogCommandType(*dialog, dialogId));
-        Connection->addCommand(cmd);
+        if (dialogs.size() < 100) {
+            unsigned int dialogId = dialogCounter;
+
+            while (dialogs.find(dialogId) != dialogs.end()) {
+                ++dialogId;
+            }
+
+            DialogType *d = new DialogType(*dialog);
+            dialogs[dialogId] = d;
+            boost::shared_ptr<BasicServerCommand>cmd(new DialogCommandType(*dialog, dialogId));
+            Connection->addCommand(cmd);
+        } else {
+            inform("ERROR: Unable to open more than 100 dialogs.");
+        }
     }
 
 public:
