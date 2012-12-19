@@ -784,15 +784,18 @@ int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid, const luab
 
 ScriptItem Character::GetItemAt(unsigned char itempos) {
     ScriptItem item;
-    item = characterItems[ itempos ];
-    item.pos = pos;
-    item.itempos = itempos;
-    item.owner = this;
+    
+    if (itempos < MAX_BODY_ITEMS + MAX_BELT_SLOTS) {
+        item = characterItems[ itempos ];
+        item.pos = pos;
+        item.itempos = itempos;
+        item.owner = this;
 
-    if (itempos < MAX_BODY_ITEMS) {
-        item.type = ScriptItem::it_inventory;
-    } else if (itempos >= MAX_BODY_ITEMS && itempos < MAX_BODY_ITEMS + MAX_BELT_SLOTS) {
-        item.type = ScriptItem::it_belt;
+        if (itempos < MAX_BODY_ITEMS) {
+            item.type = ScriptItem::it_inventory;
+        } else {
+            item.type = ScriptItem::it_belt;
+        }
     }
 
     return item;
