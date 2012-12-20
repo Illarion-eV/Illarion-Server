@@ -1866,7 +1866,9 @@ bool Player::move(direction dir, uint8_t mode) {
 
             if (oldpos.z - newpos.z > 0) {
                 int perEncumb = (LoadWeight() * 100) / maxLoadWeight();
-                int damagePerLevel = (500 * perEncumb) / (getAttribute(Character::agility) / 2);
+                auto agilityModifier = getAttribute(Character::agility) / 2;
+                if (agilityModifier < 1) agilityModifier = 1;
+                int damagePerLevel = (500 * perEncumb) / agilityModifier;
                 int damage = damagePerLevel;
 
                 // Take half again as much damage for falling 2nd level
