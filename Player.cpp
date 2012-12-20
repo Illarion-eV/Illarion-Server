@@ -65,7 +65,7 @@ template<> const std::string toString(const unsigned char &convertme) {
 }
 
 Player::Player(boost::shared_ptr<NetInterface> newConnection) throw(Player::LogoutException)
-    : Character(), mapshowcaseopen(false), onlinetime(0), Connection(newConnection),
+    : Character(), onlinetime(0), Connection(newConnection),
       turtleActive(false), clippingActive(true), admin(false), dialogCounter(0) {
 #ifdef Player_DEBUG
     std::cout << "Player Konstruktor Start" << std::endl;
@@ -314,31 +314,120 @@ unsigned short int Player::getScreenRange() const {
     return (screenwidth > screenheight) ? screenwidth : screenheight;
 }
 
-void Player::closeAllShowcasesOfMapContainers() {
+void Player::openShowcase(Container *container, bool carry) {
+    for (auto it = showcases.cbegin(); it != showcases.cend(); ++it) {
+        if (it->second->contains(container)) {
+            boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(it->first, container->getSlotCount(), container->getItems()));
+            Connection->addCommand(cmd);
+            return;
+        }
+    }
 
-    if (mapshowcaseopen) {
-        for (MAXCOUNTTYPE i = 0; i < MAXSHOWCASES; ++i) {
-            if (!(showcases[ i ].inInventory())) {
-                showcases[ i ].clear();
-                boost::shared_ptr<BasicServerCommand> cmd(new ClearShowCaseTC(i));
-                Connection->addCommand(cmd);
-            }
+    if (showcases.size() < MAXSHOWCASES) {
+        while (isShowcaseOpen(showcaseCounter)) {
+            ++showcaseCounter;
         }
 
-        mapshowcaseopen = false;
+        showcases[showcaseCounter] = new Showcase(container, carry);
+
+        boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(showcaseCounter, container->getSlotCount(), container->getItems()));
+        Connection->addCommand(cmd);
+    } else {
+        inform("ERROR: Unable to open more than 100 containers.");
+    }
+}
+
+void Player::updateShowcase(Container *container) const {
+    for (auto it = showcases.cbegin(); it != showcases.cend(); ++it) {
+        if (it->second->contains(container)) {
+            boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(it->first, container->getSlotCount(), container->getItems()));
+            Connection->addCommand(cmd);
+        }
+    }
+}
+
+bool Player::isShowcaseOpen(uint8_t showcase) const {
+    return showcases.find(showcase) != showcases.cend();
+}
+
+bool Player::isShowcaseOpen(Container *container) const {
+    for (auto it = showcases.cbegin(); it != showcases.cend(); ++it) {
+        if (it->second->contains(container)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool Player::isShowcaseInInventory(uint8_t showcase) const {
+    if (isShowcaseOpen(showcase)) {
+        return showcases.at(showcase)->inInventory();
+    }
+
+    return false;
+}
+
+uint8_t Player::getShowcaseId(Container *container) const {
+    for (auto it = showcases.cbegin(); it != showcases.cend(); ++it) {
+        if (it->second->contains(container)) {
+            return it->first;
+        }
+    }
+
+    throw std::logic_error("container has no showcase!");
+}
+
+Container *Player::getShowcaseContainer(uint8_t showcase) const {
+    auto it = showcases.find(showcase);
+    if (it != showcases.end()) {
+        return it->second->getContainer();
+    }
+
+    return 0;
+}
+
+void Player::closeShowcase(uint8_t showcase) {
+    if (isShowcaseOpen(showcase)) {
+        delete showcases[showcase];
+        showcases.erase(showcase);
+        boost::shared_ptr<BasicServerCommand>cmd(new ClearShowCaseTC(showcase));
+        Connection->addCommand(cmd);
+    }
+}
+
+void Player::closeShowcase(Container *container) {
+    for (auto it = showcases.cbegin(); it != showcases.cend();) {
+        if (it->second->contains(container)) {
+            delete it->second;
+            boost::shared_ptr<BasicServerCommand>cmd(new ClearShowCaseTC(it->first));
+            Connection->addCommand(cmd);
+            it = showcases.erase(it);
+        } else {
+            ++it;
+        }
+    }
+}
+
+void Player::closeAllShowcasesOfMapContainers() {
+    for (auto it = showcases.cbegin(); it != showcases.cend(); ++it) {
+        if (!it->second->inInventory()) {
+            delete it->second;
+            boost::shared_ptr<BasicServerCommand> cmd(new ClearShowCaseTC(it->first));
+            Connection->addCommand(cmd);
+            it = showcases.erase(it);
+        }
     }
 }
 
 void Player::closeAllShowcases() {
-
-    for (MAXCOUNTTYPE i = 0; i < MAXSHOWCASES; ++i) {
-        showcases[ i ].clear();
-        boost::shared_ptr<BasicServerCommand> cmd(new ClearShowCaseTC(i));
+    for (auto it = showcases.cbegin(); it != showcases.cend(); ++it) {
+        delete it->second;
+        boost::shared_ptr<BasicServerCommand> cmd(new ClearShowCaseTC(it->first));
         Connection->addCommand(cmd);
     }
 
-    mapshowcaseopen = false;
-
+    showcases.clear();
 }
 
 Player::~Player() {
@@ -417,13 +506,7 @@ void Player::ageInventory() {
     for (depotIterator = depotContents.begin(); depotIterator != depotContents.end(); depotIterator++) {
         if (depotIterator->second != NULL) {
             depotIterator->second->doAge(true);
-
-            for (int i = 0; i < MAXSHOWCASES; ++i) {
-                if (showcases[ i ].contains(depotIterator->second)) {
-                    boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(i, depotIterator->second->getSlotCount(), showcases[i].top()->getItems()));
-                    Connection->addCommand(cmd);
-                }
-            }
+            updateShowcase(depotIterator->second);
         }
     }
 
@@ -589,12 +672,7 @@ bool Player::swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid , uint16_t newQu
 
 void Player::updateBackPackView() {
     if (backPackContents != NULL) {
-        for (int i = 0; i < MAXSHOWCASES; ++i) {
-            if (showcases[ i ].contains(backPackContents)) {
-                boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(i, backPackContents->getSlotCount(), showcases[i].top()->getItems()));
-                Connection->addCommand(cmd);
-            }
-        }
+        updateShowcase(backPackContents);
     }
 }
 
@@ -1419,7 +1497,7 @@ bool Player::load() throw() {
                 tempc = new Container(tempi.getId());
 
                 if (linenumber > MAX_BODY_ITEMS + MAX_BELT_SLOTS) {
-                    if (!it->second->InsertContainer(tempi, tempc)) {
+                    if (!it->second->InsertContainer(tempi, tempc, itemcontainerslot[tuple])) {
                         Logger::writeError("itemload","*** player '" + name + "' insert Container wasn't sucessful!");
                     } else {
 
@@ -1972,33 +2050,21 @@ void Player::openDepot(uint16_t depotid) {
 
     //std::map<uint32_t,Container*>::iterator it;
     if (depotContents.find(depotid) != depotContents.end()) {
-        if (depotContents[ depotid ] != NULL) {
+        if (depotContents[depotid] != NULL) {
 #ifdef PLAYER_PlayerDepot_DEBUG
             std::cout << "Depotinhalt vorhanden" << std::endl;
 #endif
-            // bisher ge�fnete Container im showcase schlie�n
-            showcases[ 0 ].clear();
-            // updaten des showcases des Spielers
-            showcases[ 0 ].startContainer(depotContents[ depotid ], false);
-            // �derungen an den Client schicken
-            boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(0, DEPOTSIZE, depotContents[depotid]->getItems()));
-            Connection->addCommand(cmd);
+            openShowcase(depotContents[depotid], false);
 #ifdef PLAYER_PlayerDepot_DEBUG
             std::cout << "lookIntoDepot: Ende" << std::endl;
 #endif
-            mapshowcaseopen = true;
         }
     } else {
 #ifdef PLAYER_PlayerDepot_DEBUG
-std::cout << "Depot mit der ID: "<<depotid<<" wird neu erstellt!"<<std:
-                  endl
+std::cout << "Depot mit der ID: "<<depotid<<" wird neu erstellt!"<<std:endl
 #endif
-                  depotContents[ depotid ] = new Container(DEPOTITEM);
-        showcases[ 0 ].clear();
-        showcases[ 0 ].startContainer(depotContents[ depotid ], false);
-        boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(0, DEPOTSIZE, depotContents[ depotid]->getItems()));
-        Connection->addCommand(cmd);
-        mapshowcaseopen = true;
+        depotContents[depotid] = new Container(DEPOTITEM);
+        openShowcase(depotContents[depotid], false);
     }
 
 #ifdef PLAYER_PlayerDepot_DEBUG
@@ -2609,7 +2675,9 @@ void Player::executeMerchantDialogSell(unsigned int dialogId, uint8_t location, 
             item = GetItemAt(slot);
         } else {
             Container *container = 0;
-            showcases[location-1].top()->viewItemNr(slot, item, container);
+            if (isShowcaseOpen(location-1)) {
+                getShowcaseContainer(location-1)->viewItemNr(slot, item, container);
+            }
         }
 
         if (amount < item.getNumber()) {

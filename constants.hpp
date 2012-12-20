@@ -247,7 +247,7 @@ const uint32_t MONSTER_BASE = 0xFE000000;
 #define FLAG_COAT 16
 
 //! Die maximale Anzahl von dargestellten showcases
-#define MAXSHOWCASES 2
+#define MAXSHOWCASES 100
 
 //! Code fr "kein Feld"
 #define NOFIELD 0xFFFF

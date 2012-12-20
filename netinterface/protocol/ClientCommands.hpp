@@ -626,8 +626,8 @@ public:
             Logger::writeMessage("Casting", player->name + " is casting in showcas: "+Logger::toString(showcase)+" pos "+Logger::toString(pos));
 
             if (LuaMageScript) {
-                if (showcase < MAXSHOWCASES) {
-                    Container *ps = player->showcases[ showcase ].top();
+                if (player->isShowcaseOpen(showcase)) {
+                    Container *ps = player->getShowcaseContainer(showcase);
 
                     if (ps != NULL) {
 #ifdef World_DEBUG
@@ -645,15 +645,10 @@ public:
                                 Target.Type = LUA_ITEM;
                                 ps->viewItemNr(pos, Target.item, tempc);
                                 Target.item.pos = position(xc, yc, zc);
-
-                                if (showcase == 0) {
-                                    Target.item.type = ScriptItem::it_showcase1;
-                                } else {
-                                    Target.item.type = ScriptItem::it_showcase2;
-                                }
-
+                                Target.item.type = ScriptItem::it_container;
                                 Target.item.itempos = pos;
                                 Target.item.owner = player;
+                                Target.item.inside = ps;
                                 Target.pos = position(xc, yc, zc);
                             }
                         } else {
@@ -1127,8 +1122,8 @@ public:
                 pos = bs.pop();
                 Logger::writeMessage("Use", "showcase: " + Logger::toString(static_cast<int>(showcase)) + " pos: " + Logger::toString(static_cast<int>(pos)),false);
 
-                if (showcase < MAXSHOWCASES) {
-                    Container *ps = player->showcases[ showcase ].top();
+                if (player->isShowcaseOpen(showcase)) {
+                    Container *ps = player->getShowcaseContainer(showcase);
 
                     if (ps != NULL) {
                         Logger::writeMessage("Use", "Container gefunden!", false);
@@ -1145,15 +1140,10 @@ public:
                                     Source.Type = LUA_ITEM;
                                     ps->viewItemNr(pos, Source.item, tempc);
                                     Source.item.pos = position(xc, yc, zc);
-
-                                    if (showcase == 0) {
-                                        Source.item.type = ScriptItem::it_showcase1;
-                                    } else {
-                                        Source.item.type = ScriptItem::it_showcase2;
-                                    }
-
+                                    Source.item.type = ScriptItem::it_container;
                                     Source.item.itempos = pos;
                                     Source.item.owner = player;
+                                    Source.item.inside = ps;
                                     Source.pos = position(xc, yc, zc);
                                     first = false;
                                 }
@@ -1162,13 +1152,8 @@ public:
                                 ps->viewItemNr(pos, Target.item, tempc);
                                 Target.pos = player->pos;
                                 Target.item.pos = position(xc, yc, zc);
-
-                                if (showcase == 0) {
-                                    Target.item.type = ScriptItem::it_showcase1;
-                                } else {
-                                    Target.item.type = ScriptItem::it_showcase2;
-                                }
-
+                                Target.item.type = ScriptItem::it_container;
+                                Target.item.inside = ps;
                                 Target.item.itempos = pos;
                                 Target.item.owner = player;
                             }
@@ -1936,7 +1921,6 @@ public:
     virtual ~LookIntoInventoryTS() {};
 
     virtual void decodeData() {
-        showcase = getUnsignedCharFromBuffer();
     }
 
     void performAction(Player *player) {
@@ -1948,7 +1932,7 @@ public:
         if (player->IsConscious())
 #endif
         {
-            World::get()->lookIntoBackPack(player, showcase);
+            World::get()->lookIntoBackPack(player);
             player->actionPoints -= P_LOOK_COST;
         }
     }
@@ -1957,7 +1941,6 @@ public:
         boost::shared_ptr<BasicClientCommand>cmd(new LookIntoInventoryTS());
         return cmd;
     }
-    unsigned char showcase;
 };
 
 /**
@@ -1973,7 +1956,6 @@ public:
 
     virtual void decodeData() {
         direction = getUnsignedCharFromBuffer();
-        showcase = getUnsignedCharFromBuffer();
     }
 
     void performAction(Player *player) {
@@ -1987,7 +1969,7 @@ public:
         if (player->IsAlive())
 #endif
         {
-            World::get()->lookIntoContainerOnField(player, direction, showcase);
+            World::get()->lookIntoContainerOnField(player, direction);
             player->actionPoints -= P_LOOK_COST;
         }
     }
@@ -1997,7 +1979,6 @@ public:
         return cmd;
     }
     unsigned char direction;
-    unsigned char showcase;
 };
 
 /**

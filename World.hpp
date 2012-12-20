@@ -984,7 +984,7 @@ public:
     // \param cp der Spieler der benachrichtigt werden soll
     // \param showcase der showcase in dem das Item liegt
     // \param position die Position des Item im showcase
-    void lookAtShowcaseItem(Player *cp, unsigned char showcase, unsigned char position);
+    void lookAtShowcaseItem(Player *cp, uint8_t showcase, unsigned char position);
 
     //! sendet an den Spieler den Namen des Item an einer Position im Inventory
     // \param cp der Spieler der benachrichtigt werden soll
@@ -1259,7 +1259,7 @@ public:
     // \param pos Position des Item im showcase
     // \param count Anzahl
     // \return true falls erfolgreich, false sonst
-    bool takeItemFromShowcase(Player *cc, unsigned char showcase, unsigned char pos, Item::number_type count);
+    bool takeItemFromShowcase(Player *cc, uint8_t showcase, unsigned char pos, Item::number_type count);
 
     //! legt das Item aus g_item und ggf. g_cont in einen Schaukasten
     // und schickt ein Update an cc
@@ -1267,7 +1267,7 @@ public:
     // \param showcase die Nummer das Schaukastens
     // \param die bevorzugte Position (um das Item mit einem auf der Position zusammenzufassen)
     // \return true falls erfolgreich, false sonst
-    bool putItemInShowcase(Player *cc, unsigned char showcase, TYPE_OF_CONTAINERSLOTS pos);
+    bool putItemInShowcase(Player *cc, uint8_t showcase, TYPE_OF_CONTAINERSLOTS pos);
 
     //! berprft ein Feld auf besondere Item und WarpFelder und fhrt entsprechende Aktionen aus
     // \param cfstart das zu berprfende Feld
@@ -1293,7 +1293,7 @@ public:
     // \param showcase das showcase in welches das Item verschoben werden soll
     // \param pos Zielposition
     // \param count Anzahl
-    void moveItemFromMapIntoShowcase(Player *cp, char direction, unsigned char showcase, unsigned char pos, Item::number_type count);
+    void moveItemFromMapIntoShowcase(Player *cp, char direction, uint8_t showcase, unsigned char pos, Item::number_type count);
 
     //! ein Spieler verschiebt ein Item von der Karte an seine Koerper
     // \param cp Player der verschiebt
@@ -1309,7 +1309,7 @@ public:
     // \param dest die Ansicht, in welche das Item verschoben wird
     // \param pos2 die Position auf welches das Item verschoben werden soll
     // \parm count Anzahl
-    void moveItemBetweenShowcases(Player *cp, unsigned char source, unsigned char pos, unsigned char dest, unsigned char pos2, Item::number_type count);
+    void moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char pos, uint8_t dest, unsigned char pos2, Item::number_type count);
 
     //! wirft ein Item aus einem showcase auf die Karte
     // \param cp Player der das Item wirft
@@ -1319,7 +1319,7 @@ public:
     // \param yc Y-Koordinate der neuen Itemposition
     // \param zc Z-Koordinate der neuen Itemposition
     // \parm count Anzahl
-    void dropItemFromShowcaseOnMap(Player *cp, unsigned char showcase, unsigned char pos, short int xc, short int yc, short int zc, Item::number_type count);
+    void dropItemFromShowcaseOnMap(Player *cp, uint8_t showcase, unsigned char pos, short int xc, short int yc, short int zc, Item::number_type count);
 
     //! verschiebt ein Item aus einem showcase an den Koerper des Player
     // \param cp Player der das Item verschiebt
@@ -1327,7 +1327,7 @@ public:
     // \param pos die Position des Item in der Ansicht
     // \param cpos die Position am Koerper wohin das Item verschoben wird
     // \param count Anzahl
-    void moveItemFromShowcaseToPlayer(Player *cp, unsigned char showcase, unsigned char pos, unsigned char cpos, Item::number_type count);
+    void moveItemFromShowcaseToPlayer(Player *cp, uint8_t showcase, unsigned char pos, unsigned char cpos, Item::number_type count);
 
     //! verschiebt ein Item von einem Koerperteil zu einem anderen
     // \param cp Player der das Item verschiebt
@@ -1360,7 +1360,7 @@ public:
     // \param showcase das showcase in welches das Item verschoben werden soll
     // \param pos die Position auf welche das Item verschoben werden soll
     // \param count Anzahl
-    void moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, unsigned char showcase, unsigned char pos, Item::number_type count);
+    void moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, uint8_t showcase, unsigned char pos, Item::number_type count);
 
     //! schickt eine 'Item entfernt' - Meldung an alle Player im Sichtbereich der Koordinate xo,yo,zo
     // \param id die Identifikationsnummer des durchfhrenden Player
@@ -1396,25 +1396,23 @@ public:
     //! ein Spieler schaut in einen Container auf einem Feld
     // \param cp Player der sich den Inhalt ansieht
     // \param direction die Richtung in der der Container relativ zum Spieler liegt
-    // \param showcase die Ansicht, in welcher der Inhalt des Container dargestellt werden soll
     // \return true, falls ein Container gefunden wurde
-    bool lookIntoContainerOnField(Player *cp, char direction, unsigned char showcase);
+    bool lookIntoContainerOnField(Player *cp, char direction);
 
     //! ein Spieler schaut in seinen Rucksack
     // \param cp Player der sich den Inhalt ansieht
-    // \param showcase die Ansicht, in welcher der Inhalt des Container dargestellt werden soll
     // \return true, falls ein Container gefunden wurde
-    bool lookIntoBackPack(Player *cp, unsigned char showcase);
+    bool lookIntoBackPack(Player *cp);
 
     //deactivated, function is now in Player
-    //bool lookIntoDepot( Player* cp, unsigned char showcase );
+    //bool lookIntoDepot( Player* cp, uint8_t showcase );
 
     //! ein Spieler schaut in einen Container in einem showcase
     // \param cp Player der sich den Inhalt ansieht
     // \param showcase die Ansicht, in welcher der Inhalt des Container dargestellt werden soll
     // \param pos die Position des Container im Container
     // \return true, falls ein Container gefunden wurde
-    void lookIntoShowcaseContainer(Player *cp, unsigned char showcase, unsigned char pos);
+    void lookIntoShowcaseContainer(Player *cp, uint8_t showcase, unsigned char pos);
 
     //! Prft ob ein Item stackable ist oder nicht
     //\param item das Item welches geprft werden soll
@@ -1424,7 +1422,7 @@ public:
     //! ein Spieler schliesst einen Container in einem showcase
     // \param cp Player schliessender Spieler
     // \param showcase die Ansicht, in welcher der Inhalt des Container dargestellt werden soll
-    void closeContainerInShowcase(Player *cp, unsigned char showcase);
+    void closeContainerInShowcase(Player *cp, uint8_t showcase);
 
     //! Array mit der Definition der Bewegung fr move
     char moveSteps[ 11 ][ 3 ]; // TODO move this to a better location

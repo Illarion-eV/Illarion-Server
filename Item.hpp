@@ -303,8 +303,6 @@ class ScriptItem : public Item {
 public:
     enum itemtype {
         notdefined = 0,
-        it_showcase1 = 1,
-        it_showcase2 = 2,
         it_field = 3,
         it_inventory = 4,
         it_belt = 5,

@@ -115,7 +115,7 @@ bool Container::InsertItem(Item item, bool merge) {
 bool Container::InsertItem(Item item, TYPE_OF_CONTAINERSLOTS pos) {
     if (pos < getSlotCount()) {
         if (item.isContainer()) {
-            return InsertContainer(item, new Container(item.getId()));
+            return InsertContainer(item, new Container(item.getId()), pos);
         }
 
         auto it = items.find(pos);
@@ -169,6 +169,26 @@ bool Container::InsertContainer(Item it, Container *cc) {
         insertIntoFirstFreeSlot(titem);
         containers.insert(CONTAINERMAP::value_type(count, cc));
         return true;
+    }
+
+    return false;
+
+}
+
+bool Container::InsertContainer(Item it, Container *cc, TYPE_OF_CONTAINERSLOTS pos) {
+    if ((this != cc) && (pos < getSlotCount())) {
+        Item titem = it;
+
+        auto iterat = items.find(pos);
+
+        if (iterat != items.end()) {
+            return InsertContainer(it, cc);
+        } else {
+            titem.setNumber(pos);
+            items[pos] = titem;
+            containers.insert(CONTAINERMAP::value_type(pos, cc));
+            return true;
+        }
     }
 
     return false;
@@ -460,13 +480,7 @@ int Container::increaseAtPos(unsigned char pos, Item::number_type count) {
 }
 
 bool Container::changeItem(ScriptItem &item) {
-    MAXCOUNTTYPE tcount = 0;
-    auto it = items.begin();
-
-    while ((it != items.end()) && (tcount != item.itempos)) {
-        ++tcount;
-        ++it;
-    }
+    auto it = items.find(item.itempos);
 
     if (it != items.end()) {
         if (!it->second.isContainer()) {
@@ -548,7 +562,7 @@ void Container::Load(std::istream *where) {
         if (tempi.isContainer()) {
             tempc = new Container(tempi.getId());
             tempc->Load(where);
-            InsertContainer(tempi, tempc);
+            InsertContainer(tempi, tempc, slot);
         } else {
             InsertItem(tempi, slot);
         }

@@ -31,7 +31,7 @@ data/SpellTable.cpp data/ScriptVariablesTable.cpp data/NamesObjectTable.cpp data
 data/MonsterTable.cpp data/TilesModificatorTable.cpp data/TilesTable.cpp data/SkillTable.cpp data/WeaponObjectTable.cpp \
 \
 Map.cpp \
-MapVector.cpp Container.cpp NewClientView.cpp Item.cpp ContainerStack.cpp Field.cpp SpawnPoint.cpp \
+MapVector.cpp Container.cpp NewClientView.cpp Item.cpp Showcase.cpp Field.cpp SpawnPoint.cpp \
 \
 World.cpp \
 WorldIMPLAdmin.cpp WorldIMPLCharacterMoves.cpp WorldIMPLItemMoves.cpp WorldIMPLTalk.cpp \

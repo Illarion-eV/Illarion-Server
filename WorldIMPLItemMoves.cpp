@@ -341,13 +341,7 @@ bool World::takeItemFromInvPos(Player *cc, unsigned char pos, Item::number_type 
     if (pos == BACKPACK) {
         if (cc->characterItems[ BACKPACK ].getId() != 0) {
             if (cc->backPackContents != NULL) {
-                for (int i = 0; i < MAXSHOWCASES; ++i) {
-                    if (cc->showcases[ i ].contains(cc->backPackContents)) {
-                        cc->showcases[ i ].clear();
-                        boost::shared_ptr<BasicServerCommand>cmd(new ClearShowCaseTC(i));
-                        cc->Connection->addCommand(cmd);
-                    }
-                }
+                cc->closeShowcase(cc->backPackContents);
             }
         }
     }
@@ -371,20 +365,18 @@ bool World::takeItemFromInvPos(Player *cc, unsigned char pos, Item::number_type 
 
 
 
-bool World::takeItemFromShowcase(Player *cc, unsigned char showcase, unsigned char pos, Item::number_type count) {
-    if (showcase < MAXSHOWCASES) {
-        Container *ps = cc->showcases[ showcase ].top();
+bool World::takeItemFromShowcase(Player *cc, uint8_t showcase, unsigned char pos, Item::number_type count) {
+    Container *ps = cc->getShowcaseContainer(showcase);
 
-        if (ps != NULL) {
-            if (ps->TakeItemNr(pos, g_item, g_cont, count)) {
-                if (g_cont != NULL) {
-                    sendChangesOfContainerContentsCM(ps, g_cont);
-                } else {
-                    sendChangesOfContainerContentsIM(ps);
-                }
-
-                return true;
+    if (ps != NULL) {
+        if (ps->TakeItemNr(pos, g_item, g_cont, count)) {
+            if (g_cont != NULL) {
+                sendChangesOfContainerContentsCM(ps, g_cont);
+            } else {
+                sendChangesOfContainerContentsIM(ps);
             }
+
+            return true;
         }
     }
 
@@ -396,56 +388,52 @@ bool World::takeItemFromShowcase(Player *cc, unsigned char showcase, unsigned ch
 }
 
 
-bool World::putItemInShowcase(Player *cc, unsigned char showcase, TYPE_OF_CONTAINERSLOTS pos) {
+bool World::putItemInShowcase(Player *cc, uint8_t showcase, TYPE_OF_CONTAINERSLOTS pos) {
     if (!isStackable(g_item) && !g_item.isContainer()) {
         if (g_item.getNumber() > 1) {
             return false;
         }
     }
 
-    if (showcase < MAXSHOWCASES) {
-        Container *ps = cc->showcases[ showcase ].top();
+    Container *ps = cc->getShowcaseContainer(showcase);
 
-        if (ps != NULL) {
-            if (g_cont != NULL) {
+    if (ps != NULL) {
+        if (g_cont != NULL) {
 
 #ifdef World_BagOnlyInDepot
 
-                for (auto it = cc->depotContents.begin(); it != cc->depotContents.end(); ++it) {
-                    if (it->second == ps) {
-                        isdepot = true;
-                        break;
-                    }
+            for (auto it = cc->depotContents.begin(); it != cc->depotContents.end(); ++it) {
+                if (it->second == ps) {
+                    isdepot = true;
+                    break;
                 }
+            }
 
-                if (isdepot)
+            if (isdepot)
 #endif
-                {
-                    if (!cc->showcases[ showcase ].contains(g_cont)) {
-                        if (ps->InsertContainer(g_item, g_cont)) {
-                            sendChangesOfContainerContentsCM(ps, g_cont);
-                            g_item.reset();
-                            g_cont = NULL;
+            {
+                if (ps != g_cont) {
+                    if (ps->InsertContainer(g_item, g_cont, pos)) {
+                        sendChangesOfContainerContentsCM(ps, g_cont);
+                        g_item.reset();
+                        g_cont = NULL;
 
-                            if (cc->showcases[ showcase ].inInventory()) {}
-
-                            return true;
-                        }
-                    }
-                    //Falls man eine Tasche in eine Tasche legen will dies unterbinden
-                    else {
-                        return false;
+                        return true;
                     }
                 }
-            } else {
-                if (ps->InsertItem(g_item, pos)) {
-                    sendChangesOfContainerContentsIM(ps);
-                    g_item.reset();
+                //Falls man eine Tasche in eine Tasche legen will dies unterbinden
+                else {
+                    return false;
+                }
+            }
+        } else {
+            if (ps->InsertItem(g_item, pos)) {
+                sendChangesOfContainerContentsIM(ps);
+                g_item.reset();
 #ifdef World_ItemMove_DEBUG
-                    std::cout << "putItemInShowcase.. Ende 2" << std::endl;
+                std::cout << "putItemInShowcase.. Ende 2" << std::endl;
 #endif
-                    return true;
-                }
+                return true;
             }
         }
     }
@@ -748,7 +736,7 @@ void World::checkField(Field *cfstart, short int x, short int y, short int z) {
 
 
 ///////// zusammengesetzte Funktionen  ///////////////
-void World::dropItemFromShowcaseOnMap(Player *cp, unsigned char showcase, unsigned char pos, short int xc, short int yc, short int zc, Item::number_type count) {
+void World::dropItemFromShowcaseOnMap(Player *cp, uint8_t showcase, unsigned char pos, short int xc, short int yc, short int zc, Item::number_type count) {
 #ifdef World_ItemMove_DEBUG
     std::cout << "dropItemFromShowcaseOnMap: Spieler " << cp->name << " wirft ein Item auf die Karte" << std::endl;
 #endif
@@ -764,13 +752,8 @@ void World::dropItemFromShowcaseOnMap(Player *cp, unsigned char showcase, unsign
         ScriptItem s_item = g_item,t_item = g_item; //Item einmal source und einmal target, das erste ist das Item vor dem bewegen das andere nach dem bewegen
         s_item.pos = cp->pos;
         s_item.itempos = pos;
-
-        if (showcase == 0) {
-            s_item.type = ScriptItem::it_showcase1;
-        } else {
-            s_item.type = ScriptItem::it_showcase2;
-        }
-
+        s_item.type = ScriptItem::it_container;
+        s_item.inside = cp->getShowcaseContainer(showcase);
         s_item.owner = cp;
         t_item.pos = position(xc, yc, zc);
         t_item.type = ScriptItem::it_field;
@@ -816,7 +799,7 @@ void World::dropItemFromShowcaseOnMap(Player *cp, unsigned char showcase, unsign
 
 
 
-void World::moveItemFromShowcaseToPlayer(Player *cp, unsigned char showcase, unsigned char pos, unsigned char cpos, Item::number_type count) {
+void World::moveItemFromShowcaseToPlayer(Player *cp, uint8_t showcase, unsigned char pos, unsigned char cpos, Item::number_type count) {
     bool NOK = false;
     //CommonStruct com;
 #ifdef World_ItemMove_DEBUG
@@ -838,13 +821,8 @@ void World::moveItemFromShowcaseToPlayer(Player *cp, unsigned char showcase, uns
         ScriptItem s_item = g_item, t_item = g_item;
         s_item.pos = cp->pos;
         s_item.itempos = pos;
-
-        if (showcase == 0) {
-            s_item.type = ScriptItem::it_showcase1;
-        } else {
-            s_item.type = ScriptItem::it_showcase2;
-        }
-
+        s_item.type = ScriptItem::it_container;
+        s_item.inside = cp->getShowcaseContainer(showcase);
         s_item.owner = cp;
         t_item.pos = cp->pos;
         t_item.itempos = cpos;
@@ -1076,7 +1054,7 @@ void World::moveItemBetweenBodyParts(Player *cp, unsigned char opos, unsigned ch
 
 
 
-void World::moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, unsigned char showcase, unsigned char pos, Item::number_type count) {
+void World::moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, uint8_t showcase, unsigned char pos, Item::number_type count) {
 #ifdef World_ItemMove_DEBUG
     std::cout << "moveItemFromPlayerIntoShowcase: Spieler " << cp->name << " verschiebt Item von der Karte in ein showcase" << std::endl;
 #endif
@@ -1101,12 +1079,8 @@ void World::moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, unsig
         s_item.itempos = cpos;
         s_item.owner = cp;
 
-        if (showcase == 0) {
-            t_item.type = ScriptItem::it_showcase1;
-        } else {
-            t_item.type = ScriptItem::it_showcase2;
-        }
-
+        t_item.type = ScriptItem::it_container;
+        t_item.inside = cp->getShowcaseContainer(showcase);
         t_item.pos = cp->pos;
         t_item.owner = cp;
         t_item.itempos = pos;
@@ -1146,7 +1120,7 @@ void World::moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, unsig
 
 
 
-void World::moveItemFromMapIntoShowcase(Player *cp, char direction, unsigned char showcase, unsigned char pos, Item::number_type count) {
+void World::moveItemFromMapIntoShowcase(Player *cp, char direction, uint8_t showcase, unsigned char pos, Item::number_type count) {
 
     bool NOK = false;
     //CommonStruct com;
@@ -1171,13 +1145,8 @@ void World::moveItemFromMapIntoShowcase(Player *cp, char direction, unsigned cha
             s_item.type = ScriptItem::it_field;
             s_item.owner = cp;
             t_item.pos = cp->pos;
-
-            if (showcase == 0) {
-                t_item.type = ScriptItem::it_showcase1;
-            } else {
-                t_item.type = ScriptItem::it_showcase2;
-            }
-
+            t_item.type = ScriptItem::it_container;
+            t_item.inside = cp->getShowcaseContainer(showcase);
             t_item.itempos = pos;
             t_item.owner = cp;
 
@@ -1374,7 +1343,7 @@ void World::moveItemFromMapToPlayer(Player *cp, char direction, unsigned char cp
 }
 
 
-void World::moveItemBetweenShowcases(Player *cp, unsigned char source, unsigned char pos, unsigned char dest, unsigned char pos2, Item::number_type count) {
+void World::moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char pos, uint8_t dest, unsigned char pos2, Item::number_type count) {
     bool NOK = false;
     //CommonStruct com;
 #ifdef World_ItemMove_DEBUG
@@ -1391,23 +1360,13 @@ void World::moveItemBetweenShowcases(Player *cp, unsigned char source, unsigned 
 #endif
         ScriptItem s_item = g_item, t_item = g_item;
         s_item.pos = cp->pos;
-
-        if (source == 0) {
-            s_item.type = ScriptItem::it_showcase1;
-        } else {
-            s_item.type = ScriptItem::it_showcase2;
-        }
-
+        s_item.type = ScriptItem::it_container;
+        s_item.inside = cp->getShowcaseContainer(source);
         s_item.itempos = pos;
         s_item.owner = cp;
         t_item.pos = cp->pos;
-
-        if (dest == 0) {
-            t_item.type = ScriptItem::it_showcase1;
-        } else {
-            t_item.type = ScriptItem::it_showcase2;
-        }
-
+        t_item.type = ScriptItem::it_container;
+        t_item.inside = cp->getShowcaseContainer(dest);
         t_item.itempos = pos2;
         t_item.owner = cp;
         //Ausfhren eines Move Item Scriptes
@@ -1425,17 +1384,15 @@ void World::moveItemBetweenShowcases(Player *cp, unsigned char source, unsigned 
             }
         }
 
-        if (dest < MAXSHOWCASES) {
-            if (cp->showcases[ dest ].inInventory()) {
-                if (! cp->weightOK(g_item.getId(), g_item.getNumber(), g_cont)) {
-                    message(zuschwer, cp);
-                    NOK=true;
-                }
+        if (cp->isShowcaseInInventory(dest)) {
+            if (! cp->weightOK(g_item.getId(), g_item.getNumber(), g_cont)) {
+                message(zuschwer, cp);
+                NOK=true;
             }
         }
 
         if (!NOK) {
-            if (!putItemInShowcase(cp, dest,pos2)) {
+            if (!putItemInShowcase(cp, dest, pos2)) {
                 NOK=true;
             }
 
@@ -1569,13 +1526,13 @@ bool World::moveItem(Character *cc, unsigned char d, short int xc, short int yc,
 
 
 
-void World::lookIntoShowcaseContainer(Player *cp, unsigned char showcase, unsigned char pos) {
+void World::lookIntoShowcaseContainer(Player *cp, uint8_t showcase, unsigned char pos) {
 #ifdef World_ItemMove_DEBUG
     std::cout << "lookIntoShowcaseContainer: Spieler " << cp->name << " oeffnet einen Container im showcase" << std::endl;
 #endif
 
-    if ((showcase < MAXSHOWCASES) && (cp != NULL)) {
-        Container *top = cp->showcases[ showcase ].top();
+    if ((cp != NULL) && cp->isShowcaseOpen(showcase)) {
+        Container *top = cp->getShowcaseContainer(showcase);
         bool allowedToOpenContainer = false;
 
 //Loop through all depots if ps is a depot if yes is depot set to true
@@ -1604,11 +1561,7 @@ void World::lookIntoShowcaseContainer(Player *cp, unsigned char showcase, unsign
 #ifdef World_ItemMove_DEBUG
                     std::cout << "Container gefunden" << std::endl;
 #endif
-                    // updaten der showcases des Spielers
-                    cp->showcases[ showcase ].openContainer(tempc);
-                    // Aenderungen an den Client schicken
-                    boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(showcase, tempc->getSlotCount(), tempc->getItems()));
-                    cp->Connection->addCommand(cmd);
+                    cp->openShowcase(tempc, cp->isShowcaseInInventory(showcase));
                 }
             }
         }
@@ -1621,23 +1574,17 @@ void World::lookIntoShowcaseContainer(Player *cp, unsigned char showcase, unsign
 
 
 
-bool World::lookIntoBackPack(Player *cp, unsigned char showcase) {
+bool World::lookIntoBackPack(Player *cp) {
 #ifdef World_ItemMove_DEBUG
     std::cout << "lookIntoBackPack: Spieler " << cp->name << " schaut in seinen Rucksack" << std::endl;
 #endif
 
-    if ((showcase < MAXSHOWCASES) && (cp != NULL)) {
+    if (cp != NULL) {
         if ((cp->characterItems[ BACKPACK ].getId() != 0) && (cp->backPackContents != NULL)) {
 #ifdef World_ItemMove_DEBUG
             std::cout << "Rucksackinhalt vorhanden" << std::endl;
 #endif
-            // bisher geoeffnete Container im showcase schliessen
-            cp->showcases[ showcase ].clear();
-            // updaten des showcases des Spielers
-            cp->showcases[ showcase ].startContainer(cp->backPackContents, true);
-            // Aenderungen an den Client schicken
-            boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(showcase, cp->backPackContents->getSlotCount(), cp->backPackContents->getItems()));
-            cp->Connection->addCommand(cmd);
+            cp->openShowcase(cp->backPackContents, true);
 #ifdef World_ItemMove_DEBUG
             std::cout << "lookIntoBackPack: Ende" << std::endl;
 #endif
@@ -1652,14 +1599,14 @@ bool World::lookIntoBackPack(Player *cp, unsigned char showcase) {
 }
 
 
-bool World::lookIntoContainerOnField(Player *cp, char direction, unsigned char showcase) {
+bool World::lookIntoContainerOnField(Player *cp, char direction) {
 
 
 #ifdef World_ItemMove_DEBUG
     std::cout << "lookIntoContainerOnField: Spieler " << cp->name << " schaut in einen Container" << std::endl;
 #endif
 
-    if ((showcase < MAXSHOWCASES) && (direction < 11) && (cp != NULL)) {
+    if ((direction < 11) && (cp != NULL)) {
         // Position des Item
         short int old_x = moveSteps[(int)direction ][ 0 ] + cp->pos.x;
         short int old_y = moveSteps[(int)direction ][ 1 ] + cp->pos.y;
@@ -1697,12 +1644,7 @@ bool World::lookIntoContainerOnField(Player *cp, char direction, unsigned char s
 #ifdef World_ItemMove_DEBUG
                             std::cout << "der Inhalt des angegebenen Items mit der id titem.number wurde gefunden" << std::endl;
 #endif
-                            // updaten der showcases des Spielers
-                            cp->showcases[ showcase ].startContainer((*iv).second, false);
-                            cp->mapshowcaseopen = true;
-                            // Aenderungen an den Client schicken
-                            boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(showcase, iv->second->getSlotCount(), iv->second->getItems()));
-                            cp->Connection->addCommand(cmd);
+                            cp->openShowcase((*iv).second, false);
 
 #ifdef World_ItemMove_DEBUG
                             std::cout << "lookIntoContainerOnField: Ende 1" << std::endl;
@@ -1753,22 +1695,13 @@ bool World::lookIntoContainerOnField(Player *cp, char direction, unsigned char s
 
 
 
-void World::closeContainerInShowcase(Player *cp, unsigned char showcase) {
+void World::closeContainerInShowcase(Player *cp, uint8_t showcase) {
 #ifdef World_ItemMove_DEBUG
     std::cout << "closeContainerInShowcase: Spieler " << cp->name << " schliesst einen Container" << std::endl;
 #endif
 
-    if ((showcase < MAXSHOWCASES) && (cp != NULL)) {
-        if (!cp->showcases[ showcase ].closeContainer()) {
-            // Container war der letzte geoeffnete -> den showcase loeschen
-            boost::shared_ptr<BasicServerCommand>cmd(new ClearShowCaseTC(showcase));
-            cp->Connection->addCommand(cmd);
-        } else {
-            // Aenderungen an den Client schicken
-            Container *temp = cp->showcases[ showcase ].top();
-            boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(showcase, temp->getSlotCount(), temp->getItems()));
-            cp->Connection->addCommand(cmd);
-        }
+    if (cp != NULL) {
+        cp->closeShowcase(showcase);
     }
 
 #ifdef World_ItemMove_DEBUG
@@ -1827,21 +1760,9 @@ void World::sendChangesOfContainerContentsCM(Container *cc, Container *moved) {
     if ((cc != NULL) && (moved != NULL)) {
         PLAYERVECTOR::iterator titerator;
 
-        Container *ps;
-
         for (titerator = Players.begin(); titerator < Players.end(); ++titerator) {
-            for (MAXCOUNTTYPE i = 0; i < MAXSHOWCASES; ++i) {
-                ps = (*titerator)->showcases[ i ].top();
-
-                if ((ps == cc) && (ps != NULL)) {
-                    boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(i, ps->getSlotCount(), ps->getItems()));
-                    (*titerator)->Connection->addCommand(cmd);
-                } else if ((*titerator)->showcases[ i ].contains(moved)) {
-                    (*titerator)->showcases[ i ].clear();
-                    boost::shared_ptr<BasicServerCommand>cmd(new ClearShowCaseTC(i));
-                    (*titerator)->Connection->addCommand(cmd);
-                }
-            }
+            (*titerator)->updateShowcase(cc);
+            (*titerator)->closeShowcase(moved);
         }
     }
 }
@@ -1852,17 +1773,8 @@ void World::sendChangesOfContainerContentsIM(Container *cc) {
     if (cc != NULL) {
         PLAYERVECTOR::iterator titerator;
 
-        Container *ps;
-
         for (titerator = Players.begin(); titerator < Players.end(); ++titerator) {
-            for (int i = 0; i < MAXSHOWCASES; ++i) {
-                ps = (*titerator)->showcases[ i ].top();
-
-                if (ps == cc) {
-                    boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(i, ps->getSlotCount(), ps->getItems()));
-                    (*titerator)->Connection->addCommand(cmd);
-                }
-            }
+            (*titerator)->updateShowcase(cc);
         }
     }
 }
@@ -1877,13 +1789,7 @@ void World::closeShowcaseForOthers(Player *target, Container *moved) {
                 continue;
             }
 
-            for (MAXCOUNTTYPE i = 0; i < MAXSHOWCASES; ++i) {
-                if ((*titerator)->showcases[ i ].contains(moved)) {
-                    (*titerator)->showcases[ i ].clear();
-                    boost::shared_ptr<BasicServerCommand>cmd(new ClearShowCaseTC(i));
-                    (*titerator)->Connection->addCommand(cmd);
-                }
-            }
+            (*titerator)->closeShowcase(moved);
         }
     }
 }
@@ -1897,13 +1803,7 @@ void World::closeShowcaseIfNotInRange(Container *moved, short int x, short int y
                 continue;
             }
 
-            for (MAXCOUNTTYPE i = 0; i < MAXSHOWCASES; ++i) {
-                if ((*titerator)->showcases[ i ].contains(moved)) {
-                    (*titerator)->showcases[ i ].clear();
-                    boost::shared_ptr<BasicServerCommand>cmd(new ClearShowCaseTC(i));
-                    (*titerator)->Connection->addCommand(cmd);
-                }
-            }
+            (*titerator)->closeShowcase(moved);
         }
     }
 }

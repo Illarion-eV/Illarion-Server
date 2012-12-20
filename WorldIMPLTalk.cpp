@@ -338,12 +338,12 @@ void World::lookAtTile(Player *cp, unsigned short int tile, short int x, short i
 }
 
 
-void World::lookAtShowcaseItem(Player *cp, unsigned char showcase, unsigned char position) {
+void World::lookAtShowcaseItem(Player *cp, uint8_t showcase, unsigned char position) {
 
     ScriptItem titem;
 
-    if (showcase < MAXSHOWCASES) {
-        Container *ps = cp->showcases[ showcase ].top();
+    if (cp->isShowcaseOpen(showcase)) {
+        Container *ps = cp->getShowcaseContainer(showcase);
 
         if (ps != NULL) {
             Container *tc;
@@ -352,15 +352,11 @@ void World::lookAtShowcaseItem(Player *cp, unsigned char showcase, unsigned char
                 boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(titem.getId());
                 ScriptItem n_item = titem;
 
-                if (showcase == 0) {
-                    n_item.type = ScriptItem::it_showcase1;
-                } else {
-                    n_item.type = ScriptItem::it_showcase2;
-                }
-
+                n_item.type = ScriptItem::it_container;
                 n_item.pos = cp->pos;
                 n_item.owner = cp;
                 n_item.itempos = position;
+                n_item.inside = ps;
 
                 if (script && script->existsEntrypoint("LookAtItem")) {
                     script->LookAtItem(cp, n_item);

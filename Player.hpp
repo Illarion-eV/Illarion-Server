@@ -29,7 +29,7 @@
 
 #include "Timer.hpp"
 #include "Character.hpp"
-#include "ContainerStack.hpp"
+#include "Showcase.hpp"
 #include "constants.hpp"
 #include "LongTimeAction.hpp"
 #include <boost/shared_ptr.hpp>
@@ -110,9 +110,6 @@ public:
     //! die letzte IP des Spielers als std::string
     std::string last_ip;
 
-    //! gibt an, ob der Spieler sich gerade den Inhalt eines Containers der auf der Karte liegt anzeigen l�t
-    bool mapshowcaseopen;
-
     //BYTEDEQUE//
     //! alle Langzeiteffekte die auf den Spieler einwirken
     int longTimeEffects;
@@ -154,9 +151,6 @@ public:
     // Vektoren oft Destruktoren fr tempor�e Player aufgerufen werden, die noch
     // ben�igte Verbindungen l�chen wrden!
     boost::shared_ptr<NetInterface> Connection;
-
-    //! alle "Sichtfenster" fr Containerinhalte die der Spieler �fnen kann
-    ContainerStack showcases[ MAXSHOWCASES ];
 
 private:
     // all visible chars
@@ -320,7 +314,15 @@ public:
     //�erladene Funktion der Basisklasse ccharacter um den Spieler noch zus�zliche ausgaben seines Zustandes zu machen.
     void increasePoisonValue(short int value);
 
-    //! schlie� alle "Sichtfenster" fr Containerinhalte des Spielers
+    void openShowcase(Container *container, bool carry);
+    void updateShowcase(Container *container) const;
+    bool isShowcaseOpen(uint8_t showcase) const;
+    bool isShowcaseOpen(Container *container) const;
+    bool isShowcaseInInventory(uint8_t showcase) const;
+    uint8_t getShowcaseId(Container *container) const;
+    Container *getShowcaseContainer(uint8_t showcase) const;
+    void closeShowcase(uint8_t showcase);
+    void closeShowcase(Container *container);
     void closeAllShowcasesOfMapContainers();
     void closeAllShowcases();
 
@@ -610,6 +612,10 @@ private:
     bool unconsciousSent;
 
     bool monitoringClient;
+
+    uint8_t showcaseCounter;
+    typedef boost::unordered_map<uint8_t, Showcase *> ShowcaseMap;
+    ShowcaseMap showcases;
 
     unsigned int dialogCounter;
     typedef boost::unordered_map<unsigned int, Dialog *> DialogMap;

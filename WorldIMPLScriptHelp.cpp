@@ -226,18 +226,14 @@ void World::itemInform(Character *user, ScriptItem item, ItemLookAt lookAt) {
 
     Player *cp = dynamic_cast<Player *>(user);
 
-    if (item.type == ScriptItem::it_showcase1 ||item.type == ScriptItem::it_showcase2) {
-        if (item.owner->character == Character::player) {
-            unsigned char showcase;
-
-            if (item.type == ScriptItem::it_showcase1) {
-                showcase = 0;
-            } else if (item.type == ScriptItem::it_showcase2) {
-                showcase = 1;
+    if (item.type == ScriptItem::it_container) {
+        if (item.inside && item.owner->character == Character::player) {
+            try {
+                uint8_t showcase = cp->getShowcaseId(item.inside);
+                boost::shared_ptr<BasicServerCommand>cmd(new LookAtShowCaseItemTC(showcase, item.itempos, lookAt));
+                cp->Connection->addCommand(cmd);
+            } catch (std::logic_error &) {
             }
-
-            boost::shared_ptr<BasicServerCommand>cmd(new LookAtShowCaseItemTC(showcase, item.itempos, lookAt));
-            cp->Connection->addCommand(cmd);
         }
     } else if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
         if (item.owner->character == Character::player) {
@@ -275,25 +271,7 @@ void World::changeQualityOfItemAt(position pos, short int amount) {
 }
 
 bool World::changeItem(ScriptItem item) {
-
-    if (item.type == ScriptItem::it_showcase1 || item.type == ScriptItem::it_showcase2) {
-        if (item.owner->character == Character::player) {
-            Container *showcase;
-
-            if (item.type == ScriptItem::it_showcase1) {
-                showcase = dynamic_cast<Player *>(item.owner)->showcases[ 0 ].top();
-            } else if (item.type == ScriptItem::it_showcase2) {
-                showcase = dynamic_cast<Player *>(item.owner)->showcases[ 1 ].top();
-            }
-
-            //Neues Item an der Position erzeugen
-            showcase->changeItem(item);
-            sendChangesOfContainerContentsIM(showcase);
-            return true;
-        } else {
-            return false;
-        }
-    } else if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
+    if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
         item.owner->characterItems[ item.itempos ] = (Item)item;
 
         //Wenn character ein Spieler ist ein update schicken
@@ -387,28 +365,7 @@ bool World::erase(ScriptItem item, int amount) {
         amount = item.getNumber();
     }
 
-    //Item befindet sich in einen der beiden Showcases
-    if (item.type == ScriptItem::it_showcase1 || item.type == ScriptItem::it_showcase2) {
-        if (item.owner->character == Character::player) {
-            Container *showcase;
-
-            if (item.type == ScriptItem::it_showcase1) {
-                showcase = dynamic_cast<Player *>(item.owner)->showcases[ 0 ].top();
-            } else {
-                showcase = dynamic_cast<Player *>(item.owner)->showcases[ 1 ].top();
-            }
-
-            showcase->increaseAtPos(item.itempos, -amount);
-            sendChangesOfContainerContentsIM(showcase);
-
-            return true;
-        } else {
-            return false;
-        }
-    }
-    //Item befindet sich am K�rper oder im G�rtel
-    else if
-    (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
+    if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
         //Wenn Item rechts belegt und links ein Belegt ist [Zweihanditem] das Belegt mit l�schen
         if (item.itempos == RIGHT_TOOL && (item.owner->GetItemAt(LEFT_TOOL)).getId() == BLOCKEDITEM) {
             item.owner->increaseAtPos(LEFT_TOOL, -255);
@@ -452,26 +409,7 @@ bool World::erase(ScriptItem item, int amount) {
 
 
 bool World::increase(ScriptItem item, short int count) {
-    //Item befindet sich in einen der beiden Showcases
-    if (item.type == ScriptItem::it_showcase1 || item.type == ScriptItem::it_showcase2) {
-        if (item.owner->character == Character::player) {
-            Container *showcase;
-
-            if (item.type == ScriptItem::it_showcase1) {
-                showcase = dynamic_cast<Player *>(item.owner)->showcases[ 0 ].top();
-            } else {
-                showcase = dynamic_cast<Player *>(item.owner)->showcases[ 1 ].top();
-            }
-
-            showcase->increaseAtPos(item.itempos, count);
-            sendChangesOfContainerContentsIM(showcase);
-            return true;
-        } else {
-            return false;
-        }
-    }
-    //Item befindet sich am K�rper oder im Rucksack
-    else if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
+    if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
         item.owner->increaseAtPos(item.itempos, count);
         return true;
     }
@@ -508,26 +446,7 @@ bool World::increase(ScriptItem item, short int count) {
 }
 
 bool World::swap(ScriptItem item, TYPE_OF_ITEM_ID newitem, unsigned short int newQuality) {
-    //Item befindet sich in einen der beiden Showcases
-    if (item.type == ScriptItem::it_showcase1 || item.type == ScriptItem::it_showcase2) {
-        if (item.owner->character == Character::player) {
-            Container *showcase;
-
-            if (item.type == ScriptItem::it_showcase1) {
-                showcase = dynamic_cast<Player *>(item.owner)->showcases[ 0 ].top();
-            } else {
-                showcase = dynamic_cast<Player *>(item.owner)->showcases[ 1 ].top();
-            }
-
-            showcase->swapAtPos(item.itempos, newitem, newQuality);
-            sendChangesOfContainerContentsIM(showcase);
-            return true;
-        } else {
-            return false;
-        }
-    }
-    //Item befindet sich am K�rper oder im Rucksack
-    else if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
+    if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
         item.owner->swapAtPos(item.itempos, newitem, newQuality);
         return true;
     }
