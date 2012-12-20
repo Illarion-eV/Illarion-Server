@@ -17,6 +17,7 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
+#include <iomanip>
 #include <boost/enable_shared_from_this.hpp>
 #include "netinterface/BasicClientCommand.hpp"
 #include "netinterface/protocol/ClientCommands.hpp"
@@ -71,19 +72,31 @@ bool NetInterface::activate() {
 void NetInterface::handle_read_data(const boost::system::error_code &error) {
     if (!error) {
         if (online) {
-            cmd->decodeData();
+            try {
+                cmd->decodeData();
 
-            //std::cout<<"data decoded"<<std::endl;
-            if (cmd->isDataOk()) {
-                //std::cout<<"data was ok"<<std::endl;
-                receiveQueueMutex.lock();
-                receiveQueue.push_back(cmd);
-                receiveQueueMutex.unlock();
-            } else {
-                std::cout<<"error receiving command"<<std::endl;
+                if (cmd->isDataOk()) {
+                    receiveQueueMutex.lock();
+                    receiveQueue.push_back(cmd);
+                    receiveQueueMutex.unlock();
+                } else {
+                    std::cout<<"error receiving command"<<std::endl;
+                }
+            } catch (OverflowException &e) {
+                std::cerr << "overflow while reading from buffer from " << getIPAdress() << ": " << std::endl;
+
+                unsigned char *data = cmd->msg_data();
+                std::cerr << std::hex << std::uppercase << std::setfill('0');
+                
+                for (int i = 0; i < cmd->getLength(); ++i) {
+                    std::cerr << std::setw(2) << (int)data[i] << " ";
+                }
+
+                std::cerr << std::endl << std::dec << std::nouppercase;
+
+                closeConnection();
             }
 
-            //std::cout<<"cmd resetted!"<<std::endl;
             cmd.reset();
             boost::asio::async_read(socket,boost::asio::buffer(headerBuffer,6), boost::bind(&NetInterface::handle_read_header, shared_from_this(),boost::asio::placeholders::error));
         }
