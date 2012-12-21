@@ -410,12 +410,14 @@ void Player::closeShowcase(Container *container) {
 }
 
 void Player::closeAllShowcasesOfMapContainers() {
-    for (auto it = showcases.cbegin(); it != showcases.cend(); ++it) {
+    for (auto it = showcases.cbegin(); it != showcases.cend();) {
         if (!it->second->inInventory()) {
             delete it->second;
             boost::shared_ptr<BasicServerCommand> cmd(new ClearShowCaseTC(it->first));
             Connection->addCommand(cmd);
             it = showcases.erase(it);
+        } else {
+            ++it;
         }
     }
 }
