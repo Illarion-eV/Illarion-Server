@@ -1124,7 +1124,19 @@ void Character::ageInventory() {
 }
 
 void Character::SetAlive(bool t) {
+    bool wasAlive = alive;
     alive = t;
+
+    if (wasAlive && !alive && (character == player)) {
+        updateAppearanceForAll(true);
+
+        Player *player = dynamic_cast<Player *>(this);
+        player->ltAction->abortAction();
+
+        if (playerDeathScript) {
+            playerDeathScript->playerDeath(player);
+        }
+    }
 }
 
 
