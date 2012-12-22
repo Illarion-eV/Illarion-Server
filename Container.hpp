@@ -88,7 +88,7 @@ public:
     int eraseItem(Item::id_type itemid, Item::number_type count);
     int eraseItem(Item::id_type itemid, Item::number_type, const luabind::object &data);
 
-    int increaseAtPos(unsigned char pos, Item::number_type count);
+    int increaseAtPos(unsigned char pos, int count);
 
     bool swapAtPos(unsigned char pos, Item::id_type newid, Item::quality_type newQuality = 0);
 
@@ -110,6 +110,7 @@ public:
 private:
     bool isItemStackable(Item item);
     void insertIntoFirstFreeSlot(Item &item);
+    void insertIntoFirstFreeSlot(Item &item, Container *container);
     int recursiveWeight(int rekt);
 };
 

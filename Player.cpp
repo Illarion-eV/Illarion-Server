@@ -1074,11 +1074,11 @@ void Player::check_logindata() throw(Player::LogoutException) {
 }
 
 struct container_struct {
-    Container &container;
+    Container *container;
     unsigned int id;
     unsigned int depotid;
 
-    container_struct(Container &cc, unsigned int aboveid, unsigned int depot = 0)
+    container_struct(Container *cc, unsigned int aboveid, unsigned int depot = 0)
         : container(cc), id(aboveid), depotid(depot) { }}
 ;
 
@@ -1191,14 +1191,14 @@ bool Player::save() throw() {
 
             // add backpack to containerlist
             if (characterItems[ BACKPACK ].getId() != 0 && backPackContents != NULL) {
-                containers.push_back(container_struct(*backPackContents, BACKPACK+1));
+                containers.push_back(container_struct(backPackContents, BACKPACK+1));
             }
 
             // add depot to containerlist
             std::map<uint32_t, Container *>::iterator it;
 
             for (it = depotContents.begin(); it != depotContents.end(); ++it) {
-                containers.push_back(container_struct(*it->second, 0, it->first));
+                containers.push_back(container_struct(it->second, 0, it->first));
             }
 
             int linenumber = 0;
@@ -1250,11 +1250,11 @@ bool Player::save() throw() {
             // add backpack contents...
             while (!containers.empty()) {
                 // get container to save...
-                auto currentContainerStruct = containers.front();
-                auto currentContainer = currentContainerStruct.container;
-                containers.pop_front();
-
+                container_struct &currentContainerStruct = containers.front();
+                Container &currentContainer = *currentContainerStruct.container;
                 auto containedItems = currentContainer.getItems();
+
+                std::cout << "1. Save container at line " << currentContainerStruct.id << " with " << containedItems.size() << " items." << std::endl;
 
                 for (auto it = containedItems.cbegin(); it != containedItems.cend(); ++it) {
                     const Item &item = it->second;
@@ -1267,22 +1267,26 @@ bool Player::save() throw() {
                     itemsQuery.addValue<uint16_t>(itemsQualColumn, item.getQuality());
                     itemsQuery.addValue<TYPE_OF_CONTAINERSLOTS>(itemsSlotColumn, it->first);
 
-                    for (auto it = item.getDataBegin(); it != item.getDataEnd(); ++it) {
+                    for (auto it2 = item.getDataBegin(); it2 != item.getDataEnd(); ++it2) {
                         dataQuery.addValue<int32_t>(dataLineColumn, (int32_t) linenumber);
-                        dataQuery.addValue<std::string>(dataKeyColumn, it->first);
-                        dataQuery.addValue<std::string>(dataValueColumn, it->second);
+                        dataQuery.addValue<std::string>(dataKeyColumn, it2->first);
+                        dataQuery.addValue<std::string>(dataValueColumn, it2->second);
                     }
 
                     // if it is a container, add it to the list of containers to save...
                     if (item.isContainer()) {
                         auto containedContainers = currentContainer.getContainers();
-                        auto iterat = containedContainers.find(item.getNumber());
+                        auto iterat = containedContainers.find(it->first);
+
+                        std::cout << "Add container at position " << it->first << " with " << iterat->second->getItems().size() << " items (line " << linenumber << ")." << std::endl;
 
                         if (iterat != containedContainers.end()) {
-                            containers.push_back(container_struct(*(*iterat).second, linenumber));
+                            containers.push_back(container_struct(iterat->second, linenumber));
                         }
                     }
                 }
+
+                containers.pop_front();
             }
 
             itemsQuery.addValues(itemsPlyIdColumn, id, InsertQuery::FILL);

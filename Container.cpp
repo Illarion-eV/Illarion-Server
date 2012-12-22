@@ -143,7 +143,7 @@ bool Container::InsertItem(Item item, TYPE_OF_CONTAINERSLOTS pos) {
                 }
             }
         } else if (items.size() < getSlotCount()) {
-            items[pos] = item;
+            items.insert(ITEMMAP::value_type(pos, item));
             return true;
         }
     }
@@ -154,20 +154,7 @@ bool Container::InsertItem(Item item, TYPE_OF_CONTAINERSLOTS pos) {
 bool Container::InsertContainer(Item it, Container *cc) {
     if ((this != cc) && (items.size() < getSlotCount())) {
         Item titem = it;
-
-        CONTAINERMAP::iterator iterat;
-        CONTAINERMAP::key_type count = 0;
-        iterat = containers.find(0);
-
-        while ((iterat != containers.end()) && (count + 1 < getSlotCount())) {
-            count = count + 1;
-            iterat = containers.find(count);
-        }
-
-        // dem Container seine neue ID zuweisen
-        titem.setNumber(count);
-        insertIntoFirstFreeSlot(titem);
-        containers.insert(CONTAINERMAP::value_type(count, cc));
+        insertIntoFirstFreeSlot(titem, cc);
         return true;
     }
 
@@ -184,8 +171,7 @@ bool Container::InsertContainer(Item it, Container *cc, TYPE_OF_CONTAINERSLOTS p
         if (iterat != items.end()) {
             return InsertContainer(it, cc);
         } else {
-            titem.setNumber(pos);
-            items[pos] = titem;
+            items.insert(ITEMMAP::value_type(pos, titem));
             containers.insert(CONTAINERMAP::value_type(pos, cc));
             return true;
         }
@@ -204,7 +190,7 @@ bool Container::changeQuality(Item::id_type id, short int amount) {
         Item &item = it->second;
 
         if (item.isContainer()) {
-            auto iterat = containers.find(item.getNumber());
+            auto iterat = containers.find(it->first);
 
             if (iterat != containers.end()) {
 
@@ -244,7 +230,7 @@ bool Container::changeQualityAt(TYPE_OF_CONTAINERSLOTS nr, short int amount) {
             return true;
         } else {
             if (item.isContainer()) {
-                auto iterat = containers.find(item.getNumber());
+                auto iterat = containers.find(nr);
 
                 if (iterat != containers.end()) {
                     containers.erase(iterat);
@@ -268,7 +254,7 @@ bool Container::TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &item, Container* &cc
 
         if (item.isContainer()) {
             items.erase(nr);
-            auto iterat = containers.find(item.getNumber());
+            auto iterat = containers.find(nr);
 
             if (iterat != containers.end()) {
                 cc = (*iterat).second;
@@ -311,20 +297,18 @@ luabind::object Container::getItemList() {
     lua_State *_luaState = World::get()->getCurrentScript()->getLuaState();
     luabind::object list = luabind::newtable(_luaState);
     int index = 1;
-    MAXCOUNTTYPE pos = 0;
 
     for (auto it = items.begin(); it != items.end(); ++it) {
 
         ScriptItem item = it->second;
         item.type = ScriptItem::it_container;
-        item.itempos = pos;
+        item.itempos = it->first;
         item.inside = this;
         list[index] = item;
         ++index;
-        ++pos;
 
         if (item.isContainer()) {
-            auto iterat = containers.find(item.getNumber());
+            auto iterat = containers.find(it->first);
 
             if (iterat != containers.end()) {
                 iterat->second->increaseItemList(list, index);
@@ -340,7 +324,6 @@ luabind::object Container::getItemList(Item::id_type itemid) {
     lua_State *_luaState = World::get()->getCurrentScript()->getLuaState();
     luabind::object list = luabind::newtable(_luaState);
     int index = 1;
-    MAXCOUNTTYPE pos = 0;
 
     for (auto it = items.begin(); it != items.end(); ++it) {
         Item &item = it->second;
@@ -348,16 +331,14 @@ luabind::object Container::getItemList(Item::id_type itemid) {
         if (item.getId() == itemid) {
             ScriptItem item = it->second;
             item.type = ScriptItem::it_container;
-            item.itempos = pos;
+            item.itempos = it->first;
             item.inside = this;
             list[index] = item;
             index++;
         }
 
-        ++pos;
-
         if (item.isContainer()) {
-            auto iterat = containers.find(item.getNumber());
+            auto iterat = containers.find(it->first);
 
             if (iterat != containers.end()) {
                 iterat->second->increaseItemList(itemid , list, index);
@@ -370,24 +351,20 @@ luabind::object Container::getItemList(Item::id_type itemid) {
 }
 
 void Container::increaseItemList(Item::id_type itemid, luabind::object &list, int &index) {
-    MAXCOUNTTYPE pos = 0;
-
     for (auto it = items.begin(); it != items.end(); ++it) {
         Item &item = it->second;
 
         if (item.getId() == itemid) {
             ScriptItem item = it->second;
             item.type = ScriptItem::it_container;
-            item.itempos = pos;
+            item.itempos = it->first;
             item.inside = this;
             list[index] = item;
             index++;
         }
 
-        ++pos;
-
         if (item.isContainer()) {
-            auto iterat = containers.find(item.getNumber());
+            auto iterat = containers.find(it->first);
 
             if (iterat != containers.end()) {
                 iterat->second->increaseItemList(itemid , list, index);
@@ -398,23 +375,19 @@ void Container::increaseItemList(Item::id_type itemid, luabind::object &list, in
 }
 
 void Container::increaseItemList(luabind::object &list, int &index) {
-    MAXCOUNTTYPE pos = 0;
-
     for (auto it = items.begin(); it != items.end(); ++it) {
 
         ScriptItem item = it->second;
         item.type = ScriptItem::it_container;
-        item.itempos = pos;
+        item.itempos = it->first;
         item.inside = this;
         list[index] = item;
         ++index;
-        ++pos;
 
         if (item.isContainer()) {
-            auto iterat = containers.find(item.getNumber());
+            auto iterat = containers.find(it->first);
 
             if (iterat != containers.end()) {
-                // rekursiv verarbeiten
                 iterat->second->increaseItemList(list, index);
             }
         }
@@ -432,7 +405,7 @@ bool Container::viewItemNr(TYPE_OF_CONTAINERSLOTS nr, ScriptItem &item, Containe
         item.inside = this;
 
         if (item.isContainer()) {
-            auto iterat = containers.find(item.getNumber());
+            auto iterat = containers.find(nr);
 
             if (iterat != containers.end()) {
                 cc = iterat->second;
@@ -451,7 +424,7 @@ bool Container::viewItemNr(TYPE_OF_CONTAINERSLOTS nr, ScriptItem &item, Containe
     }
 }
 
-int Container::increaseAtPos(unsigned char pos, Item::number_type count) {
+int Container::increaseAtPos(unsigned char pos, int count) {
     auto it = items.find(pos);
     int temp = 0;
 
@@ -463,9 +436,11 @@ int Container::increaseAtPos(unsigned char pos, Item::number_type count) {
         } else {
             temp = item.getNumber() + count;
 
-            if (temp > 255) {
-                item.setNumber(255);
-                temp = temp - 255;
+            auto maxStack = item.getMaxStack();
+
+            if (temp > maxStack) {
+                item.setNumber(maxStack);
+                temp = temp - maxStack;
             } else if (temp <= 0) {
                 temp = count + item.getNumber();
                 items.erase(pos);
@@ -522,7 +497,7 @@ void Container::Save(std::ofstream *where) {
         where->write((char *) &item, sizeof(Item));
 
         if (item.isContainer()) {
-            auto iterat = containers.find(item.getNumber());
+            auto iterat = containers.find(it->first);
 
             if (iterat != containers.end()) {
                 (*iterat).second->Save(where);
@@ -580,7 +555,7 @@ int Container::countItem(Item::id_type itemid) {
         }
 
         if (item.isContainer()) {
-            auto iterat = containers.find(item.getNumber());
+            auto iterat = containers.find(it->first);
 
             if (iterat != containers.end()) {
                 temp = temp + iterat->second->countItem(itemid);
@@ -602,7 +577,7 @@ int Container::countItem(Item::id_type itemid, const luabind::object &data) {
         }
 
         if (item.isContainer()) {
-            auto iterat = containers.find(item.getNumber());
+            auto iterat = containers.find(it->first);
 
             if (iterat != containers.end()) {
                 temp = temp + iterat->second->countItem(itemid, data);
@@ -634,7 +609,7 @@ int Container::recursiveWeight(int rekt) {
         }
 
         if (item.isContainer()) {
-            auto iterat = containers.find(item.getNumber());
+            auto iterat = containers.find(it->first);
 
             if (iterat != containers.end()) {
                 temp += iterat->second->recursiveWeight(temprekt);
@@ -662,7 +637,7 @@ int Container::_eraseItem(Item::id_type itemid, Item::number_type count, const l
         Item &item = it->second;
 
         if (item.isContainer() && (temp > 0)) {
-            auto iterat = containers.find(item.getNumber());
+            auto iterat = containers.find(it->first);
 
             if (iterat != containers.end()) {
                 temp = (*iterat).second->_eraseItem(itemid, temp, data, useData);
@@ -724,7 +699,7 @@ void Container::doAge(bool inventory) {
                     } else {
 
                         if (item.isContainer()) {
-                            auto iterat = containers.find(item.getNumber());
+                            auto iterat = containers.find(it->first);
 
                             if (iterat != containers.end()) {
                                 containers.erase(iterat);
@@ -776,7 +751,21 @@ void Container::insertIntoFirstFreeSlot(Item &item) {
     }
 
     if (i < slotCount) {
-        items[i] = item;
+        items.insert(ITEMMAP::value_type(i, item));
+    }
+}
+
+void Container::insertIntoFirstFreeSlot(Item &item, Container *container) {
+    TYPE_OF_CONTAINERSLOTS slotCount = getSlotCount();
+    TYPE_OF_CONTAINERSLOTS i = 0;
+
+    while (i < slotCount && items.find(i) != items.end()) {
+        ++i;
+    }
+
+    if (i < slotCount) {
+        items.insert(ITEMMAP::value_type(i, item));
+        containers.insert(CONTAINERMAP::value_type(i, container));
     }
 }
 
