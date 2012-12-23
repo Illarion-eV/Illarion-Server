@@ -1769,8 +1769,6 @@ bool Player::move(direction dir, uint8_t mode) {
         Field *cfold=NULL;
         Field *cfnew=NULL;
 
-        unsigned short int diffz = 0;
-
         bool fieldfound = false;
 
         // get the old tile... we need it to update the old tile as well as for the walking cost
@@ -1868,26 +1866,6 @@ bool Player::move(direction dir, uint8_t mode) {
 #endif
 
                 _world->sendAllVisibleCharactersToPlayer(this, true);
-            }
-
-            if (oldpos.z - newpos.z > 0) {
-                int perEncumb = (LoadWeight() * 100) / maxLoadWeight();
-                auto agilityModifier = getAttribute(Character::agility) / 2;
-                if (agilityModifier < 1) agilityModifier = 1;
-                int damagePerLevel = (500 * perEncumb) / agilityModifier;
-                int damage = damagePerLevel;
-
-                // Take half again as much damage for falling 2nd level
-                if (diffz > 1) {
-                    // Damage = Damage * 2.5 in int terms.
-                    damage = damage * 3 - damage / 2;
-                }
-
-                if (damage > 32767) {
-                    damage = 32767;
-                }
-
-                increaseAttrib("hitpoints", -damage);
             }
 
             //Prfen ob Zielfeld ein Teleporter und evtl Spieler teleportieren
