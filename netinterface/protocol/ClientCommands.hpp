@@ -2395,9 +2395,9 @@ public:
     virtual ~IMoverActionTS() {};
 
     virtual void decodeData() {
-        xc = static_cast<char>(getShortIntFromBuffer());
-        yc = static_cast<char>(getShortIntFromBuffer());
-        zc = static_cast<char>(getShortIntFromBuffer());
+        xc = getShortIntFromBuffer();
+        yc = getShortIntFromBuffer();
+        zc = getShortIntFromBuffer();
         count = getShortIntFromBuffer();
     }
 
@@ -2421,7 +2421,7 @@ public:
         boost::shared_ptr<BasicClientCommand>cmd(new IMoverActionTS(direction));
         return cmd;
     }
-    short int xc, yc, zc;
+    int16_t xc, yc, zc;
     uint16_t count;
     uint8_t direction;
 };
