@@ -1254,8 +1254,6 @@ bool Player::save() throw() {
                 Container &currentContainer = *currentContainerStruct.container;
                 auto containedItems = currentContainer.getItems();
 
-                std::cout << "1. Save container at line " << currentContainerStruct.id << " with " << containedItems.size() << " items." << std::endl;
-
                 for (auto it = containedItems.cbegin(); it != containedItems.cend(); ++it) {
                     const Item &item = it->second;
                     itemsQuery.addValue<int32_t>(itemsLineColumn, (int32_t)(++linenumber));
@@ -1277,8 +1275,6 @@ bool Player::save() throw() {
                     if (item.isContainer()) {
                         auto containedContainers = currentContainer.getContainers();
                         auto iterat = containedContainers.find(it->first);
-
-                        std::cout << "Add container at position " << it->first << " with " << iterat->second->getItems().size() << " items (line " << linenumber << ")." << std::endl;
 
                         if (iterat != containedContainers.end()) {
                             containers.push_back(container_struct(iterat->second, linenumber));
