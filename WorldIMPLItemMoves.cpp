@@ -779,7 +779,7 @@ void World::dropItemFromShowcaseOnMap(Player *cp, uint8_t showcase, unsigned cha
         if (!putItemOnMap(cp, new_x, new_y, new_z)) {
             std::cout << "Item konnte nicht auf die Karte gelegt werden -> zurcklegen" << std::endl;
 
-            if (!putItemInShowcase(cp, showcase,0)) {
+            if (!putItemInShowcase(cp, showcase, pos)) {
                 std::cerr << "dropItemFromShowcaseOnMap: Datenverlust beim Zurcklegen, Spieler " << cp->name << std::endl;
                 g_cont = NULL;
                 g_item.reset();
