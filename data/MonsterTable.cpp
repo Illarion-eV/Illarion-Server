@@ -184,7 +184,7 @@ void MonsterTable::reload() {
 
                     for (Database::ResultConstIterator itr2 = monSkillResults.begin();
                          itr2 != monSkillResults.end(); ++itr2) {
-                        skill = (TYPE_OF_SKILL_ID)((*itr2)["mobsk_name"].as<uint16_t>());
+                        skill = (TYPE_OF_SKILL_ID)((*itr2)["mobsk_skill_id"].as<uint16_t>());
                         minValue = (*itr2)["mobsk_minvalue"].as<uint16_t>();
                         maxValue = (*itr2)["mobsk_maxvalue"].as<uint16_t>();
 
