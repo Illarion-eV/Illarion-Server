@@ -311,7 +311,7 @@ void Player::login() throw(Player::LogoutException) {
 }
 
 unsigned short int Player::getScreenRange() const {
-    return (screenwidth > screenheight) ? screenwidth : screenheight;
+    return (screenwidth > screenheight) ? 2*screenwidth : 2*screenheight;
 }
 
 void Player::openShowcase(Container *container, bool carry) {
