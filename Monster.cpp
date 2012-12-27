@@ -140,7 +140,6 @@ Monster::~Monster() {
 }
 
 void Monster::remove() {
-    setAttribute(Character::hitpoints, 0);
     Character::SetAlive(false);
 }
 
