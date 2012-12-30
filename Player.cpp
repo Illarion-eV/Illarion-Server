@@ -1090,6 +1090,19 @@ bool Player::save() throw() {
     try {
         connection->beginTransaction();
 
+        {
+            InsertQuery introductionQuery(connection);
+            const InsertQuery::columnIndex playerColumn = introductionQuery.addColumn("intro_player");
+            const InsertQuery::columnIndex knownPlayerColumn = introductionQuery.addColumn("intro_known_player");
+
+            for (auto it = newlyKnownPlayers.cbegin(); it != newlyKnownPlayers.cend(); ++it) {
+                introductionQuery.addValue<TYPE_OF_CHARACTER_ID>(playerColumn, id);
+                introductionQuery.addValue<TYPE_OF_CHARACTER_ID>(knownPlayerColumn, *it);
+            }
+
+            introductionQuery.execute();
+        }
+
         time(&lastsavetime);
         {
             UpdateQuery query(connection);
@@ -1344,6 +1357,19 @@ bool Player::load() throw() {
 
         {
             SelectQuery query;
+            query.addColumn("introduction", "intro_known_player");
+            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("introduction", "intro_player", id);
+            query.addServerTable("introduction");
+
+            Result results = query.execute();
+
+            for (ResultConstIterator it = results.begin(); it != results.end(); ++it) {
+                knownPlayers.insert((*it)["intro_known_player"].as<TYPE_OF_CHARACTER_ID>());
+            }
+        }
+
+        {
+            SelectQuery query;
             query.addColumn("playerskills", "psk_skill_id");
             query.addColumn("playerskills", "psk_value");
             query.addColumn("playerskills", "psk_minor");
@@ -1356,7 +1382,7 @@ bool Player::load() throw() {
                 for (ResultConstIterator itr = results.begin();
                      itr != results.end(); ++itr) {
                     setSkill(
-                        (TYPE_OF_SKILL_ID)((*itr)["psk_skill_id"].as<uint16_t>()),
+                        (*itr)["psk_skill_id"].as<uint16_t>(),
                         (*itr)["psk_value"].as<uint16_t>(),
                         (*itr)["psk_minor"].as<uint16_t>()
                     );
@@ -1618,8 +1644,22 @@ void Player::receiveText(talk_type tt, std::string message, Character *cc) {
     }
 }
 
-void Player::introducePerson(Character *cc) {
-    boost::shared_ptr<BasicServerCommand>cmd(new IntroduceTC(cc->id, cc->name));
+bool Player::knows(Player *player) const {
+    return this == player
+        || knownPlayers.find(player->id) != knownPlayers.cend()
+        || newlyKnownPlayers.find(player->id) != newlyKnownPlayers.cend();
+}
+
+void Player::getToKnow(Player *player) {
+    if (!knows(player)) {
+        newlyKnownPlayers.insert(player->id);
+    }
+}
+
+void Player::introducePlayer(Player *player) {
+    getToKnow(player);
+
+    boost::shared_ptr<BasicServerCommand>cmd(new IntroduceTC(player->id, player->name));
     Connection->addCommand(cmd);
 }
 

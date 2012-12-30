@@ -307,8 +307,6 @@ void World::sendCharsInVector(std::vector < T * > &vec, Player *cp, bool sendSpi
             zoffs = cc->pos.z - cp->pos.z + RANGEDOWN;
 
             if ((xoffs != 0) || (yoffs != 0) || (zoffs != RANGEDOWN)) {
-                // boost::shared_ptr<BasicServerCommand>cmd( new AppearanceTC( cc ) );
-                // cp->sendCharAppearance( cc->id, cmd, false );
                 boost::shared_ptr<BasicServerCommand>cmd(new MoveAckTC(cc->id, cc->pos, PUSH, 0));
                 cp->Connection->addCommand(cmd);
                 cmd.reset(new PlayerSpinTC(cc->faceto, cc->id));

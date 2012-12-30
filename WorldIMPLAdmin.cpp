@@ -431,7 +431,7 @@ void World::makeVisible(Player *cp) {
         }
     }
 
-    boost::shared_ptr<BasicServerCommand>cmd(new AppearanceTC(cp));
+    boost::shared_ptr<BasicServerCommand>cmd(new AppearanceTC(cp, cp));
     cp->Connection->addCommand(cmd);
 }
 

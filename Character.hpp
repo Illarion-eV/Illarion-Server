@@ -1428,11 +1428,7 @@ public:
     */
     virtual void receiveText(talk_type tt, std::string message, Character *cc);
 
-    /**
-    * introduces the character to another one
-    * @param cc the character to which we want to introduce
-    */
-    virtual void introducePerson(Character *cc);
+    virtual void introducePlayer(Player *player);
 
     void callAttackScript(Character *Attacker, Character *Defender);
 

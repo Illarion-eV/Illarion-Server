@@ -515,7 +515,7 @@ void LuaScript::init_base_functions() {
         .def("inform", (void(Character:: *)(std::string, std::string))&Character::informLua)
         .def("inform", (void(Character:: *)(std::string, Character::informType))&Character::informLua)
         .def("inform", (void(Character:: *)(std::string, std::string, Character::informType))&Character::informLua)
-        .def("introduce", &Character::introducePerson)
+        .def("introduce", &Character::introducePlayer)
         .def("move", &Character::move)
         .def("getNextStepDir", &Character::getNextStepDir, luabind::pure_out_value(_4))
         .def("getStepList",&Character::getLuaStepList)

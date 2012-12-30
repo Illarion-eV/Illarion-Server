@@ -135,7 +135,7 @@ public:
 class Character;
 class AppearanceTC : public BasicServerCommand {
 public:
-    AppearanceTC(Character *cc);
+    AppearanceTC(Character *cc, Player *receivingPlayer);
 };
 
 class AnimationTC : public BasicServerCommand {

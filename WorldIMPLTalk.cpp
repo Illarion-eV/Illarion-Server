@@ -409,20 +409,7 @@ void World::message(std::string message[3], Player *cp) {
 }
 
 void World::forceIntroducePlayer(Player *cp, Player *Admin) {
-    std::string tstring = "";
-
-    if ((cp->prefix != "") && (cp->prefix != "NULL")) {
-        tstring = cp->prefix + std::string(" ");
-    }
-
-    tstring = tstring + cp->name;
-
-    if ((cp->suffix != "") && (cp->suffix != "NULL")) {
-        tstring = tstring + std::string(" ") + cp->suffix;
-    }
-
-    boost::shared_ptr<BasicServerCommand>cmd(new IntroduceTC(cp->id,tstring));
-    Admin->Connection->addCommand(cmd);
+    Admin->introducePlayer(cp);
 }
 
 void World::introduceMyself(Player *cp) {
@@ -430,20 +417,7 @@ void World::introduceMyself(Player *cp) {
     std::vector < Player * > ::iterator titerator;
 
     for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
-        std::string tstring = "";
-
-        if ((cp->prefix != "") && (cp->prefix != "NULL")) {
-            tstring = cp->prefix + std::string(" ");
-        }
-
-        tstring = tstring + cp->name;
-
-        if ((cp->suffix != "") && (cp->suffix != "NULL")) {
-            tstring = tstring + std::string(" ") + cp->suffix;
-        }
-
-        boost::shared_ptr<BasicServerCommand>cmd(new IntroduceTC(cp->id,tstring));
-        (*titerator)->Connection->addCommand(cmd);
+        (*titerator)->introducePlayer(cp);
     }
 }
 

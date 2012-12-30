@@ -202,8 +202,23 @@ CharDescription::CharDescription(TYPE_OF_CHARACTER_ID id, std::string descriptio
     addStringToBuffer(description);
 }
 
-AppearanceTC::AppearanceTC(Character *cc) : BasicServerCommand(SC_APPEARANCE_TC) {
+AppearanceTC::AppearanceTC(Character *cc, Player *receivingPlayer) : BasicServerCommand(SC_APPEARANCE_TC) {
     addIntToBuffer(cc->id);
+
+    if (cc->character == Character::player) {
+        Player *player = dynamic_cast<Player *>(cc);
+
+        if (receivingPlayer->knows(player)) {
+            addStringToBuffer(player->name);
+        } else {
+            std::string german = "Jemand";
+            std::string english = "Someone";
+            addStringToBuffer(receivingPlayer->nls(german, english));
+        }
+    } else {
+        addStringToBuffer(cc->name);
+    }
+
     addShortIntToBuffer(cc->race);
     addUnsignedCharToBuffer(cc->getAttribute(Character::sex));
     addShortIntToBuffer(cc->getAttribute(Character::hitpoints));

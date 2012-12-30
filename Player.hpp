@@ -26,6 +26,7 @@
 #include <string>
 #include <sstream>
 #include <set>
+#include <boost/unordered_set.hpp>
 
 #include "Timer.hpp"
 #include "Character.hpp"
@@ -153,8 +154,9 @@ public:
     boost::shared_ptr<NetInterface> Connection;
 
 private:
-    // all visible chars
     std::set<uint32_t> visibleChars;
+    boost::unordered_set<TYPE_OF_CHARACTER_ID> knownPlayers;
+    boost::unordered_set<TYPE_OF_CHARACTER_ID> newlyKnownPlayers;
 
 public:
     std::string &nls(std::string &german, std::string &english);
@@ -493,8 +495,9 @@ public:
     // player heard something
     virtual void receiveText(talk_type tt, std::string message, Character *cc);
 
-    // receive an introduction
-    virtual void introducePerson(Character *cc);
+    bool knows(Player *player) const;
+    void getToKnow(Player *player);
+    virtual void introducePlayer(Player *player);
 
     // Move the Player
     virtual bool move(direction dir, uint8_t mode);

@@ -2075,15 +2075,15 @@ void Character::updatePos(position newpos) {
 }
 
 void Character::receiveText(talk_type tt, std::string message, Character *cc) {
-    // nothing to be done here...
+    // overloaded where necessary
 }
 
-void Character::introducePerson(Character *) {
-    // nothing to do normally
+void Character::introducePlayer(Player *) {
+    // overloaded in Player
 }
 
 void Character::teachMagic(unsigned char type, unsigned char flag) {
-    //nothing to do normally overloadet at Player
+    // overloaded in Player
 }
 
 bool Character::Warp(position newPos) {
@@ -2411,29 +2411,21 @@ void Character::requestCraftingLookAtIngredient(unsigned int dialogId, ItemLookA
 
 void Character::updateAppearanceForPlayer(Player *target, bool always) {
     if (!isinvisible) {
-        boost::shared_ptr<BasicServerCommand> cmd(new AppearanceTC(this));
+        boost::shared_ptr<BasicServerCommand> cmd(new AppearanceTC(this, target));
         target->sendCharAppearance(id, cmd, always);
     }
 }
 
 void Character::updateAppearanceForAll(bool always) {
     if (!isinvisible) {
-        boost::shared_ptr<BasicServerCommand> cmd(new AppearanceTC(this));
-
         std::vector < Player * > temp = World::get()->Players.findAllCharactersInScreen(pos.x, pos.y, pos.z);
         std::vector < Player * > ::iterator titerator;
 
         for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
+            boost::shared_ptr<BasicServerCommand> cmd(new AppearanceTC(this, *titerator));
             (*titerator)->sendCharAppearance(id, cmd, always);
         }
     }
-
-    //eigenes update senden
-    //if ( getType() == player)
-    //{
-    //    Player * pl = dynamic_cast<Player*>(this);
-    //    pl->Connection->addCommand( cmd );
-    //}
 }
 
 void Character::forceUpdateAppearanceForAll() {
