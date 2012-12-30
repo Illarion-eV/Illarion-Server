@@ -426,8 +426,8 @@ public:
                         return;
                     }
 
-                    std::string german = "Das ist: " + mon.name;
-                    std::string english = "This is: " + mon.name;
+                    std::string german = "Das ist: " + mon.nameDe;
+                    std::string english = "This is: " + mon.nameEn;
 
                     boost::shared_ptr<BasicServerCommand>cmd(new CharDescription(id, player->nls(german, english)));
                     player->Connection->addCommand(cmd);

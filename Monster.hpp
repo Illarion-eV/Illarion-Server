@@ -125,6 +125,9 @@ public:
     inline const bool canAttack() {
         return _canAttack;
     }
+
+    std::string nameDe;
+
 private:
 
     /**
@@ -146,8 +149,7 @@ private:
     * stores if the monster can attack or not
     */
     bool _canAttack;
-
-
+    
 };
 
 #endif // MONSTER_HPP

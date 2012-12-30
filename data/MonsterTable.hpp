@@ -65,7 +65,8 @@ struct attributedef_t {
 struct MonsterStruct {
     typedef std::map<TYPE_OF_SKILL_ID, std::pair<unsigned short, unsigned short> > skilltype;
     typedef std::map<unsigned short, std::vector<itemdef_t> > itemtype;
-    std::string name;
+    std::string nameDe;
+    std::string nameEn;
     Character::race_type race;
     unsigned short hitpoints;
     bool canselfheal;

@@ -116,9 +116,8 @@ void Monster::setType(const TYPE_OF_CHARACTER_ID &type) throw(unknownIDException
     SetMovement(monsterdef.movement);
     race = monsterdef.race;
     _canAttack = monsterdef.canattack;
-    char mname[ 80 ];
-    sprintf(mname, "%0#6X %s", id, monsterdef.name.c_str());
-    name=mname;
+    name = monsterdef.nameEn;
+    nameDe = monsterdef.nameDe;
 }
 
 void Monster::setSpawn(SpawnPoint *sp) {

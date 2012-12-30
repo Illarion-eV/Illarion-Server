@@ -57,7 +57,8 @@ void MonsterTable::reload() {
 
         SelectQuery monquery(connection);
         monquery.addColumn("monster", "mob_monsterid");
-        monquery.addColumn("monster", "mob_name");
+        monquery.addColumn("monster", "mob_name_de");
+        monquery.addColumn("monster", "mob_name_en");
         monquery.addColumn("monster", "mob_race");
         monquery.addColumn("monster", "mob_hitpoints");
         monquery.addColumn("monster", "mob_movementtype");
@@ -86,7 +87,8 @@ void MonsterTable::reload() {
                 uint32_t id;
 
                 id = (*itr)["mob_monsterid"].as<uint32_t>();
-                temprecord.name = (*itr)["mob_name"].as<std::string>();
+                temprecord.nameDe = (*itr)["mob_name_de"].as<std::string>();
+                temprecord.nameEn = (*itr)["mob_name_en"].as<std::string>();
                 temprecord.race = (Character::race_type)((*itr)["mob_race"].as<uint16_t>());
                 temprecord.hitpoints = (*itr)["mob_hitpoints"].as<uint16_t>();
                 temprecord.canselfheal = (*itr)["mob_canhealself"].as<bool>();
@@ -251,7 +253,7 @@ void MonsterTable::reload() {
                         } else if (position == "belt6") {
                             location = 17;
                         } else {
-                            std::cerr << "specified invalid itemslot: " <<  position << " for monster " << temprecord.name << std::endl;
+                            std::cerr << "specified invalid itemslot: " <<  position << " for monster " << temprecord.nameEn << std::endl;
                             location = 99;
                         }
 
@@ -261,7 +263,7 @@ void MonsterTable::reload() {
                             tempitem.AgeingSpeed = tempCommon.AgeingSpeed;
                             temprecord.items[location].push_back(tempitem);
                         } else if (location < 99) {
-                            std::cerr << "couldn't find item: " <<  tempitem.itemid << " for monster " << temprecord.name << std::endl;
+                            std::cerr << "couldn't find item: " <<  tempitem.itemid << " for monster " << temprecord.nameEn << std::endl;
                         }
                     } // for (Database::ResultConstIterator itr2 = monItemResults...
                 } // if (!monItemResults.empty())

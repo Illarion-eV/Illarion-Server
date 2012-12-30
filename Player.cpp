@@ -1094,6 +1094,7 @@ bool Player::save() throw() {
             InsertQuery introductionQuery(connection);
             const InsertQuery::columnIndex playerColumn = introductionQuery.addColumn("intro_player");
             const InsertQuery::columnIndex knownPlayerColumn = introductionQuery.addColumn("intro_known_player");
+            introductionQuery.addServerTable("introduction");
 
             for (auto it = newlyKnownPlayers.cbegin(); it != newlyKnownPlayers.cend(); ++it) {
                 introductionQuery.addValue<TYPE_OF_CHARACTER_ID>(playerColumn, id);

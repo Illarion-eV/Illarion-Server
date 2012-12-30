@@ -215,6 +215,9 @@ AppearanceTC::AppearanceTC(Character *cc, Player *receivingPlayer) : BasicServer
             std::string english = "Someone";
             addStringToBuffer(receivingPlayer->nls(german, english));
         }
+    } else if (cc->character == Character::monster) {
+        Monster *monster = dynamic_cast<Monster *>(cc);
+        addStringToBuffer(receivingPlayer->nls(monster->nameDe, monster->name));
     } else {
         addStringToBuffer(cc->name);
     }
