@@ -64,7 +64,8 @@ NPC::NPC(TYPE_OF_CHARACTER_ID _id, std::string _name, Character::race_type _race
 
     tmpField->setChar();
 
-    _world->sendCharacterMoveToAllVisiblePlayers(this,NORMALMOVE,4);
+    _world->sendPassiveMoveToAllVisiblePlayers(this);
+    _world->sendSpinToAllVisiblePlayers(this);
 
     setAttribute(Character::hitpoints, MAXHPS);
 
