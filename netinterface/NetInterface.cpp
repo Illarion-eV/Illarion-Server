@@ -87,7 +87,7 @@ void NetInterface::handle_read_data(const boost::system::error_code &error) {
 
                 unsigned char *data = cmd->msg_data();
                 std::cerr << std::hex << std::uppercase << std::setfill('0');
-                
+
                 for (int i = 0; i < cmd->getLength(); ++i) {
                     std::cerr << std::setw(2) << (int)data[i] << " ";
                 }

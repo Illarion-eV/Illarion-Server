@@ -210,29 +210,29 @@ void World::spawn_command(Player *cp, const std::string &monid) {
 
 void World::create_command(Player *cp, const std::string &itemid) {
     // if (cp->hasGMRight(gmr_basiccommands)) {
-        TYPE_OF_ITEM_ID item;
-        uint16_t quantity = 1;
-        uint16_t quality = 333;
-        std::string data;
-        lua_State *luaState = LuaScript::getLuaState();
-        luabind::object dataList = luabind::newtable(luaState);
+    TYPE_OF_ITEM_ID item;
+    uint16_t quantity = 1;
+    uint16_t quality = 333;
+    std::string data;
+    lua_State *luaState = LuaScript::getLuaState();
+    luabind::object dataList = luabind::newtable(luaState);
 
-        std::stringstream ss;
-        ss.str(itemid);
-        ss >> item;
-        ss >> quantity;
-        ss >> quality;
+    std::stringstream ss;
+    ss.str(itemid);
+    ss >> item;
+    ss >> quantity;
+    ss >> quality;
 
-        while (ss.good()) {
-            ss >> data;
-            size_t found = data.find('=');
+    while (ss.good()) {
+        ss >> data;
+        size_t found = data.find('=');
 
-            if (found != string::npos) {
-                dataList[data.substr(0, int(found))] = data.substr(int(found) + 1);
-            }
+        if (found != string::npos) {
+            dataList[data.substr(0, int(found))] = data.substr(int(found) + 1);
         }
+    }
 
-        cp->createItem(item, quantity, quality, dataList);
+    cp->createItem(item, quantity, quality, dataList);
     // }
 
 }

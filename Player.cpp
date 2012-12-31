@@ -380,6 +380,7 @@ uint8_t Player::getShowcaseId(Container *container) const {
 
 Container *Player::getShowcaseContainer(uint8_t showcase) const {
     auto it = showcases.find(showcase);
+
     if (it != showcases.end()) {
         return it->second->getContainer();
     }
@@ -1647,8 +1648,8 @@ void Player::receiveText(talk_type tt, std::string message, Character *cc) {
 
 bool Player::knows(Player *player) const {
     return this == player
-        || knownPlayers.find(player->id) != knownPlayers.cend()
-        || newlyKnownPlayers.find(player->id) != newlyKnownPlayers.cend();
+           || knownPlayers.find(player->id) != knownPlayers.cend()
+           || newlyKnownPlayers.find(player->id) != newlyKnownPlayers.cend();
 }
 
 void Player::getToKnow(Player *player) {
@@ -2084,7 +2085,7 @@ void Player::openDepot(uint16_t depotid) {
         }
     } else {
 #ifdef PLAYER_PlayerDepot_DEBUG
-std::cout << "Depot mit der ID: "<<depotid<<" wird neu erstellt!"<<std:endl
+        std::cout << "Depot mit der ID: " << depotid << " wird neu erstellt!" << std::endl;
 #endif
         depotContents[depotid] = new Container(DEPOTITEM);
         openShowcase(depotContents[depotid], false);
@@ -2698,6 +2699,7 @@ void Player::executeMerchantDialogSell(unsigned int dialogId, uint8_t location, 
             item = GetItemAt(slot);
         } else {
             Container *container = 0;
+
             if (isShowcaseOpen(location-1)) {
                 getShowcaseContainer(location-1)->viewItemNr(slot, item, container);
             }

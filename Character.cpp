@@ -784,7 +784,7 @@ int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid, const luab
 
 ScriptItem Character::GetItemAt(unsigned char itempos) {
     ScriptItem item;
-    
+
     if (itempos < MAX_BODY_ITEMS + MAX_BELT_SLOTS) {
         item = characterItems[ itempos ];
         item.pos = pos;

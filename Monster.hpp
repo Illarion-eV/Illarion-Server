@@ -149,7 +149,7 @@ private:
     * stores if the monster can attack or not
     */
     bool _canAttack;
-    
+
 };
 
 #endif // MONSTER_HPP
