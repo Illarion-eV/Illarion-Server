@@ -250,8 +250,6 @@ bool World::load_from_editor(std::string filename) {
 
     int h_level, h_x, h_y, h_width, h_height, oldy;
 
-    bool V2 = false;
-
     // load map file header information
     maptilesfile >> dummy;
 
@@ -260,13 +258,16 @@ bool World::load_from_editor(std::string filename) {
         int version;
         maptilesfile >> version;
 
-        if (version == 2) {
-            V2 = true;
+        if (version != 2) {
+            Logger::writeError("World_Imports","Invalid map format! Wrong version! Expected V2: " + filename);
+            return false;
         }
-
-        maptilesfile >> dummy;
+    } else {
+        Logger::writeError("World_Imports","Invalid map format! No version: " + filename);
+        return false;
     }
 
+    maptilesfile >> dummy;
     maptilesfile >> dummy;  // read 'L: '
     maptilesfile >> h_level;  //read int (level)
     maptilesfile >> dummy;
@@ -335,18 +336,6 @@ bool World::load_from_editor(std::string filename) {
 
         maptilesfile >> temp_tile.musicID;      // read a short uint (music-id)
         LogMessage += "musicID: " + Logger::toString(temp_tile.musicID);
-
-        if (!V2) {
-            maptilesfile >> dummy;          // read a char (;)
-
-            if (dummy != ';') {
-                Logger::writeError("World_Imports","maptile file contains errors! : " + Logger::toString(dummy));
-                return false;
-            }
-
-            unsigned short int dummyvalue;
-            maptilesfile >> dummyvalue;      // read a short uint (dummy)
-        }
 
         // store the tile in our map
         maptiles[temp_tile.x<<16|temp_tile.y] = temp_tile;
@@ -446,8 +435,6 @@ bool World::load_from_editor(std::string filename) {
         return true;    // items are not crucial
     }
 
-    unsigned short dummy_specialflags;
-
     int x,y;
     Item it;
     Item::id_type itemId;
@@ -482,16 +469,6 @@ bool World::load_from_editor(std::string filename) {
         LogMessage += "y: " + Logger::toString(y) + " ";
         mapitemsfile >> dummy;
 
-        if (!V2) {
-            if (dummy != ';') {
-                Logger::writeError("World_Imports", "mapitem file contains errors! : " + Logger::toString(dummy));
-                return false;
-            }
-
-            mapitemsfile >> dummy_specialflags;
-            mapitemsfile >> dummy;
-        }
-
         if (dummy != ';') {
             Logger::writeError("World_Imports", "mapitem file contains errors! : " + Logger::toString(dummy));
             return false;
@@ -508,72 +485,54 @@ bool World::load_from_editor(std::string filename) {
             return false;
         }
 
-        if (!V2) {
-            uint32_t itemData;
-            mapitemsfile >> itemData;
+        mapitemsfile >> itemQuality;
+        it.setQuality(itemQuality);
+        LogMessage += "quality: " + Logger::toString(itemQuality) + " ";
 
-            if (mapitemsfile.good()) {
-                if (mapitemsfile.get() == ';') {
-                    mapitemsfile >> itemQuality;
-                    it.setQuality(itemQuality);
-                    LogMessage += "quality: " + Logger::toString(itemQuality) + " ";
-                } else {
-                    mapitemsfile.unget();
-                }
-            }
+        if (mapitemsfile.good()) {
+            if (mapitemsfile.get() == ';') {
+                std::string dataSequence;
+                std::getline(mapitemsfile, dataSequence);
+                std::string key, value;
+                bool isKey = true;
 
-            // default value while mapeditor is out of order
-            it.setQuality(333);
-        } else {
-            mapitemsfile >> itemQuality;
-            it.setQuality(itemQuality);
-            LogMessage += "quality: " + Logger::toString(itemQuality) + " ";
+                for (size_t i = 0; i < dataSequence.length(); ++i) {
+                    char c = dataSequence[i];
 
-            if (mapitemsfile.good()) {
-                if (mapitemsfile.get() == ';') {
-                    std::string dataSequence;
-                    std::getline(mapitemsfile, dataSequence);
-                    std::string key, value;
-                    bool isKey = true;
+                    switch (c) {
+                    case ';':
+                        it.setData(key, value);
+                        key = "";
+                        value = "";
+                        isKey = true;
+                        break;
 
-                    for (size_t i = 0; i < dataSequence.length(); ++i) {
-                        char c = dataSequence[i];
+                    case '=':
+                        isKey = false;
+                        break;
 
-                        switch (c) {
-                        case ';':
-                            it.setData(key, value);
-                            key = "";
-                            value = "";
-                            isKey = true;
-                            break;
+                    case '\\':
+                        ++i;
 
-                        case '=':
-                            isKey = false;
-                            break;
+                        if (i == dataSequence.length()) {
+                            return false;
+                        }
 
-                        case '\\':
-                            ++i;
+                        c = dataSequence[i];
 
-                            if (i == dataSequence.length()) {
-                                return false;
-                            }
+                    default:
 
-                            c = dataSequence[i];
-
-                        default:
-
-                            if (isKey) {
-                                key = key + c;
-                            } else {
-                                value = value + c;
-                            }
+                        if (isKey) {
+                            key = key + c;
+                        } else {
+                            value = value + c;
                         }
                     }
-
-                    it.setData(key, value);
-                } else {
-                    mapitemsfile.unget();
                 }
+
+                it.setData(key, value);
+            } else {
+                mapitemsfile.unget();
             }
         }
 
