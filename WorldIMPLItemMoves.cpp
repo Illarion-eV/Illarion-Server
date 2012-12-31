@@ -762,7 +762,7 @@ void World::dropItemFromShowcaseOnMap(Player *cp, uint8_t showcase, unsigned cha
 
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
-                if (!putItemInShowcase(cp, showcase,0)) {
+                if (!putItemInShowcase(cp, showcase, pos)) {
                     std::cerr<<"DropItemFromShowcase wurde von Script unterbunden. Datenverlust beim zurcklegen! Spieler: "<<cp->name<<std::endl;
                     g_cont = NULL;
                     g_item.reset();
@@ -839,7 +839,7 @@ void World::moveItemFromShowcaseToPlayer(Player *cp, uint8_t showcase, unsigned 
 
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item,t_item)) {
-                if (!putItemInShowcase(cp, showcase,0)) {
+                if (!putItemInShowcase(cp, showcase, pos)) {
                     std::cerr<<"MoveItemFromShowcaseToPlayer wurde von Script unterbunden. Datenverlust beim zurcklegen! Spieler: "<<cp->name<<std::endl;
                     g_cont = NULL;
                     g_item.reset();
@@ -869,7 +869,7 @@ void World::moveItemFromShowcaseToPlayer(Player *cp, uint8_t showcase, unsigned 
         }
 
         if (NOK) {
-            if (!putItemInShowcase(cp, showcase,0)) {
+            if (!putItemInShowcase(cp, showcase, pos)) {
                 std::cerr << "moveItemFromShowcaseToPlayer: Datenverlust beim Zurcklegen, Spieler " << cp->name << std::endl;
                 g_cont = NULL;
                 g_item.reset();
