@@ -148,7 +148,11 @@ std::string Item::getData(std::string key) {
 
 
 void Item::setData(std::string key, std::string value) {
-    datamap[key] = value;
+    if (value.length() > 0) {
+        datamap[key] = value;
+    } else {
+        datamap.erase(key);
+    }
 }
 
 
