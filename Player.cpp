@@ -1931,6 +1931,7 @@ bool Player::move(direction dir, uint8_t mode) {
             if (j == 1) {
                 boost::shared_ptr<BasicServerCommand> cmd(new MoveAckTC(id, pos, NORMALMOVE, waitpages));
                 Connection->addCommand(cmd);
+                sendStepStripes(dir);
                 _world->sendCharacterMoveToAllVisiblePlayers(this, mode, waitpages);
                 _world->sendAllVisibleCharactersToPlayer(this, true);
                 return true;
