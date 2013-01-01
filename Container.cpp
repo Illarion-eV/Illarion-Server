@@ -72,40 +72,47 @@ Container::~Container() {
     }
 }
 
+Item::number_type Container::mergeItem(Item item) {
+    if (isItemStackable(item)) {
+        auto it = items.begin();
+
+        while ((it != items.end()) && (item.getNumber() > 0)) {
+            Item &selectedItem = it->second;
+
+            if (selectedItem.getId() == item.getId() && selectedItem.equalData(item)) {
+                item.setNumber(selectedItem.increaseNumberBy(item.getNumber()));
+                selectedItem.setMinQuality(item);
+            }
+
+            ++it;
+        }
+    }
+
+    return item.getNumber();
+}
+
 bool Container::InsertItem(Item it) {
-    return InsertItem(it, false);
+    return InsertItem(it, true);
 }
 
 bool Container::InsertItem(Item item, bool merge) {
     if (items.size() < getSlotCount()) {
         if (item.isContainer()) {
             return InsertContainer(item, new Container(item.getId()));
-        } else if (merge) {
+        }
 
-            if (isItemStackable(item)) {
-                auto it = items.begin();
+        if (merge) {
+            auto leftOver = mergeItem(item);
 
-                while ((it != items.end()) && (item.getNumber() > 0)) {
-                    Item &selectedItem = it->second;
-
-                    if (selectedItem.getId() == item.getId() && selectedItem.equalData(item)) {
-                        item.setNumber(selectedItem.increaseNumberBy(item.getNumber()));
-                        selectedItem.setMinQuality(item);
-                    }
-
-                    ++it;
-                }
-            }
-
-            if (item.getNumber() > 0) {
+            if (leftOver > 0) {
+                item.setNumber(leftOver);
                 insertIntoFirstFreeSlot(item);
             }
-
-            return true;
         } else {
             insertIntoFirstFreeSlot(item);
-            return true;
         }
+
+        return true;
     }
 
     return false;

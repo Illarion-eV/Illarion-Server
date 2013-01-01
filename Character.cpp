@@ -956,15 +956,43 @@ int Character::createItem(Item::id_type id, Item::number_type number, Item::qual
                 int old_temp = temp;
 
                 for (unsigned char i = MAX_BODY_ITEMS; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS && temp > 0; ++i) {
+                    if ((characterItems[ i ].getId() == id) && (characterItems[ i ].equalData(data))) {
+                        characterItems[ i ].setWear(cos.AgeingSpeed);
+                        characterItems[ i ].setQuality(quality);
+                        temp = characterItems[ i ].increaseNumberBy(temp);
+                    }
+                }
+
+                if (temp > 0) {
+                    bool ok = true;
+                    it.setId(id);
+                    it.setQuality(quality);
+                    it.setWear(cos.AgeingSpeed);
+                    it.setData(data);
+
+                    while (ok && (temp > 0)) {
+                        if (temp >= cos.MaxStack) {
+                            it.setNumber(cos.MaxStack);
+                        } else {
+                            it.setNumber(temp);
+                        }
+
+                        auto leftOver = backPackContents->mergeItem(it);
+
+                        if (leftOver > 0) {
+                            ok = false;
+                        }
+
+                        temp -= it.getNumber() - leftOver;
+                    }
+                }
+
+                for (unsigned char i = MAX_BODY_ITEMS; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS && temp > 0; ++i) {
                     if (characterItems[ i ].getId() == 0) {
                         characterItems[ i ].setId(id);
                         characterItems[ i ].setWear(cos.AgeingSpeed);
                         characterItems[ i ].setQuality(quality);
                         characterItems[ i ].setData(data);
-                        temp = characterItems[ i ].increaseNumberBy(temp);
-                    } else if ((characterItems[ i ].getId() == id) && (characterItems[ i ].equalData(data))) {
-                        characterItems[ i ].setWear(cos.AgeingSpeed);
-                        characterItems[ i ].setQuality(quality);
                         temp = characterItems[ i ].increaseNumberBy(temp);
                     }
                 }
@@ -983,7 +1011,7 @@ int Character::createItem(Item::id_type id, Item::number_type number, Item::qual
                     it.setWear(cos.AgeingSpeed);
                     it.setData(data);
 
-                    while ((ok) && (temp > 0)) {
+                    while (ok && (temp > 0)) {
                         if (temp >= cos.MaxStack) {
                             it.setNumber(cos.MaxStack);
                         } else {

@@ -67,6 +67,7 @@ public:
     bool changeQuality(Item::id_type id, short int amount);
     bool InsertContainer(Item it, Container *cc);
     bool InsertContainer(Item it, Container *cc, TYPE_OF_CONTAINERSLOTS pos);
+    Item::number_type mergeItem(Item item);
     bool InsertItem(Item it, bool merge);
     bool InsertItem(Item it, TYPE_OF_CONTAINERSLOTS);
     bool InsertItem(Item it);
