@@ -301,9 +301,7 @@ std::list<Character::direction> Character::getStepList(position tpos, int checkr
         if ((rTX==(closedList.back())->x) && (rTY==(closedList.back())->y)) {   // have we reached the target?
             //std::cout << "TARGET REACHED!!!" << std::endl;
             // now trace back the way! in newField we should have the last target spot.
-            feld *theField = new feld();
-
-            theField=closedList.back();
+            feld *theField = closedList.back();
 
             int newX=theField->x;
             int newY=theField->y;
@@ -497,6 +495,8 @@ std::list<Character::direction> Character::getStepList(position tpos, int checkr
     for (itt=closedList.begin() ; itt < closedList.end(); itt++) {
         delete(*itt);
     }
+
+    delete startNode;
 
     //ret.push_back(8);
     return ret;     // 8 means that we haven't found a path to the target!
