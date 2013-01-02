@@ -210,6 +210,7 @@ void World::spawn_command(Player *cp, const std::string &monid) {
 
 void World::create_command(Player *cp, const std::string &itemid) {
 #ifndef TESTSERVER
+
     if (cp->hasGMRight(gmr_basiccommands))
 #endif
     {
@@ -316,6 +317,7 @@ void World::showIPS_Command(Player *cp) {
 
 void World::jumpto_command(Player *cp,const std::string &player) {
 #ifndef TESTSERVER
+
     if (cp->hasGMRight(gmr_warp))
 #endif
     {
@@ -583,9 +585,11 @@ void World::sendAdminAllPlayerData(Player* &admin) {
 // !warp_to X<,| >Y[<,| >Z] || !warp_to Z
 void World::warpto_command(Player *cp, const std::string &ts) {
 #ifndef TESTSERVER
+
     if (!cp->hasGMRight(gmr_warp)) {
         return;
     }
+
 #endif
 
     position warpto;
@@ -1016,6 +1020,7 @@ void World::what_command(Player *cp) {
             message << "- Item " << top.getId();
 
 #ifndef TESTSERVER
+
             if (cp->hasGMRight(gmr_basiccommands))
 #endif
             {

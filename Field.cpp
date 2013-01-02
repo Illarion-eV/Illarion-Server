@@ -92,7 +92,7 @@ ScriptItem Field::getStackItem(uint8_t spos) {
 Field::Field(const Field &source) {
 
     tile = source.tile;
-	music = source.music;
+    music = source.music;
     clientflags = source.clientflags;
     extraflags = source.extraflags;
     items = source.items;
@@ -104,7 +104,7 @@ Field &Field:: operator =(const Field &source) {
 
     if (this != &source) {
         tile = source.tile;
-		music = source.music;
+        music = source.music;
         clientflags = source.clientflags;
         extraflags = source.extraflags;
         items = source.items;
