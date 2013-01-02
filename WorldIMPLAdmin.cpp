@@ -209,31 +209,34 @@ void World::spawn_command(Player *cp, const std::string &monid) {
 }
 
 void World::create_command(Player *cp, const std::string &itemid) {
-    // if (cp->hasGMRight(gmr_basiccommands)) {
-    TYPE_OF_ITEM_ID item;
-    uint16_t quantity = 1;
-    uint16_t quality = 333;
-    std::string data;
-    lua_State *luaState = LuaScript::getLuaState();
-    luabind::object dataList = luabind::newtable(luaState);
+#ifndef TESTSERVER
+    if (cp->hasGMRight(gmr_basiccommands))
+#endif
+    {
+        TYPE_OF_ITEM_ID item;
+        uint16_t quantity = 1;
+        uint16_t quality = 333;
+        std::string data;
+        lua_State *luaState = LuaScript::getLuaState();
+        luabind::object dataList = luabind::newtable(luaState);
 
-    std::stringstream ss;
-    ss.str(itemid);
-    ss >> item;
-    ss >> quantity;
-    ss >> quality;
+        std::stringstream ss;
+        ss.str(itemid);
+        ss >> item;
+        ss >> quantity;
+        ss >> quality;
 
-    while (ss.good()) {
-        ss >> data;
-        size_t found = data.find('=');
+        while (ss.good()) {
+            ss >> data;
+            size_t found = data.find('=');
 
-        if (found != string::npos) {
-            dataList[data.substr(0, int(found))] = data.substr(int(found) + 1);
+            if (found != string::npos) {
+                dataList[data.substr(0, int(found))] = data.substr(int(found) + 1);
+            }
         }
-    }
 
-    cp->createItem(item, quantity, quality, dataList);
-    // }
+        cp->createItem(item, quantity, quality, dataList);
+    }
 
 }
 
@@ -312,7 +315,10 @@ void World::showIPS_Command(Player *cp) {
 }
 
 void World::jumpto_command(Player *cp,const std::string &player) {
-    if (cp->hasGMRight(gmr_warp)) {
+#ifndef TESTSERVER
+    if (cp->hasGMRight(gmr_warp))
+#endif
+    {
         cp->closeAllShowcasesOfMapContainers();
         teleportPlayerToOther(cp, player);
     }
@@ -576,9 +582,11 @@ void World::sendAdminAllPlayerData(Player* &admin) {
 
 // !warp_to X<,| >Y[<,| >Z] || !warp_to Z
 void World::warpto_command(Player *cp, const std::string &ts) {
+#ifndef TESTSERVER
     if (!cp->hasGMRight(gmr_warp)) {
         return;
     }
+#endif
 
     position warpto;
     char *tokenize = new char[ ts.length() + 1 ];
@@ -1007,7 +1015,10 @@ void World::what_command(Player *cp) {
 
             message << "- Item " << top.getId();
 
-            if (cp->hasGMRight(gmr_basiccommands)) {
+#ifndef TESTSERVER
+            if (cp->hasGMRight(gmr_basiccommands))
+#endif
+            {
                 message << ", Quality " << top.getQuality();
 
                 if (top.getDataBegin() != top.getDataEnd()) {
