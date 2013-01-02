@@ -46,9 +46,6 @@ private:
 
     //! Anzahl der Sekunden zwischen den Schritten
     long gap;
-
-    //! Sekunden seit dem letzten Ereignis
-    long realgap;
 };
 #endif
 

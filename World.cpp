@@ -668,7 +668,7 @@ void World::checkPlayers() {
                 (*playerIterator)->Connection->shutdownSend(cmd);
             }
 
-            playerIterator++;
+            ++playerIterator;
         } else {
             std::string temp_name = (*playerIterator)->name;
             TYPE_OF_CHARACTER_ID temp_id = (*playerIterator)->id;
@@ -1126,13 +1126,13 @@ void World::checkNPC() {
                 }
             }
 
-            npcIterator++;
+            ++npcIterator;
         } // alive
         else {
             // Behandlung von toten NPC -> wiederbeleben
             (*npcIterator)->increaseAttrib("hitpoints", MAXHPS);
             sendSpinToAllVisiblePlayers((*npcIterator));
-            npcIterator++;
+            ++npcIterator;
         }
     }
 }

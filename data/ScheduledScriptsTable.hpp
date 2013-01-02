@@ -40,21 +40,17 @@ struct ScriptData {
     std::string scriptName;
     boost::shared_ptr<LuaScheduledScript>scriptptr;
 
-    ScriptData() {
+    ScriptData(): functionName(""), scriptName("") {
         minCycleTime = 0;
         maxCycleTime = 0;
         nextCycleTime = 0;
         lastCycleTime = 0;
-        functionName = "";
-        scriptName = "";
     }
-    ScriptData(uint32_t minCT, uint32_t maxCT, uint32_t nextCT, uint32_t lastCT, std::string fname, std::string sname) {
+    ScriptData(uint32_t minCT, uint32_t maxCT, uint32_t nextCT, uint32_t lastCT, std::string fname, std::string sname): functionName(fname), scriptName(sname) {
         minCycleTime = minCT;
         maxCycleTime = maxCT;
         nextCycleTime = nextCT;
         lastCycleTime = lastCT;
-        functionName = fname;
-        scriptName = sname;
     }
 };
 

@@ -68,6 +68,7 @@ LuaScript::LuaScript() {
     initialize();
 
     _filename = "";
+	luafile = "";
 }
 
 LuaScript::LuaScript(std::string filename) throw(ScriptException) {

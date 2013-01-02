@@ -134,8 +134,7 @@ void World::TriggerFieldMove(Character *cc, bool moveto) {
 }
 
 bool World::pushCharacter(Player *cp, TYPE_OF_CHARACTER_ID pushedCharId, unsigned char direction) {
-    Character *pushedChar = NULL;
-    pushedChar = Players.findID(pushedCharId);
+    Character *pushedChar = Players.findID(pushedCharId);
 
     if (!pushedChar) {
         Monsters.findID(pushedCharId);

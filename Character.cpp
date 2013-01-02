@@ -332,7 +332,7 @@ std::list<Character::direction> Character::getStepList(position tpos, int checkr
 
             std::vector<feld *>::iterator itt;
 
-            for (itt=closedList.begin() ; itt < closedList.end(); itt++) {
+            for (itt=closedList.begin() ; itt < closedList.end(); ++itt) {
                 delete(*itt);
                 //std::cout << " del1";
             }
@@ -494,7 +494,7 @@ std::list<Character::direction> Character::getStepList(position tpos, int checkr
 
     std::vector<feld *>::iterator itt;
 
-    for (itt=closedList.begin() ; itt < closedList.end(); itt++) {
+    for (itt=closedList.begin() ; itt < closedList.end(); ++itt) {
         delete(*itt);
     }
 
@@ -525,9 +525,6 @@ Character::Character() : actionPoints(P_MAX_AP),fightPoints(P_MAX_FP),waypoints(
 #ifdef Character_DEBUG
     std::cout << "Character Konstruktor Start" << std::endl;
 #endif
-    name = std::string("noname");
-    prefix = std::string("Sir");
-    suffix = std::string("of Arabia");
     race = human;
     character = player;
 
@@ -1148,7 +1145,7 @@ void Character::ageInventory() {
 
     std::map<uint32_t, Container *>::iterator depotIterator;
 
-    for (depotIterator = depotContents.begin(); depotIterator != depotContents.end(); depotIterator++) {
+    for (depotIterator = depotContents.begin(); depotIterator != depotContents.end(); ++depotIterator) {
         if (depotIterator->second != NULL) {
             depotIterator->second->doAge(true);
         }

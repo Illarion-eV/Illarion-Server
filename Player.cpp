@@ -510,7 +510,7 @@ void Player::ageInventory() {
 
     std::map<uint32_t, Container *>::iterator depotIterator;
 
-    for (depotIterator = depotContents.begin(); depotIterator != depotContents.end(); depotIterator++) {
+    for (depotIterator = depotContents.begin(); depotIterator != depotContents.end(); ++depotIterator) {
         if (depotIterator->second != NULL) {
             depotIterator->second->doAge(true);
             updateShowcase(depotIterator->second);

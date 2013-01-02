@@ -101,8 +101,7 @@ public:
     }
 
     void performAction(Player *player) {
-        Player *tempPlayer=NULL;
-        tempPlayer = World::get()->Players.find(name);
+        Player *tempPlayer = World::get()->Players.find(name);
 
         if (tempPlayer == NULL) {
             World::PLAYERVECTOR::iterator playerIterator;
@@ -176,8 +175,7 @@ public:
     }
 
     void performAction(Player *player) {
-        Player *tempPlayer=NULL;
-        tempPlayer = World::get()->Players.find(name);
+        Player *tempPlayer = World::get()->Players.find(name);
 
         if (tempPlayer == NULL) {
             World::PLAYERVECTOR::iterator playerIterator;
@@ -227,8 +225,7 @@ public:
     }
 
     void performAction(Player *player) {
-        Player *tempPlayer=NULL;
-        tempPlayer = World::get()->Players.find(name);
+        Player *tempPlayer = World::get()->Players.find(name);
 
         if (tempPlayer == NULL) {
             World::PLAYERVECTOR::iterator playerIterator;
@@ -279,8 +276,7 @@ public:
     }
 
     void performAction(Player *player) {
-        Player *tempPlayer=NULL;
-        tempPlayer = World::get()->Players.find(name);
+        Player *tempPlayer = World::get()->Players.find(name);
 
         if (tempPlayer == NULL) {
             World::PLAYERVECTOR::iterator playerIterator;
@@ -365,7 +361,7 @@ public:
 */
 class BBChangeAttribTS : public BasicClientCommand {
 public:
-    BBChangeAttribTS() : BasicClientCommand(BB_CHANGEATTRIB_TS) {
+    BBChangeAttribTS() : BasicClientCommand(BB_CHANGEATTRIB_TS), _value(0) {
     }
 
     virtual ~BBChangeAttribTS() {};
@@ -379,8 +375,7 @@ public:
     }
 
     void performAction(Player *player) {
-        Player *tempPlayer=NULL;
-        tempPlayer = World::get()->Players.find(_plname);
+        Player *tempPlayer = World::get()->Players.find(_plname);
 
         if (tempPlayer == NULL) {
             World::PLAYERVECTOR::iterator playerIterator;
@@ -415,7 +410,7 @@ public:
 */
 class BBChangeSkillTS : public BasicClientCommand {
 public:
-    BBChangeSkillTS() : BasicClientCommand(BB_CHANGEATTRIB_TS) {
+    BBChangeSkillTS() : BasicClientCommand(BB_CHANGEATTRIB_TS), _value(0) {
     }
 
     virtual ~BBChangeSkillTS() {};
@@ -429,8 +424,7 @@ public:
     }
 
     void performAction(Player *player) {
-        Player *tempPlayer=NULL;
-        tempPlayer = World::get()->Players.find(_plname);
+        Player *tempPlayer = World::get()->Players.find(_plname);
 
         if (tempPlayer == NULL) {
             World::PLAYERVECTOR::iterator playerIterator;
@@ -477,8 +471,7 @@ public:
     }
 
     void performAction(Player *player) {
-        Player *tempPlayer=NULL;
-        tempPlayer = World::get()->Players.find(playername);
+        Player *tempPlayer = World::get()->Players.find(playername);
 
         if (tempPlayer == NULL) {
             World::PLAYERVECTOR::iterator playerIterator;
@@ -580,8 +573,7 @@ public:
     }
 
     void performAction(Player *player) {
-        Player *tempPlayer=NULL;
-        tempPlayer = World::get()->Players.find(name);
+        Player *tempPlayer = World::get()->Players.find(name);
 
         if (tempPlayer == NULL) {
             World::PLAYERVECTOR::iterator playerIterator;

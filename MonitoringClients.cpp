@@ -106,7 +106,7 @@ void MonitoringClients::CheckClients() {
                 std::cout<<(*iterator)->name<<" connection inactive!"<<std::endl;
                 PlayerManager::get()->getLogOutPlayers().non_block_push_back((*iterator));
                 iterator = client_list.erase(iterator);
-                iterator--;
+                --iterator;
                 std::cout<<"added him to lostplayers!"<<std::endl;
             }
 

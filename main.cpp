@@ -66,13 +66,12 @@ extern bool importmaps;
 
 int main(int argc, char *argv[]) {
 
-    int res;
     rlimit rlp;
-    res = getrlimit(RLIMIT_CORE, &rlp);
+    getrlimit(RLIMIT_CORE, &rlp);
     std::cout<<"max core size: "<<rlp.rlim_cur<<std::endl;
     std::cout<<"current core size: "<<rlp.rlim_max<<std::endl;
     rlp.rlim_cur = 20000;
-    res = getrlimit(RLIMIT_CORE, &rlp);
+    int res = getrlimit(RLIMIT_CORE, &rlp);
 
     if (res < 0) {
         std::cout<<"err: "<<errno<<std::endl;

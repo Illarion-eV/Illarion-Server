@@ -19,9 +19,7 @@
 
 #include "IdCounter.hpp"
 
-IdCounter::IdCounter(std::string counterf) {
-    counterfile = counterf;
-
+IdCounter::IdCounter(std::string counterf): counterfile(counterf) {
     std::ifstream cfile(counterfile.c_str(), std::ios::binary | std::ios::in);
 
     // Destruktor schliesst Datei
@@ -38,8 +36,7 @@ IdCounter::IdCounter(std::string counterf) {
     }
 }
 
-IdCounter::IdCounter(const std::string &counterf, const TYPE_OF_CHARACTER_ID &startid) {
-    counterfile = counterf;
+IdCounter::IdCounter(const std::string &counterf, const TYPE_OF_CHARACTER_ID &startid): counterfile(counterf) {
     set(startid);
 }
 

@@ -854,7 +854,7 @@ void World::saveAllPlayerNamesToFile(std::string name) {
 
         fprintf(f, "%d\n", (int)players.size());
 
-        for (std::list<std::string>::iterator it = players.begin(); it != players.end(); it++) {
+        for (std::list<std::string>::iterator it = players.begin(); it != players.end(); ++it) {
             fprintf(f, "%s\n",  it->c_str());
         }
 

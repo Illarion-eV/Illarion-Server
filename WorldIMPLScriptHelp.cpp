@@ -98,7 +98,7 @@ luabind::object World::LuaLoS(position startingpos, position endingpos) {
     int index = 1;
     std::list<BlockingObject> objects = LoS(startingpos, endingpos);
 
-    for (std::list<BlockingObject>::iterator boIterator = objects.begin(); boIterator != objects.end(); boIterator++) {
+    for (std::list<BlockingObject>::iterator boIterator = objects.begin(); boIterator != objects.end(); ++boIterator) {
         luabind::object innerlist = luabind::newtable(luaState);
 
         if (boIterator->blockingType == BlockingObject::BT_CHARACTER) {

@@ -88,7 +88,7 @@ void LongTimeCharacterEffects::addEffect(LongTimeEffect *effect) {
                 inserted = true;
             } else {
                 effect->_nextCalled -= (*it)->_nextCalled;
-                it++;
+                ++it;
             }
         }
 

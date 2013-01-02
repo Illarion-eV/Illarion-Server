@@ -68,7 +68,7 @@ public:
         std::vector<std::string *> *dataRow;
 
         if (!dataStorage.empty()) {
-            for (std::vector<std::vector<std::string *> *>::iterator itr = dataStorage.begin(); itr < dataStorage.end(); itr++) {
+            for (std::vector<std::vector<std::string *> *>::iterator itr = dataStorage.begin(); itr < dataStorage.end(); ++itr) {
                 dataRow = *itr;
                 dataRow->reserve(columns);
 
@@ -99,7 +99,7 @@ public:
     template <typename T> void addValues(const QueryColumns::columnIndex &column, std::vector<T> &values) throw(std::invalid_argument) {
         typename std::vector<T>::iterator itr;
 
-        for (itr = values.begin(); itr < values.end(); itr++) {
+        for (itr = values.begin(); itr < values.end(); ++itr) {
             addValue<T>(column, *itr);
         }
     };
@@ -123,7 +123,7 @@ public:
                    MapInsertMode mode = keysAndValues) throw(std::invalid_argument) {
         typename std::map<Key, T, Compare, Allocator>::iterator itr;
 
-        for (itr = values.begin(); itr != values.end(); itr++) {
+        for (itr = values.begin(); itr != values.end(); ++itr) {
             switch (mode) {
             case onlyKeys:
                 addValue<Key>(column, itr->first);

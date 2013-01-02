@@ -69,6 +69,7 @@ struct SouTar {
     SouTar() {
         Type = LUA_NONE;
         character = NULL;
+		dialog = 0;
     }
 };
 

@@ -99,10 +99,8 @@ struct LongTimeEffectStruct {
     std::string effectname;
     std::string scriptname;
     boost::shared_ptr<LuaLongTimeEffectScript> script;
-    LongTimeEffectStruct() {
+    LongTimeEffectStruct(): effectname(""), scriptname("") {
         effectid = 0;
-        effectname = "";
-        scriptname = "";
     }
 };
 
