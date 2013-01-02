@@ -95,7 +95,7 @@ uint8_t RaceSizeTable::getRelativeSize(Character::race_type race, uint16_t size)
     }
 
     if (size >= minsize && size <= maxsize) {
-        return (uint8_t)((70*(size-minsize))/(maxsize-minsize)+50);
+        return (uint8_t)((40*(size-minsize))/(maxsize-minsize)+80);
     } else {
         return 100;
     }
