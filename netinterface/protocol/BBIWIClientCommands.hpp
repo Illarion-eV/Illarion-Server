@@ -242,9 +242,8 @@ public:
 
         if (tempPlayer != NULL) {
             tempPlayer->talk(Character::tt_say,message);
+            Logger::writeMessage("bbiwi", player->name + " talked as other player: " + tempPlayer->name + " with message: " + message);
         }
-
-        Logger::writeMessage("bbiwi", player->name + " talked as other player: " + tempPlayer->name + " with message: " + message);
     }
 
     boost::shared_ptr<BasicClientCommand> clone() {

@@ -128,8 +128,8 @@ bool LongTimeCharacterEffects::removeEffect(uint16_t effectid) {
                 }
             }
 
-            effectList.erase(it);
             delete(*it);
+            effectList.erase(it);
             return true;
         }
     }
@@ -148,8 +148,8 @@ bool LongTimeCharacterEffects::removeEffect(std::string name) {
                 }
             }
 
-            effectList.erase(it);
             delete(*it);
+            effectList.erase(it);
             return true;
         }
     }
@@ -211,7 +211,7 @@ void LongTimeCharacterEffects::checkEffects() {
 bool LongTimeCharacterEffects::save() {
     using namespace Database;
 
-    if (_owner->character != Character::player) {
+    if (_owner && _owner->character != Character::player) {
         std::cout<<"called save for LongtimeCharacterEffects but owner was no player"<<std::endl;
         return false;
     }

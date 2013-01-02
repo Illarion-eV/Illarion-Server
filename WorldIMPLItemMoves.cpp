@@ -1575,11 +1575,11 @@ void World::lookIntoShowcaseContainer(Player *cp, uint8_t showcase, unsigned cha
 
 
 bool World::lookIntoBackPack(Player *cp) {
+    if (cp != NULL) {
 #ifdef World_ItemMove_DEBUG
-    std::cout << "lookIntoBackPack: Spieler " << cp->name << " schaut in seinen Rucksack" << std::endl;
+        std::cout << "lookIntoBackPack: Spieler " << cp->name << " schaut in seinen Rucksack" << std::endl;
 #endif
 
-    if (cp != NULL) {
         if ((cp->characterItems[ BACKPACK ].getId() != 0) && (cp->backPackContents != NULL)) {
 #ifdef World_ItemMove_DEBUG
             std::cout << "Rucksackinhalt vorhanden" << std::endl;
@@ -1696,11 +1696,10 @@ bool World::lookIntoContainerOnField(Player *cp, char direction) {
 
 
 void World::closeContainerInShowcase(Player *cp, uint8_t showcase) {
-#ifdef World_ItemMove_DEBUG
-    std::cout << "closeContainerInShowcase: Spieler " << cp->name << " schliesst einen Container" << std::endl;
-#endif
-
     if (cp != NULL) {
+#ifdef World_ItemMove_DEBUG
+        std::cout << "closeContainerInShowcase: Spieler " << cp->name << " schliesst einen Container" << std::endl;
+#endif
         cp->closeShowcase(showcase);
     }
 

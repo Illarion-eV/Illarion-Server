@@ -363,6 +363,7 @@ void World::talkto_command(Player *cp, const std::string &ts) {
 
     if ((token = strtok(tokenize, ",")) != NULL) {
         std::string player = token;
+        delete[] tokenize;
 
         if ((token = strtok(NULL, "\\")) != NULL) {
             std::string message = token;
@@ -401,6 +402,9 @@ void World::talkto_command(Player *cp, const std::string &ts) {
             } //end of else
         } //end if ( token = strtok( NULL...)
     } //end of ( token = strtok( tokenize , ",")
+    else {
+        delete[] tokenize;
+    }
 }
 
 void World::makeInvisible(Player *cp) {

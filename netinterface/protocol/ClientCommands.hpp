@@ -832,8 +832,9 @@ public:
 #endif
 #ifdef DO_UNCONSCIOUS
 
-            if ((paramOK) && player->IsAlive() && player->IsConscious() && (player->GetStatus() < 10))
+            if ((paramOK) && player->IsAlive() && player->IsConscious() && (player->GetStatus() < 10)) {
 #else
+
             if ((paramOK) && player->IsAlive() && (player->GetStatus() < 10)) {
 #endif
 
@@ -875,26 +876,26 @@ public:
                     break;
                 } //Ende Switch
 
-            //monitoringClientList->sendCommand( new SendActionTS( player->id, player->name, 2, msg));
-        } //ENde if player->IsAlive
+                //monitoringClientList->sendCommand( new SendActionTS( player->id, player->name, 2, msg));
+            } //ENde if player->IsAlive
 
-        Logger::writeMessage("Casting","all succeeded",false);
+            Logger::writeMessage("Casting","all succeeded",false);
+        }
     }
-}
 
-boost::shared_ptr<BasicClientCommand> clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new CastTS());
-    return cmd;
+    boost::shared_ptr<BasicClientCommand> clone() {
+        boost::shared_ptr<BasicClientCommand>cmd(new CastTS());
+        return cmd;
 
-}
+    }
 
-unsigned char showcase;
-unsigned char pos;
-short int xc,yc,zc;
-short int paramtemp;
-unsigned char cid;
-unsigned char counter;
-unsigned long int spellId;
+    unsigned char showcase;
+    unsigned char pos;
+    short int xc,yc,zc;
+    short int paramtemp;
+    unsigned char cid;
+    unsigned char counter;
+    unsigned long int spellId;
 };
 
 
