@@ -369,6 +369,8 @@ public:
 
     virtual void setPlayerLanguage(Language::LanguageType mother_tongue);
 
+    void sendCharacters();
+
     //! schickt an den Spieler die Daten des Items an
     // einer Positon des K�pers
     // \param cpos die Position des Item am K�per

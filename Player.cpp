@@ -444,6 +444,10 @@ bool Player::VerifyPassword(std::string chkpw) {
 }
 
 
+void Player::sendCharacters() {
+    _world->sendAllVisibleCharactersToPlayer(this, true);
+}
+
 
 void Player::sendCharacterItemAtPos(unsigned char cpos) {
     if (cpos < (MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {

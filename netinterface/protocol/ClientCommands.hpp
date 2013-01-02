@@ -2482,6 +2482,7 @@ public:
         player->screenwidth = width;
         player->screenheight = height;
         player->sendFullMap();
+        player->sendCharacters();
     }
 
     boost::shared_ptr<BasicClientCommand> clone() {
