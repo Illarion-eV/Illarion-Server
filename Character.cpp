@@ -337,6 +337,8 @@ std::list<Character::direction> Character::getStepList(position tpos, int checkr
                 //std::cout << " del1";
             }
 
+            delete startNode;
+
             //std::cout << std::endl;
             //std::cout << "done deleting all stuff..." << std::endl;
             return ret;
