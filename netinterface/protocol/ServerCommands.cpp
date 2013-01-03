@@ -239,7 +239,6 @@ AppearanceTC::AppearanceTC(Character *cc, Player *receivingPlayer) : BasicServer
         addShortIntToBuffer(cc->GetItemAt(i).getId());
     }
 
-    addUnsignedCharToBuffer(cc->getWeaponMode());
     uint8_t deathflag = cc->IsAlive() ? 0 : 1;
     addUnsignedCharToBuffer(deathflag);
 }

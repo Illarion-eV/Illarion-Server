@@ -1014,12 +1014,6 @@ public:
     */
     virtual void Depot();
 
-    /**
-         * calculates the weapon mode
-         * @return 0: unarmed; 1: melee; 2: distance; 3: wand
-         */
-    uint8_t getWeaponMode();
-
     virtual uint32_t idleTime();
 
     /**

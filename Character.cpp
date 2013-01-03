@@ -2345,61 +2345,6 @@ Container *Character::GetDepot(uint32_t depotid) {
 }
 
 
-uint8_t Character::getWeaponMode() {
-    if (characterItems[ RIGHT_TOOL ].getId() != 0) {
-        WeaponStruct tmpWeapon;
-
-        if (WeaponItems->find(characterItems[ RIGHT_TOOL ].getId() , tmpWeapon)) {
-            switch (tmpWeapon.WeaponType) {
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 6:
-                return 1; //melee
-                break;
-            case 7:
-                return 2; //distance
-                break;
-            case 13:
-                return 3; //staff
-                break;
-            }
-        }
-    }
-
-    //if no weapon in right hand look in left hand
-    if (characterItems[ LEFT_TOOL ].getId() != 0) {
-        WeaponStruct tmpWeapon;
-
-        if (WeaponItems->find(characterItems[ LEFT_TOOL ].getId() , tmpWeapon)) {
-            switch (tmpWeapon.WeaponType) {
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 6:
-                return 1; //melee
-                break;
-            case 7:
-                return 2; //distance
-                break;
-            case 13:
-                return 3; //staff
-                break;
-            default:
-                return 0;
-                break;
-            }
-        }
-    }
-
-    return 0;
-}
-
-
 uint32_t Character::idleTime() {
     // Nothing to do here, overloaded in Player
     return 0;
