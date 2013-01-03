@@ -1096,12 +1096,19 @@ bool Player::save() throw() {
         connection->beginTransaction();
 
         {
+            DeleteQuery introductionQuery(connection);
+            introductionQuery.addEqualCondition<TYPE_OF_CHARACTER_ID>("introduction", "intro_player", id);
+            introductionQuery.addServerTable("introduction");
+            introductionQuery.execute();
+        }
+
+        {
             InsertQuery introductionQuery(connection);
             const InsertQuery::columnIndex playerColumn = introductionQuery.addColumn("intro_player");
             const InsertQuery::columnIndex knownPlayerColumn = introductionQuery.addColumn("intro_known_player");
             introductionQuery.addServerTable("introduction");
 
-            for (auto it = newlyKnownPlayers.cbegin(); it != newlyKnownPlayers.cend(); ++it) {
+            for (auto it = knownPlayers.cbegin(); it != knownPlayers.cend(); ++it) {
                 introductionQuery.addValue<TYPE_OF_CHARACTER_ID>(playerColumn, id);
                 introductionQuery.addValue<TYPE_OF_CHARACTER_ID>(knownPlayerColumn, *it);
             }
@@ -1651,14 +1658,12 @@ void Player::receiveText(talk_type tt, std::string message, Character *cc) {
 }
 
 bool Player::knows(Player *player) const {
-    return this == player
-           || knownPlayers.find(player->id) != knownPlayers.cend()
-           || newlyKnownPlayers.find(player->id) != newlyKnownPlayers.cend();
+    return this == player || knownPlayers.find(player->id) != knownPlayers.cend();
 }
 
 void Player::getToKnow(Player *player) {
     if (!knows(player)) {
-        newlyKnownPlayers.insert(player->id);
+        knownPlayers.insert(player->id);
     }
 }
 

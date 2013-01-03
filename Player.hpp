@@ -156,7 +156,6 @@ public:
 private:
     std::set<uint32_t> visibleChars;
     boost::unordered_set<TYPE_OF_CHARACTER_ID> knownPlayers;
-    boost::unordered_set<TYPE_OF_CHARACTER_ID> newlyKnownPlayers;
 
 public:
     std::string &nls(std::string &german, std::string &english);
