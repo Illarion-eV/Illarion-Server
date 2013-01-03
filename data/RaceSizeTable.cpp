@@ -44,7 +44,7 @@ void RaceSizeTable::reload() {
         query.addColumn("raceattr", "id");
         query.addColumn("raceattr", "minbodyheight");
         query.addColumn("raceattr", "maxbodyheight");
-        query.addAccountTable("raceattr");
+        query.addServerTable("raceattr");
 
         Database::Result results = query.execute();
         std::vector<uint16_t>minheight;
