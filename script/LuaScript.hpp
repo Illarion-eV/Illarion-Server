@@ -168,6 +168,7 @@ private:
     void writeErrorMsg();
     void writeCastErrorMsg(const std::string &entryPoint, const luabind::cast_failed &e);
     static void writeDebugMsg(const std::string &msg);
+    static bool isTestserver();
     void setCurrentWorldScript();
     luabind::object buildEntrypoint(const std::string &entrypoint) throw(luabind::error);
     bool existsQuestEntrypoint(const std::string &entrypoint);
