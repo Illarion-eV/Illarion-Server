@@ -229,6 +229,7 @@ void LuaScript::writeCastErrorMsg(const std::string &entryPoint, const luabind::
 }
 
 void LuaScript::writeDebugMsg(const std::string &msg) {
+#ifdef TESTSERVER
     lua_pushstring(_luaState, ("Debug Message: " + msg).c_str());
     add_backtrace(_luaState);
     std::string backtrace = lua_tostring(_luaState, -1);
@@ -237,6 +238,7 @@ void LuaScript::writeDebugMsg(const std::string &msg) {
     if (backtrace.length() > 0) {
         Logger::writeError("scripts", backtrace);
     }
+#endif
 }
 
 void LuaScript::writeDeprecatedMsg(const std::string &deprecatedEntity) {
