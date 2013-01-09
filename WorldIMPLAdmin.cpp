@@ -245,7 +245,7 @@ void World::create_command(Player *cp, const std::string &itemid) {
             }
         }
 
-        Logger::writeMessage("admin", cp->nameAndId() + " creates item " + itemid + " with quantity "
+        Logger::writeMessage("admin", cp->nameAndId() + " creates item " + boost::lexical_cast<std::string>(item) + " with quantity "
                              + boost::lexical_cast<std::string>(quantity) + ", quality "
                              + boost::lexical_cast<std::string>(quality) + ", data " + datalog);
         cp->createItem(item, quantity, quality, dataList);
