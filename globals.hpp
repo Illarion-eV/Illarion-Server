@@ -23,6 +23,7 @@
 #include <map>
 #include <fstream>
 #include <iostream>
+#include <boost/lexical_cast.hpp>
 
 #include "types.hpp"
 
@@ -103,6 +104,10 @@ struct position {
     */
     bool operator == (const position &pos) {
         return (x == pos.x && y == pos.y && z == pos.z);
+    }
+
+    std::string toString() const {
+        return "(" + boost::lexical_cast<std::string>(x) + ", " + boost::lexical_cast<std::string>(y) + ", " + boost::lexical_cast<std::string>(z) + ")";
     }
 };
 

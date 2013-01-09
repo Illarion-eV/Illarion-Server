@@ -45,6 +45,7 @@
 //For the reload scripts
 #include "script/LuaReloadScript.hpp"
 #include "script/LuaLearnScript.hpp"
+#include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/algorithm/string/replace.hpp>
 #include "data/LongTimeEffectTable.hpp"
@@ -184,6 +185,7 @@ void World::InitGMCommands() {
 
 void World::logon_command(Player *cp, const std::string &log) {
     if (cp->hasGMRight(gmr_reload)) {
+        Logger::writeMessage("admin", cp->nameAndId() + " activates log: " + log);
         Logger::activateLog(log);
     }
 
@@ -191,6 +193,7 @@ void World::logon_command(Player *cp, const std::string &log) {
 
 void World::logoff_command(Player *cp, const std::string &log) {
     if (cp->hasGMRight(gmr_reload)) {
+        Logger::writeMessage("admin", cp->nameAndId() + " deactivates log: " + log);
         Logger::deactivateLog(log);
     }
 
@@ -204,6 +207,8 @@ void World::spawn_command(Player *cp, const std::string &monid) {
         ss >> id;
         position pos = cp->pos;
         pos.x++;
+        Logger::writeMessage("admin", cp->nameAndId() + " creates monster " + monid
+                             + " at " + pos.toString());
         createMonster(id, pos, 0);
     }
 }
@@ -218,6 +223,7 @@ void World::create_command(Player *cp, const std::string &itemid) {
         uint16_t quantity = 1;
         uint16_t quality = 333;
         std::string data;
+        std::string datalog;
         lua_State *luaState = LuaScript::getLuaState();
         luabind::object dataList = luabind::newtable(luaState);
 
@@ -232,10 +238,16 @@ void World::create_command(Player *cp, const std::string &itemid) {
             size_t found = data.find('=');
 
             if (found != string::npos) {
-                dataList[data.substr(0, int(found))] = data.substr(int(found) + 1);
+                std::string key = data.substr(0, int(found));
+                std::string value = data.substr(int(found) + 1);
+                datalog += key + "=" + value + "; ";
+                dataList[key] = value;
             }
         }
 
+        Logger::writeMessage("admin", cp->nameAndId() + " creates item " + itemid + " with quantity "
+                             + boost::lexical_cast<std::string>(quantity) + ", quality "
+                             + boost::lexical_cast<std::string>(quality) + ", data " + datalog);
         cp->createItem(item, quantity, quality, dataList);
     }
 
@@ -246,7 +258,6 @@ void World::kill_command(Player *cp) {
         return;
     }
 
-    std::cout<<" GM "<<cp->name<<" used Nuke command";
     MONSTERVECTOR::iterator mIterator;
     uint32_t counter = 0;
 
@@ -256,11 +267,13 @@ void World::kill_command(Player *cp) {
         ++counter;
     }
 
-    std::cout<<" and killed "<<counter<<" monsters!"<<std::endl;
+    Logger::writeMessage("admin", cp->nameAndId() + " nukes " + boost::lexical_cast<std::string>(counter) + " monsters");
 }
 
 void World::reload_command(Player *cp) {
     if (cp->hasGMRight(gmr_reload)) {
+        Logger::writeMessage("admin", cp->nameAndId() + " issues a full reload");
+
         if (reload_tables(cp)) {
             cp->inform("DB tables loaded successfully!");
         } else {
@@ -270,10 +283,6 @@ void World::reload_command(Player *cp) {
 }
 
 void World::broadcast_command(Player *cp,const std::string &message) {
-#ifdef World_DEBUG
-    std::cout << "World: Admin " << cp->name << " sagt: " << message << std::endl;
-#endif
-
     if (cp->hasGMRight(gmr_broadcast)) {
 #ifdef LOG_TALK
         time_t acttime = time(NULL);
@@ -282,35 +291,27 @@ void World::broadcast_command(Player *cp,const std::string &message) {
         talkfile << talktime << " ";
         talkfile << cp->name << "(" << cp->id << ") broadcasts: " << message << std::endl;
 #endif
-
         sendMessageToAllPlayers(message);
     }
 }
 
 void World::kickall_command(Player *cp) {
     if (cp->hasGMRight(gmr_forcelogout)) {
-#ifdef World_DEBUG
-        std::cout << "World: Admin " << cp->name << " wirft alle Player aus dem Spiel" << std::endl;
-#endif
+        Logger::writeMessage("admin", cp->nameAndId() + " kicks all players");
         forceLogoutOfAllPlayers();
     }
 }
 
 void World::kickplayer_command(Player *cp,const std::string &player) {
     if (cp->hasGMRight(gmr_forcelogout)) {
-        if (forceLogoutOfPlayer(player)) {
-#ifdef World_DEBUG
-            std::cout << "World: Admin " << cp->name << " wirft Player " << player << " aus dem Spiel!" <<std::endl;
-#endif
-        }
+        Logger::writeMessage("admin", cp->nameAndId() + " kicks " + player);
+        forceLogoutOfPlayer(player);
     }
 }
 
 void World::showIPS_Command(Player *cp) {
     if (cp->hasGMRight(gmr_basiccommands)) {
-#ifdef World_DEBUG
-        std::cout << "World: Admin " << cp->name << " l�t sich alle Spieler anzeigen!" << std::endl;
-#endif
+        Logger::writeMessage("admin", cp->nameAndId() + " requests player info");
         sendAdminAllPlayerData(cp);
     }
 }
@@ -323,6 +324,8 @@ void World::jumpto_command(Player *cp,const std::string &player) {
     {
         cp->closeAllShowcasesOfMapContainers();
         teleportPlayerToOther(cp, player);
+        Logger::writeMessage("admin", cp->nameAndId() + " jumps to player " + player
+                             + " at " + cp->pos.toString());
     }
 }
 
@@ -331,9 +334,7 @@ void World::save_command(Player *cp) {
         return;
     }
 
-#ifdef World_DEBUG
-    std::cout << "World: Admin " << cp->name << " Server speichern " << std::endl;
-#endif
+    Logger::writeMessage("admin", cp->nameAndId() + " saves all maps");
 
     PLAYERVECTOR::iterator pIterator;
     Field *tempf;
@@ -345,7 +346,7 @@ void World::save_command(Player *cp) {
         }
     }
 
-    std::cout << "Karten speichern" << std::endl;
+    std::cout << "Save maps" << std::endl;
     Save("Illarion");
 
     // Flags auf der Karte wieder setzen
@@ -384,6 +385,13 @@ void World::talkto_command(Player *cp, const std::string &ts) {
 #ifdef AdminCommands_DEBUG
                 std::cout<<"Found player by name, sending message: "<<message<<std::endl;
 #endif
+#ifdef LOG_TALK
+                time_t acttime = time(NULL);
+                std::string talktime = ctime(&acttime);
+                talktime[talktime.size()-1] = ':';
+                talkfile << talktime << " ";
+                talkfile << cp->name << "(" << cp->id << ") talks to player " << tempPl->name << "(" << tempPl->id << "): " << message << std::endl;
+#endif
                 tempPl->inform(message, Player::informGM);
                 return;
             } else {
@@ -403,6 +411,14 @@ void World::talkto_command(Player *cp, const std::string &ts) {
 #ifdef AdminCommands_DEBUG
                         std::cout<<"Found player by id, sending message: "<<message<<std::endl;
 #endif
+#ifdef LOG_TALK
+                        time_t acttime = time(NULL);
+                        std::string talktime = ctime(&acttime);
+                        talktime[talktime.size()-1] = ':';
+                        talkfile << talktime << " ";
+                        talkfile << cp->name << "(" << cp->id << ") talks to player "
+                                 << (*plIterator)->name << "(" << (*plIterator)->id << "): " << message << std::endl;
+#endif
                         (*plIterator)->inform(message, Player::informGM);
                         return; //Break the loop because we sen our message
                     }
@@ -421,6 +437,7 @@ void World::makeInvisible(Player *cp) {
     }
 
     cp->isinvisible = true;
+    Logger::writeMessage("admin", cp->nameAndId() + " becomes invisible");
     sendRemoveCharToVisiblePlayers(cp->id, cp->pos);
 }
 
@@ -430,6 +447,8 @@ void World::makeVisible(Player *cp) {
     }
 
     cp->isinvisible = false;
+
+    Logger::writeMessage("admin", cp->nameAndId() + " becomes visible");
 
     std::vector < Player * > ::iterator titerator;
 
@@ -547,9 +566,9 @@ void World::forceLogoutOfAllPlayers() {
             tempf->SetPlayerOnField(false);
         }
 
+        Logger::writeMessage("admin", "--- kicked: " + (*playerIterator)->nameAndId());
         boost::shared_ptr<BasicServerCommand>cmd(new LogOutTC(SERVERSHUTDOWN));
         (*playerIterator)->Connection->shutdownSend(cmd);
-        //( *playerIterator )->Connection->closeConnection();
         PlayerManager::get()->getLogOutPlayers().non_block_push_back(*playerIterator);
     }
 
@@ -561,9 +580,9 @@ bool World::forceLogoutOfPlayer(std::string name) {
     Player *temp = Players.find(name);
 
     if (temp != NULL) {
+        Logger::writeMessage("admin", "--- kicked: " + temp->nameAndId());
         boost::shared_ptr<BasicServerCommand>cmd(new LogOutTC(BYGAMEMASTER));
         temp->Connection->shutdownSend(cmd);
-        //temp->Connection->closeConnection();
         return true;
     } else {
         return false;
@@ -628,6 +647,8 @@ void World::warpto_command(Player *cp, const std::string &ts) {
         }
     }
 
+    Logger::writeMessage("admin", cp->nameAndId() + " warps to " + warpto.toString());
+
     delete [] tokenize;
 }
 
@@ -638,13 +659,11 @@ void World::summon_command(Player *cp, const std::string &tplayer) {
         return;
     }
 
-    std::cout << "Summoning player: " << tplayer << std::endl;
     Player *tempPl;
     tempPl = Players.find(tplayer);
 
     if (tempPl != NULL) {
-        std::cout << "Warping player: " << tempPl->name << std::endl;
-        //warpPlayer( tempPl, cp->pos );
+        Logger::writeMessage("admin", cp->nameAndId() + " summons player " + tempPl->nameAndId() + " to " + cp->pos.toString());
         tempPl->Warp(cp->pos);
     } else {
         std::cout << "Looking for number" << std::endl;
@@ -661,8 +680,7 @@ void World::summon_command(Player *cp, const std::string &tplayer) {
 
             for (playerIterator = Players.begin(); playerIterator < Players.end(); ++playerIterator) {
                 if ((*playerIterator)->id == tid) {
-                    std::cout << "Warping player: " << (*playerIterator)->name << std::endl;
-                    //warpPlayer( ( *playerIterator ), cp->pos );
+                    Logger::writeMessage("admin", cp->nameAndId() + " summons player " + (*playerIterator)->nameAndId() + " to " + cp->pos.toString());
                     (*playerIterator)->Warp(cp->pos);
                 }
             }
@@ -678,13 +696,10 @@ void World::ban_command(Player *cp, const std::string &timeplayer) {
         return;
     }
 
-    std::cout << cp->name << " banning player: " << timeplayer << std::endl;
-
     char *tokenize = new char[ timeplayer.length() + 1 ];
     short int jailtime = 0;
 
     strcpy(tokenize, timeplayer.c_str());
-    std::cout << "Tokenizing " << tokenize << std::endl;
 
     char *thistoken;
 
@@ -749,7 +764,7 @@ void World::ban_command(Player *cp, const std::string &timeplayer) {
 
                     ban(tempPl, jailtime * multiplier, cp->id);
 
-                    std::cout << cp->name << " banned player: " << tempPl->name << " for " << jailtime << timescale << std::endl;
+                    Logger::writeMessage("admin", cp->nameAndId() + " bans player " + tempPl->nameAndId() + " for " + boost::lexical_cast<std::string>(jailtime) + timescale);
                     std::string tmessage = "*** Banned " + tempPl->name;
                     cp->inform(tmessage);
 
@@ -778,7 +793,7 @@ void World::banbyname(Player *cp, short int banhours, std::string tplayer) {
 
         ban(tempPl, static_cast<int>(banhours * 3600), cp->id);
 
-        std::cout << cp->name << " banned player: " << tempPl->name << " for " << banhours << " hours" << std::endl;
+        Logger::writeMessage("admin", cp->nameAndId() + " bans player " + tempPl->nameAndId() + " for " + boost::lexical_cast<std::string>(banhours) + "h");
         std::string tmessage = "*** Banned " + tempPl->name;
         cp->inform(tmessage);
 
@@ -809,7 +824,7 @@ void World::banbynumber(Player *cp, short int banhours, TYPE_OF_CHARACTER_ID tid
 
         ban(tempPl, static_cast<int>(banhours * 3600), cp->id);
 
-        std::cout << cp->name << " banned player: " << tempPl->name << " for " << banhours << " hours" << std::endl;
+        Logger::writeMessage("admin", cp->nameAndId() + " bans player " + tempPl->nameAndId() + " for " + boost::lexical_cast<std::string>(banhours) + "h");
         std::string tmessage = "*** Banned " + tempPl->name;
         cp->inform(tmessage);
 
@@ -984,6 +999,7 @@ void World::clippingon_command(Player *cp) {
         return;
     }
 
+    Logger::writeMessage("admin", cp->nameAndId() + " turns on clipping");
     cp->setClippingActive(true);
 }
 
@@ -993,6 +1009,7 @@ void World::clippingoff_command(Player *cp) {
         return;
     }
 
+    Logger::writeMessage("admin", cp->nameAndId() + " turns off clipping");
     cp->setClippingActive(false);
 }
 
@@ -1066,6 +1083,8 @@ void World::playersave_command(Player *cp) {
     if (!cp->hasGMRight(gmr_save)) {
         return;
     }
+
+    Logger::writeMessage("admin", cp->nameAndId() + " saves all players");
 
     PLAYERVECTOR::iterator pIterator;
     unsigned long int thisonlinetime = 0;

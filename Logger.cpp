@@ -82,7 +82,7 @@ void Logger::writeError(std::string LogType, std::string Message, bool saveTime)
 }
 
 void Logger::writeMessage(std::string LogType, std::string Message, bool saveTime) {
-    if (isLogActivated(LogType)) {
+    if (isLogActivated(LogType) || LogType == "admin") {
         boost::shared_ptr<std::ofstream> theLog;
 
         //!try to find a open log from the current messagetype

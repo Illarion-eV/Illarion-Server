@@ -238,6 +238,7 @@ void LuaScript::writeDebugMsg(const std::string &msg) {
     if (backtrace.length() > 0) {
         Logger::writeError("scripts", backtrace);
     }
+
 #endif
 }
 

@@ -264,6 +264,10 @@ public:
     */
     std::string name;
 
+    std::string nameAndId() const {
+        return name + "(" + boost::lexical_cast<std::string>(id) + ")";
+    }
+
     /**
     * current action points of the character
     * <b>Lua: (r/w) [movepoints]</b>
