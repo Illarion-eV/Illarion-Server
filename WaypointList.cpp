@@ -86,7 +86,7 @@ bool WaypointList::recalcStepList() {
     }
 
     steplist.clear();
-    steplist = _movechar->getStepList(positions.front(),max_fields_for_waypoints);
+    _movechar->getStepList(positions.front(), steplist);
     return (!steplist.empty());
 }
 

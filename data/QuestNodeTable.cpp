@@ -131,7 +131,7 @@ void QuestNodeTable::readQuest(boost::filesystem::ifstream &questFile, boost::fi
             TriggerNodeStruct node;
             node.pos = pos;
             node.entrypoint = entries[4];
-            std::string scriptPath = "questsystem." + questPath.filename() + "." + entries[5];
+            std::string scriptPath = "questsystem." + questPath.filename().string() + "." + entries[5];
 
             try {
                 node.script = boost::shared_ptr<LuaScript>(new LuaScript(scriptPath));
@@ -155,7 +155,7 @@ void QuestNodeTable::readQuest(boost::filesystem::ifstream &questFile, boost::fi
 
             NodeStruct node;
             node.entrypoint = entries[2];
-            std::string scriptPath = "questsystem." + questPath.filename() + "." + entries[3];
+            std::string scriptPath = "questsystem." + questPath.filename().string() + "." + entries[3];
 
             try {
                 node.script = boost::shared_ptr<LuaScript>(new LuaScript(scriptPath));

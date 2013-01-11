@@ -922,18 +922,9 @@ public:
     */
     virtual bool move(direction dir, bool active=true);
 
-    /**
-    * gets the direction of a step toward a possible position
-    * @param dir byref returns the direction in which the step must be to reach tpos
-    * @param tpos position which should be reached.
-    * @param checkrange the range which should be checked (large numbers will decrease server speed dramatically)
-    * @return true if there ist a possible step otherwise false.
-    */
-    bool getNextStepDir(position tpos, int checkrange, Character::direction &dir);
-
-    std::list<Character::direction> getStepList(position tpos, int checkrange);
-
-    luabind::object getLuaStepList(position tpos, int checkrange);
+    bool getNextStepDir(position goal, Character::direction &dir);
+    bool getStepList(position goal, std::list<Character::direction> &steps);
+    luabind::object getLuaStepList(position goal);
 
     /**
     * warps the character to another position

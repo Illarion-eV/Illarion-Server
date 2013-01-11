@@ -40,6 +40,7 @@
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "fuse_ptr.hpp"
+#include "a_star.hpp"
 
 #define MAJOR_SKILL_GAP 100
 #define USE_LUA_FIGTHING
@@ -129,11 +130,12 @@ position Character::getFrontalPosition() {
     return front;
 }
 
-luabind::object Character::getLuaStepList(position tpos, int checkrange) {
+luabind::object Character::getLuaStepList(position goal) {
     lua_State *luaState = World::get()->getCurrentScript()->getLuaState();
     luabind::object list = luabind::newtable(luaState);
     int index = 1;
-    std::list<Character::direction> dirs = getStepList(tpos, checkrange);
+    std::list<Character::direction> dirs;
+    getStepList(goal, dirs);
 
     for (std::list<Character::direction>::iterator it = dirs.begin(); it != dirs.end(); ++it) {
         list[index++] = (*it);
@@ -142,380 +144,21 @@ luabind::object Character::getLuaStepList(position tpos, int checkrange) {
     return list;
 }
 
-/* We do A* now:
-   1) Create two lists (open, closed) which hold for each tile: Movementcosts of that tile, estimated movementcosts to target, sum, parent tile
-   2) Put the start point into the open list
-   3) Put the 8 adjacent tiles to the open list and calculate movementcosts, estimated movementcosts tT, F = sum of mc to there + estimated mc tT, parent
-   4) Select the tile of the open list with the lowest F (first, this will be the start node of course) and move it to the closed list
-   5) Go to step 3 again etc. until you reach the Target*/
-
-std::list<Character::direction> Character::getStepList(position tpos, int checkrange) {
-    bool targetOccupied=false;
-    std::list<Character::direction>ret;
-    //std::cout << "called getStepList(): tpos.x=" << tpos.x << " tpos.y=" << tpos.y << " pos.x=" <<  pos.x << " pos.y=" <<  pos.y << " checkrange=" << checkrange << std::endl;
-    Field *temp5;
-
-    if (_world->GetPToCFieldAt(temp5,tpos.x,tpos.y,tpos.z)) {
-        //std::cout << "called getStepList(), pass 1 (" << tpos.x << "," << tpos.y << "," <<  tpos.z << ")" << std::endl;
-        if (!temp5->moveToPossible()) {
-            targetOccupied=true;
-        }
-    }
-
-    //std::cout << "called getStepList(), pass 2" << std::endl;
-
-    short int xoffs;
-    short int yoffs;
-    short int zoffs;
-
-    // this is for the binary heap
-    int openX[(2*checkrange+1)*(2*checkrange+1)];                       // index is just the number of nodes already checked; value = X-coordinate
-    int openY[(2*checkrange+1)*(2*checkrange+1)];                       // index is just the number of nodes already checked; value = Y-coordinate
-    int openTotalCost[(2*checkrange+1)*(2*checkrange+1)];               // index is just the number of nodes already checked; value = F
-    int openCost[(2*checkrange+1)*(2*checkrange+1)];                    // index is just the number of nodes already checked; value = G
-    short int whichList[(2*50+1)*(2*50+1)]= {};         // index of field at (x,y): x + (2*checkrange+1)*y; value = 1: openL, 2: closedL (ini: 0)
-    int openCostHeap[(2*checkrange+1)*(2*checkrange+1)+1];              // The heap that holds the quasi-totalCost-ordered indices of the nodes in the open list
-    feld *parent[(2*50+1)*(2*50+1)]= {};                // Points to the parent node in the closed list (NOT to confuse with the parent in the binary heap!!!)
-
-    int nodesInOpenlist=1;                                  // number of nodes in the openList
-    int nodesChecked=1;
-
-    xoffs = tpos.x - pos.x;
-    yoffs = tpos.y - pos.y;
-    zoffs = tpos.z - pos.z;
-
-    // We do a slight coordinate transformation here: Set the searchfield to be square ( (2*checkrange + 1)^2 ) and put the start node in the center.
-    // This means: absoluteX = pos.x - checkrange + relativeX  and  relativeX = absoluteX - pos.x + checkrange
-
-    std::vector<feld *> closedList;
-
-    // For easier handling, I use this: index = (dx+1) + (dy+1)*3; note that [4] is useless yet defined (could be anything, chose dir_west)
-    Character::direction returnDirection[9]= {dir_northwest,dir_north, dir_northeast, dir_west, dir_west, dir_east, dir_southwest, dir_south, dir_southeast};
-
-    // Put the start position to the closed list
-
-    // The startnode gets index 1 and is on the first place in the heap at start!
-
-    int actualIndex=(checkrange)+(2*checkrange+1)*(checkrange);
-
-    openCostHeap[1]=1;
-    openX[1]=checkrange;
-    openY[1]=checkrange;
-    whichList[actualIndex]=1;
-    openCost[actualIndex]=0;
-    openTotalCost[actualIndex]=9*std::max(abs(pos.x-tpos.x),abs(pos.y-tpos.y));
-    parent[actualIndex]=0;
-
-    // old implementation
-
-    feld *startNode = new feld();
-
-    startNode->x=checkrange;
-    startNode->y=checkrange;
-
-    int rTX=tpos.x-pos.x+checkrange;                            // relative coordinates of target
-    int rTY=tpos.y-pos.y+checkrange;
-    //std::cout << "Target: x = " << rTX << " y = " << rTY << std::endl;
-
-    int secCounter=0;
-
-
-
-    while (nodesInOpenlist>0 && secCounter<2000) {      // as long as there are tiles to check
-
-        feld *newField = new feld();
-        secCounter++;       // just for security reasons; if we don't find anything in 1000 steps, just leave.
-        // Put openCostHeap[1] to closedlist and remove it
-
-        // give out openlist:
-
-        /*  std::cout << "        START OPENLIST" << std::endl;
-            for (int i=1;i<=nodesInOpenlist;++i)
-            {
-                std::cout << "            Node Index: " << openCostHeap[i] << " X=" << openX[openCostHeap[i]] << " Y=" << openY[openCostHeap[i]] << " F-Cost: " << openTotalCost[openCostHeap[i]] << std::endl;
-            }
-            std::cout << "        END OPENLIST" << std::endl;
-        */
-        // NEW: Put first element from openList to ClosedList; reorder openList properly!
-        newField->x=openX[openCostHeap[1]];
-        newField->y=openY[openCostHeap[1]];
-        newField->cost=openCost[openCostHeap[1]];
-        newField->parent=parent[openCostHeap[1]];
-        newField->totalCost=openTotalCost[openCostHeap[1]];
-        newField->estCost=9*std::max(abs(openX[openCostHeap[1]]-rTX),abs(openY[openCostHeap[1]]-rTY));
-        whichList[(openX[openCostHeap[1]])+(2*checkrange+1)*(openY[openCostHeap[1]])]=2;
-        closedList.push_back(newField);
-
-        //std::cout << "Putting field x=" << openX[openCostHeap[1]] << " y=" << openY[openCostHeap[1]] << "to closed List now!" << std::endl;
-
-        // Delete first item from the openlist heap now:
-        openCostHeap[1]=openCostHeap[nodesInOpenlist];
-        nodesInOpenlist--;                      // took one out of the openlist!
-        // now reorder openList (last item is in first place now, needs to be reordered!):
-
-        int place=1;
-        int childPlace;
-
-        //std::cout << "deleting first element from openListHeap now: nodes in openlist=" << nodesInOpenlist << std::endl;
-        while (true) {
-            childPlace=place;
-
-            if (2*childPlace+1 <= nodesInOpenlist) {    // does this item have both children?
-                //std::cout << "Both children present." << std::endl;
-                // select the one with the lower F:
-                if (openTotalCost[openCostHeap[childPlace]] >= openTotalCost[openCostHeap[2*childPlace]]) {
-                    place=2*childPlace;
-                }
-
-                if (openTotalCost[openCostHeap[place]] >= openTotalCost[openCostHeap[2*childPlace+1]]) {
-                    place=2*childPlace+1;
-                }
-            } else if (2*childPlace <= nodesInOpenlist) { // just one child there
-                //std::cout << "Only one child presend." << std::endl;
-                if (openTotalCost[openCostHeap[childPlace]] >= openTotalCost[openCostHeap[2*childPlace]]) {
-                    place=2*childPlace;
-                }
-            }
-
-            if (place != childPlace) {
-                int temp = openCostHeap[childPlace];
-                openCostHeap[childPlace]=openCostHeap[place];
-                openCostHeap[place]=temp;
-                //std::cout << "changed places of nodeIdx: " << openCostHeap[childPlace] << " with idx: " << openCostHeap[place] << std::endl;
-            } else {
-                //std::cout << "exiting now the deletion of openlist 1" << std::endl;
-                break;  // end while, we're finished here.
-            }
-        }
-
-        //std::cout << " (after delete 1) NodesInOpenList = " << nodesInOpenlist << std::endl;
-
-        /*
-                std::cout << "        (after deletion)START OPENLIST" << std::endl;
-                for (int i=1;i<=nodesInOpenlist;++i)
-                {
-                    std::cout << "            Node Index: " << openCostHeap[i] << " X=" << openX[openCostHeap[i]] << " Y=" << openY[openCostHeap[i]] << " F-Cost: " << openTotalCost[openCostHeap[i]] << std::endl;
-                }
-                std::cout << "        END OPENLIST" << std::endl;
-        */
-        if ((rTX==(closedList.back())->x) && (rTY==(closedList.back())->y)) {   // have we reached the target?
-            //std::cout << "TARGET REACHED!!!" << std::endl;
-            // now trace back the way! in newField we should have the last target spot.
-            feld *theField = closedList.back();
-
-            int newX=theField->x;
-            int newY=theField->y;
-
-            int oldX, oldY, dx, dy;
-
-            while (!((theField->x == closedList.front()->x) && (theField->y == closedList.front()->y))) {    // go back from parent to parent
-                //std::cout << "    ** BT x = " << theField->x << " y = " << theField->y  << std::endl;
-                // compile ret vector
-                newX=theField->x;
-                newY=theField->y;
-
-                theField = theField->parent;
-
-                oldX=theField->x;
-                oldY=theField->y;
-
-                dx=newX-oldX;
-                dy=newY-oldY;
-
-                if (!targetOccupied) {      // if targetOccupied, ignore first step...
-                    ret.push_front(returnDirection[(dx+1)+3*(dy+1)]);
-                }
-
-                //std::cout << "    step = " << ret.front() << " for dx=" << dx << " and dy=" << dy << std::endl;
-                targetOccupied=false;
-            }
-
-            std::vector<feld *>::iterator itt;
-
-            for (itt=closedList.begin() ; itt < closedList.end(); ++itt) {
-                delete(*itt);
-                //std::cout << " del1";
-            }
-
-            delete startNode;
-
-            //std::cout << std::endl;
-            //std::cout << "done deleting all stuff..." << std::endl;
-            return ret;
-        }
-
-
-        secCounter++;
-
-        // Check adjacent tiles of the last one in the closedList
-
-        bool inOpenList=false;
-
-        // now, check the passable adjacent tiles and put them to the open list. If they are in the openList already, recalculate; if in closed, ignore;
-        // Set parent to the old field! (This is: Adjacent to the last tile we added to closedList!)
-        for (int dx=-1; dx<=1; ++dx) {
-            for (int dy=-1; dy<=1; ++dy) {
-                if ((dx != 0 || dy != 0) && (closedList.back()->x+dx >= 0) && (closedList.back()->y+dy >=0) && (closedList.back()->x+dx <= 2*checkrange+1) && (closedList.back()->y+dy <= 2*checkrange+1)) { // OK, this is really slow, but it's just to check the algorithm! Check if rX+dx, rY+dy is in openlist already
-                    actualIndex=(closedList.back()->x+dx)+(2*checkrange+1)*(closedList.back()->y+dy);
-                    int newCost=10;
-
-                    if (dx != 0 && dy != 0) {
-                        newCost=12;    // punish diagonal steps a little!
-                    }
-
-                    // First thing to check: Can we make a step on that field or is it blocked by something?
-                    Field *temp4;
-
-                    if (_world->GetPToCFieldAt(temp4,pos.x-startNode->x+closedList.back()->x+dx,pos.y-startNode->y+closedList.back()->y+dy,pos.z)) {
-                        bool foundTarget=((closedList.back()->x+dx == rTX) && (closedList.back()->y+dy == rTY));
-
-                        if (!temp4->moveToPossible() && !foundTarget) {
-                            //std::cout << "Checking field now... X=" << closedList.back()->x+dx << " Y=" << closedList.back()->y+dy << std::endl;
-                            //std::cout << "        THE FIELD X=" << pos.x-startNode->x+closedList.back()->x+dx << " Y=" << pos.y-startNode->y+closedList.back()->y+dy << " IS BLOCKED " << std::endl;
-                            continue;   // we can't move onto that field...
-                        }
-                    }
-
-                    // This field wasn't blocked, now check if we already have it in the opened or closed list...
-                    inOpenList=false;
-                    //std::cout << "Checking field now... X=" << closedList.back()->x+dx << " Y=" << closedList.back()->y+dy << " Index: " << nodesChecked+1 << " coo-idx: " << actualIndex << std::endl;
-
-                    if (whichList[actualIndex]==1) {     // Already in openList
-                        //std::cout << "Already in openlist, sorting in now." << std::endl;
-                        // first find out this nodes node-Index:
-                        int oldNodeIndex=0;
-                        int indexInHeap=0;
-
-                        for (int j=1; j<=nodesInOpenlist; ++j) {
-                            //std::cout << "checking out node: " << j << std::endl;
-                            if ((openX[openCostHeap[j]] == closedList.back()->x+dx) && (openY[openCostHeap[j]] == closedList.back()->y+dy)) {
-                                oldNodeIndex=openCostHeap[j];       // our node has node-Index: oCH[j] and
-                                indexInHeap=j;
-                                break;
-                            }
-                        }
-
-                        //std::cout << "found position in heap..." << std::endl;
-                        if (oldNodeIndex > 0) {
-                            if (closedList.back()->cost+newCost < openCost[oldNodeIndex]) {      // if the new costs are lower, then...
-
-                                openCost[oldNodeIndex]=closedList.back()->cost+newCost;
-                                openTotalCost[oldNodeIndex]=openCost[oldNodeIndex]+9*std::max(abs(openX[oldNodeIndex]-rTX),abs(openY[oldNodeIndex]-rTY));
-                                parent[oldNodeIndex]=closedList.back();
-                                // now compare to parent and exchange if necessary:
-                                int m=indexInHeap;
-
-                                while (m != 1) {
-                                    if (openTotalCost[openCostHeap[m]] < openTotalCost[openCostHeap[m/2]]) { // costs of parent higher than changed new cost? swap!
-                                        int temp=openCostHeap[m/2];
-                                        openCostHeap[m/2]=openCostHeap[m];
-                                        openCostHeap[m]=temp;
-                                        m=m/2;
-                                    } else {
-                                        break;
-                                    }
-                                }
-
-                            }
-                        }
-
-                        //std::cout << "Done comparing stuff" << std::endl;
-                        inOpenList=true;
-                    }
-
-                    if (whichList[actualIndex]==2) {     // Already in closednList
-                        inOpenList=true;                    // ignore this one then!
-                    }
-
-                    if (!inOpenList) {                      // Luckily enough, we are dealing with a field that is not in a list already.
-                        // Good idea then to put it into the openlist to consider it later.
-
-
-                        //bool inserted=false;  // just check if it was already inserted in the middle or should be appended...             !create 382
-
-                        // Insert new node to the heap
-                        //std::cout << " (before insertion) NodesInOpenList = " << nodesInOpenlist << std::endl;
-                        nodesChecked++;
-                        nodesInOpenlist++;
-
-
-                        openCostHeap[nodesInOpenlist]=nodesChecked;
-                        openX[nodesChecked]=closedList.back()->x+dx;
-                        openY[nodesChecked]=closedList.back()->y+dy;
-                        openCost[nodesChecked]=closedList.back()->cost+newCost;
-                        openTotalCost[nodesChecked]=closedList.back()->cost+newCost+9*std::max(abs(openX[nodesChecked]-rTX),abs(openY[nodesChecked]-rTY));
-                        parent[nodesChecked]=closedList.back();
-                        whichList[actualIndex]=1;           // set to openList
-
-                        int newPos=nodesInOpenlist;
-
-                        /*
-                                                std::cout << "        START OPENLIST" << std::endl;
-                                                for (int i=1;i<=nodesInOpenlist;++i)
-                                                {
-                                                    std::cout << "            Node Index: " << openCostHeap[i] << " X=" << openX[openCostHeap[i]] << " Y=" << openY[openCostHeap[i]] << " F-Cost: " << openTotalCost[openCostHeap[i]]  << " Parent: (" << parent[openCostHeap[i]]->x << "," << parent[openCostHeap[i]]->y << ")" << std::endl;
-                                                }
-                                                std::cout << "        END OPENLIST" << std::endl;*/
-                        //std::cout << "    INSERTING in openListHeap, nodes in openList: " << nodesInOpenlist << std::endl;
-                        while (newPos!=1) {
-                            //std::cout << "        Trying position " << newPos << " with this cost: " << openTotalCost[openCostHeap[newPos]] << " and comparing to his parent with: " << openTotalCost[openCostHeap[newPos/2]] << std::endl;
-                            if (openTotalCost[openCostHeap[newPos]] <= openTotalCost[openCostHeap[newPos/2]]) {
-                                //std::cout << "        Need to exchange..." << std::endl;
-                                int temp=openCostHeap[newPos/2];
-                                openCostHeap[newPos/2]=openCostHeap[newPos];
-                                openCostHeap[newPos]=temp;
-                                newPos=newPos/2;
-                            } else {
-                                //std::cout << "        Insertion at position " << newPos << std::endl;
-                                break;
-                            }
-                        }// done inserting to the heap
-
-                        //std::cout << "    END OF INSERTING in openListHeap, nodes in openList: " << nodesInOpenlist << std::endl;
-                        //std::cout << "        START OPENLIST" << std::endl;
-                        int i;
-
-                        for (i=1; i<=nodesInOpenlist; ++i) {
-                            //std::cout << "            Node Index: " << openCostHeap[i] << " X=" << openX[openCostHeap[i]] << " Y=" << openY[openCostHeap[i]] << " F-Cost: " << openTotalCost[openCostHeap[i]]  << " Parent: (" << parent[openCostHeap[i]]->x << "," << parent[openCostHeap[i]]->y << ")" << std::endl;
-                        }
-
-                        //std::cout << "        END OPENLIST" << std::endl;
-                        secCounter++;
-
-                    }
-
-                }
-            }
-        }       // finished checking adjacent tiles and eventually putting them into the openlist
-    }
-
-    //std::cout << " !!!!!!!!!!!!!!!!!!!!!!!!!!!!DIDN'T FIND A WAY, QUITTING NOW." << std::endl;
-    // clear the lists now!
-
-    std::vector<feld *>::iterator itt;
-
-    for (itt=closedList.begin() ; itt < closedList.end(); ++itt) {
-        delete(*itt);
-    }
-
-    delete startNode;
-
-    //ret.push_back(8);
-    return ret;     // 8 means that we haven't found a path to the target!
+bool Character::getStepList(position goal, std::list<Character::direction> &steps) {
+    return pathfinding::a_star(pos, goal, steps);
 }
 
 
 
-bool Character::getNextStepDir(position tpos, int checkrange, Character::direction &dir) {
-    std::list<Character::direction> steps=this->getStepList(tpos,checkrange);
-    //std::cout << "called getNextStep()" << std::endl;
+bool Character::getNextStepDir(position goal, Character::direction &dir) {
+    std::list<Character::direction> steps;
+    
+    getStepList(goal, steps);
 
     if (!steps.empty()) {
         dir = steps.front();
-        //std::cout << "called getNextStep(): pass 1 " <<  std::endl;
         return true;
     } else {
-        //std::cout << "Empty" <<  std::endl;
         return false;
     }
 }

@@ -26,6 +26,7 @@
 #include <boost/shared_ptr.hpp>
 #include "script/LuaMonsterScript.hpp"
 #include "World.hpp"
+#include "WaypointList.hpp"
 
 std::auto_ptr<IdCounter> Monster::monsteridc;
 
@@ -48,14 +49,11 @@ Monster::Monster(const TYPE_OF_CHARACTER_ID &type, const position &newpos, Spawn
 }
 
 void Monster::performStep(position targetpos) {
-    Character::direction dir;
+    waypoints->clear();
+    waypoints->addWaypoint(targetpos);
 
-    if (getNextStepDir(targetpos, MAX_PATH_FIND, dir)) {
-        std::cout << "performStep here!   " << dir << std::endl;
-        move(dir);
-        std::cout << "performStep here! pass 1" << std::endl;
-    } else {
-        dir = static_cast<Character::direction>(Random::uniform(0, 7));
+    if (!waypoints->makeMove()) {
+        Character::direction dir = static_cast<Character::direction>(Random::uniform(0, 7));
         move(dir);
     }
 }
