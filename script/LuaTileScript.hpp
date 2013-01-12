@@ -33,7 +33,7 @@ public:
     LuaTileScript(std::string filename,TilesStruct tile) throw(ScriptException);
     virtual ~LuaTileScript() throw();
 
-    void useTile(Character *user, position pos, unsigned short int counter, unsigned int param, unsigned char ltastate);
+    void useTile(Character *user, position pos, unsigned char ltastate);
     bool actionDisturbed(Character *performer, Character *disturber);
 
 private:

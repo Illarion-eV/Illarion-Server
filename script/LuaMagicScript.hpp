@@ -33,10 +33,10 @@ public:
     LuaMagicScript(std::string filename, unsigned long int MagicFlag) throw(ScriptException);
     virtual ~LuaMagicScript() throw();
 
-    void CastMagic(Character *caster, unsigned short counter, unsigned short int param, unsigned char ltastate);
-    void CastMagicOnItem(Character *caster, ScriptItem TargetItem, unsigned short counter, unsigned short int param, unsigned char ltastate);
-    void CastMagicOnCharacter(Character *caster, Character *target, unsigned short counter, unsigned short int param, unsigned char ltastate);
-    void CastMagicOnField(Character *caster, position pos, unsigned short counter, unsigned short int param, unsigned char ltastate);
+    void CastMagic(Character *caster, unsigned char ltastate);
+    void CastMagicOnItem(Character *caster, ScriptItem TargetItem, unsigned char ltastate);
+    void CastMagicOnCharacter(Character *caster, Character *target, unsigned char ltastate);
+    void CastMagicOnField(Character *caster, position pos, unsigned char ltastate);
     bool actionDisturbed(Character *performer, Character *disturber);
 
 private:

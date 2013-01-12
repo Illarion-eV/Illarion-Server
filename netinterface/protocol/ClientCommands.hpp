@@ -92,54 +92,6 @@ enum clientcommands {
     C_CRAFTINGDIALOG_TS = 0x54
 };
 
-/**
-*simple class for storing data in a fifo implemented stack for the use commands
-*/
-class ByteStack {
-public:
-    ByteStack() : ok(true) {};
-    ~ByteStack() {
-        stack.clear();
-        paramstack.clear();
-    };
-
-    void push(unsigned char v) {
-        stack.push_back(v);
-    }
-
-    unsigned char pop() {
-        if (!stack.empty()) {
-            unsigned char ret = stack.front();
-            stack.pop_front();
-            return ret;
-        }
-
-        ok = false;
-        return 0;
-    }
-
-    void push(short int v) {
-        paramstack.push_back(v);
-    }
-
-    short int popparam() {
-        if (!paramstack.empty()) {
-            short int ret = paramstack.front();
-            paramstack.pop_front();
-            return ret;
-        }
-
-        ok = false;
-        return 0;
-    }
-
-    bool ok; //<will be false if more data wants to be red than inside the stack
-
-private:
-    std::list<unsigned char>stack;
-    std::list<short int>paramstack;
-};
-
 class InputDialogTS : public BasicClientCommand {
 private:
     unsigned int dialogId;
@@ -475,8 +427,6 @@ public:
         yc = 0;
         zc = 0;
         pos = 0;
-        paramtemp = 0;
-        counter = 0;
         showcase = 0;
 
     }
@@ -502,14 +452,9 @@ public:
         case UID_INV:
             pos = getUnsignedCharFromBuffer();
             break;
-        case UID_VAR:
-            paramtemp = getShortIntFromBuffer();
-            break;
         case UID_MAGICWAND:
             break;
         }
-
-        //counter = getUnsignedCharFromBuffer();
     }
 
     void performAction(Player *player) {
@@ -824,10 +769,9 @@ public:
 
         if (LuaMageScript) {
             Logger::writeMessage("Casting","try to call magic script",false);
-            player->ltAction->setLastAction(LuaMageScript, Source, Target, counter , paramtemp, LongTimeAction::ACTION_MAGIC);
+            player->ltAction->setLastAction(LuaMageScript, Source, Target, LongTimeAction::ACTION_MAGIC);
             std::string msg;
 #ifdef World_DEBUG
-            std::cout<<"Try to call LuaMageScript with paramtemp: "<<paramtemp<<std::endl;
             std::cout<<"paramOK: "<<paramOK<<std::endl;
 #endif
 #ifdef DO_UNCONSCIOUS
@@ -840,15 +784,15 @@ public:
 
                 switch (Target.Type) {
                 case LUA_NONE:
-                    LuaMageScript->CastMagic(player,counter,paramtemp,static_cast<unsigned char>(LTS_NOLTACTION));
+                    LuaMageScript->CastMagic(player, static_cast<unsigned char>(LTS_NOLTACTION));
                     msg = "Casted spell: " + Logger::toString(spellId);
                     break;
                 case LUA_FIELD:
-                    LuaMageScript->CastMagicOnField(player,Target.pos,counter,paramtemp,static_cast<unsigned char>(LTS_NOLTACTION));
+                    LuaMageScript->CastMagicOnField(player, Target.pos, static_cast<unsigned char>(LTS_NOLTACTION));
                     msg = "Casted spell: " + Logger::toString(spellId) + " on field at pos(" + Logger::toString(Target.pos.x) + "," + Logger::toString(Target.pos.y) + "," + Logger::toString(Target.pos.z) + ")";
                     break;
                 case LUA_CHARACTER:
-                    LuaMageScript->CastMagicOnCharacter(player,Target.character,counter,paramtemp,static_cast<unsigned char>(LTS_NOLTACTION));
+                    LuaMageScript->CastMagicOnCharacter(player, Target.character, static_cast<unsigned char>(LTS_NOLTACTION));
 
                     if (Target.character->character == Character::monster) {
                         MonsterStruct monStruct;
@@ -867,11 +811,11 @@ public:
                     msg = "Casted spell: " + Logger::toString(spellId) + " on character: " + Target.character->name + "(" + Logger::toString(Target.character->id) + ")";
                     break;
                 case LUA_ITEM:
-                    LuaMageScript->CastMagicOnItem(player,Target.item,counter,paramtemp,static_cast<unsigned char>(LTS_NOLTACTION));
+                    LuaMageScript->CastMagicOnItem(player, Target.item, static_cast<unsigned char>(LTS_NOLTACTION));
                     msg = "Casted spell: " + Logger::toString(spellId) + " on item: " + Logger::toString(Target.item.getId());
                     break;
                 default:
-                    LuaMageScript->CastMagic(player,counter,paramtemp,static_cast<unsigned char>(LTS_NOLTACTION));
+                    LuaMageScript->CastMagic(player, static_cast<unsigned char>(LTS_NOLTACTION));
                     msg = "Casted spell: " + Logger::toString(spellId) + " on item: " + Logger::toString(Target.item.getId());
                     break;
                 } //Ende Switch
@@ -892,9 +836,7 @@ public:
     unsigned char showcase;
     unsigned char pos;
     short int xc,yc,zc;
-    short int paramtemp;
     unsigned char cid;
-    unsigned char counter;
     unsigned long int spellId;
 };
 
@@ -912,62 +854,34 @@ public:
     };
 
     virtual void decodeData() {
-        unsigned char count = getUnsignedCharFromBuffer();
-        bs.push(count);
+        useId = getUnsignedCharFromBuffer();
 
-        if (count > 3) {
-            Logger::writeMessage("World_Debug ", "count:" + Logger::toString(count) + " to large, set to 3!");
-            count = 3;
+        switch (useId) {
+        case UID_KOORD:
+            xc = getShortIntFromBuffer();
+            yc = getShortIntFromBuffer();
+            zc = getShortIntFromBuffer();
+            break;
+
+        case UID_SHOWC:
+            showcase = getUnsignedCharFromBuffer();
+            pos = getUnsignedCharFromBuffer();
+            break;
+
+        case UID_INV:
+            pos = getUnsignedCharFromBuffer();
+            break;
         }
-
-        for (; count > 0 ; --count) {
-            unsigned char uid = getUnsignedCharFromBuffer();
-            bs.push(uid);
-
-            switch (uid) {
-            case UID_SKILL:
-                break;
-
-            case UID_KOORD:
-                bs.push(getShortIntFromBuffer());
-                bs.push(getShortIntFromBuffer());
-                bs.push(getShortIntFromBuffer());
-                break;
-
-            case UID_SHOWC:
-                bs.push(getUnsignedCharFromBuffer());
-                bs.push(getUnsignedCharFromBuffer());
-                break;
-
-            case UID_INV:
-                bs.push(getUnsignedCharFromBuffer());
-                break;
-            case UID_VAR:
-                bs.push(getShortIntFromBuffer());
-                break;
-            }
-        }
-
-        counter = getUnsignedCharFromBuffer();
     }
 
     void performAction(Player *player) {
-        std::cout << "USE_PERFORM_START" << std::endl;
         time(&(player->lastaction));
         player->ltAction->abortAction();
-        unsigned char count = bs.pop();
 
-        if (count > 3) {
-            Logger::writeMessage("World_Debug ", "count:" + Logger::toString(count) + " to large, set to 3!");
-            count = 3;
-        }
+        Logger::writeMessage("Use", player->name + " uses something");
 
-        Logger::writeMessage("Use", player->name + " uses something, count: " + Logger::toString(static_cast<int>(count)));
-        bool first = true;
         bool paramOK = true;
-        //CScript* skript = NULL;
 
-        //Parameter fr Lua Item Scripte
         boost::shared_ptr<LuaItemScript> LuaScript;
         boost::shared_ptr<LuaNPCScript> LuaNPCScript;
         boost::shared_ptr<LuaMonsterScript> LuaMonsterScript;
@@ -976,274 +890,171 @@ public:
         CommonStruct com;
         TilesStruct Tile;
 
-        unsigned char showcase = 0;
-        unsigned char pos = 0;
-        short int xc = 0;
-        short int yc = 0;
-        short int zc = 0;
-        short int paramtemp = 0;
+        switch (useId) {
+        case UID_KOORD:
 
-        for (; count > 0; --count) {
-            unsigned char uid = bs.pop();
-            Logger::writeMessage("Use", "use ID :" + Logger::toString(static_cast<int>(uid)), false);
+            Field *temp;
 
-            switch (uid) {
-            case UID_SKILL:
-                break;
+            Logger::writeMessage("Use", "UID_KOORD",false);
+            Logger::writeMessage("Use","xc: " +Logger::toString(static_cast<int>(xc)) + " yc: " + Logger::toString(static_cast<int>(yc)) + " zc: " + Logger::toString(static_cast<int>(zc)), false);
 
-            case UID_KOORD:
-
-                Field *temp;
-                xc = static_cast<short int>(bs.popparam());
-                yc = static_cast<short int>(bs.popparam());
-                zc = static_cast<short int>(bs.popparam());
-
-                Logger::writeMessage("Use", "UID_KOORD",false);
-                Logger::writeMessage("Use","xc: " +Logger::toString(static_cast<int>(xc)) + " yc: " + Logger::toString(static_cast<int>(yc)) + " zc: " + Logger::toString(static_cast<int>(zc)), false);
-
-                if (!World::get()->GetPToCFieldAt(temp, xc, yc, zc)) {
-                    Logger::writeError("World_Debug","Use UID_KOORD field not found!");
-                    Logger::writeMessage("Use","Use UID_KOORD field not found at pos ( " + Logger::toString(static_cast<int>(xc)) + "," + Logger::toString(static_cast<int>(yc)) + "," + Logger::toString(static_cast<int>(zc)) + ")");
-                    paramOK = false;
-                } else {
-                    // Feld gefunden
-                    //Prfen ob sich irgendeine art Char auf dem Feld befindet (Spaeter nur noch IsCharOnField vorerst noch alle Arten pruefen
-                    if (temp->IsPlayerOnField() || temp->IsNPCOnField() || temp->IsMonsterOnField()) {
-                        Logger::writeMessage("Use", "Character on field found!", false);
-                        Character *tmpCharacter = World::get()->findCharacterOnField(xc, yc, zc);
-
-                        if (tmpCharacter != NULL) {
-                            //Zuweisen des Targets fr LuaScripte wenn ParamOK true ist, ein LuaScriptGeladen wurden und es nicht der erste Durchgang ist
-                            if (!first && paramOK && (LuaScript || LuaMonsterScript || LuaNPCScript || LuaTileScript)) {
-                                Target.pos = position(xc, yc, zc);
-                                Target.character = tmpCharacter;
-                                Target.Type = LUA_CHARACTER;
-                            } //Wenn kein Luascript geladen ist oder es der erste durchgang ist.
-                            else if (tmpCharacter->character == Character::player) {
-                                Logger::writeMessage("Use","Character is a player!",false);
-
-                                if (first) {
-                                    //TODO Add Playerrace scripts
-                                }
-                            }// end tmpCharacter->type == Character::player
-                            else if (tmpCharacter->character == Character::npc) {
-                                Logger::writeMessage("Use","Character is a NPC!", false);
-
-                                if (first) {
-                                    NPC *scriptNPC = dynamic_cast<NPC *>(tmpCharacter);
-                                    LuaNPCScript = scriptNPC->getScript();
-
-                                    if (LuaNPCScript) {
-                                        Source.pos = scriptNPC->pos;
-                                        Source.character = scriptNPC;
-                                        Source.Type = LUA_CHARACTER;
-                                    }
-                                }
-                            }// end else if ( tmpCharacter->type == Character::NPC )
-                            else if (tmpCharacter->character == Character::monster) {
-                                Logger::writeMessage("Use","Character is a monster!",false);
-
-                                if (first) {
-                                    Monster *scriptMonster = dynamic_cast<Monster *>(tmpCharacter);
-                                    MonsterStruct monStruct;
-
-                                    if (MonsterDescriptions->find(scriptMonster->getType(),monStruct)) {
-                                        LuaMonsterScript = monStruct.script;
-                                    } else {
-                                        Logger::writeError("World_Debug","try to use Monster but id: " + Logger::toString(scriptMonster->getType()) +" not found in database!");
-                                        Logger::writeMessage("Use","try to use Monster but id: " + Logger::toString(scriptMonster->getType()) +" not found in database!", false);
-                                    }
-
-                                    if (LuaMonsterScript) {
-                                        Source.pos = scriptMonster->pos;
-                                        Source.character = scriptMonster;
-                                        Source.Type = LUA_CHARACTER;
-                                    }
-                                }
-                            }//end if ( tmpCharacter->type == Character::Monster )
-                        } else {
-                            Logger::writeError("World_Debug", "Character on field (" + Logger::toString(xc) + "," + Logger::toString(yc) + "," + Logger::toString(zc) + ") not found!");
-                            Logger::writeMessage("Use", "Character on field (" + Logger::toString(xc) + "," + Logger::toString(yc) + "," + Logger::toString(zc) + ") not found!", false);
-                        }
-                    } //end  temp->IsPlayerOnField() || temp->IsNPCOnField() || temp->IsMonsterOnField()
-                    else {
-                        Logger::writeMessage("Use","no character on field!", false);
-                        Item it;
-
-                        if (temp->ViewTopItem(it)) {
-                            Logger::writeMessage("Use","Item on field", false);
-
-                            if (first) {
-                                LuaScript = CommonItems->findScript(it.getId());
-
-                                if (LuaScript) {
-                                    Source.Type = LUA_ITEM;
-                                    temp->ViewTopItem(Source.item);
-                                    Source.item.pos = position(xc, yc, zc); //Position des SourceItems
-                                    Source.item.type = ScriptItem::it_field; //Position des SourceItems
-                                    Source.item.owner = player; //Owner des Items
-                                    Source.pos = position(xc, yc, zc);
-                                    first = false;
-                                }
-                            } else if (LuaScript || LuaMonsterScript || LuaNPCScript || LuaTileScript) {
-                                Target.Type = LUA_ITEM;
-                                temp->ViewTopItem(Target.item);
-                                Target.item.pos = position(xc, yc, zc);
-                                Target.item.type = ScriptItem::it_field;
-                                Target.item.owner = player;
-                                Target.pos = position(xc, yc, zc);
-                            }
-                        } else {
-                            Logger::writeMessage("Use","empty field!",false);
-
-                            if (first) {
-
-                                if (Tiles->find(temp->getTileId(),Tile)) {
-                                    LuaTileScript = Tile.script;
-                                }
-
-                                if (LuaTileScript) {
-                                    Source.Type = LUA_FIELD;
-                                    Source.pos = position(xc, yc, zc);
-                                    first = false;
-                                }
-                            } else if (LuaScript || LuaMonsterScript || LuaNPCScript || LuaTileScript) {
-                                Target.Type = LUA_FIELD;
-                                Target.pos = position(xc, yc, zc);
-                            }
-                        }
-                    }
-                }
-
-                break;
-
-            case UID_SHOWC:
-
-                showcase = bs.pop();
-                pos = bs.pop();
-                Logger::writeMessage("Use", "showcase: " + Logger::toString(static_cast<int>(showcase)) + " pos: " + Logger::toString(static_cast<int>(pos)),false);
-
-                if (player->isShowcaseOpen(showcase)) {
-                    Container *ps = player->getShowcaseContainer(showcase);
-
-                    if (ps != NULL) {
-                        Logger::writeMessage("Use", "Container gefunden!", false);
-                        ScriptItem tempi;
-                        Container *tempc;
-
-                        if (ps->viewItemNr(pos, tempi, tempc)) {
-                            Logger::writeMessage("Use", "pos found item id: " + Logger::toString(tempi.getId()),false);
-
-                            if (first) {
-                                LuaScript = CommonItems->findScript(tempi.getId());
-
-                                if (LuaScript) {
-                                    Source.Type = LUA_ITEM;
-                                    ps->viewItemNr(pos, Source.item, tempc);
-                                    Source.item.pos = position(xc, yc, zc);
-                                    Source.item.type = ScriptItem::it_container;
-                                    Source.item.itempos = pos;
-                                    Source.item.owner = player;
-                                    Source.item.inside = ps;
-                                    Source.pos = position(xc, yc, zc);
-                                    first = false;
-                                }
-                            } else if (LuaScript || LuaMonsterScript || LuaNPCScript || LuaTileScript) {
-                                Target.Type = LUA_ITEM;
-                                ps->viewItemNr(pos, Target.item, tempc);
-                                Target.pos = player->pos;
-                                Target.item.pos = position(xc, yc, zc);
-                                Target.item.type = ScriptItem::it_container;
-                                Target.item.inside = ps;
-                                Target.item.itempos = pos;
-                                Target.item.owner = player;
-                            }
-                        } else {
-                            paramOK = false;
-                        }
-                    } else {
-                        paramOK = false;
-                    }
-                } else {
-                    paramOK = false;
-                }
-
-                break;
-
-            case UID_INV:
-
-                pos = bs.pop();
-
-                if (pos < (MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
-                    Logger::writeMessage("Use", "position approved!",false);
-
-                    if (player->characterItems[ pos ].getId() != 0) {
-                        Logger::writeMessage("Use","at position " + Logger::toString(static_cast<int>(pos)) + " on body, is an item with id: " + Logger::toString(player->characterItems[ pos ].getId()),false);
-
-                        if (first) {
-
-                            LuaScript = CommonItems->findScript(player->characterItems[ pos ].getId()) ;
-
-                            if (LuaScript) {
-                                Source.Type = LUA_ITEM;
-                                Source.item = (ScriptItem)player->characterItems[ pos ];
-                                Source.item.pos = player->pos;
-
-                                if (pos < MAX_BODY_ITEMS) {
-                                    Source.item.type = ScriptItem::it_inventory;
-                                } else {
-                                    Source.item.type = ScriptItem::it_belt;
-                                }
-
-                                Source.item.itempos = pos;
-                                Source.item.owner = player;
-                                Source.pos = player->pos;
-
-                                first = false;
-                            }
-                        } else if (LuaScript || LuaMonsterScript || LuaNPCScript || LuaTileScript) {
-                            Target.Type = LUA_ITEM;
-                            Target.item = (ScriptItem)player->characterItems[ pos ];
-                            Target.item.pos = player->pos;
-
-                            if (pos < MAX_BODY_ITEMS) {
-                                Target.item.type = ScriptItem::it_inventory;
-                            } else {
-                                Target.item.type = ScriptItem::it_belt;
-                            }
-
-                            Target.item.itempos = pos;
-                            Target.item.owner = player;
-                            Target.pos = player->pos;
-                            first = false;
-                        }
-                    } else {
-                        paramOK = false;
-                    }
-                } else {
-                    paramOK = false;
-                }
-
-                break;
-
-            case UID_VAR:
-                paramtemp = bs.popparam();
-                Logger::writeMessage("Use","received menu event " + Logger::toString(static_cast<int>(paramtemp)),false);
-                break;
-
-            default:
-
+            if (!World::get()->GetPToCFieldAt(temp, xc, yc, zc)) {
+                Logger::writeError("World_Debug","Use UID_KOORD field not found!");
+                Logger::writeMessage("Use","Use UID_KOORD field not found at pos ( " + Logger::toString(static_cast<int>(xc)) + "," + Logger::toString(static_cast<int>(yc)) + "," + Logger::toString(static_cast<int>(zc)) + ")");
                 paramOK = false;
-                break;
+            } else {
+                // Feld gefunden
+                //Prfen ob sich irgendeine art Char auf dem Feld befindet (Spaeter nur noch IsCharOnField vorerst noch alle Arten pruefen
+                if (temp->IsPlayerOnField() || temp->IsNPCOnField() || temp->IsMonsterOnField()) {
+                    Logger::writeMessage("Use", "Character on field found!", false);
+                    Character *tmpCharacter = World::get()->findCharacterOnField(xc, yc, zc);
+
+                    if (tmpCharacter != NULL) {
+                        if (tmpCharacter->character == Character::player) {
+                            Logger::writeMessage("Use","Character is a player!",false);
+                        } else if (tmpCharacter->character == Character::npc) {
+                            Logger::writeMessage("Use","Character is a NPC!", false);
+
+                            NPC *scriptNPC = dynamic_cast<NPC *>(tmpCharacter);
+                            LuaNPCScript = scriptNPC->getScript();
+
+                            if (LuaNPCScript) {
+                                Source.pos = scriptNPC->pos;
+                                Source.character = scriptNPC;
+                                Source.Type = LUA_CHARACTER;
+                            }
+                        } else if (tmpCharacter->character == Character::monster) {
+                            Logger::writeMessage("Use","Character is a monster!",false);
+
+                            Monster *scriptMonster = dynamic_cast<Monster *>(tmpCharacter);
+                            MonsterStruct monStruct;
+
+                            if (MonsterDescriptions->find(scriptMonster->getType(),monStruct)) {
+                                LuaMonsterScript = monStruct.script;
+                            } else {
+                                Logger::writeError("World_Debug","try to use Monster but id: " + Logger::toString(scriptMonster->getType()) +" not found in database!");
+                                Logger::writeMessage("Use","try to use Monster but id: " + Logger::toString(scriptMonster->getType()) +" not found in database!", false);
+                            }
+
+                            if (LuaMonsterScript) {
+                                Source.pos = scriptMonster->pos;
+                                Source.character = scriptMonster;
+                                Source.Type = LUA_CHARACTER;
+                            }
+                        }
+                    } else {
+                        Logger::writeError("World_Debug", "Character on field (" + Logger::toString(xc) + "," + Logger::toString(yc) + "," + Logger::toString(zc) + ") not found!");
+                        Logger::writeMessage("Use", "Character on field (" + Logger::toString(xc) + "," + Logger::toString(yc) + "," + Logger::toString(zc) + ") not found!", false);
+                    }
+                }
+                else {
+                    Logger::writeMessage("Use","no character on field!", false);
+                    Item it;
+
+                    if (temp->ViewTopItem(it)) {
+                        Logger::writeMessage("Use","Item on field", false);
+
+                        LuaScript = CommonItems->findScript(it.getId());
+
+                        if (LuaScript) {
+                            Source.Type = LUA_ITEM;
+                            temp->ViewTopItem(Source.item);
+                            Source.item.pos = position(xc, yc, zc); //Position des SourceItems
+                            Source.item.type = ScriptItem::it_field; //Position des SourceItems
+                            Source.item.owner = player; //Owner des Items
+                            Source.pos = position(xc, yc, zc);
+                        }
+                    } else {
+                        Logger::writeMessage("Use","empty field!",false);
+                            
+                        if (Tiles->find(temp->getTileId(),Tile)) {
+                            LuaTileScript = Tile.script;
+                        }
+
+                        if (LuaTileScript) {
+                            Source.Type = LUA_FIELD;
+                            Source.pos = position(xc, yc, zc);
+                        }
+                    }
+                }
             }
-        }
 
-        if (!bs.ok) {
-            std::cout<<"error while popping for use events!"<<std::endl;
+            break;
+
+        case UID_SHOWC:
+            Logger::writeMessage("Use", "showcase: " + Logger::toString(static_cast<int>(showcase)) + " pos: " + Logger::toString(static_cast<int>(pos)),false);
+
+            if (player->isShowcaseOpen(showcase)) {
+                Container *ps = player->getShowcaseContainer(showcase);
+
+                if (ps != NULL) {
+                    Logger::writeMessage("Use", "Container gefunden!", false);
+                    ScriptItem tempi;
+                    Container *tempc;
+
+                    if (ps->viewItemNr(pos, tempi, tempc)) {
+                        Logger::writeMessage("Use", "pos found item id: " + Logger::toString(tempi.getId()),false);
+
+                        LuaScript = CommonItems->findScript(tempi.getId());
+
+                        if (LuaScript) {
+                            Source.Type = LUA_ITEM;
+                            ps->viewItemNr(pos, Source.item, tempc);
+                            Source.item.pos = position(xc, yc, zc);
+                            Source.item.type = ScriptItem::it_container;
+                            Source.item.itempos = pos;
+                            Source.item.owner = player;
+                            Source.item.inside = ps;
+                            Source.pos = position(xc, yc, zc);
+                        }
+                    } else {
+                        paramOK = false;
+                    }
+                } else {
+                    paramOK = false;
+                }
+            } else {
+                paramOK = false;
+            }
+
+            break;
+
+        case UID_INV:
+            if (pos < (MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
+                Logger::writeMessage("Use", "position approved!",false);
+
+                if (player->characterItems[ pos ].getId() != 0) {
+                    Logger::writeMessage("Use","at position " + Logger::toString(static_cast<int>(pos)) + " on body, is an item with id: " + Logger::toString(player->characterItems[ pos ].getId()),false);
+
+                    LuaScript = CommonItems->findScript(player->characterItems[ pos ].getId()) ;
+
+                    if (LuaScript) {
+                        Source.Type = LUA_ITEM;
+                        Source.item = (ScriptItem)player->characterItems[ pos ];
+                        Source.item.pos = player->pos;
+
+                        if (pos < MAX_BODY_ITEMS) {
+                            Source.item.type = ScriptItem::it_inventory;
+                        } else {
+                            Source.item.type = ScriptItem::it_belt;
+                        }
+
+                        Source.item.itempos = pos;
+                        Source.item.owner = player;
+                        Source.pos = player->pos;
+                    }
+                } else {
+                    paramOK = false;
+                }
+            } else {
+                paramOK = false;
+            }
+
+            break;
+        default:
             paramOK = false;
+            break;
         }
-
-        Logger::writeMessage("Use", "received counter parameter: " + Logger::toString(static_cast<int>(counter)),false) ;
 
         Logger::writeMessage("Use_Scripts",""); //Insert time only
         Logger::writeMessage("Use_Scripts","=========Use Script Start=============",false);
@@ -1260,7 +1071,7 @@ public:
         std::string msg;
 
         if (LuaScript) {
-            player->ltAction->setLastAction(LuaScript, Source, Target, counter , paramtemp, LongTimeAction::ACTION_USE);
+            player->ltAction->setLastAction(LuaScript, Source, Target, LongTimeAction::ACTION_USE);
 #ifdef DO_UNCONSCIOUS
 
             if ((paramOK) && player->IsAlive() && player->IsConscious())
@@ -1269,13 +1080,13 @@ public:
 #endif
             {
 
-                if (Source.Type == LUA_ITEM && (Target.Type == LUA_ITEM || Target.Type == LUA_NONE)) {
-                    LuaScript->UseItem(player, Source.item, Target.item, counter, static_cast<TYPE_OF_ITEM_ID>(paramtemp), static_cast<unsigned char>(LTS_NOLTACTION));
+                if (Source.Type == LUA_ITEM) {
+                    LuaScript->UseItem(player, Source.item, static_cast<unsigned char>(LTS_NOLTACTION));
                     msg = "Used Item: " + Logger::toString(Source.item.getId()) + " with item: " + Logger::toString(Target.item.getId());
                 }
             }
         } else if (LuaNPCScript) {
-            player->ltAction->setLastAction(LuaNPCScript, Source, Target, counter , paramtemp, LongTimeAction::ACTION_USE);
+            player->ltAction->setLastAction(LuaNPCScript, Source, Target, LongTimeAction::ACTION_USE);
 #ifdef DO_UNCONSCIOUS
 
             if ((paramOK) && player->IsAlive() && cp->IsConscious())
@@ -1284,13 +1095,13 @@ public:
 #endif
             {
                 if (Source.Type == LUA_CHARACTER && (Target.Type == LUA_NONE)) {
-                    LuaNPCScript->useNPC(player, counter, static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION));
+                    LuaNPCScript->useNPC(player, static_cast<unsigned char>(LTS_NOLTACTION));
                     msg = "Used NPC: " + Source.character->name + "(" + Logger::toString(Source.character->id) + ")";
                 }
             }
 
         } else if (LuaMonsterScript) {
-            player->ltAction->setLastAction(LuaMonsterScript, Source, Target, counter , paramtemp, LongTimeAction::ACTION_USE);
+            player->ltAction->setLastAction(LuaMonsterScript, Source, Target, LongTimeAction::ACTION_USE);
 #ifdef DO_UNCONSCIOUS
 
             if ((paramOK) && player->IsAlive() && player->IsConscious())
@@ -1299,12 +1110,12 @@ public:
 #endif
             {
                 if (Source.Type == LUA_CHARACTER && (Target.Type == LUA_NONE)) {
-                    LuaMonsterScript->useMonster(Source.character,player,counter,static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION));
+                    LuaMonsterScript->useMonster(Source.character, player, static_cast<unsigned char>(LTS_NOLTACTION));
                     msg = "Used Monster: " + Source.character->name + "(" + Logger::toString(Source.character->id) + ")";
                 }
             }
         } else if (LuaTileScript) {
-            player->ltAction->setLastAction(LuaTileScript, Source, Target, counter , paramtemp, LongTimeAction::ACTION_USE);
+            player->ltAction->setLastAction(LuaTileScript, Source, Target, LongTimeAction::ACTION_USE);
 #ifdef DO_UNCONSCIOUS
 
             if ((paramOK) && player->IsAlive() && player->IsConscious())
@@ -1313,7 +1124,7 @@ public:
 #endif
             {
                 if (Source.Type == LUA_FIELD && Target.Type == LUA_NONE) {
-                    LuaTileScript->useTile(player,Source.pos,counter,static_cast<TYPE_OF_ITEM_ID>(paramtemp),static_cast<unsigned char>(LTS_NOLTACTION));
+                    LuaTileScript->useTile(player, Source.pos, static_cast<unsigned char>(LTS_NOLTACTION));
                 }
             }
         }
@@ -1328,8 +1139,12 @@ public:
         return cmd;
     }
 
-    unsigned char counter;
-    ByteStack bs;
+    unsigned char useId;
+    unsigned char showcase;
+    unsigned char pos;
+    short int xc;
+    short int yc;
+    short int zc;
 };
 
 /**

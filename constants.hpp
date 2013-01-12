@@ -262,10 +262,6 @@ const uint32_t MONSTER_BASE = 0xFE000000;
 
 //-------------- Client to Server ---------------------
 
-//ParameterID's for use
-//! folgender Wert ist Skill (ID oder String?) (im moment noch nicht implementiert)
-#define UID_SKILL 0x00
-
 //! folgender Wert ist relative x und y Koordinaten eines Items/Bodenplatte/Charakters
 #define UID_KOORD 0x01
 
@@ -274,9 +270,6 @@ const uint32_t MONSTER_BASE = 0xFE000000;
 
 //! folgender Wert ist Inventory Position
 #define UID_INV 0x03
-
-//! Variabler Parameter (wird ans Skript durchgereicht)
-#define UID_VAR 0x04
 
 //! Eine Person wird benutzt
 #define UID_PERSON 0x05

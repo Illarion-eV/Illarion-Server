@@ -38,9 +38,9 @@ void LuaItemScript::init_functions() {
     globals["thisItem"] = _comstr;
 }
 
-void LuaItemScript::UseItem(Character *User, ScriptItem SourceItem, ScriptItem TargetItem, unsigned short counter, unsigned short int param, unsigned char ltastate) {
+void LuaItemScript::UseItem(Character *User, ScriptItem SourceItem, unsigned char ltastate) {
     fuse_ptr<Character> fuse_User(User);
-    callEntrypoint("UseItem", fuse_User, SourceItem, TargetItem, counter, param, ltastate);
+    callEntrypoint("UseItem", fuse_User, SourceItem, ltastate);
 }
 
 bool LuaItemScript::actionDisturbed(Character *performer, Character *disturber) {

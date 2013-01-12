@@ -64,10 +64,10 @@ void LuaMonsterScript::onCasted(Character *Monster, Character *caster) {
     callEntrypoint("onCasted", fuse_Monster, fuse_caster);
 }
 
-void LuaMonsterScript::useMonster(Character *Monster, Character *user, unsigned short int counter, unsigned short int param, unsigned char ltastate) {
+void LuaMonsterScript::useMonster(Character *Monster, Character *user, unsigned char ltastate) {
     fuse_ptr<Character> fuse_Monster(Monster);
     fuse_ptr<Character> fuse_user(user);
-    callEntrypoint("useMonster", fuse_Monster, fuse_user, counter, param, ltastate);
+    callEntrypoint("useMonster", fuse_Monster, fuse_user, ltastate);
 }
 
 bool LuaMonsterScript::actionDisturbed(Character *performer, Character *disturber) {

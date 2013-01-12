@@ -38,7 +38,7 @@ public:
     LuaItemScript(std::string filename, CommonStruct comstr) throw(ScriptException);
     virtual ~LuaItemScript() throw();
 
-    void UseItem(Character *User, ScriptItem SourceItem, ScriptItem TargetItem, unsigned short counter, unsigned short int param, unsigned char ltastate);
+    void UseItem(Character *User, ScriptItem SourceItem, unsigned char ltastate);
     bool actionDisturbed(Character *performer, Character *disturber);
     void LookAtItem(Character *who,ScriptItem t_item);
     bool MoveItemBeforeMove(Character *who, ScriptItem sourceItem, ScriptItem targetItem);

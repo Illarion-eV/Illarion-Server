@@ -85,11 +85,9 @@ public:
     *@param script the script for the last action
     *@param srce the source object for the last action so we can determine if it was an item at which pos etc
     *@param trgt the target object for the last action so we can determine if it was an item at which pos etc
-    *@param counter the current counter value of the last action
-    *@param param the param value of the last action
     *@param at the type of action lastly performed (cast or use)
     */
-    void setLastAction(boost::shared_ptr<LuaScript> script, SouTar srce, SouTar trgt, unsigned short int counter, unsigned short int param, ActionType at);
+    void setLastAction(boost::shared_ptr<LuaScript> script, SouTar srce, SouTar trgt, ActionType at);
 
     /**
     *starts an long time action which is aborted if the player talks, is attacked ....
@@ -198,8 +196,6 @@ private:
     MilTimer *_redosoundTimer;  /**< timer which determines how many ms the sound is played again.*/
 
     ActionType _at; /**< type of the action @see ActionType*/
-    unsigned char _counter; /**< the counter value of the last action*/
-    unsigned short int _param; /**< the param value of the last action*/
 
     unsigned short int _sound; /**< id of the sound which is played to the action*/
     unsigned short int _ani; /**< id of the animation which is shown to the action*/

@@ -35,25 +35,25 @@ void LuaMagicScript::init_functions() {
     globals["thisSpell"] = _MagicFlag;
 }
 
-void LuaMagicScript::CastMagic(Character *caster, unsigned short counter, unsigned short int param, unsigned char ltastate) {
+void LuaMagicScript::CastMagic(Character *caster, unsigned char ltastate) {
     fuse_ptr<Character> fuse_caster(caster);
-    callEntrypoint("CastMagic", fuse_caster, counter, param, ltastate);
+    callEntrypoint("CastMagic", fuse_caster, ltastate);
 }
 
-void LuaMagicScript::CastMagicOnCharacter(Character *caster, Character *target, unsigned short counter, unsigned short int param, unsigned char ltastate) {
+void LuaMagicScript::CastMagicOnCharacter(Character *caster, Character *target, unsigned char ltastate) {
     fuse_ptr<Character> fuse_caster(caster);
     fuse_ptr<Character> fuse_target(target);
-    callEntrypoint("CastMagicOnCharacter", fuse_caster, fuse_target, counter, param, ltastate);
+    callEntrypoint("CastMagicOnCharacter", fuse_caster, fuse_target, ltastate);
 }
 
-void LuaMagicScript::CastMagicOnField(Character *caster, position pos, unsigned short counter, unsigned short int param, unsigned char ltastate) {
+void LuaMagicScript::CastMagicOnField(Character *caster, position pos, unsigned char ltastate) {
     fuse_ptr<Character> fuse_caster(caster);
-    callEntrypoint("CastMagicOnField", fuse_caster, pos, counter, param, ltastate);
+    callEntrypoint("CastMagicOnField", fuse_caster, pos, ltastate);
 }
 
-void LuaMagicScript::CastMagicOnItem(Character *caster, ScriptItem TargetItem, unsigned short counter, unsigned short int param, unsigned char ltastate) {
+void LuaMagicScript::CastMagicOnItem(Character *caster, ScriptItem TargetItem, unsigned char ltastate) {
     fuse_ptr<Character> fuse_caster(caster);
-    callEntrypoint("CastMagicOnItem", fuse_caster, TargetItem, counter, param, ltastate);
+    callEntrypoint("CastMagicOnItem", fuse_caster, TargetItem, ltastate);
 }
 
 bool LuaMagicScript::actionDisturbed(Character *performer, Character *disturber) {
