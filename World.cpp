@@ -783,37 +783,39 @@ void World::checkMonsters() {
     }
 
     while (monsterIterator < Monsters.end()) {
-        if ((*monsterIterator)->IsAlive()) {
+        Monster &monster = **monsterIterator;
+
+        if (monster.IsAlive()) {
             // monster alive
-            (*monsterIterator)->actionPoints += ap;
-            (*monsterIterator)->fightPoints += ap;
+            monster.actionPoints += ap;
+            monster.fightPoints += ap;
 
-            if ((*monsterIterator)->actionPoints > NP_MAX_AP) {         // too many AP
-                (*monsterIterator)->actionPoints = NP_MAX_AP;
+            if (monster.actionPoints > NP_MAX_AP) {         // too many AP
+                monster.actionPoints = NP_MAX_AP;
             }
 
-            if ((*monsterIterator)->fightPoints > NP_MAX_FP) {         // too many FP
-                (*monsterIterator)->fightPoints = NP_MAX_FP;
+            if (monster.fightPoints > NP_MAX_FP) {         // too many FP
+                monster.fightPoints = NP_MAX_FP;
             }
 
-            (*monsterIterator)->effects->checkEffects();
+            monster.effects->checkEffects();
 
             MonsterStruct monStruct;
-            bool foundMonster = MonsterDescriptions->find((*monsterIterator)->getType(), monStruct) ;
+            bool foundMonster = MonsterDescriptions->find(monster.getType(), monStruct) ;
 
-            if ((*monsterIterator)->actionPoints >= NP_MIN_AP) {
-                if (!(*monsterIterator)->getOnRoute()) {
+            if (monster.actionPoints >= NP_MIN_AP) {
+                if (!monster.getOnRoute()) {
                     //set lastTargetSeen to false if we reach the position where the target was seen the last time
-                    if ((*monsterIterator)->pos == (*monsterIterator)->lastTargetPosition) {
-                        (*monsterIterator)->lastTargetSeen = false;
+                    if (monster.pos == monster.lastTargetPosition) {
+                        monster.lastTargetSeen = false;
                     }
 
                     // enough AP
                     //searh for all players which can be attacked from the monster directly
 
                     //get attackrange of the weapon
-                    Item itl = (*monsterIterator)->GetItemAt(LEFT_TOOL);
-                    Item itr = (*monsterIterator)->GetItemAt(RIGHT_TOOL);
+                    Item itl = monster.GetItemAt(LEFT_TOOL);
+                    Item itr = monster.GetItemAt(RIGHT_TOOL);
 
                     WeaponStruct theWeapon;
                     uint16_t range=1;
@@ -825,14 +827,12 @@ void World::checkMonsters() {
                     }
 
                     //===============================================
-                    temp.clear();
-                    //temp = Players.findAllAliveCharactersInRangeOf(( *monsterIterator )->pos.x, ( *monsterIterator )->pos.y, ( *monsterIterator )->pos.z, range );
-                    findPlayersInSight((*monsterIterator)->pos, static_cast<uint8_t>(range), temp, (*monsterIterator)->faceto);
+                    temp = Players.findAllAliveCharactersInRangeOf(monster.pos.x, monster.pos.y, monster.pos.z, range);
                     bool has_attacked=false;
                     //If we have found players which can be attacked directly and the monster can attack
                     Player *foundP = 0;
 
-                    if ((!temp.empty()) && (*monsterIterator)->canAttack()) {
+                    if ((!temp.empty()) && monster.canAttack()) {
                         //angreifen
                         //search for the target via script or the player with the lowest hp
                         if (!monStruct.script || !monStruct.script->setTarget(*monsterIterator, temp, foundP)) {
@@ -841,16 +841,16 @@ void World::checkMonsters() {
 
                         if (foundP) {
                             //let the monster attack the player with the lowest hp->assigned this player as target
-                            (*monsterIterator)->enemyid = foundP->id;
-                            (*monsterIterator)->enemytype = Character::player;
-                            (*monsterIterator)->lastTargetPosition = foundP->pos;
-                            (*monsterIterator)->lastTargetSeen = true;
+                            monster.enemyid = foundP->id;
+                            monster.enemytype = Character::player;
+                            monster.lastTargetPosition = foundP->pos;
+                            monster.lastTargetSeen = true;
 
                             if (foundMonster) {
                                 //check if we have a pointer to a script
                                 if (monStruct.script) {
                                     //Wenn Scriptaufruf erfolgreich den aktuellen schleifenablauf abbrechen.
-                                    if (monStruct.script->enemyNear((*monsterIterator) ,foundP)) {
+                                    if (monStruct.script->enemyNear(*monsterIterator, foundP)) {
                                         continue; //Schleife fr dieses Monster abbrechen. Da es schon etwas diesne Schleifendurchlauf getan hat.
                                     }
                                 }
@@ -859,9 +859,9 @@ void World::checkMonsters() {
                             }
 
                             //attack the player which we have found
-                            (*monsterIterator)->turn(foundP->pos);
+                            monster.turn(foundP->pos);
 
-                            if ((*monsterIterator)->fightPoints >= NP_MIN_FP) {    // enough FP to fight?
+                            if (monster.fightPoints >= NP_MIN_FP) {    // enough FP to fight?
                                 has_attacked = characterAttacks(*monsterIterator);
                             } else {
                                 has_attacked = true;
@@ -870,13 +870,11 @@ void World::checkMonsters() {
                     }
 
                     if (!has_attacked) { //bewegen
-                        temp.clear();
-                        findPlayersInSight((*monsterIterator)->pos, static_cast<uint8_t>(9), temp, (*monsterIterator)->faceto);
-                        //temp = Players.findAllAliveCharactersInRangeOf( ( *monsterIterator )->pos.x, ( *monsterIterator )->pos.y, ( *monsterIterator )->pos.z, 9 );
+                        temp = Players.findAllAliveCharactersInRangeOf(monster.pos.x, monster.pos.y, monster.pos.z, 15);
 
                         bool makeRandomStep=true;
 
-                        if ((!temp.empty()) && ((*monsterIterator)->canAttack())) {
+                        if ((!temp.empty()) && (monster.canAttack())) {
                             Player *foundP2 = 0;
 
                             //search for the target via script or the player with the lowest hp
@@ -885,28 +883,28 @@ void World::checkMonsters() {
                             }
 
                             if (foundP2) {  // if the script returned a valid character...
-                                (*monsterIterator)->lastTargetSeen = true;
-                                (*monsterIterator)->lastTargetPosition = foundP2->pos;
+                                monster.lastTargetSeen = true;
+                                monster.lastTargetPosition = foundP2->pos;
 
                                 //Call enemyNear Script when enemy found
                                 if (foundMonster) {
                                     if (monStruct.script) {
                                         //Wenn Scriptaufruf erfolgreich den aktuellen schleifenablauf abbrechen.
-                                        if (monStruct.script->enemyOnSight((*monsterIterator) ,foundP2)) {
+                                        if (monStruct.script->enemyOnSight(*monsterIterator, foundP2)) {
                                             continue; //abort all other walking actions because the script has returned TRUE
                                         }
                                     }
 
                                     makeRandomStep=false;
-                                    (*monsterIterator)->performStep(foundP2->pos);
+                                    monster.performStep(foundP2->pos);
                                 } else {
                                     Logger::writeMessage("Monster","cant find the monster id for calling a script!");
                                 }
 
                             }
-                        } else if ((*monsterIterator)->lastTargetSeen) {
+                        } else if (monster.lastTargetSeen) {
                             makeRandomStep=false;
-                            (*monsterIterator)->performStep((*monsterIterator)->lastTargetPosition);
+                            monster.performStep(monster.lastTargetPosition);
                         }
 
                         if (makeRandomStep) {
@@ -917,30 +915,30 @@ void World::checkMonsters() {
                                 MonsterStruct monsterdef;
 
                                 //Monsterdefinition suchen
-                                if (MonsterDescriptions->find((*monsterIterator)->getType() , monsterdef)) {
+                                if (MonsterDescriptions->find(monster.getType() , monsterdef)) {
                                     if (monsterdef.canselfheal) {
-                                        (*monsterIterator)->heal();
+                                        monster.heal();
                                     }
                                 } else {
-                                    Logger::writeError("Monster","Data for Healing not Found for monsterrace: " + Logger::toString((*monsterIterator)->getType()));
+                                    Logger::writeError("Monster","Data for Healing not Found for monsterrace: " + Logger::toString(monster.getType()));
                                 }
                             } else {
-                                SpawnPoint *spawn = (*monsterIterator)->getSpawn();
+                                SpawnPoint *spawn = monster.getSpawn();
 
                                 Character::direction dir = (Character::direction)Random::uniform(0,7);
 
                                 if (spawn) {
-                                    int yoffs = (*monsterIterator)->pos.y - spawn->get_y();
-                                    int xoffs = (*monsterIterator)->pos.x - spawn->get_x();
+                                    int yoffs = monster.pos.y - spawn->get_y();
+                                    int xoffs = monster.pos.x - spawn->get_x();
 
                                     if (abs(xoffs) > spawn->getRange() || abs(yoffs) > spawn->getRange()) {
                                         // monster out of spawn range, remove it from spawn
-                                        (*monsterIterator)->setSpawn(NULL);
-                                        unsigned int type = (*monsterIterator)->getType();
+                                        monster.setSpawn(NULL);
+                                        unsigned int type = monster.getType();
                                         spawn->dead(type);
                                     }
 
-                                    position newpos = (*monsterIterator)->pos;
+                                    position newpos = monster.pos;
                                     newpos.x += moveSteps[ dir ][ 0 ];
                                     newpos.y += moveSteps[ dir ][ 1 ];
                                     newpos.z += moveSteps[ dir ][ 2 ];
@@ -999,18 +997,18 @@ void World::checkMonsters() {
                                     }
                                 }
 
-                                (*monsterIterator)->move(dir);
+                                monster.move(dir);
 
                                 // movementrate below normal if noone is near
-                                (*monsterIterator)->actionPoints -= 20;
+                                monster.actionPoints -= 20;
                                 //std::cout << "Bewege Monster zuf�lig" << std::endl;
                             }
                         }
                     }//angreifen/bewegen
                 } else { //Character is on route
                     //get attackrange of the weapon
-                    Item itl = (*monsterIterator)->GetItemAt(LEFT_TOOL);
-                    Item itr = (*monsterIterator)->GetItemAt(RIGHT_TOOL);
+                    Item itl = monster.GetItemAt(LEFT_TOOL);
+                    Item itr = monster.GetItemAt(RIGHT_TOOL);
 
                     WeaponStruct theWeapon;
                     uint16_t range=1;
@@ -1022,8 +1020,7 @@ void World::checkMonsters() {
                     }
 
                     //===============================================
-                    temp.clear();
-                    findPlayersInSight((*monsterIterator)->pos, static_cast<uint8_t>(range), temp, (*monsterIterator)->faceto);
+                    temp = Players.findAllAliveCharactersInRangeOf(monster.pos.x, monster.pos.y, monster.pos.z, range);
 
                     //If we have found players which can be attacked directly and the monster can attack
                     if (!temp.empty()) {
@@ -1033,7 +1030,7 @@ void World::checkMonsters() {
                         //search for the player with the lowes hp
                         if (findPlayerWithLowestHP(&temp, foundP)) {
                             if (foundMonster && monStruct.script) {
-                                monStruct.script->enemyNear((*monsterIterator) ,foundP);
+                                monStruct.script->enemyNear(*monsterIterator, foundP);
                             } else {
                                 Logger::writeError("Monster","cant find a monster id for checking the script!");
                             }
@@ -1042,8 +1039,7 @@ void World::checkMonsters() {
                     }
 
                     //check if there is a player on sight
-                    temp.clear();
-                    findPlayersInSight((*monsterIterator)->pos, static_cast<uint8_t>(9), temp, (*monsterIterator)->faceto);
+                    temp = Players.findAllAliveCharactersInRangeOf(monster.pos.x, monster.pos.y, monster.pos.z, 15);
 
                     if (!temp.empty()) {
                         Player *foundP;
@@ -1051,18 +1047,18 @@ void World::checkMonsters() {
                         if (findPlayerWithLowestHP(&temp, foundP)) {
                             //Call enemyNear Script when enemy found
                             if (foundMonster && monStruct.script) {
-                                monStruct.script->enemyOnSight((*monsterIterator) ,foundP);
+                                monStruct.script->enemyOnSight(*monsterIterator, foundP);
                             }
 
                             //else Logger::writeMessage("Monster","cant find the monster id for calling a script!");
                         }
                     }
 
-                    if (!(*monsterIterator)->waypoints->makeMove()) {
-                        (*monsterIterator)->setOnRoute(false);
+                    if (!monster.waypoints->makeMove()) {
+                        monster.setOnRoute(false);
 
                         if (foundMonster && monStruct.script) {
-                            monStruct.script->abortRoute((*monsterIterator));
+                            monStruct.script->abortRoute(*monsterIterator);
                         } else {
                             Logger::writeMessage("Monster","cant find the monster id for calling a script!");
                         }

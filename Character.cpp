@@ -152,7 +152,7 @@ bool Character::getStepList(position goal, std::list<Character::direction> &step
 
 bool Character::getNextStepDir(position goal, Character::direction &dir) {
     std::list<Character::direction> steps;
-    
+
     getStepList(goal, steps);
 
     if (!steps.empty()) {

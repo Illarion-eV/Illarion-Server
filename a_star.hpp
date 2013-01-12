@@ -22,23 +22,32 @@ using namespace boost;
 typedef std::pair<int, int> Position;
 Position character_moves[8] = {Position(0, -1), Position(1, -1), Position(1, 0), Position(1, 1), Position(0, 1), Position(-1, 1), Position(-1, 0), Position(-1, -1)};
 unordered_map<Position, Character::direction> character_directions = assign::map_list_of
-    (Position(0, -1), Character::dir_north)
-    (Position(1, -1), Character::dir_northeast)
-    (Position(1, 0), Character::dir_east)
-    (Position(1, 1), Character::dir_southeast)
-    (Position(0, 1), Character::dir_south)
-    (Position(-1, 1), Character::dir_southwest)
-    (Position(-1, 0), Character::dir_west)
-    (Position(-1, -1), Character::dir_northwest);
+        (Position(0, -1), Character::dir_north)
+        (Position(1, -1), Character::dir_northeast)
+        (Position(1, 0), Character::dir_east)
+        (Position(1, 1), Character::dir_southeast)
+        (Position(0, 1), Character::dir_south)
+        (Position(-1, 1), Character::dir_southwest)
+        (Position(-1, 0), Character::dir_west)
+        (Position(-1, -1), Character::dir_northwest);
 
 struct world_map_graph;
 
-struct character_out_edge_iterator: public boost::forward_iterator_helper<character_out_edge_iterator, Position, std::ptrdiff_t, Position*, Position> {
+struct character_out_edge_iterator: public boost::forward_iterator_helper<character_out_edge_iterator, Position, std::ptrdiff_t, Position *, Position> {
     character_out_edge_iterator() {}
-    character_out_edge_iterator(int i, Position p, const world_map_graph &g): position(p), graph(&g), direction(i) {valid_step();}
-    std::pair<Position, Position> operator*() const {return std::make_pair(position, Position(position.first + character_moves[direction].first, position.second + character_moves[direction].second));}
-    void operator++() {++direction; valid_step();}
-    bool operator==(const character_out_edge_iterator& iterator) const {return direction == iterator.direction;}
+    character_out_edge_iterator(int i, Position p, const world_map_graph &g): position(p), graph(&g), direction(i) {
+        valid_step();
+    }
+    std::pair<Position, Position> operator*() const {
+        return std::make_pair(position, Position(position.first + character_moves[direction].first, position.second + character_moves[direction].second));
+    }
+    void operator++() {
+        ++direction;
+        valid_step();
+    }
+    bool operator==(const character_out_edge_iterator &iterator) const {
+        return direction == iterator.direction;
+    }
 
 protected:
     void valid_step();
@@ -61,11 +70,12 @@ struct world_map_graph {
     typedef directed_tag directed_category;
     typedef disallow_parallel_edge_tag edge_parallel_category;
     typedef incidence_graph_tag traversal_category;
-    world_map_graph(int min_x, int min_y, int max_x, int max_y, int level): map_min_x(min_x), map_min_y(min_y), map_max_x(max_x), map_max_y(max_y), level(level) {}
+    world_map_graph(int min_x, int min_y, int max_x, int max_y, Position goal, int level): map_min_x(min_x), map_min_y(min_y), map_max_x(max_x), map_max_y(max_y), goal(goal), level(level) {}
     int map_min_x;
     int map_min_y;
     int map_max_x;
     int map_max_y;
+    Position goal;
     int level;
 };
 
@@ -78,7 +88,7 @@ void character_out_edge_iterator::valid_step() {
                              new_pos.first > graph->map_max_x ||
                              new_pos.second > graph->map_max_y ||
                              new_field == 0 ||
-                             !new_field->moveToPossible())) {
+                             !(new_field->moveToPossible() || new_pos == graph->goal))) {
         ++direction;
         new_pos = Position(position.first + character_moves[direction].first, position.second + character_moves[direction].second);
         new_field = World::get()->GetField(::position(new_pos.first, new_pos.second, graph->level));
@@ -106,9 +116,11 @@ out_degree(world_map_graph::vertex_descriptor v, const world_map_graph &g) {
     typedef world_map_graph::out_edge_iterator Iterator;
     world_map_graph::degree_size_type count = 0;
     Iterator end(8, v, g);
+
     for (Iterator it(0, v, g); it != end; ++it) {
         ++count;
     }
+
     return count;
 }
 
@@ -142,9 +154,17 @@ struct weight_calc {
     Cost operator()(T e) const {
         auto v = e.second;
         Field *field = World::get()->GetField(::position(v.first, v.second, level));
-        if (!field) return 1;
+
+        if (!field) {
+            return 1;
+        }
+
         auto tileId = field->getTileId();
-        if (!Tiles->find(tileId, tempTile)) return 1;
+
+        if (!Tiles->find(tileId, tempTile)) {
+            return 1;
+        }
+
         return tempTile.walkingCost;
     }
 private:
@@ -175,12 +195,13 @@ struct found_goal {};
 struct astar_ex_visitor: public boost::default_astar_visitor {
     astar_ex_visitor(Position goal): goal(goal) {};
 
-    void examine_vertex(Position u, const world_map_graph&) {
-        if (u == goal)
+    void examine_vertex(Position u, const world_map_graph &) {
+        if (u == goal) {
             throw found_goal();
+        }
     }
 
-    void discover_vertex(Position u, const world_map_graph&) {
+    void discover_vertex(Position u, const world_map_graph &) {
         //std::cout << "discover (" << u.first << ", " << u.second << ")" << std::endl;
     }
 
@@ -190,41 +211,43 @@ private:
 
 class dist_map: public boost::unordered_map<Position, Cost, vertex_hash> {
 public:
-    mapped_type& operator[](key_type const& k) {
+    mapped_type &operator[](key_type const &k) {
         if (find(k) == end()) {
             insert(std::make_pair(k, std::numeric_limits<Cost>::max()));
         }
+
         return at(k);
     }
 };
 
 class pred_map: public boost::unordered_map<Position, Position, vertex_hash> {
 public:
-    mapped_type& operator[](key_type const& k) {
+    mapped_type &operator[](key_type const &k) {
         if (find(k) == end()) {
             insert(std::make_pair(k, k));
         }
+
         return at(k);
     }
 };
 
 bool a_star(::position &start_pos, ::position &goal_pos, std::list<Character::direction> &steps) {
     steps.clear();
-    
+
     if (start_pos.z != goal_pos.z || start_pos == goal_pos) {
         return false;
     }
-    
+
     typedef graph_traits<world_map_graph>::vertex_descriptor vertex;
     typedef graph_traits<world_map_graph>::edge_descriptor edge;
 
-    world_map_graph g(start_pos.x - 50, start_pos.y - 50, goal_pos.x + 50, goal_pos.y + 50, goal_pos.z);
     vertex start(start_pos.x, start_pos.y);
     vertex goal(goal_pos.x, goal_pos.y);
+    world_map_graph g(start_pos.x - 50, start_pos.y - 50, start_pos.x + 50, start_pos.y + 50, goal, goal_pos.z);
 
     distance_heuristic h(goal);
     h(start);
-    
+
     //static_property_map<Cost> weight(1);
     function_property_map<weight_calc<edge>, edge, Cost> weight(goal_pos.z);
 
@@ -245,10 +268,11 @@ bool a_star(::position &start_pos, ::position &goal_pos, std::list<Character::di
 
     try {
         astar_search_no_init(g, start, h, weight_map(weight).rank_map(rank_pmap).
-            vertex_index_map(index).predecessor_map(pred_pmap).distance_map(dist_pmap).visitor(visitor));
+                             vertex_index_map(index).predecessor_map(pred_pmap).distance_map(dist_pmap).visitor(visitor));
     } catch (found_goal fg) {
         vertex v = goal;
         vertex pre = predecessor[v];
+
         while (v != pre) {
             int dx = v.first - pre.first;
             int dy = v.second - pre.second;
