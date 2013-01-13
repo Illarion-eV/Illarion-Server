@@ -70,11 +70,7 @@ struct world_map_graph {
     typedef directed_tag directed_category;
     typedef disallow_parallel_edge_tag edge_parallel_category;
     typedef incidence_graph_tag traversal_category;
-    world_map_graph(int min_x, int min_y, int max_x, int max_y, Position goal, int level): map_min_x(min_x), map_min_y(min_y), map_max_x(max_x), map_max_y(max_y), goal(goal), level(level) {}
-    int map_min_x;
-    int map_min_y;
-    int map_max_x;
-    int map_max_y;
+    world_map_graph(Position goal, int level): goal(goal), level(level) {}
     Position goal;
     int level;
 };
@@ -83,11 +79,7 @@ void character_out_edge_iterator::valid_step() {
     Position new_pos(position.first + character_moves[direction].first, position.second + character_moves[direction].second);
     Field *new_field = World::get()->GetField(::position(new_pos.first, new_pos.second, graph->level));
 
-    while (direction < 8 && (new_pos.first < graph->map_min_x ||
-                             new_pos.second < graph->map_min_y ||
-                             new_pos.first > graph->map_max_x ||
-                             new_pos.second > graph->map_max_y ||
-                             new_field == 0 ||
+    while (direction < 8 && (new_field == 0 ||
                              !(new_field->moveToPossible() || new_pos == graph->goal))) {
         ++direction;
         new_pos = Position(position.first + character_moves[direction].first, position.second + character_moves[direction].second);
@@ -125,7 +117,7 @@ out_degree(world_map_graph::vertex_descriptor v, const world_map_graph &g) {
 }
 
 int num_vertices(const world_map_graph &g) {
-    return (g.map_max_x - g.map_min_x + 1) * (g.map_max_y - g.map_min_y + 1);
+    return 1000;
 }
 
 typedef float Cost;
@@ -175,10 +167,18 @@ private:
 template <typename T>
 struct vertex_index_hash {
     typedef int result_type;
-    vertex_index_hash() {}
+    vertex_index_hash(): discovery_hash(0) {}
     int operator()(T v) const {
-        return v.second * 10 + v.first;
+        int &id = discovery_hash[v];
+        if (id == 0) {
+            id = ++discovery_counter;
+        }
+        return id;
     }
+
+private:
+    mutable unordered_map<Position, int> discovery_hash;
+    mutable int discovery_counter;
 };
 
 struct vertex_hash : std::unary_function<Position, std::size_t> {
@@ -191,9 +191,10 @@ struct vertex_hash : std::unary_function<Position, std::size_t> {
 };
 
 struct found_goal {};
+struct not_found {};
 
 struct astar_ex_visitor: public boost::default_astar_visitor {
-    astar_ex_visitor(Position goal): goal(goal) {};
+    astar_ex_visitor(Position goal): goal(goal), node_counter(0) {};
 
     void examine_vertex(Position u, const world_map_graph &) {
         if (u == goal) {
@@ -202,11 +203,15 @@ struct astar_ex_visitor: public boost::default_astar_visitor {
     }
 
     void discover_vertex(Position u, const world_map_graph &) {
-        //std::cout << "discover (" << u.first << ", " << u.second << ")" << std::endl;
+        ++node_counter;
+        if (node_counter > 400) {
+            throw not_found();
+        }
     }
 
 private:
     Position goal;
+    int node_counter;
 };
 
 class dist_map: public boost::unordered_map<Position, Cost, vertex_hash> {
@@ -243,7 +248,7 @@ bool a_star(::position &start_pos, ::position &goal_pos, std::list<Character::di
 
     vertex start(start_pos.x, start_pos.y);
     vertex goal(goal_pos.x, goal_pos.y);
-    world_map_graph g(start_pos.x - 50, start_pos.y - 50, start_pos.x + 50, start_pos.y + 50, goal, goal_pos.z);
+    world_map_graph g(goal, goal_pos.z);
 
     distance_heuristic h(goal);
     h(start);
@@ -262,7 +267,7 @@ bool a_star(::position &start_pos, ::position &goal_pos, std::list<Character::di
     rank[start] = h(start);
     boost::associative_property_map<dist_map> rank_pmap(rank);
 
-    const function_property_map<vertex_index_hash<vertex>, vertex, int> index;
+    function_property_map<vertex_index_hash<vertex>, vertex, int> index;
 
     astar_ex_visitor visitor(goal);
 
@@ -284,6 +289,8 @@ bool a_star(::position &start_pos, ::position &goal_pos, std::list<Character::di
         }
 
         return true;
+    } catch (not_found nf) {
+        return false;
     }
 
     return false;
