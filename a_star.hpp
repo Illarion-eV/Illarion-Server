@@ -164,23 +164,6 @@ private:
     mutable TilesStruct tempTile;
 };
 
-template <typename T>
-struct vertex_index_hash {
-    typedef int result_type;
-    vertex_index_hash(): discovery_hash(0) {}
-    int operator()(T v) const {
-        int &id = discovery_hash[v];
-        if (id == 0) {
-            id = ++discovery_counter;
-        }
-        return id;
-    }
-
-private:
-    mutable unordered_map<Position, int> discovery_hash;
-    mutable int discovery_counter;
-};
-
 struct vertex_hash : std::unary_function<Position, std::size_t> {
     std::size_t operator()(Position const &u) const {
         std::size_t seed = 0;
@@ -192,6 +175,26 @@ struct vertex_hash : std::unary_function<Position, std::size_t> {
 
 struct found_goal {};
 struct not_found {};
+
+template <typename T>
+struct vertex_index_hash {
+    typedef int result_type;
+    vertex_index_hash(): discovery_counter(0) {}
+    int operator()(T v) const {
+        int &id = discovery_hash[v];
+        if (id == 0) {
+            id = ++discovery_counter;
+        }
+        if (id > 400) {
+            throw not_found();
+        }
+        return id;
+    }
+
+private:
+    mutable unordered_map<Position, int, vertex_hash> discovery_hash;
+    mutable int discovery_counter;
+};
 
 struct astar_ex_visitor: public boost::default_astar_visitor {
     astar_ex_visitor(Position goal): goal(goal), node_counter(0) {};
