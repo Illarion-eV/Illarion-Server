@@ -946,8 +946,7 @@ public:
                         Logger::writeError("World_Debug", "Character on field (" + Logger::toString(xc) + "," + Logger::toString(yc) + "," + Logger::toString(zc) + ") not found!");
                         Logger::writeMessage("Use", "Character on field (" + Logger::toString(xc) + "," + Logger::toString(yc) + "," + Logger::toString(zc) + ") not found!", false);
                     }
-                }
-                else {
+                } else {
                     Logger::writeMessage("Use","no character on field!", false);
                     Item it;
 
@@ -966,7 +965,7 @@ public:
                         }
                     } else {
                         Logger::writeMessage("Use","empty field!",false);
-                            
+
                         if (Tiles->find(temp->getTileId(),Tile)) {
                             LuaTileScript = Tile.script;
                         }
@@ -1020,6 +1019,7 @@ public:
             break;
 
         case UID_INV:
+
             if (pos < (MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
                 Logger::writeMessage("Use", "position approved!",false);
 

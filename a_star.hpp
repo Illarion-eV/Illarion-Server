@@ -182,12 +182,15 @@ struct vertex_index_hash {
     vertex_index_hash(): discovery_counter(0) {}
     int operator()(T v) const {
         int &id = discovery_hash[v];
+
         if (id == 0) {
             id = ++discovery_counter;
         }
+
         if (id > 400) {
             throw not_found();
         }
+
         return id;
     }
 
@@ -207,6 +210,7 @@ struct astar_ex_visitor: public boost::default_astar_visitor {
 
     void discover_vertex(Position u, const world_map_graph &) {
         ++node_counter;
+
         if (node_counter > 400) {
             throw not_found();
         }
