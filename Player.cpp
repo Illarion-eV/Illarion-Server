@@ -60,10 +60,6 @@
 
 //#define PLAYER_MOVE_DEBUG
 
-template<> const std::string toString(const unsigned char &convertme) {
-    return toString((unsigned short)convertme);
-}
-
 Player::Player(boost::shared_ptr<NetInterface> newConnection) throw(Player::LogoutException)
     : Character(), onlinetime(0), Connection(newConnection),
       turtleActive(false), clippingActive(true), admin(false), dialogCounter(0) {

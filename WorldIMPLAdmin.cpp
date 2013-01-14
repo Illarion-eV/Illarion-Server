@@ -47,7 +47,6 @@
 #include "script/LuaLearnScript.hpp"
 #include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
-#include <boost/algorithm/string/replace.hpp>
 #include "data/LongTimeEffectTable.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "netinterface/NetInterface.hpp"
@@ -1782,88 +1781,8 @@ bool World::exportMaps(Player *cp) {
         return false;
     }
 
-    std::string exportdir = directory + std::string(MAPDIR) + "export/";
-    int16_t minX, minY;
-
-    for (MapVector::iterator mapIt = maps.begin(); mapIt != maps.end(); ++mapIt) {
-        minX = (*mapIt)->GetMinX();
-        minY = (*mapIt)->GetMinY();
-        // create base filename
-        std::string filebase = exportdir + "e_" + toString(minX) + "_" + toString(minY) + "_" + toString((*mapIt)->Z_Level) + ".";
-        // export fields file
-        std::ofstream fieldsf((filebase + "tiles.txt").c_str());
-        // export items file
-        std::ofstream itemsf((filebase + "items.txt").c_str());
-        // export warps file
-        std::ofstream warpsf((filebase + "warps.txt").c_str());
-
-        if (!fieldsf.good() || !itemsf.good() || !warpsf.good()) {
-            std::cerr << "could not open output files for item export: " << std::endl;
-            std::cerr << filebase << "tiles.txt" << std::endl;
-            std::cerr << filebase << "items.txt" << std::endl;
-            std::cerr << filebase << "warps.txt" << std::endl;
-            return false;
-        }
-
-        // export tiles header
-        fieldsf << "V: 2" << std::endl;
-        fieldsf << "L: " << (*mapIt)->Z_Level << std::endl;
-        fieldsf << "X: " << minX << std::endl;
-        fieldsf << "Y: " << minY << std::endl;
-        fieldsf << "W: " << (*mapIt)->GetWidth() << std::endl;
-        fieldsf << "H: " << (*mapIt)->GetHeight() << std::endl;
-
-        // iterate over the map and export...
-        short int x, y;
-
-        for (y = minY; y <= (*mapIt)->GetMaxY(); ++y) {
-            for (x = minX; x <= (*mapIt)->GetMaxX(); ++x) {
-                Field field;
-
-                if ((*mapIt)->GetCFieldAt(field, x, y)) {
-                    fieldsf << x-minX << ";" << y-minY << ";" << field.getTileCode() << ";" << field.getMusicId() << std::endl;
-
-                    if (field.IsWarpField()) {
-                        position target;
-                        field.GetWarpField(target);
-                        warpsf << x-minX << ";" << y-minY << ";" << target.x << ";" << target.y << ";" << target.z << std::endl;
-                    }
-
-                    ITEMVECTOR itemsv;
-                    field.giveExportItems(itemsv);
-
-                    for (auto it = itemsv.cbegin(); it != itemsv.cend(); ++it) {
-                        itemsf << x-minX << ";" << y-minY << ";" << it->getId() << ";" << it->getQuality();
-
-                        for (auto dataIt = it->getDataBegin(); dataIt != it->getDataEnd(); ++dataIt) {
-                            using boost::algorithm::replace_all;
-
-                            std::string key = dataIt->first;
-                            std::string value = dataIt->second;
-
-                            replace_all(key, "\\", "\\\\");
-                            replace_all(key, "=", "\\=");
-                            replace_all(key, ";", "\\;");
-                            replace_all(value, "\\", "\\\\");
-                            replace_all(value, "=", "\\=");
-                            replace_all(value, ";", "\\;");
-
-                            itemsf << ";" << key << "=" << value;
-                        }
-
-                        itemsf << std::endl;
-                    }
-                }
-            }
-        }
-
-        fieldsf.close();
-        itemsf.close();
-        warpsf.close();
-
-    }
-
-    return true;
+    std::string exportDir = directory + std::string(MAPDIR) + "export/";
+    return maps.exportTo(exportDir);
 }
 
 void World::removeTeleporter(Player *cp, const std::string &ts) {

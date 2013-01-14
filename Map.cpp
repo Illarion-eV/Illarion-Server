@@ -665,7 +665,17 @@ void Map::ageItemsInHorizontalRange(short int xstart, short int xend) {
 
 }
 
+void Map::ageContainers() {
+    for (auto it = maincontainers.begin(); it != maincontainers.end(); ++it) {
+        auto container = it->second;
 
+        for (auto content = container.begin(); content != container.end(); ++content) {
+            if (content->second != NULL) {
+                content->second->doAge();
+            }
+        }
+    }
+}
 
 void Map::ApplyToCFields_XFromTo(short int xstart, short int xend, Field::FIELD_FUNCT funct) {
 

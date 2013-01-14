@@ -124,6 +124,7 @@ public:
     bool PutCFieldAt(Field &fi, short int x, short int y);
 
     void ageItemsInHorizontalRange(short int xstart, short int xend);
+    void ageContainers();
 
     //! wendet die Funktion funct auf alle Field der Karte mit X-Koordinate von xstart bis xend an
     // \param xstart kleinste bearbeitete X-Koordinate (Koordinaten im Feld, keine logischen der Karte)

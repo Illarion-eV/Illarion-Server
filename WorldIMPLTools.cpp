@@ -773,22 +773,7 @@ bool World::DoAge() {
             nextXtoage = maps.getLowX();
 
             AgeInventory();
-
-            Map::CONTAINERHASH::iterator conmap;
-            Container::CONTAINERMAP::iterator cmi;
-
-            // f�r alle Karten die Containerinhalte altern
-            for (MapVector::iterator mapI = maps.begin(); mapI < maps.end(); ++mapI) {
-                // alle ContainerMap auf dem Feld
-                for (conmap = (*mapI)->maincontainers.begin(); conmap != (*mapI)->maincontainers.end(); ++conmap) {
-                    // Containerinhalt altern
-                    for (cmi = (*conmap).second.begin(); cmi != (*conmap).second.end(); ++cmi) {
-                        if ((*cmi).second != NULL) {
-                            (*cmi).second->doAge();
-                        }
-                    }
-                }
-            }
+            maps.ageContainers();
         } else {
             return false;
         }
@@ -865,39 +850,9 @@ void World::saveAllPlayerNamesToFile(std::string name) {
 
 
 void World::Save(std::string prefix) {
-
-    char mname[ 200 ];
     prefix = directory + std::string(MAPDIR) + prefix;
 
-    std::ofstream mapinitfile((prefix + "_initmaps").c_str(), std::ios::binary | std::ios::out | std::ios::trunc);
-
-    if (! mapinitfile.good()) {
-#ifdef World_DEBUG
-        std::cerr << "World::Save: Fehler beim Speichern der Karten, konnte initmaps nicht erstellen" << std::endl;
-#endif
-
-    } else {
-        unsigned short int size = maps.size();
-        std::cout << "World::Save: speichere " << size << " Karten" << std::endl;
-        mapinitfile.write((char *) & size, sizeof(size));
-
-        for (MapVector::iterator mapI = maps.begin(); mapI != maps.end(); ++mapI) {
-            mapinitfile.write((char *) & (*mapI)->Z_Level, sizeof((*mapI)->Z_Level));
-            mapinitfile.write((char *) & (*mapI)->Min_X, sizeof((*mapI)->Min_X));
-            mapinitfile.write((char *) & (*mapI)->Min_Y, sizeof((*mapI)->Min_Y));
-
-            mapinitfile.write((char *) & (*mapI)->Width, sizeof((*mapI)->Width));
-            mapinitfile.write((char *) & (*mapI)->Height, sizeof((*mapI)->Height));
-
-            mapinitfile.write((char *) & (*mapI)->disappears, sizeof((*mapI)->disappears));
-
-            sprintf(mname, "%s_%6d_%6d_%6d", prefix.c_str(), (*mapI)->Z_Level, (*mapI)->Min_X, (*mapI)->Min_Y);
-            (*mapI)->Save(mname);
-        }
-
-        mapinitfile.close();
-    }
-
+    maps.saveToDisk(prefix);
 
     std::ofstream specialfile((prefix + "_specialfields").c_str(), std::ios::binary | std::ios::out | std::ios::trunc);
 

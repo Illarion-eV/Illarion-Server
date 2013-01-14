@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef MAPVECTOR_HH
-#define MAPVECTOR_HH
+#ifndef MAPVECTOR_HPP
+#define MAPVECTOR_HPP
 
 #include <vector>
 #include "globals.hpp"
@@ -31,12 +31,9 @@ class Map;
 //! eine std::vector-Klasse für Map-Objekte.
 // Die Klasse erweitert die Funktionalität von std::vector um
 // Map - spezifische Suchfunktionen
-class MapVector : private std::vector < Map * > {
+class MapVector {
 public:
-    using std::vector < Map * >::iterator;
-    using std::vector < Map * >::begin;
-    using std::vector < Map * >::end;
-    using std::vector < Map * >::size;
+    typedef std::vector<Map *> map_vector_t;
 
     MapVector();
 
@@ -88,10 +85,12 @@ public:
     // \return true falls eine Karte gefunden wurde, false sonst
     bool findLowestMapOverCharacter(position pos, Map* &lowmap);
 
-    //! fügt eine Map in den std::vector ein und aktualisiert low_X und high_X
-    // \param newMap die einzufügende Map
-    // \return true falls die Map eingefügt werden konnte, false sonst
     bool InsertMap(Map *newMap);
+
+    void ageContainers();
+
+    bool exportTo(const std::string &exportDir) const;
+    void saveToDisk(const std::string &prefix) const;
 
     short int getLowX() {
         return lowX;
@@ -101,10 +100,8 @@ public:
     };
 
 private:
-    //! die kleinste X-Koordinate aller Map im std::vector
+    map_vector_t maps;
     short int lowX;
-
-    //! die großte X-Koordinate aller Map im std::vector
     short int highX;
 };
 #endif

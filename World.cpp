@@ -559,11 +559,6 @@ bool World::load_from_editor(std::string filename) {
 World::~World() {
     Logger::writeMessage("World_Debug","World Destruktor Start");
 
-    for (MapVector::iterator mapit = maps.begin(); mapit != maps.end(); ++mapit) {
-        delete(*mapit);
-        (*mapit) = NULL;
-    }
-
     delete monstertimer;
     monstertimer = NULL;
     delete npctimer;

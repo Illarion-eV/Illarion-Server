@@ -626,14 +626,5 @@ private:
     DialogMap dialogs;
 };
 
-// Binary to std::string conversions
-template<class from>
-const std::string toString(const from &convert) {
-    std::stringstream stream;
-    stream << convert;
-    return stream.str();
-}
-
-template<> const std::string toString(const unsigned char &convertme);
-
 #endif
+
