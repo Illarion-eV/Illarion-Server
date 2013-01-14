@@ -17,25 +17,25 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "MapVector.hpp"
+#include "WorldMap.hpp"
 #include "Map.hpp"
 
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/replace.hpp>
 
-MapVector::MapVector() {
+WorldMap::WorldMap() {
     lowX = 32767;
     highX = -32768;
 }
 
-void MapVector::clear() {
+void WorldMap::clear() {
     maps.clear();
 
     lowX = 32767;
     highX = -32768;
 }
 
-bool MapVector::mapInRangeOf(short int upperleft_X, short int upperleft_Y, unsigned short int sizex, unsigned short int sizey, short int z) const {
+bool WorldMap::mapInRangeOf(short int upperleft_X, short int upperleft_Y, unsigned short int sizex, unsigned short int sizey, short int z) const {
     short int downright_X = upperleft_X + sizex - 1;
     short int downright_Y = upperleft_Y + sizey - 1;
 
@@ -61,7 +61,7 @@ bool MapVector::mapInRangeOf(short int upperleft_X, short int upperleft_Y, unsig
 
 
 
-bool MapVector::findAllMapsInRangeOf(char rnorth, char rsouth, char reast, char rwest, position pos, MapVector::map_vector_t &ret) const {
+bool WorldMap::findAllMapsInRangeOf(char rnorth, char rsouth, char reast, char rwest, position pos, WorldMap::map_vector_t &ret) const {
     bool found_one = false;
 
     short int upperleft_X = pos.x - rwest;
@@ -86,7 +86,7 @@ bool MapVector::findAllMapsInRangeOf(char rnorth, char rsouth, char reast, char 
 
 
 
-bool MapVector::findAllMapsWithXInRangeOf(short int start, short int end, MapVector::map_vector_t &ret) const {
+bool WorldMap::findAllMapsWithXInRangeOf(short int start, short int end, WorldMap::map_vector_t &ret) const {
     bool found_one = false;
 
     for (auto thisIterator = maps.begin(); thisIterator < maps.end(); ++thisIterator) {
@@ -101,7 +101,7 @@ bool MapVector::findAllMapsWithXInRangeOf(short int start, short int end, MapVec
 
 
 
-bool MapVector::findMapForPos(short int x, short int y, short int z, MapVector::map_t &map) const {
+bool WorldMap::findMapForPos(short int x, short int y, short int z, WorldMap::map_t &map) const {
     for (auto thisIterator = maps.begin(); thisIterator < maps.end(); ++thisIterator) {
         if (z == (*thisIterator)->Z_Level) {
             if (((*thisIterator)->Max_X >= x) && ((*thisIterator)->Min_X <= x)) {
@@ -119,13 +119,13 @@ bool MapVector::findMapForPos(short int x, short int y, short int z, MapVector::
 
 
 
-bool MapVector::findMapForPos(position pos, MapVector::map_t &map) const {
+bool WorldMap::findMapForPos(position pos, WorldMap::map_t &map) const {
     return findMapForPos(pos.x, pos.y, pos.z, map);
 }
 
 
 
-bool MapVector::findLowestMapOverCharacter(position pos, MapVector::map_t &lowmap) const {
+bool WorldMap::findLowestMapOverCharacter(position pos, WorldMap::map_t &lowmap) const {
     bool found_one = false;
 
     int ret = NOTHING;
@@ -144,7 +144,7 @@ bool MapVector::findLowestMapOverCharacter(position pos, MapVector::map_t &lowma
 }
 
 
-bool MapVector::InsertMap(MapVector::map_t newMap) {
+bool WorldMap::InsertMap(WorldMap::map_t newMap) {
     if (newMap) {
         for (auto thisIterator = maps.begin(); thisIterator < maps.end(); ++thisIterator) {
             if ((*thisIterator) == newMap) {
@@ -168,13 +168,13 @@ bool MapVector::InsertMap(MapVector::map_t newMap) {
 
 }
 
-void MapVector::ageContainers() {
+void WorldMap::ageContainers() {
     for (auto it = maps.begin(); it != maps.end(); ++it) {
         (*it)->ageContainers();
     }
 }
 
-bool MapVector::exportTo(const std::string &exportDir) const {
+bool WorldMap::exportTo(const std::string &exportDir) const {
     for (auto mapIt = maps.begin(); mapIt != maps.end(); ++mapIt) {
         int16_t minX = (*mapIt)->GetMinX();
         int16_t minY = (*mapIt)->GetMinY();
@@ -258,7 +258,7 @@ bool MapVector::exportTo(const std::string &exportDir) const {
     return true;
 }
 
-void MapVector::saveToDisk(const std::string &prefix) const {
+void WorldMap::saveToDisk(const std::string &prefix) const {
     std::ofstream mapinitfile((prefix + "_initmaps").c_str(), std::ios::binary | std::ios::out | std::ios::trunc);
 
     if (!mapinitfile.good()) {

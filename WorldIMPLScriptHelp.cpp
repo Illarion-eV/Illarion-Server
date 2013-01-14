@@ -665,7 +665,7 @@ void World::sendMapUpdate(position pos, uint8_t range) {
 }
 
 bool World::createSavedArea(uint16_t tileid, position pos, uint16_t height, uint16_t width) {
-    MapVector::map_t dummy;
+    WorldMap::map_t dummy;
 
     for (time_t akt_x = pos.x; akt_x < pos.x+width; ++akt_x) {
         for (time_t akt_y = pos.y; akt_y < pos.y+height; ++akt_y) {
@@ -676,7 +676,7 @@ bool World::createSavedArea(uint16_t tileid, position pos, uint16_t height, uint
         }
     }
 
-    MapVector::map_t tempmap(new Map(width,height));
+    WorldMap::map_t tempmap(new Map(width,height));
     bool disappear=true;
     tempmap->Init(pos.x, pos.y, pos.z, disappear);
 

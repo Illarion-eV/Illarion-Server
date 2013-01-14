@@ -19,7 +19,7 @@
 
 #include "NewClientView.hpp"
 #include "Map.hpp"
-#include "MapVector.hpp"
+#include "WorldMap.hpp"
 #include <iostream>
 
 NewClientView::~NewClientView() {}
@@ -28,7 +28,7 @@ NewClientView::NewClientView() : viewPosition(position(0,0,0)), exists(false), s
 
 }
 
-void NewClientView::fillStripe(position pos, stripedirection dir, int length, const MapVector &maps) {
+void NewClientView::fillStripe(position pos, stripedirection dir, int length, const WorldMap &maps) {
     clearStripe();
     viewPosition = pos;
     stripedir = dir;
@@ -47,16 +47,16 @@ void NewClientView::clearStripe() {
     maxtiles = 0;
 }
 
-void NewClientView::readFields(int length, const MapVector &maps) {
+void NewClientView::readFields(int length, const WorldMap &maps) {
     int x = viewPosition.x;
     int y = viewPosition.y;
     int x_inc = (stripedir == dir_right) ? 1 : -1;
     int tmp_maxtiles = 1;
 
-    MapVector::map_vector_t good_maps;
+    WorldMap::map_vector_t good_maps;
 
     if (maps.findAllMapsInRangeOf(0, length-1, (stripedir == dir_right) ? length-1 : 0, (stripedir == dir_right) ? 0 : length-1, viewPosition, good_maps)) {
-        MapVector::map_t map;
+        WorldMap::map_t map;
 
         for (int i = 0; i < length; ++i) {
             tempCField = NULL;

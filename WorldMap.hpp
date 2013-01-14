@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef MAPVECTOR_HPP
-#define MAPVECTOR_HPP
+#ifndef _WORLDMAP_HPP_
+#define _WORLDMAP_HPP_
 
 #include <vector>
 #include <boost/shared_ptr.hpp>
@@ -27,17 +27,17 @@
 class Map;
 
 //falls nicht auskommentiert, werden mehr Bildschirmausgaben gemacht:
-/* #define MapVector_DEBUG */
+/* #define WorldMap_DEBUG */
 
 //! eine std::vector-Klasse für Map-Objekte.
 // Die Klasse erweitert die Funktionalität von std::vector um
 // Map - spezifische Suchfunktionen
-class MapVector {
+class WorldMap {
 public:
     typedef boost::shared_ptr<Map> map_t;
     typedef std::vector<map_t> map_vector_t;
 
-    MapVector();
+    WorldMap();
 
     void clear();
 

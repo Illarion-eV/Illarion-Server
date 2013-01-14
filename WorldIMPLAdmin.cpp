@@ -1740,7 +1740,7 @@ void create_area_command(World *world, Player *player,const std::string &params)
         return;
     }
 
-    MapVector::map_t tempmap(new Map(w,h));
+    WorldMap::map_t tempmap(new Map(w,h));
     bool disappear=true;
     tempmap->Init(x, y, z, disappear);
 

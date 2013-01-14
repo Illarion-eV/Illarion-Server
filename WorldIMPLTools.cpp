@@ -570,7 +570,7 @@ void World::killMonster(MONSTERVECTOR::iterator monsterIt, MONSTERVECTOR::iterat
 
 Field *World::GetField(position pos) {
     Field *field=NULL;
-    MapVector::map_t temp;
+    WorldMap::map_t temp;
 
     if (maps.findMapForPos(pos, temp)) {
         if (temp->GetPToCFieldAt(field, pos.x, pos.y)) {
@@ -586,7 +586,7 @@ Field *World::GetField(position pos) {
 
 bool World::GetPToCFieldAt(Field* &fip, short int x, short int y, short int z) {
 
-    MapVector::map_t temp;
+    WorldMap::map_t temp;
 
     if (maps.findMapForPos(x, y, z, temp)) {
         return temp->GetPToCFieldAt(fip, x, y);
@@ -599,7 +599,7 @@ bool World::GetPToCFieldAt(Field* &fip, short int x, short int y, short int z) {
 
 bool World::GetPToCFieldAt(Field* &fip, position pos) {
 
-    MapVector::map_t temp;
+    WorldMap::map_t temp;
 
     if (maps.findMapForPos(pos, temp)) {
         return temp->GetPToCFieldAt(fip, pos.x, pos.y);
@@ -610,7 +610,7 @@ bool World::GetPToCFieldAt(Field* &fip, position pos) {
 }
 
 
-bool World::GetPToCFieldAt(Field* &fip, short int x, short int y, short int z, MapVector::map_t &map) {
+bool World::GetPToCFieldAt(Field* &fip, short int x, short int y, short int z, WorldMap::map_t &map) {
 
     if (maps.findMapForPos(x, y, z, map)) {
         return map->GetPToCFieldAt(fip, x, y);
@@ -621,7 +621,7 @@ bool World::GetPToCFieldAt(Field* &fip, short int x, short int y, short int z, M
 }
 
 
-bool World::GetPToCFieldAt(Field* &fip, position pos, MapVector::map_t &map) {
+bool World::GetPToCFieldAt(Field* &fip, position pos, WorldMap::map_t &map) {
 
     if (maps.findMapForPos(pos, map)) {
         return map->GetPToCFieldAt(fip, pos.x, pos.y);
@@ -634,7 +634,7 @@ bool World::GetPToCFieldAt(Field* &fip, position pos, MapVector::map_t &map) {
 
 bool World::findEmptyCFieldNear(Field* &cf, short int &x, short int &y, short int z) {
 
-    MapVector::map_t temp;
+    WorldMap::map_t temp;
 
     if (maps.findMapForPos(x, y, z, temp)) {
         return temp->findEmptyCFieldNear(cf, x, y);
@@ -787,7 +787,7 @@ bool World::DoAge() {
         lastXtoage = maps.getHighX();
     }
 
-    MapVector::map_vector_t mapsToage;
+    WorldMap::map_vector_t mapsToage;
 
     if (maps.findAllMapsWithXInRangeOf(nextXtoage, lastXtoage, mapsToage)) {
         for (auto mapI = mapsToage.begin(); mapI < mapsToage.end(); ++mapI) {
@@ -914,7 +914,7 @@ void World::Load(std::string prefix) {
 
             mapinitfile.read((char *) & tdisappears, sizeof(tdisappears));
 
-            MapVector::map_t tempMap(new Map(tWidth, tHeight));
+            WorldMap::map_t tempMap(new Map(tWidth, tHeight));
             tempMap->Init(tMin_X, tMin_Y, tZ_Level, tdisappears);
 
             sprintf(mname, "%s_%6d_%6d_%6d", prefix.c_str(), tZ_Level, tMin_X, tMin_Y);
