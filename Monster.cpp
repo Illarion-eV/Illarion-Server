@@ -49,12 +49,19 @@ Monster::Monster(const TYPE_OF_CHARACTER_ID &type, const position &newpos, Spawn
 }
 
 void Monster::performStep(position targetpos) {
-    waypoints->clear();
-    waypoints->addWaypoint(targetpos);
+    position currentTarget;
+    bool hasTarget = waypoints->getNextWaypoint(currentTarget);
+
+    if (!(hasTarget && currentTarget == targetpos)) {
+        waypoints->clear();
+        waypoints->addWaypoint(targetpos);
+        waypoints->recalcStepList();
+    }
 
     if (!waypoints->makeMove()) {
         Character::direction dir = static_cast<Character::direction>(Random::uniform(0, 7));
         move(dir);
+        actionPoints -= 20;
     }
 }
 

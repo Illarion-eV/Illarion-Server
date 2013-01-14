@@ -64,6 +64,15 @@ void WaypointList::addWaypoint(position pos) {
     positions.push_back(pos);
 }
 
+bool WaypointList::getNextWaypoint(position &pos) const {
+    if (positions.empty()) {
+        return false;
+    }
+
+    pos = positions.front();
+    return true;
+}
+
 void WaypointList::clear() {
     positions.clear();
 }

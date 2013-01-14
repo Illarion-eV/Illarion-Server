@@ -29,58 +29,20 @@
 class WaypointList {
 public:
     static const uint8_t max_fields_for_waypoints = 12;
-
-
-
     WaypointList(Character *movechar);
-
-    /**
-    * füllt wegpunktliste mit werten aus einer lua liste
-    */
     void addFromList(const luabind::object &list);
-
-    /**
-    * Liefert eine Lua liste mit allen noch ab zu arbeitenden Wegpunkten
-    */
     luabind::object getWaypoints();
-
-    /**
-    * fügt einen einzelnen Wegpunkt hinzu
-    */
     void addWaypoint(position pos);
-
-    /**
-    * leert die Liste
-    */
+    bool getNextWaypoint(position &pos) const;
     void clear();
-
-    /**
-    * Bewegt den Character um einen Wegpunkt zu erreichen
-    * @return true wenn ein Schritt ausgeführt wurde um den Weg zu erreichen ansonsten false.
-    */
     bool makeMove();
-
-
-private:
-
-    /**
-    * ab zu arbeitende Positionen
-    */
-    std::list<position> positions;
-    Character *_movechar;
-
-    /**
-    * liste mit schritten um die nächste Position zu erreichen
-    */
-    std::list<Character::direction> steplist;
-
-    /**
-    * Prüft ob die Zielposition erreicht wurde
-    * @return true wenn eine Prüfung ok war, false wenn innerhalb einer bestimmten Anzahl von versuchen das Ziel nicht erreicht wurde
-    */
-    bool checkPosition();
     bool recalcStepList();
 
-
+private:
+    std::list<position> positions;
+    Character *_movechar;
+    std::list<Character::direction> steplist;
+    bool checkPosition();
 };
 #endif
+

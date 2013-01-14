@@ -911,17 +911,16 @@ void World::checkMonsters() {
                             // No player in range or pig/sheep OR we didn't find anything in getTarget...
                             int tempr = Random::uniform(1, 25);
 
-                            if (tempr <= 5) {
-                                MonsterStruct monsterdef;
+                            MonsterStruct monsterdef;
 
-                                //Monsterdefinition suchen
-                                if (MonsterDescriptions->find(monster.getType() , monsterdef)) {
-                                    if (monsterdef.canselfheal) {
-                                        monster.heal();
-                                    }
-                                } else {
-                                    Logger::writeError("Monster","Data for Healing not Found for monsterrace: " + Logger::toString(monster.getType()));
-                                }
+                            bool hasDefinition = MonsterDescriptions->find(monster.getType() , monsterdef);
+
+                            if (!hasDefinition) {
+                                Logger::writeError("Monster","Data for Healing not Found for monsterrace: " + Logger::toString(monster.getType()));
+                            }
+
+                            if (tempr <= 5 && hasDefinition && monsterdef.canselfheal) {
+                                monster.heal();
                             } else {
                                 SpawnPoint *spawn = monster.getSpawn();
 
