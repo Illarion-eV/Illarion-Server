@@ -1354,16 +1354,6 @@ public:
     int LoadWeight();
 
     /**
-    * checks if the character is under a map
-    */
-    bool under[ RANGEUP ];
-
-    /**
-    * checks if a character is under a Map
-    */
-    void *roofmap[ RANGEUP ];
-
-    /**
     * returns the absolut value of value
     * @param value from which we want the absolute value
     * @return the absolute value of value

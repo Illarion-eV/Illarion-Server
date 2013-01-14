@@ -21,6 +21,7 @@
 #define MAPVECTOR_HPP
 
 #include <vector>
+#include <boost/shared_ptr.hpp>
 #include "globals.hpp"
 
 class Map;
@@ -33,7 +34,8 @@ class Map;
 // Map - spezifische Suchfunktionen
 class MapVector {
 public:
-    typedef std::vector<Map *> map_vector_t;
+    typedef boost::shared_ptr<Map> map_t;
+    typedef std::vector<map_t> map_vector_t;
 
     MapVector();
 
@@ -47,7 +49,7 @@ public:
     // \param pos der Mittelpunkt des Sichtfensters
     // \param ret der Vektor mit den gefundenen Karten
     // \return true, falls mindestens eine Karte gunden wurde, false sonst
-    bool findAllMapsInRangeOf(char rnorth, char rsouth, char reast, char rwest, position pos, std::vector < Map * > &ret);
+    bool findAllMapsInRangeOf(char rnorth, char rsouth, char reast, char rwest, position pos, map_vector_t &ret) const;
 
     //! prüft, ob sich eine Map im angegebenen Bereich befindet
     // \param upperleft_X obere linke X-Koordinate
@@ -56,13 +58,13 @@ public:
     // \param sizey Höhe des Bereiches
     // \param z Z-Koordinate der Ebene
     // \return true falls siche eine Map in dem Bereich befindet
-    bool mapInRangeOf(short int upperleft_X, short int upperleft_Y, unsigned short int sizex, unsigned short int sizey, short int z);
+    bool mapInRangeOf(short int upperleft_X, short int upperleft_Y, unsigned short int sizex, unsigned short int sizey, short int z) const;
 
     //! sucht in dem std::vector nach der Map auf der pos liegt
     // \param pos die gesuchte Koordinate
     // \param map die gesucht Map, falls sie gefunden wurde
     // \return false falls keine passende Map gefunden wurde, sonst true
-    bool findMapForPos(position pos, Map* &map);
+    bool findMapForPos(position pos, map_t &map) const;
 
     //! sucht in dem std::vector nach der Map auf der (x,y,z) liegt
     // \param x die gesuchte X-Koordinate
@@ -70,32 +72,32 @@ public:
     // \param z die gesuchte Z-Koordinate
     // \param map die gesucht Map, falls sie gefunden wurde
     // \return false falls keine passende Map gefunden wurde, sonst true
-    bool findMapForPos(short int x, short int y, short int z, Map* &map);
+    bool findMapForPos(short int x, short int y, short int z, map_t &map) const;
 
     //! sucht in dem std::vector nach allen Map die die X-Koordinaten von start bis end berühren
     // \param start kleinste X-Koordinate
     // \param end größte X-Koordinate
     // \param ret ein std::vector mit Zeigern auf alle gefundenen Map
     // \return true, falls mindestens eine Map gefunden wurde, false sonst
-    bool findAllMapsWithXInRangeOf(short int start, short int end, std::vector < Map * > &ret);
+    bool findAllMapsWithXInRangeOf(short int start, short int end, map_vector_t &ret) const;
 
     //! sucht die niedrigste Karte über einer Position
     // \param pos die Position
     // \param lowmap die gefundene Karte
     // \return true falls eine Karte gefunden wurde, false sonst
-    bool findLowestMapOverCharacter(position pos, Map* &lowmap);
+    bool findLowestMapOverCharacter(position pos, map_t &lowmap) const;
 
-    bool InsertMap(Map *newMap);
+    bool InsertMap(map_t newMap);
 
     void ageContainers();
 
     bool exportTo(const std::string &exportDir) const;
     void saveToDisk(const std::string &prefix) const;
 
-    short int getLowX() {
+    short int getLowX() const {
         return lowX;
     };
-    short int getHighX() {
+    short int getHighX() const {
         return highX;
     };
 

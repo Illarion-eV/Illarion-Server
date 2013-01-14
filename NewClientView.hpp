@@ -25,11 +25,11 @@
 
 #include "globals.hpp"
 #include "constants.hpp"
+#include "MapVector.hpp"
 
 // forward declarations
 class Map;
 class Field;
-class MapVector;
 
 /**
 * class which holds isometric view specific data
@@ -122,7 +122,7 @@ public:
         * @param length number of tiles to be read
     * @param maps the maps from which we want to calculate the stripes
     */
-    void fillStripe(position pos, stripedirection dir, int length, MapVector *maps);
+    void fillStripe(position pos, stripedirection dir, int length, const MapVector &maps);
 
     /**
     * clears all current stripe infos
@@ -136,7 +136,7 @@ private:
         * @param length number of tiles to be read
     * @param maps the map vector from which we want to read the fields
     */
-    void readFields(int length, MapVector *maps);
+    void readFields(int length, const MapVector &maps);
 
     /**
     * the starting position of the current view

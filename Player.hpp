@@ -508,7 +508,6 @@ public:
     virtual bool encumberance(uint16_t &movementCost);
 
     virtual bool Warp(position newPos);
-
     virtual bool forceWarp(position newPos);
 
     virtual void openDepot(uint16_t depotid);
@@ -522,6 +521,8 @@ public:
 #endif
 
 private:
+    void handleWarp();
+
     template<class DialogType, class DialogCommandType>
     void requestDialog(DialogType *dialog) {
         if (dialog == 0) {

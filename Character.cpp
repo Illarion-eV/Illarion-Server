@@ -233,11 +233,6 @@ Character::Character() : actionPoints(P_MAX_AP),fightPoints(P_MAX_FP),waypoints(
 
     magic.flags[ DRUID ] = 0x00000000;
 
-    for (int i = 0; i < RANGEUP; ++i) {
-        under[ i ] = true;
-        roofmap[ i ] = NULL;
-    }
-
     effects = new LongTimeCharacterEffects(this);
 #ifdef Character_DEBUG
     std::cout << "Character Konstruktor Ende" << std::endl;

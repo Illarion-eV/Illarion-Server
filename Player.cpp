@@ -203,34 +203,6 @@ void Player::login() throw(Player::LogoutException) {
     pos.z=z;
     target_position->SetPlayerOnField(true);
 
-    //look if there is a tile over the player set the maps over the player
-    _world->tmap = NULL;
-    Field *testf;
-
-    for (int i = 0; i < RANGEUP; ++i) {
-        if (_world->GetPToCFieldAt(testf, pos.x, pos.y, pos.z + 1 + i, _world->tmap)) {
-            // Ebene ber der neuen Position vorhanden
-            if (((under[ i ])      // Karte wurde vorher angezeigt
-                 && (testf->getTileId() == TRANSPARENT))     // das neue Feld ber dem Spieler ist TRANSPARENT
-                || ((!under[ i ])         // Karte wurde vorher nicht angezeigt
-                    && (testf->getTileId() != TRANSPARENT))) {    // das neue Feld ber dem Spieler ist nicht TRANSPARENT
-                // Verdeckung des Spielers hat sich ge�dert
-                roofmap[ i ] = _world->tmap;
-                under[ i ] = (testf->getTileId() != TRANSPARENT);
-            } else if (_world->tmap != roofmap[ i ]) {
-                // Spieler steht unter einer anderen Karte, ohne da�sich die Verdeckung
-                // ge�dert hat
-                roofmap[ i ] = _world->tmap;
-                under[ i ] = (testf->getTileId() != TRANSPARENT);
-            }
-        } else {
-            // Spieler war vorher verdeckt, jetzt nicht mehr
-            roofmap[ i ] = NULL;
-            under[ i ] = false;
-        }
-
-    }
-
     sendWeather(_world->weather);
 
     // send player login data
@@ -1963,53 +1935,7 @@ bool Player::Warp(position newPos) {
     bool warped = Character::Warp(newPos);
 
     if (warped) {
-        //look if there is a tile over the player set the maps over the player
-        closeAllShowcasesOfMapContainers();
-        _world->tmap = NULL;
-        bool update = false;
-        Field *testf;
-
-        for (int i = 0; i < RANGEUP; ++i) {
-            if (_world->GetPToCFieldAt(testf, pos.x, pos.y, pos.z + 1 + i, _world->tmap)) {
-                // Ebene ber der neuen Position vorhanden
-                if (((under[ i ])      // Karte wurde vorher angezeigt
-                     && (testf->getTileId() == TRANSPARENT))     // das neue Feld ber dem Spieler ist TRANSPARENT
-                    || ((!under[ i ])         // Karte wurde vorher nicht angezeigt
-                        && (testf->getTileId() != TRANSPARENT))) {    // das neue Feld ber dem Spieler ist nicht TRANSPARENT
-                    // Verdeckung des Spielers hat sich ge�dert
-                    update = true;
-                    roofmap[ i ] = _world->tmap;
-                    under[ i ] = (testf->getTileId() != TRANSPARENT);
-                } else if (_world->tmap != roofmap[ i ]) {
-                    // Spieler steht unter einer anderen Karte, ohne da�sich die Verdeckung
-                    // ge�dert hat
-                    update = true;
-                    roofmap[ i ] = _world->tmap;
-                    under[ i ] = (testf->getTileId() != TRANSPARENT);
-                }
-            } else {
-                // Spieler war vorher verdeckt, jetzt nicht mehr
-                if (under[ i ]) {
-                    update = true;
-                }
-
-                roofmap[ i ] = NULL;
-                under[ i ] = false;
-            }
-
-        }
-
-        if (update) {
-            sendWeather(_world->weather);
-        }
-
-        boost::shared_ptr<BasicServerCommand>cmd(new SetCoordinateTC(pos));
-        Connection->addCommand(cmd);
-        sendFullMap();
-        visibleChars.clear();
-        _world->sendAllVisibleCharactersToPlayer(this, true);
-        cmd.reset(new BBPlayerMoveTC(id, pos.x, pos.y, pos.z));
-        _world->monitoringClientList->sendCommand(cmd);
+        handleWarp();
         return true;
     }
 
@@ -2020,56 +1946,22 @@ bool Player::forceWarp(position newPos) {
     bool warped = Character::forceWarp(newPos);
 
     if (warped) {
-        //look if there is a tile over the player set the maps over the player
-        closeAllShowcasesOfMapContainers();
-        _world->tmap = NULL;
-        bool update = false;
-        Field *testf;
-
-        for (int i = 0; i < RANGEUP; ++i) {
-            if (_world->GetPToCFieldAt(testf, pos.x, pos.y, pos.z + 1 + i, _world->tmap)) {
-                // Ebene ber der neuen Position vorhanden
-                if (((under[ i ])      // Karte wurde vorher angezeigt
-                     && (testf->getTileId() == TRANSPARENT))     // das neue Feld ber dem Spieler ist TRANSPARENT
-                    || ((!under[ i ])         // Karte wurde vorher nicht angezeigt
-                        && (testf->getTileId() != TRANSPARENT))) {    // das neue Feld ber dem Spieler ist nicht TRANSPARENT
-                    // Verdeckung des Spielers hat sich ge�dert
-                    update = true;
-                    roofmap[ i ] = _world->tmap;
-                    under[ i ] = (testf->getTileId() != TRANSPARENT);
-                } else if (_world->tmap != roofmap[ i ]) {
-                    // Spieler steht unter einer anderen Karte, ohne da�sich die Verdeckung
-                    // ge�dert hat
-                    update = true;
-                    roofmap[ i ] = _world->tmap;
-                    under[ i ] = (testf->getTileId() != TRANSPARENT);
-                }
-            } else {
-                // Spieler war vorher verdeckt, jetzt nicht mehr
-                if (under[ i ]) {
-                    update = true;
-                }
-
-                roofmap[ i ] = NULL;
-                under[ i ] = false;
-            }
-
-        }
-
-        if (update) {
-            sendWeather(_world->weather);
-        }
-
-        boost::shared_ptr<BasicServerCommand>cmd(new SetCoordinateTC(pos));
-        Connection->addCommand(cmd);
-        sendFullMap();
-        _world->sendAllVisibleCharactersToPlayer(this, true);
-        cmd.reset(new BBPlayerMoveTC(id, pos.x, pos.y, pos.z));
-        _world->monitoringClientList->sendCommand(cmd);
+        handleWarp();
         return true;
     }
 
     return false;
+}
+
+void Player::handleWarp() {
+    closeAllShowcasesOfMapContainers();
+    boost::shared_ptr<BasicServerCommand>cmd(new SetCoordinateTC(pos));
+    Connection->addCommand(cmd);
+    sendFullMap();
+    visibleChars.clear();
+    _world->sendAllVisibleCharactersToPlayer(this, true);
+    cmd.reset(new BBPlayerMoveTC(id, pos.x, pos.y, pos.z));
+    _world->monitoringClientList->sendCommand(cmd);
 }
 
 void Player::openDepot(uint16_t depotid) {
@@ -2282,7 +2174,7 @@ void Player::sendRelativeArea(int8_t zoffs) {
         World *world = World::get();
 
         for (int i=0; i <= (MAP_DIMENSION + MAP_DOWN_EXTRA + e) * 2; ++i) {
-            world->clientview.fillStripe(position(x,y,z), NewClientView::dir_right, MAP_DIMENSION+1-(i%2), &(World::get()->maps));
+            world->clientview.fillStripe(position(x,y,z), NewClientView::dir_right, MAP_DIMENSION+1-(i%2), World::get()->maps);
 
             if (world->clientview.getExists()) {
                 Connection->addCommand(boost::shared_ptr<BasicServerCommand>(new MapStripeTC(position(x,y,z), NewClientView::dir_right)));
@@ -2311,7 +2203,7 @@ void Player::sendRelativeArea(int8_t zoffs) {
         World *world = World::get();
 
         for (int i=0; i <= (2*screenheight + MAP_DOWN_EXTRA + e) * 2; ++i) {
-            world->clientview.fillStripe(position(x,y,z), NewClientView::dir_right, 2*screenwidth+1-(i%2), &(World::get()->maps));
+            world->clientview.fillStripe(position(x,y,z), NewClientView::dir_right, 2*screenwidth+1-(i%2), World::get()->maps);
 
             if (world->clientview.getExists()) {
                 Connection->addCommand(boost::shared_ptr<BasicServerCommand>(new MapStripeTC(position(x,y,z), NewClientView::dir_right)));
@@ -2396,7 +2288,7 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
                 ++l;
             }
 
-            view->fillStripe(position(x-z*3+e,y+z*3-e,pos.z+z), dir, length+l, &World::get()->maps);
+            view->fillStripe(position(x-z*3+e,y+z*3-e,pos.z+z), dir, length+l, World::get()->maps);
 
             if (view->getExists()) {
                 Connection->addCommand(boost::shared_ptr<BasicServerCommand>(new MapStripeTC(position(x-z*3+e,y+z*3-e,pos.z+z), dir)));
@@ -2465,7 +2357,7 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
                 ++l;
             }
 
-            view->fillStripe(position(x-z*3+e,y+z*3-e,pos.z+z), dir, length+l, &World::get()->maps);
+            view->fillStripe(position(x-z*3+e,y+z*3-e,pos.z+z), dir, length+l, World::get()->maps);
 
             if (view->getExists()) {
                 Connection->addCommand(boost::shared_ptr<BasicServerCommand>(new MapStripeTC(position(x-z*3+e,y+z*3-e,pos.z+z), dir)));

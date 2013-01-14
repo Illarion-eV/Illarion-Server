@@ -35,7 +35,7 @@ void MapVector::clear() {
     highX = -32768;
 }
 
-bool MapVector::mapInRangeOf(short int upperleft_X, short int upperleft_Y, unsigned short int sizex, unsigned short int sizey, short int z) {
+bool MapVector::mapInRangeOf(short int upperleft_X, short int upperleft_Y, unsigned short int sizex, unsigned short int sizey, short int z) const {
     short int downright_X = upperleft_X + sizex - 1;
     short int downright_Y = upperleft_Y + sizey - 1;
 
@@ -61,7 +61,7 @@ bool MapVector::mapInRangeOf(short int upperleft_X, short int upperleft_Y, unsig
 
 
 
-bool MapVector::findAllMapsInRangeOf(char rnorth, char rsouth, char reast, char rwest, position pos, std::vector < Map * > &ret) {
+bool MapVector::findAllMapsInRangeOf(char rnorth, char rsouth, char reast, char rwest, position pos, MapVector::map_vector_t &ret) const {
     bool found_one = false;
 
     short int upperleft_X = pos.x - rwest;
@@ -86,7 +86,7 @@ bool MapVector::findAllMapsInRangeOf(char rnorth, char rsouth, char reast, char 
 
 
 
-bool MapVector::findAllMapsWithXInRangeOf(short int start, short int end, std::vector < Map * > &ret) {
+bool MapVector::findAllMapsWithXInRangeOf(short int start, short int end, MapVector::map_vector_t &ret) const {
     bool found_one = false;
 
     for (auto thisIterator = maps.begin(); thisIterator < maps.end(); ++thisIterator) {
@@ -101,7 +101,7 @@ bool MapVector::findAllMapsWithXInRangeOf(short int start, short int end, std::v
 
 
 
-bool MapVector::findMapForPos(short int x, short int y, short int z, Map* &map) {
+bool MapVector::findMapForPos(short int x, short int y, short int z, MapVector::map_t &map) const {
     for (auto thisIterator = maps.begin(); thisIterator < maps.end(); ++thisIterator) {
         if (z == (*thisIterator)->Z_Level) {
             if (((*thisIterator)->Max_X >= x) && ((*thisIterator)->Min_X <= x)) {
@@ -113,19 +113,19 @@ bool MapVector::findMapForPos(short int x, short int y, short int z, Map* &map) 
         }// z
     }// iterator
 
-    map = NULL;
+    map.reset();
     return false;
 }
 
 
 
-bool MapVector::findMapForPos(position pos, Map* &map) {
+bool MapVector::findMapForPos(position pos, MapVector::map_t &map) const {
     return findMapForPos(pos.x, pos.y, pos.z, map);
 }
 
 
 
-bool MapVector::findLowestMapOverCharacter(position pos, Map* &lowmap) {
+bool MapVector::findLowestMapOverCharacter(position pos, MapVector::map_t &lowmap) const {
     bool found_one = false;
 
     int ret = NOTHING;
@@ -144,8 +144,8 @@ bool MapVector::findLowestMapOverCharacter(position pos, Map* &lowmap) {
 }
 
 
-bool MapVector::InsertMap(Map *newMap) {
-    if (newMap != NULL) {
+bool MapVector::InsertMap(MapVector::map_t newMap) {
+    if (newMap) {
         for (auto thisIterator = maps.begin(); thisIterator < maps.end(); ++thisIterator) {
             if ((*thisIterator) == newMap) {
                 return false;

@@ -665,12 +665,10 @@ void World::sendMapUpdate(position pos, uint8_t range) {
 }
 
 bool World::createSavedArea(uint16_t tileid, position pos, uint16_t height, uint16_t width) {
-    //Schleife durch alle spalten
-    Map *dummy;
+    MapVector::map_t dummy;
 
     for (time_t akt_x = pos.x; akt_x < pos.x+width; ++akt_x) {
         for (time_t akt_y = pos.y; akt_y < pos.y+height; ++akt_y) {
-            //Pr�fen ob auf der position ein g�ltiges Feld ist, wenn ja false zur�ck liefern
             if (maps.findMapForPos(akt_x, akt_y, pos.z, dummy)) {
                 std::cerr<<"World::createSavedArea: Aborted map insertion, map for field at ("<<akt_x <<", "<<akt_y<<", "<<pos.z<<") found!"<<std::endl;
                 return false;
@@ -678,7 +676,7 @@ bool World::createSavedArea(uint16_t tileid, position pos, uint16_t height, uint
         }
     }
 
-    Map *tempmap = new Map(width,height);
+    MapVector::map_t tempmap(new Map(width,height));
     bool disappear=true;
     tempmap->Init(pos.x, pos.y, pos.z, disappear);
 

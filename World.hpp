@@ -300,7 +300,7 @@ public:
 
     MapVector maps; /**< a vector which holds all the maps*/
 
-    Map *tmap; /**< a temporary pointer to a map, used from different methods @see Map*/
+    MapVector::map_t tmap; /**< a temporary pointer to a map, used from different methods @see Map*/
 
     Scheduler *scheduler;/**< a pointer to the scheduler object @see Scheduler*/
 
@@ -591,7 +591,7 @@ public:
     * @param map call by reference, pointer to the map on which the field lies
     * @return true if the field was found otherwise false
     */
-    bool GetPToCFieldAt(Field* &fip, position pos, Map* &map);
+    bool GetPToCFieldAt(Field* &fip, position pos, MapVector::map_t &map);
 
     /**
     * looks for a field on the current map
@@ -612,7 +612,7 @@ public:
     * @param map call by reference, pointer to the map on which the field lies
     * @return true if the field was found otherwise false
     */
-    bool GetPToCFieldAt(Field* &fip, short int x, short int y, short int z, Map* &map);
+    bool GetPToCFieldAt(Field* &fip, short int x, short int y, short int z, MapVector::map_t &map);
 
     /**
     * looks for an empty field in the near of a given pos
