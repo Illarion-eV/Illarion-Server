@@ -24,7 +24,7 @@
 #include <fstream>
 #include <iostream>
 #include <boost/lexical_cast.hpp>
-
+#include <boost/functional/hash_fwd.hpp>
 #include "types.hpp"
 
 /**
@@ -102,12 +102,21 @@ struct position {
     /**
     * overloaded == operator which determines if one position is equal to another one
     */
-    bool operator == (const position &pos) {
+    bool operator == (const position &pos) const {
         return (x == pos.x && y == pos.y && z == pos.z);
     }
 
     std::string toString() const {
         return "(" + boost::lexical_cast<std::string>(x) + ", " + boost::lexical_cast<std::string>(y) + ", " + boost::lexical_cast<std::string>(z) + ")";
+    }
+
+    friend std::size_t hash_value(const position &p) {
+        std::size_t seed = 0;
+        boost::hash_combine(seed, p.x);
+        boost::hash_combine(seed, p.y);
+        boost::hash_combine(seed, p.z);
+
+        return seed;
     }
 };
 

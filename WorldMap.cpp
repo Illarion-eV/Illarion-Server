@@ -30,6 +30,7 @@ WorldMap::WorldMap() {
 
 void WorldMap::clear() {
     maps.clear();
+    world_map.clear();
 
     lowX = 32767;
     highX = -32768;
@@ -39,15 +40,15 @@ bool WorldMap::mapInRangeOf(short int upperleft_X, short int upperleft_Y, unsign
     short int downright_X = upperleft_X + sizex - 1;
     short int downright_Y = upperleft_Y + sizey - 1;
 
-    for (auto thisIterator = maps.begin(); thisIterator < maps.end(); ++thisIterator) {
-        if ((*thisIterator)->Z_Level == z) {
-            if (((*thisIterator)->Max_X >= upperleft_X) && ((*thisIterator)->Min_X <= downright_X)) {
-                if (((*thisIterator)->Max_Y >= upperleft_Y) && ((*thisIterator)->Min_Y <= downright_Y)) {
-                    std::cout << "Map in range at Z:" << (*thisIterator)->Z_Level <<
-                              " Min_X: " << (*thisIterator)->Min_X <<
-                              " Max_X: " << (*thisIterator)->Max_X <<
-                              " Min_Y: " << (*thisIterator)->Min_Y <<
-                              " Max_Y: " << (*thisIterator)->Max_Y <<
+    for (auto it = maps.begin(); it < maps.end(); ++it) {
+        if ((*it)->Z_Level == z) {
+            if (((*it)->Max_X >= upperleft_X) && ((*it)->Min_X <= downright_X)) {
+                if (((*it)->Max_Y >= upperleft_Y) && ((*it)->Min_Y <= downright_Y)) {
+                    std::cout << "Map in range at Z:" << (*it)->Z_Level <<
+                              " Min_X: " << (*it)->Min_X <<
+                              " Max_X: " << (*it)->Max_X <<
+                              " Min_Y: " << (*it)->Min_Y <<
+                              " Max_Y: " << (*it)->Max_Y <<
                               std::endl;
                     return true;
                 }// y
@@ -63,6 +64,7 @@ bool WorldMap::mapInRangeOf(short int upperleft_X, short int upperleft_Y, unsign
 
 bool WorldMap::findAllMapsInRangeOf(char rnorth, char rsouth, char reast, char rwest, position pos, WorldMap::map_vector_t &ret) const {
     bool found_one = false;
+    ret.clear();
 
     short int upperleft_X = pos.x - rwest;
     short int downright_X = pos.x + reast;
@@ -70,11 +72,11 @@ bool WorldMap::findAllMapsInRangeOf(char rnorth, char rsouth, char reast, char r
     short int upperleft_Y = pos.y - rnorth;
     short int downright_Y = pos.y + rsouth;
 
-    for (auto thisIterator = maps.begin(); thisIterator < maps.end(); ++thisIterator) {
-        if (pos.z == (*thisIterator)->Z_Level) {
-            if (((*thisIterator)->Max_X >= upperleft_X) && ((*thisIterator)->Min_X <= downright_X)) {
-                if (((*thisIterator)->Max_Y >= upperleft_Y) && ((*thisIterator)->Min_Y <= downright_Y)) {
-                    ret.push_back(*thisIterator);
+    for (auto it = maps.begin(); it < maps.end(); ++it) {
+        if (pos.z == (*it)->Z_Level) {
+            if (((*it)->Max_X >= upperleft_X) && ((*it)->Min_X <= downright_X)) {
+                if (((*it)->Max_Y >= upperleft_Y) && ((*it)->Min_Y <= downright_Y)) {
+                    ret.push_back(*it);
                     found_one = true;
                 }// y
             }// x
@@ -88,66 +90,38 @@ bool WorldMap::findAllMapsInRangeOf(char rnorth, char rsouth, char reast, char r
 
 bool WorldMap::findAllMapsWithXInRangeOf(short int start, short int end, WorldMap::map_vector_t &ret) const {
     bool found_one = false;
+    ret.clear();
 
-    for (auto thisIterator = maps.begin(); thisIterator < maps.end(); ++thisIterator) {
-        if (((*thisIterator)->Max_X >= start) && ((*thisIterator)->Min_X <= end)) {
-            ret.push_back(*thisIterator);
+    for (auto it = maps.begin(); it != maps.end(); ++it) {
+        if (((*it)->Max_X >= start) && ((*it)->Min_X <= end)) {
+            ret.push_back(*it);
             found_one = true;
-        }// x
-    }// iterator
+        }
+    }
 
     return found_one;
 }
 
-
-
 bool WorldMap::findMapForPos(short int x, short int y, short int z, WorldMap::map_t &map) const {
-    for (auto thisIterator = maps.begin(); thisIterator < maps.end(); ++thisIterator) {
-        if (z == (*thisIterator)->Z_Level) {
-            if (((*thisIterator)->Max_X >= x) && ((*thisIterator)->Min_X <= x)) {
-                if (((*thisIterator)->Max_Y >= y) && ((*thisIterator)->Min_Y <= y)) {
-                    map = (*thisIterator);
-                    return true;
-                }// y
-            }// x
-        }// z
-    }// iterator
+    const position p(x, y, z);
+    return findMapForPos(p, map);
+}
 
-    map.reset();
+bool WorldMap::findMapForPos(const position &pos, WorldMap::map_t &map) const {
+    try {
+        map = world_map.at(pos);
+        return true;
+    } catch (std::out_of_range &e) {
+        map.reset();
+    }
+
     return false;
 }
 
-
-
-bool WorldMap::findMapForPos(position pos, WorldMap::map_t &map) const {
-    return findMapForPos(pos.x, pos.y, pos.z, map);
-}
-
-
-
-bool WorldMap::findLowestMapOverCharacter(position pos, WorldMap::map_t &lowmap) const {
-    bool found_one = false;
-
-    int ret = NOTHING;
-
-    for (auto thisIterator = maps.begin(); thisIterator < maps.end(); ++thisIterator) {
-        if ((ret > (*thisIterator)->Z_Level) && ((*thisIterator)->disappears)) {
-            if ((*thisIterator)->isOverPositionInData(pos.x, pos.y, pos.z)) {
-                ret = (*thisIterator)->Z_Level;
-                lowmap = (*thisIterator);
-                found_one = true;
-            }
-        }
-    }// iterator
-
-    return found_one;
-}
-
-
 bool WorldMap::InsertMap(WorldMap::map_t newMap) {
     if (newMap) {
-        for (auto thisIterator = maps.begin(); thisIterator < maps.end(); ++thisIterator) {
-            if ((*thisIterator) == newMap) {
+        for (auto it = maps.begin(); it < maps.end(); ++it) {
+            if (*it == newMap) {
                 return false;
             }
         }
@@ -161,6 +135,16 @@ bool WorldMap::InsertMap(WorldMap::map_t newMap) {
         }
 
         maps.push_back(newMap);
+
+        auto z = newMap->Z_Level;
+
+        for (auto x = newMap->Min_X; x <= newMap->Max_X; ++x) {
+            for (auto y = newMap->Min_Y; y <= newMap->Max_Y; ++y) {
+                position p(x, y, z);
+                world_map[p] = newMap;
+            }
+        }
+
         return true;
     }
 
