@@ -1769,7 +1769,7 @@ bool Player::move(direction dir, uint8_t mode) {
     }
 
     position newpos, oldpos;
-    uint8_t waitpages;
+    uint8_t waitpages = 0;
 
     while (j < steps && cont) {
 

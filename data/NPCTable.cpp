@@ -76,7 +76,7 @@ void NPCTable::reload() {
         if (!results.empty()) {
             NPC *newNPC = 0;
 
-            TYPE_OF_CHARACTER_ID npcID;
+            TYPE_OF_CHARACTER_ID npcID = 0;
             int32_t posx, posy, posz;
             std::string npcName;
             std::string scriptname;
