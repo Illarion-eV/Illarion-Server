@@ -21,16 +21,18 @@
 #ifndef _FUSE_PTR_HPP_
 #define _FUSE_PTR_HPP_
 
-#include <map>
+#include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
 #include <stdexcept>
 
 template<class T>
 class fuse_ptr {
-private:
-    typedef std::pair<T *, fuse_ptr<T>*> Fuse;
+public:
+    typedef boost::unordered_map<T *, boost::unordered_set<fuse_ptr<T>*> > fusebox_t;
 
+private:
     T **ptr;
-    static std::multimap<T *, fuse_ptr<T>*> fusebox;
+    static fusebox_t fusebox;
 
 public:
     fuse_ptr() {
@@ -43,14 +45,14 @@ public:
         *ptr = p;
 
         if (p != 0) {
-            fusebox.insert(Fuse(p,this));
+            fusebox[p].insert(this);
         }
     }
 
     fuse_ptr(fuse_ptr const &p) {
         ptr = new T*;
         *ptr = *(p.ptr);
-        fusebox.insert(Fuse(*ptr,this));
+        fusebox[*ptr].insert(this);
     }
 
     T *get() const {
@@ -75,13 +77,10 @@ public:
 
     virtual ~fuse_ptr() {
         if (*ptr != 0) {
-            auto range = fusebox.equal_range(*ptr);
-            auto it = range.first;
+            auto it = fusebox.find(*ptr);
 
-            for (; it != range.second && it->second != this; ++it);
-
-            if (it != range.second) {
-                fusebox.erase(it);
+            if (it != fusebox.end()) {
+                it->second.erase(this);
             }
         }
 
@@ -90,18 +89,21 @@ public:
     }
 
     static void blow_fuse(T *p) {
-        auto range = fusebox.equal_range(p);
+        auto fuse_it = fusebox.find(p);
 
-        for (auto it = range.first; it != range.second; ++it) {
-            *(it->second->ptr) = 0;
+        if (fuse_it != fusebox.end()) {
+
+            for (auto it = fuse_it->second.begin(); it != fuse_it->second.end(); ++it) {
+                *((*it)->ptr) = 0;
+            }
+
+            fusebox.erase(fuse_it);
         }
-
-        fusebox.erase(p);
     }
 };
 
 template<class T>
-std::multimap<T *, fuse_ptr<T>*> fuse_ptr<T>::fusebox;
+typename fuse_ptr<T>::fusebox_t fuse_ptr<T>::fusebox;
 
 template<class T>
 T *get_pointer(fuse_ptr<T> const &p) {
