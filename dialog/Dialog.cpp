@@ -50,3 +50,7 @@ luabind::object Dialog::getCallback() const {
     return callback;
 }
 
+bool Dialog::closeOnMove() const {
+    return false;
+}
+

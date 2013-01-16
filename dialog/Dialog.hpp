@@ -37,6 +37,7 @@ public:
     std::string getTitle() const;
     std::string getClassName() const;
     luabind::object getCallback() const;
+    virtual bool closeOnMove() const;
 };
 
 #endif

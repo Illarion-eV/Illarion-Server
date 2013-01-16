@@ -76,7 +76,8 @@ enum ServerCommands {
     SC_MERCHANTDIALOG_TC = 0x52,
     SC_SELECTIONDIALOG_TC = 0x53,
     SC_CRAFTINGDIALOG_TC = 0x54,
-    SC_CRAFTINGDIALOGUPDATE_TC = 0x55
+    SC_CRAFTINGDIALOGUPDATE_TC = 0x55,
+    SC_CLOSEDIALOG_TC = 0x5F
 };
 
 class InputDialog;
@@ -119,6 +120,11 @@ public:
 class CraftingDialogCraftingAbortedTC : public BasicServerCommand {
 public:
     CraftingDialogCraftingAbortedTC(unsigned int dialogId);
+};
+
+class CloseDialogTC : public BasicServerCommand {
+public:
+    CloseDialogTC(unsigned int dialogId);
 };
 
 class ItemUpdate_TC : public BasicServerCommand {

@@ -147,6 +147,10 @@ CraftingDialogCraftingAbortedTC::CraftingDialogCraftingAbortedTC(unsigned int di
     addIntToBuffer(dialogId);
 }
 
+CloseDialogTC::CloseDialogTC(unsigned int dialogId) : BasicServerCommand(SC_CLOSEDIALOG_TC) {
+    addIntToBuffer(dialogId);
+}
+
 ItemUpdate_TC::ItemUpdate_TC(position fieldpos, ITEMVECTOR &items) : BasicServerCommand(SC_ITEMUPDATE_TC) {
     Logger::writeMessage("rot_update", "sending new itemstack for pos("+Logger::toString(fieldpos.x)+", "+Logger::toString(fieldpos.y)+", "+Logger::toString(fieldpos.z)+")",false);
     addShortIntToBuffer(fieldpos.x);

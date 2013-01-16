@@ -184,6 +184,7 @@ public:
     void setIngredientIndex(index_t index);
     uint16_t getCraftableTime() const;
 
+    virtual bool closeOnMove() const;
 private:
     bool canAddCraftable(uint8_t group);
 };

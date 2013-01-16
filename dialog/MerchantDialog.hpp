@@ -118,6 +118,7 @@ public:
     ScriptItem getSaleItem() const;
     void setSaleItem(const ScriptItem &item);
 
+    virtual bool closeOnMove() const;
 private:
     index_type getProductsSize(const product_list &products) const;
     product_list::const_iterator getProductsBegin(const product_list &products) const;

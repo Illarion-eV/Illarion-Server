@@ -170,6 +170,10 @@ uint16_t CraftingDialog::getCraftableTime() const {
     }
 }
 
+bool CraftingDialog::closeOnMove() const {
+    return true;
+}
+
 bool CraftingDialog::canAddCraftable(uint8_t group) {
     return (groups.size()-1 >= group) && (craftables.size() < MAXCRAFTABLES);
 }

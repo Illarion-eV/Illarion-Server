@@ -153,6 +153,10 @@ void MerchantDialog::setSaleItem(const ScriptItem &item) {
     saleItem = item;
 }
 
+bool MerchantDialog::closeOnMove() const {
+    return true;
+}
+
 MerchantDialog::index_type MerchantDialog::getProductsSize(const MerchantDialog::product_list &products) const {
     return products.size();
 }

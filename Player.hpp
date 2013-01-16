@@ -324,6 +324,7 @@ public:
     Container *getShowcaseContainer(uint8_t showcase) const;
     void closeShowcase(uint8_t showcase);
     void closeShowcase(Container *container);
+    void closeOnMove();
     void closeAllShowcasesOfMapContainers();
     void closeAllShowcases();
 
@@ -545,6 +546,15 @@ private:
         }
     }
 
+    template<class DialogType>
+    DialogType *getDialog(unsigned int dialogId) {
+        try {
+            return (DialogType *)dialogs.at(dialogId);
+        } catch (std::out_of_range &e) {
+            return 0;
+        }
+    }
+
 public:
     virtual void requestInputDialog(InputDialog *inputDialog);
     void executeInputDialog(unsigned int dialogId, bool success, std::string input);
@@ -571,6 +581,7 @@ public:
     virtual void requestCraftingLookAtIngredient(unsigned int dialogId, ItemLookAt &lookAt);
 
     void invalidateDialogs();
+    void closeDialogsOnMove();
 private:
     void startCrafting(uint8_t stillToCraft, uint16_t craftingTime, uint16_t sfx, uint16_t sfxDuration, uint32_t dialogId);
 
