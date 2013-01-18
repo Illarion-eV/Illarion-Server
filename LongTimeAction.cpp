@@ -128,7 +128,7 @@ bool LongTimeAction::actionDisturbed(Character *disturber) {
             }
         } else if (_script) {
             bool disturbed = false;
-            
+
             if ((_at == ACTION_USE)) {
                 if (_source.Type == LUA_ITEM) {
                     boost::shared_ptr<LuaItemScript>itemScript = boost::dynamic_pointer_cast<LuaItemScript>(_script);

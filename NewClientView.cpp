@@ -61,23 +61,23 @@ void NewClientView::readFields(int length, const WorldMap &maps) {
         int tmp_maxtiles = 1;
 
         for (int i = 0; i < length; ++i) {
-            tempCField = NULL;
+            Field *field = NULL;
 
-            if (!map || !map->GetPToCFieldAt(tempCField,x,y)) {
+            if (!map || !map->GetPToCFieldAt(field,x,y)) {
                 map.reset();
 
                 for (auto it = good_maps.begin(); it != good_maps.end(); ++it) {
-                    if ((*it)->GetPToCFieldAt(tempCField,x,y)) {
+                    if ((*it)->GetPToCFieldAt(field,x,y)) {
                         map = *it;
                         break;
                     }
                 }
             }
 
-            if (tempCField)
-                if (((tempCField->getTileId() != TRANSPARENT) && (tempCField->getTileId() != TRANSPARENTDISAPPEAR)) || !tempCField->items.empty()) {
+            if (field)
+                if (((field->getTileId() != TRANSPARENT) && (field->getTileId() != TRANSPARENTDISAPPEAR)) || !field->items.empty()) {
                     exists = true;
-                    mapStripe[i] = tempCField;
+                    mapStripe[i] = field;
                     maxtiles = tmp_maxtiles;
                 }
 

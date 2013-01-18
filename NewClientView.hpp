@@ -157,12 +157,6 @@ private:
     * how many tiles are stored
     */
     uint8_t maxtiles;
-
-    /**
-    * pointer to a temporary field
-    */
-    Field *tempCField;
-
 };
 
 #endif
