@@ -32,7 +32,7 @@
 #define   LOG_TALK
 
 #include <list>
-
+#include <boost/unordered_map.hpp>
 #include "tuningConstants.hpp"
 #include "Player.hpp"
 #include "Monster.hpp"
@@ -314,36 +314,10 @@ public:
         sendWeatherToAllPlayers();
     }
 
-    /**
-    *a function for equalyzing to positions
-    */
-    struct eqpos {
-        bool operator()(position a, position b) const {
-            return ((a.x == b.x) && (a.y == b.y) && (a.z == b.z));
-        }
-    };
-
-    /**
-    * hashfunction for the position
-    */
-    struct poshash {
-        hash < int > inthash;
-        int operator()(const position a) const {
-            int temp = (a.x * 1000 + a.y) * 1000 + a.z;
-            return inthash(temp);
-        }
-    };
-
     //! parse GMCommands of the Form !<string1> <string2> and process them
     bool parseGMCommands(Player *cp, const std::string &text);
     //! parse PlayerCommands of the Form !<string1> <string2> and process them
     bool parsePlayerCommands(Player *cp, const std::string &text);
-
-
-    /**
-    * definition of a map which holds two positions
-    */
-    typedef hash_map < position, position, poshash, eqpos > POSITIONHASH;
 
     /**
     *a struct for saving different field attributes
@@ -357,7 +331,7 @@ public:
     /**
     *definition of a map which holds the special attribs of fields
     */
-    typedef hash_map < position, s_fieldattrib, poshash, eqpos > FIELDATTRIBHASH;
+    typedef boost::unordered_map<position, s_fieldattrib> FIELDATTRIBHASH;
 
     /**
     *the map which holds the information of all the special fields of the map

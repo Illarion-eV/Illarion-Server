@@ -48,17 +48,17 @@ struct attributedef_t {
     std::pair<unsigned short, unsigned short> willpower;
     std::pair<unsigned short, unsigned short> essence;
 
-    attributedef_t() {
-        luck = std::make_pair(10, 10);
-        strength = std::make_pair(15, 15);
-        dexterity = std::make_pair(10, 10);
-        constitution = std::make_pair(8, 8);
-        agility = std::make_pair(10, 10);
-        intelligence = std::make_pair(10, 10);
-        perception = std::make_pair(10, 10);
-        willpower = std::make_pair(10, 10);
-        essence = std::make_pair(10, 10);
-    }
+    attributedef_t():
+        luck(std::make_pair(10, 10)),
+        strength(std::make_pair(15, 15)),
+        dexterity(std::make_pair(10, 10)),
+        constitution(std::make_pair(8, 8)),
+        agility(std::make_pair(10, 10)),
+        intelligence(std::make_pair(10, 10)),
+        perception(std::make_pair(10, 10)),
+        willpower(std::make_pair(10, 10)),
+        essence(std::make_pair(10, 10))
+    {}
 
 };
 

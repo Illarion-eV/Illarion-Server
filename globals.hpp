@@ -125,11 +125,22 @@ struct position {
 * determines a 2d Postion on one single map
 * the z coordinate is the map itself
 */
-typedef struct {
-    short int x; /**< x coordinate*/
-    short int y; /**< y coordinate*/
-}
-MAP_POSITION;
+struct MAP_POSITION {
+    short int x;
+    short int y;
+
+    bool operator == (const MAP_POSITION &pos) const {
+        return (x == pos.x && y == pos.y);
+    }
+
+    friend std::size_t hash_value(const MAP_POSITION &p) {
+        std::size_t seed = 0;
+        boost::hash_combine(seed, p.x);
+        boost::hash_combine(seed, p.y);
+
+        return seed;
+    }
+};
 
 // a map storing configuration options from a config file...
 extern std::map<std::string, std::string> configOptions;

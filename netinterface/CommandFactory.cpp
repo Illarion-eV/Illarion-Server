@@ -91,7 +91,7 @@ CommandFactory::~CommandFactory() {
 }
 
 boost::shared_ptr<BasicClientCommand>  CommandFactory::getCommand(unsigned char commandId) {
-    OMMANDLIST::iterator it;
+    COMMANDLIST::iterator it;
     it = templateList.find(commandId);
 
     if (it != templateList.end()) {

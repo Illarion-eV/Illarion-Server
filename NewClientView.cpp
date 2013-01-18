@@ -25,7 +25,9 @@
 NewClientView::~NewClientView() {}
 
 NewClientView::NewClientView() : viewPosition(position(0,0,0)), exists(false), stripedir(dir_right), maxtiles(0) {
-
+    for (int i = 0; i < 100; ++i) {
+        mapStripe[i] = NULL;
+    }
 }
 
 void NewClientView::fillStripe(position pos, stripedirection dir, int length, const WorldMap &maps) {
@@ -36,7 +38,7 @@ void NewClientView::fillStripe(position pos, stripedirection dir, int length, co
 }
 
 void NewClientView::clearStripe() {
-    for (int i = 0; i < 100/*<= MAP_DIMENSION+MAP_DOWN_EXTRA+6*/; ++i) {
+    for (int i = 0; i < 100; ++i) {
         mapStripe[i] = NULL;
     }
 

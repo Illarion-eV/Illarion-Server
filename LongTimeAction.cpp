@@ -34,6 +34,7 @@ LongTimeAction::LongTimeAction(Player *player, World *world) : _owner(player) , 
     _timetowaitTimer = NULL;
     _redoaniTimer = NULL;
     _redosoundTimer = NULL;
+    _at = ACTION_USE;
     _ani = 0;
     _sound = 0;
     _targetId = 0;

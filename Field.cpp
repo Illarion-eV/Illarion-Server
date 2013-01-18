@@ -89,13 +89,12 @@ ScriptItem Field::getStackItem(uint8_t spos) {
     }
 }
 
-Field::Field(const Field &source) {
+Field::Field(const Field &source): items(source.items) {
 
     tile = source.tile;
     music = source.music;
     clientflags = source.clientflags;
     extraflags = source.extraflags;
-    items = source.items;
     warptarget = new position(*(source.warptarget));
 }
 
@@ -123,7 +122,7 @@ Field::~Field() {
 }
 
 
-bool Field::addTopItem(const Item it) {
+bool Field::addTopItem(const Item &it) {
 
     if (IsPassable()) {
         if (items.size() < MAXITEMS) {
@@ -144,7 +143,7 @@ bool Field::addTopItem(const Item it) {
 }
 
 
-bool Field::PutGroundItem(const Item it) {
+bool Field::PutGroundItem(const Item &it) {
 
     if (items.size() < MAXITEMS) {
         if (items.empty()) {
@@ -169,7 +168,7 @@ bool Field::PutGroundItem(const Item it) {
 }
 
 
-bool Field::PutTopItem(const Item it) {
+bool Field::PutTopItem(const Item &it) {
 
     if (items.size() < MAXITEMS) {
         items.push_back(it);

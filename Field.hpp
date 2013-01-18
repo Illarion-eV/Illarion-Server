@@ -187,7 +187,7 @@ public:
     * @param it the item which should be added to this field
     * @return true if the item was added false if the maximum number of items is reached or the field is not passable
     */
-    bool addTopItem(const Item it);
+    bool addTopItem(const Item &it);
 
     /**
     * adds a item on the stack of this field
@@ -195,7 +195,7 @@ public:
     * @param it the item which should be added to this field
     * @return true if the item is added or false if the maximum number of items on this field is reached
     */
-    bool PutTopItem(const Item it);
+    bool PutTopItem(const Item &it);
 
     /**
     * adds an item to the bottom of the stack on a field
@@ -203,7 +203,7 @@ public:
     * @param it the item which should be added
     * @return true if the item is added or false if the maximum number of items on this field is reached
     */
-    bool PutGroundItem(const Item it);
+    bool PutGroundItem(const Item &it);
 
     /**
     * takes the top item from this field

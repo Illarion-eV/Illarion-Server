@@ -51,22 +51,9 @@ public:
     bool find(position pos, TriggerStruct &data);
 
 private:
-    struct eqpos {
-        bool operator()(position a, position b) const {
-            return ((a.x == b.x) && (a.y == b.y) && (a.z == b.z));
-        }
-    };
-    struct poshash {
-        boost::hash<int> inthash;
-        int operator()(const position a) const {
-            int temp = (a.x * 1000 + a.y) * 1000 + a.z;
-            return inthash(temp);
-        }
-    };
-
     virtual void reload();
 
-    typedef boost::unordered_map<position, TriggerStruct, poshash, eqpos> TriggerMap;
+    typedef boost::unordered_map<position, TriggerStruct> TriggerMap;
     TriggerMap Triggers;
 
     void clearOldTable();

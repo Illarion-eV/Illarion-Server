@@ -24,24 +24,6 @@
 //#define Map_DEBUG
 
 #include <string>
-
-#if __GNUC__ < 3
-#include <hash_map>
-#else
-#include <ext/hash_map>
-
-#if (__GNUC__ > 3) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1)
-using __gnu_cxx::hash_map;
-using __gnu_cxx::hash;
-#endif
-
-#if (__GNUC__ == 3 && __GNUC_MINOR__ < 1)
-using std::hash_map;
-using std::hash;
-#endif
-
-#endif
-
 #include "MapException.hpp"
 #include "globals.hpp"
 #include "TableStructs.hpp"
@@ -156,25 +138,8 @@ public:
     //! liefert die Anzahl der Felder in Y-Richtung zur�ck
     unsigned short int GetHeight();
 
-    //! Vergleichsfunktion f�r den CONTAINERMAP - key
-    struct eqmappos {
-        bool operator()(MAP_POSITION a, MAP_POSITION b) const {
-            return ((a.x == b.x) && (a.y == b.y));
-        }
-    };
-
-    //! Hashfunktion f�r CONTAINERMAP - key
-    struct mapposhash {
-        hash < int > inthash;
-        int operator()(const MAP_POSITION a) const {
-            int temp = (a.x * 1000 + a.y) * 1000;
-            return inthash(temp);
-        }
-    };
-
-
     //! definiert eine Template-Klasse "hash_map mit key position f�r ITEMVECTORMAP"
-    typedef hash_map < MAP_POSITION, Container::CONTAINERMAP, mapposhash, eqmappos > CONTAINERHASH;
+    typedef boost::unordered_map<MAP_POSITION, Container::CONTAINERMAP> CONTAINERHASH;
 
     //! die Inhalte aller Container die direkt auf der Karte liegen mit der dazugeh�rigen Koordinate
     CONTAINERHASH maincontainers;
@@ -220,11 +185,6 @@ public:
     bool isOverMapInData(Map *refmap);
 
     bool isFullyCoveredBy(Map *refmap);
-
-    //! falls true, wird die Map nicht angezeigt, falls sich der Spieler darunter befindet
-    bool disappears;
-
-    /*   private: */
 
     //! die kleinste logisch m�gliche X-Koordinate
     short Min_X;
