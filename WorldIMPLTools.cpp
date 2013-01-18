@@ -902,8 +902,6 @@ void World::Load(std::string prefix) {
         short int tWidth;
         short int tHeight;
 
-        bool tdisappears;
-
         for (int i = 0; i < size; ++i) {
             mapinitfile.read((char *) & tZ_Level, sizeof(tZ_Level));
             mapinitfile.read((char *) & tMin_X, sizeof(tMin_X));
@@ -912,10 +910,8 @@ void World::Load(std::string prefix) {
             mapinitfile.read((char *) & tWidth, sizeof(tWidth));
             mapinitfile.read((char *) & tHeight, sizeof(tHeight));
 
-            mapinitfile.read((char *) & tdisappears, sizeof(tdisappears));
-
             WorldMap::map_t tempMap(new Map(tWidth, tHeight));
-            tempMap->Init(tMin_X, tMin_Y, tZ_Level, tdisappears);
+            tempMap->Init(tMin_X, tMin_Y, tZ_Level);
 
             sprintf(mname, "%s_%6d_%6d_%6d", prefix.c_str(), tZ_Level, tMin_X, tMin_Y);
 

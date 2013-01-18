@@ -677,8 +677,7 @@ bool World::createSavedArea(uint16_t tileid, position pos, uint16_t height, uint
     }
 
     WorldMap::map_t tempmap(new Map(width,height));
-    bool disappear=true;
-    tempmap->Init(pos.x, pos.y, pos.z, disappear);
+    tempmap->Init(pos.x, pos.y, pos.z);
 
     Field *tempf;
 

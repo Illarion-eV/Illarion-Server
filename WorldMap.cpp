@@ -264,8 +264,6 @@ void WorldMap::saveToDisk(const std::string &prefix) const {
             mapinitfile.write((char *) & (*mapI)->Width, sizeof((*mapI)->Width));
             mapinitfile.write((char *) & (*mapI)->Height, sizeof((*mapI)->Height));
 
-            mapinitfile.write((char *) & (*mapI)->disappears, sizeof((*mapI)->disappears));
-
             sprintf(mname, "%s_%6d_%6d_%6d", prefix.c_str(), (*mapI)->Z_Level, (*mapI)->Min_X, (*mapI)->Min_Y);
             (*mapI)->Save(mname);
         }

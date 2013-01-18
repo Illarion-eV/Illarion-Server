@@ -34,7 +34,7 @@ unordered_map<Position, Character::direction> character_directions = assign::map
 struct world_map_graph;
 
 struct character_out_edge_iterator: public boost::forward_iterator_helper<character_out_edge_iterator, Position, std::ptrdiff_t, Position *, Position> {
-    character_out_edge_iterator() {}
+    character_out_edge_iterator(): graph(0), direction(8) {}
     character_out_edge_iterator(int i, Position p, const world_map_graph &g): position(p), graph(&g), direction(i) {
         valid_step();
     }

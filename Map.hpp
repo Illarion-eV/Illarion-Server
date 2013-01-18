@@ -99,8 +99,7 @@ public:
     // \param minx die kleinste X-Koordinate
     // \param miny die kleinste Y-Koordinate
     // \param z die Ebene auf der die Karte liegt
-    // \param disappear gibt an, ob die Karte f�r einen darunter stehenden Spieler ausgeblendet werden soll
-    void Init(short int minx, short int miny, short int z, bool disappear);
+    void Init(short int minx, short int miny, short int z);
 
     //! liefert in fip einen Zeiger auf das Field mit den entsprechenden Koordinaten zur�ck
     // \param fip der Zeiger auf das Field den Koordinaten x,y,z

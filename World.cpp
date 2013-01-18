@@ -348,8 +348,7 @@ bool World::load_from_editor(std::string filename) {
 
     // generate new map
     WorldMap::map_t tempmap(new Map(h_width, h_height));
-    bool disappear=true;
-    tempmap->Init(h_x, h_y, h_level, disappear);
+    tempmap->Init(h_x, h_y, h_level);
 
     Field *tempf;
     int index_start;

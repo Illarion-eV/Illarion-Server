@@ -210,14 +210,13 @@ bool Map::addAlwaysContainerToPos(Item it, Container *cc, MAP_POSITION pos) {
 }
 
 
-void Map::Init(short int minx, short int miny, short int z, bool disappear) {
+void Map::Init(short int minx, short int miny, short int z) {
 
     Min_X = minx;
     Min_Y = miny;
     Max_X = Width + Min_X - 1;
     Max_Y = Height + Min_Y - 1;
     Z_Level = z;
-    disappears = disappear;
 #ifdef Map_DEBUG
     std::cout << "Map: Init, Min_X:" << Min_X << " Max_X:" << Max_X
               << " Min_Y:" << Min_Y << " Max_Y:" << Max_Y << " Z:" << Z_Level << "\n";
