@@ -42,8 +42,6 @@ extern boost::shared_ptr<LuaDepotScript>depotScript;
 
 //  atomare Funktionen  //
 bool World::putItemOnInvPos(Character *cc, unsigned char pos) {
-    bool gotWeapon = false;
-
     if (pos == BACKPACK) {
         if (cc->characterItems[ BACKPACK ].getId() == 0) {
 
@@ -74,9 +72,6 @@ bool World::putItemOnInvPos(Character *cc, unsigned char pos) {
             if (cc->characterItems[ pos ].getId() == 0 || cc->characterItems[pos].getId() == g_item.getId()) {
                 if ((pos == RIGHT_TOOL) || (pos == LEFT_TOOL)) {
                     if (WeaponItems->find(g_item.getId(), tempWeapon)) {
-                        //We take a weapon
-                        gotWeapon = true;
-
                         if ((tempWeapon.WeaponType==4) || (tempWeapon.WeaponType==5) || (tempWeapon.WeaponType==6) || (tempWeapon.WeaponType==13)) {
                             if ((pos == RIGHT_TOOL) && (cc->characterItems[ LEFT_TOOL ].getId() == 0)) {
                                 if (cc->characterItems[pos].getId() == 0 && g_item.getNumber() == 1) {
@@ -234,7 +229,7 @@ bool World::putItemOnInvPos(Character *cc, unsigned char pos) {
 
 
 bool World::putItemOnInvPos(Player *cc, unsigned char pos) {
-    if (putItemOnInvPos((Character *) cc, pos)) {
+    if (putItemOnInvPos(dynamic_cast<Character *>(cc), pos)) {
         if (pos == LEFT_TOOL) {
             cc->sendCharacterItemAtPos(pos);
             cc->sendCharacterItemAtPos(RIGHT_TOOL);
@@ -252,8 +247,6 @@ bool World::putItemOnInvPos(Player *cc, unsigned char pos) {
 }
 
 bool World::takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_type count) {
-    bool takeWeapon = false;
-
     if (pos == BACKPACK) {
         if (cc->characterItems[ BACKPACK ].getId() != 0) {
             g_item = cc->characterItems[ BACKPACK ];
@@ -272,7 +265,6 @@ bool World::takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_ty
         if ((cc->characterItems[ pos ].getId() != 0) && (cc->characterItems[ pos ].getId() != BLOCKEDITEM)) {
             if ((pos == RIGHT_TOOL) || (pos == LEFT_TOOL)) {
                 if (WeaponItems->find(cc->characterItems[ pos ].getId(), tempWeapon)) {
-                    takeWeapon = true;
                     g_item = cc->characterItems[ pos ];
                     g_cont = NULL;
 
@@ -346,7 +338,7 @@ bool World::takeItemFromInvPos(Player *cc, unsigned char pos, Item::number_type 
         }
     }
 
-    if (takeItemFromInvPos((Character *) cc, pos, count)) {
+    if (takeItemFromInvPos(dynamic_cast<Character *>(cc), pos, count)) {
         if (pos == LEFT_TOOL) {
             cc->sendCharacterItemAtPos(pos);
             cc->sendCharacterItemAtPos(RIGHT_TOOL);
@@ -800,8 +792,6 @@ void World::dropItemFromShowcaseOnMap(Player *cp, uint8_t showcase, unsigned cha
 
 
 void World::moveItemFromShowcaseToPlayer(Player *cp, uint8_t showcase, unsigned char pos, unsigned char cpos, Item::number_type count) {
-    bool NOK = false;
-    //CommonStruct com;
 #ifdef World_ItemMove_DEBUG
     std::cout << "moveItemFromShowcaseToPlayer: Spieler " << cp->name << " nimmt ein Item auf\n"
               << "showcase: " << (short int) showcase << " from position: " << (short int) pos << " to position: " << (short int) cpos << std::endl;
@@ -848,6 +838,8 @@ void World::moveItemFromShowcaseToPlayer(Player *cp, uint8_t showcase, unsigned 
                 return;
             }
         }
+
+        bool NOK = false;
 
         if (! cp->weightOK(g_item.getId(), g_item.getNumber(), g_cont)) {
             message(zuschwer, cp);
@@ -1121,10 +1113,6 @@ void World::moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, uint8
 
 
 void World::moveItemFromMapIntoShowcase(Player *cp, char direction, uint8_t showcase, unsigned char pos, Item::number_type count) {
-
-    bool NOK = false;
-    //CommonStruct com;
-
 #ifdef World_ItemMove_DEBUG
     std::cout << "moveItemFromMapIntoShowcase: Spieler " << cp->name << " verschiebt Item von der Karte in ein showcase" << std::endl;
 #endif
@@ -1171,6 +1159,8 @@ void World::moveItemFromMapIntoShowcase(Player *cp, char direction, uint8_t show
                 std::cout << "nicht alles verschieben" << std::endl;
                 g_item.setNumber(count);
             }
+
+            bool NOK = false;
 
             if (! cp->weightOK(g_item.getId(), g_item.getNumber(), g_cont)) {
                 message(zuschwer, cp);
@@ -1231,9 +1221,6 @@ void World::moveItemFromMapIntoShowcase(Player *cp, char direction, uint8_t show
 
 
 void World::moveItemFromMapToPlayer(Player *cp, char direction, unsigned char cpos, Item::number_type count) {
-    bool NOK = false;
-    //CommonStruct com;
-
 #ifdef World_ItemMove_DEBUG
     std::cout << "moveItemFromMapToPlayer: Spieler " << cp->name << " verschiebt Item von der Karte an den Koerper" << std::endl;
 #endif
@@ -1288,6 +1275,8 @@ void World::moveItemFromMapToPlayer(Player *cp, char direction, unsigned char cp
 #endif
                 g_item.setNumber(count);
             }
+
+            bool NOK = false;
 
             if (! cp->weightOK(g_item.getId(), g_item.getNumber(), g_cont)) {
                 message(zuschwer, cp);
@@ -1344,8 +1333,6 @@ void World::moveItemFromMapToPlayer(Player *cp, char direction, unsigned char cp
 
 
 void World::moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char pos, uint8_t dest, unsigned char pos2, Item::number_type count) {
-    bool NOK = false;
-    //CommonStruct com;
 #ifdef World_ItemMove_DEBUG
     std::cout << "moveItemBetweenShowcases: Spieler " << cp->name << " verschiebt Item zwischen showcases" << std::endl;
 #endif
@@ -1383,6 +1370,8 @@ void World::moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char p
                 return;
             }
         }
+
+        bool NOK = false;
 
         if (cp->isShowcaseInInventory(dest)) {
             if (! cp->weightOK(g_item.getId(), g_item.getNumber(), g_cont)) {

@@ -179,15 +179,12 @@ bool LongTimeCharacterEffects::removeEffect(LongTimeEffect *effect) {
 }
 
 void LongTimeCharacterEffects::checkEffects() {
-    //if (  _owner->character == Character::player ) std::cout<<"checkEffect: "<<checkChar->name<<" size: "<<effectList.size()<<std::endl;
-    LongTimeEffect *effect;
-    int emexit = 0;
-
     if (!effectList.empty() && (effectList.front()->_nextCalled > 0)) {
         effectList.front()->_nextCalled--;
-        //if ( _owner->character == Character::player ) std::cout<<"decreased nextcalled: "<<effectList.front()->_nextCalled<<std::endl;
     } else {
-        //if (  _owner->character == Character::player ) std::cout<<"calling an effectscript"<<std::endl;
+        LongTimeEffect *effect;
+        int emexit = 0;
+
         while (!effectList.empty() && (emexit < 200) && (effectList.front()->_nextCalled <= 0)) {
             emexit++;
             effect = effectList.front();

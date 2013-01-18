@@ -107,9 +107,6 @@ bool Init(const std::string &initfile) {
         if (!configfile.good()) {
             return false;
         }
-
-        std::stringstream stream;
-
     }
 
     return true;

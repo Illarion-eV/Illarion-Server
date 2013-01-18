@@ -455,11 +455,10 @@ bool World::swap(ScriptItem item, TYPE_OF_ITEM_ID newitem, unsigned short int ne
         Field *field;
 
         if (GetPToCFieldAt(field, item.pos.x, item.pos.y, item.pos.z)) {
-            bool ok;
             Item it;
 
             if (field->ViewTopItem(it)) {
-                ok = field->swapTopItem(newitem, newQuality);
+                bool ok = field->swapTopItem(newitem, newQuality);
 
                 if (ok) {
                     Item dummy;
@@ -562,11 +561,10 @@ bool World::createFromItem(ScriptItem item, position pos, bool always) {
 
 fuse_ptr<Character> World::createMonster(unsigned short id, position pos, short movepoints) {
     Field *field;
-    Monster *newMonster;
 
     if (GetPToCFieldAt(field, pos.x, pos.y, pos.z)) {
         try {
-            newMonster = new Monster(id, pos);
+            Monster *newMonster = new Monster(id, pos);
 #ifdef LUASCRIPT_DEBUG
             std::cout<<"Erschaffe neues Monster: " << newMonster->name << " an Position (x,y,z) " << pos.x << " " << pos.y << " " << pos.z << std::endl;
 #endif

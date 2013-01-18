@@ -281,7 +281,7 @@ bool a_star(::position &start_pos, ::position &goal_pos, std::list<Character::di
     try {
         astar_search_no_init(g, start, h, weight_map(weight).rank_map(rank_pmap).
                              vertex_index_map(index).predecessor_map(pred_pmap).distance_map(dist_pmap).visitor(visitor));
-    } catch (found_goal fg) {
+    } catch (found_goal &fg) {
         vertex v = goal;
         vertex pre = predecessor[v];
 
@@ -296,7 +296,7 @@ bool a_star(::position &start_pos, ::position &goal_pos, std::list<Character::di
         }
 
         return true;
-    } catch (not_found nf) {
+    } catch (not_found &nf) {
         return false;
     }
 

@@ -100,11 +100,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    // deactivate savethread
-    // unsigned long int thisonlinetime = 0;
-
     checkArguments(argc, argv);
-
 
     // set up logfiles etc. and check if everything works
     if (! setup_files()) {

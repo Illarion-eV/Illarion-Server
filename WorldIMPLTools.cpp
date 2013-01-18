@@ -196,8 +196,6 @@ std::list<BlockingObject> World::LoS(position startingpos, position endingpos) {
         ystep = -1;
     }
 
-    unsigned short int effekt = 1;
-
     for (short int x = startx; x <= endx; ++x) {
         if (!(x == startx && y == starty) && !(x == endx && y == endy)) {
             BlockingObject bo;
@@ -268,9 +266,6 @@ std::list<BlockingObject> World::LoS(position startingpos, position endingpos) {
             y+=ystep;
             error -= deltax;
         }
-
-        effekt = 2;
-
     }
 
     return ret;
@@ -569,10 +564,11 @@ void World::killMonster(MONSTERVECTOR::iterator monsterIt, MONSTERVECTOR::iterat
 
 
 Field *World::GetField(position pos) {
-    Field *field=NULL;
     WorldMap::map_t temp;
 
     if (maps.findMapForPos(pos, temp)) {
+        Field *field = NULL;
+
         if (temp->GetPToCFieldAt(field, pos.x, pos.y)) {
             return field;
         } else {
@@ -883,7 +879,6 @@ void World::Save(std::string prefix) {
 
 
 void World::Load(std::string prefix) {
-    char mname[ 200 ];
     prefix = directory + std::string(MAPDIR) + prefix;
 
     std::ifstream mapinitfile((prefix + "_initmaps").c_str(), std::ios::binary | std::ios::in);
@@ -901,6 +896,8 @@ void World::Load(std::string prefix) {
 
         short int tWidth;
         short int tHeight;
+
+        char mname[ 200 ];
 
         for (int i = 0; i < size; ++i) {
             mapinitfile.read((char *) & tZ_Level, sizeof(tZ_Level));

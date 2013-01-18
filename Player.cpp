@@ -113,7 +113,7 @@ Player::Player(boost::shared_ptr<NetInterface> newConnection) throw(Player::Logo
     }
 
     // player already online? if we don't use the monitoring client
-    if (!monitoringClient & (_world->Players.find(name) || PlayerManager::get()->findPlayer(name))) {
+    if (!monitoringClient && (_world->Players.find(name) || PlayerManager::get()->findPlayer(name))) {
         std::cout << "double login by " << name  << std::endl;
         throw LogoutException(DOUBLEPLAYER);
     }
@@ -127,7 +127,6 @@ Player::Player(boost::shared_ptr<NetInterface> newConnection) throw(Player::Logo
         // no skill package chosen... kick him...
         std::cerr << "no skill package chosen" << std::endl;
         throw LogoutException(NOSKILLS);
-        std::cerr << "no package chosen" << std::endl;
     }
 
     if (!loadGMFlags()) {
@@ -2601,9 +2600,8 @@ void Player::executeMerchantDialogSell(unsigned int dialogId, uint8_t location, 
         if (location == 0) {
             item = GetItemAt(slot);
         } else {
-            Container *container = 0;
-
             if (isShowcaseOpen(location-1)) {
+                Container *container = 0;
                 getShowcaseContainer(location-1)->viewItemNr(slot, item, container);
             }
         }

@@ -47,9 +47,6 @@ void RaceSizeTable::reload() {
         query.addServerTable("raceattr");
 
         Database::Result results = query.execute();
-        std::vector<uint16_t>minheight;
-        std::vector<uint16_t>maxheight;
-        std::vector<uint16_t>raceid;
 
         if (!results.empty()) {
             uint16_t currentID;

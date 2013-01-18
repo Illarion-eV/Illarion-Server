@@ -53,12 +53,12 @@ void NewClientView::readFields(int length, const WorldMap &maps) {
     int x = viewPosition.x;
     int y = viewPosition.y;
     int x_inc = (stripedir == dir_right) ? 1 : -1;
-    int tmp_maxtiles = 1;
 
     WorldMap::map_vector_t good_maps;
 
     if (maps.findAllMapsInRangeOf(0, length-1, (stripedir == dir_right) ? length-1 : 0, (stripedir == dir_right) ? 0 : length-1, viewPosition, good_maps)) {
         WorldMap::map_t map;
+        int tmp_maxtiles = 1;
 
         for (int i = 0; i < length; ++i) {
             tempCField = NULL;

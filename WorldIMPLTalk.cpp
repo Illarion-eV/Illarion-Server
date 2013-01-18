@@ -36,15 +36,13 @@ bool World::sendTextInFileToPlayer(std::string filename, Player *cp) {
         return false;
     }
 
-    const unsigned char LINE_LENGTH = 255;
-
     FILE *fp;
-
-    char line[ LINE_LENGTH ];
-
     fp = fopen(filename.c_str(), "r");
 
     if (fp != NULL) {
+        const unsigned char LINE_LENGTH = 255;
+        char line[LINE_LENGTH];
+
         while (fgets(line, LINE_LENGTH, fp) != NULL) {
             boost::shared_ptr<BasicServerCommand>cmd(new SayTC(cp->pos.x, cp->pos.y, cp->pos.z, line));
             cp->Connection->addCommand(cmd);

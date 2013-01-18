@@ -549,7 +549,7 @@ private:
     template<class DialogType>
     DialogType *getDialog(unsigned int dialogId) {
         try {
-            return (DialogType *)dialogs.at(dialogId);
+            return dynamic_cast<DialogType *>(dialogs.at(dialogId));
         } catch (std::out_of_range &e) {
             return 0;
         }

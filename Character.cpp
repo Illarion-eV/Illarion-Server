@@ -606,13 +606,14 @@ int Character::createItem(Item::id_type id, Item::number_type number, Item::qual
                     }
 
                     if (temp > 0) {
-                        bool ok = true;
                         it.setId(id);
                         it.setQuality(quality);
                         it.setWear(cos.AgeingSpeed);
                         it.setData(data);
 
                         if (backPackContents != NULL) {
+                            bool ok = true;
+
                             while (ok && (temp > 0)) {
                                 if (temp >= cos.MaxStack) {
                                     it.setNumber(cos.MaxStack);
@@ -1552,8 +1553,6 @@ void Character::talk(talk_type tt, std::string message) { //only for say, whispe
 }
 
 void Character::talkLanguage(talk_type tt, unsigned char lang, std::string message) {
-    //only for say, whisper, shout
-    std::string talktype;
     uint16_t cost = 0;
     lastSpokenText=message;
 
@@ -1571,7 +1570,6 @@ void Character::talkLanguage(talk_type tt, unsigned char lang, std::string messa
         }
 
 #endif
-        talktype = "says";
         cost = P_SAY_COST;
         break;
     case tt_whisper:
@@ -1582,7 +1580,6 @@ void Character::talkLanguage(talk_type tt, unsigned char lang, std::string messa
         }
 
 #endif
-        talktype = "whispers";
         cost = P_WHISPER_COST;
         break;
     case tt_yell:
@@ -1598,7 +1595,6 @@ void Character::talkLanguage(talk_type tt, unsigned char lang, std::string messa
         }
 
 #endif
-        talktype = "shouts";
         cost = P_SHOUT_COST;
         break;
     }
@@ -1761,9 +1757,11 @@ void Character::teachMagic(unsigned char type, unsigned char flag) {
 
 bool Character::Warp(position newPos) {
     position oldpos = pos;
-    Field *fold=NULL,* fnew=NULL;
+    Field *fold = NULL;
 
     if (_world->GetPToCFieldAt(fold, pos.x, pos.y, pos.z)) {
+        Field *fnew = NULL;
+
         if (_world->findEmptyCFieldNear(fnew, newPos.x, newPos.y, newPos.z)) {
             fold->removeChar();
             updatePos(newPos);
@@ -1785,9 +1783,11 @@ bool Character::Warp(position newPos) {
 
 bool Character::forceWarp(position newPos) {
     position oldpos = pos;
-    Field *fold=NULL,* fnew=NULL;
+    Field *fold = NULL;
 
     if (_world->GetPToCFieldAt(fold, pos.x, pos.y, pos.z)) {
+        Field *fnew = NULL;
+
         if (_world->GetPToCFieldAt(fnew, newPos.x, newPos.y, newPos.z)) {
             fold->removeChar();
             updatePos(newPos);
@@ -1884,7 +1884,6 @@ void Character::changeQualityItem(TYPE_OF_ITEM_ID id, short int amount) {
 
 void Character::changeQualityAt(unsigned char pos, short int amount) {
     std::cout<<"In ChangeQualityAt, pos: "<<(int)pos<<" amount: "<<amount<<" !"<<std::endl;
-    short int tmpQuality;
 
     if (pos < MAX_BODY_ITEMS + MAX_BELT_SLOTS) {
         //Prfen ob berhaupt ein Item an der Stelle ist oder ein belegt
@@ -1894,7 +1893,7 @@ void Character::changeQualityAt(unsigned char pos, short int amount) {
         }
 
 
-        tmpQuality = ((amount+characterItems[pos].getDurability())<100) ? (amount + characterItems[pos].getQuality()) : (characterItems[pos].getQuality() - characterItems[pos].getDurability() + 99);
+        short int tmpQuality = ((amount+characterItems[pos].getDurability())<100) ? (amount + characterItems[pos].getQuality()) : (characterItems[pos].getQuality() - characterItems[pos].getDurability() + 99);
 
         if (tmpQuality%100 > 1) {
             std::cout<<"Qualit� des Items > 0"<<std::endl;

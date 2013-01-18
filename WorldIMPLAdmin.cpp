@@ -696,13 +696,14 @@ void World::ban_command(Player *cp, const std::string &timeplayer) {
     }
 
     char *tokenize = new char[ timeplayer.length() + 1 ];
-    short int jailtime = 0;
 
     strcpy(tokenize, timeplayer.c_str());
 
     char *thistoken;
 
     if ((thistoken = strtok(tokenize, " ")) != NULL) {
+        short int jailtime = 0;
+
         if (ReadField(thistoken, jailtime)) {
             char *tcharp = strtok(NULL, " ");
 
@@ -1067,7 +1068,7 @@ void World::what_command(Player *cp) {
             } else if (id >= NPC_BASE) {
                 message << "- NPC " << id-NPC_BASE;
             } else if (id >= MONSTER_BASE) {
-                message << "- Monster " << ((Monster *)character)->getType();
+                message << "- Monster " << dynamic_cast<Monster *>(character)->getType();
             } else {
                 message << "- Player";
             }
@@ -1086,14 +1087,9 @@ void World::playersave_command(Player *cp) {
     Logger::writeMessage("admin", cp->nameAndId() + " saves all players");
 
     PLAYERVECTOR::iterator pIterator;
-    unsigned long int thisonlinetime = 0;
-
-    std::string placeholder;
 
     for (pIterator = Players.begin(); pIterator < Players.end(); ++pIterator) {
-        if (!(*pIterator)->save()) {
-            thisonlinetime = 0;
-        }
+        (*pIterator)->save();
     }
 
     std::string tmessage = "*** All online players saved! ***";
@@ -1310,7 +1306,6 @@ bool World::reload_defs(Player *cp) {
 
     sendMessageToAllPlayers("### The server is reloading, this may cause some lag ###");
 
-    std::string server;
     bool ok = true;
 
     CommonObjectTable *CommonItems_temp = 0;

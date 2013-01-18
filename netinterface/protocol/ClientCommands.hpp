@@ -487,11 +487,11 @@ public:
 
         switch (cid) {
         case UID_KOORD:
-
-            Field *temp;
             Logger::writeMessage("Casting",player->name + " trys to cast on a coordinate pos(" + Logger::toString(xc) + "," + Logger::toString(yc) + "," + Logger::toString(zc)+")",false);
 
             if (LuaMageScript) {
+                Field *temp;
+
                 if (!World::get()->GetPToCFieldAt(temp, xc, yc, zc)) {
                     Logger::writeError("World_Debug", "cant find field for casting at pos(" + Logger::toString(xc) + "," + Logger::toString(yc) + "," + Logger::toString(zc) + ") !");
                     paramOK = false;
@@ -770,7 +770,7 @@ public:
         if (LuaMageScript) {
             Logger::writeMessage("Casting","try to call magic script",false);
             player->ltAction->setLastAction(LuaMageScript, Source, Target, LongTimeAction::ACTION_MAGIC);
-            std::string msg;
+            //std::string msg;
 #ifdef World_DEBUG
             std::cout<<"paramOK: "<<paramOK<<std::endl;
 #endif
@@ -785,11 +785,11 @@ public:
                 switch (Target.Type) {
                 case LUA_NONE:
                     LuaMageScript->CastMagic(player, static_cast<unsigned char>(LTS_NOLTACTION));
-                    msg = "Casted spell: " + Logger::toString(spellId);
+                    //msg = "Casted spell: " + Logger::toString(spellId);
                     break;
                 case LUA_FIELD:
                     LuaMageScript->CastMagicOnField(player, Target.pos, static_cast<unsigned char>(LTS_NOLTACTION));
-                    msg = "Casted spell: " + Logger::toString(spellId) + " on field at pos(" + Logger::toString(Target.pos.x) + "," + Logger::toString(Target.pos.y) + "," + Logger::toString(Target.pos.z) + ")";
+                    //msg = "Casted spell: " + Logger::toString(spellId) + " on field at pos(" + Logger::toString(Target.pos.x) + "," + Logger::toString(Target.pos.y) + "," + Logger::toString(Target.pos.z) + ")";
                     break;
                 case LUA_CHARACTER:
                     LuaMageScript->CastMagicOnCharacter(player, Target.character, static_cast<unsigned char>(LTS_NOLTACTION));
@@ -808,15 +808,15 @@ public:
 
                     }
 
-                    msg = "Casted spell: " + Logger::toString(spellId) + " on character: " + Target.character->name + "(" + Logger::toString(Target.character->id) + ")";
+                    //msg = "Casted spell: " + Logger::toString(spellId) + " on character: " + Target.character->name + "(" + Logger::toString(Target.character->id) + ")";
                     break;
                 case LUA_ITEM:
                     LuaMageScript->CastMagicOnItem(player, Target.item, static_cast<unsigned char>(LTS_NOLTACTION));
-                    msg = "Casted spell: " + Logger::toString(spellId) + " on item: " + Logger::toString(Target.item.getId());
+                    //msg = "Casted spell: " + Logger::toString(spellId) + " on item: " + Logger::toString(Target.item.getId());
                     break;
                 default:
                     LuaMageScript->CastMagic(player, static_cast<unsigned char>(LTS_NOLTACTION));
-                    msg = "Casted spell: " + Logger::toString(spellId) + " on item: " + Logger::toString(Target.item.getId());
+                    //msg = "Casted spell: " + Logger::toString(spellId) + " on item: " + Logger::toString(Target.item.getId());
                     break;
                 } //Ende Switch
 

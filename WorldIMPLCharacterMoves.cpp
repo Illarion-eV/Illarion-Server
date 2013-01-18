@@ -98,7 +98,7 @@ void World::checkFieldAfterMove(Character *cc, Field *cfstart) {
             case MUSICFIELD:
 
                 if (cc->character == Character::player) {
-                    ((Player *)cc)->startMusic(which.flags);
+                    dynamic_cast<Player *>(cc)->startMusic(which.flags);
                 }
 
                 break;
@@ -253,22 +253,14 @@ void World::sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char ne
 void World::sendCharacterWarpToAllVisiblePlayers(Character *cc, position oldpos, unsigned char netid) {
     if (!cc->isinvisible) {
         std::vector < Player * > ::iterator titerator;
-        char xoffs;
-        char yoffs;
-        char zoffs;
 
-        // wegwarpen
         sendRemoveCharToVisiblePlayers(cc->id, oldpos);
 
-        // hinwarpen
         std::vector < Player * > temp;
         temp = Players.findAllCharactersInScreen(cc->pos.x, cc->pos.y, cc->pos.z);
 
         for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
             if (cc != (*titerator)) {
-                xoffs = cc->pos.x - (*titerator)->pos.x;
-                yoffs = cc->pos.y - (*titerator)->pos.y;
-                zoffs = cc->pos.z - (*titerator)->pos.z + RANGEDOWN;
                 boost::shared_ptr<BasicServerCommand> cmd(new MoveAckTC(cc->id, cc->pos, PUSH, 0));
                 (*titerator)->Connection->addCommand(cmd);
             }

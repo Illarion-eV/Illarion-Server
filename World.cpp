@@ -294,7 +294,6 @@ bool World::load_from_editor(std::string filename) {
         }
 
         temp_tile.x -= mapstartx;
-        std::string LogMessage="x: " + Logger::toString(temp_tile.x) + " ";
 
         maptilesfile >> dummy;   // read a char (;)
 
@@ -315,7 +314,6 @@ bool World::load_from_editor(std::string filename) {
         }
 
         temp_tile.y -= mapstarty;
-        LogMessage += "y: " + Logger::toString(temp_tile.y) + " ";
 
         maptilesfile >> dummy;          // read a char (;)
 
@@ -325,7 +323,6 @@ bool World::load_from_editor(std::string filename) {
         }
 
         maptilesfile >> temp_tile.fieldID;      // read an int (tile-id)
-        LogMessage += "id: " + Logger::toString(temp_tile.fieldID);
 
         maptilesfile >> dummy;          // read a char (;)
 
@@ -335,7 +332,6 @@ bool World::load_from_editor(std::string filename) {
         }
 
         maptilesfile >> temp_tile.musicID;      // read a short uint (music-id)
-        LogMessage += "musicID: " + Logger::toString(temp_tile.musicID);
 
         // store the tile in our map
         maptiles[temp_tile.x<<16|temp_tile.y] = temp_tile;
@@ -448,7 +444,6 @@ bool World::load_from_editor(std::string filename) {
         it.setNumber(1);
         x -= mapstartx;
         x += h_x;
-        std::string LogMessage =  "item: x: " + Logger::toString(x) +  " ";
         mapitemsfile >> dummy;
 
         if (dummy != ';') {
@@ -465,7 +460,6 @@ bool World::load_from_editor(std::string filename) {
 
         y -= mapstarty;
         y += h_y;
-        LogMessage += "y: " + Logger::toString(y) + " ";
         mapitemsfile >> dummy;
 
         if (dummy != ';') {
@@ -475,7 +469,6 @@ bool World::load_from_editor(std::string filename) {
 
         mapitemsfile >> itemId;
         it.setId(itemId);
-        LogMessage += "id: " + Logger::toString(itemId) + " ";
 
         mapitemsfile >> dummy;
 
@@ -486,7 +479,6 @@ bool World::load_from_editor(std::string filename) {
 
         mapitemsfile >> itemQuality;
         it.setQuality(itemQuality);
-        LogMessage += "quality: " + Logger::toString(itemQuality) + " ";
 
         if (mapitemsfile.good()) {
             if (mapitemsfile.get() == ';') {
@@ -534,9 +526,6 @@ bool World::load_from_editor(std::string filename) {
                 mapitemsfile.unget();
             }
         }
-
-        //if ( LogOptions["World_Imports"] )
-        //  Logger::writeMessage("World_Imports", LogMessage);
 
         // store the item in our map
         g_item = it;

@@ -117,7 +117,6 @@ void LongTimeAction::startLongTimeAction(unsigned short int timetowait, unsigned
 }
 
 bool LongTimeAction::actionDisturbed(Character *disturber) {
-    bool disturbed = false;
     checkSource();
     checkTarget();
 
@@ -128,6 +127,8 @@ bool LongTimeAction::actionDisturbed(Character *disturber) {
                 _owner->executeCraftingDialogCraftingAborted(_source.dialog);
             }
         } else if (_script) {
+            bool disturbed = false;
+            
             if ((_at == ACTION_USE)) {
                 if (_source.Type == LUA_ITEM) {
                     boost::shared_ptr<LuaItemScript>itemScript = boost::dynamic_pointer_cast<LuaItemScript>(_script);

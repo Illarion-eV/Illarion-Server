@@ -203,10 +203,9 @@ bool Field::TakeTopItem(Item &it) {
 
 bool Field::changeQualityOfTopItem(short int amount) {
     Item it;
-    short int tmpQuality;
 
     if (TakeTopItem(it)) {
-        tmpQuality = ((amount+it.getDurability())<100) ? (amount + it.getQuality()) : (it.getQuality() - it.getDurability() + 99);
+        short int tmpQuality = ((amount+it.getDurability())<100) ? (amount + it.getQuality()) : (it.getQuality() - it.getDurability() + 99);
 
         if (tmpQuality%100 > 1) {
             it.setQuality(tmpQuality);

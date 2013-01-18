@@ -80,7 +80,7 @@ void *save_this_player(void *ptr) {
     }
 
     try {
-        if (((Player *)ptr)->save()) {
+        if (static_cast<Player *>(ptr)->save()) {
             save_done=true;
         }
     } catch (...) {
