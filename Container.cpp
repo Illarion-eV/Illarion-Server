@@ -80,8 +80,12 @@ Item::number_type Container::mergeItem(Item item) {
             Item &selectedItem = it->second;
 
             if (selectedItem.getId() == item.getId() && selectedItem.equalData(item)) {
-                item.setNumber(selectedItem.increaseNumberBy(item.getNumber()));
-                selectedItem.setMinQuality(item);
+                Item::number_type number = selectedItem.increaseNumberBy(item.getNumber());
+
+                if (number != item.getNumber()) {
+                    item.setNumber(number);
+                    selectedItem.setMinQuality(item);
+                }
             }
 
             ++it;
