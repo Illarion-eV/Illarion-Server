@@ -1470,16 +1470,7 @@ bool World::moveItem(Character *cc, unsigned char d, short int xc, short int yc,
 
                 return false;
             }
-            /*
-            else if ( com.script )
-            {
-                   com.script->MoveItemAfterMove(cc, s_item, t_item );
-            }*/
-            else if (script) {
-                script->MoveItemAfterMove(cc, s_item, t_item);
-            }
 
-            //Wenn anzahl < als die anzahl des Tempitem und das Tempitem kein Container dann fehlerbehandlung
             if (count < tempitem.getNumber() && !tempitem.isContainer()) {
                 g_item = tempitem;
                 g_item.setNumber(g_item.getNumber() - count);
@@ -1488,15 +1479,12 @@ bool World::moveItem(Character *cc, unsigned char d, short int xc, short int yc,
                     std::cerr << "moveitem (Map-Map): Datenverlust beim teilweisen Verschieben, Character " << cc->name << std::endl;
                     g_cont = NULL;
                     g_item.reset();
-                    return false;
                 }
+
+                return false;
             }
-            /*
-            else if ( com.script )
-            {
-                   com.script->MoveItemAfterMove(cc, s_item, t_item );
-            }*/
-            else if (script) {
+            
+            if (script) {
                 script->MoveItemAfterMove(cc, s_item, t_item);
             }
 
