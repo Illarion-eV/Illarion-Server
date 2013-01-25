@@ -23,6 +23,7 @@
 SelectionDialog::SelectionDialog(std::string title, std::string text, luabind::object callback)
     :Dialog(title, "SelectionDialog", callback), text(text) {
     success = false;
+    close = false;
 }
 
 SelectionDialog::SelectionDialog(const SelectionDialog &selectionDialog) : Dialog(selectionDialog) {
@@ -35,6 +36,7 @@ SelectionDialog::SelectionDialog(const SelectionDialog &selectionDialog) : Dialo
 
     success = selectionDialog.success;
     selectedIndex = selectionDialog.selectedIndex;
+    close = selectionDialog.close;
 }
 
 SelectionDialog::~SelectionDialog() {
@@ -80,5 +82,13 @@ SelectionDialog::index_type SelectionDialog::getSelectedIndex() const {
 
 void SelectionDialog::setSelectedIndex(index_type index) {
     selectedIndex = index;
+}
+
+void SelectionDialog::setCloseOnMove() {
+    close = true;
+}
+
+bool SelectionDialog::closeOnMove() const {
+    return close;
 }
 

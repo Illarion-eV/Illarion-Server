@@ -58,6 +58,8 @@ private:
 
     index_type selectedIndex;
 
+    bool close;
+
 public:
     SelectionDialog(string title, string text, luabind::object callback);
     SelectionDialog(const SelectionDialog &selectionDialog);
@@ -75,6 +77,9 @@ public:
 
     index_type getSelectedIndex() const;
     void setSelectedIndex(index_type index);
+
+    void setCloseOnMove();
+    virtual bool closeOnMove() const;
 };
 
 #endif
