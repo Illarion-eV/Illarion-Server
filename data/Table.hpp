@@ -24,6 +24,7 @@
 class Table {
 protected:
     virtual void reload()=0;
+    virtual ~Table() { }
 };
 
 #endif

@@ -18,6 +18,7 @@
 
 
 AUTOMAKE_OPTIONS = foreign 
+ACLOCAL_AMFLAGS = -Im4
 noinst_PROGRAMS = testserver
 
 testserver_SOURCES = \
@@ -62,8 +63,9 @@ netinterface/NetInterface.cpp InitialConnection.cpp netinterface/CommandFactory.
 netinterface/BasicCommand.cpp netinterface/BasicServerCommand.cpp netinterface/BasicClientCommand.cpp \
 netinterface/protocol/ServerCommands.cpp netinterface/ByteBuffer.cpp MonitoringClients.cpp
 
-testserver_LDADD = -L/usr/local/lib -lpthread -lssl -lcrypto -lpqxx -lpq -llua5.1 -lboost_thread -lboost_system -lboost_filesystem -lluabind
-testserver_LDFLAGS =
-CXXFLAGS = -ggdb -pipe -Wall -Werror -Wno-deprecated -std=c++0x -D_THREAD_SAFE -D_REENTRANT -DTESTSERVER -DCDataConnect_DEBUG -DAdminCommands_DEBUG
-INCLUDES = -I/usr/include/postgresql -I/usr/include/lua5.1
-LIBS = -Xlinker -R /usr/local/lib
+AM_CPPFLAGS = $(BOOST_CPPFLAGS)
+
+testserver_LDADD = -L/usr/local/lib -lpthread -lssl -lcrypto $(DEPS_LIBS) -lcrypt
+testserver_LDFLAGS = $(BOOST_THREAD_LDFLAGS) $(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS)
+testserver_CXXFLAGS = -ggdb -pipe -Wall -Werror -Wno-deprecated -std=c++0x -D_THREAD_SAFE -D_REENTRANT -DTESTSERVER -DCDataConnect_DEBUG -DAdminCommands_DEBUG $(BOOST_CXXFLAGS) $(DEPS_CFLAGS)
+LIBS = -Xlinker -R /usr/local/lib $(BOOST_THREAD_LIBS) $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS)

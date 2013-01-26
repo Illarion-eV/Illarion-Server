@@ -1889,7 +1889,7 @@ bool Player::move(direction dir, uint8_t mode) {
 
             //Prfen ob Zielfeld ein Teleporter und evtl Spieler teleportieren
             if (cfnew->IsWarpField()) {
-                position oldpos = pos, newpos;
+                position newpos;
                 cfnew->GetWarpField(newpos);
                 Warp(newpos);
                 cont = false;
@@ -2233,8 +2233,8 @@ void Player::sendFullMap() {
 void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
     if ((screenwidth == 0) && (screenheight == 0)) {
         // static view
-        int x,y,z,e,l;
-        NewClientView::stripedirection dir;
+        int x = {},y = {},z,e,l;
+        NewClientView::stripedirection dir = {};
         int length = MAP_DIMENSION + 1;
 
         switch (direction) {
@@ -2300,9 +2300,9 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
         }
     } else {
         // dynamic view
-        int x,y,z,e,l;
-        NewClientView::stripedirection dir;
-        int length;
+        int x = {},y = {},z,e,l;
+        NewClientView::stripedirection dir = {};
+        int length = {};
 
         switch (direction) {
         case upper:
