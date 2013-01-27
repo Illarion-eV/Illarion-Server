@@ -51,11 +51,20 @@ BOOST_FILESYSTEM
 BOOST_SYSTEM
 
 PKG_CHECK_MODULES([lua], [lua5.1])
-PKG_CHECK_MODULES([luabind], [luabind])
 PKG_CHECK_MODULES([libpqxx], [libpqxx >= 3.1])
 
-DEPS_CFLAGS="$lua_CFLAGS $luabind_CFLAGS $libpqxx_CFLAGS"
-DEPS_LIBS="$lua_LIBS $luabind_LIBS $libpqxx_LIBS"
+AC_LANG(C++)
+SAVED_LDFLAGS=$LDFLAGS
+LDFLAGS="$LDFLAGS -lluabind"
+AC_LINK_IFELSE(
+  [AC_LANG_PROGRAM([#include <luabind/error.hpp>],
+    [luabind::error *foo])],
+  [TEST_LIBS="$TEST_LIBS -lluabind"] [HAVE_LUABIND=1],
+  [AC_MSG_ERROR([luabind is not installed.])])
+LDFLAGS=$SAVED_LDFLAGS
+
+DEPS_CFLAGS="$lua_CFLAGS $libpqxx_CFLAGS"
+DEPS_LIBS="$lua_LIBS $libpqxx_LIBS"
 
 AC_SUBST([DEPS_CFLAGS])
 AC_SUBST([DEPS_LIBS])
