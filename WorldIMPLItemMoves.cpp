@@ -1483,7 +1483,7 @@ bool World::moveItem(Character *cc, unsigned char d, short int xc, short int yc,
 
                 return false;
             }
-            
+
             if (script) {
                 script->MoveItemAfterMove(cc, s_item, t_item);
             }
