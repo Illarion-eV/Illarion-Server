@@ -35,6 +35,13 @@ Build
    automake -a -c
    ./configure
    make
+
+   for non-standard locations of luabind (i.e. in /usr/local/lib and not in /usr/lib)
+   use LDFLAGS=-L/usr/local CPPFLAGS=-I/usr/local/include ./configure
+
+   if you want to use multiple boost versions in parallel you should use the
+   flag --layout=versioned to b2 on installing this version to make sure we link against
+   the correct version
      ______________________________________________________________________
 
    Last modified: Jan 25, 2013
