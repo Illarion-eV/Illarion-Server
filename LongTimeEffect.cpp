@@ -40,66 +40,46 @@
 
 extern LongTimeEffectTable *LongTimeEffects;
 
-LongTimeEffect::LongTimeEffect(uint16_t effectId, uint32_t nextCalled) : _effectId(effectId), _effectName(""),  _nextCalled(nextCalled), _numberCalled(0), _lastCalled(0), _firstadd(true) {
+LongTimeEffect::LongTimeEffect(uint16_t effectId, int32_t executeIn): effectId(effectId), effectName(""), executeIn(executeIn), executionTime(0), numberOfCalls(0), firstadd(true) {
     LongTimeEffectStruct effect;
-    LongTimeEffects->find(_effectId, effect);
-    _effectName = effect.effectname;
-    _values.clear();
+    LongTimeEffects->find(effectId, effect);
+    effectName = effect.effectname;
 }
 
-LongTimeEffect::LongTimeEffect(std::string name, uint32_t nextCalled) : _effectId(0), _effectName(name), _nextCalled(nextCalled), _numberCalled(0), _lastCalled(0), _firstadd(true) {
+LongTimeEffect::LongTimeEffect(std::string name, int32_t executeIn): effectId(0), effectName(name), executeIn(executeIn), executionTime(0), numberOfCalls(0), firstadd(true) {
     LongTimeEffectStruct effect;
-    LongTimeEffects->find(_effectId, effect);
-    _effectId = effect.effectid;
-    _values.clear();
-}
-
-LongTimeEffect::~LongTimeEffect() {
-    _values.clear();
+    LongTimeEffects->find(effectName, effect);
+    effectId = effect.effectid;
 }
 
 bool LongTimeEffect::callEffect(Character *target) {
     bool ret = false;
     LongTimeEffectStruct effect;
 
-    if (LongTimeEffects->find(_effectId, effect)) {
+    if (LongTimeEffects->find(effectId, effect)) {
         if (effect.script) {
             ret = effect.script->callEffect(this, target);
-            _lastCalled = _nextCalled;
-            _numberCalled++;
+            ++numberOfCalls;
         }
     } else {
-        std::cout<<"can't find effect with id: "<<_effectId<<" to call the script."<<std::endl;
+        std::cerr << "Can't find effect with id " << effectId << " to call the script." << std::endl;
     }
 
     return ret;
 }
 
 void LongTimeEffect::addValue(std::string name, uint32_t value) {
-    VALUETABLE::iterator it = _values.find(name.c_str());
-
-    if (it != _values.end()) {
-        it->second = value;
-    } else {
-        char *sname = new char[name.length() + 1];
-        strcpy(sname, name.c_str());
-        sname[ name.length()] = 0;
-        _values[ sname ] = value;
-    }
+    values[name] = value;
 }
 
 void LongTimeEffect::removeValue(std::string name) {
-    VALUETABLE::iterator it = _values.find(name.c_str());
-
-    if (it != _values.end()) {
-        _values.erase(it);
-    }
+    values.erase(name);
 }
 
 bool LongTimeEffect::findValue(std::string name, uint32_t &ret) {
-    VALUETABLE::iterator it = _values.find(name.c_str());
+    auto it = values.find(name);
 
-    if (it != _values.end()) {
+    if (it != values.end()) {
         ret = it->second;
         return true;
     } else {
@@ -107,7 +87,7 @@ bool LongTimeEffect::findValue(std::string name, uint32_t &ret) {
     }
 }
 
-bool LongTimeEffect::save(uint32_t playerid) {
+bool LongTimeEffect::save(uint32_t playerid, int32_t currentTime) {
     using namespace Database;
     PConnection connection = ConnectionManager::getInstance().getConnection();
 
@@ -120,13 +100,11 @@ bool LongTimeEffect::save(uint32_t playerid) {
             const InsertQuery::columnIndex userColumn = insQuery.addColumn("plte_playerid");
             const InsertQuery::columnIndex effectColumn = insQuery.addColumn("plte_effectid");
             const InsertQuery::columnIndex nextCalledColumn = insQuery.addColumn("plte_nextcalled");
-            const InsertQuery::columnIndex lastCalledColumn = insQuery.addColumn("plte_lastcalled");
             const InsertQuery::columnIndex numberCalledColumn = insQuery.addColumn("plte_numbercalled");
             insQuery.addValue(userColumn, playerid);
-            insQuery.addValue(effectColumn, _effectId);
-            insQuery.addValue(nextCalledColumn, _nextCalled);
-            insQuery.addValue(lastCalledColumn, _lastCalled);
-            insQuery.addValue(numberCalledColumn, _numberCalled);
+            insQuery.addValue(effectColumn, effectId);
+            insQuery.addValue(nextCalledColumn, executionTime - currentTime);
+            insQuery.addValue(numberCalledColumn, numberOfCalls);
             insQuery.execute();
         }
 
@@ -136,11 +114,15 @@ bool LongTimeEffect::save(uint32_t playerid) {
             const InsertQuery::columnIndex userColumn = insQuery.addColumn("pev_playerid");
             const InsertQuery::columnIndex effectColumn = insQuery.addColumn("pev_effectid");
             const InsertQuery::columnIndex nameColumn = insQuery.addColumn("pev_name");
-            insQuery.addColumn("pev_value");
+            const InsertQuery::columnIndex valueColumn = insQuery.addColumn("pev_value");
 
-            insQuery.addValues<const char *, uint32_t, ltstr >(nameColumn, _values, InsertQuery::keysAndValues);
-            insQuery.addValues(userColumn, playerid, InsertQuery::FILL);
-            insQuery.addValues(effectColumn, _effectId, InsertQuery::FILL);
+            for (auto it = values.begin(); it != values.end(); ++it) {
+                insQuery.addValue(nameColumn, it->first);
+                insQuery.addValue(valueColumn, it->second);
+                insQuery.addValue(userColumn, playerid);
+                insQuery.addValue(effectColumn, effectId);
+            }
+
             insQuery.execute();
         }
 
@@ -155,4 +137,37 @@ bool LongTimeEffect::save(uint32_t playerid) {
     return true;
 }
 
+uint16_t LongTimeEffect::getEffectId() const {
+    return effectId;
+}
+
+std::string LongTimeEffect::getEffectName() const {
+    return effectName;
+}
+
+int32_t LongTimeEffect::getExecuteIn() const {
+    return executeIn;
+}
+
+void LongTimeEffect::setExecuteIn(int32_t time) {
+    executeIn = time;
+}
+
+int32_t LongTimeEffect::getExecutionTime() const {
+    return executionTime;
+}
+
+void LongTimeEffect::setExecutionTime(int32_t offset) {
+    executionTime = offset + executeIn;
+}
+
+uint32_t LongTimeEffect::getNumberOfCalls() const {
+    return numberOfCalls;
+}
+
+void LongTimeEffect::setNumberOfCalls(uint32_t calls) {
+    numberOfCalls = calls;
+}
+
+LTEPriority LongTimeEffect::priority = LTEPriority();
 

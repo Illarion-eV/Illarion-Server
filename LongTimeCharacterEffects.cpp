@@ -21,6 +21,7 @@
 #include "LongTimeCharacterEffects.hpp"
 
 #include <string>
+#include <algorithm>
 
 #include "data/LongTimeEffectTable.hpp"
 
@@ -33,22 +34,17 @@
 #include "script/LuaLongTimeEffectScript.hpp"
 
 #include "LongTimeEffect.hpp"
-#include "MilTimer.hpp"
 #include "Player.hpp"
 
 extern LongTimeEffectTable *LongTimeEffects;
 
-LongTimeCharacterEffects::LongTimeCharacterEffects(Character *owner) : _owner(owner) {
-}
-
-LongTimeCharacterEffects::~LongTimeCharacterEffects() {
-    effectList.clear();
+LongTimeCharacterEffects::LongTimeCharacterEffects(Character *owner) : owner(owner), time(0) {
 }
 
 bool LongTimeCharacterEffects::find(uint16_t effectid, LongTimeEffect * &effect) {
-    for (EFFECTLIST::iterator it = effectList.begin(); it != effectList.end(); ++it) {
-        if ((*it)->_effectId == effectid) {
-            effect = (*it);
+    for (auto it = effects.begin(); it != effects.end(); ++it) {
+        if ((*it)->getEffectId() == effectid) {
+            effect = *it;
             return true;
         }
     }
@@ -59,9 +55,9 @@ bool LongTimeCharacterEffects::find(uint16_t effectid, LongTimeEffect * &effect)
 
 bool LongTimeCharacterEffects::find(std::string effectname, LongTimeEffect * &effect) {
 
-    for (EFFECTLIST::iterator it = effectList.begin(); it != effectList.end(); ++it) {
-        if ((*it)->_effectName == effectname) {
-            effect = (*it);
+    for (auto it = effects.begin(); it != effects.end(); ++it) {
+        if ((*it)->getEffectName() == effectname) {
+            effect = *it;
             return true;
         }
     }
@@ -77,39 +73,24 @@ void LongTimeCharacterEffects::addEffect(LongTimeEffect *effect) {
         LuaScript::triggerScriptError("LTE must not be nil!");
     }
 
-    if (!find(effect->_effectId, foundeffect)) {
-        EFFECTLIST::iterator it = effectList.begin();
-        bool inserted = false;
-
-        while (!inserted && it != effectList.end()) {
-            if ((*it)->_nextCalled >= effect->_nextCalled) {
-                (*it)->_nextCalled -= effect->_nextCalled;
-                effectList.insert(it, effect);
-                inserted = true;
-            } else {
-                effect->_nextCalled -= (*it)->_nextCalled;
-                ++it;
-            }
-        }
-
-        if (!inserted) {
-            effectList.push_back(effect);
-        }
+    if (!find(effect->getEffectId(), foundeffect)) {
+        effect->setExecutionTime(time);
+        effects.push_back(effect);
+        std::push_heap(effects.begin(), effects.end(), LongTimeEffect::priority);
 
         LongTimeEffectStruct effectStr;
 
-        if (effect->_firstadd && LongTimeEffects->find(effect->_effectId, effectStr)) {
+        if (effect->isFirstAdd() && LongTimeEffects->find(effect->getEffectId(), effectStr)) {
             if (effectStr.script) {
-                effectStr.script->addEffect(effect , _owner);
+                effectStr.script->addEffect(effect, owner);
             }
         }
     } else {
         LongTimeEffectStruct effectStr;
 
-        if (LongTimeEffects->find(effect->_effectId, effectStr)) {
+        if (LongTimeEffects->find(effect->getEffectId(), effectStr)) {
             if (effectStr.script) {
-
-                effectStr.script->doubleEffect(foundeffect, _owner);
+                effectStr.script->doubleEffect(foundeffect, owner);
             }
         }
     }
@@ -118,18 +99,19 @@ void LongTimeCharacterEffects::addEffect(LongTimeEffect *effect) {
 }
 
 bool LongTimeCharacterEffects::removeEffect(uint16_t effectid) {
-    for (EFFECTLIST::iterator it = effectList.begin(); it != effectList.end(); ++it) {
-        if ((*it)->_effectId == effectid) {
+    for (auto it = effects.begin(); it != effects.end(); ++it) {
+        if ((*it)->getEffectId() == effectid) {
             LongTimeEffectStruct effect;
 
-            if (LongTimeEffects->find((*it)->_effectId, effect)) {
+            if (LongTimeEffects->find((*it)->getEffectId(), effect)) {
                 if (effect.script) {
-                    effect.script->removeEffect((*it), _owner);
+                    effect.script->removeEffect(*it, owner);
                 }
             }
 
-            delete(*it);
-            effectList.erase(it);
+            delete *it;
+            effects.erase(it);
+            std::make_heap(effects.begin(), effects.end(), LongTimeEffect::priority);
             return true;
         }
     }
@@ -138,18 +120,19 @@ bool LongTimeCharacterEffects::removeEffect(uint16_t effectid) {
 }
 
 bool LongTimeCharacterEffects::removeEffect(std::string name) {
-    for (EFFECTLIST::iterator it = effectList.begin(); it != effectList.end(); ++it) {
-        if ((*it)->_effectName == name) {
+    for (auto it = effects.begin(); it != effects.end(); ++it) {
+        if ((*it)->getEffectName() == name) {
             LongTimeEffectStruct effect;
 
-            if (LongTimeEffects->find((*it)->_effectId, effect)) {
+            if (LongTimeEffects->find((*it)->getEffectId(), effect)) {
                 if (effect.script) {
-                    effect.script->removeEffect((*it), _owner);
+                    effect.script->removeEffect(*it, owner);
                 }
             }
 
-            delete(*it);
-            effectList.erase(it);
+            delete *it;
+            effects.erase(it);
+            std::make_heap(effects.begin(), effects.end(), LongTimeEffect::priority);
             return true;
         }
     }
@@ -158,19 +141,19 @@ bool LongTimeCharacterEffects::removeEffect(std::string name) {
 }
 
 bool LongTimeCharacterEffects::removeEffect(LongTimeEffect *effect) {
-    for (EFFECTLIST::iterator it = effectList.begin(); it != effectList.end(); ++it) {
-        if ((*it) == effect) {
+    for (auto it = effects.begin(); it != effects.end(); ++it) {
+        if (*it == effect) {
             LongTimeEffectStruct effectStr;
 
-            if (LongTimeEffects->find((*it)->_effectId, effectStr)) {
+            if (LongTimeEffects->find((*it)->getEffectId(), effectStr)) {
                 if (effectStr.script) {
-                    effectStr.script->removeEffect((*it), _owner);
+                    effectStr.script->removeEffect(*it, owner);
                 }
             }
 
-            effectList.erase(it);
+            effects.erase(it);
             delete effect;
-            effect = NULL;
+            std::make_heap(effects.begin(), effects.end(), LongTimeEffect::priority);
             return true;
         }
     }
@@ -179,26 +162,25 @@ bool LongTimeCharacterEffects::removeEffect(LongTimeEffect *effect) {
 }
 
 void LongTimeCharacterEffects::checkEffects() {
-    if (!effectList.empty() && (effectList.front()->_nextCalled > 0)) {
-        effectList.front()->_nextCalled--;
-    } else {
-        LongTimeEffect *effect;
-        int emexit = 0;
+    ++time;
 
-        while (!effectList.empty() && (emexit < 200) && (effectList.front()->_nextCalled <= 0)) {
-            emexit++;
-            effect = effectList.front();
-            effectList.pop_front();
+    LongTimeEffect *effect;
+    int emexit = 0;
 
-            if (effect->callEffect(_owner)) {
-                addEffect(effect);
-            } else {
-                LongTimeEffectStruct effectStr;
+    while (!effects.empty() && (emexit < 200) && (effects.front()->getExecutionTime() <= time)) {
+        ++emexit;
+        std::pop_heap(effects.begin(), effects.end(), LongTimeEffect::priority);
+        effect = effects.back();
+        effects.pop_back();
 
-                if (LongTimeEffects->find(effect->_effectId, effectStr)) {
-                    if (effectStr.script) {
-                        effectStr.script->removeEffect(effect, _owner);
-                    }
+        if (effect->callEffect(owner)) {
+            addEffect(effect);
+        } else {
+            LongTimeEffectStruct effectStr;
+
+            if (LongTimeEffects->find(effect->getEffectId(), effectStr)) {
+                if (effectStr.script) {
+                    effectStr.script->removeEffect(effect, owner);
                 }
             }
         }
@@ -208,15 +190,15 @@ void LongTimeCharacterEffects::checkEffects() {
 bool LongTimeCharacterEffects::save() {
     using namespace Database;
 
-    if (_owner && _owner->character != Character::player) {
-        std::cout<<"called save for LongtimeCharacterEffects but owner was no player"<<std::endl;
+    if (owner && owner->character != Character::player) {
+        std::cerr << "called save for LongtimeCharacterEffects but owner was no player" << std::endl;
         return false;
     }
 
-    Player *player = dynamic_cast<Player *>(_owner);
+    Player *player = dynamic_cast<Player *>(owner);
 
-    if (!_owner) {
-        std::cout<<"error saving long time effects owner was NULL!"<<std::endl;
+    if (!owner) {
+        std::cout << "error saving long time effects owner was NULL!" << std::endl;
         return false;
     }
 
@@ -246,25 +228,22 @@ bool LongTimeCharacterEffects::save() {
     std::cout<<"deleting old data was successfull inserting new one"<<std::endl;
     bool allok = true;
 
-    for (EFFECTLIST::iterator it = effectList.begin(); it != effectList.end(); ++it) {
-        allok &= (*it)->save(player->id);
+    for (auto it = effects.begin(); it != effects.end(); ++it) {
+        allok and_eq(*it)->save(player->id, time);
     }
 
-    //di::postgres::enable_trace_query = false;
-    std::cout<<"saved data: "<<allok<<std::endl;
     return allok;
 }
 
 bool LongTimeCharacterEffects::load() {
     using namespace Database;
-    std::cout<<"try to load effects" <<std::endl;
 
-    if (_owner->character != Character::player) {
-        std::cout<<"called load for LongtimeCharacterEffects but owner was no player"<<std::endl;
+    if (owner->character != Character::player) {
+        std::cerr << "called load for LongtimeCharacterEffects but owner was no player" << std::endl;
         return false;
     }
 
-    Player *player = dynamic_cast<Player *>(_owner);
+    Player *player = dynamic_cast<Player *>(owner);
 
     PConnection connection = ConnectionManager::getInstance().getConnection();
 
@@ -272,7 +251,6 @@ bool LongTimeCharacterEffects::load() {
         SelectQuery query(connection);
         query.addColumn("playerlteffects", "plte_effectid");
         query.addColumn("playerlteffects", "plte_nextcalled");
-        query.addColumn("playerlteffects", "plte_lastcalled");
         query.addColumn("playerlteffects", "plte_numbercalled");
         query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playerlteffects", "plte_playerid", player->id);
         query.addServerTable("playerlteffects");
@@ -283,19 +261,18 @@ bool LongTimeCharacterEffects::load() {
         if (!results.empty()) {
             for (ResultConstIterator itr = results.begin();
                  itr != results.end(); ++itr) {
-                LongTimeEffect *effect = new LongTimeEffect(
-                    (*itr)["plte_effectid"].as<uint16_t>(),
-                    (*itr)["plte_nextcalled"].as<uint32_t>());
+                uint16_t effectId = (*itr)["plte_effectid"].as<uint16_t>();
+                LongTimeEffect *effect = new LongTimeEffect(effectId, (*itr)["plte_nextcalled"].as<int32_t>());
 
+                effect->setExecutionTime(time);
                 effect->firstAdd();
-                effect->_lastCalled = (*itr)["plte_lastcalled"].as<uint32_t>();
-                effect->_numberCalled = (*itr)["plte_numberCalled"].as<uint32_t>();
+                effect->setNumberOfCalls((*itr)["plte_numberCalled"].as<uint32_t>());
 
                 SelectQuery valuesQuery(connection);
                 valuesQuery.addColumn("playerlteffectvalues", "pev_name");
                 valuesQuery.addColumn("playerlteffectvalues", "pev_value");
                 valuesQuery.addEqualCondition<TYPE_OF_CHARACTER_ID>("playerlteffectvalues", "pev_playerid", player->id);
-                valuesQuery.addEqualCondition<uint16_t>("playerlteffectvalues", "pev_effectid", effect->_effectId);
+                valuesQuery.addEqualCondition<uint16_t>("playerlteffectvalues", "pev_effectid", effectId);
                 valuesQuery.addServerTable("playerlteffectvalues");
 
                 Result valuesResults = valuesQuery.execute();
@@ -309,10 +286,10 @@ bool LongTimeCharacterEffects::load() {
                     }
                 }
 
-                effectList.push_back(effect);
+                effects.push_back(effect);
                 LongTimeEffectStruct effectStr;
 
-                if (LongTimeEffects->find(effect->_effectId, effectStr)) {
+                if (LongTimeEffects->find(effectId, effectStr)) {
                     if (effectStr.script) {
                         effectStr.script->loadEffect(effect, player);
                     }
@@ -321,7 +298,7 @@ bool LongTimeCharacterEffects::load() {
             }
         }
 
-        std::cout<<"effects laoded" <<std::endl;
+        std::make_heap(effects.begin(), effects.end(), LongTimeEffect::priority);
 
         return true;
     } catch (std::exception &e) {
@@ -329,3 +306,4 @@ bool LongTimeCharacterEffects::load() {
         return false;
     }
 }
+

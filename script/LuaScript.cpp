@@ -810,16 +810,15 @@ void LuaScript::init_base_functions() {
             luabind::value("container",6)
         ],
         luabind::class_<LongTimeEffect>("LongTimeEffect")
-        .def(luabind::constructor<uint16_t,uint32_t>())
-        .def(luabind::constructor<std::string,uint32_t>())
+        .def(luabind::constructor<uint16_t, uint32_t>())
+        .def(luabind::constructor<std::string, uint32_t>())
         .def("addValue",&LongTimeEffect::addValue)
         .def("removeValue",&LongTimeEffect::removeValue)
         .def("findValue",&LongTimeEffect::findValue, luabind::pure_out_value(_3))
-        .def_readonly("effectId",&LongTimeEffect::_effectId)
-        .def_readonly("effectName",&LongTimeEffect::_effectName)
-        .def_readwrite("nextCalled",&LongTimeEffect::_nextCalled)
-        .def_readonly("numberCalled",&LongTimeEffect::_numberCalled)
-        .def_readonly("lastCalled",&LongTimeEffect::_lastCalled),
+        .property("effectId",&LongTimeEffect::getEffectId)
+        .property("effectName",&LongTimeEffect::getEffectName)
+        .property("nextCalled",&LongTimeEffect::getExecuteIn, &LongTimeEffect::setExecuteIn)
+        .property("numberCalled",&LongTimeEffect::getNumberOfCalls),
         luabind::class_<LongTimeEffectStruct>("LongTimeEffectStruct")
         .def(luabind::constructor<>())
         .def_readonly("effectId",&LongTimeEffectStruct::effectid)
