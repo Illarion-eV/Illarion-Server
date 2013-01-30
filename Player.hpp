@@ -513,9 +513,10 @@ public:
 
     virtual void openDepot(uint16_t depotid);
 
-    virtual void setQuestProgress(uint16_t questid, uint32_t progress) throw();
-
-    virtual uint32_t getQuestProgress(uint16_t questid) throw();
+    virtual void setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS progress) throw();
+    void sendQuestProgress(TYPE_OF_QUEST_ID questId, TYPE_OF_QUESTSTATUS progress);
+    void sendCompleteQuestProgress();
+    virtual TYPE_OF_QUESTSTATUS getQuestProgress(TYPE_OF_QUEST_ID questid) throw();
 
 #ifdef _PLAYER_AUTO_SAVE_
     void checkSave();

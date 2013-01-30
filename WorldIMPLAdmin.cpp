@@ -24,6 +24,7 @@
 #include <list>
 #include "data/TilesModificatorTable.hpp"
 #include "data/TilesTable.hpp"
+#include "data/QuestTable.hpp"
 #include "data/SkillTable.hpp"
 #include "data/ArmorObjectTable.hpp"
 #include "data/WeaponObjectTable.hpp"
@@ -61,6 +62,7 @@
 
 #include <iostream>
 
+extern QuestTable *Quests;
 extern LongTimeEffectTable *LongTimeEffects;
 extern RaceSizeTable *RaceSizes;
 extern ScriptVariablesTable *scriptVariables;
@@ -1316,7 +1318,7 @@ bool World::reload_defs(Player *cp) {
     TilesModificatorTable *TilesModItems_temp = 0;
     MonsterTable *MonsterDescriptions_temp = 0;
     TilesTable *Tiles_temp = 0;
-    //SkillTable *Skills_temp = 0;
+    QuestTable *Quests_temp = 0;
     SpellTable *Spells_temp = 0;
     TriggerTable *Trigger_temp = 0;
     MonsterAttackTable *MonsterAttacks_temp = 0;
@@ -1325,16 +1327,14 @@ bool World::reload_defs(Player *cp) {
     LongTimeEffectTable *LongTimeEffects_temp = 0;
     RaceSizeTable *RaceSizes_temp = 0;
 
-    /*
     if (ok) {
-        Skills_temp = new SkillTable();
+        Quests_temp = new QuestTable();
 
-        if (Skills_temp == NULL || !Skills_temp->dataOK()) {
-            reportTableError(cp, "skills");
+        if (Quests_temp == NULL || !Quests_temp->isDataOK()) {
+            reportTableError(cp, "quests");
             ok = false;
         }
     }
-    */
 
     if (ok) {
         RaceSizes_temp = new RaceSizeTable();
@@ -1478,11 +1478,9 @@ bool World::reload_defs(Player *cp) {
     }
 
     if (!ok) {
-        /*
-        if (Skills_temp != NULL) {
-            delete Skills_temp;
+        if (Quests_temp != NULL) {
+            delete Quests_temp;
         }
-        */
 
         if (CommonItems_temp != NULL) {
             delete CommonItems_temp;
@@ -1565,8 +1563,8 @@ bool World::reload_defs(Player *cp) {
         TilesModItems = TilesModItems_temp;
         delete Tiles;
         Tiles = Tiles_temp;
-        // delete Skills;
-        // Skills = Skills_temp;
+        delete Quests;
+        Quests = Quests_temp;
         delete MonsterDescriptions;
         MonsterDescriptions = MonsterDescriptions_temp;
         delete Spells;
@@ -1680,6 +1678,10 @@ bool World::reload_tables(Player *cp) {
 
         //reload NPC's
         initNPC();
+
+        for (auto it = Players.begin(); it < Players.end(); ++it) {
+            (*it)->sendCompleteQuestProgress();
+        }
 
         try {
             boost::shared_ptr<LuaReloadScript> tmpScript(new LuaReloadScript("server.reload"));

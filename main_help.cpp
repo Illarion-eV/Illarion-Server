@@ -43,6 +43,7 @@
 #include "data/NaturalArmorTable.hpp"
 #include "data/ScheduledScriptsTable.hpp"
 #include "data/ScriptVariablesTable.hpp"
+#include "data/QuestTable.hpp"
 #include <boost/shared_ptr.hpp>
 #include "script/LuaWeaponScript.hpp" //For standard fighting script.
 #include "script/LuaLookAtPlayerScript.hpp"
@@ -160,6 +161,8 @@ TilesModificatorTable *TilesModItems;
 TilesTable *Tiles;
 
 SkillTable *Skills;
+
+QuestTable *Quests;
 
 //! a table containing monster descriptions
 MonsterTable *MonsterDescriptions;
@@ -304,6 +307,12 @@ void loadData() {
     Skills = new SkillTable();
 
     if (!Skills->dataOK()) {
+        ok = false;
+    }
+
+    Quests = new QuestTable();
+
+    if (!Quests->isDataOK()) {
         ok = false;
     }
 

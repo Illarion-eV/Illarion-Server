@@ -979,7 +979,7 @@ public:
     * @param questid id of the quest
     * @param progress the current questprograss as flags
     */
-    virtual void setQuestProgress(uint16_t questid, uint32_t progress) throw();
+    virtual void setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS progress) throw();
 
     /**
     * gets the questprogress of a specific quest
@@ -987,7 +987,7 @@ public:
     * @param questid id of the quest
     * @return progress the current questprograss as flags
     */
-    virtual uint32_t getQuestProgress(uint16_t questid) throw();
+    virtual TYPE_OF_QUESTSTATUS getQuestProgress(TYPE_OF_QUEST_ID questid) throw();
 
     /**
     * send a character description to the player if the  char is a player

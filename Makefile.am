@@ -25,7 +25,7 @@ testserver_SOURCES = \
 \
 main.cpp main_help.cpp utility.cpp IdCounter.cpp Logger.cpp Random.cpp \
 \
-data/QuestNodeTable.cpp \
+data/QuestNodeTable.cpp data/QuestTable.cpp \
 data/ArmorObjectTable.cpp data/CommonObjectTable.cpp data/ContainerObjectTable.cpp data/RaceSizeTable.cpp \
 data/MonsterAttackTable.cpp data/ScheduledScriptsTable.cpp data/LongTimeEffectTable.cpp data/NaturalArmorTable.cpp \
 data/SpellTable.cpp data/ScriptVariablesTable.cpp data/NamesObjectTable.cpp data/NPCTable.cpp data/TriggerTable.cpp \
@@ -57,7 +57,7 @@ script/LuaMagicScript.cpp script/LuaTileScript.cpp script/LuaTriggerScript.cpp \
 script/LuaWeaponScript.cpp script/LuaScheduledScript.cpp script/LuaLongTimeEffectScript.cpp \
 script/LuaReloadScript.cpp script/LuaLoginScript.cpp script/LuaLogoutScript.cpp \
 script/LuaDepotScript.cpp script/LuaLookAtPlayerScript.cpp script/LuaLearnScript.cpp \
-script/LuaPlayerDeathScript.cpp script/LuaLookAtItemScript.cpp \
+script/LuaPlayerDeathScript.cpp script/LuaLookAtItemScript.cpp script/LuaQuestScript.cpp \
 \
 netinterface/NetInterface.cpp InitialConnection.cpp netinterface/CommandFactory.cpp \
 netinterface/BasicCommand.cpp netinterface/BasicServerCommand.cpp netinterface/BasicClientCommand.cpp \

@@ -33,6 +33,30 @@
 
 extern RaceSizeTable *RaceSizes;
 
+QuestProgressTC::QuestProgressTC(TYPE_OF_QUEST_ID id,
+                                 const std::string &title,
+                                 const std::string &description,
+                                 const std::vector<position> &targets,
+                                 bool final) : BasicServerCommand(SC_QUESTPROGRESS_TC) {
+    addShortIntToBuffer(id);
+    addStringToBuffer(title);
+    addStringToBuffer(description);
+    addUnsignedCharToBuffer(final ? 1 : 0);
+
+    if (targets.size() > 255) {
+        addUnsignedCharToBuffer(255);
+    } else {
+        addUnsignedCharToBuffer(targets.size());
+    }
+
+    for (size_t i = 0; (i < targets.size()) && (i < 255); ++i) {
+        const position &pos = targets[i];
+        addShortIntToBuffer(pos.x);
+        addShortIntToBuffer(pos.y);
+        addShortIntToBuffer(pos.z);
+    }
+}
+
 InputDialogTC::InputDialogTC(InputDialog &inputDialog, unsigned int dialogId) : BasicServerCommand(SC_INPUTDIALOG_TC) {
     addStringToBuffer(inputDialog.getTitle());
     addStringToBuffer(inputDialog.getDescription());

@@ -77,7 +77,17 @@ enum ServerCommands {
     SC_SELECTIONDIALOG_TC = 0x53,
     SC_CRAFTINGDIALOG_TC = 0x54,
     SC_CRAFTINGDIALOGUPDATE_TC = 0x55,
-    SC_CLOSEDIALOG_TC = 0x5F
+    SC_CLOSEDIALOG_TC = 0x5F,
+    SC_QUESTPROGRESS_TC = 0x40
+};
+
+class QuestProgressTC : public BasicServerCommand {
+public:
+    QuestProgressTC(TYPE_OF_QUEST_ID id,
+                    const std::string &title,
+                    const std::string &description,
+                    const std::vector<position> &targets,
+                    bool final);
 };
 
 class InputDialog;

@@ -53,6 +53,8 @@
 #include "db/UpdateQuery.hpp"
 #include "db/Result.hpp"
 
+#include "data/QuestTable.hpp"
+
 #include "dialog/InputDialog.hpp"
 #include "dialog/MessageDialog.hpp"
 #include "dialog/MerchantDialog.hpp"
@@ -201,6 +203,8 @@ void Player::login() throw(Player::LogoutException) {
     pos.y=y;
     pos.z=z;
     target_position->SetPlayerOnField(true);
+
+    sendCompleteQuestProgress();
 
     sendWeather(_world->weather);
 
@@ -2021,7 +2025,9 @@ bool Player::hasGMRight(gm_rights right) {
     return ((right & admin) == static_cast<uint32_t>(right));
 }
 
-void Player::setQuestProgress(uint16_t questid, uint32_t progress) throw() {
+extern QuestTable *Quests;
+
+void Player::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS progress) throw() {
     using namespace Database;
     PConnection connection = ConnectionManager::getInstance().getConnection();
 
@@ -2031,7 +2037,7 @@ void Player::setQuestProgress(uint16_t questid, uint32_t progress) throw() {
         SelectQuery query(connection);
         query.addColumn("questprogress", "qpg_progress");
         query.addEqualCondition<TYPE_OF_CHARACTER_ID>("questprogress", "qpg_userid", id);
-        query.addEqualCondition<uint16_t>("questprogress", "qpg_questid", questid);
+        query.addEqualCondition<TYPE_OF_QUEST_ID>("questprogress", "qpg_questid", questid);
         query.addServerTable("questprogress");
 
         Result results = query.execute();
@@ -2046,15 +2052,15 @@ void Player::setQuestProgress(uint16_t questid, uint32_t progress) throw() {
             insQuery.addServerTable("questprogress");
 
             insQuery.addValue<TYPE_OF_CHARACTER_ID>(userColumn, id);
-            insQuery.addValue<uint16_t>(questColumn, questid);
-            insQuery.addValue<uint32_t>(progressColumn, progress);
+            insQuery.addValue<TYPE_OF_QUEST_ID>(questColumn, questid);
+            insQuery.addValue<TYPE_OF_QUESTSTATUS>(progressColumn, progress);
 
             insQuery.execute();
         } else {
             UpdateQuery updQuery;
-            updQuery.addAssignColumn<uint32_t>("qpg_progress", progress);
+            updQuery.addAssignColumn<TYPE_OF_QUESTSTATUS>("qpg_progress", progress);
             updQuery.addEqualCondition<TYPE_OF_CHARACTER_ID>("questprogress", "qpg_userid", id);
-            updQuery.addEqualCondition<uint16_t>("questprogress", "qpg_questid", questid);
+            updQuery.addEqualCondition<TYPE_OF_QUEST_ID>("questprogress", "qpg_questid", questid);
             updQuery.setServerTable("questprogress");
 
             updQuery.execute();
@@ -2062,19 +2068,61 @@ void Player::setQuestProgress(uint16_t questid, uint32_t progress) throw() {
 
         connection->commitTransaction();
     } catch (std::exception &e) {
-        std::cerr<<"exception: "<<e.what()<<" while setting QuestProgress!"<<std::endl;
+        std::cerr<<"exception: "<<e.what()<<" while setting quest progress!"<<std::endl;
         connection->rollbackTransaction();
+    }
+
+    sendQuestProgress(questid, progress);
+}
+
+void Player::sendQuestProgress(TYPE_OF_QUEST_ID questId, TYPE_OF_QUESTSTATUS progress) {
+    auto script = Quests->getQuestScript(questId);
+
+    if (script) {
+        std::string title = script->title(this);
+
+        if (title.length() > 0) {
+            std::string description = script->description(this, progress);
+            TYPE_OF_QUESTSTATUS finalStatus = script->finalStatus();
+            std::vector<position> targets;
+            script->targets(this, progress, targets);
+
+            boost::shared_ptr<BasicServerCommand>cmd(new QuestProgressTC(questId, title, description, targets, progress == finalStatus));
+            Connection->addCommand(cmd);
+        }
     }
 }
 
-uint32_t Player::getQuestProgress(uint16_t questid) throw() {
+void Player::sendCompleteQuestProgress() {
+    try {
+        using namespace Database;
+
+        SelectQuery query;
+        query.addColumn("questprogress", "qpg_questid");
+        query.addColumn("questprogress", "qpg_progress");
+        query.addEqualCondition<TYPE_OF_CHARACTER_ID>("questprogress", "qpg_userid", id);
+        query.addServerTable("questprogress");
+
+        Result results = query.execute();
+
+        for (ResultConstIterator it = results.begin(); it != results.end(); ++it) {
+            TYPE_OF_QUEST_ID questId = (*it)["qpg_questid"].as<TYPE_OF_QUEST_ID>();
+            TYPE_OF_QUESTSTATUS progress = (*it)["qpg_progress"].as<TYPE_OF_QUESTSTATUS>();
+            sendQuestProgress(questId, progress);
+        }
+    } catch (std::exception &e) {
+        std::cerr<<"exception: "<<e.what()<<" while getting complete quest progress!"<<std::endl;
+    }
+}
+
+TYPE_OF_QUESTSTATUS Player::getQuestProgress(TYPE_OF_QUEST_ID questid) throw() {
     try {
         using namespace Database;
 
         SelectQuery query;
         query.addColumn("questprogress", "qpg_progress");
         query.addEqualCondition<TYPE_OF_CHARACTER_ID>("questprogress", "qpg_userid", id);
-        query.addEqualCondition<uint16_t>("questprogress", "qpg_questid", questid);
+        query.addEqualCondition<TYPE_OF_QUEST_ID>("questprogress", "qpg_questid", questid);
         query.addServerTable("questprogress");
 
         Result results = query.execute();
@@ -2082,10 +2130,10 @@ uint32_t Player::getQuestProgress(uint16_t questid) throw() {
         if (results.empty()) {
             return UINT32_C(0);
         } else {
-            return results.front()["qpg_progress"].as<uint32_t>();
+            return results.front()["qpg_progress"].as<TYPE_OF_QUESTSTATUS>();
         }
     } catch (std::exception &e) {
-        std::cerr<<"exception: "<<e.what()<<" while getting QuestProgress!"<<std::endl;
+        std::cerr<<"exception: "<<e.what()<<" while getting quest progress!"<<std::endl;
         return UINT32_C(0);
     }
 
