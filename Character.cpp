@@ -1932,7 +1932,7 @@ void Character::callAttackScript(Character *Attacker, Character *Defender) {
     standardFightingScript->onAttack(Attacker, Defender);
 }
 
-void Character::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS progress) throw() {
+void Character::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS progress) {
     // Nothing to do here, overridden for players
 }
 

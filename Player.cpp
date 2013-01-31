@@ -63,8 +63,8 @@
 //#define PLAYER_MOVE_DEBUG
 
 Player::Player(boost::shared_ptr<NetInterface> newConnection) throw(Player::LogoutException)
-    : Character(), onlinetime(0), Connection(newConnection),
-      turtleActive(false), clippingActive(true), admin(false), dialogCounter(0) {
+    : Character(), onlinetime(0), Connection(newConnection), turtleActive(false),
+      clippingActive(true), admin(false), questWriteLock(false), dialogCounter(0) {
 #ifdef Player_DEBUG
     std::cout << "Player Konstruktor Start" << std::endl;
 #endif
@@ -2027,7 +2027,13 @@ bool Player::hasGMRight(gm_rights right) {
 
 extern QuestTable *Quests;
 
-void Player::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS progress) throw() {
+void Player::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS progress) {
+    if (questWriteLock) {
+        LuaScript::writeDebugMsg("Setting quest progress is not allowed in quest entrypoint!");
+        return;
+    }
+
+    questWriteLock = true;
     using namespace Database;
     PConnection connection = ConnectionManager::getInstance().getConnection();
 
@@ -2070,9 +2076,11 @@ void Player::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS prog
     } catch (std::exception &e) {
         std::cerr<<"exception: "<<e.what()<<" while setting quest progress!"<<std::endl;
         connection->rollbackTransaction();
+        return;
     }
 
     sendQuestProgress(questid, progress);
+    questWriteLock = false;
 }
 
 void Player::sendQuestProgress(TYPE_OF_QUEST_ID questId, TYPE_OF_QUESTSTATUS progress) {

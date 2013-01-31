@@ -979,7 +979,7 @@ public:
     * @param questid id of the quest
     * @param progress the current questprograss as flags
     */
-    virtual void setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS progress) throw();
+    virtual void setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS progress);
 
     /**
     * gets the questprogress of a specific quest
