@@ -129,7 +129,7 @@ bool LongTimeAction::actionDisturbed(Character *disturber) {
         } else if (_script) {
             bool disturbed = false;
 
-            if ((_at == ACTION_USE)) {
+            if (_at == ACTION_USE) {
                 if (_source.Type == LUA_ITEM) {
                     boost::shared_ptr<LuaItemScript>itemScript = boost::dynamic_pointer_cast<LuaItemScript>(_script);
 
@@ -157,7 +157,7 @@ bool LongTimeAction::actionDisturbed(Character *disturber) {
                         }
                     }
                 }
-            } else if ((_at == ACTION_MAGIC)) {
+            } else if (_at == ACTION_MAGIC) {
                 boost::shared_ptr<LuaMagicScript>magicScript = boost::dynamic_pointer_cast<LuaMagicScript>(_script);
 
                 if (magicScript->existsEntrypoint("actionDisturbed")) {
@@ -189,7 +189,7 @@ void LongTimeAction::abortAction() {
                 _owner->executeCraftingDialogCraftingAborted(_source.dialog);
             }
         } else if (_script) {
-            if ((_at == ACTION_USE)) {
+            if (_at == ACTION_USE) {
                 //a itemscript
                 if (_source.Type == LUA_ITEM) {
                     boost::shared_ptr<LuaItemScript>itScript = boost::dynamic_pointer_cast<LuaItemScript>(_script);
@@ -226,7 +226,7 @@ void LongTimeAction::abortAction() {
                     }
 
                 }
-            } else if ((_at == ACTION_MAGIC)) {
+            } else if (_at == ACTION_MAGIC) {
                 boost::shared_ptr<LuaMagicScript>mgScript = boost::dynamic_pointer_cast<LuaMagicScript>(_script);
 
                 if (_target.Type == LUA_NONE) {
@@ -271,7 +271,7 @@ void LongTimeAction::successAction() {
                 return;
             }
         } else if (_script) {
-            if ((_at == ACTION_USE)) {
+            if (_at == ACTION_USE) {
                 //a itemscript
                 if (_source.Type == LUA_ITEM) {
                     boost::shared_ptr<LuaItemScript>itScript = boost::dynamic_pointer_cast<LuaItemScript>(_script);
@@ -307,7 +307,7 @@ void LongTimeAction::successAction() {
                         }
                     }
                 }
-            } else if ((_at == ACTION_MAGIC)) {
+            } else if (_at == ACTION_MAGIC) {
                 boost::shared_ptr<LuaMagicScript>mgScript = boost::dynamic_pointer_cast<LuaMagicScript>(_script);
 
                 if (_target.Type == LUA_NONE) {
