@@ -502,6 +502,7 @@ public:
     virtual void introducePlayer(Player *player);
 
     // Move the Player
+    using Character::move;
     virtual bool move(direction dir, uint8_t mode);
 
     // Increase Movement Cost by encumburance
