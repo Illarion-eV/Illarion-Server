@@ -25,7 +25,7 @@
 #include "World.hpp"
 
 NPC::NPC(TYPE_OF_CHARACTER_ID _id, std::string _name, Character::race_type _race, position _pos, Character::face_to dir, bool ishealer, Character::sex_type sex,
-         uint8_t _hair, uint8_t _beard, uint8_t _hairred, uint8_t _hairgreen, uint8_t _hairblue, uint8_t _skinred, uint8_t _skingreen, uint8_t _skinblue) : Character(),
+         const Character::appearance& appearance) : Character(appearance),
     _ishealer(ishealer), _startpos(_pos) {
 #ifdef Character_DEBUG
     cout << "NPC Konstruktor Start" << endl;
@@ -37,14 +37,6 @@ NPC::NPC(TYPE_OF_CHARACTER_ID _id, std::string _name, Character::race_type _race
     setAttribute(Character::sex, sex);
     character = npc;
     actionPoints = NP_MAX_AP;
-    hair = _hair;
-    beard = _beard;
-    hairred = _hairred;
-    hairgreen = _hairgreen;
-    hairblue = _hairblue;
-    skinred = _skinred;
-    skingreen = _skingreen;
-    skinblue = _skinblue;
 
     // take database id as npc id with appropriate offset so that npc ids are constant
     if (_id == DYNNPC_BASE) {
