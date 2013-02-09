@@ -173,7 +173,7 @@ public:
     /**
     *a long time needed action for the player
     */
-    LongTimeAction *ltAction;
+    std::unique_ptr<LongTimeAction> ltAction;
 
     virtual void startAction(unsigned short int wait, unsigned short int ani=0, unsigned short int redoani=0, unsigned short int sound=0, unsigned short int redosound=0);
     virtual void abortAction();

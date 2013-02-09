@@ -60,6 +60,8 @@
 #include "dialog/MerchantDialog.hpp"
 #include "dialog/SelectionDialog.hpp"
 
+#include "make_unique.hpp"
+
 //#define PLAYER_MOVE_DEBUG
 
 Player::Player(boost::shared_ptr<NetInterface> newConnection) throw(Player::LogoutException)
@@ -79,7 +81,7 @@ Player::Player(boost::shared_ptr<NetInterface> newConnection) throw(Player::Logo
 
     time(&lastaction);
 
-    ltAction = new LongTimeAction(this, _world);
+    ltAction = std::make_unique<LongTimeAction>(this, _world);
 
     // first check if we have a valid client
 
