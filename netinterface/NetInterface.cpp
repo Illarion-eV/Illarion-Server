@@ -169,7 +169,7 @@ void NetInterface::handle_read_header(const boost::system::error_code &error) {
 }
 
 
-void NetInterface::addCommand(boost::shared_ptr<BasicServerCommand> command) {
+void NetInterface::addCommand(const boost::shared_ptr<BasicServerCommand> &command) {
     if (online) {
         command->addHeader();
         sendQueueMutex.lock();
@@ -191,7 +191,7 @@ void NetInterface::addCommand(boost::shared_ptr<BasicServerCommand> command) {
 
 }
 
-void NetInterface::shutdownSend(boost::shared_ptr<BasicServerCommand> command) {
+void NetInterface::shutdownSend(const boost::shared_ptr<BasicServerCommand> &command) {
     try {
         command->addHeader();
         shutdownCmd = command;

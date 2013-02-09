@@ -71,9 +71,9 @@ public:
     * adds a command to the send queue so it will be sended correctly to the connection
     * @param command the command which should be added
     */
-    void addCommand(boost::shared_ptr<BasicServerCommand> command);
+    void addCommand(const boost::shared_ptr<BasicServerCommand> &command);
 
-    void shutdownSend(boost::shared_ptr<BasicServerCommand> command);
+    void shutdownSend(const boost::shared_ptr<BasicServerCommand> &command);
 
     std::string getIPAdress();
 

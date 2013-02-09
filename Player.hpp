@@ -164,10 +164,10 @@ public:
     virtual bool pageGM(std::string ticket);
 
     // send a char appearance; always or only if char not yet visible
-    void sendCharAppearance(TYPE_OF_CHARACTER_ID id, boost::shared_ptr<BasicServerCommand> appearance, bool always);
+    void sendCharAppearance(TYPE_OF_CHARACTER_ID id, const boost::shared_ptr<BasicServerCommand> &appearance, bool always);
 
     // removes a Char from sight
-    void sendCharRemove(TYPE_OF_CHARACTER_ID id, boost::shared_ptr<BasicServerCommand> removechar);
+    void sendCharRemove(TYPE_OF_CHARACTER_ID id, const boost::shared_ptr<BasicServerCommand> &removechar);
 
 
     /**

@@ -2560,14 +2560,14 @@ void Player::sendCharDescription(TYPE_OF_CHARACTER_ID id,const std::string &desc
     Connection->addCommand(cmd);
 }
 
-void Player::sendCharAppearance(TYPE_OF_CHARACTER_ID id, boost::shared_ptr<BasicServerCommand> appearance, bool always) {
+void Player::sendCharAppearance(TYPE_OF_CHARACTER_ID id, const boost::shared_ptr<BasicServerCommand> &appearance, bool always) {
     //send appearance always or only if the char in question just appeared
     if (always || visibleChars.insert(id).second) {
         Connection->addCommand(appearance);
     }
 }
 
-void Player::sendCharRemove(TYPE_OF_CHARACTER_ID id, boost::shared_ptr<BasicServerCommand> removechar) {
+void Player::sendCharRemove(TYPE_OF_CHARACTER_ID id, const boost::shared_ptr<BasicServerCommand> &removechar) {
     if (this->id != id) {
         visibleChars.erase(id);
         Connection->addCommand(removechar);
