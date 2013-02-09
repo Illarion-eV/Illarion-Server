@@ -95,6 +95,20 @@ void NPCTable::reload() {
 
                     npcName = ((*itr)["npc_name"].as<std::string>());
 
+		    Character::appearance appearance;
+		    appearance.hairtype = (uint8_t)((*itr)["npc_hair"].as<int16_t>());
+		    appearance.beardtype = (uint8_t)((*itr)["npc_hair"].as<int16_t>());
+		    appearance.hair = {
+                        (uint8_t)((*itr)["npc_hairred"].as<int16_t>()),
+                        (uint8_t)((*itr)["npc_hairgreen"].as<int16_t>()),
+                        (uint8_t)((*itr)["npc_hairblue"].as<int16_t>())
+		    };
+		    appearance.skin = {
+                        (uint8_t)((*itr)["npc_skinred"].as<int16_t>()),
+                        (uint8_t)((*itr)["npc_skingreen"].as<int16_t>()),
+                        (uint8_t)((*itr)["npc_skinblue"].as<int16_t>())
+		    };
+
                     newNPC = new NPC(
                         npcID, npcName,
                         (Character::race_type)((*itr)["npc_type"].as<uint32_t>()),
@@ -102,14 +116,7 @@ void NPCTable::reload() {
                         (Character::face_to)((*itr)["npc_faceto"].as<uint32_t>()),
                         ((*itr)["npc_is_healer"].as<bool>()),
                         (Character::sex_type)((*itr)["npc_sex"].as<uint32_t>()),
-                        (uint8_t)((*itr)["npc_hair"].as<int16_t>()),
-                        (uint8_t)((*itr)["npc_beard"].as<int16_t>()),
-                        (uint8_t)((*itr)["npc_hairred"].as<int16_t>()),
-                        (uint8_t)((*itr)["npc_hairgreen"].as<int16_t>()),
-                        (uint8_t)((*itr)["npc_hairblue"].as<int16_t>()),
-                        (uint8_t)((*itr)["npc_skinred"].as<int16_t>()),
-                        (uint8_t)((*itr)["npc_skingreen"].as<int16_t>()),
-                        (uint8_t)((*itr)["npc_skinblue"].as<int16_t>()));
+                        appearance);
 
                     // add npc to npc list
                     _world->Npc.push_back(newNPC);

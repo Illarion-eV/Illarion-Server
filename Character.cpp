@@ -164,7 +164,7 @@ bool Character::getNextStepDir(position goal, Character::direction &dir) {
 }
 
 
-Character::Character() : actionPoints(P_MAX_AP),fightPoints(P_MAX_FP),waypoints(new WaypointList(this)),_is_on_route(false),_world(World::get()) {
+Character::Character(const appearance& appearance) : actionPoints(P_MAX_AP),fightPoints(P_MAX_FP),waypoints(new WaypointList(this)),_is_on_route(false),_world(World::get()), _appearance(appearance) {
 #ifdef Character_DEBUG
     std::cout << "Character Konstruktor Start" << std::endl;
 #endif
@@ -177,15 +177,6 @@ Character::Character() : actionPoints(P_MAX_AP),fightPoints(P_MAX_FP),waypoints(
     poisonvalue = 0;
     mental_capacity = 0;
     _movement = walk;
-
-    hair = 0;
-    beard = 0;
-    hairred = 255;
-    hairgreen = 255;
-    hairblue = 255;
-    skinred = 255;
-    skingreen = 255;
-    skinblue = 255;
 
     activeLanguage=0; //common language
     lastSpokenText="";
@@ -931,54 +922,54 @@ unsigned short int Character::getMinorSkill(TYPE_OF_SKILL_ID s) {
 
 
 void Character::setSkinColor(uint8_t red, uint8_t green, uint8_t blue) {
-    skinred=red;
-    skingreen=green;
-    skinblue=blue;
+    _appearance.skin.red = red;
+    _appearance.skin.green = green;
+    _appearance.skin.blue = blue;
     updateAppearanceForAll(true);
 }
 
 
 void Character::getSkinColor(uint8_t &red, uint8_t &green, uint8_t &blue) {
-    red=skinred;
-    green=skingreen;
-    blue=skinblue;
+    red = _appearance.skin.red;
+    green =_appearance.skin.green;
+    blue = _appearance.skin.blue;
 }
 
 
 void Character::setHairColor(uint8_t red, uint8_t green, uint8_t blue) {
-    hairred=red;
-    hairgreen=green;
-    hairblue=blue;
+    _appearance.hair.red = red;
+    _appearance.hair.green = green;
+    _appearance.hair.blue = blue;
     updateAppearanceForAll(true);
 }
 
 
 void Character::getHairColor(uint8_t &red, uint8_t &green, uint8_t &blue) {
-    red=hairred;
-    green=hairgreen;
-    blue=hairblue;
+    red = _appearance.hair.red;
+    green = _appearance.hair.green;
+    blue = _appearance.hair.blue;
 }
 
 
 void Character::setHair(uint8_t hairID) {
-    hair=hairID;
+    _appearance.hairtype = hairID;
     updateAppearanceForAll(true);
 }
 
 
 uint8_t Character::getHair() {
-    return hair;
+    return _appearance.hairtype;
 }
 
 
 void Character::setBeard(uint8_t beardID) {
-    beard=beardID;
+    _appearance.beardtype = beardID;
     updateAppearanceForAll(true);
 }
 
 
 uint8_t Character::getBeard() {
-    return beard;
+    return _appearance.beardtype;
 }
 
 void Character::setAttribute(Character::attributeIndex attribute, Attribute::attribute_t value) {

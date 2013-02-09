@@ -305,14 +305,17 @@ public:
     */
     bool attackmode;
 
-    uint8_t hair;
-    uint8_t beard;
-    uint8_t hairred;
-    uint8_t hairgreen;
-    uint8_t hairblue;
-    uint8_t skinred;
-    uint8_t skingreen;
-    uint8_t skinblue;
+    struct appearance {
+
+	    struct color {
+		    uint8_t red, green, blue;
+	    };
+
+	    uint8_t hairtype = 0;
+	    uint8_t beardtype = 0;
+	    color hair = { 255, 255, 255 };
+	    color skin = { 255, 255, 255 };
+    };
 
     /**
     * stores the last message the character has talked
@@ -804,6 +807,8 @@ public:
 
     uint8_t getBeard();
 
+    appearance getAppearance() const { return _appearance; }
+
     void setAttribute(Character::attributeIndex attribute, Attribute::attribute_t value);
     Attribute::attribute_t getAttribute(Character::attributeIndex attribute) const;
     Attribute::attribute_t increaseAttribute(Character::attributeIndex attribute, int amount);
@@ -1260,7 +1265,7 @@ public:
     /**
     *standard constructor which initializes all lokal variables
     */
-    Character();
+    Character(const appearance& appearance = {} );
 
     /**
     * virtual destructor
@@ -1488,6 +1493,8 @@ protected:
 
     // shared code for public eraseItem methods
     virtual int _eraseItem(TYPE_OF_ITEM_ID itemid, int count, const luabind::object &data, bool useData);
+
+    appearance _appearance;
 
 private:
 

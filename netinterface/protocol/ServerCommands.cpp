@@ -254,14 +254,15 @@ AppearanceTC::AppearanceTC(Character *cc, Player *receivingPlayer) : BasicServer
     addUnsignedCharToBuffer(cc->getAttribute(Character::sex));
     addShortIntToBuffer(cc->getAttribute(Character::hitpoints));
     addUnsignedCharToBuffer(RaceSizes->getRelativeSize(cc->race, cc->getAttribute(Character::height)));
-    addUnsignedCharToBuffer(cc->hair);
-    addUnsignedCharToBuffer(cc->beard);
-    addUnsignedCharToBuffer(cc->hairred);
-    addUnsignedCharToBuffer(cc->hairgreen);
-    addUnsignedCharToBuffer(cc->hairblue);
-    addUnsignedCharToBuffer(cc->skinred);
-    addUnsignedCharToBuffer(cc->skingreen);
-    addUnsignedCharToBuffer(cc->skinblue);
+    const Character::appearance appearance = cc->getAppearance();
+    addUnsignedCharToBuffer(appearance.hairtype);
+    addUnsignedCharToBuffer(appearance.beardtype);
+    addUnsignedCharToBuffer(appearance.hair.red);
+    addUnsignedCharToBuffer(appearance.hair.green);
+    addUnsignedCharToBuffer(appearance.hair.blue);
+    addUnsignedCharToBuffer(appearance.skin.red);
+    addUnsignedCharToBuffer(appearance.skin.green);
+    addUnsignedCharToBuffer(appearance.skin.blue);
 
     for (unsigned char i = 0; i < MAX_BODY_ITEMS + MAX_BELT_SLOTS; ++i) {
         addShortIntToBuffer(cc->GetItemAt(i).getId());

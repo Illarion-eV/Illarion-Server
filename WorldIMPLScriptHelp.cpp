@@ -62,7 +62,7 @@ bool World::createDynamicNPC(std::string name, Character::race_type type, positi
     try {
 
         try {
-            NPC *newNPC = new NPC(DYNNPC_BASE, name, type, pos, (Character::face_to)4/*dir*/, false, sex, 0, 0, 255, 255, 255, 255, 255, 255);
+            NPC *newNPC = new NPC(DYNNPC_BASE, name, type, pos, (Character::face_to)4/*dir*/, false, sex, {});
 
             // add npc to npc list
             Npc.push_back(newNPC);
