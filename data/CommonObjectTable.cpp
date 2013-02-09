@@ -158,15 +158,14 @@ void CommonObjectTable::reload() {
 
 }
 
-bool CommonObjectTable::find(TYPE_OF_ITEM_ID Id, CommonStruct &ret) {
-    TABLE::iterator iterator;
-    iterator = m_table.find(Id);
-
-    if (iterator == m_table.end()) {
-        return false;
-    } else {
-        ret = (*iterator).second;
-        return true;
+const CommonStruct &CommonObjectTable::find(TYPE_OF_ITEM_ID id) {
+    try {
+        return m_table.at(id);
+    } catch (std::out_of_range &) {
+        std::stringstream ss;
+        ss << "CommonObjectTable: item " << id << " was not found!\n";
+        Logger::writeError("scripts", ss.str());
+        return m_table[id];
     }
 }
 
@@ -181,26 +180,11 @@ boost::shared_ptr<LuaItemScript> CommonObjectTable::findScript(TYPE_OF_ITEM_ID I
     }
 }
 
-bool CommonObjectTable::find(TYPE_OF_ITEM_ID Id) {
-    TABLE::iterator iterator;
-    iterator = m_table.find(Id);
-
-    if (iterator == m_table.end()) {
-        return false;
-    } else {
-        return true;
-    }
-}
-
-
-
 void CommonObjectTable::clearOldTable() {
     m_table.clear();
 }
 
-
 CommonObjectTable::~CommonObjectTable() {
     clearOldTable();
 }
-
 

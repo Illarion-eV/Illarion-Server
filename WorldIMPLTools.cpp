@@ -664,16 +664,22 @@ int World::getItemAttrib(std::string s, TYPE_OF_ITEM_ID ItemID) {
 
     // Common //
     else if (s == "agingspeed") {
-        if (CommonItems->find(ItemID, tempCommon)) {
-            return tempCommon.AgeingSpeed;
+        const CommonStruct &common = CommonItems->find(ItemID);
+
+        if (common.isValid()) {
+            return common.AgeingSpeed;
         }
     } else if (s == "objectafterrot") {
-        if (CommonItems->find(ItemID, tempCommon)) {
-            return tempCommon.ObjectAfterRot;
+        const CommonStruct &common = CommonItems->find(ItemID);
+
+        if (common.isValid()) {
+            return common.ObjectAfterRot;
         }
     } else if (s == "weight") {
-        if (CommonItems->find(ItemID, tempCommon)) {
-            return tempCommon.Weight;
+        const CommonStruct &common = CommonItems->find(ItemID);
+
+        if (common.isValid()) {
+            return common.Weight;
         }
     }
 

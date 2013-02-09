@@ -37,9 +37,6 @@
 //! table with item attributes
 extern CommonObjectTable *CommonItems;
 
-//! wird von verschiedenen Funktionen als Zwischenvariable genutzt
-extern CommonStruct tempCommon;
-
 MonsterTable::MonsterTable() : m_dataOK(false), world(World::get()) {
     reload();
 }
@@ -257,9 +254,9 @@ void MonsterTable::reload() {
                             location = 99;
                         }
 
-                        CommonStruct tempCommon;
+                        const CommonStruct &tempCommon = CommonItems->find(tempitem.itemid);
 
-                        if (location < 99 && CommonItems->find(tempitem.itemid, tempCommon)) {
+                        if (location < 99 && tempCommon.isValid()) {
                             tempitem.AgeingSpeed = tempCommon.AgeingSpeed;
                             temprecord.items[location].push_back(tempitem);
                         } else if (location < 99) {

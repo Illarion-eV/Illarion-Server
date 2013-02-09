@@ -167,9 +167,6 @@ QuestTable *Quests;
 //! a table containing monster descriptions
 MonsterTable *MonsterDescriptions;
 
-//! ein struct f�r die Allgemeinen Attribute eines Item
-CommonStruct tempCommon;
-
 //! ein struct f�r die Namen eines Item
 NamesStruct tempNames;
 

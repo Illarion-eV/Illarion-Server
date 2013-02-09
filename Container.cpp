@@ -615,9 +615,7 @@ int Container::recursiveWeight(int rekt) {
     for (auto it = items.begin(); it != items.end(); ++it) {
         Item &item = it->second;
 
-        if (!CommonItems->find(item.getId(), tempCommon)) {
-            tempCommon.Weight = 0;
-        }
+        const CommonStruct &tempCommon = CommonItems->find(item.getId());
 
         if (item.isContainer()) {
             auto iterat = containers.find(it->first);
@@ -690,19 +688,16 @@ void Container::doAge(bool inventory) {
         while (it != items.end()) {
             Item &item = it->second;
 
-            if (!CommonItems->find(item.getId(), tempCommon)) {
-                tempCommon.ObjectAfterRot = item.getId();
-                tempCommon.rotsInInventory = false;
-            }
+            const CommonStruct &tempCommon = CommonItems->find(item.getId());
 
             if (!inventory || (inventory && tempCommon.rotsInInventory)) {
                 if (!item.survivesAgeing()) {
-                    tempCommon.ObjectAfterRot = item.getId();
-
                     if (item.getId() != tempCommon.ObjectAfterRot) {
                         item.setId(tempCommon.ObjectAfterRot);
 
-                        if (CommonItems->find(tempCommon.ObjectAfterRot, tempCommon)) {
+                        const CommonStruct &afterRotCommon = CommonItems->find(tempCommon.ObjectAfterRot);
+
+                        if (afterRotCommon.isValid()) {
                             item.setWear(tempCommon.AgeingSpeed);
                         }
 
@@ -741,16 +736,8 @@ TYPE_OF_CONTAINERSLOTS Container::getSlotCount() {
 }
 
 bool Container::isItemStackable(Item item) {
-    CommonStruct com;
-
-    if (CommonItems->find(item.getId(), com)) {
-        return com.MaxStack > 1;
-    } else {
-        std::cerr<<"Item mit folgender id konnte nicht gefunden werden in Funktion isItemStackable(Item item): "<<item.getId()<<" !" <<std::endl;
-        return false;
-    }
-
-    return false;
+    const CommonStruct &com = CommonItems->find(item.getId());
+    return com.MaxStack > 1;
 }
 
 void Container::insertIntoFirstFreeSlot(Item &item) {

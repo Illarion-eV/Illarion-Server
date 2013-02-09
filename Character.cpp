@@ -497,9 +497,9 @@ int Character::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) 
     Item it;
 
     if (weightOK(newid, count, NULL)) {
-        CommonStruct cos;
+        const CommonStruct &cos = CommonItems->find(newid);
 
-        if (CommonItems->find(newid, cos)) {
+        if (cos.isValid()) {
 #ifdef Character_DEBUG
             std::cout<<"createAtPos: itemid gefunden" << std::endl;
 #endif
@@ -540,9 +540,9 @@ int Character::createItem(Item::id_type id, Item::number_type number, Item::qual
     Item it;
 
     if (weightOK(id, number, NULL)) {
-        CommonStruct cos;
+        const CommonStruct &cos = CommonItems->find(id);
 
-        if (CommonItems->find(id, cos)) {
+        if (cos.isValid()) {
 #ifdef Character_DEBUG
             std::cout << "createItem: itemid gefunden" << "\n";
 #endif
@@ -752,31 +752,24 @@ bool Character::swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t new
 
 
 void Character::ageInventory() {
-    CommonStruct tempCommon;
-
     for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
-        if (characterItems[ i ].getId() != 0) {
-            if (!CommonItems->find(characterItems[ i ].getId(), tempCommon)) {
-                tempCommon.rotsInInventory=false;
-                tempCommon.ObjectAfterRot = characterItems[ i ].getId();
-            }
+        auto itemId = characterItems[i].getId();
 
-            if (tempCommon.rotsInInventory) {
-                if (!characterItems[ i ].survivesAgeing()) {
-                    if (characterItems[ i ].getId() != tempCommon.ObjectAfterRot) {
-#ifdef Character_DEBUG
-                        std::cout << "INV:Ein Item wird umgewandelt von: " << characterItems[ i ].getId() << "  nach: " << tempCommon.ObjectAfterRot << "!\n";
-#endif
-                        characterItems[ i ].setId(tempCommon.ObjectAfterRot);
+        if (itemId != 0) {
+            const CommonStruct &tempCommon = CommonItems->find(characterItems[ i ].getId());
 
-                        if (CommonItems->find(tempCommon.ObjectAfterRot, tempCommon)) {
-                            characterItems[ i ].setWear(tempCommon.AgeingSpeed);
+            if (tempCommon.isValid() && tempCommon.rotsInInventory) {
+                if (!characterItems[i].survivesAgeing()) {
+                    if (itemId != tempCommon.ObjectAfterRot) {
+                        characterItems[i].setId(tempCommon.ObjectAfterRot);
+
+                        const CommonStruct &afterRotCommon = CommonItems->find(tempCommon.ObjectAfterRot);
+
+                        if (afterRotCommon.isValid()) {
+                            characterItems[i].setWear(afterRotCommon.AgeingSpeed);
                         }
                     } else {
-#ifdef Character_DEBUG
-                        std::cout << "INV:Ein Item wird gel�cht,ID:" << characterItems[ i ].getId() << "!\n";
-#endif
-                        characterItems[ i ].reset();
+                        characterItems[i ].reset();
                     }
                 }
             }
@@ -1333,7 +1326,7 @@ int Character::LoadWeight() {
 
     // alle Items bis auf den Rucksack
     for (int i=1; i < MAX_BODY_ITEMS + MAX_BELT_SLOTS; ++i) {
-        load += weightItem(characterItems[i].getId(),characterItems[i].getNumber());
+        load += characterItems[i].getWeight();
     }
 
     // Rucksack
@@ -1357,7 +1350,8 @@ bool Character::weightOK(TYPE_OF_ITEM_ID id, int count, Container *tcont) {
     if (tcont != NULL) {
         ok = (realweight + weightContainer(id, 1, tcont)) <= maxLoadWeight();
     } else {
-        ok = (realweight + weightItem(id, count)) <= maxLoadWeight();
+        const CommonStruct &common = CommonItems->find(id);
+        ok = (realweight + common.Weight * count) <= maxLoadWeight();
     }
 
     return ok;
@@ -1374,28 +1368,13 @@ int Character::Abso(int value) {
 }
 
 
-int Character::weightItem(TYPE_OF_ITEM_ID id, int count) {
-    int gweight;
-
-    if (CommonItems->find(id, tempCommon)) {
-        gweight = tempCommon.Weight * count;
-    } else {
-        gweight = 0;
-    }
-
-    if (gweight > 30000) {
-        return 30000;
-    } else {
-        return gweight;
-    }
-}
-
-
 int Character::weightContainer(TYPE_OF_ITEM_ID id, int count, Container *tcont) {
     int temp=0;
 
     if (id != 0) {
-        if (CommonItems->find(id, tempCommon)) {
+        const CommonStruct &tempCommon = CommonItems->find(id);
+
+        if (tempCommon.isValid()) {
             if (count > 0) {
                 temp = tempCommon.Weight;
             } else {

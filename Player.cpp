@@ -441,14 +441,9 @@ void Player::sendWeather(WeatherStruct weather) {
 
 
 void Player::ageInventory() {
-    CommonStruct tempCommon;
-
     for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
         if (characterItems[ i ].getId() != 0) {
-            if (!CommonItems->find(characterItems[ i ].getId(), tempCommon)) {
-                tempCommon.rotsInInventory=false;
-                tempCommon.ObjectAfterRot = characterItems[ i ].getId();
-            }
+            const CommonStruct &tempCommon = CommonItems->find(characterItems[ i ].getId());
 
             if (tempCommon.rotsInInventory) {
                 if (!characterItems[ i ].survivesAgeing()) {
@@ -458,8 +453,10 @@ void Player::ageInventory() {
 #endif
                         characterItems[ i ].setId(tempCommon.ObjectAfterRot);
 
-                        if (CommonItems->find(tempCommon.ObjectAfterRot, tempCommon)) {
-                            characterItems[ i ].setWear(tempCommon.AgeingSpeed);
+                        const CommonStruct &afterRotCommon = CommonItems->find(tempCommon.ObjectAfterRot);
+
+                        if (afterRotCommon.isValid()) {
+                            characterItems[ i ].setWear(afterRotCommon.AgeingSpeed);
                         }
 
                         sendCharacterItemAtPos(i);

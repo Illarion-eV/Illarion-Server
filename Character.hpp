@@ -1361,14 +1361,6 @@ public:
     int Abso(int value);
 
     /**
-    * returns the weight of count items with a specific id
-    * @param id the id from which we want to get the weight
-    * @param count how much items from which we want to get the weight
-    * @return the weight of count items with id
-    */
-    int weightItem(TYPE_OF_ITEM_ID id, int count);
-
-    /**
     * returns the weight of a container
     * @param id of the container from which we want to get the weight
     * @param count if the weight should be positive or negative

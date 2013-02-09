@@ -85,9 +85,6 @@ extern TilesTable *Tiles;
 
 extern SkillTable *Skills;
 
-//! ein struct fuer die Allgemeinen Attribute eines Item
-extern CommonStruct tempCommon;
-
 //! ein struct fuer Daten von Bodenplatten
 extern TilesStruct tempTile;
 

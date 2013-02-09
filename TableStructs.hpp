@@ -58,35 +58,8 @@ struct CommonStruct {
         rotsInInventory = false;
     }
 
-    CommonStruct(const CommonStruct &source) {
-        id = source.id;
-        Weight = source.Weight;
-        AgeingSpeed = source.AgeingSpeed;
-        ObjectAfterRot = source.ObjectAfterRot;
-        AfterInfiniteRot = source.AfterInfiniteRot;
-        Brightness = source.Brightness;
-        Worth = source.Worth;
-        MaxStack = source.MaxStack;
-        BuyStack = source.BuyStack;
-        rotsInInventory = source.rotsInInventory;
-    }
-
-    CommonStruct &operator=(const CommonStruct &source) {
-        if (this != &source) {
-            //( ( CommonStruct ) * this ) = ( ( CommonStruct ) source );
-            id = source.id;
-            Weight = source.Weight;
-            AgeingSpeed = source.AgeingSpeed;
-            ObjectAfterRot = source.ObjectAfterRot;
-            AfterInfiniteRot = source.AfterInfiniteRot;
-            Brightness = source.Brightness;
-            Worth = source.Worth;
-            MaxStack = source.MaxStack;
-            BuyStack = source.BuyStack;
-            rotsInInventory = source.rotsInInventory;
-        }
-
-        return *this;
+    bool isValid() const {
+        return id != 0;
     }
 };
 

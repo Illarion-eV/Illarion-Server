@@ -268,8 +268,10 @@ bool Field::swapTopItem(TYPE_OF_ITEM_ID newid, uint16_t newQuality) {
             temp.setQuality(newQuality);
         }
 
-        if (CommonItems->find(newid, tempCommon)) {
-            temp.setWear(tempCommon.AgeingSpeed);
+        const CommonStruct &common = CommonItems->find(newid);
+
+        if (common.isValid()) {
+            temp.setWear(common.AgeingSpeed);
         }
 
         PutTopItem(temp);
@@ -338,9 +340,11 @@ void Field::giveExportItems(ITEMVECTOR &nonmoveitems) {
         if (it->isPermanent()) {
             nonmoveitems.push_back(*it);
         } else {
-            if (CommonItems->find(it->getId(), tempCommon) && tempCommon.AfterInfiniteRot > 0) {
+            const CommonStruct &common = CommonItems->find(it->getId());
+
+            if (common.isValid() && common.AfterInfiniteRot > 0) {
                 Item rottenItem = *it;
-                rottenItem.setId(tempCommon.AfterInfiniteRot);
+                rottenItem.setId(common.AfterInfiniteRot);
                 rottenItem.makePermanent();
                 nonmoveitems.push_back(rottenItem);
             }
@@ -395,11 +399,9 @@ int8_t Field::DoAgeItems() {
             Item &item = *it;
 
             if (!item.survivesAgeing()) {
-                if (!CommonItems->find(item.getId(), tempCommon)) {
-                    tempCommon.ObjectAfterRot = item.getId();
-                }
+                const CommonStruct &tempCommon = CommonItems->find(item.getId());
 
-                if (item.getId() != tempCommon.ObjectAfterRot) {
+                if (tempCommon.isValid() && item.getId() != tempCommon.ObjectAfterRot) {
 #ifdef Field_DEBUG
                     std::cout << "FIELD:Ein Item wird umgewandelt von: " << item.getId() << "  nach: " << tempCommon.ObjectAfterRot << "!\n";
 #endif
@@ -411,8 +413,10 @@ int8_t Field::DoAgeItems() {
 
                     item.setId(tempCommon.ObjectAfterRot);
 
-                    if (CommonItems->find(tempCommon.ObjectAfterRot, tempCommon)) {
-                        item.setWear(tempCommon.AgeingSpeed);
+                    const CommonStruct &afterRotCommon = CommonItems->find(tempCommon.ObjectAfterRot);
+
+                    if (afterRotCommon.isValid()) {
+                        item.setWear(afterRotCommon.AgeingSpeed);
                     }
 
                     ++it;

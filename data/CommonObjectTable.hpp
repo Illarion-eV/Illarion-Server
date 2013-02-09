@@ -32,8 +32,7 @@ class World;
 
 class CommonObjectTable: public Table {
 public:
-    bool find(TYPE_OF_ITEM_ID Id, CommonStruct &ret);
-    bool find(TYPE_OF_ITEM_ID Id);
+    const CommonStruct &find(TYPE_OF_ITEM_ID id);
     boost::shared_ptr<LuaItemScript> findScript(TYPE_OF_ITEM_ID Id);
 
     CommonObjectTable();

@@ -32,9 +32,9 @@ Item::Item(id_type id, number_type number, wear_type wear, quality_type quality,
 }
 
 Item::number_type Item::increaseNumberBy(Item::number_type count) {
-    CommonStruct common;
+    const CommonStruct &common = CommonItems->find(id);
 
-    if (CommonItems->find(id, common)) {
+    if (common.isValid()) {
         count += getNumber();
 
         if (count >= common.MaxStack) {
@@ -184,9 +184,9 @@ void Item::reset() {
 
 
 void Item::resetWear() {
-    CommonStruct common;
+    const CommonStruct &common = CommonItems->find(id);
 
-    if (CommonItems->find(id, common)) {
+    if (common.isValid()) {
         if (!common.rotsInInventory && common.AgeingSpeed > wear) {
             wear = common.AgeingSpeed;
         }
@@ -249,29 +249,29 @@ bool Item::isContainer() const {
 }
 
 TYPE_OF_WEIGHT Item::getWeight() const {
-    CommonStruct common;
+    const CommonStruct &common = CommonItems->find(id);
 
-    if (CommonItems->find(id, common)) {
-        return common.Weight;
+    if (common.isValid()) {
+        return common.Weight * number;
     }
 
     return 0;
 }
 
 TYPE_OF_WORTH Item::getWorth() const {
-    CommonStruct common;
+    const CommonStruct &common = CommonItems->find(id);
 
-    if (CommonItems->find(id, common)) {
-        return common.Worth;
+    if (common.isValid()) {
+        return common.Worth * number;
     }
 
     return 0;
 }
 
 Item::number_type Item::getMaxStack() const {
-    CommonStruct common;
+    const CommonStruct &common = CommonItems->find(id);;
 
-    if (CommonItems->find(id, common)) {
+    if (common.isValid()) {
         return common.MaxStack;
     }
 

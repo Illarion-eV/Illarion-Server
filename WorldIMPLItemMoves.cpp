@@ -446,7 +446,9 @@ bool World::takeItemFromMap(Character *cc, short int x, short int y, short int z
     if (GetPToCFieldAt(tempf, x, y, z, tmap)) {
 
         if (tempf->ViewTopItem(g_item)) {
-            if (CommonItems->find(g_item.getId(), tempCommon)) {
+            const CommonStruct &tempCommon = CommonItems->find(g_item.getId());
+
+            if (tempCommon.isValid()) {
                 if (tempCommon.Weight < 30000 && !g_item.isPermanent()) {
                     tempf->TakeTopItem(g_item);
 
@@ -537,7 +539,7 @@ bool World::putItemOnMap(Character *cc, short int x, short int y, short int z) {
     if (cc) {
         if (cc->pos.z != z ||
             !cc->isInRangeToField(pos, MAXTHROWDISTANCE) ||
-            (!cc->isInRangeToField(pos, MAXDROPDISTANCE) && g_item.getNumber() * g_item.getWeight() > MAXTHROWWEIGHT)) {
+            (!cc->isInRangeToField(pos, MAXDROPDISTANCE) && (g_item.getWeight() > MAXTHROWWEIGHT))) {
             std::string german = "Dies ist zu schwer um so weit geworfen zu werden.";
             std::string english = "This is too heavy to be thrown this far.";
             cc->informLua(german, english);
@@ -1785,12 +1787,6 @@ void World::closeShowcaseIfNotInRange(Container *moved, short int x, short int y
 }
 
 bool World::isStackable(Item item) {
-    CommonStruct com;
-
-    if (CommonItems->find(item.getId(), com)) {
-        return com.MaxStack > 1;
-    } else {
-        std::cerr<<"Item mit folgender Id konnte bei isStackable(Item item) nicht gefunden werden: "<<item.getId()<<"!"<<std::endl;
-        return false;
-    }
+    const CommonStruct &com = CommonItems->find(item.getId());
+    return com.MaxStack > 1;
 }

@@ -68,17 +68,6 @@ void World::checkFieldAfterMove(Character *cc, Field *cfstart) {
                         script->CharacterOnField(cc);
                         return;
                     }
-
-                    /*
-                    if ( CommonItems->find( it->getId(), com) ) //Script finden f�r das Item
-                    {
-                        if ( com.script ) {
-                            com.script->CharacterOnField(cc);
-                            return;
-                        }
-
-                    }
-                    */
                 }
             }
         }

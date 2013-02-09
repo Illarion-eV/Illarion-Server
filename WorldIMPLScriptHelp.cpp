@@ -327,25 +327,13 @@ std::string World::getItemName(TYPE_OF_ITEM_ID itemid, uint8_t language) {
 
 
 CommonStruct World::getItemStats(ScriptItem item) {
-    CommonStruct data;
-
-    if (CommonItems->find(item.getId(),data)) {
-        return data;
-    } else {
-        data.id = 0;
-        return data;
-    }
+    const CommonStruct &data = CommonItems->find(item.getId());
+    return data;
 }
 
 CommonStruct World::getItemStatsFromId(TYPE_OF_ITEM_ID id) {
-    CommonStruct data;
-
-    if (CommonItems->find(id,data)) {
-        return data;
-    } else {
-        data.id = 0;
-        return data;
-    }
+    const CommonStruct &data = CommonItems->find(id);
+    return data;
 }
 
 bool World::isCharacterOnField(position pos) {
@@ -500,9 +488,9 @@ ScriptItem World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, pos
     ScriptItem sItem;
 
     if (GetPToCFieldAt(field, pos.x, pos.y, pos.z)) {
-        CommonStruct com;
+        const CommonStruct &com = CommonItems->find(id);
 
-        if (CommonItems->find(id, com)) {
+        if (com.isValid()) {
             g_item.setId(id);
             g_item.setNumber(count);
             g_item.setWear(com.AgeingSpeed);

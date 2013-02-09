@@ -79,8 +79,7 @@ MerchantDialog::product_list::const_iterator MerchantDialog::getOffersEnd() cons
 }
 
 void MerchantDialog::addOffer(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price) {
-    CommonStruct common;
-    CommonItems->find(item, common);
+    const CommonStruct &common = CommonItems->find(item);
     addProduct(offers, item, name, price, common.BuyStack);
 }
 

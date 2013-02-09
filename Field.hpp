@@ -39,7 +39,6 @@ class TilesTable;
 extern CommonObjectTable *CommonItems;
 extern TilesModificatorTable *TilesModItems;
 extern TilesTable *Tiles;
-extern CommonStruct tempCommon;
 extern std::vector<int>* erasedcontainers;
 
 
