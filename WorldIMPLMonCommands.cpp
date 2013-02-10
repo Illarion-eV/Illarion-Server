@@ -18,7 +18,6 @@
 
 
 #include "World.hpp"
-#include "Command.hpp"
 #include <sstream>
 #include <regex.h>
 #include <list>

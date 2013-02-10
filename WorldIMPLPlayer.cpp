@@ -28,8 +28,6 @@
 
 #include "db/InsertQuery.hpp"
 
-#include "Command.hpp"
-
 
 template< typename To, typename From> To stream_convert(const From &from) {
     std::stringstream stream;
@@ -42,11 +40,11 @@ template< typename To, typename From> To stream_convert(const From &from) {
 // register any Player commands here...
 void World::InitPlayerCommands() {
 
-    PlayerCommands["prefix"] = new Command(&World::prefix_command);
-    PlayerCommands["suffix"] = new Command(&World::suffix_command);
-    PlayerCommands["gm"] = new Command(&World::gmpage_command);
-    PlayerCommands["name"] = new Command(&World::name_command);
-    PlayerCommands["language"] = new Command(&World::active_language_command);
+    PlayerCommands["prefix"] = [](World *world, Player *player, const std::string &text) -> bool { return world->prefix_command(player, text); };
+    PlayerCommands["suffix"] = [](World *world, Player *player, const std::string &text) -> bool { return world->suffix_command(player, text); };
+    PlayerCommands["gm"] = [](World *world, Player *player, const std::string &text) -> bool { return world->gmpage_command(player, text); };
+    PlayerCommands["name"] = [](World *world, Player *player, const std::string &text) -> bool { world->name_command(player, text); return true; };
+    PlayerCommands["language"] = [](World *world, Player *player, const std::string &text) -> bool { return world->active_language_command(player, text); };
     PlayerCommands["l"] = PlayerCommands["language"];
 }
 
@@ -69,9 +67,9 @@ bool World::parsePlayerCommands(Player *cp, const std::string &text) {
         // do we have a matching command?
         if (it != PlayerCommands.end()) {
             if (matches[2].rm_so != -1) { // !bla something
-                done = (*it->second)(this, cp, text.substr(matches[2].rm_so));
+                done = (it->second)(this, cp, text.substr(matches[2].rm_so));
             } else { // !bla
-                done = (*it->second)(this, cp, "");
+                done = (it->second)(this, cp, "");
             }
         }
     }

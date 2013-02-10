@@ -121,18 +121,7 @@ extern boost::shared_ptr<LuaWeaponScript> standardFightingScript;
 /**
 * a class for holding gm or player commands
 */
-class CommandType {
-
-public:
-    /**
-    * pure virtual operator overloading
-    */
-    virtual bool operator()(World *, Player *, const std::string &) = 0;
-    virtual ~CommandType() {}
-
-private:
-    CommandType &operator=(const CommandType &);
-};
+typedef std::function<bool(World *, Player *, const std::string &)> CommandType;
 
 /**
 * a struct for holding Weather informations
@@ -1692,11 +1681,11 @@ private:
     bool ReadField(const char *inp, signed long int &outp);
 
     // hashmap containing all GM Commands
-    std::map< std::string, CommandType * > GMCommands;
+    std::map< std::string, CommandType> GMCommands;
     // hashmap containing all Player Commands
-    std::map< std::string, CommandType * > PlayerCommands;
+    std::map< std::string, CommandType> PlayerCommands;
 
-    typedef std::map< std::string, CommandType * >::iterator CommandIterator;
+    typedef std::map< std::string, CommandType>::iterator CommandIterator;
 
     // Send player information to GMs
     void who_command(Player *cp, const std::string &tplayer);
