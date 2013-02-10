@@ -59,7 +59,7 @@ public:
     * @param sex the sex of the npc
     */
     NPC(TYPE_OF_CHARACTER_ID id, std::string name, Character::race_type type, position pos, Character::face_to dir, bool ishealer, Character::sex_type sex,
-	const appearance& appearance);
+        const appearance &appearance);
 
     /**
     * the destructor

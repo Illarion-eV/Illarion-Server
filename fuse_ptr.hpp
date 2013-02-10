@@ -63,7 +63,7 @@ public:
         }
     }
 
-    operator T*() const {
+    operator T *() const {
         return get();
     }
 

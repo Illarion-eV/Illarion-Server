@@ -25,7 +25,7 @@
 #include "World.hpp"
 
 NPC::NPC(TYPE_OF_CHARACTER_ID _id, std::string _name, Character::race_type _race, position _pos, Character::face_to dir, bool ishealer, Character::sex_type sex,
-         const Character::appearance& appearance) : Character(appearance),
+         const Character::appearance &appearance) : Character(appearance),
     _ishealer(ishealer), _startpos(_pos) {
 #ifdef Character_DEBUG
     cout << "NPC Konstruktor Start" << endl;

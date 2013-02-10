@@ -164,7 +164,7 @@ bool Character::getNextStepDir(position goal, Character::direction &dir) {
 }
 
 
-Character::Character(const appearance& appearance) : actionPoints(P_MAX_AP),fightPoints(P_MAX_FP),waypoints(new WaypointList(this)),_is_on_route(false),_world(World::get()), _appearance(appearance) {
+Character::Character(const appearance &appearance) : actionPoints(P_MAX_AP),fightPoints(P_MAX_FP),waypoints(new WaypointList(this)),_is_on_route(false),_world(World::get()), _appearance(appearance) {
 #ifdef Character_DEBUG
     std::cout << "Character Konstruktor Start" << std::endl;
 #endif

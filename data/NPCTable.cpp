@@ -95,19 +95,19 @@ void NPCTable::reload() {
 
                     npcName = ((*itr)["npc_name"].as<std::string>());
 
-		    Character::appearance appearance;
-		    appearance.hairtype = (uint8_t)((*itr)["npc_hair"].as<int16_t>());
-		    appearance.beardtype = (uint8_t)((*itr)["npc_hair"].as<int16_t>());
-		    appearance.hair = {
+                    Character::appearance appearance;
+                    appearance.hairtype = (uint8_t)((*itr)["npc_hair"].as<int16_t>());
+                    appearance.beardtype = (uint8_t)((*itr)["npc_hair"].as<int16_t>());
+                    appearance.hair = {
                         (uint8_t)((*itr)["npc_hairred"].as<int16_t>()),
                         (uint8_t)((*itr)["npc_hairgreen"].as<int16_t>()),
                         (uint8_t)((*itr)["npc_hairblue"].as<int16_t>())
-		    };
-		    appearance.skin = {
+                    };
+                    appearance.skin = {
                         (uint8_t)((*itr)["npc_skinred"].as<int16_t>()),
                         (uint8_t)((*itr)["npc_skingreen"].as<int16_t>()),
                         (uint8_t)((*itr)["npc_skinblue"].as<int16_t>())
-		    };
+                    };
 
                     newNPC = new NPC(
                         npcID, npcName,

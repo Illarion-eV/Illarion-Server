@@ -307,14 +307,14 @@ public:
 
     struct appearance {
 
-	    struct color {
-		    uint8_t red, green, blue;
-	    };
+        struct color {
+            uint8_t red, green, blue;
+        };
 
-	    uint8_t hairtype = 0;
-	    uint8_t beardtype = 0;
-	    color hair = { 255, 255, 255 };
-	    color skin = { 255, 255, 255 };
+        uint8_t hairtype = 0;
+        uint8_t beardtype = 0;
+        color hair = { 255, 255, 255 };
+        color skin = { 255, 255, 255 };
     };
 
     /**
@@ -807,7 +807,9 @@ public:
 
     uint8_t getBeard();
 
-    appearance getAppearance() const { return _appearance; }
+    appearance getAppearance() const {
+        return _appearance;
+    }
 
     void setAttribute(Character::attributeIndex attribute, Attribute::attribute_t value);
     Attribute::attribute_t getAttribute(Character::attributeIndex attribute) const;
@@ -1265,7 +1267,7 @@ public:
     /**
     *standard constructor which initializes all lokal variables
     */
-    Character(const appearance& appearance = {} );
+    Character(const appearance &appearance = {});
 
     /**
     * virtual destructor

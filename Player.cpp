@@ -1059,7 +1059,8 @@ struct container_struct {
     unsigned int depotid;
 
     container_struct(Container *cc, unsigned int aboveid, unsigned int depot = 0)
-        : container(cc), id(aboveid), depotid(depot) { }}
+        : container(cc), id(aboveid), depotid(depot) { }
+}
 ;
 
 bool Player::save() throw() {
