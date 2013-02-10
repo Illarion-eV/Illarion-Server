@@ -17,11 +17,11 @@ Details
 
 Requirements
 
-   GCC 4.4.5
+   GCC 4.7.2
    GNU Make 3.81
-   Automake 1.11.1
+   Automake 1.11.6
    Boost 1.52.0
-   PostgreSQL 8.4.13
+   PostgreSQL 9.1.7
    libpqxx 3.1
    Lua 5.1.4
    Luabind 0.9.1 with some bugfixes: https://github.com/vilarion/luabind
@@ -44,4 +44,4 @@ Build
    the correct version
      ______________________________________________________________________
 
-   Last modified: Jan 25, 2013
+   Last modified: Feb 10, 2013
