@@ -44,17 +44,19 @@ void TilesTable::reload() {
 
     try {
         Database::SelectQuery query;
-        query.addColumn("tiles", "til_id");
-        query.addColumn("tiles", "til_isnotpassable");
-        query.addColumn("tiles", "til_isnottransparent");
-        query.addColumn("tiles", "til_isnotpenetrateable");
-        query.addColumn("tiles", "til_specialtile");
-        query.addColumn("tiles", "til_groundlevel");
-        query.addColumn("tiles", "til_german");
-        query.addColumn("tiles", "til_english");
-        query.addColumn("tiles", "til_walkingcost");
-        query.addColumn("tiles", "til_script");
-        query.addServerTable("tiles");
+        query.addColumns(
+            "til_id",
+            "til_isnotpassable",
+            "til_isnottransparent",
+            "til_isnotpenetrateable",
+            "til_specialtile",
+            "til_groundlevel",
+            "til_german",
+            "til_english",
+            "til_walkingcost",
+            "til_script"
+        );
+        query.setServerTable("tiles");
 
         Database::Result results = query.execute();
 
