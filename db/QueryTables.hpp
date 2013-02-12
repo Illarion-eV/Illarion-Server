@@ -25,10 +25,9 @@
 #include <stdexcept>
 
 #include "db/Connection.hpp"
-#include "db/Query.hpp"
 
 namespace Database {
-class QueryTables : public virtual Query {
+class QueryTables {
 private:
     std::string tables;
     bool oneTable;
@@ -41,11 +40,11 @@ public:
     void setAccountTable(const std::string &table);
 protected:
     QueryTables();
+    QueryTables(const QueryTables &org) = delete;
+    QueryTables& operator=(const QueryTables &org) = delete;
 
     void setOnlyOneTable(const bool &enabled);
     std::string &buildQuerySegment();
-private:
-    QueryTables(const QueryTables &org);
 };
 }
 

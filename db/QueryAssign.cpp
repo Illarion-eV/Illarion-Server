@@ -22,14 +22,11 @@
 
 using namespace Database;
 
-QueryAssign::QueryAssign() : Query() {
-};
-
-QueryAssign::QueryAssign(const QueryAssign &org) {
+QueryAssign::QueryAssign(const Connection &connection) : connection(connection) {
 }
 
 void QueryAssign::addAssignColumnNull(const std::string &column) {
-    appendToStringList(assignColumns, escapeAndChainKeys("", column) + " = NULL");
+    Query::appendToStringList(assignColumns, Query::escapeAndChainKeys("", column) + " = NULL");
 }
 
 std::string &QueryAssign::buildQuerySegment() {

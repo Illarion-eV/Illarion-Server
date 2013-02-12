@@ -33,7 +33,7 @@
 #include "db/QueryWhere.hpp"
 
 namespace Database {
-class SelectQuery : public virtual QueryColumns, public virtual QueryTables, public virtual QueryWhere {
+class SelectQuery : Query, public QueryColumns, public QueryTables, public QueryWhere {
 private:
     std::string orderBy;
     bool isDistinct;
@@ -44,6 +44,8 @@ public:
 
     SelectQuery();
     SelectQuery(const PConnection connection);
+    SelectQuery(const SelectQuery &org) = delete;
+    SelectQuery& operator=(const SelectQuery &org) = delete;
 
     void addOrderBy(const std::string &column, const OrderDirection &dir);
     void addOrderBy(const std::string &table, const std::string &column, const OrderDirection &dir);
@@ -51,8 +53,6 @@ public:
     void setDistinct(const bool &distinct);
 
     virtual Result execute();
-private:
-    SelectQuery(const SelectQuery &org);
 };
 }
 

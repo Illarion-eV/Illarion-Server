@@ -32,10 +32,6 @@ Connection::Connection() {
     transaction = 0;
 };
 
-Connection::Connection(const Connection &org) {
-    throw new std::domain_error("Copy constructor not supported.");
-}
-
 Connection::Connection(pqxx::connection *connection) {
     internalConnection = connection;
     transaction = 0;

@@ -20,22 +20,20 @@
 
 #include "db/QueryTables.hpp"
 #include "db/SchemaHelper.hpp"
+#include "db/Query.hpp"
 
 using namespace Database;
 
-QueryTables::QueryTables() : Query() {
+QueryTables::QueryTables() {
     oneTable = false;
 };
-
-QueryTables::QueryTables(const QueryTables &org) {
-}
 
 void QueryTables::addServerTable(const std::string &table) throw(std::logic_error) {
     if (oneTable && !tables.empty()) {
         throw new std::logic_error("Only one table is allowed for this query.");
     }
 
-    appendToStringList(tables, escapeAndChainKeys(Database::SchemaHelper::getServerSchema(), table));
+    Query::appendToStringList(tables, Query::escapeAndChainKeys(Database::SchemaHelper::getServerSchema(), table));
 }
 
 void QueryTables::addAccountTable(const std::string &table) throw(std::logic_error) {
@@ -43,15 +41,15 @@ void QueryTables::addAccountTable(const std::string &table) throw(std::logic_err
         throw new std::logic_error("Only one table is allowed for this query.");
     }
 
-    appendToStringList(tables, escapeAndChainKeys(Database::SchemaHelper::getAccountSchema(), table));
+    Query::appendToStringList(tables, Query::escapeAndChainKeys(Database::SchemaHelper::getAccountSchema(), table));
 }
 
 void QueryTables::setServerTable(const std::string &table) {
-    tables = escapeAndChainKeys(Database::SchemaHelper::getServerSchema(), table);
+    tables = Query::escapeAndChainKeys(Database::SchemaHelper::getServerSchema(), table);
 }
 
 void QueryTables::setAccountTable(const std::string &table) {
-    tables = escapeAndChainKeys(Database::SchemaHelper::getAccountSchema(), table);
+    tables = Query::escapeAndChainKeys(Database::SchemaHelper::getAccountSchema(), table);
 }
 
 void QueryTables::setOnlyOneTable(const bool &enabled) {

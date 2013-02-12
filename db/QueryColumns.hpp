@@ -25,10 +25,9 @@
 #include <boost/cstdint.hpp>
 
 #include "db/Connection.hpp"
-#include "db/Query.hpp"
 
 namespace Database {
-class QueryColumns : public virtual Query {
+class QueryColumns {
 public:
     typedef uint8_t columnIndex;
 
@@ -39,18 +38,32 @@ private:
 
 public:
 
-    virtual columnIndex addColumn(const std::string &column);
-    virtual columnIndex addColumn(const std::string &table, const std::string &column);
+    columnIndex addColumn(const std::string &column);
+    columnIndex addColumn(const std::string &table, const std::string &column);
+
+    void addColumns() {}
+    template<typename... Args>
+    void addColumns(const std::string &column, const Args&... args) {
+        addColumn(column);
+        addColumns(args...);
+    }
+
+    void addColumnsWithTable(const std::string &table) {}
+    template<typename... Args>
+    void addColumnsWithTable(const std::string &table, const std::string &column, const Args&... args) {
+        addColumn(table, column);
+        addColumnsWithTable(table, args...);
+    }
 
 protected:
     QueryColumns();
+    QueryColumns(const QueryColumns &org) = delete;
+    QueryColumns& operator=(const QueryColumns &org) = delete;
 
     std::string &buildQuerySegment();
     uint32_t getColumnCount();
 
     void setHideTable(const bool hide);
-private:
-    QueryColumns(const QueryColumns &org);
 };
 }
 

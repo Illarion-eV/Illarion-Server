@@ -26,14 +26,11 @@
 
 using namespace Database;
 
-DeleteQuery::DeleteQuery() {
+DeleteQuery::DeleteQuery() : QueryWhere(*Query::getConnection()) {
     setOnlyOneTable(true);
 }
 
-DeleteQuery::DeleteQuery(const DeleteQuery &org) {
-}
-
-DeleteQuery::DeleteQuery(const PConnection connection) : Query(connection), QueryTables(), QueryWhere() {
+DeleteQuery::DeleteQuery(const PConnection connection) : Query(connection), QueryWhere(*connection) {
     setOnlyOneTable(true);
 }
 
