@@ -45,7 +45,7 @@ public:
     SelectQuery();
     SelectQuery(const PConnection connection);
     SelectQuery(const SelectQuery &org) = delete;
-    SelectQuery& operator=(const SelectQuery &org) = delete;
+    SelectQuery &operator=(const SelectQuery &org) = delete;
 
     void addOrderBy(const std::string &column, const OrderDirection &dir);
     void addOrderBy(const std::string &table, const std::string &column, const OrderDirection &dir);

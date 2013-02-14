@@ -38,7 +38,7 @@ public:
     UpdateQuery();
     UpdateQuery(const PConnection connection);
     UpdateQuery(const UpdateQuery &org) = delete;
-    UpdateQuery& operator=(const UpdateQuery &org) = delete;
+    UpdateQuery &operator=(const UpdateQuery &org) = delete;
 
     virtual Result execute();
 };

@@ -49,7 +49,7 @@ protected:
     Query();
     Query(const PConnection connection);
     Query(const Query &org) = delete;
-    Query& operator=(const Query &org) = delete;
+    Query &operator=(const Query &org) = delete;
 
     void setQuery(const std::string &query);
     PConnection getConnection();

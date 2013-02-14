@@ -43,14 +43,14 @@ public:
 
     void addColumns() {}
     template<typename... Args>
-    void addColumns(const std::string &column, const Args&... args) {
+    void addColumns(const std::string &column, const Args &... args) {
         addColumn(column);
         addColumns(args...);
     }
 
     void addColumnsWithTable(const std::string &table) {}
     template<typename... Args>
-    void addColumnsWithTable(const std::string &table, const std::string &column, const Args&... args) {
+    void addColumnsWithTable(const std::string &table, const std::string &column, const Args &... args) {
         addColumn(table, column);
         addColumnsWithTable(table, args...);
     }
@@ -58,7 +58,7 @@ public:
 protected:
     QueryColumns();
     QueryColumns(const QueryColumns &org) = delete;
-    QueryColumns& operator=(const QueryColumns &org) = delete;
+    QueryColumns &operator=(const QueryColumns &org) = delete;
 
     std::string &buildQuerySegment();
     uint32_t getColumnCount();

@@ -32,7 +32,7 @@ public:
     DeleteQuery();
     DeleteQuery(const PConnection connection);
     DeleteQuery(const DeleteQuery &org) = delete;
-    DeleteQuery& operator=(const DeleteQuery &org) = delete;
+    DeleteQuery &operator=(const DeleteQuery &org) = delete;
 
     virtual Result execute();
 };

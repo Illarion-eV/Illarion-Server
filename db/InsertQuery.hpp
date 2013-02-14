@@ -49,7 +49,7 @@ public:
     InsertQuery();
     InsertQuery(const PConnection connection);
     InsertQuery(const InsertQuery &org) = delete;
-    InsertQuery& operator=(const InsertQuery &org) = delete;
+    InsertQuery &operator=(const InsertQuery &org) = delete;
     virtual ~InsertQuery();
 
     template <typename T> void addValue(const QueryColumns::columnIndex &column, const T &value) throw(std::invalid_argument) {

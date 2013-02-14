@@ -58,7 +58,7 @@ public:
 protected:
     QueryWhere(const Connection &connection);
     QueryWhere(const QueryWhere &org) = delete;
-    QueryWhere& operator=(const QueryWhere &org) = delete;
+    QueryWhere &operator=(const QueryWhere &org) = delete;
     virtual ~QueryWhere();
 
     std::string buildQuerySegment();

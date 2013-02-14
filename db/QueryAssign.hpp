@@ -29,7 +29,7 @@
 namespace Database {
 class QueryAssign {
 private:
-    const Connection& connection;
+    const Connection &connection;
     std::string assignColumns;
 
 public:
@@ -39,9 +39,9 @@ public:
 
     void addAssignColumnNull(const std::string &column);
 protected:
-    QueryAssign(const Connection & connection);
+    QueryAssign(const Connection &connection);
     QueryAssign(const QueryAssign &org) = delete;
-    QueryAssign& operator=(const QueryAssign &org) = delete;
+    QueryAssign &operator=(const QueryAssign &org) = delete;
 
     std::string &buildQuerySegment();
 };

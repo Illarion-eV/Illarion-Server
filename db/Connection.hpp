@@ -58,7 +58,7 @@ private:
     Connection(void);
     Connection(pqxx::connection *connection);
     Connection(const Connection &org) = delete;
-    Connection& operator=(const Connection &org) = delete;;
+    Connection &operator=(const Connection &org) = delete;;
     ~Connection(void);
     struct deleter {
         void operator()(Connection *p) {
