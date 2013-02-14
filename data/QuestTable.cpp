@@ -55,8 +55,8 @@ void QuestTable::reload() {
                     scriptname = ((*itr)["qst_script"].as<std::string>());
 
                     try {
-                        boost::shared_ptr<LuaQuestScript> script(new LuaQuestScript(scriptname));
                         TYPE_OF_QUEST_ID id = ((*itr)["qst_id"].as<TYPE_OF_QUEST_ID>());
+                        boost::shared_ptr<LuaQuestScript> script(new LuaQuestScript(scriptname, id));
                         quests[id] = script;
                     } catch (ScriptException &e) {
                         Logger::writeError("scripts", "Error while loading quest script: " + scriptname + ":\n" + e.what() + "\n");

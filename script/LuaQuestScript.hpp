@@ -31,7 +31,9 @@ class Character;
 
 class LuaQuestScript : public LuaScript {
 public:
-    LuaQuestScript(std::string filename) throw(ScriptException);
+    LuaQuestScript(std::string filename, TYPE_OF_QUEST_ID quest) throw(ScriptException);
+    LuaQuestScript(const LuaQuestScript &) = delete;
+    LuaQuestScript &operator=(const LuaQuestScript &) = delete;
     virtual ~LuaQuestScript() throw();
 
     std::string title(Character *user);
@@ -40,8 +42,8 @@ public:
     TYPE_OF_QUESTSTATUS finalStatus();
 
 private:
-    LuaQuestScript(const LuaQuestScript &);
-    LuaQuestScript &operator=(const LuaQuestScript &);
+    TYPE_OF_QUEST_ID quest;
+    static void addTarget(std::vector<position> &targets, const luabind::object &potentialTarget);
 };
 
 #endif

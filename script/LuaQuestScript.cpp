@@ -22,8 +22,8 @@
 #include "Character.hpp"
 #include "fuse_ptr.hpp"
 
-LuaQuestScript::LuaQuestScript(std::string filename) throw(ScriptException)
-    : LuaScript(filename) {
+LuaQuestScript::LuaQuestScript(std::string filename, TYPE_OF_QUEST_ID quest) throw(ScriptException)
+    : LuaScript(filename), quest(quest) {
 }
 
 LuaQuestScript::~LuaQuestScript() throw() {}
@@ -47,25 +47,31 @@ void LuaQuestScript::targets(Character *user, TYPE_OF_QUESTSTATUS status, std::v
     auto mapType = type(luaTargets);
 
     try {
-        position value = object_cast<position>(luaTargets);
-        targets.push_back(value);
+        addTarget(targets, luaTargets);
         return;
-    } catch (cast_failed &e) {
+    } catch (std::logic_error &e) {
     }
 
     if (mapType == LUA_TTABLE) {
         for (iterator it(luaTargets), end; it != end; ++it) {
             try {
-                position value = object_cast<position>(*it);
-                targets.push_back(value);
-            } catch (cast_failed &e) {
-                throw std::logic_error("Usage of invalid target value. Target values must be positions.");
+                addTarget(targets, *it);
+            } catch (std::logic_error &e) {
+                std::stringstream error;
+                error << "Usage of invalid target table entry in quest " << quest;
+                error << " for status " << status << ". A target table entry ";
+                error << "must be either a position or a table of three coordinates.";
+                writeDebugMsg(error.str());
             }
         }
     } else if (mapType == LUA_TNIL) {
         // no targets to add
     } else {
-        throw std::logic_error("Usage of invalid quest target type. Quest targets must be tables of positions, positions or nil.");
+        std::stringstream error;
+        error << "Usage of invalid quest target type in quest " << quest;
+        error << " for status " << status << ". You must return a table of positions and/or";
+        error << " coordinates, a position, a table of three coordinates or nil in QuestTargets!";
+        writeDebugMsg(error.str());
     }
 }
 
@@ -73,3 +79,26 @@ TYPE_OF_QUESTSTATUS LuaQuestScript::finalStatus() {
     return callEntrypoint<TYPE_OF_QUESTSTATUS>("QuestFinalStatus");
 }
 
+void LuaQuestScript::addTarget(std::vector<position> &targets, const luabind::object &potentialTarget) {
+    using namespace luabind;
+    auto targetType = type(potentialTarget);
+
+    try {
+        targets.push_back(object_cast<position>(potentialTarget));
+        return;
+    } catch (cast_failed &e) {
+    }
+
+    if (targetType == LUA_TTABLE) {
+        try {
+            int16_t x = object_cast<int16_t>(potentialTarget[1]);
+            int16_t y = object_cast<int16_t>(potentialTarget[2]);
+            int16_t z = object_cast<int16_t>(potentialTarget[3]);
+            targets.emplace_back(x, y, z);
+            return;
+        } catch (cast_failed &e) {
+        }
+    }
+
+    throw std::logic_error("no target found");
+}
