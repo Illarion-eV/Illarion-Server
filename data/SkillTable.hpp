@@ -23,13 +23,12 @@
 
 #include <string>
 #include <boost/unordered_map.hpp>
-#include "data/Table.hpp"
 #include "TableStructs.hpp"
 #include "types.hpp"
 
 class World;
 
-class SkillTable: public Table {
+class SkillTable {
 public:
     typedef boost::unordered_map<TYPE_OF_SKILL_ID, SkillStruct> TABLE;
 
@@ -47,7 +46,7 @@ public:
     }
 
 private:
-    virtual void reload();
+    void reload();
 
     TABLE m_table;
 

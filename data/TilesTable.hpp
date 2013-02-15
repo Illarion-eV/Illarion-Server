@@ -21,37 +21,19 @@
 #ifndef _TILES_TABLE_HPP_
 #define _TILES_TABLE_HPP_
 
-#include <string>
-#include <boost/unordered_map.hpp>
-#include "data/Table.hpp"
+#include "data/StructTable.hpp"
 #include "types.hpp"
 #include "TableStructs.hpp"
+#include "script/LuaTileScript.hpp"
 
-class World;
-
-class TilesTable: public Table {
+class TilesTable : public StructTable<TYPE_OF_TILE_ID, TilesStruct, LuaTileScript> {
 public:
-    bool find(TYPE_OF_ITEM_ID Id, TilesStruct &ret);
-
-    TilesTable();
-    ~TilesTable();
-
-    inline bool dataOK() {
-        return m_dataOK;
-    }
-
-    bool nonPassable(TYPE_OF_ITEM_ID Id);
-
-private:
-    virtual void reload();
-
-    typedef boost::unordered_map<TYPE_OF_ITEM_ID, TilesStruct> TABLE;
-
-    TABLE m_table;
-
-    void clearOldTable();
-
-    bool m_dataOK;
+    virtual std::string getTableName();
+    virtual std::vector<std::string> getColumnNames();
+    virtual TYPE_OF_TILE_ID assignId(const Database::ResultTuple &row);
+    virtual TilesStruct assignTable(const Database::ResultTuple &row);
+    virtual std::string assignScriptName(const Database::ResultTuple &row);
 };
+
 #endif
 

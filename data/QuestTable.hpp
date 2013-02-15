@@ -22,11 +22,10 @@
 
 #include <boost/shared_ptr.hpp>
 #include <unordered_map>
-#include "data/Table.hpp"
 #include "types.hpp"
 #include "script/LuaQuestScript.hpp"
 
-class QuestTable: public Table {
+class QuestTable {
 public:
     QuestTable();
 
@@ -37,7 +36,7 @@ public:
     boost::shared_ptr<LuaQuestScript> getQuestScript(TYPE_OF_QUEST_ID id);
 
 private:
-    virtual void reload();
+    void reload();
 
     typedef std::unordered_map<TYPE_OF_QUEST_ID, boost::shared_ptr<LuaQuestScript> > QuestMap;
     QuestMap quests;

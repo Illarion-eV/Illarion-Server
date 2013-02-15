@@ -23,7 +23,6 @@
 
 #include <string>
 #include <boost/unordered_map.hpp>
-#include "data/Table.hpp"
 #include "Character.hpp"
 
 struct AttackBoni {
@@ -33,7 +32,7 @@ struct AttackBoni {
     AttackBoni() : attackType(0), attackValue(0), actionPointsLost(0) {}
 };
 
-class MonsterAttackTable: public Table {
+class MonsterAttackTable {
 public:
     MonsterAttackTable();
     ~MonsterAttackTable();
@@ -45,7 +44,7 @@ public:
     }
 
 private:
-    virtual void reload();
+    void reload();
     bool m_dataOk;
 
     void clearOldTable();

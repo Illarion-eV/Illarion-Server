@@ -23,10 +23,9 @@
 
 #include <string>
 #include <boost/unordered_map.hpp>
-#include "data/Table.hpp"
 #include "TableStructs.hpp"
 
-class LongTimeEffectTable: public Table {
+class LongTimeEffectTable {
 public:
     bool find(uint16_t effectId, LongTimeEffectStruct &ret);
     bool find(std::string effectname, LongTimeEffectStruct &ret);
@@ -44,7 +43,7 @@ private:
 
     void clearOldTable();
 
-    virtual void reload();
+    void reload();
     bool m_dataOK;
 };
 #endif

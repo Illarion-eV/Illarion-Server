@@ -23,11 +23,10 @@
 
 #include <string>
 #include <boost/unordered_map.hpp>
-#include "data/Table.hpp"
 #include "constants.hpp"
 #include "TableStructs.hpp"
 
-class TilesModificatorTable: public Table {
+class TilesModificatorTable {
 public:
     bool find(TYPE_OF_ITEM_ID Id, TilesModificatorStruct &ret);
 
@@ -41,7 +40,7 @@ public:
     bool nonPassable(TYPE_OF_ITEM_ID Id);
 
 private:
-    virtual void reload();
+    void reload();
 
     typedef boost::unordered_map<TYPE_OF_ITEM_ID, TilesModificatorStruct> TABLE;
     TABLE m_table;

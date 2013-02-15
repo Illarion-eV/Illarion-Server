@@ -23,12 +23,11 @@
 
 #include <string>
 #include <boost/unordered_map.hpp>
-#include "data/Table.hpp"
 #include "TableStructs.hpp"
 
 class World;
 
-class WeaponObjectTable: public Table {
+class WeaponObjectTable {
 public:
     bool find(TYPE_OF_ITEM_ID Id, WeaponStruct &ret);
 
@@ -40,7 +39,7 @@ public:
     }
 
 private:
-    virtual void reload();
+    void reload();
 
     typedef boost::unordered_map<TYPE_OF_ITEM_ID, WeaponStruct> TABLE;
     TABLE m_table;

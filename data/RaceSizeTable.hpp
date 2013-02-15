@@ -24,9 +24,8 @@
 #include <sys/types.h>
 #include "Character.hpp"
 #include <boost/unordered_map.hpp>
-#include "data/Table.hpp"
 
-class RaceSizeTable: public Table {
+class RaceSizeTable {
 public:
     RaceSizeTable();
     ~RaceSizeTable();
@@ -38,7 +37,7 @@ public:
     }
 
 private:
-    virtual void reload();
+    void reload();
 
     bool m_dataOk;
     void clearOldTable();

@@ -26,7 +26,6 @@
 #include <list>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
-#include "data/Table.hpp"
 #include "script/LuaScheduledScript.hpp"
 
 class World;
@@ -54,7 +53,7 @@ struct ScriptData {
     }
 };
 
-class ScheduledScriptsTable: public Table {
+class ScheduledScriptsTable {
 public:
     ScheduledScriptsTable();
     ~ScheduledScriptsTable();
@@ -68,7 +67,7 @@ public:
     bool addData(ScriptData data);
 
 private:
-    virtual void reload();
+    void reload();
 
     std::list<ScriptData> m_table;
     uint32_t currentCycle;

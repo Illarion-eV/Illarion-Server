@@ -23,10 +23,9 @@
 
 #include <string>
 #include <boost/unordered_map.hpp>
-#include "data/Table.hpp"
 #include "TableStructs.hpp"
 
-class ArmorObjectTable: public Table {
+class ArmorObjectTable {
 public:
     bool find(TYPE_OF_ITEM_ID Id, ArmorStruct &ret);
 
@@ -38,7 +37,7 @@ public:
     }
 
 private:
-    virtual void reload();
+    void reload();
     typedef boost::unordered_map<TYPE_OF_ITEM_ID, ArmorStruct> TABLE;
     TABLE m_table;
     void clearOldTable();

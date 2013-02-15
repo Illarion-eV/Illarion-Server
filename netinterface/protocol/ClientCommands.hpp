@@ -888,7 +888,6 @@ public:
         boost::shared_ptr<LuaTileScript> LuaTileScript;
         SouTar Source, Target;
         CommonStruct com;
-        TilesStruct Tile;
 
         switch (useId) {
         case UID_KOORD:
@@ -966,11 +965,10 @@ public:
                     } else {
                         Logger::writeMessage("Use","empty field!",false);
 
-                        if (Tiles->find(temp->getTileId(),Tile)) {
-                            LuaTileScript = Tile.script;
-                        }
+                        const auto &tileStruct = Tiles->find(temp->getTileId());
 
-                        if (LuaTileScript) {
+                        if (tileStruct.script) {
+                            LuaTileScript = tileStruct.script;
                             Source.Type = LUA_FIELD;
                             Source.pos = position(xc, yc, zc);
                         }

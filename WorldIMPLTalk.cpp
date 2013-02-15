@@ -323,16 +323,9 @@ void World::lookAtMapItem(Player *cp, short int x, short int y, short int z) {
 
 
 void World::lookAtTile(Player *cp, unsigned short int tile, short int x, short int y, short int z) {
-    if (Tiles->find(tile, tempTile)) {
-        boost::shared_ptr<BasicServerCommand>cmd(new LookAtTileTC(x, y, z, cp->nls(tempTile.German, tempTile.English)));
-        cp->Connection->addCommand(cmd);
-    } else {
-        std::cerr << "Tile no. " << tile << " not found\n";
-        std::string german = "unbekannt";
-        std::string english = "unknown";
-        boost::shared_ptr<BasicServerCommand>cmd(new LookAtTileTC(x, y, z, cp->nls(german, english)));
-        cp->Connection->addCommand(cmd);
-    }
+    const TilesStruct &tileStruct = Tiles->find(tile);
+    boost::shared_ptr<BasicServerCommand>cmd(new LookAtTileTC(x, y, z, cp->nls(tileStruct.German, tileStruct.English)));
+    cp->Connection->addCommand(cmd);
 }
 
 

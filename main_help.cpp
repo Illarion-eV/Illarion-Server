@@ -375,8 +375,11 @@ void loadData() {
 
     Tiles = new TilesTable();
 
-    if (!Tiles->dataOK()) {
+    if (!Tiles->reloadBuffer()) {
         ok = false;
+    } else {
+        Tiles->reloadScripts();
+        Tiles->activateBuffer();
     }
 
     Spells = new SpellTable();

@@ -19,115 +19,45 @@
  */
 
 #include "data/TilesTable.hpp"
-
-#include <iostream>
-#include <string>
-
-#include "db/SelectQuery.hpp"
-#include "db/Result.hpp"
-
-#include "script/LuaTileScript.hpp"
-
 #include "constants.hpp"
-#include "TableStructs.hpp"
-#include "Logger.hpp"
 
-TilesTable::TilesTable() : m_dataOK(false) {
-    reload();
+std::string TilesTable::getTableName() {
+    return "tiles";
 }
 
-
-void TilesTable::reload() {
-#ifdef DataConnect_DEBUG
-    std::cout << "TilesTable: reload" << std::endl;
-#endif
-
-    try {
-        Database::SelectQuery query;
-        query.addColumns(
-            "til_id",
-            "til_isnotpassable",
-            "til_isnottransparent",
-            "til_isnotpenetrateable",
-            "til_specialtile",
-            "til_groundlevel",
-            "til_german",
-            "til_english",
-            "til_walkingcost",
-            "til_script"
-        );
-        query.setServerTable("tiles");
-
-        Database::Result results = query.execute();
-
-        if (!results.empty()) {
-            clearOldTable();
-            TilesStruct temprecord;
-            std::string scriptname;
-            TYPE_OF_ITEM_ID tileId;
-
-            for (Database::ResultConstIterator itr = results.begin();
-                 itr != results.end(); ++itr) {
-                tileId = (*itr)["til_id"].as<TYPE_OF_ITEM_ID>();
-                temprecord.flags = (uint8_t)((*itr)["til_groundlevel"].as<uint16_t>());
-                temprecord.flags |= (*itr)["til_isnotpassable"].as<bool>() ? FLAG_PASSABLE : 0;
-                temprecord.flags |= (*itr)["til_isnottransparent"].as<bool>() ? FLAG_TRANSPARENT : 0;
-                temprecord.flags |= (*itr)["til_isnotpenetrateable"].as<bool>() ? FLAG_TRANSPARENT : 0;
-                temprecord.flags |= (*itr)["til_specialtile"].as<bool>() ? FLAG_SPECIALITEM : 0;
-                temprecord.German = (*itr)["til_german"].as<std::string>();
-                temprecord.English = (*itr)["til_english"].as<std::string>();
-                temprecord.walkingCost = (TYPE_OF_WALKINGCOST)((*itr)["til_walkingcost"].as<int16_t>());
-
-                if (!(*itr)["til_script"].is_null()) {
-                    scriptname = (*itr)["til_script"].as<std::string>();
-
-                    if (!scriptname.empty()) {
-                        try {
-                            boost::shared_ptr<LuaTileScript> script(new LuaTileScript(scriptname, temprecord));
-                            temprecord.script = script;
-                        } catch (ScriptException &e) {
-                            Logger::writeError("scripts", "Error while loading tiles script: " + scriptname + ":\n" + e.what() + "\n");
-                        }
-                    }
-                }
-
-                m_table[tileId] = temprecord;
-            }
-
-            m_dataOK = true;
-        } else {
-            m_dataOK = false;
-        }
-
-
-#ifdef DataConnect_DEBUG
-        std::cout << "loaded " << rows << " rows into TilesTable" << std::endl;
-#endif
-
-    } catch (std::exception &e) {
-        std::cout << "exception in tiles loading: " << e.what() << std::endl;
-        m_dataOK = false;
-    }
-
-
+std::vector<std::string> TilesTable::getColumnNames() {
+    return {
+        "til_id",
+        "til_isnotpassable",
+        "til_isnottransparent",
+        "til_isnotpenetrateable",
+        "til_specialtile",
+        "til_groundlevel",
+        "til_german",
+        "til_english",
+        "til_walkingcost",
+        "til_script"
+    };
 }
 
-bool TilesTable::find(TYPE_OF_ITEM_ID Id, TilesStruct &ret) {
-    TABLE::iterator iterator;
-    iterator = m_table.find(Id);
-
-    if (iterator == m_table.end()) {
-        return false;
-    } else {
-        ret = (*iterator).second;
-        return true;
-    }
+TYPE_OF_TILE_ID TilesTable::assignId(const Database::ResultTuple &row) {
+    return row["til_id"].as<TYPE_OF_TILE_ID>();
 }
 
-void TilesTable::clearOldTable() {
-    m_table.clear();
+TilesStruct TilesTable::assignTable(const Database::ResultTuple &row) {
+    TilesStruct tile;
+    tile.flags = uint8_t(row["til_groundlevel"].as<uint16_t>());
+    tile.flags |= row["til_isnotpassable"].as<bool>() ? FLAG_PASSABLE : 0;
+    tile.flags |= row["til_isnottransparent"].as<bool>() ? FLAG_TRANSPARENT : 0;
+    tile.flags |= row["til_isnotpenetrateable"].as<bool>() ? FLAG_TRANSPARENT : 0;
+    tile.flags |= row["til_specialtile"].as<bool>() ? FLAG_SPECIALITEM : 0;
+    tile.German = row["til_german"].as<std::string>();
+    tile.English = row["til_english"].as<std::string>();
+    tile.walkingCost = TYPE_OF_WALKINGCOST(row["til_walkingcost"].as<int16_t>());
+    return tile;
 }
 
-TilesTable::~TilesTable() {
-    clearOldTable();
+std::string TilesTable::assignScriptName(const Database::ResultTuple &row) {
+    return row["til_script"].as<std::string>("");
 }
+

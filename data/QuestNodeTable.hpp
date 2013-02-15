@@ -24,7 +24,6 @@
 #include <string>
 #include <vector>
 #include "script/LuaScript.hpp"
-#include "data/Table.hpp"
 #include <boost/shared_ptr.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>

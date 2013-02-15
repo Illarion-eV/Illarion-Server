@@ -22,9 +22,11 @@
 #define _TABLE_HPP_
 
 class Table {
-protected:
-    virtual void reload()=0;
-    virtual ~Table() { }
+public:
+    virtual bool reloadBuffer() = 0;
+    virtual void reloadScripts() = 0;
+    virtual void activateBuffer() = 0;
+    virtual ~Table() {}
 };
 
 #endif

@@ -23,10 +23,9 @@
 
 #include <string>
 #include <boost/unordered_map.hpp>
-#include "data/Table.hpp"
 #include "Character.hpp"
 
-class NaturalArmorTable: public Table {
+class NaturalArmorTable {
 public:
     bool find(Character::race_type race, MonsterArmor &ret);
 
@@ -42,7 +41,7 @@ private:
     typedef boost::unordered_map<uint16_t, MonsterArmor> TABLE;
     TABLE m_ArmorTable;
 
-    virtual void reload();
+    void reload();
     bool m_dataOK;
 
     void clearOldTable();

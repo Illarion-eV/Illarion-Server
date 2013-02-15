@@ -1672,31 +1672,28 @@ bool Character::moveToPossible(const Field *field) {
 
 uint16_t Character::getMovementCost(Field *sourcefield) {
     uint16_t walkcost = 0;
+
     auto tileId = sourcefield->getTileId();
+    const auto &primaryTile = Tiles->find(tileId);
+    uint16_t tileWalkingCost = primaryTile.walkingCost;
 
-    if (!Tiles->find(tileId, tempTile)) {
-        std::cerr<<"no move cost for tile: " << tileId << std::endl;
-        return walkcost;
-    }
+    tileId = sourcefield->getSecondaryTileId();
+    const auto &secondaryTile = Tiles->find(tileId);
+    uint16_t secondaryWalkingCost = secondaryTile.walkingCost;
 
-    if (tempTile.flags & FLAG_PASSABLE) {
-        tileId = sourcefield->getSecondaryTileId();
-    }
-
-    if (!Tiles->find(tileId, tempTile)) {
-        std::cerr<<"no move cost for tile: " << tileId << std::endl;
-        return walkcost;
+    if (secondaryWalkingCost > tileWalkingCost) {
+        tileWalkingCost = secondaryWalkingCost;
     }
 
     switch (_movement) {
     case walk:
-        walkcost += tempTile.walkingCost;
+        walkcost += tileWalkingCost;
         break;
     case fly: // walking cost independent of source field
         walkcost += NP_STANDARDFLYCOST;
         break;
     case crawl: // just double the ap necessary for walking
-        walkcost += 2 * tempTile.walkingCost;
+        walkcost += 2 * tileWalkingCost;
         break;
     }
 

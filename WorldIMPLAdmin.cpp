@@ -1405,9 +1405,12 @@ bool World::reload_defs(Player *cp) {
     if (ok) {
         Tiles_temp = new TilesTable();
 
-        if (Tiles_temp == NULL || !Tiles_temp->dataOK()) {
+        if (Tiles_temp == NULL || !Tiles_temp->reloadBuffer()) {
             reportTableError(cp, "tiles");
             ok = false;
+        } else {
+            Tiles_temp->reloadScripts();
+            Tiles_temp->activateBuffer();
         }
     }
 

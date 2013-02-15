@@ -2518,7 +2518,7 @@ void Player::sendBook(uint16_t bookID) {
     Connection->addCommand(cmd);
 }
 
-std::string &Player::nls(std::string &german, std::string &english) {
+const std::string &Player::nls(const std::string &german, const std::string &english) {
     switch (getPlayerLanguage()) {
     case Language::german:
         return german;

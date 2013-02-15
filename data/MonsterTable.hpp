@@ -26,7 +26,6 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
-#include "data/Table.hpp"
 #include "script/LuaMonsterScript.hpp"
 #include "types.hpp"
 #include "Character.hpp"
@@ -80,7 +79,7 @@ struct MonsterStruct {
     uint16_t maxsize;
 };
 
-class MonsterTable: public Table {
+class MonsterTable {
 public:
     MonsterTable();
     ~MonsterTable();
@@ -97,7 +96,7 @@ private:
 
     void clearOldTable();
 
-    virtual void reload();
+    void reload();
     bool m_dataOK;
 
     World *world;

@@ -23,10 +23,9 @@
 
 #include <string>
 #include <boost/unordered_map.hpp>
-#include "data/Table.hpp"
 #include "TableStructs.hpp"
 
-class NamesObjectTable: public Table {
+class NamesObjectTable {
 public:
     bool find(TYPE_OF_ITEM_ID Id, NamesStruct &ret);
 
@@ -44,7 +43,7 @@ private:
 
     void clearOldTable();
 
-    virtual void reload();
+    void reload();
     bool m_dataOK;
 };
 

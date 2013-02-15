@@ -23,11 +23,10 @@
 
 #include <string>
 #include <boost/unordered_map.hpp>
-#include "data/Table.hpp"
 #include "types.hpp"
 #include "TableStructs.hpp"
 
-class ContainerObjectTable: public Table {
+class ContainerObjectTable {
 public:
     ContainerObjectTable();
     ~ContainerObjectTable();
@@ -44,7 +43,7 @@ private:
 
     void clearOldTable();
 
-    virtual void reload();
+    void reload();
     bool m_dataOK;
 };
 

@@ -25,7 +25,6 @@
 #include <boost/shared_ptr.hpp>
 #include <list>
 #include <boost/unordered_map.hpp>
-#include "data/Table.hpp"
 #include "globals.hpp"
 #include "script/LuaTriggerScript.hpp"
 
@@ -39,7 +38,7 @@ struct TriggerStruct {
 
 
 
-class TriggerTable: public Table {
+class TriggerTable {
 public:
     TriggerTable();
     ~TriggerTable();
@@ -51,7 +50,7 @@ public:
     bool find(position pos, TriggerStruct &data);
 
 private:
-    virtual void reload();
+    void reload();
 
     typedef boost::unordered_map<position, TriggerStruct> TriggerMap;
     TriggerMap Triggers;

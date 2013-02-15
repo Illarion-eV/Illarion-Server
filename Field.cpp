@@ -455,12 +455,10 @@ void Field::updateFlags() {
     clientflags = clientflags & (255 - (FLAG_GROUNDLEVEL));
     extraflags = extraflags & (255 - (FLAG_SPECIALITEM + FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_MAKEPASSABLE));
 
-    TilesStruct tt;
+    const TilesStruct &tt = Tiles->find(tile);
 
-    if (Tiles->find(tile, tt)) {
-        clientflags = clientflags | (tt.flags & (FLAG_GROUNDLEVEL));
-        extraflags = extraflags | (tt.flags & (FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_SPECIALTILE + FLAG_MAKEPASSABLE));
-    }
+    clientflags = clientflags | (tt.flags & (FLAG_GROUNDLEVEL));
+    extraflags = extraflags | (tt.flags & (FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_SPECIALTILE + FLAG_MAKEPASSABLE));
 
     TilesModificatorStruct tmod;
 

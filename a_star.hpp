@@ -152,12 +152,7 @@ struct weight_calc {
         }
 
         auto tileId = field->getTileId();
-
-        if (!Tiles->find(tileId, tempTile)) {
-            return 1;
-        }
-
-        return tempTile.walkingCost;
+        return Tiles->find(tileId).walkingCost;
     }
 private:
     int level;
