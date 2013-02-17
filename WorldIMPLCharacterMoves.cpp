@@ -85,6 +85,7 @@ void World::checkFieldAfterMove(Character *cc, Field *cfstart) {
             case SOUNDFIELD:
                 makeSoundForAllPlayersInRange(cc->pos.x, cc->pos.y, cc->pos.z, 3, which.flags);
                 break;
+
             case MUSICFIELD:
 
                 if (cc->character == Character::player) {
@@ -144,24 +145,31 @@ bool World::spinPlayer(Player *cp, unsigned char d) {
     case 0 :
         cp->faceto = Character::north;
         break;
+
     case 1 :
         cp->faceto = Character::northeast;
         break;
+
     case 2 :
         cp->faceto = Character::east;
         break;
+
     case 3 :
         cp->faceto = Character::southeast;
         break;
+
     case 4 :
         cp->faceto = Character::south;
         break;
+
     case 5 :
         cp->faceto = Character::southwest;
         break;
+
     case 6 :
         cp->faceto = Character::west;
         break;
+
     case 7 :
         cp->faceto = Character::northwest;
         break;

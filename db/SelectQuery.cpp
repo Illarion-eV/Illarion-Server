@@ -52,6 +52,7 @@ void SelectQuery::addOrderBy(const std::string &table, const std::string &column
     case ASC:
         orderBy += "ASC";
         break;
+
     case DESC:
         orderBy += "DESC";
         break;

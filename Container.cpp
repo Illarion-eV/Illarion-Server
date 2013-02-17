@@ -256,7 +256,7 @@ bool Container::changeQualityAt(TYPE_OF_CONTAINERSLOTS nr, short int amount) {
     return false;
 }
 
-bool Container::TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &item, Container* &cc, Item::number_type count) {
+bool Container::TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &item, Container *&cc, Item::number_type count) {
     auto it = items.find(nr);
 
     if (it != items.end()) {
@@ -406,7 +406,7 @@ void Container::increaseItemList(luabind::object &list, int &index) {
     }
 }
 
-bool Container::viewItemNr(TYPE_OF_CONTAINERSLOTS nr, ScriptItem &item, Container* &cc) {
+bool Container::viewItemNr(TYPE_OF_CONTAINERSLOTS nr, ScriptItem &item, Container *&cc) {
     auto it = items.find(nr);
 
     if (it != items.end()) {

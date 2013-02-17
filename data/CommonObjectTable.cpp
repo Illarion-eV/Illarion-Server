@@ -35,7 +35,7 @@ CommonObjectTable::CommonObjectTable() : m_dataOK(false) {
     reload();
 }
 
-TYPE_OF_ITEM_ID CommonObjectTable::calcInfiniteRot(TYPE_OF_ITEM_ID id, std::map<TYPE_OF_ITEM_ID, bool> & visited, std::map<TYPE_OF_ITEM_ID, bool> & assigned) {
+TYPE_OF_ITEM_ID CommonObjectTable::calcInfiniteRot(TYPE_OF_ITEM_ID id, std::map<TYPE_OF_ITEM_ID, bool> &visited, std::map<TYPE_OF_ITEM_ID, bool> &assigned) {
     if (visited[ id ]) {
         if (assigned[ id ]) {
             return m_table[ id ].AfterInfiniteRot;

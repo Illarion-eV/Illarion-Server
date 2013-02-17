@@ -100,26 +100,37 @@ std::string World::languageNumberToSkillName(int languageNumber) {
     switch (languageNumber) {
     case 0:
         return "common language";
+
     case 1:
         return "human language";
+
     case 2:
         return "dwarf language";
+
     case 3:
         return "elf language";
+
     case 4:
         return "lizard language";
+
     case 5:
         return "orc language";
+
     case 6:
         return "halfling language";
+
     case 7:
         return "fairy language";
+
     case 8:
         return "gnome language";
+
     case 9:
         return "goblin language";
+
     case 10:
         return "ancient language";
+
     default:
         return "";
 
@@ -142,9 +153,11 @@ void World::sendLanguageMessageToAllCharsInRange(std::string message, Character:
     case Character::tt_say:
         range = 14;
         break;
+
     case Character::tt_whisper:
         range = 2;
         break;
+
     case Character::tt_yell:
         range = 30;
         break;
@@ -211,9 +224,11 @@ void World::sendMessageToAllCharsInRange(std::string message, Character::talk_ty
     case Character::tt_say:
         range = 14;
         break;
+
     case Character::tt_whisper:
         range = 2;
         break;
+
     case Character::tt_yell:
         range = 30;
         break;

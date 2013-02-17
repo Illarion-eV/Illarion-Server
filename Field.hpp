@@ -39,7 +39,7 @@ class TilesTable;
 extern CommonObjectTable *CommonItems;
 extern TilesModificatorTable *TilesModItems;
 extern TilesTable *Tiles;
-extern std::vector<int>* erasedcontainers;
+extern std::vector<int> *erasedcontainers;
 
 
 class Field {

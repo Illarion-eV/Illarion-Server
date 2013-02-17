@@ -100,27 +100,34 @@ position Character::getFrontalPosition() {
     case north:
         --front.y;
         break;
+
     case northeast:
         --front.y;
         ++front.x;
         break;
+
     case east:
         ++front.x;
         break;
+
     case southeast:
         ++front.y;
         ++front.x;
         break;
+
     case south:
         ++front.y;
         break;
+
     case southwest:
         ++front.y;
         --front.x;
         break;
+
     case west:
         --front.x;
         break;
+
     case northwest:
         --front.y;
         --front.x;
@@ -836,9 +843,11 @@ bool Character::attack(Character *target) {
                 case player:
                     kill_log << "Player " << name << "(" << id << ") ";
                     break;
+
                 case monster:
                     kill_log << "Monster of race  " << race << "(" << id << ") ";
                     break;
+
                 case npc:
                     kill_log << "NPC " << name << "(" << id << ") ";
                     break;
@@ -850,9 +859,11 @@ bool Character::attack(Character *target) {
                 case player:
                     kill_log << "Player " << target->name << "(" << target->id << ") ";
                     break;
+
                 case monster:
                     kill_log << "Monster of race  " << target->race << "(" << target->id << ") ";
                     break;
+
                 case npc:
                     kill_log << "NPC " << target->name << "(" << target->id << ") ";
                     break;
@@ -1466,6 +1477,7 @@ void Character::talk(talk_type tt, std::string message) { //only for say, whispe
         talktype = "says";
         cost = P_SAY_COST;
         break;
+
     case tt_whisper:
 #ifdef DO_UNCONSCIOUS
 
@@ -1477,6 +1489,7 @@ void Character::talk(talk_type tt, std::string message) { //only for say, whispe
         talktype = "whispers";
         cost = P_WHISPER_COST;
         break;
+
     case tt_yell:
 
         if (!IsAlive()) {
@@ -1542,6 +1555,7 @@ void Character::talkLanguage(talk_type tt, unsigned char lang, std::string messa
 #endif
         cost = P_SAY_COST;
         break;
+
     case tt_whisper:
 #ifdef DO_UNCONSCIOUS
 
@@ -1552,6 +1566,7 @@ void Character::talkLanguage(talk_type tt, unsigned char lang, std::string messa
 #endif
         cost = P_WHISPER_COST;
         break;
+
     case tt_yell:
 
         if (!IsAlive()) {
@@ -1689,9 +1704,11 @@ uint16_t Character::getMovementCost(Field *sourcefield) {
     case walk:
         walkcost += tileWalkingCost;
         break;
+
     case fly: // walking cost independent of source field
         walkcost += NP_STANDARDFLYCOST;
         break;
+
     case crawl: // just double the ap necessary for walking
         walkcost += 2 * tileWalkingCost;
         break;

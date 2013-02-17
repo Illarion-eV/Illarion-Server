@@ -590,7 +590,7 @@ bool World::forceLogoutOfPlayer(std::string name) {
 }
 
 
-void World::sendAdminAllPlayerData(Player* &admin) {
+void World::sendAdminAllPlayerData(Player *&admin) {
     if (!admin->hasGMRight(gmr_basiccommands)) {
         return;
     }

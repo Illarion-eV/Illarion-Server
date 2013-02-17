@@ -169,11 +169,13 @@ public:
         switch (result) {
         case 0:
             break;
+
         case 1:
             saleLocation = getUnsignedCharFromBuffer();
             saleSlot = getShortIntFromBuffer();
             saleAmount = getShortIntFromBuffer();
             break;
+
         case 2:
             purchaseIndex = getUnsignedCharFromBuffer();
             purchaseAmount = getShortIntFromBuffer();
@@ -188,9 +190,11 @@ public:
         case 0:
             player->executeMerchantDialogAbort(dialogId);
             break;
+
         case 1:
             player->executeMerchantDialogSell(dialogId, saleLocation, saleSlot, saleAmount);
             break;
+
         case 2:
             player->executeMerchantDialogBuy(dialogId, purchaseIndex, purchaseAmount);
             break;
@@ -253,13 +257,16 @@ public:
         switch (result) {
         case 0:
             break;
+
         case 1:
             craftIndex = getUnsignedCharFromBuffer();
             craftAmount = getUnsignedCharFromBuffer();
             break;
+
         case 2:
             craftIndex = getUnsignedCharFromBuffer();
             break;
+
         case 3:
             craftIndex = getUnsignedCharFromBuffer();
             craftIngredient = getUnsignedCharFromBuffer();
@@ -274,12 +281,15 @@ public:
         case 0:
             player->executeCraftingDialogAbort(dialogId);
             break;
+
         case 1:
             player->executeCraftingDialogCraft(dialogId, craftIndex, craftAmount);
             break;
+
         case 2:
             player->executeCraftingDialogLookAtCraftable(dialogId, craftIndex);
             break;
+
         case 3:
             player->executeCraftingDialogLookAtIngredient(dialogId, craftIndex, craftIngredient);
             break;
@@ -449,9 +459,11 @@ public:
             showcase = getUnsignedCharFromBuffer();
             pos = getUnsignedCharFromBuffer();
             break;
+
         case UID_INV:
             pos = getUnsignedCharFromBuffer();
             break;
+
         case UID_MAGICWAND:
             break;
         }
@@ -611,6 +623,7 @@ public:
             } // LuaMageScript == NULL ?
 
             break;
+
         case UID_MAGICWAND:
 
             //UID_MAGICWAND wird immer gesandt wenn kein Ziel gewaehlt wird.
@@ -787,10 +800,12 @@ public:
                     LuaMageScript->CastMagic(player, static_cast<unsigned char>(LTS_NOLTACTION));
                     //msg = "Casted spell: " + Logger::toString(spellId);
                     break;
+
                 case LUA_FIELD:
                     LuaMageScript->CastMagicOnField(player, Target.pos, static_cast<unsigned char>(LTS_NOLTACTION));
                     //msg = "Casted spell: " + Logger::toString(spellId) + " on field at pos(" + Logger::toString(Target.pos.x) + "," + Logger::toString(Target.pos.y) + "," + Logger::toString(Target.pos.z) + ")";
                     break;
+
                 case LUA_CHARACTER:
                     LuaMageScript->CastMagicOnCharacter(player, Target.character, static_cast<unsigned char>(LTS_NOLTACTION));
 
@@ -810,10 +825,12 @@ public:
 
                     //msg = "Casted spell: " + Logger::toString(spellId) + " on character: " + Target.character->name + "(" + Logger::toString(Target.character->id) + ")";
                     break;
+
                 case LUA_ITEM:
                     LuaMageScript->CastMagicOnItem(player, Target.item, static_cast<unsigned char>(LTS_NOLTACTION));
                     //msg = "Casted spell: " + Logger::toString(spellId) + " on item: " + Logger::toString(Target.item.getId());
                     break;
+
                 default:
                     LuaMageScript->CastMagic(player, static_cast<unsigned char>(LTS_NOLTACTION));
                     //msg = "Casted spell: " + Logger::toString(spellId) + " on item: " + Logger::toString(Target.item.getId());
@@ -1049,6 +1066,7 @@ public:
             }
 
             break;
+
         default:
             paramOK = false;
             break;

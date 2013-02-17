@@ -131,9 +131,11 @@ public:
             case onlyKeys:
                 addValue<Key>(column, itr->first);
                 break;
+
             case onlyValues:
                 addValue<T>(column, itr->second);
                 break;
+
             case keysAndValues:
                 addValue<Key>(column, itr->first);
                 addValue<T>(column + 1, itr->second);

@@ -1622,10 +1622,12 @@ void Player::receiveText(talk_type tt, std::string message, Character *cc) {
     case tt_say:
         Connection->addCommand(cmd);
         break;
+
     case tt_whisper:
         cmd.reset(new WhisperTC(cc->pos.x, cc->pos.y, cc->pos.z, message));
         Connection->addCommand(cmd);
         break;
+
     case tt_yell:
         cmd.reset(new ShoutTC(cc->pos.x, cc->pos.y, cc->pos.z, message));
         Connection->addCommand(cmd);
@@ -1673,15 +1675,19 @@ void Player::teachMagic(unsigned char type,unsigned char flag) {
             case 0:
                 magic.type = MAGE;
                 break;
+
             case 1:
                 magic.type = PRIEST;
                 break;
+
             case 2:
                 magic.type = BARD;
                 break;
+
             case 3:
                 magic.type = DRUID;
                 break;
+
             default:
                 magic.type = MAGE;
                 break;
@@ -1716,6 +1722,7 @@ void Player::informLua(std::string message, informType type) {
     case informScriptHighPriority:
         inform(message, type);
         break;
+
     default:
         informLua(message);
         break;
@@ -2304,6 +2311,7 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
             }
 
             break;
+
         case left:
             x = pos.x;
             y = pos.y - MAP_DIMENSION;
@@ -2315,6 +2323,7 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
             }
 
             break;
+
         case right:
             x = pos.x + MAP_DIMENSION;
             y = pos.y;
@@ -2326,6 +2335,7 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
             }
 
             break;
+
         case lower:
             x = pos.x - MAP_DIMENSION - MAP_DOWN_EXTRA;
             y = pos.y + MAP_DOWN_EXTRA;
@@ -2372,6 +2382,7 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
             }
 
             break;
+
         case left:
             x = pos.x - screenwidth + screenheight;
             y = pos.y - screenwidth - screenheight;
@@ -2383,6 +2394,7 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
             }
 
             break;
+
         case right:
             x = pos.x + screenwidth + screenheight;
             y = pos.y + screenwidth - screenheight;
@@ -2394,6 +2406,7 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
             }
 
             break;
+
         case lower:
             x = pos.x - screenwidth - screenheight - MAP_DOWN_EXTRA;
             y = pos.y - screenwidth + screenheight + MAP_DOWN_EXTRA;
@@ -2428,48 +2441,56 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
 
 void Player::sendStepStripes(direction dir) {
     switch (dir) {
-    case(dir_north):
+    case (dir_north):
         //bewegung nach norden (Mapstripe links und oben)
         sendDirStripe(upper, false);
         sendDirStripe(left, false);
         break;
-    case(dir_northeast):
+
+    case (dir_northeast):
         //bewegung nach nordosten (Mapstripe oben)
         sendDirStripe(upper, true);
         sendDirStripe(upper, false);
         break;
-    case(dir_east) :
+
+    case (dir_east) :
         //bewegung nach osten (Mapstripe oben und rechts)
         sendDirStripe(upper, false);
         sendDirStripe(right, false);
         break;
-    case(dir_southeast):
+
+    case (dir_southeast):
         //bewegung suedosten (Mapstripe  rechts)
         sendDirStripe(right, true);
         sendDirStripe(right, false);
         break;
-    case(dir_south):
+
+    case (dir_south):
         //bewegung sueden (Mapstripe rechts und unten)
         sendDirStripe(right, false);
         sendDirStripe(lower, false);
         break;
-    case(dir_southwest):
+
+    case (dir_southwest):
         //bewegung suedwesten ( Mapstripe unten )
         sendDirStripe(lower, true);
         sendDirStripe(lower, false);
         break;
-    case(dir_west):
+
+    case (dir_west):
         //bewegung westen ( Mapstripe unten und links)
         sendDirStripe(lower, false);
         sendDirStripe(left, false);
         break;
-    case(dir_northwest):
+
+    case (dir_northwest):
         //bewegung nordwesten ( Mapstripe links )
         sendDirStripe(left, true);
         sendDirStripe(left, false);
         break;
-    case(dir_up):
-    case(dir_down):
+
+    case (dir_up):
+    case (dir_down):
         break;
     }
 }
@@ -2522,8 +2543,10 @@ const std::string &Player::nls(const std::string &german, const std::string &eng
     switch (getPlayerLanguage()) {
     case Language::german:
         return german;
+
     case Language::english:
         return english;
+
     default:
         return english;
     }

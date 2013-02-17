@@ -933,21 +933,27 @@ void World::checkMonsters() {
                                         case Character::dir_northeast:
                                             dir = Character::dir_northwest;
                                             break;
+
                                         case Character::dir_east:
                                             dir = Character::dir_west;
                                             break;
+
                                         case Character::dir_southeast:
                                             dir = Character::dir_southwest;
                                             break;
+
                                         case Character::dir_southwest:
                                             dir = Character::dir_southeast;
                                             break;
+
                                         case Character::dir_west:
                                             dir = Character::dir_east;
                                             break;
+
                                         case Character::dir_northwest:
                                             dir = Character::dir_northeast;
                                             break;
+
                                         default:
                                             break;
                                         }
@@ -958,21 +964,27 @@ void World::checkMonsters() {
                                         case Character::dir_north:
                                             dir = Character::dir_south;
                                             break;
+
                                         case Character::dir_northeast:
                                             dir = Character::dir_southeast;
                                             break;
+
                                         case Character::dir_southeast:
                                             dir = Character::dir_northeast;
                                             break;
+
                                         case Character::dir_south:
                                             dir = Character::dir_north;
                                             break;
+
                                         case Character::dir_southwest:
                                             dir = Character::dir_northwest;
                                             break;
+
                                         case Character::dir_northwest:
                                             dir = Character::dir_southwest;
                                             break;
+
                                         default:
                                             break;
                                         }
@@ -1116,7 +1128,7 @@ void World::checkNPC() {
 }
 
 
-void World::workout_CommandBuffer(Player* &cp) {
+void World::workout_CommandBuffer(Player *&cp) {
 
 
 }

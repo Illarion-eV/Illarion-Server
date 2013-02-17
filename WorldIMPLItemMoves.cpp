@@ -148,30 +148,39 @@ bool World::putItemOnInvPos(Character *cc, unsigned char pos) {
                             case HEAD :
                                 flag = FLAG_HEAD;
                                 break;
+
                             case NECK :
                                 flag = FLAG_NECK;
                                 break;
+
                             case BREAST :
                                 flag = FLAG_BREAST;
                                 break;
+
                             case HANDS :
                                 flag = FLAG_HANDS;
                                 break;
+
                             case FINGER_LEFT_HAND :
                                 flag = FLAG_FINGER;
                                 break;
+
                             case FINGER_RIGHT_HAND :
                                 flag = FLAG_FINGER;
                                 break;
+
                             case LEGS :
                                 flag = FLAG_LEGS;
                                 break;
+
                             case FEET :
                                 flag = FLAG_FEET;
                                 break;
+
                             case OAT :
                                 flag = FLAG_COAT;
                                 break;
+
                             default :
                                 flag = 0xFF;
                                 break;

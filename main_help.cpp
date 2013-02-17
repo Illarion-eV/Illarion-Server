@@ -119,10 +119,10 @@ bool Init(const std::string &initfile) {
 
 // in diesen std::vector f�gen Fields die numbers der gel�schten containeritems ein,
 //  damit die zugeh�rige Map die containerinhalte l�schen kann
-std::vector<int>* erasedcontainers;
+std::vector<int> *erasedcontainers;
 
 // Koordinaten von gel�schten Containern, ben�tigt zum Schlie�en offener Showcases
-std::vector<position>* contpos;
+std::vector<position> *contpos;
 
 //! eine Tabelle mit den Rassenspezifischen Angriffswerten
 MonsterAttackTable *MonsterAttacks;

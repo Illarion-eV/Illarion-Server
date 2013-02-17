@@ -32,10 +32,10 @@ extern volatile bool running;
 
 // in diesen std::vector fügen Fields die numbers der gelöschten containeritems ein,
 // damit die zugehörige Map die containerinhalte löschen kann
-extern std::vector<int>* erasedcontainers;
+extern std::vector<int> *erasedcontainers;
 
 // Koordinaten von gelöschten Containern, benötigt zum Schließen offener Showcases
-extern std::vector<position>* contpos;
+extern std::vector<position> *contpos;
 
 // some forward declarations to not include unecessary headers
 class Player;

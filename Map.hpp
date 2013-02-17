@@ -48,7 +48,7 @@ extern ArtefactObjectTable *ArtefactItems;
 extern TilesModificatorTable *TilesModItems;
 extern TilesTable *Tiles;
 
-extern std::vector<position>* contpos;
+extern std::vector<position> *contpos;
 
 
 class Map {
@@ -86,7 +86,7 @@ public:
     // \param x X-Koordinate
     // \param y Y-Koordinate
     // \return true falls das Feld existiert, false sonst
-    bool GetPToCFieldAt(Field* &fip, short int x, short int y);
+    bool GetPToCFieldAt(Field *&fip, short int x, short int y);
 
     //! liefert in fi eine Kopie des Feldes mit den entsprechenden Koordinaten zur�ck
     // \param fi eine Kopie des Field mit den Koordinaten x,y,z
@@ -161,7 +161,7 @@ public:
     // \param x vor Ausf�hrung der Funktion der Startpunkt der Suche, danach die X-Koordinate des gefundenen Feldes
     // \param y vor Ausf�hrung der Funktion der Startpunkt der Suche, danach die Y-Koordinate des gefundenen Feldes
     // \return true falls ein Feld gefunden wurde, false sonst
-    bool findEmptyCFieldNear(Field* &cf, short int &x, short int &y);
+    bool findEmptyCFieldNear(Field *&cf, short int &x, short int &y);
 
     //! pr�ft, ob die Map �ber der Position pos liegt
     // \param pos die zu pr�fende Position

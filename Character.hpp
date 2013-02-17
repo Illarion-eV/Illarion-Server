@@ -1069,7 +1069,7 @@ public:
         walk = 0, /**< the character walks */
         fly = 1, /**< the character swims */
         crawl = 2 /**< the character crawls */
-        //swim = 3
+                //swim = 3
     };
 
     /**

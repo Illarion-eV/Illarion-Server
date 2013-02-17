@@ -116,12 +116,15 @@ void LuaScript::loadIntoLuaState() {
         case LUA_ERRFILE:
             throw ScriptException("Could not access script file: " + errstr);
             break;
+
         case LUA_ERRSYNTAX:
             throw ScriptException("Syntax error in script file: " + errstr);
             break;
+
         case LUA_ERRMEM:
             throw ScriptException("Insufficient memory for loading script file: " + errstr);
             break;
+
         default:
             throw ScriptException("Could not load script file: " + errstr);
             break;
@@ -137,9 +140,11 @@ void LuaScript::loadIntoLuaState() {
         case LUA_ERRRUN:
             writeErrorMsg();
             break;
+
         case LUA_ERRMEM:
             throw ScriptException("Insufficient memory for running script file: " + errstr);
             break;
+
         default:
             throw ScriptException("Could not load script file: " + errstr);
             break;
@@ -740,8 +745,8 @@ void LuaScript::init_base_functions() {
         .def("removeEffect", (bool(LongTimeCharacterEffects:: *)(uint16_t))&LongTimeCharacterEffects::removeEffect)
         .def("removeEffect", (bool(LongTimeCharacterEffects:: *)(std::string))&LongTimeCharacterEffects::removeEffect)
         .def("removeEffect", (bool(LongTimeCharacterEffects:: *)(LongTimeEffect *))&LongTimeCharacterEffects::removeEffect)
-        .def("find", (bool(LongTimeCharacterEffects:: *)(uint16_t,LongTimeEffect* &))&LongTimeCharacterEffects::find,luabind::pure_out_value(_3))
-        .def("find", (bool(LongTimeCharacterEffects:: *)(std::string,LongTimeEffect* &))&LongTimeCharacterEffects::find,luabind::pure_out_value(_3)),
+        .def("find", (bool(LongTimeCharacterEffects:: *)(uint16_t,LongTimeEffect *&))&LongTimeCharacterEffects::find,luabind::pure_out_value(_3))
+        .def("find", (bool(LongTimeCharacterEffects:: *)(std::string,LongTimeEffect *&))&LongTimeCharacterEffects::find,luabind::pure_out_value(_3)),
         luabind::class_<Field>("Field")
         .def("tile", &Field::getTileId)
         //.def("changeQualityOfTopItem", &Field::changeQualityOfTopItem)
