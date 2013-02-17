@@ -29,12 +29,8 @@
 #include <arpa/inet.h>
 
 #include "data/Data.hpp"
-#include "data/NamesObjectTable.hpp"
-#include "data/WeaponObjectTable.hpp"
-#include "data/ArmorObjectTable.hpp"
 #include "data/CommonObjectTable.hpp"
 #include "data/SkillTable.hpp"
-#include "data/ContainerObjectTable.hpp"
 #include "data/MonsterTable.hpp"
 #include "data/SpellTable.hpp"
 #include "data/TriggerTable.hpp"
@@ -131,18 +127,6 @@ NaturalArmorTable *NaturalArmors;
 
 //! eine Tabelle mit den allgemeinen Attributen der Item
 CommonObjectTable *CommonItems;
-
-//! eine Tabelle mit den Namen der Item
-NamesObjectTable *ItemNames;
-
-//! eine Tabelle f�r Waffen - Item Daten
-WeaponObjectTable *WeaponItems;
-
-//! eine Tabelle f�r Schutzkleidungs - Item Daten
-ArmorObjectTable *ArmorItems;
-
-//! eine Tabelle f�r Beh�lter - Item Daten
-ContainerObjectTable *ContainerItems;
 
 //! eine Tabelle f�r die Zauberspr�che - Spells
 SpellTable *Spells;
@@ -324,30 +308,6 @@ void loadData() {
     CommonItems = new CommonObjectTable();
 
     if (!CommonItems->dataOK()) {
-        ok = false;
-    }
-
-    ItemNames = new NamesObjectTable();
-
-    if (!ItemNames->dataOK()) {
-        ok = false;
-    }
-
-    WeaponItems = new WeaponObjectTable();
-
-    if (!WeaponItems->dataOK()) {
-        ok = false;
-    }
-
-    ArmorItems = new ArmorObjectTable();
-
-    if (!ArmorItems->dataOK()) {
-        ok = false;
-    }
-
-    ContainerItems = new ContainerObjectTable();
-
-    if (!ContainerItems->dataOK()) {
         ok = false;
     }
 

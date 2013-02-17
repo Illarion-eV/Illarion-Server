@@ -18,10 +18,8 @@
 
 #include "Container.hpp"
 #include "data/CommonObjectTable.hpp"
-#include "data/ContainerObjectTable.hpp"
+#include "data/Data.hpp"
 #include "World.hpp"
-
-extern ContainerObjectTable *ContainerItems;
 
 Container::Container(Item::id_type itemId): itemId(itemId) {
 }
@@ -732,7 +730,7 @@ void Container::doAge(bool inventory) {
 }
 
 TYPE_OF_CONTAINERSLOTS Container::getSlotCount() {
-    return ContainerItems->find(itemId);
+    return Data::ContainerItems[itemId];
 }
 
 bool Container::isItemStackable(Item item) {

@@ -21,11 +21,19 @@
 #ifndef _DATA_HPP_
 #define _DATA_HPP_
 
+#include "data/NamesObjectTable.hpp"
+#include "data/WeaponObjectTable.hpp"
+#include "data/ArmorObjectTable.hpp"
+#include "data/ContainerObjectTable.hpp"
 #include "data/TilesModificatorTable.hpp"
 #include "data/TilesTable.hpp"
 
 namespace Data {
 
+extern NamesObjectTable ItemNames;
+extern WeaponObjectTable WeaponItems;
+extern ArmorObjectTable ArmorItems;
+extern ContainerObjectTable ContainerItems;
 extern TilesTable Tiles;
 extern TilesModificatorTable TilesModItems;
 

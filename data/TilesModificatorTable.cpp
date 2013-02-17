@@ -58,7 +58,7 @@ TilesModificatorStruct TilesModificatorTable::assignTable(const Database::Result
 
 bool TilesModificatorTable::nonPassable(TYPE_OF_ITEM_ID id) {
     if (exists(id)) {
-        const auto &modStruct = find(id);
+        const auto &modStruct = (*this)[id];
         return ((modStruct.Modificator & FLAG_PASSABLE) != 0) && ((modStruct.Modificator & FLAG_MAKEPASSABLE) == 0);
     }
 

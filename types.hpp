@@ -21,6 +21,7 @@
 #define _TYPES_HPP_
 
 #include <stdint.h>
+#include <string>
 
 typedef uint16_t TYPE_OF_ITEM_ID;
 typedef uint16_t TYPE_OF_TILE_ID;

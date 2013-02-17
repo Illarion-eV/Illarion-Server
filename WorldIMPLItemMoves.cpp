@@ -18,9 +18,6 @@
 
 
 #include "World.hpp"
-#include "data/ContainerObjectTable.hpp"
-#include "data/WeaponObjectTable.hpp"
-#include "data/ArmorObjectTable.hpp"
 #include "data/CommonObjectTable.hpp"
 #include "data/TilesModificatorTable.hpp"
 #include "script/LuaItemScript.hpp"
@@ -71,8 +68,10 @@ bool World::putItemOnInvPos(Character *cc, unsigned char pos) {
         if (pos < MAX_BODY_ITEMS) {
             if (cc->characterItems[ pos ].getId() == 0 || cc->characterItems[pos].getId() == g_item.getId()) {
                 if ((pos == RIGHT_TOOL) || (pos == LEFT_TOOL)) {
-                    if (WeaponItems->find(g_item.getId(), tempWeapon)) {
-                        if ((tempWeapon.WeaponType==4) || (tempWeapon.WeaponType==5) || (tempWeapon.WeaponType==6) || (tempWeapon.WeaponType==13)) {
+                    if (Data::WeaponItems.exists(g_item.getId())) {
+                        const auto &weapon = Data::WeaponItems[g_item.getId()];
+
+                        if ((weapon.WeaponType==4) || (weapon.WeaponType==5) || (weapon.WeaponType==6) || (weapon.WeaponType==13)) {
                             if ((pos == RIGHT_TOOL) && (cc->characterItems[ LEFT_TOOL ].getId() == 0)) {
                                 if (cc->characterItems[pos].getId() == 0 && g_item.getNumber() == 1) {
                                     cc->characterItems[ pos ] = g_item;
@@ -141,7 +140,8 @@ bool World::putItemOnInvPos(Character *cc, unsigned char pos) {
                     }
                 } else {
                     if (g_item.getNumber() == 1 && cc->characterItems[pos].getId() == 0) {
-                        if (ArmorItems->find(g_item.getId(), tempArmor)) {
+                        if (Data::ArmorItems.exists(g_item.getId())) {
+                            const auto &armor = Data::ArmorItems[g_item.getId()];
                             unsigned char flag;
 
                             switch (pos) {
@@ -186,7 +186,7 @@ bool World::putItemOnInvPos(Character *cc, unsigned char pos) {
                                 break;
                             }
 
-                            if ((tempArmor.BodyParts & flag) != 0) {
+                            if ((armor.BodyParts & flag) != 0) {
                                 cc->characterItems[ pos ] = g_item;
                                 g_item.reset();
                                 cc->updateAppearanceForAll(true);
@@ -273,7 +273,9 @@ bool World::takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_ty
     } else if (pos < MAX_BODY_ITEMS + MAX_BELT_SLOTS) {
         if ((cc->characterItems[ pos ].getId() != 0) && (cc->characterItems[ pos ].getId() != BLOCKEDITEM)) {
             if ((pos == RIGHT_TOOL) || (pos == LEFT_TOOL)) {
-                if (WeaponItems->find(cc->characterItems[ pos ].getId(), tempWeapon)) {
+                const auto weaponId = cc->characterItems[pos].getId();
+
+                if (Data::WeaponItems.exists(weaponId)) {
                     g_item = cc->characterItems[ pos ];
                     g_cont = NULL;
 
@@ -289,8 +291,9 @@ bool World::takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_ty
                         cc->characterItems[ pos ].setNumber(cc->characterItems[pos].getNumber() - count);
                         g_item.setNumber(count);
                     } else {
+                        const auto &weapon = Data::WeaponItems[weaponId];
 
-                        if ((tempWeapon.WeaponType==4) || (tempWeapon.WeaponType==5) || (tempWeapon.WeaponType==6) || (tempWeapon.WeaponType==13)) {
+                        if ((weapon.WeaponType==4) || (weapon.WeaponType==5) || (weapon.WeaponType==6) || (weapon.WeaponType==13)) {
                             cc->characterItems[ LEFT_TOOL ].reset();
                             cc->characterItems[ RIGHT_TOOL ].reset();
                         } else {

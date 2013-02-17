@@ -13,8 +13,6 @@
 #include "World.hpp"
 #include "data/TilesTable.hpp"
 
-extern TilesTable *Tiles;
-
 namespace pathfinding {
 
 using namespace boost;
@@ -152,7 +150,7 @@ struct weight_calc {
         }
 
         auto tileId = field->getTileId();
-        return Data::Tiles.find(tileId).walkingCost;
+        return Data::Tiles[tileId].walkingCost;
     }
 private:
     int level;

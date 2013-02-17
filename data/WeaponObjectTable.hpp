@@ -21,32 +21,18 @@
 #ifndef _WEAPON_OBJECT_TABLE_HPP_
 #define _WEAPON_OBJECT_TABLE_HPP_
 
-#include <string>
-#include <boost/unordered_map.hpp>
+#include "data/ScriptStructTable.hpp"
+#include "types.hpp"
 #include "TableStructs.hpp"
+#include "script/LuaWeaponScript.hpp"
 
-class World;
-
-class WeaponObjectTable {
+class WeaponObjectTable : public ScriptStructTable<TYPE_OF_ITEM_ID, WeaponStruct, LuaWeaponScript> {
 public:
-    bool find(TYPE_OF_ITEM_ID Id, WeaponStruct &ret);
-
-    WeaponObjectTable();
-    ~WeaponObjectTable();
-
-    inline bool dataOK() {
-        return m_dataOK;
-    }
-
-private:
-    void reload();
-
-    typedef boost::unordered_map<TYPE_OF_ITEM_ID, WeaponStruct> TABLE;
-    TABLE m_table;
-
-    void clearOldTable();
-
-    bool m_dataOK;
+    virtual std::string getTableName();
+    virtual std::vector<std::string> getColumnNames();
+    virtual TYPE_OF_ITEM_ID assignId(const Database::ResultTuple &row);
+    virtual WeaponStruct assignTable(const Database::ResultTuple &row);
+    virtual std::string assignScriptName(const Database::ResultTuple &row);
 };
 
 #endif

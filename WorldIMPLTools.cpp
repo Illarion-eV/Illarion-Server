@@ -653,20 +653,20 @@ int World::getItemAttrib(std::string s, TYPE_OF_ITEM_ID ItemID) {
 
     // Armor //
     if (s == "bodyparts") {
-        if (ArmorItems->find(ItemID, tempArmor)) {
-            return tempArmor.BodyParts;
+        if (Data::ArmorItems.exists(ItemID)) {
+            return Data::ArmorItems[ItemID].BodyParts;
         }
     } else if (s == "strokearmor") {
-        if (ArmorItems->find(ItemID, tempArmor)) {
-            return tempArmor.StrokeArmor;
+        if (Data::ArmorItems.exists(ItemID)) {
+            return Data::ArmorItems[ItemID].StrokeArmor;
         }
     } else if (s == "thrustarmor") {
-        if (ArmorItems->find(ItemID, tempArmor)) {
-            return tempArmor.ThrustArmor;
+        if (Data::ArmorItems.exists(ItemID)) {
+            return Data::ArmorItems[ItemID].ThrustArmor;
         }
     } else if (s == "armormagicdisturbance") {
-        if (ArmorItems->find(ItemID, tempArmor)) {
-            return tempArmor.MagicDisturbance;
+        if (Data::ArmorItems.exists(ItemID)) {
+            return Data::ArmorItems[ItemID].MagicDisturbance;
         }
     }
 
@@ -700,28 +700,28 @@ int World::getItemAttrib(std::string s, TYPE_OF_ITEM_ID ItemID) {
 
     // Weapon //
     else if (s == "accuracy") {
-        if (WeaponItems->find(ItemID, tempWeapon)) {
-            return tempWeapon.Accuracy;
+        if (Data::WeaponItems.exists(ItemID)) {
+            return Data::WeaponItems[ItemID].Accuracy;
         }
     } else if (s == "attack") {
-        if (WeaponItems->find(ItemID, tempWeapon)) {
-            return tempWeapon.Attack;
+        if (Data::WeaponItems.exists(ItemID)) {
+            return Data::WeaponItems[ItemID].Attack;
         }
     } else if (s == "defence") {
-        if (WeaponItems->find(ItemID, tempWeapon)) {
-            return tempWeapon.Defence;
+        if (Data::WeaponItems.exists(ItemID)) {
+            return Data::WeaponItems[ItemID].Defence;
         }
     } else if (s == "range") {
-        if (WeaponItems->find(ItemID, tempWeapon)) {
-            return tempWeapon.Range;
+        if (Data::WeaponItems.exists(ItemID)) {
+            return Data::WeaponItems[ItemID].Range;
         }
     } else if (s == "weapontype") {
-        if (WeaponItems->find(ItemID, tempWeapon)) {
-            return tempWeapon.WeaponType;
+        if (Data::WeaponItems.exists(ItemID)) {
+            return Data::WeaponItems[ItemID].WeaponType;
         }
     } else if (s == "weaponmagicdisturbance") {
-        if (WeaponItems->find(ItemID, tempWeapon)) {
-            return tempWeapon.MagicDisturbance;
+        if (Data::WeaponItems.exists(ItemID)) {
+            return Data::WeaponItems[ItemID].MagicDisturbance;
         }
     }
 

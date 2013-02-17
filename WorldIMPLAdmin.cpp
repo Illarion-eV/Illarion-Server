@@ -24,15 +24,11 @@
 #include "data/Data.hpp"
 #include "data/QuestTable.hpp"
 #include "data/SkillTable.hpp"
-#include "data/ArmorObjectTable.hpp"
-#include "data/WeaponObjectTable.hpp"
-#include "data/ContainerObjectTable.hpp"
 #include "script/LuaLookAtPlayerScript.hpp"
 #include "script/LuaLookAtItemScript.hpp"
 #include "script/LuaPlayerDeathScript.hpp"
 #include "script/LuaDepotScript.hpp"
 #include "data/CommonObjectTable.hpp"
-#include "data/NamesObjectTable.hpp"
 #include "data/MonsterTable.hpp"
 #include "data/SpellTable.hpp"
 #include "data/TriggerTable.hpp"
@@ -1309,10 +1305,6 @@ bool World::reload_defs(Player *cp) {
     bool ok = true;
 
     CommonObjectTable *CommonItems_temp = 0;
-    NamesObjectTable *ItemNames_temp = 0;
-    WeaponObjectTable *WeaponItems_temp = 0;
-    ArmorObjectTable *ArmorItems_temp = 0;
-    ContainerObjectTable *ContainerItems_temp = 0;
     MonsterTable *MonsterDescriptions_temp = 0;
     QuestTable *Quests_temp = 0;
     SpellTable *Spells_temp = 0;
@@ -1350,42 +1342,6 @@ bool World::reload_defs(Player *cp) {
 
         if (CommonItems_temp == NULL || !CommonItems_temp->dataOK()) {
             reportTableError(cp, "common");
-            ok = false;
-        }
-    }
-
-    if (ok) {
-        ItemNames_temp = new NamesObjectTable();
-
-        if (ItemNames_temp == NULL || !ItemNames_temp->dataOK()) {
-            reportTableError(cp, "itemname");
-            ok = false;
-        }
-    }
-
-    if (ok) {
-        WeaponItems_temp = new WeaponObjectTable();
-
-        if (WeaponItems_temp == NULL || !WeaponItems_temp->dataOK()) {
-            reportTableError(cp, "weapon");
-            ok = false;
-        }
-    }
-
-    if (ok) {
-        ArmorItems_temp = new ArmorObjectTable();
-
-        if (ArmorItems_temp == NULL || !ArmorItems_temp->dataOK()) {
-            reportTableError(cp, "armor");
-            ok = false;
-        }
-    }
-
-    if (ok) {
-        ContainerItems_temp = new ContainerObjectTable();
-
-        if (ContainerItems_temp == NULL || !ContainerItems_temp->dataOK()) {
-            reportTableError(cp, "container");
             ok = false;
         }
     }
@@ -1468,22 +1424,6 @@ bool World::reload_defs(Player *cp) {
             delete CommonItems_temp;
         }
 
-        if (ItemNames_temp != NULL) {
-            delete ItemNames_temp;
-        }
-
-        if (WeaponItems_temp != NULL) {
-            delete WeaponItems_temp;
-        }
-
-        if (ArmorItems_temp != NULL) {
-            delete ArmorItems_temp;
-        }
-
-        if (ContainerItems_temp != NULL) {
-            delete ContainerItems_temp;
-        }
-
         if (MonsterDescriptions_temp != NULL) {
             delete MonsterDescriptions_temp;
         }
@@ -1525,14 +1465,6 @@ bool World::reload_defs(Player *cp) {
         PlayerManager::get()->setLoginLogout(true);
         delete CommonItems;
         CommonItems = CommonItems_temp;
-        delete ItemNames;
-        ItemNames = ItemNames_temp;
-        delete WeaponItems;
-        WeaponItems = WeaponItems_temp;
-        delete ArmorItems;
-        ArmorItems = ArmorItems_temp;
-        delete ContainerItems;
-        ContainerItems = ContainerItems_temp;
         delete Quests;
         Quests = Quests_temp;
         delete MonsterDescriptions;

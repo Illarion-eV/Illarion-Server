@@ -52,7 +52,6 @@
 
 extern std::map<std::string, std::string> configOptions;
 extern MonsterTable *MonsterDescriptions;
-extern WeaponObjectTable *WeaponItems;
 extern boost::shared_ptr<LuaLogoutScript>logoutScript;
 extern std::ofstream talkfile;
 
@@ -800,13 +799,12 @@ void World::checkMonsters() {
                     Item itl = monster.GetItemAt(LEFT_TOOL);
                     Item itr = monster.GetItemAt(RIGHT_TOOL);
 
-                    WeaponStruct theWeapon;
                     uint16_t range=1;
 
-                    if (WeaponItems->find(itr.getId(), theWeapon)) {
-                        range=theWeapon.Range;
-                    } else if (WeaponItems->find(itl.getId(), theWeapon)) {
-                        range=theWeapon.Range;
+                    if (Data::WeaponItems.exists(itr.getId())) {
+                        range = Data::WeaponItems[itr.getId()].Range;
+                    } else if (Data::WeaponItems.exists(itl.getId())) {
+                        range = Data::WeaponItems[itl.getId()].Range;;
                     }
 
                     //===============================================
@@ -1004,13 +1002,12 @@ void World::checkMonsters() {
                     Item itl = monster.GetItemAt(LEFT_TOOL);
                     Item itr = monster.GetItemAt(RIGHT_TOOL);
 
-                    WeaponStruct theWeapon;
                     uint16_t range=1;
 
-                    if (WeaponItems->find(itr.getId(), theWeapon)) {
-                        range=theWeapon.Range;
-                    } else if (WeaponItems->find(itl.getId(), theWeapon)) {
-                        range=theWeapon.Range;
+                    if (Data::WeaponItems.exists(itr.getId())) {
+                        range = Data::WeaponItems[itr.getId()].Range;
+                    } else if (Data::WeaponItems.exists(itl.getId())) {
+                        range = Data::WeaponItems[itl.getId()].Range;;
                     }
 
                     //===============================================

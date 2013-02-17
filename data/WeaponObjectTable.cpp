@@ -20,118 +20,45 @@
 
 #include "data/WeaponObjectTable.hpp"
 
-#include <iostream>
-#include <string>
-
-#include <boost/shared_ptr.hpp>
-
-#include "db/SelectQuery.hpp"
-#include "db/Result.hpp"
-
-#include "script/LuaWeaponScript.hpp"
-
-#include "Logger.hpp"
-#include "types.hpp"
-
-WeaponObjectTable::WeaponObjectTable() : m_dataOK(false) {
-    reload();
+std::string WeaponObjectTable::getTableName() {
+    return "weapon";
 }
 
-
-void WeaponObjectTable::reload() {
-#ifdef DataConnect_DEBUG
-    std::cout << "WeaponObjectTable: reload" << std::endl;
-#endif
-
-    try {
-        Database::SelectQuery query;
-        query.addColumn("weapon", "wp_itemid");
-        query.addColumn("weapon", "wp_attack");
-        query.addColumn("weapon", "wp_defence");
-        query.addColumn("weapon", "wp_accuracy");
-        query.addColumn("weapon", "wp_range");
-        query.addColumn("weapon", "wp_weapontype");
-        query.addColumn("weapon", "wp_ammunitiontype");
-        query.addColumn("weapon", "wp_actionpoints");
-        query.addColumn("weapon", "wp_magicdisturbance");
-        query.addColumn("weapon", "wp_poison");
-        query.addColumn("weapon", "wp_fightingscript");
-        query.addServerTable("weapon");
-
-        Database::Result results = query.execute();
-
-        if (!results.empty()) {
-            clearOldTable();
-            WeaponStruct temprecord;
-            std::string scriptname;
-            TYPE_OF_ITEM_ID weaponId;
-
-            for (Database::ResultConstIterator itr = results.begin();
-                 itr != results.end(); ++itr) {
-                weaponId = (*itr)["wp_itemid"].as<TYPE_OF_ITEM_ID>();
-                temprecord.Attack = (TYPE_OF_ATTACK)((*itr)["wp_attack"].as<uint16_t>());
-                temprecord.Defence = (TYPE_OF_DEFENCE)((*itr)["wp_defence"].as<uint16_t>());
-                temprecord.Accuracy = (TYPE_OF_ACCURACY)((*itr)["wp_accuracy"].as<uint16_t>());
-                temprecord.Range = (TYPE_OF_RANGE)((*itr)["wp_range"].as<uint16_t>());
-                temprecord.WeaponType = (TYPE_OF_WEAPONTYPE)((*itr)["wp_weapontype"].as<uint16_t>());
-                temprecord.AmmunitionType = (TYPE_OF_AMMUNITIONTYPE)((*itr)["wp_ammunitiontype"].as<uint16_t>());
-                temprecord.ActionPoints = (TYPE_OF_ACTIONPOINTS)((*itr)["wp_actionpoints"].as<uint16_t>());
-                temprecord.MagicDisturbance = (TYPE_OF_MAGICDISTURBANCE)((*itr)["wp_magicdisturbance"].as<uint16_t>());
-                temprecord.PoisonStrength = (TYPE_OF_POISONSTRENGTH)((*itr)["wp_poison"].as<uint16_t>());
-
-                if (!(*itr)["wp_fightingscript"].is_null()) {
-                    scriptname = (*itr)["wp_fightingscript"].as<std::string>();
-
-                    if (!scriptname.empty()) {
-                        try {
-                            boost::shared_ptr<LuaWeaponScript> tmpScript(new LuaWeaponScript(scriptname));
-                            temprecord.script = tmpScript;
-                        } catch (ScriptException &e) {
-                            Logger::writeError("scripts", "Error while loading weapon script: " + scriptname + ":\n" + e.what() + "\n");
-                        }
-                    }
-                }
-
-                m_table[weaponId] = temprecord;
-            }
-
-            m_dataOK = true;
-        } else {
-            m_dataOK = false;
-        }
-
-
-#ifdef DataConnect_DEBUG
-        std::cout << "loaded " << rows << " rows into WeaponObjectTable" << std::endl;
-#endif
-
-    } catch (...) {
-        m_dataOK = false;
-    }
-
+std::vector<std::string> WeaponObjectTable::getColumnNames() {
+    return {
+        "wp_itemid",
+        "wp_attack",
+        "wp_defence",
+        "wp_accuracy",
+        "wp_range",
+        "wp_weapontype",
+        "wp_ammunitiontype",
+        "wp_actionpoints",
+        "wp_magicdisturbance",
+        "wp_poison",
+        "wp_fightingscript"
+    };
 }
 
-bool WeaponObjectTable::find(TYPE_OF_ITEM_ID Id, WeaponStruct &ret) {
-    TABLE::iterator iterator;
-    iterator = m_table.find(Id);
-
-    if (iterator == m_table.end()) {
-        return false;
-    } else {
-        ret = (*iterator).second;
-        return true;
-    }
+TYPE_OF_ITEM_ID WeaponObjectTable::assignId(const Database::ResultTuple &row) {
+    return row["wp_itemid"].as<TYPE_OF_ITEM_ID>();
 }
 
-
-
-void WeaponObjectTable::clearOldTable() {
-    m_table.clear();
+WeaponStruct WeaponObjectTable::assignTable(const Database::ResultTuple &row) {
+    WeaponStruct weapon;
+    weapon.Attack = TYPE_OF_ATTACK(row["wp_attack"].as<uint16_t>());
+    weapon.Defence = TYPE_OF_DEFENCE(row["wp_defence"].as<uint16_t>());
+    weapon.Accuracy = TYPE_OF_ACCURACY(row["wp_accuracy"].as<uint16_t>());
+    weapon.Range = TYPE_OF_RANGE(row["wp_range"].as<uint16_t>());
+    weapon.WeaponType = TYPE_OF_WEAPONTYPE(row["wp_weapontype"].as<uint16_t>());
+    weapon.AmmunitionType = TYPE_OF_AMMUNITIONTYPE(row["wp_ammunitiontype"].as<uint16_t>());
+    weapon.ActionPoints = TYPE_OF_ACTIONPOINTS(row["wp_actionpoints"].as<uint16_t>());
+    weapon.MagicDisturbance = TYPE_OF_MAGICDISTURBANCE(row["wp_magicdisturbance"].as<uint16_t>());
+    weapon.PoisonStrength = TYPE_OF_POISONSTRENGTH(row["wp_poison"].as<uint16_t>());
+    return weapon;
 }
 
-
-WeaponObjectTable::~WeaponObjectTable() {
-    clearOldTable();
+std::string WeaponObjectTable::assignScriptName(const Database::ResultTuple &row) {
+    return row["wp_fightingscript"].as<std::string>("");
 }
-
 

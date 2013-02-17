@@ -20,71 +20,22 @@
 
 #include "data/ContainerObjectTable.hpp"
 
-#include <iostream>
-
-#include "db/SelectQuery.hpp"
-#include "db/Result.hpp"
-
-ContainerObjectTable::ContainerObjectTable() : m_dataOK(false) {
-    reload();
+std::string ContainerObjectTable::getTableName() {
+    return "container";
 }
 
-void ContainerObjectTable::reload() {
-#ifdef DataConnect_DEBUG
-    std::cout << "ContainerObjectTable: reload" << std::endl;
-#endif
-
-    try {
-        Database::SelectQuery query;
-        query.addColumn("container", "con_itemid");
-        query.addColumn("container", "con_slots");
-        query.addServerTable("container");
-
-        Database::Result results = query.execute();
-
-        if (!results.empty()) {
-            clearOldTable();
-
-            for (Database::ResultConstIterator itr = results.begin();
-                 itr != results.end(); ++itr) {
-                m_table[(TYPE_OF_ITEM_ID)((*itr)["con_itemid"].as<TYPE_OF_ITEM_ID>())]
-                    = (TYPE_OF_CONTAINERSLOTS)((*itr)["con_slots"].as<TYPE_OF_CONTAINERSLOTS>());
-            }
-
-            m_dataOK = true;
-        } else {
-            m_dataOK = false;
-        }
-
-#ifdef DataConnect_DEBUG
-        std::cout << "loaded " << rows << " rows into ContainerObjectTable" << std::endl;
-#endif
-
-    } catch (...) {
-        m_dataOK = false;
-    }
-
-
+std::vector<std::string> ContainerObjectTable::getColumnNames() {
+    return {
+        "con_itemid",
+        "con_slots"
+    };
 }
 
-void ContainerObjectTable::clearOldTable() {
-    m_table.clear();
+TYPE_OF_ITEM_ID ContainerObjectTable::assignId(const Database::ResultTuple &row) {
+    return row["con_itemid"].as<TYPE_OF_ITEM_ID>();
 }
 
-
-ContainerObjectTable::~ContainerObjectTable() {
-    clearOldTable();
-}
-
-
-TYPE_OF_CONTAINERSLOTS ContainerObjectTable::find(TYPE_OF_ITEM_ID id) {
-    TABLE::iterator iterator;
-    iterator = m_table.find(id);
-
-    if (iterator == m_table.end()) {
-        return 0;
-    } else {
-        return (*iterator).second;
-    }
+TYPE_OF_CONTAINERSLOTS ContainerObjectTable::assignTable(const Database::ResultTuple &row) {
+    return row["con_slots"].as<TYPE_OF_CONTAINERSLOTS>();
 }
 

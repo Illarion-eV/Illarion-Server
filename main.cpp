@@ -42,10 +42,6 @@
 #include "MapException.hpp"
 #include "constants.hpp"
 #include "data/CommonObjectTable.hpp"
-#include "data/WeaponObjectTable.hpp"
-#include "data/NamesObjectTable.hpp"
-#include "data/ArmorObjectTable.hpp"
-#include "data/ContainerObjectTable.hpp"
 #include "data/SkillTable.hpp"
 #include "data/ScriptVariablesTable.hpp"
 #include "Logger.hpp"
@@ -227,14 +223,6 @@ int main(int argc, char *argv[]) {
     Logger::writeMessage("basic", "Die in loadItems(..) angelegten Tabellen loeschen");
     delete CommonItems;
     CommonItems = NULL;
-    delete ItemNames;
-    ItemNames = NULL;
-    delete WeaponItems;
-    WeaponItems = NULL;
-    delete ArmorItems;
-    ArmorItems = NULL;
-    delete ContainerItems;
-    ContainerItems = NULL;
     delete Skills;
     Skills = NULL;
     delete world;

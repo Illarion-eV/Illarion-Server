@@ -22,9 +22,6 @@
 #include "Item.hpp"
 #include "data/CommonObjectTable.hpp"
 #include "Field.hpp"
-#include "data/NamesObjectTable.hpp"
-#include "data/ArmorObjectTable.hpp"
-#include "data/WeaponObjectTable.hpp"
 #include "data/NaturalArmorTable.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
@@ -32,7 +29,6 @@
 #include "fuse_ptr.hpp"
 
 extern CommonObjectTable *CommonItems;
-extern NamesObjectTable *ItemNames;
 class Character;
 
 bool World::deleteNPC(unsigned int npcid) {
@@ -312,17 +308,11 @@ bool World::changeItem(ScriptItem item) {
 }
 
 std::string World::getItemName(TYPE_OF_ITEM_ID itemid, uint8_t language) {
-    NamesStruct name;
-
-    if (ItemNames->find(itemid, name)) {
-        if (language == 0) {
-            return name.German;
-        } else {
-            return name.English;
-        }
+    if (language == 0) {
+        return Data::ItemNames[itemid].German;
+    } else {
+        return Data::ItemNames[itemid].English;
     }
-
-    return "notfound";
 }
 
 
@@ -686,28 +676,25 @@ bool World::createSavedArea(uint16_t tileid, position pos, uint16_t height, uint
 
 bool World::getArmorStruct(TYPE_OF_ITEM_ID id, ArmorStruct &ret) {
     //Has to be an own function cant give a pointer of Armor items to the script
-    ArmorStruct as;
 
-    if (id == 0) {
-        ret = as;
-        return false;
+    if (Data::ArmorItems.exists(id)) {
+        ret = Data::ArmorItems[id];
+        return true;
     } else {
-        return ArmorItems->find(id, ret);
+        ret = ArmorStruct();
+        return false;
     }
-
-    //return armor;
-
 }
 
 bool World::getWeaponStruct(TYPE_OF_ITEM_ID id, WeaponStruct &ret) {
     //Has to be an own function cant give a pointer of Armor items to the script
-    WeaponStruct ws;
 
-    if (id == 0) {
-        ret = ws;
-        return false;
+    if (Data::WeaponItems.exists(id)) {
+        ret = Data::WeaponItems[id];
+        return true;
     } else {
-        return WeaponItems->find(id, ret);
+        ret = WeaponStruct();
+        return false;
     }
 }
 

@@ -25,10 +25,12 @@
 
 class World;
 class Character;
+class WeaponStruct;
 
 class LuaWeaponScript : public LuaScript {
 public:
     LuaWeaponScript(std::string filename) throw(ScriptException);
+    LuaWeaponScript(std::string filename, WeaponStruct weapon) throw(ScriptException);
     virtual ~LuaWeaponScript() throw();
 
     void onAttack(Character *Attacker, Character *Defender);

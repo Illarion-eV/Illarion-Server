@@ -21,11 +21,9 @@
 #include "Character.hpp"
 #include "tuningConstants.hpp"
 #include "Random.hpp"
-#include "data/ContainerObjectTable.hpp"
+#include "data/Data.hpp"
 #include "data/CommonObjectTable.hpp"
-#include "data/WeaponObjectTable.hpp"
 #include "Container.hpp"
-#include "data/ArmorObjectTable.hpp"
 #include "World.hpp"
 #include "data/TilesTable.hpp"
 #include "script/LuaWeaponScript.hpp"
@@ -47,11 +45,8 @@
 
 std::ofstream talkfile;
 
-extern ContainerObjectTable *ContainerItems;
 extern CommonObjectTable *CommonItems;
-extern WeaponObjectTable *WeaponItems;
 extern SkillTable *Skills;
-extern TilesTable *Tiles;
 extern boost::shared_ptr<LuaLearnScript>learnScript;
 extern boost::shared_ptr<LuaPlayerDeathScript>playerDeathScript;
 
@@ -502,7 +497,7 @@ int Character::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) 
             std::cout<<"createAtPos: itemid gefunden" << std::endl;
 #endif
 
-            if (ContainerItems->find(newid)) {
+            if (Data::ContainerItems.exists(newid)) {
 #ifdef Character_DEBUG
                 std::cout << "createAtPos: itemid ist ein Container" << std::endl;
 #endif
@@ -545,7 +540,7 @@ int Character::createItem(Item::id_type id, Item::number_type number, Item::qual
             std::cout << "createItem: itemid gefunden" << "\n";
 #endif
 
-            if (ContainerItems->find(id)) {
+            if (Data::ContainerItems.exists(id)) {
 #ifdef Character_DEBUG
                 std::cout << "createItem: itemid ist ein container" << "\n";
 #endif
@@ -1689,11 +1684,11 @@ uint16_t Character::getMovementCost(Field *sourcefield) {
     uint16_t walkcost = 0;
 
     auto tileId = sourcefield->getTileId();
-    const auto &primaryTile = Data::Tiles.find(tileId);
+    const auto &primaryTile = Data::Tiles[tileId];
     uint16_t tileWalkingCost = primaryTile.walkingCost;
 
     tileId = sourcefield->getSecondaryTileId();
-    const auto &secondaryTile = Data::Tiles.find(tileId);
+    const auto &secondaryTile = Data::Tiles[tileId];
     uint16_t secondaryWalkingCost = secondaryTile.walkingCost;
 
     if (secondaryWalkingCost > tileWalkingCost) {
@@ -1903,12 +1898,14 @@ void Character::changeQualityAt(unsigned char pos, short int amount) {
 }
 
 void Character::callAttackScript(Character *Attacker, Character *Defender) {
-    if (characterItems[ RIGHT_TOOL ].getId() != 0) {
-        WeaponStruct tmpWeapon;
+    const auto weaponId = characterItems[RIGHT_TOOL].getId();
 
-        if (WeaponItems->find(characterItems[ RIGHT_TOOL ].getId() , tmpWeapon)) {
-            if (tmpWeapon.script && tmpWeapon.script->existsEntrypoint("onAttack")) {
-                tmpWeapon.script->onAttack(Attacker, Defender);
+    if (weaponId != 0) {
+        if (Data::WeaponItems.exists(weaponId)) {
+            const auto &weapon = Data::WeaponItems[weaponId];
+
+            if (weapon.script && weapon.script->existsEntrypoint("onAttack")) {
+                weapon.script->onAttack(Attacker, Defender);
             }
         }
     }

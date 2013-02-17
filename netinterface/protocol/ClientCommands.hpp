@@ -25,10 +25,9 @@
 #include <string>
 #include "types.hpp"
 #include "Logger.hpp"
-#include "data/WeaponObjectTable.hpp"
+#include "data/Data.hpp"
 #include "data/CommonObjectTable.hpp"
 #include "data/MonsterTable.hpp"
-#include "data/TilesTable.hpp"
 #include <boost/shared_ptr.hpp>
 #include "script/LuaNPCScript.hpp"
 #include "script/LuaScript.hpp"
@@ -42,10 +41,8 @@
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
 #include <list>
 
-extern WeaponObjectTable *WeaponItems;
 extern MonsterTable *MonsterDescriptions;
 extern CommonObjectTable *CommonItem;
-extern TilesTable *Tiles;
 extern boost::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
 
 enum clientcommands {
@@ -636,8 +633,10 @@ public:
                 bool zauberstab=false;
 
                 if ((player->characterItems[ LEFT_TOOL ].getId() != 0) && (player->characterItems[ LEFT_TOOL ].getId() != BLOCKEDITEM)) {
-                    if (WeaponItems->find(player->characterItems[ LEFT_TOOL ].getId(), tempWeapon)) {
-                        if (tempWeapon.WeaponType == 13) {
+                    const auto weaponId = player->characterItems[LEFT_TOOL].getId();
+
+                    if (Data::WeaponItems.exists(weaponId)) {
+                        if (Data::WeaponItems[weaponId].WeaponType == 13) {
                             zauberstab = true;
                             std::cout << "Zauberstab in der Hand -> OK" << std::endl;
                         }
@@ -645,8 +644,10 @@ public:
                 }
 
                 if ((player->characterItems[ RIGHT_TOOL ].getId() != 0) && (player->characterItems[ RIGHT_TOOL ].getId() != BLOCKEDITEM)) {
-                    if (WeaponItems->find(player->characterItems[ RIGHT_TOOL ].getId(), tempWeapon)) {
-                        if (tempWeapon.WeaponType == 13) {
+                    const auto weaponId = player->characterItems[RIGHT_TOOL].getId();
+
+                    if (Data::WeaponItems.exists(weaponId)) {
+                        if (Data::WeaponItems[weaponId].WeaponType == 13) {
                             zauberstab = true;
                             std::cout << "Zauberstab in der Hand -> OK" << std::endl;
                         }
@@ -982,7 +983,7 @@ public:
                     } else {
                         Logger::writeMessage("Use","empty field!",false);
 
-                        const auto &tileStruct = Data::Tiles.find(temp->getTileId());
+                        const auto &tileStruct = Data::Tiles[temp->getTileId()];
 
                         if (tileStruct.script) {
                             LuaTileScript = tileStruct.script;

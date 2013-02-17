@@ -31,18 +31,9 @@
 #include "Field.hpp"
 #include "Container.hpp"
 
-// forward declarations
 class CommonObjectTable;
-class NamesObjectTable;
-class WeaponObjectTable;
-class ArmorObjectTable;
-class ArtefactObjectTable;
 
 extern CommonObjectTable *CommonItems;
-extern NamesObjectTable *ItemNames;
-extern WeaponObjectTable *WeaponItems;
-extern ArmorObjectTable *ArmorItems;
-extern ArtefactObjectTable *ArtefactItems;
 
 extern std::vector<position> *contpos;
 

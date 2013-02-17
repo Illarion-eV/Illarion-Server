@@ -22,11 +22,19 @@
 
 namespace Data {
 
+NamesObjectTable ItemNames;
+WeaponObjectTable WeaponItems;
+ArmorObjectTable ArmorItems;
+ContainerObjectTable ContainerItems;
 TilesTable Tiles;
 TilesModificatorTable TilesModItems;
 
 std::vector<Table *> getTables() {
     return {
+        &ItemNames,
+        &WeaponItems,
+        &ArmorItems,
+        &ContainerItems,
         &Tiles,
         &TilesModItems
     };

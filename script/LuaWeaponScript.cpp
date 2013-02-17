@@ -26,6 +26,10 @@ LuaWeaponScript::LuaWeaponScript(std::string filename) throw(ScriptException)
     : LuaScript(filename) {
 }
 
+LuaWeaponScript::LuaWeaponScript(std::string filename, WeaponStruct weapon) throw(ScriptException)
+    : LuaScript(filename) {
+}
+
 LuaWeaponScript::~LuaWeaponScript() throw() {}
 
 void LuaWeaponScript::onAttack(Character *Attacker, Character *Defender) {

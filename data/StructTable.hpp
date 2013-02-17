@@ -70,7 +70,7 @@ public:
         return structs.count(id) > 0;
     }
 
-    const StructType &find(const IdType &id) {
+    const StructType &operator[](const IdType &id) {
         try {
             return structs.at(id);
         } catch (std::out_of_range &) {
@@ -79,10 +79,6 @@ public:
             Logger::writeError("scripts", ss.str());
             return structs[id];
         }
-    }
-
-    const StructType &operator[](const IdType &id) {
-        return find(id);
     }
 
 protected:

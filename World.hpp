@@ -66,25 +66,7 @@
 
 extern CommonObjectTable *CommonItems; /**< a extern table for ItemAttributes @see CommonObjectTable* CommonItems **/
 
-extern NamesObjectTable *ItemNames; /**< a extern table for Itemnames @see NamesObjectTable* ItemNames **/
-
-extern WeaponObjectTable *WeaponItems;
-
-extern ArmorObjectTable *ArmorItems;
-
-//! eine Tabelle fuer Artefakt - Item Daten
-extern ArtefactObjectTable *ArtefactItems;
-
-//! eine Tabelle fuer Behaelter - Item Daten
-extern ContainerObjectTable *ContainerItems;
-
 extern SkillTable *Skills;
-
-//! ein struct fuer Daten einer Waffe
-extern WeaponStruct tempWeapon;
-
-//! ein struct fuer Daten einer Schutzkleidung
-extern ArmorStruct tempArmor;
 
 //! ein struct fuer Zaubersprche
 extern SpellTable *Spells;
