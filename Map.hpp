@@ -37,16 +37,12 @@ class NamesObjectTable;
 class WeaponObjectTable;
 class ArmorObjectTable;
 class ArtefactObjectTable;
-class TilesModificatorTable;
-class TilesTable;
 
 extern CommonObjectTable *CommonItems;
 extern NamesObjectTable *ItemNames;
 extern WeaponObjectTable *WeaponItems;
 extern ArmorObjectTable *ArmorItems;
 extern ArtefactObjectTable *ArtefactItems;
-extern TilesModificatorTable *TilesModItems;
-extern TilesTable *Tiles;
 
 extern std::vector<position> *contpos;
 

@@ -21,8 +21,7 @@
 #include <sstream>
 #include <regex.h>
 #include <list>
-#include "data/TilesModificatorTable.hpp"
-#include "data/TilesTable.hpp"
+#include "data/Data.hpp"
 #include "data/QuestTable.hpp"
 #include "data/SkillTable.hpp"
 #include "data/ArmorObjectTable.hpp"
@@ -1314,9 +1313,7 @@ bool World::reload_defs(Player *cp) {
     WeaponObjectTable *WeaponItems_temp = 0;
     ArmorObjectTable *ArmorItems_temp = 0;
     ContainerObjectTable *ContainerItems_temp = 0;
-    TilesModificatorTable *TilesModItems_temp = 0;
     MonsterTable *MonsterDescriptions_temp = 0;
-    TilesTable *Tiles_temp = 0;
     QuestTable *Quests_temp = 0;
     SpellTable *Spells_temp = 0;
     TriggerTable *Trigger_temp = 0;
@@ -1394,27 +1391,7 @@ bool World::reload_defs(Player *cp) {
     }
 
     if (ok) {
-        TilesModItems_temp = new TilesModificatorTable();
-
-        if (TilesModItems_temp == NULL || !TilesModItems_temp->reloadBuffer()) {
-            reportTableError(cp, "tilesmodificators");
-            ok = false;
-        } else {
-            TilesModItems_temp->reloadScripts();
-            TilesModItems_temp->activateBuffer();
-        }
-    }
-
-    if (ok) {
-        Tiles_temp = new TilesTable();
-
-        if (Tiles_temp == NULL || !Tiles_temp->reloadBuffer()) {
-            reportTableError(cp, "tiles");
-            ok = false;
-        } else {
-            Tiles_temp->reloadScripts();
-            Tiles_temp->activateBuffer();
-        }
+        ok = Data::reload();
     }
 
     if (ok) {
@@ -1507,14 +1484,6 @@ bool World::reload_defs(Player *cp) {
             delete ContainerItems_temp;
         }
 
-        if (TilesModItems_temp != NULL) {
-            delete TilesModItems_temp;
-        }
-
-        if (Tiles_temp != NULL) {
-            delete Tiles_temp;
-        }
-
         if (MonsterDescriptions_temp != NULL) {
             delete MonsterDescriptions_temp;
         }
@@ -1564,10 +1533,6 @@ bool World::reload_defs(Player *cp) {
         ArmorItems = ArmorItems_temp;
         delete ContainerItems;
         ContainerItems = ContainerItems_temp;
-        delete TilesModItems;
-        TilesModItems = TilesModItems_temp;
-        delete Tiles;
-        Tiles = Tiles_temp;
         delete Quests;
         Quests = Quests_temp;
         delete MonsterDescriptions;

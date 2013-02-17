@@ -19,9 +19,8 @@
 
 #include "Field.hpp"
 
-#include "data/TilesModificatorTable.hpp"
+#include "data/Data.hpp"
 #include "data/CommonObjectTable.hpp"
-#include "data/TilesTable.hpp"
 #include "globals.hpp"
 
 //#define Field_DEBUG
@@ -128,8 +127,8 @@ bool Field::addTopItem(const Item &it) {
         if (items.size() < MAXITEMS) {
             items.push_back(it);
 
-            if (TilesModItems->exists(it.getId())) {
-                const auto &temp = (*TilesModItems)[it.getId()];
+            if (Data::TilesModItems.exists(it.getId())) {
+                const auto &temp = Data::TilesModItems[it.getId()];
                 clientflags = clientflags | (temp.Modificator & (FLAG_GROUNDLEVEL));
                 extraflags = extraflags | (temp.Modificator & (FLAG_SPECIALITEM + FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_MAKEPASSABLE));
             }
@@ -153,8 +152,8 @@ bool Field::PutGroundItem(const Item &it) {
             items.insert(iterat, it);
         }
 
-        if (TilesModItems->exists(it.getId())) {
-            const auto &temp = (*TilesModItems)[it.getId()];
+        if (Data::TilesModItems.exists(it.getId())) {
+            const auto &temp = Data::TilesModItems[it.getId()];
             clientflags   = clientflags | (temp.Modificator & (FLAG_GROUNDLEVEL));
             extraflags   = extraflags | (temp.Modificator & (FLAG_SPECIALITEM + FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_MAKEPASSABLE));
         }
@@ -172,8 +171,8 @@ bool Field::PutTopItem(const Item &it) {
     if (items.size() < MAXITEMS) {
         items.push_back(it);
 
-        if (TilesModItems->exists(it.getId())) {
-            const auto &temp = (*TilesModItems)[it.getId()];
+        if (Data::TilesModItems.exists(it.getId())) {
+            const auto &temp = Data::TilesModItems[it.getId()];
             clientflags   = clientflags | (temp.Modificator & (FLAG_GROUNDLEVEL));
             extraflags   = extraflags | (temp.Modificator & (FLAG_SPECIALITEM + FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_MAKEPASSABLE));
         }
@@ -327,7 +326,7 @@ void Field::Save(std::ostream *mapt, std::ostream *obj, std::ostream *warp) {
 
 void Field::giveNonPassableItems(ITEMVECTOR &nonpassitems) {
     for (auto it = items.cbegin(); it < items.cend(); ++it) {
-        if (TilesModItems->nonPassable(it->getId())) {
+        if (Data::TilesModItems.nonPassable(it->getId())) {
             nonpassitems.push_back(*it);
         }
     }
@@ -454,15 +453,15 @@ void Field::updateFlags() {
     clientflags = clientflags & (255 - (FLAG_GROUNDLEVEL));
     extraflags = extraflags & (255 - (FLAG_SPECIALITEM + FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_MAKEPASSABLE));
 
-    if (Tiles->exists(tile)) {
-        const TilesStruct &tt = (*Tiles)[tile];
+    if (Data::Tiles.exists(tile)) {
+        const TilesStruct &tt = Data::Tiles[tile];
         clientflags = clientflags | (tt.flags & (FLAG_GROUNDLEVEL));
         extraflags = extraflags | (tt.flags & (FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_SPECIALTILE + FLAG_MAKEPASSABLE));
     }
 
     for (auto it = items.begin(); it < items.end(); ++it) {
-        if (TilesModItems->exists(it->getId())) {
-            const auto &tmod = (*TilesModItems)[it->getId()];
+        if (Data::TilesModItems.exists(it->getId())) {
+            const auto &tmod = Data::TilesModItems[it->getId()];
             clientflags = clientflags | (tmod.Modificator & (FLAG_GROUNDLEVEL));
             extraflags = extraflags | (tmod.Modificator & (FLAG_SPECIALITEM + FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_MAKEPASSABLE));
         }

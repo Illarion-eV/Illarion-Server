@@ -46,6 +46,7 @@
 #include "WorldMap.hpp"
 #include "NewClientView.hpp"
 #include "SpawnPoint.hpp"
+#include "data/Data.hpp"
 #include "data/NPCTable.hpp"
 #include "Scheduler.hpp"
 #include "data/SpellTable.hpp"
@@ -76,12 +77,6 @@ extern ArtefactObjectTable *ArtefactItems;
 
 //! eine Tabelle fuer Behaelter - Item Daten
 extern ContainerObjectTable *ContainerItems;
-
-//! eine Tabelle mit Item welche die Eigenschaften des Feldes auf dem sie liegen modifizieren
-extern TilesModificatorTable *TilesModItems;
-
-//! eine Tabelle mit allen Arten von Bodenplatten
-extern TilesTable *Tiles;
 
 extern SkillTable *Skills;
 

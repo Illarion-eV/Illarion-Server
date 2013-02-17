@@ -41,7 +41,7 @@ extern LongTimeEffectTable *LongTimeEffects;
 LongTimeCharacterEffects::LongTimeCharacterEffects(Character *owner) : owner(owner), time(0) {
 }
 
-bool LongTimeCharacterEffects::find(uint16_t effectid, LongTimeEffect*&effect) {
+bool LongTimeCharacterEffects::find(uint16_t effectid, LongTimeEffect *&effect) {
     for (auto it = effects.begin(); it != effects.end(); ++it) {
         if ((*it)->getEffectId() == effectid) {
             effect = *it;
@@ -53,7 +53,7 @@ bool LongTimeCharacterEffects::find(uint16_t effectid, LongTimeEffect*&effect) {
     return false;
 }
 
-bool LongTimeCharacterEffects::find(std::string effectname, LongTimeEffect*&effect) {
+bool LongTimeCharacterEffects::find(std::string effectname, LongTimeEffect *&effect) {
 
     for (auto it = effects.begin(); it != effects.end(); ++it) {
         if ((*it)->getEffectName() == effectname) {

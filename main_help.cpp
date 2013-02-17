@@ -28,12 +28,11 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include "data/Data.hpp"
 #include "data/NamesObjectTable.hpp"
 #include "data/WeaponObjectTable.hpp"
 #include "data/ArmorObjectTable.hpp"
 #include "data/CommonObjectTable.hpp"
-#include "data/TilesModificatorTable.hpp"
-#include "data/TilesTable.hpp"
 #include "data/SkillTable.hpp"
 #include "data/ContainerObjectTable.hpp"
 #include "data/MonsterTable.hpp"
@@ -153,12 +152,6 @@ ScheduledScriptsTable *ScheduledScripts;
 
 //! Eine Tabelle mit Triggerfeldern
 TriggerTable *Triggers;
-
-//! eine Tabelle mit Item welche die Eigenschaften des Feldes auf dem sie liegen modifizieren
-TilesModificatorTable *TilesModItems;
-
-//! eine Tabelle mit allen Arten von Bodenplatten
-TilesTable *Tiles;
 
 SkillTable *Skills;
 
@@ -358,23 +351,7 @@ void loadData() {
         ok = false;
     }
 
-    TilesModItems = new TilesModificatorTable();
-
-    if (!TilesModItems->reloadBuffer()) {
-        ok = false;
-    } else {
-        TilesModItems->reloadScripts();
-        TilesModItems->activateBuffer();
-    }
-
-    Tiles = new TilesTable();
-
-    if (!Tiles->reloadBuffer()) {
-        ok = false;
-    } else {
-        Tiles->reloadScripts();
-        Tiles->activateBuffer();
-    }
+    Data::reload();
 
     Spells = new SpellTable();
 

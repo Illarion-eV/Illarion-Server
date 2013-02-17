@@ -47,7 +47,7 @@ public:
     bool enemyNear(Character *Monster, Character *enemy);
     void abortRoute(Character *Monster);
     void onSpawn(Character *Monster);
-    bool setTarget(Character *Monster, std::vector<Player *> &CandidateList, Player*&Target);
+    bool setTarget(Character *Monster, std::vector<Player *> &CandidateList, Player *&Target);
 
 private:
     LuaMonsterScript(const LuaMonsterScript &);

@@ -570,7 +570,7 @@ bool World::putItemOnMap(Character *cc, short int x, short int y, short int z) {
         npos.x = x;
         npos.y = y;
 
-        if (TilesModItems->nonPassable(g_item.getId())) {     // nicht passierbares Item, zB. eine grosse Kiste
+        if (Data::TilesModItems.nonPassable(g_item.getId())) {     // nicht passierbares Item, zB. eine grosse Kiste
             if (! tempf->moveToPossible()) {   // das Feld ist nicht betretbar
 
                 return false;

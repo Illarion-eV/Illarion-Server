@@ -982,7 +982,7 @@ public:
                     } else {
                         Logger::writeMessage("Use","empty field!",false);
 
-                        const auto &tileStruct = Tiles->find(temp->getTileId());
+                        const auto &tileStruct = Data::Tiles.find(temp->getTileId());
 
                         if (tileStruct.script) {
                             LuaTileScript = tileStruct.script;

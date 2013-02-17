@@ -25,7 +25,7 @@ testserver_SOURCES = \
 \
 main.cpp main_help.cpp utility.cpp IdCounter.cpp Logger.cpp Random.cpp \
 \
-data/QuestNodeTable.cpp data/QuestTable.cpp \
+data/Data.cpp data/QuestNodeTable.cpp data/QuestTable.cpp \
 data/ArmorObjectTable.cpp data/CommonObjectTable.cpp data/ContainerObjectTable.cpp data/RaceSizeTable.cpp \
 data/MonsterAttackTable.cpp data/ScheduledScriptsTable.cpp data/LongTimeEffectTable.cpp data/NaturalArmorTable.cpp \
 data/SpellTable.cpp data/ScriptVariablesTable.cpp data/NamesObjectTable.cpp data/NPCTable.cpp data/TriggerTable.cpp \

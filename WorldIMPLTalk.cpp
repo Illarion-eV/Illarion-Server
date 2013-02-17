@@ -338,7 +338,7 @@ void World::lookAtMapItem(Player *cp, short int x, short int y, short int z) {
 
 
 void World::lookAtTile(Player *cp, unsigned short int tile, short int x, short int y, short int z) {
-    const TilesStruct &tileStruct = Tiles->find(tile);
+    const TilesStruct &tileStruct = Data::Tiles.find(tile);
     boost::shared_ptr<BasicServerCommand>cmd(new LookAtTileTC(x, y, z, cp->nls(tileStruct.German, tileStruct.English)));
     cp->Connection->addCommand(cmd);
 }

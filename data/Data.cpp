@@ -18,37 +18,56 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LONGTIMECHARACTEREFFECTS_HPP_
-#define LONGTIMECHARACTEREFFECTS_HPP_
+#include "data/Data.hpp"
 
-#include "LongTimeEffect.hpp"
-#include <string>
-#include <vector>
+namespace Data {
 
-class LongTimeCharacterEffects {
-public:
-    LongTimeCharacterEffects(Character *owner);
+TilesTable Tiles;
+TilesModificatorTable TilesModItems;
 
-    void addEffect(LongTimeEffect *effect);
-    bool find(uint16_t effectid, LongTimeEffect *&effect);
-    bool find(std::string effectname, LongTimeEffect *&effect);
-    bool removeEffect(uint16_t effectid);
-    bool removeEffect(std::string name);
-    bool removeEffect(LongTimeEffect *effect);
+std::vector<Table *> getTables() {
+    return {
+        &Tiles,
+        &TilesModItems
+    };
+}
 
-    void push_backEffect(LongTimeEffect *effect);
-    void checkEffects();
-    bool save();
-    bool load();
+bool reloadTables() {
+    bool success = true;
 
-private:
-    typedef std::vector<LongTimeEffect *> EFFECTS;
-    EFFECTS effects;
+    for (auto &table : getTables()) {
+        success = success && table->reloadBuffer();
 
-    Character *owner;
+        if (!success) {
+            break;
+        }
+    }
 
-    int32_t time;
-};
+    return success;
+}
 
-#endif
+void reloadScripts() {
+    for (auto &table : getTables()) {
+        table->reloadScripts();
+    }
+}
+
+void activateReload() {
+    for (auto &table : getTables()) {
+        table->activateBuffer();
+    }
+}
+
+bool reload() {
+    if (reloadTables()) {
+        reloadScripts();
+        activateReload();
+        return true;
+    }
+
+    return false;
+
+}
+
+}
 

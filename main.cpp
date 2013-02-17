@@ -46,8 +46,6 @@
 #include "data/NamesObjectTable.hpp"
 #include "data/ArmorObjectTable.hpp"
 #include "data/ContainerObjectTable.hpp"
-#include "data/TilesModificatorTable.hpp"
-#include "data/TilesTable.hpp"
 #include "data/SkillTable.hpp"
 #include "data/ScriptVariablesTable.hpp"
 #include "Logger.hpp"
@@ -237,10 +235,6 @@ int main(int argc, char *argv[]) {
     ArmorItems = NULL;
     delete ContainerItems;
     ContainerItems = NULL;
-    delete TilesModItems;
-    TilesModItems = NULL;
-    delete Tiles;
-    Tiles = NULL;
     delete Skills;
     Skills = NULL;
     delete world;

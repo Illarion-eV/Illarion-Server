@@ -18,37 +18,24 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LONGTIMECHARACTEREFFECTS_HPP_
-#define LONGTIMECHARACTEREFFECTS_HPP_
+#ifndef _DATA_HPP_
+#define _DATA_HPP_
 
-#include "LongTimeEffect.hpp"
-#include <string>
-#include <vector>
+#include "data/TilesModificatorTable.hpp"
+#include "data/TilesTable.hpp"
 
-class LongTimeCharacterEffects {
-public:
-    LongTimeCharacterEffects(Character *owner);
+namespace Data {
 
-    void addEffect(LongTimeEffect *effect);
-    bool find(uint16_t effectid, LongTimeEffect *&effect);
-    bool find(std::string effectname, LongTimeEffect *&effect);
-    bool removeEffect(uint16_t effectid);
-    bool removeEffect(std::string name);
-    bool removeEffect(LongTimeEffect *effect);
+extern TilesTable Tiles;
+extern TilesModificatorTable TilesModItems;
 
-    void push_backEffect(LongTimeEffect *effect);
-    void checkEffects();
-    bool save();
-    bool load();
+std::vector<Table *> getTables();
+bool reloadTables();
+void reloadScripts();
+void activateReload();
+bool reload();
 
-private:
-    typedef std::vector<LongTimeEffect *> EFFECTS;
-    EFFECTS effects;
-
-    Character *owner;
-
-    int32_t time;
-};
+}
 
 #endif
 

@@ -32,13 +32,9 @@
 #include "Item.hpp"
 
 class CommonObjectTable;
-class TilesModificatorTable;
 class ContainerObjectTable;
-class TilesTable;
 
 extern CommonObjectTable *CommonItems;
-extern TilesModificatorTable *TilesModItems;
-extern TilesTable *Tiles;
 extern std::vector<int> *erasedcontainers;
 
 

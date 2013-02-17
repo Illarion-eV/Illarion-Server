@@ -152,7 +152,7 @@ struct weight_calc {
         }
 
         auto tileId = field->getTileId();
-        return Tiles->find(tileId).walkingCost;
+        return Data::Tiles.find(tileId).walkingCost;
     }
 private:
     int level;

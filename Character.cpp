@@ -1689,11 +1689,11 @@ uint16_t Character::getMovementCost(Field *sourcefield) {
     uint16_t walkcost = 0;
 
     auto tileId = sourcefield->getTileId();
-    const auto &primaryTile = Tiles->find(tileId);
+    const auto &primaryTile = Data::Tiles.find(tileId);
     uint16_t tileWalkingCost = primaryTile.walkingCost;
 
     tileId = sourcefield->getSecondaryTileId();
-    const auto &secondaryTile = Tiles->find(tileId);
+    const auto &secondaryTile = Data::Tiles.find(tileId);
     uint16_t secondaryWalkingCost = secondaryTile.walkingCost;
 
     if (secondaryWalkingCost > tileWalkingCost) {

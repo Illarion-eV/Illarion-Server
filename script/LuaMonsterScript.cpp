@@ -104,7 +104,7 @@ void LuaMonsterScript::onSpawn(Character *Monster) {
     callEntrypoint("onSpawn", fuse_Monster);
 }
 
-bool LuaMonsterScript::setTarget(Character *Monster, std::vector<Player *> &CandidateList, Player*&Target) {
+bool LuaMonsterScript::setTarget(Character *Monster, std::vector<Player *> &CandidateList, Player *&Target) {
     Target = 0;
 
     if (!existsEntrypoint("setTarget")) {

@@ -58,8 +58,8 @@ void World::checkFieldAfterMove(Character *cc, Field *cfstart) {
     if (cfstart->HasSpecialItem()) {
 
         for (auto it = cfstart->items.begin(); it < cfstart->items.end(); ++it) {
-            if (TilesModItems->exists(it->getId())) {
-                const auto &tmod = (*TilesModItems)[it->getId()];
+            if (Data::TilesModItems.exists(it->getId())) {
+                const auto &tmod = Data::TilesModItems[it->getId()];
 
                 if ((tmod.Modificator & FLAG_SPECIALITEM) != 0) {
 
