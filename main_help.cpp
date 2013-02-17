@@ -144,12 +144,6 @@ QuestTable *Quests;
 //! a table containing monster descriptions
 MonsterTable *MonsterDescriptions;
 
-//! ein struct f�r Daten einer Waffe
-WeaponStruct tempWeapon;
-
-//! ein struct f�r Daten einer Schutzkleidung
-ArmorStruct tempArmor;
-
 ScriptVariablesTable *scriptVariables;
 
 LongTimeEffectTable *LongTimeEffects;
