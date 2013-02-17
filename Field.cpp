@@ -127,9 +127,9 @@ bool Field::addTopItem(const Item &it) {
     if (IsPassable()) {
         if (items.size() < MAXITEMS) {
             items.push_back(it);
-            TilesModificatorStruct temp;
 
-            if (TilesModItems->find(it.getId(), temp)) {
+            if (TilesModItems->exists(it.getId())) {
+                const auto &temp = (*TilesModItems)[it.getId()];
                 clientflags = clientflags | (temp.Modificator & (FLAG_GROUNDLEVEL));
                 extraflags = extraflags | (temp.Modificator & (FLAG_SPECIALITEM + FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_MAKEPASSABLE));
             }
@@ -153,9 +153,8 @@ bool Field::PutGroundItem(const Item &it) {
             items.insert(iterat, it);
         }
 
-        TilesModificatorStruct temp;
-
-        if (TilesModItems->find(it.getId(), temp)) {
+        if (TilesModItems->exists(it.getId())) {
+            const auto &temp = (*TilesModItems)[it.getId()];
             clientflags   = clientflags | (temp.Modificator & (FLAG_GROUNDLEVEL));
             extraflags   = extraflags | (temp.Modificator & (FLAG_SPECIALITEM + FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_MAKEPASSABLE));
         }
@@ -172,9 +171,9 @@ bool Field::PutTopItem(const Item &it) {
 
     if (items.size() < MAXITEMS) {
         items.push_back(it);
-        TilesModificatorStruct temp;
 
-        if (TilesModItems->find(it.getId(), temp)) {
+        if (TilesModItems->exists(it.getId())) {
+            const auto &temp = (*TilesModItems)[it.getId()];
             clientflags   = clientflags | (temp.Modificator & (FLAG_GROUNDLEVEL));
             extraflags   = extraflags | (temp.Modificator & (FLAG_SPECIALITEM + FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_MAKEPASSABLE));
         }
@@ -455,15 +454,15 @@ void Field::updateFlags() {
     clientflags = clientflags & (255 - (FLAG_GROUNDLEVEL));
     extraflags = extraflags & (255 - (FLAG_SPECIALITEM + FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_MAKEPASSABLE));
 
-    const TilesStruct &tt = Tiles->find(tile);
-
-    clientflags = clientflags | (tt.flags & (FLAG_GROUNDLEVEL));
-    extraflags = extraflags | (tt.flags & (FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_SPECIALTILE + FLAG_MAKEPASSABLE));
-
-    TilesModificatorStruct tmod;
+    if (Tiles->exists(tile)) {
+        const TilesStruct &tt = (*Tiles)[tile];
+        clientflags = clientflags | (tt.flags & (FLAG_GROUNDLEVEL));
+        extraflags = extraflags | (tt.flags & (FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_SPECIALTILE + FLAG_MAKEPASSABLE));
+    }
 
     for (auto it = items.begin(); it < items.end(); ++it) {
-        if (TilesModItems->find(it->getId(), tmod)) {
+        if (TilesModItems->exists(it->getId())) {
+            const auto &tmod = (*TilesModItems)[it->getId()];
             clientflags = clientflags | (tmod.Modificator & (FLAG_GROUNDLEVEL));
             extraflags = extraflags | (tmod.Modificator & (FLAG_SPECIALITEM + FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_MAKEPASSABLE));
         }
@@ -616,3 +615,4 @@ void Field::setChar() {
 void Field::removeChar() {
     clientflags &= ~FLAG_PLAYERONFIELD;
 }
+

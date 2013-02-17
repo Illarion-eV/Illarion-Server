@@ -156,7 +156,6 @@ struct weight_calc {
     }
 private:
     int level;
-    mutable TilesStruct tempTile;
 };
 
 struct vertex_hash : std::unary_function<Position, std::size_t> {

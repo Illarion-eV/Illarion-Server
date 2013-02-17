@@ -27,36 +27,26 @@
 #include "data/Table.hpp"
 #include "db/Result.hpp"
 #include "db/SelectQuery.hpp"
-#include "script/LuaScript.hpp"
 #include "Logger.hpp"
-#include <boost/make_shared.hpp>
 
-template<typename IdType, typename StructType, typename ScriptType>
+template<typename IdType, typename StructType>
 class StructTable : public Table {
 public:
     virtual bool reloadBuffer() {
         try {
             Database::SelectQuery query;
 
-for (const auto &column : getColumnNames()) {
+            for (const auto &column : getColumnNames()) {
                 query.addColumn(column);
             }
 
             query.setServerTable(getTableName());
             Database::Result results = query.execute();
 
-            structBuffer.clear();
-            scriptNames.clear();
+            clear();
 
-for (const auto &row : results) {
-                IdType id = assignId(row);
-                structBuffer.emplace(id, assignTable(row));
-
-                std::string scriptName = assignScriptName(row);
-
-                if (!scriptName.empty()) {
-                    scriptNames.emplace_back(id, scriptName);
-                }
+            for (const auto &row : results) {
+                evaluateRow(row);
             }
 
             isBufferValid = true;
@@ -68,30 +58,19 @@ for (const auto &row : results) {
         return isBufferValid;
     }
 
-    virtual void reloadScripts() {
-for (const auto &scriptNameEntry : scriptNames) {
-            const IdType &id = scriptNameEntry.first;
-            const std::string &scriptName = scriptNameEntry.second;
-
-            try {
-                auto script = boost::make_shared<ScriptType>(scriptName, structBuffer[id]);
-                structBuffer[id].script = script;
-            } catch (ScriptException &e) {
-                Logger::writeError("scripts", "Error while loading " + getTableName() + " script: " + scriptName + ":\n" + e.what() + "\n");
-            }
-        }
-
-        scriptNames.clear();
-    }
+    virtual void reloadScripts() {}
 
     virtual void activateBuffer() {
         structs.swap(structBuffer);
         isBufferValid = false;
-        structBuffer.clear();
-        scriptNames.clear();
+        clear();
     }
 
-    const StructType &find(IdType id) {
+    bool exists(const IdType &id) const {
+        return structs.count(id) > 0;
+    }
+
+    const StructType &find(const IdType &id) {
         try {
             return structs.at(id);
         } catch (std::out_of_range &) {
@@ -102,20 +81,32 @@ for (const auto &scriptNameEntry : scriptNames) {
         }
     }
 
+    const StructType &operator[](const IdType &id) {
+        return find(id);
+    }
+
 protected:
     virtual std::string getTableName() = 0;
     virtual std::vector<std::string> getColumnNames() = 0;
     virtual IdType assignId(const Database::ResultTuple &row) = 0;
     virtual StructType assignTable(const Database::ResultTuple &row) = 0;
-    virtual std::string assignScriptName(const Database::ResultTuple &row) = 0;
+
+    virtual void clear() {
+        structBuffer.clear();
+    }
+
+    virtual void evaluateRow(const Database::ResultTuple &row) {
+        structBuffer.emplace(assignId(row), assignTable(row));
+    }
+
+    StructType &findInBuffer(const IdType &id) {
+        return structBuffer[id];
+    }
 
 private:
     typedef std::unordered_map<IdType, StructType> ContainerType;
-    typedef std::vector<std::pair<IdType, std::string>> NamesType;
-
     ContainerType structs;
     ContainerType structBuffer;
-    NamesType scriptNames;
     bool isBufferValid = false;
 };
 

@@ -48,7 +48,6 @@ extern ArtefactObjectTable *ArtefactItems;
 extern TilesModificatorTable *TilesModItems;
 extern TilesTable *Tiles;
 
-extern TilesStruct tempTile;
 extern std::vector<position>* contpos;
 
 

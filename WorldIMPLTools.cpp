@@ -685,8 +685,8 @@ int World::getItemAttrib(std::string s, TYPE_OF_ITEM_ID ItemID) {
 
     // Tiles Modificator //
     else if (s == "modificator") {
-        if (TilesModItems->find(ItemID, tempModificator)) {
-            return tempModificator.Modificator;
+        if (TilesModItems->exists(ItemID)) {
+            return (*TilesModItems)[ItemID].Modificator;
         }
     }
 

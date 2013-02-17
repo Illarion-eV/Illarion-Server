@@ -167,20 +167,11 @@ QuestTable *Quests;
 //! a table containing monster descriptions
 MonsterTable *MonsterDescriptions;
 
-//! ein struct f�r die Namen eines Item
-NamesStruct tempNames;
-
 //! ein struct f�r Daten einer Waffe
 WeaponStruct tempWeapon;
 
 //! ein struct f�r Daten einer Schutzkleidung
 ArmorStruct tempArmor;
-
-//! ein struct f�r Daten von Item
-TilesModificatorStruct tempModificator;
-
-//! ein struct f�r Daten von Bodenplatten
-TilesStruct tempTile;
 
 ScriptVariablesTable *scriptVariables;
 
@@ -369,8 +360,11 @@ void loadData() {
 
     TilesModItems = new TilesModificatorTable();
 
-    if (!TilesModItems->dataOK()) {
+    if (!TilesModItems->reloadBuffer()) {
         ok = false;
+    } else {
+        TilesModItems->reloadScripts();
+        TilesModItems->activateBuffer();
     }
 
     Tiles = new TilesTable();

@@ -56,10 +56,11 @@ bool World::warpMonster(Monster *cm, Field *cfstart) {
 
 void World::checkFieldAfterMove(Character *cc, Field *cfstart) {
     if (cfstart->HasSpecialItem()) {
-        TilesModificatorStruct tmod;
 
         for (auto it = cfstart->items.begin(); it < cfstart->items.end(); ++it) {
-            if (TilesModItems->find(it->getId(), tmod)) {
+            if (TilesModItems->exists(it->getId())) {
+                const auto &tmod = (*TilesModItems)[it->getId()];
+
                 if ((tmod.Modificator & FLAG_SPECIALITEM) != 0) {
 
                     boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(it->getId());

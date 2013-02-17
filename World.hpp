@@ -85,20 +85,11 @@ extern TilesTable *Tiles;
 
 extern SkillTable *Skills;
 
-//! ein struct fuer Daten von Bodenplatten
-extern TilesStruct tempTile;
-
-//! ein struct fuer die Namen eines Item
-extern NamesStruct tempNames;
-
 //! ein struct fuer Daten einer Waffe
 extern WeaponStruct tempWeapon;
 
 //! ein struct fuer Daten einer Schutzkleidung
 extern ArmorStruct tempArmor;
-
-//! ein struct fuer Daten von Item
-extern TilesModificatorStruct tempModificator;
 
 //! ein struct fuer Zaubersprche
 extern SpellTable *Spells;

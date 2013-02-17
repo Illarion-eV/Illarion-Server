@@ -21,12 +21,12 @@
 #ifndef _TILES_TABLE_HPP_
 #define _TILES_TABLE_HPP_
 
-#include "data/StructTable.hpp"
+#include "data/ScriptStructTable.hpp"
 #include "types.hpp"
 #include "TableStructs.hpp"
 #include "script/LuaTileScript.hpp"
 
-class TilesTable : public StructTable<TYPE_OF_TILE_ID, TilesStruct, LuaTileScript> {
+class TilesTable : public ScriptStructTable<TYPE_OF_TILE_ID, TilesStruct, LuaTileScript> {
 public:
     virtual std::string getTableName();
     virtual std::vector<std::string> getColumnNames();

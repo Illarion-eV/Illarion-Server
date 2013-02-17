@@ -23,95 +23,45 @@
  */
 
 #include "data/TilesModificatorTable.hpp"
+#include "constants.hpp"
 
-#include <iostream>
-
-#include "db/SelectQuery.hpp"
-#include "db/Result.hpp"
-
-#include "types.hpp"
-
-TilesModificatorTable::TilesModificatorTable() : m_dataOK(false) {
-    reload();
+std::string TilesModificatorTable::getTableName() {
+    return "tilesmodificators";
 }
 
-void TilesModificatorTable::reload() {
-#ifdef DataConnect_DEBUG
-    std::cout << "TilesModificatorTable: reload" << std::endl;
-#endif
+std::vector<std::string> TilesModificatorTable::getColumnNames() {
+    return {
+        "tim_itemid",
+        "tim_isnotpassable",
+        "tim_isnottransparent",
+        "tim_isnotpenetrateable",
+        "tim_specialitem",
+        "tim_groundlevel",
+        "tim_makepassable"
+    };
+}
 
-    try {
-        Database::SelectQuery query;
-        query.addColumn("tilesmodificators", "tim_itemid");
-        query.addColumn("tilesmodificators", "tim_isnotpassable");
-        query.addColumn("tilesmodificators", "tim_isnottransparent");
-        query.addColumn("tilesmodificators", "tim_isnotpenetrateable");
-        query.addColumn("tilesmodificators", "tim_specialitem");
-        query.addColumn("tilesmodificators", "tim_groundlevel");
-        query.addColumn("tilesmodificators", "tim_makepassable");
-        query.addServerTable("tilesmodificators");
+TYPE_OF_ITEM_ID TilesModificatorTable::assignId(const Database::ResultTuple &row) {
+    return row["tim_itemid"].as<TYPE_OF_ITEM_ID>();
+}
 
-        Database::Result results = query.execute();
+TilesModificatorStruct TilesModificatorTable::assignTable(const Database::ResultTuple &row) {
+    TilesModificatorStruct modStruct;
+    modStruct.Modificator = uint8_t(row["tim_groundlevel"].as<uint16_t>());
+    modStruct.Modificator |= row["tim_isnotpassable"].as<bool>() ? FLAG_PASSABLE : 0;
+    modStruct.Modificator |= row["tim_isnottransparent"].as<bool>() ? FLAG_TRANSPARENT : 0;
+    modStruct.Modificator |= row["tim_isnotpenetrateable"].as<bool>() ? FLAG_TRANSPARENT : 0;
+    modStruct.Modificator |= row["tim_specialitem"].as<bool>() ? FLAG_SPECIALITEM : 0;
+    modStruct.Modificator |= row["tim_makepassable"].as<bool>() ? FLAG_MAKEPASSABLE : 0;
+    return modStruct;
+}
 
-        if (!results.empty()) {
-            clearOldTable();
-            TilesModificatorStruct temprecord;
-
-            for (Database::ResultConstIterator itr = results.begin();
-                 itr != results.end(); ++itr) {
-                temprecord.Modificator = (uint8_t)((*itr)["tim_groundlevel"].as<uint16_t>());
-                temprecord.Modificator |= (*itr)["tim_isnotpassable"].as<bool>() ? FLAG_PASSABLE : 0;
-                temprecord.Modificator |= (*itr)["tim_isnottransparent"].as<bool>() ? FLAG_TRANSPARENT : 0;
-                temprecord.Modificator |= (*itr)["tim_isnotpenetrateable"].as<bool>() ? FLAG_TRANSPARENT : 0;
-                temprecord.Modificator |= (*itr)["tim_specialitem"].as<bool>() ? FLAG_SPECIALITEM : 0;
-                temprecord.Modificator |= (*itr)["tim_makepassable"].as<bool>() ? FLAG_MAKEPASSABLE : 0;
-
-                m_table[(*itr)["tim_itemid"].as<TYPE_OF_ITEM_ID>()] = temprecord;
-            }
-
-            m_dataOK = true;
-        } else {
-            m_dataOK = false;
-        }
-
-
-#ifdef DataConnect_DEBUG
-        std::cout << "loaded " << rows << " rows into TilesModificatorTable" << std::endl;
-#endif
-
-    } catch (...) {
-        m_dataOK = false;
+bool TilesModificatorTable::nonPassable(TYPE_OF_ITEM_ID id) {
+    if (exists(id)) {
+        const auto &modStruct = find(id);
+        return ((modStruct.Modificator & FLAG_PASSABLE) != 0) && ((modStruct.Modificator & FLAG_MAKEPASSABLE) == 0);
     }
 
+    return false;
 }
 
-bool TilesModificatorTable::find(TYPE_OF_ITEM_ID Id, TilesModificatorStruct &ret) {
-    TABLE::iterator iterator;
-    iterator = m_table.find(Id);
-
-    if (iterator == m_table.end()) {
-        return false;
-    } else {
-        ret = (*iterator).second;
-        return true;
-    }
-}
-
-void TilesModificatorTable::clearOldTable() {
-    m_table.clear();
-}
-
-TilesModificatorTable::~TilesModificatorTable() {
-    clearOldTable();
-}
-
-bool TilesModificatorTable::nonPassable(TYPE_OF_ITEM_ID Id) {
-    TABLE::iterator iterator;
-    iterator = m_table.find(Id);
-
-    if (iterator == m_table.end()) {
-        return false;
-    } else {
-        return (((*iterator).second.Modificator & FLAG_PASSABLE) != 0) && (((*iterator).second.Modificator & FLAG_MAKEPASSABLE) == 0);
-    }
-}

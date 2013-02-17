@@ -1396,9 +1396,12 @@ bool World::reload_defs(Player *cp) {
     if (ok) {
         TilesModItems_temp = new TilesModificatorTable();
 
-        if (TilesModItems_temp == NULL || !TilesModItems_temp->dataOK()) {
+        if (TilesModItems_temp == NULL || !TilesModItems_temp->reloadBuffer()) {
             reportTableError(cp, "tilesmodificators");
             ok = false;
+        } else {
+            TilesModItems_temp->reloadScripts();
+            TilesModItems_temp->activateBuffer();
         }
     }
 
