@@ -54,6 +54,10 @@ QuestProgressTC::QuestProgressTC(TYPE_OF_QUEST_ID id,
     }
 }
 
+AbortQuestTC::AbortQuestTC(TYPE_OF_QUEST_ID id) : BasicServerCommand(SC_ABORTQUEST_TC) {
+    addShortIntToBuffer(id);
+}
+
 InputDialogTC::InputDialogTC(InputDialog &inputDialog, unsigned int dialogId) : BasicServerCommand(SC_INPUTDIALOG_TC) {
     addStringToBuffer(inputDialog.getTitle());
     addStringToBuffer(inputDialog.getDescription());

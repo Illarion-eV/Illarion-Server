@@ -2087,6 +2087,12 @@ void Player::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS prog
 }
 
 void Player::sendQuestProgress(TYPE_OF_QUEST_ID questId, TYPE_OF_QUESTSTATUS progress) {
+    if (progress == 0) {
+        boost::shared_ptr<BasicServerCommand>cmd(new AbortQuestTC(questId));
+        Connection->addCommand(cmd);
+        return;
+    }
+    
     if (Data::Quests.exists(questId)) {
         const auto &script = Data::Quests.script(questId);
         std::string title = script->title(this);
