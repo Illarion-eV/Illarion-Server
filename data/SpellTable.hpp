@@ -24,7 +24,7 @@
 #include <map>
 #include <list>
 #include <iostream>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/unordered_map.hpp>
 #include "script/LuaMagicScript.hpp"
 
@@ -33,7 +33,7 @@ class World;
 struct SpellStruct {
     unsigned short magictype;
     std::string scriptname;
-    boost::shared_ptr<LuaMagicScript> script;
+    std::shared_ptr<LuaMagicScript> script;
 };
 
 class SpellTable {

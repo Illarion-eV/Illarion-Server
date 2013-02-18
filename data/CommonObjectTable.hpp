@@ -22,7 +22,7 @@
 #define _COMMON_OBJECT_TABLE_HPP_
 
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "script/LuaItemScript.hpp"
 #include <boost/unordered_map.hpp>
 #include "TableStructs.hpp"
@@ -32,7 +32,7 @@ class World;
 class CommonObjectTable {
 public:
     const CommonStruct &find(TYPE_OF_ITEM_ID id);
-    boost::shared_ptr<LuaItemScript> findScript(TYPE_OF_ITEM_ID Id);
+    std::shared_ptr<LuaItemScript> findScript(TYPE_OF_ITEM_ID Id);
 
     CommonObjectTable();
     ~CommonObjectTable();
@@ -45,7 +45,7 @@ private:
     void reload();
 
     typedef boost::unordered_map<TYPE_OF_ITEM_ID, CommonStruct> TABLE;
-    typedef boost::shared_ptr<LuaItemScript> iscript;
+    typedef std::shared_ptr<LuaItemScript> iscript;
     typedef boost::unordered_map<TYPE_OF_ITEM_ID, iscript> SCRIPTTABLE;
 
     TABLE m_table;

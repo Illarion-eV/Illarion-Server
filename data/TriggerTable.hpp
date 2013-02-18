@@ -22,7 +22,7 @@
 
 #include <map>
 #include <iostream>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <list>
 #include <boost/unordered_map.hpp>
 #include "globals.hpp"
@@ -33,7 +33,7 @@ class World;
 struct TriggerStruct {
     position pos;
     std::string scriptname;
-    boost::shared_ptr<LuaTriggerScript> script;
+    std::shared_ptr<LuaTriggerScript> script;
 };
 
 

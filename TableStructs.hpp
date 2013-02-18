@@ -71,7 +71,7 @@ struct LongTimeEffectStruct {
     uint16_t effectid;
     std::string effectname;
     std::string scriptname;
-    boost::shared_ptr<LuaLongTimeEffectScript> script;
+    std::shared_ptr<LuaLongTimeEffectScript> script;
     LongTimeEffectStruct(): effectname(""), scriptname("") {
         effectid = 0;
     }
@@ -93,7 +93,6 @@ struct WeaponStruct {
     TYPE_OF_ACTIONPOINTS ActionPoints;
     TYPE_OF_MAGICDISTURBANCE MagicDisturbance;
     TYPE_OF_POISONSTRENGTH PoisonStrength;
-    boost::shared_ptr<LuaWeaponScript> script;
     //Constructor
     WeaponStruct() : Attack(0) , Defence(0) , Accuracy(0) , Range(0) , WeaponType(0) , AmmunitionType(0) , ActionPoints(0) , MagicDisturbance(0) , PoisonStrength(0) {}
 };
@@ -123,7 +122,6 @@ struct TilesStruct {
     TYPE_OF_WALKINGCOST walkingCost;
     TYPE_OF_GERMAN German;
     TYPE_OF_ENGLISH English;
-    boost::shared_ptr<LuaTileScript> script;
 };
 
 

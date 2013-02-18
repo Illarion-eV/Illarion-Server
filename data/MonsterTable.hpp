@@ -24,7 +24,7 @@
 #include <string>
 #include <map>
 #include <vector>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/unordered_map.hpp>
 #include "script/LuaMonsterScript.hpp"
 #include "types.hpp"
@@ -74,7 +74,7 @@ struct MonsterStruct {
     attributedef_t  attributes;
     skilltype skills;
     itemtype items;
-    boost::shared_ptr<LuaMonsterScript> script;
+    std::shared_ptr<LuaMonsterScript> script;
     uint16_t minsize;
     uint16_t maxsize;
 };

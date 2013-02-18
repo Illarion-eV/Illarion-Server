@@ -27,7 +27,7 @@
 #include "netinterface/NetInterface.hpp"
 #include <map>
 
-extern boost::shared_ptr<LuaDepotScript>depotScript;
+extern std::shared_ptr<LuaDepotScript>depotScript;
 
 //
 //   Constraints:
@@ -764,7 +764,7 @@ void World::dropItemFromShowcaseOnMap(Player *cp, uint8_t showcase, unsigned cha
         t_item.pos = position(xc, yc, zc);
         t_item.type = ScriptItem::it_field;
         t_item.owner = cp;
-        boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
+        std::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
 
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
@@ -839,7 +839,7 @@ void World::moveItemFromShowcaseToPlayer(Player *cp, uint8_t showcase, unsigned 
 
         t_item.owner = cp;
         //Ende Erzeugen von Source und Target Item
-        boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
+        std::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
 
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item,t_item)) {
@@ -917,7 +917,7 @@ void World::dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, short int xc
         t_item.pos = position(xc, yc, zc);
         t_item.type = ScriptItem::it_field;
         t_item.owner = cp;
-        boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
+        std::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
 
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
@@ -1023,7 +1023,7 @@ void World::moveItemBetweenBodyParts(Player *cp, unsigned char opos, unsigned ch
         }
 
         t_item.itempos = npos;
-        boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
+        std::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
 
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
@@ -1090,7 +1090,7 @@ void World::moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, uint8
         t_item.pos = cp->pos;
         t_item.owner = cp;
         t_item.itempos = pos;
-        boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
+        std::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
 
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
@@ -1153,7 +1153,7 @@ void World::moveItemFromMapIntoShowcase(Player *cp, char direction, uint8_t show
             t_item.owner = cp;
 
             //Ausfhren eines Move Item Scriptes
-            boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
+            std::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
 
             if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
                 if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
@@ -1267,7 +1267,7 @@ void World::moveItemFromMapToPlayer(Player *cp, char direction, unsigned char cp
 
             t_item.owner = cp;
             t_item.itempos = cpos;
-            boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
+            std::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
 
             if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
                 if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
@@ -1371,7 +1371,7 @@ void World::moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char p
         t_item.itempos = pos2;
         t_item.owner = cp;
         //Ausfhren eines Move Item Scriptes
-        boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
+        std::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
 
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
@@ -1453,7 +1453,7 @@ bool World::moveItem(Character *cc, unsigned char d, short int xc, short int yc,
             t_item.owner = cc;
 
             //Ausfhren eines Move Item Scriptes
-            boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
+            std::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
 
             if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
                 if (!script->MoveItemBeforeMove(cc, s_item, t_item)) {

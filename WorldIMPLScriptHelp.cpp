@@ -72,7 +72,7 @@ bool World::createDynamicNPC(std::string name, Character::race_type type, positi
 
             try {
                 // try to load the script
-                boost::shared_ptr<LuaNPCScript> script(new LuaNPCScript(scriptname, newNPC));
+                std::shared_ptr<LuaNPCScript> script(new LuaNPCScript(scriptname, newNPC));
                 newNPC->setScript(script);
             } catch (ScriptException &e) {
                 Logger::writeError("scripts", "World::createDynamicNPC: Error while loading dynamic NPC script: " + scriptname + ":\n" + std::string(e.what()) + "\n");

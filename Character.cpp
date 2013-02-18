@@ -46,9 +46,8 @@
 std::ofstream talkfile;
 
 extern CommonObjectTable *CommonItems;
-extern SkillTable *Skills;
-extern boost::shared_ptr<LuaLearnScript>learnScript;
-extern boost::shared_ptr<LuaPlayerDeathScript>playerDeathScript;
+extern std::shared_ptr<LuaLearnScript>learnScript;
+extern std::shared_ptr<LuaPlayerDeathScript>playerDeathScript;
 
 boost::unordered_map<std::string, Character::attributeIndex> Character::attributeMap = boost::assign::map_list_of
         ("strength", strength)
@@ -876,10 +875,8 @@ bool Character::attack(Character *target) {
 }
 
 std::string Character::getSkillName(TYPE_OF_SKILL_ID s) {
-    SkillStruct skillStruct;
-
-    if (Skills->find(s, skillStruct)) {
-        return skillStruct.englishName;
+    if (Data::Skills.exists(s)) {
+        return Data::Skills[s].englishName;
     } else {
         return "unknown skill";
     }
@@ -1066,7 +1063,7 @@ Attribute::attribute_t Character::increaseAttrib(std::string name, int amount) {
 }
 
 unsigned short int Character::setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor) {
-    if (!Skills->find(skill)) {
+    if (!Data::Skills.exists(skill)) {
         return 0;
     }
 
@@ -1088,7 +1085,7 @@ unsigned short int Character::setSkill(TYPE_OF_SKILL_ID skill, short int major, 
 }
 
 unsigned short int Character::increaseSkill(TYPE_OF_SKILL_ID skill, short int amount) {
-    if (!Skills->find(skill)) {
+    if (!Data::Skills.exists(skill)) {
         return 0;
     }
 
@@ -1126,7 +1123,7 @@ unsigned short int Character::increaseSkill(TYPE_OF_SKILL_ID skill, short int am
 
 
 unsigned short int Character::increaseMinorSkill(TYPE_OF_SKILL_ID skill, short int amount) {
-    if (!Skills->find(skill)) {
+    if (!Data::Skills.exists(skill)) {
         return 0;
     }
 
@@ -1187,7 +1184,7 @@ Character::skillvalue *Character::getSkillValue(TYPE_OF_SKILL_ID s) {
 }
 
 void Character::learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opponent) {
-    if (!Skills->find(skill)) {
+    if (!Data::Skills.exists(skill)) {
         return;
     }
 
@@ -1902,10 +1899,10 @@ void Character::callAttackScript(Character *Attacker, Character *Defender) {
 
     if (weaponId != 0) {
         if (Data::WeaponItems.exists(weaponId)) {
-            const auto &weapon = Data::WeaponItems[weaponId];
+            const auto &script = Data::WeaponItems.script(weaponId);
 
-            if (weapon.script && weapon.script->existsEntrypoint("onAttack")) {
-                weapon.script->onAttack(Attacker, Defender);
+            if (script && script->existsEntrypoint("onAttack")) {
+                script->onAttack(Attacker, Defender);
             }
         }
     }

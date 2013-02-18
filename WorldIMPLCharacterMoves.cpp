@@ -28,7 +28,6 @@
 #include "netinterface/NetInterface.hpp"
 #include "netinterface/BasicServerCommand.hpp"
 #include "Player.hpp"
-#include "data/RaceSizeTable.hpp"
 
 bool World::warpMonster(Monster *cm, Field *cfstart) {
     if (cfstart->IsWarpField()) {
@@ -63,7 +62,7 @@ void World::checkFieldAfterMove(Character *cc, Field *cfstart) {
 
                 if ((tmod.Modificator & FLAG_SPECIALITEM) != 0) {
 
-                    boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(it->getId());
+                    std::shared_ptr<LuaItemScript> script = CommonItems->findScript(it->getId());
 
                     if (script) {
                         script->CharacterOnField(cc);

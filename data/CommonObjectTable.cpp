@@ -115,13 +115,13 @@ void CommonObjectTable::reload() {
                     std::string scriptname = ((*itr)["com_script"].as<std::string>());
 
                     try {
-                        boost::shared_ptr<LuaItemScript> tmpScript(new LuaItemScript(scriptname, temprecord));
+                        std::shared_ptr<LuaItemScript> tmpScript(new LuaItemScript(scriptname, temprecord));
                         m_scripttable[itemID] = tmpScript;
                     } catch (ScriptException &e) {
                         Logger::writeError("scripts", "Error while loading item script: " + scriptname + ":\n" + e.what() + "\n");
                     }
                 } else if (questItr != questEnd && questItr->first == itemID) {
-                    boost::shared_ptr<LuaItemScript> tmpScript(new LuaItemScript(temprecord));
+                    std::shared_ptr<LuaItemScript> tmpScript(new LuaItemScript(temprecord));
                     m_scripttable[itemID] = tmpScript;
                 }
 
@@ -169,14 +169,14 @@ const CommonStruct &CommonObjectTable::find(TYPE_OF_ITEM_ID id) {
     }
 }
 
-boost::shared_ptr<LuaItemScript> CommonObjectTable::findScript(TYPE_OF_ITEM_ID Id) {
+std::shared_ptr<LuaItemScript> CommonObjectTable::findScript(TYPE_OF_ITEM_ID Id) {
     SCRIPTTABLE::iterator iterator;
     iterator = m_scripttable.find(Id);
 
     if (iterator != m_scripttable.end()) {
         return iterator->second;
     } else {
-        return boost::shared_ptr<LuaItemScript>();
+        return std::shared_ptr<LuaItemScript>();
     }
 }
 

@@ -46,7 +46,7 @@ extern "C" {
 #include "LongTimeEffect.hpp"
 #include "LongTimeCharacterEffects.hpp"
 #include "data/ScriptVariablesTable.hpp"
-#include "data/SkillTable.hpp"
+#include "data/Data.hpp"
 #include "Logger.hpp"
 #include "WaypointList.hpp"
 #include "fuse_ptr.hpp"
@@ -59,7 +59,6 @@ extern "C" {
 #include <cxxabi.h>
 
 extern ScriptVariablesTable *scriptVariables;
-extern SkillTable *Skills;
 
 lua_State *LuaScript::_luaState = 0;
 bool LuaScript::initialized = false;
@@ -287,8 +286,8 @@ luabind::object LuaScript::buildEntrypoint(const std::string &entrypoint) throw(
     return callee;
 }
 
-void LuaScript::addQuestScript(const std::string &entrypoint, boost::shared_ptr<LuaScript> script) {
-    questScripts.insert(std::pair<const std::string, boost::shared_ptr<LuaScript> >(entrypoint, script));
+void LuaScript::addQuestScript(const std::string &entrypoint, std::shared_ptr<LuaScript> script) {
+    questScripts.insert(std::pair<const std::string, std::shared_ptr<LuaScript> >(entrypoint, script));
 }
 
 void LuaScript::setCurrentWorldScript() {
@@ -414,8 +413,8 @@ void LuaScript::init_base_functions() {
 
     luabind::value_vector skills;
 
-    for (auto it = Skills->begin(); it != Skills->end(); ++it) {
-        skills.push_back(luabind::value(it->second.serverName.c_str(), it->first));
+    for (const auto &skill : Data::Skills) {
+        skills.push_back(luabind::value(skill.second.serverName.c_str(), skill.first));
     }
 
     luabind::module(_luaState)

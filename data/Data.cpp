@@ -22,6 +22,9 @@
 
 namespace Data {
 
+SkillTable Skills;
+QuestTable Quests;
+RaceSizeTable RaceSizes;
 NamesObjectTable ItemNames;
 WeaponObjectTable WeaponItems;
 ArmorObjectTable ArmorItems;
@@ -31,6 +34,9 @@ TilesModificatorTable TilesModItems;
 
 std::vector<Table *> getTables() {
     return {
+        &Skills,
+        &Quests,
+        &RaceSizes,
         &ItemNames,
         &WeaponItems,
         &ArmorItems,

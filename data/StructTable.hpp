@@ -21,6 +21,7 @@
 #ifndef _STRUCT_TABLE_HPP_
 #define _STRUCT_TABLE_HPP_
 
+#include <iostream>
 #include <vector>
 #include <string>
 #include <unordered_map>
@@ -31,6 +32,7 @@
 
 template<typename IdType, typename StructType>
 class StructTable : public Table {
+    typedef std::unordered_map<IdType, StructType> ContainerType;
 public:
     virtual bool reloadBuffer() {
         try {
@@ -81,6 +83,14 @@ public:
         }
     }
 
+    typename ContainerType::const_iterator begin() const {
+        return structs.cbegin();
+    }
+
+    typename ContainerType::const_iterator end() const {
+        return structs.cend();
+    }
+
 protected:
     virtual std::string getTableName() = 0;
     virtual std::vector<std::string> getColumnNames() = 0;
@@ -100,7 +110,6 @@ protected:
     }
 
 private:
-    typedef std::unordered_map<IdType, StructType> ContainerType;
     ContainerType structs;
     ContainerType structBuffer;
     bool isBufferValid = false;

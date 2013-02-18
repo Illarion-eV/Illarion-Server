@@ -23,7 +23,7 @@
 #include "db/ConnectionManager.hpp"
 #include "Player.hpp"
 #include <sstream>
-#include <memory>
+#include <boost/shared_ptr.hpp>
 #include "tuningConstants.hpp"
 #include "data/ContainerObjectTable.hpp"
 #include "data/CommonObjectTable.hpp"
@@ -52,8 +52,6 @@
 #include "db/SelectQuery.hpp"
 #include "db/UpdateQuery.hpp"
 #include "db/Result.hpp"
-
-#include "data/QuestTable.hpp"
 
 #include "dialog/InputDialog.hpp"
 #include "dialog/MessageDialog.hpp"
@@ -2032,8 +2030,6 @@ bool Player::hasGMRight(gm_rights right) {
     return ((right & admin) == static_cast<uint32_t>(right));
 }
 
-extern QuestTable *Quests;
-
 void Player::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS progress) {
     if (questWriteLock) {
         LuaScript::writeDebugMsg("Setting quest progress is not allowed in quest entrypoint!");
@@ -2091,9 +2087,8 @@ void Player::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS prog
 }
 
 void Player::sendQuestProgress(TYPE_OF_QUEST_ID questId, TYPE_OF_QUESTSTATUS progress) {
-    auto script = Quests->getQuestScript(questId);
-
-    if (script) {
+    if (Data::Quests.exists(questId)) {
+        const auto &script = Data::Quests.script(questId);
         std::string title = script->title(this);
 
         if (title.length() > 0) {
@@ -2204,10 +2199,9 @@ void Player::changeTarget() {
 }
 
 std::string Player::getSkillName(TYPE_OF_SKILL_ID s) {
-    SkillStruct skillStruct;
-
-    if (Skills->find(s, skillStruct)) {
-        return nls(skillStruct.germanName, skillStruct.englishName);
+    if (Data::Skills.exists(s)) {
+        const auto &skill = Data::Skills[s];
+        return nls(skill.germanName, skill.englishName);
     } else {
         std::string german("unbekannter Skill");
         std::string english("unknown skill");
@@ -2834,7 +2828,7 @@ void Player::startCrafting(uint8_t stillToCraft, uint16_t craftingTime, uint16_t
     source.Type = LUA_DIALOG;
     source.dialog = dialogId;
     SouTar target;
-    ltAction->setLastAction(boost::shared_ptr<LuaScript>(), source, target, LongTimeAction::ACTION_CRAFT);
+    ltAction->setLastAction(std::shared_ptr<LuaScript>(), source, target, LongTimeAction::ACTION_CRAFT);
     startAction(craftingTime, 0, 0, sfx, sfxDuration);
 
     boost::shared_ptr<BasicServerCommand> cmd(new CraftingDialogCraftTC(stillToCraft, craftingTime, dialogId));

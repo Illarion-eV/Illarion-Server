@@ -27,28 +27,46 @@
 #include "data/StructTable.hpp"
 #include "Logger.hpp"
 #include "script/LuaScript.hpp"
-#include <boost/make_shared.hpp>
+
+namespace detail {
 
 template<typename IdType, typename StructType, typename ScriptType>
+void detailAssign(std::unordered_map<IdType, std::shared_ptr<ScriptType>> &scripts, const IdType &id, const std::string &name, StructType &data, const StructType &dummy) {
+    scripts.emplace(id, std::make_shared<ScriptType>(name, data));
+}
+
+template<typename IdType, typename StructType, typename ScriptType>
+void detailAssign(std::unordered_map<IdType, std::shared_ptr<ScriptType>> &scripts, const IdType &id, const std::string &name, StructType &data, const IdType &dummy) {
+    scripts.emplace(id, std::make_shared<ScriptType>(name, id));
+}
+
+}
+
+template<typename IdType, typename StructType, typename ScriptType, typename ScriptParameter = StructType>
 class ScriptStructTable : public StructTable<IdType, StructType> {
 public:
     typedef StructTable<IdType, StructType> Base;
 
     virtual void reloadScripts() {
+        scripts.clear();
+
         for (const auto &scriptNameEntry : scriptNames) {
             const IdType &id = scriptNameEntry.first;
             const std::string &scriptName = scriptNameEntry.second;
 
             try {
                 auto &bufferStruct = this->findInBuffer(id);
-                auto script = boost::make_shared<ScriptType>(scriptName, bufferStruct);
-                bufferStruct.script = script;
+                internalAssign<ScriptParameter>(id, scriptName, bufferStruct);
             } catch (ScriptException &e) {
                 Logger::writeError("scripts", "Error while loading " + getTableName() + " script: " + scriptName + ":\n" + e.what() + "\n");
             }
         }
 
         scriptNames.clear();
+    }
+
+    const std::shared_ptr<ScriptType> &script(IdType id) {
+        return scripts[id];
     }
 
 protected:
@@ -74,9 +92,21 @@ protected:
 
 
 private:
+    typedef std::unordered_map<IdType, std::shared_ptr<ScriptType>> ScriptsType;
+
+    template<typename T>
+    void internalAssign(const IdType &id, const std::string &name, StructType &data);
+
     typedef std::vector<std::pair<IdType, std::string>> NamesType;
     NamesType scriptNames;
+    ScriptsType scripts;
 };
+
+template<typename IdType, typename StructType, typename ScriptType, typename ScriptParameter>
+template<typename T>
+void ScriptStructTable<IdType, StructType, ScriptType, ScriptParameter>::internalAssign(const IdType &id, const std::string &name, StructType &data) {
+    detail::detailAssign<IdType, StructType, ScriptType>(scripts, id, name, data, ScriptParameter());
+}
 
 #endif
 

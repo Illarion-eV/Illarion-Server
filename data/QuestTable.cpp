@@ -20,67 +20,26 @@
 
 #include "data/QuestTable.hpp"
 
-#include <iostream>
-
-#include <boost/shared_ptr.hpp>
-
-#include "db/SelectQuery.hpp"
-#include "db/Result.hpp"
-
-#include "Logger.hpp"
-
-QuestTable::QuestTable(): _dataOK(false) {
-    reload();
+std::string QuestTable::getTableName() {
+    return "quests";
 }
 
-void QuestTable::reload() {
-#ifdef DataConnect_DEBUG
-    std::cout<<"QuestTable: reload!" <<std::endl;
-#endif
-
-    try {
-        Database::SelectQuery query;
-        query.addColumn("quests", "qst_id");
-        query.addColumn("quests", "qst_script");
-        query.addServerTable("quests");
-
-        Database::Result results = query.execute();
-
-        if (!results.empty()) {
-            quests.clear();
-            std::string scriptname;
-
-            for (Database::ResultConstIterator itr = results.begin(); itr != results.end(); ++itr) {
-                if (!((*itr)["qst_script"].is_null())) {
-                    scriptname = ((*itr)["qst_script"].as<std::string>());
-
-                    try {
-                        TYPE_OF_QUEST_ID id = ((*itr)["qst_id"].as<TYPE_OF_QUEST_ID>());
-                        boost::shared_ptr<LuaQuestScript> script(new LuaQuestScript(scriptname, id));
-                        quests[id] = script;
-                    } catch (ScriptException &e) {
-                        Logger::writeError("scripts", "Error while loading quest script: " + scriptname + ":\n" + e.what() + "\n");
-                    }
-                }
-            }
-        }
-
-        std::cout << "loaded quest scripts! " << std::endl;
-        _dataOK = true;
-    } catch (std::exception &e) {
-        std::cerr << "exception: " << e.what() << std::endl;
-        _dataOK = false;
-    }
+std::vector<std::string> QuestTable::getColumnNames() {
+    return {
+        "qst_id",
+        "qst_script"
+    };
 }
 
-boost::shared_ptr<LuaQuestScript> QuestTable::getQuestScript(TYPE_OF_QUEST_ID id) {
-    auto iterator = quests.find(id);
+TYPE_OF_QUEST_ID QuestTable::assignId(const Database::ResultTuple &row) {
+    return row["qst_id"].as<TYPE_OF_QUEST_ID>();
+}
 
-    if (iterator == quests.end()) {
-        boost::shared_ptr<LuaQuestScript> notFound;
-        return notFound;
-    } else {
-        return iterator->second;
-    }
+QuestStruct QuestTable::assignTable(const Database::ResultTuple &row) {
+    return QuestStruct();
+}
+
+std::string QuestTable::assignScriptName(const Database::ResultTuple &row) {
+    return row["qst_script"].as<std::string>("");
 }
 

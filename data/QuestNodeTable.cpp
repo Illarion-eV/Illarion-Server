@@ -23,7 +23,7 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <vector>
 #include <string>
 #include "script/LuaScript.hpp"
@@ -134,7 +134,7 @@ void QuestNodeTable::readQuest(boost::filesystem::ifstream &questFile, boost::fi
             std::string scriptPath = "questsystem." + questPath.filename().string() + "." + entries[5];
 
             try {
-                node.script = boost::shared_ptr<LuaScript>(new LuaScript(scriptPath));
+                node.script = std::shared_ptr<LuaScript>(new LuaScript(scriptPath));
             } catch (ScriptException &e) {
                 Logger::writeError("scripts", "Error while loading quest script: " + std::string(e.what()) + "\n");
                 return;
@@ -158,7 +158,7 @@ void QuestNodeTable::readQuest(boost::filesystem::ifstream &questFile, boost::fi
             std::string scriptPath = "questsystem." + questPath.filename().string() + "." + entries[3];
 
             try {
-                node.script = boost::shared_ptr<LuaScript>(new LuaScript(scriptPath));
+                node.script = std::shared_ptr<LuaScript>(new LuaScript(scriptPath));
             } catch (ScriptException &e) {
                 Logger::writeError("scripts", "Error while loading quest script: " + std::string(e.what()) + "\n");
                 return;

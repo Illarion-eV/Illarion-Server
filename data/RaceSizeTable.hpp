@@ -21,30 +21,23 @@
 #ifndef _RACE_SIZE_TABLE_HPP_
 #define _RACE_SIZE_TABLE_HPP_
 
-#include <sys/types.h>
 #include "Character.hpp"
-#include <boost/unordered_map.hpp>
+#include "data/StructTable.hpp"
+#include "types.hpp"
+#include "TableStructs.hpp"
 
-class RaceSizeTable {
+struct RaceSizeStruct {
+    uint16_t minSize;
+    uint16_t maxSize;
+};
+
+class RaceSizeTable : public StructTable<uint16_t, RaceSizeStruct> {
 public:
-    RaceSizeTable();
-    ~RaceSizeTable();
-
+    virtual std::string getTableName();
+    virtual std::vector<std::string> getColumnNames();
+    virtual uint16_t assignId(const Database::ResultTuple &row);
+    virtual RaceSizeStruct assignTable(const Database::ResultTuple &row);
     uint8_t getRelativeSize(Character::race_type race, uint16_t size);
-
-    inline bool isDataOk() {
-        return m_dataOk;
-    }
-
-private:
-    void reload();
-
-    bool m_dataOk;
-    void clearOldTable();
-
-    typedef boost::unordered_map<uint16_t, uint16_t> TABLE;
-    TABLE minsizes;
-    TABLE maxsizes;
 };
 
 #endif

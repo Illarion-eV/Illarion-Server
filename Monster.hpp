@@ -23,7 +23,7 @@
 #include "Character.hpp"
 #include "SpawnPoint.hpp"
 #include "IdCounter.hpp"
-#include <memory>
+#include <boost/shared_ptr.hpp>
 
 /**
 * @ingroup Scriptclasses

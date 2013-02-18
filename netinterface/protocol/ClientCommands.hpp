@@ -43,7 +43,7 @@
 
 extern MonsterTable *MonsterDescriptions;
 extern CommonObjectTable *CommonItem;
-extern boost::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
+extern std::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
 
 enum clientcommands {
     C_LOGIN_TS = 0x0D, /*<login*/
@@ -475,7 +475,7 @@ public:
         bool paramOK = true;
         //CScript* skript = NULL;
 
-        boost::shared_ptr<LuaMagicScript> LuaMageScript;
+        std::shared_ptr<LuaMagicScript> LuaMageScript;
 
         // berprfen, ob der Spieler die Runen beherrscht
         if ((spellId & player->magic.flags[ player->magic.type ]) == spellId) {
@@ -900,10 +900,10 @@ public:
 
         bool paramOK = true;
 
-        boost::shared_ptr<LuaItemScript> LuaScript;
-        boost::shared_ptr<LuaNPCScript> LuaNPCScript;
-        boost::shared_ptr<LuaMonsterScript> LuaMonsterScript;
-        boost::shared_ptr<LuaTileScript> LuaTileScript;
+        std::shared_ptr<LuaItemScript> LuaScript;
+        std::shared_ptr<LuaNPCScript> LuaNPCScript;
+        std::shared_ptr<LuaMonsterScript> LuaMonsterScript;
+        std::shared_ptr<LuaTileScript> LuaTileScript;
         SouTar Source, Target;
         CommonStruct com;
 
@@ -983,10 +983,10 @@ public:
                     } else {
                         Logger::writeMessage("Use","empty field!",false);
 
-                        const auto &tileStruct = Data::Tiles[temp->getTileId()];
+                        auto &script = Data::Tiles.script(temp->getTileId());
 
-                        if (tileStruct.script) {
-                            LuaTileScript = tileStruct.script;
+                        if (script) {
+                            LuaTileScript = script;
                             Source.Type = LUA_FIELD;
                             Source.pos = position(xc, yc, zc);
                         }

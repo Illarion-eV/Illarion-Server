@@ -20,100 +20,28 @@
 
 #include "data/SkillTable.hpp"
 
-#include <iostream>
-#include <string>
-
-#include "db/SelectQuery.hpp"
-#include "db/Result.hpp"
-
-#include "Logger.hpp"
-
-SkillTable::SkillTable() : m_dataOK(false) {
-    reload();
+std::string SkillTable::getTableName() {
+    return "skills";
 }
 
-
-void SkillTable::reload() {
-#ifdef DataConnect_DEBUG
-    std::cout << "SkillTable: reload" << std::endl;
-#endif
-
-    try {
-        Database::SelectQuery query;
-        query.addColumn("skills", "skl_skill_id");
-        query.addColumn("skills", "skl_name");
-        query.addColumn("skills", "skl_name_english");
-        query.addColumn("skills", "skl_name_german");
-        query.addServerTable("skills");
-
-        Database::Result results = query.execute();
-
-        if (!results.empty()) {
-            clearOldTable();
-            SkillStruct tempRecord;
-
-            for (Database::ResultConstIterator itr = results.begin();
-                 itr != results.end(); ++itr) {
-                TYPE_OF_SKILL_ID skillId = (TYPE_OF_SKILL_ID)((*itr)["skl_skill_id"].as<uint16_t>());
-                tempRecord.serverName = (*itr)["skl_name"].as<std::string>();
-                tempRecord.englishName = (*itr)["skl_name_english"].as<std::string>();
-                tempRecord.germanName = (*itr)["skl_name_german"].as<std::string>();
-
-                m_table[skillId] = tempRecord;
-            }
-
-            m_dataOK = true;
-        } else {
-            m_dataOK = false;
-        }
-
-
-#ifdef DataConnect_DEBUG
-        std::cout << "loaded " << rows << " rows into SkillTable" << std::endl;
-#endif
-
-    } catch (std::exception &e) {
-        std::cout << "exception in skills loading: " << e.what() << std::endl;
-        m_dataOK = false;
-    }
-
+std::vector<std::string> SkillTable::getColumnNames() {
+    return {
+        "skl_skill_id",
+        "skl_name",
+        "skl_name_english",
+        "skl_name_german"
+    };
 }
 
-bool SkillTable::find(TYPE_OF_SKILL_ID Id) const {
-    TABLE::const_iterator iterator;
-    iterator = m_table.find(Id);
-
-    if (iterator == m_table.end()) {
-        return false;
-    } else {
-        return true;
-    }
+TYPE_OF_SKILL_ID SkillTable::assignId(const Database::ResultTuple &row) {
+    return TYPE_OF_SKILL_ID(row["skl_skill_id"].as<uint16_t>());
 }
 
-bool SkillTable::find(TYPE_OF_SKILL_ID Id, SkillStruct &ret) const {
-    TABLE::const_iterator iterator;
-    iterator = m_table.find(Id);
-
-    if (iterator == m_table.end()) {
-        return false;
-    } else {
-        ret = (*iterator).second;
-        return true;
-    }
-}
-
-SkillTable::TABLE::const_iterator SkillTable::begin() const {
-    return m_table.cbegin();
-}
-
-SkillTable::TABLE::const_iterator SkillTable::end() const {
-    return m_table.cend();
-}
-
-void SkillTable::clearOldTable() {
-    m_table.clear();
-}
-
-SkillTable::~SkillTable() {
+SkillStruct SkillTable::assignTable(const Database::ResultTuple &row) {
+    SkillStruct skill;
+    skill.serverName = row["skl_name"].as<std::string>();
+    skill.englishName = row["skl_name_english"].as<std::string>();
+    skill.germanName = row["skl_name_german"].as<std::string>();
+    return skill;
 }
 

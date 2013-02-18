@@ -52,7 +52,7 @@
 
 extern std::map<std::string, std::string> configOptions;
 extern MonsterTable *MonsterDescriptions;
-extern boost::shared_ptr<LuaLogoutScript>logoutScript;
+extern std::shared_ptr<LuaLogoutScript>logoutScript;
 extern std::ofstream talkfile;
 
 World *World::_self;
@@ -1104,7 +1104,7 @@ void World::checkNPC() {
             if ((*npcIterator)->actionPoints > NP_MIN_AP && (*npcIterator)->getScript()) {
                 // we have a script...
                 // let's execute the command for this cycle
-                boost::shared_ptr<LuaNPCScript> npcscript = (*npcIterator)->getScript();
+                std::shared_ptr<LuaNPCScript> npcscript = (*npcIterator)->getScript();
                 npcscript->nextCycle();
 
                 if ((*npcIterator)->getOnRoute() && !(*npcIterator)->waypoints->makeMove()) {

@@ -67,7 +67,7 @@ void SpellTable::reload() {
                     spell.scriptname = (*itr)["spl_scriptname"].as<std::string>();
 
                     try {
-                        boost::shared_ptr<LuaMagicScript> script(new LuaMagicScript(spell.scriptname, spellid));
+                        std::shared_ptr<LuaMagicScript> script(new LuaMagicScript(spell.scriptname, spellid));
                         spell.script = script;
                     } catch (ScriptException &e) {
                         Logger::writeError("scripts", "Error while loading magic script: " + spell.scriptname + ":\n" + e.what() + "\n");

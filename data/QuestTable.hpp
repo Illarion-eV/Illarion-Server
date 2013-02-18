@@ -20,28 +20,20 @@
 #ifndef _QUEST_TABLE_HPP_
 #define _QUEST_TABLE_HPP_
 
-#include <boost/shared_ptr.hpp>
-#include <unordered_map>
+#include "data/ScriptStructTable.hpp"
 #include "types.hpp"
 #include "script/LuaQuestScript.hpp"
 
-class QuestTable {
+struct QuestStruct {
+};
+
+class QuestTable : public ScriptStructTable<TYPE_OF_QUEST_ID, QuestStruct, LuaQuestScript, TYPE_OF_QUEST_ID> {
 public:
-    QuestTable();
-
-    inline bool isDataOK() {
-        return _dataOK;
-    }
-
-    boost::shared_ptr<LuaQuestScript> getQuestScript(TYPE_OF_QUEST_ID id);
-
-private:
-    void reload();
-
-    typedef std::unordered_map<TYPE_OF_QUEST_ID, boost::shared_ptr<LuaQuestScript> > QuestMap;
-    QuestMap quests;
-
-    bool _dataOK;
+    virtual std::string getTableName();
+    virtual std::vector<std::string> getColumnNames();
+    virtual TYPE_OF_QUEST_ID assignId(const Database::ResultTuple &row);
+    virtual QuestStruct assignTable(const Database::ResultTuple &row);
+    virtual std::string assignScriptName(const Database::ResultTuple &row);
 };
 
 #endif

@@ -51,7 +51,6 @@
 #include "Scheduler.hpp"
 #include "data/SpellTable.hpp"
 #include "data/TriggerTable.hpp"
-#include "data/SkillTable.hpp"
 #include "TableStructs.hpp"
 #include "data/NaturalArmorTable.hpp"
 #include "data/MonsterAttackTable.hpp"
@@ -65,8 +64,6 @@
 #include <exception>
 
 extern CommonObjectTable *CommonItems; /**< a extern table for ItemAttributes @see CommonObjectTable* CommonItems **/
-
-extern SkillTable *Skills;
 
 //! ein struct fuer Zaubersprche
 extern SpellTable *Spells;
@@ -83,7 +80,7 @@ extern MonsterAttackTable *MonsterAttacks;
 extern ScheduledScriptsTable *scheduledScripts;
 
 //! Ein zeiger auf das Standard Kampfscript
-extern boost::shared_ptr<LuaWeaponScript> standardFightingScript;
+extern std::shared_ptr<LuaWeaponScript> standardFightingScript;
 
 // typedef for gm commands...
 /**

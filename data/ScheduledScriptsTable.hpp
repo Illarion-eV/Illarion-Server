@@ -24,7 +24,7 @@
 #include <string>
 #include <map>
 #include <list>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/unordered_map.hpp>
 #include "script/LuaScheduledScript.hpp"
 
@@ -37,7 +37,7 @@ struct ScriptData {
     uint32_t lastCycleTime;
     std::string functionName;
     std::string scriptName;
-    boost::shared_ptr<LuaScheduledScript>scriptptr;
+    std::shared_ptr<LuaScheduledScript>scriptptr;
 
     ScriptData(): functionName(""), scriptName("") {
         minCycleTime = 0;
