@@ -25,6 +25,7 @@
 #include "data/QuestTable.hpp"
 #include "data/RaceSizeTable.hpp"
 #include "data/NaturalArmorTable.hpp"
+#include "data/MonsterAttackTable.hpp"
 #include "data/NamesObjectTable.hpp"
 #include "data/WeaponObjectTable.hpp"
 #include "data/ArmorObjectTable.hpp"
@@ -38,6 +39,7 @@ extern SkillTable Skills;
 extern QuestTable Quests;
 extern RaceSizeTable RaceSizes;
 extern NaturalArmorTable NaturalArmors;
+extern MonsterAttackTable MonsterAttacks;
 extern NamesObjectTable ItemNames;
 extern WeaponObjectTable WeaponItems;
 extern ArmorObjectTable ArmorItems;

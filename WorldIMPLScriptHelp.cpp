@@ -681,7 +681,6 @@ bool World::getArmorStruct(TYPE_OF_ITEM_ID id, ArmorStruct &ret) {
         ret = Data::ArmorItems[id];
         return true;
     } else {
-        ret = ArmorStruct();
         return false;
     }
 }
@@ -693,7 +692,6 @@ bool World::getWeaponStruct(TYPE_OF_ITEM_ID id, WeaponStruct &ret) {
         ret = Data::WeaponItems[id];
         return true;
     } else {
-        ret = WeaponStruct();
         return false;
     }
 }
@@ -704,13 +702,18 @@ bool World::getNaturalArmor(Character::race_type id, MonsterArmor &ret) {
         ret = Data::NaturalArmors[id];
         return true;
     } else {
-        ret = MonsterArmor();
         return false;
     }
 }
 
 bool World::getMonsterAttack(Character::race_type id, AttackBoni &ret) {
-    return MonsterAttacks->find(id, ret);
+
+    if (Data::MonsterAttacks.exists(id)) {
+        ret = Data::MonsterAttacks[id];
+        return true;
+    } else {
+        return false;
+    }
 }
 
 void World::sendMonitoringMessage(std::string msg, unsigned char id) {

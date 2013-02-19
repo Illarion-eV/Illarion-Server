@@ -32,7 +32,6 @@
 #include "data/MonsterTable.hpp"
 #include "data/SpellTable.hpp"
 #include "data/TriggerTable.hpp"
-#include "data/MonsterAttackTable.hpp"
 #include "data/ScheduledScriptsTable.hpp"
 #include "data/ScriptVariablesTable.hpp"
 #include <boost/shared_ptr.hpp>
@@ -113,9 +112,6 @@ std::vector<int> *erasedcontainers;
 
 // Koordinaten von gel�schten Containern, ben�tigt zum Schlie�en offener Showcases
 std::vector<position> *contpos;
-
-//! eine Tabelle mit den Rassenspezifischen Angriffswerten
-MonsterAttackTable *MonsterAttacks;
 
 //! eine Tabelle mit den allgemeinen Attributen der Item
 CommonObjectTable *CommonItems;
@@ -252,12 +248,6 @@ void loadData() {
     scriptVariables = new ScriptVariablesTable();
 
     if (!scriptVariables->isDataOk()) {
-        ok = false;
-    }
-
-    MonsterAttacks = new MonsterAttackTable();
-
-    if (!MonsterAttacks->isDataOk()) {
         ok = false;
     }
 

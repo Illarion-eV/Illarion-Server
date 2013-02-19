@@ -30,7 +30,6 @@
 #include "data/MonsterTable.hpp"
 #include "data/SpellTable.hpp"
 #include "data/TriggerTable.hpp"
-#include "data/MonsterAttackTable.hpp"
 #include "data/ScheduledScriptsTable.hpp"
 //We need this for the standard Fighting Script.
 #include "script/LuaWeaponScript.hpp"
@@ -1302,7 +1301,6 @@ bool World::reload_defs(Player *cp) {
     MonsterTable *MonsterDescriptions_temp = 0;
     SpellTable *Spells_temp = 0;
     TriggerTable *Trigger_temp = 0;
-    MonsterAttackTable *MonsterAttacks_temp = 0;
     ScheduledScriptsTable *ScheduledScripts_temp = 0;
     LongTimeEffectTable *LongTimeEffects_temp = 0;
 
@@ -1360,15 +1358,6 @@ bool World::reload_defs(Player *cp) {
     }
 
     if (ok) {
-        MonsterAttacks_temp = new MonsterAttackTable();
-
-        if (MonsterAttacks_temp == NULL || !MonsterAttacks_temp->isDataOk()) {
-            reportTableError(cp, "monsterattack");
-            ok = false;
-        }
-    }
-
-    if (ok) {
         std::cerr << "Attempting to reload Scheduler" << std::endl;
         ScheduledScripts_temp = new ScheduledScriptsTable();
         std::cerr << "Created new Scheduler" << std::endl;
@@ -1396,10 +1385,6 @@ bool World::reload_defs(Player *cp) {
             delete Trigger_temp;
         }
 
-        if (MonsterAttacks_temp != NULL) {
-            delete MonsterAttacks_temp;
-        }
-
         if (ScheduledScripts_temp != NULL) {
             delete ScheduledScripts_temp;
         }
@@ -1423,8 +1408,6 @@ bool World::reload_defs(Player *cp) {
         Spells = Spells_temp;
         delete Triggers;
         Triggers = Trigger_temp;
-        delete MonsterAttacks;
-        MonsterAttacks = MonsterAttacks_temp;
         delete scheduledScripts;
         scheduledScripts = ScheduledScripts_temp;
         delete LongTimeEffects;
