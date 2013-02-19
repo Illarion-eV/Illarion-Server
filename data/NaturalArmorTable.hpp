@@ -21,30 +21,16 @@
 #ifndef _NATURAL_ARMOR_TABLE_HPP_
 #define _NATURAL_ARMOR_TABLE_HPP_
 
-#include <string>
-#include <boost/unordered_map.hpp>
-#include "Character.hpp"
+#include "data/StructTable.hpp"
+#include "TableStructs.hpp"
 
-class NaturalArmorTable {
+class NaturalArmorTable : public StructTable<uint16_t, MonsterArmor> {
 public:
-    bool find(Character::race_type race, MonsterArmor &ret);
-
-    NaturalArmorTable();
-    ~NaturalArmorTable();
-
-    inline bool isDataOk() {
-        return m_dataOK;
-    }
-
-private:
-
-    typedef boost::unordered_map<uint16_t, MonsterArmor> TABLE;
-    TABLE m_ArmorTable;
-
-    void reload();
-    bool m_dataOK;
-
-    void clearOldTable();
+    virtual std::string getTableName();
+    virtual std::vector<std::string> getColumnNames();
+    virtual uint16_t assignId(const Database::ResultTuple &row);
+    virtual MonsterArmor assignTable(const Database::ResultTuple &row);
 };
+
 #endif
 

@@ -699,13 +699,13 @@ bool World::getWeaponStruct(TYPE_OF_ITEM_ID id, WeaponStruct &ret) {
 }
 
 bool World::getNaturalArmor(Character::race_type id, MonsterArmor &ret) {
-    MonsterArmor ma;
 
-    if (id == 0) {
-        ret = ma;
-        return false;
+    if (Data::NaturalArmors.exists(id)) {
+        ret = Data::NaturalArmors[id];
+        return true;
     } else {
-        return NaturalArmors->find(id, ret);
+        ret = MonsterArmor();
+        return false;
     }
 }
 

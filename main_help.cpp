@@ -33,7 +33,6 @@
 #include "data/SpellTable.hpp"
 #include "data/TriggerTable.hpp"
 #include "data/MonsterAttackTable.hpp"
-#include "data/NaturalArmorTable.hpp"
 #include "data/ScheduledScriptsTable.hpp"
 #include "data/ScriptVariablesTable.hpp"
 #include <boost/shared_ptr.hpp>
@@ -117,9 +116,6 @@ std::vector<position> *contpos;
 
 //! eine Tabelle mit den Rassenspezifischen Angriffswerten
 MonsterAttackTable *MonsterAttacks;
-
-//! eine Tabelle mit Rassenspezifischen R�stwerten
-NaturalArmorTable *NaturalArmors;
 
 //! eine Tabelle mit den allgemeinen Attributen der Item
 CommonObjectTable *CommonItems;
@@ -256,12 +252,6 @@ void loadData() {
     scriptVariables = new ScriptVariablesTable();
 
     if (!scriptVariables->isDataOk()) {
-        ok = false;
-    }
-
-    NaturalArmors = new NaturalArmorTable();
-
-    if (!NaturalArmors->isDataOk()) {
         ok = false;
     }
 
