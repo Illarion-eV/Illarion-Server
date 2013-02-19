@@ -2092,19 +2092,22 @@ void Player::sendQuestProgress(TYPE_OF_QUEST_ID questId, TYPE_OF_QUESTSTATUS pro
         Connection->addCommand(cmd);
         return;
     }
-    
+
     if (Data::Quests.exists(questId)) {
         const auto &script = Data::Quests.script(questId);
-        std::string title = script->title(this);
 
-        if (title.length() > 0) {
-            std::string description = script->description(this, progress);
-            TYPE_OF_QUESTSTATUS finalStatus = script->finalStatus();
-            std::vector<position> targets;
-            script->targets(this, progress, targets);
+        if (script) {
+            std::string title = script->title(this);
 
-            boost::shared_ptr<BasicServerCommand>cmd(new QuestProgressTC(questId, title, description, targets, progress == finalStatus));
-            Connection->addCommand(cmd);
+            if (title.length() > 0) {
+                std::string description = script->description(this, progress);
+                TYPE_OF_QUESTSTATUS finalStatus = script->finalStatus();
+                std::vector<position> targets;
+                script->targets(this, progress, targets);
+
+                boost::shared_ptr<BasicServerCommand>cmd(new QuestProgressTC(questId, title, description, targets, progress == finalStatus));
+                Connection->addCommand(cmd);
+            }
         }
     }
 }

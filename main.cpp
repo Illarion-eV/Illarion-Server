@@ -123,6 +123,7 @@ int main(int argc, char *argv[]) {
     if (!Data::reloadTables()) {
         throw std::runtime_error("failed to initialise tables");
     }
+
     Data::activateTables();
     loadData();
 
