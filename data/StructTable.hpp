@@ -105,10 +105,6 @@ protected:
         structBuffer.emplace(assignId(row), assignTable(row));
     }
 
-    StructType &findInBuffer(const IdType &id) {
-        return structBuffer[id];
-    }
-
 private:
     ContainerType structs;
     ContainerType structBuffer;

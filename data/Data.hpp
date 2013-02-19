@@ -46,7 +46,7 @@ extern TilesModificatorTable TilesModItems;
 std::vector<Table *> getTables();
 bool reloadTables();
 void reloadScripts();
-void activateReload();
+void activateTables();
 bool reload();
 
 }

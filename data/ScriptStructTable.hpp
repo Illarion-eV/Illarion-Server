@@ -31,12 +31,12 @@
 namespace detail {
 
 template<typename IdType, typename StructType, typename ScriptType>
-void detailAssign(std::unordered_map<IdType, std::shared_ptr<ScriptType>> &scripts, const IdType &id, const std::string &name, StructType &data, const StructType &dummy) {
+void detailAssign(std::unordered_map<IdType, std::shared_ptr<ScriptType>> &scripts, const IdType &id, const std::string &name, const StructType &data, const StructType &dummy) {
     scripts.emplace(id, std::make_shared<ScriptType>(name, data));
 }
 
 template<typename IdType, typename StructType, typename ScriptType>
-void detailAssign(std::unordered_map<IdType, std::shared_ptr<ScriptType>> &scripts, const IdType &id, const std::string &name, StructType &data, const IdType &dummy) {
+void detailAssign(std::unordered_map<IdType, std::shared_ptr<ScriptType>> &scripts, const IdType &id, const std::string &name, const StructType &data, const IdType &dummy) {
     scripts.emplace(id, std::make_shared<ScriptType>(name, id));
 }
 
@@ -55,8 +55,8 @@ public:
             const std::string &scriptName = scriptNameEntry.second;
 
             try {
-                auto &bufferStruct = this->findInBuffer(id);
-                internalAssign<ScriptParameter>(id, scriptName, bufferStruct);
+                const auto &data = (*this)[id];
+                internalAssign<ScriptParameter>(id, scriptName, data);
             } catch (ScriptException &e) {
                 Logger::writeError("scripts", "Error while loading " + getTableName() + " script: " + scriptName + ":\n" + e.what() + "\n");
             }
@@ -95,7 +95,7 @@ private:
     typedef std::unordered_map<IdType, std::shared_ptr<ScriptType>> ScriptsType;
 
     template<typename T>
-    void internalAssign(const IdType &id, const std::string &name, StructType &data);
+    void internalAssign(const IdType &id, const std::string &name, const StructType &data);
 
     typedef std::vector<std::pair<IdType, std::string>> NamesType;
     NamesType scriptNames;
@@ -104,7 +104,7 @@ private:
 
 template<typename IdType, typename StructType, typename ScriptType, typename ScriptParameter>
 template<typename T>
-void ScriptStructTable<IdType, StructType, ScriptType, ScriptParameter>::internalAssign(const IdType &id, const std::string &name, StructType &data) {
+void ScriptStructTable<IdType, StructType, ScriptType, ScriptParameter>::internalAssign(const IdType &id, const std::string &name, const StructType &data) {
     detail::detailAssign<IdType, StructType, ScriptType>(scripts, id, name, data, ScriptParameter());
 }
 

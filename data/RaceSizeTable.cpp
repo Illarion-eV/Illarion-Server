@@ -33,7 +33,7 @@ std::vector<std::string> RaceSizeTable::getColumnNames() {
 }
 
 TYPE_OF_ITEM_ID RaceSizeTable::assignId(const Database::ResultTuple &row) {
-    return uint16_t(row["id"].as<uint32_t>());
+    return uint16_t(row["id"].as<int32_t>());
 }
 
 RaceSizeStruct RaceSizeTable::assignTable(const Database::ResultTuple &row) {

@@ -120,7 +120,10 @@ int main(int argc, char *argv[]) {
     //Welt anlegen
     World *world = World::create(configOptions["datadir"] , starttime);
 
-    Data::reloadTables();
+    if (!Data::reloadTables()) {
+        throw std::runtime_error("failed to initialise tables");
+    }
+    Data::activateTables();
     loadData();
 
     if (!importmaps) {
@@ -132,7 +135,6 @@ int main(int argc, char *argv[]) {
 
     Logger::writeError("scripts", "Initialising script error log.");
     Data::reloadScripts();
-    Data::activateReload();
 
     std::cout<<"Creation the PlayerManager"<<std::endl;
     PlayerManager::get()->activate();

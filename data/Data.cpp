@@ -66,7 +66,7 @@ void reloadScripts() {
     }
 }
 
-void activateReload() {
+void activateTables() {
     for (auto &table : getTables()) {
         table->activateBuffer();
     }
@@ -74,8 +74,8 @@ void activateReload() {
 
 bool reload() {
     if (reloadTables()) {
+        activateTables();
         reloadScripts();
-        activateReload();
         return true;
     }
 
