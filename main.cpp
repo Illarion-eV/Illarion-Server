@@ -117,7 +117,6 @@ int main(int argc, char *argv[]) {
     Database::SchemaHelper::setSchemata(configOptions["postgres_schema_server"],
                                         configOptions["postgres_schema_account"]);
 
-    //Welt anlegen
     World *world = World::create(configOptions["datadir"] , starttime);
 
     if (!Data::reloadTables()) {

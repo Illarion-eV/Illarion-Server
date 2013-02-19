@@ -76,11 +76,6 @@ protected:
     virtual StructType assignTable(const Database::ResultTuple &row) = 0;
     virtual std::string assignScriptName(const Database::ResultTuple &row) = 0;
 
-    virtual void clear() {
-        Base::clear();
-        scriptNames.clear();
-    }
-
     virtual void evaluateRow(const Database::ResultTuple &row) {
         Base::evaluateRow(row);
         std::string scriptName = assignScriptName(row);
