@@ -26,7 +26,6 @@
 #include <boost/shared_ptr.hpp>
 #include "tuningConstants.hpp"
 #include "data/ContainerObjectTable.hpp"
-#include "data/CommonObjectTable.hpp"
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -443,7 +442,7 @@ void Player::sendWeather(WeatherStruct weather) {
 void Player::ageInventory() {
     for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
         if (characterItems[ i ].getId() != 0) {
-            const CommonStruct &tempCommon = CommonItems->find(characterItems[ i ].getId());
+            const auto &tempCommon = Data::CommonItems[characterItems[ i ].getId()];
 
             if (tempCommon.rotsInInventory) {
                 if (!characterItems[ i ].survivesAgeing()) {
@@ -453,7 +452,7 @@ void Player::ageInventory() {
 #endif
                         characterItems[ i ].setId(tempCommon.ObjectAfterRot);
 
-                        const CommonStruct &afterRotCommon = CommonItems->find(tempCommon.ObjectAfterRot);
+                        const auto &afterRotCommon = Data::CommonItems[tempCommon.ObjectAfterRot];
 
                         if (afterRotCommon.isValid()) {
                             characterItems[ i ].setWear(afterRotCommon.AgeingSpeed);

@@ -21,7 +21,6 @@
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "data/TilesTable.hpp"
 #include "data/TilesModificatorTable.hpp"
-#include "data/CommonObjectTable.hpp"
 #include "script/LuaItemScript.hpp"
 #include "Logger.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
@@ -62,7 +61,7 @@ void World::checkFieldAfterMove(Character *cc, Field *cfstart) {
 
                 if ((tmod.Modificator & FLAG_SPECIALITEM) != 0) {
 
-                    std::shared_ptr<LuaItemScript> script = CommonItems->findScript(it->getId());
+                    std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(it->getId());
 
                     if (script) {
                         script->CharacterOnField(cc);

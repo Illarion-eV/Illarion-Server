@@ -20,21 +20,52 @@
 
 #include "data/CommonObjectTable.hpp"
 
-#include <iostream>
-
-#include "db/SelectQuery.hpp"
-#include "db/Result.hpp"
-
-#include "script/LuaItemScript.hpp"
-
-#include "Logger.hpp"
-#include "World.hpp"
-#include "data/QuestNodeTable.hpp"
-
-CommonObjectTable::CommonObjectTable() : m_dataOK(false) {
-    reload();
+std::string CommonObjectTable::getTableName() {
+    return "common";
 }
 
+std::vector<std::string> CommonObjectTable::getColumnNames() {
+    return {
+        "com_itemid",
+        "com_weight",
+        "com_agingspeed",
+        "com_objectafterrot",
+        "com_rotsininventory",
+        "com_script",
+        "com_brightness",
+        "com_worth",
+        "com_buystack",
+        "com_maxstack"
+    };
+}
+
+TYPE_OF_ITEM_ID CommonObjectTable::assignId(const Database::ResultTuple &row) {
+    return row["com_itemid"].as<TYPE_OF_ITEM_ID>();
+}
+
+CommonStruct CommonObjectTable::assignTable(const Database::ResultTuple &row) {
+    CommonStruct common;
+    common.id = assignId(row);
+    common.Weight = TYPE_OF_WEIGHT(row["com_weight"].as<int16_t>());
+    common.AgeingSpeed = TYPE_OF_AGINGSPEED(row["com_agingspeed"].as<int16_t>());
+    common.ObjectAfterRot = row["com_objectafterrot"].as<TYPE_OF_ITEM_ID>();
+    common.rotsInInventory = row["com_rotsininventory"].as<bool>();
+    common.Brightness = TYPE_OF_BRIGHTNESS(row["com_brightness"].as<int16_t>());
+    common.Worth = row["com_worth"].as<TYPE_OF_WORTH>();
+    common.BuyStack = row["com_buystack"].as<TYPE_OF_BUY_STACK>();
+    common.MaxStack = row["com_maxstack"].as<TYPE_OF_MAX_STACK>();
+    return common;
+}
+
+std::string CommonObjectTable::assignScriptName(const Database::ResultTuple &row) {
+    return row["com_script"].as<std::string>("");
+}
+
+QuestNodeTable::TABLE_ITRS CommonObjectTable::getQuestScripts() {
+    return QuestNodeTable::getInstance()->getItemNodes();
+}
+
+/*
 TYPE_OF_ITEM_ID CommonObjectTable::calcInfiniteRot(TYPE_OF_ITEM_ID id, std::map<TYPE_OF_ITEM_ID, bool> &visited, std::map<TYPE_OF_ITEM_ID, bool> &assigned) {
     if (visited[ id ]) {
         if (assigned[ id ]) {
@@ -62,129 +93,5 @@ TYPE_OF_ITEM_ID CommonObjectTable::calcInfiniteRot(TYPE_OF_ITEM_ID id, std::map<
     assigned[ id ] = true;
     return m_table[ id ].AfterInfiniteRot;
 }
-
-void CommonObjectTable::reload() {
-
-#ifdef DataConnect_DEBUG
-    std::cout << "CommonObjectTable: reload" << std::endl;
-#endif
-
-    try {
-        Database::SelectQuery query;
-        query.addColumn("common", "com_itemid");
-        query.addColumn("common", "com_weight");
-        query.addColumn("common", "com_agingspeed");
-        query.addColumn("common", "com_objectafterrot");
-        query.addColumn("common", "com_rotsininventory");
-        query.addColumn("common", "com_script");
-        query.addColumn("common", "com_brightness");
-        query.addColumn("common", "com_worth");
-        query.addColumn("common", "com_buystack");
-        query.addColumn("common", "com_maxstack");
-        query.addServerTable("common");
-        query.addOrderBy("common", "com_itemid", Database::SelectQuery::ASC);
-
-        Database::Result results = query.execute();
-
-        std::map<TYPE_OF_ITEM_ID, bool> assigned; // map item id to whether an infinite rot has been assigned
-        std::map<TYPE_OF_ITEM_ID, bool> visited;  // map item id to whether it has been visited already in calcInfiniteRot
-
-        if (!results.empty()) {
-            clearOldTable();
-            CommonStruct temprecord;
-            auto questNodes = QuestNodeTable::getInstance()->getItemNodes();
-            auto questItr = questNodes.first;
-            auto questEnd = questNodes.second;
-
-            for (Database::ResultConstIterator itr = results.begin();
-                 itr != results.end(); ++itr) {
-
-                TYPE_OF_ITEM_ID itemID;
-                itemID = (TYPE_OF_ITEM_ID)((*itr)["com_itemid"].as<int16_t>());
-                temprecord.id = itemID;
-                temprecord.Weight = (TYPE_OF_WEIGHT)((*itr)["com_weight"].as<int16_t>());
-                temprecord.AgeingSpeed = (TYPE_OF_AGINGSPEED)((*itr)["com_agingspeed"].as<int16_t>());
-                temprecord.ObjectAfterRot = (TYPE_OF_ITEM_ID)(*itr)["com_objectafterrot"].as<TYPE_OF_ITEM_ID>();
-                temprecord.rotsInInventory = (*itr)["com_rotsininventory"].as<bool>();
-                temprecord.Brightness = (TYPE_OF_BRIGHTNESS)((*itr)["com_brightness"].as<int16_t>());
-                temprecord.Worth = (TYPE_OF_WORTH)((*itr)["com_worth"].as<TYPE_OF_WORTH>());
-                temprecord.BuyStack = (TYPE_OF_BUY_STACK)((*itr)["com_buystack"].as<TYPE_OF_BUY_STACK>());
-                temprecord.MaxStack = (TYPE_OF_MAX_STACK)((*itr)["com_maxstack"].as<TYPE_OF_MAX_STACK>());
-
-                if (!((*itr)["com_script"].is_null())) {
-                    std::string scriptname = ((*itr)["com_script"].as<std::string>());
-
-                    try {
-                        std::shared_ptr<LuaItemScript> tmpScript(new LuaItemScript(scriptname, temprecord));
-                        m_scripttable[itemID] = tmpScript;
-                    } catch (ScriptException &e) {
-                        Logger::writeError("scripts", "Error while loading item script: " + scriptname + ":\n" + e.what() + "\n");
-                    }
-                } else if (questItr != questEnd && questItr->first == itemID) {
-                    std::shared_ptr<LuaItemScript> tmpScript(new LuaItemScript(temprecord));
-                    m_scripttable[itemID] = tmpScript;
-                }
-
-                try {
-                    while (questItr != questEnd && questItr->first == itemID) {
-                        m_scripttable[itemID]->addQuestScript(questItr->second.entrypoint, questItr->second.script);
-                        ++questItr;
-                    }
-                } catch (ScriptException &e) {
-                    Logger::writeError("scripts", "Error while loading item quest script: " + questItr->second.script->getFileName() + ":\n" + e.what() + "\n");
-                }
-
-
-                m_table[itemID] = temprecord;
-
-                visited.insert(std::pair<TYPE_OF_ITEM_ID, bool>(itemID,false));
-                assigned.insert(std::pair<TYPE_OF_ITEM_ID, bool>(itemID,false));
-            }
-
-            m_dataOK = true;
-        } else {
-            m_dataOK = false;
-        }
-
-
-#ifdef DataConnect_DEBUG
-        std::cout << "loaded " << rows << " rows into CommonObjectTable" << std::endl;
-#endif
-
-    } catch (std::exception &e) {
-        std::cerr << "exception: " << e.what() << std::endl;
-        m_dataOK = false;
-    }
-
-}
-
-const CommonStruct &CommonObjectTable::find(TYPE_OF_ITEM_ID id) {
-    try {
-        return m_table.at(id);
-    } catch (std::out_of_range &) {
-        std::stringstream ss;
-        ss << "CommonObjectTable: item " << id << " was not found!\n";
-        Logger::writeError("scripts", ss.str());
-        return m_table[id];
-    }
-}
-
-std::shared_ptr<LuaItemScript> CommonObjectTable::findScript(TYPE_OF_ITEM_ID Id) {
-    SCRIPTTABLE::iterator iterator;
-    iterator = m_scripttable.find(Id);
-
-    if (iterator != m_scripttable.end()) {
-        return iterator->second;
-    } else {
-        return std::shared_ptr<LuaItemScript>();
-    }
-}
-
-void CommonObjectTable::clearOldTable() {
-    m_table.clear();
-}
-
-CommonObjectTable::~CommonObjectTable() {
-    clearOldTable();
-}
+*/
 

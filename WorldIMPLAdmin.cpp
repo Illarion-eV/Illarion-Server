@@ -26,7 +26,6 @@
 #include "script/LuaLookAtItemScript.hpp"
 #include "script/LuaPlayerDeathScript.hpp"
 #include "script/LuaDepotScript.hpp"
-#include "data/CommonObjectTable.hpp"
 #include "data/MonsterTable.hpp"
 #include "data/SpellTable.hpp"
 #include "data/TriggerTable.hpp"
@@ -1297,7 +1296,6 @@ bool World::reload_defs(Player *cp) {
 
     bool ok = true;
 
-    CommonObjectTable *CommonItems_temp = 0;
     MonsterTable *MonsterDescriptions_temp = 0;
     SpellTable *Spells_temp = 0;
     TriggerTable *Trigger_temp = 0;
@@ -1306,15 +1304,6 @@ bool World::reload_defs(Player *cp) {
 
     if (ok) {
         QuestNodeTable::getInstance()->reload();
-    }
-
-    if (ok) {
-        CommonItems_temp = new CommonObjectTable();
-
-        if (CommonItems_temp == NULL || !CommonItems_temp->dataOK()) {
-            reportTableError(cp, "common");
-            ok = false;
-        }
     }
 
     if (ok) {
@@ -1369,10 +1358,6 @@ bool World::reload_defs(Player *cp) {
     }
 
     if (!ok) {
-        if (CommonItems_temp != NULL) {
-            delete CommonItems_temp;
-        }
-
         if (MonsterDescriptions_temp != NULL) {
             delete MonsterDescriptions_temp;
         }
@@ -1400,8 +1385,6 @@ bool World::reload_defs(Player *cp) {
         // if everything went well, delete old tables and set up new tables
         //Mutex für login logout sperren so das aktuell keiner mehr einloggen kann
         PlayerManager::get()->setLoginLogout(true);
-        delete CommonItems;
-        CommonItems = CommonItems_temp;
         delete MonsterDescriptions;
         MonsterDescriptions = MonsterDescriptions_temp;
         delete Spells;

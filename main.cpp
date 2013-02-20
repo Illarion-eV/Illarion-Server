@@ -42,7 +42,6 @@
 #include "MapException.hpp"
 #include "constants.hpp"
 #include "data/Data.hpp"
-#include "data/CommonObjectTable.hpp"
 #include "data/ScriptVariablesTable.hpp"
 #include "Logger.hpp"
 #include "main_help.hpp"
@@ -227,8 +226,6 @@ int main(int argc, char *argv[]) {
     world->Save("Illarion");
     Logger::writeMessage("basic","InitialConnection beenden");
     Logger::writeMessage("basic", "Die in loadItems(..) angelegten Tabellen loeschen");
-    delete CommonItems;
-    CommonItems = NULL;
     delete world;
     world = NULL;
 

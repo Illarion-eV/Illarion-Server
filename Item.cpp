@@ -18,12 +18,10 @@
 
 
 #include "Item.hpp"
-#include "data/CommonObjectTable.hpp"
 #include "data/Data.hpp"
 #include <sstream>
 #include <boost/lexical_cast.hpp>
 
-extern CommonObjectTable *CommonItems;
 
 Item::Item(id_type id, number_type number, wear_type wear, quality_type quality, const luabind::object &datamap):
     id(id), number(number), wear(wear), quality(quality), datamap(1) {
@@ -31,7 +29,7 @@ Item::Item(id_type id, number_type number, wear_type wear, quality_type quality,
 }
 
 Item::number_type Item::increaseNumberBy(Item::number_type count) {
-    const CommonStruct &common = CommonItems->find(id);
+    const auto &common = Data::CommonItems[id];
 
     if (common.isValid()) {
         count += getNumber();
@@ -183,7 +181,7 @@ void Item::reset() {
 
 
 void Item::resetWear() {
-    const CommonStruct &common = CommonItems->find(id);
+    const auto &common = Data::CommonItems[id];
 
     if (common.isValid()) {
         if (!common.rotsInInventory && common.AgeingSpeed > wear) {
@@ -248,7 +246,7 @@ bool Item::isContainer() const {
 }
 
 TYPE_OF_WEIGHT Item::getWeight() const {
-    const CommonStruct &common = CommonItems->find(id);
+    const auto &common = Data::CommonItems[id];
 
     if (common.isValid()) {
         return common.Weight * number;
@@ -258,7 +256,7 @@ TYPE_OF_WEIGHT Item::getWeight() const {
 }
 
 TYPE_OF_WORTH Item::getWorth() const {
-    const CommonStruct &common = CommonItems->find(id);
+    const auto &common = Data::CommonItems[id];
 
     if (common.isValid()) {
         return common.Worth * number;
@@ -268,7 +266,7 @@ TYPE_OF_WORTH Item::getWorth() const {
 }
 
 Item::number_type Item::getMaxStack() const {
-    const CommonStruct &common = CommonItems->find(id);;
+    const auto &common = Data::CommonItems[id];;
 
     if (common.isValid()) {
         return common.MaxStack;

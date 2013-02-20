@@ -26,7 +26,6 @@
 #include "types.hpp"
 #include "Logger.hpp"
 #include "data/Data.hpp"
-#include "data/CommonObjectTable.hpp"
 #include "data/MonsterTable.hpp"
 #include <boost/shared_ptr.hpp>
 #include "script/LuaNPCScript.hpp"
@@ -42,7 +41,6 @@
 #include <list>
 
 extern MonsterTable *MonsterDescriptions;
-extern CommonObjectTable *CommonItem;
 extern std::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
 
 enum clientcommands {
@@ -970,7 +968,7 @@ public:
                     if (temp->ViewTopItem(it)) {
                         Logger::writeMessage("Use","Item on field", false);
 
-                        LuaScript = CommonItems->findScript(it.getId());
+                        LuaScript = Data::CommonItems.script(it.getId());
 
                         if (LuaScript) {
                             Source.Type = LUA_ITEM;
@@ -1010,7 +1008,7 @@ public:
                     if (ps->viewItemNr(pos, tempi, tempc)) {
                         Logger::writeMessage("Use", "pos found item id: " + Logger::toString(tempi.getId()),false);
 
-                        LuaScript = CommonItems->findScript(tempi.getId());
+                        LuaScript = Data::CommonItems.script(tempi.getId());
 
                         if (LuaScript) {
                             Source.Type = LUA_ITEM;
@@ -1042,7 +1040,7 @@ public:
                 if (player->characterItems[ pos ].getId() != 0) {
                     Logger::writeMessage("Use","at position " + Logger::toString(static_cast<int>(pos)) + " on body, is an item with id: " + Logger::toString(player->characterItems[ pos ].getId()),false);
 
-                    LuaScript = CommonItems->findScript(player->characterItems[ pos ].getId()) ;
+                    LuaScript = Data::CommonItems.script(player->characterItems[ pos ].getId()) ;
 
                     if (LuaScript) {
                         Source.Type = LUA_ITEM;

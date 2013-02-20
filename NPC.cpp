@@ -20,7 +20,6 @@
 #include "db/ConnectionManager.hpp"
 #include "NPC.hpp"
 #include "tuningConstants.hpp"
-#include "data/CommonObjectTable.hpp"
 #include <iostream>
 #include "World.hpp"
 

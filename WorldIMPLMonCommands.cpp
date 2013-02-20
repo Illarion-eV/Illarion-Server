@@ -26,7 +26,6 @@
 #include "data/ArmorObjectTable.hpp"
 #include "data/WeaponObjectTable.hpp"
 #include "data/ContainerObjectTable.hpp"
-#include "data/CommonObjectTable.hpp"
 #include "data/NamesObjectTable.hpp"
 #include "data/MonsterTable.hpp"
 #include "data/SpellTable.hpp"

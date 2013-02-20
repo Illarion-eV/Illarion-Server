@@ -23,10 +23,8 @@
 #include "Scheduler.hpp"
 #include "types.hpp"
 #include "TableStructs.hpp"
-#include "data/CommonObjectTable.hpp"
 #include "script/LuaLearnScript.hpp"
 
-extern CommonObjectTable *CommonItems;
 extern std::shared_ptr<LuaLearnScript>learnScript;
 
 class SGlobalPlayerLearnrate : public SchedulerObject {

@@ -63,7 +63,6 @@
 #include "luabind/object.hpp"
 #include <exception>
 
-extern CommonObjectTable *CommonItems; /**< a extern table for ItemAttributes @see CommonObjectTable* CommonItems **/
 
 //! ein struct fuer Zaubersprche
 extern SpellTable *Spells;

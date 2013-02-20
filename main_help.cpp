@@ -28,7 +28,6 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#include "data/CommonObjectTable.hpp"
 #include "data/MonsterTable.hpp"
 #include "data/SpellTable.hpp"
 #include "data/TriggerTable.hpp"
@@ -112,9 +111,6 @@ std::vector<int> *erasedcontainers;
 
 // Koordinaten von gel�schten Containern, ben�tigt zum Schlie�en offener Showcases
 std::vector<position> *contpos;
-
-//! eine Tabelle mit den allgemeinen Attributen der Item
-CommonObjectTable *CommonItems;
 
 //! eine Tabelle f�r die Zauberspr�che - Spells
 SpellTable *Spells;
@@ -248,12 +244,6 @@ void loadData() {
     scriptVariables = new ScriptVariablesTable();
 
     if (!scriptVariables->isDataOk()) {
-        ok = false;
-    }
-
-    CommonItems = new CommonObjectTable();
-
-    if (!CommonItems->dataOK()) {
         ok = false;
     }
 

@@ -41,7 +41,6 @@ class RekursionException: public std::exception {};
 
 class CommonObjectTable;
 
-extern CommonObjectTable *CommonItems;
 
 class Container {
 public:

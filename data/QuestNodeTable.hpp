@@ -43,7 +43,6 @@ class QuestNodeTable {
 private:
     typedef std::multimap<unsigned int, NodeStruct> TABLE;
     typedef TABLE::const_iterator TABLE_ITR;
-    typedef std::pair<TABLE_ITR, TABLE_ITR> TABLE_ITRS;
     typedef std::vector<TriggerNodeStruct> TRIGGERVECTOR;
     typedef TRIGGERVECTOR::const_iterator TRIGGERVECTOR_ITR;
     typedef std::pair<TRIGGERVECTOR_ITR, TRIGGERVECTOR_ITR> TRIGGERVECTOR_ITRS;
@@ -55,6 +54,8 @@ private:
     TRIGGERVECTOR triggerNodes;
 
 public:
+    typedef std::pair<TABLE_ITR, TABLE_ITR> TABLE_ITRS;
+
     static QuestNodeTable *getInstance();
     void reload();
     TABLE_ITRS getItemNodes();

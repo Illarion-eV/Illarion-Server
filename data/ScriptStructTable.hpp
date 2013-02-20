@@ -85,6 +85,9 @@ protected:
         }
     }
 
+    std::shared_ptr<ScriptType> &scriptNonConst(IdType id) {
+        return scripts[id];
+    }
 
 private:
     typedef std::unordered_map<IdType, std::shared_ptr<ScriptType>> ScriptsType;

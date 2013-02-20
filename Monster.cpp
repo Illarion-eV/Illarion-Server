@@ -20,7 +20,6 @@
 #include "Monster.hpp"
 #include "Random.hpp"
 #include "tuningConstants.hpp"
-#include "data/CommonObjectTable.hpp"
 #include <iostream>
 #include "data/MonsterTable.hpp"
 #include <boost/shared_ptr.hpp>

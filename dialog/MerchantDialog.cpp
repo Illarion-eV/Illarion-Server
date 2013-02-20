@@ -19,9 +19,7 @@
  */
 
 #include "dialog/MerchantDialog.hpp"
-#include "data/CommonObjectTable.hpp"
-
-extern CommonObjectTable *CommonItems;
+#include "data/Data.hpp"
 
 MerchantDialog::MerchantDialog(std::string title, luabind::object callback)
     :Dialog(title, "MerchantDialog", callback) {
@@ -79,7 +77,7 @@ MerchantDialog::product_list::const_iterator MerchantDialog::getOffersEnd() cons
 }
 
 void MerchantDialog::addOffer(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price) {
-    const CommonStruct &common = CommonItems->find(item);
+    const auto &common = Data::CommonItems[item];
     addProduct(offers, item, name, price, common.BuyStack);
 }
 

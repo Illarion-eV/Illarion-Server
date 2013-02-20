@@ -20,7 +20,6 @@
 #include "World.hpp"
 #include "Player.hpp"
 #include "Item.hpp"
-#include "data/CommonObjectTable.hpp"
 #include "Field.hpp"
 #include "data/NaturalArmorTable.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
@@ -28,7 +27,6 @@
 #include "Logger.hpp"
 #include "fuse_ptr.hpp"
 
-extern CommonObjectTable *CommonItems;
 class Character;
 
 bool World::deleteNPC(unsigned int npcid) {
@@ -317,12 +315,12 @@ std::string World::getItemName(TYPE_OF_ITEM_ID itemid, uint8_t language) {
 
 
 CommonStruct World::getItemStats(ScriptItem item) {
-    const CommonStruct &data = CommonItems->find(item.getId());
+    const auto &data = Data::CommonItems[item.getId()];
     return data;
 }
 
 CommonStruct World::getItemStatsFromId(TYPE_OF_ITEM_ID id) {
-    const CommonStruct &data = CommonItems->find(id);
+    const auto &data = Data::CommonItems[id];
     return data;
 }
 
@@ -478,7 +476,7 @@ ScriptItem World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, pos
     ScriptItem sItem;
 
     if (GetPToCFieldAt(field, pos.x, pos.y, pos.z)) {
-        const CommonStruct &com = CommonItems->find(id);
+        const auto &com = Data::CommonItems[id];
 
         if (com.isValid()) {
             g_item.setId(id);

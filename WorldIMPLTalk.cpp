@@ -20,7 +20,6 @@
 #include "World.hpp"
 #include "data/NamesObjectTable.hpp"
 #include "data/TilesTable.hpp"
-#include "data/CommonObjectTable.hpp"
 #include "script/LuaItemScript.hpp"
 #include "script/LuaLookAtItemScript.hpp"
 #include "TableStructs.hpp"
@@ -28,7 +27,6 @@
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "Logger.hpp"
 
-extern CommonObjectTable *CommonItems;
 extern std::shared_ptr<LuaLookAtItemScript>lookAtItemScript;
 
 bool World::sendTextInFileToPlayer(std::string filename, Player *cp) {
@@ -316,7 +314,7 @@ void World::lookAtMapItem(Player *cp, short int x, short int y, short int z) {
     if (GetPToCFieldAt(field, x, y, z)) {
         // Feld vorhanden
         if (field->ViewTopItem(titem)) {
-            std::shared_ptr<LuaItemScript> script = CommonItems->findScript(titem.getId());
+            std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(titem.getId());
             ScriptItem n_item = titem;
             n_item.type = ScriptItem::it_field;
             n_item.pos = position(x, y, z);
@@ -355,7 +353,7 @@ void World::lookAtShowcaseItem(Player *cp, uint8_t showcase, unsigned char posit
             Container *tc;
 
             if (ps->viewItemNr(position, titem, tc)) {
-                std::shared_ptr<LuaItemScript> script = CommonItems->findScript(titem.getId());
+                std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(titem.getId());
                 ScriptItem n_item = titem;
 
                 n_item.type = ScriptItem::it_container;
@@ -382,7 +380,7 @@ void World::lookAtInventoryItem(Player *cp, unsigned char position) {
 
         Item titem = cp->characterItems[ position ];
 
-        std::shared_ptr<LuaItemScript> script = CommonItems->findScript(cp->characterItems[ position ].getId());
+        std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(cp->characterItems[ position ].getId());
         ScriptItem n_item = cp->characterItems[ position ];
 
         if (position < MAX_BODY_ITEMS) {
