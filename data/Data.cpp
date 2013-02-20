@@ -19,6 +19,7 @@
  */
 
 #include "data/Data.hpp"
+#include "Logger.hpp"
 
 namespace Data {
 
@@ -54,6 +55,8 @@ std::vector<Table *> getTables() {
 
 bool reloadTables() {
     bool success = true;
+
+    Logger::writeError("scripts", "Loading data and scripts ...");
 
     for (auto &table : getTables()) {
         success = success && table->reloadBuffer();

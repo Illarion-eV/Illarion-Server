@@ -132,7 +132,6 @@ int main(int argc, char *argv[]) {
         world->load_from_editor(configOptions["datadir"] + std::string("map/import/oberwelt_0"));
     }
 
-    Logger::writeError("scripts", "Initialising script error log.");
     Data::reloadScripts();
 
     std::cout<<"Creation the PlayerManager"<<std::endl;
