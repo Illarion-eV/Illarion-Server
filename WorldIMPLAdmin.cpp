@@ -21,24 +21,15 @@
 #include <sstream>
 #include <regex.h>
 #include <list>
-#include "data/TilesModificatorTable.hpp"
-#include "data/TilesTable.hpp"
-#include "data/QuestTable.hpp"
-#include "data/SkillTable.hpp"
-#include "data/ArmorObjectTable.hpp"
-#include "data/WeaponObjectTable.hpp"
-#include "data/ContainerObjectTable.hpp"
+#include "data/Data.hpp"
 #include "script/LuaLookAtPlayerScript.hpp"
 #include "script/LuaLookAtItemScript.hpp"
 #include "script/LuaPlayerDeathScript.hpp"
 #include "script/LuaDepotScript.hpp"
 #include "data/CommonObjectTable.hpp"
-#include "data/NamesObjectTable.hpp"
 #include "data/MonsterTable.hpp"
 #include "data/SpellTable.hpp"
 #include "data/TriggerTable.hpp"
-#include "data/MonsterAttackTable.hpp"
-#include "data/NaturalArmorTable.hpp"
 #include "data/ScheduledScriptsTable.hpp"
 //We need this for the standard Fighting Script.
 #include "script/LuaWeaponScript.hpp"
@@ -53,7 +44,6 @@
 #include "script/LuaLoginScript.hpp"
 #include "script/LuaLogoutScript.hpp"
 #include "PlayerManager.hpp"
-#include "data/RaceSizeTable.hpp"
 #include "Logger.hpp"
 #include "data/ScriptVariablesTable.hpp"
 #include "data/QuestNodeTable.hpp"
@@ -61,18 +51,16 @@
 
 #include <iostream>
 
-extern QuestTable *Quests;
 extern LongTimeEffectTable *LongTimeEffects;
-extern RaceSizeTable *RaceSizes;
 extern ScriptVariablesTable *scriptVariables;
 extern std::ofstream talkfile;
-extern boost::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
-extern boost::shared_ptr<LuaLookAtItemScript>lookAtItemScript;
-extern boost::shared_ptr<LuaPlayerDeathScript>playerDeathScript;
-extern boost::shared_ptr<LuaDepotScript>depotScript;
-extern boost::shared_ptr<LuaLoginScript>loginScript;
-extern boost::shared_ptr<LuaLogoutScript>logoutScript;
-extern boost::shared_ptr<LuaLearnScript>learnScript;
+extern std::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
+extern std::shared_ptr<LuaLookAtItemScript>lookAtItemScript;
+extern std::shared_ptr<LuaPlayerDeathScript>playerDeathScript;
+extern std::shared_ptr<LuaDepotScript>depotScript;
+extern std::shared_ptr<LuaLoginScript>loginScript;
+extern std::shared_ptr<LuaLogoutScript>logoutScript;
+extern std::shared_ptr<LuaLearnScript>learnScript;
 
 
 void set_spawn_command(World *, Player *, const std::string &);
@@ -590,7 +578,7 @@ bool World::forceLogoutOfPlayer(std::string name) {
 }
 
 
-void World::sendAdminAllPlayerData(Player* &admin) {
+void World::sendAdminAllPlayerData(Player *&admin) {
     if (!admin->hasGMRight(gmr_basiccommands)) {
         return;
     }
@@ -1310,39 +1298,11 @@ bool World::reload_defs(Player *cp) {
     bool ok = true;
 
     CommonObjectTable *CommonItems_temp = 0;
-    NamesObjectTable *ItemNames_temp = 0;
-    WeaponObjectTable *WeaponItems_temp = 0;
-    ArmorObjectTable *ArmorItems_temp = 0;
-    ContainerObjectTable *ContainerItems_temp = 0;
-    TilesModificatorTable *TilesModItems_temp = 0;
     MonsterTable *MonsterDescriptions_temp = 0;
-    TilesTable *Tiles_temp = 0;
-    QuestTable *Quests_temp = 0;
     SpellTable *Spells_temp = 0;
     TriggerTable *Trigger_temp = 0;
-    MonsterAttackTable *MonsterAttacks_temp = 0;
-    NaturalArmorTable *NaturalArmors_temp = 0;
     ScheduledScriptsTable *ScheduledScripts_temp = 0;
     LongTimeEffectTable *LongTimeEffects_temp = 0;
-    RaceSizeTable *RaceSizes_temp = 0;
-
-    if (ok) {
-        Quests_temp = new QuestTable();
-
-        if (Quests_temp == NULL || !Quests_temp->isDataOK()) {
-            reportTableError(cp, "quests");
-            ok = false;
-        }
-    }
-
-    if (ok) {
-        RaceSizes_temp = new RaceSizeTable();
-
-        if (RaceSizes_temp == NULL || !RaceSizes_temp->isDataOk()) {
-            reportTableError(cp, "raceattr");
-            ok = false;
-        }
-    }
 
     if (ok) {
         QuestNodeTable::getInstance()->reload();
@@ -1358,57 +1318,7 @@ bool World::reload_defs(Player *cp) {
     }
 
     if (ok) {
-        ItemNames_temp = new NamesObjectTable();
-
-        if (ItemNames_temp == NULL || !ItemNames_temp->dataOK()) {
-            reportTableError(cp, "itemname");
-            ok = false;
-        }
-    }
-
-    if (ok) {
-        WeaponItems_temp = new WeaponObjectTable();
-
-        if (WeaponItems_temp == NULL || !WeaponItems_temp->dataOK()) {
-            reportTableError(cp, "weapon");
-            ok = false;
-        }
-    }
-
-    if (ok) {
-        ArmorItems_temp = new ArmorObjectTable();
-
-        if (ArmorItems_temp == NULL || !ArmorItems_temp->dataOK()) {
-            reportTableError(cp, "armor");
-            ok = false;
-        }
-    }
-
-    if (ok) {
-        ContainerItems_temp = new ContainerObjectTable();
-
-        if (ContainerItems_temp == NULL || !ContainerItems_temp->dataOK()) {
-            reportTableError(cp, "container");
-            ok = false;
-        }
-    }
-
-    if (ok) {
-        TilesModItems_temp = new TilesModificatorTable();
-
-        if (TilesModItems_temp == NULL || !TilesModItems_temp->dataOK()) {
-            reportTableError(cp, "tilesmodificators");
-            ok = false;
-        }
-    }
-
-    if (ok) {
-        Tiles_temp = new TilesTable();
-
-        if (Tiles_temp == NULL || !Tiles_temp->dataOK()) {
-            reportTableError(cp, "tiles");
-            ok = false;
-        }
+        ok = Data::reload();
     }
 
     if (ok) {
@@ -1448,24 +1358,6 @@ bool World::reload_defs(Player *cp) {
     }
 
     if (ok) {
-        MonsterAttacks_temp = new MonsterAttackTable();
-
-        if (MonsterAttacks_temp == NULL || !MonsterAttacks_temp->isDataOk()) {
-            reportTableError(cp, "monsterattack");
-            ok = false;
-        }
-    }
-
-    if (ok) {
-        NaturalArmors_temp = new NaturalArmorTable();
-
-        if (NaturalArmors_temp == NULL || !NaturalArmors_temp->isDataOk()) {
-            reportTableError(cp, "naturalarmor");
-            ok = false;
-        }
-    }
-
-    if (ok) {
         std::cerr << "Attempting to reload Scheduler" << std::endl;
         ScheduledScripts_temp = new ScheduledScriptsTable();
         std::cerr << "Created new Scheduler" << std::endl;
@@ -1477,36 +1369,8 @@ bool World::reload_defs(Player *cp) {
     }
 
     if (!ok) {
-        if (Quests_temp != NULL) {
-            delete Quests_temp;
-        }
-
         if (CommonItems_temp != NULL) {
             delete CommonItems_temp;
-        }
-
-        if (ItemNames_temp != NULL) {
-            delete ItemNames_temp;
-        }
-
-        if (WeaponItems_temp != NULL) {
-            delete WeaponItems_temp;
-        }
-
-        if (ArmorItems_temp != NULL) {
-            delete ArmorItems_temp;
-        }
-
-        if (ContainerItems_temp != NULL) {
-            delete ContainerItems_temp;
-        }
-
-        if (TilesModItems_temp != NULL) {
-            delete TilesModItems_temp;
-        }
-
-        if (Tiles_temp != NULL) {
-            delete Tiles_temp;
         }
 
         if (MonsterDescriptions_temp != NULL) {
@@ -1521,24 +1385,12 @@ bool World::reload_defs(Player *cp) {
             delete Trigger_temp;
         }
 
-        if (NaturalArmors_temp != NULL) {
-            delete NaturalArmors_temp;
-        }
-
-        if (MonsterAttacks_temp != NULL) {
-            delete MonsterAttacks_temp;
-        }
-
         if (ScheduledScripts_temp != NULL) {
             delete ScheduledScripts_temp;
         }
 
         if (LongTimeEffects_temp != NULL) {
             delete LongTimeEffects_temp;
-        }
-
-        if (RaceSizes_temp != NULL) {
-            delete RaceSizes_temp;
         }
 
         //if (ScriptVar_temp != NULL)
@@ -1550,34 +1402,14 @@ bool World::reload_defs(Player *cp) {
         PlayerManager::get()->setLoginLogout(true);
         delete CommonItems;
         CommonItems = CommonItems_temp;
-        delete ItemNames;
-        ItemNames = ItemNames_temp;
-        delete WeaponItems;
-        WeaponItems = WeaponItems_temp;
-        delete ArmorItems;
-        ArmorItems = ArmorItems_temp;
-        delete ContainerItems;
-        ContainerItems = ContainerItems_temp;
-        delete TilesModItems;
-        TilesModItems = TilesModItems_temp;
-        delete Tiles;
-        Tiles = Tiles_temp;
-        delete Quests;
-        Quests = Quests_temp;
         delete MonsterDescriptions;
         MonsterDescriptions = MonsterDescriptions_temp;
         delete Spells;
         Spells = Spells_temp;
         delete Triggers;
         Triggers = Trigger_temp;
-        delete NaturalArmors;
-        NaturalArmors = NaturalArmors_temp;
-        delete MonsterAttacks;
-        MonsterAttacks = MonsterAttacks_temp;
         delete scheduledScripts;
         scheduledScripts = ScheduledScripts_temp;
-        delete RaceSizes;
-        RaceSizes = RaceSizes_temp;
         delete LongTimeEffects;
         LongTimeEffects = LongTimeEffects_temp;
         // delete scriptVariables;
@@ -1587,7 +1419,7 @@ bool World::reload_defs(Player *cp) {
 
         //Reload the standard Fighting script
         try {
-            boost::shared_ptr<LuaWeaponScript> tmpScript(new LuaWeaponScript("server.standardfighting"));
+            std::shared_ptr<LuaWeaponScript> tmpScript(new LuaWeaponScript("server.standardfighting"));
             standardFightingScript = tmpScript;
         } catch (ScriptException &e) {
             reportScriptError(cp, "standardfighting", e.what());
@@ -1595,7 +1427,7 @@ bool World::reload_defs(Player *cp) {
         }
 
         try {
-            boost::shared_ptr<LuaLookAtPlayerScript>tmpScript(new LuaLookAtPlayerScript("server.playerlookat"));
+            std::shared_ptr<LuaLookAtPlayerScript>tmpScript(new LuaLookAtPlayerScript("server.playerlookat"));
             lookAtPlayerScript = tmpScript;
         } catch (ScriptException &e) {
             reportScriptError(cp, "playerlookat", e.what());
@@ -1603,7 +1435,7 @@ bool World::reload_defs(Player *cp) {
         }
 
         try {
-            boost::shared_ptr<LuaLookAtItemScript>tmpScript(new LuaLookAtItemScript("server.itemlookat"));
+            std::shared_ptr<LuaLookAtItemScript>tmpScript(new LuaLookAtItemScript("server.itemlookat"));
             lookAtItemScript = tmpScript;
         } catch (ScriptException &e) {
             reportScriptError(cp, "itemlookat", e.what());
@@ -1611,7 +1443,7 @@ bool World::reload_defs(Player *cp) {
         }
 
         try {
-            boost::shared_ptr<LuaPlayerDeathScript>tmpScript(new LuaPlayerDeathScript("server.playerdeath"));
+            std::shared_ptr<LuaPlayerDeathScript>tmpScript(new LuaPlayerDeathScript("server.playerdeath"));
             playerDeathScript = tmpScript;
         } catch (ScriptException &e) {
             reportScriptError(cp, "playerdeath", e.what());
@@ -1619,7 +1451,7 @@ bool World::reload_defs(Player *cp) {
         }
 
         try {
-            boost::shared_ptr<LuaLoginScript>tmpScript(new LuaLoginScript("server.login"));
+            std::shared_ptr<LuaLoginScript>tmpScript(new LuaLoginScript("server.login"));
             loginScript = tmpScript;
         } catch (ScriptException &e) {
             reportScriptError(cp, "login", e.what());
@@ -1627,7 +1459,7 @@ bool World::reload_defs(Player *cp) {
         }
 
         try {
-            boost::shared_ptr<LuaLogoutScript>tmpScript(new LuaLogoutScript("server.logout"));
+            std::shared_ptr<LuaLogoutScript>tmpScript(new LuaLogoutScript("server.logout"));
             logoutScript = tmpScript;
         } catch (ScriptException &e) {
             reportScriptError(cp, "logout", e.what());
@@ -1635,7 +1467,7 @@ bool World::reload_defs(Player *cp) {
         }
 
         try {
-            boost::shared_ptr<LuaLearnScript>tmpScript(new LuaLearnScript("server.learn"));
+            std::shared_ptr<LuaLearnScript>tmpScript(new LuaLearnScript("server.learn"));
             learnScript = tmpScript;
         } catch (ScriptException &e) {
             reportScriptError(cp, "learn", e.what());
@@ -1643,7 +1475,7 @@ bool World::reload_defs(Player *cp) {
         }
 
         try {
-            boost::shared_ptr<LuaDepotScript>tmpScript(new LuaDepotScript("server.depot"));
+            std::shared_ptr<LuaDepotScript>tmpScript(new LuaDepotScript("server.depot"));
             depotScript = tmpScript;
         } catch (ScriptException &e) {
             reportScriptError(cp, "depot", e.what());
@@ -1683,7 +1515,7 @@ bool World::reload_tables(Player *cp) {
         }
 
         try {
-            boost::shared_ptr<LuaReloadScript> tmpScript(new LuaReloadScript("server.reload"));
+            std::shared_ptr<LuaReloadScript> tmpScript(new LuaReloadScript("server.reload"));
             tmpScript->onReload();
         } catch (ScriptException &e) {
             reportScriptError(cp, "reload", e.what());

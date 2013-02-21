@@ -19,19 +19,17 @@
  */
 
 #include "db/QueryColumns.hpp"
+#include "db/Query.hpp"
 
 using namespace Database;
 
-QueryColumns::QueryColumns() : Query() {
+QueryColumns::QueryColumns() {
     hideTable = false;
     nextColumn = 0;
 };
 
-QueryColumns::QueryColumns(const QueryColumns &org) {
-}
-
 QueryColumns::columnIndex QueryColumns::addColumn(const std::string &column) {
-    appendToStringList(columns, escapeKey(column));
+    Query::appendToStringList(columns, Query::escapeKey(column));
     return nextColumn++;
 }
 
@@ -40,7 +38,7 @@ QueryColumns::columnIndex QueryColumns::addColumn(const std::string &table, cons
         return addColumn(column);
     }
 
-    appendToStringList(columns, escapeAndChainKeys(table, column));
+    Query::appendToStringList(columns, Query::escapeAndChainKeys(table, column));
     return nextColumn++;
 }
 

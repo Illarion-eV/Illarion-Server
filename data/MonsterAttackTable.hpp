@@ -21,37 +21,21 @@
 #ifndef _MONSTER_ATTACK_TABLE_
 #define _MONSTER_ATTACK_TABLE_
 
-#include <string>
-#include <boost/unordered_map.hpp>
-#include "data/Table.hpp"
-#include "Character.hpp"
+#include "data/StructTable.hpp"
 
 struct AttackBoni {
-    uint8_t attackType;
-    int16_t attackValue;
-    int16_t actionPointsLost;
-    AttackBoni() : attackType(0), attackValue(0), actionPointsLost(0) {}
+    uint8_t attackType = 0;
+    int16_t attackValue = 0;
+    int16_t actionPointsLost = 0;
 };
 
-class MonsterAttackTable: public Table {
+class MonsterAttackTable : public StructTable<uint16_t, AttackBoni> {
 public:
-    MonsterAttackTable();
-    ~MonsterAttackTable();
-
-    bool find(Character::race_type race, AttackBoni &ret);
-
-    inline bool isDataOk() {
-        return m_dataOk;
-    }
-
-private:
-    virtual void reload();
-    bool m_dataOk;
-
-    void clearOldTable();
-
-    typedef boost::unordered_map<uint16_t, AttackBoni> TABLE;
-    TABLE raceAttackBoni;
+    virtual std::string getTableName();
+    virtual std::vector<std::string> getColumnNames();
+    virtual uint16_t assignId(const Database::ResultTuple &row);
+    virtual AttackBoni assignTable(const Database::ResultTuple &row);
 };
+
 #endif
 

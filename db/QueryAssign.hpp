@@ -27,22 +27,23 @@
 #include "db/Query.hpp"
 
 namespace Database {
-class QueryAssign : public virtual Query {
+class QueryAssign {
 private:
+    const Connection &connection;
     std::string assignColumns;
 
 public:
     template<typename T> void addAssignColumn(const std::string &column, const T &value) {
-        appendToStringList(assignColumns, escapeAndChainKeys("", column) + " = " + quote<T>(value));
+        Query::appendToStringList(assignColumns, Query::escapeAndChainKeys("", column) + " = " + connection.quote<T>(value));
     };
 
     void addAssignColumnNull(const std::string &column);
 protected:
-    QueryAssign();
+    QueryAssign(const Connection &connection);
+    QueryAssign(const QueryAssign &org) = delete;
+    QueryAssign &operator=(const QueryAssign &org) = delete;
 
     std::string &buildQuerySegment();
-private:
-    QueryAssign(const QueryAssign &org);
 };
 }
 

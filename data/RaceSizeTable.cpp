@@ -20,86 +20,45 @@
 
 #include "data/RaceSizeTable.hpp"
 
-#include "db/SelectQuery.hpp"
-#include "db/Result.hpp"
-
-#include "types.hpp"
-
-
-RaceSizeTable::RaceSizeTable() : m_dataOk(false) {
-    reload();
+std::string RaceSizeTable::getTableName() {
+    return "raceattr";
 }
 
-RaceSizeTable::~RaceSizeTable() {
-    clearOldTable();
+std::vector<std::string> RaceSizeTable::getColumnNames() {
+    return {
+        "id",
+        "minbodyheight",
+        "maxbodyheight"
+    };
 }
 
-void RaceSizeTable::reload() {
-#ifdef DataConnect_DEBUG
-    std::cout<<"Trying to reload RaceSizeTable!"<<std::endl;
-#endif
+TYPE_OF_ITEM_ID RaceSizeTable::assignId(const Database::ResultTuple &row) {
+    return uint16_t(row["id"].as<int32_t>());
+}
 
-    try {
-        Database::SelectQuery query;
-        query.addColumn("raceattr", "id");
-        query.addColumn("raceattr", "minbodyheight");
-        query.addColumn("raceattr", "maxbodyheight");
-        query.addServerTable("raceattr");
-
-        Database::Result results = query.execute();
-
-        if (!results.empty()) {
-            uint16_t currentID;
-
-            for (Database::ResultConstIterator itr = results.begin();
-                 itr != results.end(); ++itr) {
-
-                currentID = (uint16_t)((*itr)["id"].as<int32_t>());
-                minsizes[currentID] = (uint16_t)((*itr)["minbodyheight"].as<int32_t>());
-                maxsizes[currentID] = (uint16_t)((*itr)["maxbodyheight"].as<int32_t>());
-            }
-        }
-
-
-        m_dataOk = true;
-
-#ifdef DataConnect_DEBUG
-        std::cout << "loaded " << rows << " rows into RaceSizeTable" << std::endl;
-#endif
-    } catch (...) {
-        m_dataOk = false;
-    }
+RaceSizeStruct RaceSizeTable::assignTable(const Database::ResultTuple &row) {
+    RaceSizeStruct sizes;
+    sizes.minSize = uint16_t(row["minbodyheight"].as<int32_t>(100));
+    sizes.maxSize = uint16_t(row["maxbodyheight"].as<int32_t>(100));
+    return sizes;
 }
 
 uint8_t RaceSizeTable::getRelativeSize(Character::race_type race, uint16_t size) {
     // relative size is between 50 and 120 (in percent) and a linear interploation between min and max size
-    uint16_t maxsize, minsize;
-    TABLE::iterator iter;
-    iter = minsizes.find(static_cast<uint16_t>(race));
+    const auto raceId = static_cast<uint16_t>(race);
 
-    if (iter == minsizes.end()) {
+    if (!exists(raceId)) {
         return 100;
-    } else {
-        minsize = iter->second;
     }
 
-    iter = maxsizes.find(static_cast<uint16_t>(race));
+    const auto &sizes = (*this)[raceId];
+    const auto minSize = sizes.minSize;
+    const auto maxSize = sizes.maxSize;
 
-    if (iter == maxsizes.end()) {
-        return 100;
-    } else {
-        maxsize = iter->second;
-    }
-
-    if (size >= minsize && size <= maxsize) {
-        return (uint8_t)((40*(size-minsize))/(maxsize-minsize)+80);
+    if (size >= minSize && size <= maxSize) {
+        return uint8_t((40*(size - minSize))/(maxSize - minSize) + 80);
     } else {
         return 100;
     }
-}
-
-void RaceSizeTable::clearOldTable() {
-    minsizes.clear();
-    maxsizes.clear();
 }
 

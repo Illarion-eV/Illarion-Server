@@ -32,9 +32,10 @@
 #include "db/Result.hpp"
 #include "db/QueryColumns.hpp"
 #include "db/QueryTables.hpp"
+#include "db/Query.hpp"
 
 namespace Database {
-class InsertQuery : public virtual QueryColumns, public virtual QueryTables {
+class InsertQuery : Query, public QueryColumns, public QueryTables {
 private:
     std::vector<std::vector<std::string *>*> dataStorage;
 
@@ -47,6 +48,8 @@ public:
 
     InsertQuery();
     InsertQuery(const PConnection connection);
+    InsertQuery(const InsertQuery &org) = delete;
+    InsertQuery &operator=(const InsertQuery &org) = delete;
     virtual ~InsertQuery();
 
     template <typename T> void addValue(const QueryColumns::columnIndex &column, const T &value) throw(std::invalid_argument) {
@@ -128,9 +131,11 @@ public:
             case onlyKeys:
                 addValue<Key>(column, itr->first);
                 break;
+
             case onlyValues:
                 addValue<T>(column, itr->second);
                 break;
+
             case keysAndValues:
                 addValue<Key>(column, itr->first);
                 addValue<T>(column + 1, itr->second);
@@ -140,8 +145,6 @@ public:
     };
 
     virtual Result execute();
-private:
-    InsertQuery(const InsertQuery &org);
 };
 }
 

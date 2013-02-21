@@ -90,7 +90,7 @@ public:
 
     static void shutdownLua();
     bool existsEntrypoint(const std::string &entrypoint);
-    void addQuestScript(const std::string &entrypoint, boost::shared_ptr<LuaScript> script);
+    void addQuestScript(const std::string &entrypoint, std::shared_ptr<LuaScript> script);
 
     template<typename T>
     static void executeDialogCallback(T &dialog) {
@@ -215,7 +215,7 @@ private:
     std::string _filename;
     std::vector<std::string> vecPath;
     char luafile[200];
-    typedef std::multimap<const std::string, boost::shared_ptr<LuaScript> > QuestScripts;
+    typedef std::multimap<const std::string, std::shared_ptr<LuaScript> > QuestScripts;
     QuestScripts questScripts;
 };
 

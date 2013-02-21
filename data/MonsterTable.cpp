@@ -110,13 +110,13 @@ void MonsterTable::reload() {
                     scriptname = (*itr)["script"].as<std::string>();
 
                     try {
-                        boost::shared_ptr<LuaMonsterScript> script(new LuaMonsterScript(scriptname));
+                        std::shared_ptr<LuaMonsterScript> script(new LuaMonsterScript(scriptname));
                         temprecord.script = script;
                     } catch (ScriptException &e) {
                         Logger::writeError("scripts", "Error while loading monster script: " + scriptname + ":\n" + e.what() + "\n");
                     }
                 } else if (questItr != questEnd && questItr->first == id) {
-                    boost::shared_ptr<LuaMonsterScript> tmpScript(new LuaMonsterScript());
+                    std::shared_ptr<LuaMonsterScript> tmpScript(new LuaMonsterScript());
                     temprecord.script = tmpScript;
                 }
 

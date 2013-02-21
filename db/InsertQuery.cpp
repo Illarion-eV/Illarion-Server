@@ -31,10 +31,7 @@ InsertQuery::InsertQuery() {
     setHideTable(true);
 }
 
-InsertQuery::InsertQuery(const InsertQuery &org) {
-}
-
-InsertQuery::InsertQuery(const PConnection connection) : Query(connection), QueryColumns(), QueryTables() {
+InsertQuery::InsertQuery(const PConnection connection) : Query(connection) {
     setOnlyOneTable(true);
     setHideTable(true);
 }

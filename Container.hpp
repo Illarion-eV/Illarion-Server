@@ -60,8 +60,8 @@ public:
     ~Container();
     Container &operator =(const Container &source);
 
-    bool TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &it, Container* &cc, Item::number_type count);
-    bool viewItemNr(TYPE_OF_CONTAINERSLOTS nr, ScriptItem &it, Container* &cc);
+    bool TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &it, Container *&cc, Item::number_type count);
+    bool viewItemNr(TYPE_OF_CONTAINERSLOTS nr, ScriptItem &it, Container *&cc);
     bool changeQualityAt(TYPE_OF_CONTAINERSLOTS nr, short int amount);
     bool changeQuality(Item::id_type id, short int amount);
     bool InsertContainer(Item it, Container *cc);

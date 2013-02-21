@@ -21,11 +21,9 @@
 #include "Character.hpp"
 #include "tuningConstants.hpp"
 #include "Random.hpp"
-#include "data/ContainerObjectTable.hpp"
+#include "data/Data.hpp"
 #include "data/CommonObjectTable.hpp"
-#include "data/WeaponObjectTable.hpp"
 #include "Container.hpp"
-#include "data/ArmorObjectTable.hpp"
 #include "World.hpp"
 #include "data/TilesTable.hpp"
 #include "script/LuaWeaponScript.hpp"
@@ -47,13 +45,9 @@
 
 std::ofstream talkfile;
 
-extern ContainerObjectTable *ContainerItems;
 extern CommonObjectTable *CommonItems;
-extern WeaponObjectTable *WeaponItems;
-extern SkillTable *Skills;
-extern TilesTable *Tiles;
-extern boost::shared_ptr<LuaLearnScript>learnScript;
-extern boost::shared_ptr<LuaPlayerDeathScript>playerDeathScript;
+extern std::shared_ptr<LuaLearnScript>learnScript;
+extern std::shared_ptr<LuaPlayerDeathScript>playerDeathScript;
 
 boost::unordered_map<std::string, Character::attributeIndex> Character::attributeMap = boost::assign::map_list_of
         ("strength", strength)
@@ -100,27 +94,34 @@ position Character::getFrontalPosition() {
     case north:
         --front.y;
         break;
+
     case northeast:
         --front.y;
         ++front.x;
         break;
+
     case east:
         ++front.x;
         break;
+
     case southeast:
         ++front.y;
         ++front.x;
         break;
+
     case south:
         ++front.y;
         break;
+
     case southwest:
         ++front.y;
         --front.x;
         break;
+
     case west:
         --front.x;
         break;
+
     case northwest:
         --front.y;
         --front.x;
@@ -495,7 +496,7 @@ int Character::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) 
             std::cout<<"createAtPos: itemid gefunden" << std::endl;
 #endif
 
-            if (ContainerItems->find(newid)) {
+            if (Data::ContainerItems.exists(newid)) {
 #ifdef Character_DEBUG
                 std::cout << "createAtPos: itemid ist ein Container" << std::endl;
 #endif
@@ -538,7 +539,7 @@ int Character::createItem(Item::id_type id, Item::number_type number, Item::qual
             std::cout << "createItem: itemid gefunden" << "\n";
 #endif
 
-            if (ContainerItems->find(id)) {
+            if (Data::ContainerItems.exists(id)) {
 #ifdef Character_DEBUG
                 std::cout << "createItem: itemid ist ein container" << "\n";
 #endif
@@ -836,9 +837,11 @@ bool Character::attack(Character *target) {
                 case player:
                     kill_log << "Player " << name << "(" << id << ") ";
                     break;
+
                 case monster:
                     kill_log << "Monster of race  " << race << "(" << id << ") ";
                     break;
+
                 case npc:
                     kill_log << "NPC " << name << "(" << id << ") ";
                     break;
@@ -850,9 +853,11 @@ bool Character::attack(Character *target) {
                 case player:
                     kill_log << "Player " << target->name << "(" << target->id << ") ";
                     break;
+
                 case monster:
                     kill_log << "Monster of race  " << target->race << "(" << target->id << ") ";
                     break;
+
                 case npc:
                     kill_log << "NPC " << target->name << "(" << target->id << ") ";
                     break;
@@ -870,10 +875,8 @@ bool Character::attack(Character *target) {
 }
 
 std::string Character::getSkillName(TYPE_OF_SKILL_ID s) {
-    SkillStruct skillStruct;
-
-    if (Skills->find(s, skillStruct)) {
-        return skillStruct.englishName;
+    if (Data::Skills.exists(s)) {
+        return Data::Skills[s].englishName;
     } else {
         return "unknown skill";
     }
@@ -1060,7 +1063,7 @@ Attribute::attribute_t Character::increaseAttrib(std::string name, int amount) {
 }
 
 unsigned short int Character::setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor) {
-    if (!Skills->find(skill)) {
+    if (!Data::Skills.exists(skill)) {
         return 0;
     }
 
@@ -1082,7 +1085,7 @@ unsigned short int Character::setSkill(TYPE_OF_SKILL_ID skill, short int major, 
 }
 
 unsigned short int Character::increaseSkill(TYPE_OF_SKILL_ID skill, short int amount) {
-    if (!Skills->find(skill)) {
+    if (!Data::Skills.exists(skill)) {
         return 0;
     }
 
@@ -1120,7 +1123,7 @@ unsigned short int Character::increaseSkill(TYPE_OF_SKILL_ID skill, short int am
 
 
 unsigned short int Character::increaseMinorSkill(TYPE_OF_SKILL_ID skill, short int amount) {
-    if (!Skills->find(skill)) {
+    if (!Data::Skills.exists(skill)) {
         return 0;
     }
 
@@ -1181,7 +1184,7 @@ Character::skillvalue *Character::getSkillValue(TYPE_OF_SKILL_ID s) {
 }
 
 void Character::learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opponent) {
-    if (!Skills->find(skill)) {
+    if (!Data::Skills.exists(skill)) {
         return;
     }
 
@@ -1466,6 +1469,7 @@ void Character::talk(talk_type tt, std::string message) { //only for say, whispe
         talktype = "says";
         cost = P_SAY_COST;
         break;
+
     case tt_whisper:
 #ifdef DO_UNCONSCIOUS
 
@@ -1477,6 +1481,7 @@ void Character::talk(talk_type tt, std::string message) { //only for say, whispe
         talktype = "whispers";
         cost = P_WHISPER_COST;
         break;
+
     case tt_yell:
 
         if (!IsAlive()) {
@@ -1542,6 +1547,7 @@ void Character::talkLanguage(talk_type tt, unsigned char lang, std::string messa
 #endif
         cost = P_SAY_COST;
         break;
+
     case tt_whisper:
 #ifdef DO_UNCONSCIOUS
 
@@ -1552,6 +1558,7 @@ void Character::talkLanguage(talk_type tt, unsigned char lang, std::string messa
 #endif
         cost = P_WHISPER_COST;
         break;
+
     case tt_yell:
 
         if (!IsAlive()) {
@@ -1672,31 +1679,30 @@ bool Character::moveToPossible(const Field *field) {
 
 uint16_t Character::getMovementCost(Field *sourcefield) {
     uint16_t walkcost = 0;
+
     auto tileId = sourcefield->getTileId();
+    const auto &primaryTile = Data::Tiles[tileId];
+    uint16_t tileWalkingCost = primaryTile.walkingCost;
 
-    if (!Tiles->find(tileId, tempTile)) {
-        std::cerr<<"no move cost for tile: " << tileId << std::endl;
-        return walkcost;
-    }
+    tileId = sourcefield->getSecondaryTileId();
+    const auto &secondaryTile = Data::Tiles[tileId];
+    uint16_t secondaryWalkingCost = secondaryTile.walkingCost;
 
-    if (tempTile.flags & FLAG_PASSABLE) {
-        tileId = sourcefield->getSecondaryTileId();
-    }
-
-    if (!Tiles->find(tileId, tempTile)) {
-        std::cerr<<"no move cost for tile: " << tileId << std::endl;
-        return walkcost;
+    if (secondaryWalkingCost > tileWalkingCost) {
+        tileWalkingCost = secondaryWalkingCost;
     }
 
     switch (_movement) {
     case walk:
-        walkcost += tempTile.walkingCost;
+        walkcost += tileWalkingCost;
         break;
+
     case fly: // walking cost independent of source field
         walkcost += NP_STANDARDFLYCOST;
         break;
+
     case crawl: // just double the ap necessary for walking
-        walkcost += 2 * tempTile.walkingCost;
+        walkcost += 2 * tileWalkingCost;
         break;
     }
 
@@ -1889,12 +1895,14 @@ void Character::changeQualityAt(unsigned char pos, short int amount) {
 }
 
 void Character::callAttackScript(Character *Attacker, Character *Defender) {
-    if (characterItems[ RIGHT_TOOL ].getId() != 0) {
-        WeaponStruct tmpWeapon;
+    const auto weaponId = characterItems[RIGHT_TOOL].getId();
 
-        if (WeaponItems->find(characterItems[ RIGHT_TOOL ].getId() , tmpWeapon)) {
-            if (tmpWeapon.script && tmpWeapon.script->existsEntrypoint("onAttack")) {
-                tmpWeapon.script->onAttack(Attacker, Defender);
+    if (weaponId != 0) {
+        if (Data::WeaponItems.exists(weaponId)) {
+            const auto &script = Data::WeaponItems.script(weaponId);
+
+            if (script && script->existsEntrypoint("onAttack")) {
+                script->onAttack(Attacker, Defender);
             }
         }
     }

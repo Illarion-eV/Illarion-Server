@@ -21,31 +21,15 @@
 #ifndef _CONTAINER_OBJECT_TABLE_HPP_
 #define _CONTAINER_OBJECT_TABLE_HPP_
 
-#include <string>
-#include <boost/unordered_map.hpp>
-#include "data/Table.hpp"
 #include "types.hpp"
-#include "TableStructs.hpp"
+#include "data/StructTable.hpp"
 
-class ContainerObjectTable: public Table {
+class ContainerObjectTable : public StructTable<TYPE_OF_ITEM_ID, TYPE_OF_CONTAINERSLOTS> {
 public:
-    ContainerObjectTable();
-    ~ContainerObjectTable();
-
-    inline bool dataOK() {
-        return m_dataOK;
-    }
-
-    TYPE_OF_CONTAINERSLOTS find(TYPE_OF_ITEM_ID id);
-
-private:
-    typedef boost::unordered_map<TYPE_OF_ITEM_ID, TYPE_OF_CONTAINERSLOTS> TABLE;
-    TABLE m_table;
-
-    void clearOldTable();
-
-    virtual void reload();
-    bool m_dataOK;
+    virtual std::string getTableName();
+    virtual std::vector<std::string> getColumnNames();
+    virtual TYPE_OF_ITEM_ID assignId(const Database::ResultTuple &row);
+    virtual TYPE_OF_CONTAINERSLOTS assignTable(const Database::ResultTuple &row);
 };
 
 #endif

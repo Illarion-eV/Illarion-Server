@@ -20,81 +20,26 @@
 
 #include "data/NamesObjectTable.hpp"
 
-#include <iostream>
-
-#include "db/SelectQuery.hpp"
-#include "db/Result.hpp"
-
-#include "TableStructs.hpp"
-#include "types.hpp"
-
-NamesObjectTable::NamesObjectTable() : m_dataOK(true) {
-    reload();
+std::string NamesObjectTable::getTableName() {
+    return "itemname";
 }
 
-void NamesObjectTable::reload() {
-#ifdef DataConnect_DEBUG
-    std::cout << "NamesObjectTable: reload" << std::endl;
-#endif
-
-    try {
-        Database::SelectQuery query;
-        query.addColumn("itemname", "itn_itemid");
-        query.addColumn("itemname", "itn_german");
-        query.addColumn("itemname", "itn_english");
-        query.addServerTable("itemname");
-
-        Database::Result results = query.execute();
-
-        if (!results.empty()) {
-            clearOldTable();
-            NamesStruct temprecord;
-
-            for (Database::ResultConstIterator itr = results.begin();
-                 itr != results.end(); ++itr) {
-                temprecord.German = (TYPE_OF_GERMAN)((*itr)["itn_german"].as<std::string>());
-                temprecord.English = (TYPE_OF_ENGLISH)((*itr)["itn_english"].as<std::string>());
-                m_table[(TYPE_OF_ITEM_ID)((*itr)["itn_itemid"].as<int32_t>())] = temprecord;
-            }
-
-            m_dataOK = true;
-        } else {
-            m_dataOK = false;
-        }
-
-
-#ifdef DataConnect_DEBUG
-        std::cout << "loaded " << rows << " rows into NamesObjectTable" << std::endl;
-#endif
-
-    } catch (...) {
-        m_dataOK = false;
-    }
-
+std::vector<std::string> NamesObjectTable::getColumnNames() {
+    return {
+        "itn_itemid",
+        "itn_german",
+        "itn_english"
+    };
 }
 
-bool NamesObjectTable::find(TYPE_OF_ITEM_ID Id, NamesStruct &ret) {
-    TABLE::iterator iterator;
-    iterator = m_table.find(Id);
-
-    if (iterator == m_table.end()) {
-        return false;
-    } else {
-        ret = (*iterator).second;
-        return true;
-    }
+TYPE_OF_ITEM_ID NamesObjectTable::assignId(const Database::ResultTuple &row) {
+    return row["itn_itemid"].as<TYPE_OF_ITEM_ID>();
 }
 
-
-
-void NamesObjectTable::clearOldTable() {
-    m_table.clear();
+NamesStruct NamesObjectTable::assignTable(const Database::ResultTuple &row) {
+    NamesStruct names;
+    names.German = row["itn_german"].as<TYPE_OF_GERMAN>();
+    names.English = row["itn_english"].as<TYPE_OF_ENGLISH>();
+    return names;
 }
-
-
-NamesObjectTable::~NamesObjectTable() {
-    clearOldTable();
-}
-
-
 

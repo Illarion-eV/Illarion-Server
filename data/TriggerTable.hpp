@@ -22,10 +22,9 @@
 
 #include <map>
 #include <iostream>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <list>
 #include <boost/unordered_map.hpp>
-#include "data/Table.hpp"
 #include "globals.hpp"
 #include "script/LuaTriggerScript.hpp"
 
@@ -34,12 +33,12 @@ class World;
 struct TriggerStruct {
     position pos;
     std::string scriptname;
-    boost::shared_ptr<LuaTriggerScript> script;
+    std::shared_ptr<LuaTriggerScript> script;
 };
 
 
 
-class TriggerTable: public Table {
+class TriggerTable {
 public:
     TriggerTable();
     ~TriggerTable();
@@ -51,7 +50,7 @@ public:
     bool find(position pos, TriggerStruct &data);
 
 private:
-    virtual void reload();
+    void reload();
 
     typedef boost::unordered_map<position, TriggerStruct> TriggerMap;
     TriggerMap Triggers;

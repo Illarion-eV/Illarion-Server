@@ -24,9 +24,8 @@
 #include <map>
 #include <list>
 #include <iostream>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/unordered_map.hpp>
-#include "data/Table.hpp"
 #include "script/LuaMagicScript.hpp"
 
 class World;
@@ -34,10 +33,10 @@ class World;
 struct SpellStruct {
     unsigned short magictype;
     std::string scriptname;
-    boost::shared_ptr<LuaMagicScript> script;
+    std::shared_ptr<LuaMagicScript> script;
 };
 
-class SpellTable: public Table {
+class SpellTable {
 public:
     SpellTable();
     ~SpellTable();
@@ -49,7 +48,7 @@ public:
     bool find(unsigned long int magicfFlag,unsigned short int magic_type, SpellStruct &magicSpell);
 
 private:
-    virtual void reload();
+    void reload();
 
     typedef boost::unordered_map<unsigned long int, SpellStruct> SpellMap;
     SpellMap Spells;

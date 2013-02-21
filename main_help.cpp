@@ -28,22 +28,12 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#include "data/NamesObjectTable.hpp"
-#include "data/WeaponObjectTable.hpp"
-#include "data/ArmorObjectTable.hpp"
 #include "data/CommonObjectTable.hpp"
-#include "data/TilesModificatorTable.hpp"
-#include "data/TilesTable.hpp"
-#include "data/SkillTable.hpp"
-#include "data/ContainerObjectTable.hpp"
 #include "data/MonsterTable.hpp"
 #include "data/SpellTable.hpp"
 #include "data/TriggerTable.hpp"
-#include "data/MonsterAttackTable.hpp"
-#include "data/NaturalArmorTable.hpp"
 #include "data/ScheduledScriptsTable.hpp"
 #include "data/ScriptVariablesTable.hpp"
-#include "data/QuestTable.hpp"
 #include <boost/shared_ptr.hpp>
 #include "script/LuaWeaponScript.hpp" //For standard fighting script.
 #include "script/LuaLookAtPlayerScript.hpp"
@@ -56,7 +46,6 @@
 #include "data/LongTimeEffectTable.hpp"
 #include "Connection.hpp"
 #include "netinterface/NetInterface.hpp"
-#include "data/RaceSizeTable.hpp"
 #include "Logger.hpp"
 #include "World.hpp"
 
@@ -119,31 +108,13 @@ bool Init(const std::string &initfile) {
 
 // in diesen std::vector f�gen Fields die numbers der gel�schten containeritems ein,
 //  damit die zugeh�rige Map die containerinhalte l�schen kann
-std::vector<int>* erasedcontainers;
+std::vector<int> *erasedcontainers;
 
 // Koordinaten von gel�schten Containern, ben�tigt zum Schlie�en offener Showcases
-std::vector<position>* contpos;
-
-//! eine Tabelle mit den Rassenspezifischen Angriffswerten
-MonsterAttackTable *MonsterAttacks;
-
-//! eine Tabelle mit Rassenspezifischen R�stwerten
-NaturalArmorTable *NaturalArmors;
+std::vector<position> *contpos;
 
 //! eine Tabelle mit den allgemeinen Attributen der Item
 CommonObjectTable *CommonItems;
-
-//! eine Tabelle mit den Namen der Item
-NamesObjectTable *ItemNames;
-
-//! eine Tabelle f�r Waffen - Item Daten
-WeaponObjectTable *WeaponItems;
-
-//! eine Tabelle f�r Schutzkleidungs - Item Daten
-ArmorObjectTable *ArmorItems;
-
-//! eine Tabelle f�r Beh�lter - Item Daten
-ContainerObjectTable *ContainerItems;
 
 //! eine Tabelle f�r die Zauberspr�che - Spells
 SpellTable *Spells;
@@ -154,48 +125,21 @@ ScheduledScriptsTable *ScheduledScripts;
 //! Eine Tabelle mit Triggerfeldern
 TriggerTable *Triggers;
 
-//! eine Tabelle mit Item welche die Eigenschaften des Feldes auf dem sie liegen modifizieren
-TilesModificatorTable *TilesModItems;
-
-//! eine Tabelle mit allen Arten von Bodenplatten
-TilesTable *Tiles;
-
-SkillTable *Skills;
-
-QuestTable *Quests;
-
 //! a table containing monster descriptions
 MonsterTable *MonsterDescriptions;
-
-//! ein struct f�r die Namen eines Item
-NamesStruct tempNames;
-
-//! ein struct f�r Daten einer Waffe
-WeaponStruct tempWeapon;
-
-//! ein struct f�r Daten einer Schutzkleidung
-ArmorStruct tempArmor;
-
-//! ein struct f�r Daten von Item
-TilesModificatorStruct tempModificator;
-
-//! ein struct f�r Daten von Bodenplatten
-TilesStruct tempTile;
 
 ScriptVariablesTable *scriptVariables;
 
 LongTimeEffectTable *LongTimeEffects;
 
-RaceSizeTable *RaceSizes;
-
-boost::shared_ptr<LuaDepotScript>depotScript;
-boost::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
-boost::shared_ptr<LuaLookAtItemScript>lookAtItemScript;
-boost::shared_ptr<LuaPlayerDeathScript>playerDeathScript;
-boost::shared_ptr<LuaLoginScript>loginScript;
-boost::shared_ptr<LuaLogoutScript>logoutScript;
-boost::shared_ptr<LuaLearnScript>learnScript;
-boost::shared_ptr<LuaWeaponScript> standardFightingScript;
+std::shared_ptr<LuaDepotScript>depotScript;
+std::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
+std::shared_ptr<LuaLookAtItemScript>lookAtItemScript;
+std::shared_ptr<LuaPlayerDeathScript>playerDeathScript;
+std::shared_ptr<LuaLoginScript>loginScript;
+std::shared_ptr<LuaLogoutScript>logoutScript;
+std::shared_ptr<LuaLearnScript>learnScript;
+std::shared_ptr<LuaWeaponScript> standardFightingScript;
 
 ScheduledScriptsTable *scheduledScripts;  //< table witch holds the scheduled scripts
 
@@ -301,81 +245,15 @@ void checkArguments(int argc, char *argv[]) {
 void loadData() {
     bool ok = true;
 
-    Skills = new SkillTable();
-
-    if (!Skills->dataOK()) {
-        ok = false;
-    }
-
-    Quests = new QuestTable();
-
-    if (!Quests->isDataOK()) {
-        ok = false;
-    }
-
     scriptVariables = new ScriptVariablesTable();
 
     if (!scriptVariables->isDataOk()) {
         ok = false;
     }
 
-    RaceSizes = new RaceSizeTable();
-
-    if (!RaceSizes->isDataOk()) {
-        ok = false;
-    }
-
-    NaturalArmors = new NaturalArmorTable();
-
-    if (!NaturalArmors->isDataOk()) {
-        ok = false;
-    }
-
-    MonsterAttacks = new MonsterAttackTable();
-
-    if (!MonsterAttacks->isDataOk()) {
-        ok = false;
-    }
-
     CommonItems = new CommonObjectTable();
 
     if (!CommonItems->dataOK()) {
-        ok = false;
-    }
-
-    ItemNames = new NamesObjectTable();
-
-    if (!ItemNames->dataOK()) {
-        ok = false;
-    }
-
-    WeaponItems = new WeaponObjectTable();
-
-    if (!WeaponItems->dataOK()) {
-        ok = false;
-    }
-
-    ArmorItems = new ArmorObjectTable();
-
-    if (!ArmorItems->dataOK()) {
-        ok = false;
-    }
-
-    ContainerItems = new ContainerObjectTable();
-
-    if (!ContainerItems->dataOK()) {
-        ok = false;
-    }
-
-    TilesModItems = new TilesModificatorTable();
-
-    if (!TilesModItems->dataOK()) {
-        ok = false;
-    }
-
-    Tiles = new TilesTable();
-
-    if (!Tiles->dataOK()) {
         ok = false;
     }
 
@@ -415,56 +293,56 @@ void loadData() {
     contpos= new std::vector<position>;
 
     try {
-        boost::shared_ptr<LuaWeaponScript> tmpScript(new LuaWeaponScript("server.standardfighting"));
+        std::shared_ptr<LuaWeaponScript> tmpScript(new LuaWeaponScript("server.standardfighting"));
         standardFightingScript = tmpScript;
     } catch (ScriptException &e) {
         Logger::writeError("scripts", "Error while loading script: server.standardfighting:\n" + std::string(e.what()) + "\n");
     }
 
     try {
-        boost::shared_ptr<LuaLookAtPlayerScript>tmpScript(new LuaLookAtPlayerScript("server.playerlookat"));
+        std::shared_ptr<LuaLookAtPlayerScript>tmpScript(new LuaLookAtPlayerScript("server.playerlookat"));
         lookAtPlayerScript = tmpScript;
     } catch (ScriptException &e) {
         Logger::writeError("scripts", "Error while loading script: server.playerlookat:\n" + std::string(e.what()) + "\n");
     }
 
     try {
-        boost::shared_ptr<LuaLookAtItemScript>tmpScript(new LuaLookAtItemScript("server.itemlookat"));
+        std::shared_ptr<LuaLookAtItemScript>tmpScript(new LuaLookAtItemScript("server.itemlookat"));
         lookAtItemScript = tmpScript;
     } catch (ScriptException &e) {
         Logger::writeError("scripts", "Error while loading script: server.itemlookat:\n" + std::string(e.what()) + "\n");
     }
 
     try {
-        boost::shared_ptr<LuaPlayerDeathScript>tmpScript(new LuaPlayerDeathScript("server.playerdeath"));
+        std::shared_ptr<LuaPlayerDeathScript>tmpScript(new LuaPlayerDeathScript("server.playerdeath"));
         playerDeathScript = tmpScript;
     } catch (ScriptException &e) {
         Logger::writeError("scripts", "Error while loading script: server.playerdeath:\n" + std::string(e.what()) + "\n");
     }
 
     try {
-        boost::shared_ptr<LuaDepotScript>tmpScript(new LuaDepotScript("server.depot"));
+        std::shared_ptr<LuaDepotScript>tmpScript(new LuaDepotScript("server.depot"));
         depotScript = tmpScript;
     } catch (ScriptException &e) {
         Logger::writeError("scripts", "Error while loading script: server.depot:\n" + std::string(e.what()) + "\n");
     }
 
     try {
-        boost::shared_ptr<LuaLoginScript>tmpScript(new LuaLoginScript("server.login"));
+        std::shared_ptr<LuaLoginScript>tmpScript(new LuaLoginScript("server.login"));
         loginScript = tmpScript;
     } catch (ScriptException &e) {
         Logger::writeError("scripts", "Error while loading script: server.login:\n" + std::string(e.what()) + "\n");
     }
 
     try {
-        boost::shared_ptr<LuaLogoutScript>tmpScript(new LuaLogoutScript("server.logout"));
+        std::shared_ptr<LuaLogoutScript>tmpScript(new LuaLogoutScript("server.logout"));
         logoutScript = tmpScript;
     } catch (ScriptException &e) {
         Logger::writeError("scripts", "Error while loading script: server.logout:\n" + std::string(e.what()) + "\n");
     }
 
     try {
-        boost::shared_ptr<LuaLearnScript>tmpScript(new LuaLearnScript("server.learn"));
+        std::shared_ptr<LuaLearnScript>tmpScript(new LuaLearnScript("server.learn"));
         learnScript = tmpScript;
     } catch (ScriptException &e) {
         Logger::writeError("scripts", "Error while loading script: server.learn:\n" + std::string(e.what()) + "\n");

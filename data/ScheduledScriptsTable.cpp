@@ -125,7 +125,7 @@ void ScheduledScriptsTable::reload() {
                     tmpRecord.scriptName = ((*itr)["sc_scriptname"].as<std::string>());
 
                     try {
-                        boost::shared_ptr<LuaScheduledScript> tmpScript(new LuaScheduledScript(tmpRecord.scriptName));
+                        std::shared_ptr<LuaScheduledScript> tmpScript(new LuaScheduledScript(tmpRecord.scriptName));
                         tmpRecord.scriptptr = tmpScript;
                         addData(tmpRecord);
                     } catch (ScriptException &e) {

@@ -24,20 +24,19 @@
 #include <string>
 #include <vector>
 #include "script/LuaScript.hpp"
-#include "data/Table.hpp"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 
 struct NodeStruct {
     std::string entrypoint;
-    boost::shared_ptr<LuaScript> script;
+    std::shared_ptr<LuaScript> script;
 };
 
 struct TriggerNodeStruct {
     position pos;
     std::string entrypoint;
-    boost::shared_ptr<LuaScript> script;
+    std::shared_ptr<LuaScript> script;
 };
 
 class QuestNodeTable {

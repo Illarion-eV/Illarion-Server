@@ -23,7 +23,7 @@
 #include "db/ConnectionManager.hpp"
 #include "Player.hpp"
 #include <sstream>
-#include <memory>
+#include <boost/shared_ptr.hpp>
 #include "tuningConstants.hpp"
 #include "data/ContainerObjectTable.hpp"
 #include "data/CommonObjectTable.hpp"
@@ -52,8 +52,6 @@
 #include "db/SelectQuery.hpp"
 #include "db/UpdateQuery.hpp"
 #include "db/Result.hpp"
-
-#include "data/QuestTable.hpp"
 
 #include "dialog/InputDialog.hpp"
 #include "dialog/MessageDialog.hpp"
@@ -1622,10 +1620,12 @@ void Player::receiveText(talk_type tt, std::string message, Character *cc) {
     case tt_say:
         Connection->addCommand(cmd);
         break;
+
     case tt_whisper:
         cmd.reset(new WhisperTC(cc->pos.x, cc->pos.y, cc->pos.z, message));
         Connection->addCommand(cmd);
         break;
+
     case tt_yell:
         cmd.reset(new ShoutTC(cc->pos.x, cc->pos.y, cc->pos.z, message));
         Connection->addCommand(cmd);
@@ -1673,15 +1673,19 @@ void Player::teachMagic(unsigned char type,unsigned char flag) {
             case 0:
                 magic.type = MAGE;
                 break;
+
             case 1:
                 magic.type = PRIEST;
                 break;
+
             case 2:
                 magic.type = BARD;
                 break;
+
             case 3:
                 magic.type = DRUID;
                 break;
+
             default:
                 magic.type = MAGE;
                 break;
@@ -1716,6 +1720,7 @@ void Player::informLua(std::string message, informType type) {
     case informScriptHighPriority:
         inform(message, type);
         break;
+
     default:
         informLua(message);
         break;
@@ -2025,8 +2030,6 @@ bool Player::hasGMRight(gm_rights right) {
     return ((right & admin) == static_cast<uint32_t>(right));
 }
 
-extern QuestTable *Quests;
-
 void Player::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS progress) {
     if (questWriteLock) {
         LuaScript::writeDebugMsg("Setting quest progress is not allowed in quest entrypoint!");
@@ -2084,19 +2087,27 @@ void Player::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS prog
 }
 
 void Player::sendQuestProgress(TYPE_OF_QUEST_ID questId, TYPE_OF_QUESTSTATUS progress) {
-    auto script = Quests->getQuestScript(questId);
+    if (progress == 0) {
+        boost::shared_ptr<BasicServerCommand>cmd(new AbortQuestTC(questId));
+        Connection->addCommand(cmd);
+        return;
+    }
 
-    if (script) {
-        std::string title = script->title(this);
+    if (Data::Quests.exists(questId)) {
+        const auto &script = Data::Quests.script(questId);
 
-        if (title.length() > 0) {
-            std::string description = script->description(this, progress);
-            TYPE_OF_QUESTSTATUS finalStatus = script->finalStatus();
-            std::vector<position> targets;
-            script->targets(this, progress, targets);
+        if (script) {
+            std::string title = script->title(this);
 
-            boost::shared_ptr<BasicServerCommand>cmd(new QuestProgressTC(questId, title, description, targets, progress == finalStatus));
-            Connection->addCommand(cmd);
+            if (title.length() > 0) {
+                std::string description = script->description(this, progress);
+                TYPE_OF_QUESTSTATUS finalStatus = script->finalStatus();
+                std::vector<position> targets;
+                script->targets(this, progress, targets);
+
+                boost::shared_ptr<BasicServerCommand>cmd(new QuestProgressTC(questId, title, description, targets, progress == finalStatus));
+                Connection->addCommand(cmd);
+            }
         }
     }
 }
@@ -2197,10 +2208,9 @@ void Player::changeTarget() {
 }
 
 std::string Player::getSkillName(TYPE_OF_SKILL_ID s) {
-    SkillStruct skillStruct;
-
-    if (Skills->find(s, skillStruct)) {
-        return nls(skillStruct.germanName, skillStruct.englishName);
+    if (Data::Skills.exists(s)) {
+        const auto &skill = Data::Skills[s];
+        return nls(skill.germanName, skill.englishName);
     } else {
         std::string german("unbekannter Skill");
         std::string english("unknown skill");
@@ -2304,6 +2314,7 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
             }
 
             break;
+
         case left:
             x = pos.x;
             y = pos.y - MAP_DIMENSION;
@@ -2315,6 +2326,7 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
             }
 
             break;
+
         case right:
             x = pos.x + MAP_DIMENSION;
             y = pos.y;
@@ -2326,6 +2338,7 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
             }
 
             break;
+
         case lower:
             x = pos.x - MAP_DIMENSION - MAP_DOWN_EXTRA;
             y = pos.y + MAP_DOWN_EXTRA;
@@ -2372,6 +2385,7 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
             }
 
             break;
+
         case left:
             x = pos.x - screenwidth + screenheight;
             y = pos.y - screenwidth - screenheight;
@@ -2383,6 +2397,7 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
             }
 
             break;
+
         case right:
             x = pos.x + screenwidth + screenheight;
             y = pos.y + screenwidth - screenheight;
@@ -2394,6 +2409,7 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
             }
 
             break;
+
         case lower:
             x = pos.x - screenwidth - screenheight - MAP_DOWN_EXTRA;
             y = pos.y - screenwidth + screenheight + MAP_DOWN_EXTRA;
@@ -2428,48 +2444,56 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
 
 void Player::sendStepStripes(direction dir) {
     switch (dir) {
-    case(dir_north):
+    case (dir_north):
         //bewegung nach norden (Mapstripe links und oben)
         sendDirStripe(upper, false);
         sendDirStripe(left, false);
         break;
-    case(dir_northeast):
+
+    case (dir_northeast):
         //bewegung nach nordosten (Mapstripe oben)
         sendDirStripe(upper, true);
         sendDirStripe(upper, false);
         break;
-    case(dir_east) :
+
+    case (dir_east) :
         //bewegung nach osten (Mapstripe oben und rechts)
         sendDirStripe(upper, false);
         sendDirStripe(right, false);
         break;
-    case(dir_southeast):
+
+    case (dir_southeast):
         //bewegung suedosten (Mapstripe  rechts)
         sendDirStripe(right, true);
         sendDirStripe(right, false);
         break;
-    case(dir_south):
+
+    case (dir_south):
         //bewegung sueden (Mapstripe rechts und unten)
         sendDirStripe(right, false);
         sendDirStripe(lower, false);
         break;
-    case(dir_southwest):
+
+    case (dir_southwest):
         //bewegung suedwesten ( Mapstripe unten )
         sendDirStripe(lower, true);
         sendDirStripe(lower, false);
         break;
-    case(dir_west):
+
+    case (dir_west):
         //bewegung westen ( Mapstripe unten und links)
         sendDirStripe(lower, false);
         sendDirStripe(left, false);
         break;
-    case(dir_northwest):
+
+    case (dir_northwest):
         //bewegung nordwesten ( Mapstripe links )
         sendDirStripe(left, true);
         sendDirStripe(left, false);
         break;
-    case(dir_up):
-    case(dir_down):
+
+    case (dir_up):
+    case (dir_down):
         break;
     }
 }
@@ -2518,12 +2542,14 @@ void Player::sendBook(uint16_t bookID) {
     Connection->addCommand(cmd);
 }
 
-std::string &Player::nls(std::string &german, std::string &english) {
+const std::string &Player::nls(const std::string &german, const std::string &english) {
     switch (getPlayerLanguage()) {
     case Language::german:
         return german;
+
     case Language::english:
         return english;
+
     default:
         return english;
     }
@@ -2811,7 +2837,7 @@ void Player::startCrafting(uint8_t stillToCraft, uint16_t craftingTime, uint16_t
     source.Type = LUA_DIALOG;
     source.dialog = dialogId;
     SouTar target;
-    ltAction->setLastAction(boost::shared_ptr<LuaScript>(), source, target, LongTimeAction::ACTION_CRAFT);
+    ltAction->setLastAction(std::shared_ptr<LuaScript>(), source, target, LongTimeAction::ACTION_CRAFT);
     startAction(craftingTime, 0, 0, sfx, sfxDuration);
 
     boost::shared_ptr<BasicServerCommand> cmd(new CraftingDialogCraftTC(stillToCraft, craftingTime, dialogId));

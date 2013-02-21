@@ -24,7 +24,6 @@
 #include <string>
 #include <list>
 
-#include "data/Table.hpp"
 #include "globals.hpp"
 #include "World.hpp"
 #include "NPC.hpp"
@@ -43,7 +42,7 @@ struct NPCStruct {
 };
 
 
-class NPCTable: public Table {
+class NPCTable {
 public:
     NPCTable();
     ~NPCTable();
@@ -53,7 +52,7 @@ public:
     };
 
 private:
-    virtual void reload();
+    void reload();
     bool m_dataOK;
 
     World *_world;

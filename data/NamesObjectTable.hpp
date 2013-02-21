@@ -21,31 +21,16 @@
 #ifndef _NAMES_OBJECT_TABLE_HPP_
 #define _NAMES_OBJECT_TABLE_HPP_
 
-#include <string>
-#include <boost/unordered_map.hpp>
-#include "data/Table.hpp"
+#include "types.hpp"
 #include "TableStructs.hpp"
+#include "data/StructTable.hpp"
 
-class NamesObjectTable: public Table {
+class NamesObjectTable : public StructTable<TYPE_OF_ITEM_ID, NamesStruct> {
 public:
-    bool find(TYPE_OF_ITEM_ID Id, NamesStruct &ret);
-
-    NamesObjectTable();
-    ~NamesObjectTable();
-
-    inline bool dataOK() {
-        return m_dataOK;
-    }
-
-private:
-
-    typedef boost::unordered_map<TYPE_OF_ITEM_ID, NamesStruct> TABLE;
-    TABLE m_table;
-
-    void clearOldTable();
-
-    virtual void reload();
-    bool m_dataOK;
+    virtual std::string getTableName();
+    virtual std::vector<std::string> getColumnNames();
+    virtual TYPE_OF_ITEM_ID assignId(const Database::ResultTuple &row);
+    virtual NamesStruct assignTable(const Database::ResultTuple &row);
 };
 
 #endif

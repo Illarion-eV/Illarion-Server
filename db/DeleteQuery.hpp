@@ -27,14 +27,14 @@
 #include "db/QueryWhere.hpp"
 
 namespace Database {
-class DeleteQuery : public virtual QueryTables, public virtual QueryWhere {
+class DeleteQuery : Query, public QueryTables, public QueryWhere {
 public:
     DeleteQuery();
     DeleteQuery(const PConnection connection);
+    DeleteQuery(const DeleteQuery &org) = delete;
+    DeleteQuery &operator=(const DeleteQuery &org) = delete;
 
     virtual Result execute();
-private:
-    DeleteQuery(const DeleteQuery &org);
 };
 
 }

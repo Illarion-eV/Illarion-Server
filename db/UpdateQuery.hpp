@@ -33,14 +33,14 @@
 #include "db/QueryWhere.hpp"
 
 namespace Database {
-class UpdateQuery : public virtual QueryAssign, public virtual QueryTables, public virtual QueryWhere {
+class UpdateQuery : Query, public QueryAssign, public QueryTables, public QueryWhere {
 public:
     UpdateQuery();
     UpdateQuery(const PConnection connection);
+    UpdateQuery(const UpdateQuery &org) = delete;
+    UpdateQuery &operator=(const UpdateQuery &org) = delete;
 
     virtual Result execute();
-private:
-    UpdateQuery(const UpdateQuery &org);
 };
 }
 

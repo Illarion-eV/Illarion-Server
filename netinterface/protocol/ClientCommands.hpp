@@ -25,10 +25,9 @@
 #include <string>
 #include "types.hpp"
 #include "Logger.hpp"
-#include "data/WeaponObjectTable.hpp"
+#include "data/Data.hpp"
 #include "data/CommonObjectTable.hpp"
 #include "data/MonsterTable.hpp"
-#include "data/TilesTable.hpp"
 #include <boost/shared_ptr.hpp>
 #include "script/LuaNPCScript.hpp"
 #include "script/LuaScript.hpp"
@@ -42,11 +41,9 @@
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
 #include <list>
 
-extern WeaponObjectTable *WeaponItems;
 extern MonsterTable *MonsterDescriptions;
 extern CommonObjectTable *CommonItem;
-extern TilesTable *Tiles;
-extern boost::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
+extern std::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
 
 enum clientcommands {
     C_LOGIN_TS = 0x0D, /*<login*/
@@ -169,11 +166,13 @@ public:
         switch (result) {
         case 0:
             break;
+
         case 1:
             saleLocation = getUnsignedCharFromBuffer();
             saleSlot = getShortIntFromBuffer();
             saleAmount = getShortIntFromBuffer();
             break;
+
         case 2:
             purchaseIndex = getUnsignedCharFromBuffer();
             purchaseAmount = getShortIntFromBuffer();
@@ -188,9 +187,11 @@ public:
         case 0:
             player->executeMerchantDialogAbort(dialogId);
             break;
+
         case 1:
             player->executeMerchantDialogSell(dialogId, saleLocation, saleSlot, saleAmount);
             break;
+
         case 2:
             player->executeMerchantDialogBuy(dialogId, purchaseIndex, purchaseAmount);
             break;
@@ -253,13 +254,16 @@ public:
         switch (result) {
         case 0:
             break;
+
         case 1:
             craftIndex = getUnsignedCharFromBuffer();
             craftAmount = getUnsignedCharFromBuffer();
             break;
+
         case 2:
             craftIndex = getUnsignedCharFromBuffer();
             break;
+
         case 3:
             craftIndex = getUnsignedCharFromBuffer();
             craftIngredient = getUnsignedCharFromBuffer();
@@ -274,12 +278,15 @@ public:
         case 0:
             player->executeCraftingDialogAbort(dialogId);
             break;
+
         case 1:
             player->executeCraftingDialogCraft(dialogId, craftIndex, craftAmount);
             break;
+
         case 2:
             player->executeCraftingDialogLookAtCraftable(dialogId, craftIndex);
             break;
+
         case 3:
             player->executeCraftingDialogLookAtIngredient(dialogId, craftIndex, craftIngredient);
             break;
@@ -449,9 +456,11 @@ public:
             showcase = getUnsignedCharFromBuffer();
             pos = getUnsignedCharFromBuffer();
             break;
+
         case UID_INV:
             pos = getUnsignedCharFromBuffer();
             break;
+
         case UID_MAGICWAND:
             break;
         }
@@ -466,7 +475,7 @@ public:
         bool paramOK = true;
         //CScript* skript = NULL;
 
-        boost::shared_ptr<LuaMagicScript> LuaMageScript;
+        std::shared_ptr<LuaMagicScript> LuaMageScript;
 
         // berprfen, ob der Spieler die Runen beherrscht
         if ((spellId & player->magic.flags[ player->magic.type ]) == spellId) {
@@ -611,6 +620,7 @@ public:
             } // LuaMageScript == NULL ?
 
             break;
+
         case UID_MAGICWAND:
 
             //UID_MAGICWAND wird immer gesandt wenn kein Ziel gewaehlt wird.
@@ -623,8 +633,10 @@ public:
                 bool zauberstab=false;
 
                 if ((player->characterItems[ LEFT_TOOL ].getId() != 0) && (player->characterItems[ LEFT_TOOL ].getId() != BLOCKEDITEM)) {
-                    if (WeaponItems->find(player->characterItems[ LEFT_TOOL ].getId(), tempWeapon)) {
-                        if (tempWeapon.WeaponType == 13) {
+                    const auto weaponId = player->characterItems[LEFT_TOOL].getId();
+
+                    if (Data::WeaponItems.exists(weaponId)) {
+                        if (Data::WeaponItems[weaponId].WeaponType == 13) {
                             zauberstab = true;
                             std::cout << "Zauberstab in der Hand -> OK" << std::endl;
                         }
@@ -632,8 +644,10 @@ public:
                 }
 
                 if ((player->characterItems[ RIGHT_TOOL ].getId() != 0) && (player->characterItems[ RIGHT_TOOL ].getId() != BLOCKEDITEM)) {
-                    if (WeaponItems->find(player->characterItems[ RIGHT_TOOL ].getId(), tempWeapon)) {
-                        if (tempWeapon.WeaponType == 13) {
+                    const auto weaponId = player->characterItems[RIGHT_TOOL].getId();
+
+                    if (Data::WeaponItems.exists(weaponId)) {
+                        if (Data::WeaponItems[weaponId].WeaponType == 13) {
                             zauberstab = true;
                             std::cout << "Zauberstab in der Hand -> OK" << std::endl;
                         }
@@ -787,10 +801,12 @@ public:
                     LuaMageScript->CastMagic(player, static_cast<unsigned char>(LTS_NOLTACTION));
                     //msg = "Casted spell: " + Logger::toString(spellId);
                     break;
+
                 case LUA_FIELD:
                     LuaMageScript->CastMagicOnField(player, Target.pos, static_cast<unsigned char>(LTS_NOLTACTION));
                     //msg = "Casted spell: " + Logger::toString(spellId) + " on field at pos(" + Logger::toString(Target.pos.x) + "," + Logger::toString(Target.pos.y) + "," + Logger::toString(Target.pos.z) + ")";
                     break;
+
                 case LUA_CHARACTER:
                     LuaMageScript->CastMagicOnCharacter(player, Target.character, static_cast<unsigned char>(LTS_NOLTACTION));
 
@@ -810,10 +826,12 @@ public:
 
                     //msg = "Casted spell: " + Logger::toString(spellId) + " on character: " + Target.character->name + "(" + Logger::toString(Target.character->id) + ")";
                     break;
+
                 case LUA_ITEM:
                     LuaMageScript->CastMagicOnItem(player, Target.item, static_cast<unsigned char>(LTS_NOLTACTION));
                     //msg = "Casted spell: " + Logger::toString(spellId) + " on item: " + Logger::toString(Target.item.getId());
                     break;
+
                 default:
                     LuaMageScript->CastMagic(player, static_cast<unsigned char>(LTS_NOLTACTION));
                     //msg = "Casted spell: " + Logger::toString(spellId) + " on item: " + Logger::toString(Target.item.getId());
@@ -882,13 +900,12 @@ public:
 
         bool paramOK = true;
 
-        boost::shared_ptr<LuaItemScript> LuaScript;
-        boost::shared_ptr<LuaNPCScript> LuaNPCScript;
-        boost::shared_ptr<LuaMonsterScript> LuaMonsterScript;
-        boost::shared_ptr<LuaTileScript> LuaTileScript;
+        std::shared_ptr<LuaItemScript> LuaScript;
+        std::shared_ptr<LuaNPCScript> LuaNPCScript;
+        std::shared_ptr<LuaMonsterScript> LuaMonsterScript;
+        std::shared_ptr<LuaTileScript> LuaTileScript;
         SouTar Source, Target;
         CommonStruct com;
-        TilesStruct Tile;
 
         switch (useId) {
         case UID_KOORD:
@@ -966,11 +983,10 @@ public:
                     } else {
                         Logger::writeMessage("Use","empty field!",false);
 
-                        if (Tiles->find(temp->getTileId(),Tile)) {
-                            LuaTileScript = Tile.script;
-                        }
+                        auto &script = Data::Tiles.script(temp->getTileId());
 
-                        if (LuaTileScript) {
+                        if (script) {
+                            LuaTileScript = script;
                             Source.Type = LUA_FIELD;
                             Source.pos = position(xc, yc, zc);
                         }
@@ -1051,6 +1067,7 @@ public:
             }
 
             break;
+
         default:
             paramOK = false;
             break;

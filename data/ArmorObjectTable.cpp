@@ -20,88 +20,36 @@
 
 #include "data/ArmorObjectTable.hpp"
 
-#include <iostream>
-
-#include "db/SelectQuery.hpp"
-#include "db/Result.hpp"
-
-#include "types.hpp"
-
-ArmorObjectTable::ArmorObjectTable() : m_dataOK(false) {
-    reload();
+std::string ArmorObjectTable::getTableName() {
+    return "armor";
 }
 
-void ArmorObjectTable::reload() {
-#ifdef DataConnect_DEBUG
-    std::cout << "ArmorObjectTable: reload" << std::endl;
-#endif
-
-    try {
-        Database::SelectQuery query;
-        query.addColumn("armor", "arm_itemid");
-        query.addColumn("armor", "arm_bodyparts");
-        query.addColumn("armor", "arm_puncture");
-        query.addColumn("armor", "arm_stroke");
-        query.addColumn("armor", "arm_thrust");
-        query.addColumn("armor", "arm_magicdisturbance");
-        query.addColumn("armor", "arm_absorb");
-        query.addColumn("armor", "arm_stiffness");
-        query.addServerTable("armor");
-
-        Database::Result results = query.execute();
-
-        if (!results.empty()) {
-            clearOldTable();
-            ArmorStruct temprecord;
-
-            for (Database::ResultConstIterator itr = results.begin();
-                 itr != results.end(); ++itr) {
-
-                temprecord.BodyParts = (TYPE_OF_BODYPARTS)((*itr)["arm_bodyparts"].as<int16_t>());
-                temprecord.PunctureArmor = (TYPE_OF_PUNCTUREARMOR)((*itr)["arm_puncture"].as<int16_t>());
-                temprecord.StrokeArmor = (TYPE_OF_STROKEARMOR)((*itr)["arm_stroke"].as<int16_t>());
-                temprecord.ThrustArmor = (TYPE_OF_THRUSTARMOR)((*itr)["arm_thrust"].as<int16_t>());
-                temprecord.MagicDisturbance = (TYPE_OF_MAGICDISTURBANCE)(*itr)["arm_magicdisturbance"].as<int32_t>();
-                temprecord.Absorb = (*itr)["arm_absorb"].as<int16_t>();
-                temprecord.Stiffness = (*itr)["arm_stiffness"].as<int16_t>();
-
-                m_table[(TYPE_OF_ITEM_ID)((*itr)["arm_itemid"].as<TYPE_OF_ITEM_ID>())] = temprecord;
-            }
-
-            m_dataOK = true;
-        } else {
-            m_dataOK = false;
-        }
-
-#ifdef DataConnect_DEBUG
-        std::cout << "loaded " << rows;
-        std::cout << " rows into ArmorObjectTable" << std::endl;
-#endif
-
-    } catch (...) {
-        m_dataOK = false;
-    }
+std::vector<std::string> ArmorObjectTable::getColumnNames() {
+    return {
+        "arm_itemid",
+        "arm_bodyparts",
+        "arm_puncture",
+        "arm_stroke",
+        "arm_thrust",
+        "arm_magicdisturbance",
+        "arm_absorb",
+        "arm_stiffness"
+    };
 }
 
-bool ArmorObjectTable::find(TYPE_OF_ITEM_ID Id, ArmorStruct &ret) {
-    TABLE::iterator iterator;
-    iterator = m_table.find(Id);
-
-    if (iterator == m_table.end()) {
-        return false;
-    } else {
-        ret = (*iterator).second;
-        return true;
-    }
+TYPE_OF_ITEM_ID ArmorObjectTable::assignId(const Database::ResultTuple &row) {
+    return row["arm_itemid"].as<TYPE_OF_ITEM_ID>();
 }
 
-
-
-void ArmorObjectTable::clearOldTable() {
-    m_table.clear();
+ArmorStruct ArmorObjectTable::assignTable(const Database::ResultTuple &row) {
+    ArmorStruct armor;
+    armor.BodyParts = TYPE_OF_BODYPARTS(row["arm_bodyparts"].as<int16_t>());
+    armor.PunctureArmor = TYPE_OF_PUNCTUREARMOR(row["arm_puncture"].as<int16_t>());
+    armor.StrokeArmor = TYPE_OF_STROKEARMOR(row["arm_stroke"].as<int16_t>());
+    armor.ThrustArmor = TYPE_OF_THRUSTARMOR(row["arm_thrust"].as<int16_t>());
+    armor.MagicDisturbance = TYPE_OF_MAGICDISTURBANCE(row["arm_magicdisturbance"].as<int32_t>());
+    armor.Absorb = row["arm_absorb"].as<int16_t>();
+    armor.Stiffness = row["arm_stiffness"].as<int16_t>();
+    return armor;
 }
 
-
-ArmorObjectTable::~ArmorObjectTable() {
-    clearOldTable();
-}

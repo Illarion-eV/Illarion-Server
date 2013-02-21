@@ -30,8 +30,9 @@
 #include "db/Query.hpp"
 
 namespace Database {
-class QueryWhere : public virtual Query {
+class QueryWhere {
 private:
+    const Connection &connection;
     std::stack<std::string *> conditionsStack;
     std::string conditions;
 
@@ -41,7 +42,7 @@ public:
     };
 
     template<typename T> void addEqualCondition(const std::string &table, const std::string &column, const T &value) {
-        conditionsStack.push(new std::string(escapeAndChainKeys(table, column) + " = " + quote<T>(value)));
+        conditionsStack.push(new std::string(Query::escapeAndChainKeys(table, column) + " = " + connection.quote<T>(value)));
     };
 
     template<typename T> void addNotEqualCondition(const std::string &column, const T &value) {
@@ -49,20 +50,20 @@ public:
     };
 
     template<typename T> void addNotEqualCondition(const std::string &table, const std::string &column, const T &value) {
-        conditionsStack.push(new std::string(escapeAndChainKeys(table, column) + " != " + quote<T>(value)));
+        conditionsStack.push(new std::string(Query::escapeAndChainKeys(table, column) + " != " + connection.quote<T>(value)));
     };
 
     void andConditions();
     void orConditions();
 protected:
-    QueryWhere();
-
+    QueryWhere(const Connection &connection);
+    QueryWhere(const QueryWhere &org) = delete;
+    QueryWhere &operator=(const QueryWhere &org) = delete;
     virtual ~QueryWhere();
 
     std::string buildQuerySegment();
 private:
     void mergeConditions(const std::string &operation);
-    QueryWhere(const QueryWhere &org);
 };
 }
 

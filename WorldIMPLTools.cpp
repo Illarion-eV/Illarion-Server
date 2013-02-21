@@ -86,6 +86,7 @@ bool World::findPlayersInSight(position pos, uint8_t range, std::vector<Player *
             }
 
             break;
+
         case Character::northeast:
 
             if ((*pIterator)->pos.x - pos.x >= (*pIterator)->pos.y - pos.y) {
@@ -93,6 +94,7 @@ bool World::findPlayersInSight(position pos, uint8_t range, std::vector<Player *
             }
 
             break;
+
         case Character::east:
 
             if ((*pIterator)->pos.x >= pos.x) {
@@ -100,6 +102,7 @@ bool World::findPlayersInSight(position pos, uint8_t range, std::vector<Player *
             }
 
             break;
+
         case Character::southeast:
 
             if ((*pIterator)->pos.y - pos.y >= pos.x - (*pIterator)->pos.x) {
@@ -107,6 +110,7 @@ bool World::findPlayersInSight(position pos, uint8_t range, std::vector<Player *
             }
 
             break;
+
         case Character::south:
 
             if ((*pIterator)->pos.y >= pos.y) {
@@ -114,6 +118,7 @@ bool World::findPlayersInSight(position pos, uint8_t range, std::vector<Player *
             }
 
             break;
+
         case Character::southwest:
 
             if ((*pIterator)->pos.x - pos.x <= (*pIterator)->pos.y - pos.y) {
@@ -121,6 +126,7 @@ bool World::findPlayersInSight(position pos, uint8_t range, std::vector<Player *
             }
 
             break;
+
         case Character::west:
 
             if ((*pIterator)->pos.x <= pos.x) {
@@ -128,6 +134,7 @@ bool World::findPlayersInSight(position pos, uint8_t range, std::vector<Player *
             }
 
             break;
+
         case Character::northwest:
 
             if ((*pIterator)->pos.y - pos.y >= pos.x - (*pIterator)->pos.x) {
@@ -135,6 +142,7 @@ bool World::findPlayersInSight(position pos, uint8_t range, std::vector<Player *
             }
 
             break;
+
         default:
             indir = true;
             break;
@@ -359,7 +367,7 @@ Character *World::findCharacter(TYPE_OF_CHARACTER_ID id) {
 }
 
 
-bool World::findPlayerWithLowestHP(std::vector < Player * > * ppvec, Player* &found) {
+bool World::findPlayerWithLowestHP(std::vector < Player * > *ppvec, Player *&found) {
     found = NULL;
     std::vector < Player * > ::iterator pIterator;
 
@@ -580,7 +588,7 @@ Field *World::GetField(position pos) {
 }
 
 
-bool World::GetPToCFieldAt(Field* &fip, short int x, short int y, short int z) {
+bool World::GetPToCFieldAt(Field *&fip, short int x, short int y, short int z) {
 
     WorldMap::map_t temp;
 
@@ -593,7 +601,7 @@ bool World::GetPToCFieldAt(Field* &fip, short int x, short int y, short int z) {
 }
 
 
-bool World::GetPToCFieldAt(Field* &fip, position pos) {
+bool World::GetPToCFieldAt(Field *&fip, position pos) {
 
     WorldMap::map_t temp;
 
@@ -606,7 +614,7 @@ bool World::GetPToCFieldAt(Field* &fip, position pos) {
 }
 
 
-bool World::GetPToCFieldAt(Field* &fip, short int x, short int y, short int z, WorldMap::map_t &map) {
+bool World::GetPToCFieldAt(Field *&fip, short int x, short int y, short int z, WorldMap::map_t &map) {
 
     if (maps.findMapForPos(x, y, z, map)) {
         return map->GetPToCFieldAt(fip, x, y);
@@ -617,7 +625,7 @@ bool World::GetPToCFieldAt(Field* &fip, short int x, short int y, short int z, W
 }
 
 
-bool World::GetPToCFieldAt(Field* &fip, position pos, WorldMap::map_t &map) {
+bool World::GetPToCFieldAt(Field *&fip, position pos, WorldMap::map_t &map) {
 
     if (maps.findMapForPos(pos, map)) {
         return map->GetPToCFieldAt(fip, pos.x, pos.y);
@@ -628,7 +636,7 @@ bool World::GetPToCFieldAt(Field* &fip, position pos, WorldMap::map_t &map) {
 }
 
 
-bool World::findEmptyCFieldNear(Field* &cf, short int &x, short int &y, short int z) {
+bool World::findEmptyCFieldNear(Field *&cf, short int &x, short int &y, short int z) {
 
     WorldMap::map_t temp;
 
@@ -645,20 +653,20 @@ int World::getItemAttrib(std::string s, TYPE_OF_ITEM_ID ItemID) {
 
     // Armor //
     if (s == "bodyparts") {
-        if (ArmorItems->find(ItemID, tempArmor)) {
-            return tempArmor.BodyParts;
+        if (Data::ArmorItems.exists(ItemID)) {
+            return Data::ArmorItems[ItemID].BodyParts;
         }
     } else if (s == "strokearmor") {
-        if (ArmorItems->find(ItemID, tempArmor)) {
-            return tempArmor.StrokeArmor;
+        if (Data::ArmorItems.exists(ItemID)) {
+            return Data::ArmorItems[ItemID].StrokeArmor;
         }
     } else if (s == "thrustarmor") {
-        if (ArmorItems->find(ItemID, tempArmor)) {
-            return tempArmor.ThrustArmor;
+        if (Data::ArmorItems.exists(ItemID)) {
+            return Data::ArmorItems[ItemID].ThrustArmor;
         }
     } else if (s == "armormagicdisturbance") {
-        if (ArmorItems->find(ItemID, tempArmor)) {
-            return tempArmor.MagicDisturbance;
+        if (Data::ArmorItems.exists(ItemID)) {
+            return Data::ArmorItems[ItemID].MagicDisturbance;
         }
     }
 
@@ -685,35 +693,35 @@ int World::getItemAttrib(std::string s, TYPE_OF_ITEM_ID ItemID) {
 
     // Tiles Modificator //
     else if (s == "modificator") {
-        if (TilesModItems->find(ItemID, tempModificator)) {
-            return tempModificator.Modificator;
+        if (Data::TilesModItems.exists(ItemID)) {
+            return Data::TilesModItems[ItemID].Modificator;
         }
     }
 
     // Weapon //
     else if (s == "accuracy") {
-        if (WeaponItems->find(ItemID, tempWeapon)) {
-            return tempWeapon.Accuracy;
+        if (Data::WeaponItems.exists(ItemID)) {
+            return Data::WeaponItems[ItemID].Accuracy;
         }
     } else if (s == "attack") {
-        if (WeaponItems->find(ItemID, tempWeapon)) {
-            return tempWeapon.Attack;
+        if (Data::WeaponItems.exists(ItemID)) {
+            return Data::WeaponItems[ItemID].Attack;
         }
     } else if (s == "defence") {
-        if (WeaponItems->find(ItemID, tempWeapon)) {
-            return tempWeapon.Defence;
+        if (Data::WeaponItems.exists(ItemID)) {
+            return Data::WeaponItems[ItemID].Defence;
         }
     } else if (s == "range") {
-        if (WeaponItems->find(ItemID, tempWeapon)) {
-            return tempWeapon.Range;
+        if (Data::WeaponItems.exists(ItemID)) {
+            return Data::WeaponItems[ItemID].Range;
         }
     } else if (s == "weapontype") {
-        if (WeaponItems->find(ItemID, tempWeapon)) {
-            return tempWeapon.WeaponType;
+        if (Data::WeaponItems.exists(ItemID)) {
+            return Data::WeaponItems[ItemID].WeaponType;
         }
     } else if (s == "weaponmagicdisturbance") {
-        if (WeaponItems->find(ItemID, tempWeapon)) {
-            return tempWeapon.MagicDisturbance;
+        if (Data::WeaponItems.exists(ItemID)) {
+            return Data::WeaponItems[ItemID].MagicDisturbance;
         }
     }
 
@@ -1047,7 +1055,7 @@ int World::getTime(std::string timeType) {
 }
 
 
-bool World::findWarpFieldsInRange(position pos, short int range, std::vector< boost::shared_ptr< position > > & warppositions) {
+bool World::findWarpFieldsInRange(position pos, short int range, std::vector< boost::shared_ptr< position > > &warppositions) {
     int x,y;
     Field *cf = 0;
 

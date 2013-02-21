@@ -21,34 +21,17 @@
 #ifndef _TILES_MODIFICATOR_TABLE_HPP_
 #define _TILES_MODIFICATOR_TABLE_HPP_
 
-#include <string>
-#include <boost/unordered_map.hpp>
-#include "data/Table.hpp"
-#include "constants.hpp"
+#include "data/StructTable.hpp"
+#include "types.hpp"
 #include "TableStructs.hpp"
 
-class TilesModificatorTable: public Table {
+class TilesModificatorTable : public StructTable<TYPE_OF_ITEM_ID, TilesModificatorStruct> {
 public:
-    bool find(TYPE_OF_ITEM_ID Id, TilesModificatorStruct &ret);
-
-    TilesModificatorTable();
-    ~TilesModificatorTable();
-
-    inline bool dataOK() {
-        return m_dataOK;
-    }
-
-    bool nonPassable(TYPE_OF_ITEM_ID Id);
-
-private:
-    virtual void reload();
-
-    typedef boost::unordered_map<TYPE_OF_ITEM_ID, TilesModificatorStruct> TABLE;
-    TABLE m_table;
-
-    void clearOldTable();
-
-    bool m_dataOK;
+    virtual std::string getTableName();
+    virtual std::vector<std::string> getColumnNames();
+    virtual TYPE_OF_ITEM_ID assignId(const Database::ResultTuple &row);
+    virtual TilesModificatorStruct assignTable(const Database::ResultTuple &row);
+    bool nonPassable(TYPE_OF_ITEM_ID id);
 };
 
 #endif

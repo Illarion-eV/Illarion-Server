@@ -13,8 +13,6 @@
 #include "World.hpp"
 #include "data/TilesTable.hpp"
 
-extern TilesTable *Tiles;
-
 namespace pathfinding {
 
 using namespace boost;
@@ -152,16 +150,10 @@ struct weight_calc {
         }
 
         auto tileId = field->getTileId();
-
-        if (!Tiles->find(tileId, tempTile)) {
-            return 1;
-        }
-
-        return tempTile.walkingCost;
+        return Data::Tiles[tileId].walkingCost;
     }
 private:
     int level;
-    mutable TilesStruct tempTile;
 };
 
 struct vertex_hash : std::unary_function<Position, std::size_t> {

@@ -20,73 +20,28 @@
 
 #include "data/MonsterAttackTable.hpp"
 
-#include <iostream>
-
-#include "db/SelectQuery.hpp"
-#include "db/Result.hpp"
-
-#include "types.hpp"
-
-MonsterAttackTable::MonsterAttackTable() : m_dataOk(false) {
-    reload();
+std::string MonsterAttackTable::getTableName() {
+    return "monsterattack";
 }
 
-MonsterAttackTable::~MonsterAttackTable() {
-    clearOldTable();
+std::vector<std::string> MonsterAttackTable::getColumnNames() {
+    return {
+        "mat_race_type",
+        "mat_attack_type",
+        "mat_attack_value",
+        "mat_actionpointslost"
+    };
 }
 
-void MonsterAttackTable::reload() {
-#ifdef DataConnect_DEBUG
-    std::cout<<"Trying to reload MonsterAttackTable!"<<std::endl;
-#endif
-
-    try {
-        Database::SelectQuery query;
-        query.addColumn("monsterattack", "mat_race_type");
-        query.addColumn("monsterattack", "mat_attack_type");
-        query.addColumn("monsterattack", "mat_attack_value");
-        query.addColumn("monsterattack", "mat_actionpointslost");
-        query.addServerTable("monsterattack");
-
-        Database::Result results = query.execute();
-
-        if (!results.empty()) {
-            clearOldTable();
-            AttackBoni data;
-
-            for (Database::ResultConstIterator itr = results.begin();
-                 itr != results.end(); ++itr) {
-                data.attackType = (uint8_t)((*itr)["mat_attack_type"].as<int16_t>());
-                data.attackValue = (int16_t)((*itr)["mat_attack_value"].as<int16_t>());
-                data.actionPointsLost = (int16_t)((*itr)["mat_actionpointslost"].as<int16_t>());
-                raceAttackBoni[(int16_t)((*itr)["mat_race_type"].as<int16_t>())] = data;
-            }
-        }
-
-        m_dataOk = true;
-
-#ifdef DataConnect_DEBUG
-        std::cout << "loaded " << rows << " rows into MonsterAttackTable" << std::endl;
-#endif
-    } catch (...) {
-        m_dataOk = false;
-    }
+uint16_t MonsterAttackTable::assignId(const Database::ResultTuple &row) {
+    return uint16_t(row["mat_race_type"].as<int16_t>());
 }
 
-bool MonsterAttackTable::find(Character::race_type race, AttackBoni &ret) {
-    TABLE::iterator iterat;
-    iterat = raceAttackBoni.find((int16_t)race);
-
-    if (iterat == raceAttackBoni.end()) {
-        return false;
-    } else {
-        ret = (*iterat).second;
-        return true;
-    }
-
-    return false;
+AttackBoni MonsterAttackTable::assignTable(const Database::ResultTuple &row) {
+    AttackBoni attack;
+    attack.attackType = uint8_t(row["mat_attack_type"].as<int16_t>());
+    attack.attackValue = row["mat_attack_value"].as<int16_t>();
+    attack.actionPointsLost = row["mat_actionpointslost"].as<int16_t>();
+    return attack;
 }
 
-void MonsterAttackTable::clearOldTable() {
-    raceAttackBoni.clear();
-}

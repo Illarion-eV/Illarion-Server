@@ -19,77 +19,30 @@
  */
 
 #include "data/NaturalArmorTable.hpp"
-
-#include "db/SelectQuery.hpp"
-#include "db/Result.hpp"
-
 #include "types.hpp"
 
-NaturalArmorTable::NaturalArmorTable() : m_dataOK(false) {
-    reload();
+std::string NaturalArmorTable::getTableName() {
+    return "naturalarmor";
 }
 
-NaturalArmorTable::~NaturalArmorTable() {
-    clearOldTable();
+std::vector<std::string> NaturalArmorTable::getColumnNames() {
+    return {
+        "nar_race",
+        "nar_strokearmor",
+        "nar_puncturearmor",
+        "nar_thrustarmor"
+    };
 }
 
-void NaturalArmorTable::reload() {
-#ifdef DataConnect_DEBUG
-    std::cout<<"Trying to reload NaturalArmorTable!"<<std::endl;
-#endif
-
-    try {
-        Database::SelectQuery query;
-        query.addColumn("naturalarmor", "nar_race");
-        query.addColumn("naturalarmor", "nar_strokearmor");
-        query.addColumn("naturalarmor", "nar_puncturearmor");
-        query.addColumn("naturalarmor", "nar_thrustarmor");
-        query.addServerTable("naturalarmor");
-
-        Database::Result results = query.execute();
-
-        if (!results.empty()) {
-            clearOldTable();
-            MonsterArmor armor;
-
-            for (Database::ResultConstIterator itr = results.begin();
-                 itr != results.end(); ++itr) {
-                armor.strokeArmor = (TYPE_OF_STROKEARMOR)((*itr)["nar_strokearmor"].as<int16_t>());
-                armor.punctureArmor = (TYPE_OF_PUNCTUREARMOR)((*itr)["nar_puncturearmor"].as<int16_t>());
-                armor.thrustArmor = (TYPE_OF_THRUSTARMOR)((*itr)["nar_thrustarmor"].as<int16_t>());
-                m_ArmorTable[(uint16_t)((*itr)["nar_race"].as<int32_t>())] = armor;
-            }
-
-            m_dataOK = true;
-        } else {
-            m_dataOK = false;
-        }
-
-#ifdef DataConnect_DEBUG
-        std::cout << "loaded " << rows << " rows into NaturalArmorTable" << std::endl;
-#endif
-    } catch (...) {
-        m_dataOK = false;
-    }
-
+uint16_t NaturalArmorTable::assignId(const Database::ResultTuple &row) {
+    return uint16_t(row["nar_race"].as<int32_t>());
 }
 
-bool NaturalArmorTable::find(Character::race_type race, MonsterArmor &ret) {
-    TABLE::iterator iterat;
-    iterat = m_ArmorTable.find(static_cast<uint16_t>(race));
-
-    if (iterat == m_ArmorTable.end()) {
-        return false;
-    } else {
-        ret = (*iterat).second;
-        return true;
-    }
-
-    return false;
+MonsterArmor NaturalArmorTable::assignTable(const Database::ResultTuple &row) {
+    MonsterArmor armor;
+    armor.strokeArmor = TYPE_OF_STROKEARMOR(row["nar_strokearmor"].as<int16_t>());
+    armor.punctureArmor = TYPE_OF_PUNCTUREARMOR(row["nar_puncturearmor"].as<int16_t>());
+    armor.thrustArmor = TYPE_OF_THRUSTARMOR(row["nar_thrustarmor"].as<int16_t>());
+    return armor;
 }
-
-void NaturalArmorTable::clearOldTable() {
-    m_ArmorTable.clear();
-}
-
 

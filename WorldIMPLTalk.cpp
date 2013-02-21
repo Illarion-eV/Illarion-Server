@@ -29,7 +29,7 @@
 #include "Logger.hpp"
 
 extern CommonObjectTable *CommonItems;
-extern boost::shared_ptr<LuaLookAtItemScript>lookAtItemScript;
+extern std::shared_ptr<LuaLookAtItemScript>lookAtItemScript;
 
 bool World::sendTextInFileToPlayer(std::string filename, Player *cp) {
     if (filename.length() == 0) {
@@ -100,26 +100,37 @@ std::string World::languageNumberToSkillName(int languageNumber) {
     switch (languageNumber) {
     case 0:
         return "common language";
+
     case 1:
         return "human language";
+
     case 2:
         return "dwarf language";
+
     case 3:
         return "elf language";
+
     case 4:
         return "lizard language";
+
     case 5:
         return "orc language";
+
     case 6:
         return "halfling language";
+
     case 7:
         return "fairy language";
+
     case 8:
         return "gnome language";
+
     case 9:
         return "goblin language";
+
     case 10:
         return "ancient language";
+
     default:
         return "";
 
@@ -142,9 +153,11 @@ void World::sendLanguageMessageToAllCharsInRange(std::string message, Character:
     case Character::tt_say:
         range = 14;
         break;
+
     case Character::tt_whisper:
         range = 2;
         break;
+
     case Character::tt_yell:
         range = 30;
         break;
@@ -211,9 +224,11 @@ void World::sendMessageToAllCharsInRange(std::string message, Character::talk_ty
     case Character::tt_say:
         range = 14;
         break;
+
     case Character::tt_whisper:
         range = 2;
         break;
+
     case Character::tt_yell:
         range = 30;
         break;
@@ -301,7 +316,7 @@ void World::lookAtMapItem(Player *cp, short int x, short int y, short int z) {
     if (GetPToCFieldAt(field, x, y, z)) {
         // Feld vorhanden
         if (field->ViewTopItem(titem)) {
-            boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(titem.getId());
+            std::shared_ptr<LuaItemScript> script = CommonItems->findScript(titem.getId());
             ScriptItem n_item = titem;
             n_item.type = ScriptItem::it_field;
             n_item.pos = position(x, y, z);
@@ -323,16 +338,9 @@ void World::lookAtMapItem(Player *cp, short int x, short int y, short int z) {
 
 
 void World::lookAtTile(Player *cp, unsigned short int tile, short int x, short int y, short int z) {
-    if (Tiles->find(tile, tempTile)) {
-        boost::shared_ptr<BasicServerCommand>cmd(new LookAtTileTC(x, y, z, cp->nls(tempTile.German, tempTile.English)));
-        cp->Connection->addCommand(cmd);
-    } else {
-        std::cerr << "Tile no. " << tile << " not found\n";
-        std::string german = "unbekannt";
-        std::string english = "unknown";
-        boost::shared_ptr<BasicServerCommand>cmd(new LookAtTileTC(x, y, z, cp->nls(german, english)));
-        cp->Connection->addCommand(cmd);
-    }
+    const TilesStruct &tileStruct = Data::Tiles[tile];
+    boost::shared_ptr<BasicServerCommand>cmd(new LookAtTileTC(x, y, z, cp->nls(tileStruct.German, tileStruct.English)));
+    cp->Connection->addCommand(cmd);
 }
 
 
@@ -347,7 +355,7 @@ void World::lookAtShowcaseItem(Player *cp, uint8_t showcase, unsigned char posit
             Container *tc;
 
             if (ps->viewItemNr(position, titem, tc)) {
-                boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(titem.getId());
+                std::shared_ptr<LuaItemScript> script = CommonItems->findScript(titem.getId());
                 ScriptItem n_item = titem;
 
                 n_item.type = ScriptItem::it_container;
@@ -374,7 +382,7 @@ void World::lookAtInventoryItem(Player *cp, unsigned char position) {
 
         Item titem = cp->characterItems[ position ];
 
-        boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(cp->characterItems[ position ].getId());
+        std::shared_ptr<LuaItemScript> script = CommonItems->findScript(cp->characterItems[ position ].getId());
         ScriptItem n_item = cp->characterItems[ position ];
 
         if (position < MAX_BODY_ITEMS) {

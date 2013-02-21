@@ -18,9 +18,6 @@
 
 
 #include "World.hpp"
-#include "data/ContainerObjectTable.hpp"
-#include "data/WeaponObjectTable.hpp"
-#include "data/ArmorObjectTable.hpp"
 #include "data/CommonObjectTable.hpp"
 #include "data/TilesModificatorTable.hpp"
 #include "script/LuaItemScript.hpp"
@@ -30,7 +27,7 @@
 #include "netinterface/NetInterface.hpp"
 #include <map>
 
-extern boost::shared_ptr<LuaDepotScript>depotScript;
+extern std::shared_ptr<LuaDepotScript>depotScript;
 
 //
 //   Constraints:
@@ -71,8 +68,10 @@ bool World::putItemOnInvPos(Character *cc, unsigned char pos) {
         if (pos < MAX_BODY_ITEMS) {
             if (cc->characterItems[ pos ].getId() == 0 || cc->characterItems[pos].getId() == g_item.getId()) {
                 if ((pos == RIGHT_TOOL) || (pos == LEFT_TOOL)) {
-                    if (WeaponItems->find(g_item.getId(), tempWeapon)) {
-                        if ((tempWeapon.WeaponType==4) || (tempWeapon.WeaponType==5) || (tempWeapon.WeaponType==6) || (tempWeapon.WeaponType==13)) {
+                    if (Data::WeaponItems.exists(g_item.getId())) {
+                        const auto &weapon = Data::WeaponItems[g_item.getId()];
+
+                        if ((weapon.WeaponType==4) || (weapon.WeaponType==5) || (weapon.WeaponType==6) || (weapon.WeaponType==13)) {
                             if ((pos == RIGHT_TOOL) && (cc->characterItems[ LEFT_TOOL ].getId() == 0)) {
                                 if (cc->characterItems[pos].getId() == 0 && g_item.getNumber() == 1) {
                                     cc->characterItems[ pos ] = g_item;
@@ -141,43 +140,53 @@ bool World::putItemOnInvPos(Character *cc, unsigned char pos) {
                     }
                 } else {
                     if (g_item.getNumber() == 1 && cc->characterItems[pos].getId() == 0) {
-                        if (ArmorItems->find(g_item.getId(), tempArmor)) {
+                        if (Data::ArmorItems.exists(g_item.getId())) {
+                            const auto &armor = Data::ArmorItems[g_item.getId()];
                             unsigned char flag;
 
                             switch (pos) {
                             case HEAD :
                                 flag = FLAG_HEAD;
                                 break;
+
                             case NECK :
                                 flag = FLAG_NECK;
                                 break;
+
                             case BREAST :
                                 flag = FLAG_BREAST;
                                 break;
+
                             case HANDS :
                                 flag = FLAG_HANDS;
                                 break;
+
                             case FINGER_LEFT_HAND :
                                 flag = FLAG_FINGER;
                                 break;
+
                             case FINGER_RIGHT_HAND :
                                 flag = FLAG_FINGER;
                                 break;
+
                             case LEGS :
                                 flag = FLAG_LEGS;
                                 break;
+
                             case FEET :
                                 flag = FLAG_FEET;
                                 break;
+
                             case OAT :
                                 flag = FLAG_COAT;
                                 break;
+
                             default :
                                 flag = 0xFF;
                                 break;
                             }
 
-                            if ((tempArmor.BodyParts & flag) != 0) {
+                            if ((armor.BodyParts & flag) != 0) {
                                 cc->characterItems[ pos ] = g_item;
                                 g_item.reset();
                                 cc->updateAppearanceForAll(true);
@@ -264,7 +273,9 @@ bool World::takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_ty
     } else if (pos < MAX_BODY_ITEMS + MAX_BELT_SLOTS) {
         if ((cc->characterItems[ pos ].getId() != 0) && (cc->characterItems[ pos ].getId() != BLOCKEDITEM)) {
             if ((pos == RIGHT_TOOL) || (pos == LEFT_TOOL)) {
-                if (WeaponItems->find(cc->characterItems[ pos ].getId(), tempWeapon)) {
+                const auto weaponId = cc->characterItems[pos].getId();
+
+                if (Data::WeaponItems.exists(weaponId)) {
                     g_item = cc->characterItems[ pos ];
                     g_cont = NULL;
 
@@ -280,8 +291,9 @@ bool World::takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_ty
                         cc->characterItems[ pos ].setNumber(cc->characterItems[pos].getNumber() - count);
                         g_item.setNumber(count);
                     } else {
+                        const auto &weapon = Data::WeaponItems[weaponId];
 
-                        if ((tempWeapon.WeaponType==4) || (tempWeapon.WeaponType==5) || (tempWeapon.WeaponType==6) || (tempWeapon.WeaponType==13)) {
+                        if ((weapon.WeaponType==4) || (weapon.WeaponType==5) || (weapon.WeaponType==6) || (weapon.WeaponType==13)) {
                             cc->characterItems[ LEFT_TOOL ].reset();
                             cc->characterItems[ RIGHT_TOOL ].reset();
                         } else {
@@ -561,7 +573,7 @@ bool World::putItemOnMap(Character *cc, short int x, short int y, short int z) {
         npos.x = x;
         npos.y = y;
 
-        if (TilesModItems->nonPassable(g_item.getId())) {     // nicht passierbares Item, zB. eine grosse Kiste
+        if (Data::TilesModItems.nonPassable(g_item.getId())) {     // nicht passierbares Item, zB. eine grosse Kiste
             if (! tempf->moveToPossible()) {   // das Feld ist nicht betretbar
 
                 return false;
@@ -752,7 +764,7 @@ void World::dropItemFromShowcaseOnMap(Player *cp, uint8_t showcase, unsigned cha
         t_item.pos = position(xc, yc, zc);
         t_item.type = ScriptItem::it_field;
         t_item.owner = cp;
-        boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
+        std::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
 
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
@@ -827,7 +839,7 @@ void World::moveItemFromShowcaseToPlayer(Player *cp, uint8_t showcase, unsigned 
 
         t_item.owner = cp;
         //Ende Erzeugen von Source und Target Item
-        boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
+        std::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
 
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item,t_item)) {
@@ -905,7 +917,7 @@ void World::dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, short int xc
         t_item.pos = position(xc, yc, zc);
         t_item.type = ScriptItem::it_field;
         t_item.owner = cp;
-        boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
+        std::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
 
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
@@ -1011,7 +1023,7 @@ void World::moveItemBetweenBodyParts(Player *cp, unsigned char opos, unsigned ch
         }
 
         t_item.itempos = npos;
-        boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
+        std::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
 
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
@@ -1078,7 +1090,7 @@ void World::moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, uint8
         t_item.pos = cp->pos;
         t_item.owner = cp;
         t_item.itempos = pos;
-        boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
+        std::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
 
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
@@ -1141,7 +1153,7 @@ void World::moveItemFromMapIntoShowcase(Player *cp, char direction, uint8_t show
             t_item.owner = cp;
 
             //Ausfhren eines Move Item Scriptes
-            boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
+            std::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
 
             if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
                 if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
@@ -1255,7 +1267,7 @@ void World::moveItemFromMapToPlayer(Player *cp, char direction, unsigned char cp
 
             t_item.owner = cp;
             t_item.itempos = cpos;
-            boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
+            std::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
 
             if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
                 if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
@@ -1359,7 +1371,7 @@ void World::moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char p
         t_item.itempos = pos2;
         t_item.owner = cp;
         //Ausfhren eines Move Item Scriptes
-        boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
+        std::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
 
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
@@ -1441,7 +1453,7 @@ bool World::moveItem(Character *cc, unsigned char d, short int xc, short int yc,
             t_item.owner = cc;
 
             //Ausfhren eines Move Item Scriptes
-            boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
+            std::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
 
             if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
                 if (!script->MoveItemBeforeMove(cc, s_item, t_item)) {

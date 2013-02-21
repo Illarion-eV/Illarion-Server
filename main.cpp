@@ -41,14 +41,8 @@
 #include "World.hpp"
 #include "MapException.hpp"
 #include "constants.hpp"
+#include "data/Data.hpp"
 #include "data/CommonObjectTable.hpp"
-#include "data/WeaponObjectTable.hpp"
-#include "data/NamesObjectTable.hpp"
-#include "data/ArmorObjectTable.hpp"
-#include "data/ContainerObjectTable.hpp"
-#include "data/TilesModificatorTable.hpp"
-#include "data/TilesTable.hpp"
-#include "data/SkillTable.hpp"
 #include "data/ScriptVariablesTable.hpp"
 #include "Logger.hpp"
 #include "main_help.hpp"
@@ -59,7 +53,7 @@
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
 #include "db/SchemaHelper.hpp"
 
-extern boost::shared_ptr<LuaLoginScript>loginScript;
+extern std::shared_ptr<LuaLoginScript>loginScript;
 extern ScriptVariablesTable *scriptVariables;
 
 extern bool importmaps;
@@ -123,10 +117,13 @@ int main(int argc, char *argv[]) {
     Database::SchemaHelper::setSchemata(configOptions["postgres_schema_server"],
                                         configOptions["postgres_schema_account"]);
 
-    //Welt anlegen
     World *world = World::create(configOptions["datadir"] , starttime);
 
-    //Laden der Daten fr die Welt (Items, Scripte, Tabellen etc.)
+    if (!Data::reloadTables()) {
+        throw std::runtime_error("failed to initialise tables");
+    }
+
+    Data::activateTables();
     loadData();
 
     if (!importmaps) {
@@ -135,6 +132,9 @@ int main(int argc, char *argv[]) {
         configOptions["disable_login"] = "true";
         world->load_from_editor(configOptions["datadir"] + std::string("map/import/oberwelt_0"));
     }
+
+    Logger::writeError("scripts", "Initialising script error log.");
+    Data::reloadScripts();
 
     std::cout<<"Creation the PlayerManager"<<std::endl;
     PlayerManager::get()->activate();
@@ -146,7 +146,7 @@ int main(int argc, char *argv[]) {
     world->initNPC();
 
     try {
-        boost::shared_ptr<LuaReloadScript> tmpScript(new LuaReloadScript("server.reload"));
+        std::shared_ptr<LuaReloadScript> tmpScript(new LuaReloadScript("server.reload"));
         tmpScript->onReload();
     } catch (ScriptException &e) {
         std::cerr << "reload: " << e.what() << std::endl;
@@ -229,20 +229,6 @@ int main(int argc, char *argv[]) {
     Logger::writeMessage("basic", "Die in loadItems(..) angelegten Tabellen loeschen");
     delete CommonItems;
     CommonItems = NULL;
-    delete ItemNames;
-    ItemNames = NULL;
-    delete WeaponItems;
-    WeaponItems = NULL;
-    delete ArmorItems;
-    ArmorItems = NULL;
-    delete ContainerItems;
-    ContainerItems = NULL;
-    delete TilesModItems;
-    TilesModItems = NULL;
-    delete Tiles;
-    Tiles = NULL;
-    delete Skills;
-    Skills = NULL;
     delete world;
     world = NULL;
 

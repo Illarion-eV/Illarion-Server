@@ -21,39 +21,17 @@
 #ifndef _SKILL_TABLE_HPP_
 #define _SKILL_TABLE_HPP_
 
-#include <string>
-#include <boost/unordered_map.hpp>
-#include "data/Table.hpp"
-#include "TableStructs.hpp"
+#include "data/StructTable.hpp"
 #include "types.hpp"
+#include "TableStructs.hpp"
 
-class World;
-
-class SkillTable: public Table {
+class SkillTable : public StructTable<TYPE_OF_SKILL_ID, SkillStruct> {
 public:
-    typedef boost::unordered_map<TYPE_OF_SKILL_ID, SkillStruct> TABLE;
-
-    bool find(TYPE_OF_SKILL_ID Id) const;
-    bool find(TYPE_OF_SKILL_ID Id, SkillStruct &ret) const;
-
-    TABLE::const_iterator begin() const;
-    TABLE::const_iterator end() const;
-
-    SkillTable();
-    ~SkillTable();
-
-    inline bool dataOK() {
-        return m_dataOK;
-    }
-
-private:
-    virtual void reload();
-
-    TABLE m_table;
-
-    void clearOldTable();
-
-    bool m_dataOK;
+    virtual std::string getTableName();
+    virtual std::vector<std::string> getColumnNames();
+    virtual TYPE_OF_SKILL_ID assignId(const Database::ResultTuple &row);
+    virtual SkillStruct assignTable(const Database::ResultTuple &row);
 };
+
 #endif
 

@@ -21,7 +21,6 @@
 #include "Item.hpp"
 #include "World.hpp"
 #include "Logger.hpp"
-#include "data/RaceSizeTable.hpp"
 #include "ServerCommands.hpp"
 #include "netinterface/BasicServerCommand.hpp"
 #include "netinterface/NetInterface.hpp"
@@ -30,8 +29,6 @@
 #include "dialog/MerchantDialog.hpp"
 #include "dialog/SelectionDialog.hpp"
 #include "dialog/CraftingDialog.hpp"
-
-extern RaceSizeTable *RaceSizes;
 
 QuestProgressTC::QuestProgressTC(TYPE_OF_QUEST_ID id,
                                  const std::string &title,
@@ -55,6 +52,10 @@ QuestProgressTC::QuestProgressTC(TYPE_OF_QUEST_ID id,
         addShortIntToBuffer(pos.y);
         addShortIntToBuffer(pos.z);
     }
+}
+
+AbortQuestTC::AbortQuestTC(TYPE_OF_QUEST_ID id) : BasicServerCommand(SC_ABORTQUEST_TC) {
+    addShortIntToBuffer(id);
 }
 
 InputDialogTC::InputDialogTC(InputDialog &inputDialog, unsigned int dialogId) : BasicServerCommand(SC_INPUTDIALOG_TC) {
@@ -253,7 +254,7 @@ AppearanceTC::AppearanceTC(Character *cc, Player *receivingPlayer) : BasicServer
     addShortIntToBuffer(cc->race);
     addUnsignedCharToBuffer(cc->getAttribute(Character::sex));
     addShortIntToBuffer(cc->getAttribute(Character::hitpoints));
-    addUnsignedCharToBuffer(RaceSizes->getRelativeSize(cc->race, cc->getAttribute(Character::height)));
+    addUnsignedCharToBuffer(Data::RaceSizes.getRelativeSize(cc->race, cc->getAttribute(Character::height)));
     const Character::appearance appearance = cc->getAppearance();
     addUnsignedCharToBuffer(appearance.hairtype);
     addUnsignedCharToBuffer(appearance.beardtype);

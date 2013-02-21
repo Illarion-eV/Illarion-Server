@@ -27,7 +27,7 @@
 #include "script/LuaLearnScript.hpp"
 
 extern CommonObjectTable *CommonItems;
-extern boost::shared_ptr<LuaLearnScript>learnScript;
+extern std::shared_ptr<LuaLearnScript>learnScript;
 
 class SGlobalPlayerLearnrate : public SchedulerObject {
 

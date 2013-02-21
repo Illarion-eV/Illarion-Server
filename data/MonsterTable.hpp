@@ -24,9 +24,8 @@
 #include <string>
 #include <map>
 #include <vector>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/unordered_map.hpp>
-#include "data/Table.hpp"
 #include "script/LuaMonsterScript.hpp"
 #include "types.hpp"
 #include "Character.hpp"
@@ -75,12 +74,12 @@ struct MonsterStruct {
     attributedef_t  attributes;
     skilltype skills;
     itemtype items;
-    boost::shared_ptr<LuaMonsterScript> script;
+    std::shared_ptr<LuaMonsterScript> script;
     uint16_t minsize;
     uint16_t maxsize;
 };
 
-class MonsterTable: public Table {
+class MonsterTable {
 public:
     MonsterTable();
     ~MonsterTable();
@@ -97,7 +96,7 @@ private:
 
     void clearOldTable();
 
-    virtual void reload();
+    void reload();
     bool m_dataOK;
 
     World *world;

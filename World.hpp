@@ -46,11 +46,11 @@
 #include "WorldMap.hpp"
 #include "NewClientView.hpp"
 #include "SpawnPoint.hpp"
+#include "data/Data.hpp"
 #include "data/NPCTable.hpp"
 #include "Scheduler.hpp"
 #include "data/SpellTable.hpp"
 #include "data/TriggerTable.hpp"
-#include "data/SkillTable.hpp"
 #include "TableStructs.hpp"
 #include "data/NaturalArmorTable.hpp"
 #include "data/MonsterAttackTable.hpp"
@@ -64,41 +64,6 @@
 #include <exception>
 
 extern CommonObjectTable *CommonItems; /**< a extern table for ItemAttributes @see CommonObjectTable* CommonItems **/
-
-extern NamesObjectTable *ItemNames; /**< a extern table for Itemnames @see NamesObjectTable* ItemNames **/
-
-extern WeaponObjectTable *WeaponItems;
-
-extern ArmorObjectTable *ArmorItems;
-
-//! eine Tabelle fuer Artefakt - Item Daten
-extern ArtefactObjectTable *ArtefactItems;
-
-//! eine Tabelle fuer Behaelter - Item Daten
-extern ContainerObjectTable *ContainerItems;
-
-//! eine Tabelle mit Item welche die Eigenschaften des Feldes auf dem sie liegen modifizieren
-extern TilesModificatorTable *TilesModItems;
-
-//! eine Tabelle mit allen Arten von Bodenplatten
-extern TilesTable *Tiles;
-
-extern SkillTable *Skills;
-
-//! ein struct fuer Daten von Bodenplatten
-extern TilesStruct tempTile;
-
-//! ein struct fuer die Namen eines Item
-extern NamesStruct tempNames;
-
-//! ein struct fuer Daten einer Waffe
-extern WeaponStruct tempWeapon;
-
-//! ein struct fuer Daten einer Schutzkleidung
-extern ArmorStruct tempArmor;
-
-//! ein struct fuer Daten von Item
-extern TilesModificatorStruct tempModificator;
 
 //! ein struct fuer Zaubersprche
 extern SpellTable *Spells;
@@ -115,7 +80,7 @@ extern MonsterAttackTable *MonsterAttacks;
 extern ScheduledScriptsTable *scheduledScripts;
 
 //! Ein zeiger auf das Standard Kampfscript
-extern boost::shared_ptr<LuaWeaponScript> standardFightingScript;
+extern std::shared_ptr<LuaWeaponScript> standardFightingScript;
 
 // typedef for gm commands...
 /**
@@ -398,7 +363,7 @@ public:
     *checks the command list of one player and put them into practize
     *@param cp the player which buffer is currently processed
     */
-    void workout_CommandBuffer(Player* &cp);
+    void workout_CommandBuffer(Player *&cp);
 
 
     static World *create(std::string dir, time_t starttime);
@@ -428,7 +393,7 @@ public:
     *@param call by reference, returns the player which was found
     *@return if true there was a player found otherwise false
     */
-    bool findPlayerWithLowestHP(std::vector < Player * > * ppvec, Player* &found);
+    bool findPlayerWithLowestHP(std::vector < Player * > *ppvec, Player *&found);
 
     inline LuaScript *getCurrentScript() {
         return currentScript;
@@ -450,7 +415,7 @@ public:
     * @param range the roung around pos which should be searched for warpfields
     * @param call by reference, returns a hashmap with the warpfields which where found
     */
-    bool findWarpFieldsInRange(position pos, short int range, std::vector< boost::shared_ptr< position > > & warppositions);
+    bool findWarpFieldsInRange(position pos, short int range, std::vector< boost::shared_ptr< position > > &warppositions);
 
     /**
     * returns a list of blocking objects between a startin position and a ending position
@@ -535,7 +500,7 @@ public:
     * @param pos the position where the field has to be found
     * @return true if the field was found otherwise false
     */
-    bool GetPToCFieldAt(Field* &fip, position pos);
+    bool GetPToCFieldAt(Field *&fip, position pos);
 
     /**
     * looks for a field on the map
@@ -551,7 +516,7 @@ public:
     * @param map call by reference, pointer to the map on which the field lies
     * @return true if the field was found otherwise false
     */
-    bool GetPToCFieldAt(Field* &fip, position pos, WorldMap::map_t &map);
+    bool GetPToCFieldAt(Field *&fip, position pos, WorldMap::map_t &map);
 
     /**
     * looks for a field on the current map
@@ -561,7 +526,7 @@ public:
     * @param z the z-coordinate
     * @return true if the field was found otherwise false
     */
-    bool GetPToCFieldAt(Field* &fip, short int x, short int y, short int z);
+    bool GetPToCFieldAt(Field *&fip, short int x, short int y, short int z);
 
     /**
     * looks for a field and the special map where it lies on
@@ -572,7 +537,7 @@ public:
     * @param map call by reference, pointer to the map on which the field lies
     * @return true if the field was found otherwise false
     */
-    bool GetPToCFieldAt(Field* &fip, short int x, short int y, short int z, WorldMap::map_t &map);
+    bool GetPToCFieldAt(Field *&fip, short int x, short int y, short int z, WorldMap::map_t &map);
 
     /**
     * looks for an empty field in the near of a given pos
@@ -582,7 +547,7 @@ public:
     * @param z z-coordinate of the field
     * @return true if there was an empty field near the given coordinates otherwise false
     */
-    bool findEmptyCFieldNear(Field* &cf, short int &x, short int &y, short int z);
+    bool findEmptyCFieldNear(Field *&cf, short int &x, short int &y, short int z);
 
     /**
     *returns for a item of the given id the value of an attrib back
@@ -1132,7 +1097,7 @@ public:
 
     //! sendet einem Admin die Daten aller aktiven Player
     // \param admin der Admin an den die Daten gesandt werden sollen
-    void sendAdminAllPlayerData(Player* &admin);
+    void sendAdminAllPlayerData(Player *&admin);
 
     // ! Server side implemented !warp_to x y z
     void warpto_command(Player *cp, const std::string &ts);

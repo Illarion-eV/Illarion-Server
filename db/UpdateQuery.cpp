@@ -27,14 +27,11 @@
 
 using namespace Database;
 
-UpdateQuery::UpdateQuery() {
+UpdateQuery::UpdateQuery() : QueryAssign(*Query::getConnection()), QueryWhere(*Query::getConnection()) {
     setOnlyOneTable(true);
 }
 
-UpdateQuery::UpdateQuery(const UpdateQuery &org) {
-};
-
-UpdateQuery::UpdateQuery(const PConnection connection) : Query(connection), QueryAssign(), QueryTables(), QueryWhere() {
+UpdateQuery::UpdateQuery(const PConnection connection) : Query(connection), QueryAssign(*Query::getConnection()), QueryWhere(*connection) {
     setOnlyOneTable(true);
 };
 

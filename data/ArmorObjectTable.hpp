@@ -21,28 +21,16 @@
 #ifndef _ARMOR_OBJECT_TABLE_HPP_
 #define _ARMOR_OBJECT_TABLE_HPP_
 
-#include <string>
-#include <boost/unordered_map.hpp>
-#include "data/Table.hpp"
+#include "data/StructTable.hpp"
+#include "types.hpp"
 #include "TableStructs.hpp"
 
-class ArmorObjectTable: public Table {
+class ArmorObjectTable : public StructTable<TYPE_OF_ITEM_ID, ArmorStruct> {
 public:
-    bool find(TYPE_OF_ITEM_ID Id, ArmorStruct &ret);
-
-    ArmorObjectTable();
-    ~ArmorObjectTable();
-
-    inline bool dataOK() {
-        return m_dataOK;
-    }
-
-private:
-    virtual void reload();
-    typedef boost::unordered_map<TYPE_OF_ITEM_ID, ArmorStruct> TABLE;
-    TABLE m_table;
-    void clearOldTable();
-    bool m_dataOK;
+    virtual std::string getTableName();
+    virtual std::vector<std::string> getColumnNames();
+    virtual TYPE_OF_ITEM_ID assignId(const Database::ResultTuple &row);
+    virtual ArmorStruct assignTable(const Database::ResultTuple &row);
 };
 
 #endif

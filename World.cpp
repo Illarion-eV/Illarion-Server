@@ -52,8 +52,7 @@
 
 extern std::map<std::string, std::string> configOptions;
 extern MonsterTable *MonsterDescriptions;
-extern WeaponObjectTable *WeaponItems;
-extern boost::shared_ptr<LuaLogoutScript>logoutScript;
+extern std::shared_ptr<LuaLogoutScript>logoutScript;
 extern std::ofstream talkfile;
 
 World *World::_self;
@@ -800,13 +799,12 @@ void World::checkMonsters() {
                     Item itl = monster.GetItemAt(LEFT_TOOL);
                     Item itr = monster.GetItemAt(RIGHT_TOOL);
 
-                    WeaponStruct theWeapon;
                     uint16_t range=1;
 
-                    if (WeaponItems->find(itr.getId(), theWeapon)) {
-                        range=theWeapon.Range;
-                    } else if (WeaponItems->find(itl.getId(), theWeapon)) {
-                        range=theWeapon.Range;
+                    if (Data::WeaponItems.exists(itr.getId())) {
+                        range = Data::WeaponItems[itr.getId()].Range;
+                    } else if (Data::WeaponItems.exists(itl.getId())) {
+                        range = Data::WeaponItems[itl.getId()].Range;;
                     }
 
                     //===============================================
@@ -933,21 +931,27 @@ void World::checkMonsters() {
                                         case Character::dir_northeast:
                                             dir = Character::dir_northwest;
                                             break;
+
                                         case Character::dir_east:
                                             dir = Character::dir_west;
                                             break;
+
                                         case Character::dir_southeast:
                                             dir = Character::dir_southwest;
                                             break;
+
                                         case Character::dir_southwest:
                                             dir = Character::dir_southeast;
                                             break;
+
                                         case Character::dir_west:
                                             dir = Character::dir_east;
                                             break;
+
                                         case Character::dir_northwest:
                                             dir = Character::dir_northeast;
                                             break;
+
                                         default:
                                             break;
                                         }
@@ -958,21 +962,27 @@ void World::checkMonsters() {
                                         case Character::dir_north:
                                             dir = Character::dir_south;
                                             break;
+
                                         case Character::dir_northeast:
                                             dir = Character::dir_southeast;
                                             break;
+
                                         case Character::dir_southeast:
                                             dir = Character::dir_northeast;
                                             break;
+
                                         case Character::dir_south:
                                             dir = Character::dir_north;
                                             break;
+
                                         case Character::dir_southwest:
                                             dir = Character::dir_northwest;
                                             break;
+
                                         case Character::dir_northwest:
                                             dir = Character::dir_southwest;
                                             break;
+
                                         default:
                                             break;
                                         }
@@ -992,13 +1002,12 @@ void World::checkMonsters() {
                     Item itl = monster.GetItemAt(LEFT_TOOL);
                     Item itr = monster.GetItemAt(RIGHT_TOOL);
 
-                    WeaponStruct theWeapon;
                     uint16_t range=1;
 
-                    if (WeaponItems->find(itr.getId(), theWeapon)) {
-                        range=theWeapon.Range;
-                    } else if (WeaponItems->find(itl.getId(), theWeapon)) {
-                        range=theWeapon.Range;
+                    if (Data::WeaponItems.exists(itr.getId())) {
+                        range = Data::WeaponItems[itr.getId()].Range;
+                    } else if (Data::WeaponItems.exists(itl.getId())) {
+                        range = Data::WeaponItems[itl.getId()].Range;;
                     }
 
                     //===============================================
@@ -1095,7 +1104,7 @@ void World::checkNPC() {
             if ((*npcIterator)->actionPoints > NP_MIN_AP && (*npcIterator)->getScript()) {
                 // we have a script...
                 // let's execute the command for this cycle
-                boost::shared_ptr<LuaNPCScript> npcscript = (*npcIterator)->getScript();
+                std::shared_ptr<LuaNPCScript> npcscript = (*npcIterator)->getScript();
                 npcscript->nextCycle();
 
                 if ((*npcIterator)->getOnRoute() && !(*npcIterator)->waypoints->makeMove()) {
@@ -1116,7 +1125,7 @@ void World::checkNPC() {
 }
 
 
-void World::workout_CommandBuffer(Player* &cp) {
+void World::workout_CommandBuffer(Player *&cp) {
 
 
 }

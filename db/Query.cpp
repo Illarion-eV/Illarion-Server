@@ -30,9 +30,6 @@ Query::Query() {
     dbConnection = ConnectionManager::getInstance().getConnection();
 }
 
-Query::Query(const Query &org) {
-}
-
 Query::Query(const PConnection connection) {
     dbConnection = connection;
 }

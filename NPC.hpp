@@ -86,7 +86,7 @@ public:
     * gets a pointer to the script for this npc
     * @return the pointer for the script
     */
-    boost::shared_ptr<LuaNPCScript> getScript() {
+    std::shared_ptr<LuaNPCScript> getScript() {
         return _script;
     }
 
@@ -94,7 +94,7 @@ public:
     * adds a script to this npac
     * @param script a pointer to a lua script for this npc
     */
-    void setScript(boost::shared_ptr<LuaNPCScript> script) {
+    void setScript(std::shared_ptr<LuaNPCScript> script) {
         _script = script;
     }
 
@@ -124,7 +124,7 @@ protected:
     /**
     * stores the pointer to the script for this npc
     */
-    boost::shared_ptr<LuaNPCScript> _script;
+    std::shared_ptr<LuaNPCScript> _script;
 };
 
 #endif // NPC_HPP

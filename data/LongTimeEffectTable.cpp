@@ -60,7 +60,7 @@ void LongTimeEffectTable::reload() {
                     temp.scriptname = (std::string)((*itr)["lte_scriptname"].as<std::string>());
 
                     try {
-                        boost::shared_ptr<LuaLongTimeEffectScript> script(new LuaLongTimeEffectScript(temp.scriptname, temp));
+                        std::shared_ptr<LuaLongTimeEffectScript> script(new LuaLongTimeEffectScript(temp.scriptname, temp));
                         temp.script = script;
                     } catch (ScriptException &e) {
                         Logger::writeError("scripts", "Error while loading lte script: " + temp.scriptname + ":\n" + e.what() + "\n");

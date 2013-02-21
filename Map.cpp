@@ -348,7 +348,7 @@ bool Map::Save(std::string name) {
 }
 
 
-bool Map::GetPToCFieldAt(Field* &fip, short int x, short int y) {
+bool Map::GetPToCFieldAt(Field *&fip, short int x, short int y) {
 
     unsigned short int tempx;
     unsigned short int tempy;
@@ -809,7 +809,7 @@ short int Map::Conv_To_Y(unsigned short int y) {
 }
 
 
-bool Map::findEmptyCFieldNear(Field* &cf, short int &x, short int &y) {
+bool Map::findEmptyCFieldNear(Field *&cf, short int &x, short int &y) {
 
     short int startx = x;
     short int starty = y;

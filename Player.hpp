@@ -158,7 +158,7 @@ private:
     boost::unordered_set<TYPE_OF_CHARACTER_ID> knownPlayers;
 
 public:
-    std::string &nls(std::string &german, std::string &english);
+    const std::string &nls(const std::string &german, const std::string &english);
     void checkBurden();
 
     virtual bool pageGM(std::string ticket);

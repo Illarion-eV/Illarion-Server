@@ -23,7 +23,7 @@
 #include <iostream>
 
 #include <boost/cstdint.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "db/SelectQuery.hpp"
 #include "db/Result.hpp"
@@ -74,7 +74,7 @@ void TriggerTable::reload() {
                     scriptname = ((*itr)["tgf_script"].as<std::string>());
 
                     try {
-                        boost::shared_ptr<LuaTriggerScript> script(new LuaTriggerScript(scriptname, Trigger.pos));
+                        std::shared_ptr<LuaTriggerScript> script(new LuaTriggerScript(scriptname, Trigger.pos));
                         Trigger.script = script;
                     } catch (ScriptException &e) {
                         Logger::writeError("scripts", "Error while loading trigger script: " + scriptname + ":\n" + e.what() + "\n");
@@ -93,7 +93,7 @@ void TriggerTable::reload() {
                 trigger.script->addQuestScript(questItr->entrypoint, questItr->script);
             } else {
                 trigger.pos = questItr->pos;
-                boost::shared_ptr<LuaTriggerScript> script(new LuaTriggerScript(trigger.pos));
+                std::shared_ptr<LuaTriggerScript> script(new LuaTriggerScript(trigger.pos));
                 trigger.scriptname = "";
                 trigger.script = script;
                 trigger.script->addQuestScript(questItr->entrypoint, questItr->script);

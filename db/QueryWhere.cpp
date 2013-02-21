@@ -19,13 +19,11 @@
  */
 
 #include "db/QueryWhere.hpp"
+#include "db/Query.hpp"
 
 using namespace Database;
 
-QueryWhere::QueryWhere() : Query() {
-};
-
-QueryWhere::QueryWhere(const QueryWhere &org) {
+QueryWhere::QueryWhere(const Connection &connection) : connection(connection) {
 }
 
 QueryWhere::~QueryWhere() {

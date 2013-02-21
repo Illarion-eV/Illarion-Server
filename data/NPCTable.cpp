@@ -132,7 +132,7 @@ void NPCTable::reload() {
                         scriptname = ((*itr)["npc_script"].as<std::string>());
 
                         try {
-                            boost::shared_ptr<LuaNPCScript> script(new LuaNPCScript(scriptname, newNPC));
+                            std::shared_ptr<LuaNPCScript> script(new LuaNPCScript(scriptname, newNPC));
 
                             while (questItr != questEnd && questItr->first == npcID) {
                                 script->addQuestScript(questItr->second.entrypoint, questItr->second.script);

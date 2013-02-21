@@ -19,12 +19,11 @@
 
 #include "Item.hpp"
 #include "data/CommonObjectTable.hpp"
-#include "data/ContainerObjectTable.hpp"
+#include "data/Data.hpp"
 #include <sstream>
 #include <boost/lexical_cast.hpp>
 
 extern CommonObjectTable *CommonItems;
-extern ContainerObjectTable *ContainerItems;
 
 Item::Item(id_type id, number_type number, wear_type wear, quality_type quality, const luabind::object &datamap):
     id(id), number(number), wear(wear), quality(quality), datamap(1) {
@@ -245,7 +244,7 @@ bool Item::survivesAgeing() {
 }
 
 bool Item::isContainer() const {
-    return ContainerItems->find(id);
+    return Data::ContainerItems.exists(id);
 }
 
 TYPE_OF_WEIGHT Item::getWeight() const {

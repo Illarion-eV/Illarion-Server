@@ -24,9 +24,8 @@
 #include <boost/unordered_map.hpp>
 #include <string>
 #include <luabind/object.hpp>
-#include "data/Table.hpp"
 
-class ScriptVariablesTable: public Table {
+class ScriptVariablesTable {
 public:
 
     ScriptVariablesTable();
@@ -50,7 +49,7 @@ private:
 
     void clearOldTable();
 
-    virtual void reload();
+    void reload();
 
     bool m_dataOK;
 };

@@ -26,15 +26,12 @@
 
 using namespace Database;
 
-SelectQuery::SelectQuery() {
+SelectQuery::SelectQuery() : QueryWhere(*Query::getConnection()) {
     setOnlyOneTable(false);
     isDistinct = false;
 }
 
-SelectQuery::SelectQuery(const SelectQuery &org) {
-}
-
-SelectQuery::SelectQuery(const PConnection connection) : Query(connection), QueryColumns(), QueryTables(), QueryWhere() {
+SelectQuery::SelectQuery(const PConnection connection) : Query(connection), QueryWhere(*connection) {
     setOnlyOneTable(false);
     isDistinct = false;
 };
@@ -55,6 +52,7 @@ void SelectQuery::addOrderBy(const std::string &table, const std::string &column
     case ASC:
         orderBy += "ASC";
         break;
+
     case DESC:
         orderBy += "DESC";
         break;

@@ -22,9 +22,6 @@
 #include "Item.hpp"
 #include "data/CommonObjectTable.hpp"
 #include "Field.hpp"
-#include "data/NamesObjectTable.hpp"
-#include "data/ArmorObjectTable.hpp"
-#include "data/WeaponObjectTable.hpp"
 #include "data/NaturalArmorTable.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
@@ -32,7 +29,6 @@
 #include "fuse_ptr.hpp"
 
 extern CommonObjectTable *CommonItems;
-extern NamesObjectTable *ItemNames;
 class Character;
 
 bool World::deleteNPC(unsigned int npcid) {
@@ -76,7 +72,7 @@ bool World::createDynamicNPC(std::string name, Character::race_type type, positi
 
             try {
                 // try to load the script
-                boost::shared_ptr<LuaNPCScript> script(new LuaNPCScript(scriptname, newNPC));
+                std::shared_ptr<LuaNPCScript> script(new LuaNPCScript(scriptname, newNPC));
                 newNPC->setScript(script);
             } catch (ScriptException &e) {
                 Logger::writeError("scripts", "World::createDynamicNPC: Error while loading dynamic NPC script: " + scriptname + ":\n" + std::string(e.what()) + "\n");
@@ -312,17 +308,11 @@ bool World::changeItem(ScriptItem item) {
 }
 
 std::string World::getItemName(TYPE_OF_ITEM_ID itemid, uint8_t language) {
-    NamesStruct name;
-
-    if (ItemNames->find(itemid, name)) {
-        if (language == 0) {
-            return name.German;
-        } else {
-            return name.English;
-        }
+    if (language == 0) {
+        return Data::ItemNames[itemid].German;
+    } else {
+        return Data::ItemNames[itemid].English;
     }
-
-    return "notfound";
 }
 
 
@@ -686,44 +676,44 @@ bool World::createSavedArea(uint16_t tileid, position pos, uint16_t height, uint
 
 bool World::getArmorStruct(TYPE_OF_ITEM_ID id, ArmorStruct &ret) {
     //Has to be an own function cant give a pointer of Armor items to the script
-    ArmorStruct as;
 
-    if (id == 0) {
-        ret = as;
-        return false;
+    if (Data::ArmorItems.exists(id)) {
+        ret = Data::ArmorItems[id];
+        return true;
     } else {
-        return ArmorItems->find(id, ret);
+        return false;
     }
-
-    //return armor;
-
 }
 
 bool World::getWeaponStruct(TYPE_OF_ITEM_ID id, WeaponStruct &ret) {
     //Has to be an own function cant give a pointer of Armor items to the script
-    WeaponStruct ws;
 
-    if (id == 0) {
-        ret = ws;
-        return false;
+    if (Data::WeaponItems.exists(id)) {
+        ret = Data::WeaponItems[id];
+        return true;
     } else {
-        return WeaponItems->find(id, ret);
+        return false;
     }
 }
 
 bool World::getNaturalArmor(Character::race_type id, MonsterArmor &ret) {
-    MonsterArmor ma;
 
-    if (id == 0) {
-        ret = ma;
-        return false;
+    if (Data::NaturalArmors.exists(id)) {
+        ret = Data::NaturalArmors[id];
+        return true;
     } else {
-        return NaturalArmors->find(id, ret);
+        return false;
     }
 }
 
 bool World::getMonsterAttack(Character::race_type id, AttackBoni &ret) {
-    return MonsterAttacks->find(id, ret);
+
+    if (Data::MonsterAttacks.exists(id)) {
+        ret = Data::MonsterAttacks[id];
+        return true;
+    } else {
+        return false;
+    }
 }
 
 void World::sendMonitoringMessage(std::string msg, unsigned char id) {

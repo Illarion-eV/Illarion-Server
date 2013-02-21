@@ -44,20 +44,21 @@ public:
     void commitTransaction(void);
     void rollbackTransaction(void);
 
-    template<typename T> inline std::string quote(const T &t) {
+    template<typename T> inline std::string quote(const T &t) const {
         return internalConnection->quote(t);
     }
 
-    inline bool transactionActive() {
-        return (transaction != 0);
+    inline bool transactionActive() const {
+        return transaction != 0;
     }
 private:
     /* The construction and destruction of the connections is handled by the
      * connection manager.
      */
     Connection(void);
-    Connection(const Connection &org);
     Connection(pqxx::connection *connection);
+    Connection(const Connection &org) = delete;
+    Connection &operator=(const Connection &org) = delete;;
     ~Connection(void);
     struct deleter {
         void operator()(Connection *p) {

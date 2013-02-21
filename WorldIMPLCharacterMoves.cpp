@@ -28,7 +28,6 @@
 #include "netinterface/NetInterface.hpp"
 #include "netinterface/BasicServerCommand.hpp"
 #include "Player.hpp"
-#include "data/RaceSizeTable.hpp"
 
 bool World::warpMonster(Monster *cm, Field *cfstart) {
     if (cfstart->IsWarpField()) {
@@ -56,13 +55,14 @@ bool World::warpMonster(Monster *cm, Field *cfstart) {
 
 void World::checkFieldAfterMove(Character *cc, Field *cfstart) {
     if (cfstart->HasSpecialItem()) {
-        TilesModificatorStruct tmod;
 
         for (auto it = cfstart->items.begin(); it < cfstart->items.end(); ++it) {
-            if (TilesModItems->find(it->getId(), tmod)) {
+            if (Data::TilesModItems.exists(it->getId())) {
+                const auto &tmod = Data::TilesModItems[it->getId()];
+
                 if ((tmod.Modificator & FLAG_SPECIALITEM) != 0) {
 
-                    boost::shared_ptr<LuaItemScript> script = CommonItems->findScript(it->getId());
+                    std::shared_ptr<LuaItemScript> script = CommonItems->findScript(it->getId());
 
                     if (script) {
                         script->CharacterOnField(cc);
@@ -84,6 +84,7 @@ void World::checkFieldAfterMove(Character *cc, Field *cfstart) {
             case SOUNDFIELD:
                 makeSoundForAllPlayersInRange(cc->pos.x, cc->pos.y, cc->pos.z, 3, which.flags);
                 break;
+
             case MUSICFIELD:
 
                 if (cc->character == Character::player) {
@@ -143,24 +144,31 @@ bool World::spinPlayer(Player *cp, unsigned char d) {
     case 0 :
         cp->faceto = Character::north;
         break;
+
     case 1 :
         cp->faceto = Character::northeast;
         break;
+
     case 2 :
         cp->faceto = Character::east;
         break;
+
     case 3 :
         cp->faceto = Character::southeast;
         break;
+
     case 4 :
         cp->faceto = Character::south;
         break;
+
     case 5 :
         cp->faceto = Character::southwest;
         break;
+
     case 6 :
         cp->faceto = Character::west;
         break;
+
     case 7 :
         cp->faceto = Character::northwest;
         break;

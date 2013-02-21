@@ -87,7 +87,7 @@ public:
     *@param trgt the target object for the last action so we can determine if it was an item at which pos etc
     *@param at the type of action lastly performed (cast or use)
     */
-    void setLastAction(boost::shared_ptr<LuaScript> script, SouTar srce, SouTar trgt, ActionType at);
+    void setLastAction(std::shared_ptr<LuaScript> script, SouTar srce, SouTar trgt, ActionType at);
 
     /**
     *starts an long time action which is aborted if the player talks, is attacked ....
@@ -178,7 +178,7 @@ public:
 
 
 private:
-    boost::shared_ptr<LuaScript> _script; /**< pointer to the last script*/
+    std::shared_ptr<LuaScript> _script; /**< pointer to the last script*/
     SouTar _source; /**< source of the last script*/
     SouTar _target; /**< target of the last script*/
 
