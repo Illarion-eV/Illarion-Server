@@ -35,6 +35,7 @@ ArmorObjectTable ArmorItems;
 ContainerObjectTable ContainerItems;
 TilesTable Tiles;
 TilesModificatorTable TilesModItems;
+TriggerTable Triggers;
 
 std::vector<Table *> getTables() {
     return {
@@ -49,7 +50,8 @@ std::vector<Table *> getTables() {
         &ArmorItems,
         &ContainerItems,
         &Tiles,
-        &TilesModItems
+        &TilesModItems,
+        &Triggers
     };
 }
 

@@ -33,6 +33,7 @@
 #include "data/ContainerObjectTable.hpp"
 #include "data/TilesModificatorTable.hpp"
 #include "data/TilesTable.hpp"
+#include "data/TriggerTable.hpp"
 
 namespace Data {
 
@@ -48,6 +49,7 @@ extern ArmorObjectTable ArmorItems;
 extern ContainerObjectTable ContainerItems;
 extern TilesTable Tiles;
 extern TilesModificatorTable TilesModItems;
+extern TriggerTable Triggers;
 
 std::vector<Table *> getTables();
 bool reloadTables();

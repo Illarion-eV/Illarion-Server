@@ -110,6 +110,11 @@ struct position {
         return "(" + boost::lexical_cast<std::string>(x) + ", " + boost::lexical_cast<std::string>(y) + ", " + boost::lexical_cast<std::string>(z) + ")";
     }
 
+    friend std::ostream &operator<<(std::ostream &out, const position &pos) {
+        out << "(" << pos.x << ", " << pos.y << ", " << pos.z << ")";
+        return out;
+    }
+
     friend std::size_t hash_value(const position &p) {
         std::size_t seed = 0;
         boost::hash_combine(seed, p.x);
@@ -120,6 +125,13 @@ struct position {
     }
 };
 
+namespace std {
+template<> struct hash<position> {
+    size_t operator()(const position &p) const {
+        return hash_value(p);
+    }
+};
+}
 
 /**
 * determines a 2d Postion on one single map

@@ -28,7 +28,6 @@
 #include "script/LuaDepotScript.hpp"
 #include "data/MonsterTable.hpp"
 #include "data/SpellTable.hpp"
-#include "data/TriggerTable.hpp"
 #include "data/ScheduledScriptsTable.hpp"
 //We need this for the standard Fighting Script.
 #include "script/LuaWeaponScript.hpp"
@@ -1298,7 +1297,6 @@ bool World::reload_defs(Player *cp) {
 
     MonsterTable *MonsterDescriptions_temp = 0;
     SpellTable *Spells_temp = 0;
-    TriggerTable *Trigger_temp = 0;
     ScheduledScriptsTable *ScheduledScripts_temp = 0;
     LongTimeEffectTable *LongTimeEffects_temp = 0;
 
@@ -1324,15 +1322,6 @@ bool World::reload_defs(Player *cp) {
 
         if (Spells_temp == NULL || !Spells_temp->isDataOK()) {
             reportTableError(cp, "spells");
-            ok = false;
-        }
-    }
-
-    if (ok) {
-        Trigger_temp = new TriggerTable();
-
-        if (Trigger_temp == NULL || !Trigger_temp->isDataOK()) {
-            reportTableError(cp, "triggerfields");
             ok = false;
         }
     }
@@ -1366,10 +1355,6 @@ bool World::reload_defs(Player *cp) {
             delete Spells_temp;
         }
 
-        if (Trigger_temp != NULL) {
-            delete Trigger_temp;
-        }
-
         if (ScheduledScripts_temp != NULL) {
             delete ScheduledScripts_temp;
         }
@@ -1389,8 +1374,6 @@ bool World::reload_defs(Player *cp) {
         MonsterDescriptions = MonsterDescriptions_temp;
         delete Spells;
         Spells = Spells_temp;
-        delete Triggers;
-        Triggers = Trigger_temp;
         delete scheduledScripts;
         scheduledScripts = ScheduledScripts_temp;
         delete LongTimeEffects;

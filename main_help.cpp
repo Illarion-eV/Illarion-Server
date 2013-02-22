@@ -30,7 +30,6 @@
 
 #include "data/MonsterTable.hpp"
 #include "data/SpellTable.hpp"
-#include "data/TriggerTable.hpp"
 #include "data/ScheduledScriptsTable.hpp"
 #include "data/ScriptVariablesTable.hpp"
 #include <boost/shared_ptr.hpp>
@@ -117,9 +116,6 @@ SpellTable *Spells;
 
 //! a Table with Scheduled Scripts
 ScheduledScriptsTable *ScheduledScripts;
-
-//! Eine Tabelle mit Triggerfeldern
-TriggerTable *Triggers;
 
 //! a table containing monster descriptions
 MonsterTable *MonsterDescriptions;
@@ -257,12 +253,6 @@ void loadData() {
     scheduledScripts = ScheduledScripts;
 
     if (!ScheduledScripts->dataOK()) {
-        ok = false;
-    }
-
-    Triggers = new TriggerTable();
-
-    if (!Triggers->isDataOK()) {
         ok = false;
     }
 

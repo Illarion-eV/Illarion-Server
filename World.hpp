@@ -50,7 +50,6 @@
 #include "data/NPCTable.hpp"
 #include "Scheduler.hpp"
 #include "data/SpellTable.hpp"
-#include "data/TriggerTable.hpp"
 #include "TableStructs.hpp"
 #include "data/ScheduledScriptsTable.hpp"
 #include "MonitoringClients.hpp"
@@ -64,9 +63,6 @@
 
 //! ein struct fuer Zaubersprche
 extern SpellTable *Spells;
-
-//! ein Struct fuer Trigger
-extern TriggerTable *Triggers;
 
 extern ScheduledScriptsTable *scheduledScripts;
 

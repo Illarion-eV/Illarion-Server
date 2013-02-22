@@ -472,14 +472,16 @@ bool World::takeItemFromMap(Character *cc, short int x, short int y, short int z
 
                     }
 
-                    TriggerStruct Trigger;
+                    position pos(x, y, z);
 
-                    if (Triggers->find(position(x,y,z),Trigger)) {
-                        if (Trigger.script) {
+                    if (Data::Triggers.exists(pos)) {
+                        const auto &script = Data::Triggers.script(pos);
+
+                        if (script) {
                             ScriptItem sItem = g_item;
-                            sItem.pos = position(x,y,z);
+                            sItem.pos = pos;
                             sItem.type = ScriptItem::it_field;
-                            Trigger.script->TakeItemFromField(sItem,cc);
+                            script->TakeItemFromField(sItem, cc);
                         }
                     }
 
@@ -591,20 +593,19 @@ bool World::putItemOnMap(Character *cc, short int x, short int y, short int z) {
 
             if (tmap->addContainerToPos(g_item, g_cont, npos)) {
                 sendPutItemOnMapToAllVisibleCharacters(x, y, z, g_item, tempf);
-                //Ausfhren eines Triggerscriptes. Falls eins fr das Feld vorhanden ist.
-                //Dies prft nicht nach ob ggf das entfernen des Items nicht geklappt hat
-                TriggerStruct Trigger;
+                position pos(x, y, z);
 
-                if (cc && Triggers->find(position(x,y,z),Trigger)) {
-                    if (Trigger.script) {
+                if (cc && Data::Triggers.exists(pos)) {
+                    const auto &script = Data::Triggers.script(pos);
+
+                    if (script) {
                         ScriptItem sItem = g_item;
                         sItem.pos = position(x,y,z);
                         sItem.type = ScriptItem::it_field;
-                        Trigger.script->PutItemOnField(sItem,cc);
+                        script->PutItemOnField(sItem,cc);
                     }
                 }
 
-                //=======================Ende des Triggerscriptes
                 checkField(tempf, x, y, z);
                 g_item.reset();
                 g_cont = NULL;
@@ -612,23 +613,21 @@ bool World::putItemOnMap(Character *cc, short int x, short int y, short int z) {
                 return true;
             }
         } else {
-            // normales Item
             if (tempf->addTopItem(g_item)) {
                 sendPutItemOnMapToAllVisibleCharacters(x, y, z, g_item, tempf);
-                //Ausfhren eines Triggerscriptes. Falls eins fr das Feld vorhanden ist.
-                //Dies prft nicht nach ob ggf das entfernen des Items nicht geklappt hat
-                TriggerStruct Trigger;
+                position pos(x, y, z);
 
-                if (cc && Triggers->find(position(x,y,z),Trigger)) {
-                    if (Trigger.script) {
+                if (cc && Data::Triggers.exists(pos)) {
+                    const auto &script = Data::Triggers.script(pos);
+
+                    if (script) {
                         ScriptItem sItem = g_item;
                         sItem.pos = position(x,y,z);
                         sItem.type = ScriptItem::it_field;
-                        Trigger.script->PutItemOnField(sItem,cc);
+                        script->PutItemOnField(sItem,cc);
                     }
                 }
 
-                //=======================Ende des Triggerscriptes
                 checkField(tempf, x, y, z);
                 g_cont = NULL;
                 g_item.reset();
@@ -659,20 +658,19 @@ bool World::putItemAlwaysOnMap(Character *cc, short int x, short int y, short in
 
             if (tmap->addAlwaysContainerToPos(g_item, g_cont, npos)) {
                 sendPutItemOnMapToAllVisibleCharacters(x, y, z, g_item, tempf);
-                //Ausfhren eines Triggerscriptes. Falls eins fr das Feld vorhanden ist.
-                //Dies prft nicht nach ob ggf das entfernen des Items nicht geklappt hat
-                TriggerStruct Trigger;
+                position pos(x, y, z);
 
-                if (cc && Triggers->find(position(x,y,z),Trigger)) {
-                    if (Trigger.script) {
+                if (cc && Data::Triggers.exists(pos)) {
+                    const auto &script = Data::Triggers.script(pos);
+
+                    if (script) {
                         ScriptItem sItem = g_item;
                         sItem.pos = position(x,y,z);
                         sItem.type = ScriptItem::it_field;
-                        Trigger.script->PutItemOnField(sItem,cc);
+                        script->PutItemOnField(sItem,cc);
                     }
                 }
 
-                //=======================Ende des Triggerscriptes
                 checkField(tempf, x, y, z);
                 g_item.reset();
                 g_cont = NULL;
@@ -680,24 +678,22 @@ bool World::putItemAlwaysOnMap(Character *cc, short int x, short int y, short in
                 return true;
             }
         } else {
-            // normales Item
             if (tempf->PutTopItem(g_item)) {
                 sendPutItemOnMapToAllVisibleCharacters(x, y, z, g_item, tempf);
-                //Ausfhren eines Triggerscriptes. Falls eins fr das Feld vorhanden ist.
-                //Dies prft nicht nach ob ggf das entfernen des Items nicht geklappt hat
-                TriggerStruct Trigger;
+                position pos(x, y, z);
 
-                if (cc && Triggers->find(position(x,y,z),Trigger)) {
-                    if (Trigger.script) {
+                if (cc && Data::Triggers.exists(pos)) {
+                    const auto &script = Data::Triggers.script(pos);
+
+                    if (script) {
                         ScriptItem sItem;
                         sItem = g_item;
                         sItem.pos = position(x,y,z);
                         sItem.type = ScriptItem::it_field;
-                        Trigger.script->PutItemOnField(sItem,cc);
+                        script->PutItemOnField(sItem,cc);
                     }
                 }
 
-                //=======================Ende des Triggerscriptes
                 checkField(tempf, x, y, z);
                 g_cont = NULL;
                 g_item.reset();

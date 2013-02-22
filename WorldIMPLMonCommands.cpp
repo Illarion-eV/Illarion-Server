@@ -21,17 +21,8 @@
 #include <sstream>
 #include <regex.h>
 #include <list>
-#include "data/TilesModificatorTable.hpp"
-#include "data/TilesTable.hpp"
-#include "data/ArmorObjectTable.hpp"
-#include "data/WeaponObjectTable.hpp"
-#include "data/ContainerObjectTable.hpp"
-#include "data/NamesObjectTable.hpp"
 #include "data/MonsterTable.hpp"
 #include "data/SpellTable.hpp"
-#include "data/TriggerTable.hpp"
-#include "data/MonsterAttackTable.hpp"
-#include "data/NaturalArmorTable.hpp"
 #include "data/ScheduledScriptsTable.hpp"
 //We need this for the standard Fighting Script.
 #include "script/LuaWeaponScript.hpp"

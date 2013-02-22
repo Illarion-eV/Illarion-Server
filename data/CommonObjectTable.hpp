@@ -32,7 +32,7 @@ public:
     virtual TYPE_OF_ITEM_ID assignId(const Database::ResultTuple &row);
     virtual CommonStruct assignTable(const Database::ResultTuple &row);
     virtual std::string assignScriptName(const Database::ResultTuple &row);
-    virtual QuestNodeTable::TABLE_ITRS getQuestScripts();
+    virtual NodeRange getQuestScripts();
 
 private:
     //TYPE_OF_ITEM_ID calcInfiniteRot(TYPE_OF_ITEM_ID id, std::map<TYPE_OF_ITEM_ID, bool> &visited, std::map<TYPE_OF_ITEM_ID, bool> &assigned);

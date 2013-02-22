@@ -338,11 +338,6 @@ void printerr(std::string err) {
     std::cout << "script error: " << err << std::endl;
 }
 
-std::ostream &operator<<(std::ostream &stream, const position &pos) {
-    stream << "(" << pos.x << ", " << pos.y << ", " << pos.z << ")";
-    return stream;
-}
-
 unsigned int LuaAnd(unsigned int operand1, unsigned int operand2) {
     return (operand1 & operand2);
 }

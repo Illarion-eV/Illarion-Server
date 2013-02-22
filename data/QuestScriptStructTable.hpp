@@ -37,11 +37,10 @@ public:
         for (auto it = questNodes.first; it != questNodes.second; ++it) {
             const auto &id = it->first;
             const auto &questNode = it->second;
-            const auto &data = (*this)[id];
             auto &scriptStack = this->scriptNonConst(id);
 
             if (!scriptStack) {
-                scriptStack = std::make_shared<ScriptType>(data);
+                scriptStack = std::make_shared<ScriptType>();
             }
 
             try {
@@ -54,12 +53,14 @@ public:
     }
 
 protected:
+    typedef QuestNodeTable::TableRange<IdType> NodeRange;
+
     virtual std::string getTableName() = 0;
     virtual std::vector<std::string> getColumnNames() = 0;
     virtual IdType assignId(const Database::ResultTuple &row) = 0;
     virtual StructType assignTable(const Database::ResultTuple &row) = 0;
     virtual std::string assignScriptName(const Database::ResultTuple &row) = 0;
-    virtual QuestNodeTable::TABLE_ITRS getQuestScripts() = 0;
+    virtual NodeRange getQuestScripts() = 0;
 };
 
 #endif

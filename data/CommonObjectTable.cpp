@@ -61,7 +61,7 @@ std::string CommonObjectTable::assignScriptName(const Database::ResultTuple &row
     return row["com_script"].as<std::string>("");
 }
 
-QuestNodeTable::TABLE_ITRS CommonObjectTable::getQuestScripts() {
+auto CommonObjectTable::getQuestScripts() -> NodeRange {
     return QuestNodeTable::getInstance()->getItemNodes();
 }
 
