@@ -21,41 +21,45 @@
 #ifndef _SPELL_TABLE_HPP_
 #define _SPELL_TABLE_HPP_
 
-#include <map>
-#include <list>
-#include <iostream>
-#include <memory>
-#include <boost/unordered_map.hpp>
+#include "data/ScriptStructTable.hpp"
 #include "script/LuaMagicScript.hpp"
 
-class World;
+struct Spell {
+    uint8_t magicType;
+    uint32_t spellId;
 
-struct SpellStruct {
-    unsigned short magictype;
-    std::string scriptname;
-    std::shared_ptr<LuaMagicScript> script;
-};
-
-class SpellTable {
-public:
-    SpellTable();
-    ~SpellTable();
-
-    inline bool isDataOK() {
-        return _dataOK;
+    bool operator==(const Spell &spell) const {
+        return (magicType == spell.magicType && spellId == spell.spellId);
     }
 
-    bool find(unsigned long int magicfFlag,unsigned short int magic_type, SpellStruct &magicSpell);
-
-private:
-    void reload();
-
-    typedef boost::unordered_map<unsigned long int, SpellStruct> SpellMap;
-    SpellMap Spells;
-
-    void clearOldTable();
-
-    bool _dataOK;
+    friend std::ostream &operator<<(std::ostream &out, const Spell &spell) {
+        out << "magic: " << spell.magicType << ", spell: " << spell.spellId;
+        return out;
+    }
 };
+
+namespace std {
+template<> struct hash<Spell> {
+    size_t operator()(const Spell &s) const {
+        std::size_t seed = 0;
+        boost::hash_combine(seed, s.magicType);
+        boost::hash_combine(seed, s.spellId);
+        return seed;
+    }
+};
+}
+
+struct SpellStruct {
+};
+
+class SpellTable : public ScriptStructTable<Spell, SpellStruct, LuaMagicScript> {
+public:
+    virtual std::string getTableName();
+    virtual std::vector<std::string> getColumnNames();
+    virtual Spell assignId(const Database::ResultTuple &row);
+    virtual SpellStruct assignTable(const Database::ResultTuple &row);
+    virtual std::string assignScriptName(const Database::ResultTuple &row);
+};
+
 #endif
 

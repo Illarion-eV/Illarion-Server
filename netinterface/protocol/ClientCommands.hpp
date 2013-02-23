@@ -477,10 +477,12 @@ public:
 
         // berprfen, ob der Spieler die Runen beherrscht
         if ((spellId & player->magic.flags[ player->magic.type ]) == spellId) {
-            SpellStruct CastedSpell;
+            Spell spell;
+            spell.magicType = player->magic.type;
+            spell.spellId = spellId;
 
-            if (Spells->find(spellId,player->magic.type, CastedSpell)) {
-                LuaMageScript = CastedSpell.script;
+            if (Data::Spells.exists(spell)) {
+                LuaMageScript = Data::Spells.script(spell);
             }
         }
 

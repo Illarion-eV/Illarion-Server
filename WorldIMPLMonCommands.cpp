@@ -22,7 +22,6 @@
 #include <regex.h>
 #include <list>
 #include "data/MonsterTable.hpp"
-#include "data/SpellTable.hpp"
 #include "data/ScheduledScriptsTable.hpp"
 //We need this for the standard Fighting Script.
 #include "script/LuaWeaponScript.hpp"

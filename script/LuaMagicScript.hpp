@@ -24,13 +24,13 @@
 #include "LuaScript.hpp"
 #include "TableStructs.hpp"
 
-class World;
+class SpellStruct;
 class Character;
 
 class LuaMagicScript : public LuaScript {
 
 public:
-    LuaMagicScript(std::string filename, unsigned long int MagicFlag) throw(ScriptException);
+    LuaMagicScript(std::string filename, const SpellStruct &) throw(ScriptException);
     virtual ~LuaMagicScript() throw();
 
     void CastMagic(Character *caster, unsigned char ltastate);
@@ -40,8 +40,6 @@ public:
     bool actionDisturbed(Character *performer, Character *disturber);
 
 private:
-
-    unsigned long int _MagicFlag;
     LuaMagicScript(const LuaMagicScript &);
     LuaMagicScript &operator=(const LuaMagicScript &);
 

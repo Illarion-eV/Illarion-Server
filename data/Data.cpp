@@ -33,8 +33,9 @@ NamesObjectTable ItemNames;
 WeaponObjectTable WeaponItems;
 ArmorObjectTable ArmorItems;
 ContainerObjectTable ContainerItems;
-TilesTable Tiles;
 TilesModificatorTable TilesModItems;
+TilesTable Tiles;
+SpellTable Spells;
 TriggerTable Triggers;
 LongTimeEffectTable LongTimeEffects;
 
@@ -50,8 +51,9 @@ std::vector<Table *> getTables() {
         &WeaponItems,
         &ArmorItems,
         &ContainerItems,
-        &Tiles,
         &TilesModItems,
+        &Tiles,
+        &Spells,
         &Triggers,
         &LongTimeEffects
     };

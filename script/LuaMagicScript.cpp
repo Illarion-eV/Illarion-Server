@@ -23,8 +23,8 @@
 #include "Item.hpp"
 #include "fuse_ptr.hpp"
 
-LuaMagicScript::LuaMagicScript(std::string filename, unsigned long int MagicFlag) throw(ScriptException)
-    : LuaScript(filename), _MagicFlag(MagicFlag) {
+LuaMagicScript::LuaMagicScript(std::string filename, const SpellStruct &) throw(ScriptException)
+    : LuaScript(filename) {
     init_functions();
 }
 
@@ -32,7 +32,6 @@ LuaMagicScript::~LuaMagicScript() throw() {}
 
 void LuaMagicScript::init_functions() {
     luabind::object globals = luabind::globals(_luaState);
-    globals["thisSpell"] = _MagicFlag;
 }
 
 void LuaMagicScript::CastMagic(Character *caster, unsigned char ltastate) {

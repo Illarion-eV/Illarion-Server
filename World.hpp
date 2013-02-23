@@ -49,7 +49,6 @@
 #include "data/Data.hpp"
 #include "data/NPCTable.hpp"
 #include "Scheduler.hpp"
-#include "data/SpellTable.hpp"
 #include "TableStructs.hpp"
 #include "data/ScheduledScriptsTable.hpp"
 #include "MonitoringClients.hpp"
@@ -60,9 +59,6 @@
 #include "luabind/object.hpp"
 #include <exception>
 
-
-//! ein struct fuer Zaubersprche
-extern SpellTable *Spells;
 
 extern ScheduledScriptsTable *scheduledScripts;
 

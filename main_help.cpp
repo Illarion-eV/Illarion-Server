@@ -29,7 +29,6 @@
 #include <arpa/inet.h>
 
 #include "data/MonsterTable.hpp"
-#include "data/SpellTable.hpp"
 #include "data/ScheduledScriptsTable.hpp"
 #include "data/ScriptVariablesTable.hpp"
 #include <boost/shared_ptr.hpp>
@@ -109,9 +108,6 @@ std::vector<int> *erasedcontainers;
 
 // Koordinaten von gel�schten Containern, ben�tigt zum Schlie�en offener Showcases
 std::vector<position> *contpos;
-
-//! eine Tabelle f�r die Zauberspr�che - Spells
-SpellTable *Spells;
 
 //! a Table with Scheduled Scripts
 ScheduledScriptsTable *ScheduledScripts;
@@ -237,12 +233,6 @@ void loadData() {
     scriptVariables = new ScriptVariablesTable();
 
     if (!scriptVariables->isDataOk()) {
-        ok = false;
-    }
-
-    Spells = new SpellTable();
-
-    if (!Spells->isDataOK()) {
         ok = false;
     }
 

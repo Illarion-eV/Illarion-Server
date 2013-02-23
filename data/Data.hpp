@@ -33,6 +33,7 @@
 #include "data/ContainerObjectTable.hpp"
 #include "data/TilesModificatorTable.hpp"
 #include "data/TilesTable.hpp"
+#include "data/SpellTable.hpp"
 #include "data/TriggerTable.hpp"
 #include "data/LongTimeEffectTable.hpp"
 
@@ -48,8 +49,9 @@ extern NamesObjectTable ItemNames;
 extern WeaponObjectTable WeaponItems;
 extern ArmorObjectTable ArmorItems;
 extern ContainerObjectTable ContainerItems;
-extern TilesTable Tiles;
 extern TilesModificatorTable TilesModItems;
+extern TilesTable Tiles;
+extern SpellTable Spells;
 extern TriggerTable Triggers;
 extern LongTimeEffectTable LongTimeEffects;
 
