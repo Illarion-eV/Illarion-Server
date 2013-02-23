@@ -21,30 +21,18 @@
 #ifndef _LONG_TIME_EFFECT_TABLE_HPP_
 #define _LONG_TIME_EFFECT_TABLE_HPP_
 
-#include <string>
-#include <boost/unordered_map.hpp>
+#include "data/ScriptStructTable.hpp"
 #include "TableStructs.hpp"
+#include "script/LuaLongTimeEffectScript.hpp"
 
-class LongTimeEffectTable {
+class LongTimeEffectTable : public ScriptStructTable<uint16_t, LongTimeEffectStruct, LuaLongTimeEffectScript> {
 public:
-    bool find(uint16_t effectId, LongTimeEffectStruct &ret);
-    bool find(std::string effectname, LongTimeEffectStruct &ret);
-
-    LongTimeEffectTable();
-    ~LongTimeEffectTable();
-
-    inline bool dataOK() {
-        return m_dataOK;
-    }
-
-private:
-    typedef boost::unordered_map<uint16_t, LongTimeEffectStruct> TABLE;
-    TABLE m_table;
-
-    void clearOldTable();
-
-    void reload();
-    bool m_dataOK;
+    virtual std::string getTableName();
+    virtual std::vector<std::string> getColumnNames();
+    virtual uint16_t assignId(const Database::ResultTuple &row);
+    virtual LongTimeEffectStruct assignTable(const Database::ResultTuple &row);
+    virtual std::string assignScriptName(const Database::ResultTuple &row);
 };
+
 #endif
 

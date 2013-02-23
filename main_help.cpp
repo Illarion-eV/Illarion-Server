@@ -41,7 +41,6 @@
 #include "script/LuaLoginScript.hpp"
 #include "script/LuaLogoutScript.hpp"
 #include "script/LuaLearnScript.hpp"
-#include "data/LongTimeEffectTable.hpp"
 #include "Connection.hpp"
 #include "netinterface/NetInterface.hpp"
 #include "Logger.hpp"
@@ -121,8 +120,6 @@ ScheduledScriptsTable *ScheduledScripts;
 MonsterTable *MonsterDescriptions;
 
 ScriptVariablesTable *scriptVariables;
-
-LongTimeEffectTable *LongTimeEffects;
 
 std::shared_ptr<LuaDepotScript>depotScript;
 std::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
@@ -260,12 +257,6 @@ void loadData() {
 
     if (!MonsterDescriptions->dataOK()) {
         ok=false;
-    }
-
-    LongTimeEffects = new LongTimeEffectTable();
-
-    if (!LongTimeEffects->dataOK()) {
-        ok = false;
     }
 
     erasedcontainers = new std::vector<int>;

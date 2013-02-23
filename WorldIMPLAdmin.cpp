@@ -36,7 +36,6 @@
 #include "script/LuaLearnScript.hpp"
 #include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
-#include "data/LongTimeEffectTable.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "netinterface/NetInterface.hpp"
 #include "script/LuaLoginScript.hpp"
@@ -49,7 +48,6 @@
 
 #include <iostream>
 
-extern LongTimeEffectTable *LongTimeEffects;
 extern ScriptVariablesTable *scriptVariables;
 extern std::ofstream talkfile;
 extern std::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
@@ -1298,7 +1296,6 @@ bool World::reload_defs(Player *cp) {
     MonsterTable *MonsterDescriptions_temp = 0;
     SpellTable *Spells_temp = 0;
     ScheduledScriptsTable *ScheduledScripts_temp = 0;
-    LongTimeEffectTable *LongTimeEffects_temp = 0;
 
     if (ok) {
         QuestNodeTable::getInstance()->reload();
@@ -1327,15 +1324,6 @@ bool World::reload_defs(Player *cp) {
     }
 
     if (ok) {
-        LongTimeEffects_temp = new LongTimeEffectTable();
-
-        if (LongTimeEffects_temp == NULL || !LongTimeEffects->dataOK()) {
-            reportTableError(cp, "longtimeeffects");
-            ok = false;
-        }
-    }
-
-    if (ok) {
         std::cerr << "Attempting to reload Scheduler" << std::endl;
         ScheduledScripts_temp = new ScheduledScriptsTable();
         std::cerr << "Created new Scheduler" << std::endl;
@@ -1359,10 +1347,6 @@ bool World::reload_defs(Player *cp) {
             delete ScheduledScripts_temp;
         }
 
-        if (LongTimeEffects_temp != NULL) {
-            delete LongTimeEffects_temp;
-        }
-
         //if (ScriptVar_temp != NULL)
         //    delete ScriptVar_temp;
 
@@ -1376,8 +1360,6 @@ bool World::reload_defs(Player *cp) {
         Spells = Spells_temp;
         delete scheduledScripts;
         scheduledScripts = ScheduledScripts_temp;
-        delete LongTimeEffects;
-        LongTimeEffects = LongTimeEffects_temp;
         // delete scriptVariables;
         // scriptVariables = ScriptVar_temp;
         //Mutex entsperren.

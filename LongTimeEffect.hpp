@@ -32,7 +32,6 @@ struct LTEPriority;
 class LongTimeEffect {
 public:
     LongTimeEffect(uint16_t effectId, int32_t executeIn);
-    LongTimeEffect(std::string name, int32_t executeIn);
 
     void addValue(std::string name, uint32_t value);
     void removeValue(std::string name);
@@ -63,9 +62,9 @@ private:
     uint16_t effectId;
     std::string effectName;
     int32_t executeIn;
-    int32_t executionTime;
-    uint32_t numberOfCalls;
-    bool firstadd;
+    int32_t executionTime = 0;
+    uint32_t numberOfCalls = 0;
+    bool firstadd = true;
 
     typedef std::unordered_map<std::string, uint32_t> VALUES;
     VALUES values;

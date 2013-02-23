@@ -20,94 +20,30 @@
 
 #include "data/LongTimeEffectTable.hpp"
 
-#include "db/SelectQuery.hpp"
-#include "db/Result.hpp"
-
-#include "script/LuaLongTimeEffectScript.hpp"
-
-#include "TableStructs.hpp"
-#include "Logger.hpp"
-
-LongTimeEffectTable::LongTimeEffectTable() : m_dataOK(false) {
-    reload();
+std::string LongTimeEffectTable::getTableName() {
+    return "longtimeeffects";
 }
 
-void LongTimeEffectTable::reload() {
-#ifdef DataConnect_DEBUG
-    std::cout << "LongTimeEffectTable: reload" << std::endl;
-#endif
-
-    try {
-        Database::SelectQuery query;
-        query.addColumn("longtimeeffects", "lte_effectid");
-        query.addColumn("longtimeeffects", "lte_effectname");
-        query.addColumn("longtimeeffects", "lte_scriptname");
-        query.addServerTable("longtimeeffects");
-
-        Database::Result results = query.execute();
-
-        if (!results.empty()) {
-            clearOldTable();
-            LongTimeEffectStruct temp;
-
-            for (Database::ResultConstIterator itr = results.begin();
-                 itr != results.end(); ++itr) {
-
-                temp.effectid = (uint16_t)((*itr)["lte_effectid"].as<int32_t>());
-                temp.effectname = (std::string)((*itr)["lte_effectid"].as<std::string>());
-
-                if (!(*itr)["lte_scriptname"].is_null()) {
-                    temp.scriptname = (std::string)((*itr)["lte_scriptname"].as<std::string>());
-
-                    try {
-                        std::shared_ptr<LuaLongTimeEffectScript> script(new LuaLongTimeEffectScript(temp.scriptname, temp));
-                        temp.script = script;
-                    } catch (ScriptException &e) {
-                        Logger::writeError("scripts", "Error while loading lte script: " + temp.scriptname + ":\n" + e.what() + "\n");
-                    }
-                }
-
-                m_table[temp.effectid] = temp;
-            }
-
-            m_dataOK = true;
-        }
-
-#ifdef DataConnect_DEBUG
-        std::cout << "loaded " << rows << " rows into LongTimeEffectTable" << std::endl;
-#endif
-    } catch (std::exception &e) {
-        std::cerr<<"exception in LongTimeEffect loading: " << e.what() << std::endl;
-        m_dataOK = false;
-    }
+std::vector<std::string> LongTimeEffectTable::getColumnNames() {
+    return {
+        "lte_effectid",
+        "lte_effectname",
+        "lte_scriptname"
+    };
 }
 
-bool LongTimeEffectTable::find(uint16_t effectId, LongTimeEffectStruct &ret) {
-    TABLE::iterator it = m_table.find(effectId);
-
-    if (it != m_table.end()) {
-        ret = it->second;
-        return true;
-    } else {
-        return false;
-    }
+uint16_t LongTimeEffectTable::assignId(const Database::ResultTuple &row) {
+    return row["lte_effectid"].as<uint16_t>();
 }
 
-bool LongTimeEffectTable::find(std::string effectname, LongTimeEffectStruct &ret) {
-    for (TABLE::iterator it = m_table.begin(); it != m_table.end(); ++it) {
-        if (it->second.scriptname == effectname) {
-            ret = it->second;
-            return true;
-        }
-    }
-
-    return false;
+LongTimeEffectStruct LongTimeEffectTable::assignTable(const Database::ResultTuple &row) {
+    LongTimeEffectStruct lte;
+    lte.effectid = assignId(row);
+    lte.effectname = row["lte_effectid"].as<std::string>();
+    return lte;
 }
 
-void LongTimeEffectTable::clearOldTable() {
-    m_table.clear();
+std::string LongTimeEffectTable::assignScriptName(const Database::ResultTuple &row) {
+    return row["lte_scriptname"].as<std::string>("");
 }
 
-LongTimeEffectTable::~LongTimeEffectTable() {
-    clearOldTable();
-}

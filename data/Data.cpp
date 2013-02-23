@@ -36,6 +36,7 @@ ContainerObjectTable ContainerItems;
 TilesTable Tiles;
 TilesModificatorTable TilesModItems;
 TriggerTable Triggers;
+LongTimeEffectTable LongTimeEffects;
 
 std::vector<Table *> getTables() {
     return {
@@ -51,7 +52,8 @@ std::vector<Table *> getTables() {
         &ContainerItems,
         &Tiles,
         &TilesModItems,
-        &Triggers
+        &Triggers,
+        &LongTimeEffects
     };
 }
 

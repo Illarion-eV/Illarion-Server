@@ -25,44 +25,30 @@
 
 #include <boost/cstdint.hpp>
 
-#include "data/LongTimeEffectTable.hpp"
-
 #include "db/Connection.hpp"
 #include "db/ConnectionManager.hpp"
 #include "db/InsertQuery.hpp"
 
-#include "script/LuaLongTimeEffectScript.hpp"
+#include "data/Data.hpp"
 
 #include "Character.hpp"
 #include "Player.hpp"
 #include "TableStructs.hpp"
 #include "World.hpp"
 
-extern LongTimeEffectTable *LongTimeEffects;
-
-LongTimeEffect::LongTimeEffect(uint16_t effectId, int32_t executeIn): effectId(effectId), effectName(""), executeIn(executeIn), executionTime(0), numberOfCalls(0), firstadd(true) {
-    LongTimeEffectStruct effect;
-    LongTimeEffects->find(effectId, effect);
-    effectName = effect.effectname;
-}
-
-LongTimeEffect::LongTimeEffect(std::string name, int32_t executeIn): effectId(0), effectName(name), executeIn(executeIn), executionTime(0), numberOfCalls(0), firstadd(true) {
-    LongTimeEffectStruct effect;
-    LongTimeEffects->find(effectName, effect);
-    effectId = effect.effectid;
+LongTimeEffect::LongTimeEffect(uint16_t effectId, int32_t executeIn):
+    effectId(effectId),
+    effectName(Data::LongTimeEffects[effectId].effectname),
+    executeIn(executeIn) {
 }
 
 bool LongTimeEffect::callEffect(Character *target) {
     bool ret = false;
-    LongTimeEffectStruct effect;
+    const auto &script = Data::LongTimeEffects.script(effectId);
 
-    if (LongTimeEffects->find(effectId, effect)) {
-        if (effect.script) {
-            ret = effect.script->callEffect(this, target);
-            ++numberOfCalls;
-        }
-    } else {
-        std::cerr << "Can't find effect with id " << effectId << " to call the script." << std::endl;
+    if (script) {
+        ret = script->callEffect(this, target);
+        ++numberOfCalls;
     }
 
     return ret;

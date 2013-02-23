@@ -19,8 +19,6 @@
 
 #include "World.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
-#include "data/TilesTable.hpp"
-#include "data/TilesModificatorTable.hpp"
 #include "script/LuaItemScript.hpp"
 #include "Logger.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"

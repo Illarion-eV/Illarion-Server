@@ -34,6 +34,7 @@
 #include "data/TilesModificatorTable.hpp"
 #include "data/TilesTable.hpp"
 #include "data/TriggerTable.hpp"
+#include "data/LongTimeEffectTable.hpp"
 
 namespace Data {
 
@@ -50,6 +51,7 @@ extern ContainerObjectTable ContainerItems;
 extern TilesTable Tiles;
 extern TilesModificatorTable TilesModItems;
 extern TriggerTable Triggers;
+extern LongTimeEffectTable LongTimeEffects;
 
 std::vector<Table *> getTables();
 bool reloadTables();
