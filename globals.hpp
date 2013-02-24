@@ -154,7 +154,4 @@ struct MAP_POSITION {
     }
 };
 
-//! a log file for kills
-extern std::ofstream kill_log;
-
 #endif

@@ -50,10 +50,8 @@
 
 //#define World_DEBUG
 
-extern std::map<std::string, std::string> configOptions;
 extern MonsterTable *MonsterDescriptions;
 extern std::shared_ptr<LuaLogoutScript>logoutScript;
-extern std::ofstream talkfile;
 
 World *World::_self;
 
@@ -178,11 +176,6 @@ World::World(std::string dir, time_t starttime) {
     unsigned int templi = starttime;
     char temparr[ 80 ];
     sprintf(temparr, "%u", templi);
-    //Kann ggf deaktiviert werden aufgrund des Loggers der diese bernehmen wird.
-    //-----------------------------------------------------------------------------
-    talkfile.open((dir + std::string(TALKDIR) + std::string(temparr) + std::string(".talk")).c_str() , std::ios::out | std::ios::app);
-    talkfile  << "Start " << ctime(&starttime) << " ----------------------------------" << std::endl;
-    //-----------------------------------------------------------------------------
 }
 
 
@@ -200,7 +193,7 @@ int mapfilter(const struct dirent *d) {
 bool World::load_maps() {
     // get all tiles files
     struct dirent **maplist;
-    int numfiles = scandir((configOptions["datadir"] + "map/import/").c_str(), &maplist, mapfilter, alphasort);
+    int numfiles = scandir((Config::instance().datadir() + "map/import/").c_str(), &maplist, mapfilter, alphasort);
 
     if (numfiles <= 0) {
         perror("Could not import maps");
@@ -559,10 +552,6 @@ World::~World() {
     delete monitoringClientList;
     monitoringClientList = NULL;
 
-    time_t acttime4;
-    time(&acttime4);
-    talkfile << "Ende  " << ctime(&acttime4) << " ----------------------------------" << std::endl;
-
     delete scheduler;
 }
 
@@ -743,7 +732,7 @@ void World::checkMonsters() {
     if (monstertimer->next()) {
         std::list<SpawnPoint>::iterator it;
 
-        if (configOptions["do_spawn"] != "false") {
+        if (isSpawnEnabled()) {
             for (it = SpawnList.begin(); it != SpawnList.end(); ++it) {
                 it->spawn();
             }

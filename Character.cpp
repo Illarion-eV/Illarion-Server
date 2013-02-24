@@ -42,8 +42,6 @@
 #define MAJOR_SKILL_GAP 100
 #define USE_LUA_FIGTHING
 
-std::ofstream talkfile;
-
 extern std::shared_ptr<LuaLearnScript>learnScript;
 extern std::shared_ptr<LuaPlayerDeathScript>playerDeathScript;
 
@@ -824,46 +822,7 @@ bool Character::attack(Character *target) {
 
         if (!target->IsAlive()) {
             // target was killed...
-            if (character == player || target->character == player) {
-                // player killed something or was killed...
-                time_t acttime = time(NULL);
-                std::string killtime = ctime(&acttime);
-                killtime[killtime.size()-1] = ':';
-                kill_log << killtime << " ";
-
-                switch (character) {
-                case player:
-                    kill_log << "Player " << name << "(" << id << ") ";
-                    break;
-
-                case monster:
-                    kill_log << "Monster of race  " << race << "(" << id << ") ";
-                    break;
-
-                case npc:
-                    kill_log << "NPC " << name << "(" << id << ") ";
-                    break;
-                }
-
-                kill_log << "killed ";
-
-                switch (target->character) {
-                case player:
-                    kill_log << "Player " << target->name << "(" << target->id << ") ";
-                    break;
-
-                case monster:
-                    kill_log << "Monster of race  " << target->race << "(" << target->id << ") ";
-                    break;
-
-                case npc:
-                    kill_log << "NPC " << target->name << "(" << target->id << ") ";
-                    break;
-                }
-
-                kill_log << std::endl;
-
-            }
+	    Logger::info(LogFacility::Player) << *this << " killed " << *target << Log::end;
         }
 
         return (target->IsAlive());
@@ -1502,11 +1461,7 @@ void Character::talk(talk_type tt, std::string message) { //only for say, whispe
 
     // log talk if we have a player
     if (character == player) {
-        time_t acttime = time(NULL);
-        std::string talktime = ctime(&acttime);
-        talktime[talktime.size()-1] = ':';
-        talkfile << talktime << " ";
-        talkfile << name << "(" << id << ") " << talktype << ": " << message << std::endl;
+	    Logger::info(LogFacility::Player) << *this << " " << talktype << ": " << message << Log::end;
     }
 
 #endif
@@ -2047,3 +2002,7 @@ bool Character::pageGM(std::string ticket) {
 
     return false;
 }
+
+std::ostream& operator<<(std::ostream& os, Character& character) {
+	return os << character.to_string();
+};

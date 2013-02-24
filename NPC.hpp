@@ -107,6 +107,8 @@ public:
     */
     virtual void receiveText(talk_type tt, std::string message, Character *cc);
 
+    virtual std::string to_string() const;
+
 protected:
 
     /**

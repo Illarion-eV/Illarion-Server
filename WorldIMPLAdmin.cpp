@@ -46,7 +46,6 @@
 
 #include <iostream>
 
-extern std::ofstream talkfile;
 extern std::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
 extern std::shared_ptr<LuaLookAtItemScript>lookAtItemScript;
 extern std::shared_ptr<LuaPlayerDeathScript>playerDeathScript;
@@ -246,11 +245,7 @@ void World::reload_command(Player *cp) {
 void World::broadcast_command(Player *cp,const std::string &message) {
     if (cp->hasGMRight(gmr_broadcast)) {
 #ifdef LOG_TALK
-        time_t acttime = time(NULL);
-        std::string talktime = ctime(&acttime);
-        talktime[talktime.size()-1] = ':';
-        talkfile << talktime << " ";
-        talkfile << cp->name << "(" << cp->id << ") broadcasts: " << message << std::endl;
+	Logger::info(LogFacility::Player) << cp << " broadcasts: " << message << Log::end;
 #endif
         sendMessageToAllPlayers(message);
     }
@@ -347,11 +342,7 @@ void World::talkto_command(Player *cp, const std::string &ts) {
                 std::cout<<"Found player by name, sending message: "<<message<<std::endl;
 #endif
 #ifdef LOG_TALK
-                time_t acttime = time(NULL);
-                std::string talktime = ctime(&acttime);
-                talktime[talktime.size()-1] = ':';
-                talkfile << talktime << " ";
-                talkfile << cp->name << "(" << cp->id << ") talks to player " << tempPl->name << "(" << tempPl->id << "): " << message << std::endl;
+		Logger::info(LogFacility::Player) << cp << " talks to " << tempPl << ": " << message << Log::end;
 #endif
                 tempPl->inform(message, Player::informGM);
                 return;
@@ -373,12 +364,7 @@ void World::talkto_command(Player *cp, const std::string &ts) {
                         std::cout<<"Found player by id, sending message: "<<message<<std::endl;
 #endif
 #ifdef LOG_TALK
-                        time_t acttime = time(NULL);
-                        std::string talktime = ctime(&acttime);
-                        talktime[talktime.size()-1] = ':';
-                        talkfile << talktime << " ";
-                        talkfile << cp->name << "(" << cp->id << ") talks to player "
-                                 << (*plIterator)->name << "(" << (*plIterator)->id << "): " << message << std::endl;
+			Logger::info(LogFacility::Player) << cp << " talks to " << **plIterator << ": " << message << Log::end;
 #endif
                         (*plIterator)->inform(message, Player::informGM);
                         return; //Break the loop because we sen our message

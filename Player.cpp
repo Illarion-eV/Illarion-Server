@@ -801,7 +801,7 @@ void Player::setAdmin(uint32_t tAdmin) {
 }
 
 
-bool Player::isAdmin() {
+bool Player::isAdmin() const {
     return (admin>0 && !hasGMRight(gmr_isnotshownasgm));
 }
 
@@ -2016,7 +2016,7 @@ void Player::changeQualityAt(unsigned char pos, short int amount) {
     sendCharacterItemAtPos(RIGHT_TOOL);   //Item in der rechten Hand nochmals senden um ggf ein gel�chtes Belegt an zu zeigen.
 }
 
-bool Player::hasGMRight(gm_rights right) {
+bool Player::hasGMRight(gm_rights right) const {
     return ((right & admin) == static_cast<uint32_t>(right));
 }
 
@@ -2863,3 +2863,6 @@ void Player::closeDialogsOnMove() {
     }
 }
 
+std::string Player::to_string() const {
+	return (isAdmin()?"Admin ":"Player ") + name + "(" + boost::lexical_cast<std::string>(id) + ")";
+}

@@ -47,15 +47,11 @@
 
 
 // a map storing configuration options from a config file...
-std::map<std::string, std::string> configOptions;
 bool importmaps;
 
 /*
 learn, bbiwi, basic, schedscripts, Spawn, World_Debug, World_Imports, World, World_Inits, Monster , Player_Moves, Casting, Use, Use_Scripts
 */
-
-//! file containing kill logs
-std::ofstream kill_log;
 
 //! Die Initialisierung des Servers mit Daten aus einer Datei
 bool Init(const std::string &initfile) {
@@ -124,8 +120,6 @@ std::shared_ptr<LuaWeaponScript> standardFightingScript;
 ScheduledScriptsTable *scheduledScripts;  //< table witch holds the scheduled scripts
 
 void logout_save(Player *who, bool forced, unsigned long int thistime) {
-    FILE *f;
-    f = fopen(configOptions["login_logfile"].c_str(), "at");
     time_t acttime6;
     time(&acttime6);
 
@@ -140,30 +134,13 @@ void logout_save(Player *who, bool forced, unsigned long int thistime) {
     unsigned int om = (who->onlinetime % 3600) / 60;
     unsigned int os = (who->onlinetime % 3600) % 60;
 
-    if (f != NULL) {
-        if (forced) {
-            if (who->isAdmin()) {
-            } else {
-                fprintf(f, "forced logout: %-15s Player %-20s on %s", who->Connection->getIPAdress().c_str(), who->name.c_str(), ctime(&acttime6));
-            }
-        } else {
-            if (who->isAdmin()) {
-                fprintf(f, "logout: %-15s Admin  %-20s on %s", who->Connection->getIPAdress().c_str(), who->name.c_str(), ctime(&acttime6));
-            } else {
-                fprintf(f, "logout: %-15s Player %-20s on %s", who->Connection->getIPAdress().c_str(), who->name.c_str(), ctime(&acttime6));
-            }
-        }
+    std::stringstream onlinetime;
+    onlinetime << " after " << th << "h " << tm << "m " << ts << "s, onlinetime " << oh << "h " << om << "m " << os << "s";
 
-        fprintf(f, "----- after %5uh %2um %2us, onlinetime %5uh %2um %2us -----\n\n", th, tm, ts, oh, om, os);
-        fclose(f);
-    } else {
-        std::cerr << "main: Konnte nicht in das " << configOptions["login_logfile"] << " File schreiben" << std::endl;
-    }
+    Logger::info(LogFacility::Player) << (forced?"forced ":"") << "logout: " << who->Connection->getIPAdress() << who << " on " << ctime(&acttime6) << onlinetime.str() << Log::end;
 }
 
 void login_save(Player *who) {
-    FILE *f;
-    f = fopen(configOptions["login_logfile"].c_str(), "at");
     time_t acttime7;
     time(&acttime7);
 
@@ -171,20 +148,10 @@ void login_save(Player *who) {
     unsigned int om = (who->onlinetime % 3600) / 60;
     unsigned int os = (who->onlinetime % 3600) % 60;
 
-    if (f != NULL) {
-        if (who->isAdmin()) {
-            std::cout << "main: login Admin, IP: " << who->Connection->getIPAdress() << " Name: " << who->name << " erfolgreich\n" << std::endl;
-            fprintf(f, "login:  %-15s Admin  %-20s on %s", who->Connection->getIPAdress().c_str(), who->name.c_str(), ctime(&acttime7));
-        } else {
-            std::cout << "main: login Player, IP: " << who->Connection->getIPAdress() << " Name: " << who->name << " erfolgreich\n" << std::endl;
-            fprintf(f, "login:  %-15s Player %-20s on %s", who->Connection->getIPAdress().c_str(), who->name.c_str(), ctime(&acttime7));
-        }
+    std::stringstream onlinetime;
+    onlinetime << " onlinetime till now: " << oh << "h " << om << "m " << os << "s";
 
-        fprintf(f, "----- onlinetime till now: %5uh %2um %2us -----\n\n", oh, om, os);
-        fclose(f);
-    } else {
-        std::cerr << "main: Konnte nicht in das " << configOptions["login_logfile"] << " File schreiben" << std::endl;
-    }
+    Logger::info(LogFacility::Player) << "login: " << who->Connection->getIPAdress() << who << " on " << ctime(&acttime7) << onlinetime.str() << Log::end;
 }
 
 //! zur Pr�fung der Kommandozeilenargumente
@@ -324,7 +291,7 @@ void sig_term(int) {
         std::cerr << "SIGTERM: sigaction failed" << std::endl;
     }
 
-    configOptions["disable_login"] = "false";
+    World::get()->allowLogin(false);
     running = false;
 }
 
@@ -342,26 +309,26 @@ void sig_segv(int) {
 }
 
 void sig_usr(int) {
-    std::cout<<"SIGUSR received Importing maps new !" <<std::endl;
+    Logger::info(LogFacility::World) << "SIGUSR received Importing maps new!" << Log::end;
     act_usr.sa_handler = sig_usr;
 
-    std::cout<<"disable login and log out"<<std::endl;
-    configOptions["disable_login"] = "true";
+    Logger::info(LogFacility::World) << "disable login and force log out of all Players" << Log::end;
     World *world = World::get();
+    world->allowLogin(false);
     world->forceLogoutOfAllPlayers(); //Alle spieler ausloggen
     world->maps.clear(); //alte Karten l�schen
     std::cout<<"importing mainland"<<std::endl;
-    world->load_from_editor(configOptions["datadir"] + std::string("map/import/oberwelt_0"));
+    world->load_from_editor(Config::instance().datadir() + std::string("map/import/oberwelt_0"));
     std::cout<<"loading maps"<<std::endl;
     world->load_maps();
     //alles importiert also noch ein save machen
-    std::cout<<"save world"<<std::endl;
+    Logger::info(LogFacility::World) << "Saving World..." << Log::end;
     world->Save("Illarion");
-    configOptions["disable_login"] = "false";
-    std::cout<<"...all done"<<std::endl;
+    world->allowLogin(true);
+    Logger::info(LogFacility::World) << "Map import finished" << Log::end;
 
     if (sigaction(SIGUSR1, &act_usr, NULL) < 0) {
-        std::cerr << "SIGUSR1: sigaction failed" << std::endl;
+	Logger::error(LogFacility::Other) << "SIGUSR1: sigaction failed" << Log::end;
     }
 
 }

@@ -28,6 +28,7 @@
 #include <string>
 #include "script/LuaScript.hpp"
 #include "Logger.hpp"
+#include "Config.hpp"
 
 QuestNodeTable *QuestNodeTable::instance = 0;
 
@@ -63,7 +64,7 @@ auto QuestNodeTable::getTriggerNodes() -> TableRange<position> {
 
 void QuestNodeTable::reload() {
     using namespace boost::filesystem;
-    path dirPath = path("/usr/share/servers/testserver/scripts/questsystem");
+    path dirPath = path(Config::instance().scriptdir() + "questsystem");
     path filename = path("quest.txt");
 
     directory_iterator end_itr;

@@ -69,6 +69,7 @@ public:
 
     void remove();
 
+    virtual std::string to_string() const;
 
     /**
     * the monster gets a talked text from a character near starts a script entry point
