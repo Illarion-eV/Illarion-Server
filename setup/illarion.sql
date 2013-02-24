@@ -9,6 +9,20 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 
 --
+-- Name: accounts; Type: SCHEMA; Schema: -; Owner: -
+--
+
+CREATE SCHEMA accounts;
+
+
+--
+-- Name: SCHEMA accounts; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON SCHEMA accounts IS 'accounts of illarion players';
+
+
+--
 -- Name: testserver; Type: SCHEMA; Schema: -; Owner: -
 --
 
@@ -152,9 +166,378 @@ end
 $$;
 
 
+SET search_path = accounts, pg_catalog;
+
+--
+-- Name: acc_group_seq; Type: SEQUENCE; Schema: accounts; Owner: -
+--
+
+CREATE SEQUENCE acc_group_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: acc_log_seq; Type: SEQUENCE; Schema: accounts; Owner: -
+--
+
+CREATE SEQUENCE acc_log_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
 SET default_tablespace = '';
 
 SET default_with_oids = true;
+
+--
+-- Name: account; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+--
+
+CREATE TABLE account (
+    acc_id integer DEFAULT nextval(('account_seq'::text)::regclass) NOT NULL,
+    acc_login character varying(50) DEFAULT 'noname'::character varying NOT NULL,
+    acc_passwd character varying(50) DEFAULT 'nopasswd'::character varying NOT NULL,
+    acc_email character varying(50) DEFAULT 'noemail'::character varying NOT NULL,
+    acc_registerdate timestamp without time zone,
+    acc_lastip inet NOT NULL,
+    acc_state integer DEFAULT 1 NOT NULL,
+    acc_maxchars integer DEFAULT 5 NOT NULL,
+    acc_lang smallint DEFAULT 0 NOT NULL,
+    acc_newmail character varying(50),
+    acc_racepermission character varying(255) DEFAULT '0,1,2,3,4,5'::character varying NOT NULL,
+    acc_applypermission character varying DEFAULT '6,7,8'::character varying NOT NULL,
+    acc_name character varying(50),
+    acc_weight mantis.measuresystem DEFAULT 'metric'::mantis.measuresystem NOT NULL,
+    acc_length mantis.measuresystem DEFAULT 'metric'::mantis.measuresystem NOT NULL,
+    acc_timeoffset integer DEFAULT 0 NOT NULL,
+    acc_dst smallint DEFAULT 1 NOT NULL,
+    acc_lastseen timestamp without time zone,
+    acc_recv_inact_mails smallint DEFAULT 0 NOT NULL
+);
+
+
+SET default_with_oids = false;
+
+--
+-- Name: account_groups; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+--
+
+CREATE TABLE account_groups (
+    ag_id integer DEFAULT nextval(('accounts.acc_group_seq'::text)::regclass) NOT NULL,
+    ag_acc_id integer NOT NULL,
+    ag_group_id integer NOT NULL
+);
+
+
+--
+-- Name: account_log; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+--
+
+CREATE TABLE account_log (
+    al_id integer DEFAULT nextval(('acc_log_seq'::text)::regclass) NOT NULL,
+    al_user_id integer NOT NULL,
+    al_gm_id integer,
+    al_time timestamp without time zone NOT NULL,
+    al_message text NOT NULL,
+    al_type smallint NOT NULL
+);
+
+
+--
+-- Name: TABLE account_log; Type: COMMENT; Schema: accounts; Owner: -
+--
+
+COMMENT ON TABLE account_log IS 'Logfiles accountwork gmtool';
+
+
+--
+-- Name: account_seq; Type: SEQUENCE; Schema: accounts; Owner: -
+--
+
+CREATE SEQUENCE account_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: attribtemp; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+--
+
+CREATE TABLE attribtemp (
+    attr_id integer NOT NULL,
+    attr_name_de character varying(50) NOT NULL,
+    attr_name_us character varying(50) NOT NULL,
+    attr_str smallint DEFAULT 2 NOT NULL,
+    attr_dex smallint DEFAULT 2 NOT NULL,
+    attr_agi smallint DEFAULT 2 NOT NULL,
+    attr_con smallint DEFAULT 2 NOT NULL,
+    attr_per smallint DEFAULT 2 NOT NULL,
+    attr_int smallint DEFAULT 2 NOT NULL,
+    attr_wil smallint DEFAULT 2 NOT NULL,
+    attr_ess smallint DEFAULT 2 NOT NULL
+);
+
+
+--
+-- Name: TABLE attribtemp; Type: COMMENT; Schema: accounts; Owner: -
+--
+
+COMMENT ON TABLE attribtemp IS 'Attribute Voreinstellung bei Charaktererschaffung';
+
+
+SET default_with_oids = true;
+
+--
+-- Name: bad_ips; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+--
+
+CREATE TABLE bad_ips (
+    bip_ip character varying(15) NOT NULL
+);
+
+
+--
+-- Name: TABLE bad_ips; Type: COMMENT; Schema: accounts; Owner: -
+--
+
+COMMENT ON TABLE bad_ips IS 'IPs that are not allowed to access the account system';
+
+
+--
+-- Name: COLUMN bad_ips.bip_ip; Type: COMMENT; Schema: accounts; Owner: -
+--
+
+COMMENT ON COLUMN bad_ips.bip_ip IS 'ip that is forbidden to access the account system';
+
+
+--
+-- Name: bad_value_seq; Type: SEQUENCE; Schema: accounts; Owner: -
+--
+
+CREATE SEQUENCE bad_value_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+SET default_with_oids = false;
+
+--
+-- Name: bad_values; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+--
+
+CREATE TABLE bad_values (
+    bv_id integer DEFAULT nextval(('bad_value_seq'::text)::regclass) NOT NULL,
+    bv_name character varying(50),
+    bv_name_parts character varying(50),
+    bv_ip inet,
+    bv_email character varying(50)
+);
+
+
+--
+-- Name: TABLE bad_values; Type: COMMENT; Schema: accounts; Owner: -
+--
+
+COMMENT ON TABLE bad_values IS 'Invalid or banned values for account and chars';
+
+
+SET default_with_oids = true;
+
+--
+-- Name: badname_full; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+--
+
+CREATE TABLE badname_full (
+    bf_name character varying(25) DEFAULT ''::character varying NOT NULL
+);
+
+
+--
+-- Name: badname_partial; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+--
+
+CREATE TABLE badname_partial (
+    bp_name character varying(25) DEFAULT ''::character varying NOT NULL
+);
+
+
+--
+-- Name: gm_stats; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+--
+
+CREATE TABLE gm_stats (
+    gm_name character varying(40) NOT NULL,
+    gm_acc_pos integer DEFAULT 0 NOT NULL,
+    gm_acc_neg integer DEFAULT 0 NOT NULL,
+    gm_name_pos integer DEFAULT 0 NOT NULL,
+    gm_name_neg integer DEFAULT 0 NOT NULL,
+    gm_race_pos integer DEFAULT 0 NOT NULL,
+    gm_race_neg integer DEFAULT 0 NOT NULL
+);
+
+
+--
+-- Name: gm_stats_accs; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+--
+
+CREATE TABLE gm_stats_accs (
+    gm_name character varying(40) NOT NULL,
+    gm_acc_id integer NOT NULL,
+    accepted boolean NOT NULL
+);
+
+
+--
+-- Name: gm_stats_chars; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+--
+
+CREATE TABLE gm_stats_chars (
+    gm_name character varying(40) NOT NULL,
+    gm_char_name character varying(40) NOT NULL,
+    accepted boolean NOT NULL
+);
+
+
+--
+-- Name: gm_stats_race; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+--
+
+CREATE TABLE gm_stats_race (
+    gm_name character varying(40) NOT NULL,
+    gm_apply_id integer DEFAULT 0 NOT NULL,
+    accepted boolean DEFAULT true NOT NULL
+);
+
+
+SET default_with_oids = false;
+
+--
+-- Name: groups; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+--
+
+CREATE TABLE groups (
+    g_id integer NOT NULL,
+    g_name_de character varying(50) NOT NULL,
+    g_name_us character varying(50) NOT NULL,
+    g_desc_de text NOT NULL,
+    g_desc_us text NOT NULL,
+    g_rights character varying(100) NOT NULL
+);
+
+
+SET default_with_oids = true;
+
+--
+-- Name: legtimulti; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+--
+
+CREATE TABLE legtimulti (
+    acc_id_1 integer NOT NULL,
+    acc_id_2 integer NOT NULL,
+    reason text
+);
+
+
+--
+-- Name: pqxxlog_testserver; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+--
+
+CREATE TABLE pqxxlog_testserver (
+    name character varying(256),
+    date timestamp without time zone
+);
+
+
+--
+-- Name: question_seq; Type: SEQUENCE; Schema: accounts; Owner: -
+--
+
+CREATE SEQUENCE question_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: raceapplys; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+--
+
+CREATE TABLE raceapplys (
+    ra_accid integer NOT NULL,
+    ra_race integer NOT NULL,
+    ra_how text NOT NULL,
+    ra_why text NOT NULL,
+    ra_status smallint DEFAULT 0 NOT NULL,
+    ra_answer text
+);
+
+
+SET default_with_oids = false;
+
+--
+-- Name: rights; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+--
+
+CREATE TABLE rights (
+    r_id integer NOT NULL,
+    r_key_name character varying(40) NOT NULL,
+    r_name_de character varying(50) NOT NULL,
+    r_name_us character varying(50) NOT NULL,
+    r_desc_de text NOT NULL,
+    r_desc_us text NOT NULL
+);
+
+
+--
+-- Name: story_seq; Type: SEQUENCE; Schema: accounts; Owner: -
+--
+
+CREATE SEQUENCE story_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: test; Type: VIEW; Schema: accounts; Owner: -
+--
+
+CREATE VIEW test AS
+    SELECT raceapplys.ra_accid, raceapplys.ra_answer, gm_stats_race.gm_name FROM (raceapplys JOIN gm_stats_race ON ((raceapplys.oid = (gm_stats_race.gm_apply_id)::oid))) WHERE ((raceapplys.ra_race = 7) AND (raceapplys.ra_status = 2));
+
+
+SET default_with_oids = true;
+
+--
+-- Name: warnings; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+--
+
+CREATE TABLE warnings (
+    wrn_accid integer NOT NULL,
+    wrn_reason text NOT NULL,
+    wrn_gm character varying(40) NOT NULL,
+    wrn_time timestamp with time zone NOT NULL
+);
+
+
+SET search_path = testserver, pg_catalog;
 
 --
 -- Name: armor; Type: TABLE; Schema: testserver; Owner: -; Tablespace: 
@@ -1209,6 +1592,98 @@ CREATE TABLE weapon (
 COMMENT ON COLUMN weapon.wp_fightingscript IS 'script name';
 
 
+SET search_path = accounts, pg_catalog;
+
+--
+-- Name: acc_name_unique; Type: CONSTRAINT; Schema: accounts; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY account
+    ADD CONSTRAINT acc_name_unique UNIQUE (acc_login);
+
+
+--
+-- Name: account_groups_pkey; Type: CONSTRAINT; Schema: accounts; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY account_groups
+    ADD CONSTRAINT account_groups_pkey PRIMARY KEY (ag_id);
+
+
+--
+-- Name: account_log_al_id_key; Type: CONSTRAINT; Schema: accounts; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY account_log
+    ADD CONSTRAINT account_log_al_id_key UNIQUE (al_id);
+
+
+--
+-- Name: account_pkey; Type: CONSTRAINT; Schema: accounts; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY account
+    ADD CONSTRAINT account_pkey PRIMARY KEY (acc_id);
+
+
+--
+-- Name: attribtemp_attr_id_key; Type: CONSTRAINT; Schema: accounts; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY attribtemp
+    ADD CONSTRAINT attribtemp_attr_id_key UNIQUE (attr_id);
+
+
+--
+-- Name: bad_values_bv_id_key; Type: CONSTRAINT; Schema: accounts; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY bad_values
+    ADD CONSTRAINT bad_values_bv_id_key UNIQUE (bv_id);
+
+
+--
+-- Name: badname_full_pkey; Type: CONSTRAINT; Schema: accounts; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY badname_full
+    ADD CONSTRAINT badname_full_pkey PRIMARY KEY (bf_name);
+
+
+--
+-- Name: badname_partial_pkey; Type: CONSTRAINT; Schema: accounts; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY badname_partial
+    ADD CONSTRAINT badname_partial_pkey PRIMARY KEY (bp_name);
+
+
+--
+-- Name: groups_pkey; Type: CONSTRAINT; Schema: accounts; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY groups
+    ADD CONSTRAINT groups_pkey PRIMARY KEY (g_id);
+
+
+--
+-- Name: legtimulti_pkey; Type: CONSTRAINT; Schema: accounts; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY legtimulti
+    ADD CONSTRAINT legtimulti_pkey PRIMARY KEY (acc_id_1, acc_id_2);
+
+
+--
+-- Name: rights_pkey; Type: CONSTRAINT; Schema: accounts; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY rights
+    ADD CONSTRAINT rights_pkey PRIMARY KEY (r_id);
+
+
+SET search_path = testserver, pg_catalog;
+
 --
 -- Name: armor_pkey; Type: CONSTRAINT; Schema: testserver; Owner: -; Tablespace: 
 --
@@ -1587,6 +2062,17 @@ ALTER TABLE ONLY weapon
     ADD CONSTRAINT weapon_pkey PRIMARY KEY (wp_itemid);
 
 
+SET search_path = accounts, pg_catalog;
+
+--
+-- Name: name_password_index; Type: INDEX; Schema: accounts; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX name_password_index ON account USING btree (acc_login, acc_passwd);
+
+
+SET search_path = testserver, pg_catalog;
+
 --
 -- Name: mobit_monster_idx; Type: INDEX; Schema: testserver; Owner: -; Tablespace: 
 --
@@ -1614,6 +2100,58 @@ CREATE INDEX playerskills_searchindex ON playerskills USING btree (psk_playerid)
 
 CREATE RULE gmrights_update AS ON UPDATE TO gmrights DO INSTEAD UPDATE gms SET gm_rights_server = ((((((((((((((((cast_bool(new.allow_login) + (cast_bool(new.basic_commands) << 1)) + (cast_bool(new.warp) << 2)) + (cast_bool(new.summon) << 3)) + (cast_bool(new.prison) << 4)) + (cast_bool(new.settiles) << 5)) + (cast_bool(new.clipping) << 6)) + (cast_bool(new.warp_field_edit) << 7)) + (cast_bool(new.import) << 8)) + (cast_bool(new.visibility) << 9)) + (cast_bool(new.table_reload) << 10)) + (cast_bool(new.ban) << 11)) + (cast_bool(new.toggle_login) << 12)) + (cast_bool(new.save) << 13)) + (cast_bool(new.broadcast) << 14)) + (cast_bool(new.forcelogout) << 15)) + (cast_bool(new.receive_gmcalls) << 16)) WHERE ((gms.gm_login)::text = (new.gm_login)::text);
 
+
+SET search_path = accounts, pg_catalog;
+
+--
+-- Name: acc_id_1_account_key; Type: FK CONSTRAINT; Schema: accounts; Owner: -
+--
+
+ALTER TABLE ONLY legtimulti
+    ADD CONSTRAINT acc_id_1_account_key FOREIGN KEY (acc_id_1) REFERENCES account(acc_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: acc_id_2_account_key; Type: FK CONSTRAINT; Schema: accounts; Owner: -
+--
+
+ALTER TABLE ONLY legtimulti
+    ADD CONSTRAINT acc_id_2_account_key FOREIGN KEY (acc_id_2) REFERENCES account(acc_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: account_groups_ag_acc_id_fkey; Type: FK CONSTRAINT; Schema: accounts; Owner: -
+--
+
+ALTER TABLE ONLY account_groups
+    ADD CONSTRAINT account_groups_ag_acc_id_fkey FOREIGN KEY (ag_acc_id) REFERENCES account(acc_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: account_groups_ag_group_id_fkey; Type: FK CONSTRAINT; Schema: accounts; Owner: -
+--
+
+ALTER TABLE ONLY account_groups
+    ADD CONSTRAINT account_groups_ag_group_id_fkey FOREIGN KEY (ag_group_id) REFERENCES groups(g_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: account_log_al_gm_id_fkey; Type: FK CONSTRAINT; Schema: accounts; Owner: -
+--
+
+ALTER TABLE ONLY account_log
+    ADD CONSTRAINT account_log_al_gm_id_fkey FOREIGN KEY (al_gm_id) REFERENCES account(acc_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: account_log_al_user_id_fkey; Type: FK CONSTRAINT; Schema: accounts; Owner: -
+--
+
+ALTER TABLE ONLY account_log
+    ADD CONSTRAINT account_log_al_user_id_fkey FOREIGN KEY (al_user_id) REFERENCES account(acc_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+SET search_path = testserver, pg_catalog;
 
 --
 -- Name: $1; Type: FK CONSTRAINT; Schema: testserver; Owner: -
