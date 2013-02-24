@@ -40,7 +40,7 @@ void MonitoringClients::clientConnect(Player *player) {
 #ifdef _MONITORINGCLIENTS_DEBUG
     std::cout<<"a new client connects ( "<< player->name<<" )"<<std::endl;
 #endif
-    Logger::writeMessage("bbiwi","New Client connects: " + player->name + " active clients online: " + Logger::toString(client_list.size()));
+    Logger::info(LogFacility::Admin) << "New BBIWI Client connects: " << player->name << " active clients online: " << client_list.size() << Log::end;
     //create new Monitoring Client
     client_list.push_back(player); /*<add a new client to the list*/
     //setup the keepalive
@@ -99,7 +99,7 @@ void MonitoringClients::CheckClients() {
                     (*iterator)->workoutCommands();
                 } else {
                     //timeout so we have to disconnect
-                    Logger::writeMessage("bbiwi","Client Timed out: " + (*iterator)->name);
+                    Logger::info(LogFacility::Admin) << "BBIWI Client Timed out: " << (*iterator)->name << Log::end;
                     (*iterator)->Connection->closeConnection();
                 }
             } else {

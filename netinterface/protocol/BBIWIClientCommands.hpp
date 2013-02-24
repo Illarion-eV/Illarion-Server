@@ -71,7 +71,7 @@ public:
         World::get()->sendMessageToAllPlayers(msg);
         World::get()->monitoringClientList->sendCommand(boost::shared_ptr<BasicServerCommand>(new BBMessageTC("[Server] Broadcast:",0)));
         World::get()->monitoringClientList->sendCommand(boost::shared_ptr<BasicServerCommand>(new BBMessageTC(msg, 0)));
-        std::string message = "By: " + player->name + "(" + Logger::toString(player->id) + ")";
+        std::string message = "By: " + player->name + "(" + boost::lexical_cast<std::string>(player->id) + ")";
         World::get()->monitoringClientList->sendCommand(boost::shared_ptr<BasicServerCommand>(new BBMessageTC(message,0)));
     }
 
@@ -239,7 +239,7 @@ public:
 
         if (tempPlayer != NULL) {
             tempPlayer->talk(Character::tt_say,message);
-            Logger::writeMessage("bbiwi", player->name + " talked as other player: " + tempPlayer->name + " with message: " + message);
+            Logger::info(LogFacility::Admin) << player->name << " talked as other player: " << tempPlayer->name << " with message: " << message << Log::end;
         }
     }
 
@@ -587,10 +587,10 @@ public:
 
         if (tempPlayer != NULL) {
             World::get()->ban(tempPlayer, time, player->id);
-            boost::shared_ptr<BasicServerCommand>cmd(new BBMessageTC("Player: " + name + "(" + Logger::toString(id) + ")" + " banned by: " + player->name + "(" + Logger::toString(player->id) + ")", 0));
+            boost::shared_ptr<BasicServerCommand>cmd(new BBMessageTC("Player: " + name + "(" + boost::lexical_cast<std::string>(id) + ")" + " banned by: " + player->name + "(" + boost::lexical_cast<std::string>(player->id) + ")", 0));
             World::get()->monitoringClientList->sendCommand(cmd);
         } else {
-            boost::shared_ptr<BasicServerCommand>cmd(new BBMessageTC("Cannot find the player: " + name + "(" + Logger::toString(id) + ")",0));
+            boost::shared_ptr<BasicServerCommand>cmd(new BBMessageTC("Cannot find the player: " + name + "(" + boost::lexical_cast<std::string>(id) + ")",0));
             player->Connection->addCommand(cmd);
         }
     }

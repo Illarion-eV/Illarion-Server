@@ -58,7 +58,7 @@ public:
                 const auto &data = (*this)[id];
                 internalAssign<ScriptParameter>(id, scriptName, data);
             } catch (ScriptException &e) {
-                Logger::writeError("scripts", "Error while loading " + getTableName() + " script: " + scriptName + ":\n" + e.what() + "\n");
+                Logger::error(LogFacility::Script) << "Error while loading " << getTableName() << " script: " << scriptName << ": " << e.what() << Log::end;
             }
         }
 

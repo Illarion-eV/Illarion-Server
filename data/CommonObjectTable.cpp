@@ -118,7 +118,7 @@ void CommonObjectTable::reload() {
                         std::shared_ptr<LuaItemScript> tmpScript(new LuaItemScript(scriptname, temprecord));
                         m_scripttable[itemID] = tmpScript;
                     } catch (ScriptException &e) {
-                        Logger::writeError("scripts", "Error while loading item script: " + scriptname + ":\n" + e.what() + "\n");
+                        Logger::error(LogFacility::Script) << "Error while loading item script: " << scriptname << ": " << e.what() << Log::end;
                     }
                 } else if (questItr != questEnd && questItr->first == itemID) {
                     std::shared_ptr<LuaItemScript> tmpScript(new LuaItemScript(temprecord));
@@ -131,7 +131,7 @@ void CommonObjectTable::reload() {
                         ++questItr;
                     }
                 } catch (ScriptException &e) {
-                    Logger::writeError("scripts", "Error while loading item quest script: " + questItr->second.script->getFileName() + ":\n" + e.what() + "\n");
+                    Logger::error(LogFacility::Script) << "Error while loading item quest script: " << questItr->second.script->getFileName() << ": " << e.what() << Log::end;
                 }
 
 
@@ -162,9 +162,7 @@ const CommonStruct &CommonObjectTable::find(TYPE_OF_ITEM_ID id) {
     try {
         return m_table.at(id);
     } catch (std::out_of_range &) {
-        std::stringstream ss;
-        ss << "CommonObjectTable: item " << id << " was not found!\n";
-        Logger::writeError("scripts", ss.str());
+        Logger::error(LogFacility::Script) << "CommonObjectTable: item " << id << " was not found!" << Log::end;
         return m_table[id];
     }
 }

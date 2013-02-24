@@ -24,9 +24,11 @@
 #include <string>
 
 #include <boost/cstdint.hpp>
+#include <boost/lexical_cast.hpp>
 #include <pqxx/connection.hxx>
 
 #include "db/Connection.hpp"
+#include "Config.hpp"
 
 using namespace Database;
 using std::string;
@@ -37,13 +39,13 @@ ConnectionManager &ConnectionManager::getInstance() {
     return ConnectionManager::instance;
 }
 
-void ConnectionManager::setupManager(const Login &login, const Server &server) {
+void ConnectionManager::setupManager() {
     connectionString = "";
-    addConnectionParameterIfValid("user", login.user);
-    addConnectionParameterIfValid("password", login.password);
-    addConnectionParameterIfValid("dbname", login.database);
-    addConnectionParameterIfValid("host", server.host);
-    addConnectionParameterIfValid("port", server.port);
+    addConnectionParameterIfValid("user", Config::instance().postgres_user);
+    addConnectionParameterIfValid("password", Config::instance().postgres_pwd);
+    addConnectionParameterIfValid("dbname", Config::instance().postgres_db);
+    addConnectionParameterIfValid("host", Config::instance().postgres_host);
+    addConnectionParameterIfValid("port", boost::lexical_cast<std::string>(Config::instance().postgres_port));
     isOperational = true;
 }
 

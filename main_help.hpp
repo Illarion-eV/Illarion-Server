@@ -44,9 +44,6 @@ void logout_save(Player *who, bool forced, unsigned long int thistime);
 
 void login_save(Player *who);
 
-//! Das Initialisieren von Logoptionen
-void InitLogOptions();
-
 //! Die Initialisierung des Servers mit Daten aus einer Datei
 bool Init(const std::string &initfile);
 
@@ -54,7 +51,7 @@ bool Init(const std::string &initfile);
 void checkArguments(int argc, char *argv[]);
 
 //! setup file positions
-bool setup_files();
+bool setup_files(time_t starttime);
 
 // Itemdefinitionen laden //
 void loadData();

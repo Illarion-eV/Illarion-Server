@@ -57,6 +57,7 @@ extern "C" {
 #include "dialog/CraftingDialog.hpp"
 #include "Random.hpp"
 #include <cxxabi.h>
+#include "Config.hpp"
 
 extern ScriptVariablesTable *scriptVariables;
 
@@ -75,7 +76,7 @@ LuaScript::LuaScript(std::string filename) throw(ScriptException) {
     _filename = filename;
     boost::split(vecPath, filename, boost::is_any_of("."));
 
-    strcpy(luafile, configOptions["scriptdir"].c_str());
+    strcpy(luafile, Config::instance().scriptdir().c_str());
     std::replace(filename.begin(), filename.end(), '.', '/');
     strcat(luafile, (filename + ".lua").c_str());
 
@@ -95,7 +96,7 @@ void LuaScript::initialize() {
         init_base_functions();
 
         char path[100];
-        strcpy(path, configOptions["scriptdir"].c_str());
+        strcpy(path, Config::instance().scriptdir().c_str());
         strcat(path, "?.lua");
         lua_pushstring(_luaState, "package");
         lua_gettable(_luaState, LUA_GLOBALSINDEX);
@@ -219,17 +220,15 @@ void LuaScript::writeErrorMsg() {
     }
 
     if (err.length() > 1) {
-        Logger::writeError("scripts", err);
+        Logger::error(LogFacility::Script) << err << Log::end;
     }
 }
 
 void LuaScript::writeCastErrorMsg(const std::string &entryPoint, const luabind::cast_failed &e) {
     std::string script = getFileName();
     char *expectedType = abi::__cxa_demangle(e.info().name(), 0, 0, 0);
-    std::string err = "Invalid return type in " + script + "." + entryPoint + ":\n";
-    err += "Expected type " + std::string(expectedType) + "\n";
+    Logger::error(LogFacility::Script) << "Invalid return type in " << script << "." << entryPoint << ": " << "Expected type " << expectedType << Log::end;
     free(expectedType);
-    Logger::writeError("scripts", err);
 }
 
 void LuaScript::writeDebugMsg(const std::string &msg) {
@@ -240,7 +239,7 @@ void LuaScript::writeDebugMsg(const std::string &msg) {
     lua_pop(_luaState, 1);
 
     if (backtrace.length() > 0) {
-        Logger::writeError("scripts", backtrace);
+        Logger::error(LogFacility::Script) << backtrace << Log::end;
     }
 
 #endif
@@ -253,7 +252,7 @@ void LuaScript::writeDeprecatedMsg(const std::string &deprecatedEntity) {
     lua_pop(_luaState, 1);
 
     if (backtrace.length() > 0) {
-        Logger::writeError("scripts", backtrace);
+        Logger::error(LogFacility::Script) << backtrace << Log::end;
     }
 }
 
@@ -320,7 +319,7 @@ bool LuaScript::existsEntrypoint(const std::string &entrypoint) {
 
 static int dofile(lua_State *L, const char *fname) {
     char path[100];
-    strcpy(path, configOptions["scriptdir"].c_str());
+    strcpy(path, Config::instance().scriptdir().c_str());
     strcat(path, fname);
     std::cout << "loading file: " << path << std::endl;
     int n = lua_gettop(L);

@@ -142,9 +142,6 @@ struct MAP_POSITION {
     }
 };
 
-// a map storing configuration options from a config file...
-extern std::map<std::string, std::string> configOptions;
-
 //! a log file for kills
 extern std::ofstream kill_log;
 

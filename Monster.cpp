@@ -27,6 +27,7 @@
 #include "script/LuaMonsterScript.hpp"
 #include "World.hpp"
 #include "WaypointList.hpp"
+#include "Config.hpp"
 
 std::auto_ptr<IdCounter> Monster::monsteridc;
 
@@ -37,7 +38,7 @@ Monster::Monster(const TYPE_OF_CHARACTER_ID &type, const position &newpos, Spawn
     : Character(),lastTargetPosition(position(0,0,0)),lastTargetSeen(false), spawn(spawnpoint), monstertype(type) {
 
     if (monsteridc.get() == 0) {
-        monsteridc.reset(new IdCounter(configOptions["monsteridc"], MONSTER_BASE));    // reset monster id to 0xBB000000
+        monsteridc.reset(new IdCounter(Config::instance().monsteridc, MONSTER_BASE));    // reset monster id to 0xBB000000
     }
 
     character = monster;

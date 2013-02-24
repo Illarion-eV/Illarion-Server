@@ -177,7 +177,7 @@ CloseDialogTC::CloseDialogTC(unsigned int dialogId) : BasicServerCommand(SC_CLOS
 }
 
 ItemUpdate_TC::ItemUpdate_TC(position fieldpos, ITEMVECTOR &items) : BasicServerCommand(SC_ITEMUPDATE_TC) {
-    Logger::writeMessage("rot_update", "sending new itemstack for pos("+Logger::toString(fieldpos.x)+", "+Logger::toString(fieldpos.y)+", "+Logger::toString(fieldpos.z)+")",false);
+    Logger::debug(LogFacility::World) << "sending new itemstack for pos(" << fieldpos.x << ", " << fieldpos.y << ", " << fieldpos.z << ")" << Log::end;
     addShortIntToBuffer(fieldpos.x);
     addShortIntToBuffer(fieldpos.y);
     addShortIntToBuffer(fieldpos.z);
@@ -197,7 +197,7 @@ ItemUpdate_TC::ItemUpdate_TC(position fieldpos, ITEMVECTOR &items) : BasicServer
 
         addShortIntToBuffer(it->getId());
         addShortIntToBuffer(it->getNumber());
-        Logger::writeMessage("rot_update", "adding item id: "+Logger::toString(it->getId())+" count: "+Logger::toString(static_cast<int>(it->getNumber())),false);
+        Logger::debug(LogFacility::World) << "adding item id: " << it->getId() << " count: " << static_cast<int>(it->getNumber()) << Log::end;
         size--;
     }
 }

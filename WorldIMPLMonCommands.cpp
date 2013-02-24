@@ -94,8 +94,11 @@ void World::montool_set_login(Player *c, const std::string &st) {
         return;
     }
 
-    configOptions["disable_login"] = st;
-    //std::cout << "nologin set to " << st << std::endl;
+    bool enable = true;
+    if (st == "true") enable = false;
+
+    World::get()->allowLogin(enable);
+    Logger::info(LogFacility::Admin) << c->name << " set allowLogin to " << enable << Log::end;
     //monitoringClientList->sendCommand( new SendMessageTS("set login set to: " + st +"! from "+c->name+"("+Logger::toString(c->id)+")",0));
 
 }

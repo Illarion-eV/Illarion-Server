@@ -365,8 +365,13 @@ public:
     */
     void workout_CommandBuffer(Player *&cp);
 
+    void allowLogin(bool allow) { _is_login_allowed = allow; }
+    bool isLoginAllowed() const { return _is_login_allowed; }
 
-    static World *create(std::string dir, time_t starttime);
+    void enableSpawn(bool enable) { _is_spawn_enabled = enable; }
+    bool isSpawnEnabled() const { return _is_spawn_enabled; }
+
+    static World *create(const std::string& dir, time_t starttime);
     static World *get() throw(std::runtime_error);
 
 
@@ -1555,6 +1560,9 @@ private:
     void logMissingField(const std::string &function, const position &field);
 
 private:
+
+    bool _is_login_allowed = true;
+    bool _is_spawn_enabled = true;
 
     /**
     * the constructor of World, private because of singleton pattern

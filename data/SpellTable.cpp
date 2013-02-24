@@ -70,7 +70,7 @@ void SpellTable::reload() {
                         std::shared_ptr<LuaMagicScript> script(new LuaMagicScript(spell.scriptname, spellid));
                         spell.script = script;
                     } catch (ScriptException &e) {
-                        Logger::writeError("scripts", "Error while loading magic script: " + spell.scriptname + ":\n" + e.what() + "\n");
+                        Logger::error(LogFacility::Script) << "Error while loading magic script: " << spell.scriptname << ": " << e.what() << Log::end;
                     }
                 }
 

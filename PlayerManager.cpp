@@ -223,8 +223,7 @@ void *PlayerManager::playerSaveLoop(PlayerManager *pmanager) {
 
         while (pmanager->running) {
             if (!pmanager->loggedOutPlayers.empty()) {
-                Logger::writeMessage("basic", "Ausgelogte Spieler bearbeiten: " + Logger::toString(pmanager->loggedOutPlayers.size()) + " players gone");
-                std::cout<<"ausgeloggte Spieler bearbeiten:"<<std::endl;
+                Logger::debug(LogFacility::World) << "Ausgelogte Spieler bearbeiten: " << pmanager->loggedOutPlayers.size() << " players gone" << Log::end;
 
                 while (!pmanager->loggedOutPlayers.empty()) {
                     mut.lock();
@@ -257,14 +256,12 @@ void *PlayerManager::playerSaveLoop(PlayerManager *pmanager) {
                     }
                 }
 
-                Logger::writeMessage("basic","Ausgelogte Spieler bearbeiten fertig [Begin]");
-                std::cout<<"Ausgelogte Spieler bearbeiten fertig [Begin]"<<std::endl;
+                Logger::debug(LogFacility::World) << "Ausgelogte Spieler bearbeiten fertig [Begin]" << Log::end;
                 // Statistik aktualisieren
                 //loadlog.update( world->Players.size() );
                 //world->saveAllPlayerNamesToFile( configOptions["datadir"] + std::string( ONLINEPLFILE ) );
                 world->updatePlayerList();
-                Logger::writeMessage("basic", "Ausgelogte Spieler bearbeiten fertig [End]");
-                std::cout<<"Ausgelogte Spieler bearbeiten fertig [End]"<<std::endl;
+                Logger::debug(LogFacility::World) << "Ausgelogte Spieler bearbeiten fertig [End]" << Log::end;
             }
 
             nanosleep(&waittime, NULL);

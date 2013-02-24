@@ -63,7 +63,7 @@ void LongTimeEffectTable::reload() {
                         std::shared_ptr<LuaLongTimeEffectScript> script(new LuaLongTimeEffectScript(temp.scriptname, temp));
                         temp.script = script;
                     } catch (ScriptException &e) {
-                        Logger::writeError("scripts", "Error while loading lte script: " + temp.scriptname + ":\n" + e.what() + "\n");
+                        Logger::error(LogFacility::Script) << "Error while loading lte script: " << temp.scriptname << ": " << e.what() << Log::end;
                     }
                 }
 

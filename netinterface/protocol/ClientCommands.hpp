@@ -469,8 +469,7 @@ public:
     void performAction(Player *player) {
         time(&(player->lastaction));
         player->ltAction->abortAction();
-        Logger::writeMessage("World_Debug", player->name + " is casting!");
-        Logger::writeMessage("Casting", player->name + " is casting!");
+        Logger::debug(LogFacility::Script) << player->name << " is casting!" << Log::end;
 
         bool paramOK = true;
         //CScript* skript = NULL;
@@ -486,7 +485,7 @@ public:
             }
         }
 
-        Logger::writeMessage("Casting", player->name + " can't cast the spell: " + Logger::toString(spellId) + " , flags: " + Logger::toString(player->magic.flags[ player->magic.type ]),false);
+        Logger::info(LogFacility::Script) << player->name << " can't cast the spell: " << spellId << " , flags: " << player->magic.flags[ player->magic.type ] << Log::end;
 
         //Source des Castens zuweisen
         SouTar Source, Target;
@@ -496,13 +495,13 @@ public:
 
         switch (cid) {
         case UID_KOORD:
-            Logger::writeMessage("Casting",player->name + " trys to cast on a coordinate pos(" + Logger::toString(xc) + "," + Logger::toString(yc) + "," + Logger::toString(zc)+")",false);
+            Logger::info(LogFacility::Script) << player->name << " trys to cast on a coordinate pos(" << xc << "," << yc << "," << zc << ")" << Log::end;
 
             if (LuaMageScript) {
                 Field *temp;
 
                 if (!World::get()->GetPToCFieldAt(temp, xc, yc, zc)) {
-                    Logger::writeError("World_Debug", "cant find field for casting at pos(" + Logger::toString(xc) + "," + Logger::toString(yc) + "," + Logger::toString(zc) + ") !");
+                    Logger::error(LogFacility::Script) << "cant find field for casting at pos(" << xc << "," << yc << "," << zc << ") !" << Log::end;
                     paramOK = false;
                 } else {
                     // Feld gefunden
@@ -512,12 +511,12 @@ public:
                         if (tmpCharacter != NULL) {
                             //Nothing to do here
                         } else {
-                            Logger::writeMessage("Casting","Character found at target field!",false);
+                            Logger::debug(LogFacility::Script) << "Character found at target field!" << Log::end;
                         }
 
                         // Character auf Feld ist ein Spieler
                         if ((tmpCharacter->character == Character::player) && (LuaMageScript)) {
-                            Logger::writeMessage("Casting","Target Character: player",false);
+                            Logger::debug(LogFacility::Script) << "Target Character: player" << Log::end;
                             //Lua Script zuweisung
                             Target.character = tmpCharacter;
                             Target.pos = tmpCharacter->pos;
@@ -525,13 +524,13 @@ public:
                         }
                         // Character auf Feld ist ein NPC
                         else if ((tmpCharacter->character == Character::npc) && (LuaMageScript)) {
-                            Logger::writeMessage("Casting","Target Character: NPC",false);
+                            Logger::debug(LogFacility::Script) << "Target Character: NPC" << Log::end;
                             //Lua Script zuweisung
                             Target.character = tmpCharacter;
                             Target.pos = tmpCharacter->pos;
                             Target.Type = LUA_CHARACTER;
                         } else if ((tmpCharacter->character == Character::monster) && (LuaMageScript)) {
-                            Logger::writeMessage("Casting","Target Character: monster",false);
+                            Logger::debug(LogFacility::Script) << "Target Character: monster" << Log::end;
                             //Lua Script zuweisung
                             Target.character = tmpCharacter;
                             Target.pos = tmpCharacter->pos;
@@ -541,7 +540,7 @@ public:
                         Item it;
 
                         if (temp->ViewTopItem(it)) {
-                            Logger::writeMessage("Casting","Item found at target field!",false);
+                            Logger::debug(LogFacility::Script) << "Item found at target field!" << Log::end;
 
                             if (LuaMageScript) {
                                 //Lua Script zuweisung
@@ -553,7 +552,7 @@ public:
                                 Target.item.owner = player;
                             }
                         } else {
-                            Logger::writeMessage("Casting","empty field!",false);
+                            Logger::debug(LogFacility::Script) << "empty field!" << Log::end;
 
                             if (LuaMageScript) {
                                 //Lua Script zuweisung
@@ -577,7 +576,7 @@ public:
             std::cout << "showcase: " << (int) showcase << " pos: " << (int) pos << std::endl;
 #endif
 
-            Logger::writeMessage("Casting", player->name + " is casting in showcas: "+Logger::toString(showcase)+" pos "+Logger::toString(pos));
+            Logger::info(LogFacility::Script) << player->name << " is casting in showcas: " << showcase << " pos " << pos << Log::end;
 
             if (LuaMageScript) {
                 if (player->isShowcaseOpen(showcase)) {
@@ -627,7 +626,7 @@ public:
 #ifdef World_DEBUG
             std::cout << "UID_MAGICWAND" << std::endl;
 #endif
-            Logger::writeMessage("Casting","Cast with Wand",false);
+            Logger::debug(LogFacility::Script) << "Cast with Wand" << Log::end;
 
             if ((player->attackmode) && (player->enemyid != 0) && (LuaMageScript)) {
                 bool zauberstab=false;
@@ -739,7 +738,7 @@ public:
 #ifdef World_DEBUG
             std::cout << "cast mit Inv" << std::endl;
 #endif
-            Logger::writeMessage("Casting","cast in inventory",false);
+            Logger::debug(LogFacility::Script) << "cast in inventory" << Log::end;
 
             if (LuaMageScript) {
                 if (pos < (MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
@@ -782,7 +781,7 @@ public:
         } // end of switch ID
 
         if (LuaMageScript) {
-            Logger::writeMessage("Casting","try to call magic script",false);
+            Logger::debug(LogFacility::Script) << "try to call magic script" << Log::end;
             player->ltAction->setLastAction(LuaMageScript, Source, Target, LongTimeAction::ACTION_MAGIC);
             //std::string msg;
 #ifdef World_DEBUG
@@ -841,7 +840,7 @@ public:
                 //monitoringClientList->sendCommand( new SendActionTS( player->id, player->name, 2, msg));
             } //ENde if player->IsAlive
 
-            Logger::writeMessage("Casting","all succeeded",false);
+            Logger::debug(LogFacility::Script) << "all succeeded" << Log::end;
         }
     }
 
@@ -896,7 +895,7 @@ public:
         time(&(player->lastaction));
         player->ltAction->abortAction();
 
-        Logger::writeMessage("Use", player->name + " uses something");
+        Logger::debug(LogFacility::Script) << player->name << " uses something" << Log::end;
 
         bool paramOK = true;
 
@@ -912,25 +911,25 @@ public:
 
             Field *temp;
 
-            Logger::writeMessage("Use", "UID_KOORD",false);
-            Logger::writeMessage("Use","xc: " +Logger::toString(static_cast<int>(xc)) + " yc: " + Logger::toString(static_cast<int>(yc)) + " zc: " + Logger::toString(static_cast<int>(zc)), false);
+            Logger::debug(LogFacility::Script) << "UID_KOORD" << Log::end;
+            Logger::debug(LogFacility::Script) << "xc: " << static_cast<int>(xc) << " yc: " << static_cast<int>(yc) << " zc: " << static_cast<int>(zc) << Log::end;
 
             if (!World::get()->GetPToCFieldAt(temp, xc, yc, zc)) {
-                Logger::writeError("World_Debug","Use UID_KOORD field not found!");
-                Logger::writeMessage("Use","Use UID_KOORD field not found at pos ( " + Logger::toString(static_cast<int>(xc)) + "," + Logger::toString(static_cast<int>(yc)) + "," + Logger::toString(static_cast<int>(zc)) + ")");
+                Logger::debug(LogFacility::Script) << "Use UID_KOORD field not found!" << Log::end;
+                Logger::debug(LogFacility::Script) << "Use UID_KOORD field not found at pos ( " << static_cast<int>(xc) << "," << static_cast<int>(yc) << "," << static_cast<int>(zc) << ")" << Log::end;
                 paramOK = false;
             } else {
                 // Feld gefunden
                 //Prfen ob sich irgendeine art Char auf dem Feld befindet (Spaeter nur noch IsCharOnField vorerst noch alle Arten pruefen
                 if (temp->IsPlayerOnField() || temp->IsNPCOnField() || temp->IsMonsterOnField()) {
-                    Logger::writeMessage("Use", "Character on field found!", false);
+                    Logger::debug(LogFacility::Script) << "Character on field found!" << Log::end;
                     Character *tmpCharacter = World::get()->findCharacterOnField(xc, yc, zc);
 
                     if (tmpCharacter != NULL) {
                         if (tmpCharacter->character == Character::player) {
-                            Logger::writeMessage("Use","Character is a player!",false);
+                            Logger::debug(LogFacility::Script) << "Character is a player!" << Log::end;
                         } else if (tmpCharacter->character == Character::npc) {
-                            Logger::writeMessage("Use","Character is a NPC!", false);
+                            Logger::debug(LogFacility::Script) << "Character is a NPC!" << Log::end;
 
                             NPC *scriptNPC = dynamic_cast<NPC *>(tmpCharacter);
                             LuaNPCScript = scriptNPC->getScript();
@@ -941,7 +940,7 @@ public:
                                 Source.Type = LUA_CHARACTER;
                             }
                         } else if (tmpCharacter->character == Character::monster) {
-                            Logger::writeMessage("Use","Character is a monster!",false);
+                            Logger::debug(LogFacility::Script) << "Character is a monster!" << Log::end;
 
                             Monster *scriptMonster = dynamic_cast<Monster *>(tmpCharacter);
                             MonsterStruct monStruct;
@@ -949,8 +948,7 @@ public:
                             if (MonsterDescriptions->find(scriptMonster->getType(),monStruct)) {
                                 LuaMonsterScript = monStruct.script;
                             } else {
-                                Logger::writeError("World_Debug","try to use Monster but id: " + Logger::toString(scriptMonster->getType()) +" not found in database!");
-                                Logger::writeMessage("Use","try to use Monster but id: " + Logger::toString(scriptMonster->getType()) +" not found in database!", false);
+                                Logger::error(LogFacility::Script) << "try to use Monster but id: " << scriptMonster->getType() << " not found in database!" << Log::end;
                             }
 
                             if (LuaMonsterScript) {
@@ -960,15 +958,14 @@ public:
                             }
                         }
                     } else {
-                        Logger::writeError("World_Debug", "Character on field (" + Logger::toString(xc) + "," + Logger::toString(yc) + "," + Logger::toString(zc) + ") not found!");
-                        Logger::writeMessage("Use", "Character on field (" + Logger::toString(xc) + "," + Logger::toString(yc) + "," + Logger::toString(zc) + ") not found!", false);
+                        Logger::error(LogFacility::Script) << "Character on field (" << xc << "," << yc << "," << zc << ") not found!" << Log::end;
                     }
                 } else {
-                    Logger::writeMessage("Use","no character on field!", false);
+                    Logger::debug(LogFacility::Script) << "no character on field!" << Log::end;
                     Item it;
 
                     if (temp->ViewTopItem(it)) {
-                        Logger::writeMessage("Use","Item on field", false);
+                        Logger::debug(LogFacility::Script) << "Item on field" << Log::end;
 
                         LuaScript = CommonItems->findScript(it.getId());
 
@@ -981,7 +978,7 @@ public:
                             Source.pos = position(xc, yc, zc);
                         }
                     } else {
-                        Logger::writeMessage("Use","empty field!",false);
+                        Logger::debug(LogFacility::Script) << "empty field!" << Log::end;
 
                         auto &script = Data::Tiles.script(temp->getTileId());
 
@@ -997,18 +994,18 @@ public:
             break;
 
         case UID_SHOWC:
-            Logger::writeMessage("Use", "showcase: " + Logger::toString(static_cast<int>(showcase)) + " pos: " + Logger::toString(static_cast<int>(pos)),false);
+            Logger::debug(LogFacility::Script) << "showcase: " << static_cast<int>(showcase) << " pos: " << static_cast<int>(pos) << Log::end;
 
             if (player->isShowcaseOpen(showcase)) {
                 Container *ps = player->getShowcaseContainer(showcase);
 
                 if (ps != NULL) {
-                    Logger::writeMessage("Use", "Container gefunden!", false);
+                    Logger::debug(LogFacility::Script) << "Container gefunden!" << Log::end;
                     ScriptItem tempi;
                     Container *tempc;
 
                     if (ps->viewItemNr(pos, tempi, tempc)) {
-                        Logger::writeMessage("Use", "pos found item id: " + Logger::toString(tempi.getId()),false);
+                        Logger::debug(LogFacility::Script) << "pos found item id: " << tempi.getId() << Log::end;
 
                         LuaScript = CommonItems->findScript(tempi.getId());
 
@@ -1037,10 +1034,10 @@ public:
         case UID_INV:
 
             if (pos < (MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
-                Logger::writeMessage("Use", "position approved!",false);
+                Logger::debug(LogFacility::Script) << "position approved!" << Log::end;
 
                 if (player->characterItems[ pos ].getId() != 0) {
-                    Logger::writeMessage("Use","at position " + Logger::toString(static_cast<int>(pos)) + " on body, is an item with id: " + Logger::toString(player->characterItems[ pos ].getId()),false);
+                    Logger::debug(LogFacility::Script) << "at position " << static_cast<int>(pos) << " on body, is an item with id: " << player->characterItems[ pos ].getId() << Log::end;
 
                     LuaScript = CommonItems->findScript(player->characterItems[ pos ].getId()) ;
 
@@ -1073,17 +1070,14 @@ public:
             break;
         }
 
-        Logger::writeMessage("Use_Scripts",""); //Insert time only
-        Logger::writeMessage("Use_Scripts","=========Use Script Start=============",false);
-        Logger::writeMessage("Use_Scripts","Source pos (" + Logger::toString(Source.pos.x) + "," + Logger::toString(Source.pos.y) + "," + Logger::toString(Source.pos.z) + ")",false);
-        Logger::writeMessage("Use_Scripts","Source type: " + Logger::toString(Source.Type), false);
-        Logger::writeMessage("Use_Scripts", "Source Character: " + Logger::toString(Source.character),false);
-        Logger::writeMessage("Use_Scripts","",false); //Insert blank line
-        Logger::writeMessage("Use_Scripts","Target pos (" + Logger::toString(Target.pos.x) + "," + Logger::toString(Target.pos.y) + "," + Logger::toString(Target.pos.z) + ")",false);
-        Logger::writeMessage("Use_Scripts","Target Type: " + Logger::toString(Target.Type),false);
-        Logger::writeMessage("Use_Scripts","Target Character: " + Logger::toString(Target.character),false);
-        Logger::writeMessage("Use_Scripts","==========Use Script End=============",false);
-        Logger::writeMessage("Use_Scripts","",false); //Insert blank line
+        Logger::debug(LogFacility::Script) << "=========Use Script Start=============" << Log::end;
+        Logger::debug(LogFacility::Script) << "Source pos (" << Source.pos.x << "," << Source.pos.y << "," << Source.pos.z << ")" << Log::end;
+        Logger::debug(LogFacility::Script) << "Source type: " << Source.Type << Log::end;
+        Logger::debug(LogFacility::Script) << "Source Character: " << Source.character << Log::end;
+        Logger::debug(LogFacility::Script) << "Target pos (" << Target.pos.x << "," << Target.pos.y << "," << Target.pos.z << ")" << Log::end;
+        Logger::debug(LogFacility::Script) << "Target Type: " << Target.Type << Log::end;
+        Logger::debug(LogFacility::Script) << "Target Character: " << Target.character << Log::end;
+        Logger::debug(LogFacility::Script) << "==========Use Script End=============" << Log::end;
 
         std::string msg;
 
@@ -1099,7 +1093,7 @@ public:
 
                 if (Source.Type == LUA_ITEM) {
                     LuaScript->UseItem(player, Source.item, static_cast<unsigned char>(LTS_NOLTACTION));
-                    msg = "Used Item: " + Logger::toString(Source.item.getId()) + " with item: " + Logger::toString(Target.item.getId());
+                    msg = "Used Item: " + boost::lexical_cast<std::string>(Source.item.getId()) + " with item: " + boost::lexical_cast<std::string>(Target.item.getId());
                 }
             }
         } else if (LuaNPCScript) {
@@ -1113,7 +1107,7 @@ public:
             {
                 if (Source.Type == LUA_CHARACTER && (Target.Type == LUA_NONE)) {
                     LuaNPCScript->useNPC(player, static_cast<unsigned char>(LTS_NOLTACTION));
-                    msg = "Used NPC: " + Source.character->name + "(" + Logger::toString(Source.character->id) + ")";
+                    msg = "Used NPC: " + Source.character->name + "(" + boost::lexical_cast<std::string>(Source.character->id) + ")";
                 }
             }
 
@@ -1128,7 +1122,7 @@ public:
             {
                 if (Source.Type == LUA_CHARACTER && (Target.Type == LUA_NONE)) {
                     LuaMonsterScript->useMonster(Source.character, player, static_cast<unsigned char>(LTS_NOLTACTION));
-                    msg = "Used Monster: " + Source.character->name + "(" + Logger::toString(Source.character->id) + ")";
+                    msg = "Used Monster: " + Source.character->name + "(" + boost::lexical_cast<std::string>(Source.character->id) + ")";
                 }
             }
         } else if (LuaTileScript) {
@@ -1179,7 +1173,7 @@ public:
     }
 
     void performAction(Player *player) {
-        Logger::writeMessage("World_Debug", "KEEPALIVE_TS from player " + player->name);
+        Logger::debug(LogFacility::Player) << "KEEPALIVE_TS from player " << player->name << Log::end;
         time(&(player->lastkeepalive));
     }
 
@@ -1259,7 +1253,7 @@ public:
     }
 
     void performAction(Player *player) {
-        Logger::writeMessage("World_Debug",player->name + " looks at an item in the inventory.");
+        Logger::debug(LogFacility::World) << player->name << " looks at an item in the inventory." << Log::end;
         time(&(player->lastaction));
 #ifdef DO_UNCONSCIOUS
 
@@ -1297,7 +1291,7 @@ public:
     }
 
     void performAction(Player *player) {
-        Logger::writeMessage("World_Debug", player->name + " looks at an item in a container.");
+        Logger::debug(LogFacility::World) << player->name << " looks at an item in a container." << Log::end;
         time(&(player->lastaction));
 #ifdef DO_UNCONSCIOUS
 
@@ -1340,7 +1334,7 @@ public:
     void performAction(Player *player) {
         time(&(player->lastaction));
         player->ltAction->abortAction();
-        Logger::writeMessage("World_Debug", player->name + "moves an item from the inventory to showcase!");
+        Logger::debug(LogFacility::World) << player->name << "moves an item from the inventory to showcase!" << Log::end;
 #ifdef DO_UNCONSCIOUS
 
         if (player->IsAlive() && player->IsConscious())
@@ -1384,7 +1378,7 @@ public:
     void performAction(Player *player) {
         time(&(player->lastaction));
         player->ltAction->abortAction();
-        Logger::writeMessage("World_Debug", player->name + " moves an item from the shocase to the inventory!");
+        Logger::debug(LogFacility::World) << player->name << " moves an item from the shocase to the inventory!" << Log::end;
 #ifdef DO_UNCONSCIOUS
 
         if (player->IsAlive() && player->IsConscious())
@@ -1427,7 +1421,7 @@ public:
     void performAction(Player *player) {
         time(&(player->lastaction));
         player->ltAction->abortAction();
-        Logger::writeMessage("World_Debug", player->name + "moves an item inside the inventory!");
+        Logger::debug(LogFacility::World) << player->name << "moves an item inside the inventory!" << Log::end;
 #ifdef DO_UNCONSCIOUS
 
         if (player->IsAlive() && player->IsConscious())
@@ -1471,7 +1465,7 @@ public:
     void performAction(Player *player) {
         time(&(player->lastaction));
         player->ltAction->abortAction();
-        Logger::writeMessage("World_Debug", player->name + " throws an item from inventory on the map!");
+        Logger::debug(LogFacility::World) << player->name << " throws an item from inventory on the map!" << Log::end;
 #ifdef DO_UNCONSCIOUS
 
         if (player->IsConscious())
@@ -1511,7 +1505,7 @@ public:
     void performAction(Player *player) {
         time(&(player->lastaction));
         player->ltAction->abortAction();
-        Logger::writeMessage("World_Debug", player->name + " moves an Item from the map to the inventory!");
+        Logger::debug(LogFacility::World) << player->name << " moves an Item from the map to the inventory!" << Log::end;
 #ifdef DO_UNCONSCIOUS
 
         if (player->IsAlive() && player->IsConscious())
@@ -1554,7 +1548,7 @@ public:
     void performAction(Player *player) {
         time(&(player->lastaction));
         player->ltAction->abortAction();
-        Logger::writeMessage("World_Debug", player->name + " moves an item from the map to the showcase!");
+        Logger::debug(LogFacility::World) << player->name << " moves an item from the map to the showcase!" << Log::end;
 #ifdef DO_UNCONSCIOUS
 
         if (player->IsAlive() && player->IsConscious())
@@ -1599,7 +1593,7 @@ public:
     void performAction(Player *player) {
         time(&(player->lastaction));
         player->ltAction->abortAction();
-        Logger::writeMessage("World_Debug",player->name + " moves an item between showcases!");
+        Logger::debug(LogFacility::World) << player->name << " moves an item between showcases!" << Log::end;
 #ifdef DO_UNCONSCIOUS
 
         if (player->IsAlive() && player->IsConscious())
@@ -1646,7 +1640,7 @@ public:
     void performAction(Player *player) {
         time(&(player->lastaction));
         player->ltAction->abortAction();
-        Logger::writeMessage("World_Debug",player->name + " moves an item from showcase to the map!");
+        Logger::debug(LogFacility::World) << player->name << " moves an item from showcase to the map!" << Log::end;
 #ifdef DO_UNCONSCIOUS
 
         if (player->IsConscious())
@@ -1685,7 +1679,7 @@ public:
     void performAction(Player *player) {
         time(&(player->lastaction));
         player->ltAction->abortAction();
-        Logger::writeMessage("World_Debug", player->name + " closes a container in the showcase");
+        Logger::debug(LogFacility::World) << player->name << " closes a container in the showcase" << Log::end;
 #ifdef DO_UNCONSCIOUS
 
         if (player->IsAlive() && player->IsConscious())
@@ -1723,7 +1717,7 @@ public:
     void performAction(Player *player) {
         time(&(player->lastaction));
         player->ltAction->abortAction();
-        Logger::writeMessage("World_Debug", player->name + " looks into a container in a showcase!");
+        Logger::debug(LogFacility::World) << player->name << " looks into a container in a showcase!" << Log::end;
 #ifdef DO_UNCONSCIOUS
 
         if (player->IsConscious())
@@ -1759,7 +1753,7 @@ public:
     void performAction(Player *player) {
         time(&(player->lastaction));
         player->ltAction->abortAction();
-        Logger::writeMessage("World_Debug", player->name + " looks into his backpack");
+        Logger::debug(LogFacility::World) << player->name << " looks into his backpack" << Log::end;
 #ifdef DO_UNCONSCIOUS
 
         if (player->IsConscious())
@@ -1794,7 +1788,7 @@ public:
     void performAction(Player *player) {
         time(&(player->lastaction));
         player->ltAction->abortAction();
-        Logger::writeMessage("World_Debug", player->name + " looks into a container on the map");
+        Logger::debug(LogFacility::World) << player->name << " looks into a container on the map" << Log::end;
 #ifdef DO_UNCONSCIOUS
 
         if (player->IsAlive() && player->IsConscious())
@@ -1833,7 +1827,7 @@ public:
 
     void performAction(Player *player) {
         player->ltAction->abortAction();
-        Logger::writeMessage("World_Debug", player->name + " logt aus");
+        Logger::info(LogFacility::Player) << player->name << " logt aus" << Log::end;
         player->Connection->closeConnection();
     }
 
@@ -1863,7 +1857,7 @@ public:
 
     void performAction(Player *player) {
         time(&(player->lastaction));
-        Logger::writeMessage("World_Debug", player->name + " whispers something!");
+        Logger::debug(LogFacility::World) << player->name << " whispers something!" << Log::end;
         player->talk(Character::tt_whisper, text);
     }
 
@@ -1924,7 +1918,7 @@ public:
 
     void performAction(Player *player) {
         time(&(player->lastaction));
-        Logger::writeMessage("World_Debug", player->name + " whispers something!");
+        Logger::debug(LogFacility::World) << player->name << " whispers something!" << Log::end;
 
         if (!World::get()->parseGMCommands(player, text)) {
             if (!World::get()->parsePlayerCommands(player, text)) {    // did we issue a player command?
@@ -1958,7 +1952,7 @@ public:
     }
 
     void performAction(Player *player) {
-        Logger::writeMessage("World_Debug", player->name + " want sended a refresh_ts, sending map!");
+        Logger::debug(LogFacility::World) << player->name << " want sended a refresh_ts, sending map!" << Log::end;
         //update the current mapview
         player->sendFullMap();
         World::get()->sendAllVisibleCharactersToPlayer(player, true);
@@ -1989,7 +1983,7 @@ public:
 
     void performAction(Player *player) {
         time(&(player->lastaction));
-        Logger::writeMessage("World_Debug",player->name + " introduces himself!");
+        Logger::debug(LogFacility::World) << player->name << " introduces himself!" << Log::end;
 #ifdef DO_UNCONSCIOUS
 
         if (player->IsAlive() && player->IsConscious())
@@ -2090,7 +2084,7 @@ public:
 
     void performAction(Player *player) {
         time(&(player->lastaction));
-        Logger::writeMessage("World_Debug",player->name + " looks at a map item.");
+        Logger::debug(LogFacility::World) << player->name << " looks at a map item." << Log::end;
 #ifdef DO_UNCONSCIOUS
 
         if (player->IsAlive() && player->IsConscious())
@@ -2133,7 +2127,7 @@ public:
     void performAction(Player *player) {
         time(&(player->lastaction));
         player->ltAction->abortAction();
-        Logger::writeMessage("World_Debug", "Player changes his dircetion: " + player->name + " temp: " + Logger::toString(direction));
+        Logger::debug(LogFacility::World) << "Player changes his dircetion: " << player->name << " temp: " << direction << Log::end;
 
 #ifdef DO_UNCONSCIOUS
 
@@ -2179,11 +2173,11 @@ public:
 
         if (charid == player->id && (mode == NORMALMOVE || mode == RUNNING)) {
             player->ltAction->abortAction();
-            Logger::writeMessage("World_Debug", "Playermove from Player: " + player->name);
+            Logger::debug(LogFacility::World) << "Playermove from Player: " << player->name << Log::end;
 
             if (player->getTurtleActive() && player->hasGMRight(gmr_settiles) && mode == NORMALMOVE) {
                 World::get()->setNextTile(player, player->getTurtleTile());
-                Logger::writeMessage("Player_Moves","Turtle was active, new tile set at pos: " + Logger::toString(player->pos.x) + "," + Logger::toString(player->pos.y) + "," + Logger::toString(player->pos.z) + " tile: " + Logger::toString(player->getTurtleTile()));
+                Logger::info(LogFacility::World) << "Turtle was active, new tile set at pos: " << player->pos.x << "," << player->pos.y << "," << player->pos.z << " tile: " << player->getTurtleTile() << Log::end;
             }
 
             if (player->move(static_cast<Character::direction>(direction), mode)) {
@@ -2191,7 +2185,7 @@ public:
             }
         } else if (mode == PUSH) {
             player->ltAction->abortAction();
-            Logger::writeMessage("World_Debug", "Player pushes another: " + player->name);
+            Logger::debug(LogFacility::World) << "Player pushes another: " << player->name << Log::end;
 
             if (player->IsAlive()) {
                 if (World::get()->pushCharacter(player, charid, direction)) {
@@ -2237,7 +2231,7 @@ public:
     void performAction(Player *player) {
         time(&(player->lastaction));
         player->ltAction->abortAction();
-        Logger::writeMessage("World_Debug", player->name + " tryes to move an Item!");
+        Logger::debug(LogFacility::World) << player->name << " tryes to move an Item!" << Log::end;
 #ifdef DO_UNCONSCIOUS
 
         if (player->IsAlive() && player->IsConscious())

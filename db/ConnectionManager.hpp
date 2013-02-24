@@ -38,17 +38,8 @@ private:
     bool isOperational;
 
 public:
-    struct Login {
-        string database;
-        string user;
-        string password;
-    };
-    struct Server {
-        string host;
-        string port;
-    };
     static ConnectionManager &getInstance();
-    void setupManager(const Login &login, const Server &server);
+    void setupManager();
     PConnection getConnection() throw(std::logic_error);
 private:
     ConnectionManager();

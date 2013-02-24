@@ -47,6 +47,7 @@
 #include "SchedulerTaskClasses.hpp"
 #include "TableStructs.hpp"
 #include "WaypointList.hpp"
+#include "Config.hpp"
 
 //#define World_DEBUG
 
@@ -57,7 +58,7 @@ extern std::ofstream talkfile;
 
 World *World::_self;
 
-World *World::create(std::string dir, time_t starttime) {
+World *World::create(const std::string& dir, time_t starttime) {
     if (!(_self)) {
         _self = new World(dir,starttime);
         // init spawnlocations...
@@ -83,7 +84,6 @@ World *World::get() throw(std::runtime_error) {
 
 World::World(std::string dir, time_t starttime) {
 
-    Logger::writeMessage("World_Debug","World Konstruktor Start");
     nextXtoage = 0;
 
     lastTurnIGDay=getTime("day");
@@ -184,7 +184,6 @@ World::World(std::string dir, time_t starttime) {
     talkfile.open((dir + std::string(TALKDIR) + std::string(temparr) + std::string(".talk")).c_str() , std::ios::out | std::ios::app);
     talkfile  << "Start " << ctime(&starttime) << " ----------------------------------" << std::endl;
     //-----------------------------------------------------------------------------
-    Logger::writeMessage("World_Debug", "World Konstruktor Ende");
 }
 
 
@@ -216,10 +215,10 @@ bool World::load_maps() {
 
         // strip .tiles.txt from filename
         strstr(maplist[numfiles]->d_name, ".tiles.txt")[0] = '\0';
-        Logger::writeMessage("World_Imports", "importing: " +  configOptions["datadir"] + "map/import/" + maplist[numfiles]->d_name);
+        Logger::info(LogFacility::World) << "importing: " << Config::instance().datadir << "map/import/" << maplist[numfiles]->d_name << Log::end;
 
         if (std::string(maplist[numfiles]->d_name).compare("oberwelt_0")) {
-            ok &= load_from_editor(configOptions["datadir"] + "map/import/" + maplist[numfiles]->d_name);
+            ok &= load_from_editor(Config::instance().datadir() + "map/import/" + maplist[numfiles]->d_name);
         }
 
     }
@@ -231,11 +230,11 @@ bool World::load_maps() {
 //! create a new world from editor files (new format)
 bool World::load_from_editor(std::string filename) {
     // first try to open mapfile
-    Logger::writeMessage("World_Imports", "try to Import map: " + filename);
+    Logger::info(LogFacility::World) << "try to Import map: " << filename << Log::end;
     std::ifstream maptilesfile((filename + ".tiles.txt").c_str());
 
     if (!maptilesfile.good()) {
-        Logger::writeError("World_Imports", "could not open file: " + filename + ".tiles.txt");
+        Logger::error(LogFacility::World) << "could not open file: " << filename << ".tiles.txt" << Log::end;
         return false;
     }
 
@@ -258,11 +257,11 @@ bool World::load_from_editor(std::string filename) {
         maptilesfile >> version;
 
         if (version != 2) {
-            Logger::writeError("World_Imports","Invalid map format! Wrong version! Expected V2: " + filename);
+            Logger::error(LogFacility::World) << "Invalid map format! Wrong version! Expected V2: " << filename << Log::end;
             return false;
         }
     } else {
-        Logger::writeError("World_Imports","Invalid map format! No version: " + filename);
+        Logger::error(LogFacility::World) << "Invalid map format! No version: " << filename << Log::end;
         return false;
     }
 
@@ -283,7 +282,7 @@ bool World::load_from_editor(std::string filename) {
     maptilesfile >> h_height;  //read int (height)
     oldy = -1;
 
-    Logger::writeMessage("World_Imports", "try to Import tiles: " + filename);
+    Logger::info(LogFacility::World) << "try to Import tiles: " << filename << Log::end;
     // load all tiles from the file
     maptilesfile >> temp_tile.x;  // read an int.
 
@@ -297,14 +296,14 @@ bool World::load_from_editor(std::string filename) {
         maptilesfile >> dummy;   // read a char (;)
 
         if (dummy != ';') {
-            Logger::writeError("World_Imports","maptile file contains errors! : " + Logger::toString(dummy));
+            Logger::error(LogFacility::World) << "maptile file contains errors! : " << dummy << Log::end;
             return false;
         }
 
         maptilesfile >> temp_tile.y;    //read next int
 
         if (oldy != temp_tile.y) { //log if we have read one complete line of the map
-            Logger::writeMessage("World_Imports","currently reading the y lines for tiles : " + Logger::toString(temp_tile.y),false);
+            Logger::info(LogFacility::World) << "currently reading the y lines for tiles : " << temp_tile.y << Log::end;
             oldy = temp_tile.y;
         }
 
@@ -317,7 +316,7 @@ bool World::load_from_editor(std::string filename) {
         maptilesfile >> dummy;          // read a char (;)
 
         if (dummy != ';') {
-            Logger::writeError("World_Imports","maptile file contains errors! : " + Logger::toString(dummy));
+            Logger::error(LogFacility::World) << "maptile file contains errors! : " << dummy << Log::end;
             return false;
         }
 
@@ -326,7 +325,7 @@ bool World::load_from_editor(std::string filename) {
         maptilesfile >> dummy;          // read a char (;)
 
         if (dummy != ';') {
-            Logger::writeError("World_Imports","maptile file contains errors! : " + Logger::toString(dummy));
+            Logger::error(LogFacility::World) << "maptile file contains errors! : " << dummy << Log::end;
             return false;
         }
 
@@ -338,7 +337,7 @@ bool World::load_from_editor(std::string filename) {
         maptilesfile >> temp_tile.x;    // read next x (int); if there is none, while will end
     }
 
-    Logger::writeMessage("World_Imports","maptilesfile was bad at x=" + Logger::toString(temp_tile.x) + " y=" + Logger::toString(temp_tile.y));
+    Logger::info(LogFacility::World) << "maptilesfile was bad at x=" << temp_tile.x << " y=" << temp_tile.y << Log::end;
 
 
     // generate new map
@@ -359,8 +358,8 @@ bool World::load_from_editor(std::string filename) {
                 tempf->setMusicId(temp_tile.musicID);
                 tempf->updateFlags();
             } else {
-                Logger::writeError("World", "could not get field for: " + Logger::toString(x) + " " + Logger::toString(y), false);
-                Logger::writeError("World_Imports", "could not get field for: " + Logger::toString(x) + " " + Logger::toString(y), false);
+                Logger::error(LogFacility::World) << "could not get field for: " << x << " " << y << Log::end;
+                Logger::error(LogFacility::World) << "could not get field for: " << x << " " << y << Log::end;
             }
         }
     }
@@ -372,7 +371,7 @@ bool World::load_from_editor(std::string filename) {
     std::ifstream warpfile((filename + ".warps.txt").c_str());
 
     if (!warpfile.good()) {
-        Logger::writeError("World_Imports","could not open file: " + filename + ".warps.txt");
+        Logger::error(LogFacility::World) << "could not open file: " << filename << ".warps.txt" << Log::end;
         return true;    // warps are not crucial
     }
 
@@ -384,7 +383,7 @@ bool World::load_from_editor(std::string filename) {
         warpfile >> dummy;
 
         if (dummy != ';') {
-            Logger::writeError("World_Imports","warp file contains errors! : " + Logger::toString(dummy));
+            Logger::error(LogFacility::World) << "warp file contains errors! : " << dummy << Log::end;
             return false;
         }
 
@@ -392,7 +391,7 @@ bool World::load_from_editor(std::string filename) {
         warpfile >> dummy;
 
         if (dummy != ';') {
-            Logger::writeError("World_Imports","warp file contains errors! : " + Logger::toString(dummy));
+            Logger::error(LogFacility::World) << "warp file contains errors! : " << dummy << Log::end;
             return false;
         }
 
@@ -400,7 +399,7 @@ bool World::load_from_editor(std::string filename) {
         warpfile >> dummy;
 
         if (dummy != ';') {
-            Logger::writeError("World_Imports","warp file contains errors! : " + Logger::toString(dummy));
+            Logger::error(LogFacility::World) << "warp file contains errors! : " << dummy << Log::end;
             return false;
         }
 
@@ -408,7 +407,7 @@ bool World::load_from_editor(std::string filename) {
         warpfile >> dummy;
 
         if (dummy != ';') {
-            Logger::writeError("World_Imports","warp file contains errors! : " + Logger::toString(dummy));
+            Logger::error(LogFacility::World) << "warp file contains errors! : " << dummy << Log::end;
             return false;
         }
 
@@ -425,7 +424,7 @@ bool World::load_from_editor(std::string filename) {
     std::ifstream mapitemsfile((filename + ".items.txt").c_str());
 
     if (!mapitemsfile.good()) {
-        Logger::writeError("World_Imports","could not open file: " + filename + ".items.txt");
+        Logger::error(LogFacility::World) << "could not open file: " << filename << ".items.txt" << Log::end;
         return true;    // items are not crucial
     }
 
@@ -434,7 +433,7 @@ bool World::load_from_editor(std::string filename) {
     Item::id_type itemId;
     Item::quality_type itemQuality;
     oldy = -1;
-    Logger::writeMessage("World_Imports", "try to import items: " + filename);
+    Logger::info(LogFacility::World) << "try to import items: " << filename << Log::end;
     mapitemsfile >> x;
 
     while (mapitemsfile.good()) {
@@ -446,14 +445,14 @@ bool World::load_from_editor(std::string filename) {
         mapitemsfile >> dummy;
 
         if (dummy != ';') {
-            Logger::writeError("World_Imports", "mapitem file contains errors! : " + Logger::toString(dummy));
+            Logger::error(LogFacility::World) << "mapitem file contains errors! : " << dummy << Log::end;
             return false;
         }
 
         mapitemsfile >> y;
 
         if (oldy != y) { //log if we have read one complete line of the map
-            Logger::writeMessage("World_Imports","currently reading the y lines for items : " + Logger::toString(y),false);
+            Logger::info(LogFacility::World) << "currently reading the y lines for items : " << y << Log::end;
             oldy = y;
         }
 
@@ -462,7 +461,7 @@ bool World::load_from_editor(std::string filename) {
         mapitemsfile >> dummy;
 
         if (dummy != ';') {
-            Logger::writeError("World_Imports", "mapitem file contains errors! : " + Logger::toString(dummy));
+            Logger::error(LogFacility::World) << "mapitem file contains errors! : " << dummy << Log::end;
             return false;
         }
 
@@ -472,7 +471,7 @@ bool World::load_from_editor(std::string filename) {
         mapitemsfile >> dummy;
 
         if (dummy != ';') {
-            Logger::writeError("World_Imports", "mapitem file contains errors! : " + Logger::toString(dummy));
+            Logger::error(LogFacility::World) << "mapitem file contains errors! : " << dummy << Log::end;
             return false;
         }
 
@@ -531,21 +530,19 @@ bool World::load_from_editor(std::string filename) {
         g_cont = NULL;
 
         if (!putItemAlwaysOnMap(NULL, x, y, h_level)) {
-            Logger::writeMessage("World_Imports", "could not put item");
+            Logger::info(LogFacility::World) << "could not put item" << Log::end;
         }
 
         mapitemsfile >> x;
     }
 
     mapitemsfile.close();
-    Logger::writeMessage("World_Imports", "Import map: " + filename + " was successful!");
+    Logger::info(LogFacility::World) << "Import map: " << filename << " was successful!" << Log::end;
 
     return true;
 }
 
 World::~World() {
-    Logger::writeMessage("World_Debug","World Destruktor Start");
-
     delete monstertimer;
     monstertimer = NULL;
     delete npctimer;
@@ -568,7 +565,6 @@ World::~World() {
     talkfile << "Ende  " << ctime(&acttime4) << " ----------------------------------" << std::endl;
 
     delete scheduler;
-    Logger::writeMessage("World_Debug", "World Destruktor Ende");
 }
 
 
@@ -580,7 +576,7 @@ void World::turntheworld() {
 
     if (lastTurnIGDay!=thisIGDay) {
         sendIGTimeToAllPlayers();
-        Logger::writeMessage("World_Debug", "lastTurnIGDay=" + Logger::toString(lastTurnIGDay) + " thisIGDay= "+Logger::toString(thisIGDay));
+        Logger::debug(LogFacility::World) << "lastTurnIGDay=" << lastTurnIGDay << " thisIGDay= " << thisIGDay << Log::end;
         lastTurnIGDay=thisIGDay;
     }
 
@@ -645,7 +641,7 @@ void World::checkPlayers() {
             }
             // User timed out.
             else {
-                Logger::writeMessage("World",  "Player " + (*playerIterator)->name + " Timed Out " + Logger::toString(temptime));
+                Logger::info(LogFacility::World) << "Player " << (*playerIterator)->name << " Timed Out " << temptime << Log::end;
                 boost::shared_ptr<BasicServerCommand>cmd(new LogOutTC(UNSTABLECONNECTION));
                 (*playerIterator)->Connection->shutdownSend(cmd);
             }
@@ -657,14 +653,14 @@ void World::checkPlayers() {
 
             position temp_pos = (*playerIterator)->pos;
 
-            Logger::writeMessage("World", "Player " + temp_name + " is offline");
+            Logger::info(LogFacility::World) << "Player " << temp_name << " is offline" << Log::end;
             Field *tempf;
 
             if (GetPToCFieldAt(tempf, (*playerIterator)->pos.x, (*playerIterator)->pos.y, (*playerIterator)->pos.z)) {
                 tempf->SetPlayerOnField(false);
             }
 
-            std::cout<<"logout of "<<(*playerIterator)->name<<std::endl;
+            Logger::info(LogFacility::Player) << "logout of " << (*playerIterator)->name << Log::end;
 
             logoutScript->onLogout(*playerIterator);
 
@@ -724,10 +720,10 @@ bool World::initRespawns() {
                                     (*itr)["spp_minspawntime"].as<uint16_t>(),
                                     (*itr)["spp_maxspawntime"].as<uint16_t>(),
                                     (*itr)["spp_spawnall"].as<bool>());
-                Logger::writeMessage("World_Inits", "load spawnpoint: " + Logger::toString(spawnId));
+                Logger::info(LogFacility::World) << "load spawnpoint: " << spawnId << Log::end;
                 newSpawn.load(spawnId);
                 SpawnList.push_back(newSpawn);
-                Logger::writeMessage("World_Inits", "added spawnpoint " + Logger::toString(the_pos.x) + "," + Logger::toString(the_pos.y) + "," + Logger::toString(the_pos.z));
+                Logger::info(LogFacility::World) << "added spawnpoint " << the_pos.x << "," << the_pos.y << "," << the_pos.z << Log::end;
             }
 
         } else {
@@ -736,7 +732,7 @@ bool World::initRespawns() {
 
         return true; // everything went well
     } catch (std::exception &e) {
-        Logger::writeError("World_Inits","got exception in load SpawnPoints: " + Logger::toString(e.what()));
+        Logger::error(LogFacility::World) << "got exception in load SpawnPoints: " << e.what() << Log::end;
         return false;
     }
 
@@ -753,7 +749,7 @@ void World::checkMonsters() {
                 it->spawn();
             }
         } else {
-            Logger::writeMessage("Monster","World::checkMonsters() spawning disabled!");
+            Logger::info(LogFacility::World) << "World::checkMonsters() spawning disabled!" << Log::end;
         }
     }
 
@@ -836,7 +832,7 @@ void World::checkMonsters() {
                                     }
                                 }
                             } else {
-                                Logger::writeError("Monster","cant find a monster id for checking the script!");
+                                Logger::error(LogFacility::Script) << "cant find a monster id for checking the script!" << Log::end;
                             }
 
                             //attack the player which we have found
@@ -879,7 +875,7 @@ void World::checkMonsters() {
                                     makeRandomStep=false;
                                     monster.performStep(foundP2->pos);
                                 } else {
-                                    Logger::writeMessage("Monster","cant find the monster id for calling a script!");
+                                    Logger::info(LogFacility::Script) << "cant find the monster id for calling a script!" << Log::end;
                                 }
 
                             }
@@ -897,7 +893,7 @@ void World::checkMonsters() {
                             bool hasDefinition = MonsterDescriptions->find(monster.getType() , monsterdef);
 
                             if (!hasDefinition) {
-                                Logger::writeError("Monster","Data for Healing not Found for monsterrace: " + Logger::toString(monster.getType()));
+                                Logger::error(LogFacility::World) << "Data for Healing not Found for monsterrace: " << monster.getType() << Log::end;
                             }
 
                             if (tempr <= 5 && hasDefinition && monsterdef.canselfheal) {
@@ -1023,7 +1019,7 @@ void World::checkMonsters() {
                             if (foundMonster && monStruct.script) {
                                 monStruct.script->enemyNear(*monsterIterator, foundP);
                             } else {
-                                Logger::writeError("Monster","cant find a monster id for checking the script!");
+                                Logger::error(LogFacility::World) << "cant find a monster id for checking the script!" << Log::end;
                             }
 
                         }
@@ -1051,7 +1047,7 @@ void World::checkMonsters() {
                         if (foundMonster && monStruct.script) {
                             monStruct.script->abortRoute(*monsterIterator);
                         } else {
-                            Logger::writeMessage("Monster","cant find the monster id for calling a script!");
+                            Logger::info(LogFacility::Script) << "cant find the monster id for calling a script!" << Log::end;
                         }
                     }
                 }

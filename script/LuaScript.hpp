@@ -104,10 +104,9 @@ public:
             callback(dialog);
         } catch (luabind::error &e) {
             lua_State *L = e.state();
-            std::string err = "Exception in " + dialog.getClassName() + " callback";
-            err += ": " + std::string(lua_tostring(L, -1));
+	    Logger::error(LogFacility::Script) << "Exception in " << dialog.getClassName() << " callback"
+		    << ": " << std::string(lua_tostring(L, -1)) << Log::end;
             lua_pop(L, 1);
-            Logger::writeError("scripts", err);
         }
     }
 
@@ -123,16 +122,12 @@ public:
             return luabind::object_cast<U>(callback(dialog));
         } catch (luabind::cast_failed &e) {
             char *expectedType = abi::__cxa_demangle(e.info().name(), 0, 0, 0);
-            std::string err = "Invalid return type in " + dialog.getClassName() + " callback:\n";
-            err += "Expected type " + std::string(expectedType) + "\n";
+            Logger::error(LogFacility::Script) << "Invalid return type in " << dialog.getClassName() << " callback: " << " Expected type " << expectedType << Log::end;
             free(expectedType);
-            Logger::writeError("scripts", err);
         } catch (luabind::error &e) {
             lua_State *L = e.state();
-            std::string err = "Exception in " + dialog.getClassName() + " callback";
-            err += ": " + std::string(lua_tostring(L, -1));
+            Logger::error(LogFacility::Script) << "Exception in " << dialog.getClassName() << " callback" << ": " << lua_tostring(L, -1) << Log::end;
             lua_pop(L, 1);
-            Logger::writeError("scripts", err);
         }
 
         return U();

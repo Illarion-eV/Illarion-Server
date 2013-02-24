@@ -19,7 +19,8 @@
 
 #include "InitialConnection.hpp"
 #include <boost/thread.hpp>
-#include <sstream>
+#include "Config.hpp"
+
 #define InitialConnection_DEBUG
 
 InitialConnection::InitialConnection() {
@@ -38,10 +39,7 @@ InitialConnection::TVECTORPLAYER &InitialConnection::get_Player_Vector() {
 }
 
 void InitialConnection::run_service() {
-    int port;
-    std::stringstream ss;
-    ss << configOptions["port"];
-    ss >> port;
+    int port = Config::instance().port;
 
     boost::asio::ip::tcp::endpoint endpoint = boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port);
     acceptor = new boost::asio::ip::tcp::acceptor(io_service,endpoint);

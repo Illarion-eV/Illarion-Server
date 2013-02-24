@@ -75,10 +75,10 @@ bool World::createDynamicNPC(std::string name, Character::race_type type, positi
                 std::shared_ptr<LuaNPCScript> script(new LuaNPCScript(scriptname, newNPC));
                 newNPC->setScript(script);
             } catch (ScriptException &e) {
-                Logger::writeError("scripts", "World::createDynamicNPC: Error while loading dynamic NPC script: " + scriptname + ":\n" + std::string(e.what()) + "\n");
+                Logger::error(LogFacility::Script) << "World::createDynamicNPC: Error while loading dynamic NPC script: " << scriptname << ": " << e.what() << Log::end;
             }
         } catch (NoSpace &s) {
-            Logger::writeError("scripts", "World::createDynamicNPC: No space available for dynamic NPC: " + name + ":\n" + std::string(s.what()) + "\n");
+            Logger::error(LogFacility::Script) << "World::createDynamicNPC: No space available for dynamic NPC: " << name << ": " << s.what() << Log::end;
         }
 
         return true;
@@ -447,9 +447,7 @@ bool World::swap(ScriptItem item, TYPE_OF_ITEM_ID newitem, unsigned short int ne
                         sendSwapItemOnMapToAllVisibleCharacter(it.getId(), item.pos.x, item.pos.y, item.pos.z, dummy, field);
                     }
                 } else {
-                    std::stringstream ss;
-                    ss << "World::swap: Swapping item on Field (" << item.pos.x << ", " << item.pos.y << ", " << item.pos.z << ") failed!\n";
-                    Logger::writeError("scripts", ss.str());
+                    Logger::error(LogFacility::Script) << "World::swap: Swapping item on Field (" << item.pos.x << ", " << item.pos.y << ", " << item.pos.z << ") failed!" << Log::end;
                     return false;
                 }
             }
@@ -501,9 +499,7 @@ ScriptItem World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, pos
 
             return sItem;
         } else {
-            std::stringstream ss;
-            ss << "World::createFromId: Item " << id << " was not found in CommonItems!\n";
-            Logger::writeError("scripts", ss.str());
+            Logger::error(LogFacility::Script) << "World::createFromId: Item " << id << " was not found in CommonItems!" << Log::end;
             return sItem;
         }
     } else {
@@ -553,9 +549,7 @@ fuse_ptr<Character> World::createMonster(unsigned short id, position pos, short 
             return fuse_ptr<Character>(newMonster);
 
         } catch (Monster::unknownIDException &) {
-            std::stringstream ss;
-            ss << "World::createMonster: Failed to create monster with unknown id " << id << "!\n";
-            Logger::writeError("scripts", ss.str());
+            Logger::error(LogFacility::Script) << "World::createMonster: Failed to create monster with unknown id " << id << "!" << Log::end;
             return fuse_ptr<Character>();
         }
     } else {
@@ -723,8 +717,6 @@ void World::sendMonitoringMessage(std::string msg, unsigned char id) {
 }
 
 void World::logMissingField(const std::string &function, const position &field) {
-    std::stringstream ss;
-    ss << "World::" << function << ": Field (" << field.x << ", " << field.y << ", " << field.z << ") was not found!\n";
-    Logger::writeError("scripts", ss.str());
+    Logger::error(LogFacility::Script) << "World::" << function << ": Field (" << field.x << ", " << field.y << ", " << field.z << ") was not found!" << Log::end;
 }
 

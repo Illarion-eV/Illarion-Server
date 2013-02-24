@@ -72,16 +72,15 @@ bool ScheduledScriptsTable::nextCycle() {
 }
 
 bool ScheduledScriptsTable::addData(ScriptData data) {
-    Logger::writeMessage("schedscripts","insert new Task task.nextCycle: " + Logger::toString(data.nextCycleTime)  + " current Cycle: " + Logger::toString(currentCycle));
-    std::list<ScriptData>::iterator it;
+    Logger::info(LogFacility::Script) << "insert new Task task.nextCycle: " << data.nextCycleTime << " current Cycle: " << currentCycle << Log::end;
     bool inserted = false;
 
     if (data.nextCycleTime <= currentCycle) {
         data.nextCycleTime = currentCycle + Random::uniform(data.minCycleTime, data.maxCycleTime);
     }
 
-    for (it = m_table.begin(); it != m_table.end(); ++it) {
-        if ((*it).nextCycleTime > data.nextCycleTime) {
+    for (auto it = m_table.begin(); it != m_table.end(); ++it) {
+        if (it->nextCycleTime > data.nextCycleTime) {
             m_table.insert(it, data);
             inserted = true;
             break;
@@ -129,7 +128,7 @@ void ScheduledScriptsTable::reload() {
                         tmpRecord.scriptptr = tmpScript;
                         addData(tmpRecord);
                     } catch (ScriptException &e) {
-                        Logger::writeError("scripts", "Error while loading scheduled script: " + tmpRecord.scriptName + ":\n" + e.what() + "\n");
+                        Logger::error(LogFacility::Script) << "Error while loading scheduled script: " << tmpRecord.scriptName << ": " << e.what() << Log::end;
                     }
                 }
             }

@@ -77,7 +77,7 @@ void TriggerTable::reload() {
                         std::shared_ptr<LuaTriggerScript> script(new LuaTriggerScript(scriptname, Trigger.pos));
                         Trigger.script = script;
                     } catch (ScriptException &e) {
-                        Logger::writeError("scripts", "Error while loading trigger script: " + scriptname + ":\n" + e.what() + "\n");
+                        Logger::error(LogFacility::Script) << "Error while loading trigger script: " << scriptname << ": " << e.what() << Log::end;
                     }
                 }
 
