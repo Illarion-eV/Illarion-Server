@@ -205,5 +205,5 @@ void Monster::receiveText(talk_type tt, std::string message, Character *cc) {
 }
 
 std::string Monster::to_string() const {
-	return "Monster of race " + boost::lexical_cast<std::string>((int)race) + "(" + boost::lexical_cast<std::string>(id) + ")";
+    return "Monster of race " + boost::lexical_cast<std::string>((int)race) + "(" + boost::lexical_cast<std::string>(id) + ")";
 }

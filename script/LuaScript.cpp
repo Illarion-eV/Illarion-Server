@@ -239,7 +239,7 @@ void LuaScript::writeDebugMsg(const std::string &msg) {
     lua_pop(_luaState, 1);
 
     if (backtrace.length() > 0) {
-        Logger::error(LogFacility::Script) << backtrace << Log::end;
+        Logger::debug(LogFacility::Script) << backtrace << Log::end;
     }
 
 #endif
@@ -252,7 +252,7 @@ void LuaScript::writeDeprecatedMsg(const std::string &deprecatedEntity) {
     lua_pop(_luaState, 1);
 
     if (backtrace.length() > 0) {
-        Logger::error(LogFacility::Script) << backtrace << Log::end;
+        Logger::warn(LogFacility::Script) << backtrace << Log::end;
     }
 }
 

@@ -169,7 +169,7 @@ void World::spawn_command(Player *cp, const std::string &monid) {
         position pos = cp->pos;
         pos.x++;
         Logger::info(LogFacility::Admin) << cp->nameAndId() << " creates monster " << monid
-                             << " at " << pos.toString() << Log::end;
+                                         << " at " << pos.toString() << Log::end;
         createMonster(id, pos, 0);
     }
 }
@@ -207,7 +207,7 @@ void World::create_command(Player *cp, const std::string &itemid) {
         }
 
         Logger::info(LogFacility::Admin) << cp->nameAndId() << " creates item " << item << " with quantity "
-                             << quantity << ", quality " << quality << ", data " << datalog << Log::end;
+                                         << quantity << ", quality " << quality << ", data " << datalog << Log::end;
         cp->createItem(item, quantity, quality, dataList);
     }
 
@@ -245,7 +245,7 @@ void World::reload_command(Player *cp) {
 void World::broadcast_command(Player *cp,const std::string &message) {
     if (cp->hasGMRight(gmr_broadcast)) {
 #ifdef LOG_TALK
-	Logger::info(LogFacility::Player) << cp << " broadcasts: " << message << Log::end;
+        Logger::info(LogFacility::Player) << *cp << " broadcasts: " << message << Log::end;
 #endif
         sendMessageToAllPlayers(message);
     }
@@ -281,7 +281,7 @@ void World::jumpto_command(Player *cp,const std::string &player) {
         cp->closeAllShowcasesOfMapContainers();
         teleportPlayerToOther(cp, player);
         Logger::info(LogFacility::Admin) << cp->nameAndId() << " jumps to player " << player
-                             << " at " << cp->pos.toString() << Log::end;
+                                         << " at " << cp->pos.toString() << Log::end;
     }
 }
 
@@ -342,7 +342,7 @@ void World::talkto_command(Player *cp, const std::string &ts) {
                 std::cout<<"Found player by name, sending message: "<<message<<std::endl;
 #endif
 #ifdef LOG_TALK
-		Logger::info(LogFacility::Player) << cp << " talks to " << tempPl << ": " << message << Log::end;
+                Logger::info(LogFacility::Player) << *cp << " talks to " << *tempPl << ": " << message << Log::end;
 #endif
                 tempPl->inform(message, Player::informGM);
                 return;
@@ -364,7 +364,7 @@ void World::talkto_command(Player *cp, const std::string &ts) {
                         std::cout<<"Found player by id, sending message: "<<message<<std::endl;
 #endif
 #ifdef LOG_TALK
-			Logger::info(LogFacility::Player) << cp << " talks to " << **plIterator << ": " << message << Log::end;
+                        Logger::info(LogFacility::Player) << *cp << " talks to " << **plIterator << ": " << message << Log::end;
 #endif
                         (*plIterator)->inform(message, Player::informGM);
                         return; //Break the loop because we sen our message
@@ -1415,13 +1415,16 @@ bool World::reload_tables(Player *cp) {
 
 
 // enable/disable spawnpoints
-void set_spawn_command(World * world, Player *player, const std::string &in) {
+void set_spawn_command(World *world, Player *player, const std::string &in) {
     if (!player->hasGMRight(gmr_reload)) {
         return;
     }
 
     bool enable = false;
-    if (in == "true") enable = true;
+
+    if (in == "true") {
+        enable = true;
+    }
 
     Logger::info(LogFacility::Admin) << player->name << " sets spawn to " << enable << Log::end;
 
@@ -1489,7 +1492,10 @@ void set_login(World *world, Player *player, const std::string &st) {
     }
 
     bool enable = true;
-    if (st == "true") enable = false;
+
+    if (st == "true") {
+        enable = false;
+    }
 
     world->allowLogin(enable);
     Logger::info(LogFacility::Admin) << player->name << " set allowLogin to " << enable << Log::end;

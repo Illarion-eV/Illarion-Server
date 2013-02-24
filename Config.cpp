@@ -26,54 +26,54 @@
 Config *Config::_instance = nullptr;
 
 namespace {
-	static std::map<std::string, ConfigEntryBase *> config_options;
+static std::map<std::string, ConfigEntryBase *> config_options;
 }
 
 bool Config::load(const std::string &config_file) {
-	// make sure Config is instanciated
-	Config::instance();
+    // make sure Config is instanciated
+    Config::instance();
 
-	std::ifstream configfile(config_file.c_str());
+    std::ifstream configfile(config_file.c_str());
 
-	// can't read config file
-	if (!configfile.good()) {
-		return false;
-	}
+    // can't read config file
+    if (!configfile.good()) {
+        return false;
+    }
 
-	std::string temp;
+    std::string temp;
 
-	// read first token of a line while there are any tokens left...
-	while (configfile >> temp && ! configfile.eof()) {
+    // read first token of a line while there are any tokens left...
+    while (configfile >> temp && ! configfile.eof()) {
 
-		if (temp[0] == '#') {
-			// we found a comment... skip line
-			configfile.ignore(255,'\n'); // ignore up to 255 chars until \n is found
-			continue;
-		}
+        if (temp[0] == '#') {
+            // we found a comment... skip line
+            configfile.ignore(255,'\n'); // ignore up to 255 chars until \n is found
+            continue;
+        }
 
-		// store config options in map
-		configfile.ignore(1); // ignore the blank char following the token
-		auto pos = config_options.find(temp);
+        // store config options in map
+        configfile.ignore(1); // ignore the blank char following the token
+        auto pos = config_options.find(temp);
 
-		if (pos == config_options.end()) {
-			std::cerr << "invalid config entry: " << temp << std::endl;
-			return false;
-		}
+        if (pos == config_options.end()) {
+            std::cerr << "invalid config entry: " << temp << std::endl;
+            return false;
+        }
 
-		configfile >> *(pos->second);
+        configfile >> *(pos->second);
 
-		if (!configfile.good()) {
-			return false;
-		}
-	}
+        if (!configfile.good()) {
+            return false;
+        }
+    }
 
-	for (auto item : config_options) {
-		if (!item.second->isInitialized()) {
-			std::cout << "[WARN] config entry missing for key: " << item.first << " using default value: " << *(item.second) << std::endl;
-		}
-	}
+    for (auto item : config_options) {
+        if (!item.second->isInitialized()) {
+            std::cout << "[WARN] config entry missing for key: " << item.first << " using default value: " << *(item.second) << std::endl;
+        }
+    }
 
-	return true;
+    return true;
 }
 
 std::istream &operator>>(std::istream &is, ConfigEntryBase &config_entry) {

@@ -53,8 +53,8 @@ public:
 
             isBufferValid = true;
         } catch (std::exception &e) {
-		Logger::warn(LogFacility::Database) << "Exception in loading table " << getTableName() << ": " << e.what() << Log::end;
-		isBufferValid = false;
+            Logger::warn(LogFacility::Database) << "Exception in loading table " << getTableName() << ": " << e.what() << Log::end;
+            isBufferValid = false;
         }
 
         return isBufferValid;

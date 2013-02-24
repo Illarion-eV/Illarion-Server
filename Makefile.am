@@ -74,7 +74,7 @@ LIBS = $(BOOST_THREAD_LIBS) $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS)
 
 style: .astylerc
 	astyle -n --options=$(top_srcdir)/.astylerc "${top_srcdir}/*.cpp" "${top_srcdir}/*.hpp"
-									      |
+
 noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
 		 dialog/CraftingDialog.hpp dialog/MessageDialog.hpp \
 		 dialog/SelectionDialog.hpp dialog/InputDialog.hpp \

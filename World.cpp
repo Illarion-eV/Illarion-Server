@@ -55,7 +55,7 @@ extern std::shared_ptr<LuaLogoutScript>logoutScript;
 
 World *World::_self;
 
-World *World::create(const std::string& dir, time_t starttime) {
+World *World::create(const std::string &dir, time_t starttime) {
     if (!(_self)) {
         _self = new World(dir,starttime);
         // init spawnlocations...
@@ -207,7 +207,7 @@ bool World::load_maps() {
 
         // strip .tiles.txt from filename
         strstr(maplist[numfiles]->d_name, ".tiles.txt")[0] = '\0';
-        Logger::info(LogFacility::World) << "importing: " << Config::instance().datadir << "map/import/" << maplist[numfiles]->d_name << Log::end;
+        Logger::info(LogFacility::World) << "importing: " << Config::instance().datadir() << "map/import/" << maplist[numfiles]->d_name << Log::end;
 
         if (std::string(maplist[numfiles]->d_name).compare("oberwelt_0")) {
             ok &= load_from_editor(Config::instance().datadir() + "map/import/" + maplist[numfiles]->d_name);

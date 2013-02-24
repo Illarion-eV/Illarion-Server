@@ -1498,6 +1498,6 @@ private:
 
 };
 
-std::ostream& operator<<(std::ostream& os, Character& character);
+std::ostream &operator<<(std::ostream &os, const Character &character);
 
 #endif // CHARACTER_HHP
