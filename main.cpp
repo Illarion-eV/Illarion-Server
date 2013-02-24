@@ -208,7 +208,7 @@ int main(int argc, char *argv[]) {
 
     std::cout<<"Server Shutdown:"<<std::endl;
 
-    scriptVariables->save();
+    Data::ScriptVariables.save();
     std::cout<<"Scriptvariables saved!"<<std::endl;
     world->forceLogoutOfAllPlayers();
 

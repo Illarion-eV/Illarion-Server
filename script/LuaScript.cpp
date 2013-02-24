@@ -969,6 +969,6 @@ void LuaScript::init_base_functions() {
 
     luabind::object globals = luabind::globals(_luaState);
     globals["world"] = World::get();
-    globals["ScriptVars"] = scriptVariables;
+    globals["ScriptVars"] = &Data::ScriptVariables;
 }
 

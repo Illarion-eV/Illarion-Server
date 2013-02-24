@@ -23,6 +23,7 @@
 
 namespace Data {
 
+ScriptVariablesTable ScriptVariables;
 SkillTable Skills;
 QuestTable Quests;
 RaceSizeTable RaceSizes;
@@ -41,6 +42,7 @@ LongTimeEffectTable LongTimeEffects;
 
 std::vector<Table *> getTables() {
     return {
+        &ScriptVariables,
         &Skills,
         &Quests,
         &RaceSizes,

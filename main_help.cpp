@@ -30,7 +30,6 @@
 
 #include "data/MonsterTable.hpp"
 #include "data/ScheduledScriptsTable.hpp"
-#include "data/ScriptVariablesTable.hpp"
 #include <boost/shared_ptr.hpp>
 #include "script/LuaWeaponScript.hpp" //For standard fighting script.
 #include "script/LuaLookAtPlayerScript.hpp"
@@ -114,8 +113,6 @@ ScheduledScriptsTable *ScheduledScripts;
 
 //! a table containing monster descriptions
 MonsterTable *MonsterDescriptions;
-
-ScriptVariablesTable *scriptVariables;
 
 std::shared_ptr<LuaDepotScript>depotScript;
 std::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
@@ -229,12 +226,6 @@ void checkArguments(int argc, char *argv[]) {
 // Itemdefinitionen laden
 void loadData() {
     bool ok = true;
-
-    scriptVariables = new ScriptVariablesTable();
-
-    if (!scriptVariables->isDataOk()) {
-        ok = false;
-    }
 
     ScheduledScripts = new ScheduledScriptsTable();
     scheduledScripts = ScheduledScripts;

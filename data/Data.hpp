@@ -21,6 +21,7 @@
 #ifndef _DATA_HPP_
 #define _DATA_HPP_
 
+#include "data/ScriptVariablesTable.hpp"
 #include "data/SkillTable.hpp"
 #include "data/QuestTable.hpp"
 #include "data/RaceSizeTable.hpp"
@@ -39,6 +40,7 @@
 
 namespace Data {
 
+extern ScriptVariablesTable ScriptVariables;
 extern SkillTable Skills;
 extern QuestTable Quests;
 extern RaceSizeTable RaceSizes;

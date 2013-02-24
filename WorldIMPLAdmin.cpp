@@ -41,13 +41,11 @@
 #include "script/LuaLogoutScript.hpp"
 #include "PlayerManager.hpp"
 #include "Logger.hpp"
-#include "data/ScriptVariablesTable.hpp"
 #include "data/QuestNodeTable.hpp"
 #include "constants.hpp"
 
 #include <iostream>
 
-extern ScriptVariablesTable *scriptVariables;
 extern std::ofstream talkfile;
 extern std::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
 extern std::shared_ptr<LuaLookAtItemScript>lookAtItemScript;
@@ -1331,10 +1329,6 @@ bool World::reload_defs(Player *cp) {
         if (ScheduledScripts_temp != NULL) {
             delete ScheduledScripts_temp;
         }
-
-        //if (ScriptVar_temp != NULL)
-        //    delete ScriptVar_temp;
-
     } else {
         // if everything went well, delete old tables and set up new tables
         //Mutex für login logout sperren so das aktuell keiner mehr einloggen kann
@@ -1343,8 +1337,6 @@ bool World::reload_defs(Player *cp) {
         MonsterDescriptions = MonsterDescriptions_temp;
         delete scheduledScripts;
         scheduledScripts = ScheduledScripts_temp;
-        // delete scriptVariables;
-        // scriptVariables = ScriptVar_temp;
         //Mutex entsperren.
         PlayerManager::get()->setLoginLogout(false);
 
@@ -1427,8 +1419,6 @@ bool World::reload_defs(Player *cp) {
 
 
 bool World::reload_tables(Player *cp) {
-
-    scriptVariables->save();
 
     LuaScript::shutdownLua();
 
