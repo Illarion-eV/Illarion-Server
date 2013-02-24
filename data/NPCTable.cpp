@@ -141,7 +141,7 @@ void NPCTable::reload() {
 
                             newNPC->setScript(script);
                         } catch (ScriptException &e) {
-                            Logger::writeError("scripts", "Error while loading npc script: " + scriptname + ":\n" + e.what() + "\n");
+                            Logger::error(LogFacility::Script) << "Error while loading npc script: " << scriptname << ": " << e.what() << Log::end;
                         }
                     }
 

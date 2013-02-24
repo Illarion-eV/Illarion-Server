@@ -111,7 +111,7 @@ void MonsterTable::reload() {
                         std::shared_ptr<LuaMonsterScript> script(new LuaMonsterScript(scriptname));
                         temprecord.script = script;
                     } catch (ScriptException &e) {
-                        Logger::writeError("scripts", "Error while loading monster script: " + scriptname + ":\n" + e.what() + "\n");
+                        Logger::error(LogFacility::Script) << "Error while loading monster script: " << scriptname << ": " << e.what() << Log::end;
                     }
                 } else if (questItr != questEnd && questItr->first == id) {
                     std::shared_ptr<LuaMonsterScript> tmpScript(new LuaMonsterScript());

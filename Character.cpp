@@ -814,10 +814,10 @@ bool Character::attack(Character *target) {
 
         if (character == player) {
             if (target->IsAlive()) {
-                boost::shared_ptr<BasicServerCommand>cmd(new BBSendActionTC(id, name, 1 , "Attacks : " + target->name + "(" + Logger::toString(target->id) + ")"));
+                boost::shared_ptr<BasicServerCommand>cmd(new BBSendActionTC(id, name, 1 , "Attacks : " + target->name + "(" + boost::lexical_cast<std::string>(target->id) + ")"));
                 _world->monitoringClientList->sendCommand(cmd);
             } else {
-                boost::shared_ptr<BasicServerCommand>cmd(new BBSendActionTC(id, name, 1 , "Killed : " + target->name + "(" + Logger::toString(target->id) + ")"));
+                boost::shared_ptr<BasicServerCommand>cmd(new BBSendActionTC(id, name, 1 , "Killed : " + target->name + "(" + boost::lexical_cast<std::string>(target->id) + ")"));
                 _world->monitoringClientList->sendCommand(cmd);
             }
         }

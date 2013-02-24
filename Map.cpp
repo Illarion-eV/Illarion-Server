@@ -646,13 +646,13 @@ void Map::ageItemsInHorizontalRange(short int xstart, short int xend) {
 
             if (rotstate != 0) {
                 position pos(Conv_To_X(x), Conv_To_Y(y), Z_Level);
-                Logger::writeMessage("rot_update", "aged items, pos: " + Logger::toString(pos.x) + " " + Logger::toString(pos.y) + " " + Logger::toString(pos.z));
+                Logger::debug(LogFacility::World) << "aged items, pos: " << pos.x << " " << pos.y << " " << pos.z << Log::end;
                 //a update is needed
                 std::vector<Player *> playersinview = World::get()->Players.findAllCharactersInScreen(pos.x,pos.y, pos.z);
 
                 //iterate through all the players in range and send the update for this field
                 for (std::vector<Player *>::iterator it = playersinview.begin(); it != playersinview.end(); ++it) {
-                    Logger::writeMessage("rot_update", "aged items, update needed for: " + (*it)->name);
+                    Logger::debug(LogFacility::World) << "aged items, update needed for: " << (*it)->name << Log::end;
                     boost::shared_ptr<BasicServerCommand>cmd(new ItemUpdate_TC(pos, MainMap[x][y].items));
                     (*it)->Connection->addCommand(cmd);
                 }

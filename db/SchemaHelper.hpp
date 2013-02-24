@@ -29,7 +29,7 @@ private:
     static std::string serverSchema;
     static std::string accountSchema;
 public:
-    static void setSchemata(const std::string &server, const std::string &account);
+    static void setSchemata();
     static const std::string &getServerSchema();
     static const std::string &getAccountSchema();
 };

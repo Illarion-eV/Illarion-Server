@@ -34,10 +34,8 @@ void WaypointList::addFromList(const luabind::object &list) {
                     position pos = luabind::object_cast<position>(*it);
                     positions.push_back(pos);
                 } catch (luabind::cast_failed &e) {
-                    std::string script = World::get()->getCurrentScript()->getFileName();
-                    std::string err = "Invalid type in parameter list of WaypointList:addFromList in " + script + ":\n";
-                    err += "Expected type position\n";
-                    Logger::writeError("scripts", err);
+                    const std::string script = World::get()->getCurrentScript()->getFileName();
+                    Logger::error(LogFacility::Script) << "Invalid type in parameter list of WaypointList:addFromList in " << script << ": " << "Expected type position" << Log::end;
                 }
             }
         }

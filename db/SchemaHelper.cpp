@@ -19,15 +19,16 @@
  */
 
 #include "db/SchemaHelper.hpp"
+#include "Config.hpp"
 
 using namespace Database;
 
 std::string SchemaHelper::serverSchema;
 std::string SchemaHelper::accountSchema;
 
-void SchemaHelper::setSchemata(const std::string &server, const std::string &account) {
-    serverSchema = "\"" + server + "\"";
-    accountSchema = "\"" + account + "\"";
+void SchemaHelper::setSchemata() {
+    serverSchema = std::string("\"") + (Config::instance().postgres_schema_server()) + "\"";
+    accountSchema = std::string("\"") + (Config::instance().postgres_schema_account()) + "\"";
 }
 
 const std::string &SchemaHelper::getServerSchema() {

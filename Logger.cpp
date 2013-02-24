@@ -23,146 +23,15 @@
 #include <fstream>
 #include <sstream>
 
+LogType<LogPriority::EMERGENCY>::type Logger::emergency;
+LogType<LogPriority::ALERT>::type Logger::alert;
+LogType<LogPriority::CRITICAL>::type Logger::critical;
+LogType<LogPriority::ERROR>::type Logger::error;
+LogType<LogPriority::WARNING>::type Logger::warn;
+LogType<LogPriority::NOTICE>::type Logger::notice;
+LogType<LogPriority::INFO>::type Logger::info;
+LogType<LogPriority::DEBUG>::type Logger::debug;
 
-extern std::map<std::string, std::string> configOptions;
-
-Logger::LOGMAP Logger::logs;
-Logger::LOGACTIVATEDMAP Logger::logact;
-Logger *Logger::theLoggerInstance;
-
-Logger::Logger() {
+void log_message(LogPriority priority, LogFacility facility, std::string message) {
+	syslog(static_cast<int>(priority) | static_cast<int>(facility), message.c_str());
 }
-
-Logger::~Logger() {
-}
-
-Logger *Logger::get() {
-    //proof if we have a logger instance
-    if (theLoggerInstance == NULL) {
-        //if there is no instance create on instance
-        theLoggerInstance = new Logger();
-    }
-
-    //return the instance
-    return theLoggerInstance;
-}
-
-std::string Logger::getLogDate() {
-    //Load current timestamp
-    time_t acttime = time(NULL);
-    //save the timestamp as string
-    std::string logtime = ctime(&acttime);
-    //Add a : to the string
-    logtime[logtime.size()-1] = ':';
-    return logtime;
-}
-
-void Logger::writeError(std::string LogType, std::string Message, bool saveTime) {
-    //if ( isLogActivated(LogType) )
-    {
-        boost::shared_ptr<std::ofstream> theLog;
-
-        //try to find a open log from the current error logtype
-        if (!findLog("_" + LogType + "_err", theLog)) {
-
-            if (!createLog("_" + LogType + "_err", theLog)) {
-                std::cerr<<"Cant create " << + "_" + LogType+"_err.log" << " for writing!"<<std::endl;
-                return;
-            }
-        }
-
-        if (theLog) {
-            if (saveTime) {
-                (*theLog) << getLogDate() << " " << Message << std::endl;
-            } else {
-                (*theLog) << Message << std::endl;
-            }
-        }
-    }
-}
-
-void Logger::writeMessage(std::string LogType, std::string Message, bool saveTime) {
-    if (isLogActivated(LogType) || LogType == "admin") {
-        boost::shared_ptr<std::ofstream> theLog;
-
-        //!try to find a open log from the current messagetype
-        if (!findLog("_" + LogType + "_msg", theLog)) {
-            if (!createLog("_" + LogType + "_msg", theLog)) {
-                std::cerr<<"Cant create " << + "_" + LogType + "_msg.log" << " for writing!"<<std::endl;
-                return;
-            }
-        }
-
-        if (theLog) {
-            if (saveTime) {
-                (*theLog) << getLogDate() << " " << Message << std::endl;
-            } else {
-                (*theLog) << Message << std::endl;
-            }
-        }
-    }
-}
-
-bool Logger::createLog(std::string LogType,/*std::ofstream * pLog*/ boost::shared_ptr<std::ofstream> &pLog) {
-    boost::shared_ptr<std::ofstream> ptheLog(new std::ofstream());
-    std::string file = configOptions["logdir"] + configOptions["starttime"] + LogType + ".log";
-
-    if (ptheLog) {
-        ptheLog->open(file.c_str());
-
-        if (!ptheLog->good()) {
-            std::cerr << "Could not open " << configOptions["logdir"] + configOptions["starttime"] << LogType << ".log" << " for writing!" << std::endl;
-            return false;
-        } else {
-            logs[LogType] = ptheLog;
-            pLog = ptheLog;
-
-            if (!isLogActivated(LogType)) {
-                logact[LogType] = false;
-            }
-
-            return true;
-        }
-    } else {
-        std::cerr << "pointer to ofstream is null!" <<std::endl;
-    }
-
-    return false;
-}
-
-void Logger::activateLog(std::string LogType) {
-    logact[LogType] = true;
-}
-
-void Logger::deactivateLog(std::string LogType) {
-    logact[LogType] = false;
-}
-
-bool Logger::isLogActivated(std::string LogType) {
-    LOGACTIVATEDMAP::iterator theIterator;
-    theIterator = logact.find(LogType);
-
-    if (theIterator == logact.end()) {
-        return false;
-    } else {
-        return theIterator->second;
-    }
-
-    return false;
-}
-
-bool Logger::findLog(std::string LogType, /*std::ofstream * pLog*/ boost::shared_ptr<std::ofstream> &pLog) {
-    LOGMAP::iterator theIterator;
-    theIterator = logs.find(LogType);
-
-    if (theIterator == logs.end()) {
-        return false;
-    } else {
-        pLog = (*theIterator).second;
-        return true;
-    }
-
-    return false;
-}
-
-

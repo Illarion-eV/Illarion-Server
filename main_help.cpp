@@ -43,6 +43,7 @@
 #include "netinterface/NetInterface.hpp"
 #include "Logger.hpp"
 #include "World.hpp"
+#include "Config.hpp"
 
 
 // a map storing configuration options from a config file...
@@ -52,18 +53,14 @@ bool importmaps;
 /*
 learn, bbiwi, basic, schedscripts, Spawn, World_Debug, World_Imports, World, World_Inits, Monster , Player_Moves, Casting, Use, Use_Scripts
 */
-void InitLogOptions() {
-    Logger::activateLog("basic");
-    Logger::activateLog("World_Inits");
-    Logger::activateLog("World");
-    //LogOptions["World_Debug"] = true;
-}
 
 //! file containing kill logs
 std::ofstream kill_log;
 
 //! Die Initialisierung des Servers mit Daten aus einer Datei
 bool Init(const std::string &initfile) {
+	return Config::load(initfile);
+#if 0
     // first we try to open the file
     std::ifstream configfile(initfile.c_str());
 
@@ -95,6 +92,7 @@ bool Init(const std::string &initfile) {
     }
 
     return true;
+#endif
 }
 
 #include "Player.hpp"
@@ -248,56 +246,56 @@ void loadData() {
         std::shared_ptr<LuaWeaponScript> tmpScript(new LuaWeaponScript("server.standardfighting"));
         standardFightingScript = tmpScript;
     } catch (ScriptException &e) {
-        Logger::writeError("scripts", "Error while loading script: server.standardfighting:\n" + std::string(e.what()) + "\n");
+        Logger::error(LogFacility::Script) << "Error while loading script: server.standardfighting: " << e.what() << Log::end;
     }
 
     try {
         std::shared_ptr<LuaLookAtPlayerScript>tmpScript(new LuaLookAtPlayerScript("server.playerlookat"));
         lookAtPlayerScript = tmpScript;
     } catch (ScriptException &e) {
-        Logger::writeError("scripts", "Error while loading script: server.playerlookat:\n" + std::string(e.what()) + "\n");
+        Logger::error(LogFacility::Script) << "Error while loading script: server.playerlookat: " << e.what() << Log::end;
     }
 
     try {
         std::shared_ptr<LuaLookAtItemScript>tmpScript(new LuaLookAtItemScript("server.itemlookat"));
         lookAtItemScript = tmpScript;
     } catch (ScriptException &e) {
-        Logger::writeError("scripts", "Error while loading script: server.itemlookat:\n" + std::string(e.what()) + "\n");
+        Logger::error(LogFacility::Script) << "Error while loading script: server.itemlookat: " << e.what() << Log::end;
     }
 
     try {
         std::shared_ptr<LuaPlayerDeathScript>tmpScript(new LuaPlayerDeathScript("server.playerdeath"));
         playerDeathScript = tmpScript;
     } catch (ScriptException &e) {
-        Logger::writeError("scripts", "Error while loading script: server.playerdeath:\n" + std::string(e.what()) + "\n");
+        Logger::error(LogFacility::Script) << "Error while loading script: server.playerdeath: " << e.what() << Log::end;
     }
 
     try {
         std::shared_ptr<LuaDepotScript>tmpScript(new LuaDepotScript("server.depot"));
         depotScript = tmpScript;
     } catch (ScriptException &e) {
-        Logger::writeError("scripts", "Error while loading script: server.depot:\n" + std::string(e.what()) + "\n");
+        Logger::error(LogFacility::Script) << "Error while loading script: server.depot: " << e.what() << Log::end;
     }
 
     try {
         std::shared_ptr<LuaLoginScript>tmpScript(new LuaLoginScript("server.login"));
         loginScript = tmpScript;
     } catch (ScriptException &e) {
-        Logger::writeError("scripts", "Error while loading script: server.login:\n" + std::string(e.what()) + "\n");
+        Logger::error(LogFacility::Script) << "Error while loading script: server.login: " << e.what() << Log::end;
     }
 
     try {
         std::shared_ptr<LuaLogoutScript>tmpScript(new LuaLogoutScript("server.logout"));
         logoutScript = tmpScript;
     } catch (ScriptException &e) {
-        Logger::writeError("scripts", "Error while loading script: server.logout:\n" + std::string(e.what()) + "\n");
+        Logger::error(LogFacility::Script) << "Error while loading script: server.logout: " << e.what() << Log::end;
     }
 
     try {
         std::shared_ptr<LuaLearnScript>tmpScript(new LuaLearnScript("server.learn"));
         learnScript = tmpScript;
     } catch (ScriptException &e) {
-        Logger::writeError("scripts", "Error while loading script: server.learn:\n" + std::string(e.what()) + "\n");
+        Logger::error(LogFacility::Script) << "Error while loading script: server.learn: " << e.what() << Log::end;
     }
 
 
@@ -466,41 +464,32 @@ void reset_sighandlers() {
 // cout/cerr logfiles
 std::ofstream coutfile, cerrfile;
 
-bool setup_files() {
+bool setup_files(time_t starttime) {
 
-    configOptions["login_logfile"] = configOptions["logdir"] + configOptions["starttime"] + std::string(".log");
-    configOptions["kill_logfile"] = configOptions["logdir"] + configOptions["starttime"] + std::string(".kills");
-    configOptions["cout_logfile"] =  configOptions["coutdir"] + configOptions["starttime"] + std::string(".out");
-    configOptions["cerr_logfile"] =  configOptions["coutdir"] + configOptions["starttime"] + std::string(".err");
+    std::string cout_logfile = Config::instance().coutdir() + boost::lexical_cast<std::string>(starttime) + std::string(".out");
+    std::string cerr_logfile =  Config::instance().coutdir() + boost::lexical_cast<std::string>(starttime) + std::string(".err");
 
-    std::cout << "redirecting all further output to file: " << configOptions["cout_logfile"] << std::endl;
-    std::cout << "redirecting error output to file: " << configOptions["cerr_logfile"] << std::endl;
+    std::cout << "redirecting all further output to file: " << cout_logfile << std::endl;
+    std::cout << "redirecting error output to file: " << cerr_logfile << std::endl;
 
     // open files for redirectings stdout/stderr
-    coutfile.open(configOptions["cout_logfile"].c_str(), std::ios::out | std::ios::trunc);
-    cerrfile.open(configOptions["cerr_logfile"].c_str(), std::ios::out | std::ios::trunc);
+    coutfile.open(cout_logfile.c_str(), std::ios::out | std::ios::trunc);
+    cerrfile.open(cerr_logfile.c_str(), std::ios::out | std::ios::trunc);
 
     // check if files are ok
     if (!coutfile.good()) {
-        std::cerr << "Could not open stdout log file for writing: " << configOptions["cout_logfile"] << std::endl;
+        std::cerr << "Could not open stdout log file for writing: " << cout_logfile << std::endl;
         return false;
     }
 
     if (!cerrfile.good()) {
-        std::cerr << "Could not open stderr log file for writing: " << configOptions["cerr_logfile"] << std::endl;
+        std::cerr << "Could not open stderr log file for writing: " << cerr_logfile << std::endl;
         return false;
     }
 
     // redirect stdout/stderr
     std::cout.rdbuf(coutfile.rdbuf());
     std::cerr.rdbuf(cerrfile.rdbuf());
-
-    kill_log.open(configOptions["kill_logfile"].c_str());
-
-    if (!kill_log.good()) {
-        std::cerr << "Could not open kill log file for writing: " << configOptions["kill_logfile"] << std::endl;
-        return false;
-    }
 
     return true;
 

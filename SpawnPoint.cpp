@@ -42,7 +42,6 @@ template< typename To, typename From> To stream_convert(const From &from) {
 //! Creates a new SpawnPoint at <pos>
 SpawnPoint::SpawnPoint(const position &pos, int Range, uint16_t Spawnrange, uint16_t Min_Spawntime, uint16_t Max_Spawntime, bool Spawnall) : world(World::get()), spawnpos(pos), range(Range), spawnrange(Spawnrange), min_spawntime(Min_Spawntime), max_spawntime(Max_Spawntime), spawnall(Spawnall) {
     nextspawntime = Random::uniform(min_spawntime, max_spawntime);
-    Logger::writeMessage("Spawn","SpawnPoint Konstruktor.");
 }
 
 //! Destructor
@@ -77,7 +76,7 @@ void SpawnPoint::spawn() {
 
         //std::cout<<"time to spawn new monster: new spawntime = "<<nextspawntime<<std::endl;
         // do we want monsters to spawn?
-        if (configOptions["do_spawn"] == "false") {
+        if (!World::get()->isSpawnEnabled()) {
             std::cout << "spawning disabled!" << std::endl;
             return;
         }

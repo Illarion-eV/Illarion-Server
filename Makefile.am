@@ -21,9 +21,11 @@ AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -Im4
 noinst_PROGRAMS = testserver
 
+EXTRA_DIST = .astylerc
+
 testserver_SOURCES = \
 \
-main.cpp main_help.cpp utility.cpp IdCounter.cpp Logger.cpp Random.cpp \
+main.cpp main_help.cpp utility.cpp IdCounter.cpp Logger.cpp Random.cpp Config.cpp \
 \
 data/Data.cpp data/QuestNodeTable.cpp data/QuestTable.cpp \
 data/ArmorObjectTable.cpp data/CommonObjectTable.cpp data/ContainerObjectTable.cpp data/RaceSizeTable.cpp \
@@ -69,3 +71,57 @@ testserver_LDADD = -L/usr/local/lib -lpthread -lssl -lcrypto $(DEPS_LIBS) -lcryp
 testserver_LDFLAGS = $(BOOST_THREAD_LDFLAGS) $(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS)
 testserver_CXXFLAGS = -ggdb -pipe -Wall -Werror -Wno-deprecated -std=c++11 -D_THREAD_SAFE -D_REENTRANT -DTESTSERVER -DCDataConnect_DEBUG -DAdminCommands_DEBUG $(BOOST_CXXFLAGS) $(DEPS_CFLAGS)
 LIBS = $(BOOST_THREAD_LIBS) $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS)
+
+style: .astylerc
+	astyle -n --options=$(top_srcdir)/.astylerc "${top_srcdir}/*.cpp" "${top_srcdir}/*.hpp"
+									      |
+noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
+		 dialog/CraftingDialog.hpp dialog/MessageDialog.hpp \
+		 dialog/SelectionDialog.hpp dialog/InputDialog.hpp \
+		 dialog/MerchantDialog.hpp MilTimer.hpp a_star.hpp \
+		 tuningConstants.hpp db/Result.hpp db/SchemaHelper.hpp \
+		 db/QueryColumns.hpp db/DeleteQuery.hpp db/QueryWhere.hpp \
+		 db/QueryAssign.hpp db/Query.hpp db/Connection.hpp \
+		 db/InsertQuery.hpp db/ConnectionManager.hpp \
+		 db/QueryTables.hpp db/UpdateQuery.hpp db/SelectQuery.hpp \
+		 globals.hpp make_unique.hpp World.hpp Item.hpp \
+		 TccharacterVector.hpp SchedulerTaskClasses.hpp \
+		 script/LuaLookAtItemScript.hpp \
+		 script/LuaLookAtPlayerScript.hpp script/LuaTriggerScript.hpp \
+		 script/LuaLongTimeEffectScript.hpp script/LuaLearnScript.hpp \
+		 script/LuaNPCScript.hpp script/LuaWeaponScript.hpp \
+		 script/LuaMagicScript.hpp script/LuaScheduledScript.hpp \
+		 script/LuaLoginScript.hpp script/LuaLogoutScript.hpp \
+		 script/LuaReloadScript.hpp script/LuaQuestScript.hpp \
+		 script/LuaDepotScript.hpp script/LuaMonsterScript.hpp \
+		 script/LuaPlayerDeathScript.hpp script/LuaScript.hpp \
+		 script/LuaTileScript.hpp script/LuaItemScript.hpp \
+		 tpvector.hpp Random.hpp tvector.hpp NPC.hpp Scheduler.hpp \
+		 MapException.hpp PlayerManager.hpp Character.hpp \
+		 Attribute.hpp InitialConnection.hpp Logger.hpp utility.hpp \
+		 MonitoringClients.hpp IdCounter.hpp playersave.hpp Field.hpp \
+		 data/NamesObjectTable.hpp data/SpellTable.hpp \
+		 data/QuestNodeTable.hpp data/TriggerTable.hpp \
+		 data/CommonObjectTable.hpp data/ContainerObjectTable.hpp \
+		 data/QuestTable.hpp data/MonsterAttackTable.hpp \
+		 data/SkillTable.hpp data/ArmorObjectTable.hpp \
+		 data/MonsterTable.hpp data/ScriptVariablesTable.hpp \
+		 data/NPCTable.hpp data/LongTimeEffectTable.hpp \
+		 data/TilesModificatorTable.hpp data/RaceSizeTable.hpp \
+		 data/ScheduledScriptsTable.hpp data/TilesTable.hpp \
+		 data/Table.hpp data/WeaponObjectTable.hpp \
+		 data/NaturalArmorTable.hpp main_help.hpp TableStructs.hpp \
+		 WorldMap.hpp Connection.hpp Map.hpp Language.hpp \
+		 NewClientView.hpp netinterface/Receiver.hpp \
+		 netinterface/BasicCommand.hpp \
+		 netinterface/BasicClientCommand.hpp netinterface/Sender.hpp \
+		 netinterface/ByteBuffer.hpp netinterface/CommandFactory.hpp \
+		 netinterface/BasicServerCommand.hpp \
+		 netinterface/NetInterface.hpp \
+		 netinterface/protocol/BBIWIClientCommands.hpp \
+		 netinterface/protocol/BBIWIServerCommands.hpp \
+		 netinterface/protocol/ClientCommands.hpp \
+		 netinterface/protocol/ServerCommands.hpp WaypointList.hpp \
+		 Timer.hpp constants.hpp types.hpp \
+		 LongTimeCharacterEffects.hpp LongTimeAction.hpp fuse_ptr.hpp \
+		 Player.hpp SpawnPoint.hpp LongTimeEffect.hpp Monster.hpp

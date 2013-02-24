@@ -46,8 +46,8 @@ public:
             try {
                 scriptStack->addQuestScript(questNode.entrypoint, questNode.script);
             } catch (ScriptException &e) {
-                Logger::writeError("scripts", "Error while loading " + getTableName() + " quest script: "
-                                   + questNode.script->getFileName() + ":\n" + e.what() + "\n");
+                Logger::error(LogFacility::Script) << "Error while loading " << getTableName() << " quest script: "
+                                   << questNode.script->getFileName() << ": " << e.what() << Log::end;
             }
         }
     }

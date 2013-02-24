@@ -51,6 +51,7 @@
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
 #include "db/SchemaHelper.hpp"
+#include "Config.hpp"
 
 extern std::shared_ptr<LuaLoginScript>loginScript;
 extern ScriptVariablesTable *scriptVariables;
@@ -80,13 +81,7 @@ int main(int argc, char *argv[]) {
     time_t starttime;
     time(&starttime);
 
-    std::stringstream ss;
-    ss << starttime;
-    configOptions["starttime"] = ss.str();
-    //Initialize Logging Options
-    InitLogOptions();
-
-    Logger::writeMessage("basic", "\nStarte Illarion !");
+    Logger::info(LogFacility::Other) << "Starte Illarion!" << Log::end;
 
     // initialize signalhandlers
     if (! init_sighandlers()) {
@@ -96,27 +91,19 @@ int main(int argc, char *argv[]) {
     checkArguments(argc, argv);
 
     // set up logfiles etc. and check if everything works
-    if (! setup_files()) {
+    if (! setup_files(starttime)) {
         return 1;
     }
 
-    Logger::writeMessage("basic", "main: server requires clientversion: " + configOptions["clientversion"], false);
-    Logger::writeMessage("basic", "main: listen port: " + configOptions["port"], false);
-    Logger::writeMessage("basic", "main: data directory: " + configOptions["datadir"], false);
+    Logger::info(LogFacility::Other) << "main: server requires clientversion: " << Config::instance().clientversion << Log::end;
+    Logger::info(LogFacility::Other) << "main: listen port: " << Config::instance().port << Log::end;
+    Logger::info(LogFacility::Other) << "main: data directory: " << Config::instance().datadir << Log::end;
 
     // initialise DB Manager
-    Database::ConnectionManager::Login login;
-    Database::ConnectionManager::Server server;
-    login.database = configOptions["postgres_db"];
-    login.user = configOptions["postgres_user"];
-    login.password = configOptions["postgres_pwd"];
-    server.host = configOptions["postgres_host"];
-    server.port = configOptions["postgres_port"];
-    Database::ConnectionManager::getInstance().setupManager(login, server);
-    Database::SchemaHelper::setSchemata(configOptions["postgres_schema_server"],
-                                        configOptions["postgres_schema_account"]);
+    Database::ConnectionManager::getInstance().setupManager();
+    Database::SchemaHelper::setSchemata();
 
-    World *world = World::create(configOptions["datadir"] , starttime);
+    World *world = World::create(Config::instance().datadir, starttime);
 
     if (!Data::reloadTables()) {
         throw std::runtime_error("failed to initialise tables");
@@ -128,8 +115,8 @@ int main(int argc, char *argv[]) {
     if (!importmaps) {
         world->Load("Illarion");
     } else {
-        configOptions["disable_login"] = "true";
-        world->load_from_editor(configOptions["datadir"] + std::string("map/import/oberwelt_0"));
+	world->allowLogin(false);
+        world->load_from_editor(Config::instance().datadir() + std::string("map/import/oberwelt_0"));
     }
 
     Data::reloadScripts();
@@ -150,7 +137,7 @@ int main(int argc, char *argv[]) {
         std::cerr << "reload: " << e.what() << std::endl;
     }
 
-    Logger::writeMessage("basic","Scheduler wird Initialisiert \n",false);
+    Logger::info(LogFacility::Other) << "Scheduler wird Initialisiert" << Log::end;
     //Scheduler Initialisieren
     world->initScheduler();
 
@@ -158,7 +145,7 @@ int main(int argc, char *argv[]) {
 
     running = true;
     // die OnlinePlayer-Liste aktualisieren (-> auf 0)
-    world->saveAllPlayerNamesToFile(configOptions["datadir"] + std::string(ONLINEPLFILE));
+    world->saveAllPlayerNamesToFile(Config::instance().datadir() + std::string(ONLINEPLFILE));
 
     while (running) {
         // Ausgaben auf std::cout in die Datei schreiben
@@ -204,7 +191,7 @@ int main(int argc, char *argv[]) {
     }
 
 
-    Logger::writeMessage("basic","Beende Illarion!");
+    Logger::info(LogFacility::Other) << "Beende Illarion!" << Log::end;
 
     std::cout<<"Server Shutdown:"<<std::endl;
 
@@ -218,20 +205,20 @@ int main(int argc, char *argv[]) {
     world->takeMonsterAndNPCFromMap();
 
 
-    Logger::writeMessage("basic","Statistik aktualisieren");
-    Logger::writeMessage("basic","OnlinePlayer-Liste aktualisieren (-> auf 0)");
-    world->saveAllPlayerNamesToFile(configOptions["datadir"] + std::string(ONLINEPLFILE));
-    Logger::writeMessage("basic","Karten speichern");
+    Logger::info(LogFacility::Other) << "Statistik aktualisieren" << Log::end;
+    Logger::info(LogFacility::Other) << "OnlinePlayer-Liste aktualisieren (-> auf 0)" << Log::end;
+    world->saveAllPlayerNamesToFile(Config::instance().datadir() + std::string(ONLINEPLFILE));
+    Logger::info(LogFacility::Other) << "Karten speichern" << Log::end;
     world->Save("Illarion");
-    Logger::writeMessage("basic","InitialConnection beenden");
-    Logger::writeMessage("basic", "Die in loadItems(..) angelegten Tabellen loeschen");
+    Logger::info(LogFacility::Other) << "InitialConnection beenden" << Log::end;
+    Logger::info(LogFacility::Other) << "Die in loadItems(..) angelegten Tabellen loeschen" << Log::end;
     delete world;
     world = NULL;
 
     reset_sighandlers();
 
     time(&starttime);
-    Logger::writeMessage("basic","main: Ende ");
+    Logger::info(LogFacility::Other) << "main: Ende " << Log::end;
 
     return EXIT_SUCCESS;
 }

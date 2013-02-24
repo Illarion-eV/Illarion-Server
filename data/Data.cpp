@@ -64,7 +64,7 @@ std::vector<Table *> getTables() {
 bool reloadTables() {
     bool success = true;
 
-    Logger::writeError("scripts", "Loading data and scripts ...");
+    Logger::error(LogFacility::Script) << "Loading data and scripts ..." << Log::end;
 
     for (auto &table : getTables()) {
         success = success && table->reloadBuffer();

@@ -56,6 +56,7 @@
 #include "dialog/MessageDialog.hpp"
 #include "dialog/MerchantDialog.hpp"
 #include "dialog/SelectionDialog.hpp"
+#include "Config.hpp"
 
 #include "make_unique.hpp"
 
@@ -92,10 +93,7 @@ Player::Player(boost::shared_ptr<NetInterface> newConnection) throw(Player::Logo
     name = boost::dynamic_pointer_cast<LoginCommandTS>(cmd)->loginName;
     pw = boost::dynamic_pointer_cast<LoginCommandTS>(cmd)->passwort;
     // set acceptable client version...
-    unsigned short acceptVersion;
-    std::stringstream stream;
-    stream << configOptions["clientversion"];
-    stream >> acceptVersion;
+    unsigned short acceptVersion = Config::instance().clientversion;
     monitoringClient = false;
 
     if (clientversion == 200) {
@@ -137,7 +135,7 @@ Player::Player(boost::shared_ptr<NetInterface> newConnection) throw(Player::Logo
     std::cerr << "error loading gm flags" << std::endl;
 
 
-    if (!hasGMRight(gmr_allowlogin) && configOptions["disable_login"] == "true") {
+    if (!hasGMRight(gmr_allowlogin) && !World::get()->isLoginAllowed()) {
         throw Player::LogoutException(SERVERSHUTDOWN);
     }
 
@@ -183,13 +181,9 @@ void Player::login() throw(Player::LogoutException) {
 
     if (!target_position_found) {
         // move player to startingpoint...
-        std::stringstream ssx(configOptions["playerstart_x"]);
-        ssx >> x;
-        std::stringstream ssy(configOptions["playerstart_y"]);
-        ssy >> y;
-        std::stringstream ssz(configOptions["playerstart_z"]);
-        ssz >> z;
-
+	x = Config::instance().playerstart_x;
+	y = Config::instance().playerstart_y;
+	z = Config::instance().playerstart_z;
         target_position_found = _world->findEmptyCFieldNear(target_position, x, y, z);
     }
 
@@ -1487,23 +1481,20 @@ bool Player::load() throw() {
             // item is in a depot?
             if (tempdepot && (it = depots.find(tempdepot)) == depots.end()) {
                 // serious error occured! player data corrupted!
-                std::cerr << "*** player '" << name << "' has invalid depot contents!" << std::endl;
-                Logger::writeError("itemload","*** player '" + name + "' has invalid depot contents!");
+                Logger::error(LogFacility::Player) << "player '" << name << "' has invalid depot contents!" << Log::end;
                 throw std::exception();
             }
 
             // item is in a container?
             if (dataOK && tempincont && (it = containers.find(tempincont)) == containers.end()) {
                 // serious error occured! player data corrupted!
-                std::cerr << "*** player '" << name << "' has invalid container contents!" << std::endl;
-                Logger::writeError("itemload","*** player '" + name + "' has invalid depot contents 2!");
+                Logger::error(LogFacility::Player) << "player '" << name << "' has invalid depot contents 2!" << Log::end;
                 throw std::exception();
             }
 
             if ((dataOK && ((!tempincont && ! tempdepot) && linenumber > MAX_BODY_ITEMS + MAX_BELT_SLOTS)) || (tempincont && tempdepot)) {
                 // serious error occured! player data corrupted!
-                std::cerr << "*** player '" << name << "' has invalid items!" << std::endl;
-                Logger::writeError("itemload","*** player '" + name + "' has invalid items!");
+                Logger::error(LogFacility::Player) << "player '" << name << "' has invalid items!" << Log::end;
                 throw std::exception();
             }
 
@@ -1512,7 +1503,7 @@ bool Player::load() throw() {
 
                 if (linenumber > MAX_BODY_ITEMS + MAX_BELT_SLOTS) {
                     if (!it->second->InsertContainer(tempi, tempc, itemcontainerslot[tuple])) {
-                        Logger::writeError("itemload","*** player '" + name + "' insert Container wasn't sucessful!");
+                        Logger::error(LogFacility::Player) << "player '" << name << "' insert Container wasn't sucessful!" << Log::end;
                     } else {
 
                     }

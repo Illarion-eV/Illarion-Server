@@ -53,8 +53,8 @@ public:
 
             isBufferValid = true;
         } catch (std::exception &e) {
-            std::cerr << "Exception in loading table " << getTableName() << ": " << e.what() << std::endl;
-            isBufferValid = false;
+		Logger::warn(LogFacility::Database) << "Exception in loading table " << getTableName() << ": " << e.what() << Log::end;
+		isBufferValid = false;
         }
 
         return isBufferValid;
@@ -77,8 +77,7 @@ public:
             return structs.at(id);
         } catch (std::out_of_range &) {
             std::stringstream ss;
-            ss << "Table " << getTableName() << ": entry " << id << " was not found!\n";
-            Logger::writeError("scripts", ss.str());
+            Logger::error(LogFacility::Script) << "Table " << getTableName() << ": entry " << id << " was not found!" << Log::end;
             return structs[id];
         }
     }
