@@ -268,6 +268,8 @@ public:
         return name + "(" + boost::lexical_cast<std::string>(id) + ")";
     }
 
+    virtual std::string to_string() const = 0;
+
     /**
     * current action points of the character
     * <b>Lua: (r/w) [movepoints]</b>
@@ -1495,5 +1497,7 @@ private:
     movement_type _movement; /**< the movement type of the character*/
 
 };
+
+std::ostream& operator<<(std::ostream& os, Character& character);
 
 #endif // CHARACTER_HHP

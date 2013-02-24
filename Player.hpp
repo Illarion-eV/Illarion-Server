@@ -103,6 +103,8 @@ public:
     } mapreferences;
 
 
+    virtual std::string to_string() const;
+
     void workoutCommands();
 
     //! definiert eine "Zweiseitige Warteschlange" vom Typ unsigned char
@@ -263,7 +265,7 @@ public:
     void check_logindata() throw(LogoutException);
 
     //Checks if a Player has a special GM right
-    bool hasGMRight(gm_rights right);
+    bool hasGMRight(gm_rights right) const;
 
     //! save char to db
     bool save() throw();
@@ -479,7 +481,7 @@ public:
 
     //Set for Admin state, uin32_t bit flag
     void setAdmin(uint32_t tAdmin);
-    bool isAdmin();
+    bool isAdmin() const;
 
     void setEncumberedSent(bool tEncumberedSent);
     bool wasEncumberedSent();

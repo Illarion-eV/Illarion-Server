@@ -203,3 +203,7 @@ void Monster::receiveText(talk_type tt, std::string message, Character *cc) {
         std::cerr<<"Can't find description for monster: " << getType() << " receiveText not called!"<<std::endl;
     }
 }
+
+std::string Monster::to_string() const {
+	return "Monster of race " + boost::lexical_cast<std::string>((int)race) + "(" + boost::lexical_cast<std::string>(id) + ")";
+}

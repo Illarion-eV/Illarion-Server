@@ -81,7 +81,7 @@ public:
 
     ConfigEntry<std::string> coutdir = { "coutdir", "./log/" };
     ConfigEntry<std::string> datadir = { "datadir", "./data/" };
-    ConfigEntry<std::string> scriptdir = { "scriptdir", "./data/" };
+    ConfigEntry<std::string> scriptdir = { "scriptdir", "./script/" };
     ConfigEntry<std::string> monsteridc = { "monsteridc", "./monster/monstercount.bin" };
 
     ConfigEntry<uint16_t> port = { "port", 3012 };

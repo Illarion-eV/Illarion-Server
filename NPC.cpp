@@ -78,3 +78,7 @@ void NPC::receiveText(talk_type tt, std::string message, Character *cc) {
         _script->receiveText(tt, message, cc);
     }
 }
+
+std::string NPC::to_string() const {
+	return "NPC " + name + "(" + boost::lexical_cast<std::string>(id) + ")";
+}
