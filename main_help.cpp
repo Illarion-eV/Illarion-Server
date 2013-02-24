@@ -55,7 +55,7 @@ learn, bbiwi, basic, schedscripts, Spawn, World_Debug, World_Imports, World, Wor
 
 //! Die Initialisierung des Servers mit Daten aus einer Datei
 bool Init(const std::string &initfile) {
-	return Config::load(initfile);
+    return Config::load(initfile);
 #if 0
     // first we try to open the file
     std::ifstream configfile(initfile.c_str());
@@ -137,7 +137,7 @@ void logout_save(Player *who, bool forced, unsigned long int thistime) {
     std::stringstream onlinetime;
     onlinetime << " after " << th << "h " << tm << "m " << ts << "s, onlinetime " << oh << "h " << om << "m " << os << "s";
 
-    Logger::info(LogFacility::Player) << (forced?"forced ":"") << "logout: " << who->Connection->getIPAdress() << who << " on " << ctime(&acttime6) << onlinetime.str() << Log::end;
+    Logger::info(LogFacility::Player) << (forced?"forced ":"") << "logout: " << who->Connection->getIPAdress() << *who << " on " << ctime(&acttime6) << onlinetime.str() << Log::end;
 }
 
 void login_save(Player *who) {
@@ -151,7 +151,7 @@ void login_save(Player *who) {
     std::stringstream onlinetime;
     onlinetime << " onlinetime till now: " << oh << "h " << om << "m " << os << "s";
 
-    Logger::info(LogFacility::Player) << "login: " << who->Connection->getIPAdress() << who << " on " << ctime(&acttime7) << onlinetime.str() << Log::end;
+    Logger::info(LogFacility::Player) << "login: " << who->Connection->getIPAdress() << *who << " on " << ctime(&acttime7) << onlinetime.str() << Log::end;
 }
 
 //! zur Pr�fung der Kommandozeilenargumente
@@ -328,7 +328,7 @@ void sig_usr(int) {
     Logger::info(LogFacility::World) << "Map import finished" << Log::end;
 
     if (sigaction(SIGUSR1, &act_usr, NULL) < 0) {
-	Logger::error(LogFacility::Other) << "SIGUSR1: sigaction failed" << Log::end;
+        Logger::error(LogFacility::Other) << "SIGUSR1: sigaction failed" << Log::end;
     }
 
 }

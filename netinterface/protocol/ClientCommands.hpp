@@ -1073,10 +1073,10 @@ public:
         Logger::debug(LogFacility::Script) << "=========Use Script Start=============" << Log::end;
         Logger::debug(LogFacility::Script) << "Source pos (" << Source.pos.x << "," << Source.pos.y << "," << Source.pos.z << ")" << Log::end;
         Logger::debug(LogFacility::Script) << "Source type: " << Source.Type << Log::end;
-        Logger::debug(LogFacility::Script) << "Source Character: " << Source.character << Log::end;
+        Logger::debug(LogFacility::Script) << "Source Character: " << *Source.character << Log::end;
         Logger::debug(LogFacility::Script) << "Target pos (" << Target.pos.x << "," << Target.pos.y << "," << Target.pos.z << ")" << Log::end;
         Logger::debug(LogFacility::Script) << "Target Type: " << Target.Type << Log::end;
-        Logger::debug(LogFacility::Script) << "Target Character: " << Target.character << Log::end;
+        Logger::debug(LogFacility::Script) << "Target Character: " << *Target.character << Log::end;
         Logger::debug(LogFacility::Script) << "==========Use Script End=============" << Log::end;
 
         std::string msg;

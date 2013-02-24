@@ -104,8 +104,8 @@ public:
             callback(dialog);
         } catch (luabind::error &e) {
             lua_State *L = e.state();
-	    Logger::error(LogFacility::Script) << "Exception in " << dialog.getClassName() << " callback"
-		    << ": " << std::string(lua_tostring(L, -1)) << Log::end;
+            Logger::error(LogFacility::Script) << "Exception in " << dialog.getClassName() << " callback"
+                                               << ": " << std::string(lua_tostring(L, -1)) << Log::end;
             lua_pop(L, 1);
         }
     }

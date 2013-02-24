@@ -822,7 +822,7 @@ bool Character::attack(Character *target) {
 
         if (!target->IsAlive()) {
             // target was killed...
-	    Logger::info(LogFacility::Player) << *this << " killed " << *target << Log::end;
+            Logger::info(LogFacility::Player) << *this << " killed " << *target << Log::end;
         }
 
         return (target->IsAlive());
@@ -1461,7 +1461,7 @@ void Character::talk(talk_type tt, std::string message) { //only for say, whispe
 
     // log talk if we have a player
     if (character == player) {
-	    Logger::info(LogFacility::Player) << *this << " " << talktype << ": " << message << Log::end;
+        Logger::info(LogFacility::Player) << *this << " " << talktype << ": " << message << Log::end;
     }
 
 #endif
@@ -2003,6 +2003,6 @@ bool Character::pageGM(std::string ticket) {
     return false;
 }
 
-std::ostream& operator<<(std::ostream& os, Character& character) {
-	return os << character.to_string();
+std::ostream &operator<<(std::ostream &os, const Character &character) {
+    return os << character.to_string();
 };

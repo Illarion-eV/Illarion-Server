@@ -181,9 +181,9 @@ void Player::login() throw(Player::LogoutException) {
 
     if (!target_position_found) {
         // move player to startingpoint...
-	x = Config::instance().playerstart_x;
-	y = Config::instance().playerstart_y;
-	z = Config::instance().playerstart_z;
+        x = Config::instance().playerstart_x;
+        y = Config::instance().playerstart_y;
+        z = Config::instance().playerstart_z;
         target_position_found = _world->findEmptyCFieldNear(target_position, x, y, z);
     }
 
@@ -2864,5 +2864,5 @@ void Player::closeDialogsOnMove() {
 }
 
 std::string Player::to_string() const {
-	return (isAdmin()?"Admin ":"Player ") + name + "(" + boost::lexical_cast<std::string>(id) + ")";
+    return (isAdmin()?"Admin ":"Player ") + name + "(" + boost::lexical_cast<std::string>(id) + ")";
 }

@@ -74,7 +74,7 @@ LIBS = $(BOOST_THREAD_LIBS) $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS)
 
 style: .astylerc
 	astyle -n --options=$(top_srcdir)/.astylerc "${top_srcdir}/*.cpp" "${top_srcdir}/*.hpp"
-									      |
+
 noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
 		 dialog/CraftingDialog.hpp dialog/MessageDialog.hpp \
 		 dialog/SelectionDialog.hpp dialog/InputDialog.hpp \
@@ -100,7 +100,9 @@ noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
 		 MapException.hpp PlayerManager.hpp Character.hpp \
 		 Attribute.hpp InitialConnection.hpp Logger.hpp utility.hpp \
 		 MonitoringClients.hpp IdCounter.hpp playersave.hpp Field.hpp \
-		 data/NamesObjectTable.hpp data/SpellTable.hpp \
+		 data/Data.hpp data/Table.hpp data/StructTable.hpp \
+         data/ScriptStructTable.hpp data/QuestScriptStructTable.hpp \
+         data/NamesObjectTable.hpp data/SpellTable.hpp \
 		 data/QuestNodeTable.hpp data/TriggerTable.hpp \
 		 data/CommonObjectTable.hpp data/ContainerObjectTable.hpp \
 		 data/QuestTable.hpp data/MonsterAttackTable.hpp \
@@ -122,6 +124,6 @@ noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
 		 netinterface/protocol/BBIWIServerCommands.hpp \
 		 netinterface/protocol/ClientCommands.hpp \
 		 netinterface/protocol/ServerCommands.hpp WaypointList.hpp \
-		 Timer.hpp constants.hpp types.hpp \
+		 Config.hpp Timer.hpp constants.hpp types.hpp \
 		 LongTimeCharacterEffects.hpp LongTimeAction.hpp fuse_ptr.hpp \
 		 Player.hpp SpawnPoint.hpp LongTimeEffect.hpp Monster.hpp

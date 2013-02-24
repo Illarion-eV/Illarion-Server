@@ -50,9 +50,13 @@ public:
 
     ConfigEntry(const std::string &config_name, const T &default_value = {}) : ConfigEntryBase { config_name }, _item { default_value } {}
 
-    operator T() const { return _item; }
+    operator T() const {
+        return _item;
+    }
 
-    T operator()() const { return _item; }
+    T operator()() const {
+        return _item;
+    }
 
     virtual void read(std::istream &is) {
         is >> _item;

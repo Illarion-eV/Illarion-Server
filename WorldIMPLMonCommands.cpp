@@ -84,7 +84,10 @@ void World::montool_set_login(Player *c, const std::string &st) {
     }
 
     bool enable = true;
-    if (st == "true") enable = false;
+
+    if (st == "true") {
+        enable = false;
+    }
 
     World::get()->allowLogin(enable);
     Logger::info(LogFacility::Admin) << c->name << " set allowLogin to " << enable << Log::end;
