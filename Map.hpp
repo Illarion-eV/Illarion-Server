@@ -33,7 +33,6 @@
 
 class CommonObjectTable;
 
-extern CommonObjectTable *CommonItems;
 
 extern std::vector<position> *contpos;
 

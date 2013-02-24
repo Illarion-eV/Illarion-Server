@@ -17,7 +17,6 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Container.hpp"
-#include "data/CommonObjectTable.hpp"
 #include "data/Data.hpp"
 #include "World.hpp"
 
@@ -613,7 +612,7 @@ int Container::recursiveWeight(int rekt) {
     for (auto it = items.begin(); it != items.end(); ++it) {
         Item &item = it->second;
 
-        const CommonStruct &tempCommon = CommonItems->find(item.getId());
+        const auto &tempCommon = Data::CommonItems[item.getId()];
 
         if (item.isContainer()) {
             auto iterat = containers.find(it->first);
@@ -686,14 +685,14 @@ void Container::doAge(bool inventory) {
         while (it != items.end()) {
             Item &item = it->second;
 
-            const CommonStruct &tempCommon = CommonItems->find(item.getId());
+            const auto &tempCommon = Data::CommonItems[item.getId()];
 
             if (!inventory || (inventory && tempCommon.rotsInInventory)) {
                 if (!item.survivesAgeing()) {
                     if (item.getId() != tempCommon.ObjectAfterRot) {
                         item.setId(tempCommon.ObjectAfterRot);
 
-                        const CommonStruct &afterRotCommon = CommonItems->find(tempCommon.ObjectAfterRot);
+                        const auto &afterRotCommon = Data::CommonItems[tempCommon.ObjectAfterRot];
 
                         if (afterRotCommon.isValid()) {
                             item.setWear(tempCommon.AgeingSpeed);
@@ -734,7 +733,7 @@ TYPE_OF_CONTAINERSLOTS Container::getSlotCount() {
 }
 
 bool Container::isItemStackable(Item item) {
-    const CommonStruct &com = CommonItems->find(item.getId());
+    const auto &com = Data::CommonItems[item.getId()];
     return com.MaxStack > 1;
 }
 

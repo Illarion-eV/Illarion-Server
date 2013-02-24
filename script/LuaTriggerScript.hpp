@@ -28,7 +28,7 @@ class World;
 
 class LuaTriggerScript: public LuaScript {
 public:
-    LuaTriggerScript(position pos) throw(ScriptException);
+    LuaTriggerScript() throw(ScriptException);
     LuaTriggerScript(std::string filename, position pos) throw(ScriptException);
     virtual ~LuaTriggerScript() throw();
 

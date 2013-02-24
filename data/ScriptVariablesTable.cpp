@@ -19,69 +19,34 @@
  */
 
 #include "data/ScriptVariablesTable.hpp"
-
 #include <iostream>
-
-#include <boost/lexical_cast.hpp>
-
 #include "db/Connection.hpp"
 #include "db/ConnectionManager.hpp"
 #include "db/DeleteQuery.hpp"
 #include "db/InsertQuery.hpp"
-#include "db/SelectQuery.hpp"
-#include "db/Result.hpp"
 
-ScriptVariablesTable::ScriptVariablesTable() : m_dataOK(false) {
-    reload();
+std::string ScriptVariablesTable::getTableName() {
+    return "scriptvariables";
 }
 
-ScriptVariablesTable::~ScriptVariablesTable() {
-    clearOldTable();
+std::vector<std::string> ScriptVariablesTable::getColumnNames() {
+    return {
+        "svt_ids",
+        "svt_string"
+    };
 }
 
-void ScriptVariablesTable::clearOldTable() {
-    values_table.clear();
+std::string ScriptVariablesTable::assignId(const Database::ResultTuple &row) {
+    return row["svt_ids"].as<std::string>();
 }
 
-void ScriptVariablesTable::reload() {
-    try {
-        Database::SelectQuery query;
-        query.addColumn("scriptvariables", "svt_ids");
-        query.addColumn("scriptvariables", "svt_string");
-        query.addServerTable("scriptvariables");
-
-        Database::Result results = query.execute();
-
-        if (!results.empty()) {
-            values_table.clear();
-
-            for (auto it = results.begin(); it != results.end(); ++it) {
-
-                std::string key = (*it)["svt_ids"].as<std::string>();
-                std::string value = (*it)["svt_string"].as<std::string>();
-
-                values_table[key] = value;
-            }
-        }
-
-        m_dataOK = true;
-
-#ifdef DataConnect_DEBUG
-        std::cout << "loaded " << rows << " values for scripts" << std::endl;
-#endif
-        return;
-    } catch (std::exception &e) {
-        std::cerr<<"catched error as reading scriptvariables: "<<e.what()<<std::endl;
-        m_dataOK = false;
-    }
+std::string ScriptVariablesTable::assignTable(const Database::ResultTuple &row) {
+    return row["svt_string"].as<std::string>();;
 }
 
 bool ScriptVariablesTable::find(std::string id, std::string &ret) {
-    STRINGTABLE::iterator it;
-    it = values_table.find(id.c_str());
-
-    if (it != values_table.end()) {
-        ret = it->second;
+    if (exists(id)) {
+        ret = (*this)[id];
         return true;
     } else {
         ret = "";
@@ -90,7 +55,7 @@ bool ScriptVariablesTable::find(std::string id, std::string &ret) {
 }
 
 void ScriptVariablesTable::set(std::string id, std::string value) {
-    values_table[id] = value;
+    get(id) = value;
 }
 
 void ScriptVariablesTable::set(std::string id, int32_t value) {
@@ -100,14 +65,7 @@ void ScriptVariablesTable::set(std::string id, int32_t value) {
 }
 
 bool ScriptVariablesTable::remove(std::string id) {
-    STRINGTABLE::iterator it = values_table.find(id.c_str());
-
-    if (it != values_table.end()) {
-        values_table.erase(it);
-        return true;
-    } else {
-        return false;
-    }
+    return erase(id);
 }
 
 void ScriptVariablesTable::save() {
@@ -125,10 +83,10 @@ void ScriptVariablesTable::save() {
         const InsertQuery::columnIndex idColumn = insQuery.addColumn("svt_ids");
         const InsertQuery::columnIndex valueColumn = insQuery.addColumn("svt_string");
 
-        for (auto it = values_table.cbegin(); it != values_table.cend(); ++it) {
-            if (it->second.length() > 0) {
-                insQuery.addValue<std::string>(idColumn, it->first);
-                insQuery.addValue<std::string>(valueColumn, it->second);
+        for (const auto &var : *this) {
+            if (var.second.length() > 0) {
+                insQuery.addValue<std::string>(idColumn, var.first);
+                insQuery.addValue<std::string>(valueColumn, var.second);
             }
         }
 
@@ -136,8 +94,25 @@ void ScriptVariablesTable::save() {
 
         connection->commitTransaction();
     } catch (std::exception &e) {
-        std::cerr<<"exception: "<<e.what()<<" while saving Scriptvariables!"<<std::endl;
+        std::cerr << "exception while saving script variables: " << e.what() << std::endl;
     }
 }
 
+bool ScriptVariablesTable::reloadBuffer() {
+    if (first) {
+        if (Base::reloadBuffer()) {
+            Base::activateBuffer();
+            first = false;
+        } else {
+            return false;
+        }
+    } else {
+        save();
+    }
+
+    return true;
+}
+
+void ScriptVariablesTable::activateBuffer() {
+}
 

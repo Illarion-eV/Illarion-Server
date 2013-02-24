@@ -26,10 +26,7 @@
 #include "script/LuaLookAtItemScript.hpp"
 #include "script/LuaPlayerDeathScript.hpp"
 #include "script/LuaDepotScript.hpp"
-#include "data/CommonObjectTable.hpp"
 #include "data/MonsterTable.hpp"
-#include "data/SpellTable.hpp"
-#include "data/TriggerTable.hpp"
 #include "data/ScheduledScriptsTable.hpp"
 //We need this for the standard Fighting Script.
 #include "script/LuaWeaponScript.hpp"
@@ -38,21 +35,17 @@
 #include "script/LuaLearnScript.hpp"
 #include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
-#include "data/LongTimeEffectTable.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "netinterface/NetInterface.hpp"
 #include "script/LuaLoginScript.hpp"
 #include "script/LuaLogoutScript.hpp"
 #include "PlayerManager.hpp"
 #include "Logger.hpp"
-#include "data/ScriptVariablesTable.hpp"
 #include "data/QuestNodeTable.hpp"
 #include "constants.hpp"
 
 #include <iostream>
 
-extern LongTimeEffectTable *LongTimeEffects;
-extern ScriptVariablesTable *scriptVariables;
 extern std::ofstream talkfile;
 extern std::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
 extern std::shared_ptr<LuaLookAtItemScript>lookAtItemScript;
@@ -1277,24 +1270,11 @@ bool World::reload_defs(Player *cp) {
 
     bool ok = true;
 
-    CommonObjectTable *CommonItems_temp = 0;
     MonsterTable *MonsterDescriptions_temp = 0;
-    SpellTable *Spells_temp = 0;
-    TriggerTable *Trigger_temp = 0;
     ScheduledScriptsTable *ScheduledScripts_temp = 0;
-    LongTimeEffectTable *LongTimeEffects_temp = 0;
 
     if (ok) {
         QuestNodeTable::getInstance()->reload();
-    }
-
-    if (ok) {
-        CommonItems_temp = new CommonObjectTable();
-
-        if (CommonItems_temp == NULL || !CommonItems_temp->dataOK()) {
-            reportTableError(cp, "common");
-            ok = false;
-        }
     }
 
     if (ok) {
@@ -1311,33 +1291,6 @@ bool World::reload_defs(Player *cp) {
     }
 
     if (ok) {
-        Spells_temp = new SpellTable();
-
-        if (Spells_temp == NULL || !Spells_temp->isDataOK()) {
-            reportTableError(cp, "spells");
-            ok = false;
-        }
-    }
-
-    if (ok) {
-        Trigger_temp = new TriggerTable();
-
-        if (Trigger_temp == NULL || !Trigger_temp->isDataOK()) {
-            reportTableError(cp, "triggerfields");
-            ok = false;
-        }
-    }
-
-    if (ok) {
-        LongTimeEffects_temp = new LongTimeEffectTable();
-
-        if (LongTimeEffects_temp == NULL || !LongTimeEffects->dataOK()) {
-            reportTableError(cp, "longtimeeffects");
-            ok = false;
-        }
-    }
-
-    if (ok) {
         std::cerr << "Attempting to reload Scheduler" << std::endl;
         ScheduledScripts_temp = new ScheduledScriptsTable();
         std::cerr << "Created new Scheduler" << std::endl;
@@ -1349,51 +1302,21 @@ bool World::reload_defs(Player *cp) {
     }
 
     if (!ok) {
-        if (CommonItems_temp != NULL) {
-            delete CommonItems_temp;
-        }
-
         if (MonsterDescriptions_temp != NULL) {
             delete MonsterDescriptions_temp;
-        }
-
-        if (Spells_temp != NULL) {
-            delete Spells_temp;
-        }
-
-        if (Trigger_temp != NULL) {
-            delete Trigger_temp;
         }
 
         if (ScheduledScripts_temp != NULL) {
             delete ScheduledScripts_temp;
         }
-
-        if (LongTimeEffects_temp != NULL) {
-            delete LongTimeEffects_temp;
-        }
-
-        //if (ScriptVar_temp != NULL)
-        //    delete ScriptVar_temp;
-
     } else {
         // if everything went well, delete old tables and set up new tables
         //Mutex für login logout sperren so das aktuell keiner mehr einloggen kann
         PlayerManager::get()->setLoginLogout(true);
-        delete CommonItems;
-        CommonItems = CommonItems_temp;
         delete MonsterDescriptions;
         MonsterDescriptions = MonsterDescriptions_temp;
-        delete Spells;
-        Spells = Spells_temp;
-        delete Triggers;
-        Triggers = Trigger_temp;
         delete scheduledScripts;
         scheduledScripts = ScheduledScripts_temp;
-        delete LongTimeEffects;
-        LongTimeEffects = LongTimeEffects_temp;
-        // delete scriptVariables;
-        // scriptVariables = ScriptVar_temp;
         //Mutex entsperren.
         PlayerManager::get()->setLoginLogout(false);
 
@@ -1476,8 +1399,6 @@ bool World::reload_defs(Player *cp) {
 
 
 bool World::reload_tables(Player *cp) {
-
-    scriptVariables->save();
 
     LuaScript::shutdownLua();
 

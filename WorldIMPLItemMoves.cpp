@@ -18,7 +18,6 @@
 
 
 #include "World.hpp"
-#include "data/CommonObjectTable.hpp"
 #include "data/TilesModificatorTable.hpp"
 #include "script/LuaItemScript.hpp"
 #include "script/LuaTriggerScript.hpp"
@@ -458,7 +457,7 @@ bool World::takeItemFromMap(Character *cc, short int x, short int y, short int z
     if (GetPToCFieldAt(tempf, x, y, z, tmap)) {
 
         if (tempf->ViewTopItem(g_item)) {
-            const CommonStruct &tempCommon = CommonItems->find(g_item.getId());
+            const auto &tempCommon = Data::CommonItems[g_item.getId()];
 
             if (tempCommon.isValid()) {
                 if (tempCommon.Weight < 30000 && !g_item.isPermanent()) {
@@ -473,14 +472,16 @@ bool World::takeItemFromMap(Character *cc, short int x, short int y, short int z
 
                     }
 
-                    TriggerStruct Trigger;
+                    position pos(x, y, z);
 
-                    if (Triggers->find(position(x,y,z),Trigger)) {
-                        if (Trigger.script) {
+                    if (Data::Triggers.exists(pos)) {
+                        const auto &script = Data::Triggers.script(pos);
+
+                        if (script) {
                             ScriptItem sItem = g_item;
-                            sItem.pos = position(x,y,z);
+                            sItem.pos = pos;
                             sItem.type = ScriptItem::it_field;
-                            Trigger.script->TakeItemFromField(sItem,cc);
+                            script->TakeItemFromField(sItem, cc);
                         }
                     }
 
@@ -592,20 +593,19 @@ bool World::putItemOnMap(Character *cc, short int x, short int y, short int z) {
 
             if (tmap->addContainerToPos(g_item, g_cont, npos)) {
                 sendPutItemOnMapToAllVisibleCharacters(x, y, z, g_item, tempf);
-                //Ausfhren eines Triggerscriptes. Falls eins fr das Feld vorhanden ist.
-                //Dies prft nicht nach ob ggf das entfernen des Items nicht geklappt hat
-                TriggerStruct Trigger;
+                position pos(x, y, z);
 
-                if (cc && Triggers->find(position(x,y,z),Trigger)) {
-                    if (Trigger.script) {
+                if (cc && Data::Triggers.exists(pos)) {
+                    const auto &script = Data::Triggers.script(pos);
+
+                    if (script) {
                         ScriptItem sItem = g_item;
                         sItem.pos = position(x,y,z);
                         sItem.type = ScriptItem::it_field;
-                        Trigger.script->PutItemOnField(sItem,cc);
+                        script->PutItemOnField(sItem,cc);
                     }
                 }
 
-                //=======================Ende des Triggerscriptes
                 checkField(tempf, x, y, z);
                 g_item.reset();
                 g_cont = NULL;
@@ -613,23 +613,21 @@ bool World::putItemOnMap(Character *cc, short int x, short int y, short int z) {
                 return true;
             }
         } else {
-            // normales Item
             if (tempf->addTopItem(g_item)) {
                 sendPutItemOnMapToAllVisibleCharacters(x, y, z, g_item, tempf);
-                //Ausfhren eines Triggerscriptes. Falls eins fr das Feld vorhanden ist.
-                //Dies prft nicht nach ob ggf das entfernen des Items nicht geklappt hat
-                TriggerStruct Trigger;
+                position pos(x, y, z);
 
-                if (cc && Triggers->find(position(x,y,z),Trigger)) {
-                    if (Trigger.script) {
+                if (cc && Data::Triggers.exists(pos)) {
+                    const auto &script = Data::Triggers.script(pos);
+
+                    if (script) {
                         ScriptItem sItem = g_item;
                         sItem.pos = position(x,y,z);
                         sItem.type = ScriptItem::it_field;
-                        Trigger.script->PutItemOnField(sItem,cc);
+                        script->PutItemOnField(sItem,cc);
                     }
                 }
 
-                //=======================Ende des Triggerscriptes
                 checkField(tempf, x, y, z);
                 g_cont = NULL;
                 g_item.reset();
@@ -660,20 +658,19 @@ bool World::putItemAlwaysOnMap(Character *cc, short int x, short int y, short in
 
             if (tmap->addAlwaysContainerToPos(g_item, g_cont, npos)) {
                 sendPutItemOnMapToAllVisibleCharacters(x, y, z, g_item, tempf);
-                //Ausfhren eines Triggerscriptes. Falls eins fr das Feld vorhanden ist.
-                //Dies prft nicht nach ob ggf das entfernen des Items nicht geklappt hat
-                TriggerStruct Trigger;
+                position pos(x, y, z);
 
-                if (cc && Triggers->find(position(x,y,z),Trigger)) {
-                    if (Trigger.script) {
+                if (cc && Data::Triggers.exists(pos)) {
+                    const auto &script = Data::Triggers.script(pos);
+
+                    if (script) {
                         ScriptItem sItem = g_item;
                         sItem.pos = position(x,y,z);
                         sItem.type = ScriptItem::it_field;
-                        Trigger.script->PutItemOnField(sItem,cc);
+                        script->PutItemOnField(sItem,cc);
                     }
                 }
 
-                //=======================Ende des Triggerscriptes
                 checkField(tempf, x, y, z);
                 g_item.reset();
                 g_cont = NULL;
@@ -681,24 +678,22 @@ bool World::putItemAlwaysOnMap(Character *cc, short int x, short int y, short in
                 return true;
             }
         } else {
-            // normales Item
             if (tempf->PutTopItem(g_item)) {
                 sendPutItemOnMapToAllVisibleCharacters(x, y, z, g_item, tempf);
-                //Ausfhren eines Triggerscriptes. Falls eins fr das Feld vorhanden ist.
-                //Dies prft nicht nach ob ggf das entfernen des Items nicht geklappt hat
-                TriggerStruct Trigger;
+                position pos(x, y, z);
 
-                if (cc && Triggers->find(position(x,y,z),Trigger)) {
-                    if (Trigger.script) {
+                if (cc && Data::Triggers.exists(pos)) {
+                    const auto &script = Data::Triggers.script(pos);
+
+                    if (script) {
                         ScriptItem sItem;
                         sItem = g_item;
                         sItem.pos = position(x,y,z);
                         sItem.type = ScriptItem::it_field;
-                        Trigger.script->PutItemOnField(sItem,cc);
+                        script->PutItemOnField(sItem,cc);
                     }
                 }
 
-                //=======================Ende des Triggerscriptes
                 checkField(tempf, x, y, z);
                 g_cont = NULL;
                 g_item.reset();
@@ -764,7 +759,7 @@ void World::dropItemFromShowcaseOnMap(Player *cp, uint8_t showcase, unsigned cha
         t_item.pos = position(xc, yc, zc);
         t_item.type = ScriptItem::it_field;
         t_item.owner = cp;
-        std::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
+        std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(t_item.getId());
 
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
@@ -839,7 +834,7 @@ void World::moveItemFromShowcaseToPlayer(Player *cp, uint8_t showcase, unsigned 
 
         t_item.owner = cp;
         //Ende Erzeugen von Source und Target Item
-        std::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
+        std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(t_item.getId());
 
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item,t_item)) {
@@ -917,7 +912,7 @@ void World::dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, short int xc
         t_item.pos = position(xc, yc, zc);
         t_item.type = ScriptItem::it_field;
         t_item.owner = cp;
-        std::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
+        std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(t_item.getId());
 
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
@@ -1023,7 +1018,7 @@ void World::moveItemBetweenBodyParts(Player *cp, unsigned char opos, unsigned ch
         }
 
         t_item.itempos = npos;
-        std::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
+        std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(t_item.getId());
 
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
@@ -1090,7 +1085,7 @@ void World::moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, uint8
         t_item.pos = cp->pos;
         t_item.owner = cp;
         t_item.itempos = pos;
-        std::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
+        std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(t_item.getId());
 
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
@@ -1153,7 +1148,7 @@ void World::moveItemFromMapIntoShowcase(Player *cp, char direction, uint8_t show
             t_item.owner = cp;
 
             //Ausfhren eines Move Item Scriptes
-            std::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
+            std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(t_item.getId());
 
             if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
                 if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
@@ -1267,7 +1262,7 @@ void World::moveItemFromMapToPlayer(Player *cp, char direction, unsigned char cp
 
             t_item.owner = cp;
             t_item.itempos = cpos;
-            std::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
+            std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(t_item.getId());
 
             if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
                 if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
@@ -1371,7 +1366,7 @@ void World::moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char p
         t_item.itempos = pos2;
         t_item.owner = cp;
         //Ausfhren eines Move Item Scriptes
-        std::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
+        std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(t_item.getId());
 
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
@@ -1453,7 +1448,7 @@ bool World::moveItem(Character *cc, unsigned char d, short int xc, short int yc,
             t_item.owner = cc;
 
             //Ausfhren eines Move Item Scriptes
-            std::shared_ptr<LuaItemScript> script = CommonItems->findScript(t_item.getId());
+            std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(t_item.getId());
 
             if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
                 if (!script->MoveItemBeforeMove(cc, s_item, t_item)) {
@@ -1799,6 +1794,6 @@ void World::closeShowcaseIfNotInRange(Container *moved, short int x, short int y
 }
 
 bool World::isStackable(Item item) {
-    const CommonStruct &com = CommonItems->find(item.getId());
+    const auto &com = Data::CommonItems[item.getId()];
     return com.MaxStack > 1;
 }

@@ -22,7 +22,7 @@
 #include "Item.hpp"
 #include "Character.hpp"
 
-LuaItemScript::LuaItemScript(CommonStruct comstr) : LuaScript(), _comstr(comstr) {
+LuaItemScript::LuaItemScript() : LuaScript() {
     init_functions();
 }
 

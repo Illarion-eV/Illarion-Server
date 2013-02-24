@@ -20,15 +20,10 @@
 #ifndef _TRIGGER_TABLE_HPP_
 #define _TRIGGER_TABLE_HPP_
 
-#include <map>
-#include <iostream>
-#include <memory>
-#include <list>
-#include <boost/unordered_map.hpp>
+#include "data/QuestScriptStructTable.hpp"
 #include "globals.hpp"
 #include "script/LuaTriggerScript.hpp"
 
-class World;
 
 struct TriggerStruct {
     position pos;
@@ -36,28 +31,14 @@ struct TriggerStruct {
     std::shared_ptr<LuaTriggerScript> script;
 };
 
-
-
-class TriggerTable {
+class TriggerTable : public QuestScriptStructTable<position, TriggerStruct, LuaTriggerScript, position> {
 public:
-    TriggerTable();
-    ~TriggerTable();
-
-    inline bool isDataOK() {
-        return _dataOK;
-    }
-
-    bool find(position pos, TriggerStruct &data);
-
-private:
-    void reload();
-
-    typedef boost::unordered_map<position, TriggerStruct> TriggerMap;
-    TriggerMap Triggers;
-
-    void clearOldTable();
-
-    bool _dataOK;
+    virtual std::string getTableName();
+    virtual std::vector<std::string> getColumnNames();
+    virtual position assignId(const Database::ResultTuple &row);
+    virtual TriggerStruct assignTable(const Database::ResultTuple &row);
+    virtual std::string assignScriptName(const Database::ResultTuple &row);
+    virtual NodeRange getQuestScripts();
 };
 
 #endif

@@ -24,7 +24,6 @@
 #include <stdlib.h>
 
 #include "data/ArmorObjectTable.hpp"
-#include "data/CommonObjectTable.hpp"
 #include "data/ContainerObjectTable.hpp"
 #include "data/MonsterTable.hpp"
 #include "data/TilesModificatorTable.hpp"
@@ -672,19 +671,19 @@ int World::getItemAttrib(std::string s, TYPE_OF_ITEM_ID ItemID) {
 
     // Common //
     else if (s == "agingspeed") {
-        const CommonStruct &common = CommonItems->find(ItemID);
+        const auto &common = Data::CommonItems[ItemID];
 
         if (common.isValid()) {
             return common.AgeingSpeed;
         }
     } else if (s == "objectafterrot") {
-        const CommonStruct &common = CommonItems->find(ItemID);
+        const auto &common = Data::CommonItems[ItemID];
 
         if (common.isValid()) {
             return common.ObjectAfterRot;
         }
     } else if (s == "weight") {
-        const CommonStruct &common = CommonItems->find(ItemID);
+        const auto &common = Data::CommonItems[ItemID];
 
         if (common.isValid()) {
             return common.Weight;

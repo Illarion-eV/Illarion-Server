@@ -20,7 +20,6 @@
 #include "Field.hpp"
 
 #include "data/Data.hpp"
-#include "data/CommonObjectTable.hpp"
 #include "globals.hpp"
 
 //#define Field_DEBUG
@@ -266,7 +265,7 @@ bool Field::swapTopItem(TYPE_OF_ITEM_ID newid, uint16_t newQuality) {
             temp.setQuality(newQuality);
         }
 
-        const CommonStruct &common = CommonItems->find(newid);
+        const auto &common = Data::CommonItems[newid];
 
         if (common.isValid()) {
             temp.setWear(common.AgeingSpeed);
@@ -338,7 +337,7 @@ void Field::giveExportItems(ITEMVECTOR &nonmoveitems) {
         if (it->isPermanent()) {
             nonmoveitems.push_back(*it);
         } else {
-            const CommonStruct &common = CommonItems->find(it->getId());
+            const auto &common = Data::CommonItems[it->getId()];
 
             if (common.isValid() && common.AfterInfiniteRot > 0) {
                 Item rottenItem = *it;
@@ -397,7 +396,7 @@ int8_t Field::DoAgeItems() {
             Item &item = *it;
 
             if (!item.survivesAgeing()) {
-                const CommonStruct &tempCommon = CommonItems->find(item.getId());
+                const auto &tempCommon = Data::CommonItems[item.getId()];
 
                 if (tempCommon.isValid() && item.getId() != tempCommon.ObjectAfterRot) {
 #ifdef Field_DEBUG
@@ -411,7 +410,7 @@ int8_t Field::DoAgeItems() {
 
                     item.setId(tempCommon.ObjectAfterRot);
 
-                    const CommonStruct &afterRotCommon = CommonItems->find(tempCommon.ObjectAfterRot);
+                    const auto &afterRotCommon = Data::CommonItems[tempCommon.ObjectAfterRot];
 
                     if (afterRotCommon.isValid()) {
                         item.setWear(afterRotCommon.AgeingSpeed);

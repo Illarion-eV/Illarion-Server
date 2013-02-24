@@ -104,6 +104,14 @@ protected:
         structBuffer.emplace(assignId(row), assignTable(row));
     }
 
+    bool erase(const IdType &id) {
+        return structs.erase(id) > 0;
+    }
+
+    StructType &get(const IdType &id) {
+        return structs[id];
+    }
+
 private:
     ContainerType structs;
     ContainerType structBuffer;

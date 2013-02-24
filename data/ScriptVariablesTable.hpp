@@ -21,15 +21,14 @@
 #ifndef _SCRIPT_VARIABLES_TABLE_HPP_
 #define _SCRIPT_VARIABLES_TABLE_HPP_
 
-#include <boost/unordered_map.hpp>
-#include <string>
-#include <luabind/object.hpp>
+#include "data/StructTable.hpp"
 
-class ScriptVariablesTable {
+class ScriptVariablesTable : public StructTable<std::string, std::string> {
 public:
-
-    ScriptVariablesTable();
-    ~ScriptVariablesTable();
+    virtual std::string getTableName();
+    virtual std::vector<std::string> getColumnNames();
+    virtual std::string assignId(const Database::ResultTuple &row);
+    virtual std::string assignTable(const Database::ResultTuple &row);
 
     bool find(std::string id, std::string &ret);
     void set(std::string id, std::string value);
@@ -38,20 +37,12 @@ public:
 
     void save();
 
-    bool isDataOk() {
-        return m_dataOK;
-    }
+    virtual bool reloadBuffer();
+    virtual void activateBuffer();
 
 private:
-
-    typedef boost::unordered_map<std::string, std::string> STRINGTABLE;
-    STRINGTABLE values_table;
-
-    void clearOldTable();
-
-    void reload();
-
-    bool m_dataOK;
+    typedef StructTable<std::string, std::string> Base;
+    bool first = true;
 };
 
 #endif

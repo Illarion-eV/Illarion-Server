@@ -18,7 +18,6 @@
 
 
 #include "Map.hpp"
-#include "data/CommonObjectTable.hpp"
 #include "Logger.hpp"
 #include "World.hpp"
 #include "Player.hpp"

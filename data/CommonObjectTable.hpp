@@ -21,41 +21,21 @@
 #ifndef _COMMON_OBJECT_TABLE_HPP_
 #define _COMMON_OBJECT_TABLE_HPP_
 
-#include <string>
-#include <memory>
+#include "data/QuestScriptStructTable.hpp"
 #include "script/LuaItemScript.hpp"
-#include <boost/unordered_map.hpp>
 #include "TableStructs.hpp"
 
-class World;
-
-class CommonObjectTable {
+class CommonObjectTable : public QuestScriptStructTable<TYPE_OF_ITEM_ID, CommonStruct, LuaItemScript> {
 public:
-    const CommonStruct &find(TYPE_OF_ITEM_ID id);
-    std::shared_ptr<LuaItemScript> findScript(TYPE_OF_ITEM_ID Id);
-
-    CommonObjectTable();
-    ~CommonObjectTable();
-
-    inline bool dataOK() {
-        return m_dataOK;
-    }
+    virtual std::string getTableName();
+    virtual std::vector<std::string> getColumnNames();
+    virtual TYPE_OF_ITEM_ID assignId(const Database::ResultTuple &row);
+    virtual CommonStruct assignTable(const Database::ResultTuple &row);
+    virtual std::string assignScriptName(const Database::ResultTuple &row);
+    virtual NodeRange getQuestScripts();
 
 private:
-    void reload();
-
-    typedef boost::unordered_map<TYPE_OF_ITEM_ID, CommonStruct> TABLE;
-    typedef std::shared_ptr<LuaItemScript> iscript;
-    typedef boost::unordered_map<TYPE_OF_ITEM_ID, iscript> SCRIPTTABLE;
-
-    TABLE m_table;
-    SCRIPTTABLE m_scripttable;
-
-    void clearOldTable();
-    TYPE_OF_ITEM_ID calcInfiniteRot(TYPE_OF_ITEM_ID id, std::map<TYPE_OF_ITEM_ID, bool> &visited, std::map<TYPE_OF_ITEM_ID, bool> &assigned);
-
-    bool m_dataOK;
-
+    //TYPE_OF_ITEM_ID calcInfiniteRot(TYPE_OF_ITEM_ID id, std::map<TYPE_OF_ITEM_ID, bool> &visited, std::map<TYPE_OF_ITEM_ID, bool> &assigned);
 };
 
 #endif

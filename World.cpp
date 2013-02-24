@@ -25,7 +25,6 @@
 #include <algorithm>
 #include <sys/types.h>
 
-#include "data/CommonObjectTable.hpp"
 #include "data/MonsterTable.hpp"
 #include "data/TilesTable.hpp"
 #include "data/SkillTable.hpp"

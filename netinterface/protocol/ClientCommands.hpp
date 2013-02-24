@@ -26,7 +26,6 @@
 #include "types.hpp"
 #include "Logger.hpp"
 #include "data/Data.hpp"
-#include "data/CommonObjectTable.hpp"
 #include "data/MonsterTable.hpp"
 #include <boost/shared_ptr.hpp>
 #include "script/LuaNPCScript.hpp"
@@ -42,7 +41,6 @@
 #include <list>
 
 extern MonsterTable *MonsterDescriptions;
-extern CommonObjectTable *CommonItem;
 extern std::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
 
 enum clientcommands {
@@ -478,10 +476,12 @@ public:
 
         // berprfen, ob der Spieler die Runen beherrscht
         if ((spellId & player->magic.flags[ player->magic.type ]) == spellId) {
-            SpellStruct CastedSpell;
+            Spell spell;
+            spell.magicType = player->magic.type;
+            spell.spellId = spellId;
 
-            if (Spells->find(spellId,player->magic.type, CastedSpell)) {
-                LuaMageScript = CastedSpell.script;
+            if (Data::Spells.exists(spell)) {
+                LuaMageScript = Data::Spells.script(spell);
             }
         }
 
@@ -967,7 +967,7 @@ public:
                     if (temp->ViewTopItem(it)) {
                         Logger::debug(LogFacility::Script) << "Item on field" << Log::end;
 
-                        LuaScript = CommonItems->findScript(it.getId());
+                        LuaScript = Data::CommonItems.script(it.getId());
 
                         if (LuaScript) {
                             Source.Type = LUA_ITEM;
@@ -1007,7 +1007,7 @@ public:
                     if (ps->viewItemNr(pos, tempi, tempc)) {
                         Logger::debug(LogFacility::Script) << "pos found item id: " << tempi.getId() << Log::end;
 
-                        LuaScript = CommonItems->findScript(tempi.getId());
+                        LuaScript = Data::CommonItems.script(tempi.getId());
 
                         if (LuaScript) {
                             Source.Type = LUA_ITEM;
@@ -1039,7 +1039,7 @@ public:
                 if (player->characterItems[ pos ].getId() != 0) {
                     Logger::debug(LogFacility::Script) << "at position " << static_cast<int>(pos) << " on body, is an item with id: " << player->characterItems[ pos ].getId() << Log::end;
 
-                    LuaScript = CommonItems->findScript(player->characterItems[ pos ].getId()) ;
+                    LuaScript = Data::CommonItems.script(player->characterItems[ pos ].getId()) ;
 
                     if (LuaScript) {
                         Source.Type = LUA_ITEM;

@@ -22,7 +22,6 @@
 #include "tuningConstants.hpp"
 #include "Random.hpp"
 #include "data/Data.hpp"
-#include "data/CommonObjectTable.hpp"
 #include "Container.hpp"
 #include "World.hpp"
 #include "data/TilesTable.hpp"
@@ -45,7 +44,6 @@
 
 std::ofstream talkfile;
 
-extern CommonObjectTable *CommonItems;
 extern std::shared_ptr<LuaLearnScript>learnScript;
 extern std::shared_ptr<LuaPlayerDeathScript>playerDeathScript;
 
@@ -489,7 +487,7 @@ int Character::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) 
     Item it;
 
     if (weightOK(newid, count, NULL)) {
-        const CommonStruct &cos = CommonItems->find(newid);
+        const auto &cos = Data::CommonItems[newid];
 
         if (cos.isValid()) {
 #ifdef Character_DEBUG
@@ -532,7 +530,7 @@ int Character::createItem(Item::id_type id, Item::number_type number, Item::qual
     Item it;
 
     if (weightOK(id, number, NULL)) {
-        const CommonStruct &cos = CommonItems->find(id);
+        const auto &cos = Data::CommonItems[id];
 
         if (cos.isValid()) {
 #ifdef Character_DEBUG
@@ -748,14 +746,14 @@ void Character::ageInventory() {
         auto itemId = characterItems[i].getId();
 
         if (itemId != 0) {
-            const CommonStruct &tempCommon = CommonItems->find(characterItems[ i ].getId());
+            const auto &tempCommon = Data::CommonItems[characterItems[ i ].getId()];
 
             if (tempCommon.isValid() && tempCommon.rotsInInventory) {
                 if (!characterItems[i].survivesAgeing()) {
                     if (itemId != tempCommon.ObjectAfterRot) {
                         characterItems[i].setId(tempCommon.ObjectAfterRot);
 
-                        const CommonStruct &afterRotCommon = CommonItems->find(tempCommon.ObjectAfterRot);
+                        const auto &afterRotCommon = Data::CommonItems[tempCommon.ObjectAfterRot];
 
                         if (afterRotCommon.isValid()) {
                             characterItems[i].setWear(afterRotCommon.AgeingSpeed);
@@ -1344,7 +1342,7 @@ bool Character::weightOK(TYPE_OF_ITEM_ID id, int count, Container *tcont) {
     if (tcont != NULL) {
         ok = (realweight + weightContainer(id, 1, tcont)) <= maxLoadWeight();
     } else {
-        const CommonStruct &common = CommonItems->find(id);
+        const auto &common = Data::CommonItems[id];
         ok = (realweight + common.Weight * count) <= maxLoadWeight();
     }
 
@@ -1366,7 +1364,7 @@ int Character::weightContainer(TYPE_OF_ITEM_ID id, int count, Container *tcont) 
     int temp=0;
 
     if (id != 0) {
-        const CommonStruct &tempCommon = CommonItems->find(id);
+        const auto &tempCommon = Data::CommonItems[id];
 
         if (tempCommon.isValid()) {
             if (count > 0) {

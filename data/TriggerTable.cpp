@@ -20,114 +20,38 @@
 
 #include "data/TriggerTable.hpp"
 
-#include <iostream>
-
-#include <boost/cstdint.hpp>
-#include <memory>
-
-#include "db/SelectQuery.hpp"
-#include "db/Result.hpp"
-
-#include "data/QuestNodeTable.hpp"
-
-#include "Logger.hpp"
-
-template<class from>
-const std::string toString(const from &convert) {
-    std::stringstream stream;
-    stream << convert;
-    return stream.str();
+std::string TriggerTable::getTableName() {
+    return "triggerfields";
 }
 
-
-TriggerTable::TriggerTable():  _dataOK(false) {
-    reload();
+std::vector<std::string> TriggerTable::getColumnNames() {
+    return {
+        "tgf_posx",
+        "tgf_posy",
+        "tgf_posz",
+        "tgf_script"
+    };
 }
 
-void TriggerTable::reload() {
-#ifdef DataConnect_DEBUG
-    std::cout<<"TriggerTable: reload!" <<std::endl;
-#endif
-
-    try {
-        Database::SelectQuery query;
-        query.addColumn("triggerfields", "tgf_posx");
-        query.addColumn("triggerfields", "tgf_posy");
-        query.addColumn("triggerfields", "tgf_posz");
-        query.addColumn("triggerfields", "tgf_script");
-        query.addServerTable("triggerfields");
-
-        Database::Result results = query.execute();
-
-        if (!results.empty()) {
-            clearOldTable();
-            TriggerStruct Trigger;
-            std::string scriptname;
-
-            for (Database::ResultConstIterator itr = results.begin();
-                 itr != results.end(); ++itr) {
-                Trigger.pos = position(((*itr)["tgf_posx"].as<int32_t>()),
-                                       ((*itr)["tgf_posy"].as<int32_t>()),
-                                       ((*itr)["tgf_posz"].as<int32_t>()));
-
-                if (!((*itr)["tgf_script"].is_null())) {
-                    scriptname = ((*itr)["tgf_script"].as<std::string>());
-
-                    try {
-                        std::shared_ptr<LuaTriggerScript> script(new LuaTriggerScript(scriptname, Trigger.pos));
-                        Trigger.script = script;
-                    } catch (ScriptException &e) {
-                        Logger::error(LogFacility::Script) << "Error while loading trigger script: " << scriptname << ": " << e.what() << Log::end;
-                    }
-                }
-
-                Triggers.insert(std::pair<position, TriggerStruct>(Trigger.pos, Trigger));
-            }
-        }
-
-        auto questNodes = QuestNodeTable::getInstance()->getTriggerNodes();
-        TriggerStruct trigger;
-
-        for (auto questItr = questNodes.first; questItr != questNodes.second; ++questItr) {
-            if (find(questItr->pos, trigger)) {
-                trigger.script->addQuestScript(questItr->entrypoint, questItr->script);
-            } else {
-                trigger.pos = questItr->pos;
-                std::shared_ptr<LuaTriggerScript> script(new LuaTriggerScript(trigger.pos));
-                trigger.scriptname = "";
-                trigger.script = script;
-                trigger.script->addQuestScript(questItr->entrypoint, questItr->script);
-                Triggers.insert(std::pair<position, TriggerStruct>(trigger.pos, trigger));
-            }
-        }
-
-        std::cout << " loaded trigger fields! " << std::endl;
-        _dataOK = true;
-    } catch (std::exception &e) {
-
-        std::cerr << "exception: " << e.what() << std::endl;
-        _dataOK = false;
-    }
+position TriggerTable::assignId(const Database::ResultTuple &row) {
+    return position(
+               row["tgf_posx"].as<int16_t>(),
+               row["tgf_posy"].as<int16_t>(),
+               row["tgf_posz"].as<int16_t>()
+           );
 }
 
-bool TriggerTable::find(position pos, TriggerStruct &data) {
-    TriggerMap::iterator iterator;
-    iterator = Triggers.find(pos);
-
-    if (iterator == Triggers.end()) {
-        return false;
-    } else {
-        data = (*iterator).second;
-        return true;
-    }
-
+TriggerStruct TriggerTable::assignTable(const Database::ResultTuple &row) {
+    TriggerStruct trigger;
+    trigger.pos = assignId(row);
+    return trigger;
 }
 
-void TriggerTable::clearOldTable() {
-    Triggers.clear();
+std::string TriggerTable::assignScriptName(const Database::ResultTuple &row) {
+    return row["tgf_script"].as<std::string>("");
 }
 
-TriggerTable::~TriggerTable() {
-    clearOldTable();
+auto TriggerTable::getQuestScripts() -> NodeRange {
+    return QuestNodeTable::getInstance()->getTriggerNodes();
 }
 

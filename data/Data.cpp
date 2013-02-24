@@ -19,39 +19,52 @@
  */
 
 #include "data/Data.hpp"
+#include "Logger.hpp"
 
 namespace Data {
 
+ScriptVariablesTable ScriptVariables;
 SkillTable Skills;
 QuestTable Quests;
 RaceSizeTable RaceSizes;
 NaturalArmorTable NaturalArmors;
 MonsterAttackTable MonsterAttacks;
+CommonObjectTable CommonItems;
 NamesObjectTable ItemNames;
 WeaponObjectTable WeaponItems;
 ArmorObjectTable ArmorItems;
 ContainerObjectTable ContainerItems;
-TilesTable Tiles;
 TilesModificatorTable TilesModItems;
+TilesTable Tiles;
+SpellTable Spells;
+TriggerTable Triggers;
+LongTimeEffectTable LongTimeEffects;
 
 std::vector<Table *> getTables() {
     return {
+        &ScriptVariables,
         &Skills,
         &Quests,
         &RaceSizes,
         &NaturalArmors,
         &MonsterAttacks,
+        &CommonItems,
         &ItemNames,
         &WeaponItems,
         &ArmorItems,
         &ContainerItems,
+        &TilesModItems,
         &Tiles,
-        &TilesModItems
+        &Spells,
+        &Triggers,
+        &LongTimeEffects
     };
 }
 
 bool reloadTables() {
     bool success = true;
+
+    Logger::error(LogFacility::Script) << "Loading data and scripts ..." << Log::end;
 
     for (auto &table : getTables()) {
         success = success && table->reloadBuffer();

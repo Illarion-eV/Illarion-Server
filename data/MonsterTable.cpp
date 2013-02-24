@@ -23,7 +23,6 @@
 #include <iostream>
 #include <sstream>
 
-#include "data/CommonObjectTable.hpp"
 #include "data/QuestNodeTable.hpp"
 
 #include "db/Connection.hpp"
@@ -35,7 +34,6 @@
 #include "Logger.hpp"
 
 //! table with item attributes
-extern CommonObjectTable *CommonItems;
 
 MonsterTable::MonsterTable() : m_dataOK(false), world(World::get()) {
     reload();
@@ -254,7 +252,7 @@ void MonsterTable::reload() {
                             location = 99;
                         }
 
-                        const CommonStruct &tempCommon = CommonItems->find(tempitem.itemid);
+                        const auto &tempCommon = Data::CommonItems[tempitem.itemid];
 
                         if (location < 99 && tempCommon.isValid()) {
                             tempitem.AgeingSpeed = tempCommon.AgeingSpeed;

@@ -337,11 +337,6 @@ void printerr(std::string err) {
     std::cout << "script error: " << err << std::endl;
 }
 
-std::ostream &operator<<(std::ostream &stream, const position &pos) {
-    stream << "(" << pos.x << ", " << pos.y << ", " << pos.z << ")";
-    return stream;
-}
-
 unsigned int LuaAnd(unsigned int operand1, unsigned int operand2) {
     return (operand1 & operand2);
 }
@@ -814,7 +809,6 @@ void LuaScript::init_base_functions() {
         ],
         luabind::class_<LongTimeEffect>("LongTimeEffect")
         .def(luabind::constructor<uint16_t, uint32_t>())
-        .def(luabind::constructor<std::string, uint32_t>())
         .def("addValue",&LongTimeEffect::addValue)
         .def("removeValue",&LongTimeEffect::removeValue)
         .def("findValue",&LongTimeEffect::findValue, luabind::pure_out_value(_3))
@@ -974,6 +968,6 @@ void LuaScript::init_base_functions() {
 
     luabind::object globals = luabind::globals(_luaState);
     globals["world"] = World::get();
-    globals["ScriptVars"] = scriptVariables;
+    globals["ScriptVars"] = &Data::ScriptVariables;
 }
 

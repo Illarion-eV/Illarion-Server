@@ -23,20 +23,16 @@
 #include <string>
 #include <algorithm>
 
-#include "data/LongTimeEffectTable.hpp"
-
 #include "db/Connection.hpp"
 #include "db/ConnectionManager.hpp"
 #include "db/DeleteQuery.hpp"
 #include "db/Result.hpp"
 #include "db/SelectQuery.hpp"
 
-#include "script/LuaLongTimeEffectScript.hpp"
+#include "data/Data.hpp"
 
 #include "LongTimeEffect.hpp"
 #include "Player.hpp"
-
-extern LongTimeEffectTable *LongTimeEffects;
 
 LongTimeCharacterEffects::LongTimeCharacterEffects(Character *owner) : owner(owner), time(0) {
 }
@@ -78,20 +74,18 @@ void LongTimeCharacterEffects::addEffect(LongTimeEffect *effect) {
         effects.push_back(effect);
         std::push_heap(effects.begin(), effects.end(), LongTimeEffect::priority);
 
-        LongTimeEffectStruct effectStr;
+        if (effect->isFirstAdd()) {
+            const auto &script = Data::LongTimeEffects.script(effect->getEffectId());
 
-        if (effect->isFirstAdd() && LongTimeEffects->find(effect->getEffectId(), effectStr)) {
-            if (effectStr.script) {
-                effectStr.script->addEffect(effect, owner);
+            if (script) {
+                script->addEffect(effect, owner);
             }
         }
     } else {
-        LongTimeEffectStruct effectStr;
+        const auto &script = Data::LongTimeEffects.script(effect->getEffectId());
 
-        if (LongTimeEffects->find(effect->getEffectId(), effectStr)) {
-            if (effectStr.script) {
-                effectStr.script->doubleEffect(foundeffect, owner);
-            }
+        if (script) {
+            script->doubleEffect(foundeffect, owner);
         }
     }
 
@@ -101,12 +95,10 @@ void LongTimeCharacterEffects::addEffect(LongTimeEffect *effect) {
 bool LongTimeCharacterEffects::removeEffect(uint16_t effectid) {
     for (auto it = effects.begin(); it != effects.end(); ++it) {
         if ((*it)->getEffectId() == effectid) {
-            LongTimeEffectStruct effect;
+            const auto &script = Data::LongTimeEffects.script(effectid);
 
-            if (LongTimeEffects->find((*it)->getEffectId(), effect)) {
-                if (effect.script) {
-                    effect.script->removeEffect(*it, owner);
-                }
+            if (script) {
+                script->removeEffect(*it, owner);
             }
 
             delete *it;
@@ -122,12 +114,10 @@ bool LongTimeCharacterEffects::removeEffect(uint16_t effectid) {
 bool LongTimeCharacterEffects::removeEffect(std::string name) {
     for (auto it = effects.begin(); it != effects.end(); ++it) {
         if ((*it)->getEffectName() == name) {
-            LongTimeEffectStruct effect;
+            const auto &script = Data::LongTimeEffects.script((*it)->getEffectId());
 
-            if (LongTimeEffects->find((*it)->getEffectId(), effect)) {
-                if (effect.script) {
-                    effect.script->removeEffect(*it, owner);
-                }
+            if (script) {
+                script->removeEffect(*it, owner);
             }
 
             delete *it;
@@ -143,12 +133,10 @@ bool LongTimeCharacterEffects::removeEffect(std::string name) {
 bool LongTimeCharacterEffects::removeEffect(LongTimeEffect *effect) {
     for (auto it = effects.begin(); it != effects.end(); ++it) {
         if (*it == effect) {
-            LongTimeEffectStruct effectStr;
+            const auto &script = Data::LongTimeEffects.script((*it)->getEffectId());
 
-            if (LongTimeEffects->find((*it)->getEffectId(), effectStr)) {
-                if (effectStr.script) {
-                    effectStr.script->removeEffect(*it, owner);
-                }
+            if (script) {
+                script->removeEffect(*it, owner);
             }
 
             effects.erase(it);
@@ -176,12 +164,10 @@ void LongTimeCharacterEffects::checkEffects() {
         if (effect->callEffect(owner)) {
             addEffect(effect);
         } else {
-            LongTimeEffectStruct effectStr;
+            const auto &script = Data::LongTimeEffects.script(effect->getEffectId());
 
-            if (LongTimeEffects->find(effect->getEffectId(), effectStr)) {
-                if (effectStr.script) {
-                    effectStr.script->removeEffect(effect, owner);
-                }
+            if (script) {
+                script->removeEffect(effect, owner);
             }
         }
     }
@@ -287,14 +273,11 @@ bool LongTimeCharacterEffects::load() {
                 }
 
                 effects.push_back(effect);
-                LongTimeEffectStruct effectStr;
+                const auto &script = Data::LongTimeEffects.script(effectId);
 
-                if (LongTimeEffects->find(effectId, effectStr)) {
-                    if (effectStr.script) {
-                        effectStr.script->loadEffect(effect, player);
-                    }
+                if (script) {
+                    script->loadEffect(effect, player);
                 }
-
             }
         }
 

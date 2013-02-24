@@ -22,7 +22,7 @@
 #define _QUEST_NODE_TABLE_HPP_
 
 #include <string>
-#include <vector>
+#include <unordered_map>
 #include "script/LuaScript.hpp"
 #include <memory>
 #include <boost/filesystem.hpp>
@@ -33,34 +33,29 @@ struct NodeStruct {
     std::shared_ptr<LuaScript> script;
 };
 
-struct TriggerNodeStruct {
-    position pos;
-    std::string entrypoint;
-    std::shared_ptr<LuaScript> script;
-};
-
 class QuestNodeTable {
 private:
-    typedef std::multimap<unsigned int, NodeStruct> TABLE;
-    typedef TABLE::const_iterator TABLE_ITR;
-    typedef std::pair<TABLE_ITR, TABLE_ITR> TABLE_ITRS;
-    typedef std::vector<TriggerNodeStruct> TRIGGERVECTOR;
-    typedef TRIGGERVECTOR::const_iterator TRIGGERVECTOR_ITR;
-    typedef std::pair<TRIGGERVECTOR_ITR, TRIGGERVECTOR_ITR> TRIGGERVECTOR_ITRS;
+    template <typename Key>
+    using Table = std::unordered_multimap<Key, NodeStruct>;
+    template <typename Key>
+    using TableIterator = typename Table<Key>::const_iterator;
 
     static QuestNodeTable *instance;
-    TABLE itemNodes;
-    TABLE npcNodes;
-    TABLE monsterNodes;
-    TRIGGERVECTOR triggerNodes;
+    Table<TYPE_OF_ITEM_ID> itemNodes;
+    Table<unsigned int> npcNodes;
+    Table<unsigned int> monsterNodes;
+    Table<position> triggerNodes;
 
 public:
+    template <typename Key>
+    using TableRange = std::pair<TableIterator<Key>, TableIterator<Key>>;
+
     static QuestNodeTable *getInstance();
     void reload();
-    TABLE_ITRS getItemNodes();
-    TABLE_ITRS getNpcNodes();
-    TABLE_ITRS getMonsterNodes();
-    TRIGGERVECTOR_ITRS getTriggerNodes();
+    TableRange<TYPE_OF_ITEM_ID> getItemNodes();
+    TableRange<unsigned int> getNpcNodes();
+    TableRange<unsigned int> getMonsterNodes();
+    TableRange<position> getTriggerNodes();
 
 private:
     void readQuest(boost::filesystem::ifstream &questFile, boost::filesystem::path &questPath);

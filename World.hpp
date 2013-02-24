@@ -49,11 +49,7 @@
 #include "data/Data.hpp"
 #include "data/NPCTable.hpp"
 #include "Scheduler.hpp"
-#include "data/SpellTable.hpp"
-#include "data/TriggerTable.hpp"
 #include "TableStructs.hpp"
-#include "data/NaturalArmorTable.hpp"
-#include "data/MonsterAttackTable.hpp"
 #include "data/ScheduledScriptsTable.hpp"
 #include "MonitoringClients.hpp"
 #include "InitialConnection.hpp"
@@ -63,19 +59,6 @@
 #include "luabind/object.hpp"
 #include <exception>
 
-extern CommonObjectTable *CommonItems; /**< a extern table for ItemAttributes @see CommonObjectTable* CommonItems **/
-
-//! ein struct fuer Zaubersprche
-extern SpellTable *Spells;
-
-//! ein Struct fuer Trigger
-extern TriggerTable *Triggers;
-
-//! Eine Tabelle mit MonsterRstungen
-extern NaturalArmorTable *NaturalArmors;
-
-//! Eine Tabelle mit Bonis fuer Monsterangriffe
-extern MonsterAttackTable *MonsterAttacks;
 
 extern ScheduledScriptsTable *scheduledScripts;
 
@@ -1571,10 +1554,8 @@ private:
     *@param time_t the starting time of the server
     */
     World(std::string dir, time_t starttime);
-    World &operator = (const World &other) {
-        return *_self;
-    }
-    World(const World &other) {}
+    World &operator=(const World &) = delete;
+    World(const World &) = delete;
 
     static World *_self;
 
@@ -1720,22 +1701,5 @@ private:
     bool reload_tables(Player *cp);
 };
 
-
-#define MAX_PATH_FIND 50
-
-/**
-* struct which holds two koordinates and a distance
-*/
-struct feld {
-    short int x,y; /**< the x,y koordinates*/
-    short int cost, estCost, totalCost;  /**< movement costs and estimated movement costs */
-    feld *parent;
-};
-
-/**
-* a list of fields which should be searched
-* AFAIK for the A pathfinding algorithm
-*/
-typedef std::vector<feld> SuchFeldListe;
-
 #endif
+

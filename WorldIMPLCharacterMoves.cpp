@@ -19,9 +19,6 @@
 
 #include "World.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
-#include "data/TilesTable.hpp"
-#include "data/TilesModificatorTable.hpp"
-#include "data/CommonObjectTable.hpp"
 #include "script/LuaItemScript.hpp"
 #include "Logger.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
@@ -62,7 +59,7 @@ void World::checkFieldAfterMove(Character *cc, Field *cfstart) {
 
                 if ((tmod.Modificator & FLAG_SPECIALITEM) != 0) {
 
-                    std::shared_ptr<LuaItemScript> script = CommonItems->findScript(it->getId());
+                    std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(it->getId());
 
                     if (script) {
                         script->CharacterOnField(cc);
@@ -96,28 +93,24 @@ void World::checkFieldAfterMove(Character *cc, Field *cfstart) {
         }
     }
 
-    //Struct f�r Scriptdaten
-    TriggerStruct trigger;
+    if (cc && Data::Triggers.exists(cc->pos)) {
+        const auto &script = Data::Triggers.script(cc->pos);
 
-    //Schauen ob f�r die Position auf die der Char gegangen ist ein Triggerscript ausgef�hrt werden soll
-    if (Triggers->find(cc->pos,trigger)) {
-        //Wenn ein G�ltiges Triggerscript f�r die Position verf�gbar ist CharacterOnField ausf�hren
-        if (trigger.script) {
-            trigger.script->CharacterOnField(cc);
+        if (script) {
+            script->CharacterOnField(cc);
         }
     }
 }
 
 void World::TriggerFieldMove(Character *cc, bool moveto) {
-    TriggerStruct trigger;
+    if (cc && Data::Triggers.exists(cc->pos)) {
+        const auto &script = Data::Triggers.script(cc->pos);
 
-    if (Triggers->find(cc->pos,trigger)) {
-        //Wenn ein G�ltiges Triggerscript f�r die Position verf�gbar ist CharacterOnField ausf�hren
-        if (trigger.script) {
+        if (script) {
             if (moveto) {
-                trigger.script->MoveToField(cc);
+                script->MoveToField(cc);
             } else {
-                trigger.script->MoveFromField(cc);
+                script->MoveFromField(cc);
             }
         }
     }

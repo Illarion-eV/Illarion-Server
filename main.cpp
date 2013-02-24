@@ -42,7 +42,6 @@
 #include "MapException.hpp"
 #include "constants.hpp"
 #include "data/Data.hpp"
-#include "data/CommonObjectTable.hpp"
 #include "data/ScriptVariablesTable.hpp"
 #include "Logger.hpp"
 #include "main_help.hpp"
@@ -120,7 +119,6 @@ int main(int argc, char *argv[]) {
         world->load_from_editor(Config::instance().datadir() + std::string("map/import/oberwelt_0"));
     }
 
-    Logger::error(LogFacility::Script) << "Initialising script error log." << Log::end;
     Data::reloadScripts();
 
     std::cout<<"Creation the PlayerManager"<<std::endl;
@@ -197,7 +195,7 @@ int main(int argc, char *argv[]) {
 
     std::cout<<"Server Shutdown:"<<std::endl;
 
-    scriptVariables->save();
+    Data::ScriptVariables.save();
     std::cout<<"Scriptvariables saved!"<<std::endl;
     world->forceLogoutOfAllPlayers();
 
@@ -214,8 +212,6 @@ int main(int argc, char *argv[]) {
     world->Save("Illarion");
     Logger::info(LogFacility::Other) << "InitialConnection beenden" << Log::end;
     Logger::info(LogFacility::Other) << "Die in loadItems(..) angelegten Tabellen loeschen" << Log::end;
-    delete CommonItems;
-    CommonItems = NULL;
     delete world;
     world = NULL;
 

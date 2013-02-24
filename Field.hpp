@@ -34,7 +34,6 @@
 class CommonObjectTable;
 class ContainerObjectTable;
 
-extern CommonObjectTable *CommonItems;
 extern std::vector<int> *erasedcontainers;
 
 

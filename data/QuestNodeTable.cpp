@@ -45,20 +45,20 @@ QuestNodeTable::QuestNodeTable() {
 
 QuestNodeTable::~QuestNodeTable() {}
 
-QuestNodeTable::TABLE_ITRS QuestNodeTable::getItemNodes() {
-    return QuestNodeTable::TABLE_ITRS(itemNodes.cbegin(), itemNodes.cend());
+auto QuestNodeTable::getItemNodes() -> TableRange<TYPE_OF_ITEM_ID> {
+    return {itemNodes.cbegin(), itemNodes.cend()};
 }
 
-QuestNodeTable::TABLE_ITRS QuestNodeTable::getNpcNodes() {
-    return QuestNodeTable::TABLE_ITRS(npcNodes.cbegin(), npcNodes.cend());
+auto QuestNodeTable::getNpcNodes() -> TableRange<unsigned int> {
+    return {npcNodes.cbegin(), npcNodes.cend()};
 }
 
-QuestNodeTable::TABLE_ITRS QuestNodeTable::getMonsterNodes() {
-    return QuestNodeTable::TABLE_ITRS(monsterNodes.cbegin(), monsterNodes.cend());
+auto QuestNodeTable::getMonsterNodes() -> TableRange<unsigned int> {
+    return {monsterNodes.cbegin(), monsterNodes.cend()};
 }
 
-QuestNodeTable::TRIGGERVECTOR_ITRS QuestNodeTable::getTriggerNodes() {
-    return QuestNodeTable::TRIGGERVECTOR_ITRS(triggerNodes.cbegin(), triggerNodes.cend());
+auto QuestNodeTable::getTriggerNodes() -> TableRange<position> {
+    return {triggerNodes.cbegin(), triggerNodes.cend()};
 }
 
 void QuestNodeTable::reload() {
@@ -128,8 +128,7 @@ void QuestNodeTable::readQuest(boost::filesystem::ifstream &questFile, boost::fi
                 return;
             }
 
-            TriggerNodeStruct node;
-            node.pos = pos;
+            NodeStruct node;
             node.entrypoint = entries[4];
             std::string scriptPath = "questsystem." + questPath.filename().string() + "." + entries[5];
 
@@ -140,7 +139,7 @@ void QuestNodeTable::readQuest(boost::filesystem::ifstream &questFile, boost::fi
                 return;
             }
 
-            triggerNodes.push_back(node);
+            triggerNodes.emplace(pos, node);
 
         } else {
 

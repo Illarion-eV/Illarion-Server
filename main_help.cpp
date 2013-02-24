@@ -28,12 +28,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#include "data/CommonObjectTable.hpp"
 #include "data/MonsterTable.hpp"
-#include "data/SpellTable.hpp"
-#include "data/TriggerTable.hpp"
 #include "data/ScheduledScriptsTable.hpp"
-#include "data/ScriptVariablesTable.hpp"
 #include <boost/shared_ptr.hpp>
 #include "script/LuaWeaponScript.hpp" //For standard fighting script.
 #include "script/LuaLookAtPlayerScript.hpp"
@@ -43,7 +39,6 @@
 #include "script/LuaLoginScript.hpp"
 #include "script/LuaLogoutScript.hpp"
 #include "script/LuaLearnScript.hpp"
-#include "data/LongTimeEffectTable.hpp"
 #include "Connection.hpp"
 #include "netinterface/NetInterface.hpp"
 #include "Logger.hpp"
@@ -111,24 +106,11 @@ std::vector<int> *erasedcontainers;
 // Koordinaten von gel�schten Containern, ben�tigt zum Schlie�en offener Showcases
 std::vector<position> *contpos;
 
-//! eine Tabelle mit den allgemeinen Attributen der Item
-CommonObjectTable *CommonItems;
-
-//! eine Tabelle f�r die Zauberspr�che - Spells
-SpellTable *Spells;
-
 //! a Table with Scheduled Scripts
 ScheduledScriptsTable *ScheduledScripts;
 
-//! Eine Tabelle mit Triggerfeldern
-TriggerTable *Triggers;
-
 //! a table containing monster descriptions
 MonsterTable *MonsterDescriptions;
-
-ScriptVariablesTable *scriptVariables;
-
-LongTimeEffectTable *LongTimeEffects;
 
 std::shared_ptr<LuaDepotScript>depotScript;
 std::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
@@ -243,24 +225,6 @@ void checkArguments(int argc, char *argv[]) {
 void loadData() {
     bool ok = true;
 
-    scriptVariables = new ScriptVariablesTable();
-
-    if (!scriptVariables->isDataOk()) {
-        ok = false;
-    }
-
-    CommonItems = new CommonObjectTable();
-
-    if (!CommonItems->dataOK()) {
-        ok = false;
-    }
-
-    Spells = new SpellTable();
-
-    if (!Spells->isDataOK()) {
-        ok = false;
-    }
-
     ScheduledScripts = new ScheduledScriptsTable();
     scheduledScripts = ScheduledScripts;
 
@@ -268,22 +232,10 @@ void loadData() {
         ok = false;
     }
 
-    Triggers = new TriggerTable();
-
-    if (!Triggers->isDataOK()) {
-        ok = false;
-    }
-
     MonsterDescriptions = new MonsterTable();
 
     if (!MonsterDescriptions->dataOK()) {
         ok=false;
-    }
-
-    LongTimeEffects = new LongTimeEffectTable();
-
-    if (!LongTimeEffects->dataOK()) {
-        ok = false;
     }
 
     erasedcontainers = new std::vector<int>;
