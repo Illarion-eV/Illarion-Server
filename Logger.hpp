@@ -93,7 +93,7 @@ public:
 
     LogStream &operator<<(const Log::end_t &) {
         log_message(priority, _facility, _ss.str());
-        _ss.str();
+        _ss.str({});
         return *this;
     }
 
