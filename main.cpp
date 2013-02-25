@@ -110,7 +110,7 @@ int main(int argc, char *argv[]) {
     }
 
     Data::Skills.activateBuffer();
-    
+
     if (!Data::reloadTables()) {
         throw std::runtime_error("failed to initialise tables");
     }
@@ -151,8 +151,6 @@ int main(int argc, char *argv[]) {
     int new_players_processed;
 
     running = true;
-    // die OnlinePlayer-Liste aktualisieren (-> auf 0)
-    world->saveAllPlayerNamesToFile(Config::instance().datadir() + std::string(ONLINEPLFILE));
 
     while (running) {
         // Ausgaben auf std::cout in die Datei schreiben
@@ -209,8 +207,6 @@ int main(int argc, char *argv[]) {
 
     world->takeMonsterAndNPCFromMap();
 
-
-    world->saveAllPlayerNamesToFile(Config::instance().datadir() + std::string(ONLINEPLFILE));
     Logger::info(LogFacility::Other) << "saving maps" << Log::end;
     world->Save("Illarion");
     delete world;

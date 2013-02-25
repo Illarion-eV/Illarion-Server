@@ -41,7 +41,7 @@ NPC::NPC(TYPE_OF_CHARACTER_ID _id, std::string _name, Character::race_type _race
     if (_id == DYNNPC_BASE) {
         id = DYNNPC_BASE + _world->Npc.size();
     } else {
-        id = NPC_BASE + _id;    // _world->npcidc->nextFreeId();
+        id = NPC_BASE + _id;
     }
 
     Field *tmpField;
