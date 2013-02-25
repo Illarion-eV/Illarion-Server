@@ -22,7 +22,6 @@
 
 #include "Character.hpp"
 #include "SpawnPoint.hpp"
-#include "IdCounter.hpp"
 #include <boost/shared_ptr.hpp>
 
 /**
@@ -131,26 +130,10 @@ public:
 
 private:
 
-    /**
-    * pointer to the spawnpoint of this monster
-    */
+    static uint32_t counter;
     SpawnPoint *spawn;
-
-    /**
-    *pointer to the id counter which gives new unique id's to the monsters
-    */
-    static std::auto_ptr<IdCounter> monsteridc;
-
-    /**
-    * stores the type of the monster
-    */
     TYPE_OF_CHARACTER_ID monstertype;
-
-    /**
-    * stores if the monster can attack or not
-    */
     bool _canAttack;
-
 };
 
 #endif // MONSTER_HPP

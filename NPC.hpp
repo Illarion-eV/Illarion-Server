@@ -111,21 +111,9 @@ public:
 
 protected:
 
-    /**
-    * stores if the character is a healer or not
-    */
+    static uint32_t counter;
     bool _ishealer;
-
-    //CCharacter::sex_type _sex;
-
-    /**
-    * stores the starting position
-    */
     position _startpos;
-
-    /**
-    * stores the pointer to the script for this npc
-    */
     std::shared_ptr<LuaNPCScript> _script;
 };
 

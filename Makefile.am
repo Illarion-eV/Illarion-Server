@@ -25,7 +25,7 @@ EXTRA_DIST = .astylerc
 
 testserver_SOURCES = \
 \
-main.cpp main_help.cpp utility.cpp IdCounter.cpp Logger.cpp Random.cpp Config.cpp \
+main.cpp main_help.cpp utility.cpp Logger.cpp Random.cpp Config.cpp \
 \
 data/Data.cpp data/QuestNodeTable.cpp data/QuestTable.cpp \
 data/ArmorObjectTable.cpp data/CommonObjectTable.cpp data/ContainerObjectTable.cpp data/RaceSizeTable.cpp \
@@ -99,7 +99,7 @@ noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
 		 tpvector.hpp Random.hpp tvector.hpp NPC.hpp Scheduler.hpp \
 		 MapException.hpp PlayerManager.hpp Character.hpp \
 		 Attribute.hpp InitialConnection.hpp Logger.hpp utility.hpp \
-		 MonitoringClients.hpp IdCounter.hpp playersave.hpp Field.hpp \
+		 MonitoringClients.hpp playersave.hpp Field.hpp \
 		 data/Data.hpp data/Table.hpp data/StructTable.hpp \
          data/ScriptStructTable.hpp data/QuestScriptStructTable.hpp \
          data/NamesObjectTable.hpp data/SpellTable.hpp \

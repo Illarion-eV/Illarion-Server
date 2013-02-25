@@ -28,20 +28,14 @@
 #include "WaypointList.hpp"
 #include "Config.hpp"
 
-std::auto_ptr<IdCounter> Monster::monsteridc;
-
-// the table with monster descriptions
 extern MonsterTable *MonsterDescriptions;
+
+uint32_t Monster::counter = 0;
 
 Monster::Monster(const TYPE_OF_CHARACTER_ID &type, const position &newpos, SpawnPoint *spawnpoint) throw(unknownIDException)
     : Character(),lastTargetPosition(position(0,0,0)),lastTargetSeen(false), spawn(spawnpoint), monstertype(type) {
-
-    if (monsteridc.get() == 0) {
-        monsteridc.reset(new IdCounter(Config::instance().monsteridc, MONSTER_BASE));    // reset monster id to 0xBB000000
-    }
-
     character = monster;
-    id = monsteridc->nextFreeId();
+    id = counter++;
     actionPoints = NP_MAX_AP;
     SetAlive(true);
     setType(type);

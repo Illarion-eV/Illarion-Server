@@ -23,6 +23,8 @@
 #include <iostream>
 #include "World.hpp"
 
+uint32_t NPC::counter = 0;
+
 NPC::NPC(TYPE_OF_CHARACTER_ID _id, std::string _name, Character::race_type _race, position _pos, Character::face_to dir, bool ishealer, Character::sex_type sex,
          const Character::appearance &appearance) : Character(appearance),
     _ishealer(ishealer), _startpos(_pos) {
@@ -39,7 +41,8 @@ NPC::NPC(TYPE_OF_CHARACTER_ID _id, std::string _name, Character::race_type _race
 
     // take database id as npc id with appropriate offset so that npc ids are constant
     if (_id == DYNNPC_BASE) {
-        id = DYNNPC_BASE + _world->Npc.size();
+        id = DYNNPC_BASE + counter;
+        ++counter;
     } else {
         id = NPC_BASE + _id;
     }
