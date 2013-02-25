@@ -1254,7 +1254,11 @@ bool World::reload_defs(Player *cp) {
 
     sendMessageToAllPlayers("### The server is reloading, this may cause some lag ###");
 
-    bool ok = true;
+    bool ok = Data::Skills.reloadBuffer();
+
+    if (ok) {
+        Data::Skills.activateBuffer();
+    }
 
     MonsterTable *MonsterDescriptions_temp = 0;
     ScheduledScriptsTable *ScheduledScripts_temp = 0;

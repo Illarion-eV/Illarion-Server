@@ -105,6 +105,12 @@ int main(int argc, char *argv[]) {
 
     World *world = World::create(Config::instance().datadir, starttime);
 
+    if (!Data::Skills.reloadBuffer()) {
+        throw std::runtime_error("failed to initialise skills");
+    }
+
+    Data::Skills.activateBuffer();
+    
     if (!Data::reloadTables()) {
         throw std::runtime_error("failed to initialise tables");
     }
