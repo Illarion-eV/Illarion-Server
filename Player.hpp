@@ -479,7 +479,7 @@ public:
 
     //Set for Admin state, uin32_t bit flag
     void setAdmin(uint32_t tAdmin);
-    bool isAdmin() const;
+    virtual bool isAdmin() const;
 
     void setEncumberedSent(bool tEncumberedSent);
     bool wasEncumberedSent();

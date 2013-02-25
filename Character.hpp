@@ -440,7 +440,7 @@ public:
     * <b>Lua: [:isAdmin]</b>
     * @return true if the char is an admin otherwise false
     */
-    inline virtual bool isAdmin() {
+    virtual bool isAdmin() const {
         return false;
     }
 
@@ -449,7 +449,7 @@ public:
     * returns the monstertype
     * @return the monster type, < 0 for no monster
     */
-    inline virtual TYPE_OF_CHARACTER_ID getType() {
+    virtual TYPE_OF_CHARACTER_ID getType() {
         return 0;
     }
 
