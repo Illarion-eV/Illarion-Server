@@ -74,7 +74,6 @@ int main(int argc, char *argv[]) {
     }
 
     importmaps = false;
-    //di::postgres::enable_trace_query = true;
     // get more info for unspecified exceptions
     std::set_terminate(__gnu_cxx::__verbose_terminate_handler);
     // save starting time
@@ -128,9 +127,9 @@ int main(int argc, char *argv[]) {
 
     Data::reloadScripts();
 
-    std::cout<<"Creation the PlayerManager"<<std::endl;
+    Logger::info(LogFacility::Other) << "create PlayerManager" << Log::end;
     PlayerManager::get()->activate();
-    std::cout<<"PlayerManager activated"<<std::endl;
+    Logger::info(LogFacility::Other) << "PlayerManager activated" << Log::end;
     PlayerManager::TPLAYERVECTOR &newplayers = PlayerManager::get()->getLogInPlayers();
     timespec stime;
     stime.tv_sec = 0;
@@ -141,10 +140,11 @@ int main(int argc, char *argv[]) {
         std::shared_ptr<LuaReloadScript> tmpScript(new LuaReloadScript("server.reload"));
         tmpScript->onReload();
     } catch (ScriptException &e) {
-        std::cerr << "reload: " << e.what() << std::endl;
+
+        Logger::critical(LogFacility::Script) << "server.reload failed: " << e.what() << Log::end;
     }
 
-    Logger::info(LogFacility::Other) << "Scheduler wird Initialisiert" << Log::end;
+    Logger::info(LogFacility::Other) << "scheduler is being initialised" << Log::end;
     //Scheduler Initialisieren
     world->initScheduler();
 
@@ -198,12 +198,10 @@ int main(int argc, char *argv[]) {
     }
 
 
-    Logger::info(LogFacility::Other) << "Beende Illarion!" << Log::end;
-
-    std::cout<<"Server Shutdown:"<<std::endl;
+    Logger::info(LogFacility::Other) << "Stopping Illarion!" << Log::end;
 
     Data::ScriptVariables.save();
-    std::cout<<"Scriptvariables saved!"<<std::endl;
+    Logger::info(LogFacility::Other) << "ScriptVariables saved!" << Log::end;
     world->forceLogoutOfAllPlayers();
 
     //saving all players which where forced logged out.
@@ -212,20 +210,16 @@ int main(int argc, char *argv[]) {
     world->takeMonsterAndNPCFromMap();
 
 
-    Logger::info(LogFacility::Other) << "Statistik aktualisieren" << Log::end;
-    Logger::info(LogFacility::Other) << "OnlinePlayer-Liste aktualisieren (-> auf 0)" << Log::end;
     world->saveAllPlayerNamesToFile(Config::instance().datadir() + std::string(ONLINEPLFILE));
-    Logger::info(LogFacility::Other) << "Karten speichern" << Log::end;
+    Logger::info(LogFacility::Other) << "saving maps" << Log::end;
     world->Save("Illarion");
-    Logger::info(LogFacility::Other) << "InitialConnection beenden" << Log::end;
-    Logger::info(LogFacility::Other) << "Die in loadItems(..) angelegten Tabellen loeschen" << Log::end;
     delete world;
     world = NULL;
 
     reset_sighandlers();
 
     time(&starttime);
-    Logger::info(LogFacility::Other) << "main: Ende " << Log::end;
+    Logger::info(LogFacility::Other) << "Illarion has been successfully terminated! " << Log::end;
 
     return EXIT_SUCCESS;
 }
