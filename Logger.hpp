@@ -30,7 +30,7 @@
 #define LOGLEVEL_DEBUG   7
 
 #ifndef MIN_LOGLEVEL
-#define MIN_LOGLEVEL     7
+#define MIN_LOGLEVEL     6
 #endif
 
 enum class LogFacility {
@@ -93,7 +93,7 @@ public:
 
     LogStream &operator<<(const Log::end_t &) {
         log_message(priority, _facility, _ss.str());
-        _ss.str({});
+        _ss.str( {});
         return *this;
     }
 

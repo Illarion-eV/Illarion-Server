@@ -168,8 +168,6 @@ World::World(std::string dir, time_t starttime) {
     moveSteps[ 10 ][ 1 ] = 0;
     moveSteps[ 10 ][ 2 ] = 0;
 
-    npcidc   = new IdCounter(dir + std::string(NPCDIR) + std::string(NPCCOUNTERNAME), NPC_BASE);
-
     zuschwer[ Language::german ] = "Du kannst nicht so viel tragen!";
     zuschwer[ Language::english ] = "You can't carry that much!";
 
@@ -545,8 +543,6 @@ World::~World() {
     fieldtimer[ 1 ] = NULL;
     delete fieldtimer[ 2 ];
     fieldtimer[ 2 ] = NULL;
-    delete npcidc;
-    npcidc = NULL;
     delete monitoringclienttimer;
     monitoringclienttimer = NULL;
     delete monitoringClientList;
@@ -708,10 +704,10 @@ bool World::initRespawns() {
                                     (*itr)["spp_minspawntime"].as<uint16_t>(),
                                     (*itr)["spp_maxspawntime"].as<uint16_t>(),
                                     (*itr)["spp_spawnall"].as<bool>());
-                Logger::info(LogFacility::World) << "load spawnpoint: " << spawnId << Log::end;
+                Logger::info(LogFacility::World) << "load spawnpoint " << spawnId << ":" << Log::end;
                 newSpawn.load(spawnId);
                 SpawnList.push_back(newSpawn);
-                Logger::info(LogFacility::World) << "added spawnpoint " << the_pos.x << "," << the_pos.y << "," << the_pos.z << Log::end;
+                Logger::info(LogFacility::World) << "added spawnpoint " << the_pos.toString() << Log::end;
             }
 
         } else {
@@ -1161,7 +1157,6 @@ void World::initNPC() {
         }
     */
     std::cout<<" Lade und setze NPC's neu: \n";
-    npcidc->set(NPC_BASE); //Counter wieder auf Basis setzen.
     Field *tempf; //alte NPC's l�chen
 
     for (npcIterator = Npc.begin(); npcIterator < Npc.end(); ++npcIterator) {

@@ -91,74 +91,11 @@ const uint32_t MONSTER_BASE = 0xFE000000;
 // 128 |FLAG_SPECIALTILE   |                   |FLAG_PLAYERONFIELD  |FLAG_SPECIALTILE   |
 // ----+-------------------+-------------------+--------------------+-------------------+
 
-////////////////////////
-//! das root - Verzeichnis des Servers
-#define DEFAULTMUDDIR "/home/ftp/pub/testserver/" // testserver
-
-//! das Verzeichnis mit den Gespr�hen der Player, relativ zum DEFAULTMUDDIR
-#define TALKDIR          "talk/"
-
 //! das Verzeichnis der Karte, relativ zum DEFAULTMUDDIR
 #define MAPDIR          "map/"
 
-//! das Verzeichnis der Monster, relativ zum DEFAULTMUDDIR
-#define MONSTERDIR       "monster/"
-
-//! das Verzeichnis der NPC, relativ zum DEFAULTMUDDIR
-#define NPCDIR          "npc/"
-
-//! das Verzeichnis der Tabellen, relativ zum DEFAULTMUDDIR
-#define TABLESDIR          "tables/"
-
 //! das Verzeichnis der Skripte, relativ zum DEFAULTMUDDIR
 #define SCRIPTSDIR          "scripts/"
-
-//! das Verzeichnis fr Statistiken, relativ zum DEFAULTMUDDIR
-#define STATISTICSDIR          "statistics/"
-
-//! Datei in welche die aktuell aktiven Spieler eingetragen werden
-#define ONLINEPLFILE      "onlineplayer.txt"
-
-//! Datei in welche die Anzahl der aktiven Player zu bestimmten Zeitpunkten gespeichert wird
-#define HISTORYFILE      "onlinehistory.txt"
-
-//! Datei in der die gr�te vergebene Player-ID steht
-#define PLAYERCOUNTERNAME      "playercount.bin"
-
-//! Datei in der die gr�te vergebene Monster-ID steht
-#define MONSTERCOUNTERNAME      "monstercount.bin"
-
-//! Datei in der die gr�te vergebene NPC-ID steht
-#define NPCCOUNTERNAME      "npccount.bin"
-
-//! Datei in der die Namen der Admins stehen
-#define ADMINFILE       "admins.txt"
-
-#define APPROVEDFILE    "approved.txt"
-
-//! Datei mit allen bisher vergebenen Namen
-#define NAMEFILE      "names.txt"
-
-//! der Standard Lese-Port fr Verbindungen (aus Serversicht)
-#define READPORT_PL      3012  // testserver
-
-//! die aktuell ben�igte Clientversion
-#define LIENTVERSION      0x0019
-
-//! die aktuelle Serverversion (wichtig fr die Konvertierung gespeicherter Daten)
-#define SERVERVERSION      0x0010
-
-//! Entfernung des Players zum n�dlichen Rand seines Sichtbereiches
-//#define RANGENORTH       0x0E
-
-//! Entfernung des Players zum sdlichen Rand seines Sichtbereiches
-//#define RANGESOUTH       0x0E
-
-//! Entfernung des Players zum �tlichen Rand seines Sichtbereiches
-//#define RANGEEAST       0x0E
-
-//! Entfernung des Players zum westlichen Rand seines Sichtbereiches
-//#define RANGEWEST       0x0E
 
 //! Anzahl der maximal sichtbaren Ebenen nach Oben
 #define RANGEUP       0x02
@@ -168,9 +105,6 @@ const uint32_t MONSTER_BASE = 0xFE000000;
 
 //! Anzahl der Felder zwischen zwei Ebenen
 #define LEVELDISTANCE 0x03
-
-//! genutzt zum �erprfen, ob der Spieler unter einem Dach steht
-#define NOTHING 0x7FFF
 
 //! Typ der maximalen Anzahl von Item in einem Container
 #define MAXCOUNTTYPE unsigned char

@@ -72,7 +72,7 @@ bool ScheduledScriptsTable::nextCycle() {
 }
 
 bool ScheduledScriptsTable::addData(ScriptData data) {
-    Logger::info(LogFacility::Script) << "insert new Task task.nextCycle: " << data.nextCycleTime << " current Cycle: " << currentCycle << Log::end;
+    Logger::debug(LogFacility::Script) << "insert new Task task.nextCycle: " << data.nextCycleTime << " current Cycle: " << currentCycle << Log::end;
     bool inserted = false;
 
     if (data.nextCycleTime <= currentCycle) {

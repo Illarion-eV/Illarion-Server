@@ -43,7 +43,6 @@ LongTimeEffectTable LongTimeEffects;
 std::vector<Table *> getTables() {
     return {
         &ScriptVariables,
-        &Skills,
         &Quests,
         &RaceSizes,
         &NaturalArmors,

@@ -42,7 +42,6 @@
 #include "MilTimer.hpp"
 #include "Timer.hpp"
 #include "constants.hpp"
-#include "IdCounter.hpp"
 #include "WorldMap.hpp"
 #include "NewClientView.hpp"
 #include "SpawnPoint.hpp"
@@ -229,8 +228,6 @@ public:
     unsigned long int usedAP;
 
     short int ap; /**< actionpoints since the last loop call **/
-
-    IdCounter *npcidc; /**< a counter for npc id's **/
 
     WorldMap maps; /**< a vector which holds all the maps*/
 
@@ -627,12 +624,6 @@ public:
     *@param prefic the name under which the world should be saved
     */
     void Save(std::string prefix);
-
-    /**
-    *saves the names of all players online in a file.
-    *@param name the name of the file where the names should be saved
-    */
-    void saveAllPlayerNamesToFile(std::string name);
 
     /**
     *@brief changes one part of the weather and sends the new weather to all players

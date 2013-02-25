@@ -29,6 +29,18 @@ COMMENT ON SCHEMA accounts IS 'accounts of illarion players';
 CREATE SCHEMA testserver;
 
 
+SET search_path = accounts, pg_catalog;
+
+--
+-- Name: measuresystem; Type: TYPE; Schema: accounts; Owner: -
+--
+
+CREATE TYPE measuresystem AS ENUM (
+    'metric',
+    'imperial'
+);
+
+
 SET search_path = testserver, pg_catalog;
 
 --
@@ -68,15 +80,6 @@ end loop;
 return 0;
 end
 $$;
-
-
---
--- Name: plpgsql_call_handler(); Type: FUNCTION; Schema: testserver; Owner: -
---
-
-CREATE FUNCTION plpgsql_call_handler() RETURNS language_handler
-    LANGUAGE c
-    AS '$libdir/plpgsql', 'plpgsql_call_handler';
 
 
 --
@@ -214,12 +217,12 @@ CREATE TABLE account (
     acc_racepermission character varying(255) DEFAULT '0,1,2,3,4,5'::character varying NOT NULL,
     acc_applypermission character varying DEFAULT '6,7,8'::character varying NOT NULL,
     acc_name character varying(50),
-    acc_weight mantis.measuresystem DEFAULT 'metric'::mantis.measuresystem NOT NULL,
-    acc_length mantis.measuresystem DEFAULT 'metric'::mantis.measuresystem NOT NULL,
     acc_timeoffset integer DEFAULT 0 NOT NULL,
     acc_dst smallint DEFAULT 1 NOT NULL,
     acc_lastseen timestamp without time zone,
-    acc_recv_inact_mails smallint DEFAULT 0 NOT NULL
+    acc_recv_inact_mails smallint DEFAULT 0 NOT NULL,
+    acc_length measuresystem DEFAULT 'metric'::measuresystem NOT NULL,
+    acc_weight measuresystem DEFAULT 'metric'::measuresystem NOT NULL
 );
 
 

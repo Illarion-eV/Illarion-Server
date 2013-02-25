@@ -831,33 +831,6 @@ void World::AgeInventory() {
 }
 
 
-void World::saveAllPlayerNamesToFile(std::string name) {
-
-    PLAYERVECTOR::iterator titerator;
-    FILE *f;
-    f = fopen(name.c_str(), "w");
-
-    if (f != NULL) {
-        std::list<std::string> players;
-
-        for (titerator = Players.begin(); titerator < Players.end(); ++titerator) {
-            if (!(*titerator)->isAdmin() || (*titerator)->hasGMRight(gmr_isnotshownasgm)) {
-                players.push_back((*titerator)->name);
-            }
-        }
-
-        fprintf(f, "%d\n", (int)players.size());
-
-        for (std::list<std::string>::iterator it = players.begin(); it != players.end(); ++it) {
-            fprintf(f, "%s\n",  it->c_str());
-        }
-
-        fclose(f);
-    }
-
-}
-
-
 void World::Save(std::string prefix) {
     prefix = directory + std::string(MAPDIR) + prefix;
 

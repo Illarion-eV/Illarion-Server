@@ -256,12 +256,9 @@ void *PlayerManager::playerSaveLoop(PlayerManager *pmanager) {
                     }
                 }
 
-                Logger::debug(LogFacility::World) << "Ausgelogte Spieler bearbeiten fertig [Begin]" << Log::end;
-                // Statistik aktualisieren
-                //loadlog.update( world->Players.size() );
-                //world->saveAllPlayerNamesToFile( configOptions["datadir"] + std::string( ONLINEPLFILE ) );
+                Logger::debug(LogFacility::World) << "update player list [begin]" << Log::end;
                 world->updatePlayerList();
-                Logger::debug(LogFacility::World) << "Ausgelogte Spieler bearbeiten fertig [End]" << Log::end;
+                Logger::debug(LogFacility::World) << "update player list [end]" << Log::end;
             }
 
             nanosleep(&waittime, NULL);
