@@ -44,7 +44,7 @@ Timer.cpp MilTimer.cpp \
 LongTimeEffect.cpp LongTimeAction.cpp LongTimeCharacterEffects.cpp Scheduler.cpp \
 \
 Attribute.cpp Character.cpp \
-Player.cpp PlayerWorkoutCommands.cpp Monster.cpp NPC.cpp PlayerManager.cpp playersave.cpp WaypointList.cpp Language.cpp \
+Player.cpp PlayerWorkoutCommands.cpp Monster.cpp NPC.cpp PlayerManager.cpp playersave.cpp WaypointList.cpp \
 \
 dialog/Dialog.cpp dialog/InputDialog.cpp dialog/MessageDialog.cpp dialog/MerchantDialog.cpp \
 dialog/SelectionDialog.cpp dialog/CraftingDialog.cpp \

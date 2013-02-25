@@ -1381,7 +1381,7 @@ void Character::increaseMentalCapacity(int value) {
     }
 }
 
-std::string Character::alterSpokenMessage(std::string message, int languageSkill) {
+std::string Character::alterSpokenMessage(const std::string& message, int languageSkill) const {
     int counter=0;
     std::string alteredMessage;
 
@@ -1404,10 +1404,14 @@ int Character::getLanguageSkill(int languageSkillNumber) {
     return 100;
 }
 
-void Character::talk(talk_type tt, std::string message) { //only for say, whisper, shout
+void Character::talk(talk_type tt, const std::string& message) { //only for say, whisper, shout
+	talk(tt, message, message);
+}
+
+void Character::talk(talk_type tt, const std::string& german, const std::string& english) { //only for say, whisper, shout
     std::string talktype;
     uint16_t cost = 0;
-    lastSpokenText=message;
+    lastSpokenText = english;
 
     switch (tt) {
     case tt_say:
@@ -1457,30 +1461,29 @@ void Character::talk(talk_type tt, std::string message) { //only for say, whispe
         break;
     }
 
-#ifdef LOG_TALK
-
-    // log talk if we have a player
     if (character == player) {
-        Logger::info(LogFacility::Player) << *this << " " << talktype << ": " << message << Log::end;
-    }
-
+#ifdef LOG_TALK
+    // log talk if we have a player
+        Logger::info(LogFacility::Player) << *this << " " << talktype << ": " << german << " / " <<  english << Log::end;
 #endif
 
-    if (character == player) {
         /**
          * create a new Talk command and send them
          */
-        boost::shared_ptr<BasicServerCommand>cmd(new BBTalkTC(id ,name, static_cast<unsigned char>(tt), message));
+        boost::shared_ptr<BasicServerCommand>cmd(new BBTalkTC(id ,name, static_cast<unsigned char>(tt), ((Player*)this)->nls(german, english)));
         _world->monitoringClientList->sendCommand(cmd);
     }
 
-
-
-    _world->sendMessageToAllCharsInRange(message,tt,this);
+    _world->sendMessageToAllCharsInRange(german, english, tt, this);
     actionPoints -= cost;
 }
 
-void Character::talkLanguage(talk_type tt, unsigned char lang, std::string message) {
+void Character::talkLanguage(talk_type tt, Language lang, const std::string& message) {
+    LuaScript* currentScript = World::get()->currentScript;
+    if (currentScript != nullptr) {
+	    Logger::warn(LogFacility::Script) << "script called deprecated talkLanguage function: " << currentScript->getFileName() << Log::end;
+    }
+
     uint16_t cost = 0;
     lastSpokenText=message;
 
@@ -1529,7 +1532,7 @@ void Character::talkLanguage(talk_type tt, unsigned char lang, std::string messa
         break;
     }
 
-    _world->sendLanguageMessageToAllCharsInRange(message,tt,lang,this);
+    _world->sendLanguageMessageToAllCharsInRange(message, tt, lang, this);
     actionPoints -= cost;
 }
 
@@ -1756,23 +1759,23 @@ void Character::defaultMusic() {
     //Nothing to do here, overloaded for players
 }
 
-void Character::inform(std::string text, informType type) {
+void Character::inform(const std::string& text, informType type) const {
     // override for char types that need this kind of information
 }
 
-void Character::informLua(std::string text) {
+void Character::informLua(const std::string& text) const {
     // override for char types that need this kind of information
 }
 
-void Character::informLua(std::string german, std::string english) {
+void Character::informLua(const std::string& german, const std::string& english) const {
     // override for char types that need this kind of information
 }
 
-void Character::informLua(std::string text, informType type) {
+void Character::informLua(const std::string& text, informType type) const {
     // override for char types that need this kind of information
 }
 
-void Character::informLua(std::string german, std::string english, informType type) {
+void Character::informLua(const std::string& german, const std::string& english, informType type) const {
     // override for char types that need this kind of information
 }
 

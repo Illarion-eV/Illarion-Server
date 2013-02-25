@@ -918,14 +918,11 @@ void Player::check_logindata() throw(Player::LogoutException) {
         Database::ResultTuple accRow = accResult.front();
 
         int acc_state;
-        Language::LanguageType mother_tongue;
         std::string real_pwd;
 
         real_pwd = accRow["acc_passwd"].as<std::string>();
-        mother_tongue = (Language::LanguageType)(accRow["acc_lang"].as<uint16_t>());
+        _player_language = static_cast<Language>(accRow["acc_lang"].as<uint16_t>());
         acc_state = accRow["acc_state"].as<uint16_t>();
-
-        setPlayerLanguage(mother_tongue);
 
         // check if account is active
         if (acc_state < 3) { // TODO how is acc_state defined??
@@ -1690,20 +1687,20 @@ void Player::teachMagic(unsigned char type,unsigned char flag) {
     }
 }
 
-void Player::inform(std::string message, informType type) {
+void Player::inform(const std::string& message, informType type) const {
     boost::shared_ptr<BasicServerCommand>cmd(new InformTC(type, message));
     Connection->addCommand(cmd);
 }
 
-void Player::informLua(std::string message) {
+void Player::informLua(const std::string& message) const {
     inform(message, informScriptMediumPriority);
 }
 
-void Player::informLua(std::string german, std::string english) {
+void Player::informLua(const std::string& german, const std::string& english) const {
     informLua(nls(german, english));
 }
 
-void Player::informLua(std::string message, informType type) {
+void Player::informLua(const std::string& message, informType type) const {
     switch (type) {
     case informScriptLowPriority:
     case informScriptMediumPriority:
@@ -1717,7 +1714,7 @@ void Player::informLua(std::string message, informType type) {
     }
 }
 
-void Player::informLua(std::string german, std::string english, informType type) {
+void Player::informLua(const std::string& german, const std::string& english, informType type) const {
     informLua(nls(german, english), type);
 }
 
@@ -2208,12 +2205,8 @@ std::string Player::getSkillName(TYPE_OF_SKILL_ID s) {
     }
 }
 
-const unsigned short int Player::getPlayerLanguage() {
-    return _player_language->_language;
-}
-
-void Player::setPlayerLanguage(Language::LanguageType mother_tongue) {
-    _player_language = Language::create(mother_tongue);
+Language Player::getPlayerLanguage() const {
+    return _player_language;
 }
 
 void Player::sendRelativeArea(int8_t zoffs) {
@@ -2532,7 +2525,7 @@ void Player::sendBook(uint16_t bookID) {
     Connection->addCommand(cmd);
 }
 
-const std::string &Player::nls(const std::string &german, const std::string &english) {
+const std::string &Player::nls(const std::string &german, const std::string &english) const {
     switch (getPlayerLanguage()) {
     case Language::german:
         return german;

@@ -160,7 +160,7 @@ private:
     boost::unordered_set<TYPE_OF_CHARACTER_ID> knownPlayers;
 
 public:
-    const std::string &nls(const std::string &german, const std::string &english);
+    const std::string &nls(const std::string &german, const std::string &english) const;
     void checkBurden();
 
     virtual bool pageGM(std::string ticket);
@@ -367,9 +367,7 @@ public:
 
     virtual std::string getSkillName(TYPE_OF_SKILL_ID s);
     //! Returns the language which the player specified when creating the Character (german/english)
-    virtual const unsigned short int getPlayerLanguage();
-
-    virtual void setPlayerLanguage(Language::LanguageType mother_tongue);
+    Language getPlayerLanguage() const;
 
     void sendCharacters();
 
@@ -490,11 +488,11 @@ public:
     bool wasUnconsciousSent();
 
     // player gets informed about something
-    virtual void inform(std::string text, informType type = informServer);
-    virtual void informLua(std::string text);
-    virtual void informLua(std::string german, std::string english);
-    virtual void informLua(std::string text, informType type);
-    virtual void informLua(std::string german, std::string english, informType type);
+    virtual void inform(const std::string& text, informType type = informServer) const;
+    virtual void informLua(const std::string& text) const;
+    virtual void informLua(const std::string& german, const std::string& english) const;
+    virtual void informLua(const std::string& text, informType type) const;
+    virtual void informLua(const std::string& german, const std::string& english, informType type) const;
 
     // player heard something
     virtual void receiveText(talk_type tt, std::string message, Character *cc);
@@ -596,7 +594,7 @@ protected:
 
 private:
 
-    Language *_player_language;
+    Language _player_language;
 
 #ifdef _PLAYER_AUTO_SAVE_
     Timer *saveTimer;  //save every 10 minutes 600 sec's
