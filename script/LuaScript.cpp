@@ -239,7 +239,7 @@ void LuaScript::writeDebugMsg(const std::string &msg) {
     lua_pop(_luaState, 1);
 
     if (backtrace.length() > 0) {
-        Logger::debug(LogFacility::Script) << backtrace << Log::end;
+        Logger::notice(LogFacility::Script) << backtrace << Log::end;
     }
 
 #endif

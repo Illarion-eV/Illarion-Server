@@ -30,7 +30,7 @@
 #define LOGLEVEL_DEBUG   7
 
 #ifndef MIN_LOGLEVEL
-#define MIN_LOGLEVEL     7
+#define MIN_LOGLEVEL     6
 #endif
 
 enum class LogFacility {
