@@ -168,9 +168,6 @@ World::World(std::string dir, time_t starttime) {
     moveSteps[ 10 ][ 1 ] = 0;
     moveSteps[ 10 ][ 2 ] = 0;
 
-    zuschwer[ Language::german ] = "Du kannst nicht so viel tragen!";
-    zuschwer[ Language::english ] = "You can't carry that much!";
-
     unsigned int templi = starttime;
     char temparr[ 80 ];
     sprintf(temparr, "%u", templi);

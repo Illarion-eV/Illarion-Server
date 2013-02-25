@@ -949,7 +949,8 @@ public:
     //! \param message what the char says
     //! \param tt did he shout/talk/whisper?
     //! \param the talking char
-    void sendMessageToAllCharsInRange(std::string message, Character::talk_type tt, Character *cc);
+    void sendMessageToAllCharsInRange(const std::string& message, Character::talk_type tt, Character *cc);
+    void sendMessageToAllCharsInRange(const std::string& german, const std::string& english, Character::talk_type tt, Character *cc);
 
     /**
     *Sends a message in a specific language to all chars in range with this language
@@ -957,8 +958,9 @@ public:
     *@param tt shout/talk/whisper
     *@param lang the language to which players the message is send
     *@param cc the talking char
+    *@todo remove deprecated function
     */
-    void sendLanguageMessageToAllCharsInRange(std::string message, Character::talk_type tt, unsigned char lang, Character *cc);
+    void sendLanguageMessageToAllCharsInRange(std::string message, Character::talk_type tt, Language lang, Character *cc);
 
     //! schickt an alle Player eine Nachricht
     // \param message die Nachricht die geschickt werden soll
@@ -988,8 +990,6 @@ public:
 
     //GM Funktion um ein Vorstellen aller Personen im Sichtbereich zu erzwingen
     void ForceIntroduceAll(Player *cp);
-
-    void message(std::string message[3], Player *cp);
 
     //Sends the current weather to one player
     void sendWeather(Player *cp);
@@ -1557,8 +1557,6 @@ private:
     World(const World &) = delete;
 
     static World *_self;
-
-    std::string zuschwer[ 3 ];
 
     //! IG day of last turntheworld
     int lastTurnIGDay;

@@ -20,20 +20,9 @@
 #ifndef LANGUAGE_HPP
 #define LANGUAGE_HPP
 
-class Language {
-
-public:
-    enum LanguageType {
+enum class Language {
         german = 0,
         english = 1
-    };
-
-    static Language *create(LanguageType);
-
-    LanguageType _language;
-
-protected:
-    Language(LanguageType);
 };
 
 #endif
