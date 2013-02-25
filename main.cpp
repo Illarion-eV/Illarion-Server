@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
     time_t starttime;
     time(&starttime);
 
-    Logger::info(LogFacility::Other) << "Starte Illarion!" << Log::end;
+    Logger::info(LogFacility::Other) << "Starting Illarion!" << Log::end;
 
     // initialize signalhandlers
     if (! init_sighandlers()) {
@@ -98,6 +98,7 @@ int main(int argc, char *argv[]) {
     Logger::info(LogFacility::Other) << "main: server requires clientversion: " << Config::instance().clientversion << Log::end;
     Logger::info(LogFacility::Other) << "main: listen port: " << Config::instance().port << Log::end;
     Logger::info(LogFacility::Other) << "main: data directory: " << Config::instance().datadir() << Log::end;
+    Logger::info(LogFacility::Script) << "Initialising script log ..." << Log::end;
 
     // initialise DB Manager
     Database::ConnectionManager::getInstance().setupManager();
