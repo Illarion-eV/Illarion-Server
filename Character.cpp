@@ -1468,7 +1468,7 @@ void Character::talkLanguage(talk_type tt, Language lang, const std::string &mes
     LuaScript *currentScript = World::get()->currentScript;
 
     if (currentScript != nullptr) {
-        Logger::warn(LogFacility::Script) << "script called deprecated talkLanguage function: " << currentScript->getFileName() << Log::end;
+        Logger::warn(LogFacility::Script) << "script called deprecated talkLanguage function, use talk(type, german, english) instead: " << currentScript->getFileName() << Log::end;
     }
 
     uint16_t cost = 0;
