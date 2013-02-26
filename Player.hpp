@@ -479,7 +479,7 @@ public:
 
     //Set for Admin state, uin32_t bit flag
     void setAdmin(uint32_t tAdmin);
-    bool isAdmin() const;
+    virtual bool isAdmin() const;
 
     void setEncumberedSent(bool tEncumberedSent);
     bool wasEncumberedSent();
@@ -488,11 +488,11 @@ public:
     bool wasUnconsciousSent();
 
     // player gets informed about something
-    virtual void inform(const std::string& text, informType type = informServer) const;
-    virtual void informLua(const std::string& text) const;
-    virtual void informLua(const std::string& german, const std::string& english) const;
-    virtual void informLua(const std::string& text, informType type) const;
-    virtual void informLua(const std::string& german, const std::string& english, informType type) const;
+    virtual void inform(const std::string &text, informType type = informServer) const;
+    virtual void informLua(const std::string &text) const;
+    virtual void informLua(const std::string &german, const std::string &english) const;
+    virtual void informLua(const std::string &text, informType type) const;
+    virtual void informLua(const std::string &german, const std::string &english, informType type) const;
 
     // player heard something
     virtual void receiveText(talk_type tt, std::string message, Character *cc);
