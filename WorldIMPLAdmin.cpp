@@ -870,13 +870,6 @@ void World::who_command(Player *cp, const std::string &tplayer) {
             tmessage = tmessage + " HPs:" + stream_convert<std::string>(tempPl->getAttribute(Character::hitpoints));
             tmessage = tmessage + ((tempPl->IsAlive()) ? " Alive" : " Dead");
             tmessage = tmessage + " Mental Capacity: " + stream_convert<std::string>(tempPl->getMentalCapacity());
-#ifdef DO_UNCONSCIOUS
-
-            if (! tempPl->IsConscious()) {
-                tmessage = tmessage + " (Unconscious)";
-            }
-
-#endif
             std::string german = " German";
             std::string english = " English";
             tmessage = tmessage + tempPl->nls(german, english);

@@ -143,7 +143,7 @@ void World::sendMessageToAllPlayers(std::string message) {
     }
 }
 
-void World::sendMessageToAllCharsInRange(const std::string& german, const std::string& english, Character::talk_type tt, Character *cc) {
+void World::sendMessageToAllCharsInRange(const std::string &german, const std::string &english, Character::talk_type tt, Character *cc) {
     uint16_t range = 0;
 
     // how far can we be heard?
@@ -169,10 +169,11 @@ void World::sendMessageToAllCharsInRange(const std::string& german, const std::s
     std::string spokenMessage_german, spokenMessage_english, tempMessage;
 
     bool is_action = german.substr(0, 3) == "#me";
+
     if (!is_action) {
-	    // alter message because of the speakers inability to speak...
-	    spokenMessage_german = cc->alterSpokenMessage(german, cc->getLanguageSkill(cc->activeLanguage));
-	    spokenMessage_english = cc->alterSpokenMessage(english, cc->getLanguageSkill(cc->activeLanguage));
+        // alter message because of the speakers inability to speak...
+        spokenMessage_german = cc->alterSpokenMessage(german, cc->getLanguageSkill(cc->activeLanguage));
+        spokenMessage_english = cc->alterSpokenMessage(english, cc->getLanguageSkill(cc->activeLanguage));
     }
 
     // tell all OTHER players... (but tell them what they understand due to their inability to do so)
@@ -180,36 +181,36 @@ void World::sendMessageToAllCharsInRange(const std::string& german, const std::s
     std::string prefix = languagePrefix(cc->activeLanguage);
 
     for (auto player : players) {
-	    if (!is_action && player->id != cc->id) {
-		    tempMessage = prefix + player->alterSpokenMessage(player->nls(spokenMessage_german, spokenMessage_english), player->getLanguageSkill(cc->activeLanguage));
-		    player->receiveText(tt, tempMessage, cc);
-	    } else {
-		    if (is_action) {
-			    player->receiveText(tt, player->nls(german, english), cc);
-		    } else {
-			    player->receiveText(tt, prefix + player->nls(german, english), cc);
-		    }
-	    }
+        if (!is_action && player->id != cc->id) {
+            tempMessage = prefix + player->alterSpokenMessage(player->nls(spokenMessage_german, spokenMessage_english), player->getLanguageSkill(cc->activeLanguage));
+            player->receiveText(tt, tempMessage, cc);
+        } else {
+            if (is_action) {
+                player->receiveText(tt, player->nls(german, english), cc);
+            } else {
+                player->receiveText(tt, prefix + player->nls(german, english), cc);
+            }
+        }
     }
 
     // NPCs talking to other NPCs will mess up thisNPC, so only let players talk to NPCs and monsters for now
     if (cc->character == Character::player) {
 
-	// get all NPCs
-	std::vector<NPC *> npcs = Npc.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, range);
-	// get all Monsters
-	std::vector<Monster *> monsters = Monsters.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, range);
+        // get all NPCs
+        std::vector<NPC *> npcs = Npc.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, range);
+        // get all Monsters
+        std::vector<Monster *> monsters = Monsters.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, range);
 
         // tell all npcs
-	for (auto npc : npcs) {
+        for (auto npc : npcs) {
             tempMessage=prefix + npc->alterSpokenMessage(english, npc->getLanguageSkill(cc->activeLanguage));
             npc->receiveText(tt, tempMessage, cc);
         }
 
         // tell all monsters
-	for (auto monster : monsters) {
-		monster->receiveText(tt, english, cc);
-	}
+        for (auto monster : monsters) {
+            monster->receiveText(tt, english, cc);
+        }
     }
 }
 
@@ -284,8 +285,8 @@ void World::sendLanguageMessageToAllCharsInRange(std::string message, Character:
 }
 
 
-void World::sendMessageToAllCharsInRange(const std::string& message, Character::talk_type tt, Character *cc) {
-	sendMessageToAllCharsInRange(message, message, tt, cc);
+void World::sendMessageToAllCharsInRange(const std::string &message, Character::talk_type tt, Character *cc) {
+    sendMessageToAllCharsInRange(message, message, tt, cc);
 }
 
 void World::makeGFXForAllPlayersInRange(short int xc, short int yc, short int zc, int distancemetric ,unsigned short int gfx) {

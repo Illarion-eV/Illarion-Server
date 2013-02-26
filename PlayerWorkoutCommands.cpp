@@ -32,14 +32,7 @@ void Player::workoutCommands() {
 
     if (cmd) {
         cmd->performAction(this);
-    }
-
-#ifdef DO_UNCONSCIOUS
-    else if (IsAlive() && IsConscious())
-#else
-    else if (IsAlive())
-#endif
-    {
+    } else if (IsAlive()) {
         if (attackmode && fightPoints >= P_MIN_FP) {
             //cp->ltAction->abortAction();
             World::get()->characterAttacks(this);

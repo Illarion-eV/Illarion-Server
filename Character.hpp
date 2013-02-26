@@ -892,7 +892,7 @@ public:
     * @param languageSkill the language skill in which the message is spoken
     * @return a changed message depending how good the char understands the spoken language
     */
-    std::string alterSpokenMessage(const std::string& message, int languageSkill) const;
+    std::string alterSpokenMessage(const std::string &message, int languageSkill) const;
 
     int getLanguageSkill(int languageSkillNumber);
 
@@ -902,8 +902,8 @@ public:
      * @param tt how loudely the character talks
      * @param message the message the character talks
      */
-    virtual void talk(talk_type tt, const std::string& message);
-    virtual void talk(talk_type tt, const std::string& german, const std::string& english);
+    virtual void talk(talk_type tt, const std::string &message);
+    virtual void talk(talk_type tt, const std::string &german, const std::string &english);
 
     /**
     * the character talks something in a specific language
@@ -912,18 +912,18 @@ public:
     * @param lang in which language the character talkes
     * @param message the message the character talkes
     */
-    virtual void talkLanguage(talk_type tt, Language lang, const std::string& message);
+    virtual void talkLanguage(talk_type tt, Language lang, const std::string &message);
 
     /**
     * informs only this character about something
     * <b>Lua: [:inform]</b>
     * @param message which should be sended to this character
     */
-    virtual void inform(const std::string& message, informType type = informServer) const;
-    virtual void informLua(const std::string& message) const;
-    virtual void informLua(const std::string& german, const std::string& english) const;
-    virtual void informLua(const std::string& message, informType type) const;
-    virtual void informLua(const std::string& german, const std::string& english, informType type) const;
+    virtual void inform(const std::string &message, informType type = informServer) const;
+    virtual void informLua(const std::string &message) const;
+    virtual void informLua(const std::string &german, const std::string &english) const;
+    virtual void informLua(const std::string &message, informType type) const;
+    virtual void informLua(const std::string &german, const std::string &english, informType type) const;
 
     /**
     * moves this character in a direction
@@ -1296,16 +1296,6 @@ public:
     inline bool IsAlive() const {
         return alive;
     }
-
-#ifdef DO_UNCONSCIOUS
-    inline bool IsConscious() const {
-        return (battrib.hitpoints > UNCONSCIOUS || ! IsAlive());
-    }
-
-    inline bool IsDying() const {
-        return (battrib.hitpoints <= DYING && IsAlive());
-    }
-#endif
 
     /**
     * changes the lifestate of this character

@@ -1687,20 +1687,20 @@ void Player::teachMagic(unsigned char type,unsigned char flag) {
     }
 }
 
-void Player::inform(const std::string& message, informType type) const {
+void Player::inform(const std::string &message, informType type) const {
     boost::shared_ptr<BasicServerCommand>cmd(new InformTC(type, message));
     Connection->addCommand(cmd);
 }
 
-void Player::informLua(const std::string& message) const {
+void Player::informLua(const std::string &message) const {
     inform(message, informScriptMediumPriority);
 }
 
-void Player::informLua(const std::string& german, const std::string& english) const {
+void Player::informLua(const std::string &german, const std::string &english) const {
     informLua(nls(german, english));
 }
 
-void Player::informLua(const std::string& message, informType type) const {
+void Player::informLua(const std::string &message, informType type) const {
     switch (type) {
     case informScriptLowPriority:
     case informScriptMediumPriority:
@@ -1714,7 +1714,7 @@ void Player::informLua(const std::string& message, informType type) const {
     }
 }
 
-void Player::informLua(const std::string& german, const std::string& english, informType type) const {
+void Player::informLua(const std::string &german, const std::string &english, informType type) const {
     informLua(nls(german, english), type);
 }
 

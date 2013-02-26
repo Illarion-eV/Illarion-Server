@@ -27,8 +27,10 @@
 #include <map>
 
 // TODO find a better place for the constants
-static const std::string message_overweight_german { "Du kannst nicht so viel tragen!" };
-static const std::string message_overweight_english { "You can't carry that much!" };
+static const std::string message_overweight_german { "Du kannst nicht so viel tragen!"
+};
+static const std::string message_overweight_english { "You can't carry that much!"
+};
 
 extern std::shared_ptr<LuaDepotScript>depotScript;
 
@@ -855,7 +857,7 @@ void World::moveItemFromShowcaseToPlayer(Player *cp, uint8_t showcase, unsigned 
         bool NOK = false;
 
         if (! cp->weightOK(g_item.getId(), g_item.getNumber(), g_cont)) {
-	    cp->informLua(message_overweight_german, message_overweight_english);
+            cp->informLua(message_overweight_german, message_overweight_english);
             NOK = true;
         }
 
@@ -1176,7 +1178,7 @@ void World::moveItemFromMapIntoShowcase(Player *cp, char direction, uint8_t show
             bool NOK = false;
 
             if (! cp->weightOK(g_item.getId(), g_item.getNumber(), g_cont)) {
-		cp->informLua(message_overweight_german, message_overweight_english);
+                cp->informLua(message_overweight_german, message_overweight_english);
                 NOK = true;
             }
 
@@ -1292,7 +1294,7 @@ void World::moveItemFromMapToPlayer(Player *cp, char direction, unsigned char cp
             bool NOK = false;
 
             if (! cp->weightOK(g_item.getId(), g_item.getNumber(), g_cont)) {
-		cp->informLua(message_overweight_german, message_overweight_english);
+                cp->informLua(message_overweight_german, message_overweight_english);
                 NOK = true;
             }
 
@@ -1388,7 +1390,7 @@ void World::moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char p
 
         if (cp->isShowcaseInInventory(dest)) {
             if (! cp->weightOK(g_item.getId(), g_item.getNumber(), g_cont)) {
-		cp->informLua(message_overweight_german, message_overweight_english);
+                cp->informLua(message_overweight_german, message_overweight_english);
                 NOK=true;
             }
         }

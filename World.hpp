@@ -949,8 +949,8 @@ public:
     //! \param message what the char says
     //! \param tt did he shout/talk/whisper?
     //! \param the talking char
-    void sendMessageToAllCharsInRange(const std::string& message, Character::talk_type tt, Character *cc);
-    void sendMessageToAllCharsInRange(const std::string& german, const std::string& english, Character::talk_type tt, Character *cc);
+    void sendMessageToAllCharsInRange(const std::string &message, Character::talk_type tt, Character *cc);
+    void sendMessageToAllCharsInRange(const std::string &german, const std::string &english, Character::talk_type tt, Character *cc);
 
     /**
     *Sends a message in a specific language to all chars in range with this language

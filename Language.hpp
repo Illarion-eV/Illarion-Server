@@ -21,8 +21,8 @@
 #define LANGUAGE_HPP
 
 enum class Language {
-        german = 0,
-        english = 1
+    german = 0,
+    english = 1
 };
 
 #endif

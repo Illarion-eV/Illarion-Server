@@ -787,14 +787,8 @@ public:
 #ifdef World_DEBUG
             std::cout<<"paramOK: "<<paramOK<<std::endl;
 #endif
-#ifdef DO_UNCONSCIOUS
-
-            if ((paramOK) && player->IsAlive() && player->IsConscious() && (player->GetStatus() < 10)) {
-#else
 
             if ((paramOK) && player->IsAlive() && (player->GetStatus() < 10)) {
-#endif
-
                 switch (Target.Type) {
                 case LUA_NONE:
                     LuaMageScript->CastMagic(player, static_cast<unsigned char>(LTS_NOLTACTION));
@@ -1083,13 +1077,8 @@ public:
 
         if (LuaScript) {
             player->ltAction->setLastAction(LuaScript, Source, Target, LongTimeAction::ACTION_USE);
-#ifdef DO_UNCONSCIOUS
 
-            if ((paramOK) && player->IsAlive() && player->IsConscious())
-#else
-            if ((paramOK) && player->IsAlive())
-#endif
-            {
+            if ((paramOK) && player->IsAlive()) {
 
                 if (Source.Type == LUA_ITEM) {
                     LuaScript->UseItem(player, Source.item, static_cast<unsigned char>(LTS_NOLTACTION));
@@ -1098,13 +1087,8 @@ public:
             }
         } else if (LuaNPCScript) {
             player->ltAction->setLastAction(LuaNPCScript, Source, Target, LongTimeAction::ACTION_USE);
-#ifdef DO_UNCONSCIOUS
 
-            if ((paramOK) && player->IsAlive() && cp->IsConscious())
-#else
-            if ((paramOK) && player->IsAlive())
-#endif
-            {
+            if ((paramOK) && player->IsAlive()) {
                 if (Source.Type == LUA_CHARACTER && (Target.Type == LUA_NONE)) {
                     LuaNPCScript->useNPC(player, static_cast<unsigned char>(LTS_NOLTACTION));
                     msg = "Used NPC: " + Source.character->name + "(" + boost::lexical_cast<std::string>(Source.character->id) + ")";
@@ -1113,13 +1097,8 @@ public:
 
         } else if (LuaMonsterScript) {
             player->ltAction->setLastAction(LuaMonsterScript, Source, Target, LongTimeAction::ACTION_USE);
-#ifdef DO_UNCONSCIOUS
 
-            if ((paramOK) && player->IsAlive() && player->IsConscious())
-#else
-            if ((paramOK) && player->IsAlive())
-#endif
-            {
+            if ((paramOK) && player->IsAlive()) {
                 if (Source.Type == LUA_CHARACTER && (Target.Type == LUA_NONE)) {
                     LuaMonsterScript->useMonster(Source.character, player, static_cast<unsigned char>(LTS_NOLTACTION));
                     msg = "Used Monster: " + Source.character->name + "(" + boost::lexical_cast<std::string>(Source.character->id) + ")";
@@ -1127,13 +1106,8 @@ public:
             }
         } else if (LuaTileScript) {
             player->ltAction->setLastAction(LuaTileScript, Source, Target, LongTimeAction::ACTION_USE);
-#ifdef DO_UNCONSCIOUS
 
-            if ((paramOK) && player->IsAlive() && player->IsConscious())
-#else
-            if ((paramOK) && player->IsAlive())
-#endif
-            {
+            if ((paramOK) && player->IsAlive()) {
                 if (Source.Type == LUA_FIELD && Target.Type == LUA_NONE) {
                     LuaTileScript->useTile(player, Source.pos, static_cast<unsigned char>(LTS_NOLTACTION));
                 }
@@ -1255,13 +1229,8 @@ public:
     void performAction(Player *player) {
         Logger::debug(LogFacility::World) << player->name << " looks at an item in the inventory." << Log::end;
         time(&(player->lastaction));
-#ifdef DO_UNCONSCIOUS
 
-        if (player->IsAlive() && player->IsConscious())
-#else
-        if (player->IsAlive())
-#endif
-        {
+        if (player->IsAlive()) {
             World::get()->lookAtInventoryItem(player, pos);
             player->actionPoints -= P_LOOK_COST;
         }
@@ -1293,13 +1262,8 @@ public:
     void performAction(Player *player) {
         Logger::debug(LogFacility::World) << player->name << " looks at an item in a container." << Log::end;
         time(&(player->lastaction));
-#ifdef DO_UNCONSCIOUS
 
-        if (player->IsAlive() && player->IsConscious())
-#else
-        if (player->IsAlive())
-#endif
-        {
+        if (player->IsAlive()) {
             World::get()->lookAtShowcaseItem(player, showcase, pos);
             player->actionPoints -= P_LOOK_COST;
         }
@@ -1335,13 +1299,8 @@ public:
         time(&(player->lastaction));
         player->ltAction->abortAction();
         Logger::debug(LogFacility::World) << player->name << "moves an item from the inventory to showcase!" << Log::end;
-#ifdef DO_UNCONSCIOUS
 
-        if (player->IsAlive() && player->IsConscious())
-#else
-        if (player->IsAlive())
-#endif
-        {
+        if (player->IsAlive()) {
             World::get()->moveItemFromPlayerIntoShowcase(player, cpos, showcase, pos, count);
             player->actionPoints -= P_ITEMMOVE_COST;
         }
@@ -1379,13 +1338,8 @@ public:
         time(&(player->lastaction));
         player->ltAction->abortAction();
         Logger::debug(LogFacility::World) << player->name << " moves an item from the shocase to the inventory!" << Log::end;
-#ifdef DO_UNCONSCIOUS
 
-        if (player->IsAlive() && player->IsConscious())
-#else
-        if (player->IsAlive())
-#endif
-        {
+        if (player->IsAlive()) {
             World::get()->moveItemFromShowcaseToPlayer(player, showcase, pos, cpos, count);
             player->actionPoints -= P_ITEMMOVE_COST;
         }
@@ -1422,13 +1376,8 @@ public:
         time(&(player->lastaction));
         player->ltAction->abortAction();
         Logger::debug(LogFacility::World) << player->name << "moves an item inside the inventory!" << Log::end;
-#ifdef DO_UNCONSCIOUS
 
-        if (player->IsAlive() && player->IsConscious())
-#else
-        if (player->IsAlive())
-#endif
-        {
+        if (player->IsAlive()) {
             World::get()->moveItemBetweenBodyParts(player, opos, npos, count);
             player->actionPoints -= P_ITEMMOVE_COST;
         }
@@ -1466,14 +1415,8 @@ public:
         time(&(player->lastaction));
         player->ltAction->abortAction();
         Logger::debug(LogFacility::World) << player->name << " throws an item from inventory on the map!" << Log::end;
-#ifdef DO_UNCONSCIOUS
-
-        if (player->IsConscious())
-#endif
-        {
-            World::get()->dropItemFromPlayerOnMap(player, pos, xc, yc, zc, count);
-            player->actionPoints -= P_ITEMMOVE_COST;
-        }
+        World::get()->dropItemFromPlayerOnMap(player, pos, xc, yc, zc, count);
+        player->actionPoints -= P_ITEMMOVE_COST;
     }
 
     boost::shared_ptr<BasicClientCommand> clone() {
@@ -1506,13 +1449,8 @@ public:
         time(&(player->lastaction));
         player->ltAction->abortAction();
         Logger::debug(LogFacility::World) << player->name << " moves an Item from the map to the inventory!" << Log::end;
-#ifdef DO_UNCONSCIOUS
 
-        if (player->IsAlive() && player->IsConscious())
-#else
-        if (player->IsAlive())
-#endif
-        {
+        if (player->IsAlive()) {
             World::get()->moveItemFromMapToPlayer(player, dir, pos, count);
             player->actionPoints -= P_ITEMMOVE_COST;
         }
@@ -1549,13 +1487,8 @@ public:
         time(&(player->lastaction));
         player->ltAction->abortAction();
         Logger::debug(LogFacility::World) << player->name << " moves an item from the map to the showcase!" << Log::end;
-#ifdef DO_UNCONSCIOUS
 
-        if (player->IsAlive() && player->IsConscious())
-#else
-        if (player->IsAlive())
-#endif
-        {
+        if (player->IsAlive()) {
             World::get()->moveItemFromMapIntoShowcase(player, dir, showcase, pos, count);
             player->actionPoints -= P_ITEMMOVE_COST;
         }
@@ -1594,13 +1527,8 @@ public:
         time(&(player->lastaction));
         player->ltAction->abortAction();
         Logger::debug(LogFacility::World) << player->name << " moves an item between showcases!" << Log::end;
-#ifdef DO_UNCONSCIOUS
 
-        if (player->IsAlive() && player->IsConscious())
-#else
-        if (player->IsAlive())
-#endif
-        {
+        if (player->IsAlive()) {
             World::get()->moveItemBetweenShowcases(player, source, spos, dest, dpos, count);
             player->actionPoints -= P_ITEMMOVE_COST;
         }
@@ -1641,14 +1569,8 @@ public:
         time(&(player->lastaction));
         player->ltAction->abortAction();
         Logger::debug(LogFacility::World) << player->name << " moves an item from showcase to the map!" << Log::end;
-#ifdef DO_UNCONSCIOUS
-
-        if (player->IsConscious())
-#endif
-        {
-            World::get()->dropItemFromShowcaseOnMap(player, showcase, pos, xc, yc, zc, count);
-            player->actionPoints -= P_ITEMMOVE_COST;
-        }
+        World::get()->dropItemFromShowcaseOnMap(player, showcase, pos, xc, yc, zc, count);
+        player->actionPoints -= P_ITEMMOVE_COST;
     }
 
     boost::shared_ptr<BasicClientCommand> clone() {
@@ -1680,13 +1602,8 @@ public:
         time(&(player->lastaction));
         player->ltAction->abortAction();
         Logger::debug(LogFacility::World) << player->name << " closes a container in the showcase" << Log::end;
-#ifdef DO_UNCONSCIOUS
 
-        if (player->IsAlive() && player->IsConscious())
-#else
-        if (player->IsAlive())
-#endif
-        {
+        if (player->IsAlive()) {
             World::get()->closeContainerInShowcase(player, showcase);
         }
     }
@@ -1718,14 +1635,8 @@ public:
         time(&(player->lastaction));
         player->ltAction->abortAction();
         Logger::debug(LogFacility::World) << player->name << " looks into a container in a showcase!" << Log::end;
-#ifdef DO_UNCONSCIOUS
-
-        if (player->IsConscious())
-#endif
-        {
-            World::get()->lookIntoShowcaseContainer(player, showcase, pos);
-            player->actionPoints -= P_LOOK_COST;
-        }
+        World::get()->lookIntoShowcaseContainer(player, showcase, pos);
+        player->actionPoints -= P_LOOK_COST;
     }
 
     boost::shared_ptr<BasicClientCommand> clone() {
@@ -1754,14 +1665,8 @@ public:
         time(&(player->lastaction));
         player->ltAction->abortAction();
         Logger::debug(LogFacility::World) << player->name << " looks into his backpack" << Log::end;
-#ifdef DO_UNCONSCIOUS
-
-        if (player->IsConscious())
-#endif
-        {
-            World::get()->lookIntoBackPack(player);
-            player->actionPoints -= P_LOOK_COST;
-        }
+        World::get()->lookIntoBackPack(player);
+        player->actionPoints -= P_LOOK_COST;
     }
 
     boost::shared_ptr<BasicClientCommand> clone() {
@@ -1789,13 +1694,8 @@ public:
         time(&(player->lastaction));
         player->ltAction->abortAction();
         Logger::debug(LogFacility::World) << player->name << " looks into a container on the map" << Log::end;
-#ifdef DO_UNCONSCIOUS
 
-        if (player->IsAlive() && player->IsConscious())
-#else
-        if (player->IsAlive())
-#endif
-        {
+        if (player->IsAlive()) {
             World::get()->lookIntoContainerOnField(player, direction);
             player->actionPoints -= P_LOOK_COST;
         }
@@ -1984,13 +1884,8 @@ public:
     void performAction(Player *player) {
         time(&(player->lastaction));
         Logger::debug(LogFacility::World) << player->name << " introduces himself!" << Log::end;
-#ifdef DO_UNCONSCIOUS
 
-        if (player->IsAlive() && player->IsConscious())
-#else
-        if (player->IsAlive())
-#endif
-        {
+        if (player->IsAlive()) {
             World::get()->introduceMyself(player);
         }
     }
@@ -2022,13 +1917,8 @@ public:
 
     void performAction(Player *player) {
         time(&(player->lastaction));
-#ifdef DO_UNCONSCIOUS
 
-        if (player->IsAlive() && player->GetStatus() < 10 && player->IsConscious())
-#else
-        if (player->IsAlive() && player->GetStatus() < 10)
-#endif
-        {
+        if (player->IsAlive() && player->GetStatus() < 10) {
             player->ltAction->abortAction();
 
             if (player->IsAlive()) {
@@ -2085,13 +1975,8 @@ public:
     void performAction(Player *player) {
         time(&(player->lastaction));
         Logger::debug(LogFacility::World) << player->name << " looks at a map item." << Log::end;
-#ifdef DO_UNCONSCIOUS
 
-        if (player->IsAlive() && player->IsConscious())
-#else
-        if (player->IsAlive())
-#endif
-        {
+        if (player->IsAlive()) {
             World::get()->lookAtMapItem(player, x, y, z);
             player->actionPoints -= P_LOOK_COST;
         }
@@ -2129,14 +2014,8 @@ public:
         player->ltAction->abortAction();
         Logger::debug(LogFacility::World) << "Player changes his dircetion: " << player->name << " temp: " << direction << Log::end;
 
-#ifdef DO_UNCONSCIOUS
-
-        if (player->IsConscious())
-#endif
-        {
-            if (World::get()->spinPlayer(player, direction)) {
-                player->actionPoints -= P_SPIN_COST;
-            }
+        if (World::get()->spinPlayer(player, direction)) {
+            player->actionPoints -= P_SPIN_COST;
         }
     }
 
@@ -2232,13 +2111,8 @@ public:
         time(&(player->lastaction));
         player->ltAction->abortAction();
         Logger::debug(LogFacility::World) << player->name << " tryes to move an Item!" << Log::end;
-#ifdef DO_UNCONSCIOUS
 
-        if (player->IsAlive() && player->IsConscious())
-#else
-        if (player->IsAlive())
-#endif
-        {
+        if (player->IsAlive()) {
             World::get()->moveItem(player, direction, xc, yc, zc, count);
             player->actionPoints -= P_ITEMMOVE_COST;
         }
