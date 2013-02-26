@@ -333,10 +333,6 @@ public:
             World::get()->montool_kickall_command(player);
         }
 
-        if (_command == "importmaps") {
-            World::get()->montool_import_maps_command(player);
-        }
-
         if (_command == "setloginfalse") {
             World::get()->montool_set_login(player,"false");
         }

@@ -67,17 +67,6 @@ void World::montool_kickall_command(Player *c) {
     }
 }
 
-void World::montool_import_maps_command(Player *c) {
-    if (!c->hasGMRight(gmr_import)) {
-        return;
-    }
-
-    {
-        load_maps();
-        //monitoringClientList->sendCommand( new SendMessageTS("maps imported! from "+c->name+"("+Logger::toString(c->id)+")",0));
-    }
-}
-
 void World::montool_set_login(Player *c, const std::string &st) {
     if (!c->hasGMRight(gmr_loginstate)) {
         return;

@@ -56,7 +56,6 @@ extern std::shared_ptr<LuaLearnScript>learnScript;
 
 
 void set_spawn_command(World *, Player *, const std::string &);
-void import_maps_command(World *, Player *, const std::string &);
 void create_area_command(World *, Player *, const std::string &);
 void set_login(World *, Player *, const std::string &);
 
@@ -105,8 +104,6 @@ void World::InitGMCommands() {
     GMCommands["add_teleport"] = [](World *world, Player *player, const std::string &text) -> bool { world->teleport_command(player, text); return true; };
 
     GMCommands["set_spawn"] = [](World *world, Player *player, const std::string &text) -> bool { set_spawn_command(world, player, text); return true; };
-
-    GMCommands["importmaps"] = [](World *world, Player *player, const std::string &text) -> bool { import_maps_command(world, player, text); return true; };
 
     GMCommands["create_area"] = [](World *world, Player *player, const std::string &text) -> bool { create_area_command(world, player, text); return true; };
 
@@ -1170,8 +1167,6 @@ void World::gmhelp_command(Player *cp) {
     }
 
     if (cp->hasGMRight(gmr_import)) {
-        tmessage = "!importmaps <x> <y> <z> - Imports new maps from the Editor to the location.";
-        cp->inform(tmessage);
         tmessage = "create_area <x> <y> <z> <width> <height> <tile> - Creates a new map at <x> <y> <z> with the dimensions <height> <width> and filled with <tile>.";
         cp->inform(tmessage);
         tmessage = "!exportmaps - Exports the current maps.";
@@ -1435,14 +1430,6 @@ void set_spawn_command(World *world, Player *player, const std::string &in) {
     world->enableSpawn(enable);
 }
 
-
-void import_maps_command(World *world, Player *player, const std::string &param) {
-    if (!player->hasGMRight(gmr_import)) {
-        return;
-    }
-
-    world->load_maps();
-}
 
 // create a new area starting at x,y,z with dimension w,h, filltile ft (create_area x y z w h ft)
 void create_area_command(World *world, Player *player,const std::string &params) {

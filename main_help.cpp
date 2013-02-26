@@ -46,9 +46,6 @@
 #include "Config.hpp"
 
 
-// a map storing configuration options from a config file...
-bool importmaps;
-
 /*
 learn, bbiwi, basic, schedscripts, Spawn, World_Debug, World_Imports, World, World_Inits, Monster , Player_Moves, Casting, Use, Use_Scripts
 */
@@ -165,22 +162,6 @@ void checkArguments(int argc, char *argv[]) {
             std::cout << "main: ERROR READING CONFIGFILE " << argv[ 1 ] << " ! " << std::endl;
             std::cout << "main: USAGE: " << argv[0] << " configfile" << std::endl;
             exit(-1);
-        }
-    } else if (argc == 3) {
-        std::cout<<"main: 3 args for mapimport"<<std::endl;
-
-        if (Init(std::string(argv[ 1 ]))) {
-            std::cout << "main: USING CONFIGFILE " << argv[ 1 ] << "\n";
-            std::cout << "main: LOADING..." << std::endl;
-        } else {
-            std::cout << "main: ERROR READING CONFIGFILE " << argv[ 1 ] << " ! " << std::endl;
-            std::cout << "main: USAGE: " << argv[0] << " configfile" << std::endl;
-            exit(-1);
-        }
-
-        if (std::string(argv[ 2 ]) == "-MAPIMPORT") {
-            std::cout << "main: IMPORTING MAPS NEW "<<std::endl;
-            importmaps = true;
         }
     } else {
         std::cout << "main: USAGE: " << argv[0] << " configfile" << std::endl;
@@ -317,8 +298,6 @@ void sig_usr(int) {
     world->allowLogin(false);
     world->forceLogoutOfAllPlayers(); //Alle spieler ausloggen
     world->maps.clear(); //alte Karten l�schen
-    std::cout<<"importing mainland"<<std::endl;
-    world->load_from_editor(Config::instance().datadir() + std::string("map/import/oberwelt_0"));
     std::cout<<"loading maps"<<std::endl;
     world->load_maps();
     //alles importiert also noch ein save machen

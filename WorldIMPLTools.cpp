@@ -870,11 +870,14 @@ void World::Load(std::string prefix) {
     std::ifstream mapinitfile((prefix + "_initmaps").c_str(), std::ios::binary | std::ios::in);
 
     if (! mapinitfile.good()) {
-        std::cerr << "World::Load: Fehler beim Laden der Karten, konnte initmaps nicht �ffnen" << std::endl;
+        Logger::error(LogFacility::World) << "Error while loading maps: could not open " << (prefix + "_initmaps") << Log::end;
+        Logger::info(LogFacility::World) << "trying to import maps" << Log::end;
+	load_maps();
+	return;
     } else {
         unsigned short int size;
         mapinitfile.read((char *) & size, sizeof(size));
-        std::cout << "World::Load: lade " << size << " Karten" << std::endl;
+        Logger::info(LogFacility::World) << "Loading " << size << " maps" << Log::end;
 
         short int tZ_Level;
         short int tMin_X;
@@ -910,11 +913,13 @@ void World::Load(std::string prefix) {
     std::ifstream specialfile((prefix + "_specialfields").c_str(), std::ios::binary | std::ios::in);
 
     if (! specialfile.good()) {
-        std::cerr << "World::Load: Fehler beim Laden der speziellen Felder, konnte _specialfields nicht �ffnen" << std::endl;
+        Logger::error(LogFacility::World) << "Error while loading maps: could not open " << (prefix + "_specialfields") << Log::end;
+	// TODO propably should terminate the server due to a severe error here...
+	return;
     } else {
         unsigned short int size3;
         specialfile.read((char *) & size3, sizeof(size3));
-        std::cout << "World::Load: lade " << size3 << " spezielle Felder" << std::endl;
+        Logger::info(LogFacility::World) << "Loading " << size3 << " special fields" << Log::end;
 
         position start;
         s_fieldattrib attrib;

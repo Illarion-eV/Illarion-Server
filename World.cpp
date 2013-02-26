@@ -204,9 +204,7 @@ bool World::load_maps() {
         strstr(maplist[numfiles]->d_name, ".tiles.txt")[0] = '\0';
         Logger::info(LogFacility::World) << "importing: " << Config::instance().datadir() << "map/import/" << maplist[numfiles]->d_name << Log::end;
 
-        if (std::string(maplist[numfiles]->d_name).compare("oberwelt_0")) {
-            ok &= load_from_editor(Config::instance().datadir() + "map/import/" + maplist[numfiles]->d_name);
-        }
+	ok &= load_from_editor(Config::instance().datadir() + "map/import/" + maplist[numfiles]->d_name);
 
     }
 
@@ -290,7 +288,6 @@ bool World::load_from_editor(std::string filename) {
         maptilesfile >> temp_tile.y;    //read next int
 
         if (oldy != temp_tile.y) { //log if we have read one complete line of the map
-            Logger::info(LogFacility::World) << "currently reading the y lines for tiles : " << temp_tile.y << Log::end;
             oldy = temp_tile.y;
         }
 
@@ -324,9 +321,6 @@ bool World::load_from_editor(std::string filename) {
         maptilesfile >> temp_tile.x;    // read next x (int); if there is none, while will end
     }
 
-    Logger::info(LogFacility::World) << "maptilesfile was bad at x=" << temp_tile.x << " y=" << temp_tile.y << Log::end;
-
-
     // generate new map
     WorldMap::map_t tempmap(new Map(h_width, h_height));
     tempmap->Init(h_x, h_y, h_level);
@@ -345,7 +339,6 @@ bool World::load_from_editor(std::string filename) {
                 tempf->setMusicId(temp_tile.musicID);
                 tempf->updateFlags();
             } else {
-                Logger::error(LogFacility::World) << "could not get field for: " << x << " " << y << Log::end;
                 Logger::error(LogFacility::World) << "could not get field for: " << x << " " << y << Log::end;
             }
         }
@@ -439,7 +432,6 @@ bool World::load_from_editor(std::string filename) {
         mapitemsfile >> y;
 
         if (oldy != y) { //log if we have read one complete line of the map
-            Logger::info(LogFacility::World) << "currently reading the y lines for items : " << y << Log::end;
             oldy = y;
         }
 

@@ -329,8 +329,6 @@ public:
         */
     bool load_maps();
 
-    bool import_all_maps();
-
     /**
     *function for maploading
     *this function loads a specified new map from the importdir
@@ -368,7 +366,6 @@ public:
     void montool_kill_command(Player *c);
     void montool_reload_command(Player *c);
     void montool_kickall_command(Player *c);
-    void montool_import_maps_command(Player *c);
     void montool_set_login(Player *c, const std::string &st);
 
     /**============ WorldIMPLTools.cpp ==================*/

@@ -56,8 +56,6 @@
 extern std::shared_ptr<LuaLoginScript>loginScript;
 extern ScriptVariablesTable *scriptVariables;
 
-extern bool importmaps;
-
 int main(int argc, char *argv[]) {
 
     rlimit rlp;
@@ -73,7 +71,6 @@ int main(int argc, char *argv[]) {
         exit(-2);
     }
 
-    importmaps = false;
     // get more info for unspecified exceptions
     std::set_terminate(__gnu_cxx::__verbose_terminate_handler);
     // save starting time
@@ -118,12 +115,7 @@ int main(int argc, char *argv[]) {
     Data::activateTables();
     loadData();
 
-    if (!importmaps) {
-        world->Load("Illarion");
-    } else {
-        world->allowLogin(false);
-        world->load_from_editor(Config::instance().datadir() + std::string("map/import/oberwelt_0"));
-    }
+    world->Load("Illarion");
 
     Data::reloadScripts();
 
