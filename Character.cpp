@@ -1406,10 +1406,33 @@ int Character::getLanguageSkill(int languageSkillNumber) {
 
 void Character::talk(talk_type tt, const std::string &message) { //only for say, whisper, shout
     talk(tt, message, message);
+
+    if (character == player) {
+#ifdef LOG_TALK
+        std::string talkType;
+
+        switch (tt) {
+        case tt_say:
+            talkType = "says";
+            break;
+
+        case tt_whisper:
+            talkType = "whispers";
+            break;
+
+        case tt_yell:
+            talkType = "shouts";
+            break;
+        }
+
+        Logger::info(LogFacility::Chat) << *this << " " << talkType << ": " << message << Log::end;
+#endif
+        boost::shared_ptr<BasicServerCommand>cmd(new BBTalkTC(id ,name, static_cast<unsigned char>(tt), message));
+        _world->monitoringClientList->sendCommand(cmd);
+    }
 }
 
 void Character::talk(talk_type tt, const std::string &german, const std::string &english) { //only for say, whisper, shout
-    std::string talktype;
     uint16_t cost = 0;
     lastSpokenText = english;
 
@@ -1420,12 +1443,10 @@ void Character::talk(talk_type tt, const std::string &german, const std::string 
             return;
         }
 
-        talktype = "says";
         cost = P_SAY_COST;
         break;
 
     case tt_whisper:
-        talktype = "whispers";
         cost = P_WHISPER_COST;
         break;
 
@@ -1435,22 +1456,8 @@ void Character::talk(talk_type tt, const std::string &german, const std::string 
             return;
         }
 
-        talktype = "shouts";
         cost = P_SHOUT_COST;
         break;
-    }
-
-    if (character == player) {
-#ifdef LOG_TALK
-        // log talk if we have a player
-        Logger::info(LogFacility::Player) << *this << " " << talktype << ": " << german << " / " <<  english << Log::end;
-#endif
-
-        /**
-         * create a new Talk command and send them
-         */
-        boost::shared_ptr<BasicServerCommand>cmd(new BBTalkTC(id ,name, static_cast<unsigned char>(tt), ((Player *)this)->nls(german, english)));
-        _world->monitoringClientList->sendCommand(cmd);
     }
 
     _world->sendMessageToAllCharsInRange(german, english, tt, this);
