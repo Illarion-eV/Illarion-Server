@@ -290,7 +290,7 @@ bool World::load_from_editor(std::string filename) {
         maptilesfile >> temp_tile.y;    //read next int
 
         if (oldy != temp_tile.y) { //log if we have read one complete line of the map
-            Logger::info(LogFacility::World) << "currently reading the y lines for tiles : " << temp_tile.y << Log::end;
+            Logger::debug(LogFacility::World) << "currently reading the y lines for tiles : " << temp_tile.y << Log::end;
             oldy = temp_tile.y;
         }
 
@@ -324,7 +324,7 @@ bool World::load_from_editor(std::string filename) {
         maptilesfile >> temp_tile.x;    // read next x (int); if there is none, while will end
     }
 
-    Logger::info(LogFacility::World) << "maptilesfile was bad at x=" << temp_tile.x << " y=" << temp_tile.y << Log::end;
+    Logger::debug(LogFacility::World) << "maptilesfile was bad at x=" << temp_tile.x << " y=" << temp_tile.y << Log::end;
 
 
     // generate new map
@@ -439,7 +439,7 @@ bool World::load_from_editor(std::string filename) {
         mapitemsfile >> y;
 
         if (oldy != y) { //log if we have read one complete line of the map
-            Logger::info(LogFacility::World) << "currently reading the y lines for items : " << y << Log::end;
+            Logger::debug(LogFacility::World) << "currently reading the y lines for items : " << y << Log::end;
             oldy = y;
         }
 
