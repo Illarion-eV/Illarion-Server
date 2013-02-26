@@ -701,10 +701,10 @@ bool World::initRespawns() {
                                     (*itr)["spp_minspawntime"].as<uint16_t>(),
                                     (*itr)["spp_maxspawntime"].as<uint16_t>(),
                                     (*itr)["spp_spawnall"].as<bool>());
-                Logger::info(LogFacility::World) << "load spawnpoint " << spawnId << ":" << Log::end;
+                Logger::debug(LogFacility::World) << "load spawnpoint " << spawnId << ":" << Log::end;
                 newSpawn.load(spawnId);
                 SpawnList.push_back(newSpawn);
-                Logger::info(LogFacility::World) << "added spawnpoint " << the_pos.toString() << Log::end;
+                Logger::debug(LogFacility::World) << "added spawnpoint " << the_pos.toString() << Log::end;
             }
 
         } else {

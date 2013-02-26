@@ -180,6 +180,7 @@ struct vertex_index_hash {
         }
 
         if (id > 400) {
+            Logger::debug(LogFacility::Other) << "[PATH FINDING] No path found in vertex_index_hash!" << Log::end;
             throw not_found();
         }
 
@@ -196,6 +197,7 @@ struct astar_ex_visitor: public boost::default_astar_visitor {
 
     void examine_vertex(Position u, const world_map_graph &) {
         if (u == goal) {
+            Logger::debug(LogFacility::Other) << "[PATH FINDING] Path found in astar_ex_visitor!" << Log::end;
             throw found_goal();
         }
     }
@@ -204,6 +206,7 @@ struct astar_ex_visitor: public boost::default_astar_visitor {
         ++node_counter;
 
         if (node_counter > 400) {
+            Logger::debug(LogFacility::Other) << "[PATH FINDING] No path found in astar_ex_visitor!" << Log::end;
             throw not_found();
         }
     }
