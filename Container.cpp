@@ -495,14 +495,14 @@ bool Container::swapAtPos(unsigned char pos, Item::id_type newid, Item::quality_
     return false;
 }
 
-void Container::Save(std::ofstream *where) {
+void Container::Save(std::ofstream &where) {
     MAXCOUNTTYPE size = items.size();
-    where->write((char *) & size, sizeof(size));
+    where.write((char *) & size, sizeof(size));
 
     for (auto it = items.begin(); it != items.end(); ++it) {
         Item &item = it->second;
-        where->write((char *) &(it->first), sizeof(TYPE_OF_CONTAINERSLOTS));
-        where->write((char *) &item, sizeof(Item));
+        where.write((char *) &(it->first), sizeof(TYPE_OF_CONTAINERSLOTS));
+        where.write((char *) &item, sizeof(Item));
 
         if (item.isContainer()) {
             auto iterat = containers.find(it->first);
@@ -511,13 +511,13 @@ void Container::Save(std::ofstream *where) {
                 (*iterat).second->Save(where);
             } else {
                 size = 0;
-                where->write((char *) & size, sizeof(size));
+                where.write((char *) & size, sizeof(size));
             }
         }
     }
 }
 
-void Container::Load(std::istream *where) {
+void Container::Load(std::istream &where) {
 
     if (!containers.empty()) {
 
@@ -531,7 +531,7 @@ void Container::Load(std::istream *where) {
     containers.clear();
 
     MAXCOUNTTYPE size;
-    where->read((char *) & size, sizeof(size));
+    where.read((char *) & size, sizeof(size));
 
     Container *tempc;
 
@@ -539,8 +539,8 @@ void Container::Load(std::istream *where) {
     Item tempi;
 
     for (int i = 0; i < size; ++i) {
-        where->read((char *) & slot, sizeof(TYPE_OF_CONTAINERSLOTS));
-        where->read((char *) & tempi, sizeof(tempi));
+        where.read((char *) & slot, sizeof(TYPE_OF_CONTAINERSLOTS));
+        where.read((char *) & tempi, sizeof(tempi));
 
         if (tempi.isContainer()) {
             tempc = new Container(tempi.getId());

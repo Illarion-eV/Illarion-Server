@@ -227,55 +227,43 @@ void Map::Init(short int minx, short int miny, short int z) {
 
 
 bool Map::Save(std::string name) {
-    std::cout << "Map: Save - start, speichere" << name << std::endl;
+    Logger::info(LogFacility::World) << "Saving map " << name << Log::end;
 
     if (! Map_initialized) {
-        std::cout << "Map: Karte nicht gespeichert da noch nicht initialisiert" << std::endl;
+        Logger::warn(LogFacility::World) << "Can't save uninitialized map: " << name << Log::end;
         return false;
     }
 
-    std::ofstream *main_map;
-    std::ofstream *main_item;
-    std::ofstream *all_container;
-    std::ofstream *main_warp;
+    std::ofstream main_map { (name + "_map").c_str(), std::ios::binary | std::ios::out };
+    std::ofstream main_item { (name + "_item").c_str(), std::ios::binary | std::ios::out };
+    std::ofstream main_warp { (name + "_warp").c_str(), std::ios::binary | std::ios::out };
+    std::ofstream all_container { (name + "_container").c_str(), std::ios::binary | std::ios::out };
 
-    std::string a, b, w, e;
+    if ((main_map.good()) && (main_item.good()) && (main_warp.good()) && (all_container.good())) {
+        // Write Map Size
+        main_map.write((char *) & Width, sizeof(Width));
+        main_map.write((char *) & Height, sizeof(Height));
+        main_map.write((char *) & Min_X, sizeof(Min_X));
+        main_map.write((char *) & Min_Y, sizeof(Min_Y));
+        main_map.write((char *) & Z_Level, sizeof(Z_Level));
 
-    a = name + "_map";
-    b = name + "_item";
-    w = name + "_warp";
-    e = name + "_container";
+        main_item.write((char *) & Width, sizeof(Width));
+        main_item.write((char *) & Height, sizeof(Height));
+        main_item.write((char *) & Min_X, sizeof(Min_X));
+        main_item.write((char *) & Min_Y, sizeof(Min_Y));
+        main_item.write((char *) & Z_Level, sizeof(Z_Level));
 
-    main_map = new std::ofstream(a.c_str(), std::ios::binary | std::ios::out);
-    main_item = new std::ofstream(b.c_str(), std::ios::binary | std::ios::out);
-    main_warp = new std::ofstream(w.c_str(), std::ios::binary | std::ios::out);
-    all_container = new std::ofstream(e.c_str(), std::ios::binary | std::ios::out);
+        main_warp.write((char *) & Width, sizeof(Width));
+        main_warp.write((char *) & Height, sizeof(Height));
+        main_warp.write((char *) & Min_X, sizeof(Min_X));
+        main_warp.write((char *) & Min_Y, sizeof(Min_Y));
+        main_warp.write((char *) & Z_Level, sizeof(Z_Level));
 
-    if ((main_map->good()) && (main_item->good()) && (main_warp->good()) && (all_container->good())) {
-        //Map-Gr�e schreiben - Write Map Size
-        main_map->write((char *) & Width, sizeof(Width));
-        main_map->write((char *) & Height, sizeof(Height));
-        main_map->write((char *) & Min_X, sizeof(Min_X));
-        main_map->write((char *) & Min_Y, sizeof(Min_Y));
-        main_map->write((char *) & Z_Level, sizeof(Z_Level));
-
-        main_item->write((char *) & Width, sizeof(Width));
-        main_item->write((char *) & Height, sizeof(Height));
-        main_item->write((char *) & Min_X, sizeof(Min_X));
-        main_item->write((char *) & Min_Y, sizeof(Min_Y));
-        main_item->write((char *) & Z_Level, sizeof(Z_Level));
-
-        main_warp->write((char *) & Width, sizeof(Width));
-        main_warp->write((char *) & Height, sizeof(Height));
-        main_warp->write((char *) & Min_X, sizeof(Min_X));
-        main_warp->write((char *) & Min_Y, sizeof(Min_Y));
-        main_warp->write((char *) & Z_Level, sizeof(Z_Level));
-
-        all_container->write((char *) & Width, sizeof(Width));
-        all_container->write((char *) & Height, sizeof(Height));
-        all_container->write((char *) & Min_X, sizeof(Min_X));
-        all_container->write((char *) & Min_Y, sizeof(Min_Y));
-        all_container->write((char *) & Z_Level, sizeof(Z_Level));
+        all_container.write((char *) & Width, sizeof(Width));
+        all_container.write((char *) & Height, sizeof(Height));
+        all_container.write((char *) & Min_X, sizeof(Min_X));
+        all_container.write((char *) & Min_Y, sizeof(Min_Y));
+        all_container.write((char *) & Z_Level, sizeof(Z_Level));
 
         // Felder speichern - Store fields
         for (unsigned short int x = 0; x < Width; ++x) {
@@ -284,28 +272,26 @@ bool Map::Save(std::string name) {
             }
         }
 
-        CONTAINERHASH::iterator ptr;
-        Container::CONTAINERMAP::iterator citer;
         unsigned long int fcount;
         MAXCOUNTTYPE icount;
 
         // Anzahl der Felder mit Eintr�en fr Containern
         fcount = maincontainers.size();
-        all_container->write((char *) & fcount, sizeof(fcount));
+        all_container.write((char *) & fcount, sizeof(fcount));
 
         if (! maincontainers.empty()) {
-            for (ptr = maincontainers.begin(); ptr != maincontainers.end(); ++ptr) {
+            for (auto ptr = maincontainers.begin(); ptr != maincontainers.end(); ++ptr) {
                 // die Koordinate schreiben
-                all_container->write((char *) & ptr->first, sizeof ptr->first);
+                all_container.write((char *) & ptr->first, sizeof ptr->first);
 
                 // die Anzahl Container in der CONTAINERMAP an der aktuellen Koordinate
                 icount = ptr->second.size();
-                all_container->write((char *) & icount, sizeof(icount));
+                all_container.write((char *) & icount, sizeof(icount));
 
                 if (!ptr->second.empty()) {
-                    for (citer = ptr->second.begin(); citer != ptr->second.end(); ++citer) {
+                    for (auto citer = ptr->second.begin(); citer != ptr->second.end(); ++citer) {
                         // die Kennung des Container speichern
-                        all_container->write((char *) & ((*citer).first), sizeof((*citer).first));
+                        all_container.write((char *) & ((*citer).first), sizeof((*citer).first));
                         // jeden Container speichern
                         (*citer).second->Save(all_container);
                     }
@@ -313,33 +299,11 @@ bool Map::Save(std::string name) {
             }
         }
 
-#ifdef Map_DEBUG
-        std::cout << "Map: Save - end\n";
-#endif
-
-        delete main_map;
-        main_map = NULL;
-        delete main_item;
-        main_item = NULL;
-        delete main_warp;
-        main_warp = NULL;
-        delete all_container;
-        all_container = NULL;
-
         return true;
 
     } else {
 
-        std::cerr << "Map: ERROR SAVING FILES \n";
-
-        delete main_map;
-        main_map = NULL;
-        delete main_item;
-        main_item = NULL;
-        delete main_warp;
-        main_warp = NULL;
-        delete all_container;
-        all_container = NULL;
+        Logger::error(LogFacility::World) << "Saving map failed." << Log::end;
         return false;
 
     }
@@ -368,56 +332,46 @@ bool Map::GetPToCFieldAt(Field *&fip, short int x, short int y) {
 
 bool Map::Load(std::string name, unsigned short int x_offs, unsigned short int y_offs) {
 
-    std::cout << "Map: Load - start, lade " << name  << " position: " << x_offs << " " << y_offs << std::endl;
-
-    std::ifstream *main_map;
-    std::ifstream *main_item;
-    std::ifstream *main_warp;
-    std::ifstream *all_container;
+    Logger::info(LogFacility::World) << "Loading map " << name  << " for position: " << x_offs << " " << y_offs << Log::end;
 
     std::string a, b, w, e;
 
-    a = name + "_map";
-    b = name + "_item";
-    w = name + "_warp";
-    e = name + "_container";
+    std::ifstream main_map { (name + "_map").c_str(), std::ios::binary | std::ios::in };
+    std::ifstream main_item { (name + "_item").c_str(), std::ios::binary | std::ios::in };
+    std::ifstream main_warp { (name + "_warp").c_str(), std::ios::binary | std::ios::in };
+    std::ifstream all_container { (name + "_container").c_str(), std::ios::binary | std::ios::in };
 
-    main_map = new std::ifstream(a.c_str(), std::ios::binary | std::ios::in);
-    main_item = new std::ifstream(b.c_str(), std::ios::binary | std::ios::in);
-    main_warp = new std::ifstream(w.c_str(), std::ios::binary | std::ios::in);
-    all_container = new std::ifstream(e.c_str(), std::ios::binary | std::ios::in);
-
-    if ((main_map->good()) && (main_item->good()) && (main_warp->good()) && (all_container->good())) {
-        //Map-Gr�e lesen und berprfen - Read map size and examine
+    if ((main_map.good()) && (main_item.good()) && (main_warp.good()) && (all_container.good())) {
+        // Read map size and examine
         short int twidth[ 4 ];
         short int theight[ 4 ];
         short int tminx[ 4 ];
         short int tminy[ 4 ];
         short int tzlevel[ 4 ];
 
-        main_map->read((char *) & twidth[ 0 ], sizeof(Width));
-        main_map->read((char *) & theight[ 0 ], sizeof(Height));
-        main_map->read((char *) & tminx[ 0 ], sizeof(Min_X));
-        main_map->read((char *) & tminy[ 0 ], sizeof(Min_Y));
-        main_map->read((char *) & tzlevel[ 0 ], sizeof(Z_Level));
+        main_map.read((char *) & twidth[ 0 ], sizeof(Width));
+        main_map.read((char *) & theight[ 0 ], sizeof(Height));
+        main_map.read((char *) & tminx[ 0 ], sizeof(Min_X));
+        main_map.read((char *) & tminy[ 0 ], sizeof(Min_Y));
+        main_map.read((char *) & tzlevel[ 0 ], sizeof(Z_Level));
 
-        main_item->read((char *) & twidth[ 1 ], sizeof(Width));
-        main_item->read((char *) & theight[ 1 ], sizeof(Height));
-        main_item->read((char *) & tminx[ 1 ], sizeof(Min_X));
-        main_item->read((char *) & tminy[ 1 ], sizeof(Min_Y));
-        main_item->read((char *) & tzlevel[ 1 ], sizeof(Z_Level));
+        main_item.read((char *) & twidth[ 1 ], sizeof(Width));
+        main_item.read((char *) & theight[ 1 ], sizeof(Height));
+        main_item.read((char *) & tminx[ 1 ], sizeof(Min_X));
+        main_item.read((char *) & tminy[ 1 ], sizeof(Min_Y));
+        main_item.read((char *) & tzlevel[ 1 ], sizeof(Z_Level));
 
-        main_warp->read((char *) & twidth[ 2 ], sizeof(Width));
-        main_warp->read((char *) & theight[ 2 ], sizeof(Height));
-        main_warp->read((char *) & tminx[ 2 ], sizeof(Min_X));
-        main_warp->read((char *) & tminy[ 2 ], sizeof(Min_Y));
-        main_warp->read((char *) & tzlevel[ 2 ], sizeof(Z_Level));
+        main_warp.read((char *) & twidth[ 2 ], sizeof(Width));
+        main_warp.read((char *) & theight[ 2 ], sizeof(Height));
+        main_warp.read((char *) & tminx[ 2 ], sizeof(Min_X));
+        main_warp.read((char *) & tminy[ 2 ], sizeof(Min_Y));
+        main_warp.read((char *) & tzlevel[ 2 ], sizeof(Z_Level));
 
-        all_container->read((char *) & twidth[ 3 ], sizeof(Width));
-        all_container->read((char *) & theight[ 3 ], sizeof(Height));
-        all_container->read((char *) & tminx[ 3 ], sizeof(Min_X));
-        all_container->read((char *) & tminy[ 3 ], sizeof(Min_Y));
-        all_container->read((char *) & tzlevel[ 3 ], sizeof(Z_Level));
+        all_container.read((char *) & twidth[ 3 ], sizeof(Width));
+        all_container.read((char *) & theight[ 3 ], sizeof(Height));
+        all_container.read((char *) & tminx[ 3 ], sizeof(Min_X));
+        all_container.read((char *) & tminy[ 3 ], sizeof(Min_Y));
+        all_container.read((char *) & tzlevel[ 3 ], sizeof(Z_Level));
 
         if ((twidth[ 0 ] == twidth[ 1 ]) && (twidth[ 1 ] == twidth[ 2 ]) && (twidth[ 2 ] == twidth[ 3 ])) {
             if ((theight[ 0 ] == theight[ 1 ]) && (theight[ 1 ] == theight[ 2 ]) && (theight[ 2 ] == theight[ 3 ])) {
@@ -476,14 +430,14 @@ bool Map::Load(std::string name, unsigned short int x_offs, unsigned short int y
                                 CONTAINERHASH::iterator conmapn;
 
                                 // Anzahl der Felder mit Eintr�en fr Containern
-                                all_container->read((char *) & fcount, sizeof(fcount));
+                                all_container.read((char *) & fcount, sizeof(fcount));
 
                                 for (unsigned long int i = 0; i < fcount; ++i) {
                                     // die Koordinate lesen
-                                    all_container->read((char *) & pos, sizeof pos);
+                                    all_container.read((char *) & pos, sizeof pos);
 
                                     // die Anzahl der Container in der CONTAINERMAP fr die aktuelle Koordinate lesen
-                                    all_container->read((char *) & icount, sizeof(icount));
+                                    all_container.read((char *) & icount, sizeof(icount));
 
                                     if (icount > 0) {
                                         // fr die Koordinate eine CONTAINERMAP anlegen
@@ -491,7 +445,7 @@ bool Map::Load(std::string name, unsigned short int x_offs, unsigned short int y
 
                                         for (MAXCOUNTTYPE k = 0; k < icount; ++k) {
                                             // die Kennung des Container lesen
-                                            all_container->read((char *) & key, sizeof(key));
+                                            all_container.read((char *) & key, sizeof(key));
 
                                             Field field;
 
@@ -519,17 +473,6 @@ bool Map::Load(std::string name, unsigned short int x_offs, unsigned short int y
 
                                 Map_initialized = true;
 
-                                delete main_map;
-                                main_map = NULL;
-                                delete main_item;
-                                main_item = NULL;
-                                delete main_warp;
-                                main_warp = 0;
-                                delete all_container;
-                                all_container = NULL;
-#ifdef Map_DEBUG
-                                std::cout << "Map: Load - end \n";
-#endif
                                 return true;
                             }
                         }
@@ -539,12 +482,7 @@ bool Map::Load(std::string name, unsigned short int x_offs, unsigned short int y
         }
     }
 
-    std::cerr << "Map: ERROR LOADING FILES \n";
-
-    delete main_map;
-    delete main_item;
-    delete main_warp;
-    delete all_container;
+    Logger::error(LogFacility::World) << "Map: ERROR LOADING FILES" << Log::end;
 
     return false;
 

@@ -191,42 +191,42 @@ void Item::resetWear() {
 }
 
 
-void Item::save(std::ostream *obj) const {
-    obj->write((char *) &id, sizeof(id_type));
-    obj->write((char *) &number, sizeof(number_type));
-    obj->write((char *) &wear, sizeof(wear_type));
-    obj->write((char *) &quality, sizeof(quality_type));
+void Item::save(std::ostream &obj) const {
+    obj.write((char *) &id, sizeof(id_type));
+    obj.write((char *) &number, sizeof(number_type));
+    obj.write((char *) &wear, sizeof(wear_type));
+    obj.write((char *) &quality, sizeof(quality_type));
     uint8_t mapsize = static_cast<uint8_t>(datamap.size());
-    obj->write((char *) &mapsize, sizeof(uint8_t));
+    obj.write((char *) &mapsize, sizeof(uint8_t));
 
     for (auto it = datamap.begin(); it != datamap.end(); ++it) {
         uint8_t sz1 = static_cast<uint8_t>(it->first.size());
         uint8_t sz2 = static_cast<uint8_t>(it->second.size());
-        obj->write((char *) &sz1 , sizeof(uint8_t));
-        obj->write((char *) &sz2 , sizeof(uint8_t));
-        obj->write((char *) it->first.data() , sz1);
-        obj->write((char *) it->second.data() , sz2);
+        obj.write((char *) &sz1 , sizeof(uint8_t));
+        obj.write((char *) &sz2 , sizeof(uint8_t));
+        obj.write((char *) it->first.data() , sz1);
+        obj.write((char *) it->second.data() , sz2);
     }
 }
 
 
-void Item::load(std::istream *obj) {
-    obj->read((char *) &id, sizeof(id_type));
-    obj->read((char *) &number, sizeof(number_type));
-    obj->read((char *) &wear, sizeof(wear_type));
-    obj->read((char *) &quality, sizeof(quality_type));
+void Item::load(std::istream &obj) {
+    obj.read((char *) &id, sizeof(id_type));
+    obj.read((char *) &number, sizeof(number_type));
+    obj.read((char *) &wear, sizeof(wear_type));
+    obj.read((char *) &quality, sizeof(quality_type));
     uint8_t tempsize;
-    obj->read((char *) &tempsize, sizeof(uint8_t));
+    obj.read((char *) &tempsize, sizeof(uint8_t));
     char readStr[255];
 
     for (int i = 0; i < tempsize; ++i) {
         uint8_t sz1 = 0;
         uint8_t sz2 = 0;
-        obj->read((char *) &sz1, sizeof(uint8_t));
-        obj->read((char *) &sz2, sizeof(uint8_t));
-        obj->read((char *) readStr, sz1);
+        obj.read((char *) &sz1, sizeof(uint8_t));
+        obj.read((char *) &sz2, sizeof(uint8_t));
+        obj.read((char *) readStr, sz1);
         std::string key(readStr,sz1);
-        obj->read((char *) readStr, sz2);
+        obj.read((char *) readStr, sz2);
         std::string value(readStr,sz2);
         datamap[key] = value;
     }

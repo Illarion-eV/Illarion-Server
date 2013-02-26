@@ -872,8 +872,8 @@ void World::Load(std::string prefix) {
     if (! mapinitfile.good()) {
         Logger::error(LogFacility::World) << "Error while loading maps: could not open " << (prefix + "_initmaps") << Log::end;
         Logger::info(LogFacility::World) << "trying to import maps" << Log::end;
-	load_maps();
-	return;
+        load_maps();
+        return;
     } else {
         unsigned short int size;
         mapinitfile.read((char *) & size, sizeof(size));
@@ -914,8 +914,8 @@ void World::Load(std::string prefix) {
 
     if (! specialfile.good()) {
         Logger::error(LogFacility::World) << "Error while loading maps: could not open " << (prefix + "_specialfields") << Log::end;
-	// TODO propably should terminate the server due to a severe error here...
-	return;
+        // TODO propably should terminate the server due to a severe error here...
+        return;
     } else {
         unsigned short int size3;
         specialfile.read((char *) & size3, sizeof(size3));

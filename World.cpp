@@ -204,7 +204,7 @@ bool World::load_maps() {
         strstr(maplist[numfiles]->d_name, ".tiles.txt")[0] = '\0';
         Logger::info(LogFacility::World) << "importing: " << Config::instance().datadir() << "map/import/" << maplist[numfiles]->d_name << Log::end;
 
-	ok &= load_from_editor(Config::instance().datadir() + "map/import/" + maplist[numfiles]->d_name);
+        ok &= load_from_editor(Config::instance().datadir() + "map/import/" + maplist[numfiles]->d_name);
 
     }
 

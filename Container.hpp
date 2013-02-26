@@ -70,8 +70,8 @@ public:
     bool InsertItem(Item it, TYPE_OF_CONTAINERSLOTS);
     bool InsertItem(Item it);
 
-    void Save(std::ofstream *where);
-    void Load(std::istream *where);
+    void Save(std::ofstream &where);
+    void Load(std::istream &where);
 
     void doAge(bool inventory = false);
 

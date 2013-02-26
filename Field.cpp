@@ -296,15 +296,15 @@ MAXCOUNTTYPE Field::NumberOfItems() {
 }
 
 
-void Field::Save(std::ostream *mapt, std::ostream *obj, std::ostream *warp) {
+void Field::Save(std::ostream &mapt, std::ostream &obj, std::ostream &warp) {
 
-    mapt->write((char *) & tile, sizeof(tile));
-    mapt->write((char *) & music, sizeof(music));
-    mapt->write((char *) & clientflags, sizeof(clientflags));
-    mapt->write((char *) & extraflags, sizeof(extraflags));
+    mapt.write((char *) & tile, sizeof(tile));
+    mapt.write((char *) & music, sizeof(music));
+    mapt.write((char *) & clientflags, sizeof(clientflags));
+    mapt.write((char *) & extraflags, sizeof(extraflags));
 
     unsigned char size = items.size();
-    obj->write((char *) & size, sizeof(size));
+    obj.write((char *) & size, sizeof(size));
 
     for (auto it = items.begin(); it < items.end(); ++it) {
         it->save(obj);
@@ -312,13 +312,13 @@ void Field::Save(std::ostream *mapt, std::ostream *obj, std::ostream *warp) {
 
     if (IsWarpField()) {
         char b = 1;
-        warp->write((char *) & b, sizeof(b));
-        warp->write((char *) & warptarget->x, sizeof(warptarget->x));
-        warp->write((char *) & warptarget->y, sizeof(warptarget->x));
-        warp->write((char *) & warptarget->z, sizeof(warptarget->x));
+        warp.write((char *) & b, sizeof(b));
+        warp.write((char *) & warptarget->x, sizeof(warptarget->x));
+        warp.write((char *) & warptarget->y, sizeof(warptarget->x));
+        warp.write((char *) & warptarget->z, sizeof(warptarget->x));
     } else {
         char b = 0;
-        warp->write((char *) & b, sizeof(b));
+        warp.write((char *) & b, sizeof(b));
     }
 }
 
@@ -350,19 +350,19 @@ void Field::giveExportItems(ITEMVECTOR &nonmoveitems) {
 }
 
 
-void Field::Load(std::istream *mapt, std::istream *obj, std::istream *warp) {
+void Field::Load(std::istream &mapt, std::istream &obj, std::istream &warp) {
 
-    mapt->read((char *) & tile, sizeof(tile));
-    mapt->read((char *) & music, sizeof(music));
-    mapt->read((char *) & clientflags, sizeof(clientflags));
-    mapt->read((char *) & extraflags, sizeof(extraflags));
+    mapt.read((char *) & tile, sizeof(tile));
+    mapt.read((char *) & music, sizeof(music));
+    mapt.read((char *) & clientflags, sizeof(clientflags));
+    mapt.read((char *) & extraflags, sizeof(extraflags));
 
     unsigned char ftemp = 255 - FLAG_NPCONFIELD - FLAG_MONSTERONFIELD - FLAG_PLAYERONFIELD;
 
     clientflags = clientflags & ftemp;
 
     MAXCOUNTTYPE size;
-    obj->read((char *) & size, sizeof(size));
+    obj.read((char *) & size, sizeof(size));
 
     items.clear();
     Item temp;
@@ -373,13 +373,13 @@ void Field::Load(std::istream *mapt, std::istream *obj, std::istream *warp) {
     }
 
     char iswarp = 0;
-    warp->read((char *) & iswarp, sizeof(iswarp));
+    warp.read((char *) & iswarp, sizeof(iswarp));
 
     if (iswarp == 1) {
         short int x, y, z;
-        warp->read((char *) & x, sizeof(warptarget->x));
-        warp->read((char *) & y, sizeof(warptarget->y));
-        warp->read((char *) & z, sizeof(warptarget->z));
+        warp.read((char *) & x, sizeof(warptarget->x));
+        warp.read((char *) & y, sizeof(warptarget->y));
+        warp.read((char *) & z, sizeof(warptarget->z));
         SetWarpField(position(x, y, z));
     }
 

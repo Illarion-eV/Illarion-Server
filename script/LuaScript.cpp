@@ -407,7 +407,7 @@ void LuaScript::init_base_functions() {
 
     luabind::value_vector skills;
 
-    for (const auto &skill : Data::Skills) {
+for (const auto &skill : Data::Skills) {
         skills.push_back(luabind::value(skill.second.serverName.c_str(), skill.first));
     }
 
@@ -739,8 +739,8 @@ void LuaScript::init_base_functions() {
         .def("removeEffect", (bool(LongTimeCharacterEffects:: *)(uint16_t))&LongTimeCharacterEffects::removeEffect)
         .def("removeEffect", (bool(LongTimeCharacterEffects:: *)(std::string))&LongTimeCharacterEffects::removeEffect)
         .def("removeEffect", (bool(LongTimeCharacterEffects:: *)(LongTimeEffect *))&LongTimeCharacterEffects::removeEffect)
-        .def("find", (bool(LongTimeCharacterEffects:: *)(uint16_t,LongTimeEffect *&))&LongTimeCharacterEffects::find,luabind::pure_out_value(_3))
-        .def("find", (bool(LongTimeCharacterEffects:: *)(std::string,LongTimeEffect *&))&LongTimeCharacterEffects::find,luabind::pure_out_value(_3)),
+        .def("find", (bool(LongTimeCharacterEffects:: *)(uint16_t,LongTimeEffect * &))&LongTimeCharacterEffects::find,luabind::pure_out_value(_3))
+        .def("find", (bool(LongTimeCharacterEffects:: *)(std::string,LongTimeEffect * &))&LongTimeCharacterEffects::find,luabind::pure_out_value(_3)),
         luabind::class_<Field>("Field")
         .def("tile", &Field::getTileId)
         //.def("changeQualityOfTopItem", &Field::changeQualityOfTopItem)

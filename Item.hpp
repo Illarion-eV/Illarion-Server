@@ -280,8 +280,8 @@ public:
     void reset();
     void resetWear();
 
-    void save(std::ostream *obj) const;
-    void load(std::istream *obj);
+    void save(std::ostream &obj) const;
+    void load(std::istream &obj);
 
     bool survivesAgeing();
     bool isContainer() const;

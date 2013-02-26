@@ -65,7 +65,7 @@ bool reloadTables() {
 
     Logger::notice(LogFacility::Script) << "Loading data and scripts ..." << Log::end;
 
-    for (auto &table : getTables()) {
+for (auto &table : getTables()) {
         success = success && table->reloadBuffer();
 
         if (!success) {
@@ -77,13 +77,13 @@ bool reloadTables() {
 }
 
 void reloadScripts() {
-    for (auto &table : getTables()) {
+for (auto &table : getTables()) {
         table->reloadScripts();
     }
 }
 
 void activateTables() {
-    for (auto &table : getTables()) {
+for (auto &table : getTables()) {
         table->activateBuffer();
     }
 }

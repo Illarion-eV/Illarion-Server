@@ -38,7 +38,7 @@ public:
         try {
             Database::SelectQuery query;
 
-            for (const auto &column : getColumnNames()) {
+for (const auto &column : getColumnNames()) {
                 query.addColumn(column);
             }
 
@@ -47,7 +47,7 @@ public:
 
             clear();
 
-            for (const auto &row : results) {
+for (const auto &row : results) {
                 evaluateRow(row);
             }
 

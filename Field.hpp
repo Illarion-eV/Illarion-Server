@@ -56,7 +56,7 @@ public:
     ~Field();
     Field &operator =(const Field &source);
 
-    void Save(std::ostream *mapt, std::ostream *obj, std::ostream *warp);
+    void Save(std::ostream &mapt, std::ostream &obj, std::ostream &warp);
 
     /**
     * changes the quality of the top item on this field
@@ -82,7 +82,7 @@ public:
     * @param obj the itemfile where the items are loaded from
     * @param warp the file where the warpfield is loaded from
     */
-    void Load(std::istream *mapt, std::istream *obj, std::istream *warp);
+    void Load(std::istream &mapt, std::istream &obj, std::istream &warp);
 
     /**
     * checks if a field is passable for characters

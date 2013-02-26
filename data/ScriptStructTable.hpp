@@ -50,7 +50,7 @@ public:
     virtual void reloadScripts() {
         scripts.clear();
 
-        for (const auto &scriptNameEntry : scriptNames) {
+for (const auto &scriptNameEntry : scriptNames) {
             const IdType &id = scriptNameEntry.first;
             const std::string &scriptName = scriptNameEntry.second;
 

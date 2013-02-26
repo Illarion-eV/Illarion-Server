@@ -52,7 +52,9 @@ uint8_t RaceSizeTable::getRelativeSize(Character::race_type race, uint16_t size)
     }
 
     const auto &sizes = (*this)[raceId];
+
     const auto minSize = sizes.minSize;
+
     const auto maxSize = sizes.maxSize;
 
     if (size >= minSize && size <= maxSize) {
