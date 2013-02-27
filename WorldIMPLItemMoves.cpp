@@ -28,9 +28,9 @@
 
 // TODO find a better place for the constants
 static const std::string message_overweight_german { "Du kannst nicht so viel tragen!"
-                                                   };
+};
 static const std::string message_overweight_english { "You can't carry that much!"
-                                                    };
+};
 
 extern std::shared_ptr<LuaDepotScript>depotScript;
 

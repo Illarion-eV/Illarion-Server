@@ -2427,56 +2427,56 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
 
 void Player::sendStepStripes(direction dir) {
     switch (dir) {
-    case(dir_north):
+    case (dir_north):
         //bewegung nach norden (Mapstripe links und oben)
         sendDirStripe(upper, false);
         sendDirStripe(left, false);
         break;
 
-    case(dir_northeast):
+    case (dir_northeast):
         //bewegung nach nordosten (Mapstripe oben)
         sendDirStripe(upper, true);
         sendDirStripe(upper, false);
         break;
 
-    case(dir_east) :
+    case (dir_east) :
         //bewegung nach osten (Mapstripe oben und rechts)
         sendDirStripe(upper, false);
         sendDirStripe(right, false);
         break;
 
-    case(dir_southeast):
+    case (dir_southeast):
         //bewegung suedosten (Mapstripe  rechts)
         sendDirStripe(right, true);
         sendDirStripe(right, false);
         break;
 
-    case(dir_south):
+    case (dir_south):
         //bewegung sueden (Mapstripe rechts und unten)
         sendDirStripe(right, false);
         sendDirStripe(lower, false);
         break;
 
-    case(dir_southwest):
+    case (dir_southwest):
         //bewegung suedwesten ( Mapstripe unten )
         sendDirStripe(lower, true);
         sendDirStripe(lower, false);
         break;
 
-    case(dir_west):
+    case (dir_west):
         //bewegung westen ( Mapstripe unten und links)
         sendDirStripe(lower, false);
         sendDirStripe(left, false);
         break;
 
-    case(dir_northwest):
+    case (dir_northwest):
         //bewegung nordwesten ( Mapstripe links )
         sendDirStripe(left, true);
         sendDirStripe(left, false);
         break;
 
-    case(dir_up):
-    case(dir_down):
+    case (dir_up):
+    case (dir_down):
         break;
     }
 }

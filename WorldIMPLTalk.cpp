@@ -180,7 +180,7 @@ void World::sendMessageToAllCharsInRange(const std::string &german, const std::s
     // tell the player himself what he wanted to say
     std::string prefix = languagePrefix(cc->activeLanguage);
 
-for (auto player : players) {
+    for (auto player : players) {
         if (!is_action && player->id != cc->id) {
             tempMessage = prefix + player->alterSpokenMessage(player->nls(spokenMessage_german, spokenMessage_english), player->getLanguageSkill(cc->activeLanguage));
             player->receiveText(tt, tempMessage, cc);
@@ -202,13 +202,13 @@ for (auto player : players) {
         std::vector<Monster *> monsters = Monsters.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, range);
 
         // tell all npcs
-for (auto npc : npcs) {
+        for (auto npc : npcs) {
             tempMessage=prefix + npc->alterSpokenMessage(english, npc->getLanguageSkill(cc->activeLanguage));
             npc->receiveText(tt, tempMessage, cc);
         }
 
         // tell all monsters
-for (auto monster : monsters) {
+        for (auto monster : monsters) {
             monster->receiveText(tt, english, cc);
         }
     }

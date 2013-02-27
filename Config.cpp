@@ -67,7 +67,7 @@ bool Config::load(const std::string &config_file) {
         }
     }
 
-for (auto item : config_options) {
+    for (auto item : config_options) {
         if (!item.second->isInitialized()) {
             std::cout << "[WARN] config entry missing for key: " << item.first << " using default value: " << *(item.second) << std::endl;
         }

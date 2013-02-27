@@ -83,7 +83,7 @@ void ScriptVariablesTable::save() {
         const InsertQuery::columnIndex idColumn = insQuery.addColumn("svt_ids");
         const InsertQuery::columnIndex valueColumn = insQuery.addColumn("svt_string");
 
-for (const auto &var : *this) {
+        for (const auto &var : *this) {
             if (var.second.length() > 0) {
                 insQuery.addValue<std::string>(idColumn, var.first);
                 insQuery.addValue<std::string>(valueColumn, var.second);
