@@ -58,6 +58,7 @@ extern "C" {
 #include "Random.hpp"
 #include <cxxabi.h>
 #include "Config.hpp"
+#include "script/forwarder.hpp"
 
 extern ScriptVariablesTable *scriptVariables;
 
@@ -588,7 +589,7 @@ void LuaScript::init_base_functions() {
         .def("callAttackScript", &Character::callAttackScript)
         .def("getItemList", &Character::getItemList)
         .def_readonly("lastSpokenText", &Character::lastSpokenText)
-        .def("getPlayerLanguage", &Character::getPlayerLanguageLua)
+        .def("getPlayerLanguage", getPlayerLanguageLua)
         .def("getBackPack", &Character::GetBackPack)
         .def("getDepot", &Character::GetDepot)
         .def("setQuestProgress", &Character::setQuestProgress)

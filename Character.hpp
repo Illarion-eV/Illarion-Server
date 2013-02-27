@@ -397,10 +397,6 @@ public:
         return Language::english;   //nothing to do at all
     } //mother_tongue}
 
-    uint32_t getPlayerLanguageLua() const {
-        return static_cast<uint32_t>(getPlayerLanguage());
-    }
-
     /**
     * returns the magic flags of the specified magic type of the char
     * <b>Lua: [:getMagicFlags]</b>

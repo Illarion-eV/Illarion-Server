@@ -53,7 +53,7 @@ db/ConnectionManager.cpp db/Connection.cpp db/Query.cpp \
 db/SelectQuery.cpp db/InsertQuery.cpp db/UpdateQuery.cpp db/DeleteQuery.cpp \
 db/QueryAssign.cpp db/QueryWhere.cpp db/QueryColumns.cpp db/QueryTables.cpp db/SchemaHelper.cpp \
 \
-script/LuaScript.cpp \
+script/LuaScript.cpp script/forwarder.cpp \
 script/LuaNPCScript.cpp script/LuaItemScript.cpp script/LuaMonsterScript.cpp \
 script/LuaMagicScript.cpp script/LuaTileScript.cpp script/LuaTriggerScript.cpp \
 script/LuaWeaponScript.cpp script/LuaScheduledScript.cpp script/LuaLongTimeEffectScript.cpp \
