@@ -588,7 +588,7 @@ void LuaScript::init_base_functions() {
         .def("callAttackScript", &Character::callAttackScript)
         .def("getItemList", &Character::getItemList)
         .def_readonly("lastSpokenText", &Character::lastSpokenText)
-        .def("getPlayerLanguage", &Character::getPlayerLanguage)
+        .def("getPlayerLanguage", &Character::getPlayerLanguageLua)
         .def("getBackPack", &Character::GetBackPack)
         .def("getDepot", &Character::GetDepot)
         .def("setQuestProgress", &Character::setQuestProgress)
@@ -825,8 +825,8 @@ void LuaScript::init_base_functions() {
         luabind::class_<Player, Character>("Player")
         .enum_("player_language")
         [
-            luabind::value("german",0),
-            luabind::value("english",1)
+            luabind::value("german", static_cast<uint32_t>(Language::german)),
+            luabind::value("english", static_cast<uint32_t>(Language::english))
         ],
         luabind::class_<World>("World")
         .def("LoS", &World::LuaLoS)

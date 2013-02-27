@@ -393,9 +393,13 @@ public:
     * <b>Lua: [:getPlayerLanguage()]</b>
     * @return the number which determines the player language 0 german, 1 english
     */
-    inline virtual const short unsigned int getPlayerLanguage() {
-        return 1;   //nothing to do at all
+    virtual Language getPlayerLanguage() const {
+        return Language::english;   //nothing to do at all
     } //mother_tongue}
+
+    uint32_t getPlayerLanguageLua() const {
+        return static_cast<uint32_t>(getPlayerLanguage());
+    }
 
     /**
     * returns the magic flags of the specified magic type of the char

@@ -367,7 +367,7 @@ public:
 
     virtual std::string getSkillName(TYPE_OF_SKILL_ID s);
     //! Returns the language which the player specified when creating the Character (german/english)
-    Language getPlayerLanguage() const;
+    virtual Language getPlayerLanguage() const;
 
     void sendCharacters();
 
