@@ -103,7 +103,7 @@ public:
     } mapreferences;
 
 
-    virtual std::string to_string() const;
+    virtual std::string to_string() const override;
 
     void workoutCommands();
 
@@ -147,7 +147,7 @@ public:
     uint8_t screenwidth;
     uint8_t screenheight;
 
-    virtual unsigned short int getScreenRange() const;
+    virtual unsigned short int getScreenRange() const override;
 
     //! die Verbindung zum Spieler, -- Achtung ! Die Verbindung wird NICHT im Destruktor gel�cht
     // , da sie auch extern erstellt wird und durch das Einfgen in diverse
@@ -163,7 +163,7 @@ public:
     const std::string &nls(const std::string &german, const std::string &english) const;
     void checkBurden();
 
-    virtual bool pageGM(std::string ticket);
+    virtual bool pageGM(std::string ticket) override;
 
     // send a char appearance; always or only if char not yet visible
     void sendCharAppearance(TYPE_OF_CHARACTER_ID id, const boost::shared_ptr<BasicServerCommand> &appearance, bool always);
@@ -177,78 +177,78 @@ public:
     */
     std::unique_ptr<LongTimeAction> ltAction;
 
-    virtual void startAction(unsigned short int wait, unsigned short int ani=0, unsigned short int redoani=0, unsigned short int sound=0, unsigned short int redosound=0);
-    virtual void abortAction();
-    virtual void successAction();
-    virtual void actionDisturbed(Character *disturber);
+    virtual void startAction(unsigned short int wait, unsigned short int ani=0, unsigned short int redoani=0, unsigned short int sound=0, unsigned short int redosound=0) override;
+    virtual void abortAction() override;
+    virtual void successAction() override;
+    virtual void actionDisturbed(Character *disturber) override;
 
     /**
     *changes the source of the last action of this Player
     *<b>Lua: [:changeSource]</b>
     *@param cc source is a character the pointer to this character
     */
-    virtual void changeSource(Character *cc);
+    virtual void changeSource(Character *cc) override;
 
     /**
     *changes the source of the last action for this player
     *<b>Lua: [:changeSource]</b>
     *@param sI source is a item the new item
     */
-    inline virtual void changeSource(ScriptItem sI);
+    inline virtual void changeSource(ScriptItem sI) override;
 
     /**
     *changes the Source of the last action for this player.
     *<b>Lua: [:changeSource]</b>
     *@param pos source is a position the new position
     */
-    inline virtual void changeSource(position pos);
+    inline virtual void changeSource(position pos) override;
 
     /**
     *changes the Source of the last action to nothing for this player
     *<b>Lua: [:changeSource]</b>
     */
-    inline virtual void changeSource();
+    inline virtual void changeSource() override;
 
     /**
     *changes the Target of the last action for this player.
     *<b>Lua: [:changeTarget]</b>
     *@param cc target is a character the pointer to this character
     */
-    inline virtual void changeTarget(Character *cc);
+    inline virtual void changeTarget(Character *cc) override;
 
     /**
     *changes the Target of the last action for this player.
     *<b>Lua: [:changeTarget]</b>
     *@param sI target is a item the new item
     */
-    inline virtual void changeTarget(ScriptItem sI);
+    inline virtual void changeTarget(ScriptItem sI) override;
 
     /**
     *changes the target of the last action for this player.
     *<b>Lua: [:changeTarget]</b>
     *@param pos Target is a position the new position
     */
-    inline virtual void changeTarget(position pos);
+    inline virtual void changeTarget(position pos) override;
 
     /**
     *changes the Target of the last action to nothing for this player
     *<b>Lua: [:changeTarget]</b>
     */
-    inline virtual void changeTarget();
+    inline virtual void changeTarget() override;
 
     /**
     * returns the number of seconds the player has been idle, not actively issuing commands
     * <b>Lua: [:idleTime]</b>
     * @return number of seconds the player has been idle
     */
-    virtual uint32_t idleTime();
+    virtual uint32_t idleTime() override;
 
     /**
     * send a book ID to the client
     * <b>Lua: [:sendBook]</b>
     * @param bookID id of the book
     */
-    virtual void sendBook(uint16_t bookID);
+    virtual void sendBook(uint16_t bookID) override;
 
     /**
     * send a character description to the player if the  char is a player
@@ -256,7 +256,7 @@ public:
     * @param id of the character from which the description is sended
     * @param desc the current descpription
     */
-    virtual void sendCharDescription(TYPE_OF_CHARACTER_ID id,const std::string &desc);
+    virtual void sendCharDescription(TYPE_OF_CHARACTER_ID id,const std::string &desc) override;
 
     //! normal constructor
     Player(boost::shared_ptr<NetInterface> newConnection) throw(LogoutException);
@@ -352,22 +352,22 @@ public:
     //! L�st den Player Magie lernen. Fr standard Charactere keine Funktion in Player berladen
     //\param type Magierichtung die gelernt werden soll (0 Magier, 1 Priester, 2 Barde, 3 Druide)
     //\param flag Magieflags die gelernt werden sollen
-    virtual void teachMagic(unsigned char type, unsigned char flag);
+    virtual void teachMagic(unsigned char type, unsigned char flag) override;
 
     //! Sets the active magic type of a player (druid/mage/...)
     //\param newMagType Magierichtung, die jetzt aktiv ist (0 Magier, 1 Priester, 2 Barde, 3 Druide)
-    virtual void set_magic_type(magic_type newMagType) {
+    virtual void set_magic_type(magic_type newMagType) override {
         magic.type=newMagType;
         sendMagicFlags(magic.type);
     }
 
-    virtual void setInformChar(bool newInformChar) {
+    virtual void setInformChar(bool newInformChar) override {
         informCharacter=newInformChar;
     }
 
-    virtual std::string getSkillName(TYPE_OF_SKILL_ID s);
+    virtual std::string getSkillName(TYPE_OF_SKILL_ID s) override;
     //! Returns the language which the player specified when creating the Character (german/english)
-    virtual Language getPlayerLanguage() const;
+    virtual Language getPlayerLanguage() const override;
 
     void sendCharacters();
 
@@ -385,20 +385,20 @@ public:
 
     void ageInventory();
 
-    virtual int createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, const luabind::object &data);
+    virtual int createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, const luabind::object &data) override;
 
-    virtual void learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opponent);
+    virtual void learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opponent) override;
 
-    virtual unsigned short int increaseSkill(TYPE_OF_SKILL_ID skill, short int amount);
+    virtual unsigned short int increaseSkill(TYPE_OF_SKILL_ID skill, short int amount) override;
 
-    virtual void deleteAllSkills();
+    virtual void deleteAllSkills() override;
 
     //! löscht count Item mit der ID itemid aus dem Inventory des Player
     // und schickt ein Update an den Spieler
     // \param itemid die Id der zu löschenden Item
     // \param count die Anzahl der zu löschenden Item
     // \return Anzahl der Item die nicht gelöcht werden konnten
-    virtual int eraseItem(TYPE_OF_ITEM_ID itemid, int count);
+    virtual int eraseItem(TYPE_OF_ITEM_ID itemid, int count) override;
 
     //! löscht count Items mit der ID itemid aus dem Inventory des Player
     // und schickt ein Update an den Spieler
@@ -406,7 +406,7 @@ public:
     // \param count die Anzahl der zu löschenden Items
     // \oaram data Datawert der zu löschenden Items
     // \return Anzahl der Items, die nicht gelöscht werden konnten
-    virtual int eraseItem(TYPE_OF_ITEM_ID itemid, int count, const luabind::object &data);
+    virtual int eraseItem(TYPE_OF_ITEM_ID itemid, int count, const luabind::object &data) override;
 
     //! ver�dert die Anzahl des Item an der Position pos um count
     // und schickt ein Update an den Spieler
@@ -443,7 +443,7 @@ public:
     // \param value der Wert des Attributs
     void sendAttrib(Character::attributeIndex attribute);
 
-    virtual void handleAttributeChange(Character::attributeIndex attribute);
+    virtual void handleAttributeChange(Character::attributeIndex attribute) override;
 
 
     void startMusic(short int which);
@@ -479,7 +479,7 @@ public:
 
     //Set for Admin state, uin32_t bit flag
     void setAdmin(uint32_t tAdmin);
-    virtual bool isAdmin() const;
+    virtual bool isAdmin() const override;
 
     void setEncumberedSent(bool tEncumberedSent);
     bool wasEncumberedSent();
@@ -488,36 +488,36 @@ public:
     bool wasUnconsciousSent();
 
     // player gets informed about something
-    virtual void inform(const std::string &text, informType type = informServer) const;
-    virtual void informLua(const std::string &text) const;
-    virtual void informLua(const std::string &german, const std::string &english) const;
-    virtual void informLua(const std::string &text, informType type) const;
-    virtual void informLua(const std::string &german, const std::string &english, informType type) const;
+    virtual void inform(const std::string &text, informType type = informServer) const override;
+    virtual void informLua(const std::string &text) const override;
+    virtual void informLua(const std::string &german, const std::string &english) const override;
+    virtual void informLua(const std::string &text, informType type) const override;
+    virtual void informLua(const std::string &german, const std::string &english, informType type) const override;
 
     // player heard something
-    virtual void receiveText(talk_type tt, std::string message, Character *cc);
+    virtual void receiveText(talk_type tt, std::string message, Character *cc) override;
 
     bool knows(Player *player) const;
     void getToKnow(Player *player);
-    virtual void introducePlayer(Player *player);
+    virtual void introducePlayer(Player *player) override;
 
     // Move the Player
     using Character::move;
-    virtual bool move(direction dir, uint8_t mode);
+    bool move(direction dir, uint8_t mode);
 
     // Increase Movement Cost by encumburance
     // \return true if walking possible else false
-    virtual bool encumberance(uint16_t &movementCost);
+    bool encumberance(uint16_t &movementCost);
 
-    virtual bool Warp(position newPos);
-    virtual bool forceWarp(position newPos);
+    virtual bool Warp(position newPos) override;
+    virtual bool forceWarp(position newPos) override;
 
-    virtual void openDepot(uint16_t depotid);
+    void openDepot(uint16_t depotid);
 
-    virtual void setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS progress);
+    virtual void setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS progress) override;
     void sendQuestProgress(TYPE_OF_QUEST_ID questId, TYPE_OF_QUESTSTATUS progress);
     void sendCompleteQuestProgress();
-    virtual TYPE_OF_QUESTSTATUS getQuestProgress(TYPE_OF_QUEST_ID questid) throw();
+    virtual TYPE_OF_QUESTSTATUS getQuestProgress(TYPE_OF_QUEST_ID questid) throw() override;
 
 #ifdef _PLAYER_AUTO_SAVE_
     void checkSave();
@@ -558,29 +558,29 @@ private:
     }
 
 public:
-    virtual void requestInputDialog(InputDialog *inputDialog);
+    virtual void requestInputDialog(InputDialog *inputDialog) override;
     void executeInputDialog(unsigned int dialogId, bool success, std::string input);
 
-    virtual void requestMessageDialog(MessageDialog *messageDialog);
+    virtual void requestMessageDialog(MessageDialog *messageDialog) override;
     void executeMessageDialog(unsigned int dialogId);
 
-    virtual void requestMerchantDialog(MerchantDialog *merchantDialog);
+    virtual void requestMerchantDialog(MerchantDialog *merchantDialog) override;
     void executeMerchantDialogAbort(unsigned int dialogId);
     void executeMerchantDialogBuy(unsigned int dialogId, MerchantDialog::index_type index, Item::number_type amount);
     void executeMerchantDialogSell(unsigned int dialogId, uint8_t location, TYPE_OF_CONTAINERSLOTS slot, Item::number_type amount);
 
-    virtual void requestSelectionDialog(SelectionDialog *selectionDialog);
+    virtual void requestSelectionDialog(SelectionDialog *selectionDialog) override;
     void executeSelectionDialog(unsigned int dialogId, bool success, SelectionDialog::index_type index);
 
-    virtual void requestCraftingDialog(CraftingDialog *craftingDialog);
+    virtual void requestCraftingDialog(CraftingDialog *craftingDialog) override;
     void executeCraftingDialogAbort(unsigned int dialogId);
     void executeCraftingDialogCraft(unsigned int dialogId, uint8_t craftIndex, uint8_t craftAmount);
     void executeCraftingDialogCraftingComplete(unsigned int dialogId);
     void executeCraftingDialogCraftingAborted(unsigned int dialogId);
     void executeCraftingDialogLookAtCraftable(unsigned int dialogId, uint8_t craftIndex);
     void executeCraftingDialogLookAtIngredient(unsigned int dialogId, uint8_t craftIndex, uint8_t craftIngredient);
-    virtual void requestCraftingLookAt(unsigned int dialogId, ItemLookAt &lookAt);
-    virtual void requestCraftingLookAtIngredient(unsigned int dialogId, ItemLookAt &lookAt);
+    virtual void requestCraftingLookAt(unsigned int dialogId, ItemLookAt &lookAt) override;
+    virtual void requestCraftingLookAtIngredient(unsigned int dialogId, ItemLookAt &lookAt) override;
 
     void invalidateDialogs();
     void closeDialogsOnMove();
@@ -590,7 +590,7 @@ private:
 protected:
 
     // shared code for all eraseItem methods
-    virtual int _eraseItem(TYPE_OF_ITEM_ID itemid, int count, const luabind::object &data, bool useData);
+    virtual int _eraseItem(TYPE_OF_ITEM_ID itemid, int count, const luabind::object &data, bool useData) override;
 
 private:
 

@@ -40,7 +40,7 @@ public:
     UpdateQuery(const UpdateQuery &org) = delete;
     UpdateQuery &operator=(const UpdateQuery &org) = delete;
 
-    virtual Result execute();
+    virtual Result execute() override;
 };
 }
 

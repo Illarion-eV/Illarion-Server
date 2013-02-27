@@ -27,10 +27,10 @@
 
 class TilesModificatorTable : public StructTable<TYPE_OF_ITEM_ID, TilesModificatorStruct> {
 public:
-    virtual std::string getTableName();
-    virtual std::vector<std::string> getColumnNames();
-    virtual TYPE_OF_ITEM_ID assignId(const Database::ResultTuple &row);
-    virtual TilesModificatorStruct assignTable(const Database::ResultTuple &row);
+    virtual std::string getTableName() override;
+    virtual std::vector<std::string> getColumnNames() override;
+    virtual TYPE_OF_ITEM_ID assignId(const Database::ResultTuple &row) override;
+    virtual TilesModificatorStruct assignTable(const Database::ResultTuple &row) override;
     bool nonPassable(TYPE_OF_ITEM_ID id);
 };
 

@@ -79,7 +79,7 @@ public:
     void setSelectedIndex(index_type index);
 
     void setCloseOnMove();
-    virtual bool closeOnMove() const;
+    virtual bool closeOnMove() const override;
 };
 
 #endif

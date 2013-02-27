@@ -99,18 +99,18 @@ public:
 
     virtual ~InputDialogTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         dialogId = getIntFromBuffer();
         success = getUnsignedCharFromBuffer() > 0;
         input = getStringFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->executeInputDialog(dialogId, success, input);
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new InputDialogTS());
         return cmd;
     }
@@ -126,16 +126,16 @@ public:
 
     virtual ~MessageDialogTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         dialogId = getIntFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->executeMessageDialog(dialogId);
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new MessageDialogTS());
         return cmd;
     }
@@ -157,7 +157,7 @@ public:
 
     virtual ~MerchantDialogTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         dialogId = getIntFromBuffer();
         result = getUnsignedCharFromBuffer();
 
@@ -178,7 +178,7 @@ public:
         }
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
 
         switch (result) {
@@ -196,7 +196,7 @@ public:
         }
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new MerchantDialogTS());
         return cmd;
     }
@@ -214,18 +214,18 @@ public:
 
     virtual ~SelectionDialogTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         dialogId = getIntFromBuffer();
         success = getUnsignedCharFromBuffer() > 0;
         selectedIndex = getUnsignedCharFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->executeSelectionDialog(dialogId, success, selectedIndex);
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new SelectionDialogTS());
         return cmd;
     }
@@ -245,7 +245,7 @@ public:
 
     virtual ~CraftingDialogTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         dialogId = getIntFromBuffer();
         result = getUnsignedCharFromBuffer();
 
@@ -269,7 +269,7 @@ public:
         }
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
 
         switch (result) {
@@ -291,7 +291,7 @@ public:
         }
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new CraftingDialogTS());
         return cmd;
     }
@@ -304,11 +304,11 @@ public:
 
     virtual ~RequestAppearanceTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         id = getIntFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         Character *ch = World::get()->Players.findID(id);
 
@@ -327,7 +327,7 @@ public:
 
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new RequestAppearanceTS());
         return cmd;
     }
@@ -353,12 +353,12 @@ public:
 
     }
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         id = getIntFromBuffer();
         mode = getUnsignedCharFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
 
         if (id < MONSTER_BASE) {
@@ -411,7 +411,7 @@ public:
 
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new LookAtCharacterTS());
         return cmd;
     }
@@ -439,7 +439,7 @@ public:
     virtual ~CastTS() {
     };
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         spellId = static_cast<unsigned long int>(getIntFromBuffer());
         cid = getUnsignedCharFromBuffer();
 
@@ -464,7 +464,7 @@ public:
         }
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
         Logger::debug(LogFacility::Script) << player->name << " is casting!" << Log::end;
@@ -838,7 +838,7 @@ public:
         }
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new CastTS());
         return cmd;
 
@@ -864,7 +864,7 @@ public:
     virtual ~UseTS() {
     };
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         useId = getUnsignedCharFromBuffer();
 
         switch (useId) {
@@ -885,7 +885,7 @@ public:
         }
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
 
@@ -1119,7 +1119,7 @@ public:
 
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new UseTS());
         return cmd;
     }
@@ -1143,15 +1143,15 @@ public:
 
     virtual ~KeepAliveTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         Logger::debug(LogFacility::Player) << "KEEPALIVE_TS from player " << player->name << Log::end;
         time(&(player->lastkeepalive));
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new KeepAliveTS());
         return cmd;
     }
@@ -1168,15 +1168,15 @@ public:
 
     virtual ~RequestSkillsTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->sendAllSkills();
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new RequestSkillsTS());
         return cmd;
     }
@@ -1193,10 +1193,10 @@ public:
 
     virtual ~AttackStopTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
         player->attackmode = false;
@@ -1205,7 +1205,7 @@ public:
         player->Connection->addCommand(cmd);
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new AttackStopTS());
         return cmd;
     }
@@ -1222,11 +1222,11 @@ public:
 
     virtual ~LookAtInventoryItemTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         pos = getUnsignedCharFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         Logger::debug(LogFacility::World) << player->name << " looks at an item in the inventory." << Log::end;
         time(&(player->lastaction));
 
@@ -1236,7 +1236,7 @@ public:
         }
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new LookAtInventoryItemTS());
         return cmd;
     }
@@ -1254,12 +1254,12 @@ public:
 
     virtual ~LookAtShowCaseItemTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         showcase = getUnsignedCharFromBuffer();
         pos = getUnsignedCharFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         Logger::debug(LogFacility::World) << player->name << " looks at an item in a container." << Log::end;
         time(&(player->lastaction));
 
@@ -1269,7 +1269,7 @@ public:
         }
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new LookAtShowCaseItemTS());
         return cmd;
     }
@@ -1288,14 +1288,14 @@ public:
 
     virtual ~MoveItemFromPlayerToShowCaseTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         cpos = getUnsignedCharFromBuffer();
         showcase = getUnsignedCharFromBuffer();
         pos = getUnsignedCharFromBuffer();
         count = getShortIntFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
         Logger::debug(LogFacility::World) << player->name << "moves an item from the inventory to showcase!" << Log::end;
@@ -1306,7 +1306,7 @@ public:
         }
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new MoveItemFromPlayerToShowCaseTS());
         return cmd;
     }
@@ -1327,14 +1327,14 @@ public:
 
     virtual ~MoveItemFromShowCaseToPlayerTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         showcase = getUnsignedCharFromBuffer();
         pos = getUnsignedCharFromBuffer();
         cpos = getUnsignedCharFromBuffer();
         count = getShortIntFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
         Logger::debug(LogFacility::World) << player->name << " moves an item from the shocase to the inventory!" << Log::end;
@@ -1345,7 +1345,7 @@ public:
         }
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new MoveItemFromShowCaseToPlayerTS());
         return cmd;
     }
@@ -1366,13 +1366,13 @@ public:
 
     virtual ~MoveItemInsideInventoryTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         opos = getUnsignedCharFromBuffer();
         npos = getUnsignedCharFromBuffer();
         count = getShortIntFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
         Logger::debug(LogFacility::World) << player->name << "moves an item inside the inventory!" << Log::end;
@@ -1383,7 +1383,7 @@ public:
         }
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new MoveItemInsideInventoryTS());
         return cmd;
     }
@@ -1403,7 +1403,7 @@ public:
 
     virtual ~DropItemFromInventoryOnMapTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         pos = getUnsignedCharFromBuffer();
         xc = static_cast<short int>(getShortIntFromBuffer());
         yc = static_cast<short int>(getShortIntFromBuffer());
@@ -1411,7 +1411,7 @@ public:
         count = getShortIntFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
         Logger::debug(LogFacility::World) << player->name << " throws an item from inventory on the map!" << Log::end;
@@ -1419,7 +1419,7 @@ public:
         player->actionPoints -= P_ITEMMOVE_COST;
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new DropItemFromInventoryOnMapTS());
         return cmd;
     }
@@ -1439,13 +1439,13 @@ public:
 
     virtual ~MoveItemFromMapToPlayerTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         dir = getUnsignedCharFromBuffer();
         pos = getUnsignedCharFromBuffer();
         count = getShortIntFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
         Logger::debug(LogFacility::World) << player->name << " moves an Item from the map to the inventory!" << Log::end;
@@ -1456,7 +1456,7 @@ public:
         }
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new MoveItemFromMapToPlayerTS());
         return cmd;
     }
@@ -1476,14 +1476,14 @@ public:
 
     virtual ~MoveItemFromMapIntoShowCaseTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         dir = getUnsignedCharFromBuffer();
         showcase = getUnsignedCharFromBuffer();
         pos = getUnsignedCharFromBuffer();
         count = getShortIntFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
         Logger::debug(LogFacility::World) << player->name << " moves an item from the map to the showcase!" << Log::end;
@@ -1494,7 +1494,7 @@ public:
         }
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new MoveItemFromMapIntoShowCaseTS());
         return cmd;
     }
@@ -1515,7 +1515,7 @@ public:
 
     virtual ~MoveItemBetweenShowCasesTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         source = getUnsignedCharFromBuffer();
         spos = getUnsignedCharFromBuffer();
         dest = getUnsignedCharFromBuffer();
@@ -1523,7 +1523,7 @@ public:
         count = getShortIntFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
         Logger::debug(LogFacility::World) << player->name << " moves an item between showcases!" << Log::end;
@@ -1534,7 +1534,7 @@ public:
         }
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new MoveItemBetweenShowCasesTS());
         return cmd;
     }
@@ -1556,7 +1556,7 @@ public:
 
     virtual ~DropItemFromShowCaseOnMapTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         showcase = getUnsignedCharFromBuffer();
         pos = getUnsignedCharFromBuffer();
         xc = static_cast<short int>(getShortIntFromBuffer());
@@ -1565,7 +1565,7 @@ public:
         count = getShortIntFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
         Logger::debug(LogFacility::World) << player->name << " moves an item from showcase to the map!" << Log::end;
@@ -1573,7 +1573,7 @@ public:
         player->actionPoints -= P_ITEMMOVE_COST;
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new DropItemFromShowCaseOnMapTS());
         return cmd;
     }
@@ -1594,11 +1594,11 @@ public:
 
     virtual ~CloseContainerInShowCaseTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         showcase = getUnsignedCharFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
         Logger::debug(LogFacility::World) << player->name << " closes a container in the showcase" << Log::end;
@@ -1608,7 +1608,7 @@ public:
         }
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new CloseContainerInShowCaseTS());
         return cmd;
     }
@@ -1626,12 +1626,12 @@ public:
 
     virtual ~LookIntoShowCaseContainerTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         showcase = getUnsignedCharFromBuffer();
         pos = getUnsignedCharFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
         Logger::debug(LogFacility::World) << player->name << " looks into a container in a showcase!" << Log::end;
@@ -1639,7 +1639,7 @@ public:
         player->actionPoints -= P_LOOK_COST;
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new LookIntoShowCaseContainerTS());
         return cmd;
     }
@@ -1658,10 +1658,10 @@ public:
 
     virtual ~LookIntoInventoryTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
         Logger::debug(LogFacility::World) << player->name << " looks into his backpack" << Log::end;
@@ -1669,7 +1669,7 @@ public:
         player->actionPoints -= P_LOOK_COST;
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new LookIntoInventoryTS());
         return cmd;
     }
@@ -1686,11 +1686,11 @@ public:
 
     virtual ~LookIntoContainerOnFieldTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         direction = getUnsignedCharFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
         Logger::debug(LogFacility::World) << player->name << " looks into a container on the map" << Log::end;
@@ -1701,7 +1701,7 @@ public:
         }
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new LookIntoContainerOnFieldTS());
         return cmd;
     }
@@ -1722,16 +1722,16 @@ public:
 
     virtual ~LogOutTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         player->ltAction->abortAction();
         Logger::info(LogFacility::Player) << player->name << " logt aus" << Log::end;
         player->Connection->closeConnection();
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new LogOutTS());
         return cmd;
     }
@@ -1751,17 +1751,17 @@ public:
 
     virtual ~WhisperTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         text = getStringFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         Logger::debug(LogFacility::World) << player->name << " whispers something!" << Log::end;
         player->talk(Character::tt_whisper, text);
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new WhisperTS());
         return cmd;
     }
@@ -1782,16 +1782,16 @@ public:
 
     virtual ~ShoutTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         text = getStringFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->talk(Character::tt_yell, text);
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new ShoutTS());
         return cmd;
     }
@@ -1812,11 +1812,11 @@ public:
 
     virtual ~SayTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         text = getStringFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         Logger::debug(LogFacility::World) << player->name << " whispers something!" << Log::end;
 
@@ -1827,7 +1827,7 @@ public:
         }
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new SayTS());
         return cmd;
     }
@@ -1848,17 +1848,17 @@ public:
 
     virtual ~RefreshTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         Logger::debug(LogFacility::World) << player->name << " want sended a refresh_ts, sending map!" << Log::end;
         //update the current mapview
         player->sendFullMap();
         World::get()->sendAllVisibleCharactersToPlayer(player, true);
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new RefreshTS());
         return cmd;
     }
@@ -1878,10 +1878,10 @@ public:
 
     virtual ~IntroduceTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         Logger::debug(LogFacility::World) << player->name << " introduces himself!" << Log::end;
 
@@ -1890,7 +1890,7 @@ public:
         }
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new IntroduceTS());
         return cmd;
     }
@@ -1911,11 +1911,11 @@ public:
 
     virtual ~AttackPlayerTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         enemyid = getIntFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
 
         if (player->IsAlive() && player->GetStatus() < 10) {
@@ -1944,7 +1944,7 @@ public:
         }
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new AttackPlayerTS());
         return cmd;
     }
@@ -1966,13 +1966,13 @@ public:
 
     virtual ~LookAtMapItemTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         x = getShortIntFromBuffer();
         y = getShortIntFromBuffer();
         z = getShortIntFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         Logger::debug(LogFacility::World) << player->name << " looks at a map item." << Log::end;
 
@@ -1983,7 +1983,7 @@ public:
 
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new LookAtMapItemTS());
         return cmd;
     }
@@ -2006,10 +2006,10 @@ public:
 
     virtual ~PSpinActionTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
         Logger::debug(LogFacility::World) << "Player changes his dircetion: " << player->name << " temp: " << direction << Log::end;
@@ -2019,7 +2019,7 @@ public:
         }
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new PSpinActionTS(direction));
         return cmd;
     }
@@ -2041,13 +2041,13 @@ public:
 
     virtual ~CharMoveTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         charid = getIntFromBuffer();
         direction = getUnsignedCharFromBuffer();
         mode = getUnsignedCharFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
 
         if (charid == player->id && (mode == NORMALMOVE || mode == RUNNING)) {
@@ -2074,7 +2074,7 @@ public:
         }
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new CharMoveTS());
         return cmd;
     }
@@ -2100,14 +2100,14 @@ public:
 
     virtual ~IMoverActionTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         xc = getShortIntFromBuffer();
         yc = getShortIntFromBuffer();
         zc = getShortIntFromBuffer();
         count = getShortIntFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
         Logger::debug(LogFacility::World) << player->name << " tryes to move an Item!" << Log::end;
@@ -2118,7 +2118,7 @@ public:
         }
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new IMoverActionTS(direction));
         return cmd;
     }
@@ -2140,17 +2140,17 @@ public:
 
     virtual ~LoginCommandTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         clientVersion = getUnsignedCharFromBuffer();
         loginName = getStringFromBuffer();
         passwort = getStringFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastaction));
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new LoginCommandTS());
         return cmd;
     }
@@ -2173,12 +2173,12 @@ public:
 
     virtual ~ScreenSizeCommandTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         width = getUnsignedCharFromBuffer();
         height = getUnsignedCharFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         // Set screen width and screen height
         player->screenwidth = width;
         player->screenheight = height;
@@ -2186,7 +2186,7 @@ public:
         player->sendCharacters();
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new ScreenSizeCommandTS());
         return cmd;
     }

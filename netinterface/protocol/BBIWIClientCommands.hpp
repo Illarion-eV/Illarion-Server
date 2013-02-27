@@ -63,11 +63,11 @@ public:
 
     virtual ~BBBroadCastTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         msg = getStringFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         World::get()->sendMessageToAllPlayers(msg);
         World::get()->monitoringClientList->sendCommand(boost::shared_ptr<BasicServerCommand>(new BBMessageTC("[Server] Broadcast:",0)));
         World::get()->monitoringClientList->sendCommand(boost::shared_ptr<BasicServerCommand>(new BBMessageTC(msg, 0)));
@@ -75,7 +75,7 @@ public:
         World::get()->monitoringClientList->sendCommand(boost::shared_ptr<BasicServerCommand>(new BBMessageTC(message,0)));
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new BBBroadCastTS());
         return cmd;
     }
@@ -95,12 +95,12 @@ public:
 
     virtual ~BBRequestStatTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         id = getIntFromBuffer();
         name = getStringFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         Player *tempPlayer = World::get()->Players.find(name);
 
         if (tempPlayer == NULL) {
@@ -148,7 +148,7 @@ public:
         }
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new BBRequestStatTS());
         return cmd;
     }
@@ -169,12 +169,12 @@ public:
 
     virtual ~BBRequestSkillsTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         id = getIntFromBuffer();
         name = getStringFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         Player *tempPlayer = World::get()->Players.find(name);
 
         if (tempPlayer == NULL) {
@@ -197,7 +197,7 @@ public:
         }
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new BBRequestSkillsTS());
         return cmd;
     }
@@ -218,13 +218,13 @@ public:
 
     virtual ~BBSpeakAsTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         id = getIntFromBuffer();
         name = getStringFromBuffer();
         message = getStringFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         Player *tempPlayer = World::get()->Players.find(name);
 
         if (tempPlayer == NULL) {
@@ -243,7 +243,7 @@ public:
         }
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new BBSpeakAsTS());
         return cmd;
     }
@@ -267,7 +267,7 @@ public:
 
     virtual ~BBWarpPlayerTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         id = getIntFromBuffer();
         name = getStringFromBuffer();
         posx = getIntFromBuffer();
@@ -275,7 +275,7 @@ public:
         posz = getIntFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         Player *tempPlayer = World::get()->Players.find(name);
 
         if (tempPlayer == NULL) {
@@ -294,7 +294,7 @@ public:
         }
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new BBWarpPlayerTS());
         return cmd;
     }
@@ -316,11 +316,11 @@ public:
 
     virtual ~BBServerCommandTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         _command = getStringFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         if (_command == "nuke") {
             World::get()->montool_kill_command(player);
         }
@@ -342,7 +342,7 @@ public:
         }
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new BBServerCommandTS());
         return cmd;
     }
@@ -362,7 +362,7 @@ public:
 
     virtual ~BBChangeAttribTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         _plid = getIntFromBuffer();
         _plname = getStringFromBuffer();
         _attr = getStringFromBuffer();
@@ -370,7 +370,7 @@ public:
         std::cout<<"received ChangeAttrib: "<<_plid<<" "<<_plname<<" "<<_attr<<" "<<_value<<std::endl;
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         Player *tempPlayer = World::get()->Players.find(_plname);
 
         if (tempPlayer == NULL) {
@@ -388,7 +388,7 @@ public:
         }
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new BBChangeAttribTS());
         return cmd;
     }
@@ -411,7 +411,7 @@ public:
 
     virtual ~BBChangeSkillTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         _plid = getIntFromBuffer();
         _plname = getStringFromBuffer();
         _skill = getUnsignedCharFromBuffer();
@@ -419,7 +419,7 @@ public:
         std::cout<<"received ChangeSkill: "<<_plid<<" "<<_plname<<" "<<_skill<<" "<<_value<<std::endl;
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         Player *tempPlayer = World::get()->Players.find(_plname);
 
         if (tempPlayer == NULL) {
@@ -437,7 +437,7 @@ public:
         }
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new BBChangeSkillTS());
         return cmd;
     }
@@ -460,13 +460,13 @@ public:
 
     virtual ~BBTalktoTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         playerid = getIntFromBuffer();
         playername = getStringFromBuffer();
         msg = getStringFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         Player *tempPlayer = World::get()->Players.find(playername);
 
         if (tempPlayer == NULL) {
@@ -484,7 +484,7 @@ public:
         }
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new BBTalktoTS());
         return cmd;
     }
@@ -506,17 +506,17 @@ public:
 
     virtual ~BBDisconnectTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
 
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         //we want to disconnect so we close the connection
         player->Connection->closeConnection();
 
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new BBDisconnectTS());
         return cmd;
     }
@@ -536,15 +536,15 @@ public:
 
     virtual ~BBKeepAliveTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
 
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         time(&(player->lastkeepalive));
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new BBKeepAliveTS());
         return cmd;
     }
@@ -562,13 +562,13 @@ public:
 
     virtual ~BBBanTS() {};
 
-    virtual void decodeData() {
+    virtual void decodeData() override {
         id = getIntFromBuffer();
         name = getStringFromBuffer();
         time = getIntFromBuffer();
     }
 
-    void performAction(Player *player) {
+    virtual void performAction(Player *player) override {
         Player *tempPlayer = World::get()->Players.find(name);
 
         if (tempPlayer == NULL) {
@@ -591,7 +591,7 @@ public:
         }
     }
 
-    boost::shared_ptr<BasicClientCommand> clone() {
+    virtual boost::shared_ptr<BasicClientCommand> clone() override {
         boost::shared_ptr<BasicClientCommand>cmd(new BBBanTS());
         return cmd;
     }

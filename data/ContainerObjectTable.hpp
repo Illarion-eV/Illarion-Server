@@ -26,10 +26,10 @@
 
 class ContainerObjectTable : public StructTable<TYPE_OF_ITEM_ID, TYPE_OF_CONTAINERSLOTS> {
 public:
-    virtual std::string getTableName();
-    virtual std::vector<std::string> getColumnNames();
-    virtual TYPE_OF_ITEM_ID assignId(const Database::ResultTuple &row);
-    virtual TYPE_OF_CONTAINERSLOTS assignTable(const Database::ResultTuple &row);
+    virtual std::string getTableName() override;
+    virtual std::vector<std::string> getColumnNames() override;
+    virtual TYPE_OF_ITEM_ID assignId(const Database::ResultTuple &row) override;
+    virtual TYPE_OF_CONTAINERSLOTS assignTable(const Database::ResultTuple &row) override;
 };
 
 #endif

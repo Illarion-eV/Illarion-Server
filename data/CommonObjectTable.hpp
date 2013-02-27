@@ -27,12 +27,12 @@
 
 class CommonObjectTable : public QuestScriptStructTable<TYPE_OF_ITEM_ID, CommonStruct, LuaItemScript> {
 public:
-    virtual std::string getTableName();
-    virtual std::vector<std::string> getColumnNames();
-    virtual TYPE_OF_ITEM_ID assignId(const Database::ResultTuple &row);
-    virtual CommonStruct assignTable(const Database::ResultTuple &row);
-    virtual std::string assignScriptName(const Database::ResultTuple &row);
-    virtual NodeRange getQuestScripts();
+    virtual std::string getTableName() override;
+    virtual std::vector<std::string> getColumnNames() override;
+    virtual TYPE_OF_ITEM_ID assignId(const Database::ResultTuple &row) override;
+    virtual CommonStruct assignTable(const Database::ResultTuple &row) override;
+    virtual std::string assignScriptName(const Database::ResultTuple &row) override;
+    virtual NodeRange getQuestScripts() override;
 
 private:
     //TYPE_OF_ITEM_ID calcInfiniteRot(TYPE_OF_ITEM_ID id, std::map<TYPE_OF_ITEM_ID, bool> &visited, std::map<TYPE_OF_ITEM_ID, bool> &assigned);

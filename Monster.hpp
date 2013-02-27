@@ -68,7 +68,7 @@ public:
 
     void remove();
 
-    virtual std::string to_string() const;
+    virtual std::string to_string() const override;
 
     /**
     * the monster gets a talked text from a character near starts a script entry point
@@ -113,7 +113,7 @@ public:
     /**
     * destructor
     */
-    virtual ~Monster();
+    virtual ~Monster() override;
 
     position lastTargetPosition; /**< last position of the last seen target */
     bool lastTargetSeen; /**< if true the monster trys to reach the last targetposition if there is no other enemy*/

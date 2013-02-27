@@ -64,7 +64,7 @@ public:
     /**
     * the destructor
     */
-    virtual ~NPC();
+    virtual ~NPC() override;
 
     /**
     * gets the healer state of this npc
@@ -105,9 +105,9 @@ public:
     * @param message the text which is spoken
     * @param cc the character who has spokenthe text
     */
-    virtual void receiveText(talk_type tt, std::string message, Character *cc);
+    virtual void receiveText(talk_type tt, std::string message, Character *cc) override;
 
-    virtual std::string to_string() const;
+    virtual std::string to_string() const override;
 
 protected:
 

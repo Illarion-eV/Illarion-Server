@@ -30,7 +30,7 @@ class QuestScriptStructTable : public ScriptStructTable<IdType, StructType, Scri
 public:
     typedef ScriptStructTable<IdType, StructType, ScriptType, ScriptParameter> Base;
 
-    virtual void reloadScripts() {
+    virtual void reloadScripts() override {
         Base::reloadScripts();
         auto questNodes = getQuestScripts();
 
@@ -55,11 +55,12 @@ public:
 protected:
     typedef QuestNodeTable::TableRange<IdType> NodeRange;
 
-    virtual std::string getTableName() = 0;
-    virtual std::vector<std::string> getColumnNames() = 0;
-    virtual IdType assignId(const Database::ResultTuple &row) = 0;
-    virtual StructType assignTable(const Database::ResultTuple &row) = 0;
-    virtual std::string assignScriptName(const Database::ResultTuple &row) = 0;
+    using Base::getTableName;
+    using Base::getColumnNames;
+    using Base::assignId;
+    using Base::assignTable;
+    using Base::assignScriptName;
+
     virtual NodeRange getQuestScripts() = 0;
 };
 

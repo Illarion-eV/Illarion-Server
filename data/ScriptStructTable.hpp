@@ -47,7 +47,7 @@ class ScriptStructTable : public StructTable<IdType, StructType> {
 public:
     typedef StructTable<IdType, StructType> Base;
 
-    virtual void reloadScripts() {
+    virtual void reloadScripts() override {
         scripts.clear();
 
         for (const auto &scriptNameEntry : scriptNames) {
@@ -70,13 +70,13 @@ public:
     }
 
 protected:
-    virtual std::string getTableName() = 0;
-    virtual std::vector<std::string> getColumnNames() = 0;
-    virtual IdType assignId(const Database::ResultTuple &row) = 0;
-    virtual StructType assignTable(const Database::ResultTuple &row) = 0;
+    using Base::getTableName;
+    using Base::getColumnNames;
+    using Base::assignId;
+    using Base::assignTable;
     virtual std::string assignScriptName(const Database::ResultTuple &row) = 0;
 
-    virtual void evaluateRow(const Database::ResultTuple &row) {
+    virtual void evaluateRow(const Database::ResultTuple &row) override {
         Base::evaluateRow(row);
         std::string scriptName = assignScriptName(row);
 

@@ -25,10 +25,10 @@
 
 class ScriptVariablesTable : public StructTable<std::string, std::string> {
 public:
-    virtual std::string getTableName();
-    virtual std::vector<std::string> getColumnNames();
-    virtual std::string assignId(const Database::ResultTuple &row);
-    virtual std::string assignTable(const Database::ResultTuple &row);
+    virtual std::string getTableName() override;
+    virtual std::vector<std::string> getColumnNames() override;
+    virtual std::string assignId(const Database::ResultTuple &row) override;
+    virtual std::string assignTable(const Database::ResultTuple &row) override;
 
     bool find(std::string id, std::string &ret);
     void set(std::string id, std::string value);
@@ -37,8 +37,8 @@ public:
 
     void save();
 
-    virtual bool reloadBuffer();
-    virtual void activateBuffer();
+    virtual bool reloadBuffer() override;
+    virtual void activateBuffer() override;
 
 private:
     typedef StructTable<std::string, std::string> Base;
