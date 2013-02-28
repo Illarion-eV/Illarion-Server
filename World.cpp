@@ -610,7 +610,7 @@ void World::checkPlayers() {
                 }
 
                 (*playerIterator)->ltAction->checkAction();
-                (*playerIterator)->effects->checkEffects();
+                (*playerIterator)->effects.checkEffects();
             }
             // User timed out.
             else {
@@ -749,7 +749,7 @@ void World::checkMonsters() {
                 monster.fightPoints = NP_MAX_FP;
             }
 
-            monster.effects->checkEffects();
+            monster.effects.checkEffects();
 
             MonsterStruct monStruct;
             bool foundMonster = MonsterDescriptions->find(monster.getType(), monStruct) ;
@@ -1014,7 +1014,7 @@ void World::checkMonsters() {
                         }
                     }
 
-                    if (!monster.waypoints->makeMove()) {
+                    if (!monster.waypoints.makeMove()) {
                         monster.setOnRoute(false);
 
                         if (foundMonster && monStruct.script) {
@@ -1068,7 +1068,7 @@ void World::checkNPC() {
                 (*npcIterator)->actionPoints = NP_MAX_AP;
             }
 
-            (*npcIterator)->effects->checkEffects();
+            (*npcIterator)->effects.checkEffects();
 
             if ((*npcIterator)->actionPoints > NP_MIN_AP && (*npcIterator)->getScript()) {
                 // we have a script...
@@ -1076,7 +1076,7 @@ void World::checkNPC() {
                 std::shared_ptr<LuaNPCScript> npcscript = (*npcIterator)->getScript();
                 npcscript->nextCycle();
 
-                if ((*npcIterator)->getOnRoute() && !(*npcIterator)->waypoints->makeMove()) {
+                if ((*npcIterator)->getOnRoute() && !(*npcIterator)->waypoints.makeMove()) {
                     (*npcIterator)->setOnRoute(false);
                     npcscript->abortRoute();
                 }

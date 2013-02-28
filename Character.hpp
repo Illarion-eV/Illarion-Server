@@ -25,6 +25,7 @@
 #include "Attribute.hpp"
 #include "Language.hpp"
 #include "WaypointList.hpp"
+#include "LongTimeCharacterEffects.hpp"
 #include "types.hpp"
 
 class Field;
@@ -318,9 +319,9 @@ public:
     /**
     *the effects which are currently working on the character
     */
-    LongTimeCharacterEffects *effects;
+    LongTimeCharacterEffects effects;
 
-    WaypointList *waypoints;
+    WaypointList waypoints;
 
     /**
     *======================end of group Lua Variables===================

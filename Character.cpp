@@ -160,7 +160,7 @@ bool Character::getNextStepDir(position goal, direction &dir) {
 }
 
 
-Character::Character(const appearance &appearance) : actionPoints(P_MAX_AP), fightPoints(P_MAX_FP), waypoints(new WaypointList(this)), attributes(ATTRIBUTECOUNT), _is_on_route(false), _world(World::get()), _appearance(appearance) {
+Character::Character(const appearance &appearance) : actionPoints(P_MAX_AP), fightPoints(P_MAX_FP), effects(this), waypoints(this), attributes(ATTRIBUTECOUNT), _is_on_route(false), _world(World::get()), _appearance(appearance) {
 #ifdef Character_DEBUG
     std::cout << "Character Konstruktor Start" << std::endl;
 #endif
@@ -220,7 +220,6 @@ Character::Character(const appearance &appearance) : actionPoints(P_MAX_AP), fig
 
     magic.flags[ DRUID ] = 0x00000000;
 
-    effects = new LongTimeCharacterEffects(this);
 #ifdef Character_DEBUG
     std::cout << "Character Konstruktor Ende" << std::endl;
 #endif
@@ -244,23 +243,6 @@ Character::~Character() {
         delete rit->second;
     }
 
-    if (effects != NULL) {
-        delete effects;
-        effects = NULL;
-    }
-
-    if (waypoints != NULL) {
-        waypoints->clear();
-        delete waypoints;
-        waypoints = NULL;
-    }
-
-    /*
-    if ( depotContents != NULL ) {
-      delete depotContents;
-      depotContents = NULL;
-    }
-    */
 #ifdef Character_DEBUG
     std::cout << "Character Destruktor Ende" << std::endl;
 #endif

@@ -208,7 +208,7 @@ void Player::login() throw(Player::LogoutException) {
     cmd.reset(new SetCoordinateTC(pos));
     Connection->addCommand(cmd);
 
-    effects->load();
+    effects.load();
 
     //send the basic data to the monitoring client
     cmd.reset(new BBPlayerTC(id, name, pos.x, pos.y,pos.z));
@@ -1284,7 +1284,7 @@ bool Player::save() throw() {
 
         connection->commitTransaction();
 
-        if (!effects->save()) {
+        if (!effects.save()) {
             std::cerr<<"error while saving lteffects for player"<<name<<std::endl;
         }
 
