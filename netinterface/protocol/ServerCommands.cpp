@@ -112,9 +112,9 @@ SelectionDialogTC::SelectionDialogTC(SelectionDialog &selectionDialog, unsigned 
     SelectionDialog::index_type size = selectionDialog.getOptionsSize();
     addUnsignedCharToBuffer(size);
 
-    for (auto it = selectionDialog.getOptionsBegin(); it != selectionDialog.getOptionsEnd(); ++it) {
-        addShortIntToBuffer((*it)->getItem());
-        addStringToBuffer((*it)->getName());
+    for (const auto &option : selectionDialog) {
+        addShortIntToBuffer(option.getItem());
+        addStringToBuffer(option.getName());
     }
 
     addIntToBuffer(dialogId);

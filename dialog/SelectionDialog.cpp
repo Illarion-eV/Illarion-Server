@@ -29,8 +29,7 @@ SelectionDialog::SelectionDialog(std::string title, std::string text, luabind::o
 SelectionDialog::SelectionDialog(const SelectionDialog &selectionDialog) : Dialog(selectionDialog) {
     text = selectionDialog.text;
 
-    for (auto it = selectionDialog.options.begin(); it != selectionDialog.options.end(); ++it) {
-        Option &option = **it;
+    for (const auto &option : selectionDialog.options) {
         addOption(option.getItem(), option.getName());
     }
 
@@ -39,32 +38,25 @@ SelectionDialog::SelectionDialog(const SelectionDialog &selectionDialog) : Dialo
     close = selectionDialog.close;
 }
 
-SelectionDialog::~SelectionDialog() {
-    for (auto it = options.begin(); it != options.end(); ++it) {
-        delete *it;
-    }
-}
-
 std::string SelectionDialog::getText() const {
     return text;
 }
 
-SelectionDialog::index_type SelectionDialog::getOptionsSize() const {
+auto SelectionDialog::getOptionsSize() const -> index_type {
     return options.size();
 }
 
-vector<Option *>::const_iterator SelectionDialog::getOptionsBegin() const {
+auto SelectionDialog::begin() const -> iterator_type {
     return options.cbegin();
 }
 
-vector<Option *>::const_iterator SelectionDialog::getOptionsEnd() const {
+auto SelectionDialog::end() const -> iterator_type {
     return options.cend();
 }
 
-void SelectionDialog::addOption(TYPE_OF_ITEM_ID item, string name) {
+void SelectionDialog::addOption(TYPE_OF_ITEM_ID item, const string &name) {
     if (options.size() < MAXOPTIONS) {
-        Option *option = new Option(item, name);
-        options.push_back(option);
+        options.emplace_back(item, name);
     }
 }
 
@@ -76,7 +68,7 @@ void SelectionDialog::setSuccess(bool success) {
     this->success = success;
 }
 
-SelectionDialog::index_type SelectionDialog::getSelectedIndex() const {
+auto SelectionDialog::getSelectedIndex() const -> index_type {
     return selectedIndex;
 }
 

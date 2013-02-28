@@ -36,10 +36,10 @@ private:
 
 public:
     Option(TYPE_OF_ITEM_ID item, string name): item(item), name(name) {};
-    TYPE_OF_ITEM_ID getItem() {
+    TYPE_OF_ITEM_ID getItem() const {
         return item;
     };
-    string &getName() {
+    const string &getName() const {
         return name;
     };
 };
@@ -47,12 +47,14 @@ public:
 class SelectionDialog: public Dialog {
 public:
     typedef uint8_t index_type;
+    typedef vector<Option> options_type;
+    typedef options_type::const_iterator iterator_type;
 
 private:
     string text;
 
     static const uint32_t MAXOPTIONS = 256;
-    vector<Option *> options;
+    options_type options;
 
     bool success;
 
@@ -63,14 +65,13 @@ private:
 public:
     SelectionDialog(string title, string text, luabind::object callback);
     SelectionDialog(const SelectionDialog &selectionDialog);
-    ~SelectionDialog();
 
     string getText() const;
 
     index_type getOptionsSize() const;
-    vector<Option *>::const_iterator getOptionsBegin() const;
-    vector<Option *>::const_iterator getOptionsEnd() const;
-    void addOption(TYPE_OF_ITEM_ID item, string name);
+    iterator_type begin() const;
+    iterator_type end() const;
+    void addOption(TYPE_OF_ITEM_ID item, const string &name);
 
     bool getSuccess() const;
     void setSuccess(bool success);
