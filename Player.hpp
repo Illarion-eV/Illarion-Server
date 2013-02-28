@@ -26,7 +26,8 @@
 #include <string>
 #include <sstream>
 #include <set>
-#include <boost/unordered_set.hpp>
+#include <unordered_set>
+#include <unordered_map>
 
 #include "Timer.hpp"
 #include "Character.hpp"
@@ -38,7 +39,6 @@
 #include "netinterface/NetInterface.hpp"
 #include "netinterface/BasicServerCommand.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
-#include "boost/unordered_map.hpp"
 #include "dialog/MerchantDialog.hpp"
 #include "dialog/SelectionDialog.hpp"
 #include "dialog/CraftingDialog.hpp"
@@ -157,7 +157,7 @@ public:
 
 private:
     std::set<uint32_t> visibleChars;
-    boost::unordered_set<TYPE_OF_CHARACTER_ID> knownPlayers;
+    std::unordered_set<TYPE_OF_CHARACTER_ID> knownPlayers;
 
 public:
     const std::string &nls(const std::string &german, const std::string &english) const;
@@ -539,8 +539,7 @@ private:
                 ++dialogId;
             }
 
-            DialogType *d = new DialogType(*dialog);
-            dialogs[dialogId] = d;
+            dialogs[dialogId] = std::make_shared<DialogType>(*dialog);
             boost::shared_ptr<BasicServerCommand>cmd(new DialogCommandType(*dialog, dialogId));
             Connection->addCommand(cmd);
         } else {
@@ -549,17 +548,17 @@ private:
     }
 
     template<class DialogType>
-    DialogType *getDialog(unsigned int dialogId) {
+    std::shared_ptr<DialogType> getDialog(unsigned int dialogId) {
         try {
-            return dynamic_cast<DialogType *>(dialogs.at(dialogId));
+            return std::dynamic_pointer_cast<DialogType>(dialogs.at(dialogId));
         } catch (std::out_of_range &e) {
-            return 0;
+            return std::shared_ptr<DialogType>();
         }
     }
 
 public:
     virtual void requestInputDialog(InputDialog *inputDialog) override;
-    void executeInputDialog(unsigned int dialogId, bool success, std::string input);
+    void executeInputDialog(unsigned int dialogId, bool success, const std::string &input);
 
     virtual void requestMessageDialog(MessageDialog *messageDialog) override;
     void executeMessageDialog(unsigned int dialogId);
@@ -634,11 +633,11 @@ private:
     bool monitoringClient;
 
     uint8_t showcaseCounter;
-    typedef boost::unordered_map<uint8_t, Showcase *> ShowcaseMap;
+    typedef std::unordered_map<uint8_t, Showcase *> ShowcaseMap;
     ShowcaseMap showcases;
 
     unsigned int dialogCounter;
-    typedef boost::unordered_map<unsigned int, Dialog *> DialogMap;
+    typedef std::unordered_map<unsigned int, std::shared_ptr<Dialog>> DialogMap;
     DialogMap dialogs;
 };
 
