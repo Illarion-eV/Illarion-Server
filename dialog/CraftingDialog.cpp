@@ -67,7 +67,7 @@ auto CraftingDialog::getGroupsEnd() const -> group_iterator {
     return groups.cend();
 }
 
-void CraftingDialog::addGroup(const std::string &name) {
+void CraftingDialog::addGroup(const string &name) {
     if (groups.size() < 256) {
         groups.push_back(name);
     }

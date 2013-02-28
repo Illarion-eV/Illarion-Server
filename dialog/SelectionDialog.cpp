@@ -20,7 +20,7 @@
 
 #include "dialog/SelectionDialog.hpp"
 
-SelectionDialog::SelectionDialog(std::string title, std::string text, luabind::object callback)
+SelectionDialog::SelectionDialog(const string &title, const string &text, const luabind::object &callback)
     :Dialog(title, "SelectionDialog", callback), text(text) {
     success = false;
     close = false;
@@ -38,7 +38,7 @@ SelectionDialog::SelectionDialog(const SelectionDialog &selectionDialog) : Dialo
     close = selectionDialog.close;
 }
 
-std::string SelectionDialog::getText() const {
+const string &SelectionDialog::getText() const {
     return text;
 }
 

@@ -20,11 +20,10 @@
 
 #include "dialog/InputDialog.hpp"
 
-InputDialog::InputDialog(std::string title, std::string description, bool multiline,
-                         unsigned short maxChars, luabind::object callback)
-    :Dialog(title, "InputDialog", callback), description(description), multiline(multiline), maxChars(maxChars) {
+InputDialog::InputDialog(const string &title, const string &description, bool multiline,
+                         unsigned short maxChars, const luabind::object &callback)
+    :Dialog(title, "InputDialog", callback), description(description), multiline(multiline), maxChars(maxChars), input() {
     success = false;
-    input = "";
 }
 
 InputDialog::InputDialog(const InputDialog &inputDialog) : Dialog(inputDialog) {
@@ -35,7 +34,7 @@ InputDialog::InputDialog(const InputDialog &inputDialog) : Dialog(inputDialog) {
     input = inputDialog.input;
 }
 
-std::string InputDialog::getDescription() const {
+const string &InputDialog::getDescription() const {
     return description;
 }
 
@@ -55,11 +54,11 @@ void InputDialog::setSuccess(bool success) {
     this->success = success;
 }
 
-std::string InputDialog::getInput() const {
+const string &InputDialog::getInput() const {
     return input;
 }
 
-void InputDialog::setInput(std::string input) {
+void InputDialog::setInput(string input) {
     if (maxChars > 0) {
         input = input.substr(0, maxChars);
     }

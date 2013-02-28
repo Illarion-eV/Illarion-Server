@@ -20,7 +20,7 @@
 
 #include "dialog/MessageDialog.hpp"
 
-MessageDialog::MessageDialog(std::string title, std::string text, luabind::object callback)
+MessageDialog::MessageDialog(const string &title, const string &text, const luabind::object &callback)
     :Dialog(title, "MessageDialog", callback), text(text) {
 }
 
@@ -28,7 +28,7 @@ MessageDialog::MessageDialog(const MessageDialog &messageDialog) : Dialog(messag
     text = messageDialog.text;
 }
 
-std::string MessageDialog::getText() const {
+const string &MessageDialog::getText() const {
     return text;
 }
 

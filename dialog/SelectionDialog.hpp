@@ -23,10 +23,8 @@
 
 #include "dialog/Dialog.hpp"
 #include "Item.hpp"
-#include <string>
 #include <vector>
 
-using std::string;
 using std::vector;
 
 class Option {
@@ -63,10 +61,10 @@ private:
     bool close;
 
 public:
-    SelectionDialog(string title, string text, luabind::object callback);
+    SelectionDialog(const string &title, const string &text, const luabind::object &callback);
     SelectionDialog(const SelectionDialog &selectionDialog);
 
-    string getText() const;
+    const string &getText() const;
 
     index_type getOptionsSize() const;
     iterator_type begin() const;

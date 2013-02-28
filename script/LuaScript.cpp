@@ -426,7 +426,7 @@ void LuaScript::init_base_functions() {
             luabind::value("playerSells",1),
             luabind::value("playerBuys",2)
         ]
-        .def(luabind::constructor<const std::string &, luabind::object>())
+        .def(luabind::constructor<std::string, luabind::object>())
         .def("addOffer", (void(MerchantDialog:: *)(TYPE_OF_ITEM_ID, const std::string &, TYPE_OF_WORTH))&MerchantDialog::addOffer)
         .def("addOffer", (void(MerchantDialog:: *)(TYPE_OF_ITEM_ID, const std::string &, TYPE_OF_WORTH, TYPE_OF_BUY_STACK))&MerchantDialog::addOffer)
         .def("addPrimaryRequest", &MerchantDialog::addPrimaryRequest)
@@ -451,7 +451,7 @@ void LuaScript::init_base_functions() {
             luabind::value("playerCraftingComplete", 4),
             luabind::value("playerCraftingAborted", 5)
         ]
-        .def(luabind::constructor<const std::string &, uint16_t, uint16_t, const luabind::object &>())
+        .def(luabind::constructor<std::string, uint16_t, uint16_t, luabind::object>())
         .def("clearGroupsAndProducts", &CraftingDialog::clearGroupsAndProducts)
         .def("addGroup", &CraftingDialog::addGroup)
         .def("addCraftable", (void(CraftingDialog:: *)(uint8_t, uint8_t, TYPE_OF_ITEM_ID, const std::string &, uint16_t))&CraftingDialog::addCraftable)

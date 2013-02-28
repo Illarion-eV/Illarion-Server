@@ -23,14 +23,10 @@
 
 #include "dialog/Dialog.hpp"
 #include "Item.hpp"
-#include <string>
 #include <vector>
 #include <unordered_map>
 
-
-using std::string;
 using std::vector;
-
 
 class Ingredient {
 private:
@@ -159,7 +155,7 @@ public:
     index_t getGroupsSize() const;
     group_iterator getGroupsBegin() const;
     group_iterator getGroupsEnd() const;
-    void addGroup(const std::string &name);
+    void addGroup(const string &name);
 
     index_t getCraftablesSize() const;
     craftable_iterator getCraftablesBegin() const;

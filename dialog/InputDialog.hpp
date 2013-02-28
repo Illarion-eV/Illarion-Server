@@ -22,26 +22,25 @@
 #define _INPUT_DIALOG_HPP_
 
 #include "dialog/Dialog.hpp"
-#include <string>
 
 class InputDialog: public Dialog {
 private:
-    std::string description;
+    string description;
     bool  multiline;
     unsigned short maxChars;
     bool success;
-    std::string input;
+    string input;
 
 public:
-    InputDialog(std::string title, std::string description, bool multiline, unsigned short maxChars, luabind::object callback);
+    InputDialog(const string &title, const string &description, bool multiline, unsigned short maxChars, const luabind::object &callback);
     InputDialog(const InputDialog &inputDialog);
-    std::string getDescription() const;
+    const string &getDescription() const;
     bool isMultiline() const;
     unsigned short getMaxChars() const;
     bool getSuccess() const;
     void setSuccess(bool success);
-    std::string getInput() const;
-    void setInput(std::string input);
+    const string &getInput() const;
+    void setInput(string input);
 };
 
 #endif

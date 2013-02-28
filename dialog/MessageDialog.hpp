@@ -22,16 +22,15 @@
 #define _MESSAGE_DIALOG_HPP_
 
 #include "dialog/Dialog.hpp"
-#include <string>
 
 class MessageDialog: public Dialog {
 private:
-    std::string text;
+    string text;
 
 public:
-    MessageDialog(std::string title, std::string text, luabind::object callback);
+    MessageDialog(const string &title, const string &text, const luabind::object &callback);
     MessageDialog(const MessageDialog &messageDialog);
-    std::string getText() const;
+    const string &getText() const;
 };
 
 #endif

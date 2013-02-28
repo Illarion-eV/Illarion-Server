@@ -21,7 +21,7 @@
 #include "dialog/MerchantDialog.hpp"
 #include "data/Data.hpp"
 
-MerchantDialog::MerchantDialog(const std::string &title, const luabind::object &callback)
+MerchantDialog::MerchantDialog(const string &title, const luabind::object &callback)
     :Dialog(title, "MerchantDialog", callback) {
     result = playerAborts;
     purchaseIndex = 0;

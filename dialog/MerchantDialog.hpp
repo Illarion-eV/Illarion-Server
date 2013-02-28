@@ -23,13 +23,9 @@
 
 #include "dialog/Dialog.hpp"
 #include "Item.hpp"
-#include <string>
 #include <vector>
 
-
-using std::string;
 using std::vector;
-
 
 class Product {
 private:
