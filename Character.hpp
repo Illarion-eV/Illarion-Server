@@ -24,8 +24,9 @@
 #include <boost/unordered_map.hpp>
 #include "Attribute.hpp"
 #include "Language.hpp"
+#include "WaypointList.hpp"
+#include "types.hpp"
 
-class WaypointList;
 class Field;
 class InputDialog;
 class MessageDialog;
@@ -174,19 +175,6 @@ public:
     * shows a direction
     *<b>Lua: [direction]</b>
     */
-    enum direction {
-        dir_north = 0,
-        dir_northeast = 1,
-        dir_east = 2,
-        dir_southeast = 3,
-        dir_south = 4,
-        dir_southwest = 5,
-        dir_west = 6,
-        dir_northwest = 7,
-        dir_up = 8,
-        dir_down = 9
-    };
-
     enum informType {
         informServer = 0,
         informBroadcast = 1,
@@ -937,8 +925,8 @@ public:
     */
     virtual bool move(direction dir, bool active=true);
 
-    bool getNextStepDir(position goal, Character::direction &dir);
-    bool getStepList(position goal, std::list<Character::direction> &steps);
+    bool getNextStepDir(position goal, direction &dir);
+    bool getStepList(position goal, std::list<direction> &steps);
     luabind::object getLuaStepList(position goal);
 
     /**

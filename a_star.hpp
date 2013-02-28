@@ -19,15 +19,15 @@ using namespace boost;
 
 typedef std::pair<int, int> Position;
 Position character_moves[8] = {Position(0, -1), Position(1, -1), Position(1, 0), Position(1, 1), Position(0, 1), Position(-1, 1), Position(-1, 0), Position(-1, -1)};
-unordered_map<Position, Character::direction> character_directions = assign::map_list_of
-        (Position(0, -1), Character::dir_north)
-        (Position(1, -1), Character::dir_northeast)
-        (Position(1, 0), Character::dir_east)
-        (Position(1, 1), Character::dir_southeast)
-        (Position(0, 1), Character::dir_south)
-        (Position(-1, 1), Character::dir_southwest)
-        (Position(-1, 0), Character::dir_west)
-        (Position(-1, -1), Character::dir_northwest);
+unordered_map<Position, direction> character_directions = assign::map_list_of
+        (Position(0, -1), dir_north)
+        (Position(1, -1), dir_northeast)
+        (Position(1, 0), dir_east)
+        (Position(1, 1), dir_southeast)
+        (Position(0, 1), dir_south)
+        (Position(-1, 1), dir_southwest)
+        (Position(-1, 0), dir_west)
+        (Position(-1, -1), dir_northwest);
 
 struct world_map_graph;
 
@@ -238,7 +238,7 @@ public:
     }
 };
 
-bool a_star(::position &start_pos, ::position &goal_pos, std::list<Character::direction> &steps) {
+bool a_star(::position &start_pos, ::position &goal_pos, std::list<direction> &steps) {
     steps.clear();
 
     if (start_pos.z != goal_pos.z || start_pos == goal_pos) {

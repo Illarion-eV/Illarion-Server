@@ -27,7 +27,6 @@
 #include "data/TilesTable.hpp"
 #include "script/LuaWeaponScript.hpp"
 #include "Logger.hpp"
-#include "WaypointList.hpp"
 #include <map>
 #include <algorithm>
 #include <boost/shared_ptr.hpp>
@@ -131,24 +130,24 @@ luabind::object Character::getLuaStepList(position goal) {
     lua_State *luaState = World::get()->getCurrentScript()->getLuaState();
     luabind::object list = luabind::newtable(luaState);
     int index = 1;
-    std::list<Character::direction> dirs;
+    std::list<direction> dirs;
     getStepList(goal, dirs);
 
-    for (std::list<Character::direction>::iterator it = dirs.begin(); it != dirs.end(); ++it) {
+    for (std::list<direction>::iterator it = dirs.begin(); it != dirs.end(); ++it) {
         list[index++] = (*it);
     }
 
     return list;
 }
 
-bool Character::getStepList(position goal, std::list<Character::direction> &steps) {
+bool Character::getStepList(position goal, std::list<direction> &steps) {
     return pathfinding::a_star(pos, goal, steps);
 }
 
 
 
-bool Character::getNextStepDir(position goal, Character::direction &dir) {
-    std::list<Character::direction> steps;
+bool Character::getNextStepDir(position goal, direction &dir) {
+    std::list<direction> steps;
 
     getStepList(goal, steps);
 
@@ -1498,7 +1497,7 @@ void Character::talkLanguage(talk_type tt, Language lang, const std::string &mes
 }
 
 void Character::turn(direction dir) {
-    if (dir != dir_up && dir != dir_down && dir != static_cast<Character::direction>(faceto)) {
+    if (dir != dir_up && dir != dir_down && dir != static_cast<direction>(faceto)) {
         faceto = (Character::face_to)dir;
         _world->sendSpinToAllVisiblePlayers(this);
     }
@@ -1510,9 +1509,9 @@ void Character::turn(position posi) {
     short int yoffs = posi.y - pos.y;
 
     if (abs(xoffs)>abs(yoffs)) {
-        turn(static_cast<Character::direction>((xoffs>0)?2:6));
+        turn(static_cast<direction>((xoffs>0)?2:6));
     } else {
-        turn(static_cast<Character::direction>((yoffs>0)?4:0));
+        turn(static_cast<direction>((yoffs>0)?4:0));
     }
 }
 

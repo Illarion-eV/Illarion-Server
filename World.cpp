@@ -874,7 +874,7 @@ void World::checkMonsters() {
                             } else {
                                 SpawnPoint *spawn = monster.getSpawn();
 
-                                Character::direction dir = (Character::direction)Random::uniform(0,7);
+                                direction dir = (direction)Random::uniform(0,7);
 
                                 if (spawn) {
                                     int yoffs = monster.pos.y - spawn->get_y();
@@ -897,28 +897,28 @@ void World::checkMonsters() {
                                     // if walking out of range, mirroring dir. at spawn area border lets the char stay in range with L_inf metric
                                     if (abs(xoffs) > spawn->getRange()) {
                                         switch (dir) {
-                                        case Character::dir_northeast:
-                                            dir = Character::dir_northwest;
+                                        case dir_northeast:
+                                            dir = dir_northwest;
                                             break;
 
-                                        case Character::dir_east:
-                                            dir = Character::dir_west;
+                                        case dir_east:
+                                            dir = dir_west;
                                             break;
 
-                                        case Character::dir_southeast:
-                                            dir = Character::dir_southwest;
+                                        case dir_southeast:
+                                            dir = dir_southwest;
                                             break;
 
-                                        case Character::dir_southwest:
-                                            dir = Character::dir_southeast;
+                                        case dir_southwest:
+                                            dir = dir_southeast;
                                             break;
 
-                                        case Character::dir_west:
-                                            dir = Character::dir_east;
+                                        case dir_west:
+                                            dir = dir_east;
                                             break;
 
-                                        case Character::dir_northwest:
-                                            dir = Character::dir_northeast;
+                                        case dir_northwest:
+                                            dir = dir_northeast;
                                             break;
 
                                         default:
@@ -928,28 +928,28 @@ void World::checkMonsters() {
 
                                     if (abs(yoffs) > spawn->getRange()) {
                                         switch (dir) {
-                                        case Character::dir_north:
-                                            dir = Character::dir_south;
+                                        case dir_north:
+                                            dir = dir_south;
                                             break;
 
-                                        case Character::dir_northeast:
-                                            dir = Character::dir_southeast;
+                                        case dir_northeast:
+                                            dir = dir_southeast;
                                             break;
 
-                                        case Character::dir_southeast:
-                                            dir = Character::dir_northeast;
+                                        case dir_southeast:
+                                            dir = dir_northeast;
                                             break;
 
-                                        case Character::dir_south:
-                                            dir = Character::dir_north;
+                                        case dir_south:
+                                            dir = dir_north;
                                             break;
 
-                                        case Character::dir_southwest:
-                                            dir = Character::dir_northwest;
+                                        case dir_southwest:
+                                            dir = dir_northwest;
                                             break;
 
-                                        case Character::dir_northwest:
-                                            dir = Character::dir_southwest;
+                                        case dir_northwest:
+                                            dir = dir_southwest;
                                             break;
 
                                         default:

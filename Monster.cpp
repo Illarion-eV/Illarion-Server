@@ -53,7 +53,7 @@ void Monster::performStep(position targetpos) {
     }
 
     if (!waypoints->makeMove()) {
-        Character::direction dir = static_cast<Character::direction>(Random::uniform(0, 7));
+        direction dir = static_cast<direction>(Random::uniform(0, 7));
         move(dir);
         actionPoints -= 20;
     }

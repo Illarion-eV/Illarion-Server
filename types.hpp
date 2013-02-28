@@ -66,4 +66,17 @@ typedef uint32_t TYPE_OF_QUESTSTATUS;
 typedef std::string TYPE_OF_GERMAN;
 typedef std::string TYPE_OF_ENGLISH;
 
+enum direction {
+    dir_north = 0,
+    dir_northeast = 1,
+    dir_east = 2,
+    dir_southeast = 3,
+    dir_south = 4,
+    dir_southwest = 5,
+    dir_west = 6,
+    dir_northwest = 7,
+    dir_up = 8,
+    dir_down = 9
+};
+
 #endif

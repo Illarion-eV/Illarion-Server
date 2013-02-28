@@ -2043,7 +2043,7 @@ public:
 
     virtual void decodeData() override {
         charid = getIntFromBuffer();
-        direction = getUnsignedCharFromBuffer();
+        dir = getUnsignedCharFromBuffer();
         mode = getUnsignedCharFromBuffer();
     }
 
@@ -2059,7 +2059,7 @@ public:
                 Logger::info(LogFacility::World) << "Turtle was active, new tile set at pos: " << player->pos.x << "," << player->pos.y << "," << player->pos.z << " tile: " << player->getTurtleTile() << Log::end;
             }
 
-            if (player->move(static_cast<Character::direction>(direction), mode)) {
+            if (player->move(static_cast<direction>(dir), mode)) {
                 player->closeAllShowcasesOfMapContainers();
             }
         } else if (mode == PUSH) {
@@ -2067,7 +2067,7 @@ public:
             Logger::debug(LogFacility::World) << "Player pushes another: " << player->name << Log::end;
 
             if (player->IsAlive()) {
-                if (World::get()->pushCharacter(player, charid, direction)) {
+                if (World::get()->pushCharacter(player, charid, static_cast<direction>(dir))) {
                     player->actionPoints -= P_PUSH_COST;
                 }
             }
@@ -2080,7 +2080,7 @@ public:
     }
 
     TYPE_OF_CHARACTER_ID charid;
-    unsigned char direction;
+    unsigned char dir;
     unsigned char mode;
 };
 

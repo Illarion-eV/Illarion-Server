@@ -116,7 +116,7 @@ void World::TriggerFieldMove(Character *cc, bool moveto) {
     }
 }
 
-bool World::pushCharacter(Player *cp, TYPE_OF_CHARACTER_ID pushedCharId, unsigned char direction) {
+bool World::pushCharacter(Player *cp, TYPE_OF_CHARACTER_ID pushedCharId, direction dir) {
     Character *pushedChar = Players.findID(pushedCharId);
 
     if (!pushedChar) {
@@ -124,7 +124,7 @@ bool World::pushCharacter(Player *cp, TYPE_OF_CHARACTER_ID pushedCharId, unsigne
     }
 
     if (pushedChar && pushedChar->pos.z == cp->pos.z && abs(pushedChar->pos.x - cp->pos.x)<=1 && abs(pushedChar->pos.y - cp->pos.y)<=1) {
-        return pushedChar->move((Character::direction)direction,false);
+        return pushedChar->move(dir,false);
     }
 
     return false;
