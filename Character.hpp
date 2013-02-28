@@ -1224,7 +1224,7 @@ public:
     face_to faceto;
 
 private:
-    Attribute *attributes[ATTRIBUTECOUNT];
+    std::vector<Attribute> attributes;
 
 public:
     bool informCharacter; /**< if true the character gets more debug informations*/
