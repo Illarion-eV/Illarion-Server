@@ -25,7 +25,7 @@
 #include "Item.hpp"
 #include <string>
 #include <vector>
-#include <boost/unordered_map.hpp>
+#include <unordered_map>
 
 
 using std::string;
@@ -40,10 +40,10 @@ private:
 public:
     Ingredient(TYPE_OF_ITEM_ID item): item(item), number(1) {};
     Ingredient(TYPE_OF_ITEM_ID item, uint8_t number): item(item), number(number) {};
-    TYPE_OF_ITEM_ID getItem() {
+    TYPE_OF_ITEM_ID getItem() const {
         return item;
     };
-    uint8_t getNumber() {
+    uint8_t getNumber() const {
         return number;
     };
 };
@@ -52,7 +52,8 @@ public:
 class Craftable {
 public:
     typedef uint8_t index_t;
-    typedef vector<Ingredient *> ingredients_t;
+    typedef vector<Ingredient> ingredients_t;
+    typedef ingredients_t::const_iterator ingredient_iterator;
 
 private:
     static const uint32_t MAXINGREDIENTS = 256;
@@ -64,8 +65,8 @@ private:
     uint8_t craftedStackSize;
 
 public:
-    Craftable(uint8_t group, TYPE_OF_ITEM_ID item, string name, uint16_t decisecondsToCraft): group(group), item(item), name(name), decisecondsToCraft(decisecondsToCraft), craftedStackSize(1) {};
-    Craftable(uint8_t group, TYPE_OF_ITEM_ID item, string name, uint16_t decisecondsToCraft, uint8_t craftedStackSize): group(group), item(item), name(name), decisecondsToCraft(decisecondsToCraft), craftedStackSize(craftedStackSize) {};
+    Craftable(uint8_t group, TYPE_OF_ITEM_ID item, const string &name, uint16_t decisecondsToCraft): group(group), item(item), name(name), decisecondsToCraft(decisecondsToCraft), craftedStackSize(1) {};
+    Craftable(uint8_t group, TYPE_OF_ITEM_ID item, const string &name, uint16_t decisecondsToCraft, uint8_t craftedStackSize): group(group), item(item), name(name), decisecondsToCraft(decisecondsToCraft), craftedStackSize(craftedStackSize) {};
     Craftable(const Craftable &craftable) {
         group = craftable.group;
         item = craftable.item;
@@ -73,49 +74,42 @@ public:
         decisecondsToCraft = craftable.decisecondsToCraft;
         craftedStackSize = craftable.craftedStackSize;
 
-        for (auto it = craftable.getIngredientsBegin(); it != craftable.getIngredientsEnd(); ++it) {
-            Ingredient &ingredient = **it;
+        for (const auto &ingredient : craftable.ingredients) {
             addIngredient(ingredient.getItem(), ingredient.getNumber());
         }
     };
-    ~Craftable() {
-        for (auto it = ingredients.begin(); it < ingredients.end(); ++it) {
-            delete *it;
-            *it = 0;
-        }
-    };
-    uint8_t getGroup() {
+    uint8_t getGroup() const {
         return group;
     };
-    TYPE_OF_ITEM_ID getItem() {
+    TYPE_OF_ITEM_ID getItem() const {
         return item;
     };
-    string &getName() {
+    const string &getName() const {
         return name;
     };
-    uint16_t getDecisecondsToCraft() {
+    uint16_t getDecisecondsToCraft() const {
         return decisecondsToCraft;
     };
-    uint8_t getCraftedStackSize() {
+    uint8_t getCraftedStackSize() const {
         return craftedStackSize;
     };
     void addIngredient(TYPE_OF_ITEM_ID item) {
         if (ingredients.size() < MAXINGREDIENTS) {
-            ingredients.push_back(new Ingredient(item));
+            ingredients.emplace_back(item);
         }
     };
     void addIngredient(TYPE_OF_ITEM_ID item, uint8_t number) {
         if (ingredients.size() < MAXINGREDIENTS) {
-            ingredients.push_back(new Ingredient(item, number));
+            ingredients.emplace_back(item, number);
         }
     };
-    index_t getIngredientsSize() {
+    index_t getIngredientsSize() const {
         return ingredients.size();
     };
-    ingredients_t::const_iterator getIngredientsBegin() const {
+    ingredient_iterator begin() const {
         return ingredients.cbegin();
     };
-    ingredients_t::const_iterator getIngredientsEnd() const {
+    ingredient_iterator end() const {
         return ingredients.cend();
     };
 };
@@ -125,7 +119,10 @@ class CraftingDialog: public Dialog {
 public:
     typedef uint8_t index_t;
     typedef vector<string> groups_t;
-    typedef boost::unordered_map<uint8_t, Craftable *> craftables_t;
+    typedef groups_t::const_iterator group_iterator;
+    typedef std::unordered_map<uint8_t, Craftable> craftables_t;
+    typedef craftables_t::const_iterator craftable_iterator;
+
     enum Result {
         playerAborts = 0,
         playerCrafts = 1,
@@ -151,9 +148,8 @@ private:
     uint8_t lastAddedCraftableId;
 
 public:
-    CraftingDialog(string title, uint16_t sfx, uint16_t sfxDuration, luabind::object callback);
+    CraftingDialog(const string &title, uint16_t sfx, uint16_t sfxDuration, const luabind::object &callback);
     CraftingDialog(const CraftingDialog &craftingDialog);
-    ~CraftingDialog();
 
     uint16_t getSfx() const;
     uint16_t getSfxDuration() const;
@@ -161,15 +157,15 @@ public:
     void clearGroupsAndProducts();
 
     index_t getGroupsSize() const;
-    groups_t::const_iterator getGroupsBegin() const;
-    groups_t::const_iterator getGroupsEnd() const;
-    void addGroup(std::string name);
+    group_iterator getGroupsBegin() const;
+    group_iterator getGroupsEnd() const;
+    void addGroup(const std::string &name);
 
     index_t getCraftablesSize() const;
-    craftables_t::const_iterator getCraftablesBegin() const;
-    craftables_t::const_iterator getCraftablesEnd() const;
-    void addCraftable(uint8_t id, uint8_t group, TYPE_OF_ITEM_ID item, string name, uint16_t decisecondsToCraft);
-    void addCraftable(uint8_t id, uint8_t group, TYPE_OF_ITEM_ID item, string name, uint16_t decisecondsToCraft, uint8_t craftedStackSize);
+    craftable_iterator getCraftablesBegin() const;
+    craftable_iterator getCraftablesEnd() const;
+    void addCraftable(uint8_t id, uint8_t group, TYPE_OF_ITEM_ID item, const string &name, uint16_t decisecondsToCraft);
+    void addCraftable(uint8_t id, uint8_t group, TYPE_OF_ITEM_ID item, const string &name, uint16_t decisecondsToCraft, uint8_t craftedStackSize);
     void addCraftableIngredient(TYPE_OF_ITEM_ID item);
     void addCraftableIngredient(TYPE_OF_ITEM_ID item, uint8_t number);
 
@@ -185,6 +181,7 @@ public:
     uint16_t getCraftableTime() const;
 
     virtual bool closeOnMove() const override;
+
 private:
     bool canAddCraftable(uint8_t group);
 };

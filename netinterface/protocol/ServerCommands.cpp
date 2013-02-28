@@ -134,7 +134,7 @@ CraftingDialogTC::CraftingDialogTC(CraftingDialog &craftingDialog, unsigned int 
 
     for (auto it = craftingDialog.getCraftablesBegin(); it != craftingDialog.getCraftablesEnd(); ++it) {
         uint8_t craftableId = it->first;
-        Craftable &craftable = *it->second;
+        const Craftable &craftable = it->second;
         addUnsignedCharToBuffer(craftableId);
         addUnsignedCharToBuffer(craftable.getGroup());
         addShortIntToBuffer(craftable.getItem());
@@ -145,8 +145,7 @@ CraftingDialogTC::CraftingDialogTC(CraftingDialog &craftingDialog, unsigned int 
         Craftable::index_t numberOfIngredients = craftable.getIngredientsSize();
         addUnsignedCharToBuffer(numberOfIngredients);
 
-        for (auto it2 = craftable.getIngredientsBegin(); it2 != craftable.getIngredientsEnd(); ++it2) {
-            Ingredient &ingredient = **it2;
+        for (const auto &ingredient : craftable) {
             addShortIntToBuffer(ingredient.getItem());
             addUnsignedCharToBuffer(ingredient.getNumber());
         }

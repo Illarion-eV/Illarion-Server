@@ -451,11 +451,11 @@ void LuaScript::init_base_functions() {
             luabind::value("playerCraftingComplete", 4),
             luabind::value("playerCraftingAborted", 5)
         ]
-        .def(luabind::constructor<std::string, uint16_t, uint16_t, luabind::object>())
+        .def(luabind::constructor<const std::string &, uint16_t, uint16_t, const luabind::object &>())
         .def("clearGroupsAndProducts", &CraftingDialog::clearGroupsAndProducts)
         .def("addGroup", &CraftingDialog::addGroup)
-        .def("addCraftable", (void(CraftingDialog:: *)(uint8_t, uint8_t, TYPE_OF_ITEM_ID, std::string, uint16_t))&CraftingDialog::addCraftable)
-        .def("addCraftable", (void(CraftingDialog:: *)(uint8_t, uint8_t, TYPE_OF_ITEM_ID, std::string, uint16_t, uint8_t))&CraftingDialog::addCraftable)
+        .def("addCraftable", (void(CraftingDialog:: *)(uint8_t, uint8_t, TYPE_OF_ITEM_ID, const std::string &, uint16_t))&CraftingDialog::addCraftable)
+        .def("addCraftable", (void(CraftingDialog:: *)(uint8_t, uint8_t, TYPE_OF_ITEM_ID, const std::string &, uint16_t, uint8_t))&CraftingDialog::addCraftable)
         .def("addCraftableIngredient", (void(CraftingDialog:: *)(TYPE_OF_ITEM_ID))&CraftingDialog::addCraftableIngredient)
         .def("addCraftableIngredient", (void(CraftingDialog:: *)(TYPE_OF_ITEM_ID, uint8_t))&CraftingDialog::addCraftableIngredient)
         .def("getResult", &CraftingDialog::getResult)
