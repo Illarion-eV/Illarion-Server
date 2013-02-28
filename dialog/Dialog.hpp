@@ -31,12 +31,12 @@ private:
     luabind::object callback;
 
 public:
-    Dialog(std::string title, std::string className, luabind::object callback);
+    Dialog(const std::string &title, const std::string &className, const luabind::object &callback);
     Dialog(const Dialog &dialog);
     virtual ~Dialog() {};
-    std::string getTitle() const;
-    std::string getClassName() const;
-    luabind::object getCallback() const;
+    const std::string &getTitle() const;
+    const std::string &getClassName() const;
+    const luabind::object &getCallback() const;
     virtual bool closeOnMove() const;
 };
 

@@ -21,7 +21,7 @@
 #include "dialog/MerchantDialog.hpp"
 #include "data/Data.hpp"
 
-MerchantDialog::MerchantDialog(std::string title, luabind::object callback)
+MerchantDialog::MerchantDialog(const std::string &title, const luabind::object &callback)
     :Dialog(title, "MerchantDialog", callback) {
     result = playerAborts;
     purchaseIndex = 0;
@@ -29,18 +29,15 @@ MerchantDialog::MerchantDialog(std::string title, luabind::object callback)
 }
 
 MerchantDialog::MerchantDialog(const MerchantDialog &merchantDialog) : Dialog(merchantDialog) {
-    for (auto it = merchantDialog.offers.begin(); it != merchantDialog.offers.end(); ++it) {
-        OfferProduct &product = *(OfferProduct *)*it;
-        addProduct(offers, product.getItem(), product.getName(), product.getPrice(), product.getStack());
+    for (const auto &product : merchantDialog.offers) {
+        addOffer(product.getItem(), product.getName(), product.getPrice(), product.getStack());
     }
 
-    for (auto it = merchantDialog.primaryRequests.begin(); it != merchantDialog.primaryRequests.end(); ++it) {
-        Product &product = **it;
+    for (const auto &product : merchantDialog.primaryRequests) {
         addProduct(primaryRequests, product.getItem(), product.getName(), product.getPrice());
     }
 
-    for (auto it = merchantDialog.secondaryRequests.begin(); it != merchantDialog.secondaryRequests.end(); ++it) {
-        Product &product = **it;
+    for (const auto &product : merchantDialog.secondaryRequests) {
         addProduct(secondaryRequests, product.getItem(), product.getName(), product.getPrice());
     }
 
@@ -50,75 +47,63 @@ MerchantDialog::MerchantDialog(const MerchantDialog &merchantDialog) : Dialog(me
     saleItem = merchantDialog.saleItem;
 }
 
-MerchantDialog::~MerchantDialog() {
-    for (auto it = offers.begin(); it != offers.end(); ++it) {
-        delete *it;
-    }
-
-    for (auto it = primaryRequests.begin(); it != primaryRequests.end(); ++it) {
-        delete *it;
-    }
-
-    for (auto it = secondaryRequests.begin(); it != secondaryRequests.end(); ++it) {
-        delete *it;
-    }
+auto MerchantDialog::getOffersSize() const -> index_type {
+    return offers.size();
 }
 
-MerchantDialog::index_type MerchantDialog::getOffersSize() const {
-    return getProductsSize(offers);
+auto MerchantDialog::getOffersBegin() const -> offer_iterator {
+    return offers.cbegin();
 }
 
-MerchantDialog::product_list::const_iterator MerchantDialog::getOffersBegin() const {
-    return getProductsBegin(offers);
+auto MerchantDialog::getOffersEnd() const -> offer_iterator {
+    return offers.cend();
 }
 
-MerchantDialog::product_list::const_iterator MerchantDialog::getOffersEnd() const {
-    return getProductsEnd(offers);
-}
-
-void MerchantDialog::addOffer(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price) {
+void MerchantDialog::addOffer(TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price) {
     const auto &common = Data::CommonItems[item];
-    addProduct(offers, item, name, price, common.BuyStack);
+    addOffer(item, name, price, common.BuyStack);
 }
 
-void MerchantDialog::addOffer(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price, TYPE_OF_BUY_STACK stack) {
-    addProduct(offers, item, name, price, stack);
+void MerchantDialog::addOffer(TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price, TYPE_OF_BUY_STACK stack) {
+    if (canAddOffer()) {
+        offers.emplace_back(item, name, price, stack);
+    }
 }
 
-MerchantDialog::index_type MerchantDialog::getPrimaryRequestsSize() const {
+auto MerchantDialog::getPrimaryRequestsSize() const -> index_type {
     return getProductsSize(primaryRequests);
 }
 
-MerchantDialog::product_list::const_iterator MerchantDialog::getPrimaryRequestsBegin() const {
+auto MerchantDialog::getPrimaryRequestsBegin() const -> product_iterator {
     return getProductsBegin(primaryRequests);
 }
 
-MerchantDialog::product_list::const_iterator MerchantDialog::getPrimaryRequestsEnd() const {
+auto MerchantDialog::getPrimaryRequestsEnd() const -> product_iterator {
     return getProductsEnd(primaryRequests);
 }
 
-void MerchantDialog::addPrimaryRequest(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price) {
+void MerchantDialog::addPrimaryRequest(TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price) {
     addProduct(primaryRequests, item, name, price);
 }
 
-MerchantDialog::index_type MerchantDialog::getSecondaryRequestsSize() const {
+auto MerchantDialog::getSecondaryRequestsSize() const -> index_type {
     return getProductsSize(secondaryRequests);
 }
 
-MerchantDialog::product_list::const_iterator MerchantDialog::getSecondaryRequestsBegin() const {
+auto MerchantDialog::getSecondaryRequestsBegin() const -> product_iterator {
     return getProductsBegin(secondaryRequests);
 }
 
-MerchantDialog::product_list::const_iterator MerchantDialog::getSecondaryRequestsEnd() const {
+auto MerchantDialog::getSecondaryRequestsEnd() const -> product_iterator {
     return getProductsEnd(secondaryRequests);
 }
 
-void MerchantDialog::addSecondaryRequest(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price) {
+void MerchantDialog::addSecondaryRequest(TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price) {
     addProduct(secondaryRequests, item, name, price);
 }
 
 
-MerchantDialog::Result MerchantDialog::getResult() const {
+auto MerchantDialog::getResult() const -> Result{
     return result;
 }
 
@@ -126,7 +111,7 @@ void MerchantDialog::setResult(Result result) {
     this->result = result;
 }
 
-MerchantDialog::index_type MerchantDialog::getPurchaseIndex() const {
+auto MerchantDialog::getPurchaseIndex() const -> index_type {
     return purchaseIndex;
 }
 
@@ -142,7 +127,7 @@ void MerchantDialog::setPurchaseAmount(Item::number_type amount) {
     purchaseAmount = amount;
 }
 
-ScriptItem MerchantDialog::getSaleItem() const {
+const ScriptItem &MerchantDialog::getSaleItem() const {
     return saleItem;
 }
 
@@ -154,33 +139,29 @@ bool MerchantDialog::closeOnMove() const {
     return true;
 }
 
-MerchantDialog::index_type MerchantDialog::getProductsSize(const MerchantDialog::product_list &products) const {
+auto MerchantDialog::getProductsSize(const product_list &products) const -> index_type {
     return products.size();
 }
 
-MerchantDialog::product_list::const_iterator MerchantDialog::getProductsBegin(const product_list &products) const {
+auto MerchantDialog::getProductsBegin(const product_list &products) const -> product_iterator {
     return products.cbegin();
 }
 
-MerchantDialog::product_list::const_iterator MerchantDialog::getProductsEnd(const product_list &products) const {
+auto MerchantDialog::getProductsEnd(const product_list &products) const -> product_iterator {
     return products.cend();
 }
 
-void MerchantDialog::addProduct(MerchantDialog::product_list &products, TYPE_OF_ITEM_ID item, string &name, TYPE_OF_WORTH price) {
+void MerchantDialog::addProduct(product_list &products, TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price) {
     if (canAddProduct(products)) {
-        Product *product = new Product(item, name, price);
-        products.push_back(product);
+        products.emplace_back(item, name, price);
     }
 }
 
-void MerchantDialog::addProduct(MerchantDialog::product_list &products, TYPE_OF_ITEM_ID item, string &name, TYPE_OF_WORTH price, TYPE_OF_BUY_STACK stack) {
-    if (canAddProduct(products)) {
-        Product *product = new OfferProduct(item, name, price, stack);
-        products.push_back(product);
-    }
+bool MerchantDialog::canAddOffer() const {
+    return offers.size() < MAXPRODUCTS;
 }
 
-bool MerchantDialog::canAddProduct(MerchantDialog::product_list &products) {
+bool MerchantDialog::canAddProduct(const product_list &products) const {
     return products.size() < MAXPRODUCTS;
 }
 

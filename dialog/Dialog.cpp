@@ -23,7 +23,7 @@
 #include "Logger.hpp"
 #include <stdexcept>
 
-Dialog::Dialog(std::string title, std::string className, luabind::object callback)
+Dialog::Dialog(const std::string &title, const std::string &className, const luabind::object &callback)
     : title(title), className(className), callback(callback) {
     auto type = luabind::type(callback);
 
@@ -38,15 +38,15 @@ Dialog::Dialog(const Dialog &dialog) {
     callback = dialog.callback;
 }
 
-std::string Dialog::getClassName() const {
+const std::string &Dialog::getClassName() const {
     return className;
 }
 
-std::string Dialog::getTitle() const {
+const std::string &Dialog::getTitle() const {
     return title;
 }
 
-luabind::object Dialog::getCallback() const {
+const luabind::object &Dialog::getCallback() const {
     return callback;
 }
 
