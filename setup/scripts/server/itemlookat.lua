@@ -10,7 +10,7 @@ module("server.itemlookat", package.seeall)
 -- @param[in] item      the item the player is looking at
 -- @return true in case the script generated the lookat
 function lookAtItem(player, item)
-    local lookAt = lookAt()
+    local lookAt = ItemLookAt()
     lookAt.name = world:getItemName(item.id,Player.english)
     world:itemInform(player, item, lookAt)
     return true
