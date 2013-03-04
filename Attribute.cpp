@@ -20,6 +20,11 @@
 
 #include "Attribute.hpp"
 
+Attribute::Attribute() {
+    value = 0;
+    maximum = 0;
+}
+
 Attribute::Attribute(attribute_t value) {
     this->value = value;
     maximum = 0;
@@ -38,7 +43,7 @@ void Attribute::setValue(attribute_t value) {
     }
 }
 
-Attribute::attribute_t Attribute::getValue() const {
+auto Attribute::getValue() const -> attribute_t {
     return value;
 }
 

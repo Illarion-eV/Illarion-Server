@@ -23,13 +23,9 @@
 
 #include "dialog/Dialog.hpp"
 #include "Item.hpp"
-#include <string>
 #include <vector>
 
-
-using std::string;
 using std::vector;
-
 
 class Product {
 private:
@@ -38,14 +34,14 @@ private:
     TYPE_OF_WORTH price;
 
 public:
-    Product(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price): item(item), name(name), price(price) {};
-    TYPE_OF_ITEM_ID getItem() {
+    Product(TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price): item(item), name(name), price(price) {};
+    TYPE_OF_ITEM_ID getItem() const {
         return item;
     };
-    string &getName() {
+    const string &getName() const {
         return name;
     };
-    TYPE_OF_WORTH getPrice() {
+    TYPE_OF_WORTH getPrice() const {
         return price;
     };
 };
@@ -56,8 +52,8 @@ private:
     TYPE_OF_BUY_STACK stack;
 
 public:
-    OfferProduct(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price, TYPE_OF_BUY_STACK stack): Product(item, name, price), stack(stack) {};
-    TYPE_OF_BUY_STACK getStack() {
+    OfferProduct(TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price, TYPE_OF_BUY_STACK stack): Product(item, name, price), stack(stack) {};
+    TYPE_OF_BUY_STACK getStack() const {
         return stack;
     };
 };
@@ -66,7 +62,11 @@ public:
 class MerchantDialog: public Dialog {
 public:
     typedef uint8_t index_type;
-    typedef vector<Product *> product_list;
+    typedef vector<Product> product_list;
+    typedef product_list::const_iterator product_iterator;
+    typedef vector<OfferProduct> offer_list;
+    typedef offer_list::const_iterator offer_iterator;
+
     enum Result {
         playerAborts = 0,
         playerSells = 1,
@@ -75,7 +75,7 @@ public:
 
 private:
     static const uint32_t MAXPRODUCTS = 256;
-    product_list offers;
+    offer_list offers;
     product_list primaryRequests;
     product_list secondaryRequests;
 
@@ -87,25 +87,24 @@ private:
     ScriptItem saleItem;
 
 public:
-    MerchantDialog(string title, luabind::object callback);
+    MerchantDialog(const string &title, const luabind::object &callback);
     MerchantDialog(const MerchantDialog &merchantDialog);
-    ~MerchantDialog();
 
     index_type getOffersSize() const;
-    product_list::const_iterator getOffersBegin() const;
-    product_list::const_iterator getOffersEnd() const;
-    void addOffer(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price);
-    void addOffer(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price, TYPE_OF_BUY_STACK stack);
+    offer_iterator getOffersBegin() const;
+    offer_iterator getOffersEnd() const;
+    void addOffer(TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price);
+    void addOffer(TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price, TYPE_OF_BUY_STACK stack);
 
     index_type getPrimaryRequestsSize() const;
-    product_list::const_iterator getPrimaryRequestsBegin() const;
-    product_list::const_iterator getPrimaryRequestsEnd() const;
-    void addPrimaryRequest(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price);
+    product_iterator getPrimaryRequestsBegin() const;
+    product_iterator getPrimaryRequestsEnd() const;
+    void addPrimaryRequest(TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price);
 
     index_type getSecondaryRequestsSize() const;
-    product_list::const_iterator getSecondaryRequestsBegin() const;
-    product_list::const_iterator getSecondaryRequestsEnd() const;
-    void addSecondaryRequest(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price);
+    product_iterator getSecondaryRequestsBegin() const;
+    product_iterator getSecondaryRequestsEnd() const;
+    void addSecondaryRequest(TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price);
 
     Result getResult() const;
     void setResult(Result result);
@@ -115,17 +114,18 @@ public:
     Item::number_type getPurchaseAmount() const;
     void setPurchaseAmount(Item::number_type amount);
 
-    ScriptItem getSaleItem() const;
+    const ScriptItem &getSaleItem() const;
     void setSaleItem(const ScriptItem &item);
 
     virtual bool closeOnMove() const override;
 private:
     index_type getProductsSize(const product_list &products) const;
-    product_list::const_iterator getProductsBegin(const product_list &products) const;
-    product_list::const_iterator getProductsEnd(const product_list &products) const;
-    void addProduct(product_list &products, TYPE_OF_ITEM_ID item, string &name, TYPE_OF_WORTH price);
-    void addProduct(product_list &products, TYPE_OF_ITEM_ID item, string &name, TYPE_OF_WORTH price, TYPE_OF_BUY_STACK stack);
-    bool canAddProduct(product_list &products);
+    product_iterator getProductsBegin(const product_list &products) const;
+    product_iterator getProductsEnd(const product_list &products) const;
+    void addProduct(product_list &products, TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price);
+    void addProduct(product_list &products, TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price, TYPE_OF_BUY_STACK stack);
+    bool canAddOffer() const;
+    bool canAddProduct(const product_list &products) const;
 };
 
 #endif

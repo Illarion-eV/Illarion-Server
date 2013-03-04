@@ -221,7 +221,7 @@ void World::itemInform(Character *user, ScriptItem item, ItemLookAt lookAt) {
     Player *cp = dynamic_cast<Player *>(user);
 
     if (item.type == ScriptItem::it_container) {
-        if (item.inside && item.owner->character == Character::player) {
+        if (item.inside) {
             try {
                 uint8_t showcase = cp->getShowcaseId(item.inside);
                 boost::shared_ptr<BasicServerCommand>cmd(new LookAtShowCaseItemTC(showcase, item.itempos, lookAt));
@@ -230,15 +230,11 @@ void World::itemInform(Character *user, ScriptItem item, ItemLookAt lookAt) {
             }
         }
     } else if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
-        if (item.owner->character == Character::player) {
-            boost::shared_ptr<BasicServerCommand>cmd(new LookAtInventoryItemTC(item.itempos, lookAt));
-            cp->Connection->addCommand(cmd);
-        }
+        boost::shared_ptr<BasicServerCommand>cmd(new LookAtInventoryItemTC(item.itempos, lookAt));
+        cp->Connection->addCommand(cmd);
     } else if (item.type == ScriptItem::it_field) {
-        if (item.owner->character == Character::player) {
-            boost::shared_ptr<BasicServerCommand>cmd(new LookAtMapItemTC(item.pos.x, item.pos.y, item.pos.z, lookAt));
-            cp->Connection->addCommand(cmd);
-        }
+        boost::shared_ptr<BasicServerCommand>cmd(new LookAtMapItemTC(item.pos.x, item.pos.y, item.pos.z, lookAt));
+        cp->Connection->addCommand(cmd);
     }
 }
 

@@ -30,6 +30,7 @@ private:
     attribute_t maximum;
 
 public:
+    Attribute();
     Attribute(attribute_t value);
     Attribute(attribute_t value, attribute_t maximum);
     void setValue(attribute_t value);

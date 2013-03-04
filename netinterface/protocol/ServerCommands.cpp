@@ -78,29 +78,29 @@ MerchantDialogTC::MerchantDialogTC(MerchantDialog &merchantDialog, unsigned int 
     addUnsignedCharToBuffer(size);
 
     for (auto it = merchantDialog.getOffersBegin(); it != merchantDialog.getOffersEnd(); ++it) {
-        OfferProduct &product = *(OfferProduct *)*it;
-        addShortIntToBuffer(product.getItem());
-        addStringToBuffer(product.getName());
-        addIntToBuffer(product.getPrice());
-        addShortIntToBuffer(product.getStack());
+        const OfferProduct &offer = *it;
+        addShortIntToBuffer(offer.getItem());
+        addStringToBuffer(offer.getName());
+        addIntToBuffer(offer.getPrice());
+        addShortIntToBuffer(offer.getStack());
     }
 
     size = merchantDialog.getPrimaryRequestsSize();
     addUnsignedCharToBuffer(size);
 
     for (auto it = merchantDialog.getPrimaryRequestsBegin(); it != merchantDialog.getPrimaryRequestsEnd(); ++it) {
-        addShortIntToBuffer((*it)->getItem());
-        addStringToBuffer((*it)->getName());
-        addIntToBuffer((*it)->getPrice());
+        addShortIntToBuffer(it->getItem());
+        addStringToBuffer(it->getName());
+        addIntToBuffer(it->getPrice());
     }
 
     size = merchantDialog.getSecondaryRequestsSize();
     addUnsignedCharToBuffer(size);
 
     for (auto it = merchantDialog.getSecondaryRequestsBegin(); it != merchantDialog.getSecondaryRequestsEnd(); ++it) {
-        addShortIntToBuffer((*it)->getItem());
-        addStringToBuffer((*it)->getName());
-        addIntToBuffer((*it)->getPrice());
+        addShortIntToBuffer(it->getItem());
+        addStringToBuffer(it->getName());
+        addIntToBuffer(it->getPrice());
     }
 
     addIntToBuffer(dialogId);
@@ -112,9 +112,9 @@ SelectionDialogTC::SelectionDialogTC(SelectionDialog &selectionDialog, unsigned 
     SelectionDialog::index_type size = selectionDialog.getOptionsSize();
     addUnsignedCharToBuffer(size);
 
-    for (auto it = selectionDialog.getOptionsBegin(); it != selectionDialog.getOptionsEnd(); ++it) {
-        addShortIntToBuffer((*it)->getItem());
-        addStringToBuffer((*it)->getName());
+    for (const auto &option : selectionDialog) {
+        addShortIntToBuffer(option.getItem());
+        addStringToBuffer(option.getName());
     }
 
     addIntToBuffer(dialogId);
@@ -134,7 +134,7 @@ CraftingDialogTC::CraftingDialogTC(CraftingDialog &craftingDialog, unsigned int 
 
     for (auto it = craftingDialog.getCraftablesBegin(); it != craftingDialog.getCraftablesEnd(); ++it) {
         uint8_t craftableId = it->first;
-        Craftable &craftable = *it->second;
+        const Craftable &craftable = it->second;
         addUnsignedCharToBuffer(craftableId);
         addUnsignedCharToBuffer(craftable.getGroup());
         addShortIntToBuffer(craftable.getItem());
@@ -145,8 +145,7 @@ CraftingDialogTC::CraftingDialogTC(CraftingDialog &craftingDialog, unsigned int 
         Craftable::index_t numberOfIngredients = craftable.getIngredientsSize();
         addUnsignedCharToBuffer(numberOfIngredients);
 
-        for (auto it2 = craftable.getIngredientsBegin(); it2 != craftable.getIngredientsEnd(); ++it2) {
-            Ingredient &ingredient = **it2;
+        for (const auto &ingredient : craftable) {
             addShortIntToBuffer(ingredient.getItem());
             addUnsignedCharToBuffer(ingredient.getNumber());
         }

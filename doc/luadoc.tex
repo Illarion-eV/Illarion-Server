@@ -55,7 +55,7 @@
 \makeindex
 \begin{document}
 \lstset{basicstyle=\small, keywordstyle=\ttfamily, identifierstyle=\ttfamily}
-\title{Lua documentation for Illarion scripting\\v5.5}
+\title{Lua documentation for Illarion scripting\\v5.6}
 \author{Martin \thanks{ \texttt{martin@illarion.org, http://www.illarion.org}},
 pharse \thanks{ \texttt{pharse@illarion.org, http://www.illarion.org}},
 vilarion \thanks{ \texttt{vilarion@illarion.org, http://www.illarion.org}}}
@@ -205,7 +205,7 @@ Avoid this by copying the single x,y and z coordinates in a new position struct.
        Lets a character say/whisper/yell some \var{text}.\\
        Example: \comm{User}:\com{talk}{\comm{Character.say}, "Hello world!"}
 \end{quote}
-\void \var{character}:\com{talk}{\integer \var{texttype},\integer \var{language},\txt \var{germanText}, \txt \var{englishText}}
+\void \var{character}:\com{talk}{\integer \var{texttype},\txt \var{germanText}, \txt \var{englishText}}
 \begin{quote}
        Same as \com{talk}{...} except that players will only hear speech in their own language.
 \end{quote}
@@ -422,7 +422,7 @@ Any change to fixed attributes is only temporary and will be null upon the next 
 \end{quote}
 \integer \var{character}:\com{getType}{}
 \begin{quote}
-       returns 0 for player, 1 for monster, 2 for NPC
+       Returns Character.player for players, Character.monster for monsters and Character.npc for NPCs.
 \end{quote}
 \void \var{character}:\com{increasePoisonValue}{\var{value}}\\
 \integer \var{character}:\com{getPoisonValue}{}\\
@@ -1322,7 +1322,7 @@ The example at the end of this chapter will help you a lot.
 \void \var{effect}:\com{addValue}{\txt \var{name},\integer \var{value}}
 \begin{quote}
        \var{name} is an arbitrary name for a variable that can be introduced and filled with \var{value} and is added
-       to that effect. It can later (at one of the following calls, for example) be read or changed again.
+       to that effect. It can later (at one of the following calls, for example) be read or changed again. Note that \var{value} can be any integer x, but it will be saved as y, where $0 \le y < 2^{32}$ and $x \equiv y \pmod{2^{32}}$.
 \end{quote}
 \void \var{effect}:\com{removeValue}{\txt \var{name}}
 \begin{quote}
@@ -2359,6 +2359,10 @@ It might be the case, and this is hoped much, that you want to create more compl
 \appendix
 
 \chapter{Versions}
+Version 5.6 (01 03 13)\\
+* Added numeric constants for char:getType()\\
+* Added a note about how LTE values are saved\\
+\\
 Version 5.5 (26 02 13)\\
 * Removed deprecated talkLanguage command\\
 * Added localised overload for talk command\\

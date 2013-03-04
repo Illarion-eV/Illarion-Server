@@ -27,7 +27,6 @@
 #include "data/TilesTable.hpp"
 #include "script/LuaWeaponScript.hpp"
 #include "Logger.hpp"
-#include "WaypointList.hpp"
 #include <map>
 #include <algorithm>
 #include <boost/shared_ptr.hpp>
@@ -131,24 +130,24 @@ luabind::object Character::getLuaStepList(position goal) {
     lua_State *luaState = World::get()->getCurrentScript()->getLuaState();
     luabind::object list = luabind::newtable(luaState);
     int index = 1;
-    std::list<Character::direction> dirs;
+    std::list<direction> dirs;
     getStepList(goal, dirs);
 
-    for (std::list<Character::direction>::iterator it = dirs.begin(); it != dirs.end(); ++it) {
+    for (std::list<direction>::iterator it = dirs.begin(); it != dirs.end(); ++it) {
         list[index++] = (*it);
     }
 
     return list;
 }
 
-bool Character::getStepList(position goal, std::list<Character::direction> &steps) {
+bool Character::getStepList(position goal, std::list<direction> &steps) {
     return pathfinding::a_star(pos, goal, steps);
 }
 
 
 
-bool Character::getNextStepDir(position goal, Character::direction &dir) {
-    std::list<Character::direction> steps;
+bool Character::getNextStepDir(position goal, direction &dir) {
+    std::list<direction> steps;
 
     getStepList(goal, steps);
 
@@ -161,7 +160,7 @@ bool Character::getNextStepDir(position goal, Character::direction &dir) {
 }
 
 
-Character::Character(const appearance &appearance) : actionPoints(P_MAX_AP),fightPoints(P_MAX_FP),waypoints(new WaypointList(this)),_is_on_route(false),_world(World::get()), _appearance(appearance) {
+Character::Character(const appearance &appearance) : actionPoints(P_MAX_AP), fightPoints(P_MAX_FP), effects(this), waypoints(this), attributes(ATTRIBUTECOUNT), _is_on_route(false), _world(World::get()), _appearance(appearance) {
 #ifdef Character_DEBUG
     std::cout << "Character Konstruktor Start" << std::endl;
 #endif
@@ -188,23 +187,23 @@ Character::Character(const appearance &appearance) : actionPoints(P_MAX_AP),figh
         characterItems[ i ].reset();
     }
 
-    attributes[strength] = new Attribute(0, MAXATTRIB);
-    attributes[dexterity] = new Attribute(0, MAXATTRIB);
-    attributes[constitution] = new Attribute(0, MAXATTRIB);
-    attributes[agility] = new Attribute(0, MAXATTRIB);
-    attributes[intelligence] = new Attribute(0, MAXATTRIB);
-    attributes[perception] = new Attribute(0, MAXATTRIB);
-    attributes[willpower] = new Attribute(0, MAXATTRIB);
-    attributes[essence] = new Attribute(0, MAXATTRIB);
-    attributes[hitpoints] = new Attribute(0, MAXHPS);
-    attributes[mana] = new Attribute(0, MAXMANA);
-    attributes[foodlevel] = new Attribute(0, MAXFOOD);
-    attributes[sex] = new Attribute(0);
-    attributes[age] = new Attribute(0);
-    attributes[weight] = new Attribute(0);
-    attributes[height] = new Attribute(0);
-    attributes[attitude] = new Attribute(0);
-    attributes[luck] = new Attribute(0);
+    attributes[strength] = Attribute(0, MAXATTRIB);
+    attributes[dexterity] = Attribute(0, MAXATTRIB);
+    attributes[constitution] = Attribute(0, MAXATTRIB);
+    attributes[agility] = Attribute(0, MAXATTRIB);
+    attributes[intelligence] = Attribute(0, MAXATTRIB);
+    attributes[perception] = Attribute(0, MAXATTRIB);
+    attributes[willpower] = Attribute(0, MAXATTRIB);
+    attributes[essence] = Attribute(0, MAXATTRIB);
+    attributes[hitpoints] = Attribute(0, MAXHPS);
+    attributes[mana] = Attribute(0, MAXMANA);
+    attributes[foodlevel] = Attribute(0, MAXFOOD);
+    attributes[sex] = Attribute(0);
+    attributes[age] = Attribute(0);
+    attributes[weight] = Attribute(0);
+    attributes[height] = Attribute(0);
+    attributes[attitude] = Attribute(0);
+    attributes[luck] = Attribute(0);
 
 
     faceto = north;
@@ -221,7 +220,6 @@ Character::Character(const appearance &appearance) : actionPoints(P_MAX_AP),figh
 
     magic.flags[ DRUID ] = 0x00000000;
 
-    effects = new LongTimeCharacterEffects(this);
 #ifdef Character_DEBUG
     std::cout << "Character Konstruktor Ende" << std::endl;
 #endif
@@ -234,11 +232,6 @@ Character::~Character() {
     //blow lua fuse for this char
     fuse_ptr<Character>::blow_fuse(this);
 
-    for (int i = 0; i < Character::ATTRIBUTECOUNT; ++i) {
-        delete attributes[i];
-        attributes[i] = NULL;
-    }
-
     if (backPackContents != NULL) {
         delete backPackContents;
         backPackContents = NULL;
@@ -250,23 +243,6 @@ Character::~Character() {
         delete rit->second;
     }
 
-    if (effects != NULL) {
-        delete effects;
-        effects = NULL;
-    }
-
-    if (waypoints != NULL) {
-        waypoints->clear();
-        delete waypoints;
-        waypoints = NULL;
-    }
-
-    /*
-    if ( depotContents != NULL ) {
-      delete depotContents;
-      depotContents = NULL;
-    }
-    */
 #ifdef Character_DEBUG
     std::cout << "Character Destruktor Ende" << std::endl;
 #endif
@@ -926,7 +902,7 @@ uint8_t Character::getBeard() {
 }
 
 void Character::setAttribute(Character::attributeIndex attribute, Attribute::attribute_t value) {
-    auto &attrib = *(attributes[attribute]);
+    auto &attrib = attributes[attribute];
     auto oldValue = attrib.getValue();
     attrib.setValue(value);
     auto newValue = attrib.getValue();
@@ -937,11 +913,11 @@ void Character::setAttribute(Character::attributeIndex attribute, Attribute::att
 }
 
 Attribute::attribute_t Character::getAttribute(Character::attributeIndex attribute) const {
-    return attributes[attribute]->getValue();
+    return attributes[attribute].getValue();
 }
 
 Attribute::attribute_t Character::increaseAttribute(Character::attributeIndex attribute, int amount) {
-    auto &attrib = *(attributes[attribute]);
+    auto &attrib = attributes[attribute];
     auto oldValue = attrib.getValue();
     attrib.increaseValue(amount);
     auto newValue = attrib.getValue();
@@ -1503,7 +1479,7 @@ void Character::talkLanguage(talk_type tt, Language lang, const std::string &mes
 }
 
 void Character::turn(direction dir) {
-    if (dir != dir_up && dir != dir_down && dir != static_cast<Character::direction>(faceto)) {
+    if (dir != dir_up && dir != dir_down && dir != static_cast<direction>(faceto)) {
         faceto = (Character::face_to)dir;
         _world->sendSpinToAllVisiblePlayers(this);
     }
@@ -1515,9 +1491,9 @@ void Character::turn(position posi) {
     short int yoffs = posi.y - pos.y;
 
     if (abs(xoffs)>abs(yoffs)) {
-        turn(static_cast<Character::direction>((xoffs>0)?2:6));
+        turn(static_cast<direction>((xoffs>0)?2:6));
     } else {
-        turn(static_cast<Character::direction>((yoffs>0)?4:0));
+        turn(static_cast<direction>((yoffs>0)?4:0));
     }
 }
 

@@ -24,19 +24,21 @@
 #include <string>
 #include <luabind/object.hpp>
 
+using std::string;
+
 class Dialog {
 private:
-    std::string title;
-    std::string className;
+    string title;
+    string className;
     luabind::object callback;
 
 public:
-    Dialog(std::string title, std::string className, luabind::object callback);
+    Dialog(const string &title, const string &className, const luabind::object &callback);
     Dialog(const Dialog &dialog);
     virtual ~Dialog() {};
-    std::string getTitle() const;
-    std::string getClassName() const;
-    luabind::object getCallback() const;
+    const string &getTitle() const;
+    const string &getClassName() const;
+    const luabind::object &getCallback() const;
     virtual bool closeOnMove() const;
 };
 

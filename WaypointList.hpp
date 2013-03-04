@@ -24,7 +24,10 @@
 #include "globals.hpp"
 #include "luabind/luabind.hpp"
 #include "luabind/object.hpp"
-#include "Character.hpp"
+#include "types.hpp"
+#include <list>
+
+class Character;
 
 class WaypointList {
 public:
@@ -41,7 +44,7 @@ public:
 private:
     std::list<position> positions;
     Character *_movechar;
-    std::list<Character::direction> steplist;
+    std::list<direction> steplist;
     bool checkPosition();
 };
 #endif

@@ -208,7 +208,7 @@ void Player::login() throw(Player::LogoutException) {
     cmd.reset(new SetCoordinateTC(pos));
     Connection->addCommand(cmd);
 
-    effects->load();
+    effects.load();
 
     //send the basic data to the monitoring client
     cmd.reset(new BBPlayerTC(id, name, pos.x, pos.y,pos.z));
@@ -1284,7 +1284,7 @@ bool Player::save() throw() {
 
         connection->commitTransaction();
 
-        if (!effects->save()) {
+        if (!effects.save()) {
             std::cerr<<"error while saving lteffects for player"<<name<<std::endl;
         }
 
@@ -2588,10 +2588,10 @@ void Player::requestInputDialog(InputDialog *inputDialog) {
     requestDialog<InputDialog, InputDialogTC>(inputDialog);
 }
 
-void Player::executeInputDialog(unsigned int dialogId, bool success, std::string input) {
-    InputDialog *inputDialog = getDialog<InputDialog>(dialogId);
+void Player::executeInputDialog(unsigned int dialogId, bool success, const std::string &input) {
+    auto inputDialog = getDialog<InputDialog>(dialogId);
 
-    if (inputDialog != 0) {
+    if (inputDialog) {
         inputDialog->setSuccess(success);
 
         if (success) {
@@ -2601,7 +2601,6 @@ void Player::executeInputDialog(unsigned int dialogId, bool success, std::string
         LuaScript::executeDialogCallback(*inputDialog);
     }
 
-    delete inputDialog;
     dialogs.erase(dialogId);
 }
 
@@ -2610,13 +2609,12 @@ void Player::requestMessageDialog(MessageDialog *messageDialog) {
 }
 
 void Player::executeMessageDialog(unsigned int dialogId) {
-    MessageDialog *messageDialog = getDialog<MessageDialog>(dialogId);
+    auto messageDialog = getDialog<MessageDialog>(dialogId);
 
-    if (messageDialog != 0) {
+    if (messageDialog) {
         LuaScript::executeDialogCallback(*messageDialog);
     }
 
-    delete messageDialog;
     dialogs.erase(dialogId);
 }
 
@@ -2625,9 +2623,9 @@ void Player::requestMerchantDialog(MerchantDialog *merchantDialog) {
 }
 
 void Player::executeMerchantDialogAbort(unsigned int dialogId) {
-    MerchantDialog *merchantDialog = getDialog<MerchantDialog>(dialogId);
+    auto merchantDialog = getDialog<MerchantDialog>(dialogId);
 
-    if (merchantDialog != 0) {
+    if (merchantDialog) {
         merchantDialog->setResult(MerchantDialog::playerAborts);
         merchantDialog->setPurchaseIndex(0);
         merchantDialog->setPurchaseAmount(0);
@@ -2636,14 +2634,13 @@ void Player::executeMerchantDialogAbort(unsigned int dialogId) {
         LuaScript::executeDialogCallback(*merchantDialog);
     }
 
-    delete merchantDialog;
     dialogs.erase(dialogId);
 }
 
 void Player::executeMerchantDialogBuy(unsigned int dialogId, MerchantDialog::index_type index, Item::number_type amount) {
-    MerchantDialog *merchantDialog = getDialog<MerchantDialog>(dialogId);
+    auto merchantDialog = getDialog<MerchantDialog>(dialogId);
 
-    if (merchantDialog != 0) {
+    if (merchantDialog) {
         merchantDialog->setResult(MerchantDialog::playerBuys);
         merchantDialog->setPurchaseIndex(index);
         merchantDialog->setPurchaseAmount(amount);
@@ -2654,9 +2651,9 @@ void Player::executeMerchantDialogBuy(unsigned int dialogId, MerchantDialog::ind
 }
 
 void Player::executeMerchantDialogSell(unsigned int dialogId, uint8_t location, TYPE_OF_CONTAINERSLOTS slot, Item::number_type amount) {
-    MerchantDialog *merchantDialog = getDialog<MerchantDialog>(dialogId);
+    auto merchantDialog = getDialog<MerchantDialog>(dialogId);
 
-    if (merchantDialog != 0) {
+    if (merchantDialog) {
         merchantDialog->setResult(MerchantDialog::playerSells);
         merchantDialog->setPurchaseIndex(0);
         merchantDialog->setPurchaseAmount(0);
@@ -2685,9 +2682,9 @@ void Player::requestSelectionDialog(SelectionDialog *selectionDialog) {
 }
 
 void Player::executeSelectionDialog(unsigned int dialogId, bool success, SelectionDialog::index_type index) {
-    SelectionDialog *selectionDialog = getDialog<SelectionDialog>(dialogId);
+    auto selectionDialog = getDialog<SelectionDialog>(dialogId);
 
-    if (selectionDialog != 0) {
+    if (selectionDialog) {
         selectionDialog->setSuccess(success);
 
         if (success) {
@@ -2697,7 +2694,6 @@ void Player::executeSelectionDialog(unsigned int dialogId, bool success, Selecti
         LuaScript::executeDialogCallback(*selectionDialog);
     }
 
-    delete selectionDialog;
     dialogs.erase(dialogId);
 }
 
@@ -2706,21 +2702,20 @@ void Player::requestCraftingDialog(CraftingDialog *craftingDialog) {
 }
 
 void Player::executeCraftingDialogAbort(unsigned int dialogId) {
-    CraftingDialog *craftingDialog = getDialog<CraftingDialog>(dialogId);
+    auto craftingDialog = getDialog<CraftingDialog>(dialogId);
 
-    if (craftingDialog != 0) {
+    if (craftingDialog) {
         craftingDialog->setResult(CraftingDialog::playerAborts);
         LuaScript::executeDialogCallback(*craftingDialog);
     }
 
-    delete craftingDialog;
     dialogs.erase(dialogId);
 }
 
 void Player::executeCraftingDialogCraft(unsigned int dialogId, uint8_t craftId, uint8_t craftAmount) {
-    CraftingDialog *craftingDialog = getDialog<CraftingDialog>(dialogId);
+    auto craftingDialog = getDialog<CraftingDialog>(dialogId);
 
-    if (craftingDialog != 0) {
+    if (craftingDialog) {
         craftingDialog->setResult(CraftingDialog::playerCrafts);
         craftingDialog->setCraftableId(craftId);
         craftingDialog->setCraftableAmount(craftAmount);
@@ -2739,9 +2734,9 @@ void Player::executeCraftingDialogCraft(unsigned int dialogId, uint8_t craftId, 
 }
 
 void Player::executeCraftingDialogCraftingComplete(unsigned int dialogId) {
-    CraftingDialog *craftingDialog = getDialog<CraftingDialog>(dialogId);
+    auto craftingDialog = getDialog<CraftingDialog>(dialogId);
 
-    if (craftingDialog != 0) {
+    if (craftingDialog) {
         craftingDialog->setResult(CraftingDialog::playerCraftingComplete);
         bool renewProductList = LuaScript::executeDialogCallback<bool>(*craftingDialog);
 
@@ -2763,9 +2758,9 @@ void Player::executeCraftingDialogCraftingComplete(unsigned int dialogId) {
 }
 
 void Player::executeCraftingDialogCraftingAborted(unsigned int dialogId) {
-    CraftingDialog *craftingDialog = getDialog<CraftingDialog>(dialogId);
+    auto craftingDialog = getDialog<CraftingDialog>(dialogId);
 
-    if (craftingDialog != 0) {
+    if (craftingDialog) {
         craftingDialog->setResult(CraftingDialog::playerCraftingAborted);
         LuaScript::executeDialogCallback(*craftingDialog);
 
@@ -2775,9 +2770,9 @@ void Player::executeCraftingDialogCraftingAborted(unsigned int dialogId) {
 }
 
 void Player::executeCraftingDialogLookAtCraftable(unsigned int dialogId, uint8_t craftId) {
-    CraftingDialog *craftingDialog = getDialog<CraftingDialog>(dialogId);
+    auto craftingDialog = getDialog<CraftingDialog>(dialogId);
 
-    if (craftingDialog != 0) {
+    if (craftingDialog) {
         craftingDialog->setResult(CraftingDialog::playerLooksAtCraftable);
         craftingDialog->setCraftableId(craftId);
         ItemLookAt lookAt = LuaScript::executeDialogCallback<ItemLookAt>(*craftingDialog);
@@ -2786,9 +2781,9 @@ void Player::executeCraftingDialogLookAtCraftable(unsigned int dialogId, uint8_t
 }
 
 void Player::executeCraftingDialogLookAtIngredient(unsigned int dialogId, uint8_t craftId, uint8_t craftIngredient) {
-    CraftingDialog *craftingDialog = getDialog<CraftingDialog>(dialogId);
+    auto craftingDialog = getDialog<CraftingDialog>(dialogId);
 
-    if (craftingDialog != 0) {
+    if (craftingDialog) {
         craftingDialog->setResult(CraftingDialog::playerLooksAtIngredient);
         craftingDialog->setCraftableId(craftId);
         craftingDialog->setIngredientIndex(craftIngredient);
@@ -2798,18 +2793,18 @@ void Player::executeCraftingDialogLookAtIngredient(unsigned int dialogId, uint8_
 }
 
 void Player::requestCraftingLookAt(unsigned int dialogId, ItemLookAt &lookAt) {
-    CraftingDialog *craftingDialog = getDialog<CraftingDialog>(dialogId);
+    auto craftingDialog = getDialog<CraftingDialog>(dialogId);
 
-    if (craftingDialog != 0) {
+    if (craftingDialog) {
         boost::shared_ptr<BasicServerCommand> cmd(new LookAtDialogItemTC(dialogId, craftingDialog->getCraftableId(), lookAt));
         Connection->addCommand(cmd);
     }
 }
 
 void Player::requestCraftingLookAtIngredient(unsigned int dialogId, ItemLookAt &lookAt) {
-    CraftingDialog *craftingDialog = getDialog<CraftingDialog>(dialogId);
+    auto craftingDialog = getDialog<CraftingDialog>(dialogId);
 
-    if (craftingDialog != 0) {
+    if (craftingDialog) {
         boost::shared_ptr<BasicServerCommand> cmd(new LookAtCraftingDialogIngredientTC(dialogId, craftingDialog->getCraftableId(), craftingDialog->getIngredientIndex(), lookAt));
         Connection->addCommand(cmd);
     }
@@ -2828,12 +2823,10 @@ void Player::startCrafting(uint8_t stillToCraft, uint16_t craftingTime, uint16_t
 }
 
 void Player::invalidateDialogs() {
-    for (auto it = dialogs.begin(); it != dialogs.end(); ++it) {
-        if (it->second != 0) {
-            boost::shared_ptr<BasicServerCommand> cmd(new CloseDialogTC(it->first));
+    for (const auto &dialog : dialogs) {
+        if (dialog.second) {
+            boost::shared_ptr<BasicServerCommand> cmd(new CloseDialogTC(dialog.first));
             Connection->addCommand(cmd);
-            delete it->second;
-            it->second = 0;
         }
     }
 
@@ -2842,13 +2835,12 @@ void Player::invalidateDialogs() {
 
 void Player::closeDialogsOnMove() {
     for (auto it = dialogs.begin(); it != dialogs.end();) {
+
         if (it->second && it->second->closeOnMove()) {
             boost::shared_ptr<BasicServerCommand> cmd(new CloseDialogTC(it->first));
             Connection->addCommand(cmd);
-            delete it->second;
-            it->second = 0;
             it = dialogs.erase(it);
-        } else if (it->second == 0) {
+        } else if (!it->second) {
             it = dialogs.erase(it);
         } else {
             ++it;

@@ -811,7 +811,7 @@ public:
     *
     *@return true if the pushing action was succesfull otherwise false
     */
-    bool pushCharacter(Player *cp, TYPE_OF_CHARACTER_ID pushedCharId, unsigned char direction);
+    bool pushCharacter(Player *cp, TYPE_OF_CHARACTER_ID pushedCharId, direction dir);
 
 #if 0
     //! bewegt das Monster in die durch d angegebene Richtung
