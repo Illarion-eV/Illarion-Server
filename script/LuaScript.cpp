@@ -591,7 +591,7 @@ void LuaScript::init_base_functions() {
         .def("getBackPack", &Character::GetBackPack)
         .def("getDepot", &Character::GetDepot)
         .def("setQuestProgress", &Character::setQuestProgress)
-        .def("getQuestProgress", &Character::getQuestProgress)
+        .def("getQuestProgress", &Character::getQuestProgress, luabind::pure_out_value(_3))
         .def("getOnRoute",&Character::getOnRoute)
         .def("setOnRoute",&Character::setOnRoute)
         .def("getMonsterType", &Character::getType)

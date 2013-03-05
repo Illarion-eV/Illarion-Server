@@ -1774,7 +1774,7 @@ void Character::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS p
     // Nothing to do here, overridden for players
 }
 
-TYPE_OF_QUESTSTATUS Character::getQuestProgress(TYPE_OF_QUEST_ID questid) throw() {
+TYPE_OF_QUESTSTATUS Character::getQuestProgress(TYPE_OF_QUEST_ID questid, int &time) throw() {
     // Nothing to do here, overridden for players
     return 0;
 }

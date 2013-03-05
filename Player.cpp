@@ -2045,16 +2045,19 @@ void Player::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS prog
             const InsertQuery::columnIndex userColumn = insQuery.addColumn("qpg_userid");
             const InsertQuery::columnIndex questColumn = insQuery.addColumn("qpg_questid");
             const InsertQuery::columnIndex progressColumn = insQuery.addColumn("qpg_progress");
+            const InsertQuery::columnIndex timeColumn = insQuery.addColumn("qpg_time");
             insQuery.addServerTable("questprogress");
 
             insQuery.addValue<TYPE_OF_CHARACTER_ID>(userColumn, id);
             insQuery.addValue<TYPE_OF_QUEST_ID>(questColumn, questid);
             insQuery.addValue<TYPE_OF_QUESTSTATUS>(progressColumn, progress);
+            insQuery.addValue<int>(timeColumn, int(time(nullptr)));
 
             insQuery.execute();
         } else {
             UpdateQuery updQuery;
             updQuery.addAssignColumn<TYPE_OF_QUESTSTATUS>("qpg_progress", progress);
+            updQuery.addAssignColumn<int>("qpg_time", int(time(nullptr)));
             updQuery.addEqualCondition<TYPE_OF_CHARACTER_ID>("questprogress", "qpg_userid", id);
             updQuery.addEqualCondition<TYPE_OF_QUEST_ID>("questprogress", "qpg_questid", questid);
             updQuery.setServerTable("questprogress");
@@ -2121,12 +2124,13 @@ void Player::sendCompleteQuestProgress() {
     }
 }
 
-TYPE_OF_QUESTSTATUS Player::getQuestProgress(TYPE_OF_QUEST_ID questid) throw() {
+TYPE_OF_QUESTSTATUS Player::getQuestProgress(TYPE_OF_QUEST_ID questid, int &time) throw() {
     try {
         using namespace Database;
 
         SelectQuery query;
         query.addColumn("questprogress", "qpg_progress");
+        query.addColumn("questprogress", "qpg_time");
         query.addEqualCondition<TYPE_OF_CHARACTER_ID>("questprogress", "qpg_userid", id);
         query.addEqualCondition<TYPE_OF_QUEST_ID>("questprogress", "qpg_questid", questid);
         query.addServerTable("questprogress");
@@ -2134,15 +2138,19 @@ TYPE_OF_QUESTSTATUS Player::getQuestProgress(TYPE_OF_QUEST_ID questid) throw() {
         Result results = query.execute();
 
         if (results.empty()) {
+            time = 0;
             return UINT32_C(0);
         } else {
+            time = results.front()["qpg_time"].as<int>();
             return results.front()["qpg_progress"].as<TYPE_OF_QUESTSTATUS>();
         }
     } catch (std::exception &e) {
         std::cerr<<"exception: "<<e.what()<<" while getting quest progress!"<<std::endl;
+        time = 0;
         return UINT32_C(0);
     }
 
+    time = 0;
     return UINT32_C(0);
 }
 

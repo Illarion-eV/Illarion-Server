@@ -982,7 +982,7 @@ public:
     * @param questid id of the quest
     * @return progress the current questprograss as flags
     */
-    virtual TYPE_OF_QUESTSTATUS getQuestProgress(TYPE_OF_QUEST_ID questid) throw();
+    virtual TYPE_OF_QUESTSTATUS getQuestProgress(TYPE_OF_QUEST_ID questid, int &time) throw();
 
     /**
     * send a character description to the player if the  char is a player
