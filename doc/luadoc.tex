@@ -55,7 +55,7 @@
 \makeindex
 \begin{document}
 \lstset{basicstyle=\small, keywordstyle=\ttfamily, identifierstyle=\ttfamily}
-\title{Lua documentation for Illarion scripting\\v5.6}
+\title{Lua documentation for Illarion scripting\\v5.7}
 \author{Martin \thanks{ \texttt{martin@illarion.org, http://www.illarion.org}},
 pharse \thanks{ \texttt{pharse@illarion.org, http://www.illarion.org}},
 vilarion \thanks{ \texttt{vilarion@illarion.org, http://www.illarion.org}}}
@@ -450,9 +450,9 @@ Any change to fixed attributes is only temporary and will be null upon the next 
 \begin{quote}
        A questprogress can be set for a specific quest.
 \end{quote}
-\integer \var{character}:\com{getQuestProgress}{\integer \var{questID}}
+\integer\var{progress}[, \integer\var{time}] \var{character}:\com{getQuestProgress}{\integer \var{questID}}
 \begin{quote}
-       Returns the questprogress for a specific quest.
+       Returns the \var{progress} for a specific quest. Optionally also returns the \var{time} when this progress was last set as Unix timestamp.
 \end{quote}
 \subsection{Item handling}
 \integer \var{character}:\com{createItem}{\integer \var{itemID},\integer \var{count},\integer \var{quality}, \datatable \var{data}}
@@ -2357,6 +2357,9 @@ It might be the case, and this is hoped much, that you want to create more compl
 \appendix
 
 \chapter{Versions}
+Version 5.7 (05 03 13)\\
+* Added time as return value of getQuestProgress\\
+\\
 Version 5.6 (01 03 13)\\
 * Added numeric constants for char:getType()\\
 * Added a note about how LTE values are saved\\
