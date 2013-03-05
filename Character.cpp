@@ -1440,44 +1440,6 @@ void Character::talk(talk_type tt, const std::string &german, const std::string 
     actionPoints -= cost;
 }
 
-void Character::talkLanguage(talk_type tt, Language lang, const std::string &message) {
-    LuaScript *currentScript = World::get()->currentScript;
-
-    if (currentScript != nullptr) {
-        Logger::warn(LogFacility::Script) << "script called deprecated talkLanguage function, use talk(type, german, english) instead: " << currentScript->getFileName() << Log::end;
-    }
-
-    uint16_t cost = 0;
-    lastSpokenText=message;
-
-    switch (tt) {
-    case tt_say:
-
-        if (!IsAlive()) {
-            return;
-        }
-
-        cost = P_SAY_COST;
-        break;
-
-    case tt_whisper:
-        cost = P_WHISPER_COST;
-        break;
-
-    case tt_yell:
-
-        if (!IsAlive()) {
-            return;
-        }
-
-        cost = P_SHOUT_COST;
-        break;
-    }
-
-    _world->sendLanguageMessageToAllCharsInRange(message, tt, lang, this);
-    actionPoints -= cost;
-}
-
 void Character::turn(direction dir) {
     if (dir != dir_up && dir != dir_down && dir != static_cast<direction>(faceto)) {
         faceto = (Character::face_to)dir;

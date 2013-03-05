@@ -899,15 +899,6 @@ public:
     virtual void talk(talk_type tt, const std::string &german, const std::string &english);
 
     /**
-    * the character talks something in a specific language
-    * <b>Lua: [:talkLanguage]</b>
-    * @param tt how loudely the character talks
-    * @param lang in which language the character talkes
-    * @param message the message the character talkes
-    */
-    virtual void talkLanguage(talk_type tt, Language lang, const std::string &message);
-
-    /**
     * informs only this character about something
     * <b>Lua: [:inform]</b>
     * @param message which should be sended to this character

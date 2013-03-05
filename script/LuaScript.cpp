@@ -509,7 +509,6 @@ void LuaScript::init_base_functions() {
         .def("talk", (void(Character:: *)(Character::talk_type, const std::string &))&Character::talk)
         .def("talk", (void(Character:: *)(Character::talk_type, const std::string &, const std::string &))&Character::talk)
         .def("sendCharDescription", &Character::sendCharDescription)
-        .def("talkLanguage", &Character::talkLanguage)
         .def("startAction", &Character::startAction)
         .def("abortAction", &Character::abortAction)
         .def("successAction", &Character::successAction)
