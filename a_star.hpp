@@ -5,7 +5,6 @@
 #include <cmath>
 #include <vector>
 #include <boost/unordered_map.hpp>
-#include <boost/property_map/function_property_map.hpp>
 #include <boost/graph/astar_search.hpp>
 #include <map>
 
@@ -137,20 +136,36 @@ private:
     Vertex goal;
 };
 
-template <typename T>
-struct weight_calc {
-    typedef Cost result_type;
-    weight_calc(int level): level(level) {}
-    Cost operator()(T e) const {
-        auto v = e.second;
-        Field *field = World::get()->GetField(::position(v.first, v.second, level));
+struct edge_hash : std::unary_function<std::pair<Position, Position>, std::size_t> {
+    std::size_t operator()(std::pair<Position, Position> const &e) const {
+        std::size_t seed = 0;
+        boost::hash_combine(seed, e.first.first);
+        boost::hash_combine(seed, e.first.second);
+        boost::hash_combine(seed, e.second.first);
+        boost::hash_combine(seed, e.second.second);
+        return seed;
+    }
+};
 
-        if (!field) {
-            return 1;
+struct weight_calc: public unordered_map<std::pair<Position, Position>, Cost, edge_hash> {
+    weight_calc(int level): level(level) {}
+    typedef unordered_map<std::pair<Position, Position>, Cost, edge_hash> base;
+    mapped_type &operator[](key_type const &k) {
+        mapped_type &cost = base::operator[](k);
+
+        if (cost == 0.0) {
+            auto v = k.second;
+            Field *field = World::get()->GetField(::position(v.first, v.second, level));
+
+            if (!field) {
+                cost = 1;
+            } else {
+                auto tileId = field->getTileId();
+                cost = Data::Tiles[tileId].walkingCost;
+            }
         }
 
-        auto tileId = field->getTileId();
-        return Data::Tiles[tileId].walkingCost;
+        return cost;
     }
 private:
     int level;
@@ -168,12 +183,10 @@ struct vertex_hash : std::unary_function<Position, std::size_t> {
 struct found_goal {};
 struct not_found {};
 
-template <typename T>
-struct vertex_index_hash {
-    typedef int result_type;
-    vertex_index_hash(): discovery_counter(0) {}
-    int operator()(T v) const {
-        int &id = discovery_hash[v];
+struct vertex_index_hash: public unordered_map<Position, int, vertex_hash> {
+    typedef unordered_map<Position, int, vertex_hash> base;
+    mapped_type &operator[](key_type const &k) {
+        int &id = base::operator[](k);
 
         if (id == 0) {
             id = ++discovery_counter;
@@ -188,8 +201,7 @@ struct vertex_index_hash {
     }
 
 private:
-    mutable unordered_map<Position, int, vertex_hash> discovery_hash;
-    mutable int discovery_counter;
+    mutable int discovery_counter = 0;
 };
 
 struct astar_ex_visitor: public boost::default_astar_visitor {
@@ -255,8 +267,8 @@ bool a_star(::position &start_pos, ::position &goal_pos, std::list<direction> &s
     distance_heuristic h(goal);
     h(start);
 
-    //static_property_map<Cost> weight(1);
-    function_property_map<weight_calc<edge>, edge, Cost> weight(goal_pos.z);
+    weight_calc w(goal_pos.z);
+    boost::associative_property_map<weight_calc> weight(w);
 
     pred_map predecessor;
     boost::associative_property_map<pred_map> pred_pmap(predecessor);
@@ -269,7 +281,8 @@ bool a_star(::position &start_pos, ::position &goal_pos, std::list<direction> &s
     rank[start] = h(start);
     boost::associative_property_map<dist_map> rank_pmap(rank);
 
-    function_property_map<vertex_index_hash<vertex>, vertex, int> index;
+    vertex_index_hash vertex_hash;
+    boost::associative_property_map<vertex_index_hash> index(vertex_hash);
 
     astar_ex_visitor visitor(goal);
 
