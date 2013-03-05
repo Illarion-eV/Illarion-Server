@@ -1518,8 +1518,7 @@ function UseItem(User, SourceItem, ltstate)
 
         -- Cast forced emotes from the Charakter who uses our potion
         -- (german for germans, english for the rest)
-        User:talkLanguage(Character.say, Player.german, "#me verschüttet den Trank.");
-        User:talkLanguage(Character.say, Player.english, "#me spills the potion.");
+        User:talk(Character.say, "#me verschüttet den Trank.", "#me spills the potion.")
         -- [...] possibly remove the bottle etc.
         -- since the user failed to drink the potion we are done now
         return
@@ -1541,9 +1540,8 @@ function UseItem(User, SourceItem, ltstate)
         -- every 2,5 seconds. So the sound is only played once (at the beginning)
         User:startAction(20,0,0,15,25);
 
-        -- lets tell everyone that our User drank a potion by a forced emote
-        User:talkLanguage(Character.say, Player.german, "#me beginnt einen Trank zu trinken.");
-        User:talkLanguage(Character.say, Player.english, "#me starts to trink a potion.");
+        -- let's tell everyone that our user drank a potion with a forced emote
+        User:talk(Character.say, "#me beginnt einen Trank zu trinken.", "#me starts to trink a potion.")
 
         -- And quit the script since we are done now and waiting for the next call
         return
