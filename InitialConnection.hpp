@@ -92,12 +92,6 @@ private:
 
     //! std::vector for new players...
     TVECTORPLAYER playerVector;
-
-    //! gibt an, ob die Verbindung noch online ist
-    volatile bool online;
-
-
-
 };
 
 #endif

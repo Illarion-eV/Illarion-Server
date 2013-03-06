@@ -123,7 +123,6 @@ private:
 
     std::string ipadress;
 
-    boost::asio::io_service &io_service;
     boost::asio::ip::tcp::socket socket;
 
     //Factory für Commands vom Client
