@@ -33,5 +33,5 @@ LogType<LogPriority::INFO>::type Logger::info;
 LogType<LogPriority::DEBUG>::type Logger::debug;
 
 void log_message(LogPriority priority, LogFacility facility, const std::string &message) {
-    syslog(static_cast<int>(priority) | static_cast<int>(facility), message.c_str());
+    syslog(static_cast<int>(priority) | static_cast<int>(facility), "%s", message.c_str());
 }
