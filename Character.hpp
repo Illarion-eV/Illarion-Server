@@ -895,15 +895,6 @@ public:
     virtual void talk(talk_type tt, const std::string &german, const std::string &english);
 
     /**
-    * the character talks something in a specific language
-    * <b>Lua: [:talkLanguage]</b>
-    * @param tt how loudely the character talks
-    * @param lang in which language the character talkes
-    * @param message the message the character talkes
-    */
-    virtual void talkLanguage(talk_type tt, Language lang, const std::string &message);
-
-    /**
     * informs only this character about something
     * <b>Lua: [:inform]</b>
     * @param message which should be sended to this character
@@ -987,7 +978,7 @@ public:
     * @param questid id of the quest
     * @return progress the current questprograss as flags
     */
-    virtual TYPE_OF_QUESTSTATUS getQuestProgress(TYPE_OF_QUEST_ID questid) throw();
+    virtual TYPE_OF_QUESTSTATUS getQuestProgress(TYPE_OF_QUEST_ID questid, int &time) throw();
 
     /**
     * send a character description to the player if the  char is a player

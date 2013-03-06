@@ -24,7 +24,7 @@
 #include "LuaScript.hpp"
 #include "TableStructs.hpp"
 
-class SpellStruct;
+struct SpellStruct;
 class Character;
 
 class LuaMagicScript : public LuaScript {

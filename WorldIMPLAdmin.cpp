@@ -1483,7 +1483,8 @@ void set_login(World *world, Player *player, const std::string &st) {
 
     world->allowLogin(enable);
     Logger::info(LogFacility::Admin) << player->name << " set allowLogin to " << enable << Log::end;
-    std::string tmessage = "nologin set to: " + enable?"false":"true";
+    std::string tmessage = "nologin set to: ";
+    tmessage += enable ? "false" : "true";
     player->inform(tmessage);
 }
 
