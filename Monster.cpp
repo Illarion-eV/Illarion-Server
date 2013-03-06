@@ -187,7 +187,7 @@ void Monster::receiveText(talk_type tt, std::string message, Character *cc) {
     MonsterStruct monStruct;
 
     if (MonsterDescriptions->find(getType(), monStruct)) {
-        if (monStruct.script!=NULL && monStruct.script->existsEntrypoint("receiveText")) {
+        if (monStruct.script && monStruct.script->existsEntrypoint("receiveText")) {
             //Nur Script aufrufen wenn man sich nicht selber h�rt.
             if (this != cc) {
                 monStruct.script->receiveText(this,tt,message,cc);
