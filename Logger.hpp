@@ -54,7 +54,7 @@ enum class LogPriority {
     DEBUG = LOG_DEBUG
 };
 
-void log_message(LogPriority priority, LogFacility facility, std::string message);
+void log_message(LogPriority priority, LogFacility facility, const std::string &message);
 
 namespace Log {
 class end_t {
