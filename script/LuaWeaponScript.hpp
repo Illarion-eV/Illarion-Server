@@ -25,7 +25,7 @@
 
 class World;
 class Character;
-class WeaponStruct;
+struct WeaponStruct;
 
 class LuaWeaponScript : public LuaScript {
 public:
