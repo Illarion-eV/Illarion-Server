@@ -307,6 +307,8 @@ public:
         uint8_t beardtype = 0;
         color hair = { 255, 255, 255 };
         color skin = { 255, 255, 255 };
+
+        appearance() {};
     };
 
     /**
