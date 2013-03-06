@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef SHEDULER_H
-#define SHEDULER_H
+#ifndef _SCHEDULER_HPP_
+#define _SCHEDULER_HPP_
 
 #include <list>
 
@@ -27,7 +27,6 @@ class World;
 class SchedulerObject {
 
 public:
-    //überladung für den Operator ()
     virtual bool operator()(World *world) = 0;
     inline unsigned long int GetNextCycle() {
         return nextCycle;
@@ -56,7 +55,6 @@ protected:
     unsigned short int count;
 
 private:
-    //! no copy operator for pure virtual classes
     SchedulerObject &operator=(const SchedulerObject &);
 };
 
@@ -64,26 +62,16 @@ private:
 class Scheduler {
 
 public:
-    //constructor welcher den Thread erstellt
-    // \param Zeiger auf das World objekt in dem der Scheduler läuft
     Scheduler(World *pworld);
-    //Destructor welcher den Thread beendet.
-    ~Scheduler();
-    //Funktion um einen Task in die Liste hinzu zu fügen
     void AddTask(SchedulerObject *sobject);
-    //Funktion welche den nächsten Zyklus einleitet.
     void NextCycle();
-    //Funktion welche den Aktuellen Zyklus zurück liefert.
     inline unsigned long int GetCurrentCycle() {
         return cycle;
     }
 
 private:
-    //Liste für die Sheduler objekte
     std::list<SchedulerObject *> Tasks;
-    //Aktueller Zyklus
     unsigned long int cycle;
-    //verbindung zur Spielwelt
     World *world;
 };
 
