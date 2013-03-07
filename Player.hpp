@@ -481,12 +481,6 @@ public:
     void setAdmin(uint32_t tAdmin);
     virtual bool isAdmin() const override;
 
-    void setEncumberedSent(bool tEncumberedSent);
-    bool wasEncumberedSent();
-
-    void setUnconsciousSent(bool tUnconsciousSent);
-    bool wasUnconsciousSent();
-
     // player gets informed about something
     virtual void inform(const std::string &text, informType type = informServer) const override;
     virtual void informLua(const std::string &text) const override;
@@ -626,9 +620,17 @@ private:
 
     bool questWriteLock;
 
-    bool encumberedSent;
+    int relativeLoad() const;
 
-    bool unconsciousSent;
+    enum class LoadLevel {
+        unburdened,
+        burdened,
+        overtaxed
+    };
+
+    LoadLevel loadLevel = LoadLevel::unburdened;
+
+    LoadLevel loadFactor() const;
 
     bool monitoringClient;
 

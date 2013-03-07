@@ -1238,17 +1238,12 @@ unsigned short int Character::distanceMetric(Character *cc) {
 }
 
 
-unsigned short int Character::maxLiftWeigt() {
-    return 29999;
-}
-
-
-unsigned short int Character::maxLoadWeight() {
+unsigned short int Character::maxLoadWeight() const {
     return getAttribute(Character::strength) * 500 + 5000;
 }
 
 
-int Character::LoadWeight() {
+int Character::LoadWeight() const {
     int load=0;
 
     // alle Items bis auf den Rucksack
@@ -1269,7 +1264,7 @@ int Character::LoadWeight() {
 }
 
 
-bool Character::weightOK(TYPE_OF_ITEM_ID id, int count, Container *tcont) {
+bool Character::weightOK(TYPE_OF_ITEM_ID id, int count, Container *tcont) const {
     bool ok;
 
     int realweight = LoadWeight();
@@ -1295,7 +1290,7 @@ int Character::Abso(int value) {
 }
 
 
-int Character::weightContainer(TYPE_OF_ITEM_ID id, int count, Container *tcont) {
+int Character::weightContainer(TYPE_OF_ITEM_ID id, int count, Container *tcont) const {
     int temp=0;
 
     if (id != 0) {

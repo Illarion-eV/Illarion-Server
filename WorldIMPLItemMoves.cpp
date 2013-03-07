@@ -792,6 +792,7 @@ void World::dropItemFromShowcaseOnMap(Player *cp, uint8_t showcase, unsigned cha
                 g_item.reset();
             }
         } else {
+            cp->checkBurden();
 
             if (script) {
                 script->MoveItemAfterMove(cp, s_item, t_item);
@@ -945,8 +946,12 @@ void World::dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, short int xc
                 g_cont = NULL;
                 g_item.reset();
             }
-        } else if (script) {
-            script->MoveItemAfterMove(cp, s_item, t_item);
+        } else {
+            cp->checkBurden();
+            
+            if (script) {
+                script->MoveItemAfterMove(cp, s_item, t_item);
+            }
         }
 
     }
@@ -1114,6 +1119,8 @@ void World::moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, uint8
                 g_item.reset();
             }
         } else {
+            cp->checkBurden();
+
             if (script) {
                 script->MoveItemAfterMove(cp, s_item, t_item);
             }
@@ -1185,15 +1192,13 @@ void World::moveItemFromMapIntoShowcase(Player *cp, char direction, uint8_t show
             if (!NOK) {
                 if (!putItemInShowcase(cp, showcase,pos)) {
                     NOK =true;
+                } else {
+                    cp->checkBurden();
+
+                    if (script) {
+                        script->MoveItemAfterMove(cp, s_item, t_item);
+                    }
                 }
-
-                cp->checkBurden();
-
-                if (script) {
-                    script->MoveItemAfterMove(cp, s_item, t_item);
-                }
-
-
             }
 
             if (NOK) {
@@ -1301,12 +1306,12 @@ void World::moveItemFromMapToPlayer(Player *cp, char direction, unsigned char cp
             if (!NOK) {
                 if (!putItemOnInvPos(cp, cpos)) {
                     NOK = true;
-                }
+                } else {
+                    cp->checkBurden();
 
-                cp->checkBurden();
-
-                if (script) {
-                    script->MoveItemAfterMove(cp, s_item, t_item);
+                    if (script) {
+                        script->MoveItemAfterMove(cp, s_item, t_item);
+                    }
                 }
             }
 
@@ -1398,14 +1403,13 @@ void World::moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char p
         if (!NOK) {
             if (!putItemInShowcase(cp, dest, pos2)) {
                 NOK=true;
+            } else {
+                cp->checkBurden();
+
+                if (script) {
+                    script->MoveItemAfterMove(cp, s_item, t_item);
+                }
             }
-
-            cp->checkBurden();
-
-            if (script) {
-                script->MoveItemAfterMove(cp, s_item, t_item);
-            }
-
         }
 
         if (NOK) {

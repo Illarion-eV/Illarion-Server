@@ -1323,22 +1323,16 @@ public:
     virtual void deleteAllSkills();
 
     /**
-    * returns the maximal weight the character can lift
-    * @return the number of (pounds??) how much the character can lift
-    */
-    unsigned short int maxLiftWeigt();
-
-    /**
     * returns the maximal weight the character can carry
     * @return the number of (pounds??) the character can carry in hin inventory
     */
-    unsigned short int maxLoadWeight();
+    unsigned short int maxLoadWeight() const;
 
     /**
     * the weight amount the character is carrieng
     * @return the number of (pounds??) the character carries
     */
-    int LoadWeight();
+    int LoadWeight() const;
 
     /**
     * returns the absolut value of value
@@ -1354,7 +1348,7 @@ public:
     * @param tcont the container from which we want to get the weight
     * @return the +/- weight of the container
     */
-    int weightContainer(unsigned short int id, int count, Container *tcont);
+    int weightContainer(unsigned short int id, int count, Container *tcont) const;
 
     /**
     * checks if in tcont is enough place for count items with id
@@ -1363,7 +1357,7 @@ public:
     * @param tcont pointer to the container (items inside the container)
     * @return true if count items of id can be added otherwise false
     */
-    bool weightOK(TYPE_OF_ITEM_ID id, int count, Container *tcont);
+    bool weightOK(TYPE_OF_ITEM_ID id, int count, Container *tcont) const;
 
 
     /**

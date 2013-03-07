@@ -259,18 +259,10 @@ void Player::login() throw(Player::LogoutException) {
     // send magic skills
     sendMagicFlags(magic.type);
 
+    checkBurden();
+
     time(&logintime);
     time(&lastkeepalive);
-
-    if ((LoadWeight() * 100) / maxLoadWeight() > 75) {
-        setEncumberedSent(true);
-        std::string german = "Deine Last bremst dich.";
-        std::string english = "Your burden slows you down.";
-        informLua(german, english);
-    } else {
-        setEncumberedSent(false);
-    }
-
     time(&lastsavetime);
 }
 
@@ -483,6 +475,7 @@ void Player::ageInventory() {
         }
     }
 
+    checkBurden();
 }
 
 void Player::learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opponent) {
@@ -511,6 +504,7 @@ int Player::createItem(Item::id_type id, Item::number_type number, Item::quality
     }
 
     updateBackPackView();
+    checkBurden();
 
     return temp;
 }
@@ -563,6 +557,8 @@ int Player::_eraseItem(TYPE_OF_ITEM_ID itemid, int count, const luabind::object 
             updateAppearanceForAll(true);
         }
     }
+
+    checkBurden();
 
 #ifdef Player_DEBUG
     std::cout << "eraseItem: am Ende noch zu l�chen: " << temp << "\n";
@@ -623,12 +619,14 @@ int Player::increaseAtPos(unsigned char pos, int count) {
     }
 
     sendCharacterItemAtPos(pos);
+    checkBurden();
     return temp;
 }
 
 int Player::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) {
     int temp = Character::createAtPos(pos,newid,count);
     sendCharacterItemAtPos(pos);
+    checkBurden();
     return temp;
 
 }
@@ -636,6 +634,7 @@ int Player::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) {
 bool Player::swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid , uint16_t newQuality) {
     if (Character::swapAtPos(pos, newid, newQuality)) {
         sendCharacterItemAtPos(pos);
+        checkBurden();
         return true;
     }
 
@@ -805,26 +804,6 @@ bool Player::isAdmin() const {
     return (admin>0 && !hasGMRight(gmr_isnotshownasgm));
 }
 
-
-void Player::setEncumberedSent(bool tEncumberedSent) {
-    encumberedSent = tEncumberedSent;
-}
-
-
-bool Player::wasEncumberedSent() {
-    return encumberedSent;
-}
-
-
-void Player::setUnconsciousSent(bool tUnconsciousSent) {
-
-    unconsciousSent = tUnconsciousSent;
-}
-
-
-bool Player::wasUnconsciousSent() {
-    return unconsciousSent;
-}
 
 void Player::check_logindata() throw(Player::LogoutException) {
     Database::PConnection connection = Database::ConnectionManager::getInstance().getConnection();
@@ -1718,30 +1697,61 @@ void Player::informLua(const std::string &german, const std::string &english, in
     informLua(nls(german, english), type);
 }
 
-bool Player::encumberance(uint16_t &movementCost) {
-    int perEncumb = (LoadWeight() * 100) / maxLoadWeight();
+int Player::relativeLoad() const {
+    return LoadWeight() * 100 / maxLoadWeight();
+}
 
-    if (perEncumb > 75) {
-        if (!wasEncumberedSent()) {
-            setEncumberedSent(true);
+auto Player::loadFactor() const -> LoadLevel {
+    int load = relativeLoad();
+
+    if (load > 100) {
+        return LoadLevel::overtaxed;
+    } else if (load > 75) {
+        return LoadLevel::burdened;
+    }
+
+    return LoadLevel::unburdened;
+}
+
+void Player::checkBurden() {
+    auto currentLoadLevel = loadFactor();
+    
+    if (currentLoadLevel != loadLevel) {
+        loadLevel = currentLoadLevel;
+
+        switch (loadLevel) {
+        case LoadLevel::burdened: {
             std::string german = "Deine Last bremst dich.";
             std::string english = "Your burden slows you down.";
             informLua(nls(german, english));
+            break;
         }
 
-        if (perEncumb > 100) {
+        case LoadLevel::overtaxed: {
             std::string german = "Deine Last hindert dich daran zu laufen.";
             std::string english = "Your burden keeps you from moving.";
             informLua(nls(german, english));
-            return false;
+            break;
         }
 
-        setEncumberedSent(false);
-
-        movementCost += movementCost * 3 * (perEncumb-75) / 25;
+        default: {
+            std::string german = "Eine schwere Last ist von deinen Schultern genommen.";
+            std::string english = "A heavy burden has been lifted from your shoulders.";
+            informLua(nls(german, english));
+            break;
+        }
+        }
     }
+}
 
-    return true;
+bool Player::encumberance(uint16_t &movementCost) {
+    int load = relativeLoad();
+    movementCost += movementCost * 3 * (load-75) / 25;
+    
+    checkBurden();
+
+    auto level = loadFactor();
+    return level != LoadLevel::overtaxed;
 }
 
 bool Player::move(direction dir, uint8_t mode) {
@@ -2543,22 +2553,6 @@ const std::string &Player::nls(const std::string &german, const std::string &eng
 
     default:
         return english;
-    }
-}
-
-void Player::checkBurden() {
-    if (LoadWeight() * 100 / maxLoadWeight() > 75) {
-        if (!wasEncumberedSent()) {
-            setEncumberedSent(true);
-            std::string german = "Deine Last bremst dich.";
-            std::string english = "Your burden slows you down.";
-            informLua(nls(german, english));
-        }
-    } else if (wasEncumberedSent()) {
-        setEncumberedSent(false);
-        std::string german = "Eine schwere Last ist von deinen Schultern genommen.";
-        std::string english = "A heavy burden has been lifted from your shoulders.";
-        informLua(nls(german, english));
     }
 }
 
