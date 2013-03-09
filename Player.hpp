@@ -475,10 +475,7 @@ public:
 
     // player gets informed about something
     virtual void inform(const std::string &text, informType type = informServer) const override;
-    virtual void informLua(const std::string &text) const override;
-    virtual void informLua(const std::string &german, const std::string &english) const override;
-    virtual void informLua(const std::string &text, informType type) const override;
-    virtual void informLua(const std::string &german, const std::string &english, informType type) const override;
+    virtual void inform(const std::string &german, const std::string& english, informType type = informServer) const override;
 
     // player heard something
     virtual void receiveText(talk_type tt, const std::string &message, Character *cc) override;

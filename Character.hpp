@@ -350,10 +350,7 @@ public:
     virtual void talk(talk_type tt, const std::string &german, const std::string &english);
 
     virtual void inform(const std::string &message, informType type = informServer) const;
-    virtual void informLua(const std::string &message) const;
-    virtual void informLua(const std::string &german, const std::string &english) const;
-    virtual void informLua(const std::string &message, informType type) const;
-    virtual void informLua(const std::string &german, const std::string &english, informType type) const;
+    virtual void inform(const std::string &german, const std::string& english, informType type = informServer) const;
 
     virtual bool move(direction dir, bool active=true);
 

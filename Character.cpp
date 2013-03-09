@@ -1519,19 +1519,7 @@ void Character::inform(const std::string &text, informType type) const {
     // override for char types that need this kind of information
 }
 
-void Character::informLua(const std::string &text) const {
-    // override for char types that need this kind of information
-}
-
-void Character::informLua(const std::string &german, const std::string &english) const {
-    // override for char types that need this kind of information
-}
-
-void Character::informLua(const std::string &text, informType type) const {
-    // override for char types that need this kind of information
-}
-
-void Character::informLua(const std::string &german, const std::string &english, informType type) const {
+void Character::inform(const std::string&, const std::string&, informType type) const {
     // override for char types that need this kind of information
 }
 

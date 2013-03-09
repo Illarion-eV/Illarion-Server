@@ -1468,18 +1468,18 @@ bool Player::load() throw() {
 
 void Player::increasePoisonValue(short int value) {
     if ((poisonvalue == 0) && value > 0) {
-        std::string german = "Du bist vergiftet.";
-        std::string english = "You are poisoned.";
-        informLua(german, english);
+        static const std::string german = "Du bist vergiftet.";
+        static const std::string english = "You are poisoned.";
+        inform(german, english, informScriptMediumPriority);
     }
 
     if ((poisonvalue + value) >= MAXPOISONVALUE) {
         poisonvalue = MAXPOISONVALUE;
     } else if ((poisonvalue + value) <= 0) {
         poisonvalue = 0;
-        std::string german = "Es geht dir auf einmal besser.";
-        std::string english = "You suddenly feel better.";
-        informLua(german, english);
+        static const std::string german = "Es geht dir auf einmal besser.";
+        static const std::string english = "You suddenly feel better.";
+        inform(german, english, informScriptMediumPriority);
     } else {
         poisonvalue += value;
     }
@@ -1594,30 +1594,8 @@ void Player::inform(const std::string &message, informType type) const {
     Connection->addCommand(cmd);
 }
 
-void Player::informLua(const std::string &message) const {
-    inform(message, informScriptMediumPriority);
-}
-
-void Player::informLua(const std::string &german, const std::string &english) const {
-    informLua(nls(german, english));
-}
-
-void Player::informLua(const std::string &message, informType type) const {
-    switch (type) {
-    case informScriptLowPriority:
-    case informScriptMediumPriority:
-    case informScriptHighPriority:
-        inform(message, type);
-        break;
-
-    default:
-        informLua(message);
-        break;
-    }
-}
-
-void Player::informLua(const std::string &german, const std::string &english, informType type) const {
-    informLua(nls(german, english), type);
+void Player::inform(const std::string& german, const std::string& english, informType type) const {
+	inform(nls(german, english), type);
 }
 
 int Player::relativeLoad() const {
@@ -1644,23 +1622,23 @@ void Player::checkBurden() {
 
         switch (loadLevel) {
         case LoadLevel::burdened: {
-            std::string german = "Deine Last bremst dich.";
-            std::string english = "Your burden slows you down.";
-            informLua(nls(german, english));
+            static const std::string german = "Deine Last bremst dich.";
+            static const std::string english = "Your burden slows you down.";
+            inform(nls(german, english), informScriptMediumPriority);
             break;
         }
 
         case LoadLevel::overtaxed: {
-            std::string german = "Deine Last hindert dich daran zu laufen.";
-            std::string english = "Your burden keeps you from moving.";
-            informLua(nls(german, english));
+            static const std::string german = "Deine Last hindert dich daran zu laufen.";
+            static const std::string english = "Your burden keeps you from moving.";
+            inform(nls(german, english), informScriptMediumPriority);
             break;
         }
 
         default: {
-            std::string german = "Eine schwere Last ist von deinen Schultern genommen.";
-            std::string english = "A heavy burden has been lifted from your shoulders.";
-            informLua(nls(german, english));
+            static const std::string german = "Eine schwere Last ist von deinen Schultern genommen.";
+            static const std::string english = "A heavy burden has been lifted from your shoulders.";
+            inform(nls(german, english), informScriptMediumPriority);
             break;
         }
         }

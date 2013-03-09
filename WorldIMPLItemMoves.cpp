@@ -559,9 +559,9 @@ bool World::putItemOnMap(Character *cc, short int x, short int y, short int z) {
         if (cc->pos.z != z ||
             !cc->isInRangeToField(pos, MAXTHROWDISTANCE) ||
             (!cc->isInRangeToField(pos, MAXDROPDISTANCE) && (g_item.getWeight() > MAXTHROWWEIGHT))) {
-            std::string german = "Dies ist zu schwer um so weit geworfen zu werden.";
-            std::string english = "This is too heavy to be thrown this far.";
-            cc->informLua(german, english);
+            static const std::string german = "Dies ist zu schwer um so weit geworfen zu werden.";
+            static const std::string english = "This is too heavy to be thrown this far.";
+            cc->inform(german, english, Character::informScriptMediumPriority);
             return false;
         }
     }
@@ -833,7 +833,7 @@ void World::moveItemFromShowcaseToPlayer(Player *cp, uint8_t showcase, unsigned 
         bool NOK = false;
 
         if (! cp->weightOK(g_item.getId(), g_item.getNumber(), g_cont)) {
-            cp->informLua(message_overweight_german, message_overweight_english);
+            cp->inform(message_overweight_german, message_overweight_english, Character::informScriptMediumPriority);
             NOK = true;
         }
 
@@ -1096,7 +1096,7 @@ void World::moveItemFromMapIntoShowcase(Player *cp, char direction, uint8_t show
             bool NOK = false;
 
             if (! cp->weightOK(g_item.getId(), g_item.getNumber(), g_cont)) {
-                cp->informLua(message_overweight_german, message_overweight_english);
+                cp->inform(message_overweight_german, message_overweight_english, Character::informScriptMediumPriority);
                 NOK = true;
             }
 
@@ -1191,7 +1191,7 @@ void World::moveItemFromMapToPlayer(Player *cp, char direction, unsigned char cp
             bool NOK = false;
 
             if (! cp->weightOK(g_item.getId(), g_item.getNumber(), g_cont)) {
-                cp->informLua(message_overweight_german, message_overweight_english);
+                cp->inform(message_overweight_german, message_overweight_english, Character::informScriptMediumPriority);
                 NOK = true;
             }
 
@@ -1272,7 +1272,7 @@ void World::moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char p
 
         if (cp->isShowcaseInInventory(dest)) {
             if (! cp->weightOK(g_item.getId(), g_item.getNumber(), g_cont)) {
-                cp->informLua(message_overweight_german, message_overweight_english);
+                cp->inform(message_overweight_german, message_overweight_english, Character::informScriptMediumPriority);
                 NOK=true;
             }
         }
