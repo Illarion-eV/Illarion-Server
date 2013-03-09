@@ -54,15 +54,15 @@ bool LongTimeEffect::callEffect(Character *target) {
     return ret;
 }
 
-void LongTimeEffect::addValue(std::string name, uint32_t value) {
+void LongTimeEffect::addValue(const std::string &name, uint32_t value) {
     values[name] = value;
 }
 
-void LongTimeEffect::removeValue(std::string name) {
+void LongTimeEffect::removeValue(const std::string &name) {
     values.erase(name);
 }
 
-bool LongTimeEffect::findValue(std::string name, uint32_t &ret) {
+bool LongTimeEffect::findValue(const std::string &name, uint32_t &ret) {
     auto it = values.find(name);
 
     if (it != values.end()) {
@@ -102,9 +102,9 @@ bool LongTimeEffect::save(uint32_t playerid, int32_t currentTime) {
             const InsertQuery::columnIndex nameColumn = insQuery.addColumn("pev_name");
             const InsertQuery::columnIndex valueColumn = insQuery.addColumn("pev_value");
 
-            for (auto it = values.begin(); it != values.end(); ++it) {
-                insQuery.addValue(nameColumn, it->first);
-                insQuery.addValue(valueColumn, it->second);
+            for (const auto &value : values) {
+                insQuery.addValue(nameColumn, value.first);
+                insQuery.addValue(valueColumn, value.second);
                 insQuery.addValue(userColumn, playerid);
                 insQuery.addValue(effectColumn, effectId);
             }

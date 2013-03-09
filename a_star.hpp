@@ -250,7 +250,7 @@ public:
     }
 };
 
-bool a_star(::position &start_pos, ::position &goal_pos, std::list<direction> &steps) {
+bool a_star(const ::position &start_pos, const ::position &goal_pos, std::list<direction> &steps) {
     steps.clear();
 
     if (start_pos.z != goal_pos.z || start_pos == goal_pos) {

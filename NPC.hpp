@@ -58,7 +58,7 @@ public:
     * @param ishealer if true the npc ressurects death players
     * @param sex the sex of the npc
     */
-    NPC(TYPE_OF_CHARACTER_ID id, std::string name, Character::race_type type, position pos, Character::face_to dir, bool ishealer, Character::sex_type sex,
+    NPC(TYPE_OF_CHARACTER_ID id, const std::string &name, Character::race_type type, const position &pos, Character::face_to dir, bool ishealer, Character::sex_type sex,
         const appearance &appearance);
 
     /**
@@ -70,7 +70,7 @@ public:
     * gets the healer state of this npc
     * @return if the npc is a healer or not
     */
-    bool getHealer() {
+    bool getHealer() const {
         return _ishealer;
     }
 
@@ -78,7 +78,7 @@ public:
     * gets the initial position of the npc
     * @return the starting position of this npc
     */
-    position getStartPos() {
+    position getStartPos() const {
         return _startpos;
     }
 
@@ -86,7 +86,7 @@ public:
     * gets a pointer to the script for this npc
     * @return the pointer for the script
     */
-    std::shared_ptr<LuaNPCScript> getScript() {
+    std::shared_ptr<LuaNPCScript> getScript() const {
         return _script;
     }
 
@@ -105,7 +105,7 @@ public:
     * @param message the text which is spoken
     * @param cc the character who has spokenthe text
     */
-    virtual void receiveText(talk_type tt, std::string message, Character *cc) override;
+    virtual void receiveText(talk_type tt, const std::string &message, Character *cc) override;
 
     virtual std::string to_string() const override;
 

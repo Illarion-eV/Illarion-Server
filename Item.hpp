@@ -25,8 +25,7 @@
 #include <cstdlib>
 #include <vector>
 #include <string>
-#include <boost/shared_ptr.hpp>
-#include <boost/unordered_map.hpp>
+#include <unordered_map>
 #include "types.hpp"
 #include "globals.hpp"
 #include "fuse_ptr.hpp"
@@ -50,7 +49,7 @@ public:
         diamondLevel(0), emeraldLevel(0), rubyLevel(0), sapphireLevel(0),
         amethystLevel(0), obsidianLevel(0), topazLevel(0), bonus(0) {}
 
-    void setName(std::string name) {
+    void setName(const std::string &name) {
         this->name = name;
     }
     const std::string &getName() const {
@@ -64,14 +63,14 @@ public:
         return rareness;
     }
 
-    void setDescription(std::string description) {
+    void setDescription(const std::string &description) {
         this->description = description;
     }
     const std::string &getDescription() const {
         return description;
     }
 
-    void setCraftedBy(std::string craftedBy) {
+    void setCraftedBy(const std::string &craftedBy) {
         this->craftedBy = craftedBy;
     }
     const std::string &getCraftedBy() const {
@@ -92,14 +91,14 @@ public:
         return worth;
     }
 
-    void setQualityText(std::string qualityText) {
+    void setQualityText(const std::string &qualityText) {
         this->qualityText = qualityText;
     }
     const std::string &getQualityText() const {
         return qualityText;
     }
 
-    void setDurabilityText(std::string durabilityText) {
+    void setDurabilityText(const std::string &durabilityText) {
         this->durabilityText = durabilityText;
     }
     const std::string &getDurabilityText() const {
@@ -211,7 +210,7 @@ public:
     typedef uint16_t number_type;
     typedef uint8_t  wear_type;
     typedef uint16_t quality_type;
-    typedef boost::unordered_map<std::string, std::string> datamap_type;
+    typedef std::unordered_map<std::string, std::string> datamap_type;
 
     static const number_type MAX_NUMBER = 250;
     static const wear_type PERMANENT_WEAR = 255;
@@ -255,11 +254,11 @@ public:
     void setMinQuality(const Item &item);
 
     void setData(const luabind::object &datamap);
-    bool hasData(const luabind::object &datamap);
+    bool hasData(const luabind::object &datamap) const;
     bool hasNoData() const;
-    std::string getData(std::string key);
-    void setData(std::string key, std::string value);
-    void setData(std::string key, int32_t value);
+    std::string getData(const std::string &key) const;
+    void setData(const std::string &key, const std::string &value);
+    void setData(const std::string &key, int32_t value);
     inline datamap_type::const_iterator getDataBegin() const {
         return datamap.cbegin();
     }

@@ -71,7 +71,7 @@ public:
         World::get()->sendMessageToAllPlayers(msg);
         World::get()->monitoringClientList->sendCommand(boost::shared_ptr<BasicServerCommand>(new BBMessageTC("[Server] Broadcast:",0)));
         World::get()->monitoringClientList->sendCommand(boost::shared_ptr<BasicServerCommand>(new BBMessageTC(msg, 0)));
-        std::string message = "By: " + player->name + "(" + boost::lexical_cast<std::string>(player->id) + ")";
+        std::string message = "By: " + player->to_string();
         World::get()->monitoringClientList->sendCommand(boost::shared_ptr<BasicServerCommand>(new BBMessageTC(message,0)));
     }
 
@@ -103,46 +103,44 @@ public:
     virtual void performAction(Player *player) override {
         Player *tempPlayer = World::get()->Players.find(name);
 
-        if (tempPlayer == NULL) {
-            World::PLAYERVECTOR::iterator playerIterator;
-
-            for (playerIterator = World::get()->Players.begin(); playerIterator != World::get()->Players.end(); ++playerIterator) {
-                if ((*playerIterator)->id == id) {
-                    tempPlayer = (*playerIterator);
+        if (!tempPlayer) {
+            for (const auto &p : World::get()->Players) {
+                if (p->getId() == id) {
+                    tempPlayer = p;
                 }
             }
         }
 
-        if (tempPlayer != NULL) {
-            boost::shared_ptr<BasicServerCommand>cmd(new BBSendAttribTC(tempPlayer->id, "sex", tempPlayer->increaseAttrib("sex",0)));
+        if (tempPlayer) {
+            boost::shared_ptr<BasicServerCommand>cmd(new BBSendAttribTC(tempPlayer->getId(), "sex", tempPlayer->increaseAttrib("sex",0)));
             player->Connection->addCommand(cmd);
-            cmd.reset(new BBSendAttribTC(tempPlayer->id, "age", tempPlayer->increaseAttrib("age",0)));
+            cmd.reset(new BBSendAttribTC(tempPlayer->getId(), "age", tempPlayer->increaseAttrib("age",0)));
             player->Connection->addCommand(cmd);
-            cmd.reset(new BBSendAttribTC(tempPlayer->id, "weight", tempPlayer->increaseAttrib("weight",0)));
+            cmd.reset(new BBSendAttribTC(tempPlayer->getId(), "weight", tempPlayer->increaseAttrib("weight",0)));
             player->Connection->addCommand(cmd);
-            cmd.reset(new BBSendAttribTC(tempPlayer->id, "body_height", tempPlayer->increaseAttrib("body_height",0)));
+            cmd.reset(new BBSendAttribTC(tempPlayer->getId(), "body_height", tempPlayer->increaseAttrib("body_height",0)));
             player->Connection->addCommand(cmd);
-            cmd.reset(new BBSendAttribTC(tempPlayer->id, "attitude", tempPlayer->increaseAttrib("attitude",0)));
+            cmd.reset(new BBSendAttribTC(tempPlayer->getId(), "attitude", tempPlayer->increaseAttrib("attitude",0)));
             player->Connection->addCommand(cmd);
-            cmd.reset(new BBSendAttribTC(tempPlayer->id, "luck", tempPlayer->increaseAttrib("luck",0)));
+            cmd.reset(new BBSendAttribTC(tempPlayer->getId(), "luck", tempPlayer->increaseAttrib("luck",0)));
             player->Connection->addCommand(cmd);
-            cmd.reset(new BBSendAttribTC(tempPlayer->id, "strength", tempPlayer->increaseAttrib("strength",0)));
+            cmd.reset(new BBSendAttribTC(tempPlayer->getId(), "strength", tempPlayer->increaseAttrib("strength",0)));
             player->Connection->addCommand(cmd);
-            cmd.reset(new BBSendAttribTC(tempPlayer->id, "dexterity", tempPlayer->increaseAttrib("dexterity",0)));
+            cmd.reset(new BBSendAttribTC(tempPlayer->getId(), "dexterity", tempPlayer->increaseAttrib("dexterity",0)));
             player->Connection->addCommand(cmd);
-            cmd.reset(new BBSendAttribTC(tempPlayer->id, "constitution", tempPlayer->increaseAttrib("constitution",0)));
+            cmd.reset(new BBSendAttribTC(tempPlayer->getId(), "constitution", tempPlayer->increaseAttrib("constitution",0)));
             player->Connection->addCommand(cmd);
-            cmd.reset(new BBSendAttribTC(tempPlayer->id, "intelligence", tempPlayer->increaseAttrib("intelligence",0)));
+            cmd.reset(new BBSendAttribTC(tempPlayer->getId(), "intelligence", tempPlayer->increaseAttrib("intelligence",0)));
             player->Connection->addCommand(cmd);
-            cmd.reset(new BBSendAttribTC(tempPlayer->id, "perception", tempPlayer->increaseAttrib("perception",0)));
+            cmd.reset(new BBSendAttribTC(tempPlayer->getId(), "perception", tempPlayer->increaseAttrib("perception",0)));
             player->Connection->addCommand(cmd);
-            cmd.reset(new BBSendAttribTC(tempPlayer->id, "age", tempPlayer->increaseAttrib("age",0)));
+            cmd.reset(new BBSendAttribTC(tempPlayer->getId(), "age", tempPlayer->increaseAttrib("age",0)));
             player->Connection->addCommand(cmd);
-            cmd.reset(new BBSendAttribTC(tempPlayer->id, "willpower", tempPlayer->increaseAttrib("willpower",0)));
+            cmd.reset(new BBSendAttribTC(tempPlayer->getId(), "willpower", tempPlayer->increaseAttrib("willpower",0)));
             player->Connection->addCommand(cmd);
-            cmd.reset(new BBSendAttribTC(tempPlayer->id, "essence", tempPlayer->increaseAttrib("essence",0)));
+            cmd.reset(new BBSendAttribTC(tempPlayer->getId(), "essence", tempPlayer->increaseAttrib("essence",0)));
             player->Connection->addCommand(cmd);
-            cmd.reset(new BBSendAttribTC(tempPlayer->id, "agility", tempPlayer->increaseAttrib("agility",0)));
+            cmd.reset(new BBSendAttribTC(tempPlayer->getId(), "agility", tempPlayer->increaseAttrib("agility",0)));
             player->Connection->addCommand(cmd);
 
         }
@@ -177,21 +175,19 @@ public:
     virtual void performAction(Player *player) override {
         Player *tempPlayer = World::get()->Players.find(name);
 
-        if (tempPlayer == NULL) {
-            World::PLAYERVECTOR::iterator playerIterator;
-
-            for (playerIterator = World::get()->Players.begin(); playerIterator != World::get()->Players.end(); ++playerIterator) {
-                if ((*playerIterator)->id == id) {
-                    tempPlayer = (*playerIterator);
+        if (!tempPlayer) {
+            for (const auto &p : World::get()->Players) {
+                if (p->getId() == id) {
+                    tempPlayer = p;
                 }
             }
         }
 
-        if (tempPlayer != NULL) {
+        if (tempPlayer) {
             Character::SKILLMAP::const_iterator sIterator;
 
-            for (sIterator = tempPlayer->skills.begin(); sIterator != tempPlayer->skills.end(); ++sIterator) {
-                boost::shared_ptr<BasicServerCommand>cmd(new BBSendSkillTC(tempPlayer->id, sIterator->first, sIterator->second.major, sIterator->second.minor));
+            for (const auto &skill : tempPlayer->skills) {
+                boost::shared_ptr<BasicServerCommand>cmd(new BBSendSkillTC(tempPlayer->getId(), skill.first, skill.second.major, skill.second.minor));
                 player->Connection->addCommand(cmd);
             }
         }
@@ -227,19 +223,17 @@ public:
     virtual void performAction(Player *player) override {
         Player *tempPlayer = World::get()->Players.find(name);
 
-        if (tempPlayer == NULL) {
-            World::PLAYERVECTOR::iterator playerIterator;
-
-            for (playerIterator = World::get()->Players.begin(); playerIterator != World::get()->Players.end(); ++playerIterator) {
-                if ((*playerIterator)->id == id) {
-                    tempPlayer = (*playerIterator);
+        if (!tempPlayer) {
+            for (const auto &p : World::get()->Players) {
+                if (p->getId() == id) {
+                    tempPlayer = p;
                 }
             }
         }
 
-        if (tempPlayer != NULL) {
+        if (tempPlayer) {
             tempPlayer->talk(Character::tt_say,message);
-            Logger::info(LogFacility::Admin) << player->name << " talked as other player: " << tempPlayer->name << " with message: " << message << Log::end;
+            Logger::info(LogFacility::Admin) << player->to_string() << " talked as other player: " << tempPlayer->to_string() << " with message: " << message << Log::end;
         }
     }
 
@@ -278,19 +272,16 @@ public:
     virtual void performAction(Player *player) override {
         Player *tempPlayer = World::get()->Players.find(name);
 
-        if (tempPlayer == NULL) {
-            World::PLAYERVECTOR::iterator playerIterator;
-
-            for (playerIterator = World::get()->Players.begin(); playerIterator != World::get()->Players.end(); ++playerIterator) {
-                if ((*playerIterator)->id == id) {
-                    tempPlayer = (*playerIterator);
+        if (!tempPlayer) {
+            for (const auto &p : World::get()->Players) {
+                if (p->getId() == id) {
+                    tempPlayer = p;
                 }
             }
         }
 
-        if (tempPlayer != NULL) {
-            position *pos = new position(posx,posy,posz);
-            tempPlayer->Warp((*pos));
+        if (tempPlayer) {
+            tempPlayer->Warp(position(posx,posy,posz));
         }
     }
 
@@ -373,17 +364,15 @@ public:
     virtual void performAction(Player *player) override {
         Player *tempPlayer = World::get()->Players.find(_plname);
 
-        if (tempPlayer == NULL) {
-            World::PLAYERVECTOR::iterator playerIterator;
-
-            for (playerIterator = World::get()->Players.begin(); playerIterator != World::get()->Players.end(); ++playerIterator) {
-                if ((*playerIterator)->id == _plid) {
-                    tempPlayer = (*playerIterator);
+        if (!tempPlayer) {
+            for (const auto &p : World::get()->Players) {
+                if (p->getId() == _plid) {
+                    tempPlayer = p;
                 }
             }
         }
 
-        if (tempPlayer != NULL) {
+        if (tempPlayer) {
             tempPlayer->increaseAttrib(_attr,_value);
         }
     }
@@ -422,17 +411,15 @@ public:
     virtual void performAction(Player *player) override {
         Player *tempPlayer = World::get()->Players.find(_plname);
 
-        if (tempPlayer == NULL) {
-            World::PLAYERVECTOR::iterator playerIterator;
-
-            for (playerIterator = World::get()->Players.begin(); playerIterator != World::get()->Players.end(); ++playerIterator) {
-                if ((*playerIterator)->id == _plid) {
-                    tempPlayer = (*playerIterator);
+        if (!tempPlayer) {
+            for (const auto &p : World::get()->Players) {
+                if (p->getId() == _plid) {
+                    tempPlayer = p;
                 }
             }
         }
 
-        if (tempPlayer != NULL) {
+        if (tempPlayer) {
             tempPlayer->increaseSkill(_skill, _value);
         }
     }
@@ -469,17 +456,15 @@ public:
     virtual void performAction(Player *player) override {
         Player *tempPlayer = World::get()->Players.find(playername);
 
-        if (tempPlayer == NULL) {
-            World::PLAYERVECTOR::iterator playerIterator;
-
-            for (playerIterator = World::get()->Players.begin(); playerIterator != World::get()->Players.end(); ++playerIterator) {
-                if ((*playerIterator)->id == playerid) {
-                    tempPlayer = (*playerIterator);
+        if (!tempPlayer) {
+            for (const auto &p : World::get()->Players) {
+                if (p->getId() == playerid) {
+                    tempPlayer = p;
                 }
             }
         }
 
-        if (tempPlayer != NULL) {
+        if (tempPlayer) {
             tempPlayer->inform(msg, Player::informGM);
         }
     }
@@ -571,22 +556,20 @@ public:
     virtual void performAction(Player *player) override {
         Player *tempPlayer = World::get()->Players.find(name);
 
-        if (tempPlayer == NULL) {
-            World::PLAYERVECTOR::iterator playerIterator;
-
-            for (playerIterator = World::get()->Players.begin(); playerIterator != World::get()->Players.end(); ++playerIterator) {
-                if ((*playerIterator)->id == id) {
-                    tempPlayer = (*playerIterator);
+        if (!tempPlayer) {
+            for (const auto &p : World::get()->Players) {
+                if (p->getId() == id) {
+                    tempPlayer = p;
                 }
             }
         }
 
-        if (tempPlayer != NULL) {
-            World::get()->ban(tempPlayer, time, player->id);
-            boost::shared_ptr<BasicServerCommand>cmd(new BBMessageTC("Player: " + name + "(" + boost::lexical_cast<std::string>(id) + ")" + " banned by: " + player->name + "(" + boost::lexical_cast<std::string>(player->id) + ")", 0));
+        if (tempPlayer) {
+            World::get()->ban(tempPlayer, time, player->getId());
+            boost::shared_ptr<BasicServerCommand>cmd(new BBMessageTC(tempPlayer->to_string() + " banned by: " + player->to_string(), 0));
             World::get()->monitoringClientList->sendCommand(cmd);
         } else {
-            boost::shared_ptr<BasicServerCommand>cmd(new BBMessageTC("Cannot find the player: " + name + "(" + boost::lexical_cast<std::string>(id) + ")",0));
+            boost::shared_ptr<BasicServerCommand>cmd(new BBMessageTC("Cannot find the player: " + name + "(" + std::to_string(id) + ")",0));
             player->Connection->addCommand(cmd);
         }
     }

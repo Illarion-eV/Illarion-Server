@@ -43,18 +43,15 @@ private:
     unsigned short int music;
     unsigned char clientflags;
     unsigned char extraflags;
-    position *warptarget;
+    position warptarget;
 
 public:
     void setTileId(unsigned short int id);
     void setMusicId(unsigned short int id);
-    unsigned short int getMusicId();
-    unsigned short int getTileCode();
+    unsigned short int getMusicId() const;
+    unsigned short int getTileCode() const;
 
     Field();
-    Field(const Field &source);
-    ~Field();
-    Field &operator =(const Field &source);
 
     void Save(std::ostream &mapt, std::ostream &obj, std::ostream &warp);
 
@@ -68,13 +65,13 @@ public:
     * finds all non passable items on a field
     * @param nonpassitems byreference here the items are returned which are non passable
     */
-    void giveNonPassableItems(ITEMVECTOR &nonpassitems);
+    void giveNonPassableItems(ITEMVECTOR &nonpassitems) const;
 
     /**
     * finds all non movable items on a field
     * @param nonmoveitems byreference here the items are returned which are non movable
     */
-    void giveExportItems(ITEMVECTOR &nonmoveitems);
+    void giveExportItems(ITEMVECTOR &nonmoveitems) const;
 
     /**
     * loads this field from files
@@ -94,49 +91,49 @@ public:
     * checks if you can look through a tile
     * @return true if the tile is transparent otherwise false
     */
-    bool IsTransparent();
+    bool IsTransparent() const;
 
     /**
     * checks if you can fall through a tile
     * @return if a character can fall through this tile otherwise false
     */
-    bool IsPenetrateable();
+    bool IsPenetrateable() const;
 
     /**
     * checks if a character is on this field (earlier the players etc where seperated)
     * @return true if there is a character on this field
     */
-    bool IsPlayerOnField();
+    bool IsPlayerOnField() const;
 
     /**
     * checks if a npc is on field
     * @return true if there is a npc on this field
     */
-    bool IsNPCOnField();
+    bool IsNPCOnField() const;
 
     /**
     * checks if a Monster is on a field
     * @return true if there is a monster on this field otherwise false
     */
-    bool IsMonsterOnField();
+    bool IsMonsterOnField() const;
 
     /**
     * checks if the field is a warpfield
     * @return true if the field is a warpfield otherwise false
     */
-    bool IsWarpField();
+    bool IsWarpField() const;
 
     /**
     * checks if there lies a special item on this field
     * @return true if there is a special item on this field otherwise false
     */
-    bool HasSpecialItem();
+    bool HasSpecialItem() const;
 
     /**
     * checks if the field is a special field (triggerfield for example)
     * @return true if the field is a special field otherwise false
     */
-    bool IsSpecialField();
+    bool IsSpecialField() const;
 
     /**
     * check if a move to this field is possible or not ( for example another character stands at it)
@@ -148,7 +145,7 @@ public:
     * finds the height level of the field
     * @return the height level of this field
     */
-    unsigned char GroundLevel();
+    unsigned char GroundLevel() const;
 
     /**
     * calculates the flags for this field new
@@ -171,9 +168,9 @@ public:
     * <b>Lua: [:tile]</b>
     * @return the id of the field
     */
-    unsigned short int getTileId();
+    unsigned short int getTileId() const;
 
-    unsigned short int getSecondaryTileId();
+    unsigned short int getSecondaryTileId() const;
 
     /**
     * adds a item to the stack of this field but not if the field is not passable
@@ -231,7 +228,7 @@ public:
     * @param it byreference returns the top item on the field
     * @return true if there is at least one item on this field which can be returned otherwise false
     */
-    bool ViewTopItem(Item &it);
+    bool ViewTopItem(Item &it) const;
 
     /**
     * deletes all Items from this field
@@ -245,13 +242,13 @@ public:
     * @param spos the position inside the item stack on this field
     * @return the scriptitem struct of the item on spos
     */
-    ScriptItem getStackItem(uint8_t spos);
+    ScriptItem getStackItem(uint8_t spos) const;
 
     /**
     * returns the number of items which are inside the item stack of this field
     * @return the number of items on this field
     */
-    MAXCOUNTTYPE NumberOfItems();
+    MAXCOUNTTYPE NumberOfItems() const;
 
     /**
     *=================================end of grouping script functions================
@@ -312,7 +309,7 @@ public:
     * delivers the position of the warp destination
     * @param pos the position of the warp destination
     */
-    void GetWarpField(position &pos);
+    void GetWarpField(position &pos) const;
 
     /**
     * sets the flag which shows if there is a special item on this field

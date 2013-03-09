@@ -91,7 +91,7 @@ void *save_this_player(void *ptr) {
 }
 
 bool save_player(Player *player) {
-    players_tosave_map[player->name]++;
+    players_tosave_map[player->getName()]++;
     pthread_attr_t pattr;
     pthread_attr_init(&pattr);
     pthread_attr_setdetachstate(&pattr, PTHREAD_CREATE_JOINABLE);
@@ -109,7 +109,7 @@ bool save_player(Player *player) {
     void *ret;
 
     if (! save_done) {
-        std::cerr << "killed save thread for player " << player->name << std::endl;
+        std::cerr << "killed save thread for " << player->to_string() << std::endl;
         // kill thread...
         pthread_kill(playersavethread, SIGCHLD);
         pthread_join(playersavethread, &ret);
@@ -138,16 +138,16 @@ void *player_save_loop(void *) {
             Player *temp = players_to_save.pop_front();
 
             if (! save_player(temp)) {
-                if (players_tosave_map[temp->name] > 10) {
-                    std::cerr << "*** player " << temp->name << " not saved!" << std::endl;
+                if (players_tosave_map[temp->getName()] > 10) {
+                    std::cerr << "*** " << temp->to_string() << " not saved!" << std::endl;
                     delete temp;
                 } else {
-                    std::cout << "could not save player " << temp->name << " trying again... " << std::endl;
+                    std::cout << "could not save " << temp->to_string() << ", trying again ..." << std::endl;
                     players_to_save.push_back(temp);
                 }
             } else {
-                players_tosave_map.erase(temp->name);
-                std::cout << "saved player " << temp->name << std::endl;
+                players_tosave_map.erase(temp->getName());
+                std::cout << "saved " << temp->to_string() << std::endl;
                 delete temp;
             }
         }

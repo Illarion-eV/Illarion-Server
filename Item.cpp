@@ -87,7 +87,7 @@ void Item::setData(const luabind::object &datamap) {
 }
 
 
-bool Item::hasData(const luabind::object &datamap) {
+bool Item::hasData(const luabind::object &datamap) const {
     using namespace luabind;
     auto mapType = type(datamap);
 
@@ -139,12 +139,16 @@ bool Item::hasNoData() const {
     return datamap.size() == 0;
 }
 
-std::string Item::getData(std::string key) {
-    return datamap[key];
+std::string Item::getData(const std::string &key) const {
+    if (datamap.find(key) != datamap.end()) {
+        return datamap.at(key);
+    } else {
+        return "";
+    }
 }
 
 
-void Item::setData(std::string key, std::string value) {
+void Item::setData(const std::string &key, const std::string &value) {
     if (value.length() > 0) {
         datamap[key] = value;
     } else {
@@ -153,7 +157,7 @@ void Item::setData(std::string key, std::string value) {
 }
 
 
-void Item::setData(std::string key, int32_t value) {
+void Item::setData(const std::string &key, int32_t value) {
     std::stringstream ss;
     ss << value;
     setData(key, ss.str());

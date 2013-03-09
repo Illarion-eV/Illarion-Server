@@ -188,15 +188,15 @@ ItemUpdate_TC::ItemUpdate_TC(position fieldpos, ITEMVECTOR &items) : BasicServer
 
     addUnsignedCharToBuffer(static_cast<uint8_t>(size));
 
-    for (auto it = items.begin(); it != items.end(); ++it) {
+    for (const auto &item : items) {
         //we added 255 items
         if (size <= 0) {
             break;
         }
 
-        addShortIntToBuffer(it->getId());
-        addShortIntToBuffer(it->getNumber());
-        Logger::debug(LogFacility::World) << "adding item id: " << it->getId() << " count: " << static_cast<int>(it->getNumber()) << Log::end;
+        addShortIntToBuffer(item.getId());
+        addShortIntToBuffer(item.getNumber());
+        Logger::debug(LogFacility::World) << "adding item id: " << item.getId() << " count: " << static_cast<int>(item.getNumber()) << Log::end;
         size--;
     }
 }
@@ -213,14 +213,14 @@ ItemUpdate_TC::ItemUpdate_TC(int16_t px, int16_t py, int16_t pz, ITEMVECTOR &ite
 
     addUnsignedCharToBuffer(static_cast<uint8_t>(size));
 
-    for (auto it = items.begin(); it != items.end(); ++it) {
+    for (const auto &item : items) {
         //we added 255 items
         if (size <= 0) {
             break;
         }
 
-        addShortIntToBuffer(it->getId());
-        addShortIntToBuffer(it->getNumber());
+        addShortIntToBuffer(item.getId());
+        addShortIntToBuffer(item.getNumber());
         size--;
     }
 }
@@ -231,13 +231,13 @@ CharDescription::CharDescription(TYPE_OF_CHARACTER_ID id, std::string descriptio
 }
 
 AppearanceTC::AppearanceTC(Character *cc, Player *receivingPlayer) : BasicServerCommand(SC_APPEARANCE_TC) {
-    addIntToBuffer(cc->id);
+    addIntToBuffer(cc->getId());
 
     if (cc->character == Character::player) {
         Player *player = dynamic_cast<Player *>(cc);
 
         if (receivingPlayer->knows(player)) {
-            addStringToBuffer(player->name);
+            addStringToBuffer(player->getName());
         } else {
             std::string german = "Jemand";
             std::string english = "Someone";
@@ -245,9 +245,9 @@ AppearanceTC::AppearanceTC(Character *cc, Player *receivingPlayer) : BasicServer
         }
     } else if (cc->character == Character::monster) {
         Monster *monster = dynamic_cast<Monster *>(cc);
-        addStringToBuffer(receivingPlayer->nls(monster->nameDe, monster->name));
+        addStringToBuffer(receivingPlayer->nls(monster->nameDe, monster->getName()));
     } else {
-        addStringToBuffer(cc->name);
+        addStringToBuffer(cc->getName());
     }
 
     addShortIntToBuffer(cc->race);
@@ -411,13 +411,12 @@ ItemRemoveTC::ItemRemoveTC(short int x, short int y, short int z) : BasicServerC
 }
 
 AdminViewPlayersTC::AdminViewPlayersTC() : BasicServerCommand(SC_ADMINVIEWPLAYERS_TC) {
-    World::PLAYERVECTOR::iterator titerator;
     unsigned short int count = World::get()->Players.size();
     addShortIntToBuffer(count);
 
-    for (titerator = World::get()->Players.begin(); titerator < World::get()->Players.end(); ++titerator) {
-        addStringToBuffer((*titerator)->name);
-        addStringToBuffer((*titerator)->last_ip);
+    for (const auto &p : World::get()->Players) {
+        addStringToBuffer(p->getName());
+        addStringToBuffer(p->last_ip);
     }
 }
 
@@ -443,9 +442,9 @@ UpdateShowCaseTC::UpdateShowCaseTC(unsigned char showcase, const TYPE_OF_CONTAIN
     TYPE_OF_CONTAINERSLOTS size = items.size();
     addShortIntToBuffer(size);
 
-    for (auto it = items.begin(); it != items.end(); ++it) {
-        const Item &item = it->second;
-        addShortIntToBuffer(it->first);
+    for (const auto &it : items) {
+        const Item &item = it.second;
+        addShortIntToBuffer(it.first);
         addShortIntToBuffer(item.getId());
 
         if (item.isContainer()) {
@@ -471,8 +470,7 @@ MapStripeTC::MapStripeTC(position pos, NewClientView::stripedirection dir) : Bas
             addShortIntToBuffer(fields[i]->getMusicId());
             addUnsignedCharToBuffer(static_cast<unsigned char>(fields[i]->items.size()));
 
-            for (auto it = fields[i]->items.begin(); it < fields[i]->items.end(); ++it) {
-                Item &item = *it;
+            for (const auto &item : fields[i]->items) {
                 addShortIntToBuffer(item.getId());
 
                 if (item.isContainer()) {

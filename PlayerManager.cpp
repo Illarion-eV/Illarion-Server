@@ -65,54 +65,33 @@ PlayerManager::PlayerManager() {
     std::cout<<"==============creating Player manager==============="<<std::endl;
     running = false;
     threadOk = false;
-
-    /* std::cout<<"creating deleteOldConnection Loop:";
-    if ( pthread_create( &deleteOldConnection_thread, &pattr, (void*(*)(void*))&deleteOldConnectionsLoop, this ) != 0 )
-         std::cout<<"not sucessfull"<<std::endl;
-     else
-         std::cout<<"successfull"<<std::endl; */
 }
 
 PlayerManager::~PlayerManager() {
     pthread_cancel(login_thread);
     pthread_cancel(save_thread);
-    //pthread_cancel( deleteOldConnection_thread );
-    //delete incon;
-    //shutdownConnections.clear();
 }
 
 void PlayerManager::saveAll() {
-
     if (!loggedOutPlayers.empty()) {
-        std::cout<<"forced save:"<<std::endl;
-
-        for (TPLAYERVECTOR::iterator pIterator = loggedOutPlayers.begin(); pIterator != loggedOutPlayers.end(); ++pIterator) {
-            // Logout - Vorgang protokollieren
-            if (!(*pIterator)->isMonitoringClient()) {
-                //( *pIterator )->closeAllShowcases();
-                (*pIterator)->save();
-                (*pIterator)->Connection->closeConnection();
+        for (auto const &player : loggedOutPlayers) {
+            if (!player->isMonitoringClient()) {
+                player->save();
+                player->Connection->closeConnection();
             }
         }
-
-        std::cout<<"saved all players"<<std::endl;
     }
 
-    std::cout<<"clearing logged out player list"<<std::endl;
     loggedOutPlayers.clear();
-    std::cout<<"cleared"<<std::endl;
-
 }
 
-bool PlayerManager::findPlayer(std::string name) {
+bool PlayerManager::findPlayer(const std::string &name) {
     mut.lock();
 
-    for (TPLAYERVECTOR::iterator pIterator = loggedOutPlayers.begin(); pIterator != loggedOutPlayers.end(); ++pIterator) {
-        // Logout - Vorgang protokollieren
-        if ((*pIterator)->name == name) {
+    for (auto const &player : loggedOutPlayers) {
+        if (player->getName() == name) {
             mut.unlock();
             return true;
-
         }
     }
 
@@ -219,7 +198,7 @@ void *PlayerManager::playerSaveLoop(PlayerManager *pmanager) {
         waittime.tv_sec = 0;
         waittime.tv_nsec = 100000000;
         pmanager->threadOk = true;
-        Player *tmpPl=NULL;
+        Player *tmpPl = nullptr;
 
         while (pmanager->running) {
             if (!pmanager->loggedOutPlayers.empty()) {
@@ -230,29 +209,19 @@ void *PlayerManager::playerSaveLoop(PlayerManager *pmanager) {
                     tmpPl = pmanager->loggedOutPlayers.non_block_pop_front();
                     mut.unlock();
 
-                    // Logout - Vorgang protokollieren
                     if (!tmpPl->isMonitoringClient()) {
                         reloadmutex.lock_shared();
                         tmpPl->save();
                         reloadmutex.unlock_shared();
                         tmpPl->Connection->closeConnection();
-                        std::cout<<"removed player: "<<tmpPl->name<<std::endl;
-                        boost::shared_ptr<BasicServerCommand> cmd(new BBLogOutTC(tmpPl->id, tmpPl->name));
+                        boost::shared_ptr<BasicServerCommand> cmd(new BBLogOutTC(tmpPl->getId(), tmpPl->getName()));
                         world->monitoringClientList->sendCommand(cmd);
-                        //std::cout<<"deleting player!"<<std::endl;
-                        //pmanager->shutdownConnections.non_block_push_back( tmpPl->Connection);
-                        //(*pIterator)->Connection.reset();
                         delete tmpPl;
-                        tmpPl=NULL;
-                        std::cout<<"deleting end!"<<std::endl;
+                        tmpPl = nullptr;
                     } else {
                         tmpPl->Connection->closeConnection();
-                        //std::cout<<"deleting Monitoring client!"<<std::endl;
-                        //pmanager->shutdownConnections.non_block_push_back( tmpPl->Connection);
-                        //(*pIterator)->Connection.reset();
                         delete tmpPl;
-                        tmpPl=NULL;
-                        std::cout<<"player deleted"<<std::endl;
+                        tmpPl = nullptr;
                     }
                 }
 
@@ -273,51 +242,3 @@ void *PlayerManager::playerSaveLoop(PlayerManager *pmanager) {
     return NULL;
 }
 
-//void * PlayerManager::deleteOldConnectionsLoop(PlayerManager * pmanager)
-//{
-//    try
-//    {
-//        TPLAYERVECTOR::iterator pIterator;
-//        timespec waittime;
-//        waittime.tv_sec = 0;
-//        waittime.tv_nsec = 100000000;
-//        pmanager->threadOk = true;
-//        boost::shared_ptr<NetInterface> sd;
-//        int size = 0;
-//        while ( pmanager->running )
-//        {
-//               if ( !pmanager->shutdownConnections.non_block_empty() )
-//               {
-//                   size = 0;
-//                   size = pmanager->shutdownConnections.size();
-//                   for ( int i = 0; i < size ; ++i )
-//                   {
-//                        sd = pmanager->shutdownConnections.non_block_pop_front();
-//                        if ( sd )
-//                        {
-//                            if ( sd->shutdownOK() )
-//                            {
-//                                std::cout<<"try to delete 1 connection to proceed: "<<size<<std::endl;
-//                                sd.reset();
-//                            }
-//                            else
-//                            {
-//                                pmanager->shutdownConnections.non_block_push_back( sd );
-//                            }
-//                        }
-//                   }
-//              }
-//             nanosleep(&waittime, NULL);
-//        }
-//        pmanager->threadOk = false;
-//    }
-//    catch ( std::exception &e )
-//    {
-//
-//    }
-//    catch ( ... )
-//    {
-//        throw;
-//    }
-//    return NULL;
-//}

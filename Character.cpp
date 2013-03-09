@@ -30,7 +30,6 @@
 #include <map>
 #include <algorithm>
 #include <boost/shared_ptr.hpp>
-#include <boost/assign/list_of.hpp>
 #include "script/LuaLearnScript.hpp"
 #include "script/LuaPlayerDeathScript.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
@@ -44,45 +43,47 @@
 extern std::shared_ptr<LuaLearnScript>learnScript;
 extern std::shared_ptr<LuaPlayerDeathScript>playerDeathScript;
 
-boost::unordered_map<std::string, Character::attributeIndex> Character::attributeMap = boost::assign::map_list_of
-        ("strength", strength)
-        ("dexterity", dexterity)
-        ("constitution", constitution)
-        ("agility", agility)
-        ("intelligence", intelligence)
-        ("perception", perception)
-        ("willpower", willpower)
-        ("essence", essence)
-        ("hitpoints", hitpoints)
-        ("mana", mana)
-        ("foodlevel", foodlevel)
-        ("sex", sex)
-        ("age", age)
-        ("weight", weight)
-        ("height", height)
-        ("attitude", attitude)
-        ("luck", luck);
+Character::attribute_map_t Character::attributeMap = {
+        {"strength", strength},
+        {"dexterity", dexterity},
+        {"constitution", constitution},
+        {"agility", agility},
+        {"intelligence", intelligence},
+        {"perception", perception},
+        {"willpower", willpower},
+        {"essence", essence},
+        {"hitpoints", hitpoints},
+        {"mana", mana},
+        {"foodlevel", foodlevel},
+        {"sex", sex},
+        {"age", age},
+        {"weight", weight},
+        {"height", height},
+        {"attitude", attitude},
+        {"luck", luck}
+};
 
-boost::unordered_map<Character::attributeIndex, std::string> Character::attributeStringMap = boost::assign::map_list_of
-        (strength, "strength")
-        (dexterity, "dexterity")
-        (constitution, "constitution")
-        (agility, "agility")
-        (intelligence, "intelligence")
-        (perception, "perception")
-        (willpower, "willpower")
-        (essence, "essence")
-        (hitpoints, "hitpoints")
-        (mana, "mana")
-        (foodlevel, "foodlevel")
-        (sex, "sex")
-        (age, "age")
-        (weight, "weight")
-        (height, "height")
-        (attitude, "attitude")
-        (luck, "luck");
+Character::attribute_string_map_t Character::attributeStringMap = {
+        {strength, "strength"},
+        {dexterity, "dexterity"},
+        {constitution, "constitution"},
+        {agility, "agility"},
+        {intelligence, "intelligence"},
+        {perception, "perception"},
+        {willpower, "willpower"},
+        {essence, "essence"},
+        {hitpoints, "hitpoints"},
+        {mana, "mana"},
+        {foodlevel, "foodlevel"},
+        {sex, "sex"},
+        {age, "age"},
+        {weight, "weight"},
+        {height, "height"},
+        {attitude, "attitude"},
+        {luck, "luck"}
+};
 
-position Character::getFrontalPosition() {
+position Character::getFrontalPosition() const {
     position front = pos;
 
     switch (faceto) {
@@ -126,27 +127,27 @@ position Character::getFrontalPosition() {
     return front;
 }
 
-luabind::object Character::getLuaStepList(position goal) {
+luabind::object Character::getLuaStepList(const position &goal) const {
     lua_State *luaState = World::get()->getCurrentScript()->getLuaState();
     luabind::object list = luabind::newtable(luaState);
     int index = 1;
     std::list<direction> dirs;
     getStepList(goal, dirs);
 
-    for (std::list<direction>::iterator it = dirs.begin(); it != dirs.end(); ++it) {
-        list[index++] = (*it);
+    for (const auto &dir : dirs) {
+        list[index++] = dir;
     }
 
     return list;
 }
 
-bool Character::getStepList(position goal, std::list<direction> &steps) {
+bool Character::getStepList(const position &goal, std::list<direction> &steps) const {
     return pathfinding::a_star(pos, goal, steps);
 }
 
 
 
-bool Character::getNextStepDir(position goal, direction &dir) {
+bool Character::getNextStepDir(const position &goal, direction &dir) const {
     std::list<direction> steps;
 
     getStepList(goal, steps);
@@ -160,10 +161,7 @@ bool Character::getNextStepDir(position goal, direction &dir) {
 }
 
 
-Character::Character(const appearance &appearance) : actionPoints(P_MAX_AP), fightPoints(P_MAX_FP), effects(this), waypoints(this), attributes(ATTRIBUTECOUNT), _is_on_route(false), _world(World::get()), _appearance(appearance) {
-#ifdef Character_DEBUG
-    std::cout << "Character Konstruktor Start" << std::endl;
-#endif
+Character::Character(const appearance &appearance) : actionPoints(P_MAX_AP), fightPoints(P_MAX_FP), effects(this), waypoints(this), _is_on_route(false), _world(World::get()), _appearance(appearance), attributes(ATTRIBUTECOUNT) {
     race = human;
     character = player;
 
@@ -176,8 +174,6 @@ Character::Character(const appearance &appearance) : actionPoints(P_MAX_AP), fig
 
     activeLanguage=0; //common language
     lastSpokenText="";
-    //nrOfers=0;
-    informCharacter=false;
 
     pos.x = 0;
     pos.y = 0;
@@ -205,36 +201,23 @@ Character::Character(const appearance &appearance) : actionPoints(P_MAX_AP), fig
     attributes[attitude] = Attribute(0);
     attributes[luck] = Attribute(0);
 
-
     faceto = north;
-    backPackContents = NULL;
-    //depotContents = NULL;
+    backPackContents = nullptr;
 
     magic.type = MAGE;
-
     magic.flags[ MAGE ] = 0x00000000;
-
     magic.flags[ PRIEST ] = 0x00000000;
-
     magic.flags[ BARD ] = 0x00000000;
-
     magic.flags[ DRUID ] = 0x00000000;
-
-#ifdef Character_DEBUG
-    std::cout << "Character Konstruktor Ende" << std::endl;
-#endif
 }
 
 Character::~Character() {
-#ifdef Character_DEBUG
-    std::cout << "Character Destruktor Start" << std::endl;
-#endif
     //blow lua fuse for this char
     fuse_ptr<Character>::blow_fuse(this);
 
-    if (backPackContents != NULL) {
+    if (backPackContents) {
         delete backPackContents;
-        backPackContents = NULL;
+        backPackContents = nullptr;
     }
 
     std::map<uint32_t,Container *>::reverse_iterator rit;
@@ -242,14 +225,10 @@ Character::~Character() {
     for (rit = depotContents.rbegin(); rit != depotContents.rend(); ++rit) {
         delete rit->second;
     }
-
-#ifdef Character_DEBUG
-    std::cout << "Character Destruktor Ende" << std::endl;
-#endif
 }
 
 
-int Character::countItem(TYPE_OF_ITEM_ID itemid) {
+int Character::countItem(TYPE_OF_ITEM_ID itemid) const {
     int temp = 0;
 
     for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
@@ -258,20 +237,14 @@ int Character::countItem(TYPE_OF_ITEM_ID itemid) {
         }
     }
 
-#ifdef Character_DEBUG
-    std::cout << "std::coutItem: am K�per gefunden: " << temp << "\n";
-#endif
-
-    if ((characterItems[ BACKPACK ].getId() != 0) && (backPackContents != NULL)) {
+    if ((characterItems[ BACKPACK ].getId() != 0) && backPackContents) {
         temp = temp + backPackContents->countItem(itemid);
     }
 
-#ifdef Character_DEBUG
-    std::cout << "std::coutItem: am K�per + Rucksack gefunden: " << temp << "\n";
-#endif
     return temp;
 }
-int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid) {
+
+int Character::countItemAt(const std::string &where, TYPE_OF_ITEM_ID itemid) const {
     int temp = 0;
 
     if (where == "all") {
@@ -281,18 +254,10 @@ int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid) {
             }
         }
 
-#ifdef Character_DEBUG
-        std::cout << "std::coutItem: am K�per gefunden: " << temp << "\n";
-#endif
-
-
-        if ((characterItems[ BACKPACK ].getId() != 0) && (backPackContents != NULL)) {
+        if ((characterItems[ BACKPACK ].getId() != 0) && backPackContents) {
             temp = temp + backPackContents->countItem(itemid);
         }
 
-#ifdef Character_DEBUG
-        std::cout << "std::coutItem: am K�per + Rucksack gefunden: " << temp << "\n";
-#endif
         return temp;
     }
 
@@ -317,7 +282,7 @@ int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid) {
     }
 
     if (where == "backpack") {
-        if ((characterItems[ BACKPACK ].getId() != 0) && (backPackContents != NULL)) {
+        if ((characterItems[ BACKPACK ].getId() != 0) && backPackContents) {
             temp = temp + backPackContents->countItem(itemid);
         }
 
@@ -327,7 +292,7 @@ int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid) {
     return temp;
 }
 
-int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid, const luabind::object &data) {
+int Character::countItemAt(const std::string &where, TYPE_OF_ITEM_ID itemid, const luabind::object &data) const {
     int temp = 0;
 
     if (where == "all") {
@@ -337,18 +302,10 @@ int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid, const luab
             }
         }
 
-#ifdef Character_DEBUG
-        std::cout << "std::coutItem: am K�per gefunden: " << temp << "\n";
-#endif
-
-
-        if ((characterItems[ BACKPACK ].getId() != 0) && (backPackContents != NULL)) {
+        if ((characterItems[ BACKPACK ].getId() != 0) && backPackContents) {
             temp = temp + backPackContents->countItem(itemid, data);
         }
 
-#ifdef Character_DEBUG
-        std::cout << "std::coutItem: am K�per + Rucksack gefunden: " << temp << "\n";
-#endif
         return temp;
     }
 
@@ -373,7 +330,7 @@ int Character::countItemAt(std::string where, TYPE_OF_ITEM_ID itemid, const luab
     }
 
     if (where == "backpack") {
-        if ((characterItems[ BACKPACK ].getId() != 0) && (backPackContents != NULL)) {
+        if ((characterItems[ BACKPACK ].getId() != 0) && backPackContents) {
             temp = temp + backPackContents->countItem(itemid , data);
         }
 
@@ -405,16 +362,9 @@ ScriptItem Character::GetItemAt(unsigned char itempos) {
 
 int Character::_eraseItem(TYPE_OF_ITEM_ID itemid, int count, const luabind::object &data, bool useData) {
     int temp = count;
-#ifdef Character_DEBUG
-    std::cout << "try to erase in inventory " << count << " items of type " << itemid << " data " << data << "\n";
-#endif
 
-    if ((characterItems[ BACKPACK ].getId() != 0) && (backPackContents != NULL)) {
+    if ((characterItems[ BACKPACK ].getId() != 0) && backPackContents) {
         temp = backPackContents->_eraseItem(itemid, temp, data, useData);
-#ifdef Character_DEBUG
-        std::cout << "eraseItem: nach L�chen im Rucksack noch zu l�chen: " << temp << "\n";
-#endif
-
     }
 
     if (temp > 0) {
@@ -436,12 +386,7 @@ int Character::_eraseItem(TYPE_OF_ITEM_ID itemid, int count, const luabind::obje
         }
     }
 
-#ifdef Character_DEBUG
-    std::cout << "eraseItem: am Ende noch zu loeschen: " << temp << "\n";
-#endif
-
     return temp;
-
 }
 
 
@@ -460,20 +405,11 @@ int Character::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) 
     int temp = count;
     Item it;
 
-    if (weightOK(newid, count, NULL)) {
+    if (weightOK(newid, count, nullptr)) {
         const auto &cos = Data::CommonItems[newid];
 
         if (cos.isValid()) {
-#ifdef Character_DEBUG
-            std::cout<<"createAtPos: itemid gefunden" << std::endl;
-#endif
-
-            if (Data::ContainerItems.exists(newid)) {
-#ifdef Character_DEBUG
-                std::cout << "createAtPos: itemid ist ein Container" << std::endl;
-#endif
-
-            } else {
+            if (!Data::ContainerItems.exists(newid)) {
                 if (characterItems[ pos ].getId() == 0) {
                     if (temp > cos.MaxStack) {
                         characterItems[ pos ].setId(newid);
@@ -503,23 +439,12 @@ int Character::createItem(Item::id_type id, Item::number_type number, Item::qual
     int temp = number;
     Item it;
 
-    if (weightOK(id, number, NULL)) {
+    if (weightOK(id, number, nullptr)) {
         const auto &cos = Data::CommonItems[id];
 
         if (cos.isValid()) {
-#ifdef Character_DEBUG
-            std::cout << "createItem: itemid gefunden" << "\n";
-#endif
-
             if (Data::ContainerItems.exists(id)) {
-#ifdef Character_DEBUG
-                std::cout << "createItem: itemid ist ein container" << "\n";
-#endif
-
                 if (characterItems[ BACKPACK ].getId() == 0) {
-#ifdef Character_DEBUG
-                    std::cout << "createItem: erstelle neuen Rucksack" << "\n";
-#endif
                     characterItems[ BACKPACK ].setId(id);
                     characterItems[ BACKPACK ].setWear(cos.AgeingSpeed);
                     characterItems[ BACKPACK ].setQuality(quality);
@@ -540,10 +465,6 @@ int Character::createItem(Item::id_type id, Item::number_type number, Item::qual
                 it.setData(data);
 
                 for (int i = temp; i > 0; i--) {
-#ifdef Character_DEBUG
-                    std::cout << "createItem: erstelle neuen container im Rucksack" << std::endl;
-#endif
-
                     if (!backPackContents->InsertContainer(it, new Container(it.getId()))) {
                         i = 0;
                     } else {
@@ -551,9 +472,6 @@ int Character::createItem(Item::id_type id, Item::number_type number, Item::qual
                     }
                 }
             } else {
-#ifdef Character_DEBUG
-                std::cout << "createItem: normales Item" << std::endl;
-#endif
                 int old_temp = temp;
 
                 if (cos.MaxStack > 1) {
@@ -575,7 +493,7 @@ int Character::createItem(Item::id_type id, Item::number_type number, Item::qual
                         it.setWear(cos.AgeingSpeed);
                         it.setData(data);
 
-                        if (backPackContents != NULL) {
+                        if (backPackContents) {
                             bool ok = true;
 
                             while (ok && (temp > 0)) {
@@ -611,10 +529,7 @@ int Character::createItem(Item::id_type id, Item::number_type number, Item::qual
                     updateAppearanceForAll(true);
                 }
 
-                if ((temp > 0) && (backPackContents != NULL)) {
-#ifdef Character_DEBUG
-                    std::cout << "createItem: Platz im belt nicht ausreichend, erstelle im backpack" << std::endl;
-#endif
+                if ((temp > 0) && backPackContents) {
                     bool ok = true;
                     it.setId(id);
                     it.setQuality(quality);
@@ -637,33 +552,19 @@ int Character::createItem(Item::id_type id, Item::number_type number, Item::qual
                 }
             }
         }
-
-#ifdef Character_DEBUG
-        std::cout << "createItem: Anzahl der Item die nicht erstellt werden konnten: " << temp << std::endl;
-#endif
-
     }
 
     return temp;
-
 }
 
 
 int Character::increaseAtPos(unsigned char pos, int count) {
     int temp = count;
 
-#ifdef Character_DEBUG
-    std::cout << "increaseAtPos " << (short int) pos << " " << count << "\n";
-#endif
-
     if ((pos > 0) && (pos < MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
-        if (weightOK(characterItems[ pos ].getId(), count, NULL)) {
+        if (weightOK(characterItems[ pos ].getId(), count, nullptr)) {
 
             temp = characterItems[ pos ].getNumber() + count;
-
-#ifdef Character_DEBUG
-            std::cout << "temp " << temp << "\n";
-#endif
             auto maxStack = characterItems[pos].getMaxStack();
 
             if (temp > maxStack) {
@@ -689,14 +590,7 @@ int Character::increaseAtPos(unsigned char pos, int count) {
 
 
 bool Character::swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t newQuality) {
-#ifdef Character_DEBUG
-    std::cout << "swapAtPos " << (short int) pos << " newid " << newid << "\n";
-#endif
-
     if ((pos > 0) && (pos < MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
-#ifdef Character_DEBUG
-        std::cout << "pos gefunden, alte id: " << characterItems[ pos ].getId() << "\n";
-#endif
         bool updateBrightness = World::get()->getItemStatsFromId(characterItems[ pos ].getId()).Brightness > 0 || World::get()->getItemStatsFromId(newid).Brightness > 0;
         characterItems[ pos ].setId(newid);
 
@@ -740,16 +634,13 @@ void Character::ageInventory() {
         }
     }
 
-    // Inhalt des Rucksacks altern
-    if ((characterItems[ BACKPACK ].getId() != 0) && (backPackContents != NULL)) {
+    if ((characterItems[ BACKPACK ].getId() != 0) && backPackContents) {
         backPackContents->doAge(true);
     }
 
-    std::map<uint32_t, Container *>::iterator depotIterator;
-
-    for (depotIterator = depotContents.begin(); depotIterator != depotContents.end(); ++depotIterator) {
-        if (depotIterator->second != NULL) {
-            depotIterator->second->doAge(true);
+    for (const auto &depot : depotContents) {
+        if (depot.second) {
+            depot.second->doAge(true);
         }
     }
 }
@@ -772,9 +663,7 @@ void Character::SetAlive(bool t) {
 
 
 bool Character::attack(Character *target) {
-
-    if (target != NULL && target->IsAlive()) {
-
+    if (target && target->IsAlive()) {
         if (!actionRunning()) {
             if (target->IsAlive()) {
                 if (target->character == player) {
@@ -788,10 +677,10 @@ bool Character::attack(Character *target) {
 
         if (character == player) {
             if (target->IsAlive()) {
-                boost::shared_ptr<BasicServerCommand>cmd(new BBSendActionTC(id, name, 1 , "Attacks : " + target->name + "(" + boost::lexical_cast<std::string>(target->id) + ")"));
+                boost::shared_ptr<BasicServerCommand>cmd(new BBSendActionTC(id, name, 1 , "Attacks : " + target->to_string()));
                 _world->monitoringClientList->sendCommand(cmd);
             } else {
-                boost::shared_ptr<BasicServerCommand>cmd(new BBSendActionTC(id, name, 1 , "Killed : " + target->name + "(" + boost::lexical_cast<std::string>(target->id) + ")"));
+                boost::shared_ptr<BasicServerCommand>cmd(new BBSendActionTC(id, name, 1 , "Killed : " + target->to_string()));
                 _world->monitoringClientList->sendCommand(cmd);
             }
         }
@@ -807,7 +696,7 @@ bool Character::attack(Character *target) {
     return false;
 }
 
-std::string Character::getSkillName(TYPE_OF_SKILL_ID s) {
+std::string Character::getSkillName(TYPE_OF_SKILL_ID s) const {
     if (Data::Skills.exists(s)) {
         return Data::Skills[s].englishName;
     } else {
@@ -815,36 +704,22 @@ std::string Character::getSkillName(TYPE_OF_SKILL_ID s) {
     }
 }
 
-unsigned short int Character::getSkill(TYPE_OF_SKILL_ID s) {
-    SKILLMAP::iterator iterator;
-    iterator = skills.find(s);
+unsigned short int Character::getSkill(TYPE_OF_SKILL_ID s) const {
+    auto iterator = skills.find(s);
 
     if (iterator == skills.end()) {
-#ifdef Character_DEBUG
-        std::cout << "getSkill: Skill " << s << " not found!\n";
-#endif
         return 0;
     } else {
-#ifdef Character_DEBUG
-        std::cout << "getSkill: Skill " << s << " found! " << (*iterator).second.value << "\n";
-#endif
         return (*iterator).second.major;
     }
 }
 
-unsigned short int Character::getMinorSkill(TYPE_OF_SKILL_ID s) {
-    SKILLMAP::iterator iterator;
-    iterator = skills.find(s);
+unsigned short int Character::getMinorSkill(TYPE_OF_SKILL_ID s) const {
+    auto iterator = skills.find(s);
 
     if (iterator == skills.end()) {
-#ifdef Character_DEBUG
-        std::cout << "getMinorSkill: Skill " << s << " not found!\n";
-#endif
         return 0;
     } else {
-#ifdef Character_DEBUG
-        std::cout << "getMinorSkill: Skill " << s << " found! " << (*iterator).second.value << "\n";
-#endif
         return (*iterator).second.minor;
     }
 }
@@ -858,7 +733,7 @@ void Character::setSkinColor(uint8_t red, uint8_t green, uint8_t blue) {
 }
 
 
-void Character::getSkinColor(uint8_t &red, uint8_t &green, uint8_t &blue) {
+void Character::getSkinColor(uint8_t &red, uint8_t &green, uint8_t &blue) const {
     red = _appearance.skin.red;
     green =_appearance.skin.green;
     blue = _appearance.skin.blue;
@@ -873,7 +748,7 @@ void Character::setHairColor(uint8_t red, uint8_t green, uint8_t blue) {
 }
 
 
-void Character::getHairColor(uint8_t &red, uint8_t &green, uint8_t &blue) {
+void Character::getHairColor(uint8_t &red, uint8_t &green, uint8_t &blue) const {
     red = _appearance.hair.red;
     green = _appearance.hair.green;
     blue = _appearance.hair.blue;
@@ -886,7 +761,7 @@ void Character::setHair(uint8_t hairID) {
 }
 
 
-uint8_t Character::getHair() {
+uint8_t Character::getHair() const {
     return _appearance.hairtype;
 }
 
@@ -897,7 +772,7 @@ void Character::setBeard(uint8_t beardID) {
 }
 
 
-uint8_t Character::getBeard() {
+uint8_t Character::getBeard() const {
     return _appearance.beardtype;
 }
 
@@ -936,7 +811,7 @@ void Character::handleAttributeChange(Character::attributeIndex attribute) {
     }
 }
 
-void Character::setAttrib(std::string name, Attribute::attribute_t value) {
+void Character::setAttrib(const std::string &name, Attribute::attribute_t value) {
     if (name == "faceto") {
         turn((direction)value);
     } else if (name == "racetyp") {
@@ -952,7 +827,7 @@ void Character::setAttrib(std::string name, Attribute::attribute_t value) {
     }
 }
 
-Attribute::attribute_t Character::increaseAttrib(std::string name, int amount) {
+Attribute::attribute_t Character::increaseAttrib(const std::string &name, int amount) {
     if (name == "posx") {
         return pos.x;
     }
@@ -1000,8 +875,7 @@ unsigned short int Character::setSkill(TYPE_OF_SKILL_ID skill, short int major, 
         return 0;
     }
 
-    SKILLMAP::iterator iterator;
-    iterator = skills.find(skill);
+    auto iterator = skills.find(skill);
     {
         if (iterator == skills.end()) {
             skillvalue sv;
@@ -1022,8 +896,7 @@ unsigned short int Character::increaseSkill(TYPE_OF_SKILL_ID skill, short int am
         return 0;
     }
 
-    SKILLMAP::iterator iterator;
-    iterator = skills.find(skill);
+    auto iterator = skills.find(skill);
 
     if (iterator == skills.end()) {
         skillvalue sv;
@@ -1060,8 +933,7 @@ unsigned short int Character::increaseMinorSkill(TYPE_OF_SKILL_ID skill, short i
         return 0;
     }
 
-    SKILLMAP::iterator iterator;
-    iterator = skills.find(skill);
+    auto iterator = skills.find(skill);
 
     if (iterator == skills.end()) {
         skillvalue sv;
@@ -1106,11 +978,11 @@ unsigned short int Character::increaseMinorSkill(TYPE_OF_SKILL_ID skill, short i
     }
 }
 
-Character::skillvalue *Character::getSkillValue(TYPE_OF_SKILL_ID s) {
-    SKILLMAP::iterator it = skills.find(s);
+auto Character::getSkillValue(TYPE_OF_SKILL_ID s) const -> const skillvalue * {
+    auto it = skills.find(s);
 
     if (it == skills.end()) {
-        return NULL;
+        return nullptr;
     } else {
         return &(it->second);
     }
@@ -1134,13 +1006,13 @@ void Character::deleteAllSkills() {
 }
 
 
-bool Character::isInRange(Character *cc, unsigned short int distancemetric) {
-    if (cc != NULL) {
+bool Character::isInRange(Character *cc, unsigned short int distancemetric) const {
+    if (cc) {
         short int pz = cc->pos.z - pos.z;
         short int px = cc->pos.x - pos.x;
         short int py = cc->pos.y - pos.y;
 
-        if (((Abso(px) + Abso(py)) <= distancemetric) && (pz==0)) {
+        if (((abs(px) + abs(py)) <= distancemetric) && (pz==0)) {
             return true;
         }
     }
@@ -1152,19 +1024,19 @@ unsigned short int Character::getScreenRange() const {
     return 14;
 }
 
-bool Character::isInRangeToField(position m_pos, unsigned short int distancemetric) {
+bool Character::isInRangeToField(const position &m_pos, unsigned short int distancemetric) const {
     short int pz = m_pos.z - pos.z;
     short int px = m_pos.x - pos.x;
     short int py = m_pos.y - pos.y;
 
-    if (((Abso(px) + Abso(py)) <= distancemetric) && (pz == 0)) {
+    if (((abs(px) + abs(py)) <= distancemetric) && (pz == 0)) {
         return true;
     } else {
         return false;
     }
 }
 
-unsigned short int Character::distanceMetricToPosition(position m_pos) {
+unsigned short int Character::distanceMetricToPosition(const position &m_pos) const {
     unsigned short int ret=0xFFFF;
     short int pz = pos.z - m_pos.z;
     short int px = pos.x - m_pos.x;
@@ -1199,10 +1071,10 @@ unsigned short int Character::distanceMetricToPosition(position m_pos) {
     return ret;
 }
 
-unsigned short int Character::distanceMetric(Character *cc) {
+unsigned short int Character::distanceMetric(Character *cc) const {
     unsigned short int ret=0xFFFF;
 
-    if (cc != NULL) {
+    if (cc) {
         short int pz = pos.z - cc->pos.z;
         short int px = pos.x - cc->pos.x;
         short int py = pos.y - cc->pos.y;
@@ -1269,7 +1141,7 @@ bool Character::weightOK(TYPE_OF_ITEM_ID id, int count, Container *tcont) const 
 
     int realweight = LoadWeight();
 
-    if (tcont != NULL) {
+    if (tcont) {
         ok = (realweight + weightContainer(id, 1, tcont)) <= maxLoadWeight();
     } else {
         const auto &common = Data::CommonItems[id];
@@ -1277,16 +1149,6 @@ bool Character::weightOK(TYPE_OF_ITEM_ID id, int count, Container *tcont) const 
     }
 
     return ok;
-
-}
-
-
-int Character::Abso(int value) {
-    if (value < 0) {
-        return (0 - value);
-    }
-
-    return value;
 }
 
 
@@ -1304,7 +1166,7 @@ int Character::weightContainer(TYPE_OF_ITEM_ID id, int count, Container *tcont) 
             }
         }
 
-        if (tcont != NULL) {
+        if (tcont) {
             try {
                 if (count > 0) {
                     temp += tcont->weight();
@@ -1325,7 +1187,7 @@ int Character::weightContainer(TYPE_OF_ITEM_ID id, int count, Container *tcont) 
     }
 }
 
-Character::movement_type Character::GetMovement() {
+Character::movement_type Character::GetMovement() const {
     return _movement;
 }
 
@@ -1366,12 +1228,10 @@ std::string Character::alterSpokenMessage(const std::string &message, int langua
         counter++;
     }
 
-    //std::cout << "message: "<< message << ", altered msg: " << alteredMessage << "\n";
-
     return alteredMessage;
 }
 
-int Character::getLanguageSkill(int languageSkillNumber) {
+int Character::getLanguageSkill(int languageSkillNumber) const {
     return 100;
 }
 
@@ -1442,7 +1302,7 @@ void Character::turn(direction dir) {
     }
 }
 
-void Character::turn(position posi) {
+void Character::turn(const position &posi) {
     //attack the player which we have found
     short int xoffs = posi.x - pos.x;
     short int yoffs = posi.y - pos.y;
@@ -1527,12 +1387,12 @@ bool Character::move(direction dir, bool active) {
     return false;
 }
 
-bool Character::moveToPossible(const Field *field) {
+bool Character::moveToPossible(const Field *field) const {
     // for monsters/npcs we just use the field infos for now
     return field->moveToPossible();
 }
 
-uint16_t Character::getMovementCost(Field *sourcefield) {
+uint16_t Character::getMovementCost(const Field *sourcefield) const {
     uint16_t walkcost = 0;
 
     auto tileId = sourcefield->getTileId();
@@ -1570,11 +1430,11 @@ uint16_t Character::getMovementCost(Field *sourcefield) {
     return walkcost;
 }
 
-void Character::updatePos(position newpos) {
+void Character::updatePos(const position &newpos) {
     pos = newpos;
 }
 
-void Character::receiveText(talk_type tt, std::string message, Character *cc) {
+void Character::receiveText(talk_type tt, const std::string &message, Character *cc) {
     // overloaded where necessary
 }
 
@@ -1586,12 +1446,13 @@ void Character::teachMagic(unsigned char type, unsigned char flag) {
     // overloaded in Player
 }
 
-bool Character::Warp(position newPos) {
+bool Character::Warp(const position &targetPos) {
     position oldpos = pos;
-    Field *fold = NULL;
+    Field *fold = nullptr;
 
     if (_world->GetPToCFieldAt(fold, pos.x, pos.y, pos.z)) {
-        Field *fnew = NULL;
+        Field *fnew = nullptr;
+        position newPos = targetPos;
 
         if (_world->findEmptyCFieldNear(fnew, newPos.x, newPos.y, newPos.z)) {
             fold->removeChar();
@@ -1612,12 +1473,12 @@ bool Character::Warp(position newPos) {
     return false;
 }
 
-bool Character::forceWarp(position newPos) {
+bool Character::forceWarp(const position &newPos) {
     position oldpos = pos;
-    Field *fold = NULL;
+    Field *fold = nullptr;
 
     if (_world->GetPToCFieldAt(fold, pos.x, pos.y, pos.z)) {
-        Field *fnew = NULL;
+        Field *fnew = nullptr;
 
         if (_world->GetPToCFieldAt(fnew, newPos.x, newPos.y, newPos.z)) {
             fold->removeChar();
@@ -1643,10 +1504,6 @@ void Character::LTIncreaseHP(unsigned short int value, unsigned short int count,
 }
 
 void Character::LTIncreaseMana(unsigned short int value, unsigned short int count, unsigned short int time) {
-    //Nothing to do here, overloaded for players
-}
-
-void Character::Depot() {
     //Nothing to do here, overloaded for players
 }
 
@@ -1679,12 +1536,10 @@ void Character::informLua(const std::string &german, const std::string &english,
 }
 
 void Character::changeQualityItem(TYPE_OF_ITEM_ID id, short int amount) {
-    if ((characterItems[ BACKPACK ].getId() != 0) && (backPackContents != NULL)) {
+    if ((characterItems[ BACKPACK ].getId() != 0) && backPackContents) {
         if (backPackContents->changeQuality(id, amount)) {
             return;
         }
-
-        //�dern des Items in eine untercontainer geschehen.
     }
 
     short int tmpQuality;
@@ -1714,10 +1569,7 @@ void Character::changeQualityItem(TYPE_OF_ITEM_ID id, short int amount) {
 }
 
 void Character::changeQualityAt(unsigned char pos, short int amount) {
-    std::cout<<"In ChangeQualityAt, pos: "<<(int)pos<<" amount: "<<amount<<" !"<<std::endl;
-
     if (pos < MAX_BODY_ITEMS + MAX_BELT_SLOTS) {
-        //Prfen ob berhaupt ein Item an der Stelle ist oder ein belegt
         if ((characterItems[ pos ].getId() == 0) || (characterItems[pos].getId() == BLOCKEDITEM)) {
             std::cerr<<"changeQualityAt, kein Item oder belegt an der position: "<<(int)pos<<" !"<<std::endl;
             return;
@@ -1731,15 +1583,11 @@ void Character::changeQualityAt(unsigned char pos, short int amount) {
             characterItems[ pos ].setQuality(tmpQuality);
             std::cout<<"Akt Qualit�: "<<characterItems[ pos ].getQuality()<<std::endl;
             return;
-        }
-        //L�chen falls qualit� zu gering
-        else {
+        } else {
 
             if (pos == RIGHT_TOOL && characterItems[LEFT_TOOL].getId() == BLOCKEDITEM) {
-                //Belegt aus linker hand l�chen wenn item in rechter hand ein zweih�deritem war
                 characterItems[LEFT_TOOL].reset();
             } else if (pos == LEFT_TOOL && characterItems[RIGHT_TOOL].getId() == BLOCKEDITEM) {
-                //Belegt aus rechter hand l�chen wenn item in linker hand ein zweih�der ist
                 characterItems[RIGHT_TOOL].reset();
             }
 
@@ -1769,7 +1617,7 @@ void Character::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS p
     // Nothing to do here, overridden for players
 }
 
-TYPE_OF_QUESTSTATUS Character::getQuestProgress(TYPE_OF_QUEST_ID questid, int &time) throw() {
+TYPE_OF_QUESTSTATUS Character::getQuestProgress(TYPE_OF_QUEST_ID questid, int &time) const {
     // Nothing to do here, overridden for players
     return 0;
 }
@@ -1798,7 +1646,7 @@ luabind::object Character::getItemList(TYPE_OF_ITEM_ID id) {
     }
 
     // Inhalt des Rucksacks altern
-    if ((characterItems[ BACKPACK ].getId() != 0) && (backPackContents != NULL)) {
+    if ((characterItems[ BACKPACK ].getId() != 0) && backPackContents) {
         backPackContents->increaseItemList(id, list, index);
     }
 
@@ -1806,22 +1654,22 @@ luabind::object Character::getItemList(TYPE_OF_ITEM_ID id) {
 }
 
 
-Container *Character::GetBackPack() {
+Container *Character::GetBackPack() const {
     return backPackContents;
 }
 
-Container *Character::GetDepot(uint32_t depotid) {
-    std::map<uint32_t, Container *>::iterator it;
+Container *Character::GetDepot(uint32_t depotid) const {
+    auto it = depotContents.find(depotid + 1);;
 
-    if ((it=depotContents.find(depotid + 1)) == depotContents.end()) {
-        return 0;
+    if (it == depotContents.end()) {
+        return nullptr;
     } else {
         return it->second;
     }
 }
 
 
-uint32_t Character::idleTime() {
+uint32_t Character::idleTime() const {
     // Nothing to do here, overloaded in Player
     return 0;
 }
@@ -1868,12 +1716,9 @@ void Character::updateAppearanceForPlayer(Player *target, bool always) {
 
 void Character::updateAppearanceForAll(bool always) {
     if (!isinvisible) {
-        std::vector < Player * > temp = World::get()->Players.findAllCharactersInScreen(pos.x, pos.y, pos.z);
-        std::vector < Player * > ::iterator titerator;
-
-        for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
-            boost::shared_ptr<BasicServerCommand> cmd(new AppearanceTC(this, *titerator));
-            (*titerator)->sendCharAppearance(id, cmd, always);
+        for (const auto &player : World::get()->Players.findAllCharactersInScreen(pos.x, pos.y, pos.z)) {
+            boost::shared_ptr<BasicServerCommand> cmd(new AppearanceTC(this, player));
+            player->sendCharAppearance(id, cmd, always);
         }
     }
 }
@@ -1890,19 +1735,23 @@ void Character::performAnimation(uint8_t animID) {
     if (!isinvisible) {
         boost::shared_ptr<BasicServerCommand> cmd(new AnimationTC(id, animID));
 
-        std::vector < Player * > temp = World::get()->Players.findAllCharactersInScreen(pos.x, pos.y, pos.z);
-        std::vector < Player * > ::iterator titerator;
-
-        for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
-            (*titerator)->Connection->addCommand(cmd);
+        for (const auto &player : World::get()->Players.findAllCharactersInScreen(pos.x, pos.y, pos.z)) {
+            player->Connection->addCommand(cmd);
         }
     }
 }
 
-bool Character::pageGM(std::string ticket) {
+bool Character::pageGM(const std::string &ticket) {
     //Nothing to do here, overloaded in Player
-
     return false;
+}
+
+void Character::setId(TYPE_OF_CHARACTER_ID id) {
+    this->id = id;
+}
+
+void Character::setName(const std::string &name) {
+    this->name = name;
 }
 
 std::ostream &operator<<(std::ostream &os, const Character &character) {

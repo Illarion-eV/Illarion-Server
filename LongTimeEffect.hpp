@@ -33,9 +33,9 @@ class LongTimeEffect {
 public:
     LongTimeEffect(uint16_t effectId, int32_t executeIn);
 
-    void addValue(std::string name, uint32_t value);
-    void removeValue(std::string name);
-    bool findValue(std::string name, uint32_t &ret);
+    void addValue(const std::string &name, uint32_t value);
+    void removeValue(const std::string &name);
+    bool findValue(const std::string &name, uint32_t &ret);
 
     bool callEffect(Character *target);
     bool save(uint32_t playerid, int32_t currentTime);

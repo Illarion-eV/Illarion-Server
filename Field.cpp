@@ -29,18 +29,18 @@ Field::Field() {
     music = 0;
     clientflags = 0;
     extraflags = 0;
-    warptarget = new position(0,0,0);
+    warptarget = {0, 0, 0};
 }
 
 void Field::setTileId(unsigned short int id) {
     tile = id;
 }
 
-unsigned short int Field::getTileCode() {
+unsigned short int Field::getTileCode() const {
     return tile;
 }
 
-unsigned short int Field::getTileId() {
+unsigned short int Field::getTileId() const {
     if (((tile & 0xFC00) >> 10) > 0) {
         return tile & 0x001F;
     } else {
@@ -48,7 +48,7 @@ unsigned short int Field::getTileId() {
     }
 }
 
-unsigned short int Field::getSecondaryTileId() {
+unsigned short int Field::getSecondaryTileId() const {
     if (((tile & 0xFC00) >> 10) > 0) {
         return (tile & 0x03E0) >> 5;
     } else {
@@ -60,11 +60,11 @@ void Field::setMusicId(unsigned short int id) {
     music = id;
 }
 
-unsigned short int Field::getMusicId() {
+unsigned short int Field::getMusicId() const {
     return music;
 }
 
-ScriptItem Field::getStackItem(uint8_t spos) {
+ScriptItem Field::getStackItem(uint8_t spos) const {
     ScriptItem retItem;
 
     if (items.empty()) {
@@ -72,9 +72,9 @@ ScriptItem Field::getStackItem(uint8_t spos) {
     } else {
         uint8_t counter = 0;
 
-        for (auto it = items.begin(); it < items.end(); ++it) {
+        for (const auto &item : items) {
             if (counter >= spos) {
-                retItem = *it;
+                retItem = item;
                 retItem.type = ScriptItem::it_field;
                 retItem.itempos = counter;
                 return retItem;
@@ -85,38 +85,6 @@ ScriptItem Field::getStackItem(uint8_t spos) {
 
         return retItem;
     }
-}
-
-Field::Field(const Field &source): items(source.items) {
-
-    tile = source.tile;
-    music = source.music;
-    clientflags = source.clientflags;
-    extraflags = source.extraflags;
-    warptarget = new position(*(source.warptarget));
-}
-
-
-Field &Field:: operator =(const Field &source) {
-
-    if (this != &source) {
-        tile = source.tile;
-        music = source.music;
-        clientflags = source.clientflags;
-        extraflags = source.extraflags;
-        items = source.items;
-        warptarget->x = source.warptarget->x;
-        warptarget->y = source.warptarget->y;
-        warptarget->z = source.warptarget->z;
-    }
-
-    return *this;
-
-}
-
-
-Field::~Field() {
-    delete warptarget;
 }
 
 
@@ -142,7 +110,6 @@ bool Field::addTopItem(const Item &it) {
 
 
 bool Field::PutGroundItem(const Item &it) {
-
     if (items.size() < MAXITEMS) {
         if (items.empty()) {
             items.push_back(it);
@@ -161,12 +128,10 @@ bool Field::PutGroundItem(const Item &it) {
     }
 
     return false;
-
 }
 
 
 bool Field::PutTopItem(const Item &it) {
-
     if (items.size() < MAXITEMS) {
         items.push_back(it);
 
@@ -180,12 +145,10 @@ bool Field::PutTopItem(const Item &it) {
     }
 
     return false;
-
 }
 
 
 bool Field::TakeTopItem(Item &it) {
-
     if (items.empty()) {
         return false;
     }
@@ -195,7 +158,6 @@ bool Field::TakeTopItem(Item &it) {
     updateFlags();
 
     return true;
-
 }
 
 bool Field::changeQualityOfTopItem(short int amount) {
@@ -279,7 +241,7 @@ bool Field::swapTopItem(TYPE_OF_ITEM_ID newid, uint16_t newQuality) {
 }
 
 
-bool Field::ViewTopItem(Item &it) {
+bool Field::ViewTopItem(Item &it) const {
 
     if (items.empty()) {
         return false;
@@ -291,7 +253,7 @@ bool Field::ViewTopItem(Item &it) {
 }
 
 
-MAXCOUNTTYPE Field::NumberOfItems() {
+MAXCOUNTTYPE Field::NumberOfItems() const {
     return items.size();
 }
 
@@ -313,9 +275,9 @@ void Field::Save(std::ostream &mapt, std::ostream &obj, std::ostream &warp) {
     if (IsWarpField()) {
         char b = 1;
         warp.write((char *) & b, sizeof(b));
-        warp.write((char *) & warptarget->x, sizeof(warptarget->x));
-        warp.write((char *) & warptarget->y, sizeof(warptarget->x));
-        warp.write((char *) & warptarget->z, sizeof(warptarget->x));
+        warp.write((char *) & warptarget.x, sizeof(warptarget.x));
+        warp.write((char *) & warptarget.y, sizeof(warptarget.y));
+        warp.write((char *) & warptarget.z, sizeof(warptarget.z));
     } else {
         char b = 0;
         warp.write((char *) & b, sizeof(b));
@@ -323,24 +285,24 @@ void Field::Save(std::ostream &mapt, std::ostream &obj, std::ostream &warp) {
 }
 
 
-void Field::giveNonPassableItems(ITEMVECTOR &nonpassitems) {
-    for (auto it = items.cbegin(); it < items.cend(); ++it) {
-        if (Data::TilesModItems.nonPassable(it->getId())) {
-            nonpassitems.push_back(*it);
+void Field::giveNonPassableItems(ITEMVECTOR &nonpassitems) const {
+    for (const auto &item : items) {
+        if (Data::TilesModItems.nonPassable(item.getId())) {
+            nonpassitems.push_back(item);
         }
     }
 }
 
 
-void Field::giveExportItems(ITEMVECTOR &nonmoveitems) {
-    for (auto it = items.cbegin(); it < items.cend(); ++it) {
-        if (it->isPermanent()) {
-            nonmoveitems.push_back(*it);
+void Field::giveExportItems(ITEMVECTOR &nonmoveitems) const {
+    for (const auto &item : items) {
+        if (item.isPermanent()) {
+            nonmoveitems.push_back(item);
         } else {
-            const auto &common = Data::CommonItems[it->getId()];
+            const auto &common = Data::CommonItems[item.getId()];
 
             if (common.isValid() && common.AfterInfiniteRot > 0) {
-                Item rottenItem = *it;
+                Item rottenItem = item;
                 rottenItem.setId(common.AfterInfiniteRot);
                 rottenItem.makePermanent();
                 nonmoveitems.push_back(rottenItem);
@@ -377,9 +339,9 @@ void Field::Load(std::istream &mapt, std::istream &obj, std::istream &warp) {
 
     if (iswarp == 1) {
         short int x, y, z;
-        warp.read((char *) & x, sizeof(warptarget->x));
-        warp.read((char *) & y, sizeof(warptarget->y));
-        warp.read((char *) & z, sizeof(warptarget->z));
+        warp.read((char *) & x, sizeof(warptarget.x));
+        warp.read((char *) & y, sizeof(warptarget.y));
+        warp.read((char *) & z, sizeof(warptarget.z));
         SetWarpField(position(x, y, z));
     }
 
@@ -474,12 +436,12 @@ void Field::DeleteAllItems() {
 }
 
 
-unsigned char Field::GroundLevel() {
+unsigned char Field::GroundLevel() const {
     return (clientflags & FLAG_GROUNDLEVEL);
 }
 
 
-bool Field::IsMonsterOnField() {
+bool Field::IsMonsterOnField() const {
     return ((clientflags & FLAG_MONSTERONFIELD) != 0);
 }
 
@@ -493,7 +455,7 @@ void Field::SetMonsterOnField(bool t) {
 }
 
 
-bool Field::IsNPCOnField() {
+bool Field::IsNPCOnField() const {
     return ((clientflags & FLAG_NPCONFIELD) != 0);
 }
 
@@ -507,7 +469,7 @@ void Field::SetNPCOnField(bool t) {
 }
 
 
-bool Field::IsPlayerOnField() {
+bool Field::IsPlayerOnField() const {
     return ((clientflags & FLAG_PLAYERONFIELD) != 0);
 }
 
@@ -530,16 +492,14 @@ void Field::SetLevel(unsigned char z) {
 }
 
 
-bool Field::IsWarpField() {
+bool Field::IsWarpField() const {
     return ((extraflags & FLAG_WARPFIELD) != 0);
 }
 
 
 
 void Field::SetWarpField(const position &pos) {
-    warptarget->x = pos.x;
-    warptarget->y = pos.y;
-    warptarget->z = pos.z;
+    warptarget = pos;
     extraflags = extraflags | FLAG_WARPFIELD;
 }
 
@@ -549,14 +509,12 @@ void Field::UnsetWarpField() {
 }
 
 
-void Field::GetWarpField(position &pos) {
-    pos.x = warptarget->x;
-    pos.y = warptarget->y;
-    pos.z = warptarget->z;
+void Field::GetWarpField(position &pos) const {
+    pos = warptarget;
 }
 
 
-bool Field::HasSpecialItem() {
+bool Field::HasSpecialItem() const {
     return ((extraflags & FLAG_SPECIALITEM) != 0);
 }
 
@@ -570,7 +528,7 @@ void Field::SetSpecialItem(bool t) {
 }
 
 
-bool Field::IsSpecialField() {
+bool Field::IsSpecialField() const {
     return ((extraflags & FLAG_SPECIALTILE) != 0);
 }
 
@@ -584,7 +542,7 @@ void Field::SetSpecialField(bool t) {
 }
 
 
-bool Field::IsTransparent() {
+bool Field::IsTransparent() const {
     return ((extraflags & FLAG_TRANSPARENT) == 0);
 }
 
@@ -594,7 +552,7 @@ bool Field::IsPassable() const {
 }
 
 
-bool Field::IsPenetrateable() {
+bool Field::IsPenetrateable() const {
     return ((extraflags & FLAG_PENETRATEABLE) == 0);
 }
 

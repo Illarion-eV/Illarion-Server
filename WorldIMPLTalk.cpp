@@ -55,12 +55,10 @@ bool World::sendTextInFileToPlayer(std::string filename, Player *cp) {
 
 
 void World::sendMessageToAdmin(std::string message) {
-    PLAYERVECTOR::iterator titerator;
-
-    for (titerator = Players.begin(); titerator < Players.end(); ++titerator) {
-        if ((*titerator)->hasGMRight(gmr_getgmcalls)) {
-            boost::shared_ptr<BasicServerCommand>cmd(new SayTC((*titerator)->pos.x, (*titerator)->pos.y, (*titerator)->pos.z, message));
-            (*titerator)->Connection->addCommand(cmd);
+    for (const auto &player : Players) {
+        if (player->hasGMRight(gmr_getgmcalls)) {
+            boost::shared_ptr<BasicServerCommand>cmd(new SayTC(player->pos.x, player->pos.y, player->pos.z, message));
+            player->Connection->addCommand(cmd);
         }
     }
 }
@@ -136,10 +134,8 @@ std::string World::languageNumberToSkillName(int languageNumber) {
 }
 
 void World::sendMessageToAllPlayers(std::string message) {
-    PLAYERVECTOR::iterator titerator;
-
-    for (titerator = Players.begin(); titerator < Players.end(); ++titerator) {
-        (*titerator)->inform(message, Player::informBroadcast);
+    for (const auto &player : Players) {
+        player->inform(message, Player::informBroadcast);
     }
 }
 
@@ -161,11 +157,6 @@ void World::sendMessageToAllCharsInRange(const std::string &german, const std::s
         break;
     }
 
-    //determine spoken language skill
-
-    // get all Players
-    std::vector<Player *> players = Players.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, range);
-
     std::string spokenMessage_german, spokenMessage_english, tempMessage;
 
     bool is_action = german.substr(0, 3) == "#me";
@@ -180,8 +171,8 @@ void World::sendMessageToAllCharsInRange(const std::string &german, const std::s
     // tell the player himself what he wanted to say
     std::string prefix = languagePrefix(cc->activeLanguage);
 
-    for (auto player : players) {
-        if (!is_action && player->id != cc->id) {
+    for (const auto &player : Players.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, range)) {
+        if (!is_action && player->getId() != cc->getId()) {
             tempMessage = prefix + player->alterSpokenMessage(player->nls(spokenMessage_german, spokenMessage_english), player->getLanguageSkill(cc->activeLanguage));
             player->receiveText(tt, tempMessage, cc);
         } else {
@@ -193,22 +184,15 @@ void World::sendMessageToAllCharsInRange(const std::string &german, const std::s
         }
     }
 
-    // NPCs talking to other NPCs will mess up thisNPC, so only let players talk to NPCs and monsters for now
     if (cc->character == Character::player) {
-
-        // get all NPCs
-        std::vector<NPC *> npcs = Npc.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, range);
-        // get all Monsters
-        std::vector<Monster *> monsters = Monsters.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, range);
-
         // tell all npcs
-        for (auto npc : npcs) {
+        for (const auto &npc : Npc.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, range)) {
             tempMessage=prefix + npc->alterSpokenMessage(english, npc->getLanguageSkill(cc->activeLanguage));
             npc->receiveText(tt, tempMessage, cc);
         }
 
         // tell all monsters
-        for (auto monster : monsters) {
+        for (const auto &monster : Monsters.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, range)) {
             monster->receiveText(tt, english, cc);
         }
     }
@@ -248,39 +232,36 @@ void World::sendLanguageMessageToAllCharsInRange(std::string message, Character:
     // tell all OTHER players... (but tell them what they understand due to their inability to do so)
     // tell the player himself what he wanted to say
     //std::cout << "message in WorldIMPLTalk:" << message;
-    if ((message[0]=='#') && (message[1]=='m') && (message[2]=='e')) {
-        for (PLAYERVECTOR::iterator it = players.begin(); it != players.end(); ++it) {
-            if ((*it)->getPlayerLanguage() == lang) {
-                (*it)->receiveText(tt, message, cc);
+    if (message.substr(0, 3) == "#me") {
+        for (const auto &player : players) {
+            if (player->getPlayerLanguage() == lang) {
+                player->receiveText(tt, message, cc);
             }
         }
     } else {
-        for (PLAYERVECTOR::iterator it = players.begin(); it != players.end(); ++it) {
-            if ((*it)->getPlayerLanguage() == lang) {
-                if ((*it)->id!=cc->id) {
-                    tempMessage=languagePrefix(cc->activeLanguage)+(*it)->alterSpokenMessage(spokenMessage,(*it)->getLanguageSkill(cc->activeLanguage));
-                    (*it)->receiveText(tt, tempMessage, cc);
+        for (const auto &player : players) {
+            if (player->getPlayerLanguage() == lang) {
+                if (player->getId() != cc->getId()) {
+                    tempMessage=languagePrefix(cc->activeLanguage) + player->alterSpokenMessage(spokenMessage, player->getLanguageSkill(cc->activeLanguage));
+                    player->receiveText(tt, tempMessage, cc);
                 } else {
-                    (*it)->receiveText(tt, languagePrefix(cc->activeLanguage)+message, cc);
+                    player->receiveText(tt, languagePrefix(cc->activeLanguage)+message, cc);
                 }
             }
         }
     }
 
-    // NPCs talking to other NPCs will mess up thisNPC, so only let players talk to NPCs and monsters for now
     if (cc->character == Character::player) {
-
         // tell all npcs
-        for (NPCVECTOR::iterator it = npcs.begin(); it != npcs.end(); ++it) {
-            tempMessage=languagePrefix(cc->activeLanguage)+(*it)->alterSpokenMessage(spokenMessage,(*it)->getLanguageSkill(cc->activeLanguage));
-            (*it)->receiveText(tt, tempMessage, cc);
+        for (const auto &npc : npcs) {
+            tempMessage=languagePrefix(cc->activeLanguage) + npc->alterSpokenMessage(spokenMessage, npc->getLanguageSkill(cc->activeLanguage));
+            npc->receiveText(tt, tempMessage, cc);
         }
 
         // tell all monsters
-        for (MONSTERVECTOR::iterator it = monsters.begin(); it != monsters.end(); ++it) {
-            (*it)->receiveText(tt, message, cc);
+        for (const auto &monster : monsters) {
+            monster->receiveText(tt, message, cc);
         }
-
     }
 }
 
@@ -290,23 +271,17 @@ void World::sendMessageToAllCharsInRange(const std::string &message, Character::
 }
 
 void World::makeGFXForAllPlayersInRange(short int xc, short int yc, short int zc, int distancemetric ,unsigned short int gfx) {
-    std::vector < Player * > temp = Players.findAllCharactersInRangeOf(xc, yc, zc, distancemetric);
-    std::vector < Player * > ::iterator titerator;
-
-    for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
+    for (const auto &player : Players.findAllCharactersInRangeOf(xc, yc, zc, distancemetric)) {
         boost::shared_ptr<BasicServerCommand>cmd(new GraphicEffectTC(xc, yc, zc, gfx));
-        (*titerator)->Connection->addCommand(cmd);
+        player->Connection->addCommand(cmd);
     }
 }
 
 
 void World::makeSoundForAllPlayersInRange(short int xc, short int yc, short int zc, int distancemetric, unsigned short int sound) {
-    std::vector < Player * > temp = Players.findAllCharactersInRangeOf(xc, yc, zc, distancemetric);
-    std::vector < Player * > ::iterator titerator;
-
-    for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
+    for (const auto &player : Players.findAllCharactersInRangeOf(xc, yc, zc, distancemetric)) {
         boost::shared_ptr<BasicServerCommand>cmd(new SoundTC(xc, yc, zc, sound));
-        (*titerator)->Connection->addCommand(cmd);
+        player->Connection->addCommand(cmd);
     }
 }
 
@@ -413,11 +388,8 @@ void World::forceIntroducePlayer(Player *cp, Player *Admin) {
 }
 
 void World::introduceMyself(Player *cp) {
-    std::vector < Player * > temp = Players.findAllCharactersInRangeOf(cp->pos.x, cp->pos.y, cp->pos.z, 2);
-    std::vector < Player * > ::iterator titerator;
-
-    for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
-        (*titerator)->introducePlayer(cp);
+    for (const auto &player : Players.findAllCharactersInRangeOf(cp->pos.x, cp->pos.y, cp->pos.z, 2)) {
+        player->introducePlayer(cp);
     }
 }
 
@@ -431,18 +403,14 @@ void World::sendIGTime(Player *cp) {
 }
 
 void World::sendIGTimeToAllPlayers() {
-    PLAYERVECTOR::iterator titerator;
-
-    for (titerator = Players.begin(); titerator != Players.end(); ++titerator) {
-        sendIGTime((*titerator));
+    for (const auto &player : Players) {
+        sendIGTime(player);
     }
 }
 
 void World::sendWeatherToAllPlayers() {
-    PLAYERVECTOR::iterator titerator;
-
-    for (titerator = Players.begin(); titerator != Players.end(); ++titerator) {
-        (*titerator)->sendWeather(weather);
+    for (const auto &player : Players) {
+        player->sendWeather(weather);
     }
 }
 

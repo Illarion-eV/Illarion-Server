@@ -514,12 +514,12 @@ void LuaScript::init_base_functions() {
         .def("successAction", &Character::successAction)
         .def("disturbAction", &Character::actionDisturbed)
         .def("changeSource", (void(Character:: *)(Character *))&Character::changeSource)
-        .def("changeSource", (void(Character:: *)(ScriptItem))&Character::changeSource)
-        .def("changeSource", (void(Character:: *)(position))&Character::changeSource)
+        .def("changeSource", (void(Character:: *)(const ScriptItem &))&Character::changeSource)
+        .def("changeSource", (void(Character:: *)(const position &))&Character::changeSource)
         .def("changeSource", (void(Character:: *)(void))&Character::changeSource)
         .def("changeTarget", (void(Character:: *)(Character *))&Character::changeTarget)
-        .def("changeTarget", (void(Character:: *)(ScriptItem))&Character::changeTarget)
-        .def("changeTarget", (void(Character:: *)(position))&Character::changeTarget)
+        .def("changeTarget", (void(Character:: *)(const ScriptItem &))&Character::changeTarget)
+        .def("changeTarget", (void(Character:: *)(const position &))&Character::changeTarget)
         .def("changeTarget", (void(Character:: *)(void))&Character::changeTarget)
         .def("inform", (void(Character:: *)(const std::string &) const)&Character::informLua)
         .def("inform", (void(Character:: *)(const std::string &, const std::string &) const)&Character::informLua)
@@ -542,8 +542,8 @@ void LuaScript::init_base_functions() {
         .def("setClippingActive", &Character::setClippingActive)
         .def("getClippingActive", &Character::getClippingActive)
         .def("countItem", &Character::countItem)
-        .def("countItemAt", (int(Character:: *)(std::string, TYPE_OF_ITEM_ID, const luabind::object &))&Character::countItemAt)
-        .def("countItemAt", (int(Character:: *)(std::string, TYPE_OF_ITEM_ID))&Character::countItemAt)
+        .def("countItemAt", (int(Character:: *)(const std::string &, TYPE_OF_ITEM_ID, const luabind::object &) const)&Character::countItemAt)
+        .def("countItemAt", (int(Character:: *)(const std::string &, TYPE_OF_ITEM_ID) const)&Character::countItemAt)
         .def("eraseItem", (int(Character:: *)(TYPE_OF_ITEM_ID, int, const luabind::object &))&Character::eraseItem)
         .def("eraseItem", (int(Character:: *)(TYPE_OF_ITEM_ID, int))&Character::eraseItem)
         .def("increaseAtPos", &Character::increaseAtPos)
@@ -598,8 +598,8 @@ void LuaScript::init_base_functions() {
         .def_readonly("effects", &Character::effects)
         .def_readonly("waypoints", &Character::waypoints)
         .def_readonly("pos", &Character::pos)
-        .def_readonly("name", &Character::name)
-        .def_readonly("id", &Character::id)
+        .property("name", &Character::getName)
+        .property("id", &Character::getId)
         .def_readwrite("activeLanguage", &Character::activeLanguage)
         .def_readwrite("movepoints", &Character::actionPoints)
         .def_readwrite("fightpoints", &Character::fightPoints)
@@ -662,8 +662,7 @@ void LuaScript::init_base_functions() {
         .enum_("sex_type")
         [
             luabind::value("male",0),
-            luabind::value("female",1),
-            luabind::value("neuter",2)
+            luabind::value("female",1)
         ]
         .enum_("face_to")
         [
@@ -736,10 +735,10 @@ void LuaScript::init_base_functions() {
         luabind::class_<LongTimeCharacterEffects>("LongTimeCharacterEffects")
         .def("addEffect",&LongTimeCharacterEffects::addEffect, luabind::adopt(_2))
         .def("removeEffect", (bool(LongTimeCharacterEffects:: *)(uint16_t))&LongTimeCharacterEffects::removeEffect)
-        .def("removeEffect", (bool(LongTimeCharacterEffects:: *)(std::string))&LongTimeCharacterEffects::removeEffect)
+        .def("removeEffect", (bool(LongTimeCharacterEffects:: *)(const std::string &))&LongTimeCharacterEffects::removeEffect)
         .def("removeEffect", (bool(LongTimeCharacterEffects:: *)(LongTimeEffect *))&LongTimeCharacterEffects::removeEffect)
         .def("find", (bool(LongTimeCharacterEffects:: *)(uint16_t,LongTimeEffect *&))&LongTimeCharacterEffects::find,luabind::pure_out_value(_3))
-        .def("find", (bool(LongTimeCharacterEffects:: *)(std::string,LongTimeEffect *&))&LongTimeCharacterEffects::find,luabind::pure_out_value(_3)),
+        .def("find", (bool(LongTimeCharacterEffects:: *)(const std::string &,LongTimeEffect *&))&LongTimeCharacterEffects::find,luabind::pure_out_value(_3)),
         luabind::class_<Field>("Field")
         .def("tile", &Field::getTileId)
         //.def("changeQualityOfTopItem", &Field::changeQualityOfTopItem)
@@ -787,9 +786,9 @@ void LuaScript::init_base_functions() {
         .property("wear", &Item::getWear, &Item::setWear)
         .property("number", &Item::getNumber, &Item::setNumber)
         .property("quality", &Item::getQuality, &Item::setQuality)
-        .def("setData", (void(Item:: *)(std::string, std::string))&Item::setData)
-        .def("setData", (void(Item:: *)(std::string, int32_t))&Item::setData)
-        .def("getData", (std::string(Item:: *)(std::string))&Item::getData),
+        .def("setData", (void(Item:: *)(const std::string &, const std::string&))&Item::setData)
+        .def("setData", (void(Item:: *)(const std::string &, int32_t))&Item::setData)
+        .def("getData", (std::string(Item:: *)(const std::string &))&Item::getData),
         luabind::class_<ScriptItem,Item>("scriptItem")
         .def(luabind::constructor<>())
         .def_readonly("owner", &ScriptItem::getOwnerForLua)

@@ -25,13 +25,13 @@
 
 uint32_t NPC::counter = 0;
 
-NPC::NPC(TYPE_OF_CHARACTER_ID _id, std::string _name, Character::race_type _race, position _pos, Character::face_to dir, bool ishealer, Character::sex_type sex,
+NPC::NPC(TYPE_OF_CHARACTER_ID _id, const std::string &_name, Character::race_type _race, const position &_pos, Character::face_to dir, bool ishealer, Character::sex_type sex,
          const Character::appearance &appearance) : Character(appearance),
     _ishealer(ishealer), _startpos(_pos) {
 #ifdef Character_DEBUG
     cout << "NPC Konstruktor Start" << endl;
 #endif
-    name = _name;
+    setName(_name);
     pos=_pos;
     faceto=dir;
     race=_race;
@@ -41,10 +41,10 @@ NPC::NPC(TYPE_OF_CHARACTER_ID _id, std::string _name, Character::race_type _race
 
     // take database id as npc id with appropriate offset so that npc ids are constant
     if (_id == DYNNPC_BASE) {
-        id = DYNNPC_BASE + counter;
+        setId(DYNNPC_BASE + counter);
         ++counter;
     } else {
-        id = NPC_BASE + _id;
+        setId(NPC_BASE + _id);
     }
 
     Field *tmpField;
@@ -75,7 +75,7 @@ NPC::~NPC() {
 #endif
 }
 
-void NPC::receiveText(talk_type tt, std::string message, Character *cc) {
+void NPC::receiveText(talk_type tt, const std::string &message, Character *cc) {
     if (_script && cc != this && _script->existsEntrypoint("receiveText")) {
         // since we have a script, we tell it we got a message
         _script->receiveText(tt, message, cc);
@@ -83,5 +83,5 @@ void NPC::receiveText(talk_type tt, std::string message, Character *cc) {
 }
 
 std::string NPC::to_string() const {
-    return "NPC " + name + "(" + boost::lexical_cast<std::string>(id) + ")";
+    return "NPC " + getName() + "(" + std::to_string(getId()) + ")";
 }

@@ -74,8 +74,6 @@ Player::Player(boost::shared_ptr<NetInterface> newConnection) throw(Player::Logo
     character = player;
     SetAlive(true);
     SetMovement(walk);
-    prefix="";
-    suffix="";
 
     time(&lastaction);
 
@@ -85,12 +83,12 @@ Player::Player(boost::shared_ptr<NetInterface> newConnection) throw(Player::Logo
 
     boost::shared_ptr<BasicClientCommand> cmd = Connection->getCommand();
 
-    if ((cmd == NULL) || cmd->getDefinitionByte() != C_LOGIN_TS) {
+    if (!cmd || cmd->getDefinitionByte() != C_LOGIN_TS) {
         throw LogoutException(UNSTABLECONNECTION);
     }
 
     unsigned short int clientversion = boost::dynamic_pointer_cast<LoginCommandTS>(cmd)->clientVersion;
-    name = boost::dynamic_pointer_cast<LoginCommandTS>(cmd)->loginName;
+    setName(boost::dynamic_pointer_cast<LoginCommandTS>(cmd)->loginName);
     pw = boost::dynamic_pointer_cast<LoginCommandTS>(cmd)->passwort;
     // set acceptable client version...
     unsigned short acceptVersion = Config::instance().clientversion;
@@ -99,58 +97,45 @@ Player::Player(boost::shared_ptr<NetInterface> newConnection) throw(Player::Logo
     if (clientversion == 200) {
         monitoringClient = true;
     } else if (clientversion != acceptVersion) {
-        std::cerr << "old client: " << clientversion << " != " << acceptVersion << std::endl;
+        Logger::error(LogFacility::Player) << to_string() << " tried to login with an old client (version " << clientversion << ") but version " << acceptVersion << " is required" << Log::end;
         throw LogoutException(OLDCLIENT);
     }
 
-    // client version seems to be ok... now find out username/password he supplied...
-
-    if (name == "" || pw == "") {
-        // no name/password retrieved... kick him...
-        std::cerr << "no name/pwd recvd" << std::endl;
+    if (getName() == "" || pw == "") {
         throw LogoutException(WRONGPWD);
     }
 
     // player already online? if we don't use the monitoring client
-    if (!monitoringClient && (_world->Players.find(name) || PlayerManager::get()->findPlayer(name))) {
-        std::cout << "double login by " << name  << std::endl;
+    if (!monitoringClient && (_world->Players.find(getName()) || PlayerManager::get()->findPlayer(getName()))) {
+        Logger::alert(LogFacility::Player) << to_string() << " tried to login twice from ip: " << Connection->getIPAdress() << Log::end;
         throw LogoutException(DOUBLEPLAYER);
     }
 
-    std::cerr << "checking login data for: " << name << std::endl;
-    // next check if username/password are ok
     check_logindata();
-    std::cerr << "checking login data done" << std::endl;
 
     if (status == 7) {
-        // no skill package chosen... kick him...
-        std::cerr << "no skill package chosen" << std::endl;
+        Logger::error(LogFacility::Player) << to_string() << " did not select a skill package" << Log::end;
         throw LogoutException(NOSKILLS);
     }
 
     if (!loadGMFlags()) {
-        throw LogoutException(UNSTABLECONNECTION);    //Fehler beim Laden der GM daten
+        Logger::error(LogFacility::Player) << "Failed to load gm flags for " << to_string() << Log::end;
+        throw LogoutException(UNSTABLECONNECTION);
     }
-
-    std::cerr << "error loading gm flags" << std::endl;
-
 
     if (!hasGMRight(gmr_allowlogin) && !World::get()->isLoginAllowed()) {
         throw Player::LogoutException(SERVERSHUTDOWN);
     }
-
-    std::cerr << "no gm rights" << std::endl;
 
     if (monitoringClient && !hasGMRight(gmr_ban)) {
         throw Player::LogoutException(NOACCOUNT);
     }
 
     last_ip = Connection->getIPAdress();
-    std::cerr << "write last IP" << std::endl;
 
-    //we dont want to add more if we have a monitoring client
+    // we don't want to load more if we have a monitoring client
     if (monitoringClient) {
-        std::cout<<"login monitoring client: "<<name<<std::endl;
+        Logger::info(LogFacility::Admin) << to_string() << " connects with monitoring client" << Log::end;
         return;
     }
 
@@ -158,13 +143,6 @@ Player::Player(boost::shared_ptr<NetInterface> newConnection) throw(Player::Logo
     if (!load()) {
         throw LogoutException(ORRUPTDATA);
     }
-
-    std::cerr << "loading inventory done" << std::endl;
-
-#ifdef Player_DEBUG
-    std::cout << "Player Konstruktor Ende" << std::endl;
-#endif
-
 }
 
 void Player::login() throw(Player::LogoutException) {
@@ -202,7 +180,7 @@ void Player::login() throw(Player::LogoutException) {
     sendWeather(_world->weather);
 
     // send player login data
-    boost::shared_ptr<BasicServerCommand> cmd(new IdTC(id));
+    boost::shared_ptr<BasicServerCommand> cmd(new IdTC(getId()));
     Connection->addCommand(cmd);
     // position
     cmd.reset(new SetCoordinateTC(pos));
@@ -211,7 +189,7 @@ void Player::login() throw(Player::LogoutException) {
     effects.load();
 
     //send the basic data to the monitoring client
-    cmd.reset(new BBPlayerTC(id, name, pos.x, pos.y,pos.z));
+    cmd.reset(new BBPlayerTC(getId(), getName(), pos.x, pos.y,pos.z));
     _world->monitoringClientList->sendCommand(cmd);
 
     // send weather and time before sending the map, to display everything correctly from the start
@@ -232,7 +210,7 @@ void Player::login() throw(Player::LogoutException) {
     _world->sendCharacterMoveToAllVisiblePlayers(this, NORMALMOVE, 4);
     // additional nop info
     _world->sendSpinToAllVisiblePlayers(this);
-    cmd.reset(new PlayerSpinTC(faceto, id));
+    cmd.reset(new PlayerSpinTC(faceto, getId()));
     Connection->addCommand(cmd);
 
     // send attributes
@@ -271,9 +249,9 @@ unsigned short int Player::getScreenRange() const {
 }
 
 void Player::openShowcase(Container *container, bool carry) {
-    for (auto it = showcases.cbegin(); it != showcases.cend(); ++it) {
-        if (it->second->contains(container)) {
-            boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(it->first, container->getSlotCount(), container->getItems()));
+    for (const auto &showcase : showcases) {
+        if (showcase.second->contains(container)) {
+            boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(showcase.first, container->getSlotCount(), container->getItems()));
             Connection->addCommand(cmd);
             return;
         }
@@ -294,9 +272,9 @@ void Player::openShowcase(Container *container, bool carry) {
 }
 
 void Player::updateShowcase(Container *container) const {
-    for (auto it = showcases.cbegin(); it != showcases.cend(); ++it) {
-        if (it->second->contains(container)) {
-            boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(it->first, container->getSlotCount(), container->getItems()));
+    for (const auto &showcase : showcases) {
+        if (showcase.second->contains(container)) {
+            boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(showcase.first, container->getSlotCount(), container->getItems()));
             Connection->addCommand(cmd);
         }
     }
@@ -307,8 +285,8 @@ bool Player::isShowcaseOpen(uint8_t showcase) const {
 }
 
 bool Player::isShowcaseOpen(Container *container) const {
-    for (auto it = showcases.cbegin(); it != showcases.cend(); ++it) {
-        if (it->second->contains(container)) {
+    for (const auto &showcase : showcases) {
+        if (showcase.second->contains(container)) {
             return true;
         }
     }
@@ -325,9 +303,9 @@ bool Player::isShowcaseInInventory(uint8_t showcase) const {
 }
 
 uint8_t Player::getShowcaseId(Container *container) const {
-    for (auto it = showcases.cbegin(); it != showcases.cend(); ++it) {
-        if (it->second->contains(container)) {
-            return it->first;
+    for (const auto &showcase : showcases) {
+        if (showcase.second->contains(container)) {
+            return showcase.first;
         }
     }
 
@@ -385,19 +363,13 @@ void Player::closeAllShowcasesOfMapContainers() {
 }
 
 void Player::closeAllShowcases() {
-    for (auto it = showcases.cbegin(); it != showcases.cend(); ++it) {
-        delete it->second;
-        boost::shared_ptr<BasicServerCommand> cmd(new ClearShowCaseTC(it->first));
+    for (const auto &showcase : showcases) {
+        delete showcase.second;
+        boost::shared_ptr<BasicServerCommand> cmd(new ClearShowCaseTC(showcase.first));
         Connection->addCommand(cmd);
     }
 
     showcases.clear();
-}
-
-Player::~Player() {
-#ifdef Player_DEBUG
-    std::cout << "Player Destruktor Start/Ende" << std::endl;
-#endif
 }
 
 bool Player::VerifyPassword(std::string chkpw) {
@@ -433,9 +405,6 @@ void Player::ageInventory() {
             if (tempCommon.rotsInInventory) {
                 if (!characterItems[ i ].survivesAgeing()) {
                     if (characterItems[ i ].getId() != tempCommon.ObjectAfterRot) {
-#ifdef Character_DEBUG
-                        std::cout << "INV:Ein Item wird umgewandelt von: " << characterItems[ i ].getId() << "  nach: " << tempCommon.ObjectAfterRot << "!\n";
-#endif
                         characterItems[ i ].setId(tempCommon.ObjectAfterRot);
 
                         const auto &afterRotCommon = Data::CommonItems[tempCommon.ObjectAfterRot];
@@ -446,9 +415,6 @@ void Player::ageInventory() {
 
                         sendCharacterItemAtPos(i);
                     } else {
-#ifdef Character_DEBUG
-                        std::cout << "INV:Ein Item wird gel�cht,ID:" << characterItems[ i ].getId() << "!\n";
-#endif
                         characterItems[ i ].reset();
                         sendCharacterItemAtPos(i);
                     }
@@ -460,18 +426,17 @@ void Player::ageInventory() {
         }
     }
 
-    // Inhalt des Rucksacks altern
-    if ((characterItems[ BACKPACK ].getId() != 0) && (backPackContents != NULL)) {
+    if ((characterItems[ BACKPACK ].getId() != 0) && backPackContents) {
         backPackContents->doAge(true);
         updateBackPackView();
     }
 
-    std::map<uint32_t, Container *>::iterator depotIterator;
+    for (const auto &depotMapEntry : depotContents) {
+        const auto &depot = depotMapEntry.second;
 
-    for (depotIterator = depotContents.begin(); depotIterator != depotContents.end(); ++depotIterator) {
-        if (depotIterator->second != NULL) {
-            depotIterator->second->doAge(true);
-            updateShowcase(depotIterator->second);
+        if (depot) {
+            depot->doAge(true);
+            updateShowcase(depot);
         }
     }
 
@@ -512,17 +477,10 @@ int Player::createItem(Item::id_type id, Item::number_type number, Item::quality
 
 int Player::_eraseItem(TYPE_OF_ITEM_ID itemid, int count, const luabind::object &data, bool useData) {
     int temp = count;
-#ifdef Player_DEBUG
-    std::cout << "try to erase in player inventory " << count << " items of type " << itemid << "\n";
-#endif
 
-    if ((characterItems[ BACKPACK ].getId() != 0) && (backPackContents != NULL)) {
+    if ((characterItems[ BACKPACK ].getId() != 0) && backPackContents) {
         temp = backPackContents->_eraseItem(itemid, temp, data, useData);
         updateBackPackView();
-#ifdef Player_DEBUG
-        std::cout << "eraseItem: nach L�chen im Rucksack noch zu l�chen: " << temp << "\n";
-#endif
-
     }
 
     if (temp > 0) {
@@ -533,13 +491,11 @@ int Player::_eraseItem(TYPE_OF_ITEM_ID itemid, int count, const luabind::object 
                     temp = temp - characterItems[ i ].getNumber();
                     characterItems[ i ].reset();
 
-                    //std::cout<<"Try to find out if it was a two hander!"<<std::endl;
                     if (i == LEFT_TOOL || i == RIGHT_TOOL) {
                         unsigned char offhand = (i==LEFT_TOOL)?RIGHT_TOOL:LEFT_TOOL;
 
                         if (characterItems[ offhand ].getId() == BLOCKEDITEM) {
                             // delete the occupied slot if the item was a two hander...
-                            //std::cout<<"Item was two hander try to delete occopied slot"<<std::endl;
                             characterItems[ offhand ].reset();
                             sendCharacterItemAtPos(offhand);
                         }
@@ -559,10 +515,6 @@ int Player::_eraseItem(TYPE_OF_ITEM_ID itemid, int count, const luabind::object 
     }
 
     checkBurden();
-
-#ifdef Player_DEBUG
-    std::cout << "eraseItem: am Ende noch zu l�chen: " << temp << "\n";
-#endif
     return temp;
 }
 
@@ -581,17 +533,10 @@ int Player::eraseItem(TYPE_OF_ITEM_ID itemid, int count, const luabind::object &
 int Player::increaseAtPos(unsigned char pos, int count) {
     int temp = count;
 
-#ifdef Player_DEBUG
-    std::cout << "increaseAtPos " << (short int) pos << " " << count << "\n";
-#endif
-
     if ((pos > 0) && (pos < MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
-        if (weightOK(characterItems[ pos ].getId(), count, NULL)) {
+        if (weightOK(characterItems[ pos ].getId(), count, nullptr)) {
 
             temp = characterItems[ pos ].getNumber() + count;
-#ifdef Player_DEBUG
-            std::cout << "temp " << temp << "\n";
-#endif
             auto maxStack = characterItems[pos].getMaxStack();
 
             if (temp > maxStack) {
@@ -602,7 +547,6 @@ int Player::increaseAtPos(unsigned char pos, int count) {
                 temp = count + characterItems[ pos ].getNumber();
                 characterItems[ pos ].reset();
 
-                //L�chen des Occopied Slots
                 if (pos == RIGHT_TOOL && characterItems[LEFT_TOOL].getId() == BLOCKEDITEM) {
                     characterItems[LEFT_TOOL].reset();
                     sendCharacterItemAtPos(LEFT_TOOL);
@@ -643,7 +587,7 @@ bool Player::swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid , uint16_t newQu
 
 
 void Player::updateBackPackView() {
-    if (backPackContents != NULL) {
+    if (backPackContents) {
         updateShowcase(backPackContents);
     }
 }
@@ -652,15 +596,15 @@ void Player::updateBackPackView() {
 void Player::sendSkill(TYPE_OF_SKILL_ID skill, unsigned short int major, unsigned short int minor) {
     boost::shared_ptr<BasicServerCommand>cmd(new UpdateSkillTC(skill, major, minor));
     Connection->addCommand(cmd);
-    cmd.reset(new BBSendSkillTC(id, skill, major, minor));
+    cmd.reset(new BBSendSkillTC(getId(), skill, major, minor));
     _world->monitoringClientList->sendCommand(cmd);
 }
 
 
 void Player::sendAllSkills() {
-    for (SKILLMAP::const_iterator ptr = skills.begin(); ptr != skills.end(); ++ptr) {
-        if (ptr->second.major>0) {
-            sendSkill(ptr->first, ptr->second.major, ptr->second.minor);
+    for (const auto &skill : skills) {
+        if (skill.second.major>0) {
+            sendSkill(skill.first, skill.second.major, skill.second.minor);
         }
     }
 }
@@ -676,9 +620,9 @@ void Player::sendMagicFlags(int type) {
 
 void Player::sendAttrib(Character::attributeIndex attribute) {
     auto value = getAttribute(attribute);
-    boost::shared_ptr<BasicServerCommand> cmd(new UpdateAttribTC(id, attributeStringMap[attribute], value));
+    boost::shared_ptr<BasicServerCommand> cmd(new UpdateAttribTC(getId(), attributeStringMap[attribute], value));
     Connection->addCommand(cmd);
-    cmd.reset(new BBSendAttribTC(id, attributeStringMap[attribute], value));
+    cmd.reset(new BBSendAttribTC(getId(), attributeStringMap[attribute], value));
     _world->monitoringClientList->sendCommand(cmd);
 }
 
@@ -703,7 +647,7 @@ void Player::defaultMusic() {
 
 // Setters and Getters //
 
-unsigned char Player::GetStatus() {
+unsigned char Player::GetStatus() const {
     return status;
 }
 
@@ -714,7 +658,7 @@ void Player::SetStatus(unsigned char thisStatus) {
 
 
 // What time does the status get reset?
-time_t Player::GetStatusTime() {
+time_t Player::GetStatusTime() const {
     return statustime;
 }
 
@@ -725,7 +669,7 @@ void Player::SetStatusTime(time_t thisStatustime) {
 
 
 // Who banned/jailed the player?
-std::string Player::GetStatusGM() {
+std::string Player::GetStatusGM() const {
     using namespace Database;
     SelectQuery query;
     query.addColumn("chars", "chr_playerid");
@@ -754,12 +698,12 @@ void Player::SetStatusGM(TYPE_OF_CHARACTER_ID thisStatusgm) {
 
 
 // Why where they banned/jailed?
-std::string Player::GetStatusReason() {
+std::string Player::GetStatusReason() const {
     return statusreason;
 }
 
 
-void Player::SetStatusReason(std::string thisStatusreason) {
+void Player::SetStatusReason(const std::string &thisStatusreason) {
     statusreason = thisStatusreason;
 }
 
@@ -775,12 +719,12 @@ void Player::setClippingActive(bool tclippingActive) {
 }
 
 
-bool Player::getTurtleActive() {
+bool Player::getTurtleActive() const {
     return turtleActive;
 }
 
 
-bool Player::getClippingActive() {
+bool Player::getClippingActive() const {
     return clippingActive;
 }
 
@@ -790,7 +734,7 @@ void Player::setTurtleTile(unsigned char tturtletile) {
 }
 
 
-unsigned char Player::getTurtleTile() {
+unsigned char Player::getTurtleTile() const {
     return turtletile;
 }
 
@@ -818,9 +762,7 @@ void Player::check_logindata() throw(Player::LogoutException) {
         charQuery.addColumn("chars", "chr_lastsavetime");
         charQuery.addColumn("chars", "chr_sex");
         charQuery.addColumn("chars", "chr_race");
-        charQuery.addColumn("chars", "chr_prefix");
-        charQuery.addColumn("chars", "chr_suffix");
-        charQuery.addEqualCondition<std::string>("chars", "chr_name", name);
+        charQuery.addEqualCondition<std::string>("chars", "chr_name", getName());
         charQuery.addServerTable("chars");
 
         Database::Result charResult = charQuery.execute();
@@ -833,7 +775,7 @@ void Player::check_logindata() throw(Player::LogoutException) {
 
         TYPE_OF_CHARACTER_ID account_id;
 
-        id = charRow["chr_playerid"].as<TYPE_OF_CHARACTER_ID>();
+        setId(charRow["chr_playerid"].as<TYPE_OF_CHARACTER_ID>());
         account_id = charRow["chr_accid"].as<TYPE_OF_CHARACTER_ID>();
         status = charRow["chr_status"].as<uint16_t>();
 
@@ -845,14 +787,6 @@ void Player::check_logindata() throw(Player::LogoutException) {
         lastsavetime = charRow["chr_lastsavetime"].as<time_t>();
         setAttribute(Character::sex, charRow["chr_sex"].as<uint16_t>());
         race = (Character::race_type) charRow["chr_race"].as<uint16_t>();
-
-        if (!charRow["chr_prefix"].is_null()) {
-            prefix = charRow["chr_prefix"].as<std::string>();
-        }
-
-        if (!charRow["chr_suffix"].is_null()) {
-            suffix = charRow["chr_suffix"].as<std::string>();
-        }
 
         // first we check the status since we already retrieved it
         switch (status) {
@@ -914,15 +848,7 @@ void Player::check_logindata() throw(Player::LogoutException) {
 
         // check password
         if (std::string(crypt(pw.c_str(),"$1$illarion1")) != real_pwd) {
-            std::cerr << "*** ";
-            time_t acttime = time(NULL);
-            std::string attempttime = ctime(&acttime);
-            attempttime[attempttime.size()-1] = ':';
-            std::cerr << attempttime;
-            std::cerr << " Player '" << name << "' sent PWD '" << pw
-                      << "' but needs  '" << real_pwd << "' ip: "
-                      << Connection->getIPAdress() << std::endl;
-
+            Logger::alert(LogFacility::Player) << to_string() << " sent wrong password from ip: " << Connection->getIPAdress() << Log::end;
             throw LogoutException(WRONGPWD);
         }
 
@@ -965,7 +891,7 @@ void Player::check_logindata() throw(Player::LogoutException) {
         playerQuery.addColumn("player", "ply_skinred");
         playerQuery.addColumn("player", "ply_skingreen");
         playerQuery.addColumn("player", "ply_skinblue");
-        playerQuery.addEqualCondition("player", "ply_playerid", id);
+        playerQuery.addEqualCondition("player", "ply_playerid", getId());
         playerQuery.addServerTable("player");
 
         Database::Result playerResult = playerQuery.execute();
@@ -1040,7 +966,7 @@ bool Player::save() throw() {
 
         {
             DeleteQuery introductionQuery(connection);
-            introductionQuery.addEqualCondition<TYPE_OF_CHARACTER_ID>("introduction", "intro_player", id);
+            introductionQuery.addEqualCondition<TYPE_OF_CHARACTER_ID>("introduction", "intro_player", getId());
             introductionQuery.addServerTable("introduction");
             introductionQuery.execute();
         }
@@ -1051,9 +977,9 @@ bool Player::save() throw() {
             const InsertQuery::columnIndex knownPlayerColumn = introductionQuery.addColumn("intro_known_player");
             introductionQuery.addServerTable("introduction");
 
-            for (auto it = knownPlayers.cbegin(); it != knownPlayers.cend(); ++it) {
-                introductionQuery.addValue<TYPE_OF_CHARACTER_ID>(playerColumn, id);
-                introductionQuery.addValue<TYPE_OF_CHARACTER_ID>(knownPlayerColumn, *it);
+            for (const auto player : knownPlayers) {
+                introductionQuery.addValue<TYPE_OF_CHARACTER_ID>(playerColumn, getId());
+                introductionQuery.addValue<TYPE_OF_CHARACTER_ID>(knownPlayerColumn, player);
             }
 
             introductionQuery.execute();
@@ -1065,8 +991,6 @@ bool Player::save() throw() {
             query.addAssignColumn<uint16_t>("chr_status", (uint16_t) status);
             query.addAssignColumn<std::string>("chr_lastip", last_ip);
             query.addAssignColumn<uint32_t>("chr_onlinetime", onlinetime + lastsavetime - logintime);
-            query.addAssignColumn<std::string>("chr_prefix", prefix);
-            query.addAssignColumn<std::string>("chr_suffix", suffix);
             query.addAssignColumn<time_t>("chr_lastsavetime", lastsavetime);
 
             if (status != 0) {
@@ -1079,7 +1003,7 @@ bool Player::save() throw() {
                 query.addAssignColumnNull("chr_statusreason");
             }
 
-            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("chars", "chr_playerid", id);
+            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("chars", "chr_playerid", getId());
             query.setServerTable("chars");
 
             query.execute();
@@ -1110,14 +1034,14 @@ bool Player::save() throw() {
             query.addAssignColumn<uint16_t>("ply_skinred", _appearance.skin.red);
             query.addAssignColumn<uint16_t>("ply_skingreen", _appearance.skin.green);
             query.addAssignColumn<uint16_t>("ply_skinblue", _appearance.skin.blue);
-            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("player", "ply_playerid", id);
+            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("player", "ply_playerid", getId());
             query.addServerTable("player");
             query.execute();
         }
 
         {
             DeleteQuery query(connection);
-            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playerskills", "psk_playerid", id);
+            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playerskills", "psk_playerid", getId());
             query.setServerTable("playerskills");
             query.execute();
         }
@@ -1130,27 +1054,27 @@ bool Player::save() throw() {
             const InsertQuery::columnIndex minorColumn = query.addColumn("psk_minor");
 
             // now store the skills
-            for (SKILLMAP::iterator skillptr = skills.begin(); skillptr != skills.end(); ++skillptr) {
-                query.addValue<uint16_t>(skillIdColumn, skillptr->first);
-                query.addValue<uint16_t>(valueColumn, (uint16_t) skillptr->second.major);
-                query.addValue<uint16_t>(minorColumn, (uint16_t) skillptr->second.minor);
+            for (const auto &skill : skills) {
+                query.addValue<uint16_t>(skillIdColumn, skill.first);
+                query.addValue<uint16_t>(valueColumn, (uint16_t) skill.second.major);
+                query.addValue<uint16_t>(minorColumn, (uint16_t) skill.second.minor);
             }
 
-            query.addValues<TYPE_OF_CHARACTER_ID>(playerIdColumn, id, InsertQuery::FILL);
+            query.addValues<TYPE_OF_CHARACTER_ID>(playerIdColumn, getId(), InsertQuery::FILL);
             query.addServerTable("playerskills");
             query.execute();
         }
 
         {
             DeleteQuery query(connection);
-            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playeritems", "pit_playerid", id);
+            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playeritems", "pit_playerid", getId());
             query.setServerTable("playeritems");
             query.execute();
         }
 
         {
             DeleteQuery query(connection);
-            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playeritem_datavalues", "idv_playerid", id);
+            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playeritem_datavalues", "idv_playerid", getId());
             query.setServerTable("playeritem_datavalues");
             query.execute();
         }
@@ -1159,15 +1083,15 @@ bool Player::save() throw() {
             std::list<container_struct> containers;
 
             // add backpack to containerlist
-            if (characterItems[ BACKPACK ].getId() != 0 && backPackContents != NULL) {
+            if (characterItems[ BACKPACK ].getId() != 0 && backPackContents) {
                 containers.push_back(container_struct(backPackContents, BACKPACK+1));
             }
 
             // add depot to containerlist
             std::map<uint32_t, Container *>::iterator it;
 
-            for (it = depotContents.begin(); it != depotContents.end(); ++it) {
-                containers.push_back(container_struct(it->second, 0, it->first));
+            for (const auto &depot : depotContents) {
+                containers.push_back(container_struct(depot.second, 0, depot.first));
             }
 
             int linenumber = 0;
@@ -1223,8 +1147,8 @@ bool Player::save() throw() {
                 Container &currentContainer = *currentContainerStruct.container;
                 auto containedItems = currentContainer.getItems();
 
-                for (auto it = containedItems.cbegin(); it != containedItems.cend(); ++it) {
-                    const Item &item = it->second;
+                for (const auto &it : containedItems) {
+                    const Item &item = it.second;
                     itemsQuery.addValue<int32_t>(itemsLineColumn, (int32_t)(++linenumber));
                     itemsQuery.addValue<int16_t>(itemsContainerColumn, (int16_t) currentContainerStruct.id);
                     itemsQuery.addValue<int32_t>(itemsDepotColumn, (int32_t) currentContainerStruct.depotid);
@@ -1232,7 +1156,7 @@ bool Player::save() throw() {
                     itemsQuery.addValue<uint16_t>(itemsWearColumn, item.getWear());
                     itemsQuery.addValue<uint16_t>(itemsNumberColumn, item.getNumber());
                     itemsQuery.addValue<uint16_t>(itemsQualColumn, item.getQuality());
-                    itemsQuery.addValue<TYPE_OF_CONTAINERSLOTS>(itemsSlotColumn, it->first);
+                    itemsQuery.addValue<TYPE_OF_CONTAINERSLOTS>(itemsSlotColumn, it.first);
 
                     for (auto it2 = item.getDataBegin(); it2 != item.getDataEnd(); ++it2) {
                         dataQuery.addValue<int32_t>(dataLineColumn, (int32_t) linenumber);
@@ -1243,7 +1167,7 @@ bool Player::save() throw() {
                     // if it is a container, add it to the list of containers to save...
                     if (item.isContainer()) {
                         auto containedContainers = currentContainer.getContainers();
-                        auto iterat = containedContainers.find(it->first);
+                        auto iterat = containedContainers.find(it.first);
 
                         if (iterat != containedContainers.end()) {
                             containers.push_back(container_struct(iterat->second, linenumber));
@@ -1254,8 +1178,8 @@ bool Player::save() throw() {
                 containers.pop_front();
             }
 
-            itemsQuery.addValues(itemsPlyIdColumn, id, InsertQuery::FILL);
-            dataQuery.addValues(dataPlyIdColumn, id, InsertQuery::FILL);
+            itemsQuery.addValues(itemsPlyIdColumn, getId(), InsertQuery::FILL);
+            dataQuery.addValues(dataPlyIdColumn, getId(), InsertQuery::FILL);
 
             itemsQuery.execute();
             dataQuery.execute();
@@ -1264,12 +1188,12 @@ bool Player::save() throw() {
         connection->commitTransaction();
 
         if (!effects.save()) {
-            std::cerr<<"error while saving lteffects for player"<<name<<std::endl;
+            Logger::error(LogFacility::Player) << "error while saving lteffects for " << to_string() << Log::end;
         }
 
         return true;
     } catch (std::exception &e) {
-        std::cerr << "Playersave caught exception: " << e.what() << std::endl;
+        Logger::error(LogFacility::Player) << "Playersave caught exception: " << e.what() << Log::end;
         connection->rollbackTransaction();
         return false;
     }
@@ -1280,7 +1204,7 @@ bool Player::loadGMFlags() throw() {
         using namespace Database;
         SelectQuery query;
         query.addColumn("gms", "gm_rights_server");
-        query.addEqualCondition<TYPE_OF_CHARACTER_ID>("gms", "gm_charid", id);
+        query.addEqualCondition<TYPE_OF_CHARACTER_ID>("gms", "gm_charid", getId());
         query.addServerTable("gms");
 
         Result results = query.execute();
@@ -1293,7 +1217,7 @@ bool Player::loadGMFlags() throw() {
 
         return true;
     } catch (std::exception &e) {
-        std::cerr<<"exception: "<<e.what()<<" while loading GM Flags!"<<std::endl;
+        Logger::error(LogFacility::Player) << "exception: " << e.what() << " while loading gm flags!" << Log::end;
         return false;
     }
 
@@ -1314,13 +1238,13 @@ bool Player::load() throw() {
         {
             SelectQuery query;
             query.addColumn("introduction", "intro_known_player");
-            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("introduction", "intro_player", id);
+            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("introduction", "intro_player", getId());
             query.addServerTable("introduction");
 
             Result results = query.execute();
 
-            for (ResultConstIterator it = results.begin(); it != results.end(); ++it) {
-                knownPlayers.insert((*it)["intro_known_player"].as<TYPE_OF_CHARACTER_ID>());
+            for (const auto &row : results) {
+                knownPlayers.insert(row["intro_known_player"].as<TYPE_OF_CHARACTER_ID>());
             }
         }
 
@@ -1329,22 +1253,21 @@ bool Player::load() throw() {
             query.addColumn("playerskills", "psk_skill_id");
             query.addColumn("playerskills", "psk_value");
             query.addColumn("playerskills", "psk_minor");
-            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playerskills", "psk_playerid", id);
+            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playerskills", "psk_playerid", getId());
             query.addServerTable("playerskills");
 
             Result results = query.execute();
 
             if (!results.empty()) {
-                for (ResultConstIterator itr = results.begin();
-                     itr != results.end(); ++itr) {
+                for (const auto &row : results) {
                     setSkill(
-                        (*itr)["psk_skill_id"].as<uint16_t>(),
-                        (*itr)["psk_value"].as<uint16_t>(),
-                        (*itr)["psk_minor"].as<uint16_t>()
+                        row["psk_skill_id"].as<uint16_t>(),
+                        row["psk_value"].as<uint16_t>(),
+                        row["psk_minor"].as<uint16_t>()
                     );
                 }
             } else {
-                std::cout<<"No Skills to load for "<<name<<"("<<id<<")"<<std::endl;
+                Logger::warn(LogFacility::Player) << to_string() << " has no skills" << Log::end;
             }
         }
 
@@ -1357,16 +1280,16 @@ bool Player::load() throw() {
             query.addColumn("playeritem_datavalues", "idv_linenumber");
             query.addColumn("playeritem_datavalues", "idv_key");
             query.addColumn("playeritem_datavalues", "idv_value");
-            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playeritem_datavalues", "idv_playerid", id);
+            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playeritem_datavalues", "idv_playerid", getId());
             query.addOrderBy("playeritem_datavalues", "idv_linenumber", SelectQuery::ASC);
             query.addServerTable("playeritem_datavalues");
 
             Result results = query.execute();
 
-            for (ResultConstIterator itr = results.begin(); itr != results.end(); ++itr) {
-                ditemlinenumber.push_back((*itr)["idv_linenumber"].as<uint16_t>());
-                key.push_back((*itr)["idv_key"].as<std::string>());
-                value.push_back((*itr)["idv_value"].as<std::string>());
+            for (const auto &row : results) {
+                ditemlinenumber.push_back(row["idv_linenumber"].as<uint16_t>());
+                key.push_back(row["idv_key"].as<std::string>());
+                value.push_back(row["idv_value"].as<std::string>());
             }
         }
         size_t dataRows = ditemlinenumber.size();
@@ -1390,21 +1313,21 @@ bool Player::load() throw() {
             query.addColumn("playeritems", "pit_number");
             query.addColumn("playeritems", "pit_quality");
             query.addColumn("playeritems", "pit_containerslot");
-            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playeritems", "pit_playerid", id);
+            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playeritems", "pit_playerid", getId());
             query.addOrderBy("playeritems", "pit_linenumber", SelectQuery::ASC);
             query.addServerTable("playeritems");
 
             Result results = query.execute();
 
-            for (ResultConstIterator itr = results.begin(); itr != results.end(); ++itr) {
-                itemlinenumber.push_back((*itr)["pit_linenumber"].as<uint16_t>());
-                itemincontainer.push_back((*itr)["pit_in_container"].as<uint16_t>());
-                itemdepot.push_back((*itr)["pit_depot"].as<uint32_t>());
-                itemid.push_back((*itr)["pit_itemid"].as<Item::id_type>());
-                itemwear.push_back((Item::wear_type)((*itr)["pit_wear"].as<uint16_t>()));
-                itemnumber.push_back((*itr)["pit_number"].as<Item::number_type>());
-                itemquality.push_back((*itr)["pit_quality"].as<Item::quality_type>());
-                itemcontainerslot.push_back((*itr)["pit_containerslot"].as<TYPE_OF_CONTAINERSLOTS>());
+            for (const auto &row : results) {
+                itemlinenumber.push_back(row["pit_linenumber"].as<uint16_t>());
+                itemincontainer.push_back(row["pit_in_container"].as<uint16_t>());
+                itemdepot.push_back(row["pit_depot"].as<uint32_t>());
+                itemid.push_back(row["pit_itemid"].as<Item::id_type>());
+                itemwear.push_back((Item::wear_type)(row["pit_wear"].as<uint16_t>()));
+                itemnumber.push_back(row["pit_number"].as<Item::number_type>());
+                itemquality.push_back(row["pit_quality"].as<Item::quality_type>());
+                itemcontainerslot.push_back(row["pit_containerslot"].as<TYPE_OF_CONTAINERSLOTS>());
             }
         }
         size_t itemRows = itemlinenumber.size();
@@ -1415,13 +1338,13 @@ bool Player::load() throw() {
             SelectQuery query;
             query.setDistinct(true);
             query.addColumn("playeritems", "pit_depot");
-            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playeritems", "pit_playerid", id);
+            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playeritems", "pit_playerid", getId());
             query.addServerTable("playeritems");
 
             Result results = query.execute();
 
-            for (ResultConstIterator itr = results.begin(); itr != results.end(); ++itr) {
-                depotid.push_back((*itr)["pit_depot"].as<uint32_t>());
+            for (const auto &row : results) {
+                depotid.push_back(row["pit_depot"].as<uint32_t>());
             }
         }
 
@@ -1457,20 +1380,20 @@ bool Player::load() throw() {
             // item is in a depot?
             if (tempdepot && (it = depots.find(tempdepot)) == depots.end()) {
                 // serious error occured! player data corrupted!
-                Logger::error(LogFacility::Player) << "player '" << name << "' has invalid depot contents!" << Log::end;
+                Logger::error(LogFacility::Player) << to_string() << " has invalid depot contents!" << Log::end;
                 throw std::exception();
             }
 
             // item is in a container?
             if (dataOK && tempincont && (it = containers.find(tempincont)) == containers.end()) {
                 // serious error occured! player data corrupted!
-                Logger::error(LogFacility::Player) << "player '" << name << "' has invalid depot contents 2!" << Log::end;
+                Logger::error(LogFacility::Player) << to_string() << " has invalid depot contents 2!" << Log::end;
                 throw std::exception();
             }
 
             if ((dataOK && ((!tempincont && ! tempdepot) && linenumber > MAX_BODY_ITEMS + MAX_BELT_SLOTS)) || (tempincont && tempdepot)) {
                 // serious error occured! player data corrupted!
-                Logger::error(LogFacility::Player) << "player '" << name << "' has invalid items!" << Log::end;
+                Logger::error(LogFacility::Player) << to_string() << " has invalid items!" << Log::end;
                 throw std::exception();
             }
 
@@ -1479,7 +1402,7 @@ bool Player::load() throw() {
 
                 if (linenumber > MAX_BODY_ITEMS + MAX_BELT_SLOTS) {
                     if (!it->second->InsertContainer(tempi, tempc, itemcontainerslot[tuple])) {
-                        Logger::error(LogFacility::Player) << "player '" << name << "' insert Container wasn't sucessful!" << Log::end;
+                        Logger::error(LogFacility::Player) << to_string() << " insert Container wasn't sucessful!" << Log::end;
                     } else {
 
                     }
@@ -1500,16 +1423,16 @@ bool Player::load() throw() {
         if ((it=containers.find(BACKPACK + 1)) != containers.end()) {
             backPackContents = it->second;
         } else {
-            backPackContents = NULL;
+            backPackContents = nullptr;
         }
 
-        std::map<uint32_t,Container *>::iterator it2;
+        for (const auto &depot : depots) {
+            auto it = depotContents.find(depot.first);
 
-        for (it = depots.begin(); it != depots.end(); ++it) {
-            if ((it2=depotContents.find(it->first)) != depotContents.end()) {
-                it2->second = it->second;
+            if (it != depotContents.end()) {
+                it->second = depot.second;
             } else {
-                it2->second = NULL;
+                it->second = nullptr;
             }
         }
     } catch (std::exception &e) {
@@ -1536,7 +1459,7 @@ bool Player::load() throw() {
             delete rit2->second;
         }
 
-        backPackContents=NULL;
+        backPackContents = nullptr;
     }
 
     //#endif
@@ -1579,7 +1502,7 @@ unsigned short int Player::increaseSkill(TYPE_OF_SKILL_ID skill, short int amoun
     return major;
 }
 
-void Player::receiveText(talk_type tt, std::string message, Character *cc) {
+void Player::receiveText(talk_type tt, const std::string &message, Character *cc) {
     boost::shared_ptr<BasicServerCommand>cmd(new SayTC(cc->pos.x, cc->pos.y, cc->pos.z, message));
 
     switch (tt) {
@@ -1600,19 +1523,19 @@ void Player::receiveText(talk_type tt, std::string message, Character *cc) {
 }
 
 bool Player::knows(Player *player) const {
-    return this == player || knownPlayers.find(player->id) != knownPlayers.cend();
+    return this == player || knownPlayers.find(player->getId()) != knownPlayers.cend();
 }
 
 void Player::getToKnow(Player *player) {
     if (!knows(player)) {
-        knownPlayers.insert(player->id);
+        knownPlayers.insert(player->getId());
     }
 }
 
 void Player::introducePlayer(Player *player) {
     getToKnow(player);
 
-    boost::shared_ptr<BasicServerCommand>cmd(new IntroduceTC(player->id, player->name));
+    boost::shared_ptr<BasicServerCommand>cmd(new IntroduceTC(player->getId(), player->getName()));
     Connection->addCommand(cmd);
 }
 
@@ -1791,8 +1714,8 @@ bool Player::move(direction dir, uint8_t mode) {
         newpos.y += _world->moveSteps[ dir ][ 1 ];
         newpos.z += _world->moveSteps[ dir ][ 2 ];
 
-        Field *cfold=NULL;
-        Field *cfnew=NULL;
+        Field *cfold = nullptr;
+        Field *cfnew = nullptr;
 
         bool fieldfound = false;
 
@@ -1812,7 +1735,7 @@ bool Player::move(direction dir, uint8_t mode) {
             }
         }
 
-        if (cfnew != NULL && fieldfound && (cfnew->moveToPossible() || (getClippingActive() == false && (isAdmin() || hasGMRight(gmr_isnotshownasgm))))) {
+        if (cfnew && fieldfound && (cfnew->moveToPossible() || (getClippingActive() == false && (isAdmin() || hasGMRight(gmr_isnotshownasgm))))) {
             uint16_t walkcost = getMovementCost(cfnew);
 #ifdef PLAYER_MOVE_DEBUG
             std::cout<< "Player::move Walkcost beforce encumberance: " << walkcost << std::endl;
@@ -1823,7 +1746,7 @@ bool Player::move(direction dir, uint8_t mode) {
                 std::cout<< "Player::move Walkcost after encumberance Char overloadet: " << walkcost << std::endl;
 #endif
                 //Char ueberladen
-                boost::shared_ptr<BasicServerCommand>cmd(new MoveAckTC(id, pos, NOMOVE, 0));
+                boost::shared_ptr<BasicServerCommand>cmd(new MoveAckTC(getId(), pos, NOMOVE, 0));
                 Connection->addCommand(cmd);
                 return false;
             } else {
@@ -1856,7 +1779,7 @@ bool Player::move(direction dir, uint8_t mode) {
             if (newpos.z != oldpos.z) {
                 //Z Coordinate hat sich ge�ndert komplettes update senden (Sp�ter durch teilupdate ersetzen)
                 updatePos(newpos);
-                boost::shared_ptr<BasicServerCommand>cmd(new MoveAckTC(id, pos, NOMOVE, 0));
+                boost::shared_ptr<BasicServerCommand>cmd(new MoveAckTC(getId(), pos, NOMOVE, 0));
                 Connection->addCommand(cmd);
                 // Koordinate
                 cmd.reset(new SetCoordinateTC(pos));
@@ -1865,7 +1788,7 @@ bool Player::move(direction dir, uint8_t mode) {
                 cont = false;
             } else {
                 if (mode != RUNNING || (j == 1 && cont)) {
-                    boost::shared_ptr<BasicServerCommand> cmd(new MoveAckTC(id, newpos, mode, waitpages));
+                    boost::shared_ptr<BasicServerCommand> cmd(new MoveAckTC(getId(), newpos, mode, waitpages));
                     Connection->addCommand(cmd);
                 }
 
@@ -1907,7 +1830,7 @@ bool Player::move(direction dir, uint8_t mode) {
             //Ggf Scriptausfhrung beim Betreten eines Triggerfeldes
             _world->TriggerFieldMove(this,true);
             //send the move to the monitoring clients
-            boost::shared_ptr<BasicServerCommand>cmd(new BBPlayerMoveTC(id, pos.x, pos.y, pos.z));
+            boost::shared_ptr<BasicServerCommand>cmd(new BBPlayerMoveTC(getId(), pos.x, pos.y, pos.z));
             _world->monitoringClientList->sendCommand(cmd);
 
             if (mode != RUNNING || j == 1) {
@@ -1916,14 +1839,14 @@ bool Player::move(direction dir, uint8_t mode) {
         } // neues Feld vorhanden und passierbar?
         else {
             if (j == 1) {
-                boost::shared_ptr<BasicServerCommand> cmd(new MoveAckTC(id, pos, NORMALMOVE, waitpages));
+                boost::shared_ptr<BasicServerCommand> cmd(new MoveAckTC(getId(), pos, NORMALMOVE, waitpages));
                 Connection->addCommand(cmd);
                 sendStepStripes(dir);
                 _world->sendCharacterMoveToAllVisiblePlayers(this, mode, waitpages);
                 _world->sendAllVisibleCharactersToPlayer(this, true);
                 return true;
             } else if (j == 0) {
-                boost::shared_ptr<BasicServerCommand>cmd(new MoveAckTC(id, pos, NOMOVE, 0));
+                boost::shared_ptr<BasicServerCommand>cmd(new MoveAckTC(getId(), pos, NOMOVE, 0));
                 Connection->addCommand(cmd);
                 return false;
             }
@@ -1935,13 +1858,13 @@ bool Player::move(direction dir, uint8_t mode) {
 #ifdef PLAYER_MOVE_DEBUG
     std::cout << "movePlayer: Bewegung nicht moeglich \n";
 #endif
-    boost::shared_ptr<BasicServerCommand>cmd(new MoveAckTC(id, pos, NOMOVE, 0));
+    boost::shared_ptr<BasicServerCommand>cmd(new MoveAckTC(getId(), pos, NOMOVE, 0));
     Connection->addCommand(cmd);
     return false;
 }
 
 
-bool Player::Warp(position newPos) {
+bool Player::Warp(const position &newPos) {
     bool warped = Character::Warp(newPos);
 
     if (warped) {
@@ -1952,7 +1875,7 @@ bool Player::Warp(position newPos) {
     return false;
 }
 
-bool Player::forceWarp(position newPos) {
+bool Player::forceWarp(const position &newPos) {
     bool warped = Character::forceWarp(newPos);
 
     if (warped) {
@@ -1970,38 +1893,19 @@ void Player::handleWarp() {
     sendFullMap();
     visibleChars.clear();
     _world->sendAllVisibleCharactersToPlayer(this, true);
-    cmd.reset(new BBPlayerMoveTC(id, pos.x, pos.y, pos.z));
+    cmd.reset(new BBPlayerMoveTC(getId(), pos.x, pos.y, pos.z));
     _world->monitoringClientList->sendCommand(cmd);
 }
 
 void Player::openDepot(uint16_t depotid) {
-    //_world->lookIntoDepot(this, 0 );
-#ifdef PLAYER_PlayerDepot_DEBUG
-    std::cout << "lookIntoDepot: Spieler " << cp->name << " schaut in sein Depot" << std::endl;
-#endif
-
-    //std::map<uint32_t,Container*>::iterator it;
     if (depotContents.find(depotid) != depotContents.end()) {
-        if (depotContents[depotid] != NULL) {
-#ifdef PLAYER_PlayerDepot_DEBUG
-            std::cout << "Depotinhalt vorhanden" << std::endl;
-#endif
+        if (depotContents[depotid]) {
             openShowcase(depotContents[depotid], false);
-#ifdef PLAYER_PlayerDepot_DEBUG
-            std::cout << "lookIntoDepot: Ende" << std::endl;
-#endif
         }
     } else {
-#ifdef PLAYER_PlayerDepot_DEBUG
-        std::cout << "Depot mit der ID: " << depotid << " wird neu erstellt!" << std::endl;
-#endif
         depotContents[depotid] = new Container(DEPOTITEM);
         openShowcase(depotContents[depotid], false);
     }
-
-#ifdef PLAYER_PlayerDepot_DEBUG
-    std::cout << "lookIntoDepot: Ende" << std::endl;
-#endif
 }
 
 void Player::changeQualityItem(TYPE_OF_ITEM_ID id, short int amount) {
@@ -2009,18 +1913,15 @@ void Player::changeQualityItem(TYPE_OF_ITEM_ID id, short int amount) {
     updateBackPackView();
 
     for (unsigned char i = MAX_BELT_SLOTS + MAX_BODY_ITEMS - 1; i > 0; --i) {
-        //Update des Inventorys.
         sendCharacterItemAtPos(i);
     }
 }
 
 void Player::changeQualityAt(unsigned char pos, short int amount) {
-    //std::cout<<"in Player changeQualityAt!"<<std::endl;
     Character::changeQualityAt(pos, amount);
-    //std::cout<<"ende des ccharacter ChangeQualityAt aufrufes"<<std::endl;
     sendCharacterItemAtPos(pos);
-    sendCharacterItemAtPos(LEFT_TOOL);   //Item in der Linken hand nochmals senden um ggf ein gel�chtes Belegt an zu zeigen.
-    sendCharacterItemAtPos(RIGHT_TOOL);   //Item in der rechten Hand nochmals senden um ggf ein gel�chtes Belegt an zu zeigen.
+    sendCharacterItemAtPos(LEFT_TOOL);
+    sendCharacterItemAtPos(RIGHT_TOOL);
 }
 
 bool Player::hasGMRight(gm_rights right) const {
@@ -2042,7 +1943,7 @@ void Player::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS prog
 
         SelectQuery query(connection);
         query.addColumn("questprogress", "qpg_progress");
-        query.addEqualCondition<TYPE_OF_CHARACTER_ID>("questprogress", "qpg_userid", id);
+        query.addEqualCondition<TYPE_OF_CHARACTER_ID>("questprogress", "qpg_userid", getId());
         query.addEqualCondition<TYPE_OF_QUEST_ID>("questprogress", "qpg_questid", questid);
         query.addServerTable("questprogress");
 
@@ -2058,7 +1959,7 @@ void Player::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS prog
             const InsertQuery::columnIndex timeColumn = insQuery.addColumn("qpg_time");
             insQuery.addServerTable("questprogress");
 
-            insQuery.addValue<TYPE_OF_CHARACTER_ID>(userColumn, id);
+            insQuery.addValue<TYPE_OF_CHARACTER_ID>(userColumn, getId());
             insQuery.addValue<TYPE_OF_QUEST_ID>(questColumn, questid);
             insQuery.addValue<TYPE_OF_QUESTSTATUS>(progressColumn, progress);
             insQuery.addValue<int>(timeColumn, int(time(nullptr)));
@@ -2068,7 +1969,7 @@ void Player::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS prog
             UpdateQuery updQuery;
             updQuery.addAssignColumn<TYPE_OF_QUESTSTATUS>("qpg_progress", progress);
             updQuery.addAssignColumn<int>("qpg_time", int(time(nullptr)));
-            updQuery.addEqualCondition<TYPE_OF_CHARACTER_ID>("questprogress", "qpg_userid", id);
+            updQuery.addEqualCondition<TYPE_OF_CHARACTER_ID>("questprogress", "qpg_userid", getId());
             updQuery.addEqualCondition<TYPE_OF_QUEST_ID>("questprogress", "qpg_questid", questid);
             updQuery.setServerTable("questprogress");
 
@@ -2119,14 +2020,14 @@ void Player::sendCompleteQuestProgress() {
         SelectQuery query;
         query.addColumn("questprogress", "qpg_questid");
         query.addColumn("questprogress", "qpg_progress");
-        query.addEqualCondition<TYPE_OF_CHARACTER_ID>("questprogress", "qpg_userid", id);
+        query.addEqualCondition<TYPE_OF_CHARACTER_ID>("questprogress", "qpg_userid", getId());
         query.addServerTable("questprogress");
 
         Result results = query.execute();
 
-        for (ResultConstIterator it = results.begin(); it != results.end(); ++it) {
-            TYPE_OF_QUEST_ID questId = (*it)["qpg_questid"].as<TYPE_OF_QUEST_ID>();
-            TYPE_OF_QUESTSTATUS progress = (*it)["qpg_progress"].as<TYPE_OF_QUESTSTATUS>();
+        for (const auto &row : results) {
+            TYPE_OF_QUEST_ID questId = row["qpg_questid"].as<TYPE_OF_QUEST_ID>();
+            TYPE_OF_QUESTSTATUS progress = row["qpg_progress"].as<TYPE_OF_QUESTSTATUS>();
             sendQuestProgress(questId, progress);
         }
     } catch (std::exception &e) {
@@ -2134,14 +2035,14 @@ void Player::sendCompleteQuestProgress() {
     }
 }
 
-TYPE_OF_QUESTSTATUS Player::getQuestProgress(TYPE_OF_QUEST_ID questid, int &time) throw() {
+TYPE_OF_QUESTSTATUS Player::getQuestProgress(TYPE_OF_QUEST_ID questid, int &time) const {
     try {
         using namespace Database;
 
         SelectQuery query;
         query.addColumn("questprogress", "qpg_progress");
         query.addColumn("questprogress", "qpg_time");
-        query.addEqualCondition<TYPE_OF_CHARACTER_ID>("questprogress", "qpg_userid", id);
+        query.addEqualCondition<TYPE_OF_CHARACTER_ID>("questprogress", "qpg_userid", getId());
         query.addEqualCondition<TYPE_OF_QUEST_ID>("questprogress", "qpg_questid", questid);
         query.addServerTable("questprogress");
 
@@ -2184,11 +2085,11 @@ void Player::changeSource(Character *cc) {
     ltAction->changeSource(cc);
 }
 
-void Player::changeSource(ScriptItem sI) {
+void Player::changeSource(const ScriptItem &sI) {
     ltAction->changeSource(sI);
 }
 
-void Player::changeSource(position pos) {
+void Player::changeSource(const position &pos) {
     ltAction->changeSource(pos);
 }
 
@@ -2200,11 +2101,11 @@ void Player::changeTarget(Character *cc) {
     ltAction->changeTarget(cc);
 }
 
-void Player::changeTarget(ScriptItem sI) {
+void Player::changeTarget(const ScriptItem &sI) {
     ltAction->changeTarget(sI);
 }
 
-void Player::changeTarget(position pos) {
+void Player::changeTarget(const position &pos) {
     ltAction->changeTarget(pos);
 }
 
@@ -2212,7 +2113,7 @@ void Player::changeTarget() {
     ltAction->changeTarget();
 }
 
-std::string Player::getSkillName(TYPE_OF_SKILL_ID s) {
+std::string Player::getSkillName(TYPE_OF_SKILL_ID s) const  {
     if (Data::Skills.exists(s)) {
         const auto &skill = Data::Skills[s];
         return nls(skill.germanName, skill.englishName);
@@ -2532,7 +2433,7 @@ void Player::sendSingleStripe(viewdir direction, int8_t zoffs) {
     */
 }
 
-uint32_t Player::idleTime() {
+uint32_t Player::idleTime() const {
     time_t now;
     time(&now);
     return now - lastaction;
@@ -2556,9 +2457,9 @@ const std::string &Player::nls(const std::string &german, const std::string &eng
     }
 }
 
-bool Player::pageGM(std::string ticket) {
+bool Player::pageGM(const std::string &ticket) {
     try {
-        _world->logGMTicket(this, "[Auto] " + ticket, "Automatic page about " + name + ": ");
+        _world->logGMTicket(this, "[Auto] " + ticket, true);
         return true;
     } catch (...) {
     }
@@ -2567,7 +2468,7 @@ bool Player::pageGM(std::string ticket) {
 }
 
 
-void Player::sendCharDescription(TYPE_OF_CHARACTER_ID id,const std::string &desc) {
+void Player::sendCharDescription(TYPE_OF_CHARACTER_ID id, const std::string &desc) {
     boost::shared_ptr<BasicServerCommand>cmd(new CharDescription(id, desc));
     Connection->addCommand(cmd);
 }
@@ -2580,7 +2481,7 @@ void Player::sendCharAppearance(TYPE_OF_CHARACTER_ID id, const boost::shared_ptr
 }
 
 void Player::sendCharRemove(TYPE_OF_CHARACTER_ID id, const boost::shared_ptr<BasicServerCommand> &removechar) {
-    if (this->id != id) {
+    if (this->getId() != id) {
         visibleChars.erase(id);
         Connection->addCommand(removechar);
     }
@@ -2851,5 +2752,5 @@ void Player::closeDialogsOnMove() {
 }
 
 std::string Player::to_string() const {
-    return (isAdmin()?"Admin ":"Player ") + name + "(" + boost::lexical_cast<std::string>(id) + ")";
+    return (isAdmin()?"Admin ":"Player ") + getName() + "(" + std::to_string(getId()) + ")";
 }

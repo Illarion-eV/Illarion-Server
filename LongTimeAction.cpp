@@ -47,11 +47,11 @@ void LongTimeAction::setLastAction(std::shared_ptr<LuaScript> script, SouTar src
     _at = at;
 
     if (trgt.character != NULL) {
-        _targetId = _target.character->id;
+        _targetId = _target.character->getId();
     }
 
     if (srce.character != NULL) {
-        _sourceId = _source.character->id;
+        _sourceId = _source.character->getId();
         _sourceCharType = _source.character->character;
     }
 }
@@ -343,7 +343,7 @@ void LongTimeAction::changeSource(Character *cc) {
     _source.Type = LUA_CHARACTER;
     _source.pos = cc->pos;
     _source.character = cc;
-    _sourceId = cc->id;
+    _sourceId = cc->getId();
     _sourceCharType = cc->character;
 }
 
@@ -372,7 +372,7 @@ void LongTimeAction::changeTarget(Character *cc) {
     _target.Type = LUA_CHARACTER;
     _target.pos = cc->pos;
     _target.character = cc;
-    _targetId = cc->id;
+    _targetId = cc->getId();
 }
 
 void LongTimeAction::changeTarget(ScriptItem sI) {

@@ -163,16 +163,13 @@ int main(int argc, char *argv[]) {
                     world->monitoringClientList->clientConnect(newPlayer);
                 } else {
                     try {
-                        std::cout<<"login successful by: "<<newPlayer->name<<" "<<newPlayer->id<<std::endl;
                         world->Players.push_back(newPlayer);
                         newPlayer->login();
                         loginScript->onLogin(newPlayer);
                         world->updatePlayerList();
                     } catch (Player::LogoutException &e) {
-                        std::cout<<"got logout Exception during login!"<<std::endl;
                         boost::shared_ptr<BasicServerCommand> cmd(new LogOutTC(e.getReason()));
                         newPlayer->Connection->shutdownSend(cmd);
-                        //newPlayer->Connection->closeConnection();
                         PlayerManager::get()->getLogOutPlayers().non_block_push_back(newPlayer);
                     }
                 }

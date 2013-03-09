@@ -590,7 +590,7 @@ void Map::ageItemsInHorizontalRange(short int xstart, short int xend) {
 
                 //iterate through all the players in range and send the update for this field
                 for (std::vector<Player *>::iterator it = playersinview.begin(); it != playersinview.end(); ++it) {
-                    Logger::debug(LogFacility::World) << "aged items, update needed for: " << (*it)->name << Log::end;
+                    Logger::debug(LogFacility::World) << "aged items, update needed for: " << (*it)->to_string() << Log::end;
                     boost::shared_ptr<BasicServerCommand>cmd(new ItemUpdate_TC(pos, MainMap[x][y].items));
                     (*it)->Connection->addCommand(cmd);
                 }

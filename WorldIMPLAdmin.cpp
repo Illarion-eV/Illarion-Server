@@ -126,8 +126,6 @@ void World::InitGMCommands() {
 
     GMCommands["removewarpfield"] = [](World *world, Player *player, const std::string &text) -> bool { world->removeTeleporter(player, text); return true; };
 
-    GMCommands["inform"] = [](World *world, Player *player, const std::string &) -> bool { world->informChar(player); return true; };
-
     GMCommands["talkto"] = [](World *world, Player *player, const std::string &text) -> bool { world->talkto_command(player, text); return true; };
     GMCommands["tt"] = GMCommands["talkto"];
 
@@ -165,7 +163,7 @@ void World::spawn_command(Player *cp, const std::string &monid) {
         ss >> id;
         position pos = cp->pos;
         pos.x++;
-        Logger::info(LogFacility::Admin) << cp->nameAndId() << " creates monster " << monid
+        Logger::info(LogFacility::Admin) << cp->to_string() << " creates monster " << monid
                                          << " at " << pos.toString() << Log::end;
         createMonster(id, pos, 0);
     }
@@ -203,7 +201,7 @@ void World::create_command(Player *cp, const std::string &itemid) {
             }
         }
 
-        Logger::info(LogFacility::Admin) << cp->nameAndId() << " creates item " << item << " with quantity "
+        Logger::info(LogFacility::Admin) << cp->to_string() << " creates item " << item << " with quantity "
                                          << quantity << ", quality " << quality << ", data " << datalog << Log::end;
         cp->createItem(item, quantity, quality, dataList);
     }
@@ -215,21 +213,19 @@ void World::kill_command(Player *cp) {
         return;
     }
 
-    MONSTERVECTOR::iterator mIterator;
     uint32_t counter = 0;
 
-    for (mIterator = Monsters.begin() ; mIterator != Monsters.end(); ++mIterator) {
-        //Kill the monster we have found
-        (*mIterator)->remove();
+    for (const auto &monster : Monsters) {
+        monster->remove();
         ++counter;
     }
 
-    Logger::info(LogFacility::Admin) << cp->nameAndId() << " nukes " << counter << " monsters" << Log::end;
+    Logger::info(LogFacility::Admin) << cp->to_string() << " nukes " << counter << " monsters" << Log::end;
 }
 
 void World::reload_command(Player *cp) {
     if (cp->hasGMRight(gmr_reload)) {
-        Logger::info(LogFacility::Admin) << cp->nameAndId() << " issues a full reload" << Log::end;
+        Logger::info(LogFacility::Admin) << cp->to_string() << " issues a full reload" << Log::end;
 
         if (reload_tables(cp)) {
             cp->inform("DB tables loaded successfully!");
@@ -250,21 +246,21 @@ void World::broadcast_command(Player *cp,const std::string &message) {
 
 void World::kickall_command(Player *cp) {
     if (cp->hasGMRight(gmr_forcelogout)) {
-        Logger::info(LogFacility::Admin) << cp->nameAndId() << " kicks all players" << Log::end;
+        Logger::info(LogFacility::Admin) << cp->to_string() << " kicks all players" << Log::end;
         forceLogoutOfAllPlayers();
     }
 }
 
-void World::kickplayer_command(Player *cp,const std::string &player) {
+void World::kickplayer_command(Player *cp, const std::string &player) {
     if (cp->hasGMRight(gmr_forcelogout)) {
-        Logger::info(LogFacility::Admin) << cp->nameAndId() << " kicks " << player << Log::end;
+        Logger::info(LogFacility::Admin) << cp->to_string() << " kicks " << player << Log::end;
         forceLogoutOfPlayer(player);
     }
 }
 
 void World::showIPS_Command(Player *cp) {
     if (cp->hasGMRight(gmr_basiccommands)) {
-        Logger::info(LogFacility::Admin) << cp->nameAndId() << " requests player info" << Log::end;
+        Logger::info(LogFacility::Admin) << cp->to_string() << " requests player info" << Log::end;
         sendAdminAllPlayerData(cp);
     }
 }
@@ -277,7 +273,7 @@ void World::jumpto_command(Player *cp,const std::string &player) {
     {
         cp->closeAllShowcasesOfMapContainers();
         teleportPlayerToOther(cp, player);
-        Logger::info(LogFacility::Admin) << cp->nameAndId() << " jumps to player " << player
+        Logger::info(LogFacility::Admin) << cp->to_string() << " jumps to player " << player
                                          << " at " << cp->pos.toString() << Log::end;
     }
 }
@@ -287,14 +283,12 @@ void World::save_command(Player *cp) {
         return;
     }
 
-    Logger::info(LogFacility::Admin) << cp->nameAndId() << " saves all maps" << Log::end;
+    Logger::info(LogFacility::Admin) << cp->to_string() << " saves all maps" << Log::end;
 
-    PLAYERVECTOR::iterator pIterator;
     Field *tempf;
 
-    for (pIterator = Players.begin(); pIterator < Players.end(); ++pIterator) {
-        // Felder auf denen Spieler stehen als frei markieren, damit die flags richtig gespeichert werden
-        if (GetPToCFieldAt(tempf, (*pIterator)->pos.x, (*pIterator)->pos.y, (*pIterator)->pos.z)) {
+    for (const auto &player : Players) {
+        if (GetPToCFieldAt(tempf, player->pos.x, player->pos.y, player->pos.z)) {
             tempf->SetPlayerOnField(false);
         }
     }
@@ -302,9 +296,8 @@ void World::save_command(Player *cp) {
     std::cout << "Save maps" << std::endl;
     Save("Illarion");
 
-    // Flags auf der Karte wieder setzen
-    for (pIterator = Players.begin(); pIterator < Players.end(); ++pIterator) {
-        if (GetPToCFieldAt(tempf, (*pIterator)->pos.x, (*pIterator)->pos.y, (*pIterator)->pos.z)) {
+    for (const auto &player : Players) {
+        if (GetPToCFieldAt(tempf, player->pos.x, player->pos.y, player->pos.z)) {
             tempf->SetPlayerOnField(true);
         }
     }
@@ -323,21 +316,15 @@ void World::talkto_command(Player *cp, const std::string &ts) {
     std::cout<<"Tokenizing "<<tokenize<<std::endl;
     char *token;
 
-    if ((token = strtok(tokenize, ",")) != NULL) {
+    if ((token = strtok(tokenize, ","))) {
         std::string player = token;
         delete[] tokenize;
 
-        if ((token = strtok(NULL, "\\")) != NULL) {
+        if ((token = strtok(NULL, "\\"))) {
             std::string message = token;
-#ifdef AdminCommands_DEBUG
-            std::cout<<"Try to find player by name: "<<player<<std::endl;
-#endif
             Player *tempPl = Players.find(player);
 
-            if (tempPl != NULL) {
-#ifdef AdminCommands_DEBUG
-                std::cout<<"Found player by name, sending message: "<<message<<std::endl;
-#endif
+            if (tempPl) {
 #ifdef LOG_TALK
                 Logger::info(LogFacility::Player) << *cp << " talks to " << *tempPl << ": " << message << Log::end;
 #endif
@@ -350,27 +337,17 @@ void World::talkto_command(Player *cp, const std::string &ts) {
                 ss.str(player);
                 ss >> tid;
 
-#ifdef AdminCommands_DEBUG
-                std::cout<<"Try to find player by id: "<<tid<<std::endl;
-#endif
-                PLAYERVECTOR::iterator plIterator;
-
-                for (plIterator = Players.begin(); plIterator != Players.end(); ++plIterator) {
-                    if ((*plIterator)->id == tid) {
-#ifdef AdminCommands_DEBUG
-                        std::cout<<"Found player by id, sending message: "<<message<<std::endl;
-#endif
+                tempPl = Players.findID(tid);
+                if (tempPl) {
 #ifdef LOG_TALK
-                        Logger::info(LogFacility::Player) << *cp << " talks to " << **plIterator << ": " << message << Log::end;
+                    Logger::info(LogFacility::Player) << *cp << " talks to " << *tempPl << ": " << message << Log::end;
 #endif
-                        (*plIterator)->inform(message, Player::informGM);
-                        return; //Break the loop because we sen our message
-                    }
-                } //end of for ( plIter..)
-            } //end of else
-        } //end if ( token = strtok( NULL...)
-    } //end of ( token = strtok( tokenize , ",")
-    else {
+                    tempPl->inform(message, Player::informGM);
+                    return;
+                }
+            }
+        }
+    } else {
         delete[] tokenize;
     }
 }
@@ -381,8 +358,8 @@ void World::makeInvisible(Player *cp) {
     }
 
     cp->isinvisible = true;
-    Logger::info(LogFacility::Admin) << cp->nameAndId() << " becomes invisible" << Log::end;
-    sendRemoveCharToVisiblePlayers(cp->id, cp->pos);
+    Logger::info(LogFacility::Admin) << cp->to_string() << " becomes invisible" << Log::end;
+    sendRemoveCharToVisiblePlayers(cp->getId(), cp->pos);
 }
 
 void World::makeVisible(Player *cp) {
@@ -392,17 +369,12 @@ void World::makeVisible(Player *cp) {
 
     cp->isinvisible = false;
 
-    Logger::info(LogFacility::Admin) << cp->nameAndId() << " becomes visible" << Log::end;
+    Logger::info(LogFacility::Admin) << cp->to_string() << " becomes visible" << Log::end;
 
-    std::vector < Player * > ::iterator titerator;
-
-    std::vector < Player * > temp = Players.findAllCharactersInScreen(cp->pos.x, cp->pos.y, cp->pos.z);
-
-    for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
-        //Fr alle anderen Sichtbar machen
-        if (cp != (*titerator)) {
-            boost::shared_ptr<BasicServerCommand>cmd(new MoveAckTC(cp->id, cp->pos, PUSH, 0));
-            (*titerator)->Connection->addCommand(cmd);
+    for (const auto &player : Players.findAllCharactersInScreen(cp->pos.x, cp->pos.y, cp->pos.z)) {
+        if (cp != player) {
+            boost::shared_ptr<BasicServerCommand>cmd(new MoveAckTC(cp->getId(), cp->pos, PUSH, 0));
+            player->Connection->addCommand(cmd);
         }
     }
 
@@ -429,12 +401,10 @@ void World::ForceIntroduce(Player *cp, const std::string &ts) {
         ss >> tid;
 
         if (tid) {
-            PLAYERVECTOR::iterator playerIterator;
-
-            for (playerIterator = Players.begin(); playerIterator < Players.end(); ++playerIterator) {
-                if ((*playerIterator)->id == tid) {
-                    forceIntroducePlayer((*playerIterator), cp);
-                }
+            Player *player = Players.findID(tid);
+            
+            if (player) {
+                forceIntroducePlayer(player, cp);
             }
         }
     }
@@ -445,26 +415,10 @@ void World::ForceIntroduceAll(Player *cp) {
         return;
     }
 
-    std::vector < Player * > temp = Players.findAllCharactersInRangeOf(cp->pos.x, cp->pos.y, cp->pos.z, cp->getScreenRange());
-    std::vector < Player * > ::iterator titerator;
-
-    for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
-        //Schleife durch alle Spieler in Sichtweise
-        if (cp != (*titerator)) {
-            forceIntroducePlayer((*titerator), cp);
+    for (const auto &player : Players.findAllCharactersInRangeOf(cp->pos.x, cp->pos.y, cp->pos.z, cp->getScreenRange())) {
+        if (cp != player) {
+            forceIntroducePlayer(player, cp);
         }
-    }
-}
-
-void World::informChar(Player *cp) {
-    if (!cp->hasGMRight(gmr_basiccommands)) {
-        return;
-    }
-
-    if (cp->informCharacter) {
-        cp->setInformChar(false);
-    } else {
-        cp->setInformChar(true);
     }
 }
 
@@ -476,9 +430,8 @@ void World::teleportPlayerToOther(Player *cp, std::string ts) {
     Player *tempPl;
     tempPl = Players.find(ts);
 
-    if (tempPl != NULL) {
+    if (tempPl) {
         cp->Warp(tempPl->pos);
-        //warpPlayer( cp, tempPl->pos );
     } else {
         TYPE_OF_CHARACTER_ID tid;
 
@@ -488,13 +441,10 @@ void World::teleportPlayerToOther(Player *cp, std::string ts) {
         ss >> tid;
 
         if (tid) {
-            PLAYERVECTOR::iterator playerIterator;
-
-            for (playerIterator = Players.begin(); playerIterator < Players.end(); ++playerIterator) {
-                if ((*playerIterator)->id == tid) {
-                    //warpPlayer( cp, ( *playerIterator )->pos );
-                    cp->Warp((*playerIterator)->pos);
-                }
+            tempPl = Players.findID(tid);
+            
+            if (tempPl) {
+                cp->Warp(tempPl->pos);
             }
         }
     }
@@ -503,28 +453,27 @@ void World::teleportPlayerToOther(Player *cp, std::string ts) {
 
 void World::forceLogoutOfAllPlayers() {
     Field *tempf;
-    PLAYERVECTOR::iterator playerIterator;
 
-    for (playerIterator = Players.begin(); playerIterator < Players.end(); ++playerIterator) {
-        if (GetPToCFieldAt(tempf, (*playerIterator)->pos.x, (*playerIterator)->pos.y, (*playerIterator)->pos.z)) {
+    for (const auto &player : Players) {
+        if (GetPToCFieldAt(tempf, player->pos.x, player->pos.y, player->pos.z)) {
             tempf->SetPlayerOnField(false);
         }
 
-        Logger::info(LogFacility::Admin) << "--- kicked: " << (*playerIterator)->nameAndId() << Log::end;
+        Logger::info(LogFacility::Admin) << "--- kicked: " << *player << Log::end;
         boost::shared_ptr<BasicServerCommand>cmd(new LogOutTC(SERVERSHUTDOWN));
-        (*playerIterator)->Connection->shutdownSend(cmd);
-        PlayerManager::get()->getLogOutPlayers().non_block_push_back(*playerIterator);
+        player->Connection->shutdownSend(cmd);
+        PlayerManager::get()->getLogOutPlayers().non_block_push_back(player);
     }
 
     Players.clear();
 }
 
 
-bool World::forceLogoutOfPlayer(std::string name) {
+bool World::forceLogoutOfPlayer(const std::string &name) {
     Player *temp = Players.find(name);
 
-    if (temp != NULL) {
-        Logger::info(LogFacility::Admin) << "--- kicked: " << temp->nameAndId() << Log::end;
+    if (temp) {
+        Logger::info(LogFacility::Admin) << "--- kicked: " << temp->to_string() << Log::end;
         boost::shared_ptr<BasicServerCommand>cmd(new LogOutTC(BYGAMEMASTER));
         temp->Connection->shutdownSend(cmd);
         return true;
@@ -562,11 +511,11 @@ void World::warpto_command(Player *cp, const std::string &ts) {
     std::cout << "Tokenizing " << tokenize << std::endl;
     char *thistoken;
 
-    if ((thistoken = strtok(tokenize, " ,")) != NULL) {
+    if ((thistoken = strtok(tokenize, " ,"))) {
         if (ReadField(thistoken, warpto.x)) {
-            if ((thistoken = strtok(NULL, " ,")) != NULL) {
+            if ((thistoken = strtok(NULL, " ,"))) {
                 if (ReadField(thistoken, warpto.y)) {
-                    if ((thistoken = strtok(NULL, " ,")) != NULL) {
+                    if ((thistoken = strtok(NULL, " ,"))) {
                         if (ReadField(thistoken, warpto.z)) {
                             //warpPlayer( cp, warpto );
                             cp->forceWarp(warpto);
@@ -591,7 +540,7 @@ void World::warpto_command(Player *cp, const std::string &ts) {
         }
     }
 
-    Logger::info(LogFacility::Admin) << cp->nameAndId() << " warps to " << warpto.toString() << Log::end;
+    Logger::info(LogFacility::Admin) << cp->to_string() << " warps to " << warpto.toString() << Log::end;
 
     delete [] tokenize;
 }
@@ -607,10 +556,9 @@ void World::summon_command(Player *cp, const std::string &tplayer) {
     tempPl = Players.find(tplayer);
 
     if (tempPl != NULL) {
-        Logger::info(LogFacility::Admin) << cp->nameAndId() << " summons player " << tempPl->nameAndId() << " to " << cp->pos.toString() << Log::end;
+        Logger::info(LogFacility::Admin) << cp->to_string() << " summons player " << tempPl->to_string() << " to " << cp->pos.toString() << Log::end;
         tempPl->Warp(cp->pos);
     } else {
-        std::cout << "Looking for number" << std::endl;
         TYPE_OF_CHARACTER_ID tid;
 
         // convert arg to digit and try again...
@@ -619,14 +567,11 @@ void World::summon_command(Player *cp, const std::string &tplayer) {
         ss >> tid;
 
         if (tid) {
-            std::cout << "Looking for number " << tid << std::endl;
-            PLAYERVECTOR::iterator playerIterator;
-
-            for (playerIterator = Players.begin(); playerIterator < Players.end(); ++playerIterator) {
-                if ((*playerIterator)->id == tid) {
-                    Logger::info(LogFacility::Admin) << cp->nameAndId() << " summons player " << (*playerIterator)->nameAndId() << " to " << cp->pos.toString() << Log::end;
-                    (*playerIterator)->Warp(cp->pos);
-                }
+            tempPl = Players.findID(tid);
+            
+            if (tempPl) {
+                Logger::info(LogFacility::Admin) << *cp << " summons player " << *tempPl << " to " << cp->pos.toString() << Log::end;
+                tempPl->Warp(cp->pos);
             }
         }
     }
@@ -686,7 +631,7 @@ void World::ban_command(Player *cp, const std::string &timeplayer) {
                 Player *tempPl;
                 tempPl = Players.find(tplayer);
 
-                if (tempPl == NULL) {
+                if (!tempPl) {
                     TYPE_OF_CHARACTER_ID tid;
 
                     // convert arg to digit and try again...
@@ -695,22 +640,16 @@ void World::ban_command(Player *cp, const std::string &timeplayer) {
                     ss >> tid;
 
                     if (tid) {
-                        PLAYERVECTOR::iterator playerIterator;
-
-                        for (playerIterator = Players.begin(); playerIterator < Players.end(); ++playerIterator) {
-                            if ((*playerIterator)->id == tid) {
-                                tempPl = (*playerIterator);
-                            }
-                        }
+                        tempPl = Players.findID(tid);
                     }
                 }
 
-                if (tempPl != NULL) {
+                if (tempPl) {
 
-                    ban(tempPl, jailtime * multiplier, cp->id);
+                    ban(tempPl, jailtime * multiplier, cp->getId());
 
-                    Logger::info(LogFacility::Admin) << cp->nameAndId() << " bans player " << tempPl->nameAndId() << " for " << jailtime << timescale << Log::end;
-                    std::string tmessage = "*** Banned " + tempPl->name;
+                    Logger::info(LogFacility::Admin) << cp->to_string() << " bans player " << tempPl->to_string() << " for " << jailtime << timescale << Log::end;
+                    std::string tmessage = "*** Banned " + tempPl->to_string();
                     cp->inform(tmessage);
 
                 } else {
@@ -736,10 +675,10 @@ void World::banbyname(Player *cp, short int banhours, std::string tplayer) {
 
     if (tempPl != NULL) {
 
-        ban(tempPl, static_cast<int>(banhours * 3600), cp->id);
+        ban(tempPl, static_cast<int>(banhours * 3600), cp->getId());
 
-        Logger::info(LogFacility::Admin) << cp->nameAndId() << " bans player " << tempPl->nameAndId() << " for " << banhours << "h" << Log::end;
-        std::string tmessage = "*** Banned " + tempPl->name;
+        Logger::info(LogFacility::Admin) << cp->to_string() << " bans player " << tempPl->to_string() << " for " << banhours << "h" << Log::end;
+        std::string tmessage = "*** Banned " + tempPl->to_string();
         cp->inform(tmessage);
 
     } else {
@@ -755,26 +694,18 @@ void World::banbynumber(Player *cp, short int banhours, TYPE_OF_CHARACTER_ID tid
         return;
     }
 
-    Player *tempPl = NULL;
+    Player *tempPl = Players.findID(tid);
 
-    PLAYERVECTOR::iterator playerIterator;
+    if (tempPl) {
 
-    for (playerIterator = Players.begin(); playerIterator < Players.end(); ++playerIterator) {
-        if ((*playerIterator)->id == tid) {
-            tempPl = (*playerIterator);
-        }
-    }
+        ban(tempPl, static_cast<int>(banhours * 3600), cp->getId());
 
-    if (tempPl != NULL) {
-
-        ban(tempPl, static_cast<int>(banhours * 3600), cp->id);
-
-        Logger::info(LogFacility::Admin) << cp->nameAndId() << " bans player " << tempPl->nameAndId() << " for " << banhours << "h" << Log::end;
-        std::string tmessage = "*** Banned " + tempPl->name;
+        Logger::info(LogFacility::Admin) << *cp << " bans player " << *tempPl << " for " << banhours << "h" << Log::end;
+        std::string tmessage = "*** Banned " + tempPl->to_string();
         cp->inform(tmessage);
 
     } else {
-        std::string tmessage = "*** Could not find " + stream_convert<std::string>(tid);
+        std::string tmessage = "*** Could not find " + std::to_string(tid);
         std::cout << tmessage << std::endl;
         cp->inform(tmessage);
     }
@@ -786,19 +717,19 @@ void World::banbynumber(Player *cp, short int banhours, TYPE_OF_CHARACTER_ID tid
 void World::ban(Player *cp, int bantime, TYPE_OF_CHARACTER_ID gmid) {
     if (bantime >= 0) {
         if (bantime > 0) {
-            cp->SetStatus(BANNEDFORTIME);         // Banned for time
+            cp->SetStatus(BANNEDFORTIME);
             time_t ttime;
             time(&ttime);
             // Banned for seconds
-            cp->SetStatusTime(ttime + bantime);    // Banned for expire
-            cp->SetStatusGM(gmid);               // Banned by who
+            cp->SetStatusTime(ttime + bantime);
+            cp->SetStatusGM(gmid);
         } else if (bantime == 0) {
-            cp->SetStatus(BANNED);                 // Banned indefinately
+            cp->SetStatus(BANNED);
             cp->SetStatusTime(0);
-            cp->SetStatusGM(gmid);               // Banned by who
+            cp->SetStatusGM(gmid);
         }
 
-        forceLogoutOfPlayer(cp->name);
+        forceLogoutOfPlayer(cp->getName());
 
     }
 
@@ -814,20 +745,13 @@ void World::who_command(Player *cp, const std::string &tplayer) {
     if (tplayer == "") {
 
         std::string tmessage = "";
-        PLAYERVECTOR::iterator playerIterator;
 
-        for (playerIterator = Players.begin(); playerIterator < Players.end(); ++playerIterator) {
-            if (tmessage.length() > 0 && tmessage.length() + 10 + (*playerIterator)->name.length() > 104) {
-                cp->inform(tmessage);
-                tmessage = "";
-            }
-
+        for (const auto &p : Players) {
             if (tmessage.length() > 0) {
                 tmessage = tmessage + ", ";
             }
 
-            tmessage = tmessage + (*playerIterator)->name +
-                       "(" + stream_convert<std::string>((*playerIterator)->id) + ")";
+            tmessage = tmessage + p->to_string();
         }
 
         if (tmessage.length() > 0) {
@@ -835,10 +759,9 @@ void World::who_command(Player *cp, const std::string &tplayer) {
         }
     } else {
 
-        Player *tempPl;
-        tempPl = Players.find(tplayer);
+        Player *tempPl = Players.find(tplayer);
 
-        if (tempPl == NULL) {
+        if (!tempPl) {
             TYPE_OF_CHARACTER_ID tid;
 
             // convert arg to digit and try again...
@@ -847,19 +770,12 @@ void World::who_command(Player *cp, const std::string &tplayer) {
             ss >> tid;
 
             if (tid) {
-                PLAYERVECTOR::iterator playerIterator;
-
-                for (playerIterator = Players.begin(); playerIterator < Players.end(); ++playerIterator) {
-                    if ((*playerIterator)->id == tid) {
-                        tempPl = (*playerIterator);
-                    }
-                }
+                tempPl = Players.findID(tid);
             }
         }
 
-        if (tempPl != NULL) {
-            std::string tmessage = tempPl->name +
-                                   "(" + stream_convert<std::string>(tempPl->id) + ")";
+        if (tempPl) {
+            std::string tmessage = tempPl->to_string();
 
             tmessage = tmessage + " x" + stream_convert<std::string>(tempPl->pos.x);
             tmessage = tmessage + " y" + stream_convert<std::string>(tempPl->pos.y);
@@ -937,7 +853,7 @@ void World::clippingon_command(Player *cp) {
         return;
     }
 
-    Logger::info(LogFacility::Admin) << cp->nameAndId() << " turns on clipping" << Log::end;
+    Logger::info(LogFacility::Admin) << cp->to_string() << " turns on clipping" << Log::end;
     cp->setClippingActive(true);
 }
 
@@ -947,7 +863,7 @@ void World::clippingoff_command(Player *cp) {
         return;
     }
 
-    Logger::info(LogFacility::Admin) << cp->nameAndId() << " turns off clipping" << Log::end;
+    Logger::info(LogFacility::Admin) << cp->to_string() << " turns off clipping" << Log::end;
     cp->setClippingActive(false);
 }
 
@@ -999,7 +915,7 @@ void World::what_command(Player *cp) {
 
         if (character != 0) {
             message.str("");
-            uint32_t id = character->id;
+            uint32_t id = character->getId();
 
             if (id >= DYNNPC_BASE) {
                 message << "- Dynamic NPC";
@@ -1022,12 +938,10 @@ void World::playersave_command(Player *cp) {
         return;
     }
 
-    Logger::info(LogFacility::Admin) << cp->nameAndId() << " saves all players" << Log::end;
+    Logger::info(LogFacility::Admin) << *cp << " saves all players" << Log::end;
 
-    PLAYERVECTOR::iterator pIterator;
-
-    for (pIterator = Players.begin(); pIterator < Players.end(); ++pIterator) {
-        (*pIterator)->save();
+    for (const auto &p : Players) {
+        p->save();
     }
 
     std::string tmessage = "*** All online players saved! ***";
@@ -1090,8 +1004,6 @@ void World::gmhelp_command(Player *cp) {
         tmessage = "!forceintroduce <char id|char name> - (!fi) introduces the char to all gms in range.";
         cp->inform(tmessage);
         tmessage = "!forceintroduceall - (!fia) introduces all chars in sight to you.";
-        cp->inform(tmessage);
-        tmessage = "!inform - gives you some more informations while fighting.";
         cp->inform(tmessage);
         tmessage = "!talkto <playername|id>, <message> - (!tt) sends a message to a specific player important is the , after the id or name!";
         cp->inform(tmessage);
@@ -1389,8 +1301,8 @@ bool World::reload_tables(Player *cp) {
         //reload NPC's
         initNPC();
 
-        for (auto it = Players.begin(); it < Players.end(); ++it) {
-            (*it)->sendCompleteQuestProgress();
+        for (const auto &p : Players) {
+            p->sendCompleteQuestProgress();
         }
 
         try {
@@ -1418,7 +1330,7 @@ void set_spawn_command(World *world, Player *player, const std::string &in) {
         enable = true;
     }
 
-    Logger::info(LogFacility::Admin) << player->name << " sets spawn to " << enable << Log::end;
+    Logger::info(LogFacility::Admin) << player->to_string() << " sets spawn to " << enable << Log::end;
 
     world->enableSpawn(enable);
 }
@@ -1441,7 +1353,7 @@ void create_area_command(World *world, Player *player,const std::string &params)
     ss >> filltile;
 
     if (x==-65535 || y == -65535 || z == -65535 || w < 1 || h < 1 || filltile < 0) {
-        std::cout << "error in create_area_command issued by " << player->name << "!" << std::endl;
+        std::cout << "error in create_area_command issued by " << player->to_string() << "!" << std::endl;
         std::cout << "positions: " << x << "\t" << y << '\t' << z << '\t' << w << '\t' << h << '\t' << std::endl;
         return;
     }
@@ -1466,7 +1378,7 @@ void create_area_command(World *world, Player *player,const std::string &params)
 
     std::string tmessage = "map inserted.";
     player->inform(tmessage);
-    std::cerr << "Map created by " << player->name << " on " << x << " - " << y << " - " << z << " with w: " << w << " h: " << h << "ft: " << filltile << std::endl;
+    std::cerr << "Map created by " << player->to_string() << " on " << x << " - " << y << " - " << z << " with w: " << w << " h: " << h << "ft: " << filltile << std::endl;
 
 }
 
@@ -1482,7 +1394,7 @@ void set_login(World *world, Player *player, const std::string &st) {
     }
 
     world->allowLogin(enable);
-    Logger::info(LogFacility::Admin) << player->name << " set allowLogin to " << enable << Log::end;
+    Logger::info(LogFacility::Admin) << player->to_string() << " set allowLogin to " << enable << Log::end;
     std::string tmessage = "nologin set to: ";
     tmessage += enable ? "false" : "true";
     player->inform(tmessage);
@@ -1543,14 +1455,13 @@ void World::showWarpFieldsInRange(Player *cp, const std::string &ts) {
         std::vector< boost::shared_ptr< position > > warpfieldsinrange;
 
         if (findWarpFieldsInRange(cp->pos, range, warpfieldsinrange)) {
-            std::vector< boost::shared_ptr< position > >::iterator it;
             std::string message;
             cp->inform("Start list of warpfields:");
 
-            for (it = warpfieldsinrange.begin(); it != warpfieldsinrange.end(); ++it) {
+            for (const auto warpfield : warpfieldsinrange) {
                 position target;
-                GetField(**it)->GetWarpField(target);
-                message = "Warpfield at (x,y,z) " + stream_convert<std::string>((*it)->x) + "," + stream_convert<std::string> ((*it)->y) + "," + stream_convert<std::string>((*it)->z) + " Target (x,y,z) : " + stream_convert<std::string>(target.x) + "," + stream_convert<std::string>(target.y) + "," + stream_convert<std::string>(target.z);
+                GetField(*warpfield)->GetWarpField(target);
+                message = "Warpfield at " + warpfield->toString() + " to " + target.toString();
                 cp->inform(message);
             }
 
