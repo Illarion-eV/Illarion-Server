@@ -399,8 +399,8 @@ public:
                     return;
                 }
 
-                std::string german = "Das ist: " + npc->name;
-                std::string english = "This is: " + npc->name;
+                std::string german = "Das ist: " + npc->getName();
+                std::string english = "This is: " + npc->getName();
 
                 boost::shared_ptr<BasicServerCommand>cmd(new CharDescription(id, player->nls(german, english)));
                 player->Connection->addCommand(cmd);
@@ -467,7 +467,6 @@ public:
     virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
-        Logger::debug(LogFacility::Script) << player->name << " is casting!" << Log::end;
 
         bool paramOK = true;
         //CScript* skript = NULL;
@@ -485,7 +484,7 @@ public:
             }
         }
 
-        Logger::info(LogFacility::Script) << player->name << " can't cast the spell: " << spellId << " , flags: " << player->magic.flags[ player->magic.type ] << Log::end;
+        Logger::info(LogFacility::Script) << player->to_string() << " can't cast the spell: " << spellId << " , flags: " << player->magic.flags[ player->magic.type ] << Log::end;
 
         //Source des Castens zuweisen
         SouTar Source, Target;
@@ -495,7 +494,7 @@ public:
 
         switch (cid) {
         case UID_KOORD:
-            Logger::info(LogFacility::Script) << player->name << " trys to cast on a coordinate pos(" << xc << "," << yc << "," << zc << ")" << Log::end;
+            Logger::info(LogFacility::Script) << player->to_string() << " trys to cast on a coordinate pos(" << xc << "," << yc << "," << zc << ")" << Log::end;
 
             if (LuaMageScript) {
                 Field *temp;
@@ -576,7 +575,7 @@ public:
             std::cout << "showcase: " << (int) showcase << " pos: " << (int) pos << std::endl;
 #endif
 
-            Logger::info(LogFacility::Script) << player->name << " is casting in showcas: " << showcase << " pos " << pos << Log::end;
+            Logger::info(LogFacility::Script) << player->to_string() << " is casting in showcas: " << showcase << " pos " << pos << Log::end;
 
             if (LuaMageScript) {
                 if (player->isShowcaseOpen(showcase)) {
@@ -817,7 +816,7 @@ public:
 
                     }
 
-                    //msg = "Casted spell: " + Logger::toString(spellId) + " on character: " + Target.character->name + "(" + Logger::toString(Target.character->id) + ")";
+                    //msg = "Casted spell: " + Logger::toString(spellId) + " on character: " + Target.character->to_string() + "(" + Logger::toString(Target.character->getId()) + ")";
                     break;
 
                 case LUA_ITEM:
@@ -831,7 +830,7 @@ public:
                     break;
                 } //Ende Switch
 
-                //monitoringClientList->sendCommand( new SendActionTS( player->id, player->name, 2, msg));
+                //monitoringClientList->sendCommand( new SendActionTS( player->getId(), player->to_string, 2, msg));
             } //ENde if player->IsAlive
 
             Logger::debug(LogFacility::Script) << "all succeeded" << Log::end;
@@ -889,7 +888,7 @@ public:
         time(&(player->lastaction));
         player->ltAction->abortAction();
 
-        Logger::debug(LogFacility::Script) << player->name << " uses something" << Log::end;
+        Logger::debug(LogFacility::Script) << player->to_string() << " uses something" << Log::end;
 
         bool paramOK = true;
 
@@ -1082,7 +1081,7 @@ public:
 
                 if (Source.Type == LUA_ITEM) {
                     LuaScript->UseItem(player, Source.item, static_cast<unsigned char>(LTS_NOLTACTION));
-                    msg = "Used Item: " + boost::lexical_cast<std::string>(Source.item.getId()) + " with item: " + boost::lexical_cast<std::string>(Target.item.getId());
+                    msg = "Used Item: " + std::to_string(Source.item.getId()) + " with item: " + std::to_string(Target.item.getId());
                 }
             }
         } else if (LuaNPCScript) {
@@ -1091,7 +1090,7 @@ public:
             if ((paramOK) && player->IsAlive()) {
                 if (Source.Type == LUA_CHARACTER && (Target.Type == LUA_NONE)) {
                     LuaNPCScript->useNPC(player, static_cast<unsigned char>(LTS_NOLTACTION));
-                    msg = "Used NPC: " + Source.character->name + "(" + boost::lexical_cast<std::string>(Source.character->id) + ")";
+                    msg = "Used NPC: " + Source.character->to_string();
                 }
             }
 
@@ -1101,7 +1100,7 @@ public:
             if ((paramOK) && player->IsAlive()) {
                 if (Source.Type == LUA_CHARACTER && (Target.Type == LUA_NONE)) {
                     LuaMonsterScript->useMonster(Source.character, player, static_cast<unsigned char>(LTS_NOLTACTION));
-                    msg = "Used Monster: " + Source.character->name + "(" + boost::lexical_cast<std::string>(Source.character->id) + ")";
+                    msg = "Used Monster: " + Source.character->to_string();
                 }
             }
         } else if (LuaTileScript) {
@@ -1114,7 +1113,7 @@ public:
             }
         }
 
-        boost::shared_ptr<BasicServerCommand>cmd(new BBSendActionTC(player->id, player->name, 3,msg));
+        boost::shared_ptr<BasicServerCommand>cmd(new BBSendActionTC(player->getId(), player->getName(), 3,msg));
         World::get()->monitoringClientList->sendCommand(cmd);
 
     }
@@ -1147,7 +1146,7 @@ public:
     }
 
     virtual void performAction(Player *player) override {
-        Logger::debug(LogFacility::Player) << "KEEPALIVE_TS from player " << player->name << Log::end;
+        Logger::debug(LogFacility::Player) << "KEEPALIVE_TS from player " << player->to_string() << Log::end;
         time(&(player->lastkeepalive));
     }
 
@@ -1227,7 +1226,7 @@ public:
     }
 
     virtual void performAction(Player *player) override {
-        Logger::debug(LogFacility::World) << player->name << " looks at an item in the inventory." << Log::end;
+        Logger::debug(LogFacility::World) << player->to_string() << " looks at an item in the inventory." << Log::end;
         time(&(player->lastaction));
 
         if (player->IsAlive()) {
@@ -1260,7 +1259,7 @@ public:
     }
 
     virtual void performAction(Player *player) override {
-        Logger::debug(LogFacility::World) << player->name << " looks at an item in a container." << Log::end;
+        Logger::debug(LogFacility::World) << player->to_string() << " looks at an item in a container." << Log::end;
         time(&(player->lastaction));
 
         if (player->IsAlive()) {
@@ -1298,7 +1297,7 @@ public:
     virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
-        Logger::debug(LogFacility::World) << player->name << "moves an item from the inventory to showcase!" << Log::end;
+        Logger::debug(LogFacility::World) << player->to_string() << "moves an item from the inventory to showcase!" << Log::end;
 
         if (player->IsAlive()) {
             World::get()->moveItemFromPlayerIntoShowcase(player, cpos, showcase, pos, count);
@@ -1337,7 +1336,7 @@ public:
     virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
-        Logger::debug(LogFacility::World) << player->name << " moves an item from the shocase to the inventory!" << Log::end;
+        Logger::debug(LogFacility::World) << player->to_string() << " moves an item from the shocase to the inventory!" << Log::end;
 
         if (player->IsAlive()) {
             World::get()->moveItemFromShowcaseToPlayer(player, showcase, pos, cpos, count);
@@ -1375,7 +1374,7 @@ public:
     virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
-        Logger::debug(LogFacility::World) << player->name << "moves an item inside the inventory!" << Log::end;
+        Logger::debug(LogFacility::World) << player->to_string() << "moves an item inside the inventory!" << Log::end;
 
         if (player->IsAlive()) {
             World::get()->moveItemBetweenBodyParts(player, opos, npos, count);
@@ -1414,7 +1413,7 @@ public:
     virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
-        Logger::debug(LogFacility::World) << player->name << " throws an item from inventory on the map!" << Log::end;
+        Logger::debug(LogFacility::World) << player->to_string() << " throws an item from inventory on the map!" << Log::end;
         World::get()->dropItemFromPlayerOnMap(player, pos, xc, yc, zc, count);
         player->actionPoints -= P_ITEMMOVE_COST;
     }
@@ -1448,7 +1447,7 @@ public:
     virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
-        Logger::debug(LogFacility::World) << player->name << " moves an Item from the map to the inventory!" << Log::end;
+        Logger::debug(LogFacility::World) << player->to_string() << " moves an Item from the map to the inventory!" << Log::end;
 
         if (player->IsAlive()) {
             World::get()->moveItemFromMapToPlayer(player, dir, pos, count);
@@ -1486,7 +1485,7 @@ public:
     virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
-        Logger::debug(LogFacility::World) << player->name << " moves an item from the map to the showcase!" << Log::end;
+        Logger::debug(LogFacility::World) << player->to_string() << " moves an item from the map to the showcase!" << Log::end;
 
         if (player->IsAlive()) {
             World::get()->moveItemFromMapIntoShowcase(player, dir, showcase, pos, count);
@@ -1526,7 +1525,7 @@ public:
     virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
-        Logger::debug(LogFacility::World) << player->name << " moves an item between showcases!" << Log::end;
+        Logger::debug(LogFacility::World) << player->to_string() << " moves an item between showcases!" << Log::end;
 
         if (player->IsAlive()) {
             World::get()->moveItemBetweenShowcases(player, source, spos, dest, dpos, count);
@@ -1568,7 +1567,7 @@ public:
     virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
-        Logger::debug(LogFacility::World) << player->name << " moves an item from showcase to the map!" << Log::end;
+        Logger::debug(LogFacility::World) << player->to_string() << " moves an item from showcase to the map!" << Log::end;
         World::get()->dropItemFromShowcaseOnMap(player, showcase, pos, xc, yc, zc, count);
         player->actionPoints -= P_ITEMMOVE_COST;
     }
@@ -1601,7 +1600,7 @@ public:
     virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
-        Logger::debug(LogFacility::World) << player->name << " closes a container in the showcase" << Log::end;
+        Logger::debug(LogFacility::World) << player->to_string() << " closes a container in the showcase" << Log::end;
 
         if (player->IsAlive()) {
             World::get()->closeContainerInShowcase(player, showcase);
@@ -1634,7 +1633,7 @@ public:
     virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
-        Logger::debug(LogFacility::World) << player->name << " looks into a container in a showcase!" << Log::end;
+        Logger::debug(LogFacility::World) << player->to_string() << " looks into a container in a showcase!" << Log::end;
         World::get()->lookIntoShowcaseContainer(player, showcase, pos);
         player->actionPoints -= P_LOOK_COST;
     }
@@ -1664,7 +1663,7 @@ public:
     virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
-        Logger::debug(LogFacility::World) << player->name << " looks into his backpack" << Log::end;
+        Logger::debug(LogFacility::World) << player->to_string() << " looks into his backpack" << Log::end;
         World::get()->lookIntoBackPack(player);
         player->actionPoints -= P_LOOK_COST;
     }
@@ -1693,7 +1692,7 @@ public:
     virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
-        Logger::debug(LogFacility::World) << player->name << " looks into a container on the map" << Log::end;
+        Logger::debug(LogFacility::World) << player->to_string() << " looks into a container on the map" << Log::end;
 
         if (player->IsAlive()) {
             World::get()->lookIntoContainerOnField(player, direction);
@@ -1727,7 +1726,7 @@ public:
 
     virtual void performAction(Player *player) override {
         player->ltAction->abortAction();
-        Logger::info(LogFacility::Player) << player->name << " logt aus" << Log::end;
+        Logger::info(LogFacility::Player) << player->to_string() << " loggt aus" << Log::end;
         player->Connection->closeConnection();
     }
 
@@ -1757,7 +1756,7 @@ public:
 
     virtual void performAction(Player *player) override {
         time(&(player->lastaction));
-        Logger::debug(LogFacility::World) << player->name << " whispers something!" << Log::end;
+        Logger::debug(LogFacility::World) << player->to_string() << " whispers something!" << Log::end;
         player->talk(Character::tt_whisper, text);
     }
 
@@ -1818,7 +1817,7 @@ public:
 
     virtual void performAction(Player *player) override {
         time(&(player->lastaction));
-        Logger::debug(LogFacility::World) << player->name << " whispers something!" << Log::end;
+        Logger::debug(LogFacility::World) << player->to_string() << " whispers something!" << Log::end;
 
         if (!World::get()->parseGMCommands(player, text)) {
             if (!World::get()->parsePlayerCommands(player, text)) {    // did we issue a player command?
@@ -1852,7 +1851,7 @@ public:
     }
 
     virtual void performAction(Player *player) override {
-        Logger::debug(LogFacility::World) << player->name << " want sended a refresh_ts, sending map!" << Log::end;
+        Logger::debug(LogFacility::World) << player->to_string() << " want sended a refresh_ts, sending map!" << Log::end;
         //update the current mapview
         player->sendFullMap();
         World::get()->sendAllVisibleCharactersToPlayer(player, true);
@@ -1883,7 +1882,7 @@ public:
 
     virtual void performAction(Player *player) override {
         time(&(player->lastaction));
-        Logger::debug(LogFacility::World) << player->name << " introduces himself!" << Log::end;
+        Logger::debug(LogFacility::World) << player->to_string() << " introduces himself!" << Log::end;
 
         if (player->IsAlive()) {
             World::get()->introduceMyself(player);
@@ -1936,7 +1935,7 @@ public:
 
                 boost::shared_ptr<BasicServerCommand>cmd(new AttackAcknowledgedTC());
                 player->Connection->addCommand(cmd);
-                //monitoringClientList->sendCommand( new SendActionTS(player->id, player->name, 0, "Starts an attack: " + Logger::toString(player->enemyid) ) );
+                //monitoringClientList->sendCommand( new SendActionTS(player->getId(), player->getName(), 0, "Starts an attack: " + Logger::toString(player->enemyid) ) );
                 World::get()->characterAttacks(player);
             } else {
                 player->attackmode = false;
@@ -1974,7 +1973,7 @@ public:
 
     virtual void performAction(Player *player) override {
         time(&(player->lastaction));
-        Logger::debug(LogFacility::World) << player->name << " looks at a map item." << Log::end;
+        Logger::debug(LogFacility::World) << player->to_string() << " looks at a map item." << Log::end;
 
         if (player->IsAlive()) {
             World::get()->lookAtMapItem(player, x, y, z);
@@ -2012,7 +2011,7 @@ public:
     virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
-        Logger::debug(LogFacility::World) << "Player changes his dircetion: " << player->name << " temp: " << direction << Log::end;
+        Logger::debug(LogFacility::World) << player->to_string() << " changes his dircetion to " << direction << Log::end;
 
         if (World::get()->spinPlayer(player, direction)) {
             player->actionPoints -= P_SPIN_COST;
@@ -2050,9 +2049,9 @@ public:
     virtual void performAction(Player *player) override {
         time(&(player->lastaction));
 
-        if (charid == player->id && (mode == NORMALMOVE || mode == RUNNING)) {
+        if (charid == player->getId() && (mode == NORMALMOVE || mode == RUNNING)) {
             player->ltAction->abortAction();
-            Logger::debug(LogFacility::World) << "Playermove from Player: " << player->name << Log::end;
+            Logger::debug(LogFacility::World) << "Playermove by " << player->to_string() << Log::end;
 
             if (player->getTurtleActive() && player->hasGMRight(gmr_settiles) && mode == NORMALMOVE) {
                 World::get()->setNextTile(player, player->getTurtleTile());
@@ -2064,7 +2063,7 @@ public:
             }
         } else if (mode == PUSH) {
             player->ltAction->abortAction();
-            Logger::debug(LogFacility::World) << "Player pushes another: " << player->name << Log::end;
+            Logger::debug(LogFacility::World) << "Player pushes another: " << player->to_string() << Log::end;
 
             if (player->IsAlive()) {
                 if (World::get()->pushCharacter(player, charid, static_cast<direction>(dir))) {
@@ -2110,7 +2109,7 @@ public:
     virtual void performAction(Player *player) override {
         time(&(player->lastaction));
         player->ltAction->abortAction();
-        Logger::debug(LogFacility::World) << player->name << " tryes to move an Item!" << Log::end;
+        Logger::debug(LogFacility::World) << player->to_string() << " tryes to move an Item!" << Log::end;
 
         if (player->IsAlive()) {
             World::get()->moveItem(player, direction, xc, yc, zc, count);

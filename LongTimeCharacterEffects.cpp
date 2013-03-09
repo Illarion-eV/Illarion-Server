@@ -38,27 +38,27 @@ LongTimeCharacterEffects::LongTimeCharacterEffects(Character *owner) : owner(own
 }
 
 bool LongTimeCharacterEffects::find(uint16_t effectid, LongTimeEffect *&effect) {
-    for (auto it = effects.begin(); it != effects.end(); ++it) {
-        if ((*it)->getEffectId() == effectid) {
-            effect = *it;
+    for (const auto &e : effects) {
+        if (e->getEffectId() == effectid) {
+            effect = e;
             return true;
         }
     }
 
-    effect = NULL;
+    effect = nullptr;
     return false;
 }
 
-bool LongTimeCharacterEffects::find(std::string effectname, LongTimeEffect *&effect) {
+bool LongTimeCharacterEffects::find(const std::string &effectname, LongTimeEffect *&effect) {
 
-    for (auto it = effects.begin(); it != effects.end(); ++it) {
-        if ((*it)->getEffectName() == effectname) {
-            effect = *it;
+    for (const auto &e : effects) {
+        if (e->getEffectName() == effectname) {
+            effect = e;
             return true;
         }
     }
 
-    effect = NULL;
+    effect = nullptr;
     return false;
 }
 
@@ -111,7 +111,7 @@ bool LongTimeCharacterEffects::removeEffect(uint16_t effectid) {
     return false;
 }
 
-bool LongTimeCharacterEffects::removeEffect(std::string name) {
+bool LongTimeCharacterEffects::removeEffect(const std::string &name) {
     for (auto it = effects.begin(); it != effects.end(); ++it) {
         if ((*it)->getEffectName() == name) {
             const auto &script = Data::LongTimeEffects.script((*it)->getEffectId());
@@ -194,13 +194,13 @@ bool LongTimeCharacterEffects::save() {
     try {
         {
             DeleteQuery query(connection);
-            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playerlteffects", "plte_playerid", player->id);
+            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playerlteffects", "plte_playerid", player->getId());
             query.setServerTable("playerlteffects");
             query.execute();
         }
         {
             DeleteQuery query(connection);
-            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playerlteffectvalues", "pev_playerid", player->id);
+            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playerlteffectvalues", "pev_playerid", player->getId());
             query.setServerTable("playerlteffectvalues");
             query.execute();
         }
@@ -215,7 +215,7 @@ bool LongTimeCharacterEffects::save() {
     bool allok = true;
 
     for (auto it = effects.begin(); it != effects.end(); ++it) {
-        allok and_eq(*it)->save(player->id, time);
+        allok and_eq(*it)->save(player->getId(), time);
     }
 
     return allok;
@@ -238,37 +238,35 @@ bool LongTimeCharacterEffects::load() {
         query.addColumn("playerlteffects", "plte_effectid");
         query.addColumn("playerlteffects", "plte_nextcalled");
         query.addColumn("playerlteffects", "plte_numbercalled");
-        query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playerlteffects", "plte_playerid", player->id);
+        query.addEqualCondition<TYPE_OF_CHARACTER_ID>("playerlteffects", "plte_playerid", player->getId());
         query.addServerTable("playerlteffects");
         query.addOrderBy("playerlteffects", "plte_nextcalled", SelectQuery::ASC);
 
         Result results = query.execute();
 
         if (!results.empty()) {
-            for (ResultConstIterator itr = results.begin();
-                 itr != results.end(); ++itr) {
-                uint16_t effectId = (*itr)["plte_effectid"].as<uint16_t>();
-                LongTimeEffect *effect = new LongTimeEffect(effectId, (*itr)["plte_nextcalled"].as<int32_t>());
+            for (const auto &row : results) {
+                uint16_t effectId = row["plte_effectid"].as<uint16_t>();
+                LongTimeEffect *effect = new LongTimeEffect(effectId, row["plte_nextcalled"].as<int32_t>());
 
                 effect->setExecutionTime(time);
                 effect->firstAdd();
-                effect->setNumberOfCalls((*itr)["plte_numberCalled"].as<uint32_t>());
+                effect->setNumberOfCalls(row["plte_numberCalled"].as<uint32_t>());
 
                 SelectQuery valuesQuery(connection);
                 valuesQuery.addColumn("playerlteffectvalues", "pev_name");
                 valuesQuery.addColumn("playerlteffectvalues", "pev_value");
-                valuesQuery.addEqualCondition<TYPE_OF_CHARACTER_ID>("playerlteffectvalues", "pev_playerid", player->id);
+                valuesQuery.addEqualCondition<TYPE_OF_CHARACTER_ID>("playerlteffectvalues", "pev_playerid", player->getId());
                 valuesQuery.addEqualCondition<uint16_t>("playerlteffectvalues", "pev_effectid", effectId);
                 valuesQuery.addServerTable("playerlteffectvalues");
 
                 Result valuesResults = valuesQuery.execute();
 
                 if (!valuesResults.empty()) {
-                    for (ResultConstIterator itr2 = valuesResults.begin();
-                         itr2 != valuesResults.end(); ++itr2) {
+                    for (const auto &valueRow : valuesResults) {
                         effect->addValue(
-                            (*itr2)["pev_name"].as<std::string>(),
-                            (*itr2)["pev_value"].as<uint32_t>());
+                            valueRow["pev_name"].as<std::string>(),
+                            valueRow["pev_value"].as<uint32_t>());
                     }
                 }
 
@@ -285,7 +283,7 @@ bool LongTimeCharacterEffects::load() {
 
         return true;
     } catch (std::exception &e) {
-        std::cerr << "Error while loading longtimeeffects for player: " << player->name << "(" << player->id << ") what: " << e.what() << std::endl;
+        std::cerr << "Error while loading longtimeeffects for " << player->to_string() << ": " << e.what() << std::endl;
         return false;
     }
 }

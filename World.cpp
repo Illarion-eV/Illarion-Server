@@ -587,7 +587,7 @@ void World::checkPlayers() {
     time(&tempkeepalive);
     int temptime;
 
-    PLAYERVECTOR::iterator playerIterator = Players.begin();
+    auto playerIterator = Players.begin();
 
     while (playerIterator < Players.end()) {
         if ((*playerIterator)->Connection->online) {
@@ -614,26 +614,24 @@ void World::checkPlayers() {
             }
             // User timed out.
             else {
-                Logger::info(LogFacility::World) << "Player " << (*playerIterator)->name << " Timed Out " << temptime << Log::end;
+                Logger::info(LogFacility::World) << (*playerIterator)->to_string() << " timed out " << temptime << Log::end;
                 boost::shared_ptr<BasicServerCommand>cmd(new LogOutTC(UNSTABLECONNECTION));
                 (*playerIterator)->Connection->shutdownSend(cmd);
             }
 
             ++playerIterator;
         } else {
-            std::string temp_name = (*playerIterator)->name;
-            TYPE_OF_CHARACTER_ID temp_id = (*playerIterator)->id;
-
+            auto temp_id = (*playerIterator)->getId();
             position temp_pos = (*playerIterator)->pos;
 
-            Logger::info(LogFacility::World) << "Player " << temp_name << " is offline" << Log::end;
+            Logger::info(LogFacility::World) << (*playerIterator)->to_string() << " is offline" << Log::end;
             Field *tempf;
 
             if (GetPToCFieldAt(tempf, (*playerIterator)->pos.x, (*playerIterator)->pos.y, (*playerIterator)->pos.z)) {
                 tempf->SetPlayerOnField(false);
             }
 
-            Logger::info(LogFacility::Player) << "logout of " << (*playerIterator)->name << Log::end;
+            Logger::info(LogFacility::Player) << "logout of " << (*playerIterator)->to_string() << Log::end;
 
             logoutScript->onLogout(*playerIterator);
 
@@ -786,12 +784,12 @@ void World::checkMonsters() {
                         //angreifen
                         //search for the target via script or the player with the lowest hp
                         if (!monStruct.script || !monStruct.script->setTarget(*monsterIterator, temp, foundP)) {
-                            findPlayerWithLowestHP(&temp, foundP);
+                            findPlayerWithLowestHP(temp, foundP);
                         }
 
                         if (foundP) {
                             //let the monster attack the player with the lowest hp->assigned this player as target
-                            monster.enemyid = foundP->id;
+                            monster.enemyid = foundP->getId();
                             monster.enemytype = Character::player;
                             monster.lastTargetPosition = foundP->pos;
                             monster.lastTargetSeen = true;
@@ -829,7 +827,7 @@ void World::checkMonsters() {
 
                             //search for the target via script or the player with the lowest hp
                             if (!monStruct.script || !monStruct.script->setTarget(*monsterIterator, temp, foundP2)) {
-                                findPlayerWithLowestHP(&temp, foundP2);
+                                findPlayerWithLowestHP(temp, foundP2);
                             }
 
                             if (foundP2) {  // if the script returned a valid character...
@@ -962,7 +960,6 @@ void World::checkMonsters() {
 
                                 // movementrate below normal if noone is near
                                 monster.actionPoints -= 20;
-                                //std::cout << "Bewege Monster zuf�lig" << std::endl;
                             }
                         }
                     }//angreifen/bewegen
@@ -988,7 +985,7 @@ void World::checkMonsters() {
                         Player *foundP;
 
                         //search for the player with the lowes hp
-                        if (findPlayerWithLowestHP(&temp, foundP)) {
+                        if (findPlayerWithLowestHP(temp, foundP)) {
                             if (foundMonster && monStruct.script) {
                                 monStruct.script->enemyNear(*monsterIterator, foundP);
                             } else {
@@ -1004,7 +1001,7 @@ void World::checkMonsters() {
                     if (!temp.empty()) {
                         Player *foundP;
 
-                        if (findPlayerWithLowestHP(&temp, foundP)) {
+                        if (findPlayerWithLowestHP(temp, foundP)) {
                             //Call enemyNear Script when enemy found
                             if (foundMonster && monStruct.script) {
                                 monStruct.script->enemyOnSight(*monsterIterator, foundP);
@@ -1135,35 +1132,19 @@ bool World::ReadField(const char *inp, signed long int &outp) {
 
 // Init method for NPC's
 void World::initNPC() {
-    NPCVECTOR::iterator npcIterator;
-    /*
-        for ( npcIterator = Npc.begin(); npcIterator < Npc.end(); ++npcIterator ) {
-                // call reload script
-                if ( ( *npcIterator )->getScript() )
-                {
-                    ( *npcIterator )->getScript()->beforeReload();
-            }
-        }
-    */
-    std::cout<<" Lade und setze NPC's neu: \n";
-    Field *tempf; //alte NPC's l�chen
+    Field *tempf;
 
-    for (npcIterator = Npc.begin(); npcIterator < Npc.end(); ++npcIterator) {
-        if (GetPToCFieldAt(tempf, (*npcIterator)->pos.x, (*npcIterator)->pos.y, (*npcIterator)->pos.z)) {
-            //tempf->SetNPCOnField( false );
+    for (const auto &npc : Npc) {
+        if (GetPToCFieldAt(tempf, npc->pos.x, npc->pos.y, npc->pos.z)) {
             tempf->removeChar();
         }
 
-        sendRemoveCharToVisiblePlayers((*npcIterator)->id, (*npcIterator)->pos);
-        delete(*npcIterator);
-        *npcIterator = NULL;
+        sendRemoveCharToVisiblePlayers(npc->getId(), npc->pos);
+        delete npc;
     }
 
-    Npc.clear(); //Ende des L�chens der alten NPC's
-    NPCTable *NPCTbl;
-    NPCTbl = new NPCTable();
-    delete NPCTbl;
-    std::cout<<"Laden der NPC's beendet! \n";
+    Npc.clear();
+    NPCTable NPCTbl;
 }
 void World::initScheduler() {
     std::cout<<"Scheduler init \n";

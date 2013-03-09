@@ -406,13 +406,13 @@ bool World::putItemInShowcase(Player *cc, uint8_t showcase, TYPE_OF_CONTAINERSLO
 
     Container *ps = cc->getShowcaseContainer(showcase);
 
-    if (ps != NULL) {
-        if (g_cont != NULL) {
+    if (ps) {
+        if (g_cont) {
 
 #ifdef World_BagOnlyInDepot
 
-            for (auto it = cc->depotContents.begin(); it != cc->depotContents.end(); ++it) {
-                if (it->second == ps) {
+            for (const auto &depot : cc->depotContents) {
+                if (depot.second == ps) {
                     isdepot = true;
                     break;
                 }
@@ -515,25 +515,25 @@ bool World::takeItemFromMap(Character *cc, short int x, short int y, short int z
                                     tmap->maincontainers.erase(conmapo);
                                 }
 
-                                sendRemoveItemFromMapToAllVisibleCharacters(cc->id, x, y, z, tempf);
+                                sendRemoveItemFromMapToAllVisibleCharacters(cc->getId(), x, y, z, tempf);
 
                                 return true;
                             } else {
                                 g_cont = new Container(g_item.getId());
-                                sendRemoveItemFromMapToAllVisibleCharacters(cc->id, x, y, z, tempf);
+                                sendRemoveItemFromMapToAllVisibleCharacters(cc->getId(), x, y, z, tempf);
 
                                 return true;
                             }
                         } else {
                             g_cont = new Container(g_item.getId());
-                            sendRemoveItemFromMapToAllVisibleCharacters(cc->id, x, y, z, tempf);
+                            sendRemoveItemFromMapToAllVisibleCharacters(cc->getId(), x, y, z, tempf);
 
                             return true;
                         }
                     } else {
                         // normales Item
                         g_cont = NULL;
-                        sendRemoveItemFromMapToAllVisibleCharacters(cc->id, x, y, z, tempf);
+                        sendRemoveItemFromMapToAllVisibleCharacters(cc->getId(), x, y, z, tempf);
 
                         return true;
                     }
@@ -744,19 +744,12 @@ void World::checkField(Field *cfstart, short int x, short int y, short int z) {
 
 ///////// zusammengesetzte Funktionen  ///////////////
 void World::dropItemFromShowcaseOnMap(Player *cp, uint8_t showcase, unsigned char pos, short int xc, short int yc, short int zc, Item::number_type count) {
-#ifdef World_ItemMove_DEBUG
-    std::cout << "dropItemFromShowcaseOnMap: Spieler " << cp->name << " wirft ein Item auf die Karte" << std::endl;
-#endif
-
     if (count == 0) {
         return;
     }
 
     if (takeItemFromShowcase(cp, showcase, pos, count)) {
-        std::cout << "dropItemFromShowcaseOnMap: Item genommen" << std::endl;
-        //CommonStruct com;
-        //Ausfhren eines MoveItemScripts
-        ScriptItem s_item = g_item,t_item = g_item; //Item einmal source und einmal target, das erste ist das Item vor dem bewegen das andere nach dem bewegen
+        ScriptItem s_item = g_item,t_item = g_item;
         s_item.pos = cp->pos;
         s_item.itempos = pos;
         s_item.type = ScriptItem::it_container;
@@ -770,7 +763,7 @@ void World::dropItemFromShowcaseOnMap(Player *cp, uint8_t showcase, unsigned cha
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
                 if (!putItemInShowcase(cp, showcase, pos)) {
-                    std::cerr<<"DropItemFromShowcase wurde von Script unterbunden. Datenverlust beim zurcklegen! Spieler: "<<cp->name<<std::endl;
+                    Logger::error(LogFacility::Player) << "dropItemFromShowcaseOnMap failed: item " << g_item.getId() << " lost for " << cp->to_string() << Log::end;
                     g_cont = NULL;
                     g_item.reset();
                 }
@@ -784,45 +777,29 @@ void World::dropItemFromShowcaseOnMap(Player *cp, uint8_t showcase, unsigned cha
         short int new_z = zc;
 
         if (!putItemOnMap(cp, new_x, new_y, new_z)) {
-            std::cout << "Item konnte nicht auf die Karte gelegt werden -> zurcklegen" << std::endl;
-
             if (!putItemInShowcase(cp, showcase, pos)) {
-                std::cerr << "dropItemFromShowcaseOnMap: Datenverlust beim Zurcklegen, Spieler " << cp->name << std::endl;
+                Logger::error(LogFacility::Player) << "dropItemFromShowcaseOnMap failed: item " << g_item.getId() << " lost for " << cp->to_string() << Log::end;
                 g_cont = NULL;
                 g_item.reset();
             }
         } else {
+            cp->checkBurden();
 
             if (script) {
                 script->MoveItemAfterMove(cp, s_item, t_item);
             }
         }
     }
-
-#ifdef World_ItemMove_DEBUG
-    std::cout << "dropItemFromShowcaseOnMap: beendet" << std::endl;
-#endif
 }
 
 
 
 void World::moveItemFromShowcaseToPlayer(Player *cp, uint8_t showcase, unsigned char pos, unsigned char cpos, Item::number_type count) {
-#ifdef World_ItemMove_DEBUG
-    std::cout << "moveItemFromShowcaseToPlayer: Spieler " << cp->name << " nimmt ein Item auf\n"
-              << "showcase: " << (short int) showcase << " from position: " << (short int) pos << " to position: " << (short int) cpos << std::endl;
-#endif
-
     if (count == 0) {
         return;
     }
 
     if (takeItemFromShowcase(cp, showcase, pos, count)) {
-#ifdef World_ItemMove_DEBUG
-        std::cout << "Item genommen" << std::endl;
-#endif
-
-        //Ausfhren eines MoveItemScripts
-        //Erzeugen von source und TargetItem
         ScriptItem s_item = g_item, t_item = g_item;
         s_item.pos = cp->pos;
         s_item.itempos = pos;
@@ -839,13 +816,12 @@ void World::moveItemFromShowcaseToPlayer(Player *cp, uint8_t showcase, unsigned 
         }
 
         t_item.owner = cp;
-        //Ende Erzeugen von Source und Target Item
         std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(t_item.getId());
 
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item,t_item)) {
                 if (!putItemInShowcase(cp, showcase, pos)) {
-                    std::cerr<<"MoveItemFromShowcaseToPlayer wurde von Script unterbunden. Datenverlust beim zurcklegen! Spieler: "<<cp->name<<std::endl;
+                    Logger::error(LogFacility::Player) << "moveItemFromShowcaseToPlayer failed: item " << g_item.getId() << " lost for " << cp->to_string() << Log::end;
                     g_cont = NULL;
                     g_item.reset();
                 }
@@ -870,40 +846,27 @@ void World::moveItemFromShowcaseToPlayer(Player *cp, uint8_t showcase, unsigned 
                 if (script) {
                     script->MoveItemAfterMove(cp, s_item, t_item);
                 }
-
-                //Ende des SCripte nach erfolgreichen ausfhren des Moves.
             }
         }
 
         if (NOK) {
             if (!putItemInShowcase(cp, showcase, pos)) {
-                std::cerr << "moveItemFromShowcaseToPlayer: Datenverlust beim Zurcklegen, Spieler " << cp->name << std::endl;
+                Logger::error(LogFacility::Player) << "moveItemFromShowcaseToPlayer failed: item " << g_item.getId() << " lost for " << cp->to_string() << Log::end;
                 g_cont = NULL;
                 g_item.reset();
             }
         }
     }
-
-#ifdef World_ItemMove_DEBUG
-    std::cout << "moveItemFromShowcaseToPlayer: Ende" << std::endl;
-#endif
 }
 
 
 
 void World::dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, short int xc, short int yc, short int zc, Item::number_type count) {
-#ifdef World_ItemMove_DEBUG
-    std::cout << "dropItemFromPlayerOnMap: Spieler " << cp->name << " wirft ein Item auf die Karte" << std::endl;
-#endif
-
     if (count == 0) {
         return;
     }
 
-    //CommonStruct com;
     if (takeItemFromInvPos(cp, cpos, count)) {
-        std::cout << "dropItemFromPlayerOnMap Item genommen" << std::endl;
-        //Ausfhren eines MoveItemScripts
         ScriptItem s_item = g_item, t_item = g_item;
         s_item.pos = cp->pos;
 
@@ -922,9 +885,8 @@ void World::dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, short int xc
 
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
-                //std::cout<<"Legen des Items vom Spieler auf Karte vom Script unterbunden, zurck legen"<<std::endl;
                 if (!putItemOnInvPos(cp, cpos)) {
-                    std::cerr<<"MoveItemFromPlayerOnMap wurde von Script unterbunden. Datenverlust beim zurcklegen! Spieler: "<<cp->name<<std::endl;
+                    Logger::error(LogFacility::Player) << "dropItemFromPlayerOnMap failed: item " << g_item.getId() << " lost for " << cp->to_string() << Log::end;
                     g_cont = NULL;
                     g_item.reset();
                 }
@@ -938,71 +900,52 @@ void World::dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, short int xc
         short int new_z = zc;
 
         if (!putItemOnMap(cp, new_x, new_y, new_z)) {
-            std::cout << "Item konnte nicht auf die Karte gelegt werden -> zurcklegen" << std::endl;
-
             if (!putItemOnInvPos(cp, cpos)) {
-                std::cerr << "dropItemFromPlayerOnMap: Datenverlust beim Zurcklegen, Spieler " << cp->name << std::endl;
+                Logger::error(LogFacility::Player) << "dropItemFromPlayerOnMap failed: item " << g_item.getId() << " lost for " << cp->to_string() << Log::end;
                 g_cont = NULL;
                 g_item.reset();
             }
-        } else if (script) {
-            script->MoveItemAfterMove(cp, s_item, t_item);
+        } else {
+            cp->checkBurden();
+            
+            if (script) {
+                script->MoveItemAfterMove(cp, s_item, t_item);
+            }
         }
 
     }
-
-#ifdef World_ItemMove_DEBUG
-    std::cout << "dropItemFromPlayerOnMap: Ende" << std::endl;
-#endif
 }
 
 
 
 void World::dropItemFromMonsterOnMap(Monster *cm, unsigned char cpos, char xo, char yo, char zo, Item::number_type count) {
-#ifdef World_ItemMove_DEBUG
-    std::cout << "dropItemFromMonsterOnMap: Monster " << cm->name << " wirft ein Item auf die Karte" << std::endl;
-#endif
-
     if (count == 0) {
         return;
     }
 
-    if (takeItemFromInvPos(cm, cpos, count)) {          // take item from monster position
-        std::cout << "Item genommen" << std::endl;
-        short int new_x = cm->pos.x + xo;               // select coordinates for item to drop
+    if (takeItemFromInvPos(cm, cpos, count)) {
+        short int new_x = cm->pos.x + xo;
         short int new_y = cm->pos.y + yo;
         short int new_z = cm->pos.z + zo;
 
-        if (!putItemOnMap(cm, new_x, new_y, new_z)) {      // put item there
-            std::cout << "Item konnte nicht auf die Karte gelegt werden -> zurcklegen" << std::endl;
-
+        if (!putItemOnMap(cm, new_x, new_y, new_z)) {
             if (!putItemOnInvPos(cm, cpos)) {
-                std::cerr << "dropItemFromMonsterOnMap: Datenverlust beim Zurcklegen, Monster " << cm->name << std::endl;
+                Logger::error(LogFacility::World) << "dropItemFromMonsterOnMap failed: item " << g_item.getId() << " lost for " << cm->to_string() << Log::end;
                 g_cont = NULL;
                 g_item.reset();
             }
         }
     }
-
-#ifdef World_ItemMove_DEBUG
-    std::cout << "dropItemFromMonsterOnMap: Ende" << std::endl;
-#endif
 }
 
 
 
 void World::moveItemBetweenBodyParts(Player *cp, unsigned char opos, unsigned char npos, Item::number_type count) {
-#ifdef World_ItemMove_DEBUG
-    std::cout << "moveItemBetweenBodyParts: Spieler " << cp->name << " verschiebt ein Item" << std::endl;
-#endif
-
-    //CommonStruct com;
     if (count == 0) {
         return;
     }
 
     if (takeItemFromInvPos(cp, opos, count)) {
-        std::cout << "Item genommen" << std::endl;
         ScriptItem s_item = g_item, t_item = g_item;
         s_item.owner = cp;
         s_item.pos = cp->pos;
@@ -1029,7 +972,7 @@ void World::moveItemBetweenBodyParts(Player *cp, unsigned char opos, unsigned ch
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
                 if (!putItemOnInvPos(cp, opos)) {
-                    std::cerr<<"MoveItemFromPlayerOnMap wurde von Script unterbunden. Datenverlust beim zurcklegen! Spieler: "<<cp->name<<std::endl;
+                    Logger::error(LogFacility::Player) << "moveItemBetweenBodyParts failed: item " << g_item.getId() << " lost for " << cp->to_string() << Log::end;
                     g_cont = NULL;
                     g_item.reset();
                 }
@@ -1039,41 +982,27 @@ void World::moveItemBetweenBodyParts(Player *cp, unsigned char opos, unsigned ch
         }
 
         if (!putItemOnInvPos(cp, npos)) {
-            std::cout << "Item konnte nicht verschoben werden -> zurcklegen" << std::endl;
-
             if (!putItemOnInvPos(cp, opos)) {
-                std::cerr << "moveItemBetweenBodyParts: Datenverlust beim Zurcklegen, Spieler " << cp->name << std::endl;
+                Logger::error(LogFacility::Player) << "moveItemBetweenBodyParts failed: item " << g_item.getId() << " lost for " << cp->to_string() << Log::end;
                 g_cont = NULL;
                 g_item.reset();
             }
         } else {
-            // if (com.script) com.script->MoveItemAfterMove(cp, s_item, t_item);
             if (script) {
                 script->MoveItemAfterMove(cp, s_item, t_item);
             }
         }
     }
-
-#ifdef World_ItemMove_DEBUG
-    std::cout << "moveItemBetweenBodyParts: Ende" << std::endl;
-#endif
 }
 
 
 
 void World::moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, uint8_t showcase, unsigned char pos, Item::number_type count) {
-#ifdef World_ItemMove_DEBUG
-    std::cout << "moveItemFromPlayerIntoShowcase: Spieler " << cp->name << " verschiebt Item von der Karte in ein showcase" << std::endl;
-#endif
-    //  CommonStruct com;
-
     if (count == 0) {
         return;
     }
 
     if (takeItemFromInvPos(cp, cpos, count)) {
-        std::cout << "Item genommen" << std::endl;
-        //Ausfhren eines Move Item Scriptes
         ScriptItem s_item = g_item, t_item = g_item;
 
         if (cpos < MAX_BODY_ITEMS) {
@@ -1096,7 +1025,7 @@ void World::moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, uint8
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
                 if (!putItemOnInvPos(cp, cpos)) {
-                    std::cerr<<"MoveItemFromPlayerOnMap wurde von Script unterbunden. Datenverlust beim zurcklegen! Spieler: "<<cp->name<<std::endl;
+                    Logger::error(LogFacility::Player) << "moveItemFromPlayerIntoShowcase failed: item " << g_item.getId() << " lost for " << cp->to_string() << Log::end;
                     g_cont = NULL;
                     g_item.reset();
                 }
@@ -1106,32 +1035,24 @@ void World::moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, uint8
         }
 
         if (!putItemInShowcase(cp, showcase, pos)) {
-            std::cout << "Item konnte nicht eingefgt werden -> zurcklegen" << std::endl;
-
             if (!putItemOnInvPos(cp, cpos)) {
-                std::cerr << "moveItemFromPlayerIntoShowcase: Datenverlust beim Zurcklegen, Spieler " << cp->name << std::endl;
+                Logger::error(LogFacility::Player) << "moveItemFromPlayerIntoShowcase failed: item " << g_item.getId() << " lost for " << cp->to_string() << Log::end;
                 g_cont = NULL;
                 g_item.reset();
             }
         } else {
+            cp->checkBurden();
+
             if (script) {
                 script->MoveItemAfterMove(cp, s_item, t_item);
             }
         }
     }
-
-#ifdef World_ItemMove_DEBUG
-    std::cout << "moveItemFromPlayerIntoShowcase: Ende" << std::endl;
-#endif
 }
 
 
 
 void World::moveItemFromMapIntoShowcase(Player *cp, char direction, uint8_t showcase, unsigned char pos, Item::number_type count) {
-#ifdef World_ItemMove_DEBUG
-    std::cout << "moveItemFromMapIntoShowcase: Spieler " << cp->name << " verschiebt Item von der Karte in ein showcase" << std::endl;
-#endif
-
     if (count == 0) {
         return;
     }
@@ -1142,7 +1063,6 @@ void World::moveItemFromMapIntoShowcase(Player *cp, char direction, uint8_t show
         short int old_z = cp->pos.z + moveSteps[(int)direction ][ 2 ];
 
         if (takeItemFromMap(cp, old_x, old_y, old_z)) {
-            std::cout << "Item genommen" << std::endl;
             ScriptItem s_item = g_item, t_item = g_item;
             s_item.pos = position(old_x, old_y, old_z);
             s_item.type = ScriptItem::it_field;
@@ -1153,13 +1073,12 @@ void World::moveItemFromMapIntoShowcase(Player *cp, char direction, uint8_t show
             t_item.itempos = pos;
             t_item.owner = cp;
 
-            //Ausfhren eines Move Item Scriptes
             std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(t_item.getId());
 
             if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
                 if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
                     if (!putItemOnMap(cp, old_x, old_y, old_z)) {
-                        std::cerr<<"MoveItemFromMapIntoShowcase wurde von Script unterbunden. Datenverlust beim zurcklegen! Spieler: "<<cp->name<<std::endl;
+                        Logger::error(LogFacility::Player) << "moveItemFromMapIntoShowcase failed: item " << g_item.getId() << " lost for " << cp->to_string() << Log::end;
                         g_cont = NULL;
                         g_item.reset();
                     }
@@ -1171,7 +1090,6 @@ void World::moveItemFromMapIntoShowcase(Player *cp, char direction, uint8_t show
             Item tempitem = g_item;
 
             if (count < g_item.getNumber()) {
-                std::cout << "nicht alles verschieben" << std::endl;
                 g_item.setNumber(count);
             }
 
@@ -1185,23 +1103,20 @@ void World::moveItemFromMapIntoShowcase(Player *cp, char direction, uint8_t show
             if (!NOK) {
                 if (!putItemInShowcase(cp, showcase,pos)) {
                     NOK =true;
+                } else {
+                    cp->checkBurden();
+
+                    if (script) {
+                        script->MoveItemAfterMove(cp, s_item, t_item);
+                    }
                 }
-
-                cp->checkBurden();
-
-                if (script) {
-                    script->MoveItemAfterMove(cp, s_item, t_item);
-                }
-
-
             }
 
             if (NOK) {
-                std::cout << "Item konnte nicht eingefgt werden -> zurcklegen" << std::endl;
                 g_item = tempitem;
 
                 if (!putItemOnMap(cp, old_x, old_y, old_z)) {
-                    std::cerr << "moveItemFromMapIntoShowcase: Datenverlust beim Zurcklegen, Spieler " << cp->name << std::endl;
+                    Logger::error(LogFacility::Player) << "moveItemFromMapIntoShowcase failed: item " << g_item.getId() << " lost for " << cp->to_string() << Log::end;
                     g_cont = NULL;
                     g_item.reset();
                 }
@@ -1214,7 +1129,7 @@ void World::moveItemFromMapIntoShowcase(Player *cp, char direction, uint8_t show
                 g_item.setNumber(g_item.getNumber() - count);
 
                 if (!putItemOnMap(cp, old_x, old_y, old_z)) {
-                    std::cerr << "moveItemFromMapIntoShowcase : Datenverlust beim teilweisen Verschieben, Spieler " << cp->name << std::endl;
+                    Logger::error(LogFacility::Player) << "moveItemFromMapIntoShowcase failed: item " << g_item.getId() << " lost for " << cp->to_string() << Log::end;
                     g_cont = NULL;
                     g_item.reset();
                     return;
@@ -1224,22 +1139,11 @@ void World::moveItemFromMapIntoShowcase(Player *cp, char direction, uint8_t show
             return;
         }
     }
-
-#ifdef World_ItemMove_DEBUG
-    std::cout << "moveItemFromMapIntoShowcase: Ende" << std::endl;
-#endif
-
-    return;
-
 }
 
 
 
 void World::moveItemFromMapToPlayer(Player *cp, char direction, unsigned char cpos, Item::number_type count) {
-#ifdef World_ItemMove_DEBUG
-    std::cout << "moveItemFromMapToPlayer: Spieler " << cp->name << " verschiebt Item von der Karte an den Koerper" << std::endl;
-#endif
-
     if (count == 0) {
         return;
     }
@@ -1250,11 +1154,7 @@ void World::moveItemFromMapToPlayer(Player *cp, char direction, unsigned char cp
         short int old_z = cp->pos.z + moveSteps[(int)direction ][ 2 ];
 
         if (takeItemFromMap(cp, old_x, old_y, old_z)) {
-#ifdef World_ItemMove_DEBUG
-            std::cout << "Item genommen" << std::endl;
-#endif
             ScriptItem s_item = g_item, t_item = g_item;
-            //Ausfhren eines Move Item Scriptes
             s_item.pos = position(old_x, old_y, old_z);
             s_item.type = ScriptItem::it_field;
             s_item.owner = cp;
@@ -1273,7 +1173,7 @@ void World::moveItemFromMapToPlayer(Player *cp, char direction, unsigned char cp
             if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
                 if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
                     if (!putItemOnMap(cp, old_x, old_y, old_z)) {
-                        std::cerr<<"MoveItemFromMapToPlayer wurde von Script unterbunden. Datenverlust beim zurcklegen! Spieler: "<<cp->name<<std::endl;
+                        Logger::error(LogFacility::Player) << "moveItemFromMapToPlayer failed: item " << g_item.getId() << " lost for " << cp->to_string() << Log::end;
                         g_cont = NULL;
                         g_item.reset();
                     }
@@ -1285,9 +1185,6 @@ void World::moveItemFromMapToPlayer(Player *cp, char direction, unsigned char cp
             Item tempitem = g_item;
 
             if (count < g_item.getNumber()) {
-#ifdef World_ItemMove_DEBUG
-                std::cout << "nicht alles verschieben" << std::endl;
-#endif
                 g_item.setNumber(count);
             }
 
@@ -1301,23 +1198,20 @@ void World::moveItemFromMapToPlayer(Player *cp, char direction, unsigned char cp
             if (!NOK) {
                 if (!putItemOnInvPos(cp, cpos)) {
                     NOK = true;
-                }
+                } else {
+                    cp->checkBurden();
 
-                cp->checkBurden();
-
-                if (script) {
-                    script->MoveItemAfterMove(cp, s_item, t_item);
+                    if (script) {
+                        script->MoveItemAfterMove(cp, s_item, t_item);
+                    }
                 }
             }
 
             if (NOK) {
-#ifdef World_ItemMove_DEBUG
-                std::cout << "Item konnte nicht eingefgt werden -> zurcklegen" << std::endl;
-#endif
                 g_item = tempitem;
 
                 if (! putItemOnMap(cp, old_x, old_y, old_z)) {
-                    std::cerr << "moveItemFromMapToPlayer: Datenverlust beim Zurcklegen, Spieler " << cp->name << std::endl;
+                    Logger::error(LogFacility::Player) << "moveItemFromMapToPlayer failed: item " << g_item.getId() << " lost for " << cp->to_string() << Log::end;
                     g_cont = NULL;
                     g_item.reset();
                 }
@@ -1330,7 +1224,7 @@ void World::moveItemFromMapToPlayer(Player *cp, char direction, unsigned char cp
                 g_item.setNumber(g_item.getNumber() - count);
 
                 if (!putItemOnMap(cp, old_x, old_y, old_z)) {
-                    std::cerr << "moveItemFromMapToPlayer : Datenverlust beim teilweisen Verschieben, Spieler " << cp->name << std::endl;
+                    Logger::error(LogFacility::Player) << "moveItemFromMapToPlayer failed: item " << g_item.getId() << " lost for " << cp->to_string() << Log::end;
                     g_cont = NULL;
                     g_item.reset();
                     return;
@@ -1340,26 +1234,15 @@ void World::moveItemFromMapToPlayer(Player *cp, char direction, unsigned char cp
             return;
         }
     }
-
-#ifdef World_ItemMove_DEBUG
-    std::cout << "moveItemFromMapToPlayer: Ende" << std::endl;
-#endif
 }
 
 
 void World::moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char pos, uint8_t dest, unsigned char pos2, Item::number_type count) {
-#ifdef World_ItemMove_DEBUG
-    std::cout << "moveItemBetweenShowcases: Spieler " << cp->name << " verschiebt Item zwischen showcases" << std::endl;
-#endif
-
     if (count == 0) {
         return;
     }
 
     if (takeItemFromShowcase(cp, source, pos, count)) {
-#ifdef World_ItemMove_DEBUG
-        std::cout << "Item genommen" << std::endl;
-#endif
         ScriptItem s_item = g_item, t_item = g_item;
         s_item.pos = cp->pos;
         s_item.type = ScriptItem::it_container;
@@ -1371,13 +1254,12 @@ void World::moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char p
         t_item.inside = cp->getShowcaseContainer(dest);
         t_item.itempos = pos2;
         t_item.owner = cp;
-        //Ausfhren eines Move Item Scriptes
         std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(t_item.getId());
 
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
                 if (!putItemInShowcase(cp, dest, pos2)) {
-                    std::cerr<<"MoveItemBetweenShowcases wurde von Script unterbunden. Datenverlust beim zurcklegen! Spieler: "<<cp->name<<std::endl;
+                    Logger::error(LogFacility::Player) << "moveItemBetweenShowcases failed: item " << g_item.getId() << " lost for " << cp->to_string() << Log::end;
                     g_cont = NULL;
                     g_item.reset();
                 }
@@ -1398,39 +1280,27 @@ void World::moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char p
         if (!NOK) {
             if (!putItemInShowcase(cp, dest, pos2)) {
                 NOK=true;
+            } else {
+                cp->checkBurden();
+
+                if (script) {
+                    script->MoveItemAfterMove(cp, s_item, t_item);
+                }
             }
-
-            cp->checkBurden();
-
-            if (script) {
-                script->MoveItemAfterMove(cp, s_item, t_item);
-            }
-
         }
 
         if (NOK) {
-            std::cout << "Item konnte nicht eingefgt werden -> zurcklegen" << std::endl;
-
             if (! putItemInShowcase(cp, source, pos)) {
-                std::cerr << "moveItemBetweenShowcases: Datenverlust beim Zurcklegen, Spieler " << cp->name << std::endl;
+                Logger::error(LogFacility::Player) << "moveItemBetweenShowcases failed: item " << g_item.getId() << " lost for " << cp->to_string() << Log::end;
                 g_cont = NULL;
                 g_item.reset();
             }
         }
     }
-
-#ifdef World_ItemMove_DEBUG
-    std::cout << "moveItemBetweenShowcases: Ende" << std::endl;
-#endif
 }
 
 
 bool World::moveItem(Character *cc, unsigned char d, short int xc, short int yc, short int zc, Item::number_type count) {
-#ifdef World_ItemMove_DEBUG
-    std::cout << "moveItem: Character " << cc->name << " bewegt Item" << std::endl;
-#endif
-
-    //CommonStruct com;
     if (count == 0) {
         return false;
     }
@@ -1453,13 +1323,12 @@ bool World::moveItem(Character *cc, unsigned char d, short int xc, short int yc,
             t_item.type = ScriptItem::it_field;
             t_item.owner = cc;
 
-            //Ausfhren eines Move Item Scriptes
             std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(t_item.getId());
 
             if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
                 if (!script->MoveItemBeforeMove(cc, s_item, t_item)) {
                     if (!putItemOnMap(cc, old_x, old_y, old_z)) {
-                        std::cerr<<"MoveItemOnMap wurde von Script unterbunden. Datenverlust beim zurcklegen! Spieler: "<<cc->name<<std::endl;
+                        Logger::error(LogFacility::Player) << "moveItem failed: item " << g_item.getId() << " lost for " << cc->to_string() << Log::end;
                         g_cont = NULL;
                         g_item.reset();
                     }
@@ -1478,7 +1347,7 @@ bool World::moveItem(Character *cc, unsigned char d, short int xc, short int yc,
                 g_item = tempitem;
 
                 if (!putItemOnMap(cc, old_x, old_y, old_z)) {
-                    std::cerr << "moveitem (Map-Map): Datenverlust beim Zurcklegen, Character " << cc->name << std::endl;
+                    Logger::error(LogFacility::Player) << "moveItem failed: item " << g_item.getId() << " lost for " << cc->to_string() << Log::end;
                     g_cont = NULL;
                     g_item.reset();
                 }
@@ -1491,7 +1360,7 @@ bool World::moveItem(Character *cc, unsigned char d, short int xc, short int yc,
                 g_item.setNumber(g_item.getNumber() - count);
 
                 if (!putItemOnMap(cc, old_x, old_y, old_z)) {
-                    std::cerr << "moveitem (Map-Map): Datenverlust beim teilweisen Verschieben, Character " << cc->name << std::endl;
+                    Logger::error(LogFacility::Player) << "moveItem failed: item " << g_item.getId() << " lost for " << cc->to_string() << Log::end;
                     g_cont = NULL;
                     g_item.reset();
                 }
@@ -1507,99 +1376,54 @@ bool World::moveItem(Character *cc, unsigned char d, short int xc, short int yc,
 
         }
     }
-
-#ifdef World_ItemMove_DEBUG
-    std::cout << "moveItem: Ende" << std::endl;
-#endif
-
+    
     return false;
-
 }
 
 
-
 void World::lookIntoShowcaseContainer(Player *cp, uint8_t showcase, unsigned char pos) {
-#ifdef World_ItemMove_DEBUG
-    std::cout << "lookIntoShowcaseContainer: Spieler " << cp->name << " oeffnet einen Container im showcase" << std::endl;
-#endif
-
     if ((cp != NULL) && cp->isShowcaseOpen(showcase)) {
         Container *top = cp->getShowcaseContainer(showcase);
         bool allowedToOpenContainer = false;
 
-//Loop through all depots if ps is a depot if yes is depot set to true
         std::map<uint32_t,Container *>::iterator it;
 
-        for (it = cp->depotContents.begin(); it != cp->depotContents.end(); ++it) {
-            if (it->second == top) {
+        for (const auto &depot : cp->depotContents) {
+            if (depot.second == top) {
                 allowedToOpenContainer = true;
                 break;
             }
         }
-
-//end of loop through all the depots
-
 
         if (top != NULL && allowedToOpenContainer) {
             Container *tempc;
             ScriptItem tempi;
 
             if (top->viewItemNr(pos, tempi, tempc)) {
-#ifdef World_ItemMove_DEBUG
-                std::cout << "pos gefunden" << std::endl;
-#endif
-
                 if (tempc != NULL) {
-#ifdef World_ItemMove_DEBUG
-                    std::cout << "Container gefunden" << std::endl;
-#endif
                     cp->openShowcase(tempc, cp->isShowcaseInInventory(showcase));
                 }
             }
         }
     }
-
-#ifdef World_ItemMove_DEBUG
-    std::cout << "lookIntoShowcaseContainer: Ende" << std::endl;
-#endif
 }
 
 
 
 bool World::lookIntoBackPack(Player *cp) {
-    if (cp != NULL) {
-#ifdef World_ItemMove_DEBUG
-        std::cout << "lookIntoBackPack: Spieler " << cp->name << " schaut in seinen Rucksack" << std::endl;
-#endif
-
+    if (cp) {
         if ((cp->characterItems[ BACKPACK ].getId() != 0) && (cp->backPackContents != NULL)) {
-#ifdef World_ItemMove_DEBUG
-            std::cout << "Rucksackinhalt vorhanden" << std::endl;
-#endif
             cp->openShowcase(cp->backPackContents, true);
-#ifdef World_ItemMove_DEBUG
-            std::cout << "lookIntoBackPack: Ende" << std::endl;
-#endif
             return true;
         }
     }
 
-#ifdef World_ItemMove_DEBUG
-    std::cout << "lookIntoBackPack: Ende" << std::endl;
-#endif
     return false;
 }
 
 
 bool World::lookIntoContainerOnField(Player *cp, char direction) {
-
-
-#ifdef World_ItemMove_DEBUG
-    std::cout << "lookIntoContainerOnField: Spieler " << cp->name << " schaut in einen Container" << std::endl;
-#endif
-
     if ((direction < 11) && (cp != NULL)) {
-        // Position des Item
         short int old_x = moveSteps[(int)direction ][ 0 ] + cp->pos.x;
         short int old_y = moveSteps[(int)direction ][ 1 ] + cp->pos.y;
         short int old_z = moveSteps[(int)direction ][ 2 ] + cp->pos.z;
@@ -1607,57 +1431,25 @@ bool World::lookIntoContainerOnField(Player *cp, char direction) {
         Field *cfold;
 
         if (GetPToCFieldAt(cfold, old_x, old_y, old_z, tmap)) {
-#ifdef World_ItemMove_DEBUG
-            std::cout << "Feld vorhanden" << std::endl;
-#endif
             Item titem;
 
             if (cfold->ViewTopItem(titem)) {
-#ifdef World_ItemMove_DEBUG
-                std::cout << "mindesten 1 Item vorhanden" << std::endl;
-#endif
-
                 if (titem.getId() != DEPOTITEM && titem.isContainer()) {
-#ifdef World_ItemMove_DEBUG
-                    std::cout << "item ist ein Container" << std::endl;
-#endif
                     MAP_POSITION opos;
                     opos.x = old_x;
                     opos.y = old_y;
                     Map::CONTAINERHASH::iterator conmapo = tmap->maincontainers.find(opos);
 
                     if (conmapo != tmap->maincontainers.end()) {
-#ifdef World_ItemMove_DEBUG
-                        std::cout << "containermap fr das Feld gefunden" << std::endl;
-#endif
                         Container::CONTAINERMAP::iterator iv = (*conmapo).second.find(titem.getNumber());
 
                         if (iv != (*conmapo).second.end()) {
-#ifdef World_ItemMove_DEBUG
-                            std::cout << "der Inhalt des angegebenen Items mit der id titem.number wurde gefunden" << std::endl;
-#endif
                             cp->openShowcase((*iv).second, false);
-
-#ifdef World_ItemMove_DEBUG
-                            std::cout << "lookIntoContainerOnField: Ende 1" << std::endl;
-#endif
                             return true;
-                        } else {
-#ifdef World_ItemMove_DEBUG
-                            std::cout << "lookIntoContainerOnField: kein Containerinhalt vorhanden" << std::endl;
-#endif
-
                         }
-                    } else {
-#ifdef World_ItemMove_DEBUG
-                        std::cout << "lookIntoContainerOnField: kein Container vorhanden" << std::endl;
-#endif
-
                     }
                 } else {
-                    // check if we got a depot there...
                     if (titem.getId() == DEPOTITEM) {
-                        //titem.data + 1 so no 0 depot is used.
                         if (depotScript && depotScript->existsEntrypoint("onOpenDepot")) {
                             if (depotScript->onOpenDepot(cp, titem)) {
                                 cp->openDepot(titem.getDepot());
@@ -1665,136 +1457,98 @@ bool World::lookIntoContainerOnField(Player *cp, char direction) {
                         } else {
                             cp->openDepot(titem.getDepot());
                         }
-
-                        //lookIntoDepot(cp, showcase);
                     } else {
-#ifdef World_ItemMove_DEBUG
-                        std::cout << "lookIntoContainerOnField: das oberste Item ist kein Container" << std::endl;
-#endif
 
                     }
-
                 }
             }
         }
     }
 
-#ifdef World_ItemMove_DEBUG
-    std::cout << "lookIntoContainerOnField: Ende 2" << std::endl;
-#endif
     return false;
 }
 
 
 
 void World::closeContainerInShowcase(Player *cp, uint8_t showcase) {
-    if (cp != NULL) {
-#ifdef World_ItemMove_DEBUG
-        std::cout << "closeContainerInShowcase: Spieler " << cp->name << " schliesst einen Container" << std::endl;
-#endif
+    if (cp) {
         cp->closeShowcase(showcase);
     }
-
-#ifdef World_ItemMove_DEBUG
-    std::cout << "closeContainerInShowcase: Ende" << std::endl;
-#endif
 }
 
 
 void World::sendRemoveItemFromMapToAllVisibleCharacters(TYPE_OF_ITEM_ID id, short int xo, short int yo, short int zo, Field *cfp) {
-    if (cfp != NULL) {
-        std::vector < Player * > temp = Players.findAllCharactersInScreen(xo, yo, zo);
-
-        std::vector < Player * > ::iterator titerator;
-
-        for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
-            // cfp->SetLevel( zoffs ); // DEAD_CODE ???
+    if (cfp) {
+        for (const auto &player : Players.findAllCharactersInScreen(xo, yo, zo)) {
             boost::shared_ptr<BasicServerCommand>cmd(new ItemRemoveTC(xo, yo, zo));
-            (*titerator)->Connection->addCommand(cmd);
+            player->Connection->addCommand(cmd);
         }
     }
 }
 
 
 void World::sendSwapItemOnMapToAllVisibleCharacter(TYPE_OF_ITEM_ID id, short int xn, short int yn, short int zn, Item &it, Field *cfp) {
-    if (cfp != NULL) {
+    if (cfp) {
         std::vector < Player * > temp = Players.findAllCharactersInScreen(xn, yn, zn);
 
         std::vector < Player * > ::iterator titerator;
 
-        for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
-            std::cout<<"adding swap to "<<(*titerator)->name<<"("<<(*titerator)->id<<")"<<std::endl;
+        for (const auto &player : Players.findAllCharactersInScreen(xn, yn, zn)) {
             boost::shared_ptr<BasicServerCommand>cmd(new ItemSwapTC(xn, yn, zn, id, it));
-            (*titerator)->Connection->addCommand(cmd);
-            std::cout<<"adding swap to "<<(*titerator)->name<<"("<<(*titerator)->id<<") ended."<<std::endl;
-
+            player->Connection->addCommand(cmd);
         }
     }
 }
 
 void World::sendPutItemOnMapToAllVisibleCharacters(short int xn, short int yn, short int zn, Item &it, Field *cfp) {
-    if (cfp != NULL) {
-        std::vector < Player * > temp = Players.findAllCharactersInScreen(xn, yn, zn);
-
-        std::vector < Player * > ::iterator titerator;
-
-        for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
-            // cfp->SetLevel( zoffs ); // DEAD_CODE ???
+    if (cfp) {
+        for (const auto &player : Players.findAllCharactersInScreen(xn, yn, zn)) {
             boost::shared_ptr<BasicServerCommand>cmd(new ItemPutTC(xn, yn, zn, it));
-            (*titerator)->Connection->addCommand(cmd);
+            player->Connection->addCommand(cmd);
         }
     }
 }
 
 
 void World::sendChangesOfContainerContentsCM(Container *cc, Container *moved) {
-    if ((cc != NULL) && (moved != NULL)) {
-        PLAYERVECTOR::iterator titerator;
-
-        for (titerator = Players.begin(); titerator < Players.end(); ++titerator) {
-            (*titerator)->updateShowcase(cc);
-            (*titerator)->closeShowcase(moved);
+    if (cc && moved) {
+        for (const auto &player : Players) {
+            player->updateShowcase(cc);
+            player->closeShowcase(moved);
         }
     }
 }
-
-
 
 void World::sendChangesOfContainerContentsIM(Container *cc) {
-    if (cc != NULL) {
-        PLAYERVECTOR::iterator titerator;
-
-        for (titerator = Players.begin(); titerator < Players.end(); ++titerator) {
-            (*titerator)->updateShowcase(cc);
+    if (cc) {
+        for (const auto &player : Players) {
+            player->updateShowcase(cc);
         }
     }
 }
 
-//! close the showcase for everyone except the person who took it...
 void World::closeShowcaseForOthers(Player *target, Container *moved) {
-    if (moved != NULL) {
+    if (moved) {
         PLAYERVECTOR::iterator titerator;
 
-        for (titerator = Players.begin(); titerator < Players.end(); ++titerator) {
-            if (target == *titerator) {
+        for (const auto &player : Players) {
+            if (target == player) {
                 continue;
             }
 
-            (*titerator)->closeShowcase(moved);
+            player->closeShowcase(moved);
         }
     }
 }
 
 void World::closeShowcaseIfNotInRange(Container *moved, short int x, short int y, short int z) {
-    if (moved != NULL) {
-        PLAYERVECTOR::iterator titerator;
-
-        for (titerator = Players.begin(); titerator < Players.end(); ++titerator) {
-            if (abs(x-(*titerator)->pos.x) <= 1 && abs(y-(*titerator)->pos.y) <= 1 && z == (*titerator)->pos.z) {
+    if (moved) {
+        for (const auto &player : Players) {
+            if (abs(x-player->pos.x) <= 1 && abs(y-player->pos.y) <= 1 && z == player->pos.z) {
                 continue;
             }
 
-            (*titerator)->closeShowcase(moved);
+            player->closeShowcase(moved);
         }
     }
 }

@@ -31,9 +31,9 @@ public:
 
     void addEffect(LongTimeEffect *effect);
     bool find(uint16_t effectid, LongTimeEffect *&effect);
-    bool find(std::string effectname, LongTimeEffect *&effect);
+    bool find(const std::string &effectname, LongTimeEffect *&effect);
     bool removeEffect(uint16_t effectid);
-    bool removeEffect(std::string name);
+    bool removeEffect(const std::string &name);
     bool removeEffect(LongTimeEffect *effect);
 
     void push_backEffect(LongTimeEffect *effect);

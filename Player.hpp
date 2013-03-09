@@ -163,7 +163,7 @@ public:
     const std::string &nls(const std::string &german, const std::string &english) const;
     void checkBurden();
 
-    virtual bool pageGM(std::string ticket) override;
+    virtual bool pageGM(const std::string &ticket) override;
 
     // send a char appearance; always or only if char not yet visible
     void sendCharAppearance(TYPE_OF_CHARACTER_ID id, const boost::shared_ptr<BasicServerCommand> &appearance, bool always);
@@ -194,14 +194,14 @@ public:
     *<b>Lua: [:changeSource]</b>
     *@param sI source is a item the new item
     */
-    inline virtual void changeSource(ScriptItem sI) override;
+    inline virtual void changeSource(const ScriptItem &sI) override;
 
     /**
     *changes the Source of the last action for this player.
     *<b>Lua: [:changeSource]</b>
     *@param pos source is a position the new position
     */
-    inline virtual void changeSource(position pos) override;
+    inline virtual void changeSource(const position &pos) override;
 
     /**
     *changes the Source of the last action to nothing for this player
@@ -221,14 +221,14 @@ public:
     *<b>Lua: [:changeTarget]</b>
     *@param sI target is a item the new item
     */
-    inline virtual void changeTarget(ScriptItem sI) override;
+    inline virtual void changeTarget(const ScriptItem &sI) override;
 
     /**
     *changes the target of the last action for this player.
     *<b>Lua: [:changeTarget]</b>
     *@param pos Target is a position the new position
     */
-    inline virtual void changeTarget(position pos) override;
+    inline virtual void changeTarget(const position &pos) override;
 
     /**
     *changes the Target of the last action to nothing for this player
@@ -241,7 +241,7 @@ public:
     * <b>Lua: [:idleTime]</b>
     * @return number of seconds the player has been idle
     */
-    virtual uint32_t idleTime() override;
+    virtual uint32_t idleTime() const override;
 
     /**
     * send a book ID to the client
@@ -278,10 +278,6 @@ public:
 
     //Loads the GM Flag of the character
     bool loadGMFlags() throw();
-
-    //! Destruktor
-    ~Player();
-
 
     /**
     * sends one area relative to the current z coordinate to the player
@@ -361,11 +357,7 @@ public:
         sendMagicFlags(magic.type);
     }
 
-    virtual void setInformChar(bool newInformChar) override {
-        informCharacter=newInformChar;
-    }
-
-    virtual std::string getSkillName(TYPE_OF_SKILL_ID s) override;
+    virtual std::string getSkillName(TYPE_OF_SKILL_ID s) const override;
     //! Returns the language which the player specified when creating the Character (german/english)
     virtual Language getPlayerLanguage() const override;
 
@@ -449,43 +441,37 @@ public:
     void startMusic(short int which);
     void defaultMusic();
 
-    bool sendTextInFile(std::string filename);
+    bool sendTextInFile(const std::string &filename);
 
     // Setters and Getters //
-    unsigned char GetStatus();
+    unsigned char GetStatus() const;
     void SetStatus(unsigned char thisStatus);
 
     // What time does the status get reset?
-    time_t GetStatusTime();
+    time_t GetStatusTime() const;
     void SetStatusTime(time_t thisStatustime);
 
     // Who banned/jailed the player?
-    std::string GetStatusGM();
+    std::string GetStatusGM() const;
     void SetStatusGM(TYPE_OF_CHARACTER_ID thisStatusGM);
 
     // Why where they banned/jailed?
-    std::string GetStatusReason();
-    void SetStatusReason(std::string thisStatusreason);
+    std::string GetStatusReason() const;
+    void SetStatusReason(const std::string &thisStatusreason);
 
     // World Map Turtle Graphics
     void setTurtleActive(bool tturtleActive);
-    bool getTurtleActive();
+    bool getTurtleActive() const;
     void setTurtleTile(unsigned char tturtletile);
-    unsigned char getTurtleTile();
+    unsigned char getTurtleTile() const;
 
     // Clipping on/off (default to on)
     void setClippingActive(bool tclippingActive);
-    bool getClippingActive();
+    bool getClippingActive() const;
 
     //Set for Admin state, uin32_t bit flag
     void setAdmin(uint32_t tAdmin);
     virtual bool isAdmin() const override;
-
-    void setEncumberedSent(bool tEncumberedSent);
-    bool wasEncumberedSent();
-
-    void setUnconsciousSent(bool tUnconsciousSent);
-    bool wasUnconsciousSent();
 
     // player gets informed about something
     virtual void inform(const std::string &text, informType type = informServer) const override;
@@ -495,7 +481,7 @@ public:
     virtual void informLua(const std::string &german, const std::string &english, informType type) const override;
 
     // player heard something
-    virtual void receiveText(talk_type tt, std::string message, Character *cc) override;
+    virtual void receiveText(talk_type tt, const std::string &message, Character *cc) override;
 
     bool knows(Player *player) const;
     void getToKnow(Player *player);
@@ -509,15 +495,15 @@ public:
     // \return true if walking possible else false
     bool encumberance(uint16_t &movementCost);
 
-    virtual bool Warp(position newPos) override;
-    virtual bool forceWarp(position newPos) override;
+    virtual bool Warp(const position &newPos) override;
+    virtual bool forceWarp(const position &newPos) override;
 
     void openDepot(uint16_t depotid);
 
     virtual void setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS progress) override;
     void sendQuestProgress(TYPE_OF_QUEST_ID questId, TYPE_OF_QUESTSTATUS progress);
     void sendCompleteQuestProgress();
-    virtual TYPE_OF_QUESTSTATUS getQuestProgress(TYPE_OF_QUEST_ID questid, int &time) throw() override;
+    virtual TYPE_OF_QUESTSTATUS getQuestProgress(TYPE_OF_QUEST_ID questid, int &time) const override;
 
 #ifdef _PLAYER_AUTO_SAVE_
     void checkSave();
@@ -548,7 +534,7 @@ private:
     }
 
     template<class DialogType>
-    std::shared_ptr<DialogType> getDialog(unsigned int dialogId) {
+    std::shared_ptr<DialogType> getDialog(unsigned int dialogId) const {
         try {
             return std::dynamic_pointer_cast<DialogType>(dialogs.at(dialogId));
         } catch (std::out_of_range &e) {
@@ -626,9 +612,17 @@ private:
 
     bool questWriteLock;
 
-    bool encumberedSent;
+    int relativeLoad() const;
 
-    bool unconsciousSent;
+    enum class LoadLevel {
+        unburdened,
+        burdened,
+        overtaxed
+    };
+
+    LoadLevel loadLevel = LoadLevel::unburdened;
+
+    LoadLevel loadFactor() const;
 
     bool monitoringClient;
 

@@ -37,86 +37,58 @@ MonitoringClients::~MonitoringClients() {
 }
 
 void MonitoringClients::clientConnect(Player *player) {
-#ifdef _MONITORINGCLIENTS_DEBUG
-    std::cout<<"a new client connects ( "<< player->name<<" )"<<std::endl;
-#endif
-    Logger::info(LogFacility::Admin) << "New BBIWI Client connects: " << player->name << " active clients online: " << client_list.size() << Log::end;
+    Logger::info(LogFacility::Admin) << "New BBIWI Client connects: " << player->to_string() << "; active clients online: " << client_list.size() << Log::end;
     //create new Monitoring Client
     client_list.push_back(player); /*<add a new client to the list*/
     //setup the keepalive
     time(&(player->lastkeepalive));
     //Send all player infos to the new connected client
-    ccharactervector < Player * >::iterator pIterator;
 
-    for (pIterator = _world->Players.begin(); pIterator != _world->Players.end(); ++pIterator) {
-        boost::shared_ptr<BasicServerCommand>cmd(new BBPlayerTC((*pIterator)->id, (*pIterator)->name, (*pIterator)->pos.x, (*pIterator)->pos.y, (*pIterator)->pos.z));
+    for (const auto &p : _world->Players) {
+        boost::shared_ptr<BasicServerCommand>cmd(new BBPlayerTC(p->getId(), p->getName(), p->pos.x, p->pos.y, p->pos.z));
         player->Connection->addCommand(cmd);
-        cmd.reset(new BBSendAttribTC((*pIterator)->id, "hitpoints", (*pIterator)->increaseAttrib("hitpoints",0)));
+        cmd.reset(new BBSendAttribTC(p->getId(), "hitpoints", p->increaseAttrib("hitpoints",0)));
         player->Connection->addCommand(cmd);
-        cmd.reset(new BBSendAttribTC((*pIterator)->id, "mana", (*pIterator)->increaseAttrib("mana",0)));
+        cmd.reset(new BBSendAttribTC(p->getId(), "mana", p->increaseAttrib("mana",0)));
         player->Connection->addCommand(cmd);
-        cmd.reset(new BBSendAttribTC((*pIterator)->id, "foodlevel", (*pIterator)->increaseAttrib("foodlevel",0)));
+        cmd.reset(new BBSendAttribTC(p->getId(), "foodlevel", p->increaseAttrib("foodlevel",0)));
         player->Connection->addCommand(cmd);
     }
-
-#ifdef _MONITORINGCLIENTS_DEBUG
-    std::cout<<"connection sucessfully ( "<< player->name<<" )"<<std::endl;
-#endif
 }
 
 void MonitoringClients::sendCommand(boost::shared_ptr<BasicServerCommand> command) {
-    std::list<Player *>::iterator iterator;
-
-    //Loop through all onl clients
-    for (iterator = client_list.begin(); iterator != client_list.end(); ++iterator) {
-        //Send this command to all players
-        (*iterator)->Connection->addCommand(command);
+    for (const auto &client : client_list) {
+        client->Connection->addCommand(command);
     }
-
 }
 
 
 void MonitoringClients::CheckClients() {
-    std::list<Player *>::iterator iterator;
+    for (auto it = client_list.begin(); it != client_list.end(); ++it) {
+        time_t thetime;
+        time(&thetime);
 
-    if (!client_list.empty()) {
-        for (iterator = client_list.begin(); iterator != client_list.end(); ++iterator) {
-            time_t thetime;
-            time(&thetime);
+        if ((*it)->Connection->online) {
+            time_t tempkeepalive;
+            time(&tempkeepalive);
+            int temptime;
+            temptime = tempkeepalive - (*it)->lastkeepalive;
 
-            //sendCommand( new SendMessageTS("CheckClients begin " + Logger::toString(thetime),0));
-            if ((*iterator)->Connection->online) {
-                /**
-                * get the current time
-                */
-                time_t tempkeepalive;
-                time(&tempkeepalive);
-                int temptime;
-                temptime = tempkeepalive - (*iterator)->lastkeepalive;
-
-                //check if we have a timeout
-                if ((temptime >= 0) && (temptime < 20)) {
-                    (*iterator)->workoutCommands();
-                } else {
-                    //timeout so we have to disconnect
-                    Logger::info(LogFacility::Admin) << "BBIWI Client Timed out: " << (*iterator)->name << Log::end;
-                    (*iterator)->Connection->closeConnection();
-                }
+            //check if we have a timeout
+            if ((temptime >= 0) && (temptime < 20)) {
+                (*it)->workoutCommands();
             } else {
-                std::cout<<(*iterator)->name<<" connection inactive!"<<std::endl;
-                PlayerManager::get()->getLogOutPlayers().non_block_push_back((*iterator));
-                iterator = client_list.erase(iterator);
-                --iterator;
-                std::cout<<"added him to lostplayers!"<<std::endl;
+                //timeout so we have to disconnect
+                Logger::info(LogFacility::Admin) << "BBIWI Client timed out: " << (*it)->to_string() << Log::end;
+                (*it)->Connection->closeConnection();
             }
-
-            time(&thetime);
-            //sendCommand( new SendMessageTS("CheckClients end " + Logger::toString(thetime),0));
-
+        } else {
+            PlayerManager::get()->getLogOutPlayers().non_block_push_back(*it);
+            it = client_list.erase(it);
+            --it;
         }
 
+        time(&thetime);
     }
 }
-
-
 

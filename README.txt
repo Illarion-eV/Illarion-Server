@@ -17,10 +17,10 @@ Details
 
 Requirements
 
-   GCC 4.7.2
+   GCC 4.7.2 OR clang 3.1
    GNU Make 3.81
    Automake 1.11.6
-   Boost 1.52.0
+   Boost 1.49.0
    PostgreSQL 9.1.7
    libpqxx 3.1
    Lua 5.1.4
@@ -33,7 +33,7 @@ Build
    autoheader
    autoconf
    automake -a -c
-   ./configure
+   ./configure OR ./configure CXX=clang
    make
 
    for non-standard locations of luabind (i.e. in /usr/local/lib and not in /usr/lib)
@@ -44,4 +44,4 @@ Build
    the correct version
      ______________________________________________________________________
 
-   Last modified: Feb 10, 2013
+   Last modified: Mar 06, 2013

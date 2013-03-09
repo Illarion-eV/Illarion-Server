@@ -24,7 +24,7 @@
 #include "CommandFactory.hpp"
 
 
-NetInterface::NetInterface(boost::asio::io_service &io_servicen) : online(false), io_service(io_servicen), socket(io_servicen), inactive(0) {
+NetInterface::NetInterface(boost::asio::io_service &io_servicen) : online(false), socket(io_servicen), inactive(0) {
     cmd.reset();
 }
 

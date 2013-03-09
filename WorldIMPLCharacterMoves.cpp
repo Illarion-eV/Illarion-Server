@@ -53,13 +53,13 @@ bool World::warpMonster(Monster *cm, Field *cfstart) {
 void World::checkFieldAfterMove(Character *cc, Field *cfstart) {
     if (cfstart->HasSpecialItem()) {
 
-        for (auto it = cfstart->items.begin(); it < cfstart->items.end(); ++it) {
-            if (Data::TilesModItems.exists(it->getId())) {
-                const auto &tmod = Data::TilesModItems[it->getId()];
+        for (const auto &item : cfstart->items) {
+            if (Data::TilesModItems.exists(item.getId())) {
+                const auto &tmod = Data::TilesModItems[item.getId()];
 
                 if ((tmod.Modificator & FLAG_SPECIALITEM) != 0) {
 
-                    std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(it->getId());
+                    std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(item.getId());
 
                     if (script) {
                         script->CharacterOnField(cc);
@@ -176,35 +176,26 @@ bool World::spinPlayer(Player *cp, unsigned char d) {
 
 
 void World::sendSpinToAllVisiblePlayers(Character *cc) {
-
-    std::vector < Player * > temp = Players.findAllCharactersInScreen(cc->pos.x, cc->pos.y, cc->pos.z);
-    std::vector < Player * > ::iterator titerator;
-
-    for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
-        boost::shared_ptr<BasicServerCommand>cmd(new PlayerSpinTC(cc->faceto, cc->id));
-        (*titerator)->Connection->addCommand(cmd);
+    for (const auto &p : Players.findAllCharactersInScreen(cc->pos.x, cc->pos.y, cc->pos.z)) {
+        boost::shared_ptr<BasicServerCommand>cmd(new PlayerSpinTC(cc->faceto, cc->getId()));
+        p->Connection->addCommand(cmd);
     }
-
 }
 
 
 void World::sendPassiveMoveToAllVisiblePlayers(Character *ccp) {
-
-    std::vector < Player * > temp = Players.findAllCharactersInScreen(ccp->pos.x, ccp->pos.y, ccp->pos.z);
-
-    std::vector < Player * >::iterator titerator;
     char xoffs;
     char yoffs;
     char zoffs;
 
-    for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
-        xoffs = ccp->pos.x - (*titerator)->pos.x;
-        yoffs = ccp->pos.y - (*titerator)->pos.y;
-        zoffs = ccp->pos.z - (*titerator)->pos.z + RANGEDOWN;
+    for (const auto &p : Players.findAllCharactersInScreen(ccp->pos.x, ccp->pos.y, ccp->pos.z)) {
+        xoffs = ccp->pos.x - p->pos.x;
+        yoffs = ccp->pos.y - p->pos.y;
+        zoffs = ccp->pos.z - p->pos.z + RANGEDOWN;
 
         if ((xoffs != 0) || (yoffs != 0) || (zoffs != RANGEDOWN)) {
-            boost::shared_ptr<BasicServerCommand>cmd(new MoveAckTC(ccp->id, ccp->pos, PUSH, 0));
-            (*titerator)->Connection->addCommand(cmd);
+            boost::shared_ptr<BasicServerCommand>cmd(new MoveAckTC(ccp->getId(), ccp->pos, PUSH, 0));
+            p->Connection->addCommand(cmd);
         }
     }
 
@@ -217,23 +208,19 @@ void World::sendCharacterMoveToAllVisibleChars(Character *cc, unsigned char wait
 }
 
 void World::sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char netid, unsigned char waitpages) {
-    if (!cc->isinvisible) { //Nur wenn Character nicht unsichtbar ist die Bewegung �bertragen
-
-        std::vector < Player * > temp = Players.findAllCharactersInScreen(cc->pos.x, cc->pos.y, cc->pos.z);
-
-        std::vector < Player * > ::iterator titerator;
+    if (!cc->isinvisible) {
         char xoffs;
         char yoffs;
         char zoffs;
 
-        for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
-            xoffs = cc->pos.x - (*titerator)->pos.x;
-            yoffs = cc->pos.y - (*titerator)->pos.y;
-            zoffs = cc->pos.z - (*titerator)->pos.z + RANGEDOWN;
+        for (const auto &p : Players.findAllCharactersInScreen(cc->pos.x, cc->pos.y, cc->pos.z)) {
+            xoffs = cc->pos.x - p->pos.x;
+            yoffs = cc->pos.y - p->pos.y;
+            zoffs = cc->pos.z - p->pos.z + RANGEDOWN;
 
             if ((xoffs != 0) || (yoffs != 0) || (zoffs != RANGEDOWN)) {
-                boost::shared_ptr<BasicServerCommand>cmd(new MoveAckTC(cc->id, cc->pos, netid, waitpages));
-                (*titerator)->Connection->addCommand(cmd);
+                boost::shared_ptr<BasicServerCommand>cmd(new MoveAckTC(cc->getId(), cc->pos, netid, waitpages));
+                p->Connection->addCommand(cmd);
             }
         }
     }
@@ -242,17 +229,12 @@ void World::sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char ne
 
 void World::sendCharacterWarpToAllVisiblePlayers(Character *cc, position oldpos, unsigned char netid) {
     if (!cc->isinvisible) {
-        std::vector < Player * > ::iterator titerator;
+        sendRemoveCharToVisiblePlayers(cc->getId(), oldpos);
 
-        sendRemoveCharToVisiblePlayers(cc->id, oldpos);
-
-        std::vector < Player * > temp;
-        temp = Players.findAllCharactersInScreen(cc->pos.x, cc->pos.y, cc->pos.z);
-
-        for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
-            if (cc != (*titerator)) {
-                boost::shared_ptr<BasicServerCommand> cmd(new MoveAckTC(cc->id, cc->pos, PUSH, 0));
-                (*titerator)->Connection->addCommand(cmd);
+        for (const auto &p : Players.findAllCharactersInScreen(cc->pos.x, cc->pos.y, cc->pos.z)) {
+            if (cc != p) {
+                boost::shared_ptr<BasicServerCommand> cmd(new MoveAckTC(cc->getId(), cc->pos, PUSH, 0));
+                p->Connection->addCommand(cmd);
             }
         }
     }
@@ -271,26 +253,22 @@ void World::sendAllVisibleCharactersToPlayer(Player *cp, bool sendSpin) {
 }
 
 
-template< class T >
-void World::sendCharsInVector(std::vector < T * > &vec, Player *cp, bool sendSpin) {
-    typename std::vector < T * > ::iterator titerator;
+template<class T>
+void World::sendCharsInVector(const std::vector<T *> &vec, Player *cp, bool sendSpin) {
     char xoffs;
     char yoffs;
     char zoffs;
-    T *cc;
 
-    for (titerator = vec.begin(); titerator < vec.end(); ++titerator) {
-        cc = *titerator;
-
+    for (const auto &cc : vec) {
         if (!cc->isinvisible) {
             xoffs = cc->pos.x - cp->pos.x;
             yoffs = cc->pos.y - cp->pos.y;
             zoffs = cc->pos.z - cp->pos.z + RANGEDOWN;
 
             if ((xoffs != 0) || (yoffs != 0) || (zoffs != RANGEDOWN)) {
-                boost::shared_ptr<BasicServerCommand>cmd(new MoveAckTC(cc->id, cc->pos, PUSH, 0));
+                boost::shared_ptr<BasicServerCommand>cmd(new MoveAckTC(cc->getId(), cc->pos, PUSH, 0));
                 cp->Connection->addCommand(cmd);
-                cmd.reset(new PlayerSpinTC(cc->faceto, cc->id));
+                cmd.reset(new PlayerSpinTC(cc->faceto, cc->getId()));
 
                 if (sendSpin) {
                     cp->Connection->addCommand(cmd);
@@ -440,22 +418,4 @@ bool World::removeWarpField(position where) {
 
     return false;
 }
-
-/*
-bool World::findWarpFieldTarget( position where, const position & target ) {
-
-#ifdef Map_DEBUG
-    std::cout << "findWarpField: x: " << where.x << " y: " << where.y << " z: " << where.z << "\n";
-#endif
-
-    POSITIONHASH::iterator temp = warpfields.find( where );
-    if ( warpfields.end() != temp ) {
-        target = ( *temp ).second;
-        return true;
-    }
-
-    return false;
-
-}
-*/
 

@@ -35,7 +35,7 @@ uint32_t Monster::counter = 0;
 Monster::Monster(const TYPE_OF_CHARACTER_ID &type, const position &newpos, SpawnPoint *spawnpoint) throw(unknownIDException)
     : Character(),lastTargetPosition(position(0,0,0)),lastTargetSeen(false), spawn(spawnpoint), monstertype(type) {
     character = monster;
-    id = counter++;
+    setId(counter++);
     actionPoints = NP_MAX_AP;
     SetAlive(true);
     setType(type);
@@ -115,7 +115,7 @@ void Monster::setType(const TYPE_OF_CHARACTER_ID &type) throw(unknownIDException
     SetMovement(monsterdef.movement);
     race = monsterdef.race;
     _canAttack = monsterdef.canattack;
-    name = monsterdef.nameEn;
+    setName(monsterdef.nameEn);
     nameDe = monsterdef.nameDe;
 }
 
@@ -187,7 +187,7 @@ void Monster::receiveText(talk_type tt, std::string message, Character *cc) {
     MonsterStruct monStruct;
 
     if (MonsterDescriptions->find(getType(), monStruct)) {
-        if (monStruct.script!=NULL && monStruct.script->existsEntrypoint("receiveText")) {
+        if (monStruct.script && monStruct.script->existsEntrypoint("receiveText")) {
             //Nur Script aufrufen wenn man sich nicht selber h�rt.
             if (this != cc) {
                 monStruct.script->receiveText(this,tt,message,cc);
@@ -199,5 +199,5 @@ void Monster::receiveText(talk_type tt, std::string message, Character *cc) {
 }
 
 std::string Monster::to_string() const {
-    return "Monster of race " + boost::lexical_cast<std::string>((int)race) + "(" + boost::lexical_cast<std::string>(id) + ")";
+    return "Monster of race " + std::to_string((int)race) + "(" + std::to_string(getId()) + ")";
 }

@@ -36,34 +36,24 @@
 
 #include "netinterface/protocol/ServerCommands.hpp"
 
-//Table with data of Monsters
 extern MonsterTable *MonsterDescriptions;
 
 class Field;
 
-//function is quick and dirty, should be replaced later
 void World::deleteAllLostNPC() {
-    Field *tempf; //alte NPC's l?chen
-    NPCVECTOR::iterator npcIteratorOld;
-    std::vector< TYPE_OF_CHARACTER_ID>::iterator npcIteratorToDelete;
+    Field *tempf;
 
-    for (npcIteratorToDelete = LostNpcs.begin(); npcIteratorToDelete != LostNpcs.end(); ++npcIteratorToDelete) {
-        std::cout<<" Delete NPC: "<<(*npcIteratorToDelete)<<std::endl;
+    for (const TYPE_OF_CHARACTER_ID &npcToDelete : LostNpcs) {
+        const auto &npc = Npc.findID(npcToDelete);
 
-        for (npcIteratorOld = Npc.begin(); npcIteratorOld < Npc.end(); ++npcIteratorOld) {
-            if ((*npcIteratorOld)->id == (*npcIteratorToDelete)) {
-                if (GetPToCFieldAt(tempf, (*npcIteratorOld)->pos.x, (*npcIteratorOld)->pos.y, (*npcIteratorOld)->pos.z)) {
-                    //tempf->SetNPCOnField( false );
-                    tempf->removeChar();
-                }
-
-                sendRemoveCharToVisiblePlayers((*npcIteratorOld)->id, (*npcIteratorOld)->pos);
-                delete(*npcIteratorOld);
-                npcIteratorOld = Npc.erase(npcIteratorOld);
+        if (npc) {
+            if (GetPToCFieldAt(tempf, npc->pos.x, npc->pos.y, npc->pos.z)) {
+                tempf->removeChar();
             }
-        }
 
-        std::cout<<" NPC was deleted"<<std::endl;
+            sendRemoveCharToVisiblePlayers(npc->getId(), npc->pos);
+            delete npc;
+        }
     }
 
     LostNpcs.clear();
@@ -71,16 +61,14 @@ void World::deleteAllLostNPC() {
 
 bool World::findPlayersInSight(position pos, uint8_t range, std::vector<Player *> &ret, Character::face_to direction) {
     bool found = false;
-    std::vector<Player *>playersinrange = Players.findAllAliveCharactersInRangeOfOnSameMap(pos.x,pos.y,pos.z,range);
 
-    for (std::vector<Player *>::iterator pIterator = playersinrange.begin(); pIterator != playersinrange.end(); ++pIterator) {
-
+    for (const auto &player : Players.findAllAliveCharactersInRangeOfOnSameMap(pos.x, pos.y, pos.z, range)) {
         bool indir = false;
 
         switch (direction) {
         case Character::north:
 
-            if ((*pIterator)->pos.y <= pos.y) {
+            if (player->pos.y <= pos.y) {
                 indir = true;
             }
 
@@ -88,7 +76,7 @@ bool World::findPlayersInSight(position pos, uint8_t range, std::vector<Player *
 
         case Character::northeast:
 
-            if ((*pIterator)->pos.x - pos.x >= (*pIterator)->pos.y - pos.y) {
+            if (player->pos.x - pos.x >= player->pos.y - pos.y) {
                 indir = true;
             }
 
@@ -96,7 +84,7 @@ bool World::findPlayersInSight(position pos, uint8_t range, std::vector<Player *
 
         case Character::east:
 
-            if ((*pIterator)->pos.x >= pos.x) {
+            if (player->pos.x >= pos.x) {
                 indir = true;
             }
 
@@ -104,7 +92,7 @@ bool World::findPlayersInSight(position pos, uint8_t range, std::vector<Player *
 
         case Character::southeast:
 
-            if ((*pIterator)->pos.y - pos.y >= pos.x - (*pIterator)->pos.x) {
+            if (player->pos.y - pos.y >= pos.x - player->pos.x) {
                 indir = true;
             }
 
@@ -112,7 +100,7 @@ bool World::findPlayersInSight(position pos, uint8_t range, std::vector<Player *
 
         case Character::south:
 
-            if ((*pIterator)->pos.y >= pos.y) {
+            if (player->pos.y >= pos.y) {
                 indir = true;
             }
 
@@ -120,7 +108,7 @@ bool World::findPlayersInSight(position pos, uint8_t range, std::vector<Player *
 
         case Character::southwest:
 
-            if ((*pIterator)->pos.x - pos.x <= (*pIterator)->pos.y - pos.y) {
+            if (player->pos.x - pos.x <= player->pos.y - pos.y) {
                 indir = true;
             }
 
@@ -128,7 +116,7 @@ bool World::findPlayersInSight(position pos, uint8_t range, std::vector<Player *
 
         case Character::west:
 
-            if ((*pIterator)->pos.x <= pos.x) {
+            if (player->pos.x <= pos.x) {
                 indir = true;
             }
 
@@ -136,7 +124,7 @@ bool World::findPlayersInSight(position pos, uint8_t range, std::vector<Player *
 
         case Character::northwest:
 
-            if ((*pIterator)->pos.y - pos.y >= pos.x - (*pIterator)->pos.x) {
+            if (player->pos.y - pos.y >= pos.x - player->pos.x) {
                 indir = true;
             }
 
@@ -148,10 +136,10 @@ bool World::findPlayersInSight(position pos, uint8_t range, std::vector<Player *
         }
 
         if (indir) {
-            std::list<BlockingObject> objects = LoS(pos,(*pIterator)->pos);
+            std::list<BlockingObject> objects = LoS(pos, player->pos);
 
             if (objects.empty()) {
-                ret.push_back((*pIterator));
+                ret.push_back(player);
                 found = true;
             }
         }
@@ -297,10 +285,8 @@ void World::updatePlayerList() {
             insQuery.setServerTable("onlineplayer");
             const InsertQuery::columnIndex column = insQuery.addColumn("on_playerid");
 
-            PLAYERVECTOR::iterator plIterator;
-
-            for (plIterator = Players.begin(); plIterator != Players.end(); ++plIterator) {
-                insQuery.addValue<TYPE_OF_CHARACTER_ID>(column, (*plIterator)->id);
+            for (const auto &player : Players) {
+                insQuery.addValue<TYPE_OF_CHARACTER_ID>(column, player->getId());
             }
 
             insQuery.execute();
@@ -366,47 +352,40 @@ Character *World::findCharacter(TYPE_OF_CHARACTER_ID id) {
 }
 
 
-bool World::findPlayerWithLowestHP(std::vector < Player * > *ppvec, Player *&found) {
-    found = NULL;
-    std::vector < Player * > ::iterator pIterator;
+bool World::findPlayerWithLowestHP(const std::vector<Player *> &ppvec, Player *&found) {
+    found = nullptr;
 
-    for (pIterator = ppvec->begin(); pIterator < ppvec->end(); ++pIterator) {
-        if (found == NULL) {
-            found = *pIterator;
+    for (const auto &player : ppvec) {
+        if (!found) {
+            found = player;
         } else {
-            if (found->getAttribute(Character::hitpoints) > (*pIterator)->getAttribute(Character::hitpoints)) {
-                found = (*pIterator);
+            if (found->getAttribute(Character::hitpoints) > player->getAttribute(Character::hitpoints)) {
+                found = player;
             }
         }
     }
 
-    return (found != NULL);
+    return found;
 }
 
 
 void World::takeMonsterAndNPCFromMap() {
     Field *tempf;
 
-    MONSTERVECTOR::iterator monsterIterator;
-
-    for (monsterIterator = Monsters.begin(); monsterIterator < Monsters.end(); ++monsterIterator) {
-        if (GetPToCFieldAt(tempf, (*monsterIterator)->pos.x, (*monsterIterator)->pos.y, (*monsterIterator)->pos.z)) {
+    for (const auto &monster : Monsters) {
+        if (GetPToCFieldAt(tempf, monster->pos.x, monster->pos.y, monster->pos.z)) {
             tempf->SetMonsterOnField(false);
         }
 
-        delete(*monsterIterator);
-        *monsterIterator = NULL;
+        delete monster;
     }
 
-    NPCVECTOR::iterator npcIterator;
-
-    for (npcIterator = Npc.begin(); npcIterator < Npc.end(); ++npcIterator) {
-        if (GetPToCFieldAt(tempf, (*npcIterator)->pos.x, (*npcIterator)->pos.y, (*npcIterator)->pos.z)) {
+    for (const auto &npc : Npc) {
+        if (GetPToCFieldAt(tempf, npc->pos.x, npc->pos.y, npc->pos.z)) {
             tempf->SetNPCOnField(false);
         }
 
-        delete(*npcIterator);
-        *npcIterator = NULL;
+        delete npc;
     }
 
     Monsters.clear();
@@ -417,7 +396,7 @@ void World::takeMonsterAndNPCFromMap() {
 // only invoked when ATTACK***_TS is received or when a monster attacks
 bool World::characterAttacks(Character *cp) {
 
-    if (cp->enemyid != cp->id) {
+    if (cp->enemyid != cp->getId()) {
 
         if (cp->enemytype == Character::player) {
 #ifdef World_DEBUG
@@ -501,7 +480,7 @@ bool World::characterAttacks(Character *cp) {
 
                         Player *foundPl;
 
-                        if (!temp.empty() && findPlayerWithLowestHP(&temp, foundPl)) {
+                        if (!temp.empty() && findPlayerWithLowestHP(temp, foundPl)) {
                             temppl->turn(foundPl->pos);
                         }
 
@@ -532,7 +511,7 @@ bool World::killMonster(Monster *monsterp) {
     if (monsterp != NULL) {
         MONSTERVECTOR::iterator newIt;
 
-        if (Monsters.getIterator(monsterp->id, newIt)) {
+        if (Monsters.getIterator(monsterp->getId(), newIt)) {
             MONSTERVECTOR::iterator temp;
             killMonster(newIt, temp);
             return true;
@@ -558,7 +537,7 @@ void World::killMonster(MONSTERVECTOR::iterator monsterIt, MONSTERVECTOR::iterat
 
     }
 
-    sendRemoveCharToVisiblePlayers((*monsterIt)->id, (*monsterIt)->pos);
+    sendRemoveCharToVisiblePlayers((*monsterIt)->getId(), (*monsterIt)->pos);
 
     // delete our monster
     if (*monsterIt) {
@@ -730,34 +709,21 @@ int World::getItemAttrib(std::string s, TYPE_OF_ITEM_ID ItemID) {
 
 
 void World::closeShowcasesForContainerPositions() {
-
-    std::vector < Player * > temp;
-
-    for (std::vector < position > ::iterator posit = contpos->begin(); posit < contpos->end(); ++posit) {
-        temp=Players.findAllCharactersInMaxRangeOf(posit->x, posit->y, posit->z, 1);
-
-        for (std::vector < Player * > ::iterator titerator = temp.begin(); titerator < temp.end(); ++titerator) {
-            (*titerator)->closeAllShowcasesOfMapContainers();
+    for (const auto &pos : *contpos) {
+        for (const auto &player : Players.findAllCharactersInMaxRangeOf(pos.x, pos.y, pos.z, 1)) {
+            player->closeAllShowcasesOfMapContainers();
         }
-
-        temp.clear();
     }
-
 }
 
 
 void World::updatePlayerView(short int startx, short int endx) {
-
-    std::vector < Player * > temp;
+    std::vector<Player *> temp;
 
     if (Players.findAllCharactersWithXInRangeOf(startx - 20, endx + 20, temp)) {
-        for (std::vector < Player * > ::iterator titerator = temp.begin(); titerator < temp.end(); ++titerator) {
-#ifdef World_DEBUG
-            std::cout << "update view for player " << (*titerator)->name << " " << startx << ":#" << (*titerator)->pos.x << "#:" << endx << "\n";
-#endif
-
-            (*titerator)->sendFullMap();
-            sendAllVisibleCharactersToPlayer((*titerator), true);
+        for (const auto &player : temp) {
+            player->sendFullMap();
+            sendAllVisibleCharactersToPlayer(player, true);
         }
     }
 
@@ -799,8 +765,8 @@ bool World::DoAge() {
     WorldMap::map_vector_t mapsToage;
 
     if (maps.findAllMapsWithXInRangeOf(nextXtoage, lastXtoage, mapsToage)) {
-        for (auto mapI = mapsToage.begin(); mapI < mapsToage.end(); ++mapI) {
-            (*mapI)->ageItemsInHorizontalRange(nextXtoage, lastXtoage);
+        for (const auto &map : mapsToage) {
+            map->ageItemsInHorizontalRange(nextXtoage, lastXtoage);
         }
 
         closeShowcasesForContainerPositions();
@@ -815,19 +781,13 @@ bool World::DoAge() {
 
 
 void World::AgeInventory() {
-
-    PLAYERVECTOR::iterator titerator;
-
-    for (titerator = Players.begin(); titerator < Players.end(); ++titerator) {
-        (*titerator)->ageInventory();
+    for (const auto &player : Players) {
+        player->ageInventory();
     }
 
-    MONSTERVECTOR::iterator monsterIterator;
-
-    for (monsterIterator = Monsters.begin(); monsterIterator < Monsters.end(); ++monsterIterator) {
-        (*monsterIterator)->ageInventory();
+    for (const auto &monster : Monsters) {
+        monster->ageInventory();
     }
-
 }
 
 
@@ -850,12 +810,10 @@ void World::Save(std::string prefix) {
 #endif
         specialfile.write((char *) & size, sizeof(size));
 
-        FIELDATTRIBHASH::const_iterator witerat = specialfields.begin();
-
-        for (; witerat != specialfields.end(); ++witerat) {
-            specialfile.write((char *) & (witerat->first), sizeof(witerat->first));
-            specialfile.write((char *) & (witerat->second.type), sizeof(witerat->second.type));
-            specialfile.write((char *) & (witerat->second.flags), sizeof(witerat->second.flags));
+        for (const auto &field : specialfields) {
+            specialfile.write((char *) & (field.first), sizeof(field.first));
+            specialfile.write((char *) & (field.second.type), sizeof(field.second.type));
+            specialfile.write((char *) & (field.second.flags), sizeof(field.second.flags));
         }
 
         specialfile.close();
@@ -1070,33 +1028,27 @@ void World::setWeatherPart(std::string type, char value) {
 }
 
 void World::sendRemoveCharToVisiblePlayers(TYPE_OF_CHARACTER_ID id, position &pos) {
-    std::vector < Player * > temp = Players.findAllCharactersInScreen(pos.x, pos.y, pos.z);
-    std::vector < Player * > ::iterator titerator;
     boost::shared_ptr<BasicServerCommand>cmd(new RemoveCharTC(id));
 
-    for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
-        (*titerator)->sendCharRemove(id, cmd);
+    for (const auto &player : Players.findAllCharactersInScreen(pos.x, pos.y, pos.z)) {
+        player->sendCharRemove(id, cmd);
     }
 }
 
 void World::sendHealthToAllVisiblePlayers(Character *cc, Attribute::attribute_t health) {
     if (!cc->isinvisible) {
-
-        std::vector < Player * > temp = Players.findAllCharactersInScreen(cc->pos.x, cc->pos.y, cc->pos.z);
-
-        std::vector < Player * > ::iterator titerator;
         char xoffs;
         char yoffs;
         char zoffs;
 
-        for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
-            xoffs = cc->pos.x - (*titerator)->pos.x;
-            yoffs = cc->pos.y - (*titerator)->pos.y;
-            zoffs = cc->pos.z - (*titerator)->pos.z + RANGEDOWN;
+        for (const auto &player : Players.findAllCharactersInScreen(cc->pos.x, cc->pos.y, cc->pos.z)) {
+            xoffs = cc->pos.x - player->pos.x;
+            yoffs = cc->pos.y - player->pos.y;
+            zoffs = cc->pos.z - player->pos.z + RANGEDOWN;
 
             if ((xoffs != 0) || (yoffs != 0) || (zoffs != RANGEDOWN)) {
-                boost::shared_ptr<BasicServerCommand>cmd(new UpdateAttribTC(cc->id, "hitpoints", health));
-                (*titerator)->Connection->addCommand(cmd);
+                boost::shared_ptr<BasicServerCommand>cmd(new UpdateAttribTC(cc->getId(), "hitpoints", health));
+                player->Connection->addCommand(cmd);
             }
         }
     }

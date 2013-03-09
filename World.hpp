@@ -383,7 +383,7 @@ public:
     *@param call by reference, returns the player which was found
     *@return if true there was a player found otherwise false
     */
-    bool findPlayerWithLowestHP(std::vector < Player * > *ppvec, Player *&found);
+    bool findPlayerWithLowestHP(const std::vector<Player *> &ppvec, Player *&found);
 
     inline LuaScript *getCurrentScript() {
         return currentScript;
@@ -872,7 +872,7 @@ public:
     // \param vec der std::vector mit den Character
     // \param cp Player an den verschickt wird
     // \param sendSpin falls true, wird auch die Blickrichtung mit verschickt
-    template< class T > void sendCharsInVector(std::vector < T * > &vec, Player *cp, bool sendSpin);
+    template<class T> void sendCharsInVector(const std::vector<T *> &vec, Player *cp, bool sendSpin);
 
     //////////// in WorldIMPLTalk.cpp /////////////////
     bool sendTextInFileToPlayer(std::string filename, Player *cp);
@@ -1046,10 +1046,6 @@ public:
     //! toetet alles auf der Karte befindlichen Monster
     void kill_command(Player *cp);
 
-    //! sets the informCharacter-flag
-    // \param cp the corresponding Player to be informed
-    void informChar(Player *cp);
-
     //! resambles the former #r command, reloads all tables, definitions and scripts
     // \param cp is the GM performing this full reload
     void reload_command(Player *cp);
@@ -1077,7 +1073,7 @@ public:
     //! wirft einen aktiven Player aus dem Spiel
     // \param name der Spieler der herausgeworfen werden soll
     // \return true falls der Player gefunden wurde, false sonst
-    bool forceLogoutOfPlayer(std::string name);
+    bool forceLogoutOfPlayer(const std::string &name);
 
     //! sendet einem Admin die Daten aller aktiven Player
     // \param admin der Admin an den die Daten gesandt werden sollen
@@ -1671,17 +1667,13 @@ private:
     bool gmpage_command(Player *player, const std::string &ticket);
 
 public:
-    void logGMTicket(Player *Player, const std::string &ticket, const std::string &prefix);
+    void logGMTicket(Player *Player, const std::string &ticket, bool automatic);
 
 private:
     bool active_language_command(Player *cp, const std::string &language);
 
     //Fgt einen Spieler unter falschen namen in die Eigene Namensliste hinzu
     void name_command(Player *cp, const std::string &ts);
-
-    // Allow players to change title prefix and suffix
-    bool prefix_command(Player *cp, const std::string &tprefix);
-    bool suffix_command(Player *cp, const std::string &tprefix);
 
     // register any GM commands here...
     void InitGMCommands();

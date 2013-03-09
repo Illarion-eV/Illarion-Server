@@ -40,8 +40,6 @@ template< typename To, typename From> To stream_convert(const From &from) {
 // register any Player commands here...
 void World::InitPlayerCommands() {
 
-    PlayerCommands["prefix"] = [](World *world, Player *player, const std::string &text) -> bool { return world->prefix_command(player, text); };
-    PlayerCommands["suffix"] = [](World *world, Player *player, const std::string &text) -> bool { return world->suffix_command(player, text); };
     PlayerCommands["gm"] = [](World *world, Player *player, const std::string &text) -> bool { return world->gmpage_command(player, text); };
     PlayerCommands["name"] = [](World *world, Player *player, const std::string &text) -> bool { world->name_command(player, text); return true; };
     PlayerCommands["language"] = [](World *world, Player *player, const std::string &text) -> bool { return world->active_language_command(player, text); };
@@ -87,22 +85,19 @@ void World::name_command(Player *cp, const std::string &ts) {
     std::cout << "Tokenizing " << tokenize << std::endl;
     char *thistoken;
 
-    if ((thistoken = strtok(tokenize, " ,")) != NULL) {
+    if ((thistoken = strtok(tokenize, " ,"))) {
         // convert arg to digit and try again...
         std::stringstream ss;
         ss.str(thistoken);
         ss >> player;
 
         if (player) {
-            if ((thistoken = strtok(NULL, "")) != NULL) {
-                std::cout<<"name Command from: " << cp->name << " intr: " << player << " with name: "<< thistoken;
-                PLAYERVECTOR::iterator playerIterator;
-
-                for (playerIterator = Players.begin(); playerIterator < Players.end(); ++playerIterator) {
-                    if ((*playerIterator)->id == player) {
+            if ((thistoken = strtok(NULL, ""))) {
+                for (const auto &p : Players) {
+                    if (p->getId() == player) {
                         std::string newname(thistoken);
                         name = "! " + newname;
-                        boost::shared_ptr<BasicServerCommand>cmd(new IntroduceTC((*playerIterator)->id, name));
+                        boost::shared_ptr<BasicServerCommand>cmd(new IntroduceTC(player, name));
                         cp->Connection->addCommand(cmd);
                     }
                 }
@@ -118,7 +113,7 @@ void World::name_command(Player *cp, const std::string &ts) {
 // GM page (!gm <text>)
 bool World::gmpage_command(Player *player, const std::string &ticket) {
     try {
-        logGMTicket(player, ticket, "Page from " + player->name + ": ");
+        logGMTicket(player, ticket, false);
         player->inform("--- The message has been delivered to the GM team. ---");
         return true;
     } catch (...) {
@@ -127,67 +122,29 @@ bool World::gmpage_command(Player *player, const std::string &ticket) {
     return false;
 }
 
-void World::logGMTicket(Player *player, const std::string &ticket, const std::string &prefix) {
+void World::logGMTicket(Player *player, const std::string &ticket, bool automatic) {
     using namespace Database;
 
     InsertQuery insQuery;
     insQuery.setServerTable("gmpager");
     const InsertQuery::columnIndex userColumn = insQuery.addColumn("pager_user");
     const InsertQuery::columnIndex textColumn = insQuery.addColumn("pager_text");
-    insQuery.addValue(userColumn, player->id);
+    insQuery.addValue(userColumn, player->getId());
     insQuery.addValue(textColumn, ticket);
 
     insQuery.execute();
 
-    std::string message = prefix + ticket;
+    std::string message;
+
+    if (automatic) {
+        message = "Automatic page about " + player->to_string() + ": " + ticket;
+    } else {
+        message = "Page from " + player->to_string() + ": " + ticket;
+    }
+    
     sendMessageToAdmin(message);
     boost::shared_ptr<BasicServerCommand>cmd(new BBMessageTC(message,2));
     monitoringClientList->sendCommand(cmd);
-}
-
-// !prefix <prefix>
-bool World::prefix_command(Player *cp, const std::string &tprefix) {
-
-    cp->prefix = tprefix;
-
-    std::string tstring = "Okay, ";
-
-    if ((cp->prefix != "") && (cp->prefix !="NULL")) {
-        tstring = tstring + cp->prefix + std::string(" ");
-    }
-
-    tstring = tstring + cp->name;
-
-    if ((cp->suffix != "") && (cp->prefix !="NULL")) {
-        tstring = tstring + std::string(" ") + cp->suffix;
-    }
-
-    cp->inform(tstring);
-    return true;
-
-}
-
-
-// !suffix <suffix>
-bool World::suffix_command(Player *cp, const std::string &tsuffix) {
-
-    cp->suffix = tsuffix;
-
-    std::string tstring = "Okay, ";
-
-    if ((cp->prefix != "") && (cp->prefix != "NULL")) {
-        tstring = tstring + cp->prefix + std::string(" ");
-    }
-
-    tstring = tstring + cp->name;
-
-    if ((cp->suffix != "") && (cp->prefix !="NULL")) {
-        tstring = tstring + std::string(" ") + cp->suffix;
-    }
-
-    cp->inform(tstring);
-    return true;
-
 }
 
 // !language <language>, language=common, human, dwarfen, elven, lizard, orc, ...
@@ -235,8 +192,6 @@ bool World::active_language_command(Player *cp, const std::string &language) {
     if (strcmp(language.c_str(),"ancient")==0) {
         cp->activeLanguage=10;
     }
-
-    //std::cout << cp->name << "switched language to " << cp->activeLanguage << "with " << language << "\n";
 
     return true;
 }

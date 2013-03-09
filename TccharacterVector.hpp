@@ -32,19 +32,19 @@ class ccharactervector : public std::vector < _Tp > {
 public:
     //! sucht in dem std::vector nach dem Character mit Namen n
     // \param n der Name des Character
-    // \return _Tp Zeiger auf den gefunden Character, NULL falls nicht gefunden
-    _Tp find(std::string n);
+    // \return _Tp Zeiger auf den gefunden Character, nullptr falls nicht gefunden
+    _Tp find(const std::string &n);
 
     //! sucht in dem std::vector nach dem Character mit der ID id
     // \param id die id des Character
-    // \return _Tp Zeiger auf den gefunden Character, NULL falls nicht gefunden
+    // \return _Tp Zeiger auf den gefunden Character, nullptr falls nicht gefunden
     _Tp findID(TYPE_OF_CHARACTER_ID id);
 
     //! sucht in dem std::vector nach dem Character mit den Koordinaten xc,yc,zc
     // \param xc X-Koordinate des gesuchten Character
     // \param xc Y-Koordinate des gesuchten Character
     // \param xc Z-Koordinate des gesuchten Character
-    // \return _Tp Zeiger auf den gefunden Character, NULL falls nicht gefunden
+    // \return _Tp Zeiger auf den gefunden Character, nullptr falls nicht gefunden
     _Tp find(short int xc, short int yc, short int zc);
 
     //! sucht in dem std::vector nach dem Character mit den Koordinaten xc,yc,zc
@@ -108,87 +108,70 @@ public:
 };
 
 
-template < class _Tp > _Tp ccharactervector < _Tp > ::find(std::string n) {
-
-    typename ccharactervector::iterator thisIterator;
-
-    for (thisIterator = this->begin(); thisIterator < this->end(); ++thisIterator) {
-        if (comparestrings_nocase((*thisIterator)->name, n)) {
-            return * thisIterator;
+template < class _Tp > _Tp ccharactervector < _Tp > ::find(const std::string &n) {
+    for (const auto &character : *this) {
+        if (comparestrings_nocase(character->getName(), n)) {
+            return character;
         }
     }
 
-    return NULL;
-
+    return nullptr;
 }
 
 
 template < class _Tp > _Tp ccharactervector < _Tp > ::findID(TYPE_OF_CHARACTER_ID id) {
-    typename ccharactervector::iterator thisIterator;
-
-    for (thisIterator = this->begin(); thisIterator < this->end(); ++thisIterator) {
-        if (((*thisIterator)->id) == id) {
-            return * thisIterator;
+    for (const auto &character : *this) {
+        if (character->getId() == id) {
+            return character;
         }
     }
 
-    return NULL;
-
+    return nullptr;
 }
 
 
 template < class _Tp > _Tp ccharactervector < _Tp > ::find(short int xc, short int yc, short int zc) {
-    typename ccharactervector::iterator thisIterator;
+    for (const auto &character : *this) {
+        if (character->pos.x == xc) {
+            if (character->pos.y == yc) {
+                if (character->pos.z == zc) {
+                    return character;
+                }
+            }
+        }
+    }
 
-    for (thisIterator = this->begin(); thisIterator < this->end(); ++thisIterator) {
-        if (((*thisIterator)->pos.x) == xc) {
-            if (((*thisIterator)->pos.y) == yc) {
-                if (((*thisIterator)->pos.z) == zc) {
-                    return * thisIterator;
-                }// z
-            }// y
-        }// x
-    }// iterator
-
-    return NULL;
-
+    return nullptr;
 }
 
 
 template < class _Tp > bool ccharactervector < _Tp > ::find(short int xc, short int yc, short int zc, _Tp &ret) {
-
-    typename ccharactervector::iterator thisIterator;
-
-    for (thisIterator = this->begin(); thisIterator < this->end(); ++thisIterator) {
-        if (((*thisIterator)->pos.x) == xc) {
-            if (((*thisIterator)->pos.y) == yc) {
-                if (((*thisIterator)->pos.z) == zc) {
-                    ret = *thisIterator;
+    for (const auto &character : *this) {
+        if (character->pos.x == xc) {
+            if (character->pos.y == yc) {
+                if (character->pos.z == zc) {
+                    ret = character;
                     return true;
-                }// z
-            }// y
-        }// x
-    }// iterator
+                }
+            }
+        }
+    }
 
     return false;
-
 }
 
 
 template < class _Tp > bool ccharactervector < _Tp > ::remove(short int xc, short int yc, short int zc) {
-
-    typename ccharactervector::iterator thisIterator;
-
-    for (thisIterator = this->begin(); thisIterator < this->end(); ++thisIterator) {
-        if (((*thisIterator)->pos.x) == xc) {
-            if (((*thisIterator)->pos.y) == yc) {
-                if (((*thisIterator)->pos.z) == zc) {
+    for (auto thisIterator = this->begin(); thisIterator < this->end(); ++thisIterator) {
+        if ((*thisIterator)->pos.x == xc) {
+            if ((*thisIterator)->pos.y == yc) {
+                if ((*thisIterator)->pos.z == zc) {
                     erase(thisIterator);
                     return true;
-                }// z
-            }// y
-        }// x
-    }// iterator
+                }
+            }
+        }
+    }
 
     return false;
 
@@ -196,11 +179,8 @@ template < class _Tp > bool ccharactervector < _Tp > ::remove(short int xc, shor
 
 
 template < class _Tp > bool ccharactervector < _Tp > ::getIterator(TYPE_OF_CHARACTER_ID id, typename ccharactervector::iterator &newIt) {
-
-    typename ccharactervector::iterator thisIterator;
-
-    for (thisIterator = this->begin(); thisIterator < this->end(); ++thisIterator) {
-        if (((*thisIterator)->id) == id) {
+    for (auto thisIterator = this->begin(); thisIterator < this->end(); ++thisIterator) {
+        if ((*thisIterator)->getId() == id) {
             newIt = thisIterator;
             return true;
         }
@@ -212,146 +192,132 @@ template < class _Tp > bool ccharactervector < _Tp > ::getIterator(TYPE_OF_CHARA
 
 
 template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllCharactersInRangeOf(short int xc, short int yc, short int zc, int distancemetric) {
-
     std::vector < _Tp > temp;
-    typename ccharactervector::iterator thisIterator;
     short int px;
     short int py;
     short int pz;
 
-    for (thisIterator = this->begin(); thisIterator < this->end(); ++thisIterator) {
-        pz = (*thisIterator)->pos.z - zc;
+    for (const auto &character : *this) {
+        pz = character->pos.z - zc;
 
         if ((-RANGEDOWN <= pz) && (pz <= RANGEUP)) {
-            px = (*thisIterator)->pos.x - xc;
-            py = (*thisIterator)->pos.y - yc;
+            px = character->pos.x - xc;
+            py = character->pos.y - yc;
 
             if ((abs(px) + abs(py)) <= distancemetric) {
-                temp.push_back(*thisIterator);
+                temp.push_back(character);
             }
-        }// z
-    }// iterator
+        }
+    }
 
     return temp;
-
 }
 
 
 template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllCharactersInScreen(short int xc, short int yc, short int zc) {
-
     std::vector < _Tp > temp;
-    typename ccharactervector::iterator thisIterator;
     short int px;
     short int py;
     short int pz;
 
-    for (thisIterator = this->begin(); thisIterator < this->end(); ++thisIterator) {
-        pz = (*thisIterator)->pos.z - zc;
+    for (const auto &character : *this) {
+        pz = character->pos.z - zc;
 
         if ((-RANGEDOWN <= pz) && (pz <= RANGEUP)) {
-            px = (*thisIterator)->pos.x - xc;
-            py = (*thisIterator)->pos.y - yc;
+            px = character->pos.x - xc;
+            py = character->pos.y - yc;
 
-            if ((abs(px) + abs(py)) <= (*thisIterator)->getScreenRange()) {
-                temp.push_back(*thisIterator);
+            if ((abs(px) + abs(py)) <= character->getScreenRange()) {
+                temp.push_back(character);
             }
-        }// z
-    }// iterator
+        }
+    }
 
     return temp;
-
 }
 
 
 template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllCharactersInMaxRangeOf(short int xc, short int yc, short int zc, int distancemetric) {
-
     std::vector < _Tp > temp;
-    typename ccharactervector::iterator thisIterator;
     short int px;
     short int py;
     short int pz;
 
-    for (thisIterator = this->begin(); thisIterator < this->end(); ++thisIterator) {
-        pz = (*thisIterator)->pos.z - zc;
+    for (const auto &character : *this) {
+        pz = character->pos.z - zc;
 
         if ((-RANGEDOWN <= pz) && (pz <= RANGEUP)) {
-            px = (*thisIterator)->pos.x - xc;
-            py = (*thisIterator)->pos.y - yc;
+            px = character->pos.x - xc;
+            py = character->pos.y - yc;
 
             if ((abs(px) <= distancemetric) && (abs(py) <=distancemetric)) {
-                temp.push_back(*thisIterator);
+                temp.push_back(character);
             }
-        }// z
-    }// iterator
+        }
+    }
 
     return temp;
-
 }
 
 
 template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllAliveCharactersInRangeOf(short int xc, short int yc, short int zc, int distancemetric) {
     std::vector < _Tp > temp;
-    typename ccharactervector::iterator thisIterator;
     short int px;
     short int py;
     short int pz;
 
-    for (thisIterator = this->begin(); thisIterator < this->end(); ++thisIterator) {
-        pz = (*thisIterator)->pos.z - zc;
+    for (const auto &character : *this) {
+        pz = character->pos.z - zc;
 
         if ((-RANGEDOWN <= pz) && (pz <= RANGEUP)) {
-            px = (*thisIterator)->pos.x - xc;
-            py = (*thisIterator)->pos.y - yc;
+            px = character->pos.x - xc;
+            py = character->pos.y - yc;
 
             if (((abs(px) + abs(py)) <= distancemetric) ||
                 ((distancemetric == 1) && (abs(px) == 1) && (abs(py) == 1))) {       // Allow angle attacks
-                if ((*thisIterator)->IsAlive()) {
-                    temp.push_back(*thisIterator);
+                if (character->IsAlive()) {
+                    temp.push_back(character);
                 }
             }
-        }// z
-    }// iterator
+        }
+    }
 
     return temp;
 }
 
 template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllAliveCharactersInRangeOfOnSameMap(short int xc, short int yc, short int zc, int distancemetric) {
     std::vector < _Tp > temp;
-    typename ccharactervector::iterator thisIterator;
     short int px;
     short int py;
 
-    for (thisIterator = this->begin(); thisIterator < this->end(); ++thisIterator) {
-        //z coordinate is the same
-        if ((*thisIterator)->pos.z == zc) {
-            px = (*thisIterator)->pos.x - xc;
-            py = (*thisIterator)->pos.y - yc;
+    for (const auto &character : *this) {
+        if (character->pos.z == zc) {
+            px = character->pos.x - xc;
+            py = character->pos.y - yc;
 
             if (((abs(px) + abs(py)) <= distancemetric) || ((distancemetric == 1) && (abs(px) == 1) && (abs(py) == 1))) {          // Allow angle attacks
-                if ((*thisIterator)->IsAlive()) {
-                    temp.push_back(*thisIterator);
+                if (character->IsAlive()) {
+                    temp.push_back(character);
                 }
             }
         }
-    }// iterator
+    }
 
     return temp;
 }
 
 
 template < class _Tp > bool ccharactervector < _Tp > ::findAllCharactersWithXInRangeOf(short int startx, short int endx, std::vector < _Tp > &ret) {
-    typename ccharactervector::iterator thisIterator;
     bool found_one = false;
 
-    for (thisIterator = this->begin(); thisIterator < this->end(); ++thisIterator) {
-        if (((*thisIterator)->pos.x >= startx) && ((*thisIterator)->pos.x <= endx)) {
-            ret.push_back(*thisIterator);
+    for (const auto &character : *this) {
+        if ((character->pos.x >= startx) && (character->pos.x <= endx)) {
+            ret.push_back(character);
             found_one = true;
-        }// x
-    }// iterator
+        }
+    }
 
     return found_one;
-
 }
 
 #endif
