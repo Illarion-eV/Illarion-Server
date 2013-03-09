@@ -356,7 +356,6 @@ public:
 
     bool getNextStepDir(const position &goal, direction &dir) const;
     bool getStepList(const position &goal, std::list<direction> &steps) const;
-    luabind::object getLuaStepList(const position &goal) const;
 
     virtual bool Warp(const position &newPos);
     virtual bool forceWarp(const position &newPos);

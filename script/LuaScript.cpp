@@ -529,7 +529,6 @@ void LuaScript::init_base_functions() {
         .def("introduce", &Character::introducePlayer)
         .def("move", &Character::move)
         .def("getNextStepDir", &Character::getNextStepDir, luabind::pure_out_value(_3))
-        .def("getStepList",&Character::getLuaStepList, luabind::pure_out_value(_3))
         .def("getRace", &Character::get_race)
         .def("getFaceTo", &Character::get_face_to)
         .def("getType", &Character::get_character)

@@ -127,20 +127,6 @@ position Character::getFrontalPosition() const {
     return front;
 }
 
-luabind::object Character::getLuaStepList(const position &goal) const {
-    lua_State *luaState = World::get()->getCurrentScript()->getLuaState();
-    luabind::object list = luabind::newtable(luaState);
-    int index = 1;
-    std::list<direction> dirs;
-    getStepList(goal, dirs);
-
-    for (const auto &dir : dirs) {
-        list[index++] = dir;
-    }
-
-    return list;
-}
-
 bool Character::getStepList(const position &goal, std::list<direction> &steps) const {
     return pathfinding::a_star(pos, goal, steps);
 }
