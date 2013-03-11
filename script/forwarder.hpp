@@ -32,4 +32,6 @@ void inform_lua4(const Character* character, const std::string& message);
 void inform_lua1(const Character* character, const std::string& german, const std::string& english, Character::informType type);
 void inform_lua3(const Character* character, const std::string& german, const std::string& english);
 
+void log_lua(const std::string &message);
+
 #endif

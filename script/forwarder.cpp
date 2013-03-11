@@ -1,4 +1,5 @@
 #include "script/forwarder.hpp"
+#include "Logger.hpp"
 
 uint32_t getPlayerLanguageLua(const Character* character) {
         return static_cast<uint32_t>(character->getPlayerLanguage());
@@ -34,5 +35,9 @@ void inform_lua1(const Character* character, const std::string& german, const st
 
 void inform_lua3(const Character* character, const std::string& german, const std::string& english) {
 	character->inform(german, english, Character::informScriptMediumPriority);
+}
+
+void log_lua(const std::string &message) {
+    Logger::info(LogFacility::Script) << message << Log::end;
 }
 

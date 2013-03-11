@@ -962,6 +962,7 @@ void LuaScript::init_base_functions() {
         ],
         luabind::def("isValidChar", &isValid<Character>),
         luabind::def("debug", &LuaScript::writeDebugMsg),
+        luabind::def("log", log_lua),
         luabind::def("isTestserver", &LuaScript::isTestserver)
     ];
 
