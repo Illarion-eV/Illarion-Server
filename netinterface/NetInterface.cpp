@@ -23,6 +23,7 @@
 #include "netinterface/protocol/ClientCommands.hpp"
 #include "CommandFactory.hpp"
 
+#include "netinterface/NetInterface.hpp"
 
 NetInterface::NetInterface(boost::asio::io_service &io_servicen) : online(false), socket(io_servicen), inactive(0) {
     cmd.reset();

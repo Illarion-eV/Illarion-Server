@@ -61,9 +61,9 @@ script/LuaReloadScript.cpp script/LuaLoginScript.cpp script/LuaLogoutScript.cpp 
 script/LuaDepotScript.cpp script/LuaLookAtPlayerScript.cpp script/LuaLearnScript.cpp \
 script/LuaPlayerDeathScript.cpp script/LuaLookAtItemScript.cpp script/LuaQuestScript.cpp \
 \
-netinterface/NetInterface.cpp InitialConnection.cpp netinterface/CommandFactory.cpp \
+netinterface/NetInterface.cpp InitialConnection.cpp netinterface/CommandFactory.cpp MonitoringClients.cpp \
 netinterface/BasicCommand.cpp netinterface/BasicServerCommand.cpp netinterface/BasicClientCommand.cpp \
-netinterface/protocol/ServerCommands.cpp netinterface/ByteBuffer.cpp MonitoringClients.cpp
+netinterface/protocol/ServerCommands.cpp netinterface/protocol/ClientCommands.cpp netinterface/ByteBuffer.cpp
 
 AM_CPPFLAGS = $(BOOST_CPPFLAGS)
 

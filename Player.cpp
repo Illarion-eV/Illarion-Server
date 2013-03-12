@@ -87,10 +87,10 @@ Player::Player(boost::shared_ptr<NetInterface> newConnection) throw(Player::Logo
         throw LogoutException(UNSTABLECONNECTION);
     }
 
-    unsigned short int clientversion = boost::dynamic_pointer_cast<LoginCommandTS>(cmd)->clientVersion;
-    setName(boost::dynamic_pointer_cast<LoginCommandTS>(cmd)->loginName);
-    pw = boost::dynamic_pointer_cast<LoginCommandTS>(cmd)->passwort;
-    // set acceptable client version...
+    const auto loginCommand = boost::dynamic_pointer_cast<LoginCommandTS>(cmd);
+    unsigned short int clientversion = loginCommand->getClientVersion();
+    setName(loginCommand->getLoginName());
+    pw = loginCommand->getPassword();
     unsigned short acceptVersion = Config::instance().clientversion;
     monitoringClient = false;
 
