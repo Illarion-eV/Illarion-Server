@@ -24,7 +24,6 @@
 #include "Logger.hpp"
 #include "data/Data.hpp"
 #include "data/MonsterTable.hpp"
-#include <boost/shared_ptr.hpp>
 #include "script/LuaNPCScript.hpp"
 #include "script/LuaScript.hpp"
 #include "script/LuaItemScript.hpp"
@@ -33,9 +32,7 @@
 #include "script/LuaTileScript.hpp"
 #include "script/LuaLookAtPlayerScript.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
-#include "netinterface/BasicClientCommand.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
-#include <list>
 
 #include "netinterface/protocol/ClientCommands.hpp"
 
