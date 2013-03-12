@@ -227,7 +227,7 @@ void World::sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char ne
 }
 
 
-void World::sendCharacterWarpToAllVisiblePlayers(Character *cc, position oldpos, unsigned char netid) {
+void World::sendCharacterWarpToAllVisiblePlayers(Character *cc, const position &oldpos, unsigned char netid) {
     if (!cc->isinvisible) {
         sendRemoveCharToVisiblePlayers(cc->getId(), oldpos);
 
@@ -279,9 +279,9 @@ void World::sendCharsInVector(const std::vector<T *> &vec, Player *cp, bool send
 }
 
 
-bool World::addWarpField(position where, position target, unsigned short int starttilenr, Item::id_type startitemnr) {
+bool World::addWarpField(const position &where, const position &target, unsigned short int starttilenr, Item::id_type startitemnr) {
 #ifdef World_CharMove_DEBUG
-    std::cout << "addWarpField: x: " << where.x << " y: " << where.y << " z: " << where.z << "\n";
+    std::cout << "addWarpField: " << where << "\n";
 #endif
     Field *cfstart;
 
@@ -311,8 +311,8 @@ bool World::addWarpField(position where, position target, unsigned short int sta
 }
 
 
-bool World::makeSpecialField(position where, s_fieldattrib which) {
-    std::cout << "addSpecialField: x: " << where.x << " y: " << where.y << " z: " << where.z << "\n";
+bool World::makeSpecialField(const position &where, s_fieldattrib which) {
+    std::cout << "addSpecialField: " << where << "\n";
     Field *cfstart;
 
     // Startfeld vorhanden
@@ -342,7 +342,7 @@ bool World::makeSpecialField(short int x, short int y, short int z, unsigned cha
 }
 
 
-bool World::addWarpField(position where, position target, unsigned short int starttilenr, Item::id_type startitemnr, unsigned short int targettilenr, Item::id_type targetitemnr) {
+bool World::addWarpField(const position &where, const position &target, unsigned short int starttilenr, Item::id_type startitemnr, unsigned short int targettilenr, Item::id_type targetitemnr) {
 
     if (addWarpField(where, target, starttilenr, startitemnr)) {
 
@@ -361,53 +361,10 @@ bool World::addWarpField(position where, position target, unsigned short int sta
 }
 
 
-bool World::addWayUp(position where, unsigned short int starttilenr, Item::id_type startitemnr, unsigned short int targettilenr, Item::id_type targetitemnr) {
-
-    position target;
-    target.x = where.x;
-    target.y = where.y;
-    target.z = where.z + 1;
-
-    if (addWarpField(where, target, starttilenr, startitemnr)) {
-        std::cout << "nach oben ist ok" << std::endl;
-        Field *cfp;
-
-        if (GetPToCFieldAt(cfp, target.x, target.y+1, target.z)) {
-            std::cout << "Zielfeld gefunden" << std::endl;
-
-            if (targettilenr != 0) {
-                cfp->setTileId(targettilenr);
-            }
-
-            if (targetitemnr != 0) {
-                Item trapdoor;
-                trapdoor.setId(targetitemnr);
-                trapdoor.setNumber(1);
-                trapdoor.makePermanent();
-                std::cout << "vor PutItem" << std::endl;
-                cfp->PutTopItem(trapdoor);
-                std::cout << "nach PutItem" << std::endl;
-            }
-
-            target.y = target.y + 1;
-            where.y = where.y + 1;
-
-            cfp->SetWarpField(target);
-            return true;
-        } else {
-            removeWarpField(where);
-        }
-    }
-
-    return false;
-
-}
-
-
-bool World::removeWarpField(position where) {
+bool World::removeWarpField(const position &where) {
 
 #ifdef World_CharMove_DEBUG
-    std::cout << "removeWarpField: x:" << where.x << " y: " << where.y << " z: " << where.z << "\n";
+    std::cout << "removeWarpField: " << where << "\n";
 #endif
     Field *cfstart;
 

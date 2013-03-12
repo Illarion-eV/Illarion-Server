@@ -23,13 +23,13 @@
 #include "netinterface/BasicCommand.hpp"
 #include <stdint.h>
 #include <iostream>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 class Player;
 class OverflowException {};
 
 class BasicClientCommand;
-typedef boost::shared_ptr<BasicClientCommand> ClientCommandPointer;
+typedef std::shared_ptr<BasicClientCommand> ClientCommandPointer;
 
 class BasicClientCommand : public BasicCommand {
 public:

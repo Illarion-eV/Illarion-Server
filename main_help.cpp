@@ -412,8 +412,8 @@ std::ofstream coutfile, cerrfile;
 
 bool setup_files(time_t starttime) {
 
-    std::string cout_logfile = Config::instance().coutdir() + boost::lexical_cast<std::string>(starttime) + std::string(".out");
-    std::string cerr_logfile =  Config::instance().coutdir() + boost::lexical_cast<std::string>(starttime) + std::string(".err");
+    std::string cout_logfile = Config::instance().coutdir() + std::to_string(starttime) + std::string(".out");
+    std::string cerr_logfile =  Config::instance().coutdir() + std::to_string(starttime) + std::string(".err");
 
     std::cout << "redirecting all further output to file: " << cout_logfile << std::endl;
     std::cout << "redirecting error output to file: " << cerr_logfile << std::endl;

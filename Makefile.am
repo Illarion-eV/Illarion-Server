@@ -114,9 +114,9 @@ noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
 		 data/Table.hpp data/WeaponObjectTable.hpp \
 		 data/NaturalArmorTable.hpp main_help.hpp TableStructs.hpp \
 		 WorldMap.hpp Connection.hpp Map.hpp Language.hpp \
-		 NewClientView.hpp netinterface/Receiver.hpp \
+		 NewClientView.hpp \
 		 netinterface/BasicCommand.hpp \
-		 netinterface/BasicClientCommand.hpp netinterface/Sender.hpp \
+		 netinterface/BasicClientCommand.hpp \
 		 netinterface/ByteBuffer.hpp netinterface/CommandFactory.hpp \
 		 netinterface/BasicServerCommand.hpp \
 		 netinterface/NetInterface.hpp \

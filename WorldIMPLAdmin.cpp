@@ -33,8 +33,6 @@
 //For the reload scripts
 #include "script/LuaReloadScript.hpp"
 #include "script/LuaLearnScript.hpp"
-#include <boost/lexical_cast.hpp>
-#include <boost/shared_ptr.hpp>
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "netinterface/NetInterface.hpp"
 #include "script/LuaLoginScript.hpp"
@@ -665,7 +663,7 @@ void World::ban_command(Player *cp, const std::string &timeplayer) {
 
 }
 
-void World::banbyname(Player *cp, short int banhours, std::string tplayer) {
+void World::banbyname(Player *cp, short int banhours, const std::string &tplayer) {
     if (!cp->hasGMRight(gmr_ban)) {
         return;
     }
@@ -1452,16 +1450,16 @@ void World::showWarpFieldsInRange(Player *cp, const std::string &ts) {
     short int range = 0;
 
     if (ReadField(ts.c_str(), range)) {
-        std::vector< boost::shared_ptr< position > > warpfieldsinrange;
+        std::vector<position> warpfieldsinrange;
 
         if (findWarpFieldsInRange(cp->pos, range, warpfieldsinrange)) {
             std::string message;
             cp->inform("Start list of warpfields:");
 
-            for (const auto warpfield : warpfieldsinrange) {
+            for (const auto &warpfield : warpfieldsinrange) {
                 position target;
-                GetField(*warpfield)->GetWarpField(target);
-                message = "Warpfield at " + warpfield->toString() + " to " + target.toString();
+                GetField(warpfield)->GetWarpField(target);
+                message = "Warpfield at " + warpfield.toString() + " to " + target.toString();
                 cp->inform(message);
             }
 

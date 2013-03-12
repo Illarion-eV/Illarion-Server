@@ -21,8 +21,7 @@
 #define _WORLDMAP_HPP_
 
 #include <vector>
-#include <boost/shared_ptr.hpp>
-#include <boost/unordered_map.hpp>
+#include <unordered_map>
 #include "globals.hpp"
 
 class Map;
@@ -35,7 +34,7 @@ class Map;
 // Map - spezifische Suchfunktionen
 class WorldMap {
 public:
-    typedef boost::shared_ptr<Map> map_t;
+    typedef std::shared_ptr<Map> map_t;
     typedef std::vector<map_t> map_vector_t;
 
     WorldMap();
@@ -64,7 +63,7 @@ public:
 
 private:
     map_vector_t maps;
-    boost::unordered_map<position, map_t> world_map;
+    std::unordered_map<position, map_t> world_map;
     short int lowX;
     short int highX;
 };

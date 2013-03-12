@@ -21,13 +21,13 @@
 #define _CBASICSERVERCOMMAND_HPP_
 
 #include "netinterface/BasicCommand.hpp"
-#include <boost/shared_ptr.hpp>
 #include <string>
 #include <stdint.h>
 #include <vector>
+#include <memory>
 
 class BasicServerCommand;
-typedef boost::shared_ptr<BasicServerCommand> ServerCommandPointer;
+typedef std::shared_ptr<BasicServerCommand> ServerCommandPointer;
 
 /**
 *@ingroup Netinterface

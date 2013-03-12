@@ -20,11 +20,11 @@
 #ifndef _RANDOM_HPP_
 #define _RANDOM_HPP_
 
-#include <boost/random/mersenne_twister.hpp>
+#include <random>
 
 class Random {
 private:
-    static boost::mt19937 rng;
+    static std::mt19937 rng;
     Random() {};
 public:
     static double uniform();

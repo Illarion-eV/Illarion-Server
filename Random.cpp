@@ -16,28 +16,24 @@
 //  You should have received a copy of the GNU General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
+#include <functional>
 #include "Random.hpp"
-#include <boost/random/uniform_01.hpp>
-#include <boost/random/uniform_int.hpp>
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 
-boost::mt19937 Random::rng;
+std::mt19937 Random::rng;
 
 double Random::uniform() {
-    boost::uniform_01<double> uniform;
+    std::uniform_real_distribution<double> uniform(0, 1);
     return uniform(rng);
 }
 
 int Random::uniform(int min, int max) {
-    boost::uniform_int<int> uniform(min, max);
+    std::uniform_int_distribution<int> uniform(min, max);
     return uniform(rng);
 }
 
 double Random::normal(double mean, double sd) {
-    boost::normal_distribution<double> norm(mean, sd);
-    boost::variate_generator<boost::mt19937 &, boost::normal_distribution<double> > gen(rng, norm);
-    return gen();
+    std::normal_distribution<double> norm(mean, sd);
+    auto generator = std::bind(norm, rng);
+    return generator();
 }
 

@@ -32,7 +32,7 @@
 #define   LOG_TALK
 
 #include <list>
-#include <boost/unordered_map.hpp>
+#include <unordered_map>
 #include "tuningConstants.hpp"
 #include "Player.hpp"
 #include "Monster.hpp"
@@ -262,7 +262,7 @@ public:
     /**
     *definition of a map which holds the special attribs of fields
     */
-    typedef boost::unordered_map<position, s_fieldattrib> FIELDATTRIBHASH;
+    typedef std::unordered_map<position, s_fieldattrib> FIELDATTRIBHASH;
 
     /**
     *the map which holds the information of all the special fields of the map
@@ -319,7 +319,7 @@ public:
     *@param timeType <"year"|"month"|"day"|"hour"|"minute"|"second">
     *@return an int which is the current illarion time from the type
     */
-    int getTime(std::string timeType);
+    int getTime(const std::string &timeType);
 
     /**
         * function for maploading
@@ -335,7 +335,7 @@ public:
     *@param filename name of the mapfile which should be loaded
     *@return true if loading was successful, false otherwise
     */
-    bool load_from_editor(std::string filename);
+    bool load_from_editor(const std::string &filename);
 
     /**
     *checks the command list of one player and put them into practize
@@ -405,7 +405,7 @@ public:
     * @param range the roung around pos which should be searched for warpfields
     * @param call by reference, returns a hashmap with the warpfields which where found
     */
-    bool findWarpFieldsInRange(position pos, short int range, std::vector< boost::shared_ptr< position > > &warppositions);
+    bool findWarpFieldsInRange(const position &pos, short int range, std::vector<position> &warppositions);
 
     /**
     * returns a list of blocking objects between a startin position and a ending position
@@ -413,10 +413,10 @@ public:
     * @param endingpos the end of the line of sight calculation
     * @return list of all blocking objects between startingpos and endingpos.
     */
-    std::list<BlockingObject> LoS(position startingpos, position endingpos);
+    std::list<BlockingObject> LoS(const position &startingpos, const position &endingpos);
 
 
-    bool findPlayersInSight(position pos, uint8_t range, std::vector<Player *> &ret, Character::face_to direction);
+    bool findPlayersInSight(const position &pos, uint8_t range, std::vector<Player *> &ret, Character::face_to direction);
 
 
     /**
@@ -490,7 +490,7 @@ public:
     * @param pos the position where the field has to be found
     * @return true if the field was found otherwise false
     */
-    bool GetPToCFieldAt(Field *&fip, position pos);
+    bool GetPToCFieldAt(Field *&fip, const position &pos);
 
     /**
     * looks for a field on the map
@@ -498,7 +498,7 @@ public:
     * @return a pointer to the field, NULL if there is no field at this position
     * @see GetPToCFieldAt()
     */
-    Field *GetField(position pos);
+    Field *GetField(const position &pos);
 
     /**
     * looks for a field and the special map where it lies on
@@ -506,7 +506,7 @@ public:
     * @param map call by reference, pointer to the map on which the field lies
     * @return true if the field was found otherwise false
     */
-    bool GetPToCFieldAt(Field *&fip, position pos, WorldMap::map_t &map);
+    bool GetPToCFieldAt(Field *&fip, const position &pos, WorldMap::map_t &map);
 
     /**
     * looks for a field on the current map
@@ -593,7 +593,7 @@ public:
     * @see ContainerStruct
     *
     */
-    int getItemAttrib(std::string s, TYPE_OF_ITEM_ID ItemID);
+    int getItemAttrib(const std::string &s, TYPE_OF_ITEM_ID ItemID);
 
     /**
     *sends all players in sight of the tiles line the map
@@ -613,14 +613,14 @@ public:
     *
     *@param prefix the name of the world wich should be loaded
     */
-    void Load(std::string prefix);
+    void Load(const std::string &prefix);
 
     /**
     *saves the world
     *
     *@param prefic the name under which the world should be saved
     */
-    void Save(std::string prefix);
+    void Save(const std::string &prefix);
 
     /**
     *@brief changes one part of the weather and sends the new weather to all players
@@ -635,9 +635,9 @@ public:
     *<li> "thunderstorm" is there any thunderstorm and how strong is it </li>
     *<li> "temperature" the temperature in C </li>
     */
-    void setWeatherPart(std::string type, char value);
+    void setWeatherPart(const std::string &type, char value);
 
-    void sendRemoveCharToVisiblePlayers(TYPE_OF_CHARACTER_ID id, position &pos);
+    void sendRemoveCharToVisiblePlayers(TYPE_OF_CHARACTER_ID id, const position &pos);
 
     void sendHealthToAllVisiblePlayers(Character *cc, Attribute::attribute_t health);
 
@@ -661,7 +661,7 @@ public:
     *@param startitemnr the id of a new item which should be placed at the start position. 0 for no changes
     *@return true if the adding of the warpfield was succesfull otherwise false
     */
-    bool addWarpField(position where, position target, unsigned short int starttilenr, Item::id_type startitemnr);
+    bool addWarpField(const position &where, const position &target, unsigned short int starttilenr, Item::id_type startitemnr);
 
     /**
     *adds a two way warpfield to the map
@@ -676,7 +676,7 @@ public:
     *@param targetitemnr the id of a new item which should be added at the target pos. 0 for no changes
     *@return true if the adding of the warpfield was succesfull otherwise false
     */
-    bool addWarpField(position where, position target, unsigned short int starttilenr, Item::id_type startitemnr, unsigned short int targettilenr, Item::id_type targetitemnr);
+    bool addWarpField(const position &where, const position &target, unsigned short int starttilenr, Item::id_type startitemnr, unsigned short int targettilenr, Item::id_type targetitemnr);
 
     /**
     *adds a special field to a specific position
@@ -686,7 +686,7 @@ public:
     *@see s_fieldattrib
     *@return true if the adding was succesfully otherwise false
     */
-    bool makeSpecialField(position where, s_fieldattrib which);
+    bool makeSpecialField(const position &where, s_fieldattrib which);
 
     /**
     *adds a special field to a specific position
@@ -702,24 +702,12 @@ public:
     bool makeSpecialField(short int x, short int y, short int z, unsigned char type, unsigned long int value);
 
     /**
-    *adds a teleportfield and a teleportfield back to the field one layer higher
-    *
-    *@param where the position for the warpfield
-    *@param starttilenr the id of the new groundtile on the startfield. 0 for no changes
-    *@param startitemnr the id of a item which should be placed at the startfield. 0 for no changes
-    *@param targettilenr the id of the new grountile on the targetfield (same x,y position but z + 1 ). 0 for no changes
-    *@param tergetitemnr tje od of an item which should be placed at the targetfield. 0 for no changes
-    *@return true if the adding of the warpfield was successfully otherwise false
-    */
-    bool addWayUp(position where, unsigned short int starttilenr, Item::id_type startitemnr, unsigned short int targettilenr, Item::id_type targetitemnr);
-
-    /**
     *removes a warpfield at a given position
     *
     *@param where the position of the warpfield which should be removed
     *@return true if the removing was succesfull otherwise false
     */
-    bool removeWarpField(position where);
+    bool removeWarpField(const position &where);
 
     /**
     * looks for the targetposition of a Warpfield
@@ -865,7 +853,7 @@ public:
     // \param cc der bewegte Character
     // \param oldpos die alte Position
     // \param netid PLAYERMOVE_TC, MONSTERMOVE_TC oder NPCMOVE_TC
-    void sendCharacterWarpToAllVisiblePlayers(Character *cc, position oldpos, unsigned char netid);
+    void sendCharacterWarpToAllVisiblePlayers(Character *cc, const position &oldpos, unsigned char netid);
 
     //! sendet die Daten aller Chars in dem std::vector an cp
     // fuer jeden Eintrag muss gelten: (cp->pos.z - RANGEDOWN) >= eintr->pos.z
@@ -875,7 +863,7 @@ public:
     template<class T> void sendCharsInVector(const std::vector<T *> &vec, Player *cp, bool sendSpin);
 
     //////////// in WorldIMPLTalk.cpp /////////////////
-    bool sendTextInFileToPlayer(std::string filename, Player *cp);
+    bool sendTextInFileToPlayer(const std::string &filename, Player *cp);
 
     //! sendet an den Spieler den Namen des obersten Item auf einem Feld
     //  bzw. den Namen des Feldes
@@ -957,15 +945,15 @@ public:
     *@param cc the talking char
     *@todo remove deprecated function
     */
-    void sendLanguageMessageToAllCharsInRange(std::string message, Character::talk_type tt, Language lang, Character *cc);
+    void sendLanguageMessageToAllCharsInRange(const std::string &message, Character::talk_type tt, Language lang, Character *cc);
 
     //! schickt an alle Player eine Nachricht
     // \param message die Nachricht die geschickt werden soll
-    void sendMessageToAllPlayers(std::string message);
+    void sendMessageToAllPlayers(const std::string &message);
 
     //! schickt eine Nachricht an alle GM's im Spiel.
     // \param message die zu schickende Nachricht
-    void sendMessageToAdmin(std::string message);
+    void sendMessageToAdmin(const std::string &message);
 
     //! converts the number of a language to the proper skill name.
     // \param language number
@@ -1352,7 +1340,7 @@ public:
     *@param scriptname scriptname
     *@return success of creation
     */
-    bool createDynamicNPC(std::string name, Character::race_type type, position pos, /*CCharacter::face_to dir,*/ Character::sex_type sex, std::string scriptname);
+    bool createDynamicNPC(const std::string &name, Character::race_type type, const position &pos, /*CCharacter::face_to dir,*/ Character::sex_type sex, const std::string &scriptname);
 
 
     /**
@@ -1362,7 +1350,7 @@ public:
     *@param endingpos the ending position for the line of sight
     *@return a luabind list with all the item or characters in the way
     */
-    luabind::object LuaLoS(position startingpos, position endingpos);
+    luabind::object LuaLoS(const position &startingpos, const position &endingpos);
 
     /**
     *creates a luabind list with all the players which are currently online and returns it
@@ -1384,10 +1372,10 @@ public:
     *@param range the range around the position for calculating
     *@return a lua list with all the characters (including monsters, npcs, players) around this char
     */
-    luabind::object getCharactersInRangeOf(position posi, uint8_t range);
-    luabind::object getPlayersInRangeOf(position posi, uint8_t range);
-    luabind::object getMonstersInRangeOf(position posi, uint8_t range);
-    luabind::object getNPCSInRangeOf(position posi, uint8_t range);
+    luabind::object getCharactersInRangeOf(const position &posi, uint8_t range);
+    luabind::object getPlayersInRangeOf(const position &posi, uint8_t range);
+    luabind::object getMonstersInRangeOf(const position &posi, uint8_t range);
+    luabind::object getNPCSInRangeOf(const position &posi, uint8_t range);
 
     //Sucht zu einem Item die gesamten Stats wie Gewicht heraus
     //\param item, das Item zu dem die Stats heraus gesucht werden sollen.
@@ -1410,17 +1398,17 @@ public:
     //Aendert ein ScriptItem
     bool changeItem(ScriptItem item);
 
-    void changeQualityOfItemAt(position pos, short int amount);
+    void changeQualityOfItemAt(const position &pos, short int amount);
 
     //Prft ob sich auf dem Feld ein Character befindet
     //\param position die zu prfen ist
     //\return true oder false
-    bool isCharacterOnField(position pos);
+    bool isCharacterOnField(const position &pos);
 
     //Liefert einen Zeiger auf einen Character
     //\param pos, die Position auf der sich der Character befinden soll
     //\return Zeiger auf den Character
-    fuse_ptr<Character> getCharacterOnField(position pos);
+    fuse_ptr<Character> getCharacterOnField(const position &pos);
 
     //Loescht ein ScriptItem
     //\ param Item, das Item welches geloescht werden soll
@@ -1447,50 +1435,50 @@ public:
     //\ param pos Position des Items
     //\ return bool Wert ob das Erstellen geklappt hat.
     //\ quali int, das die qualitaet angibt
-    ScriptItem createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, position pos, bool allways, int quali, const luabind::object &data);
+    ScriptItem createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, const position &pos, bool allways, int quali, const luabind::object &data);
 
     //Erzeugt auf den Angegebenen Feld ein bestimmtes Item
     //\ param item, das Item was erzeugt werden soll
     //\ param pos, Position des Items
     //\ return bool Wert der angibt ob das Erstellen geklappt hat.
-    bool createFromItem(ScriptItem item, position pos, bool allways);
+    bool createFromItem(ScriptItem item, const position &pos, bool allways);
 
     //Erzeugt ein Monster mit der entsprechenden ID auf dem Feld
     //\ param id, das Monster welches Erzeugt werden soll
     //\ param pos, die Position des Monsters
     //\ return fuse_ptr<Character> Valid monster on success, invalid monster on failure
-    fuse_ptr<Character> createMonster(unsigned short id, position pos, short movepoints);
+    fuse_ptr<Character> createMonster(unsigned short id, const position &pos, short movepoints);
 
     //Zeigt eine Grafik auf einem bestimmten Feld an
     //\gfxid, ID der anzuzeigenden Grafik
     //\pos, Position wo diese Grafik angezeigt werden soll
-    void gfx(unsigned short int gfxid, position pos);
+    void gfx(unsigned short int gfxid, const position &pos);
 
     //Spielt einen Soundeffekt auf einem bestimmten Feld ab
     //\soundid, ID des abzuspielenden Effektes
     //\pos, Position wo dieser Effekt abgespielt werden soll
-    void makeSound(unsigned short int soundid, position pos);
+    void makeSound(unsigned short int soundid, const position &pos);
 
     //!Prft ob auf einen FEld ein ITem liegt
     //\pos die Position des feldes
     //\return true wenn auf den Feld ein ITem liegt
-    bool isItemOnField(position pos);
+    bool isItemOnField(const position &pos);
 
     //!Liefert ein Item zurck welches auf dem Feld liegt
     //\pos die Position des Feldes
     //\return das ScriptITem auf dem Feld;
-    ScriptItem getItemOnField(position pos);
+    ScriptItem getItemOnField(const position &pos);
 
     //!Aendert ein Bodentile
     //\tileid, neue Id des bodentiles
     //\pos, Position des zu aendernden Bodentiles.
-    void changeTile(short int tileid, position pos);
+    void changeTile(short int tileid, const position &pos);
 
 
     //!Sendet ein Map update zu allen spielern in bereich range um pos
     //\pos, position von der ausgegangen wird
     //\bereich von dem die Spieler genommen werden sollen.
-    void sendMapUpdate(position pos, uint8_t range);
+    void sendMapUpdate(const position &pos, uint8_t range);
 
     //!Sicherer CreateArea command, prft erst ab ob er eine vorhandene Map berschreibt.
     //\tileid: standard Tile
@@ -1498,7 +1486,7 @@ public:
     //\height: Hoehe der neuen Karte
     //\width: breite der neuen Karte
     //\return true wenn das einfgen klappte, ansonsten false wenns zu berlagerungen kommt.
-    bool createSavedArea(uint16_t tileid, position pos, uint16_t height, uint16_t width);
+    bool createSavedArea(uint16_t tileid, const position &pos, uint16_t height, uint16_t width);
 
     //! Laedt eine Armor Struct anhand einer id.
     //\return true false der Armorstruct gefunden wurde
@@ -1521,7 +1509,7 @@ public:
     *@param msg the message string which should be sended
     *@param id the id of the msg ( 1 are message which displayed in a window 0 basic message)
     */
-    void sendMonitoringMessage(std::string msg, unsigned char id);
+    void sendMonitoringMessage(const std::string &msg, unsigned char id);
 
     /**
      * bans a player for the bantime
@@ -1545,7 +1533,7 @@ private:
     *@param dir the main directory of the server
     *@param time_t the starting time of the server
     */
-    World(std::string dir, time_t starttime);
+    World(const std::string &dir, time_t starttime);
     World &operator=(const World &) = delete;
     World(const World &) = delete;
 
@@ -1636,7 +1624,7 @@ private:
 
     // Ban a player
     void ban_command(Player *cp, const std::string &timeplayer);
-    void banbyname(Player *cp, short int banhours, std::string tplayer);
+    void banbyname(Player *cp, short int banhours, const std::string &tplayer);
     void banbynumber(Player *cp, short int banhours, TYPE_OF_CHARACTER_ID tid);
 
 

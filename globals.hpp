@@ -24,7 +24,7 @@
 #include <fstream>
 #include <iostream>
 #include <boost/lexical_cast.hpp>
-#include <boost/functional/hash_fwd.hpp>
+#include <boost/functional/hash/hash.hpp>
 #include "types.hpp"
 
 /**
@@ -107,7 +107,7 @@ struct position {
     }
 
     std::string toString() const {
-        return "(" + boost::lexical_cast<std::string>(x) + ", " + boost::lexical_cast<std::string>(y) + ", " + boost::lexical_cast<std::string>(z) + ")";
+        return "(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ")";
     }
 
     friend std::ostream &operator<<(std::ostream &out, const position &pos) {
@@ -153,5 +153,13 @@ struct MAP_POSITION {
         return seed;
     }
 };
+
+namespace std {
+template<> struct hash<MAP_POSITION> {
+    size_t operator()(const MAP_POSITION &p) const {
+        return hash_value(p);
+    }
+};
+}
 
 #endif

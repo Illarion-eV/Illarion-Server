@@ -29,7 +29,7 @@
 
 extern std::shared_ptr<LuaLookAtItemScript>lookAtItemScript;
 
-bool World::sendTextInFileToPlayer(std::string filename, Player *cp) {
+bool World::sendTextInFileToPlayer(const std::string &filename, Player *cp) {
     if (filename.length() == 0) {
         return false;
     }
@@ -54,7 +54,7 @@ bool World::sendTextInFileToPlayer(std::string filename, Player *cp) {
 }
 
 
-void World::sendMessageToAdmin(std::string message) {
+void World::sendMessageToAdmin(const std::string &message) {
     for (const auto &player : Players) {
         if (player->hasGMRight(gmr_getgmcalls)) {
             ServerCommandPointer cmd(new SayTC(player->pos.x, player->pos.y, player->pos.z, message));
@@ -133,7 +133,7 @@ std::string World::languageNumberToSkillName(int languageNumber) {
     }
 }
 
-void World::sendMessageToAllPlayers(std::string message) {
+void World::sendMessageToAllPlayers(const std::string &message) {
     for (const auto &player : Players) {
         player->inform(message, Player::informBroadcast);
     }
@@ -198,7 +198,7 @@ void World::sendMessageToAllCharsInRange(const std::string &german, const std::s
     }
 }
 
-void World::sendLanguageMessageToAllCharsInRange(std::string message, Character::talk_type tt, Language lang, Character *cc) {
+void World::sendLanguageMessageToAllCharsInRange(const std::string &message, Character::talk_type tt, Language lang, Character *cc) {
     uint16_t range = 0;
 
     // how far can we be heard?

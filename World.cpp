@@ -79,7 +79,7 @@ World *World::get() throw(std::runtime_error) {
     return _self;
 }
 
-World::World(std::string dir, time_t starttime) {
+World::World(const std::string &dir, time_t starttime) {
 
     nextXtoage = 0;
 
@@ -213,7 +213,7 @@ bool World::load_maps() {
 }
 
 //! create a new world from editor files (new format)
-bool World::load_from_editor(std::string filename) {
+bool World::load_from_editor(const std::string &filename) {
     // first try to open mapfile
     Logger::info(LogFacility::World) << "try to Import map: " << filename << Log::end;
     std::ifstream maptilesfile((filename + ".tiles.txt").c_str());

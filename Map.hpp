@@ -24,6 +24,7 @@
 //#define Map_DEBUG
 
 #include <string>
+#include <unordered_map>
 #include "MapException.hpp"
 #include "globals.hpp"
 #include "TableStructs.hpp"
@@ -123,7 +124,7 @@ public:
     unsigned short int GetHeight();
 
     //! definiert eine Template-Klasse "hash_map mit key position f�r ITEMVECTORMAP"
-    typedef boost::unordered_map<MAP_POSITION, Container::CONTAINERMAP> CONTAINERHASH;
+    typedef std::unordered_map<MAP_POSITION, Container::CONTAINERMAP> CONTAINERHASH;
 
     //! die Inhalte aller Container die direkt auf der Karte liegen mit der dazugeh�rigen Koordinate
     CONTAINERHASH maincontainers;
