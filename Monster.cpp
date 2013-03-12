@@ -35,7 +35,7 @@ uint32_t Monster::counter = 0;
 Monster::Monster(const TYPE_OF_CHARACTER_ID &type, const position &newpos, SpawnPoint *spawnpoint) throw(unknownIDException)
     : Character(),lastTargetPosition(position(0,0,0)),lastTargetSeen(false), spawn(spawnpoint), monstertype(type) {
     character = monster;
-    setId(counter++);
+    setId(MONSTER_BASE + counter++ % (NPC_BASE-MONSTER_BASE));
     actionPoints = NP_MAX_AP;
     SetAlive(true);
     setType(type);
