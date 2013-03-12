@@ -25,7 +25,7 @@ EXTRA_DIST = .astylerc
 
 testserver_SOURCES = \
 \
-main.cpp main_help.cpp utility.cpp Logger.cpp Random.cpp Config.cpp \
+main.cpp main_help.cpp utility.cpp Logger.cpp Random.cpp Config.cpp a_star.cpp \
 \
 data/Data.cpp data/QuestNodeTable.cpp data/QuestTable.cpp \
 data/ArmorObjectTable.cpp data/CommonObjectTable.cpp data/ContainerObjectTable.cpp data/RaceSizeTable.cpp \
