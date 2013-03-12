@@ -373,12 +373,12 @@ void World::makeVisible(Player *cp) {
 
     for (const auto &player : Players.findAllCharactersInScreen(cp->pos.x, cp->pos.y, cp->pos.z)) {
         if (cp != player) {
-            boost::shared_ptr<BasicServerCommand>cmd(new MoveAckTC(cp->getId(), cp->pos, PUSH, 0));
+            ServerCommandPointer cmd(new MoveAckTC(cp->getId(), cp->pos, PUSH, 0));
             player->Connection->addCommand(cmd);
         }
     }
 
-    boost::shared_ptr<BasicServerCommand>cmd(new AppearanceTC(cp, cp));
+    ServerCommandPointer cmd(new AppearanceTC(cp, cp));
     cp->Connection->addCommand(cmd);
 }
 
@@ -460,7 +460,7 @@ void World::forceLogoutOfAllPlayers() {
         }
 
         Logger::info(LogFacility::Admin) << "--- kicked: " << *player << Log::end;
-        boost::shared_ptr<BasicServerCommand>cmd(new LogOutTC(SERVERSHUTDOWN));
+        ServerCommandPointer cmd(new LogOutTC(SERVERSHUTDOWN));
         player->Connection->shutdownSend(cmd);
         PlayerManager::get()->getLogOutPlayers().non_block_push_back(player);
     }
@@ -474,7 +474,7 @@ bool World::forceLogoutOfPlayer(const std::string &name) {
 
     if (temp) {
         Logger::info(LogFacility::Admin) << "--- kicked: " << temp->to_string() << Log::end;
-        boost::shared_ptr<BasicServerCommand>cmd(new LogOutTC(BYGAMEMASTER));
+        ServerCommandPointer cmd(new LogOutTC(BYGAMEMASTER));
         temp->Connection->shutdownSend(cmd);
         return true;
     } else {
@@ -488,7 +488,7 @@ void World::sendAdminAllPlayerData(Player *&admin) {
         return;
     }
 
-    boost::shared_ptr<BasicServerCommand>cmd(new AdminViewPlayersTC());
+    ServerCommandPointer cmd(new AdminViewPlayersTC());
     admin->Connection->addCommand(cmd);
 
 }

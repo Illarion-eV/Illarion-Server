@@ -615,7 +615,7 @@ void World::checkPlayers() {
             // User timed out.
             else {
                 Logger::info(LogFacility::World) << (*playerIterator)->to_string() << " timed out " << temptime << Log::end;
-                boost::shared_ptr<BasicServerCommand>cmd(new LogOutTC(UNSTABLECONNECTION));
+                ServerCommandPointer cmd(new LogOutTC(UNSTABLECONNECTION));
                 (*playerIterator)->Connection->shutdownSend(cmd);
             }
 

@@ -425,11 +425,11 @@ bool World::characterAttacks(Character *cp) {
                         //temppl->nrOfAttackers=0;
 
                         if (cp->character == Character::player) {
-                            boost::shared_ptr<BasicServerCommand>cmd(new TargetLostTC());
+                            ServerCommandPointer cmd(new TargetLostTC());
                             dynamic_cast<Player *>(cp)->Connection->addCommand(cmd);
                         }
 
-                        boost::shared_ptr<BasicServerCommand>cmd(new TargetLostTC());
+                        ServerCommandPointer cmd(new TargetLostTC());
                         dynamic_cast<Player *>(temppl)->Connection->addCommand(cmd);
                         temppl->attackmode = false;
                     }
@@ -464,7 +464,7 @@ bool World::characterAttacks(Character *cp) {
                         cp->attackmode = false;
 
                         if (cp->character == Character::player) {
-                            boost::shared_ptr<BasicServerCommand>cmd(new TargetLostTC());
+                            ServerCommandPointer cmd(new TargetLostTC());
                             dynamic_cast<Player *>(cp)->Connection->addCommand(cmd);
                         }
                     } else {
@@ -495,7 +495,7 @@ bool World::characterAttacks(Character *cp) {
         cp->attackmode = false;
 
         if (cp->character == Character::player) {
-            boost::shared_ptr<BasicServerCommand>cmd(new TargetLostTC());
+            ServerCommandPointer cmd(new TargetLostTC());
             dynamic_cast<Player *>(cp)->Connection->addCommand(cmd);
         }
 
@@ -1028,7 +1028,7 @@ void World::setWeatherPart(std::string type, char value) {
 }
 
 void World::sendRemoveCharToVisiblePlayers(TYPE_OF_CHARACTER_ID id, position &pos) {
-    boost::shared_ptr<BasicServerCommand>cmd(new RemoveCharTC(id));
+    ServerCommandPointer cmd(new RemoveCharTC(id));
 
     for (const auto &player : Players.findAllCharactersInScreen(pos.x, pos.y, pos.z)) {
         player->sendCharRemove(id, cmd);
@@ -1047,7 +1047,7 @@ void World::sendHealthToAllVisiblePlayers(Character *cc, Attribute::attribute_t 
             zoffs = cc->pos.z - player->pos.z + RANGEDOWN;
 
             if ((xoffs != 0) || (yoffs != 0) || (zoffs != RANGEDOWN)) {
-                boost::shared_ptr<BasicServerCommand>cmd(new UpdateAttribTC(cc->getId(), "hitpoints", health));
+                ServerCommandPointer cmd(new UpdateAttribTC(cc->getId(), "hitpoints", health));
                 player->Connection->addCommand(cmd);
             }
         }

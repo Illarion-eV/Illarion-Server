@@ -42,7 +42,7 @@ bool World::sendTextInFileToPlayer(std::string filename, Player *cp) {
         char line[LINE_LENGTH];
 
         while (fgets(line, LINE_LENGTH, fp) != NULL) {
-            boost::shared_ptr<BasicServerCommand>cmd(new SayTC(cp->pos.x, cp->pos.y, cp->pos.z, line));
+            ServerCommandPointer cmd(new SayTC(cp->pos.x, cp->pos.y, cp->pos.z, line));
             cp->Connection->addCommand(cmd);
         }
 
@@ -57,7 +57,7 @@ bool World::sendTextInFileToPlayer(std::string filename, Player *cp) {
 void World::sendMessageToAdmin(std::string message) {
     for (const auto &player : Players) {
         if (player->hasGMRight(gmr_getgmcalls)) {
-            boost::shared_ptr<BasicServerCommand>cmd(new SayTC(player->pos.x, player->pos.y, player->pos.z, message));
+            ServerCommandPointer cmd(new SayTC(player->pos.x, player->pos.y, player->pos.z, message));
             player->Connection->addCommand(cmd);
         }
     }
@@ -272,7 +272,7 @@ void World::sendMessageToAllCharsInRange(const std::string &message, Character::
 
 void World::makeGFXForAllPlayersInRange(short int xc, short int yc, short int zc, int distancemetric ,unsigned short int gfx) {
     for (const auto &player : Players.findAllCharactersInRangeOf(xc, yc, zc, distancemetric)) {
-        boost::shared_ptr<BasicServerCommand>cmd(new GraphicEffectTC(xc, yc, zc, gfx));
+        ServerCommandPointer cmd(new GraphicEffectTC(xc, yc, zc, gfx));
         player->Connection->addCommand(cmd);
     }
 }
@@ -280,7 +280,7 @@ void World::makeGFXForAllPlayersInRange(short int xc, short int yc, short int zc
 
 void World::makeSoundForAllPlayersInRange(short int xc, short int yc, short int zc, int distancemetric, unsigned short int sound) {
     for (const auto &player : Players.findAllCharactersInRangeOf(xc, yc, zc, distancemetric)) {
-        boost::shared_ptr<BasicServerCommand>cmd(new SoundTC(xc, yc, zc, sound));
+        ServerCommandPointer cmd(new SoundTC(xc, yc, zc, sound));
         player->Connection->addCommand(cmd);
     }
 }
@@ -318,7 +318,7 @@ void World::lookAtMapItem(Player *cp, short int x, short int y, short int z) {
 
 void World::lookAtTile(Player *cp, unsigned short int tile, short int x, short int y, short int z) {
     const TilesStruct &tileStruct = Data::Tiles[tile];
-    boost::shared_ptr<BasicServerCommand>cmd(new LookAtTileTC(x, y, z, cp->nls(tileStruct.German, tileStruct.English)));
+    ServerCommandPointer cmd(new LookAtTileTC(x, y, z, cp->nls(tileStruct.German, tileStruct.English)));
     cp->Connection->addCommand(cmd);
 }
 
@@ -398,7 +398,7 @@ void World::sendWeather(Player *cp) {
 }
 
 void World::sendIGTime(Player *cp) {
-    boost::shared_ptr<BasicServerCommand>cmd(new UpdateTimeTC(static_cast<unsigned char>(getTime("hour")),static_cast<unsigned char>(getTime("minute")),static_cast<unsigned char>(getTime("day")),static_cast<unsigned char>(getTime("month")), static_cast<short int>(getTime("year"))));
+    ServerCommandPointer cmd(new UpdateTimeTC(static_cast<unsigned char>(getTime("hour")),static_cast<unsigned char>(getTime("minute")),static_cast<unsigned char>(getTime("day")),static_cast<unsigned char>(getTime("month")), static_cast<short int>(getTime("year"))));
     cp->Connection->addCommand(cmd);
 }
 

@@ -265,7 +265,7 @@ void LookAtCharacterTS::performAction(Player *player) {
                 std::string german = "Das ist: " + mon.nameDe;
                 std::string english = "This is: " + mon.nameEn;
 
-                boost::shared_ptr<BasicServerCommand>cmd(new CharDescription(id, player->nls(german, english)));
+                ServerCommandPointer cmd(new CharDescription(id, player->nls(german, english)));
                 player->Connection->addCommand(cmd);
             }
         }
@@ -281,7 +281,7 @@ void LookAtCharacterTS::performAction(Player *player) {
             std::string german = "Das ist: " + npc->getName();
             std::string english = "This is: " + npc->getName();
 
-            boost::shared_ptr<BasicServerCommand>cmd(new CharDescription(id, player->nls(german, english)));
+            ServerCommandPointer cmd(new CharDescription(id, player->nls(german, english)));
             player->Connection->addCommand(cmd);
 
         }
@@ -954,7 +954,7 @@ void UseTS::performAction(Player *player) {
         }
     }
 
-    boost::shared_ptr<BasicServerCommand>cmd(new BBSendActionTC(player->getId(), player->getName(), 3,msg));
+    ServerCommandPointer cmd(new BBSendActionTC(player->getId(), player->getName(), 3,msg));
     World::get()->monitoringClientList->sendCommand(cmd);
 }
 
@@ -1005,7 +1005,7 @@ void AttackStopTS::performAction(Player *player) {
     time(&(player->lastaction));
     player->ltAction->abortAction();
     player->attackmode = false;
-    boost::shared_ptr<BasicServerCommand>cmd(new TargetLostTC());
+    ServerCommandPointer cmd(new TargetLostTC());
     player->Connection->addCommand(cmd);
 }
 
@@ -1486,7 +1486,7 @@ void AttackPlayerTS::performAction(Player *player) {
                 player->enemytype = Character::npc;
             }
 
-            boost::shared_ptr<BasicServerCommand>cmd(new AttackAcknowledgedTC());
+            ServerCommandPointer cmd(new AttackAcknowledgedTC());
             player->Connection->addCommand(cmd);
             //monitoringClientList->sendCommand( new SendActionTS(player->getId(), player->getName(), 0, "Starts an attack: " + Logger::toString(player->enemyid) ) );
             World::get()->characterAttacks(player);

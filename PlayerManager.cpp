@@ -166,7 +166,7 @@ void *PlayerManager::loginLoop(PlayerManager *pmanager) {
                         }
 
                         std::cout<<"got logoutException durin loading! "<<std::endl;
-                        boost::shared_ptr<BasicServerCommand>cmd(new LogOutTC(e.getReason()));
+                        ServerCommandPointer cmd(new LogOutTC(e.getReason()));
                         Connection->shutdownSend(cmd);
                         //Connection->closeConnection();
                         //Connection.reset();
@@ -214,7 +214,7 @@ void *PlayerManager::playerSaveLoop(PlayerManager *pmanager) {
                         tmpPl->save();
                         reloadmutex.unlock_shared();
                         tmpPl->Connection->closeConnection();
-                        boost::shared_ptr<BasicServerCommand> cmd(new BBLogOutTC(tmpPl->getId(), tmpPl->getName()));
+                        ServerCommandPointer cmd(new BBLogOutTC(tmpPl->getId(), tmpPl->getName()));
                         world->monitoringClientList->sendCommand(cmd);
                         delete tmpPl;
                         tmpPl = nullptr;

@@ -69,10 +69,10 @@ public:
 
     virtual void performAction(Player *player) override {
         World::get()->sendMessageToAllPlayers(msg);
-        World::get()->monitoringClientList->sendCommand(boost::shared_ptr<BasicServerCommand>(new BBMessageTC("[Server] Broadcast:",0)));
-        World::get()->monitoringClientList->sendCommand(boost::shared_ptr<BasicServerCommand>(new BBMessageTC(msg, 0)));
+        World::get()->monitoringClientList->sendCommand(ServerCommandPointer(new BBMessageTC("[Server] Broadcast:",0)));
+        World::get()->monitoringClientList->sendCommand(ServerCommandPointer(new BBMessageTC(msg, 0)));
         std::string message = "By: " + player->to_string();
-        World::get()->monitoringClientList->sendCommand(boost::shared_ptr<BasicServerCommand>(new BBMessageTC(message,0)));
+        World::get()->monitoringClientList->sendCommand(ServerCommandPointer(new BBMessageTC(message,0)));
     }
 
     virtual ClientCommandPointer clone() override {
@@ -112,7 +112,7 @@ public:
         }
 
         if (tempPlayer) {
-            boost::shared_ptr<BasicServerCommand>cmd(new BBSendAttribTC(tempPlayer->getId(), "sex", tempPlayer->increaseAttrib("sex",0)));
+            ServerCommandPointer cmd(new BBSendAttribTC(tempPlayer->getId(), "sex", tempPlayer->increaseAttrib("sex",0)));
             player->Connection->addCommand(cmd);
             cmd.reset(new BBSendAttribTC(tempPlayer->getId(), "age", tempPlayer->increaseAttrib("age",0)));
             player->Connection->addCommand(cmd);
@@ -187,7 +187,7 @@ public:
             Character::SKILLMAP::const_iterator sIterator;
 
             for (const auto &skill : tempPlayer->skills) {
-                boost::shared_ptr<BasicServerCommand>cmd(new BBSendSkillTC(tempPlayer->getId(), skill.first, skill.second.major, skill.second.minor));
+                ServerCommandPointer cmd(new BBSendSkillTC(tempPlayer->getId(), skill.first, skill.second.major, skill.second.minor));
                 player->Connection->addCommand(cmd);
             }
         }
@@ -566,10 +566,10 @@ public:
 
         if (tempPlayer) {
             World::get()->ban(tempPlayer, time, player->getId());
-            boost::shared_ptr<BasicServerCommand>cmd(new BBMessageTC(tempPlayer->to_string() + " banned by: " + player->to_string(), 0));
+            ServerCommandPointer cmd(new BBMessageTC(tempPlayer->to_string() + " banned by: " + player->to_string(), 0));
             World::get()->monitoringClientList->sendCommand(cmd);
         } else {
-            boost::shared_ptr<BasicServerCommand>cmd(new BBMessageTC("Cannot find the player: " + name + "(" + std::to_string(id) + ")",0));
+            ServerCommandPointer cmd(new BBMessageTC("Cannot find the player: " + name + "(" + std::to_string(id) + ")",0));
             player->Connection->addCommand(cmd);
         }
     }

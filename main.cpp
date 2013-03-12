@@ -168,7 +168,7 @@ int main(int argc, char *argv[]) {
                         loginScript->onLogin(newPlayer);
                         world->updatePlayerList();
                     } catch (Player::LogoutException &e) {
-                        boost::shared_ptr<BasicServerCommand> cmd(new LogOutTC(e.getReason()));
+                        ServerCommandPointer cmd(new LogOutTC(e.getReason()));
                         newPlayer->Connection->shutdownSend(cmd);
                         PlayerManager::get()->getLogOutPlayers().non_block_push_back(newPlayer);
                     }

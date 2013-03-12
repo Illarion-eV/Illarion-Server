@@ -68,7 +68,7 @@ void *Sender::send_loop(Sender *sender) {
         timespec lwaittime;
         lwaittime.tv_sec = 0;
         lwaittime.tv_nsec = 100000000; //50 ms
-        boost::shared_ptr<BasicServerCommand> cmd;
+        ServerCommandPointer cmd;
 
         while ((sender->cSendActive && sender->sendQueue) || (sender->slrunning && sender->sendQueue)) {
             cmd.reset();

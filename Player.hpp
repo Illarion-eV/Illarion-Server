@@ -166,10 +166,10 @@ public:
     virtual bool pageGM(const std::string &ticket) override;
 
     // send a char appearance; always or only if char not yet visible
-    void sendCharAppearance(TYPE_OF_CHARACTER_ID id, const boost::shared_ptr<BasicServerCommand> &appearance, bool always);
+    void sendCharAppearance(TYPE_OF_CHARACTER_ID id, const ServerCommandPointer &appearance, bool always);
 
     // removes a Char from sight
-    void sendCharRemove(TYPE_OF_CHARACTER_ID id, const boost::shared_ptr<BasicServerCommand> &removechar);
+    void sendCharRemove(TYPE_OF_CHARACTER_ID id, const ServerCommandPointer &removechar);
 
 
     /**
@@ -523,7 +523,7 @@ private:
             }
 
             dialogs[dialogId] = std::make_shared<DialogType>(*dialog);
-            boost::shared_ptr<BasicServerCommand>cmd(new DialogCommandType(*dialog, dialogId));
+            ServerCommandPointer cmd(new DialogCommandType(*dialog, dialogId));
             Connection->addCommand(cmd);
         } else {
             inform("ERROR: Unable to open more than 100 dialogs.");

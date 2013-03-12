@@ -177,7 +177,7 @@ bool World::spinPlayer(Player *cp, unsigned char d) {
 
 void World::sendSpinToAllVisiblePlayers(Character *cc) {
     for (const auto &p : Players.findAllCharactersInScreen(cc->pos.x, cc->pos.y, cc->pos.z)) {
-        boost::shared_ptr<BasicServerCommand>cmd(new PlayerSpinTC(cc->faceto, cc->getId()));
+        ServerCommandPointer cmd(new PlayerSpinTC(cc->faceto, cc->getId()));
         p->Connection->addCommand(cmd);
     }
 }
@@ -194,7 +194,7 @@ void World::sendPassiveMoveToAllVisiblePlayers(Character *ccp) {
         zoffs = ccp->pos.z - p->pos.z + RANGEDOWN;
 
         if ((xoffs != 0) || (yoffs != 0) || (zoffs != RANGEDOWN)) {
-            boost::shared_ptr<BasicServerCommand>cmd(new MoveAckTC(ccp->getId(), ccp->pos, PUSH, 0));
+            ServerCommandPointer cmd(new MoveAckTC(ccp->getId(), ccp->pos, PUSH, 0));
             p->Connection->addCommand(cmd);
         }
     }
@@ -219,7 +219,7 @@ void World::sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char ne
             zoffs = cc->pos.z - p->pos.z + RANGEDOWN;
 
             if ((xoffs != 0) || (yoffs != 0) || (zoffs != RANGEDOWN)) {
-                boost::shared_ptr<BasicServerCommand>cmd(new MoveAckTC(cc->getId(), cc->pos, netid, waitpages));
+                ServerCommandPointer cmd(new MoveAckTC(cc->getId(), cc->pos, netid, waitpages));
                 p->Connection->addCommand(cmd);
             }
         }
@@ -233,7 +233,7 @@ void World::sendCharacterWarpToAllVisiblePlayers(Character *cc, position oldpos,
 
         for (const auto &p : Players.findAllCharactersInScreen(cc->pos.x, cc->pos.y, cc->pos.z)) {
             if (cc != p) {
-                boost::shared_ptr<BasicServerCommand> cmd(new MoveAckTC(cc->getId(), cc->pos, PUSH, 0));
+                ServerCommandPointer cmd(new MoveAckTC(cc->getId(), cc->pos, PUSH, 0));
                 p->Connection->addCommand(cmd);
             }
         }
@@ -266,7 +266,7 @@ void World::sendCharsInVector(const std::vector<T *> &vec, Player *cp, bool send
             zoffs = cc->pos.z - cp->pos.z + RANGEDOWN;
 
             if ((xoffs != 0) || (yoffs != 0) || (zoffs != RANGEDOWN)) {
-                boost::shared_ptr<BasicServerCommand>cmd(new MoveAckTC(cc->getId(), cc->pos, PUSH, 0));
+                ServerCommandPointer cmd(new MoveAckTC(cc->getId(), cc->pos, PUSH, 0));
                 cp->Connection->addCommand(cmd);
                 cmd.reset(new PlayerSpinTC(cc->faceto, cc->getId()));
 

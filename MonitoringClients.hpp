@@ -47,7 +47,7 @@ public:
      * sends a new Command to all the connected clients
      * @param command the command which should be sended
      */
-    void sendCommand(boost::shared_ptr<BasicServerCommand> command);
+    void sendCommand(ServerCommandPointer command);
 
     /**
      * function which checks if new commands from clients are arrived and handels them

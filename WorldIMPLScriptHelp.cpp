@@ -224,16 +224,16 @@ void World::itemInform(Character *user, ScriptItem item, ItemLookAt lookAt) {
         if (item.inside) {
             try {
                 uint8_t showcase = cp->getShowcaseId(item.inside);
-                boost::shared_ptr<BasicServerCommand>cmd(new LookAtShowCaseItemTC(showcase, item.itempos, lookAt));
+                ServerCommandPointer cmd(new LookAtShowCaseItemTC(showcase, item.itempos, lookAt));
                 cp->Connection->addCommand(cmd);
             } catch (std::logic_error &) {
             }
         }
     } else if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
-        boost::shared_ptr<BasicServerCommand>cmd(new LookAtInventoryItemTC(item.itempos, lookAt));
+        ServerCommandPointer cmd(new LookAtInventoryItemTC(item.itempos, lookAt));
         cp->Connection->addCommand(cmd);
     } else if (item.type == ScriptItem::it_field) {
-        boost::shared_ptr<BasicServerCommand>cmd(new LookAtMapItemTC(item.pos.x, item.pos.y, item.pos.z, lookAt));
+        ServerCommandPointer cmd(new LookAtMapItemTC(item.pos.x, item.pos.y, item.pos.z, lookAt));
         cp->Connection->addCommand(cmd);
     }
 }
@@ -559,7 +559,7 @@ void World::gfx(unsigned short int gfxid, position pos) {
     std::vector < Player * > ::iterator titerator;
 
     for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
-        boost::shared_ptr<BasicServerCommand>cmd(new GraphicEffectTC(pos.x, pos.y, pos.z, gfxid));
+        ServerCommandPointer cmd(new GraphicEffectTC(pos.x, pos.y, pos.z, gfxid));
         (*titerator)->Connection->addCommand(cmd);
     }
 }
@@ -569,7 +569,7 @@ void World::makeSound(unsigned short int soundid, position pos) {
     std::vector < Player * > ::iterator titerator;
 
     for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
-        boost::shared_ptr<BasicServerCommand>cmd(new SoundTC(pos.x, pos.y, pos.z, soundid));
+        ServerCommandPointer cmd(new SoundTC(pos.x, pos.y, pos.z, soundid));
         (*titerator)->Connection->addCommand(cmd);
     }
 }
@@ -706,7 +706,7 @@ bool World::getMonsterAttack(Character::race_type id, AttackBoni &ret) {
 
 void World::sendMonitoringMessage(std::string msg, unsigned char id) {
     //send this Command to all Monitoring Clients
-    boost::shared_ptr<BasicServerCommand>cmd(new BBMessageTC(msg, id));
+    ServerCommandPointer cmd(new BBMessageTC(msg, id));
     monitoringClientList->sendCommand(cmd);
 }
 
