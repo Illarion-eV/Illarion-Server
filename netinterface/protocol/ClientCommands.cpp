@@ -56,8 +56,8 @@ void InputDialogTS::performAction(Player *player) {
     player->executeInputDialog(dialogId, success, input);
 }
 
-boost::shared_ptr<BasicClientCommand> InputDialogTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new InputDialogTS());
+ClientCommandPointer InputDialogTS::clone() {
+    ClientCommandPointer cmd(new InputDialogTS());
     return cmd;
 }
 
@@ -73,8 +73,8 @@ void MessageDialogTS::performAction(Player *player) {
     player->executeMessageDialog(dialogId);
 }
 
-boost::shared_ptr<BasicClientCommand> MessageDialogTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new MessageDialogTS());
+ClientCommandPointer MessageDialogTS::clone() {
+    ClientCommandPointer cmd(new MessageDialogTS());
     return cmd;
 }
 
@@ -120,8 +120,8 @@ void MerchantDialogTS::performAction(Player *player) {
     }
 }
 
-boost::shared_ptr<BasicClientCommand> MerchantDialogTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new MerchantDialogTS());
+ClientCommandPointer MerchantDialogTS::clone() {
+    ClientCommandPointer cmd(new MerchantDialogTS());
     return cmd;
 }
 
@@ -139,8 +139,8 @@ void SelectionDialogTS::performAction(Player *player) {
     player->executeSelectionDialog(dialogId, success, selectedIndex);
 }
 
-boost::shared_ptr<BasicClientCommand> SelectionDialogTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new SelectionDialogTS());
+ClientCommandPointer SelectionDialogTS::clone() {
+    ClientCommandPointer cmd(new SelectionDialogTS());
     return cmd;
 }
 
@@ -193,8 +193,8 @@ void CraftingDialogTS::performAction(Player *player) {
     }
 }
 
-boost::shared_ptr<BasicClientCommand> CraftingDialogTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new CraftingDialogTS());
+ClientCommandPointer CraftingDialogTS::clone() {
+    ClientCommandPointer cmd(new CraftingDialogTS());
     return cmd;
 }
 
@@ -224,8 +224,8 @@ void RequestAppearanceTS::performAction(Player *player) {
 
 }
 
-boost::shared_ptr<BasicClientCommand> RequestAppearanceTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new RequestAppearanceTS());
+ClientCommandPointer RequestAppearanceTS::clone() {
+    ClientCommandPointer cmd(new RequestAppearanceTS());
     return cmd;
 }
 
@@ -290,8 +290,8 @@ void LookAtCharacterTS::performAction(Player *player) {
 
 }
 
-boost::shared_ptr<BasicClientCommand> LookAtCharacterTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new LookAtCharacterTS());
+ClientCommandPointer LookAtCharacterTS::clone() {
+    ClientCommandPointer cmd(new LookAtCharacterTS());
     return cmd;
 }
 
@@ -696,8 +696,8 @@ void CastTS::performAction(Player *player) {
     }
 }
 
-boost::shared_ptr<BasicClientCommand> CastTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new CastTS());
+ClientCommandPointer CastTS::clone() {
+    ClientCommandPointer cmd(new CastTS());
     return cmd;
 }
 
@@ -958,8 +958,8 @@ void UseTS::performAction(Player *player) {
     World::get()->monitoringClientList->sendCommand(cmd);
 }
 
-boost::shared_ptr<BasicClientCommand> UseTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new UseTS());
+ClientCommandPointer UseTS::clone() {
+    ClientCommandPointer cmd(new UseTS());
     return cmd;
 }
 
@@ -974,8 +974,8 @@ void KeepAliveTS::performAction(Player *player) {
     time(&(player->lastkeepalive));
 }
 
-boost::shared_ptr<BasicClientCommand> KeepAliveTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new KeepAliveTS());
+ClientCommandPointer KeepAliveTS::clone() {
+    ClientCommandPointer cmd(new KeepAliveTS());
     return cmd;
 }
 
@@ -990,8 +990,8 @@ void RequestSkillsTS::performAction(Player *player) {
     player->sendAllSkills();
 }
 
-boost::shared_ptr<BasicClientCommand> RequestSkillsTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new RequestSkillsTS());
+ClientCommandPointer RequestSkillsTS::clone() {
+    ClientCommandPointer cmd(new RequestSkillsTS());
     return cmd;
 }
 
@@ -1009,8 +1009,8 @@ void AttackStopTS::performAction(Player *player) {
     player->Connection->addCommand(cmd);
 }
 
-boost::shared_ptr<BasicClientCommand> AttackStopTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new AttackStopTS());
+ClientCommandPointer AttackStopTS::clone() {
+    ClientCommandPointer cmd(new AttackStopTS());
     return cmd;
 }
 
@@ -1031,8 +1031,8 @@ void LookAtInventoryItemTS::performAction(Player *player) {
     }
 }
 
-boost::shared_ptr<BasicClientCommand> LookAtInventoryItemTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new LookAtInventoryItemTS());
+ClientCommandPointer LookAtInventoryItemTS::clone() {
+    ClientCommandPointer cmd(new LookAtInventoryItemTS());
     return cmd;
 }
 
@@ -1054,8 +1054,8 @@ void LookAtShowCaseItemTS::performAction(Player *player) {
     }
 }
 
-boost::shared_ptr<BasicClientCommand> LookAtShowCaseItemTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new LookAtShowCaseItemTS());
+ClientCommandPointer LookAtShowCaseItemTS::clone() {
+    ClientCommandPointer cmd(new LookAtShowCaseItemTS());
     return cmd;
 }
 
@@ -1080,8 +1080,8 @@ void MoveItemFromPlayerToShowCaseTS::performAction(Player *player) {
     }
 }
 
-boost::shared_ptr<BasicClientCommand> MoveItemFromPlayerToShowCaseTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new MoveItemFromPlayerToShowCaseTS());
+ClientCommandPointer MoveItemFromPlayerToShowCaseTS::clone() {
+    ClientCommandPointer cmd(new MoveItemFromPlayerToShowCaseTS());
     return cmd;
 }
 
@@ -1106,8 +1106,8 @@ void MoveItemFromShowCaseToPlayerTS::performAction(Player *player) {
     }
 }
 
-boost::shared_ptr<BasicClientCommand> MoveItemFromShowCaseToPlayerTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new MoveItemFromShowCaseToPlayerTS());
+ClientCommandPointer MoveItemFromShowCaseToPlayerTS::clone() {
+    ClientCommandPointer cmd(new MoveItemFromShowCaseToPlayerTS());
     return cmd;
 }
 
@@ -1131,8 +1131,8 @@ void MoveItemInsideInventoryTS::performAction(Player *player) {
     }
 }
 
-boost::shared_ptr<BasicClientCommand> MoveItemInsideInventoryTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new MoveItemInsideInventoryTS());
+ClientCommandPointer MoveItemInsideInventoryTS::clone() {
+    ClientCommandPointer cmd(new MoveItemInsideInventoryTS());
     return cmd;
 }
 
@@ -1155,8 +1155,8 @@ void DropItemFromInventoryOnMapTS::performAction(Player *player) {
     player->actionPoints -= P_ITEMMOVE_COST;
 }
 
-boost::shared_ptr<BasicClientCommand> DropItemFromInventoryOnMapTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new DropItemFromInventoryOnMapTS());
+ClientCommandPointer DropItemFromInventoryOnMapTS::clone() {
+    ClientCommandPointer cmd(new DropItemFromInventoryOnMapTS());
     return cmd;
 }
 
@@ -1180,8 +1180,8 @@ void MoveItemFromMapToPlayerTS::performAction(Player *player) {
     }
 }
 
-boost::shared_ptr<BasicClientCommand> MoveItemFromMapToPlayerTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new MoveItemFromMapToPlayerTS());
+ClientCommandPointer MoveItemFromMapToPlayerTS::clone() {
+    ClientCommandPointer cmd(new MoveItemFromMapToPlayerTS());
     return cmd;
 }
 
@@ -1206,8 +1206,8 @@ void MoveItemFromMapIntoShowCaseTS::performAction(Player *player) {
     }
 }
 
-boost::shared_ptr<BasicClientCommand> MoveItemFromMapIntoShowCaseTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new MoveItemFromMapIntoShowCaseTS());
+ClientCommandPointer MoveItemFromMapIntoShowCaseTS::clone() {
+    ClientCommandPointer cmd(new MoveItemFromMapIntoShowCaseTS());
     return cmd;
 }
 
@@ -1233,8 +1233,8 @@ void MoveItemBetweenShowCasesTS::performAction(Player *player) {
     }
 }
 
-boost::shared_ptr<BasicClientCommand> MoveItemBetweenShowCasesTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new MoveItemBetweenShowCasesTS());
+ClientCommandPointer MoveItemBetweenShowCasesTS::clone() {
+    ClientCommandPointer cmd(new MoveItemBetweenShowCasesTS());
     return cmd;
 }
 
@@ -1258,8 +1258,8 @@ void DropItemFromShowCaseOnMapTS::performAction(Player *player) {
     player->actionPoints -= P_ITEMMOVE_COST;
 }
 
-boost::shared_ptr<BasicClientCommand> DropItemFromShowCaseOnMapTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new DropItemFromShowCaseOnMapTS());
+ClientCommandPointer DropItemFromShowCaseOnMapTS::clone() {
+    ClientCommandPointer cmd(new DropItemFromShowCaseOnMapTS());
     return cmd;
 }
 
@@ -1280,8 +1280,8 @@ void CloseContainerInShowCaseTS::performAction(Player *player) {
     }
 }
 
-boost::shared_ptr<BasicClientCommand> CloseContainerInShowCaseTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new CloseContainerInShowCaseTS());
+ClientCommandPointer CloseContainerInShowCaseTS::clone() {
+    ClientCommandPointer cmd(new CloseContainerInShowCaseTS());
     return cmd;
 }
 
@@ -1301,8 +1301,8 @@ void LookIntoShowCaseContainerTS::performAction(Player *player) {
     player->actionPoints -= P_LOOK_COST;
 }
 
-boost::shared_ptr<BasicClientCommand> LookIntoShowCaseContainerTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new LookIntoShowCaseContainerTS());
+ClientCommandPointer LookIntoShowCaseContainerTS::clone() {
+    ClientCommandPointer cmd(new LookIntoShowCaseContainerTS());
     return cmd;
 }
 
@@ -1320,8 +1320,8 @@ void LookIntoInventoryTS::performAction(Player *player) {
     player->actionPoints -= P_LOOK_COST;
 }
 
-boost::shared_ptr<BasicClientCommand> LookIntoInventoryTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new LookIntoInventoryTS());
+ClientCommandPointer LookIntoInventoryTS::clone() {
+    ClientCommandPointer cmd(new LookIntoInventoryTS());
     return cmd;
 }
 
@@ -1343,8 +1343,8 @@ void LookIntoContainerOnFieldTS::performAction(Player *player) {
     }
 }
 
-boost::shared_ptr<BasicClientCommand> LookIntoContainerOnFieldTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new LookIntoContainerOnFieldTS());
+ClientCommandPointer LookIntoContainerOnFieldTS::clone() {
+    ClientCommandPointer cmd(new LookIntoContainerOnFieldTS());
     return cmd;
 }
 
@@ -1360,8 +1360,8 @@ void LogOutTS::performAction(Player *player) {
     player->Connection->closeConnection();
 }
 
-boost::shared_ptr<BasicClientCommand> LogOutTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new LogOutTS());
+ClientCommandPointer LogOutTS::clone() {
+    ClientCommandPointer cmd(new LogOutTS());
     return cmd;
 }
 
@@ -1378,8 +1378,8 @@ void WhisperTS::performAction(Player *player) {
     player->talk(Character::tt_whisper, text);
 }
 
-boost::shared_ptr<BasicClientCommand> WhisperTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new WhisperTS());
+ClientCommandPointer WhisperTS::clone() {
+    ClientCommandPointer cmd(new WhisperTS());
     return cmd;
 }
 
@@ -1395,8 +1395,8 @@ void ShoutTS::performAction(Player *player) {
     player->talk(Character::tt_yell, text);
 }
 
-boost::shared_ptr<BasicClientCommand> ShoutTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new ShoutTS());
+ClientCommandPointer ShoutTS::clone() {
+    ClientCommandPointer cmd(new ShoutTS());
     return cmd;
 }
 
@@ -1418,8 +1418,8 @@ void SayTS::performAction(Player *player) {
     }
 }
 
-boost::shared_ptr<BasicClientCommand> SayTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new SayTS());
+ClientCommandPointer SayTS::clone() {
+    ClientCommandPointer cmd(new SayTS());
     return cmd;
 }
 
@@ -1435,8 +1435,8 @@ void RefreshTS::performAction(Player *player) {
     World::get()->sendAllVisibleCharactersToPlayer(player, true);
 }
 
-boost::shared_ptr<BasicClientCommand> RefreshTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new RefreshTS());
+ClientCommandPointer RefreshTS::clone() {
+    ClientCommandPointer cmd(new RefreshTS());
     return cmd;
 }
 
@@ -1455,8 +1455,8 @@ void IntroduceTS::performAction(Player *player) {
     }
 }
 
-boost::shared_ptr<BasicClientCommand> IntroduceTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new IntroduceTS());
+ClientCommandPointer IntroduceTS::clone() {
+    ClientCommandPointer cmd(new IntroduceTS());
     return cmd;
 }
 
@@ -1496,8 +1496,8 @@ void AttackPlayerTS::performAction(Player *player) {
     }
 }
 
-boost::shared_ptr<BasicClientCommand> AttackPlayerTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new AttackPlayerTS());
+ClientCommandPointer AttackPlayerTS::clone() {
+    ClientCommandPointer cmd(new AttackPlayerTS());
     return cmd;
 }
 
@@ -1521,8 +1521,8 @@ void LookAtMapItemTS::performAction(Player *player) {
 
 }
 
-boost::shared_ptr<BasicClientCommand> LookAtMapItemTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new LookAtMapItemTS());
+ClientCommandPointer LookAtMapItemTS::clone() {
+    ClientCommandPointer cmd(new LookAtMapItemTS());
     return cmd;
 }
 
@@ -1543,8 +1543,8 @@ void PSpinActionTS::performAction(Player *player) {
     }
 }
 
-boost::shared_ptr<BasicClientCommand> PSpinActionTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new PSpinActionTS(direction));
+ClientCommandPointer PSpinActionTS::clone() {
+    ClientCommandPointer cmd(new PSpinActionTS(direction));
     return cmd;
 }
 
@@ -1584,8 +1584,8 @@ void CharMoveTS::performAction(Player *player) {
     }
 }
 
-boost::shared_ptr<BasicClientCommand> CharMoveTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new CharMoveTS());
+ClientCommandPointer CharMoveTS::clone() {
+    ClientCommandPointer cmd(new CharMoveTS());
     return cmd;
 }
 
@@ -1611,8 +1611,8 @@ void IMoverActionTS::performAction(Player *player) {
     }
 }
 
-boost::shared_ptr<BasicClientCommand> IMoverActionTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new IMoverActionTS(direction));
+ClientCommandPointer IMoverActionTS::clone() {
+    ClientCommandPointer cmd(new IMoverActionTS(direction));
     return cmd;
 }
 
@@ -1629,8 +1629,8 @@ void LoginCommandTS::performAction(Player *player) {
     time(&(player->lastaction));
 }
 
-boost::shared_ptr<BasicClientCommand> LoginCommandTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new LoginCommandTS());
+ClientCommandPointer LoginCommandTS::clone() {
+    ClientCommandPointer cmd(new LoginCommandTS());
     return cmd;
 }
 
@@ -1661,8 +1661,8 @@ void ScreenSizeCommandTS::performAction(Player *player) {
     player->sendCharacters();
 }
 
-boost::shared_ptr<BasicClientCommand> ScreenSizeCommandTS::clone() {
-    boost::shared_ptr<BasicClientCommand>cmd(new ScreenSizeCommandTS());
+ClientCommandPointer ScreenSizeCommandTS::clone() {
+    ClientCommandPointer cmd(new ScreenSizeCommandTS());
     return cmd;
 }
 

@@ -81,7 +81,7 @@ public:
     * returns a command from the receive Queue if on is available
     * @return the command which was in the receive Queue or an empty (NULL) Command if there wasn't something in the receive Queue
     */
-    boost::shared_ptr<BasicClientCommand> getCommand();
+    ClientCommandPointer getCommand();
 
 
     volatile bool online; /*< if connection is active*/
@@ -94,8 +94,8 @@ public:
         return receiveQueue.size();
     }
 
-    typedef std::deque< boost::shared_ptr<BasicClientCommand> >CLIENTCOMMANDLIST;
-    typedef std::deque< boost::shared_ptr<BasicServerCommand> >SERVERCOMMANDLIST;
+    typedef std::deque<ClientCommandPointer> CLIENTCOMMANDLIST;
+    typedef std::deque<boost::shared_ptr<BasicServerCommand>> SERVERCOMMANDLIST;
 
     boost::asio::ip::tcp::socket &getSocket() {
         return socket;
@@ -113,7 +113,7 @@ private:
     //Buffer for the header of messages
     unsigned char headerBuffer[6];
 
-    boost::shared_ptr<BasicClientCommand> cmd;
+    ClientCommandPointer cmd;
     boost::shared_ptr<BasicServerCommand> shutdownCmd;
     boost::shared_ptr<BasicServerCommand> cmdToWrite;
 

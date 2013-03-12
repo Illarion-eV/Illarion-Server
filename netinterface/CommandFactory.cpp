@@ -90,7 +90,7 @@ CommandFactory::~CommandFactory() {
     templateList.clear();
 }
 
-boost::shared_ptr<BasicClientCommand>  CommandFactory::getCommand(unsigned char commandId) {
+ClientCommandPointer  CommandFactory::getCommand(unsigned char commandId) {
     COMMANDLIST::iterator it;
     it = templateList.find(commandId);
 
@@ -100,6 +100,6 @@ boost::shared_ptr<BasicClientCommand>  CommandFactory::getCommand(unsigned char 
         return cmd->clone();
     }
 
-    return boost::shared_ptr<BasicClientCommand>();
+    return ClientCommandPointer();
 }
 

@@ -22,7 +22,6 @@
 #define _CLIENT_COMMANDS_HPP_
 
 #include <string>
-#include <boost/shared_ptr.hpp>
 #include "types.hpp"
 #include "netinterface/BasicClientCommand.hpp"
 
@@ -80,7 +79,7 @@ public:
     InputDialogTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -92,7 +91,7 @@ public:
     MessageDialogTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -110,7 +109,7 @@ public:
     MerchantDialogTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -124,7 +123,7 @@ public:
     SelectionDialogTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -140,7 +139,7 @@ public:
     CraftingDialogTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -152,7 +151,7 @@ public:
     RequestAppearanceTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -165,7 +164,7 @@ public:
     LookAtCharacterTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -181,7 +180,7 @@ public:
     CastTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -198,7 +197,7 @@ public:
     UseTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -207,7 +206,7 @@ public:
     KeepAliveTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -216,7 +215,7 @@ public:
     RequestSkillsTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -225,7 +224,7 @@ public:
     AttackStopTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -237,7 +236,7 @@ public:
     LookAtInventoryItemTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -250,7 +249,7 @@ public:
     LookAtShowCaseItemTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -265,7 +264,7 @@ public:
     MoveItemFromPlayerToShowCaseTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -280,7 +279,7 @@ public:
     MoveItemFromShowCaseToPlayerTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -294,7 +293,7 @@ public:
     MoveItemInsideInventoryTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -308,7 +307,7 @@ public:
     DropItemFromInventoryOnMapTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -322,7 +321,7 @@ public:
     MoveItemFromMapToPlayerTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -337,7 +336,7 @@ public:
     MoveItemFromMapIntoShowCaseTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -353,7 +352,7 @@ public:
     MoveItemBetweenShowCasesTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -368,7 +367,7 @@ public:
     DropItemFromShowCaseOnMapTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -380,7 +379,7 @@ public:
     CloseContainerInShowCaseTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -392,7 +391,7 @@ public:
     LookIntoShowCaseContainerTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -401,7 +400,7 @@ public:
     LookIntoInventoryTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 class LookIntoContainerOnFieldTS : public BasicClientCommand {
@@ -412,7 +411,7 @@ public:
     LookIntoContainerOnFieldTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -421,7 +420,7 @@ public:
     LogOutTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -433,7 +432,7 @@ public:
     WhisperTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -445,7 +444,7 @@ public:
     ShoutTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -457,7 +456,7 @@ public:
     SayTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -466,7 +465,7 @@ public:
     RefreshTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -475,7 +474,7 @@ public:
     IntroduceTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -487,7 +486,7 @@ public:
     AttackPlayerTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -499,7 +498,7 @@ public:
     LookAtMapItemTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -511,7 +510,7 @@ public:
     PSpinActionTS(uint8_t dir);
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -525,7 +524,7 @@ public:
     CharMoveTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -539,7 +538,7 @@ public:
     IMoverActionTS(uint8_t dir);
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 
@@ -553,7 +552,7 @@ public:
     LoginCommandTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 
     unsigned short getClientVersion() const;
     const std::string &getLoginName() const;
@@ -570,7 +569,7 @@ public:
     ScreenSizeCommandTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
-    virtual boost::shared_ptr<BasicClientCommand> clone() override;
+    virtual ClientCommandPointer clone() override;
 };
 
 #endif

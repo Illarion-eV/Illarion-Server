@@ -242,9 +242,9 @@ void NetInterface::handle_write_shutdown(const boost::system::error_code &error)
     }
 }
 
-boost::shared_ptr<BasicClientCommand> NetInterface::getCommand() {
+ClientCommandPointer NetInterface::getCommand() {
     if (online) {
-        boost::shared_ptr<BasicClientCommand> ret;
+        ClientCommandPointer ret;
         receiveQueueMutex.lock();
 
         if (!receiveQueue.empty()) {
@@ -256,6 +256,6 @@ boost::shared_ptr<BasicClientCommand> NetInterface::getCommand() {
         return ret;
     }
 
-    return boost::shared_ptr<BasicClientCommand>();
+    return ClientCommandPointer();
 }
 

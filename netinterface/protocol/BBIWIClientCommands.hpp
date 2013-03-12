@@ -75,8 +75,8 @@ public:
         World::get()->monitoringClientList->sendCommand(boost::shared_ptr<BasicServerCommand>(new BBMessageTC(message,0)));
     }
 
-    virtual boost::shared_ptr<BasicClientCommand> clone() override {
-        boost::shared_ptr<BasicClientCommand>cmd(new BBBroadCastTS());
+    virtual ClientCommandPointer clone() override {
+        ClientCommandPointer cmd(new BBBroadCastTS());
         return cmd;
     }
 
@@ -146,8 +146,8 @@ public:
         }
     }
 
-    virtual boost::shared_ptr<BasicClientCommand> clone() override {
-        boost::shared_ptr<BasicClientCommand>cmd(new BBRequestStatTS());
+    virtual ClientCommandPointer clone() override {
+        ClientCommandPointer cmd(new BBRequestStatTS());
         return cmd;
     }
 
@@ -193,8 +193,8 @@ public:
         }
     }
 
-    virtual boost::shared_ptr<BasicClientCommand> clone() override {
-        boost::shared_ptr<BasicClientCommand>cmd(new BBRequestSkillsTS());
+    virtual ClientCommandPointer clone() override {
+        ClientCommandPointer cmd(new BBRequestSkillsTS());
         return cmd;
     }
 
@@ -237,8 +237,8 @@ public:
         }
     }
 
-    virtual boost::shared_ptr<BasicClientCommand> clone() override {
-        boost::shared_ptr<BasicClientCommand>cmd(new BBSpeakAsTS());
+    virtual ClientCommandPointer clone() override {
+        ClientCommandPointer cmd(new BBSpeakAsTS());
         return cmd;
     }
 
@@ -285,8 +285,8 @@ public:
         }
     }
 
-    virtual boost::shared_ptr<BasicClientCommand> clone() override {
-        boost::shared_ptr<BasicClientCommand>cmd(new BBWarpPlayerTS());
+    virtual ClientCommandPointer clone() override {
+        ClientCommandPointer cmd(new BBWarpPlayerTS());
         return cmd;
     }
 
@@ -333,8 +333,8 @@ public:
         }
     }
 
-    virtual boost::shared_ptr<BasicClientCommand> clone() override {
-        boost::shared_ptr<BasicClientCommand>cmd(new BBServerCommandTS());
+    virtual ClientCommandPointer clone() override {
+        ClientCommandPointer cmd(new BBServerCommandTS());
         return cmd;
     }
 
@@ -377,8 +377,8 @@ public:
         }
     }
 
-    virtual boost::shared_ptr<BasicClientCommand> clone() override {
-        boost::shared_ptr<BasicClientCommand>cmd(new BBChangeAttribTS());
+    virtual ClientCommandPointer clone() override {
+        ClientCommandPointer cmd(new BBChangeAttribTS());
         return cmd;
     }
 
@@ -424,8 +424,8 @@ public:
         }
     }
 
-    virtual boost::shared_ptr<BasicClientCommand> clone() override {
-        boost::shared_ptr<BasicClientCommand>cmd(new BBChangeSkillTS());
+    virtual ClientCommandPointer clone() override {
+        ClientCommandPointer cmd(new BBChangeSkillTS());
         return cmd;
     }
 
@@ -469,8 +469,8 @@ public:
         }
     }
 
-    virtual boost::shared_ptr<BasicClientCommand> clone() override {
-        boost::shared_ptr<BasicClientCommand>cmd(new BBTalktoTS());
+    virtual ClientCommandPointer clone() override {
+        ClientCommandPointer cmd(new BBTalktoTS());
         return cmd;
     }
 
@@ -501,8 +501,8 @@ public:
 
     }
 
-    virtual boost::shared_ptr<BasicClientCommand> clone() override {
-        boost::shared_ptr<BasicClientCommand>cmd(new BBDisconnectTS());
+    virtual ClientCommandPointer clone() override {
+        ClientCommandPointer cmd(new BBDisconnectTS());
         return cmd;
     }
 
@@ -529,8 +529,8 @@ public:
         time(&(player->lastkeepalive));
     }
 
-    virtual boost::shared_ptr<BasicClientCommand> clone() override {
-        boost::shared_ptr<BasicClientCommand>cmd(new BBKeepAliveTS());
+    virtual ClientCommandPointer clone() override {
+        ClientCommandPointer cmd(new BBKeepAliveTS());
         return cmd;
     }
 
@@ -574,8 +574,8 @@ public:
         }
     }
 
-    virtual boost::shared_ptr<BasicClientCommand> clone() override {
-        boost::shared_ptr<BasicClientCommand>cmd(new BBBanTS());
+    virtual ClientCommandPointer clone() override {
+        ClientCommandPointer cmd(new BBBanTS());
         return cmd;
     }
     TYPE_OF_CHARACTER_ID id; /*<which character is banned*/

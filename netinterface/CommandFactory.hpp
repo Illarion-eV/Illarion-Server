@@ -22,8 +22,7 @@
 
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
-
-class BasicClientCommand;
+#include "netinterface/BasicClientCommand.hpp"
 
 /**
 *factory class which holds templates of BasicServerCommand classes
@@ -40,7 +39,7 @@ public:
     *@param commandId the id of the command which we want to use
     *@return a pointer to an empty command with the given commandId
     */
-    boost::shared_ptr<BasicClientCommand> getCommand(unsigned char commandId);
+    ClientCommandPointer getCommand(unsigned char commandId);
 
 private:
 

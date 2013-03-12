@@ -81,7 +81,7 @@ Player::Player(boost::shared_ptr<NetInterface> newConnection) throw(Player::Logo
 
     // first check if we have a valid client
 
-    boost::shared_ptr<BasicClientCommand> cmd = Connection->getCommand();
+    ClientCommandPointer cmd = Connection->getCommand();
 
     if (!cmd || cmd->getDefinitionByte() != C_LOGIN_TS) {
         throw LogoutException(UNSTABLECONNECTION);

@@ -75,7 +75,7 @@ protected:
 
     boost::shared_ptr<ByteBuffer> buffer; /*<local buffer to the received data*/
     //CByteBuffer * buffer;
-    boost::shared_ptr<BasicClientCommand> cmd; /*<command which is actuelly received*/
+    ClientCommandPointer cmd; /*<command which is actuelly received*/
 
     volatile void checkData(); /*<checkes the received and try to get the command data*/
     volatile uint8_t numtrys; /*< unsuccessful attemps to read data for a command*/
