@@ -27,7 +27,7 @@ LuaTriggerScript::LuaTriggerScript() throw(ScriptException)
     init_functions();
 }
 
-LuaTriggerScript::LuaTriggerScript(std::string filename, position pos) throw(ScriptException)
+LuaTriggerScript::LuaTriggerScript(const std::string &filename, const position &pos) throw(ScriptException)
     : LuaScript(filename), _pos(pos) {
     init_functions();
 }
@@ -44,7 +44,7 @@ void LuaTriggerScript::CharacterOnField(Character *character) {
     callEntrypoint("CharacterOnField", fuse_character);
 }
 
-void LuaTriggerScript::ItemRotsOnField(ScriptItem oldItem, ScriptItem newItem) {
+void LuaTriggerScript::ItemRotsOnField(const ScriptItem &oldItem, const ScriptItem &newItem) {
     callEntrypoint("ItemRotsOnField", oldItem, newItem);
 }
 
@@ -58,12 +58,12 @@ void LuaTriggerScript::MoveToField(Character *character) {
     callEntrypoint("MoveToField", fuse_character);
 }
 
-void LuaTriggerScript::PutItemOnField(ScriptItem item, Character *character) {
+void LuaTriggerScript::PutItemOnField(const ScriptItem &item, Character *character) {
     fuse_ptr<Character> fuse_character(character);
     callEntrypoint("PutItemOnField", item, fuse_character);
 }
 
-void LuaTriggerScript::TakeItemFromField(ScriptItem item, Character *character) {
+void LuaTriggerScript::TakeItemFromField(const ScriptItem &item, Character *character) {
     fuse_ptr<Character> fuse_Character(character);
     callEntrypoint("TakeItemFromField", item, fuse_Character);
 }

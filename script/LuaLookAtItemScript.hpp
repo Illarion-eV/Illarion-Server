@@ -28,10 +28,10 @@ class ScriptItem;
 
 class LuaLookAtItemScript : public LuaScript {
 public:
-    LuaLookAtItemScript(std::string filename) throw(ScriptException);
+    LuaLookAtItemScript(const std::string &filename) throw(ScriptException);
     virtual ~LuaLookAtItemScript() throw();
 
-    bool lookAtItem(Character *character, ScriptItem item);
+    bool lookAtItem(Character *character, const ScriptItem &item);
 
 private:
 

@@ -26,7 +26,7 @@ LuaItemScript::LuaItemScript() : LuaScript() {
     init_functions();
 }
 
-LuaItemScript::LuaItemScript(std::string filename, CommonStruct comstr) throw(ScriptException)
+LuaItemScript::LuaItemScript(const std::string &filename, const CommonStruct &comstr) throw(ScriptException)
     : LuaScript(filename) , _comstr(comstr) {
     init_functions();
 }
@@ -38,7 +38,7 @@ void LuaItemScript::init_functions() {
     globals["thisItem"] = _comstr;
 }
 
-void LuaItemScript::UseItem(Character *User, ScriptItem SourceItem, unsigned char ltastate) {
+void LuaItemScript::UseItem(Character *User, const ScriptItem &SourceItem, unsigned char ltastate) {
     fuse_ptr<Character> fuse_User(User);
     callEntrypoint("UseItem", fuse_User, SourceItem, ltastate);
 }
@@ -49,17 +49,17 @@ bool LuaItemScript::actionDisturbed(Character *performer, Character *disturber) 
     return callEntrypoint<bool>("actionDisturbed", fuse_performer, fuse_disturber);
 }
 
-void LuaItemScript::LookAtItem(Character *who, ScriptItem t_item) {
+void LuaItemScript::LookAtItem(Character *who, const ScriptItem &t_item) {
     fuse_ptr<Character> fuse_who(who);
     callEntrypoint("LookAtItem", fuse_who, t_item);
 }
 
-bool LuaItemScript::MoveItemBeforeMove(Character *who, ScriptItem sourceItem,ScriptItem targetItem) {
+bool LuaItemScript::MoveItemBeforeMove(Character *who, const ScriptItem &sourceItem, const ScriptItem &targetItem) {
     fuse_ptr<Character> fuse_who(who);
     return callEntrypoint<bool>("MoveItemBeforeMove", fuse_who, sourceItem, targetItem);
 }
 
-void LuaItemScript::MoveItemAfterMove(Character *who, ScriptItem sourceItem, ScriptItem targetItem) {
+void LuaItemScript::MoveItemAfterMove(Character *who, const ScriptItem &sourceItem, const ScriptItem &targetItem) {
     fuse_ptr<Character> fuse_who(who);
     callEntrypoint("MoveItemAfterMove", fuse_who, sourceItem, targetItem);
 }

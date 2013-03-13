@@ -183,14 +183,13 @@ void Monster::heal() {
     increaseAttrib("mana", 150);
 }
 
-void Monster::receiveText(talk_type tt, std::string message, Character *cc) {
+void Monster::receiveText(talk_type tt, const std::string &message, Character *cc) {
     MonsterStruct monStruct;
 
     if (MonsterDescriptions->find(getType(), monStruct)) {
         if (monStruct.script && monStruct.script->existsEntrypoint("receiveText")) {
-            //Nur Script aufrufen wenn man sich nicht selber h�rt.
             if (this != cc) {
-                monStruct.script->receiveText(this,tt,message,cc);
+                monStruct.script->receiveText(this, tt, message, cc);
             }
         }
     } else {

@@ -78,7 +78,7 @@ public:
     * Function which adds a string to the buffer of the command
     * @param data The string to be added to the command
     */
-    void addStringToBuffer(std::string data);
+    void addStringToBuffer(const std::string &data);
 
     /**
     * Function which adds an integer to the buffer of the command

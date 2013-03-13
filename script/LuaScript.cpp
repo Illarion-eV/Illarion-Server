@@ -286,7 +286,7 @@ luabind::object LuaScript::buildEntrypoint(const std::string &entrypoint) throw(
     return callee;
 }
 
-void LuaScript::addQuestScript(const std::string &entrypoint, std::shared_ptr<LuaScript> script) {
+void LuaScript::addQuestScript(const std::string &entrypoint, const std::shared_ptr<LuaScript> &script) {
     questScripts.insert(std::pair<const std::string, std::shared_ptr<LuaScript> >(entrypoint, script));
 }
 
@@ -949,8 +949,8 @@ void LuaScript::init_base_functions() {
         .def("weight", &Container::weight),
         luabind::class_<ScriptVariablesTable>("ScriptVariables")
         .def("find", &ScriptVariablesTable::find, luabind::pure_out_value(_3))
-        .def("set", (void(ScriptVariablesTable:: *)(std::string, std::string))&ScriptVariablesTable::set)
-        .def("set", (void(ScriptVariablesTable:: *)(std::string, int32_t))&ScriptVariablesTable::set)
+        .def("set", (void(ScriptVariablesTable:: *)(const std::string &, const std::string &))&ScriptVariablesTable::set)
+        .def("set", (void(ScriptVariablesTable:: *)(const std::string &, int32_t))&ScriptVariablesTable::set)
         .def("remove", &ScriptVariablesTable::remove)
         .def("save" , &ScriptVariablesTable::save),
         luabind::class_<Random>("Random")

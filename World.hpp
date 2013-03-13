@@ -914,22 +914,6 @@ public:
     // \param gfx ID fuer den Sound
     void makeGFXForAllPlayersInRange(short int xc, short int yc, short int zc, int distancemetric, unsigned short int gfx);
 
-#if 0
-    //! schickt an alle Spieler in der Naehe von xc,yc,zc eine Nachricht
-    // \param message die Nachricht die geschickt werden soll
-    // \param xc X-Koordinate des Mittelpunktes
-    // \param yc Y-Koordinate des Mittelpunktes
-    // \param zc Z-Koordinate der Ebene
-    // \param rn Entfernung Richtung Norden in der die Message noch gehoert wird
-    // \param rs Entfernung Richtung Sden in der die Message noch gehoert wird
-    // \param re Entfernung Richtung Osten in der die Message noch gehoert wird
-    // \param rw Entfernung Richtung Westen in der die Message noch gehoert wird
-    // \param ru Entfernung nach oben in der die Message noch gehoert wird
-    // \param rd Entfernung nach unten in der die Message noch gehoert wird
-    // \param mid ID fr SAY, SHOUT, WHISPER usw.
-    void sendMessageToAllPlayersInRange(std::string message, short int xc, short int yc, short int zc, int distancemetric, unsigned char mid);
-#endif
-
     //! send a message to all chars near pos
     //! \param message what the char says
     //! \param tt did he shout/talk/whisper?

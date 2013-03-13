@@ -226,7 +226,7 @@ void Map::Init(short int minx, short int miny, short int z) {
 }
 
 
-bool Map::Save(std::string name) {
+bool Map::Save(const std::string &name) {
     Logger::info(LogFacility::World) << "Saving map " << name << Log::end;
 
     if (! Map_initialized) {
@@ -330,7 +330,7 @@ bool Map::GetPToCFieldAt(Field *&fip, short int x, short int y) {
 }
 
 
-bool Map::Load(std::string name, unsigned short int x_offs, unsigned short int y_offs) {
+bool Map::Load(const std::string &name, unsigned short int x_offs, unsigned short int y_offs) {
 
     Logger::info(LogFacility::World) << "Loading map " << name  << " for position: " << x_offs << " " << y_offs << Log::end;
 

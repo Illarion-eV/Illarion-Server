@@ -56,7 +56,7 @@ void MonitoringClients::clientConnect(Player *player) {
     }
 }
 
-void MonitoringClients::sendCommand(ServerCommandPointer command) {
+void MonitoringClients::sendCommand(const ServerCommandPointer &command) {
     for (const auto &client : client_list) {
         client->Connection->addCommand(command);
     }

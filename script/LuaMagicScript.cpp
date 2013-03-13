@@ -23,7 +23,7 @@
 #include "Item.hpp"
 #include "fuse_ptr.hpp"
 
-LuaMagicScript::LuaMagicScript(std::string filename, const SpellStruct &) throw(ScriptException)
+LuaMagicScript::LuaMagicScript(const std::string &filename, const SpellStruct &) throw(ScriptException)
     : LuaScript(filename) {
     init_functions();
 }
@@ -45,12 +45,12 @@ void LuaMagicScript::CastMagicOnCharacter(Character *caster, Character *target, 
     callEntrypoint("CastMagicOnCharacter", fuse_caster, fuse_target, ltastate);
 }
 
-void LuaMagicScript::CastMagicOnField(Character *caster, position pos, unsigned char ltastate) {
+void LuaMagicScript::CastMagicOnField(Character *caster, const position &pos, unsigned char ltastate) {
     fuse_ptr<Character> fuse_caster(caster);
     callEntrypoint("CastMagicOnField", fuse_caster, pos, ltastate);
 }
 
-void LuaMagicScript::CastMagicOnItem(Character *caster, ScriptItem TargetItem, unsigned char ltastate) {
+void LuaMagicScript::CastMagicOnItem(Character *caster, const ScriptItem &TargetItem, unsigned char ltastate) {
     fuse_ptr<Character> fuse_caster(caster);
     callEntrypoint("CastMagicOnItem", fuse_caster, TargetItem, ltastate);
 }

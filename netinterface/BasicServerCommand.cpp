@@ -78,7 +78,7 @@ char *BasicServerCommand::cmdData() {
 
 }
 
-void BasicServerCommand::addStringToBuffer(std::string data) {
+void BasicServerCommand::addStringToBuffer(const std::string &data) {
     unsigned short int count = data.length();
     addShortIntToBuffer(count);
 

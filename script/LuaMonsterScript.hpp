@@ -31,11 +31,11 @@ class World;
 class LuaMonsterScript : public LuaScript {
 public:
     LuaMonsterScript() throw(ScriptException);
-    LuaMonsterScript(std::string filename) throw(ScriptException);
+    LuaMonsterScript(const std::string &filename) throw(ScriptException);
 
     virtual ~LuaMonsterScript() throw();
 
-    void receiveText(Character *Monster, Character::talk_type tt, std::string message, Character *cc);
+    void receiveText(Character *Monster, Character::talk_type tt, const std::string &message, Character *cc);
     void onDeath(Character *Monster);
     void onAttacked(Character *Monster, Character *attacker);
     void onCasted(Character *Monster, Character *caster);

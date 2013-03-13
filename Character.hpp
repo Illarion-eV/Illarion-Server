@@ -48,7 +48,7 @@ class SelectionDialog;
 class CraftingDialog;
 
 struct NoSpace : public std::runtime_error {
-    NoSpace(std::string s = "no space") : std::runtime_error(s) {}
+    NoSpace(const std::string &s = "no space") : std::runtime_error(s) {}
 };
 
 enum magic_type {

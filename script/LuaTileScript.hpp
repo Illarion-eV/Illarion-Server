@@ -30,10 +30,10 @@ class Character;
 
 class LuaTileScript : public LuaScript {
 public:
-    LuaTileScript(std::string filename,TilesStruct tile) throw(ScriptException);
+    LuaTileScript(const std::string &filename, const TilesStruct &tile) throw(ScriptException);
     virtual ~LuaTileScript() throw();
 
-    void useTile(Character *user, position pos, unsigned char ltastate);
+    void useTile(Character *user, const position &pos, unsigned char ltastate);
     bool actionDisturbed(Character *performer, Character *disturber);
 
 private:

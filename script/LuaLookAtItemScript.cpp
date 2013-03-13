@@ -23,13 +23,13 @@
 #include "Item.hpp"
 #include "fuse_ptr.hpp"
 
-LuaLookAtItemScript::LuaLookAtItemScript(std::string filename) throw(ScriptException)
+LuaLookAtItemScript::LuaLookAtItemScript(const std::string &filename) throw(ScriptException)
     : LuaScript(filename) {
 }
 
 LuaLookAtItemScript::~LuaLookAtItemScript() throw() {}
 
-bool LuaLookAtItemScript::lookAtItem(Character *character, ScriptItem item) {
+bool LuaLookAtItemScript::lookAtItem(Character *character, const ScriptItem &item) {
     fuse_ptr<Character> fuse_character(character);
     return callEntrypoint<bool>("lookAtItem", fuse_character, item);
 }

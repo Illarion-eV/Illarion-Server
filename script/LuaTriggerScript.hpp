@@ -29,15 +29,15 @@ class World;
 class LuaTriggerScript: public LuaScript {
 public:
     LuaTriggerScript() throw(ScriptException);
-    LuaTriggerScript(std::string filename, position pos) throw(ScriptException);
+    LuaTriggerScript(const std::string &filename, const position &pos) throw(ScriptException);
     virtual ~LuaTriggerScript() throw();
 
     void CharacterOnField(Character *Character);
     void MoveToField(Character *Character);
     void MoveFromField(Character *Character);
-    void PutItemOnField(ScriptItem item, Character *Character);
-    void TakeItemFromField(ScriptItem item, Character *Character);
-    void ItemRotsOnField(ScriptItem oldItem, ScriptItem newItem);
+    void PutItemOnField(const ScriptItem &item, Character *Character);
+    void TakeItemFromField(const ScriptItem &item, Character *Character);
+    void ItemRotsOnField(const ScriptItem &oldItem, const ScriptItem &newItem);
 
 private:
 

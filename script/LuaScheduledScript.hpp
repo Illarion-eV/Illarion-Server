@@ -28,10 +28,10 @@ class World;
 class LuaScheduledScript : public LuaScript {
 public:
 
-    LuaScheduledScript(std::string filename) throw(ScriptException);
+    LuaScheduledScript(const std::string &filename) throw(ScriptException);
     virtual ~LuaScheduledScript() throw();
 
-    void callFunction(std::string name, uint32_t currentCycle, uint32_t lastCycle, uint32_t nextCycle);
+    void callFunction(const std::string &name, uint32_t currentCycle, uint32_t lastCycle, uint32_t nextCycle);
 
 private:
     LuaScheduledScript(const LuaScheduledScript &);

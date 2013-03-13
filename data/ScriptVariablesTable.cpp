@@ -44,7 +44,7 @@ std::string ScriptVariablesTable::assignTable(const Database::ResultTuple &row) 
     return row["svt_string"].as<std::string>();;
 }
 
-bool ScriptVariablesTable::find(std::string id, std::string &ret) {
+bool ScriptVariablesTable::find(const std::string &id, std::string &ret) {
     if (exists(id)) {
         ret = (*this)[id];
         return true;
@@ -54,17 +54,17 @@ bool ScriptVariablesTable::find(std::string id, std::string &ret) {
     }
 }
 
-void ScriptVariablesTable::set(std::string id, std::string value) {
+void ScriptVariablesTable::set(const std::string &id, const std::string &value) {
     get(id) = value;
 }
 
-void ScriptVariablesTable::set(std::string id, int32_t value) {
+void ScriptVariablesTable::set(const std::string &id, int32_t value) {
     std::stringstream ss;
     ss << value;
     set(id, ss.str());
 }
 
-bool ScriptVariablesTable::remove(std::string id) {
+bool ScriptVariablesTable::remove(const std::string &id) {
     return erase(id);
 }
 

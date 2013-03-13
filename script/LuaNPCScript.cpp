@@ -22,7 +22,7 @@
 #include "NPC.hpp"
 #include "fuse_ptr.hpp"
 
-LuaNPCScript::LuaNPCScript(std::string filename, NPC *thisnpc) throw(ScriptException)
+LuaNPCScript::LuaNPCScript(const std::string &filename, NPC *thisnpc) throw(ScriptException)
     : LuaScript(filename), _thisnpc(thisnpc) {
 }
 
@@ -39,7 +39,7 @@ void LuaNPCScript::lookAtNpc(Character *source, unsigned char mode) {
     callEntrypoint("lookAtNpc", fuse_thisnpc, fuse_source, mode);
 }
 
-void LuaNPCScript::receiveText(Character::talk_type tt, std::string message, Character *cc) {
+void LuaNPCScript::receiveText(Character::talk_type tt, const std::string &message, Character *cc) {
     fuse_ptr<Character> fuse_thisnpc(_thisnpc);
     fuse_ptr<Character> fuse_cc(cc);
     callEntrypoint("receiveText", fuse_thisnpc, (int)tt, message, fuse_cc);

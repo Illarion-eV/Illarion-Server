@@ -29,8 +29,8 @@ struct WeaponStruct;
 
 class LuaWeaponScript : public LuaScript {
 public:
-    LuaWeaponScript(std::string filename) throw(ScriptException);
-    LuaWeaponScript(std::string filename, WeaponStruct weapon) throw(ScriptException);
+    LuaWeaponScript(const std::string &filename) throw(ScriptException);
+    LuaWeaponScript(const std::string &filename, const WeaponStruct &weapon) throw(ScriptException);
     virtual ~LuaWeaponScript() throw();
 
     void onAttack(Character *Attacker, Character *Defender);

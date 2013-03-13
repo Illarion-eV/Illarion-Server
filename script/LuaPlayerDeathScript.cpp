@@ -22,7 +22,7 @@
 #include "Character.hpp"
 #include "fuse_ptr.hpp"
 
-LuaPlayerDeathScript::LuaPlayerDeathScript(std::string filename) throw(ScriptException)
+LuaPlayerDeathScript::LuaPlayerDeathScript(const std::string &filename) throw(ScriptException)
     : LuaScript(filename) {
 }
 

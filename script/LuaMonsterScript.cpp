@@ -29,7 +29,7 @@ LuaMonsterScript::LuaMonsterScript() throw(ScriptException)
     : LuaScript() {
 }
 
-LuaMonsterScript::LuaMonsterScript(std::string filename) throw(ScriptException)
+LuaMonsterScript::LuaMonsterScript(const std::string &filename) throw(ScriptException)
     : LuaScript(filename) {
 }
 
@@ -46,7 +46,7 @@ void LuaMonsterScript::lookAtMonster(Character *source, Character *target, unsig
     callEntrypoint("lookAtMonster", fuse_source, fuse_target, mode);
 }
 
-void LuaMonsterScript::receiveText(Character *Monster, Character::talk_type tt, std::string message, Character *cc) {
+void LuaMonsterScript::receiveText(Character *Monster, Character::talk_type tt, const std::string &message, Character *cc) {
     fuse_ptr<Character> fuse_Monster(Monster);
     fuse_ptr<Character> fuse_cc(cc);
     callEntrypoint("receiveText", fuse_Monster, (int)tt, message, fuse_cc);

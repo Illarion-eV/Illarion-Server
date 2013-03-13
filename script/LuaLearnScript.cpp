@@ -23,7 +23,7 @@
 #include <string>
 #include "fuse_ptr.hpp"
 
-LuaLearnScript::LuaLearnScript(std::string filename) throw(ScriptException)
+LuaLearnScript::LuaLearnScript(const std::string &filename) throw(ScriptException)
     : LuaScript(filename) {
 }
 

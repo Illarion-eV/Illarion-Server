@@ -22,7 +22,7 @@
 #include "Character.hpp"
 #include "fuse_ptr.hpp"
 
-LuaQuestScript::LuaQuestScript(std::string filename, TYPE_OF_QUEST_ID quest) throw(ScriptException)
+LuaQuestScript::LuaQuestScript(const std::string &filename, TYPE_OF_QUEST_ID quest) throw(ScriptException)
     : LuaScript(filename), quest(quest) {
 }
 

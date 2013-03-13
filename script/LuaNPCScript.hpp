@@ -30,11 +30,11 @@ class World;
 
 class LuaNPCScript : public LuaScript {
 public:
-    LuaNPCScript(std::string filename, NPC *thisnpc) throw(ScriptException);
+    LuaNPCScript(const std::string &filename, NPC *thisnpc) throw(ScriptException);
     virtual ~LuaNPCScript() throw();
 
     void nextCycle();
-    void receiveText(Character::talk_type tt, std::string message, Character *cc);
+    void receiveText(Character::talk_type tt, const std::string &message, Character *cc);
     void useNPC(Character *user, unsigned char ltastate);
     void lookAtNpc(Character *source, unsigned char mode);
     bool actionDisturbed(Character *performer, Character *disturber);

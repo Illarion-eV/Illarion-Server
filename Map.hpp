@@ -55,12 +55,12 @@ public:
     // \param x_offs Verschiebung der zu ladenden Karte im physikalischen Feld
     // \param y_offs Verschiebung der zu ladenden Karte im physikalischen Feld
     // \return true falls Laden erfolgreich, false sonst
-    bool Load(std::string name, unsigned short int x_offs, unsigned short int y_offs);
+    bool Load(const std::string &name, unsigned short int x_offs, unsigned short int y_offs);
 
     //! speichert die aktuelle Karte
     // \param name Name unter der die Karte gespeichert werden soll
     // \return true falls Speichern erfolgreich, false sonst
-    bool Save(std::string name);
+    bool Save(const std::string &name);
 
     //! bereitet die Umrechnung von logischen x,y - Koordinaten in reale Feldindizes vor
     // \param minx die kleinste X-Koordinate

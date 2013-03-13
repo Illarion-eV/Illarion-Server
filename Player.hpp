@@ -332,15 +332,6 @@ public:
     //�dert die Qualit� eines Items mit einer bestimmten ID
     void changeQualityItem(TYPE_OF_ITEM_ID id, short int amount);
 
-    //! speichert die Daten des Character in eine Datei
-    // \param pfn das Verzeichnis fr die Datendatei
-    // \return true falls erfolgreich, false sonst
-
-    //! berprft ein Pa�ort
-    // \param chkpw das Pa�ort das berprft werden soll
-    // \return true, falls chkpw mit dem Pa�ort des Spielers bereinstimmt
-    bool VerifyPassword(std::string chkpw);
-
     inline bool isMonitoringClient() {
         return monitoringClient;
     }

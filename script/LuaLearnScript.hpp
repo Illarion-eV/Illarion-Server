@@ -28,7 +28,7 @@ class Character;
 
 class LuaLearnScript : public LuaScript {
 public:
-    LuaLearnScript(std::string filename) throw(ScriptException);
+    LuaLearnScript(const std::string &filename) throw(ScriptException);
     virtual ~LuaLearnScript() throw();
 
     void learn(Character *cc, TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opponent);

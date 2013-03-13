@@ -372,10 +372,6 @@ void Player::closeAllShowcases() {
     showcases.clear();
 }
 
-bool Player::VerifyPassword(std::string chkpw) {
-    return (pw == chkpw);
-}
-
 
 void Player::sendCharacters() {
     _world->sendAllVisibleCharactersToPlayer(this, true);
