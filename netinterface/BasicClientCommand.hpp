@@ -23,19 +23,13 @@
 #include "netinterface/BasicCommand.hpp"
 #include <stdint.h>
 #include <iostream>
-#include <boost/shared_ptr.hpp>
+#include <memory>
+
 class Player;
-
-/**
-*@ingroup Netinterface
-*class which holds a basic Client Command should be overloaded to define the different commands
-*which can be received by the server
-*/
-
-/**
-* simple exception on an overflow
-*/
 class OverflowException {};
+
+class BasicClientCommand;
+typedef std::shared_ptr<BasicClientCommand> ClientCommandPointer;
 
 class BasicClientCommand : public BasicCommand {
 public:
@@ -71,7 +65,7 @@ public:
     * a copy function which returns an empty version of the command
     * (for usage of the commandFactory class
     */
-    virtual boost::shared_ptr<BasicClientCommand> clone() = 0;
+    virtual ClientCommandPointer clone() = 0;
 
     /**
     * returns if the receiving of the command was sucessfull

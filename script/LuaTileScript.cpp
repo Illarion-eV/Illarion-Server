@@ -22,7 +22,7 @@
 #include "Character.hpp"
 #include "fuse_ptr.hpp"
 
-LuaTileScript::LuaTileScript(std::string filename, TilesStruct tile) throw(ScriptException)
+LuaTileScript::LuaTileScript(const std::string &filename, const TilesStruct &tile) throw(ScriptException)
     : LuaScript(filename), thisTile(tile) {
     init_functions();
 }
@@ -34,7 +34,7 @@ void LuaTileScript::init_functions() {
     globals["thisTile"] = thisTile;
 }
 
-void LuaTileScript::useTile(Character *user, position pos, unsigned char ltastate) {
+void LuaTileScript::useTile(Character *user, const position &pos, unsigned char ltastate) {
     fuse_ptr<Character> fuse_user(user);
     callEntrypoint("useTile", fuse_user, pos, ltastate);
 }

@@ -40,7 +40,7 @@ class Dialog;
 
 class ScriptException : public std::runtime_error {
 public:
-    ScriptException(std::string s) throw() : std::runtime_error(s) {}
+    ScriptException(const std::string &s) throw() : std::runtime_error(s) {}
 };
 
 enum SouTarTypes {
@@ -90,7 +90,7 @@ public:
 
     static void shutdownLua();
     bool existsEntrypoint(const std::string &entrypoint);
-    void addQuestScript(const std::string &entrypoint, std::shared_ptr<LuaScript> script);
+    void addQuestScript(const std::string &entrypoint, const std::shared_ptr<LuaScript> &script);
 
     template<typename T>
     static void executeDialogCallback(T &dialog) {

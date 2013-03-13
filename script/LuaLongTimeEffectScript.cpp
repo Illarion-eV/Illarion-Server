@@ -25,7 +25,7 @@
 #include "LongTimeEffect.hpp"
 #include "fuse_ptr.hpp"
 
-LuaLongTimeEffectScript::LuaLongTimeEffectScript(std::string filename, LongTimeEffectStruct effectStruct) throw(ScriptException)
+LuaLongTimeEffectScript::LuaLongTimeEffectScript(const std::string &filename, const LongTimeEffectStruct &effectStruct) throw(ScriptException)
     : LuaScript(filename), _effectStruct(effectStruct) {
     init_functions();
 }

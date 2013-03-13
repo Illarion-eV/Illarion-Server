@@ -30,10 +30,10 @@ public:
     virtual std::string assignId(const Database::ResultTuple &row) override;
     virtual std::string assignTable(const Database::ResultTuple &row) override;
 
-    bool find(std::string id, std::string &ret);
-    void set(std::string id, std::string value);
-    void set(std::string id, int32_t value);
-    bool remove(std::string id);
+    bool find(const std::string &id, std::string &ret);
+    void set(const std::string &id, const std::string &value);
+    void set(const std::string &id, int32_t value);
+    bool remove(const std::string &id);
 
     void save();
 

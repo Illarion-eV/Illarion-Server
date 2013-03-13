@@ -20,7 +20,6 @@
 #include "WorldMap.hpp"
 #include "Map.hpp"
 
-#include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/replace.hpp>
 
 WorldMap::WorldMap() {
@@ -163,9 +162,9 @@ bool WorldMap::exportTo(const std::string &exportDir) const {
         int16_t minX = (*mapIt)->GetMinX();
         int16_t minY = (*mapIt)->GetMinY();
         // create base filename
-        std::string filebase = exportDir + "e_" + boost::lexical_cast<std::string>(minX)
-                               + "_" + boost::lexical_cast<std::string>(minY)
-                               + "_" + boost::lexical_cast<std::string>((*mapIt)->Z_Level) + ".";
+        std::string filebase = exportDir + "e_" + std::to_string(minX)
+                               + "_" + std::to_string(minY)
+                               + "_" + std::to_string((*mapIt)->Z_Level) + ".";
         // export fields file
         std::ofstream fieldsf((filebase + "tiles.txt").c_str());
         // export items file

@@ -21,14 +21,14 @@
 #ifndef _FUSE_PTR_HPP_
 #define _FUSE_PTR_HPP_
 
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
+#include <unordered_map>
+#include <unordered_set>
 #include <stdexcept>
 
 template<class T>
 class fuse_ptr {
 public:
-    typedef boost::unordered_map<T *, boost::unordered_set<fuse_ptr<T>*> > fusebox_t;
+    typedef std::unordered_map<T *, std::unordered_set<fuse_ptr<T>*> > fusebox_t;
 
 private:
     T **ptr;

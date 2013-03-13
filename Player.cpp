@@ -81,16 +81,16 @@ Player::Player(boost::shared_ptr<NetInterface> newConnection) throw(Player::Logo
 
     // first check if we have a valid client
 
-    boost::shared_ptr<BasicClientCommand> cmd = Connection->getCommand();
+    ClientCommandPointer cmd = Connection->getCommand();
 
     if (!cmd || cmd->getDefinitionByte() != C_LOGIN_TS) {
         throw LogoutException(UNSTABLECONNECTION);
     }
 
-    unsigned short int clientversion = boost::dynamic_pointer_cast<LoginCommandTS>(cmd)->clientVersion;
-    setName(boost::dynamic_pointer_cast<LoginCommandTS>(cmd)->loginName);
-    pw = boost::dynamic_pointer_cast<LoginCommandTS>(cmd)->passwort;
-    // set acceptable client version...
+    const auto loginCommand = std::dynamic_pointer_cast<LoginCommandTS>(cmd);
+    unsigned short int clientversion = loginCommand->getClientVersion();
+    setName(loginCommand->getLoginName());
+    pw = loginCommand->getPassword();
     unsigned short acceptVersion = Config::instance().clientversion;
     monitoringClient = false;
 
@@ -180,7 +180,7 @@ void Player::login() throw(Player::LogoutException) {
     sendWeather(_world->weather);
 
     // send player login data
-    boost::shared_ptr<BasicServerCommand> cmd(new IdTC(getId()));
+    ServerCommandPointer cmd(new IdTC(getId()));
     Connection->addCommand(cmd);
     // position
     cmd.reset(new SetCoordinateTC(pos));
@@ -251,7 +251,7 @@ unsigned short int Player::getScreenRange() const {
 void Player::openShowcase(Container *container, bool carry) {
     for (const auto &showcase : showcases) {
         if (showcase.second->contains(container)) {
-            boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(showcase.first, container->getSlotCount(), container->getItems()));
+            ServerCommandPointer cmd(new UpdateShowCaseTC(showcase.first, container->getSlotCount(), container->getItems()));
             Connection->addCommand(cmd);
             return;
         }
@@ -264,7 +264,7 @@ void Player::openShowcase(Container *container, bool carry) {
 
         showcases[showcaseCounter] = new Showcase(container, carry);
 
-        boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(showcaseCounter, container->getSlotCount(), container->getItems()));
+        ServerCommandPointer cmd(new UpdateShowCaseTC(showcaseCounter, container->getSlotCount(), container->getItems()));
         Connection->addCommand(cmd);
     } else {
         inform("ERROR: Unable to open more than 100 containers.");
@@ -274,7 +274,7 @@ void Player::openShowcase(Container *container, bool carry) {
 void Player::updateShowcase(Container *container) const {
     for (const auto &showcase : showcases) {
         if (showcase.second->contains(container)) {
-            boost::shared_ptr<BasicServerCommand>cmd(new UpdateShowCaseTC(showcase.first, container->getSlotCount(), container->getItems()));
+            ServerCommandPointer cmd(new UpdateShowCaseTC(showcase.first, container->getSlotCount(), container->getItems()));
             Connection->addCommand(cmd);
         }
     }
@@ -326,7 +326,7 @@ void Player::closeShowcase(uint8_t showcase) {
     if (isShowcaseOpen(showcase)) {
         delete showcases[showcase];
         showcases.erase(showcase);
-        boost::shared_ptr<BasicServerCommand>cmd(new ClearShowCaseTC(showcase));
+        ServerCommandPointer cmd(new ClearShowCaseTC(showcase));
         Connection->addCommand(cmd);
     }
 }
@@ -335,7 +335,7 @@ void Player::closeShowcase(Container *container) {
     for (auto it = showcases.cbegin(); it != showcases.cend();) {
         if (it->second->contains(container)) {
             delete it->second;
-            boost::shared_ptr<BasicServerCommand>cmd(new ClearShowCaseTC(it->first));
+            ServerCommandPointer cmd(new ClearShowCaseTC(it->first));
             Connection->addCommand(cmd);
             it = showcases.erase(it);
         } else {
@@ -353,7 +353,7 @@ void Player::closeAllShowcasesOfMapContainers() {
     for (auto it = showcases.cbegin(); it != showcases.cend();) {
         if (!it->second->inInventory()) {
             delete it->second;
-            boost::shared_ptr<BasicServerCommand> cmd(new ClearShowCaseTC(it->first));
+            ServerCommandPointer cmd(new ClearShowCaseTC(it->first));
             Connection->addCommand(cmd);
             it = showcases.erase(it);
         } else {
@@ -365,15 +365,11 @@ void Player::closeAllShowcasesOfMapContainers() {
 void Player::closeAllShowcases() {
     for (const auto &showcase : showcases) {
         delete showcase.second;
-        boost::shared_ptr<BasicServerCommand> cmd(new ClearShowCaseTC(showcase.first));
+        ServerCommandPointer cmd(new ClearShowCaseTC(showcase.first));
         Connection->addCommand(cmd);
     }
 
     showcases.clear();
-}
-
-bool Player::VerifyPassword(std::string chkpw) {
-    return (pw == chkpw);
 }
 
 
@@ -385,14 +381,14 @@ void Player::sendCharacters() {
 void Player::sendCharacterItemAtPos(unsigned char cpos) {
     if (cpos < (MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
         // gltiger Wert
-        boost::shared_ptr<BasicServerCommand>cmd(new UpdateInventoryPosTC(cpos, characterItems[cpos].getId(), characterItems[cpos].getNumber()));
+        ServerCommandPointer cmd(new UpdateInventoryPosTC(cpos, characterItems[cpos].getId(), characterItems[cpos].getNumber()));
         Connection->addCommand(cmd);
     }
 }
 
 
 void Player::sendWeather(WeatherStruct weather) {
-    boost::shared_ptr<BasicServerCommand>cmd(new UpdateWeatherTC(weather));
+    ServerCommandPointer cmd(new UpdateWeatherTC(weather));
     Connection->addCommand(cmd);
 }
 
@@ -582,7 +578,7 @@ void Player::updateBackPackView() {
 
 
 void Player::sendSkill(TYPE_OF_SKILL_ID skill, unsigned short int major, unsigned short int minor) {
-    boost::shared_ptr<BasicServerCommand>cmd(new UpdateSkillTC(skill, major, minor));
+    ServerCommandPointer cmd(new UpdateSkillTC(skill, major, minor));
     Connection->addCommand(cmd);
     cmd.reset(new BBSendSkillTC(getId(), skill, major, minor));
     _world->monitoringClientList->sendCommand(cmd);
@@ -600,7 +596,7 @@ void Player::sendAllSkills() {
 
 void Player::sendMagicFlags(int type) {
     if ((type >= 0) && (type < 4)) {
-        boost::shared_ptr<BasicServerCommand>cmd(new UpdateMagicFlagsTC(type, magic.flags[ type ]));
+        ServerCommandPointer cmd(new UpdateMagicFlagsTC(type, magic.flags[ type ]));
         Connection->addCommand(cmd);
     }
 }
@@ -608,7 +604,7 @@ void Player::sendMagicFlags(int type) {
 
 void Player::sendAttrib(Character::attributeIndex attribute) {
     auto value = getAttribute(attribute);
-    boost::shared_ptr<BasicServerCommand> cmd(new UpdateAttribTC(getId(), attributeStringMap[attribute], value));
+    ServerCommandPointer cmd(new UpdateAttribTC(getId(), attributeStringMap[attribute], value));
     Connection->addCommand(cmd);
     cmd.reset(new BBSendAttribTC(getId(), attributeStringMap[attribute], value));
     _world->monitoringClientList->sendCommand(cmd);
@@ -622,13 +618,13 @@ void Player::handleAttributeChange(Character::attributeIndex attribute) {
 
 
 void Player::startMusic(short int title) {
-    boost::shared_ptr<BasicServerCommand>cmd(new MusicTC(title));
+    ServerCommandPointer cmd(new MusicTC(title));
     Connection->addCommand(cmd);
 }
 
 
 void Player::defaultMusic() {
-    boost::shared_ptr<BasicServerCommand>cmd(new MusicDefaultTC());
+    ServerCommandPointer cmd(new MusicDefaultTC());
     Connection->addCommand(cmd);
 }
 
@@ -1491,7 +1487,7 @@ unsigned short int Player::increaseSkill(TYPE_OF_SKILL_ID skill, short int amoun
 }
 
 void Player::receiveText(talk_type tt, const std::string &message, Character *cc) {
-    boost::shared_ptr<BasicServerCommand>cmd(new SayTC(cc->pos.x, cc->pos.y, cc->pos.z, message));
+    ServerCommandPointer cmd(new SayTC(cc->pos.x, cc->pos.y, cc->pos.z, message));
 
     switch (tt) {
     case tt_say:
@@ -1523,7 +1519,7 @@ void Player::getToKnow(Player *player) {
 void Player::introducePlayer(Player *player) {
     getToKnow(player);
 
-    boost::shared_ptr<BasicServerCommand>cmd(new IntroduceTC(player->getId(), player->getName()));
+    ServerCommandPointer cmd(new IntroduceTC(player->getId(), player->getName()));
     Connection->addCommand(cmd);
 }
 
@@ -1578,7 +1574,7 @@ void Player::teachMagic(unsigned char type,unsigned char flag) {
 }
 
 void Player::inform(const std::string &message, informType type) const {
-    boost::shared_ptr<BasicServerCommand>cmd(new InformTC(type, message));
+    ServerCommandPointer cmd(new InformTC(type, message));
     Connection->addCommand(cmd);
 }
 
@@ -1712,7 +1708,7 @@ bool Player::move(direction dir, uint8_t mode) {
                 std::cout<< "Player::move Walkcost after encumberance Char overloadet: " << walkcost << std::endl;
 #endif
                 //Char ueberladen
-                boost::shared_ptr<BasicServerCommand>cmd(new MoveAckTC(getId(), pos, NOMOVE, 0));
+                ServerCommandPointer cmd(new MoveAckTC(getId(), pos, NOMOVE, 0));
                 Connection->addCommand(cmd);
                 return false;
             } else {
@@ -1745,7 +1741,7 @@ bool Player::move(direction dir, uint8_t mode) {
             if (newpos.z != oldpos.z) {
                 //Z Coordinate hat sich ge�ndert komplettes update senden (Sp�ter durch teilupdate ersetzen)
                 updatePos(newpos);
-                boost::shared_ptr<BasicServerCommand>cmd(new MoveAckTC(getId(), pos, NOMOVE, 0));
+                ServerCommandPointer cmd(new MoveAckTC(getId(), pos, NOMOVE, 0));
                 Connection->addCommand(cmd);
                 // Koordinate
                 cmd.reset(new SetCoordinateTC(pos));
@@ -1754,7 +1750,7 @@ bool Player::move(direction dir, uint8_t mode) {
                 cont = false;
             } else {
                 if (mode != RUNNING || (j == 1 && cont)) {
-                    boost::shared_ptr<BasicServerCommand> cmd(new MoveAckTC(getId(), newpos, mode, waitpages));
+                    ServerCommandPointer cmd(new MoveAckTC(getId(), newpos, mode, waitpages));
                     Connection->addCommand(cmd);
                 }
 
@@ -1796,7 +1792,7 @@ bool Player::move(direction dir, uint8_t mode) {
             //Ggf Scriptausfhrung beim Betreten eines Triggerfeldes
             _world->TriggerFieldMove(this,true);
             //send the move to the monitoring clients
-            boost::shared_ptr<BasicServerCommand>cmd(new BBPlayerMoveTC(getId(), pos.x, pos.y, pos.z));
+            ServerCommandPointer cmd(new BBPlayerMoveTC(getId(), pos.x, pos.y, pos.z));
             _world->monitoringClientList->sendCommand(cmd);
 
             if (mode != RUNNING || j == 1) {
@@ -1805,14 +1801,14 @@ bool Player::move(direction dir, uint8_t mode) {
         } // neues Feld vorhanden und passierbar?
         else {
             if (j == 1) {
-                boost::shared_ptr<BasicServerCommand> cmd(new MoveAckTC(getId(), pos, NORMALMOVE, waitpages));
+                ServerCommandPointer cmd(new MoveAckTC(getId(), pos, NORMALMOVE, waitpages));
                 Connection->addCommand(cmd);
                 sendStepStripes(dir);
                 _world->sendCharacterMoveToAllVisiblePlayers(this, mode, waitpages);
                 _world->sendAllVisibleCharactersToPlayer(this, true);
                 return true;
             } else if (j == 0) {
-                boost::shared_ptr<BasicServerCommand>cmd(new MoveAckTC(getId(), pos, NOMOVE, 0));
+                ServerCommandPointer cmd(new MoveAckTC(getId(), pos, NOMOVE, 0));
                 Connection->addCommand(cmd);
                 return false;
             }
@@ -1824,7 +1820,7 @@ bool Player::move(direction dir, uint8_t mode) {
 #ifdef PLAYER_MOVE_DEBUG
     std::cout << "movePlayer: Bewegung nicht moeglich \n";
 #endif
-    boost::shared_ptr<BasicServerCommand>cmd(new MoveAckTC(getId(), pos, NOMOVE, 0));
+    ServerCommandPointer cmd(new MoveAckTC(getId(), pos, NOMOVE, 0));
     Connection->addCommand(cmd);
     return false;
 }
@@ -1854,7 +1850,7 @@ bool Player::forceWarp(const position &newPos) {
 
 void Player::handleWarp() {
     closeOnMove();
-    boost::shared_ptr<BasicServerCommand>cmd(new SetCoordinateTC(pos));
+    ServerCommandPointer cmd(new SetCoordinateTC(pos));
     Connection->addCommand(cmd);
     sendFullMap();
     visibleChars.clear();
@@ -1955,7 +1951,7 @@ void Player::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS prog
 
 void Player::sendQuestProgress(TYPE_OF_QUEST_ID questId, TYPE_OF_QUESTSTATUS progress) {
     if (progress == 0) {
-        boost::shared_ptr<BasicServerCommand>cmd(new AbortQuestTC(questId));
+        ServerCommandPointer cmd(new AbortQuestTC(questId));
         Connection->addCommand(cmd);
         return;
     }
@@ -1972,7 +1968,7 @@ void Player::sendQuestProgress(TYPE_OF_QUEST_ID questId, TYPE_OF_QUESTSTATUS pro
                 std::vector<position> targets;
                 script->targets(this, progress, targets);
 
-                boost::shared_ptr<BasicServerCommand>cmd(new QuestProgressTC(questId, title, description, targets, progress == finalStatus));
+                ServerCommandPointer cmd(new QuestProgressTC(questId, title, description, targets, progress == finalStatus));
                 Connection->addCommand(cmd);
             }
         }
@@ -2115,7 +2111,7 @@ void Player::sendRelativeArea(int8_t zoffs) {
             world->clientview.fillStripe(position(x,y,z), NewClientView::dir_right, MAP_DIMENSION+1-(i%2), World::get()->maps);
 
             if (world->clientview.getExists()) {
-                Connection->addCommand(boost::shared_ptr<BasicServerCommand>(new MapStripeTC(position(x,y,z), NewClientView::dir_right)));
+                Connection->addCommand(ServerCommandPointer(new MapStripeTC(position(x,y,z), NewClientView::dir_right)));
             }
 
             if (i % 2 == 0) {
@@ -2144,7 +2140,7 @@ void Player::sendRelativeArea(int8_t zoffs) {
             world->clientview.fillStripe(position(x,y,z), NewClientView::dir_right, 2*screenwidth+1-(i%2), World::get()->maps);
 
             if (world->clientview.getExists()) {
-                Connection->addCommand(boost::shared_ptr<BasicServerCommand>(new MapStripeTC(position(x,y,z), NewClientView::dir_right)));
+                Connection->addCommand(ServerCommandPointer(new MapStripeTC(position(x,y,z), NewClientView::dir_right)));
             }
 
             if (i % 2 == 0) {
@@ -2161,7 +2157,7 @@ void Player::sendFullMap() {
         sendRelativeArea(i);
     }
 
-    Connection->addCommand(boost::shared_ptr<BasicServerCommand>(new MapCompleteTC()));
+    Connection->addCommand(ServerCommandPointer(new MapCompleteTC()));
 }
 
 void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
@@ -2232,7 +2228,7 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
             view->fillStripe(position(x-z*3+e,y+z*3-e,pos.z+z), dir, length+l, World::get()->maps);
 
             if (view->getExists()) {
-                Connection->addCommand(boost::shared_ptr<BasicServerCommand>(new MapStripeTC(position(x-z*3+e,y+z*3-e,pos.z+z), dir)));
+                Connection->addCommand(ServerCommandPointer(new MapStripeTC(position(x-z*3+e,y+z*3-e,pos.z+z), dir)));
             }
         }
     } else {
@@ -2304,7 +2300,7 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
             view->fillStripe(position(x-z*3+e,y+z*3-e,pos.z+z), dir, length+l, World::get()->maps);
 
             if (view->getExists()) {
-                Connection->addCommand(boost::shared_ptr<BasicServerCommand>(new MapStripeTC(position(x-z*3+e,y+z*3-e,pos.z+z), dir)));
+                Connection->addCommand(ServerCommandPointer(new MapStripeTC(position(x-z*3+e,y+z*3-e,pos.z+z), dir)));
             }
         }
     }
@@ -2406,7 +2402,7 @@ uint32_t Player::idleTime() const {
 }
 
 void Player::sendBook(uint16_t bookID) {
-    boost::shared_ptr<BasicServerCommand>cmd(new BookTC(bookID));
+    ServerCommandPointer cmd(new BookTC(bookID));
     Connection->addCommand(cmd);
 }
 
@@ -2435,18 +2431,18 @@ bool Player::pageGM(const std::string &ticket) {
 
 
 void Player::sendCharDescription(TYPE_OF_CHARACTER_ID id, const std::string &desc) {
-    boost::shared_ptr<BasicServerCommand>cmd(new CharDescription(id, desc));
+    ServerCommandPointer cmd(new CharDescription(id, desc));
     Connection->addCommand(cmd);
 }
 
-void Player::sendCharAppearance(TYPE_OF_CHARACTER_ID id, const boost::shared_ptr<BasicServerCommand> &appearance, bool always) {
+void Player::sendCharAppearance(TYPE_OF_CHARACTER_ID id, const ServerCommandPointer &appearance, bool always) {
     //send appearance always or only if the char in question just appeared
     if (always || visibleChars.insert(id).second) {
         Connection->addCommand(appearance);
     }
 }
 
-void Player::sendCharRemove(TYPE_OF_CHARACTER_ID id, const boost::shared_ptr<BasicServerCommand> &removechar) {
+void Player::sendCharRemove(TYPE_OF_CHARACTER_ID id, const ServerCommandPointer &removechar) {
     if (this->getId() != id) {
         visibleChars.erase(id);
         Connection->addCommand(removechar);
@@ -2609,11 +2605,11 @@ void Player::executeCraftingDialogCraftingComplete(unsigned int dialogId) {
         craftingDialog->setResult(CraftingDialog::playerCraftingComplete);
         bool renewProductList = LuaScript::executeDialogCallback<bool>(*craftingDialog);
 
-        boost::shared_ptr<BasicServerCommand> cmd(new CraftingDialogCraftingCompleteTC(dialogId));
+        ServerCommandPointer cmd(new CraftingDialogCraftingCompleteTC(dialogId));
         Connection->addCommand(cmd);
 
         if (renewProductList) {
-            boost::shared_ptr<BasicServerCommand> cmd(new CraftingDialogTC(*craftingDialog, dialogId));
+            ServerCommandPointer cmd(new CraftingDialogTC(*craftingDialog, dialogId));
             Connection->addCommand(cmd);
         }
 
@@ -2633,7 +2629,7 @@ void Player::executeCraftingDialogCraftingAborted(unsigned int dialogId) {
         craftingDialog->setResult(CraftingDialog::playerCraftingAborted);
         LuaScript::executeDialogCallback(*craftingDialog);
 
-        boost::shared_ptr<BasicServerCommand> cmd(new CraftingDialogCraftingAbortedTC(dialogId));
+        ServerCommandPointer cmd(new CraftingDialogCraftingAbortedTC(dialogId));
         Connection->addCommand(cmd);
     }
 }
@@ -2665,7 +2661,7 @@ void Player::requestCraftingLookAt(unsigned int dialogId, ItemLookAt &lookAt) {
     auto craftingDialog = getDialog<CraftingDialog>(dialogId);
 
     if (craftingDialog) {
-        boost::shared_ptr<BasicServerCommand> cmd(new LookAtDialogItemTC(dialogId, craftingDialog->getCraftableId(), lookAt));
+        ServerCommandPointer cmd(new LookAtDialogItemTC(dialogId, craftingDialog->getCraftableId(), lookAt));
         Connection->addCommand(cmd);
     }
 }
@@ -2674,7 +2670,7 @@ void Player::requestCraftingLookAtIngredient(unsigned int dialogId, ItemLookAt &
     auto craftingDialog = getDialog<CraftingDialog>(dialogId);
 
     if (craftingDialog) {
-        boost::shared_ptr<BasicServerCommand> cmd(new LookAtCraftingDialogIngredientTC(dialogId, craftingDialog->getCraftableId(), craftingDialog->getIngredientIndex(), lookAt));
+        ServerCommandPointer cmd(new LookAtCraftingDialogIngredientTC(dialogId, craftingDialog->getCraftableId(), craftingDialog->getIngredientIndex(), lookAt));
         Connection->addCommand(cmd);
     }
 }
@@ -2687,14 +2683,14 @@ void Player::startCrafting(uint8_t stillToCraft, uint16_t craftingTime, uint16_t
     ltAction->setLastAction(std::shared_ptr<LuaScript>(), source, target, LongTimeAction::ACTION_CRAFT);
     startAction(craftingTime, 0, 0, sfx, sfxDuration);
 
-    boost::shared_ptr<BasicServerCommand> cmd(new CraftingDialogCraftTC(stillToCraft, craftingTime, dialogId));
+    ServerCommandPointer cmd(new CraftingDialogCraftTC(stillToCraft, craftingTime, dialogId));
     Connection->addCommand(cmd);
 }
 
 void Player::invalidateDialogs() {
     for (const auto &dialog : dialogs) {
         if (dialog.second) {
-            boost::shared_ptr<BasicServerCommand> cmd(new CloseDialogTC(dialog.first));
+            ServerCommandPointer cmd(new CloseDialogTC(dialog.first));
             Connection->addCommand(cmd);
         }
     }
@@ -2706,7 +2702,7 @@ void Player::closeDialogsOnMove() {
     for (auto it = dialogs.begin(); it != dialogs.end();) {
 
         if (it->second && it->second->closeOnMove()) {
-            boost::shared_ptr<BasicServerCommand> cmd(new CloseDialogTC(it->first));
+            ServerCommandPointer cmd(new CloseDialogTC(it->first));
             Connection->addCommand(cmd);
             it = dialogs.erase(it);
         } else if (!it->second) {

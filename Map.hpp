@@ -24,6 +24,7 @@
 //#define Map_DEBUG
 
 #include <string>
+#include <unordered_map>
 #include "MapException.hpp"
 #include "globals.hpp"
 #include "TableStructs.hpp"
@@ -54,12 +55,12 @@ public:
     // \param x_offs Verschiebung der zu ladenden Karte im physikalischen Feld
     // \param y_offs Verschiebung der zu ladenden Karte im physikalischen Feld
     // \return true falls Laden erfolgreich, false sonst
-    bool Load(std::string name, unsigned short int x_offs, unsigned short int y_offs);
+    bool Load(const std::string &name, unsigned short int x_offs, unsigned short int y_offs);
 
     //! speichert die aktuelle Karte
     // \param name Name unter der die Karte gespeichert werden soll
     // \return true falls Speichern erfolgreich, false sonst
-    bool Save(std::string name);
+    bool Save(const std::string &name);
 
     //! bereitet die Umrechnung von logischen x,y - Koordinaten in reale Feldindizes vor
     // \param minx die kleinste X-Koordinate
@@ -123,7 +124,7 @@ public:
     unsigned short int GetHeight();
 
     //! definiert eine Template-Klasse "hash_map mit key position f�r ITEMVECTORMAP"
-    typedef boost::unordered_map<MAP_POSITION, Container::CONTAINERMAP> CONTAINERHASH;
+    typedef std::unordered_map<MAP_POSITION, Container::CONTAINERMAP> CONTAINERHASH;
 
     //! die Inhalte aller Container die direkt auf der Karte liegen mit der dazugeh�rigen Koordinate
     CONTAINERHASH maincontainers;

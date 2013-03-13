@@ -1,6 +1,7 @@
 #include "script/forwarder.hpp"
 #include "globals.hpp"
 #include "World.hpp"
+#include "Logger.hpp"
 
 std::shared_ptr<script_data_exchangemap> convert_to_map(const luabind::object& data) {
 	auto mapType = luabind::type(data);
@@ -102,5 +103,9 @@ int create_item(Character* character, Item::id_type id, Item::number_type number
 
 ScriptItem world_createFromId(World* world, TYPE_OF_ITEM_ID id, unsigned short int count, position pos, bool always, int quali, const luabind::object& data) {
 	return world->createFromId(id, count, pos, always, quali, convert_to_map(data).get());
+}
+
+void log_lua(const std::string &message) {
+    Logger::info(LogFacility::Script) << message << Log::end;
 }
 

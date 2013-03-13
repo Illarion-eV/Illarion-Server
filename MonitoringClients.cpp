@@ -45,7 +45,7 @@ void MonitoringClients::clientConnect(Player *player) {
     //Send all player infos to the new connected client
 
     for (const auto &p : _world->Players) {
-        boost::shared_ptr<BasicServerCommand>cmd(new BBPlayerTC(p->getId(), p->getName(), p->pos.x, p->pos.y, p->pos.z));
+        ServerCommandPointer cmd(new BBPlayerTC(p->getId(), p->getName(), p->pos.x, p->pos.y, p->pos.z));
         player->Connection->addCommand(cmd);
         cmd.reset(new BBSendAttribTC(p->getId(), "hitpoints", p->increaseAttrib("hitpoints",0)));
         player->Connection->addCommand(cmd);
@@ -56,7 +56,7 @@ void MonitoringClients::clientConnect(Player *player) {
     }
 }
 
-void MonitoringClients::sendCommand(boost::shared_ptr<BasicServerCommand> command) {
+void MonitoringClients::sendCommand(const ServerCommandPointer &command) {
     for (const auto &client : client_list) {
         client->Connection->addCommand(command);
     }

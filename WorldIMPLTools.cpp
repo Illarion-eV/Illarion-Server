@@ -59,7 +59,7 @@ void World::deleteAllLostNPC() {
     LostNpcs.clear();
 }
 
-bool World::findPlayersInSight(position pos, uint8_t range, std::vector<Player *> &ret, Character::face_to direction) {
+bool World::findPlayersInSight(const position &pos, uint8_t range, std::vector<Player *> &ret, Character::face_to direction) {
     bool found = false;
 
     for (const auto &player : Players.findAllAliveCharactersInRangeOfOnSameMap(pos.x, pos.y, pos.z, range)) {
@@ -148,7 +148,7 @@ bool World::findPlayersInSight(position pos, uint8_t range, std::vector<Player *
     return found;
 }
 
-std::list<BlockingObject> World::LoS(position startingpos, position endingpos) {
+std::list<BlockingObject> World::LoS(const position &startingpos, const position &endingpos) {
     std::list<BlockingObject> ret;
     ret.clear();
     bool steep = std::abs(startingpos.y - endingpos.y) > std::abs(startingpos.x - endingpos.x);
@@ -425,11 +425,11 @@ bool World::characterAttacks(Character *cp) {
                         //temppl->nrOfAttackers=0;
 
                         if (cp->character == Character::player) {
-                            boost::shared_ptr<BasicServerCommand>cmd(new TargetLostTC());
+                            ServerCommandPointer cmd(new TargetLostTC());
                             dynamic_cast<Player *>(cp)->Connection->addCommand(cmd);
                         }
 
-                        boost::shared_ptr<BasicServerCommand>cmd(new TargetLostTC());
+                        ServerCommandPointer cmd(new TargetLostTC());
                         dynamic_cast<Player *>(temppl)->Connection->addCommand(cmd);
                         temppl->attackmode = false;
                     }
@@ -464,7 +464,7 @@ bool World::characterAttacks(Character *cp) {
                         cp->attackmode = false;
 
                         if (cp->character == Character::player) {
-                            boost::shared_ptr<BasicServerCommand>cmd(new TargetLostTC());
+                            ServerCommandPointer cmd(new TargetLostTC());
                             dynamic_cast<Player *>(cp)->Connection->addCommand(cmd);
                         }
                     } else {
@@ -495,7 +495,7 @@ bool World::characterAttacks(Character *cp) {
         cp->attackmode = false;
 
         if (cp->character == Character::player) {
-            boost::shared_ptr<BasicServerCommand>cmd(new TargetLostTC());
+            ServerCommandPointer cmd(new TargetLostTC());
             dynamic_cast<Player *>(cp)->Connection->addCommand(cmd);
         }
 
@@ -549,7 +549,7 @@ void World::killMonster(MONSTERVECTOR::iterator monsterIt, MONSTERVECTOR::iterat
 }
 
 
-Field *World::GetField(position pos) {
+Field *World::GetField(const position &pos) {
     WorldMap::map_t temp;
 
     if (maps.findMapForPos(pos, temp)) {
@@ -579,7 +579,7 @@ bool World::GetPToCFieldAt(Field *&fip, short int x, short int y, short int z) {
 }
 
 
-bool World::GetPToCFieldAt(Field *&fip, position pos) {
+bool World::GetPToCFieldAt(Field *&fip, const position &pos) {
 
     WorldMap::map_t temp;
 
@@ -603,7 +603,7 @@ bool World::GetPToCFieldAt(Field *&fip, short int x, short int y, short int z, W
 }
 
 
-bool World::GetPToCFieldAt(Field *&fip, position pos, WorldMap::map_t &map) {
+bool World::GetPToCFieldAt(Field *&fip, const position &pos, WorldMap::map_t &map) {
 
     if (maps.findMapForPos(pos, map)) {
         return map->GetPToCFieldAt(fip, pos.x, pos.y);
@@ -627,7 +627,7 @@ bool World::findEmptyCFieldNear(Field *&cf, short int &x, short int &y, short in
 }
 
 
-int World::getItemAttrib(std::string s, TYPE_OF_ITEM_ID ItemID) {
+int World::getItemAttrib(const std::string &s, TYPE_OF_ITEM_ID ItemID) {
 
     // Armor //
     if (s == "bodyparts") {
@@ -791,12 +791,12 @@ void World::AgeInventory() {
 }
 
 
-void World::Save(std::string prefix) {
-    prefix = directory + std::string(MAPDIR) + prefix;
+void World::Save(const std::string &prefix) {
+    std::string path = directory + std::string(MAPDIR) + prefix;
 
-    maps.saveToDisk(prefix);
+    maps.saveToDisk(path);
 
-    std::ofstream specialfile((prefix + "_specialfields").c_str(), std::ios::binary | std::ios::out | std::ios::trunc);
+    std::ofstream specialfile((path + "_specialfields").c_str(), std::ios::binary | std::ios::out | std::ios::trunc);
 
     if (! specialfile.good()) {
 #ifdef World_DEBUG
@@ -822,13 +822,13 @@ void World::Save(std::string prefix) {
 }
 
 
-void World::Load(std::string prefix) {
-    prefix = directory + std::string(MAPDIR) + prefix;
+void World::Load(const std::string &prefix) {
+    std::string path = directory + std::string(MAPDIR) + prefix;
 
-    std::ifstream mapinitfile((prefix + "_initmaps").c_str(), std::ios::binary | std::ios::in);
+    std::ifstream mapinitfile((path + "_initmaps").c_str(), std::ios::binary | std::ios::in);
 
     if (! mapinitfile.good()) {
-        Logger::error(LogFacility::World) << "Error while loading maps: could not open " << (prefix + "_initmaps") << Log::end;
+        Logger::error(LogFacility::World) << "Error while loading maps: could not open " << (path + "_initmaps") << Log::end;
         Logger::info(LogFacility::World) << "trying to import maps" << Log::end;
         load_maps();
         return;
@@ -857,7 +857,7 @@ void World::Load(std::string prefix) {
             WorldMap::map_t tempMap(new Map(tWidth, tHeight));
             tempMap->Init(tMin_X, tMin_Y, tZ_Level);
 
-            sprintf(mname, "%s_%6d_%6d_%6d", prefix.c_str(), tZ_Level, tMin_X, tMin_Y);
+            sprintf(mname, "%s_%6d_%6d_%6d", path.c_str(), tZ_Level, tMin_X, tMin_Y);
 
             // if the map loads ok...
             if (tempMap->Load(mname, 0, 0)) {
@@ -868,10 +868,10 @@ void World::Load(std::string prefix) {
         mapinitfile.close();
     }
 
-    std::ifstream specialfile((prefix + "_specialfields").c_str(), std::ios::binary | std::ios::in);
+    std::ifstream specialfile((path + "_specialfields").c_str(), std::ios::binary | std::ios::in);
 
     if (! specialfile.good()) {
-        Logger::error(LogFacility::World) << "Error while loading maps: could not open " << (prefix + "_specialfields") << Log::end;
+        Logger::error(LogFacility::World) << "Error while loading maps: could not open " << (path + "_specialfields") << Log::end;
         // TODO propably should terminate the server due to a severe error here...
         return;
     } else {
@@ -895,7 +895,7 @@ void World::Load(std::string prefix) {
 
 }
 
-int World::getTime(std::string timeType) {
+int World::getTime(const std::string &timeType) {
     int minute,hour,day,month,year,illaTime;
     time_t curr_unixtime;
     struct tm *timestamp;
@@ -990,22 +990,21 @@ int World::getTime(std::string timeType) {
 }
 
 
-bool World::findWarpFieldsInRange(position pos, short int range, std::vector< boost::shared_ptr< position > > &warppositions) {
+bool World::findWarpFieldsInRange(const position &pos, short int range, std::vector<position> &warppositions) {
     int x,y;
     Field *cf = 0;
 
     for (x=pos.x-range; x<=pos.x+range; ++x)
         for (y=pos.y-range; y<=pos.y+range; ++y)
             if (GetPToCFieldAt(cf, x, y, pos.z) && cf->IsWarpField()) {
-                boost::shared_ptr<position> p(new position(x, y, pos.z));
-                warppositions.push_back(p);
+                warppositions.emplace_back(x, y, pos.z);
             }
 
     return !warppositions.empty();
 }
 
 
-void World::setWeatherPart(std::string type, char value) {
+void World::setWeatherPart(const std::string &type, char value) {
     if (type == "cloud_density") {
         weather.cloud_density = value;
     } else if (type == "fog_density") {
@@ -1027,8 +1026,8 @@ void World::setWeatherPart(std::string type, char value) {
     sendWeatherToAllPlayers();
 }
 
-void World::sendRemoveCharToVisiblePlayers(TYPE_OF_CHARACTER_ID id, position &pos) {
-    boost::shared_ptr<BasicServerCommand>cmd(new RemoveCharTC(id));
+void World::sendRemoveCharToVisiblePlayers(TYPE_OF_CHARACTER_ID id, const position &pos) {
+    ServerCommandPointer cmd(new RemoveCharTC(id));
 
     for (const auto &player : Players.findAllCharactersInScreen(pos.x, pos.y, pos.z)) {
         player->sendCharRemove(id, cmd);
@@ -1047,7 +1046,7 @@ void World::sendHealthToAllVisiblePlayers(Character *cc, Attribute::attribute_t 
             zoffs = cc->pos.z - player->pos.z + RANGEDOWN;
 
             if ((xoffs != 0) || (yoffs != 0) || (zoffs != RANGEDOWN)) {
-                boost::shared_ptr<BasicServerCommand>cmd(new UpdateAttribTC(cc->getId(), "hitpoints", health));
+                ServerCommandPointer cmd(new UpdateAttribTC(cc->getId(), "hitpoints", health));
                 player->Connection->addCommand(cmd);
             }
         }

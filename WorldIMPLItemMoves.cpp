@@ -1480,7 +1480,7 @@ void World::closeContainerInShowcase(Player *cp, uint8_t showcase) {
 void World::sendRemoveItemFromMapToAllVisibleCharacters(TYPE_OF_ITEM_ID id, short int xo, short int yo, short int zo, Field *cfp) {
     if (cfp) {
         for (const auto &player : Players.findAllCharactersInScreen(xo, yo, zo)) {
-            boost::shared_ptr<BasicServerCommand>cmd(new ItemRemoveTC(xo, yo, zo));
+            ServerCommandPointer cmd(new ItemRemoveTC(xo, yo, zo));
             player->Connection->addCommand(cmd);
         }
     }
@@ -1494,7 +1494,7 @@ void World::sendSwapItemOnMapToAllVisibleCharacter(TYPE_OF_ITEM_ID id, short int
         std::vector < Player * > ::iterator titerator;
 
         for (const auto &player : Players.findAllCharactersInScreen(xn, yn, zn)) {
-            boost::shared_ptr<BasicServerCommand>cmd(new ItemSwapTC(xn, yn, zn, id, it));
+            ServerCommandPointer cmd(new ItemSwapTC(xn, yn, zn, id, it));
             player->Connection->addCommand(cmd);
         }
     }
@@ -1503,7 +1503,7 @@ void World::sendSwapItemOnMapToAllVisibleCharacter(TYPE_OF_ITEM_ID id, short int
 void World::sendPutItemOnMapToAllVisibleCharacters(short int xn, short int yn, short int zn, Item &it, Field *cfp) {
     if (cfp) {
         for (const auto &player : Players.findAllCharactersInScreen(xn, yn, zn)) {
-            boost::shared_ptr<BasicServerCommand>cmd(new ItemPutTC(xn, yn, zn, it));
+            ServerCommandPointer cmd(new ItemPutTC(xn, yn, zn, it));
             player->Connection->addCommand(cmd);
         }
     }

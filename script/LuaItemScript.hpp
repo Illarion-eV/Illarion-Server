@@ -35,14 +35,14 @@ class ScriptItem;
 class LuaItemScript : public LuaScript {
 public:
     LuaItemScript();
-    LuaItemScript(std::string filename, CommonStruct comstr) throw(ScriptException);
+    LuaItemScript(const std::string &filename, const CommonStruct &comstr) throw(ScriptException);
     virtual ~LuaItemScript() throw();
 
-    void UseItem(Character *User, ScriptItem SourceItem, unsigned char ltastate);
+    void UseItem(Character *User, const ScriptItem &SourceItem, unsigned char ltastate);
     bool actionDisturbed(Character *performer, Character *disturber);
-    void LookAtItem(Character *who,ScriptItem t_item);
-    bool MoveItemBeforeMove(Character *who, ScriptItem sourceItem, ScriptItem targetItem);
-    void MoveItemAfterMove(Character *who, ScriptItem sourceItem, ScriptItem targetItem);
+    void LookAtItem(Character *who, const ScriptItem &t_item);
+    bool MoveItemBeforeMove(Character *who, const ScriptItem &sourceItem, const ScriptItem &targetItem);
+    void MoveItemAfterMove(Character *who, const ScriptItem &sourceItem, const ScriptItem &targetItem);
     void CharacterOnField(Character *who);
 
 private:

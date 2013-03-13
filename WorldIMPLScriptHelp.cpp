@@ -52,7 +52,7 @@ bool World::deleteNPC(unsigned int npcid) {
     return true;
 }
 
-bool World::createDynamicNPC(std::string name, Character::race_type type, position pos, /*CCharacter::face_to dir,*/ Character::sex_type sex, std::string scriptname) {
+bool World::createDynamicNPC(const std::string &name, Character::race_type type, const position &pos, /*CCharacter::face_to dir,*/ Character::sex_type sex, const std::string &scriptname) {
     try {
 
         try {
@@ -86,7 +86,7 @@ bool World::createDynamicNPC(std::string name, Character::race_type type, positi
     }
 }
 
-luabind::object World::LuaLoS(position startingpos, position endingpos) {
+luabind::object World::LuaLoS(const position &startingpos, const position &endingpos) {
     lua_State *luaState = getCurrentScript()->getLuaState();
     luabind::object list = luabind::newtable(luaState);
     int index = 1;
@@ -139,7 +139,7 @@ luabind::object World::getNPCS() {
 
 }
 
-luabind::object World::getCharactersInRangeOf(position posi, uint8_t range) {
+luabind::object World::getCharactersInRangeOf(const position &posi, uint8_t range) {
     lua_State *luaState = getCurrentScript()->getLuaState();
     luabind::object list = luabind::newtable(luaState);
     int index = 1;
@@ -168,7 +168,7 @@ luabind::object World::getCharactersInRangeOf(position posi, uint8_t range) {
     return list;
 }
 
-luabind::object World::getPlayersInRangeOf(position posi, uint8_t range) {
+luabind::object World::getPlayersInRangeOf(const position &posi, uint8_t range) {
     lua_State *luaState = getCurrentScript()->getLuaState();
     luabind::object list = luabind::newtable(luaState);
     int index = 1;
@@ -183,7 +183,7 @@ luabind::object World::getPlayersInRangeOf(position posi, uint8_t range) {
     return list;
 }
 
-luabind::object World::getMonstersInRangeOf(position posi, uint8_t range) {
+luabind::object World::getMonstersInRangeOf(const position &posi, uint8_t range) {
     lua_State *luaState = getCurrentScript()->getLuaState();
     luabind::object list = luabind::newtable(luaState);
     int index = 1;
@@ -198,7 +198,7 @@ luabind::object World::getMonstersInRangeOf(position posi, uint8_t range) {
     return list;
 }
 
-luabind::object World::getNPCSInRangeOf(position posi, uint8_t range) {
+luabind::object World::getNPCSInRangeOf(const position &posi, uint8_t range) {
     lua_State *luaState = getCurrentScript()->getLuaState();
     luabind::object list = luabind::newtable(luaState);
     int index = 1;
@@ -224,16 +224,16 @@ void World::itemInform(Character *user, ScriptItem item, ItemLookAt lookAt) {
         if (item.inside) {
             try {
                 uint8_t showcase = cp->getShowcaseId(item.inside);
-                boost::shared_ptr<BasicServerCommand>cmd(new LookAtShowCaseItemTC(showcase, item.itempos, lookAt));
+                ServerCommandPointer cmd(new LookAtShowCaseItemTC(showcase, item.itempos, lookAt));
                 cp->Connection->addCommand(cmd);
             } catch (std::logic_error &) {
             }
         }
     } else if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
-        boost::shared_ptr<BasicServerCommand>cmd(new LookAtInventoryItemTC(item.itempos, lookAt));
+        ServerCommandPointer cmd(new LookAtInventoryItemTC(item.itempos, lookAt));
         cp->Connection->addCommand(cmd);
     } else if (item.type == ScriptItem::it_field) {
-        boost::shared_ptr<BasicServerCommand>cmd(new LookAtMapItemTC(item.pos.x, item.pos.y, item.pos.z, lookAt));
+        ServerCommandPointer cmd(new LookAtMapItemTC(item.pos.x, item.pos.y, item.pos.z, lookAt));
         cp->Connection->addCommand(cmd);
     }
 }
@@ -250,7 +250,7 @@ void World::changeQuality(ScriptItem item, short int amount) {
     }
 }
 
-void World::changeQualityOfItemAt(position pos, short int amount) {
+void World::changeQualityOfItemAt(const position &pos, short int amount) {
     Field *field;
 
     if (GetPToCFieldAt(field, pos.x, pos.y, pos.z)) {
@@ -320,7 +320,7 @@ CommonStruct World::getItemStatsFromId(TYPE_OF_ITEM_ID id) {
     return data;
 }
 
-bool World::isCharacterOnField(position pos) {
+bool World::isCharacterOnField(const position &pos) {
     if (findCharacterOnField(pos.x, pos.y, pos.z)) {
         return true;
     } else {
@@ -328,7 +328,7 @@ bool World::isCharacterOnField(position pos) {
     }
 }
 
-fuse_ptr<Character> World::getCharacterOnField(position pos) {
+fuse_ptr<Character> World::getCharacterOnField(const position &pos) {
     return fuse_ptr<Character>(findCharacterOnField(pos.x, pos.y, pos.z));
 }
 
@@ -465,7 +465,7 @@ bool World::swap(ScriptItem item, TYPE_OF_ITEM_ID newitem, unsigned short int ne
     return false;
 }
 
-ScriptItem World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, position pos, bool always, int quality, script_data_exchangemap const* data) {
+ScriptItem World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, const position& pos, bool always, int quality, script_data_exchangemap const* data) {
     Field *field;
     ScriptItem sItem;
 
@@ -505,7 +505,7 @@ ScriptItem World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, pos
 
 }
 
-bool World::createFromItem(ScriptItem item, position pos, bool always) {
+bool World::createFromItem(ScriptItem item, const position &pos, bool always) {
     Field *field;
 
     if (GetPToCFieldAt(field, pos.x, pos.y, pos.z)) {
@@ -527,7 +527,7 @@ bool World::createFromItem(ScriptItem item, position pos, bool always) {
     return false;
 }
 
-fuse_ptr<Character> World::createMonster(unsigned short id, position pos, short movepoints) {
+fuse_ptr<Character> World::createMonster(unsigned short id, const position &pos, short movepoints) {
     Field *field;
 
     if (GetPToCFieldAt(field, pos.x, pos.y, pos.z)) {
@@ -554,27 +554,27 @@ fuse_ptr<Character> World::createMonster(unsigned short id, position pos, short 
     return fuse_ptr<Character>();
 }
 
-void World::gfx(unsigned short int gfxid, position pos) {
+void World::gfx(unsigned short int gfxid, const position &pos) {
     std::vector < Player * > temp = Players.findAllCharactersInScreen(pos.x, pos.y, pos.z);
     std::vector < Player * > ::iterator titerator;
 
     for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
-        boost::shared_ptr<BasicServerCommand>cmd(new GraphicEffectTC(pos.x, pos.y, pos.z, gfxid));
+        ServerCommandPointer cmd(new GraphicEffectTC(pos.x, pos.y, pos.z, gfxid));
         (*titerator)->Connection->addCommand(cmd);
     }
 }
 
-void World::makeSound(unsigned short int soundid, position pos) {
+void World::makeSound(unsigned short int soundid, const position &pos) {
     std::vector < Player * > temp = Players.findAllCharactersInScreen(pos.x, pos.y, pos.z);
     std::vector < Player * > ::iterator titerator;
 
     for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
-        boost::shared_ptr<BasicServerCommand>cmd(new SoundTC(pos.x, pos.y, pos.z, soundid));
+        ServerCommandPointer cmd(new SoundTC(pos.x, pos.y, pos.z, soundid));
         (*titerator)->Connection->addCommand(cmd);
     }
 }
 
-bool World::isItemOnField(position pos) {
+bool World::isItemOnField(const position &pos) {
     Field *field;
 
     if (GetPToCFieldAt(field, pos.x, pos.y, pos.z)) {
@@ -587,7 +587,7 @@ bool World::isItemOnField(position pos) {
     return false;
 }
 
-ScriptItem World::getItemOnField(position pos) {
+ScriptItem World::getItemOnField(const position &pos) {
     Field *field;
     ScriptItem item;
 
@@ -607,7 +607,7 @@ ScriptItem World::getItemOnField(position pos) {
     return item;
 }
 
-void World::changeTile(short int tileid, position pos) {
+void World::changeTile(short int tileid, const position &pos) {
     Field *field;
 
     if (GetPToCFieldAt(field, pos.x, pos.y, pos.z)) {
@@ -617,7 +617,7 @@ void World::changeTile(short int tileid, position pos) {
 }
 
 
-void World::sendMapUpdate(position pos, uint8_t range) {
+void World::sendMapUpdate(const position &pos, uint8_t range) {
     std::vector<Player *> temp;
     std::vector<Player *>::iterator pIterator;
     temp=Players.findAllCharactersInRangeOf(pos.x,pos.y,pos.z, range);
@@ -628,7 +628,7 @@ void World::sendMapUpdate(position pos, uint8_t range) {
     }
 }
 
-bool World::createSavedArea(uint16_t tileid, position pos, uint16_t height, uint16_t width) {
+bool World::createSavedArea(uint16_t tileid, const position &pos, uint16_t height, uint16_t width) {
     WorldMap::map_t dummy;
 
     for (time_t akt_x = pos.x; akt_x < pos.x+width; ++akt_x) {
@@ -704,13 +704,13 @@ bool World::getMonsterAttack(Character::race_type id, AttackBoni &ret) {
     }
 }
 
-void World::sendMonitoringMessage(std::string msg, unsigned char id) {
+void World::sendMonitoringMessage(const std::string &msg, unsigned char id) {
     //send this Command to all Monitoring Clients
-    boost::shared_ptr<BasicServerCommand>cmd(new BBMessageTC(msg, id));
+    ServerCommandPointer cmd(new BBMessageTC(msg, id));
     monitoringClientList->sendCommand(cmd);
 }
 
 void World::logMissingField(const std::string &function, const position &field) {
-    Logger::error(LogFacility::Script) << "World::" << function << ": Field (" << field.x << ", " << field.y << ", " << field.z << ") was not found!" << Log::end;
+    Logger::error(LogFacility::Script) << "World::" << function << ": Field " << field << " was not found!" << Log::end;
 }
 

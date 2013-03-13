@@ -27,7 +27,7 @@ class Character;
 
 class LuaPlayerDeathScript : public LuaScript {
 public:
-    LuaPlayerDeathScript(std::string filename) throw(ScriptException);
+    LuaPlayerDeathScript(const std::string &filename) throw(ScriptException);
     virtual ~LuaPlayerDeathScript() throw();
 
     void playerDeath(Character *deadPlayer);

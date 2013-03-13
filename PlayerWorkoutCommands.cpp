@@ -28,7 +28,7 @@ void Player::workoutCommands() {
 #ifdef _PLAYER_AUTO_SAVE_
     checkSave();
 #endif
-    boost::shared_ptr<BasicClientCommand> cmd = Connection->getCommand();
+    ClientCommandPointer cmd = Connection->getCommand();
 
     if (cmd) {
         cmd->performAction(this);

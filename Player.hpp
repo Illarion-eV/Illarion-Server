@@ -166,10 +166,10 @@ public:
     virtual bool pageGM(const std::string &ticket) override;
 
     // send a char appearance; always or only if char not yet visible
-    void sendCharAppearance(TYPE_OF_CHARACTER_ID id, const boost::shared_ptr<BasicServerCommand> &appearance, bool always);
+    void sendCharAppearance(TYPE_OF_CHARACTER_ID id, const ServerCommandPointer &appearance, bool always);
 
     // removes a Char from sight
-    void sendCharRemove(TYPE_OF_CHARACTER_ID id, const boost::shared_ptr<BasicServerCommand> &removechar);
+    void sendCharRemove(TYPE_OF_CHARACTER_ID id, const ServerCommandPointer &removechar);
 
 
     /**
@@ -331,15 +331,6 @@ public:
 
     //�dert die Qualit� eines Items mit einer bestimmten ID
     void changeQualityItem(TYPE_OF_ITEM_ID id, short int amount);
-
-    //! speichert die Daten des Character in eine Datei
-    // \param pfn das Verzeichnis fr die Datendatei
-    // \return true falls erfolgreich, false sonst
-
-    //! berprft ein Pa�ort
-    // \param chkpw das Pa�ort das berprft werden soll
-    // \return true, falls chkpw mit dem Pa�ort des Spielers bereinstimmt
-    bool VerifyPassword(std::string chkpw);
 
     inline bool isMonitoringClient() {
         return monitoringClient;
@@ -516,7 +507,7 @@ private:
             }
 
             dialogs[dialogId] = std::make_shared<DialogType>(*dialog);
-            boost::shared_ptr<BasicServerCommand>cmd(new DialogCommandType(*dialog, dialogId));
+            ServerCommandPointer cmd(new DialogCommandType(*dialog, dialogId));
             Connection->addCommand(cmd);
         } else {
             inform("ERROR: Unable to open more than 100 dialogs.");

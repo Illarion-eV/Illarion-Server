@@ -603,10 +603,10 @@ bool Character::attack(Character *target) {
 
         if (character == player) {
             if (target->IsAlive()) {
-                boost::shared_ptr<BasicServerCommand>cmd(new BBSendActionTC(id, name, 1 , "Attacks : " + target->to_string()));
+                ServerCommandPointer cmd(new BBSendActionTC(id, name, 1 , "Attacks : " + target->to_string()));
                 _world->monitoringClientList->sendCommand(cmd);
             } else {
-                boost::shared_ptr<BasicServerCommand>cmd(new BBSendActionTC(id, name, 1 , "Killed : " + target->to_string()));
+                ServerCommandPointer cmd(new BBSendActionTC(id, name, 1 , "Killed : " + target->to_string()));
                 _world->monitoringClientList->sendCommand(cmd);
             }
         }
@@ -1184,7 +1184,7 @@ void Character::talk(talk_type tt, const std::string &message) { //only for say,
 
         Logger::info(LogFacility::Chat) << *this << " " << talkType << ": " << message << Log::end;
 #endif
-        boost::shared_ptr<BasicServerCommand>cmd(new BBTalkTC(id ,name, static_cast<unsigned char>(tt), message));
+        ServerCommandPointer cmd(new BBTalkTC(id ,name, static_cast<unsigned char>(tt), message));
         _world->monitoringClientList->sendCommand(cmd);
     }
 }
@@ -1623,7 +1623,7 @@ void Character::requestCraftingLookAtIngredient(unsigned int dialogId, ItemLookA
 
 void Character::updateAppearanceForPlayer(Player *target, bool always) {
     if (!isinvisible) {
-        boost::shared_ptr<BasicServerCommand> cmd(new AppearanceTC(this, target));
+        ServerCommandPointer cmd(new AppearanceTC(this, target));
         target->sendCharAppearance(id, cmd, always);
     }
 }
@@ -1631,7 +1631,7 @@ void Character::updateAppearanceForPlayer(Player *target, bool always) {
 void Character::updateAppearanceForAll(bool always) {
     if (!isinvisible) {
         for (const auto &player : World::get()->Players.findAllCharactersInScreen(pos.x, pos.y, pos.z)) {
-            boost::shared_ptr<BasicServerCommand> cmd(new AppearanceTC(this, player));
+            ServerCommandPointer cmd(new AppearanceTC(this, player));
             player->sendCharAppearance(id, cmd, always);
         }
     }
@@ -1647,7 +1647,7 @@ void Character::sendCharDescription(TYPE_OF_CHARACTER_ID id,const std::string &d
 
 void Character::performAnimation(uint8_t animID) {
     if (!isinvisible) {
-        boost::shared_ptr<BasicServerCommand> cmd(new AnimationTC(id, animID));
+        ServerCommandPointer cmd(new AnimationTC(id, animID));
 
         for (const auto &player : World::get()->Players.findAllCharactersInScreen(pos.x, pos.y, pos.z)) {
             player->Connection->addCommand(cmd);

@@ -33,8 +33,6 @@
 //For the reload scripts
 #include "script/LuaReloadScript.hpp"
 #include "script/LuaLearnScript.hpp"
-#include <boost/lexical_cast.hpp>
-#include <boost/shared_ptr.hpp>
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "netinterface/NetInterface.hpp"
 #include "script/LuaLoginScript.hpp"
@@ -372,12 +370,12 @@ void World::makeVisible(Player *cp) {
 
     for (const auto &player : Players.findAllCharactersInScreen(cp->pos.x, cp->pos.y, cp->pos.z)) {
         if (cp != player) {
-            boost::shared_ptr<BasicServerCommand>cmd(new MoveAckTC(cp->getId(), cp->pos, PUSH, 0));
+            ServerCommandPointer cmd(new MoveAckTC(cp->getId(), cp->pos, PUSH, 0));
             player->Connection->addCommand(cmd);
         }
     }
 
-    boost::shared_ptr<BasicServerCommand>cmd(new AppearanceTC(cp, cp));
+    ServerCommandPointer cmd(new AppearanceTC(cp, cp));
     cp->Connection->addCommand(cmd);
 }
 
@@ -459,7 +457,7 @@ void World::forceLogoutOfAllPlayers() {
         }
 
         Logger::info(LogFacility::Admin) << "--- kicked: " << *player << Log::end;
-        boost::shared_ptr<BasicServerCommand>cmd(new LogOutTC(SERVERSHUTDOWN));
+        ServerCommandPointer cmd(new LogOutTC(SERVERSHUTDOWN));
         player->Connection->shutdownSend(cmd);
         PlayerManager::get()->getLogOutPlayers().non_block_push_back(player);
     }
@@ -473,7 +471,7 @@ bool World::forceLogoutOfPlayer(const std::string &name) {
 
     if (temp) {
         Logger::info(LogFacility::Admin) << "--- kicked: " << temp->to_string() << Log::end;
-        boost::shared_ptr<BasicServerCommand>cmd(new LogOutTC(BYGAMEMASTER));
+        ServerCommandPointer cmd(new LogOutTC(BYGAMEMASTER));
         temp->Connection->shutdownSend(cmd);
         return true;
     } else {
@@ -487,7 +485,7 @@ void World::sendAdminAllPlayerData(Player *&admin) {
         return;
     }
 
-    boost::shared_ptr<BasicServerCommand>cmd(new AdminViewPlayersTC());
+    ServerCommandPointer cmd(new AdminViewPlayersTC());
     admin->Connection->addCommand(cmd);
 
 }
@@ -664,7 +662,7 @@ void World::ban_command(Player *cp, const std::string &timeplayer) {
 
 }
 
-void World::banbyname(Player *cp, short int banhours, std::string tplayer) {
+void World::banbyname(Player *cp, short int banhours, const std::string &tplayer) {
     if (!cp->hasGMRight(gmr_ban)) {
         return;
     }
@@ -1451,16 +1449,16 @@ void World::showWarpFieldsInRange(Player *cp, const std::string &ts) {
     short int range = 0;
 
     if (ReadField(ts.c_str(), range)) {
-        std::vector< boost::shared_ptr< position > > warpfieldsinrange;
+        std::vector<position> warpfieldsinrange;
 
         if (findWarpFieldsInRange(cp->pos, range, warpfieldsinrange)) {
             std::string message;
             cp->inform("Start list of warpfields:");
 
-            for (const auto warpfield : warpfieldsinrange) {
+            for (const auto &warpfield : warpfieldsinrange) {
                 position target;
-                GetField(*warpfield)->GetWarpField(target);
-                message = "Warpfield at " + warpfield->toString() + " to " + target.toString();
+                GetField(warpfield)->GetWarpField(target);
+                message = "Warpfield at " + warpfield.toString() + " to " + target.toString();
                 cp->inform(message);
             }
 

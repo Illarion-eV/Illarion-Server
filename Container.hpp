@@ -26,7 +26,7 @@
 
 #include "TableStructs.hpp"
 
-#include <boost/unordered_map.hpp>
+#include <unordered_map>
 #include <iterator>
 #include <iostream>
 #include <fstream>
@@ -44,8 +44,8 @@ class CommonObjectTable;
 
 class Container {
 public:
-    typedef boost::unordered_map<TYPE_OF_CONTAINERSLOTS, Item> ITEMMAP;
-    typedef boost::unordered_map<TYPE_OF_CONTAINERSLOTS, Container *> CONTAINERMAP;
+    typedef std::unordered_map<TYPE_OF_CONTAINERSLOTS, Item> ITEMMAP;
+    typedef std::unordered_map<TYPE_OF_CONTAINERSLOTS, Container *> CONTAINERMAP;
 
 private:
     Item::id_type itemId;

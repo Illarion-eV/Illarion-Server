@@ -97,7 +97,7 @@ void World::name_command(Player *cp, const std::string &ts) {
                     if (p->getId() == player) {
                         std::string newname(thistoken);
                         name = "! " + newname;
-                        boost::shared_ptr<BasicServerCommand>cmd(new IntroduceTC(player, name));
+                        ServerCommandPointer cmd(new IntroduceTC(player, name));
                         cp->Connection->addCommand(cmd);
                     }
                 }
@@ -143,7 +143,7 @@ void World::logGMTicket(Player *player, const std::string &ticket, bool automati
     }
     
     sendMessageToAdmin(message);
-    boost::shared_ptr<BasicServerCommand>cmd(new BBMessageTC(message,2));
+    ServerCommandPointer cmd(new BBMessageTC(message,2));
     monitoringClientList->sendCommand(cmd);
 }
 

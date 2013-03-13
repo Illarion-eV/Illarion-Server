@@ -25,7 +25,7 @@ EXTRA_DIST = .astylerc
 
 testserver_SOURCES = \
 \
-main.cpp main_help.cpp utility.cpp Logger.cpp Random.cpp Config.cpp \
+main.cpp main_help.cpp utility.cpp Logger.cpp Random.cpp Config.cpp a_star.cpp \
 \
 data/Data.cpp data/QuestNodeTable.cpp data/QuestTable.cpp \
 data/ArmorObjectTable.cpp data/CommonObjectTable.cpp data/ContainerObjectTable.cpp data/RaceSizeTable.cpp \
@@ -61,9 +61,9 @@ script/LuaReloadScript.cpp script/LuaLoginScript.cpp script/LuaLogoutScript.cpp 
 script/LuaDepotScript.cpp script/LuaLookAtPlayerScript.cpp script/LuaLearnScript.cpp \
 script/LuaPlayerDeathScript.cpp script/LuaLookAtItemScript.cpp script/LuaQuestScript.cpp \
 \
-netinterface/NetInterface.cpp InitialConnection.cpp netinterface/CommandFactory.cpp \
+netinterface/NetInterface.cpp InitialConnection.cpp netinterface/CommandFactory.cpp MonitoringClients.cpp \
 netinterface/BasicCommand.cpp netinterface/BasicServerCommand.cpp netinterface/BasicClientCommand.cpp \
-netinterface/protocol/ServerCommands.cpp netinterface/ByteBuffer.cpp MonitoringClients.cpp
+netinterface/protocol/ServerCommands.cpp netinterface/protocol/ClientCommands.cpp netinterface/ByteBuffer.cpp
 
 AM_CPPFLAGS = $(BOOST_CPPFLAGS)
 
@@ -114,9 +114,9 @@ noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
 		 data/Table.hpp data/WeaponObjectTable.hpp \
 		 data/NaturalArmorTable.hpp main_help.hpp TableStructs.hpp \
 		 WorldMap.hpp Connection.hpp Map.hpp Language.hpp \
-		 NewClientView.hpp netinterface/Receiver.hpp \
+		 NewClientView.hpp \
 		 netinterface/BasicCommand.hpp \
-		 netinterface/BasicClientCommand.hpp netinterface/Sender.hpp \
+		 netinterface/BasicClientCommand.hpp \
 		 netinterface/ByteBuffer.hpp netinterface/CommandFactory.hpp \
 		 netinterface/BasicServerCommand.hpp \
 		 netinterface/NetInterface.hpp \

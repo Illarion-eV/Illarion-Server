@@ -71,9 +71,9 @@ public:
     * adds a command to the send queue so it will be sended correctly to the connection
     * @param command the command which should be added
     */
-    void addCommand(const boost::shared_ptr<BasicServerCommand> &command);
+    void addCommand(const ServerCommandPointer &command);
 
-    void shutdownSend(const boost::shared_ptr<BasicServerCommand> &command);
+    void shutdownSend(const ServerCommandPointer &command);
 
     std::string getIPAdress();
 
@@ -81,7 +81,7 @@ public:
     * returns a command from the receive Queue if on is available
     * @return the command which was in the receive Queue or an empty (NULL) Command if there wasn't something in the receive Queue
     */
-    boost::shared_ptr<BasicClientCommand> getCommand();
+    ClientCommandPointer getCommand();
 
 
     volatile bool online; /*< if connection is active*/
@@ -94,8 +94,8 @@ public:
         return receiveQueue.size();
     }
 
-    typedef std::deque< boost::shared_ptr<BasicClientCommand> >CLIENTCOMMANDLIST;
-    typedef std::deque< boost::shared_ptr<BasicServerCommand> >SERVERCOMMANDLIST;
+    typedef std::deque<ClientCommandPointer> CLIENTCOMMANDLIST;
+    typedef std::deque<ServerCommandPointer> SERVERCOMMANDLIST;
 
     boost::asio::ip::tcp::socket &getSocket() {
         return socket;
@@ -113,9 +113,9 @@ private:
     //Buffer for the header of messages
     unsigned char headerBuffer[6];
 
-    boost::shared_ptr<BasicClientCommand> cmd;
-    boost::shared_ptr<BasicServerCommand> shutdownCmd;
-    boost::shared_ptr<BasicServerCommand> cmdToWrite;
+    ClientCommandPointer cmd;
+    ServerCommandPointer shutdownCmd;
+    ServerCommandPointer cmdToWrite;
 
 
     CLIENTCOMMANDLIST receiveQueue; /*<stores the commands which are received in a queue*/

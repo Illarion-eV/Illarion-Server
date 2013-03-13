@@ -23,13 +23,13 @@
 #include "Item.hpp"
 #include "fuse_ptr.hpp"
 
-LuaDepotScript::LuaDepotScript(std::string filename) throw(ScriptException)
+LuaDepotScript::LuaDepotScript(const std::string &filename) throw(ScriptException)
     : LuaScript(filename) {
 }
 
 LuaDepotScript::~LuaDepotScript() throw() {}
 
-bool LuaDepotScript::onOpenDepot(Character *cc, Item itm) {
+bool LuaDepotScript::onOpenDepot(Character *cc, const Item &itm) {
     fuse_ptr<Character> fuse_cc(cc);
     return callEntrypoint<bool>("onOpenDepot", fuse_cc, itm);
 }

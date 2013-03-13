@@ -23,6 +23,7 @@
 #include "netinterface/protocol/ClientCommands.hpp"
 #include "CommandFactory.hpp"
 
+#include "netinterface/NetInterface.hpp"
 
 NetInterface::NetInterface(boost::asio::io_service &io_servicen) : online(false), socket(io_servicen), inactive(0) {
     cmd.reset();
@@ -169,7 +170,7 @@ void NetInterface::handle_read_header(const boost::system::error_code &error) {
 }
 
 
-void NetInterface::addCommand(const boost::shared_ptr<BasicServerCommand> &command) {
+void NetInterface::addCommand(const ServerCommandPointer &command) {
     if (online) {
         command->addHeader();
         sendQueueMutex.lock();
@@ -191,7 +192,7 @@ void NetInterface::addCommand(const boost::shared_ptr<BasicServerCommand> &comma
 
 }
 
-void NetInterface::shutdownSend(const boost::shared_ptr<BasicServerCommand> &command) {
+void NetInterface::shutdownSend(const ServerCommandPointer &command) {
     try {
         command->addHeader();
         shutdownCmd = command;
@@ -241,9 +242,9 @@ void NetInterface::handle_write_shutdown(const boost::system::error_code &error)
     }
 }
 
-boost::shared_ptr<BasicClientCommand> NetInterface::getCommand() {
+ClientCommandPointer NetInterface::getCommand() {
     if (online) {
-        boost::shared_ptr<BasicClientCommand> ret;
+        ClientCommandPointer ret;
         receiveQueueMutex.lock();
 
         if (!receiveQueue.empty()) {
@@ -255,6 +256,6 @@ boost::shared_ptr<BasicClientCommand> NetInterface::getCommand() {
         return ret;
     }
 
-    return boost::shared_ptr<BasicClientCommand>();
+    return ClientCommandPointer();
 }
 

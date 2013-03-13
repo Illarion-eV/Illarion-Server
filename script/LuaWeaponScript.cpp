@@ -22,11 +22,11 @@
 #include "Character.hpp"
 #include "fuse_ptr.hpp"
 
-LuaWeaponScript::LuaWeaponScript(std::string filename) throw(ScriptException)
+LuaWeaponScript::LuaWeaponScript(const std::string &filename) throw(ScriptException)
     : LuaScript(filename) {
 }
 
-LuaWeaponScript::LuaWeaponScript(std::string filename, WeaponStruct weapon) throw(ScriptException)
+LuaWeaponScript::LuaWeaponScript(const std::string &filename, const WeaponStruct &weapon) throw(ScriptException)
     : LuaScript(filename) {
 }
 

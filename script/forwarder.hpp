@@ -41,4 +41,7 @@ int erase_item2(Character*, TYPE_OF_ITEM_ID, int, const luabind::object&);
 int create_item(Character*, Item::id_type id, Item::number_type number, Item::quality_type quality, const luabind::object&);
 
 ScriptItem world_createFromId(World* world, TYPE_OF_ITEM_ID id, unsigned short int count, position pos, bool allways, int quali, const luabind::object& data);
+
+void log_lua(const std::string &message);
+
 #endif
