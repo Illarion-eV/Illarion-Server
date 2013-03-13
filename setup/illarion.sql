@@ -1152,7 +1152,8 @@ SET default_with_oids = false;
 CREATE TABLE questprogress (
     qpg_userid integer NOT NULL,
     qpg_questid smallint NOT NULL,
-    qpg_progress integer DEFAULT 0 NOT NULL
+    qpg_progress integer DEFAULT 0 NOT NULL,
+    qpg_time integer DEFAULT 0 NOT NULL
 );
 
 
