@@ -465,7 +465,7 @@ bool World::swap(ScriptItem item, TYPE_OF_ITEM_ID newitem, unsigned short int ne
     return false;
 }
 
-ScriptItem World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, position pos, bool always, int quality, const luabind::object &data) {
+ScriptItem World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, position pos, bool always, int quality, script_data_exchangemap const* data) {
     Field *field;
     ScriptItem sItem;
 

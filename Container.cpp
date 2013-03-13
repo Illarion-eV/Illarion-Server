@@ -552,35 +552,13 @@ void Container::Load(std::istream &where) {
     }
 }
 
-int Container::countItem(Item::id_type itemid) {
+int Container::countItem(Item::id_type itemid, script_data_exchangemap const* data) const {
     int temp = 0;
 
     for (auto it = items.begin(); it != items.end(); ++it) {
-        Item &item = it->second;
+        const Item &item = it->second;
 
-        if (item.getId() == itemid) {
-            temp = temp + item.getNumber();
-        }
-
-        if (item.isContainer()) {
-            auto iterat = containers.find(it->first);
-
-            if (iterat != containers.end()) {
-                temp = temp + iterat->second->countItem(itemid);
-            }
-        }
-    }
-
-    return temp;
-}
-
-int Container::countItem(Item::id_type itemid, const luabind::object &data) {
-    int temp = 0;
-
-    for (auto it = items.begin(); it != items.end(); ++it) {
-        Item &item = it->second;
-
-        if (item.getId() == itemid && item.hasData(data)) {
+        if (item.getId() == itemid && (data == nullptr || item.hasData(*data))) {
             temp = temp + item.getNumber();
         }
 
@@ -634,7 +612,8 @@ int Container::recursiveWeight(int rekt) {
     }
 }
 
-int Container::_eraseItem(Item::id_type itemid, Item::number_type count, const luabind::object &data, bool useData) {
+int Container::eraseItem(Item::id_type itemid, Item::number_type count, script_data_exchangemap const* data) {
+
     int temp = count;
 
     auto it = items.begin();
@@ -646,11 +625,11 @@ int Container::_eraseItem(Item::id_type itemid, Item::number_type count, const l
             auto iterat = containers.find(it->first);
 
             if (iterat != containers.end()) {
-                temp = (*iterat).second->_eraseItem(itemid, temp, data, useData);
+                temp = (*iterat).second->eraseItem(itemid, temp, data);
             }
 
             ++it;
-        } else if ((item.getId() == itemid && (!useData || item.hasData(data))) && (temp > 0)) {
+        } else if ((item.getId() == itemid && (data == nullptr || item.hasData(*data))) && (temp > 0)) {
 
             if (temp >= item.getNumber()) {
                 temp = temp - item.getNumber();
@@ -667,15 +646,6 @@ int Container::_eraseItem(Item::id_type itemid, Item::number_type count, const l
     }
 
     return temp;
-}
-
-int Container::eraseItem(Item::id_type itemid, Item::number_type count) {
-    const luabind::object nothing;
-    return _eraseItem(itemid, count, nothing, false);
-}
-
-int Container::eraseItem(Item::id_type itemid, Item::number_type count, const luabind::object &data) {
-    return _eraseItem(itemid, count, data, true);
 }
 
 void Container::doAge(bool inventory) {

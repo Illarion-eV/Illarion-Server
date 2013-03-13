@@ -459,7 +459,7 @@ void Player::learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t oppone
 }
 
 
-int Player::createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, const luabind::object &data) {
+int Player::createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, script_data_exchangemap const* data) {
     int temp = Character::createItem(id, number, quality, data);
 
     for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
@@ -475,18 +475,18 @@ int Player::createItem(Item::id_type id, Item::number_type number, Item::quality
 }
 
 
-int Player::_eraseItem(TYPE_OF_ITEM_ID itemid, int count, const luabind::object &data, bool useData) {
+int Player::eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangemap const* data) {
     int temp = count;
 
     if ((characterItems[ BACKPACK ].getId() != 0) && backPackContents) {
-        temp = backPackContents->_eraseItem(itemid, temp, data, useData);
+        temp = backPackContents->eraseItem(itemid, temp, data);
         updateBackPackView();
     }
 
     if (temp > 0) {
         // BACKPACK als Item erstmal auslassen
         for (unsigned char i = MAX_BELT_SLOTS + MAX_BODY_ITEMS - 1; i > 0; --i) {
-            if ((characterItems[ i ].getId() == itemid) && (!useData || characterItems[ i ].hasData(data)) && (temp > 0)) {
+            if ((characterItems[ i ].getId() == itemid) && (data == nullptr || characterItems[ i ].hasData(*data)) && (temp > 0)) {
                 if (temp >= characterItems[ i ].getNumber()) {
                     temp = temp - characterItems[ i ].getNumber();
                     characterItems[ i ].reset();
@@ -517,18 +517,6 @@ int Player::_eraseItem(TYPE_OF_ITEM_ID itemid, int count, const luabind::object 
     checkBurden();
     return temp;
 }
-
-
-int Player::eraseItem(TYPE_OF_ITEM_ID itemid, int count) {
-    const luabind::object nothing;
-    return _eraseItem(itemid, count, nothing, false);
-}
-
-
-int Player::eraseItem(TYPE_OF_ITEM_ID itemid, int count, const luabind::object &data) {
-    return _eraseItem(itemid, count, data, true);
-}
-
 
 int Player::increaseAtPos(unsigned char pos, int count) {
     int temp = count;

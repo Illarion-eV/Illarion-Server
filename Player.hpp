@@ -377,7 +377,7 @@ public:
 
     void ageInventory();
 
-    virtual int createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, const luabind::object &data) override;
+    virtual int createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, script_data_exchangemap const* data) override;
 
     virtual void learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opponent) override;
 
@@ -385,20 +385,13 @@ public:
 
     virtual void deleteAllSkills() override;
 
-    //! löscht count Item mit der ID itemid aus dem Inventory des Player
-    // und schickt ein Update an den Spieler
-    // \param itemid die Id der zu löschenden Item
-    // \param count die Anzahl der zu löschenden Item
-    // \return Anzahl der Item die nicht gelöcht werden konnten
-    virtual int eraseItem(TYPE_OF_ITEM_ID itemid, int count) override;
-
     //! löscht count Items mit der ID itemid aus dem Inventory des Player
     // und schickt ein Update an den Spieler
     // \param itemid die Id der zu löschenden Items
     // \param count die Anzahl der zu löschenden Items
     // \oaram data Datawert der zu löschenden Items
     // \return Anzahl der Items, die nicht gelöscht werden konnten
-    virtual int eraseItem(TYPE_OF_ITEM_ID itemid, int count, const luabind::object &data) override;
+    virtual int eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangemap const* data = nullptr) override;
 
     //! ver�dert die Anzahl des Item an der Position pos um count
     // und schickt ein Update an den Spieler
@@ -568,11 +561,6 @@ public:
     void closeDialogsOnMove();
 private:
     void startCrafting(uint8_t stillToCraft, uint16_t craftingTime, uint16_t sfx, uint16_t sfxDuration, uint32_t dialogId);
-
-protected:
-
-    // shared code for all eraseItem methods
-    virtual int _eraseItem(TYPE_OF_ITEM_ID itemid, int count, const luabind::object &data, bool useData) override;
 
 private:
 

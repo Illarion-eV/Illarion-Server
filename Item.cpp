@@ -23,9 +23,9 @@
 #include <boost/lexical_cast.hpp>
 
 
-Item::Item(id_type id, number_type number, wear_type wear, quality_type quality, const luabind::object &datamap):
+Item::Item(id_type id, number_type number, wear_type wear, quality_type quality, const script_data_exchangemap& datamap):
     id(id), number(number), wear(wear), quality(quality), datamap(1) {
-    setData(datamap);
+    setData(&datamap);
 }
 
 Item::number_type Item::increaseNumberBy(Item::number_type count) {
@@ -53,86 +53,27 @@ void Item::setMinQuality(const Item &item) {
     quality = minQuality * 100 + minDurability;
 }
 
-void Item::setData(const luabind::object &datamap) {
-    using namespace luabind;
-    auto mapType = type(datamap);
+void Item::setData(script_data_exchangemap const* datamap) {
+	if (datamap == nullptr) {
+		this->datamap.clear();
+		return;
+	}
 
-    if (mapType == LUA_TTABLE) {
-        for (iterator it(datamap), end; it != end; ++it) {
-            std::string key;
-
-            try {
-                key = object_cast<std::string>(it.key());
-            } catch (cast_failed &e) {
-                throw std::logic_error("Usage of invalid data map key. Data map keys must be strings.");
-            }
-
-            try {
-                std::string value = object_cast<std::string>(*it);
-                setData(key, value);
-            } catch (cast_failed &e) {
-                try {
-                    int32_t intValue = object_cast<int32_t>(*it);
-                    setData(key, intValue);
-                } catch (cast_failed &e) {
-                    throw std::logic_error("Usage of invalid data map value. Data map values must be numbers or strings.");
-                }
-            }
-        }
-    } else if (mapType == LUA_TNIL) {
-        this->datamap.clear();
-    } else {
-        throw std::logic_error("Usage of invalid data map type. Data maps must be tables or nil.");
-    }
+	for (const auto& item : *datamap) {
+		setData(item.first, item.second);
+	}
 }
 
 
-bool Item::hasData(const luabind::object &datamap) const {
-    using namespace luabind;
-    auto mapType = type(datamap);
+bool Item::hasData(const script_data_exchangemap& datamap) const {
+	if (datamap.empty() && !hasNoData())
+		return false;
 
-    if (mapType == LUA_TTABLE) {
-        bool isSameData = true;
-
-        iterator it(datamap), end;
-
-        if (it == end) {
-            return hasNoData();
-        }
-
-        for (; it != end && isSameData; ++it) {
-            std::string key;
-
-            try {
-                key = object_cast<std::string>(it.key());
-            } catch (cast_failed &e) {
-                throw std::logic_error("Usage of invalid data map key. Data map keys must be strings.");
-            }
-
-            std::string value;
-
-            try {
-                value = object_cast<std::string>(*it);
-            } catch (cast_failed &e) {
-                try {
-                    int32_t intValue = object_cast<int32_t>(*it);
-                    std::stringstream ss;
-                    ss << intValue;
-                    value = ss.str();
-                } catch (cast_failed &e) {
-                    throw std::logic_error("Usage of invalid data map value. Data map values must be numbers or strings.");
-                }
-            }
-
-            isSameData = (getData(key) == value);
-        }
-
-        return isSameData;
-    } else if (mapType != LUA_TNIL) {
-        throw std::logic_error("Usage of invalid data map type. Data maps must be tables or nil.");
-    }
-
-    return true;
+	for (const auto& item : datamap) {
+		if (getData(item.first) != item.second)
+			return false;
+	}
+	return true;
 }
 
 bool Item::hasNoData() const {

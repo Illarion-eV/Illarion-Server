@@ -180,8 +180,7 @@ void World::create_command(Player *cp, const std::string &itemid) {
         uint16_t quality = 333;
         std::string data;
         std::string datalog;
-        lua_State *luaState = LuaScript::getLuaState();
-        luabind::object dataList = luabind::newtable(luaState);
+	script_data_exchangemap dataList;
 
         std::stringstream ss;
         ss.str(itemid);
@@ -197,13 +196,13 @@ void World::create_command(Player *cp, const std::string &itemid) {
                 std::string key = data.substr(0, int(found));
                 std::string value = data.substr(int(found) + 1);
                 datalog += key + "=" + value + "; ";
-                dataList[key] = value;
+		dataList.push_back(std::make_pair(key, value));
             }
         }
 
         Logger::info(LogFacility::Admin) << cp->to_string() << " creates item " << item << " with quantity "
                                          << quantity << ", quality " << quality << ", data " << datalog << Log::end;
-        cp->createItem(item, quantity, quality, dataList);
+        cp->createItem(item, quantity, quality, &dataList);
     }
 
 }

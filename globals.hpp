@@ -154,4 +154,6 @@ struct MAP_POSITION {
     }
 };
 
+typedef std::vector<std::pair<std::string, std::string>> script_data_exchangemap;
+
 #endif

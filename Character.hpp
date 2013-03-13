@@ -292,11 +292,9 @@ public:
 
     int countItem(TYPE_OF_ITEM_ID itemid) const ;
     // where determines where the items will be counted ("all", "belt", "body", "backpack")
-    int countItemAt(const std::string &where, TYPE_OF_ITEM_ID itemid) const;
-    int countItemAt(const std::string &where, TYPE_OF_ITEM_ID itemid, const luabind::object &data) const;
-    virtual int eraseItem(TYPE_OF_ITEM_ID itemid, int count);
-    virtual int eraseItem(TYPE_OF_ITEM_ID itemid, int count, const luabind::object &data);
-    virtual int createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, const luabind::object &data);
+    int countItemAt(const std::string &where, TYPE_OF_ITEM_ID itemid, script_data_exchangemap const* data = nullptr) const;
+    virtual int eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangemap const* data = nullptr);
+    virtual int createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, script_data_exchangemap const* data);
     virtual int increaseAtPos(unsigned char pos, int count);
     virtual int createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count);
     virtual bool swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t newQuality = 0);
@@ -632,9 +630,6 @@ protected:
     * @return the movement costs
     */
     virtual uint16_t getMovementCost(const Field *sourcefield) const;
-
-    // shared code for public eraseItem methods
-    virtual int _eraseItem(TYPE_OF_ITEM_ID itemid, int count, const luabind::object &data, bool useData);
 
     appearance _appearance;
 
