@@ -837,26 +837,6 @@ CREATE TABLE longtimeeffects (
 
 
 --
--- Name: mental_capacity; Type: TABLE; Schema: server; Owner: -; Tablespace: 
---
-
-CREATE TABLE mental_capacity (
-    mc_max_mentalcapacity integer,
-    mc_learnborder integer,
-    mc_first_warning integer,
-    mc_second_warning integer,
-    mc_decreaseamount smallint,
-    mc_increase_fighting smallint,
-    mc_increase_druidery smallint,
-    mc_increase_magic smallint,
-    mc_increase_craftmanship smallint,
-    mc_increase_other smallint,
-    mc_increase_language smallint,
-    mc_increasereference smallint DEFAULT 0
-);
-
-
---
 -- Name: monster; Type: TABLE; Schema: server; Owner: -; Tablespace: 
 --
 
