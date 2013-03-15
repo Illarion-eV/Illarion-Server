@@ -552,7 +552,7 @@ void Container::Load(std::istream &where) {
     }
 }
 
-int Container::countItem(Item::id_type itemid, script_data_exchangemap const* data) const {
+int Container::countItem(Item::id_type itemid, script_data_exchangemap const *data) const {
     int temp = 0;
 
     for (auto it = items.begin(); it != items.end(); ++it) {
@@ -612,7 +612,7 @@ int Container::recursiveWeight(int rekt) {
     }
 }
 
-int Container::eraseItem(Item::id_type itemid, Item::number_type count, script_data_exchangemap const* data) {
+int Container::eraseItem(Item::id_type itemid, Item::number_type count, script_data_exchangemap const *data) {
 
     int temp = count;
 

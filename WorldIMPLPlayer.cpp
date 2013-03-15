@@ -141,7 +141,7 @@ void World::logGMTicket(Player *player, const std::string &ticket, bool automati
     } else {
         message = "Page from " + player->to_string() + ": " + ticket;
     }
-    
+
     sendMessageToAdmin(message);
     ServerCommandPointer cmd(new BBMessageTC(message,2));
     monitoringClientList->sendCommand(cmd);

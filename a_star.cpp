@@ -99,7 +99,7 @@ std::size_t edge_hash::operator()(std::pair<Position, Position> const &e) const 
 weight_calc::weight_calc(int level): level(level) {
 }
 
-auto weight_calc::operator[](key_type const &k) -> mapped_type& {
+auto weight_calc::operator[](key_type const &k) -> mapped_type & {
     mapped_type &cost = base::operator[](k);
 
     if (cost == 0.0) {
@@ -124,7 +124,7 @@ std::size_t vertex_hash::operator()(Position const &u) const {
     return seed;
 }
 
-auto vertex_index_hash::operator[](key_type const &k) -> mapped_type& {
+auto vertex_index_hash::operator[](key_type const &k) -> mapped_type & {
     int &id = base::operator[](k);
 
     if (id == 0) {
@@ -158,7 +158,7 @@ void astar_ex_visitor::discover_vertex(const Position &u, const world_map_graph 
     }
 }
 
-auto dist_map::operator[](key_type const &k) -> mapped_type& {
+auto dist_map::operator[](key_type const &k) -> mapped_type & {
     if (find(k) == end()) {
         insert(std::make_pair(k, std::numeric_limits<Cost>::max()));
     }
@@ -166,7 +166,7 @@ auto dist_map::operator[](key_type const &k) -> mapped_type& {
     return at(k);
 }
 
-auto pred_map::operator[](key_type const &k) -> mapped_type& {
+auto pred_map::operator[](key_type const &k) -> mapped_type & {
     if (find(k) == end()) {
         insert(std::make_pair(k, k));
     }
@@ -221,6 +221,7 @@ bool a_star(const ::position &start_pos, const ::position &goal_pos, std::list<d
             int dx = v.first - pre.first;
             int dy = v.second - pre.second;
             vertex dir(dx, dy);
+
             try {
                 steps.push_front(character_directions.at(dir));
             } catch (std::out_of_range &) {

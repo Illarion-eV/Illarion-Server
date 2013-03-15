@@ -455,7 +455,7 @@ void Player::learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t oppone
 }
 
 
-int Player::createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, script_data_exchangemap const* data) {
+int Player::createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, script_data_exchangemap const *data) {
     int temp = Character::createItem(id, number, quality, data);
 
     for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
@@ -471,7 +471,7 @@ int Player::createItem(Item::id_type id, Item::number_type number, Item::quality
 }
 
 
-int Player::eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangemap const* data) {
+int Player::eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangemap const *data) {
     int temp = count;
 
     if ((characterItems[ BACKPACK ].getId() != 0) && backPackContents) {
@@ -1578,8 +1578,8 @@ void Player::inform(const std::string &message, informType type) const {
     Connection->addCommand(cmd);
 }
 
-void Player::inform(const std::string& german, const std::string& english, informType type) const {
-	inform(nls(german, english), type);
+void Player::inform(const std::string &german, const std::string &english, informType type) const {
+    inform(nls(german, english), type);
 }
 
 int Player::relativeLoad() const {
@@ -1600,7 +1600,7 @@ auto Player::loadFactor() const -> LoadLevel {
 
 void Player::checkBurden() {
     auto currentLoadLevel = loadFactor();
-    
+
     if (currentLoadLevel != loadLevel) {
         loadLevel = currentLoadLevel;
 
@@ -1632,7 +1632,7 @@ void Player::checkBurden() {
 bool Player::encumberance(uint16_t &movementCost) {
     int load = relativeLoad();
     movementCost += movementCost * 3 * (load-75) / 25;
-    
+
     checkBurden();
 
     auto level = loadFactor();

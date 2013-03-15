@@ -44,43 +44,43 @@ extern std::shared_ptr<LuaLearnScript>learnScript;
 extern std::shared_ptr<LuaPlayerDeathScript>playerDeathScript;
 
 Character::attribute_map_t Character::attributeMap = {
-        {"strength", strength},
-        {"dexterity", dexterity},
-        {"constitution", constitution},
-        {"agility", agility},
-        {"intelligence", intelligence},
-        {"perception", perception},
-        {"willpower", willpower},
-        {"essence", essence},
-        {"hitpoints", hitpoints},
-        {"mana", mana},
-        {"foodlevel", foodlevel},
-        {"sex", sex},
-        {"age", age},
-        {"weight", weight},
-        {"height", height},
-        {"attitude", attitude},
-        {"luck", luck}
+    {"strength", strength},
+    {"dexterity", dexterity},
+    {"constitution", constitution},
+    {"agility", agility},
+    {"intelligence", intelligence},
+    {"perception", perception},
+    {"willpower", willpower},
+    {"essence", essence},
+    {"hitpoints", hitpoints},
+    {"mana", mana},
+    {"foodlevel", foodlevel},
+    {"sex", sex},
+    {"age", age},
+    {"weight", weight},
+    {"height", height},
+    {"attitude", attitude},
+    {"luck", luck}
 };
 
 Character::attribute_string_map_t Character::attributeStringMap = {
-        {strength, "strength"},
-        {dexterity, "dexterity"},
-        {constitution, "constitution"},
-        {agility, "agility"},
-        {intelligence, "intelligence"},
-        {perception, "perception"},
-        {willpower, "willpower"},
-        {essence, "essence"},
-        {hitpoints, "hitpoints"},
-        {mana, "mana"},
-        {foodlevel, "foodlevel"},
-        {sex, "sex"},
-        {age, "age"},
-        {weight, "weight"},
-        {height, "height"},
-        {attitude, "attitude"},
-        {luck, "luck"}
+    {strength, "strength"},
+    {dexterity, "dexterity"},
+    {constitution, "constitution"},
+    {agility, "agility"},
+    {intelligence, "intelligence"},
+    {perception, "perception"},
+    {willpower, "willpower"},
+    {essence, "essence"},
+    {hitpoints, "hitpoints"},
+    {mana, "mana"},
+    {foodlevel, "foodlevel"},
+    {sex, "sex"},
+    {age, "age"},
+    {weight, "weight"},
+    {height, "height"},
+    {attitude, "attitude"},
+    {luck, "luck"}
 };
 
 position Character::getFrontalPosition() const {
@@ -230,7 +230,7 @@ int Character::countItem(TYPE_OF_ITEM_ID itemid) const {
     return temp;
 }
 
-int Character::countItemAt(const std::string &where, TYPE_OF_ITEM_ID itemid, script_data_exchangemap const* data) const {
+int Character::countItemAt(const std::string &where, TYPE_OF_ITEM_ID itemid, script_data_exchangemap const *data) const {
     int temp = 0;
 
     if (where == "all") {
@@ -298,7 +298,7 @@ ScriptItem Character::GetItemAt(unsigned char itempos) {
 }
 
 
-int Character::eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangemap const* data) {
+int Character::eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangemap const *data) {
     int temp = count;
 
     if ((characterItems[ BACKPACK ].getId() != 0) && backPackContents) {
@@ -361,7 +361,7 @@ int Character::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) 
 }
 
 
-int Character::createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, script_data_exchangemap const* data) {
+int Character::createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, script_data_exchangemap const *data) {
     int temp = number;
     Item it;
 
@@ -1445,7 +1445,7 @@ void Character::inform(const std::string &text, informType type) const {
     // override for char types that need this kind of information
 }
 
-void Character::inform(const std::string&, const std::string&, informType type) const {
+void Character::inform(const std::string &, const std::string &, informType type) const {
     // override for char types that need this kind of information
 }
 

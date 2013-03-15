@@ -292,9 +292,9 @@ public:
 
     int countItem(TYPE_OF_ITEM_ID itemid) const ;
     // where determines where the items will be counted ("all", "belt", "body", "backpack")
-    int countItemAt(const std::string &where, TYPE_OF_ITEM_ID itemid, script_data_exchangemap const* data = nullptr) const;
-    virtual int eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangemap const* data = nullptr);
-    virtual int createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, script_data_exchangemap const* data);
+    int countItemAt(const std::string &where, TYPE_OF_ITEM_ID itemid, script_data_exchangemap const *data = nullptr) const;
+    virtual int eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangemap const *data = nullptr);
+    virtual int createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, script_data_exchangemap const *data);
     virtual int increaseAtPos(unsigned char pos, int count);
     virtual int createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count);
     virtual bool swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t newQuality = 0);
@@ -348,7 +348,7 @@ public:
     virtual void talk(talk_type tt, const std::string &german, const std::string &english);
 
     virtual void inform(const std::string &message, informType type = informServer) const;
-    virtual void inform(const std::string &german, const std::string& english, informType type = informServer) const;
+    virtual void inform(const std::string &german, const std::string &english, informType type = informServer) const;
 
     virtual bool move(direction dir, bool active=true);
 

@@ -368,7 +368,7 @@ public:
 
     void ageInventory();
 
-    virtual int createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, script_data_exchangemap const* data) override;
+    virtual int createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, script_data_exchangemap const *data) override;
 
     virtual void learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opponent) override;
 
@@ -382,7 +382,7 @@ public:
     // \param count die Anzahl der zu löschenden Items
     // \oaram data Datawert der zu löschenden Items
     // \return Anzahl der Items, die nicht gelöscht werden konnten
-    virtual int eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangemap const* data = nullptr) override;
+    virtual int eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangemap const *data = nullptr) override;
 
     //! ver�dert die Anzahl des Item an der Position pos um count
     // und schickt ein Update an den Spieler
@@ -459,7 +459,7 @@ public:
 
     // player gets informed about something
     virtual void inform(const std::string &text, informType type = informServer) const override;
-    virtual void inform(const std::string &german, const std::string& english, informType type = informServer) const override;
+    virtual void inform(const std::string &german, const std::string &english, informType type = informServer) const override;
 
     // player heard something
     virtual void receiveText(talk_type tt, const std::string &message, Character *cc) override;

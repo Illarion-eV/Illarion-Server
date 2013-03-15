@@ -23,7 +23,7 @@
 #include <boost/lexical_cast.hpp>
 
 
-Item::Item(id_type id, number_type number, wear_type wear, quality_type quality, const script_data_exchangemap& datamap):
+Item::Item(id_type id, number_type number, wear_type wear, quality_type quality, const script_data_exchangemap &datamap):
     id(id), number(number), wear(wear), quality(quality), datamap(1) {
     setData(&datamap);
 }
@@ -53,27 +53,30 @@ void Item::setMinQuality(const Item &item) {
     quality = minQuality * 100 + minDurability;
 }
 
-void Item::setData(script_data_exchangemap const* datamap) {
-	if (datamap == nullptr) {
-		this->datamap.clear();
-		return;
-	}
+void Item::setData(script_data_exchangemap const *datamap) {
+    if (datamap == nullptr) {
+        this->datamap.clear();
+        return;
+    }
 
-	for (const auto& item : *datamap) {
-		setData(item.first, item.second);
-	}
+    for (const auto& item : *datamap) {
+        setData(item.first, item.second);
+    }
 }
 
 
-bool Item::hasData(const script_data_exchangemap& datamap) const {
-	if (datamap.empty() && !hasNoData())
-		return false;
+bool Item::hasData(const script_data_exchangemap &datamap) const {
+    if (datamap.empty() && !hasNoData()) {
+        return false;
+    }
 
-	for (const auto& item : datamap) {
-		if (getData(item.first) != item.second)
-			return false;
-	}
-	return true;
+    for (const auto& item : datamap) {
+        if (getData(item.first) != item.second) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 bool Item::hasNoData() const {

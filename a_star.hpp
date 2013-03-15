@@ -48,7 +48,7 @@ struct world_map_graph;
 struct character_out_edge_iterator: public boost::forward_iterator_helper<character_out_edge_iterator, Position, std::ptrdiff_t, Position *, Position> {
     character_out_edge_iterator();
     character_out_edge_iterator(int i, const Position &p, const world_map_graph &g);
-    
+
     std::pair<Position, Position> operator*() const;
     void operator++();
     bool operator==(const character_out_edge_iterator &iterator) const;

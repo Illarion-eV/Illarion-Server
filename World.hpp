@@ -1419,7 +1419,7 @@ public:
     //\ param pos Position des Items
     //\ return bool Wert ob das Erstellen geklappt hat.
     //\ quali int, das die qualitaet angibt
-    ScriptItem createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, const position& pos, bool always, int quali, script_data_exchangemap const* data);
+    ScriptItem createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, const position &pos, bool always, int quali, script_data_exchangemap const *data);
 
     //Erzeugt auf den Angegebenen Feld ein bestimmtes Item
     //\ param item, das Item was erzeugt werden soll

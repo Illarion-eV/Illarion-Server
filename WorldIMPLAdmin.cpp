@@ -178,7 +178,7 @@ void World::create_command(Player *cp, const std::string &itemid) {
         uint16_t quality = 333;
         std::string data;
         std::string datalog;
-	script_data_exchangemap dataList;
+        script_data_exchangemap dataList;
 
         std::stringstream ss;
         ss.str(itemid);
@@ -194,7 +194,7 @@ void World::create_command(Player *cp, const std::string &itemid) {
                 std::string key = data.substr(0, int(found));
                 std::string value = data.substr(int(found) + 1);
                 datalog += key + "=" + value + "; ";
-		dataList.push_back(std::make_pair(key, value));
+                dataList.push_back(std::make_pair(key, value));
             }
         }
 
@@ -335,6 +335,7 @@ void World::talkto_command(Player *cp, const std::string &ts) {
                 ss >> tid;
 
                 tempPl = Players.findID(tid);
+
                 if (tempPl) {
 #ifdef LOG_TALK
                     Logger::info(LogFacility::Player) << *cp << " talks to " << *tempPl << ": " << message << Log::end;
@@ -399,7 +400,7 @@ void World::ForceIntroduce(Player *cp, const std::string &ts) {
 
         if (tid) {
             Player *player = Players.findID(tid);
-            
+
             if (player) {
                 forceIntroducePlayer(player, cp);
             }
@@ -439,7 +440,7 @@ void World::teleportPlayerToOther(Player *cp, std::string ts) {
 
         if (tid) {
             tempPl = Players.findID(tid);
-            
+
             if (tempPl) {
                 cp->Warp(tempPl->pos);
             }
@@ -565,7 +566,7 @@ void World::summon_command(Player *cp, const std::string &tplayer) {
 
         if (tid) {
             tempPl = Players.findID(tid);
-            
+
             if (tempPl) {
                 Logger::info(LogFacility::Admin) << *cp << " summons player " << *tempPl << " to " << cp->pos.toString() << Log::end;
                 tempPl->Warp(cp->pos);

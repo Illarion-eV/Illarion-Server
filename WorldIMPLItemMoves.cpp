@@ -907,7 +907,7 @@ void World::dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, short int xc
             }
         } else {
             cp->checkBurden();
-            
+
             if (script) {
                 script->MoveItemAfterMove(cp, s_item, t_item);
             }
@@ -1376,7 +1376,7 @@ bool World::moveItem(Character *cc, unsigned char d, short int xc, short int yc,
 
         }
     }
-    
+
     return false;
 }
 

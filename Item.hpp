@@ -218,7 +218,7 @@ public:
     Item(): id(0), number(0), wear(0), quality(333), datamap(1) {}
     Item(id_type id, number_type number, wear_type wear, quality_type quality = 333) :
         id(id), number(number), wear(wear), quality(quality), datamap(1) {}
-    Item(id_type id, number_type number, wear_type wear, quality_type quality, const script_data_exchangemap& datamap);
+    Item(id_type id, number_type number, wear_type wear, quality_type quality, const script_data_exchangemap &datamap);
 
     inline id_type getId() const {
         return id;
@@ -255,8 +255,8 @@ public:
 
     // setData actually does either a clear (if the datamap is nil) or a merge of the keys in datamap
     // TODO split into clear and add or merge function to make usage more obvious
-    void setData(script_data_exchangemap const* datamap);
-    bool hasData(const script_data_exchangemap& datamap) const;
+    void setData(script_data_exchangemap const *datamap);
+    bool hasData(const script_data_exchangemap &datamap) const;
     bool hasNoData() const;
     std::string getData(const std::string &key) const;
     void setData(const std::string &key, const std::string &value);
@@ -267,7 +267,7 @@ public:
     inline datamap_type::const_iterator getDataEnd() const {
         return datamap.cend();
     }
-    inline bool equalData(script_data_exchangemap const* data) const {
+    inline bool equalData(script_data_exchangemap const *data) const {
         Item item;
         item.setData(data);
         return equalData(item);

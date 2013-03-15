@@ -103,7 +103,7 @@ void MerchantDialog::addSecondaryRequest(TYPE_OF_ITEM_ID item, const string &nam
 }
 
 
-auto MerchantDialog::getResult() const -> Result{
+auto MerchantDialog::getResult() const -> Result {
     return result;
 }
 
