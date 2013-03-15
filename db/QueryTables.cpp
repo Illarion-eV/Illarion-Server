@@ -30,7 +30,7 @@ QueryTables::QueryTables() {
 
 void QueryTables::addServerTable(const std::string &table) throw(std::logic_error) {
     if (oneTable && !tables.empty()) {
-        throw new std::logic_error("Only one table is allowed for this query.");
+        throw std::logic_error("Only one table is allowed for this query.");
     }
 
     Query::appendToStringList(tables, Query::escapeAndChainKeys(Database::SchemaHelper::getServerSchema(), table));
@@ -38,7 +38,7 @@ void QueryTables::addServerTable(const std::string &table) throw(std::logic_erro
 
 void QueryTables::addAccountTable(const std::string &table) throw(std::logic_error) {
     if (oneTable && !tables.empty()) {
-        throw new std::logic_error("Only one table is allowed for this query.");
+        throw std::logic_error("Only one table is allowed for this query.");
     }
 
     Query::appendToStringList(tables, Query::escapeAndChainKeys(Database::SchemaHelper::getAccountSchema(), table));

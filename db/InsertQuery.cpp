@@ -79,7 +79,7 @@ Result InsertQuery::execute() {
         dataRow = *itr;
 
         if (columns != dataRow->size()) {
-            throw new std::invalid_argument("Incorrect amount of data supplied.");
+            throw std::invalid_argument("Incorrect amount of data supplied.");
         }
 
         for (uint32_t column = 0; column < columns; column++) {

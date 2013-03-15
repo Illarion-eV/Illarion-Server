@@ -51,7 +51,7 @@ void ConnectionManager::setupManager() {
 
 PConnection ConnectionManager::getConnection() throw(std::logic_error) {
     if (!isOperational) {
-        throw new std::logic_error("Connection Manager is not set up yet");
+        throw std::logic_error("Connection Manager is not set up yet");
     }
 
     boost::shared_ptr<Connection> connPtr(
@@ -66,7 +66,7 @@ ConnectionManager::ConnectionManager() {
 };
 
 ConnectionManager::ConnectionManager(const ConnectionManager &org) {
-    throw new std::domain_error("Copy constructor not supported.");
+    throw std::domain_error("Copy constructor not supported.");
 }
 
 void ConnectionManager::addConnectionParameterIfValid(const string &param,

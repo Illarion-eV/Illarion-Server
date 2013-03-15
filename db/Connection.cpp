@@ -46,7 +46,7 @@ Connection::~Connection() {
 
 void Connection::beginTransaction() {
     if (internalConnection == 0) {
-        throw new std::domain_error(
+        throw std::domain_error(
             "Transaction not possible while internal connection is not set.");
     }
 

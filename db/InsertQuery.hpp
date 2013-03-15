@@ -64,7 +64,7 @@ public:
         uint32_t columns = getColumnCount();
 
         if (columns <= column) {
-            throw new std::invalid_argument("Column index out of range.");
+            throw std::invalid_argument("Column index out of range.");
         }
 
         std::string strValue = quote<T>(value);

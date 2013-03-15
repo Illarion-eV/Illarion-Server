@@ -45,7 +45,7 @@ Query::Query(const PConnection connection, const std::string &query) {
 
 Result Query::execute() {
     if (dbConnection.get() == 0 || dbQuery.empty()) {
-        throw new std::domain_error(
+        throw std::domain_error(
             "Connection and query string are required to execute the query.");
     }
 
