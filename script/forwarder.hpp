@@ -44,4 +44,5 @@ ScriptItem world_createFromId(World* world, TYPE_OF_ITEM_ID id, unsigned short i
 
 void log_lua(const std::string &message);
 
+luabind::object character_getItemList(const Character*, TYPE_OF_ITEM_ID id);
 #endif

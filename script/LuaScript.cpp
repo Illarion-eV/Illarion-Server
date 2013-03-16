@@ -585,7 +585,7 @@ void LuaScript::init_base_functions() {
         .def("startMusic", &Character::startMusic)
         .def("defaultMusic", &Character::defaultMusic)
         .def("callAttackScript", &Character::callAttackScript)
-        .def("getItemList", &Character::getItemList)
+        .def("getItemList", character_getItemList)
         .def_readonly("lastSpokenText", &Character::lastSpokenText)
         .def("getPlayerLanguage", getPlayerLanguageLua)
         .def("getBackPack", &Character::GetBackPack)

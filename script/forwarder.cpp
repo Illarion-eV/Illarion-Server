@@ -109,3 +109,15 @@ void log_lua(const std::string &message) {
     Logger::info(LogFacility::Script) << message << Log::end;
 }
 
+luabind::object character_getItemList(const Character* character, TYPE_OF_ITEM_ID id) {
+	const auto& content = character->getItemList(id);
+	lua_State *_luaState = World::get()->getCurrentScript()->getLuaState();
+	luabind::object list = luabind::newtable(_luaState);
+
+	int index = 1;
+	for (auto item : content) {
+		list[index++] = item;
+	}
+
+	return list;
+}

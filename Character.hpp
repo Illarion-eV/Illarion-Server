@@ -29,8 +29,6 @@
 #include "constants.hpp"
 #include "TableStructs.hpp"
 #include "Item.hpp"
-#include "luabind/luabind.hpp"
-#include "luabind/object.hpp"
 #include "LongTimeCharacterEffects.hpp"
 #include "Attribute.hpp"
 #include "Language.hpp"
@@ -301,7 +299,7 @@ public:
     ScriptItem GetItemAt(unsigned char itempos);
     Container *GetBackPack() const;
     Container *GetDepot(uint32_t depotid) const;
-    luabind::object getItemList(TYPE_OF_ITEM_ID id);
+    std::vector<ScriptItem> getItemList(TYPE_OF_ITEM_ID id) const;
 
     virtual std::string getSkillName(TYPE_OF_SKILL_ID s) const;
     unsigned short int getSkill(TYPE_OF_SKILL_ID s) const;
