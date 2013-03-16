@@ -29,6 +29,7 @@ extern "C" {
 #include "globals.hpp"
 #include "Item.hpp"
 #include "Logger.hpp"
+#include <luabind/luabind.hpp>
 #include <luabind/object.hpp>
 #include "fuse_ptr.hpp"
 #include <map>

@@ -728,8 +728,8 @@ void LuaScript::init_base_functions() {
         luabind::class_<NPC, Character>("NPC"),
         luabind::class_<Monster, Character>("Monster"),
         luabind::class_<WaypointList>("WaypointList")
-        .def("addFromList", &WaypointList::addFromList)
-        .def("getWaypoints",&WaypointList::getWaypoints)
+        .def("addFromList", &waypointlist_addFromList)
+        .def("getWaypoints",&waypointlist_getWaypoints)
         .def("addWaypoint",&WaypointList::addWaypoint)
         .def("clear",&WaypointList::clear),
         luabind::class_<LongTimeCharacterEffects>("LongTimeCharacterEffects")

@@ -22,8 +22,6 @@
 
 
 #include "globals.hpp"
-#include "luabind/luabind.hpp"
-#include "luabind/object.hpp"
 #include "types.hpp"
 #include <list>
 
@@ -33,9 +31,8 @@ class WaypointList {
 public:
     static const uint8_t max_fields_for_waypoints = 12;
     WaypointList(Character *movechar);
-    void addFromList(const luabind::object &list);
-    luabind::object getWaypoints();
-    void addWaypoint(position pos);
+    const std::list<position>& getWaypoints() const;
+    void addWaypoint(const position& pos);
     bool getNextWaypoint(position &pos) const;
     void clear();
     bool makeMove();

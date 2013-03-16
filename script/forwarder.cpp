@@ -121,3 +121,34 @@ luabind::object character_getItemList(const Character* character, TYPE_OF_ITEM_I
 
 	return list;
 }
+
+luabind::object waypointlist_getWaypoints(const WaypointList* wpl) {
+    lua_State *luaState = World::get()->getCurrentScript()->getLuaState();
+    luabind::object list = luabind::newtable(luaState);
+
+    int index = 1;
+
+    const auto& waypoints = wpl->getWaypoints();
+    for (const auto& waypoint : waypoints) {
+        list[index++] = waypoint;
+    }
+
+    return list;
+
+}
+
+void waypointlist_addFromList(WaypointList* wpl, const luabind::object &list) {
+    if (list.is_valid()) {
+        if (luabind::type(list) == LUA_TTABLE) {
+            for (luabind::iterator it(list), end; it != end; ++it) {
+                try {
+                    position pos = luabind::object_cast<position>(*it);
+		    wpl->addWaypoint(pos);
+                } catch (luabind::cast_failed &e) {
+                    const std::string script = World::get()->getCurrentScript()->getFileName();
+                    Logger::error(LogFacility::Script) << "Invalid type in parameter list of WaypointList:addFromList in " << script << ": " << "Expected type position" << Log::end;
+                }
+            }
+        }
+    }
+}

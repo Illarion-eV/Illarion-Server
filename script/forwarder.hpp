@@ -24,6 +24,7 @@
 #include <stdint.h>
 #include <string>
 #include "Character.hpp"
+#include <luabind/object.hpp>
 
 uint32_t getPlayerLanguageLua(const Character*);
 
@@ -45,4 +46,7 @@ ScriptItem world_createFromId(World* world, TYPE_OF_ITEM_ID id, unsigned short i
 void log_lua(const std::string &message);
 
 luabind::object character_getItemList(const Character*, TYPE_OF_ITEM_ID id);
+
+void waypointlist_addFromList(WaypointList* wpl, const luabind::object &list);
+luabind::object waypointlist_getWaypoints(const WaypointList* wpl);
 #endif
