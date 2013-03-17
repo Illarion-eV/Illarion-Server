@@ -39,7 +39,7 @@ public:
         return threadOk;
     }
 
-    bool findPlayer(const std::string &name);
+    bool findPlayer(const std::string &name) const;
 
     void setLoginLogout(bool val);
 

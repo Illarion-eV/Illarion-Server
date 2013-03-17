@@ -385,7 +385,7 @@ public:
     */
     bool findPlayerWithLowestHP(const std::vector<Player *> &ppvec, Player *&found);
 
-    inline LuaScript *getCurrentScript() {
+    inline LuaScript *getCurrentScript() const {
         return currentScript;
     }
     inline void setCurrentScript(LuaScript *script) {
@@ -413,7 +413,7 @@ public:
     * @param endingpos the end of the line of sight calculation
     * @return list of all blocking objects between startingpos and endingpos.
     */
-    std::list<BlockingObject> LoS(const position &startingpos, const position &endingpos);
+    std::list<BlockingObject> LoS(const position &startingpos, const position &endingpos) const;
 
 
     bool findPlayersInSight(const position &pos, uint8_t range, std::vector<Player *> &ret, Character::face_to direction);
@@ -429,7 +429,7 @@ public:
     * @return a pointer to a character, NULL if no character was found
     * @todo has to be changed for only one charactervector
     */
-    Character *findCharacterOnField(short int posx, short int posy, short int posz);
+    Character *findCharacterOnField(short int posx, short int posy, short int posz) const;
 
     /**
         * searches for a special player
@@ -440,7 +440,7 @@ public:
         * @param posz the z coordinate of the field
         * @return a pointer to a player, NULL if no player was found
         */
-    Player *findPlayerOnField(short int posx, short int posy, short int posz);
+    Player *findPlayerOnField(short int posx, short int posy, short int posz) const;
 
 
     /**
@@ -490,7 +490,7 @@ public:
     * @param pos the position where the field has to be found
     * @return true if the field was found otherwise false
     */
-    bool GetPToCFieldAt(Field *&fip, const position &pos);
+    bool GetPToCFieldAt(Field *&fip, const position &pos) const;
 
     /**
     * looks for a field on the map
@@ -498,7 +498,7 @@ public:
     * @return a pointer to the field, NULL if there is no field at this position
     * @see GetPToCFieldAt()
     */
-    Field *GetField(const position &pos);
+    Field *GetField(const position &pos) const;
 
     /**
     * looks for a field and the special map where it lies on
@@ -506,7 +506,7 @@ public:
     * @param map call by reference, pointer to the map on which the field lies
     * @return true if the field was found otherwise false
     */
-    bool GetPToCFieldAt(Field *&fip, const position &pos, WorldMap::map_t &map);
+    bool GetPToCFieldAt(Field *&fip, const position &pos, WorldMap::map_t &map) const;
 
     /**
     * looks for a field on the current map
@@ -516,7 +516,7 @@ public:
     * @param z the z-coordinate
     * @return true if the field was found otherwise false
     */
-    bool GetPToCFieldAt(Field *&fip, short int x, short int y, short int z);
+    bool GetPToCFieldAt(Field *&fip, short int x, short int y, short int z) const;
 
     /**
     * looks for a field and the special map where it lies on
@@ -527,7 +527,7 @@ public:
     * @param map call by reference, pointer to the map on which the field lies
     * @return true if the field was found otherwise false
     */
-    bool GetPToCFieldAt(Field *&fip, short int x, short int y, short int z, WorldMap::map_t &map);
+    bool GetPToCFieldAt(Field *&fip, short int x, short int y, short int z, WorldMap::map_t &map) const;
 
     /**
     * looks for an empty field in the near of a given pos
