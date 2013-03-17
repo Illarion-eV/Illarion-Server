@@ -49,4 +49,7 @@ luabind::object character_getItemList(const Character*, TYPE_OF_ITEM_ID id);
 
 void waypointlist_addFromList(WaypointList* wpl, const luabind::object &list);
 luabind::object waypointlist_getWaypoints(const WaypointList* wpl);
+
+luabind::object world_LuaLoS(const World* world, const position &startingpos, const position &endingpos);
+
 #endif

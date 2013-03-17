@@ -54,8 +54,6 @@
 #include "InitialConnection.hpp"
 #include "tvector.hpp"
 #include "script/LuaLogoutScript.hpp"
-#include "luabind/luabind.hpp"
-#include "luabind/object.hpp"
 #include <exception>
 
 
@@ -1325,16 +1323,6 @@ public:
     *@return success of creation
     */
     bool createDynamicNPC(const std::string &name, Character::race_type type, const position &pos, /*CCharacter::face_to dir,*/ Character::sex_type sex, const std::string &scriptname);
-
-
-    /**
-    *calculates the line of sight between two positions and returns a list of all
-    *objects which are in the way of sight to lua
-    *@param startinpos the starting position for the line of sight
-    *@param endingpos the ending position for the line of sight
-    *@return a luabind list with all the item or characters in the way
-    */
-    luabind::object LuaLoS(const position &startingpos, const position &endingpos);
 
     /**
     *creates a luabind list with all the players which are currently online and returns it

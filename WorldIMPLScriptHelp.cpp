@@ -86,30 +86,6 @@ bool World::createDynamicNPC(const std::string &name, Character::race_type type,
     }
 }
 
-luabind::object World::LuaLoS(const position &startingpos, const position &endingpos) {
-    lua_State *luaState = getCurrentScript()->getLuaState();
-    luabind::object list = luabind::newtable(luaState);
-    int index = 1;
-    std::list<BlockingObject> objects = LoS(startingpos, endingpos);
-
-    for (std::list<BlockingObject>::iterator boIterator = objects.begin(); boIterator != objects.end(); ++boIterator) {
-        luabind::object innerlist = luabind::newtable(luaState);
-
-        if (boIterator->blockingType == BlockingObject::BT_CHARACTER) {
-            innerlist["TYPE"] = "CHARACTER";
-            innerlist["OBJECT"] = fuse_ptr<Character>(boIterator->blockingChar);
-        } else if (boIterator->blockingType == BlockingObject::BT_ITEM) {
-            innerlist["TYPE"] = "ITEM";
-            innerlist["OBJECT"] = boIterator->blockingItem;
-        }
-
-        list[index] = innerlist;
-        index++;
-    }
-
-    return list;
-}
-
 luabind::object World::getPlayersOnline() {
     lua_State *luaState = getCurrentScript()->getLuaState();
     luabind::object list = luabind::newtable(luaState);

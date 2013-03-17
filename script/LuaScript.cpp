@@ -827,7 +827,7 @@ void LuaScript::init_base_functions() {
             luabind::value("english", static_cast<uint32_t>(Language::english))
         ],
         luabind::class_<World>("World")
-        .def("LoS", &World::LuaLoS)
+        .def("LoS", &world_LuaLoS)
         .def("deleteNPC", &World::deleteNPC)
         .def("createDynamicNPC", &World::createDynamicNPC)
         .def("getPlayersOnline", &World::getPlayersOnline)
