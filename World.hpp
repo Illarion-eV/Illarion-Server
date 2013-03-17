@@ -1325,29 +1325,29 @@ public:
     bool createDynamicNPC(const std::string &name, Character::race_type type, const position &pos, /*CCharacter::face_to dir,*/ Character::sex_type sex, const std::string &scriptname);
 
     /**
-    *creates a luabind list with all the players which are currently online and returns it
+    *creates a list with all the players which are currently online and returns it
     *to lua
-    *@return the lua list with all the players currently online
+    *@return the list with all the players currently online
     */
-    luabind::object getPlayersOnline();
+    const PLAYERVECTOR& getPlayersOnline() const;
 
     /**
-    *creates a luabind list with all the npcs which are currently online and returns it
+    *creates a list with all the npcs which are currently online and returns it
     *to lua
-    *@return the lua list with all the npcs currently online
+    *@return the list with all the npcs currently online
     */
-    luabind::object getNPCS();
+    const NPCVECTOR& getNPCS() const;
 
     /**
-    *creates a lua list with all the characters in range around a specific position
+    *creates a list with all the characters in range around a specific position
     *@param posi the position from where the character around should be calculated
     *@param range the range around the position for calculating
-    *@return a lua list with all the characters (including monsters, npcs, players) around this char
+    *@return a list with all the characters (including monsters, npcs, players) around this char
     */
-    luabind::object getCharactersInRangeOf(const position &posi, uint8_t range);
-    luabind::object getPlayersInRangeOf(const position &posi, uint8_t range);
-    luabind::object getMonstersInRangeOf(const position &posi, uint8_t range);
-    luabind::object getNPCSInRangeOf(const position &posi, uint8_t range);
+    std::vector<Character*> getCharactersInRangeOf(const position &posi, uint8_t range) const;
+    std::vector<Player*> getPlayersInRangeOf(const position &posi, uint8_t range) const;
+    std::vector<Monster*> getMonstersInRangeOf(const position &posi, uint8_t range) const;
+    std::vector<NPC*> getNPCSInRangeOf(const position &posi, uint8_t range) const;
 
     //Sucht zu einem Item die gesamten Stats wie Gewicht heraus
     //\param item, das Item zu dem die Stats heraus gesucht werden sollen.

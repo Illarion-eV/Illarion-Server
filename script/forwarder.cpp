@@ -177,3 +177,51 @@ luabind::object world_LuaLoS(const World* world, const position &startingpos, co
     return list;
 }
 
+luabind::object world_getPlayersOnline(const World* world) {
+    lua_State *luaState = world->getCurrentScript()->getLuaState();
+    luabind::object list = luabind::newtable(luaState);
+    int index = 1;
+
+    const auto& players = world->getPlayersOnline();
+
+    for (auto player : players) {
+        list[index] = fuse_ptr<Character>(player);
+        index++;
+    }
+
+    return list;
+}
+
+template<typename Container>
+luabind::object convert_to_fuselist(const Container& container) {
+    lua_State *luaState = World::get()->getCurrentScript()->getLuaState();
+    luabind::object list = luabind::newtable(luaState);
+    int index = 1;
+
+    for (auto item : container) {
+	    list[index] = fuse_ptr<Character>(item);
+	    index++;
+    }
+
+    return list;
+}
+
+luabind::object world_getNPCS(const World* world) {
+	return convert_to_fuselist(world->getNPCS());
+}
+
+luabind::object world_getCharactersInRangeOf(const World* world, const position &posi, uint8_t range) {
+	return convert_to_fuselist(world->getCharactersInRangeOf(posi, range));
+}
+
+luabind::object world_getPlayersInRangeOf(const World* world, const position &posi, uint8_t range) {
+	return convert_to_fuselist(world->getPlayersInRangeOf(posi, range));
+}
+
+luabind::object world_getMonstersInRangeOf(const World* world, const position &posi, uint8_t range) {
+	return convert_to_fuselist(world->getMonstersInRangeOf(posi, range));
+}
+
+luabind::object world_getNPCSInRangeOf(const World* world, const position &posi, uint8_t range) {
+	return convert_to_fuselist(world->getNPCSInRangeOf(posi, range));
+}

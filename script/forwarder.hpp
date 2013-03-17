@@ -51,5 +51,12 @@ void waypointlist_addFromList(WaypointList* wpl, const luabind::object &list);
 luabind::object waypointlist_getWaypoints(const WaypointList* wpl);
 
 luabind::object world_LuaLoS(const World* world, const position &startingpos, const position &endingpos);
+luabind::object world_getPlayersOnline(const World* world);
+luabind::object world_getNPCS(const World* world);
+
+luabind::object world_getCharactersInRangeOf(const World* world, const position &posi, uint8_t range);
+luabind::object world_getPlayersInRangeOf(const World* world, const position &posi, uint8_t range);
+luabind::object world_getMonstersInRangeOf(const World* world, const position &posi, uint8_t range);
+luabind::object world_getNPCSInRangeOf(const World* world, const position &posi, uint8_t range);
 
 #endif

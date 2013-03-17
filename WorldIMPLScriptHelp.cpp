@@ -86,107 +86,40 @@ bool World::createDynamicNPC(const std::string &name, Character::race_type type,
     }
 }
 
-luabind::object World::getPlayersOnline() {
-    lua_State *luaState = getCurrentScript()->getLuaState();
-    luabind::object list = luabind::newtable(luaState);
-    int index = 1;
-    PLAYERVECTOR::iterator pIterator;
 
-    for (pIterator = Players.begin(); pIterator != Players.end(); ++pIterator) {
-        list[index] = fuse_ptr<Character>(*pIterator);
-        index++;
-    }
-
-    return list;
+const World::PLAYERVECTOR& World::getPlayersOnline() const {
+	return Players;
 }
 
-luabind::object World::getNPCS() {
-    lua_State *luaState = getCurrentScript()->getLuaState();
-    luabind::object list = luabind::newtable(luaState);
-    int index = 1;
-    NPCVECTOR::iterator npcIterator;
-
-    for (npcIterator = Npc.begin(); npcIterator != Npc.end(); ++npcIterator) {
-        list[index] = fuse_ptr<Character>(*npcIterator);
-        index++;
-    }
-
-    return list;
-
+const World::NPCVECTOR& World::getNPCS() const {
+	return Npc;
 }
 
-luabind::object World::getCharactersInRangeOf(const position &posi, uint8_t range) {
-    lua_State *luaState = getCurrentScript()->getLuaState();
-    luabind::object list = luabind::newtable(luaState);
-    int index = 1;
+std::vector<Character*> World::getCharactersInRangeOf(const position &posi, uint8_t range) const {
+    std::vector<Character*> list;
 
     std::vector < Player * > tempP = Players.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range);
-
-    for (std::vector< Player *>::iterator pIterator = tempP.begin(); pIterator != tempP.end() ; ++pIterator) {
-        list[index] = fuse_ptr<Character>(*pIterator);
-        index++;
-    }
+    list.insert(list.end(), tempP.begin(), tempP.end());
 
     std::vector < Monster * > tempM = Monsters.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range);
-
-    for (std::vector< Monster *>::iterator mIterator = tempM.begin(); mIterator != tempM.end() ; ++mIterator) {
-        list[index] = fuse_ptr<Character>(*mIterator);
-        index++;
-    }
+    list.insert(list.end(), tempM.begin(), tempM.end());
 
     std::vector < NPC * > tempN = Npc.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range);
-
-    for (std::vector< NPC *>::iterator nIterator = tempN.begin(); nIterator != tempN.end() ; ++nIterator) {
-        list[index] = fuse_ptr<Character>(*nIterator);
-        index++;
-    }
+    list.insert(list.end(), tempN.begin(), tempN.end());
 
     return list;
 }
 
-luabind::object World::getPlayersInRangeOf(const position &posi, uint8_t range) {
-    lua_State *luaState = getCurrentScript()->getLuaState();
-    luabind::object list = luabind::newtable(luaState);
-    int index = 1;
-
-    std::vector < Player * > tempP = Players.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range);
-
-    for (std::vector< Player *>::iterator pIterator = tempP.begin(); pIterator != tempP.end() ; ++pIterator) {
-        list[index] = fuse_ptr<Character>(*pIterator);
-        index++;
-    }
-
-    return list;
+std::vector<Player*> World::getPlayersInRangeOf(const position &posi, uint8_t range) const {
+    return Players.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range);
 }
 
-luabind::object World::getMonstersInRangeOf(const position &posi, uint8_t range) {
-    lua_State *luaState = getCurrentScript()->getLuaState();
-    luabind::object list = luabind::newtable(luaState);
-    int index = 1;
-
-    std::vector < Monster * > tempM = Monsters.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range);
-
-    for (std::vector< Monster *>::iterator mIterator = tempM.begin(); mIterator != tempM.end() ; ++mIterator) {
-        list[index] = fuse_ptr<Character>(*mIterator);
-        index++;
-    }
-
-    return list;
+std::vector<Monster*> World::getMonstersInRangeOf(const position &posi, uint8_t range) const {
+    return Monsters.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range);
 }
 
-luabind::object World::getNPCSInRangeOf(const position &posi, uint8_t range) {
-    lua_State *luaState = getCurrentScript()->getLuaState();
-    luabind::object list = luabind::newtable(luaState);
-    int index = 1;
-
-    std::vector < NPC * > tempN = Npc.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range);
-
-    for (std::vector< NPC *>::iterator nIterator = tempN.begin(); nIterator != tempN.end() ; ++nIterator) {
-        list[index] = fuse_ptr<Character>(*nIterator);
-        index++;
-    }
-
-    return list;
+std::vector<NPC*> World::getNPCSInRangeOf(const position &posi, uint8_t range) const {
+    return Npc.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range);
 }
 
 void World::itemInform(Character *user, ScriptItem item, ItemLookAt lookAt) {
