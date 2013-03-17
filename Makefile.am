@@ -69,7 +69,7 @@ AM_CPPFLAGS = $(BOOST_CPPFLAGS)
 
 testserver_LDADD = -L/usr/local/lib -lpthread -lssl -lcrypto $(DEPS_LIBS) -lcrypt
 testserver_LDFLAGS = $(BOOST_THREAD_LDFLAGS) $(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS)
-testserver_CXXFLAGS = -pipe -Wall -Werror -Wno-deprecated -std=c++11 -D_THREAD_SAFE -D_REENTRANT -DCDataConnect_DEBUG -DAdminCommands_DEBUG $(BOOST_CXXFLAGS) $(DEPS_CFLAGS) -O3
+testserver_CXXFLAGS = -ggdb -pipe -Wall -Werror -Wno-deprecated -std=c++11 -D_THREAD_SAFE -D_REENTRANT -DTESTSERVER -DCDataConnect_DEBUG -DAdminCommands_DEBUG $(BOOST_CXXFLAGS) $(DEPS_CFLAGS)
 LIBS = $(BOOST_THREAD_LIBS) $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS)
 
 style: .astylerc
