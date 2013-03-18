@@ -109,13 +109,12 @@ struct edge_hash : std::unary_function<std::pair<Position, Position>, std::size_
     std::size_t operator()(std::pair<Position, Position> const &e) const;
 };
 
-struct weight_calc: public unordered_map<std::pair<Position, Position>, Cost, edge_hash> {
+struct weight_calc: public boost::unordered_map<std::pair<Position, Position>, Cost, edge_hash> {
     weight_calc(int level);
-    typedef unordered_map<std::pair<Position, Position>, Cost, edge_hash> base;
-    mapped_type &operator[](key_type const &k);
+    mapped_type &operator[](const key_type &v);
 
 private:
-    int level;
+    const int level;
 };
 
 struct vertex_hash : std::unary_function<Position, std::size_t> {
@@ -126,8 +125,7 @@ struct found_goal {};
 struct not_found {};
 
 struct vertex_index_hash: public unordered_map<Position, int, vertex_hash> {
-    typedef unordered_map<Position, int, vertex_hash> base;
-    mapped_type &operator[](key_type const &k);
+    mapped_type &operator[](const key_type &v);
 
 private:
     mutable int discovery_counter = 0;

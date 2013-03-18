@@ -1,3 +1,23 @@
+/*
+ * Illarionserver - server for the game Illarion
+ * Copyright 2011 Illarion e.V.
+ *
+ * This file is part of Illarionserver.
+ *
+ * Illarionserver  is  free  software:  you can redistribute it and/or modify it
+ * under the terms of the  GNU  General  Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * Illarionserver is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY;  without  even  the  implied  warranty  of  MERCHANTABILITY  or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU  General Public License along with
+ * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include "World.hpp"
 #include "data/TilesTable.hpp"
 
@@ -100,21 +120,19 @@ weight_calc::weight_calc(int level): level(level) {
 }
 
 auto weight_calc::operator[](key_type const &k) -> mapped_type & {
-    mapped_type &cost = base::operator[](k);
-
-    if (cost == 0.0) {
+    if (find(k) == end()) {
         auto v = k.second;
         Field *field = World::get()->GetField(::position(v.first, v.second, level));
 
         if (!field) {
-            cost = 1;
+            insert(std::make_pair(k, 1));
         } else {
             auto tileId = field->getTileId();
-            cost = Data::Tiles[tileId].walkingCost;
+            insert(std::make_pair(k, Data::Tiles[tileId].walkingCost));
         }
     }
 
-    return cost;
+    return at(k);
 }
 
 std::size_t vertex_hash::operator()(Position const &u) const {
@@ -125,18 +143,16 @@ std::size_t vertex_hash::operator()(Position const &u) const {
 }
 
 auto vertex_index_hash::operator[](key_type const &k) -> mapped_type & {
-    int &id = base::operator[](k);
-
-    if (id == 0) {
-        id = ++discovery_counter;
+    if (find(k) == end()) {
+        insert(std::make_pair(k, ++discovery_counter));
     }
 
-    if (id > 400) {
+    if (discovery_counter > 400) {
         Logger::debug(LogFacility::Other) << "[PATH FINDING] No path found in vertex_index_hash!" << Log::end;
         throw not_found();
     }
 
-    return id;
+    return at(k);
 }
 
 astar_ex_visitor::astar_ex_visitor(const Position &goal): goal(goal) {
@@ -191,8 +207,8 @@ bool a_star(const ::position &start_pos, const ::position &goal_pos, std::list<d
     distance_heuristic h(goal);
     h(start);
 
-    weight_calc w(goal_pos.z);
-    boost::associative_property_map<weight_calc> weight(w);
+    weight_calc weights(goal_pos.z);
+    boost::associative_property_map<weight_calc> weight(weights);
 
     pred_map predecessor;
     boost::associative_property_map<pred_map> pred_pmap(predecessor);
@@ -205,8 +221,8 @@ bool a_star(const ::position &start_pos, const ::position &goal_pos, std::list<d
     rank[start] = h(start);
     boost::associative_property_map<dist_map> rank_pmap(rank);
 
-    vertex_index_hash vertex_hash;
-    boost::associative_property_map<vertex_index_hash> index(vertex_hash);
+    vertex_index_hash index_map;
+    boost::associative_property_map<vertex_index_hash> index(index_map);
 
     astar_ex_visitor visitor(goal);
 
