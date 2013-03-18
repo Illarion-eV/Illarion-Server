@@ -226,9 +226,12 @@ bool a_star(const ::position &start_pos, const ::position &goal_pos, std::list<d
 
     astar_ex_visitor visitor(goal);
 
+    auto color = make_shared_array_property_map(num_vertices(g), white_color, index);
+
     try {
-        astar_search_no_init(g, start, h, weight_map(weight).rank_map(rank_pmap).
-                             vertex_index_map(index).predecessor_map(pred_pmap).distance_map(dist_pmap).visitor(visitor));
+        astar_search_no_init(g, start, h, visitor, pred_pmap, rank_pmap,
+                dist_pmap, weight, color, index, std::less<Cost>(),
+                std::plus<Cost>(), std::numeric_limits<Cost>::max(), Cost());
     } catch (found_goal &fg) {
         vertex v = goal;
         vertex pre = predecessor[v];
