@@ -90,7 +90,7 @@ public:
     * returns the type of this monster
     * @return the type
     */
-    inline TYPE_OF_CHARACTER_ID getType() {
+    virtual TYPE_OF_CHARACTER_ID getType() const override {
         return monstertype;
     }
 
@@ -99,7 +99,7 @@ public:
     * @param target the character which is attacked
     * @return no usage at this time anything can be returned
     */
-    bool attack(Character *target);
+    virtual bool attack(Character *target) override;
 
     void heal();
 
