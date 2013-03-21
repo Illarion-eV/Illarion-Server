@@ -65,6 +65,29 @@ LDFLAGS=$SAVED_LDFLAGS
 DEPS_CFLAGS="$lua_CFLAGS $libpqxx_CFLAGS"
 DEPS_LIBS="$lua_LIBS $libpqxx_LIBS -lluabind"
 
+ac_gtest_dir="/usr/src/gtest"
+ac_gmock_dir="/usr/src/gmock"
+AC_ARG_WITH([gtest],
+            [AS_HELP_STRING([--with-gtest],
+              [set custom path for gtest source])],
+            [ac_gtest_dir=$withval],
+            [])
+AC_ARG_WITH([gmock],
+            [AS_HELP_STRING([--with-gmock],
+              [set custom path for gmock source])],
+            [ac_gmock_dir=$withval],
+            [])
+
+if [ ! test -e $ac_gtest_dir/src/gtest-all.cc ]; then
+	AC_MSG_ERROR([gtest sources not found])
+fi
+
+if [ ! test -e $ac_gmock_dir/src/gmock-all.cc ]; then
+	AC_MSG_ERROR([gmock sources not found])
+fi
+
+AC_SUBST([GMOCK_DIR], [$ac_gmock_dir])
+AC_SUBST([GTEST_DIR], [$ac_gtest_dir])
 AC_SUBST([DEPS_CFLAGS])
 AC_SUBST([DEPS_LIBS])
 

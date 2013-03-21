@@ -78,6 +78,7 @@ class LuaScript {
 public:
     LuaScript();
     LuaScript(std::string filename) throw(ScriptException);
+    LuaScript(const std::string& code, const std::string& scriptname) throw(ScriptException);
 
     virtual ~LuaScript() throw();
 

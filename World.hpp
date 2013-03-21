@@ -218,7 +218,7 @@ public:
     /**
      * holds the monitoring clients on the World
      */
-    MonitoringClients *monitoringClientList;
+    MonitoringClients *monitoringClientList = nullptr;
 
     timeb now; /**< current time of the server used in @see turntheworld() **/
 
@@ -231,7 +231,7 @@ public:
 
     WorldMap::map_t tmap; /**< a temporary pointer to a map, used from different methods @see Map*/
 
-    Scheduler *scheduler;/**< a pointer to the scheduler object @see Scheduler*/
+    Scheduler *scheduler = nullptr;/**< a pointer to the scheduler object @see Scheduler*/
 
     WeatherStruct weather;/**< a struct to the weather @see WeatherStruct */
 
@@ -276,7 +276,7 @@ public:
     /**
     *the standard destructor of the server
     */
-    ~World();
+    virtual ~World();
 
     /**
     *main loop for the world
@@ -1359,13 +1359,13 @@ public:
     //param amount, der Wert um den die Qualitaet geaendert werden soll
     void changeQuality(ScriptItem item, short int amount);
 
-    void itemInform(Character *user, ScriptItem item, ItemLookAt lookAt);
+    virtual void itemInform(Character *user, ScriptItem item, ItemLookAt lookAt);
 
     //Liefert den Namen eines Items mit einer bestimmten id zurck
     //\param itemid, id des items zu dem der Name geliefert werden soll
     //\param language, die Sprache in der der Name zurck gegeben werden sollte
     //\ret der name in der entsprechenden Sprache.
-    std::string getItemName(TYPE_OF_ITEM_ID itemid, uint8_t language);
+    virtual std::string getItemName(TYPE_OF_ITEM_ID itemid, uint8_t language);
 
     //Aendert ein ScriptItem
     bool changeItem(ScriptItem item);
@@ -1491,10 +1491,12 @@ public:
      */
     void ban(Player *cp, int bantime, TYPE_OF_CHARACTER_ID gmid);
 
-private:
-    void logMissingField(const std::string &function, const position &field);
+protected:
+	World() = default; // used for testcases
+	static World *_self;
 
 private:
+    void logMissingField(const std::string &function, const position &field);
 
     bool _is_login_allowed = true;
     bool _is_spawn_enabled = true;
@@ -1509,26 +1511,24 @@ private:
     World &operator=(const World &) = delete;
     World(const World &) = delete;
 
-    static World *_self;
-
     //! IG day of last turntheworld
     int lastTurnIGDay;
 
     //! Timer fr die Monster - Respawn
-    Timer *monstertimer;
+    Timer *monstertimer = nullptr;
 
     //! Timer fr Effekte auf Feldern
-    Timer *fieldtimer[ 3 ];
+    Timer *fieldtimer[3] = { nullptr, nullptr, nullptr };
 
     //! Timer fr die NPC
-    MilTimer *npctimer;
+    MilTimer *npctimer = nullptr;
 
     //! Timer fr den Scheduler
-    Timer *schedulertimer;
+    Timer *schedulertimer = nullptr;
 
-    Timer *ScriptTimer; //< Tuner for scheduled scripts.
+    Timer *ScriptTimer = nullptr; //< Tuner for scheduled scripts.
 
-    MilTimer *monitoringclienttimer;
+    MilTimer *monitoringclienttimer = nullptr;
 
     //! das home-Verzeichnis des Servers
     std::string directory;
