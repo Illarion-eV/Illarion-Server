@@ -29,6 +29,7 @@ extern "C" {
 #include "globals.hpp"
 #include "Item.hpp"
 #include "Logger.hpp"
+#include <luabind/luabind.hpp>
 #include <luabind/object.hpp>
 #include "fuse_ptr.hpp"
 #include <map>
@@ -77,6 +78,7 @@ class LuaScript {
 public:
     LuaScript();
     LuaScript(std::string filename) throw(ScriptException);
+    LuaScript(const std::string& code, const std::string& scriptname) throw(ScriptException);
 
     virtual ~LuaScript() throw();
 

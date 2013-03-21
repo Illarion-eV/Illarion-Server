@@ -301,10 +301,8 @@ bool Container::TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &item, Container *&cc
     }
 }
 
-luabind::object Container::getItemList() {
-    lua_State *_luaState = World::get()->getCurrentScript()->getLuaState();
-    luabind::object list = luabind::newtable(_luaState);
-    int index = 1;
+std::vector<ScriptItem> Container::getItemList() {
+    std::vector<ScriptItem> list;
 
     for (auto it = items.begin(); it != items.end(); ++it) {
 
@@ -312,14 +310,13 @@ luabind::object Container::getItemList() {
         item.type = ScriptItem::it_container;
         item.itempos = it->first;
         item.inside = this;
-        list[index] = item;
-        ++index;
+	list.push_back(item);
 
         if (item.isContainer()) {
             auto iterat = containers.find(it->first);
 
             if (iterat != containers.end()) {
-                iterat->second->increaseItemList(list, index);
+                iterat->second->addContentToList(list);
             }
         }
 
@@ -328,10 +325,8 @@ luabind::object Container::getItemList() {
     return list;
 }
 
-luabind::object Container::getItemList(Item::id_type itemid) {
-    lua_State *_luaState = World::get()->getCurrentScript()->getLuaState();
-    luabind::object list = luabind::newtable(_luaState);
-    int index = 1;
+std::vector<ScriptItem> Container::getItemList(Item::id_type itemid) {
+    std::vector<ScriptItem> list;
 
     for (auto it = items.begin(); it != items.end(); ++it) {
         Item &item = it->second;
@@ -341,15 +336,14 @@ luabind::object Container::getItemList(Item::id_type itemid) {
             item.type = ScriptItem::it_container;
             item.itempos = it->first;
             item.inside = this;
-            list[index] = item;
-            index++;
+	    list.push_back(item);
         }
 
         if (item.isContainer()) {
             auto iterat = containers.find(it->first);
 
             if (iterat != containers.end()) {
-                iterat->second->increaseItemList(itemid , list, index);
+                iterat->second->addContentToList(itemid , list);
             }
         }
 
@@ -358,45 +352,43 @@ luabind::object Container::getItemList(Item::id_type itemid) {
     return list;
 }
 
-void Container::increaseItemList(Item::id_type itemid, luabind::object &list, int &index) {
+void Container::addContentToList(Item::id_type itemid, std::vector<ScriptItem>& list) {
     for (auto it = items.begin(); it != items.end(); ++it) {
-        Item &item = it->second;
+        const Item &item = it->second;
 
         if (item.getId() == itemid) {
             ScriptItem item = it->second;
             item.type = ScriptItem::it_container;
             item.itempos = it->first;
             item.inside = this;
-            list[index] = item;
-            index++;
+	    list.push_back(item);
         }
 
         if (item.isContainer()) {
             auto iterat = containers.find(it->first);
 
             if (iterat != containers.end()) {
-                iterat->second->increaseItemList(itemid , list, index);
+                iterat->second->addContentToList(itemid, list);
             }
         }
 
     }
 }
 
-void Container::increaseItemList(luabind::object &list, int &index) {
+void Container::addContentToList(std::vector<ScriptItem>& list) {
     for (auto it = items.begin(); it != items.end(); ++it) {
 
         ScriptItem item = it->second;
         item.type = ScriptItem::it_container;
         item.itempos = it->first;
         item.inside = this;
-        list[index] = item;
-        ++index;
+	list.push_back(item);
 
         if (item.isContainer()) {
             auto iterat = containers.find(it->first);
 
             if (iterat != containers.end()) {
-                iterat->second->increaseItemList(list, index);
+                iterat->second->addContentToList(list);
             }
         }
 

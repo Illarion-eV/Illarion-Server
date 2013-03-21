@@ -116,3 +116,119 @@ void log_lua(const std::string &message) {
     Logger::info(LogFacility::Script) << message << Log::end;
 }
 
+luabind::object character_getItemList(const Character* character, TYPE_OF_ITEM_ID id) {
+	const auto& content = character->getItemList(id);
+	lua_State *_luaState = World::get()->getCurrentScript()->getLuaState();
+	luabind::object list = luabind::newtable(_luaState);
+
+	int index = 1;
+	for (auto item : content) {
+		list[index++] = item;
+	}
+
+	return list;
+}
+
+luabind::object waypointlist_getWaypoints(const WaypointList* wpl) {
+    lua_State *luaState = World::get()->getCurrentScript()->getLuaState();
+    luabind::object list = luabind::newtable(luaState);
+
+    int index = 1;
+
+    const auto& waypoints = wpl->getWaypoints();
+    for (const auto& waypoint : waypoints) {
+        list[index++] = waypoint;
+    }
+
+    return list;
+
+}
+
+void waypointlist_addFromList(WaypointList* wpl, const luabind::object &list) {
+    if (list.is_valid()) {
+        if (luabind::type(list) == LUA_TTABLE) {
+            for (luabind::iterator it(list), end; it != end; ++it) {
+                try {
+                    position pos = luabind::object_cast<position>(*it);
+		    wpl->addWaypoint(pos);
+                } catch (luabind::cast_failed &e) {
+                    const std::string script = World::get()->getCurrentScript()->getFileName();
+                    Logger::error(LogFacility::Script) << "Invalid type in parameter list of WaypointList:addFromList in " << script << ": " << "Expected type position" << Log::end;
+                }
+            }
+        }
+    }
+}
+
+luabind::object world_LuaLoS(const World* world, const position &startingpos, const position &endingpos) {
+    lua_State *luaState = world->getCurrentScript()->getLuaState();
+    luabind::object list = luabind::newtable(luaState);
+    int index = 1;
+    std::list<BlockingObject> objects = world->LoS(startingpos, endingpos);
+
+    for (std::list<BlockingObject>::iterator boIterator = objects.begin(); boIterator != objects.end(); ++boIterator) {
+        luabind::object innerlist = luabind::newtable(luaState);
+
+        if (boIterator->blockingType == BlockingObject::BT_CHARACTER) {
+            innerlist["TYPE"] = "CHARACTER";
+            innerlist["OBJECT"] = fuse_ptr<Character>(boIterator->blockingChar);
+        } else if (boIterator->blockingType == BlockingObject::BT_ITEM) {
+            innerlist["TYPE"] = "ITEM";
+            innerlist["OBJECT"] = boIterator->blockingItem;
+        }
+
+        list[index] = innerlist;
+        index++;
+    }
+
+    return list;
+}
+
+luabind::object world_getPlayersOnline(const World* world) {
+    lua_State *luaState = world->getCurrentScript()->getLuaState();
+    luabind::object list = luabind::newtable(luaState);
+    int index = 1;
+
+    const auto& players = world->getPlayersOnline();
+
+    for (auto player : players) {
+        list[index] = fuse_ptr<Character>(player);
+        index++;
+    }
+
+    return list;
+}
+
+template<typename Container>
+luabind::object convert_to_fuselist(const Container& container) {
+    lua_State *luaState = World::get()->getCurrentScript()->getLuaState();
+    luabind::object list = luabind::newtable(luaState);
+    int index = 1;
+
+    for (auto item : container) {
+	    list[index] = fuse_ptr<Character>(item);
+	    index++;
+    }
+
+    return list;
+}
+
+luabind::object world_getNPCS(const World* world) {
+	return convert_to_fuselist(world->getNPCS());
+}
+
+luabind::object world_getCharactersInRangeOf(const World* world, const position &posi, uint8_t range) {
+	return convert_to_fuselist(world->getCharactersInRangeOf(posi, range));
+}
+
+luabind::object world_getPlayersInRangeOf(const World* world, const position &posi, uint8_t range) {
+	return convert_to_fuselist(world->getPlayersInRangeOf(posi, range));
+}
+
+luabind::object world_getMonstersInRangeOf(const World* world, const position &posi, uint8_t range) {
+	return convert_to_fuselist(world->getMonstersInRangeOf(posi, range));
+}
+
+luabind::object world_getNPCSInRangeOf(const World* world, const position &posi, uint8_t range) {
+	return convert_to_fuselist(world->getNPCSInRangeOf(posi, range));
+}

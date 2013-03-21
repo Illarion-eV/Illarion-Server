@@ -1536,10 +1536,8 @@ TYPE_OF_QUESTSTATUS Character::getQuestProgress(TYPE_OF_QUEST_ID questid, int &t
     return 0;
 }
 
-luabind::object Character::getItemList(TYPE_OF_ITEM_ID id) {
-    lua_State *_luaState = _world->getCurrentScript()->getLuaState();
-    luabind::object list = luabind::newtable(_luaState);
-    int index = 1;
+std::vector<ScriptItem> Character::getItemList(TYPE_OF_ITEM_ID id) const {
+    std::vector<ScriptItem> list;
 
     for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
         if (characterItems[ i ].getId() == id) {
@@ -1553,15 +1551,13 @@ luabind::object Character::getItemList(TYPE_OF_ITEM_ID id) {
 
             item.pos = pos;
             item.itempos = i;
-            item.owner = this;
-            list[index] = item; //ad an item to the index
-            index++; //increase index after adding an item.
+            item.owner = const_cast<Character*>(this);
+	    list.push_back(item);
         }
     }
 
-    // Inhalt des Rucksacks altern
     if ((characterItems[ BACKPACK ].getId() != 0) && backPackContents) {
-        backPackContents->increaseItemList(id, list, index);
+        backPackContents->addContentToList(id, list);
     }
 
     return list;

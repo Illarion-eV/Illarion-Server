@@ -85,7 +85,7 @@ void PlayerManager::saveAll() {
     loggedOutPlayers.clear();
 }
 
-bool PlayerManager::findPlayer(const std::string &name) {
+bool PlayerManager::findPlayer(const std::string &name) const {
     mut.lock();
 
     for (auto const &player : loggedOutPlayers) {

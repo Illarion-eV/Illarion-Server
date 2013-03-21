@@ -29,7 +29,6 @@
 #include "types.hpp"
 #include "globals.hpp"
 #include "fuse_ptr.hpp"
-#include <luabind/object.hpp>
 
 class Character;
 class Container;

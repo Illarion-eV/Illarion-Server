@@ -54,8 +54,6 @@
 #include "InitialConnection.hpp"
 #include "tvector.hpp"
 #include "script/LuaLogoutScript.hpp"
-#include "luabind/luabind.hpp"
-#include "luabind/object.hpp"
 #include <exception>
 
 
@@ -220,7 +218,7 @@ public:
     /**
      * holds the monitoring clients on the World
      */
-    MonitoringClients *monitoringClientList;
+    MonitoringClients *monitoringClientList = nullptr;
 
     timeb now; /**< current time of the server used in @see turntheworld() **/
 
@@ -233,7 +231,7 @@ public:
 
     WorldMap::map_t tmap; /**< a temporary pointer to a map, used from different methods @see Map*/
 
-    Scheduler *scheduler;/**< a pointer to the scheduler object @see Scheduler*/
+    Scheduler *scheduler = nullptr;/**< a pointer to the scheduler object @see Scheduler*/
 
     WeatherStruct weather;/**< a struct to the weather @see WeatherStruct */
 
@@ -278,7 +276,7 @@ public:
     /**
     *the standard destructor of the server
     */
-    ~World();
+    virtual ~World();
 
     /**
     *main loop for the world
@@ -385,7 +383,7 @@ public:
     */
     bool findPlayerWithLowestHP(const std::vector<Player *> &ppvec, Player *&found);
 
-    inline LuaScript *getCurrentScript() {
+    inline LuaScript *getCurrentScript() const {
         return currentScript;
     }
     inline void setCurrentScript(LuaScript *script) {
@@ -413,7 +411,7 @@ public:
     * @param endingpos the end of the line of sight calculation
     * @return list of all blocking objects between startingpos and endingpos.
     */
-    std::list<BlockingObject> LoS(const position &startingpos, const position &endingpos);
+    std::list<BlockingObject> LoS(const position &startingpos, const position &endingpos) const;
 
 
     bool findPlayersInSight(const position &pos, uint8_t range, std::vector<Player *> &ret, Character::face_to direction);
@@ -429,7 +427,7 @@ public:
     * @return a pointer to a character, NULL if no character was found
     * @todo has to be changed for only one charactervector
     */
-    Character *findCharacterOnField(short int posx, short int posy, short int posz);
+    Character *findCharacterOnField(short int posx, short int posy, short int posz) const;
 
     /**
         * searches for a special player
@@ -440,7 +438,7 @@ public:
         * @param posz the z coordinate of the field
         * @return a pointer to a player, NULL if no player was found
         */
-    Player *findPlayerOnField(short int posx, short int posy, short int posz);
+    Player *findPlayerOnField(short int posx, short int posy, short int posz) const;
 
 
     /**
@@ -490,7 +488,7 @@ public:
     * @param pos the position where the field has to be found
     * @return true if the field was found otherwise false
     */
-    bool GetPToCFieldAt(Field *&fip, const position &pos);
+    bool GetPToCFieldAt(Field *&fip, const position &pos) const;
 
     /**
     * looks for a field on the map
@@ -498,7 +496,7 @@ public:
     * @return a pointer to the field, NULL if there is no field at this position
     * @see GetPToCFieldAt()
     */
-    Field *GetField(const position &pos);
+    Field *GetField(const position &pos) const;
 
     /**
     * looks for a field and the special map where it lies on
@@ -506,7 +504,7 @@ public:
     * @param map call by reference, pointer to the map on which the field lies
     * @return true if the field was found otherwise false
     */
-    bool GetPToCFieldAt(Field *&fip, const position &pos, WorldMap::map_t &map);
+    bool GetPToCFieldAt(Field *&fip, const position &pos, WorldMap::map_t &map) const;
 
     /**
     * looks for a field on the current map
@@ -516,7 +514,7 @@ public:
     * @param z the z-coordinate
     * @return true if the field was found otherwise false
     */
-    bool GetPToCFieldAt(Field *&fip, short int x, short int y, short int z);
+    bool GetPToCFieldAt(Field *&fip, short int x, short int y, short int z) const;
 
     /**
     * looks for a field and the special map where it lies on
@@ -527,7 +525,7 @@ public:
     * @param map call by reference, pointer to the map on which the field lies
     * @return true if the field was found otherwise false
     */
-    bool GetPToCFieldAt(Field *&fip, short int x, short int y, short int z, WorldMap::map_t &map);
+    bool GetPToCFieldAt(Field *&fip, short int x, short int y, short int z, WorldMap::map_t &map) const;
 
     /**
     * looks for an empty field in the near of a given pos
@@ -1326,40 +1324,30 @@ public:
     */
     bool createDynamicNPC(const std::string &name, Character::race_type type, const position &pos, /*CCharacter::face_to dir,*/ Character::sex_type sex, const std::string &scriptname);
 
-
     /**
-    *calculates the line of sight between two positions and returns a list of all
-    *objects which are in the way of sight to lua
-    *@param startinpos the starting position for the line of sight
-    *@param endingpos the ending position for the line of sight
-    *@return a luabind list with all the item or characters in the way
-    */
-    luabind::object LuaLoS(const position &startingpos, const position &endingpos);
-
-    /**
-    *creates a luabind list with all the players which are currently online and returns it
+    *creates a list with all the players which are currently online and returns it
     *to lua
-    *@return the lua list with all the players currently online
+    *@return the list with all the players currently online
     */
-    luabind::object getPlayersOnline();
+    const PLAYERVECTOR& getPlayersOnline() const;
 
     /**
-    *creates a luabind list with all the npcs which are currently online and returns it
+    *creates a list with all the npcs which are currently online and returns it
     *to lua
-    *@return the lua list with all the npcs currently online
+    *@return the list with all the npcs currently online
     */
-    luabind::object getNPCS();
+    const NPCVECTOR& getNPCS() const;
 
     /**
-    *creates a lua list with all the characters in range around a specific position
+    *creates a list with all the characters in range around a specific position
     *@param posi the position from where the character around should be calculated
     *@param range the range around the position for calculating
-    *@return a lua list with all the characters (including monsters, npcs, players) around this char
+    *@return a list with all the characters (including monsters, npcs, players) around this char
     */
-    luabind::object getCharactersInRangeOf(const position &posi, uint8_t range);
-    luabind::object getPlayersInRangeOf(const position &posi, uint8_t range);
-    luabind::object getMonstersInRangeOf(const position &posi, uint8_t range);
-    luabind::object getNPCSInRangeOf(const position &posi, uint8_t range);
+    std::vector<Character*> getCharactersInRangeOf(const position &posi, uint8_t range) const;
+    std::vector<Player*> getPlayersInRangeOf(const position &posi, uint8_t range) const;
+    std::vector<Monster*> getMonstersInRangeOf(const position &posi, uint8_t range) const;
+    std::vector<NPC*> getNPCSInRangeOf(const position &posi, uint8_t range) const;
 
     //Sucht zu einem Item die gesamten Stats wie Gewicht heraus
     //\param item, das Item zu dem die Stats heraus gesucht werden sollen.
@@ -1371,13 +1359,13 @@ public:
     //param amount, der Wert um den die Qualitaet geaendert werden soll
     void changeQuality(ScriptItem item, short int amount);
 
-    void itemInform(Character *user, ScriptItem item, ItemLookAt lookAt);
+    virtual void itemInform(Character *user, ScriptItem item, ItemLookAt lookAt);
 
     //Liefert den Namen eines Items mit einer bestimmten id zurck
     //\param itemid, id des items zu dem der Name geliefert werden soll
     //\param language, die Sprache in der der Name zurck gegeben werden sollte
     //\ret der name in der entsprechenden Sprache.
-    std::string getItemName(TYPE_OF_ITEM_ID itemid, uint8_t language);
+    virtual std::string getItemName(TYPE_OF_ITEM_ID itemid, uint8_t language);
 
     //Aendert ein ScriptItem
     bool changeItem(ScriptItem item);
@@ -1503,10 +1491,12 @@ public:
      */
     void ban(Player *cp, int bantime, TYPE_OF_CHARACTER_ID gmid);
 
-private:
-    void logMissingField(const std::string &function, const position &field);
+protected:
+	World() = default; // used for testcases
+	static World *_self;
 
 private:
+    void logMissingField(const std::string &function, const position &field);
 
     bool _is_login_allowed = true;
     bool _is_spawn_enabled = true;
@@ -1521,26 +1511,24 @@ private:
     World &operator=(const World &) = delete;
     World(const World &) = delete;
 
-    static World *_self;
-
     //! IG day of last turntheworld
     int lastTurnIGDay;
 
     //! Timer fr die Monster - Respawn
-    Timer *monstertimer;
+    Timer *monstertimer = nullptr;
 
     //! Timer fr Effekte auf Feldern
-    Timer *fieldtimer[ 3 ];
+    Timer *fieldtimer[3] = { nullptr, nullptr, nullptr };
 
     //! Timer fr die NPC
-    MilTimer *npctimer;
+    MilTimer *npctimer = nullptr;
 
     //! Timer fr den Scheduler
-    Timer *schedulertimer;
+    Timer *schedulertimer = nullptr;
 
-    Timer *ScriptTimer; //< Tuner for scheduled scripts.
+    Timer *ScriptTimer = nullptr; //< Tuner for scheduled scripts.
 
-    MilTimer *monitoringclienttimer;
+    MilTimer *monitoringclienttimer = nullptr;
 
     //! das home-Verzeichnis des Servers
     std::string directory;

@@ -84,6 +84,53 @@ LuaScript::LuaScript(std::string filename) throw(ScriptException) {
     loadIntoLuaState();
 }
 
+LuaScript::LuaScript(const std::string& code, const std::string& scriptname) throw(ScriptException) {
+    initialize();
+
+    int err = luaL_loadbuffer(_luaState, code.c_str(), code.length(), scriptname.c_str());
+    if (err != 0) {
+        std::string errstr(luafile);
+
+        switch (err) {
+        case LUA_ERRFILE:
+            throw ScriptException("Could not access script file: " + errstr);
+            break;
+
+        case LUA_ERRSYNTAX:
+            throw ScriptException("Syntax error in script file: " + errstr);
+            break;
+
+        case LUA_ERRMEM:
+            throw ScriptException("Insufficient memory for loading script file: " + errstr);
+            break;
+
+        default:
+            throw ScriptException("Could not load script file: " + errstr);
+            break;
+        }
+    }
+
+    err = lua_pcall(_luaState, 0, LUA_MULTRET, 0);
+
+    if (err != 0) {
+        std::string errstr(luafile);
+
+        switch (err) {
+        case LUA_ERRRUN:
+            writeErrorMsg();
+            break;
+
+        case LUA_ERRMEM:
+            throw ScriptException("Insufficient memory for running script file: " + errstr);
+            break;
+
+        default:
+            throw ScriptException("Could not load script file: " + errstr);
+            break;
+        }
+    }
+}
+
 void LuaScript::initialize() {
     if (!initialized) {
         initialized = true;
@@ -585,7 +632,7 @@ void LuaScript::init_base_functions() {
         .def("startMusic", &Character::startMusic)
         .def("defaultMusic", &Character::defaultMusic)
         .def("callAttackScript", &Character::callAttackScript)
-        .def("getItemList", &Character::getItemList)
+        .def("getItemList", character_getItemList)
         .def_readonly("lastSpokenText", &Character::lastSpokenText)
         .def("getPlayerLanguage", getPlayerLanguageLua)
         .def("getBackPack", &Character::GetBackPack)
@@ -728,8 +775,8 @@ void LuaScript::init_base_functions() {
         luabind::class_<NPC, Character>("NPC"),
         luabind::class_<Monster, Character>("Monster"),
         luabind::class_<WaypointList>("WaypointList")
-        .def("addFromList", &WaypointList::addFromList)
-        .def("getWaypoints",&WaypointList::getWaypoints)
+        .def("addFromList", &waypointlist_addFromList)
+        .def("getWaypoints",&waypointlist_getWaypoints)
         .def("addWaypoint",&WaypointList::addWaypoint)
         .def("clear",&WaypointList::clear),
         luabind::class_<LongTimeCharacterEffects>("LongTimeCharacterEffects")
@@ -827,15 +874,15 @@ void LuaScript::init_base_functions() {
             luabind::value("english", static_cast<uint32_t>(Language::english))
         ],
         luabind::class_<World>("World")
-        .def("LoS", &World::LuaLoS)
+        .def("LoS", &world_LuaLoS)
         .def("deleteNPC", &World::deleteNPC)
         .def("createDynamicNPC", &World::createDynamicNPC)
-        .def("getPlayersOnline", &World::getPlayersOnline)
-        .def("getNPCS", &World::getNPCS)
-        .def("getCharactersInRangeOf", &World::getCharactersInRangeOf)
-        .def("getPlayersInRangeOf", &World::getPlayersInRangeOf)
-        .def("getMonstersInRangeOf", &World::getMonstersInRangeOf)
-        .def("getNPCSInRangeOf", &World::getNPCSInRangeOf)
+        .def("getPlayersOnline", &world_getPlayersOnline)
+        .def("getNPCS", &world_getNPCS)
+        .def("getCharactersInRangeOf", &world_getCharactersInRangeOf)
+        .def("getPlayersInRangeOf", &world_getPlayersInRangeOf)
+        .def("getMonstersInRangeOf", &world_getMonstersInRangeOf)
+        .def("getNPCSInRangeOf", &world_getNPCSInRangeOf)
         .def("getArmorStruct", &World::getArmorStruct, luabind::pure_out_value(_3))
         .def("getWeaponStruct", &World::getWeaponStruct, luabind::pure_out_value(_3))
         .def("getNaturalArmor", &World::getNaturalArmor, luabind::pure_out_value(_3))

@@ -36,6 +36,7 @@ class LuaItemScript : public LuaScript {
 public:
     LuaItemScript();
     LuaItemScript(const std::string &filename, const CommonStruct &comstr) throw(ScriptException);
+    LuaItemScript(const std::string &code, const std::string& codename, const CommonStruct &comstr) throw(ScriptException);
     virtual ~LuaItemScript() throw();
 
     void UseItem(Character *User, const ScriptItem &SourceItem, unsigned char ltastate);

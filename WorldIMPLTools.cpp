@@ -148,7 +148,7 @@ bool World::findPlayersInSight(const position &pos, uint8_t range, std::vector<P
     return found;
 }
 
-std::list<BlockingObject> World::LoS(const position &startingpos, const position &endingpos) {
+std::list<BlockingObject> World::LoS(const position &startingpos, const position &endingpos) const {
     std::list<BlockingObject> ret;
     ret.clear();
     bool steep = std::abs(startingpos.y - endingpos.y) > std::abs(startingpos.x - endingpos.x);
@@ -301,7 +301,7 @@ void World::updatePlayerList() {
     std::cout<<"updateplayerlist end"<<std::endl;
 }
 
-Character *World::findCharacterOnField(short int posx, short int posy, short int posz) {
+Character *World::findCharacterOnField(short int posx, short int posy, short int posz) const {
     Character *tmpChr;
     tmpChr = Players.find(posx, posy, posz);
 
@@ -324,7 +324,7 @@ Character *World::findCharacterOnField(short int posx, short int posy, short int
     return NULL;
 }
 
-Player *World::findPlayerOnField(short int posx, short int posy, short int posz) {
+Player *World::findPlayerOnField(short int posx, short int posy, short int posz) const {
     return Players.find(posx, posy, posz);
 }
 
@@ -549,7 +549,7 @@ void World::killMonster(MONSTERVECTOR::iterator monsterIt, MONSTERVECTOR::iterat
 }
 
 
-Field *World::GetField(const position &pos) {
+Field *World::GetField(const position &pos) const {
     WorldMap::map_t temp;
 
     if (maps.findMapForPos(pos, temp)) {
@@ -566,7 +566,7 @@ Field *World::GetField(const position &pos) {
 }
 
 
-bool World::GetPToCFieldAt(Field *&fip, short int x, short int y, short int z) {
+bool World::GetPToCFieldAt(Field *&fip, short int x, short int y, short int z) const {
 
     WorldMap::map_t temp;
 
@@ -579,7 +579,7 @@ bool World::GetPToCFieldAt(Field *&fip, short int x, short int y, short int z) {
 }
 
 
-bool World::GetPToCFieldAt(Field *&fip, const position &pos) {
+bool World::GetPToCFieldAt(Field *&fip, const position &pos) const {
 
     WorldMap::map_t temp;
 
@@ -592,7 +592,7 @@ bool World::GetPToCFieldAt(Field *&fip, const position &pos) {
 }
 
 
-bool World::GetPToCFieldAt(Field *&fip, short int x, short int y, short int z, WorldMap::map_t &map) {
+bool World::GetPToCFieldAt(Field *&fip, short int x, short int y, short int z, WorldMap::map_t &map) const {
 
     if (maps.findMapForPos(x, y, z, map)) {
         return map->GetPToCFieldAt(fip, x, y);
@@ -603,7 +603,7 @@ bool World::GetPToCFieldAt(Field *&fip, short int x, short int y, short int z, W
 }
 
 
-bool World::GetPToCFieldAt(Field *&fip, const position &pos, WorldMap::map_t &map) {
+bool World::GetPToCFieldAt(Field *&fip, const position &pos, WorldMap::map_t &map) const {
 
     if (maps.findMapForPos(pos, map)) {
         return map->GetPToCFieldAt(fip, pos.x, pos.y);

@@ -36,8 +36,6 @@ class RekursionException: public std::exception {};
 
 #include "Item.hpp"
 #include "constants.hpp"
-#include "luabind/luabind.hpp"
-#include "luabind/object.hpp"
 
 class CommonObjectTable;
 
@@ -77,11 +75,12 @@ public:
 
     int countItem(Item::id_type itemid, script_data_exchangemap const *data = nullptr) const;
 
-    void increaseItemList(Item::id_type itemid, luabind::object &list,int &index);
-    void increaseItemList(luabind::object &list,int &index);
+    // TODO merge implementations of both addContentToList variations
+    void addContentToList(Item::id_type itemid, std::vector<ScriptItem>& list);
+    void addContentToList(std::vector<ScriptItem>& list);
 
-    luabind::object getItemList(Item::id_type itemid);
-    luabind::object getItemList();
+    std::vector<ScriptItem> getItemList(Item::id_type itemid);
+    std::vector<ScriptItem> getItemList();
 
     int eraseItem(Item::id_type itemid, Item::number_type count, script_data_exchangemap const *data = nullptr);
 
