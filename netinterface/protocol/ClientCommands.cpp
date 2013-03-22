@@ -203,7 +203,6 @@ void RequestAppearanceTS::decodeData() {
 }
 
 void RequestAppearanceTS::performAction(Player *player) {
-    time(&(player->lastaction));
     Character *ch = World::get()->Players.findID(id);
 
     if (ch == NULL) {
@@ -235,8 +234,6 @@ void LookAtCharacterTS::decodeData() {
 }
 
 void LookAtCharacterTS::performAction(Player *player) {
-    time(&(player->lastaction));
-
     if (id < MONSTER_BASE) {
         Player *pl = World::get()->Players.findID(id);
 
@@ -1020,7 +1017,6 @@ void LookAtInventoryItemTS::decodeData() {
 
 void LookAtInventoryItemTS::performAction(Player *player) {
     Logger::debug(LogFacility::World) << player->to_string() << " looks at an item in the inventory." << Log::end;
-    time(&(player->lastaction));
 
     if (player->IsAlive()) {
         World::get()->lookAtInventoryItem(player, pos);
@@ -1043,7 +1039,6 @@ void LookAtShowCaseItemTS::decodeData() {
 
 void LookAtShowCaseItemTS::performAction(Player *player) {
     Logger::debug(LogFacility::World) << player->to_string() << " looks at an item in a container." << Log::end;
-    time(&(player->lastaction));
 
     if (player->IsAlive()) {
         World::get()->lookAtShowcaseItem(player, showcase, pos);
@@ -1508,7 +1503,6 @@ void LookAtMapItemTS::decodeData() {
 }
 
 void LookAtMapItemTS::performAction(Player *player) {
-    time(&(player->lastaction));
     Logger::debug(LogFacility::World) << player->to_string() << " looks at a map item." << Log::end;
 
     if (player->IsAlive()) {
