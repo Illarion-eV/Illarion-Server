@@ -1329,7 +1329,7 @@ uint16_t Character::getMovementCost(const Field *sourcefield) const {
     const auto &secondaryTile = Data::Tiles[tileId];
     uint16_t secondaryWalkingCost = secondaryTile.walkingCost;
 
-    if (secondaryWalkingCost > tileWalkingCost) {
+    if (secondaryWalkingCost < tileWalkingCost) {
         tileWalkingCost = secondaryWalkingCost;
     }
 
