@@ -1653,6 +1653,10 @@ bool Player::move(direction dir, uint8_t mode) {
         faceto = (Character::face_to)dir;
     }
 
+    if (mode == RUNNING && loadFactor() != LoadLevel::unburdened) {
+        mode = NORMALMOVE;
+    }
+
     size_t steps;
     size_t j = 0;
     bool cont = true;
