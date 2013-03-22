@@ -33,7 +33,6 @@ int Random::uniform(int min, int max) {
 
 double Random::normal(double mean, double sd) {
     std::normal_distribution<double> norm(mean, sd);
-    auto generator = std::bind(norm, rng);
-    return generator();
+    return norm(rng);
 }
 
