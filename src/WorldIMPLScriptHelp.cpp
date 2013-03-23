@@ -87,16 +87,16 @@ bool World::createDynamicNPC(const std::string &name, Character::race_type type,
 }
 
 
-const World::PLAYERVECTOR& World::getPlayersOnline() const {
-	return Players;
+const World::PLAYERVECTOR &World::getPlayersOnline() const {
+    return Players;
 }
 
-const World::NPCVECTOR& World::getNPCS() const {
-	return Npc;
+const World::NPCVECTOR &World::getNPCS() const {
+    return Npc;
 }
 
-std::vector<Character*> World::getCharactersInRangeOf(const position &posi, uint8_t range) const {
-    std::vector<Character*> list;
+std::vector<Character *> World::getCharactersInRangeOf(const position &posi, uint8_t range) const {
+    std::vector<Character *> list;
 
     std::vector < Player * > tempP = Players.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range);
     list.insert(list.end(), tempP.begin(), tempP.end());
@@ -110,15 +110,15 @@ std::vector<Character*> World::getCharactersInRangeOf(const position &posi, uint
     return list;
 }
 
-std::vector<Player*> World::getPlayersInRangeOf(const position &posi, uint8_t range) const {
+std::vector<Player *> World::getPlayersInRangeOf(const position &posi, uint8_t range) const {
     return Players.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range);
 }
 
-std::vector<Monster*> World::getMonstersInRangeOf(const position &posi, uint8_t range) const {
+std::vector<Monster *> World::getMonstersInRangeOf(const position &posi, uint8_t range) const {
     return Monsters.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range);
 }
 
-std::vector<NPC*> World::getNPCSInRangeOf(const position &posi, uint8_t range) const {
+std::vector<NPC *> World::getNPCSInRangeOf(const position &posi, uint8_t range) const {
     return Npc.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range);
 }
 

@@ -737,9 +737,11 @@ void World::ban(Player *cp, int bantime, TYPE_OF_CHARACTER_ID gmid) {
 // !who [player]
 void World::who_command(Player *cp, const std::string &tplayer) {
 #ifndef TESTSERVER
+
     if (!cp->hasGMRight(gmr_basiccommands)) {
         return;
     }
+
 #endif
 
     if (tplayer == "") {

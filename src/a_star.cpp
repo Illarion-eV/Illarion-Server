@@ -230,8 +230,8 @@ bool a_star(const ::position &start_pos, const ::position &goal_pos, std::list<d
 
     try {
         astar_search_no_init(g, start, h, visitor, pred_pmap, rank_pmap,
-                dist_pmap, weight, color, index, std::less<Cost>(),
-                std::plus<Cost>(), std::numeric_limits<Cost>::max(), Cost());
+                             dist_pmap, weight, color, index, std::less<Cost>(),
+                             std::plus<Cost>(), std::numeric_limits<Cost>::max(), Cost());
     } catch (found_goal &fg) {
         vertex v = goal;
         vertex pre = predecessor[v];

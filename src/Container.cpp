@@ -310,7 +310,7 @@ std::vector<ScriptItem> Container::getItemList() {
         item.type = ScriptItem::it_container;
         item.itempos = it->first;
         item.inside = this;
-	list.push_back(item);
+        list.push_back(item);
 
         if (item.isContainer()) {
             auto iterat = containers.find(it->first);
@@ -336,7 +336,7 @@ std::vector<ScriptItem> Container::getItemList(Item::id_type itemid) {
             item.type = ScriptItem::it_container;
             item.itempos = it->first;
             item.inside = this;
-	    list.push_back(item);
+            list.push_back(item);
         }
 
         if (item.isContainer()) {
@@ -352,7 +352,7 @@ std::vector<ScriptItem> Container::getItemList(Item::id_type itemid) {
     return list;
 }
 
-void Container::addContentToList(Item::id_type itemid, std::vector<ScriptItem>& list) {
+void Container::addContentToList(Item::id_type itemid, std::vector<ScriptItem> &list) {
     for (auto it = items.begin(); it != items.end(); ++it) {
         const Item &item = it->second;
 
@@ -361,7 +361,7 @@ void Container::addContentToList(Item::id_type itemid, std::vector<ScriptItem>& 
             item.type = ScriptItem::it_container;
             item.itempos = it->first;
             item.inside = this;
-	    list.push_back(item);
+            list.push_back(item);
         }
 
         if (item.isContainer()) {
@@ -375,14 +375,14 @@ void Container::addContentToList(Item::id_type itemid, std::vector<ScriptItem>& 
     }
 }
 
-void Container::addContentToList(std::vector<ScriptItem>& list) {
+void Container::addContentToList(std::vector<ScriptItem> &list) {
     for (auto it = items.begin(); it != items.end(); ++it) {
 
         ScriptItem item = it->second;
         item.type = ScriptItem::it_container;
         item.itempos = it->first;
         item.inside = this;
-	list.push_back(item);
+        list.push_back(item);
 
         if (item.isContainer()) {
             auto iterat = containers.find(it->first);

@@ -1551,8 +1551,8 @@ std::vector<ScriptItem> Character::getItemList(TYPE_OF_ITEM_ID id) const {
 
             item.pos = pos;
             item.itempos = i;
-            item.owner = const_cast<Character*>(this);
-	    list.push_back(item);
+            item.owner = const_cast<Character *>(this);
+            list.push_back(item);
         }
     }
 

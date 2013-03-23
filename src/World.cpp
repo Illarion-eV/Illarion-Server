@@ -522,20 +522,30 @@ bool World::load_from_editor(const std::string &filename) {
 }
 
 World::~World() {
-	if (monstertimer != nullptr)
-		delete monstertimer;
-	if (npctimer != nullptr)
-		delete npctimer;
-	for (size_t i = 0; i <3; ++i)
-		if (fieldtimer[i] != nullptr)
-			delete fieldtimer[i];
-	if (monitoringclienttimer != nullptr)
-		delete monitoringclienttimer;
-	if (monitoringClientList != nullptr)
-		delete monitoringClientList;
+    if (monstertimer != nullptr) {
+        delete monstertimer;
+    }
 
-	if (scheduler != nullptr)
-		delete scheduler;
+    if (npctimer != nullptr) {
+        delete npctimer;
+    }
+
+    for (size_t i = 0; i <3; ++i)
+        if (fieldtimer[i] != nullptr) {
+            delete fieldtimer[i];
+        }
+
+    if (monitoringclienttimer != nullptr) {
+        delete monitoringclienttimer;
+    }
+
+    if (monitoringClientList != nullptr) {
+        delete monitoringClientList;
+    }
+
+    if (scheduler != nullptr) {
+        delete scheduler;
+    }
 }
 
 

@@ -31,7 +31,7 @@ LuaItemScript::LuaItemScript(const std::string &filename, const CommonStruct &co
     init_functions();
 }
 
-LuaItemScript::LuaItemScript(const std::string& code, const std::string& codename, const CommonStruct& comstr) throw(ScriptException)
+LuaItemScript::LuaItemScript(const std::string &code, const std::string &codename, const CommonStruct &comstr) throw(ScriptException)
     : LuaScript(code, codename), _comstr(comstr) {
     init_functions();
 }

@@ -163,32 +163,32 @@ TEST(ItemTest, setDataMap) {
 
 TEST(ItemTest, hasDataNone) {
     Item item;
-    EXPECT_TRUE(item.hasData({}));
-    EXPECT_FALSE(item.hasData({std::make_pair("testKey", "testValue")}));
-    EXPECT_FALSE(item.hasData({std::make_pair("testKey", "testValue"), std::make_pair("testKey2", "testValue2")}));
+    EXPECT_TRUE(item.hasData( {}));
+    EXPECT_FALSE(item.hasData( {std::make_pair("testKey", "testValue")}));
+    EXPECT_FALSE(item.hasData( {std::make_pair("testKey", "testValue"), std::make_pair("testKey2", "testValue2")}));
 }
 
 TEST(ItemTest, hasDataOne) {
     Item item;
     item.setData("testKey", "testValue");
-    EXPECT_FALSE(item.hasData({}));
-    EXPECT_TRUE(item.hasData({std::make_pair("testKey", "testValue")}));
-    EXPECT_FALSE(item.hasData({std::make_pair("testKey", "testValue"), std::make_pair("wrongKey", "wrongValue")}));
+    EXPECT_FALSE(item.hasData( {}));
+    EXPECT_TRUE(item.hasData( {std::make_pair("testKey", "testValue")}));
+    EXPECT_FALSE(item.hasData( {std::make_pair("testKey", "testValue"), std::make_pair("wrongKey", "wrongValue")}));
 }
 
 TEST(ItemTest, hasDataMultiple) {
     Item item;
     item.setData("testKey", "testValue");
     item.setData("testKey2", "testValue2");
-    EXPECT_FALSE(item.hasData({}));
-    EXPECT_TRUE(item.hasData({std::make_pair("testKey", "testValue")}));
-    EXPECT_TRUE(item.hasData({std::make_pair("testKey", "testValue"), std::make_pair("testKey2", "testValue2")}));
-    EXPECT_FALSE(item.hasData({std::make_pair("testKey", "testValue"), std::make_pair("wrongKey", "wrongValue")}));
+    EXPECT_FALSE(item.hasData( {}));
+    EXPECT_TRUE(item.hasData( {std::make_pair("testKey", "testValue")}));
+    EXPECT_TRUE(item.hasData( {std::make_pair("testKey", "testValue"), std::make_pair("testKey2", "testValue2")}));
+    EXPECT_FALSE(item.hasData( {std::make_pair("testKey", "testValue"), std::make_pair("wrongKey", "wrongValue")}));
 }
 
-int main(int argc, char** argv) {
-	::testing::InitGoogleTest(&argc, argv);
-	::testing::AddGlobalTestEnvironment(new ItemEnvironment);
+int main(int argc, char **argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    ::testing::AddGlobalTestEnvironment(new ItemEnvironment);
     return RUN_ALL_TESTS();
 }
 

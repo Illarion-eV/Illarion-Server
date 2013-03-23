@@ -76,8 +76,8 @@ public:
     int countItem(Item::id_type itemid, script_data_exchangemap const *data = nullptr) const;
 
     // TODO merge implementations of both addContentToList variations
-    void addContentToList(Item::id_type itemid, std::vector<ScriptItem>& list);
-    void addContentToList(std::vector<ScriptItem>& list);
+    void addContentToList(Item::id_type itemid, std::vector<ScriptItem> &list);
+    void addContentToList(std::vector<ScriptItem> &list);
 
     std::vector<ScriptItem> getItemList(Item::id_type itemid);
     std::vector<ScriptItem> getItemList();

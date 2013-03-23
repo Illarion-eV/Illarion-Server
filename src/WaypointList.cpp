@@ -26,11 +26,11 @@ WaypointList::WaypointList(Character *movechar) : _movechar(movechar) {
 
 }
 
-const std::list<position>& WaypointList::getWaypoints() const {
-	return positions;
+const std::list<position> &WaypointList::getWaypoints() const {
+    return positions;
 }
 
-void WaypointList::addWaypoint(const position& pos) {
+void WaypointList::addWaypoint(const position &pos) {
     positions.push_back(pos);
 }
 

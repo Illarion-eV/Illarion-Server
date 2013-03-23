@@ -45,18 +45,18 @@ ScriptItem world_createFromId(World *world, TYPE_OF_ITEM_ID id, unsigned short i
 
 void log_lua(const std::string &message);
 
-luabind::object character_getItemList(const Character*, TYPE_OF_ITEM_ID id);
+luabind::object character_getItemList(const Character *, TYPE_OF_ITEM_ID id);
 
-void waypointlist_addFromList(WaypointList* wpl, const luabind::object &list);
-luabind::object waypointlist_getWaypoints(const WaypointList* wpl);
+void waypointlist_addFromList(WaypointList *wpl, const luabind::object &list);
+luabind::object waypointlist_getWaypoints(const WaypointList *wpl);
 
-luabind::object world_LuaLoS(const World* world, const position &startingpos, const position &endingpos);
-luabind::object world_getPlayersOnline(const World* world);
-luabind::object world_getNPCS(const World* world);
+luabind::object world_LuaLoS(const World *world, const position &startingpos, const position &endingpos);
+luabind::object world_getPlayersOnline(const World *world);
+luabind::object world_getNPCS(const World *world);
 
-luabind::object world_getCharactersInRangeOf(const World* world, const position &posi, uint8_t range);
-luabind::object world_getPlayersInRangeOf(const World* world, const position &posi, uint8_t range);
-luabind::object world_getMonstersInRangeOf(const World* world, const position &posi, uint8_t range);
-luabind::object world_getNPCSInRangeOf(const World* world, const position &posi, uint8_t range);
+luabind::object world_getCharactersInRangeOf(const World *world, const position &posi, uint8_t range);
+luabind::object world_getPlayersInRangeOf(const World *world, const position &posi, uint8_t range);
+luabind::object world_getMonstersInRangeOf(const World *world, const position &posi, uint8_t range);
+luabind::object world_getNPCSInRangeOf(const World *world, const position &posi, uint8_t range);
 
 #endif

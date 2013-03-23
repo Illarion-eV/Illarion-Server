@@ -1329,14 +1329,14 @@ public:
     *to lua
     *@return the list with all the players currently online
     */
-    const PLAYERVECTOR& getPlayersOnline() const;
+    const PLAYERVECTOR &getPlayersOnline() const;
 
     /**
     *creates a list with all the npcs which are currently online and returns it
     *to lua
     *@return the list with all the npcs currently online
     */
-    const NPCVECTOR& getNPCS() const;
+    const NPCVECTOR &getNPCS() const;
 
     /**
     *creates a list with all the characters in range around a specific position
@@ -1344,10 +1344,10 @@ public:
     *@param range the range around the position for calculating
     *@return a list with all the characters (including monsters, npcs, players) around this char
     */
-    std::vector<Character*> getCharactersInRangeOf(const position &posi, uint8_t range) const;
-    std::vector<Player*> getPlayersInRangeOf(const position &posi, uint8_t range) const;
-    std::vector<Monster*> getMonstersInRangeOf(const position &posi, uint8_t range) const;
-    std::vector<NPC*> getNPCSInRangeOf(const position &posi, uint8_t range) const;
+    std::vector<Character *> getCharactersInRangeOf(const position &posi, uint8_t range) const;
+    std::vector<Player *> getPlayersInRangeOf(const position &posi, uint8_t range) const;
+    std::vector<Monster *> getMonstersInRangeOf(const position &posi, uint8_t range) const;
+    std::vector<NPC *> getNPCSInRangeOf(const position &posi, uint8_t range) const;
 
     //Sucht zu einem Item die gesamten Stats wie Gewicht heraus
     //\param item, das Item zu dem die Stats heraus gesucht werden sollen.
@@ -1492,8 +1492,8 @@ public:
     void ban(Player *cp, int bantime, TYPE_OF_CHARACTER_ID gmid);
 
 protected:
-	World() = default; // used for testcases
-	static World *_self;
+    World() = default; // used for testcases
+    static World *_self;
 
 private:
     void logMissingField(const std::string &function, const position &field);

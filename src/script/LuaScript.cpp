@@ -84,10 +84,11 @@ LuaScript::LuaScript(std::string filename) throw(ScriptException) {
     loadIntoLuaState();
 }
 
-LuaScript::LuaScript(const std::string& code, const std::string& scriptname) throw(ScriptException) {
+LuaScript::LuaScript(const std::string &code, const std::string &scriptname) throw(ScriptException) {
     initialize();
 
     int err = luaL_loadbuffer(_luaState, code.c_str(), code.length(), scriptname.c_str());
+
     if (err != 0) {
         std::string errstr(luafile);
 
