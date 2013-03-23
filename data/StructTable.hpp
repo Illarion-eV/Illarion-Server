@@ -101,7 +101,11 @@ protected:
     }
 
     virtual void evaluateRow(const Database::ResultTuple &row) {
-        structBuffer.emplace(assignId(row), assignTable(row));
+        emplace(assignId(row), assignTable(row));
+    }
+
+    virtual void emplace(const IdType &id, const StructType &data) {
+        structBuffer.emplace(id, data);
     }
 
     bool erase(const IdType &id) {
