@@ -168,7 +168,7 @@ public:
 
     position getFrontalPosition() const;
 
-    inline virtual bool actionRunning() const {
+    virtual bool actionRunning() const {
         return false;
     }
 

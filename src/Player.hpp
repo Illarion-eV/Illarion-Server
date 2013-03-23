@@ -306,7 +306,7 @@ public:
     */
     void sendSingleStripe(viewdir direction, int8_t zoffs);
 
-    inline bool actionRunning() {
+    virtual bool actionRunning() const override {
         return ltAction->actionRunning();
     }
 
