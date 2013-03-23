@@ -19,7 +19,7 @@
 
 AUTOMAKE_OPTIONS = foreign 
 ACLOCAL_AMFLAGS = -Im4
-noinst_PROGRAMS = testserver test_binding
+noinst_PROGRAMS = testserver test_binding ItemTest
 noinst_LIBRARIES = libserver.a libgmock.a
 
 CXXFLAGS = -ggdb -pipe -Wall -Werror -Wno-deprecated -std=c++11 -D_THREAD_SAFE -D_REENTRANT -DTESTSERVER -DCDataConnect_DEBUG -DAdminCommands_DEBUG $(BOOST_CXXFLAGS) $(DEPS_CFLAGS)
@@ -81,11 +81,15 @@ style: .astylerc
 libgmock_a_SOURCES = $(GMOCK_DIR)/src/gmock-all.cc $(GTEST_DIR)/src/gtest-all.cc
 libgmock_a_CXXFLAGS = $(CXXFLAGS) -I$(GMOCK_DIR) -I$(GTEST_DIR)
 
-TESTS = test_binding
+TESTS = test_binding ItemTest
 
 test_binding_SOURCES = test_binding.cpp
 test_binding_LDADD = -L/usr/local/lib -lpthread -lssl -lcrypto $(DEPS_LIBS) -lcrypt libserver.a libgmock.a
 test_binding_LDFLAGS = $(BOOST_THREAD_LDFLAGS) $(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS)
+
+ItemTest_SOURCES = ItemTest.cpp
+ItemTest_LDADD = -L/usr/local/lib -lpthread -lssl -lcrypto $(DEPS_LIBS) -lcrypt libserver.a libgmock.a
+ItemTest_LDFLAGS = $(BOOST_THREAD_LDFLAGS) $(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS)
 
 noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
 		 dialog/CraftingDialog.hpp dialog/MessageDialog.hpp \
