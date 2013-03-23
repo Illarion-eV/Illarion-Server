@@ -91,4 +91,6 @@ AC_SUBST([GTEST_DIR], [$ac_gtest_dir])
 AC_SUBST([DEPS_CFLAGS])
 AC_SUBST([DEPS_LIBS])
 
-AC_OUTPUT(Makefile)
+AC_OUTPUT([Makefile
+	   script/Makefile
+])
