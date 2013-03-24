@@ -140,15 +140,13 @@ int main(int argc, char *argv[]) {
     //Scheduler Initialisieren
     world->initScheduler();
 
-    int new_players_processed;
-
     running = true;
 
     while (running) {
         // Ausgaben auf std::cout in die Datei schreiben
         std::cout.flush();
         // make sure we don't block the server with processing new players...
-        new_players_processed = 0;
+        int new_players_processed = 0;
 
         // process new players from connection thread
         while (!newplayers.empty() && new_players_processed < MAXPLAYERSPROCESSED) {

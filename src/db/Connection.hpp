@@ -63,7 +63,6 @@ private:
     struct deleter {
         void operator()(Connection *p) {
             delete p;
-            p = 0;
         };
     };
 

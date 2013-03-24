@@ -325,14 +325,12 @@ bool World::load_from_editor(const std::string &filename) {
     WorldMap::map_t tempmap(new Map(h_width, h_height));
     tempmap->Init(h_x, h_y, h_level);
 
-    Field *tempf;
-    int index_start;
-
-    for (int x=0; x<h_width; ++x) {
-        index_start = x << 16;
+    for (int x=0; x < h_width; ++x) {
+        int index_start = x << 16;
 
         for (int y=0; y<h_height; ++y) {
             temp_tile = maptiles[index_start | y];
+            Field *tempf;
 
             if (tempmap->GetPToCFieldAt(tempf, temp_tile.x+h_x, temp_tile.y+h_y)) {
                 tempf->setTileId(temp_tile.fieldID);
@@ -1140,9 +1138,9 @@ bool World::ReadField(const char *inp, signed long int &outp) {
 
 // Init method for NPC's
 void World::initNPC() {
-    Field *tempf;
-
     for (const auto &npc : Npc) {
+        Field *tempf;
+
         if (GetPToCFieldAt(tempf, npc->pos.x, npc->pos.y, npc->pos.z)) {
             tempf->removeChar();
         }
@@ -1154,6 +1152,7 @@ void World::initNPC() {
     Npc.clear();
     NPCTable NPCTbl;
 }
+
 void World::initScheduler() {
     std::cout<<"Scheduler init \n";
     scheduler = new Scheduler(this);

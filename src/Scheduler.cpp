@@ -27,10 +27,9 @@ Scheduler::Scheduler(World *pworld) : cycle(0), world(pworld) {
 
 void Scheduler::NextCycle() {
     int emexit = 0;
-    SchedulerObject *m_object;
 
     while (!Tasks.empty() && (emexit < 201) && (Tasks.front()->GetNextCycle() <= cycle)) {
-        m_object = NULL;
+        SchedulerObject *m_object = nullptr;
         ++emexit;
 
         if (emexit>=199) {
@@ -41,7 +40,7 @@ void Scheduler::NextCycle() {
             m_object = Tasks.front();
         }
 
-        if (m_object!=NULL) {
+        if (m_object) {
             if ((*m_object)(world)) {
                 AddTask(m_object);
             }

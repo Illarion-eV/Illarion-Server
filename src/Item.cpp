@@ -80,7 +80,7 @@ bool Item::hasData(const script_data_exchangemap &datamap) const {
 }
 
 bool Item::hasNoData() const {
-    return datamap.size() == 0;
+    return datamap.empty();
 }
 
 std::string Item::getData(const std::string &key) const {

@@ -151,14 +151,12 @@ bool LongTimeCharacterEffects::removeEffect(LongTimeEffect *effect) {
 
 void LongTimeCharacterEffects::checkEffects() {
     ++time;
-
-    LongTimeEffect *effect;
     int emexit = 0;
 
     while (!effects.empty() && (emexit < 200) && (effects.front()->getExecutionTime() <= time)) {
         ++emexit;
         std::pop_heap(effects.begin(), effects.end(), LongTimeEffect::priority);
-        effect = effects.back();
+        LongTimeEffect *effect = effects.back();
         effects.pop_back();
 
         if (effect->callEffect(owner)) {

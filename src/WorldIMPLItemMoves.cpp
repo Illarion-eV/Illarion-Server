@@ -1382,11 +1382,9 @@ bool World::moveItem(Character *cc, unsigned char d, short int xc, short int yc,
 
 
 void World::lookIntoShowcaseContainer(Player *cp, uint8_t showcase, unsigned char pos) {
-    if ((cp != NULL) && cp->isShowcaseOpen(showcase)) {
+    if (cp && cp->isShowcaseOpen(showcase)) {
         Container *top = cp->getShowcaseContainer(showcase);
         bool allowedToOpenContainer = false;
-
-        std::map<uint32_t,Container *>::iterator it;
 
         for (const auto &depot : cp->depotContents) {
             if (depot.second == top) {
@@ -1395,12 +1393,12 @@ void World::lookIntoShowcaseContainer(Player *cp, uint8_t showcase, unsigned cha
             }
         }
 
-        if (top != NULL && allowedToOpenContainer) {
+        if (top && allowedToOpenContainer) {
             Container *tempc;
             ScriptItem tempi;
 
             if (top->viewItemNr(pos, tempi, tempc)) {
-                if (tempc != NULL) {
+                if (tempc) {
                     cp->openShowcase(tempc, cp->isShowcaseInInventory(showcase));
                 }
             }
@@ -1489,10 +1487,6 @@ void World::sendRemoveItemFromMapToAllVisibleCharacters(TYPE_OF_ITEM_ID id, shor
 
 void World::sendSwapItemOnMapToAllVisibleCharacter(TYPE_OF_ITEM_ID id, short int xn, short int yn, short int zn, Item &it, Field *cfp) {
     if (cfp) {
-        std::vector < Player * > temp = Players.findAllCharactersInScreen(xn, yn, zn);
-
-        std::vector < Player * > ::iterator titerator;
-
         for (const auto &player : Players.findAllCharactersInScreen(xn, yn, zn)) {
             ServerCommandPointer cmd(new ItemSwapTC(xn, yn, zn, id, it));
             player->Connection->addCommand(cmd);

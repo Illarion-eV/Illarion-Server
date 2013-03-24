@@ -193,16 +193,13 @@ template < class _Tp > bool ccharactervector < _Tp > ::getIterator(TYPE_OF_CHARA
 
 template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllCharactersInRangeOf(short int xc, short int yc, short int zc, int distancemetric) const {
     std::vector < _Tp > temp;
-    short int px;
-    short int py;
-    short int pz;
 
     for (const auto &character : *this) {
-        pz = character->pos.z - zc;
+        short int pz = character->pos.z - zc;
 
         if ((-RANGEDOWN <= pz) && (pz <= RANGEUP)) {
-            px = character->pos.x - xc;
-            py = character->pos.y - yc;
+            short int px = character->pos.x - xc;
+            short int py = character->pos.y - yc;
 
             if ((abs(px) + abs(py)) <= distancemetric) {
                 temp.push_back(character);
@@ -216,16 +213,13 @@ template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllCha
 
 template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllCharactersInScreen(short int xc, short int yc, short int zc) const {
     std::vector < _Tp > temp;
-    short int px;
-    short int py;
-    short int pz;
 
     for (const auto &character : *this) {
-        pz = character->pos.z - zc;
+        short int pz = character->pos.z - zc;
 
         if ((-RANGEDOWN <= pz) && (pz <= RANGEUP)) {
-            px = character->pos.x - xc;
-            py = character->pos.y - yc;
+            short int px = character->pos.x - xc;
+            short int py = character->pos.y - yc;
 
             if ((abs(px) + abs(py)) <= character->getScreenRange()) {
                 temp.push_back(character);
@@ -239,16 +233,13 @@ template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllCha
 
 template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllCharactersInMaxRangeOf(short int xc, short int yc, short int zc, int distancemetric) const {
     std::vector < _Tp > temp;
-    short int px;
-    short int py;
-    short int pz;
 
     for (const auto &character : *this) {
-        pz = character->pos.z - zc;
+        short int pz = character->pos.z - zc;
 
         if ((-RANGEDOWN <= pz) && (pz <= RANGEUP)) {
-            px = character->pos.x - xc;
-            py = character->pos.y - yc;
+            short int px = character->pos.x - xc;
+            short int py = character->pos.y - yc;
 
             if ((abs(px) <= distancemetric) && (abs(py) <=distancemetric)) {
                 temp.push_back(character);
@@ -262,16 +253,13 @@ template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllCha
 
 template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllAliveCharactersInRangeOf(short int xc, short int yc, short int zc, int distancemetric) const {
     std::vector < _Tp > temp;
-    short int px;
-    short int py;
-    short int pz;
 
     for (const auto &character : *this) {
-        pz = character->pos.z - zc;
+        short int pz = character->pos.z - zc;
 
         if ((-RANGEDOWN <= pz) && (pz <= RANGEUP)) {
-            px = character->pos.x - xc;
-            py = character->pos.y - yc;
+            short int px = character->pos.x - xc;
+            short int py = character->pos.y - yc;
 
             if (((abs(px) + abs(py)) <= distancemetric) ||
                 ((distancemetric == 1) && (abs(px) == 1) && (abs(py) == 1))) {       // Allow angle attacks
@@ -287,13 +275,11 @@ template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllAli
 
 template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllAliveCharactersInRangeOfOnSameMap(short int xc, short int yc, short int zc, int distancemetric) const {
     std::vector < _Tp > temp;
-    short int px;
-    short int py;
 
     for (const auto &character : *this) {
         if (character->pos.z == zc) {
-            px = character->pos.x - xc;
-            py = character->pos.y - yc;
+            short int px = character->pos.x - xc;
+            short int py = character->pos.y - yc;
 
             if (((abs(px) + abs(py)) <= distancemetric) || ((distancemetric == 1) && (abs(px) == 1) && (abs(py) == 1))) {          // Allow angle attacks
                 if (character->IsAlive()) {

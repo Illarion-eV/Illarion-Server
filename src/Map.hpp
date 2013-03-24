@@ -47,6 +47,9 @@ public:
     // \param sizey die Anzahl der Felder in Y-Richtung
     Map(unsigned short int sizex, unsigned short int sizey);
 
+    Map(const Map &) = delete;
+    Map &operator=(const Map &) = delete;
+
     //! Destruktor
     ~Map();
 

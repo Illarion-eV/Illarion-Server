@@ -34,14 +34,9 @@
 */
 class ByteBuffer {
 public:
-    /**
-    * standard constructor
-    */
     ByteBuffer();
-
-    /**
-    * standard destructor
-    */
+    ByteBuffer(const ByteBuffer &) = delete;
+    ByteBuffer &operator=(const ByteBuffer &) = delete;
     ~ByteBuffer();
 
     /**

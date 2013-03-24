@@ -1072,8 +1072,6 @@ bool Player::save() throw() {
             }
 
             // add depot to containerlist
-            std::map<uint32_t, Container *>::iterator it;
-
             for (const auto &depot : depotContents) {
                 containers.push_back(container_struct(depot.second, 0, depot.first));
             }
@@ -1131,8 +1129,8 @@ bool Player::save() throw() {
                 Container &currentContainer = *currentContainerStruct.container;
                 auto containedItems = currentContainer.getItems();
 
-                for (const auto &it : containedItems) {
-                    const Item &item = it.second;
+                for (const auto &slotAndItem : containedItems) {
+                    const Item &item = slotAndItem.second;
                     itemsQuery.addValue<int32_t>(itemsLineColumn, (int32_t)(++linenumber));
                     itemsQuery.addValue<int16_t>(itemsContainerColumn, (int16_t) currentContainerStruct.id);
                     itemsQuery.addValue<int32_t>(itemsDepotColumn, (int32_t) currentContainerStruct.depotid);
@@ -1140,18 +1138,18 @@ bool Player::save() throw() {
                     itemsQuery.addValue<uint16_t>(itemsWearColumn, item.getWear());
                     itemsQuery.addValue<uint16_t>(itemsNumberColumn, item.getNumber());
                     itemsQuery.addValue<uint16_t>(itemsQualColumn, item.getQuality());
-                    itemsQuery.addValue<TYPE_OF_CONTAINERSLOTS>(itemsSlotColumn, it.first);
+                    itemsQuery.addValue<TYPE_OF_CONTAINERSLOTS>(itemsSlotColumn, slotAndItem.first);
 
-                    for (auto it2 = item.getDataBegin(); it2 != item.getDataEnd(); ++it2) {
+                    for (auto it = item.getDataBegin(); it != item.getDataEnd(); ++it) {
                         dataQuery.addValue<int32_t>(dataLineColumn, (int32_t) linenumber);
-                        dataQuery.addValue<std::string>(dataKeyColumn, it2->first);
-                        dataQuery.addValue<std::string>(dataValueColumn, it2->second);
+                        dataQuery.addValue<std::string>(dataKeyColumn, it->first);
+                        dataQuery.addValue<std::string>(dataValueColumn, it->second);
                     }
 
                     // if it is a container, add it to the list of containers to save...
                     if (item.isContainer()) {
                         auto containedContainers = currentContainer.getContainers();
-                        auto iterat = containedContainers.find(it.first);
+                        auto iterat = containedContainers.find(slotAndItem.first);
 
                         if (iterat != containedContainers.end()) {
                             containers.push_back(container_struct(iterat->second, linenumber));
@@ -1341,14 +1339,12 @@ bool Player::load() throw() {
             }
         }
 
-        unsigned int tempdepot, tempincont, linenumber;
-        Container *tempc;
         unsigned int curdatalinenumber = 0;
 
         for (unsigned int tuple = 0; tuple < itemRows; ++tuple) {
-            tempincont = itemincontainer[tuple];
-            tempdepot = itemdepot[tuple];
-            linenumber = itemlinenumber[tuple];
+            unsigned int tempincont = itemincontainer[tuple];
+            unsigned int tempdepot = itemdepot[tuple];
+            unsigned int linenumber = itemlinenumber[tuple];
 
             Item tempi(itemid[tuple],
                        itemnumber[tuple],
@@ -1382,7 +1378,7 @@ bool Player::load() throw() {
             }
 
             if (tempi.isContainer()) {
-                tempc = new Container(tempi.getId());
+                Container *tempc = new Container(tempi.getId());
 
                 if (linenumber > MAX_BODY_ITEMS + MAX_BELT_SLOTS) {
                     if (!it->second->InsertContainer(tempi, tempc, itemcontainerslot[tuple])) {
@@ -2167,7 +2163,7 @@ void Player::sendFullMap() {
 void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
     if ((screenwidth == 0) && (screenheight == 0)) {
         // static view
-        int x = {},y = {},z,e,l;
+        int x = {}, y = {}, z;
         NewClientView::stripedirection dir = {};
         int length = MAP_DIMENSION + 1;
 
@@ -2222,8 +2218,8 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
         NewClientView *view = &(World::get()->clientview);
 
         for (z = - 2; z <= 2; ++z) {
-            e = (direction != lower && z > 0) ? z*3 : 0; // left, right and upper stripes moved up if z>0 to provide the client with info for detecting roofs
-            l = (dir == NewClientView::dir_down && z > 0) ? e : 0; // right and left stripes have to become longer then
+            int e = (direction != lower && z > 0) ? z*3 : 0; // left, right and upper stripes moved up if z>0 to provide the client with info for detecting roofs
+            int l = (dir == NewClientView::dir_down && z > 0) ? e : 0; // right and left stripes have to become longer then
 
             if (extraStripeForDiagonalMove) {
                 ++l;
@@ -2237,7 +2233,7 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
         }
     } else {
         // dynamic view
-        int x = {},y = {},z,e,l;
+        int x = {}, y = {}, z;
         NewClientView::stripedirection dir = {};
         int length = {};
 
@@ -2294,8 +2290,8 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
         NewClientView *view = &(World::get()->clientview);
 
         for (z = - 2; z <= 2; ++z) {
-            e = (direction != lower && z > 0) ? z*3 : 0; // left, right and upper stripes moved up if z>0 to provide the client with info for detecting roofs
-            l = (dir == NewClientView::dir_down && z > 0) ? e : 0; // right and left stripes have to become longer then
+            int e = (direction != lower && z > 0) ? z*3 : 0; // left, right and upper stripes moved up if z>0 to provide the client with info for detecting roofs
+            int l = (dir == NewClientView::dir_down && z > 0) ? e : 0; // right and left stripes have to become longer then
 
             if (extraStripeForDiagonalMove) {
                 ++l;

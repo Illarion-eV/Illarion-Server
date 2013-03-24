@@ -184,8 +184,6 @@ public:
         }
 
         if (tempPlayer) {
-            Character::SKILLMAP::const_iterator sIterator;
-
             for (const auto &skill : tempPlayer->skills) {
                 ServerCommandPointer cmd(new BBSendSkillTC(tempPlayer->getId(), skill.first, skill.second.major, skill.second.minor));
                 player->Connection->addCommand(cmd);

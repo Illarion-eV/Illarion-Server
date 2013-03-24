@@ -119,12 +119,11 @@ void *PlayerManager::loginLoop(PlayerManager *pmanager) {
         waittime.tv_sec = 0;
         waittime.tv_nsec = 100000000;
         pmanager->threadOk = true;
-        int curconn = 0;
         boost::shared_ptr<NetInterface> Connection;
 
         while (pmanager->running) {
             //loop must be steered by counter so we parse every connection only one time bevor we getting to the other loop
-            curconn = newplayers.non_block_size();
+            int curconn = newplayers.non_block_size();
 
             for (int i = 0; i < curconn; ++i) {
                 std::cout<<"read connection"<<std::endl;

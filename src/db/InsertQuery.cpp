@@ -65,18 +65,13 @@ Result InsertQuery::execute() {
     ss << "(";
     uint32_t columns = getColumnCount();
     bool firstDone = false;
-    std::vector<std::string *> *dataRow;;
 
-    std::vector<std::vector<std::string *> *>::iterator itr;
-
-    for (itr = dataStorage.begin(); itr < dataStorage.end(); ++itr) {
+    for (const auto &dataRow : dataStorage) {
         if (firstDone) {
             ss << "), (";
         } else {
             firstDone = true;
         }
-
-        dataRow = *itr;
 
         if (columns != dataRow->size()) {
             throw std::invalid_argument("Incorrect amount of data supplied.");

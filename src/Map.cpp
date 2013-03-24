@@ -334,8 +334,6 @@ bool Map::Load(const std::string &name, unsigned short int x_offs, unsigned shor
 
     Logger::info(LogFacility::World) << "Loading map " << name  << " for position: " << x_offs << " " << y_offs << Log::end;
 
-    std::string a, b, w, e;
-
     std::ifstream main_map { (name + "_map").c_str(), std::ios::binary | std::ios::in };
     std::ifstream main_item { (name + "_item").c_str(), std::ios::binary | std::ios::in };
     std::ifstream main_warp { (name + "_warp").c_str(), std::ios::binary | std::ios::in };

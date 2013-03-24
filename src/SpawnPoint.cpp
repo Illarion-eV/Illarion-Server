@@ -49,12 +49,10 @@ SpawnPoint::~SpawnPoint() {}
 
 //! add new Monstertyp to SpawnList...
 void SpawnPoint::addMonster(const TYPE_OF_CHARACTER_ID &typ, const short int &count) {
-    std::list<struct SpawnEntryStruct>::iterator it;
-
-    for (it = SpawnTypes.begin(); it != SpawnTypes.end(); ++it) {
-        if ((*it).typ == typ) {
+    for (auto &spawn : SpawnTypes) {
+        if (spawn.typ == typ) {
             // monster type already there... just raise max_count
-            (*it).max_count+=count;
+            spawn.max_count += count;
             return;
         }
     }
@@ -81,16 +79,14 @@ void SpawnPoint::spawn() {
             return;
         }
 
-        std::list<struct SpawnEntryStruct>::iterator it;
-
-        int num;
         Field *tempf;
         Monster *newmonster;
 
         // check all monstertyps...
-        for (it = SpawnTypes.begin(); it != SpawnTypes.end(); ++it) {
+        for (auto &spawn : SpawnTypes) {
             // less monster spawned than we need?
-            if ((num=(*it).max_count - (*it).akt_count) > 0) {
+            int num = spawn.max_count - spawn.akt_count;
+            if (num > 0) {
                 try {
                     // spawn some new baddies :)
                     if (!spawnall) {
@@ -107,11 +103,11 @@ void SpawnPoint::spawn() {
                         //std::cout<<"spawned new monster at pos: "<<tempPos.x<<" "<<tempPos.y<<" "<<tempPos.z<<std::endl;
                         //end of setting the new spawnpos
                         if (world->findEmptyCFieldNear(tempf, tempPos.x, tempPos.y, tempPos.z)) {
-                            newmonster = new Monster(it->typ, tempPos, this);
+                            newmonster = new Monster(spawn.typ, tempPos, this);
 #ifdef SpawnPoint_DEBUG
                             std::cout << "erschaffe Monster " << newmonster->name << " " << tempPos.x << " " << tempPos.y << " " << tempPos.z << std::endl;
 #endif
-                            (*it).akt_count++;
+                            spawn.akt_count++;
                             // Monster in die Liste der aktiven Monster einf�gen
                             world->newMonsters.push_back(newmonster);
                             tempf->SetPlayerOnField(true);
@@ -121,7 +117,7 @@ void SpawnPoint::spawn() {
                         }
                     }
                 } catch (Monster::unknownIDException &) {
-                    std::cerr << "couldn't create monster in SpawnPoint.cpp: " << it->typ << std::endl;
+                    std::cerr << "couldn't create monster in SpawnPoint.cpp: " << spawn.typ << std::endl;
                 }
             }
         }
@@ -131,11 +127,9 @@ void SpawnPoint::spawn() {
 }
 
 void SpawnPoint::dead(const TYPE_OF_CHARACTER_ID &typ) {
-    std::list<struct SpawnEntryStruct>::iterator it;
-
-    for (it = SpawnTypes.begin(); it != SpawnTypes.end(); ++it) {
-        if ((*it).typ == typ) {
-            (*it).akt_count--;
+    for (auto &spawn : SpawnTypes) {
+        if (spawn.typ == typ) {
+            spawn.akt_count--;
         }
     }
 }
@@ -153,10 +147,9 @@ bool SpawnPoint::load(const int &id) {
         if (!results.empty()) {
             SpawnTypes.clear();
 
-            for (Database::ResultConstIterator itr = results.begin();
-                 itr != results.end(); ++itr) {
-                addMonster((*itr)["spm_race"].as<TYPE_OF_CHARACTER_ID>(),
-                           (*itr)["spm_count"].as<int16_t>());
+            for (const auto &row : results) {
+                addMonster(row["spm_race"].as<TYPE_OF_CHARACTER_ID>(),
+                           row["spm_count"].as<int16_t>());
             }
         }
     } catch (std::exception &e) {

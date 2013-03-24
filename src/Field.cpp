@@ -24,12 +24,11 @@
 
 //#define Field_DEBUG
 
-Field::Field() {
+Field::Field() : warptarget{0, 0, 0} {
     tile = 0;
     music = 0;
     clientflags = 0;
     extraflags = 0;
-    warptarget = {0, 0, 0};
 }
 
 void Field::setTileId(unsigned short int id) {
