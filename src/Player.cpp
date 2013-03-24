@@ -2163,7 +2163,7 @@ void Player::sendFullMap() {
 void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
     if ((screenwidth == 0) && (screenheight == 0)) {
         // static view
-        int x = {}, y = {}, z;
+        int x = {}, y = {};
         NewClientView::stripedirection dir = {};
         int length = MAP_DIMENSION + 1;
 
@@ -2217,7 +2217,7 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
 
         NewClientView *view = &(World::get()->clientview);
 
-        for (z = - 2; z <= 2; ++z) {
+        for (int z = - 2; z <= 2; ++z) {
             int e = (direction != lower && z > 0) ? z*3 : 0; // left, right and upper stripes moved up if z>0 to provide the client with info for detecting roofs
             int l = (dir == NewClientView::dir_down && z > 0) ? e : 0; // right and left stripes have to become longer then
 
@@ -2233,7 +2233,7 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
         }
     } else {
         // dynamic view
-        int x = {}, y = {}, z;
+        int x = {}, y = {};
         NewClientView::stripedirection dir = {};
         int length = {};
 
@@ -2289,7 +2289,7 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
 
         NewClientView *view = &(World::get()->clientview);
 
-        for (z = - 2; z <= 2; ++z) {
+        for (int z = - 2; z <= 2; ++z) {
             int e = (direction != lower && z > 0) ? z*3 : 0; // left, right and upper stripes moved up if z>0 to provide the client with info for detecting roofs
             int l = (dir == NewClientView::dir_down && z > 0) ? e : 0; // right and left stripes have to become longer then
 
