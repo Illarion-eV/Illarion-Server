@@ -28,7 +28,7 @@ Item::Item(id_type id, number_type number, wear_type wear, quality_type quality,
     setData(&datamap);
 }
 
-Item::number_type Item::increaseNumberBy(Item::number_type count) {
+auto Item::increaseNumberBy(Item::number_type count) -> number_type {
     const auto &common = Data::CommonItems[id];
 
     if (common.isValid()) {
@@ -213,7 +213,7 @@ TYPE_OF_WORTH Item::getWorth() const {
     return 0;
 }
 
-Item::number_type Item::getMaxStack() const {
+auto Item::getMaxStack() const -> number_type {
     const auto &common = Data::CommonItems[id];;
 
     if (common.isValid()) {
@@ -221,6 +221,10 @@ Item::number_type Item::getMaxStack() const {
     }
 
     return 0;
+}
+
+bool Item::isStackable() const {
+    return getMaxStack() > 1;
 }
 
 bool Item::isPermanent() const {

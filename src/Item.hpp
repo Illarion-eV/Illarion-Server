@@ -288,6 +288,7 @@ public:
     TYPE_OF_WEIGHT getWeight() const;
     TYPE_OF_WORTH getWorth() const;
     number_type getMaxStack() const;
+    bool isStackable() const;
     bool isPermanent() const;
     void makePermanent();
 

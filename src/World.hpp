@@ -1277,11 +1277,6 @@ public:
     // \return true, falls ein Container gefunden wurde
     void lookIntoShowcaseContainer(Player *cp, uint8_t showcase, unsigned char pos);
 
-    //! Prft ob ein Item stackable ist oder nicht
-    //\param item das Item welches geprft werden soll
-    //\return true, falls das Item Stapelbar ist.
-    bool isStackable(Item item);
-
     //! ein Spieler schliesst einen Container in einem showcase
     // \param cp Player schliessender Spieler
     // \param showcase die Ansicht, in welcher der Inhalt des Container dargestellt werden soll

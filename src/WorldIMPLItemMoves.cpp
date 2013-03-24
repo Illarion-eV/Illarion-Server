@@ -34,15 +34,8 @@ static const std::string message_overweight_english { "You can't carry that much
 
 extern std::shared_ptr<LuaDepotScript>depotScript;
 
-//
-//   Constraints:
-//
-//   Immer wenn ein Item/Container in g_item/g_cont verschoben wird, muss die Variable tempWeight auf das Gesamtgewicht
-//   der bewegten Items gesetzt werden. Sind g_item/g_cont leer, dann ist auch tempWeight==0.
-//
-//   Das Gesamtgewicht aller Items eines Character (ohne die in g_item/g_cont) steht immer in sumWeight und muss entsprechend aktualisiert werden.
+// atomic functions //
 
-//  atomare Funktionen  //
 bool World::putItemOnInvPos(Character *cc, unsigned char pos) {
     if (pos == BACKPACK) {
         if (cc->characterItems[ BACKPACK ].getId() == 0) {
@@ -113,7 +106,7 @@ bool World::putItemOnInvPos(Character *cc, unsigned char pos) {
                     }
 
                     if (cc->characterItems[pos].getId() == 0) {
-                        if (!isStackable(g_item) && !g_item.isContainer()) {
+                        if (!g_item.isStackable() && !g_item.isContainer()) {
                             if (g_item.getNumber() > 1) {
                                 return false;
                             }
@@ -125,7 +118,7 @@ bool World::putItemOnInvPos(Character *cc, unsigned char pos) {
                         cc->updateAppearanceForAll(true);
                         return true;
                     } else {
-                        if (!isStackable(g_item) && !g_item.isContainer()) {
+                        if (!g_item.isStackable() && !g_item.isContainer()) {
                             return false;
                         }
 
@@ -204,7 +197,7 @@ bool World::putItemOnInvPos(Character *cc, unsigned char pos) {
         } else if (pos < MAX_BODY_ITEMS + MAX_BELT_SLOTS) {
             if (cc->characterItems[ pos ].getId() == 0) {
 
-                if (!isStackable(g_item) && !g_item.isContainer()) {
+                if (!g_item.isStackable() && !g_item.isContainer()) {
                     if (g_item.getNumber() > 1) {
                         return false;
                     }
@@ -216,7 +209,7 @@ bool World::putItemOnInvPos(Character *cc, unsigned char pos) {
                 return true;
             } else if (cc->characterItems[ pos ].getId() == g_item.getId()) {
 
-                if (!isStackable(g_item) && !g_item.isContainer()) {
+                if (!g_item.isStackable() && !g_item.isContainer()) {
                     return false;
                 }
 
@@ -239,8 +232,6 @@ bool World::putItemOnInvPos(Character *cc, unsigned char pos) {
 
     return false;
 }
-
-
 
 bool World::putItemOnInvPos(Player *cc, unsigned char pos) {
     if (putItemOnInvPos(dynamic_cast<Character *>(cc), pos)) {
@@ -284,7 +275,7 @@ bool World::takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_ty
                     g_item = cc->characterItems[ pos ];
                     g_cont = NULL;
 
-                    if (!isStackable(g_item) && !g_item.isContainer()) {
+                    if (!g_item.isStackable() && !g_item.isContainer()) {
                         if (g_item.getNumber() > 1 && count > 1) {
                             g_item.reset();
                             g_cont = NULL;
@@ -314,7 +305,7 @@ bool World::takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_ty
             g_item = cc->characterItems[ pos ];
             g_cont = NULL;
 
-            if (isStackable(g_item) && count > 1 && !g_item.isContainer()) {
+            if (g_item.isStackable() && count > 1 && !g_item.isContainer()) {
                 if (g_item.getNumber() > count) {
                     cc->characterItems[ pos ].setNumber(cc->characterItems[ pos ].getNumber() - count);
                     g_item.setNumber(count);
@@ -344,8 +335,6 @@ bool World::takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_ty
     return false;
 }
 
-
-
 bool World::takeItemFromInvPos(Player *cc, unsigned char pos, Item::number_type count) {
     if (pos == BACKPACK) {
         if (cc->characterItems[ BACKPACK ].getId() != 0) {
@@ -372,8 +361,6 @@ bool World::takeItemFromInvPos(Player *cc, unsigned char pos, Item::number_type 
     }
 }
 
-
-
 bool World::takeItemFromShowcase(Player *cc, uint8_t showcase, unsigned char pos, Item::number_type count) {
     Container *ps = cc->getShowcaseContainer(showcase);
 
@@ -396,9 +383,8 @@ bool World::takeItemFromShowcase(Player *cc, uint8_t showcase, unsigned char pos
 
 }
 
-
 bool World::putItemInShowcase(Player *cc, uint8_t showcase, TYPE_OF_CONTAINERSLOTS pos) {
-    if (!isStackable(g_item) && !g_item.isContainer()) {
+    if (!g_item.isStackable() && !g_item.isContainer()) {
         if (g_item.getNumber() > 1) {
             return false;
         }
@@ -455,8 +441,6 @@ bool World::putItemInShowcase(Player *cc, uint8_t showcase, TYPE_OF_CONTAINERSLO
 
 }
 
-
-
 bool World::takeItemFromMap(Character *cc, short int x, short int y, short int z) {
     Field *tempf;
 
@@ -469,7 +453,7 @@ bool World::takeItemFromMap(Character *cc, short int x, short int y, short int z
                 if (tempCommon.Weight < 30000 && !g_item.isPermanent()) {
                     tempf->TakeTopItem(g_item);
 
-                    if (!isStackable(g_item) && !g_item.isContainer()) {
+                    if (!g_item.isStackable() && !g_item.isContainer()) {
                         if (g_item.getNumber() > 1) {
                             g_item.reset();
                             g_cont = NULL;
@@ -548,7 +532,6 @@ bool World::takeItemFromMap(Character *cc, short int x, short int y, short int z
     return false;
 }
 
-
 bool World::putItemOnMap(Character *cc, short int x, short int y, short int z) {
     Field *tempf;
 
@@ -567,7 +550,7 @@ bool World::putItemOnMap(Character *cc, short int x, short int y, short int z) {
     }
 
     //stacking von Items verhindern
-    if (!isStackable(g_item) && !g_item.isContainer()) {
+    if (!g_item.isStackable() && !g_item.isContainer()) {
         if (g_item.getNumber() > 1) {
             return false;
         }
@@ -647,7 +630,6 @@ bool World::putItemOnMap(Character *cc, short int x, short int y, short int z) {
 
 }
 
-
 bool World::putItemAlwaysOnMap(Character *cc, short int x, short int y, short int z) {
     Field *tempf;
 
@@ -713,8 +695,6 @@ bool World::putItemAlwaysOnMap(Character *cc, short int x, short int y, short in
 
 }
 
-
-
 void World::checkField(Field *cfstart, short int x, short int y, short int z) {
     if (cfstart != NULL) {
         if (cfstart->HasSpecialItem()) {
@@ -741,8 +721,8 @@ void World::checkField(Field *cfstart, short int x, short int y, short int z) {
     }
 }
 
+// combined functions //
 
-///////// zusammengesetzte Funktionen  ///////////////
 void World::dropItemFromShowcaseOnMap(Player *cp, uint8_t showcase, unsigned char pos, short int xc, short int yc, short int zc, Item::number_type count) {
     if (count == 0) {
         return;
@@ -791,8 +771,6 @@ void World::dropItemFromShowcaseOnMap(Player *cp, uint8_t showcase, unsigned cha
         }
     }
 }
-
-
 
 void World::moveItemFromShowcaseToPlayer(Player *cp, uint8_t showcase, unsigned char pos, unsigned char cpos, Item::number_type count) {
     if (count == 0) {
@@ -859,8 +837,6 @@ void World::moveItemFromShowcaseToPlayer(Player *cp, uint8_t showcase, unsigned 
     }
 }
 
-
-
 void World::dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, short int xc, short int yc, short int zc, Item::number_type count) {
     if (count == 0) {
         return;
@@ -915,7 +891,6 @@ void World::dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, short int xc
 
     }
 }
-
 
 void World::moveItemBetweenBodyParts(Player *cp, unsigned char opos, unsigned char npos, Item::number_type count) {
     if (count == 0) {
@@ -972,8 +947,6 @@ void World::moveItemBetweenBodyParts(Player *cp, unsigned char opos, unsigned ch
     }
 }
 
-
-
 void World::moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, uint8_t showcase, unsigned char pos, Item::number_type count) {
     if (count == 0) {
         return;
@@ -1026,8 +999,6 @@ void World::moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, uint8
         }
     }
 }
-
-
 
 void World::moveItemFromMapIntoShowcase(Player *cp, char direction, uint8_t showcase, unsigned char pos, Item::number_type count) {
     if (count == 0) {
@@ -1117,8 +1088,6 @@ void World::moveItemFromMapIntoShowcase(Player *cp, char direction, uint8_t show
         }
     }
 }
-
-
 
 void World::moveItemFromMapToPlayer(Player *cp, char direction, unsigned char cpos, Item::number_type count) {
     if (count == 0) {
@@ -1213,7 +1182,6 @@ void World::moveItemFromMapToPlayer(Player *cp, char direction, unsigned char cp
     }
 }
 
-
 void World::moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char pos, uint8_t dest, unsigned char pos2, Item::number_type count) {
     if (count == 0) {
         return;
@@ -1275,7 +1243,6 @@ void World::moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char p
         }
     }
 }
-
 
 bool World::moveItem(Character *cc, unsigned char d, short int xc, short int yc, short int zc, Item::number_type count) {
     if (count == 0) {
@@ -1357,7 +1324,6 @@ bool World::moveItem(Character *cc, unsigned char d, short int xc, short int yc,
     return false;
 }
 
-
 void World::lookIntoShowcaseContainer(Player *cp, uint8_t showcase, unsigned char pos) {
     if (cp && cp->isShowcaseOpen(showcase)) {
         Container *top = cp->getShowcaseContainer(showcase);
@@ -1383,8 +1349,6 @@ void World::lookIntoShowcaseContainer(Player *cp, uint8_t showcase, unsigned cha
     }
 }
 
-
-
 bool World::lookIntoBackPack(Player *cp) {
     if (cp) {
         if ((cp->characterItems[ BACKPACK ].getId() != 0) && (cp->backPackContents != NULL)) {
@@ -1395,7 +1359,6 @@ bool World::lookIntoBackPack(Player *cp) {
 
     return false;
 }
-
 
 bool World::lookIntoContainerOnField(Player *cp, char direction) {
     if ((direction < 11) && (cp != NULL)) {
@@ -1443,14 +1406,11 @@ bool World::lookIntoContainerOnField(Player *cp, char direction) {
     return false;
 }
 
-
-
 void World::closeContainerInShowcase(Player *cp, uint8_t showcase) {
     if (cp) {
         cp->closeShowcase(showcase);
     }
 }
-
 
 void World::sendRemoveItemFromMapToAllVisibleCharacters(TYPE_OF_ITEM_ID id, short int xo, short int yo, short int zo, Field *cfp) {
     if (cfp) {
@@ -1460,7 +1420,6 @@ void World::sendRemoveItemFromMapToAllVisibleCharacters(TYPE_OF_ITEM_ID id, shor
         }
     }
 }
-
 
 void World::sendSwapItemOnMapToAllVisibleCharacter(TYPE_OF_ITEM_ID id, short int xn, short int yn, short int zn, Item &it, Field *cfp) {
     if (cfp) {
@@ -1479,7 +1438,6 @@ void World::sendPutItemOnMapToAllVisibleCharacters(short int xn, short int yn, s
         }
     }
 }
-
 
 void World::sendChangesOfContainerContentsCM(Container *cc, Container *moved) {
     if (cc && moved) {
@@ -1522,9 +1480,4 @@ void World::closeShowcaseIfNotInRange(Container *moved, short int x, short int y
             player->closeShowcase(moved);
         }
     }
-}
-
-bool World::isStackable(Item item) {
-    const auto &com = Data::CommonItems[item.getId()];
-    return com.MaxStack > 1;
 }
