@@ -415,30 +415,8 @@ public:
 
 
     bool findPlayersInSight(const position &pos, uint8_t range, std::vector<Player *> &ret, Character::face_to direction);
-
-
-    /**
-    * searches for a special character
-    * looks into all three vectors ( player, monster, npc ) for a character on the given field
-    * can be found in WorldIMPLTools.cpp
-    * @param posx the x coordinate of the field
-    * @param posy the y coordinate of the field
-    * @param posz the z coordinate of the field
-    * @return a pointer to a character, NULL if no character was found
-    * @todo has to be changed for only one charactervector
-    */
-    Character *findCharacterOnField(short int posx, short int posy, short int posz) const;
-
-    /**
-        * searches for a special player
-        * looks for a player on the given field
-        * can be found in WorldIMPLTools.cpp
-        * @param posx the x coordinate of the field
-        * @param posy the y coordinate of the field
-        * @param posz the z coordinate of the field
-        * @return a pointer to a player, NULL if no player was found
-        */
-    Player *findPlayerOnField(short int posx, short int posy, short int posz) const;
+    Character *findCharacterOnField(const position &pos) const;
+    Player *findPlayerOnField(const position &pos) const;
 
 
     /**
@@ -860,16 +838,10 @@ public:
     // \param sendSpin falls true, wird auch die Blickrichtung mit verschickt
     template<class T> void sendCharsInVector(const std::vector<T *> &vec, Player *cp, bool sendSpin);
 
-    //! sendet an den Spieler den Namen des obersten Item auf einem Feld
-    //  bzw. den Namen des Feldes
-    // \param cp der Spieler der benachrichtigt werden soll
-    // \param xo X-Abstand des Item zu cp
-    // \param yo Y-Abstand des Item zu cp
-    // \param zo Z-Abstand des Item zu cp
-    void lookAtMapItem(Player *cp, short int x, short int y, short int z);
+    void lookAtMapItem(Player *cp, const position &pos);
 
 private:
-    void lookAtTile(Player *cp, unsigned short int tile, short int x, short int y, short int z);
+    void lookAtTile(Player *cp, unsigned short int tile, const position &pos);
 
 public:
     //! sendet an den Spieler den Namen des Item an einer Position im showcase
@@ -883,31 +855,8 @@ public:
     // \param position die Position des Item im Inventory
     void lookAtInventoryItem(Player *cp, unsigned char position);
 
-    //! erzeugt fuer alle Spieler in der Naehe von xc,yc,zc einen Soundeffekt
-    // \param xc X-Koordinate des Mittelpunktes
-    // \param yc Y-Koordinate des Mittelpunktes
-    // \param zc Z-Koordinate der Ebene
-    // \param rn Entfernung Richtung Norden in der der Sound noch gehoert wird
-    // \param rs Entfernung Richtung Sden in der der Sound noch gehoert wird
-    // \param re Entfernung Richtung Osten in der der Sound noch gehoert wird
-    // \param rw Entfernung Richtung Westen in der der Sound noch gehoert wird
-    // \param ru Entfernung nach oben in der der Sound noch gehoert wird
-    // \param rd Entfernung nach unten in der der Sound noch gehoert wird
-    // \param sound ID fuer den Sound
-    void makeSoundForAllPlayersInRange(short int xc, short int yc, short int zc, int distancemetric, unsigned short int sound);
-
-    //! erzeugt fr alle Spieler in der Naehe von xc,yc,zc einen Grafikeffekt
-    // \param xc X-Koordinate des Mittelpunktes
-    // \param yc Y-Koordinate des Mittelpunktes
-    // \param zc Z-Koordinate der Ebene
-    // \param rn Entfernung Richtung Norden in der der Grafikeffekt noch gesehen wird
-    // \param rs Entfernung Richtung Sden in der der Grafikeffekt noch gesehen wird
-    // \param re Entfernung Richtung Osten in der der Grafikeffekt noch gesehen wird
-    // \param rw Entfernung Richtung Westen in der der Grafikeffekt noch gesehen wird
-    // \param ru Entfernung nach oben in der der Grafikeffekt noch gesehen wird
-    // \param rd Entfernung nach unten in der der Grafikeffekt noch gesehen wird
-    // \param gfx ID fuer den Sound
-    void makeGFXForAllPlayersInRange(short int xc, short int yc, short int zc, int distancemetric, unsigned short int gfx);
+    void makeSoundForAllPlayersInRange(const position &pos, int distancemetric, unsigned short int sound);
+    void makeGFXForAllPlayersInRange(const position &pos, int distancemetric, unsigned short int gfx);
 
     //! send a message to all chars near pos
     //! \param message what the char says
@@ -1067,218 +1016,39 @@ public:
 
     //////////// in WorldIMPLItemMoves.cpp ////////////////
 
-    //! wird von den takeItem* und putItem* -Funktionen als Zwischenablage genutzt
     Item g_item;
-
-    //! wird von den takeItem* und putItem* -Funktionen als Zwischenablage genutzt
     Container *g_cont;
 
-    //! nimmt ein Item von der Karte und speichert es in g_item und ggf. g_cont
-    // \param cc der Character der das Item anhebt
-    // \param x alte X-Koordinate des Item
-    // \param y alte Y-Koordinate des Item
-    // \param z alte Z-Koordinate des Item
-    // \return true falls erfolgreich, false sonst
-    bool takeItemFromMap(Character *cc, short int x, short int y, short int z);
-
-    //! wirft das Item aus g_item und ggf. g_cont auf Karte
-    // \param cc der Character der das Item wegwirft
-    // \param x neue X-Koordinate des Item
-    // \param y neue Y-Koordinate des Item
-    // \param z neue Z-Koordinate des Item
-    // \return true falls erfolgreich, false sonst
-    bool putItemOnMap(Character *cc, short int x, short int y, short int z);
-    bool putItemAlwaysOnMap(Character *cc, short int x, short int y, short int z);
-
-    //! nimmt ein Item aus dem Inventory von cc und speichert es in g_item und ggf. g_cont
-    // \param cc der Character von dem das Item genommen wird
-    // \param pos Position des Item im Inventory
-    // \param count Anzahl
-    // \return true falls erfolgreich, false sonst
+    bool takeItemFromMap(Character *cc, const position &itemPosition);
+    bool putItemOnMap(Character *cc, const position &itemPosition);
+    bool putItemAlwaysOnMap(Character *cc, const position &itemPosition);
     bool takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_type count);
-
-    //! legt das Item aus g_item und ggf. g_cont an eine Inventoryposition
-    // \param cc der Character der das Item bekommt
-    // \param pos Position des Item im Inventory
-    // \return true falls erfolgreich, false sonst
     bool putItemOnInvPos(Character *cc, unsigned char pos);
-
-    //! nimmt ein Item aus dem Inventory von cc und speichert es in g_item und ggf. g_cont
-    // und schickt ein Update an cc
-    // \param cc der Player von dem das Item genommen wird
-    // \param pos Position des Item im Inventory
-    // \param count Anzahl
-    // \return true falls erfolgreich, false sonst
     bool takeItemFromInvPos(Player *cc, unsigned char pos, Item::number_type count);
-
-    //! legt das Item aus g_item und ggf. g_cont an eine Inventoryposition
-    // und schickt ein Update an cc
-    // \param cc der Player der das Item bekommt
-    // \param pos Position des Item im Inventory
-    // \return true falls erfolgreich, false sonst
     bool putItemOnInvPos(Player *cc, unsigned char pos);
 
-    //! close showcases of this container for other player
     void closeShowcaseForOthers(Player *target, Container *moved);
+    void closeShowcaseIfNotInRange(Container *moved, const position &showcasePosition);
 
-    //! close showcases for container for everyone not in range
-    void closeShowcaseIfNotInRange(Container *moved, short int x, short int y, short int z);
-
-    //! nimmt ein Item aus einem Schaukaste von cc und speichert es in g_item und ggf. g_cont
-    // und schickt ein Update an cc
-    // \param cc der Player von dem das Item genommen wird
-    // \param showcase die Nummer das Schaukastens
-    // \param pos Position des Item im showcase
-    // \param count Anzahl
-    // \return true falls erfolgreich, false sonst
     bool takeItemFromShowcase(Player *cc, uint8_t showcase, unsigned char pos, Item::number_type count);
-
-    //! legt das Item aus g_item und ggf. g_cont in einen Schaukasten
-    // und schickt ein Update an cc
-    // \param cc der Player der das Item bekommt
-    // \param showcase die Nummer das Schaukastens
-    // \param die bevorzugte Position (um das Item mit einem auf der Position zusammenzufassen)
-    // \return true falls erfolgreich, false sonst
     bool putItemInShowcase(Player *cc, uint8_t showcase, TYPE_OF_CONTAINERSLOTS pos);
+    void checkField(Field *cfstart, const position &itemPosition);
 
-    //! berprft ein Feld auf besondere Item und WarpFelder und fhrt entsprechende Aktionen aus
-    // \param cfstart das zu berprfende Feld
-    // \param x die X-Koordinate von cfstart
-    // \param y die Y-Koordinate von cfstart
-    // \param z die Z-Koordinate von cfstart
-    void checkField(Field *cfstart, short int x, short int y, short int z);
-
-    //! verschiebt das oberste Item des Feldes,welches in der durch d angegebene Richtung vom cp aus gesehen liegt,
-    //  um das durch xo,yo,zo gegebene Offset
-    // \param cc Zeiger auf den Character der die Verschiebung durchfhrt
-    // \param d Richtung in der das Item liegt vom Player aus gesehen: 0->Norden bis 7->NO im Uhrzeigersinn, 8 nach oben, 9 nach unten
-    // \param xc X-Zielkoordinate
-    // \param yc Y-Zielkoordinate
-    // \param zc Z-Zielkoordinate
-    // \param count Anzahl
-    // \return true falls Verschiebung ausgefhrt werden konnte, false sonst
-    bool moveItem(Character *cc, unsigned char d, short int xc, short int yc, short int zc, Item::number_type count);
-
-    //! ein Spieler verschiebt ein Item von der Karte in ein showcase
-    // \param cp Player der verschiebt
-    // \param direction Richtung in der das Item relativ zum Spieler liegt
-    // \param showcase das showcase in welches das Item verschoben werden soll
-    // \param pos Zielposition
-    // \param count Anzahl
-    void moveItemFromMapIntoShowcase(Player *cp, char direction, uint8_t showcase, unsigned char pos, Item::number_type count);
-
-    //! ein Spieler verschiebt ein Item von der Karte an seine Koerper
-    // \param cp Player der verschiebt
-    // \param direction Richtung in der das Item relativ zum Spieler liegt
-    // \param cpos Position am Koerper an welche das Item verschoben werden soll
-    // \param count Anzahl
-    void moveItemFromMapToPlayer(Player *cp, char direction, unsigned char cpos, Item::number_type count);
-
-    //! ein Spieler verschiebt ein Item zwischen showcases
-    // \param cp Player der verschiebt
-    // \param source die Ansicht, aus welcher das Item verschoben wird
-    // \param pos die Position (Nummer) des Item welches verschoben wird
-    // \param dest die Ansicht, in welche das Item verschoben wird
-    // \param pos2 die Position auf welches das Item verschoben werden soll
-    // \parm count Anzahl
+    bool moveItem(Character *cc, direction dir, const position &newPosition, Item::number_type count);
+    void moveItemFromMapIntoShowcase(Player *cp, direction dir, uint8_t showcase, unsigned char pos, Item::number_type count);
+    void moveItemFromMapToPlayer(Player *cp, direction dir, unsigned char cpos, Item::number_type count);
     void moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char pos, uint8_t dest, unsigned char pos2, Item::number_type count);
-
-    //! wirft ein Item aus einem showcase auf die Karte
-    // \param cp Player der das Item wirft
-    // \param showcase die Ansicht, aus welcher das Item verschoben wird
-    // \param pos die Position (Nummer) des Item welches verschoben wird
-    // \param xc X-Koordinate der neuen Itemposition
-    // \param yc Y-Koordinate der neuen Itemposition
-    // \param zc Z-Koordinate der neuen Itemposition
-    // \parm count Anzahl
-    void dropItemFromShowcaseOnMap(Player *cp, uint8_t showcase, unsigned char pos, short int xc, short int yc, short int zc, Item::number_type count);
-
-    //! verschiebt ein Item aus einem showcase an den Koerper des Player
-    // \param cp Player der das Item verschiebt
-    // \param showcase die Ansicht, aus der das Item verschoben werden soll
-    // \param pos die Position des Item in der Ansicht
-    // \param cpos die Position am Koerper wohin das Item verschoben wird
-    // \param count Anzahl
+    void dropItemFromShowcaseOnMap(Player *cp, uint8_t showcase, unsigned char pos, const position &newPosition, Item::number_type count);
     void moveItemFromShowcaseToPlayer(Player *cp, uint8_t showcase, unsigned char pos, unsigned char cpos, Item::number_type count);
-
-    //! verschiebt ein Item von einem Koerperteil zu einem anderen
-    // \param cp Player der das Item verschiebt
-    // \param opos die Position des Item welches verschoben wird
-    // \param npos die neue Position des Item
-    // \parm count Anzahl
     void moveItemBetweenBodyParts(Player *cp, unsigned char opos, unsigned char npos, Item::number_type count);
-
-    //! wirft eines der Item vom Koerper des Player auf die Karte
-    // \param cp Player der das Item wirft
-    // \param cpos die Position des Item welches verschoben wird
-    // \param xc X-Koordinate der neuen Itemposition
-    // \param yc Y-Koordinate der neuen Itemposition
-    // \param zc Z-Koordinate der neuen Itemposition
-    // \param count Anza
-    void dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, short int xc, short int yc, short int zc, Item::number_type count);
-
-    //! ein Spieler verschiebt ein Item vom Koerper in ein showcase
-    // \param cp Player der verschiebt
-    // \param cpos die Position des Item welches verschoben wird
-    // \param showcase das showcase in welches das Item verschoben werden soll
-    // \param pos die Position auf welche das Item verschoben werden soll
-    // \param count Anzahl
+    void dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, const position &newPosition, Item::number_type count);
     void moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, uint8_t showcase, unsigned char pos, Item::number_type count);
-
-    //! schickt eine 'Item entfernt' - Meldung an alle Player im Sichtbereich der Koordinate xo,yo,zo
-    // \param id die Identifikationsnummer des durchfhrenden Player
-    // \param xo X-Koordinate der alten Position des verschonbenen Item
-    // \param yo Y-Koordinate der alten Position des verschonbenen Item
-    // \param zo Z-Koordinate der alten Position des verschonbenen Item
-    void sendRemoveItemFromMapToAllVisibleCharacters(TYPE_OF_ITEM_ID id, short int xo, short int yo, short int zo, Field *cfp);
-
-    //! schickt eine 'neues Item auf der Karte' - Meldung an alle Player im Sichtbereich der Koordinate xn,yn,zn
-    // \param xn X-Koordinate der Position des neuen Items
-    // \param yn Y-Koordinate der Position des neuen Items
-    // \param zn Z-Koordinate der Position des neuen Items
-    // \param it Item welches auf die Karte gelegt wird
-    void sendPutItemOnMapToAllVisibleCharacters(short int xn, short int yn, short int zn, Item &it, Field *cfp);
-
-    /**
-    *simulates a swap on a field (sends put and delete in fast time)
-    */
-    void sendSwapItemOnMapToAllVisibleCharacter(TYPE_OF_ITEM_ID id, short int xn, short int yn, short int zn, Item &it, Field *cfp);
-
-
-    //! benachrichtigt alle betroffenen Spieler von der Verschiebung des
-    // Container moved aus dem Container cc
-    // \param cc der Container dessen Inhalt sich aendert
-    // \param moved der Container der verschoben wird
+    
+    void sendRemoveItemFromMapToAllVisibleCharacters(const position &itemPosition);
+    void sendPutItemOnMapToAllVisibleCharacters(const position &itemPosition, const Item &it);
+    void sendSwapItemOnMapToAllVisibleCharacter(TYPE_OF_ITEM_ID id, const position &itemPosition, const Item &it);
     void sendChangesOfContainerContentsCM(Container *cc, Container *moved);
-
-    //! benachrichtigt alle betroffenen Spieler von der Aenderung des
-    // Inhaltes des Container cc
-    // \param cc der Container dessen Inhalt sich aendert
     void sendChangesOfContainerContentsIM(Container *cc);
-
-    //! ein Spieler schaut in einen Container auf einem Feld
-    // \param cp Player der sich den Inhalt ansieht
-    // \param direction die Richtung in der der Container relativ zum Spieler liegt
-    // \return true, falls ein Container gefunden wurde
-    bool lookIntoContainerOnField(Player *cp, char direction);
-
-    //! ein Spieler schaut in seinen Rucksack
-    // \param cp Player der sich den Inhalt ansieht
-    // \return true, falls ein Container gefunden wurde
-    bool lookIntoBackPack(Player *cp);
-
-    //deactivated, function is now in Player
-    //bool lookIntoDepot( Player* cp, uint8_t showcase );
-
-    //! ein Spieler schaut in einen Container in einem showcase
-    // \param cp Player der sich den Inhalt ansieht
-    // \param showcase die Ansicht, in welcher der Inhalt des Container dargestellt werden soll
-    // \param pos die Position des Container im Container
-    // \return true, falls ein Container gefunden wurde
-    void lookIntoShowcaseContainer(Player *cp, uint8_t showcase, unsigned char pos);
-
-    //! Array mit der Definition der Bewegung fr move
-    char moveSteps[ 11 ][ 3 ]; // TODO move this to a better location
 
     //////////////////////////////////////In WorldIMPLScriptHelp.cpp//////////////////////////////////////////
 
@@ -1337,7 +1107,7 @@ public:
     //param amount, der Wert um den die Qualitaet geaendert werden soll
     void changeQuality(ScriptItem item, short int amount);
 
-    virtual void itemInform(Character *user, ScriptItem item, ItemLookAt lookAt);
+    virtual void itemInform(Character *user, const ScriptItem &item, const ItemLookAt &lookAt);
 
     //Liefert den Namen eines Items mit einer bestimmten id zurck
     //\param itemid, id des items zu dem der Name geliefert werden soll

@@ -58,7 +58,7 @@ AbortQuestTC::AbortQuestTC(TYPE_OF_QUEST_ID id) : BasicServerCommand(SC_ABORTQUE
     addShortIntToBuffer(id);
 }
 
-InputDialogTC::InputDialogTC(InputDialog &inputDialog, unsigned int dialogId) : BasicServerCommand(SC_INPUTDIALOG_TC) {
+InputDialogTC::InputDialogTC(const InputDialog &inputDialog, unsigned int dialogId) : BasicServerCommand(SC_INPUTDIALOG_TC) {
     addStringToBuffer(inputDialog.getTitle());
     addStringToBuffer(inputDialog.getDescription());
     addUnsignedCharToBuffer(inputDialog.isMultiline() ? 1 : 0);
@@ -66,13 +66,13 @@ InputDialogTC::InputDialogTC(InputDialog &inputDialog, unsigned int dialogId) : 
     addIntToBuffer(dialogId);
 }
 
-MessageDialogTC::MessageDialogTC(MessageDialog &messageDialog, unsigned int dialogId) : BasicServerCommand(SC_MESSAGEDIALOG_TC) {
+MessageDialogTC::MessageDialogTC(const MessageDialog &messageDialog, unsigned int dialogId) : BasicServerCommand(SC_MESSAGEDIALOG_TC) {
     addStringToBuffer(messageDialog.getTitle());
     addStringToBuffer(messageDialog.getText());
     addIntToBuffer(dialogId);
 }
 
-MerchantDialogTC::MerchantDialogTC(MerchantDialog &merchantDialog, unsigned int dialogId) : BasicServerCommand(SC_MERCHANTDIALOG_TC) {
+MerchantDialogTC::MerchantDialogTC(const MerchantDialog &merchantDialog, unsigned int dialogId) : BasicServerCommand(SC_MERCHANTDIALOG_TC) {
     addStringToBuffer(merchantDialog.getTitle());
     MerchantDialog::index_type size = merchantDialog.getOffersSize();
     addUnsignedCharToBuffer(size);
@@ -106,7 +106,7 @@ MerchantDialogTC::MerchantDialogTC(MerchantDialog &merchantDialog, unsigned int 
     addIntToBuffer(dialogId);
 }
 
-SelectionDialogTC::SelectionDialogTC(SelectionDialog &selectionDialog, unsigned int dialogId) : BasicServerCommand(SC_SELECTIONDIALOG_TC) {
+SelectionDialogTC::SelectionDialogTC(const SelectionDialog &selectionDialog, unsigned int dialogId) : BasicServerCommand(SC_SELECTIONDIALOG_TC) {
     addStringToBuffer(selectionDialog.getTitle());
     addStringToBuffer(selectionDialog.getText());
     SelectionDialog::index_type size = selectionDialog.getOptionsSize();
@@ -120,7 +120,7 @@ SelectionDialogTC::SelectionDialogTC(SelectionDialog &selectionDialog, unsigned 
     addIntToBuffer(dialogId);
 }
 
-CraftingDialogTC::CraftingDialogTC(CraftingDialog &craftingDialog, unsigned int dialogId) : BasicServerCommand(SC_CRAFTINGDIALOG_TC) {
+CraftingDialogTC::CraftingDialogTC(const CraftingDialog &craftingDialog, unsigned int dialogId) : BasicServerCommand(SC_CRAFTINGDIALOG_TC) {
     addStringToBuffer(craftingDialog.getTitle());
     CraftingDialog::index_t numberOfGroups = craftingDialog.getGroupsSize();
     addUnsignedCharToBuffer(numberOfGroups);
@@ -175,11 +175,11 @@ CloseDialogTC::CloseDialogTC(unsigned int dialogId) : BasicServerCommand(SC_CLOS
     addIntToBuffer(dialogId);
 }
 
-ItemUpdate_TC::ItemUpdate_TC(position fieldpos, ITEMVECTOR &items) : BasicServerCommand(SC_ITEMUPDATE_TC) {
-    Logger::debug(LogFacility::World) << "sending new itemstack for pos(" << fieldpos.x << ", " << fieldpos.y << ", " << fieldpos.z << ")" << Log::end;
-    addShortIntToBuffer(fieldpos.x);
-    addShortIntToBuffer(fieldpos.y);
-    addShortIntToBuffer(fieldpos.z);
+ItemUpdate_TC::ItemUpdate_TC(const position &pos, const ITEMVECTOR &items) : BasicServerCommand(SC_ITEMUPDATE_TC) {
+    Logger::debug(LogFacility::World) << "sending new itemstack for pos " << pos << Log::end;
+    addShortIntToBuffer(pos.x);
+    addShortIntToBuffer(pos.y);
+    addShortIntToBuffer(pos.z);
     int16_t size = static_cast<unsigned char>(items.size());
 
     if (size > 255) {
@@ -201,36 +201,12 @@ ItemUpdate_TC::ItemUpdate_TC(position fieldpos, ITEMVECTOR &items) : BasicServer
     }
 }
 
-ItemUpdate_TC::ItemUpdate_TC(int16_t px, int16_t py, int16_t pz, ITEMVECTOR &items) : BasicServerCommand(SC_ITEMUPDATE_TC) {
-    addShortIntToBuffer(px);
-    addShortIntToBuffer(py);
-    addShortIntToBuffer(pz);
-    int16_t size = static_cast<unsigned char>(items.size());
-
-    if (size > 255) {
-        size = 255;
-    }
-
-    addUnsignedCharToBuffer(static_cast<uint8_t>(size));
-
-    for (const auto &item : items) {
-        //we added 255 items
-        if (size <= 0) {
-            break;
-        }
-
-        addShortIntToBuffer(item.getId());
-        addShortIntToBuffer(item.getNumber());
-        size--;
-    }
-}
-
-CharDescription::CharDescription(TYPE_OF_CHARACTER_ID id, std::string description) : BasicServerCommand(SC_LOOKATCHARRESULT_TC) {
+CharDescription::CharDescription(TYPE_OF_CHARACTER_ID id, const std::string &description) : BasicServerCommand(SC_LOOKATCHARRESULT_TC) {
     addIntToBuffer(id);
     addStringToBuffer(description);
 }
 
-AppearanceTC::AppearanceTC(Character *cc, Player *receivingPlayer) : BasicServerCommand(SC_APPEARANCE_TC) {
+AppearanceTC::AppearanceTC(Character *cc, const Player *receivingPlayer) : BasicServerCommand(SC_APPEARANCE_TC) {
     addIntToBuffer(cc->getId());
 
     if (cc->character == Character::player) {
@@ -334,10 +310,10 @@ LookAtShowCaseItemTC::LookAtShowCaseItemTC(unsigned char showcase, unsigned char
     addItemLookAt(this, lookAt);
 }
 
-LookAtMapItemTC::LookAtMapItemTC(short int x, short int y, short int z, const ItemLookAt &lookAt) : BasicServerCommand(SC_LOOKATMAPITEM_TC) {
-    addShortIntToBuffer(x);
-    addShortIntToBuffer(y);
-    addShortIntToBuffer(z);
+LookAtMapItemTC::LookAtMapItemTC(const position &pos, const ItemLookAt &lookAt) : BasicServerCommand(SC_LOOKATMAPITEM_TC) {
+    addShortIntToBuffer(pos.x);
+    addShortIntToBuffer(pos.y);
+    addShortIntToBuffer(pos.z);
     addItemLookAt(this, lookAt);
 }
 
@@ -356,17 +332,17 @@ LookAtCraftingDialogIngredientTC::LookAtCraftingDialogIngredientTC(unsigned int 
     addItemLookAt(this, lookAt);
 }
 
-LookAtTileTC::LookAtTileTC(short int x, short int y, short int z, const std::string &lookAt) : BasicServerCommand(SC_LOOKATTILE_TC) {
-    addShortIntToBuffer(x);
-    addShortIntToBuffer(y);
-    addShortIntToBuffer(z);
+LookAtTileTC::LookAtTileTC(const position &pos, const std::string &lookAt) : BasicServerCommand(SC_LOOKATTILE_TC) {
+    addShortIntToBuffer(pos.x);
+    addShortIntToBuffer(pos.y);
+    addShortIntToBuffer(pos.z);
     addStringToBuffer(lookAt);
 }
 
-ItemPutTC::ItemPutTC(short int x, short int y, short int z, Item &item) : BasicServerCommand(SC_ITEMPUT_TC) {
-    addShortIntToBuffer(x);
-    addShortIntToBuffer(y);
-    addShortIntToBuffer(z);
+ItemPutTC::ItemPutTC(const position &pos, const Item &item) : BasicServerCommand(SC_ITEMPUT_TC) {
+    addShortIntToBuffer(pos.x);
+    addShortIntToBuffer(pos.y);
+    addShortIntToBuffer(pos.z);
     addShortIntToBuffer(item.getId());
 
     if (item.isContainer()) {
@@ -376,7 +352,7 @@ ItemPutTC::ItemPutTC(short int x, short int y, short int z, Item &item) : BasicS
     }
 }
 
-ItemSwapTC::ItemSwapTC(position pos, unsigned short int id, Item &item) : BasicServerCommand(SC_MAPITEMSWAP) {
+ItemSwapTC::ItemSwapTC(const position &pos, unsigned short int id, const Item &item) : BasicServerCommand(SC_MAPITEMSWAP) {
     addShortIntToBuffer(pos.x);
     addShortIntToBuffer(pos.y);
     addShortIntToBuffer(pos.z);
@@ -390,24 +366,10 @@ ItemSwapTC::ItemSwapTC(position pos, unsigned short int id, Item &item) : BasicS
     }
 }
 
-ItemSwapTC::ItemSwapTC(short int x, short int y, short int z, unsigned short int id, Item &item) : BasicServerCommand(SC_MAPITEMSWAP) {
-    addShortIntToBuffer(x);
-    addShortIntToBuffer(y);
-    addShortIntToBuffer(z);
-    addShortIntToBuffer(id);
-    addShortIntToBuffer(item.getId());
-
-    if (item.isContainer()) {
-        addUnsignedCharToBuffer(1);
-    } else {
-        addShortIntToBuffer(item.getNumber());
-    }
-}
-
-ItemRemoveTC::ItemRemoveTC(short int x, short int y, short int z) : BasicServerCommand(SC_ITEMREMOVE_TC) {
-    addShortIntToBuffer(x);
-    addShortIntToBuffer(y);
-    addShortIntToBuffer(z);
+ItemRemoveTC::ItemRemoveTC(const position &pos) : BasicServerCommand(SC_ITEMREMOVE_TC) {
+    addShortIntToBuffer(pos.x);
+    addShortIntToBuffer(pos.y);
+    addShortIntToBuffer(pos.z);
 }
 
 AdminViewPlayersTC::AdminViewPlayersTC() : BasicServerCommand(SC_ADMINVIEWPLAYERS_TC) {
@@ -420,17 +382,17 @@ AdminViewPlayersTC::AdminViewPlayersTC() : BasicServerCommand(SC_ADMINVIEWPLAYER
     }
 }
 
-SoundTC::SoundTC(short int x, short int y, short int z, unsigned short int id) : BasicServerCommand(SC_SOUND_TC) {
-    addShortIntToBuffer(x);
-    addShortIntToBuffer(y);
-    addShortIntToBuffer(z);
+SoundTC::SoundTC(const position &pos, unsigned short int id) : BasicServerCommand(SC_SOUND_TC) {
+    addShortIntToBuffer(pos.x);
+    addShortIntToBuffer(pos.y);
+    addShortIntToBuffer(pos.z);
     addShortIntToBuffer(id);
 }
 
-GraphicEffectTC::GraphicEffectTC(short int x, short int y, short int z, unsigned short int id) : BasicServerCommand(SC_GRAPHICEFFECT_TC) {
-    addShortIntToBuffer(x);
-    addShortIntToBuffer(y);
-    addShortIntToBuffer(z);
+GraphicEffectTC::GraphicEffectTC(const position &pos, unsigned short int id) : BasicServerCommand(SC_GRAPHICEFFECT_TC) {
+    addShortIntToBuffer(pos.x);
+    addShortIntToBuffer(pos.y);
+    addShortIntToBuffer(pos.z);
     addShortIntToBuffer(id);
 }
 
@@ -455,7 +417,7 @@ UpdateShowCaseTC::UpdateShowCaseTC(unsigned char showcase, const TYPE_OF_CONTAIN
     }
 }
 
-MapStripeTC::MapStripeTC(position pos, NewClientView::stripedirection dir) : BasicServerCommand(SC_MAPSTRIPE_TC) {
+MapStripeTC::MapStripeTC(const position &pos, NewClientView::stripedirection dir) : BasicServerCommand(SC_MAPSTRIPE_TC) {
     addShortIntToBuffer(pos.x);
     addShortIntToBuffer(pos.y);
     addShortIntToBuffer(pos.z);
@@ -490,7 +452,7 @@ MapStripeTC::MapStripeTC(position pos, NewClientView::stripedirection dir) : Bas
 MapCompleteTC::MapCompleteTC() : BasicServerCommand(SC_MAPCOMPLETE_TC) {
 }
 
-MoveAckTC::MoveAckTC(TYPE_OF_CHARACTER_ID id, position pos, unsigned char mode, unsigned char waitpages) : BasicServerCommand(SC_MOVEACK_TC) {
+MoveAckTC::MoveAckTC(TYPE_OF_CHARACTER_ID id, const position &pos, unsigned char mode, unsigned char waitpages) : BasicServerCommand(SC_MOVEACK_TC) {
     addIntToBuffer(id);
     addShortIntToBuffer(pos.x);
     addShortIntToBuffer(pos.y);
@@ -499,33 +461,33 @@ MoveAckTC::MoveAckTC(TYPE_OF_CHARACTER_ID id, position pos, unsigned char mode, 
     addUnsignedCharToBuffer(waitpages);
 }
 
-IntroduceTC::IntroduceTC(TYPE_OF_CHARACTER_ID id, std::string name) : BasicServerCommand(SC_INTRODUCE_TC) {
+IntroduceTC::IntroduceTC(TYPE_OF_CHARACTER_ID id, const std::string &name) : BasicServerCommand(SC_INTRODUCE_TC) {
     addIntToBuffer(id);
     addStringToBuffer(name);
 }
 
-ShoutTC::ShoutTC(int16_t x, int16_t y, int16_t z, std::string text) : BasicServerCommand(SC_SHOUT_TC) {
-    addShortIntToBuffer(x);
-    addShortIntToBuffer(y);
-    addShortIntToBuffer(z);
+ShoutTC::ShoutTC(const position &pos, const std::string &text) : BasicServerCommand(SC_SHOUT_TC) {
+    addShortIntToBuffer(pos.x);
+    addShortIntToBuffer(pos.y);
+    addShortIntToBuffer(pos.z);
     addStringToBuffer(text);
 }
 
-WhisperTC::WhisperTC(int16_t x, int16_t y, int16_t z, std::string text) : BasicServerCommand(SC_WHISPER_TC) {
-    addShortIntToBuffer(x);
-    addShortIntToBuffer(y);
-    addShortIntToBuffer(z);
+WhisperTC::WhisperTC(const position &pos, const std::string &text) : BasicServerCommand(SC_WHISPER_TC) {
+    addShortIntToBuffer(pos.x);
+    addShortIntToBuffer(pos.y);
+    addShortIntToBuffer(pos.z);
     addStringToBuffer(text);
 }
 
-SayTC::SayTC(int16_t x, int16_t y, int16_t z, std::string text) : BasicServerCommand(SC_SAY_TC) {
-    addShortIntToBuffer(x);
-    addShortIntToBuffer(y);
-    addShortIntToBuffer(z);
+SayTC::SayTC(const position &pos, const std::string &text) : BasicServerCommand(SC_SAY_TC) {
+    addShortIntToBuffer(pos.x);
+    addShortIntToBuffer(pos.y);
+    addShortIntToBuffer(pos.z);
     addStringToBuffer(text);
 }
 
-InformTC::InformTC(Character::informType type, std::string text) : BasicServerCommand(SC_INFORM_TC) {
+InformTC::InformTC(Character::informType type, const std::string &text) : BasicServerCommand(SC_INFORM_TC) {
     addUnsignedCharToBuffer(type);
     addStringToBuffer(text);
 }
@@ -537,7 +499,7 @@ MusicTC::MusicTC(short int title) : BasicServerCommand(SC_MUSIC_TC) {
 MusicDefaultTC::MusicDefaultTC() : BasicServerCommand(SC_MUSICDEFAULT_TC) {
 }
 
-UpdateAttribTC::UpdateAttribTC(TYPE_OF_CHARACTER_ID id, std::string name, short int value) : BasicServerCommand(SC_UPDATEATTRIB_TC) {
+UpdateAttribTC::UpdateAttribTC(TYPE_OF_CHARACTER_ID id, const std::string &name, short int value) : BasicServerCommand(SC_UPDATEATTRIB_TC) {
     addIntToBuffer(id);
     addStringToBuffer(name);
     addShortIntToBuffer(value);
@@ -558,7 +520,7 @@ UpdateSkillTC::UpdateSkillTC(TYPE_OF_SKILL_ID skill, unsigned short int major, u
     addShortIntToBuffer(minor);
 }
 
-UpdateWeatherTC::UpdateWeatherTC(WeatherStruct weather) : BasicServerCommand(SC_UPDATEWEATHER_TC) {
+UpdateWeatherTC::UpdateWeatherTC(const WeatherStruct &weather) : BasicServerCommand(SC_UPDATEWEATHER_TC) {
     addUnsignedCharToBuffer(weather.cloud_density);
     addUnsignedCharToBuffer(weather.fog_density);
     addUnsignedCharToBuffer(weather.wind_dir);
@@ -567,17 +529,6 @@ UpdateWeatherTC::UpdateWeatherTC(WeatherStruct weather) : BasicServerCommand(SC_
     addUnsignedCharToBuffer(static_cast<unsigned char>(weather.per_type));
     addUnsignedCharToBuffer(weather.thunderstorm);
     addUnsignedCharToBuffer(weather.temperature);
-}
-
-UpdateWeatherTC::UpdateWeatherTC(uint8_t cd, uint8_t fd, uint8_t wd, uint8_t gs, uint8_t ps, uint8_t pt, uint8_t ts, uint8_t tp) : BasicServerCommand(SC_UPDATEWEATHER_TC) {
-    addUnsignedCharToBuffer(cd);
-    addUnsignedCharToBuffer(fd);
-    addUnsignedCharToBuffer(wd);
-    addUnsignedCharToBuffer(gs);
-    addUnsignedCharToBuffer(ps);
-    addUnsignedCharToBuffer(pt);
-    addUnsignedCharToBuffer(ts);
-    addUnsignedCharToBuffer(tp);
 }
 
 IdTC::IdTC(int id) : BasicServerCommand(SC_ID_TC) {
@@ -590,16 +541,10 @@ UpdateInventoryPosTC::UpdateInventoryPosTC(unsigned char pos, TYPE_OF_ITEM_ID id
     addShortIntToBuffer(number);
 }
 
-SetCoordinateTC::SetCoordinateTC(position pos) : BasicServerCommand(SC_SETCOORDINATE_TC) {
+SetCoordinateTC::SetCoordinateTC(const position &pos) : BasicServerCommand(SC_SETCOORDINATE_TC) {
     addShortIntToBuffer(pos.x);
     addShortIntToBuffer(pos.y);
     addShortIntToBuffer(pos.z);
-}
-
-SetCoordinateTC::SetCoordinateTC(short int x, short int y, short int z) : BasicServerCommand(SC_SETCOORDINATE_TC) {
-    addShortIntToBuffer(x);
-    addShortIntToBuffer(y);
-    addShortIntToBuffer(z);
 }
 
 PlayerSpinTC::PlayerSpinTC(unsigned char faceto, TYPE_OF_CHARACTER_ID id) : BasicServerCommand(SC_PLAYERSPIN_TC) {

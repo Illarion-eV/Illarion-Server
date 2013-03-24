@@ -18,7 +18,7 @@ public:
     }
 
     MOCK_METHOD2(getItemName, std::string(TYPE_OF_ITEM_ID itemid, uint8_t language));
-    MOCK_METHOD3(itemInform, void(Character *user, ScriptItem item, ItemLookAt lookAt));
+    MOCK_METHOD3(itemInform, void(Character *user, const ScriptItem &item, const ItemLookAt &lookAt));
 };
 
 using ::testing::Return;

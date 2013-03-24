@@ -25,7 +25,6 @@
 #include "script/LuaLookAtPlayerScript.hpp"
 #include "script/LuaLookAtItemScript.hpp"
 #include "script/LuaPlayerDeathScript.hpp"
-#include "script/LuaDepotScript.hpp"
 #include "data/MonsterTable.hpp"
 #include "data/ScheduledScriptsTable.hpp"
 //We need this for the standard Fighting Script.
@@ -37,6 +36,7 @@
 #include "netinterface/NetInterface.hpp"
 #include "script/LuaLoginScript.hpp"
 #include "script/LuaLogoutScript.hpp"
+#include "script/LuaDepotScript.hpp"
 #include "PlayerManager.hpp"
 #include "Logger.hpp"
 #include "data/QuestNodeTable.hpp"
@@ -47,11 +47,10 @@
 extern std::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
 extern std::shared_ptr<LuaLookAtItemScript>lookAtItemScript;
 extern std::shared_ptr<LuaPlayerDeathScript>playerDeathScript;
-extern std::shared_ptr<LuaDepotScript>depotScript;
 extern std::shared_ptr<LuaLoginScript>loginScript;
 extern std::shared_ptr<LuaLogoutScript>logoutScript;
 extern std::shared_ptr<LuaLearnScript>learnScript;
-
+extern std::shared_ptr<LuaDepotScript>depotScript;
 
 void set_spawn_command(World *, Player *, const std::string &);
 void create_area_command(World *, Player *, const std::string &);
@@ -369,7 +368,7 @@ void World::makeVisible(Player *cp) {
 
     Logger::info(LogFacility::Admin) << cp->to_string() << " becomes visible" << Log::end;
 
-    for (const auto &player : Players.findAllCharactersInScreen(cp->pos.x, cp->pos.y, cp->pos.z)) {
+    for (const auto &player : Players.findAllCharactersInScreen(cp->pos)) {
         if (cp != player) {
             ServerCommandPointer cmd(new MoveAckTC(cp->getId(), cp->pos, PUSH, 0));
             player->Connection->addCommand(cmd);
@@ -413,7 +412,7 @@ void World::ForceIntroduceAll(Player *cp) {
         return;
     }
 
-    for (const auto &player : Players.findAllCharactersInRangeOf(cp->pos.x, cp->pos.y, cp->pos.z, cp->getScreenRange())) {
+    for (const auto &player : Players.findAllCharactersInRangeOf(cp->pos, cp->getScreenRange())) {
         if (cp != player) {
             forceIntroducePlayer(player, cp);
         }
@@ -876,7 +875,7 @@ void World::what_command(Player *cp) {
     cp->inform("Facing:");
     std::stringstream message;
 
-    message << "- Position (" << front.x << ", " << front.y << ", " << front.z << ")";
+    message << "- Position " << front;
     cp->inform(message.str());
     Field *tempf;
 
@@ -913,7 +912,7 @@ void World::what_command(Player *cp) {
             cp->inform(message.str());
         }
 
-        Character *character = findCharacterOnField(front.x, front.y, front.z);
+        Character *character = findCharacterOnField(front);
 
         if (character != 0) {
             message.str("");

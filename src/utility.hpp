@@ -16,6 +16,14 @@
 //  You should have received a copy of the GNU General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
+#ifndef _UTILITY_HPP_
+#define _UTILITY_HPP_
+
+#include "types.hpp"
 
 extern bool mypred(char c1, char c2);
 extern bool comparestrings_nocase(const std::string &s1, const std::string &s2);
+extern direction to_direction(uint8_t dir);
+
+#endif
+

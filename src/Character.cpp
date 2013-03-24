@@ -1251,9 +1251,7 @@ bool Character::move(direction dir, bool active) {
 
     // check if we can move to our target field
     position newpos = pos;
-    newpos.x += _world->moveSteps[ dir ][ 0 ];
-    newpos.y += _world->moveSteps[ dir ][ 1 ];
-    newpos.z += _world->moveSteps[ dir ][ 2 ];
+    newpos.move(dir);
 
     bool fieldfound = false;
     Field *cfnew, *cfold;
@@ -1618,7 +1616,7 @@ void Character::updateAppearanceForPlayer(Player *target, bool always) {
 
 void Character::updateAppearanceForAll(bool always) {
     if (!isinvisible) {
-        for (const auto &player : World::get()->Players.findAllCharactersInScreen(pos.x, pos.y, pos.z)) {
+        for (const auto &player : World::get()->Players.findAllCharactersInScreen(pos)) {
             ServerCommandPointer cmd(new AppearanceTC(this, player));
             player->sendCharAppearance(id, cmd, always);
         }
@@ -1637,7 +1635,7 @@ void Character::performAnimation(uint8_t animID) {
     if (!isinvisible) {
         ServerCommandPointer cmd(new AnimationTC(id, animID));
 
-        for (const auto &player : World::get()->Players.findAllCharactersInScreen(pos.x, pos.y, pos.z)) {
+        for (const auto &player : World::get()->Players.findAllCharactersInScreen(pos)) {
             player->Connection->addCommand(cmd);
         }
     }

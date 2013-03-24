@@ -56,9 +56,14 @@
 #include "dialog/MessageDialog.hpp"
 #include "dialog/MerchantDialog.hpp"
 #include "dialog/SelectionDialog.hpp"
+
+#include "script/LuaDepotScript.hpp"
+
 #include "Config.hpp"
 
 #include "make_unique.hpp"
+
+extern std::shared_ptr<LuaDepotScript>depotScript;
 
 //#define PLAYER_MOVE_DEBUG
 
@@ -372,6 +377,81 @@ void Player::closeAllShowcases() {
     showcases.clear();
 }
 
+void Player::lookIntoShowcaseContainer(uint8_t showcase, unsigned char pos) {
+    if (isShowcaseOpen(showcase)) {
+        Container *top = getShowcaseContainer(showcase);
+        bool allowedToOpenContainer = false;
+
+        for (const auto &depot : depotContents) {
+            if (depot.second == top) {
+                allowedToOpenContainer = true;
+                break;
+            }
+        }
+
+        if (top && allowedToOpenContainer) {
+            Container *tempc;
+            ScriptItem tempi;
+
+            if (top->viewItemNr(pos, tempi, tempc)) {
+                if (tempc) {
+                    openShowcase(tempc, isShowcaseInInventory(showcase));
+                }
+            }
+        }
+    }
+}
+
+bool Player::lookIntoBackPack() {
+    if ((characterItems[ BACKPACK ].getId() != 0) && backPackContents) {
+        openShowcase(backPackContents, true);
+        return true;
+    }
+
+    return false;
+}
+
+bool Player::lookIntoContainerOnField(direction dir) {
+    position containerPosition = pos;
+    containerPosition.move(dir);
+
+    Field *cfold;
+    WorldMap::map_t map;
+
+    if (World::get()->GetPToCFieldAt(cfold, containerPosition, map)) {
+        Item titem;
+
+        if (cfold->ViewTopItem(titem)) {
+            if (titem.getId() != DEPOTITEM && titem.isContainer()) {
+                MAP_POSITION opos(containerPosition);
+                auto it = map->maincontainers.find(opos);
+
+                if (it != map->maincontainers.end()) {
+                    auto iv = it->second.find(titem.getNumber());
+
+                    if (iv != it->second.end()) {
+                        openShowcase(iv->second, false);
+                        return true;
+                    }
+                }
+            } else {
+                if (titem.getId() == DEPOTITEM) {
+                    if (depotScript && depotScript->existsEntrypoint("onOpenDepot")) {
+                        if (depotScript->onOpenDepot(this, titem)) {
+                            openDepot(titem.getDepot());
+                        }
+                    } else {
+                        openDepot(titem.getDepot());
+                    }
+                } else {
+
+                }
+            }
+        }
+    }
+
+    return false;
+}
 
 void Player::sendCharacters() {
     _world->sendAllVisibleCharactersToPlayer(this, true);
@@ -1483,7 +1563,7 @@ unsigned short int Player::increaseSkill(TYPE_OF_SKILL_ID skill, short int amoun
 }
 
 void Player::receiveText(talk_type tt, const std::string &message, Character *cc) {
-    ServerCommandPointer cmd(new SayTC(cc->pos.x, cc->pos.y, cc->pos.z, message));
+    ServerCommandPointer cmd(new SayTC(cc->pos, message));
 
     switch (tt) {
     case tt_say:
@@ -1491,12 +1571,12 @@ void Player::receiveText(talk_type tt, const std::string &message, Character *cc
         break;
 
     case tt_whisper:
-        cmd.reset(new WhisperTC(cc->pos.x, cc->pos.y, cc->pos.z, message));
+        cmd.reset(new WhisperTC(cc->pos, message));
         Connection->addCommand(cmd);
         break;
 
     case tt_yell:
-        cmd.reset(new ShoutTC(cc->pos.x, cc->pos.y, cc->pos.z, message));
+        cmd.reset(new ShoutTC(cc->pos, message));
         Connection->addCommand(cmd);
         break;
     }
@@ -1672,9 +1752,7 @@ bool Player::move(direction dir, uint8_t mode) {
         newpos = pos;
         oldpos = pos;
 
-        newpos.x += _world->moveSteps[ dir ][ 0 ];
-        newpos.y += _world->moveSteps[ dir ][ 1 ];
-        newpos.z += _world->moveSteps[ dir ][ 2 ];
+        newpos.move(dir);
 
         Field *cfold = nullptr;
         Field *cfnew = nullptr;
@@ -2356,8 +2434,7 @@ void Player::sendStepStripes(direction dir) {
         sendDirStripe(left, false);
         break;
 
-    case (dir_up):
-    case (dir_down):
+    default:
         break;
     }
 }

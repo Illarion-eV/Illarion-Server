@@ -17,6 +17,9 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
+#ifndef _PLAYERMANAGER_HPP_
+#define _PLAYERMANAGER_HPP_
+
 #include "InitialConnection.hpp"
 #include <pthread.h>
 #include "tvector.hpp"
@@ -109,3 +112,6 @@ private:
 
 
 };
+
+#endif
+

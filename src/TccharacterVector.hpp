@@ -24,85 +24,23 @@
 #include <vector>
 #include "utility.hpp"
 
-//! eine std::vector-Template-Klasse für Character-Objekte
-// Die Klasse erweitert die Funktionalität von std::vector um
-// ccharacter - spezifische Suchfunktionen
 template < class _Tp >
 class ccharactervector : public std::vector < _Tp > {
 public:
-    //! sucht in dem std::vector nach dem Character mit Namen n
-    // \param n der Name des Character
-    // \return _Tp Zeiger auf den gefunden Character, nullptr falls nicht gefunden
-    _Tp find(const std::string &n) const;
-
-    //! sucht in dem std::vector nach dem Character mit der ID id
-    // \param id die id des Character
-    // \return _Tp Zeiger auf den gefunden Character, nullptr falls nicht gefunden
+    _Tp find(const std::string &name) const;
     _Tp findID(TYPE_OF_CHARACTER_ID id) const;
+    _Tp find(const position &pos) const;
+    bool find(const position &pos, _Tp &ret) const;
+    
+    bool remove(const position &pos);
 
-    //! sucht in dem std::vector nach dem Character mit den Koordinaten xc,yc,zc
-    // \param xc X-Koordinate des gesuchten Character
-    // \param xc Y-Koordinate des gesuchten Character
-    // \param xc Z-Koordinate des gesuchten Character
-    // \return _Tp Zeiger auf den gefunden Character, nullptr falls nicht gefunden
-    _Tp find(short int xc, short int yc, short int zc) const;
-
-    //! sucht in dem std::vector nach dem Character mit den Koordinaten xc,yc,zc
-    // \param xc X-Koordinate des gesuchten Character
-    // \param xc Y-Koordinate des gesuchten Character
-    // \param xc Z-Koordinate des gesuchten Character
-    // \param ret Zeiger auf den gefunden Character
-    // \return true falls ein Character gefunden wurde, false sonst
-    bool find(short int xc, short int yc, short int zc, _Tp &ret) const;
-
-    //! löscht in dem std::vector den Character mit den Koordinaten xc,yc,zc
-    // \param xc X-Koordinate des gesuchten Character
-    // \param xc Y-Koordinate des gesuchten Character
-    // \param xc Z-Koordinate des gesuchten Character
-    // \return true falls ein Character gelöscht wurde, false sonst
-    bool remove(short int xc, short int yc, short int zc);
-
-    //! sucht in dem std::vector nach dem Character mit der Id id
-    // \param id die ID des gesuchten Character
-    // \param newIt falls erfolgreich der Iterator auf den Character mit der ID id
-    // \return true falls der Character gefunden wurde, false sonst
     bool getIterator(TYPE_OF_CHARACTER_ID id, typename ccharactervector::iterator &newIt);
 
-    //! sucht in dem std::vector nach Character mit Koordinaten in der Nähe von (xc,yc,zc)
-    // \param rnorth maximaler Abstand der Character nach Norden
-    // \param rsouth maximaler Abstand der Character nach Süden
-    // \param reast maximaler Abstand der Character nach Osten
-    // \param rwest maximaler Abstand der Character nach Westen
-    // \param rup maximaler Abstand der Character nach oben
-    // \param rdown maximaler Abstand der Character nach unten
-    // \return std::vector<_Tp> Vektor mit allen Character mit Koordinate (x,y,z) für die gilt:
-    // (zc-rup <= z <= zc+down) und (xc-rwest <= x <= xc+reast) und (yc-rnorth <= y <= yc+rwest)
-    std::vector < _Tp > findAllCharactersInRangeOf(short int xc, short int yc, short int zc, int distancemetric) const;
-    std::vector < _Tp > findAllCharactersInMaxRangeOf(short int xc, short int yc, short int zc, int distancemetric) const;
-
-    std::vector < _Tp > findAllCharactersInScreen(short int xc, short int yc, short int zc) const;
-
-    //! sucht in dem std::vector nach lebenden Character mit Koordinaten in der Nähe von (xc,yc,zc)
-    // \param rnorth maximaler Abstand der Character nach Norden
-    // \param rsouth maximaler Abstand der Character nach Süden
-    // \param reast maximaler Abstand der Character nach Osten
-    // \param rwest maximaler Abstand der Character nach Westen
-    // \param rup maximaler Abstand der Character nach oben
-    // \param rdown maximaler Abstand der Character nach unten
-    // \return std::vector<_Tp> Vektor mit allen Character mit Koordinate (x,y,z) für die gilt:
-    // (zc-rup <= z <= zc+down) und (xc-rwest <= x <= xc+reast) und (yc-rnorth <= y <= yc+rwest)
-    std::vector < _Tp > findAllAliveCharactersInRangeOf(short int xc, short int yc, short int zc, int distancemetric) const;
-
-    /**
-    * looks in the vector for all characters which are alive and coordinates in the near of the given coordinates
-    * but only at the same map ( z = z )
-    */
-    std::vector < _Tp > findAllAliveCharactersInRangeOfOnSameMap(short int xc, short int yc, short int zc, int distancemetric) const;
-
-    //! sucht in dem std::vector nach Character mit X-Koordinaten für die gilt startx <= x <= endx
-    // \param startx kleinste X-Koordinate für akzeptierte Character
-    // \param endx größte X-Koordinate für akzeptierte Character
-    // \return true falls mindestens ein Character gefunden wurde
+    std::vector < _Tp > findAllCharactersInRangeOf(const position &pos, int distancemetric) const;
+    std::vector < _Tp > findAllCharactersInMaxRangeOf(const position &pos, int distancemetric) const;
+    std::vector < _Tp > findAllCharactersInScreen(const position &pos) const;
+    std::vector < _Tp > findAllAliveCharactersInRangeOf(const position &pos, int distancemetric) const;
+    std::vector < _Tp > findAllAliveCharactersInRangeOfOnSameMap(const position &pos, int distancemetric) const;
     bool findAllCharactersWithXInRangeOf(short int startx, short int endx, std::vector < _Tp > &ret) const;
 
 };
@@ -130,14 +68,10 @@ template < class _Tp > _Tp ccharactervector < _Tp > ::findID(TYPE_OF_CHARACTER_I
 }
 
 
-template < class _Tp > _Tp ccharactervector < _Tp > ::find(short int xc, short int yc, short int zc) const {
+template < class _Tp > _Tp ccharactervector < _Tp > ::find(const position &pos) const {
     for (const auto &character : *this) {
-        if (character->pos.x == xc) {
-            if (character->pos.y == yc) {
-                if (character->pos.z == zc) {
-                    return character;
-                }
-            }
+        if (character->pos == pos) {
+            return character;
         }
     }
 
@@ -145,15 +79,11 @@ template < class _Tp > _Tp ccharactervector < _Tp > ::find(short int xc, short i
 }
 
 
-template < class _Tp > bool ccharactervector < _Tp > ::find(short int xc, short int yc, short int zc, _Tp &ret) const {
+template < class _Tp > bool ccharactervector < _Tp > ::find(const position &pos, _Tp &ret) const {
     for (const auto &character : *this) {
-        if (character->pos.x == xc) {
-            if (character->pos.y == yc) {
-                if (character->pos.z == zc) {
-                    ret = character;
-                    return true;
-                }
-            }
+        if (character->pos == pos) {
+            ret = character;
+            return true;
         }
     }
 
@@ -161,20 +91,15 @@ template < class _Tp > bool ccharactervector < _Tp > ::find(short int xc, short 
 }
 
 
-template < class _Tp > bool ccharactervector < _Tp > ::remove(short int xc, short int yc, short int zc) {
+template < class _Tp > bool ccharactervector < _Tp > ::remove(const position &pos) {
     for (auto thisIterator = this->begin(); thisIterator < this->end(); ++thisIterator) {
-        if ((*thisIterator)->pos.x == xc) {
-            if ((*thisIterator)->pos.y == yc) {
-                if ((*thisIterator)->pos.z == zc) {
-                    erase(thisIterator);
-                    return true;
-                }
-            }
+        if ((*thisIterator)->pos == pos) {
+            erase(thisIterator);
+            return true;
         }
     }
 
     return false;
-
 }
 
 
@@ -191,17 +116,17 @@ template < class _Tp > bool ccharactervector < _Tp > ::getIterator(TYPE_OF_CHARA
 }
 
 
-template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllCharactersInRangeOf(short int xc, short int yc, short int zc, int distancemetric) const {
+template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllCharactersInRangeOf(const position &pos, int distancemetric) const {
     std::vector < _Tp > temp;
 
     for (const auto &character : *this) {
-        short int pz = character->pos.z - zc;
+        short int dz = character->pos.z - pos.z;
 
-        if ((-RANGEDOWN <= pz) && (pz <= RANGEUP)) {
-            short int px = character->pos.x - xc;
-            short int py = character->pos.y - yc;
+        if ((-RANGEDOWN <= dz) && (dz <= RANGEUP)) {
+            short int dx = character->pos.x - pos.x;
+            short int dy = character->pos.y - pos.y;
 
-            if ((abs(px) + abs(py)) <= distancemetric) {
+            if ((abs(dx) + abs(dy)) <= distancemetric) {
                 temp.push_back(character);
             }
         }
@@ -211,17 +136,17 @@ template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllCha
 }
 
 
-template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllCharactersInScreen(short int xc, short int yc, short int zc) const {
+template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllCharactersInScreen(const position &pos) const {
     std::vector < _Tp > temp;
 
     for (const auto &character : *this) {
-        short int pz = character->pos.z - zc;
+        short int dz = character->pos.z - pos.z;
 
-        if ((-RANGEDOWN <= pz) && (pz <= RANGEUP)) {
-            short int px = character->pos.x - xc;
-            short int py = character->pos.y - yc;
+        if ((-RANGEDOWN <= dz) && (dz <= RANGEUP)) {
+            short int dx = character->pos.x - pos.x;
+            short int dy = character->pos.y - pos.y;
 
-            if ((abs(px) + abs(py)) <= character->getScreenRange()) {
+            if ((abs(dx) + abs(dy)) <= character->getScreenRange()) {
                 temp.push_back(character);
             }
         }
@@ -231,17 +156,17 @@ template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllCha
 }
 
 
-template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllCharactersInMaxRangeOf(short int xc, short int yc, short int zc, int distancemetric) const {
+template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllCharactersInMaxRangeOf(const position &pos, int distancemetric) const {
     std::vector < _Tp > temp;
 
     for (const auto &character : *this) {
-        short int pz = character->pos.z - zc;
+        short int dz = character->pos.z - pos.z;
 
-        if ((-RANGEDOWN <= pz) && (pz <= RANGEUP)) {
-            short int px = character->pos.x - xc;
-            short int py = character->pos.y - yc;
+        if ((-RANGEDOWN <= dz) && (dz <= RANGEUP)) {
+            short int dx = character->pos.x - pos.x;
+            short int dy = character->pos.y - pos.y;
 
-            if ((abs(px) <= distancemetric) && (abs(py) <=distancemetric)) {
+            if ((abs(dx) <= distancemetric) && (abs(dy) <=distancemetric)) {
                 temp.push_back(character);
             }
         }
@@ -251,18 +176,18 @@ template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllCha
 }
 
 
-template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllAliveCharactersInRangeOf(short int xc, short int yc, short int zc, int distancemetric) const {
+template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllAliveCharactersInRangeOf(const position &pos, int distancemetric) const {
     std::vector < _Tp > temp;
 
     for (const auto &character : *this) {
-        short int pz = character->pos.z - zc;
+        short int dz = character->pos.z - pos.z;
 
-        if ((-RANGEDOWN <= pz) && (pz <= RANGEUP)) {
-            short int px = character->pos.x - xc;
-            short int py = character->pos.y - yc;
+        if ((-RANGEDOWN <= dz) && (dz <= RANGEUP)) {
+            short int dx = character->pos.x - pos.x;
+            short int dy = character->pos.y - pos.y;
 
-            if (((abs(px) + abs(py)) <= distancemetric) ||
-                ((distancemetric == 1) && (abs(px) == 1) && (abs(py) == 1))) {       // Allow angle attacks
+            if (((abs(dx) + abs(dy)) <= distancemetric) ||
+                ((distancemetric == 1) && (abs(dx) == 1) && (abs(dy) == 1))) {       // Allow angle attacks
                 if (character->IsAlive()) {
                     temp.push_back(character);
                 }
@@ -273,15 +198,15 @@ template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllAli
     return temp;
 }
 
-template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllAliveCharactersInRangeOfOnSameMap(short int xc, short int yc, short int zc, int distancemetric) const {
+template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllAliveCharactersInRangeOfOnSameMap(const position &pos, int distancemetric) const {
     std::vector < _Tp > temp;
 
     for (const auto &character : *this) {
-        if (character->pos.z == zc) {
-            short int px = character->pos.x - xc;
-            short int py = character->pos.y - yc;
+        if (character->pos.z == pos.z) {
+            short int dx = character->pos.x - pos.x;
+            short int dy = character->pos.y - pos.y;
 
-            if (((abs(px) + abs(py)) <= distancemetric) || ((distancemetric == 1) && (abs(px) == 1) && (abs(py) == 1))) {          // Allow angle attacks
+            if (((abs(dx) + abs(dy)) <= distancemetric) || ((distancemetric == 1) && (abs(dx) == 1) && (abs(dy) == 1))) {          // Allow angle attacks
                 if (character->IsAlive()) {
                     temp.push_back(character);
                 }

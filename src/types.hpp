@@ -76,7 +76,9 @@ enum direction {
     dir_west = 6,
     dir_northwest = 7,
     dir_up = 8,
-    dir_down = 9
+    dir_down = 9,
+    dir_none = 10
 };
 
 #endif
+

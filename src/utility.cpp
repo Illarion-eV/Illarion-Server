@@ -20,6 +20,7 @@
 #include <string>
 #include <algorithm>
 #include <cctype>
+#include "utility.hpp"
 
 bool mypred(char c1, char c2) {
     return tolower(c1) == tolower(c2);
@@ -34,3 +35,12 @@ bool comparestrings_nocase(const std::string &s1, const std::string &s2) {
     return equal(s1.begin(), s1.end(), s2.begin(), mypred);
 
 }
+
+direction to_direction(uint8_t dir) {
+    if (dir < 10) {
+        return static_cast<direction>(dir);
+    } else {
+        return dir_none;
+    }
+}
+

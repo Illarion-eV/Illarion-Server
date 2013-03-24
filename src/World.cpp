@@ -113,61 +113,6 @@ World::World(const std::string &dir, time_t starttime) {
 
     srand((unsigned) time(NULL));
 
-    // Bewegung nach Norden
-    moveSteps[ 0 ][ 0 ] = 0;      // x - Koordinate
-    moveSteps[ 0 ][ 1 ] = -1;     // y - Koordinate
-    moveSteps[ 0 ][ 2 ] = 0;      // z - Koordinate
-
-    // NO
-    moveSteps[ 1 ][ 0 ] = 1;
-    moveSteps[ 1 ][ 1 ] = -1;
-    moveSteps[ 1 ][ 2 ] = 0;
-
-    // O
-    moveSteps[ 2 ][ 0 ] = 1;
-    moveSteps[ 2 ][ 1 ] = 0;
-    moveSteps[ 2 ][ 2 ] = 0;
-
-    // SO
-    moveSteps[ 3 ][ 0 ] = 1;
-    moveSteps[ 3 ][ 1 ] = 1;
-    moveSteps[ 3 ][ 2 ] = 0;
-
-    // S
-    moveSteps[ 4 ][ 0 ] = 0;
-    moveSteps[ 4 ][ 1 ] = 1;
-    moveSteps[ 4 ][ 2 ] = 0;
-
-    // SW
-    moveSteps[ 5 ][ 0 ] = -1;
-    moveSteps[ 5 ][ 1 ] = 1;
-    moveSteps[ 5 ][ 2 ] = 0;
-
-    // W
-    moveSteps[ 6 ][ 0 ] = -1;
-    moveSteps[ 6 ][ 1 ] = 0;
-    moveSteps[ 6 ][ 2 ] = 0;
-
-    // NW
-    moveSteps[ 7 ][ 0 ] = -1;
-    moveSteps[ 7 ][ 1 ] = -1;
-    moveSteps[ 7 ][ 2 ] = 0;
-
-    // up
-    moveSteps[ 8 ][ 0 ] = 0;
-    moveSteps[ 8 ][ 1 ] = 0;
-    moveSteps[ 8 ][ 2 ] = 1;
-
-    // down
-    moveSteps[ 9 ][ 0 ] = 0;
-    moveSteps[ 9 ][ 1 ] = 0;
-    moveSteps[ 9 ][ 2 ] = -1;
-
-    // no move
-    moveSteps[ 10 ][ 0 ] = 0;
-    moveSteps[ 10 ][ 1 ] = 0;
-    moveSteps[ 10 ][ 2 ] = 0;
-
     unsigned int templi = starttime;
     char temparr[ 80 ];
     sprintf(temparr, "%u", templi);
@@ -504,9 +449,9 @@ bool World::load_from_editor(const std::string &filename) {
 
         // store the item in our map
         g_item = it;
-        g_cont = NULL;
+        g_cont = nullptr;
 
-        if (!putItemAlwaysOnMap(NULL, x, y, h_level)) {
+        if (!putItemAlwaysOnMap(nullptr, position(x, y, h_level))) {
             Logger::info(LogFacility::World) << "could not put item" << Log::end;
         }
 
@@ -781,7 +726,7 @@ void World::checkMonsters() {
                     }
 
                     //===============================================
-                    temp = Players.findAllAliveCharactersInRangeOf(monster.pos.x, monster.pos.y, monster.pos.z, range);
+                    temp = Players.findAllAliveCharactersInRangeOf(monster.pos, range);
                     bool has_attacked=false;
                     //If we have found players which can be attacked directly and the monster can attack
                     Player *foundP = 0;
@@ -824,7 +769,7 @@ void World::checkMonsters() {
                     }
 
                     if (!has_attacked) { //bewegen
-                        temp = Players.findAllAliveCharactersInRangeOf(monster.pos.x, monster.pos.y, monster.pos.z, 15);
+                        temp = Players.findAllAliveCharactersInRangeOf(monster.pos, 15);
 
                         bool makeRandomStep=true;
 
@@ -892,9 +837,7 @@ void World::checkMonsters() {
                                     }
 
                                     position newpos = monster.pos;
-                                    newpos.x += moveSteps[ dir ][ 0 ];
-                                    newpos.y += moveSteps[ dir ][ 1 ];
-                                    newpos.z += moveSteps[ dir ][ 2 ];
+                                    newpos.move(dir);
                                     yoffs = spawn->get_y() - newpos.y;
                                     xoffs = spawn->get_x() - newpos.x;
 
@@ -983,7 +926,7 @@ void World::checkMonsters() {
                     }
 
                     //===============================================
-                    temp = Players.findAllAliveCharactersInRangeOf(monster.pos.x, monster.pos.y, monster.pos.z, range);
+                    temp = Players.findAllAliveCharactersInRangeOf(monster.pos, range);
 
                     //If we have found players which can be attacked directly and the monster can attack
                     if (!temp.empty()) {
@@ -1002,7 +945,7 @@ void World::checkMonsters() {
                     }
 
                     //check if there is a player on sight
-                    temp = Players.findAllAliveCharactersInRangeOf(monster.pos.x, monster.pos.y, monster.pos.z, 15);
+                    temp = Players.findAllAliveCharactersInRangeOf(monster.pos, 15);
 
                     if (!temp.empty()) {
                         Player *foundP;

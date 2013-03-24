@@ -23,6 +23,7 @@
 
 #include <string>
 #include "types.hpp"
+#include "globals.hpp"
 #include "netinterface/BasicClientCommand.hpp"
 
 enum clientcommands {
@@ -172,7 +173,7 @@ class CastTS : public BasicClientCommand {
 private:
     unsigned char showcase;
     unsigned char pos;
-    short int xc,yc,zc;
+    position castPosition;
     unsigned char cid;
     unsigned long int spellId;
 
@@ -189,9 +190,7 @@ private:
     unsigned char useId;
     unsigned char showcase;
     unsigned char pos;
-    short int xc;
-    short int yc;
-    short int zc;
+    position usePosition;
 
 public:
     UseTS();
@@ -300,7 +299,7 @@ public:
 class DropItemFromInventoryOnMapTS : public BasicClientCommand {
 private:
     unsigned char pos;
-    short int xc,yc,zc;
+    position mapPosition;
     unsigned short count;
 
 public:
@@ -313,7 +312,7 @@ public:
 
 class MoveItemFromMapToPlayerTS : public BasicClientCommand {
 private:
-    unsigned char dir;
+    direction dir;
     unsigned char pos;
     unsigned short count;
 
@@ -327,7 +326,7 @@ public:
 
 class MoveItemFromMapIntoShowCaseTS : public BasicClientCommand {
 private:
-    unsigned char dir;
+    direction dir;
     unsigned char showcase;
     unsigned char pos;
     unsigned short count;
@@ -360,7 +359,7 @@ class DropItemFromShowCaseOnMapTS : public BasicClientCommand {
 private:
     unsigned char showcase;
     unsigned char pos;
-    short int xc,yc,zc;
+    position mapPosition;
     unsigned short count;
 
 public:
@@ -405,7 +404,7 @@ public:
 
 class LookIntoContainerOnFieldTS : public BasicClientCommand {
 private:
-    unsigned char direction;
+    direction dir;
 
 public:
     LookIntoContainerOnFieldTS();
@@ -492,7 +491,7 @@ public:
 
 class LookAtMapItemTS : public BasicClientCommand {
 private:
-    short int x, y, z;
+    position pos;
 
 public:
     LookAtMapItemTS();
@@ -530,9 +529,9 @@ public:
 
 class IMoverActionTS : public BasicClientCommand {
 private:
-    int16_t xc, yc, zc;
+    position pos;
     uint16_t count;
-    uint8_t direction;
+    direction dir;
 
 public:
     IMoverActionTS(uint8_t dir);

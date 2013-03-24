@@ -324,6 +324,9 @@ public:
     void closeOnMove();
     void closeAllShowcasesOfMapContainers();
     void closeAllShowcases();
+    void lookIntoShowcaseContainer(uint8_t showcase, unsigned char pos);
+    bool lookIntoBackPack();
+    bool lookIntoContainerOnField(direction dir);
 
     //�dert die Qualit� eines Items an einer bestimmten Stelle
     void changeQualityAt(unsigned char pos, short int amount);

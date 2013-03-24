@@ -298,9 +298,9 @@ void CastTS::decodeData() {
 
     switch (cid) {
     case UID_KOORD:
-        xc = static_cast<short int>(getShortIntFromBuffer());
-        yc = static_cast<short int>(getShortIntFromBuffer());
-        zc = static_cast<short int>(getShortIntFromBuffer());
+        castPosition.x = static_cast<short int>(getShortIntFromBuffer());
+        castPosition.y = static_cast<short int>(getShortIntFromBuffer());
+        castPosition.z = static_cast<short int>(getShortIntFromBuffer());
         break;
 
     case UID_SHOWC:
@@ -337,7 +337,7 @@ void CastTS::performAction(Player *player) {
         }
     }
 
-    Logger::info(LogFacility::Script) << player->to_string() << " can't cast the spell: " << spellId << " , flags: " << player->magic.flags[ player->magic.type ] << Log::end;
+    Logger::info(LogFacility::Script) << *player << " can't cast the spell: " << spellId << " , flags: " << player->magic.flags[ player->magic.type ] << Log::end;
 
     //Source des Castens zuweisen
     SouTar Source, Target;
@@ -347,20 +347,20 @@ void CastTS::performAction(Player *player) {
 
     switch (cid) {
     case UID_KOORD:
-        Logger::info(LogFacility::Script) << player->to_string() << " trys to cast on a coordinate pos(" << xc << "," << yc << "," << zc << ")" << Log::end;
+        Logger::info(LogFacility::Script) << *player << " trys to cast on a coordinate pos " << castPosition << Log::end;
 
         if (LuaMageScript) {
             Field *temp;
 
-            if (!World::get()->GetPToCFieldAt(temp, xc, yc, zc)) {
-                Logger::error(LogFacility::Script) << "cant find field for casting at pos(" << xc << "," << yc << "," << zc << ") !" << Log::end;
+            if (!World::get()->GetPToCFieldAt(temp, castPosition)) {
+                Logger::error(LogFacility::Script) << "cant find field for casting at pos " << castPosition << Log::end;
                 paramOK = false;
             } else {
                 // Feld gefunden
                 if (temp->IsPlayerOnField() || temp->IsMonsterOnField() || temp->IsNPCOnField()) {
-                    Character *tmpCharacter = World::get()->findCharacterOnField(xc, yc, zc);
+                    Character *tmpCharacter = World::get()->findCharacterOnField(castPosition);
 
-                    if (tmpCharacter != NULL) {
+                    if (tmpCharacter) {
                         //Nothing to do here
                     } else {
                         Logger::debug(LogFacility::Script) << "Character found at target field!" << Log::end;
@@ -395,26 +395,24 @@ void CastTS::performAction(Player *player) {
                         Logger::debug(LogFacility::Script) << "Item found at target field!" << Log::end;
 
                         if (LuaMageScript) {
-                            //Lua Script zuweisung
-                            Target.pos = position(xc, yc, zc); //Position des TargetItems
+                            Target.pos = castPosition;
                             Target.Type = LUA_ITEM;
                             Target.item = it;
                             Target.item.type = ScriptItem::it_field;
-                            Target.item.pos = position(xc, yc, zc); //Position des TargetItems
+                            Target.item.pos = castPosition;
                             Target.item.owner = player;
                         }
                     } else {
                         Logger::debug(LogFacility::Script) << "empty field!" << Log::end;
 
                         if (LuaMageScript) {
-                            //Lua Script zuweisung
-                            Target.pos = position(xc, yc, zc); //Position des TargetItems
+                            Target.pos = castPosition;
                             Target.Type = LUA_FIELD;
                         }
-                    } // Item oder leer ?
-                } // character ?
-            } // Feld vorhanden ?
-        } // skript != NULL ?
+                    }
+                }
+            }
+        }
         else {
             std::cerr<<"LuaMageScript false, paramOK = false!"<<std::endl;
             paramOK = false;
@@ -428,7 +426,7 @@ void CastTS::performAction(Player *player) {
         std::cout << "showcase: " << (int) showcase << " pos: " << (int) pos << std::endl;
 #endif
 
-        Logger::info(LogFacility::Script) << player->to_string() << " is casting in showcas: " << showcase << " pos " << pos << Log::end;
+        Logger::info(LogFacility::Script) << *player << " is casting in showcas: " << showcase << " pos " << pos << Log::end;
 
         if (LuaMageScript) {
             if (player->isShowcaseOpen(showcase)) {
@@ -449,12 +447,12 @@ void CastTS::performAction(Player *player) {
                         if (LuaMageScript) {
                             Target.Type = LUA_ITEM;
                             ps->viewItemNr(pos, Target.item, tempc);
-                            Target.item.pos = position(xc, yc, zc);
+                            Target.item.pos = castPosition;
                             Target.item.type = ScriptItem::it_container;
                             Target.item.itempos = pos;
                             Target.item.owner = player;
                             Target.item.inside = ps;
-                            Target.pos = position(xc, yc, zc);
+                            Target.pos = castPosition;
                         }
                     } else {
                         std::cerr<<"ps->viewItemNr false, paramOK = false!"<<std::endl;
@@ -683,7 +681,7 @@ void CastTS::performAction(Player *player) {
                 break;
             } //Ende Switch
 
-            //monitoringClientList->sendCommand( new SendActionTS( player->getId(), player->to_string, 2, msg));
+            //monitoringClientList->sendCommand( new SendActionTS( player->getId(), *player, 2, msg));
         } //ENde if player->IsAlive
 
         Logger::debug(LogFacility::Script) << "all succeeded" << Log::end;
@@ -703,9 +701,9 @@ void UseTS::decodeData() {
 
     switch (useId) {
     case UID_KOORD:
-        xc = getShortIntFromBuffer();
-        yc = getShortIntFromBuffer();
-        zc = getShortIntFromBuffer();
+        usePosition.x = getShortIntFromBuffer();
+        usePosition.y = getShortIntFromBuffer();
+        usePosition.z = getShortIntFromBuffer();
         break;
 
     case UID_SHOWC:
@@ -723,7 +721,7 @@ void UseTS::performAction(Player *player) {
     time(&(player->lastaction));
     player->ltAction->abortAction();
 
-    Logger::debug(LogFacility::Script) << player->to_string() << " uses something" << Log::end;
+    Logger::debug(LogFacility::Script) << *player << " uses something" << Log::end;
 
     bool paramOK = true;
 
@@ -740,20 +738,20 @@ void UseTS::performAction(Player *player) {
         Field *temp;
 
         Logger::debug(LogFacility::Script) << "UID_KOORD" << Log::end;
-        Logger::debug(LogFacility::Script) << "xc: " << static_cast<int>(xc) << " yc: " << static_cast<int>(yc) << " zc: " << static_cast<int>(zc) << Log::end;
+        Logger::debug(LogFacility::Script) << usePosition << Log::end;
 
-        if (!World::get()->GetPToCFieldAt(temp, xc, yc, zc)) {
+        if (!World::get()->GetPToCFieldAt(temp, usePosition)) {
             Logger::debug(LogFacility::Script) << "Use UID_KOORD field not found!" << Log::end;
-            Logger::debug(LogFacility::Script) << "Use UID_KOORD field not found at pos ( " << static_cast<int>(xc) << "," << static_cast<int>(yc) << "," << static_cast<int>(zc) << ")" << Log::end;
+            Logger::debug(LogFacility::Script) << "Use UID_KOORD field not found at pos " << usePosition << Log::end;
             paramOK = false;
         } else {
             // Feld gefunden
             //Prfen ob sich irgendeine art Char auf dem Feld befindet (Spaeter nur noch IsCharOnField vorerst noch alle Arten pruefen
             if (temp->IsPlayerOnField() || temp->IsNPCOnField() || temp->IsMonsterOnField()) {
                 Logger::debug(LogFacility::Script) << "Character on field found!" << Log::end;
-                Character *tmpCharacter = World::get()->findCharacterOnField(xc, yc, zc);
+                Character *tmpCharacter = World::get()->findCharacterOnField(usePosition);
 
-                if (tmpCharacter != NULL) {
+                if (tmpCharacter) {
                     if (tmpCharacter->character == Character::player) {
                         Logger::debug(LogFacility::Script) << "Character is a player!" << Log::end;
                     } else if (tmpCharacter->character == Character::npc) {
@@ -786,7 +784,7 @@ void UseTS::performAction(Player *player) {
                         }
                     }
                 } else {
-                    Logger::error(LogFacility::Script) << "Character on field (" << xc << "," << yc << "," << zc << ") not found!" << Log::end;
+                    Logger::error(LogFacility::Script) << "Character on field " << usePosition << " not found!" << Log::end;
                 }
             } else {
                 Logger::debug(LogFacility::Script) << "no character on field!" << Log::end;
@@ -800,10 +798,10 @@ void UseTS::performAction(Player *player) {
                     if (LuaScript) {
                         Source.Type = LUA_ITEM;
                         temp->ViewTopItem(Source.item);
-                        Source.item.pos = position(xc, yc, zc); //Position des SourceItems
-                        Source.item.type = ScriptItem::it_field; //Position des SourceItems
-                        Source.item.owner = player; //Owner des Items
-                        Source.pos = position(xc, yc, zc);
+                        Source.item.pos = usePosition;
+                        Source.item.type = ScriptItem::it_field;
+                        Source.item.owner = player;
+                        Source.pos = usePosition;
                     }
                 } else {
                     Logger::debug(LogFacility::Script) << "empty field!" << Log::end;
@@ -813,7 +811,7 @@ void UseTS::performAction(Player *player) {
                     if (script) {
                         LuaTileScript = script;
                         Source.Type = LUA_FIELD;
-                        Source.pos = position(xc, yc, zc);
+                        Source.pos = usePosition;
                     }
                 }
             }
@@ -840,12 +838,12 @@ void UseTS::performAction(Player *player) {
                     if (LuaScript) {
                         Source.Type = LUA_ITEM;
                         ps->viewItemNr(pos, Source.item, tempc);
-                        Source.item.pos = position(xc, yc, zc);
+                        Source.item.pos = usePosition;
                         Source.item.type = ScriptItem::it_container;
                         Source.item.itempos = pos;
                         Source.item.owner = player;
                         Source.item.inside = ps;
-                        Source.pos = position(xc, yc, zc);
+                        Source.pos = usePosition;
                     }
                 } else {
                     paramOK = false;
@@ -964,7 +962,7 @@ void KeepAliveTS::decodeData() {
 }
 
 void KeepAliveTS::performAction(Player *player) {
-    Logger::debug(LogFacility::Player) << "KEEPALIVE_TS from player " << player->to_string() << Log::end;
+    Logger::debug(LogFacility::Player) << "KEEPALIVE_TS from player " << *player << Log::end;
     time(&(player->lastkeepalive));
 }
 
@@ -1016,7 +1014,7 @@ void LookAtInventoryItemTS::decodeData() {
 }
 
 void LookAtInventoryItemTS::performAction(Player *player) {
-    Logger::debug(LogFacility::World) << player->to_string() << " looks at an item in the inventory." << Log::end;
+    Logger::debug(LogFacility::World) << *player << " looks at an item in the inventory." << Log::end;
 
     if (player->IsAlive()) {
         World::get()->lookAtInventoryItem(player, pos);
@@ -1038,7 +1036,7 @@ void LookAtShowCaseItemTS::decodeData() {
 }
 
 void LookAtShowCaseItemTS::performAction(Player *player) {
-    Logger::debug(LogFacility::World) << player->to_string() << " looks at an item in a container." << Log::end;
+    Logger::debug(LogFacility::World) << *player << " looks at an item in a container." << Log::end;
 
     if (player->IsAlive()) {
         World::get()->lookAtShowcaseItem(player, showcase, pos);
@@ -1064,7 +1062,7 @@ void MoveItemFromPlayerToShowCaseTS::decodeData() {
 void MoveItemFromPlayerToShowCaseTS::performAction(Player *player) {
     time(&(player->lastaction));
     player->ltAction->abortAction();
-    Logger::debug(LogFacility::World) << player->to_string() << "moves an item from the inventory to showcase!" << Log::end;
+    Logger::debug(LogFacility::World) << *player << "moves an item from the inventory to showcase!" << Log::end;
 
     if (player->IsAlive()) {
         World::get()->moveItemFromPlayerIntoShowcase(player, cpos, showcase, pos, count);
@@ -1090,7 +1088,7 @@ void MoveItemFromShowCaseToPlayerTS::decodeData() {
 void MoveItemFromShowCaseToPlayerTS::performAction(Player *player) {
     time(&(player->lastaction));
     player->ltAction->abortAction();
-    Logger::debug(LogFacility::World) << player->to_string() << " moves an item from the shocase to the inventory!" << Log::end;
+    Logger::debug(LogFacility::World) << *player << " moves an item from the shocase to the inventory!" << Log::end;
 
     if (player->IsAlive()) {
         World::get()->moveItemFromShowcaseToPlayer(player, showcase, pos, cpos, count);
@@ -1115,7 +1113,7 @@ void MoveItemInsideInventoryTS::decodeData() {
 void MoveItemInsideInventoryTS::performAction(Player *player) {
     time(&(player->lastaction));
     player->ltAction->abortAction();
-    Logger::debug(LogFacility::World) << player->to_string() << "moves an item inside the inventory!" << Log::end;
+    Logger::debug(LogFacility::World) << *player << "moves an item inside the inventory!" << Log::end;
 
     if (player->IsAlive()) {
         World::get()->moveItemBetweenBodyParts(player, opos, npos, count);
@@ -1133,17 +1131,17 @@ DropItemFromInventoryOnMapTS::DropItemFromInventoryOnMapTS() : BasicClientComman
 
 void DropItemFromInventoryOnMapTS::decodeData() {
     pos = getUnsignedCharFromBuffer();
-    xc = static_cast<short int>(getShortIntFromBuffer());
-    yc = static_cast<short int>(getShortIntFromBuffer());
-    zc = static_cast<short int>(getShortIntFromBuffer());
+    mapPosition.x = static_cast<short int>(getShortIntFromBuffer());
+    mapPosition.y = static_cast<short int>(getShortIntFromBuffer());
+    mapPosition.z = static_cast<short int>(getShortIntFromBuffer());
     count = getShortIntFromBuffer();
 }
 
 void DropItemFromInventoryOnMapTS::performAction(Player *player) {
     time(&(player->lastaction));
     player->ltAction->abortAction();
-    Logger::debug(LogFacility::World) << player->to_string() << " throws an item from inventory on the map!" << Log::end;
-    World::get()->dropItemFromPlayerOnMap(player, pos, xc, yc, zc, count);
+    Logger::debug(LogFacility::World) << *player << " throws an item from inventory on the map!" << Log::end;
+    World::get()->dropItemFromPlayerOnMap(player, pos, mapPosition, count);
     player->actionPoints -= P_ITEMMOVE_COST;
 }
 
@@ -1156,7 +1154,7 @@ MoveItemFromMapToPlayerTS::MoveItemFromMapToPlayerTS() : BasicClientCommand(C_MO
 }
 
 void MoveItemFromMapToPlayerTS::decodeData() {
-    dir = getUnsignedCharFromBuffer();
+    dir = to_direction(getUnsignedCharFromBuffer());
     pos = getUnsignedCharFromBuffer();
     count = getShortIntFromBuffer();
 }
@@ -1164,7 +1162,7 @@ void MoveItemFromMapToPlayerTS::decodeData() {
 void MoveItemFromMapToPlayerTS::performAction(Player *player) {
     time(&(player->lastaction));
     player->ltAction->abortAction();
-    Logger::debug(LogFacility::World) << player->to_string() << " moves an Item from the map to the inventory!" << Log::end;
+    Logger::debug(LogFacility::World) << *player << " moves an Item from the map to the inventory!" << Log::end;
 
     if (player->IsAlive()) {
         World::get()->moveItemFromMapToPlayer(player, dir, pos, count);
@@ -1181,7 +1179,7 @@ MoveItemFromMapIntoShowCaseTS::MoveItemFromMapIntoShowCaseTS() : BasicClientComm
 }
 
 void MoveItemFromMapIntoShowCaseTS::decodeData() {
-    dir = getUnsignedCharFromBuffer();
+    dir = to_direction(getUnsignedCharFromBuffer());
     showcase = getUnsignedCharFromBuffer();
     pos = getUnsignedCharFromBuffer();
     count = getShortIntFromBuffer();
@@ -1190,7 +1188,7 @@ void MoveItemFromMapIntoShowCaseTS::decodeData() {
 void MoveItemFromMapIntoShowCaseTS::performAction(Player *player) {
     time(&(player->lastaction));
     player->ltAction->abortAction();
-    Logger::debug(LogFacility::World) << player->to_string() << " moves an item from the map to the showcase!" << Log::end;
+    Logger::debug(LogFacility::World) << *player << " moves an item from the map to the showcase!" << Log::end;
 
     if (player->IsAlive()) {
         World::get()->moveItemFromMapIntoShowcase(player, dir, showcase, pos, count);
@@ -1217,7 +1215,7 @@ void MoveItemBetweenShowCasesTS::decodeData() {
 void MoveItemBetweenShowCasesTS::performAction(Player *player) {
     time(&(player->lastaction));
     player->ltAction->abortAction();
-    Logger::debug(LogFacility::World) << player->to_string() << " moves an item between showcases!" << Log::end;
+    Logger::debug(LogFacility::World) << *player << " moves an item between showcases!" << Log::end;
 
     if (player->IsAlive()) {
         World::get()->moveItemBetweenShowcases(player, source, spos, dest, dpos, count);
@@ -1236,17 +1234,17 @@ DropItemFromShowCaseOnMapTS::DropItemFromShowCaseOnMapTS() : BasicClientCommand(
 void DropItemFromShowCaseOnMapTS::decodeData() {
     showcase = getUnsignedCharFromBuffer();
     pos = getUnsignedCharFromBuffer();
-    xc = static_cast<short int>(getShortIntFromBuffer());
-    yc = static_cast<short int>(getShortIntFromBuffer());
-    zc = static_cast<short int>(getShortIntFromBuffer());
+    mapPosition.x = static_cast<short int>(getShortIntFromBuffer());
+    mapPosition.y = static_cast<short int>(getShortIntFromBuffer());
+    mapPosition.z = static_cast<short int>(getShortIntFromBuffer());
     count = getShortIntFromBuffer();
 }
 
 void DropItemFromShowCaseOnMapTS::performAction(Player *player) {
     time(&(player->lastaction));
     player->ltAction->abortAction();
-    Logger::debug(LogFacility::World) << player->to_string() << " moves an item from showcase to the map!" << Log::end;
-    World::get()->dropItemFromShowcaseOnMap(player, showcase, pos, xc, yc, zc, count);
+    Logger::debug(LogFacility::World) << *player << " moves an item from showcase to the map!" << Log::end;
+    World::get()->dropItemFromShowcaseOnMap(player, showcase, pos, mapPosition, count);
     player->actionPoints -= P_ITEMMOVE_COST;
 }
 
@@ -1265,7 +1263,7 @@ void CloseContainerInShowCaseTS::decodeData() {
 void CloseContainerInShowCaseTS::performAction(Player *player) {
     time(&(player->lastaction));
     player->ltAction->abortAction();
-    Logger::debug(LogFacility::World) << player->to_string() << " closes a container in the showcase" << Log::end;
+    Logger::debug(LogFacility::World) << *player << " closes a container in the showcase" << Log::end;
 
     if (player->IsAlive()) {
         player->closeShowcase(showcase);
@@ -1288,8 +1286,8 @@ void LookIntoShowCaseContainerTS::decodeData() {
 void LookIntoShowCaseContainerTS::performAction(Player *player) {
     time(&(player->lastaction));
     player->ltAction->abortAction();
-    Logger::debug(LogFacility::World) << player->to_string() << " looks into a container in a showcase!" << Log::end;
-    World::get()->lookIntoShowcaseContainer(player, showcase, pos);
+    Logger::debug(LogFacility::World) << *player << " looks into a container in a showcase!" << Log::end;
+    player->lookIntoShowcaseContainer(showcase, pos);
     player->actionPoints -= P_LOOK_COST;
 }
 
@@ -1307,8 +1305,8 @@ void LookIntoInventoryTS::decodeData() {
 void LookIntoInventoryTS::performAction(Player *player) {
     time(&(player->lastaction));
     player->ltAction->abortAction();
-    Logger::debug(LogFacility::World) << player->to_string() << " looks into his backpack" << Log::end;
-    World::get()->lookIntoBackPack(player);
+    Logger::debug(LogFacility::World) << *player << " looks into his backpack" << Log::end;
+    player->lookIntoBackPack();
     player->actionPoints -= P_LOOK_COST;
 }
 
@@ -1321,16 +1319,16 @@ LookIntoContainerOnFieldTS::LookIntoContainerOnFieldTS() : BasicClientCommand(C_
 }
 
 void LookIntoContainerOnFieldTS::decodeData() {
-    direction = getUnsignedCharFromBuffer();
+    dir = to_direction(getUnsignedCharFromBuffer());
 }
 
 void LookIntoContainerOnFieldTS::performAction(Player *player) {
     time(&(player->lastaction));
     player->ltAction->abortAction();
-    Logger::debug(LogFacility::World) << player->to_string() << " looks into a container on the map" << Log::end;
+    Logger::debug(LogFacility::World) << *player << " looks into a container on the map" << Log::end;
 
     if (player->IsAlive()) {
-        World::get()->lookIntoContainerOnField(player, direction);
+        player->lookIntoContainerOnField(dir);
         player->actionPoints -= P_LOOK_COST;
     }
 }
@@ -1348,7 +1346,7 @@ void LogOutTS::decodeData() {
 
 void LogOutTS::performAction(Player *player) {
     player->ltAction->abortAction();
-    Logger::info(LogFacility::Player) << player->to_string() << " loggt aus" << Log::end;
+    Logger::info(LogFacility::Player) << *player << " loggt aus" << Log::end;
     player->Connection->closeConnection();
 }
 
@@ -1366,7 +1364,7 @@ void WhisperTS::decodeData() {
 
 void WhisperTS::performAction(Player *player) {
     time(&(player->lastaction));
-    Logger::debug(LogFacility::World) << player->to_string() << " whispers something!" << Log::end;
+    Logger::debug(LogFacility::World) << *player << " whispers something!" << Log::end;
     player->talk(Character::tt_whisper, text);
 }
 
@@ -1401,7 +1399,7 @@ void SayTS::decodeData() {
 
 void SayTS::performAction(Player *player) {
     time(&(player->lastaction));
-    Logger::debug(LogFacility::World) << player->to_string() << " whispers something!" << Log::end;
+    Logger::debug(LogFacility::World) << *player << " whispers something!" << Log::end;
 
     if (!World::get()->parseGMCommands(player, text)) {
         if (!World::get()->parsePlayerCommands(player, text)) {    // did we issue a player command?
@@ -1422,7 +1420,7 @@ void RefreshTS::decodeData() {
 }
 
 void RefreshTS::performAction(Player *player) {
-    Logger::debug(LogFacility::World) << player->to_string() << " want sended a refresh_ts, sending map!" << Log::end;
+    Logger::debug(LogFacility::World) << *player << " want sended a refresh_ts, sending map!" << Log::end;
     player->sendFullMap();
     World::get()->sendAllVisibleCharactersToPlayer(player, true);
 }
@@ -1440,7 +1438,7 @@ void IntroduceTS::decodeData() {
 
 void IntroduceTS::performAction(Player *player) {
     time(&(player->lastaction));
-    Logger::debug(LogFacility::World) << player->to_string() << " introduces himself!" << Log::end;
+    Logger::debug(LogFacility::World) << *player << " introduces himself!" << Log::end;
 
     if (player->IsAlive()) {
         World::get()->introduceMyself(player);
@@ -1497,16 +1495,16 @@ LookAtMapItemTS::LookAtMapItemTS() : BasicClientCommand(C_LOOKATMAPITEM_TS) {
 }
 
 void LookAtMapItemTS::decodeData() {
-    x = getShortIntFromBuffer();
-    y = getShortIntFromBuffer();
-    z = getShortIntFromBuffer();
+    pos.x = getShortIntFromBuffer();
+    pos.y = getShortIntFromBuffer();
+    pos.z = getShortIntFromBuffer();
 }
 
 void LookAtMapItemTS::performAction(Player *player) {
-    Logger::debug(LogFacility::World) << player->to_string() << " looks at a map item." << Log::end;
+    Logger::debug(LogFacility::World) << *player << " looks at a map item." << Log::end;
 
     if (player->IsAlive()) {
-        World::get()->lookAtMapItem(player, x, y, z);
+        World::get()->lookAtMapItem(player, pos);
         player->actionPoints -= P_LOOK_COST;
     }
 
@@ -1527,7 +1525,7 @@ void PSpinActionTS::decodeData() {
 void PSpinActionTS::performAction(Player *player) {
     time(&(player->lastaction));
     player->ltAction->abortAction();
-    Logger::debug(LogFacility::World) << player->to_string() << " changes his dircetion to " << direction << Log::end;
+    Logger::debug(LogFacility::World) << *player << " changes his dircetion to " << direction << Log::end;
 
     if (World::get()->spinPlayer(player, direction)) {
         player->actionPoints -= P_SPIN_COST;
@@ -1553,7 +1551,7 @@ void CharMoveTS::performAction(Player *player) {
 
     if (charid == player->getId() && (mode == NORMALMOVE || mode == RUNNING)) {
         player->ltAction->abortAction();
-        Logger::debug(LogFacility::World) << "Playermove by " << player->to_string() << Log::end;
+        Logger::debug(LogFacility::World) << "Playermove by " << *player << Log::end;
 
         if (player->getTurtleActive() && player->hasGMRight(gmr_settiles) && mode == NORMALMOVE) {
             World::get()->setNextTile(player, player->getTurtleTile());
@@ -1565,7 +1563,7 @@ void CharMoveTS::performAction(Player *player) {
         }
     } else if (mode == PUSH) {
         player->ltAction->abortAction();
-        Logger::debug(LogFacility::World) << "Player pushes another: " << player->to_string() << Log::end;
+        Logger::debug(LogFacility::World) << "Player pushes another: " << *player << Log::end;
 
         if (player->IsAlive()) {
             if (World::get()->pushCharacter(player, charid, static_cast<direction>(dir))) {
@@ -1581,29 +1579,29 @@ ClientCommandPointer CharMoveTS::clone() {
 }
 
 IMoverActionTS::IMoverActionTS(uint8_t dir) : BasicClientCommand(C_IMOVERSTART_TS) {
-    direction = dir;
+    this->dir = to_direction(dir);
 }
 
 void IMoverActionTS::decodeData() {
-    xc = getShortIntFromBuffer();
-    yc = getShortIntFromBuffer();
-    zc = getShortIntFromBuffer();
+    pos.x = getShortIntFromBuffer();
+    pos.y = getShortIntFromBuffer();
+    pos.z = getShortIntFromBuffer();
     count = getShortIntFromBuffer();
 }
 
 void IMoverActionTS::performAction(Player *player) {
     time(&(player->lastaction));
     player->ltAction->abortAction();
-    Logger::debug(LogFacility::World) << player->to_string() << " tryes to move an Item!" << Log::end;
+    Logger::debug(LogFacility::World) << *player << " tryes to move an Item!" << Log::end;
 
     if (player->IsAlive()) {
-        World::get()->moveItem(player, direction, xc, yc, zc, count);
+        World::get()->moveItem(player, dir, pos, count);
         player->actionPoints -= P_ITEMMOVE_COST;
     }
 }
 
 ClientCommandPointer IMoverActionTS::clone() {
-    ClientCommandPointer cmd(new IMoverActionTS(direction));
+    ClientCommandPointer cmd(new IMoverActionTS(dir));
     return cmd;
 }
 

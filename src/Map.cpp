@@ -582,15 +582,15 @@ void Map::ageItemsInHorizontalRange(short int xstart, short int xend) {
 
             if (rotstate != 0) {
                 position pos(Conv_To_X(x), Conv_To_Y(y), Z_Level);
-                Logger::debug(LogFacility::World) << "aged items, pos: " << pos.x << " " << pos.y << " " << pos.z << Log::end;
+                Logger::debug(LogFacility::World) << "aged items, pos: " << pos << Log::end;
                 //a update is needed
-                std::vector<Player *> playersinview = World::get()->Players.findAllCharactersInScreen(pos.x,pos.y, pos.z);
+                std::vector<Player *> playersinview = World::get()->Players.findAllCharactersInScreen(pos);
 
                 //iterate through all the players in range and send the update for this field
-                for (std::vector<Player *>::iterator it = playersinview.begin(); it != playersinview.end(); ++it) {
-                    Logger::debug(LogFacility::World) << "aged items, update needed for: " << (*it)->to_string() << Log::end;
+                for (const auto &player : playersinview) {
+                    Logger::debug(LogFacility::World) << "aged items, update needed for: " << *player << Log::end;
                     ServerCommandPointer cmd(new ItemUpdate_TC(pos, MainMap[x][y].items));
-                    (*it)->Connection->addCommand(cmd);
+                    player->Connection->addCommand(cmd);
                 }
             }
 
@@ -603,9 +603,9 @@ void Map::ageContainers() {
     for (auto it = maincontainers.begin(); it != maincontainers.end(); ++it) {
         auto container = it->second;
 
-        for (auto content = container.begin(); content != container.end(); ++content) {
-            if (content->second != NULL) {
-                content->second->doAge();
+        for (const auto &content : container) {
+            if (content.second) {
+                content.second->doAge();
             }
         }
     }

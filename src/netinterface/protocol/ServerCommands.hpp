@@ -99,31 +99,31 @@ public:
 class InputDialog;
 class InputDialogTC : public BasicServerCommand {
 public:
-    InputDialogTC(InputDialog &inputDialog, unsigned int dialogId);
+    InputDialogTC(const InputDialog &inputDialog, unsigned int dialogId);
 };
 
 class MessageDialog;
 class MessageDialogTC : public BasicServerCommand {
 public:
-    MessageDialogTC(MessageDialog &messageDialog, unsigned int dialogId);
+    MessageDialogTC(const MessageDialog &messageDialog, unsigned int dialogId);
 };
 
 class MerchantDialog;
 class MerchantDialogTC : public BasicServerCommand {
 public:
-    MerchantDialogTC(MerchantDialog &merchantDialog, unsigned int dialogId);
+    MerchantDialogTC(const MerchantDialog &merchantDialog, unsigned int dialogId);
 };
 
 class SelectionDialog;
 class SelectionDialogTC : public BasicServerCommand {
 public:
-    SelectionDialogTC(SelectionDialog &selectionDialog, unsigned int dialogId);
+    SelectionDialogTC(const SelectionDialog &selectionDialog, unsigned int dialogId);
 };
 
 class CraftingDialog;
 class CraftingDialogTC : public BasicServerCommand {
 public:
-    CraftingDialogTC(CraftingDialog &craftingDialog, unsigned int dialogId);
+    CraftingDialogTC(const CraftingDialog &craftingDialog, unsigned int dialogId);
 };
 class CraftingDialogCraftTC : public BasicServerCommand {
 public:
@@ -145,19 +145,18 @@ public:
 
 class ItemUpdate_TC : public BasicServerCommand {
 public:
-    ItemUpdate_TC(position fieldpos, ITEMVECTOR &items);
-    ItemUpdate_TC(int16_t px, int16_t py, int16_t pz, ITEMVECTOR &items);
+    ItemUpdate_TC(const position &pos, const ITEMVECTOR &items);
 };
 
 class CharDescription : public BasicServerCommand {
 public:
-    CharDescription(TYPE_OF_CHARACTER_ID id, std::string description);
+    CharDescription(TYPE_OF_CHARACTER_ID id, const std::string &description);
 };
 
 class Character;
 class AppearanceTC : public BasicServerCommand {
 public:
-    AppearanceTC(Character *cc, Player *receivingPlayer);
+    AppearanceTC(Character *cc, const Player *receivingPlayer);
 };
 
 class AnimationTC : public BasicServerCommand {
@@ -210,7 +209,7 @@ public:
 
 class LookAtMapItemTC : public BasicServerCommand {
 public:
-    LookAtMapItemTC(short int x, short int y, short int z, const ItemLookAt &lookAt);
+    LookAtMapItemTC(const position &pos, const ItemLookAt &lookAt);
 };
 
 class LookAtDialogItemTC : public BasicServerCommand {
@@ -225,23 +224,22 @@ public:
 
 class LookAtTileTC : public BasicServerCommand {
 public:
-    LookAtTileTC(short int x, short int y, short int z, const std::string &lookAt);
+    LookAtTileTC(const position &pos, const std::string &lookAt);
 };
 
 class ItemPutTC : public BasicServerCommand {
 public:
-    ItemPutTC(short int x, short int y, short int z, Item &item);
+    ItemPutTC(const position &pos, const Item &item);
 };
 
 class ItemSwapTC : public BasicServerCommand {
 public:
-    ItemSwapTC(position pos, unsigned short int id, Item &item);
-    ItemSwapTC(short int x, short int y, short int z, unsigned short int id, Item &item);
+    ItemSwapTC(const position &pos, unsigned short int id, const Item &item);
 };
 
 class ItemRemoveTC : public BasicServerCommand {
 public:
-    ItemRemoveTC(short int x, short int y, short int z);
+    ItemRemoveTC(const position &pos);
 };
 
 class AdminViewPlayersTC : public BasicServerCommand {
@@ -251,17 +249,12 @@ public:
 
 class SoundTC : public BasicServerCommand {
 public:
-    SoundTC(short int x, short int y, short int z, unsigned short int id);
+    SoundTC(const position &pos, unsigned short int id);
 };
 
 class GraphicEffectTC : public BasicServerCommand {
 public:
-    GraphicEffectTC(short int x, short int y, short int z, unsigned short int id);
-};
-
-class PushPlayerTC : public BasicServerCommand {
-public:
-    PushPlayerTC(char xoffs, char yoffs, uint32_t id, unsigned short int appearance, unsigned char direction);
+    GraphicEffectTC(const position &pos, unsigned short int id);
 };
 
 class UpdateShowCaseTC : public BasicServerCommand {
@@ -271,7 +264,7 @@ public:
 
 class MapStripeTC : public BasicServerCommand {
 public:
-    MapStripeTC(position pos, NewClientView::stripedirection dir);
+    MapStripeTC(const position &pos, NewClientView::stripedirection dir);
 };
 
 class MapCompleteTC : public BasicServerCommand {
@@ -281,32 +274,32 @@ public:
 
 class MoveAckTC : public BasicServerCommand {
 public:
-    MoveAckTC(TYPE_OF_CHARACTER_ID id, position pos, unsigned char mode, unsigned char waitpages);
+    MoveAckTC(TYPE_OF_CHARACTER_ID id, const position &pos, unsigned char mode, unsigned char waitpages);
 };
 
 class IntroduceTC : public BasicServerCommand {
 public:
-    IntroduceTC(TYPE_OF_CHARACTER_ID id, std::string name);
+    IntroduceTC(TYPE_OF_CHARACTER_ID id, const std::string &name);
 };
 
 class ShoutTC : public BasicServerCommand {
 public:
-    ShoutTC(int16_t x, int16_t y, int16_t z, std::string text);
+    ShoutTC(const position &pos, const std::string &text);
 };
 
 class WhisperTC : public BasicServerCommand {
 public:
-    WhisperTC(int16_t x, int16_t y, int16_t z, std::string text);
+    WhisperTC(const position &pos, const std::string &text);
 };
 
 class SayTC : public BasicServerCommand {
 public:
-    SayTC(int16_t x, int16_t y, int16_t z, std::string text);
+    SayTC(const position &pos, const std::string &text);
 };
 
 class InformTC : public BasicServerCommand {
 public:
-    InformTC(Character::informType type, std::string text);
+    InformTC(Character::informType type, const std::string &text);
 };
 
 class MusicTC : public BasicServerCommand {
@@ -321,7 +314,7 @@ public:
 
 class UpdateAttribTC : public BasicServerCommand {
 public:
-    UpdateAttribTC(TYPE_OF_CHARACTER_ID id, std::string name, short int value);
+    UpdateAttribTC(TYPE_OF_CHARACTER_ID id, const std::string &name, short int value);
 };
 
 class UpdateMagicFlagsTC : public BasicServerCommand {
@@ -341,10 +334,7 @@ public:
 
 class UpdateWeatherTC : public BasicServerCommand {
 public:
-    UpdateWeatherTC(WeatherStruct weather);
-    UpdateWeatherTC(uint8_t cloudDensity, uint8_t fogDensity,
-                    uint8_t windDirection, uint8_t windForce, uint8_t precipitationStrength,
-                    uint8_t precipitationType, uint8_t thunderstorm, uint8_t temperature);
+    UpdateWeatherTC(const WeatherStruct &weather);
 };
 
 class IdTC : public BasicServerCommand {
@@ -359,8 +349,7 @@ public:
 
 class SetCoordinateTC : public BasicServerCommand {
 public:
-    SetCoordinateTC(position pos);
-    SetCoordinateTC(short int x, short int y, short int z);
+    SetCoordinateTC(const position &pos);
 };
 
 class PlayerSpinTC : public BasicServerCommand {

@@ -62,7 +62,7 @@ void World::deleteAllLostNPC() {
 bool World::findPlayersInSight(const position &pos, uint8_t range, std::vector<Player *> &ret, Character::face_to direction) {
     bool found = false;
 
-    for (const auto &player : Players.findAllAliveCharactersInRangeOfOnSameMap(pos.x, pos.y, pos.z, range)) {
+    for (const auto &player : Players.findAllAliveCharactersInRangeOfOnSameMap(pos, range)) {
         bool indir = false;
 
         switch (direction) {
@@ -197,10 +197,12 @@ std::list<BlockingObject> World::LoS(const position &startingpos, const position
             Field *temp;
 
             if (steep) {
-                if (GetPToCFieldAt(temp,y,x,startingpos.z)) {
+                const position pos(y, x, startingpos.z);
+
+                if (GetPToCFieldAt(temp, pos)) {
                     if (temp->IsPlayerOnField()) {
                         bo.blockingType = BlockingObject::BT_CHARACTER;
-                        bo.blockingChar = findCharacterOnField(y,x,startingpos.z);
+                        bo.blockingChar = findCharacterOnField(pos);
 
                         if (swapped) {
                             ret.push_back(bo);
@@ -212,7 +214,7 @@ std::list<BlockingObject> World::LoS(const position &startingpos, const position
 
                         if (temp->ViewTopItem(it)) {
                             bo.blockingType = BlockingObject::BT_ITEM;
-                            it.pos = position(y,x,startingpos.z);
+                            it.pos = position(pos);
                             it.type = ScriptItem::it_field;
                             bo.blockingItem = it;
 
@@ -225,10 +227,12 @@ std::list<BlockingObject> World::LoS(const position &startingpos, const position
                     }
                 }
             } else {
-                if (GetPToCFieldAt(temp,x,y,startingpos.z)) {
+                const position pos(x, y, startingpos.z);
+
+                if (GetPToCFieldAt(temp, pos)) {
                     if (temp->IsPlayerOnField()) {
                         bo.blockingType = BlockingObject::BT_CHARACTER;
-                        bo.blockingChar = findCharacterOnField(x,y,startingpos.z);
+                        bo.blockingChar = findCharacterOnField(pos);
 
                         if (swapped) {
                             ret.push_back(bo);
@@ -240,7 +244,7 @@ std::list<BlockingObject> World::LoS(const position &startingpos, const position
 
                         if (temp->ViewTopItem(it)) {
                             bo.blockingType = BlockingObject::BT_ITEM;
-                            it.pos = position(x,y,startingpos.z);
+                            it.pos = pos;
                             it.type = ScriptItem::it_field;
                             bo.blockingItem = it;
 
@@ -301,54 +305,54 @@ void World::updatePlayerList() {
     std::cout<<"updateplayerlist end"<<std::endl;
 }
 
-Character *World::findCharacterOnField(short int posx, short int posy, short int posz) const {
+Character *World::findCharacterOnField(const position &pos) const {
     Character *tmpChr;
-    tmpChr = Players.find(posx, posy, posz);
+    tmpChr = Players.find(pos);
 
-    if (tmpChr != NULL) {
+    if (tmpChr) {
         return tmpChr;
     }
 
-    tmpChr = Monsters.find(posx, posy, posz);
+    tmpChr = Monsters.find(pos);
 
-    if (tmpChr != NULL) {
+    if (tmpChr) {
         return tmpChr;
     }
 
-    tmpChr = Npc.find(posx, posy, posz);
+    tmpChr = Npc.find(pos);
 
-    if (tmpChr != NULL) {
+    if (tmpChr) {
         return tmpChr;
     }
 
-    return NULL;
+    return nullptr;
 }
 
-Player *World::findPlayerOnField(short int posx, short int posy, short int posz) const {
-    return Players.find(posx, posy, posz);
+Player *World::findPlayerOnField(const position &pos) const {
+    return Players.find(pos);
 }
 
 Character *World::findCharacter(TYPE_OF_CHARACTER_ID id) {
     Character *tmpChr;
     tmpChr = dynamic_cast<Character *>(Players.findID(id));
 
-    if (tmpChr != NULL) {
+    if (tmpChr) {
         return tmpChr;
     }
 
     tmpChr = dynamic_cast<Character *>(Monsters.findID(id));
 
-    if (tmpChr != NULL) {
+    if (tmpChr) {
         return tmpChr;
     }
 
     tmpChr = dynamic_cast<Character *>(Npc.findID(id));
 
-    if (tmpChr != NULL) {
+    if (tmpChr) {
         return tmpChr;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 
@@ -373,7 +377,7 @@ void World::takeMonsterAndNPCFromMap() {
     Field *tempf;
 
     for (const auto &monster : Monsters) {
-        if (GetPToCFieldAt(tempf, monster->pos.x, monster->pos.y, monster->pos.z)) {
+        if (GetPToCFieldAt(tempf, monster->pos)) {
             tempf->SetMonsterOnField(false);
         }
 
@@ -381,7 +385,7 @@ void World::takeMonsterAndNPCFromMap() {
     }
 
     for (const auto &npc : Npc) {
-        if (GetPToCFieldAt(tempf, npc->pos.x, npc->pos.y, npc->pos.z)) {
+        if (GetPToCFieldAt(tempf, npc->pos)) {
             tempf->SetNPCOnField(false);
         }
 
@@ -710,7 +714,7 @@ int World::getItemAttrib(const std::string &s, TYPE_OF_ITEM_ID ItemID) {
 
 void World::closeShowcasesForContainerPositions() {
     for (const auto &pos : *contpos) {
-        for (const auto &player : Players.findAllCharactersInMaxRangeOf(pos.x, pos.y, pos.z, 1)) {
+        for (const auto &player : Players.findAllCharactersInMaxRangeOf(pos, 1)) {
             player->closeAllShowcasesOfMapContainers();
         }
     }
@@ -1029,7 +1033,7 @@ void World::setWeatherPart(const std::string &type, char value) {
 void World::sendRemoveCharToVisiblePlayers(TYPE_OF_CHARACTER_ID id, const position &pos) {
     ServerCommandPointer cmd(new RemoveCharTC(id));
 
-    for (const auto &player : Players.findAllCharactersInScreen(pos.x, pos.y, pos.z)) {
+    for (const auto &player : Players.findAllCharactersInScreen(pos)) {
         player->sendCharRemove(id, cmd);
     }
 }
@@ -1040,7 +1044,7 @@ void World::sendHealthToAllVisiblePlayers(Character *cc, Attribute::attribute_t 
         char yoffs;
         char zoffs;
 
-        for (const auto &player : Players.findAllCharactersInScreen(cc->pos.x, cc->pos.y, cc->pos.z)) {
+        for (const auto &player : Players.findAllCharactersInScreen(cc->pos)) {
             xoffs = cc->pos.x - player->pos.x;
             yoffs = cc->pos.y - player->pos.y;
             zoffs = cc->pos.z - player->pos.z + RANGEDOWN;

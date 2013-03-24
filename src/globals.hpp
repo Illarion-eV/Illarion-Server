@@ -27,83 +27,57 @@
 #include <boost/functional/hash/hash.hpp>
 #include "types.hpp"
 
-/**
-* @ingroup Scriptclasses
-* defines a 3d coordinate in the area
-* exportet to lua as <b>position</b>
-*/
 struct position {
-    /**
-    *@name position Lua Variables:
-    * to lua exportet variables
-    */
-
-    //@{
-    /**
-    *=============================start group Lua Variables===================
-    *@ingroup Scriptvariables
-    */
-
-    /**
-    * x-coordinate of the position
-    * <b>Lua: (r/w) [x]</b>
-    */
     short int x;
-
-    /**
-    * y-coordinate of the position
-    * <b>Lua: (r/w) [y]</b>
-    */
     short int y;
-
-    /**
-    * z-coordinate of the position
-    * <b>Lua: (r/w) [z]</b>
-    */
     short int z;
 
-    /**
-    *=============================end group Lua Variables===================
-    */
-    //@}
-
-
-    /**
-    * @name position Lua Functions:
-    * to Lua exported Functions
-    */
-
-    //@{
-    /**
-    *=============================start group Lua functions===================
-    *@ingroup Scriptfunctions
-    */
-
-    /**
-    * standard constructor for creating a new position
-    * @param _x starting x position of the coordinate
-    * @param _y starting y position of the coordinate
-    * @param _z starting z position of the coordinate
-    */
-    position(int _x, int _y, int _z) : x(_x), y(_y), z(_z) {}
-
-    /**
-    * standard constructor which creates a position and initializes x,y,z with 0
-    */
-    position() : x(0), y(0), z(0) {}
-
-    /**
-    *=============================end Lua Variables===================
-    */
-
-    //@}
-
-
-    /**
-    * overloaded == operator which determines if one position is equal to another one
-    */
+    position() = default;
+    position(short int x, short int y, short int z) : x(x), y(y), z(z) {}
+    
     bool operator == (const position &pos) const {
         return (x == pos.x && y == pos.y && z == pos.z);
+    }
+
+    void move(direction dir) {
+        switch (dir) {
+        case dir_north:
+            --y;
+            break;
+        case dir_northeast:
+            --y;
+            ++x;
+            break;
+        case dir_east:
+            ++x;
+            break;
+        case dir_southeast:
+            ++y;
+            ++x;
+            break;
+        case dir_south:
+            ++y;
+            break;
+        case dir_southwest:
+            ++y;
+            --x;
+            break;
+        case dir_west:
+            --x;
+            break;
+        case dir_northwest:
+            --y;
+            --x;
+            break;
+        case dir_up:
+            ++z;
+            break;
+        case dir_down:
+            --z;
+            break;
+        default:
+            break;
+        }
     }
 
     std::string toString() const {
@@ -133,13 +107,13 @@ template<> struct hash<position> {
 };
 }
 
-/**
-* determines a 2d Postion on one single map
-* the z coordinate is the map itself
-*/
 struct MAP_POSITION {
     short int x;
     short int y;
+
+    MAP_POSITION() = default;
+    MAP_POSITION(short int x, short int y): x(x), y(y) {}
+    MAP_POSITION(const position &pos): x(pos.x), y(pos.y) {}
 
     bool operator == (const MAP_POSITION &pos) const {
         return (x == pos.x && y == pos.y);
@@ -154,8 +128,6 @@ struct MAP_POSITION {
     }
 };
 
-typedef std::vector<std::pair<std::string, std::string>> script_data_exchangemap;
-
 namespace std {
 template<> struct hash<MAP_POSITION> {
     size_t operator()(const MAP_POSITION &p) const {
@@ -163,5 +135,7 @@ template<> struct hash<MAP_POSITION> {
     }
 };
 }
+
+typedef std::vector<std::pair<std::string, std::string>> script_data_exchangemap;
 
 #endif

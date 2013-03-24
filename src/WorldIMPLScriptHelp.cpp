@@ -95,34 +95,34 @@ const World::NPCVECTOR &World::getNPCS() const {
     return Npc;
 }
 
-std::vector<Character *> World::getCharactersInRangeOf(const position &posi, uint8_t range) const {
+std::vector<Character *> World::getCharactersInRangeOf(const position &pos, uint8_t range) const {
     std::vector<Character *> list;
 
-    std::vector < Player * > tempP = Players.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range);
+    std::vector < Player * > tempP = Players.findAllCharactersInRangeOf(pos, range);
     list.insert(list.end(), tempP.begin(), tempP.end());
 
-    std::vector < Monster * > tempM = Monsters.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range);
+    std::vector < Monster * > tempM = Monsters.findAllCharactersInRangeOf(pos, range);
     list.insert(list.end(), tempM.begin(), tempM.end());
 
-    std::vector < NPC * > tempN = Npc.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range);
+    std::vector < NPC * > tempN = Npc.findAllCharactersInRangeOf(pos, range);
     list.insert(list.end(), tempN.begin(), tempN.end());
 
     return list;
 }
 
-std::vector<Player *> World::getPlayersInRangeOf(const position &posi, uint8_t range) const {
-    return Players.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range);
+std::vector<Player *> World::getPlayersInRangeOf(const position &pos, uint8_t range) const {
+    return Players.findAllCharactersInRangeOf(pos, range);
 }
 
-std::vector<Monster *> World::getMonstersInRangeOf(const position &posi, uint8_t range) const {
-    return Monsters.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range);
+std::vector<Monster *> World::getMonstersInRangeOf(const position &pos, uint8_t range) const {
+    return Monsters.findAllCharactersInRangeOf(pos, range);
 }
 
-std::vector<NPC *> World::getNPCSInRangeOf(const position &posi, uint8_t range) const {
-    return Npc.findAllCharactersInRangeOf(posi.x , posi.y, posi.z, range);
+std::vector<NPC *> World::getNPCSInRangeOf(const position &pos, uint8_t range) const {
+    return Npc.findAllCharactersInRangeOf(pos, range);
 }
 
-void World::itemInform(Character *user, ScriptItem item, ItemLookAt lookAt) {
+void World::itemInform(Character *user, const ScriptItem &item, const ItemLookAt &lookAt) {
     if (user->character != Character::player) {
         return;
     }
@@ -142,7 +142,7 @@ void World::itemInform(Character *user, ScriptItem item, ItemLookAt lookAt) {
         ServerCommandPointer cmd(new LookAtInventoryItemTC(item.itempos, lookAt));
         cp->Connection->addCommand(cmd);
     } else if (item.type == ScriptItem::it_field) {
-        ServerCommandPointer cmd(new LookAtMapItemTC(item.pos.x, item.pos.y, item.pos.z, lookAt));
+        ServerCommandPointer cmd(new LookAtMapItemTC(item.pos, lookAt));
         cp->Connection->addCommand(cmd);
     }
 }
@@ -162,9 +162,9 @@ void World::changeQuality(ScriptItem item, short int amount) {
 void World::changeQualityOfItemAt(const position &pos, short int amount) {
     Field *field;
 
-    if (GetPToCFieldAt(field, pos.x, pos.y, pos.z)) {
+    if (GetPToCFieldAt(field, pos)) {
         if (field->changeQualityOfTopItem(amount)) {
-            sendRemoveItemFromMapToAllVisibleCharacters(0, pos.x, pos.y, pos.z, field);
+            sendRemoveItemFromMapToAllVisibleCharacters(pos);
         }
     }
 }
@@ -184,14 +184,14 @@ bool World::changeItem(ScriptItem item) {
         Field *field;
         Item dummy;
 
-        if (GetPToCFieldAt(field, item.pos.x, item.pos.y, item.pos.z)) {
+        if (GetPToCFieldAt(field, item.pos)) {
             Item it;
 
             if (field->TakeTopItem(it)) {
                 field->PutTopItem(static_cast<Item>(item));
 
                 if (item.getId() != it.getId() || it.getNumber() != item.getNumber()) {
-                    sendSwapItemOnMapToAllVisibleCharacter(it.getId(), item.pos.x, item.pos.y, item.pos.z, item, field);
+                    sendSwapItemOnMapToAllVisibleCharacter(it.getId(), item.pos, item);
                 }
             }
 
@@ -230,7 +230,7 @@ CommonStruct World::getItemStatsFromId(TYPE_OF_ITEM_ID id) {
 }
 
 bool World::isCharacterOnField(const position &pos) {
-    if (findCharacterOnField(pos.x, pos.y, pos.z)) {
+    if (findCharacterOnField(pos)) {
         return true;
     } else {
         return false;
@@ -238,7 +238,7 @@ bool World::isCharacterOnField(const position &pos) {
 }
 
 fuse_ptr<Character> World::getCharacterOnField(const position &pos) {
-    return fuse_ptr<Character>(findCharacterOnField(pos.x, pos.y, pos.z));
+    return fuse_ptr<Character>(findCharacterOnField(pos));
 }
 
 bool World::erase(ScriptItem item, int amount) {
@@ -267,7 +267,7 @@ bool World::erase(ScriptItem item, int amount) {
             field->increaseTopItem(-amount, erased);
 
             if (erased) {
-                sendRemoveItemFromMapToAllVisibleCharacters(0, item.pos.x, item.pos.y, item.pos.z, field);
+                sendRemoveItemFromMapToAllVisibleCharacters(item.pos);
             }
 
             return true;
@@ -303,7 +303,7 @@ bool World::increase(ScriptItem item, short int count) {
             field->increaseTopItem(count, erased);
 
             if (erased) {
-                sendRemoveItemFromMapToAllVisibleCharacters(0, item.pos.x, item.pos.y, item.pos.z, field);
+                sendRemoveItemFromMapToAllVisibleCharacters(item.pos);
             }
 
             return true;
@@ -347,10 +347,10 @@ bool World::swap(ScriptItem item, TYPE_OF_ITEM_ID newitem, unsigned short int ne
                     dummy.setNumber(it.getNumber());
 
                     if (it.getId() != newitem) {
-                        sendSwapItemOnMapToAllVisibleCharacter(it.getId(), item.pos.x, item.pos.y, item.pos.z, dummy, field);
+                        sendSwapItemOnMapToAllVisibleCharacter(it.getId(), item.pos, dummy);
                     }
                 } else {
-                    Logger::error(LogFacility::Script) << "World::swap: Swapping item on Field (" << item.pos.x << ", " << item.pos.y << ", " << item.pos.z << ") failed!" << Log::end;
+                    Logger::error(LogFacility::Script) << "World::swap: Swapping item on Field " << item.pos << " failed!" << Log::end;
                     return false;
                 }
             }
@@ -387,17 +387,17 @@ ScriptItem World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, con
             g_item.setWear(com.AgeingSpeed);
             g_item.setQuality(quality);
             g_item.setData(data);
-            g_cont = NULL;
+            g_cont = nullptr;
             sItem = g_item;
             sItem.pos = pos;
             sItem.type = ScriptItem::it_field;
             sItem.itempos = 255;
-            sItem.owner = NULL;
+            sItem.owner = nullptr;
 
             if (always) {
-                putItemAlwaysOnMap(NULL,pos.x,pos.y,pos.z);
+                putItemAlwaysOnMap(nullptr, pos);
             } else {
-                putItemOnMap(NULL,pos.x,pos.y,pos.z);
+                putItemOnMap(nullptr, pos);
             }
 
             return sItem;
@@ -419,12 +419,12 @@ bool World::createFromItem(ScriptItem item, const position &pos, bool always) {
 
     if (GetPToCFieldAt(field, pos.x, pos.y, pos.z)) {
         g_item = static_cast<Item>(item);
-        g_cont = NULL;
+        g_cont = nullptr;
 
         if (always) {
-            putItemAlwaysOnMap(NULL,pos.x,pos.y,pos.z);
+            putItemAlwaysOnMap(nullptr, pos);
         } else {
-            putItemOnMap(NULL,pos.x,pos.y,pos.z);
+            putItemOnMap(nullptr, pos);
         }
 
         return true;
@@ -464,21 +464,21 @@ fuse_ptr<Character> World::createMonster(unsigned short id, const position &pos,
 }
 
 void World::gfx(unsigned short int gfxid, const position &pos) {
-    std::vector < Player * > temp = Players.findAllCharactersInScreen(pos.x, pos.y, pos.z);
+    std::vector < Player * > temp = Players.findAllCharactersInScreen(pos);
     std::vector < Player * > ::iterator titerator;
 
     for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
-        ServerCommandPointer cmd(new GraphicEffectTC(pos.x, pos.y, pos.z, gfxid));
+        ServerCommandPointer cmd(new GraphicEffectTC(pos, gfxid));
         (*titerator)->Connection->addCommand(cmd);
     }
 }
 
 void World::makeSound(unsigned short int soundid, const position &pos) {
-    std::vector < Player * > temp = Players.findAllCharactersInScreen(pos.x, pos.y, pos.z);
+    std::vector < Player * > temp = Players.findAllCharactersInScreen(pos);
     std::vector < Player * > ::iterator titerator;
 
     for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
-        ServerCommandPointer cmd(new SoundTC(pos.x, pos.y, pos.z, soundid));
+        ServerCommandPointer cmd(new SoundTC(pos, soundid));
         (*titerator)->Connection->addCommand(cmd);
     }
 }
@@ -486,7 +486,7 @@ void World::makeSound(unsigned short int soundid, const position &pos) {
 bool World::isItemOnField(const position &pos) {
     Field *field;
 
-    if (GetPToCFieldAt(field, pos.x, pos.y, pos.z)) {
+    if (GetPToCFieldAt(field, pos)) {
         Item dummy;
         return field->ViewTopItem(dummy);
     } else {
@@ -500,7 +500,7 @@ ScriptItem World::getItemOnField(const position &pos) {
     Field *field;
     ScriptItem item;
 
-    if (GetPToCFieldAt(field, pos.x, pos.y, pos.z)) {
+    if (GetPToCFieldAt(field, pos)) {
         Item It;
 
         if (field->ViewTopItem(It)) {
@@ -519,7 +519,7 @@ ScriptItem World::getItemOnField(const position &pos) {
 void World::changeTile(short int tileid, const position &pos) {
     Field *field;
 
-    if (GetPToCFieldAt(field, pos.x, pos.y, pos.z)) {
+    if (GetPToCFieldAt(field, pos)) {
         field->setTileId(tileid);
         field->updateFlags();
     }
@@ -529,7 +529,7 @@ void World::changeTile(short int tileid, const position &pos) {
 void World::sendMapUpdate(const position &pos, uint8_t range) {
     std::vector<Player *> temp;
     std::vector<Player *>::iterator pIterator;
-    temp=Players.findAllCharactersInRangeOf(pos.x,pos.y,pos.z, range);
+    temp=Players.findAllCharactersInRangeOf(pos, range);
 
     for (pIterator = temp.begin(); pIterator != temp.end(); ++pIterator) {
         (*pIterator)->sendFullMap();

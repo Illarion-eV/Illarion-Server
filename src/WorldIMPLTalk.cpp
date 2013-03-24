@@ -32,7 +32,7 @@ extern std::shared_ptr<LuaLookAtItemScript>lookAtItemScript;
 void World::sendMessageToAdmin(const std::string &message) {
     for (const auto &player : Players) {
         if (player->hasGMRight(gmr_getgmcalls)) {
-            ServerCommandPointer cmd(new SayTC(player->pos.x, player->pos.y, player->pos.z, message));
+            ServerCommandPointer cmd(new SayTC(player->pos, message));
             player->Connection->addCommand(cmd);
         }
     }
@@ -146,7 +146,7 @@ void World::sendMessageToAllCharsInRange(const std::string &german, const std::s
     // tell the player himself what he wanted to say
     std::string prefix = languagePrefix(cc->activeLanguage);
 
-    for (const auto &player : Players.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, range)) {
+    for (const auto &player : Players.findAllCharactersInRangeOf(cc->pos, range)) {
         if (!is_action && player->getId() != cc->getId()) {
             tempMessage = prefix + player->alterSpokenMessage(player->nls(spokenMessage_german, spokenMessage_english), player->getLanguageSkill(cc->activeLanguage));
             player->receiveText(tt, tempMessage, cc);
@@ -161,13 +161,13 @@ void World::sendMessageToAllCharsInRange(const std::string &german, const std::s
 
     if (cc->character == Character::player) {
         // tell all npcs
-        for (const auto &npc : Npc.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, range)) {
+        for (const auto &npc : Npc.findAllCharactersInRangeOf(cc->pos, range)) {
             tempMessage=prefix + npc->alterSpokenMessage(english, npc->getLanguageSkill(cc->activeLanguage));
             npc->receiveText(tt, tempMessage, cc);
         }
 
         // tell all monsters
-        for (const auto &monster : Monsters.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, range)) {
+        for (const auto &monster : Monsters.findAllCharactersInRangeOf(cc->pos, range)) {
             monster->receiveText(tt, english, cc);
         }
     }
@@ -194,11 +194,11 @@ void World::sendLanguageMessageToAllCharsInRange(const std::string &message, Cha
     //determine spoken language skill
 
     // get all Players
-    std::vector<Player *> players = Players.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, range);
+    std::vector<Player *> players = Players.findAllCharactersInRangeOf(cc->pos, range);
     // get all NPCs
-    std::vector<NPC *> npcs = Npc.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, range);
+    std::vector<NPC *> npcs = Npc.findAllCharactersInRangeOf(cc->pos, range);
     // get all Monsters
-    std::vector<Monster *> monsters = Monsters.findAllCharactersInRangeOf(cc->pos.x, cc->pos.y, cc->pos.z, range);
+    std::vector<Monster *> monsters = Monsters.findAllCharactersInRangeOf(cc->pos, range);
 
     // alter message because of the speakers inability to speak...
     std::string spokenMessage,tempMessage;
@@ -245,35 +245,35 @@ void World::sendMessageToAllCharsInRange(const std::string &message, Character::
     sendMessageToAllCharsInRange(message, message, tt, cc);
 }
 
-void World::makeGFXForAllPlayersInRange(short int xc, short int yc, short int zc, int distancemetric ,unsigned short int gfx) {
-    for (const auto &player : Players.findAllCharactersInRangeOf(xc, yc, zc, distancemetric)) {
-        ServerCommandPointer cmd(new GraphicEffectTC(xc, yc, zc, gfx));
+void World::makeGFXForAllPlayersInRange(const position &pos, int distancemetric ,unsigned short int gfx) {
+    for (const auto &player : Players.findAllCharactersInRangeOf(pos, distancemetric)) {
+        ServerCommandPointer cmd(new GraphicEffectTC(pos, gfx));
         player->Connection->addCommand(cmd);
     }
 }
 
 
-void World::makeSoundForAllPlayersInRange(short int xc, short int yc, short int zc, int distancemetric, unsigned short int sound) {
-    for (const auto &player : Players.findAllCharactersInRangeOf(xc, yc, zc, distancemetric)) {
-        ServerCommandPointer cmd(new SoundTC(xc, yc, zc, sound));
+void World::makeSoundForAllPlayersInRange(const position &pos, int distancemetric, unsigned short int sound) {
+    for (const auto &player : Players.findAllCharactersInRangeOf(pos, distancemetric)) {
+        ServerCommandPointer cmd(new SoundTC(pos, sound));
         player->Connection->addCommand(cmd);
     }
 }
 
 
 
-void World::lookAtMapItem(Player *cp, short int x, short int y, short int z) {
+void World::lookAtMapItem(Player *cp, const position &pos) {
 
     Field *field;
     Item titem;
 
-    if (GetPToCFieldAt(field, x, y, z)) {
+    if (GetPToCFieldAt(field, pos)) {
         // Feld vorhanden
         if (field->ViewTopItem(titem)) {
             std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(titem.getId());
             ScriptItem n_item = titem;
             n_item.type = ScriptItem::it_field;
-            n_item.pos = position(x, y, z);
+            n_item.pos = pos;
             n_item.owner = cp;
 
             if (script && script->existsEntrypoint("LookAtItem")) {
@@ -282,18 +282,18 @@ void World::lookAtMapItem(Player *cp, short int x, short int y, short int z) {
             }
 
             if (!lookAtItemScript->lookAtItem(cp, n_item)) {
-                lookAtTile(cp, field->getTileId(), x, y, z);
+                lookAtTile(cp, field->getTileId(), pos);
             }
         } else {
-            lookAtTile(cp, field->getTileId(), x, y, z);
+            lookAtTile(cp, field->getTileId(), pos);
         }
     }
 }
 
 
-void World::lookAtTile(Player *cp, unsigned short int tile, short int x, short int y, short int z) {
+void World::lookAtTile(Player *cp, unsigned short int tile, const position &pos) {
     const TilesStruct &tileStruct = Data::Tiles[tile];
-    ServerCommandPointer cmd(new LookAtTileTC(x, y, z, cp->nls(tileStruct.German, tileStruct.English)));
+    ServerCommandPointer cmd(new LookAtTileTC(pos, cp->nls(tileStruct.German, tileStruct.English)));
     cp->Connection->addCommand(cmd);
 }
 
@@ -363,7 +363,7 @@ void World::forceIntroducePlayer(Player *cp, Player *Admin) {
 }
 
 void World::introduceMyself(Player *cp) {
-    for (const auto &player : Players.findAllCharactersInRangeOf(cp->pos.x, cp->pos.y, cp->pos.z, 2)) {
+    for (const auto &player : Players.findAllCharactersInRangeOf(cp->pos, 2)) {
         player->introducePlayer(cp);
     }
 }

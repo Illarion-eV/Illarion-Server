@@ -79,7 +79,7 @@ void World::checkFieldAfterMove(Character *cc, Field *cfstart) {
 
             switch (which.type) {
             case SOUNDFIELD:
-                makeSoundForAllPlayersInRange(cc->pos.x, cc->pos.y, cc->pos.z, 3, which.flags);
+                makeSoundForAllPlayersInRange(cc->pos, 3, which.flags);
                 break;
 
             case MUSICFIELD:
@@ -176,7 +176,7 @@ bool World::spinPlayer(Player *cp, unsigned char d) {
 
 
 void World::sendSpinToAllVisiblePlayers(Character *cc) {
-    for (const auto &p : Players.findAllCharactersInScreen(cc->pos.x, cc->pos.y, cc->pos.z)) {
+    for (const auto &p : Players.findAllCharactersInScreen(cc->pos)) {
         ServerCommandPointer cmd(new PlayerSpinTC(cc->faceto, cc->getId()));
         p->Connection->addCommand(cmd);
     }
@@ -188,7 +188,7 @@ void World::sendPassiveMoveToAllVisiblePlayers(Character *ccp) {
     char yoffs;
     char zoffs;
 
-    for (const auto &p : Players.findAllCharactersInScreen(ccp->pos.x, ccp->pos.y, ccp->pos.z)) {
+    for (const auto &p : Players.findAllCharactersInScreen(ccp->pos)) {
         xoffs = ccp->pos.x - p->pos.x;
         yoffs = ccp->pos.y - p->pos.y;
         zoffs = ccp->pos.z - p->pos.z + RANGEDOWN;
@@ -213,7 +213,7 @@ void World::sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char ne
         char yoffs;
         char zoffs;
 
-        for (const auto &p : Players.findAllCharactersInScreen(cc->pos.x, cc->pos.y, cc->pos.z)) {
+        for (const auto &p : Players.findAllCharactersInScreen(cc->pos)) {
             xoffs = cc->pos.x - p->pos.x;
             yoffs = cc->pos.y - p->pos.y;
             zoffs = cc->pos.z - p->pos.z + RANGEDOWN;
@@ -231,7 +231,7 @@ void World::sendCharacterWarpToAllVisiblePlayers(Character *cc, const position &
     if (!cc->isinvisible) {
         sendRemoveCharToVisiblePlayers(cc->getId(), oldpos);
 
-        for (const auto &p : Players.findAllCharactersInScreen(cc->pos.x, cc->pos.y, cc->pos.z)) {
+        for (const auto &p : Players.findAllCharactersInScreen(cc->pos)) {
             if (cc != p) {
                 ServerCommandPointer cmd(new MoveAckTC(cc->getId(), cc->pos, PUSH, 0));
                 p->Connection->addCommand(cmd);
@@ -242,13 +242,13 @@ void World::sendCharacterWarpToAllVisiblePlayers(Character *cc, const position &
 
 
 void World::sendAllVisibleCharactersToPlayer(Player *cp, bool sendSpin) {
-    std::vector < Player * > tempP = Players.findAllCharactersInRangeOf(cp->pos.x , cp->pos.y, cp->pos.z, cp->getScreenRange());
+    std::vector < Player * > tempP = Players.findAllCharactersInRangeOf(cp->pos, cp->getScreenRange());
     sendCharsInVector< Player >(tempP, cp, sendSpin);
 
-    std::vector < Monster * > tempM = Monsters.findAllCharactersInRangeOf(cp->pos.x , cp->pos.y, cp->pos.z, cp->getScreenRange());
+    std::vector < Monster * > tempM = Monsters.findAllCharactersInRangeOf(cp->pos, cp->getScreenRange());
     sendCharsInVector< Monster >(tempM, cp, sendSpin);
 
-    std::vector < NPC * > tempN = Npc.findAllCharactersInRangeOf(cp->pos.x , cp->pos.y, cp->pos.z, cp->getScreenRange());
+    std::vector < NPC * > tempN = Npc.findAllCharactersInRangeOf(cp->pos, cp->getScreenRange());
     sendCharsInVector< NPC >(tempN, cp, sendSpin);
 }
 
