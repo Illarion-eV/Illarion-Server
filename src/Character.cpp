@@ -1425,14 +1425,6 @@ bool Character::forceWarp(const position &newPos) {
     return false;
 }
 
-void Character::LTIncreaseHP(unsigned short int value, unsigned short int count, unsigned short int time) {
-    //Nothing to do here, overloaded for players
-}
-
-void Character::LTIncreaseMana(unsigned short int value, unsigned short int count, unsigned short int time) {
-    //Nothing to do here, overloaded for players
-}
-
 void Character::startMusic(short int title) {
     //Nothing to do here, overloaded for players
 }

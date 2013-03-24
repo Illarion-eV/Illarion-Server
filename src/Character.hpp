@@ -356,9 +356,6 @@ public:
     virtual bool Warp(const position &newPos);
     virtual bool forceWarp(const position &newPos);
 
-    virtual void LTIncreaseHP(unsigned short int value, unsigned short int count, unsigned short int time);
-    virtual void LTIncreaseMana(unsigned short int value, unsigned short int count, unsigned short int time);
-
     virtual void startMusic(short int title);
     virtual void defaultMusic();
 

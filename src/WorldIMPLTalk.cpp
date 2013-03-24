@@ -29,31 +29,6 @@
 
 extern std::shared_ptr<LuaLookAtItemScript>lookAtItemScript;
 
-bool World::sendTextInFileToPlayer(const std::string &filename, Player *cp) {
-    if (filename.length() == 0) {
-        return false;
-    }
-
-    FILE *fp;
-    fp = fopen(filename.c_str(), "r");
-
-    if (fp != NULL) {
-        const unsigned char LINE_LENGTH = 255;
-        char line[LINE_LENGTH];
-
-        while (fgets(line, LINE_LENGTH, fp) != NULL) {
-            ServerCommandPointer cmd(new SayTC(cp->pos.x, cp->pos.y, cp->pos.z, line));
-            cp->Connection->addCommand(cmd);
-        }
-
-        fclose(fp);
-        return true;
-    } else {
-        return false;
-    }
-}
-
-
 void World::sendMessageToAdmin(const std::string &message) {
     for (const auto &player : Players) {
         if (player->hasGMRight(gmr_getgmcalls)) {

@@ -332,11 +332,6 @@ public:
     void SetLevel(unsigned char z);
 
     /**
-    * defines a type of function which takes a pointer to a field as param an returns nothing
-    */
-    typedef void (*FIELD_FUNCT)(Field *);
-
-    /**
     * stores the items on this field
     */
     ITEMVECTOR items;

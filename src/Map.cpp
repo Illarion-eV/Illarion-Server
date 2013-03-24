@@ -611,31 +611,6 @@ void Map::ageContainers() {
     }
 }
 
-void Map::ApplyToCFields_XFromTo(short int xstart, short int xend, Field::FIELD_FUNCT funct) {
-
-    short int tempMinX;
-    short int tempMaxX;
-
-    try {
-        tempMinX = Conv_X_Koord(xstart);
-    } catch (Exception_CoordinateOutOfRange &e) {
-        tempMinX = 0;
-    }
-
-    try {
-        tempMaxX = Conv_X_Koord(xend);
-    } catch (Exception_CoordinateOutOfRange &e) {
-        tempMaxX = Width - 1;
-    }
-
-    for (short int x = tempMinX; x <= tempMaxX; ++x) {
-        for (short int y = 0; y < Height; ++y) {
-            funct(&(MainMap [ x ][ y ]));
-        }
-    }
-}
-
-
 bool Map::SetPlayerAt(short int x, short int y, bool t) {
 
     Field *temp;
@@ -770,7 +745,7 @@ bool Map::findEmptyCFieldNear(Field *&cf, short int &x, short int &y) {
             }
 
             x++;
-        }//Schleife durch x
+        }
 
         y = starty - d;
 
@@ -790,118 +765,12 @@ bool Map::findEmptyCFieldNear(Field *&cf, short int &x, short int &y) {
             }
 
             y++;
-        }//Schleife durch y
+        }
 
         d++;
-    }//Schleife durch Abstand d
-
-    return false;
-
-}
-
-
-bool Map::coversPositionInView(position pos) {
-
-    if (Z_Level > pos.z) {        // Die effektiv sichtbare Mittelpunktkoordinate fr die gegeben Karte bestimmen
-        int view_X = pos.x - ((Z_Level - pos.z) * LEVELDISTANCE);
-        int view_Y = pos.y + ((Z_Level - pos.z) * LEVELDISTANCE);
-
-        if ((Max_X >= view_X) && (Min_X <= view_X)) {
-            if ((Max_Y >= view_Y) && (Min_Y <= view_Y)) {
-                Field *cftemp;
-
-                if (GetPToCFieldAt(cftemp, view_X, view_Y)) {
-                    if (cftemp->getTileId() != TRANSPARENT) {
-                        return true;
-                    }
-                }
-            }
-        }
     }
 
     return false;
 
-}
-
-
-bool Map::isOverPositionInData(short int x, short int y, short int z) {
-    if (Z_Level > z) {
-        if ((Max_X >= x) && (Min_X <= x)) {
-            if ((Max_Y >= y) && (Min_Y <= y)) {
-                Field *cftemp;
-
-                if (GetPToCFieldAt(cftemp, x, y)) {
-                    if (cftemp->getTileId() != TRANSPARENT) {
-                        return true;
-                    }
-                }
-            }
-        }
-    }
-
-    return false;
-
-}
-
-
-bool Map::isOverMapInData(Map *refmap) {
-
-    if (refmap == NULL) {
-        return false;
-    }
-
-    if (Z_Level > refmap->Z_Level) {
-        if ((refmap->Max_X >= Max_X) && (refmap->Min_X <= Min_X)) {
-            if ((refmap->Max_Y >= Max_Y) && (refmap->Min_Y <= Min_Y)) {
-                return true;
-            }
-        }
-    }
-
-    return false;
-
-}
-
-
-bool Map::isFullyCoveredBy(Map *refmap) {
-
-    if (refmap == NULL) {
-        return false;
-    }
-
-    if (Z_Level < refmap->Z_Level) {
-        int shift = (refmap->Z_Level - Z_Level) * LEVELDISTANCE;
-
-        if ((refmap->Max_X + shift >= Max_X) && (refmap->Min_X + shift <= Min_X)) {
-            if ((refmap->Max_Y - shift >= Max_Y) && (refmap->Min_Y - shift <= Min_Y)) {
-                return true;
-            }
-        }
-    }
-
-    return false;
-
-}
-
-
-bool Map::isVisibleFromInView(position pos, int distancemetric) {
-
-    return true;
-
-    // Just get rid of compile warnings... //
-    // Was previously commented out //
-#if 0
-    int viewCenter_X = pos.x - ((pos.z - Z_Level) * LEVELDISTANCE);
-    int viewCenter_Y = pos.y + ((pos.z - Z_Level) * LEVELDISTANCE);
-
-
-    if ((Min_X < (viewCenter_X + distancemetric)) && (Max_X > (viewCenter_X - distancemetric))) {
-        if ((Min_Y < (viewCenter_Y + distancemetric)) && (Max_Y > (viewCenter_Y - distancemetric))) {
-            return true;
-        }
-    }
-
-    return false;
-#endif
 }
 

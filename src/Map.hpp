@@ -95,12 +95,6 @@ public:
     void ageItemsInHorizontalRange(short int xstart, short int xend);
     void ageContainers();
 
-    //! wendet die Funktion funct auf alle Field der Karte mit X-Koordinate von xstart bis xend an
-    // \param xstart kleinste bearbeitete X-Koordinate (Koordinaten im Feld, keine logischen der Karte)
-    // \param xend gr�sste bearbeitete X-Koordinate (Koordinaten im Feld, keine logischen der Karte)
-    // \param funct anzuwendende Funktion
-    void ApplyToCFields_XFromTo(short int xstart, short int xend, Field::FIELD_FUNCT funct);
-
     //! setzt das Flag welches angibt, ob ein Spieler auf dem Feld ist auf t
     // \param x X-Koordinate
     // \param y Y-Koordinate
@@ -152,27 +146,6 @@ public:
     // \param y vor Ausf�hrung der Funktion der Startpunkt der Suche, danach die Y-Koordinate des gefundenen Feldes
     // \return true falls ein Feld gefunden wurde, false sonst
     bool findEmptyCFieldNear(Field *&cf, short int &x, short int &y);
-
-    //! pr�ft, ob die Map �ber der Position pos liegt
-    // \param pos die zu pr�fende Position
-    // \return true falls die Map �ber der Position pos liegt, false sonst
-    bool coversPositionInView(position pos);
-
-    bool isVisibleFromInView(position pos, int distancemetric);
-
-    //! pr�ft, ob die Map �ber der Position (x,y,z) liegt
-    // \param x die zu pr�fende X-Koordinate
-    // \param y die zu pr�fende Y-Koordinate
-    // \param z die zu pr�fende Z-Koordinate
-    // \return true falls die Map �ber der Position (x,y,z) liegt, false sonst
-    bool isOverPositionInData(short int x, short int y, short int z);
-
-    //! pr�ft, ob die Map �ber der Map refmap liegt
-    // \param refmap die zu �berpr�fende Map
-    // \return true falls die Map �ber der Map refmap liegt, false sonst
-    bool isOverMapInData(Map *refmap);
-
-    bool isFullyCoveredBy(Map *refmap);
 
     //! die kleinste logisch m�gliche X-Koordinate
     short Min_X;

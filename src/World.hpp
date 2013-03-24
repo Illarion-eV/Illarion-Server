@@ -860,9 +860,6 @@ public:
     // \param sendSpin falls true, wird auch die Blickrichtung mit verschickt
     template<class T> void sendCharsInVector(const std::vector<T *> &vec, Player *cp, bool sendSpin);
 
-    //////////// in WorldIMPLTalk.cpp /////////////////
-    bool sendTextInFileToPlayer(const std::string &filename, Player *cp);
-
     //! sendet an den Spieler den Namen des obersten Item auf einem Feld
     //  bzw. den Namen des Feldes
     // \param cp der Spieler der benachrichtigt werden soll
@@ -1219,15 +1216,6 @@ public:
     // \param zc Z-Koordinate der neuen Itemposition
     // \param count Anza
     void dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, short int xc, short int yc, short int zc, Item::number_type count);
-
-    //! wirft eines der Item vom Koerper des Monster auf die Karte
-    // \param cm Monster der das Item wirft
-    // \param cpos die Position des Item welches verschoben wird
-    // \param xo X-Offset der neuen Itemposition relativ zum Monster
-    // \param yo Y-Offset der neuen Itemposition relativ zum Monster
-    // \param zo Z-Offset der neuen Itemposition relativ zum Monster
-    // \param count Anzahl
-    void dropItemFromMonsterOnMap(Monster *cm, unsigned char cpos, char xo, char yo, char zo, Item::number_type count);
 
     //! ein Spieler verschiebt ein Item vom Koerper in ein showcase
     // \param cp Player der verschiebt

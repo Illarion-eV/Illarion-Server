@@ -917,29 +917,6 @@ void World::dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, short int xc
 }
 
 
-
-void World::dropItemFromMonsterOnMap(Monster *cm, unsigned char cpos, char xo, char yo, char zo, Item::number_type count) {
-    if (count == 0) {
-        return;
-    }
-
-    if (takeItemFromInvPos(cm, cpos, count)) {
-        short int new_x = cm->pos.x + xo;
-        short int new_y = cm->pos.y + yo;
-        short int new_z = cm->pos.z + zo;
-
-        if (!putItemOnMap(cm, new_x, new_y, new_z)) {
-            if (!putItemOnInvPos(cm, cpos)) {
-                Logger::error(LogFacility::World) << "dropItemFromMonsterOnMap failed: item " << g_item.getId() << " lost for " << cm->to_string() << Log::end;
-                g_cont = NULL;
-                g_item.reset();
-            }
-        }
-    }
-}
-
-
-
 void World::moveItemBetweenBodyParts(Player *cp, unsigned char opos, unsigned char npos, Item::number_type count) {
     if (count == 0) {
         return;
