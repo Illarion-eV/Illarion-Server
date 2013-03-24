@@ -310,8 +310,7 @@ public:
         return ltAction->actionRunning();
     }
 
-    //�erladene Funktion der Basisklasse ccharacter um den Spieler noch zus�zliche ausgaben seines Zustandes zu machen.
-    void increasePoisonValue(short int value);
+    virtual void increasePoisonValue(short int value) override;
 
     void openShowcase(Container *container, bool carry);
     void updateShowcase(Container *container) const;
