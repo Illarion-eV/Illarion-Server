@@ -1406,12 +1406,6 @@ bool World::lookIntoContainerOnField(Player *cp, char direction) {
     return false;
 }
 
-void World::closeContainerInShowcase(Player *cp, uint8_t showcase) {
-    if (cp) {
-        cp->closeShowcase(showcase);
-    }
-}
-
 void World::sendRemoveItemFromMapToAllVisibleCharacters(TYPE_OF_ITEM_ID id, short int xo, short int yo, short int zo, Field *cfp) {
     if (cfp) {
         for (const auto &player : Players.findAllCharactersInScreen(xo, yo, zo)) {

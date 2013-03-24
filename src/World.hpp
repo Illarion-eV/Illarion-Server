@@ -1277,11 +1277,6 @@ public:
     // \return true, falls ein Container gefunden wurde
     void lookIntoShowcaseContainer(Player *cp, uint8_t showcase, unsigned char pos);
 
-    //! ein Spieler schliesst einen Container in einem showcase
-    // \param cp Player schliessender Spieler
-    // \param showcase die Ansicht, in welcher der Inhalt des Container dargestellt werden soll
-    void closeContainerInShowcase(Player *cp, uint8_t showcase);
-
     //! Array mit der Definition der Bewegung fr move
     char moveSteps[ 11 ][ 3 ]; // TODO move this to a better location
 

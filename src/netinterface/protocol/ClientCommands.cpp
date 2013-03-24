@@ -1268,7 +1268,7 @@ void CloseContainerInShowCaseTS::performAction(Player *player) {
     Logger::debug(LogFacility::World) << player->to_string() << " closes a container in the showcase" << Log::end;
 
     if (player->IsAlive()) {
-        World::get()->closeContainerInShowcase(player, showcase);
+        player->closeShowcase(showcase);
     }
 }
 
