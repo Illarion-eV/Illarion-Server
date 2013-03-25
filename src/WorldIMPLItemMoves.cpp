@@ -1177,7 +1177,7 @@ void World::moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char p
 
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
-                if (!putItemInShowcase(cp, dest, pos2)) {
+                if (!putItemInShowcase(cp, source, pos)) {
                     Logger::error(LogFacility::Player) << "moveItemBetweenShowcases failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
                     g_cont = nullptr;
                     g_item.reset();
