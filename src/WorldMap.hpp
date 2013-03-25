@@ -42,9 +42,8 @@ public:
     void clear();
 
     bool findAllMapsInRangeOf(char rnorth, char rsouth, char reast, char rwest, position pos, map_vector_t &ret) const;
-    bool mapInRangeOf(short int upperleft_X, short int upperleft_Y, unsigned short int sizex, unsigned short int sizey, short int z) const;
+    bool mapInRangeOf(const position &upperleft, unsigned short int dx, unsigned short int dy) const;
     bool findMapForPos(const position &pos, map_t &map) const;
-    bool findMapForPos(short int x, short int y, short int z, map_t &map) const;
     bool findAllMapsWithXInRangeOf(short int start, short int end, map_vector_t &ret) const;
 
     bool InsertMap(map_t newMap);

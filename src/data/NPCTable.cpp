@@ -74,48 +74,47 @@ void NPCTable::reload() {
         Database::Result results = query.execute();
 
         if (!results.empty()) {
-            NPC *newNPC = 0;
-
-            TYPE_OF_CHARACTER_ID npcID = 0;
-            int32_t posx, posy, posz;
-            std::string npcName;
-            std::string scriptname;
             auto questNodes = QuestNodeTable::getInstance()->getNpcNodes();
             auto questItr = questNodes.first;
             auto questEnd = questNodes.second;
 
-            for (Database::ResultConstIterator itr = results.begin();
-                 itr != results.end(); ++itr) {
+            for (const auto &row : results) {
+                NPC *newNPC = nullptr;
+                TYPE_OF_CHARACTER_ID npcID = 0;
+                std::string npcName;
+
                 try {
-                    npcID = ((*itr)["npc_id"].as<TYPE_OF_CHARACTER_ID>());
+                    npcID = row["npc_id"].as<TYPE_OF_CHARACTER_ID>();
 
-                    posx = ((*itr)["npc_posx"].as<int32_t>());
-                    posy = ((*itr)["npc_posy"].as<int32_t>());
-                    posz = ((*itr)["npc_posz"].as<int32_t>());
+                    const position pos(
+                        row["npc_posx"].as<int16_t>(),
+                        row["npc_posy"].as<int16_t>(),
+                        row["npc_posz"].as<int16_t>()
+                    );
 
-                    npcName = ((*itr)["npc_name"].as<std::string>());
+                    npcName = row["npc_name"].as<std::string>();
 
                     Character::appearance appearance;
-                    appearance.hairtype = (uint8_t)((*itr)["npc_hair"].as<int16_t>());
-                    appearance.beardtype = (uint8_t)((*itr)["npc_hair"].as<int16_t>());
+                    appearance.hairtype = uint8_t(row["npc_hair"].as<int16_t>());
+                    appearance.beardtype = uint8_t(row["npc_hair"].as<int16_t>());
                     appearance.hair = {
-                        (uint8_t)((*itr)["npc_hairred"].as<int16_t>()),
-                        (uint8_t)((*itr)["npc_hairgreen"].as<int16_t>()),
-                        (uint8_t)((*itr)["npc_hairblue"].as<int16_t>())
+                        uint8_t(row["npc_hairred"].as<int16_t>()),
+                        uint8_t(row["npc_hairgreen"].as<int16_t>()),
+                        uint8_t(row["npc_hairblue"].as<int16_t>())
                     };
                     appearance.skin = {
-                        (uint8_t)((*itr)["npc_skinred"].as<int16_t>()),
-                        (uint8_t)((*itr)["npc_skingreen"].as<int16_t>()),
-                        (uint8_t)((*itr)["npc_skinblue"].as<int16_t>())
+                        (uint8_t)(row["npc_skinred"].as<int16_t>()),
+                        (uint8_t)(row["npc_skingreen"].as<int16_t>()),
+                        (uint8_t)(row["npc_skinblue"].as<int16_t>())
                     };
 
                     newNPC = new NPC(
                         npcID, npcName,
-                        (Character::race_type)((*itr)["npc_type"].as<uint32_t>()),
-                        position(posx, posy, posz),
-                        (Character::face_to)((*itr)["npc_faceto"].as<uint32_t>()),
-                        ((*itr)["npc_is_healer"].as<bool>()),
-                        (Character::sex_type)((*itr)["npc_sex"].as<uint32_t>()),
+                        Character::race_type(row["npc_type"].as<uint32_t>()),
+                        pos,
+                        Character::face_to(row["npc_faceto"].as<uint32_t>()),
+                        row["npc_is_healer"].as<bool>(),
+                        Character::sex_type(row["npc_sex"].as<uint32_t>()),
                         appearance);
 
                     // add npc to npc list
@@ -124,12 +123,12 @@ void NPCTable::reload() {
                     // set field to occupied
                     Field *tempf;
 
-                    if (_world->GetPToCFieldAt(tempf, posx, posy, posz)) {
+                    if (_world->GetPToCFieldAt(tempf, pos)) {
                         tempf->setChar();
                     }
 
-                    if (!((*itr)["npc_script"].is_null())) {
-                        scriptname = ((*itr)["npc_script"].as<std::string>());
+                    if (!row["npc_script"].is_null()) {
+                        const std::string scriptname = row["npc_script"].as<std::string>();
 
                         try {
                             std::shared_ptr<LuaNPCScript> script(new LuaNPCScript(scriptname, newNPC));
@@ -145,7 +144,7 @@ void NPCTable::reload() {
                         }
                     }
 
-                    newNPC = 0;
+                    newNPC = nullptr;
                 } catch (NoSpace &s) {
                     std::cout << "no space available for npc: " << npcName << "(" << npcID << ") : " << s.what() << std::endl;
                 }

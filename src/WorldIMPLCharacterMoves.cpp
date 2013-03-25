@@ -28,19 +28,15 @@
 
 bool World::warpMonster(Monster *cm, Field *cfstart) {
     if (cfstart->IsWarpField()) {
-        position oldpos = cm->pos;
+        const position oldpos = cm->pos;
         cfstart->GetWarpField(cm->pos);
         Field *cfend;
 
-        if (findEmptyCFieldNear(cfend, cm->pos.x, cm->pos.y, cm->pos.z)) {
+        if (findEmptyCFieldNear(cfend, cm->pos)) {
             cfstart->SetMonsterOnField(false);
             cfend->SetMonsterOnField(true);
 
-            // allen anderen Spielern den Warp �bermitteln
             sendCharacterWarpToAllVisiblePlayers(cm, oldpos, PUSH);
-#ifdef World_CharMove_DEBUG
-            std::cout << "warpMonster: neu " << cm->pos.x << " " << cm->pos.y << " " << (short int) cm->pos.z << "\n";
-#endif
             return true;
         } else {
             cm->pos = oldpos;

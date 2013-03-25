@@ -262,7 +262,7 @@ bool World::erase(ScriptItem item, int amount) {
         Field *field;
         Item dummy;
 
-        if (GetPToCFieldAt(field, item.pos.x, item.pos.y, item.pos.z)) {
+        if (GetPToCFieldAt(field, item.pos)) {
             bool erased=false;
             field->increaseTopItem(-amount, erased);
 
@@ -298,7 +298,7 @@ bool World::increase(ScriptItem item, short int count) {
     else if (item.type == ScriptItem::it_field) {
         Field *field;
 
-        if (GetPToCFieldAt(field, item.pos.x, item.pos.y, item.pos.z)) {
+        if (GetPToCFieldAt(field, item.pos)) {
             bool erased=false;
             field->increaseTopItem(count, erased);
 
@@ -335,7 +335,7 @@ bool World::swap(ScriptItem item, TYPE_OF_ITEM_ID newitem, unsigned short int ne
     else if (item.type == ScriptItem::it_field) {
         Field *field;
 
-        if (GetPToCFieldAt(field, item.pos.x, item.pos.y, item.pos.z)) {
+        if (GetPToCFieldAt(field, item.pos)) {
             Item it;
 
             if (field->ViewTopItem(it)) {
@@ -378,7 +378,7 @@ ScriptItem World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, con
     Field *field;
     ScriptItem sItem;
 
-    if (GetPToCFieldAt(field, pos.x, pos.y, pos.z)) {
+    if (GetPToCFieldAt(field, pos)) {
         const auto &com = Data::CommonItems[id];
 
         if (com.isValid()) {
@@ -417,7 +417,7 @@ ScriptItem World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, con
 bool World::createFromItem(ScriptItem item, const position &pos, bool always) {
     Field *field;
 
-    if (GetPToCFieldAt(field, pos.x, pos.y, pos.z)) {
+    if (GetPToCFieldAt(field, pos)) {
         g_item = static_cast<Item>(item);
         g_cont = nullptr;
 
@@ -439,7 +439,7 @@ bool World::createFromItem(ScriptItem item, const position &pos, bool always) {
 fuse_ptr<Character> World::createMonster(unsigned short id, const position &pos, short movepoints) {
     Field *field;
 
-    if (GetPToCFieldAt(field, pos.x, pos.y, pos.z)) {
+    if (GetPToCFieldAt(field, pos)) {
         try {
             Monster *newMonster = new Monster(id, pos);
 #ifdef LUASCRIPT_DEBUG
@@ -542,8 +542,10 @@ bool World::createSavedArea(uint16_t tileid, const position &pos, uint16_t heigh
 
     for (time_t akt_x = pos.x; akt_x < pos.x+width; ++akt_x) {
         for (time_t akt_y = pos.y; akt_y < pos.y+height; ++akt_y) {
-            if (maps.findMapForPos(akt_x, akt_y, pos.z, dummy)) {
-                std::cerr<<"World::createSavedArea: Aborted map insertion, map for field at ("<<akt_x <<", "<<akt_y<<", "<<pos.z<<") found!"<<std::endl;
+            const position testPos(akt_x, akt_y, pos.z);
+
+            if (maps.findMapForPos(testPos, dummy)) {
+                std::cerr<<"World::createSavedArea: Aborted map insertion, map for field at "<< testPos << " found!"<<std::endl;
                 return false;
             }
         }
@@ -560,13 +562,13 @@ bool World::createSavedArea(uint16_t tileid, const position &pos, uint16_t heigh
                 tempf->setTileId(tileid);
                 tempf->updateFlags();
             } else {
-                std::cerr << "World::createSavedArea: For map inserted at (" << pos.x << ", " << pos.y << ", " << pos.z << ") no Field was found for offset (" << _x << ", " << _y << ")!" << std::endl;
+                std::cerr << "World::createSavedArea: For map inserted at " << pos << " no Field was found for offset (" << _x << ", " << _y << ")!" << std::endl;
             }
 
         }
 
     maps.InsertMap(tempmap);
-    std::cout<<" Map Created by createSavedArea command at x: "<<pos.x<<" y: "<<pos.y<<" z: "<<pos.z<<" height: "<<height<<" width: "<<width<<" standard tile: "<<tileid<<"!"<<std::endl;
+    std::cout<<" Map Created by createSavedArea command at " << pos <<" height: "<<height<<" width: "<<width<<" standard tile: "<<tileid<<"!"<<std::endl;
     return true;
 }
 

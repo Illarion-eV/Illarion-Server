@@ -47,7 +47,7 @@ void World::deleteAllLostNPC() {
         const auto &npc = Npc.findID(npcToDelete);
 
         if (npc) {
-            if (GetPToCFieldAt(tempf, npc->pos.x, npc->pos.y, npc->pos.z)) {
+            if (GetPToCFieldAt(tempf, npc->pos)) {
                 tempf->removeChar();
             }
 
@@ -512,7 +512,7 @@ bool World::characterAttacks(Character *cp) {
 
 
 bool World::killMonster(Monster *monsterp) {
-    if (monsterp != NULL) {
+    if (monsterp) {
         MONSTERVECTOR::iterator newIt;
 
         if (Monsters.getIterator(monsterp->getId(), newIt)) {
@@ -531,7 +531,7 @@ void World::killMonster(MONSTERVECTOR::iterator monsterIt, MONSTERVECTOR::iterat
     //( *monsterIt )->SetAlive( false );
     Field *tempf;
 
-    if (GetPToCFieldAt(tempf, (*monsterIt)->pos.x, (*monsterIt)->pos.y, (*monsterIt)->pos.z)) {
+    if (GetPToCFieldAt(tempf, (*monsterIt)->pos)) {
         //tempf->SetMonsterOnField( false );
         tempf->removeChar();
     } else {
@@ -557,29 +557,16 @@ Field *World::GetField(const position &pos) const {
     WorldMap::map_t temp;
 
     if (maps.findMapForPos(pos, temp)) {
-        Field *field = NULL;
+        Field *field = nullptr;
 
         if (temp->GetPToCFieldAt(field, pos.x, pos.y)) {
             return field;
         } else {
-            return NULL;
+            return nullptr;
         }
     } else {
-        return NULL;
+        return nullptr;
     }
-}
-
-
-bool World::GetPToCFieldAt(Field *&fip, short int x, short int y, short int z) const {
-
-    WorldMap::map_t temp;
-
-    if (maps.findMapForPos(x, y, z, temp)) {
-        return temp->GetPToCFieldAt(fip, x, y);
-    } else {
-        return false;
-    }
-
 }
 
 
@@ -589,17 +576,6 @@ bool World::GetPToCFieldAt(Field *&fip, const position &pos) const {
 
     if (maps.findMapForPos(pos, temp)) {
         return temp->GetPToCFieldAt(fip, pos.x, pos.y);
-    }
-
-    return false;
-
-}
-
-
-bool World::GetPToCFieldAt(Field *&fip, short int x, short int y, short int z, WorldMap::map_t &map) const {
-
-    if (maps.findMapForPos(x, y, z, map)) {
-        return map->GetPToCFieldAt(fip, x, y);
     }
 
     return false;
@@ -618,12 +594,12 @@ bool World::GetPToCFieldAt(Field *&fip, const position &pos, WorldMap::map_t &ma
 }
 
 
-bool World::findEmptyCFieldNear(Field *&cf, short int &x, short int &y, short int z) {
+bool World::findEmptyCFieldNear(Field *&cf, position &pos) {
 
     WorldMap::map_t temp;
 
-    if (maps.findMapForPos(x, y, z, temp)) {
-        return temp->findEmptyCFieldNear(cf, x, y);
+    if (maps.findMapForPos(pos, temp)) {
+        return temp->findEmptyCFieldNear(cf, pos.x, pos.y);
     }
 
     return false;
@@ -995,14 +971,16 @@ int World::getTime(const std::string &timeType) {
 
 
 bool World::findWarpFieldsInRange(const position &pos, short int range, std::vector<position> &warppositions) {
-    int x,y;
-    Field *cf = 0;
+    for (int x = pos.x - range; x <= pos.x + range; ++x) {
+        for (int y = pos.y - range; y <= pos.y + range; ++y) {
+            const position p(x, y, pos.z);
+            Field *cf = 0;
 
-    for (x=pos.x-range; x<=pos.x+range; ++x)
-        for (y=pos.y-range; y<=pos.y+range; ++y)
-            if (GetPToCFieldAt(cf, x, y, pos.z) && cf->IsWarpField()) {
-                warppositions.emplace_back(x, y, pos.z);
+            if (GetPToCFieldAt(cf, p) && cf->IsWarpField()) {
+                warppositions.push_back(p);
             }
+        }
+    }
 
     return !warppositions.empty();
 }

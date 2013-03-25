@@ -29,7 +29,6 @@ namespace Database {
  */
 typedef pqxx::result Result;
 typedef pqxx::result::tuple ResultTuple;
-typedef pqxx::result::const_iterator ResultConstIterator;
 typedef pqxx::result::tuple::reference ResultField;
 typedef Result *PResult;
 }

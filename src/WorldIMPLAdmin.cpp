@@ -284,7 +284,7 @@ void World::save_command(Player *cp) {
     Field *tempf;
 
     for (const auto &player : Players) {
-        if (GetPToCFieldAt(tempf, player->pos.x, player->pos.y, player->pos.z)) {
+        if (GetPToCFieldAt(tempf, player->pos)) {
             tempf->SetPlayerOnField(false);
         }
     }
@@ -293,7 +293,7 @@ void World::save_command(Player *cp) {
     Save("Illarion");
 
     for (const auto &player : Players) {
-        if (GetPToCFieldAt(tempf, player->pos.x, player->pos.y, player->pos.z)) {
+        if (GetPToCFieldAt(tempf, player->pos)) {
             tempf->SetPlayerOnField(true);
         }
     }
@@ -452,7 +452,7 @@ void World::forceLogoutOfAllPlayers() {
     Field *tempf;
 
     for (const auto &player : Players) {
-        if (GetPToCFieldAt(tempf, player->pos.x, player->pos.y, player->pos.z)) {
+        if (GetPToCFieldAt(tempf, player->pos)) {
             tempf->SetPlayerOnField(false);
         }
 
@@ -470,7 +470,7 @@ bool World::forceLogoutOfPlayer(const std::string &name) {
     Player *temp = Players.find(name);
 
     if (temp) {
-        Logger::info(LogFacility::Admin) << "--- kicked: " << temp->to_string() << Log::end;
+        Logger::info(LogFacility::Admin) << "--- kicked: " << *temp << Log::end;
         ServerCommandPointer cmd(new LogOutTC(BYGAMEMASTER));
         temp->Connection->shutdownSend(cmd);
         return true;
@@ -809,12 +809,10 @@ void World::tile_command(Player *cp, const std::string &ttilenumber) {
 
 
 void World::setNextTile(Player *cp, unsigned char tilenumber) {
-
-    position tpos = cp->getFrontalPosition();
-
+    const position &pos = cp->getFrontalPosition();
     Field *tempf;
 
-    if (GetPToCFieldAt(tempf, tpos.x, tpos.y, tpos.z)) {
+    if (GetPToCFieldAt(tempf, pos)) {
         tempf->setTileId(tilenumber);
         tempf->updateFlags();
     }

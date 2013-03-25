@@ -49,12 +49,12 @@ NPC::NPC(TYPE_OF_CHARACTER_ID _id, const std::string &_name, Character::race_typ
 
     Field *tmpField;
 
-    if (!_world->findEmptyCFieldNear(tmpField,pos.x, pos.y, pos.z)) {
+    if (!_world->findEmptyCFieldNear(tmpField, pos)) {
         throw NoSpace();
     }
 
     _startpos = pos;
-    std::cout << "NewNPC spwaned: pos: " << pos.x << " " << pos.y << " " << pos.z << " type: " << _race << " Name: " << _name<< " is_healer: " << _ishealer << " sex: " << getAttribute(Character::sex) << std::endl;
+    std::cout << "NewNPC spwaned: pos: " << pos << " type: " << _race << " Name: " << _name<< " is_healer: " << _ishealer << " sex: " << getAttribute(Character::sex) << std::endl;
 
     tmpField->setChar();
 

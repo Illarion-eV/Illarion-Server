@@ -37,7 +37,7 @@ MonitoringClients::~MonitoringClients() {
 }
 
 void MonitoringClients::clientConnect(Player *player) {
-    Logger::info(LogFacility::Admin) << "New BBIWI Client connects: " << player->to_string() << "; active clients online: " << client_list.size() << Log::end;
+    Logger::info(LogFacility::Admin) << "New BBIWI Client connects: " << *player << "; active clients online: " << client_list.size() << Log::end;
     //create new Monitoring Client
     client_list.push_back(player); /*<add a new client to the list*/
     //setup the keepalive
@@ -45,7 +45,7 @@ void MonitoringClients::clientConnect(Player *player) {
     //Send all player infos to the new connected client
 
     for (const auto &p : _world->Players) {
-        ServerCommandPointer cmd(new BBPlayerTC(p->getId(), p->getName(), p->pos.x, p->pos.y, p->pos.z));
+        ServerCommandPointer cmd(new BBPlayerTC(p->getId(), p->getName(), p->pos));
         player->Connection->addCommand(cmd);
         cmd.reset(new BBSendAttribTC(p->getId(), "hitpoints", p->increaseAttrib("hitpoints",0)));
         player->Connection->addCommand(cmd);

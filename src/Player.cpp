@@ -152,22 +152,18 @@ Player::Player(boost::shared_ptr<NetInterface> newConnection) throw(Player::Logo
 
 void Player::login() throw(Player::LogoutException) {
     // find a position for our player...
-    short int x,y,z;
     bool target_position_found;
     Field *target_position;
 
     // try to find a targetposition near the logout place...
-    x = pos.x;
-    y = pos.y;
-    z = pos.z;
-    target_position_found = _world->findEmptyCFieldNear(target_position, x, y, z);
+    target_position_found = _world->findEmptyCFieldNear(target_position, pos);
 
     if (!target_position_found) {
         // move player to startingpoint...
-        x = Config::instance().playerstart_x;
-        y = Config::instance().playerstart_y;
-        z = Config::instance().playerstart_z;
-        target_position_found = _world->findEmptyCFieldNear(target_position, x, y, z);
+        pos.x = Config::instance().playerstart_x;
+        pos.y = Config::instance().playerstart_y;
+        pos.z = Config::instance().playerstart_z;
+        target_position_found = _world->findEmptyCFieldNear(target_position, pos);
     }
 
     if (!target_position_found) {
@@ -175,9 +171,6 @@ void Player::login() throw(Player::LogoutException) {
     }
 
     // set player on target field...
-    pos.x=x;
-    pos.y=y;
-    pos.z=z;
     target_position->SetPlayerOnField(true);
 
     sendCompleteQuestProgress();
@@ -194,7 +187,7 @@ void Player::login() throw(Player::LogoutException) {
     effects.load();
 
     //send the basic data to the monitoring client
-    cmd.reset(new BBPlayerTC(getId(), getName(), pos.x, pos.y,pos.z));
+    cmd.reset(new BBPlayerTC(getId(), getName(), pos));
     _world->monitoringClientList->sendCommand(cmd);
 
     // send weather and time before sending the map, to display everything correctly from the start
@@ -1760,13 +1753,13 @@ bool Player::move(direction dir, uint8_t mode) {
         bool fieldfound = false;
 
         // get the old tile... we need it to update the old tile as well as for the walking cost
-        if (!_world->GetPToCFieldAt(cfold, pos.x, pos.y, pos.z)) {
+        if (!_world->GetPToCFieldAt(cfold, pos)) {
             return false;
         }
 
         // we need to search for tiles below this level
         for (size_t i = 0; i < RANGEDOWN + 1 && !fieldfound; ++i) {
-            fieldfound = _world->GetPToCFieldAt(cfnew, newpos.x, newpos.y, newpos.z, _world->tmap);
+            fieldfound = _world->GetPToCFieldAt(cfnew, newpos, _world->tmap);
 
             // did we hit a targetfield?
             if (!fieldfound || cfnew->getTileId() == TRANSPARENTDISAPPEAR || cfnew->getTileId() == TRANSPARENT) {
@@ -1870,7 +1863,7 @@ bool Player::move(direction dir, uint8_t mode) {
             //Ggf Scriptausfhrung beim Betreten eines Triggerfeldes
             _world->TriggerFieldMove(this,true);
             //send the move to the monitoring clients
-            ServerCommandPointer cmd(new BBPlayerMoveTC(getId(), pos.x, pos.y, pos.z));
+            ServerCommandPointer cmd(new BBPlayerMoveTC(getId(), pos));
             _world->monitoringClientList->sendCommand(cmd);
 
             if (mode != RUNNING || j == 1) {
@@ -1933,7 +1926,7 @@ void Player::handleWarp() {
     sendFullMap();
     visibleChars.clear();
     _world->sendAllVisibleCharactersToPlayer(this, true);
-    cmd.reset(new BBPlayerMoveTC(getId(), pos.x, pos.y, pos.z));
+    cmd.reset(new BBPlayerMoveTC(getId(), pos));
     _world->monitoringClientList->sendCommand(cmd);
 }
 

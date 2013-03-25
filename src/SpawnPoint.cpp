@@ -102,18 +102,17 @@ void SpawnPoint::spawn() {
 
                         //std::cout<<"spawned new monster at pos: "<<tempPos.x<<" "<<tempPos.y<<" "<<tempPos.z<<std::endl;
                         //end of setting the new spawnpos
-                        if (world->findEmptyCFieldNear(tempf, tempPos.x, tempPos.y, tempPos.z)) {
+                        if (world->findEmptyCFieldNear(tempf, tempPos)) {
                             newmonster = new Monster(spawn.typ, tempPos, this);
 #ifdef SpawnPoint_DEBUG
-                            std::cout << "erschaffe Monster " << newmonster->name << " " << tempPos.x << " " << tempPos.y << " " << tempPos.z << std::endl;
+                            std::cout << "erschaffe Monster " << newmonster->name << " " << tempPos << std::endl;
 #endif
                             spawn.akt_count++;
-                            // Monster in die Liste der aktiven Monster einf�gen
                             world->newMonsters.push_back(newmonster);
                             tempf->SetPlayerOnField(true);
                             world->sendCharacterMoveToAllVisiblePlayers(newmonster, NORMALMOVE, 4);
                         } else {
-                            std::cout<<"cant find empty field at pos ( "<<tempPos.x<<" "<<tempPos.y<<" "<<tempPos.z<<" )"<<std::endl;
+                            std::cout<<"cant find empty field at pos " << tempPos << std::endl;
                         }
                     }
                 } catch (Monster::unknownIDException &) {

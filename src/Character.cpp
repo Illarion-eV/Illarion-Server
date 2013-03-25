@@ -1257,11 +1257,11 @@ bool Character::move(direction dir, bool active) {
     Field *cfnew, *cfold;
 
     // get the old tile... we need it to update the old tile as well as for the walking cost
-    _world->GetPToCFieldAt(cfold, pos.x, pos.y, pos.z);
+    _world->GetPToCFieldAt(cfold, pos);
 
     // we need to search for tiles below this level
     for (size_t i = 0; i < RANGEDOWN + 1 && !fieldfound; ++i) {
-        fieldfound = _world->GetPToCFieldAt(cfnew, newpos.x, newpos.y, newpos.z);
+        fieldfound = _world->GetPToCFieldAt(cfnew, newpos);
 
         // did we hit a targetfield?
         if (!fieldfound || cfnew->getTileId() == TRANSPARENTDISAPPEAR || cfnew->getTileId() == TRANSPARENT) {
@@ -1374,11 +1374,11 @@ bool Character::Warp(const position &targetPos) {
     position oldpos = pos;
     Field *fold = nullptr;
 
-    if (_world->GetPToCFieldAt(fold, pos.x, pos.y, pos.z)) {
+    if (_world->GetPToCFieldAt(fold, pos)) {
         Field *fnew = nullptr;
         position newPos = targetPos;
 
-        if (_world->findEmptyCFieldNear(fnew, newPos.x, newPos.y, newPos.z)) {
+        if (_world->findEmptyCFieldNear(fnew, newPos)) {
             fold->removeChar();
             updatePos(newPos);
             fnew->setChar();
@@ -1401,10 +1401,10 @@ bool Character::forceWarp(const position &newPos) {
     position oldpos = pos;
     Field *fold = nullptr;
 
-    if (_world->GetPToCFieldAt(fold, pos.x, pos.y, pos.z)) {
+    if (_world->GetPToCFieldAt(fold, pos)) {
         Field *fnew = nullptr;
 
-        if (_world->GetPToCFieldAt(fnew, newPos.x, newPos.y, newPos.z)) {
+        if (_world->GetPToCFieldAt(fnew, newPos)) {
             fold->removeChar();
             updatePos(newPos);
             fnew->setChar();

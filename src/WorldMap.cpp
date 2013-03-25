@@ -35,25 +35,25 @@ void WorldMap::clear() {
     highX = -32768;
 }
 
-bool WorldMap::mapInRangeOf(short int upperleft_X, short int upperleft_Y, unsigned short int sizex, unsigned short int sizey, short int z) const {
-    short int downright_X = upperleft_X + sizex - 1;
-    short int downright_Y = upperleft_Y + sizey - 1;
+bool WorldMap::mapInRangeOf(const position &upperleft, unsigned short int dx, unsigned short int dy) const {
+    short int downright_x = upperleft.x + dx - 1;
+    short int downright_y = upperleft.y + dy - 1;
 
-    for (auto it = maps.begin(); it < maps.end(); ++it) {
-        if ((*it)->Z_Level == z) {
-            if (((*it)->Max_X >= upperleft_X) && ((*it)->Min_X <= downright_X)) {
-                if (((*it)->Max_Y >= upperleft_Y) && ((*it)->Min_Y <= downright_Y)) {
-                    std::cout << "Map in range at Z:" << (*it)->Z_Level <<
-                              " Min_X: " << (*it)->Min_X <<
-                              " Max_X: " << (*it)->Max_X <<
-                              " Min_Y: " << (*it)->Min_Y <<
-                              " Max_Y: " << (*it)->Max_Y <<
+    for (const auto &map : maps) {
+        if (map->Z_Level == upperleft.z) {
+            if ((map->Max_X >= upperleft.x) && (map->Min_X <= downright_x)) {
+                if ((map->Max_Y >= upperleft.y) && (map->Min_Y <= downright_y)) {
+                    std::cout << "Map in range at Z:" << map->Z_Level <<
+                              " Min_X: " << map->Min_X <<
+                              " Max_X: " << map->Max_X <<
+                              " Min_Y: " << map->Min_Y <<
+                              " Max_Y: " << map->Max_Y <<
                               std::endl;
                     return true;
-                }// y
-            }// x
-        }// z
-    }// iterator
+                }
+            }
+        }
+    }
 
     return false;
 
@@ -99,11 +99,6 @@ bool WorldMap::findAllMapsWithXInRangeOf(short int start, short int end, WorldMa
     }
 
     return found_one;
-}
-
-bool WorldMap::findMapForPos(short int x, short int y, short int z, WorldMap::map_t &map) const {
-    const position p(x, y, z);
-    return findMapForPos(p, map);
 }
 
 bool WorldMap::findMapForPos(const position &pos, WorldMap::map_t &map) const {

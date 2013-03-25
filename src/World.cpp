@@ -541,71 +541,72 @@ void World::checkPlayers() {
     auto playerIterator = Players.begin();
 
     while (playerIterator < Players.end()) {
-        if ((*playerIterator)->Connection->online) {
-            temptime = tempkeepalive - (*playerIterator)->lastkeepalive;
+        Player &player = **playerIterator;
+
+        if (player.Connection->online) {
+            temptime = tempkeepalive - player.lastkeepalive;
 
             if (((temptime >= 0) && (temptime <= CLIENT_TIMEOUT))) {
-                (*playerIterator)->actionPoints += ap;
-                (*playerIterator)->fightPoints += ap;
+                player.actionPoints += ap;
+                player.fightPoints += ap;
 
-                if ((*playerIterator)->actionPoints > P_MAX_AP) {
-                    (*playerIterator)->actionPoints = P_MAX_AP;
+                if (player.actionPoints > P_MAX_AP) {
+                    player.actionPoints = P_MAX_AP;
                 }
 
-                if ((*playerIterator)->fightPoints > P_MAX_FP) {
-                    (*playerIterator)->fightPoints = P_MAX_FP;
+                if (player.fightPoints > P_MAX_FP) {
+                    player.fightPoints = P_MAX_FP;
                 }
 
-                if ((*playerIterator)->actionPoints >= P_MIN_AP) {
-                    (*playerIterator)->workoutCommands();
+                if (player.actionPoints >= P_MIN_AP) {
+                    player.workoutCommands();
                 }
 
-                (*playerIterator)->ltAction->checkAction();
-                (*playerIterator)->effects.checkEffects();
+                player.ltAction->checkAction();
+                player.effects.checkEffects();
             }
             // User timed out.
             else {
-                Logger::info(LogFacility::World) << (*playerIterator)->to_string() << " timed out " << temptime << Log::end;
+                Logger::info(LogFacility::World) << player << " timed out " << temptime << Log::end;
                 ServerCommandPointer cmd(new LogOutTC(UNSTABLECONNECTION));
-                (*playerIterator)->Connection->shutdownSend(cmd);
+                player.Connection->shutdownSend(cmd);
             }
 
             ++playerIterator;
         } else {
-            auto temp_id = (*playerIterator)->getId();
-            position temp_pos = (*playerIterator)->pos;
+            const position &pos = player.pos;
 
-            Logger::info(LogFacility::World) << (*playerIterator)->to_string() << " is offline" << Log::end;
+            Logger::info(LogFacility::World) << player << " is offline" << Log::end;
             Field *tempf;
 
-            if (GetPToCFieldAt(tempf, (*playerIterator)->pos.x, (*playerIterator)->pos.y, (*playerIterator)->pos.z)) {
+            if (GetPToCFieldAt(tempf, pos)) {
                 tempf->SetPlayerOnField(false);
             }
 
-            Logger::info(LogFacility::Player) << "logout of " << (*playerIterator)->to_string() << Log::end;
+            Logger::info(LogFacility::Player) << "logout of " << player << Log::end;
 
             logoutScript->onLogout(*playerIterator);
 
             PlayerManager::get()->getLogOutPlayers().non_block_push_back(*playerIterator);
             playerIterator = Players.erase(playerIterator);
-            sendRemoveCharToVisiblePlayers(temp_id, temp_pos);
+            sendRemoveCharToVisiblePlayers(player.getId(), pos);
         }
     }
 }
 
 void World::invalidatePlayerDialogs() {
-    for (auto it = Players.begin(); it != Players.end(); ++it) {
-        (*it)->invalidateDialogs();
+    for (const auto &player : Players) {
+        player->invalidateDialogs();
     }
 }
 
 // init the respawn locations... for now still hardcoded...
 bool World::initRespawns() {
     // if we have monsters, we need to delete their spawnpoints...
-    for (MONSTERVECTOR::iterator monsterIterator = Monsters.begin(); monsterIterator != Monsters.end(); ++monsterIterator) {
+    for (const auto &monster : Monsters) {
         // if the spawn is set to NULL it is regarded as no spawnpoint.
-        (*monsterIterator)->remove();
-        (*monsterIterator)->setSpawn(NULL);
+        monster->remove();
+        monster->setSpawn(nullptr);
     }
 
     SpawnList.clear();
@@ -628,24 +629,22 @@ bool World::initRespawns() {
         Database::Result results = query.execute();
 
         if (!results.empty()) {
-            uint32_t spawnId;
 
-            for (Database::ResultConstIterator itr = results.begin();
-                 itr != results.end(); ++itr) {
-                spawnId = (*itr)["spp_id"].as<uint32_t>();
-                position the_pos((*itr)["spp_x"].as<int32_t>(),
-                                 (*itr)["spp_y"].as<int32_t>(),
-                                 (*itr)["spp_z"].as<int32_t>());
-                SpawnPoint newSpawn(the_pos,
-                                    (*itr)["spp_range"].as<int>(),
-                                    (*itr)["spp_spawnrange"].as<uint16_t>(),
-                                    (*itr)["spp_minspawntime"].as<uint16_t>(),
-                                    (*itr)["spp_maxspawntime"].as<uint16_t>(),
-                                    (*itr)["spp_spawnall"].as<bool>());
+            for (const auto &row : results) {
+                const uint32_t spawnId = row["spp_id"].as<uint32_t>();
+                const position pos(row["spp_x"].as<int16_t>(),
+                                   row["spp_y"].as<int16_t>(),
+                                   row["spp_z"].as<int16_t>());
+                SpawnPoint newSpawn(pos,
+                                    row["spp_range"].as<int>(),
+                                    row["spp_spawnrange"].as<uint16_t>(),
+                                    row["spp_minspawntime"].as<uint16_t>(),
+                                    row["spp_maxspawntime"].as<uint16_t>(),
+                                    row["spp_spawnall"].as<bool>());
                 Logger::debug(LogFacility::World) << "load spawnpoint " << spawnId << ":" << Log::end;
                 newSpawn.load(spawnId);
                 SpawnList.push_back(newSpawn);
-                Logger::debug(LogFacility::World) << "added spawnpoint " << the_pos.toString() << Log::end;
+                Logger::debug(LogFacility::World) << "added spawnpoint " << pos << Log::end;
             }
 
         } else {
@@ -729,7 +728,7 @@ void World::checkMonsters() {
                     temp = Players.findAllAliveCharactersInRangeOf(monster.pos, range);
                     bool has_attacked=false;
                     //If we have found players which can be attacked directly and the monster can attack
-                    Player *foundP = 0;
+                    Player *foundP = nullptr;
 
                     if ((!temp.empty()) && monster.canAttack()) {
                         //angreifen
@@ -831,7 +830,7 @@ void World::checkMonsters() {
 
                                     if (abs(xoffs) > spawn->getRange() || abs(yoffs) > spawn->getRange()) {
                                         // monster out of spawn range, remove it from spawn
-                                        monster.setSpawn(NULL);
+                                        monster.setSpawn(nullptr);
                                         unsigned int type = monster.getType();
                                         spawn->dead(type);
                                     }
@@ -1084,7 +1083,7 @@ void World::initNPC() {
     for (const auto &npc : Npc) {
         Field *tempf;
 
-        if (GetPToCFieldAt(tempf, npc->pos.x, npc->pos.y, npc->pos.z)) {
+        if (GetPToCFieldAt(tempf, npc->pos)) {
             tempf->removeChar();
         }
 

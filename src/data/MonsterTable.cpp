@@ -74,24 +74,19 @@ void MonsterTable::reload() {
             auto questItr = questNodes.first;
             auto questEnd = questNodes.second;
 
-            for (Database::ResultConstIterator itr = monresults.begin();
-                 itr != monresults.end(); ++itr) {
+            for (const auto &row : monresults) {
                 MonsterStruct temprecord;
-                std::string movementType;
-                std::string scriptname;
-                uint32_t id;
+                const uint32_t id = row["mob_monsterid"].as<uint32_t>();
+                temprecord.nameDe = row["mob_name_de"].as<std::string>();
+                temprecord.nameEn = row["mob_name_en"].as<std::string>();
+                temprecord.race = Character::race_type(row["mob_race"].as<uint16_t>());
+                temprecord.hitpoints = row["mob_hitpoints"].as<uint16_t>();
+                temprecord.canselfheal = row["mob_canhealself"].as<bool>();
+                temprecord.canattack = row["mob_canattack"].as<bool>();
+                temprecord.minsize = row["mob_minsize"].as<uint16_t>();
+                temprecord.maxsize = row["mob_maxsize"].as<uint16_t>();
 
-                id = (*itr)["mob_monsterid"].as<uint32_t>();
-                temprecord.nameDe = (*itr)["mob_name_de"].as<std::string>();
-                temprecord.nameEn = (*itr)["mob_name_en"].as<std::string>();
-                temprecord.race = (Character::race_type)((*itr)["mob_race"].as<uint16_t>());
-                temprecord.hitpoints = (*itr)["mob_hitpoints"].as<uint16_t>();
-                temprecord.canselfheal = (*itr)["mob_canhealself"].as<bool>();
-                temprecord.canattack = (*itr)["mob_canattack"].as<bool>();
-                temprecord.minsize = (*itr)["mob_minsize"].as<uint16_t>();
-                temprecord.maxsize = (*itr)["mob_maxsize"].as<uint16_t>();
-
-                movementType = (*itr)["mob_movementtype"].as<std::string>();
+                const std::string movementType = row["mob_movementtype"].as<std::string>("");
 
                 if (movementType == "walk") {
                     temprecord.movement = Character::walk;
@@ -104,8 +99,8 @@ void MonsterTable::reload() {
                     temprecord.movement = Character::walk;
                 }
 
-                if (!(*itr)["script"].is_null()) {
-                    scriptname = (*itr)["script"].as<std::string>();
+                if (!row["script"].is_null()) {
+                    const std::string scriptname = row["script"].as<std::string>();
 
                     try {
                         std::shared_ptr<LuaMonsterScript> script(new LuaMonsterScript(scriptname));
@@ -132,39 +127,33 @@ void MonsterTable::reload() {
 
                 Database::Result monAttrResults = monAttrQuery.execute();
 
-                if (!monAttrResults.empty()) {
-                    std::string attribute;
-                    uint16_t minValue, maxValue;
+                for (const auto &row : monAttrResults) {
+                    const std::string attribute = row["mobattr_name"].as<std::string>("");
+                    uint16_t minValue = row["mobattr_min"].as<uint16_t>();
+                    uint16_t maxValue = row["mobattr_max"].as<uint16_t>();
 
-                    for (Database::ResultConstIterator itr2 = monAttrResults.begin();
-                         itr2 != monAttrResults.end(); ++itr2) {
-                        attribute = (*itr2)["mobattr_name"].as<std::string>();
-                        minValue = (*itr2)["mobattr_min"].as<uint16_t>();
-                        maxValue = (*itr2)["mobattr_max"].as<uint16_t>();
-
-                        if (attribute == "luck") {
-                            temprecord.attributes.luck = std::make_pair(minValue, maxValue);
-                        } else if (attribute == "strength") {
-                            temprecord.attributes.strength = std::make_pair(minValue, maxValue);
-                        } else if (attribute == "dexterity") {
-                            temprecord.attributes.dexterity = std::make_pair(minValue, maxValue);
-                        } else if (attribute == "constitution") {
-                            temprecord.attributes.constitution = std::make_pair(minValue, maxValue);
-                        } else if (attribute == "agility") {
-                            temprecord.attributes.agility = std::make_pair(minValue, maxValue);
-                        } else if (attribute == "intelligence") {
-                            temprecord.attributes.intelligence = std::make_pair(minValue, maxValue);
-                        } else if (attribute == "perception") {
-                            temprecord.attributes.perception = std::make_pair(minValue, maxValue);
-                        } else if (attribute == "willpower") {
-                            temprecord.attributes.willpower = std::make_pair(minValue, maxValue);
-                        } else if (attribute == "essence") {
-                            temprecord.attributes.essence = std::make_pair(minValue, maxValue);
-                        } else {
-                            std::cerr << "unknown attribute type: "<< attribute << std::endl;
-                        }
-                    } // for (Database::ResultConstIterator itr2 = monAttrResults...
-                } // if (!monAttrResults.empty())
+                    if (attribute == "luck") {
+                        temprecord.attributes.luck = std::make_pair(minValue, maxValue);
+                    } else if (attribute == "strength") {
+                        temprecord.attributes.strength = std::make_pair(minValue, maxValue);
+                    } else if (attribute == "dexterity") {
+                        temprecord.attributes.dexterity = std::make_pair(minValue, maxValue);
+                    } else if (attribute == "constitution") {
+                        temprecord.attributes.constitution = std::make_pair(minValue, maxValue);
+                    } else if (attribute == "agility") {
+                        temprecord.attributes.agility = std::make_pair(minValue, maxValue);
+                    } else if (attribute == "intelligence") {
+                        temprecord.attributes.intelligence = std::make_pair(minValue, maxValue);
+                    } else if (attribute == "perception") {
+                        temprecord.attributes.perception = std::make_pair(minValue, maxValue);
+                    } else if (attribute == "willpower") {
+                        temprecord.attributes.willpower = std::make_pair(minValue, maxValue);
+                    } else if (attribute == "essence") {
+                        temprecord.attributes.essence = std::make_pair(minValue, maxValue);
+                    } else {
+                        std::cerr << "unknown attribute type: "<< attribute << std::endl;
+                    }
+                }
 
                 SelectQuery monSkillQuery(connection);
                 monSkillQuery.addColumn("monster_skills", "mobsk_skill_id");
@@ -175,19 +164,13 @@ void MonsterTable::reload() {
 
                 Database::Result monSkillResults = monSkillQuery.execute();
 
-                if (!monSkillResults.empty()) {
-                    TYPE_OF_SKILL_ID skill;
-                    uint16_t minValue, maxValue;
+                for (const auto &row : monSkillResults) {
+                    TYPE_OF_SKILL_ID skill = TYPE_OF_SKILL_ID(row["mobsk_skill_id"].as<uint16_t>());
+                    uint16_t minValue = row["mobsk_minvalue"].as<uint16_t>();
+                    uint16_t maxValue = row["mobsk_maxvalue"].as<uint16_t>();
 
-                    for (Database::ResultConstIterator itr2 = monSkillResults.begin();
-                         itr2 != monSkillResults.end(); ++itr2) {
-                        skill = (TYPE_OF_SKILL_ID)((*itr2)["mobsk_skill_id"].as<uint16_t>());
-                        minValue = (*itr2)["mobsk_minvalue"].as<uint16_t>();
-                        maxValue = (*itr2)["mobsk_maxvalue"].as<uint16_t>();
-
-                        temprecord.skills[skill] = std::make_pair(minValue, maxValue);
-                    } // for (Database::ResultConstIterator itr2 = monSkillResults...
-                } // if (!monSkillResults.empty())
+                    temprecord.skills[skill] = std::make_pair(minValue, maxValue);
+                }
 
                 SelectQuery monItemQuery(connection);
                 monItemQuery.addColumn("monster_items", "mobit_itemid");
@@ -199,74 +182,69 @@ void MonsterTable::reload() {
 
                 Database::Result monItemResults = monItemQuery.execute();
 
-                if (!monItemResults.empty()) {
+                for (const auto &row : monItemResults) {
                     itemdef_t tempitem;
+                    tempitem.itemid = row["mobit_itemid"].as<TYPE_OF_ITEM_ID>();
+                    tempitem.amount = std::make_pair(
+                                          row["mobit_mincount"].as<uint16_t>(),
+                                          row["mobit_maxcount"].as<uint16_t>());
+
+                    const std::string position = row["mobit_position"].as<std::string>("");
                     uint16_t location;
-                    std::string position;
 
-                    for (Database::ResultConstIterator itr2 = monItemResults.begin();
-                         itr2 != monItemResults.end(); ++itr2) {
-                        tempitem.itemid = (*itr2)["mobit_itemid"].as<TYPE_OF_ITEM_ID>();
-                        tempitem.amount = std::make_pair(
-                                              (*itr2)["mobit_mincount"].as<uint16_t>(),
-                                              (*itr2)["mobit_maxcount"].as<uint16_t>());
+                    if (position == "head") {
+                        location = 1;
+                    } else if (position == "neck") {
+                        location = 2;
+                    } else if (position == "breast") {
+                        location = 3;
+                    } else if (position == "hands") {
+                        location = 4;
+                    } else if (position == "left hand") {
+                        location = 5;
+                    } else if (position == "right hand") {
+                        location = 6;
+                    } else if (position == "left finger") {
+                        location = 7;
+                    } else if (position == "right finger") {
+                        location = 8;
+                    } else if (position == "legs") {
+                        location = 9;
+                    } else if (position == "feet") {
+                        location = 10;
+                    } else if (position == "coat") {
+                        location = 11;
+                    } else if (position == "belt1") {
+                        location = 12;
+                    } else if (position == "belt2") {
+                        location = 13;
+                    } else if (position == "belt3") {
+                        location = 14;
+                    } else if (position == "belt4") {
+                        location = 15;
+                    } else if (position == "belt5") {
+                        location = 16;
+                    } else if (position == "belt6") {
+                        location = 17;
+                    } else {
+                        std::cerr << "specified invalid itemslot: " <<  position << " for monster " << temprecord.nameEn << std::endl;
+                        location = 99;
+                    }
 
-                        position = (*itr2)["mobit_position"].as<std::string>();
+                    const auto &tempCommon = Data::CommonItems[tempitem.itemid];
 
-                        if (position == "head") {
-                            location = 1;
-                        } else if (position == "neck") {
-                            location = 2;
-                        } else if (position == "breast") {
-                            location = 3;
-                        } else if (position == "hands") {
-                            location = 4;
-                        } else if (position == "left hand") {
-                            location = 5;
-                        } else if (position == "right hand") {
-                            location = 6;
-                        } else if (position == "left finger") {
-                            location = 7;
-                        } else if (position == "right finger") {
-                            location = 8;
-                        } else if (position == "legs") {
-                            location = 9;
-                        } else if (position == "feet") {
-                            location = 10;
-                        } else if (position == "coat") {
-                            location = 11;
-                        } else if (position == "belt1") {
-                            location = 12;
-                        } else if (position == "belt2") {
-                            location = 13;
-                        } else if (position == "belt3") {
-                            location = 14;
-                        } else if (position == "belt4") {
-                            location = 15;
-                        } else if (position == "belt5") {
-                            location = 16;
-                        } else if (position == "belt6") {
-                            location = 17;
-                        } else {
-                            std::cerr << "specified invalid itemslot: " <<  position << " for monster " << temprecord.nameEn << std::endl;
-                            location = 99;
-                        }
-
-                        const auto &tempCommon = Data::CommonItems[tempitem.itemid];
-
-                        if (location < 99 && tempCommon.isValid()) {
-                            tempitem.AgeingSpeed = tempCommon.AgeingSpeed;
-                            temprecord.items[location].push_back(tempitem);
-                        } else if (location < 99) {
-                            std::cerr << "couldn't find item: " <<  tempitem.itemid << " for monster " << temprecord.nameEn << std::endl;
-                        }
-                    } // for (Database::ResultConstIterator itr2 = monItemResults...
-                } // if (!monItemResults.empty())
+                    if (location < 99 && tempCommon.isValid()) {
+                        tempitem.AgeingSpeed = tempCommon.AgeingSpeed;
+                        temprecord.items[location].push_back(tempitem);
+                    } else if (location < 99) {
+                        std::cerr << "couldn't find item: " <<  tempitem.itemid << " for monster " << temprecord.nameEn << std::endl;
+                    }
+                }
 
                 m_table[id] = temprecord;
                 m_dataOK = true;
-            } // for (Database::ResultConstIterator itr = monresults...
-        } // if (!monresults.empty())
+            }
+        }
 
         connection->commitTransaction();
 #ifdef DataConnect_DEBUG

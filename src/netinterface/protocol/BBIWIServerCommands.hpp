@@ -53,7 +53,7 @@ enum bbservercommands {
 class BBSendActionTC : public BasicServerCommand {
 public:
 
-    BBSendActionTC(TYPE_OF_CHARACTER_ID id, std::string name, uint8_t type, std::string desc) : BasicServerCommand(BB_SENDACTION_TC) {
+    BBSendActionTC(TYPE_OF_CHARACTER_ID id, const std::string &name, uint8_t type, const std::string &desc) : BasicServerCommand(BB_SENDACTION_TC) {
         addIntToBuffer(id);
         addStringToBuffer(name);
         addUnsignedCharToBuffer(type);
@@ -84,7 +84,7 @@ public:
 class BBSendAttribTC : public BasicServerCommand {
 public:
 
-    BBSendAttribTC(TYPE_OF_CHARACTER_ID id, std::string attr, short int value) : BasicServerCommand(BB_SENDATTRIB_TC) {
+    BBSendAttribTC(TYPE_OF_CHARACTER_ID id, const std::string &attr, short int value) : BasicServerCommand(BB_SENDATTRIB_TC) {
         addIntToBuffer(id);
         addStringToBuffer(attr);
         addShortIntToBuffer(value);
@@ -98,7 +98,7 @@ public:
 class BBLogOutTC : public BasicServerCommand {
 public:
 
-    BBLogOutTC(TYPE_OF_CHARACTER_ID id, std::string name) : BasicServerCommand(BB_LOGOUT_TC) {
+    BBLogOutTC(TYPE_OF_CHARACTER_ID id, const std::string &name) : BasicServerCommand(BB_LOGOUT_TC) {
         addIntToBuffer(id);
         addStringToBuffer(name);
     }
@@ -111,7 +111,7 @@ public:
 class BBTalkTC : public BasicServerCommand {
 public:
 
-    BBTalkTC(TYPE_OF_CHARACTER_ID id, std::string name, uint8_t tt, std::string msg) : BasicServerCommand(BB_TALK_TC) {
+    BBTalkTC(TYPE_OF_CHARACTER_ID id, const std::string &name, uint8_t tt, const std::string &msg) : BasicServerCommand(BB_TALK_TC) {
         addIntToBuffer(id);
         addStringToBuffer(name);
         addUnsignedCharToBuffer(tt);
@@ -125,12 +125,12 @@ public:
 */
 class BBPlayerTC : public BasicServerCommand {
 public:
-    BBPlayerTC(TYPE_OF_CHARACTER_ID id, std::string name, int posx, int posy, int posz) : BasicServerCommand(BB_PLAYER_TC) {
+    BBPlayerTC(TYPE_OF_CHARACTER_ID id, const std::string &name, const position &pos) : BasicServerCommand(BB_PLAYER_TC) {
         addIntToBuffer(id);
         addStringToBuffer(name);
-        addIntToBuffer(posx);
-        addIntToBuffer(posy);
-        addIntToBuffer(posz);
+        addIntToBuffer(pos.x);
+        addIntToBuffer(pos.y);
+        addIntToBuffer(pos.z);
         std::cout<<"sended data of new player: "<<name<<std::endl;
     }
 };
@@ -141,11 +141,11 @@ public:
 */
 class BBPlayerMoveTC : public BasicServerCommand {
 public:
-    BBPlayerMoveTC(TYPE_OF_CHARACTER_ID id, int newx, int newy, int newz) : BasicServerCommand(BB_PLAYERMOVE_TC) {
+    BBPlayerMoveTC(TYPE_OF_CHARACTER_ID id, const position &pos) : BasicServerCommand(BB_PLAYERMOVE_TC) {
         addIntToBuffer(id);
-        addIntToBuffer(newx);
-        addIntToBuffer(newy);
-        addIntToBuffer(newz);
+        addIntToBuffer(pos.x);
+        addIntToBuffer(pos.y);
+        addIntToBuffer(pos.z);
     }
 };
 
@@ -155,7 +155,7 @@ public:
 */
 class BBMessageTC : public BasicServerCommand {
 public:
-    BBMessageTC(std::string msg, uint8_t id) : BasicServerCommand(BB_MESSAGE_TC) {
+    BBMessageTC(const std::string &msg, uint8_t id) : BasicServerCommand(BB_MESSAGE_TC) {
         addStringToBuffer(msg);
         addUnsignedCharToBuffer(id);
     }

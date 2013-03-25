@@ -113,15 +113,14 @@ void ScheduledScriptsTable::reload() {
             clearOldTable();
             ScriptData tmpRecord;
 
-            for (Database::ResultConstIterator itr = results.begin();
-                 itr != results.end(); ++itr) {
-                tmpRecord.minCycleTime = (uint32_t)((*itr)["sc_mincycletime"].as<uint32_t>());
-                tmpRecord.maxCycleTime = (uint32_t)((*itr)["sc_maxcycletime"].as<uint32_t>());
+            for (const auto &row : results) {
+                tmpRecord.minCycleTime = row["sc_mincycletime"].as<uint32_t>();
+                tmpRecord.maxCycleTime = row["sc_maxcycletime"].as<uint32_t>();
                 tmpRecord.nextCycleTime = 0;
 
-                if (!((*itr)["sc_scriptname"].is_null()) && !((*itr)["sc_functionname"].is_null())) {
-                    tmpRecord.functionName = ((*itr)["sc_functionname"].as<std::string>());
-                    tmpRecord.scriptName = ((*itr)["sc_scriptname"].as<std::string>());
+                if (!row["sc_scriptname"].is_null() && !row["sc_functionname"].is_null()) {
+                    tmpRecord.functionName = row["sc_functionname"].as<std::string>();
+                    tmpRecord.scriptName = row["sc_scriptname"].as<std::string>();
 
                     try {
                         std::shared_ptr<LuaScheduledScript> tmpScript(new LuaScheduledScript(tmpRecord.scriptName));
