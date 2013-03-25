@@ -1941,15 +1941,6 @@ void Player::openDepot(uint16_t depotid) {
     }
 }
 
-void Player::changeQualityItem(TYPE_OF_ITEM_ID id, short int amount) {
-    Character::changeQualityItem(id, amount);
-    updateBackPackView();
-
-    for (unsigned char i = MAX_BELT_SLOTS + MAX_BODY_ITEMS - 1; i > 0; --i) {
-        sendCharacterItemAtPos(i);
-    }
-}
-
 void Player::changeQualityAt(unsigned char pos, short int amount) {
     Character::changeQualityAt(pos, amount);
     sendCharacterItemAtPos(pos);

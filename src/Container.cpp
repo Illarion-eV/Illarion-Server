@@ -189,43 +189,6 @@ bool Container::InsertContainer(Item it, Container *cc, TYPE_OF_CONTAINERSLOTS p
 
 }
 
-bool Container::changeQuality(Item::id_type id, short int amount) {
-    short int tmpQuality;
-
-    auto it = items.begin();
-
-    while (it != items.end()) {
-        Item &item = it->second;
-
-        if (item.isContainer()) {
-            auto iterat = containers.find(it->first);
-
-            if (iterat != containers.end()) {
-
-                if ((*iterat).second->changeQuality(id, amount)) {
-                    return true;
-                }
-            }
-
-            ++it;
-        } else if (item.getId() == id) {
-            tmpQuality = ((amount+item.getDurability())<100) ? (amount + item.getQuality()) : (item.getQuality()-item.getDurability() + 99);
-
-            if (tmpQuality%100 > 1) {
-                item.setQuality(tmpQuality);
-                return true;
-            } else {
-                items.erase(it);
-                return true;
-            }
-        } else {
-            ++it;
-        }
-    }
-
-    return false;
-}
-
 bool Container::changeQualityAt(TYPE_OF_CONTAINERSLOTS nr, short int amount) {
     auto it = items.find(nr);
 

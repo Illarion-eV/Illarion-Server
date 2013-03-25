@@ -331,9 +331,6 @@ public:
     //�dert die Qualit� eines Items an einer bestimmten Stelle
     void changeQualityAt(unsigned char pos, short int amount);
 
-    //�dert die Qualit� eines Items mit einer bestimmten ID
-    void changeQualityItem(TYPE_OF_ITEM_ID id, short int amount);
-
     inline bool isMonitoringClient() {
         return monitoringClient;
     }

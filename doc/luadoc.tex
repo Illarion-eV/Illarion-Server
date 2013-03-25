@@ -55,7 +55,7 @@
 \makeindex
 \begin{document}
 \lstset{basicstyle=\small, keywordstyle=\ttfamily, identifierstyle=\ttfamily}
-\title{Lua documentation for Illarion scripting\\v5.7}
+\title{Lua documentation for Illarion scripting\\v5.8}
 \author{Martin \thanks{ \texttt{martin@illarion.org, http://www.illarion.org}},
 pharse \thanks{ \texttt{pharse@illarion.org, http://www.illarion.org}},
 vilarion \thanks{ \texttt{vilarion@illarion.org, http://www.illarion.org}}}
@@ -271,10 +271,6 @@ Avoid this by copying the single x,y and z coordinates in a new position struct.
 \txt \var{character}:\com{alterMessage}{\txt \var{Text},\integer \var{LanguageSkill}}
 \begin{quote}
        Returns the altered \var{Text} with respect to the \var{LanguageSkill} given.
-\end{quote}
-\void \var{character}:\com{changeQualityItem}{\integer \var{id},\integer \var{amount}}
-\begin{quote}
-       Alters the quality of one item of the given \var{id} in either the belt, body or inventory.
 \end{quote}
 \void \var{character}:\com{sendCharDescription}{\integer \var{id}, \txt \var{text}}
 \begin{quote}
@@ -649,10 +645,6 @@ Some items can contain other items. These are for example a character's backpack
 \void \var{Container}:\com{changeQualityAt}{\integer \var{itempos},\integer \var{amount}}
 \begin{quote}
         Changes the quality of an item at a given position inside a container. Returns \lua{true} if it worked.
-\end{quote}
-\bool \var{Container}:\com{changeQuality}{\integer \var{itemid},\integer \var{amount}}
-\begin{quote}
-        Changes the quality of an item with a given item-ID inside a container. Returns \lua{true} if it worked.
 \end{quote}
 \bool \var{Container}:\com{insertContainer}{\scripti \var{item}, \container \var{container}}\\
 \bool \var{Container}:\com{insertContainer}{\scripti \var{item}, \container \var{container}, \integer \var{itempos}}
@@ -2357,6 +2349,10 @@ It might be the case, and this is hoped much, that you want to create more compl
 \appendix
 
 \chapter{Versions}
+Version 5.8 (25 03 13)\\
+* Removed obsolete function Character:changeQualityItem\\
+* Removed obsolete function Container:changeQuality\\
+\\
 Version 5.7 (05 03 13)\\
 * Added time as return value of getQuestProgress\\
 \\

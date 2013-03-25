@@ -218,7 +218,6 @@ public:
     }
 
     virtual void changeQualityAt(unsigned char pos, short int amount);
-    virtual void changeQualityItem(TYPE_OF_ITEM_ID id, short int amount);
     virtual void increasePoisonValue(short int value);
 
     inline short int getPoisonValue() const {

@@ -1439,39 +1439,6 @@ void Character::inform(const std::string &, const std::string &, informType type
     // override for char types that need this kind of information
 }
 
-void Character::changeQualityItem(TYPE_OF_ITEM_ID id, short int amount) {
-    if ((characterItems[ BACKPACK ].getId() != 0) && backPackContents) {
-        if (backPackContents->changeQuality(id, amount)) {
-            return;
-        }
-    }
-
-    short int tmpQuality;
-
-    for (unsigned char i = MAX_BELT_SLOTS + MAX_BODY_ITEMS - 1; i > 0; --i) {
-        if (characterItems[ i ].getId() == id) {
-            // don't increase the class of the item, but allow decrease of the item class
-            tmpQuality = ((amount+characterItems[i].getDurability())<100) ? (amount + characterItems[i].getQuality()) : (characterItems[i].getQuality() - characterItems[i].getDurability() + 99);
-
-            if (tmpQuality%100 > 1) {
-                characterItems[i].setQuality(tmpQuality);
-                return;
-            } else {
-                if (i == RIGHT_TOOL && characterItems[LEFT_TOOL].getId() == BLOCKEDITEM) {
-                    //Belegt aus linker hand l�chen wenn item in rechter hand ein zweih�deritem war
-                    characterItems[LEFT_TOOL].reset();
-                } else if (i == LEFT_TOOL && characterItems[RIGHT_TOOL].getId() == BLOCKEDITEM) {
-                    //Belegt aus rechter hand l�chen wenn item in linker hand ein zweih�der ist
-                    characterItems[RIGHT_TOOL].reset();
-                }
-
-                characterItems[i].reset();
-                return;
-            }
-        }
-    }
-}
-
 void Character::changeQualityAt(unsigned char pos, short int amount) {
     if (pos < MAX_BODY_ITEMS + MAX_BELT_SLOTS) {
         if ((characterItems[ pos ].getId() == 0) || (characterItems[pos].getId() == BLOCKEDITEM)) {
