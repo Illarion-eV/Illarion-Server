@@ -173,7 +173,7 @@ const uint32_t MONSTER_BASE = 0xFE000000;
 #define FLAG_FEET 128
 
 //! Umhang
-#define OAT 11
+#define COAT 11
 
 #define LAST_WEARABLE 11
 

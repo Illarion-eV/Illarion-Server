@@ -18,21 +18,13 @@
 
 
 #include "World.hpp"
-#include "data/TilesModificatorTable.hpp"
 #include "script/LuaItemScript.hpp"
-#include "script/LuaTriggerScript.hpp"
-#include "script/LuaDepotScript.hpp"
-#include "netinterface/protocol/ServerCommands.hpp"
-#include "netinterface/NetInterface.hpp"
-#include <map>
 
 // TODO find a better place for the constants
 static const std::string message_overweight_german { "Du kannst nicht so viel tragen!"
 };
 static const std::string message_overweight_english { "You can't carry that much!"
 };
-
-extern std::shared_ptr<LuaDepotScript>depotScript;
 
 // atomic functions //
 
@@ -175,7 +167,7 @@ bool World::putItemOnInvPos(Character *cc, unsigned char pos) {
                                 flag = FLAG_FEET;
                                 break;
 
-                            case OAT :
+                            case COAT :
                                 flag = FLAG_COAT;
                                 break;
 
@@ -910,6 +902,7 @@ void World::moveItemBetweenBodyParts(Player *cp, unsigned char opos, unsigned ch
         }
 
         if (!putItemOnInvPos(cp, npos)) {
+            
             if (!putItemOnInvPos(cp, opos)) {
                 Logger::error(LogFacility::Player) << "moveItemBetweenBodyParts failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
                 g_cont = nullptr;
@@ -1187,18 +1180,18 @@ void World::moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char p
             }
         }
 
-        bool NOK = false;
+        bool success = true;
 
         if (cp->isShowcaseInInventory(dest)) {
             if (! cp->weightOK(g_item.getId(), g_item.getNumber(), g_cont)) {
                 cp->inform(message_overweight_german, message_overweight_english, Character::informScriptMediumPriority);
-                NOK=true;
+                success = false;
             }
         }
 
-        if (!NOK) {
+        if (success) {
             if (!putItemInShowcase(cp, dest, pos2)) {
-                NOK=true;
+                success = false;
             } else {
                 cp->checkBurden();
 
@@ -1208,7 +1201,7 @@ void World::moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char p
             }
         }
 
-        if (NOK) {
+        if (!success) {
             if (! putItemInShowcase(cp, source, pos)) {
                 Logger::error(LogFacility::Player) << "moveItemBetweenShowcases failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
                 g_cont = nullptr;
