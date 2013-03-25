@@ -396,7 +396,7 @@ GraphicEffectTC::GraphicEffectTC(const position &pos, unsigned short int id) : B
     addShortIntToBuffer(id);
 }
 
-UpdateShowCaseTC::UpdateShowCaseTC(unsigned char showcase, const TYPE_OF_CONTAINERSLOTS volume, const Container::ITEMMAP &items) : BasicServerCommand(SC_UPDATESHOWCASE_TC) {
+UpdateShowcaseTC::UpdateShowcaseTC(unsigned char showcase, TYPE_OF_CONTAINERSLOTS volume, const Container::ITEMMAP &items) : BasicServerCommand(SC_UPDATESHOWCASE_TC) {
     addUnsignedCharToBuffer(showcase);
 
     addShortIntToBuffer(volume);
@@ -414,6 +414,18 @@ UpdateShowCaseTC::UpdateShowCaseTC(unsigned char showcase, const TYPE_OF_CONTAIN
         } else {
             addShortIntToBuffer(item.getNumber());
         }
+    }
+}
+
+UpdateShowcaseSlotTC::UpdateShowcaseSlotTC(unsigned char showcase, TYPE_OF_CONTAINERSLOTS slot, const Item &item) : BasicServerCommand(SC_UPDATESHOWCASESLOT_TC) {
+    addUnsignedCharToBuffer(showcase);
+    addShortIntToBuffer(slot);
+    addShortIntToBuffer(item.getId());
+    
+    if (item.isContainer()) {
+        addShortIntToBuffer(1);
+    } else {
+        addShortIntToBuffer(item.getNumber());
     }
 }
 

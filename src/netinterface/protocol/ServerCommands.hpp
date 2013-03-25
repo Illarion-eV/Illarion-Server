@@ -50,6 +50,7 @@ enum ServerCommands {
     SC_INTRODUCE_TC = 0xD4,
     SC_MOVEACK_TC = 0xDF,
     SC_UPDATESHOWCASE_TC = 0xC5,
+    SC_UPDATESHOWCASESLOT_TC = 0xCF,
     SC_MAPITEMSWAP = 0xD9,
     SC_GRAPHICEFFECT_TC = 0xC9,
     SC_SOUND_TC = 0xC7,
@@ -257,9 +258,13 @@ public:
     GraphicEffectTC(const position &pos, unsigned short int id);
 };
 
-class UpdateShowCaseTC : public BasicServerCommand {
+class UpdateShowcaseTC : public BasicServerCommand {
 public:
-    UpdateShowCaseTC(unsigned char showcase, const TYPE_OF_CONTAINERSLOTS volume, const Container::ITEMMAP &items);
+    UpdateShowcaseTC(unsigned char showcase, TYPE_OF_CONTAINERSLOTS volume, const Container::ITEMMAP &items);
+};
+
+class UpdateShowcaseSlotTC : public BasicServerCommand {
+    UpdateShowcaseSlotTC(unsigned char showcase, TYPE_OF_CONTAINERSLOTS slot, const Item &item);
 };
 
 class MapStripeTC : public BasicServerCommand {

@@ -249,7 +249,7 @@ unsigned short int Player::getScreenRange() const {
 void Player::openShowcase(Container *container, bool carry) {
     for (const auto &showcase : showcases) {
         if (showcase.second->contains(container)) {
-            ServerCommandPointer cmd(new UpdateShowCaseTC(showcase.first, container->getSlotCount(), container->getItems()));
+            ServerCommandPointer cmd(new UpdateShowcaseTC(showcase.first, container->getSlotCount(), container->getItems()));
             Connection->addCommand(cmd);
             return;
         }
@@ -262,7 +262,7 @@ void Player::openShowcase(Container *container, bool carry) {
 
         showcases[showcaseCounter] = new Showcase(container, carry);
 
-        ServerCommandPointer cmd(new UpdateShowCaseTC(showcaseCounter, container->getSlotCount(), container->getItems()));
+        ServerCommandPointer cmd(new UpdateShowcaseTC(showcaseCounter, container->getSlotCount(), container->getItems()));
         Connection->addCommand(cmd);
     } else {
         inform("ERROR: Unable to open more than 100 containers.");
@@ -272,7 +272,7 @@ void Player::openShowcase(Container *container, bool carry) {
 void Player::updateShowcase(Container *container) const {
     for (const auto &showcase : showcases) {
         if (showcase.second->contains(container)) {
-            ServerCommandPointer cmd(new UpdateShowCaseTC(showcase.first, container->getSlotCount(), container->getItems()));
+            ServerCommandPointer cmd(new UpdateShowcaseTC(showcase.first, container->getSlotCount(), container->getItems()));
             Connection->addCommand(cmd);
         }
     }
