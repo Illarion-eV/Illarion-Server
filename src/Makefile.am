@@ -27,9 +27,9 @@ LDADD = -L/usr/local/lib -lpthread -lssl -lcrypto $(DEPS_LIBS) -lcrypt libserver
 
 LIBS = $(BOOST_THREAD_LIBS) $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS)
 
-BUILT_SOURCES = version.hpp
+SUBDIRS = script .
 
-SUBDIRS = script
+BUILT_SOURCES = version.hpp
 
 libserver_la_SOURCES = \
 main_help.cpp utility.cpp Logger.cpp Random.cpp Config.cpp a_star.cpp \
@@ -108,9 +108,9 @@ noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
 		 netinterface/protocol/ServerCommands.hpp WaypointList.hpp \
 		 Config.hpp Timer.hpp constants.hpp types.hpp \
 		 LongTimeCharacterEffects.hpp LongTimeAction.hpp fuse_ptr.hpp \
-		 Player.hpp SpawnPoint.hpp LongTimeEffect.hpp Monster.hpp \
-		 version.hpp
+		 Player.hpp SpawnPoint.hpp LongTimeEffect.hpp Monster.hpp
 
 version.hpp: $(HEADERS) $(SOURCES) $(top_builddir)/src/script/libscriptbinding.la
 	echo "#define SERVER_VERSION \"`git describe --long`\"" > version.hpp
 
+$(top_builddir)/src/script/libscriptbinding.la: script
