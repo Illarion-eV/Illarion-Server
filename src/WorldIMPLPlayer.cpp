@@ -28,6 +28,7 @@
 
 #include "db/InsertQuery.hpp"
 
+#include "version.hpp"
 
 template< typename To, typename From> To stream_convert(const From &from) {
     std::stringstream stream;
@@ -44,6 +45,8 @@ void World::InitPlayerCommands() {
     PlayerCommands["name"] = [](World *world, Player *player, const std::string &text) -> bool { world->name_command(player, text); return true; };
     PlayerCommands["language"] = [](World *world, Player *player, const std::string &text) -> bool { return world->active_language_command(player, text); };
     PlayerCommands["l"] = PlayerCommands["language"];
+    PlayerCommands["version"] = [](World *world, Player *player, const std::string &) -> bool { world->version_command(player); return true; };
+    PlayerCommands["v"] = PlayerCommands["version"];
 }
 
 
@@ -194,5 +197,9 @@ bool World::active_language_command(Player *cp, const std::string &language) {
     }
 
     return true;
+}
+
+void World::version_command(Player *player) {
+    player->inform("Version: " SERVER_VERSION);
 }
 

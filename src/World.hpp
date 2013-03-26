@@ -1310,6 +1310,8 @@ private:
 
     //! reload all tables
     bool reload_tables(Player *cp);
+
+    void version_command(Player *player);
 };
 
 #endif
