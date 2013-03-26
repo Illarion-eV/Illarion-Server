@@ -3,12 +3,14 @@
 #include "script/LuaItemScript.hpp"
 #include "Character.hpp"
 #include "World.hpp"
+#include "Container.hpp"
 
 class MockCharacter : public Character {
 public:
     MOCK_CONST_METHOD0(to_string, std::string());
     MOCK_CONST_METHOD2(inform, void(const std::string &, informType));
     MOCK_CONST_METHOD3(inform, void(const std::string &, const std::string &, informType));
+    MOCK_CONST_METHOD0(GetBackPack, Container *());
 };
 
 class MockWorld : public World {
@@ -21,8 +23,17 @@ public:
     MOCK_METHOD3(itemInform, void(Character *user, const ScriptItem &item, const ItemLookAt &lookAt));
 };
 
+class MockContainer : public Container {
+public:
+    MockContainer() : Container(0) {}
+
+    MOCK_CONST_METHOD2(countItem, int(Item::id_type, script_data_exchangemap const *));
+    MOCK_METHOD3(eraseItem, int(Item::id_type, Item::number_type, script_data_exchangemap const *));
+};
+
 using ::testing::Return;
 using ::testing::_;
+using ::testing::Pointee;
 
 class world_bindings : public ::testing::Test {
 public:
@@ -30,6 +41,7 @@ public:
     MockCharacter player;
     ScriptItem item;
     CommonStruct itemdef;
+    MockContainer container;
 };
 
 TEST_F(world_bindings, LookAtItem) {
@@ -56,6 +68,34 @@ TEST_F(world_bindings, UseItem) {
 
     EXPECT_CALL(world, getItemName(_, _)).Times(1).WillOnce(Return("itemname"));
     EXPECT_CALL(player, inform(_,_)).Times(1);
+    script.UseItem(&player, item, 1);
+}
+
+TEST_F(world_bindings, ContainerCountItem) {
+    LuaItemScript script {"function UseItem(User, SourceItem, ltstate)\n"
+                          "local container = User:getBackPack()\n"
+                          "container:countItem(1, {key1 = \"value1\", key2 = \"value2\"})"
+                          "end",
+                          "container_countitem_test", itemdef
+                         };
+    const script_data_exchangemap data {{"key1", "value1"}, {"key2", "value2"}};
+
+    EXPECT_CALL(player, GetBackPack()).Times(1).WillOnce(Return(&container));
+    EXPECT_CALL(container, countItem(1, Pointee(data))).Times(1);
+    script.UseItem(&player, item, 1);
+}
+
+TEST_F(world_bindings, ContainerEraseItem) {
+    LuaItemScript script {"function UseItem(User, SourceItem, ltstate)\n"
+                          "local container = User:getBackPack()\n"
+                          "container:eraseItem(1, 1, {key1 = \"value1\", key2 = \"value2\"})"
+                          "end",
+                          "container_eraseitem_test", itemdef
+                         };
+    const script_data_exchangemap data {{"key1", "value1"}, {"key2", "value2"}};
+
+    EXPECT_CALL(player, GetBackPack()).Times(1).WillOnce(Return(&container));
+    EXPECT_CALL(container, eraseItem(1, 1, Pointee(data))).Times(1);
     script.UseItem(&player, item, 1);
 }
 

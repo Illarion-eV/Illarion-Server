@@ -54,7 +54,7 @@ private:
 public:
     Container(Item::id_type itemId);
     Container(const Container &source);
-    ~Container();
+    virtual ~Container();
     Container &operator =(const Container &source);
 
     bool TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &it, Container *&cc, Item::number_type count);
@@ -72,7 +72,7 @@ public:
 
     void doAge(bool inventory = false);
 
-    int countItem(Item::id_type itemid, script_data_exchangemap const *data = nullptr) const;
+    virtual int countItem(Item::id_type itemid, script_data_exchangemap const *data = nullptr) const;
 
     // TODO merge implementations of both addContentToList variations
     void addContentToList(Item::id_type itemid, std::vector<ScriptItem> &list);
@@ -81,7 +81,7 @@ public:
     std::vector<ScriptItem> getItemList(Item::id_type itemid);
     std::vector<ScriptItem> getItemList();
 
-    int eraseItem(Item::id_type itemid, Item::number_type count, script_data_exchangemap const *data = nullptr);
+    virtual int eraseItem(Item::id_type itemid, Item::number_type count, script_data_exchangemap const *data = nullptr);
 
     int increaseAtPos(unsigned char pos, int count);
 

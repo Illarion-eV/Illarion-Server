@@ -296,7 +296,7 @@ public:
     virtual int createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count);
     virtual bool swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t newQuality = 0);
     ScriptItem GetItemAt(unsigned char itempos);
-    Container *GetBackPack() const;
+    virtual Container *GetBackPack() const;
     Container *GetDepot(uint32_t depotid) const;
     std::vector<ScriptItem> getItemList(TYPE_OF_ITEM_ID id) const;
 
