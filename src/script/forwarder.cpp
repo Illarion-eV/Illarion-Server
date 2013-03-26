@@ -108,6 +108,22 @@ int create_item(Character *character, Item::id_type id, Item::number_type number
     return character->createItem(id, number, quality, convert_to_map(data).get());
 }
 
+int container_count_item1(Container *container, Item::id_type id) {
+    return container->countItem(id);
+}
+
+int container_count_item2(Container *container, Item::id_type id, const luabind::object &data) {
+    return container->countItem(id, convert_to_map(data).get());
+}
+
+int container_erase_item1(Container *container, Item::id_type id, Item::number_type number) {
+    return container->eraseItem(id, number);
+}
+
+int container_erase_item2(Container *container, Item::id_type id, Item::number_type number, const luabind::object &data) {
+    return container->eraseItem(id, number, convert_to_map(data).get());
+}
+
 ScriptItem world_createFromId(World *world, TYPE_OF_ITEM_ID id, unsigned short int count, position pos, bool always, int quali, const luabind::object &data) {
     return world->createFromId(id, count, pos, always, quali, convert_to_map(data).get());
 }

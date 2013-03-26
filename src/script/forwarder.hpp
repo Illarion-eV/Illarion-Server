@@ -24,6 +24,7 @@
 #include <stdint.h>
 #include <string>
 #include "Character.hpp"
+#include "Container.hpp"
 #include <luabind/object.hpp>
 
 uint32_t getPlayerLanguageLua(const Character *);
@@ -40,6 +41,12 @@ int erase_item1(Character *, TYPE_OF_ITEM_ID, int);
 int erase_item2(Character *, TYPE_OF_ITEM_ID, int, const luabind::object &);
 
 int create_item(Character *, Item::id_type id, Item::number_type number, Item::quality_type quality, const luabind::object &);
+
+int container_count_item1(Container *, Item::id_type);
+int container_count_item2(Container *, Item::id_type, const luabind::object &data);
+
+int container_erase_item1(Container *, Item::id_type, Item::number_type);
+int container_erase_item2(Container *, Item::id_type, Item::number_type, const luabind::object &data);
 
 ScriptItem world_createFromId(World *world, TYPE_OF_ITEM_ID id, unsigned short int count, position pos, bool allways, int quali, const luabind::object &data);
 
