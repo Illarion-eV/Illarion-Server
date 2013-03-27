@@ -337,8 +337,6 @@ void CastTS::performAction(Player *player) {
         }
     }
 
-    Logger::info(LogFacility::Script) << *player << " can't cast the spell: " << spellId << " , flags: " << player->magic.flags[ player->magic.type ] << Log::end;
-
     //Source des Castens zuweisen
     SouTar Source, Target;
     Source.character = dynamic_cast<Character *>(player);
@@ -347,7 +345,7 @@ void CastTS::performAction(Player *player) {
 
     switch (cid) {
     case UID_KOORD:
-        Logger::info(LogFacility::Script) << *player << " trys to cast on a coordinate pos " << castPosition << Log::end;
+        Logger::debug(LogFacility::Script) << *player << " trys to cast on a coordinate pos " << castPosition << Log::end;
 
         if (LuaMageScript) {
             Field *temp;
@@ -426,7 +424,7 @@ void CastTS::performAction(Player *player) {
         std::cout << "showcase: " << (int) showcase << " pos: " << (int) pos << std::endl;
 #endif
 
-        Logger::info(LogFacility::Script) << *player << " is casting in showcas: " << showcase << " pos " << pos << Log::end;
+        Logger::debug(LogFacility::Script) << *player << " is casting in showcas: " << showcase << " pos " << pos << Log::end;
 
         if (LuaMageScript) {
             if (player->isShowcaseOpen(showcase)) {

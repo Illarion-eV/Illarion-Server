@@ -796,7 +796,7 @@ void World::checkMonsters() {
                                     makeRandomStep=false;
                                     monster.performStep(foundP2->pos);
                                 } else {
-                                    Logger::info(LogFacility::Script) << "cant find the monster id for calling a script!" << Log::end;
+                                    Logger::notice(LogFacility::Script) << "cant find the monster id for calling a script!" << Log::end;
                                 }
 
                             }
@@ -965,7 +965,7 @@ void World::checkMonsters() {
                         if (foundMonster && monStruct.script) {
                             monStruct.script->abortRoute(*monsterIterator);
                         } else {
-                            Logger::info(LogFacility::Script) << "cant find the monster id for calling a script!" << Log::end;
+                            Logger::notice(LogFacility::Script) << "cant find the monster id for calling a script!" << Log::end;
                         }
                     }
                 }
