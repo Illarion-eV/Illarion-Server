@@ -126,7 +126,7 @@ void ScheduledScriptsTable::reload() {
                         std::shared_ptr<LuaScheduledScript> tmpScript(new LuaScheduledScript(tmpRecord.scriptName));
                         tmpRecord.scriptptr = tmpScript;
                         addData(tmpRecord);
-                    } catch (ScriptException &e) {
+                    } catch (const ScriptException &e) {
                         Logger::error(LogFacility::Script) << "Error while loading scheduled script: " << tmpRecord.scriptName << ": " << e.what() << Log::end;
                     }
                 }

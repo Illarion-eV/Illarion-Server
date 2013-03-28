@@ -21,7 +21,10 @@
 #ifndef _SPELL_TABLE_HPP_
 #define _SPELL_TABLE_HPP_
 
+#include <boost/functional/hash/hash.hpp>
+
 #include "data/ScriptStructTable.hpp"
+
 #include "script/LuaMagicScript.hpp"
 
 struct Spell {

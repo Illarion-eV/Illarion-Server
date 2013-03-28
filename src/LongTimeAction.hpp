@@ -21,6 +21,9 @@
 #define _CLONGTIMEACTION_HPP_
 
 #include <boost/shared_ptr.hpp>
+
+#include "Item.hpp"
+
 #include "script/LuaScript.hpp"
 
 class Player;

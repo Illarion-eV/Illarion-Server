@@ -23,10 +23,14 @@
 
 #include <string>
 #include <unordered_map>
-#include "script/LuaScript.hpp"
 #include <memory>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
+
+#include "types.hpp"
+#include "globals.hpp"
+
+class LuaScript;
 
 struct NodeStruct {
     std::string entrypoint;
