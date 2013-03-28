@@ -16,14 +16,21 @@
 //  You should have received a copy of the GNU General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "ServerCommands.hpp"
 
 #include "globals.hpp"
 #include "Item.hpp"
+#include "Player.hpp"
+#include "Monster.hpp"
+#include "Field.hpp"
 #include "World.hpp"
 #include "Logger.hpp"
-#include "ServerCommands.hpp"
+
+#include "data/Data.hpp"
+
 #include "netinterface/BasicServerCommand.hpp"
 #include "netinterface/NetInterface.hpp"
+
 #include "dialog/InputDialog.hpp"
 #include "dialog/MessageDialog.hpp"
 #include "dialog/MerchantDialog.hpp"

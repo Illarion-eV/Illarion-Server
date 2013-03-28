@@ -18,10 +18,14 @@
 
 
 #include "playersave.hpp"
-#include "Player.hpp"
+
 #include <unistd.h>
 #include <signal.h>
+
+#include "Player.hpp"
 #include "Connection.hpp"
+#include "LongTimeAction.hpp"
+
 #include "netinterface/NetInterface.hpp"
 
 tvector<Player *> players_to_save;

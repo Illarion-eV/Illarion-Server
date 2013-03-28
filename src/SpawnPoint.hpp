@@ -22,7 +22,6 @@
 #define SPAWNPOINT_HPP
 
 #include "globals.hpp"
-#include "Character.hpp"
 #include <list>
 
 // just declare a class named World...

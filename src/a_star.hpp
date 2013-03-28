@@ -21,11 +21,14 @@
 #ifndef _A_STAR_HPP_
 #define _A_STAR_HPP_
 
+#include <vector>
 #include <boost/assign/list_of.hpp>
 #include <boost/graph/graph_concepts.hpp>
-#include <vector>
 #include <boost/unordered_map.hpp>
 #include <boost/graph/astar_search.hpp>
+#include <boost/operators.hpp>
+#include "types.hpp"
+#include "globals.hpp"
 
 namespace pathfinding {
 

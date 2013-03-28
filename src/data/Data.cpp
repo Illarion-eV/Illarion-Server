@@ -20,6 +20,7 @@
 
 #include "data/Data.hpp"
 #include "Logger.hpp"
+#include "script/LuaLongTimeEffectScript.hpp"
 
 namespace Data {
 

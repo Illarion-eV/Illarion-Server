@@ -19,29 +19,39 @@
  */
 
 #include "Character.hpp"
-#include "tuningConstants.hpp"
-#include "Random.hpp"
-#include "data/Data.hpp"
-#include "Container.hpp"
-#include "World.hpp"
-#include "data/TilesTable.hpp"
-#include "script/LuaWeaponScript.hpp"
-#include "Logger.hpp"
+
 #include <map>
 #include <algorithm>
 #include <boost/shared_ptr.hpp>
-#include "script/LuaLearnScript.hpp"
-#include "script/LuaPlayerDeathScript.hpp"
-#include "netinterface/protocol/BBIWIServerCommands.hpp"
-#include "netinterface/protocol/ServerCommands.hpp"
+
+#include "tuningConstants.hpp"
 #include "fuse_ptr.hpp"
 #include "a_star.hpp"
+#include "Container.hpp"
+#include "Player.hpp"
+#include "Random.hpp"
+#include "World.hpp"
+#include "Field.hpp"
+#include "Logger.hpp"
+#include "MonitoringClients.hpp"
+#include "LongTimeAction.hpp"
+
+#include "data/Data.hpp"
+#include "data/TilesTable.hpp"
+
+#include "script/LuaWeaponScript.hpp"
+#include "script/LuaLearnScript.hpp"
+#include "script/LuaPlayerDeathScript.hpp"
+
+#include "netinterface/protocol/BBIWIServerCommands.hpp"
+#include "netinterface/protocol/ServerCommands.hpp"
 
 #define MAJOR_SKILL_GAP 100
 #define USE_LUA_FIGTHING
 
 extern std::shared_ptr<LuaLearnScript>learnScript;
 extern std::shared_ptr<LuaPlayerDeathScript>playerDeathScript;
+extern std::shared_ptr<LuaWeaponScript> standardFightingScript;
 
 Character::attribute_map_t Character::attributeMap = {
     {"strength", strength},

@@ -16,34 +16,42 @@
 //  You should have received a copy of the GNU General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
-#define _XOPEN_SOURCE
-#include <unistd.h>
-
-#include "db/ConnectionManager.hpp"
 #include "Player.hpp"
-#include <sstream>
-#include <boost/shared_ptr.hpp>
-#include "tuningConstants.hpp"
-#include "data/ContainerObjectTable.hpp"
+
+#include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+
+#include <sstream>
+
+#include <boost/shared_ptr.hpp>
+
+#include "tuningConstants.hpp"
 #include "Field.hpp"
+#include "Map.hpp"
 #include "World.hpp"
-#include "netinterface/NetInterface.hpp"
-#include "netinterface/BasicClientCommand.hpp"
-//for login command
-#include "netinterface/protocol/ClientCommands.hpp"
-#include "netinterface/protocol/ServerCommands.hpp"
-//#include "playersave.hpp"
 #include "Random.hpp"
 #include "SchedulerTaskClasses.hpp"
-#include "netinterface/protocol/BBIWIServerCommands.hpp"
 #include "Logger.hpp"
 #include "tvector.hpp"
 #include "PlayerManager.hpp"
+#include "MonitoringClients.hpp"
+#include "Config.hpp"
+#include "make_unique.hpp"
+#include "Showcase.hpp"
+#include "LongTimeAction.hpp"
 
+#include "data/Data.hpp"
+#include "data/ContainerObjectTable.hpp"
+
+#include "netinterface/NetInterface.hpp"
+#include "netinterface/BasicClientCommand.hpp"
+#include "netinterface/protocol/ClientCommands.hpp"
+#include "netinterface/protocol/ServerCommands.hpp"
+#include "netinterface/protocol/BBIWIServerCommands.hpp"
+
+#include "db/ConnectionManager.hpp"
 #include "db/Connection.hpp"
 #include "db/ConnectionManager.hpp"
 #include "db/DeleteQuery.hpp"
@@ -56,12 +64,9 @@
 #include "dialog/MessageDialog.hpp"
 #include "dialog/MerchantDialog.hpp"
 #include "dialog/SelectionDialog.hpp"
+#include "dialog/CraftingDialog.hpp"
 
 #include "script/LuaDepotScript.hpp"
-
-#include "Config.hpp"
-
-#include "make_unique.hpp"
 
 extern std::shared_ptr<LuaDepotScript>depotScript;
 
@@ -2776,4 +2781,8 @@ void Player::closeDialogsOnMove() {
 
 std::string Player::to_string() const {
     return (isAdmin()?"Admin ":"Player ") + getName() + "(" + std::to_string(getId()) + ")";
+}
+
+bool Player::actionRunning() const {
+	return ltAction->actionRunning();
 }

@@ -24,11 +24,9 @@
 #define MAP_DOWN_EXTRA 3 // extra downwards extension
 
 #include "globals.hpp"
-#include "constants.hpp"
 #include "WorldMap.hpp"
 
 // forward declarations
-class Map;
 class Field;
 
 /**

@@ -23,6 +23,13 @@
 #include <list>
 #include <stdlib.h>
 
+#include "Player.hpp"
+#include "NPC.hpp"
+#include "Monster.hpp"
+#include "Field.hpp"
+#include "Map.hpp"
+
+#include "data/Data.hpp"
 #include "data/ArmorObjectTable.hpp"
 #include "data/ContainerObjectTable.hpp"
 #include "data/MonsterTable.hpp"
@@ -37,8 +44,7 @@
 #include "netinterface/protocol/ServerCommands.hpp"
 
 extern MonsterTable *MonsterDescriptions;
-
-class Field;
+extern std::vector<position> *contpos;
 
 void World::deleteAllLostNPC() {
     Field *tempf;

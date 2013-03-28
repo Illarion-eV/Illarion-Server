@@ -20,12 +20,7 @@
 #ifndef MAIN_HELP_H
 #define MAIN_HELP_H
 
-#include <signal.h>
 #include <vector>
-
-#include "globals.hpp"
-
-class World;
 
 //! falls false beendet sich das Programm
 extern volatile bool running;

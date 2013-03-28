@@ -23,6 +23,9 @@
 #include <sstream>
 #include <regex.h>
 
+#include "Player.hpp"
+#include "MonitoringClients.hpp"
+
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
 

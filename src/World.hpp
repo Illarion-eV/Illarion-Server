@@ -31,36 +31,29 @@
 //falls nicht auskommentiert, werden die Gespraeche der Player gespeichert
 #define   LOG_TALK
 
+#include <sys/timeb.h>
+
 #include <list>
 #include <unordered_map>
-#include "tuningConstants.hpp"
-#include "Player.hpp"
-#include "Monster.hpp"
-#include "NPC.hpp"
-#include "TccharacterVector.hpp"
-#include "Map.hpp"
-#include "MilTimer.hpp"
-#include "Timer.hpp"
-#include "constants.hpp"
-#include "WorldMap.hpp"
+
 #include "NewClientView.hpp"
-#include "SpawnPoint.hpp"
-#include "data/Data.hpp"
-#include "data/NPCTable.hpp"
-#include "Scheduler.hpp"
-#include "TableStructs.hpp"
-#include "data/ScheduledScriptsTable.hpp"
-#include "MonitoringClients.hpp"
-#include "InitialConnection.hpp"
+#include "TccharacterVector.hpp"
 #include "tvector.hpp"
-#include "script/LuaLogoutScript.hpp"
-#include <exception>
+#include "SpawnPoint.hpp"
+#include "TableStructs.hpp"
+#include "Character.hpp"
+#include "Language.hpp"
 
+#include "data/MonsterAttackTable.hpp"
 
-extern ScheduledScriptsTable *scheduledScripts;
-
-//! Ein zeiger auf das Standard Kampfscript
-extern std::shared_ptr<LuaWeaponScript> standardFightingScript;
+class Player;
+class Monster;
+class NPC;
+class MonitoringClients;
+class Scheduler;
+class LuaScript;
+class Timer;
+class MilTimer;
 
 // typedef for gm commands...
 /**

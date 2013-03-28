@@ -18,10 +18,13 @@
 
 
 #include "LongTimeAction.hpp"
+
 #include "World.hpp"
-#include "Player.hpp"
-#include "MilTimer.hpp"
 #include "Character.hpp"
+#include "Player.hpp"
+#include "Monster.hpp"
+#include "NPC.hpp"
+#include "MilTimer.hpp"
 
 #include "script/LuaItemScript.hpp"
 #include "script/LuaTileScript.hpp"

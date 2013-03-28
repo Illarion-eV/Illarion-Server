@@ -25,15 +25,20 @@ extern "C" {
 #include <lualib.h>
 }
 
+#include <iostream>
+#include <algorithm>
+#include <cxxabi.h>
+
 #include "luabind/luabind.hpp"
 #include "luabind/operator.hpp"
 #include <luabind/adopt_policy.hpp>
 #include "luabind/out_value_policy.hpp"
 #include <luabind/raw_policy.hpp>
-#include <iostream>
-#include <algorithm>
+
 #include <boost/algorithm/string.hpp>
+
 #include "Character.hpp"
+#include "Monster.hpp"
 #include "NPC.hpp"
 #include "Field.hpp"
 #include "Item.hpp"
@@ -45,19 +50,21 @@ extern "C" {
 #include "LongTimeAction.hpp"
 #include "LongTimeEffect.hpp"
 #include "LongTimeCharacterEffects.hpp"
-#include "data/ScriptVariablesTable.hpp"
-#include "data/Data.hpp"
 #include "Logger.hpp"
 #include "WaypointList.hpp"
 #include "fuse_ptr.hpp"
+#include "Random.hpp"
+#include "Config.hpp"
+
+#include "data/ScriptVariablesTable.hpp"
+#include "data/Data.hpp"
+
 #include "dialog/InputDialog.hpp"
 #include "dialog/MessageDialog.hpp"
 #include "dialog/MerchantDialog.hpp"
 #include "dialog/SelectionDialog.hpp"
 #include "dialog/CraftingDialog.hpp"
-#include "Random.hpp"
-#include <cxxabi.h>
-#include "Config.hpp"
+
 #include "script/forwarder.hpp"
 
 extern ScriptVariablesTable *scriptVariables;

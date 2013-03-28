@@ -21,8 +21,10 @@
 #define SCHEDULEDTASKCLASSES
 
 #include "Scheduler.hpp"
-#include "types.hpp"
-#include "TableStructs.hpp"
+#include "Player.hpp"
+#include "Monster.hpp"
+#include "NPC.hpp"
+
 #include "script/LuaLearnScript.hpp"
 
 extern std::shared_ptr<LuaLearnScript>learnScript;

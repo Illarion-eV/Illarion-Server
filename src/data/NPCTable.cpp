@@ -23,23 +23,18 @@
  */
 
 #include "data/NPCTable.hpp"
-#include "data/QuestNodeTable.hpp"
 
 #include <iostream>
-
-#include "db/SelectQuery.hpp"
-#include "db/Result.hpp"
 
 #include "Logger.hpp"
 #include "types.hpp"
 
-template< typename To, typename From> To stream_convert(const From &from) {
-    std::stringstream stream;
-    stream << from;
-    To to;
-    stream >> to;
-    return to;
-}
+#include "db/SelectQuery.hpp"
+#include "db/Result.hpp"
+
+#include "data/QuestNodeTable.hpp"
+
+#include "script/LuaNPCScript.hpp"
 
 NPCTable::NPCTable() : _world(World::get()) {
     reload();

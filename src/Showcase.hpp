@@ -20,7 +20,7 @@
 #ifndef _SHOWCASE_HPP_
 #define _SHOWCASE_HPP_
 
-#include "Container.hpp"
+class Container;
 
 class Showcase {
 public:

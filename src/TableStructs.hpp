@@ -23,10 +23,9 @@
 #define BOOST_HAS_THREADS
 
 #include <string>
-#include "types.hpp"
 #include <boost/shared_ptr.hpp>
-#include <pthread.h>
-#include <iostream>
+
+#include "types.hpp"
 
 class LuaTileScript;
 class LuaItemScript;

@@ -25,20 +25,6 @@
 #include <algorithm>
 #include <sys/types.h>
 
-#include "data/MonsterTable.hpp"
-#include "data/TilesTable.hpp"
-#include "data/SkillTable.hpp"
-#include "data/WeaponObjectTable.hpp"
-
-#include "script/LuaLogoutScript.hpp"
-
-#include "db/SelectQuery.hpp"
-#include "db/Result.hpp"
-
-#include "netinterface/BasicCommand.hpp"
-#include "netinterface/NetInterface.hpp"
-#include "netinterface/protocol/ServerCommands.hpp"
-
 #include "Logger.hpp"
 #include "LongTimeAction.hpp"
 #include "PlayerManager.hpp"
@@ -47,6 +33,31 @@
 #include "TableStructs.hpp"
 #include "WaypointList.hpp"
 #include "Config.hpp"
+#include "MonitoringClients.hpp"
+#include "MilTimer.hpp"
+#include "Map.hpp"
+#include "tuningConstants.hpp"
+#include "Timer.hpp"
+
+#include "data/Data.hpp"
+#include "data/ScheduledScriptsTable.hpp"
+#include "data/NPCTable.hpp"
+#include "data/MonsterTable.hpp"
+#include "data/TilesTable.hpp"
+#include "data/SkillTable.hpp"
+#include "data/WeaponObjectTable.hpp"
+
+#include "script/LuaLogoutScript.hpp"
+#include "script/LuaNPCScript.hpp"
+
+#include "db/SelectQuery.hpp"
+#include "db/Result.hpp"
+
+#include "netinterface/BasicCommand.hpp"
+#include "netinterface/NetInterface.hpp"
+#include "netinterface/protocol/ServerCommands.hpp"
+
+extern ScheduledScriptsTable *scheduledScripts;
 
 //#define World_DEBUG
 

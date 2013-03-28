@@ -25,9 +25,8 @@
 
 class Player;
 class World;
-class MilTimer;
 class Character;
-class LuaScript;
+class MilTimer;
 
 
 /**

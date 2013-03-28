@@ -25,18 +25,8 @@
 
 #include <string>
 #include <unordered_map>
-#include "MapException.hpp"
-#include "globals.hpp"
-#include "TableStructs.hpp"
-#include "Item.hpp"
 #include "Field.hpp"
 #include "Container.hpp"
-
-class CommonObjectTable;
-
-
-extern std::vector<position> *contpos;
-
 
 class Map {
 

@@ -23,6 +23,7 @@
 #include <string>
 #include <vector>
 #include "utility.hpp"
+#include "constants.hpp"
 
 template < class _Tp >
 class ccharactervector : public std::vector < _Tp > {

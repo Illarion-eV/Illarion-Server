@@ -24,29 +24,26 @@
 //#define Player_DEBUG
 
 #include <string>
-#include <sstream>
 #include <set>
 #include <unordered_set>
 #include <unordered_map>
-
-#include "Timer.hpp"
-#include "Character.hpp"
-#include "Showcase.hpp"
-#include "constants.hpp"
-#include "LongTimeAction.hpp"
 #include <boost/shared_ptr.hpp>
-#include "Language.hpp"
-#include "netinterface/NetInterface.hpp"
+
+#include "Character.hpp"
+
 #include "netinterface/BasicServerCommand.hpp"
-#include "netinterface/protocol/ServerCommands.hpp"
+#include "netinterface/NetInterface.hpp"
+
 #include "dialog/MerchantDialog.hpp"
 #include "dialog/SelectionDialog.hpp"
-#include "dialog/CraftingDialog.hpp"
 
-class World;
-class LuaScript;
+#include "script/LuaScript.hpp"
+
 struct WeatherStruct;
 class Dialog;
+class Timer;
+class LongTimeAction;
+class Showcase;
 
 enum gm_rights {
     gmr_allowlogin = 1, //GM is allowed to login if nologin is true
@@ -306,9 +303,7 @@ public:
     */
     void sendSingleStripe(viewdir direction, int8_t zoffs);
 
-    virtual bool actionRunning() const override {
-        return ltAction->actionRunning();
-    }
+    virtual bool actionRunning() const override;
 
     virtual void increasePoisonValue(short int value) override;
 

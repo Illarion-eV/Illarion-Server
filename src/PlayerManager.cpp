@@ -18,11 +18,16 @@
 
 
 #include "PlayerManager.hpp"
+
 #include "World.hpp"
-#include "script/LuaLogoutScript.hpp"
 #include "Player.hpp"
 #include "Logger.hpp"
 #include "main_help.hpp"
+#include "MonitoringClients.hpp"
+#include "LongTimeAction.hpp"
+
+#include "script/LuaLogoutScript.hpp"
+
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
 

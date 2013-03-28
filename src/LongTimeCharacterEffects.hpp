@@ -21,9 +21,11 @@
 #ifndef LONGTIMECHARACTEREFFECTS_HPP_
 #define LONGTIMECHARACTEREFFECTS_HPP_
 
-#include "LongTimeEffect.hpp"
 #include <string>
 #include <vector>
+
+class LongTimeEffect;
+class Character;
 
 class LongTimeCharacterEffects {
 public:

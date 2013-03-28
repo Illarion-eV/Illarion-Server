@@ -27,18 +27,14 @@
 #include "TableStructs.hpp"
 
 #include <unordered_map>
-#include <iterator>
 #include <iostream>
 #include <fstream>
-#include <sys/types.h>
-
-class RekursionException: public std::exception {};
 
 #include "Item.hpp"
-#include "constants.hpp"
 
 class CommonObjectTable;
 
+class RekursionException: public std::exception {};
 
 class Container {
 public:

@@ -20,10 +20,12 @@
 #ifndef _PLAYERMANAGER_HPP_
 #define _PLAYERMANAGER_HPP_
 
-#include "InitialConnection.hpp"
 #include <pthread.h>
-#include "tvector.hpp"
+
 #include "boost/thread/shared_mutex.hpp"
+
+#include "InitialConnection.hpp"
+#include "tvector.hpp"
 
 
 class Player;

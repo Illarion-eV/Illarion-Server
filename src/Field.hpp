@@ -22,13 +22,11 @@
 
 // #define Field_DEBUG
 
-#include "constants.hpp"
-#include "globals.hpp"
-#include "TableStructs.hpp"
-
 #include <vector>
 #include <sys/socket.h>
 
+#include "constants.hpp"
+#include "globals.hpp"
 #include "Item.hpp"
 
 class CommonObjectTable;

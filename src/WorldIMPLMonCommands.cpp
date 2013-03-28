@@ -28,6 +28,7 @@
 #include <boost/shared_ptr.hpp>
 #include "Logger.hpp"
 #include "Player.hpp"
+#include "Monster.hpp"
 
 #include <iostream>
 

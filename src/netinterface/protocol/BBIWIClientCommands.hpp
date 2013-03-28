@@ -27,9 +27,13 @@
 */
 
 
+#include <boost/shared_ptr.hpp>
+
+#include "Player.hpp"
 #include "World.hpp"
 #include "Logger.hpp"
-#include <boost/shared_ptr.hpp>
+#include "MonitoringClients.hpp"
+
 #include "netinterface/BasicClientCommand.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
 

@@ -18,19 +18,15 @@
 
 
 #include "InitialConnection.hpp"
+
 #include <boost/thread.hpp>
+
 #include "Config.hpp"
 
-#define InitialConnection_DEBUG
+#include "netinterface/NetInterface.hpp"
 
 InitialConnection::InitialConnection() {
-#ifdef InitialConnection_DEBUG
-    std::cout << "InternetConnection Konstruktor Start\n";
-#endif
     boost::thread servicethread(boost::bind(&InitialConnection::run_service,this));
-#ifdef InitialConnection_DEBUG
-    std::cout << "InternetConnection Konstruktor Ende\n";
-#endif
 }
 
 
@@ -70,13 +66,7 @@ void InitialConnection::accept_connection(boost::shared_ptr<NetInterface> connec
 
 
 InitialConnection::~InitialConnection() {
-#ifdef InitialConnection_DEBUG
-    std::cout << "InternetConnection Destruktor Start" << std::endl;
-#endif
     io_service.stop();
     delete acceptor;
     acceptor = NULL;
-#ifdef InitialConnection_DEBUG
-    std::cout << "InternetConnection Destruktor Ende" << std::endl;
-#endif
 }

@@ -18,31 +18,37 @@
 
 
 #include "World.hpp"
+
 #include <sstream>
 #include <regex.h>
 #include <list>
+#include <iostream>
+
+#include "PlayerManager.hpp"
+#include "Logger.hpp"
+#include "constants.hpp"
+#include "Player.hpp"
+#include "Monster.hpp"
+#include "Field.hpp"
+#include "Map.hpp"
+
 #include "data/Data.hpp"
+#include "data/MonsterTable.hpp"
+#include "data/ScheduledScriptsTable.hpp"
+#include "data/QuestNodeTable.hpp"
+
 #include "script/LuaLookAtPlayerScript.hpp"
 #include "script/LuaLookAtItemScript.hpp"
 #include "script/LuaPlayerDeathScript.hpp"
-#include "data/MonsterTable.hpp"
-#include "data/ScheduledScriptsTable.hpp"
-//We need this for the standard Fighting Script.
 #include "script/LuaWeaponScript.hpp"
-//For the reload scripts
 #include "script/LuaReloadScript.hpp"
 #include "script/LuaLearnScript.hpp"
-#include "netinterface/protocol/ServerCommands.hpp"
-#include "netinterface/NetInterface.hpp"
 #include "script/LuaLoginScript.hpp"
 #include "script/LuaLogoutScript.hpp"
 #include "script/LuaDepotScript.hpp"
-#include "PlayerManager.hpp"
-#include "Logger.hpp"
-#include "data/QuestNodeTable.hpp"
-#include "constants.hpp"
 
-#include <iostream>
+#include "netinterface/protocol/ServerCommands.hpp"
+#include "netinterface/NetInterface.hpp"
 
 extern std::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
 extern std::shared_ptr<LuaLookAtItemScript>lookAtItemScript;
@@ -51,18 +57,12 @@ extern std::shared_ptr<LuaLoginScript>loginScript;
 extern std::shared_ptr<LuaLogoutScript>logoutScript;
 extern std::shared_ptr<LuaLearnScript>learnScript;
 extern std::shared_ptr<LuaDepotScript>depotScript;
+extern ScheduledScriptsTable *scheduledScripts;
+extern std::shared_ptr<LuaWeaponScript> standardFightingScript;
 
 void set_spawn_command(World *, Player *, const std::string &);
 void create_area_command(World *, Player *, const std::string &);
 void set_login(World *, Player *, const std::string &);
-
-template< typename To, typename From> To stream_convert(const From &from) {
-    std::stringstream stream;
-    stream << from;
-    To to;
-    stream >> to;
-    return to;
-}
 
 // register any gm commands here...
 void World::InitGMCommands() {
@@ -778,12 +778,12 @@ void World::who_command(Player *cp, const std::string &tplayer) {
         if (tempPl) {
             std::string tmessage = tempPl->to_string();
 
-            tmessage = tmessage + " x" + stream_convert<std::string>(tempPl->pos.x);
-            tmessage = tmessage + " y" + stream_convert<std::string>(tempPl->pos.y);
-            tmessage = tmessage + " z" + stream_convert<std::string>(tempPl->pos.z);
-            tmessage = tmessage + " HPs:" + stream_convert<std::string>(tempPl->getAttribute(Character::hitpoints));
+            tmessage = tmessage + " x" + std::to_string(tempPl->pos.x);
+            tmessage = tmessage + " y" + std::to_string(tempPl->pos.y);
+            tmessage = tmessage + " z" + std::to_string(tempPl->pos.z);
+            tmessage = tmessage + " HPs:" + std::to_string(tempPl->getAttribute(Character::hitpoints));
             tmessage = tmessage + ((tempPl->IsAlive()) ? " Alive" : " Dead");
-            tmessage = tmessage + " Mental Capacity: " + stream_convert<std::string>(tempPl->getMentalCapacity());
+            tmessage = tmessage + " Mental Capacity: " + std::to_string(tempPl->getMentalCapacity());
             std::string german = " German";
             std::string english = " English";
             tmessage = tmessage + tempPl->nls(german, english);

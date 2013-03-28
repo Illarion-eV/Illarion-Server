@@ -23,7 +23,6 @@
 #include <list>
 #include <exception>
 #include <iostream>
-#include <cerrno> // error numbers.. EAGAIN etc.
 #include <pthread.h>
 #include <stdint.h>
 

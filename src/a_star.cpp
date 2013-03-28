@@ -18,10 +18,12 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "World.hpp"
-#include "data/TilesTable.hpp"
-
 #include "a_star.hpp"
+
+#include "World.hpp"
+#include "Field.hpp"
+#include "data/TilesTable.hpp"
+#include "data/Data.hpp"
 
 namespace pathfinding {
 
