@@ -27,7 +27,6 @@
 #include <list>
 #include <exception>
 #include <iostream>
-#include <cerrno> // error numbers.. EAGAIN etc.
 #include <pthread.h>
 
 #ifndef _MAX_NON_BLOCK_TRYS2_

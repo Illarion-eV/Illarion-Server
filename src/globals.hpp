@@ -21,10 +21,9 @@
 #define globals_HH
 
 #include <map>
-#include <fstream>
 #include <iostream>
-#include <boost/lexical_cast.hpp>
 #include <boost/functional/hash/hash.hpp>
+
 #include "types.hpp"
 
 struct position {

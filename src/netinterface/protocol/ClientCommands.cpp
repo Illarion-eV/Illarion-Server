@@ -16,14 +16,25 @@
 //  You should have received a copy of the GNU General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "Player.hpp"
+#include "netinterface/protocol/ClientCommands.hpp"
+
+#include <string>
+
+#include "types.hpp"
+#include "Field.hpp"
 #include "World.hpp"
 #include "Character.hpp"
-#include <string>
-#include "types.hpp"
+#include "Player.hpp"
+#include "Monster.hpp"
+#include "NPC.hpp"
 #include "Logger.hpp"
+#include "MonitoringClients.hpp"
+#include "tuningConstants.hpp"
+#include "LongTimeAction.hpp"
+
 #include "data/Data.hpp"
 #include "data/MonsterTable.hpp"
+
 #include "script/LuaNPCScript.hpp"
 #include "script/LuaScript.hpp"
 #include "script/LuaItemScript.hpp"
@@ -33,8 +44,6 @@
 #include "script/LuaLookAtPlayerScript.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
-
-#include "netinterface/protocol/ClientCommands.hpp"
 
 extern MonsterTable *MonsterDescriptions;
 extern std::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;

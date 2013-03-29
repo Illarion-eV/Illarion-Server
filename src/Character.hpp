@@ -25,17 +25,13 @@
 #include <fstream>
 #include <map>
 #include <unordered_map>
-#include "tuningConstants.hpp"
-#include "globals.hpp"
 #include "constants.hpp"
-#include "TableStructs.hpp"
-#include "Item.hpp"
+#include "tuningConstants.hpp"
 #include "LongTimeCharacterEffects.hpp"
-#include "Attribute.hpp"
-#include "Language.hpp"
 #include "WaypointList.hpp"
-#include "LongTimeCharacterEffects.hpp"
-#include "types.hpp"
+#include "Language.hpp"
+#include "Attribute.hpp"
+#include "Item.hpp"
 
 class World;
 class Container;
@@ -45,6 +41,7 @@ class MessageDialog;
 class MerchantDialog;
 class SelectionDialog;
 class CraftingDialog;
+class Player;
 
 struct NoSpace : public std::runtime_error {
     NoSpace(const std::string &s = "no space") : std::runtime_error(s) {}

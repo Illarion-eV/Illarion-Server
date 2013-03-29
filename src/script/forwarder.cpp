@@ -1,7 +1,13 @@
 #include "script/forwarder.hpp"
+
 #include "globals.hpp"
 #include "World.hpp"
 #include "Logger.hpp"
+#include "Player.hpp"
+#include "Monster.hpp"
+#include "NPC.hpp"
+
+#include "script/LuaScript.hpp"
 
 std::shared_ptr<script_data_exchangemap> convert_to_map(const luabind::object &data) {
     auto mapType = luabind::type(data);

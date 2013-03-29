@@ -16,12 +16,15 @@
 //  You should have received a copy of the GNU General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "NPC.hpp"
+
+#include "tuningConstants.hpp"
+#include "World.hpp"
+#include "Field.hpp"
 
 #include "db/ConnectionManager.hpp"
-#include "NPC.hpp"
-#include "tuningConstants.hpp"
-#include <iostream>
-#include "World.hpp"
+
+#include "script/LuaNPCScript.hpp"
 
 uint32_t NPC::counter = 0;
 

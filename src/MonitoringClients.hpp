@@ -21,10 +21,9 @@
 #define _CMONITORINGCLIENTS_
 
 #include <list>
-#include <iostream>
-#include <boost/shared_ptr.hpp>
 
-class BasicServerCommand;
+#include "netinterface/BasicServerCommand.hpp"
+
 class World;
 class Player;
 

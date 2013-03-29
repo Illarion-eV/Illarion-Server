@@ -18,8 +18,12 @@
 
 
 #include "World.hpp"
-#include "Player.hpp"
+
 #include <boost/shared_ptr.hpp>
+
+#include "Player.hpp"
+#include "tuningConstants.hpp"
+
 #include "netinterface/NetInterface.hpp"
 #include "netinterface/protocol/ClientCommands.hpp"
 

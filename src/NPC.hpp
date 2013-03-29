@@ -21,8 +21,10 @@
 #define NPC_HPP
 
 #include "Character.hpp"
-#include "script/LuaNPCScript.hpp"
+
 #include <boost/shared_ptr.hpp>
+
+class LuaNPCScript;
 
 /**
 * struct to take a text

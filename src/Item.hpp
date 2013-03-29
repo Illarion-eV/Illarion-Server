@@ -21,11 +21,10 @@
 #ifndef _ITEM_HPP_
 #define _ITEM_HPP_
 
-#include <cstdio>
-#include <cstdlib>
 #include <vector>
 #include <string>
 #include <unordered_map>
+
 #include "types.hpp"
 #include "globals.hpp"
 #include "fuse_ptr.hpp"

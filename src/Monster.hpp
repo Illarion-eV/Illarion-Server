@@ -21,8 +21,8 @@
 #define MONSTER_HPP
 
 #include "Character.hpp"
-#include "SpawnPoint.hpp"
-#include <boost/shared_ptr.hpp>
+
+class SpawnPoint;
 
 /**
 * @ingroup Scriptclasses

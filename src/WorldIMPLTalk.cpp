@@ -24,8 +24,12 @@
 #include "script/LuaLookAtItemScript.hpp"
 #include "TableStructs.hpp"
 #include "Player.hpp"
+#include "NPC.hpp"
+#include "Monster.hpp"
+#include "Field.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "Logger.hpp"
+#include "data/Data.hpp"
 
 extern std::shared_ptr<LuaLookAtItemScript>lookAtItemScript;
 

@@ -30,6 +30,8 @@
 #include "World.hpp"
 #include "Random.hpp"
 #include "Logger.hpp"
+#include "Monster.hpp"
+#include "Field.hpp"
 
 template< typename To, typename From> To stream_convert(const From &from) {
     std::stringstream stream;

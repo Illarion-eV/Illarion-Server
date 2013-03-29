@@ -23,33 +23,18 @@
 //falls nicht auskommentiert, werden mehr Bildschirmausgaben gemacht:
 //#define InitialConnection_DEBUG
 
-#include <string>
-#include <vector>
-#include <sstream>
-
-//#include <sys/socket.h>
-//#include <netinet/in.h>
-//#include <arpa/inet.h>
-//#include <netinet/tcp.h>
-
 #include <stdio.h>
 
-#include "constants.hpp"
-#include "Player.hpp"
 #include <boost/shared_ptr.hpp>
-#include <boost/bind.hpp>
-#include <boost/enable_shared_from_this.hpp>
 #include <boost/asio.hpp>
-#include "netinterface/NetInterface.hpp"
-// include our thread safe std::vector...
-#include "tpvector.hpp"
 
+#include "tpvector.hpp"
+#include "Connection.hpp"
+
+class NetInterface;
 
 //! die maximal Anzahl von noch nicht bearbeiteten Verbindungen in der Warteschlange
 #define BACKLOG 10
-
-//! die maximale Anzahl von Versuchen Name und Pa�wort eines neuen Spielers zu erfragen
-#define MAXTRY 50
 
 //! erstellt Verbindungen zu neuen Clients
 // Eine Instanz dieser Klasse wartet auf Verbindungsanfragen
@@ -60,10 +45,7 @@ class InitialConnection : public Connection {
 public:
 
 
-    //! ein std::vector von Player
-    //typedef tvector<InternetConnection*> TVECTORPLAYER; // thread safe vector
     typedef tpvector<boost::shared_ptr<NetInterface> > TVECTORPLAYER;
-    //typedef std::vector<Player*> VECTORPLAYER;
 
     //! Konstruktor
     InitialConnection();

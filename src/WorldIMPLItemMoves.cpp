@@ -18,6 +18,17 @@
 
 
 #include "World.hpp"
+#include "Container.hpp"
+#include "Player.hpp"
+#include "Monster.hpp"
+#include "NPC.hpp"
+#include "data/Data.hpp"
+#include "Field.hpp"
+#include "Map.hpp"
+#include "tuningConstants.hpp"
+
+#include "netinterface/protocol/ServerCommands.hpp"
+
 #include "script/LuaItemScript.hpp"
 
 // TODO find a better place for the constants

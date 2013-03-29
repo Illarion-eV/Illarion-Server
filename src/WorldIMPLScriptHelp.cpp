@@ -18,16 +18,24 @@
 
 
 #include "World.hpp"
+
 #include "Player.hpp"
+#include "NPC.hpp"
+#include "Monster.hpp"
 #include "Item.hpp"
 #include "Field.hpp"
-#include "data/NaturalArmorTable.hpp"
-#include "netinterface/protocol/ServerCommands.hpp"
-#include "netinterface/protocol/BBIWIServerCommands.hpp"
+#include "Map.hpp"
+#include "MonitoringClients.hpp"
 #include "Logger.hpp"
 #include "fuse_ptr.hpp"
 
-class Character;
+#include "data/Data.hpp"
+#include "data/NaturalArmorTable.hpp"
+
+#include "script/LuaNPCScript.hpp"
+
+#include "netinterface/protocol/ServerCommands.hpp"
+#include "netinterface/protocol/BBIWIServerCommands.hpp"
 
 bool World::deleteNPC(unsigned int npcid) {
     /*

@@ -20,6 +20,7 @@
 #ifndef _WORLDMAP_HPP_
 #define _WORLDMAP_HPP_
 
+#include <memory>
 #include <vector>
 #include <unordered_map>
 #include "globals.hpp"

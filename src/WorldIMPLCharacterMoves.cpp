@@ -25,6 +25,10 @@
 #include "netinterface/NetInterface.hpp"
 #include "netinterface/BasicServerCommand.hpp"
 #include "Player.hpp"
+#include "Field.hpp"
+#include "Monster.hpp"
+#include "NPC.hpp"
+#include "data/Data.hpp"
 
 void World::checkFieldAfterMove(Character *cc, Field *cfstart) {
     if (cfstart->HasSpecialItem()) {

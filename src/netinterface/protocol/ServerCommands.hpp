@@ -22,11 +22,16 @@
 #define _SERVER_COMMANDS_HPP_
 
 #include "NewClientView.hpp"
+#include "Container.hpp"
+#include "Character.hpp"
+
 #include "netinterface/BasicServerCommand.hpp"
 
 struct WeatherStruct;
 class Item;
 class ItemLookAt;
+class Player;
+
 typedef std::vector < Item > ITEMVECTOR;
 
 enum ServerCommands {

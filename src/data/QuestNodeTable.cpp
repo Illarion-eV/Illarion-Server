@@ -19,16 +19,19 @@
  */
 
 #include "data/QuestNodeTable.hpp"
+
+#include <memory>
+#include <vector>
+#include <string>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
-#include <memory>
-#include <vector>
-#include <string>
-#include "script/LuaScript.hpp"
+
 #include "Logger.hpp"
 #include "Config.hpp"
+
+#include "script/LuaScript.hpp"
 
 QuestNodeTable *QuestNodeTable::instance = 0;
 

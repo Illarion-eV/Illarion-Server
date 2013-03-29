@@ -261,5 +261,4 @@ const uint32_t MONSTER_BASE = 0xFE000000;
 //! Grund fuer Verbindungsabbruch: Spielerdaten korrupt
 #define ORRUPTDATA 0x0D
 
-const unsigned char MAXTRY = 5;
 #endif

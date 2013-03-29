@@ -32,6 +32,7 @@
 
 #include "World.hpp"
 #include "Logger.hpp"
+#include "data/Data.hpp"
 
 //! table with item attributes
 

@@ -21,13 +21,15 @@
 #define _CLONGTIMEACTION_HPP_
 
 #include <boost/shared_ptr.hpp>
+
+#include "Item.hpp"
+
 #include "script/LuaScript.hpp"
 
 class Player;
 class World;
-class MilTimer;
 class Character;
-class LuaScript;
+class MilTimer;
 
 
 /**

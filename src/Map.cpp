@@ -18,18 +18,19 @@
 
 
 #include "Map.hpp"
+
+#include <vector>
+
 #include "Logger.hpp"
 #include "World.hpp"
 #include "Player.hpp"
-#include <vector>
+#include "MapException.hpp"
+
 #include "netinterface/protocol/ServerCommands.hpp"
 
+extern std::vector<position> *contpos;
+
 Map::Map(unsigned short int sizex, unsigned short int sizey) {
-
-#ifdef Map_DEBUG
-    std::cout << "Map Konstruktor Start, Width:" << sizex << " Height:" << sizey << "\n";
-#endif
-
     Width = sizex;
     Height = sizey;
     Min_X = 0;
@@ -52,18 +53,10 @@ Map::Map(unsigned short int sizex, unsigned short int sizey) {
         }
     }
 
-#ifdef Map_DEBUG
-    std::cout << "Map Konstruktor Ende\n";
-#endif
-
 }
 
 
 Map::~Map() {
-#ifdef Map_DEBUG
-    std::cout << "Map Destruktor Start" << std::endl;
-#endif
-
     for (int i = 0; i < Width; ++i) {
         delete[] MainMap[ i ];
         MainMap[ i ] = NULL;
@@ -71,9 +64,6 @@ Map::~Map() {
 
     delete[] MainMap;
     MainMap = NULL;
-#ifdef Map_DEBUG
-    std::cout << "Map Destruktor Ende" << std::endl;
-#endif
 }
 
 
