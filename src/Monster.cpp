@@ -36,10 +36,9 @@ Monster::Monster(const TYPE_OF_CHARACTER_ID &type, const position &newpos, Spawn
     : Character(),lastTargetPosition(position(0,0,0)),lastTargetSeen(false), spawn(spawnpoint), monstertype(type) {
     character = monster;
     setId(MONSTER_BASE + counter++ % (NPC_BASE-MONSTER_BASE));
-    actionPoints = NP_MAX_AP;
     SetAlive(true);
     setType(type);
-    pos=newpos;
+    setPosition(newpos);
 }
 
 void Monster::performStep(position targetpos) {
@@ -55,7 +54,7 @@ void Monster::performStep(position targetpos) {
     if (!waypoints.makeMove()) {
         direction dir = static_cast<direction>(Random::uniform(0, 7));
         move(dir);
-        actionPoints -= 20;
+        increaseActionPoints(-20);
     }
 }
 

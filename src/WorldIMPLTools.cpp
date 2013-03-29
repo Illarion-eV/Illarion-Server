@@ -47,11 +47,11 @@ void World::deleteAllLostNPC() {
         const auto &npc = Npc.findID(npcToDelete);
 
         if (npc) {
-            if (GetPToCFieldAt(tempf, npc->pos)) {
+            if (GetPToCFieldAt(tempf, npc->getPosition())) {
                 tempf->removeChar();
             }
 
-            sendRemoveCharToVisiblePlayers(npc->getId(), npc->pos);
+            sendRemoveCharToVisiblePlayers(npc->getId(), npc->getPosition());
             delete npc;
         }
     }
@@ -64,11 +64,12 @@ bool World::findPlayersInSight(const position &pos, uint8_t range, std::vector<P
 
     for (const auto &player : Players.findAllAliveCharactersInRangeOfOnSameMap(pos, range)) {
         bool indir = false;
+        const position &playerPos = player->getPosition();
 
         switch (direction) {
         case Character::north:
 
-            if (player->pos.y <= pos.y) {
+            if (playerPos.y <= pos.y) {
                 indir = true;
             }
 
@@ -76,7 +77,7 @@ bool World::findPlayersInSight(const position &pos, uint8_t range, std::vector<P
 
         case Character::northeast:
 
-            if (player->pos.x - pos.x >= player->pos.y - pos.y) {
+            if (playerPos.x - pos.x >= playerPos.y - pos.y) {
                 indir = true;
             }
 
@@ -84,7 +85,7 @@ bool World::findPlayersInSight(const position &pos, uint8_t range, std::vector<P
 
         case Character::east:
 
-            if (player->pos.x >= pos.x) {
+            if (playerPos.x >= pos.x) {
                 indir = true;
             }
 
@@ -92,7 +93,7 @@ bool World::findPlayersInSight(const position &pos, uint8_t range, std::vector<P
 
         case Character::southeast:
 
-            if (player->pos.y - pos.y >= pos.x - player->pos.x) {
+            if (playerPos.y - pos.y >= pos.x - playerPos.x) {
                 indir = true;
             }
 
@@ -100,7 +101,7 @@ bool World::findPlayersInSight(const position &pos, uint8_t range, std::vector<P
 
         case Character::south:
 
-            if (player->pos.y >= pos.y) {
+            if (playerPos.y >= pos.y) {
                 indir = true;
             }
 
@@ -108,7 +109,7 @@ bool World::findPlayersInSight(const position &pos, uint8_t range, std::vector<P
 
         case Character::southwest:
 
-            if (player->pos.x - pos.x <= player->pos.y - pos.y) {
+            if (playerPos.x - pos.x <= playerPos.y - pos.y) {
                 indir = true;
             }
 
@@ -116,7 +117,7 @@ bool World::findPlayersInSight(const position &pos, uint8_t range, std::vector<P
 
         case Character::west:
 
-            if (player->pos.x <= pos.x) {
+            if (playerPos.x <= pos.x) {
                 indir = true;
             }
 
@@ -124,7 +125,7 @@ bool World::findPlayersInSight(const position &pos, uint8_t range, std::vector<P
 
         case Character::northwest:
 
-            if (player->pos.y - pos.y >= pos.x - player->pos.x) {
+            if (playerPos.y - pos.y >= pos.x - playerPos.x) {
                 indir = true;
             }
 
@@ -136,7 +137,7 @@ bool World::findPlayersInSight(const position &pos, uint8_t range, std::vector<P
         }
 
         if (indir) {
-            std::list<BlockingObject> objects = LoS(pos, player->pos);
+            std::list<BlockingObject> objects = LoS(pos, player->getPosition());
 
             if (objects.empty()) {
                 ret.push_back(player);
@@ -377,7 +378,7 @@ void World::takeMonsterAndNPCFromMap() {
     Field *tempf;
 
     for (const auto &monster : Monsters) {
-        if (GetPToCFieldAt(tempf, monster->pos)) {
+        if (GetPToCFieldAt(tempf, monster->getPosition())) {
             tempf->SetMonsterOnField(false);
         }
 
@@ -385,7 +386,7 @@ void World::takeMonsterAndNPCFromMap() {
     }
 
     for (const auto &npc : Npc) {
-        if (GetPToCFieldAt(tempf, npc->pos)) {
+        if (GetPToCFieldAt(tempf, npc->getPosition())) {
             tempf->SetNPCOnField(false);
         }
 
@@ -417,7 +418,7 @@ bool World::characterAttacks(Character *cp) {
                     if (!cp->attack(temppl)) {
                         sendSpinToAllVisiblePlayers(temppl);
 
-                        cp->attackmode = false;
+                        cp->setAttackMode(false);
 
                         //set lasttargetseen to false if the player who was attacked is death
                         if (cp->character == Character::monster) {
@@ -435,17 +436,13 @@ bool World::characterAttacks(Character *cp) {
 
                         ServerCommandPointer cmd(new TargetLostTC());
                         dynamic_cast<Player *>(temppl)->Connection->addCommand(cmd);
-                        temppl->attackmode = false;
+                        temppl->setAttackMode(false);
                     }
 
                     return true;
                 }
             }
         } else if (cp->enemytype == Character::monster) {
-#ifdef World_DEBUG
-            std::cout << "attack monster" << std::endl;
-#endif
-
             Monster *temppl = Monsters.findID(cp->enemyid);
 
             // Ziel gefunden
@@ -465,7 +462,7 @@ bool World::characterAttacks(Character *cp) {
 
                     // Ziel ist tot
                     if (!cp->attack(temppl)) {
-                        cp->attackmode = false;
+                        cp->setAttackMode(false);
 
                         if (cp->character == Character::player) {
                             ServerCommandPointer cmd(new TargetLostTC());
@@ -475,7 +472,7 @@ bool World::characterAttacks(Character *cp) {
                         //check for turning into attackackers direction
                         std::vector<Player *>temp;
                         temp.clear();
-                        findPlayersInSight(temppl->pos, static_cast<uint8_t>(9), temp, temppl->faceto);
+                        findPlayersInSight(temppl->getPosition(), static_cast<uint8_t>(9), temp, temppl->faceto);
 
                         //add the current attacker to the list
                         if (cp->character == Character::player) {
@@ -485,7 +482,7 @@ bool World::characterAttacks(Character *cp) {
                         Player *foundPl;
 
                         if (!temp.empty() && findPlayerWithLowestHP(temp, foundPl)) {
-                            temppl->turn(foundPl->pos);
+                            temppl->turn(foundPl->getPosition());
                         }
 
                     }
@@ -495,8 +492,8 @@ bool World::characterAttacks(Character *cp) {
             }
         }
 
-        // Ziel nicht gefunden/au�er Sichtweite
-        cp->attackmode = false;
+        // target not found, out of view
+        cp->setAttackMode(false);
 
         if (cp->character == Character::player) {
             ServerCommandPointer cmd(new TargetLostTC());
@@ -527,29 +524,18 @@ bool World::killMonster(Monster *monsterp) {
 
 
 void World::killMonster(MONSTERVECTOR::iterator monsterIt, MONSTERVECTOR::iterator &newIt) {
-
-    //( *monsterIt )->SetAlive( false );
     Field *tempf;
+    Monster *monster = *monsterIt;
+    const auto &monsterPos = monster->getPosition();
 
-    if (GetPToCFieldAt(tempf, (*monsterIt)->pos)) {
-        //tempf->SetMonsterOnField( false );
+    if (GetPToCFieldAt(tempf, monsterPos)) {
         tempf->removeChar();
-    } else {
-#ifdef World_DEBUG
-        std::cout << "Feld nicht gefunden" << std::endl;
-#endif
-
     }
 
-    sendRemoveCharToVisiblePlayers((*monsterIt)->getId(), (*monsterIt)->pos);
+    sendRemoveCharToVisiblePlayers(monster->getId(), monsterPos);
 
-    // delete our monster
-    if (*monsterIt) {
-        delete *monsterIt;
-    }
-
+    delete monster;
     newIt = Monsters.erase(monsterIt);
-
 }
 
 
@@ -1017,15 +1003,17 @@ void World::sendRemoveCharToVisiblePlayers(TYPE_OF_CHARACTER_ID id, const positi
 }
 
 void World::sendHealthToAllVisiblePlayers(Character *cc, Attribute::attribute_t health) {
-    if (!cc->isinvisible) {
+    if (!cc->isInvisible()) {
+        const auto &charPos = cc->getPosition();
         char xoffs;
         char yoffs;
         char zoffs;
 
-        for (const auto &player : Players.findAllCharactersInScreen(cc->pos)) {
-            xoffs = cc->pos.x - player->pos.x;
-            yoffs = cc->pos.y - player->pos.y;
-            zoffs = cc->pos.z - player->pos.z + RANGEDOWN;
+        for (const auto &player : Players.findAllCharactersInScreen(cc->getPosition())) {
+            const auto &playerPos = player->getPosition();
+            xoffs = charPos.x - playerPos.x;
+            yoffs = charPos.y - playerPos.y;
+            zoffs = charPos.z - playerPos.z + RANGEDOWN;
 
             if ((xoffs != 0) || (yoffs != 0) || (zoffs != RANGEDOWN)) {
                 ServerCommandPointer cmd(new UpdateAttribTC(cc->getId(), "hitpoints", health));

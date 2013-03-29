@@ -25,6 +25,7 @@
 #include <fstream>
 #include <map>
 #include <unordered_map>
+#include "tuningConstants.hpp"
 #include "globals.hpp"
 #include "constants.hpp"
 #include "TableStructs.hpp"
@@ -146,23 +147,37 @@ public:
         unsigned short int minor = 0;
     };
 
-    inline TYPE_OF_CHARACTER_ID getId() const {
-        return id;
-    }
-
-    inline std::string getName() const {
-        return name;
-    }
-
+    TYPE_OF_CHARACTER_ID getId() const;
+    const std::string &getName() const;
     virtual std::string to_string() const = 0;
 
-    short int actionPoints;
-    short int fightPoints;
-    short int activeLanguage;
-    position pos;
-    bool attackmode;
+    short int getActionPoints() const;
+    virtual short int getMinActionPoints() const;
+    virtual short int getMaxActionPoints() const;
+    void setActionPoints(short int ap);
+    void increaseActionPoints(short int ap);
+    bool canAct() const;
 
-    std::string lastSpokenText;
+    short int getFightPoints() const;
+    virtual short int getMinFightPoints() const;
+    virtual short int getMaxFightPoints() const;
+    void setFightPoints(short int fp);
+    void increaseFightPoints(short int fp);
+    bool canFight() const;
+
+    short int getActiveLanguage() const;
+    void setActiveLanguage(short int l);
+
+    const position &getPosition() const;
+
+    bool getAttackMode() const;
+    void setAttackMode(bool attack);
+
+    const std::string &getLastSpokenText() const;
+
+    bool isInvisible() const;
+    void setInvisible(bool invisible);
+
     LongTimeCharacterEffects effects;
     WaypointList waypoints;
 
@@ -513,8 +528,8 @@ public:
 
     /**
     * array for the items of the character
-    * 0 = backpack, 1 - MAX_BODY_ITEMS - 1 = items at the body
-    * (MAX_BODY_ITEMS + MAX_BELT_SLOTS -1) = items in the belt
+    * 0 = backpack, 1 to MAX_BODY_ITEMS - 1: equipped items
+    * MAX_BODY_ITEMS - 1 to MAX_BODY_ITEMS + MAX_BELT_SLOTS - 1: items in the belt
     */
     Item characterItems[ MAX_BODY_ITEMS + MAX_BELT_SLOTS ];
 
@@ -526,8 +541,6 @@ public:
     * second param is the pointer to the container which stores the items in this depot
     */
     std::map<uint32_t, Container *> depotContents;
-
-    bool isinvisible;
 
     virtual void ageInventory();
 
@@ -609,14 +622,14 @@ protected:
 
     void setId(TYPE_OF_CHARACTER_ID id);
     void setName(const std::string &name);
+    void setPosition(const position &pos);
 
-    bool _is_on_route;
-    short int poisonvalue;
-    int mental_capacity;
+    bool _is_on_route = false;
+    short int poisonvalue = 0;
+    int mental_capacity = 0;
     World *_world;
 
     virtual bool moveToPossible(const Field *field) const;
-    virtual void updatePos(const position &newpos); /**< sets the character to a new position*/
 
     /**
     * calculates movement costs for this character
@@ -632,7 +645,14 @@ private:
     std::string name;
     movement_type _movement;
     std::vector<Attribute> attributes;
-    bool alive;
+    bool alive = true;
+    short int actionPoints = NP_MAX_AP;
+    short int fightPoints = NP_MAX_FP;
+    short int activeLanguage = 0;
+    position pos = {0, 0, 0};
+    bool attackmode = false;
+    std::string lastSpokenText = {};
+    bool isinvisible = false;
 };
 
 std::ostream &operator<<(std::ostream &os, const Character &character);

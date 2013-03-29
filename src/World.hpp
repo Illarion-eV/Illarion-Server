@@ -670,50 +670,6 @@ public:
     */
     void checkFieldAfterMove(Character *cp, Field *cfstart);
 
-    /**
-    * a Player pushes a character
-    *
-    *@param cp a pointer to the player which is pushing the character
-    *@param pushedCharId id of the character to be pushed
-    *@param direction the direction of the movement relative to the pushing char
-    *
-    *
-    *<ul>
-    *<li> 0 - North</li>
-    *<li> 1 - Northwest (not used)</li>
-    *<li> 2 - West </li>
-    *<li> 3 - Southwest (not used) </li>
-    *<li> 4 - South </li>
-    *<li> 5 - Southeast </li>
-    *<li> 6 - East </li>
-    *<li> 7 - Northeast </li>
-    *<li> 8 - up </li>
-    *<li> 9 - down </li>
-    *
-    *@return true if the pushing action was succesfull otherwise false
-    */
-    bool pushCharacter(Player *cp, TYPE_OF_CHARACTER_ID pushedCharId, direction dir);
-
-#if 0
-    //! bewegt das Monster in die durch d angegebene Richtung
-    // \param cp Zeiger auf das Monster das bewegt werden soll
-    // \param d Richtung der Bewegung: 0->Norden bis 7->NO im Uhrzeigersinn, 8 nach oben, 9 nach unten
-    // \return true falls Bewegung ausgefhrt werden konnte, false sonst
-    bool moveMonster(Monster *cp, unsigned char d, bool active);
-
-    //! bewegt den NPC in die durch d angegebene Richtung
-    // \param cn Zeiger auf den NPC der bewegt werden soll
-    // \param d Richtung der Bewegung: 0->Norden bis 7->NO im Uhrzeigersinn, 8 nach oben, 9 nach unten
-    // \return true falls Bewegung ausgefhrt werden konnte, false sonst
-    bool moveNPC(NPC *cn, unsigned char d, bool active);
-#endif
-
-    //! teleportiert cm, falls cfstart ein WarpFeld ist
-    // \param cp Zeiger auf das Monster das bewegt werden soll
-    // \param cfstart das zu prfende Feld
-    // \return true falls Bewegung ausgefhrt werden konnte, false sonst
-    bool warpMonster(Monster *cm, Field *cfstart);
-
     //! dreht den Spieler in die durch d angegebene Richtung
     // \param cp Zeiger auf den Spieler der gedreht werden soll
     // \param d neue Blickrichtung : 0->Norden bis 7->NO im Uhrzeigersinn, 8 nach oben, 9 nach unten

@@ -19,7 +19,6 @@
  */
 
 #include "Character.hpp"
-#include "tuningConstants.hpp"
 #include "Random.hpp"
 #include "data/Data.hpp"
 #include "Container.hpp"
@@ -38,7 +37,6 @@
 #include "a_star.hpp"
 
 #define MAJOR_SKILL_GAP 100
-#define USE_LUA_FIGTHING
 
 extern std::shared_ptr<LuaLearnScript>learnScript;
 extern std::shared_ptr<LuaPlayerDeathScript>playerDeathScript;
@@ -147,23 +145,12 @@ bool Character::getNextStepDir(const position &goal, direction &dir) const {
 }
 
 
-Character::Character(const appearance &appearance) : actionPoints(P_MAX_AP), fightPoints(P_MAX_FP), effects(this), waypoints(this), _is_on_route(false), _world(World::get()), _appearance(appearance), attributes(ATTRIBUTECOUNT) {
+Character::Character(const appearance &appearance) : effects(this), waypoints(this), _world(World::get()), _appearance(appearance), attributes(ATTRIBUTECOUNT) {
     race = human;
     character = player;
 
-    isinvisible=false;
     SetAlive(true);
-    attackmode = false;
-    poisonvalue = 0;
-    mental_capacity = 0;
     _movement = walk;
-
-    activeLanguage=0; //common language
-    lastSpokenText="";
-
-    pos.x = 0;
-    pos.y = 0;
-    pos.z = 0;
 
     for (int i = 0; i < MAX_BODY_ITEMS + MAX_BELT_SLOTS; ++i) {
         characterItems[ i ].reset();
@@ -213,6 +200,101 @@ Character::~Character() {
     }
 }
 
+TYPE_OF_CHARACTER_ID Character::getId() const {
+    return id;
+}
+
+const std::string &Character::getName() const {
+    return name;
+}
+
+short int Character::getActionPoints() const {
+    return actionPoints;
+}
+
+short int Character::getMinActionPoints() const {
+    return NP_MIN_AP;
+}
+
+short int Character::getMaxActionPoints() const {
+    return NP_MAX_AP;
+}
+
+void Character::setActionPoints(short int ap) {
+    if (ap > getMaxActionPoints()) {
+        actionPoints = getMaxActionPoints();
+    } else {
+        actionPoints = ap;
+    }
+}
+
+void Character::increaseActionPoints(short int ap) {
+    setActionPoints(actionPoints + ap);
+}
+
+bool Character::canAct() const {
+    return actionPoints >= getMinActionPoints();
+}
+
+short int Character::getFightPoints() const {
+    return fightPoints;
+}
+
+short int Character::getMinFightPoints() const {
+    return NP_MIN_FP;
+}
+
+short int Character::getMaxFightPoints() const {
+    return NP_MAX_FP;
+}
+
+void Character::setFightPoints(short int fp) {
+    if (fp > getMaxFightPoints()) {
+        fightPoints = getMaxFightPoints();
+    } else {
+        fightPoints = fp;
+    }
+}
+
+void Character::increaseFightPoints(short int fp) {
+    setFightPoints(fightPoints + fp);
+}
+
+bool Character::canFight() const {
+    return fightPoints >= getMinFightPoints();
+}
+
+short int Character::getActiveLanguage() const {
+    return activeLanguage;
+}
+
+void Character::setActiveLanguage(short int l) {
+    activeLanguage = l;
+}
+
+const position &Character::getPosition() const {
+    return pos;
+}
+
+bool Character::getAttackMode() const {
+    return attackmode;
+}
+
+void Character::setAttackMode(bool attack) {
+    attackmode = attack;
+}
+
+const std::string &Character::getLastSpokenText() const {
+    return lastSpokenText;
+}
+
+bool Character::isInvisible() const {
+    return isinvisible;
+}
+
+void Character::setInvisible(bool invisible) {
+    isinvisible = invisible;
+}
 
 int Character::countItem(TYPE_OF_ITEM_ID itemid) const {
     int temp = 0;
@@ -1290,7 +1372,7 @@ bool Character::move(direction dir, bool active) {
         cfnew->setChar();
 
         // set new position
-        updatePos(newpos);
+        setPosition(newpos);
 
         // send word out to all chars in range
         if (active) {
@@ -1354,10 +1436,6 @@ uint16_t Character::getMovementCost(const Field *sourcefield) const {
     return walkcost;
 }
 
-void Character::updatePos(const position &newpos) {
-    pos = newpos;
-}
-
 void Character::receiveText(talk_type tt, const std::string &message, Character *cc) {
     // overloaded where necessary
 }
@@ -1380,7 +1458,7 @@ bool Character::Warp(const position &targetPos) {
 
         if (_world->findEmptyCFieldNear(fnew, newPos)) {
             fold->removeChar();
-            updatePos(newPos);
+            setPosition(newPos);
             fnew->setChar();
             _world->sendCharacterWarpToAllVisiblePlayers(this, oldpos, PUSH);
             return true;
@@ -1406,7 +1484,7 @@ bool Character::forceWarp(const position &newPos) {
 
         if (_world->GetPToCFieldAt(fnew, newPos)) {
             fold->removeChar();
-            updatePos(newPos);
+            setPosition(newPos);
             fnew->setChar();
             _world->sendCharacterWarpToAllVisiblePlayers(this, oldpos, PUSH);
             return true;
@@ -1619,6 +1697,10 @@ void Character::setId(TYPE_OF_CHARACTER_ID id) {
 
 void Character::setName(const std::string &name) {
     this->name = name;
+}
+
+void Character::setPosition(const position &pos) {
+    this->pos = pos;
 }
 
 std::ostream &operator<<(std::ostream &os, const Character &character) {

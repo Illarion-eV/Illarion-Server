@@ -312,6 +312,11 @@ public:
 
     virtual void increasePoisonValue(short int value) override;
 
+    virtual short int getMinActionPoints() const override;
+    virtual short int getMaxActionPoints() const override;
+    virtual short int getMinFightPoints() const override;
+    virtual short int getMaxFightPoints() const override;
+
     void openShowcase(Container *container, bool carry);
     void updateShowcase(Container *container) const;
     bool isShowcaseOpen(uint8_t showcase) const;

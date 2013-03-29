@@ -156,6 +156,7 @@ void Player::login() throw(Player::LogoutException) {
     Field *target_position;
 
     // try to find a targetposition near the logout place...
+    position pos;
     target_position_found = _world->findEmptyCFieldNear(target_position, pos);
 
     if (!target_position_found) {
@@ -171,6 +172,7 @@ void Player::login() throw(Player::LogoutException) {
     }
 
     // set player on target field...
+    setPosition(pos);
     target_position->SetPlayerOnField(true);
 
     sendCompleteQuestProgress();
@@ -405,7 +407,7 @@ bool Player::lookIntoBackPack() {
 }
 
 bool Player::lookIntoContainerOnField(direction dir) {
-    position containerPosition = pos;
+    position containerPosition = getPosition();
     containerPosition.move(dir);
 
     Field *cfold;
@@ -959,9 +961,11 @@ void Player::check_logindata() throw(Player::LogoutException) {
 
         Database::ResultTuple playerRow = playerResult.front();
 
+        position pos;
         pos.x = playerRow["ply_posx"].as<int32_t>();
         pos.y = playerRow["ply_posy"].as<int32_t>();
         pos.z = playerRow["ply_posz"].as<int32_t>();
+        setPosition(pos);
         faceto = (Character::face_to) playerRow["ply_faceto"].as<uint16_t>();
 
         setAttribute(Character::age, playerRow["ply_age"].as<uint16_t>());
@@ -1068,9 +1072,9 @@ bool Player::save() throw() {
 
         {
             UpdateQuery query(connection);
-            query.addAssignColumn<int32_t>("ply_posx", pos.x);
-            query.addAssignColumn<int32_t>("ply_posy", pos.y);
-            query.addAssignColumn<int32_t>("ply_posz", pos.z);
+            query.addAssignColumn<int32_t>("ply_posx", getPosition().x);
+            query.addAssignColumn<int32_t>("ply_posy", getPosition().y);
+            query.addAssignColumn<int32_t>("ply_posz", getPosition().z);
             query.addAssignColumn<uint16_t>("ply_faceto", (uint16_t) faceto);
             query.addAssignColumn<uint16_t>("ply_hitpoints", getAttribute(Character::hitpoints));
             query.addAssignColumn<uint16_t>("ply_mana", getAttribute(Character::mana));
@@ -1536,9 +1540,22 @@ void Player::increasePoisonValue(short int value) {
     } else {
         poisonvalue += value;
     }
+}
 
+short int Player::getMinActionPoints() const {
+    return P_MIN_AP;
+}
 
-    //============================================================================
+short int Player::getMaxActionPoints() const {
+    return P_MAX_AP;
+}
+
+short int Player::getMinFightPoints() const {
+    return P_MIN_FP;
+}
+
+short int Player::getMaxFightPoints() const {
+    return P_MAX_FP;
 }
 
 unsigned short int Player::setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor) {
@@ -1556,7 +1573,7 @@ unsigned short int Player::increaseSkill(TYPE_OF_SKILL_ID skill, short int amoun
 }
 
 void Player::receiveText(talk_type tt, const std::string &message, Character *cc) {
-    ServerCommandPointer cmd(new SayTC(cc->pos, message));
+    ServerCommandPointer cmd(new SayTC(cc->getPosition(), message));
 
     switch (tt) {
     case tt_say:
@@ -1564,12 +1581,12 @@ void Player::receiveText(talk_type tt, const std::string &message, Character *cc
         break;
 
     case tt_whisper:
-        cmd.reset(new WhisperTC(cc->pos, message));
+        cmd.reset(new WhisperTC(cc->getPosition(), message));
         Connection->addCommand(cmd);
         break;
 
     case tt_yell:
-        cmd.reset(new ShoutTC(cc->pos, message));
+        cmd.reset(new ShoutTC(cc->getPosition(), message));
         Connection->addCommand(cmd);
         break;
     }
@@ -1709,12 +1726,7 @@ bool Player::encumberance(uint16_t &movementCost) {
 }
 
 bool Player::move(direction dir, uint8_t mode) {
-#ifdef PLAYER_MOVE_DEBUG
-    std::cout<<"Player::move position old: ";
-    std::cout << pos.x << " " << pos.y << " " << pos.z << std::endl;
-#endif
-    //Ggf Scriptausfhrung wenn der Spieler auf ein Triggerfeld tritt
-    _world->TriggerFieldMove(this,false);
+    _world->TriggerFieldMove(this, false);
     closeOnMove();
 
     // if we actively move we look into that direction...
@@ -1742,8 +1754,8 @@ bool Player::move(direction dir, uint8_t mode) {
     while (j < steps && cont) {
 
         // check if we can move to our target field
-        newpos = pos;
-        oldpos = pos;
+        newpos = getPosition();
+        oldpos = getPosition();
 
         newpos.move(dir);
 
@@ -1753,7 +1765,7 @@ bool Player::move(direction dir, uint8_t mode) {
         bool fieldfound = false;
 
         // get the old tile... we need it to update the old tile as well as for the walking cost
-        if (!_world->GetPToCFieldAt(cfold, pos)) {
+        if (!_world->GetPToCFieldAt(cfold, getPosition())) {
             return false;
         }
 
@@ -1778,15 +1790,14 @@ bool Player::move(direction dir, uint8_t mode) {
 #ifdef PLAYER_MOVE_DEBUG
                 std::cout<< "Player::move Walkcost after encumberance Char overloadet: " << walkcost << std::endl;
 #endif
-                //Char ueberladen
-                ServerCommandPointer cmd(new MoveAckTC(getId(), pos, NOMOVE, 0));
+                ServerCommandPointer cmd(new MoveAckTC(getId(), getPosition(), NOMOVE, 0));
                 Connection->addCommand(cmd);
                 return false;
             } else {
 #ifdef PLAYER_MOVE_DEBUG
                 std::cout<< "Player::move Walkcost after Char not overloadet encumberance: " << walkcost << std::endl;
 #endif
-                int16_t diff = (P_MIN_AP - actionPoints + walkcost) * 10;
+                int16_t diff = (P_MIN_AP - getActionPoints() + walkcost) * 10;
 
                 // necessary to get smooth movement in client (dunno how this one is supposed to work exactly)
                 if (diff < 60) {
@@ -1796,26 +1807,19 @@ bool Player::move(direction dir, uint8_t mode) {
                 }
 
                 if (mode != RUNNING || (j == 1 && cont)) {
-                    actionPoints -= walkcost;
+                    increaseActionPoints(-walkcost);
                 }
             }
 
-#ifdef PLAYER_MOVE_DEBUG
-            std::cout << "Player::move : Bewegung moeglich" << std::endl;
-#endif
-            // Spieler vom alten Feld nehmen
             cfold->removeChar();
-
-            // Spieler auf das neue Feld setzen
             cfnew->setChar();
 
             if (newpos.z != oldpos.z) {
-                //Z Coordinate hat sich ge�ndert komplettes update senden (Sp�ter durch teilupdate ersetzen)
-                updatePos(newpos);
-                ServerCommandPointer cmd(new MoveAckTC(getId(), pos, NOMOVE, 0));
+                setPosition(newpos);
+                ServerCommandPointer cmd(new MoveAckTC(getId(), getPosition(), NOMOVE, 0));
                 Connection->addCommand(cmd);
                 // Koordinate
-                cmd.reset(new SetCoordinateTC(pos));
+                cmd.reset(new SetCoordinateTC(getPosition()));
                 Connection->addCommand(cmd);
                 sendFullMap();
                 cont = false;
@@ -1829,27 +1833,18 @@ bool Player::move(direction dir, uint8_t mode) {
                     sendStepStripes(dir);
                 }
 
-                pos.x = newpos.x;
-                pos.y = newpos.y;
+                setPosition(newpos);
 
                 if (mode != RUNNING || (j == 1 && cont)) {
                     sendStepStripes(dir);
                 }
             }
 
-            // allen anderen Spielern die Bewegung bermitteln
             if (mode != RUNNING || j == 1 || !cont) {
                 _world->sendCharacterMoveToAllVisiblePlayers(this, mode, waitpages);
-
-#ifdef PLAYER_MOVE_DEBUG
-                std::cout << "Player move position new: ";
-                std::cout << pos.x << " " << pos.y << " " << pos.z << std::endl;
-#endif
-
                 _world->sendAllVisibleCharactersToPlayer(this, true);
             }
 
-            //Prfen ob Zielfeld ein Teleporter und evtl Spieler teleportieren
             if (cfnew->IsWarpField()) {
                 position newpos;
                 cfnew->GetWarpField(newpos);
@@ -1857,41 +1852,35 @@ bool Player::move(direction dir, uint8_t mode) {
                 cont = false;
             }
 
-            //Prfen ob das Feld ein spezielles feld ist.
             _world->checkFieldAfterMove(this, cfnew);
 
-            //Ggf Scriptausfhrung beim Betreten eines Triggerfeldes
             _world->TriggerFieldMove(this,true);
-            //send the move to the monitoring clients
-            ServerCommandPointer cmd(new BBPlayerMoveTC(getId(), pos));
+            ServerCommandPointer cmd(new BBPlayerMoveTC(getId(), getPosition()));
             _world->monitoringClientList->sendCommand(cmd);
 
             if (mode != RUNNING || j == 1) {
                 return true;
             }
-        } // neues Feld vorhanden und passierbar?
+        }
         else {
             if (j == 1) {
-                ServerCommandPointer cmd(new MoveAckTC(getId(), pos, NORMALMOVE, waitpages));
+                ServerCommandPointer cmd(new MoveAckTC(getId(), getPosition(), NORMALMOVE, waitpages));
                 Connection->addCommand(cmd);
                 sendStepStripes(dir);
                 _world->sendCharacterMoveToAllVisiblePlayers(this, mode, waitpages);
                 _world->sendAllVisibleCharactersToPlayer(this, true);
                 return true;
             } else if (j == 0) {
-                ServerCommandPointer cmd(new MoveAckTC(getId(), pos, NOMOVE, 0));
+                ServerCommandPointer cmd(new MoveAckTC(getId(), getPosition(), NOMOVE, 0));
                 Connection->addCommand(cmd);
                 return false;
             }
         }
 
         ++j;
-    } // loop (steps)
+    }
 
-#ifdef PLAYER_MOVE_DEBUG
-    std::cout << "movePlayer: Bewegung nicht moeglich \n";
-#endif
-    ServerCommandPointer cmd(new MoveAckTC(getId(), pos, NOMOVE, 0));
+    ServerCommandPointer cmd(new MoveAckTC(getId(), getPosition(), NOMOVE, 0));
     Connection->addCommand(cmd);
     return false;
 }
@@ -1921,12 +1910,12 @@ bool Player::forceWarp(const position &newPos) {
 
 void Player::handleWarp() {
     closeOnMove();
-    ServerCommandPointer cmd(new SetCoordinateTC(pos));
+    ServerCommandPointer cmd(new SetCoordinateTC(getPosition()));
     Connection->addCommand(cmd);
     sendFullMap();
     visibleChars.clear();
     _world->sendAllVisibleCharactersToPlayer(this, true);
-    cmd.reset(new BBPlayerMoveTC(getId(), pos));
+    cmd.reset(new BBPlayerMoveTC(getId(), getPosition()));
     _world->monitoringClientList->sendCommand(cmd);
 }
 
@@ -2155,9 +2144,9 @@ Language Player::getPlayerLanguage() const {
 void Player::sendRelativeArea(int8_t zoffs) {
     if ((screenwidth == 0) && (screenheight == 0)) {
         // static view
-        int x = pos.x;
-        int y = pos.y - MAP_DIMENSION;
-        int z = pos.z + zoffs;
+        int x = getPosition().x;
+        int y = getPosition().y - MAP_DIMENSION;
+        int z = getPosition().z + zoffs;
         int e = zoffs * 3;
 
         if (zoffs < 0) {
@@ -2184,9 +2173,9 @@ void Player::sendRelativeArea(int8_t zoffs) {
         }
     } else {
         // dynamic view
-        int x = pos.x - screenwidth + screenheight;
-        int y = pos.y - screenwidth - screenheight;
-        int z = pos.z + zoffs;
+        int x = getPosition().x - screenwidth + screenheight;
+        int y = getPosition().y - screenwidth - screenheight;
+        int z = getPosition().z + zoffs;
         int e = zoffs * 3;
 
         if (zoffs < 0) {
@@ -2223,6 +2212,8 @@ void Player::sendFullMap() {
 }
 
 void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
+    const auto &pos = getPosition();
+
     if ((screenwidth == 0) && (screenheight == 0)) {
         // static view
         int x = {}, y = {};
@@ -2424,36 +2415,7 @@ void Player::sendStepStripes(direction dir) {
 }
 
 void Player::sendSingleStripe(viewdir direction, int8_t zoffs) {
-    /* NOT USED YET
-       int x,y,z;
-       NewClientView::stripedirection dir;
-       switch ( direction )
-       {
-           case upper:
-               x = pos.x;
-               y = pos.y - MAP_DIMENSION;
-               dir = NewClientView::dir_right;
-               break;
-           case left:
-               x = pos.x;
-               y = pos.y - MAP_DIMENSION;
-               dir = NewClientView::dir_down;
-               break;
-           case right:
-               x = pos.x + MAP_DIMENSION;
-               y = pos.y;
-               dir = NewClientView::dir_down;
-               break;
-           case lower:
-               x = pos.x - MAP_DIMENSION;
-               y = pos.y;
-               dir = NewClientView::dir_right;
-               break;
-       }
-       z = pos.z + zoffs;
-       NewClientView * view = &(World::get()->clientview);
-       view->fillStripe( position(x,y,z), dir, &CWWorld::get()->maps );
-    */
+    // NOT USED YET
 }
 
 uint32_t Player::idleTime() const {

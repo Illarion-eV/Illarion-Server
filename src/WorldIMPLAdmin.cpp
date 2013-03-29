@@ -158,10 +158,10 @@ void World::spawn_command(Player *cp, const std::string &monid) {
         std::stringstream ss;
         ss.str(monid);
         ss >> id;
-        position pos = cp->pos;
+        position pos = cp->getPosition();
         pos.x++;
-        Logger::info(LogFacility::Admin) << cp->to_string() << " creates monster " << monid
-                                         << " at " << pos.toString() << Log::end;
+        Logger::info(LogFacility::Admin) << *cp << " creates monster " << monid
+                                         << " at " << pos << Log::end;
         createMonster(id, pos, 0);
     }
 }
@@ -197,7 +197,7 @@ void World::create_command(Player *cp, const std::string &itemid) {
             }
         }
 
-        Logger::info(LogFacility::Admin) << cp->to_string() << " creates item " << item << " with quantity "
+        Logger::info(LogFacility::Admin) << *cp << " creates item " << item << " with quantity "
                                          << quantity << ", quality " << quality << ", data " << datalog << Log::end;
         cp->createItem(item, quantity, quality, &dataList);
     }
@@ -216,12 +216,12 @@ void World::kill_command(Player *cp) {
         ++counter;
     }
 
-    Logger::info(LogFacility::Admin) << cp->to_string() << " nukes " << counter << " monsters" << Log::end;
+    Logger::info(LogFacility::Admin) << *cp << " nukes " << counter << " monsters" << Log::end;
 }
 
 void World::reload_command(Player *cp) {
     if (cp->hasGMRight(gmr_reload)) {
-        Logger::info(LogFacility::Admin) << cp->to_string() << " issues a full reload" << Log::end;
+        Logger::info(LogFacility::Admin) << *cp << " issues a full reload" << Log::end;
 
         if (reload_tables(cp)) {
             cp->inform("DB tables loaded successfully!");
@@ -242,21 +242,21 @@ void World::broadcast_command(Player *cp,const std::string &message) {
 
 void World::kickall_command(Player *cp) {
     if (cp->hasGMRight(gmr_forcelogout)) {
-        Logger::info(LogFacility::Admin) << cp->to_string() << " kicks all players" << Log::end;
+        Logger::info(LogFacility::Admin) << *cp << " kicks all players" << Log::end;
         forceLogoutOfAllPlayers();
     }
 }
 
 void World::kickplayer_command(Player *cp, const std::string &player) {
     if (cp->hasGMRight(gmr_forcelogout)) {
-        Logger::info(LogFacility::Admin) << cp->to_string() << " kicks " << player << Log::end;
+        Logger::info(LogFacility::Admin) << *cp << " kicks " << player << Log::end;
         forceLogoutOfPlayer(player);
     }
 }
 
 void World::showIPS_Command(Player *cp) {
     if (cp->hasGMRight(gmr_basiccommands)) {
-        Logger::info(LogFacility::Admin) << cp->to_string() << " requests player info" << Log::end;
+        Logger::info(LogFacility::Admin) << *cp << " requests player info" << Log::end;
         sendAdminAllPlayerData(cp);
     }
 }
@@ -269,8 +269,8 @@ void World::jumpto_command(Player *cp,const std::string &player) {
     {
         cp->closeAllShowcasesOfMapContainers();
         teleportPlayerToOther(cp, player);
-        Logger::info(LogFacility::Admin) << cp->to_string() << " jumps to player " << player
-                                         << " at " << cp->pos.toString() << Log::end;
+        Logger::info(LogFacility::Admin) << *cp << " jumps to player " << player
+                                         << " at " << cp->getPosition() << Log::end;
     }
 }
 
@@ -279,12 +279,12 @@ void World::save_command(Player *cp) {
         return;
     }
 
-    Logger::info(LogFacility::Admin) << cp->to_string() << " saves all maps" << Log::end;
+    Logger::info(LogFacility::Admin) << *cp << " saves all maps" << Log::end;
 
     Field *tempf;
 
     for (const auto &player : Players) {
-        if (GetPToCFieldAt(tempf, player->pos)) {
+        if (GetPToCFieldAt(tempf, player->getPosition())) {
             tempf->SetPlayerOnField(false);
         }
     }
@@ -293,7 +293,7 @@ void World::save_command(Player *cp) {
     Save("Illarion");
 
     for (const auto &player : Players) {
-        if (GetPToCFieldAt(tempf, player->pos)) {
+        if (GetPToCFieldAt(tempf, player->getPosition())) {
             tempf->SetPlayerOnField(true);
         }
     }
@@ -354,9 +354,9 @@ void World::makeInvisible(Player *cp) {
         return;
     }
 
-    cp->isinvisible = true;
-    Logger::info(LogFacility::Admin) << cp->to_string() << " becomes invisible" << Log::end;
-    sendRemoveCharToVisiblePlayers(cp->getId(), cp->pos);
+    cp->setInvisible(true);
+    Logger::info(LogFacility::Admin) << *cp << " becomes invisible" << Log::end;
+    sendRemoveCharToVisiblePlayers(cp->getId(), cp->getPosition());
 }
 
 void World::makeVisible(Player *cp) {
@@ -364,13 +364,13 @@ void World::makeVisible(Player *cp) {
         return;
     }
 
-    cp->isinvisible = false;
+    cp->setInvisible(false);
 
-    Logger::info(LogFacility::Admin) << cp->to_string() << " becomes visible" << Log::end;
+    Logger::info(LogFacility::Admin) << *cp << " becomes visible" << Log::end;
 
-    for (const auto &player : Players.findAllCharactersInScreen(cp->pos)) {
+    for (const auto &player : Players.findAllCharactersInScreen(cp->getPosition())) {
         if (cp != player) {
-            ServerCommandPointer cmd(new MoveAckTC(cp->getId(), cp->pos, PUSH, 0));
+            ServerCommandPointer cmd(new MoveAckTC(cp->getId(), cp->getPosition(), PUSH, 0));
             player->Connection->addCommand(cmd);
         }
     }
@@ -412,7 +412,7 @@ void World::ForceIntroduceAll(Player *cp) {
         return;
     }
 
-    for (const auto &player : Players.findAllCharactersInRangeOf(cp->pos, cp->getScreenRange())) {
+    for (const auto &player : Players.findAllCharactersInRangeOf(cp->getPosition(), cp->getScreenRange())) {
         if (cp != player) {
             forceIntroducePlayer(player, cp);
         }
@@ -428,7 +428,7 @@ void World::teleportPlayerToOther(Player *cp, std::string ts) {
     tempPl = Players.find(ts);
 
     if (tempPl) {
-        cp->Warp(tempPl->pos);
+        cp->Warp(tempPl->getPosition());
     } else {
         TYPE_OF_CHARACTER_ID tid;
 
@@ -441,7 +441,7 @@ void World::teleportPlayerToOther(Player *cp, std::string ts) {
             tempPl = Players.findID(tid);
 
             if (tempPl) {
-                cp->Warp(tempPl->pos);
+                cp->Warp(tempPl->getPosition());
             }
         }
     }
@@ -452,7 +452,7 @@ void World::forceLogoutOfAllPlayers() {
     Field *tempf;
 
     for (const auto &player : Players) {
-        if (GetPToCFieldAt(tempf, player->pos)) {
+        if (GetPToCFieldAt(tempf, player->getPosition())) {
             tempf->SetPlayerOnField(false);
         }
 
@@ -520,7 +520,7 @@ void World::warpto_command(Player *cp, const std::string &ts) {
                     }
                     // Must give X and Y, but not Z
                     else {
-                        warpto.z = cp->pos.z;
+                        warpto.z = cp->getPosition().z;
                         cp->forceWarp(warpto);
                         //warpPlayer( cp, warpto );
                     }
@@ -529,15 +529,15 @@ void World::warpto_command(Player *cp, const std::string &ts) {
             // Enable !warp_to Z for easy level change
             else {
                 warpto.z = warpto.x;
-                warpto.x = cp->pos.x;
-                warpto.y = cp->pos.y;
+                warpto.x = cp->getPosition().x;
+                warpto.y = cp->getPosition().y;
                 cp->forceWarp(warpto);
                 //warpPlayer( cp, warpto );
             }
         }
     }
 
-    Logger::info(LogFacility::Admin) << cp->to_string() << " warps to " << warpto.toString() << Log::end;
+    Logger::info(LogFacility::Admin) << *cp << " warps to " << warpto << Log::end;
 
     delete [] tokenize;
 }
@@ -553,8 +553,8 @@ void World::summon_command(Player *cp, const std::string &tplayer) {
     tempPl = Players.find(tplayer);
 
     if (tempPl != NULL) {
-        Logger::info(LogFacility::Admin) << cp->to_string() << " summons player " << tempPl->to_string() << " to " << cp->pos.toString() << Log::end;
-        tempPl->Warp(cp->pos);
+        Logger::info(LogFacility::Admin) << *cp << " summons player " << *tempPl << " to " << cp->getPosition() << Log::end;
+        tempPl->Warp(cp->getPosition());
     } else {
         TYPE_OF_CHARACTER_ID tid;
 
@@ -567,8 +567,8 @@ void World::summon_command(Player *cp, const std::string &tplayer) {
             tempPl = Players.findID(tid);
 
             if (tempPl) {
-                Logger::info(LogFacility::Admin) << *cp << " summons player " << *tempPl << " to " << cp->pos.toString() << Log::end;
-                tempPl->Warp(cp->pos);
+                Logger::info(LogFacility::Admin) << *cp << " summons player " << *tempPl << " to " << cp->getPosition() << Log::end;
+                tempPl->Warp(cp->getPosition());
             }
         }
     }
@@ -645,7 +645,7 @@ void World::ban_command(Player *cp, const std::string &timeplayer) {
 
                     ban(tempPl, jailtime * multiplier, cp->getId());
 
-                    Logger::info(LogFacility::Admin) << cp->to_string() << " bans player " << tempPl->to_string() << " for " << jailtime << timescale << Log::end;
+                    Logger::info(LogFacility::Admin) << *cp << " bans player " << *tempPl << " for " << jailtime << timescale << Log::end;
                     std::string tmessage = "*** Banned " + tempPl->to_string();
                     cp->inform(tmessage);
 
@@ -674,7 +674,7 @@ void World::banbyname(Player *cp, short int banhours, const std::string &tplayer
 
         ban(tempPl, static_cast<int>(banhours * 3600), cp->getId());
 
-        Logger::info(LogFacility::Admin) << cp->to_string() << " bans player " << tempPl->to_string() << " for " << banhours << "h" << Log::end;
+        Logger::info(LogFacility::Admin) << *cp << " bans player " << *tempPl << " for " << banhours << "h" << Log::end;
         std::string tmessage = "*** Banned " + tempPl->to_string();
         cp->inform(tmessage);
 
@@ -778,9 +778,9 @@ void World::who_command(Player *cp, const std::string &tplayer) {
         if (tempPl) {
             std::string tmessage = tempPl->to_string();
 
-            tmessage = tmessage + " x" + stream_convert<std::string>(tempPl->pos.x);
-            tmessage = tmessage + " y" + stream_convert<std::string>(tempPl->pos.y);
-            tmessage = tmessage + " z" + stream_convert<std::string>(tempPl->pos.z);
+            tmessage = tmessage + " x" + stream_convert<std::string>(tempPl->getPosition().x);
+            tmessage = tmessage + " y" + stream_convert<std::string>(tempPl->getPosition().y);
+            tmessage = tmessage + " z" + stream_convert<std::string>(tempPl->getPosition().z);
             tmessage = tmessage + " HPs:" + stream_convert<std::string>(tempPl->getAttribute(Character::hitpoints));
             tmessage = tmessage + ((tempPl->IsAlive()) ? " Alive" : " Dead");
             tmessage = tmessage + " Mental Capacity: " + stream_convert<std::string>(tempPl->getMentalCapacity());
@@ -852,7 +852,7 @@ void World::clippingon_command(Player *cp) {
         return;
     }
 
-    Logger::info(LogFacility::Admin) << cp->to_string() << " turns on clipping" << Log::end;
+    Logger::info(LogFacility::Admin) << *cp << " turns on clipping" << Log::end;
     cp->setClippingActive(true);
 }
 
@@ -862,7 +862,7 @@ void World::clippingoff_command(Player *cp) {
         return;
     }
 
-    Logger::info(LogFacility::Admin) << cp->to_string() << " turns off clipping" << Log::end;
+    Logger::info(LogFacility::Admin) << *cp << " turns off clipping" << Log::end;
     cp->setClippingActive(false);
 }
 
@@ -969,7 +969,7 @@ void World::teleport_command(Player *cp, const std::string &ts) {
                 if (ReadField(thistoken, teleportto.y)) {
                     if ((thistoken = strtok(NULL, " ,")) != NULL) {
                         if (ReadField(thistoken, teleportto.z)) {
-                            if (addWarpField(cp->pos, teleportto, 0, 0)) {
+                            if (addWarpField(cp->getPosition(), teleportto, 0, 0)) {
                                 std::string tmessage = "*** Warp Field Added! ***";
                                 cp->inform(tmessage);
                             } else {
@@ -1329,7 +1329,7 @@ void set_spawn_command(World *world, Player *player, const std::string &in) {
         enable = true;
     }
 
-    Logger::info(LogFacility::Admin) << player->to_string() << " sets spawn to " << enable << Log::end;
+    Logger::info(LogFacility::Admin) << *player << " sets spawn to " << enable << Log::end;
 
     world->enableSpawn(enable);
 }
@@ -1352,7 +1352,7 @@ void create_area_command(World *world, Player *player,const std::string &params)
     ss >> filltile;
 
     if (x==-65535 || y == -65535 || z == -65535 || w < 1 || h < 1 || filltile < 0) {
-        std::cout << "error in create_area_command issued by " << player->to_string() << "!" << std::endl;
+        std::cout << "error in create_area_command issued by " << *player << "!" << std::endl;
         std::cout << "positions: " << x << "\t" << y << '\t' << z << '\t' << w << '\t' << h << '\t' << std::endl;
         return;
     }
@@ -1377,7 +1377,7 @@ void create_area_command(World *world, Player *player,const std::string &params)
 
     std::string tmessage = "map inserted.";
     player->inform(tmessage);
-    std::cerr << "Map created by " << player->to_string() << " on " << x << " - " << y << " - " << z << " with w: " << w << " h: " << h << "ft: " << filltile << std::endl;
+    std::cerr << "Map created by " << *player << " on " << x << " - " << y << " - " << z << " with w: " << w << " h: " << h << "ft: " << filltile << std::endl;
 
 }
 
@@ -1393,7 +1393,7 @@ void set_login(World *world, Player *player, const std::string &st) {
     }
 
     world->allowLogin(enable);
-    Logger::info(LogFacility::Admin) << player->to_string() << " set allowLogin to " << enable << Log::end;
+    Logger::info(LogFacility::Admin) << *player << " set allowLogin to " << enable << Log::end;
     std::string tmessage = "nologin set to: ";
     tmessage += enable ? "false" : "true";
     player->inform(tmessage);
@@ -1453,7 +1453,7 @@ void World::showWarpFieldsInRange(Player *cp, const std::string &ts) {
     if (ReadField(ts.c_str(), range)) {
         std::vector<position> warpfieldsinrange;
 
-        if (findWarpFieldsInRange(cp->pos, range, warpfieldsinrange)) {
+        if (findWarpFieldsInRange(cp->getPosition(), range, warpfieldsinrange)) {
             std::string message;
             cp->inform("Start list of warpfields:");
 

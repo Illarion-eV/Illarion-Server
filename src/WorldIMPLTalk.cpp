@@ -32,7 +32,7 @@ extern std::shared_ptr<LuaLookAtItemScript>lookAtItemScript;
 void World::sendMessageToAdmin(const std::string &message) {
     for (const auto &player : Players) {
         if (player->hasGMRight(gmr_getgmcalls)) {
-            ServerCommandPointer cmd(new SayTC(player->pos, message));
+            ServerCommandPointer cmd(new SayTC(player->getPosition(), message));
             player->Connection->addCommand(cmd);
         }
     }
@@ -138,17 +138,17 @@ void World::sendMessageToAllCharsInRange(const std::string &german, const std::s
 
     if (!is_action) {
         // alter message because of the speakers inability to speak...
-        spokenMessage_german = cc->alterSpokenMessage(german, cc->getLanguageSkill(cc->activeLanguage));
-        spokenMessage_english = cc->alterSpokenMessage(english, cc->getLanguageSkill(cc->activeLanguage));
+        spokenMessage_german = cc->alterSpokenMessage(german, cc->getLanguageSkill(cc->getActiveLanguage()));
+        spokenMessage_english = cc->alterSpokenMessage(english, cc->getLanguageSkill(cc->getActiveLanguage()));
     }
 
     // tell all OTHER players... (but tell them what they understand due to their inability to do so)
     // tell the player himself what he wanted to say
-    std::string prefix = languagePrefix(cc->activeLanguage);
+    std::string prefix = languagePrefix(cc->getActiveLanguage());
 
-    for (const auto &player : Players.findAllCharactersInRangeOf(cc->pos, range)) {
+    for (const auto &player : Players.findAllCharactersInRangeOf(cc->getPosition(), range)) {
         if (!is_action && player->getId() != cc->getId()) {
-            tempMessage = prefix + player->alterSpokenMessage(player->nls(spokenMessage_german, spokenMessage_english), player->getLanguageSkill(cc->activeLanguage));
+            tempMessage = prefix + player->alterSpokenMessage(player->nls(spokenMessage_german, spokenMessage_english), player->getLanguageSkill(cc->getActiveLanguage()));
             player->receiveText(tt, tempMessage, cc);
         } else {
             if (is_action) {
@@ -161,13 +161,13 @@ void World::sendMessageToAllCharsInRange(const std::string &german, const std::s
 
     if (cc->character == Character::player) {
         // tell all npcs
-        for (const auto &npc : Npc.findAllCharactersInRangeOf(cc->pos, range)) {
-            tempMessage=prefix + npc->alterSpokenMessage(english, npc->getLanguageSkill(cc->activeLanguage));
+        for (const auto &npc : Npc.findAllCharactersInRangeOf(cc->getPosition(), range)) {
+            tempMessage=prefix + npc->alterSpokenMessage(english, npc->getLanguageSkill(cc->getActiveLanguage()));
             npc->receiveText(tt, tempMessage, cc);
         }
 
         // tell all monsters
-        for (const auto &monster : Monsters.findAllCharactersInRangeOf(cc->pos, range)) {
+        for (const auto &monster : Monsters.findAllCharactersInRangeOf(cc->getPosition(), range)) {
             monster->receiveText(tt, english, cc);
         }
     }
@@ -194,15 +194,15 @@ void World::sendLanguageMessageToAllCharsInRange(const std::string &message, Cha
     //determine spoken language skill
 
     // get all Players
-    std::vector<Player *> players = Players.findAllCharactersInRangeOf(cc->pos, range);
+    std::vector<Player *> players = Players.findAllCharactersInRangeOf(cc->getPosition(), range);
     // get all NPCs
-    std::vector<NPC *> npcs = Npc.findAllCharactersInRangeOf(cc->pos, range);
+    std::vector<NPC *> npcs = Npc.findAllCharactersInRangeOf(cc->getPosition(), range);
     // get all Monsters
-    std::vector<Monster *> monsters = Monsters.findAllCharactersInRangeOf(cc->pos, range);
+    std::vector<Monster *> monsters = Monsters.findAllCharactersInRangeOf(cc->getPosition(), range);
 
     // alter message because of the speakers inability to speak...
     std::string spokenMessage,tempMessage;
-    spokenMessage=cc->alterSpokenMessage(message,cc->getLanguageSkill(cc->activeLanguage));
+    spokenMessage=cc->alterSpokenMessage(message,cc->getLanguageSkill(cc->getActiveLanguage()));
 
     // tell all OTHER players... (but tell them what they understand due to their inability to do so)
     // tell the player himself what he wanted to say
@@ -217,10 +217,10 @@ void World::sendLanguageMessageToAllCharsInRange(const std::string &message, Cha
         for (const auto &player : players) {
             if (player->getPlayerLanguage() == lang) {
                 if (player->getId() != cc->getId()) {
-                    tempMessage=languagePrefix(cc->activeLanguage) + player->alterSpokenMessage(spokenMessage, player->getLanguageSkill(cc->activeLanguage));
+                    tempMessage=languagePrefix(cc->getActiveLanguage()) + player->alterSpokenMessage(spokenMessage, player->getLanguageSkill(cc->getActiveLanguage()));
                     player->receiveText(tt, tempMessage, cc);
                 } else {
-                    player->receiveText(tt, languagePrefix(cc->activeLanguage)+message, cc);
+                    player->receiveText(tt, languagePrefix(cc->getActiveLanguage())+message, cc);
                 }
             }
         }
@@ -229,7 +229,7 @@ void World::sendLanguageMessageToAllCharsInRange(const std::string &message, Cha
     if (cc->character == Character::player) {
         // tell all npcs
         for (const auto &npc : npcs) {
-            tempMessage=languagePrefix(cc->activeLanguage) + npc->alterSpokenMessage(spokenMessage, npc->getLanguageSkill(cc->activeLanguage));
+            tempMessage=languagePrefix(cc->getActiveLanguage()) + npc->alterSpokenMessage(spokenMessage, npc->getLanguageSkill(cc->getActiveLanguage()));
             npc->receiveText(tt, tempMessage, cc);
         }
 
@@ -313,7 +313,7 @@ void World::lookAtShowcaseItem(Player *cp, uint8_t showcase, unsigned char posit
                 ScriptItem n_item = titem;
 
                 n_item.type = ScriptItem::it_container;
-                n_item.pos = cp->pos;
+                n_item.pos = cp->getPosition();
                 n_item.owner = cp;
                 n_item.itempos = position;
                 n_item.inside = ps;
@@ -346,7 +346,7 @@ void World::lookAtInventoryItem(Player *cp, unsigned char position) {
         }
 
         n_item.itempos = position;
-        n_item.pos = cp->pos;
+        n_item.pos = cp->getPosition();
         n_item.owner = cp;
 
         if (script && script->existsEntrypoint("LookAtItem")) {
@@ -363,7 +363,7 @@ void World::forceIntroducePlayer(Player *cp, Player *Admin) {
 }
 
 void World::introduceMyself(Player *cp) {
-    for (const auto &player : Players.findAllCharactersInRangeOf(cp->pos, 2)) {
+    for (const auto &player : Players.findAllCharactersInRangeOf(cp->getPosition(), 2)) {
         player->introducePlayer(cp);
     }
 }

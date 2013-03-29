@@ -26,26 +26,6 @@
 #include "netinterface/BasicServerCommand.hpp"
 #include "Player.hpp"
 
-bool World::warpMonster(Monster *cm, Field *cfstart) {
-    if (cfstart->IsWarpField()) {
-        const position oldpos = cm->pos;
-        cfstart->GetWarpField(cm->pos);
-        Field *cfend;
-
-        if (findEmptyCFieldNear(cfend, cm->pos)) {
-            cfstart->SetMonsterOnField(false);
-            cfend->SetMonsterOnField(true);
-
-            sendCharacterWarpToAllVisiblePlayers(cm, oldpos, PUSH);
-            return true;
-        } else {
-            cm->pos = oldpos;
-        }
-    }
-
-    return false;
-}
-
 void World::checkFieldAfterMove(Character *cc, Field *cfstart) {
     if (cfstart->HasSpecialItem()) {
 
@@ -68,14 +48,14 @@ void World::checkFieldAfterMove(Character *cc, Field *cfstart) {
 
     if (cfstart->IsSpecialField()) {
         s_fieldattrib which;
-        FIELDATTRIBHASH::iterator temp = specialfields.find(cc->pos);
+        FIELDATTRIBHASH::iterator temp = specialfields.find(cc->getPosition());
 
         if (specialfields.end() != temp) {
             which = (*temp).second;
 
             switch (which.type) {
             case SOUNDFIELD:
-                makeSoundForAllPlayersInRange(cc->pos, 3, which.flags);
+                makeSoundForAllPlayersInRange(cc->getPosition(), 3, which.flags);
                 break;
 
             case MUSICFIELD:
@@ -89,8 +69,8 @@ void World::checkFieldAfterMove(Character *cc, Field *cfstart) {
         }
     }
 
-    if (cc && Data::Triggers.exists(cc->pos)) {
-        const auto &script = Data::Triggers.script(cc->pos);
+    if (cc && Data::Triggers.exists(cc->getPosition())) {
+        const auto &script = Data::Triggers.script(cc->getPosition());
 
         if (script) {
             script->CharacterOnField(cc);
@@ -99,8 +79,8 @@ void World::checkFieldAfterMove(Character *cc, Field *cfstart) {
 }
 
 void World::TriggerFieldMove(Character *cc, bool moveto) {
-    if (cc && Data::Triggers.exists(cc->pos)) {
-        const auto &script = Data::Triggers.script(cc->pos);
+    if (cc && Data::Triggers.exists(cc->getPosition())) {
+        const auto &script = Data::Triggers.script(cc->getPosition());
 
         if (script) {
             if (moveto) {
@@ -110,20 +90,6 @@ void World::TriggerFieldMove(Character *cc, bool moveto) {
             }
         }
     }
-}
-
-bool World::pushCharacter(Player *cp, TYPE_OF_CHARACTER_ID pushedCharId, direction dir) {
-    Character *pushedChar = Players.findID(pushedCharId);
-
-    if (!pushedChar) {
-        Monsters.findID(pushedCharId);
-    }
-
-    if (pushedChar && pushedChar->pos.z == cp->pos.z && abs(pushedChar->pos.x - cp->pos.x)<=1 && abs(pushedChar->pos.y - cp->pos.y)<=1) {
-        return pushedChar->move(dir,false);
-    }
-
-    return false;
 }
 
 bool World::spinPlayer(Player *cp, unsigned char d) {
@@ -172,7 +138,7 @@ bool World::spinPlayer(Player *cp, unsigned char d) {
 
 
 void World::sendSpinToAllVisiblePlayers(Character *cc) {
-    for (const auto &p : Players.findAllCharactersInScreen(cc->pos)) {
+    for (const auto &p : Players.findAllCharactersInScreen(cc->getPosition())) {
         ServerCommandPointer cmd(new PlayerSpinTC(cc->faceto, cc->getId()));
         p->Connection->addCommand(cmd);
     }
@@ -183,14 +149,16 @@ void World::sendPassiveMoveToAllVisiblePlayers(Character *ccp) {
     char xoffs;
     char yoffs;
     char zoffs;
+    const auto &charPos = ccp->getPosition();
 
-    for (const auto &p : Players.findAllCharactersInScreen(ccp->pos)) {
-        xoffs = ccp->pos.x - p->pos.x;
-        yoffs = ccp->pos.y - p->pos.y;
-        zoffs = ccp->pos.z - p->pos.z + RANGEDOWN;
+    for (const auto &p : Players.findAllCharactersInScreen(charPos)) {
+        const auto &playerPos = p->getPosition();
+        xoffs = charPos.x - playerPos.x;
+        yoffs = charPos.y - playerPos.y;
+        zoffs = charPos.z - playerPos.z + RANGEDOWN;
 
         if ((xoffs != 0) || (yoffs != 0) || (zoffs != RANGEDOWN)) {
-            ServerCommandPointer cmd(new MoveAckTC(ccp->getId(), ccp->pos, PUSH, 0));
+            ServerCommandPointer cmd(new MoveAckTC(ccp->getId(), charPos, PUSH, 0));
             p->Connection->addCommand(cmd);
         }
     }
@@ -204,18 +172,20 @@ void World::sendCharacterMoveToAllVisibleChars(Character *cc, unsigned char wait
 }
 
 void World::sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char netid, unsigned char waitpages) {
-    if (!cc->isinvisible) {
+    if (!cc->isInvisible()) {
         char xoffs;
         char yoffs;
         char zoffs;
+        const auto &charPos = cc->getPosition();
 
-        for (const auto &p : Players.findAllCharactersInScreen(cc->pos)) {
-            xoffs = cc->pos.x - p->pos.x;
-            yoffs = cc->pos.y - p->pos.y;
-            zoffs = cc->pos.z - p->pos.z + RANGEDOWN;
+        for (const auto &p : Players.findAllCharactersInScreen(charPos)) {
+            const auto &playerPos = p->getPosition();
+            xoffs = charPos.x - playerPos.x;
+            yoffs = charPos.y - playerPos.y;
+            zoffs = charPos.z - playerPos.z + RANGEDOWN;
 
             if ((xoffs != 0) || (yoffs != 0) || (zoffs != RANGEDOWN)) {
-                ServerCommandPointer cmd(new MoveAckTC(cc->getId(), cc->pos, netid, waitpages));
+                ServerCommandPointer cmd(new MoveAckTC(cc->getId(), charPos, netid, waitpages));
                 p->Connection->addCommand(cmd);
             }
         }
@@ -224,12 +194,12 @@ void World::sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char ne
 
 
 void World::sendCharacterWarpToAllVisiblePlayers(Character *cc, const position &oldpos, unsigned char netid) {
-    if (!cc->isinvisible) {
+    if (!cc->isInvisible()) {
         sendRemoveCharToVisiblePlayers(cc->getId(), oldpos);
 
-        for (const auto &p : Players.findAllCharactersInScreen(cc->pos)) {
+        for (const auto &p : Players.findAllCharactersInScreen(cc->getPosition())) {
             if (cc != p) {
-                ServerCommandPointer cmd(new MoveAckTC(cc->getId(), cc->pos, PUSH, 0));
+                ServerCommandPointer cmd(new MoveAckTC(cc->getId(), cc->getPosition(), PUSH, 0));
                 p->Connection->addCommand(cmd);
             }
         }
@@ -238,13 +208,13 @@ void World::sendCharacterWarpToAllVisiblePlayers(Character *cc, const position &
 
 
 void World::sendAllVisibleCharactersToPlayer(Player *cp, bool sendSpin) {
-    std::vector < Player * > tempP = Players.findAllCharactersInRangeOf(cp->pos, cp->getScreenRange());
+    std::vector < Player * > tempP = Players.findAllCharactersInRangeOf(cp->getPosition(), cp->getScreenRange());
     sendCharsInVector< Player >(tempP, cp, sendSpin);
 
-    std::vector < Monster * > tempM = Monsters.findAllCharactersInRangeOf(cp->pos, cp->getScreenRange());
+    std::vector < Monster * > tempM = Monsters.findAllCharactersInRangeOf(cp->getPosition(), cp->getScreenRange());
     sendCharsInVector< Monster >(tempM, cp, sendSpin);
 
-    std::vector < NPC * > tempN = Npc.findAllCharactersInRangeOf(cp->pos, cp->getScreenRange());
+    std::vector < NPC * > tempN = Npc.findAllCharactersInRangeOf(cp->getPosition(), cp->getScreenRange());
     sendCharsInVector< NPC >(tempN, cp, sendSpin);
 }
 
@@ -254,15 +224,17 @@ void World::sendCharsInVector(const std::vector<T *> &vec, Player *cp, bool send
     char xoffs;
     char yoffs;
     char zoffs;
+    const auto &playerPos = cp->getPosition();
 
     for (const auto &cc : vec) {
-        if (!cc->isinvisible) {
-            xoffs = cc->pos.x - cp->pos.x;
-            yoffs = cc->pos.y - cp->pos.y;
-            zoffs = cc->pos.z - cp->pos.z + RANGEDOWN;
+        if (!cc->isInvisible()) {
+            const auto &charPos = cc->getPosition();
+            xoffs = charPos.x - playerPos.x;
+            yoffs = charPos.y - playerPos.y;
+            zoffs = charPos.z - playerPos.z + RANGEDOWN;
 
             if ((xoffs != 0) || (yoffs != 0) || (zoffs != RANGEDOWN)) {
-                ServerCommandPointer cmd(new MoveAckTC(cc->getId(), cc->pos, PUSH, 0));
+                ServerCommandPointer cmd(new MoveAckTC(cc->getId(), charPos, PUSH, 0));
                 cp->Connection->addCommand(cmd);
                 cmd.reset(new PlayerSpinTC(cc->faceto, cc->getId()));
 

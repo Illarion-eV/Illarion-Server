@@ -52,7 +52,7 @@ bool WaypointList::checkPosition() {
         return false;
     }
 
-    if (_movechar->pos == positions.front()) {
+    if (_movechar->getPosition() == positions.front()) {
         positions.pop_front();
     }
 

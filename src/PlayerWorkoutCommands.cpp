@@ -25,15 +25,20 @@
 
 
 void Player::workoutCommands() {
+    if (!canAct()) {
+        return;
+    }
+
 #ifdef _PLAYER_AUTO_SAVE_
     checkSave();
 #endif
+
     ClientCommandPointer cmd = Connection->getCommand();
 
     if (cmd) {
         cmd->performAction(this);
     } else if (IsAlive()) {
-        if (attackmode && fightPoints >= P_MIN_FP) {
+        if (getAttackMode() && canFight()) {
             //cp->ltAction->abortAction();
             World::get()->characterAttacks(this);
         }
@@ -41,3 +46,4 @@ void Player::workoutCommands() {
 
     cmd.reset();
 }
+

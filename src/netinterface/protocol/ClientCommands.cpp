@@ -340,7 +340,7 @@ void CastTS::performAction(Player *player) {
     //Source des Castens zuweisen
     SouTar Source, Target;
     Source.character = dynamic_cast<Character *>(player);
-    Source.pos = player->pos;
+    Source.pos = player->getPosition();
     Source.Type = LUA_CHARACTER;
 
     switch (cid) {
@@ -369,7 +369,7 @@ void CastTS::performAction(Player *player) {
                         Logger::debug(LogFacility::Script) << "Target Character: player" << Log::end;
                         //Lua Script zuweisung
                         Target.character = tmpCharacter;
-                        Target.pos = tmpCharacter->pos;
+                        Target.pos = tmpCharacter->getPosition();
                         Target.Type = LUA_CHARACTER;
                     }
                     // Character auf Feld ist ein NPC
@@ -377,13 +377,13 @@ void CastTS::performAction(Player *player) {
                         Logger::debug(LogFacility::Script) << "Target Character: NPC" << Log::end;
                         //Lua Script zuweisung
                         Target.character = tmpCharacter;
-                        Target.pos = tmpCharacter->pos;
+                        Target.pos = tmpCharacter->getPosition();
                         Target.Type = LUA_CHARACTER;
                     } else if ((tmpCharacter->character == Character::monster) && (LuaMageScript)) {
                         Logger::debug(LogFacility::Script) << "Target Character: monster" << Log::end;
                         //Lua Script zuweisung
                         Target.character = tmpCharacter;
-                        Target.pos = tmpCharacter->pos;
+                        Target.pos = tmpCharacter->getPosition();
                         Target.Type = LUA_CHARACTER;
                     }
                 } else {
@@ -476,7 +476,7 @@ void CastTS::performAction(Player *player) {
 #endif
         Logger::debug(LogFacility::Script) << "Cast with Wand" << Log::end;
 
-        if ((player->attackmode) && (player->enemyid != 0) && (LuaMageScript)) {
+        if (player->getAttackMode() && (player->enemyid != 0) && (LuaMageScript)) {
             bool zauberstab=false;
 
             if ((player->characterItems[ LEFT_TOOL ].getId() != 0) && (player->characterItems[ LEFT_TOOL ].getId() != BLOCKEDITEM)) {
@@ -517,7 +517,7 @@ void CastTS::performAction(Player *player) {
                         Target.character = World::get()->findCharacter(player->enemyid);
 
                         if (Target.character != NULL) {
-                            Target.pos = Target.character->pos;
+                            Target.pos = Target.character->getPosition();
                         } else {
                             paramOK = false;
                             std::cerr << "Kein geeignetes Ziel fr Zauberstab gefunden (Target.Character == NULL)!" << std::endl;
@@ -536,7 +536,7 @@ void CastTS::performAction(Player *player) {
                         Target.character = World::get()->findCharacter(player->enemyid);
 
                         if (Target.character != NULL) {
-                            Target.pos = Target.character->pos;
+                            Target.pos = Target.character->getPosition();
                         } else {
                             paramOK = false;
                             std::cerr << "Kein geeignetes Ziel fr Zauberstab gefunden (Target.Character == NULL)!" << std::endl;
@@ -555,7 +555,7 @@ void CastTS::performAction(Player *player) {
                         Target.character = World::get()->findCharacter(player->enemyid);
 
                         if (Target.character != NULL) {
-                            Target.pos = Target.character->pos;
+                            Target.pos = Target.character->getPosition();
                         } else {
                             paramOK = false;
                             std::cerr << "Kein geeignetes Ziel fr Zauberstab gefunden (Target.Character == NULL)!" << std::endl;
@@ -602,7 +602,7 @@ void CastTS::performAction(Player *player) {
                     if (LuaMageScript) {
                         Target.Type = LUA_ITEM;
                         Target.item = (ScriptItem)player->characterItems[ pos ];
-                        Target.item.pos = player->pos;
+                        Target.item.pos = player->getPosition();
 
                         if (pos < MAX_BODY_ITEMS) {
                             Target.item.type = ScriptItem::it_inventory;
@@ -612,7 +612,7 @@ void CastTS::performAction(Player *player) {
 
                         Target.item.itempos = pos;
                         Target.item.owner = player;
-                        Target.pos = player->pos;
+                        Target.pos = player->getPosition();
                     }
                 } else {
                     std::cerr<<"cp->characterItems[pos].getId() != 0 false, paramOK = false!"<<std::endl;
@@ -759,7 +759,7 @@ void UseTS::performAction(Player *player) {
                         LuaNPCScript = scriptNPC->getScript();
 
                         if (LuaNPCScript) {
-                            Source.pos = scriptNPC->pos;
+                            Source.pos = scriptNPC->getPosition();
                             Source.character = scriptNPC;
                             Source.Type = LUA_CHARACTER;
                         }
@@ -776,7 +776,7 @@ void UseTS::performAction(Player *player) {
                         }
 
                         if (LuaMonsterScript) {
-                            Source.pos = scriptMonster->pos;
+                            Source.pos = scriptMonster->getPosition();
                             Source.character = scriptMonster;
                             Source.Type = LUA_CHARACTER;
                         }
@@ -868,7 +868,7 @@ void UseTS::performAction(Player *player) {
                 if (LuaScript) {
                     Source.Type = LUA_ITEM;
                     Source.item = (ScriptItem)player->characterItems[ pos ];
-                    Source.item.pos = player->pos;
+                    Source.item.pos = player->getPosition();
 
                     if (pos < MAX_BODY_ITEMS) {
                         Source.item.type = ScriptItem::it_inventory;
@@ -878,7 +878,7 @@ void UseTS::performAction(Player *player) {
 
                     Source.item.itempos = pos;
                     Source.item.owner = player;
-                    Source.pos = player->pos;
+                    Source.pos = player->getPosition();
                 }
             } else {
                 paramOK = false;
@@ -994,7 +994,7 @@ void AttackStopTS::decodeData() {
 void AttackStopTS::performAction(Player *player) {
     time(&(player->lastaction));
     player->ltAction->abortAction();
-    player->attackmode = false;
+    player->setAttackMode(false);
     ServerCommandPointer cmd(new TargetLostTC());
     player->Connection->addCommand(cmd);
 }
@@ -1016,7 +1016,7 @@ void LookAtInventoryItemTS::performAction(Player *player) {
 
     if (player->IsAlive()) {
         World::get()->lookAtInventoryItem(player, pos);
-        player->actionPoints -= P_LOOK_COST;
+        player->increaseActionPoints(-P_LOOK_COST);
     }
 }
 
@@ -1038,7 +1038,7 @@ void LookAtShowCaseItemTS::performAction(Player *player) {
 
     if (player->IsAlive()) {
         World::get()->lookAtShowcaseItem(player, showcase, pos);
-        player->actionPoints -= P_LOOK_COST;
+        player->increaseActionPoints(-P_LOOK_COST);
     }
 }
 
@@ -1064,7 +1064,7 @@ void MoveItemFromPlayerToShowCaseTS::performAction(Player *player) {
 
     if (player->IsAlive()) {
         World::get()->moveItemFromPlayerIntoShowcase(player, cpos, showcase, pos, count);
-        player->actionPoints -= P_ITEMMOVE_COST;
+        player->increaseActionPoints(-P_ITEMMOVE_COST);
     }
 }
 
@@ -1090,7 +1090,7 @@ void MoveItemFromShowCaseToPlayerTS::performAction(Player *player) {
 
     if (player->IsAlive()) {
         World::get()->moveItemFromShowcaseToPlayer(player, showcase, pos, cpos, count);
-        player->actionPoints -= P_ITEMMOVE_COST;
+        player->increaseActionPoints(-P_ITEMMOVE_COST);
     }
 }
 
@@ -1115,7 +1115,7 @@ void MoveItemInsideInventoryTS::performAction(Player *player) {
 
     if (player->IsAlive()) {
         World::get()->moveItemBetweenBodyParts(player, opos, npos, count);
-        player->actionPoints -= P_ITEMMOVE_COST;
+        player->increaseActionPoints(-P_ITEMMOVE_COST);
     }
 }
 
@@ -1140,7 +1140,7 @@ void DropItemFromInventoryOnMapTS::performAction(Player *player) {
     player->ltAction->abortAction();
     Logger::debug(LogFacility::World) << *player << " throws an item from inventory on the map!" << Log::end;
     World::get()->dropItemFromPlayerOnMap(player, pos, mapPosition, count);
-    player->actionPoints -= P_ITEMMOVE_COST;
+    player->increaseActionPoints(-P_ITEMMOVE_COST);
 }
 
 ClientCommandPointer DropItemFromInventoryOnMapTS::clone() {
@@ -1164,7 +1164,7 @@ void MoveItemFromMapToPlayerTS::performAction(Player *player) {
 
     if (player->IsAlive()) {
         World::get()->moveItemFromMapToPlayer(player, dir, pos, count);
-        player->actionPoints -= P_ITEMMOVE_COST;
+        player->increaseActionPoints(-P_ITEMMOVE_COST);
     }
 }
 
@@ -1190,7 +1190,7 @@ void MoveItemFromMapIntoShowCaseTS::performAction(Player *player) {
 
     if (player->IsAlive()) {
         World::get()->moveItemFromMapIntoShowcase(player, dir, showcase, pos, count);
-        player->actionPoints -= P_ITEMMOVE_COST;
+        player->increaseActionPoints(-P_ITEMMOVE_COST);
     }
 }
 
@@ -1217,7 +1217,7 @@ void MoveItemBetweenShowCasesTS::performAction(Player *player) {
 
     if (player->IsAlive()) {
         World::get()->moveItemBetweenShowcases(player, source, spos, dest, dpos, count);
-        player->actionPoints -= P_ITEMMOVE_COST;
+        player->increaseActionPoints(-P_ITEMMOVE_COST);
     }
 }
 
@@ -1243,7 +1243,7 @@ void DropItemFromShowCaseOnMapTS::performAction(Player *player) {
     player->ltAction->abortAction();
     Logger::debug(LogFacility::World) << *player << " moves an item from showcase to the map!" << Log::end;
     World::get()->dropItemFromShowcaseOnMap(player, showcase, pos, mapPosition, count);
-    player->actionPoints -= P_ITEMMOVE_COST;
+    player->increaseActionPoints(-P_ITEMMOVE_COST);
 }
 
 ClientCommandPointer DropItemFromShowCaseOnMapTS::clone() {
@@ -1286,7 +1286,7 @@ void LookIntoShowCaseContainerTS::performAction(Player *player) {
     player->ltAction->abortAction();
     Logger::debug(LogFacility::World) << *player << " looks into a container in a showcase!" << Log::end;
     player->lookIntoShowcaseContainer(showcase, pos);
-    player->actionPoints -= P_LOOK_COST;
+    player->increaseActionPoints(-P_LOOK_COST);
 }
 
 ClientCommandPointer LookIntoShowCaseContainerTS::clone() {
@@ -1305,7 +1305,7 @@ void LookIntoInventoryTS::performAction(Player *player) {
     player->ltAction->abortAction();
     Logger::debug(LogFacility::World) << *player << " looks into his backpack" << Log::end;
     player->lookIntoBackPack();
-    player->actionPoints -= P_LOOK_COST;
+    player->increaseActionPoints(-P_LOOK_COST);
 }
 
 ClientCommandPointer LookIntoInventoryTS::clone() {
@@ -1327,7 +1327,7 @@ void LookIntoContainerOnFieldTS::performAction(Player *player) {
 
     if (player->IsAlive()) {
         player->lookIntoContainerOnField(dir);
-        player->actionPoints -= P_LOOK_COST;
+        player->increaseActionPoints(-P_LOOK_COST);
     }
 }
 
@@ -1463,7 +1463,7 @@ void AttackPlayerTS::performAction(Player *player) {
 
         if (player->IsAlive()) {
             player->enemyid = enemyid;
-            player->attackmode = true;
+            player->setAttackMode(true);
             player->enemytype = Character::player;
 
             if (player->enemyid >= MONSTER_BASE) {
@@ -1479,7 +1479,7 @@ void AttackPlayerTS::performAction(Player *player) {
             //monitoringClientList->sendCommand( new SendActionTS(player->getId(), player->getName(), 0, "Starts an attack: " + Logger::toString(player->enemyid) ) );
             World::get()->characterAttacks(player);
         } else {
-            player->attackmode = false;
+            player->setAttackMode(false);
         }
     }
 }
@@ -1503,7 +1503,7 @@ void LookAtMapItemTS::performAction(Player *player) {
 
     if (player->IsAlive()) {
         World::get()->lookAtMapItem(player, pos);
-        player->actionPoints -= P_LOOK_COST;
+        player->increaseActionPoints(-P_LOOK_COST);
     }
 
 }
@@ -1526,7 +1526,7 @@ void PSpinActionTS::performAction(Player *player) {
     Logger::debug(LogFacility::World) << *player << " changes his dircetion to " << direction << Log::end;
 
     if (World::get()->spinPlayer(player, direction)) {
-        player->actionPoints -= P_SPIN_COST;
+        player->increaseActionPoints(-P_SPIN_COST);
     }
 }
 
@@ -1553,20 +1553,11 @@ void CharMoveTS::performAction(Player *player) {
 
         if (player->getTurtleActive() && player->hasGMRight(gmr_settiles) && mode == NORMALMOVE) {
             World::get()->setNextTile(player, player->getTurtleTile());
-            Logger::info(LogFacility::World) << "Turtle was active, new tile set at pos: " << player->pos.x << "," << player->pos.y << "," << player->pos.z << " tile: " << player->getTurtleTile() << Log::end;
+            Logger::info(LogFacility::World) << "Turtle was active, new tile set at pos: " << player->getPosition() << " tile: " << player->getTurtleTile() << Log::end;
         }
 
         if (player->move(static_cast<direction>(dir), mode)) {
             player->closeAllShowcasesOfMapContainers();
-        }
-    } else if (mode == PUSH) {
-        player->ltAction->abortAction();
-        Logger::debug(LogFacility::World) << "Player pushes another: " << *player << Log::end;
-
-        if (player->IsAlive()) {
-            if (World::get()->pushCharacter(player, charid, static_cast<direction>(dir))) {
-                player->actionPoints -= P_PUSH_COST;
-            }
         }
     }
 }
@@ -1594,7 +1585,7 @@ void IMoverActionTS::performAction(Player *player) {
 
     if (player->IsAlive()) {
         World::get()->moveItem(player, dir, pos, count);
-        player->actionPoints -= P_ITEMMOVE_COST;
+        player->increaseActionPoints(-P_ITEMMOVE_COST);
     }
 }
 

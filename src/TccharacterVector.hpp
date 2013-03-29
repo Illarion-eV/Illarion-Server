@@ -70,7 +70,7 @@ template < class _Tp > _Tp ccharactervector < _Tp > ::findID(TYPE_OF_CHARACTER_I
 
 template < class _Tp > _Tp ccharactervector < _Tp > ::find(const position &pos) const {
     for (const auto &character : *this) {
-        if (character->pos == pos) {
+        if (character->getPosition() == pos) {
             return character;
         }
     }
@@ -81,7 +81,7 @@ template < class _Tp > _Tp ccharactervector < _Tp > ::find(const position &pos) 
 
 template < class _Tp > bool ccharactervector < _Tp > ::find(const position &pos, _Tp &ret) const {
     for (const auto &character : *this) {
-        if (character->pos == pos) {
+        if (character->getPosition() == pos) {
             ret = character;
             return true;
         }
@@ -93,7 +93,7 @@ template < class _Tp > bool ccharactervector < _Tp > ::find(const position &pos,
 
 template < class _Tp > bool ccharactervector < _Tp > ::remove(const position &pos) {
     for (auto thisIterator = this->begin(); thisIterator < this->end(); ++thisIterator) {
-        if ((*thisIterator)->pos == pos) {
+        if ((*thisIterator)->getPosition() == pos) {
             erase(thisIterator);
             return true;
         }
@@ -120,11 +120,12 @@ template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllCha
     std::vector < _Tp > temp;
 
     for (const auto &character : *this) {
-        short int dz = character->pos.z - pos.z;
+        const auto &charPos = character->getPosition();
+        short int dz = charPos.z - pos.z;
 
         if ((-RANGEDOWN <= dz) && (dz <= RANGEUP)) {
-            short int dx = character->pos.x - pos.x;
-            short int dy = character->pos.y - pos.y;
+            short int dx = charPos.x - pos.x;
+            short int dy = charPos.y - pos.y;
 
             if ((abs(dx) + abs(dy)) <= distancemetric) {
                 temp.push_back(character);
@@ -140,11 +141,12 @@ template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllCha
     std::vector < _Tp > temp;
 
     for (const auto &character : *this) {
-        short int dz = character->pos.z - pos.z;
+        const auto &charPos = character->getPosition();
+        short int dz = charPos.z - pos.z;
 
         if ((-RANGEDOWN <= dz) && (dz <= RANGEUP)) {
-            short int dx = character->pos.x - pos.x;
-            short int dy = character->pos.y - pos.y;
+            short int dx = charPos.x - pos.x;
+            short int dy = charPos.y - pos.y;
 
             if ((abs(dx) + abs(dy)) <= character->getScreenRange()) {
                 temp.push_back(character);
@@ -160,11 +162,12 @@ template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllCha
     std::vector < _Tp > temp;
 
     for (const auto &character : *this) {
-        short int dz = character->pos.z - pos.z;
+        const auto &charPos = character->getPosition();
+        short int dz = charPos.z - pos.z;
 
         if ((-RANGEDOWN <= dz) && (dz <= RANGEUP)) {
-            short int dx = character->pos.x - pos.x;
-            short int dy = character->pos.y - pos.y;
+            short int dx = charPos.x - pos.x;
+            short int dy = charPos.y - pos.y;
 
             if ((abs(dx) <= distancemetric) && (abs(dy) <=distancemetric)) {
                 temp.push_back(character);
@@ -180,11 +183,12 @@ template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllAli
     std::vector < _Tp > temp;
 
     for (const auto &character : *this) {
-        short int dz = character->pos.z - pos.z;
+        const auto &charPos = character->getPosition();
+        short int dz = charPos.z - pos.z;
 
         if ((-RANGEDOWN <= dz) && (dz <= RANGEUP)) {
-            short int dx = character->pos.x - pos.x;
-            short int dy = character->pos.y - pos.y;
+            short int dx = charPos.x - pos.x;
+            short int dy = charPos.y - pos.y;
 
             if (((abs(dx) + abs(dy)) <= distancemetric) ||
                 ((distancemetric == 1) && (abs(dx) == 1) && (abs(dy) == 1))) {       // Allow angle attacks
@@ -202,9 +206,11 @@ template < class _Tp > std::vector < _Tp > ccharactervector < _Tp > ::findAllAli
     std::vector < _Tp > temp;
 
     for (const auto &character : *this) {
-        if (character->pos.z == pos.z) {
-            short int dx = character->pos.x - pos.x;
-            short int dy = character->pos.y - pos.y;
+        const auto &charPos = character->getPosition();
+
+        if (charPos.z == pos.z) {
+            short int dx = charPos.x - pos.x;
+            short int dy = charPos.y - pos.y;
 
             if (((abs(dx) + abs(dy)) <= distancemetric) || ((distancemetric == 1) && (abs(dx) == 1) && (abs(dy) == 1))) {          // Allow angle attacks
                 if (character->IsAlive()) {
@@ -222,7 +228,9 @@ template < class _Tp > bool ccharactervector < _Tp > ::findAllCharactersWithXInR
     bool found_one = false;
 
     for (const auto &character : *this) {
-        if ((character->pos.x >= startx) && (character->pos.x <= endx)) {
+        const auto &charPos = character->getPosition();
+
+        if ((charPos.x >= startx) && (charPos.x <= endx)) {
             ret.push_back(character);
             found_one = true;
         }

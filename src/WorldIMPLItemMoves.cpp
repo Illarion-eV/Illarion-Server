@@ -526,7 +526,7 @@ bool World::putItemOnMap(Character *cc, const position &itemPosition) {
     Field *tempf;
 
     if (cc) {
-        if (cc->pos.z != itemPosition.z ||
+        if (cc->getPosition().z != itemPosition.z ||
             !cc->isInRangeToField(itemPosition, MAXTHROWDISTANCE) ||
             (!cc->isInRangeToField(itemPosition, MAXDROPDISTANCE) && (g_item.getWeight() > MAXTHROWWEIGHT))) {
             static const std::string german = "Dies ist zu schwer um so weit geworfen zu werden.";
@@ -706,7 +706,7 @@ void World::dropItemFromShowcaseOnMap(Player *cp, uint8_t showcase, unsigned cha
 
     if (takeItemFromShowcase(cp, showcase, pos, count)) {
         ScriptItem s_item = g_item,t_item = g_item;
-        s_item.pos = cp->pos;
+        s_item.pos = cp->getPosition();
         s_item.itempos = pos;
         s_item.type = ScriptItem::it_container;
         s_item.inside = cp->getShowcaseContainer(showcase);
@@ -751,12 +751,12 @@ void World::moveItemFromShowcaseToPlayer(Player *cp, uint8_t showcase, unsigned 
 
     if (takeItemFromShowcase(cp, showcase, pos, count)) {
         ScriptItem s_item = g_item, t_item = g_item;
-        s_item.pos = cp->pos;
+        s_item.pos = cp->getPosition();
         s_item.itempos = pos;
         s_item.type = ScriptItem::it_container;
         s_item.inside = cp->getShowcaseContainer(showcase);
         s_item.owner = cp;
-        t_item.pos = cp->pos;
+        t_item.pos = cp->getPosition();
         t_item.itempos = cpos;
 
         if (cpos < MAX_BODY_ITEMS) {
@@ -816,7 +816,7 @@ void World::dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, const positi
 
     if (takeItemFromInvPos(cp, cpos, count)) {
         ScriptItem s_item = g_item, t_item = g_item;
-        s_item.pos = cp->pos;
+        s_item.pos = cp->getPosition();
 
         if (cpos < MAX_BODY_ITEMS) {
             s_item.type = ScriptItem::it_inventory;
@@ -868,7 +868,7 @@ void World::moveItemBetweenBodyParts(Player *cp, unsigned char opos, unsigned ch
     if (takeItemFromInvPos(cp, opos, count)) {
         ScriptItem s_item = g_item, t_item = g_item;
         s_item.owner = cp;
-        s_item.pos = cp->pos;
+        s_item.pos = cp->getPosition();
 
         if (opos < MAX_BODY_ITEMS) {
             s_item.type = ScriptItem::it_inventory;
@@ -878,7 +878,7 @@ void World::moveItemBetweenBodyParts(Player *cp, unsigned char opos, unsigned ch
 
         s_item.itempos = opos;
         t_item.owner = cp;
-        t_item.pos = cp->pos;
+        t_item.pos = cp->getPosition();
 
         if (npos < MAX_BODY_ITEMS) {
             t_item.type = ScriptItem::it_inventory;
@@ -930,13 +930,13 @@ void World::moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, uint8
             s_item.type = ScriptItem::it_belt;
         }
 
-        s_item.pos = cp->pos;
+        s_item.pos = cp->getPosition();
         s_item.itempos = cpos;
         s_item.owner = cp;
 
         t_item.type = ScriptItem::it_container;
         t_item.inside = cp->getShowcaseContainer(showcase);
-        t_item.pos = cp->pos;
+        t_item.pos = cp->getPosition();
         t_item.owner = cp;
         t_item.itempos = pos;
         std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(t_item.getId());
@@ -975,7 +975,7 @@ void World::moveItemFromMapIntoShowcase(Player *cp, direction dir, uint8_t showc
     }
 
     if (cp) {
-        position itemPosition = cp->pos;
+        position itemPosition = cp->getPosition();
         itemPosition.move(dir);
 
         if (takeItemFromMap(cp, itemPosition)) {
@@ -983,7 +983,7 @@ void World::moveItemFromMapIntoShowcase(Player *cp, direction dir, uint8_t showc
             s_item.pos = itemPosition;
             s_item.type = ScriptItem::it_field;
             s_item.owner = cp;
-            t_item.pos = cp->pos;
+            t_item.pos = cp->getPosition();
             t_item.type = ScriptItem::it_container;
             t_item.inside = cp->getShowcaseContainer(showcase);
             t_item.itempos = pos;
@@ -1063,7 +1063,7 @@ void World::moveItemFromMapToPlayer(Player *cp, direction dir, unsigned char cpo
     }
 
     if (cp) {
-        position itemPosition = cp->pos;
+        position itemPosition = cp->getPosition();
         itemPosition.move(dir);
 
         if (takeItemFromMap(cp, itemPosition)) {
@@ -1071,7 +1071,7 @@ void World::moveItemFromMapToPlayer(Player *cp, direction dir, unsigned char cpo
             s_item.pos = itemPosition;
             s_item.type = ScriptItem::it_field;
             s_item.owner = cp;
-            t_item.pos = cp->pos;
+            t_item.pos = cp->getPosition();
 
             if (cpos < MAX_BODY_ITEMS) {
                 t_item.type = ScriptItem::it_inventory;
@@ -1156,12 +1156,12 @@ void World::moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char p
 
     if (takeItemFromShowcase(cp, source, pos, count)) {
         ScriptItem s_item = g_item, t_item = g_item;
-        s_item.pos = cp->pos;
+        s_item.pos = cp->getPosition();
         s_item.type = ScriptItem::it_container;
         s_item.inside = cp->getShowcaseContainer(source);
         s_item.itempos = pos;
         s_item.owner = cp;
-        t_item.pos = cp->pos;
+        t_item.pos = cp->getPosition();
         t_item.type = ScriptItem::it_container;
         t_item.inside = cp->getShowcaseContainer(dest);
         t_item.itempos = pos2;
@@ -1217,7 +1217,7 @@ bool World::moveItem(Character *cc, direction dir, const position &newPosition, 
     }
 
     if (cc) {
-        position oldPosition = cc->pos;
+        position oldPosition = cc->getPosition();
         oldPosition.move(dir);
 
         if (takeItemFromMap(cc, oldPosition)) {
@@ -1341,9 +1341,10 @@ void World::closeShowcaseForOthers(Player *target, Container *moved) {
 void World::closeShowcaseIfNotInRange(Container *moved, const position &showcasePosition) {
     if (moved) {
         for (const auto &player : Players) {
-            if (abs(showcasePosition.x - player->pos.x) <= 1
-                    && abs(showcasePosition.y - player->pos.y) <= 1
-                    && showcasePosition.z == player->pos.z) {
+            const auto &pos = player->getPosition();
+            if (abs(showcasePosition.x - pos.x) <= 1
+                    && abs(showcasePosition.y - pos.y) <= 1
+                    && showcasePosition.z == pos.z) {
                 continue;
             }
 

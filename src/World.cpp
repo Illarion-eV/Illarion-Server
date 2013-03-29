@@ -547,21 +547,9 @@ void World::checkPlayers() {
             temptime = tempkeepalive - player.lastkeepalive;
 
             if (((temptime >= 0) && (temptime <= CLIENT_TIMEOUT))) {
-                player.actionPoints += ap;
-                player.fightPoints += ap;
-
-                if (player.actionPoints > P_MAX_AP) {
-                    player.actionPoints = P_MAX_AP;
-                }
-
-                if (player.fightPoints > P_MAX_FP) {
-                    player.fightPoints = P_MAX_FP;
-                }
-
-                if (player.actionPoints >= P_MIN_AP) {
-                    player.workoutCommands();
-                }
-
+                player.increaseActionPoints(ap);
+                player.increaseFightPoints(ap);
+                player.workoutCommands();
                 player.ltAction->checkAction();
                 player.effects.checkEffects();
             }
@@ -574,7 +562,7 @@ void World::checkPlayers() {
 
             ++playerIterator;
         } else {
-            const position &pos = player.pos;
+            const position &pos = player.getPosition();
 
             Logger::info(LogFacility::World) << player << " is offline" << Log::end;
             Field *tempf;
@@ -685,27 +673,17 @@ void World::checkMonsters() {
         Monster &monster = **monsterIterator;
 
         if (monster.IsAlive()) {
-            // monster alive
-            monster.actionPoints += ap;
-            monster.fightPoints += ap;
-
-            if (monster.actionPoints > NP_MAX_AP) {         // too many AP
-                monster.actionPoints = NP_MAX_AP;
-            }
-
-            if (monster.fightPoints > NP_MAX_FP) {         // too many FP
-                monster.fightPoints = NP_MAX_FP;
-            }
-
+            monster.increaseActionPoints(ap);
+            monster.increaseFightPoints(ap);
             monster.effects.checkEffects();
 
             MonsterStruct monStruct;
             bool foundMonster = MonsterDescriptions->find(monster.getType(), monStruct) ;
 
-            if (monster.actionPoints >= NP_MIN_AP) {
+            if (monster.canAct()) {
                 if (!monster.getOnRoute()) {
                     //set lastTargetSeen to false if we reach the position where the target was seen the last time
-                    if (monster.pos == monster.lastTargetPosition) {
+                    if (monster.getPosition() == monster.lastTargetPosition) {
                         monster.lastTargetSeen = false;
                     }
 
@@ -725,7 +703,7 @@ void World::checkMonsters() {
                     }
 
                     //===============================================
-                    temp = Players.findAllAliveCharactersInRangeOf(monster.pos, range);
+                    temp = Players.findAllAliveCharactersInRangeOf(monster.getPosition(), range);
                     bool has_attacked=false;
                     //If we have found players which can be attacked directly and the monster can attack
                     Player *foundP = nullptr;
@@ -741,7 +719,7 @@ void World::checkMonsters() {
                             //let the monster attack the player with the lowest hp->assigned this player as target
                             monster.enemyid = foundP->getId();
                             monster.enemytype = Character::player;
-                            monster.lastTargetPosition = foundP->pos;
+                            monster.lastTargetPosition = foundP->getPosition();
                             monster.lastTargetSeen = true;
 
                             if (foundMonster) {
@@ -757,9 +735,9 @@ void World::checkMonsters() {
                             }
 
                             //attack the player which we have found
-                            monster.turn(foundP->pos);
+                            monster.turn(foundP->getPosition());
 
-                            if (monster.fightPoints >= NP_MIN_FP) {    // enough FP to fight?
+                            if (monster.canFight()) {    // enough FP to fight?
                                 has_attacked = characterAttacks(*monsterIterator);
                             } else {
                                 has_attacked = true;
@@ -768,7 +746,7 @@ void World::checkMonsters() {
                     }
 
                     if (!has_attacked) { //bewegen
-                        temp = Players.findAllAliveCharactersInRangeOf(monster.pos, 15);
+                        temp = Players.findAllAliveCharactersInRangeOf(monster.getPosition(), 15);
 
                         bool makeRandomStep=true;
 
@@ -782,7 +760,7 @@ void World::checkMonsters() {
 
                             if (foundP2) {  // if the script returned a valid character...
                                 monster.lastTargetSeen = true;
-                                monster.lastTargetPosition = foundP2->pos;
+                                monster.lastTargetPosition = foundP2->getPosition();
 
                                 //Call enemyNear Script when enemy found
                                 if (foundMonster) {
@@ -794,7 +772,7 @@ void World::checkMonsters() {
                                     }
 
                                     makeRandomStep=false;
-                                    monster.performStep(foundP2->pos);
+                                    monster.performStep(foundP2->getPosition());
                                 } else {
                                     Logger::notice(LogFacility::Script) << "cant find the monster id for calling a script!" << Log::end;
                                 }
@@ -825,8 +803,8 @@ void World::checkMonsters() {
                                 direction dir = (direction)Random::uniform(0,7);
 
                                 if (spawn) {
-                                    int yoffs = monster.pos.y - spawn->get_y();
-                                    int xoffs = monster.pos.x - spawn->get_x();
+                                    int yoffs = monster.getPosition().y - spawn->get_y();
+                                    int xoffs = monster.getPosition().x - spawn->get_x();
 
                                     if (abs(xoffs) > spawn->getRange() || abs(yoffs) > spawn->getRange()) {
                                         // monster out of spawn range, remove it from spawn
@@ -835,7 +813,7 @@ void World::checkMonsters() {
                                         spawn->dead(type);
                                     }
 
-                                    position newpos = monster.pos;
+                                    position newpos = monster.getPosition();
                                     newpos.move(dir);
                                     yoffs = spawn->get_y() - newpos.y;
                                     xoffs = spawn->get_x() - newpos.x;
@@ -907,7 +885,7 @@ void World::checkMonsters() {
                                 monster.move(dir);
 
                                 // movementrate below normal if noone is near
-                                monster.actionPoints -= 20;
+                                monster.increaseActionPoints(-20);
                             }
                         }
                     }//angreifen/bewegen
@@ -925,7 +903,7 @@ void World::checkMonsters() {
                     }
 
                     //===============================================
-                    temp = Players.findAllAliveCharactersInRangeOf(monster.pos, range);
+                    temp = Players.findAllAliveCharactersInRangeOf(monster.getPosition(), range);
 
                     //If we have found players which can be attacked directly and the monster can attack
                     if (!temp.empty()) {
@@ -944,7 +922,7 @@ void World::checkMonsters() {
                     }
 
                     //check if there is a player on sight
-                    temp = Players.findAllAliveCharactersInRangeOf(monster.pos, 15);
+                    temp = Players.findAllAliveCharactersInRangeOf(monster.getPosition(), 15);
 
                     if (!temp.empty()) {
                         Player *foundP;
@@ -1002,46 +980,30 @@ void World::checkMonsters() {
 void World::checkNPC() {
     deleteAllLostNPC();
 
-    NPCVECTOR::iterator npcIterator = Npc.begin();
+    for (const auto &npc : Npc) {
 
-    while (npcIterator < Npc.end()) {
+        if (npc->IsAlive()) {
+            npc->increaseActionPoints(ap);
+            npc->effects.checkEffects();
+            std::shared_ptr<LuaNPCScript> npcScript = npc->getScript();
 
-        if ((*npcIterator)->IsAlive()) {
-            (*npcIterator)->actionPoints += ap;
+            if (npc->canAct() && npcScript) {
+                npcScript->nextCycle();
 
-            if ((*npcIterator)->actionPoints > NP_MAX_AP) {
-                (*npcIterator)->actionPoints = NP_MAX_AP;
-            }
-
-            (*npcIterator)->effects.checkEffects();
-
-            if ((*npcIterator)->actionPoints > NP_MIN_AP && (*npcIterator)->getScript()) {
-                // we have a script...
-                // let's execute the command for this cycle
-                std::shared_ptr<LuaNPCScript> npcscript = (*npcIterator)->getScript();
-                npcscript->nextCycle();
-
-                if ((*npcIterator)->getOnRoute() && !(*npcIterator)->waypoints.makeMove()) {
-                    (*npcIterator)->setOnRoute(false);
-                    npcscript->abortRoute();
+                if (npc->getOnRoute() && !npc->waypoints.makeMove()) {
+                    npc->setOnRoute(false);
+                    npcScript->abortRoute();
                 }
             }
-
-            ++npcIterator;
-        } // alive
-        else {
-            // Behandlung von toten NPC -> wiederbeleben
-            (*npcIterator)->increaseAttrib("hitpoints", MAXHPS);
-            sendSpinToAllVisiblePlayers((*npcIterator));
-            ++npcIterator;
+        } else {
+            npc->increaseAttrib("hitpoints", MAXHPS);
+            sendSpinToAllVisiblePlayers(npc);
         }
     }
 }
 
 
 void World::workout_CommandBuffer(Player *&cp) {
-
-
 }
 
 
@@ -1083,11 +1045,11 @@ void World::initNPC() {
     for (const auto &npc : Npc) {
         Field *tempf;
 
-        if (GetPToCFieldAt(tempf, npc->pos)) {
+        if (GetPToCFieldAt(tempf, npc->getPosition())) {
             tempf->removeChar();
         }
 
-        sendRemoveCharToVisiblePlayers(npc->getId(), npc->pos);
+        sendRemoveCharToVisiblePlayers(npc->getId(), npc->getPosition());
         delete npc;
     }
 

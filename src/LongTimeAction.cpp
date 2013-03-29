@@ -65,11 +65,11 @@ bool LongTimeAction::checkAction() {
         }
 
         if ((_redoaniTimer) && (_redoaniTimer->Next()) && (_ani != 0)) {
-            _world->gfx(_ani, _owner->pos);
+            _world->gfx(_ani, _owner->getPosition());
         }
 
         if ((_redosoundTimer) && (_redosoundTimer->Next()) && (_sound != 0)) {
-            _world->makeSound(_sound, _owner->pos);
+            _world->makeSound(_sound, _owner->getPosition());
         }
     }
 
@@ -107,11 +107,11 @@ void LongTimeAction::startLongTimeAction(unsigned short int timetowait, unsigned
     }
 
     if (_sound != 0) {
-        _world->makeSound(_sound, _owner->pos);
+        _world->makeSound(_sound, _owner->getPosition());
     }
 
     if (_ani != 0) {
-        _world->gfx(_ani, _owner->pos);
+        _world->gfx(_ani, _owner->getPosition());
     }
 
 }
@@ -341,7 +341,7 @@ void LongTimeAction::successAction() {
 
 void LongTimeAction::changeSource(Character *cc) {
     _source.Type = LUA_CHARACTER;
-    _source.pos = cc->pos;
+    _source.pos = cc->getPosition();
     _source.character = cc;
     _sourceId = cc->getId();
     _sourceCharType = cc->character;
@@ -370,7 +370,7 @@ void LongTimeAction::changeSource() {
 
 void LongTimeAction::changeTarget(Character *cc) {
     _target.Type = LUA_CHARACTER;
-    _target.pos = cc->pos;
+    _target.pos = cc->getPosition();
     _target.character = cc;
     _targetId = cc->getId();
 }

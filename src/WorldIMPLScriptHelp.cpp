@@ -445,7 +445,7 @@ fuse_ptr<Character> World::createMonster(unsigned short id, const position &pos,
 #ifdef LUASCRIPT_DEBUG
             std::cout<<"Erschaffe neues Monster: " << newMonster->name << " an Position (x,y,z) " << pos.x << " " << pos.y << " " << pos.z << std::endl;
 #endif
-            newMonster->actionPoints = movepoints;
+            newMonster->setActionPoints(movepoints);
             newMonsters.push_back(newMonster);
             field->setChar();
             sendCharacterMoveToAllVisiblePlayers(newMonster, NORMALMOVE, 4);

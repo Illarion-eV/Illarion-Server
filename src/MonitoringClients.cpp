@@ -45,7 +45,7 @@ void MonitoringClients::clientConnect(Player *player) {
     //Send all player infos to the new connected client
 
     for (const auto &p : _world->Players) {
-        ServerCommandPointer cmd(new BBPlayerTC(p->getId(), p->getName(), p->pos));
+        ServerCommandPointer cmd(new BBPlayerTC(p->getId(), p->getName(), p->getPosition()));
         player->Connection->addCommand(cmd);
         cmd.reset(new BBSendAttribTC(p->getId(), "hitpoints", p->increaseAttrib("hitpoints",0)));
         player->Connection->addCommand(cmd);

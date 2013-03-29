@@ -32,12 +32,11 @@ NPC::NPC(TYPE_OF_CHARACTER_ID _id, const std::string &_name, Character::race_typ
     cout << "NPC Konstruktor Start" << endl;
 #endif
     setName(_name);
-    pos=_pos;
+    _startpos = _pos;
     faceto=dir;
     race=_race;
     setAttribute(Character::sex, sex);
     character = npc;
-    actionPoints = NP_MAX_AP;
 
     // take database id as npc id with appropriate offset so that npc ids are constant
     if (_id == DYNNPC_BASE) {
@@ -49,12 +48,12 @@ NPC::NPC(TYPE_OF_CHARACTER_ID _id, const std::string &_name, Character::race_typ
 
     Field *tmpField;
 
-    if (!_world->findEmptyCFieldNear(tmpField, pos)) {
+    if (!_world->findEmptyCFieldNear(tmpField, _startpos)) {
         throw NoSpace();
     }
 
-    _startpos = pos;
-    std::cout << "NewNPC spwaned: pos: " << pos << " type: " << _race << " Name: " << _name<< " is_healer: " << _ishealer << " sex: " << getAttribute(Character::sex) << std::endl;
+    setPosition(_startpos);
+    std::cout << "NewNPC spwaned: pos: " << _startpos << " type: " << _race << " Name: " << _name<< " is_healer: " << _ishealer << " sex: " << getAttribute(Character::sex) << std::endl;
 
     tmpField->setChar();
 
