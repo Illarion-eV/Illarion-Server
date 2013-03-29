@@ -161,7 +161,7 @@ void Player::login() throw(Player::LogoutException) {
     Field *target_position;
 
     // try to find a targetposition near the logout place...
-    position pos;
+    position pos = getPosition();
     target_position_found = _world->findEmptyCFieldNear(target_position, pos);
 
     if (!target_position_found) {
