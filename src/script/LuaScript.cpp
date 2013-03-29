@@ -528,7 +528,7 @@ void LuaScript::init_base_functions() {
         luabind::class_<position>("position")
         .def(luabind::constructor<>())
         .def(luabind::constructor<short int, short int, short int>())
-        .def(luabind::self == luabind::const_self)
+        .def(luabind::const_self == luabind::const_self)
         .def(luabind::tostring(luabind::const_self))
         .def_readwrite("x",&position::x)
         .def_readwrite("y",&position::y)
