@@ -60,7 +60,7 @@ bool World::deleteNPC(unsigned int npcid) {
     return true;
 }
 
-bool World::createDynamicNPC(const std::string &name, Character::race_type type, const position &pos, /*CCharacter::face_to dir,*/ Character::sex_type sex, const std::string &scriptname) {
+bool World::createDynamicNPC(const std::string &name, TYPE_OF_RACE_ID type, const position &pos, /*CCharacter::face_to dir,*/ Character::sex_type sex, const std::string &scriptname) {
     try {
 
         try {
@@ -603,7 +603,7 @@ bool World::getWeaponStruct(TYPE_OF_ITEM_ID id, WeaponStruct &ret) {
     }
 }
 
-bool World::getNaturalArmor(Character::race_type id, MonsterArmor &ret) {
+bool World::getNaturalArmor(TYPE_OF_RACE_ID id, MonsterArmor &ret) {
 
     if (Data::NaturalArmors.exists(id)) {
         ret = Data::NaturalArmors[id];
@@ -613,7 +613,7 @@ bool World::getNaturalArmor(Character::race_type id, MonsterArmor &ret) {
     }
 }
 
-bool World::getMonsterAttack(Character::race_type id, AttackBoni &ret) {
+bool World::getMonsterAttack(TYPE_OF_RACE_ID id, AttackBoni &ret) {
 
     if (Data::MonsterAttacks.exists(id)) {
         ret = Data::MonsterAttacks[id];

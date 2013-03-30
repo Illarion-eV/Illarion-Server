@@ -930,7 +930,7 @@ public:
     *@param scriptname scriptname
     *@return success of creation
     */
-    bool createDynamicNPC(const std::string &name, Character::race_type type, const position &pos, /*CCharacter::face_to dir,*/ Character::sex_type sex, const std::string &scriptname);
+    bool createDynamicNPC(const std::string &name, TYPE_OF_RACE_ID type, const position &pos, /*CCharacter::face_to dir,*/ Character::sex_type sex, const std::string &scriptname);
 
     /**
     *creates a list with all the players which are currently online and returns it
@@ -1078,11 +1078,11 @@ public:
 
     //! Laedt ein MonsterRst Struct anhand einer id.
     //\return true false der Struct gefunden wurde.
-    bool getNaturalArmor(Character::race_type id, MonsterArmor &ret);
+    bool getNaturalArmor(TYPE_OF_RACE_ID id, MonsterArmor &ret);
 
     //! Laedt ein Attack Boni struct anhand einer id
     //\return true wenn das Struct gefunden wurde
-    bool getMonsterAttack(Character::race_type id, AttackBoni &ret);
+    bool getMonsterAttack(TYPE_OF_RACE_ID id, AttackBoni &ret);
 
     /**
     *sends a Message to All Monitoring Clients

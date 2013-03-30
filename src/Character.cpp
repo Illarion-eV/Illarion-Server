@@ -827,7 +827,7 @@ void Character::setAttrib(const std::string &name, Attribute::attribute_t value)
     if (name == "faceto") {
         turn((direction)value);
     } else if (name == "racetyp") {
-        race = (race_type)value;
+        race = (TYPE_OF_RACE_ID)value;
         updateAppearanceForAll(true);
     } else {
         try {
@@ -1705,7 +1705,7 @@ void Character::setPosition(const position &pos) {
     this->pos = pos;
 }
 
-void Character::setRace(race_type race) {
+void Character::setRace(TYPE_OF_RACE_ID race) {
     this->race = race;
 }
 

@@ -66,7 +66,7 @@ struct MonsterStruct {
     typedef std::map<unsigned short, std::vector<itemdef_t> > itemtype;
     std::string nameDe;
     std::string nameEn;
-    Character::race_type race;
+    TYPE_OF_RACE_ID race;
     unsigned short hitpoints;
     bool canselfheal;
     Character::movement_type movement;

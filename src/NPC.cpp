@@ -28,7 +28,7 @@
 
 uint32_t NPC::counter = 0;
 
-NPC::NPC(TYPE_OF_CHARACTER_ID _id, const std::string &_name, Character::race_type _race, const position &_pos, Character::face_to dir, bool ishealer, Character::sex_type sex,
+NPC::NPC(TYPE_OF_CHARACTER_ID _id, const std::string &_name, TYPE_OF_RACE_ID _race, const position &_pos, Character::face_to dir, bool ishealer, Character::sex_type sex,
          const Character::appearance &appearance) : Character(appearance),
     _ishealer(ishealer), _startpos(_pos) {
 #ifdef Character_DEBUG

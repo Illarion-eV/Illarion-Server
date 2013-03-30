@@ -155,108 +155,6 @@ public:
         unsigned long int flags[ 4 ];
     };
 
-    enum race_type {  human = 0,
-                      dwarf = 1,
-                      halfling = 2,
-                      elf = 3,
-                      orc = 4,
-                      lizardman = 5,
-                      gnome = 6,
-                      healer = 7,
-                      troll = 9,
-                      mumie = 10,
-                      skeleton = 11,
-                      beholder = 12,
-                      blackbeholder = 13,
-                      transparentbeholder = 14,
-                      brownmummy = 15,
-                      bluemummy = 17,
-                      sheep = 18,
-                      spider = 19,
-                      demonskeleton = 20,
-                      redspider = 21,
-                      greenspider = 22,
-                      bluespider = 23,
-                      pig = 24,
-                      boar = 25,
-                      transparentspider = 26,
-                      wasp = 27,
-                      redwasp = 28,
-                      stonegolem = 30,
-                      brownstonegolem = 31,
-                      redstonegolem = 32,
-                      silverstonegolem = 33,
-                      transparentstonegolem = 34,
-                      cow = 37,
-                      bull = 38,
-                      wolf = 39,
-                      transparentwolf = 40,
-                      blackwolf = 41,
-                      greywolf = 42,
-                      redwolf = 43,
-                      redraptor = 48,
-                      silverbear = 49,
-                      blackbear = 50,
-                      bear = 51,
-                      raptor = 52,
-                      zombie = 53,
-                      hellhound = 54,
-                      imp = 55,
-                      iron_golem = 56,
-                      ratman = 57,
-                      dog = 58,
-                      beetle = 59,
-                      fox = 60,
-                      slime = 61,
-                      chicken = 62,
-                      bonedragon = 63,
-                      blackbonedragon = 64,
-                      redbonedragon = 65,
-                      transparentbonedragon = 66,
-                      greenbonedragon = 67,
-                      bluebonedragon = 68,
-                      goldbonedragon = 69,
-                      redmummy = 70,
-                      greymummy = 71,
-                      blackmummy = 72,
-                      goldmummy = 73,
-                      transparentskeleton = 74,
-                      blueskeleton = 75,
-                      greenskeleton = 76,
-                      goldgolem = 77,
-                      goldskeleton = 78,
-                      bluetroll = 79,
-                      blacktroll = 80,
-                      redtroll = 81,
-                      blackzombie = 82,
-                      transparentzombie = 83,
-                      redzombie = 84,
-                      blackhellhound = 85,
-                      transparenthellhound = 86,
-                      greenhellhound = 87,
-                      redhellhound = 88,
-                      redimp = 89,
-                      blackimp = 90,
-                      blueirongolem = 91,
-                      redratman = 92,
-                      greenratman = 93,
-                      blueratman = 94,
-                      reddog = 95,
-                      greydog = 96,
-                      blackdog = 97,
-                      greenbeetle = 98,
-                      copperbeetle = 99,
-                      redbeetle = 100,
-                      goldbeetle = 101,
-                      greyfox = 102,
-                      redslime = 103,
-                      blackslime = 104,
-                      transparentslime = 105,
-                      brownchicken = 106,
-                      redchicken = 107,
-                      blackchicken = 108,
-                   };
-    
     TYPE_OF_CHARACTER_ID getId() const;
     const std::string &getName() const;
     virtual std::string to_string() const = 0;
@@ -330,7 +228,7 @@ public:
 
     virtual unsigned short getType() const = 0;
 
-    inline race_type getRace() const {
+    inline TYPE_OF_RACE_ID getRace() const {
         return race;
     }
 
@@ -616,7 +514,7 @@ protected:
     void setId(TYPE_OF_CHARACTER_ID id);
     void setName(const std::string &name);
     void setPosition(const position &pos);
-    void setRace(race_type race);
+    void setRace(TYPE_OF_RACE_ID race);
     void setFaceTo(face_to faceTo);
     void setMagicFlags(magic_type type, uint64_t flags);
 
@@ -649,7 +547,7 @@ private:
     bool attackmode = false;
     std::string lastSpokenText = {};
     bool isinvisible = false;
-    race_type race = human;
+    TYPE_OF_RACE_ID race = 0;
     face_to faceto = north;    
     s_magic magic;
 };

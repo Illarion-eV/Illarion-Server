@@ -105,7 +105,7 @@ void NPCTable::reload() {
 
                     newNPC = new NPC(
                         npcID, npcName,
-                        Character::race_type(row["npc_type"].as<uint32_t>()),
+                        row["npc_type"].as<TYPE_OF_RACE_ID>(),
                         pos,
                         Character::face_to(row["npc_faceto"].as<uint32_t>()),
                         row["npc_is_healer"].as<bool>(),

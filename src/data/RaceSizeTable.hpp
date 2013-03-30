@@ -37,7 +37,7 @@ public:
     virtual std::vector<std::string> getColumnNames() override;
     virtual uint16_t assignId(const Database::ResultTuple &row) override;
     virtual RaceSizeStruct assignTable(const Database::ResultTuple &row) override;
-    uint8_t getRelativeSize(Character::race_type race, uint16_t size);
+    uint8_t getRelativeSize(TYPE_OF_RACE_ID race, uint16_t size);
 };
 
 #endif

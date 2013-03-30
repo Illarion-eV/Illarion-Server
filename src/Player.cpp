@@ -849,7 +849,7 @@ void Player::check_logindata() throw(Player::LogoutException) {
         onlinetime = charRow["chr_onlinetime"].as<time_t>();
         lastsavetime = charRow["chr_lastsavetime"].as<time_t>();
         setAttribute(Character::sex, charRow["chr_sex"].as<uint16_t>());
-        setRace((Character::race_type) charRow["chr_race"].as<uint16_t>());
+        setRace(charRow["chr_race"].as<TYPE_OF_RACE_ID>());
 
         // first we check the status since we already retrieved it
         switch (status) {

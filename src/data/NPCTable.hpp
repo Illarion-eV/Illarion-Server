@@ -34,7 +34,7 @@ class World;
 struct NPCStruct {
     position NPCPos;
     std::string Name;
-    Character::race_type type;
+    TYPE_OF_RACE_ID type;
     Character::face_to faceto;
     std::vector<struct NPCTalk> speechTexts;
     unsigned short int walk_range;

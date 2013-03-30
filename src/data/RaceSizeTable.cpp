@@ -43,7 +43,7 @@ RaceSizeStruct RaceSizeTable::assignTable(const Database::ResultTuple &row) {
     return sizes;
 }
 
-uint8_t RaceSizeTable::getRelativeSize(Character::race_type race, uint16_t size) {
+uint8_t RaceSizeTable::getRelativeSize(TYPE_OF_RACE_ID race, uint16_t size) {
     // relative size is between 50 and 120 (in percent) and a linear interploation between min and max size
     const auto raceId = static_cast<uint16_t>(race);
 

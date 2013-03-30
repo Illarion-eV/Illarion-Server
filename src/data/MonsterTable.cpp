@@ -80,7 +80,7 @@ void MonsterTable::reload() {
                 const uint32_t id = row["mob_monsterid"].as<uint32_t>();
                 temprecord.nameDe = row["mob_name_de"].as<std::string>();
                 temprecord.nameEn = row["mob_name_en"].as<std::string>();
-                temprecord.race = Character::race_type(row["mob_race"].as<uint16_t>());
+                temprecord.race = row["mob_race"].as<TYPE_OF_RACE_ID>();
                 temprecord.hitpoints = row["mob_hitpoints"].as<uint16_t>();
                 temprecord.canselfheal = row["mob_canhealself"].as<bool>();
                 temprecord.canattack = row["mob_canattack"].as<bool>();
