@@ -99,6 +99,9 @@ public:
         lowerright = 3
     } mapreferences;
 
+    virtual unsigned short getType() const override {
+        return player;
+    }
 
     virtual std::string to_string() const override;
 
@@ -342,9 +345,9 @@ public:
 
     //! Sets the active magic type of a player (druid/mage/...)
     //\param newMagType Magierichtung, die jetzt aktiv ist (0 Magier, 1 Priester, 2 Barde, 3 Druide)
-    virtual void set_magic_type(magic_type newMagType) override {
-        magic.type=newMagType;
-        sendMagicFlags(magic.type);
+    virtual void setMagicType(magic_type newMagType) override {
+        Character::setMagicType(newMagType);
+        sendMagicFlags(newMagType);
     }
 
     virtual std::string getSkillName(TYPE_OF_SKILL_ID s) const override;
@@ -459,6 +462,8 @@ public:
     // player gets informed about something
     virtual void inform(const std::string &text, informType type = informServer) const override;
     virtual void inform(const std::string &german, const std::string &english, informType type = informServer) const override;
+
+    virtual void turn(direction dir) override;
 
     // player heard something
     virtual void receiveText(talk_type tt, const std::string &message, Character *cc) override;

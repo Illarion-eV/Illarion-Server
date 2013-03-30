@@ -174,7 +174,7 @@ void LongTimeCharacterEffects::checkEffects() {
 bool LongTimeCharacterEffects::save() {
     using namespace Database;
 
-    if (owner && owner->character != Character::player) {
+    if (owner && owner->getType() != Character::player) {
         std::cerr << "called save for LongtimeCharacterEffects but owner was no player" << std::endl;
         return false;
     }
@@ -222,7 +222,7 @@ bool LongTimeCharacterEffects::save() {
 bool LongTimeCharacterEffects::load() {
     using namespace Database;
 
-    if (owner->character != Character::player) {
+    if (owner->getType() != Character::player) {
         std::cerr << "called load for LongtimeCharacterEffects but owner was no player" << std::endl;
         return false;
     }

@@ -131,7 +131,7 @@ std::vector<NPC *> World::getNPCSInRangeOf(const position &pos, uint8_t range) c
 }
 
 void World::itemInform(Character *user, const ScriptItem &item, const ItemLookAt &lookAt) {
-    if (user->character != Character::player) {
+    if (user->getType() != Character::player) {
         return;
     }
 
@@ -182,7 +182,7 @@ bool World::changeItem(ScriptItem item) {
         item.owner->characterItems[ item.itempos ] = (Item)item;
 
         //Wenn character ein Spieler ist ein update schicken
-        if (item.owner->character == Character::player) {
+        if (item.owner->getType() == Character::player) {
             dynamic_cast<Player *>(item.owner)->sendCharacterItemAtPos(item.itempos);
         }
 

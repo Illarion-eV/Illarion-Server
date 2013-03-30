@@ -216,7 +216,7 @@ CharDescription::CharDescription(TYPE_OF_CHARACTER_ID id, const std::string &des
 AppearanceTC::AppearanceTC(Character *cc, const Player *receivingPlayer) : BasicServerCommand(SC_APPEARANCE_TC) {
     addIntToBuffer(cc->getId());
 
-    if (cc->character == Character::player) {
+    if (cc->getType() == Character::player) {
         Player *player = dynamic_cast<Player *>(cc);
 
         if (receivingPlayer->knows(player)) {
@@ -226,17 +226,17 @@ AppearanceTC::AppearanceTC(Character *cc, const Player *receivingPlayer) : Basic
             std::string english = "Someone";
             addStringToBuffer(receivingPlayer->nls(german, english));
         }
-    } else if (cc->character == Character::monster) {
+    } else if (cc->getType() == Character::monster) {
         Monster *monster = dynamic_cast<Monster *>(cc);
         addStringToBuffer(receivingPlayer->nls(monster->nameDe, monster->getName()));
     } else {
         addStringToBuffer(cc->getName());
     }
 
-    addShortIntToBuffer(cc->race);
+    addShortIntToBuffer(cc->getRace());
     addUnsignedCharToBuffer(cc->getAttribute(Character::sex));
     addShortIntToBuffer(cc->getAttribute(Character::hitpoints));
-    addUnsignedCharToBuffer(Data::RaceSizes.getRelativeSize(cc->race, cc->getAttribute(Character::height)));
+    addUnsignedCharToBuffer(Data::RaceSizes.getRelativeSize(cc->getRace(), cc->getAttribute(Character::height)));
     const Character::appearance appearance = cc->getAppearance();
     addUnsignedCharToBuffer(appearance.hairtype);
     addUnsignedCharToBuffer(appearance.beardtype);

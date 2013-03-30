@@ -689,7 +689,7 @@ void World::checkMonsters() {
             monster.effects.checkEffects();
 
             MonsterStruct monStruct;
-            bool foundMonster = MonsterDescriptions->find(monster.getType(), monStruct) ;
+            bool foundMonster = MonsterDescriptions->find(monster.getMonsterType(), monStruct) ;
 
             if (monster.canAct()) {
                 if (!monster.getOnRoute()) {
@@ -800,10 +800,10 @@ void World::checkMonsters() {
 
                             MonsterStruct monsterdef;
 
-                            bool hasDefinition = MonsterDescriptions->find(monster.getType() , monsterdef);
+                            bool hasDefinition = MonsterDescriptions->find(monster.getMonsterType() , monsterdef);
 
                             if (!hasDefinition) {
-                                Logger::error(LogFacility::World) << "Data for Healing not Found for monsterrace: " << monster.getType() << Log::end;
+                                Logger::error(LogFacility::World) << "Data for Healing not Found for monsterrace: " << monster.getMonsterType() << Log::end;
                             }
 
                             if (tempr <= 5 && hasDefinition && monsterdef.canselfheal) {
@@ -820,7 +820,7 @@ void World::checkMonsters() {
                                     if (abs(xoffs) > spawn->getRange() || abs(yoffs) > spawn->getRange()) {
                                         // monster out of spawn range, remove it from spawn
                                         monster.setSpawn(nullptr);
-                                        unsigned int type = monster.getType();
+                                        unsigned int type = monster.getMonsterType();
                                         spawn->dead(type);
                                     }
 
@@ -974,7 +974,7 @@ void World::checkMonsters() {
     for (MONSTERVECTOR::iterator newMonIt = newMonsters.begin(); newMonIt != newMonsters.end(); ++newMonIt) {
         Monsters.push_back((*newMonIt));
         MonsterStruct monStruct;
-        bool foundMonster = MonsterDescriptions->find((*newMonIt)->getType(), monStruct) ;
+        bool foundMonster = MonsterDescriptions->find((*newMonIt)->getMonsterType(), monStruct) ;
 
         if (foundMonster && monStruct.script) {
             monStruct.script->onSpawn((*newMonIt));

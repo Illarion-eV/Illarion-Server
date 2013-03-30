@@ -81,7 +81,6 @@ Player::Player(boost::shared_ptr<NetInterface> newConnection) throw(Player::Logo
 
     screenwidth = 0;
     screenheight = 0;
-    character = player;
     SetAlive(true);
     SetMovement(walk);
 
@@ -215,7 +214,7 @@ void Player::login() throw(Player::LogoutException) {
     _world->sendCharacterMoveToAllVisiblePlayers(this, NORMALMOVE, 4);
     // additional nop info
     _world->sendSpinToAllVisiblePlayers(this);
-    cmd.reset(new PlayerSpinTC(faceto, getId()));
+    cmd.reset(new PlayerSpinTC(getFaceTo(), getId()));
     Connection->addCommand(cmd);
 
     // send attributes
@@ -240,7 +239,7 @@ void Player::login() throw(Player::LogoutException) {
 
 
     // send magic skills
-    sendMagicFlags(magic.type);
+    sendMagicFlags(getMagicType());
 
     checkBurden();
 
@@ -676,7 +675,7 @@ void Player::sendAllSkills() {
 
 void Player::sendMagicFlags(int type) {
     if ((type >= 0) && (type < 4)) {
-        ServerCommandPointer cmd(new UpdateMagicFlagsTC(type, magic.flags[ type ]));
+        ServerCommandPointer cmd(new UpdateMagicFlagsTC(type, getMagicFlags(type)));
         Connection->addCommand(cmd);
     }
 }
@@ -850,7 +849,7 @@ void Player::check_logindata() throw(Player::LogoutException) {
         onlinetime = charRow["chr_onlinetime"].as<time_t>();
         lastsavetime = charRow["chr_lastsavetime"].as<time_t>();
         setAttribute(Character::sex, charRow["chr_sex"].as<uint16_t>());
-        race = (Character::race_type) charRow["chr_race"].as<uint16_t>();
+        setRace((Character::race_type) charRow["chr_race"].as<uint16_t>());
 
         // first we check the status since we already retrieved it
         switch (status) {
@@ -916,8 +915,6 @@ void Player::check_logindata() throw(Player::LogoutException) {
             throw LogoutException(WRONGPWD);
         }
 
-        character = Character::player;
-
         Database::SelectQuery playerQuery(connection);
         playerQuery.addColumn("player", "ply_posx");
         playerQuery.addColumn("player", "ply_posy");
@@ -971,7 +968,7 @@ void Player::check_logindata() throw(Player::LogoutException) {
         pos.y = playerRow["ply_posy"].as<int32_t>();
         pos.z = playerRow["ply_posz"].as<int32_t>();
         setPosition(pos);
-        faceto = (Character::face_to) playerRow["ply_faceto"].as<uint16_t>();
+        setFaceTo((Character::face_to) playerRow["ply_faceto"].as<uint16_t>());
 
         setAttribute(Character::age, playerRow["ply_age"].as<uint16_t>());
         setAttribute(Character::weight, playerRow["ply_weight"].as<uint16_t>());
@@ -991,11 +988,11 @@ void Player::check_logindata() throw(Player::LogoutException) {
         setAttribute(Character::foodlevel, playerRow["ply_foodlevel"].as<uint32_t>());
 
         SetAlive(playerRow["ply_lifestate"].as<uint16_t>() != 0);
-        magic.type = (magic_type) playerRow["ply_magictype"].as<uint16_t>();
-        magic.flags[MAGE] = playerRow["ply_magicflagsmage"].as<uint64_t>();
-        magic.flags[PRIEST] = playerRow["ply_magicflagspriest"].as<uint64_t>();
-        magic.flags[BARD] = playerRow["ply_magicflagsbard"].as<uint64_t>();
-        magic.flags[DRUID] = playerRow["ply_magicflagsdruid"].as<uint64_t>();
+        setMagicType(magic_type(playerRow["ply_magictype"].as<uint16_t>()));
+        setMagicFlags(MAGE, playerRow["ply_magicflagsmage"].as<uint64_t>());
+        setMagicFlags(PRIEST, playerRow["ply_magicflagspriest"].as<uint64_t>());
+        setMagicFlags(BARD, playerRow["ply_magicflagsbard"].as<uint64_t>());
+        setMagicFlags(DRUID, playerRow["ply_magicflagsdruid"].as<uint64_t>());
         poisonvalue = playerRow["ply_poison"].as<uint16_t>();
         mental_capacity = playerRow["ply_mental_capacity"].as<uint32_t>();
         _appearance.hairtype = playerRow["ply_hair"].as<uint16_t>();
@@ -1080,16 +1077,16 @@ bool Player::save() throw() {
             query.addAssignColumn<int32_t>("ply_posx", getPosition().x);
             query.addAssignColumn<int32_t>("ply_posy", getPosition().y);
             query.addAssignColumn<int32_t>("ply_posz", getPosition().z);
-            query.addAssignColumn<uint16_t>("ply_faceto", (uint16_t) faceto);
+            query.addAssignColumn<uint16_t>("ply_faceto", (uint16_t) getFaceTo());
             query.addAssignColumn<uint16_t>("ply_hitpoints", getAttribute(Character::hitpoints));
             query.addAssignColumn<uint16_t>("ply_mana", getAttribute(Character::mana));
             query.addAssignColumn<uint32_t>("ply_foodlevel", getAttribute(Character::foodlevel));
             query.addAssignColumn<uint32_t>("ply_lifestate", IsAlive() ? 1 : 0);
-            query.addAssignColumn<uint32_t>("ply_magictype", (uint32_t) magic.type);
-            query.addAssignColumn<uint64_t>("ply_magicflagsmage", magic.flags[MAGE]);
-            query.addAssignColumn<uint64_t>("ply_magicflagspriest", magic.flags[PRIEST]);
-            query.addAssignColumn<uint64_t>("ply_magicflagsbard", magic.flags[BARD]);
-            query.addAssignColumn<uint64_t>("ply_magicflagsdruid", magic.flags[DRUID]);
+            query.addAssignColumn<uint32_t>("ply_magictype", (uint32_t) getMagicType());
+            query.addAssignColumn<uint64_t>("ply_magicflagsmage", getMagicFlags(MAGE));
+            query.addAssignColumn<uint64_t>("ply_magicflagspriest", getMagicFlags(PRIEST));
+            query.addAssignColumn<uint64_t>("ply_magicflagsbard", getMagicFlags(BARD));
+            query.addAssignColumn<uint64_t>("ply_magicflagsdruid", getMagicFlags(DRUID));
             query.addAssignColumn<uint16_t>("ply_poison", poisonvalue);
             query.addAssignColumn<uint32_t>("ply_mental_capacity", mental_capacity);
             query.addAssignColumn<uint16_t>("ply_hair", _appearance.hairtype);
@@ -1577,6 +1574,11 @@ unsigned short int Player::increaseSkill(TYPE_OF_SKILL_ID skill, short int amoun
     return major;
 }
 
+void Player::turn(direction dir) {
+    Character::turn(dir);
+    increaseActionPoints(-P_SPIN_COST);
+}
+
 void Player::receiveText(talk_type tt, const std::string &message, Character *cc) {
     ServerCommandPointer cmd(new SayTC(cc->getPosition(), message));
 
@@ -1621,18 +1623,15 @@ void Player::deleteAllSkills() {
 }
 
 void Player::teachMagic(unsigned char type,unsigned char flag) {
-    //>0 braucht nicht abgefragt werden da unsinged char immer >=0 sein muss
-    if ((type < 4)) {
+/*
+    if (type < 4) {
         unsigned long int tflags=0;
 
         for (int i = 0; i < 4; ++i) {
-            //  std::cout << magic.flags[ i ] << " ";
             tflags|=magic.flags[ i ];
         }
 
-        // Prfen ob der Char schon flags hat. Wenn neun dann neue Magierichtung.
         if (tflags == 0) {
-            //   std::cout << "tflags==0, PARAMTYPE type= " << type << std::endl;
             switch (type) {
             case 0:
                 magic.type = MAGE;
@@ -1658,10 +1657,10 @@ void Player::teachMagic(unsigned char type,unsigned char flag) {
 
         unsigned long int temp = 1;
         temp <<= flag;
-        //std::cout << "addiere flag " << temp << std::endl;
         magic.flags[ type ] |= temp;
         sendMagicFlags(magic.type);
     }
+*/
 }
 
 void Player::inform(const std::string &message, informType type) const {
@@ -1735,8 +1734,8 @@ bool Player::move(direction dir, uint8_t mode) {
     closeOnMove();
 
     // if we actively move we look into that direction...
-    if (mode != PUSH && dir != dir_up && dir != dir_down) {
-        faceto = (Character::face_to)dir;
+    if (mode != PUSH) {
+        turn(dir);
     }
 
     if (mode == RUNNING && loadFactor() != LoadLevel::unburdened) {

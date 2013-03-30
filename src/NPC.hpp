@@ -68,6 +68,10 @@ public:
     */
     virtual ~NPC() override;
 
+    virtual unsigned short getType() const override {
+        return npc;
+    }
+
     /**
     * gets the healer state of this npc
     * @return if the npc is a healer or not

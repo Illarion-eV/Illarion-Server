@@ -503,10 +503,10 @@ public:
 
 class PSpinActionTS : public BasicClientCommand {
 private:
-    uint8_t direction;
+    direction dir;
 
 public:
-    PSpinActionTS(uint8_t dir);
+    PSpinActionTS(direction dir);
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
     virtual ClientCommandPointer clone() override;

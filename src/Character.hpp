@@ -120,14 +120,14 @@ public:
     };
 
     enum face_to {
-        north = 0,
-        northeast = 1,
-        east = 2,
-        southeast = 3,
-        south = 4,
-        southwest = 5,
-        west = 6,
-        northwest = 7
+        north = dir_north,
+        northeast = dir_northeast,
+        east = dir_east,
+        southeast = dir_southeast,
+        south = dir_south,
+        southwest = dir_southwest,
+        west = dir_west,
+        northwest = dir_northwest
     };
 
     enum informType {
@@ -144,6 +144,119 @@ public:
         unsigned short int minor = 0;
     };
 
+    enum movement_type {
+        walk = 0,
+        fly = 1,
+        crawl = 2
+    };
+
+    struct s_magic {
+        magic_type type;
+        unsigned long int flags[ 4 ];
+    };
+
+    enum race_type {  human = 0,
+                      dwarf = 1,
+                      halfling = 2,
+                      elf = 3,
+                      orc = 4,
+                      lizardman = 5,
+                      gnome = 6,
+                      healer = 7,
+                      troll = 9,
+                      mumie = 10,
+                      skeleton = 11,
+                      beholder = 12,
+                      blackbeholder = 13,
+                      transparentbeholder = 14,
+                      brownmummy = 15,
+                      bluemummy = 17,
+                      sheep = 18,
+                      spider = 19,
+                      demonskeleton = 20,
+                      redspider = 21,
+                      greenspider = 22,
+                      bluespider = 23,
+                      pig = 24,
+                      boar = 25,
+                      transparentspider = 26,
+                      wasp = 27,
+                      redwasp = 28,
+                      stonegolem = 30,
+                      brownstonegolem = 31,
+                      redstonegolem = 32,
+                      silverstonegolem = 33,
+                      transparentstonegolem = 34,
+                      cow = 37,
+                      bull = 38,
+                      wolf = 39,
+                      transparentwolf = 40,
+                      blackwolf = 41,
+                      greywolf = 42,
+                      redwolf = 43,
+                      redraptor = 48,
+                      silverbear = 49,
+                      blackbear = 50,
+                      bear = 51,
+                      raptor = 52,
+                      zombie = 53,
+                      hellhound = 54,
+                      imp = 55,
+                      iron_golem = 56,
+                      ratman = 57,
+                      dog = 58,
+                      beetle = 59,
+                      fox = 60,
+                      slime = 61,
+                      chicken = 62,
+                      bonedragon = 63,
+                      blackbonedragon = 64,
+                      redbonedragon = 65,
+                      transparentbonedragon = 66,
+                      greenbonedragon = 67,
+                      bluebonedragon = 68,
+                      goldbonedragon = 69,
+                      redmummy = 70,
+                      greymummy = 71,
+                      blackmummy = 72,
+                      goldmummy = 73,
+                      transparentskeleton = 74,
+                      blueskeleton = 75,
+                      greenskeleton = 76,
+                      goldgolem = 77,
+                      goldskeleton = 78,
+                      bluetroll = 79,
+                      blacktroll = 80,
+                      redtroll = 81,
+                      blackzombie = 82,
+                      transparentzombie = 83,
+                      redzombie = 84,
+                      blackhellhound = 85,
+                      transparenthellhound = 86,
+                      greenhellhound = 87,
+                      redhellhound = 88,
+                      redimp = 89,
+                      blackimp = 90,
+                      blueirongolem = 91,
+                      redratman = 92,
+                      greenratman = 93,
+                      blueratman = 94,
+                      reddog = 95,
+                      greydog = 96,
+                      blackdog = 97,
+                      greenbeetle = 98,
+                      copperbeetle = 99,
+                      redbeetle = 100,
+                      goldbeetle = 101,
+                      greyfox = 102,
+                      redslime = 103,
+                      blackslime = 104,
+                      transparentslime = 105,
+                      brownchicken = 106,
+                      redchicken = 107,
+                      blackchicken = 108,
+                   };
+    
     TYPE_OF_CHARACTER_ID getId() const;
     const std::string &getName() const;
     virtual std::string to_string() const = 0;
@@ -184,12 +297,14 @@ public:
         return false;
     }
 
-    inline unsigned short get_magic_type() const {
+    inline unsigned short getMagicType() const {
         return magic.type;
     }
 
-    inline virtual void set_magic_type(magic_type newMagType) {
-        magic.type=newMagType;
+    inline virtual void setMagicType(magic_type newMagType) {
+        if (newMagType < 4) {
+            magic.type=newMagType;
+        }
     }
 
     void setOnRoute(bool onr) {
@@ -205,19 +320,21 @@ public:
     }
 
 
-    inline unsigned long int get_magic_flags(unsigned char type) const {
-        return magic.flags[type];
+    inline unsigned long int getMagicFlags(unsigned char type) const {
+        if (type < 4) {
+            return magic.flags[type];
+        } else {
+            return 0;
+        }
     }
 
-    inline unsigned short get_character() const {
-        return character;
-    }
+    virtual unsigned short getType() const = 0;
 
-    inline unsigned short get_race() const {
+    inline race_type getRace() const {
         return race;
     }
 
-    inline unsigned short get_face_to() const {
+    inline face_to getFaceTo() const {
         return faceto;
     }
 
@@ -225,7 +342,7 @@ public:
         return false;
     }
 
-    virtual TYPE_OF_CHARACTER_ID getType() const {
+    virtual TYPE_OF_CHARACTER_ID getMonsterType() const {
         return 0;
     }
 
@@ -389,132 +506,11 @@ public:
 
     typedef std::map<TYPE_OF_SKILL_ID, skillvalue> SKILLMAP;
 
-    enum movement_type {
-        walk = 0,
-        fly = 1,
-        crawl = 2
-    };
-
     movement_type GetMovement() const;
     void SetMovement(movement_type tmovement);
 
     void AddWeight();
     void SubWeight();
-
-    struct s_magic {
-        magic_type type;
-        unsigned long int flags[ 4 ];
-    };
-
-    enum race_type {  human = 0,
-                      dwarf = 1,
-                      halfling = 2,
-                      elf = 3,
-                      orc = 4,
-                      lizardman = 5,
-                      gnome = 6,
-                      healer = 7,
-                      troll = 9,
-                      mumie = 10,
-                      skeleton = 11,
-                      beholder = 12,
-                      blackbeholder = 13,
-                      transparentbeholder = 14,
-                      brownmummy = 15,
-                      bluemummy = 17,
-                      sheep = 18,
-                      spider = 19,
-                      demonskeleton = 20,
-                      redspider = 21,
-                      greenspider = 22,
-                      bluespider = 23,
-                      pig = 24,
-                      boar = 25,
-                      transparentspider = 26,
-                      wasp = 27,
-                      redwasp = 28,
-                      stonegolem = 30,
-                      brownstonegolem = 31,
-                      redstonegolem = 32,
-                      silverstonegolem = 33,
-                      transparentstonegolem = 34,
-                      cow = 37,
-                      bull = 38,
-                      wolf = 39,
-                      transparentwolf = 40,
-                      blackwolf = 41,
-                      greywolf = 42,
-                      redwolf = 43,
-                      redraptor = 48,
-                      silverbear = 49,
-                      blackbear = 50,
-                      bear = 51,
-                      raptor = 52,
-                      zombie = 53,
-                      hellhound = 54,
-                      imp = 55,
-                      iron_golem = 56,
-                      ratman = 57,
-                      dog = 58,
-                      beetle = 59,
-                      fox = 60,
-                      slime = 61,
-                      chicken = 62,
-                      bonedragon = 63,
-                      blackbonedragon = 64,
-                      redbonedragon = 65,
-                      transparentbonedragon = 66,
-                      greenbonedragon = 67,
-                      bluebonedragon = 68,
-                      goldbonedragon = 69,
-                      redmummy = 70,
-                      greymummy = 71,
-                      blackmummy = 72,
-                      goldmummy = 73,
-                      transparentskeleton = 74,
-                      blueskeleton = 75,
-                      greenskeleton = 76,
-                      goldgolem = 77,
-                      goldskeleton = 78,
-                      bluetroll = 79,
-                      blacktroll = 80,
-                      redtroll = 81,
-                      blackzombie = 82,
-                      transparentzombie = 83,
-                      redzombie = 84,
-                      blackhellhound = 85,
-                      transparenthellhound = 86,
-                      greenhellhound = 87,
-                      redhellhound = 88,
-                      redimp = 89,
-                      blackimp = 90,
-                      blueirongolem = 91,
-                      redratman = 92,
-                      greenratman = 93,
-                      blueratman = 94,
-                      reddog = 95,
-                      greydog = 96,
-                      blackdog = 97,
-                      greenbeetle = 98,
-                      copperbeetle = 99,
-                      redbeetle = 100,
-                      goldbeetle = 101,
-                      greyfox = 102,
-                      redslime = 103,
-                      blackslime = 104,
-                      transparentslime = 105,
-                      brownchicken = 106,
-                      redchicken = 107,
-                      blackchicken = 108,
-                   };
-
-    race_type race;
-
-    character_type character;
-
-    s_magic magic;
-
-    face_to faceto;
 
     inline virtual void setClippingActive(bool tclippingActive) {}
     inline virtual bool getClippingActive() const {
@@ -573,7 +569,7 @@ public:
     bool weightOK(TYPE_OF_ITEM_ID id, int count, Container *tcont) const;
 
     virtual void turn(direction dir);
-    virtual void turn(const position &posi);
+    void turn(const position &posi);
 
     virtual void receiveText(talk_type tt, const std::string &message, Character *cc);
 
@@ -620,6 +616,9 @@ protected:
     void setId(TYPE_OF_CHARACTER_ID id);
     void setName(const std::string &name);
     void setPosition(const position &pos);
+    void setRace(race_type race);
+    void setFaceTo(face_to faceTo);
+    void setMagicFlags(magic_type type, uint64_t flags);
 
     bool _is_on_route = false;
     short int poisonvalue = 0;
@@ -640,7 +639,7 @@ protected:
 private:
     TYPE_OF_CHARACTER_ID id;
     std::string name;
-    movement_type _movement;
+    movement_type _movement = walk;
     std::vector<Attribute> attributes;
     bool alive = true;
     short int actionPoints = NP_MAX_AP;
@@ -650,6 +649,9 @@ private:
     bool attackmode = false;
     std::string lastSpokenText = {};
     bool isinvisible = false;
+    race_type race = human;
+    face_to faceto = north;    
+    s_magic magic;
 };
 
 std::ostream &operator<<(std::ostream &os, const Character &character);

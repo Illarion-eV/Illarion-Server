@@ -922,7 +922,7 @@ void World::what_command(Player *cp) {
             } else if (id >= NPC_BASE) {
                 message << "- NPC " << id-NPC_BASE;
             } else if (id >= MONSTER_BASE) {
-                message << "- Monster " << dynamic_cast<Monster *>(character)->getType();
+                message << "- Monster " << dynamic_cast<Monster *>(character)->getMonsterType();
             } else {
                 message << "- Player";
             }

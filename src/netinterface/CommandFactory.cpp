@@ -77,7 +77,7 @@ CommandFactory::CommandFactory() {
     templateList[ C_CHARMOVE_TS ] = new CharMoveTS();
 
     for (int i = C_PSPINRSTART_TS; i <= C_PSPINREND_TS; ++i) {
-        templateList[i] = new PSpinActionTS(i - C_PSPINRSTART_TS);
+        templateList[i] = new PSpinActionTS(static_cast<direction>(i - C_PSPINRSTART_TS));
     }
 
     templateList[ C_LOOKATCHARACTER_TS ] = new LookAtCharacterTS();

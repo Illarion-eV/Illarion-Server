@@ -55,7 +55,7 @@ void LongTimeAction::setLastAction(std::shared_ptr<LuaScript> script, SouTar src
 
     if (srce.character != NULL) {
         _sourceId = _source.character->getId();
-        _sourceCharType = _source.character->character;
+        _sourceCharType = _source.character->getType();
     }
 }
 
@@ -347,7 +347,7 @@ void LongTimeAction::changeSource(Character *cc) {
     _source.pos = cc->getPosition();
     _source.character = cc;
     _sourceId = cc->getId();
-    _sourceCharType = cc->character;
+    _sourceCharType = cc->getType();
 }
 
 void LongTimeAction::changeSource(ScriptItem sI) {

@@ -163,7 +163,7 @@ void World::sendMessageToAllCharsInRange(const std::string &german, const std::s
         }
     }
 
-    if (cc->character == Character::player) {
+    if (cc->getType() == Character::player) {
         // tell all npcs
         for (const auto &npc : Npc.findAllCharactersInRangeOf(cc->getPosition(), range)) {
             tempMessage=prefix + npc->alterSpokenMessage(english, npc->getLanguageSkill(cc->getActiveLanguage()));
@@ -230,7 +230,7 @@ void World::sendLanguageMessageToAllCharsInRange(const std::string &message, Cha
         }
     }
 
-    if (cc->character == Character::player) {
+    if (cc->getType() == Character::player) {
         // tell all npcs
         for (const auto &npc : npcs) {
             tempMessage=languagePrefix(cc->getActiveLanguage()) + npc->alterSpokenMessage(spokenMessage, npc->getLanguageSkill(cc->getActiveLanguage()));

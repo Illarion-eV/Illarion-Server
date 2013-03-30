@@ -427,7 +427,7 @@ bool World::characterAttacks(Character *cp) {
                         cp->setAttackMode(false);
 
                         //set lasttargetseen to false if the player who was attacked is death
-                        if (cp->character == Character::monster) {
+                        if (cp->getType() == Character::monster) {
                             Monster *mon = dynamic_cast<Monster *>(cp);
                             mon->lastTargetSeen = false;
                         }
@@ -435,7 +435,7 @@ bool World::characterAttacks(Character *cp) {
                         // dead people cannot be attacked, reset counter
                         //temppl->nrOfAttackers=0;
 
-                        if (cp->character == Character::player) {
+                        if (cp->getType() == Character::player) {
                             ServerCommandPointer cmd(new TargetLostTC());
                             dynamic_cast<Player *>(cp)->Connection->addCommand(cmd);
                         }
@@ -456,21 +456,21 @@ bool World::characterAttacks(Character *cp) {
                 if (cp->isInRange(temppl, temppl->getScreenRange())) {
                     MonsterStruct monStruct;
 
-                    if (MonsterDescriptions->find(temppl->getType(), monStruct)) {
+                    if (MonsterDescriptions->find(temppl->getMonsterType(), monStruct)) {
                         if (monStruct.script) {
                             monStruct.script->onAttacked(temppl,cp);
                         } else {
-                            std::cerr<<"No script initialized for monster: "<<temppl->getType()<<" on Attack not called!"<<std::endl;
+                            std::cerr<<"No script initialized for monster: "<<temppl->getMonsterType()<<" on Attack not called!"<<std::endl;
                         }
                     } else {
-                        std::cerr<<"Didn't finde Monster Description for: "<< temppl->getType() << " can't call onAttacked!"<<std::endl;
+                        std::cerr<<"Didn't finde Monster Description for: "<< temppl->getMonsterType() << " can't call onAttacked!"<<std::endl;
                     }
 
                     // Ziel ist tot
                     if (!cp->attack(temppl)) {
                         cp->setAttackMode(false);
 
-                        if (cp->character == Character::player) {
+                        if (cp->getType() == Character::player) {
                             ServerCommandPointer cmd(new TargetLostTC());
                             dynamic_cast<Player *>(cp)->Connection->addCommand(cmd);
                         }
@@ -478,10 +478,10 @@ bool World::characterAttacks(Character *cp) {
                         //check for turning into attackackers direction
                         std::vector<Player *>temp;
                         temp.clear();
-                        findPlayersInSight(temppl->getPosition(), static_cast<uint8_t>(9), temp, temppl->faceto);
+                        findPlayersInSight(temppl->getPosition(), static_cast<uint8_t>(9), temp, temppl->getFaceTo());
 
                         //add the current attacker to the list
-                        if (cp->character == Character::player) {
+                        if (cp->getType() == Character::player) {
                             temp.push_back(dynamic_cast<Player *>(cp));
                         }
 
@@ -501,7 +501,7 @@ bool World::characterAttacks(Character *cp) {
         // target not found, out of view
         cp->setAttackMode(false);
 
-        if (cp->character == Character::player) {
+        if (cp->getType() == Character::player) {
             ServerCommandPointer cmd(new TargetLostTC());
             dynamic_cast<Player *>(cp)->Connection->addCommand(cmd);
         }

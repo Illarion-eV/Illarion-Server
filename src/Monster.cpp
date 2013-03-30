@@ -34,10 +34,9 @@ uint32_t Monster::counter = 0;
 
 Monster::Monster(const TYPE_OF_CHARACTER_ID &type, const position &newpos, SpawnPoint *spawnpoint) throw(unknownIDException)
     : Character(),lastTargetPosition(position(0,0,0)),lastTargetSeen(false), spawn(spawnpoint), monstertype(type) {
-    character = monster;
     setId(MONSTER_BASE + counter++ % (NPC_BASE-MONSTER_BASE));
     SetAlive(true);
-    setType(type);
+    setMonsterType(type);
     setPosition(newpos);
 }
 
@@ -58,7 +57,7 @@ void Monster::performStep(position targetpos) {
     }
 }
 
-void Monster::setType(const TYPE_OF_CHARACTER_ID &type) throw(unknownIDException) {
+void Monster::setMonsterType(const TYPE_OF_CHARACTER_ID &type) throw(unknownIDException) {
     deleteAllSkills();
 
 
@@ -112,7 +111,7 @@ void Monster::setType(const TYPE_OF_CHARACTER_ID &type) throw(unknownIDException
     }
 
     SetMovement(monsterdef.movement);
-    race = monsterdef.race;
+    setRace(monsterdef.race);
     _canAttack = monsterdef.canattack;
     setName(monsterdef.nameEn);
     nameDe = monsterdef.nameDe;
@@ -148,14 +147,14 @@ void Monster::SetAlive(bool t) {
 
         MonsterStruct monStruct;
 
-        if (MonsterDescriptions->find(getType(), monStruct)) {
+        if (MonsterDescriptions->find(getMonsterType(), monStruct)) {
             if (monStruct.script) {
                 monStruct.script->onDeath(this);
             } else {
-                std::cerr<<"Script for Monster: "<<getType()<<" not active!"<<std::endl;
+                std::cerr<<"Script for Monster: "<<getMonsterType()<<" not active!"<<std::endl;
             }
         } else {
-            std::cerr<<"Can't finde Description for Monster: " << getType() << " on Death not called!"<<std::endl;
+            std::cerr<<"Can't finde Description for Monster: " << getMonsterType() << " on Death not called!"<<std::endl;
         }
     }
 }
@@ -164,14 +163,14 @@ bool Monster::attack(Character *target) {
 
     MonsterStruct monStruct;
 
-    if (MonsterDescriptions->find(getType(), monStruct)) {
+    if (MonsterDescriptions->find(getMonsterType(), monStruct)) {
         if (monStruct.script) {
             monStruct.script->onAttack(this,target);
         } else {
-            std::cerr<<"Script for Monster: "<<getType()<<"not active!"<<std::endl;
+            std::cerr<<"Script for Monster: "<<getMonsterType()<<"not active!"<<std::endl;
         }
     } else {
-        std::cerr<<"Can't find Description for Monster: " << getType() << " onAttack not called!" << std::endl;
+        std::cerr<<"Can't find Description for Monster: " << getMonsterType() << " onAttack not called!" << std::endl;
     }
 
     return Character::attack(target);
@@ -185,17 +184,17 @@ void Monster::heal() {
 void Monster::receiveText(talk_type tt, const std::string &message, Character *cc) {
     MonsterStruct monStruct;
 
-    if (MonsterDescriptions->find(getType(), monStruct)) {
+    if (MonsterDescriptions->find(getMonsterType(), monStruct)) {
         if (monStruct.script && monStruct.script->existsEntrypoint("receiveText")) {
             if (this != cc) {
                 monStruct.script->receiveText(this, tt, message, cc);
             }
         }
     } else {
-        std::cerr<<"Can't find description for monster: " << getType() << " receiveText not called!"<<std::endl;
+        std::cerr<<"Can't find description for monster: " << getMonsterType() << " receiveText not called!"<<std::endl;
     }
 }
 
 std::string Monster::to_string() const {
-    return "Monster of race " + std::to_string((int)race) + "(" + std::to_string(getId()) + ")";
+    return "Monster of race " + std::to_string((int)getRace()) + "(" + std::to_string(getId()) + ")";
 }

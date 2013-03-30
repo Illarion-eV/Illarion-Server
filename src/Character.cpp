@@ -156,12 +156,7 @@ bool Character::getNextStepDir(const position &goal, direction &dir) const {
 
 
 Character::Character(const appearance &appearance) : effects(this), waypoints(this), _world(World::get()), _appearance(appearance), attributes(ATTRIBUTECOUNT) {
-    race = human;
-    character = player;
-
     SetAlive(true);
-    _movement = walk;
-
     for (int i = 0; i < MAX_BODY_ITEMS + MAX_BELT_SLOTS; ++i) {
         characterItems[ i ].reset();
     }
@@ -184,7 +179,6 @@ Character::Character(const appearance &appearance) : effects(this), waypoints(th
     attributes[attitude] = Attribute(0);
     attributes[luck] = Attribute(0);
 
-    faceto = north;
     backPackContents = nullptr;
 
     magic.type = MAGE;
@@ -667,7 +661,7 @@ void Character::SetAlive(bool t) {
     bool wasAlive = alive;
     alive = t;
 
-    if (wasAlive && !alive && (character == player)) {
+    if (wasAlive && !alive && (getType() == player)) {
         updateAppearanceForAll(true);
 
         Player *player = dynamic_cast<Player *>(this);
@@ -684,7 +678,7 @@ bool Character::attack(Character *target) {
     if (target && target->IsAlive()) {
         if (!actionRunning()) {
             if (target->IsAlive()) {
-                if (target->character == player) {
+                if (target->getType() == player) {
                     Player *pl = dynamic_cast<Player *>(target);
                     pl->ltAction->actionDisturbed(this);
                 }
@@ -693,7 +687,7 @@ bool Character::attack(Character *target) {
             }
         }
 
-        if (character == player) {
+        if (getType() == player) {
             if (target->IsAlive()) {
                 ServerCommandPointer cmd(new BBSendActionTC(id, name, 1 , "Attacks : " + target->to_string()));
                 _world->monitoringClientList->sendCommand(cmd);
@@ -1256,7 +1250,7 @@ int Character::getLanguageSkill(int languageSkillNumber) const {
 void Character::talk(talk_type tt, const std::string &message) { //only for say, whisper, shout
     talk(tt, message, message);
 
-    if (character == player) {
+    if (getType() == player) {
 #ifdef LOG_TALK
         std::string talkType;
 
@@ -1314,14 +1308,13 @@ void Character::talk(talk_type tt, const std::string &german, const std::string 
 }
 
 void Character::turn(direction dir) {
-    if (dir != dir_up && dir != dir_down && dir != static_cast<direction>(faceto)) {
+    if (dir < 8 && dir != static_cast<direction>(faceto)) {
         faceto = (Character::face_to)dir;
         _world->sendSpinToAllVisiblePlayers(this);
     }
 }
 
 void Character::turn(const position &posi) {
-    //attack the player which we have found
     short int xoffs = posi.x - pos.x;
     short int yoffs = posi.y - pos.y;
 
@@ -1333,7 +1326,6 @@ void Character::turn(const position &posi) {
 }
 
 bool Character::move(direction dir, bool active) {
-    //Ggf Scriptausfhrung wenn man sich von einen Feld wegbewegt.
     _world->TriggerFieldMove(this,false);
 
     // if we move we look into that direction...
@@ -1437,7 +1429,7 @@ uint16_t Character::getMovementCost(const Field *sourcefield) const {
         break;
     }
 
-    if (character != player) {
+    if (getType() != player) {
         walkcost += STANDARD_MONSTER_WALKING_COST;
     }
 
@@ -1711,6 +1703,20 @@ void Character::setName(const std::string &name) {
 
 void Character::setPosition(const position &pos) {
     this->pos = pos;
+}
+
+void Character::setRace(race_type race) {
+    this->race = race;
+}
+
+void Character::setFaceTo(face_to faceTo) {
+    faceto = faceTo;
+}
+
+void Character::setMagicFlags(magic_type type, uint64_t flags) {
+    if (type < 4) {
+        magic.flags[type] = flags;
+    }
 }
 
 std::ostream &operator<<(std::ostream &os, const Character &character) {

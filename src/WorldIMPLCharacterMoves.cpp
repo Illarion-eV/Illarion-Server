@@ -64,7 +64,7 @@ void World::checkFieldAfterMove(Character *cc, Field *cfstart) {
 
             case MUSICFIELD:
 
-                if (cc->character == Character::player) {
+                if (cc->getType() == Character::player) {
                     dynamic_cast<Player *>(cc)->startMusic(which.flags);
                 }
 
@@ -96,54 +96,10 @@ void World::TriggerFieldMove(Character *cc, bool moveto) {
     }
 }
 
-bool World::spinPlayer(Player *cp, unsigned char d) {
-
-    // die Blickrichtung �ndern
-    switch (d) {
-    case 0 :
-        cp->faceto = Character::north;
-        break;
-
-    case 1 :
-        cp->faceto = Character::northeast;
-        break;
-
-    case 2 :
-        cp->faceto = Character::east;
-        break;
-
-    case 3 :
-        cp->faceto = Character::southeast;
-        break;
-
-    case 4 :
-        cp->faceto = Character::south;
-        break;
-
-    case 5 :
-        cp->faceto = Character::southwest;
-        break;
-
-    case 6 :
-        cp->faceto = Character::west;
-        break;
-
-    case 7 :
-        cp->faceto = Character::northwest;
-        break;
-    }
-
-    // allen sichtbaren Spielern die Drehung �bermitteln
-    sendSpinToAllVisiblePlayers(cp);
-
-    return true;
-
-}
-
 
 void World::sendSpinToAllVisiblePlayers(Character *cc) {
     for (const auto &p : Players.findAllCharactersInScreen(cc->getPosition())) {
-        ServerCommandPointer cmd(new PlayerSpinTC(cc->faceto, cc->getId()));
+        ServerCommandPointer cmd(new PlayerSpinTC(cc->getFaceTo(), cc->getId()));
         p->Connection->addCommand(cmd);
     }
 }
@@ -240,7 +196,7 @@ void World::sendCharsInVector(const std::vector<T *> &vec, Player *cp, bool send
             if ((xoffs != 0) || (yoffs != 0) || (zoffs != RANGEDOWN)) {
                 ServerCommandPointer cmd(new MoveAckTC(cc->getId(), charPos, PUSH, 0));
                 cp->Connection->addCommand(cmd);
-                cmd.reset(new PlayerSpinTC(cc->faceto, cc->getId()));
+                cmd.reset(new PlayerSpinTC(cc->getFaceTo(), cc->getId()));
 
                 if (sendSpin) {
                     cp->Connection->addCommand(cmd);

@@ -36,10 +36,9 @@ NPC::NPC(TYPE_OF_CHARACTER_ID _id, const std::string &_name, Character::race_typ
 #endif
     setName(_name);
     _startpos = _pos;
-    faceto=dir;
-    race=_race;
+    setFaceTo(dir);
+    setRace(_race);
     setAttribute(Character::sex, sex);
-    character = npc;
 
     // take database id as npc id with appropriate offset so that npc ids are constant
     if (_id == DYNNPC_BASE) {

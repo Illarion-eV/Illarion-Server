@@ -663,12 +663,6 @@ public:
     */
     void checkFieldAfterMove(Character *cp, Field *cfstart);
 
-    //! dreht den Spieler in die durch d angegebene Richtung
-    // \param cp Zeiger auf den Spieler der gedreht werden soll
-    // \param d neue Blickrichtung : 0->Norden bis 7->NO im Uhrzeigersinn, 8 nach oben, 9 nach unten
-    // \return true falls Drehung ausgefhrt werden konnte, false sonst
-    bool spinPlayer(Player *cp, unsigned char d);
-
     //! schickt eine Verschiebungsmeldung (Player/NPC/Monster) an alle Player im Sichtbereich
     // \param ccp der bewegte Character
     void sendPassiveMoveToAllVisiblePlayers(Character *ccp);

@@ -259,7 +259,7 @@ void LookAtCharacterTS::performAction(Player *player) {
         if (monster) {
             MonsterStruct mon;
 
-            if (MonsterDescriptions->find(monster->getType(), mon)) {
+            if (MonsterDescriptions->find(monster->getMonsterType(), mon)) {
                 if (mon.script && mon.script->existsEntrypoint("lookAtMonster")) {
                     mon.script->lookAtMonster(player, monster, mode);
                     return;
@@ -331,14 +331,12 @@ void CastTS::performAction(Player *player) {
     player->ltAction->abortAction();
 
     bool paramOK = true;
-    //CScript* skript = NULL;
 
     std::shared_ptr<LuaMagicScript> LuaMageScript;
 
-    // berprfen, ob der Spieler die Runen beherrscht
-    if ((spellId & player->magic.flags[ player->magic.type ]) == spellId) {
+    if ((spellId & player->getMagicFlags(player->getMagicType())) == spellId) {
         Spell spell;
-        spell.magicType = player->magic.type;
+        spell.magicType = player->getMagicType();
         spell.spellId = spellId;
 
         if (Data::Spells.exists(spell)) {
@@ -346,7 +344,6 @@ void CastTS::performAction(Player *player) {
         }
     }
 
-    //Source des Castens zuweisen
     SouTar Source, Target;
     Source.character = dynamic_cast<Character *>(player);
     Source.pos = player->getPosition();
@@ -363,34 +360,26 @@ void CastTS::performAction(Player *player) {
                 Logger::error(LogFacility::Script) << "cant find field for casting at pos " << castPosition << Log::end;
                 paramOK = false;
             } else {
-                // Feld gefunden
                 if (temp->IsPlayerOnField() || temp->IsMonsterOnField() || temp->IsNPCOnField()) {
                     Character *tmpCharacter = World::get()->findCharacterOnField(castPosition);
 
                     if (tmpCharacter) {
-                        //Nothing to do here
                     } else {
                         Logger::debug(LogFacility::Script) << "Character found at target field!" << Log::end;
                     }
 
-                    // Character auf Feld ist ein Spieler
-                    if ((tmpCharacter->character == Character::player) && (LuaMageScript)) {
+                    if ((tmpCharacter->getType() == Character::player) && (LuaMageScript)) {
                         Logger::debug(LogFacility::Script) << "Target Character: player" << Log::end;
-                        //Lua Script zuweisung
                         Target.character = tmpCharacter;
                         Target.pos = tmpCharacter->getPosition();
                         Target.Type = LUA_CHARACTER;
-                    }
-                    // Character auf Feld ist ein NPC
-                    else if ((tmpCharacter->character == Character::npc) && (LuaMageScript)) {
+                    } else if ((tmpCharacter->getType() == Character::npc) && (LuaMageScript)) {
                         Logger::debug(LogFacility::Script) << "Target Character: NPC" << Log::end;
-                        //Lua Script zuweisung
                         Target.character = tmpCharacter;
                         Target.pos = tmpCharacter->getPosition();
                         Target.Type = LUA_CHARACTER;
-                    } else if ((tmpCharacter->character == Character::monster) && (LuaMageScript)) {
+                    } else if ((tmpCharacter->getType() == Character::monster) && (LuaMageScript)) {
                         Logger::debug(LogFacility::Script) << "Target Character: monster" << Log::end;
-                        //Lua Script zuweisung
                         Target.character = tmpCharacter;
                         Target.pos = tmpCharacter->getPosition();
                         Target.Type = LUA_CHARACTER;
@@ -660,16 +649,16 @@ void CastTS::performAction(Player *player) {
             case LUA_CHARACTER:
                 LuaMageScript->CastMagicOnCharacter(player, Target.character, static_cast<unsigned char>(LTS_NOLTACTION));
 
-                if (Target.character->character == Character::monster) {
+                if (Target.character->getType() == Character::monster) {
                     MonsterStruct monStruct;
                     Monster *temp = dynamic_cast<Monster *>(Target.character);
 
-                    if (MonsterDescriptions->find(temp->getType(), monStruct)) {
+                    if (MonsterDescriptions->find(temp->getMonsterType(), monStruct)) {
                         if (monStruct.script) {
                             monStruct.script->onCasted(temp,player);
                         }
                     } else {
-                        std::cerr<<"Didn't finde Monster Description for: "<< temp->getType() << " can't call onCasted!"<<std::endl;
+                        std::cerr<<"Didn't finde Monster Description for: "<< temp->getMonsterType() << " can't call onCasted!"<<std::endl;
                     }
 
                 }
@@ -759,9 +748,9 @@ void UseTS::performAction(Player *player) {
                 Character *tmpCharacter = World::get()->findCharacterOnField(usePosition);
 
                 if (tmpCharacter) {
-                    if (tmpCharacter->character == Character::player) {
+                    if (tmpCharacter->getType() == Character::player) {
                         Logger::debug(LogFacility::Script) << "Character is a player!" << Log::end;
-                    } else if (tmpCharacter->character == Character::npc) {
+                    } else if (tmpCharacter->getType() == Character::npc) {
                         Logger::debug(LogFacility::Script) << "Character is a NPC!" << Log::end;
 
                         NPC *scriptNPC = dynamic_cast<NPC *>(tmpCharacter);
@@ -772,16 +761,16 @@ void UseTS::performAction(Player *player) {
                             Source.character = scriptNPC;
                             Source.Type = LUA_CHARACTER;
                         }
-                    } else if (tmpCharacter->character == Character::monster) {
+                    } else if (tmpCharacter->getType() == Character::monster) {
                         Logger::debug(LogFacility::Script) << "Character is a monster!" << Log::end;
 
                         Monster *scriptMonster = dynamic_cast<Monster *>(tmpCharacter);
                         MonsterStruct monStruct;
 
-                        if (MonsterDescriptions->find(scriptMonster->getType(),monStruct)) {
+                        if (MonsterDescriptions->find(scriptMonster->getMonsterType(),monStruct)) {
                             LuaMonsterScript = monStruct.script;
                         } else {
-                            Logger::error(LogFacility::Script) << "try to use Monster but id: " << scriptMonster->getType() << " not found in database!" << Log::end;
+                            Logger::error(LogFacility::Script) << "try to use Monster but id: " << scriptMonster->getMonsterType() << " not found in database!" << Log::end;
                         }
 
                         if (LuaMonsterScript) {
@@ -1522,8 +1511,8 @@ ClientCommandPointer LookAtMapItemTS::clone() {
     return cmd;
 }
 
-PSpinActionTS::PSpinActionTS(uint8_t dir) : BasicClientCommand(C_PSPINRSTART_TS) {
-    direction = dir;
+PSpinActionTS::PSpinActionTS(direction dir) : BasicClientCommand(C_PSPINRSTART_TS) {
+    this->dir = dir;
 }
 
 void PSpinActionTS::decodeData() {
@@ -1532,15 +1521,13 @@ void PSpinActionTS::decodeData() {
 void PSpinActionTS::performAction(Player *player) {
     time(&(player->lastaction));
     player->ltAction->abortAction();
-    Logger::debug(LogFacility::World) << *player << " changes his dircetion to " << direction << Log::end;
+    Logger::debug(LogFacility::World) << *player << " changes his dircetion to " << (int)dir << Log::end;
 
-    if (World::get()->spinPlayer(player, direction)) {
-        player->increaseActionPoints(-P_SPIN_COST);
-    }
+    player->turn((direction)dir);
 }
 
 ClientCommandPointer PSpinActionTS::clone() {
-    ClientCommandPointer cmd(new PSpinActionTS(direction));
+    ClientCommandPointer cmd(new PSpinActionTS(dir));
     return cmd;
 }
 
