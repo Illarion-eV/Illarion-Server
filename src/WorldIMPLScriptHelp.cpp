@@ -67,7 +67,7 @@ bool World::createDynamicNPC(const std::string &name, TYPE_OF_RACE_ID type, cons
             NPC *newNPC = new NPC(DYNNPC_BASE, name, type, pos, (Character::face_to)4/*dir*/, false, sex, {});
 
             // add npc to npc list
-            Npc.push_back(newNPC);
+            Npc.insert(newNPC);
 
             // set field to occupied
             Field *tempf;
@@ -95,12 +95,24 @@ bool World::createDynamicNPC(const std::string &name, TYPE_OF_RACE_ID type, cons
 }
 
 
-const World::PLAYERVECTOR &World::getPlayersOnline() const {
-    return Players;
+std::vector<Player *> World::getPlayersOnline() const {
+    std::vector<Player *> list;
+
+    for (const auto &player : Players) {
+        list.push_back(player);
+    }
+
+    return list;
 }
 
-const World::NPCVECTOR &World::getNPCS() const {
-    return Npc;
+std::vector<NPC *> World::getNPCS() const {
+    std::vector<NPC *> list;
+
+    for (const auto &npc : Npc) {
+        list.push_back(npc);
+    }
+
+    return list;
 }
 
 std::vector<Character *> World::getCharactersInRangeOf(const position &pos, uint8_t range) const {

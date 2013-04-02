@@ -514,34 +514,25 @@ bool World::characterAttacks(Character *cp) {
 }
 
 
-bool World::killMonster(Monster *monsterp) {
-    if (monsterp) {
-        MONSTERVECTOR::iterator newIt;
+bool World::killMonster(TYPE_OF_CHARACTER_ID id) {
+    auto monster = Monsters.findID(id);
 
-        if (Monsters.getIterator(monsterp->getId(), newIt)) {
-            MONSTERVECTOR::iterator temp;
-            killMonster(newIt, temp);
-            return true;
+    if (monster) {
+        const auto &monsterPos = monster->getPosition();
+        Field *field;
+
+        if (GetPToCFieldAt(field, monsterPos)) {
+            field->removeChar();
         }
+
+        sendRemoveCharToVisiblePlayers(monster->getId(), monsterPos);
+        Monsters.erase(id);
+        delete monster;
+
+        return true;
     }
 
     return false;
-}
-
-
-void World::killMonster(MONSTERVECTOR::iterator monsterIt, MONSTERVECTOR::iterator &newIt) {
-    Field *tempf;
-    Monster *monster = *monsterIt;
-    const auto &monsterPos = monster->getPosition();
-
-    if (GetPToCFieldAt(tempf, monsterPos)) {
-        tempf->removeChar();
-    }
-
-    sendRemoveCharToVisiblePlayers(monster->getId(), monsterPos);
-
-    delete monster;
-    newIt = Monsters.erase(monsterIt);
 }
 
 

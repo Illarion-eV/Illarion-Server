@@ -25,30 +25,58 @@
 #include "utility.hpp"
 #include "constants.hpp"
 
-template < class _Tp >
-class CharacterContainer : public std::vector < _Tp > {
+template <class T>
+class CharacterContainer {
 public:
-    _Tp find(const std::string &name) const;
-    _Tp findID(TYPE_OF_CHARACTER_ID id) const;
-    _Tp find(const position &pos) const;
-    bool find(const position &pos, _Tp &ret) const;
+    typedef T* pointer;
+
+private:
+    std::vector<pointer> container;
+
+public:
+    typename std::vector<pointer>::const_iterator begin() const {
+        return container.begin();
+    }
+
+    typename std::vector<pointer>::const_iterator end() const {
+        return container.end();
+    }
+
+    bool empty() const {
+        return container.empty();
+    }
+
+    size_t size() const {
+        return container.size();
+    }
+
+    void insert(pointer p) {
+        container.push_back(p);
+    }
+
+    pointer find(const std::string &name) const;
+    pointer findID(TYPE_OF_CHARACTER_ID id) const;
+    pointer find(const position &pos) const;
+    bool find(const position &pos, pointer &ret) const;
     
+    bool erase(TYPE_OF_CHARACTER_ID id);
     bool remove(const position &pos);
+    void clear() {
+        container.clear();
+    }
 
-    bool getIterator(TYPE_OF_CHARACTER_ID id, typename CharacterContainer::iterator &newIt);
-
-    std::vector < _Tp > findAllCharactersInRangeOf(const position &pos, int distancemetric) const;
-    std::vector < _Tp > findAllCharactersInMaxRangeOf(const position &pos, int distancemetric) const;
-    std::vector < _Tp > findAllCharactersInScreen(const position &pos) const;
-    std::vector < _Tp > findAllAliveCharactersInRangeOf(const position &pos, int distancemetric) const;
-    std::vector < _Tp > findAllAliveCharactersInRangeOfOnSameMap(const position &pos, int distancemetric) const;
-    bool findAllCharactersWithXInRangeOf(short int startx, short int endx, std::vector < _Tp > &ret) const;
-
+    std::vector<pointer> findAllCharactersInRangeOf(const position &pos, int distancemetric) const;
+    std::vector<pointer> findAllCharactersInMaxRangeOf(const position &pos, int distancemetric) const;
+    std::vector<pointer> findAllCharactersInScreen(const position &pos) const;
+    std::vector<pointer> findAllAliveCharactersInRangeOf(const position &pos, int distancemetric) const;
+    std::vector<pointer> findAllAliveCharactersInRangeOfOnSameMap(const position &pos, int distancemetric) const;
+    bool findAllCharactersWithXInRangeOf(short int startx, short int endx, std::vector<pointer> &ret) const;
 };
 
 
-template < class _Tp > _Tp CharacterContainer < _Tp > ::find(const std::string &n) const {
-    for (const auto &character : *this) {
+template <class T>
+auto CharacterContainer<T>::find(const std::string &n) const -> pointer {
+    for (const auto &character : container) {
         if (comparestrings_nocase(character->getName(), n)) {
             return character;
         }
@@ -58,8 +86,9 @@ template < class _Tp > _Tp CharacterContainer < _Tp > ::find(const std::string &
 }
 
 
-template < class _Tp > _Tp CharacterContainer < _Tp > ::findID(TYPE_OF_CHARACTER_ID id) const {
-    for (const auto &character : *this) {
+template <class T>
+auto CharacterContainer<T>::findID(TYPE_OF_CHARACTER_ID id) const -> pointer {
+    for (const auto &character : container) {
         if (character->getId() == id) {
             return character;
         }
@@ -69,8 +98,9 @@ template < class _Tp > _Tp CharacterContainer < _Tp > ::findID(TYPE_OF_CHARACTER
 }
 
 
-template < class _Tp > _Tp CharacterContainer < _Tp > ::find(const position &pos) const {
-    for (const auto &character : *this) {
+template <class T>
+auto CharacterContainer<T>::find(const position &pos) const -> pointer {
+    for (const auto &character : container) {
         if (character->getPosition() == pos) {
             return character;
         }
@@ -80,8 +110,9 @@ template < class _Tp > _Tp CharacterContainer < _Tp > ::find(const position &pos
 }
 
 
-template < class _Tp > bool CharacterContainer < _Tp > ::find(const position &pos, _Tp &ret) const {
-    for (const auto &character : *this) {
+template <class T>
+bool CharacterContainer<T>::find(const position &pos, pointer &ret) const {
+    for (const auto &character : container) {
         if (character->getPosition() == pos) {
             ret = character;
             return true;
@@ -91,11 +122,11 @@ template < class _Tp > bool CharacterContainer < _Tp > ::find(const position &po
     return false;
 }
 
-
-template < class _Tp > bool CharacterContainer < _Tp > ::remove(const position &pos) {
-    for (auto thisIterator = this->begin(); thisIterator < this->end(); ++thisIterator) {
-        if ((*thisIterator)->getPosition() == pos) {
-            erase(thisIterator);
+template <class T>
+bool CharacterContainer<T>::erase(TYPE_OF_CHARACTER_ID id) {
+    for (auto it = container.begin(); it != container.end(); ++it) {
+        if ((*it)->getId() == id) {
+            container.erase(it);
             return true;
         }
     }
@@ -104,23 +135,24 @@ template < class _Tp > bool CharacterContainer < _Tp > ::remove(const position &
 }
 
 
-template < class _Tp > bool CharacterContainer < _Tp > ::getIterator(TYPE_OF_CHARACTER_ID id, typename CharacterContainer::iterator &newIt) {
-    for (auto thisIterator = this->begin(); thisIterator < this->end(); ++thisIterator) {
-        if ((*thisIterator)->getId() == id) {
-            newIt = thisIterator;
+template <class T>
+bool CharacterContainer<T>::remove(const position &pos) {
+    for (auto it = container.begin(); it != container.end(); ++it) {
+        if ((*it)->getPosition() == pos) {
+            container.erase(it);
             return true;
         }
     }
 
     return false;
-
 }
 
 
-template < class _Tp > std::vector < _Tp > CharacterContainer < _Tp > ::findAllCharactersInRangeOf(const position &pos, int distancemetric) const {
-    std::vector < _Tp > temp;
+template <class T>
+auto CharacterContainer<T>::findAllCharactersInRangeOf(const position &pos, int distancemetric) const -> std::vector<pointer> {
+    std::vector<pointer> temp;
 
-    for (const auto &character : *this) {
+    for (const auto &character : container) {
         const auto &charPos = character->getPosition();
         short int dz = charPos.z - pos.z;
 
@@ -138,10 +170,11 @@ template < class _Tp > std::vector < _Tp > CharacterContainer < _Tp > ::findAllC
 }
 
 
-template < class _Tp > std::vector < _Tp > CharacterContainer < _Tp > ::findAllCharactersInScreen(const position &pos) const {
-    std::vector < _Tp > temp;
+template <class T>
+auto CharacterContainer<T>::findAllCharactersInScreen(const position &pos) const -> std::vector<pointer> {
+    std::vector<pointer> temp;
 
-    for (const auto &character : *this) {
+    for (const auto &character : container) {
         const auto &charPos = character->getPosition();
         short int dz = charPos.z - pos.z;
 
@@ -159,10 +192,11 @@ template < class _Tp > std::vector < _Tp > CharacterContainer < _Tp > ::findAllC
 }
 
 
-template < class _Tp > std::vector < _Tp > CharacterContainer < _Tp > ::findAllCharactersInMaxRangeOf(const position &pos, int distancemetric) const {
-    std::vector < _Tp > temp;
+template <class T>
+auto CharacterContainer<T>::findAllCharactersInMaxRangeOf(const position &pos, int distancemetric) const -> std::vector<pointer> {
+    std::vector<pointer> temp;
 
-    for (const auto &character : *this) {
+    for (const auto &character : container) {
         const auto &charPos = character->getPosition();
         short int dz = charPos.z - pos.z;
 
@@ -180,10 +214,11 @@ template < class _Tp > std::vector < _Tp > CharacterContainer < _Tp > ::findAllC
 }
 
 
-template < class _Tp > std::vector < _Tp > CharacterContainer < _Tp > ::findAllAliveCharactersInRangeOf(const position &pos, int distancemetric) const {
-    std::vector < _Tp > temp;
+template <class T>
+auto CharacterContainer<T>::findAllAliveCharactersInRangeOf(const position &pos, int distancemetric) const -> std::vector<pointer> {
+    std::vector<pointer> temp;
 
-    for (const auto &character : *this) {
+    for (const auto &character : container) {
         const auto &charPos = character->getPosition();
         short int dz = charPos.z - pos.z;
 
@@ -203,10 +238,11 @@ template < class _Tp > std::vector < _Tp > CharacterContainer < _Tp > ::findAllA
     return temp;
 }
 
-template < class _Tp > std::vector < _Tp > CharacterContainer < _Tp > ::findAllAliveCharactersInRangeOfOnSameMap(const position &pos, int distancemetric) const {
-    std::vector < _Tp > temp;
+template <class T>
+auto CharacterContainer<T>::findAllAliveCharactersInRangeOfOnSameMap(const position &pos, int distancemetric) const -> std::vector<pointer> {
+    std::vector<pointer> temp;
 
-    for (const auto &character : *this) {
+    for (const auto &character : container) {
         const auto &charPos = character->getPosition();
 
         if (charPos.z == pos.z) {
@@ -225,10 +261,11 @@ template < class _Tp > std::vector < _Tp > CharacterContainer < _Tp > ::findAllA
 }
 
 
-template < class _Tp > bool CharacterContainer < _Tp > ::findAllCharactersWithXInRangeOf(short int startx, short int endx, std::vector < _Tp > &ret) const {
+template <class T>
+bool CharacterContainer<T>::findAllCharactersWithXInRangeOf(short int startx, short int endx, std::vector<pointer> &ret) const {
     bool found_one = false;
 
-    for (const auto &character : *this) {
+    for (const auto &character : container) {
         const auto &charPos = character->getPosition();
 
         if ((charPos.x >= startx) && (charPos.x <= endx)) {

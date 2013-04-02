@@ -104,7 +104,7 @@ void LuaMonsterScript::onSpawn(Character *Monster) {
     callEntrypoint("onSpawn", fuse_Monster);
 }
 
-bool LuaMonsterScript::setTarget(Character *Monster, std::vector<Player *> &CandidateList, Player *&Target) {
+bool LuaMonsterScript::setTarget(Character *Monster, const std::vector<Player *> &CandidateList, Player *&Target) {
     Target = 0;
 
     if (!existsEntrypoint("setTarget")) {
@@ -114,8 +114,8 @@ bool LuaMonsterScript::setTarget(Character *Monster, std::vector<Player *> &Cand
     luabind::object luaCandidateList = luabind::newtable(_luaState);
     int index = 1;
 
-    for (auto it = CandidateList.begin(); it != CandidateList.end(); ++it) {
-        fuse_ptr<Character> fuse_it(*it);
+    for (const auto &player : CandidateList) {
+        fuse_ptr<Character> fuse_it(player);
         luaCandidateList[index++] = fuse_it;
     }
 

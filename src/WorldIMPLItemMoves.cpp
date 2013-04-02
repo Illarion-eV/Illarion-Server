@@ -1337,8 +1337,6 @@ void World::sendChangesOfContainerContentsIM(Container *cc) {
 
 void World::closeShowcaseForOthers(Player *target, Container *moved) {
     if (moved) {
-        PLAYERVECTOR::iterator titerator;
-
         for (const auto &player : Players) {
             if (target == player) {
                 continue;

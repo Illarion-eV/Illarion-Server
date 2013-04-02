@@ -113,7 +113,7 @@ void NPCTable::reload() {
                         appearance);
 
                     // add npc to npc list
-                    _world->Npc.push_back(newNPC);
+                    _world->Npc.insert(newNPC);
 
                     // set field to occupied
                     Field *tempf;

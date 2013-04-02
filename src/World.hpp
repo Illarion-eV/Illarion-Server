@@ -149,19 +149,19 @@ public:
     *a typedef for holding Players
     *@todo: change the three vectors @see PLAYERVECTOR, @see MONSTERVECTOR, @see NPCVECTOR so there is only one HARVECTOR
     */
-    typedef CharacterContainer < Player * > PLAYERVECTOR;
+    typedef CharacterContainer<Player> PLAYERVECTOR;
 
     /**
     *a typedef for holding monsters
     *@todo: change the three vectors @see PLAYERVECTOR, @see MONSTERVECTOR, @see NPCVECTOR so there is only one HARVECTOR
     */
-    typedef CharacterContainer < Monster * > MONSTERVECTOR;
+    typedef CharacterContainer<Monster> MONSTERVECTOR;
 
     /**
     *a typedef for holding npc's
     *@todo: change the three vectors @see PLAYERVECTOR, @see MONSTERVECTOR, @see NPCVECTOR so there is only one HARVECTOR
     */
-    typedef CharacterContainer < NPC * > NPCVECTOR;
+    typedef CharacterContainer<NPC> NPCVECTOR;
 
     /**
     *  a typedef for holding players which have logged out in a thread save
@@ -195,7 +195,7 @@ public:
     /**
     * new Monsters which should be spawned so the server didn't crash on creating monsters from monsters
     */
-    MONSTERVECTOR newMonsters;
+    std::vector<Monster *> newMonsters;
 
     /**
     *holds all npc's on the world
@@ -435,23 +435,7 @@ public:
     */
     bool characterAttacks(Character *cp);
 
-    /**
-    * kills one monster and drops his inventory on the map
-    * can be found in WorldIMPLTools.cpp
-    * @warning iterators on the monsters becomes invalid
-    * @param monsterp a pointer to the monster which should be killed
-    * @ true if the monster was deleted succesfully otherwise false
-    */
-    bool killMonster(Monster *monsterp);
-
-    /**
-    * kills one monster
-    * drops the invventory on the map and returns the iterator of the monster
-    * which is in the list after the killed monster.
-    * @param monsterIt iterator to the monster which should be killed
-    * @param newIt iterator the the next monster in the list
-    */
-    void killMonster(MONSTERVECTOR::iterator monsterIt, MONSTERVECTOR::iterator &newIt);
+    bool killMonster(TYPE_OF_CHARACTER_ID id);
 
     /**
     * looks for a field on the map
@@ -937,14 +921,14 @@ public:
     *to lua
     *@return the list with all the players currently online
     */
-    const PLAYERVECTOR &getPlayersOnline() const;
+    std::vector<Player *> getPlayersOnline() const;
 
     /**
     *creates a list with all the npcs which are currently online and returns it
     *to lua
     *@return the list with all the npcs currently online
     */
-    const NPCVECTOR &getNPCS() const;
+    std::vector<NPC *> getNPCS() const;
 
     /**
     *creates a list with all the characters in range around a specific position

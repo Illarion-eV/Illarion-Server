@@ -549,10 +549,10 @@ void World::checkPlayers() {
     time(&tempkeepalive);
     int temptime;
 
-    auto playerIterator = Players.begin();
+    std::vector<Player *> lostPlayers;
 
-    while (playerIterator < Players.end()) {
-        Player &player = **playerIterator;
+    for (const auto &playerPointer : Players) {
+        Player &player = *playerPointer;
 
         if (player.Connection->online) {
             temptime = tempkeepalive - player.lastkeepalive;
@@ -570,8 +570,6 @@ void World::checkPlayers() {
                 ServerCommandPointer cmd(new LogOutTC(UNSTABLECONNECTION));
                 player.Connection->shutdownSend(cmd);
             }
-
-            ++playerIterator;
         } else {
             const position &pos = player.getPosition();
 
@@ -584,12 +582,15 @@ void World::checkPlayers() {
 
             Logger::info(LogFacility::Player) << "logout of " << player << Log::end;
 
-            logoutScript->onLogout(*playerIterator);
+            logoutScript->onLogout(playerPointer);
 
-            PlayerManager::get()->getLogOutPlayers().non_block_push_back(*playerIterator);
-            playerIterator = Players.erase(playerIterator);
+            PlayerManager::get()->getLogOutPlayers().non_block_push_back(playerPointer);
             sendRemoveCharToVisiblePlayers(player.getId(), pos);
         }
+    }
+
+    for (const auto &player : lostPlayers) {
+        Players.erase(player->getId());
     }
 }
 
@@ -662,26 +663,23 @@ void World::checkMonsters() {
 
     // respawn ?
     if (monstertimer->next()) {
-        std::list<SpawnPoint>::iterator it;
-
         if (isSpawnEnabled()) {
-            for (it = SpawnList.begin(); it != SpawnList.end(); ++it) {
-                it->spawn();
+            for (auto &spawn : SpawnList) {
+                spawn.spawn();
             }
         } else {
             Logger::info(LogFacility::World) << "World::checkMonsters() spawning disabled!" << Log::end;
         }
     }
 
-    std::vector < Player * > temp;
-    auto monsterIterator = Monsters.begin();
-
     if (ap > 1) {
         --ap;
     }
 
-    while (monsterIterator < Monsters.end()) {
-        Monster &monster = **monsterIterator;
+    std::vector<Monster *> deadMonsters;
+
+    for (auto &monsterPointer : Monsters) {
+        Monster &monster = *monsterPointer;
 
         if (monster.IsAlive()) {
             monster.increaseActionPoints(ap);
@@ -714,7 +712,7 @@ void World::checkMonsters() {
                     }
 
                     //===============================================
-                    temp = Players.findAllAliveCharactersInRangeOf(monster.getPosition(), range);
+                    const auto temp = Players.findAllAliveCharactersInRangeOf(monster.getPosition(), range);
                     bool has_attacked=false;
                     //If we have found players which can be attacked directly and the monster can attack
                     Player *foundP = nullptr;
@@ -722,7 +720,7 @@ void World::checkMonsters() {
                     if ((!temp.empty()) && monster.canAttack()) {
                         //angreifen
                         //search for the target via script or the player with the lowest hp
-                        if (!monStruct.script || !monStruct.script->setTarget(*monsterIterator, temp, foundP)) {
+                        if (!monStruct.script || !monStruct.script->setTarget(monsterPointer, temp, foundP)) {
                             findPlayerWithLowestHP(temp, foundP);
                         }
 
@@ -737,7 +735,7 @@ void World::checkMonsters() {
                                 //check if we have a pointer to a script
                                 if (monStruct.script) {
                                     //Wenn Scriptaufruf erfolgreich den aktuellen schleifenablauf abbrechen.
-                                    if (monStruct.script->enemyNear(*monsterIterator, foundP)) {
+                                    if (monStruct.script->enemyNear(monsterPointer, foundP)) {
                                         continue; //Schleife fr dieses Monster abbrechen. Da es schon etwas diesne Schleifendurchlauf getan hat.
                                     }
                                 }
@@ -749,7 +747,7 @@ void World::checkMonsters() {
                             monster.turn(foundP->getPosition());
 
                             if (monster.canFight()) {    // enough FP to fight?
-                                has_attacked = characterAttacks(*monsterIterator);
+                                has_attacked = characterAttacks(monsterPointer);
                             } else {
                                 has_attacked = true;
                             }
@@ -757,7 +755,7 @@ void World::checkMonsters() {
                     }
 
                     if (!has_attacked) { //bewegen
-                        temp = Players.findAllAliveCharactersInRangeOf(monster.getPosition(), 15);
+                        const auto temp = Players.findAllAliveCharactersInRangeOf(monster.getPosition(), 15);
 
                         bool makeRandomStep=true;
 
@@ -765,7 +763,7 @@ void World::checkMonsters() {
                             Player *foundP2 = 0;
 
                             //search for the target via script or the player with the lowest hp
-                            if (!monStruct.script || !monStruct.script->setTarget(*monsterIterator, temp, foundP2)) {
+                            if (!monStruct.script || !monStruct.script->setTarget(monsterPointer, temp, foundP2)) {
                                 findPlayerWithLowestHP(temp, foundP2);
                             }
 
@@ -776,8 +774,7 @@ void World::checkMonsters() {
                                 //Call enemyNear Script when enemy found
                                 if (foundMonster) {
                                     if (monStruct.script) {
-                                        //Wenn Scriptaufruf erfolgreich den aktuellen schleifenablauf abbrechen.
-                                        if (monStruct.script->enemyOnSight(*monsterIterator, foundP2)) {
+                                        if (monStruct.script->enemyOnSight(monsterPointer, foundP2)) {
                                             continue; //abort all other walking actions because the script has returned TRUE
                                         }
                                     }
@@ -914,7 +911,7 @@ void World::checkMonsters() {
                     }
 
                     //===============================================
-                    temp = Players.findAllAliveCharactersInRangeOf(monster.getPosition(), range);
+                    const auto temp = Players.findAllAliveCharactersInRangeOf(monster.getPosition(), range);
 
                     //If we have found players which can be attacked directly and the monster can attack
                     if (!temp.empty()) {
@@ -924,7 +921,7 @@ void World::checkMonsters() {
                         //search for the player with the lowes hp
                         if (findPlayerWithLowestHP(temp, foundP)) {
                             if (foundMonster && monStruct.script) {
-                                monStruct.script->enemyNear(*monsterIterator, foundP);
+                                monStruct.script->enemyNear(monsterPointer, foundP);
                             } else {
                                 Logger::error(LogFacility::World) << "cant find a monster id for checking the script!" << Log::end;
                             }
@@ -933,18 +930,16 @@ void World::checkMonsters() {
                     }
 
                     //check if there is a player on sight
-                    temp = Players.findAllAliveCharactersInRangeOf(monster.getPosition(), 15);
+                    const auto temp2 = Players.findAllAliveCharactersInRangeOf(monster.getPosition(), 15);
 
-                    if (!temp.empty()) {
+                    if (!temp2.empty()) {
                         Player *foundP;
 
-                        if (findPlayerWithLowestHP(temp, foundP)) {
+                        if (findPlayerWithLowestHP(temp2, foundP)) {
                             //Call enemyNear Script when enemy found
                             if (foundMonster && monStruct.script) {
-                                monStruct.script->enemyOnSight(*monsterIterator, foundP);
+                                monStruct.script->enemyOnSight(monsterPointer, foundP);
                             }
-
-                            //else Logger::writeMessage("Monster","cant find the monster id for calling a script!");
                         }
                     }
 
@@ -952,37 +947,33 @@ void World::checkMonsters() {
                         monster.setOnRoute(false);
 
                         if (foundMonster && monStruct.script) {
-                            monStruct.script->abortRoute(*monsterIterator);
+                            monStruct.script->abortRoute(monsterPointer);
                         } else {
                             Logger::notice(LogFacility::Script) << "cant find the monster id for calling a script!" << Log::end;
                         }
                     }
                 }
-            } // ausreichend actionpoints
+            }
+        } else {
+            deadMonsters.push_back(monsterPointer);
+        }
+    }
 
-            monsterIterator++;
-        } //alive ?
-        else {
-            // tot
-            MONSTERVECTOR::iterator newIt;
-            killMonster(monsterIterator, newIt);
-            monsterIterator = newIt;
-        } //alive ?
-    }//alle Monster abgearbeitet
+    for (const auto &monster : deadMonsters) {
+        killMonster(monster->getId());
+    }
 
-    //Adding all new monsters to monsterlist und calling the onSpawn Script entry
-    for (MONSTERVECTOR::iterator newMonIt = newMonsters.begin(); newMonIt != newMonsters.end(); ++newMonIt) {
-        Monsters.push_back((*newMonIt));
+    for (auto &monster : newMonsters) {
+        Monsters.insert(monster);
         MonsterStruct monStruct;
-        bool foundMonster = MonsterDescriptions->find((*newMonIt)->getMonsterType(), monStruct) ;
+        bool foundMonster = MonsterDescriptions->find(monster->getMonsterType(), monStruct) ;
 
         if (foundMonster && monStruct.script) {
-            monStruct.script->onSpawn((*newMonIt));
+            monStruct.script->onSpawn(monster);
         }
 
     }
 
-    //clear new monsters so they can be added
     newMonsters.clear();
 }
 

@@ -167,7 +167,7 @@ int main(int argc, char *argv[]) {
                     world->monitoringClientList->clientConnect(newPlayer);
                 } else {
                     try {
-                        world->Players.push_back(newPlayer);
+                        world->Players.insert(newPlayer);
                         newPlayer->login();
                         loginScript->onLogin(newPlayer);
                         world->updatePlayerList();
