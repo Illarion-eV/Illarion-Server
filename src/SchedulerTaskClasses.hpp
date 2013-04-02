@@ -39,16 +39,14 @@ public:
     virtual ~SGlobalPlayerLearnrate() {}
 
     bool operator()(World *world) {
-        ccharactervector < Player * >::iterator playerIterator;
-
-        for (playerIterator = world->Players.begin(); playerIterator < world->Players.end(); ++playerIterator) {
-            if ((*playerIterator)->getMentalCapacity() > 0) {   //Prüfen ob aktueller Spieler MC > 0 hat
-                learnScript->reduceMC(*playerIterator);
+        for (const auto &player : world->Players) {
+            if (player->getMentalCapacity() > 0) {
+                learnScript->reduceMC(player);
             }
         }
 
-        nextCycle += 10; //Neue Zykluszeit berechnen (aller 10 Zyklen);
-        return true; //Task erneut einfügen
+        nextCycle += 10;
+        return true;
     }
 
 };
@@ -62,24 +60,20 @@ public:
     }
     virtual ~SGlobalMonsterLearnrate() {}
     bool operator()(World *world) {
-        ccharactervector < Monster * >::iterator monsterIterator;
-
-        for (monsterIterator = world->Monsters.begin(); monsterIterator < world->Monsters.end(); ++monsterIterator) {
-            if ((*monsterIterator)->getMentalCapacity() > 0) {   //Prüfen ob aktuelles Monster MC > 0 hat
-                learnScript->reduceMC(*monsterIterator);
+        for (const auto &monster : world->Monsters) {
+            if (monster->getMentalCapacity() > 0) {
+                learnScript->reduceMC(monster);
             }
         }
 
-        ccharactervector < NPC * >::iterator npcIterator;
-
-        for (npcIterator = world->Npc.begin(); npcIterator < world->Npc.end(); ++npcIterator) {
-            if ((*npcIterator)->getMentalCapacity() > 0) {
-                learnScript->reduceMC(*npcIterator);
+        for (const auto &npc : world->Npc) {
+            if (npc->getMentalCapacity() > 0) {
+                learnScript->reduceMC(npc);
             }
         }
 
-        nextCycle += 10; //Neue Zykluszeit berechnen (aller 30 Zyklen) zur Serverentlastung dafür die dreifache Senkung;
-        return true; //Task erneut einfügen
+        nextCycle += 10;
+        return true;
     }
 };
 
