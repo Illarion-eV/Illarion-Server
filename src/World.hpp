@@ -37,7 +37,7 @@
 #include <unordered_map>
 
 #include "NewClientView.hpp"
-#include "TccharacterVector.hpp"
+#include "CharacterContainer.hpp"
 #include "tvector.hpp"
 #include "SpawnPoint.hpp"
 #include "TableStructs.hpp"
@@ -149,19 +149,19 @@ public:
     *a typedef for holding Players
     *@todo: change the three vectors @see PLAYERVECTOR, @see MONSTERVECTOR, @see NPCVECTOR so there is only one HARVECTOR
     */
-    typedef ccharactervector < Player * > PLAYERVECTOR;
+    typedef CharacterContainer < Player * > PLAYERVECTOR;
 
     /**
     *a typedef for holding monsters
     *@todo: change the three vectors @see PLAYERVECTOR, @see MONSTERVECTOR, @see NPCVECTOR so there is only one HARVECTOR
     */
-    typedef ccharactervector < Monster * > MONSTERVECTOR;
+    typedef CharacterContainer < Monster * > MONSTERVECTOR;
 
     /**
     *a typedef for holding npc's
     *@todo: change the three vectors @see PLAYERVECTOR, @see MONSTERVECTOR, @see NPCVECTOR so there is only one HARVECTOR
     */
-    typedef ccharactervector < NPC * > NPCVECTOR;
+    typedef CharacterContainer < NPC * > NPCVECTOR;
 
     /**
     *  a typedef for holding players which have logged out in a thread save

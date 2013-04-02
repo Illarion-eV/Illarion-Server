@@ -77,7 +77,7 @@ noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
 		 db/InsertQuery.hpp db/ConnectionManager.hpp \
 		 db/QueryTables.hpp db/UpdateQuery.hpp db/SelectQuery.hpp \
 		 globals.hpp make_unique.hpp World.hpp Item.hpp \
-		 TccharacterVector.hpp SchedulerTaskClasses.hpp \
+		 CharacterContainer.hpp SchedulerTaskClasses.hpp \
 		 tpvector.hpp Random.hpp tvector.hpp NPC.hpp Scheduler.hpp \
 		 MapException.hpp PlayerManager.hpp Character.hpp \
 		 Attribute.hpp InitialConnection.hpp Logger.hpp utility.hpp \
