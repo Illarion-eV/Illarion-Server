@@ -333,7 +333,7 @@ void World::talkto_command(Player *cp, const std::string &ts) {
                 ss.str(player);
                 ss >> tid;
 
-                tempPl = Players.findID(tid);
+                tempPl = Players.find(tid);
 
                 if (tempPl) {
 #ifdef LOG_TALK
@@ -398,7 +398,7 @@ void World::ForceIntroduce(Player *cp, const std::string &ts) {
         ss >> tid;
 
         if (tid) {
-            Player *player = Players.findID(tid);
+            Player *player = Players.find(tid);
 
             if (player) {
                 forceIntroducePlayer(player, cp);
@@ -438,7 +438,7 @@ void World::teleportPlayerToOther(Player *cp, std::string ts) {
         ss >> tid;
 
         if (tid) {
-            tempPl = Players.findID(tid);
+            tempPl = Players.find(tid);
 
             if (tempPl) {
                 cp->Warp(tempPl->getPosition());
@@ -564,7 +564,7 @@ void World::summon_command(Player *cp, const std::string &tplayer) {
         ss >> tid;
 
         if (tid) {
-            tempPl = Players.findID(tid);
+            tempPl = Players.find(tid);
 
             if (tempPl) {
                 Logger::info(LogFacility::Admin) << *cp << " summons player " << *tempPl << " to " << cp->getPosition() << Log::end;
@@ -637,7 +637,7 @@ void World::ban_command(Player *cp, const std::string &timeplayer) {
                     ss >> tid;
 
                     if (tid) {
-                        tempPl = Players.findID(tid);
+                        tempPl = Players.find(tid);
                     }
                 }
 
@@ -691,7 +691,7 @@ void World::banbynumber(Player *cp, short int banhours, TYPE_OF_CHARACTER_ID tid
         return;
     }
 
-    Player *tempPl = Players.findID(tid);
+    Player *tempPl = Players.find(tid);
 
     if (tempPl) {
 
@@ -771,7 +771,7 @@ void World::who_command(Player *cp, const std::string &tplayer) {
             ss >> tid;
 
             if (tid) {
-                tempPl = Players.findID(tid);
+                tempPl = Players.find(tid);
             }
         }
 

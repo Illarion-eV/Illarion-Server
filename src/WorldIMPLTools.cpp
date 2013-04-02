@@ -50,7 +50,7 @@ void World::deleteAllLostNPC() {
     Field *tempf;
 
     for (const TYPE_OF_CHARACTER_ID &npcToDelete : LostNpcs) {
-        const auto &npc = Npc.findID(npcToDelete);
+        const auto &npc = Npc.find(npcToDelete);
 
         if (npc) {
             if (GetPToCFieldAt(tempf, npc->getPosition())) {
@@ -341,19 +341,19 @@ Player *World::findPlayerOnField(const position &pos) const {
 
 Character *World::findCharacter(TYPE_OF_CHARACTER_ID id) {
     Character *tmpChr;
-    tmpChr = dynamic_cast<Character *>(Players.findID(id));
+    tmpChr = dynamic_cast<Character *>(Players.find(id));
 
     if (tmpChr) {
         return tmpChr;
     }
 
-    tmpChr = dynamic_cast<Character *>(Monsters.findID(id));
+    tmpChr = dynamic_cast<Character *>(Monsters.find(id));
 
     if (tmpChr) {
         return tmpChr;
     }
 
-    tmpChr = dynamic_cast<Character *>(Npc.findID(id));
+    tmpChr = dynamic_cast<Character *>(Npc.find(id));
 
     if (tmpChr) {
         return tmpChr;
@@ -413,7 +413,7 @@ bool World::characterAttacks(Character *cp) {
 #ifdef World_DEBUG
             std::cout << "attack player" << std::endl;
 #endif
-            Player *temppl = Players.findID(cp->enemyid);
+            Player *temppl = Players.find(cp->enemyid);
 
             // Ziel gefunden
             if (temppl != NULL) {
@@ -449,7 +449,7 @@ bool World::characterAttacks(Character *cp) {
                 }
             }
         } else if (cp->enemytype == Character::monster) {
-            Monster *temppl = Monsters.findID(cp->enemyid);
+            Monster *temppl = Monsters.find(cp->enemyid);
 
             // Ziel gefunden
             if (temppl != NULL) {
@@ -515,7 +515,7 @@ bool World::characterAttacks(Character *cp) {
 
 
 bool World::killMonster(TYPE_OF_CHARACTER_ID id) {
-    auto monster = Monsters.findID(id);
+    auto monster = Monsters.find(id);
 
     if (monster) {
         const auto &monsterPos = monster->getPosition();

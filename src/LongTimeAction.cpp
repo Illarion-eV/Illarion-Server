@@ -392,16 +392,16 @@ void LongTimeAction::checkTarget() {
     } else {
         if (_targetId < MONSTER_BASE) {
             //player
-            if (World::get()->Players.findID(_targetId) == NULL) {
+            if (World::get()->Players.find(_targetId) == NULL) {
                 _target.character=NULL;
             }
         } else if (_targetId >= MONSTER_BASE && _targetId < NPC_BASE) {
             //monster
-            if (World::get()->Monsters.findID(_targetId) == NULL) {
+            if (World::get()->Monsters.find(_targetId) == NULL) {
                 _target.character=NULL;
             }
         } else {
-            if (World::get()->Npc.findID(_targetId) == NULL) {
+            if (World::get()->Npc.find(_targetId) == NULL) {
                 _target.character=NULL;
             }
         }
@@ -417,18 +417,18 @@ void LongTimeAction::checkSource() {
     } else {
         if (_sourceId < MONSTER_BASE) {
             //player
-            if (World::get()->Players.findID(_sourceId) == NULL) {
+            if (World::get()->Players.find(_sourceId) == NULL) {
                 _source.character=NULL;
                 _sourceCharType=0;
             }
         } else if (_sourceId >= MONSTER_BASE && _sourceId < NPC_BASE) {
             //monster
-            if (World::get()->Monsters.findID(_sourceId) == NULL) {
+            if (World::get()->Monsters.find(_sourceId) == NULL) {
                 _source.character=NULL;
                 _sourceCharType=0;
             }
         } else {
-            if (World::get()->Npc.findID(_sourceId) != NULL) {
+            if (World::get()->Npc.find(_sourceId) != NULL) {
                 _source.character=NULL;
                 _sourceCharType=0;
             }

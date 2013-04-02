@@ -430,12 +430,12 @@ Character *getCharForId(TYPE_OF_CHARACTER_ID id) {
 
     if (id < MONSTER_BASE) {
         //player
-        ret = World::get()->Players.findID(id);
+        ret = World::get()->Players.find(id);
     } else if (id >= MONSTER_BASE && id < NPC_BASE) {
         //monster
-        ret = World::get()->Monsters.findID(id);
+        ret = World::get()->Monsters.find(id);
     } else {
-        ret = World::get()->Npc.findID(id);
+        ret = World::get()->Npc.find(id);
     }
 
     return ret;

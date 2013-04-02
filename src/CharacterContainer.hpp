@@ -55,7 +55,7 @@ public:
     }
 
     pointer find(const std::string &name) const;
-    pointer findID(TYPE_OF_CHARACTER_ID id) const;
+    pointer find(TYPE_OF_CHARACTER_ID id) const;
     pointer find(const position &pos) const;
     bool find(const position &pos, pointer &ret) const;
     
@@ -87,7 +87,7 @@ auto CharacterContainer<T>::find(const std::string &n) const -> pointer {
 
 
 template <class T>
-auto CharacterContainer<T>::findID(TYPE_OF_CHARACTER_ID id) const -> pointer {
+auto CharacterContainer<T>::find(TYPE_OF_CHARACTER_ID id) const -> pointer {
     for (const auto &character : container) {
         if (character->getId() == id) {
             return character;

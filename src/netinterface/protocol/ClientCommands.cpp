@@ -212,13 +212,13 @@ void RequestAppearanceTS::decodeData() {
 }
 
 void RequestAppearanceTS::performAction(Player *player) {
-    Character *ch = World::get()->Players.findID(id);
+    Character *ch = World::get()->Players.find(id);
 
     if (ch == NULL) {
-        ch = World::get()->Monsters.findID(id);
+        ch = World::get()->Monsters.find(id);
 
         if (ch == NULL) {
-            ch = World::get()->Npc.findID(id);
+            ch = World::get()->Npc.find(id);
         }
     }
 
@@ -244,7 +244,7 @@ void LookAtCharacterTS::decodeData() {
 
 void LookAtCharacterTS::performAction(Player *player) {
     if (id < MONSTER_BASE) {
-        Player *pl = World::get()->Players.findID(id);
+        Player *pl = World::get()->Players.find(id);
 
         if (pl) {
             if (lookAtPlayerScript) {
@@ -254,7 +254,7 @@ void LookAtCharacterTS::performAction(Player *player) {
 
         //code for player handling
     } else if (id >= MONSTER_BASE && id < NPC_BASE) {
-        Monster *monster = World::get()->Monsters.findID(id);
+        Monster *monster = World::get()->Monsters.find(id);
 
         if (monster) {
             MonsterStruct mon;
@@ -273,7 +273,7 @@ void LookAtCharacterTS::performAction(Player *player) {
             }
         }
     } else {
-        NPC *npc = World::get()->Npc.findID(id);
+        NPC *npc = World::get()->Npc.find(id);
 
         if (npc) {
             if (npc->getScript() && npc->getScript()->existsEntrypoint("lookAtNpc")) {
