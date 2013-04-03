@@ -19,10 +19,11 @@
 
 #include "Scheduler.hpp"
 #include <iostream>
+#include "World.hpp"
 
 //#define Scheduler_DEBUG
 
-Scheduler::Scheduler(World *pworld) : cycle(0), world(pworld) {
+Scheduler::Scheduler() : cycle(0), world(World::get()) {
 }
 
 void Scheduler::NextCycle() {

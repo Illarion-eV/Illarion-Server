@@ -62,7 +62,7 @@ private:
 class Scheduler {
 
 public:
-    Scheduler(World *pworld);
+    Scheduler();
     void AddTask(SchedulerObject *sobject);
     void NextCycle();
     inline unsigned long int GetCurrentCycle() {

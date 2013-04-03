@@ -29,7 +29,7 @@
 #include "netinterface/protocol/BBIWIClientCommands.hpp"
 
 
-MonitoringClients::MonitoringClients(World *world) : _world(world) {
+MonitoringClients::MonitoringClients() : _world(World::get()) {
 }
 
 MonitoringClients::~MonitoringClients() {

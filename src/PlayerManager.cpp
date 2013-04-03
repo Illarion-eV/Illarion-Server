@@ -219,7 +219,7 @@ void *PlayerManager::playerSaveLoop(PlayerManager *pmanager) {
                         reloadmutex.unlock_shared();
                         tmpPl->Connection->closeConnection();
                         ServerCommandPointer cmd(new BBLogOutTC(tmpPl->getId(), tmpPl->getName()));
-                        world->monitoringClientList.sendCommand(cmd);
+                        world->monitoringClientList->sendCommand(cmd);
                         delete tmpPl;
                         tmpPl = nullptr;
                     } else {

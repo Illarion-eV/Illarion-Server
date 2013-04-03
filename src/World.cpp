@@ -73,6 +73,7 @@ World *World::create(const std::string &dir, time_t starttime) {
         _self->InitGMCommands();
         // initialise list of Player Commands
         _self->InitPlayerCommands();
+        _self->monitoringClientList = std::make_unique<MonitoringClients>();
     }
 
     return _self;
@@ -86,7 +87,7 @@ World *World::get() throw(std::runtime_error) {
     return _self;
 }
 
-World::World(const std::string &dir, time_t starttime): monitoringClientList(this) {
+World::World(const std::string &dir, time_t starttime) {
 
     nextXtoage = 0;
 
@@ -483,7 +484,7 @@ void World::turntheworld() {
         checkNPC();
 
         if (monitoringclienttimer.Next()) {
-            monitoringClientList.CheckClients();
+            monitoringClientList->CheckClients();
         }
 
         if (schedulertimer.next()) {
@@ -1013,7 +1014,7 @@ void World::initNPC() {
 
 void World::initScheduler() {
     std::cout<<"Scheduler init \n";
-    scheduler = std::make_unique<Scheduler>(this);
+    scheduler = std::make_unique<Scheduler>();
     //===========Globale Tasks wie Wetter Gezeiteneffekte etc einfgen=========
     SchedulerObject *globalPlLearning;  //Task anlegen der die Geistige Aufnahmef�igkeit aller 10 sec bei Spielern wieder senkt
     globalPlLearning = new SGlobalPlayerLearnrate(scheduler->GetCurrentCycle()+5);

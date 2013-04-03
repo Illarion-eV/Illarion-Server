@@ -20,8 +20,8 @@
 #ifndef _CCOMMANDFACTORY_HPP_
 #define _CCOMMANDFACTORY_HPP_
 
-#include <boost/shared_ptr.hpp>
-#include <boost/unordered_map.hpp>
+#include <memory>
+#include <unordered_map>
 #include "netinterface/BasicClientCommand.hpp"
 
 /**
@@ -43,8 +43,8 @@ public:
 
 private:
 
-    typedef boost::unordered_map<unsigned char, BasicClientCommand *> COMMANDLIST;
-    COMMANDLIST templateList; /*<the list which holds the templates for the concrete classes*/
+    typedef std::unordered_map<unsigned char, std::unique_ptr<BasicClientCommand>> COMMANDLIST;
+    COMMANDLIST templateList;
 
 };
 

@@ -690,10 +690,10 @@ bool Character::attack(Character *target) {
         if (getType() == player) {
             if (target->IsAlive()) {
                 ServerCommandPointer cmd(new BBSendActionTC(id, name, 1 , "Attacks : " + target->to_string()));
-                _world->monitoringClientList.sendCommand(cmd);
+                _world->monitoringClientList->sendCommand(cmd);
             } else {
                 ServerCommandPointer cmd(new BBSendActionTC(id, name, 1 , "Killed : " + target->to_string()));
-                _world->monitoringClientList.sendCommand(cmd);
+                _world->monitoringClientList->sendCommand(cmd);
             }
         }
 
@@ -1271,7 +1271,7 @@ void Character::talk(talk_type tt, const std::string &message) { //only for say,
         Logger::info(LogFacility::Chat) << *this << " " << talkType << ": " << message << Log::end;
 #endif
         ServerCommandPointer cmd(new BBTalkTC(id ,name, static_cast<unsigned char>(tt), message));
-        _world->monitoringClientList.sendCommand(cmd);
+        _world->monitoringClientList->sendCommand(cmd);
     }
 }
 

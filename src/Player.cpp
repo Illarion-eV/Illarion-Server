@@ -194,7 +194,7 @@ void Player::login() throw(Player::LogoutException) {
 
     //send the basic data to the monitoring client
     cmd.reset(new BBPlayerTC(getId(), getName(), pos));
-    _world->monitoringClientList.sendCommand(cmd);
+    _world->monitoringClientList->sendCommand(cmd);
 
     // send weather and time before sending the map, to display everything correctly from the start
     _world->sendIGTime(this);
@@ -660,7 +660,7 @@ void Player::sendSkill(TYPE_OF_SKILL_ID skill, unsigned short int major, unsigne
     ServerCommandPointer cmd(new UpdateSkillTC(skill, major, minor));
     Connection->addCommand(cmd);
     cmd.reset(new BBSendSkillTC(getId(), skill, major, minor));
-    _world->monitoringClientList.sendCommand(cmd);
+    _world->monitoringClientList->sendCommand(cmd);
 }
 
 
@@ -686,7 +686,7 @@ void Player::sendAttrib(Character::attributeIndex attribute) {
     ServerCommandPointer cmd(new UpdateAttribTC(getId(), attributeStringMap[attribute], value));
     Connection->addCommand(cmd);
     cmd.reset(new BBSendAttribTC(getId(), attributeStringMap[attribute], value));
-    _world->monitoringClientList.sendCommand(cmd);
+    _world->monitoringClientList->sendCommand(cmd);
 }
 
 
@@ -1860,7 +1860,7 @@ bool Player::move(direction dir, uint8_t mode) {
 
             _world->TriggerFieldMove(this,true);
             ServerCommandPointer cmd(new BBPlayerMoveTC(getId(), getPosition()));
-            _world->monitoringClientList.sendCommand(cmd);
+            _world->monitoringClientList->sendCommand(cmd);
 
             if (mode != RUNNING || j == 1) {
                 return true;
@@ -1920,7 +1920,7 @@ void Player::handleWarp() {
     visibleChars.clear();
     _world->sendAllVisibleCharactersToPlayer(this, true);
     cmd.reset(new BBPlayerMoveTC(getId(), getPosition()));
-    _world->monitoringClientList.sendCommand(cmd);
+    _world->monitoringClientList->sendCommand(cmd);
 }
 
 void Player::openDepot(uint16_t depotid) {

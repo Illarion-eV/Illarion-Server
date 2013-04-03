@@ -44,7 +44,7 @@ void World::montool_kill_command(Player *c) {
         ++counter;
     });
 
-    //monitoringClientList.sendCommand( new SendMessageTS("Sucessfully killed: "+Logger::toString(counter)+" monsters per nuke from: "+c->to_string()+"("+Logger::toString(c->id)+")",0));
+    //monitoringClientList->sendCommand( new SendMessageTS("Sucessfully killed: "+Logger::toString(counter)+" monsters per nuke from: "+c->to_string()+"("+Logger::toString(c->id)+")",0));
 }
 
 void World::montool_reload_command(Player *c) {
@@ -52,9 +52,9 @@ void World::montool_reload_command(Player *c) {
     if ( c->hasGMRight(gmr_reload) )
     {
         if (reload_tables(c) )
-            //monitoringClientList.sendCommand( new SendMessageTS("db tables loaded succesfully! from "+c->to_string()+"("+Logger::toString(c->id)+")",0));
+            //monitoringClientList->sendCommand( new SendMessageTS("db tables loaded succesfully! from "+c->to_string()+"("+Logger::toString(c->id)+")",0));
         else
-            //monitoringClientList.sendCommand( new SendMessageTS("error while loading tables! from "+c->to_string()+"("+Logger::toString(c->id)+")",0));
+            //monitoringClientList->sendCommand( new SendMessageTS("error while loading tables! from "+c->to_string()+"("+Logger::toString(c->id)+")",0));
     }
     */
 }
@@ -62,7 +62,7 @@ void World::montool_reload_command(Player *c) {
 void World::montool_kickall_command(Player *c) {
     if (c->hasGMRight(gmr_forcelogout)) {
         forceLogoutOfAllPlayers();
-        //monitoringClientList.sendCommand( new SendMessageTS("all players forced to logout! from "+c->to_string()+"("+Logger::toString(c->id)+")",0));
+        //monitoringClientList->sendCommand( new SendMessageTS("all players forced to logout! from "+c->to_string()+"("+Logger::toString(c->id)+")",0));
     }
 }
 
@@ -79,6 +79,6 @@ void World::montool_set_login(Player *c, const std::string &st) {
 
     World::get()->allowLogin(enable);
     Logger::info(LogFacility::Admin) << c->to_string() << " set allowLogin to " << enable << Log::end;
-    //monitoringClientList.sendCommand( new SendMessageTS("set login set to: " + st +"! from "+c->to_string()+"("+Logger::toString(c->id)+")",0));
+    //monitoringClientList->sendCommand( new SendMessageTS("set login set to: " + st +"! from "+c->to_string()+"("+Logger::toString(c->id)+")",0));
 
 }

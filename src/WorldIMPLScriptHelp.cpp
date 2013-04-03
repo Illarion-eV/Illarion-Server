@@ -638,7 +638,7 @@ bool World::getMonsterAttack(TYPE_OF_RACE_ID id, AttackBoni &ret) {
 void World::sendMonitoringMessage(const std::string &msg, unsigned char id) {
     //send this Command to all Monitoring Clients
     ServerCommandPointer cmd(new BBMessageTC(msg, id));
-    monitoringClientList.sendCommand(cmd);
+    monitoringClientList->sendCommand(cmd);
 }
 
 void World::logMissingField(const std::string &function, const position &field) {

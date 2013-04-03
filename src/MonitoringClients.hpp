@@ -33,7 +33,7 @@ class Player;
  */
 class MonitoringClients {
 public:
-    MonitoringClients(World *world);
+    MonitoringClients();
     ~MonitoringClients();
 
     /**

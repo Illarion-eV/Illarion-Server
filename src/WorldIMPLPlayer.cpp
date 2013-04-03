@@ -150,7 +150,7 @@ void World::logGMTicket(Player *player, const std::string &ticket, bool automati
 
     sendMessageToAdmin(message);
     ServerCommandPointer cmd(new BBMessageTC(message,2));
-    monitoringClientList.sendCommand(cmd);
+    monitoringClientList->sendCommand(cmd);
 }
 
 // !language <language>, language=common, human, dwarfen, elven, lizard, orc, ...

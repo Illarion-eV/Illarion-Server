@@ -63,7 +63,7 @@ void InputDialogTS::performAction(Player *player) {
 }
 
 ClientCommandPointer InputDialogTS::clone() {
-    ClientCommandPointer cmd(new InputDialogTS());
+    ClientCommandPointer cmd = std::make_shared<InputDialogTS>();
     return cmd;
 }
 
@@ -80,7 +80,7 @@ void MessageDialogTS::performAction(Player *player) {
 }
 
 ClientCommandPointer MessageDialogTS::clone() {
-    ClientCommandPointer cmd(new MessageDialogTS());
+    ClientCommandPointer cmd = std::make_shared<MessageDialogTS>();
     return cmd;
 }
 
@@ -127,7 +127,7 @@ void MerchantDialogTS::performAction(Player *player) {
 }
 
 ClientCommandPointer MerchantDialogTS::clone() {
-    ClientCommandPointer cmd(new MerchantDialogTS());
+    ClientCommandPointer cmd = std::make_shared<MerchantDialogTS>();
     return cmd;
 }
 
@@ -146,7 +146,7 @@ void SelectionDialogTS::performAction(Player *player) {
 }
 
 ClientCommandPointer SelectionDialogTS::clone() {
-    ClientCommandPointer cmd(new SelectionDialogTS());
+    ClientCommandPointer cmd = std::make_shared<SelectionDialogTS>();
     return cmd;
 }
 
@@ -200,7 +200,7 @@ void CraftingDialogTS::performAction(Player *player) {
 }
 
 ClientCommandPointer CraftingDialogTS::clone() {
-    ClientCommandPointer cmd(new CraftingDialogTS());
+    ClientCommandPointer cmd = std::make_shared<CraftingDialogTS>();
     return cmd;
 }
 
@@ -230,7 +230,7 @@ void RequestAppearanceTS::performAction(Player *player) {
 }
 
 ClientCommandPointer RequestAppearanceTS::clone() {
-    ClientCommandPointer cmd(new RequestAppearanceTS());
+    ClientCommandPointer cmd = std::make_shared<RequestAppearanceTS>();
     return cmd;
 }
 
@@ -268,7 +268,7 @@ void LookAtCharacterTS::performAction(Player *player) {
                 std::string german = "Das ist: " + mon.nameDe;
                 std::string english = "This is: " + mon.nameEn;
 
-                ServerCommandPointer cmd(new CharDescription(id, player->nls(german, english)));
+                ServerCommandPointer cmd = std::make_shared<CharDescription>(id, player->nls(german, english));
                 player->Connection->addCommand(cmd);
             }
         }
@@ -284,7 +284,7 @@ void LookAtCharacterTS::performAction(Player *player) {
             std::string german = "Das ist: " + npc->getName();
             std::string english = "This is: " + npc->getName();
 
-            ServerCommandPointer cmd(new CharDescription(id, player->nls(german, english)));
+            ServerCommandPointer cmd = std::make_shared<CharDescription>(id, player->nls(german, english));
             player->Connection->addCommand(cmd);
 
         }
@@ -294,7 +294,7 @@ void LookAtCharacterTS::performAction(Player *player) {
 }
 
 ClientCommandPointer LookAtCharacterTS::clone() {
-    ClientCommandPointer cmd(new LookAtCharacterTS());
+    ClientCommandPointer cmd = std::make_shared<LookAtCharacterTS>();
     return cmd;
 }
 
@@ -677,7 +677,7 @@ void CastTS::performAction(Player *player) {
                 break;
             } //Ende Switch
 
-            //monitoringClientList.sendCommand( new SendActionTS( player->getId(), *player, 2, msg));
+            //monitoringClientList->sendCommand( new SendActionTS( player->getId(), *player, 2, msg));
         } //ENde if player->IsAlive
 
         Logger::debug(LogFacility::Script) << "all succeeded" << Log::end;
@@ -685,7 +685,7 @@ void CastTS::performAction(Player *player) {
 }
 
 ClientCommandPointer CastTS::clone() {
-    ClientCommandPointer cmd(new CastTS());
+    ClientCommandPointer cmd = std::make_shared<CastTS>();
     return cmd;
 }
 
@@ -942,12 +942,12 @@ void UseTS::performAction(Player *player) {
         }
     }
 
-    ServerCommandPointer cmd(new BBSendActionTC(player->getId(), player->getName(), 3,msg));
-    World::get()->monitoringClientList.sendCommand(cmd);
+    ServerCommandPointer cmd = std::make_shared<BBSendActionTC>(player->getId(), player->getName(), 3,msg);
+    World::get()->monitoringClientList->sendCommand(cmd);
 }
 
 ClientCommandPointer UseTS::clone() {
-    ClientCommandPointer cmd(new UseTS());
+    ClientCommandPointer cmd = std::make_shared<UseTS>();
     return cmd;
 }
 
@@ -963,7 +963,7 @@ void KeepAliveTS::performAction(Player *player) {
 }
 
 ClientCommandPointer KeepAliveTS::clone() {
-    ClientCommandPointer cmd(new KeepAliveTS());
+    ClientCommandPointer cmd = std::make_shared<KeepAliveTS>();
     return cmd;
 }
 
@@ -979,7 +979,7 @@ void RequestSkillsTS::performAction(Player *player) {
 }
 
 ClientCommandPointer RequestSkillsTS::clone() {
-    ClientCommandPointer cmd(new RequestSkillsTS());
+    ClientCommandPointer cmd = std::make_shared<RequestSkillsTS>();
     return cmd;
 }
 
@@ -993,12 +993,12 @@ void AttackStopTS::performAction(Player *player) {
     time(&(player->lastaction));
     player->ltAction->abortAction();
     player->setAttackMode(false);
-    ServerCommandPointer cmd(new TargetLostTC());
+    ServerCommandPointer cmd = std::make_shared<TargetLostTC>();
     player->Connection->addCommand(cmd);
 }
 
 ClientCommandPointer AttackStopTS::clone() {
-    ClientCommandPointer cmd(new AttackStopTS());
+    ClientCommandPointer cmd = std::make_shared<AttackStopTS>();
     return cmd;
 }
 
@@ -1019,7 +1019,7 @@ void LookAtInventoryItemTS::performAction(Player *player) {
 }
 
 ClientCommandPointer LookAtInventoryItemTS::clone() {
-    ClientCommandPointer cmd(new LookAtInventoryItemTS());
+    ClientCommandPointer cmd = std::make_shared<LookAtInventoryItemTS>();
     return cmd;
 }
 
@@ -1041,7 +1041,7 @@ void LookAtShowCaseItemTS::performAction(Player *player) {
 }
 
 ClientCommandPointer LookAtShowCaseItemTS::clone() {
-    ClientCommandPointer cmd(new LookAtShowCaseItemTS());
+    ClientCommandPointer cmd = std::make_shared<LookAtShowCaseItemTS>();
     return cmd;
 }
 
@@ -1067,7 +1067,7 @@ void MoveItemFromPlayerToShowCaseTS::performAction(Player *player) {
 }
 
 ClientCommandPointer MoveItemFromPlayerToShowCaseTS::clone() {
-    ClientCommandPointer cmd(new MoveItemFromPlayerToShowCaseTS());
+    ClientCommandPointer cmd = std::make_shared<MoveItemFromPlayerToShowCaseTS>();
     return cmd;
 }
 
@@ -1093,7 +1093,7 @@ void MoveItemFromShowCaseToPlayerTS::performAction(Player *player) {
 }
 
 ClientCommandPointer MoveItemFromShowCaseToPlayerTS::clone() {
-    ClientCommandPointer cmd(new MoveItemFromShowCaseToPlayerTS());
+    ClientCommandPointer cmd = std::make_shared<MoveItemFromShowCaseToPlayerTS>();
     return cmd;
 }
 
@@ -1118,7 +1118,7 @@ void MoveItemInsideInventoryTS::performAction(Player *player) {
 }
 
 ClientCommandPointer MoveItemInsideInventoryTS::clone() {
-    ClientCommandPointer cmd(new MoveItemInsideInventoryTS());
+    ClientCommandPointer cmd = std::make_shared<MoveItemInsideInventoryTS>();
     return cmd;
 }
 
@@ -1142,7 +1142,7 @@ void DropItemFromInventoryOnMapTS::performAction(Player *player) {
 }
 
 ClientCommandPointer DropItemFromInventoryOnMapTS::clone() {
-    ClientCommandPointer cmd(new DropItemFromInventoryOnMapTS());
+    ClientCommandPointer cmd = std::make_shared<DropItemFromInventoryOnMapTS>();
     return cmd;
 }
 
@@ -1167,7 +1167,7 @@ void MoveItemFromMapToPlayerTS::performAction(Player *player) {
 }
 
 ClientCommandPointer MoveItemFromMapToPlayerTS::clone() {
-    ClientCommandPointer cmd(new MoveItemFromMapToPlayerTS());
+    ClientCommandPointer cmd = std::make_shared<MoveItemFromMapToPlayerTS>();
     return cmd;
 }
 
@@ -1193,7 +1193,7 @@ void MoveItemFromMapIntoShowCaseTS::performAction(Player *player) {
 }
 
 ClientCommandPointer MoveItemFromMapIntoShowCaseTS::clone() {
-    ClientCommandPointer cmd(new MoveItemFromMapIntoShowCaseTS());
+    ClientCommandPointer cmd = std::make_shared<MoveItemFromMapIntoShowCaseTS>();
     return cmd;
 }
 
@@ -1220,7 +1220,7 @@ void MoveItemBetweenShowCasesTS::performAction(Player *player) {
 }
 
 ClientCommandPointer MoveItemBetweenShowCasesTS::clone() {
-    ClientCommandPointer cmd(new MoveItemBetweenShowCasesTS());
+    ClientCommandPointer cmd = std::make_shared<MoveItemBetweenShowCasesTS>();
     return cmd;
 }
 
@@ -1245,7 +1245,7 @@ void DropItemFromShowCaseOnMapTS::performAction(Player *player) {
 }
 
 ClientCommandPointer DropItemFromShowCaseOnMapTS::clone() {
-    ClientCommandPointer cmd(new DropItemFromShowCaseOnMapTS());
+    ClientCommandPointer cmd = std::make_shared<DropItemFromShowCaseOnMapTS>();
     return cmd;
 }
 
@@ -1267,7 +1267,7 @@ void CloseContainerInShowCaseTS::performAction(Player *player) {
 }
 
 ClientCommandPointer CloseContainerInShowCaseTS::clone() {
-    ClientCommandPointer cmd(new CloseContainerInShowCaseTS());
+    ClientCommandPointer cmd = std::make_shared<CloseContainerInShowCaseTS>();
     return cmd;
 }
 
@@ -1288,7 +1288,7 @@ void LookIntoShowCaseContainerTS::performAction(Player *player) {
 }
 
 ClientCommandPointer LookIntoShowCaseContainerTS::clone() {
-    ClientCommandPointer cmd(new LookIntoShowCaseContainerTS());
+    ClientCommandPointer cmd = std::make_shared<LookIntoShowCaseContainerTS>();
     return cmd;
 }
 
@@ -1307,7 +1307,7 @@ void LookIntoInventoryTS::performAction(Player *player) {
 }
 
 ClientCommandPointer LookIntoInventoryTS::clone() {
-    ClientCommandPointer cmd(new LookIntoInventoryTS());
+    ClientCommandPointer cmd = std::make_shared<LookIntoInventoryTS>();
     return cmd;
 }
 
@@ -1330,7 +1330,7 @@ void LookIntoContainerOnFieldTS::performAction(Player *player) {
 }
 
 ClientCommandPointer LookIntoContainerOnFieldTS::clone() {
-    ClientCommandPointer cmd(new LookIntoContainerOnFieldTS());
+    ClientCommandPointer cmd = std::make_shared<LookIntoContainerOnFieldTS>();
     return cmd;
 }
 
@@ -1347,7 +1347,7 @@ void LogOutTS::performAction(Player *player) {
 }
 
 ClientCommandPointer LogOutTS::clone() {
-    ClientCommandPointer cmd(new LogOutTS());
+    ClientCommandPointer cmd = std::make_shared<LogOutTS>();
     return cmd;
 }
 
@@ -1365,7 +1365,7 @@ void WhisperTS::performAction(Player *player) {
 }
 
 ClientCommandPointer WhisperTS::clone() {
-    ClientCommandPointer cmd(new WhisperTS());
+    ClientCommandPointer cmd = std::make_shared<WhisperTS>();
     return cmd;
 }
 
@@ -1382,7 +1382,7 @@ void ShoutTS::performAction(Player *player) {
 }
 
 ClientCommandPointer ShoutTS::clone() {
-    ClientCommandPointer cmd(new ShoutTS());
+    ClientCommandPointer cmd = std::make_shared<ShoutTS>();
     return cmd;
 }
 
@@ -1405,7 +1405,7 @@ void SayTS::performAction(Player *player) {
 }
 
 ClientCommandPointer SayTS::clone() {
-    ClientCommandPointer cmd(new SayTS());
+    ClientCommandPointer cmd = std::make_shared<SayTS>();
     return cmd;
 }
 
@@ -1422,7 +1422,7 @@ void RefreshTS::performAction(Player *player) {
 }
 
 ClientCommandPointer RefreshTS::clone() {
-    ClientCommandPointer cmd(new RefreshTS());
+    ClientCommandPointer cmd = std::make_shared<RefreshTS>();
     return cmd;
 }
 
@@ -1442,7 +1442,7 @@ void IntroduceTS::performAction(Player *player) {
 }
 
 ClientCommandPointer IntroduceTS::clone() {
-    ClientCommandPointer cmd(new IntroduceTS());
+    ClientCommandPointer cmd = std::make_shared<IntroduceTS>();
     return cmd;
 }
 
@@ -1472,9 +1472,9 @@ void AttackPlayerTS::performAction(Player *player) {
                 player->enemytype = Character::npc;
             }
 
-            ServerCommandPointer cmd(new AttackAcknowledgedTC());
+            ServerCommandPointer cmd = std::make_shared<AttackAcknowledgedTC>();
             player->Connection->addCommand(cmd);
-            //monitoringClientList.sendCommand( new SendActionTS(player->getId(), player->getName(), 0, "Starts an attack: " + Logger::toString(player->enemyid) ) );
+            //monitoringClientList->sendCommand( new SendActionTS(player->getId(), player->getName(), 0, "Starts an attack: " + Logger::toString(player->enemyid) ) );
             World::get()->characterAttacks(player);
         } else {
             player->setAttackMode(false);
@@ -1483,7 +1483,7 @@ void AttackPlayerTS::performAction(Player *player) {
 }
 
 ClientCommandPointer AttackPlayerTS::clone() {
-    ClientCommandPointer cmd(new AttackPlayerTS());
+    ClientCommandPointer cmd = std::make_shared<AttackPlayerTS>();
     return cmd;
 }
 
@@ -1507,7 +1507,7 @@ void LookAtMapItemTS::performAction(Player *player) {
 }
 
 ClientCommandPointer LookAtMapItemTS::clone() {
-    ClientCommandPointer cmd(new LookAtMapItemTS());
+    ClientCommandPointer cmd = std::make_shared<LookAtMapItemTS>();
     return cmd;
 }
 
@@ -1527,7 +1527,7 @@ void PSpinActionTS::performAction(Player *player) {
 }
 
 ClientCommandPointer PSpinActionTS::clone() {
-    ClientCommandPointer cmd(new PSpinActionTS(dir));
+    ClientCommandPointer cmd = std::make_shared<PSpinActionTS>(dir);
     return cmd;
 }
 
@@ -1559,7 +1559,7 @@ void CharMoveTS::performAction(Player *player) {
 }
 
 ClientCommandPointer CharMoveTS::clone() {
-    ClientCommandPointer cmd(new CharMoveTS());
+    ClientCommandPointer cmd = std::make_shared<CharMoveTS>();
     return cmd;
 }
 
@@ -1586,7 +1586,7 @@ void IMoverActionTS::performAction(Player *player) {
 }
 
 ClientCommandPointer IMoverActionTS::clone() {
-    ClientCommandPointer cmd(new IMoverActionTS(dir));
+    ClientCommandPointer cmd = std::make_shared<IMoverActionTS>(dir);
     return cmd;
 }
 
@@ -1604,7 +1604,7 @@ void LoginCommandTS::performAction(Player *player) {
 }
 
 ClientCommandPointer LoginCommandTS::clone() {
-    ClientCommandPointer cmd(new LoginCommandTS());
+    ClientCommandPointer cmd = std::make_shared<LoginCommandTS>();
     return cmd;
 }
 
@@ -1636,7 +1636,7 @@ void ScreenSizeCommandTS::performAction(Player *player) {
 }
 
 ClientCommandPointer ScreenSizeCommandTS::clone() {
-    ClientCommandPointer cmd(new ScreenSizeCommandTS());
+    ClientCommandPointer cmd = std::make_shared<ScreenSizeCommandTS>();
     return cmd;
 }
 

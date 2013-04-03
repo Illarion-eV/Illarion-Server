@@ -212,7 +212,7 @@ public:
     /**
      * holds the monitoring clients on the World
      */
-    MonitoringClients monitoringClientList;
+    std::unique_ptr<MonitoringClients> monitoringClientList = nullptr;
 
     timeb now; /**< current time of the server used in @see turntheworld() **/
 
