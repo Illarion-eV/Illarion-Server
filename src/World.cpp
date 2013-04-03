@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <sys/types.h>
 
+#include "make_unique.hpp"
 #include "Logger.hpp"
 #include "LongTimeAction.hpp"
 #include "PlayerManager.hpp"
@@ -33,11 +34,8 @@
 #include "TableStructs.hpp"
 #include "WaypointList.hpp"
 #include "Config.hpp"
-#include "MonitoringClients.hpp"
-#include "MilTimer.hpp"
 #include "Map.hpp"
 #include "tuningConstants.hpp"
-#include "Timer.hpp"
 
 #include "data/Data.hpp"
 #include "data/ScheduledScriptsTable.hpp"
@@ -75,8 +73,6 @@ World *World::create(const std::string &dir, time_t starttime) {
         _self->InitGMCommands();
         // initialise list of Player Commands
         _self->InitPlayerCommands();
-        _self->monitoringClientList = new MonitoringClients(_self);
-
     }
 
     return _self;
@@ -90,7 +86,7 @@ World *World::get() throw(std::runtime_error) {
     return _self;
 }
 
-World::World(const std::string &dir, time_t starttime) {
+World::World(const std::string &dir, time_t starttime): monitoringClientList(this) {
 
     nextXtoage = 0;
 
@@ -99,30 +95,16 @@ World::World(const std::string &dir, time_t starttime) {
     usedAP = 0;
     timeStart = starttime*1000;
 
-    currentScript = NULL;
+    currentScript = nullptr;
 
     directory = dir;
     scriptDir = dir + std::string(SCRIPTSDIR);
 
-    fieldtimer[ 0 ] = new Timer(5);       // 5 s
-    fieldtimer[ 1 ] = new Timer(5);       // 5 s
-    fieldtimer[ 2 ] = new Timer(5);       // 5 s
-
-    monstertimer = new Timer(10);       // 60 s
-
-    schedulertimer = new Timer(1);      // 1 s
-
-    ScriptTimer = new Timer(1);   //1 s
-
-    npctimer = new MilTimer(2000);         // 2 s
-
-    monitoringclienttimer = new MilTimer(250);
-
     timecount = 1;
-    last_age = time(NULL);
+    last_age = time(nullptr);
     ammount = 50;
 
-    srand((unsigned) time(NULL));
+    srand((unsigned) time(nullptr));
 
     unsigned int templi = starttime;
     char temparr[ 80 ];
@@ -476,30 +458,6 @@ bool World::load_from_editor(const std::string &filename) {
 }
 
 World::~World() {
-    if (monstertimer != nullptr) {
-        delete monstertimer;
-    }
-
-    if (npctimer != nullptr) {
-        delete npctimer;
-    }
-
-    for (size_t i = 0; i <3; ++i)
-        if (fieldtimer[i] != nullptr) {
-            delete fieldtimer[i];
-        }
-
-    if (monitoringclienttimer != nullptr) {
-        delete monitoringclienttimer;
-    }
-
-    if (monitoringClientList != nullptr) {
-        delete monitoringClientList;
-    }
-
-    if (scheduler != nullptr) {
-        delete scheduler;
-    }
 }
 
 
@@ -524,17 +482,15 @@ void World::turntheworld() {
         checkMonsters();
         checkNPC();
 
-        if (monitoringclienttimer->Next()) {
-            monitoringClientList->CheckClients();
+        if (monitoringclienttimer.Next()) {
+            monitoringClientList.CheckClients();
         }
 
-        //N�hsten Scheduler Cycle einleiten nur zu Testzwecke
-        //Der Scheduler soll in einen eigenen Thread laufen.
-        if (schedulertimer->next()) {
+        if (schedulertimer.next()) {
             scheduler->NextCycle();
         }
 
-        if (ScriptTimer->next()) {
+        if (ScriptTimer.next()) {
             scheduledScripts->nextCycle();
         }
     }
@@ -658,7 +614,7 @@ bool World::initRespawns() {
 void World::checkMonsters() {
 
     // respawn ?
-    if (monstertimer->next()) {
+    if (monstertimer.next()) {
         if (isSpawnEnabled()) {
             for (auto &spawn : SpawnList) {
                 spawn.spawn();
@@ -1057,7 +1013,7 @@ void World::initNPC() {
 
 void World::initScheduler() {
     std::cout<<"Scheduler init \n";
-    scheduler = new Scheduler(this);
+    scheduler = std::make_unique<Scheduler>(this);
     //===========Globale Tasks wie Wetter Gezeiteneffekte etc einfgen=========
     SchedulerObject *globalPlLearning;  //Task anlegen der die Geistige Aufnahmef�igkeit aller 10 sec bei Spielern wieder senkt
     globalPlLearning = new SGlobalPlayerLearnrate(scheduler->GetCurrentCycle()+5);

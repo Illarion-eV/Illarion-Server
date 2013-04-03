@@ -677,7 +677,7 @@ void CastTS::performAction(Player *player) {
                 break;
             } //Ende Switch
 
-            //monitoringClientList->sendCommand( new SendActionTS( player->getId(), *player, 2, msg));
+            //monitoringClientList.sendCommand( new SendActionTS( player->getId(), *player, 2, msg));
         } //ENde if player->IsAlive
 
         Logger::debug(LogFacility::Script) << "all succeeded" << Log::end;
@@ -943,7 +943,7 @@ void UseTS::performAction(Player *player) {
     }
 
     ServerCommandPointer cmd(new BBSendActionTC(player->getId(), player->getName(), 3,msg));
-    World::get()->monitoringClientList->sendCommand(cmd);
+    World::get()->monitoringClientList.sendCommand(cmd);
 }
 
 ClientCommandPointer UseTS::clone() {
@@ -1474,7 +1474,7 @@ void AttackPlayerTS::performAction(Player *player) {
 
             ServerCommandPointer cmd(new AttackAcknowledgedTC());
             player->Connection->addCommand(cmd);
-            //monitoringClientList->sendCommand( new SendActionTS(player->getId(), player->getName(), 0, "Starts an attack: " + Logger::toString(player->enemyid) ) );
+            //monitoringClientList.sendCommand( new SendActionTS(player->getId(), player->getName(), 0, "Starts an attack: " + Logger::toString(player->enemyid) ) );
             World::get()->characterAttacks(player);
         } else {
             player->setAttackMode(false);

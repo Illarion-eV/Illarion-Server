@@ -164,7 +164,7 @@ int main(int argc, char *argv[]) {
                 login_save(newPlayer);
 
                 if (newPlayer->isMonitoringClient()) {
-                    world->monitoringClientList->clientConnect(newPlayer);
+                    world->monitoringClientList.clientConnect(newPlayer);
                 } else {
                     try {
                         world->Players.insert(newPlayer);

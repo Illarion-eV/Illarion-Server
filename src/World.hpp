@@ -33,6 +33,7 @@
 
 #include <sys/timeb.h>
 
+#include <memory>
 #include <list>
 #include <unordered_map>
 
@@ -43,17 +44,17 @@
 #include "TableStructs.hpp"
 #include "Character.hpp"
 #include "Language.hpp"
+#include "Timer.hpp"
+#include "MilTimer.hpp"
+#include "MonitoringClients.hpp"
+#include "Scheduler.hpp"
 
 #include "data/MonsterAttackTable.hpp"
 
 class Player;
 class Monster;
 class NPC;
-class MonitoringClients;
-class Scheduler;
 class LuaScript;
-class Timer;
-class MilTimer;
 
 // typedef for gm commands...
 /**
@@ -211,7 +212,7 @@ public:
     /**
      * holds the monitoring clients on the World
      */
-    MonitoringClients *monitoringClientList = nullptr;
+    MonitoringClients monitoringClientList;
 
     timeb now; /**< current time of the server used in @see turntheworld() **/
 
@@ -224,7 +225,7 @@ public:
 
     WorldMap::map_t tmap; /**< a temporary pointer to a map, used from different methods @see Map*/
 
-    Scheduler *scheduler = nullptr;/**< a pointer to the scheduler object @see Scheduler*/
+    std::unique_ptr<Scheduler> scheduler = nullptr;/**< a pointer to the scheduler object @see Scheduler*/
 
     WeatherStruct weather;/**< a struct to the weather @see WeatherStruct */
 
@@ -265,10 +266,6 @@ public:
     */
     LuaScript *currentScript;
 
-    ///////// in World.cpp ///////
-    /**
-    *the standard destructor of the server
-    */
     virtual ~World();
 
     /**
@@ -1106,21 +1103,10 @@ private:
     //! IG day of last turntheworld
     int lastTurnIGDay;
 
-    //! Timer fr die Monster - Respawn
-    Timer *monstertimer = nullptr;
-
-    //! Timer fr Effekte auf Feldern
-    Timer *fieldtimer[3] = { nullptr, nullptr, nullptr };
-
-    //! Timer fr die NPC
-    MilTimer *npctimer = nullptr;
-
-    //! Timer fr den Scheduler
-    Timer *schedulertimer = nullptr;
-
-    Timer *ScriptTimer = nullptr; //< Tuner for scheduled scripts.
-
-    MilTimer *monitoringclienttimer = nullptr;
+    Timer monstertimer = {10};
+    Timer schedulertimer = {1};
+    Timer ScriptTimer = {1};
+    MilTimer monitoringclienttimer = {250};
 
     //! das home-Verzeichnis des Servers
     std::string directory;
