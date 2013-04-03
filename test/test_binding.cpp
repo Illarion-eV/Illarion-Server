@@ -7,6 +7,7 @@
 
 class MockCharacter : public Character {
 public:
+    MOCK_CONST_METHOD0(getType, unsigned short());
     MOCK_CONST_METHOD0(to_string, std::string());
     MOCK_CONST_METHOD2(inform, void(const std::string &, informType));
     MOCK_CONST_METHOD3(inform, void(const std::string &, const std::string &, informType));
