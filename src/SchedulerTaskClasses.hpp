@@ -29,6 +29,14 @@
 
 extern std::shared_ptr<LuaLearnScript>learnScript;
 
+namespace {
+    auto reduceMC = [](Character * character) {
+        if (character->getMentalCapacity() > 0) {
+            learnScript->reduceMC(character);
+        }
+    };
+}
+
 class SGlobalPlayerLearnrate : public SchedulerObject {
 
 public:
@@ -39,12 +47,7 @@ public:
     virtual ~SGlobalPlayerLearnrate() {}
 
     bool operator()(World *world) {
-        for (const auto &player : world->Players) {
-            if (player->getMentalCapacity() > 0) {
-                learnScript->reduceMC(player);
-            }
-        }
-
+        world->Players.for_each(reduceMC);
         nextCycle += 10;
         return true;
     }
@@ -60,18 +63,8 @@ public:
     }
     virtual ~SGlobalMonsterLearnrate() {}
     bool operator()(World *world) {
-        for (const auto &monster : world->Monsters) {
-            if (monster->getMentalCapacity() > 0) {
-                learnScript->reduceMC(monster);
-            }
-        }
-
-        for (const auto &npc : world->Npc) {
-            if (npc->getMentalCapacity() > 0) {
-                learnScript->reduceMC(npc);
-            }
-        }
-
+        world->Monsters.for_each(reduceMC);
+        world->Npc.for_each(reduceMC);
         nextCycle += 10;
         return true;
     }

@@ -108,11 +108,7 @@ public:
         Player *tempPlayer = World::get()->Players.find(name);
 
         if (!tempPlayer) {
-            for (const auto &p : World::get()->Players) {
-                if (p->getId() == id) {
-                    tempPlayer = p;
-                }
-            }
+            tempPlayer = World::get()->Players.find(id);
         }
 
         if (tempPlayer) {
@@ -180,11 +176,7 @@ public:
         Player *tempPlayer = World::get()->Players.find(name);
 
         if (!tempPlayer) {
-            for (const auto &p : World::get()->Players) {
-                if (p->getId() == id) {
-                    tempPlayer = p;
-                }
-            }
+            tempPlayer = World::get()->Players.find(id);
         }
 
         if (tempPlayer) {
@@ -226,11 +218,7 @@ public:
         Player *tempPlayer = World::get()->Players.find(name);
 
         if (!tempPlayer) {
-            for (const auto &p : World::get()->Players) {
-                if (p->getId() == id) {
-                    tempPlayer = p;
-                }
-            }
+            tempPlayer = World::get()->Players.find(id);
         }
 
         if (tempPlayer) {
@@ -275,11 +263,7 @@ public:
         Player *tempPlayer = World::get()->Players.find(name);
 
         if (!tempPlayer) {
-            for (const auto &p : World::get()->Players) {
-                if (p->getId() == id) {
-                    tempPlayer = p;
-                }
-            }
+            tempPlayer = World::get()->Players.find(id);
         }
 
         if (tempPlayer) {
@@ -367,11 +351,7 @@ public:
         Player *tempPlayer = World::get()->Players.find(_plname);
 
         if (!tempPlayer) {
-            for (const auto &p : World::get()->Players) {
-                if (p->getId() == _plid) {
-                    tempPlayer = p;
-                }
-            }
+            tempPlayer = World::get()->Players.find(_plid);
         }
 
         if (tempPlayer) {
@@ -414,11 +394,7 @@ public:
         Player *tempPlayer = World::get()->Players.find(_plname);
 
         if (!tempPlayer) {
-            for (const auto &p : World::get()->Players) {
-                if (p->getId() == _plid) {
-                    tempPlayer = p;
-                }
-            }
+            tempPlayer = World::get()->Players.find(_plid);
         }
 
         if (tempPlayer) {
@@ -459,11 +435,7 @@ public:
         Player *tempPlayer = World::get()->Players.find(playername);
 
         if (!tempPlayer) {
-            for (const auto &p : World::get()->Players) {
-                if (p->getId() == playerid) {
-                    tempPlayer = p;
-                }
-            }
+            tempPlayer = World::get()->Players.find(playerid);
         }
 
         if (tempPlayer) {
@@ -559,11 +531,7 @@ public:
         Player *tempPlayer = World::get()->Players.find(name);
 
         if (!tempPlayer) {
-            for (const auto &p : World::get()->Players) {
-                if (p->getId() == id) {
-                    tempPlayer = p;
-                }
-            }
+            tempPlayer = World::get()->Players.find(id);
         }
 
         if (tempPlayer) {

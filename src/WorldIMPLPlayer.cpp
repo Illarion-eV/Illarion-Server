@@ -99,14 +99,14 @@ void World::name_command(Player *cp, const std::string &ts) {
 
         if (player) {
             if ((thistoken = strtok(NULL, ""))) {
-                for (const auto &p : Players) {
+                Players.for_each([&](Player *p) {
                     if (p->getId() == player) {
                         std::string newname(thistoken);
                         name = "! " + newname;
                         ServerCommandPointer cmd(new IntroduceTC(player, name));
                         cp->Connection->addCommand(cmd);
                     }
-                }
+                });
             }
 
         }

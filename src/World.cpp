@@ -547,15 +547,14 @@ void World::turntheworld() {
 void World::checkPlayers() {
     time_t tempkeepalive;
     time(&tempkeepalive);
-    int temptime;
 
     std::vector<Player *> lostPlayers;
 
-    for (const auto &playerPointer : Players) {
+    Players.for_each([tempkeepalive, &lostPlayers, this](Player *playerPointer) {
         Player &player = *playerPointer;
 
         if (player.Connection->online) {
-            temptime = tempkeepalive - player.lastkeepalive;
+            int temptime = tempkeepalive - player.lastkeepalive;
 
             if (((temptime >= 0) && (temptime <= CLIENT_TIMEOUT))) {
                 player.increaseActionPoints(ap);
@@ -586,8 +585,9 @@ void World::checkPlayers() {
 
             PlayerManager::get()->getLogOutPlayers().non_block_push_back(playerPointer);
             sendRemoveCharToVisiblePlayers(player.getId(), pos);
+            lostPlayers.push_back(playerPointer);
         }
-    }
+    });
 
     for (const auto &player : lostPlayers) {
         Players.erase(player->getId());
@@ -595,19 +595,15 @@ void World::checkPlayers() {
 }
 
 void World::invalidatePlayerDialogs() {
-    for (const auto &player : Players) {
-        player->invalidateDialogs();
-    }
+    Players.for_each(&Player::invalidateDialogs);
 }
 
 // init the respawn locations... for now still hardcoded...
 bool World::initRespawns() {
-    // if we have monsters, we need to delete their spawnpoints...
-    for (const auto &monster : Monsters) {
-        // if the spawn is set to NULL it is regarded as no spawnpoint.
+    Monsters.for_each([](Monster *monster) {
         monster->remove();
         monster->setSpawn(nullptr);
-    }
+    });
 
     SpawnList.clear();
 
@@ -678,7 +674,7 @@ void World::checkMonsters() {
 
     std::vector<Monster *> deadMonsters;
 
-    for (auto &monsterPointer : Monsters) {
+    Monsters.for_each([this, &deadMonsters](Monster *monsterPointer) {
         Monster &monster = *monsterPointer;
 
         if (monster.IsAlive()) {
@@ -736,7 +732,7 @@ void World::checkMonsters() {
                                 if (monStruct.script) {
                                     //Wenn Scriptaufruf erfolgreich den aktuellen schleifenablauf abbrechen.
                                     if (monStruct.script->enemyNear(monsterPointer, foundP)) {
-                                        continue; //Schleife fr dieses Monster abbrechen. Da es schon etwas diesne Schleifendurchlauf getan hat.
+                                        return; //Schleife fr dieses Monster abbrechen. Da es schon etwas diesne Schleifendurchlauf getan hat.
                                     }
                                 }
                             } else {
@@ -775,7 +771,7 @@ void World::checkMonsters() {
                                 if (foundMonster) {
                                     if (monStruct.script) {
                                         if (monStruct.script->enemyOnSight(monsterPointer, foundP2)) {
-                                            continue; //abort all other walking actions because the script has returned TRUE
+                                            return; //abort all other walking actions because the script has returned TRUE
                                         }
                                     }
 
@@ -957,7 +953,7 @@ void World::checkMonsters() {
         } else {
             deadMonsters.push_back(monsterPointer);
         }
-    }
+    });
 
     for (const auto &monster : deadMonsters) {
         killMonster(monster->getId());
@@ -982,7 +978,7 @@ void World::checkMonsters() {
 void World::checkNPC() {
     deleteAllLostNPC();
 
-    for (const auto &npc : Npc) {
+    Npc.for_each([this](NPC* npc) {
 
         if (npc->IsAlive()) {
             npc->increaseActionPoints(ap);
@@ -1001,7 +997,7 @@ void World::checkNPC() {
             npc->increaseAttrib("hitpoints", MAXHPS);
             sendSpinToAllVisiblePlayers(npc);
         }
-    }
+    });
 }
 
 
@@ -1044,7 +1040,7 @@ bool World::ReadField(const char *inp, signed long int &outp) {
 
 // Init method for NPC's
 void World::initNPC() {
-    for (const auto &npc : Npc) {
+    Npc.for_each([this](NPC *npc) {
         Field *tempf;
 
         if (GetPToCFieldAt(tempf, npc->getPosition())) {
@@ -1053,7 +1049,7 @@ void World::initNPC() {
 
         sendRemoveCharToVisiblePlayers(npc->getId(), npc->getPosition());
         delete npc;
-    }
+    });
 
     Npc.clear();
     NPCTable NPCTbl;

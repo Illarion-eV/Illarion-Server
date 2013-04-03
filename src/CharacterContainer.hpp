@@ -22,8 +22,12 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
+#include <functional>
 #include "utility.hpp"
 #include "constants.hpp"
+
+class Character;
 
 template <class T>
 class CharacterContainer {
@@ -31,36 +35,29 @@ public:
     typedef T* pointer;
 
 private:
-    std::vector<pointer> container;
+    typedef std::function<void(pointer)> for_each_type;
+    typedef void(Character::*for_each_member_type)();
+    typedef typename std::unordered_map<TYPE_OF_CHARACTER_ID, pointer> container_type;
+    container_type container;
 
 public:
-    typename std::vector<pointer>::const_iterator begin() const {
-        return container.begin();
-    }
-
-    typename std::vector<pointer>::const_iterator end() const {
-        return container.end();
-    }
-
     bool empty() const {
         return container.empty();
     }
 
-    size_t size() const {
+    auto size() const -> decltype(container.size()) {
         return container.size();
     }
 
     void insert(pointer p) {
-        container.push_back(p);
+        container.emplace(p->getId(), p);
     }
 
     pointer find(const std::string &name) const;
     pointer find(TYPE_OF_CHARACTER_ID id) const;
     pointer find(const position &pos) const;
-    bool find(const position &pos, pointer &ret) const;
     
     bool erase(TYPE_OF_CHARACTER_ID id);
-    bool remove(const position &pos);
     void clear() {
         container.clear();
     }
@@ -71,14 +68,32 @@ public:
     std::vector<pointer> findAllAliveCharactersInRangeOf(const position &pos, int distancemetric) const;
     std::vector<pointer> findAllAliveCharactersInRangeOfOnSameMap(const position &pos, int distancemetric) const;
     bool findAllCharactersWithXInRangeOf(short int startx, short int endx, std::vector<pointer> &ret) const;
+
+    void for_each(const for_each_type &function) {
+        for (const auto &key_value : container) {
+            function(key_value.second);
+        }
+    }
+
+    void for_each(const for_each_type &function) const {
+        for (const auto &key_value : container) {
+            function(key_value.second);
+        }
+    }
+
+    void for_each(const for_each_member_type &function) {
+        for (const auto &key_value : container) {
+            (key_value.second->*function)();
+        }
+    }
 };
 
 
 template <class T>
 auto CharacterContainer<T>::find(const std::string &n) const -> pointer {
     for (const auto &character : container) {
-        if (comparestrings_nocase(character->getName(), n)) {
-            return character;
+        if (comparestrings_nocase(character.second->getName(), n)) {
+            return character.second;
         }
     }
 
@@ -88,10 +103,10 @@ auto CharacterContainer<T>::find(const std::string &n) const -> pointer {
 
 template <class T>
 auto CharacterContainer<T>::find(TYPE_OF_CHARACTER_ID id) const -> pointer {
-    for (const auto &character : container) {
-        if (character->getId() == id) {
-            return character;
-        }
+    const auto it = container.find(id);
+
+    if (it != container.end()) {
+        return it->second;
     }
 
     return nullptr;
@@ -101,8 +116,8 @@ auto CharacterContainer<T>::find(TYPE_OF_CHARACTER_ID id) const -> pointer {
 template <class T>
 auto CharacterContainer<T>::find(const position &pos) const -> pointer {
     for (const auto &character : container) {
-        if (character->getPosition() == pos) {
-            return character;
+        if (character.second->getPosition() == pos) {
+            return character.second;
         }
     }
 
@@ -111,40 +126,8 @@ auto CharacterContainer<T>::find(const position &pos) const -> pointer {
 
 
 template <class T>
-bool CharacterContainer<T>::find(const position &pos, pointer &ret) const {
-    for (const auto &character : container) {
-        if (character->getPosition() == pos) {
-            ret = character;
-            return true;
-        }
-    }
-
-    return false;
-}
-
-template <class T>
 bool CharacterContainer<T>::erase(TYPE_OF_CHARACTER_ID id) {
-    for (auto it = container.begin(); it != container.end(); ++it) {
-        if ((*it)->getId() == id) {
-            container.erase(it);
-            return true;
-        }
-    }
-
-    return false;
-}
-
-
-template <class T>
-bool CharacterContainer<T>::remove(const position &pos) {
-    for (auto it = container.begin(); it != container.end(); ++it) {
-        if ((*it)->getPosition() == pos) {
-            container.erase(it);
-            return true;
-        }
-    }
-
-    return false;
+    return container.erase(id) > 0;
 }
 
 
@@ -153,7 +136,7 @@ auto CharacterContainer<T>::findAllCharactersInRangeOf(const position &pos, int 
     std::vector<pointer> temp;
 
     for (const auto &character : container) {
-        const auto &charPos = character->getPosition();
+        const auto &charPos = character.second->getPosition();
         short int dz = charPos.z - pos.z;
 
         if ((-RANGEDOWN <= dz) && (dz <= RANGEUP)) {
@@ -161,7 +144,7 @@ auto CharacterContainer<T>::findAllCharactersInRangeOf(const position &pos, int 
             short int dy = charPos.y - pos.y;
 
             if ((abs(dx) + abs(dy)) <= distancemetric) {
-                temp.push_back(character);
+                temp.push_back(character.second);
             }
         }
     }
@@ -175,15 +158,15 @@ auto CharacterContainer<T>::findAllCharactersInScreen(const position &pos) const
     std::vector<pointer> temp;
 
     for (const auto &character : container) {
-        const auto &charPos = character->getPosition();
+        const auto &charPos = character.second->getPosition();
         short int dz = charPos.z - pos.z;
 
         if ((-RANGEDOWN <= dz) && (dz <= RANGEUP)) {
             short int dx = charPos.x - pos.x;
             short int dy = charPos.y - pos.y;
 
-            if ((abs(dx) + abs(dy)) <= character->getScreenRange()) {
-                temp.push_back(character);
+            if ((abs(dx) + abs(dy)) <= character.second->getScreenRange()) {
+                temp.push_back(character.second);
             }
         }
     }
@@ -197,7 +180,7 @@ auto CharacterContainer<T>::findAllCharactersInMaxRangeOf(const position &pos, i
     std::vector<pointer> temp;
 
     for (const auto &character : container) {
-        const auto &charPos = character->getPosition();
+        const auto &charPos = character.second->getPosition();
         short int dz = charPos.z - pos.z;
 
         if ((-RANGEDOWN <= dz) && (dz <= RANGEUP)) {
@@ -205,7 +188,7 @@ auto CharacterContainer<T>::findAllCharactersInMaxRangeOf(const position &pos, i
             short int dy = charPos.y - pos.y;
 
             if ((abs(dx) <= distancemetric) && (abs(dy) <=distancemetric)) {
-                temp.push_back(character);
+                temp.push_back(character.second);
             }
         }
     }
@@ -219,7 +202,7 @@ auto CharacterContainer<T>::findAllAliveCharactersInRangeOf(const position &pos,
     std::vector<pointer> temp;
 
     for (const auto &character : container) {
-        const auto &charPos = character->getPosition();
+        const auto &charPos = character.second->getPosition();
         short int dz = charPos.z - pos.z;
 
         if ((-RANGEDOWN <= dz) && (dz <= RANGEUP)) {
@@ -228,8 +211,8 @@ auto CharacterContainer<T>::findAllAliveCharactersInRangeOf(const position &pos,
 
             if (((abs(dx) + abs(dy)) <= distancemetric) ||
                 ((distancemetric == 1) && (abs(dx) == 1) && (abs(dy) == 1))) {       // Allow angle attacks
-                if (character->IsAlive()) {
-                    temp.push_back(character);
+                if (character.second->IsAlive()) {
+                    temp.push_back(character.second);
                 }
             }
         }
@@ -243,15 +226,15 @@ auto CharacterContainer<T>::findAllAliveCharactersInRangeOfOnSameMap(const posit
     std::vector<pointer> temp;
 
     for (const auto &character : container) {
-        const auto &charPos = character->getPosition();
+        const auto &charPos = character.second->getPosition();
 
         if (charPos.z == pos.z) {
             short int dx = charPos.x - pos.x;
             short int dy = charPos.y - pos.y;
 
             if (((abs(dx) + abs(dy)) <= distancemetric) || ((distancemetric == 1) && (abs(dx) == 1) && (abs(dy) == 1))) {          // Allow angle attacks
-                if (character->IsAlive()) {
-                    temp.push_back(character);
+                if (character.second->IsAlive()) {
+                    temp.push_back(character.second);
                 }
             }
         }
@@ -266,10 +249,10 @@ bool CharacterContainer<T>::findAllCharactersWithXInRangeOf(short int startx, sh
     bool found_one = false;
 
     for (const auto &character : container) {
-        const auto &charPos = character->getPosition();
+        const auto &charPos = character.second->getPosition();
 
         if ((charPos.x >= startx) && (charPos.x <= endx)) {
-            ret.push_back(character);
+            ret.push_back(character.second);
             found_one = true;
         }
     }

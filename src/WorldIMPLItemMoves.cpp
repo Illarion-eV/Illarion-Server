@@ -686,22 +686,22 @@ void World::checkField(Field *cfstart, const position &itemPosition) {
     if (cfstart) {
         if (cfstart->HasSpecialItem()) {
             if (cfstart->IsPlayerOnField()) {
-                Player *temp;
+                Player *temp = Players.find(itemPosition);
 
-                if (Players.find(itemPosition, temp)) {
+                if (temp) {
                     checkFieldAfterMove(temp, cfstart);
                 }
             } else if (cfstart->IsMonsterOnField()) {
-                Monster *temp2;
+                Monster *temp = Monsters.find(itemPosition);
 
-                if (Monsters.find(itemPosition, temp2)) {
-                    checkFieldAfterMove(temp2, cfstart);
+                if (temp) {
+                    checkFieldAfterMove(temp, cfstart);
                 }
             } else if (cfstart->IsNPCOnField()) {
-                NPC *temp3;
+                NPC *temp = Npc.find(itemPosition);;
 
-                if (Npc.find(itemPosition, temp3)) {
-                    checkFieldAfterMove(temp3, cfstart);
+                if (temp) {
+                    checkFieldAfterMove(temp, cfstart);
                 }
             }
         }
@@ -1320,44 +1320,41 @@ void World::sendPutItemOnMapToAllVisibleCharacters(const position &itemPosition,
 
 void World::sendChangesOfContainerContentsCM(Container *cc, Container *moved) {
     if (cc && moved) {
-        for (const auto &player : Players) {
+        Players.for_each([cc, moved](Player *player) {
             player->updateShowcase(cc);
             player->closeShowcase(moved);
-        }
+        });
     }
 }
 
 void World::sendChangesOfContainerContentsIM(Container *cc) {
     if (cc) {
-        for (const auto &player : Players) {
+        Players.for_each([cc](Player *player) {
             player->updateShowcase(cc);
-        }
+        });
     }
 }
 
 void World::closeShowcaseForOthers(Player *target, Container *moved) {
     if (moved) {
-        for (const auto &player : Players) {
-            if (target == player) {
-                continue;
+        Players.for_each([target, moved](Player *player) {
+            if (target != player) {
+                player->closeShowcase(moved);
             }
-
-            player->closeShowcase(moved);
-        }
+        });
     }
 }
 
 void World::closeShowcaseIfNotInRange(Container *moved, const position &showcasePosition) {
     if (moved) {
-        for (const auto &player : Players) {
+        Players.for_each([&showcasePosition, moved](Player *player) {
             const auto &pos = player->getPosition();
-            if (abs(showcasePosition.x - pos.x) <= 1
-                    && abs(showcasePosition.y - pos.y) <= 1
-                    && showcasePosition.z == pos.z) {
-                continue;
+            if (abs(showcasePosition.x - pos.x) > 1
+                    || abs(showcasePosition.y - pos.y) > 1
+                    || showcasePosition.z != pos.z) {
+                player->closeShowcase(moved);;
             }
-
-            player->closeShowcase(moved);
-        }
+        });
     }
 }
+

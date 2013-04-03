@@ -34,12 +34,12 @@
 extern std::shared_ptr<LuaLookAtItemScript>lookAtItemScript;
 
 void World::sendMessageToAdmin(const std::string &message) {
-    for (const auto &player : Players) {
+    Players.for_each([&message](Player *player) {
         if (player->hasGMRight(gmr_getgmcalls)) {
             ServerCommandPointer cmd(new SayTC(player->getPosition(), message));
             player->Connection->addCommand(cmd);
         }
-    }
+    });
 }
 
 
@@ -113,9 +113,9 @@ std::string World::languageNumberToSkillName(int languageNumber) {
 }
 
 void World::sendMessageToAllPlayers(const std::string &message) {
-    for (const auto &player : Players) {
+    Players.for_each([&message](Player *player) {
         player->inform(message, Player::informBroadcast);
-    }
+    });
 }
 
 void World::sendMessageToAllCharsInRange(const std::string &german, const std::string &english, Character::talk_type tt, Character *cc) {
@@ -382,14 +382,12 @@ void World::sendIGTime(Player *cp) {
 }
 
 void World::sendIGTimeToAllPlayers() {
-    for (const auto &player : Players) {
-        sendIGTime(player);
-    }
+    Players.for_each(sendIGTime);
 }
 
 void World::sendWeatherToAllPlayers() {
-    for (const auto &player : Players) {
+    Players.for_each([this](Player *player) {
         player->sendWeather(weather);
-    }
+    });
 }
 

@@ -98,9 +98,9 @@ bool World::createDynamicNPC(const std::string &name, TYPE_OF_RACE_ID type, cons
 std::vector<Player *> World::getPlayersOnline() const {
     std::vector<Player *> list;
 
-    for (const auto &player : Players) {
+    Players.for_each([&list](Player *player) {
         list.push_back(player);
-    }
+    });
 
     return list;
 }
@@ -108,9 +108,9 @@ std::vector<Player *> World::getPlayersOnline() const {
 std::vector<NPC *> World::getNPCS() const {
     std::vector<NPC *> list;
 
-    for (const auto &npc : Npc) {
+    Npc.for_each([&list](NPC *npc) {
         list.push_back(npc);
-    }
+    });
 
     return list;
 }

@@ -296,9 +296,9 @@ void World::updatePlayerList() {
             insQuery.setServerTable("onlineplayer");
             const InsertQuery::columnIndex column = insQuery.addColumn("on_playerid");
 
-            for (const auto &player : Players) {
+            Players.for_each([&](Player *player) {
                 insQuery.addValue<TYPE_OF_CHARACTER_ID>(column, player->getId());
-            }
+            });
 
             insQuery.execute();
         }
@@ -381,23 +381,25 @@ bool World::findPlayerWithLowestHP(const std::vector<Player *> &ppvec, Player *&
 
 
 void World::takeMonsterAndNPCFromMap() {
-    Field *tempf;
+    Monsters.for_each([this](Monster *monster) {
+        Field *tempf;
 
-    for (const auto &monster : Monsters) {
         if (GetPToCFieldAt(tempf, monster->getPosition())) {
             tempf->SetMonsterOnField(false);
         }
 
         delete monster;
-    }
+    });
 
-    for (const auto &npc : Npc) {
+    Npc.for_each([this](NPC *npc) {
+        Field *tempf;
+
         if (GetPToCFieldAt(tempf, npc->getPosition())) {
             tempf->SetNPCOnField(false);
         }
 
         delete npc;
-    }
+    });
 
     Monsters.clear();
     Npc.clear();
@@ -744,13 +746,8 @@ bool World::DoAge() {
 
 
 void World::AgeInventory() {
-    for (const auto &player : Players) {
-        player->ageInventory();
-    }
-
-    for (const auto &monster : Monsters) {
-        monster->ageInventory();
-    }
+    Players.for_each(&Player::ageInventory);
+    Monsters.for_each(&Monster::ageInventory);
 }
 
 

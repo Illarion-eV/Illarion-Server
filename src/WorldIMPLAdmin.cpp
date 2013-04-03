@@ -211,10 +211,10 @@ void World::kill_command(Player *cp) {
 
     uint32_t counter = 0;
 
-    for (const auto &monster : Monsters) {
+    Monsters.for_each([&counter](Monster *monster) {
         monster->remove();
         ++counter;
-    }
+    });
 
     Logger::info(LogFacility::Admin) << *cp << " nukes " << counter << " monsters" << Log::end;
 }
@@ -281,22 +281,24 @@ void World::save_command(Player *cp) {
 
     Logger::info(LogFacility::Admin) << *cp << " saves all maps" << Log::end;
 
-    Field *tempf;
+    Players.for_each([this](Player *player) {
+        Field *tempf;
 
-    for (const auto &player : Players) {
         if (GetPToCFieldAt(tempf, player->getPosition())) {
             tempf->SetPlayerOnField(false);
         }
-    }
+    });
 
     std::cout << "Save maps" << std::endl;
     Save("Illarion");
 
-    for (const auto &player : Players) {
+    Players.for_each([this](Player *player) {
+        Field *tempf;
+            
         if (GetPToCFieldAt(tempf, player->getPosition())) {
             tempf->SetPlayerOnField(true);
         }
-    }
+    });
 
     std::string tmessage = "*** Maps saved! ***";
     cp->inform(tmessage);
@@ -449,9 +451,9 @@ void World::teleportPlayerToOther(Player *cp, std::string ts) {
 
 
 void World::forceLogoutOfAllPlayers() {
-    Field *tempf;
+    Players.for_each([this](Player *player) {
+        Field *tempf;
 
-    for (const auto &player : Players) {
         if (GetPToCFieldAt(tempf, player->getPosition())) {
             tempf->SetPlayerOnField(false);
         }
@@ -460,7 +462,7 @@ void World::forceLogoutOfAllPlayers() {
         ServerCommandPointer cmd(new LogOutTC(SERVERSHUTDOWN));
         player->Connection->shutdownSend(cmd);
         PlayerManager::get()->getLogOutPlayers().non_block_push_back(player);
-    }
+    });
 
     Players.clear();
 }
@@ -747,13 +749,13 @@ void World::who_command(Player *cp, const std::string &tplayer) {
 
         std::string tmessage = "";
 
-        for (const auto &p : Players) {
+        Players.for_each([&tmessage](Player *p) {
             if (tmessage.length() > 0) {
                 tmessage = tmessage + ", ";
             }
 
             tmessage = tmessage + p->to_string();
-        }
+        });
 
         if (tmessage.length() > 0) {
             cp->inform(tmessage);
@@ -940,9 +942,7 @@ void World::playersave_command(Player *cp) {
 
     Logger::info(LogFacility::Admin) << *cp << " saves all players" << Log::end;
 
-    for (const auto &p : Players) {
-        p->save();
-    }
+    Players.for_each(&Player::save);
 
     std::string tmessage = "*** All online players saved! ***";
     cp->inform(tmessage);
@@ -1301,9 +1301,7 @@ bool World::reload_tables(Player *cp) {
         //reload NPC's
         initNPC();
 
-        for (const auto &p : Players) {
-            p->sendCompleteQuestProgress();
-        }
+        Players.for_each(&Player::sendCompleteQuestProgress);
 
         try {
             std::shared_ptr<LuaReloadScript> tmpScript(new LuaReloadScript("server.reload"));

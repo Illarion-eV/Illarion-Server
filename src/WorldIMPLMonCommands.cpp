@@ -39,11 +39,10 @@ void World::montool_kill_command(Player *c) {
 
     uint32_t counter = 0;
 
-    for (const auto &monster : Monsters) {
-        // kill the monster we have found
+    Monsters.for_each([&counter](Monster *monster) {
         monster->increaseAttrib("hitpoints", -(monster->increaseAttrib("hitpoints",0)+1));
         ++counter;
-    }
+    });
 
     //monitoringClientList->sendCommand( new SendMessageTS("Sucessfully killed: "+Logger::toString(counter)+" monsters per nuke from: "+c->to_string()+"("+Logger::toString(c->id)+")",0));
 }

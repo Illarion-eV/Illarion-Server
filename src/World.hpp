@@ -310,7 +310,7 @@ public:
     *@param timeType <"year"|"month"|"day"|"hour"|"minute"|"second">
     *@return an int which is the current illarion time from the type
     */
-    int getTime(const std::string &timeType);
+    static int getTime(const std::string &timeType);
 
     /**
         * function for maploading
@@ -755,7 +755,7 @@ public:
     void sendIGTimeToAllPlayers();
 
     //Sends the current IG Time to one player
-    void sendIGTime(Player *cp);
+    static void sendIGTime(Player *cp);
 
     /**
     *sends the current weather to all players online

@@ -383,10 +383,10 @@ AdminViewPlayersTC::AdminViewPlayersTC() : BasicServerCommand(SC_ADMINVIEWPLAYER
     unsigned short int count = World::get()->Players.size();
     addShortIntToBuffer(count);
 
-    for (const auto &p : World::get()->Players) {
+    World::get()->Players.for_each([this](Player *p) {
         addStringToBuffer(p->getName());
         addStringToBuffer(p->last_ip);
-    }
+    });
 }
 
 SoundTC::SoundTC(const position &pos, unsigned short int id) : BasicServerCommand(SC_SOUND_TC) {
