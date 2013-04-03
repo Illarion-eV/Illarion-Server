@@ -19,12 +19,12 @@
 
 #include "LongTimeAction.hpp"
 
+#include "make_unique.hpp"
 #include "World.hpp"
 #include "Character.hpp"
 #include "Player.hpp"
 #include "Monster.hpp"
 #include "NPC.hpp"
-#include "MilTimer.hpp"
 
 #include "script/LuaItemScript.hpp"
 #include "script/LuaTileScript.hpp"
@@ -32,15 +32,7 @@
 #include "script/LuaNPCScript.hpp"
 #include "script/LuaMagicScript.hpp"
 
-LongTimeAction::LongTimeAction(Player *player, World *world) : _owner(player) , _world(world), _actionrunning(false) {
-    _script.reset();
-    _timetowaitTimer = NULL;
-    _redoaniTimer = NULL;
-    _redosoundTimer = NULL;
-    _at = ACTION_USE;
-    _ani = 0;
-    _sound = 0;
-    _targetId = 0;
+LongTimeAction::LongTimeAction(Player *player, World *world) : _owner(player) , _world(world) {
 }
 
 void LongTimeAction::setLastAction(std::shared_ptr<LuaScript> script, SouTar srce, SouTar trgt, ActionType at) {
@@ -49,11 +41,11 @@ void LongTimeAction::setLastAction(std::shared_ptr<LuaScript> script, SouTar src
     _target = trgt;
     _at = at;
 
-    if (trgt.character != NULL) {
+    if (trgt.character) {
         _targetId = _target.character->getId();
     }
 
-    if (srce.character != NULL) {
+    if (srce.character) {
         _sourceId = _source.character->getId();
         _sourceCharType = _source.character->getType();
     }
@@ -84,29 +76,22 @@ void LongTimeAction::startLongTimeAction(unsigned short int timetowait, unsigned
     _ani = ani;
     _sound = sound;
 
-    //delete old timer and initialize new ones if necsessary
-    if (_timetowaitTimer) {
-        delete _timetowaitTimer;
-    }
-
-    _timetowaitTimer = new MilTimer(timetowait * 100);
+    _timetowaitTimer = std::make_unique<MilTimer>(timetowait * 100);
 
     if (_redoaniTimer) {
-        delete _redoaniTimer;
-        _redoaniTimer = NULL;
+        _redoaniTimer.reset();
     }
 
     if (_ani != 0 && redoani != 0) {
-        _redoaniTimer = new MilTimer(redoani * 100);
+        _redoaniTimer = std::make_unique<MilTimer>(redoani * 100);
     }
 
     if (_redosoundTimer) {
-        delete _redosoundTimer;
-        _redosoundTimer = NULL;
+        _redosoundTimer.reset();
     }
 
     if (_sound != 0 && redosound != 0) {
-        _redosoundTimer = new MilTimer(redosound * 100);
+        _redosoundTimer = std::make_unique<MilTimer>(redosound * 100);
     }
 
     if (_sound != 0) {
@@ -249,12 +234,9 @@ void LongTimeAction::abortAction() {
 
     _actionrunning = false;
     _script.reset();
-    delete _redoaniTimer;
-    _redoaniTimer = NULL;
-    delete _redosoundTimer;
-    _redosoundTimer = NULL;
-    delete _timetowaitTimer;
-    _timetowaitTimer = NULL;
+    _redoaniTimer.reset();
+    _redosoundTimer.reset();
+    _timetowaitTimer.reset();
     _ani = 0;
     _sound = 0;
 
@@ -330,12 +312,9 @@ void LongTimeAction::successAction() {
 
     if (!_actionrunning) {
         _script.reset();
-        delete _redoaniTimer;
-        _redoaniTimer = NULL;
-        delete _redosoundTimer;
-        _redosoundTimer = NULL;
-        delete _timetowaitTimer;
-        _timetowaitTimer = NULL;
+        _redoaniTimer.reset();
+        _redosoundTimer.reset();
+        _timetowaitTimer.reset();
         _ani = 0;
         _sound = 0;
     }
@@ -387,22 +366,22 @@ void LongTimeAction::changeTarget(ScriptItem sI) {
 
 void LongTimeAction::checkTarget() {
     if (_targetId == 0) {
-        _source.character=NULL;
+        _source.character = nullptr;
         return;
     } else {
         if (_targetId < MONSTER_BASE) {
             //player
-            if (World::get()->Players.find(_targetId) == NULL) {
-                _target.character=NULL;
+            if (World::get()->Players.find(_targetId) == nullptr) {
+                _target.character = nullptr;
             }
         } else if (_targetId >= MONSTER_BASE && _targetId < NPC_BASE) {
             //monster
-            if (World::get()->Monsters.find(_targetId) == NULL) {
-                _target.character=NULL;
+            if (World::get()->Monsters.find(_targetId) == nullptr) {
+                _target.character = nullptr;
             }
         } else {
-            if (World::get()->Npc.find(_targetId) == NULL) {
-                _target.character=NULL;
+            if (World::get()->Npc.find(_targetId) == nullptr) {
+                _target.character = nullptr;
             }
         }
 
@@ -411,26 +390,26 @@ void LongTimeAction::checkTarget() {
 
 void LongTimeAction::checkSource() {
     if (_sourceId == 0) {
-        _source.character=NULL;
-        _sourceCharType=0;
+        _source.character = nullptr;
+        _sourceCharType = 0;
         return;
     } else {
         if (_sourceId < MONSTER_BASE) {
             //player
-            if (World::get()->Players.find(_sourceId) == NULL) {
-                _source.character=NULL;
-                _sourceCharType=0;
+            if (World::get()->Players.find(_sourceId) == nullptr) {
+                _source.character = nullptr;
+                _sourceCharType = 0;
             }
         } else if (_sourceId >= MONSTER_BASE && _sourceId < NPC_BASE) {
             //monster
-            if (World::get()->Monsters.find(_sourceId) == NULL) {
-                _source.character=NULL;
-                _sourceCharType=0;
+            if (World::get()->Monsters.find(_sourceId) == nullptr) {
+                _source.character = nullptr;
+                _sourceCharType = 0;
             }
         } else {
-            if (World::get()->Npc.find(_sourceId) != NULL) {
-                _source.character=NULL;
-                _sourceCharType=0;
+            if (World::get()->Npc.find(_sourceId) == nullptr) {
+                _source.character = nullptr;
+                _sourceCharType = 0;
             }
         }
 

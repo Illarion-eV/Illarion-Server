@@ -20,17 +20,14 @@
 #ifndef _CLONGTIMEACTION_HPP_
 #define _CLONGTIMEACTION_HPP_
 
-#include <boost/shared_ptr.hpp>
-
+#include <memory>
+#include "MilTimer.hpp"
 #include "Item.hpp"
-
 #include "script/LuaScript.hpp"
 
 class Player;
 class World;
 class Character;
-class MilTimer;
-
 
 /**
 * @ingroup Scriptclasses
@@ -180,7 +177,7 @@ public:
 
 
 private:
-    std::shared_ptr<LuaScript> _script; /**< pointer to the last script*/
+    std::shared_ptr<LuaScript> _script = nullptr; /**< pointer to the last script*/
     SouTar _source; /**< source of the last script*/
     SouTar _target; /**< target of the last script*/
 
@@ -191,16 +188,16 @@ private:
     Player *_owner;  /**< the owner of the LongTimeAction Objectt*/
     World *_world;  /**< pointer to the gameworld*/
 
-    bool _actionrunning; /**< boolean value, if true there is currently a action running*/
+    bool _actionrunning = false; /**< boolean value, if true there is currently a action running*/
 
-    MilTimer *_timetowaitTimer;  /**< timer which determines how many ms the action has to wait until it is sucessfull*/
-    MilTimer *_redoaniTimer;  /**< timer which determines after how many ms the animation is shown again*/
-    MilTimer *_redosoundTimer;  /**< timer which determines how many ms the sound is played again.*/
+    std::unique_ptr<MilTimer> _timetowaitTimer = nullptr;  /**< timer which determines how many ms the action has to wait until it is sucessfull*/
+    std::unique_ptr<MilTimer> _redoaniTimer = nullptr;  /**< timer which determines after how many ms the animation is shown again*/
+    std::unique_ptr<MilTimer> _redosoundTimer = nullptr;  /**< timer which determines how many ms the sound is played again.*/
 
-    ActionType _at; /**< type of the action @see ActionType*/
+    ActionType _at = ACTION_USE; /**< type of the action @see ActionType*/
 
-    unsigned short int _sound; /**< id of the sound which is played to the action*/
-    unsigned short int _ani; /**< id of the animation which is shown to the action*/
+    unsigned short int _sound = 0; /**< id of the sound which is played to the action*/
+    unsigned short int _ani = 0; /**< id of the animation which is shown to the action*/
 
     void checkTarget();
     void checkSource();
