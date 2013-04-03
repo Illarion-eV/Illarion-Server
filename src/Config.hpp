@@ -19,9 +19,11 @@
 #ifndef __CONFIG_HPP__
 #define __CONFIG_HPP__
 
+#include <memory>
 #include <string>
 #include <map>
 #include <iostream>
+#include "make_unique.hpp"
 
 class ConfigEntryBase {
 public:
@@ -76,8 +78,8 @@ public:
     static void register_entry(const std::string &config_name, ConfigEntryBase *entry);
 
     static Config &instance() {
-        if (_instance == nullptr) {
-            _instance = new Config();
+        if (!_instance) {
+            _instance = std::make_unique<Config>();
         }
 
         return *_instance;
@@ -103,7 +105,7 @@ public:
     ConfigEntry<int16_t> playerstart_z = { "playerstart_z", 0 };
 
 private:
-    static Config *_instance;
+    static std::unique_ptr<Config> _instance;
 };
 
 #endif

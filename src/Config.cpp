@@ -23,7 +23,7 @@
 #include <iostream>
 #include <fstream>
 
-Config *Config::_instance = nullptr;
+std::unique_ptr<Config> Config::_instance = nullptr;
 
 namespace {
 static std::map<std::string, ConfigEntryBase *> config_options;
