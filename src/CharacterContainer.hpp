@@ -27,8 +27,6 @@
 #include "utility.hpp"
 #include "constants.hpp"
 
-class Character;
-
 template <class T>
 class CharacterContainer {
 public:
@@ -36,7 +34,7 @@ public:
 
 private:
     typedef std::function<void(pointer)> for_each_type;
-    typedef void(Character::*for_each_member_type)();
+    typedef void(T::*for_each_member_type)();
     typedef typename std::unordered_map<TYPE_OF_CHARACTER_ID, pointer> container_type;
     container_type container;
 
