@@ -43,6 +43,10 @@ public:
     ScriptItem item;
     CommonStruct itemdef;
     MockContainer container;
+
+    ~world_bindings() {
+        LuaScript::shutdownLua();
+    }
 };
 
 TEST_F(world_bindings, LookAtItem) {
