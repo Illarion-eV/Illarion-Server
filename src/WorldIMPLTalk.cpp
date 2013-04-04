@@ -382,7 +382,9 @@ void World::sendIGTime(Player *cp) {
 }
 
 void World::sendIGTimeToAllPlayers() {
-    Players.for_each(sendIGTime);
+    Players.for_each([this](Player *player) {
+        sendIGTime(player);
+    });
 }
 
 void World::sendWeatherToAllPlayers() {
