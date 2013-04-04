@@ -184,16 +184,16 @@ void Player::login() throw(Player::LogoutException) {
     sendWeather(_world->weather);
 
     // send player login data
-    ServerCommandPointer cmd(new IdTC(getId()));
+    ServerCommandPointer cmd = std::make_shared<IdTC>(getId());
     Connection->addCommand(cmd);
     // position
-    cmd.reset(new SetCoordinateTC(pos));
+    cmd = std::make_shared<SetCoordinateTC>(pos);
     Connection->addCommand(cmd);
 
     effects.load();
 
     //send the basic data to the monitoring client
-    cmd.reset(new BBPlayerTC(getId(), getName(), pos));
+    cmd = std::make_shared<BBPlayerTC>(getId(), getName(), pos);
     _world->monitoringClientList->sendCommand(cmd);
 
     // send weather and time before sending the map, to display everything correctly from the start
@@ -214,7 +214,7 @@ void Player::login() throw(Player::LogoutException) {
     _world->sendCharacterMoveToAllVisiblePlayers(this, NORMALMOVE, 4);
     // additional nop info
     _world->sendSpinToAllVisiblePlayers(this);
-    cmd.reset(new PlayerSpinTC(getFaceTo(), getId()));
+    cmd = std::make_shared<PlayerSpinTC>(getFaceTo(), getId());
     Connection->addCommand(cmd);
 
     // send attributes
@@ -255,7 +255,7 @@ unsigned short int Player::getScreenRange() const {
 void Player::openShowcase(Container *container, bool carry) {
     for (const auto &showcase : showcases) {
         if (showcase.second->contains(container)) {
-            ServerCommandPointer cmd(new UpdateShowcaseTC(showcase.first, container->getSlotCount(), container->getItems()));
+            ServerCommandPointer cmd = std::make_shared<UpdateShowcaseTC>(showcase.first, container->getSlotCount(), container->getItems());
             Connection->addCommand(cmd);
             return;
         }
@@ -266,9 +266,9 @@ void Player::openShowcase(Container *container, bool carry) {
             ++showcaseCounter;
         }
 
-        showcases[showcaseCounter] = new Showcase(container, carry);
+        showcases[showcaseCounter] = std::make_unique<Showcase>(container, carry);
 
-        ServerCommandPointer cmd(new UpdateShowcaseTC(showcaseCounter, container->getSlotCount(), container->getItems()));
+        ServerCommandPointer cmd = std::make_shared<UpdateShowcaseTC>(showcaseCounter, container->getSlotCount(), container->getItems());
         Connection->addCommand(cmd);
     } else {
         inform("ERROR: Unable to open more than 100 containers.");
@@ -278,7 +278,7 @@ void Player::openShowcase(Container *container, bool carry) {
 void Player::updateShowcase(Container *container) const {
     for (const auto &showcase : showcases) {
         if (showcase.second->contains(container)) {
-            ServerCommandPointer cmd(new UpdateShowcaseTC(showcase.first, container->getSlotCount(), container->getItems()));
+            ServerCommandPointer cmd = std::make_shared<UpdateShowcaseTC>(showcase.first, container->getSlotCount(), container->getItems());
             Connection->addCommand(cmd);
         }
     }
@@ -328,9 +328,8 @@ Container *Player::getShowcaseContainer(uint8_t showcase) const {
 
 void Player::closeShowcase(uint8_t showcase) {
     if (isShowcaseOpen(showcase)) {
-        delete showcases[showcase];
         showcases.erase(showcase);
-        ServerCommandPointer cmd(new ClearShowCaseTC(showcase));
+        ServerCommandPointer cmd = std::make_shared<ClearShowCaseTC>(showcase);
         Connection->addCommand(cmd);
     }
 }
@@ -338,8 +337,7 @@ void Player::closeShowcase(uint8_t showcase) {
 void Player::closeShowcase(Container *container) {
     for (auto it = showcases.cbegin(); it != showcases.cend();) {
         if (it->second->contains(container)) {
-            delete it->second;
-            ServerCommandPointer cmd(new ClearShowCaseTC(it->first));
+            ServerCommandPointer cmd = std::make_shared<ClearShowCaseTC>(it->first);
             Connection->addCommand(cmd);
             it = showcases.erase(it);
         } else {
@@ -356,8 +354,7 @@ void Player::closeOnMove() {
 void Player::closeAllShowcasesOfMapContainers() {
     for (auto it = showcases.cbegin(); it != showcases.cend();) {
         if (!it->second->inInventory()) {
-            delete it->second;
-            ServerCommandPointer cmd(new ClearShowCaseTC(it->first));
+            ServerCommandPointer cmd = std::make_shared<ClearShowCaseTC>(it->first);
             Connection->addCommand(cmd);
             it = showcases.erase(it);
         } else {
@@ -368,8 +365,7 @@ void Player::closeAllShowcasesOfMapContainers() {
 
 void Player::closeAllShowcases() {
     for (const auto &showcase : showcases) {
-        delete showcase.second;
-        ServerCommandPointer cmd(new ClearShowCaseTC(showcase.first));
+        ServerCommandPointer cmd = std::make_shared<ClearShowCaseTC>(showcase.first);
         Connection->addCommand(cmd);
     }
 
@@ -460,14 +456,14 @@ void Player::sendCharacters() {
 void Player::sendCharacterItemAtPos(unsigned char cpos) {
     if (cpos < (MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
         // gltiger Wert
-        ServerCommandPointer cmd(new UpdateInventoryPosTC(cpos, characterItems[cpos].getId(), characterItems[cpos].getNumber()));
+        ServerCommandPointer cmd = std::make_shared<UpdateInventoryPosTC>(cpos, characterItems[cpos].getId(), characterItems[cpos].getNumber());
         Connection->addCommand(cmd);
     }
 }
 
 
 void Player::sendWeather(WeatherStruct weather) {
-    ServerCommandPointer cmd(new UpdateWeatherTC(weather));
+    ServerCommandPointer cmd = std::make_shared<UpdateWeatherTC>(weather);
     Connection->addCommand(cmd);
 }
 
@@ -657,9 +653,9 @@ void Player::updateBackPackView() {
 
 
 void Player::sendSkill(TYPE_OF_SKILL_ID skill, unsigned short int major, unsigned short int minor) {
-    ServerCommandPointer cmd(new UpdateSkillTC(skill, major, minor));
+    ServerCommandPointer cmd = std::make_shared<UpdateSkillTC>(skill, major, minor);
     Connection->addCommand(cmd);
-    cmd.reset(new BBSendSkillTC(getId(), skill, major, minor));
+    cmd = std::make_shared<BBSendSkillTC>(getId(), skill, major, minor);
     _world->monitoringClientList->sendCommand(cmd);
 }
 
@@ -675,7 +671,7 @@ void Player::sendAllSkills() {
 
 void Player::sendMagicFlags(int type) {
     if ((type >= 0) && (type < 4)) {
-        ServerCommandPointer cmd(new UpdateMagicFlagsTC(type, getMagicFlags(type)));
+        ServerCommandPointer cmd = std::make_shared<UpdateMagicFlagsTC>(type, getMagicFlags(type));
         Connection->addCommand(cmd);
     }
 }
@@ -683,9 +679,9 @@ void Player::sendMagicFlags(int type) {
 
 void Player::sendAttrib(Character::attributeIndex attribute) {
     auto value = getAttribute(attribute);
-    ServerCommandPointer cmd(new UpdateAttribTC(getId(), attributeStringMap[attribute], value));
+    ServerCommandPointer cmd = std::make_shared<UpdateAttribTC>(getId(), attributeStringMap[attribute], value);
     Connection->addCommand(cmd);
-    cmd.reset(new BBSendAttribTC(getId(), attributeStringMap[attribute], value));
+    cmd = std::make_shared<BBSendAttribTC>(getId(), attributeStringMap[attribute], value);
     _world->monitoringClientList->sendCommand(cmd);
 }
 
@@ -697,13 +693,13 @@ void Player::handleAttributeChange(Character::attributeIndex attribute) {
 
 
 void Player::startMusic(short int title) {
-    ServerCommandPointer cmd(new MusicTC(title));
+    ServerCommandPointer cmd = std::make_shared<MusicTC>(title);
     Connection->addCommand(cmd);
 }
 
 
 void Player::defaultMusic() {
-    ServerCommandPointer cmd(new MusicDefaultTC());
+    ServerCommandPointer cmd = std::make_shared<MusicDefaultTC>();
     Connection->addCommand(cmd);
 }
 
@@ -1580,7 +1576,7 @@ void Player::turn(direction dir) {
 }
 
 void Player::receiveText(talk_type tt, const std::string &message, Character *cc) {
-    ServerCommandPointer cmd(new SayTC(cc->getPosition(), message));
+    ServerCommandPointer cmd = std::make_shared<SayTC>(cc->getPosition(), message);
 
     switch (tt) {
     case tt_say:
@@ -1588,12 +1584,12 @@ void Player::receiveText(talk_type tt, const std::string &message, Character *cc
         break;
 
     case tt_whisper:
-        cmd.reset(new WhisperTC(cc->getPosition(), message));
+        cmd = std::make_shared<WhisperTC>(cc->getPosition(), message);
         Connection->addCommand(cmd);
         break;
 
     case tt_yell:
-        cmd.reset(new ShoutTC(cc->getPosition(), message));
+        cmd = std::make_shared<ShoutTC>(cc->getPosition(), message);
         Connection->addCommand(cmd);
         break;
     }
@@ -1612,7 +1608,7 @@ void Player::getToKnow(Player *player) {
 void Player::introducePlayer(Player *player) {
     getToKnow(player);
 
-    ServerCommandPointer cmd(new IntroduceTC(player->getId(), player->getName()));
+    ServerCommandPointer cmd = std::make_shared<IntroduceTC>(player->getId(), player->getName());
     Connection->addCommand(cmd);
 }
 
@@ -1664,7 +1660,7 @@ void Player::teachMagic(unsigned char type,unsigned char flag) {
 }
 
 void Player::inform(const std::string &message, informType type) const {
-    ServerCommandPointer cmd(new InformTC(type, message));
+    ServerCommandPointer cmd = std::make_shared<InformTC>(type, message);
     Connection->addCommand(cmd);
 }
 
@@ -1794,7 +1790,7 @@ bool Player::move(direction dir, uint8_t mode) {
 #ifdef PLAYER_MOVE_DEBUG
                 std::cout<< "Player::move Walkcost after encumberance Char overloadet: " << walkcost << std::endl;
 #endif
-                ServerCommandPointer cmd(new MoveAckTC(getId(), getPosition(), NOMOVE, 0));
+                ServerCommandPointer cmd = std::make_shared<MoveAckTC>(getId(), getPosition(), NOMOVE, 0);
                 Connection->addCommand(cmd);
                 return false;
             } else {
@@ -1820,16 +1816,16 @@ bool Player::move(direction dir, uint8_t mode) {
 
             if (newpos.z != oldpos.z) {
                 setPosition(newpos);
-                ServerCommandPointer cmd(new MoveAckTC(getId(), getPosition(), NOMOVE, 0));
+                ServerCommandPointer cmd = std::make_shared<MoveAckTC>(getId(), getPosition(), NOMOVE, 0);
                 Connection->addCommand(cmd);
                 // Koordinate
-                cmd.reset(new SetCoordinateTC(getPosition()));
+                cmd = std::make_shared<SetCoordinateTC>(getPosition());
                 Connection->addCommand(cmd);
                 sendFullMap();
                 cont = false;
             } else {
                 if (mode != RUNNING || (j == 1 && cont)) {
-                    ServerCommandPointer cmd(new MoveAckTC(getId(), newpos, mode, waitpages));
+                    ServerCommandPointer cmd = std::make_shared<MoveAckTC>(getId(), newpos, mode, waitpages);
                     Connection->addCommand(cmd);
                 }
 
@@ -1859,7 +1855,7 @@ bool Player::move(direction dir, uint8_t mode) {
             _world->checkFieldAfterMove(this, cfnew);
 
             _world->TriggerFieldMove(this,true);
-            ServerCommandPointer cmd(new BBPlayerMoveTC(getId(), getPosition()));
+            ServerCommandPointer cmd = std::make_shared<BBPlayerMoveTC>(getId(), getPosition());
             _world->monitoringClientList->sendCommand(cmd);
 
             if (mode != RUNNING || j == 1) {
@@ -1868,14 +1864,14 @@ bool Player::move(direction dir, uint8_t mode) {
         }
         else {
             if (j == 1) {
-                ServerCommandPointer cmd(new MoveAckTC(getId(), getPosition(), NORMALMOVE, waitpages));
+                ServerCommandPointer cmd = std::make_shared<MoveAckTC>(getId(), getPosition(), NORMALMOVE, waitpages);
                 Connection->addCommand(cmd);
                 sendStepStripes(dir);
                 _world->sendCharacterMoveToAllVisiblePlayers(this, mode, waitpages);
                 _world->sendAllVisibleCharactersToPlayer(this, true);
                 return true;
             } else if (j == 0) {
-                ServerCommandPointer cmd(new MoveAckTC(getId(), getPosition(), NOMOVE, 0));
+                ServerCommandPointer cmd = std::make_shared<MoveAckTC>(getId(), getPosition(), NOMOVE, 0);
                 Connection->addCommand(cmd);
                 return false;
             }
@@ -1884,7 +1880,7 @@ bool Player::move(direction dir, uint8_t mode) {
         ++j;
     }
 
-    ServerCommandPointer cmd(new MoveAckTC(getId(), getPosition(), NOMOVE, 0));
+    ServerCommandPointer cmd = std::make_shared<MoveAckTC>(getId(), getPosition(), NOMOVE, 0);
     Connection->addCommand(cmd);
     return false;
 }
@@ -1914,12 +1910,12 @@ bool Player::forceWarp(const position &newPos) {
 
 void Player::handleWarp() {
     closeOnMove();
-    ServerCommandPointer cmd(new SetCoordinateTC(getPosition()));
+    ServerCommandPointer cmd = std::make_shared<SetCoordinateTC>(getPosition());
     Connection->addCommand(cmd);
     sendFullMap();
     visibleChars.clear();
     _world->sendAllVisibleCharactersToPlayer(this, true);
-    cmd.reset(new BBPlayerMoveTC(getId(), getPosition()));
+    cmd = std::make_shared<BBPlayerMoveTC>(getId(), getPosition());
     _world->monitoringClientList->sendCommand(cmd);
 }
 
@@ -2006,7 +2002,7 @@ void Player::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS prog
 
 void Player::sendQuestProgress(TYPE_OF_QUEST_ID questId, TYPE_OF_QUESTSTATUS progress) {
     if (progress == 0) {
-        ServerCommandPointer cmd(new AbortQuestTC(questId));
+        ServerCommandPointer cmd = std::make_shared<AbortQuestTC>(questId);
         Connection->addCommand(cmd);
         return;
     }
@@ -2023,7 +2019,7 @@ void Player::sendQuestProgress(TYPE_OF_QUEST_ID questId, TYPE_OF_QUESTSTATUS pro
                 std::vector<position> targets;
                 script->targets(this, progress, targets);
 
-                ServerCommandPointer cmd(new QuestProgressTC(questId, title, description, targets, progress == finalStatus));
+                ServerCommandPointer cmd = std::make_shared<QuestProgressTC>(questId, title, description, targets, progress == finalStatus);
                 Connection->addCommand(cmd);
             }
         }
@@ -2166,7 +2162,7 @@ void Player::sendRelativeArea(int8_t zoffs) {
             world->clientview.fillStripe(position(x,y,z), NewClientView::dir_right, MAP_DIMENSION+1-(i%2), World::get()->maps);
 
             if (world->clientview.getExists()) {
-                Connection->addCommand(ServerCommandPointer(new MapStripeTC(position(x,y,z), NewClientView::dir_right)));
+                Connection->addCommand(std::make_shared<MapStripeTC>(position(x,y,z), NewClientView::dir_right));
             }
 
             if (i % 2 == 0) {
@@ -2195,7 +2191,7 @@ void Player::sendRelativeArea(int8_t zoffs) {
             world->clientview.fillStripe(position(x,y,z), NewClientView::dir_right, 2*screenwidth+1-(i%2), World::get()->maps);
 
             if (world->clientview.getExists()) {
-                Connection->addCommand(ServerCommandPointer(new MapStripeTC(position(x,y,z), NewClientView::dir_right)));
+                Connection->addCommand(std::make_shared<MapStripeTC>(position(x,y,z), NewClientView::dir_right));
             }
 
             if (i % 2 == 0) {
@@ -2212,7 +2208,7 @@ void Player::sendFullMap() {
         sendRelativeArea(i);
     }
 
-    Connection->addCommand(ServerCommandPointer(new MapCompleteTC()));
+    Connection->addCommand(std::make_shared<MapCompleteTC>());
 }
 
 void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
@@ -2285,7 +2281,7 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
             view->fillStripe(position(x-z*3+e,y+z*3-e,pos.z+z), dir, length+l, World::get()->maps);
 
             if (view->getExists()) {
-                Connection->addCommand(ServerCommandPointer(new MapStripeTC(position(x-z*3+e,y+z*3-e,pos.z+z), dir)));
+                Connection->addCommand(std::make_shared<MapStripeTC>(position(x-z*3+e,y+z*3-e,pos.z+z), dir));
             }
         }
     } else {
@@ -2357,7 +2353,7 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
             view->fillStripe(position(x-z*3+e,y+z*3-e,pos.z+z), dir, length+l, World::get()->maps);
 
             if (view->getExists()) {
-                Connection->addCommand(ServerCommandPointer(new MapStripeTC(position(x-z*3+e,y+z*3-e,pos.z+z), dir)));
+                Connection->addCommand(std::make_shared<MapStripeTC>(position(x-z*3+e,y+z*3-e,pos.z+z), dir));
             }
         }
     }
@@ -2429,7 +2425,7 @@ uint32_t Player::idleTime() const {
 }
 
 void Player::sendBook(uint16_t bookID) {
-    ServerCommandPointer cmd(new BookTC(bookID));
+    ServerCommandPointer cmd = std::make_shared<BookTC>(bookID);
     Connection->addCommand(cmd);
 }
 
@@ -2458,7 +2454,7 @@ bool Player::pageGM(const std::string &ticket) {
 
 
 void Player::sendCharDescription(TYPE_OF_CHARACTER_ID id, const std::string &desc) {
-    ServerCommandPointer cmd(new CharDescription(id, desc));
+    ServerCommandPointer cmd = std::make_shared<CharDescription>(id, desc);
     Connection->addCommand(cmd);
 }
 
@@ -2632,11 +2628,11 @@ void Player::executeCraftingDialogCraftingComplete(unsigned int dialogId) {
         craftingDialog->setResult(CraftingDialog::playerCraftingComplete);
         bool renewProductList = LuaScript::executeDialogCallback<bool>(*craftingDialog);
 
-        ServerCommandPointer cmd(new CraftingDialogCraftingCompleteTC(dialogId));
+        ServerCommandPointer cmd = std::make_shared<CraftingDialogCraftingCompleteTC>(dialogId);
         Connection->addCommand(cmd);
 
         if (renewProductList) {
-            ServerCommandPointer cmd(new CraftingDialogTC(*craftingDialog, dialogId));
+            ServerCommandPointer cmd = std::make_shared<CraftingDialogTC>(*craftingDialog, dialogId);
             Connection->addCommand(cmd);
         }
 
@@ -2656,7 +2652,7 @@ void Player::executeCraftingDialogCraftingAborted(unsigned int dialogId) {
         craftingDialog->setResult(CraftingDialog::playerCraftingAborted);
         LuaScript::executeDialogCallback(*craftingDialog);
 
-        ServerCommandPointer cmd(new CraftingDialogCraftingAbortedTC(dialogId));
+        ServerCommandPointer cmd = std::make_shared<CraftingDialogCraftingAbortedTC>(dialogId);
         Connection->addCommand(cmd);
     }
 }
@@ -2688,7 +2684,7 @@ void Player::requestCraftingLookAt(unsigned int dialogId, ItemLookAt &lookAt) {
     auto craftingDialog = getDialog<CraftingDialog>(dialogId);
 
     if (craftingDialog) {
-        ServerCommandPointer cmd(new LookAtDialogItemTC(dialogId, craftingDialog->getCraftableId(), lookAt));
+        ServerCommandPointer cmd = std::make_shared<LookAtDialogItemTC>(dialogId, craftingDialog->getCraftableId(), lookAt);
         Connection->addCommand(cmd);
     }
 }
@@ -2697,7 +2693,7 @@ void Player::requestCraftingLookAtIngredient(unsigned int dialogId, ItemLookAt &
     auto craftingDialog = getDialog<CraftingDialog>(dialogId);
 
     if (craftingDialog) {
-        ServerCommandPointer cmd(new LookAtCraftingDialogIngredientTC(dialogId, craftingDialog->getCraftableId(), craftingDialog->getIngredientIndex(), lookAt));
+        ServerCommandPointer cmd = std::make_shared<LookAtCraftingDialogIngredientTC>(dialogId, craftingDialog->getCraftableId(), craftingDialog->getIngredientIndex(), lookAt);
         Connection->addCommand(cmd);
     }
 }
@@ -2710,14 +2706,14 @@ void Player::startCrafting(uint8_t stillToCraft, uint16_t craftingTime, uint16_t
     ltAction->setLastAction(std::shared_ptr<LuaScript>(), source, target, LongTimeAction::ACTION_CRAFT);
     startAction(craftingTime, 0, 0, sfx, sfxDuration);
 
-    ServerCommandPointer cmd(new CraftingDialogCraftTC(stillToCraft, craftingTime, dialogId));
+    ServerCommandPointer cmd = std::make_shared<CraftingDialogCraftTC>(stillToCraft, craftingTime, dialogId);
     Connection->addCommand(cmd);
 }
 
 void Player::invalidateDialogs() {
     for (const auto &dialog : dialogs) {
         if (dialog.second) {
-            ServerCommandPointer cmd(new CloseDialogTC(dialog.first));
+            ServerCommandPointer cmd = std::make_shared<CloseDialogTC>(dialog.first);
             Connection->addCommand(cmd);
         }
     }
@@ -2729,7 +2725,7 @@ void Player::closeDialogsOnMove() {
     for (auto it = dialogs.begin(); it != dialogs.end();) {
 
         if (it->second && it->second->closeOnMove()) {
-            ServerCommandPointer cmd(new CloseDialogTC(it->first));
+            ServerCommandPointer cmd = std::make_shared<CloseDialogTC>(it->first);
             Connection->addCommand(cmd);
             it = dialogs.erase(it);
         } else if (!it->second) {

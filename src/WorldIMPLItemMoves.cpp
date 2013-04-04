@@ -1299,21 +1299,21 @@ bool World::moveItem(Character *cc, direction dir, const position &newPosition, 
 
 void World::sendRemoveItemFromMapToAllVisibleCharacters(const position &itemPosition) {
     for (const auto &player : Players.findAllCharactersInScreen(itemPosition)) {
-        ServerCommandPointer cmd(new ItemRemoveTC(itemPosition));
+        ServerCommandPointer cmd = std::make_shared<ItemRemoveTC>(itemPosition);
         player->Connection->addCommand(cmd);
     }
 }
 
 void World::sendSwapItemOnMapToAllVisibleCharacter(TYPE_OF_ITEM_ID id, const position &itemPosition, const Item &it) {
     for (const auto &player : Players.findAllCharactersInScreen(itemPosition)) {
-        ServerCommandPointer cmd(new ItemSwapTC(itemPosition, id, it));
+        ServerCommandPointer cmd = std::make_shared<ItemSwapTC>(itemPosition, id, it);
         player->Connection->addCommand(cmd);
     }
 }
 
 void World::sendPutItemOnMapToAllVisibleCharacters(const position &itemPosition, const Item &it) {
     for (const auto &player : Players.findAllCharactersInScreen(itemPosition)) {
-        ServerCommandPointer cmd(new ItemPutTC(itemPosition, it));
+        ServerCommandPointer cmd = std::make_shared<ItemPutTC>(itemPosition, it);
         player->Connection->addCommand(cmd);
     }
 }

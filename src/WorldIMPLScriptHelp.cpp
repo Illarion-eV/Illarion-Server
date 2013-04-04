@@ -153,16 +153,16 @@ void World::itemInform(Character *user, const ScriptItem &item, const ItemLookAt
         if (item.inside) {
             try {
                 uint8_t showcase = cp->getShowcaseId(item.inside);
-                ServerCommandPointer cmd(new LookAtShowCaseItemTC(showcase, item.itempos, lookAt));
+                ServerCommandPointer cmd = std::make_shared<LookAtShowCaseItemTC>(showcase, item.itempos, lookAt);
                 cp->Connection->addCommand(cmd);
             } catch (std::logic_error &) {
             }
         }
     } else if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
-        ServerCommandPointer cmd(new LookAtInventoryItemTC(item.itempos, lookAt));
+        ServerCommandPointer cmd = std::make_shared<LookAtInventoryItemTC>(item.itempos, lookAt);
         cp->Connection->addCommand(cmd);
     } else if (item.type == ScriptItem::it_field) {
-        ServerCommandPointer cmd(new LookAtMapItemTC(item.pos, lookAt));
+        ServerCommandPointer cmd = std::make_shared<LookAtMapItemTC>(item.pos, lookAt);
         cp->Connection->addCommand(cmd);
     }
 }
@@ -488,7 +488,7 @@ void World::gfx(unsigned short int gfxid, const position &pos) {
     std::vector < Player * > ::iterator titerator;
 
     for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
-        ServerCommandPointer cmd(new GraphicEffectTC(pos, gfxid));
+        ServerCommandPointer cmd = std::make_shared<GraphicEffectTC>(pos, gfxid);
         (*titerator)->Connection->addCommand(cmd);
     }
 }
@@ -498,7 +498,7 @@ void World::makeSound(unsigned short int soundid, const position &pos) {
     std::vector < Player * > ::iterator titerator;
 
     for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
-        ServerCommandPointer cmd(new SoundTC(pos, soundid));
+        ServerCommandPointer cmd = std::make_shared<SoundTC>(pos, soundid);
         (*titerator)->Connection->addCommand(cmd);
     }
 }
@@ -637,7 +637,7 @@ bool World::getMonsterAttack(TYPE_OF_RACE_ID id, AttackBoni &ret) {
 
 void World::sendMonitoringMessage(const std::string &msg, unsigned char id) {
     //send this Command to all Monitoring Clients
-    ServerCommandPointer cmd(new BBMessageTC(msg, id));
+    ServerCommandPointer cmd = std::make_shared<BBMessageTC>(msg, id);
     monitoringClientList->sendCommand(cmd);
 }
 

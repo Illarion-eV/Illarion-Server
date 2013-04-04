@@ -191,56 +191,56 @@ void loadData() {
     contpos= new std::vector<position>;
 
     try {
-        std::shared_ptr<LuaWeaponScript> tmpScript(new LuaWeaponScript("server.standardfighting"));
+        auto tmpScript = std::make_shared<LuaWeaponScript>("server.standardfighting");
         standardFightingScript = tmpScript;
     } catch (ScriptException &e) {
         Logger::error(LogFacility::Script) << "Error while loading script: server.standardfighting: " << e.what() << Log::end;
     }
 
     try {
-        std::shared_ptr<LuaLookAtPlayerScript>tmpScript(new LuaLookAtPlayerScript("server.playerlookat"));
+        auto tmpScript = std::make_shared<LuaLookAtPlayerScript>("server.playerlookat");
         lookAtPlayerScript = tmpScript;
     } catch (ScriptException &e) {
         Logger::error(LogFacility::Script) << "Error while loading script: server.playerlookat: " << e.what() << Log::end;
     }
 
     try {
-        std::shared_ptr<LuaLookAtItemScript>tmpScript(new LuaLookAtItemScript("server.itemlookat"));
+        auto tmpScript = std::make_shared<LuaLookAtItemScript>("server.itemlookat");
         lookAtItemScript = tmpScript;
     } catch (ScriptException &e) {
         Logger::error(LogFacility::Script) << "Error while loading script: server.itemlookat: " << e.what() << Log::end;
     }
 
     try {
-        std::shared_ptr<LuaPlayerDeathScript>tmpScript(new LuaPlayerDeathScript("server.playerdeath"));
+        auto tmpScript = std::make_shared<LuaPlayerDeathScript>("server.playerdeath");
         playerDeathScript = tmpScript;
     } catch (ScriptException &e) {
         Logger::error(LogFacility::Script) << "Error while loading script: server.playerdeath: " << e.what() << Log::end;
     }
 
     try {
-        std::shared_ptr<LuaDepotScript>tmpScript(new LuaDepotScript("server.depot"));
+        auto tmpScript = std::make_shared<LuaDepotScript>("server.depot");
         depotScript = tmpScript;
     } catch (ScriptException &e) {
         Logger::error(LogFacility::Script) << "Error while loading script: server.depot: " << e.what() << Log::end;
     }
 
     try {
-        std::shared_ptr<LuaLoginScript>tmpScript(new LuaLoginScript("server.login"));
+        auto tmpScript = std::make_shared<LuaLoginScript>("server.login");
         loginScript = tmpScript;
     } catch (ScriptException &e) {
         Logger::error(LogFacility::Script) << "Error while loading script: server.login: " << e.what() << Log::end;
     }
 
     try {
-        std::shared_ptr<LuaLogoutScript>tmpScript(new LuaLogoutScript("server.logout"));
+        auto tmpScript = std::make_shared<LuaLogoutScript>("server.logout");
         logoutScript = tmpScript;
     } catch (ScriptException &e) {
         Logger::error(LogFacility::Script) << "Error while loading script: server.logout: " << e.what() << Log::end;
     }
 
     try {
-        std::shared_ptr<LuaLearnScript>tmpScript(new LuaLearnScript("server.learn"));
+        auto tmpScript = std::make_shared<LuaLearnScript>("server.learn");
         learnScript = tmpScript;
     } catch (ScriptException &e) {
         Logger::error(LogFacility::Script) << "Error while loading script: server.learn: " << e.what() << Log::end;

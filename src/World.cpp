@@ -523,7 +523,7 @@ void World::checkPlayers() {
             // User timed out.
             else {
                 Logger::info(LogFacility::World) << player << " timed out " << temptime << Log::end;
-                ServerCommandPointer cmd(new LogOutTC(UNSTABLECONNECTION));
+                ServerCommandPointer cmd = std::make_shared<LogOutTC>(UNSTABLECONNECTION);
                 player.Connection->shutdownSend(cmd);
             }
         } else {

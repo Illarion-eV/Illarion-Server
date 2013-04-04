@@ -135,7 +135,7 @@ int main(int argc, char *argv[]) {
     world->initNPC();
 
     try {
-        std::shared_ptr<LuaReloadScript> tmpScript(new LuaReloadScript("server.reload"));
+        std::shared_ptr<LuaReloadScript> tmpScript = std::make_shared<LuaReloadScript>("server.reload");
         tmpScript->onReload();
     } catch (ScriptException &e) {
 
@@ -172,7 +172,7 @@ int main(int argc, char *argv[]) {
                         loginScript->onLogin(newPlayer);
                         world->updatePlayerList();
                     } catch (Player::LogoutException &e) {
-                        ServerCommandPointer cmd(new LogOutTC(e.getReason()));
+                        ServerCommandPointer cmd = std::make_shared<LogOutTC>(e.getReason());
                         newPlayer->Connection->shutdownSend(cmd);
                         PlayerManager::get()->getLogOutPlayers().non_block_push_back(newPlayer);
                     }

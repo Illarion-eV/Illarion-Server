@@ -73,14 +73,14 @@ public:
 
     virtual void performAction(Player *player) override {
         World::get()->sendMessageToAllPlayers(msg);
-        World::get()->monitoringClientList->sendCommand(ServerCommandPointer(new BBMessageTC("[Server] Broadcast:",0)));
-        World::get()->monitoringClientList->sendCommand(ServerCommandPointer(new BBMessageTC(msg, 0)));
+        World::get()->monitoringClientList->sendCommand(std::make_shared<BBMessageTC>("[Server] Broadcast:",0));
+        World::get()->monitoringClientList->sendCommand(std::make_shared<BBMessageTC>(msg, 0));
         std::string message = "By: " + player->to_string();
-        World::get()->monitoringClientList->sendCommand(ServerCommandPointer(new BBMessageTC(message,0)));
+        World::get()->monitoringClientList->sendCommand(std::make_shared<BBMessageTC>(message,0));
     }
 
     virtual ClientCommandPointer clone() override {
-        ClientCommandPointer cmd(new BBBroadCastTS());
+        ClientCommandPointer cmd = std::make_shared<BBBroadCastTS>();
         return cmd;
     }
 
@@ -112,42 +112,42 @@ public:
         }
 
         if (tempPlayer) {
-            ServerCommandPointer cmd(new BBSendAttribTC(tempPlayer->getId(), "sex", tempPlayer->increaseAttrib("sex",0)));
+            ServerCommandPointer cmd = std::make_shared<BBSendAttribTC>(tempPlayer->getId(), "sex", tempPlayer->increaseAttrib("sex",0));
             player->Connection->addCommand(cmd);
-            cmd.reset(new BBSendAttribTC(tempPlayer->getId(), "age", tempPlayer->increaseAttrib("age",0)));
+            cmd = std::make_shared<BBSendAttribTC>(tempPlayer->getId(), "age", tempPlayer->increaseAttrib("age",0));
             player->Connection->addCommand(cmd);
-            cmd.reset(new BBSendAttribTC(tempPlayer->getId(), "weight", tempPlayer->increaseAttrib("weight",0)));
+            cmd = std::make_shared<BBSendAttribTC>(tempPlayer->getId(), "weight", tempPlayer->increaseAttrib("weight",0));
             player->Connection->addCommand(cmd);
-            cmd.reset(new BBSendAttribTC(tempPlayer->getId(), "body_height", tempPlayer->increaseAttrib("body_height",0)));
+            cmd = std::make_shared<BBSendAttribTC>(tempPlayer->getId(), "body_height", tempPlayer->increaseAttrib("body_height",0));
             player->Connection->addCommand(cmd);
-            cmd.reset(new BBSendAttribTC(tempPlayer->getId(), "attitude", tempPlayer->increaseAttrib("attitude",0)));
+            cmd = std::make_shared<BBSendAttribTC>(tempPlayer->getId(), "attitude", tempPlayer->increaseAttrib("attitude",0));
             player->Connection->addCommand(cmd);
-            cmd.reset(new BBSendAttribTC(tempPlayer->getId(), "luck", tempPlayer->increaseAttrib("luck",0)));
+            cmd = std::make_shared<BBSendAttribTC>(tempPlayer->getId(), "luck", tempPlayer->increaseAttrib("luck",0));
             player->Connection->addCommand(cmd);
-            cmd.reset(new BBSendAttribTC(tempPlayer->getId(), "strength", tempPlayer->increaseAttrib("strength",0)));
+            cmd = std::make_shared<BBSendAttribTC>(tempPlayer->getId(), "strength", tempPlayer->increaseAttrib("strength",0));
             player->Connection->addCommand(cmd);
-            cmd.reset(new BBSendAttribTC(tempPlayer->getId(), "dexterity", tempPlayer->increaseAttrib("dexterity",0)));
+            cmd = std::make_shared<BBSendAttribTC>(tempPlayer->getId(), "dexterity", tempPlayer->increaseAttrib("dexterity",0));
             player->Connection->addCommand(cmd);
-            cmd.reset(new BBSendAttribTC(tempPlayer->getId(), "constitution", tempPlayer->increaseAttrib("constitution",0)));
+            cmd = std::make_shared<BBSendAttribTC>(tempPlayer->getId(), "constitution", tempPlayer->increaseAttrib("constitution",0));
             player->Connection->addCommand(cmd);
-            cmd.reset(new BBSendAttribTC(tempPlayer->getId(), "intelligence", tempPlayer->increaseAttrib("intelligence",0)));
+            cmd = std::make_shared<BBSendAttribTC>(tempPlayer->getId(), "intelligence", tempPlayer->increaseAttrib("intelligence",0));
             player->Connection->addCommand(cmd);
-            cmd.reset(new BBSendAttribTC(tempPlayer->getId(), "perception", tempPlayer->increaseAttrib("perception",0)));
+            cmd = std::make_shared<BBSendAttribTC>(tempPlayer->getId(), "perception", tempPlayer->increaseAttrib("perception",0));
             player->Connection->addCommand(cmd);
-            cmd.reset(new BBSendAttribTC(tempPlayer->getId(), "age", tempPlayer->increaseAttrib("age",0)));
+            cmd = std::make_shared<BBSendAttribTC>(tempPlayer->getId(), "age", tempPlayer->increaseAttrib("age",0));
             player->Connection->addCommand(cmd);
-            cmd.reset(new BBSendAttribTC(tempPlayer->getId(), "willpower", tempPlayer->increaseAttrib("willpower",0)));
+            cmd = std::make_shared<BBSendAttribTC>(tempPlayer->getId(), "willpower", tempPlayer->increaseAttrib("willpower",0));
             player->Connection->addCommand(cmd);
-            cmd.reset(new BBSendAttribTC(tempPlayer->getId(), "essence", tempPlayer->increaseAttrib("essence",0)));
+            cmd = std::make_shared<BBSendAttribTC>(tempPlayer->getId(), "essence", tempPlayer->increaseAttrib("essence",0));
             player->Connection->addCommand(cmd);
-            cmd.reset(new BBSendAttribTC(tempPlayer->getId(), "agility", tempPlayer->increaseAttrib("agility",0)));
+            cmd = std::make_shared<BBSendAttribTC>(tempPlayer->getId(), "agility", tempPlayer->increaseAttrib("agility",0));
             player->Connection->addCommand(cmd);
 
         }
     }
 
     virtual ClientCommandPointer clone() override {
-        ClientCommandPointer cmd(new BBRequestStatTS());
+        ClientCommandPointer cmd = std::make_shared<BBRequestStatTS>();
         return cmd;
     }
 
@@ -181,14 +181,14 @@ public:
 
         if (tempPlayer) {
             for (const auto &skill : tempPlayer->skills) {
-                ServerCommandPointer cmd(new BBSendSkillTC(tempPlayer->getId(), skill.first, skill.second.major, skill.second.minor));
+                ServerCommandPointer cmd = std::make_shared<BBSendSkillTC>(tempPlayer->getId(), skill.first, skill.second.major, skill.second.minor);
                 player->Connection->addCommand(cmd);
             }
         }
     }
 
     virtual ClientCommandPointer clone() override {
-        ClientCommandPointer cmd(new BBRequestSkillsTS());
+        ClientCommandPointer cmd = std::make_shared<BBRequestSkillsTS>();
         return cmd;
     }
 
@@ -228,7 +228,7 @@ public:
     }
 
     virtual ClientCommandPointer clone() override {
-        ClientCommandPointer cmd(new BBSpeakAsTS());
+        ClientCommandPointer cmd = std::make_shared<BBSpeakAsTS>();
         return cmd;
     }
 
@@ -272,7 +272,7 @@ public:
     }
 
     virtual ClientCommandPointer clone() override {
-        ClientCommandPointer cmd(new BBWarpPlayerTS());
+        ClientCommandPointer cmd = std::make_shared<BBWarpPlayerTS>();
         return cmd;
     }
 
@@ -320,7 +320,7 @@ public:
     }
 
     virtual ClientCommandPointer clone() override {
-        ClientCommandPointer cmd(new BBServerCommandTS());
+        ClientCommandPointer cmd = std::make_shared<BBServerCommandTS>();
         return cmd;
     }
 
@@ -360,7 +360,7 @@ public:
     }
 
     virtual ClientCommandPointer clone() override {
-        ClientCommandPointer cmd(new BBChangeAttribTS());
+        ClientCommandPointer cmd = std::make_shared<BBChangeAttribTS>();
         return cmd;
     }
 
@@ -403,7 +403,7 @@ public:
     }
 
     virtual ClientCommandPointer clone() override {
-        ClientCommandPointer cmd(new BBChangeSkillTS());
+        ClientCommandPointer cmd = std::make_shared<BBChangeSkillTS>();
         return cmd;
     }
 
@@ -444,7 +444,7 @@ public:
     }
 
     virtual ClientCommandPointer clone() override {
-        ClientCommandPointer cmd(new BBTalktoTS());
+        ClientCommandPointer cmd = std::make_shared<BBTalktoTS>();
         return cmd;
     }
 
@@ -476,7 +476,7 @@ public:
     }
 
     virtual ClientCommandPointer clone() override {
-        ClientCommandPointer cmd(new BBDisconnectTS());
+        ClientCommandPointer cmd = std::make_shared<BBDisconnectTS>();
         return cmd;
     }
 
@@ -504,7 +504,7 @@ public:
     }
 
     virtual ClientCommandPointer clone() override {
-        ClientCommandPointer cmd(new BBKeepAliveTS());
+        ClientCommandPointer cmd = std::make_shared<BBKeepAliveTS>();
         return cmd;
     }
 
@@ -536,16 +536,16 @@ public:
 
         if (tempPlayer) {
             World::get()->ban(tempPlayer, time, player->getId());
-            ServerCommandPointer cmd(new BBMessageTC(tempPlayer->to_string() + " banned by: " + player->to_string(), 0));
+            ServerCommandPointer cmd = std::make_shared<BBMessageTC>(tempPlayer->to_string() + " banned by: " + player->to_string(), 0);
             World::get()->monitoringClientList->sendCommand(cmd);
         } else {
-            ServerCommandPointer cmd(new BBMessageTC("Cannot find the player: " + name + "(" + std::to_string(id) + ")",0));
+            ServerCommandPointer cmd = std::make_shared<BBMessageTC>("Cannot find the player: " + name + "(" + std::to_string(id) + ")",0);
             player->Connection->addCommand(cmd);
         }
     }
 
     virtual ClientCommandPointer clone() override {
-        ClientCommandPointer cmd(new BBBanTS());
+        ClientCommandPointer cmd = std::make_shared<BBBanTS>();
         return cmd;
     }
     TYPE_OF_CHARACTER_ID id; /*<which character is banned*/

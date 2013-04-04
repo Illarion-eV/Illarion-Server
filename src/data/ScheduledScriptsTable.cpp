@@ -123,7 +123,7 @@ void ScheduledScriptsTable::reload() {
                     tmpRecord.scriptName = row["sc_scriptname"].as<std::string>();
 
                     try {
-                        std::shared_ptr<LuaScheduledScript> tmpScript(new LuaScheduledScript(tmpRecord.scriptName));
+                        std::shared_ptr<LuaScheduledScript> tmpScript = std::make_shared<LuaScheduledScript>(tmpRecord.scriptName);
                         tmpRecord.scriptptr = tmpScript;
                         addData(tmpRecord);
                     } catch (const ScriptException &e) {

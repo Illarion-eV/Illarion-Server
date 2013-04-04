@@ -45,13 +45,13 @@ void MonitoringClients::clientConnect(Player *player) {
     //Send all player infos to the new connected client
 
     _world->Players.for_each([&](Player *p) {
-        ServerCommandPointer cmd(new BBPlayerTC(p->getId(), p->getName(), p->getPosition()));
+        ServerCommandPointer cmd = std::make_shared<BBPlayerTC>(p->getId(), p->getName(), p->getPosition());
         player->Connection->addCommand(cmd);
-        cmd.reset(new BBSendAttribTC(p->getId(), "hitpoints", p->increaseAttrib("hitpoints",0)));
+        cmd = std::make_shared<BBSendAttribTC>(p->getId(), "hitpoints", p->increaseAttrib("hitpoints",0));
         player->Connection->addCommand(cmd);
-        cmd.reset(new BBSendAttribTC(p->getId(), "mana", p->increaseAttrib("mana",0)));
+        cmd = std::make_shared<BBSendAttribTC>(p->getId(), "mana", p->increaseAttrib("mana",0));
         player->Connection->addCommand(cmd);
-        cmd.reset(new BBSendAttribTC(p->getId(), "foodlevel", p->increaseAttrib("foodlevel",0)));
+        cmd = std::make_shared<BBSendAttribTC>(p->getId(), "foodlevel", p->increaseAttrib("foodlevel",0));
         player->Connection->addCommand(cmd);
     });
 }

@@ -438,11 +438,11 @@ bool World::characterAttacks(Character *cp) {
                         //temppl->nrOfAttackers=0;
 
                         if (cp->getType() == Character::player) {
-                            ServerCommandPointer cmd(new TargetLostTC());
+                            ServerCommandPointer cmd = std::make_shared<TargetLostTC>();
                             dynamic_cast<Player *>(cp)->Connection->addCommand(cmd);
                         }
 
-                        ServerCommandPointer cmd(new TargetLostTC());
+                        ServerCommandPointer cmd = std::make_shared<TargetLostTC>();
                         dynamic_cast<Player *>(temppl)->Connection->addCommand(cmd);
                         temppl->setAttackMode(false);
                     }
@@ -473,7 +473,7 @@ bool World::characterAttacks(Character *cp) {
                         cp->setAttackMode(false);
 
                         if (cp->getType() == Character::player) {
-                            ServerCommandPointer cmd(new TargetLostTC());
+                            ServerCommandPointer cmd = std::make_shared<TargetLostTC>();
                             dynamic_cast<Player *>(cp)->Connection->addCommand(cmd);
                         }
                     } else {
@@ -504,7 +504,7 @@ bool World::characterAttacks(Character *cp) {
         cp->setAttackMode(false);
 
         if (cp->getType() == Character::player) {
-            ServerCommandPointer cmd(new TargetLostTC());
+            ServerCommandPointer cmd = std::make_shared<TargetLostTC>();
             dynamic_cast<Player *>(cp)->Connection->addCommand(cmd);
         }
 
@@ -989,7 +989,7 @@ void World::setWeatherPart(const std::string &type, char value) {
 }
 
 void World::sendRemoveCharToVisiblePlayers(TYPE_OF_CHARACTER_ID id, const position &pos) {
-    ServerCommandPointer cmd(new RemoveCharTC(id));
+    ServerCommandPointer cmd = std::make_shared<RemoveCharTC>(id);
 
     for (const auto &player : Players.findAllCharactersInScreen(pos)) {
         player->sendCharRemove(id, cmd);
@@ -1010,7 +1010,7 @@ void World::sendHealthToAllVisiblePlayers(Character *cc, Attribute::attribute_t 
             zoffs = charPos.z - playerPos.z + RANGEDOWN;
 
             if ((xoffs != 0) || (yoffs != 0) || (zoffs != RANGEDOWN)) {
-                ServerCommandPointer cmd(new UpdateAttribTC(cc->getId(), "hitpoints", health));
+                ServerCommandPointer cmd = std::make_shared<UpdateAttribTC>(cc->getId(), "hitpoints", health);
                 player->Connection->addCommand(cmd);
             }
         }

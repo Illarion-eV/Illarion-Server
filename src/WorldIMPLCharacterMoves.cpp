@@ -99,7 +99,7 @@ void World::TriggerFieldMove(Character *cc, bool moveto) {
 
 void World::sendSpinToAllVisiblePlayers(Character *cc) {
     for (const auto &p : Players.findAllCharactersInScreen(cc->getPosition())) {
-        ServerCommandPointer cmd(new PlayerSpinTC(cc->getFaceTo(), cc->getId()));
+        ServerCommandPointer cmd = std::make_shared<PlayerSpinTC>(cc->getFaceTo(), cc->getId());
         p->Connection->addCommand(cmd);
     }
 }
@@ -118,7 +118,7 @@ void World::sendPassiveMoveToAllVisiblePlayers(Character *ccp) {
         zoffs = charPos.z - playerPos.z + RANGEDOWN;
 
         if ((xoffs != 0) || (yoffs != 0) || (zoffs != RANGEDOWN)) {
-            ServerCommandPointer cmd(new MoveAckTC(ccp->getId(), charPos, PUSH, 0));
+            ServerCommandPointer cmd = std::make_shared<MoveAckTC>(ccp->getId(), charPos, PUSH, 0);
             p->Connection->addCommand(cmd);
         }
     }
@@ -145,7 +145,7 @@ void World::sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char ne
             zoffs = charPos.z - playerPos.z + RANGEDOWN;
 
             if ((xoffs != 0) || (yoffs != 0) || (zoffs != RANGEDOWN)) {
-                ServerCommandPointer cmd(new MoveAckTC(cc->getId(), charPos, netid, waitpages));
+                ServerCommandPointer cmd = std::make_shared<MoveAckTC>(cc->getId(), charPos, netid, waitpages);
                 p->Connection->addCommand(cmd);
             }
         }
@@ -159,7 +159,7 @@ void World::sendCharacterWarpToAllVisiblePlayers(Character *cc, const position &
 
         for (const auto &p : Players.findAllCharactersInScreen(cc->getPosition())) {
             if (cc != p) {
-                ServerCommandPointer cmd(new MoveAckTC(cc->getId(), cc->getPosition(), PUSH, 0));
+                ServerCommandPointer cmd = std::make_shared<MoveAckTC>(cc->getId(), cc->getPosition(), PUSH, 0);
                 p->Connection->addCommand(cmd);
             }
         }
@@ -194,9 +194,9 @@ void World::sendCharsInVector(const std::vector<T *> &vec, Player *cp, bool send
             zoffs = charPos.z - playerPos.z + RANGEDOWN;
 
             if ((xoffs != 0) || (yoffs != 0) || (zoffs != RANGEDOWN)) {
-                ServerCommandPointer cmd(new MoveAckTC(cc->getId(), charPos, PUSH, 0));
+                ServerCommandPointer cmd = std::make_shared<MoveAckTC>(cc->getId(), charPos, PUSH, 0);
                 cp->Connection->addCommand(cmd);
-                cmd.reset(new PlayerSpinTC(cc->getFaceTo(), cc->getId()));
+                cmd = std::make_shared<PlayerSpinTC>(cc->getFaceTo(), cc->getId());
 
                 if (sendSpin) {
                     cp->Connection->addCommand(cmd);

@@ -31,19 +31,18 @@
 
 #include "Character.hpp"
 
+#include "Showcase.hpp"
 #include "netinterface/BasicServerCommand.hpp"
 #include "netinterface/NetInterface.hpp"
-
 #include "dialog/MerchantDialog.hpp"
 #include "dialog/SelectionDialog.hpp"
-
 #include "script/LuaScript.hpp"
+
 
 struct WeatherStruct;
 class Dialog;
 class Timer;
 class LongTimeAction;
-class Showcase;
 
 enum gm_rights {
     gmr_allowlogin = 1, //GM is allowed to login if nologin is true
@@ -511,7 +510,7 @@ private:
             }
 
             dialogs[dialogId] = std::make_shared<DialogType>(*dialog);
-            ServerCommandPointer cmd(new DialogCommandType(*dialog, dialogId));
+            ServerCommandPointer cmd = std::make_shared<DialogCommandType>(*dialog, dialogId);
             Connection->addCommand(cmd);
         } else {
             inform("ERROR: Unable to open more than 100 dialogs.");
@@ -607,7 +606,7 @@ private:
     bool monitoringClient;
 
     uint8_t showcaseCounter;
-    typedef std::unordered_map<uint8_t, Showcase *> ShowcaseMap;
+    typedef std::unordered_map<uint8_t, std::unique_ptr<Showcase>> ShowcaseMap;
     ShowcaseMap showcases;
 
     unsigned int dialogCounter;

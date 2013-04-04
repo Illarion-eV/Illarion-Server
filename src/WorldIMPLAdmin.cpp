@@ -372,12 +372,12 @@ void World::makeVisible(Player *cp) {
 
     for (const auto &player : Players.findAllCharactersInScreen(cp->getPosition())) {
         if (cp != player) {
-            ServerCommandPointer cmd(new MoveAckTC(cp->getId(), cp->getPosition(), PUSH, 0));
+            ServerCommandPointer cmd = std::make_shared<MoveAckTC>(cp->getId(), cp->getPosition(), PUSH, 0);
             player->Connection->addCommand(cmd);
         }
     }
 
-    ServerCommandPointer cmd(new AppearanceTC(cp, cp));
+    ServerCommandPointer cmd = std::make_shared<AppearanceTC>(cp, cp);
     cp->Connection->addCommand(cmd);
 }
 
@@ -459,7 +459,7 @@ void World::forceLogoutOfAllPlayers() {
         }
 
         Logger::info(LogFacility::Admin) << "--- kicked: " << *player << Log::end;
-        ServerCommandPointer cmd(new LogOutTC(SERVERSHUTDOWN));
+        ServerCommandPointer cmd = std::make_shared<LogOutTC>(SERVERSHUTDOWN);
         player->Connection->shutdownSend(cmd);
         PlayerManager::get()->getLogOutPlayers().non_block_push_back(player);
     });
@@ -473,7 +473,7 @@ bool World::forceLogoutOfPlayer(const std::string &name) {
 
     if (temp) {
         Logger::info(LogFacility::Admin) << "--- kicked: " << *temp << Log::end;
-        ServerCommandPointer cmd(new LogOutTC(BYGAMEMASTER));
+        ServerCommandPointer cmd = std::make_shared<LogOutTC>(BYGAMEMASTER);
         temp->Connection->shutdownSend(cmd);
         return true;
     } else {
@@ -487,7 +487,7 @@ void World::sendAdminAllPlayerData(Player *&admin) {
         return;
     }
 
-    ServerCommandPointer cmd(new AdminViewPlayersTC());
+    ServerCommandPointer cmd = std::make_shared<AdminViewPlayersTC>();
     admin->Connection->addCommand(cmd);
 
 }
@@ -1212,7 +1212,7 @@ bool World::reload_defs(Player *cp) {
 
         //Reload the standard Fighting script
         try {
-            std::shared_ptr<LuaWeaponScript> tmpScript(new LuaWeaponScript("server.standardfighting"));
+            std::shared_ptr<LuaWeaponScript> tmpScript = std::make_shared<LuaWeaponScript>("server.standardfighting");
             standardFightingScript = tmpScript;
         } catch (ScriptException &e) {
             reportScriptError(cp, "standardfighting", e.what());
@@ -1220,7 +1220,7 @@ bool World::reload_defs(Player *cp) {
         }
 
         try {
-            std::shared_ptr<LuaLookAtPlayerScript>tmpScript(new LuaLookAtPlayerScript("server.playerlookat"));
+            std::shared_ptr<LuaLookAtPlayerScript>tmpScript = std::make_shared<LuaLookAtPlayerScript>("server.playerlookat");
             lookAtPlayerScript = tmpScript;
         } catch (ScriptException &e) {
             reportScriptError(cp, "playerlookat", e.what());
@@ -1228,7 +1228,7 @@ bool World::reload_defs(Player *cp) {
         }
 
         try {
-            std::shared_ptr<LuaLookAtItemScript>tmpScript(new LuaLookAtItemScript("server.itemlookat"));
+            std::shared_ptr<LuaLookAtItemScript>tmpScript = std::make_shared<LuaLookAtItemScript>("server.itemlookat");
             lookAtItemScript = tmpScript;
         } catch (ScriptException &e) {
             reportScriptError(cp, "itemlookat", e.what());
@@ -1236,7 +1236,7 @@ bool World::reload_defs(Player *cp) {
         }
 
         try {
-            std::shared_ptr<LuaPlayerDeathScript>tmpScript(new LuaPlayerDeathScript("server.playerdeath"));
+            std::shared_ptr<LuaPlayerDeathScript>tmpScript = std::make_shared<LuaPlayerDeathScript>("server.playerdeath");
             playerDeathScript = tmpScript;
         } catch (ScriptException &e) {
             reportScriptError(cp, "playerdeath", e.what());
@@ -1244,7 +1244,7 @@ bool World::reload_defs(Player *cp) {
         }
 
         try {
-            std::shared_ptr<LuaLoginScript>tmpScript(new LuaLoginScript("server.login"));
+            std::shared_ptr<LuaLoginScript>tmpScript = std::make_shared<LuaLoginScript>("server.login");
             loginScript = tmpScript;
         } catch (ScriptException &e) {
             reportScriptError(cp, "login", e.what());
@@ -1252,7 +1252,7 @@ bool World::reload_defs(Player *cp) {
         }
 
         try {
-            std::shared_ptr<LuaLogoutScript>tmpScript(new LuaLogoutScript("server.logout"));
+            std::shared_ptr<LuaLogoutScript>tmpScript = std::make_shared<LuaLogoutScript>("server.logout");
             logoutScript = tmpScript;
         } catch (ScriptException &e) {
             reportScriptError(cp, "logout", e.what());
@@ -1260,7 +1260,7 @@ bool World::reload_defs(Player *cp) {
         }
 
         try {
-            std::shared_ptr<LuaLearnScript>tmpScript(new LuaLearnScript("server.learn"));
+            std::shared_ptr<LuaLearnScript>tmpScript = std::make_shared<LuaLearnScript>("server.learn");
             learnScript = tmpScript;
         } catch (ScriptException &e) {
             reportScriptError(cp, "learn", e.what());
@@ -1268,7 +1268,7 @@ bool World::reload_defs(Player *cp) {
         }
 
         try {
-            std::shared_ptr<LuaDepotScript>tmpScript(new LuaDepotScript("server.depot"));
+            std::shared_ptr<LuaDepotScript>tmpScript = std::make_shared<LuaDepotScript>("server.depot");
             depotScript = tmpScript;
         } catch (ScriptException &e) {
             reportScriptError(cp, "depot", e.what());
@@ -1304,7 +1304,7 @@ bool World::reload_tables(Player *cp) {
         Players.for_each(&Player::sendCompleteQuestProgress);
 
         try {
-            std::shared_ptr<LuaReloadScript> tmpScript(new LuaReloadScript("server.reload"));
+            std::shared_ptr<LuaReloadScript> tmpScript = std::make_shared<LuaReloadScript>("server.reload");
             tmpScript->onReload();
         } catch (ScriptException &e) {
             reportScriptError(cp, "reload", e.what());
