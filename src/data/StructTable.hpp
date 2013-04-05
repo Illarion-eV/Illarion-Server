@@ -76,7 +76,6 @@ public:
         try {
             return structs.at(id);
         } catch (std::out_of_range &) {
-            std::stringstream ss;
             Logger::error(LogFacility::Script) << "Table " << getTableName() << ": entry " << id << " was not found!" << Log::end;
             return structs[id];
         }
