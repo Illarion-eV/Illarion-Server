@@ -35,6 +35,8 @@ typedef uint32_t TYPE_OF_WORTH;
 typedef uint16_t TYPE_OF_MAX_STACK;
 typedef uint16_t TYPE_OF_BUY_STACK;
 
+typedef uint8_t  TYPE_OF_ITEMLEVEL;
+
 typedef uint8_t  TYPE_OF_ATTACK;
 typedef uint8_t  TYPE_OF_DEFENCE;
 typedef uint8_t  TYPE_OF_ACCURACY;
@@ -47,6 +49,7 @@ typedef uint8_t  TYPE_OF_STROKEARMOR;
 typedef uint8_t  TYPE_OF_PUNCTUREARMOR;
 typedef uint8_t  TYPE_OF_THRUSTARMOR;
 typedef uint16_t TYPE_OF_MAGICDISTURBANCE;
+typedef uint8_t  TYPE_OF_ARMORTYPE;
 
 typedef uint16_t TYPE_OF_CONTAINERSLOTS;
 

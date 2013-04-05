@@ -660,7 +660,7 @@ int World::getItemAttrib(const std::string &s, TYPE_OF_ITEM_ID ItemID) {
         }
     } else if (s == "weapontype") {
         if (Data::WeaponItems.exists(ItemID)) {
-            return Data::WeaponItems[ItemID].WeaponType;
+            return Data::WeaponItems[ItemID].Type;
         }
     } else if (s == "weaponmagicdisturbance") {
         if (Data::WeaponItems.exists(ItemID)) {

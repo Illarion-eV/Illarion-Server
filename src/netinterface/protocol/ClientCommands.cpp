@@ -481,7 +481,7 @@ void CastTS::performAction(Player *player) {
                 const auto weaponId = player->characterItems[LEFT_TOOL].getId();
 
                 if (Data::WeaponItems.exists(weaponId)) {
-                    if (Data::WeaponItems[weaponId].WeaponType == 13) {
+                    if (Data::WeaponItems[weaponId].Type == 13) {
                         zauberstab = true;
                         std::cout << "Zauberstab in der Hand -> OK" << std::endl;
                     }
@@ -492,7 +492,7 @@ void CastTS::performAction(Player *player) {
                 const auto weaponId = player->characterItems[RIGHT_TOOL].getId();
 
                 if (Data::WeaponItems.exists(weaponId)) {
-                    if (Data::WeaponItems[weaponId].WeaponType == 13) {
+                    if (Data::WeaponItems[weaponId].Type == 13) {
                         zauberstab = true;
                         std::cout << "Zauberstab in der Hand -> OK" << std::endl;
                     }

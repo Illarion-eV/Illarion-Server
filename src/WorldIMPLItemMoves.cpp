@@ -72,7 +72,7 @@ bool World::putItemOnInvPos(Character *cc, unsigned char pos) {
                     if (Data::WeaponItems.exists(g_item.getId())) {
                         const auto &weapon = Data::WeaponItems[g_item.getId()];
 
-                        if ((weapon.WeaponType==4) || (weapon.WeaponType==5) || (weapon.WeaponType==6) || (weapon.WeaponType==13)) {
+                        if ((weapon.Type==4) || (weapon.Type==5) || (weapon.Type==6) || (weapon.Type==13)) {
                             if ((pos == RIGHT_TOOL) && (cc->characterItems[ LEFT_TOOL ].getId() == 0)) {
                                 if (cc->characterItems[pos].getId() == 0 && g_item.getNumber() == 1) {
                                     cc->characterItems[ pos ] = g_item;
@@ -292,7 +292,7 @@ bool World::takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_ty
                     } else {
                         const auto &weapon = Data::WeaponItems[weaponId];
 
-                        if ((weapon.WeaponType==4) || (weapon.WeaponType==5) || (weapon.WeaponType==6) || (weapon.WeaponType==13)) {
+                        if ((weapon.Type==4) || (weapon.Type==5) || (weapon.Type==6) || (weapon.Type==13)) {
                             cc->characterItems[ LEFT_TOOL ].reset();
                             cc->characterItems[ RIGHT_TOOL ].reset();
                         } else {

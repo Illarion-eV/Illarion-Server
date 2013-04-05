@@ -34,8 +34,12 @@ class Container;
 
 class ItemLookAt {
 public:
+    static const TYPE_OF_ITEMLEVEL MAX_ITEMLEVEL = 100;
+    static const TYPE_OF_ARMORTYPE MAX_ARMORTYPE = 5;
+    static const TYPE_OF_WEAPONTYPE MAX_WEAPONTYPE = 14;
     static const uint8_t MAX_GEM_LEVEL = 10;
     static const uint8_t MAX_DURABILITY = 100;
+
     enum Rareness {
         commonItem = 1,
         uncommonItem = 2,
@@ -73,6 +77,33 @@ public:
     }
     const std::string &getCraftedBy() const {
         return craftedBy;
+    }
+
+    void setLevel(TYPE_OF_ITEMLEVEL level) {
+        if (level <= MAX_ITEMLEVEL) {
+            this->level = level;
+        }
+    }
+    TYPE_OF_ITEMLEVEL getLevel() const {
+        return level;
+    }
+
+    void setArmorType(TYPE_OF_ARMORTYPE type) {
+        if (type <= MAX_ARMORTYPE) {
+            armorType = type;
+        }
+    }
+    TYPE_OF_ARMORTYPE getArmorType() const {
+        return armorType;
+    }
+
+    void setWeaponType(TYPE_OF_WEAPONTYPE type) {
+        if (type <= MAX_WEAPONTYPE) {
+            weaponType = type;
+        }
+    }
+    TYPE_OF_WEAPONTYPE getWeaponType() const {
+        return weaponType;
     }
 
     void setWeight(TYPE_OF_WEIGHT weight) {
@@ -187,6 +218,9 @@ private:
     Rareness rareness;
     std::string description;
     std::string craftedBy;
+    TYPE_OF_ITEMLEVEL level;
+    TYPE_OF_ARMORTYPE armorType;
+    TYPE_OF_WEAPONTYPE weaponType;
     TYPE_OF_WEIGHT weight;
     TYPE_OF_WORTH worth;
     std::string qualityText;
