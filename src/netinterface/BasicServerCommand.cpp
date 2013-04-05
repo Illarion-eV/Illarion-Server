@@ -55,7 +55,7 @@ BasicServerCommand::BasicServerCommand(unsigned char defByte , uint16_t bsize) :
 
 BasicServerCommand::~BasicServerCommand() {
     delete[] buffer;
-    buffer = NULL;
+    buffer = nullptr;
 }
 
 void BasicServerCommand::addHeader() {
@@ -127,7 +127,7 @@ void BasicServerCommand::resizeBuffer() {
 
     //delete the temp buffer;
     delete[] temp;
-    temp = NULL;
+    temp = nullptr;
     std::cout<<"resizing the sendBuffer successfully"<<std::endl;
 }
 

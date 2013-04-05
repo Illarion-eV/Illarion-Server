@@ -318,7 +318,7 @@ void World::talkto_command(Player *cp, const std::string &ts) {
         std::string player = token;
         delete[] tokenize;
 
-        if ((token = strtok(NULL, "\\"))) {
+        if ((token = strtok(nullptr, "\\"))) {
             std::string message = token;
             Player *tempPl = Players.find(player);
 
@@ -389,7 +389,7 @@ void World::ForceIntroduce(Player *cp, const std::string &ts) {
     Player *tempPl;
     tempPl = Players.find(ts);
 
-    if (tempPl != NULL) {
+    if (tempPl != nullptr) {
         forceIntroducePlayer(tempPl, cp);
     } else {
         TYPE_OF_CHARACTER_ID tid;
@@ -512,9 +512,9 @@ void World::warpto_command(Player *cp, const std::string &ts) {
 
     if ((thistoken = strtok(tokenize, " ,"))) {
         if (ReadField(thistoken, warpto.x)) {
-            if ((thistoken = strtok(NULL, " ,"))) {
+            if ((thistoken = strtok(nullptr, " ,"))) {
                 if (ReadField(thistoken, warpto.y)) {
-                    if ((thistoken = strtok(NULL, " ,"))) {
+                    if ((thistoken = strtok(nullptr, " ,"))) {
                         if (ReadField(thistoken, warpto.z)) {
                             //warpPlayer( cp, warpto );
                             cp->forceWarp(warpto);
@@ -554,7 +554,7 @@ void World::summon_command(Player *cp, const std::string &tplayer) {
     Player *tempPl;
     tempPl = Players.find(tplayer);
 
-    if (tempPl != NULL) {
+    if (tempPl != nullptr) {
         Logger::info(LogFacility::Admin) << *cp << " summons player " << *tempPl << " to " << cp->getPosition() << Log::end;
         tempPl->Warp(cp->getPosition());
     } else {
@@ -590,13 +590,13 @@ void World::ban_command(Player *cp, const std::string &timeplayer) {
 
     char *thistoken;
 
-    if ((thistoken = strtok(tokenize, " ")) != NULL) {
+    if ((thistoken = strtok(tokenize, " ")) != nullptr) {
         short int jailtime = 0;
 
         if (ReadField(thistoken, jailtime)) {
-            char *tcharp = strtok(NULL, " ");
+            char *tcharp = strtok(nullptr, " ");
 
-            if (tcharp != NULL) {
+            if (tcharp != nullptr) {
                 int multiplier = 0;
 
                 std::string tplayer;
@@ -613,9 +613,9 @@ void World::ban_command(Player *cp, const std::string &timeplayer) {
                     timescale = "";
                 }
 
-                char *tcharp = strtok(NULL, "\\");
+                char *tcharp = strtok(nullptr, "\\");
 
-                if (tcharp != NULL) {
+                if (tcharp != nullptr) {
                     tplayer = tcharp;
 
                     if (timescale != "") {
@@ -672,7 +672,7 @@ void World::banbyname(Player *cp, short int banhours, const std::string &tplayer
     Player *tempPl;
     tempPl = Players.find(tplayer);
 
-    if (tempPl != NULL) {
+    if (tempPl != nullptr) {
 
         ban(tempPl, static_cast<int>(banhours * 3600), cp->getId());
 
@@ -964,11 +964,11 @@ void World::teleport_command(Player *cp, const std::string &ts) {
     std::cout << "Tokenizing " << tokenize << std::endl;
     char *thistoken;
 
-    if ((thistoken = strtok(tokenize, " ,")) != NULL) {
+    if ((thistoken = strtok(tokenize, " ,")) != nullptr) {
         if (ReadField(thistoken, teleportto.x)) {
-            if ((thistoken = strtok(NULL, " ,")) != NULL) {
+            if ((thistoken = strtok(nullptr, " ,")) != nullptr) {
                 if (ReadField(thistoken, teleportto.y)) {
-                    if ((thistoken = strtok(NULL, " ,")) != NULL) {
+                    if ((thistoken = strtok(nullptr, " ,")) != nullptr) {
                         if (ReadField(thistoken, teleportto.z)) {
                             if (addWarpField(cp->getPosition(), teleportto, 0, 0)) {
                                 std::string tmessage = "*** Warp Field Added! ***";
@@ -1174,7 +1174,7 @@ bool World::reload_defs(Player *cp) {
     if (ok) {
         MonsterDescriptions_temp = new MonsterTable();
 
-        if (MonsterDescriptions_temp == NULL || !MonsterDescriptions_temp->dataOK()) {
+        if (MonsterDescriptions_temp == nullptr || !MonsterDescriptions_temp->dataOK()) {
             reportTableError(cp, "monster");
             ok = false;
         }
@@ -1185,18 +1185,18 @@ bool World::reload_defs(Player *cp) {
         ScheduledScripts_temp = new ScheduledScriptsTable();
         std::cerr << "Created new Scheduler" << std::endl;
 
-        if (ScheduledScripts_temp == NULL || !ScheduledScripts_temp->dataOK()) {
+        if (ScheduledScripts_temp == nullptr || !ScheduledScripts_temp->dataOK()) {
             reportTableError(cp, "scheduledscripts");
             ok = false;
         }
     }
 
     if (!ok) {
-        if (MonsterDescriptions_temp != NULL) {
+        if (MonsterDescriptions_temp != nullptr) {
             delete MonsterDescriptions_temp;
         }
 
-        if (ScheduledScripts_temp != NULL) {
+        if (ScheduledScripts_temp != nullptr) {
             delete ScheduledScripts_temp;
         }
     } else {
@@ -1419,11 +1419,11 @@ void World::removeTeleporter(Player *cp, const std::string &ts) {
     std::cout << "Tokenizing " << tokenize << std::endl;
     char *thistoken;
 
-    if ((thistoken = strtok(tokenize, " ,")) != NULL) {
+    if ((thistoken = strtok(tokenize, " ,")) != nullptr) {
         if (ReadField(thistoken, teleport.x)) {
-            if ((thistoken = strtok(NULL, " ,")) != NULL) {
+            if ((thistoken = strtok(nullptr, " ,")) != nullptr) {
                 if (ReadField(thistoken, teleport.y)) {
-                    if ((thistoken = strtok(NULL, " ,")) != NULL) {
+                    if ((thistoken = strtok(nullptr, " ,")) != nullptr) {
                         if (ReadField(thistoken, teleport.z)) {
                             if (removeWarpField(teleport)) {
                                 std::string tmessage = "*** Warp Field deleted! ***";

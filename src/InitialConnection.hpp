@@ -68,7 +68,7 @@ private:
 
 
     //! wartet auf eine neue Verbindung (blockierend)
-    // \return eine neue Verbindung oder NULL
+    // \return eine neue Verbindung oder nullptr
     //CInternetConnection* accept_connection();
     void accept_connection(boost::shared_ptr<NetInterface> connection, const boost::system::error_code &error);
 

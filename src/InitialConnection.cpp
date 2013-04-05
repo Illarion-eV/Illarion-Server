@@ -68,5 +68,5 @@ void InitialConnection::accept_connection(boost::shared_ptr<NetInterface> connec
 InitialConnection::~InitialConnection() {
     io_service.stop();
     delete acceptor;
-    acceptor = NULL;
+    acceptor = nullptr;
 }

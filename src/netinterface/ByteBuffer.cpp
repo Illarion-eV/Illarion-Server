@@ -26,7 +26,7 @@
 ByteBuffer::ByteBuffer() : bytesAvailable(0), rBuff(0), wBuff(1), readPos(0) {
     vlock = new pthread_mutex_t;
 
-    if (pthread_mutex_init(vlock,NULL)) {
+    if (pthread_mutex_init(vlock,nullptr)) {
         std::cout << "Mutex couldn't get initialized... throwing exception!" << std::endl;
         throw std::exception();
     }

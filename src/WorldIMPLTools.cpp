@@ -418,7 +418,7 @@ bool World::characterAttacks(Character *cp) {
             Player *temppl = Players.find(cp->enemyid);
 
             // Ziel gefunden
-            if (temppl != NULL) {
+            if (temppl != nullptr) {
                 // Ziel sichtbar
                 if (cp->isInRange(temppl, temppl->getScreenRange())) {
 
@@ -454,7 +454,7 @@ bool World::characterAttacks(Character *cp) {
             Monster *temppl = Monsters.find(cp->enemyid);
 
             // Ziel gefunden
-            if (temppl != NULL) {
+            if (temppl != nullptr) {
                 if (cp->isInRange(temppl, temppl->getScreenRange())) {
                     MonsterStruct monStruct;
 
@@ -699,7 +699,7 @@ bool World::DoAge() {
 
     if (nextXtoage >= maps.getHighX()) {
         // auf allen Karten alles abgearbeitet
-        time_t temp = time(NULL);      // liefert die Sekunden seit dem 1.1.1970
+        time_t temp = time(nullptr);      // liefert die Sekunden seit dem 1.1.1970
         realgap = temp - last_age;
 
         // Zeit f�r neuen Durchlauf der Karte
@@ -862,11 +862,11 @@ int World::getTime(const std::string &timeType) {
 
     // return unix timestamp if requsted and quit function
     if (timeType=="unix") {
-        return (int)time(NULL);
+        return (int)time(nullptr);
     }
 
     // get current time and timezone data to get additional informations for time conversation
-    curr_unixtime = time(NULL);
+    curr_unixtime = time(nullptr);
     timestamp = localtime(&curr_unixtime);
 
     illaTime = (int)curr_unixtime;

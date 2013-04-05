@@ -177,13 +177,13 @@ void *PlayerManager::loginLoop(PlayerManager *pmanager) {
                         //pmanager->shutdownConnections.non_block_push_back( Connection );
                     }
                 } else {
-                    std::cout<<"try to get connection but was NULL!"<<std::endl;
+                    std::cout<<"try to get connection but was nullptr!"<<std::endl;
                     Connection.reset();
                 }
 
             } // get new players
 
-            nanosleep(&waittime, NULL);
+            nanosleep(&waittime, nullptr);
         }
     } catch (std::exception &e) {
 
@@ -191,7 +191,7 @@ void *PlayerManager::loginLoop(PlayerManager *pmanager) {
         throw;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 void *PlayerManager::playerSaveLoop(PlayerManager *pmanager) {
@@ -234,7 +234,7 @@ void *PlayerManager::playerSaveLoop(PlayerManager *pmanager) {
                 Logger::debug(LogFacility::World) << "update player list [end]" << Log::end;
             }
 
-            nanosleep(&waittime, NULL);
+            nanosleep(&waittime, nullptr);
         }
 
     } catch (std::exception &e) {
@@ -243,6 +243,6 @@ void *PlayerManager::playerSaveLoop(PlayerManager *pmanager) {
         throw;
     }
 
-    return NULL;
+    return nullptr;
 }
 

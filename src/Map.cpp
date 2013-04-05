@@ -59,11 +59,11 @@ Map::Map(unsigned short int sizex, unsigned short int sizey) {
 Map::~Map() {
     for (int i = 0; i < Width; ++i) {
         delete[] MainMap[ i ];
-        MainMap[ i ] = NULL;
+        MainMap[ i ] = nullptr;
     }
 
     delete[] MainMap;
-    MainMap = NULL;
+    MainMap = nullptr;
 }
 
 
@@ -388,7 +388,7 @@ bool Map::Load(const std::string &name, unsigned short int x_offs, unsigned shor
                                         if (! ptr->second.empty()) {
                                             for (citer = ptr->second.begin(); citer != ptr->second.end(); ++citer) {
                                                 delete(*citer).second;
-                                                (*citer).second = NULL;
+                                                (*citer).second = nullptr;
                                             }
                                         }
                                     }

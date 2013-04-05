@@ -214,16 +214,16 @@ void RequestAppearanceTS::decodeData() {
 void RequestAppearanceTS::performAction(Player *player) {
     Character *ch = World::get()->Players.find(id);
 
-    if (ch == NULL) {
+    if (ch == nullptr) {
         ch = World::get()->Monsters.find(id);
 
-        if (ch == NULL) {
+        if (ch == nullptr) {
             ch = World::get()->Npc.find(id);
         }
     }
 
     //check if we found a character befor
-    if (ch != NULL) {
+    if (ch != nullptr) {
         ch->updateAppearanceForPlayer(player, true);
     }
 
@@ -428,7 +428,7 @@ void CastTS::performAction(Player *player) {
             if (player->isShowcaseOpen(showcase)) {
                 Container *ps = player->getShowcaseContainer(showcase);
 
-                if (ps != NULL) {
+                if (ps != nullptr) {
 #ifdef World_DEBUG
                     std::cout << "Container gefunden" << std::endl;
 #endif
@@ -462,7 +462,7 @@ void CastTS::performAction(Player *player) {
                 std::cerr << "showcase < MAXSHOWCASE false, paramOK = false!"<<std::endl;
                 paramOK = false;
             }
-        } // LuaMageScript == NULL ?
+        } // LuaMageScript == nullptr ?
 
         break;
 
@@ -514,11 +514,11 @@ void CastTS::performAction(Player *player) {
                         Target.Type = LUA_CHARACTER;
                         Target.character = World::get()->findCharacter(player->enemyid);
 
-                        if (Target.character != NULL) {
+                        if (Target.character != nullptr) {
                             Target.pos = Target.character->getPosition();
                         } else {
                             paramOK = false;
-                            std::cerr << "Kein geeignetes Ziel fr Zauberstab gefunden (Target.Character == NULL)!" << std::endl;
+                            std::cerr << "Kein geeignetes Ziel fr Zauberstab gefunden (Target.Character == nullptr)!" << std::endl;
                         }
                     }
 
@@ -533,11 +533,11 @@ void CastTS::performAction(Player *player) {
                         Target.Type = LUA_CHARACTER;
                         Target.character = World::get()->findCharacter(player->enemyid);
 
-                        if (Target.character != NULL) {
+                        if (Target.character != nullptr) {
                             Target.pos = Target.character->getPosition();
                         } else {
                             paramOK = false;
-                            std::cerr << "Kein geeignetes Ziel fr Zauberstab gefunden (Target.Character == NULL)!" << std::endl;
+                            std::cerr << "Kein geeignetes Ziel fr Zauberstab gefunden (Target.Character == nullptr)!" << std::endl;
                         }
                     }
 
@@ -552,11 +552,11 @@ void CastTS::performAction(Player *player) {
                         Target.Type = LUA_CHARACTER;
                         Target.character = World::get()->findCharacter(player->enemyid);
 
-                        if (Target.character != NULL) {
+                        if (Target.character != nullptr) {
                             Target.pos = Target.character->getPosition();
                         } else {
                             paramOK = false;
-                            std::cerr << "Kein geeignetes Ziel fr Zauberstab gefunden (Target.Character == NULL)!" << std::endl;
+                            std::cerr << "Kein geeignetes Ziel fr Zauberstab gefunden (Target.Character == nullptr)!" << std::endl;
                         }
                     }
 
@@ -620,7 +620,7 @@ void CastTS::performAction(Player *player) {
                 std::cerr<<"pos < (MAX_BELT_SLOTS + MAX_BODY_ITEMS), paramOK = false!"<<std::endl;
                 paramOK = false;
             }
-        } // skript != NULL ?
+        } // skript != nullptr ?
 
         break;
 
@@ -821,7 +821,7 @@ void UseTS::performAction(Player *player) {
         if (player->isShowcaseOpen(showcase)) {
             Container *ps = player->getShowcaseContainer(showcase);
 
-            if (ps != NULL) {
+            if (ps != nullptr) {
                 Logger::debug(LogFacility::Script) << "Container gefunden!" << Log::end;
                 ScriptItem tempi;
                 Container *tempc;

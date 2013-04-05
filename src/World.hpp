@@ -130,7 +130,7 @@ struct BlockingObject {
     ScriptItem blockingItem;
     BlockingObject() {
         blockingType = BT_NONE;
-        blockingChar = NULL;
+        blockingChar = nullptr;
     }
 };
 
@@ -414,7 +414,7 @@ public:
     * can be found in WorldIMPLTools.cpp
     * looks into all three vectors ( player, monster, npc )  for a character with the given id
     * @param id the id of the character which should be found
-    * @return a pointer to the character, NULL if the character wasn't found
+    * @return a pointer to the character, nullptr if the character wasn't found
     * @todo has to be changed for only one charactervetor
     */
     Character *findCharacter(TYPE_OF_CHARACTER_ID id);
@@ -445,7 +445,7 @@ public:
     /**
     * looks for a field on the map
     * @param pos the position at which the field should be
-    * @return a pointer to the field, NULL if there is no field at this position
+    * @return a pointer to the field, nullptr if there is no field at this position
     * @see GetPToCFieldAt()
     */
     Field *GetField(const position &pos) const;

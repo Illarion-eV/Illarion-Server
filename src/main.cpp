@@ -178,14 +178,14 @@ int main(int argc, char *argv[]) {
                     }
                 }
             } else {
-                std::cout<<"try to get new player but was NULL!"<<std::endl;
+                std::cout<<"try to get new player but was nullptr!"<<std::endl;
             }
 
         } // get new players
 
         // Eingaben der Player abarbeiten und die Karte altern
         world->turntheworld();
-        nanosleep(&stime, NULL);
+        nanosleep(&stime, nullptr);
     }
 
 
@@ -203,7 +203,7 @@ int main(int argc, char *argv[]) {
     Logger::info(LogFacility::Other) << "saving maps" << Log::end;
     world->Save("Illarion");
     delete world;
-    world = NULL;
+    world = nullptr;
 
     reset_sighandlers();
 

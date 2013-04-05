@@ -43,7 +43,7 @@ bool start_savethread() {
     pthread_attr_setdetachstate(&pattr, PTHREAD_CREATE_DETACHED);
 
     keep_thread=true;
-    int temp = pthread_create(&save_thread, &pattr,(void*( *)(void *)) &player_save_loop, NULL);
+    int temp = pthread_create(&save_thread, &pattr,(void*( *)(void *)) &player_save_loop, nullptr);
 
     if (temp != 0) {
         std::cerr << "Could not create Player save thread: "
@@ -69,7 +69,7 @@ pthread_t playersavethread;
 
 void sig_chld(int) {
     // just exit the thread...
-    pthread_exit(NULL);
+    pthread_exit(nullptr);
 }
 
 void *save_this_player(void *ptr) {
@@ -78,9 +78,9 @@ void *save_this_player(void *ptr) {
     sigact.sa_flags = SA_RESTART;
     sigemptyset(&sigact.sa_mask);
 
-    if (sigaction(SIGCHLD, &sigact, NULL) < 0) {
+    if (sigaction(SIGCHLD, &sigact, nullptr) < 0) {
         std::cerr << "failed to set sigaction for sig_chld!" << std::endl;
-        pthread_exit(NULL);
+        pthread_exit(nullptr);
     }
 
     try {
@@ -91,7 +91,7 @@ void *save_this_player(void *ptr) {
         std::cerr<< "catched exception while trying to save player!"<<std::endl;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 bool save_player(Player *player) {
@@ -130,7 +130,7 @@ void *player_save_loop(void *) {
     sigact.sa_flags = SA_NOMASK;
     sigemptyset(&sigact.sa_mask);
 
-    if (sigaction(SIGCHLD, &sigact, NULL) < 0) {
+    if (sigaction(SIGCHLD, &sigact, nullptr) < 0) {
         std::cerr << "failed to ignore sig_chld!" << std::endl;
         exit(1);
     }
@@ -161,5 +161,5 @@ void *player_save_loop(void *) {
 
     std::cout << "playersave thread done." << std::endl;
     save_thread_done = true;
-    return NULL;
+    return nullptr;
 }

@@ -21,7 +21,7 @@
 #include "BasicCommand.hpp"
 
 BasicClientCommand::BasicClientCommand(unsigned char defByte) : BasicCommand(defByte), dataOk(true), length(0), bytesRetrieved(0), checkSum(0), crc(0) {
-    msg_buffer = NULL;
+    msg_buffer = nullptr;
 }
 
 

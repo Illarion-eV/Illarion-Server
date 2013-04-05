@@ -225,7 +225,7 @@ int LuaScript::add_backtrace(lua_State *L) {
     lua_Debug d;
     std::stringstream msg;
 
-    if (lua_tostring(L, -1) != NULL) {
+    if (lua_tostring(L, -1) != nullptr) {
         std::string err = lua_tostring(L, -1);
         lua_pop(L, 1);
         msg << err << std::endl;
@@ -426,7 +426,7 @@ uint64_t LuaLShift64(uint64_t value, unsigned char bits) {
 }
 
 Character *getCharForId(TYPE_OF_CHARACTER_ID id) {
-    Character *ret = NULL;
+    Character *ret = nullptr;
 
     if (id < MONSTER_BASE) {
         //player
@@ -451,7 +451,7 @@ void LuaScript::init_base_functions() {
         {LUA_STRLIBNAME, luaopen_string},
         {LUA_MATHLIBNAME, luaopen_math},
         // {LUA_DBLIBNAME, luaopen_debug},
-        {NULL, NULL}
+        {nullptr, nullptr}
     };
     const luaL_Reg *lib = lualibs;
 

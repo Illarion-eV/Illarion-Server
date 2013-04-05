@@ -268,7 +268,7 @@ void sig_term(int) {
     //  ignore signal
     act_term.sa_handler = SIG_IGN;
 
-    if (sigaction(SIGTERM, &act_term, NULL) < 0) {
+    if (sigaction(SIGTERM, &act_term, nullptr) < 0) {
         std::cerr << "SIGTERM: sigaction failed" << std::endl;
     }
 
@@ -283,7 +283,7 @@ void sig_segv(int) {
     // ignore signal
     act_segv.sa_handler = SIG_IGN;
 
-    if (sigaction(SIGSEGV, &act_segv, NULL) < 0) {
+    if (sigaction(SIGSEGV, &act_segv, nullptr) < 0) {
         std::cerr << "SIGSEGV: sigaction failed" << std::endl;
     }
 
@@ -306,7 +306,7 @@ void sig_usr(int) {
     world->allowLogin(true);
     Logger::info(LogFacility::World) << "Map import finished" << Log::end;
 
-    if (sigaction(SIGUSR1, &act_usr, NULL) < 0) {
+    if (sigaction(SIGUSR1, &act_usr, nullptr) < 0) {
         Logger::error(LogFacility::Other) << "SIGUSR1: sigaction failed" << Log::end;
     }
 
@@ -330,19 +330,19 @@ bool init_sighandlers() {
         return false;
     }
 
-    if (sigaction(SIGCHLD, &act_pipe, NULL) < 0) {
+    if (sigaction(SIGCHLD, &act_pipe, nullptr) < 0) {
         std::cerr << "main: sigaction failed" << std::endl;
         return false;
     }
 
 
-    if (sigaction(SIGINT, &act_pipe, NULL) < 0) {
+    if (sigaction(SIGINT, &act_pipe, nullptr) < 0) {
         std::cerr << "main: sigaction failed" << std::endl;
         return false;
     }
 
 
-    if (sigaction(SIGQUIT, &act_pipe, NULL) < 0) {
+    if (sigaction(SIGQUIT, &act_pipe, nullptr) < 0) {
         std::cerr << "main: sigaction failed" << std::endl;
         return false;
     }
@@ -382,7 +382,7 @@ bool init_sighandlers() {
     act_usr.sa_handler = sig_usr;
     act_usr.sa_flags = SA_RESTART;
 
-    if (sigaction(SIGUSR1, &act_usr, NULL) < 0) {
+    if (sigaction(SIGUSR1, &act_usr, nullptr) < 0) {
         std::cerr << "main: sigaction SIGUSR1 failed" << std::endl;
         return false;
     }
@@ -394,11 +394,11 @@ bool init_sighandlers() {
 void reset_sighandlers() {
     std::cout << "reset of signal handlers...";
 
-    sigaction(SIGPIPE, &act_pipe_o, NULL);
+    sigaction(SIGPIPE, &act_pipe_o, nullptr);
 
-    sigaction(SIGTERM, &act_term_o, NULL);
+    sigaction(SIGTERM, &act_term_o, nullptr);
 
-    sigaction(SIGSEGV, &act_segv_o, NULL);
+    sigaction(SIGSEGV, &act_segv_o, nullptr);
 
     std::cout << " done.";
 }

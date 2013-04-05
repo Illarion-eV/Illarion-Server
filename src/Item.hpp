@@ -352,15 +352,15 @@ public:
         return fuse_owner;
     };
     Container *inside;
-    ScriptItem() : Item(0,0,0), type(notdefined), pos(position(0, 0, 0)), itempos(255), owner(NULL), inside(NULL) {}
+    ScriptItem() : Item(0,0,0), type(notdefined), pos(position(0, 0, 0)), itempos(255), owner(nullptr), inside(nullptr) {}
     unsigned char getType() {
         return type;
     }
     ScriptItem(const Item &source) : Item(source), pos(position(0, 0, 0)) {
         itempos = 0;
         type = notdefined;
-        owner = NULL;
-        inside = NULL;
+        owner = nullptr;
+        inside = nullptr;
     }
 
 } ;

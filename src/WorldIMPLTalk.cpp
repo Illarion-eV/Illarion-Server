@@ -309,7 +309,7 @@ void World::lookAtShowcaseItem(Player *cp, uint8_t showcase, unsigned char posit
     if (cp->isShowcaseOpen(showcase)) {
         Container *ps = cp->getShowcaseContainer(showcase);
 
-        if (ps != NULL) {
+        if (ps != nullptr) {
             Container *tc;
 
             if (ps->viewItemNr(position, titem, tc)) {

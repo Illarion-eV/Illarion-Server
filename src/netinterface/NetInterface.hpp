@@ -79,7 +79,7 @@ public:
 
     /**
     * returns a command from the receive Queue if on is available
-    * @return the command which was in the receive Queue or an empty (NULL) Command if there wasn't something in the receive Queue
+    * @return the command which was in the receive Queue or an empty (nullptr) Command if there wasn't something in the receive Queue
     */
     ClientCommandPointer getCommand();
 

@@ -98,7 +98,7 @@ void World::name_command(Player *cp, const std::string &ts) {
         ss >> player;
 
         if (player) {
-            if ((thistoken = strtok(NULL, ""))) {
+            if ((thistoken = strtok(nullptr, ""))) {
                 Players.for_each([&](Player *p) {
                     if (p->getId() == player) {
                         std::string newname(thistoken);

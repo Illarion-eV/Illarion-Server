@@ -34,7 +34,7 @@ public:
         // initialize our mutex
         vlock = new pthread_mutex_t;
 
-        if (pthread_mutex_init(vlock,NULL)) {
+        if (pthread_mutex_init(vlock,nullptr)) {
             std::cout << "Mutex couldn't get initialized... throwing exception!" << std::endl;
             throw std::exception();
         }
@@ -70,7 +70,7 @@ public:
                 stime.tv_sec = 0;
                 stime.tv_nsec = 5000000;
                 std::cout<<"non_block_size blocked mutex"<<std::endl;
-                nanosleep(&stime, NULL);
+                nanosleep(&stime, nullptr);
             } else {
                 uint16_t s = std::list<T>::size();
                 pthread_mutex_unlock(vlock);
@@ -121,7 +121,7 @@ public:
                 stime.tv_sec = 0;
                 stime.tv_nsec = 5000000;
                 std::cout<<"non_block_push_back blocked mutex"<<std::endl;
-                nanosleep(&stime, NULL);
+                nanosleep(&stime, nullptr);
             } else {
                 std::list<T>::push_back(item);
                 pthread_mutex_unlock(vlock);
@@ -141,7 +141,7 @@ public:
                 stime.tv_sec = 0;
                 stime.tv_nsec = 5000000;
                 std::cout<<"non_block_push_front blocked mutex"<<std::endl;
-                nanosleep(&stime, NULL);
+                nanosleep(&stime, nullptr);
             } else {
                 std::list<T>::push_front(item);
                 pthread_mutex_unlock(vlock);
@@ -161,7 +161,7 @@ public:
                 stime.tv_sec = 0;
                 stime.tv_nsec = 5000000;
                 std::cout<<"non_block_push_back blocked mutex"<<std::endl;
-                nanosleep(&stime, NULL);
+                nanosleep(&stime, nullptr);
             } else {
                 T item = std::list<T>::front();
                 std::list<T>::pop_front();
@@ -201,7 +201,7 @@ public:
                 stime.tv_sec = 0;
                 stime.tv_nsec = 5000000;
                 std::cout<<"non_block_empty blocked mutex"<<std::endl;
-                nanosleep(&stime, NULL);
+                nanosleep(&stime, nullptr);
             } else {
                 bool empty = std::list<T>::empty();
                 pthread_mutex_unlock(vlock);
