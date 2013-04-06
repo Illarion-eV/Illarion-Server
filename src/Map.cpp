@@ -28,7 +28,7 @@
 
 #include "netinterface/protocol/ServerCommands.hpp"
 
-extern std::vector<position> *contpos;
+extern std::vector<position> contpos;
 
 Map::Map(unsigned short int sizex, unsigned short int sizey) {
     Width = sizex;
@@ -539,34 +539,29 @@ void Map::ageItemsInHorizontalRange(short int xstart, short int xend) {
         for (short int y = 0; y < Height; ++y) {
             int8_t rotstate = MainMap[x][y].DoAgeItems();
 
-            //CLogger::writeMessage("rot_update", "aged items, rotstate: " + Logger::toString( static_cast<int>(rotstate) ) );
             if (rotstate == -1) {
-                //a container was rotted
                 pos.x=Conv_To_X(x);
                 pos.y=Conv_To_Y(y);
 
-                // mindestens ein Containeritem wurde gel�cht -> mit Hilfe von erasedcontainers
-                //   die Inhalte l�chen
-                for (ercontit = erasedcontainers->begin(); ercontit != erasedcontainers->end(); ++ercontit) {
-                    CONTAINERHASH::iterator conmapn = maincontainers.find(pos);
+                for (const auto &erased : erasedcontainers) {
+                    auto conmapn = maincontainers.find(pos);
 
                     if (conmapn != maincontainers.end()) {   // containermap fr das Zielfeld gefunden
-                        Container::CONTAINERMAP::iterator iterat;
-                        iterat = (*conmapn).second.find(*ercontit);
+                        auto iterat = conmapn->second.find(erased);
 
-                        if (iterat != (*conmapn).second.end()) {
+                        if (iterat != conmapn->second.end()) {
                             std::cout << "Containerinhalt auf Feld wird geloescht !" << std::endl;
-                            (*conmapn).second.erase(iterat);
+                            conmapn->second.erase(iterat);
                         }
 
                         posZ.x=pos.x;
                         posZ.y=pos.y;
                         posZ.z=Z_Level;
-                        contpos->push_back(posZ);
+                        contpos.push_back(posZ);
                     }
                 }
 
-                erasedcontainers->clear();
+                erasedcontainers.clear();
 
             }
 
@@ -590,8 +585,8 @@ void Map::ageItemsInHorizontalRange(short int xstart, short int xend) {
 }
 
 void Map::ageContainers() {
-    for (auto it = maincontainers.begin(); it != maincontainers.end(); ++it) {
-        auto container = it->second;
+    for (const auto &key_container : maincontainers) {
+        const auto &container = key_container.second;
 
         for (const auto &content : container) {
             if (content.second) {

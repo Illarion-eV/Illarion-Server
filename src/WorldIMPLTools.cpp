@@ -44,7 +44,7 @@
 #include "netinterface/protocol/ServerCommands.hpp"
 
 extern MonsterTable *MonsterDescriptions;
-extern std::vector<position> *contpos;
+extern std::vector<position> contpos;
 
 void World::deleteAllLostNPC() {
     Field *tempf;
@@ -674,7 +674,7 @@ int World::getItemAttrib(const std::string &s, TYPE_OF_ITEM_ID ItemID) {
 
 
 void World::closeShowcasesForContainerPositions() {
-    for (const auto &pos : *contpos) {
+    for (const auto &pos : contpos) {
         for (const auto &player : Players.findAllCharactersInMaxRangeOf(pos, 1)) {
             player->closeAllShowcasesOfMapContainers();
         }
@@ -735,7 +735,7 @@ bool World::DoAge() {
         }
 
         closeShowcasesForContainerPositions();
-        contpos->clear();
+        contpos.clear();
     }
 
     nextXtoage = lastXtoage + 1;

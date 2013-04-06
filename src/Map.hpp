@@ -176,8 +176,6 @@ public:
     inline   short int Conv_To_X(unsigned short int x);
 
     inline short int Conv_To_Y(unsigned short int y);
-
-    std::vector<int>::iterator ercontit;
 };
 
 #endif
