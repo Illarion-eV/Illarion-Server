@@ -417,7 +417,7 @@ public:
     * @return a pointer to the character, NULL if the character wasn't found
     * @todo has to be changed for only one charactervetor
     */
-    Character *findCharacter(TYPE_OF_CHARACTER_ID id);
+    virtual Character *findCharacter(TYPE_OF_CHARACTER_ID id);
 
     /**
             *deletes all monsters and npcs from the map and emptys the lists
