@@ -23,7 +23,7 @@
 //falls nicht auskommentiert, werden mehr Bildschirmausgaben gemacht:
 //#define InitialConnection_DEBUG
 
-#include <stdio.h>
+#include <memory>
 
 #include <boost/shared_ptr.hpp>
 #include <boost/asio.hpp>
@@ -64,7 +64,7 @@ private:
     void run_service();
 
     boost::asio::io_service io_service;
-    boost::asio::ip::tcp::acceptor *acceptor;
+    std::unique_ptr<boost::asio::ip::tcp::acceptor> acceptor = nullptr;
 
 
     //! wartet auf eine neue Verbindung (blockierend)

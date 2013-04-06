@@ -21,6 +21,7 @@
 
 #include <boost/thread.hpp>
 
+#include "make_unique.hpp"
 #include "Config.hpp"
 
 #include "netinterface/NetInterface.hpp"
@@ -38,7 +39,7 @@ void InitialConnection::run_service() {
     int port = Config::instance().port;
 
     boost::asio::ip::tcp::endpoint endpoint = boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port);
-    acceptor = new boost::asio::ip::tcp::acceptor(io_service,endpoint);
+    acceptor = std::make_unique<boost::asio::ip::tcp::acceptor>(io_service,endpoint);
     boost::shared_ptr<NetInterface> newConnection(new NetInterface(io_service));
     acceptor->async_accept(newConnection->getSocket(),boost::bind(&InitialConnection::accept_connection, this, newConnection, boost::asio::placeholders::error));
     std::cout<<"Starting the IO Service!"<<std::endl;
@@ -67,6 +68,4 @@ void InitialConnection::accept_connection(boost::shared_ptr<NetInterface> connec
 
 InitialConnection::~InitialConnection() {
     io_service.stop();
-    delete acceptor;
-    acceptor = nullptr;
 }
