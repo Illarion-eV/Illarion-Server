@@ -30,7 +30,6 @@ void Scheduler::NextCycle() {
     int emexit = 0;
 
     while (!Tasks.empty() && (emexit < 201) && (Tasks.front()->GetNextCycle() <= cycle)) {
-        SchedulerObject *m_object = nullptr;
         ++emexit;
 
         if (emexit>=199) {
@@ -38,39 +37,37 @@ void Scheduler::NextCycle() {
         }
 
         if (!Tasks.empty()) {
-            m_object = Tasks.front();
-        }
-
-        if (m_object) {
-            if ((*m_object)(world)) {
-                AddTask(m_object);
+            auto task = std::move(Tasks.front());
+            Tasks.pop_front();
+        
+            if (task) {
+                if ((*task)(world)) {
+                    AddTask(std::move(task));
+                }
             }
         }
-
-        Tasks.pop_front();
     }
 
     ++cycle;
 }
 
-void Scheduler::AddTask(SchedulerObject *sobject) {
-    std::list<SchedulerObject *>::iterator it;
+void Scheduler::AddTask(std::unique_ptr<SchedulerObject> task) {
     bool inserted = false;
 
-    if (sobject->GetNextCycle() <= cycle) {
-        sobject->SetNextCycle(cycle + 1);
+    if (task->GetNextCycle() <= cycle) {
+        task->SetNextCycle(cycle + 1);
     }
 
-    for (it = Tasks.begin(); it != Tasks.end(); ++it) {
-        if ((*it)->GetNextCycle() > sobject->GetNextCycle()) {
-            Tasks.insert(it, sobject);
+    for (auto it = Tasks.begin(); it != Tasks.end(); ++it) {
+        if ((*it)->GetNextCycle() > task->GetNextCycle()) {
+            Tasks.insert(it, std::move(task));
             inserted = true;
             break;
         }
     }
 
     if (!inserted) {
-        Tasks.push_back(sobject);
+        Tasks.push_back(std::move(task));
     }
 }
 

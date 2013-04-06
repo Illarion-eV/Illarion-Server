@@ -261,7 +261,7 @@ bool World::load_from_editor(const std::string &filename) {
     }
 
     // generate new map
-    WorldMap::map_t tempmap(new Map(h_width, h_height));
+    auto tempmap = std::make_shared<Map>(h_width, h_height);
     tempmap->Init(h_x, h_y, h_level);
 
     for (int x=0; x < h_width; ++x) {
@@ -1013,16 +1013,10 @@ void World::initNPC() {
 }
 
 void World::initScheduler() {
-    std::cout<<"Scheduler init \n";
     scheduler = std::make_unique<Scheduler>();
-    //===========Globale Tasks wie Wetter Gezeiteneffekte etc einfgen=========
-    SchedulerObject *globalPlLearning;  //Task anlegen der die Geistige Aufnahmef�igkeit aller 10 sec bei Spielern wieder senkt
-    globalPlLearning = new SGlobalPlayerLearnrate(scheduler->GetCurrentCycle()+5);
-    scheduler->AddTask(globalPlLearning);
-    SchedulerObject *globalMonLearning;  //Task anlegen der die Geistige Aufnahmef�igkeit aller 30 sec bei Monstern wieder senkt
-    globalMonLearning = new SGlobalMonsterLearnrate(scheduler->GetCurrentCycle()+10);
-    scheduler->AddTask(globalMonLearning);
-    //=========================================================================
-    std::cout<<"Scheduler init end \n";
+    auto globalPlLearning = std::make_unique<SGlobalPlayerLearnrate>(scheduler->GetCurrentCycle()+5);
+    scheduler->AddTask(std::move(globalPlLearning));
+    auto globalMonLearning = std::make_unique<SGlobalMonsterLearnrate>(scheduler->GetCurrentCycle()+10);
+    scheduler->AddTask(std::move(globalMonLearning));
 }
 
