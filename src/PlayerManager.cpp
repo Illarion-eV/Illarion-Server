@@ -118,13 +118,11 @@ void PlayerManager::setLoginLogout(bool val) {
 
 void *PlayerManager::loginLoop(PlayerManager *pmanager) {
     try {
-        InitialConnection::TVECTORPLAYER &newplayers = pmanager->incon.get_Player_Vector();
-        TPLAYERVECTOR::iterator pIterator;
+        auto &newplayers = pmanager->incon.get_Player_Vector();
         timespec waittime;
         waittime.tv_sec = 0;
         waittime.tv_nsec = 100000000;
         pmanager->threadOk = true;
-        boost::shared_ptr<NetInterface> Connection;
 
         while (pmanager->running) {
             //loop must be steered by counter so we parse every connection only one time bevor we getting to the other loop
@@ -132,7 +130,7 @@ void *PlayerManager::loginLoop(PlayerManager *pmanager) {
 
             for (int i = 0; i < curconn; ++i) {
                 std::cout<<"read connection"<<std::endl;
-                Connection = newplayers.non_block_pop_front();
+                auto Connection = newplayers.non_block_pop_front();
 
                 if (Connection) {
                     bool isLocked = false;
@@ -197,7 +195,6 @@ void *PlayerManager::loginLoop(PlayerManager *pmanager) {
 void *PlayerManager::playerSaveLoop(PlayerManager *pmanager) {
     try {
         World *world = World::get();
-        TPLAYERVECTOR::iterator pIterator;
         timespec waittime;
         waittime.tv_sec = 0;
         waittime.tv_nsec = 100000000;

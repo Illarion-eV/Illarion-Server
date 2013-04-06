@@ -19,6 +19,7 @@
 
 #include "InitialConnection.hpp"
 
+#include <boost/make_shared.hpp>
 #include <boost/thread.hpp>
 
 #include "make_unique.hpp"
@@ -40,7 +41,7 @@ void InitialConnection::run_service() {
 
     boost::asio::ip::tcp::endpoint endpoint = boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port);
     acceptor = std::make_unique<boost::asio::ip::tcp::acceptor>(io_service,endpoint);
-    boost::shared_ptr<NetInterface> newConnection(new NetInterface(io_service));
+    auto newConnection = boost::make_shared<NetInterface>(io_service);
     acceptor->async_accept(newConnection->getSocket(),boost::bind(&InitialConnection::accept_connection, this, newConnection, boost::asio::placeholders::error));
     std::cout<<"Starting the IO Service!"<<std::endl;
     io_service.run();
@@ -56,7 +57,7 @@ void InitialConnection::accept_connection(boost::shared_ptr<NetInterface> connec
             std::cerr<<"Fehler bei Aktivierung der Connection"<<std::endl;
         }
 
-        boost::shared_ptr<NetInterface> newConnection(new NetInterface(io_service));
+        auto newConnection = boost::make_shared<NetInterface>(io_service);
         acceptor->async_accept(newConnection->getSocket(),boost::bind(&InitialConnection::accept_connection, this, newConnection, boost::asio::placeholders::error));
     } else {
         std::cerr<<"Fehler im Accept:" << error.message() << ": " <<error.value() <<std::endl;
