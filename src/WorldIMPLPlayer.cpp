@@ -86,7 +86,8 @@ void World::name_command(Player *cp, const std::string &ts) {
 bool World::gmpage_command(Player *player, const std::string &ticket) {
     try {
         logGMTicket(player, ticket, false);
-        player->inform("--- The message has been delivered to the GM team. ---");
+        player->inform("--- Die Nachricht wurde an das GM-Team gesendet. ---",
+                       "--- The message has been delivered to the GM team. ---");
         return true;
     } catch (...) {
     }
@@ -121,47 +122,47 @@ void World::logGMTicket(Player *player, const std::string &ticket, bool automati
 
 // !language <language>, language=common, human, dwarfen, elven, lizard, orc, ...
 bool World::active_language_command(Player *cp, const std::string &language) {
-    if (strcmp(language.c_str(),"common")==0) {
+    if (language == "common") {
         cp->setActiveLanguage(0);
     }
 
-    if (strcmp(language.c_str(),"human")==0) {
+    if (language == "human") {
         cp->setActiveLanguage(1);
     }
 
-    if (strcmp(language.c_str(),"dwarf")==0) {
+    if (language == "dwarf") {
         cp->setActiveLanguage(2);
     }
 
-    if (strcmp(language.c_str(),"elf")==0) {
+    if (language == "elf") {
         cp->setActiveLanguage(3);
     }
 
-    if (strcmp(language.c_str(),"lizard")==0) {
+    if (language == "lizard") {
         cp->setActiveLanguage(4);
     }
 
-    if (strcmp(language.c_str(),"orc")==0) {
+    if (language == "orc") {
         cp->setActiveLanguage(5);
     }
 
-    if (strcmp(language.c_str(),"halfling")==0) {
+    if (language == "halfling") {
         cp->setActiveLanguage(6);
     }
 
-    if (strcmp(language.c_str(),"fairy")==0) {
+    if (language == "fairy") {
         cp->setActiveLanguage(7);
     }
 
-    if (strcmp(language.c_str(),"gnome")==0) {
+    if (language == "gnome") {
         cp->setActiveLanguage(8);
     }
 
-    if (strcmp(language.c_str(),"goblin")==0) {
+    if (language == "goblin") {
         cp->setActiveLanguage(9);
     }
 
-    if (strcmp(language.c_str(),"ancient")==0) {
+    if (language == "ancient") {
         cp->setActiveLanguage(10);
     }
 
