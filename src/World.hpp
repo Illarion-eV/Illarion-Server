@@ -834,7 +834,7 @@ public:
 
     //! sendet einem Admin die Daten aller aktiven Player
     // \param admin der Admin an den die Daten gesandt werden sollen
-    void sendAdminAllPlayerData(Player *&admin);
+    void sendAdminAllPlayerData(Player *admin);
 
     // ! Server side implemented !warp_to x y z
     void warpto_command(Player *cp, const std::string &ts);
@@ -1157,11 +1157,6 @@ private:
     // initmethod for spawn places...
     bool initRespawns();
 
-    // Convert a std::string to a short int
-    bool ReadField(const char *inp, signed short int &outp);
-    // Convert a std::string to a long short int
-    bool ReadField(const char *inp, signed long int &outp);
-
     typedef std::map<std::string, CommandType> CommandMap;
     CommandMap GMCommands;
     CommandMap PlayerCommands;
@@ -1171,9 +1166,6 @@ private:
 
     // Ban a player
     void ban_command(Player *cp, const std::string &timeplayer);
-    void banbyname(Player *cp, short int banhours, const std::string &tplayer);
-    void banbynumber(Player *cp, short int banhours, TYPE_OF_CHARACTER_ID tid);
-
 
     // Change tile in front of admin
     void tile_command(Player *cp, const std::string &ttilenumber);

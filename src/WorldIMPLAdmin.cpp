@@ -354,71 +354,39 @@ void World::makeVisible(Player *cp) {
     cp->Connection->addCommand(cmd);
 }
 
-void World::ForceIntroduce(Player *cp, const std::string &ts) {
-    if (!cp->hasGMRight(gmr_basiccommands)) {
+void World::ForceIntroduce(Player *player, const std::string &text) {
+    if (!player->hasGMRight(gmr_basiccommands)) {
         return;
     }
 
-    Player *tempPl;
-    tempPl = Players.find(ts);
+    auto target = Players.find(text);
 
-    if (tempPl != nullptr) {
-        forceIntroducePlayer(tempPl, cp);
-    } else {
-        TYPE_OF_CHARACTER_ID tid;
+    if (target) {
+        forceIntroducePlayer(target, player);
+    }
+}
 
-        // convert arg to digit and try again...
-        std::stringstream ss;
-        ss.str(ts);
-        ss >> tid;
+void World::ForceIntroduceAll(Player *player) {
+    if (!player->hasGMRight(gmr_basiccommands)) {
+        return;
+    }
 
-        if (tid) {
-            Player *player = Players.find(tid);
-
-            if (player) {
-                forceIntroducePlayer(player, cp);
-            }
+    for (const auto &p : Players.findAllCharactersInRangeOf(player->getPosition(), player->getScreenRange())) {
+        if (player->getId() != p->getId()) {
+            forceIntroducePlayer(p, player);
         }
     }
 }
 
-void World::ForceIntroduceAll(Player *cp) {
-    if (!cp->hasGMRight(gmr_basiccommands)) {
+void World::teleportPlayerToOther(Player *player, std::string text) {
+    if (!player->hasGMRight(gmr_warp)) {
         return;
     }
 
-    for (const auto &player : Players.findAllCharactersInRangeOf(cp->getPosition(), cp->getScreenRange())) {
-        if (cp != player) {
-            forceIntroducePlayer(player, cp);
-        }
-    }
-}
+    auto target = Players.find(text);
 
-void World::teleportPlayerToOther(Player *cp, std::string ts) {
-    if (!cp->hasGMRight(gmr_warp)) {
-        return;
-    }
-
-    Player *tempPl;
-    tempPl = Players.find(ts);
-
-    if (tempPl) {
-        cp->Warp(tempPl->getPosition());
-    } else {
-        TYPE_OF_CHARACTER_ID tid;
-
-        // convert arg to digit and try again...
-        std::stringstream ss;
-        ss.str(ts);
-        ss >> tid;
-
-        if (tid) {
-            tempPl = Players.find(tid);
-
-            if (tempPl) {
-                cp->Warp(tempPl->getPosition());
-            }
-        }
+    if (target && target->getId() != player->getId()) {
+        player->Warp(target->getPosition());
     }
 }
 
@@ -455,256 +423,136 @@ bool World::forceLogoutOfPlayer(const std::string &name) {
 }
 
 
-void World::sendAdminAllPlayerData(Player *&admin) {
+void World::sendAdminAllPlayerData(Player *admin) {
     if (!admin->hasGMRight(gmr_basiccommands)) {
         return;
     }
 
     ServerCommandPointer cmd = std::make_shared<AdminViewPlayersTC>();
     admin->Connection->addCommand(cmd);
-
 }
 
 
 // !warp_to X<,| >Y[<,| >Z] || !warp_to Z
-void World::warpto_command(Player *cp, const std::string &ts) {
+void World::warpto_command(Player *p, const std::string &text) {
 #ifndef TESTSERVER
-
-    if (!cp->hasGMRight(gmr_warp)) {
+    if (!p->hasGMRight(gmr_warp)) {
         return;
     }
-
 #endif
 
-    position warpto;
-    char *tokenize = new char[ ts.length() + 1 ];
+    static const boost::regex pattern(R"(^(-?\d+)[ ,]?(-?\d+)?[ ,]?(-?\d+)?$)");
+    boost::smatch match;
 
-    strcpy(tokenize, ts.c_str());
-    std::cout << "Tokenizing " << tokenize << std::endl;
-    char *thistoken;
+    if (boost::regex_match(text, match, pattern)) {
+        try {
+            position warpto = p->getPosition();
+            auto a = boost::lexical_cast<short int>(match[1].str());
 
-    if ((thistoken = strtok(tokenize, " ,"))) {
-        if (ReadField(thistoken, warpto.x)) {
-            if ((thistoken = strtok(nullptr, " ,"))) {
-                if (ReadField(thistoken, warpto.y)) {
-                    if ((thistoken = strtok(nullptr, " ,"))) {
-                        if (ReadField(thistoken, warpto.z)) {
-                            //warpPlayer( cp, warpto );
-                            cp->forceWarp(warpto);
-                        }
-                    }
-                    // Must give X and Y, but not Z
-                    else {
-                        warpto.z = cp->getPosition().z;
-                        cp->forceWarp(warpto);
-                        //warpPlayer( cp, warpto );
-                    }
+            if (!match[2].str().empty()) {
+                auto b = boost::lexical_cast<short int>(match[2].str());
+
+                if (!match[3].str().empty()) {
+                    auto c = boost::lexical_cast<short int>(match[3].str());
+                    warpto = {a, b, c};
+                } else {
+                    warpto.x = a;
+                    warpto.y = b;
                 }
+            } else {
+                warpto.z = a;
             }
-            // Enable !warp_to Z for easy level change
-            else {
-                warpto.z = warpto.x;
-                warpto.x = cp->getPosition().x;
-                warpto.y = cp->getPosition().y;
-                cp->forceWarp(warpto);
-                //warpPlayer( cp, warpto );
-            }
+
+            p->forceWarp(warpto);
+            Logger::info(LogFacility::Admin) << *p << " warps to " << warpto << Log::end;
+        } catch (boost::bad_lexical_cast &) {
         }
     }
-
-    Logger::info(LogFacility::Admin) << *cp << " warps to " << warpto << Log::end;
-
-    delete [] tokenize;
 }
 
 
 // !summon <player>
-void World::summon_command(Player *cp, const std::string &tplayer) {
-    if (!cp->hasGMRight(gmr_summon)) {
+void World::summon_command(Player *player, const std::string &text) {
+    if (!player->hasGMRight(gmr_summon)) {
         return;
     }
 
-    Player *tempPl;
-    tempPl = Players.find(tplayer);
+    auto target = Players.find(text);
 
-    if (tempPl != nullptr) {
-        Logger::info(LogFacility::Admin) << *cp << " summons player " << *tempPl << " to " << cp->getPosition() << Log::end;
-        tempPl->Warp(cp->getPosition());
-    } else {
-        TYPE_OF_CHARACTER_ID tid;
-
-        // convert arg to digit and try again...
-        std::stringstream ss;
-        ss.str(tplayer);
-        ss >> tid;
-
-        if (tid) {
-            tempPl = Players.find(tid);
-
-            if (tempPl) {
-                Logger::info(LogFacility::Admin) << *cp << " summons player " << *tempPl << " to " << cp->getPosition() << Log::end;
-                tempPl->Warp(cp->getPosition());
-            }
-        }
+    if (target && target->getId() != player->getId()) {
+        Logger::info(LogFacility::Admin) << *player << " summons player " << *target << " to " << player->getPosition() << Log::end;
+        target->Warp(player->getPosition());
     }
-
 }
 
 
 // !ban <time> [m|h|d] <player>
-void World::ban_command(Player *cp, const std::string &timeplayer) {
+void World::ban_command(Player *cp, const std::string &text) {
     if (!cp->hasGMRight(gmr_ban)) {
         return;
     }
 
-    char *tokenize = new char[ timeplayer.length() + 1 ];
+    static const boost::regex pattern(R"(^(?:(\d+) ?([mhd]) ?)?(.+)$)");
+    boost::smatch match;
 
-    strcpy(tokenize, timeplayer.c_str());
+    if (boost::regex_match(text, match, pattern)) {
+        auto target = Players.find(match[3].str());
 
-    char *thistoken;
+        if (target) {
+            if (match[1].str().empty()) {
+                ban(target, 0, cp->getId());
+                Logger::info(LogFacility::Admin) << *cp << " bans player " << *target << " indefinately" << Log::end;
+                std::string message = "*** Banned player " + target->to_string() + " indefinately";
+                cp->inform(message);
+            } else {
+                try {
+                    auto duration = boost::lexical_cast<int>(match[1].str());
+                    char timeunit = match[2].str()[0];
 
-    if ((thistoken = strtok(tokenize, " ")) != nullptr) {
-        short int jailtime = 0;
-
-        if (ReadField(thistoken, jailtime)) {
-            char *tcharp = strtok(nullptr, " ");
-
-            if (tcharp != nullptr) {
-                int multiplier = 0;
-
-                std::string tplayer;
-                std::string timescale = tcharp;
-
-                if (timescale == "m") {
-                    multiplier = 60;
-                    timescale = "";
-                } else if (timescale == "h") {
-                    multiplier = 3600;
-                    timescale = "";
-                } else if (timescale == "d") {
-                    multiplier = 86400;
-                    timescale = "";
-                }
-
-                char *tcharp = strtok(nullptr, "\\");
-
-                if (tcharp != nullptr) {
-                    tplayer = tcharp;
-
-                    if (timescale != "") {
-                        tplayer = timescale + " " + tplayer;
+                    switch (timeunit) {
+                    case 'd':
+                        ban(target, duration*86400, cp->getId());
+                        break;
+                    case 'h':
+                        ban(target, duration*3600, cp->getId());
+                        break;
+                    case 'm':
+                        ban(target, duration*60, cp->getId());
+                        break;
+                    default:
+                        break;
                     }
-                } else {
-                    tplayer = timescale;
-                    timescale = "d";
-                    multiplier = 86400;
-                }
 
-                Player *tempPl;
-                tempPl = Players.find(tplayer);
-
-                if (!tempPl) {
-                    TYPE_OF_CHARACTER_ID tid;
-
-                    // convert arg to digit and try again...
-                    std::stringstream ss;
-                    ss.str(tplayer);
-                    ss >> tid;
-
-                    if (tid) {
-                        tempPl = Players.find(tid);
-                    }
-                }
-
-                if (tempPl) {
-
-                    ban(tempPl, jailtime * multiplier, cp->getId());
-
-                    Logger::info(LogFacility::Admin) << *cp << " bans player " << *tempPl << " for " << jailtime << timescale << Log::end;
-                    std::string tmessage = "*** Banned " + tempPl->to_string();
-                    cp->inform(tmessage);
-
-                } else {
-                    std::string tmessage = "*** Could not find " + tplayer;
-                    std::cout << tmessage << std::endl;
-                    cp->inform(tmessage);
+                    Logger::info(LogFacility::Admin) << *cp << " bans player " << *target << " for " << duration << timeunit << Log::end;
+                    std::string message = "*** Banned player " + target->to_string() + " for " + match[1].str() + match[2].str();
+                    cp->inform(message);
+                } catch (boost::bad_lexical_cast &) {
+                    cp->inform("*** Invalid duration, player not banned!");
                 }
             }
+        } else {
+            std::string message = "*** Could not find " + match[3].str();
+            cp->inform(message);
         }
     }
-
-    delete [] tokenize;
-
-}
-
-void World::banbyname(Player *cp, short int banhours, const std::string &tplayer) {
-    if (!cp->hasGMRight(gmr_ban)) {
-        return;
-    }
-
-    Player *tempPl;
-    tempPl = Players.find(tplayer);
-
-    if (tempPl != nullptr) {
-
-        ban(tempPl, static_cast<int>(banhours * 3600), cp->getId());
-
-        Logger::info(LogFacility::Admin) << *cp << " bans player " << *tempPl << " for " << banhours << "h" << Log::end;
-        std::string tmessage = "*** Banned " + tempPl->to_string();
-        cp->inform(tmessage);
-
-    } else {
-        std::string tmessage = "*** Could not find " + tplayer;
-        std::cout << tmessage << std::endl;
-        cp->inform(tmessage);
-    }
-
-}
-
-void World::banbynumber(Player *cp, short int banhours, TYPE_OF_CHARACTER_ID tid) {
-    if (!cp->hasGMRight(gmr_ban)) {
-        return;
-    }
-
-    Player *tempPl = Players.find(tid);
-
-    if (tempPl) {
-
-        ban(tempPl, static_cast<int>(banhours * 3600), cp->getId());
-
-        Logger::info(LogFacility::Admin) << *cp << " bans player " << *tempPl << " for " << banhours << "h" << Log::end;
-        std::string tmessage = "*** Banned " + tempPl->to_string();
-        cp->inform(tmessage);
-
-    } else {
-        std::string tmessage = "*** Could not find " + std::to_string(tid);
-        std::cout << tmessage << std::endl;
-        cp->inform(tmessage);
-    }
-
-
 }
 
 
 void World::ban(Player *cp, int bantime, TYPE_OF_CHARACTER_ID gmid) {
-    if (bantime >= 0) {
-        if (bantime > 0) {
-            cp->SetStatus(BANNEDFORTIME);
-            time_t ttime;
-            time(&ttime);
-            // Banned for seconds
-            cp->SetStatusTime(ttime + bantime);
-            cp->SetStatusGM(gmid);
-        } else if (bantime == 0) {
-            cp->SetStatus(BANNED);
-            cp->SetStatusTime(0);
-            cp->SetStatusGM(gmid);
-        }
-
-        forceLogoutOfPlayer(cp->getName());
-
+    if (bantime == 0) {
+        cp->SetStatus(BANNED);
+        cp->SetStatusTime(0);
+        cp->SetStatusGM(gmid);
+    } else if (bantime > 0) {
+        cp->SetStatus(BANNEDFORTIME);
+        time_t ttime;
+        time(&ttime);
+        // Banned for seconds
+        cp->SetStatusTime(ttime + bantime);
+        cp->SetStatusGM(gmid);
     }
 
+    forceLogoutOfPlayer(cp->getName());
 }
 
 
@@ -737,19 +585,6 @@ void World::who_command(Player *cp, const std::string &tplayer) {
 
         Player *tempPl = Players.find(tplayer);
 
-        if (!tempPl) {
-            TYPE_OF_CHARACTER_ID tid;
-
-            // convert arg to digit and try again...
-            std::stringstream ss;
-            ss.str(tplayer);
-            ss >> tid;
-
-            if (tid) {
-                tempPl = Players.find(tid);
-            }
-        }
-
         if (tempPl) {
             std::string tmessage = tempPl->to_string();
             const auto &pos = tempPl->getPosition();
@@ -770,17 +605,15 @@ void World::who_command(Player *cp, const std::string &tplayer) {
 }
 
 
-void World::tile_command(Player *cp, const std::string &ttilenumber) {
+void World::tile_command(Player *cp, const std::string &tile) {
     if (!cp->hasGMRight(gmr_settiles)) {
         return;
     }
 
-    short int tilenumber = 0;
-
-    if (ReadField(ttilenumber.c_str(), tilenumber)) {
-        setNextTile(cp, tilenumber);
+    try {
+        setNextTile(cp, boost::lexical_cast<unsigned char>(tile));
+    } catch (boost::bad_lexical_cast &) {
     }
-
 }
 
 
@@ -800,16 +633,16 @@ void World::setNextTile(Player *cp, unsigned char tilenumber) {
 }
 
 
-void World::turtleon_command(Player *cp, const std::string &ttilenumber) {
+void World::turtleon_command(Player *cp, const std::string &tile) {
     if (!cp->hasGMRight(gmr_settiles)) {
         return;
     }
 
-    short int tilenumber = 0;
-
-    if (ReadField(ttilenumber.c_str(), tilenumber)) {
+    try {
+        auto id = boost::lexical_cast<unsigned char>(tile);
         cp->setTurtleActive(true);
-        cp->setTurtleTile(tilenumber);
+        cp->setTurtleTile(id);
+    } catch (boost::bad_lexical_cast &) {
     }
 }
 
@@ -924,40 +757,29 @@ void World::playersave_command(Player *cp) {
 
 
 // !teleport X<,| >Y[<,| >Z]
-void World::teleport_command(Player *cp, const std::string &ts) {
-
+void World::teleport_command(Player *cp, const std::string &text) {
     if (!cp->hasGMRight(gmr_warp)) {
         return;
     }
 
-    position teleportto;
-    char *tokenize = new char[ ts.length() + 1 ];
+    static const boost::regex pattern(R"(^(-?\d+)[, ](-?\d+)[, ](-?\d+)$)");
+    boost::smatch match;
 
-    strcpy(tokenize, ts.c_str());
-    std::cout << "Tokenizing " << tokenize << std::endl;
-    char *thistoken;
+    if (boost::regex_match(text, match, pattern)) {
+        try {
+            auto x = boost::lexical_cast<short int>(match[1].str());
+            auto y = boost::lexical_cast<short int>(match[2].str());
+            auto z = boost::lexical_cast<short int>(match[3].str());
 
-    if ((thistoken = strtok(tokenize, " ,")) != nullptr) {
-        if (ReadField(thistoken, teleportto.x)) {
-            if ((thistoken = strtok(nullptr, " ,")) != nullptr) {
-                if (ReadField(thistoken, teleportto.y)) {
-                    if ((thistoken = strtok(nullptr, " ,")) != nullptr) {
-                        if (ReadField(thistoken, teleportto.z)) {
-                            if (addWarpField(cp->getPosition(), teleportto, 0, 0)) {
-                                std::string tmessage = "*** Warp Field Added! ***";
-                                cp->inform(tmessage);
-                            } else {
-                                std::string tmessage = "*** Warp Field *NOT* Added! ***";
-                                cp->inform(tmessage);
-                            };
-                        }
-                    }
-                }
+            if (addWarpField(cp->getPosition(), position(x, y, z), 0, 0)) {
+                cp->inform("*** warp field added ***");
+            } else {
+                cp->inform("*** Error: could not add warp field ***");
             }
+        } catch (boost::bad_lexical_cast &) {
+            cp->inform("*** Error: could not parse target position ***");
         }
     }
-
-    delete [] tokenize;
 }
 
 
@@ -987,9 +809,9 @@ void World::gmhelp_command(Player *cp) {
     }
 
     if (cp->hasGMRight(gmr_warp)) {
-        tmessage = "!warp <x> <y> [z] - (!w) to x, y, z location.";
+        tmessage = "!warp <x> <y> [z] | !warp z - (!w) change given coordinates.";
         cp->inform(tmessage);
-        tmessage = "!add_teleport <x> <y> <z> - Adds a teleportfield in front of you to the field <x> <y> <z>.";
+        tmessage = "!add_teleport <x> <y> <z> - Adds a teleportfield from your position to the field <x> <y> <z>.";
         cp->inform(tmessage);
         tmessage = "!showwarpfields <range> - Shows all warpfields in the range <range>.";
         cp->inform(tmessage);
@@ -1301,7 +1123,7 @@ void create_area_command(World *world, Player *player,const std::string &params)
         return;
     }
 
-    WorldMap::map_t tempmap(new Map(w,h));
+    auto tempmap = std::make_shared<Map>(w,h);
     tempmap->Init(x, y, z);
 
     Field *tempf;
@@ -1352,63 +1174,54 @@ bool World::exportMaps(Player *cp) {
     return maps.exportTo(exportDir);
 }
 
-void World::removeTeleporter(Player *cp, const std::string &ts) {
+void World::removeTeleporter(Player *cp, const std::string &text) {
     if (!cp->hasGMRight(gmr_warpfields)) {
         return;
     }
 
-    position teleport;
-    char *tokenize = new char[ ts.length() + 1 ];
+    static const boost::regex pattern(R"(^(-?\d+)[, ](-?\d+)[, ](-?\d+)$)");
+    boost::smatch match;
 
-    strcpy(tokenize, ts.c_str());
-    std::cout << "Tokenizing " << tokenize << std::endl;
-    char *thistoken;
+    if (boost::regex_match(text, match, pattern)) {
+        try {
+            auto x = boost::lexical_cast<short int>(match[1].str());
+            auto y = boost::lexical_cast<short int>(match[2].str());
+            auto z = boost::lexical_cast<short int>(match[3].str());
 
-    if ((thistoken = strtok(tokenize, " ,")) != nullptr) {
-        if (ReadField(thistoken, teleport.x)) {
-            if ((thistoken = strtok(nullptr, " ,")) != nullptr) {
-                if (ReadField(thistoken, teleport.y)) {
-                    if ((thistoken = strtok(nullptr, " ,")) != nullptr) {
-                        if (ReadField(thistoken, teleport.z)) {
-                            if (removeWarpField(teleport)) {
-                                std::string tmessage = "*** Warp Field deleted! ***";
-                                cp->inform(tmessage);
-                            } else {
-                                std::string tmessage = "*** Warp Field *NOT* deleted! ***";
-                                cp->inform(tmessage);
-                            };
-                        }
-                    }
-                }
+            if (removeWarpField(position(x, y, z))) {
+                cp->inform("*** warp field deleted ***");
+            } else {
+                cp->inform("*** Error: could not delete warp field ***");
             }
+        } catch (boost::bad_lexical_cast &) {
+            cp->inform("*** Error: could not parse warp field position ***");
         }
     }
-
-    delete [] tokenize;
 }
 
-void World::showWarpFieldsInRange(Player *cp, const std::string &ts) {
+void World::showWarpFieldsInRange(Player *cp, const std::string &text) {
     if (!cp->hasGMRight(gmr_warpfields)) {
         return;
     }
 
-    short int range = 0;
-
-    if (ReadField(ts.c_str(), range)) {
+    try {
+        auto range = boost::lexical_cast<short int>(text);
         std::vector<position> warpfieldsinrange;
 
         if (findWarpFieldsInRange(cp->getPosition(), range, warpfieldsinrange)) {
-            std::string message;
-            cp->inform("Start list of warpfields:");
+            cp->inform("List of warp fields:");
 
             for (const auto &warpfield : warpfieldsinrange) {
                 position target;
                 GetField(warpfield)->GetWarpField(target);
-                message = "Warpfield at " + warpfield.toString() + " to " + target.toString();
+                std::string message = warpfield.toString() + " -> " + target.toString();
                 cp->inform(message);
             }
 
-            cp->inform("End list of warpfields.");
+            cp->inform("---");
         }
+    } catch (boost::bad_lexical_cast &) {
+        cp->inform("*** Error: could not parse range ***");
     }
 }
+

@@ -962,39 +962,6 @@ void World::workout_CommandBuffer(Player *&cp) {
 }
 
 
-bool World::ReadField(const char *inp, signed short int &outp) {
-    char **error = nullptr;
-    long int temp=strtol(inp,error,10);
-
-    if (error != nullptr) {
-        std::cerr << "ERROR in ReadField to signed short int" << std::endl;
-    } else {
-        if ((temp <= (0x7FFF)) && (temp >= -0x8000)) {
-            outp = temp;
-            return true;
-        } else {
-            std::cerr << "RANGE ERROR on ReadField to signed short int" << std::endl;
-        }
-    }
-
-    return false;
-}
-
-bool World::ReadField(const char *inp, signed long int &outp) {
-    char **error=nullptr;
-    signed long int temp=strtol(inp,error,10);
-
-    if (error != nullptr) {
-        std::cerr << "ERROR in ReadField to signed long int" << std::endl;;
-        return false;
-    } else {
-        outp = temp;
-        return true;
-    }
-}
-
-
-
 // Init method for NPC's
 void World::initNPC() {
     Npc.for_each([this](NPC *npc) {
