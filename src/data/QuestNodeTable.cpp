@@ -27,27 +27,26 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
+#include "make_unique.hpp"
 
 #include "Logger.hpp"
 #include "Config.hpp"
 
 #include "script/LuaScript.hpp"
 
-QuestNodeTable *QuestNodeTable::instance = 0;
+std::unique_ptr<QuestNodeTable> QuestNodeTable::instance = nullptr;
 
-QuestNodeTable *QuestNodeTable::getInstance() {
-    if (instance == 0) {
-        instance = new QuestNodeTable();
+QuestNodeTable &QuestNodeTable::getInstance() {
+    if (!instance) {
+        instance = std::make_unique<QuestNodeTable>();
     }
 
-    return instance;
+    return *instance;
 }
 
 QuestNodeTable::QuestNodeTable() {
     reload();
 }
-
-QuestNodeTable::~QuestNodeTable() {}
 
 auto QuestNodeTable::getItemNodes() -> TableRange<TYPE_OF_ITEM_ID> {
     return {itemNodes.cbegin(), itemNodes.cend()};
@@ -137,7 +136,7 @@ void QuestNodeTable::readQuest(boost::filesystem::ifstream &questFile, boost::fi
             std::string scriptPath = "questsystem." + questPath.filename().string() + "." + entries[5];
 
             try {
-                node.script = std::shared_ptr<LuaScript>(new LuaScript(scriptPath));
+                node.script = std::make_shared<LuaScript>(scriptPath);
             } catch (ScriptException &e) {
                 Logger::error(LogFacility::Script) << "Error while loading quest script: " << e.what() << Log::end;
                 return;
@@ -161,7 +160,7 @@ void QuestNodeTable::readQuest(boost::filesystem::ifstream &questFile, boost::fi
             std::string scriptPath = "questsystem." + questPath.filename().string() + "." + entries[3];
 
             try {
-                node.script = std::shared_ptr<LuaScript>(new LuaScript(scriptPath));
+                node.script = std::make_shared<LuaScript>(scriptPath);
             } catch (ScriptException &e) {
                 Logger::error(LogFacility::Script) << "Error while loading quest script: " << e.what() << Log::end;
                 return;

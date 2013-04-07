@@ -931,7 +931,7 @@ bool World::reload_defs(Player *cp) {
     ScheduledScriptsTable *ScheduledScripts_temp = 0;
 
     if (ok) {
-        QuestNodeTable::getInstance()->reload();
+        QuestNodeTable::getInstance().reload();
     }
 
     if (ok) {

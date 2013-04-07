@@ -44,17 +44,19 @@ private:
     template <typename Key>
     using TableIterator = typename Table<Key>::const_iterator;
 
-    static QuestNodeTable *instance;
+    static std::unique_ptr<QuestNodeTable> instance;
     Table<TYPE_OF_ITEM_ID> itemNodes;
     Table<unsigned int> npcNodes;
     Table<unsigned int> monsterNodes;
     Table<position> triggerNodes;
 
 public:
+    QuestNodeTable();
+
     template <typename Key>
     using TableRange = std::pair<TableIterator<Key>, TableIterator<Key>>;
 
-    static QuestNodeTable *getInstance();
+    static QuestNodeTable &getInstance();
     void reload();
     TableRange<TYPE_OF_ITEM_ID> getItemNodes();
     TableRange<unsigned int> getNpcNodes();
@@ -65,9 +67,8 @@ private:
     void readQuest(boost::filesystem::ifstream &questFile, boost::filesystem::path &questPath);
     void clear();
 
-    QuestNodeTable();
-    ~QuestNodeTable();
-    QuestNodeTable(const QuestNodeTable &);
+    QuestNodeTable(const QuestNodeTable &) = delete;
+    QuestNodeTable &operator=(const QuestNodeTable &) = delete;
 };
 
 #endif

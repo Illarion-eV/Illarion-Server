@@ -571,7 +571,7 @@ bool World::createSavedArea(uint16_t tileid, const position &pos, uint16_t heigh
         }
     }
 
-    WorldMap::map_t tempmap(new Map(width,height));
+    auto tempmap = std::make_shared<Map>(width,height);
     tempmap->Init(pos.x, pos.y, pos.z);
 
     Field *tempf;

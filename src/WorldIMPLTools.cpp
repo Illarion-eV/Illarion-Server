@@ -814,7 +814,7 @@ void World::Load(const std::string &prefix) {
             mapinitfile.read((char *) & tWidth, sizeof(tWidth));
             mapinitfile.read((char *) & tHeight, sizeof(tHeight));
 
-            WorldMap::map_t tempMap(new Map(tWidth, tHeight));
+            auto tempMap = std::make_shared<Map>(tWidth, tHeight);
             tempMap->Init(tMin_X, tMin_Y, tZ_Level);
 
             sprintf(mname, "%s_%6d_%6d_%6d", path.c_str(), tZ_Level, tMin_X, tMin_Y);

@@ -71,7 +71,7 @@ void MonsterTable::reload() {
         if (!monresults.empty()) {
             clearOldTable();
 
-            auto questNodes = QuestNodeTable::getInstance()->getMonsterNodes();
+            auto questNodes = QuestNodeTable::getInstance().getMonsterNodes();
             auto questItr = questNodes.first;
             auto questEnd = questNodes.second;
 

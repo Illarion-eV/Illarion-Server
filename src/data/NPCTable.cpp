@@ -69,7 +69,7 @@ void NPCTable::reload() {
         Database::Result results = query.execute();
 
         if (!results.empty()) {
-            auto questNodes = QuestNodeTable::getInstance()->getNpcNodes();
+            auto questNodes = QuestNodeTable::getInstance().getNpcNodes();
             auto questItr = questNodes.first;
             auto questEnd = questNodes.second;
 
