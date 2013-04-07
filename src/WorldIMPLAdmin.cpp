@@ -20,7 +20,6 @@
 #include "World.hpp"
 
 #include <sstream>
-#include <regex.h>
 #include <list>
 #include <iostream>
 
@@ -1099,36 +1098,8 @@ void World::gmhelp_command(Player *cp) {
 }
 
 //! parse GMCommands of the form !<string1> <string2> and process them
-bool World::parseGMCommands(Player *cp, const std::string &text) {
-
-    // did we find a command?
-    bool done = false;
-
-    // use a regexp to match for commands...
-    regex_t expression;
-    regcomp(&expression, "^!([^ ]+) ?(.*)?$",REG_ICASE|REG_EXTENDED);
-    regmatch_t matches[3];
-
-    if (regexec(&expression, text.c_str(), 3, matches, 0) == 0) {
-        // we found something...
-        CommandIterator it = GMCommands.find(text.substr(matches[1].rm_so, matches[1].rm_eo-1));
-
-        // do we have a matching command?
-        if (it != GMCommands.end()) {
-            if (matches[2].rm_so != -1) { // !bla something
-                (it->second)(this, cp, text.substr(matches[2].rm_so));
-            } else { // !bla
-                (it->second)(this, cp, "");
-            }
-
-            done = true;
-        }
-    }
-
-    regfree(&expression);
-
-    return done;
-
+bool World::parseGMCommands(Player *user, const std::string &text) {
+    return executeUserCommand(user, text, GMCommands);
 }
 
 extern MonsterTable *MonsterDescriptions;

@@ -21,7 +21,6 @@
 #include "World.hpp"
 
 #include <sstream>
-#include <regex.h>
 
 #include "Player.hpp"
 #include "MonitoringClients.hpp"
@@ -54,35 +53,11 @@ void World::InitPlayerCommands() {
 
 
 //! parse PlayerCommands of the form !<string1> <string2> and process them
-bool World::parsePlayerCommands(Player *cp, const std::string &text) {
-
-    // did we find a command?
-    bool done = false;
-
-    // use a regexp to match for commands...
-    regex_t expression;
-    regcomp(&expression, "^!([^ ]+) ?(.*)?$",REG_ICASE|REG_EXTENDED);
-    regmatch_t matches[3];
-
-    if (regexec(&expression, text.c_str(), 3, matches, 0) == 0) {
-        // we found something...
-        CommandIterator it = PlayerCommands.find(text.substr(matches[1].rm_so, matches[1].rm_eo-1));
-
-        // do we have a matching command?
-        if (it != PlayerCommands.end()) {
-            if (matches[2].rm_so != -1) { // !bla something
-                done = (it->second)(this, cp, text.substr(matches[2].rm_so));
-            } else { // !bla
-                done = (it->second)(this, cp, "");
-            }
-        }
-    }
-
-    regfree(&expression);
-
-    return done;
-
+bool World::parsePlayerCommands(Player *player, const std::string &text) {
+    return executeUserCommand(player, text, PlayerCommands);
 }
+
+
 void World::name_command(Player *cp, const std::string &ts) {
     char *tokenize = new char[ ts.length() + 1 ];
     TYPE_OF_CHARACTER_ID player;

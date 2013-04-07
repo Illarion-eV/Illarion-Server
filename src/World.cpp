@@ -21,7 +21,7 @@
 #include "World.hpp"
 
 #include <dirent.h>
-#include <regex.h>
+#include <boost/regex.hpp>
 #include <algorithm>
 #include <sys/types.h>
 
@@ -1018,5 +1018,23 @@ void World::initScheduler() {
     scheduler->AddTask(std::move(globalPlLearning));
     auto globalMonLearning = std::make_unique<SGlobalMonsterLearnrate>(scheduler->GetCurrentCycle()+10);
     scheduler->AddTask(std::move(globalMonLearning));
+}
+
+bool World::executeUserCommand(Player *user, const std::string &input, const CommandMap &commands) {
+    bool found = false;
+
+    static const boost::regex pattern("^!([^ ]+) ?(.*)?$");
+    boost::smatch match;
+
+    if (boost::regex_match(input, match, pattern)) {
+        auto it = commands.find(match[1].str());
+
+        if (it != commands.end()) {
+            (it->second)(this, user, match[2].str());
+            found = true;
+        }
+    }
+
+    return found;
 }
 

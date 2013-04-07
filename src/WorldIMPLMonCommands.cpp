@@ -19,7 +19,6 @@
 
 #include "World.hpp"
 #include <sstream>
-#include <regex.h>
 #include <list>
 #include "data/MonsterTable.hpp"
 #include "data/ScheduledScriptsTable.hpp"

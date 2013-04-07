@@ -1162,12 +1162,9 @@ private:
     // Convert a std::string to a long short int
     bool ReadField(const char *inp, signed long int &outp);
 
-    // hashmap containing all GM Commands
-    std::map< std::string, CommandType> GMCommands;
-    // hashmap containing all Player Commands
-    std::map< std::string, CommandType> PlayerCommands;
-
-    typedef std::map< std::string, CommandType>::iterator CommandIterator;
+    typedef std::map<std::string, CommandType> CommandMap;
+    CommandMap GMCommands;
+    CommandMap PlayerCommands;
 
     // Send player information to GMs
     void who_command(Player *cp, const std::string &tplayer);
@@ -1217,6 +1214,7 @@ private:
     void InitGMCommands();
     // register any Player commands here...
     void InitPlayerCommands();
+    bool executeUserCommand(Player *user, const std::string &input, const CommandMap &commands);
 
     // export maps to mapdir/export
     bool exportMaps(Player *cp);
