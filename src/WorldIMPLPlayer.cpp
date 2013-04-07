@@ -20,6 +20,7 @@
 
 #include "World.hpp"
 
+#include <boost/regex.hpp>
 #include "Player.hpp"
 #include "MonitoringClients.hpp"
 
@@ -35,51 +36,15 @@
 void World::InitPlayerCommands() {
 
     PlayerCommands["gm"] = [](World *world, Player *player, const std::string &text) -> bool { return world->gmpage_command(player, text); };
-    PlayerCommands["name"] = [](World *world, Player *player, const std::string &text) -> bool { world->name_command(player, text); return true; };
     PlayerCommands["language"] = [](World *world, Player *player, const std::string &text) -> bool { return world->active_language_command(player, text); };
     PlayerCommands["l"] = PlayerCommands["language"];
     PlayerCommands["version"] = [](World *world, Player *player, const std::string &) -> bool { world->version_command(player); return true; };
     PlayerCommands["v"] = PlayerCommands["version"];
 }
 
-
 //! parse PlayerCommands of the form !<string1> <string2> and process them
 bool World::parsePlayerCommands(Player *player, const std::string &text) {
     return executeUserCommand(player, text, PlayerCommands);
-}
-
-
-void World::name_command(Player *cp, const std::string &ts) {
-    char *tokenize = new char[ ts.length() + 1 ];
-    TYPE_OF_CHARACTER_ID player;
-    std::string name;
-    strcpy(tokenize, ts.c_str());
-    std::cout << "Tokenizing " << tokenize << std::endl;
-    char *thistoken;
-
-    if ((thistoken = strtok(tokenize, " ,"))) {
-        // convert arg to digit and try again...
-        std::stringstream ss;
-        ss.str(thistoken);
-        ss >> player;
-
-        if (player) {
-            if ((thistoken = strtok(nullptr, ""))) {
-                Players.for_each([&](Player *p) {
-                    if (p->getId() == player) {
-                        std::string newname(thistoken);
-                        name = "! " + newname;
-                        ServerCommandPointer cmd = std::make_shared<IntroduceTC>(player, name);
-                        cp->Connection->addCommand(cmd);
-                    }
-                });
-            }
-
-        }
-
-    }
-
-    delete [] tokenize;
 }
 
 // GM page (!gm <text>)

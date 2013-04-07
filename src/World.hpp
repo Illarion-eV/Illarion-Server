@@ -1207,9 +1207,6 @@ public:
 private:
     bool active_language_command(Player *cp, const std::string &language);
 
-    //Fgt einen Spieler unter falschen namen in die Eigene Namensliste hinzu
-    void name_command(Player *cp, const std::string &ts);
-
     // register any GM commands here...
     void InitGMCommands();
     // register any Player commands here...
