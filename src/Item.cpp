@@ -22,6 +22,50 @@
 #include <sstream>
 #include <boost/lexical_cast.hpp>
 
+bool ItemLookAt::operator==(const ItemLookAt& rhs) const {
+	bool equal = true;
+	equal &= (name == rhs.name);
+	equal &= (rareness == rhs.rareness);
+	equal &= (description == rhs.description);
+	equal &= (craftedBy == rhs.craftedBy);
+	equal &= (weight == rhs.weight);
+	equal &= (worth == rhs.worth);
+	equal &= (qualityText == rhs.qualityText);
+	equal &= (durabilityText == rhs.durabilityText);
+	equal &= (durabilityValue == rhs.durabilityValue);
+	equal &= (diamondLevel == rhs.diamondLevel);
+	equal &= (emeraldLevel == rhs.emeraldLevel);
+	equal &= (rubyLevel == rhs.rubyLevel);
+	equal &= (sapphireLevel == rhs.sapphireLevel);
+	equal &= (amethystLevel == rhs.amethystLevel);
+	equal &= (obsidianLevel == rhs.obsidianLevel);
+	equal &= (topazLevel == rhs.topazLevel);
+	equal &= (bonus == rhs.bonus);
+
+	return equal;
+}
+
+bool ScriptItem::operator==(const ScriptItem& rhs) const {
+	bool equal = (static_cast<const Item&>(*this) == rhs);
+	equal &= (type == rhs.type);
+	equal &= (pos == rhs.pos);
+	equal &= (itempos == rhs.itempos);
+	equal &= (owner == rhs.owner);
+	equal &= (inside == rhs.inside);
+
+	return equal;
+}
+
+bool Item::operator==(const Item& rhs) const {
+	bool equal = true;
+	equal &= (id == rhs.id);
+	equal &= (number == rhs.number);
+	equal &= (wear == rhs.wear);
+	equal &= (quality == rhs.quality);
+	equal &= (datamap == rhs.datamap);
+
+	return equal;
+}
 
 Item::Item(id_type id, number_type number, wear_type wear, quality_type quality, const script_data_exchangemap &datamap):
     id(id), number(number), wear(wear), quality(quality), datamap(1) {

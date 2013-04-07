@@ -64,8 +64,10 @@ TEST_F(world_bindings, LookAtItem) {
                           "lookat_test", itemdef
                          };
 
-    EXPECT_CALL(world, getItemName(_, _)).Times(1).WillOnce(Return("itemname"));
-    EXPECT_CALL(world, itemInform(_, _, _)).Times(1);
+    ItemLookAt itl;
+    itl.setName("itemname");
+    EXPECT_CALL(world, getItemName(item.getId(), static_cast<uint8_t>(Language::english))).Times(1).WillOnce(Return("itemname"));
+    EXPECT_CALL(world, itemInform(&player, item, itl)).Times(1);
     script.LookAtItem(&player, item);
 }
 
