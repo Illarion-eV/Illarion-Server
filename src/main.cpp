@@ -126,9 +126,9 @@ int main(int argc, char *argv[]) {
     Data::reloadScripts();
 
     Logger::info(LogFacility::Other) << "create PlayerManager" << Log::end;
-    PlayerManager::get()->activate();
+    PlayerManager::get().activate();
     Logger::info(LogFacility::Other) << "PlayerManager activated" << Log::end;
-    PlayerManager::TPLAYERVECTOR &newplayers = PlayerManager::get()->getLogInPlayers();
+    PlayerManager::TPLAYERVECTOR &newplayers = PlayerManager::get().getLogInPlayers();
     timespec stime;
     stime.tv_sec = 0;
     stime.tv_nsec = 25000000;
@@ -174,7 +174,7 @@ int main(int argc, char *argv[]) {
                     } catch (Player::LogoutException &e) {
                         ServerCommandPointer cmd = std::make_shared<LogOutTC>(e.getReason());
                         newPlayer->Connection->shutdownSend(cmd);
-                        PlayerManager::get()->getLogOutPlayers().non_block_push_back(newPlayer);
+                        PlayerManager::get().getLogOutPlayers().non_block_push_back(newPlayer);
                     }
                 }
             } else {
@@ -196,7 +196,7 @@ int main(int argc, char *argv[]) {
     world->forceLogoutOfAllPlayers();
 
     //saving all players which where forced logged out.
-    PlayerManager::get()->saveAll();
+    PlayerManager::get().saveAll();
 
     world->takeMonsterAndNPCFromMap();
 

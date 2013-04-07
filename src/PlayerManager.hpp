@@ -32,7 +32,7 @@ class Player;
 
 class PlayerManager {
 public:
-    static PlayerManager *get();
+    static PlayerManager &get();
 
     ~PlayerManager();
 
@@ -61,7 +61,7 @@ public:
 private:
     PlayerManager();
 
-    static PlayerManager *instance;  /**< pointer to current local instance of the Player Manager*/
+    static std::unique_ptr<PlayerManager> instance;
 
     /**
     * loop which is threaded to get new connections

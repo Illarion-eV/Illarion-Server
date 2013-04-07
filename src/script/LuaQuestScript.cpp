@@ -39,18 +39,18 @@ std::string LuaQuestScript::description(Character *user, TYPE_OF_QUESTSTATUS sta
 }
 
 void LuaQuestScript::targets(Character *user, TYPE_OF_QUESTSTATUS status, std::vector<position> &targets) {
+    using namespace luabind;
     targets.clear();
     fuse_ptr<Character> fuse_user(user);
-    luabind::object luaTargets = callEntrypoint<luabind::object>("QuestTargets", fuse_user, status);
-
-    using namespace luabind;
-    auto mapType = type(luaTargets);
+    auto luaTargets = callEntrypoint<object>("QuestTargets", fuse_user, status);
 
     try {
         addTarget(targets, luaTargets);
         return;
     } catch (std::logic_error &e) {
     }
+
+    auto mapType = type(luaTargets);
 
     if (mapType == LUA_TTABLE) {
         for (iterator it(luaTargets), end; it != end; ++it) {
@@ -81,13 +81,14 @@ TYPE_OF_QUESTSTATUS LuaQuestScript::finalStatus() {
 
 void LuaQuestScript::addTarget(std::vector<position> &targets, const luabind::object &potentialTarget) {
     using namespace luabind;
-    auto targetType = type(potentialTarget);
 
     try {
         targets.push_back(object_cast<position>(potentialTarget));
         return;
     } catch (cast_failed &e) {
     }
+
+    auto targetType = type(potentialTarget);
 
     if (targetType == LUA_TTABLE) {
         try {

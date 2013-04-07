@@ -115,7 +115,7 @@ Player::Player(boost::shared_ptr<NetInterface> newConnection) throw(Player::Logo
     }
 
     // player already online? if we don't use the monitoring client
-    if (!monitoringClient && (_world->Players.find(getName()) || PlayerManager::get()->findPlayer(getName()))) {
+    if (!monitoringClient && (_world->Players.find(getName()) || PlayerManager::get().findPlayer(getName()))) {
         Logger::alert(LogFacility::Player) << to_string() << " tried to login twice from ip: " << Connection->getIPAdress() << Log::end;
         throw LogoutException(DOUBLEPLAYER);
     }

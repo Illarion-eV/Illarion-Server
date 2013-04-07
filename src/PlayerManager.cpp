@@ -19,6 +19,7 @@
 
 #include "PlayerManager.hpp"
 
+#include "make_unique.hpp"
 #include "World.hpp"
 #include "Player.hpp"
 #include "Logger.hpp"
@@ -31,16 +32,16 @@
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
 
-PlayerManager *PlayerManager::instance;
+std::unique_ptr<PlayerManager> PlayerManager::instance = nullptr;
 boost::mutex PlayerManager::mut;
 boost::shared_mutex PlayerManager::reloadmutex;
 
-PlayerManager *PlayerManager::get() {
+PlayerManager &PlayerManager::get() {
     if (!instance) {
-        instance = new PlayerManager();
+        instance = std::make_unique<PlayerManager>();
     }
 
-    return instance;
+    return *instance;
 }
 
 void PlayerManager::activate() {

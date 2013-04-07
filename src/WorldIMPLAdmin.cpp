@@ -402,7 +402,7 @@ void World::forceLogoutOfAllPlayers() {
         Logger::info(LogFacility::Admin) << "--- kicked: " << *player << Log::end;
         ServerCommandPointer cmd = std::make_shared<LogOutTC>(SERVERSHUTDOWN);
         player->Connection->shutdownSend(cmd);
-        PlayerManager::get()->getLogOutPlayers().non_block_push_back(player);
+        PlayerManager::get().getLogOutPlayers().non_block_push_back(player);
     });
 
     Players.clear();
@@ -969,13 +969,13 @@ bool World::reload_defs(Player *cp) {
     } else {
         // if everything went well, delete old tables and set up new tables
         //Mutex für login logout sperren so das aktuell keiner mehr einloggen kann
-        PlayerManager::get()->setLoginLogout(true);
+        PlayerManager::get().setLoginLogout(true);
         delete MonsterDescriptions;
         MonsterDescriptions = MonsterDescriptions_temp;
         delete scheduledScripts;
         scheduledScripts = ScheduledScripts_temp;
         //Mutex entsperren.
-        PlayerManager::get()->setLoginLogout(false);
+        PlayerManager::get().setLoginLogout(false);
 
         //Reload the standard Fighting script
         try {
