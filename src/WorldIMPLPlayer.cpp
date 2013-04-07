@@ -20,8 +20,6 @@
 
 #include "World.hpp"
 
-#include <sstream>
-
 #include "Player.hpp"
 #include "MonitoringClients.hpp"
 
@@ -32,13 +30,6 @@
 
 #include "version.hpp"
 
-template< typename To, typename From> To stream_convert(const From &from) {
-    std::stringstream stream;
-    stream << from;
-    To to;
-    stream >> to;
-    return to;
-}
 
 // register any Player commands here...
 void World::InitPlayerCommands() {
