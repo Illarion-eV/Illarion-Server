@@ -22,6 +22,7 @@
 #include <sstream>
 #include <list>
 #include <iostream>
+#include <boost/regex.hpp>
 
 #include "PlayerManager.hpp"
 #include "Logger.hpp"
@@ -303,50 +304,23 @@ void World::save_command(Player *cp) {
     cp->inform(tmessage);
 }
 
-void World::talkto_command(Player *cp, const std::string &ts) {
-    if (!cp->hasGMRight(gmr_basiccommands)) {
-        return;    //quit if the player hasn't the right
+void World::talkto_command(Player *player, const std::string &text) {
+    if (!player->hasGMRight(gmr_basiccommands)) {
+        return;
     }
 
-    char *tokenize = new char[ ts.length() + 1 ]; //Neuen char mit gr�e des strings anlegen
-    strcpy(tokenize, ts.c_str());   //Copy ts to tokenize
-    std::cout<<"Tokenizing "<<tokenize<<std::endl;
-    char *token;
+    static const boost::regex pattern("^(.*?),(.*)$");
+    boost::smatch match;
 
-    if ((token = strtok(tokenize, ","))) {
-        std::string player = token;
-        delete[] tokenize;
+    if (boost::regex_match(text, match, pattern)) {
+        Player *target = Players.find(match[1].str());
 
-        if ((token = strtok(nullptr, "\\"))) {
-            std::string message = token;
-            Player *tempPl = Players.find(player);
-
-            if (tempPl) {
+        if (target) {
 #ifdef LOG_TALK
-                Logger::info(LogFacility::Player) << *cp << " talks to " << *tempPl << ": " << message << Log::end;
+            Logger::info(LogFacility::Player) << *player << " talks to " << *target << ": " << match[2].str() << Log::end;
 #endif
-                tempPl->inform(message, Player::informGM);
-                return;
-            } else {
-                TYPE_OF_CHARACTER_ID tid;
-
-                std::stringstream ss;
-                ss.str(player);
-                ss >> tid;
-
-                tempPl = Players.find(tid);
-
-                if (tempPl) {
-#ifdef LOG_TALK
-                    Logger::info(LogFacility::Player) << *cp << " talks to " << *tempPl << ": " << message << Log::end;
-#endif
-                    tempPl->inform(message, Player::informGM);
-                    return;
-                }
-            }
+            target->inform(match[2].str(), Player::informGM);
         }
-    } else {
-        delete[] tokenize;
     }
 }
 

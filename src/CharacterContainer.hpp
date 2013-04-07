@@ -24,6 +24,7 @@
 #include <vector>
 #include <unordered_map>
 #include <functional>
+#include <boost/lexical_cast.hpp>
 #include "utility.hpp"
 #include "constants.hpp"
 
@@ -88,10 +89,15 @@ public:
 
 
 template <class T>
-auto CharacterContainer<T>::find(const std::string &n) const -> pointer {
-    for (const auto &character : container) {
-        if (comparestrings_nocase(character.second->getName(), n)) {
-            return character.second;
+auto CharacterContainer<T>::find(const std::string &text) const -> pointer {
+    try {
+        auto id = boost::lexical_cast<TYPE_OF_CHARACTER_ID>(text);
+        return find(id);
+    } catch (boost::bad_lexical_cast &) {
+        for (const auto &character : container) {
+            if (comparestrings_nocase(character.second->getName(), text)) {
+                return character.second;
+            }
         }
     }
 
