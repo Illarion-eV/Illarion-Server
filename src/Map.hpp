@@ -40,9 +40,6 @@ public:
     Map(const Map &) = delete;
     Map &operator=(const Map &) = delete;
 
-    //! Destruktor
-    ~Map();
-
     //! l�dt eine gespeicherte Karte
     // \param name der Name der zu ladenden Karte
     // \param x_offs Verschiebung der zu ladenden Karte im physikalischen Feld
@@ -163,7 +160,7 @@ public:
     bool Map_initialized;
 
     //! Zeiger auf die Hauptebene der Karte
-    Field **MainMap;
+    std::vector<std::vector<Field>> MainMap;
 
     //! konvertiert eine logische X-Koordinate in einen Feldindex
     // \throw Exception_CoordinateOutOfRange

@@ -30,7 +30,7 @@
 
 extern std::vector<position> contpos;
 
-Map::Map(unsigned short int sizex, unsigned short int sizey) {
+Map::Map(unsigned short int sizex, unsigned short int sizey) : MainMap(sizex, std::vector<Field>(sizey, Field())) {
     Width = sizex;
     Height = sizey;
     Min_X = 0;
@@ -39,34 +39,7 @@ Map::Map(unsigned short int sizex, unsigned short int sizey) {
     Max_Y = 0;
     Z_Level = 0;
     Map_initialized = false;
-
-    //das Array fr MainMap im Speicher anlegen
-    MainMap = new Field * [ Width ];            // SCHRITT 1: ZEILEN EINRICHTEN.
-
-    for (int i = 0; i < Width; ++i) {
-        MainMap[ i ] = new Field[ Height ];      // SCHRITT 2: SPALTEN EINRICHTEN.
-    }
-
-    for (int b = 0; b < Width; ++b) {
-        for (int h = 0; h < Height; ++h) {
-            MainMap[ b ][ h ].setTileId(TRANSPARENT);
-        }
-    }
-
 }
-
-
-Map::~Map() {
-    for (int i = 0; i < Width; ++i) {
-        delete[] MainMap[ i ];
-        MainMap[ i ] = nullptr;
-    }
-
-    delete[] MainMap;
-    MainMap = nullptr;
-}
-
-
 
 bool Map::addItemToPos(Item it, MAP_POSITION pos) {
     Field *cfnew;
@@ -79,7 +52,6 @@ bool Map::addItemToPos(Item it, MAP_POSITION pos) {
 
     return false;
 }
-
 
 
 bool Map::addContainerToPos(Item it, Container *cc, MAP_POSITION pos) {
