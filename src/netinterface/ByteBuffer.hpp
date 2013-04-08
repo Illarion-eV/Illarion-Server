@@ -21,7 +21,7 @@
 #define _CBYTE_BUFFER_HPP_
 
 #include <stdint.h>
-#include <pthread.h>
+#include <mutex>
 
 #define RECV_BUFFERSIZE 100
 #define NUMBEROFBUFFERS 12
@@ -80,7 +80,7 @@ private:
     */
     bool getReadBuffer();
 
-    pthread_mutex_t *vlock; /*<mutex for thread safety*/
+    std::mutex vlock; /*<mutex for thread safety*/
     uint16_t bytesAvailable; /*<stores how much bytes are currently in the buffer*/
 
     volatile uint8_t rBuff; /*<number of current read buffer*/

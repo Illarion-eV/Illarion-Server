@@ -32,12 +32,10 @@
 #include "netinterface/BasicClientCommand.hpp"
 #include "netinterface/BasicServerCommand.hpp"
 #include "netinterface/CommandFactory.hpp"
-#include <boost/thread/mutex.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/bind.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/asio.hpp>
 #include <deque>
+#include <mutex>
 
 
 /**
@@ -128,8 +126,8 @@ private:
     //Factory für Commands vom Client
     CommandFactory commandFactory;
     uint16_t inactive;
-    boost::mutex sendQueueMutex;
-    boost::mutex receiveQueueMutex;
+    std::mutex sendQueueMutex;
+    std::mutex receiveQueueMutex;
 
 
 

@@ -23,57 +23,30 @@
 #include <list>
 #include <exception>
 #include <iostream>
-#include <pthread.h>
-#include <stdint.h>
+#include <cstdint>
+#include <thread>
+#include <mutex>
+#include <chrono>
 
 #define _MAX_NON_BLOCK_TRYS_ 20
 
 template<class T> class tpvector : public std::list<T> {
 public:
-    tpvector() : std::list<T>() {
-        // initialize our mutex
-        vlock = new pthread_mutex_t;
-
-        if (pthread_mutex_init(vlock,nullptr)) {
-            std::cout << "Mutex couldn't get initialized... throwing exception!" << std::endl;
-            throw std::exception();
-        }
-    }
-
-    ~tpvector() {
-        pthread_mutex_destroy(vlock);
-        delete vlock;
-    }
-
-    inline uint16_t size() {
-        // get mutex
-        if (pthread_mutex_lock(vlock)) {
-            std::cout << "problem with mutex locking!" << std::endl;
-        }
-
+    inline size_t size() {
+        std::lock_guard<std::mutex> lock(vlock);
         uint16_t s = std::list<T>::size();
-
-        // release mutex
-        if (pthread_mutex_unlock(vlock)) {
-            std::cout << "problem with mutex unlocking occured!" << std::endl;
-        }
-
         return s;
     }
 
-    inline uint16_t non_block_size() {
+    inline size_t non_block_size() {
         for (int i = 0; i < _MAX_NON_BLOCK_TRYS_ ; ++i) {
-            int err = pthread_mutex_trylock(vlock);
-
-            if (err) {
-                timespec stime;
-                stime.tv_sec = 0;
-                stime.tv_nsec = 5000000;
+            if (!vlock.try_lock()) {
+                std::chrono::milliseconds wait(5);
                 std::cout<<"non_block_size blocked mutex"<<std::endl;
-                nanosleep(&stime, nullptr);
+                std::this_thread::sleep_for(wait);
             } else {
-                uint16_t s = std::list<T>::size();
-                pthread_mutex_unlock(vlock);
+                auto s = std::list<T>::size();
+                vlock.unlock();
                 return s;
             }
         }
@@ -81,50 +54,25 @@ public:
         return 0;
     }
 
-
-
-
     inline void clear() {
-        // get mutex
-        if (pthread_mutex_lock(vlock)) {
-            std::cout << "problem with mutex locking!" << std::endl;
-        }
-
+        std::lock_guard<std::mutex> lock(vlock);
         std::list<T>::clear();
-
-        // release mutex
-        if (pthread_mutex_unlock(vlock)) {
-            std::cout << "problem with mutex unlocking occured!" << std::endl;
-        }
     }
 
     inline void push_back(const T &item) {
-        // get mutex
-        if (pthread_mutex_lock(vlock)) {
-            std::cout << "problem with mutex locking!" << std::endl;
-        }
-
+        std::lock_guard<std::mutex> lock(vlock);
         std::list<T>::push_back(item);
-
-        // release mutex
-        if (pthread_mutex_unlock(vlock)) {
-            std::cout << "problem with mutex unlocking occured!" << std::endl;
-        }
     }
 
     inline bool non_block_push_back(const T &item) {
         for (int i = 0; i < _MAX_NON_BLOCK_TRYS_ ; ++i) {
-            int err = pthread_mutex_trylock(vlock);
-
-            if (err) {
-                timespec stime;
-                stime.tv_sec = 0;
-                stime.tv_nsec = 5000000;
+            if (!vlock.try_lock()) {
+                std::chrono::milliseconds wait(5);
                 std::cout<<"non_block_push_back blocked mutex"<<std::endl;
-                nanosleep(&stime, nullptr);
+                std::this_thread::sleep_for(wait);
             } else {
                 std::list<T>::push_back(item);
-                pthread_mutex_unlock(vlock);
+                vlock.unlock();
                 return true;
             }
         }
@@ -134,17 +82,13 @@ public:
 
     inline bool non_block_push_front(const T &item) {
         for (int i = 0; i < _MAX_NON_BLOCK_TRYS_ ; ++i) {
-            int err = pthread_mutex_trylock(vlock);
-
-            if (err) {
-                timespec stime;
-                stime.tv_sec = 0;
-                stime.tv_nsec = 5000000;
+            if (!vlock.try_lock()) {
+                std::chrono::milliseconds wait(5);
                 std::cout<<"non_block_push_front blocked mutex"<<std::endl;
-                nanosleep(&stime, nullptr);
+                std::this_thread::sleep_for(wait);
             } else {
                 std::list<T>::push_front(item);
-                pthread_mutex_unlock(vlock);
+                vlock.unlock();
                 return true;
             }
         }
@@ -154,18 +98,14 @@ public:
 
     inline T non_block_pop_front() {
         for (int i = 0; i < _MAX_NON_BLOCK_TRYS_ ; ++i) {
-            int err = pthread_mutex_trylock(vlock);
-
-            if (err) {
-                timespec stime;
-                stime.tv_sec = 0;
-                stime.tv_nsec = 5000000;
-                std::cout<<"non_block_push_back blocked mutex"<<std::endl;
-                nanosleep(&stime, nullptr);
+            if (!vlock.try_lock()) {
+                std::chrono::milliseconds wait(5);
+                std::cout<<"non_block_pop_front blocked mutex"<<std::endl;
+                std::this_thread::sleep_for(wait);
             } else {
                 T item = std::list<T>::front();
                 std::list<T>::pop_front();
-                pthread_mutex_unlock(vlock);
+                vlock.unlock();
                 return item;
             }
         }
@@ -178,33 +118,19 @@ public:
 
 
     inline bool empty() {
-        if (pthread_mutex_lock(vlock)) {
-            std::cout << "problem with mutex locking!" << std::endl;
-        }
-
-        bool empty = std::list<T>::empty();
-
-        // release mutex
-        if (pthread_mutex_unlock(vlock)) {
-            std::cout << "problem with mutex unlocking occured!" << std::endl;
-        }
-
-        return empty;
+        std::lock_guard<std::mutex> lock(vlock);
+        return std::list<T>::empty();
     }
 
     inline bool non_block_empty() {
         for (int i = 0; i < _MAX_NON_BLOCK_TRYS_ ; ++i) {
-            int err = pthread_mutex_trylock(vlock);
-
-            if (err) {
-                timespec stime;
-                stime.tv_sec = 0;
-                stime.tv_nsec = 5000000;
+            if (!vlock.try_lock()) {
+                std::chrono::milliseconds wait(5);
                 std::cout<<"non_block_empty blocked mutex"<<std::endl;
-                nanosleep(&stime, nullptr);
+                std::this_thread::sleep_for(wait);
             } else {
                 bool empty = std::list<T>::empty();
-                pthread_mutex_unlock(vlock);
+                vlock.unlock();
                 return empty;
             }
         }
@@ -213,25 +139,14 @@ public:
     }
 
     inline T pop_front() {
-        // get mutex
-        if (pthread_mutex_lock(vlock)) {
-            std::cout << "problem with mutex locking!" << std::endl;
-        }
-
+        std::lock_guard<std::mutex> lock(vlock);
         T item = std::list<T>::front();
         std::list<T>::pop_front();
-
-        // release mutex
-        if (pthread_mutex_unlock(vlock)) {
-            std::cout << "problem with mutex unlocking occured!" << std::endl;
-        }
-
         return item;
     }
 
 private:
-    pthread_mutex_t *vlock;
-
+    std::mutex vlock;
 };
 
 #endif

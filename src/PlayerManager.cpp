@@ -33,8 +33,8 @@
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
 
 std::unique_ptr<PlayerManager> PlayerManager::instance = nullptr;
-boost::mutex PlayerManager::mut;
-boost::shared_mutex PlayerManager::reloadmutex;
+std::mutex PlayerManager::mut;
+std::mutex PlayerManager::reloadmutex;
 
 PlayerManager &PlayerManager::get() {
     if (!instance) {
@@ -45,37 +45,12 @@ PlayerManager &PlayerManager::get() {
 }
 
 void PlayerManager::activate() {
-    std::cout<<"PlayerManager::activate called"<<std::endl;
-    pthread_attr_t pattr;
-    pthread_attr_init(&pattr);
-    pthread_attr_setdetachstate(&pattr, PTHREAD_CREATE_DETACHED);
     running = true;
-    std::cout<<"creating login thread:";
 
-    if (pthread_create(&login_thread, &pattr, (void*( *)(void *))&loginLoop, this) != 0) {
-        std::cout<<"not sucessfull"<<std::endl;
-    } else {
-        std::cout<<"successfull"<<std::endl;
-    }
-
-    std::cout<<"creating save Loop:";
-
-    if (pthread_create(&save_thread, &pattr, (void*( *)(void *))&playerSaveLoop, this) != 0) {
-        std::cout<<"not sucessfull"<<std::endl;
-    } else {
-        std::cout<<"successfull"<<std::endl;
-    }
-}
-
-PlayerManager::PlayerManager() {
-    std::cout<<"==============creating Player manager==============="<<std::endl;
-    running = false;
-    threadOk = false;
-}
-
-PlayerManager::~PlayerManager() {
-    pthread_cancel(login_thread);
-    pthread_cancel(save_thread);
+    login_thread = std::make_unique<std::thread>(loginLoop, this);
+    login_thread->detach();
+    save_thread = std::make_unique<std::thread>(playerSaveLoop, this);
+    save_thread->detach();
 }
 
 void PlayerManager::saveAll() {
@@ -92,32 +67,26 @@ void PlayerManager::saveAll() {
 }
 
 bool PlayerManager::findPlayer(const std::string &name) const {
-    mut.lock();
+    std::lock_guard<std::mutex> lock(mut);
 
     for (auto const &player : loggedOutPlayers) {
         if (player->getName() == name) {
-            mut.unlock();
             return true;
         }
     }
 
-    mut.unlock();
     return false;
 }
 
 void PlayerManager::setLoginLogout(bool val) {
     if (val) {
-        //anmelden des exklusiven zugriffs
-        reloadmutex.lock_upgrade();
-        //bekommen des exklusiven zugriffs
-        reloadmutex.unlock_upgrade_and_lock();
+        reloadmutex.lock();
     } else {
-        //exklusiver zugriff freigeben
         reloadmutex.unlock();
     }
 }
 
-void *PlayerManager::loginLoop(PlayerManager *pmanager) {
+void PlayerManager::loginLoop(PlayerManager *pmanager) {
     try {
         auto &newplayers = pmanager->incon.get_Player_Vector();
         timespec waittime;
@@ -130,28 +99,25 @@ void *PlayerManager::loginLoop(PlayerManager *pmanager) {
             int curconn = newplayers.non_block_size();
 
             for (int i = 0; i < curconn; ++i) {
-                std::cout<<"read connection"<<std::endl;
                 auto Connection = newplayers.non_block_pop_front();
 
                 if (Connection) {
-                    bool isLocked = false;
-
                     try {
                         if (!Connection->online) {
                             throw Player::LogoutException(UNSTABLECONNECTION);
                         }
 
                         if (Connection->receivedSize() > 0) {
-                            std::cout<<"try to login player"<<std::endl;
-                            //get shared lock
-                            reloadmutex.lock_shared();
-                            isLocked = true;
-                            Player *newPlayer = new Player(Connection);
-                            //release shared lock
-                            reloadmutex.unlock_shared();
-                            isLocked = false;
-                            pmanager->loggedInPlayers.non_block_push_back(newPlayer);
-                            std::cout<<"added player to list"<<std::endl;
+                            Player *newPlayer = nullptr;
+                            {
+                                std::lock_guard<std::mutex> lock(reloadmutex);
+                                newPlayer = new Player(Connection);
+                            }
+                            
+                            if (newPlayer) {
+                                pmanager->loggedInPlayers.non_block_push_back(newPlayer);
+                            }
+
                             Connection.reset();
                         } else {
                             if (Connection->nextInactive()) {
@@ -163,17 +129,9 @@ void *PlayerManager::loginLoop(PlayerManager *pmanager) {
                             Connection.reset();
                         }
                     } catch (Player::LogoutException &e) {
-                        // Only unlock reloadmutex if it has actually been locked
-                        if (isLocked) {
-                            reloadmutex.unlock_shared();
-                        }
-
                         std::cout<<"got logoutException durin loading! "<<std::endl;
                         ServerCommandPointer cmd = std::make_shared<LogOutTC>(e.getReason());
                         Connection->shutdownSend(cmd);
-                        //Connection->closeConnection();
-                        //Connection.reset();
-                        //pmanager->shutdownConnections.non_block_push_back( Connection );
                     }
                 } else {
                     std::cout<<"try to get connection but was nullptr!"<<std::endl;
@@ -189,11 +147,9 @@ void *PlayerManager::loginLoop(PlayerManager *pmanager) {
     } catch (...) {
         throw;
     }
-
-    return nullptr;
 }
 
-void *PlayerManager::playerSaveLoop(PlayerManager *pmanager) {
+void PlayerManager::playerSaveLoop(PlayerManager *pmanager) {
     try {
         World *world = World::get();
         timespec waittime;
@@ -207,14 +163,16 @@ void *PlayerManager::playerSaveLoop(PlayerManager *pmanager) {
                 Logger::debug(LogFacility::World) << "Ausgelogte Spieler bearbeiten: " << pmanager->loggedOutPlayers.size() << " players gone" << Log::end;
 
                 while (!pmanager->loggedOutPlayers.empty()) {
-                    mut.lock();
-                    tmpPl = pmanager->loggedOutPlayers.non_block_pop_front();
-                    mut.unlock();
+                    {
+                        std::lock_guard<std::mutex> lock(mut);
+                        tmpPl = pmanager->loggedOutPlayers.non_block_pop_front();
+                    }
 
                     if (!tmpPl->isMonitoringClient()) {
-                        reloadmutex.lock_shared();
-                        tmpPl->save();
-                        reloadmutex.unlock_shared();
+                        {
+                            std::lock_guard<std::mutex> lock(reloadmutex);
+                            tmpPl->save();
+                        }
                         tmpPl->Connection->closeConnection();
                         ServerCommandPointer cmd = std::make_shared<BBLogOutTC>(tmpPl->getId(), tmpPl->getName());
                         world->monitoringClientList->sendCommand(cmd);
@@ -240,7 +198,5 @@ void *PlayerManager::playerSaveLoop(PlayerManager *pmanager) {
     } catch (...) {
         throw;
     }
-
-    return nullptr;
 }
 

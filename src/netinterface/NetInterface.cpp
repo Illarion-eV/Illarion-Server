@@ -18,7 +18,7 @@
 
 
 #include <iomanip>
-#include <boost/enable_shared_from_this.hpp>
+#include <boost/bind.hpp>
 #include "netinterface/BasicClientCommand.hpp"
 #include "netinterface/protocol/ClientCommands.hpp"
 #include "CommandFactory.hpp"
@@ -77,9 +77,8 @@ void NetInterface::handle_read_data(const boost::system::error_code &error) {
                 cmd->decodeData();
 
                 if (cmd->isDataOk()) {
-                    receiveQueueMutex.lock();
+                    std::lock_guard<std::mutex> lock(receiveQueueMutex);
                     receiveQueue.push_back(cmd);
-                    receiveQueueMutex.unlock();
                 } else {
                     std::cout<<"error receiving command"<<std::endl;
                 }
@@ -173,7 +172,7 @@ void NetInterface::handle_read_header(const boost::system::error_code &error) {
 void NetInterface::addCommand(const ServerCommandPointer &command) {
     if (online) {
         command->addHeader();
-        sendQueueMutex.lock();
+        std::lock_guard<std::mutex> lock(sendQueueMutex);
         bool write_in_progress = !sendQueue.empty();
         sendQueue.push_back(command);
 
@@ -186,10 +185,7 @@ void NetInterface::addCommand(const ServerCommandPointer &command) {
             std::cerr<<"addCommand error during write: "<<ex.what()<<std::endl;
             closeConnection();
         }
-
-        sendQueueMutex.unlock();
     }
-
 }
 
 void NetInterface::shutdownSend(const ServerCommandPointer &command) {
@@ -208,16 +204,13 @@ void NetInterface::handle_write(const boost::system::error_code &error) {
     try {
         if (!error) {
             if (online) {
-                sendQueueMutex.lock();
+                std::lock_guard<std::mutex> lock(sendQueueMutex);
                 sendQueue.pop_front();
 
                 if (!sendQueue.empty() && online) {
                     boost::asio::async_write(socket,boost::asio::buffer(sendQueue.front()->cmdData(),sendQueue.front()->getLength()),
                                              boost::bind(&NetInterface::handle_write, shared_from_this(),boost::asio::placeholders::error));
                 }
-
-                sendQueueMutex.unlock();
-
             }
         } else {
             std::cerr<<"handle_write error during write: "<<error.message()<<" :"<<error<<std::endl;
@@ -245,14 +238,13 @@ void NetInterface::handle_write_shutdown(const boost::system::error_code &error)
 ClientCommandPointer NetInterface::getCommand() {
     if (online) {
         ClientCommandPointer ret;
-        receiveQueueMutex.lock();
+        std::lock_guard<std::mutex> lock(receiveQueueMutex);
 
         if (!receiveQueue.empty()) {
             ret = receiveQueue.front();
             receiveQueue.pop_front();
         }
-
-        receiveQueueMutex.unlock();
+        
         return ret;
     }
 

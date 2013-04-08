@@ -51,7 +51,7 @@ Timer.cpp MilTimer.cpp \
 LongTimeEffect.cpp LongTimeAction.cpp LongTimeCharacterEffects.cpp Scheduler.cpp \
 \
 Attribute.cpp Character.cpp \
-Player.cpp PlayerWorkoutCommands.cpp Monster.cpp NPC.cpp PlayerManager.cpp playersave.cpp WaypointList.cpp \
+Player.cpp PlayerWorkoutCommands.cpp Monster.cpp NPC.cpp PlayerManager.cpp WaypointList.cpp \
 \
 dialog/Dialog.cpp dialog/InputDialog.cpp dialog/MessageDialog.cpp dialog/MerchantDialog.cpp \
 dialog/SelectionDialog.cpp dialog/CraftingDialog.cpp \
@@ -81,7 +81,7 @@ noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
 		 tpvector.hpp Random.hpp tvector.hpp NPC.hpp Scheduler.hpp \
 		 MapException.hpp PlayerManager.hpp Character.hpp \
 		 Attribute.hpp InitialConnection.hpp Logger.hpp utility.hpp \
-		 MonitoringClients.hpp playersave.hpp Field.hpp \
+		 MonitoringClients.hpp Field.hpp \
 		 data/Data.hpp data/Table.hpp data/StructTable.hpp \
 		 data/ScriptStructTable.hpp data/QuestScriptStructTable.hpp \
 		 data/NamesObjectTable.hpp data/SpellTable.hpp \
