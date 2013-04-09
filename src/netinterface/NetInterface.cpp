@@ -18,12 +18,14 @@
 
 
 #include <iomanip>
-#include <boost/bind.hpp>
+#include <functional>
 #include "netinterface/BasicClientCommand.hpp"
 #include "netinterface/protocol/ClientCommands.hpp"
 #include "CommandFactory.hpp"
 
 #include "netinterface/NetInterface.hpp"
+
+using namespace std::placeholders;
 
 NetInterface::NetInterface(boost::asio::io_service &io_servicen) : online(false), socket(io_servicen), inactive(0) {
     cmd.reset();
@@ -59,7 +61,7 @@ void NetInterface::closeConnection() {
 
 bool NetInterface::activate() {
     try {
-        boost::asio::async_read(socket,boost::asio::buffer(headerBuffer,6), boost::bind(&NetInterface::handle_read_header, shared_from_this(),boost::asio::placeholders::error));
+        boost::asio::async_read(socket,boost::asio::buffer(headerBuffer,6), std::bind(&NetInterface::handle_read_header, shared_from_this(), _1));
         ipadress = socket.remote_endpoint().address().to_string();
         online = true;
         return true;
@@ -98,7 +100,7 @@ void NetInterface::handle_read_data(const boost::system::error_code &error) {
             }
 
             cmd.reset();
-            boost::asio::async_read(socket,boost::asio::buffer(headerBuffer,6), boost::bind(&NetInterface::handle_read_header, shared_from_this(),boost::asio::placeholders::error));
+            boost::asio::async_read(socket,boost::asio::buffer(headerBuffer,6), std::bind(&NetInterface::handle_read_header, shared_from_this(), _1));
         }
     } else {
         if (online) {
@@ -106,7 +108,7 @@ void NetInterface::handle_read_data(const boost::system::error_code &error) {
         }
 
         closeConnection();
-        boost::asio::async_read(socket,boost::asio::buffer(headerBuffer,6), boost::bind(&NetInterface::handle_read_header, shared_from_this(),boost::asio::placeholders::error));
+        boost::asio::async_read(socket,boost::asio::buffer(headerBuffer,6), std::bind(&NetInterface::handle_read_header, shared_from_this(), _1));
     }
 }
 
@@ -127,7 +129,7 @@ void NetInterface::handle_read_header(const boost::system::error_code &error) {
 
             if (cmd) {
                 cmd->setHeaderData(length,checkSum);
-                boost::asio::async_read(socket,boost::asio::buffer(cmd->msg_data(),cmd->getLength()), boost::bind(&NetInterface::handle_read_data, shared_from_this(),boost::asio::placeholders::error));
+                boost::asio::async_read(socket,boost::asio::buffer(cmd->msg_data(),cmd->getLength()), std::bind(&NetInterface::handle_read_data, shared_from_this(), _1));
                 return;
             } else {
                 std::cout<<"No Command with id "<<headerBuffer[0]<<"found searching new Command"<<std::endl;
@@ -150,13 +152,13 @@ void NetInterface::handle_read_header(const boost::system::error_code &error) {
                 }
 
                 //restheader empfangen
-                boost::asio::async_read(socket,boost::asio::buffer(&headerBuffer[start],6-start), boost::bind(&NetInterface::handle_read_header, shared_from_this(),boost::asio::placeholders::error));
+                boost::asio::async_read(socket,boost::asio::buffer(&headerBuffer[start],6-start), std::bind(&NetInterface::handle_read_header, shared_from_this(), _1));
                 return;
             }
         }
 
         //Keine Command Signature gefunden wieder 6 Byte Header auslesen
-        boost::asio::async_read(socket,boost::asio::buffer(headerBuffer,6), boost::bind(&NetInterface::handle_read_header, shared_from_this(),boost::asio::placeholders::error));
+        boost::asio::async_read(socket,boost::asio::buffer(headerBuffer,6), std::bind(&NetInterface::handle_read_header, shared_from_this(), _1));
 
     } else {
         if (online) {
@@ -179,7 +181,7 @@ void NetInterface::addCommand(const ServerCommandPointer &command) {
         try {
             if (!write_in_progress && online) {
                 boost::asio::async_write(socket,boost::asio::buffer(sendQueue.front()->cmdData(),sendQueue.front()->getLength()),
-                                         boost::bind(&NetInterface::handle_write, shared_from_this(),boost::asio::placeholders::error));
+                                         std::bind(&NetInterface::handle_write, shared_from_this(), _1));
             }
         } catch (std::exception &ex) {
             std::cerr<<"addCommand error during write: "<<ex.what()<<std::endl;
@@ -193,7 +195,7 @@ void NetInterface::shutdownSend(const ServerCommandPointer &command) {
         command->addHeader();
         shutdownCmd = command;
         boost::asio::async_write(socket,boost::asio::buffer(shutdownCmd->cmdData(),shutdownCmd->getLength()),
-                                 boost::bind(&NetInterface::handle_write_shutdown, shared_from_this(),boost::asio::placeholders::error));
+                                 std::bind(&NetInterface::handle_write_shutdown, shared_from_this(), _1));
     } catch (std::exception &ex) {
         std::cerr<<"Exception beim Schreiben von Daten:"<<ex.what()<<std::endl;
         closeConnection();
@@ -209,7 +211,7 @@ void NetInterface::handle_write(const boost::system::error_code &error) {
 
                 if (!sendQueue.empty() && online) {
                     boost::asio::async_write(socket,boost::asio::buffer(sendQueue.front()->cmdData(),sendQueue.front()->getLength()),
-                                             boost::bind(&NetInterface::handle_write, shared_from_this(),boost::asio::placeholders::error));
+                                             std::bind(&NetInterface::handle_write, shared_from_this(), _1));
                 }
             }
         } else {
