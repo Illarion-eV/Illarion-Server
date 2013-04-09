@@ -22,7 +22,6 @@
 #include "tuningConstants.hpp"
 #include <iostream>
 #include "data/MonsterTable.hpp"
-#include <boost/shared_ptr.hpp>
 #include "script/LuaMonsterScript.hpp"
 #include "World.hpp"
 #include "WaypointList.hpp"

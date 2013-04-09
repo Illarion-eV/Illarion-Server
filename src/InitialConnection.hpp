@@ -25,7 +25,6 @@
 
 #include <memory>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/asio.hpp>
 
 #include "tpvector.hpp"
@@ -45,7 +44,7 @@ class InitialConnection : public Connection {
 public:
 
 
-    typedef tpvector<boost::shared_ptr<NetInterface> > TVECTORPLAYER;
+    typedef tpvector<std::shared_ptr<NetInterface>> TVECTORPLAYER;
 
     //! Konstruktor
     InitialConnection();
@@ -70,7 +69,7 @@ private:
     //! wartet auf eine neue Verbindung (blockierend)
     // \return eine neue Verbindung oder nullptr
     //CInternetConnection* accept_connection();
-    void accept_connection(boost::shared_ptr<NetInterface> connection, const boost::system::error_code &error);
+    void accept_connection(std::shared_ptr<NetInterface> connection, const boost::system::error_code &error);
 
     //! std::vector for new players...
     TVECTORPLAYER playerVector;

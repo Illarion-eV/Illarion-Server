@@ -23,11 +23,11 @@
 //falls nicht auskommentiert, werden mehr Bildschirmausgaben gemacht:
 //#define Player_DEBUG
 
+#include <memory>
 #include <string>
 #include <set>
 #include <unordered_set>
 #include <unordered_map>
-#include <boost/shared_ptr.hpp>
 
 #include "Character.hpp"
 
@@ -152,7 +152,7 @@ public:
     // , da sie auch extern erstellt wird und durch das Einfgen in diverse
     // Vektoren oft Destruktoren fr tempor�e Player aufgerufen werden, die noch
     // ben�igte Verbindungen l�chen wrden!
-    boost::shared_ptr<NetInterface> Connection;
+    std::shared_ptr<NetInterface> Connection;
 
 private:
     std::set<uint32_t> visibleChars;
@@ -258,7 +258,7 @@ public:
     virtual void sendCharDescription(TYPE_OF_CHARACTER_ID id,const std::string &desc) override;
 
     //! normal constructor
-    Player(boost::shared_ptr<NetInterface> newConnection) throw(LogoutException);
+    Player(std::shared_ptr<NetInterface> newConnection) throw(LogoutException);
 
     //! check if username/password is ok
     void check_logindata() throw(LogoutException);

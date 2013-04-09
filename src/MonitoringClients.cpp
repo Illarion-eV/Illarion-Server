@@ -21,7 +21,6 @@
 #include "World.hpp"
 #include "Character.hpp"
 #include "Logger.hpp"
-#include <boost/shared_ptr.hpp>
 #include "PlayerManager.hpp"
 #include "MonitoringClients.hpp"
 #include "netinterface/NetInterface.hpp"

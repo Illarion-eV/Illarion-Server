@@ -20,11 +20,8 @@
 #ifndef _TABLESTRUCTS_HPP_
 #define _TABLESTRUCTS_HPP_
 
-#define BOOST_HAS_THREADS
-
+#include <memory>
 #include <string>
-#include <boost/shared_ptr.hpp>
-
 #include "types.hpp"
 
 class LuaTileScript;

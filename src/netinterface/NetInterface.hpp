@@ -32,7 +32,7 @@
 #include "netinterface/BasicClientCommand.hpp"
 #include "netinterface/BasicServerCommand.hpp"
 #include "netinterface/CommandFactory.hpp"
-#include <boost/enable_shared_from_this.hpp>
+#include <memory>
 #include <boost/asio.hpp>
 #include <deque>
 #include <mutex>
@@ -47,7 +47,7 @@
 *@ingroup Netinterface
 *class which holds the network interface and its thread for sending and receiving data
 */
-class NetInterface : public boost::enable_shared_from_this<NetInterface> {
+class NetInterface : public std::enable_shared_from_this<NetInterface> {
 public:
 
     /**

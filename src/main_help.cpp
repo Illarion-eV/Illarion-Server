@@ -30,7 +30,6 @@
 
 #include "data/MonsterTable.hpp"
 #include "data/ScheduledScriptsTable.hpp"
-#include <boost/shared_ptr.hpp>
 #include "script/LuaWeaponScript.hpp" //For standard fighting script.
 #include "script/LuaLookAtPlayerScript.hpp"
 #include "script/LuaLookAtItemScript.hpp"

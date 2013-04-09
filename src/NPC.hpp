@@ -21,8 +21,7 @@
 #define NPC_HPP
 
 #include "Character.hpp"
-
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 class LuaNPCScript;
 

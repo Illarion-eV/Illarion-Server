@@ -22,7 +22,6 @@
 
 #include <map>
 #include <algorithm>
-#include <boost/shared_ptr.hpp>
 
 #include "fuse_ptr.hpp"
 #include "a_star.hpp"

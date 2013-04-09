@@ -24,7 +24,6 @@
 #include "data/ScheduledScriptsTable.hpp"
 //We need this for the standard Fighting Script.
 #include "script/LuaWeaponScript.hpp"
-#include <boost/shared_ptr.hpp>
 #include "Logger.hpp"
 #include "Player.hpp"
 #include "Monster.hpp"

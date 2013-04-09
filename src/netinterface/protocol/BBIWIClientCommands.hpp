@@ -27,8 +27,6 @@
 */
 
 
-#include <boost/shared_ptr.hpp>
-
 #include "Player.hpp"
 #include "World.hpp"
 #include "Logger.hpp"

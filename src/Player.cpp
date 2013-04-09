@@ -25,8 +25,6 @@
 
 #include <sstream>
 
-#include <boost/shared_ptr.hpp>
-
 #include "tuningConstants.hpp"
 #include "Field.hpp"
 #include "Map.hpp"
@@ -72,7 +70,7 @@ extern std::shared_ptr<LuaDepotScript>depotScript;
 
 //#define PLAYER_MOVE_DEBUG
 
-Player::Player(boost::shared_ptr<NetInterface> newConnection) throw(Player::LogoutException)
+Player::Player(std::shared_ptr<NetInterface> newConnection) throw(Player::LogoutException)
     : Character(), onlinetime(0), Connection(newConnection), turtleActive(false),
       clippingActive(true), admin(false), questWriteLock(false), dialogCounter(0) {
 #ifdef Player_DEBUG
