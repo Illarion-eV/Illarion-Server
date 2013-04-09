@@ -21,26 +21,26 @@
 #ifndef _CONNECTION_HPP_
 #define _CONNECTION_HPP_
 
-#include <boost/shared_ptr.hpp>
-#include <boost/checked_delete.hpp>
-
+#include <memory>
+#include <string>
 #include <pqxx/connection.hxx>
 #include <pqxx/transaction.hxx>
 
 namespace Database {
 class Connection;
 
-typedef boost::shared_ptr<Connection> PConnection;
+typedef std::shared_ptr<Connection> PConnection;
 
 class Connection {
 private:
     /* The libpgxx representation of the connection to the database. */
-    pqxx::connection *internalConnection;
-
-    pqxx::transaction_base *transaction;
+    std::unique_ptr<pqxx::connection> internalConnection = nullptr;
+    std::unique_ptr<pqxx::transaction_base> transaction = nullptr;
 
 public:
+    Connection(const std::string &connectionString);
     void beginTransaction(void);
+    pqxx::result query(const std::string &query);
     void commitTransaction(void);
     void rollbackTransaction(void);
 
@@ -49,31 +49,14 @@ public:
     }
 
     inline bool transactionActive() const {
-        return transaction != 0;
+        return bool(transaction);
     }
+
 private:
-    /* The construction and destruction of the connections is handled by the
-     * connection manager.
-     */
-    Connection(void);
-    Connection(pqxx::connection *connection);
     Connection(const Connection &org) = delete;
-    Connection &operator=(const Connection &org) = delete;;
-    ~Connection(void);
-    struct deleter {
-        void operator()(Connection *p) {
-            delete p;
-        };
-    };
-
-    friend class ConnectionManager;
-
-    /* The current transaction is required by the query class in order to
-     * execute the query properly.
-     */
-    pqxx::transaction_base *getTransaction(void);
-    friend class Query;
+    Connection &operator=(const Connection &org) = delete;
 };
+
 }
 
 #endif // _CONNECTION_HPP_

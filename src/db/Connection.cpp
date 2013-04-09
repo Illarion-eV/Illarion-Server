@@ -21,56 +21,45 @@
 #include "Connection.hpp"
 
 #include <stdexcept>
-
 #include <pqxx/connection.hxx>
 #include <pqxx/transaction.hxx>
+#include "make_unique.hpp"
 
 using namespace Database;
 
-Connection::Connection() {
-    internalConnection = 0;
-    transaction = 0;
-};
-
-Connection::Connection(pqxx::connection *connection) {
-    internalConnection = connection;
-    transaction = 0;
-}
-
-Connection::~Connection() {
-    if (internalConnection != 0) {
-        internalConnection->disconnect();
-        delete internalConnection;
-    }
+Connection::Connection(const std::string &connectionString) {
+    internalConnection = std::make_unique<pqxx::connection>(connectionString);
 }
 
 void Connection::beginTransaction() {
-    if (internalConnection == 0) {
+    if (!internalConnection) {
         throw std::domain_error(
             "Transaction not possible while internal connection is not set.");
     }
 
     rollbackTransaction();
-    transaction = new pqxx::transaction<>(*internalConnection);
-
+    transaction = std::make_unique<pqxx::transaction<>>(*internalConnection);
 };
 
 void Connection::commitTransaction() {
-    if (transaction != 0) {
+    if (transaction) {
         transaction->commit();
-        delete transaction;
-        transaction = 0;
+        transaction.reset();
     }
 };
 
 void Connection::rollbackTransaction() {
-    if (transaction != 0) {
+    if (transaction) {
         transaction->abort();
-        delete transaction;
-        transaction = 0;
+        transaction.reset();
     }
 };
 
-pqxx::transaction_base *Connection::getTransaction() {
-    return transaction;
+pqxx::result Connection::query(const std::string &query) {
+    if (transaction) {
+        return transaction->exec(query);
+    }
+
+    throw std::domain_error("No active transaction");
 }
+

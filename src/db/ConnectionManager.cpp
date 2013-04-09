@@ -54,10 +54,7 @@ PConnection ConnectionManager::getConnection() throw(std::logic_error) {
         throw std::logic_error("Connection Manager is not set up yet");
     }
 
-    boost::shared_ptr<Connection> connPtr(
-        new Connection(new pqxx::connection(connectionString)),
-        Connection::deleter()
-    );
+    auto connPtr = std::make_shared<Connection>(connectionString);
     return connPtr;
 }
 
