@@ -18,7 +18,7 @@
 
 
 #include "LuaItemScript.hpp"
-#include "fuse_ptr.hpp"
+#include "character_ptr.hpp"
 #include "Item.hpp"
 #include "Character.hpp"
 
@@ -44,33 +44,33 @@ void LuaItemScript::init_functions() {
 }
 
 void LuaItemScript::UseItem(Character *User, const ScriptItem &SourceItem, unsigned char ltastate) {
-    fuse_ptr<Character> fuse_User(User);
+    character_ptr fuse_User(User);
     callEntrypoint("UseItem", fuse_User, SourceItem, ltastate);
 }
 
 bool LuaItemScript::actionDisturbed(Character *performer, Character *disturber) {
-    fuse_ptr<Character> fuse_performer(performer);
-    fuse_ptr<Character> fuse_disturber(disturber);
+    character_ptr fuse_performer(performer);
+    character_ptr fuse_disturber(disturber);
     return callEntrypoint<bool>("actionDisturbed", fuse_performer, fuse_disturber);
 }
 
 void LuaItemScript::LookAtItem(Character *who, const ScriptItem &t_item) {
-    fuse_ptr<Character> fuse_who(who);
+    character_ptr fuse_who(who);
     callEntrypoint("LookAtItem", fuse_who, t_item);
 }
 
 bool LuaItemScript::MoveItemBeforeMove(Character *who, const ScriptItem &sourceItem, const ScriptItem &targetItem) {
-    fuse_ptr<Character> fuse_who(who);
+    character_ptr fuse_who(who);
     return callEntrypoint<bool>("MoveItemBeforeMove", fuse_who, sourceItem, targetItem);
 }
 
 void LuaItemScript::MoveItemAfterMove(Character *who, const ScriptItem &sourceItem, const ScriptItem &targetItem) {
-    fuse_ptr<Character> fuse_who(who);
+    character_ptr fuse_who(who);
     callEntrypoint("MoveItemAfterMove", fuse_who, sourceItem, targetItem);
 }
 
 void LuaItemScript::CharacterOnField(Character *who) {
-    fuse_ptr<Character> fuse_who(who);
+    character_ptr fuse_who(who);
     callEntrypoint("CharacterOnField", fuse_who);
 }
 

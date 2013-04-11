@@ -48,6 +48,7 @@
 #include "MilTimer.hpp"
 #include "MonitoringClients.hpp"
 #include "Scheduler.hpp"
+#include "character_ptr.hpp"
 
 #include "data/MonsterAttackTable.hpp"
 
@@ -969,7 +970,7 @@ public:
     //Liefert einen Zeiger auf einen Character
     //\param pos, die Position auf der sich der Character befinden soll
     //\return Zeiger auf den Character
-    fuse_ptr<Character> getCharacterOnField(const position &pos);
+    character_ptr getCharacterOnField(const position &pos);
 
     //Loescht ein ScriptItem
     //\ param Item, das Item welches geloescht werden soll
@@ -1007,8 +1008,8 @@ public:
     //Erzeugt ein Monster mit der entsprechenden ID auf dem Feld
     //\ param id, das Monster welches Erzeugt werden soll
     //\ param pos, die Position des Monsters
-    //\ return fuse_ptr<Character> Valid monster on success, invalid monster on failure
-    fuse_ptr<Character> createMonster(unsigned short id, const position &pos, short movepoints);
+    //\ return character_ptr Valid monster on success, invalid monster on failure
+    character_ptr createMonster(unsigned short id, const position &pos, short movepoints);
 
     //Zeigt eine Grafik auf einem bestimmten Feld an
     //\gfxid, ID der anzuzeigenden Grafik

@@ -20,6 +20,7 @@
 #include "WorldMap.hpp"
 #include "Map.hpp"
 
+#include <stdexcept>
 #include <boost/algorithm/string/replace.hpp>
 
 WorldMap::WorldMap() {

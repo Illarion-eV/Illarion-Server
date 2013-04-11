@@ -20,7 +20,7 @@
 
 #include "LuaLoginScript.hpp"
 #include "Character.hpp"
-#include "fuse_ptr.hpp"
+#include "character_ptr.hpp"
 
 LuaLoginScript::LuaLoginScript(const std::string &filename) throw(ScriptException)
     : LuaScript(filename) {
@@ -29,6 +29,6 @@ LuaLoginScript::LuaLoginScript(const std::string &filename) throw(ScriptExceptio
 LuaLoginScript::~LuaLoginScript() throw() {}
 
 void LuaLoginScript::onLogin(Character *cc) {
-    fuse_ptr<Character> fuse_cc(cc);
+    character_ptr fuse_cc(cc);
     callEntrypoint("onLogin", fuse_cc);
 }

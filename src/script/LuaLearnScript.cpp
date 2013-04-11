@@ -21,7 +21,7 @@
 #include "LuaLearnScript.hpp"
 #include "Character.hpp"
 #include <string>
-#include "fuse_ptr.hpp"
+#include "character_ptr.hpp"
 
 LuaLearnScript::LuaLearnScript(const std::string &filename) throw(ScriptException)
     : LuaScript(filename) {
@@ -30,12 +30,12 @@ LuaLearnScript::LuaLearnScript(const std::string &filename) throw(ScriptExceptio
 LuaLearnScript::~LuaLearnScript() throw() {}
 
 void LuaLearnScript::learn(Character *cc, TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opponent) {
-    fuse_ptr<Character> fuse_cc(cc);
+    character_ptr fuse_cc(cc);
     callEntrypoint("learn", fuse_cc, skill, actionPoints, opponent);
 }
 
 void LuaLearnScript::reduceMC(Character *cc) {
-    fuse_ptr<Character> fuse_cc(cc);
+    character_ptr fuse_cc(cc);
     callEntrypoint("reduceMC", fuse_cc);
 }
 

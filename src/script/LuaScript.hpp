@@ -31,7 +31,7 @@ extern "C" {
 #include "Logger.hpp"
 #include <luabind/luabind.hpp>
 #include <luabind/object.hpp>
-#include "fuse_ptr.hpp"
+#include "character_ptr.hpp"
 #include <map>
 #include <cxxabi.h>
 

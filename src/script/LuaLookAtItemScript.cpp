@@ -21,7 +21,7 @@
 #include "LuaLookAtItemScript.hpp"
 #include "Character.hpp"
 #include "Item.hpp"
-#include "fuse_ptr.hpp"
+#include "character_ptr.hpp"
 
 LuaLookAtItemScript::LuaLookAtItemScript(const std::string &filename) throw(ScriptException)
     : LuaScript(filename) {
@@ -30,7 +30,7 @@ LuaLookAtItemScript::LuaLookAtItemScript(const std::string &filename) throw(Scri
 LuaLookAtItemScript::~LuaLookAtItemScript() throw() {}
 
 bool LuaLookAtItemScript::lookAtItem(Character *character, const ScriptItem &item) {
-    fuse_ptr<Character> fuse_character(character);
+    character_ptr fuse_character(character);
     return callEntrypoint<bool>("lookAtItem", fuse_character, item);
 }
 

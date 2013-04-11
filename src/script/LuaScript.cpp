@@ -52,7 +52,7 @@ extern "C" {
 #include "LongTimeCharacterEffects.hpp"
 #include "Logger.hpp"
 #include "WaypointList.hpp"
-#include "fuse_ptr.hpp"
+#include "character_ptr.hpp"
 #include "Random.hpp"
 #include "Config.hpp"
 
@@ -1043,7 +1043,7 @@ void LuaScript::init_base_functions() {
             luabind::def("uniform", (int( *)(int, int)) &Random::uniform),
             luabind::def("normal", &Random::normal)
         ],
-        luabind::def("isValidChar", &isValid<Character>),
+        luabind::def("isValidChar", &isValid),
         luabind::def("debug", &LuaScript::writeDebugMsg),
         luabind::def("log", log_lua),
         luabind::def("isTestserver", &LuaScript::isTestserver)

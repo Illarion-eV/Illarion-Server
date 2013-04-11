@@ -20,7 +20,7 @@
 
 #include "LuaQuestScript.hpp"
 #include "Character.hpp"
-#include "fuse_ptr.hpp"
+#include "character_ptr.hpp"
 
 LuaQuestScript::LuaQuestScript(const std::string &filename, TYPE_OF_QUEST_ID quest) throw(ScriptException)
     : LuaScript(filename), quest(quest) {
@@ -29,19 +29,19 @@ LuaQuestScript::LuaQuestScript(const std::string &filename, TYPE_OF_QUEST_ID que
 LuaQuestScript::~LuaQuestScript() throw() {}
 
 std::string LuaQuestScript::title(Character *user) {
-    fuse_ptr<Character> fuse_user(user);
+    character_ptr fuse_user(user);
     return callEntrypoint<std::string>("QuestTitle", fuse_user);
 }
 
 std::string LuaQuestScript::description(Character *user, TYPE_OF_QUESTSTATUS status) {
-    fuse_ptr<Character> fuse_user(user);
+    character_ptr fuse_user(user);
     return callEntrypoint<std::string>("QuestDescription", fuse_user, status);
 }
 
 void LuaQuestScript::targets(Character *user, TYPE_OF_QUESTSTATUS status, std::vector<position> &targets) {
     using namespace luabind;
     targets.clear();
-    fuse_ptr<Character> fuse_user(user);
+    character_ptr fuse_user(user);
     auto luaTargets = callEntrypoint<object>("QuestTargets", fuse_user, status);
 
     try {

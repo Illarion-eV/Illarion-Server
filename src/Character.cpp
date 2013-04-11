@@ -23,7 +23,7 @@
 #include <map>
 #include <algorithm>
 
-#include "fuse_ptr.hpp"
+#include "character_ptr.hpp"
 #include "a_star.hpp"
 #include "Container.hpp"
 #include "Player.hpp"
@@ -188,9 +188,6 @@ Character::Character(const appearance &appearance) : effects(this), waypoints(th
 }
 
 Character::~Character() {
-    //blow lua fuse for this char
-    fuse_ptr<Character>::blow_fuse(this);
-
     if (backPackContents) {
         delete backPackContents;
         backPackContents = nullptr;

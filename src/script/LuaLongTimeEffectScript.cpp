@@ -23,7 +23,7 @@
 #include "luabind/luabind.hpp"
 #include "Character.hpp"
 #include "LongTimeEffect.hpp"
-#include "fuse_ptr.hpp"
+#include "character_ptr.hpp"
 
 LuaLongTimeEffectScript::LuaLongTimeEffectScript(const std::string &filename, const LongTimeEffectStruct &effectStruct) throw(ScriptException)
     : LuaScript(filename), _effectStruct(effectStruct) {
@@ -38,27 +38,27 @@ void LuaLongTimeEffectScript::init_functions() {
 }
 
 bool LuaLongTimeEffectScript::callEffect(LongTimeEffect *effect, Character *target) {
-    fuse_ptr<Character> fuse_target(target);
+    character_ptr fuse_target(target);
     return callEntrypoint<bool>("callEffect", effect, fuse_target);
 }
 
 void LuaLongTimeEffectScript::doubleEffect(LongTimeEffect *effect, Character *target) {
-    fuse_ptr<Character> fuse_target(target);
+    character_ptr fuse_target(target);
     callEntrypoint("doubleEffect", effect, fuse_target);
 }
 
 void LuaLongTimeEffectScript::loadEffect(LongTimeEffect *effect, Character *target) {
-    fuse_ptr<Character> fuse_target(target);
+    character_ptr fuse_target(target);
     callEntrypoint("loadEffect", effect, fuse_target);
 }
 
 void LuaLongTimeEffectScript::addEffect(LongTimeEffect *effect, Character *target) {
-    fuse_ptr<Character> fuse_target(target);
+    character_ptr fuse_target(target);
     callEntrypoint("addEffect", effect, fuse_target);
 }
 
 void LuaLongTimeEffectScript::removeEffect(LongTimeEffect *effect, Character *target) {
-    fuse_ptr<Character> fuse_target(target);
+    character_ptr fuse_target(target);
     callEntrypoint("removeEffect", effect, fuse_target);
 }
 

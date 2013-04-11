@@ -27,7 +27,7 @@
 #include "Map.hpp"
 #include "MonitoringClients.hpp"
 #include "Logger.hpp"
-#include "fuse_ptr.hpp"
+#include "character_ptr.hpp"
 
 #include "data/Data.hpp"
 #include "data/NaturalArmorTable.hpp"
@@ -257,8 +257,8 @@ bool World::isCharacterOnField(const position &pos) {
     }
 }
 
-fuse_ptr<Character> World::getCharacterOnField(const position &pos) {
-    return fuse_ptr<Character>(findCharacterOnField(pos));
+character_ptr World::getCharacterOnField(const position &pos) {
+    return character_ptr(findCharacterOnField(pos));
 }
 
 bool World::erase(ScriptItem item, int amount) {
@@ -456,7 +456,7 @@ bool World::createFromItem(ScriptItem item, const position &pos, bool always) {
     return false;
 }
 
-fuse_ptr<Character> World::createMonster(unsigned short id, const position &pos, short movepoints) {
+character_ptr World::createMonster(unsigned short id, const position &pos, short movepoints) {
     Field *field;
 
     if (GetPToCFieldAt(field, pos)) {
@@ -469,18 +469,18 @@ fuse_ptr<Character> World::createMonster(unsigned short id, const position &pos,
             newMonsters.push_back(newMonster);
             field->setChar();
             sendCharacterMoveToAllVisiblePlayers(newMonster, NORMALMOVE, 4);
-            return fuse_ptr<Character>(newMonster);
+            return character_ptr(newMonster);
 
         } catch (Monster::unknownIDException &) {
             Logger::error(LogFacility::Script) << "World::createMonster: Failed to create monster with unknown id " << id << "!" << Log::end;
-            return fuse_ptr<Character>();
+            return character_ptr();
         }
     } else {
         logMissingField("createMonster", pos);
-        return fuse_ptr<Character>();
+        return character_ptr();
     }
 
-    return fuse_ptr<Character>();
+    return character_ptr();
 }
 
 void World::gfx(unsigned short int gfxid, const position &pos) {

@@ -27,7 +27,7 @@
 
 #include "types.hpp"
 #include "globals.hpp"
-#include "fuse_ptr.hpp"
+#include "character_ptr.hpp"
 
 class Character;
 class Container;
@@ -347,8 +347,8 @@ public:
     position pos;
     unsigned char itempos;
     Character *owner;
-    fuse_ptr<Character> getOwnerForLua() {
-        fuse_ptr<Character> fuse_owner(owner);
+    character_ptr getOwnerForLua() {
+        character_ptr fuse_owner(owner);
         return fuse_owner;
     };
     Container *inside;

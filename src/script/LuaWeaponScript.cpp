@@ -20,7 +20,7 @@
 
 #include "LuaWeaponScript.hpp"
 #include "Character.hpp"
-#include "fuse_ptr.hpp"
+#include "character_ptr.hpp"
 
 LuaWeaponScript::LuaWeaponScript(const std::string &filename) throw(ScriptException)
     : LuaScript(filename) {
@@ -33,8 +33,8 @@ LuaWeaponScript::LuaWeaponScript(const std::string &filename, const WeaponStruct
 LuaWeaponScript::~LuaWeaponScript() throw() {}
 
 void LuaWeaponScript::onAttack(Character *Attacker, Character *Defender) {
-    fuse_ptr<Character> fuse_Attacker(Attacker);
-    fuse_ptr<Character> fuse_Defender(Defender);
+    character_ptr fuse_Attacker(Attacker);
+    character_ptr fuse_Defender(Defender);
     callEntrypoint("onAttack", fuse_Attacker, fuse_Defender);
 }
 

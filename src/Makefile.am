@@ -32,7 +32,7 @@ SUBDIRS = script .
 BUILT_SOURCES = version.hpp
 
 libserver_la_SOURCES = \
-main_help.cpp utility.cpp Logger.cpp Random.cpp Config.cpp a_star.cpp \
+main_help.cpp utility.cpp Logger.cpp Random.cpp Config.cpp a_star.cpp character_ptr.cpp \
 \
 data/Data.cpp data/QuestNodeTable.cpp data/QuestTable.cpp \
 data/ArmorObjectTable.cpp data/CommonObjectTable.cpp data/ContainerObjectTable.cpp data/RaceSizeTable.cpp \
@@ -107,7 +107,7 @@ noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
 		 netinterface/protocol/ClientCommands.hpp \
 		 netinterface/protocol/ServerCommands.hpp WaypointList.hpp \
 		 Config.hpp Timer.hpp constants.hpp types.hpp \
-		 LongTimeCharacterEffects.hpp LongTimeAction.hpp fuse_ptr.hpp \
+		 LongTimeCharacterEffects.hpp LongTimeAction.hpp character_ptr.hpp \
 		 Player.hpp SpawnPoint.hpp LongTimeEffect.hpp Monster.hpp
 
 version.hpp: $(HEADERS) $(SOURCES) $(top_builddir)/src/script/libscriptbinding.la

@@ -554,5 +554,4 @@ private:
 
 std::ostream &operator<<(std::ostream &os, const Character &character);
 
-
 #endif
