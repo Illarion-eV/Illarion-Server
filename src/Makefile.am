@@ -45,7 +45,7 @@ WorldMap.cpp Container.cpp NewClientView.cpp Item.cpp Showcase.cpp Field.cpp Spa
 \
 World.cpp \
 WorldIMPLAdmin.cpp WorldIMPLCharacterMoves.cpp WorldIMPLItemMoves.cpp WorldIMPLTalk.cpp \
-WorldIMPLTools.cpp WorldIMPLScriptHelp.cpp WorldIMPLPlayer.cpp WorldIMPLMonCommands.cpp \
+WorldIMPLTools.cpp WorldIMPLScriptHelp.cpp WorldIMPLPlayer.cpp \
 \
 Timer.cpp MilTimer.cpp \
 LongTimeEffect.cpp LongTimeAction.cpp LongTimeCharacterEffects.cpp Scheduler.cpp \
@@ -62,7 +62,9 @@ db/QueryAssign.cpp db/QueryWhere.cpp db/QueryColumns.cpp db/QueryTables.cpp db/S
 \
 netinterface/NetInterface.cpp InitialConnection.cpp netinterface/CommandFactory.cpp MonitoringClients.cpp \
 netinterface/BasicCommand.cpp netinterface/BasicServerCommand.cpp netinterface/BasicClientCommand.cpp \
-netinterface/protocol/ServerCommands.cpp netinterface/protocol/ClientCommands.cpp netinterface/ByteBuffer.cpp
+netinterface/protocol/ServerCommands.cpp netinterface/protocol/ClientCommands.cpp netinterface/ByteBuffer.cpp \
+netinterface/protocol/BBIWIServerCommands.cpp netinterface/protocol/BBIWIClientCommands.cpp
+
 libserver_la_LIBADD = $(top_builddir)/src/script/libscriptbinding.la
 
 testserver_SOURCES = main.cpp

@@ -67,8 +67,6 @@ CommandFactory::CommandFactory() {
     templateList[BB_SERVERCOMMAND_TS ] = std::make_unique<BBServerCommandTS>();
     templateList[BB_WARPPLAYER_TS ] = std::make_unique<BBWarpPlayerTS>();
     templateList[BB_SPEAKAS_TS ] = std::make_unique<BBSpeakAsTS>();
-    templateList[BB_REQUESTSTATS_TS ] = std::make_unique<BBRequestStatTS>();
-    templateList[BB_REQUESTSKILLS_TS ] = std::make_unique<BBRequestSkillsTS>();
 
     for (int i = C_IMOVERSTART_TS; i <= C_IMOVEREND_TS; ++i) {
         templateList[i] = std::make_unique<IMoverActionTS>(i - C_IMOVERSTART_TS);

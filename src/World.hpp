@@ -350,13 +350,6 @@ public:
     static World *get() throw(std::runtime_error);
 
 
-
-    /**=============CWorldIMPLMonCommands.cpp===============*/
-    void montool_kill_command(Player *c);
-    void montool_reload_command(Player *c);
-    void montool_kickall_command(Player *c);
-    void montool_set_login(Player *c, const std::string &st);
-
     /**============ WorldIMPLTools.cpp ==================*/
 
     /**
@@ -1071,7 +1064,7 @@ public:
     *@param msg the message string which should be sended
     *@param id the id of the msg ( 1 are message which displayed in a window 0 basic message)
     */
-    void sendMonitoringMessage(const std::string &msg, unsigned char id);
+    void sendMonitoringMessage(const std::string &msg, unsigned char id = 0);
 
     /**
      * bans a player for the bantime
@@ -1080,6 +1073,8 @@ public:
      * @gmid the id of the gm which has banned the player
      */
     void ban(Player *cp, int bantime, TYPE_OF_CHARACTER_ID gmid);
+
+    void set_login(Player *player, const std::string &text);
 
 protected:
     World() = default; // used for testcases
@@ -1165,9 +1160,6 @@ private:
     // Send player information to GMs
     void who_command(Player *cp, const std::string &tplayer);
 
-    // Ban a player
-    void ban_command(Player *cp, const std::string &timeplayer);
-
     // Change tile in front of admin
     void tile_command(Player *cp, const std::string &ttilenumber);
 
@@ -1195,6 +1187,7 @@ private:
     bool gmpage_command(Player *player, const std::string &ticket);
 
 public:
+    void ban_command(Player *cp, const std::string &timeplayer);
     void logGMTicket(Player *Player, const std::string &ticket, bool automatic);
 
 private:

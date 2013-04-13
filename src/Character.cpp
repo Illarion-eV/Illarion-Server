@@ -685,10 +685,10 @@ bool Character::attack(Character *target) {
 
         if (getType() == player) {
             if (target->IsAlive()) {
-                ServerCommandPointer cmd = std::make_shared<BBSendActionTC>(id, name, 1 , "Attacks : " + target->to_string());
+                ServerCommandPointer cmd = std::make_shared<BBSendActionTC>(id, 1 , "Attacks : " + target->to_string());
                 _world->monitoringClientList->sendCommand(cmd);
             } else {
-                ServerCommandPointer cmd = std::make_shared<BBSendActionTC>(id, name, 1 , "Killed : " + target->to_string());
+                ServerCommandPointer cmd = std::make_shared<BBSendActionTC>(id, 1 , "Killed : " + target->to_string());
                 _world->monitoringClientList->sendCommand(cmd);
             }
         }
@@ -1266,7 +1266,7 @@ void Character::talk(talk_type tt, const std::string &message) { //only for say,
 
         Logger::info(LogFacility::Chat) << *this << " " << talkType << ": " << message << Log::end;
 #endif
-        ServerCommandPointer cmd = std::make_shared<BBTalkTC>(id ,name, static_cast<unsigned char>(tt), message);
+        ServerCommandPointer cmd = std::make_shared<BBTalkTC>(id, static_cast<unsigned char>(tt), message);
         _world->monitoringClientList->sendCommand(cmd);
     }
 }

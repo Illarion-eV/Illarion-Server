@@ -104,7 +104,7 @@ void World::InitGMCommands() {
 
     GMCommands["create_area"] = [](World *world, Player *player, const std::string &text) -> bool { create_area_command(world, player, text); return true; };
 
-    GMCommands["nologin"] = [](World *world, Player *player, const std::string &text) -> bool { set_login(world, player, text); return true; };
+    GMCommands["login"] = [](World *world, Player *player, const std::string &text) -> bool { world->set_login(player, text); return true; };
 
     GMCommands["forceintroduce"] = [](World *world, Player *player, const std::string &text) -> bool { world->ForceIntroduce(player, text); return true; };
     GMCommands["fi"] = GMCommands["forceintroduce"];
@@ -216,12 +216,16 @@ void World::kill_command(Player *cp) {
         ++counter;
     });
 
-    Logger::info(LogFacility::Admin) << *cp << " nukes " << counter << " monsters" << Log::end;
+    std::string message = cp->to_string() + " nukes " + std::to_string(counter) + " monsters";
+    Logger::info(LogFacility::Admin) << message << Log::end;
+    sendMonitoringMessage(message);
 }
 
 void World::reload_command(Player *cp) {
     if (cp->hasGMRight(gmr_reload)) {
-        Logger::info(LogFacility::Admin) << *cp << " issues a full reload" << Log::end;
+        std::string message = cp->to_string() + " issues a full reload";
+        Logger::info(LogFacility::Admin) << message << Log::end;
+        sendMonitoringMessage(message);
 
         if (reload_tables(cp)) {
             cp->inform("DB tables loaded successfully!");
@@ -231,18 +235,22 @@ void World::reload_command(Player *cp) {
     }
 }
 
-void World::broadcast_command(Player *cp,const std::string &message) {
+void World::broadcast_command(Player *cp, const std::string &message) {
     if (cp->hasGMRight(gmr_broadcast)) {
+        std::string logMsg = cp->to_string() + " broadcasts: " + message;
 #ifdef LOG_TALK
-        Logger::info(LogFacility::Player) << *cp << " broadcasts: " << message << Log::end;
+        Logger::info(LogFacility::Player) << logMsg << Log::end;
 #endif
+        sendMonitoringMessage(logMsg);
         sendMessageToAllPlayers(message);
     }
 }
 
 void World::kickall_command(Player *cp) {
     if (cp->hasGMRight(gmr_forcelogout)) {
-        Logger::info(LogFacility::Admin) << *cp << " kicks all players" << Log::end;
+        std::string message = cp->to_string() + " kicks all players";
+        Logger::info(LogFacility::Admin) << message << Log::end;
+        sendMonitoringMessage(message);
         forceLogoutOfAllPlayers();
     }
 }
@@ -399,7 +407,10 @@ void World::forceLogoutOfAllPlayers() {
             tempf->SetPlayerOnField(false);
         }
 
-        Logger::info(LogFacility::Admin) << "--- kicked: " << *player << Log::end;
+        std::string message = "--- kicked: ";
+        message = message + player->to_string();
+        Logger::info(LogFacility::Admin) << message << Log::end;
+        sendMonitoringMessage(message);
         ServerCommandPointer cmd = std::make_shared<LogOutTC>(SERVERSHUTDOWN);
         player->Connection->shutdownSend(cmd);
         PlayerManager::get().getLogOutPlayers().non_block_push_back(player);
@@ -413,7 +424,10 @@ bool World::forceLogoutOfPlayer(const std::string &name) {
     Player *temp = Players.find(name);
 
     if (temp) {
-        Logger::info(LogFacility::Admin) << "--- kicked: " << *temp << Log::end;
+        std::string message = "--- kicked: ";
+        message = message + temp->to_string();
+        Logger::info(LogFacility::Admin) << message << Log::end;
+        sendMonitoringMessage(message);
         ServerCommandPointer cmd = std::make_shared<LogOutTC>(BYGAMEMASTER);
         temp->Connection->shutdownSend(cmd);
         return true;
@@ -501,8 +515,10 @@ void World::ban_command(Player *cp, const std::string &text) {
         if (target) {
             if (match[1].str().empty()) {
                 ban(target, 0, cp->getId());
-                Logger::info(LogFacility::Admin) << *cp << " bans player " << *target << " indefinately" << Log::end;
-                std::string message = "*** Banned player " + target->to_string() + " indefinately";
+                std::string message = cp->to_string() + " bans player " + target->to_string() + " indefinately";
+                Logger::info(LogFacility::Admin) << message << Log::end;
+                sendMonitoringMessage(message);
+                message = "*** Banned player " + target->to_string() + " indefinately";
                 cp->inform(message);
             } else {
                 try {
@@ -523,8 +539,10 @@ void World::ban_command(Player *cp, const std::string &text) {
                         break;
                     }
 
-                    Logger::info(LogFacility::Admin) << *cp << " bans player " << *target << " for " << duration << timeunit << Log::end;
-                    std::string message = "*** Banned player " + target->to_string() + " for " + match[1].str() + match[2].str();
+                    std::string message = cp->to_string() + " bans player " + target->to_string() + " for " + std::to_string(duration) + timeunit;
+                    Logger::info(LogFacility::Admin) << message << Log::end;
+                    sendMonitoringMessage(message);
+                    message = "*** Banned player " + target->to_string() + " for " + match[1].str() + match[2].str();
                     cp->inform(message);
                 } catch (boost::bad_lexical_cast &) {
                     cp->inform("*** Invalid duration, player not banned!");
@@ -874,7 +892,7 @@ void World::gmhelp_command(Player *cp) {
     }
 
     if (cp->hasGMRight(gmr_loginstate)) {
-        tmessage = "!nologin <true|false> - changes the login state, with true only gm's can log in.";
+        tmessage = "!login <true|false> - changes the login state, with false only gm's can log in.";
         cp->inform(tmessage);
     }
 
@@ -1147,22 +1165,24 @@ void create_area_command(World *world, Player *player,const std::string &params)
 
 }
 
-void set_login(World *world, Player *player, const std::string &st) {
+void World::set_login(Player *player, const std::string &text) {
     if (!player->hasGMRight(gmr_loginstate)) {
         return;
     }
 
     bool enable = true;
 
-    if (st == "true") {
+    if (text == "false") {
         enable = false;
     }
 
-    world->allowLogin(enable);
-    Logger::info(LogFacility::Admin) << *player << " set allowLogin to " << enable << Log::end;
-    std::string tmessage = "nologin set to: ";
-    tmessage += enable ? "false" : "true";
-    player->inform(tmessage);
+    allowLogin(enable);
+    std::string message = player->to_string() + " set login flag to " + (enable ? "true" : "false");
+    Logger::info(LogFacility::Admin) << message << Log::end;
+    sendMonitoringMessage(message);
+    message = "login flag set to: ";
+    message += enable ? "true" : "false";
+    player->inform(message);
 }
 
 bool World::exportMaps(Player *cp) {

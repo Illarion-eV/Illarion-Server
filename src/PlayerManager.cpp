@@ -174,7 +174,7 @@ void PlayerManager::playerSaveLoop(PlayerManager *pmanager) {
                             tmpPl->save();
                         }
                         tmpPl->Connection->closeConnection();
-                        ServerCommandPointer cmd = std::make_shared<BBLogOutTC>(tmpPl->getId(), tmpPl->getName());
+                        ServerCommandPointer cmd = std::make_shared<BBLogOutTC>(tmpPl->getId());
                         world->monitoringClientList->sendCommand(cmd);
                         delete tmpPl;
                         tmpPl = nullptr;

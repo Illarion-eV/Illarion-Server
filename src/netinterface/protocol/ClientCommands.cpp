@@ -942,7 +942,7 @@ void UseTS::performAction(Player *player) {
         }
     }
 
-    ServerCommandPointer cmd = std::make_shared<BBSendActionTC>(player->getId(), player->getName(), 3,msg);
+    ServerCommandPointer cmd = std::make_shared<BBSendActionTC>(player->getId(), 3,msg);
     World::get()->monitoringClientList->sendCommand(cmd);
 }
 

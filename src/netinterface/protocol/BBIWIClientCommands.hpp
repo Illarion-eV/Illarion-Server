@@ -17,538 +17,149 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef _BBIWI_CLIENT_COMMANDS_HPP
-#define _BBIWI_CLIENT_COMMANDS_HPP
-
-/**
-*@defgroup BBIWIClientcommands BBIWI Clientcommands
-*@ingroup Netinterface
-*commands which are sended from the BBIWI client
-*/
-
-
-#include "Player.hpp"
-#include "World.hpp"
-#include "Logger.hpp"
-#include "MonitoringClients.hpp"
+#ifndef _BBIWI_CLIENT_COMMANDS_HPP_
+#define _BBIWI_CLIENT_COMMANDS_HPP_
 
 #include "netinterface/BasicClientCommand.hpp"
-#include "netinterface/protocol/BBIWIServerCommands.hpp"
+#include "types.hpp"
 
-/**
-* @ingroup BBIWIClientcommands
-* defines the definition bytes for the different bbiwi commands
-*/
+class Player;
+
 enum bbclientcommands {
-    BB_KEEPALIVE_TS = 0x01, /*< a keepalive from client is received */
-    BB_BROADCAST_TS = 0x02, /*< a broadcast from the cliet is received */
-    BB_DISCONNECT_TS = 0x03, /*< a the monitoring client disconnects*/
-    BB_BAN_TS = 0x04, /*< player should be banned*/
-    BB_TALKTO_TS = 0x05, /*< talk directly to a player*/
-    BB_CHANGEATTRIB_TS = 0x06, /*< change a attribute*/
-    BB_CHANGESKILL_TS = 0x07, /*< change a skill*/
-    BB_SERVERCOMMAND_TS = 0x08, /*< a servercommand like reload*/
-    BB_WARPPLAYER_TS = 0x09, /*< a warp player to a special position*/
-    BB_SPEAKAS_TS = 0x0A, /*< talk as the player*/
-    BB_REQUESTSTATS_TS = 0x0B,
-    BB_REQUESTSKILLS_TS = 0x0C
+    BB_KEEPALIVE_TS = 0x01,
+    BB_BROADCAST_TS = 0x02,
+    BB_DISCONNECT_TS = 0x03,
+    BB_BAN_TS = 0x04,
+    BB_TALKTO_TS = 0x05,
+    BB_CHANGEATTRIB_TS = 0x06,
+    BB_CHANGESKILL_TS = 0x07,
+    BB_SERVERCOMMAND_TS = 0x08,
+    BB_WARPPLAYER_TS = 0x09,
+    BB_SPEAKAS_TS = 0x0A
 };
 
-/**
-* @ingroup BBIWIClientcommands
-* client send a broadcast to all players
-*/
 class BBBroadCastTS : public BasicClientCommand {
-public:
-    BBBroadCastTS() : BasicClientCommand(BB_BROADCAST_TS) {
-    }
-
-    virtual ~BBBroadCastTS() {};
-
-    virtual void decodeData() override {
-        msg = getStringFromBuffer();
-    }
-
-    virtual void performAction(Player *player) override {
-        World::get()->sendMessageToAllPlayers(msg);
-        World::get()->monitoringClientList->sendCommand(std::make_shared<BBMessageTC>("[Server] Broadcast:",0));
-        World::get()->monitoringClientList->sendCommand(std::make_shared<BBMessageTC>(msg, 0));
-        std::string message = "By: " + player->to_string();
-        World::get()->monitoringClientList->sendCommand(std::make_shared<BBMessageTC>(message,0));
-    }
-
-    virtual ClientCommandPointer clone() override {
-        ClientCommandPointer cmd = std::make_shared<BBBroadCastTS>();
-        return cmd;
-    }
-
     std::string msg;
 
-};
-
-/**
-* @ingroup BBIWIClientcommands
-* client send a special command
-*/
-class BBRequestStatTS : public BasicClientCommand {
 public:
-    BBRequestStatTS() : BasicClientCommand(BB_REQUESTSTATS_TS) {
-    }
+    BBBroadCastTS();
+    virtual ~BBBroadCastTS();
 
-    virtual ~BBRequestStatTS() {};
-
-    virtual void decodeData() override {
-        id = getIntFromBuffer();
-        name = getStringFromBuffer();
-    }
-
-    virtual void performAction(Player *player) override {
-        Player *tempPlayer = World::get()->Players.find(name);
-
-        if (!tempPlayer) {
-            tempPlayer = World::get()->Players.find(id);
-        }
-
-        if (tempPlayer) {
-            ServerCommandPointer cmd = std::make_shared<BBSendAttribTC>(tempPlayer->getId(), "sex", tempPlayer->increaseAttrib("sex",0));
-            player->Connection->addCommand(cmd);
-            cmd = std::make_shared<BBSendAttribTC>(tempPlayer->getId(), "age", tempPlayer->increaseAttrib("age",0));
-            player->Connection->addCommand(cmd);
-            cmd = std::make_shared<BBSendAttribTC>(tempPlayer->getId(), "weight", tempPlayer->increaseAttrib("weight",0));
-            player->Connection->addCommand(cmd);
-            cmd = std::make_shared<BBSendAttribTC>(tempPlayer->getId(), "body_height", tempPlayer->increaseAttrib("body_height",0));
-            player->Connection->addCommand(cmd);
-            cmd = std::make_shared<BBSendAttribTC>(tempPlayer->getId(), "attitude", tempPlayer->increaseAttrib("attitude",0));
-            player->Connection->addCommand(cmd);
-            cmd = std::make_shared<BBSendAttribTC>(tempPlayer->getId(), "luck", tempPlayer->increaseAttrib("luck",0));
-            player->Connection->addCommand(cmd);
-            cmd = std::make_shared<BBSendAttribTC>(tempPlayer->getId(), "strength", tempPlayer->increaseAttrib("strength",0));
-            player->Connection->addCommand(cmd);
-            cmd = std::make_shared<BBSendAttribTC>(tempPlayer->getId(), "dexterity", tempPlayer->increaseAttrib("dexterity",0));
-            player->Connection->addCommand(cmd);
-            cmd = std::make_shared<BBSendAttribTC>(tempPlayer->getId(), "constitution", tempPlayer->increaseAttrib("constitution",0));
-            player->Connection->addCommand(cmd);
-            cmd = std::make_shared<BBSendAttribTC>(tempPlayer->getId(), "intelligence", tempPlayer->increaseAttrib("intelligence",0));
-            player->Connection->addCommand(cmd);
-            cmd = std::make_shared<BBSendAttribTC>(tempPlayer->getId(), "perception", tempPlayer->increaseAttrib("perception",0));
-            player->Connection->addCommand(cmd);
-            cmd = std::make_shared<BBSendAttribTC>(tempPlayer->getId(), "age", tempPlayer->increaseAttrib("age",0));
-            player->Connection->addCommand(cmd);
-            cmd = std::make_shared<BBSendAttribTC>(tempPlayer->getId(), "willpower", tempPlayer->increaseAttrib("willpower",0));
-            player->Connection->addCommand(cmd);
-            cmd = std::make_shared<BBSendAttribTC>(tempPlayer->getId(), "essence", tempPlayer->increaseAttrib("essence",0));
-            player->Connection->addCommand(cmd);
-            cmd = std::make_shared<BBSendAttribTC>(tempPlayer->getId(), "agility", tempPlayer->increaseAttrib("agility",0));
-            player->Connection->addCommand(cmd);
-
-        }
-    }
-
-    virtual ClientCommandPointer clone() override {
-        ClientCommandPointer cmd = std::make_shared<BBRequestStatTS>();
-        return cmd;
-    }
-
-    TYPE_OF_CHARACTER_ID id;
-    std::string name;
+    virtual void decodeData() override;
+    virtual void performAction(Player *player) override;
+    virtual ClientCommandPointer clone() override;
 };
 
-
-/**
-* @ingroup BBIWIClientcommands
-* client requests all skills of another player
-*/
-class BBRequestSkillsTS : public BasicClientCommand {
-public:
-    BBRequestSkillsTS() : BasicClientCommand(BB_REQUESTSKILLS_TS) {
-    }
-
-    virtual ~BBRequestSkillsTS() {};
-
-    virtual void decodeData() override {
-        id = getIntFromBuffer();
-        name = getStringFromBuffer();
-    }
-
-    virtual void performAction(Player *player) override {
-        Player *tempPlayer = World::get()->Players.find(name);
-
-        if (!tempPlayer) {
-            tempPlayer = World::get()->Players.find(id);
-        }
-
-        if (tempPlayer) {
-            for (const auto &skill : tempPlayer->skills) {
-                ServerCommandPointer cmd = std::make_shared<BBSendSkillTC>(tempPlayer->getId(), skill.first, skill.second.major, skill.second.minor);
-                player->Connection->addCommand(cmd);
-            }
-        }
-    }
-
-    virtual ClientCommandPointer clone() override {
-        ClientCommandPointer cmd = std::make_shared<BBRequestSkillsTS>();
-        return cmd;
-    }
-
-    TYPE_OF_CHARACTER_ID id;
-    std::string name;
-};
-
-
-/**
-* @ingroup BBIWIClientcommands
-* client wants to speak as a player
-*/
 class BBSpeakAsTS : public BasicClientCommand {
-public:
-    BBSpeakAsTS() : BasicClientCommand(BB_SPEAKAS_TS) {
-    }
-
-    virtual ~BBSpeakAsTS() {};
-
-    virtual void decodeData() override {
-        id = getIntFromBuffer();
-        name = getStringFromBuffer();
-        message = getStringFromBuffer();
-    }
-
-    virtual void performAction(Player *player) override {
-        Player *tempPlayer = World::get()->Players.find(name);
-
-        if (!tempPlayer) {
-            tempPlayer = World::get()->Players.find(id);
-        }
-
-        if (tempPlayer) {
-            tempPlayer->talk(Character::tt_say,message);
-            Logger::info(LogFacility::Admin) << player->to_string() << " talked as other player: " << tempPlayer->to_string() << " with message: " << message << Log::end;
-        }
-    }
-
-    virtual ClientCommandPointer clone() override {
-        ClientCommandPointer cmd = std::make_shared<BBSpeakAsTS>();
-        return cmd;
-    }
-
     TYPE_OF_CHARACTER_ID id;
-    std::string name;
     std::string message;
+    
+public:
+    BBSpeakAsTS();
+    virtual ~BBSpeakAsTS();
 
+    virtual void decodeData() override;
+    virtual void performAction(Player *player) override;
+    virtual ClientCommandPointer clone() override;
 };
 
-
-
-/**
-* @ingroup BBIWIClientcommands
-* client wants a player to warp
-*/
 class BBWarpPlayerTS : public BasicClientCommand {
-public:
-    BBWarpPlayerTS() : BasicClientCommand(BB_WARPPLAYER_TS) {
-    }
-
-    virtual ~BBWarpPlayerTS() {};
-
-    virtual void decodeData() override {
-        id = getIntFromBuffer();
-        name = getStringFromBuffer();
-        posx = getIntFromBuffer();
-        posy = getIntFromBuffer();
-        posz = getIntFromBuffer();
-    }
-
-    virtual void performAction(Player *player) override {
-        Player *tempPlayer = World::get()->Players.find(name);
-
-        if (!tempPlayer) {
-            tempPlayer = World::get()->Players.find(id);
-        }
-
-        if (tempPlayer) {
-            tempPlayer->Warp(position(posx,posy,posz));
-        }
-    }
-
-    virtual ClientCommandPointer clone() override {
-        ClientCommandPointer cmd = std::make_shared<BBWarpPlayerTS>();
-        return cmd;
-    }
-
     TYPE_OF_CHARACTER_ID id;
-    std::string name;
-    int32_t posx,posy,posz;
+    int16_t posx, posy, posz;
 
+public:
+    BBWarpPlayerTS();
+    virtual ~BBWarpPlayerTS();
+
+    virtual void decodeData() override;
+    virtual void performAction(Player *player) override;
+    virtual ClientCommandPointer clone() override;
 };
 
-/**
-* @ingroup BBIWIClientcommands
-* client send a special command
-*/
 class BBServerCommandTS : public BasicClientCommand {
-public:
-    BBServerCommandTS() : BasicClientCommand(BB_SERVERCOMMAND_TS) {
-    }
-
-    virtual ~BBServerCommandTS() {};
-
-    virtual void decodeData() override {
-        _command = getStringFromBuffer();
-    }
-
-    virtual void performAction(Player *player) override {
-        if (_command == "nuke") {
-            World::get()->montool_kill_command(player);
-        }
-
-        if (_command == "reload") {
-            World::get()->montool_reload_command(player);
-        }
-
-        if (_command == "kickall") {
-            World::get()->montool_kickall_command(player);
-        }
-
-        if (_command == "setloginfalse") {
-            World::get()->montool_set_login(player,"false");
-        }
-
-        if (_command == "setlogintrue") {
-            World::get()->montool_set_login(player,"true");
-        }
-    }
-
-    virtual ClientCommandPointer clone() override {
-        ClientCommandPointer cmd = std::make_shared<BBServerCommandTS>();
-        return cmd;
-    }
-
     std::string _command;
 
+public:
+    BBServerCommandTS();
+    virtual ~BBServerCommandTS();
+
+    virtual void decodeData() override;
+    virtual void performAction(Player *player) override;
+    virtual ClientCommandPointer clone() override;
 };
 
-/**
-* @ingroup BBIWIClientcommands
-* client wants to change skill of someone
-*/
 class BBChangeAttribTS : public BasicClientCommand {
+    TYPE_OF_CHARACTER_ID id;
+    std::string attrib;
+    short int value;
+
 public:
-    BBChangeAttribTS() : BasicClientCommand(BB_CHANGEATTRIB_TS), _value(0) {
-    }
+    BBChangeAttribTS();
+    virtual ~BBChangeAttribTS();
 
-    virtual ~BBChangeAttribTS() {};
-
-    virtual void decodeData() override {
-        _plid = getIntFromBuffer();
-        _plname = getStringFromBuffer();
-        _attr = getStringFromBuffer();
-        _value = getShortIntFromBuffer();
-        std::cout<<"received ChangeAttrib: "<<_plid<<" "<<_plname<<" "<<_attr<<" "<<_value<<std::endl;
-    }
-
-    virtual void performAction(Player *player) override {
-        Player *tempPlayer = World::get()->Players.find(_plname);
-
-        if (!tempPlayer) {
-            tempPlayer = World::get()->Players.find(_plid);
-        }
-
-        if (tempPlayer) {
-            tempPlayer->increaseAttrib(_attr,_value);
-        }
-    }
-
-    virtual ClientCommandPointer clone() override {
-        ClientCommandPointer cmd = std::make_shared<BBChangeAttribTS>();
-        return cmd;
-    }
-
-    TYPE_OF_CHARACTER_ID _plid;
-    std::string _plname;
-    std::string _attr;
-    short int _value;
-
+    virtual void decodeData() override;
+    virtual void performAction(Player *player) override;
+    virtual ClientCommandPointer clone() override;
 };
 
-/**
-* @ingroup BBIWIClientcommands
-* client wants to change an attrib of someone
-*/
 class BBChangeSkillTS : public BasicClientCommand {
+    TYPE_OF_CHARACTER_ID id;
+    TYPE_OF_SKILL_ID skill;
+    short int value;
+
 public:
-    BBChangeSkillTS() : BasicClientCommand(BB_CHANGEATTRIB_TS), _value(0) {
-    }
+    BBChangeSkillTS();
+    virtual ~BBChangeSkillTS();
 
-    virtual ~BBChangeSkillTS() {};
-
-    virtual void decodeData() override {
-        _plid = getIntFromBuffer();
-        _plname = getStringFromBuffer();
-        _skill = getUnsignedCharFromBuffer();
-        _value = getShortIntFromBuffer();
-        std::cout<<"received ChangeSkill: "<<_plid<<" "<<_plname<<" "<<_skill<<" "<<_value<<std::endl;
-    }
-
-    virtual void performAction(Player *player) override {
-        Player *tempPlayer = World::get()->Players.find(_plname);
-
-        if (!tempPlayer) {
-            tempPlayer = World::get()->Players.find(_plid);
-        }
-
-        if (tempPlayer) {
-            tempPlayer->increaseSkill(_skill, _value);
-        }
-    }
-
-    virtual ClientCommandPointer clone() override {
-        ClientCommandPointer cmd = std::make_shared<BBChangeSkillTS>();
-        return cmd;
-    }
-
-    TYPE_OF_CHARACTER_ID _plid;
-    std::string _plname;
-    TYPE_OF_SKILL_ID _skill;
-    short int _value;
-
+    virtual void decodeData() override;
+    virtual void performAction(Player *player) override;
+    virtual ClientCommandPointer clone() override;
 };
 
-/**
-* @ingroup BBIWIClientcommands
-* client talks to someone
-*/
 class BBTalktoTS : public BasicClientCommand {
-public:
-    BBTalktoTS() : BasicClientCommand(BB_TALKTO_TS) {
-    }
-
-    virtual ~BBTalktoTS() {};
-
-    virtual void decodeData() override {
-        playerid = getIntFromBuffer();
-        playername = getStringFromBuffer();
-        msg = getStringFromBuffer();
-    }
-
-    virtual void performAction(Player *player) override {
-        Player *tempPlayer = World::get()->Players.find(playername);
-
-        if (!tempPlayer) {
-            tempPlayer = World::get()->Players.find(playerid);
-        }
-
-        if (tempPlayer) {
-            tempPlayer->inform(msg, Player::informGM);
-        }
-    }
-
-    virtual ClientCommandPointer clone() override {
-        ClientCommandPointer cmd = std::make_shared<BBTalktoTS>();
-        return cmd;
-    }
-
-    TYPE_OF_CHARACTER_ID playerid;
-    std::string playername;
+    TYPE_OF_CHARACTER_ID id;
     std::string msg;
+    
+public:
+    BBTalktoTS();
+    virtual ~BBTalktoTS();
 
+    virtual void decodeData() override;
+    virtual void performAction(Player *player) override;
+    virtual ClientCommandPointer clone() override;
 };
 
-/**
-* @ingroup BBIWIClientcommands
-* client disconnects
-*/
 class BBDisconnectTS : public BasicClientCommand {
 public:
-    BBDisconnectTS() : BasicClientCommand(BB_DISCONNECT_TS) {
-    }
-
-    virtual ~BBDisconnectTS() {};
-
-    virtual void decodeData() override {
-
-    }
-
-    virtual void performAction(Player *player) override {
-        //we want to disconnect so we close the connection
-        player->Connection->closeConnection();
-
-    }
-
-    virtual ClientCommandPointer clone() override {
-        ClientCommandPointer cmd = std::make_shared<BBDisconnectTS>();
-        return cmd;
-    }
-
+    BBDisconnectTS();
+    virtual ~BBDisconnectTS();
+    
+    virtual void decodeData() override;
+    virtual void performAction(Player *player) override;
+    virtual ClientCommandPointer clone() override;
 };
 
-
-/**
-* @ingroup BBIWIClientcommands
-* character received a keepalive
-*/
 class BBKeepAliveTS : public BasicClientCommand {
 public:
-    BBKeepAliveTS() : BasicClientCommand(BB_KEEPALIVE_TS) {
+    BBKeepAliveTS();
+    virtual ~BBKeepAliveTS();
 
-    }
-
-    virtual ~BBKeepAliveTS() {};
-
-    virtual void decodeData() override {
-
-    }
-
-    virtual void performAction(Player *player) override {
-        time(&(player->lastkeepalive));
-    }
-
-    virtual ClientCommandPointer clone() override {
-        ClientCommandPointer cmd = std::make_shared<BBKeepAliveTS>();
-        return cmd;
-    }
-
+    virtual void decodeData() override;
+    virtual void performAction(Player *player) override;
+    virtual ClientCommandPointer clone() override;
 };
 
-/**
-* @ingroup BBIWIClientcommands
-* character is banned for an amount of time
-*/
 class BBBanTS : public BasicClientCommand {
+    TYPE_OF_CHARACTER_ID id;
+    uint32_t time;
+
 public:
-    BBBanTS() : BasicClientCommand(BB_BAN_TS) {
-    }
+    BBBanTS();
+    virtual ~BBBanTS();
 
-    virtual ~BBBanTS() {};
-
-    virtual void decodeData() override {
-        id = getIntFromBuffer();
-        name = getStringFromBuffer();
-        time = getIntFromBuffer();
-    }
-
-    virtual void performAction(Player *player) override {
-        Player *tempPlayer = World::get()->Players.find(name);
-
-        if (!tempPlayer) {
-            tempPlayer = World::get()->Players.find(id);
-        }
-
-        if (tempPlayer) {
-            World::get()->ban(tempPlayer, time, player->getId());
-            ServerCommandPointer cmd = std::make_shared<BBMessageTC>(tempPlayer->to_string() + " banned by: " + player->to_string(), 0);
-            World::get()->monitoringClientList->sendCommand(cmd);
-        } else {
-            ServerCommandPointer cmd = std::make_shared<BBMessageTC>("Cannot find the player: " + name + "(" + std::to_string(id) + ")",0);
-            player->Connection->addCommand(cmd);
-        }
-    }
-
-    virtual ClientCommandPointer clone() override {
-        ClientCommandPointer cmd = std::make_shared<BBBanTS>();
-        return cmd;
-    }
-    TYPE_OF_CHARACTER_ID id; /*<which character is banned*/
-    std::string name; /*<which character is banned*/
-    uint32_t time; /*<how long is he banned*/
+    virtual void decodeData() override;
+    virtual void performAction(Player *player) override;
+    virtual ClientCommandPointer clone() override;
 };
 
 #endif

@@ -17,24 +17,15 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef _BBIWI_SERVER_COMMANDS_HPP
-#define _BBIWI_SERVER_COMMANDS_HPP
+#ifndef _BBIWI_SERVER_COMMANDS_HPP_
+#define _BBIWI_SERVER_COMMANDS_HPP_
 
 #include "netinterface/BasicServerCommand.hpp"
+#include "globals.hpp"
 #include "types.hpp"
 #include <string>
 
 
-/**
-* @defgroup BBIWIServercommands BBIWI Servercommands
-* @ingroup Netinterface
-* commands which are sended from the server to the bbiwi client
-*/
-
-/**
-* @ingroup BBIWIServerCommands
-* defines the initializing bytes of BBIWI Server commands
-*/
 enum bbservercommands {
     BB_MESSAGE_TC = 0x01, /*<message send from the Server to the client*/
     BB_PLAYER_TC = 0x02, /*<a complete package of player data is send*/
@@ -46,119 +37,44 @@ enum bbservercommands {
     BB_SENDACTION_TC = 0x08
 };
 
-/**
-* @ingroup BBIWIServerCommands
-* command when a action is sendet
-*/
 class BBSendActionTC : public BasicServerCommand {
 public:
-
-    BBSendActionTC(TYPE_OF_CHARACTER_ID id, const std::string &name, uint8_t type, const std::string &desc) : BasicServerCommand(BB_SENDACTION_TC) {
-        addIntToBuffer(id);
-        addStringToBuffer(name);
-        addUnsignedCharToBuffer(type);
-        addStringToBuffer(desc);
-    }
+    BBSendActionTC(TYPE_OF_CHARACTER_ID id, uint8_t type, const std::string &desc);
 };
 
-
-/**
-* @ingroup BBIWIServerCommands
-* command when skill is sended
-*/
 class BBSendSkillTC : public BasicServerCommand {
 public:
-
-    BBSendSkillTC(TYPE_OF_CHARACTER_ID id, TYPE_OF_SKILL_ID skill, short int value, short int minor) : BasicServerCommand(BB_SENDSKILL_TC) {
-        addIntToBuffer(id);
-        addUnsignedCharToBuffer(skill);
-        addShortIntToBuffer(value);
-        addShortIntToBuffer(minor);
-    }
+    BBSendSkillTC(TYPE_OF_CHARACTER_ID id, TYPE_OF_SKILL_ID skill, short int value, short int minor);
 };
 
-/**
-* @ingroup BBIWIServerCommands
-* command when a character talks
-*/
 class BBSendAttribTC : public BasicServerCommand {
 public:
-
-    BBSendAttribTC(TYPE_OF_CHARACTER_ID id, const std::string &attr, short int value) : BasicServerCommand(BB_SENDATTRIB_TC) {
-        addIntToBuffer(id);
-        addStringToBuffer(attr);
-        addShortIntToBuffer(value);
-    }
+    BBSendAttribTC(TYPE_OF_CHARACTER_ID id, const std::string &attribute, short int value);
 };
 
-/**
-* @ingroup BBIWIServerCommands
-* command when a character talks
-*/
 class BBLogOutTC : public BasicServerCommand {
 public:
-
-    BBLogOutTC(TYPE_OF_CHARACTER_ID id, const std::string &name) : BasicServerCommand(BB_LOGOUT_TC) {
-        addIntToBuffer(id);
-        addStringToBuffer(name);
-    }
+    BBLogOutTC(TYPE_OF_CHARACTER_ID id);
 };
 
-/**
-* @ingroup BBIWIServerCommands
-* command when a character talks
-*/
 class BBTalkTC : public BasicServerCommand {
 public:
-
-    BBTalkTC(TYPE_OF_CHARACTER_ID id, const std::string &name, uint8_t tt, const std::string &msg) : BasicServerCommand(BB_TALK_TC) {
-        addIntToBuffer(id);
-        addStringToBuffer(name);
-        addUnsignedCharToBuffer(tt);
-        addStringToBuffer(msg);
-    }
+    BBTalkTC(TYPE_OF_CHARACTER_ID id, uint8_t tt, const std::string &msg);
 };
 
-/**
-* @ingroup BBIWIServerCommands
-* command when a player logged in
-*/
 class BBPlayerTC : public BasicServerCommand {
 public:
-    BBPlayerTC(TYPE_OF_CHARACTER_ID id, const std::string &name, const position &pos) : BasicServerCommand(BB_PLAYER_TC) {
-        addIntToBuffer(id);
-        addStringToBuffer(name);
-        addIntToBuffer(pos.x);
-        addIntToBuffer(pos.y);
-        addIntToBuffer(pos.z);
-        std::cout<<"sended data of new player: "<<name<<std::endl;
-    }
+    BBPlayerTC(TYPE_OF_CHARACTER_ID id, const std::string &name, const position &pos);
 };
 
-/**
-* @ingroup BBIWIServerCommands
-* command when the player has moved
-*/
 class BBPlayerMoveTC : public BasicServerCommand {
 public:
-    BBPlayerMoveTC(TYPE_OF_CHARACTER_ID id, const position &pos) : BasicServerCommand(BB_PLAYERMOVE_TC) {
-        addIntToBuffer(id);
-        addIntToBuffer(pos.x);
-        addIntToBuffer(pos.y);
-        addIntToBuffer(pos.z);
-    }
+    BBPlayerMoveTC(TYPE_OF_CHARACTER_ID id, const position &pos);
 };
 
-/**
-* @ingroup BBIWIServerCommands
-* command when a general message arrived from server
-*/
 class BBMessageTC : public BasicServerCommand {
 public:
-    BBMessageTC(const std::string &msg, uint8_t id) : BasicServerCommand(BB_MESSAGE_TC) {
-        addStringToBuffer(msg);
-        addUnsignedCharToBuffer(id);
-    }
+    BBMessageTC(const std::string &msg, uint8_t type);
 };
 
 #endif
