@@ -147,7 +147,7 @@ void login_save(Player *who) {
     std::stringstream onlinetime;
     onlinetime << " onlinetime till now: " << oh << "h " << om << "m " << os << "s";
 
-    Logger::info(LogFacility::Player) << "login: " << who->Connection->getIPAdress() << *who << " on " << ctime(&acttime7) << onlinetime.str() << Log::end;
+    Logger::info(LogFacility::Player) << "login of " << *who << " from " << who->Connection->getIPAdress() << " on " << ctime(&acttime7) << onlinetime.str() << Log::end;
 }
 
 //! zur Pr�fung der Kommandozeilenargumente
