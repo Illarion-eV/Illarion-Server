@@ -370,9 +370,9 @@ bool World::takeItemFromShowcase(Player *cc, uint8_t showcase, unsigned char pos
     if (ps) {
         if (ps->TakeItemNr(pos, g_item, g_cont, count)) {
             if (g_cont) {
-                sendChangesOfContainerContentsCM(ps, g_cont);
+                sendContainerSlotChange(ps, pos, g_cont);
             } else {
-                sendChangesOfContainerContentsIM(ps);
+                sendContainerSlotChange(ps, pos);
             }
 
             return true;
@@ -412,7 +412,7 @@ bool World::putItemInShowcase(Player *cc, uint8_t showcase, TYPE_OF_CONTAINERSLO
             {
                 if (ps != g_cont) {
                     if (ps->InsertContainer(g_item, g_cont, pos)) {
-                        sendChangesOfContainerContentsCM(ps, g_cont);
+                        sendContainerSlotChange(ps, pos, g_cont);
                         g_item.reset();
                         g_cont = nullptr;
 
@@ -426,7 +426,7 @@ bool World::putItemInShowcase(Player *cc, uint8_t showcase, TYPE_OF_CONTAINERSLO
             }
         } else {
             if (ps->InsertItem(g_item, pos)) {
-                sendChangesOfContainerContentsIM(ps);
+                sendContainerSlotChange(ps, pos);
                 g_item.reset();
 #ifdef World_ItemMove_DEBUG
                 std::cout << "putItemInShowcase.. Ende 2" << std::endl;
@@ -1318,19 +1318,19 @@ void World::sendPutItemOnMapToAllVisibleCharacters(const position &itemPosition,
     }
 }
 
-void World::sendChangesOfContainerContentsCM(Container *cc, Container *moved) {
+void World::sendContainerSlotChange(Container *cc, TYPE_OF_CONTAINERSLOTS slot, Container *moved) {
     if (cc && moved) {
-        Players.for_each([cc, moved](Player *player) {
-            player->updateShowcase(cc);
+        Players.for_each([cc, slot, moved](Player *player) {
+            player->updateShowcaseSlot(cc, slot);
             player->closeShowcase(moved);
         });
     }
 }
 
-void World::sendChangesOfContainerContentsIM(Container *cc) {
+void World::sendContainerSlotChange(Container *cc, TYPE_OF_CONTAINERSLOTS slot) {
     if (cc) {
-        Players.for_each([cc](Player *player) {
-            player->updateShowcase(cc);
+        Players.for_each([cc, slot](Player *player) {
+            player->updateShowcaseSlot(cc, slot);
         });
     }
 }

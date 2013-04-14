@@ -222,7 +222,7 @@ bool World::changeItem(ScriptItem item) {
     } else if (item.type == ScriptItem::it_container) {
         if (item.inside) {
             item.inside->changeItem(item);
-            sendChangesOfContainerContentsIM(item.inside);
+            sendContainerSlotChange(item.inside, item.itempos);
             return true;
         }
     }
@@ -298,7 +298,7 @@ bool World::erase(ScriptItem item, int amount) {
     } else if (item.type == ScriptItem::it_container) {
         if (item.inside) {
             item.inside->increaseAtPos(item.itempos, -amount);
-            sendChangesOfContainerContentsIM(item.inside);
+            sendContainerSlotChange(item.inside, item.itempos);
             return true;
         } else {
             return false;
@@ -336,7 +336,7 @@ bool World::increase(ScriptItem item, short int count) {
     else if (item.type == ScriptItem::it_container) {
         if (item.inside) {
             item.inside->increaseAtPos(item.itempos, count);
-            sendChangesOfContainerContentsIM(item.inside);
+            sendContainerSlotChange(item.inside, item.itempos);
             return true;
         } else {
             return false;
@@ -383,7 +383,7 @@ bool World::swap(ScriptItem item, TYPE_OF_ITEM_ID newitem, unsigned short int ne
     else if (item.type == ScriptItem::it_container) {
         if (item.inside) {
             item.inside->swapAtPos(item.itempos, newitem, newQuality);
-            sendChangesOfContainerContentsIM(item.inside);
+            sendContainerSlotChange(item.inside, item.itempos);
             return true;
         } else {
             return false;

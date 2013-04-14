@@ -882,8 +882,8 @@ public:
     void sendRemoveItemFromMapToAllVisibleCharacters(const position &itemPosition);
     void sendPutItemOnMapToAllVisibleCharacters(const position &itemPosition, const Item &it);
     void sendSwapItemOnMapToAllVisibleCharacter(TYPE_OF_ITEM_ID id, const position &itemPosition, const Item &it);
-    void sendChangesOfContainerContentsCM(Container *cc, Container *moved);
-    void sendChangesOfContainerContentsIM(Container *cc);
+    void sendContainerSlotChange(Container *cc, TYPE_OF_CONTAINERSLOTS slot, Container *moved);
+    void sendContainerSlotChange(Container *cc, TYPE_OF_CONTAINERSLOTS slot);
 
     //////////////////////////////////////In WorldIMPLScriptHelp.cpp//////////////////////////////////////////
 

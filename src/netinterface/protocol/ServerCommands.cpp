@@ -428,6 +428,13 @@ UpdateShowcaseTC::UpdateShowcaseTC(unsigned char showcase, TYPE_OF_CONTAINERSLOT
     }
 }
 
+UpdateShowcaseSlotTC::UpdateShowcaseSlotTC(unsigned char showcase, TYPE_OF_CONTAINERSLOTS slot) : BasicServerCommand(SC_UPDATESHOWCASESLOT_TC) {
+    addUnsignedCharToBuffer(showcase);
+    addShortIntToBuffer(slot);
+    addShortIntToBuffer(0);
+    addShortIntToBuffer(0);
+}
+
 UpdateShowcaseSlotTC::UpdateShowcaseSlotTC(unsigned char showcase, TYPE_OF_CONTAINERSLOTS slot, const Item &item) : BasicServerCommand(SC_UPDATESHOWCASESLOT_TC) {
     addUnsignedCharToBuffer(showcase);
     addShortIntToBuffer(slot);

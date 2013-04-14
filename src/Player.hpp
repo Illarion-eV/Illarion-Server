@@ -316,6 +316,7 @@ public:
 
     void openShowcase(Container *container, bool carry);
     void updateShowcase(Container *container) const;
+    void updateShowcaseSlot(Container *container, TYPE_OF_CONTAINERSLOTS slot) const;
     bool isShowcaseOpen(uint8_t showcase) const;
     bool isShowcaseOpen(Container *container) const;
     bool isShowcaseInInventory(uint8_t showcase) const;

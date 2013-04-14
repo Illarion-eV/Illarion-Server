@@ -274,9 +274,25 @@ void Player::openShowcase(Container *container, bool carry) {
 }
 
 void Player::updateShowcase(Container *container) const {
-    for (const auto &showcase : showcases) {
-        if (showcase.second->contains(container)) {
-            ServerCommandPointer cmd = std::make_shared<UpdateShowcaseTC>(showcase.first, container->getSlotCount(), container->getItems());
+    if (isShowcaseOpen(container)) {
+        auto id = getShowcaseId(container);
+        ServerCommandPointer cmd = std::make_shared<UpdateShowcaseTC>(id, container->getSlotCount(), container->getItems());
+        Connection->addCommand(cmd);
+    }
+}
+
+void Player::updateShowcaseSlot(Container *container, TYPE_OF_CONTAINERSLOTS slot) const {
+    if (isShowcaseOpen(container) && slot < container->getSlotCount()) {
+        auto showcase = getShowcaseId(container);
+        const auto &items = container->getItems();
+        const auto it = items.find(slot);
+
+        if (it != items.end()) {
+            const auto &item = it->second;
+            ServerCommandPointer cmd = std::make_shared<UpdateShowcaseSlotTC>(showcase, slot, item);
+            Connection->addCommand(cmd);
+        } else {
+            ServerCommandPointer cmd = std::make_shared<UpdateShowcaseSlotTC>(showcase, slot);
             Connection->addCommand(cmd);
         }
     }
