@@ -142,6 +142,8 @@ Player::Player(std::shared_ptr<NetInterface> newConnection) throw(Player::Logout
 
     // we don't want to load more if we have a monitoring client
     if (monitoringClient) {
+        ServerCommandPointer cmd = std::make_shared<BBLoginSuccessfulTC>();
+        Connection->addCommand(cmd);
         Logger::info(LogFacility::Admin) << to_string() << " connects with monitoring client" << Log::end;
         return;
     }

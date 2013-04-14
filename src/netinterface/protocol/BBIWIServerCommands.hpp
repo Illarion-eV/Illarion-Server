@@ -27,6 +27,7 @@
 
 
 enum bbservercommands {
+    BB_LOGINSUCCESSFUL_TC = 0x00,
     BB_MESSAGE_TC = 0x01, /*<message send from the Server to the client*/
     BB_PLAYER_TC = 0x02, /*<a complete package of player data is send*/
     BB_TALK_TC = 0x03, /*<a player says something*/
@@ -35,6 +36,11 @@ enum bbservercommands {
     BB_SENDATTRIB_TC = 0x06, /*<we got a attrib change*/
     BB_SENDSKILL_TC = 0x07, /*<we got a skillchange*/
     BB_SENDACTION_TC = 0x08
+};
+
+class BBLoginSuccessfulTC : public BasicServerCommand {
+public:
+    BBLoginSuccessfulTC();
 };
 
 class BBSendActionTC : public BasicServerCommand {

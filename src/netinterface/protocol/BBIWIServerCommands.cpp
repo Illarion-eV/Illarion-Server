@@ -19,6 +19,9 @@
 
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
 
+BBLoginSuccessfulTC::BBLoginSuccessfulTC() : BasicServerCommand(BB_LOGINSUCCESSFUL_TC) {
+}
+
 BBSendActionTC::BBSendActionTC(TYPE_OF_CHARACTER_ID id, uint8_t type, const std::string &desc) : BasicServerCommand(BB_SENDACTION_TC) {
     addIntToBuffer(id);
     addUnsignedCharToBuffer(type);
