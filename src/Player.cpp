@@ -668,7 +668,7 @@ void Player::sendAllSkills() {
 
 
 void Player::sendMagicFlags(int type) {
-    if ((type >= 0) && (type < 4)) {
+    if ((type >= 0) && (type < 4) && !monitoringClient) {
         ServerCommandPointer cmd = std::make_shared<UpdateMagicFlagsTC>(type, getMagicFlags(type));
         Connection->addCommand(cmd);
     }
@@ -677,9 +677,13 @@ void Player::sendMagicFlags(int type) {
 
 void Player::sendAttrib(Character::attributeIndex attribute) {
     auto value = getAttribute(attribute);
-    ServerCommandPointer cmd = std::make_shared<UpdateAttribTC>(getId(), attributeStringMap[attribute], value);
-    Connection->addCommand(cmd);
-    cmd = std::make_shared<BBSendAttribTC>(getId(), attributeStringMap[attribute], value);
+
+    if (!monitoringClient) {
+        ServerCommandPointer cmd = std::make_shared<UpdateAttribTC>(getId(), attributeStringMap[attribute], value);
+        Connection->addCommand(cmd);
+    }
+
+    ServerCommandPointer cmd = std::make_shared<BBSendAttribTC>(getId(), attributeStringMap[attribute], value);
     _world->monitoringClientList->sendCommand(cmd);
 }
 
