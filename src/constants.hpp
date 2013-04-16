@@ -26,6 +26,8 @@ const uint32_t DYNNPC_BASE = 0xFF800000;
 const uint32_t NPC_BASE = 0xFF000000;
 const uint32_t MONSTER_BASE = 0xFE000000;
 
+const uint32_t MONSTERVIEWRANGE = 11;
+
 #define MAXPOISONVALUE     400
 #define MAXMANA            10000
 #define MAXHPS 10000

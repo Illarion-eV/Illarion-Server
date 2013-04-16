@@ -708,7 +708,7 @@ void World::checkMonsters() {
                     }
 
                     if (!has_attacked) { //bewegen
-                        const auto temp = Players.findAllAliveCharactersInRangeOf(monster.getPosition(), 15);
+                        const auto temp = Players.findAllAliveCharactersInRangeOf(monster.getPosition(), MONSTERVIEWRANGE);
 
                         bool makeRandomStep=true;
 
@@ -883,7 +883,7 @@ void World::checkMonsters() {
                     }
 
                     //check if there is a player on sight
-                    const auto temp2 = Players.findAllAliveCharactersInRangeOf(monster.getPosition(), 15);
+                    const auto temp2 = Players.findAllAliveCharactersInRangeOf(monster.getPosition(), MONSTERVIEWRANGE);
 
                     if (!temp2.empty()) {
                         Player *foundP;
