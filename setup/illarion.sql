@@ -661,8 +661,6 @@ CREATE TABLE chars (
     chr_lastsavetime bigint DEFAULT (0)::bigint NOT NULL,
     chr_race integer NOT NULL,
     chr_sex smallint NOT NULL,
-    chr_prefix character varying(50),
-    chr_suffix character varying(50),
     chr_name character varying(50) NOT NULL,
     chr_shortdesc_de character varying(255) DEFAULT ''::character varying NOT NULL,
     chr_shortdesc_us character varying(255) DEFAULT ''::character varying NOT NULL,
