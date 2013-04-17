@@ -1099,7 +1099,6 @@ CREATE TABLE playeritems (
     pit_wear smallint DEFAULT (0)::smallint NOT NULL,
     pit_number smallint DEFAULT (0)::smallint NOT NULL,
     pit_quality smallint DEFAULT 330 NOT NULL,
-    pit_data integer DEFAULT 0 NOT NULL,
     pit_containerslot smallint DEFAULT 0 NOT NULL,
     CONSTRAINT playeritems_depot_check CHECK ((pit_depot >= 0)),
     CONSTRAINT playeritems_in_container_check CHECK (((pit_in_container < pit_linenumber) OR (pit_in_container = 0))),
