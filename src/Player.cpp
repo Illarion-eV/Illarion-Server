@@ -284,10 +284,6 @@ void Player::updateShowcase(Container *container) const {
 }
 
 void Player::updateShowcaseSlot(Container *container, TYPE_OF_CONTAINERSLOTS slot) const {
-    updateShowcase(container);
-
-    // Disabled until the client can handle UpdateShowcaseSlotTC
-    /*
     if (isShowcaseOpen(container) && slot < container->getSlotCount()) {
         auto showcase = getShowcaseId(container);
         const auto &items = container->getItems();
@@ -302,7 +298,6 @@ void Player::updateShowcaseSlot(Container *container, TYPE_OF_CONTAINERSLOTS slo
             Connection->addCommand(cmd);
         }
     }
-    */
 }
 
 bool Player::isShowcaseOpen(uint8_t showcase) const {
