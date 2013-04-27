@@ -195,7 +195,7 @@ luabind::object world_LuaLoS(const World *world, const position &startingpos, co
 
         if (boIterator->blockingType == BlockingObject::BT_CHARACTER) {
             innerlist["TYPE"] = "CHARACTER";
-            innerlist["OBJECT"] = fuse_ptr<Character>(boIterator->blockingChar);
+            innerlist["OBJECT"] = character_ptr(boIterator->blockingChar);
         } else if (boIterator->blockingType == BlockingObject::BT_ITEM) {
             innerlist["TYPE"] = "ITEM";
             innerlist["OBJECT"] = boIterator->blockingItem;
@@ -216,7 +216,7 @@ luabind::object world_getPlayersOnline(const World *world) {
     const auto &players = world->getPlayersOnline();
 
     for (auto player : players) {
-        list[index] = fuse_ptr<Character>(player);
+        list[index] = character_ptr(player);
         index++;
     }
 
@@ -230,7 +230,7 @@ luabind::object convert_to_fuselist(const Container &container) {
     int index = 1;
 
     for (auto item : container) {
-        list[index] = fuse_ptr<Character>(item);
+        list[index] = character_ptr(item);
         index++;
     }
 

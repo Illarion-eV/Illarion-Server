@@ -55,7 +55,7 @@
 \makeindex
 \begin{document}
 \lstset{basicstyle=\small, keywordstyle=\ttfamily, identifierstyle=\ttfamily}
-\title{Lua documentation for Illarion scripting\\v5.8}
+\title{Lua documentation for Illarion scripting\\v5.9}
 \author{Martin \thanks{ \texttt{martin@illarion.org, http://www.illarion.org}},
 pharse \thanks{ \texttt{pharse@illarion.org, http://www.illarion.org}},
 vilarion \thanks{ \texttt{vilarion@illarion.org, http://www.illarion.org}}}
@@ -953,8 +953,8 @@ This kind of item variable holds general information about an item (weight, ID,.
 \end{quote}
 
 
-\chapter{Items (weaponstruct, armorstruct)}
-\section{Variables(weapon)}
+\chapter{Weapons and Armor}
+\section{WeaponStruct}
 \lua{r}:  \integer \var{weaponstruct}.\comm{Attack}\\
 \lua{r}:  \integer \var{weaponstruct}.\comm{Defence}\\
 \lua{r}:  \integer \var{weaponstruct}.\comm{Accuracy}\\
@@ -964,14 +964,22 @@ This kind of item variable holds general information about an item (weight, ID,.
 \lua{r}:  \integer \var{weaponstruct}.\comm{ActionPoints}\\
 \lua{r}:  \integer \var{weaponstruct}.\comm{MagicDisturbance}\\
 \lua{r}:  \integer \var{weaponstruct}.\comm{PoisonStrength}\\
-\section{Variables (armor)}
+\lua{r}:  \integer \var{weaponstruct}.\comm{Level}\\
+\\
+Type can be one of the following: WeaponStruct.\{slashing, concussion, puncture, slashingTwoHand, concussionTwoHand, punctureTwoHand, firearm, arrow, bolt, stone, stave, shield\}
+\section{ArmorStruct}
 \lua{r}:  \integer \var{armorstruct}.\comm{BodyParts}\\
 \lua{r}:  \integer \var{armorstruct}.\comm{PunctureArmor}\\
 \lua{r}:  \integer \var{armorstruct}.\comm{StrokeArmor}\\
 \lua{r}:  \integer \var{armorstruct}.\comm{ThrustArmor}\\
 \lua{r}:  \integer \var{armorstruct}.\comm{MagicDisturbance}\\
-\lua{r}:  \integer \var{armorstruct}.\comm{Stiffness}
-\section{Variables (natural armor (monsters))}
+\lua{r}:  \integer \var{armorstruct}.\comm{Stiffness}\\
+\lua{r}:  \integer \var{armorstruct}.\comm{Level}\\
+\lua{r}:  \integer \var{armorstruct}.\comm{Type}\\
+\\
+Type can be one of the following: ArmorStruct.\{clothing, general, light, medium, heavy, jewellery\}
+\section{NaturalArmor}
+Monsters can have these intrinsic armor properties:\\
 \lua{r}:  \integer \var{naturalarmor}.\comm{strokeArmor}\\
 \lua{r}:  \integer \var{naturalarmor}.\comm{thrustArmor}\\
 \lua{r}:  \integer \var{naturalarmor}.\comm{punctureArmor}\\
@@ -1011,12 +1019,37 @@ This kind of item variable holds general information about an item (weight, ID,.
        Useable in \comm{LookAtItem}: Displays information about an item. ItemLookAt is a class where certain information about the item is stored. An empty instance can be created with lookAt = ItemLookAt(). ItemLookAt has the fields as listed in table \ref{ItemLookAt}. All fields are optional and some of them are coupled with a dedicated item data, storing the corresponding value.
 
 \begin{table}
-\begin{tabular}{l|p{3cm}|p{3cm}|p{3.5cm}}
+\begin{tabular}{l|p{3.8cm}|p{3cm}|p{3.5cm}}
     ItemLookAt field & type & item data & description\\ \hline
     name & string & "nameDe"\newline"nameEn"\\
-    rareness & ItemLookAt.\newline\hspace*{5mm}commonItem\newline\hspace*{5mm}uncommonItem\newline\hspace*{5mm}rareItem\newline\hspace*{5mm}epicItem & "rareness"\\
+    rareness & ItemLookAt.\newline
+        \hspace*{5mm}commonItem\newline
+        \hspace*{5mm}uncommonItem\newline
+        \hspace*{5mm}rareItem\newline
+        \hspace*{5mm}epicItem & "rareness"\\
     description & string & "descriptionDe"\newline"descriptionEn"\\
     craftedBy & string & "craftedBy"\\
+    level & number & - & 0..100\\
+    armorType & ArmorStruct.\newline
+        \hspace*{5mm}clothing\newline
+        \hspace*{5mm}general\newline
+        \hspace*{5mm}light\newline
+        \hspace*{5mm}medium\newline
+        \hspace*{5mm}heavy\newline
+        \hspace*{5mm}jewellery & - \\
+    weaponType & WeaponStruct.\newline
+        \hspace*{5mm}slashing\newline
+        \hspace*{5mm}concussion\newline
+        \hspace*{5mm}puncture\newline
+        \hspace*{5mm}slashingTwoHand\newline
+        \hspace*{5mm}concussionTwoHand\newline
+        \hspace*{5mm}punctureTwoHand\newline
+        \hspace*{5mm}firearm\newline
+        \hspace*{5mm}arrow\newline
+        \hspace*{5mm}bolt\newline
+        \hspace*{5mm}stone\newline
+        \hspace*{5mm}stave\newline
+        \hspace*{5mm}shield & -\\
     weight & number & -\\
     worth & number & - & selling price in copper\\
     qualityText & string & -\\
@@ -2349,6 +2382,13 @@ It might be the case, and this is hoped much, that you want to create more compl
 \appendix
 
 \chapter{Versions}
+Version 5.9 (05 04 13)\\
+* Added ArmorStruct.Type, ArmorStruct.Level\\
+* Added global constants for ArmorStruct.Type\\
+* Added WeaponStruct.Level\\
+* Added global constants for WeaponStruct.Type\\
+* Added ItemLookAt.level, ItemLookAt.armorType, ItemLookAt.weaponType\\
+\\
 Version 5.8 (25 03 13)\\
 * Removed obsolete function Character:changeQualityItem\\
 * Removed obsolete function Container:changeQuality\\

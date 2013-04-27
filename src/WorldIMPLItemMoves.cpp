@@ -72,7 +72,7 @@ bool World::putItemOnInvPos(Character *cc, unsigned char pos) {
                     if (Data::WeaponItems.exists(g_item.getId())) {
                         const auto &weapon = Data::WeaponItems[g_item.getId()];
 
-                        if ((weapon.WeaponType==4) || (weapon.WeaponType==5) || (weapon.WeaponType==6) || (weapon.WeaponType==13)) {
+                        if ((weapon.Type==4) || (weapon.Type==5) || (weapon.Type==6) || (weapon.Type==13)) {
                             if ((pos == RIGHT_TOOL) && (cc->characterItems[ LEFT_TOOL ].getId() == 0)) {
                                 if (cc->characterItems[pos].getId() == 0 && g_item.getNumber() == 1) {
                                     cc->characterItems[ pos ] = g_item;
@@ -292,7 +292,7 @@ bool World::takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_ty
                     } else {
                         const auto &weapon = Data::WeaponItems[weaponId];
 
-                        if ((weapon.WeaponType==4) || (weapon.WeaponType==5) || (weapon.WeaponType==6) || (weapon.WeaponType==13)) {
+                        if ((weapon.Type==4) || (weapon.Type==5) || (weapon.Type==6) || (weapon.Type==13)) {
                             cc->characterItems[ LEFT_TOOL ].reset();
                             cc->characterItems[ RIGHT_TOOL ].reset();
                         } else {
@@ -370,9 +370,9 @@ bool World::takeItemFromShowcase(Player *cc, uint8_t showcase, unsigned char pos
     if (ps) {
         if (ps->TakeItemNr(pos, g_item, g_cont, count)) {
             if (g_cont) {
-                sendChangesOfContainerContentsCM(ps, g_cont);
+                sendContainerSlotChange(ps, pos, g_cont);
             } else {
-                sendChangesOfContainerContentsIM(ps);
+                sendContainerSlotChange(ps, pos);
             }
 
             return true;
@@ -412,7 +412,7 @@ bool World::putItemInShowcase(Player *cc, uint8_t showcase, TYPE_OF_CONTAINERSLO
             {
                 if (ps != g_cont) {
                     if (ps->InsertContainer(g_item, g_cont, pos)) {
-                        sendChangesOfContainerContentsCM(ps, g_cont);
+                        sendContainerSlotChange(ps, pos, g_cont);
                         g_item.reset();
                         g_cont = nullptr;
 
@@ -426,7 +426,7 @@ bool World::putItemInShowcase(Player *cc, uint8_t showcase, TYPE_OF_CONTAINERSLO
             }
         } else {
             if (ps->InsertItem(g_item, pos)) {
-                sendChangesOfContainerContentsIM(ps);
+                sendContainerSlotChange(ps, pos);
                 g_item.reset();
 #ifdef World_ItemMove_DEBUG
                 std::cout << "putItemInShowcase.. Ende 2" << std::endl;
@@ -1299,38 +1299,38 @@ bool World::moveItem(Character *cc, direction dir, const position &newPosition, 
 
 void World::sendRemoveItemFromMapToAllVisibleCharacters(const position &itemPosition) {
     for (const auto &player : Players.findAllCharactersInScreen(itemPosition)) {
-        ServerCommandPointer cmd(new ItemRemoveTC(itemPosition));
+        ServerCommandPointer cmd = std::make_shared<ItemRemoveTC>(itemPosition);
         player->Connection->addCommand(cmd);
     }
 }
 
 void World::sendSwapItemOnMapToAllVisibleCharacter(TYPE_OF_ITEM_ID id, const position &itemPosition, const Item &it) {
     for (const auto &player : Players.findAllCharactersInScreen(itemPosition)) {
-        ServerCommandPointer cmd(new ItemSwapTC(itemPosition, id, it));
+        ServerCommandPointer cmd = std::make_shared<ItemSwapTC>(itemPosition, id, it);
         player->Connection->addCommand(cmd);
     }
 }
 
 void World::sendPutItemOnMapToAllVisibleCharacters(const position &itemPosition, const Item &it) {
     for (const auto &player : Players.findAllCharactersInScreen(itemPosition)) {
-        ServerCommandPointer cmd(new ItemPutTC(itemPosition, it));
+        ServerCommandPointer cmd = std::make_shared<ItemPutTC>(itemPosition, it);
         player->Connection->addCommand(cmd);
     }
 }
 
-void World::sendChangesOfContainerContentsCM(Container *cc, Container *moved) {
+void World::sendContainerSlotChange(Container *cc, TYPE_OF_CONTAINERSLOTS slot, Container *moved) {
     if (cc && moved) {
-        Players.for_each([cc, moved](Player *player) {
-            player->updateShowcase(cc);
+        Players.for_each([cc, slot, moved](Player *player) {
+            player->updateShowcaseSlot(cc, slot);
             player->closeShowcase(moved);
         });
     }
 }
 
-void World::sendChangesOfContainerContentsIM(Container *cc) {
+void World::sendContainerSlotChange(Container *cc, TYPE_OF_CONTAINERSLOTS slot) {
     if (cc) {
-        Players.for_each([cc](Player *player) {
-            player->updateShowcase(cc);
+        Players.for_each([cc, slot](Player *player) {
+            player->updateShowcaseSlot(cc, slot);
         });
     }
 }

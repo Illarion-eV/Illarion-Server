@@ -26,7 +26,7 @@ NewClientView::~NewClientView() {}
 
 NewClientView::NewClientView() : viewPosition(position(0,0,0)), exists(false), stripedir(dir_right), maxtiles(0) {
     for (int i = 0; i < 100; ++i) {
-        mapStripe[i] = NULL;
+        mapStripe[i] = nullptr;
     }
 }
 
@@ -39,7 +39,7 @@ void NewClientView::fillStripe(position pos, stripedirection dir, int length, co
 
 void NewClientView::clearStripe() {
     for (int i = 0; i < 100; ++i) {
-        mapStripe[i] = NULL;
+        mapStripe[i] = nullptr;
     }
 
     exists = false;
@@ -61,7 +61,7 @@ void NewClientView::readFields(int length, const WorldMap &maps) {
         int tmp_maxtiles = 1;
 
         for (int i = 0; i < length; ++i) {
-            Field *field = NULL;
+            Field *field = nullptr;
 
             if (!map || !map->GetPToCFieldAt(field,x,y)) {
                 map.reset();

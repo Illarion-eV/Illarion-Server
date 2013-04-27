@@ -20,8 +20,6 @@
 
 #include "SpawnPoint.hpp"
 
-#include <sstream>
-
 #include <boost/cstdint.hpp>
 
 #include "db/SelectQuery.hpp"
@@ -33,13 +31,6 @@
 #include "Monster.hpp"
 #include "Field.hpp"
 
-template< typename To, typename From> To stream_convert(const From &from) {
-    std::stringstream stream;
-    stream << from;
-    To to;
-    stream >> to;
-    return to;
-}
 
 //! Creates a new SpawnPoint at <pos>
 SpawnPoint::SpawnPoint(const position &pos, int Range, uint16_t Spawnrange, uint16_t Min_Spawntime, uint16_t Max_Spawntime, bool Spawnall) : world(World::get()), spawnpos(pos), range(Range), spawnrange(Spawnrange), min_spawntime(Min_Spawntime), max_spawntime(Max_Spawntime), spawnall(Spawnall) {

@@ -52,6 +52,6 @@ std::string TriggerTable::assignScriptName(const Database::ResultTuple &row) {
 }
 
 auto TriggerTable::getQuestScripts() -> NodeRange {
-    return QuestNodeTable::getInstance()->getTriggerNodes();
+    return QuestNodeTable::getInstance().getTriggerNodes();
 }
 

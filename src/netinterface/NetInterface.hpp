@@ -32,12 +32,10 @@
 #include "netinterface/BasicClientCommand.hpp"
 #include "netinterface/BasicServerCommand.hpp"
 #include "netinterface/CommandFactory.hpp"
-#include <boost/thread/mutex.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/bind.hpp>
-#include <boost/enable_shared_from_this.hpp>
+#include <memory>
 #include <boost/asio.hpp>
 #include <deque>
+#include <mutex>
 
 
 /**
@@ -49,7 +47,7 @@
 *@ingroup Netinterface
 *class which holds the network interface and its thread for sending and receiving data
 */
-class NetInterface : public boost::enable_shared_from_this<NetInterface> {
+class NetInterface : public std::enable_shared_from_this<NetInterface> {
 public:
 
     /**
@@ -79,7 +77,7 @@ public:
 
     /**
     * returns a command from the receive Queue if on is available
-    * @return the command which was in the receive Queue or an empty (NULL) Command if there wasn't something in the receive Queue
+    * @return the command which was in the receive Queue or an empty (nullptr) Command if there wasn't something in the receive Queue
     */
     ClientCommandPointer getCommand();
 
@@ -128,8 +126,8 @@ private:
     //Factory für Commands vom Client
     CommandFactory commandFactory;
     uint16_t inactive;
-    boost::mutex sendQueueMutex;
-    boost::mutex receiveQueueMutex;
+    std::mutex sendQueueMutex;
+    std::mutex receiveQueueMutex;
 
 
 

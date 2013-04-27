@@ -20,6 +20,7 @@
 #ifndef _SCHEDULER_HPP_
 #define _SCHEDULER_HPP_
 
+#include <memory>
 #include <list>
 
 class World;
@@ -63,14 +64,14 @@ class Scheduler {
 
 public:
     Scheduler();
-    void AddTask(SchedulerObject *sobject);
+    void AddTask(std::unique_ptr<SchedulerObject> sobject);
     void NextCycle();
     inline unsigned long int GetCurrentCycle() {
         return cycle;
     }
 
 private:
-    std::list<SchedulerObject *> Tasks;
+    std::list<std::unique_ptr<SchedulerObject>> Tasks;
     unsigned long int cycle;
     World *world;
 };

@@ -34,8 +34,7 @@ Query::Query(const PConnection connection) {
     dbConnection = connection;
 }
 
-Query::Query(const std::string &query) {
-    Query(ConnectionManager::getInstance().getConnection(), query);
+Query::Query(const std::string &query) : Query(ConnectionManager::getInstance().getConnection(), query) {
 }
 
 Query::Query(const PConnection connection, const std::string &query) {
@@ -44,7 +43,7 @@ Query::Query(const PConnection connection, const std::string &query) {
 }
 
 Result Query::execute() {
-    if (dbConnection.get() == 0 || dbQuery.empty()) {
+    if (!dbConnection || dbQuery.empty()) {
         throw std::domain_error(
             "Connection and query string are required to execute the query.");
     }
@@ -55,14 +54,13 @@ Result Query::execute() {
         dbConnection->beginTransaction();
     }
 
-    pqxx::transaction_base *trans = dbConnection->getTransaction();
-    pqxx::result result = trans->exec(dbQuery);
+    auto result = dbConnection->query(dbQuery);
 
     if (ownTransaction) {
         dbConnection->commitTransaction();
     }
 
-    return (Result) result;
+    return result;
 }
 
 void Query::setQuery(const std::string &query) {

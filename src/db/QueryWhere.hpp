@@ -33,7 +33,7 @@ namespace Database {
 class QueryWhere {
 private:
     const Connection &connection;
-    std::stack<std::string *> conditionsStack;
+    std::stack<std::string> conditionsStack;
     std::string conditions;
 
 public:
@@ -42,7 +42,7 @@ public:
     };
 
     template<typename T> void addEqualCondition(const std::string &table, const std::string &column, const T &value) {
-        conditionsStack.push(new std::string(Query::escapeAndChainKeys(table, column) + " = " + connection.quote<T>(value)));
+        conditionsStack.push(std::move(std::string(Query::escapeAndChainKeys(table, column) + " = " + connection.quote<T>(value))));
     };
 
     template<typename T> void addNotEqualCondition(const std::string &column, const T &value) {
@@ -50,7 +50,7 @@ public:
     };
 
     template<typename T> void addNotEqualCondition(const std::string &table, const std::string &column, const T &value) {
-        conditionsStack.push(new std::string(Query::escapeAndChainKeys(table, column) + " != " + connection.quote<T>(value)));
+        conditionsStack.push(std::move(std::string(Query::escapeAndChainKeys(table, column) + " != " + connection.quote<T>(value))));
     };
 
     void andConditions();
@@ -59,7 +59,6 @@ protected:
     QueryWhere(const Connection &connection);
     QueryWhere(const QueryWhere &org) = delete;
     QueryWhere &operator=(const QueryWhere &org) = delete;
-    virtual ~QueryWhere();
 
     std::string buildQuerySegment();
 private:

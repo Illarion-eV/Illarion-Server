@@ -36,7 +36,7 @@ extern std::shared_ptr<LuaLookAtItemScript>lookAtItemScript;
 void World::sendMessageToAdmin(const std::string &message) {
     Players.for_each([&message](Player *player) {
         if (player->hasGMRight(gmr_getgmcalls)) {
-            ServerCommandPointer cmd(new SayTC(player->getPosition(), message));
+            ServerCommandPointer cmd = std::make_shared<SayTC>(player->getPosition(), message);
             player->Connection->addCommand(cmd);
         }
     });
@@ -251,7 +251,7 @@ void World::sendMessageToAllCharsInRange(const std::string &message, Character::
 
 void World::makeGFXForAllPlayersInRange(const position &pos, int distancemetric ,unsigned short int gfx) {
     for (const auto &player : Players.findAllCharactersInRangeOf(pos, distancemetric)) {
-        ServerCommandPointer cmd(new GraphicEffectTC(pos, gfx));
+        ServerCommandPointer cmd = std::make_shared<GraphicEffectTC>(pos, gfx);
         player->Connection->addCommand(cmd);
     }
 }
@@ -259,7 +259,7 @@ void World::makeGFXForAllPlayersInRange(const position &pos, int distancemetric 
 
 void World::makeSoundForAllPlayersInRange(const position &pos, int distancemetric, unsigned short int sound) {
     for (const auto &player : Players.findAllCharactersInRangeOf(pos, distancemetric)) {
-        ServerCommandPointer cmd(new SoundTC(pos, sound));
+        ServerCommandPointer cmd = std::make_shared<SoundTC>(pos, sound);
         player->Connection->addCommand(cmd);
     }
 }
@@ -297,7 +297,7 @@ void World::lookAtMapItem(Player *cp, const position &pos) {
 
 void World::lookAtTile(Player *cp, unsigned short int tile, const position &pos) {
     const TilesStruct &tileStruct = Data::Tiles[tile];
-    ServerCommandPointer cmd(new LookAtTileTC(pos, cp->nls(tileStruct.German, tileStruct.English)));
+    ServerCommandPointer cmd = std::make_shared<LookAtTileTC>(pos, cp->nls(tileStruct.German, tileStruct.English));
     cp->Connection->addCommand(cmd);
 }
 
@@ -309,7 +309,7 @@ void World::lookAtShowcaseItem(Player *cp, uint8_t showcase, unsigned char posit
     if (cp->isShowcaseOpen(showcase)) {
         Container *ps = cp->getShowcaseContainer(showcase);
 
-        if (ps != NULL) {
+        if (ps != nullptr) {
             Container *tc;
 
             if (ps->viewItemNr(position, titem, tc)) {
@@ -377,12 +377,14 @@ void World::sendWeather(Player *cp) {
 }
 
 void World::sendIGTime(Player *cp) {
-    ServerCommandPointer cmd(new UpdateTimeTC(static_cast<unsigned char>(getTime("hour")),static_cast<unsigned char>(getTime("minute")),static_cast<unsigned char>(getTime("day")),static_cast<unsigned char>(getTime("month")), static_cast<short int>(getTime("year"))));
+    ServerCommandPointer cmd = std::make_shared<UpdateTimeTC>(static_cast<unsigned char>(getTime("hour")),static_cast<unsigned char>(getTime("minute")),static_cast<unsigned char>(getTime("day")),static_cast<unsigned char>(getTime("month")), static_cast<short int>(getTime("year")));
     cp->Connection->addCommand(cmd);
 }
 
 void World::sendIGTimeToAllPlayers() {
-    Players.for_each(sendIGTime);
+    Players.for_each([this](Player *player) {
+        sendIGTime(player);
+    });
 }
 
 void World::sendWeatherToAllPlayers() {

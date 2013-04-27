@@ -291,6 +291,10 @@ void addItemLookAt(BasicServerCommand *cmd, const ItemLookAt &lookAt) {
     cmd->addUnsignedCharToBuffer((uint8_t)lookAt.getRareness());
     cmd->addStringToBuffer(lookAt.getDescription());
     cmd->addStringToBuffer(lookAt.getCraftedBy());
+    // TODO: Add the three bytes below, once the client can handle them
+    //cmd->addUnsignedCharToBuffer(lookAt.getLevel());
+    //cmd->addUnsignedCharToBuffer(lookAt.getArmorType());
+    //cmd->addUnsignedCharToBuffer(lookAt.getWeaponType());
     cmd->addShortIntToBuffer(lookAt.getWeight());
     cmd->addIntToBuffer(lookAt.getWorth());
     cmd->addStringToBuffer(lookAt.getQualityText());
@@ -422,6 +426,13 @@ UpdateShowcaseTC::UpdateShowcaseTC(unsigned char showcase, TYPE_OF_CONTAINERSLOT
             addShortIntToBuffer(item.getNumber());
         }
     }
+}
+
+UpdateShowcaseSlotTC::UpdateShowcaseSlotTC(unsigned char showcase, TYPE_OF_CONTAINERSLOTS slot) : BasicServerCommand(SC_UPDATESHOWCASESLOT_TC) {
+    addUnsignedCharToBuffer(showcase);
+    addShortIntToBuffer(slot);
+    addShortIntToBuffer(0);
+    addShortIntToBuffer(0);
 }
 
 UpdateShowcaseSlotTC::UpdateShowcaseSlotTC(unsigned char showcase, TYPE_OF_CONTAINERSLOTS slot, const Item &item) : BasicServerCommand(SC_UPDATESHOWCASESLOT_TC) {

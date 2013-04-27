@@ -28,9 +28,9 @@
 
 #include "netinterface/protocol/ServerCommands.hpp"
 
-extern std::vector<position> *contpos;
+extern std::vector<position> contpos;
 
-Map::Map(unsigned short int sizex, unsigned short int sizey) {
+Map::Map(unsigned short int sizex, unsigned short int sizey) : MainMap(sizex, std::vector<Field>(sizey, Field())) {
     Width = sizex;
     Height = sizey;
     Min_X = 0;
@@ -39,34 +39,7 @@ Map::Map(unsigned short int sizex, unsigned short int sizey) {
     Max_Y = 0;
     Z_Level = 0;
     Map_initialized = false;
-
-    //das Array fr MainMap im Speicher anlegen
-    MainMap = new Field * [ Width ];            // SCHRITT 1: ZEILEN EINRICHTEN.
-
-    for (int i = 0; i < Width; ++i) {
-        MainMap[ i ] = new Field[ Height ];      // SCHRITT 2: SPALTEN EINRICHTEN.
-    }
-
-    for (int b = 0; b < Width; ++b) {
-        for (int h = 0; h < Height; ++h) {
-            MainMap[ b ][ h ].setTileId(TRANSPARENT);
-        }
-    }
-
 }
-
-
-Map::~Map() {
-    for (int i = 0; i < Width; ++i) {
-        delete[] MainMap[ i ];
-        MainMap[ i ] = NULL;
-    }
-
-    delete[] MainMap;
-    MainMap = NULL;
-}
-
-
 
 bool Map::addItemToPos(Item it, MAP_POSITION pos) {
     Field *cfnew;
@@ -79,7 +52,6 @@ bool Map::addItemToPos(Item it, MAP_POSITION pos) {
 
     return false;
 }
-
 
 
 bool Map::addContainerToPos(Item it, Container *cc, MAP_POSITION pos) {
@@ -388,7 +360,7 @@ bool Map::Load(const std::string &name, unsigned short int x_offs, unsigned shor
                                         if (! ptr->second.empty()) {
                                             for (citer = ptr->second.begin(); citer != ptr->second.end(); ++citer) {
                                                 delete(*citer).second;
-                                                (*citer).second = NULL;
+                                                (*citer).second = nullptr;
                                             }
                                         }
                                     }
@@ -539,34 +511,29 @@ void Map::ageItemsInHorizontalRange(short int xstart, short int xend) {
         for (short int y = 0; y < Height; ++y) {
             int8_t rotstate = MainMap[x][y].DoAgeItems();
 
-            //CLogger::writeMessage("rot_update", "aged items, rotstate: " + Logger::toString( static_cast<int>(rotstate) ) );
             if (rotstate == -1) {
-                //a container was rotted
                 pos.x=Conv_To_X(x);
                 pos.y=Conv_To_Y(y);
 
-                // mindestens ein Containeritem wurde gel�cht -> mit Hilfe von erasedcontainers
-                //   die Inhalte l�chen
-                for (ercontit = erasedcontainers->begin(); ercontit != erasedcontainers->end(); ++ercontit) {
-                    CONTAINERHASH::iterator conmapn = maincontainers.find(pos);
+                for (const auto &erased : erasedcontainers) {
+                    auto conmapn = maincontainers.find(pos);
 
                     if (conmapn != maincontainers.end()) {   // containermap fr das Zielfeld gefunden
-                        Container::CONTAINERMAP::iterator iterat;
-                        iterat = (*conmapn).second.find(*ercontit);
+                        auto iterat = conmapn->second.find(erased);
 
-                        if (iterat != (*conmapn).second.end()) {
+                        if (iterat != conmapn->second.end()) {
                             std::cout << "Containerinhalt auf Feld wird geloescht !" << std::endl;
-                            (*conmapn).second.erase(iterat);
+                            conmapn->second.erase(iterat);
                         }
 
                         posZ.x=pos.x;
                         posZ.y=pos.y;
                         posZ.z=Z_Level;
-                        contpos->push_back(posZ);
+                        contpos.push_back(posZ);
                     }
                 }
 
-                erasedcontainers->clear();
+                erasedcontainers.clear();
 
             }
 
@@ -579,7 +546,7 @@ void Map::ageItemsInHorizontalRange(short int xstart, short int xend) {
                 //iterate through all the players in range and send the update for this field
                 for (const auto &player : playersinview) {
                     Logger::debug(LogFacility::World) << "aged items, update needed for: " << *player << Log::end;
-                    ServerCommandPointer cmd(new ItemUpdate_TC(pos, MainMap[x][y].items));
+                    ServerCommandPointer cmd = std::make_shared<ItemUpdate_TC>(pos, MainMap[x][y].items);
                     player->Connection->addCommand(cmd);
                 }
             }
@@ -590,8 +557,8 @@ void Map::ageItemsInHorizontalRange(short int xstart, short int xend) {
 }
 
 void Map::ageContainers() {
-    for (auto it = maincontainers.begin(); it != maincontainers.end(); ++it) {
-        auto container = it->second;
+    for (const auto &key_container : maincontainers) {
+        const auto &container = key_container.second;
 
         for (const auto &content : container) {
             if (content.second) {

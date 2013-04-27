@@ -555,13 +555,17 @@ CREATE TABLE armor (
     arm_magicdisturbance integer NOT NULL,
     arm_absorb smallint DEFAULT 0 NOT NULL,
     arm_stiffness smallint DEFAULT 0 NOT NULL,
+    arm_level smallint DEFAULT 0 NOT NULL,
+    arm_type smallint DEFAULT 0 NOT NULL,
     CONSTRAINT armor_absorb_check CHECK ((arm_absorb >= 0)),
     CONSTRAINT armor_bodyparts_check CHECK (((arm_bodyparts >= 0) AND (arm_bodyparts < 256))),
+    CONSTRAINT armor_level_check CHECK (((arm_level >= 0) AND (arm_level <= 100))),
     CONSTRAINT armor_magicdist_check CHECK (((arm_magicdisturbance >= 0) AND (arm_magicdisturbance <= 100))),
     CONSTRAINT armor_puncture_check CHECK (((arm_puncture >= 0) AND (arm_puncture <= 200))),
     CONSTRAINT armor_stiffness_check CHECK (((arm_stiffness >= 0) AND (arm_stiffness <= 200))),
     CONSTRAINT armor_stroke_check CHECK (((arm_stroke >= 0) AND (arm_stroke <= 200))),
-    CONSTRAINT armor_thrust_check CHECK (((arm_thrust >= 0) AND (arm_thrust <= 200)))
+    CONSTRAINT armor_thrust_check CHECK (((arm_thrust >= 0) AND (arm_thrust <= 200))),
+    CONSTRAINT armor_type_check CHECK (((arm_type >= 0) AND (arm_type < 6)))
 );
 
 
@@ -657,8 +661,6 @@ CREATE TABLE chars (
     chr_lastsavetime bigint DEFAULT (0)::bigint NOT NULL,
     chr_race integer NOT NULL,
     chr_sex smallint NOT NULL,
-    chr_prefix character varying(50),
-    chr_suffix character varying(50),
     chr_name character varying(50) NOT NULL,
     chr_shortdesc_de character varying(255) DEFAULT ''::character varying NOT NULL,
     chr_shortdesc_us character varying(255) DEFAULT ''::character varying NOT NULL,
@@ -1095,7 +1097,6 @@ CREATE TABLE playeritems (
     pit_wear smallint DEFAULT (0)::smallint NOT NULL,
     pit_number smallint DEFAULT (0)::smallint NOT NULL,
     pit_quality smallint DEFAULT 330 NOT NULL,
-    pit_data integer DEFAULT 0 NOT NULL,
     pit_containerslot smallint DEFAULT 0 NOT NULL,
     CONSTRAINT playeritems_depot_check CHECK ((pit_depot >= 0)),
     CONSTRAINT playeritems_in_container_check CHECK (((pit_in_container < pit_linenumber) OR (pit_in_container = 0))),
@@ -1557,10 +1558,12 @@ CREATE TABLE weapon (
     wp_magicdisturbance integer NOT NULL,
     wp_poison smallint NOT NULL,
     wp_fightingscript character varying(50),
+    wp_level smallint DEFAULT 0 NOT NULL,
     CONSTRAINT weapon_accuracy_check CHECK (((wp_accuracy > 0) AND (wp_accuracy <= 100))),
     CONSTRAINT weapon_ap_check CHECK (((wp_actionpoints > 0) AND (wp_actionpoints <= 100))),
     CONSTRAINT weapon_attack_check CHECK (((wp_attack >= 0) AND (wp_attack <= 200))),
     CONSTRAINT weapon_defence_check CHECK (((wp_defence >= 0) AND (wp_defence <= 200))),
+    CONSTRAINT weapon_level_check CHECK (((wp_level >= 0) AND (wp_level <= 100))),
     CONSTRAINT weapon_magicdist_check CHECK (((wp_magicdisturbance >= 0) AND (wp_magicdisturbance <= 200))),
     CONSTRAINT weapon_poison_check CHECK (((wp_poison >= 0) AND (wp_poison <= 100))),
     CONSTRAINT weapon_range_check CHECK (((wp_range > 0) AND (wp_range <= 10))),

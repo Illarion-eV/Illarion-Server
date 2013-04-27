@@ -23,27 +23,26 @@
 //falls nicht auskommentiert, werden mehr Bildschirmausgaben gemacht:
 //#define Player_DEBUG
 
+#include <memory>
 #include <string>
 #include <set>
 #include <unordered_set>
 #include <unordered_map>
-#include <boost/shared_ptr.hpp>
 
 #include "Character.hpp"
 
+#include "Showcase.hpp"
 #include "netinterface/BasicServerCommand.hpp"
 #include "netinterface/NetInterface.hpp"
-
 #include "dialog/MerchantDialog.hpp"
 #include "dialog/SelectionDialog.hpp"
-
 #include "script/LuaScript.hpp"
+
 
 struct WeatherStruct;
 class Dialog;
 class Timer;
 class LongTimeAction;
-class Showcase;
 
 enum gm_rights {
     gmr_allowlogin = 1, //GM is allowed to login if nologin is true
@@ -153,7 +152,7 @@ public:
     // , da sie auch extern erstellt wird und durch das Einfgen in diverse
     // Vektoren oft Destruktoren fr tempor�e Player aufgerufen werden, die noch
     // ben�igte Verbindungen l�chen wrden!
-    boost::shared_ptr<NetInterface> Connection;
+    std::shared_ptr<NetInterface> Connection;
 
 private:
     std::set<uint32_t> visibleChars;
@@ -259,7 +258,7 @@ public:
     virtual void sendCharDescription(TYPE_OF_CHARACTER_ID id,const std::string &desc) override;
 
     //! normal constructor
-    Player(boost::shared_ptr<NetInterface> newConnection) throw(LogoutException);
+    Player(std::shared_ptr<NetInterface> newConnection) throw(LogoutException);
 
     //! check if username/password is ok
     void check_logindata() throw(LogoutException);
@@ -317,6 +316,7 @@ public:
 
     void openShowcase(Container *container, bool carry);
     void updateShowcase(Container *container) const;
+    void updateShowcaseSlot(Container *container, TYPE_OF_CONTAINERSLOTS slot) const;
     bool isShowcaseOpen(uint8_t showcase) const;
     bool isShowcaseOpen(Container *container) const;
     bool isShowcaseInInventory(uint8_t showcase) const;
@@ -511,7 +511,7 @@ private:
             }
 
             dialogs[dialogId] = std::make_shared<DialogType>(*dialog);
-            ServerCommandPointer cmd(new DialogCommandType(*dialog, dialogId));
+            ServerCommandPointer cmd = std::make_shared<DialogCommandType>(*dialog, dialogId);
             Connection->addCommand(cmd);
         } else {
             inform("ERROR: Unable to open more than 100 dialogs.");
@@ -607,7 +607,7 @@ private:
     bool monitoringClient;
 
     uint8_t showcaseCounter;
-    typedef std::unordered_map<uint8_t, Showcase *> ShowcaseMap;
+    typedef std::unordered_map<uint8_t, std::unique_ptr<Showcase>> ShowcaseMap;
     ShowcaseMap showcases;
 
     unsigned int dialogCounter;

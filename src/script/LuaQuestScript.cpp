@@ -20,7 +20,7 @@
 
 #include "LuaQuestScript.hpp"
 #include "Character.hpp"
-#include "fuse_ptr.hpp"
+#include "character_ptr.hpp"
 
 LuaQuestScript::LuaQuestScript(const std::string &filename, TYPE_OF_QUEST_ID quest) throw(ScriptException)
     : LuaScript(filename), quest(quest) {
@@ -29,28 +29,28 @@ LuaQuestScript::LuaQuestScript(const std::string &filename, TYPE_OF_QUEST_ID que
 LuaQuestScript::~LuaQuestScript() throw() {}
 
 std::string LuaQuestScript::title(Character *user) {
-    fuse_ptr<Character> fuse_user(user);
+    character_ptr fuse_user(user);
     return callEntrypoint<std::string>("QuestTitle", fuse_user);
 }
 
 std::string LuaQuestScript::description(Character *user, TYPE_OF_QUESTSTATUS status) {
-    fuse_ptr<Character> fuse_user(user);
+    character_ptr fuse_user(user);
     return callEntrypoint<std::string>("QuestDescription", fuse_user, status);
 }
 
 void LuaQuestScript::targets(Character *user, TYPE_OF_QUESTSTATUS status, std::vector<position> &targets) {
-    targets.clear();
-    fuse_ptr<Character> fuse_user(user);
-    luabind::object luaTargets = callEntrypoint<luabind::object>("QuestTargets", fuse_user, status);
-
     using namespace luabind;
-    auto mapType = type(luaTargets);
+    targets.clear();
+    character_ptr fuse_user(user);
+    auto luaTargets = callEntrypoint<object>("QuestTargets", fuse_user, status);
 
     try {
         addTarget(targets, luaTargets);
         return;
     } catch (std::logic_error &e) {
     }
+
+    auto mapType = type(luaTargets);
 
     if (mapType == LUA_TTABLE) {
         for (iterator it(luaTargets), end; it != end; ++it) {
@@ -81,13 +81,14 @@ TYPE_OF_QUESTSTATUS LuaQuestScript::finalStatus() {
 
 void LuaQuestScript::addTarget(std::vector<position> &targets, const luabind::object &potentialTarget) {
     using namespace luabind;
-    auto targetType = type(potentialTarget);
 
     try {
         targets.push_back(object_cast<position>(potentialTarget));
         return;
     } catch (cast_failed &e) {
     }
+
+    auto targetType = type(potentialTarget);
 
     if (targetType == LUA_TTABLE) {
         try {

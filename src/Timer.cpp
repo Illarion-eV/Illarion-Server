@@ -21,7 +21,7 @@
 
 Timer::Timer(unsigned long int timegap) {
     gap = timegap;
-    last = time(NULL) - timegap;
+    last = time(nullptr) - timegap;
 }
 
 
@@ -29,7 +29,7 @@ Timer::~Timer() {}
 
 
 bool Timer::next() {
-    time_t temp = time(NULL);       // liefert die Sekunden seit dem 1.1.1970
+    time_t temp = time(nullptr);       // liefert die Sekunden seit dem 1.1.1970
     long realgap = temp - last;
 
     if (realgap >= gap) {

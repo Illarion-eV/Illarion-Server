@@ -62,7 +62,7 @@ std::string CommonObjectTable::assignScriptName(const Database::ResultTuple &row
 }
 
 auto CommonObjectTable::getQuestScripts() -> NodeRange {
-    return QuestNodeTable::getInstance()->getItemNodes();
+    return QuestNodeTable::getInstance().getItemNodes();
 }
 
 /*

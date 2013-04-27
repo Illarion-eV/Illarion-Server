@@ -71,8 +71,7 @@ public:
         std::vector<std::string *> *dataRow;
 
         if (!dataStorage.empty()) {
-            for (std::vector<std::vector<std::string *> *>::iterator itr = dataStorage.begin(); itr < dataStorage.end(); ++itr) {
-                dataRow = *itr;
+            for (const auto &dataRow : dataStorage) {
                 dataRow->reserve(columns);
 
                 if (!dataRow->at(column)) {
@@ -100,10 +99,8 @@ public:
     };
 
     template <typename T> void addValues(const QueryColumns::columnIndex &column, std::vector<T> &values) throw(std::invalid_argument) {
-        typename std::vector<T>::iterator itr;
-
-        for (itr = values.begin(); itr < values.end(); ++itr) {
-            addValue<T>(column, *itr);
+        for (const auto &value : values) {
+            addValue<T>(column, value);
         }
     };
 
@@ -124,21 +121,19 @@ public:
     void addValues(const QueryColumns::columnIndex &column,
                    std::map<Key,T,Compare, Allocator> &values,
                    MapInsertMode mode = keysAndValues) throw(std::invalid_argument) {
-        typename std::map<Key, T, Compare, Allocator>::iterator itr;
-
-        for (itr = values.begin(); itr != values.end(); ++itr) {
+        for (const auto &key_value : values) {
             switch (mode) {
             case onlyKeys:
-                addValue<Key>(column, itr->first);
+                addValue<Key>(column, key_value.first);
                 break;
 
             case onlyValues:
-                addValue<T>(column, itr->second);
+                addValue<T>(column, key_value.second);
                 break;
 
             case keysAndValues:
-                addValue<Key>(column, itr->first);
-                addValue<T>(column + 1, itr->second);
+                addValue<Key>(column, key_value.first);
+                addValue<T>(column + 1, key_value.second);
                 break;
             }
         }

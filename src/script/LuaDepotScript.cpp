@@ -21,7 +21,7 @@
 #include "LuaDepotScript.hpp"
 #include "Character.hpp"
 #include "Item.hpp"
-#include "fuse_ptr.hpp"
+#include "character_ptr.hpp"
 
 LuaDepotScript::LuaDepotScript(const std::string &filename) throw(ScriptException)
     : LuaScript(filename) {
@@ -30,7 +30,7 @@ LuaDepotScript::LuaDepotScript(const std::string &filename) throw(ScriptExceptio
 LuaDepotScript::~LuaDepotScript() throw() {}
 
 bool LuaDepotScript::onOpenDepot(Character *cc, const Item &itm) {
-    fuse_ptr<Character> fuse_cc(cc);
+    character_ptr fuse_cc(cc);
     return callEntrypoint<bool>("onOpenDepot", fuse_cc, itm);
 }
 

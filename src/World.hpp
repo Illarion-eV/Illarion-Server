@@ -48,6 +48,7 @@
 #include "MilTimer.hpp"
 #include "MonitoringClients.hpp"
 #include "Scheduler.hpp"
+#include "character_ptr.hpp"
 
 #include "data/MonsterAttackTable.hpp"
 
@@ -130,7 +131,7 @@ struct BlockingObject {
     ScriptItem blockingItem;
     BlockingObject() {
         blockingType = BT_NONE;
-        blockingChar = NULL;
+        blockingChar = nullptr;
     }
 };
 
@@ -307,7 +308,7 @@ public:
     *@param timeType <"year"|"month"|"day"|"hour"|"minute"|"second">
     *@return an int which is the current illarion time from the type
     */
-    static int getTime(const std::string &timeType);
+    int getTime(const std::string &timeType);
 
     /**
         * function for maploading
@@ -348,13 +349,6 @@ public:
     static World *create(const std::string &dir, time_t starttime);
     static World *get() throw(std::runtime_error);
 
-
-
-    /**=============CWorldIMPLMonCommands.cpp===============*/
-    void montool_kill_command(Player *c);
-    void montool_reload_command(Player *c);
-    void montool_kickall_command(Player *c);
-    void montool_set_login(Player *c, const std::string &st);
 
     /**============ WorldIMPLTools.cpp ==================*/
 
@@ -414,7 +408,7 @@ public:
     * can be found in WorldIMPLTools.cpp
     * looks into all three vectors ( player, monster, npc )  for a character with the given id
     * @param id the id of the character which should be found
-    * @return a pointer to the character, NULL if the character wasn't found
+    * @return a pointer to the character, nullptr if the character wasn't found
     * @todo has to be changed for only one charactervetor
     */
     virtual Character *findCharacter(TYPE_OF_CHARACTER_ID id);
@@ -445,7 +439,7 @@ public:
     /**
     * looks for a field on the map
     * @param pos the position at which the field should be
-    * @return a pointer to the field, NULL if there is no field at this position
+    * @return a pointer to the field, nullptr if there is no field at this position
     * @see GetPToCFieldAt()
     */
     Field *GetField(const position &pos) const;
@@ -752,7 +746,7 @@ public:
     void sendIGTimeToAllPlayers();
 
     //Sends the current IG Time to one player
-    static void sendIGTime(Player *cp);
+    void sendIGTime(Player *cp);
 
     /**
     *sends the current weather to all players online
@@ -834,7 +828,7 @@ public:
 
     //! sendet einem Admin die Daten aller aktiven Player
     // \param admin der Admin an den die Daten gesandt werden sollen
-    void sendAdminAllPlayerData(Player *&admin);
+    void sendAdminAllPlayerData(Player *admin);
 
     // ! Server side implemented !warp_to x y z
     void warpto_command(Player *cp, const std::string &ts);
@@ -888,8 +882,8 @@ public:
     void sendRemoveItemFromMapToAllVisibleCharacters(const position &itemPosition);
     void sendPutItemOnMapToAllVisibleCharacters(const position &itemPosition, const Item &it);
     void sendSwapItemOnMapToAllVisibleCharacter(TYPE_OF_ITEM_ID id, const position &itemPosition, const Item &it);
-    void sendChangesOfContainerContentsCM(Container *cc, Container *moved);
-    void sendChangesOfContainerContentsIM(Container *cc);
+    void sendContainerSlotChange(Container *cc, TYPE_OF_CONTAINERSLOTS slot, Container *moved);
+    void sendContainerSlotChange(Container *cc, TYPE_OF_CONTAINERSLOTS slot);
 
     //////////////////////////////////////In WorldIMPLScriptHelp.cpp//////////////////////////////////////////
 
@@ -969,7 +963,7 @@ public:
     //Liefert einen Zeiger auf einen Character
     //\param pos, die Position auf der sich der Character befinden soll
     //\return Zeiger auf den Character
-    fuse_ptr<Character> getCharacterOnField(const position &pos);
+    character_ptr getCharacterOnField(const position &pos);
 
     //Loescht ein ScriptItem
     //\ param Item, das Item welches geloescht werden soll
@@ -1007,8 +1001,8 @@ public:
     //Erzeugt ein Monster mit der entsprechenden ID auf dem Feld
     //\ param id, das Monster welches Erzeugt werden soll
     //\ param pos, die Position des Monsters
-    //\ return fuse_ptr<Character> Valid monster on success, invalid monster on failure
-    fuse_ptr<Character> createMonster(unsigned short id, const position &pos, short movepoints);
+    //\ return character_ptr Valid monster on success, invalid monster on failure
+    character_ptr createMonster(unsigned short id, const position &pos, short movepoints);
 
     //Zeigt eine Grafik auf einem bestimmten Feld an
     //\gfxid, ID der anzuzeigenden Grafik
@@ -1070,7 +1064,7 @@ public:
     *@param msg the message string which should be sended
     *@param id the id of the msg ( 1 are message which displayed in a window 0 basic message)
     */
-    void sendMonitoringMessage(const std::string &msg, unsigned char id);
+    void sendMonitoringMessage(const std::string &msg, unsigned char id = 0);
 
     /**
      * bans a player for the bantime
@@ -1079,6 +1073,8 @@ public:
      * @gmid the id of the gm which has banned the player
      */
     void ban(Player *cp, int bantime, TYPE_OF_CHARACTER_ID gmid);
+
+    void set_login(Player *player, const std::string &text);
 
 protected:
     World() = default; // used for testcases
@@ -1157,26 +1153,12 @@ private:
     // initmethod for spawn places...
     bool initRespawns();
 
-    // Convert a std::string to a short int
-    bool ReadField(const char *inp, signed short int &outp);
-    // Convert a std::string to a long short int
-    bool ReadField(const char *inp, signed long int &outp);
-
-    // hashmap containing all GM Commands
-    std::map< std::string, CommandType> GMCommands;
-    // hashmap containing all Player Commands
-    std::map< std::string, CommandType> PlayerCommands;
-
-    typedef std::map< std::string, CommandType>::iterator CommandIterator;
+    typedef std::map<std::string, CommandType> CommandMap;
+    CommandMap GMCommands;
+    CommandMap PlayerCommands;
 
     // Send player information to GMs
     void who_command(Player *cp, const std::string &tplayer);
-
-    // Ban a player
-    void ban_command(Player *cp, const std::string &timeplayer);
-    void banbyname(Player *cp, short int banhours, const std::string &tplayer);
-    void banbynumber(Player *cp, short int banhours, TYPE_OF_CHARACTER_ID tid);
-
 
     // Change tile in front of admin
     void tile_command(Player *cp, const std::string &ttilenumber);
@@ -1205,18 +1187,17 @@ private:
     bool gmpage_command(Player *player, const std::string &ticket);
 
 public:
+    void ban_command(Player *cp, const std::string &timeplayer);
     void logGMTicket(Player *Player, const std::string &ticket, bool automatic);
 
 private:
     bool active_language_command(Player *cp, const std::string &language);
 
-    //Fgt einen Spieler unter falschen namen in die Eigene Namensliste hinzu
-    void name_command(Player *cp, const std::string &ts);
-
     // register any GM commands here...
     void InitGMCommands();
     // register any Player commands here...
     void InitPlayerCommands();
+    bool executeUserCommand(Player *user, const std::string &input, const CommandMap &commands);
 
     // export maps to mapdir/export
     bool exportMaps(Player *cp);

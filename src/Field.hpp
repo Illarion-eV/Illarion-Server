@@ -32,7 +32,7 @@
 class CommonObjectTable;
 class ContainerObjectTable;
 
-extern std::vector<int> *erasedcontainers;
+extern std::vector<int> erasedcontainers;
 
 
 class Field {

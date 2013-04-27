@@ -30,7 +30,6 @@
 
 #include "data/MonsterTable.hpp"
 #include "data/ScheduledScriptsTable.hpp"
-#include <boost/shared_ptr.hpp>
 #include "script/LuaWeaponScript.hpp" //For standard fighting script.
 #include "script/LuaLookAtPlayerScript.hpp"
 #include "script/LuaLookAtItemScript.hpp"
@@ -94,10 +93,10 @@ bool Init(const std::string &initfile) {
 
 // in diesen std::vector f�gen Fields die numbers der gel�schten containeritems ein,
 //  damit die zugeh�rige Map die containerinhalte l�schen kann
-std::vector<int> *erasedcontainers;
+std::vector<int> erasedcontainers;
 
 // Koordinaten von gel�schten Containern, ben�tigt zum Schlie�en offener Showcases
-std::vector<position> *contpos;
+std::vector<position> contpos;
 
 //! a Table with Scheduled Scripts
 ScheduledScriptsTable *ScheduledScripts;
@@ -148,7 +147,7 @@ void login_save(Player *who) {
     std::stringstream onlinetime;
     onlinetime << " onlinetime till now: " << oh << "h " << om << "m " << os << "s";
 
-    Logger::info(LogFacility::Player) << "login: " << who->Connection->getIPAdress() << *who << " on " << ctime(&acttime7) << onlinetime.str() << Log::end;
+    Logger::info(LogFacility::Player) << "login of " << *who << " from " << who->Connection->getIPAdress() << " on " << ctime(&acttime7) << onlinetime.str() << Log::end;
 }
 
 //! zur Pr�fung der Kommandozeilenargumente
@@ -186,61 +185,57 @@ void loadData() {
         ok=false;
     }
 
-    erasedcontainers = new std::vector<int>;
-
-    contpos= new std::vector<position>;
-
     try {
-        std::shared_ptr<LuaWeaponScript> tmpScript(new LuaWeaponScript("server.standardfighting"));
+        auto tmpScript = std::make_shared<LuaWeaponScript>("server.standardfighting");
         standardFightingScript = tmpScript;
     } catch (ScriptException &e) {
         Logger::error(LogFacility::Script) << "Error while loading script: server.standardfighting: " << e.what() << Log::end;
     }
 
     try {
-        std::shared_ptr<LuaLookAtPlayerScript>tmpScript(new LuaLookAtPlayerScript("server.playerlookat"));
+        auto tmpScript = std::make_shared<LuaLookAtPlayerScript>("server.playerlookat");
         lookAtPlayerScript = tmpScript;
     } catch (ScriptException &e) {
         Logger::error(LogFacility::Script) << "Error while loading script: server.playerlookat: " << e.what() << Log::end;
     }
 
     try {
-        std::shared_ptr<LuaLookAtItemScript>tmpScript(new LuaLookAtItemScript("server.itemlookat"));
+        auto tmpScript = std::make_shared<LuaLookAtItemScript>("server.itemlookat");
         lookAtItemScript = tmpScript;
     } catch (ScriptException &e) {
         Logger::error(LogFacility::Script) << "Error while loading script: server.itemlookat: " << e.what() << Log::end;
     }
 
     try {
-        std::shared_ptr<LuaPlayerDeathScript>tmpScript(new LuaPlayerDeathScript("server.playerdeath"));
+        auto tmpScript = std::make_shared<LuaPlayerDeathScript>("server.playerdeath");
         playerDeathScript = tmpScript;
     } catch (ScriptException &e) {
         Logger::error(LogFacility::Script) << "Error while loading script: server.playerdeath: " << e.what() << Log::end;
     }
 
     try {
-        std::shared_ptr<LuaDepotScript>tmpScript(new LuaDepotScript("server.depot"));
+        auto tmpScript = std::make_shared<LuaDepotScript>("server.depot");
         depotScript = tmpScript;
     } catch (ScriptException &e) {
         Logger::error(LogFacility::Script) << "Error while loading script: server.depot: " << e.what() << Log::end;
     }
 
     try {
-        std::shared_ptr<LuaLoginScript>tmpScript(new LuaLoginScript("server.login"));
+        auto tmpScript = std::make_shared<LuaLoginScript>("server.login");
         loginScript = tmpScript;
     } catch (ScriptException &e) {
         Logger::error(LogFacility::Script) << "Error while loading script: server.login: " << e.what() << Log::end;
     }
 
     try {
-        std::shared_ptr<LuaLogoutScript>tmpScript(new LuaLogoutScript("server.logout"));
+        auto tmpScript = std::make_shared<LuaLogoutScript>("server.logout");
         logoutScript = tmpScript;
     } catch (ScriptException &e) {
         Logger::error(LogFacility::Script) << "Error while loading script: server.logout: " << e.what() << Log::end;
     }
 
     try {
-        std::shared_ptr<LuaLearnScript>tmpScript(new LuaLearnScript("server.learn"));
+        auto tmpScript = std::make_shared<LuaLearnScript>("server.learn");
         learnScript = tmpScript;
     } catch (ScriptException &e) {
         Logger::error(LogFacility::Script) << "Error while loading script: server.learn: " << e.what() << Log::end;
@@ -268,7 +263,7 @@ void sig_term(int) {
     //  ignore signal
     act_term.sa_handler = SIG_IGN;
 
-    if (sigaction(SIGTERM, &act_term, NULL) < 0) {
+    if (sigaction(SIGTERM, &act_term, nullptr) < 0) {
         std::cerr << "SIGTERM: sigaction failed" << std::endl;
     }
 
@@ -283,7 +278,7 @@ void sig_segv(int) {
     // ignore signal
     act_segv.sa_handler = SIG_IGN;
 
-    if (sigaction(SIGSEGV, &act_segv, NULL) < 0) {
+    if (sigaction(SIGSEGV, &act_segv, nullptr) < 0) {
         std::cerr << "SIGSEGV: sigaction failed" << std::endl;
     }
 
@@ -306,7 +301,7 @@ void sig_usr(int) {
     world->allowLogin(true);
     Logger::info(LogFacility::World) << "Map import finished" << Log::end;
 
-    if (sigaction(SIGUSR1, &act_usr, NULL) < 0) {
+    if (sigaction(SIGUSR1, &act_usr, nullptr) < 0) {
         Logger::error(LogFacility::Other) << "SIGUSR1: sigaction failed" << Log::end;
     }
 
@@ -330,19 +325,19 @@ bool init_sighandlers() {
         return false;
     }
 
-    if (sigaction(SIGCHLD, &act_pipe, NULL) < 0) {
+    if (sigaction(SIGCHLD, &act_pipe, nullptr) < 0) {
         std::cerr << "main: sigaction failed" << std::endl;
         return false;
     }
 
 
-    if (sigaction(SIGINT, &act_pipe, NULL) < 0) {
+    if (sigaction(SIGINT, &act_pipe, nullptr) < 0) {
         std::cerr << "main: sigaction failed" << std::endl;
         return false;
     }
 
 
-    if (sigaction(SIGQUIT, &act_pipe, NULL) < 0) {
+    if (sigaction(SIGQUIT, &act_pipe, nullptr) < 0) {
         std::cerr << "main: sigaction failed" << std::endl;
         return false;
     }
@@ -382,7 +377,7 @@ bool init_sighandlers() {
     act_usr.sa_handler = sig_usr;
     act_usr.sa_flags = SA_RESTART;
 
-    if (sigaction(SIGUSR1, &act_usr, NULL) < 0) {
+    if (sigaction(SIGUSR1, &act_usr, nullptr) < 0) {
         std::cerr << "main: sigaction SIGUSR1 failed" << std::endl;
         return false;
     }
@@ -394,11 +389,11 @@ bool init_sighandlers() {
 void reset_sighandlers() {
     std::cout << "reset of signal handlers...";
 
-    sigaction(SIGPIPE, &act_pipe_o, NULL);
+    sigaction(SIGPIPE, &act_pipe_o, nullptr);
 
-    sigaction(SIGTERM, &act_term_o, NULL);
+    sigaction(SIGTERM, &act_term_o, nullptr);
 
-    sigaction(SIGSEGV, &act_segv_o, NULL);
+    sigaction(SIGSEGV, &act_segv_o, nullptr);
 
     std::cout << " done.";
 }

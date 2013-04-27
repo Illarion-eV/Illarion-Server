@@ -44,7 +44,7 @@
 #include "netinterface/protocol/ServerCommands.hpp"
 
 extern MonsterTable *MonsterDescriptions;
-extern std::vector<position> *contpos;
+extern std::vector<position> contpos;
 
 void World::deleteAllLostNPC() {
     Field *tempf;
@@ -418,7 +418,7 @@ bool World::characterAttacks(Character *cp) {
             Player *temppl = Players.find(cp->enemyid);
 
             // Ziel gefunden
-            if (temppl != NULL) {
+            if (temppl != nullptr) {
                 // Ziel sichtbar
                 if (cp->isInRange(temppl, temppl->getScreenRange())) {
 
@@ -438,11 +438,11 @@ bool World::characterAttacks(Character *cp) {
                         //temppl->nrOfAttackers=0;
 
                         if (cp->getType() == Character::player) {
-                            ServerCommandPointer cmd(new TargetLostTC());
+                            ServerCommandPointer cmd = std::make_shared<TargetLostTC>();
                             dynamic_cast<Player *>(cp)->Connection->addCommand(cmd);
                         }
 
-                        ServerCommandPointer cmd(new TargetLostTC());
+                        ServerCommandPointer cmd = std::make_shared<TargetLostTC>();
                         dynamic_cast<Player *>(temppl)->Connection->addCommand(cmd);
                         temppl->setAttackMode(false);
                     }
@@ -454,7 +454,7 @@ bool World::characterAttacks(Character *cp) {
             Monster *temppl = Monsters.find(cp->enemyid);
 
             // Ziel gefunden
-            if (temppl != NULL) {
+            if (temppl != nullptr) {
                 if (cp->isInRange(temppl, temppl->getScreenRange())) {
                     MonsterStruct monStruct;
 
@@ -473,7 +473,7 @@ bool World::characterAttacks(Character *cp) {
                         cp->setAttackMode(false);
 
                         if (cp->getType() == Character::player) {
-                            ServerCommandPointer cmd(new TargetLostTC());
+                            ServerCommandPointer cmd = std::make_shared<TargetLostTC>();
                             dynamic_cast<Player *>(cp)->Connection->addCommand(cmd);
                         }
                     } else {
@@ -504,7 +504,7 @@ bool World::characterAttacks(Character *cp) {
         cp->setAttackMode(false);
 
         if (cp->getType() == Character::player) {
-            ServerCommandPointer cmd(new TargetLostTC());
+            ServerCommandPointer cmd = std::make_shared<TargetLostTC>();
             dynamic_cast<Player *>(cp)->Connection->addCommand(cmd);
         }
 
@@ -660,7 +660,7 @@ int World::getItemAttrib(const std::string &s, TYPE_OF_ITEM_ID ItemID) {
         }
     } else if (s == "weapontype") {
         if (Data::WeaponItems.exists(ItemID)) {
-            return Data::WeaponItems[ItemID].WeaponType;
+            return Data::WeaponItems[ItemID].Type;
         }
     } else if (s == "weaponmagicdisturbance") {
         if (Data::WeaponItems.exists(ItemID)) {
@@ -674,7 +674,7 @@ int World::getItemAttrib(const std::string &s, TYPE_OF_ITEM_ID ItemID) {
 
 
 void World::closeShowcasesForContainerPositions() {
-    for (const auto &pos : *contpos) {
+    for (const auto &pos : contpos) {
         for (const auto &player : Players.findAllCharactersInMaxRangeOf(pos, 1)) {
             player->closeAllShowcasesOfMapContainers();
         }
@@ -699,7 +699,7 @@ bool World::DoAge() {
 
     if (nextXtoage >= maps.getHighX()) {
         // auf allen Karten alles abgearbeitet
-        time_t temp = time(NULL);      // liefert die Sekunden seit dem 1.1.1970
+        time_t temp = time(nullptr);      // liefert die Sekunden seit dem 1.1.1970
         realgap = temp - last_age;
 
         // Zeit f�r neuen Durchlauf der Karte
@@ -735,7 +735,7 @@ bool World::DoAge() {
         }
 
         closeShowcasesForContainerPositions();
-        contpos->clear();
+        contpos.clear();
     }
 
     nextXtoage = lastXtoage + 1;
@@ -814,7 +814,7 @@ void World::Load(const std::string &prefix) {
             mapinitfile.read((char *) & tWidth, sizeof(tWidth));
             mapinitfile.read((char *) & tHeight, sizeof(tHeight));
 
-            WorldMap::map_t tempMap(new Map(tWidth, tHeight));
+            auto tempMap = std::make_shared<Map>(tWidth, tHeight);
             tempMap->Init(tMin_X, tMin_Y, tZ_Level);
 
             sprintf(mname, "%s_%6d_%6d_%6d", path.c_str(), tZ_Level, tMin_X, tMin_Y);
@@ -862,11 +862,11 @@ int World::getTime(const std::string &timeType) {
 
     // return unix timestamp if requsted and quit function
     if (timeType=="unix") {
-        return (int)time(NULL);
+        return (int)time(nullptr);
     }
 
     // get current time and timezone data to get additional informations for time conversation
-    curr_unixtime = time(NULL);
+    curr_unixtime = time(nullptr);
     timestamp = localtime(&curr_unixtime);
 
     illaTime = (int)curr_unixtime;
@@ -989,7 +989,7 @@ void World::setWeatherPart(const std::string &type, char value) {
 }
 
 void World::sendRemoveCharToVisiblePlayers(TYPE_OF_CHARACTER_ID id, const position &pos) {
-    ServerCommandPointer cmd(new RemoveCharTC(id));
+    ServerCommandPointer cmd = std::make_shared<RemoveCharTC>(id);
 
     for (const auto &player : Players.findAllCharactersInScreen(pos)) {
         player->sendCharRemove(id, cmd);
@@ -1010,7 +1010,7 @@ void World::sendHealthToAllVisiblePlayers(Character *cc, Attribute::attribute_t 
             zoffs = charPos.z - playerPos.z + RANGEDOWN;
 
             if ((xoffs != 0) || (yoffs != 0) || (zoffs != RANGEDOWN)) {
-                ServerCommandPointer cmd(new UpdateAttribTC(cc->getId(), "hitpoints", health));
+                ServerCommandPointer cmd = std::make_shared<UpdateAttribTC>(cc->getId(), "hitpoints", health);
                 player->Connection->addCommand(cmd);
             }
         }

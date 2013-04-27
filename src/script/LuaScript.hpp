@@ -31,7 +31,7 @@ extern "C" {
 #include "Logger.hpp"
 #include <luabind/luabind.hpp>
 #include <luabind/object.hpp>
-#include "fuse_ptr.hpp"
+#include "character_ptr.hpp"
 #include <map>
 #include <cxxabi.h>
 
@@ -59,7 +59,7 @@ enum LtaStates {
 };
 
 struct SouTar {
-    Character *character;  /**< Source or target is a character, this is the pointer to it, otherwise NULL */
+    Character *character;  /**< Source or target is a character, this is the pointer to it, otherwise nullptr */
     ScriptItem item; /**< Source or target is a Item, this holds the information of the item */
     SouTarTypes Type; /**< Source or Target Type (if its an character, field or item) */
     position pos; /**< aboslute position of the object */
@@ -69,7 +69,7 @@ struct SouTar {
     */
     SouTar() {
         Type = LUA_NONE;
-        character = NULL;
+        character = nullptr;
         dialog = 0;
     }
 };

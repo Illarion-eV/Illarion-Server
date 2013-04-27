@@ -26,13 +26,6 @@ using namespace Database;
 QueryWhere::QueryWhere(const Connection &connection) : connection(connection) {
 }
 
-QueryWhere::~QueryWhere() {
-    while (!conditionsStack.empty()) {
-        delete conditionsStack.top();
-        conditionsStack.pop();
-    }
-}
-
 void QueryWhere::andConditions() {
     mergeConditions("AND");
 }
@@ -58,33 +51,22 @@ void QueryWhere::mergeConditions(const std::string &operation) {
         return;
     }
 
-    std::string *cond1;
-    std::string *cond2;
-    bool removeFirst = false;
+    std::string cond1;
 
     if (conditions.empty()) {
-        cond1 = conditionsStack.top();
+        cond1 = std::move(conditionsStack.top());
         conditionsStack.pop();
 
         if (conditionsStack.empty()) {
-            conditions = *cond1;
-            delete cond1;
+            conditions = std::move(cond1);
             return;
         }
-
-        removeFirst = true;
     } else {
-        cond1 = &conditions;
+        cond1 = std::move(conditions);
     }
 
-    cond2 = conditionsStack.top();
+    std::string cond2 = std::move(conditionsStack.top());
     conditionsStack.pop();
 
-    conditions = "(" + *cond1 + " " + operation + " " + *cond2 + ")";
-
-    if (removeFirst) {
-        delete cond1;
-    }
-
-    delete cond2;
+    conditions = "(" + cond1 + " " + operation + " " + cond2 + ")";
 }

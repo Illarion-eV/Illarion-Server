@@ -20,9 +20,9 @@
 #ifndef _PLAYERMANAGER_HPP_
 #define _PLAYERMANAGER_HPP_
 
-#include <pthread.h>
-
-#include "boost/thread/shared_mutex.hpp"
+#include <memory>
+#include <thread>
+#include <mutex>
 
 #include "InitialConnection.hpp"
 #include "tvector.hpp"
@@ -32,9 +32,7 @@ class Player;
 
 class PlayerManager {
 public:
-    static PlayerManager *get();
-
-    ~PlayerManager();
+    static PlayerManager &get();
 
     void saveAll();
 
@@ -59,31 +57,28 @@ public:
 
 
 private:
-    PlayerManager();
-
-    static PlayerManager *instance;  /**< pointer to current local instance of the Player Manager*/
+    static std::unique_ptr<PlayerManager> instance;
 
     /**
     * loop which is threaded to get new connections
     * create players, or storing data and deleting old connections
     */
-    static void *loginLoop(PlayerManager *pmanager);
-    static void *playerSaveLoop(PlayerManager *pmanager);
-    //static void * deleteOldConnectionsLoop(PlayerManager * pmanager);
-    static boost::mutex mut;
+    static void loginLoop(PlayerManager *pmanager);
+    static void playerSaveLoop(PlayerManager *pmanager);
+    static std::mutex mut;
 
     //Mutex der gesetzt wird beim reloaden. (Als multi read single write lock)
-    static boost::shared_mutex reloadmutex;
+    static std::mutex reloadmutex;
 
     /**
     * true if the thread is running
     */
-    volatile bool running;
+    volatile bool running = false;
 
     /**
     * if false the thread was exited correctly
     */
-    volatile bool threadOk;
+    volatile bool threadOk = false;
 
     /**
     * logged out players which connection wherent shutted down
@@ -106,13 +101,8 @@ private:
     */
     InitialConnection incon;
 
-    pthread_t login_thread;
-    pthread_t save_thread;
-    //pthread_t deleteOldConnection_thread;
-
-
-
-
+    std::unique_ptr<std::thread> login_thread = nullptr;
+    std::unique_ptr<std::thread> save_thread = nullptr;
 };
 
 #endif

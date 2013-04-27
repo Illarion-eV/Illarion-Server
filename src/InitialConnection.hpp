@@ -23,9 +23,8 @@
 //falls nicht auskommentiert, werden mehr Bildschirmausgaben gemacht:
 //#define InitialConnection_DEBUG
 
-#include <stdio.h>
+#include <memory>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/asio.hpp>
 
 #include "tpvector.hpp"
@@ -45,7 +44,7 @@ class InitialConnection : public Connection {
 public:
 
 
-    typedef tpvector<boost::shared_ptr<NetInterface> > TVECTORPLAYER;
+    typedef tpvector<std::shared_ptr<NetInterface>> TVECTORPLAYER;
 
     //! Konstruktor
     InitialConnection();
@@ -64,13 +63,13 @@ private:
     void run_service();
 
     boost::asio::io_service io_service;
-    boost::asio::ip::tcp::acceptor *acceptor;
+    std::unique_ptr<boost::asio::ip::tcp::acceptor> acceptor = nullptr;
 
 
     //! wartet auf eine neue Verbindung (blockierend)
-    // \return eine neue Verbindung oder NULL
+    // \return eine neue Verbindung oder nullptr
     //CInternetConnection* accept_connection();
-    void accept_connection(boost::shared_ptr<NetInterface> connection, const boost::system::error_code &error);
+    void accept_connection(std::shared_ptr<NetInterface> connection, const boost::system::error_code &error);
 
     //! std::vector for new players...
     TVECTORPLAYER playerVector;

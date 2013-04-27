@@ -20,7 +20,7 @@
 
 #include "LuaTileScript.hpp"
 #include "Character.hpp"
-#include "fuse_ptr.hpp"
+#include "character_ptr.hpp"
 
 LuaTileScript::LuaTileScript(const std::string &filename, const TilesStruct &tile) throw(ScriptException)
     : LuaScript(filename), thisTile(tile) {
@@ -35,13 +35,13 @@ void LuaTileScript::init_functions() {
 }
 
 void LuaTileScript::useTile(Character *user, const position &pos, unsigned char ltastate) {
-    fuse_ptr<Character> fuse_user(user);
+    character_ptr fuse_user(user);
     callEntrypoint("useTile", fuse_user, pos, ltastate);
 }
 
 bool LuaTileScript::actionDisturbed(Character *performer, Character *disturber) {
-    fuse_ptr<Character> fuse_performer(performer);
-    fuse_ptr<Character> fuse_disturber(disturber);
+    character_ptr fuse_performer(performer);
+    character_ptr fuse_disturber(disturber);
     return callEntrypoint<bool>("actionDisturbed", fuse_performer, fuse_disturber);
 }
 

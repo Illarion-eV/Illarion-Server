@@ -23,7 +23,7 @@
 #include "World.hpp"
 #include "Character.hpp"
 #include "Player.hpp"
-#include "fuse_ptr.hpp"
+#include "character_ptr.hpp"
 
 LuaMonsterScript::LuaMonsterScript() throw(ScriptException)
     : LuaScript() {
@@ -36,71 +36,71 @@ LuaMonsterScript::LuaMonsterScript(const std::string &filename) throw(ScriptExce
 LuaMonsterScript::~LuaMonsterScript() throw() {}
 
 void LuaMonsterScript::onDeath(Character *Monster) {
-    fuse_ptr<Character> fuse_Monster(Monster);
+    character_ptr fuse_Monster(Monster);
     callEntrypoint("onDeath", fuse_Monster);
 }
 
 void LuaMonsterScript::lookAtMonster(Character *source, Character *target, unsigned char mode) {
-    fuse_ptr<Character> fuse_source(source);
-    fuse_ptr<Character> fuse_target(target);
+    character_ptr fuse_source(source);
+    character_ptr fuse_target(target);
     callEntrypoint("lookAtMonster", fuse_source, fuse_target, mode);
 }
 
 void LuaMonsterScript::receiveText(Character *Monster, Character::talk_type tt, const std::string &message, Character *cc) {
-    fuse_ptr<Character> fuse_Monster(Monster);
-    fuse_ptr<Character> fuse_cc(cc);
+    character_ptr fuse_Monster(Monster);
+    character_ptr fuse_cc(cc);
     callEntrypoint("receiveText", fuse_Monster, (int)tt, message, fuse_cc);
 }
 
 void LuaMonsterScript::onAttacked(Character *Monster, Character *attacker) {
-    fuse_ptr<Character> fuse_Monster(Monster);
-    fuse_ptr<Character> fuse_attacker(attacker);
+    character_ptr fuse_Monster(Monster);
+    character_ptr fuse_attacker(attacker);
     callEntrypoint("onAttacked", fuse_Monster, fuse_attacker);
 }
 
 void LuaMonsterScript::onCasted(Character *Monster, Character *caster) {
-    fuse_ptr<Character> fuse_Monster(Monster);
-    fuse_ptr<Character> fuse_caster(caster);
+    character_ptr fuse_Monster(Monster);
+    character_ptr fuse_caster(caster);
     callEntrypoint("onCasted", fuse_Monster, fuse_caster);
 }
 
 void LuaMonsterScript::useMonster(Character *Monster, Character *user, unsigned char ltastate) {
-    fuse_ptr<Character> fuse_Monster(Monster);
-    fuse_ptr<Character> fuse_user(user);
+    character_ptr fuse_Monster(Monster);
+    character_ptr fuse_user(user);
     callEntrypoint("useMonster", fuse_Monster, fuse_user, ltastate);
 }
 
 bool LuaMonsterScript::actionDisturbed(Character *performer, Character *disturber) {
-    fuse_ptr<Character> fuse_performer(performer);
-    fuse_ptr<Character> fuse_disturber(disturber);
+    character_ptr fuse_performer(performer);
+    character_ptr fuse_disturber(disturber);
     return callEntrypoint<bool>("actionDisturbed", fuse_performer, fuse_disturber);
 }
 
 void LuaMonsterScript::onAttack(Character *Monster, Character *target) {
-    fuse_ptr<Character> fuse_Monster(Monster);
-    fuse_ptr<Character> fuse_target(target);
+    character_ptr fuse_Monster(Monster);
+    character_ptr fuse_target(target);
     callEntrypoint("onAttack", fuse_Monster, fuse_target);
 }
 
 bool LuaMonsterScript::enemyOnSight(Character *Monster, Character *enemy) {
-    fuse_ptr<Character> fuse_Monster(Monster);
-    fuse_ptr<Character> fuse_enemy(enemy);
+    character_ptr fuse_Monster(Monster);
+    character_ptr fuse_enemy(enemy);
     return callEntrypoint<bool>("enemyOnSight", fuse_Monster, fuse_enemy);
 }
 
 bool LuaMonsterScript::enemyNear(Character *Monster, Character *enemy) {
-    fuse_ptr<Character> fuse_Monster(Monster);
-    fuse_ptr<Character> fuse_enemy(enemy);
+    character_ptr fuse_Monster(Monster);
+    character_ptr fuse_enemy(enemy);
     return callEntrypoint<bool>("enemyNear", fuse_Monster, fuse_enemy);
 }
 
 void LuaMonsterScript::abortRoute(Character *Monster) {
-    fuse_ptr<Character> fuse_Monster(Monster);
+    character_ptr fuse_Monster(Monster);
     callEntrypoint("abortRoute", fuse_Monster);
 }
 
 void LuaMonsterScript::onSpawn(Character *Monster) {
-    fuse_ptr<Character> fuse_Monster(Monster);
+    character_ptr fuse_Monster(Monster);
     callEntrypoint("onSpawn", fuse_Monster);
 }
 
@@ -115,11 +115,11 @@ bool LuaMonsterScript::setTarget(Character *Monster, const std::vector<Player *>
     int index = 1;
 
     for (const auto &player : CandidateList) {
-        fuse_ptr<Character> fuse_it(player);
+        character_ptr fuse_it(player);
         luaCandidateList[index++] = fuse_it;
     }
 
-    fuse_ptr<Character> fuse_Monster(Monster);
+    character_ptr fuse_Monster(Monster);
     index = callEntrypoint<int>("setTarget", fuse_Monster, luaCandidateList) - 1;
 
     if (index >= 0 && index < (int)CandidateList.size()) {

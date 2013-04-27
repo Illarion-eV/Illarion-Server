@@ -384,7 +384,7 @@ int8_t Field::DoAgeItems() {
 #endif
 
                     if (item.isContainer()) {
-                        erasedcontainers->push_back(item.getNumber());
+                        erasedcontainers.push_back(item.getNumber());
                         ret = -1;
                     }
 

@@ -18,18 +18,33 @@
  *  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "LuaLogoutScript.hpp"
-#include "Character.hpp"
-#include "character_ptr.hpp"
+#ifndef _CHARACTER_PTR_HPP_
+#define _CHARACTER_PTR_HPP_
 
-LuaLogoutScript::LuaLogoutScript(const std::string &filename) throw(ScriptException)
-    : LuaScript(filename) {
-}
+#include "types.hpp"
 
-LuaLogoutScript::~LuaLogoutScript() throw() {}
+class Character;
 
-void LuaLogoutScript::onLogout(Character *cc) {
-    character_ptr fuse_cc(cc);
-    callEntrypoint("onLogout", fuse_cc);
-}
+class character_ptr {
+    TYPE_OF_CHARACTER_ID id;
+
+public:
+    character_ptr();
+    character_ptr(Character *p);
+    character_ptr(character_ptr const &p);
+
+    Character *get() const;
+    operator Character *() const;
+    Character *operator->() const;
+    operator bool() const;
+
+private:
+    Character *getPointerFromId(TYPE_OF_CHARACTER_ID) const;
+};
+
+Character *get_pointer(character_ptr const &p);
+
+bool isValid(character_ptr const &p);
+
+#endif
 

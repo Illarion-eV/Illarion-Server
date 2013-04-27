@@ -21,7 +21,7 @@
 #include "World.hpp"
 
 #include <dirent.h>
-#include <regex.h>
+#include <boost/regex.hpp>
 #include <algorithm>
 #include <sys/types.h>
 
@@ -261,7 +261,7 @@ bool World::load_from_editor(const std::string &filename) {
     }
 
     // generate new map
-    WorldMap::map_t tempmap(new Map(h_width, h_height));
+    auto tempmap = std::make_shared<Map>(h_width, h_height);
     tempmap->Init(h_x, h_y, h_level);
 
     for (int x=0; x < h_width; ++x) {
@@ -523,7 +523,7 @@ void World::checkPlayers() {
             // User timed out.
             else {
                 Logger::info(LogFacility::World) << player << " timed out " << temptime << Log::end;
-                ServerCommandPointer cmd(new LogOutTC(UNSTABLECONNECTION));
+                ServerCommandPointer cmd = std::make_shared<LogOutTC>(UNSTABLECONNECTION);
                 player.Connection->shutdownSend(cmd);
             }
         } else {
@@ -540,7 +540,7 @@ void World::checkPlayers() {
 
             logoutScript->onLogout(playerPointer);
 
-            PlayerManager::get()->getLogOutPlayers().non_block_push_back(playerPointer);
+            PlayerManager::get().getLogOutPlayers().non_block_push_back(playerPointer);
             sendRemoveCharToVisiblePlayers(player.getId(), pos);
             lostPlayers.push_back(playerPointer);
         }
@@ -708,7 +708,7 @@ void World::checkMonsters() {
                     }
 
                     if (!has_attacked) { //bewegen
-                        const auto temp = Players.findAllAliveCharactersInRangeOf(monster.getPosition(), 15);
+                        const auto temp = Players.findAllAliveCharactersInRangeOf(monster.getPosition(), MONSTERVIEWRANGE);
 
                         bool makeRandomStep=true;
 
@@ -883,7 +883,7 @@ void World::checkMonsters() {
                     }
 
                     //check if there is a player on sight
-                    const auto temp2 = Players.findAllAliveCharactersInRangeOf(monster.getPosition(), 15);
+                    const auto temp2 = Players.findAllAliveCharactersInRangeOf(monster.getPosition(), MONSTERVIEWRANGE);
 
                     if (!temp2.empty()) {
                         Player *foundP;
@@ -962,39 +962,6 @@ void World::workout_CommandBuffer(Player *&cp) {
 }
 
 
-bool World::ReadField(const char *inp, signed short int &outp) {
-    char **error = NULL;
-    long int temp=strtol(inp,error,10);
-
-    if (error != NULL) {
-        std::cerr << "ERROR in ReadField to signed short int" << std::endl;
-    } else {
-        if ((temp <= (0x7FFF)) && (temp >= -0x8000)) {
-            outp = temp;
-            return true;
-        } else {
-            std::cerr << "RANGE ERROR on ReadField to signed short int" << std::endl;
-        }
-    }
-
-    return false;
-}
-
-bool World::ReadField(const char *inp, signed long int &outp) {
-    char **error=NULL;
-    signed long int temp=strtol(inp,error,10);
-
-    if (error != NULL) {
-        std::cerr << "ERROR in ReadField to signed long int" << std::endl;;
-        return false;
-    } else {
-        outp = temp;
-        return true;
-    }
-}
-
-
-
 // Init method for NPC's
 void World::initNPC() {
     Npc.for_each([this](NPC *npc) {
@@ -1013,16 +980,28 @@ void World::initNPC() {
 }
 
 void World::initScheduler() {
-    std::cout<<"Scheduler init \n";
     scheduler = std::make_unique<Scheduler>();
-    //===========Globale Tasks wie Wetter Gezeiteneffekte etc einfgen=========
-    SchedulerObject *globalPlLearning;  //Task anlegen der die Geistige Aufnahmef�igkeit aller 10 sec bei Spielern wieder senkt
-    globalPlLearning = new SGlobalPlayerLearnrate(scheduler->GetCurrentCycle()+5);
-    scheduler->AddTask(globalPlLearning);
-    SchedulerObject *globalMonLearning;  //Task anlegen der die Geistige Aufnahmef�igkeit aller 30 sec bei Monstern wieder senkt
-    globalMonLearning = new SGlobalMonsterLearnrate(scheduler->GetCurrentCycle()+10);
-    scheduler->AddTask(globalMonLearning);
-    //=========================================================================
-    std::cout<<"Scheduler init end \n";
+    auto globalPlLearning = std::make_unique<SGlobalPlayerLearnrate>(scheduler->GetCurrentCycle()+5);
+    scheduler->AddTask(std::move(globalPlLearning));
+    auto globalMonLearning = std::make_unique<SGlobalMonsterLearnrate>(scheduler->GetCurrentCycle()+10);
+    scheduler->AddTask(std::move(globalMonLearning));
+}
+
+bool World::executeUserCommand(Player *user, const std::string &input, const CommandMap &commands) {
+    bool found = false;
+
+    static const boost::regex pattern("^!([^ ]+) ?(.*)?$");
+    boost::smatch match;
+
+    if (boost::regex_match(input, match, pattern)) {
+        auto it = commands.find(match[1].str());
+
+        if (it != commands.end()) {
+            (it->second)(this, user, match[2].str());
+            found = true;
+        }
+    }
+
+    return found;
 }
 

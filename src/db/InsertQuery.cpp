@@ -37,16 +37,12 @@ InsertQuery::InsertQuery(const PConnection connection) : Query(connection) {
 }
 
 InsertQuery::~InsertQuery() {
-    std::vector<std::vector<std::string *> *>::iterator it;
-
-    for (it = dataStorage.begin(); it < dataStorage.end(); ++it) {
-        std::vector<std::string *>::iterator it2;
-
-        for (it2 = (*it)->begin(); it2 < (*it)->end(); ++it2) {
-            delete *it2;
+    for (const auto &row : dataStorage) {
+        for (const auto &data : *row) {
+            delete data;
         }
 
-        delete *it;
+        delete row;
     }
 }
 

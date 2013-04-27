@@ -20,11 +20,8 @@
 #ifndef _TABLESTRUCTS_HPP_
 #define _TABLESTRUCTS_HPP_
 
-#define BOOST_HAS_THREADS
-
+#include <memory>
 #include <string>
-#include <boost/shared_ptr.hpp>
-
 #include "types.hpp"
 
 class LuaTileScript;
@@ -87,13 +84,13 @@ struct WeaponStruct {
     TYPE_OF_DEFENCE Defence;
     TYPE_OF_ACCURACY Accuracy;
     TYPE_OF_RANGE Range;
-    TYPE_OF_WEAPONTYPE WeaponType;
+    TYPE_OF_WEAPONTYPE Type;
     TYPE_OF_AMMUNITIONTYPE AmmunitionType;
     TYPE_OF_ACTIONPOINTS ActionPoints;
     TYPE_OF_MAGICDISTURBANCE MagicDisturbance;
     TYPE_OF_POISONSTRENGTH PoisonStrength;
-    //Constructor
-    WeaponStruct() : Attack(0) , Defence(0) , Accuracy(0) , Range(0) , WeaponType(0) , AmmunitionType(0) , ActionPoints(0) , MagicDisturbance(0) , PoisonStrength(0) {}
+    TYPE_OF_ITEMLEVEL Level;
+    WeaponStruct() : Attack(0) , Defence(0) , Accuracy(0) , Range(0) , Type(0) , AmmunitionType(0) , ActionPoints(0) , MagicDisturbance(0) , PoisonStrength(0), Level(0) {}
 };
 
 
@@ -105,7 +102,9 @@ struct ArmorStruct {
     TYPE_OF_MAGICDISTURBANCE MagicDisturbance;
     int16_t Absorb;
     int16_t Stiffness;
-    ArmorStruct() : BodyParts(0) , PunctureArmor(0), StrokeArmor(0), ThrustArmor(0),MagicDisturbance(0),Absorb(0), Stiffness(0) {}
+    TYPE_OF_ITEMLEVEL Level;
+    TYPE_OF_ARMORTYPE Type;
+    ArmorStruct() : BodyParts(0) , PunctureArmor(0), StrokeArmor(0), ThrustArmor(0),MagicDisturbance(0),Absorb(0), Stiffness(0), Level(0), Type(0) {}
 };
 
 

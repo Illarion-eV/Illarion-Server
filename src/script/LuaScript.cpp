@@ -52,7 +52,7 @@ extern "C" {
 #include "LongTimeCharacterEffects.hpp"
 #include "Logger.hpp"
 #include "WaypointList.hpp"
-#include "fuse_ptr.hpp"
+#include "character_ptr.hpp"
 #include "Random.hpp"
 #include "Config.hpp"
 
@@ -225,7 +225,7 @@ int LuaScript::add_backtrace(lua_State *L) {
     lua_Debug d;
     std::stringstream msg;
 
-    if (lua_tostring(L, -1) != NULL) {
+    if (lua_tostring(L, -1) != nullptr) {
         std::string err = lua_tostring(L, -1);
         lua_pop(L, 1);
         msg << err << std::endl;
@@ -426,7 +426,7 @@ uint64_t LuaLShift64(uint64_t value, unsigned char bits) {
 }
 
 Character *getCharForId(TYPE_OF_CHARACTER_ID id) {
-    Character *ret = NULL;
+    Character *ret = nullptr;
 
     if (id < MONSTER_BASE) {
         //player
@@ -451,7 +451,7 @@ void LuaScript::init_base_functions() {
         {LUA_STRLIBNAME, luaopen_string},
         {LUA_MATHLIBNAME, luaopen_math},
         // {LUA_DBLIBNAME, luaopen_debug},
-        {NULL, NULL}
+        {nullptr, nullptr}
     };
     const luaL_Reg *lib = lualibs;
 
@@ -820,6 +820,9 @@ void LuaScript::init_base_functions() {
         .property("rareness", &ItemLookAt::getRareness, &ItemLookAt::setRareness)
         .property("description", &ItemLookAt::getDescription, &ItemLookAt::setDescription)
         .property("craftedBy", &ItemLookAt::getCraftedBy, &ItemLookAt::setCraftedBy)
+        .property("level", &ItemLookAt::getLevel, &ItemLookAt::setLevel)
+        .property("armorType", &ItemLookAt::getArmorType, &ItemLookAt::setArmorType)
+        .property("weaponType", &ItemLookAt::getWeaponType, &ItemLookAt::setWeaponType)
         .property("weight", &ItemLookAt::getWeight, &ItemLookAt::setWeight)
         .property("worth", &ItemLookAt::getWorth, &ItemLookAt::setWorth)
         .property("qualityText", &ItemLookAt::getQualityText, &ItemLookAt::setQualityText)
@@ -954,24 +957,51 @@ void LuaScript::init_base_functions() {
         .def_readonly("walkingCost", &TilesStruct::walkingCost),
         luabind::class_<WeaponStruct>("WeaponStruct")
         .def(luabind::constructor<>())
+        .enum_("type")
+        [
+            luabind::value("slashing", 1),
+            luabind::value("concussion", 2),
+            luabind::value("puncture", 3),
+            luabind::value("slashingTwoHand", 4),
+            luabind::value("concussionTwoHand", 5),
+            luabind::value("punctureTwoHand", 6),
+            luabind::value("firearm", 7),
+            luabind::value("arrow", 10),
+            luabind::value("bolt", 11),
+            luabind::value("stone", 12),
+            luabind::value("stave", 13),
+            luabind::value("shield", 14)
+        ]
         .def_readonly("Attack", &WeaponStruct::Attack)
         .def_readonly("Defence", &WeaponStruct::Defence)
         .def_readonly("Accuracy", &WeaponStruct::Accuracy)
         .def_readonly("Range", &WeaponStruct::Range)
-        .def_readonly("WeaponType", &WeaponStruct::WeaponType)
+        .def_readonly("WeaponType", &WeaponStruct::Type)
         .def_readonly("AmmunitionType", &WeaponStruct::AmmunitionType)
         .def_readonly("ActionPoints",&WeaponStruct::ActionPoints)
         .def_readonly("MagicDisturbance",&WeaponStruct::MagicDisturbance)
-        .def_readonly("PoisonStrength",&WeaponStruct::PoisonStrength),
+        .def_readonly("PoisonStrength",&WeaponStruct::PoisonStrength)
+        .def_readonly("Level", &WeaponStruct::Level),
         luabind::class_<ArmorStruct>("ArmorStruct")
         .def(luabind::constructor<>())
+        .enum_("type")
+        [
+            luabind::value("clothing", 0),
+            luabind::value("general", 1),
+            luabind::value("light", 2),
+            luabind::value("medium", 3),
+            luabind::value("heavy", 4),
+            luabind::value("juwellery", 5)
+        ]
         .def_readonly("BodyParts",&ArmorStruct::BodyParts)
         .def_readonly("PunctureArmor",&ArmorStruct::PunctureArmor)
         .def_readonly("StrokeArmor",&ArmorStruct::StrokeArmor)
         .def_readonly("ThrustArmor",&ArmorStruct::ThrustArmor)
         .def_readonly("MagicDisturbance",&ArmorStruct::MagicDisturbance)
         .def_readonly("Absorb",&ArmorStruct::Absorb)
-        .def_readonly("Stiffness",&ArmorStruct::Stiffness),
+        .def_readonly("Stiffness",&ArmorStruct::Stiffness)
+        .def_readonly("Level", &ArmorStruct::Level)
+        .def_readonly("Type", &ArmorStruct::Type),
         luabind::class_<MonsterArmor>("NaturalArmor")
         .def(luabind::constructor<>())
         .def_readonly("strokeArmor",&MonsterArmor::strokeArmor)
@@ -1013,7 +1043,7 @@ void LuaScript::init_base_functions() {
             luabind::def("uniform", (int( *)(int, int)) &Random::uniform),
             luabind::def("normal", &Random::normal)
         ],
-        luabind::def("isValidChar", &isValid<Character>),
+        luabind::def("isValidChar", &isValid),
         luabind::def("debug", &LuaScript::writeDebugMsg),
         luabind::def("log", log_lua),
         luabind::def("isTestserver", &LuaScript::isTestserver)

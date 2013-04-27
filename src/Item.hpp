@@ -27,15 +27,19 @@
 
 #include "types.hpp"
 #include "globals.hpp"
-#include "fuse_ptr.hpp"
+#include "character_ptr.hpp"
 
 class Character;
 class Container;
 
 class ItemLookAt {
 public:
+    static const TYPE_OF_ITEMLEVEL MAX_ITEMLEVEL = 100;
+    static const TYPE_OF_ARMORTYPE MAX_ARMORTYPE = 5;
+    static const TYPE_OF_WEAPONTYPE MAX_WEAPONTYPE = 14;
     static const uint8_t MAX_GEM_LEVEL = 10;
     static const uint8_t MAX_DURABILITY = 100;
+
     enum Rareness {
         commonItem = 1,
         uncommonItem = 2,
@@ -73,6 +77,33 @@ public:
     }
     const std::string &getCraftedBy() const {
         return craftedBy;
+    }
+
+    void setLevel(TYPE_OF_ITEMLEVEL level) {
+        if (level <= MAX_ITEMLEVEL) {
+            this->level = level;
+        }
+    }
+    TYPE_OF_ITEMLEVEL getLevel() const {
+        return level;
+    }
+
+    void setArmorType(TYPE_OF_ARMORTYPE type) {
+        if (type <= MAX_ARMORTYPE) {
+            armorType = type;
+        }
+    }
+    TYPE_OF_ARMORTYPE getArmorType() const {
+        return armorType;
+    }
+
+    void setWeaponType(TYPE_OF_WEAPONTYPE type) {
+        if (type <= MAX_WEAPONTYPE) {
+            weaponType = type;
+        }
+    }
+    TYPE_OF_WEAPONTYPE getWeaponType() const {
+        return weaponType;
     }
 
     void setWeight(TYPE_OF_WEIGHT weight) {
@@ -189,6 +220,9 @@ private:
     Rareness rareness;
     std::string description;
     std::string craftedBy;
+    TYPE_OF_ITEMLEVEL level;
+    TYPE_OF_ARMORTYPE armorType;
+    TYPE_OF_WEAPONTYPE weaponType;
     TYPE_OF_WEIGHT weight;
     TYPE_OF_WORTH worth;
     std::string qualityText;
@@ -316,20 +350,20 @@ public:
     position pos;
     unsigned char itempos;
     Character *owner;
-    fuse_ptr<Character> getOwnerForLua() {
-        fuse_ptr<Character> fuse_owner(owner);
+    character_ptr getOwnerForLua() {
+        character_ptr fuse_owner(owner);
         return fuse_owner;
     };
     Container *inside;
-    ScriptItem() : Item(0,0,0), type(notdefined), pos(position(0, 0, 0)), itempos(255), owner(NULL), inside(NULL) {}
+    ScriptItem() : Item(0,0,0), type(notdefined), pos(position(0, 0, 0)), itempos(255), owner(nullptr), inside(nullptr) {}
     unsigned char getType() {
         return type;
     }
     ScriptItem(const Item &source) : Item(source), pos(position(0, 0, 0)) {
         itempos = 0;
         type = notdefined;
-        owner = NULL;
-        inside = NULL;
+        owner = nullptr;
+        inside = nullptr;
     }
 
     bool operator==(const ScriptItem& rhs) const;

@@ -20,7 +20,7 @@
 
 #include "LuaLookAtPlayerScript.hpp"
 #include "Character.hpp"
-#include "fuse_ptr.hpp"
+#include "character_ptr.hpp"
 
 LuaLookAtPlayerScript::LuaLookAtPlayerScript(const std::string &filename) throw(ScriptException)
     : LuaScript(filename) {
@@ -29,8 +29,8 @@ LuaLookAtPlayerScript::LuaLookAtPlayerScript(const std::string &filename) throw(
 LuaLookAtPlayerScript::~LuaLookAtPlayerScript() throw() {}
 
 void LuaLookAtPlayerScript::lookAtPlayer(Character *source, Character *target, unsigned char mode) {
-    fuse_ptr<Character> fuse_source(source);
-    fuse_ptr<Character> fuse_target(target);
+    character_ptr fuse_source(source);
+    character_ptr fuse_target(target);
     callEntrypoint("lookAtPlayer", fuse_source, fuse_target, mode);
 }
 

@@ -20,7 +20,7 @@
 
 #include "LuaPlayerDeathScript.hpp"
 #include "Character.hpp"
-#include "fuse_ptr.hpp"
+#include "character_ptr.hpp"
 
 LuaPlayerDeathScript::LuaPlayerDeathScript(const std::string &filename) throw(ScriptException)
     : LuaScript(filename) {
@@ -29,7 +29,7 @@ LuaPlayerDeathScript::LuaPlayerDeathScript(const std::string &filename) throw(Sc
 LuaPlayerDeathScript::~LuaPlayerDeathScript() throw() {}
 
 void LuaPlayerDeathScript::playerDeath(Character *deadPlayer) {
-    fuse_ptr<Character> fuse_deadPlayer(deadPlayer);
+    character_ptr fuse_deadPlayer(deadPlayer);
     callEntrypoint("playerDeath", fuse_deadPlayer);
 }
 

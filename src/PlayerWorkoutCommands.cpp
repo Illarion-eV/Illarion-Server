@@ -19,8 +19,6 @@
 
 #include "World.hpp"
 
-#include <boost/shared_ptr.hpp>
-
 #include "Player.hpp"
 #include "tuningConstants.hpp"
 

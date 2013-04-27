@@ -22,17 +22,17 @@ noinst_LTLIBRARIES = libserver.la
 
 AM_CXXFLAGS = -ggdb -pipe -Wall -Werror -Wno-deprecated -std=c++11 $(BOOST_CXXFLAGS) $(DEPS_CFLAGS) -fPIC
 AM_CPPFLAGS = -D_THREAD_SAFE -D_REENTRANT -DTESTSERVER -DCDataConnect_DEBUG -DAdminCommands_DEBUG $(BOOST_CPPFLAGS) -I$(top_srcdir)/src -DPIC
-AM_LDFLAGS = $(BOOST_THREAD_LDFLAGS) $(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS)
+AM_LDFLAGS = $(BOOST_THREAD_LDFLAGS) $(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS) $(BOOST_REGEX_LDFLAGS)
 LDADD = -L/usr/local/lib -lpthread -lssl -lcrypto $(DEPS_LIBS) -lcrypt libserver.la $(top_builddir)/src/script/libscriptbinding.la
 
-LIBS = $(BOOST_THREAD_LIBS) $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS)
+LIBS = $(BOOST_THREAD_LIBS) $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS) $(BOOST_REGEX_LIBS)
 
 SUBDIRS = script .
 
 BUILT_SOURCES = version.hpp
 
 libserver_la_SOURCES = \
-main_help.cpp utility.cpp Logger.cpp Random.cpp Config.cpp a_star.cpp \
+main_help.cpp utility.cpp Logger.cpp Random.cpp Config.cpp a_star.cpp character_ptr.cpp \
 \
 data/Data.cpp data/QuestNodeTable.cpp data/QuestTable.cpp \
 data/ArmorObjectTable.cpp data/CommonObjectTable.cpp data/ContainerObjectTable.cpp data/RaceSizeTable.cpp \
@@ -45,13 +45,13 @@ WorldMap.cpp Container.cpp NewClientView.cpp Item.cpp Showcase.cpp Field.cpp Spa
 \
 World.cpp \
 WorldIMPLAdmin.cpp WorldIMPLCharacterMoves.cpp WorldIMPLItemMoves.cpp WorldIMPLTalk.cpp \
-WorldIMPLTools.cpp WorldIMPLScriptHelp.cpp WorldIMPLPlayer.cpp WorldIMPLMonCommands.cpp \
+WorldIMPLTools.cpp WorldIMPLScriptHelp.cpp WorldIMPLPlayer.cpp \
 \
 Timer.cpp MilTimer.cpp \
 LongTimeEffect.cpp LongTimeAction.cpp LongTimeCharacterEffects.cpp Scheduler.cpp \
 \
 Attribute.cpp Character.cpp \
-Player.cpp PlayerWorkoutCommands.cpp Monster.cpp NPC.cpp PlayerManager.cpp playersave.cpp WaypointList.cpp \
+Player.cpp PlayerWorkoutCommands.cpp Monster.cpp NPC.cpp PlayerManager.cpp WaypointList.cpp \
 \
 dialog/Dialog.cpp dialog/InputDialog.cpp dialog/MessageDialog.cpp dialog/MerchantDialog.cpp \
 dialog/SelectionDialog.cpp dialog/CraftingDialog.cpp \
@@ -62,7 +62,9 @@ db/QueryAssign.cpp db/QueryWhere.cpp db/QueryColumns.cpp db/QueryTables.cpp db/S
 \
 netinterface/NetInterface.cpp InitialConnection.cpp netinterface/CommandFactory.cpp MonitoringClients.cpp \
 netinterface/BasicCommand.cpp netinterface/BasicServerCommand.cpp netinterface/BasicClientCommand.cpp \
-netinterface/protocol/ServerCommands.cpp netinterface/protocol/ClientCommands.cpp netinterface/ByteBuffer.cpp
+netinterface/protocol/ServerCommands.cpp netinterface/protocol/ClientCommands.cpp netinterface/ByteBuffer.cpp \
+netinterface/protocol/BBIWIServerCommands.cpp netinterface/protocol/BBIWIClientCommands.cpp
+
 libserver_la_LIBADD = $(top_builddir)/src/script/libscriptbinding.la
 
 testserver_SOURCES = main.cpp
@@ -81,7 +83,7 @@ noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
 		 tpvector.hpp Random.hpp tvector.hpp NPC.hpp Scheduler.hpp \
 		 MapException.hpp PlayerManager.hpp Character.hpp \
 		 Attribute.hpp InitialConnection.hpp Logger.hpp utility.hpp \
-		 MonitoringClients.hpp playersave.hpp Field.hpp \
+		 MonitoringClients.hpp Field.hpp \
 		 data/Data.hpp data/Table.hpp data/StructTable.hpp \
 		 data/ScriptStructTable.hpp data/QuestScriptStructTable.hpp \
 		 data/NamesObjectTable.hpp data/SpellTable.hpp \
@@ -107,7 +109,7 @@ noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
 		 netinterface/protocol/ClientCommands.hpp \
 		 netinterface/protocol/ServerCommands.hpp WaypointList.hpp \
 		 Config.hpp Timer.hpp constants.hpp types.hpp \
-		 LongTimeCharacterEffects.hpp LongTimeAction.hpp fuse_ptr.hpp \
+		 LongTimeCharacterEffects.hpp LongTimeAction.hpp character_ptr.hpp \
 		 Player.hpp SpawnPoint.hpp LongTimeEffect.hpp Monster.hpp
 
 version.hpp: $(HEADERS) $(SOURCES) $(top_builddir)/src/script/libscriptbinding.la

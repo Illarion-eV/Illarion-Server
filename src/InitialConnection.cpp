@@ -19,14 +19,17 @@
 
 #include "InitialConnection.hpp"
 
-#include <boost/thread.hpp>
+#include <functional>
+#include <thread>
 
+#include "make_unique.hpp"
 #include "Config.hpp"
 
 #include "netinterface/NetInterface.hpp"
 
 InitialConnection::InitialConnection() {
-    boost::thread servicethread(boost::bind(&InitialConnection::run_service,this));
+    std::thread servicethread(std::bind(&InitialConnection::run_service,this));
+    servicethread.detach();
 }
 
 
@@ -38,15 +41,16 @@ void InitialConnection::run_service() {
     int port = Config::instance().port;
 
     boost::asio::ip::tcp::endpoint endpoint = boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port);
-    acceptor = new boost::asio::ip::tcp::acceptor(io_service,endpoint);
-    boost::shared_ptr<NetInterface> newConnection(new NetInterface(io_service));
-    acceptor->async_accept(newConnection->getSocket(),boost::bind(&InitialConnection::accept_connection, this, newConnection, boost::asio::placeholders::error));
+    acceptor = std::make_unique<boost::asio::ip::tcp::acceptor>(io_service,endpoint);
+    auto newConnection = std::make_shared<NetInterface>(io_service);
+    using std::placeholders::_1;
+    acceptor->async_accept(newConnection->getSocket(), std::bind(&InitialConnection::accept_connection, this, newConnection, _1));
     std::cout<<"Starting the IO Service!"<<std::endl;
     io_service.run();
 }
 
 //CInternetConnection* InitialConnection::accept_connection() {
-void InitialConnection::accept_connection(boost::shared_ptr<NetInterface> connection, const boost::system::error_code &error) {
+void InitialConnection::accept_connection(std::shared_ptr<NetInterface> connection, const boost::system::error_code &error) {
     if (!error) {
         if (connection->activate()) {
             //Verbindung in die Liste aufnehmen
@@ -55,8 +59,9 @@ void InitialConnection::accept_connection(boost::shared_ptr<NetInterface> connec
             std::cerr<<"Fehler bei Aktivierung der Connection"<<std::endl;
         }
 
-        boost::shared_ptr<NetInterface> newConnection(new NetInterface(io_service));
-        acceptor->async_accept(newConnection->getSocket(),boost::bind(&InitialConnection::accept_connection, this, newConnection, boost::asio::placeholders::error));
+        auto newConnection = std::make_shared<NetInterface>(io_service);
+        using std::placeholders::_1;
+        acceptor->async_accept(newConnection->getSocket(), std::bind(&InitialConnection::accept_connection, this, newConnection, _1));
     } else {
         std::cerr<<"Fehler im Accept:" << error.message() << ": " <<error.value() <<std::endl;
     }
@@ -67,6 +72,4 @@ void InitialConnection::accept_connection(boost::shared_ptr<NetInterface> connec
 
 InitialConnection::~InitialConnection() {
     io_service.stop();
-    delete acceptor;
-    acceptor = NULL;
 }

@@ -23,7 +23,6 @@
 
 #include <map>
 #include <string>
-#include <boost/shared_ptr.hpp>
 #include "LuaScript.hpp"
 #include "TableStructs.hpp"
 

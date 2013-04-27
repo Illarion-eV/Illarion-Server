@@ -182,7 +182,7 @@ bool LongTimeCharacterEffects::save() {
     Player *player = dynamic_cast<Player *>(owner);
 
     if (!owner) {
-        std::cout << "error saving long time effects owner was NULL!" << std::endl;
+        std::cout << "error saving long time effects owner was nullptr!" << std::endl;
         return false;
     }
 

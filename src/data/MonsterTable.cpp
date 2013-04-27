@@ -71,7 +71,7 @@ void MonsterTable::reload() {
         if (!monresults.empty()) {
             clearOldTable();
 
-            auto questNodes = QuestNodeTable::getInstance()->getMonsterNodes();
+            auto questNodes = QuestNodeTable::getInstance().getMonsterNodes();
             auto questItr = questNodes.first;
             auto questEnd = questNodes.second;
 
@@ -110,7 +110,7 @@ void MonsterTable::reload() {
                         Logger::error(LogFacility::Script) << "Error while loading monster script: " << scriptname << ": " << e.what() << Log::end;
                     }
                 } else if (questItr != questEnd && questItr->first == id) {
-                    std::shared_ptr<LuaMonsterScript> tmpScript(new LuaMonsterScript());
+                    std::shared_ptr<LuaMonsterScript> tmpScript = std::make_shared<LuaMonsterScript>();
                     temprecord.script = tmpScript;
                 }
 

@@ -37,7 +37,7 @@ Container &Container::operator=(const Container &source) {
         if (!containers.empty()) {
             for (auto it = containers.begin(); it != containers.end(); ++it) {
                 delete it->second;
-                it->second = NULL;
+                it->second = nullptr;
             }
 
             containers.clear();
@@ -62,7 +62,7 @@ Container::~Container() {
 
         for (auto it = containers.begin(); it != containers.end(); ++it) {
             delete it->second;
-            it->second = NULL;
+            it->second = nullptr;
         }
 
         containers.clear();
@@ -237,7 +237,7 @@ bool Container::TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &item, Container *&cc
             return true;
 
         } else {
-            cc = NULL;
+            cc = nullptr;
 
             if (isItemStackable(item) && count > 1) {
                 if (selectedItem.getNumber() > count) {
@@ -259,7 +259,7 @@ bool Container::TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &item, Container *&cc
         return true;
     } else {
         items.erase(nr);
-        cc = NULL;
+        cc = nullptr;
         return false;
     }
 }
@@ -376,13 +376,13 @@ bool Container::viewItemNr(TYPE_OF_CONTAINERSLOTS nr, ScriptItem &item, Containe
                 cc = new Container(item.getId());
             }
         } else {
-            cc = NULL;
+            cc = nullptr;
         }
 
         return true;
     } else {
         items.erase(nr);
-        cc = NULL;
+        cc = nullptr;
         return false;
     }
 }
@@ -478,7 +478,7 @@ void Container::Load(std::istream &where) {
 
         for (auto it = containers.begin(); it != containers.end(); ++it) {
             delete it->second;
-            it->second = NULL;
+            it->second = nullptr;
         }
     }
 

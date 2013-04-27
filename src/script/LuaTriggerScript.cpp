@@ -20,7 +20,7 @@
 
 #include "LuaTriggerScript.hpp"
 #include "Character.hpp"
-#include "fuse_ptr.hpp"
+#include "character_ptr.hpp"
 
 LuaTriggerScript::LuaTriggerScript() throw(ScriptException)
     : LuaScript() {
@@ -40,7 +40,7 @@ void LuaTriggerScript::init_functions() {
 }
 
 void LuaTriggerScript::CharacterOnField(Character *character) {
-    fuse_ptr<Character> fuse_character(character);
+    character_ptr fuse_character(character);
     callEntrypoint("CharacterOnField", fuse_character);
 }
 
@@ -49,22 +49,22 @@ void LuaTriggerScript::ItemRotsOnField(const ScriptItem &oldItem, const ScriptIt
 }
 
 void LuaTriggerScript::MoveFromField(Character *character) {
-    fuse_ptr<Character> fuse_character(character);
+    character_ptr fuse_character(character);
     callEntrypoint("MoveFromField", fuse_character);
 }
 
 void LuaTriggerScript::MoveToField(Character *character) {
-    fuse_ptr<Character> fuse_character(character);
+    character_ptr fuse_character(character);
     callEntrypoint("MoveToField", fuse_character);
 }
 
 void LuaTriggerScript::PutItemOnField(const ScriptItem &item, Character *character) {
-    fuse_ptr<Character> fuse_character(character);
+    character_ptr fuse_character(character);
     callEntrypoint("PutItemOnField", item, fuse_character);
 }
 
 void LuaTriggerScript::TakeItemFromField(const ScriptItem &item, Character *character) {
-    fuse_ptr<Character> fuse_Character(character);
+    character_ptr fuse_Character(character);
     callEntrypoint("TakeItemFromField", item, fuse_Character);
 }
 

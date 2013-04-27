@@ -269,6 +269,8 @@ public:
 };
 
 class UpdateShowcaseSlotTC : public BasicServerCommand {
+public:
+    UpdateShowcaseSlotTC(unsigned char showcase, TYPE_OF_CONTAINERSLOTS slot);
     UpdateShowcaseSlotTC(unsigned char showcase, TYPE_OF_CONTAINERSLOTS slot, const Item &item);
 };
 
