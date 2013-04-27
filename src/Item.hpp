@@ -213,6 +213,8 @@ public:
         return bonus;
     }
 
+    bool operator==(const ItemLookAt& rhs) const;
+
 private:
     std::string name;
     Rareness rareness;
@@ -325,6 +327,7 @@ public:
     bool isPermanent() const;
     void makePermanent();
 
+    bool operator==(const Item& rhs) const;
 private:
     id_type id;
     number_type number;
@@ -363,7 +366,8 @@ public:
         inside = nullptr;
     }
 
-} ;
+    bool operator==(const ScriptItem& rhs) const;
+};
 
 typedef std::vector < Item > ITEMVECTOR;
 

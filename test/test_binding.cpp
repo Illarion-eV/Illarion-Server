@@ -22,6 +22,7 @@ public:
 
     MOCK_METHOD2(getItemName, std::string(TYPE_OF_ITEM_ID itemid, uint8_t language));
     MOCK_METHOD3(itemInform, void(Character *user, const ScriptItem &item, const ItemLookAt &lookAt));
+    MOCK_METHOD1(findCharacter, Character*(TYPE_OF_CHARACTER_ID id));
 };
 
 class MockContainer : public Container {
@@ -47,6 +48,10 @@ public:
     ~world_bindings() {
         LuaScript::shutdownLua();
     }
+
+    world_bindings() {
+	    ON_CALL(world, findCharacter(player.getId())).WillByDefault(Return(&player));
+    }
 };
 
 TEST_F(world_bindings, LookAtItem) {
@@ -59,8 +64,10 @@ TEST_F(world_bindings, LookAtItem) {
                           "lookat_test", itemdef
                          };
 
-    EXPECT_CALL(world, getItemName(_, _)).Times(1).WillOnce(Return("itemname"));
-    EXPECT_CALL(world, itemInform(_, _, _)).Times(1);
+    ItemLookAt itl;
+    itl.setName("itemname");
+    EXPECT_CALL(world, getItemName(item.getId(), static_cast<uint8_t>(Language::english))).Times(1).WillOnce(Return("itemname"));
+    EXPECT_CALL(world, itemInform(&player, item, itl)).Times(1);
     script.LookAtItem(&player, item);
 }
 
@@ -71,7 +78,7 @@ TEST_F(world_bindings, UseItem) {
                           "useitem_test", itemdef
                          };
 
-    EXPECT_CALL(world, getItemName(_, _)).Times(1).WillOnce(Return("itemname"));
+    EXPECT_CALL(world, getItemName(item.getId(), _)).Times(1).WillOnce(Return("itemname"));
     EXPECT_CALL(player, inform(_,_)).Times(1);
     script.UseItem(&player, item, 1);
 }
