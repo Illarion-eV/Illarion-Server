@@ -340,23 +340,30 @@ Player *World::findPlayerOnField(const position &pos) const {
 }
 
 Character *World::findCharacter(TYPE_OF_CHARACTER_ID id) {
-    Character *tmpChr;
-    tmpChr = dynamic_cast<Character *>(Players.find(id));
+    if (id < MONSTER_BASE) {
+        auto tmpChr = dynamic_cast<Character *>(Players.find(id));
 
-    if (tmpChr) {
-        return tmpChr;
-    }
+        if (tmpChr) {
+            return tmpChr;
+        }
+    } else if (id < NPC_BASE) {
+        auto tmpChr = dynamic_cast<Character *>(Monsters.find(id));
 
-    tmpChr = dynamic_cast<Character *>(Monsters.find(id));
+        if (tmpChr) {
+            return tmpChr;
+        } else {
+            for (const auto &monster : newMonsters) {
+                if (id == monster->getId()) {
+                    return monster;
+                }
+            }
+        }
+    } else {
+        auto tmpChr = dynamic_cast<Character *>(Npc.find(id));
 
-    if (tmpChr) {
-        return tmpChr;
-    }
-
-    tmpChr = dynamic_cast<Character *>(Npc.find(id));
-
-    if (tmpChr) {
-        return tmpChr;
+        if (tmpChr) {
+            return tmpChr;
+        }
     }
 
     return nullptr;
