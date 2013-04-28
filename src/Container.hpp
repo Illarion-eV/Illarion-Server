@@ -87,7 +87,7 @@ public:
 
     int weight();
 
-    TYPE_OF_CONTAINERSLOTS getSlotCount();
+    virtual TYPE_OF_CONTAINERSLOTS getSlotCount();
 
     inline const ITEMMAP &getItems() const {
         return items;
