@@ -103,10 +103,6 @@ void NetInterface::handle_read_data(const boost::system::error_code &error) {
             boost::asio::async_read(socket,boost::asio::buffer(headerBuffer,6), std::bind(&NetInterface::handle_read_header, shared_from_this(), _1));
         }
     } else {
-        if (online) {
-            std::cerr<<"handle_read_data error during read "<<getIPAdress()<<" "<<error.message()<<" :"<< error<<std::endl;
-        }
-
         closeConnection();
         boost::asio::async_read(socket,boost::asio::buffer(headerBuffer,6), std::bind(&NetInterface::handle_read_header, shared_from_this(), _1));
     }
