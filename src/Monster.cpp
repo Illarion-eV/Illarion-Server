@@ -34,7 +34,7 @@ uint32_t Monster::counter = 0;
 Monster::Monster(const TYPE_OF_CHARACTER_ID &type, const position &newpos, SpawnPoint *spawnpoint) throw(unknownIDException)
     : Character(),lastTargetPosition(position(0,0,0)),lastTargetSeen(false), spawn(spawnpoint), monstertype(type) {
     setId(MONSTER_BASE + counter++ % (NPC_BASE-MONSTER_BASE));
-    SetAlive(true);
+    setAlive(true);
     setMonsterType(type);
     setPosition(newpos);
 }
@@ -135,12 +135,12 @@ Monster::~Monster() {
 }
 
 void Monster::remove() {
-    Character::SetAlive(false);
+    Character::setAlive(false);
 }
 
-void Monster::SetAlive(bool t) {
-    bool wasAlive = Character::IsAlive();
-    Character::SetAlive(t);
+void Monster::setAlive(bool t) {
+    bool wasAlive = Character::isAlive();
+    Character::setAlive(t);
 
     if (!t && wasAlive) {
 

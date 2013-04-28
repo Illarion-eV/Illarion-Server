@@ -435,11 +435,11 @@ public:
 
     virtual void ageInventory();
 
-    inline bool IsAlive() const {
+    inline bool isAlive() const {
         return alive;
     }
 
-    virtual void SetAlive(bool t);
+    virtual void setAlive(bool t);
 
     character_type enemytype;
     TYPE_OF_CHARACTER_ID enemyid;

@@ -64,8 +64,10 @@
 #include "dialog/SelectionDialog.hpp"
 #include "dialog/CraftingDialog.hpp"
 
+#include "script/LuaPlayerDeathScript.hpp"
 #include "script/LuaDepotScript.hpp"
 
+extern std::shared_ptr<LuaPlayerDeathScript>playerDeathScript;
 extern std::shared_ptr<LuaDepotScript>depotScript;
 
 //#define PLAYER_MOVE_DEBUG
@@ -79,7 +81,7 @@ Player::Player(std::shared_ptr<NetInterface> newConnection) throw(Player::Logout
 
     screenwidth = 0;
     screenheight = 0;
-    SetAlive(true);
+    Character::setAlive(true);
     SetMovement(walk);
 
     time(&lastaction);
@@ -250,6 +252,21 @@ void Player::login() throw(Player::LogoutException) {
 
 unsigned short int Player::getScreenRange() const {
     return (screenwidth > screenheight) ? 2*screenwidth : 2*screenheight;
+}
+
+void Player::setAlive(bool alive) {
+    bool wasAlive = isAlive();
+    Character::setAlive(alive);
+
+    if (wasAlive && !alive) {
+        updateAppearanceForAll(true);
+
+        ltAction->abortAction();
+
+        if (playerDeathScript) {
+            playerDeathScript->playerDeath(this);
+        }
+    }
 }
 
 void Player::openShowcase(Container *container, bool carry) {
@@ -1003,7 +1020,7 @@ void Player::check_logindata() throw(Player::LogoutException) {
         setAttribute(Character::essence, playerRow["ply_essence"].as<uint16_t>());
         setAttribute(Character::foodlevel, playerRow["ply_foodlevel"].as<uint32_t>());
 
-        SetAlive(playerRow["ply_lifestate"].as<uint16_t>() != 0);
+        Character::setAlive(playerRow["ply_lifestate"].as<uint16_t>() != 0);
         setMagicType(magic_type(playerRow["ply_magictype"].as<uint16_t>()));
         setMagicFlags(MAGE, playerRow["ply_magicflagsmage"].as<uint64_t>());
         setMagicFlags(PRIEST, playerRow["ply_magicflagspriest"].as<uint64_t>());
@@ -1097,7 +1114,7 @@ bool Player::save() throw() {
             query.addAssignColumn<uint16_t>("ply_hitpoints", getAttribute(Character::hitpoints));
             query.addAssignColumn<uint16_t>("ply_mana", getAttribute(Character::mana));
             query.addAssignColumn<uint32_t>("ply_foodlevel", getAttribute(Character::foodlevel));
-            query.addAssignColumn<uint32_t>("ply_lifestate", IsAlive() ? 1 : 0);
+            query.addAssignColumn<uint32_t>("ply_lifestate", isAlive() ? 1 : 0);
             query.addAssignColumn<uint32_t>("ply_magictype", (uint32_t) getMagicType());
             query.addAssignColumn<uint64_t>("ply_magicflagsmage", getMagicFlags(MAGE));
             query.addAssignColumn<uint64_t>("ply_magicflagspriest", getMagicFlags(PRIEST));

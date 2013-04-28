@@ -251,7 +251,7 @@ AppearanceTC::AppearanceTC(Character *cc, const Player *receivingPlayer) : Basic
         addShortIntToBuffer(cc->GetItemAt(i).getId());
     }
 
-    uint8_t deathflag = cc->IsAlive() ? 0 : 1;
+    uint8_t deathflag = cc->isAlive() ? 0 : 1;
     addUnsignedCharToBuffer(deathflag);
 }
 

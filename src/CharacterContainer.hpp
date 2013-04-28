@@ -215,7 +215,7 @@ auto CharacterContainer<T>::findAllAliveCharactersInRangeOf(const position &pos,
 
             if (((abs(dx) + abs(dy)) <= distancemetric) ||
                 ((distancemetric == 1) && (abs(dx) == 1) && (abs(dy) == 1))) {       // Allow angle attacks
-                if (character.second->IsAlive()) {
+                if (character.second->isAlive()) {
                     temp.push_back(character.second);
                 }
             }
@@ -237,7 +237,7 @@ auto CharacterContainer<T>::findAllAliveCharactersInRangeOfOnSameMap(const posit
             short int dy = charPos.y - pos.y;
 
             if (((abs(dx) + abs(dy)) <= distancemetric) || ((distancemetric == 1) && (abs(dx) == 1) && (abs(dy) == 1))) {          // Allow angle attacks
-                if (character.second->IsAlive()) {
+                if (character.second->isAlive()) {
                     temp.push_back(character.second);
                 }
             }

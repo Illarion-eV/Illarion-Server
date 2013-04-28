@@ -39,7 +39,7 @@ void Player::workoutCommands() {
 
     if (cmd) {
         cmd->performAction(this);
-    } else if (IsAlive()) {
+    } else if (isAlive()) {
         if (getAttackMode() && canFight()) {
             //cp->ltAction->abortAction();
             World::get()->characterAttacks(this);

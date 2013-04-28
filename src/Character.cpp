@@ -39,7 +39,6 @@
 
 #include "script/LuaWeaponScript.hpp"
 #include "script/LuaLearnScript.hpp"
-#include "script/LuaPlayerDeathScript.hpp"
 
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
@@ -47,7 +46,6 @@
 #define MAJOR_SKILL_GAP 100
 
 extern std::shared_ptr<LuaLearnScript>learnScript;
-extern std::shared_ptr<LuaPlayerDeathScript>playerDeathScript;
 extern std::shared_ptr<LuaWeaponScript> standardFightingScript;
 
 Character::attribute_map_t Character::attributeMap = {
@@ -155,7 +153,7 @@ bool Character::getNextStepDir(const position &goal, direction &dir) const {
 
 
 Character::Character(const appearance &appearance) : effects(this), waypoints(this), _world(World::get()), _appearance(appearance), attributes(ATTRIBUTECOUNT) {
-    SetAlive(true);
+    setAlive(true);
     for (int i = 0; i < MAX_BODY_ITEMS + MAX_BELT_SLOTS; ++i) {
         characterItems[ i ].reset();
     }
@@ -653,27 +651,15 @@ void Character::ageInventory() {
     }
 }
 
-void Character::SetAlive(bool t) {
-    bool wasAlive = alive;
+void Character::setAlive(bool t) {
     alive = t;
-
-    if (wasAlive && !alive && (getType() == player)) {
-        updateAppearanceForAll(true);
-
-        Player *player = dynamic_cast<Player *>(this);
-        player->ltAction->abortAction();
-
-        if (playerDeathScript) {
-            playerDeathScript->playerDeath(player);
-        }
-    }
 }
 
 
 bool Character::attack(Character *target) {
-    if (target && target->IsAlive()) {
+    if (target && target->isAlive()) {
         if (!actionRunning()) {
-            if (target->IsAlive()) {
+            if (target->isAlive()) {
                 if (target->getType() == player) {
                     Player *pl = dynamic_cast<Player *>(target);
                     pl->ltAction->actionDisturbed(this);
@@ -684,7 +670,7 @@ bool Character::attack(Character *target) {
         }
 
         if (getType() == player) {
-            if (target->IsAlive()) {
+            if (target->isAlive()) {
                 ServerCommandPointer cmd = std::make_shared<BBSendActionTC>(id, 1 , "Attacks : " + target->to_string());
                 _world->monitoringClientList->sendCommand(cmd);
             } else {
@@ -693,12 +679,12 @@ bool Character::attack(Character *target) {
             }
         }
 
-        if (!target->IsAlive()) {
+        if (!target->isAlive()) {
             // target was killed...
             Logger::info(LogFacility::Player) << *this << " killed " << *target << Log::end;
         }
 
-        return (target->IsAlive());
+        return (target->isAlive());
     }
 
     return false;
@@ -814,7 +800,7 @@ Attribute::attribute_t Character::increaseAttribute(Character::attributeIndex at
 
 void Character::handleAttributeChange(Character::attributeIndex attribute) {
     if (attribute == Character::hitpoints) {
-        SetAlive(getAttribute(hitpoints) > 0);
+        setAlive(getAttribute(hitpoints) > 0);
         _world->sendHealthToAllVisiblePlayers(this, getAttribute(hitpoints));
     }
 }
@@ -1278,7 +1264,7 @@ void Character::talk(talk_type tt, const std::string &german, const std::string 
     switch (tt) {
     case tt_say:
 
-        if (!IsAlive()) {
+        if (!isAlive()) {
             return;
         }
 
@@ -1291,7 +1277,7 @@ void Character::talk(talk_type tt, const std::string &german, const std::string 
 
     case tt_yell:
 
-        if (!IsAlive()) {
+        if (!isAlive()) {
             return;
         }
 

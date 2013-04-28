@@ -68,7 +68,7 @@ public:
     * if a monster is killed it will be removed from his spawnpoint
     * @param t the new lifestate true = alive false = death
     */
-    void SetAlive(bool t);
+    virtual void setAlive(bool t) override;
 
     void remove();
 

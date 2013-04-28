@@ -634,7 +634,7 @@ void CastTS::performAction(Player *player) {
         std::cout<<"paramOK: "<<paramOK<<std::endl;
 #endif
 
-        if ((paramOK) && player->IsAlive() && (player->GetStatus() < 10)) {
+        if ((paramOK) && player->isAlive() && (player->GetStatus() < 10)) {
             switch (Target.Type) {
             case LUA_NONE:
                 LuaMageScript->CastMagic(player, static_cast<unsigned char>(LTS_NOLTACTION));
@@ -678,7 +678,7 @@ void CastTS::performAction(Player *player) {
             } //Ende Switch
 
             //monitoringClientList->sendCommand( new SendActionTS( player->getId(), *player, 2, msg));
-        } //ENde if player->IsAlive
+        } //ENde if player->isAlive
 
         Logger::debug(LogFacility::Script) << "all succeeded" << Log::end;
     }
@@ -906,7 +906,7 @@ void UseTS::performAction(Player *player) {
     if (LuaScript) {
         player->ltAction->setLastAction(LuaScript, Source, Target, LongTimeAction::ACTION_USE);
 
-        if ((paramOK) && player->IsAlive()) {
+        if ((paramOK) && player->isAlive()) {
 
             if (Source.Type == LUA_ITEM) {
                 LuaScript->UseItem(player, Source.item, static_cast<unsigned char>(LTS_NOLTACTION));
@@ -916,7 +916,7 @@ void UseTS::performAction(Player *player) {
     } else if (LuaNPCScript) {
         player->ltAction->setLastAction(LuaNPCScript, Source, Target, LongTimeAction::ACTION_USE);
 
-        if ((paramOK) && player->IsAlive()) {
+        if ((paramOK) && player->isAlive()) {
             if (Source.Type == LUA_CHARACTER && (Target.Type == LUA_NONE)) {
                 LuaNPCScript->useNPC(player, static_cast<unsigned char>(LTS_NOLTACTION));
                 msg = "Used NPC: " + Source.character->to_string();
@@ -926,7 +926,7 @@ void UseTS::performAction(Player *player) {
     } else if (LuaMonsterScript) {
         player->ltAction->setLastAction(LuaMonsterScript, Source, Target, LongTimeAction::ACTION_USE);
 
-        if ((paramOK) && player->IsAlive()) {
+        if ((paramOK) && player->isAlive()) {
             if (Source.Type == LUA_CHARACTER && (Target.Type == LUA_NONE)) {
                 LuaMonsterScript->useMonster(Source.character, player, static_cast<unsigned char>(LTS_NOLTACTION));
                 msg = "Used Monster: " + Source.character->to_string();
@@ -935,7 +935,7 @@ void UseTS::performAction(Player *player) {
     } else if (LuaTileScript) {
         player->ltAction->setLastAction(LuaTileScript, Source, Target, LongTimeAction::ACTION_USE);
 
-        if ((paramOK) && player->IsAlive()) {
+        if ((paramOK) && player->isAlive()) {
             if (Source.Type == LUA_FIELD && Target.Type == LUA_NONE) {
                 LuaTileScript->useTile(player, Source.pos, static_cast<unsigned char>(LTS_NOLTACTION));
             }
@@ -1012,7 +1012,7 @@ void LookAtInventoryItemTS::decodeData() {
 void LookAtInventoryItemTS::performAction(Player *player) {
     Logger::debug(LogFacility::World) << *player << " looks at an item in the inventory." << Log::end;
 
-    if (player->IsAlive()) {
+    if (player->isAlive()) {
         World::get()->lookAtInventoryItem(player, pos);
         player->increaseActionPoints(-P_LOOK_COST);
     }
@@ -1034,7 +1034,7 @@ void LookAtShowCaseItemTS::decodeData() {
 void LookAtShowCaseItemTS::performAction(Player *player) {
     Logger::debug(LogFacility::World) << *player << " looks at an item in a container." << Log::end;
 
-    if (player->IsAlive()) {
+    if (player->isAlive()) {
         World::get()->lookAtShowcaseItem(player, showcase, pos);
         player->increaseActionPoints(-P_LOOK_COST);
     }
@@ -1060,7 +1060,7 @@ void MoveItemFromPlayerToShowCaseTS::performAction(Player *player) {
     player->ltAction->abortAction();
     Logger::debug(LogFacility::World) << *player << "moves an item from the inventory to showcase!" << Log::end;
 
-    if (player->IsAlive()) {
+    if (player->isAlive()) {
         World::get()->moveItemFromPlayerIntoShowcase(player, cpos, showcase, pos, count);
         player->increaseActionPoints(-P_ITEMMOVE_COST);
     }
@@ -1086,7 +1086,7 @@ void MoveItemFromShowCaseToPlayerTS::performAction(Player *player) {
     player->ltAction->abortAction();
     Logger::debug(LogFacility::World) << *player << " moves an item from the shocase to the inventory!" << Log::end;
 
-    if (player->IsAlive()) {
+    if (player->isAlive()) {
         World::get()->moveItemFromShowcaseToPlayer(player, showcase, pos, cpos, count);
         player->increaseActionPoints(-P_ITEMMOVE_COST);
     }
@@ -1111,7 +1111,7 @@ void MoveItemInsideInventoryTS::performAction(Player *player) {
     player->ltAction->abortAction();
     Logger::debug(LogFacility::World) << *player << "moves an item inside the inventory!" << Log::end;
 
-    if (player->IsAlive()) {
+    if (player->isAlive()) {
         World::get()->moveItemBetweenBodyParts(player, opos, npos, count);
         player->increaseActionPoints(-P_ITEMMOVE_COST);
     }
@@ -1160,7 +1160,7 @@ void MoveItemFromMapToPlayerTS::performAction(Player *player) {
     player->ltAction->abortAction();
     Logger::debug(LogFacility::World) << *player << " moves an Item from the map to the inventory!" << Log::end;
 
-    if (player->IsAlive()) {
+    if (player->isAlive()) {
         World::get()->moveItemFromMapToPlayer(player, dir, pos, count);
         player->increaseActionPoints(-P_ITEMMOVE_COST);
     }
@@ -1186,7 +1186,7 @@ void MoveItemFromMapIntoShowCaseTS::performAction(Player *player) {
     player->ltAction->abortAction();
     Logger::debug(LogFacility::World) << *player << " moves an item from the map to the showcase!" << Log::end;
 
-    if (player->IsAlive()) {
+    if (player->isAlive()) {
         World::get()->moveItemFromMapIntoShowcase(player, dir, showcase, pos, count);
         player->increaseActionPoints(-P_ITEMMOVE_COST);
     }
@@ -1213,7 +1213,7 @@ void MoveItemBetweenShowCasesTS::performAction(Player *player) {
     player->ltAction->abortAction();
     Logger::debug(LogFacility::World) << *player << " moves an item between showcases!" << Log::end;
 
-    if (player->IsAlive()) {
+    if (player->isAlive()) {
         World::get()->moveItemBetweenShowcases(player, source, spos, dest, dpos, count);
         player->increaseActionPoints(-P_ITEMMOVE_COST);
     }
@@ -1261,7 +1261,7 @@ void CloseContainerInShowCaseTS::performAction(Player *player) {
     player->ltAction->abortAction();
     Logger::debug(LogFacility::World) << *player << " closes a container in the showcase" << Log::end;
 
-    if (player->IsAlive()) {
+    if (player->isAlive()) {
         player->closeShowcase(showcase);
     }
 }
@@ -1323,7 +1323,7 @@ void LookIntoContainerOnFieldTS::performAction(Player *player) {
     player->ltAction->abortAction();
     Logger::debug(LogFacility::World) << *player << " looks into a container on the map" << Log::end;
 
-    if (player->IsAlive()) {
+    if (player->isAlive()) {
         player->lookIntoContainerOnField(dir);
         player->increaseActionPoints(-P_LOOK_COST);
     }
@@ -1436,7 +1436,7 @@ void IntroduceTS::performAction(Player *player) {
     time(&(player->lastaction));
     Logger::debug(LogFacility::World) << *player << " introduces himself!" << Log::end;
 
-    if (player->IsAlive()) {
+    if (player->isAlive()) {
         World::get()->introduceMyself(player);
     }
 }
@@ -1456,10 +1456,10 @@ void AttackPlayerTS::decodeData() {
 void AttackPlayerTS::performAction(Player *player) {
     time(&(player->lastaction));
 
-    if (player->IsAlive() && player->GetStatus() < 10) {
+    if (player->isAlive() && player->GetStatus() < 10) {
         player->ltAction->abortAction();
 
-        if (player->IsAlive()) {
+        if (player->isAlive()) {
             player->enemyid = enemyid;
             player->setAttackMode(true);
             player->enemytype = Character::player;
@@ -1499,7 +1499,7 @@ void LookAtMapItemTS::decodeData() {
 void LookAtMapItemTS::performAction(Player *player) {
     Logger::debug(LogFacility::World) << *player << " looks at a map item." << Log::end;
 
-    if (player->IsAlive()) {
+    if (player->isAlive()) {
         World::get()->lookAtMapItem(player, pos);
         player->increaseActionPoints(-P_LOOK_COST);
     }
@@ -1579,7 +1579,7 @@ void IMoverActionTS::performAction(Player *player) {
     player->ltAction->abortAction();
     Logger::debug(LogFacility::World) << *player << " tryes to move an Item!" << Log::end;
 
-    if (player->IsAlive()) {
+    if (player->isAlive()) {
         World::get()->moveItem(player, dir, pos, count);
         player->increaseActionPoints(-P_ITEMMOVE_COST);
     }

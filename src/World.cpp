@@ -634,7 +634,7 @@ void World::checkMonsters() {
     Monsters.for_each([this, &deadMonsters](Monster *monsterPointer) {
         Monster &monster = *monsterPointer;
 
-        if (monster.IsAlive()) {
+        if (monster.isAlive()) {
             monster.increaseActionPoints(ap);
             monster.increaseFightPoints(ap);
             monster.effects.checkEffects();
@@ -937,7 +937,7 @@ void World::checkNPC() {
 
     Npc.for_each([this](NPC* npc) {
 
-        if (npc->IsAlive()) {
+        if (npc->isAlive()) {
             npc->increaseActionPoints(ap);
             npc->effects.checkEffects();
             std::shared_ptr<LuaNPCScript> npcScript = npc->getScript();

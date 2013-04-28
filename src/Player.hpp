@@ -160,6 +160,9 @@ private:
 
 public:
     const std::string &nls(const std::string &german, const std::string &english) const;
+
+    virtual void setAlive(bool alive) override;
+
     void checkBurden();
 
     virtual bool pageGM(const std::string &ticket) override;
