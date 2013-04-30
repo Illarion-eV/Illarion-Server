@@ -29,10 +29,7 @@ Requirements
 Build
 
    Run inside the source directory:
-   aclocal
-   autoheader
-   autoconf
-   automake -a -c
+   ./bootstrap
    ./configure OR ./configure CXX=clang
    make
 
@@ -44,4 +41,4 @@ Build
    the correct version
      ______________________________________________________________________
 
-   Last modified: Mar 06, 2013
+   Last modified: Apr 30, 2013
