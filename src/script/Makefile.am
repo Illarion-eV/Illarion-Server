@@ -3,7 +3,7 @@ AM_CPPFLAGS = -D_THREAD_SAFE -D_REENTRANT -DTESTSERVER -DCDataConnect_DEBUG -DAd
 
 noinst_LTLIBRARIES = libscriptbinding.la
 
-libscriptbinding_la_SOURCES = LuaScript.cpp forwarder.cpp \
+libscriptbinding_la_SOURCES = LuaScript.cpp forwarder.cpp LuaTestSupportScript.cpp \
 			     LuaNPCScript.cpp LuaItemScript.cpp LuaMonsterScript.cpp \
 			     LuaMagicScript.cpp LuaTileScript.cpp LuaTriggerScript.cpp \
 			     LuaWeaponScript.cpp LuaScheduledScript.cpp LuaLongTimeEffectScript.cpp \
@@ -12,7 +12,7 @@ libscriptbinding_la_SOURCES = LuaScript.cpp forwarder.cpp \
 			     LuaPlayerDeathScript.cpp LuaLookAtItemScript.cpp LuaQuestScript.cpp
 
 noinst_HEADERS = forwarder.hpp \
-		 LuaLookAtItemScript.hpp \
+		 LuaLookAtItemScript.hpp LuaTestSupportScript.hpp \
 		 LuaLookAtPlayerScript.hpp LuaTriggerScript.hpp \
 		 LuaLongTimeEffectScript.hpp LuaLearnScript.hpp \
 		 LuaNPCScript.hpp LuaWeaponScript.hpp \

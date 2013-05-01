@@ -18,7 +18,7 @@
 
 
 check_LTLIBRARIES = libgmock.la
-check_PROGRAMS = test_binding ItemTest test_container
+check_PROGRAMS = test_binding ItemTest test_container test_binding_item test_binding_scriptitem
 
 AM_CXXFLAGS = -ggdb -pipe -Wall -Werror -Wno-deprecated -std=c++11 $(BOOST_CXXFLAGS) $(DEPS_CFLAGS)
 AM_CPPFLAGS = -D_THREAD_SAFE -D_REENTRANT -DTESTSERVER -DCDataConnect_DEBUG -DAdminCommands_DEBUG $(BOOST_CPPFLAGS) -I$(top_srcdir)/src
@@ -30,9 +30,12 @@ LIBS = $(BOOST_THREAD_LIBS) $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS)
 nodist_libgmock_la_SOURCES = $(GMOCK_DIR)/src/gmock-all.cc $(GTEST_DIR)/src/gtest-all.cc
 libgmock_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(GMOCK_DIR) -I$(GTEST_DIR)
 
-TESTS = test_binding ItemTest test_container
+TESTS = test_binding ItemTest test_container test_binding_item test_binding_scriptitem
 
 test_binding_SOURCES = test_binding.cpp
+
+test_binding_item_SOURCES = test_binding_item.cpp
+test_binding_scriptitem_SOURCES = test_binding_scriptitem.cpp
 
 ItemTest_SOURCES = ItemTest.cpp
 
