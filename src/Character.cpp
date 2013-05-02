@@ -1696,9 +1696,7 @@ void Character::setFaceTo(face_to faceTo) {
 }
 
 void Character::setMagicFlags(magic_type type, uint64_t flags) {
-    if (type < 4) {
-        magic.flags[type] = flags;
-    }
+    magic.flags[type] = flags;
 }
 
 std::ostream &operator<<(std::ostream &os, const Character &character) {

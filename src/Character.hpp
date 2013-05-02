@@ -200,9 +200,7 @@ public:
     }
 
     inline virtual void setMagicType(magic_type newMagType) {
-        if (newMagType < 4) {
-            magic.type=newMagType;
-        }
+        magic.type = newMagType;
     }
 
     void setOnRoute(bool onr) {
