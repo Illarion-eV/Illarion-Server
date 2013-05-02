@@ -38,3 +38,7 @@ ScriptItem LuaTestSupportScript::scriptitem_test(const ScriptItem& in) {
 int LuaTestSupportScript::int_test(int arg) {
 	return callEntrypoint<int>("int_test", arg);
 }
+
+position LuaTestSupportScript::position_test(const position& pos) {
+	return callEntrypoint<position>("position_test", pos);
+}

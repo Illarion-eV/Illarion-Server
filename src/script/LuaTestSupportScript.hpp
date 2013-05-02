@@ -23,6 +23,7 @@
 
 #include "LuaScript.hpp"
 #include "Item.hpp"
+#include "globals.hpp"
 
 class World;
 class Character;
@@ -35,6 +36,7 @@ public:
     Item item_test(const Item& in);
     ScriptItem scriptitem_test(const ScriptItem& in);
     int int_test(int arg);
+    position position_test(const position& pos);
 
 private:
 
