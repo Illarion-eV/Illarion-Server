@@ -155,7 +155,7 @@ protected:
     T callEntrypoint(const std::string &entrypoint, const Args &... args) {
         setCurrentWorldScript();
         callQuestEntrypoint(entrypoint, args...);
-        return safeCall<T>(entrypoint, args...);
+        return safeCall<T, Args...>(entrypoint, args...);
     };
 
 private:

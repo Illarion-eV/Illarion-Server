@@ -28,17 +28,17 @@ LuaTestSupportScript::LuaTestSupportScript(const std::string &code, const std::s
 LuaTestSupportScript::~LuaTestSupportScript() noexcept {}
 
 Item LuaTestSupportScript::item_test(const Item& in) {
-	return callEntrypoint<Item>("item_test", in);
+	return callEntrypoint<Item, Item>("item_test", in);
 }
 
 ScriptItem LuaTestSupportScript::scriptitem_test(const ScriptItem& in) {
-	return callEntrypoint<ScriptItem>("scriptitem_test", in);
+	return callEntrypoint<ScriptItem, ScriptItem>("scriptitem_test", in);
 }
 
 int LuaTestSupportScript::int_test(int arg) {
-	return callEntrypoint<int>("int_test", arg);
+	return callEntrypoint<int, int>("int_test", arg);
 }
 
 position LuaTestSupportScript::position_test(const position& pos) {
-	return callEntrypoint<position>("position_test", pos);
+	return callEntrypoint<position, position>("position_test", pos);
 }
