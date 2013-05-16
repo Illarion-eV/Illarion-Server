@@ -713,7 +713,7 @@ void World::checkMonsters() {
                         bool makeRandomStep=true;
 
                         if ((!temp.empty()) && (monster.canAttack())) {
-                            Player *foundP2 = 0;
+                            Player *foundP2 = nullptr;
 
                             //search for the target via script or the player with the lowest hp
                             if (!monStruct.script || !monStruct.script->setTarget(monsterPointer, temp, foundP2)) {
@@ -886,9 +886,14 @@ void World::checkMonsters() {
                     const auto temp2 = Players.findAllAliveCharactersInRangeOf(monster.getPosition(), MONSTERVIEWRANGE);
 
                     if (!temp2.empty()) {
-                        Player *foundP;
+                        Player *foundP = nullptr;
 
-                        if (findPlayerWithLowestHP(temp2, foundP)) {
+                        //search for the target via script or the player with the lowest hp
+                        if (!monStruct.script || !monStruct.script->setTarget(monsterPointer, temp2, foundP)) {
+                            findPlayerWithLowestHP(temp2, foundP);
+                        }
+
+                        if (foundP) {
                             //Call enemyNear Script when enemy found
                             if (foundMonster && monStruct.script) {
                                 monStruct.script->enemyOnSight(monsterPointer, foundP);
