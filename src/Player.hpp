@@ -609,6 +609,7 @@ private:
 
     bool monitoringClient;
 
+    const uint8_t BACKPACK_SHOWCASE = 0;
     uint8_t showcaseCounter;
     typedef std::unordered_map<uint8_t, std::unique_ptr<Showcase>> ShowcaseMap;
     ShowcaseMap showcases;
