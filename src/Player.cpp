@@ -951,7 +951,7 @@ void Player::check_logindata() throw(Player::LogoutException) {
         }
 
         // check password
-        if (std::string(crypt(pw.c_str(),"$1$illarion1")) != real_pwd) {
+        if (pw != real_pwd) {
             Logger::alert(LogFacility::Player) << to_string() << " sent wrong password from ip: " << Connection->getIPAdress() << Log::end;
             throw LogoutException(WRONGPWD);
         }
