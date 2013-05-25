@@ -2036,8 +2036,9 @@ void Player::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS prog
 
         connection->commitTransaction();
     } catch (std::exception &e) {
-        std::cerr<<"exception: "<<e.what()<<" while setting quest progress!"<<std::endl;
+        Logger::error(LogFacility::Script) << "Setting quest progress failed for " << to_string() << ": " << e.what() << Log::end;
         connection->rollbackTransaction();
+        questWriteLock = false;
         return;
     }
 
