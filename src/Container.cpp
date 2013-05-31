@@ -672,6 +672,7 @@ void Container::insertIntoFirstFreeSlot(Item &item) {
 
     if (i < slotCount) {
         items.insert(ITEMMAP::value_type(i, item));
+        World::get()->sendContainerSlotChange(this, i);
     }
 }
 
@@ -686,6 +687,7 @@ void Container::insertIntoFirstFreeSlot(Item &item, Container *container) {
     if (i < slotCount) {
         items.insert(ITEMMAP::value_type(i, item));
         containers.insert(CONTAINERMAP::value_type(i, container));
+        World::get()->sendContainerSlotChange(this, i);
     }
 }
 
