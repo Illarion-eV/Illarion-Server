@@ -1,6 +1,7 @@
 #include <gmock/gmock.h>
 
-#include <Container.hpp>
+#include "Container.hpp"
+#include "World.hpp"
 
 const Item::id_type itemid_1 = 0x23;
 const Item::id_type itemid_2 = 0x42;
@@ -17,6 +18,17 @@ class MockContainer : public Container {
 		MOCK_METHOD0(getSlotCount, TYPE_OF_CONTAINERSLOTS());
 };
 
+class MockWorld : public World {
+public:
+    MockWorld() {
+        World::_self = this;
+    }
+
+    //MOCK_METHOD2(getItemName, std::string(TYPE_OF_ITEM_ID itemid, uint8_t language));
+    //MOCK_METHOD3(itemInform, void(Character *user, const ScriptItem &item, const ItemLookAt &lookAt));
+    //MOCK_METHOD1(findCharacter, Character*(TYPE_OF_CHARACTER_ID id));
+};
+
 class container_tests : public ::testing::Test {
 	public:
 		container_tests() : container{0x13} {
@@ -27,7 +39,8 @@ class container_tests : public ::testing::Test {
 		}
 
 		MockContainer container;
-		uint16_t size_c1 = 1;
+        MockWorld world;
+        uint16_t size_c1 = 1;
 		uint16_t size_c2 = 1;
 };
 
