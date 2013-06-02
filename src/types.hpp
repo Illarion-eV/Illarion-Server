@@ -65,7 +65,7 @@ typedef uint8_t  TYPE_OF_ACTIONPOINTS;
 typedef uint8_t  TYPE_OF_SKILL_ID;
 
 typedef uint16_t TYPE_OF_QUEST_ID;
-typedef uint32_t TYPE_OF_QUESTSTATUS;
+typedef int32_t TYPE_OF_QUESTSTATUS;
 
 typedef std::string TYPE_OF_GERMAN;
 typedef std::string TYPE_OF_ENGLISH;
