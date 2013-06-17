@@ -45,6 +45,7 @@ enum clientcommands {
     C_WHISPER_TS = 0xF3,
     C_REFRESH_TS = 0xF2,
     C_LOGOUT_TS = 0xF1,
+    C_PICKUPITEM_TS = 0xED,
     C_LOOKINTOCONTAINERONFIELD_TS = 0xEC,
     C_LOOKINTOINVENTORY_TS = 0xEB,
     C_LOOKINTOSHOWCASECONTAINER_TS = 0xEA,
@@ -413,6 +414,16 @@ public:
     virtual ClientCommandPointer clone() override;
 };
 
+class PickUpItemTS : public BasicClientCommand {
+private:
+    position pos;
+
+public:
+    PickUpItemTS();
+    virtual void decodeData() override;
+    virtual void performAction(Player *player) override;
+    virtual ClientCommandPointer clone() override;
+};
 
 class LogOutTS : public BasicClientCommand {
 public:

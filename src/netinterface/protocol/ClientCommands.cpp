@@ -1334,6 +1334,31 @@ ClientCommandPointer LookIntoContainerOnFieldTS::clone() {
     return cmd;
 }
 
+PickUpItemTS::PickUpItemTS() : BasicClientCommand(C_PICKUPITEM_TS) {
+}
+
+void PickUpItemTS::decodeData() {
+    pos.x = getShortIntFromBuffer();
+    pos.y = getShortIntFromBuffer();
+    pos.z = getShortIntFromBuffer();
+}
+
+void PickUpItemTS::performAction(Player *player) {
+    time(&(player->lastaction));
+    player->ltAction->abortAction();
+    Logger::debug(LogFacility::World) << *player << " tries to pick up item at " << pos << Log::end;
+
+    if (player->isAlive()) {
+        World::get()->pickUpItemFromMap(player, pos);
+        player->increaseActionPoints(-P_ITEMMOVE_COST);
+    }
+}
+
+ClientCommandPointer PickUpItemTS::clone() {
+    ClientCommandPointer cmd = std::make_shared<PickUpItemTS>();
+    return cmd;
+}
+
 LogOutTS::LogOutTS() : BasicClientCommand(C_LOGOUT_TS) {
 }
 

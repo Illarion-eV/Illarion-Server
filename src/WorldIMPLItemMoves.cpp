@@ -1297,6 +1297,9 @@ bool World::moveItem(Character *cc, direction dir, const position &newPosition, 
     return false;
 }
 
+void World::pickUpItemFromMap(Player *cp, const position &itemPosition) {
+}
+
 void World::sendRemoveItemFromMapToAllVisibleCharacters(const position &itemPosition) {
     for (const auto &player : Players.findAllCharactersInScreen(itemPosition)) {
         ServerCommandPointer cmd = std::make_shared<ItemRemoveTC>(itemPosition);
