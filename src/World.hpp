@@ -879,6 +879,7 @@ public:
     void dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, const position &newPosition, Item::number_type count);
     void moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, uint8_t showcase, unsigned char pos, Item::number_type count);
     void pickUpItemFromMap(Player *cp, const position &itemPosition);
+    void pickUpAllItemsFromMap(Player *cp);
     
     void sendRemoveItemFromMapToAllVisibleCharacters(const position &itemPosition);
     void sendPutItemOnMapToAllVisibleCharacters(const position &itemPosition, const Item &it);

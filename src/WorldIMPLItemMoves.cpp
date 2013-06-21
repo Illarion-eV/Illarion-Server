@@ -1298,6 +1298,11 @@ bool World::moveItem(Character *cc, direction dir, const position &newPosition, 
 }
 
 void World::pickUpItemFromMap(Player *cp, const position &itemPosition) {
+    cp->inform("Automatic item pickup not implemented yet.");
+}
+
+void World::pickUpAllItemsFromMap(Player *cp) {
+    cp->inform("Automatic pickup of all items not implemented yet.");
 }
 
 void World::sendRemoveItemFromMapToAllVisibleCharacters(const position &itemPosition) {

@@ -1359,6 +1359,28 @@ ClientCommandPointer PickUpItemTS::clone() {
     return cmd;
 }
 
+PickUpAllItemsTS::PickUpAllItemsTS() : BasicClientCommand(C_PICKUPALLITEMS_TS) {
+}
+
+void PickUpAllItemsTS::decodeData() {
+}
+
+void PickUpAllItemsTS::performAction(Player *player) {
+    time(&(player->lastaction));
+    player->ltAction->abortAction();
+    Logger::debug(LogFacility::World) << *player << " tries to pick up all nearby items" << Log::end;
+
+    if (player->isAlive()) {
+        World::get()->pickUpAllItemsFromMap(player);
+        player->increaseActionPoints(-P_ITEMMOVE_COST);
+    }
+}
+
+ClientCommandPointer PickUpAllItemsTS::clone() {
+    ClientCommandPointer cmd = std::make_shared<PickUpAllItemsTS>();
+    return cmd;
+}
+
 LogOutTS::LogOutTS() : BasicClientCommand(C_LOGOUT_TS) {
 }
 

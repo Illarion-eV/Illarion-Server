@@ -41,6 +41,7 @@ CommandFactory::CommandFactory() {
     templateList[C_REFRESH_TS ] = std::make_unique<RefreshTS>();
     templateList[C_LOGOUT_TS ] = std::make_unique<LogOutTS>();
     templateList[C_PICKUPITEM_TS ] = std::make_unique<PickUpItemTS>();
+    templateList[C_PICKUPALLITEMS_TS ] = std::make_unique<PickUpAllItemsTS>();
     templateList[C_LOOKINTOCONTAINERONFIELD_TS ] = std::make_unique<LookIntoContainerOnFieldTS>();
     templateList[C_LOOKINTOINVENTORY_TS ] = std::make_unique<LookIntoInventoryTS>();
     templateList[C_LOOKINTOSHOWCASECONTAINER_TS ] = std::make_unique<LookIntoShowCaseContainerTS>();
