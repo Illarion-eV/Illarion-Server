@@ -445,6 +445,14 @@ bool World::putItemInShowcase(Player *cc, uint8_t showcase, TYPE_OF_CONTAINERSLO
 }
 
 bool World::takeItemFromMap(Character *cc, const position &itemPosition) {
+    auto dx = abs(itemPosition.x - cc->getPosition().x);
+    auto dy = abs(itemPosition.y - cc->getPosition().y);
+    auto dz = abs(itemPosition.z - cc->getPosition().z);
+
+    if (dx > 1 || dy > 1 || dz != 0) {
+        return false;
+    }
+
     Field *tempf;
 
     if (GetPToCFieldAt(tempf, itemPosition, tmap)) {
@@ -980,31 +988,29 @@ void World::moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, uint8
     }
 }
 
-void World::moveItemFromMapIntoShowcase(Player *cp, direction dir, uint8_t showcase, unsigned char pos, Item::number_type count) {
+void World::moveItemFromMapIntoShowcase(Player *cp, const position &sourcePosition, uint8_t showcase, unsigned char showcaseSlot, Item::number_type count) {
     if (count == 0) {
         return;
     }
 
     if (cp) {
-        position itemPosition = cp->getPosition();
-        itemPosition.move(dir);
 
-        if (takeItemFromMap(cp, itemPosition)) {
+        if (takeItemFromMap(cp, sourcePosition)) {
             ScriptItem s_item = g_item, t_item = g_item;
-            s_item.pos = itemPosition;
+            s_item.pos = sourcePosition;
             s_item.type = ScriptItem::it_field;
             s_item.owner = cp;
             t_item.pos = cp->getPosition();
             t_item.type = ScriptItem::it_container;
             t_item.inside = cp->getShowcaseContainer(showcase);
-            t_item.itempos = pos;
+            t_item.itempos = showcaseSlot;
             t_item.owner = cp;
 
             std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(t_item.getId());
 
             if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
                 if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
-                    if (!putItemOnMap(cp, itemPosition)) {
+                    if (!putItemOnMap(cp, sourcePosition)) {
                         Logger::error(LogFacility::Player) << "moveItemFromMapIntoShowcase failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
                         g_cont = nullptr;
                         g_item.reset();
@@ -1028,7 +1034,7 @@ void World::moveItemFromMapIntoShowcase(Player *cp, direction dir, uint8_t showc
             }
 
             if (!NOK) {
-                if (!putItemInShowcase(cp, showcase,pos)) {
+                if (!putItemInShowcase(cp, showcase, showcaseSlot)) {
                     NOK =true;
                 } else {
                     cp->checkBurden();
@@ -1042,7 +1048,7 @@ void World::moveItemFromMapIntoShowcase(Player *cp, direction dir, uint8_t showc
             if (NOK) {
                 g_item = tempitem;
 
-                if (!putItemOnMap(cp, itemPosition)) {
+                if (!putItemOnMap(cp, sourcePosition)) {
                     Logger::error(LogFacility::Player) << "moveItemFromMapIntoShowcase failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
                     g_cont = nullptr;
                     g_item.reset();
@@ -1055,7 +1061,7 @@ void World::moveItemFromMapIntoShowcase(Player *cp, direction dir, uint8_t showc
                 g_item = tempitem;
                 g_item.setNumber(g_item.getNumber() - count);
 
-                if (!putItemOnMap(cp, itemPosition)) {
+                if (!putItemOnMap(cp, sourcePosition)) {
                     Logger::error(LogFacility::Player) << "moveItemFromMapIntoShowcase failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
                     g_cont = nullptr;
                     g_item.reset();
@@ -1068,35 +1074,33 @@ void World::moveItemFromMapIntoShowcase(Player *cp, direction dir, uint8_t showc
     }
 }
 
-void World::moveItemFromMapToPlayer(Player *cp, direction dir, unsigned char cpos, Item::number_type count) {
+void World::moveItemFromMapToPlayer(Player *cp, const position &sourcePosition, unsigned char inventorySlot, Item::number_type count) {
     if (count == 0) {
         return;
     }
 
     if (cp) {
-        position itemPosition = cp->getPosition();
-        itemPosition.move(dir);
 
-        if (takeItemFromMap(cp, itemPosition)) {
+        if (takeItemFromMap(cp, sourcePosition)) {
             ScriptItem s_item = g_item, t_item = g_item;
-            s_item.pos = itemPosition;
+            s_item.pos = sourcePosition;
             s_item.type = ScriptItem::it_field;
             s_item.owner = cp;
             t_item.pos = cp->getPosition();
 
-            if (cpos < MAX_BODY_ITEMS) {
+            if (inventorySlot < MAX_BODY_ITEMS) {
                 t_item.type = ScriptItem::it_inventory;
             } else {
                 t_item.type = ScriptItem::it_belt;
             }
 
             t_item.owner = cp;
-            t_item.itempos = cpos;
+            t_item.itempos = inventorySlot;
             std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(t_item.getId());
 
             if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
                 if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
-                    if (!putItemOnMap(cp, itemPosition)) {
+                    if (!putItemOnMap(cp, sourcePosition)) {
                         Logger::error(LogFacility::Player) << "moveItemFromMapToPlayer failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
                         g_cont = nullptr;
                         g_item.reset();
@@ -1120,7 +1124,7 @@ void World::moveItemFromMapToPlayer(Player *cp, direction dir, unsigned char cpo
             }
 
             if (!NOK) {
-                if (!putItemOnInvPos(cp, cpos)) {
+                if (!putItemOnInvPos(cp, inventorySlot)) {
                     NOK = true;
                 } else {
                     cp->checkBurden();
@@ -1134,7 +1138,7 @@ void World::moveItemFromMapToPlayer(Player *cp, direction dir, unsigned char cpo
             if (NOK) {
                 g_item = tempitem;
 
-                if (! putItemOnMap(cp, itemPosition)) {
+                if (! putItemOnMap(cp, sourcePosition)) {
                     Logger::error(LogFacility::Player) << "moveItemFromMapToPlayer failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
                     g_cont = nullptr;
                     g_item.reset();
@@ -1147,7 +1151,7 @@ void World::moveItemFromMapToPlayer(Player *cp, direction dir, unsigned char cpo
                 g_item = tempitem;
                 g_item.setNumber(g_item.getNumber() - count);
 
-                if (!putItemOnMap(cp, itemPosition)) {
+                if (!putItemOnMap(cp, sourcePosition)) {
                     Logger::error(LogFacility::Player) << "moveItemFromMapToPlayer failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
                     g_cont = nullptr;
                     g_item.reset();
@@ -1222,30 +1226,28 @@ void World::moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char p
     }
 }
 
-bool World::moveItem(Character *cc, direction dir, const position &newPosition, Item::number_type count) {
+bool World::moveItemFromMapToMap(Player *cp, const position &oldPosition, const position &newPosition, Item::number_type count) {
     if (count == 0) {
         return false;
     }
 
-    if (cc) {
-        position oldPosition = cc->getPosition();
-        oldPosition.move(dir);
+    if (cp) {
 
-        if (takeItemFromMap(cc, oldPosition)) {
+        if (takeItemFromMap(cp, oldPosition)) {
             ScriptItem s_item = g_item, t_item = g_item;
             s_item.pos = oldPosition;
             s_item.type = ScriptItem::it_field;
-            s_item.owner = cc;
+            s_item.owner = cp;
             t_item.pos = newPosition;
             t_item.type = ScriptItem::it_field;
-            t_item.owner = cc;
+            t_item.owner = cp;
 
             std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(t_item.getId());
 
             if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
-                if (!script->MoveItemBeforeMove(cc, s_item, t_item)) {
-                    if (!putItemOnMap(cc, oldPosition)) {
-                        Logger::error(LogFacility::Player) << "moveItem failed: item " << g_item.getId() << " lost for " << *cc << Log::end;
+                if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
+                    if (!putItemOnMap(cp, oldPosition)) {
+                        Logger::error(LogFacility::Player) << "moveItem failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
                         g_cont = nullptr;
                         g_item.reset();
                     }
@@ -1260,11 +1262,11 @@ bool World::moveItem(Character *cc, direction dir, const position &newPosition, 
                 g_item.setNumber(count);
             }
 
-            if (!putItemOnMap(cc, newPosition)) {
+            if (!putItemOnMap(cp, newPosition)) {
                 g_item = tempitem;
 
-                if (!putItemOnMap(cc, oldPosition)) {
-                    Logger::error(LogFacility::Player) << "moveItem failed: item " << g_item.getId() << " lost for " << *cc << Log::end;
+                if (!putItemOnMap(cp, oldPosition)) {
+                    Logger::error(LogFacility::Player) << "moveItem failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
                     g_cont = nullptr;
                     g_item.reset();
                 }
@@ -1276,8 +1278,8 @@ bool World::moveItem(Character *cc, direction dir, const position &newPosition, 
                 g_item = tempitem;
                 g_item.setNumber(g_item.getNumber() - count);
 
-                if (!putItemOnMap(cc, oldPosition)) {
-                    Logger::error(LogFacility::Player) << "moveItem failed: item " << g_item.getId() << " lost for " << *cc << Log::end;
+                if (!putItemOnMap(cp, oldPosition)) {
+                    Logger::error(LogFacility::Player) << "moveItem failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
                     g_cont = nullptr;
                     g_item.reset();
                 }
@@ -1286,7 +1288,7 @@ bool World::moveItem(Character *cc, direction dir, const position &newPosition, 
             }
 
             if (script) {
-                script->MoveItemAfterMove(cc, s_item, t_item);
+                script->MoveItemAfterMove(cp, s_item, t_item);
             }
 
             return true;

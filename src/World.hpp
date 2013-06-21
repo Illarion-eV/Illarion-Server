@@ -869,9 +869,9 @@ public:
     bool putItemInShowcase(Player *cc, uint8_t showcase, TYPE_OF_CONTAINERSLOTS pos);
     void checkField(Field *cfstart, const position &itemPosition);
 
-    bool moveItem(Character *cc, direction dir, const position &newPosition, Item::number_type count);
-    void moveItemFromMapIntoShowcase(Player *cp, direction dir, uint8_t showcase, unsigned char pos, Item::number_type count);
-    void moveItemFromMapToPlayer(Player *cp, direction dir, unsigned char cpos, Item::number_type count);
+    bool moveItemFromMapToMap(Player *cp, const position &oldPosition, const position &newPosition, Item::number_type count);
+    void moveItemFromMapIntoShowcase(Player *cp, const position &sourcePosition, uint8_t showcase, unsigned char showcaseSlot, Item::number_type count);
+    void moveItemFromMapToPlayer(Player *cp, const position &sourcePosition, unsigned char inventorySlot, Item::number_type count);
     void moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char pos, uint8_t dest, unsigned char pos2, Item::number_type count);
     void dropItemFromShowcaseOnMap(Player *cp, uint8_t showcase, unsigned char pos, const position &newPosition, Item::number_type count);
     void moveItemFromShowcaseToPlayer(Player *cp, uint8_t showcase, unsigned char pos, unsigned char cpos, Item::number_type count);

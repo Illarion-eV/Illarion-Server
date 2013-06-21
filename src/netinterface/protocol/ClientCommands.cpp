@@ -307,9 +307,9 @@ void CastTS::decodeData() {
 
     switch (cid) {
     case UID_KOORD:
-        castPosition.x = static_cast<short int>(getShortIntFromBuffer());
-        castPosition.y = static_cast<short int>(getShortIntFromBuffer());
-        castPosition.z = static_cast<short int>(getShortIntFromBuffer());
+        castPosition.x = getShortIntFromBuffer();
+        castPosition.y = getShortIntFromBuffer();
+        castPosition.z = getShortIntFromBuffer();
         break;
 
     case UID_SHOWC:
@@ -1127,9 +1127,9 @@ DropItemFromInventoryOnMapTS::DropItemFromInventoryOnMapTS() : BasicClientComman
 
 void DropItemFromInventoryOnMapTS::decodeData() {
     pos = getUnsignedCharFromBuffer();
-    mapPosition.x = static_cast<short int>(getShortIntFromBuffer());
-    mapPosition.y = static_cast<short int>(getShortIntFromBuffer());
-    mapPosition.z = static_cast<short int>(getShortIntFromBuffer());
+    mapPosition.x = getShortIntFromBuffer();
+    mapPosition.y = getShortIntFromBuffer();
+    mapPosition.z = getShortIntFromBuffer();
     count = getShortIntFromBuffer();
 }
 
@@ -1150,18 +1150,20 @@ MoveItemFromMapToPlayerTS::MoveItemFromMapToPlayerTS() : BasicClientCommand(C_MO
 }
 
 void MoveItemFromMapToPlayerTS::decodeData() {
-    dir = to_direction(getUnsignedCharFromBuffer());
-    pos = getUnsignedCharFromBuffer();
+    sourcePosition.x = getShortIntFromBuffer();
+    sourcePosition.y = getShortIntFromBuffer();
+    sourcePosition.z = getShortIntFromBuffer();
+    inventorySlot = getUnsignedCharFromBuffer();
     count = getShortIntFromBuffer();
 }
 
 void MoveItemFromMapToPlayerTS::performAction(Player *player) {
     time(&(player->lastaction));
     player->ltAction->abortAction();
-    Logger::debug(LogFacility::World) << *player << " moves an Item from the map to the inventory!" << Log::end;
+    Logger::debug(LogFacility::World) << *player << " moves an item from map " << sourcePosition << " to inventory slot " << inventorySlot << Log::end;
 
     if (player->isAlive()) {
-        World::get()->moveItemFromMapToPlayer(player, dir, pos, count);
+        World::get()->moveItemFromMapToPlayer(player, sourcePosition, inventorySlot, count);
         player->increaseActionPoints(-P_ITEMMOVE_COST);
     }
 }
@@ -1175,25 +1177,56 @@ MoveItemFromMapIntoShowCaseTS::MoveItemFromMapIntoShowCaseTS() : BasicClientComm
 }
 
 void MoveItemFromMapIntoShowCaseTS::decodeData() {
-    dir = to_direction(getUnsignedCharFromBuffer());
+    sourcePosition.x = getShortIntFromBuffer();
+    sourcePosition.y = getShortIntFromBuffer();
+    sourcePosition.z = getShortIntFromBuffer();
     showcase = getUnsignedCharFromBuffer();
-    pos = getUnsignedCharFromBuffer();
+    showcaseSlot = getUnsignedCharFromBuffer();
     count = getShortIntFromBuffer();
 }
 
 void MoveItemFromMapIntoShowCaseTS::performAction(Player *player) {
     time(&(player->lastaction));
     player->ltAction->abortAction();
-    Logger::debug(LogFacility::World) << *player << " moves an item from the map to the showcase!" << Log::end;
+    Logger::debug(LogFacility::World) << *player << " moves an item from map " << sourcePosition << " to showcase " << (int)showcase << " slot " << (int)showcaseSlot << Log::end;
 
     if (player->isAlive()) {
-        World::get()->moveItemFromMapIntoShowcase(player, dir, showcase, pos, count);
+        World::get()->moveItemFromMapIntoShowcase(player, sourcePosition, showcase, showcaseSlot, count);
         player->increaseActionPoints(-P_ITEMMOVE_COST);
     }
 }
 
 ClientCommandPointer MoveItemFromMapIntoShowCaseTS::clone() {
     ClientCommandPointer cmd = std::make_shared<MoveItemFromMapIntoShowCaseTS>();
+    return cmd;
+}
+
+MoveItemFromMapToMapTS::MoveItemFromMapToMapTS() : BasicClientCommand(C_MOVEITEMFROMMAPTOMAP_TS) {
+}
+
+void MoveItemFromMapToMapTS::decodeData() {
+    sourcePosition.x = getShortIntFromBuffer();
+    sourcePosition.y = getShortIntFromBuffer();
+    sourcePosition.z = getShortIntFromBuffer();
+    targetPosition.x = getShortIntFromBuffer();
+    targetPosition.y = getShortIntFromBuffer();
+    targetPosition.z = getShortIntFromBuffer();
+    count = getShortIntFromBuffer();
+}
+
+void MoveItemFromMapToMapTS::performAction(Player *player) {
+    time(&(player->lastaction));
+    player->ltAction->abortAction();
+    Logger::debug(LogFacility::World) << *player << " moves an item from map " << sourcePosition << " to map " << targetPosition << Log::end;
+
+    if (player->isAlive()) {
+        World::get()->moveItemFromMapToMap(player, sourcePosition, targetPosition, count);
+        player->increaseActionPoints(-P_ITEMMOVE_COST);
+    }
+}
+
+ClientCommandPointer MoveItemFromMapToMapTS::clone() {
+    ClientCommandPointer cmd = std::make_shared<MoveItemFromMapToMapTS>();
     return cmd;
 }
 
@@ -1230,9 +1263,9 @@ DropItemFromShowCaseOnMapTS::DropItemFromShowCaseOnMapTS() : BasicClientCommand(
 void DropItemFromShowCaseOnMapTS::decodeData() {
     showcase = getUnsignedCharFromBuffer();
     pos = getUnsignedCharFromBuffer();
-    mapPosition.x = static_cast<short int>(getShortIntFromBuffer());
-    mapPosition.y = static_cast<short int>(getShortIntFromBuffer());
-    mapPosition.z = static_cast<short int>(getShortIntFromBuffer());
+    mapPosition.x = getShortIntFromBuffer();
+    mapPosition.y = getShortIntFromBuffer();
+    mapPosition.z = getShortIntFromBuffer();
     count = getShortIntFromBuffer();
 }
 
@@ -1558,23 +1591,23 @@ ClientCommandPointer LookAtMapItemTS::clone() {
     return cmd;
 }
 
-PSpinActionTS::PSpinActionTS(direction dir) : BasicClientCommand(C_PSPINRSTART_TS) {
-    this->dir = dir;
+PlayerSpinTS::PlayerSpinTS() : BasicClientCommand(C_PLAYERSPIN_TS) {
 }
 
-void PSpinActionTS::decodeData() {
+void PlayerSpinTS::decodeData() {
+    dir = to_direction(getUnsignedCharFromBuffer());
 }
 
-void PSpinActionTS::performAction(Player *player) {
+void PlayerSpinTS::performAction(Player *player) {
     time(&(player->lastaction));
     player->ltAction->abortAction();
     Logger::debug(LogFacility::World) << *player << " changes his dircetion to " << (int)dir << Log::end;
 
-    player->turn((direction)dir);
+    player->turn(dir);
 }
 
-ClientCommandPointer PSpinActionTS::clone() {
-    ClientCommandPointer cmd = std::make_shared<PSpinActionTS>(dir);
+ClientCommandPointer PlayerSpinTS::clone() {
+    ClientCommandPointer cmd = std::make_shared<PlayerSpinTS>();
     return cmd;
 }
 
@@ -1607,33 +1640,6 @@ void CharMoveTS::performAction(Player *player) {
 
 ClientCommandPointer CharMoveTS::clone() {
     ClientCommandPointer cmd = std::make_shared<CharMoveTS>();
-    return cmd;
-}
-
-IMoverActionTS::IMoverActionTS(uint8_t dir) : BasicClientCommand(C_IMOVERSTART_TS) {
-    this->dir = to_direction(dir);
-}
-
-void IMoverActionTS::decodeData() {
-    pos.x = getShortIntFromBuffer();
-    pos.y = getShortIntFromBuffer();
-    pos.z = getShortIntFromBuffer();
-    count = getShortIntFromBuffer();
-}
-
-void IMoverActionTS::performAction(Player *player) {
-    time(&(player->lastaction));
-    player->ltAction->abortAction();
-    Logger::debug(LogFacility::World) << *player << " tryes to move an Item!" << Log::end;
-
-    if (player->isAlive()) {
-        World::get()->moveItem(player, dir, pos, count);
-        player->increaseActionPoints(-P_ITEMMOVE_COST);
-    }
-}
-
-ClientCommandPointer IMoverActionTS::clone() {
-    ClientCommandPointer cmd = std::make_shared<IMoverActionTS>(dir);
     return cmd;
 }
 
