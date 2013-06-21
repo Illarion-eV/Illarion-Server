@@ -1299,12 +1299,88 @@ bool World::moveItemFromMapToMap(Player *cp, const position &oldPosition, const 
     return false;
 }
 
-void World::pickUpItemFromMap(Player *cp, const position &itemPosition) {
-    cp->inform("Automatic item pickup not implemented yet.");
+bool World::pickUpItemFromMap(Player *cp, const position &sourcePosition) {
+    if (cp) {
+
+        if (takeItemFromMap(cp, sourcePosition)) {
+            ScriptItem s_item = g_item, t_item = g_item;
+            s_item.pos = sourcePosition;
+            s_item.type = ScriptItem::it_field;
+            s_item.owner = cp;
+            t_item.pos = cp->getPosition();
+            t_item.owner = cp;
+
+            std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(t_item.getId());
+
+            if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
+                if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
+                    if (!putItemOnMap(cp, sourcePosition)) {
+                        Logger::error(LogFacility::Player) << "pickUpItemFromMap failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
+                        g_cont = nullptr;
+                        g_item.reset();
+                    }
+
+                    return false;
+                }
+            }
+
+            Item tempitem = g_item;
+            bool NOK = false;
+
+            if (! cp->weightOK(g_item.getId(), g_item.getNumber(), g_cont)) {
+                cp->inform(message_overweight_german, message_overweight_english, Character::informScriptMediumPriority);
+                NOK = true;
+            }
+
+            if (!NOK) {
+                script_data_exchangemap data_map;
+
+                for (auto it = g_item.getDataBegin(); it != g_item.getDataEnd(); ++it) {
+                    data_map.push_back(*it);
+                }
+
+                if (cp->createItem(g_item.getId(), g_item.getNumber(), g_item.getQuality(), &data_map) > 0) {
+                    NOK =true;
+                } else {
+                    g_item.reset();
+                    cp->checkBurden();
+
+                    if (script) {
+                        script->MoveItemAfterMove(cp, s_item, t_item);
+                    }
+                }
+            }
+
+            if (NOK) {
+                g_item = tempitem;
+
+                if (!putItemOnMap(cp, sourcePosition)) {
+                    Logger::error(LogFacility::Player) << "moveItemFromMapIntoShowcase failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
+                    g_cont = nullptr;
+                    g_item.reset();
+                }
+
+                return false;
+            }
+
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void World::pickUpAllItemsFromMap(Player *cp) {
-    cp->inform("Automatic pickup of all items not implemented yet.");
+    for (short int dy = -1; dy <= 1; ++dy) {
+        for (short int dx = -1; dx <= 1; ++dx) {
+            auto pos = cp->getPosition();
+            pos.x += dx;
+            pos.y += dy;
+
+            while (pickUpItemFromMap(cp, pos)) {
+            }
+        }
+    }
 }
 
 void World::sendRemoveItemFromMapToAllVisibleCharacters(const position &itemPosition) {
