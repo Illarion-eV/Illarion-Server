@@ -1354,6 +1354,7 @@ bool Character::move(direction dir, bool active) {
         // mark fields as (un)occupied
         cfold->removeChar();
         cfnew->setChar();
+        _world->moveFromTo(this, pos, newpos);
 
         // set new position
         setPosition(newpos);
