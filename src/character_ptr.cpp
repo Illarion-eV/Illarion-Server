@@ -27,7 +27,11 @@ character_ptr::character_ptr() {
 }
 
 character_ptr::character_ptr(Character *p) {
-    id = p->getId();
+    if (p) {
+        id = p->getId();
+    } else {
+        id = 0;
+    }
 }
 
 character_ptr::character_ptr(character_ptr const &p) {
@@ -35,7 +39,7 @@ character_ptr::character_ptr(character_ptr const &p) {
 }
 
 Character *character_ptr::get() const {
-    auto ptr = getPointerFromId(id);
+    auto ptr = getPointerFromId();
     
     if (ptr) {
         return ptr;
@@ -53,11 +57,15 @@ Character *character_ptr::operator->() const {
 }
 
 character_ptr::operator bool() const {
-    return getPointerFromId(id) != nullptr;
+    return getPointerFromId() != nullptr;
 }
 
-Character *character_ptr::getPointerFromId(TYPE_OF_CHARACTER_ID) const {
-    return World::get()->findCharacter(id);
+Character *character_ptr::getPointerFromId() const {
+    if (id != 0) {
+        return World::get()->findCharacter(id);
+    }
+
+    return nullptr;
 }
 
 Character *get_pointer(character_ptr const &p) {
