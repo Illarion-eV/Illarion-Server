@@ -55,7 +55,7 @@
 \makeindex
 \begin{document}
 \lstset{basicstyle=\small, keywordstyle=\ttfamily, identifierstyle=\ttfamily}
-\title{Lua documentation for Illarion scripting\\v5.9}
+\title{Lua documentation for Illarion scripting\\v5.10}
 \author{Martin \thanks{ \texttt{martin@illarion.org, http://www.illarion.org}},
 pharse \thanks{ \texttt{pharse@illarion.org, http://www.illarion.org}},
 vilarion \thanks{ \texttt{vilarion@illarion.org, http://www.illarion.org}}}
@@ -1682,10 +1682,6 @@ While using luac -p for finding compilation errors is very straight forward, it 
 \begin{quote}
        If used on the testserver prints \var{debugMessage} to the script log together with a stacktrace showing where the call of \com{debug}{...} originated. Has no effect on the illarionserver.
 \end{quote}
-\bool \com{isTestserver}{}
-\begin{quote}
-       Returns \var{true} if called on the testserver and \var{false} if called on the illarionserver. Use this when performing non-trivial debugging to prevent debugging code from being executed on the illarionserver. Examples would be working on server scripts like standardfighting and preventing char:inform output for debugging purposes on the illarionserver.
-\end{quote}
 
 \chapter{Entry Points}
 
@@ -2382,6 +2378,9 @@ It might be the case, and this is hoped much, that you want to create more compl
 \appendix
 
 \chapter{Versions}
+Version 5.10 (23 07 13)\\
+* Removed isTestserver\\
+\\
 Version 5.9 (05 04 13)\\
 * Added ArmorStruct.Type, ArmorStruct.Level\\
 * Added global constants for ArmorStruct.Type\\

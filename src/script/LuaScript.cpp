@@ -312,14 +312,6 @@ void LuaScript::writeDeprecatedMsg(const std::string &deprecatedEntity) {
     }
 }
 
-bool LuaScript::isTestserver() {
-#ifdef TESTSERVER
-    return true;
-#else
-    return false;
-#endif
-}
-
 luabind::object LuaScript::buildEntrypoint(const std::string &entrypoint) throw(luabind::error) {
     luabind::object obj = luabind::globals(_luaState);
     std::string currentpath = "";
@@ -1045,8 +1037,7 @@ void LuaScript::init_base_functions() {
         ],
         luabind::def("isValidChar", &isValid),
         luabind::def("debug", &LuaScript::writeDebugMsg),
-        luabind::def("log", log_lua),
-        luabind::def("isTestserver", &LuaScript::isTestserver)
+        luabind::def("log", log_lua)
     ];
 
     luabind::object globals = luabind::globals(_luaState);
