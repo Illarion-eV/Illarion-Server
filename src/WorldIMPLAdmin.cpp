@@ -803,6 +803,23 @@ void World::teleport_command(Player *cp, const std::string &text) {
 
 void World::gmhelp_command(Player *cp) {
     if (!cp->hasGMRight(gmr_basiccommands)) {
+#ifdef TESTSERVER
+        std::string tmessage = " <> - parameter.  [] - optional.  | = choice.  () = shortcut";
+        cp->inform(tmessage);
+        tmessage = "!create <id> [<quantity> [<quality> [[<data_key>=<data_value>] ...]]] creates an item in your inventory.";
+        cp->inform(tmessage);
+        tmessage = "!jumpto <playerid|name> - (!j) teleports you to the player.";
+        cp->inform(tmessage);
+        tmessage = "!warp <x> <y> [<z>] | !warp <z> - (!w) change given coordinates.";
+        cp->inform(tmessage);
+        tmessage = "!what - sends various information of the field or the character in front of you.";
+        cp->inform(tmessage);
+        tmessage = "!who [<player>] - List all players online or a single player if specified.";
+        cp->inform(tmessage);
+#else
+        std::string tmessage = "!what - sends various information of the field or the character in front of you.";
+        cp->inform(tmessage);
+#endif
         return;
     }
 
@@ -810,9 +827,9 @@ void World::gmhelp_command(Player *cp) {
     cp->inform(tmessage);
 
     if (cp->hasGMRight(gmr_basiccommands)) {
-        tmessage = "!what - sends different informations of the field or the character in front of you.";
+        tmessage = "!what - sends various information of the field or the character in front of you.";
         cp->inform(tmessage);
-        tmessage = "!who [player] - List all players online or a single player if specified.";
+        tmessage = "!who [<player>] - List all players online or a single player if specified.";
         cp->inform(tmessage);
         tmessage = "!forceintroduce <char id|char name> - (!fi) introduces the char to all gms in range.";
         cp->inform(tmessage);
@@ -822,12 +839,12 @@ void World::gmhelp_command(Player *cp) {
         cp->inform(tmessage);
         tmessage = "!broadcast <message> - (!bc) Broadcasts the message <message> to all players IG.";
         cp->inform(tmessage);
-        tmessage = "!create id [quantity [quality [[data_key=data_value] ...]]] creates an item in your inventory.";
+        tmessage = "!create <id> [<quantity> [<quality> [[<data_key>=<data_value>] ...]]] creates an item in your inventory.";
 
     }
 
     if (cp->hasGMRight(gmr_warp)) {
-        tmessage = "!warp <x> <y> [z] | !warp z - (!w) change given coordinates.";
+        tmessage = "!warp <x> <y> [<z>] | !warp <z> - (!w) change given coordinates.";
         cp->inform(tmessage);
         tmessage = "!add_teleport <x> <y> <z> - Adds a teleportfield from your position to the field <x> <y> <z>.";
         cp->inform(tmessage);
@@ -846,7 +863,7 @@ void World::gmhelp_command(Player *cp) {
     }
 
     if (cp->hasGMRight(gmr_ban)) {
-        tmessage = "!ban <time> [m|h|d] <player> - (!b) Bans the player <player> for <time> [m]inutes/[h]ours/[d]ays.";
+        tmessage = "!ban <time> [<m|h|d>] <player> - (!b) Bans the player <player> for <time> [m]inutes/[h]ours/[d]ays.";
         cp->inform(tmessage);
     }
 
