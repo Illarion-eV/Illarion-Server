@@ -28,6 +28,23 @@
 struct RaceAttributeStruct {
     uint16_t minSize;
     uint16_t maxSize;
+    uint8_t minAgility;
+    uint8_t maxAgility;
+    uint8_t minConstitution;
+    uint8_t maxConstitution;
+    uint8_t minDexterity;
+    uint8_t maxDexterity;
+    uint8_t minEssence;
+    uint8_t maxEssence;
+    uint8_t minIntelligence;
+    uint8_t maxIntelligence;
+    uint8_t minPerception;
+    uint8_t maxPerception;
+    uint8_t minStrength;
+    uint8_t maxStrength;
+    uint8_t minWillpower;
+    uint8_t maxWillpower;
+    uint8_t maxAttribs;
 };
 
 class RaceAttributeTable : public StructTable<uint16_t, RaceAttributeStruct> {

@@ -28,7 +28,24 @@ std::vector<std::string> RaceAttributeTable::getColumnNames() {
     return {
         "id",
         "minbodyheight",
-        "maxbodyheight"
+        "maxbodyheight",
+        "minagility",
+        "maxagility",
+        "minconstitution",
+        "maxconstitution",
+        "mindexterity",
+        "maxdexterity",
+        "minessence",
+        "maxessence",
+        "minintelligence",
+        "maxintelligence",
+        "minperception",
+        "maxperception",
+        "minstrength",
+        "maxstrength",
+        "minwillpower",
+        "maxwillpower",
+        "maxattribs"
     };
 }
 
@@ -37,10 +54,27 @@ TYPE_OF_ITEM_ID RaceAttributeTable::assignId(const Database::ResultTuple &row) {
 }
 
 RaceAttributeStruct RaceAttributeTable::assignTable(const Database::ResultTuple &row) {
-    RaceAttributeStruct sizes;
-    sizes.minSize = uint16_t(row["minbodyheight"].as<int32_t>(100));
-    sizes.maxSize = uint16_t(row["maxbodyheight"].as<int32_t>(100));
-    return sizes;
+    RaceAttributeStruct attributes;
+    attributes.minSize = uint16_t(row["minbodyheight"].as<int32_t>(100));
+    attributes.maxSize = uint16_t(row["maxbodyheight"].as<int32_t>(100));
+    attributes.minAgility = uint8_t(row["minagility"].as<int32_t>(2));
+    attributes.maxAgility = uint8_t(row["maxagility"].as<int32_t>(20));
+    attributes.minConstitution = uint8_t(row["minconstitution"].as<int32_t>(2));
+    attributes.maxConstitution = uint8_t(row["maxconstitution"].as<int32_t>(20));
+    attributes.minDexterity = uint8_t(row["mindexterity"].as<int32_t>(2));
+    attributes.maxDexterity = uint8_t(row["maxdexterity"].as<int32_t>(20));
+    attributes.minEssence = uint8_t(row["minessence"].as<int32_t>(2));
+    attributes.maxEssence = uint8_t(row["maxessence"].as<int32_t>(20));
+    attributes.minIntelligence = uint8_t(row["minintelligence"].as<int32_t>(2));
+    attributes.maxIntelligence = uint8_t(row["maxintelligence"].as<int32_t>(20));
+    attributes.minPerception = uint8_t(row["minperception"].as<int32_t>(2));
+    attributes.maxPerception = uint8_t(row["maxperception"].as<int32_t>(20));
+    attributes.minStrength = uint8_t(row["minstrength"].as<int32_t>(2));
+    attributes.maxStrength = uint8_t(row["maxstrength"].as<int32_t>(20));
+    attributes.minWillpower = uint8_t(row["minwillpower"].as<int32_t>(2));
+    attributes.maxWillpower = uint8_t(row["maxwillpower"].as<int32_t>(20));
+    attributes.maxAttribs = uint8_t(row["maxattribs"].as<int16_t>(84));
+    return attributes;
 }
 
 uint8_t RaceAttributeTable::getRelativeSize(TYPE_OF_RACE_ID race, uint16_t size) {
