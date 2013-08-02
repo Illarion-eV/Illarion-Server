@@ -721,6 +721,7 @@ void World::what_command(Player *cp) {
             if (cp->hasGMRight(gmr_basiccommands))
 #endif
             {
+                message << ", Stack of " << top.getNumber();
                 message << ", Quality " << top.getQuality();
 
                 if (top.getDataBegin() != top.getDataEnd()) {
