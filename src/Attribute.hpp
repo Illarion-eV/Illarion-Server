@@ -26,6 +26,7 @@ public:
     typedef unsigned short attribute_t;
 
 private:
+    attribute_t baseValue;
     attribute_t value;
     attribute_t maximum;
 

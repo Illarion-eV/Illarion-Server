@@ -22,16 +22,19 @@
 
 Attribute::Attribute() {
     value = 0;
+    baseValue = 0;
     maximum = 0;
 }
 
 Attribute::Attribute(attribute_t value) {
     this->value = value;
+    baseValue = value;
     maximum = 0;
 }
 
 Attribute::Attribute(attribute_t value, attribute_t maximum) {
     this->value = value;
+    baseValue = value;
     this->maximum = maximum;
 }
 
@@ -40,6 +43,10 @@ void Attribute::setValue(attribute_t value) {
         this->value = maximum;
     } else {
         this->value = value;
+    }
+
+    if (baseValue == 0) {
+        baseValue = this->value;
     }
 }
 
