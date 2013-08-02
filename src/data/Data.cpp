@@ -27,7 +27,7 @@ namespace Data {
 ScriptVariablesTable ScriptVariables;
 SkillTable Skills;
 QuestTable Quests;
-RaceSizeTable RaceSizes;
+RaceAttributeTable RaceAttributes;
 NaturalArmorTable NaturalArmors;
 MonsterAttackTable MonsterAttacks;
 CommonObjectTable CommonItems;
@@ -45,7 +45,7 @@ std::vector<Table *> getTables() {
     return {
         &ScriptVariables,
         &Quests,
-        &RaceSizes,
+        &RaceAttributes,
         &NaturalArmors,
         &MonsterAttacks,
         &CommonItems,

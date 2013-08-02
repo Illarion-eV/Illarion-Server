@@ -18,25 +18,24 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _RACE_SIZE_TABLE_HPP_
-#define _RACE_SIZE_TABLE_HPP_
+#ifndef _RACE_ATTRIBUTE_TABLE_HPP_
+#define _RACE_ATTRIBUTE_TABLE_HPP_
 
 #include "Character.hpp"
 #include "data/StructTable.hpp"
 #include "types.hpp"
-#include "TableStructs.hpp"
 
-struct RaceSizeStruct {
+struct RaceAttributeStruct {
     uint16_t minSize;
     uint16_t maxSize;
 };
 
-class RaceSizeTable : public StructTable<uint16_t, RaceSizeStruct> {
+class RaceAttributeTable : public StructTable<uint16_t, RaceAttributeStruct> {
 public:
     virtual std::string getTableName() override;
     virtual std::vector<std::string> getColumnNames() override;
     virtual uint16_t assignId(const Database::ResultTuple &row) override;
-    virtual RaceSizeStruct assignTable(const Database::ResultTuple &row) override;
+    virtual RaceAttributeStruct assignTable(const Database::ResultTuple &row) override;
     uint8_t getRelativeSize(TYPE_OF_RACE_ID race, uint16_t size);
 };
 

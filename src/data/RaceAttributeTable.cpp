@@ -18,13 +18,13 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "data/RaceSizeTable.hpp"
+#include "data/RaceAttributeTable.hpp"
 
-std::string RaceSizeTable::getTableName() {
+std::string RaceAttributeTable::getTableName() {
     return "raceattr";
 }
 
-std::vector<std::string> RaceSizeTable::getColumnNames() {
+std::vector<std::string> RaceAttributeTable::getColumnNames() {
     return {
         "id",
         "minbodyheight",
@@ -32,18 +32,18 @@ std::vector<std::string> RaceSizeTable::getColumnNames() {
     };
 }
 
-TYPE_OF_ITEM_ID RaceSizeTable::assignId(const Database::ResultTuple &row) {
+TYPE_OF_ITEM_ID RaceAttributeTable::assignId(const Database::ResultTuple &row) {
     return uint16_t(row["id"].as<int32_t>());
 }
 
-RaceSizeStruct RaceSizeTable::assignTable(const Database::ResultTuple &row) {
-    RaceSizeStruct sizes;
+RaceAttributeStruct RaceAttributeTable::assignTable(const Database::ResultTuple &row) {
+    RaceAttributeStruct sizes;
     sizes.minSize = uint16_t(row["minbodyheight"].as<int32_t>(100));
     sizes.maxSize = uint16_t(row["maxbodyheight"].as<int32_t>(100));
     return sizes;
 }
 
-uint8_t RaceSizeTable::getRelativeSize(TYPE_OF_RACE_ID race, uint16_t size) {
+uint8_t RaceAttributeTable::getRelativeSize(TYPE_OF_RACE_ID race, uint16_t size) {
     // relative size is between 50 and 120 (in percent) and a linear interploation between min and max size
     const auto raceId = static_cast<uint16_t>(race);
 
