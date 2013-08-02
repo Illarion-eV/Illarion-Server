@@ -38,6 +38,18 @@ Attribute::Attribute(attribute_t value, attribute_t maximum) {
     this->maximum = maximum;
 }
 
+void Attribute::setBaseValue(attribute_t value) {
+    attribute_t valueOffset = this->value - baseValue;
+
+    if (value > maximum && maximum != 0) {
+        baseValue = maximum;
+    } else {
+        baseValue = value;
+    }
+
+    setValue(this->value + valueOffset);
+}
+
 void Attribute::setValue(attribute_t value) {
     if (value > maximum && maximum != 0) {
         this->value = maximum;
@@ -50,8 +62,26 @@ void Attribute::setValue(attribute_t value) {
     }
 }
 
+auto Attribute::getBaseValue() const -> attribute_t {
+    return baseValue;
+}
+
 auto Attribute::getValue() const -> attribute_t {
     return value;
+}
+
+void Attribute::increaseBaseValue(int amount) {
+    int newValue = baseValue + amount;
+
+    if (newValue < 0) {
+        baseValue = 0;
+    } else if (newValue > maximum && maximum != 0) {
+        baseValue = maximum;
+    } else {
+        baseValue = newValue;
+    }
+
+    increaseValue(amount);
 }
 
 void Attribute::increaseValue(int amount) {

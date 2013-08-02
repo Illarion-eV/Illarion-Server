@@ -34,8 +34,11 @@ public:
     Attribute();
     Attribute(attribute_t value);
     Attribute(attribute_t value, attribute_t maximum);
+    void setBaseValue(attribute_t value);
     void setValue(attribute_t value);
+    attribute_t getBaseValue() const;
     attribute_t getValue() const;
+    void increaseBaseValue(int amount);
     void increaseValue(int amount);
 };
 
