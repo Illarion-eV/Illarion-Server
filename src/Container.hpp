@@ -87,7 +87,7 @@ public:
 
     int weight();
 
-    virtual TYPE_OF_CONTAINERSLOTS getSlotCount();
+    virtual TYPE_OF_CONTAINERSLOTS getSlotCount() const;
 
     inline const ITEMMAP &getItems() const {
         return items;
@@ -95,6 +95,8 @@ public:
     inline const CONTAINERMAP &getContainers() const {
         return containers;
     }
+
+    TYPE_OF_CONTAINERSLOTS getFirstFreeSlot() const;
 
 private:
     bool isItemStackable(Item item);
