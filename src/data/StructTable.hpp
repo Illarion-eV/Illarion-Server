@@ -81,6 +81,10 @@ public:
         }
     }
 
+    const StructType &get(const IdType &id) const {
+        return structs.at(id);
+    }
+
     typename ContainerType::const_iterator begin() const {
         return structs.cbegin();
     }

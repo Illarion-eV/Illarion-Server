@@ -419,6 +419,8 @@ public:
 
     unsigned short int setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor);
 
+    virtual bool saveBaseAttributes() override;
+
     //! sendet ein Attributupdate an den Client
     // \param name der Name des Attributs
     // \param value der Wert des Attributs

@@ -718,6 +718,28 @@ void Player::sendMagicFlags(int type) {
 }
 
 
+bool Player::saveBaseAttributes() {
+    if (getBaseAttributeSum() != getMaxAttributePoints()) {
+        return false;
+    }
+
+    Database::UpdateQuery query;
+    query.addAssignColumn<uint16_t>("ply_agility", getBaseAttribute(Character::agility));
+    query.addAssignColumn<uint16_t>("ply_constitution", getBaseAttribute(Character::constitution));
+    query.addAssignColumn<uint16_t>("ply_dexterity", getBaseAttribute(Character::dexterity));
+    query.addAssignColumn<uint16_t>("ply_essence", getBaseAttribute(Character::essence));
+    query.addAssignColumn<uint16_t>("ply_intelligence", getBaseAttribute(Character::intelligence));
+    query.addAssignColumn<uint16_t>("ply_perception", getBaseAttribute(Character::perception));
+    query.addAssignColumn<uint16_t>("ply_strength", getBaseAttribute(Character::strength));
+    query.addAssignColumn<uint16_t>("ply_willpower", getBaseAttribute(Character::willpower));
+    query.addEqualCondition<TYPE_OF_CHARACTER_ID>("player", "ply_playerid", getId());
+    query.addServerTable("player");
+    query.execute();
+
+    return true;
+}
+
+
 void Player::sendAttrib(Character::attributeIndex attribute) {
     auto value = getAttribute(attribute);
 

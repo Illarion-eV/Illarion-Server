@@ -26,25 +26,25 @@
 #include "types.hpp"
 
 struct RaceAttributeStruct {
-    uint16_t minSize;
-    uint16_t maxSize;
-    uint8_t minAgility;
-    uint8_t maxAgility;
-    uint8_t minConstitution;
-    uint8_t maxConstitution;
-    uint8_t minDexterity;
-    uint8_t maxDexterity;
-    uint8_t minEssence;
-    uint8_t maxEssence;
-    uint8_t minIntelligence;
-    uint8_t maxIntelligence;
-    uint8_t minPerception;
-    uint8_t maxPerception;
-    uint8_t minStrength;
-    uint8_t maxStrength;
-    uint8_t minWillpower;
-    uint8_t maxWillpower;
-    uint8_t maxAttribs;
+    uint16_t minSize = 100;
+    uint16_t maxSize = 100;
+    uint8_t minAgility = 2;
+    uint8_t maxAgility = 20;
+    uint8_t minConstitution = 2;
+    uint8_t maxConstitution = 20;
+    uint8_t minDexterity = 2;
+    uint8_t maxDexterity = 20;
+    uint8_t minEssence = 2;
+    uint8_t maxEssence = 20;
+    uint8_t minIntelligence = 2;
+    uint8_t maxIntelligence = 20;
+    uint8_t minPerception = 2;
+    uint8_t maxPerception = 20;
+    uint8_t minStrength = 2;
+    uint8_t maxStrength = 20;
+    uint8_t minWillpower = 2;
+    uint8_t maxWillpower = 20;
+    uint8_t maxAttribs = 84;
 };
 
 class RaceAttributeTable : public StructTable<uint16_t, RaceAttributeStruct> {
@@ -53,7 +53,9 @@ public:
     virtual std::vector<std::string> getColumnNames() override;
     virtual uint16_t assignId(const Database::ResultTuple &row) override;
     virtual RaceAttributeStruct assignTable(const Database::ResultTuple &row) override;
-    uint8_t getRelativeSize(TYPE_OF_RACE_ID race, uint16_t size);
+    uint8_t getRelativeSize(TYPE_OF_RACE_ID race, uint16_t size) const;
+    bool isBaseAttributeInLimits(TYPE_OF_RACE_ID race, Character::attributeIndex attribute, Attribute::attribute_t value) const;
+    uint8_t getMaxAttributePoints(TYPE_OF_RACE_ID race) const;
 };
 
 #endif

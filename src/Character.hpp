@@ -343,12 +343,23 @@ public:
         return _appearance;
     }
 
+    bool setBaseAttribute(Character::attributeIndex attribute, Attribute::attribute_t value);
     void setAttribute(Character::attributeIndex attribute, Attribute::attribute_t value);
+    Attribute::attribute_t getBaseAttribute(Character::attributeIndex attribute) const;
     Attribute::attribute_t getAttribute(Character::attributeIndex attribute) const;
+    bool increaseBaseAttribute(Character::attributeIndex attribute, int amount);
     Attribute::attribute_t increaseAttribute(Character::attributeIndex attribute, int amount);
+    bool isBaseAttributeValid(Character::attributeIndex attribute, Attribute::attribute_t value) const;
+    uint16_t getBaseAttributeSum() const;
+    uint16_t getMaxAttributePoints() const;
+    virtual bool saveBaseAttributes();
     virtual void handleAttributeChange(Character::attributeIndex attribute);
-    Attribute::attribute_t increaseAttrib(const std::string &name, int amount);
+    bool isBaseAttribValid(const std::string &name, Attribute::attribute_t value) const;
+    bool setBaseAttrib(const std::string &name, Attribute::attribute_t value);
     void setAttrib(const std::string &name, Attribute::attribute_t value);
+    Attribute::attribute_t getBaseAttrib(const std::string &name);
+    bool increaseBaseAttrib(const std::string &name, int amount);
+    Attribute::attribute_t increaseAttrib(const std::string &name, int amount);
 
     virtual unsigned short int increaseSkill(TYPE_OF_SKILL_ID skill, short int amount);
     virtual unsigned short int increaseMinorSkill(TYPE_OF_SKILL_ID skill, short int amount);
