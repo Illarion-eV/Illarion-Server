@@ -840,7 +840,7 @@ Attribute::attribute_t Character::increaseAttribute(Character::attributeIndex at
 
 bool Character::isBaseAttributeValid(Character::attributeIndex attribute, Attribute::attribute_t value) const {
     return Data::RaceAttributes.isBaseAttributeInLimits(getRace(), attribute, value)
-        && getBaseAttributeSum() <= getMaxAttributePoints();
+        && getBaseAttributeSum() - getBaseAttribute(attribute) + value <= getMaxAttributePoints();
 }
 
 uint16_t Character::getBaseAttributeSum() const {
