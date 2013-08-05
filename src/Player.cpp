@@ -940,7 +940,7 @@ void Player::check_logindata() throw(Player::LogoutException) {
 
         onlinetime = charRow["chr_onlinetime"].as<time_t>();
         lastsavetime = charRow["chr_lastsavetime"].as<time_t>();
-        setBaseAttribute(Character::sex, charRow["chr_sex"].as<uint16_t>());
+        setAttribute(Character::sex, charRow["chr_sex"].as<uint16_t>());
         setRace(charRow["chr_race"].as<TYPE_OF_RACE_ID>());
 
         // first we check the status since we already retrieved it
@@ -1062,13 +1062,13 @@ void Player::check_logindata() throw(Player::LogoutException) {
         setPosition(pos);
         setFaceTo((Character::face_to) playerRow["ply_faceto"].as<uint16_t>());
 
-        setBaseAttribute(Character::age, playerRow["ply_age"].as<uint16_t>());
-        setBaseAttribute(Character::weight, playerRow["ply_weight"].as<uint16_t>());
-        setBaseAttribute(Character::height, playerRow["ply_body_height"].as<uint16_t>());
-        setBaseAttribute(Character::hitpoints, playerRow["ply_hitpoints"].as<uint16_t>());
-        setBaseAttribute(Character::mana, playerRow["ply_mana"].as<uint16_t>());
-        setBaseAttribute(Character::attitude, playerRow["ply_attitude"].as<uint16_t>());
-        setBaseAttribute(Character::luck, playerRow["ply_luck"].as<uint16_t>());
+        setAttribute(Character::age, playerRow["ply_age"].as<uint16_t>());
+        setAttribute(Character::weight, playerRow["ply_weight"].as<uint16_t>());
+        setAttribute(Character::height, playerRow["ply_body_height"].as<uint16_t>());
+        setAttribute(Character::hitpoints, playerRow["ply_hitpoints"].as<uint16_t>());
+        setAttribute(Character::mana, playerRow["ply_mana"].as<uint16_t>());
+        setAttribute(Character::attitude, playerRow["ply_attitude"].as<uint16_t>());
+        setAttribute(Character::luck, playerRow["ply_luck"].as<uint16_t>());
         setBaseAttribute(Character::strength, playerRow["ply_strength"].as<uint16_t>());
         setBaseAttribute(Character::dexterity, playerRow["ply_dexterity"].as<uint16_t>());
         setBaseAttribute(Character::constitution, playerRow["ply_constitution"].as<uint16_t>());
@@ -1077,7 +1077,7 @@ void Player::check_logindata() throw(Player::LogoutException) {
         setBaseAttribute(Character::perception, playerRow["ply_perception"].as<uint16_t>());
         setBaseAttribute(Character::willpower, playerRow["ply_willpower"].as<uint16_t>());
         setBaseAttribute(Character::essence, playerRow["ply_essence"].as<uint16_t>());
-        setBaseAttribute(Character::foodlevel, playerRow["ply_foodlevel"].as<uint32_t>());
+        setAttribute(Character::foodlevel, playerRow["ply_foodlevel"].as<uint32_t>());
 
         Character::setAlive(playerRow["ply_lifestate"].as<uint16_t>() != 0);
         setMagicType(magic_type(playerRow["ply_magictype"].as<uint16_t>()));
