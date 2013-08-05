@@ -21,44 +21,40 @@
 #include "Attribute.hpp"
 
 Attribute::Attribute() {
-    value = 0;
     baseValue = 0;
+    offset = 0;
     maximum = 0;
 }
 
 Attribute::Attribute(attribute_t value) {
-    this->value = value;
     baseValue = value;
     maximum = 0;
 }
 
 Attribute::Attribute(attribute_t value, attribute_t maximum) {
-    this->value = value;
     baseValue = value;
+    offset = 0;
     this->maximum = maximum;
 }
 
 void Attribute::setBaseValue(attribute_t value) {
-    attribute_t valueOffset = this->value - baseValue;
-
     if (value > maximum && maximum != 0) {
         baseValue = maximum;
     } else {
         baseValue = value;
     }
-
-    setValue(this->value + valueOffset);
 }
 
 void Attribute::setValue(attribute_t value) {
-    if (value > maximum && maximum != 0) {
-        this->value = maximum;
-    } else {
-        this->value = value;
-    }
-
     if (baseValue == 0) {
-        baseValue = this->value;
+        baseValue = value;
+        offset = 0;
+    } else {
+        if (value > maximum && maximum != 0) {
+            offset = maximum - baseValue;
+        } else {
+            offset = value - baseValue;;
+        }
     }
 }
 
@@ -67,7 +63,15 @@ auto Attribute::getBaseValue() const -> attribute_t {
 }
 
 auto Attribute::getValue() const -> attribute_t {
-    return value;
+    int value = baseValue + offset;
+
+    if (value < 0) {
+        return 0;
+    } else if (value > maximum && maximum != 0) {
+        return maximum;
+    } else {
+        return value;
+    }
 }
 
 void Attribute::increaseBaseValue(int amount) {
@@ -80,19 +84,8 @@ void Attribute::increaseBaseValue(int amount) {
     } else {
         baseValue = newValue;
     }
-
-    increaseValue(amount);
 }
 
 void Attribute::increaseValue(int amount) {
-    int newValue = value + amount;
-
-    if (newValue < 0) {
-        value = 0;
-    } else if (newValue > maximum && maximum != 0) {
-        value = maximum;
-    } else {
-        value = newValue;
-    }
+    offset += amount;    
 }
-

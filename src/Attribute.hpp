@@ -27,7 +27,7 @@ public:
 
 private:
     attribute_t baseValue;
-    attribute_t value;
+    int16_t offset;
     attribute_t maximum;
 
 public:
