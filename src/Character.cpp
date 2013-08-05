@@ -888,18 +888,11 @@ bool Character::setBaseAttrib(const std::string &name, Attribute::attribute_t va
 }
 
 void Character::setAttrib(const std::string &name, Attribute::attribute_t value) {
-    if (name == "faceto") {
-        turn((direction)value);
-    } else if (name == "racetyp") {
-        race = (TYPE_OF_RACE_ID)value;
-        updateAppearanceForAll(true);
-    } else {
-        try {
-            Character::attributeIndex attribute = attributeMap.at(name);
-            setAttribute(attribute, value);
-        } catch (...) {
+    try {
+        Character::attributeIndex attribute = attributeMap.at(name);
+        setAttribute(attribute, value);
+    } catch (...) {
 
-        }
     }
 }
 
