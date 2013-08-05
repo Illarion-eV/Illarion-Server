@@ -20,7 +20,7 @@
 #ifndef TUNINGCONSTANTS_HPP
 #define TUNINGCONSTANTS_HPP
 
-#define CLIENT_TIMEOUT 25
+#define CLIENT_TIMEOUT 50
 
 // how many players to process each turn (maximum)
 #define MAXPLAYERSPROCESSED 5
