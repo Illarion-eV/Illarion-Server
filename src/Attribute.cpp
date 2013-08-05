@@ -22,7 +22,6 @@
 
 Attribute::Attribute() {
     baseValue = 0;
-    offset = 0;
     maximum = 0;
 }
 
@@ -33,7 +32,6 @@ Attribute::Attribute(attribute_t value) {
 
 Attribute::Attribute(attribute_t value, attribute_t maximum) {
     baseValue = value;
-    offset = 0;
     this->maximum = maximum;
 }
 
