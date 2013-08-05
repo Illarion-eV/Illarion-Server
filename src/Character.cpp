@@ -925,36 +925,8 @@ bool Character::increaseBaseAttrib(const std::string &name, int amount) {
 
 
 Attribute::attribute_t Character::increaseAttrib(const std::string &name, int amount) {
-    if (name == "posx") {
-        return pos.x;
-    }
-
-    if (name == "posy") {
-        return pos.y;
-    }
-
-    if (name == "posz") {
-        return pos.z;
-    }
-
-    if (name == "faceto") {
-        return faceto;
-    }
-
-    if (name == "id") {
-        return id;
-    }
-
-    if (name == "racetyp") {
-        return race;
-    }
-
     if (name == "sex") {
         return getAttribute(Character::sex);
-    }
-
-    if (name == "magictype") {
-        return magic.type;
     }
 
     try {

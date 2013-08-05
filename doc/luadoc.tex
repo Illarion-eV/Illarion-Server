@@ -55,7 +55,7 @@
 \makeindex
 \begin{document}
 \lstset{basicstyle=\small, keywordstyle=\ttfamily, identifierstyle=\ttfamily}
-\title{Lua documentation for Illarion scripting\\v5.10}
+\title{Lua documentation for Illarion scripting\\v5.11}
 \author{Martin \thanks{ \texttt{martin@illarion.org, http://www.illarion.org}},
 pharse \thanks{ \texttt{pharse@illarion.org, http://www.illarion.org}},
 vilarion \thanks{ \texttt{vilarion@illarion.org, http://www.illarion.org}}}
@@ -268,6 +268,11 @@ Avoid this by copying the single x,y and z coordinates in a new position struct.
         \caption{The 8 possible directions}\label{directions}
         \end{figure}
 \end{quote}
+\void \var{character}:\com{turn}{\integer \var{direction}}\\
+\void \var{character}:\com{turn}{\position \var{position}}
+\begin{quote}
+    Turns \var{character} into the given \var{direction} or towards the given \var{position}.
+\end{quote}
 \txt \var{character}:\com{alterMessage}{\txt \var{Text},\integer \var{LanguageSkill}}
 \begin{quote}
        Returns the altered \var{Text} with respect to the \var{LanguageSkill} given.
@@ -322,13 +327,13 @@ Any change to fixed attributes is only temporary and will be null upon the next 
 \void \var{character}:\com{setAttrib}{\txt \var{AttribName}, \integer \var{value}}
 \begin{quote}
        \var{AttribName} can be:
-       "faceto", "racetyp" (see below), "sex", "age", "body\_height", "attitude", "luck", "strength", "dexterity",
+       "sex", "age", "body\_height", "attitude", "luck", "strength", "dexterity",
        "constitution", "agility", "intelligence", "perception", "willpower", "essence", "foodlevel", "hitpoints",
        "mana", "poisonvalue".
        And "sex" can be:
        Character.male, Character.female
 
-       Note that, if you set racetyp, the effect will not be visible immediately. To make it visible, use \comm{increaseAttrib} with an attribute that can be changed, like hitpoints. Be also aware that any attribute change to fixed attributes like "strength" will only last for the current session and will be reset to the database value upon the next login.
+       Be aware that any attribute change to fixed attributes like "strength" will only last for the current session and will be reset to the database value upon the next login.
 \end{quote}
 \void \var{character}:\com{setSkinColor}{\integer \var{red}, \integer \var{green}, \integer \var{blue}}
 \begin{quote}
@@ -362,9 +367,13 @@ Any change to fixed attributes is only temporary and will be null upon the next 
 \begin{quote}
     Returns the ID of the present beard, 0 for no beard.
 \end{quote}
+\integer \var{character}:\com{setRace}{\integer \var{race}}
+\begin{quote}
+    Temporarily sets the race of a character. See table \ref{raceIDs} for details. 
+\end{quote}
 \integer \var{character}:\com{getRace}{}
 \begin{quote}
-       Returns the race-ID of a character. Consult Tab.(\ref{raceIDs}) for details.
+       Returns the race of a character. See table \ref{raceIDs} for details.
        \begin{table}
 \begin{tabular}{lc|lc|lc}
     Name & \var{rID} & Name & \var{rID} & Name & \var{rID}  \\ \hline
@@ -2378,6 +2387,10 @@ It might be the case, and this is hoped much, that you want to create more compl
 \appendix
 
 \chapter{Versions}
+Version 5.11 (05 08 13)\\
+* Added Character:setRace\\
+* Added Character:turn\\
+\\
 Version 5.10 (23 07 13)\\
 * Removed isTestserver\\
 \\

@@ -1642,6 +1642,11 @@ void Player::turn(direction dir) {
     increaseActionPoints(-P_SPIN_COST);
 }
 
+void Player::turn(const position &pos) {
+    Character::turn(pos);
+    increaseActionPoints(-P_SPIN_COST);
+}
+
 void Player::receiveText(talk_type tt, const std::string &message, Character *cc) {
     ServerCommandPointer cmd = std::make_shared<SayTC>(cc->getPosition(), message);
 

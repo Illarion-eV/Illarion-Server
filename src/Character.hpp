@@ -226,6 +226,11 @@ public:
 
     virtual unsigned short getType() const = 0;
 
+    inline void changeRace(TYPE_OF_RACE_ID race) {
+        this->race = race;
+        updateAppearanceForAll(true);
+    }
+
     inline TYPE_OF_RACE_ID getRace() const {
         return race;
     }
@@ -476,7 +481,7 @@ public:
     bool weightOK(TYPE_OF_ITEM_ID id, int count, Container *tcont) const;
 
     virtual void turn(direction dir);
-    void turn(const position &posi);
+    virtual void turn(const position &posi);
 
     virtual void receiveText(talk_type tt, const std::string &message, Character *cc);
 
