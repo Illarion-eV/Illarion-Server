@@ -1069,14 +1069,14 @@ void Player::check_logindata() throw(Player::LogoutException) {
         setAttribute(Character::mana, playerRow["ply_mana"].as<uint16_t>());
         setAttribute(Character::attitude, playerRow["ply_attitude"].as<uint16_t>());
         setAttribute(Character::luck, playerRow["ply_luck"].as<uint16_t>());
-        setBaseAttribute(Character::strength, playerRow["ply_strength"].as<uint16_t>());
-        setBaseAttribute(Character::dexterity, playerRow["ply_dexterity"].as<uint16_t>());
-        setBaseAttribute(Character::constitution, playerRow["ply_constitution"].as<uint16_t>());
-        setBaseAttribute(Character::agility, playerRow["ply_agility"].as<uint16_t>());
-        setBaseAttribute(Character::intelligence, playerRow["ply_intelligence"].as<uint16_t>());
-        setBaseAttribute(Character::perception, playerRow["ply_perception"].as<uint16_t>());
-        setBaseAttribute(Character::willpower, playerRow["ply_willpower"].as<uint16_t>());
-        setBaseAttribute(Character::essence, playerRow["ply_essence"].as<uint16_t>());
+        setAttribute(Character::strength, playerRow["ply_strength"].as<uint16_t>());
+        setAttribute(Character::dexterity, playerRow["ply_dexterity"].as<uint16_t>());
+        setAttribute(Character::constitution, playerRow["ply_constitution"].as<uint16_t>());
+        setAttribute(Character::agility, playerRow["ply_agility"].as<uint16_t>());
+        setAttribute(Character::intelligence, playerRow["ply_intelligence"].as<uint16_t>());
+        setAttribute(Character::perception, playerRow["ply_perception"].as<uint16_t>());
+        setAttribute(Character::willpower, playerRow["ply_willpower"].as<uint16_t>());
+        setAttribute(Character::essence, playerRow["ply_essence"].as<uint16_t>());
         setAttribute(Character::foodlevel, playerRow["ply_foodlevel"].as<uint32_t>());
 
         Character::setAlive(playerRow["ply_lifestate"].as<uint16_t>() != 0);
