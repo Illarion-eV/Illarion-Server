@@ -155,7 +155,7 @@ public:
         unsigned long int flags[ 4 ];
     };
 
-    TYPE_OF_CHARACTER_ID getId() const;
+    virtual TYPE_OF_CHARACTER_ID getId() const;
     const std::string &getName() const;
     virtual std::string to_string() const = 0;
 
