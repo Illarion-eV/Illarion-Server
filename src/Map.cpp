@@ -94,7 +94,7 @@ bool Map::addContainerToPos(Item it, Container *cc, MAP_POSITION pos) {
                     }
 
                     Item titem = it;
-                    titem.setNumber(1);
+                    titem.setNumber(count);
 
                     if (!cfnew->addTopItem(titem)) {
                         (*conmapn).second.erase(count);
