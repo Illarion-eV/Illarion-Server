@@ -55,7 +55,7 @@
 \makeindex
 \begin{document}
 \lstset{basicstyle=\small, keywordstyle=\ttfamily, identifierstyle=\ttfamily}
-\title{Lua documentation for Illarion scripting\\v5.11}
+\title{Lua documentation for Illarion scripting\\v5.12}
 \author{Martin \thanks{ \texttt{martin@illarion.org, http://www.illarion.org}},
 pharse \thanks{ \texttt{pharse@illarion.org, http://www.illarion.org}},
 vilarion \thanks{ \texttt{vilarion@illarion.org, http://www.illarion.org}}}
@@ -320,9 +320,7 @@ Any change to fixed attributes is only temporary and will be null upon the next 
 \integer \var{character}:\com{increaseAttrib}{\txt \var{AttribName}, \integer \var{value}}
 \begin{quote}
        Increases the attribute given (see below) and returns the new attribute value. Use \var{value}=0 to read the attribute's value. Note
-       that this command also sends an playerupdate to all visible characters around, so if you need to change a characters
-       appearance it is a good idea to use this command to make this change visible. This only holds for attributes that
-       are allowed to be changed, like hitpoints.
+       that this command also sends a player update to all characters in range if necessary.
 \end{quote}
 \void \var{character}:\com{setAttrib}{\txt \var{AttribName}, \integer \var{value}}
 \begin{quote}
@@ -334,6 +332,35 @@ Any change to fixed attributes is only temporary and will be null upon the next 
        Character.male, Character.female
 
        Be aware that any attribute change to fixed attributes like "strength" will only last for the current session and will be reset to the database value upon the next login.
+\end{quote}
+\bool \var{character}:\com{isBaseAttributeValid}{\txt \var{attribute}, \integer \var{value}}
+\begin{quote}
+Returns whether \var{value} is acceptable for the given \var{attribute} and the race of the character, respecting limits given in table raceattr.
+\end{quote}
+\integer \var{character}:\com{getBaseAttributeSum}{}
+\begin{quote}
+Returns the current sum of the eight primary attributes: agility, constitution, dexterity, essence, intelligence, perception, strength and willpower.
+\end{quote}
+\integer \var{character}:\com{getMaxAttributePoints}{}
+\begin{quote}
+Returns the value which \com{getBaseAttributeSum}{} needs to result in, so that the base attributes can be saved. Can be used to make tests before actually trying to save the base attributes.
+\end{quote}
+\integer \var{character}:\com{getBaseAttribute}{\txt \var{attribute}}
+\begin{quote}
+Returns the base value of the given \var{attribute}, that is the value that this attribute normally has, when no special effects are active.
+\end{quote}
+\bool \var{character}:\com{setBaseAttribute}{\txt \var{attribute}, \integer \var{value}}
+\begin{quote}
+Sets the base value of the given \var{attribute} and returns \var{true} if 
+\com{isBaseAttributeValid}{...} would return \var{true}. Otherwise is a no-op and returns \var{false}.
+\end{quote}
+\bool \var{character}:\com{increaseBaseAttribute}{\txt \var{attribute}, \integer \var{amount}}
+\begin{quote}
+If \com{isBaseAttributeValid}{...} would return \var{true}, increases or decreases the base value of the given \var{attribute} and returns \var{true}. Otherwise is a no-op and returns \var{false}.
+\end{quote}
+\bool \var{character}:\com{saveBaseAttributes}{}
+\begin{quote}
+Saves the eight primary base attributes to the database, iff \com{getBaseAttributeSum}{} == \com{getMaxAttributePoints}{}. On failure resets primary attribute values to database values. Returns whether the operation was successful or not.
 \end{quote}
 \void \var{character}:\com{setSkinColor}{\integer \var{red}, \integer \var{green}, \integer \var{blue}}
 \begin{quote}
@@ -2387,6 +2414,15 @@ It might be the case, and this is hoped much, that you want to create more compl
 \appendix
 
 \chapter{Versions}
+Version 5.12 (08 08 13)\\
+* Added Character:isBaseAttributeValid\\
+* Added Character:getBaseAttributeSum\\
+* Added Character:getMaxAttributePoints\\
+* Added Character:saveBaseAttributes\\
+* Added Character:setBaseAttribute\\
+* Added Character:getBaseAttribute\\
+* Added Character:increaseBaseAttribute\\
+\\
 Version 5.11 (05 08 13)\\
 * Added Character:setRace\\
 * Added Character:turn\\
