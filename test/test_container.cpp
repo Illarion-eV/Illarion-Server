@@ -15,7 +15,7 @@ class MockContainer : public Container {
 		MockContainer(Item::id_type id) : Container(id) {
 		}
 
-		MOCK_METHOD0(getSlotCount, TYPE_OF_CONTAINERSLOTS());
+		MOCK_CONST_METHOD0(getSlotCount, TYPE_OF_CONTAINERSLOTS());
 };
 
 class MockWorld : public World {

@@ -419,6 +419,8 @@ public:
 
     unsigned short int setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor);
 
+    virtual bool saveBaseAttributes() override;
+
     //! sendet ein Attributupdate an den Client
     // \param name der Name des Attributs
     // \param value der Wert des Attributs
@@ -467,6 +469,7 @@ public:
     virtual void inform(const std::string &german, const std::string &english, informType type = informServer) const override;
 
     virtual void turn(direction dir) override;
+    virtual void turn(const position &posi) override;
 
     // player heard something
     virtual void receiveText(talk_type tt, const std::string &message, Character *cc) override;

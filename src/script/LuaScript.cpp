@@ -312,14 +312,6 @@ void LuaScript::writeDeprecatedMsg(const std::string &deprecatedEntity) {
     }
 }
 
-bool LuaScript::isTestserver() {
-#ifdef TESTSERVER
-    return true;
-#else
-    return false;
-#endif
-}
-
 luabind::object LuaScript::buildEntrypoint(const std::string &entrypoint) throw(luabind::error) {
     luabind::object obj = luabind::globals(_luaState);
     std::string currentpath = "";
@@ -582,7 +574,10 @@ void LuaScript::init_base_functions() {
         .def("inform", inform_lua4)
         .def("introduce", &Character::introducePlayer)
         .def("move", &Character::move)
+        .def("turn", (void(Character:: *)(direction))&Character::turn)
+        .def("turn", (void(Character:: *)(const position &))&Character::turn)
         .def("getNextStepDir", &Character::getNextStepDir, luabind::pure_out_value(_3))
+        .def("setRace", &Character::changeRace)
         .def("getRace", &Character::getRace)
         .def("getFaceTo", &Character::getFaceTo)
         .def("getType", &Character::getType)
@@ -613,6 +608,13 @@ void LuaScript::init_base_functions() {
         .def("getMinorSkill", &Character::getMinorSkill)
         .def("increaseAttrib", &Character::increaseAttrib)
         .def("setAttrib", &Character::setAttrib)
+        .def("isBaseAttributeValid", &Character::isBaseAttribValid)
+        .def("getBaseAttributeSum", &Character::getBaseAttributeSum)
+        .def("getMaxAttributePoints", &Character::getMaxAttributePoints)
+        .def("saveBaseAttributes", &Character::saveBaseAttributes)
+        .def("setBaseAttribute", &Character::setBaseAttrib)
+        .def("getBaseAttribute", &Character::getBaseAttrib)
+        .def("increaseBaseAttribute", &Character::increaseBaseAttrib)
         .def("increaseSkill", &Character::increaseSkill)
         .def("increaseMinorSkill", &Character::increaseMinorSkill)
         .def("setSkill", &Character::setSkill)
@@ -1045,8 +1047,7 @@ void LuaScript::init_base_functions() {
         ],
         luabind::def("isValidChar", &isValid),
         luabind::def("debug", &LuaScript::writeDebugMsg),
-        luabind::def("log", log_lua),
-        luabind::def("isTestserver", &LuaScript::isTestserver)
+        luabind::def("log", log_lua)
     ];
 
     luabind::object globals = luabind::globals(_luaState);

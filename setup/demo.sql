@@ -128,8 +128,8 @@ COPY common (com_itemid, com_volume, com_weight, com_agingspeed, com_objectafter
 56883538	506	5000	30000	255	506	\N	f	0	0	1	1
 \.
 
-COPY chars (chr_accid, chr_playerid, chr_status, chr_statustime, chr_statusgm, chr_statusreason, chr_lastip, chr_onlinetime, chr_lastsavetime, chr_race, chr_sex, chr_prefix, chr_suffix, chr_name, chr_shortdesc_de, chr_shortdesc_us) WITH OIDS FROM stdin;
-4456069	1	1	0	\N	\N	\N	0.0.0.0	0	0	0	0			Test		
+COPY chars (chr_accid, chr_playerid, chr_status, chr_statustime, chr_statusgm, chr_statusreason, chr_lastip, chr_onlinetime, chr_lastsavetime, chr_race, chr_sex, chr_name, chr_shortdesc_de, chr_shortdesc_us) WITH OIDS FROM stdin;
+4456069	1	1	0	\N	\N	\N	0.0.0.0	0	0	0	0	Test		
 \.
 
 COPY player (ply_playerid, ply_posx, ply_posy, ply_posz, ply_faceto, ply_age, ply_weight, ply_body_height, ply_hitpoints, ply_mana, ply_attitude, ply_luck, ply_strength, ply_dexterity, ply_constitution, ply_agility, ply_intelligence, ply_perception, ply_willpower, ply_essence, ply_foodlevel, ply_appearance, ply_lifestate, ply_magictype, ply_magicflagsmage, ply_magicflagspriest, ply_magicflagsbard, ply_magicflagsdruid, ply_lastmusic, ply_poison, ply_mental_capacity, ply_dob, ply_hair, ply_beard, ply_hairred, ply_hairgreen, ply_hairblue, ply_skinred, ply_skingreen, ply_skinblue) WITH OIDS FROM stdin;

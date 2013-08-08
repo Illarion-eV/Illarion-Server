@@ -718,6 +718,57 @@ void Player::sendMagicFlags(int type) {
 }
 
 
+bool Player::saveBaseAttributes() {
+    if (getBaseAttributeSum() != getMaxAttributePoints()) {
+        Database::SelectQuery query;
+        query.addColumn("player", "ply_strength");
+        query.addColumn("player", "ply_dexterity");
+        query.addColumn("player", "ply_constitution");
+        query.addColumn("player", "ply_agility");
+        query.addColumn("player", "ply_intelligence");
+        query.addColumn("player", "ply_perception");
+        query.addColumn("player", "ply_willpower");
+        query.addColumn("player", "ply_essence");
+        query.addEqualCondition<TYPE_OF_CHARACTER_ID>("player", "ply_playerid", getId());
+        query.addServerTable("player");
+
+        auto result = query.execute();
+
+        if (result.empty()) {
+            throw LogoutException(NOCHARACTERFOUND);
+        }
+
+        auto row = result.front();
+
+        setBaseAttribute(Character::strength, row["ply_strength"].as<uint16_t>());
+        setBaseAttribute(Character::dexterity, row["ply_dexterity"].as<uint16_t>());
+        setBaseAttribute(Character::constitution, row["ply_constitution"].as<uint16_t>());
+        setBaseAttribute(Character::agility, row["ply_agility"].as<uint16_t>());
+        setBaseAttribute(Character::intelligence, row["ply_intelligence"].as<uint16_t>());
+        setBaseAttribute(Character::perception, row["ply_perception"].as<uint16_t>());
+        setBaseAttribute(Character::willpower, row["ply_willpower"].as<uint16_t>());
+        setBaseAttribute(Character::essence, row["ply_essence"].as<uint16_t>());
+
+        return false;
+    }
+
+    Database::UpdateQuery query;
+    query.addAssignColumn<uint16_t>("ply_agility", getBaseAttribute(Character::agility));
+    query.addAssignColumn<uint16_t>("ply_constitution", getBaseAttribute(Character::constitution));
+    query.addAssignColumn<uint16_t>("ply_dexterity", getBaseAttribute(Character::dexterity));
+    query.addAssignColumn<uint16_t>("ply_essence", getBaseAttribute(Character::essence));
+    query.addAssignColumn<uint16_t>("ply_intelligence", getBaseAttribute(Character::intelligence));
+    query.addAssignColumn<uint16_t>("ply_perception", getBaseAttribute(Character::perception));
+    query.addAssignColumn<uint16_t>("ply_strength", getBaseAttribute(Character::strength));
+    query.addAssignColumn<uint16_t>("ply_willpower", getBaseAttribute(Character::willpower));
+    query.addEqualCondition<TYPE_OF_CHARACTER_ID>("player", "ply_playerid", getId());
+    query.addServerTable("player");
+    query.execute();
+
+    return true;
+}
+
+
 void Player::sendAttrib(Character::attributeIndex attribute) {
     auto value = getAttribute(attribute);
 
@@ -1617,6 +1668,11 @@ unsigned short int Player::increaseSkill(TYPE_OF_SKILL_ID skill, short int amoun
 
 void Player::turn(direction dir) {
     Character::turn(dir);
+    increaseActionPoints(-P_SPIN_COST);
+}
+
+void Player::turn(const position &pos) {
+    Character::turn(pos);
     increaseActionPoints(-P_SPIN_COST);
 }
 

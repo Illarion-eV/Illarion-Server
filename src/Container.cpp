@@ -181,6 +181,7 @@ bool Container::InsertContainer(Item it, Container *cc, TYPE_OF_CONTAINERSLOTS p
         } else {
             items.insert(ITEMMAP::value_type(pos, titem));
             containers.insert(CONTAINERMAP::value_type(pos, cc));
+            World::get()->sendContainerSlotChange(this, pos);
             return true;
         }
     }
@@ -653,7 +654,7 @@ void Container::doAge(bool inventory) {
 
 }
 
-TYPE_OF_CONTAINERSLOTS Container::getSlotCount() {
+TYPE_OF_CONTAINERSLOTS Container::getSlotCount() const {
     return Data::ContainerItems[itemId];
 }
 
@@ -663,20 +664,27 @@ bool Container::isItemStackable(Item item) {
 }
 
 void Container::insertIntoFirstFreeSlot(Item &item) {
+    TYPE_OF_CONTAINERSLOTS freeSlot = getFirstFreeSlot();
     TYPE_OF_CONTAINERSLOTS slotCount = getSlotCount();
-    TYPE_OF_CONTAINERSLOTS i = 0;
 
-    while (i < slotCount && items.find(i) != items.end()) {
-        ++i;
-    }
-
-    if (i < slotCount) {
-        items.insert(ITEMMAP::value_type(i, item));
-        World::get()->sendContainerSlotChange(this, i);
+    if (freeSlot < slotCount) {
+        items.insert(ITEMMAP::value_type(freeSlot, item));
+        World::get()->sendContainerSlotChange(this, freeSlot);
     }
 }
 
 void Container::insertIntoFirstFreeSlot(Item &item, Container *container) {
+    TYPE_OF_CONTAINERSLOTS freeSlot = getFirstFreeSlot();
+    TYPE_OF_CONTAINERSLOTS slotCount = getSlotCount();
+
+    if (freeSlot < slotCount) {
+        items.insert(ITEMMAP::value_type(freeSlot, item));
+        containers.insert(CONTAINERMAP::value_type(freeSlot, container));
+        World::get()->sendContainerSlotChange(this, freeSlot);
+    }
+}
+
+TYPE_OF_CONTAINERSLOTS Container::getFirstFreeSlot() const {
     TYPE_OF_CONTAINERSLOTS slotCount = getSlotCount();
     TYPE_OF_CONTAINERSLOTS i = 0;
 
@@ -684,10 +692,5 @@ void Container::insertIntoFirstFreeSlot(Item &item, Container *container) {
         ++i;
     }
 
-    if (i < slotCount) {
-        items.insert(ITEMMAP::value_type(i, item));
-        containers.insert(CONTAINERMAP::value_type(i, container));
-        World::get()->sendContainerSlotChange(this, i);
-    }
+    return i;
 }
-

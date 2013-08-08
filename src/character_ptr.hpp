@@ -39,7 +39,7 @@ public:
     operator bool() const;
 
 private:
-    Character *getPointerFromId(TYPE_OF_CHARACTER_ID) const;
+    Character *getPointerFromId() const;
 };
 
 Character *get_pointer(character_ptr const &p);

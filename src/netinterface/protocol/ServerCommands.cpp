@@ -236,7 +236,7 @@ AppearanceTC::AppearanceTC(Character *cc, const Player *receivingPlayer) : Basic
     addShortIntToBuffer(cc->getRace());
     addUnsignedCharToBuffer(cc->getAttribute(Character::sex));
     addShortIntToBuffer(cc->getAttribute(Character::hitpoints));
-    addUnsignedCharToBuffer(Data::RaceSizes.getRelativeSize(cc->getRace(), cc->getAttribute(Character::height)));
+    addUnsignedCharToBuffer(Data::RaceAttributes.getRelativeSize(cc->getRace(), cc->getAttribute(Character::height)));
     const Character::appearance appearance = cc->getAppearance();
     addUnsignedCharToBuffer(appearance.hairtype);
     addUnsignedCharToBuffer(appearance.beardtype);

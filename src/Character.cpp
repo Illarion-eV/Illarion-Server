@@ -770,6 +770,24 @@ uint8_t Character::getBeard() const {
     return _appearance.beardtype;
 }
 
+bool Character::setBaseAttribute(Character::attributeIndex attribute, Attribute::attribute_t value) {
+    auto &attrib = attributes[attribute];
+    auto oldValue = attrib.getValue();
+
+    if (isBaseAttributeValid(attribute, value)) {
+        attrib.setBaseValue(value);
+        auto newValue = attrib.getValue();
+
+        if (newValue != oldValue) {
+            handleAttributeChange(attribute);
+        }
+
+        return true;
+    } else {
+        return false;
+    }
+}
+
 void Character::setAttribute(Character::attributeIndex attribute, Attribute::attribute_t value) {
     auto &attrib = attributes[attribute];
     auto oldValue = attrib.getValue();
@@ -781,8 +799,30 @@ void Character::setAttribute(Character::attributeIndex attribute, Attribute::att
     }
 }
 
+Attribute::attribute_t Character::getBaseAttribute(Character::attributeIndex attribute) const {
+    return attributes[attribute].getBaseValue();
+}
+
 Attribute::attribute_t Character::getAttribute(Character::attributeIndex attribute) const {
     return attributes[attribute].getValue();
+}
+
+bool Character::increaseBaseAttribute(Character::attributeIndex attribute, int amount) {
+    auto &attrib = attributes[attribute];
+    auto oldValue = attrib.getValue();
+    
+    if (isBaseAttributeValid(attribute, attrib.getBaseValue() + amount)) {
+        attrib.increaseBaseValue(amount);
+        auto newValue = attrib.getValue();
+
+        if (newValue != oldValue) {
+            handleAttributeChange(attribute);
+        }
+
+        return true;
+    } else {
+        return false;
+    }
 }
 
 Attribute::attribute_t Character::increaseAttribute(Character::attributeIndex attribute, int amount) {
@@ -798,6 +838,29 @@ Attribute::attribute_t Character::increaseAttribute(Character::attributeIndex at
     return newValue;
 }
 
+bool Character::isBaseAttributeValid(Character::attributeIndex attribute, Attribute::attribute_t value) const {
+    return Data::RaceAttributes.isBaseAttributeInLimits(getRace(), attribute, value);
+}
+
+uint16_t Character::getBaseAttributeSum() const {
+    return attributes[Character::agility].getBaseValue()
+        + attributes[Character::constitution].getBaseValue()
+        + attributes[Character::dexterity].getBaseValue()
+        + attributes[Character::essence].getBaseValue()
+        + attributes[Character::intelligence].getBaseValue()
+        + attributes[Character::perception].getBaseValue()
+        + attributes[Character::strength].getBaseValue()
+        + attributes[Character::willpower].getBaseValue();
+}
+
+uint16_t Character::getMaxAttributePoints() const {
+    return Data::RaceAttributes.getMaxAttributePoints(getRace());
+}
+
+bool Character::saveBaseAttributes() {
+    return false;
+}
+
 void Character::handleAttributeChange(Character::attributeIndex attribute) {
     if (attribute == Character::hitpoints) {
         setAlive(getAttribute(hitpoints) > 0);
@@ -805,53 +868,57 @@ void Character::handleAttributeChange(Character::attributeIndex attribute) {
     }
 }
 
-void Character::setAttrib(const std::string &name, Attribute::attribute_t value) {
-    if (name == "faceto") {
-        turn((direction)value);
-    } else if (name == "racetyp") {
-        race = (TYPE_OF_RACE_ID)value;
-        updateAppearanceForAll(true);
-    } else {
-        try {
-            Character::attributeIndex attribute = attributeMap.at(name);
-            setAttribute(attribute, value);
-        } catch (...) {
-
-        }
+bool Character::isBaseAttribValid(const std::string &name, Attribute::attribute_t value) const {
+    try {
+        Character::attributeIndex attribute = attributeMap.at(name);
+        return isBaseAttributeValid(attribute, value);
+    } catch (...) {
+        return false;
     }
 }
 
+bool Character::setBaseAttrib(const std::string &name, Attribute::attribute_t value) {
+    try {
+        Character::attributeIndex attribute = attributeMap.at(name);
+        return setBaseAttribute(attribute, value);
+    } catch (...) {
+        return false;
+    }
+}
+
+void Character::setAttrib(const std::string &name, Attribute::attribute_t value) {
+    try {
+        Character::attributeIndex attribute = attributeMap.at(name);
+        setAttribute(attribute, value);
+    } catch (...) {
+
+    }
+}
+
+Attribute::attribute_t Character::getBaseAttrib(const std::string &name) {
+    try {
+        Character::attributeIndex attribute = attributeMap.at(name);
+        return getBaseAttribute(attribute);
+    } catch (...) {
+        return 0;
+    }
+}
+
+
+
+bool Character::increaseBaseAttrib(const std::string &name, int amount) {
+    try {
+        Character::attributeIndex attribute = attributeMap.at(name);
+        return increaseBaseAttribute(attribute, amount);
+    } catch (...) {
+        return false;
+    }
+}
+
+
 Attribute::attribute_t Character::increaseAttrib(const std::string &name, int amount) {
-    if (name == "posx") {
-        return pos.x;
-    }
-
-    if (name == "posy") {
-        return pos.y;
-    }
-
-    if (name == "posz") {
-        return pos.z;
-    }
-
-    if (name == "faceto") {
-        return faceto;
-    }
-
-    if (name == "id") {
-        return id;
-    }
-
-    if (name == "racetyp") {
-        return race;
-    }
-
     if (name == "sex") {
         return getAttribute(Character::sex);
-    }
-
-    if (name == "magictype") {
-        return magic.type;
     }
 
     try {

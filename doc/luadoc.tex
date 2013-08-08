@@ -55,7 +55,7 @@
 \makeindex
 \begin{document}
 \lstset{basicstyle=\small, keywordstyle=\ttfamily, identifierstyle=\ttfamily}
-\title{Lua documentation for Illarion scripting\\v5.9}
+\title{Lua documentation for Illarion scripting\\v5.12}
 \author{Martin \thanks{ \texttt{martin@illarion.org, http://www.illarion.org}},
 pharse \thanks{ \texttt{pharse@illarion.org, http://www.illarion.org}},
 vilarion \thanks{ \texttt{vilarion@illarion.org, http://www.illarion.org}}}
@@ -268,6 +268,11 @@ Avoid this by copying the single x,y and z coordinates in a new position struct.
         \caption{The 8 possible directions}\label{directions}
         \end{figure}
 \end{quote}
+\void \var{character}:\com{turn}{\integer \var{direction}}\\
+\void \var{character}:\com{turn}{\position \var{position}}
+\begin{quote}
+    Turns \var{character} into the given \var{direction} or towards the given \var{position}.
+\end{quote}
 \txt \var{character}:\com{alterMessage}{\txt \var{Text},\integer \var{LanguageSkill}}
 \begin{quote}
        Returns the altered \var{Text} with respect to the \var{LanguageSkill} given.
@@ -315,20 +320,47 @@ Any change to fixed attributes is only temporary and will be null upon the next 
 \integer \var{character}:\com{increaseAttrib}{\txt \var{AttribName}, \integer \var{value}}
 \begin{quote}
        Increases the attribute given (see below) and returns the new attribute value. Use \var{value}=0 to read the attribute's value. Note
-       that this command also sends an playerupdate to all visible characters around, so if you need to change a characters
-       appearance it is a good idea to use this command to make this change visible. This only holds for attributes that
-       are allowed to be changed, like hitpoints.
+       that this command also sends a player update to all characters in range if necessary.
 \end{quote}
 \void \var{character}:\com{setAttrib}{\txt \var{AttribName}, \integer \var{value}}
 \begin{quote}
        \var{AttribName} can be:
-       "faceto", "racetyp" (see below), "sex", "age", "body\_height", "attitude", "luck", "strength", "dexterity",
+       "sex", "age", "body\_height", "attitude", "luck", "strength", "dexterity",
        "constitution", "agility", "intelligence", "perception", "willpower", "essence", "foodlevel", "hitpoints",
        "mana", "poisonvalue".
        And "sex" can be:
        Character.male, Character.female
 
-       Note that, if you set racetyp, the effect will not be visible immediately. To make it visible, use \comm{increaseAttrib} with an attribute that can be changed, like hitpoints. Be also aware that any attribute change to fixed attributes like "strength" will only last for the current session and will be reset to the database value upon the next login.
+       Be aware that any attribute change to fixed attributes like "strength" will only last for the current session and will be reset to the database value upon the next login.
+\end{quote}
+\bool \var{character}:\com{isBaseAttributeValid}{\txt \var{attribute}, \integer \var{value}}
+\begin{quote}
+Returns whether \var{value} is acceptable for the given \var{attribute} and the race of the character, respecting limits given in table raceattr.
+\end{quote}
+\integer \var{character}:\com{getBaseAttributeSum}{}
+\begin{quote}
+Returns the current sum of the eight primary attributes: agility, constitution, dexterity, essence, intelligence, perception, strength and willpower.
+\end{quote}
+\integer \var{character}:\com{getMaxAttributePoints}{}
+\begin{quote}
+Returns the value which \com{getBaseAttributeSum}{} needs to result in, so that the base attributes can be saved. Can be used to make tests before actually trying to save the base attributes.
+\end{quote}
+\integer \var{character}:\com{getBaseAttribute}{\txt \var{attribute}}
+\begin{quote}
+Returns the base value of the given \var{attribute}, that is the value that this attribute normally has, when no special effects are active.
+\end{quote}
+\bool \var{character}:\com{setBaseAttribute}{\txt \var{attribute}, \integer \var{value}}
+\begin{quote}
+Sets the base value of the given \var{attribute} and returns \var{true} if 
+\com{isBaseAttributeValid}{...} would return \var{true}. Otherwise is a no-op and returns \var{false}.
+\end{quote}
+\bool \var{character}:\com{increaseBaseAttribute}{\txt \var{attribute}, \integer \var{amount}}
+\begin{quote}
+If \com{isBaseAttributeValid}{...} would return \var{true}, increases or decreases the base value of the given \var{attribute} and returns \var{true}. Otherwise is a no-op and returns \var{false}.
+\end{quote}
+\bool \var{character}:\com{saveBaseAttributes}{}
+\begin{quote}
+Saves the eight primary base attributes to the database, iff \com{getBaseAttributeSum}{} == \com{getMaxAttributePoints}{}. On failure resets primary attribute values to database values. Returns whether the operation was successful or not.
 \end{quote}
 \void \var{character}:\com{setSkinColor}{\integer \var{red}, \integer \var{green}, \integer \var{blue}}
 \begin{quote}
@@ -362,9 +394,13 @@ Any change to fixed attributes is only temporary and will be null upon the next 
 \begin{quote}
     Returns the ID of the present beard, 0 for no beard.
 \end{quote}
+\integer \var{character}:\com{setRace}{\integer \var{race}}
+\begin{quote}
+    Temporarily sets the race of a character. See table \ref{raceIDs} for details. 
+\end{quote}
 \integer \var{character}:\com{getRace}{}
 \begin{quote}
-       Returns the race-ID of a character. Consult Tab.(\ref{raceIDs}) for details.
+       Returns the race of a character. See table \ref{raceIDs} for details.
        \begin{table}
 \begin{tabular}{lc|lc|lc}
     Name & \var{rID} & Name & \var{rID} & Name & \var{rID}  \\ \hline
@@ -1682,10 +1718,6 @@ While using luac -p for finding compilation errors is very straight forward, it 
 \begin{quote}
        If used on the testserver prints \var{debugMessage} to the script log together with a stacktrace showing where the call of \com{debug}{...} originated. Has no effect on the illarionserver.
 \end{quote}
-\bool \com{isTestserver}{}
-\begin{quote}
-       Returns \var{true} if called on the testserver and \var{false} if called on the illarionserver. Use this when performing non-trivial debugging to prevent debugging code from being executed on the illarionserver. Examples would be working on server scripts like standardfighting and preventing char:inform output for debugging purposes on the illarionserver.
-\end{quote}
 
 \chapter{Entry Points}
 
@@ -2382,6 +2414,22 @@ It might be the case, and this is hoped much, that you want to create more compl
 \appendix
 
 \chapter{Versions}
+Version 5.12 (08 08 13)\\
+* Added Character:isBaseAttributeValid\\
+* Added Character:getBaseAttributeSum\\
+* Added Character:getMaxAttributePoints\\
+* Added Character:saveBaseAttributes\\
+* Added Character:setBaseAttribute\\
+* Added Character:getBaseAttribute\\
+* Added Character:increaseBaseAttribute\\
+\\
+Version 5.11 (05 08 13)\\
+* Added Character:setRace\\
+* Added Character:turn\\
+\\
+Version 5.10 (23 07 13)\\
+* Removed isTestserver\\
+\\
 Version 5.9 (05 04 13)\\
 * Added ArmorStruct.Type, ArmorStruct.Level\\
 * Added global constants for ArmorStruct.Type\\
