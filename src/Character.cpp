@@ -1421,7 +1421,6 @@ bool Character::move(direction dir, bool active) {
         // mark fields as (un)occupied
         cfold->removeChar();
         cfnew->setChar();
-        _world->moveFromTo(this, pos, newpos);
 
         // set new position
         setPosition(newpos);
@@ -1752,6 +1751,7 @@ void Character::setName(const std::string &name) {
 }
 
 void Character::setPosition(const position &pos) {
+    _world->moveFromTo(this, this->pos, pos);
     this->pos = pos;
 }
 
