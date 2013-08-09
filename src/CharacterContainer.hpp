@@ -52,12 +52,11 @@ private:
     typedef std::function<void(pointer)> for_each_type;
     typedef void(T::*for_each_member_type)();
     typedef typename std::unordered_map<TYPE_OF_CHARACTER_ID, pointer> container_type;
-    typedef typename std::map<position, TYPE_OF_CHARACTER_ID,PositionComparison> position_to_id_type;
+    typedef typename std::multimap<position, TYPE_OF_CHARACTER_ID,PositionComparison> position_to_id_type;
     position_to_id_type position_to_id;
     container_type container;
 
     bool getPosition(TYPE_OF_CHARACTER_ID id,position& pos);
-    bool getCharacterID(const position& pos,TYPE_OF_CHARACTER_ID& id);
     iterator_range<position_to_id_type::const_iterator> projection_x_axis(const position& pos, int r) const;
 
 public:
@@ -71,7 +70,7 @@ public:
 
     void insert(pointer p) {
         container.emplace(p->getId(), p);
-        position_to_id[p->getPosition()] = p->getId();
+        position_to_id.insert(std::make_pair(p->getPosition(), p->getId()));
     }
 
     pointer find(const std::string &name) const;
@@ -81,6 +80,7 @@ public:
     bool erase(TYPE_OF_CHARACTER_ID id);
     void clear() {
         container.clear();
+        position_to_id.clear();
     }
 
     std::vector<pointer> findAllCharactersInRangeOf(const position &pos, int distancemetric) const;

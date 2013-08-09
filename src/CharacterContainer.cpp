@@ -29,7 +29,7 @@
 template <class T>
 bool CharacterContainer<T>::getPosition(TYPE_OF_CHARACTER_ID id,position& pos) {
     auto i = container.find(id);
-    if(i!=container.end()) {
+    if (i!=container.end()) {
         pos = (i->second)->getPosition();
         return true;
     } else {
@@ -37,16 +37,6 @@ bool CharacterContainer<T>::getPosition(TYPE_OF_CHARACTER_ID id,position& pos) {
     }
 }
 
-template <class T>
-bool CharacterContainer<T>::getCharacterID(const position& pos,TYPE_OF_CHARACTER_ID& id) {
-    auto i = position_to_id.find(pos);
-    if(i!=position_to_id.end()) {
-        id = i->second;
-        return true;
-    } else {
-        return false;
-    }
-}
 
 template <class T>
 iterator_range<typename CharacterContainer<T>::position_to_id_type::const_iterator> CharacterContainer<T>::projection_x_axis(const position& pos, int r) const {
@@ -86,7 +76,8 @@ auto CharacterContainer<T>::find(TYPE_OF_CHARACTER_ID id) const -> pointer {
 template <class T>
 auto CharacterContainer<T>::find(const position &pos) const -> pointer {
     const auto i = position_to_id.find(pos);
-    if(i!=position_to_id.end()) {
+    
+    if (i!=position_to_id.end()) {
         return find(i->second);
     }
     return nullptr;
@@ -94,10 +85,15 @@ auto CharacterContainer<T>::find(const position &pos) const -> pointer {
 
 template <class T>
 void CharacterContainer<T>::update(TYPE_OF_CHARACTER_ID id, const position& old, const position& current) {
-    const auto i = position_to_id.find(old);
-    if(i!=position_to_id.end() && i->second==id) {
-        position_to_id.erase(i);
+    const auto range = position_to_id.equal_range(old);
+    
+    for (auto it = range.first; it != range.second; ++it) {
+        if (it->second == id) {
+            position_to_id.erase(it);
+            break;
+        }
     }
+
     position_to_id.insert(std::make_pair(current,id));
 }
 
@@ -106,9 +102,18 @@ void CharacterContainer<T>::update(TYPE_OF_CHARACTER_ID id, const position& old,
 template <class T>
 bool CharacterContainer<T>::erase(TYPE_OF_CHARACTER_ID id) {
     position pos;
-    if(getPosition(id,pos)) {
-        if(position_to_id[pos]==id) position_to_id.erase(pos);
+    
+    if (getPosition(id, pos)) {
+        const auto range = position_to_id.equal_range(pos);
+
+        for (auto it = range.first; it != range.second; ++it) {
+            if (it->second == id) {
+                position_to_id.erase(it);
+                break;
+            }
+        }
     }
+    
     return container.erase(id) > 0;
 }
 
@@ -117,16 +122,19 @@ template <class T>
 auto CharacterContainer<T>::findAllCharactersInRangeOf(const position &pos, int distancemetric) const -> std::vector<pointer> {
     std::vector<pointer> temp;
     auto candidates = projection_x_axis(pos,distancemetric);
-    for(auto& c : candidates) {
+    
+    for (auto& c : candidates) {
         const position& p = c.first;
         TYPE_OF_CHARACTER_ID id = c.second;
         short int dx = p.x - pos.x;
         short int dy = p.y - pos.y;
         short int dz = p.z - pos.z;
-        if((abs(dx) + abs(dy) <= distancemetric) && (-RANGEDOWN <= dz) && (dz <= RANGEUP)) {
-            if(auto character=find(id)) temp.push_back(character);
+        
+        if ((abs(dx) + abs(dy) <= distancemetric) && (-RANGEDOWN <= dz) && (dz <= RANGEUP)) {
+            if (auto character=find(id)) temp.push_back(character);
         }
-    };
+    }
+    
     return temp;
 }
 
@@ -136,18 +144,21 @@ auto CharacterContainer<T>::findAllCharactersInScreen(const position &pos) const
     std::vector<pointer> temp;
     const int MAX_SCREEN_RANGE = 30;
     auto candidates = projection_x_axis(pos,MAX_SCREEN_RANGE);
-    for(auto& c : candidates) {
+    
+    for (auto& c : candidates) {
         const position& p = c.first;
         TYPE_OF_CHARACTER_ID id = c.second;
         short int dx = p.x - pos.x;
         short int dy = p.y - pos.y;
         short int dz = p.z - pos.z;
-        if(auto character=find(id)) {
-            if((abs(dx) + abs(dy) <= character->getScreenRange()) && (-RANGEDOWN <= dz) && (dz <= RANGEUP)) {
+    
+        if (auto character=find(id)) {
+            if ((abs(dx) + abs(dy) <= character->getScreenRange()) && (-RANGEDOWN <= dz) && (dz <= RANGEUP)) {
                 temp.push_back(character);
             }
         }
-    };
+    }
+
     return temp;
 }
 
@@ -155,16 +166,19 @@ template <class T>
 auto CharacterContainer<T>::findAllCharactersInMaxRangeOf(const position &pos, int distancemetric) const -> std::vector<pointer> {
     std::vector<pointer> temp;
     auto candidates = projection_x_axis(pos,distancemetric);
-    for(auto& c : candidates) {
+    
+    for (auto& c : candidates) {
         const position& p = c.first;
         TYPE_OF_CHARACTER_ID id = c.second;
         short int dx = p.x - pos.x;
         short int dy = p.y - pos.y;
         short int dz = p.z - pos.z;
-        if(abs(dx) <= distancemetric && abs(dy) <= distancemetric && (-RANGEDOWN <= dz) && (dz <= RANGEUP)) {
-            if(auto character=find(id)) temp.push_back(character);
+    
+        if (abs(dx) <= distancemetric && abs(dy) <= distancemetric && (-RANGEDOWN <= dz) && (dz <= RANGEUP)) {
+            if (auto character=find(id)) temp.push_back(character);
         }
-    };
+    }
+
     return temp;
 }
 
@@ -173,18 +187,21 @@ template <class T>
 auto CharacterContainer<T>::findAllAliveCharactersInRangeOf(const position &pos, int distancemetric) const -> std::vector<pointer> {
     std::vector<pointer> temp;
     auto candidates = projection_x_axis(pos,distancemetric);
-    for(auto& c : candidates) {
+    
+    for (auto& c : candidates) {
         const position& p = c.first;
         TYPE_OF_CHARACTER_ID id = c.second;
         short int dx = p.x - pos.x;
         short int dy = p.y - pos.y;
         short int dz = p.z - pos.z;
-        if(((abs(dx) + abs(dy) <= distancemetric) || (distancemetric==1 && abs(dx)==1 && abs(dy)==1)) && (-RANGEDOWN <= dz) && (dz <= RANGEUP)) {
-            if(auto character=find(id))
-                if(character->isAlive())
+        
+        if (((abs(dx) + abs(dy) <= distancemetric) || (distancemetric==1 && abs(dx)==1 && abs(dy)==1)) && (-RANGEDOWN <= dz) && (dz <= RANGEUP)) {
+            if (auto character=find(id))
+                if (character->isAlive())
                     temp.push_back(character);
         }
-    };
+    }
+
     return temp;
 }
 
@@ -192,19 +209,22 @@ template <class T>
 auto CharacterContainer<T>::findAllAliveCharactersInRangeOfOnSameMap(const position &pos, int distancemetric) const -> std::vector<pointer> {
     std::vector<pointer> temp;
     auto candidates = projection_x_axis(pos,distancemetric);
-    for(auto& c : candidates) {
+    
+    for (auto& c : candidates) {
         const position& p = c.first;
         TYPE_OF_CHARACTER_ID id = c.second;
         short int dx = p.x - pos.x;
         short int dy = p.y - pos.y;
         short int dz = p.z - pos.z;
-        if(((abs(dx) + abs(dy) <= distancemetric) || (distancemetric==1 && abs(dx)==1 && abs(dy)==1)) && (-RANGEDOWN <= dz) && (dz <= RANGEUP)) {
-            if(auto character=find(id))
-                if(character->isAlive())
+     
+        if (((abs(dx) + abs(dy) <= distancemetric) || (distancemetric==1 && abs(dx)==1 && abs(dy)==1)) && (-RANGEDOWN <= dz) && (dz <= RANGEUP)) {
+            if (auto character=find(id))
+                if (character->isAlive())
                     temp.push_back(character);
         }
-    };
-    return temp;}
+    }
+    return temp;
+}
 
 
 template <class T>
@@ -213,14 +233,17 @@ bool CharacterContainer<T>::findAllCharactersWithXInRangeOf(short int startx, sh
     int r = (endx-startx)/2+1;
     int x = startx + (endx-startx)/2;
     auto candidates = projection_x_axis(position(x,0,0),r);
-    for(auto& c : candidates) {
+    
+    for (auto& c : candidates) {
         const position& p = c.first;
         TYPE_OF_CHARACTER_ID id = c.second;
+    
         if ((p.x >= startx) && (p.x <= endx)) {
-            if(auto character=find(id))
+            if (auto character=find(id))
                 ret.push_back(character);
         }
-    };
+    }
+    
     return found_one;
 }
 
