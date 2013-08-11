@@ -34,8 +34,6 @@ class PlayerManager {
 public:
     static PlayerManager &get();
 
-    void saveAll();
-
     void activate();
     void stop();
 

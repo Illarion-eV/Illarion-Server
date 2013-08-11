@@ -63,19 +63,6 @@ void PlayerManager::stop() {
     Logger::info(LogFacility::Other) << "Player manager terminated!" << Log::end;
 }
 
-void PlayerManager::saveAll() {
-    if (!loggedOutPlayers.empty()) {
-        for (auto const &player : loggedOutPlayers) {
-            if (!player->isMonitoringClient()) {
-                player->save();
-                player->Connection->closeConnection();
-            }
-        }
-    }
-
-    loggedOutPlayers.clear();
-}
-
 bool PlayerManager::findPlayer(const std::string &name) const {
     std::lock_guard<std::mutex> lock(mut);
 
