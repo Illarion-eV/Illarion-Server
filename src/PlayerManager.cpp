@@ -171,10 +171,7 @@ void PlayerManager::playerSaveLoop(PlayerManager *pmanager) {
         while (pmanager->running || !pmanager->loggedOutPlayers.empty()) {
             if (!pmanager->loggedOutPlayers.empty()) {
                 while (!pmanager->loggedOutPlayers.empty()) {
-                    {
-                        std::lock_guard<std::mutex> lock(mut);
-                        tmpPl = pmanager->loggedOutPlayers.non_block_pop_front();
-                    }
+                    tmpPl = pmanager->loggedOutPlayers.front();
 
                     if (!tmpPl->isMonitoringClient()) {
                         {
@@ -191,6 +188,9 @@ void PlayerManager::playerSaveLoop(PlayerManager *pmanager) {
                         delete tmpPl;
                         tmpPl = nullptr;
                     }
+
+                    std::lock_guard<std::mutex> lock(mut);
+                    pmanager->loggedOutPlayers.non_block_pop_front();
                 }
 
                 Logger::debug(LogFacility::World) << "update player list [begin]" << Log::end;
