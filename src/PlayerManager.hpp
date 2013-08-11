@@ -37,6 +37,7 @@ public:
     void saveAll();
 
     void activate();
+    void stop();
 
     bool threadOK() {
         return threadOk;

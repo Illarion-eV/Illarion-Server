@@ -48,9 +48,19 @@ void PlayerManager::activate() {
     running = true;
 
     login_thread = std::make_unique<std::thread>(loginLoop, this);
-    login_thread->detach();
     save_thread = std::make_unique<std::thread>(playerSaveLoop, this);
-    save_thread->detach();
+}
+
+void PlayerManager::stop() {
+    running = false;
+    
+    Logger::info(LogFacility::Other) << "Waiting for login thread to terminate ..." << Log::end;
+    login_thread->join();
+
+    Logger::info(LogFacility::Other) << "Waiting for player save thread to terminate ..." << Log::end;
+    save_thread->join();
+
+    Logger::info(LogFacility::Other) << "Player manager terminated!" << Log::end;
 }
 
 void PlayerManager::saveAll() {
@@ -158,10 +168,8 @@ void PlayerManager::playerSaveLoop(PlayerManager *pmanager) {
         pmanager->threadOk = true;
         Player *tmpPl = nullptr;
 
-        while (pmanager->running) {
+        while (pmanager->running || !pmanager->loggedOutPlayers.empty()) {
             if (!pmanager->loggedOutPlayers.empty()) {
-                Logger::debug(LogFacility::World) << "Ausgelogte Spieler bearbeiten: " << pmanager->loggedOutPlayers.size() << " players gone" << Log::end;
-
                 while (!pmanager->loggedOutPlayers.empty()) {
                     {
                         std::lock_guard<std::mutex> lock(mut);

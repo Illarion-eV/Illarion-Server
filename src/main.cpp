@@ -192,11 +192,9 @@ int main(int argc, char *argv[]) {
 
     Data::ScriptVariables.save();
     Logger::info(LogFacility::Other) << "ScriptVariables saved!" << Log::end;
+
     world->forceLogoutOfAllPlayers();
-
-    //saving all players which where forced logged out.
-    PlayerManager::get().saveAll();
-
+    PlayerManager::get().stop();
     world->takeMonsterAndNPCFromMap();
 
     Logger::info(LogFacility::Other) << "saving maps" << Log::end;
@@ -206,7 +204,6 @@ int main(int argc, char *argv[]) {
 
     reset_sighandlers();
 
-    time(&starttime);
     Logger::info(LogFacility::Other) << "Illarion has been successfully terminated! " << Log::end;
 
     return EXIT_SUCCESS;

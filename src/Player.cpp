@@ -1114,6 +1114,8 @@ struct container_struct {
 bool Player::save() throw() {
     using namespace Database;
 
+    Logger::info(LogFacility::Player) << "Saving " << to_string() << Log::end;
+
     PConnection connection = ConnectionManager::getInstance().getConnection();
 
     try {
