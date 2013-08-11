@@ -189,7 +189,7 @@ void Map::Init(short int minx, short int miny, short int z) {
 
 
 bool Map::Save(const std::string &name) {
-    Logger::info(LogFacility::World) << "Saving map " << name << Log::end;
+    Logger::debug(LogFacility::World) << "Saving map " << name << Log::end;
 
     if (! Map_initialized) {
         Logger::warn(LogFacility::World) << "Can't save uninitialized map: " << name << Log::end;
@@ -265,7 +265,7 @@ bool Map::Save(const std::string &name) {
 
     } else {
 
-        Logger::error(LogFacility::World) << "Saving map failed." << Log::end;
+        Logger::error(LogFacility::World) << "Saving map failed: " << name << Log::end;
         return false;
 
     }
@@ -294,7 +294,7 @@ bool Map::GetPToCFieldAt(Field *&fip, short int x, short int y) {
 
 bool Map::Load(const std::string &name, unsigned short int x_offs, unsigned short int y_offs) {
 
-    Logger::info(LogFacility::World) << "Loading map " << name  << " for position: " << x_offs << " " << y_offs << Log::end;
+    Logger::debug(LogFacility::World) << "Loading map " << name  << " for position: " << x_offs << " " << y_offs << Log::end;
 
     std::ifstream main_map { (name + "_map").c_str(), std::ios::binary | std::ios::in };
     std::ifstream main_item { (name + "_item").c_str(), std::ios::binary | std::ios::in };
@@ -442,7 +442,7 @@ bool Map::Load(const std::string &name, unsigned short int x_offs, unsigned shor
         }
     }
 
-    Logger::error(LogFacility::World) << "Map: ERROR LOADING FILES" << Log::end;
+    Logger::error(LogFacility::World) << "Map: ERROR LOADING FILES: " << name << Log::end;
 
     return false;
 

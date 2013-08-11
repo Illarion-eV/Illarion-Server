@@ -197,7 +197,6 @@ int main(int argc, char *argv[]) {
     PlayerManager::get().stop();
     world->takeMonsterAndNPCFromMap();
 
-    Logger::info(LogFacility::Other) << "saving maps" << Log::end;
     world->Save("Illarion");
     delete world;
     world = nullptr;

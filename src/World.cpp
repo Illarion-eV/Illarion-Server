@@ -134,6 +134,8 @@ bool World::load_maps() {
         return false;
     }
 
+    Logger::info(LogFacility::World) << "Importing " << numfiles << " maps." << Log::end;
+
     bool ok = true;
 
     // iterate over all map files...
@@ -141,7 +143,7 @@ bool World::load_maps() {
 
         // strip .tiles.txt from filename
         strstr(maplist[numfiles]->d_name, ".tiles.txt")[0] = '\0';
-        Logger::info(LogFacility::World) << "importing: " << Config::instance().datadir() << "map/import/" << maplist[numfiles]->d_name << Log::end;
+        Logger::debug(LogFacility::World) << "Importing: " << Config::instance().datadir() << "map/import/" << maplist[numfiles]->d_name << Log::end;
 
         ok &= load_from_editor(Config::instance().datadir() + "map/import/" + maplist[numfiles]->d_name);
 
@@ -154,7 +156,7 @@ bool World::load_maps() {
 //! create a new world from editor files (new format)
 bool World::load_from_editor(const std::string &filename) {
     // first try to open mapfile
-    Logger::info(LogFacility::World) << "try to Import map: " << filename << Log::end;
+    Logger::debug(LogFacility::World) << "try to Import map: " << filename << Log::end;
     std::ifstream maptilesfile((filename + ".tiles.txt").c_str());
 
     if (!maptilesfile.good()) {
@@ -206,7 +208,7 @@ bool World::load_from_editor(const std::string &filename) {
     maptilesfile >> h_height;  //read int (height)
     oldy = -1;
 
-    Logger::info(LogFacility::World) << "try to Import tiles: " << filename << Log::end;
+    Logger::debug(LogFacility::World) << "try to Import tiles: " << filename << Log::end;
     // load all tiles from the file
     maptilesfile >> temp_tile.x;  // read an int.
 
@@ -350,7 +352,7 @@ bool World::load_from_editor(const std::string &filename) {
     Item::id_type itemId;
     Item::quality_type itemQuality;
     oldy = -1;
-    Logger::info(LogFacility::World) << "try to import items: " << filename << Log::end;
+    Logger::debug(LogFacility::World) << "try to import items: " << filename << Log::end;
     mapitemsfile >> x;
 
     while (mapitemsfile.good()) {
@@ -453,7 +455,7 @@ bool World::load_from_editor(const std::string &filename) {
     }
 
     mapitemsfile.close();
-    Logger::info(LogFacility::World) << "Import map: " << filename << " was successful!" << Log::end;
+    Logger::debug(LogFacility::World) << "Import map: " << filename << " was successful!" << Log::end;
 
     return true;
 }

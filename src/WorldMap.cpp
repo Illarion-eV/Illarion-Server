@@ -19,6 +19,7 @@
 
 #include "WorldMap.hpp"
 #include "Map.hpp"
+#include "Logger.hpp"
 
 #include <stdexcept>
 #include <boost/algorithm/string/replace.hpp>
@@ -247,7 +248,7 @@ void WorldMap::saveToDisk(const std::string &prefix) const {
 
     } else {
         unsigned short int size = maps.size();
-        std::cout << "Saving " << size << " maps." << std::endl;
+        Logger::info(LogFacility::World) << "Saving " << size << " maps." << Log::end;
         mapinitfile.write((char *) & size, sizeof(size));
         char mname[200];
 

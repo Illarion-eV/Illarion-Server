@@ -802,7 +802,7 @@ void World::Load(const std::string &prefix) {
     } else {
         unsigned short int size;
         mapinitfile.read((char *) & size, sizeof(size));
-        Logger::info(LogFacility::World) << "Loading " << size << " maps" << Log::end;
+        Logger::info(LogFacility::World) << "Loading " << size << " maps." << Log::end;
 
         short int tZ_Level;
         short int tMin_X;
