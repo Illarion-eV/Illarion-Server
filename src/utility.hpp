@@ -25,5 +25,17 @@ extern bool mypred(char c1, char c2);
 extern bool comparestrings_nocase(const std::string &s1, const std::string &s2);
 extern direction to_direction(uint8_t dir);
 
+
+template <class T>
+struct iterator_range {
+    T begin() {
+        return p.first;
+    }
+    T end() {
+        return p.second;
+    }
+    std::pair<T,T> p;
+};
+
 #endif
 

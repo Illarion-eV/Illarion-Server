@@ -96,6 +96,20 @@ void World::TriggerFieldMove(Character *cc, bool moveto) {
     }
 }
 
+void World::moveFromTo(Character *cc, const position& from, const position& to) {
+    switch(cc->getType()) {
+        case Character::player:
+            Players.update(cc->getId(),from,to);
+            break;
+        case Character::monster:
+            Monsters.update(cc->getId(),from,to);
+            break;
+        case Character::npc:
+            Npc.update(cc->getId(),from,to);
+            break;
+    }
+}
+
 
 void World::sendSpinToAllVisiblePlayers(Character *cc) {
     for (const auto &p : Players.findAllCharactersInScreen(cc->getPosition())) {
