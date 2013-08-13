@@ -43,7 +43,7 @@ public:
 
 private:
     TYPE_OF_QUEST_ID quest;
-    static void addTarget(std::vector<position> &targets, const luabind::object &potentialTarget);
+    static position getPosition(const luabind::object &potentialPosition);
 };
 
 #endif

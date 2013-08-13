@@ -44,8 +44,15 @@ void LuaQuestScript::targets(Character *user, TYPE_OF_QUESTSTATUS status, std::v
     character_ptr fuse_user(user);
     auto luaTargets = callEntrypoint<object>("QuestTargets", fuse_user, status);
 
+    if (!luaTargets.is_valid()) {
+        std::stringstream error;
+        error << "No valid QuestTarget entrypoint in quest " << quest << ".";
+        writeDebugMsg(error.str());
+        return;
+    }
+
     try {
-        addTarget(targets, luaTargets);
+        targets.push_back(getPosition(luaTargets));
         return;
     } catch (std::logic_error &e) {
     }
@@ -55,7 +62,7 @@ void LuaQuestScript::targets(Character *user, TYPE_OF_QUESTSTATUS status, std::v
     if (mapType == LUA_TTABLE) {
         for (iterator it(luaTargets), end; it != end; ++it) {
             try {
-                addTarget(targets, *it);
+                targets.push_back(getPosition(*it));
             } catch (std::logic_error &e) {
                 std::stringstream error;
                 error << "Usage of invalid target table entry in quest " << quest;
@@ -79,27 +86,29 @@ TYPE_OF_QUESTSTATUS LuaQuestScript::finalStatus() {
     return callEntrypoint<TYPE_OF_QUESTSTATUS>("QuestFinalStatus");
 }
 
-void LuaQuestScript::addTarget(std::vector<position> &targets, const luabind::object &potentialTarget) {
+position LuaQuestScript::getPosition(const luabind::object &potentialPosition) {
     using namespace luabind;
 
+    if (!potentialPosition.is_valid()) {
+        throw std::logic_error("no position found");
+    }
+
     try {
-        targets.push_back(object_cast<position>(potentialTarget));
-        return;
+        return object_cast<position>(potentialPosition);
     } catch (cast_failed &e) {
     }
 
-    auto targetType = type(potentialTarget);
+    auto positionType = type(potentialPosition);
 
-    if (targetType == LUA_TTABLE) {
+    if (positionType == LUA_TTABLE) {
         try {
-            int16_t x = object_cast<int16_t>(potentialTarget[1]);
-            int16_t y = object_cast<int16_t>(potentialTarget[2]);
-            int16_t z = object_cast<int16_t>(potentialTarget[3]);
-            targets.emplace_back(x, y, z);
-            return;
+            int16_t x = object_cast<int16_t>(potentialPosition[1]);
+            int16_t y = object_cast<int16_t>(potentialPosition[2]);
+            int16_t z = object_cast<int16_t>(potentialPosition[3]);
+            return position(x, y, z);
         } catch (cast_failed &e) {
         }
     }
 
-    throw std::logic_error("no target found");
+    throw std::logic_error("no position found");
 }
