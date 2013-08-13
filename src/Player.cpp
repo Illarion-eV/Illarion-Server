@@ -2124,6 +2124,22 @@ void Player::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS prog
     questWriteLock = false;
 }
 
+void Player::sendAvailableQuests() {
+    const auto quests = Data::Quests.getQuestsInRange(getPosition(), getScreenRange());
+    int someTime;
+
+    for (const auto &quest : quests) {
+        const TYPE_OF_QUEST_ID questId = quest.first;
+
+        if (getQuestProgress(questId, someTime) == 0) {
+            const position &start = quest.second;
+            std::stringstream message;
+            message << "Quest " << questId << " available at " << start;
+            inform(message.str());
+        }
+    }
+}
+
 void Player::sendQuestProgress(TYPE_OF_QUEST_ID questId, TYPE_OF_QUESTSTATUS progress) {
     if (progress == 0) {
         ServerCommandPointer cmd = std::make_shared<AbortQuestTC>(questId);

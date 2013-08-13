@@ -190,6 +190,8 @@ void World::sendAllVisibleCharactersToPlayer(Player *cp, bool sendSpin) {
 
     std::vector < NPC * > tempN = Npc.findAllCharactersInRangeOf(cp->getPosition(), cp->getScreenRange());
     sendCharsInVector< NPC >(tempN, cp, sendSpin);
+
+    cp->sendAvailableQuests();
 }
 
 
