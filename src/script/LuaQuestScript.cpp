@@ -38,6 +38,20 @@ std::string LuaQuestScript::description(Character *user, TYPE_OF_QUESTSTATUS sta
     return callEntrypoint<std::string>("QuestDescription", fuse_user, status);
 }
 
+position LuaQuestScript::start() {
+    using namespace luabind;
+    auto startPosition = callEntrypoint<object>("QuestStart");
+    
+    try {
+        return getPosition(startPosition);
+    } catch (std::logic_error &e) {
+        std::stringstream error;
+        error << "No valid QuestStart entrypoint in quest " << quest << ".";
+        writeDebugMsg(error.str());
+        throw;
+    }
+}
+
 void LuaQuestScript::targets(Character *user, TYPE_OF_QUESTSTATUS status, std::vector<position> &targets) {
     using namespace luabind;
     targets.clear();
