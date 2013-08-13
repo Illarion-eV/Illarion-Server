@@ -85,6 +85,7 @@ Player::Player(std::shared_ptr<NetInterface> newConnection) throw(Player::Logout
     SetMovement(walk);
 
     time(&lastaction);
+    time(&lastkeepalive);
 
     ltAction = std::make_unique<LongTimeAction>(this, _world);
 
