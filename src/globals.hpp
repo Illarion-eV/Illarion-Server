@@ -98,6 +98,20 @@ struct position {
     }
 };
 
+struct PositionComparison {
+    bool operator()(const position& pos1, const position& pos2) const {
+        if(pos1.x == pos2.x) {
+            if(pos1.y == pos2.y) {
+                return pos1.z < pos2.z;
+            } else {
+                return pos1.y < pos2.y;
+            }
+        } else {
+            return pos1.x < pos2.x;
+        }
+    }
+};
+
 namespace std {
 template<> struct hash<position> {
     size_t operator()(const position &p) const {

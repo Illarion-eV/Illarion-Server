@@ -21,19 +21,33 @@
 #define _QUEST_TABLE_HPP_
 
 #include "data/ScriptStructTable.hpp"
+
+#include <map>
+
 #include "types.hpp"
+#include "globals.hpp"
 #include "script/LuaQuestScript.hpp"
 
 struct QuestStruct {
 };
 
 class QuestTable : public ScriptStructTable<TYPE_OF_QUEST_ID, QuestStruct, LuaQuestScript, TYPE_OF_QUEST_ID> {
+private:
+    typedef ScriptStructTable<TYPE_OF_QUEST_ID, QuestStruct, LuaQuestScript, TYPE_OF_QUEST_ID> Base;
+    typedef std::multimap<position, TYPE_OF_QUEST_ID, PositionComparison> quest_starts_type;
+
 public:
     virtual std::string getTableName() override;
     virtual std::vector<std::string> getColumnNames() override;
     virtual TYPE_OF_QUEST_ID assignId(const Database::ResultTuple &row) override;
     virtual QuestStruct assignTable(const Database::ResultTuple &row) override;
     virtual std::string assignScriptName(const Database::ResultTuple &row) override;
+    virtual void reloadScripts() override;
+
+    typedef std::map<TYPE_OF_QUEST_ID, position> QuestStartMap;
+    QuestStartMap getQuestsInRange(const position &pos, int radius) const;
+private:
+    quest_starts_type questStarts;
 };
 
 #endif
