@@ -176,7 +176,7 @@ public:
     short int getActiveLanguage() const;
     void setActiveLanguage(short int l);
 
-    const position &getPosition() const;
+    virtual const position &getPosition() const;
 
     bool getAttackMode() const;
     void setAttackMode(bool attack);

@@ -70,14 +70,18 @@ public:
     }
 
     void insert(pointer p) {
-        container.emplace(p->getId(), p);
-        position_to_id.insert(std::make_pair(p->getPosition(), p->getId()));
+        const auto id = p->getId();
+        
+        if (!find(id)) {
+            container.emplace(id, p);
+            position_to_id.insert(std::make_pair(p->getPosition(), id));
+        }
     }
 
     pointer find(const std::string &name) const;
     pointer find(TYPE_OF_CHARACTER_ID id) const;
     pointer find(const position &pos) const;
-    void update(TYPE_OF_CHARACTER_ID id, const position& old, const position& current);
+    void update(pointer p, const position& newPosition);
     bool erase(TYPE_OF_CHARACTER_ID id);
     void clear() {
         container.clear();

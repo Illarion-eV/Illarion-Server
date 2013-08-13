@@ -84,17 +84,23 @@ auto CharacterContainer<T>::find(const position &pos) const -> pointer {
 }
 
 template <class T>
-void CharacterContainer<T>::update(TYPE_OF_CHARACTER_ID id, const position& old, const position& current) {
-    const auto range = position_to_id.equal_range(old);
+void CharacterContainer<T>::update(pointer p, const position& newPosition) {
+    const auto id = p->getId();
+
+    if (!find(id)) {
+        insert(p);
+    }
+
+    const auto &oldPosition = p->getPosition();
+    const auto range = position_to_id.equal_range(oldPosition);
     
     for (auto it = range.first; it != range.second; ++it) {
         if (it->second == id) {
             position_to_id.erase(it);
-            break;
+            position_to_id.insert(std::make_pair(newPosition, id));
+            return;
         }
     }
-
-    position_to_id.insert(std::make_pair(current,id));
 }
 
 
@@ -247,6 +253,7 @@ bool CharacterContainer<T>::findAllCharactersWithXInRangeOf(short int startx, sh
     return found_one;
 }
 
+template class CharacterContainer<Character>;
 template class CharacterContainer<Player>;
 template class CharacterContainer<Monster>;
 template class CharacterContainer<NPC>;

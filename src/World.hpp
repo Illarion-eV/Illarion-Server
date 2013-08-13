@@ -593,7 +593,7 @@ public:
     *@param from the old position
     *@param to the new position
     */
-    void moveFromTo(Character *cc, const position& from, const position& to);
+    void moveTo(Character *cc, const position& to);
 
 
     /**

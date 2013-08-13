@@ -96,16 +96,16 @@ void World::TriggerFieldMove(Character *cc, bool moveto) {
     }
 }
 
-void World::moveFromTo(Character *cc, const position& from, const position& to) {
+void World::moveTo(Character *cc, const position& to) {
     switch(cc->getType()) {
         case Character::player:
-            Players.update(cc->getId(),from,to);
+            Players.update(dynamic_cast<Player *>(cc), to);
             break;
         case Character::monster:
-            Monsters.update(cc->getId(),from,to);
+            Monsters.update(dynamic_cast<Monster *>(cc), to);
             break;
         case Character::npc:
-            Npc.update(cc->getId(),from,to);
+            Npc.update(dynamic_cast<NPC *>(cc), to);
             break;
     }
 }

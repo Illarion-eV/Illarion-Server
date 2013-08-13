@@ -1751,7 +1751,7 @@ void Character::setName(const std::string &name) {
 }
 
 void Character::setPosition(const position &pos) {
-    _world->moveFromTo(this, this->pos, pos);
+    _world->moveTo(this, pos);
     this->pos = pos;
 }
 
