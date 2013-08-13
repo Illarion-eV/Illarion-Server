@@ -25,6 +25,7 @@
 #include <unordered_map>
 #include <functional>
 #include <boost/lexical_cast.hpp>
+#include "globals.hpp"
 #include "utility.hpp"
 #include "constants.hpp"
 
