@@ -620,6 +620,10 @@ private:
     unsigned int dialogCounter;
     typedef std::unordered_map<unsigned int, std::shared_ptr<Dialog>> DialogMap;
     DialogMap dialogs;
+
+    typedef std::pair<TYPE_OF_QUESTSTATUS, int> QuestStatusTimePair;
+    typedef std::unordered_map<TYPE_OF_QUEST_ID, QuestStatusTimePair> QuestMap;
+    QuestMap quests;
 };
 
 #endif
