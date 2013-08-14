@@ -884,6 +884,12 @@ void LuaScript::init_base_functions() {
         [
             luabind::value("german", static_cast<uint32_t>(Language::german)),
             luabind::value("english", static_cast<uint32_t>(Language::english))
+        ]
+        .enum_("quest_availability")
+        [
+            luabind::value("questAvailable", static_cast<uint32_t>(questAvailable)),
+            luabind::value("questWillBeAvailable", static_cast<uint32_t>(questWillBeAvailable)),
+            luabind::value("questNotAvailable", static_cast<uint32_t>(questNotAvailable))
         ],
         luabind::class_<World>("World")
         .def("LoS", &world_LuaLoS)
