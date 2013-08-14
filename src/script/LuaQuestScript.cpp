@@ -38,6 +38,11 @@ std::string LuaQuestScript::description(Character *user, TYPE_OF_QUESTSTATUS sta
     return callEntrypoint<std::string>("QuestDescription", fuse_user, status);
 }
 
+QuestAvailability LuaQuestScript::available(Character *user, TYPE_OF_QUESTSTATUS status) {
+    character_ptr fuse_user(user);
+    return callEntrypoint<QuestAvailability>("QuestAvailability", fuse_user, status);
+}
+
 position LuaQuestScript::start() {
     using namespace luabind;
     auto startPosition = callEntrypoint<object>("QuestStart");

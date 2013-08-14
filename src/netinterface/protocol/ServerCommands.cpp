@@ -65,6 +65,25 @@ AbortQuestTC::AbortQuestTC(TYPE_OF_QUEST_ID id) : BasicServerCommand(SC_ABORTQUE
     addShortIntToBuffer(id);
 }
 
+AvailableQuestsTC::AvailableQuestsTC(const std::vector<position> &availableNow,
+                                     const std::vector<position> &availableSoon) : BasicServerCommand(SC_AVAILABLEQUESTS_TC) {
+    addShortIntToBuffer(availableNow.size());
+    
+    for (const auto &pos : availableNow) {
+        addShortIntToBuffer(pos.x);
+        addShortIntToBuffer(pos.y);
+        addShortIntToBuffer(pos.z);
+    }
+
+    addShortIntToBuffer(availableSoon.size());
+
+    for (const auto &pos : availableSoon) {
+        addShortIntToBuffer(pos.x);
+        addShortIntToBuffer(pos.y);
+        addShortIntToBuffer(pos.z);
+    }
+}
+
 InputDialogTC::InputDialogTC(const InputDialog &inputDialog, unsigned int dialogId) : BasicServerCommand(SC_INPUTDIALOG_TC) {
     addStringToBuffer(inputDialog.getTitle());
     addStringToBuffer(inputDialog.getDescription());

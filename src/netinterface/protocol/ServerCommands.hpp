@@ -85,7 +85,8 @@ enum ServerCommands {
     SC_CRAFTINGDIALOGUPDATE_TC = 0x55,
     SC_CLOSEDIALOG_TC = 0x5F,
     SC_QUESTPROGRESS_TC = 0x40,
-    SC_ABORTQUEST_TC = 0x41
+    SC_ABORTQUEST_TC = 0x41,
+    SC_AVAILABLEQUESTS_TC = 0x42
 };
 
 class QuestProgressTC : public BasicServerCommand {
@@ -100,6 +101,11 @@ public:
 class AbortQuestTC : public BasicServerCommand {
 public:
     AbortQuestTC(TYPE_OF_QUEST_ID id);
+};
+
+class AvailableQuestsTC : public BasicServerCommand {
+public:
+    AvailableQuestsTC(const std::vector<position> &availableNow, const std::vector<position> &availableSoon);
 };
 
 class InputDialog;

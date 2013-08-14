@@ -2128,16 +2128,25 @@ void Player::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS prog
 void Player::sendAvailableQuests() {
     const auto quests = Data::Quests.getQuestsInRange(getPosition(), getScreenRange());
     int someTime;
+    std::vector<position> questsAvailableNow;
+    std::vector<position> questsAvailableSoon;
 
     for (const auto &quest : quests) {
         const TYPE_OF_QUEST_ID questId = quest.first;
+        const TYPE_OF_QUESTSTATUS questStatus = getQuestProgress(questId, someTime);
+        const position &start = quest.second;
+        const QuestAvailability availability = Data::Quests.script(questId)->available(this, questStatus);
 
-        if (getQuestProgress(questId, someTime) == 0) {
-            const position &start = quest.second;
-            std::stringstream message;
-            message << "Quest " << questId << " available at " << start;
-            inform(message.str());
+        if ((availability == questDefaultAvailable && questStatus == 0) || availability == questAvailable) {
+            questsAvailableNow.push_back(start);
+        } else if (availability == questWillBeAvailable) {
+            questsAvailableSoon.push_back(start);
         }
+    }
+
+    if (questsAvailableNow.size() > 0 || questsAvailableSoon.size() > 0) {
+        ServerCommandPointer cmd = std::make_shared<AvailableQuestsTC>(questsAvailableNow, questsAvailableSoon);
+        Connection->addCommand(cmd);
     }
 }
 

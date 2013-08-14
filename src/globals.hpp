@@ -149,6 +149,13 @@ template<> struct hash<MAP_POSITION> {
 };
 }
 
+enum QuestAvailability {
+    questDefaultAvailable = 0,
+    questAvailable = 1,
+    questWillBeAvailable = 2,
+    questNotAvailable = 3
+};
+
 typedef std::vector<std::pair<std::string, std::string>> script_data_exchangemap;
 
 #endif
