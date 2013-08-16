@@ -20,8 +20,8 @@
 
 #include "World.hpp"
 
-#include <dirent.h>
 #include <boost/regex.hpp>
+#include <boost/filesystem.hpp>
 #include <algorithm>
 #include <sys/types.h>
 
@@ -120,37 +120,38 @@ struct editor_maptile {
     unsigned short int musicID;
 };
 
-int mapfilter(const struct dirent *d) {
-    return (0 == strstr(d->d_name, ".tiles.txt"))?0:1;
-}
+const boost::regex tilesFilter( ".*\\.tiles\\.txt" );
 
 bool World::load_maps() {
-    // get all tiles files
-    struct dirent **maplist;
-    int numfiles = scandir((Config::instance().datadir() + "map/import/").c_str(), &maplist, mapfilter, alphasort);
+    int numfiles = 0;
+    bool ok = true;
+
+    Logger::info(LogFacility::World) << "Importing maps." << Log::end;
+
+    for (boost::filesystem::recursive_directory_iterator end, it(Config::instance().datadir() + "map/import/"); it != end; ++it) {
+        if (!boost::filesystem::is_regular_file(it->status())) continue;
+        if (!boost::regex_match(it->path().filename().string(), tilesFilter)) continue;
+    
+        std::string map = it->path().string();
+        
+        // strip .tiles.txt from file name
+        map.resize(map.length() - 10);
+
+        Logger::debug(LogFacility::World) << "Importing: " << map << Log::end;
+
+        ok and_eq load_from_editor(map);
+    
+        ++numfiles;
+    }
 
     if (numfiles <= 0) {
         perror("Could not import maps");
         return false;
     }
 
-    Logger::info(LogFacility::World) << "Importing " << numfiles << " maps." << Log::end;
-
-    bool ok = true;
-
-    // iterate over all map files...
-    while (numfiles--) {
-
-        // strip .tiles.txt from filename
-        strstr(maplist[numfiles]->d_name, ".tiles.txt")[0] = '\0';
-        Logger::debug(LogFacility::World) << "Importing: " << Config::instance().datadir() << "map/import/" << maplist[numfiles]->d_name << Log::end;
-
-        ok &= load_from_editor(Config::instance().datadir() + "map/import/" + maplist[numfiles]->d_name);
-
-    }
+    Logger::info(LogFacility::World) << "Imported " << numfiles << " maps." << Log::end;
 
     return ok;
-
 }
 
 //! create a new world from editor files (new format)
