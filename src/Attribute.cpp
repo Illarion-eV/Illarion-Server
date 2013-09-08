@@ -85,5 +85,13 @@ void Attribute::increaseBaseValue(int amount) {
 }
 
 void Attribute::increaseValue(int amount) {
-    offset += amount;    
+    int value = getValue() + amount;
+
+    if (value < 0) {
+        setValue(0);
+    } else if (value > maximum && maximum != 0) {
+        setValue(maximum);
+    } else {
+        setValue(value);
+    }
 }
