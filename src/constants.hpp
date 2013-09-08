@@ -31,7 +31,7 @@ const uint32_t MONSTERVIEWRANGE = 11;
 #define MAXPOISONVALUE     400
 #define MAXMANA            10000
 #define MAXHPS 10000
-#define MAXFOOD 65000
+#define MAXFOOD 60000
 #define MAXATTRIB 255
 
 #define WAITINGVALIDATION 1
