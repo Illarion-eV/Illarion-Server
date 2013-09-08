@@ -2085,7 +2085,8 @@ void Player::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS prog
 
         Result results = query.execute();
 
-        save();
+        // TODO: Save player from dedicated thread only, see PlayerManager
+        //save();
 
         if (results.empty()) {
             InsertQuery insQuery;
