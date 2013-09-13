@@ -310,10 +310,9 @@ void addItemLookAt(BasicServerCommand *cmd, const ItemLookAt &lookAt) {
     cmd->addUnsignedCharToBuffer((uint8_t)lookAt.getRareness());
     cmd->addStringToBuffer(lookAt.getDescription());
     cmd->addStringToBuffer(lookAt.getCraftedBy());
-    // TODO: Add the three bytes below, once the client can handle them
-    //cmd->addUnsignedCharToBuffer(lookAt.getLevel());
-    //cmd->addUnsignedCharToBuffer(lookAt.getArmorType());
-    //cmd->addUnsignedCharToBuffer(lookAt.getWeaponType());
+    cmd->addStringToBuffer(lookAt.getType());
+    cmd->addUnsignedCharToBuffer(lookAt.getLevel());
+    cmd->addUnsignedCharToBuffer(lookAt.isUsable());
     cmd->addShortIntToBuffer(lookAt.getWeight());
     cmd->addIntToBuffer(lookAt.getWorth());
     cmd->addStringToBuffer(lookAt.getQualityText());

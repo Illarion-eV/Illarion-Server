@@ -35,8 +35,6 @@ class Container;
 class ItemLookAt {
 public:
     static const TYPE_OF_ITEMLEVEL MAX_ITEMLEVEL = 100;
-    static const TYPE_OF_ARMORTYPE MAX_ARMORTYPE = 5;
-    static const TYPE_OF_WEAPONTYPE MAX_WEAPONTYPE = 14;
     static const uint8_t MAX_GEM_LEVEL = 10;
     static const uint8_t MAX_DURABILITY = 100;
 
@@ -46,10 +44,6 @@ public:
         rareItem = 3,
         epicItem = 4,
     };
-
-    ItemLookAt(): rareness(commonItem), weight(0), worth(0), durabilityValue(0),
-        diamondLevel(0), emeraldLevel(0), rubyLevel(0), sapphireLevel(0),
-        amethystLevel(0), obsidianLevel(0), topazLevel(0), bonus(0) {}
 
     void setName(const std::string &name) {
         this->name = name;
@@ -79,6 +73,13 @@ public:
         return craftedBy;
     }
 
+    void setType(const std::string &type) {
+        this->type = type;
+    }
+    const std::string &getType() const {
+        return type;
+    }
+
     void setLevel(TYPE_OF_ITEMLEVEL level) {
         if (level <= MAX_ITEMLEVEL) {
             this->level = level;
@@ -88,22 +89,11 @@ public:
         return level;
     }
 
-    void setArmorType(TYPE_OF_ARMORTYPE type) {
-        if (type <= MAX_ARMORTYPE) {
-            armorType = type;
-        }
+    void setUsable(bool usable) {
+        this->usable = usable;
     }
-    TYPE_OF_ARMORTYPE getArmorType() const {
-        return armorType;
-    }
-
-    void setWeaponType(TYPE_OF_WEAPONTYPE type) {
-        if (type <= MAX_WEAPONTYPE) {
-            weaponType = type;
-        }
-    }
-    TYPE_OF_WEAPONTYPE getWeaponType() const {
-        return weaponType;
+    bool isUsable() const {
+        return usable;
     }
 
     void setWeight(TYPE_OF_WEIGHT weight) {
@@ -217,25 +207,25 @@ public:
 
 private:
     std::string name;
-    Rareness rareness;
+    Rareness rareness = commonItem;
     std::string description;
     std::string craftedBy;
-    TYPE_OF_ITEMLEVEL level;
-    TYPE_OF_ARMORTYPE armorType;
-    TYPE_OF_WEAPONTYPE weaponType;
-    TYPE_OF_WEIGHT weight;
-    TYPE_OF_WORTH worth;
+    std::string type;
+    TYPE_OF_ITEMLEVEL level = 0;
+    bool usable = true;
+    TYPE_OF_WEIGHT weight = 0;
+    TYPE_OF_WORTH worth = 0;
     std::string qualityText;
     std::string durabilityText;
-    uint8_t durabilityValue;
-    uint8_t diamondLevel;
-    uint8_t emeraldLevel;;
-    uint8_t rubyLevel;
-    uint8_t sapphireLevel;
-    uint8_t amethystLevel;
-    uint8_t obsidianLevel;
-    uint8_t topazLevel;
-    uint8_t bonus;
+    uint8_t durabilityValue = 0;
+    uint8_t diamondLevel = 0;
+    uint8_t emeraldLevel = 0;
+    uint8_t rubyLevel = 0;
+    uint8_t sapphireLevel = 0;
+    uint8_t amethystLevel = 0;
+    uint8_t obsidianLevel = 0;
+    uint8_t topazLevel = 0;
+    uint8_t bonus = 0;
 };
 
 class Item {
