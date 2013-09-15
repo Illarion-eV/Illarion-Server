@@ -57,6 +57,7 @@
 #include "db/SelectQuery.hpp"
 #include "db/UpdateQuery.hpp"
 #include "db/Result.hpp"
+#include "db/SchemaHelper.hpp"
 
 #include "dialog/InputDialog.hpp"
 #include "dialog/MessageDialog.hpp"
@@ -1009,7 +1010,7 @@ void Player::check_logindata() throw(Player::LogoutException) {
         }
 
         std::stringstream newPlayerQueryString;
-        newPlayerQueryString << "SELECT is_new_player(" << account_id << ");";
+        newPlayerQueryString << "SET search_path TO "<< Database::SchemaHelper::getServerSchema() << "; SELECT is_new_player(" << account_id << ");";
         Database::Query newPlayerQuery(connection, newPlayerQueryString.str());
         auto newPlayerResult = newPlayerQuery.execute();
         
