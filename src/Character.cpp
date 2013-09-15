@@ -1737,6 +1737,10 @@ void Character::performAnimation(uint8_t animID) {
     }
 }
 
+bool Character::isNewPlayer() const {
+    return false;
+}
+
 bool Character::pageGM(const std::string &ticket) {
     //Nothing to do here, overloaded in Player
     return false;

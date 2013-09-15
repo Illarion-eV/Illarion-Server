@@ -537,6 +537,7 @@ void LuaScript::init_base_functions() {
         .def_readwrite("thunderstorm", &WeatherStruct::thunderstorm)
         .def_readwrite("temperature", &WeatherStruct::temperature),
         luabind::class_<Character>("Character")
+        .def("isNewPlayer", &Character::isNewPlayer)
         .def("pageGM", &Character::pageGM)
         .def("requestInputDialog", &Character::requestInputDialog, luabind::adopt(_2))
         .def("requestMessageDialog", &Character::requestMessageDialog, luabind::adopt(_2))

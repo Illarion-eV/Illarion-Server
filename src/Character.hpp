@@ -404,6 +404,7 @@ public:
 
     virtual void sendCharDescription(TYPE_OF_CHARACTER_ID id, const std::string &desc);
 
+    virtual bool isNewPlayer() const;
     virtual bool pageGM(const std::string &ticket);
 
     virtual uint32_t idleTime() const;

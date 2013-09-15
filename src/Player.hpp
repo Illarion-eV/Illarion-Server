@@ -122,6 +122,8 @@ public:
     //! E-Mail
     std::string email;
 
+    bool newPlayer = false;
+
     //! Zeit (in Sekunden) die der Spieler insgesamt online war
     unsigned long int onlinetime;
 
@@ -159,6 +161,8 @@ private:
     std::unordered_set<TYPE_OF_CHARACTER_ID> knownPlayers;
 
 public:
+    virtual bool isNewPlayer() const override;
+    
     const std::string &nls(const std::string &german, const std::string &english) const;
 
     virtual void setAlive(bool alive) override;

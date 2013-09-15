@@ -1008,6 +1008,18 @@ void Player::check_logindata() throw(Player::LogoutException) {
             throw LogoutException(WRONGPWD);
         }
 
+        std::stringstream newPlayerQueryString;
+        newPlayerQueryString << "SELECT is_new_player(" << account_id << ");";
+        Database::Query newPlayerQuery(connection, newPlayerQueryString.str());
+        auto newPlayerResult = newPlayerQuery.execute();
+        
+        if (!newPlayerResult.empty()) {
+            const auto &row = newPlayerResult.front();
+            newPlayer = row["is_new_player"].as<bool>(false);
+        }
+
+        std::cout << *this << " is " << (newPlayer ? "new" : "not new") << std::endl;
+
         Database::SelectQuery playerQuery(connection);
         playerQuery.addColumn("player", "ply_posx");
         playerQuery.addColumn("player", "ply_posy");
@@ -2546,6 +2558,10 @@ uint32_t Player::idleTime() const {
 void Player::sendBook(uint16_t bookID) {
     ServerCommandPointer cmd = std::make_shared<BookTC>(bookID);
     Connection->addCommand(cmd);
+}
+
+bool Player::isNewPlayer() const {
+    return newPlayer;
 }
 
 const std::string &Player::nls(const std::string &german, const std::string &english) const {
