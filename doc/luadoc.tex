@@ -55,7 +55,7 @@
 \makeindex
 \begin{document}
 \lstset{basicstyle=\small, keywordstyle=\ttfamily, identifierstyle=\ttfamily}
-\title{Lua documentation for Illarion scripting\\v5.12}
+\title{Lua documentation for Illarion scripting\\v5.13}
 \author{Martin \thanks{ \texttt{martin@illarion.org, http://www.illarion.org}},
 pharse \thanks{ \texttt{pharse@illarion.org, http://www.illarion.org}},
 vilarion \thanks{ \texttt{vilarion@illarion.org, http://www.illarion.org}}}
@@ -557,6 +557,10 @@ Returns a list with all items of this \var{ItemID}.
 \end{quote}
 
 \subsection{All the rest}
+\bool \var{character}:\com{isNewPlayer}{}
+\begin{quote}
+       Returns whether \var{character} is a new player or not. The exact behaviour is defined in the database function is\_new\_player.
+\end{quote}
 \bool \var{character}:\com{isInRange}{\character \var{character2},\integer \var{Distance}}
 \begin{quote}
        Returns true if \var{character2} is within \var{Distance} of \var{character}, else false.
@@ -1002,7 +1006,7 @@ This kind of item variable holds general information about an item (weight, ID,.
 \lua{r}:  \integer \var{weaponstruct}.\comm{PoisonStrength}\\
 \lua{r}:  \integer \var{weaponstruct}.\comm{Level}\\
 \\
-Type can be one of the following: WeaponStruct.\{slashing, concussion, puncture, slashingTwoHand, concussionTwoHand, punctureTwoHand, firearm, arrow, bolt, stone, stave, shield\}
+WeaponType can be one of the following: WeaponStruct.\{slashing, concussion, puncture, slashingTwoHand, concussionTwoHand, punctureTwoHand, firearm, arrow, bolt, stone, stave, shield\}
 \section{ArmorStruct}
 \lua{r}:  \integer \var{armorstruct}.\comm{BodyParts}\\
 \lua{r}:  \integer \var{armorstruct}.\comm{PunctureArmor}\\
@@ -1065,27 +1069,9 @@ Monsters can have these intrinsic armor properties:\\
         \hspace*{5mm}epicItem & "rareness"\\
     description & string & "descriptionDe"\newline"descriptionEn"\\
     craftedBy & string & "craftedBy"\\
+    type & string & - & derived from WeaponStruct or ArmorStruct\\
     level & number & - & 0..100\\
-    armorType & ArmorStruct.\newline
-        \hspace*{5mm}clothing\newline
-        \hspace*{5mm}general\newline
-        \hspace*{5mm}light\newline
-        \hspace*{5mm}medium\newline
-        \hspace*{5mm}heavy\newline
-        \hspace*{5mm}jewellery & - \\
-    weaponType & WeaponStruct.\newline
-        \hspace*{5mm}slashing\newline
-        \hspace*{5mm}concussion\newline
-        \hspace*{5mm}puncture\newline
-        \hspace*{5mm}slashingTwoHand\newline
-        \hspace*{5mm}concussionTwoHand\newline
-        \hspace*{5mm}punctureTwoHand\newline
-        \hspace*{5mm}firearm\newline
-        \hspace*{5mm}arrow\newline
-        \hspace*{5mm}bolt\newline
-        \hspace*{5mm}stone\newline
-        \hspace*{5mm}stave\newline
-        \hspace*{5mm}shield & -\\
+    usable & boolean & - & can the player use this?\\
     weight & number & -\\
     worth & number & - & selling price in copper\\
     qualityText & string & -\\
@@ -2414,6 +2400,10 @@ It might be the case, and this is hoped much, that you want to create more compl
 \appendix
 
 \chapter{Versions}
+Version 5.13 (15 09 13)\\
+* Added Character:isNewPlayer\\
+* Updated ItemLookAt\\
+\\
 Version 5.12 (08 08 13)\\
 * Added Character:isBaseAttributeValid\\
 * Added Character:getBaseAttributeSum\\
