@@ -1263,8 +1263,6 @@ bool Player::save() throw() {
                 containers.push_back(container_struct(depot.second, 0, depot.first));
             }
 
-            int linenumber = 0;
-
             InsertQuery itemsQuery(connection);
             const InsertQuery::columnIndex itemsPlyIdColumn = itemsQuery.addColumn("pit_playerid");
             const InsertQuery::columnIndex itemsLineColumn = itemsQuery.addColumn("pit_linenumber");
@@ -1284,14 +1282,18 @@ bool Player::save() throw() {
             const InsertQuery::columnIndex dataValueColumn = dataQuery.addColumn("idv_value");
             dataQuery.setServerTable("playeritem_datavalues");
 
+            int linenumber = 0;
+
             // save all items directly on the body...
             for (int thisItemSlot = 0; thisItemSlot < MAX_BODY_ITEMS + MAX_BELT_SLOTS; ++thisItemSlot) {
-                //if there is no item on this place, set all other values to 0
+                ++linenumber;
+
+                //if there is no item on this place, do not save it
                 if (characterItems[ thisItemSlot ].getId() == 0) {
-                    characterItems[ thisItemSlot ].reset();
+                    continue;
                 }
 
-                itemsQuery.addValue<int32_t>(itemsLineColumn, (int32_t)(++linenumber));
+                itemsQuery.addValue<int32_t>(itemsLineColumn, linenumber);
                 itemsQuery.addValue<int16_t>(itemsContainerColumn, 0);
                 itemsQuery.addValue<int32_t>(itemsDepotColumn, 0);
                 itemsQuery.addValue<TYPE_OF_ITEM_ID>(itemsItmIdColumn, characterItems[thisItemSlot].getId());
@@ -1302,7 +1304,7 @@ bool Player::save() throw() {
 
                 for (auto it = characterItems[ thisItemSlot ].getDataBegin(); it != characterItems[ thisItemSlot ].getDataEnd(); ++it) {
                     if (it->second.length() > 0) {
-                        dataQuery.addValue<int32_t>(dataLineColumn, (int32_t) linenumber);
+                        dataQuery.addValue<int32_t>(dataLineColumn, linenumber);
                         dataQuery.addValue<std::string>(dataKeyColumn, it->first);
                         dataQuery.addValue<std::string>(dataValueColumn, it->second);
                     }
@@ -1318,7 +1320,7 @@ bool Player::save() throw() {
 
                 for (const auto &slotAndItem : containedItems) {
                     const Item &item = slotAndItem.second;
-                    itemsQuery.addValue<int32_t>(itemsLineColumn, (int32_t)(++linenumber));
+                    itemsQuery.addValue<int32_t>(itemsLineColumn, ++linenumber);
                     itemsQuery.addValue<int16_t>(itemsContainerColumn, (int16_t) currentContainerStruct.id);
                     itemsQuery.addValue<int32_t>(itemsDepotColumn, (int32_t) currentContainerStruct.depotid);
                     itemsQuery.addValue<TYPE_OF_ITEM_ID>(itemsItmIdColumn, item.getId());
@@ -1328,7 +1330,7 @@ bool Player::save() throw() {
                     itemsQuery.addValue<TYPE_OF_CONTAINERSLOTS>(itemsSlotColumn, slotAndItem.first);
 
                     for (auto it = item.getDataBegin(); it != item.getDataEnd(); ++it) {
-                        dataQuery.addValue<int32_t>(dataLineColumn, (int32_t) linenumber);
+                        dataQuery.addValue<int32_t>(dataLineColumn, linenumber);
                         dataQuery.addValue<std::string>(dataKeyColumn, it->first);
                         dataQuery.addValue<std::string>(dataValueColumn, it->second);
                     }
