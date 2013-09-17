@@ -328,6 +328,8 @@ void World::talkto_command(Player *player, const std::string &text) {
             Logger::info(LogFacility::Player) << *player << " talks to " << *target << ": " << match[2].str() << Log::end;
 #endif
             target->inform(match[2].str(), Player::informGM);
+            std::string message = "to " + player->to_string() + ": " + match[2].str();
+            player->inform(message, Player::informScriptMediumPriority);
         }
     }
 }
