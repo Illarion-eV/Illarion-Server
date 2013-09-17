@@ -889,7 +889,8 @@ CREATE TABLE monster_items (
     mobit_mincount smallint NOT NULL,
     mobit_maxcount smallint NOT NULL,
     CONSTRAINT "$1" CHECK (((((((((((((((((((mobit_position)::text = 'head'::text) OR ((mobit_position)::text = 'neck'::text)) OR ((mobit_position)::text = 'breast'::text)) OR ((mobit_position)::text = 'hands'::text)) OR ((mobit_position)::text = 'left hand'::text)) OR ((mobit_position)::text = 'right hand'::text)) OR ((mobit_position)::text = 'left finger'::text)) OR ((mobit_position)::text = 'right finger'::text)) OR ((mobit_position)::text = 'legs'::text)) OR ((mobit_position)::text = 'feet'::text)) OR ((mobit_position)::text = 'coat'::text)) OR ((mobit_position)::text = 'belt1'::text)) OR ((mobit_position)::text = 'belt2'::text)) OR ((mobit_position)::text = 'belt3'::text)) OR ((mobit_position)::text = 'belt4'::text)) OR ((mobit_position)::text = 'belt5'::text)) OR ((mobit_position)::text = 'belt6'::text))),
-    CONSTRAINT monster_items_count_check CHECK (((mobit_mincount <= mobit_maxcount) AND (mobit_mincount > 0)))
+    CONSTRAINT monster_items_count_check CHECK (((mobit_mincount <= mobit_maxcount) AND (mobit_mincount > 0))),
+    CONSTRAINT monster_items_mobit_itemid_check CHECK ((mobit_itemid > 0))
 );
 
 
@@ -1107,6 +1108,7 @@ CREATE TABLE playeritems (
     CONSTRAINT playeritems_depot_check CHECK ((pit_depot >= 0)),
     CONSTRAINT playeritems_in_container_check CHECK (((pit_in_container < pit_linenumber) OR (pit_in_container = 0))),
     CONSTRAINT playeritems_linenumber_check CHECK ((pit_linenumber > 0)),
+    CONSTRAINT playeritems_pit_itemid_check CHECK ((pit_itemid > 0)),
     CONSTRAINT playeritems_wear_check CHECK (((pit_wear >= 0) AND (pit_wear <= 255)))
 );
 
@@ -1355,7 +1357,8 @@ CREATE TABLE startpack_items (
     spi_quality smallint NOT NULL,
     CONSTRAINT startpack_items_linenumber_check CHECK (((spi_linenumber > 0) AND (spi_linenumber <= 18))),
     CONSTRAINT startpack_items_number_check CHECK ((spi_number > 0)),
-    CONSTRAINT startpack_items_quality_check CHECK (((spi_quality > 0) AND (spi_quality < 1000)))
+    CONSTRAINT startpack_items_quality_check CHECK (((spi_quality > 0) AND (spi_quality < 1000))),
+    CONSTRAINT startpack_items_spi_item_id_check CHECK ((spi_item_id > 0))
 );
 
 
