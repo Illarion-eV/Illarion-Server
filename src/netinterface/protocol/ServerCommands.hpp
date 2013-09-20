@@ -332,7 +332,7 @@ public:
 
 class UpdateAttribTC : public BasicServerCommand {
 public:
-    UpdateAttribTC(TYPE_OF_CHARACTER_ID id, const std::string &name, short int value);
+    UpdateAttribTC(TYPE_OF_CHARACTER_ID id, const std::string &name, unsigned short int value);
 };
 
 class UpdateMagicFlagsTC : public BasicServerCommand {
