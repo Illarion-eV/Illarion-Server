@@ -70,7 +70,14 @@ public:
     enum Result {
         playerAborts = 0,
         playerSells = 1,
-        playerBuys = 2
+        playerBuys = 2,
+        playerLooksAt = 3
+    };
+
+    enum ListType {
+        listSell = 0,
+        listBuyPrimary = 1,
+        listBuySecondary = 2
     };
 
 private:
@@ -85,6 +92,8 @@ private:
     Item::number_type purchaseAmount;
 
     ScriptItem saleItem;
+
+    ListType lookAtList;
 
 public:
     MerchantDialog(const string &title, const luabind::object &callback);
@@ -116,6 +125,9 @@ public:
 
     const ScriptItem &getSaleItem() const;
     void setSaleItem(const ScriptItem &item);
+
+    ListType getLookAtList() const;
+    void setLookAtList(ListType list);
 
     virtual bool closeOnMove() const override;
 private:

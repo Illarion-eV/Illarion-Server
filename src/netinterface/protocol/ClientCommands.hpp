@@ -106,6 +106,8 @@ private:
     uint8_t saleLocation;
     uint16_t saleSlot;
     uint16_t saleAmount;
+    uint8_t lookAtList;
+    uint8_t lookAtSlot;
 
 public:
     MerchantDialogTS();

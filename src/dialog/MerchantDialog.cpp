@@ -45,6 +45,7 @@ MerchantDialog::MerchantDialog(const MerchantDialog &merchantDialog) : Dialog(me
     purchaseIndex = merchantDialog.purchaseIndex;
     purchaseAmount = merchantDialog.purchaseAmount;
     saleItem = merchantDialog.saleItem;
+    lookAtList = merchantDialog.lookAtList;
 }
 
 auto MerchantDialog::getOffersSize() const -> index_type {
@@ -133,6 +134,14 @@ const ScriptItem &MerchantDialog::getSaleItem() const {
 
 void MerchantDialog::setSaleItem(const ScriptItem &item) {
     saleItem = item;
+}
+
+auto MerchantDialog::getLookAtList() const -> ListType {
+    return lookAtList;
+}
+
+void MerchantDialog::setLookAtList(ListType list) {
+    lookAtList = list;
 }
 
 bool MerchantDialog::closeOnMove() const {

@@ -370,11 +370,11 @@ LookAtDialogItemTC::LookAtDialogItemTC(unsigned int dialogId, uint8_t itemIndex,
     addItemLookAt(this, lookAt);
 }
 
-LookAtCraftingDialogIngredientTC::LookAtCraftingDialogIngredientTC(unsigned int dialogId, uint8_t itemIndex, uint8_t ingredientIndex, const ItemLookAt &lookAt) : BasicServerCommand(SC_LOOKATDIALOGITEM_TC) {
+LookAtDialogGroupItemTC::LookAtDialogGroupItemTC(unsigned int dialogId, uint8_t groupIndex, uint8_t itemIndex, const ItemLookAt &lookAt) : BasicServerCommand(SC_LOOKATDIALOGITEM_TC) {
     addIntToBuffer(dialogId);
     addUnsignedCharToBuffer(1);
+    addUnsignedCharToBuffer(groupIndex);
     addUnsignedCharToBuffer(itemIndex);
-    addUnsignedCharToBuffer(ingredientIndex);
     addItemLookAt(this, lookAt);
 }
 

@@ -2673,6 +2673,20 @@ void Player::executeMerchantDialogSell(unsigned int dialogId, uint8_t location, 
     }
 }
 
+void Player::executeMerchantDialogLookAt(unsigned int dialogId, uint8_t list, uint8_t slot) {
+    auto merchantDialog = getDialog<MerchantDialog>(dialogId);
+
+    if (merchantDialog) {
+        merchantDialog->setResult(MerchantDialog::playerLooksAt);
+        merchantDialog->setLookAtList(static_cast<MerchantDialog::ListType>(list));
+        merchantDialog->setPurchaseIndex(slot);
+        ItemLookAt lookAt = LuaScript::executeDialogCallback<ItemLookAt>(*merchantDialog);
+
+        ServerCommandPointer cmd = std::make_shared<LookAtDialogGroupItemTC>(dialogId, list, slot, lookAt);
+        Connection->addCommand(cmd);        
+    }
+}
+
 void Player::requestSelectionDialog(SelectionDialog *selectionDialog) {
     requestDialog<SelectionDialog, SelectionDialogTC>(selectionDialog);
 }
@@ -2801,7 +2815,7 @@ void Player::requestCraftingLookAtIngredient(unsigned int dialogId, ItemLookAt &
     auto craftingDialog = getDialog<CraftingDialog>(dialogId);
 
     if (craftingDialog) {
-        ServerCommandPointer cmd = std::make_shared<LookAtCraftingDialogIngredientTC>(dialogId, craftingDialog->getCraftableId(), craftingDialog->getIngredientIndex(), lookAt);
+        ServerCommandPointer cmd = std::make_shared<LookAtDialogGroupItemTC>(dialogId, craftingDialog->getCraftableId(), craftingDialog->getIngredientIndex(), lookAt);
         Connection->addCommand(cmd);
     }
 }

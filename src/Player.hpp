@@ -556,6 +556,7 @@ public:
     void executeMerchantDialogAbort(unsigned int dialogId);
     void executeMerchantDialogBuy(unsigned int dialogId, MerchantDialog::index_type index, Item::number_type amount);
     void executeMerchantDialogSell(unsigned int dialogId, uint8_t location, TYPE_OF_CONTAINERSLOTS slot, Item::number_type amount);
+    void executeMerchantDialogLookAt(unsigned int dialogId, uint8_t list, uint8_t slot);
 
     virtual void requestSelectionDialog(SelectionDialog *selectionDialog) override;
     void executeSelectionDialog(unsigned int dialogId, bool success, SelectionDialog::index_type index);

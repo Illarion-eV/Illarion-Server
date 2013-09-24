@@ -236,9 +236,9 @@ public:
     LookAtDialogItemTC(unsigned int dialogId, uint8_t itemIndex, const ItemLookAt &lookAt);
 };
 
-class LookAtCraftingDialogIngredientTC : public BasicServerCommand {
+class LookAtDialogGroupItemTC : public BasicServerCommand {
 public:
-    LookAtCraftingDialogIngredientTC(unsigned int dialogId, uint8_t itemIndex, uint8_t ingredientIndex, const ItemLookAt &lookAt);
+    LookAtDialogGroupItemTC(unsigned int dialogId, uint8_t groupIndex, uint8_t itemIndex, const ItemLookAt &lookAt);
 };
 
 class LookAtTileTC : public BasicServerCommand {

@@ -105,6 +105,11 @@ void MerchantDialogTS::decodeData() {
         purchaseIndex = getUnsignedCharFromBuffer();
         purchaseAmount = getShortIntFromBuffer();
         break;
+
+    case 3:
+        lookAtList = getUnsignedCharFromBuffer();
+        lookAtSlot = getUnsignedCharFromBuffer();
+        break;
     }
 }
 
@@ -122,6 +127,10 @@ void MerchantDialogTS::performAction(Player *player) {
 
     case 2:
         player->executeMerchantDialogBuy(dialogId, purchaseIndex, purchaseAmount);
+        break;
+
+    case 3:
+        player->executeMerchantDialogLookAt(dialogId, lookAtList, lookAtSlot);
         break;
     }
 }

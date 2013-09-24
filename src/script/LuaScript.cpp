@@ -468,7 +468,14 @@ void LuaScript::init_base_functions() {
         [
             luabind::value("playerAborts",0),
             luabind::value("playerSells",1),
-            luabind::value("playerBuys",2)
+            luabind::value("playerBuys",2),
+            luabind::value("playerLooksAt",3)
+        ]
+        .enum_("ListType")
+        [
+            luabind::value("listSell",0),
+            luabind::value("listBuyPrimary",1),
+            luabind::value("listBuySecondary",2)
         ]
         .def(luabind::constructor<std::string, luabind::object>())
         .def("addOffer", (void(MerchantDialog:: *)(TYPE_OF_ITEM_ID, const std::string &, TYPE_OF_WORTH))&MerchantDialog::addOffer)
@@ -478,7 +485,8 @@ void LuaScript::init_base_functions() {
         .def("getResult", &MerchantDialog::getResult)
         .def("getPurchaseIndex", &MerchantDialog::getPurchaseIndex)
         .def("getPurchaseAmount", &MerchantDialog::getPurchaseAmount)
-        .def("getSaleItem", &MerchantDialog::getSaleItem),
+        .def("getSaleItem", &MerchantDialog::getSaleItem)
+        .def("getLookAtList", &MerchantDialog::getLookAtList),
         luabind::class_<SelectionDialog>("SelectionDialog")
         .def(luabind::constructor<std::string, std::string, luabind::object>())
         .def("addOption", &SelectionDialog::addOption)
