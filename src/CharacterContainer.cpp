@@ -88,7 +88,7 @@ void CharacterContainer<T>::update(pointer p, const position& newPosition) {
     const auto id = p->getId();
 
     if (!find(id)) {
-        insert(p);
+        return;
     }
 
     const auto &oldPosition = p->getPosition();

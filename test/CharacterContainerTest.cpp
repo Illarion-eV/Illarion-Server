@@ -66,7 +66,8 @@ TEST_F(CharacterContainerTest, find) {
 
 TEST_F(CharacterContainerTest, update) {
     container.update(&character, pos);
-    EXPECT_EQ(1, container.size());
+    EXPECT_EQ(0, container.size());
+    container.insert(&character);
     container.update(&character, pos);
     EXPECT_EQ(1, container.size());
 }
