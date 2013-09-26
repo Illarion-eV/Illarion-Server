@@ -929,6 +929,21 @@ CREATE TABLE monsterattack (
 COMMENT ON COLUMN monsterattack.mat_attack_type IS '1-slashing, 2-concussion, 3-puncture';
 
 
+SET default_with_oids = false;
+
+--
+-- Name: naming; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+--
+
+CREATE TABLE naming (
+    name_player integer NOT NULL,
+    name_named_player integer NOT NULL,
+    name_player_name character varying(50) NOT NULL
+);
+
+
+SET default_with_oids = true;
+
 --
 -- Name: naturalarmor; Type: TABLE; Schema: server; Owner: -; Tablespace: 
 --
@@ -1810,6 +1825,14 @@ ALTER TABLE ONLY monsterattack
 
 
 --
+-- Name: naming_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY naming
+    ADD CONSTRAINT naming_pkey PRIMARY KEY (name_player, name_named_player);
+
+
+--
 -- Name: naturalarmor_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
 --
 
@@ -2300,6 +2323,22 @@ ALTER TABLE ONLY introduction
 
 ALTER TABLE ONLY monster_skills
     ADD CONSTRAINT mobsk_skill_id_key FOREIGN KEY (mobsk_skill_id) REFERENCES skills(skl_skill_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: naming_name_named_player_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+--
+
+ALTER TABLE ONLY naming
+    ADD CONSTRAINT naming_name_named_player_fkey FOREIGN KEY (name_named_player) REFERENCES chars(chr_playerid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: naming_name_player_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+--
+
+ALTER TABLE ONLY naming
+    ADD CONSTRAINT naming_name_player_fkey FOREIGN KEY (name_player) REFERENCES chars(chr_playerid) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
