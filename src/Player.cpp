@@ -1156,6 +1156,29 @@ bool Player::save() throw() {
             introductionQuery.execute();
         }
 
+        {
+            DeleteQuery namingQuery(connection);
+            namingQuery.addEqualCondition<TYPE_OF_CHARACTER_ID>("naming", "name_player", getId());
+            namingQuery.addServerTable("naming");
+            namingQuery.execute();
+        }
+
+        {
+            InsertQuery namingQuery(connection);
+            const InsertQuery::columnIndex playerColumn = namingQuery.addColumn("name_player");
+            const InsertQuery::columnIndex namedPlayerColumn = namingQuery.addColumn("name_named_player");
+            const InsertQuery::columnIndex playerNameColumn = namingQuery.addColumn("name_player_name");
+            namingQuery.addServerTable("naming");
+
+            for (const auto &playerAndName : namedPlayers) {
+                namingQuery.addValue<TYPE_OF_CHARACTER_ID>(playerColumn, getId());
+                namingQuery.addValue<TYPE_OF_CHARACTER_ID>(namedPlayerColumn, playerAndName.first);
+                namingQuery.addValue<std::string>(playerNameColumn, playerAndName.second);
+            }
+
+            namingQuery.execute();
+        }
+
         time(&lastsavetime);
         {
             UpdateQuery query(connection);
@@ -1434,6 +1457,21 @@ bool Player::load() throw() {
 
             for (const auto &row : results) {
                 knownPlayers.insert(row["intro_known_player"].as<TYPE_OF_CHARACTER_ID>());
+            }
+        }
+
+        {
+            SelectQuery query;
+            query.addColumn("naming", "name_named_player");
+            query.addColumn("naming", "name_player_name");
+            query.addEqualCondition<TYPE_OF_CHARACTER_ID>("naming", "name_player", getId());
+            query.addServerTable("naming");
+
+            Result results = query.execute();
+
+            for (const auto &row : results) {
+                namedPlayers.emplace(row["name_named_player"].as<TYPE_OF_CHARACTER_ID>(),
+                                     row["name_player_name"].as<std::string>());
             }
         }
 
@@ -1747,6 +1785,28 @@ void Player::introducePlayer(Player *player) {
 
     ServerCommandPointer cmd = std::make_shared<IntroduceTC>(player->getId(), player->getName());
     Connection->addCommand(cmd);
+}
+
+void Player::namePlayer(TYPE_OF_CHARACTER_ID playerId, const std::string &name) {
+    const Character *character = World::get()->findCharacter(playerId);
+
+    if (character->getType() == player && this->getId() != playerId) {
+        if (name.length() > 0) {
+            namedPlayers[playerId] = name;
+        } else {
+            namedPlayers.erase(playerId);
+        }
+    }
+}
+
+std::string Player::getCustomNameOf(Player *player) const {
+    const auto it = namedPlayers.find(player->getId());
+
+    if (it != namedPlayers.cend()) {
+        return it->second;
+    } else {
+        return {};
+    }
 }
 
 void Player::deleteAllSkills() {

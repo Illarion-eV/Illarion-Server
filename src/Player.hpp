@@ -159,6 +159,7 @@ public:
 private:
     std::set<uint32_t> visibleChars;
     std::unordered_set<TYPE_OF_CHARACTER_ID> knownPlayers;
+    std::unordered_map<TYPE_OF_CHARACTER_ID, std::string> namedPlayers;
 
 public:
     virtual bool isNewPlayer() const override;
@@ -481,6 +482,8 @@ public:
     bool knows(Player *player) const;
     void getToKnow(Player *player);
     virtual void introducePlayer(Player *player) override;
+    void namePlayer(TYPE_OF_CHARACTER_ID playerId, const std::string &name);
+    std::string getCustomNameOf(Player *player) const;
 
     // Move the Player
     using Character::move;

@@ -36,6 +36,7 @@ enum clientcommands {
     C_USE_TS = 0xFE,
     C_CAST_TS = 0xFD,
     C_ATTACKPLAYER_TS = 0xFA,
+    C_CUSTOMNAME_TS = 0xF7,
     C_INTRODUCE_TS = 0xF6,
     C_SAY_TS = 0xF5,
     C_SHOUT_TS = 0xF4,
@@ -503,6 +504,19 @@ public:
 class IntroduceTS : public BasicClientCommand {
 public:
     IntroduceTS();
+    virtual void decodeData() override;
+    virtual void performAction(Player *player) override;
+    virtual ClientCommandPointer clone() override;
+};
+
+
+class CustomNameTS : public BasicClientCommand {
+private:
+    TYPE_OF_CHARACTER_ID playerId;
+    std::string playerName;
+    
+public:
+    CustomNameTS();
     virtual void decodeData() override;
     virtual void performAction(Player *player) override;
     virtual ClientCommandPointer clone() override;

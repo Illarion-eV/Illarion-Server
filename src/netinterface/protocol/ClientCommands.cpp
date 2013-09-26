@@ -1526,6 +1526,26 @@ ClientCommandPointer IntroduceTS::clone() {
     return cmd;
 }
 
+CustomNameTS::CustomNameTS() : BasicClientCommand(C_CUSTOMNAME_TS) {
+}
+
+void CustomNameTS::decodeData() {
+    playerId = getIntFromBuffer();
+    playerName = getStringFromBuffer();
+}
+
+void CustomNameTS::performAction(Player *player) {
+    time(&(player->lastaction));
+    Logger::debug(LogFacility::Player) << *player << " names " << playerId << " as " << playerName << Log::end;
+
+    player->namePlayer(playerId, playerName);
+}
+
+ClientCommandPointer CustomNameTS::clone() {
+    ClientCommandPointer cmd = std::make_shared<CustomNameTS>();
+    return cmd;
+}
+
 AttackPlayerTS::AttackPlayerTS() : BasicClientCommand(C_ATTACKPLAYER_TS) {
 }
 
