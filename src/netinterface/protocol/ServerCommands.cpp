@@ -241,15 +241,17 @@ AppearanceTC::AppearanceTC(Character *cc, const Player *receivingPlayer) : Basic
         if (receivingPlayer->knows(player)) {
             addStringToBuffer(player->getName());
         } else {
-            std::string german = "Jemand";
-            std::string english = "Someone";
-            addStringToBuffer(receivingPlayer->nls(german, english));
+            addStringToBuffer("");
         }
+
+        addStringToBuffer(receivingPlayer->getCustomNameOf(player));
     } else if (cc->getType() == Character::monster) {
         Monster *monster = dynamic_cast<Monster *>(cc);
         addStringToBuffer(receivingPlayer->nls(monster->nameDe, monster->getName()));
+        addStringToBuffer("");
     } else {
         addStringToBuffer(cc->getName());
+        addStringToBuffer("");
     }
 
     addShortIntToBuffer(cc->getRace());
