@@ -960,6 +960,8 @@ void KeepAliveTS::decodeData() {
 void KeepAliveTS::performAction(Player *player) {
     Logger::debug(LogFacility::Player) << "KEEPALIVE_TS from player " << *player << Log::end;
     time(&(player->lastkeepalive));
+    ServerCommandPointer cmd = std::make_shared<KeepAliveTC>();
+    player->Connection->addCommand(cmd);
 }
 
 ClientCommandPointer KeepAliveTS::clone() {

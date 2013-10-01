@@ -37,6 +37,9 @@
 #include "dialog/SelectionDialog.hpp"
 #include "dialog/CraftingDialog.hpp"
 
+KeepAliveTC::KeepAliveTC() : BasicServerCommand(SC_KEEPALIVE_TC) {
+}
+
 QuestProgressTC::QuestProgressTC(TYPE_OF_QUEST_ID id,
                                  const std::string &title,
                                  const std::string &description,

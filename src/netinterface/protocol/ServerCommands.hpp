@@ -35,6 +35,7 @@ class Player;
 typedef std::vector < Item > ITEMVECTOR;
 
 enum ServerCommands {
+    SC_KEEPALIVE_TC = 0x00,
     SC_ID_TC = 0xCA,
     SC_SETCOORDINATE_TC = 0xBD,
     SC_MAPSTRIPE_TC = 0xA1,
@@ -87,6 +88,11 @@ enum ServerCommands {
     SC_QUESTPROGRESS_TC = 0x40,
     SC_ABORTQUEST_TC = 0x41,
     SC_AVAILABLEQUESTS_TC = 0x42
+};
+
+class KeepAliveTC : public BasicServerCommand {
+public:
+    KeepAliveTC();
 };
 
 class QuestProgressTC : public BasicServerCommand {
