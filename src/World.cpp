@@ -55,6 +55,8 @@
 #include "netinterface/NetInterface.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
 
+#include "Statistics.hpp"
+
 extern ScheduledScriptsTable *scheduledScripts;
 
 //#define World_DEBUG
@@ -482,9 +484,19 @@ void World::turntheworld() {
     if (ap > 0) {
         usedAP += ap;
 
+        using namespace Statistic;
+
+        Statistics::getInstance().startTimer(Statistics::player);
         checkPlayers();
+        Statistics::getInstance().stopTimer(Statistics::player);
+
+        Statistics::getInstance().startTimer(Statistics::monster);
         checkMonsters();
+        Statistics::getInstance().stopTimer(Statistics::monster);
+
+        Statistics::getInstance().startTimer(Statistics::npc);
         checkNPC();
+        Statistics::getInstance().stopTimer(Statistics::npc);
 
         if (monitoringclienttimer.Next()) {
             monitoringClientList->CheckClients();

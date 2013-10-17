@@ -58,6 +58,8 @@
 #include "script/LuaLoginScript.hpp"
 #include "script/LuaReloadScript.hpp"
 
+#include "Statistics.hpp"
+
 extern std::shared_ptr<LuaLoginScript>loginScript;
 extern ScriptVariablesTable *scriptVariables;
 
@@ -147,6 +149,9 @@ int main(int argc, char *argv[]) {
 
     running = true;
 
+    using namespace Statistic;
+    Statistics::getInstance().startTimer(Statistics::cycle);
+
     while (running) {
         // Ausgaben auf std::cout in die Datei schreiben
         std::cout.flush();
@@ -185,6 +190,7 @@ int main(int argc, char *argv[]) {
         // Eingaben der Player abarbeiten und die Karte altern
         world->turntheworld();
         nanosleep(&stime, nullptr);
+        Statistics::getInstance().stopTimer(Statistics::cycle);
     }
 
 

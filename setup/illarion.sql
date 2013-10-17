@@ -1500,6 +1500,78 @@ COMMENT ON COLUMN startpacks.stp_german IS 'The German name of the package';
 COMMENT ON COLUMN startpacks.stp_english IS 'The English name of the package';
 
 
+--
+-- Name: statistics; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+--
+
+CREATE TABLE statistics (
+    stat_version integer NOT NULL,
+    stat_type integer NOT NULL,
+    stat_players integer NOT NULL,
+    stat_samples bigint DEFAULT 0 NOT NULL,
+    stat_time bigint DEFAULT 0 NOT NULL,
+    stat_time_squared bigint DEFAULT 0 NOT NULL,
+    stat_time_min integer DEFAULT 0 NOT NULL,
+    stat_time_max integer DEFAULT 0 NOT NULL
+);
+
+
+--
+-- Name: COLUMN statistics.stat_version; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN statistics.stat_version IS 'server version used for obtaining the samples';
+
+
+--
+-- Name: COLUMN statistics.stat_type; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN statistics.stat_type IS 'e.g. 0 for server cycle duration';
+
+
+--
+-- Name: COLUMN statistics.stat_players; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN statistics.stat_players IS 'number of players online';
+
+
+--
+-- Name: COLUMN statistics.stat_samples; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN statistics.stat_samples IS 'number of samples/cycles';
+
+
+--
+-- Name: COLUMN statistics.stat_time; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN statistics.stat_time IS 'time spent for all samples/cycles';
+
+
+--
+-- Name: COLUMN statistics.stat_time_squared; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN statistics.stat_time_squared IS 'sum of squared times of all samples/cycles';
+
+
+--
+-- Name: COLUMN statistics.stat_time_min; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN statistics.stat_time_min IS 'minimum time of all sample/cycle times';
+
+
+--
+-- Name: COLUMN statistics.stat_time_max; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN statistics.stat_time_max IS 'maximum time of all sample/cycle times';
+
+
 SET default_with_oids = true;
 
 --
@@ -1558,6 +1630,32 @@ CREATE TABLE triggerfields (
     CONSTRAINT trigger_script_check CHECK ((btrim((tgf_script)::text) <> ''::text))
 );
 
+
+--
+-- Name: version_seq; Type: SEQUENCE; Schema: server; Owner: -
+--
+
+CREATE SEQUENCE version_seq
+    START WITH 0
+    INCREMENT BY 1
+    MINVALUE 0
+    MAXVALUE 2147483647
+    CACHE 1;
+
+
+SET default_with_oids = false;
+
+--
+-- Name: versions; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+--
+
+CREATE TABLE versions (
+    version_id integer DEFAULT nextval('version_seq'::regclass) NOT NULL,
+    version_name character varying(30) NOT NULL
+);
+
+
+SET default_with_oids = true;
 
 --
 -- Name: weapon; Type: TABLE; Schema: server; Owner: -; Tablespace: 
@@ -2051,6 +2149,14 @@ ALTER TABLE ONLY startpacks
 
 
 --
+-- Name: statistics_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY statistics
+    ADD CONSTRAINT statistics_pkey PRIMARY KEY (stat_version, stat_type, stat_players);
+
+
+--
 -- Name: tiles_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
 --
 
@@ -2080,6 +2186,22 @@ ALTER TABLE ONLY triggerfields
 
 ALTER TABLE ONLY chars
     ADD CONSTRAINT unique_name UNIQUE (chr_name);
+
+
+--
+-- Name: versions_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY versions
+    ADD CONSTRAINT versions_pkey PRIMARY KEY (version_id);
+
+
+--
+-- Name: versions_version_name_key; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY versions
+    ADD CONSTRAINT versions_version_name_key UNIQUE (version_name);
 
 
 --
@@ -2467,6 +2589,14 @@ ALTER TABLE ONLY startpack_skills
 
 ALTER TABLE ONLY startpack_skills
     ADD CONSTRAINT startpack_skills_skill_id_fkey FOREIGN KEY (sps_skill_id) REFERENCES skills(skl_skill_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: statistics_stat_version_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+--
+
+ALTER TABLE ONLY statistics
+    ADD CONSTRAINT statistics_stat_version_fkey FOREIGN KEY (stat_version) REFERENCES versions(version_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
