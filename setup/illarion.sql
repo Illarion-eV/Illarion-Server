@@ -1508,11 +1508,8 @@ CREATE TABLE statistics (
     stat_version integer NOT NULL,
     stat_type integer NOT NULL,
     stat_players integer NOT NULL,
-    stat_samples bigint DEFAULT 0 NOT NULL,
-    stat_time bigint DEFAULT 0 NOT NULL,
-    stat_time_squared bigint DEFAULT 0 NOT NULL,
-    stat_time_min integer DEFAULT 0 NOT NULL,
-    stat_time_max integer DEFAULT 0 NOT NULL
+    stat_bin integer NOT NULL,
+    stat_count integer DEFAULT 0 NOT NULL
 );
 
 
@@ -1520,7 +1517,7 @@ CREATE TABLE statistics (
 -- Name: COLUMN statistics.stat_version; Type: COMMENT; Schema: server; Owner: -
 --
 
-COMMENT ON COLUMN statistics.stat_version IS 'server version used for obtaining the samples';
+COMMENT ON COLUMN statistics.stat_version IS 'server version for filling the bins';
 
 
 --
@@ -1538,38 +1535,17 @@ COMMENT ON COLUMN statistics.stat_players IS 'number of players online';
 
 
 --
--- Name: COLUMN statistics.stat_samples; Type: COMMENT; Schema: server; Owner: -
+-- Name: COLUMN statistics.stat_bin; Type: COMMENT; Schema: server; Owner: -
 --
 
-COMMENT ON COLUMN statistics.stat_samples IS 'number of samples/cycles';
-
-
---
--- Name: COLUMN statistics.stat_time; Type: COMMENT; Schema: server; Owner: -
---
-
-COMMENT ON COLUMN statistics.stat_time IS 'time spent for all samples/cycles';
+COMMENT ON COLUMN statistics.stat_bin IS 'represents samples in [value, value+1)';
 
 
 --
--- Name: COLUMN statistics.stat_time_squared; Type: COMMENT; Schema: server; Owner: -
+-- Name: COLUMN statistics.stat_count; Type: COMMENT; Schema: server; Owner: -
 --
 
-COMMENT ON COLUMN statistics.stat_time_squared IS 'sum of squared times of all samples/cycles';
-
-
---
--- Name: COLUMN statistics.stat_time_min; Type: COMMENT; Schema: server; Owner: -
---
-
-COMMENT ON COLUMN statistics.stat_time_min IS 'minimum time of all sample/cycle times';
-
-
---
--- Name: COLUMN statistics.stat_time_max; Type: COMMENT; Schema: server; Owner: -
---
-
-COMMENT ON COLUMN statistics.stat_time_max IS 'maximum time of all sample/cycle times';
+COMMENT ON COLUMN statistics.stat_count IS 'number of samples in bin';
 
 
 SET default_with_oids = true;
@@ -2153,7 +2129,7 @@ ALTER TABLE ONLY startpacks
 --
 
 ALTER TABLE ONLY statistics
-    ADD CONSTRAINT statistics_pkey PRIMARY KEY (stat_version, stat_type, stat_players);
+    ADD CONSTRAINT statistics_pkey PRIMARY KEY (stat_version, stat_type, stat_players, stat_bin);
 
 
 --

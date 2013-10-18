@@ -23,16 +23,9 @@
 
 #include <limits>
 #include <vector>
+#include <unordered_map>
 
 namespace Statistic {
-
-struct DataSet {
-    long samples = 0;
-    long time = 0;
-    long timeSquared = 0;
-    int timeMin = std::numeric_limits<int>::max();
-    int timeMax = 0;
-};
 
 class Statistics {
 public:
@@ -54,7 +47,8 @@ private:
     Statistics(const Statistics &) = delete;
     Statistics &operator=(const Statistics &) = delete;
 
-    typedef std::vector<DataSet> PlayerData;
+    typedef std::unordered_map<int, int> BinToCount;
+    typedef std::vector<BinToCount> PlayerData;
     typedef std::vector<PlayerData> StatTypes;
 
     static Statistics *instance;

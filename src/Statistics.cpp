@@ -75,12 +75,7 @@ void Statistics::stopTimer(Type type) {
             statistics[intType].emplace_back();
         }
         
-        auto &data = statistics[intType][playersOnline];
-        ++data.samples;
-        data.time += duration;
-        data.timeSquared += duration*duration;
-        data.timeMin = std::min(data.timeMin, duration);
-        data.timeMax = std::max(data.timeMax, duration);
+        ++statistics[intType][playersOnline][duration];
 
         if (now - lastSaveTime > SAVE_INTERVAL) {
             lastSaveTime = now;
@@ -123,11 +118,8 @@ void Statistics::load() {
     SelectQuery query;
     query.addColumn("statistics", "stat_type");
     query.addColumn("statistics", "stat_players");
-    query.addColumn("statistics", "stat_samples");
-    query.addColumn("statistics", "stat_time");
-    query.addColumn("statistics", "stat_time_squared");
-    query.addColumn("statistics", "stat_time_min");
-    query.addColumn("statistics", "stat_time_max");
+    query.addColumn("statistics", "stat_bin");
+    query.addColumn("statistics", "stat_count");
     query.addEqualCondition<int>("statistics", "stat_version", versionId);
     query.addServerTable("statistics");
 
@@ -136,12 +128,14 @@ void Statistics::load() {
     for (const auto &row : result) {
         int type = row["stat_type"].as<int>();
         int players_online = row["stat_players"].as<int>();
-        auto &stats = statistics[type][players_online];
-        stats.samples = row["stat_samples"].as<long long>();
-        stats.time = row["stat_time"].as<long long>();
-        stats.timeSquared = row["stat_time_squared"].as<long long>();
-        stats.timeMin = row["stat_time_min"].as<int>();
-        stats.timeMax = row["stat_time_max"].as<int>();
+        int bin = row["stat_bin"].as<int>();
+        int count = row["stat_count"].as<int>();
+
+        while (statistics[type].size() <= static_cast<size_t>(players_online)) {
+            statistics[type].emplace_back();
+        }
+
+        statistics[type][players_online][bin] = count;
     }
 }
 
@@ -160,27 +154,23 @@ void Statistics::save() {
         const auto versionColumn = insertQuery.addColumn("stat_version");
         const auto typeColumn = insertQuery.addColumn("stat_type");
         const auto playersColumn = insertQuery.addColumn("stat_players");
-        const auto samplesColumn = insertQuery.addColumn("stat_samples");
-        const auto timeColumn = insertQuery.addColumn("stat_time");
-        const auto timeSquaredColumn = insertQuery.addColumn("stat_time_squared");
-        const auto timeMinColumn = insertQuery.addColumn("stat_time_min");
-        const auto timeMaxColumn = insertQuery.addColumn("stat_time_max");
+        const auto binColumn = insertQuery.addColumn("stat_bin");
+        const auto countColumn = insertQuery.addColumn("stat_count");
         insertQuery.addServerTable("statistics");
 
         int currentType = 0;
         for (const auto &types : statistics) {
             int players = 0;
 
-            for (const auto &data : types) {
-                if (data.samples > 0) {
-                    insertQuery.addValue<int>(versionColumn, versionId);
-                    insertQuery.addValue<int>(typeColumn, currentType);
-                    insertQuery.addValue<int>(playersColumn, players);
-                    insertQuery.addValue<long>(samplesColumn, data.samples);
-                    insertQuery.addValue<long>(timeColumn, data.time);
-                    insertQuery.addValue<long>(timeSquaredColumn, data.timeSquared);
-                    insertQuery.addValue<int>(timeMinColumn, data.timeMin);
-                    insertQuery.addValue<int>(timeMaxColumn, data.timeMax);
+            for (const auto &bins : types) {
+                for (const auto &bin : bins) {
+                    if (bin.second > 0) {
+                        insertQuery.addValue<int>(versionColumn, versionId);
+                        insertQuery.addValue<int>(typeColumn, currentType);
+                        insertQuery.addValue<int>(playersColumn, players);
+                        insertQuery.addValue<int>(binColumn, bin.first);
+                        insertQuery.addValue<int>(countColumn, bin.second);
+                    }
                 }
 
                 ++players;
