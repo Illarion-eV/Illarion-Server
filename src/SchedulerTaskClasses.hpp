@@ -37,38 +37,5 @@ namespace {
     };
 }
 
-class SGlobalPlayerLearnrate : public SchedulerObject {
-
-public:
-
-    SGlobalPlayerLearnrate(unsigned long int first_cycle) {
-        nextCycle = first_cycle;
-    }
-    virtual ~SGlobalPlayerLearnrate() {}
-
-    bool operator()(World *world) {
-        world->Players.for_each(reduceMC);
-        nextCycle += 10;
-        return true;
-    }
-
-};
-
-class SGlobalMonsterLearnrate : public SchedulerObject {
-
-public:
-
-    SGlobalMonsterLearnrate(unsigned long int first_cycle) {
-        nextCycle = first_cycle;
-    }
-    virtual ~SGlobalMonsterLearnrate() {}
-    bool operator()(World *world) {
-        world->Monsters.for_each(reduceMC);
-        world->Npc.for_each(reduceMC);
-        nextCycle += 10;
-        return true;
-    }
-};
-
 #endif
 

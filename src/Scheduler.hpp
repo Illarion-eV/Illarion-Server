@@ -21,59 +21,60 @@
 #define _SCHEDULER_HPP_
 
 #include <memory>
-#include <list>
+#include <string>
+#include <chrono>
+#include <queue>
+#include <mutex>
+#include <condition_variable>
 
-class World;
+template<typename clock_type>
+class Task {
+	public:
+		Task(std::function<void()> task, typename clock_type::time_point start_point, std::chrono::nanoseconds interval, const std::string& name);
 
-class SchedulerObject {
+		inline bool operator<(const Task& other) const {
+			return other._next < _next;
+		}
 
-public:
-    virtual bool operator()(World *world) = 0;
-    inline unsigned long int GetNextCycle() {
-        return nextCycle;
-    }
-    inline void SetNextCycle(unsigned long int nCycle) {
-        nextCycle = nCycle;
-    }
-    inline short int GetCount() {
-        return count;
-    }
-    inline void SetCount(unsigned short int nCount) {
-        count = nCount;
-    }
-    inline unsigned long int GetCycleTime() {
-        return CycleTime;
-    }
-    inline void SetCycleTime(unsigned long int nCycleTime) {
-        CycleTime = nCycleTime;
-    }
-    virtual ~SchedulerObject() {}
+		bool run();
 
-protected:
+		inline std::string getName() const {
+			return _name;
+		}
 
-    unsigned long int nextCycle ;
-    unsigned long int CycleTime ;
-    unsigned short int count;
+		inline typename clock_type::time_point getNextTime() const {
+			return _next;
+		}
 
-private:
-    SchedulerObject &operator=(const SchedulerObject &);
+	private:
+		std::function<void()> _task;
+
+		typename clock_type::time_point _next;
+		std::chrono::nanoseconds _interval;
+		std::string _name;
 };
 
+template<typename clock_type>
+class ClockBasedScheduler {
+	public:
+		void addOneshotTask(std::function<void()> task, const std::chrono::nanoseconds delay, const std::string& taskname);
+		void addRecurringTask(std::function<void()> task, const std::chrono::nanoseconds interval, const std::string& taskname, bool start_immediately = false);
+		void signalNewPlayerAction();
 
-class Scheduler {
+		void run_once(std::chrono::nanoseconds max_timeout);
 
-public:
-    Scheduler();
-    void AddTask(std::unique_ptr<SchedulerObject> sobject);
-    void NextCycle();
-    inline unsigned long int GetCurrentCycle() {
-        return cycle;
-    }
+	private:
+		std::chrono::nanoseconds getNextTaskTime();
+		void execute_tasks();
 
-private:
-    std::list<std::unique_ptr<SchedulerObject>> Tasks;
-    unsigned long int cycle;
-    World *world;
+		std::mutex _new_action_signal_mutex;
+		std::condition_variable _new_action_available_cond;
+
+		typedef std::priority_queue<Task<clock_type>> task_container_t;
+		task_container_t _tasks;
+		std::mutex _container_mutex;
 };
+
+#include "Scheduler.tcc"
 
 #endif

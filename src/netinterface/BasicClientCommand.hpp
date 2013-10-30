@@ -37,11 +37,14 @@ public:
     * Constructor of a basic command
     * @param defByte the initializing byte of the command
     */
-    BasicClientCommand(unsigned char defByte);
+    BasicClientCommand(unsigned char defByte, uint16_t minAP = 0);
 
     void setHeaderData(uint16_t mlength, uint16_t mcheckSum);
 
     virtual ~BasicClientCommand();
+
+    //! no copy operator for pure virtual types
+    BasicClientCommand &operator=(const BasicClientCommand &) = delete;
 
     /**
      * returns the data ptr for the command message
@@ -104,6 +107,10 @@ public:
         return length;
     }
 
+    inline uint16_t getMinAP() {
+	return minAP;
+    }
+
 protected:
 
     bool dataOk; /*<true if data is ok, will set to false if a command wants to read more data from the buffer as is in it, or if the checksum isn't the same*/
@@ -113,8 +120,7 @@ protected:
     uint16_t checkSum; /*< the checksum transmitted in the header*/
     uint32_t crc; /*< the checksum of the data*/
 
-    //! no copy operator for pure virtual types
-    BasicClientCommand &operator=(const BasicClientCommand &);
+    uint16_t minAP; /*< number of ap necessary to perform command */
 };
 
 #endif

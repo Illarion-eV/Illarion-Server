@@ -226,7 +226,7 @@ public:
 
     WorldMap::map_t tmap; /**< a temporary pointer to a map, used from different methods @see Map*/
 
-    std::unique_ptr<Scheduler> scheduler = nullptr;/**< a pointer to the scheduler object @see Scheduler*/
+    ClockBasedScheduler<std::chrono::steady_clock> scheduler;
 
     WeatherStruct weather;/**< a struct to the weather @see WeatherStruct */
 
@@ -1111,9 +1111,6 @@ private:
     int lastTurnIGDay;
 
     Timer monstertimer = {10};
-    Timer schedulertimer = {1};
-    Timer ScriptTimer = {1};
-    MilTimer monitoringclienttimer = {250};
 
     //! das home-Verzeichnis des Servers
     std::string directory;

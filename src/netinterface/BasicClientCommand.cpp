@@ -20,7 +20,7 @@
 #include "BasicClientCommand.hpp"
 #include "BasicCommand.hpp"
 
-BasicClientCommand::BasicClientCommand(unsigned char defByte) : BasicCommand(defByte), dataOk(true), length(0), bytesRetrieved(0), checkSum(0), crc(0) {
+BasicClientCommand::BasicClientCommand(unsigned char defByte, uint16_t minAP) : BasicCommand(defByte), dataOk(true), length(0), bytesRetrieved(0), checkSum(0), crc(0), minAP(minAP) {
     msg_buffer = nullptr;
 }
 

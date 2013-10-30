@@ -497,21 +497,7 @@ void World::turntheworld() {
         Statistics::getInstance().startTimer(Statistics::npc);
         checkNPC();
         Statistics::getInstance().stopTimer(Statistics::npc);
-
-        if (monitoringclienttimer.Next()) {
-            monitoringClientList->CheckClients();
-        }
-
-        if (schedulertimer.next()) {
-            scheduler->NextCycle();
-        }
-
-        if (ScriptTimer.next()) {
-            scheduledScripts->nextCycle();
-        }
     }
-
-    DoAge();
 }
 
 
@@ -1000,11 +986,12 @@ void World::initNPC() {
 }
 
 void World::initScheduler() {
-    scheduler = std::make_unique<Scheduler>();
-    auto globalPlLearning = std::make_unique<SGlobalPlayerLearnrate>(scheduler->GetCurrentCycle()+5);
-    scheduler->AddTask(std::move(globalPlLearning));
-    auto globalMonLearning = std::make_unique<SGlobalMonsterLearnrate>(scheduler->GetCurrentCycle()+10);
-    scheduler->AddTask(std::move(globalMonLearning));
+    scheduler.addRecurringTask([&] { Players.for_each(reduceMC); }, std::chrono::seconds(10), "increase_player_learn_points");
+    scheduler.addRecurringTask([&] { Monsters.for_each(reduceMC); Npc.for_each(reduceMC); }, std::chrono::seconds(10), "increase_monster_learn_points");
+    scheduler.addRecurringTask([&] { monitoringClientList->CheckClients(); }, std::chrono::milliseconds(250), "check_monitoring_clients");
+    scheduler.addRecurringTask([&] { scheduledScripts->nextCycle(); }, std::chrono::seconds(1), "check_scheduled_scripts");
+    scheduler.addRecurringTask([&] { DoAge(); }, std::chrono::milliseconds(25), "check_aging");
+    scheduler.addRecurringTask([&] { turntheworld(); }, std::chrono::milliseconds(25), "turntheworld");
 }
 
 bool World::executeUserCommand(Player *user, const std::string &input, const CommandMap &commands) {

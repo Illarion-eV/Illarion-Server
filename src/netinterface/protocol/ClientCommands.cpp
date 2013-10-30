@@ -1004,7 +1004,7 @@ ClientCommandPointer AttackStopTS::clone() {
     return cmd;
 }
 
-LookAtInventoryItemTS::LookAtInventoryItemTS() : BasicClientCommand(C_LOOKATINVENTORYITEM_TS) {
+LookAtInventoryItemTS::LookAtInventoryItemTS() : BasicClientCommand(C_LOOKATINVENTORYITEM_TS, P_LOOK_COST) {
 }
 
 void LookAtInventoryItemTS::decodeData() {
@@ -1025,7 +1025,7 @@ ClientCommandPointer LookAtInventoryItemTS::clone() {
     return cmd;
 }
 
-LookAtShowCaseItemTS::LookAtShowCaseItemTS() : BasicClientCommand(C_LOOKATSHOWCASEITEM_TS) {
+LookAtShowCaseItemTS::LookAtShowCaseItemTS() : BasicClientCommand(C_LOOKATSHOWCASEITEM_TS, P_LOOK_COST) {
 }
 
 void LookAtShowCaseItemTS::decodeData() {
@@ -1047,7 +1047,7 @@ ClientCommandPointer LookAtShowCaseItemTS::clone() {
     return cmd;
 }
 
-MoveItemFromPlayerToShowCaseTS::MoveItemFromPlayerToShowCaseTS() : BasicClientCommand(C_MOVEITEMFROMPLAYERTOSHOWCASE_TS) {
+MoveItemFromPlayerToShowCaseTS::MoveItemFromPlayerToShowCaseTS() : BasicClientCommand(C_MOVEITEMFROMPLAYERTOSHOWCASE_TS, P_ITEMMOVE_COST) {
 }
 
 void MoveItemFromPlayerToShowCaseTS::decodeData() {
@@ -1073,7 +1073,7 @@ ClientCommandPointer MoveItemFromPlayerToShowCaseTS::clone() {
     return cmd;
 }
 
-MoveItemFromShowCaseToPlayerTS::MoveItemFromShowCaseToPlayerTS() : BasicClientCommand(C_MOVEITEMFROMSHOWCASETOPLAYER_TS) {
+MoveItemFromShowCaseToPlayerTS::MoveItemFromShowCaseToPlayerTS() : BasicClientCommand(C_MOVEITEMFROMSHOWCASETOPLAYER_TS, P_ITEMMOVE_COST) {
 }
 
 void MoveItemFromShowCaseToPlayerTS::decodeData() {
@@ -1099,7 +1099,7 @@ ClientCommandPointer MoveItemFromShowCaseToPlayerTS::clone() {
     return cmd;
 }
 
-MoveItemInsideInventoryTS::MoveItemInsideInventoryTS() : BasicClientCommand(C_MOVEITEMINSIDEINVENTORY_TS) {
+MoveItemInsideInventoryTS::MoveItemInsideInventoryTS() : BasicClientCommand(C_MOVEITEMINSIDEINVENTORY_TS, P_ITEMMOVE_COST) {
 }
 
 void MoveItemInsideInventoryTS::decodeData() {
@@ -1124,7 +1124,7 @@ ClientCommandPointer MoveItemInsideInventoryTS::clone() {
     return cmd;
 }
 
-DropItemFromInventoryOnMapTS::DropItemFromInventoryOnMapTS() : BasicClientCommand(C_DROPITEMFROMPLAYERONMAP_TS) {
+DropItemFromInventoryOnMapTS::DropItemFromInventoryOnMapTS() : BasicClientCommand(C_DROPITEMFROMPLAYERONMAP_TS, P_ITEMMOVE_COST) {
 }
 
 void DropItemFromInventoryOnMapTS::decodeData() {
@@ -1148,7 +1148,7 @@ ClientCommandPointer DropItemFromInventoryOnMapTS::clone() {
     return cmd;
 }
 
-MoveItemFromMapToPlayerTS::MoveItemFromMapToPlayerTS() : BasicClientCommand(C_MOVEITEMFROMMAPTOPLAYER_TS) {
+MoveItemFromMapToPlayerTS::MoveItemFromMapToPlayerTS() : BasicClientCommand(C_MOVEITEMFROMMAPTOPLAYER_TS, P_ITEMMOVE_COST) {
 }
 
 void MoveItemFromMapToPlayerTS::decodeData() {
@@ -1175,7 +1175,7 @@ ClientCommandPointer MoveItemFromMapToPlayerTS::clone() {
     return cmd;
 }
 
-MoveItemFromMapIntoShowCaseTS::MoveItemFromMapIntoShowCaseTS() : BasicClientCommand(C_MOVEITEMFROMMAPINTOSHOWCASE_TS) {
+MoveItemFromMapIntoShowCaseTS::MoveItemFromMapIntoShowCaseTS() : BasicClientCommand(C_MOVEITEMFROMMAPINTOSHOWCASE_TS, P_ITEMMOVE_COST) {
 }
 
 void MoveItemFromMapIntoShowCaseTS::decodeData() {
@@ -1203,7 +1203,7 @@ ClientCommandPointer MoveItemFromMapIntoShowCaseTS::clone() {
     return cmd;
 }
 
-MoveItemFromMapToMapTS::MoveItemFromMapToMapTS() : BasicClientCommand(C_MOVEITEMFROMMAPTOMAP_TS) {
+MoveItemFromMapToMapTS::MoveItemFromMapToMapTS() : BasicClientCommand(C_MOVEITEMFROMMAPTOMAP_TS, P_ITEMMOVE_COST) {
 }
 
 void MoveItemFromMapToMapTS::decodeData() {
@@ -1232,7 +1232,7 @@ ClientCommandPointer MoveItemFromMapToMapTS::clone() {
     return cmd;
 }
 
-MoveItemBetweenShowCasesTS::MoveItemBetweenShowCasesTS() : BasicClientCommand(C_MOVEITEMBETWEENSHOWCASES_TS) {
+MoveItemBetweenShowCasesTS::MoveItemBetweenShowCasesTS() : BasicClientCommand(C_MOVEITEMBETWEENSHOWCASES_TS, P_ITEMMOVE_COST) {
 }
 
 void MoveItemBetweenShowCasesTS::decodeData() {
@@ -1259,7 +1259,7 @@ ClientCommandPointer MoveItemBetweenShowCasesTS::clone() {
     return cmd;
 }
 
-DropItemFromShowCaseOnMapTS::DropItemFromShowCaseOnMapTS() : BasicClientCommand(C_DROPITEMFROMSHOWCASEONMAP_TS) {
+DropItemFromShowCaseOnMapTS::DropItemFromShowCaseOnMapTS() : BasicClientCommand(C_DROPITEMFROMSHOWCASEONMAP_TS, P_ITEMMOVE_COST) {
 }
 
 void DropItemFromShowCaseOnMapTS::decodeData() {
@@ -1306,7 +1306,7 @@ ClientCommandPointer CloseContainerInShowCaseTS::clone() {
     return cmd;
 }
 
-LookIntoShowCaseContainerTS::LookIntoShowCaseContainerTS() : BasicClientCommand(C_LOOKINTOSHOWCASECONTAINER_TS) {
+LookIntoShowCaseContainerTS::LookIntoShowCaseContainerTS() : BasicClientCommand(C_LOOKINTOSHOWCASECONTAINER_TS, P_LOOK_COST) {
 }
 
 void LookIntoShowCaseContainerTS::decodeData() {
@@ -1327,7 +1327,7 @@ ClientCommandPointer LookIntoShowCaseContainerTS::clone() {
     return cmd;
 }
 
-LookIntoInventoryTS::LookIntoInventoryTS() : BasicClientCommand(C_LOOKINTOINVENTORY_TS) {
+LookIntoInventoryTS::LookIntoInventoryTS() : BasicClientCommand(C_LOOKINTOINVENTORY_TS, P_LOOK_COST) {
 }
 
 void LookIntoInventoryTS::decodeData() {
@@ -1346,7 +1346,7 @@ ClientCommandPointer LookIntoInventoryTS::clone() {
     return cmd;
 }
 
-LookIntoContainerOnFieldTS::LookIntoContainerOnFieldTS() : BasicClientCommand(C_LOOKINTOCONTAINERONFIELD_TS) {
+LookIntoContainerOnFieldTS::LookIntoContainerOnFieldTS() : BasicClientCommand(C_LOOKINTOCONTAINERONFIELD_TS, P_LOOK_COST) {
 }
 
 void LookIntoContainerOnFieldTS::decodeData() {
@@ -1369,7 +1369,7 @@ ClientCommandPointer LookIntoContainerOnFieldTS::clone() {
     return cmd;
 }
 
-PickUpItemTS::PickUpItemTS() : BasicClientCommand(C_PICKUPITEM_TS) {
+PickUpItemTS::PickUpItemTS() : BasicClientCommand(C_PICKUPITEM_TS, P_ITEMMOVE_COST) {
 }
 
 void PickUpItemTS::decodeData() {
@@ -1394,7 +1394,7 @@ ClientCommandPointer PickUpItemTS::clone() {
     return cmd;
 }
 
-PickUpAllItemsTS::PickUpAllItemsTS() : BasicClientCommand(C_PICKUPALLITEMS_TS) {
+PickUpAllItemsTS::PickUpAllItemsTS() : BasicClientCommand(C_PICKUPALLITEMS_TS, P_ITEMMOVE_COST) {
 }
 
 void PickUpAllItemsTS::decodeData() {
@@ -1589,7 +1589,7 @@ ClientCommandPointer AttackPlayerTS::clone() {
     return cmd;
 }
 
-LookAtMapItemTS::LookAtMapItemTS() : BasicClientCommand(C_LOOKATMAPITEM_TS) {
+LookAtMapItemTS::LookAtMapItemTS() : BasicClientCommand(C_LOOKATMAPITEM_TS, P_LOOK_COST) {
 }
 
 void LookAtMapItemTS::decodeData() {

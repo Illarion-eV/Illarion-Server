@@ -48,7 +48,7 @@ WorldIMPLAdmin.cpp WorldIMPLCharacterMoves.cpp WorldIMPLItemMoves.cpp WorldIMPLT
 WorldIMPLTools.cpp WorldIMPLScriptHelp.cpp WorldIMPLPlayer.cpp \
 \
 Timer.cpp MilTimer.cpp \
-LongTimeEffect.cpp LongTimeAction.cpp LongTimeCharacterEffects.cpp Scheduler.cpp \
+LongTimeEffect.cpp LongTimeAction.cpp LongTimeCharacterEffects.cpp \
 \
 Attribute.cpp Character.cpp CharacterContainer.cpp \
 Player.cpp PlayerWorkoutCommands.cpp Monster.cpp NPC.cpp PlayerManager.cpp WaypointList.cpp \
@@ -80,7 +80,7 @@ noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
 		 db/QueryTables.hpp db/UpdateQuery.hpp db/SelectQuery.hpp \
 		 globals.hpp make_unique.hpp World.hpp Item.hpp \
 		 CharacterContainer.hpp SchedulerTaskClasses.hpp \
-		 tpvector.hpp Random.hpp tvector.hpp NPC.hpp Scheduler.hpp \
+		 tpvector.hpp Random.hpp tvector.hpp NPC.hpp Scheduler.hpp Scheduler.tcc \
 		 MapException.hpp PlayerManager.hpp Character.hpp \
 		 Attribute.hpp InitialConnection.hpp Logger.hpp utility.hpp \
 		 MonitoringClients.hpp Field.hpp \
