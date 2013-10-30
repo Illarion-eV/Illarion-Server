@@ -93,10 +93,10 @@ void PlayerManager::loginLoop(PlayerManager *pmanager) {
 
         while (pmanager->running) {
             //loop must be steered by counter so we parse every connection only one time bevor we getting to the other loop
-            int curconn = newplayers.non_block_size();
+            int curconn = newplayers.size();
 
             for (int i = 0; i < curconn; ++i) {
-                auto Connection = newplayers.non_block_pop_front();
+                auto Connection = newplayers.pop_front();
 
                 if (Connection) {
                     try {
@@ -112,7 +112,7 @@ void PlayerManager::loginLoop(PlayerManager *pmanager) {
                             }
                             
                             if (newPlayer) {
-                                pmanager->loggedInPlayers.non_block_push_back(newPlayer);
+                                pmanager->loggedInPlayers.push_back(newPlayer);
                             }
 
                             Connection.reset();
@@ -122,7 +122,7 @@ void PlayerManager::loginLoop(PlayerManager *pmanager) {
                                 throw Player::LogoutException(UNSTABLECONNECTION);
                             }
 
-                            newplayers.non_block_push_back(Connection);
+                            newplayers.push_back(Connection);
                             Connection.reset();
                         }
                     } catch (Player::LogoutException &e) {
@@ -177,7 +177,7 @@ void PlayerManager::playerSaveLoop(PlayerManager *pmanager) {
                     }
 
                     std::lock_guard<std::mutex> lock(mut);
-                    pmanager->loggedOutPlayers.non_block_pop_front();
+                    pmanager->loggedOutPlayers.pop_front();
                 }
 
                 Logger::debug(LogFacility::World) << "update player list [begin]" << Log::end;

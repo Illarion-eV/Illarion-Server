@@ -82,7 +82,7 @@ void MonitoringClients::CheckClients() {
                 (*it)->Connection->closeConnection();
             }
         } else {
-            PlayerManager::get().getLogOutPlayers().non_block_push_back(*it);
+            PlayerManager::get().getLogOutPlayers().push_back(*it);
             it = client_list.erase(it);
             --it;
         }

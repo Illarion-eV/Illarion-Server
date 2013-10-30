@@ -159,7 +159,7 @@ int main(int argc, char *argv[]) {
         while (!newplayers.empty() && new_players_processed < MAXPLAYERSPROCESSED) {
 
             new_players_processed++;
-            Player *newPlayer = newplayers.non_block_pop_front();
+            Player *newPlayer = newplayers.pop_front();
 
             if (newPlayer) {
                 login_save(newPlayer);
@@ -175,7 +175,7 @@ int main(int argc, char *argv[]) {
                     } catch (Player::LogoutException &e) {
                         ServerCommandPointer cmd = std::make_shared<LogOutTC>(e.getReason());
                         newPlayer->Connection->shutdownSend(cmd);
-                        PlayerManager::get().getLogOutPlayers().non_block_push_back(newPlayer);
+                        PlayerManager::get().getLogOutPlayers().push_back(newPlayer);
                     }
                 }
             } else {

@@ -28,30 +28,12 @@
 #include <mutex>
 #include <chrono>
 
-#define _MAX_NON_BLOCK_TRYS_ 20
-
 template<class T> class tpvector : public std::list<T> {
 public:
     inline size_t size() {
         std::lock_guard<std::mutex> lock(vlock);
         uint16_t s = std::list<T>::size();
         return s;
-    }
-
-    inline size_t non_block_size() {
-        for (int i = 0; i < _MAX_NON_BLOCK_TRYS_ ; ++i) {
-            if (!vlock.try_lock()) {
-                std::chrono::milliseconds wait(5);
-                std::cout<<"non_block_size blocked mutex"<<std::endl;
-                std::this_thread::sleep_for(wait);
-            } else {
-                auto s = std::list<T>::size();
-                vlock.unlock();
-                return s;
-            }
-        }
-
-        return 0;
     }
 
     inline void clear() {
@@ -64,78 +46,9 @@ public:
         std::list<T>::push_back(item);
     }
 
-    inline bool non_block_push_back(const T &item) {
-        for (int i = 0; i < _MAX_NON_BLOCK_TRYS_ ; ++i) {
-            if (!vlock.try_lock()) {
-                std::chrono::milliseconds wait(5);
-                std::cout<<"non_block_push_back blocked mutex"<<std::endl;
-                std::this_thread::sleep_for(wait);
-            } else {
-                std::list<T>::push_back(item);
-                vlock.unlock();
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    inline bool non_block_push_front(const T &item) {
-        for (int i = 0; i < _MAX_NON_BLOCK_TRYS_ ; ++i) {
-            if (!vlock.try_lock()) {
-                std::chrono::milliseconds wait(5);
-                std::cout<<"non_block_push_front blocked mutex"<<std::endl;
-                std::this_thread::sleep_for(wait);
-            } else {
-                std::list<T>::push_front(item);
-                vlock.unlock();
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    inline T non_block_pop_front() {
-        for (int i = 0; i < _MAX_NON_BLOCK_TRYS_ ; ++i) {
-            if (!vlock.try_lock()) {
-                std::chrono::milliseconds wait(5);
-                std::cout<<"non_block_pop_front blocked mutex"<<std::endl;
-                std::this_thread::sleep_for(wait);
-            } else {
-                T item = std::list<T>::front();
-                std::list<T>::pop_front();
-                vlock.unlock();
-                return item;
-            }
-        }
-
-        T item;
-        return item;
-
-    }
-
-
-
     inline bool empty() {
         std::lock_guard<std::mutex> lock(vlock);
         return std::list<T>::empty();
-    }
-
-    inline bool non_block_empty() {
-        for (int i = 0; i < _MAX_NON_BLOCK_TRYS_ ; ++i) {
-            if (!vlock.try_lock()) {
-                std::chrono::milliseconds wait(5);
-                std::cout<<"non_block_empty blocked mutex"<<std::endl;
-                std::this_thread::sleep_for(wait);
-            } else {
-                bool empty = std::list<T>::empty();
-                vlock.unlock();
-                return empty;
-            }
-        }
-
-        return true;
     }
 
     inline T pop_front() {

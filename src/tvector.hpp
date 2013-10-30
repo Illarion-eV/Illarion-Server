@@ -31,10 +31,6 @@
 #include <mutex>
 #include <chrono>
 
-#ifndef _MAX_NON_BLOCK_TRYS2_
-#define _MAX_NON_BLOCK_TRYS2_ 20
-#endif
-
 template<class T> class tvector : public std::list<T> {
 public:
     inline void clear() {
@@ -47,22 +43,6 @@ public:
         std::list<T>::push_back(item);
     }
 
-    inline bool non_block_push_back(const T &item) {
-        for (int i = 0; i < _MAX_NON_BLOCK_TRYS2_ ; ++i) {
-            if (!vlock.try_lock()) {
-                std::chrono::milliseconds wait(5);
-                std::cout<<"non_block_push_back blocked mutex"<<std::endl;
-                std::this_thread::sleep_for(wait);
-            } else {
-                std::list<T>::push_back(item);
-                vlock.unlock();
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     inline bool empty() {
         std::lock_guard<std::mutex> lock(vlock);
         return std::list<T>::empty();
@@ -73,23 +53,6 @@ public:
         T &item = std::list<T>::front();
         std::list<T>::pop_front();
         return item;
-    }
-
-    inline T non_block_pop_front() {
-        for (int i = 0; i < _MAX_NON_BLOCK_TRYS2_ ; ++i) {
-            if (!vlock.try_lock()) {
-                std::chrono::milliseconds wait(5);
-                std::cout<<"non_block_pop_front blocked mutex"<<std::endl;
-                std::this_thread::sleep_for(wait);
-            } else {
-                T item = std::list<T>::front();
-                std::list<T>::pop_front();
-                vlock.unlock();
-                return item;
-            }
-        }
-
-        return T();
     }
 
 private:

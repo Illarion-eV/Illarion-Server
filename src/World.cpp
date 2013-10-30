@@ -541,7 +541,7 @@ void World::checkPlayers() {
 
             logoutScript->onLogout(playerPointer);
 
-            PlayerManager::get().getLogOutPlayers().non_block_push_back(playerPointer);
+            PlayerManager::get().getLogOutPlayers().push_back(playerPointer);
             sendRemoveCharToVisiblePlayers(player.getId(), pos);
             lostPlayers.push_back(playerPointer);
         }

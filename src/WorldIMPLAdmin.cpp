@@ -415,7 +415,7 @@ void World::forceLogoutOfAllPlayers() {
         sendMonitoringMessage(message);
         ServerCommandPointer cmd = std::make_shared<LogOutTC>(SERVERSHUTDOWN);
         player->Connection->shutdownSend(cmd);
-        PlayerManager::get().getLogOutPlayers().non_block_push_back(player);
+        PlayerManager::get().getLogOutPlayers().push_back(player);
     });
 
     Players.clear();
