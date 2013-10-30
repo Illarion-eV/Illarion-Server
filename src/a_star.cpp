@@ -200,7 +200,6 @@ bool a_star(const ::position &start_pos, const ::position &goal_pos, std::list<d
     }
 
     typedef graph_traits<world_map_graph>::vertex_descriptor vertex;
-    typedef graph_traits<world_map_graph>::edge_descriptor edge;
 
     vertex start(start_pos.x, start_pos.y);
     vertex goal(goal_pos.x, goal_pos.y);

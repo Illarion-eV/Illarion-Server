@@ -21,7 +21,7 @@ noinst_PROGRAMS = testserver
 noinst_LTLIBRARIES = libserver.la
 
 AM_CXXFLAGS = -ggdb -pipe -Wall -Werror -Wno-deprecated -std=c++11 $(BOOST_CXXFLAGS) $(DEPS_CFLAGS) -fPIC
-AM_CPPFLAGS = -D_THREAD_SAFE -D_REENTRANT -DTESTSERVER -DCDataConnect_DEBUG -DAdminCommands_DEBUG $(BOOST_CPPFLAGS) -I$(top_srcdir)/src -DPIC
+AM_CPPFLAGS = -D_THREAD_SAFE -D_REENTRANT -DTESTSERVER -DCDataConnect_DEBUG -DAdminCommands_DEBUG $(subst -I,-isystem,$(BOOST_CPPFLAGS)) -I$(top_srcdir)/src -DPIC
 AM_LDFLAGS = $(BOOST_THREAD_LDFLAGS) $(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS) $(BOOST_REGEX_LDFLAGS)
 LDADD = -L/usr/local/lib -lpthread -lssl $(DEPS_LIBS) libserver.la $(top_builddir)/src/script/libscriptbinding.la
 
