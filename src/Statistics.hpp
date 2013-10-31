@@ -21,6 +21,7 @@
 #ifndef _STATISTICS_HPP_
 #define _STATISTICS_HPP_
 
+#include <string>
 #include <limits>
 #include <vector>
 #include <unordered_map>
@@ -29,19 +30,11 @@ namespace Statistic {
 
 class Statistics {
 public:
-    enum Type {
-        cycle,
-        player,
-        monster,
-        npc,
-        TYPE_COUNT
-    };
-
     static Statistics &getInstance();
 
-    void startTimer(Type type);
+    void startTimer(const std::string &type);
     // not thread-safe, collect statistics in main thread only for now
-    void stopTimer(Type type);
+    void stopTimer(const std::string &type);
 
 private:
     Statistics();
@@ -53,14 +46,22 @@ private:
     typedef std::vector<PlayerData> StatTypes;
 
     static Statistics *instance;
+    
     int versionId;
+
+    std::unordered_map<std::string, int> types;
+
     StatTypes statisticsDB;
     StatTypes statistics;
     StatTypes statisticsSave;
+    
     std::vector<long> startTimes;
     static const long SAVE_INTERVAL = 60000; // one minute
+    static const int DEFAULT_PLAYERS = 50;
     long lastSaveTime;
-    
+
+    void loadTypes();
+    int typeToInt(const std::string &type);
     void load();
     void save();
     int getVersionId();

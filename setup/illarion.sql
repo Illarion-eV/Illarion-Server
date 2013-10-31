@@ -1501,6 +1501,18 @@ COMMENT ON COLUMN startpacks.stp_english IS 'The English name of the package';
 
 
 --
+-- Name: stat_type_seq; Type: SEQUENCE; Schema: server; Owner: -
+--
+
+CREATE SEQUENCE stat_type_seq
+    START WITH 0
+    INCREMENT BY 1
+    MINVALUE 0
+    MAXVALUE 2147483647
+    CACHE 1;
+
+
+--
 -- Name: statistics; Type: TABLE; Schema: server; Owner: -; Tablespace: 
 --
 
@@ -1546,6 +1558,16 @@ COMMENT ON COLUMN statistics.stat_bin IS 'represents samples in [value, value+1)
 --
 
 COMMENT ON COLUMN statistics.stat_count IS 'number of samples in bin';
+
+
+--
+-- Name: statistics_types; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+--
+
+CREATE TABLE statistics_types (
+    stat_type_id integer DEFAULT nextval('stat_type_seq'::regclass) NOT NULL,
+    stat_type_name character varying(50) NOT NULL
+);
 
 
 SET default_with_oids = true;
@@ -2133,6 +2155,22 @@ ALTER TABLE ONLY statistics
 
 
 --
+-- Name: statistics_types_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY statistics_types
+    ADD CONSTRAINT statistics_types_pkey PRIMARY KEY (stat_type_id);
+
+
+--
+-- Name: statistics_types_stat_type_name_key; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY statistics_types
+    ADD CONSTRAINT statistics_types_stat_type_name_key UNIQUE (stat_type_name);
+
+
+--
 -- Name: tiles_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
 --
 
@@ -2565,6 +2603,14 @@ ALTER TABLE ONLY startpack_skills
 
 ALTER TABLE ONLY startpack_skills
     ADD CONSTRAINT startpack_skills_skill_id_fkey FOREIGN KEY (sps_skill_id) REFERENCES skills(skl_skill_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: statistics_stat_type_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+--
+
+ALTER TABLE ONLY statistics
+    ADD CONSTRAINT statistics_stat_type_fkey FOREIGN KEY (stat_type) REFERENCES statistics_types(stat_type_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --

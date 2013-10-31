@@ -147,7 +147,7 @@ int main(int argc, char *argv[]) {
     running = true;
 
     using namespace Statistic;
-    Statistics::getInstance().startTimer(Statistics::cycle);
+    Statistics::getInstance().startTimer("cycle");
 
     while (running) {
         // Ausgaben auf std::cout in die Datei schreiben
@@ -187,7 +187,7 @@ int main(int argc, char *argv[]) {
         // run scheduler until next task or for 25ms
 	world->scheduler.run_once(std::chrono::milliseconds(25));
 	world->checkPlayerImmediateCommands();
-        Statistics::getInstance().stopTimer(Statistics::cycle);
+        Statistics::getInstance().stopTimer("cycle");
     }
 
 
