@@ -44,6 +44,8 @@ void Player::workoutCommands() {
 	    queuedCommands.pop();
 	    lock.unlock();
 	    cmd->performAction(this);
+	    using namespace Statistic;
+	    Statistics::getInstance().logTime("command_incoming_done_ap", std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - cmd->getIncomingTime()).count());
 	    lock.lock();
     }
 }
