@@ -23,21 +23,24 @@
 #include "db/ConnectionManager.hpp"
 #include "db/SelectQuery.hpp"
 #include "db/InsertQuery.hpp"
-#include "db/DeleteQuery.hpp"
+#include "db/UpdateQuery.hpp"
 #include "db/Query.hpp"
 #include "World.hpp"
 #include "Logger.hpp"
 #include <chrono>
 #include <algorithm>
+#include <thread>
 
 namespace Statistic {
 
 Statistics *Statistics::instance = nullptr;
 
-Statistics::Statistics() : statistics(TYPE_COUNT), startTimes(TYPE_COUNT) {
+Statistics::Statistics() : statisticsDB(TYPE_COUNT), statistics(TYPE_COUNT), statisticsSave(TYPE_COUNT), startTimes(TYPE_COUNT) {
     for (int i = 0; i < TYPE_COUNT; ++i) {
         for (int j = 0; j < 50; ++j) {
+            statisticsDB[i].emplace_back();
             statistics[i].emplace_back();
+            statisticsSave[i].emplace_back();
         }
     }
 
@@ -79,7 +82,10 @@ void Statistics::stopTimer(Type type) {
 
         if (now - lastSaveTime > SAVE_INTERVAL) {
             lastSaveTime = now;
-            save();
+
+            statistics.swap(statisticsSave);
+            std::thread t(&Statistics::save, this);
+            t.detach();
         }
     }
 }
@@ -131,11 +137,11 @@ void Statistics::load() {
         int bin = row["stat_bin"].as<int>();
         int count = row["stat_count"].as<int>();
 
-        while (statistics[type].size() <= static_cast<size_t>(players_online)) {
-            statistics[type].emplace_back();
+        while (statisticsDB[type].size() <= static_cast<size_t>(players_online)) {
+            statisticsDB[type].emplace_back();
         }
 
-        statistics[type][players_online][bin] = count;
+        statisticsDB[type][players_online][bin] = count;
     }
 }
 
@@ -145,11 +151,6 @@ void Statistics::save() {
     auto connection = ConnectionManager::getInstance().getConnection();
 
     try {
-        DeleteQuery deleteQuery(connection);
-        deleteQuery.addEqualCondition<int>("statistics", "stat_version", versionId);
-        deleteQuery.addServerTable("statistics");
-        deleteQuery.execute();
-
         InsertQuery insertQuery(connection);
         const auto versionColumn = insertQuery.addColumn("stat_version");
         const auto typeColumn = insertQuery.addColumn("stat_type");
@@ -159,20 +160,41 @@ void Statistics::save() {
         insertQuery.addServerTable("statistics");
 
         int currentType = 0;
-        for (const auto &types : statistics) {
+        for (auto &types : statisticsSave) {
+            auto &typeDB = statisticsDB[currentType];
             int players = 0;
 
-            for (const auto &bins : types) {
+            for (auto &bins : types) {
+                auto &playersDB = typeDB[players];
+
                 for (const auto &bin : bins) {
-                    if (bin.second > 0) {
-                        insertQuery.addValue<int>(versionColumn, versionId);
-                        insertQuery.addValue<int>(typeColumn, currentType);
-                        insertQuery.addValue<int>(playersColumn, players);
-                        insertQuery.addValue<int>(binColumn, bin.first);
-                        insertQuery.addValue<int>(countColumn, bin.second);
+                    auto dbIterator = playersDB.find(bin.first);
+
+                    if (dbIterator == playersDB.end()) {
+                        if (bin.second > 0) {
+                            playersDB.insert(bin);
+                            
+                            insertQuery.addValue<int>(versionColumn, versionId);
+                            insertQuery.addValue<int>(typeColumn, currentType);
+                            insertQuery.addValue<int>(playersColumn, players);
+                            insertQuery.addValue<int>(binColumn, bin.first);
+                            insertQuery.addValue<int>(countColumn, bin.second);
+                        }
+                    } else {
+                        dbIterator->second += bin.second;
+                        
+                        Database::UpdateQuery query;
+                        query.addAssignColumn<int>("stat_count", dbIterator->second);
+                        query.addEqualCondition<int>("statistics", "stat_version", versionId);
+                        query.addEqualCondition<int>("statistics", "stat_type", currentType);
+                        query.addEqualCondition<int>("statistics", "stat_players", players);
+                        query.addEqualCondition<int>("statistics", "stat_bin", bin.first);
+                        query.addServerTable("statistics");
+                        query.execute();
                     }
                 }
 
+                bins.clear();
                 ++players;
             }
 

@@ -40,6 +40,7 @@ public:
     static Statistics &getInstance();
 
     void startTimer(Type type);
+    // not thread-safe, collect statistics in main thread only for now
     void stopTimer(Type type);
 
 private:
@@ -53,7 +54,9 @@ private:
 
     static Statistics *instance;
     int versionId;
+    StatTypes statisticsDB;
     StatTypes statistics;
+    StatTypes statisticsSave;
     std::vector<long> startTimes;
     static const long SAVE_INTERVAL = 60000; // one minute
     long lastSaveTime;
