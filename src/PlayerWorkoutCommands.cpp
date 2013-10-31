@@ -38,7 +38,7 @@ void Player::workoutCommands() {
 
     while (!queuedCommands.empty() && queuedCommands.front()->getMinAP() <= getActionPoints()) {
 	    ClientCommandPointer cmd = queuedCommands.front();
-	    immediateCommands.pop();
+	    queuedCommands.pop();
 	    lock.unlock();
 	    cmd->performAction(this);
 	    lock.lock();
