@@ -130,9 +130,6 @@ Player::Player(std::shared_ptr<NetInterface> newConnection) throw(Player::Logout
     if (!load()) {
         throw LogoutException(ORRUPTDATA);
     }
-
-    // start processing client commands
-    Connection->activate(this);
 }
 
 void Player::login() throw(Player::LogoutException) {
@@ -227,6 +224,9 @@ void Player::login() throw(Player::LogoutException) {
     time(&logintime);
     time(&lastkeepalive);
     time(&lastsavetime);
+
+    // start processing client commands
+    Connection->activate(this);
 }
 
 unsigned short int Player::getScreenRange() const {
