@@ -486,17 +486,17 @@ void World::turntheworld() {
 
         using namespace Statistic;
 
-        Statistics::getInstance().startTimer(Statistics::player);
+        Statistics::getInstance().startTimer("cycle player");
         checkPlayers();
-        Statistics::getInstance().stopTimer(Statistics::player);
+        Statistics::getInstance().stopTimer("cycle player");
 
-        Statistics::getInstance().startTimer(Statistics::monster);
+        Statistics::getInstance().startTimer("cycle monster");
         checkMonsters();
-        Statistics::getInstance().stopTimer(Statistics::monster);
+        Statistics::getInstance().stopTimer("cycle monster");
 
-        Statistics::getInstance().startTimer(Statistics::npc);
+        Statistics::getInstance().startTimer("cycle npc");
         checkNPC();
-        Statistics::getInstance().stopTimer(Statistics::npc);
+        Statistics::getInstance().stopTimer("cycle npc");
     }
 }
 

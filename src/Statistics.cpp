@@ -30,14 +30,23 @@
 #include <chrono>
 #include <algorithm>
 #include <thread>
+#include <stdexcept>
 
 namespace Statistic {
 
 Statistics *Statistics::instance = nullptr;
 
-Statistics::Statistics() : statisticsDB(TYPE_COUNT), statistics(TYPE_COUNT), statisticsSave(TYPE_COUNT), startTimes(TYPE_COUNT) {
-    for (int i = 0; i < TYPE_COUNT; ++i) {
-        for (int j = 0; j < 50; ++j) {
+Statistics::Statistics() {
+    loadTypes();
+    auto typesCount = types.size();
+
+    statisticsDB.resize(typesCount);
+    statistics.resize(typesCount);
+    statisticsSave.resize(typesCount);
+    startTimes.resize(typesCount);
+
+    for (size_t i = 0; i < typesCount; ++i) {
+        for (int j = 0; j < DEFAULT_PLAYERS; ++j) {
             statisticsDB[i].emplace_back();
             statistics[i].emplace_back();
             statisticsSave[i].emplace_back();
@@ -57,36 +66,60 @@ Statistics &Statistics::getInstance() {
     return *instance;
 }
 
-void Statistics::startTimer(Type type) {
-    int intType = static_cast<int>(type);
+void Statistics::startTimer(const std::string &type) {
+    int intType;
 
-    if (intType >= 0 && intType < TYPE_COUNT) {
-        startTimes[intType] = getMillisecondsSinceEpoch();
+    try {
+        intType = typeToInt(type);
+    } catch (std::out_of_range &e) {
+        return;
+    }
+
+    startTimes[intType] = getMillisecondsSinceEpoch();
+}
+
+void Statistics::stopTimer(const std::string &type) {
+    int intType;
+
+    try {
+        intType = typeToInt(type);
+    } catch (std::out_of_range &e) {
+        return;
+    }   
+
+    long now = getMillisecondsSinceEpoch();
+    int duration = static_cast<int>(now - startTimes[intType]);
+    startTimes[intType] = now;
+    auto playersOnline = World::get()->Players.size();
+
+    while (statistics[intType].size() <= playersOnline) {
+        statistics[intType].emplace_back();
+    }
+    
+    ++statistics[intType][playersOnline][duration];
+
+    if (now - lastSaveTime > SAVE_INTERVAL) {
+        lastSaveTime = now;
+
+        statistics.swap(statisticsSave);
+        std::thread t(&Statistics::save, this);
+        t.detach();
     }
 }
 
-void Statistics::stopTimer(Type type) {
-    int intType = static_cast<int>(type);
+int Statistics::typeToInt(const std::string &type) {
+    const auto it = types.find(type);
 
-    if (intType >= 0 && intType < TYPE_COUNT) {
-        long now = getMillisecondsSinceEpoch();
-        int duration = static_cast<int>(now - startTimes[intType]);
-        startTimes[intType] = now;
-        auto playersOnline = World::get()->Players.size();
+    if (it != types.end()) {
+        return it->second;
+    } else {
+        const auto unknownIt = types.find("unknown");
 
-        while (statistics[intType].size() <= playersOnline) {
-            statistics[intType].emplace_back();
+        if (unknownIt == types.end()) {
+            throw std::out_of_range("unknown statistic type");
         }
-        
-        ++statistics[intType][playersOnline][duration];
 
-        if (now - lastSaveTime > SAVE_INTERVAL) {
-            lastSaveTime = now;
-
-            statistics.swap(statisticsSave);
-            std::thread t(&Statistics::save, this);
-            t.detach();
-        }
+        return unknownIt->second;
     }
 }
 
@@ -116,6 +149,21 @@ int Statistics::getVersionId() {
     auto idResult = idQuery.execute();
     const auto &row = idResult.front();
     return row["lastval"].as<int>();
+}
+
+void Statistics::loadTypes() {
+    using namespace Database;
+
+    SelectQuery query;
+    query.addColumn("statistics_types", "stat_type_id");
+    query.addColumn("statistics_types", "stat_type_name");
+    query.addServerTable("statistics_types");
+
+    auto result = query.execute();
+
+    for (const auto &row : result) {
+        types.emplace(row["stat_type_name"].as<std::string>(), row["stat_type_id"].as<int>());
+    }
 }
 
 void Statistics::load() {
