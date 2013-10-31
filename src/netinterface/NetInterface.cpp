@@ -78,6 +78,7 @@ void NetInterface::handle_read_data(const boost::system::error_code &error) {
                 cmd->decodeData();
 
                 if (cmd->isDataOk()) {
+		    cmd->setReceivedTime();
 		    if (owner == nullptr) {
 			auto login = std::dynamic_pointer_cast<LoginCommandTS>(cmd);
 			if (!login) {

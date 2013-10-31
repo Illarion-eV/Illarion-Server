@@ -36,6 +36,8 @@ public:
     // not thread-safe, collect statistics in main thread only for now
     void stopTimer(const std::string &type);
 
+    // not thread-safe, collect statistics in main thread only for now
+    void logTime(const std::string& type, int duration);
 private:
     Statistics();
     Statistics(const Statistics &) = delete;

@@ -24,6 +24,7 @@
 #include <stdint.h>
 #include <iostream>
 #include <memory>
+#include <chrono>
 
 class Player;
 class OverflowException {};
@@ -111,6 +112,14 @@ public:
 	return minAP;
     }
 
+    inline std::chrono::steady_clock::time_point getIncomingTime() {
+	    return incomingTime;
+    }
+
+    inline void setReceivedTime() {
+	    incomingTime = std::chrono::steady_clock::now();
+    }
+
 protected:
 
     bool dataOk; /*<true if data is ok, will set to false if a command wants to read more data from the buffer as is in it, or if the checksum isn't the same*/
@@ -121,6 +130,7 @@ protected:
     uint32_t crc; /*< the checksum of the data*/
 
     uint16_t minAP; /*< number of ap necessary to perform command */
+    std::chrono::steady_clock::time_point incomingTime;
 };
 
 #endif

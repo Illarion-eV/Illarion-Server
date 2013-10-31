@@ -107,6 +107,32 @@ void Statistics::stopTimer(const std::string &type) {
     }
 }
 
+void Statistics::logTime(const std::string& type, int duration) {
+    int intType;
+
+    try {
+        intType = typeToInt(type);
+    } catch (std::out_of_range &e) {
+        return;
+    }
+    auto playersOnline = World::get()->Players.size();
+
+    while (statistics[intType].size() <= playersOnline) {
+        statistics[intType].emplace_back();
+    }
+
+    ++statistics[intType][playersOnline][duration];
+
+    long now = getMillisecondsSinceEpoch();
+    if (now - lastSaveTime > SAVE_INTERVAL) {
+        lastSaveTime = now;
+
+        statistics.swap(statisticsSave);
+        std::thread t(&Statistics::save, this);
+        t.detach();
+    }
+}
+
 int Statistics::typeToInt(const std::string &type) {
     const auto it = types.find(type);
 
