@@ -51,7 +51,7 @@
 #define P_USE_COST 10
 #define NP_USE_COST 10
 
-#define P_LOOK_COST 5
+#define P_LOOK_COST 0
 
 #define P_SAY_COST 3
 #define P_SHOUT_COST 9
