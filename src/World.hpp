@@ -1197,6 +1197,8 @@ private:
 public:
     void ban_command(Player *cp, const std::string &timeplayer);
     void logGMTicket(Player *Player, const std::string &ticket, bool automatic);
+    void checkPlayerImmediateCommands();
+    void addPlayerImmediateActionQueue(Player* player);
 
 private:
     bool active_language_command(Player *cp, const std::string &language);
@@ -1214,6 +1216,9 @@ private:
     bool reload_tables(Player *cp);
 
     void version_command(Player *player);
+
+    std::mutex immediatePlayerCommandsMutex;
+    std::queue<Player*> immediatePlayerCommands;
 };
 
 #endif

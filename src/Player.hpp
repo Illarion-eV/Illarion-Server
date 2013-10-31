@@ -26,6 +26,7 @@
 #include <memory>
 #include <string>
 #include <set>
+#include <queue>
 #include <unordered_set>
 #include <unordered_map>
 
@@ -105,6 +106,7 @@ public:
     virtual std::string to_string() const override;
 
     void workoutCommands();
+    void checkFightMode();
 
     //! definiert eine "Zweiseitige Warteschlange" vom Typ unsigned char
     //typedef deque<unsigned char> BYTEDEQUE;
@@ -160,8 +162,14 @@ private:
     std::set<uint32_t> visibleChars;
     std::unordered_set<TYPE_OF_CHARACTER_ID> knownPlayers;
     std::unordered_map<TYPE_OF_CHARACTER_ID, std::string> namedPlayers;
+    typedef std::queue<ClientCommandPointer> CLIENTCOMMANDLIST;
+    CLIENTCOMMANDLIST immediateCommands;
+    CLIENTCOMMANDLIST queuedCommands;
+    std::mutex commandMutex;
 
 public:
+    void receiveCommand(ClientCommandPointer cmd);
+
     virtual bool isNewPlayer() const override;
     
     const std::string &nls(const std::string &german, const std::string &english) const;
@@ -504,10 +512,6 @@ public:
     void sendCompleteQuestProgress();
     virtual TYPE_OF_QUESTSTATUS getQuestProgress(TYPE_OF_QUEST_ID questid, int &time) const override;
 
-#ifdef _PLAYER_AUTO_SAVE_
-    void checkSave();
-#endif
-
 private:
     void handleWarp();
 
@@ -574,10 +578,6 @@ private:
 private:
 
     Language _player_language;
-
-#ifdef _PLAYER_AUTO_SAVE_
-    Timer *saveTimer;  //save every 10 minutes 600 sec's
-#endif
 
     // Status of the player, Okay, waiting authroization, jailed, banned, etc..
     unsigned char status;

@@ -37,6 +37,7 @@
 #include <deque>
 #include <mutex>
 
+class LoginCommandTS;
 
 /**
 * @defgroup Netinterface Network Interface
@@ -62,7 +63,7 @@ public:
     ~NetInterface();
 
     void closeConnection(); /*<closes the connection to the client*/
-    bool activate(); /*<activates the connection starts the sending and receiving threads*/
+    bool activate(Player* = nullptr); /*<activates the connection starts the sending and receiving threads, if player == nullptr only login command is accepted and processing stops afterwards*/
     bool nextInactive();
 
     /**
@@ -75,32 +76,19 @@ public:
 
     std::string getIPAdress();
 
-    /**
-    * returns a command from the receive Queue if on is available
-    * @return the command which was in the receive Queue or an empty (nullptr) Command if there wasn't something in the receive Queue
-    */
-    ClientCommandPointer getCommand();
-
-
     volatile bool online; /*< if connection is active*/
 
-    /**
-    * gets the number of received Commands
-    * @return the number of commands which are currently in the received queue
-    */
-    uint16_t receivedSize() {
-        return receiveQueue.size();
-    }
-
-    typedef std::deque<ClientCommandPointer> CLIENTCOMMANDLIST;
     typedef std::deque<ServerCommandPointer> SERVERCOMMANDLIST;
 
     boost::asio::ip::tcp::socket &getSocket() {
         return socket;
     }
 
-private:
+    std::shared_ptr<LoginCommandTS> getLoginData() const {
+	    return loginData;
+    }
 
+private:
 
     void handle_read_header(const boost::system::error_code &error);
     void handle_read_data(const boost::system::error_code &error);
@@ -115,8 +103,6 @@ private:
     ServerCommandPointer shutdownCmd;
     ServerCommandPointer cmdToWrite;
 
-
-    CLIENTCOMMANDLIST receiveQueue; /*<stores the commands which are received in a queue*/
     SERVERCOMMANDLIST sendQueue;
 
     std::string ipadress;
@@ -127,10 +113,9 @@ private:
     CommandFactory commandFactory;
     uint16_t inactive;
     std::mutex sendQueueMutex;
-    std::mutex receiveQueueMutex;
+    std::shared_ptr<LoginCommandTS> loginData;
 
-
-
+    Player* owner;
 };
 
 

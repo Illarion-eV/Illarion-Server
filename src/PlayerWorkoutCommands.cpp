@@ -27,25 +27,48 @@
 
 
 void Player::workoutCommands() {
-    if (!canAct()) {
-        return;
+    std::unique_lock<std::mutex> lock(commandMutex);
+    while (!immediateCommands.empty()) {
+	    ClientCommandPointer cmd = immediateCommands.front();
+	    immediateCommands.pop();
+	    lock.unlock();
+	    cmd->performAction(this);
+	    lock.lock();
     }
 
-#ifdef _PLAYER_AUTO_SAVE_
-    checkSave();
-#endif
-
-    ClientCommandPointer cmd = Connection->getCommand();
-
-    if (cmd) {
-        cmd->performAction(this);
-    } else if (isAlive()) {
-        if (getAttackMode() && canFight()) {
-            //cp->ltAction->abortAction();
-            World::get()->characterAttacks(this);
-        }
+    while (!queuedCommands.empty() && queuedCommands.front()->getMinAP() <= getActionPoints()) {
+	    ClientCommandPointer cmd = queuedCommands.front();
+	    immediateCommands.pop();
+	    lock.unlock();
+	    cmd->performAction(this);
+	    lock.lock();
     }
+}
 
-    cmd.reset();
+void Player::checkFightMode() {
+    if (getAttackMode() && canFight()) {
+	    //cp->ltAction->abortAction();
+	    World::get()->characterAttacks(this);
+    }
+}
+
+void Player::receiveCommand(ClientCommandPointer cmd) {
+	bool notify = false;
+	{
+		std::unique_lock<std::mutex> lock(commandMutex);
+		if (cmd->getMinAP() == 0) {
+			immediateCommands.push(cmd);
+			notify = true;
+		} else {
+			if (getActionPoints() > cmd->getMinAP() && queuedCommands.empty())
+				notify = true;
+			queuedCommands.push(cmd);
+		}
+	}
+
+	if (notify) {
+		World::get()->addPlayerImmediateActionQueue(this);
+		World::get()->scheduler.signalNewPlayerAction();
+	}
 }
 

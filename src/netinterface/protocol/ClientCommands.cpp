@@ -234,7 +234,7 @@ ClientCommandPointer RequestAppearanceTS::clone() {
     return cmd;
 }
 
-LookAtCharacterTS::LookAtCharacterTS() : BasicClientCommand(C_LOOKATCHARACTER_TS) {
+LookAtCharacterTS::LookAtCharacterTS() : BasicClientCommand(C_LOOKATCHARACTER_TS, P_LOOK_COST) {
 }
 
 void LookAtCharacterTS::decodeData() {
@@ -689,7 +689,7 @@ ClientCommandPointer CastTS::clone() {
     return cmd;
 }
 
-UseTS::UseTS() : BasicClientCommand(C_USE_TS) {
+UseTS::UseTS() : BasicClientCommand(C_USE_TS, P_MIN_AP) {
 }
 
 void UseTS::decodeData() {
@@ -1613,7 +1613,7 @@ ClientCommandPointer LookAtMapItemTS::clone() {
     return cmd;
 }
 
-PlayerSpinTS::PlayerSpinTS() : BasicClientCommand(C_PLAYERSPIN_TS) {
+PlayerSpinTS::PlayerSpinTS() : BasicClientCommand(C_PLAYERSPIN_TS, P_SPIN_COST) {
 }
 
 void PlayerSpinTS::decodeData() {
@@ -1633,7 +1633,7 @@ ClientCommandPointer PlayerSpinTS::clone() {
     return cmd;
 }
 
-CharMoveTS::CharMoveTS() : BasicClientCommand(C_CHARMOVE_TS) {
+CharMoveTS::CharMoveTS() : BasicClientCommand(C_CHARMOVE_TS, P_MIN_AP) {
 }
 
 void CharMoveTS::decodeData() {

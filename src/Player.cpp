@@ -75,7 +75,7 @@ extern std::shared_ptr<LuaDepotScript>depotScript;
 
 Player::Player(std::shared_ptr<NetInterface> newConnection) throw(Player::LogoutException)
     : Character(), onlinetime(0), Connection(newConnection), turtleActive(false),
-      clippingActive(true), admin(false), questWriteLock(false), dialogCounter(0) {
+      clippingActive(true), admin(false), questWriteLock(false), monitoringClient(false), dialogCounter(0) {
 #ifdef Player_DEBUG
     std::cout << "Player Konstruktor Start" << std::endl;
 #endif
@@ -90,37 +90,9 @@ Player::Player(std::shared_ptr<NetInterface> newConnection) throw(Player::Logout
 
     ltAction = std::make_unique<LongTimeAction>(this, _world);
 
-    // first check if we have a valid client
-
-    ClientCommandPointer cmd = Connection->getCommand();
-
-    if (!cmd || cmd->getDefinitionByte() != C_LOGIN_TS) {
-        throw LogoutException(UNSTABLECONNECTION);
-    }
-
-    const auto loginCommand = std::dynamic_pointer_cast<LoginCommandTS>(cmd);
-    unsigned short int clientversion = loginCommand->getClientVersion();
+    const auto loginCommand = Connection->getLoginData();
     setName(loginCommand->getLoginName());
     pw = loginCommand->getPassword();
-    unsigned short acceptVersion = Config::instance().clientversion;
-    monitoringClient = false;
-
-    if (clientversion == 200) {
-        monitoringClient = true;
-    } else if (clientversion != acceptVersion) {
-        Logger::error(LogFacility::Player) << to_string() << " tried to login with an old client (version " << clientversion << ") but version " << acceptVersion << " is required" << Log::end;
-        throw LogoutException(OLDCLIENT);
-    }
-
-    if (getName() == "" || pw == "") {
-        throw LogoutException(WRONGPWD);
-    }
-
-    // player already online? if we don't use the monitoring client
-    if (!monitoringClient && (_world->Players.find(getName()) || PlayerManager::get().findPlayer(getName()))) {
-        Logger::alert(LogFacility::Player) << to_string() << " tried to login twice from ip: " << Connection->getIPAdress() << Log::end;
-        throw LogoutException(DOUBLEPLAYER);
-    }
 
     check_logindata();
 
@@ -144,6 +116,7 @@ Player::Player(std::shared_ptr<NetInterface> newConnection) throw(Player::Logout
 
     last_ip = Connection->getIPAdress();
 
+#if 0 // TODO move code to BBIWI specific class
     // we don't want to load more if we have a monitoring client
     if (monitoringClient) {
         ServerCommandPointer cmd = std::make_shared<BBLoginSuccessfulTC>();
@@ -151,11 +124,15 @@ Player::Player(std::shared_ptr<NetInterface> newConnection) throw(Player::Logout
         Logger::info(LogFacility::Admin) << to_string() << " connects with monitoring client" << Log::end;
         return;
     }
+#endif
 
     // now load inventory...
     if (!load()) {
         throw LogoutException(ORRUPTDATA);
     }
+
+    // start processing client commands
+    Connection->activate(this);
 }
 
 void Player::login() throw(Player::LogoutException) {

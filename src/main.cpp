@@ -186,6 +186,7 @@ int main(int argc, char *argv[]) {
 
         // run scheduler until next task or for 25ms
 	world->scheduler.run_once(std::chrono::milliseconds(25));
+	world->checkPlayerImmediateCommands();
         Statistics::getInstance().stopTimer(Statistics::cycle);
     }
 

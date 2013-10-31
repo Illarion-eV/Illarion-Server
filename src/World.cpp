@@ -518,6 +518,7 @@ void World::checkPlayers() {
                 player.increaseActionPoints(ap);
                 player.increaseFightPoints(ap);
                 player.workoutCommands();
+                player.checkFightMode();
                 player.ltAction->checkAction();
                 player.effects.checkEffects();
             }
@@ -550,6 +551,24 @@ void World::checkPlayers() {
     for (const auto &player : lostPlayers) {
         Players.erase(player->getId());
     }
+}
+
+void World::checkPlayerImmediateCommands() {
+    std::unique_lock<std::mutex> lock(immediatePlayerCommandsMutex);
+    while (!immediatePlayerCommands.empty()) {
+	auto player = immediatePlayerCommands.front();
+	immediatePlayerCommands.pop();
+	lock.unlock();
+
+        if (player->Connection->online)
+		player->workoutCommands();
+	lock.lock();
+    }
+}
+
+void World::addPlayerImmediateActionQueue(Player* player) {
+    std::unique_lock<std::mutex> lock(immediatePlayerCommandsMutex);
+    immediatePlayerCommands.push(player);
 }
 
 void World::invalidatePlayerDialogs() {
