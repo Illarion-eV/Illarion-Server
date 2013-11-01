@@ -150,8 +150,6 @@ int main(int argc, char *argv[]) {
     Statistics::getInstance().startTimer("cycle");
 
     while (running) {
-        // Ausgaben auf std::cout in die Datei schreiben
-        std::cout.flush();
         // make sure we don't block the server with processing new players...
         int new_players_processed = 0;
 
@@ -185,7 +183,7 @@ int main(int argc, char *argv[]) {
         } // get new players
 
         // run scheduler until next task or for 25ms
-	world->scheduler.run_once(std::chrono::milliseconds(25));
+	world->scheduler.run_once(std::chrono::seconds(1));
 	world->checkPlayerImmediateCommands();
         Statistics::getInstance().stopTimer("cycle");
     }

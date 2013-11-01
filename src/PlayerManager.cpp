@@ -134,6 +134,7 @@ void PlayerManager::loginLoop(PlayerManager *pmanager) {
                             }
                             
 			    pmanager->loggedInPlayers.push_back(newPlayer);
+			    World::get()->scheduler.signalNewPlayerAction();
 
                             Connection.reset();
                         } else {
