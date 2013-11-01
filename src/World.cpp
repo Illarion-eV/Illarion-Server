@@ -471,14 +471,6 @@ void World::turntheworld() {
     ftime(&now);
     unsigned long timeNow = now.time*1000 + now.millitm;
 
-    int thisIGDay = getTime("day");
-
-    if (lastTurnIGDay!=thisIGDay) {
-        sendIGTimeToAllPlayers();
-        Logger::debug(LogFacility::World) << "lastTurnIGDay=" << lastTurnIGDay << " thisIGDay= " << thisIGDay << Log::end;
-        lastTurnIGDay=thisIGDay;
-    }
-
     ap = timeNow/MIN_AP_UPDATE - timeStart/MIN_AP_UPDATE - usedAP;
 
     if (ap > 0) {
@@ -1004,13 +996,33 @@ void World::initNPC() {
     NPCTable NPCTbl;
 }
 
+// calculate when the next day change for illarion time will be
+static std::chrono::steady_clock::time_point getNextIGDayTime() {
+    // next day is at ((current unix timestamp - 950742000 + (is_dst?3600:0)) / 28800 + 1) * 28800
+    time_t curr_unixtime = time(nullptr);
+    struct tm *timestamp = localtime(&curr_unixtime);
+    if (timestamp->tm_isdst)
+	    curr_unixtime += 3600;
+    curr_unixtime -= 950742000; // begin of illarion time, 17.2.2000
+    curr_unixtime -= curr_unixtime % 28800;
+    curr_unixtime += 28800;
+
+    auto scheduler_ref = std::chrono::steady_clock::now();
+    auto realtime_ref = std::chrono::system_clock::now();
+    auto diff = std::chrono::system_clock::from_time_t(curr_unixtime) - realtime_ref;
+    scheduler_ref += diff;
+
+    return scheduler_ref;
+}
+
 void World::initScheduler() {
     scheduler.addRecurringTask([&] { Players.for_each(reduceMC); }, std::chrono::seconds(10), "increase_player_learn_points");
     scheduler.addRecurringTask([&] { Monsters.for_each(reduceMC); Npc.for_each(reduceMC); }, std::chrono::seconds(10), "increase_monster_learn_points");
     scheduler.addRecurringTask([&] { monitoringClientList->CheckClients(); }, std::chrono::milliseconds(250), "check_monitoring_clients");
     scheduler.addRecurringTask([&] { scheduledScripts->nextCycle(); }, std::chrono::seconds(1), "check_scheduled_scripts");
     scheduler.addRecurringTask([&] { DoAge(); }, std::chrono::milliseconds(25), "check_aging");
-    scheduler.addRecurringTask([&] { turntheworld(); }, std::chrono::milliseconds(25), "turntheworld");
+    scheduler.addRecurringTask([&] { turntheworld(); }, std::chrono::milliseconds(100), "turntheworld");
+    scheduler.addRecurringTask([&] { sendIGTimeToAllPlayers(); }, std::chrono::hours(8), getNextIGDayTime(), "update_ig_day");
 }
 
 bool World::executeUserCommand(Player *user, const std::string &input, const CommandMap &commands) {

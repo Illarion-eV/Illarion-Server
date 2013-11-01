@@ -53,6 +53,12 @@ void ClockBasedScheduler<clock_type>::addRecurringTask(std::function<void()> tas
 }
 
 template<typename clock_type>
+void ClockBasedScheduler<clock_type>::addRecurringTask(std::function<void()> task, const std::chrono::nanoseconds interval, typename clock_type::time_point first_time, const std::string& taskname) {
+	std::unique_lock<std::mutex> lock(_container_mutex);
+	_tasks.emplace(task, first_time, interval, taskname);
+}
+
+template<typename clock_type>
 void ClockBasedScheduler<clock_type>::signalNewPlayerAction() {
 	std::unique_lock<std::mutex> lock(_new_action_signal_mutex);
 	_new_action_available_cond.notify_all();

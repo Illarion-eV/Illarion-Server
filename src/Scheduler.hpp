@@ -59,6 +59,7 @@ class ClockBasedScheduler {
 	public:
 		void addOneshotTask(std::function<void()> task, const std::chrono::nanoseconds delay, const std::string& taskname);
 		void addRecurringTask(std::function<void()> task, const std::chrono::nanoseconds interval, const std::string& taskname, bool start_immediately = false);
+		void addRecurringTask(std::function<void()> task, const std::chrono::nanoseconds interval, typename clock_type::time_point first_time, const std::string& taskname);
 		void signalNewPlayerAction();
 
 		void run_once(std::chrono::nanoseconds max_timeout);
