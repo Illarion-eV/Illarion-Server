@@ -75,7 +75,6 @@ public:
     }
 
     std::vector<pointer> findAllCharactersInRangeOf(const position &pos, int distancemetric) const;
-    std::vector<pointer> findAllCharactersInMaxRangeOf(const position &pos, int distancemetric) const;
     std::vector<pointer> findAllCharactersInScreen(const position &pos) const;
     std::vector<pointer> findAllAliveCharactersInRangeOf(const position &pos, int distancemetric) const;
     std::vector<pointer> findAllAliveCharactersInRangeOfOnSameMap(const position &pos, int distancemetric) const;

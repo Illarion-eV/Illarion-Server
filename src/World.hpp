@@ -465,11 +465,6 @@ public:
     void updatePlayerView(short int startx, short int endx);
 
     /**
-    *closes the showcases of different players
-    */
-    void closeShowcasesForContainerPositions();
-
-    /**
     *loads the world
     *
     *@param prefix the name of the world wich should be loaded
@@ -1115,42 +1110,8 @@ private:
     //! das home-Verzeichnis des Servers
     std::string directory;
 
-    //! Zeitpunkt der letzten Alterung (Anzahl der Sekunden seit 1.1.1970)
-    time_t last_age;     //(32 Bit Integer)
-
-    //! Anzahl der Sekunden zwischen den Alterungsschritten
-    static const long gap = 180;
-
-    //! X-Koordinate bei der die Alterung fortgesetzt wird
-    short int nextXtoage;
-
-    //! X-Koordinate nach der die Alterung gestoppt wird
-    short int lastXtoage;
-
-    //! entspricht (Anzahl-1) Spalten, die in einem Durchlauf gealtert werden
-    unsigned short int ammount;
-
-    //! Breite der zu alternden Karte
-    unsigned short int Width;
-
-    //! Hoehe der zu alternden Karte
-    unsigned short int Height;
-
-    //! Sekunden seit der letzten vollstaendigen Alterung der Karte
-    long realgap;
-
-    //! Anzahl der kommpletten Durchlaeufe durch die Karte, seit die altersresistentesten Items gealtert wurden
-    unsigned short int timecount;
-
-    //! ages all world items if necessary
-    // \return true iff any aging was done
-    bool DoAge();
-
-    //! Fhrt die Alterung der Item im Inventory aller Player durch
-    // und schickt ggf. ein Update an die Spieler
-    // \param funct
-    // \see Item.h
-    void AgeInventory();
+    void age();
+    void ageInventory();
 
     //! das Verzeichnis mit den Skripten
     std::string scriptDir;

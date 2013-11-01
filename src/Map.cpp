@@ -486,28 +486,16 @@ bool Map::PutCFieldAt(Field &fi, short int x, short int y) {
 
 }
 
+void Map::age() {
+    ageContainers();
+    ageItems();
+}
 
-void Map::ageItemsInHorizontalRange(short int xstart, short int xend) {
-
-    short int tempMinX;
-    short int tempMaxX;
+void Map::ageItems() {
     position posZ;
-
-    try {
-        tempMinX = Conv_X_Koord(xstart);
-    } catch (Exception_CoordinateOutOfRange &e) {
-        tempMinX = 0;
-    }
-
-    try {
-        tempMaxX = Conv_X_Koord(xend);
-    } catch (Exception_CoordinateOutOfRange &e) {
-        tempMaxX = Width - 1;
-    }
-
     MAP_POSITION pos;
 
-    for (short int x = tempMinX; x <= tempMaxX; ++x) {
+    for (short int x = 0; x < Width; ++x) {
         for (short int y = 0; y < Height; ++y) {
             int8_t rotstate = MainMap[x][y].DoAgeItems();
 

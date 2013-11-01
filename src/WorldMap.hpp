@@ -38,33 +38,21 @@ public:
     typedef std::shared_ptr<Map> map_t;
     typedef std::vector<map_t> map_vector_t;
 
-    WorldMap();
-
     void clear();
 
     bool findAllMapsInRangeOf(char rnorth, char rsouth, char reast, char rwest, position pos, map_vector_t &ret) const;
     bool mapInRangeOf(const position &upperleft, unsigned short int dx, unsigned short int dy) const;
     bool findMapForPos(const position &pos, map_t &map) const;
-    bool findAllMapsWithXInRangeOf(short int start, short int end, map_vector_t &ret) const;
 
     bool InsertMap(map_t newMap);
 
-    void ageContainers();
+    void age();
 
     bool exportTo(const std::string &exportDir) const;
     void saveToDisk(const std::string &prefix) const;
 
-    short int getLowX() const {
-        return lowX;
-    };
-    short int getHighX() const {
-        return highX;
-    };
-
 private:
     map_vector_t maps;
     std::unordered_map<position, map_t> world_map;
-    short int lowX;
-    short int highX;
 };
 #endif

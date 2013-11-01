@@ -79,8 +79,7 @@ public:
     // \return true falls die x,y Koordinate existiert, false sonst
     bool PutCFieldAt(Field &fi, short int x, short int y);
 
-    void ageItemsInHorizontalRange(short int xstart, short int xend);
-    void ageContainers();
+    void age();
 
     //! setzt das Flag welches angibt, ob ein Spieler auf dem Feld ist auf t
     // \param x X-Koordinate
@@ -173,6 +172,10 @@ public:
     inline   short int Conv_To_X(unsigned short int x);
 
     inline short int Conv_To_Y(unsigned short int y);
+
+private:
+    void ageItems();
+    void ageContainers();
 };
 
 #endif

@@ -24,17 +24,9 @@
 #include <stdexcept>
 #include <boost/algorithm/string/replace.hpp>
 
-WorldMap::WorldMap() {
-    lowX = 32767;
-    highX = -32768;
-}
-
 void WorldMap::clear() {
     maps.clear();
     world_map.clear();
-
-    lowX = 32767;
-    highX = -32768;
 }
 
 bool WorldMap::mapInRangeOf(const position &upperleft, unsigned short int dx, unsigned short int dy) const {
@@ -87,22 +79,6 @@ bool WorldMap::findAllMapsInRangeOf(char rnorth, char rsouth, char reast, char r
     return found_one;
 }
 
-
-
-bool WorldMap::findAllMapsWithXInRangeOf(short int start, short int end, WorldMap::map_vector_t &ret) const {
-    bool found_one = false;
-    ret.clear();
-
-    for (auto it = maps.begin(); it != maps.end(); ++it) {
-        if (((*it)->Max_X >= start) && ((*it)->Min_X <= end)) {
-            ret.push_back(*it);
-            found_one = true;
-        }
-    }
-
-    return found_one;
-}
-
 bool WorldMap::findMapForPos(const position &pos, WorldMap::map_t &map) const {
     try {
         map = world_map.at(pos);
@@ -120,14 +96,6 @@ bool WorldMap::InsertMap(WorldMap::map_t newMap) {
             if (*it == newMap) {
                 return false;
             }
-        }
-
-        if (newMap->Min_X < lowX) {
-            lowX = newMap->Min_X;
-        }
-
-        if (newMap->Max_X > highX) {
-            highX = newMap->Max_X;
         }
 
         maps.push_back(newMap);
@@ -148,9 +116,9 @@ bool WorldMap::InsertMap(WorldMap::map_t newMap) {
 
 }
 
-void WorldMap::ageContainers() {
-    for (auto it = maps.begin(); it != maps.end(); ++it) {
-        (*it)->ageContainers();
+void WorldMap::age() {
+    for (auto &map : maps) {
+        map->age();
     }
 }
 

@@ -169,27 +169,6 @@ auto CharacterContainer<T>::findAllCharactersInScreen(const position &pos) const
 }
 
 template <class T>
-auto CharacterContainer<T>::findAllCharactersInMaxRangeOf(const position &pos, int distancemetric) const -> std::vector<pointer> {
-    std::vector<pointer> temp;
-    auto candidates = projection_x_axis(pos,distancemetric);
-    
-    for (auto& c : candidates) {
-        const position& p = c.first;
-        TYPE_OF_CHARACTER_ID id = c.second;
-        short int dx = p.x - pos.x;
-        short int dy = p.y - pos.y;
-        short int dz = p.z - pos.z;
-    
-        if (abs(dx) <= distancemetric && abs(dy) <= distancemetric && (-RANGEDOWN <= dz) && (dz <= RANGEUP)) {
-            if (auto character=find(id)) temp.push_back(character);
-        }
-    }
-
-    return temp;
-}
-
-
-template <class T>
 auto CharacterContainer<T>::findAllAliveCharactersInRangeOf(const position &pos, int distancemetric) const -> std::vector<pointer> {
     std::vector<pointer> temp;
     auto candidates = projection_x_axis(pos,distancemetric);

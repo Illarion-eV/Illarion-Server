@@ -680,15 +680,6 @@ int World::getItemAttrib(const std::string &s, TYPE_OF_ITEM_ID ItemID) {
 }
 
 
-void World::closeShowcasesForContainerPositions() {
-    for (const auto &pos : contpos) {
-        for (const auto &player : Players.findAllCharactersInMaxRangeOf(pos, 1)) {
-            player->closeAllShowcasesOfMapContainers();
-        }
-    }
-}
-
-
 void World::updatePlayerView(short int startx, short int endx) {
     std::vector<Player *> temp;
 
@@ -702,57 +693,13 @@ void World::updatePlayerView(short int startx, short int endx) {
 }
 
 
-bool World::DoAge() {
-
-    if (nextXtoage >= maps.getHighX()) {
-        // auf allen Karten alles abgearbeitet
-        time_t temp = time(nullptr);      // liefert die Sekunden seit dem 1.1.1970
-        realgap = temp - last_age;
-
-        // Zeit f�r neuen Durchlauf der Karte
-        if (realgap >= gap) {
-#ifdef World_DEBUG
-            std::cout << "World.DoAge: Karte gealtert nach " << realgap << " Sekunden\n";
-#endif
-            ++timecount;
-
-            last_age = temp;
-            nextXtoage = maps.getLowX();
-
-            AgeInventory();
-            maps.ageContainers();
-        } else {
-            return false;
-        }
-    }
-
-    // noch nicht die gesamte Karte durchlaufen ->
-    // restliche Streifen bearbeiten
-    lastXtoage = nextXtoage + ammount - 1;
-
-    if (lastXtoage >= maps.getHighX()) {
-        lastXtoage = maps.getHighX();
-    }
-
-    WorldMap::map_vector_t mapsToage;
-
-    if (maps.findAllMapsWithXInRangeOf(nextXtoage, lastXtoage, mapsToage)) {
-        for (const auto &map : mapsToage) {
-            map->ageItemsInHorizontalRange(nextXtoage, lastXtoage);
-        }
-
-        closeShowcasesForContainerPositions();
-        contpos.clear();
-    }
-
-    nextXtoage = lastXtoage + 1;
-
-    return true;
-
+void World::age() {
+    ageInventory();
+    maps.age();
 }
 
 
-void World::AgeInventory() {
+void World::ageInventory() {
     Players.for_each(&Player::ageInventory);
     Monsters.for_each(&Monster::ageInventory);
 }

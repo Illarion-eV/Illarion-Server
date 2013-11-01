@@ -90,9 +90,6 @@ World *World::get() throw(std::runtime_error) {
 }
 
 World::World(const std::string &dir, time_t starttime) {
-
-    nextXtoage = 0;
-
     lastTurnIGDay=getTime("day");
 
     usedAP = 0;
@@ -102,10 +99,6 @@ World::World(const std::string &dir, time_t starttime) {
 
     directory = dir;
     scriptDir = dir + std::string(SCRIPTSDIR);
-
-    timecount = 1;
-    last_age = time(nullptr);
-    ammount = 50;
 
     srand((unsigned) time(nullptr));
 
@@ -1020,7 +1013,7 @@ void World::initScheduler() {
     scheduler.addRecurringTask([&] { Monsters.for_each(reduceMC); Npc.for_each(reduceMC); }, std::chrono::seconds(10), "increase_monster_learn_points");
     scheduler.addRecurringTask([&] { monitoringClientList->CheckClients(); }, std::chrono::milliseconds(250), "check_monitoring_clients");
     scheduler.addRecurringTask([&] { scheduledScripts->nextCycle(); }, std::chrono::seconds(1), "check_scheduled_scripts");
-    scheduler.addRecurringTask([&] { DoAge(); }, std::chrono::milliseconds(25), "check_aging");
+    scheduler.addRecurringTask([&] { age(); }, std::chrono::minutes(3), "check_aging");
     scheduler.addRecurringTask([&] { turntheworld(); }, std::chrono::milliseconds(100), "turntheworld");
     scheduler.addRecurringTask([&] { sendIGTimeToAllPlayers(); }, std::chrono::hours(8), getNextIGDayTime(), "update_ig_day");
 }
