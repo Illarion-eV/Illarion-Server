@@ -1110,7 +1110,7 @@ private:
     //! das home-Verzeichnis des Servers
     std::string directory;
 
-    void age();
+    void ageMaps();
     void ageInventory();
 
     //! das Verzeichnis mit den Skripten

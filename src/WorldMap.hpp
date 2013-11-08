@@ -46,7 +46,7 @@ public:
 
     bool InsertMap(map_t newMap);
 
-    void age();
+    bool allMapsAged();
 
     bool exportTo(const std::string &exportDir) const;
     void saveToDisk(const std::string &prefix) const;
@@ -54,5 +54,6 @@ public:
 private:
     map_vector_t maps;
     std::unordered_map<position, map_t> world_map;
+    size_t ageIndex = 0;
 };
 #endif

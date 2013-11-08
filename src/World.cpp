@@ -1013,7 +1013,8 @@ void World::initScheduler() {
     scheduler.addRecurringTask([&] { Monsters.for_each(reduceMC); Npc.for_each(reduceMC); }, std::chrono::seconds(10), "increase_monster_learn_points");
     scheduler.addRecurringTask([&] { monitoringClientList->CheckClients(); }, std::chrono::milliseconds(250), "check_monitoring_clients");
     scheduler.addRecurringTask([&] { scheduledScripts->nextCycle(); }, std::chrono::seconds(1), "check_scheduled_scripts");
-    scheduler.addRecurringTask([&] { age(); }, std::chrono::minutes(3), "check_aging");
+    scheduler.addRecurringTask([&] { ageInventory(); }, std::chrono::minutes(3), "age_inventory");
+    scheduler.addRecurringTask([&] { ageMaps(); }, std::chrono::minutes(3), "age_maps");
     scheduler.addRecurringTask([&] { turntheworld(); }, std::chrono::milliseconds(100), "turntheworld");
     scheduler.addRecurringTask([&] { sendIGTimeToAllPlayers(); }, std::chrono::hours(8), getNextIGDayTime(), "update_ig_day");
 }

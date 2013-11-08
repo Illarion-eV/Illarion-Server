@@ -693,9 +693,10 @@ void World::updatePlayerView(short int startx, short int endx) {
 }
 
 
-void World::age() {
-    ageInventory();
-    maps.age();
+void World::ageMaps() {
+    if (not maps.allMapsAged()) {
+        scheduler.addOneshotTask([&] { ageMaps(); }, std::chrono::seconds(1), "age_maps");
+    }
 }
 
 

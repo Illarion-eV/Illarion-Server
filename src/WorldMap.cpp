@@ -23,6 +23,7 @@
 
 #include <stdexcept>
 #include <boost/algorithm/string/replace.hpp>
+#include <chrono>
 
 void WorldMap::clear() {
     maps.clear();
@@ -116,10 +117,22 @@ bool WorldMap::InsertMap(WorldMap::map_t newMap) {
 
 }
 
-void WorldMap::age() {
-    for (auto &map : maps) {
-        map->age();
+bool WorldMap::allMapsAged() {
+    using std::chrono::steady_clock;
+    using std::chrono::milliseconds;
+
+    auto startTime = steady_clock::now();
+
+    while (ageIndex < maps.size() && steady_clock::now() - startTime < milliseconds(10)) {
+        maps[ageIndex++]->age();
     }
+
+    if (ageIndex < maps.size()) {
+        return false;
+    }
+
+    ageIndex = 0;
+    return true;
 }
 
 bool WorldMap::exportTo(const std::string &exportDir) const {
