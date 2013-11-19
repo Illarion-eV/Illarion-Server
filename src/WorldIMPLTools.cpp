@@ -43,8 +43,11 @@
 
 #include "netinterface/protocol/ServerCommands.hpp"
 
+#include "script/LuaWeaponScript.hpp"
+
 extern MonsterTable *MonsterDescriptions;
 extern std::vector<position> contpos;
+extern std::shared_ptr<LuaWeaponScript> standardFightingScript;
 
 void World::deleteAllLostNPC() {
     Field *tempf;
@@ -370,23 +373,6 @@ Character *World::findCharacter(TYPE_OF_CHARACTER_ID id) {
 }
 
 
-bool World::findPlayerWithLowestHP(const std::vector<Player *> &ppvec, Player *&found) {
-    found = nullptr;
-
-    for (const auto &player : ppvec) {
-        if (!found) {
-            found = player;
-        } else {
-            if (found->getAttribute(Character::hitpoints) > player->getAttribute(Character::hitpoints)) {
-                found = player;
-            }
-        }
-    }
-
-    return found;
-}
-
-
 void World::takeMonsterAndNPCFromMap() {
     Monsters.for_each([this](Monster *monster) {
         Field *tempf;
@@ -494,10 +480,12 @@ bool World::characterAttacks(Character *cp) {
                             temp.push_back(dynamic_cast<Player *>(cp));
                         }
 
-                        Player *foundPl;
+                        if (!temp.empty()) {
+                            Player *foundPl = standardFightingScript->setTarget(temppl, temp);
 
-                        if (!temp.empty() && findPlayerWithLowestHP(temp, foundPl)) {
-                            temppl->turn(foundPl->getPosition());
+                            if (foundPl) {
+                                temppl->turn(foundPl->getPosition());
+                            }
                         }
 
                     }

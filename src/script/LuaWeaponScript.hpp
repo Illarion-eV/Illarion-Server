@@ -22,9 +22,11 @@
 #define _LUA_WEAPON_SCRIPT_HPP_
 
 #include "LuaScript.hpp"
+#include <vector>
 
 class World;
 class Character;
+class Player;
 struct WeaponStruct;
 
 class LuaWeaponScript : public LuaScript {
@@ -34,6 +36,7 @@ public:
     virtual ~LuaWeaponScript() throw();
 
     void onAttack(Character *Attacker, Character *Defender);
+    Player *setTarget(Character *Monster, const std::vector<Player *> &CandidateList);
 
 private:
     LuaWeaponScript(const LuaWeaponScript &);

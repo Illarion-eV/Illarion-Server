@@ -359,14 +359,6 @@ public:
     */
     void deleteAllLostNPC();
 
-    /**
-    *finds the player with the lowes healthpoints in a given player vector
-    *@param ppvec the vector which should be searched for the player with the lowest hp
-    *@param call by reference, returns the player which was found
-    *@return if true there was a player found otherwise false
-    */
-    bool findPlayerWithLowestHP(const std::vector<Player *> &ppvec, Player *&found);
-
     inline LuaScript *getCurrentScript() const {
         return currentScript;
     }

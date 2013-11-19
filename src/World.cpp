@@ -47,6 +47,7 @@
 
 #include "script/LuaLogoutScript.hpp"
 #include "script/LuaNPCScript.hpp"
+#include "script/LuaWeaponScript.hpp"
 
 #include "db/SelectQuery.hpp"
 #include "db/Result.hpp"
@@ -62,7 +63,8 @@ extern ScheduledScriptsTable *scheduledScripts;
 //#define World_DEBUG
 
 extern MonsterTable *MonsterDescriptions;
-extern std::shared_ptr<LuaLogoutScript>logoutScript;
+extern std::shared_ptr<LuaLogoutScript> logoutScript;
+extern std::shared_ptr<LuaWeaponScript> standardFightingScript;
 
 World *World::_self;
 
@@ -676,10 +678,8 @@ void World::checkMonsters() {
                     Player *foundP = nullptr;
 
                     if ((!temp.empty()) && monster.canAttack()) {
-                        //angreifen
-                        //search for the target via script or the player with the lowest hp
                         if (!monStruct.script || !monStruct.script->setTarget(monsterPointer, temp, foundP)) {
-                            findPlayerWithLowestHP(temp, foundP);
+                            foundP = standardFightingScript->setTarget(monsterPointer, temp);
                         }
 
                         if (foundP) {
@@ -720,9 +720,8 @@ void World::checkMonsters() {
                         if ((!temp.empty()) && (monster.canAttack())) {
                             Player *foundP2 = nullptr;
 
-                            //search for the target via script or the player with the lowest hp
                             if (!monStruct.script || !monStruct.script->setTarget(monsterPointer, temp, foundP2)) {
-                                findPlayerWithLowestHP(temp, foundP2);
+                                foundP2 = standardFightingScript->setTarget(monsterPointer, temp);
                             }
 
                             if (foundP2) {  // if the script returned a valid character...
@@ -873,17 +872,14 @@ void World::checkMonsters() {
 
                     //If we have found players which can be attacked directly and the monster can attack
                     if (!temp.empty()) {
-                        //angreifen
-                        Player *foundP;
+                        Player *foundP = standardFightingScript->setTarget(monsterPointer, temp);
 
-                        //search for the player with the lowes hp
-                        if (findPlayerWithLowestHP(temp, foundP)) {
+                        if (foundP) {
                             if (foundMonster && monStruct.script) {
                                 monStruct.script->enemyNear(monsterPointer, foundP);
                             } else {
                                 Logger::error(LogFacility::World) << "cant find a monster id for checking the script!" << Log::end;
                             }
-
                         }
                     }
 
@@ -895,7 +891,7 @@ void World::checkMonsters() {
 
                         //search for the target via script or the player with the lowest hp
                         if (!monStruct.script || !monStruct.script->setTarget(monsterPointer, temp2, foundP)) {
-                            findPlayerWithLowestHP(temp2, foundP);
+                            foundP = standardFightingScript->setTarget(monsterPointer, temp2);
                         }
 
                         if (foundP) {
