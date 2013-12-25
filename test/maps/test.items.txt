@@ -1,0 +1,5 @@
+0;3;2622;111;rareness=2
+0;3;2615;0;craftedBy=me
+3;2;2609;123;\;\\\=crazy\=\;=\;\=\\crazy\\\\
+4;1;651;42
+4;1;2579;0;nameDe=German Äöß;nameEn=English

@@ -54,6 +54,11 @@ BOOST_GRAPH
 PKG_CHECK_MODULES([lua], [lua5.1])
 PKG_CHECK_MODULES([libpqxx], [libpqxx >= 3.1])
 
+AC_CONFIG_LINKS([test/maps/test.tiles.txt:test/maps/test.tiles.txt
+       test/maps/test.items.txt:test/maps/test.items.txt
+       test/maps/test.warps.txt:test/maps/test.warps.txt
+])
+
 AC_LANG(C++)
 SAVED_LDFLAGS=$LDFLAGS
 LDFLAGS="$LDFLAGS -lluabind"
@@ -98,3 +103,4 @@ AC_OUTPUT([Makefile
 	   src/script/Makefile
 	   test/Makefile
 ])
+
