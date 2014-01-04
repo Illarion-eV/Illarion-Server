@@ -1165,6 +1165,8 @@ private:
     // export maps to mapdir/export
     bool exportMaps(Player *cp);
 
+    void ignoreComments(std::ifstream &inputStream);
+
     //! reload all tables
     bool reload_tables(Player *cp);
 

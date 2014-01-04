@@ -172,6 +172,8 @@ bool World::load_from_editor(const std::string &filename) {
 
     int h_level, h_x, h_y, h_width, h_height, oldy;
 
+    ignoreComments(maptilesfile);
+
     // load map file header information
     maptilesfile >> dummy;
 
@@ -292,6 +294,8 @@ bool World::load_from_editor(const std::string &filename) {
         return true;    // warps are not crucial
     }
 
+    ignoreComments(warpfile);
+
     position start, target;
     start.z = h_level;
     warpfile >> start.x;
@@ -344,6 +348,8 @@ bool World::load_from_editor(const std::string &filename) {
         Logger::error(LogFacility::World) << "could not open file: " << filename << ".items.txt" << Log::end;
         return true;    // items are not crucial
     }
+
+    ignoreComments(mapitemsfile);
 
     int x,y;
     Item it;
@@ -456,6 +462,19 @@ bool World::load_from_editor(const std::string &filename) {
     Logger::debug(LogFacility::World) << "Import map: " << filename << " was successful!" << Log::end;
 
     return true;
+}
+
+void World::ignoreComments(std::ifstream &inputStream) {
+    while (true) {
+        char firstCharacter = inputStream.get();
+
+        if (firstCharacter == '#') {
+            inputStream.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        } else {
+            inputStream.unget();
+            break;
+        }
+    }
 }
 
 World::~World() {
