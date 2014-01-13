@@ -39,6 +39,10 @@ std::string LuaQuestScript::description(Character *user, TYPE_OF_QUESTSTATUS sta
 }
 
 QuestAvailability LuaQuestScript::available(Character *user, TYPE_OF_QUESTSTATUS status) {
+    if (!existsEntrypoint("QuestAvailability")) {
+        return questDefaultAvailable;
+    }
+
     character_ptr fuse_user(user);
     return callEntrypoint<QuestAvailability>("QuestAvailability", fuse_user, status);
 }
