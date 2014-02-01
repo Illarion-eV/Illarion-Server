@@ -631,7 +631,7 @@ void World::tile_command(Player *cp, const std::string &tile) {
     }
 
     try {
-        setNextTile(cp, boost::lexical_cast<unsigned char>(tile));
+        setNextTile(cp, boost::lexical_cast<unsigned short>(tile));
     } catch (boost::bad_lexical_cast &) {
     }
 }
@@ -659,7 +659,7 @@ void World::turtleon_command(Player *cp, const std::string &tile) {
     }
 
     try {
-        auto id = boost::lexical_cast<unsigned char>(tile);
+        auto id = boost::lexical_cast<unsigned short>(tile);
         cp->setTurtleActive(true);
         cp->setTurtleTile(id);
     } catch (boost::bad_lexical_cast &) {
