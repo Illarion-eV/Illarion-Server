@@ -64,6 +64,10 @@ bool WaypointList::recalcStepList() {
         return false;
     }
 
+    if (positions.empty()) {
+        return false;
+    }
+
     steplist.clear();
     _movechar->getStepList(positions.front(), steplist);
     return (!steplist.empty());
