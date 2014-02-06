@@ -105,7 +105,7 @@ void SpawnPoint::spawn() {
                             tempf->SetPlayerOnField(true);
                             world->sendCharacterMoveToAllVisiblePlayers(newmonster, NORMALMOVE, 4);
                         } else {
-                            std::cout<<"cant find empty field at pos " << tempPos << std::endl;
+                            //std::cout<<"cant find empty field at pos " << tempPos << std::endl;
                         }
                     }
                 } catch (Monster::unknownIDException &) {
