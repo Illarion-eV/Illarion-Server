@@ -227,7 +227,9 @@ bool a_star(const ::position &start_pos, const ::position &goal_pos, std::list<d
 
     astar_ex_visitor visitor(goal);
 
-    auto color = make_shared_array_property_map(num_vertices(g), white_color, index);
+    typedef boost::unordered_map<Position, default_color_type, vertex_hash> color_map_t;
+    color_map_t color_map;
+    boost::associative_property_map<color_map_t> color(color_map);
 
     try {
         astar_search_no_init(g, start, h, visitor, pred_pmap, rank_pmap,
