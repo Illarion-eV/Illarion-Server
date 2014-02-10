@@ -136,7 +136,7 @@ auto CharacterContainer<T>::findAllCharactersInRangeOf(const position &pos, int 
         short int dy = p.y - pos.y;
         short int dz = p.z - pos.z;
         
-        if ((abs(dx) + abs(dy) <= distancemetric) && (-RANGEDOWN <= dz) && (dz <= RANGEUP)) {
+        if (abs(dx) <= distancemetric && abs(dy) <= distancemetric && -RANGEDOWN <= dz && dz <= RANGEUP) {
             if (auto character=find(id)) temp.push_back(character);
         }
     }
@@ -180,7 +180,7 @@ auto CharacterContainer<T>::findAllAliveCharactersInRangeOf(const position &pos,
         short int dy = p.y - pos.y;
         short int dz = p.z - pos.z;
         
-        if (((abs(dx) + abs(dy) <= distancemetric) || (distancemetric==1 && abs(dx)==1 && abs(dy)==1)) && (-RANGEDOWN <= dz) && (dz <= RANGEUP)) {
+        if (abs(dx) <= distancemetric && abs(dy) <= distancemetric && -RANGEDOWN <= dz && dz <= RANGEUP) {
             if (auto character=find(id))
                 if (character->isAlive())
                     temp.push_back(character);
@@ -202,7 +202,7 @@ auto CharacterContainer<T>::findAllAliveCharactersInRangeOfOnSameMap(const posit
         short int dy = p.y - pos.y;
         short int dz = p.z - pos.z;
      
-        if (((abs(dx) + abs(dy) <= distancemetric) || (distancemetric==1 && abs(dx)==1 && abs(dy)==1)) && (-RANGEDOWN <= dz) && (dz <= RANGEUP)) {
+        if (abs(dx) <= distancemetric && abs(dy) <= distancemetric && -RANGEDOWN <= dz && dz <= RANGEUP) {
             if (auto character=find(id))
                 if (character->isAlive())
                     temp.push_back(character);
