@@ -734,6 +734,8 @@ void World::Load(const std::string &prefix) {
         Logger::error(LogFacility::World) << "Error while loading maps: could not open " << (path + "_initmaps") << Log::end;
         Logger::info(LogFacility::World) << "trying to import maps" << Log::end;
         load_maps();
+        Logger::info(LogFacility::World) << "Saving World..." << Log::end;
+        Save("Illarion");
         return;
     } else {
         unsigned short int size;
