@@ -117,11 +117,18 @@ struct editor_maptile {
     unsigned short int musicID;
 };
 
-const boost::regex tilesFilter( ".*\\.tiles\\.txt" );
 
 bool World::load_maps() {
     int numfiles = 0;
     bool ok = true;
+
+    Logger::info(LogFacility::World) << "Removing old maps." << Log::end;
+    
+    for (boost::filesystem::directory_iterator end, it(Config::instance().datadir() + "map/"); it != end; ++it) {
+        if (boost::regex_match(it->path().filename().string(), mapFilter)) {
+             boost::filesystem::remove(it->path());
+        }
+    }
 
     Logger::info(LogFacility::World) << "Importing maps." << Log::end;
 
