@@ -21,7 +21,7 @@
 AC_PREREQ(2.50)
 AC_INIT(Illarion Server, 0.9, http://illarion.org)
 AC_CONFIG_MACRO_DIR([m4])
-AM_INIT_AUTOMAKE(illarion_server, 0.9)
+AM_INIT_AUTOMAKE([-Wno-portability foreign 1.11])
 AC_CONFIG_HEADERS(config.h)
 
 # Checks for programs.
