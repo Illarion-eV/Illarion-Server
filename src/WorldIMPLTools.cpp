@@ -694,8 +694,8 @@ void World::ageInventory() {
 }
 
 
-void World::Save(const std::string &prefix) {
-    std::string path = directory + std::string(MAPDIR) + prefix;
+void World::Save() {
+    std::string path = directory + std::string(MAPDIR) + worldName;
 
     maps.saveToDisk(path);
 
@@ -725,8 +725,8 @@ void World::Save(const std::string &prefix) {
 }
 
 
-void World::Load(const std::string &prefix) {
-    std::string path = directory + std::string(MAPDIR) + prefix;
+void World::Load() {
+    std::string path = directory + std::string(MAPDIR) + worldName;
 
     std::ifstream mapinitfile((path + "_initmaps").c_str(), std::ios::binary | std::ios::in);
 
@@ -735,7 +735,7 @@ void World::Load(const std::string &prefix) {
         Logger::info(LogFacility::World) << "trying to import maps" << Log::end;
         load_maps();
         Logger::info(LogFacility::World) << "Saving World..." << Log::end;
-        Save("Illarion");
+        Save();
         return;
     } else {
         unsigned short int size;

@@ -298,7 +298,7 @@ void World::save_command(Player *cp) {
     });
 
     std::cout << "Save maps" << std::endl;
-    Save("Illarion");
+    Save();
 
     Players.for_each([this](Player *player) {
         Field *tempf;

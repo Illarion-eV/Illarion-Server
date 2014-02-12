@@ -122,7 +122,7 @@ int main(int argc, char *argv[]) {
     Data::activateTables();
     loadData();
 
-    world->Load("Illarion");
+    world->Load();
 
     Data::reloadScripts();
 
@@ -198,7 +198,7 @@ int main(int argc, char *argv[]) {
     PlayerManager::get().stop();
     world->takeMonsterAndNPCFromMap();
 
-    world->Save("Illarion");
+    world->Save();
     delete world;
     world = nullptr;
 

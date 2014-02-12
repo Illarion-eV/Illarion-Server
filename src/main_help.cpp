@@ -297,7 +297,7 @@ void sig_usr(int) {
     world->load_maps();
     //alles importiert also noch ein save machen
     Logger::info(LogFacility::World) << "Saving World..." << Log::end;
-    world->Save("Illarion");
+    world->Save();
     world->allowLogin(true);
     Logger::info(LogFacility::World) << "Map import finished" << Log::end;
 

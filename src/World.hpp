@@ -456,19 +456,8 @@ public:
     */
     void updatePlayerView(short int startx, short int endx);
 
-    /**
-    *loads the world
-    *
-    *@param prefix the name of the world wich should be loaded
-    */
-    void Load(const std::string &prefix);
-
-    /**
-    *saves the world
-    *
-    *@param prefic the name under which the world should be saved
-    */
-    void Save(const std::string &prefix);
+    void Load();
+    void Save();
 
     /**
     *@brief changes one part of the weather and sends the new weather to all players
@@ -1174,6 +1163,7 @@ private:
 
     std::mutex immediatePlayerCommandsMutex;
     std::queue<Player*> immediatePlayerCommands;
+    const std::string worldName{"Illarion"};
 };
 
 #endif
