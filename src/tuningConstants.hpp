@@ -81,4 +81,6 @@
 #define MAXTHROWWEIGHT 99
 #define MAXDROPDISTANCE 2
 
+const unsigned short NP_MAX_WALK_AGI = 20;
+
 #endif

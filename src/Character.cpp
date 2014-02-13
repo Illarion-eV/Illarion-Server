@@ -1478,11 +1478,14 @@ uint16_t Character::getMovementCost(const Field *sourcefield) const {
         break;
     }
 
+    auto agility = getAttribute(Character::agility);
+
     if (getType() != player) {
         walkcost += STANDARD_MONSTER_WALKING_COST;
+        agility = std::min(agility, NP_MAX_WALK_AGI);
     }
 
-    walkcost = (walkcost * P_MOVECOSTFORMULA_walkingCost_MULTIPLIER) / (getAttribute(Character::agility) + P_MOVECOSTFORMULA_agility_ADD);
+    walkcost = (walkcost * P_MOVECOSTFORMULA_walkingCost_MULTIPLIER) / (agility + P_MOVECOSTFORMULA_agility_ADD);
 
     return walkcost;
 }
