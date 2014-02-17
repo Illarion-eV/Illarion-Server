@@ -21,6 +21,9 @@
 #include "data/Data.hpp"
 #include "Logger.hpp"
 #include "script/LuaLongTimeEffectScript.hpp"
+#include "Config.hpp"
+
+#include <stdlib.h>
 
 namespace Data {
 
@@ -66,6 +69,8 @@ bool reloadTables() {
 
     Logger::notice(LogFacility::Script) << "Loading data and scripts ..." << Log::end;
 
+    system((Config::instance().datadir() + "pre-reload").c_str());
+
     for (auto &table : getTables()) {
         success = success && table->reloadBuffer();
 
@@ -97,7 +102,6 @@ bool reload() {
     }
 
     return false;
-
 }
 
 }
