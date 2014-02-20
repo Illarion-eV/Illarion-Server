@@ -81,7 +81,7 @@ bool WaypointList::makeMove() {
     }
 
     if (!_movechar->move(steplist.front())) {
-        return recalcStepList();
+        return steplist.size() > 1 && recalcStepList();
     }
 
     steplist.pop_front();
