@@ -677,15 +677,10 @@ void World::checkMonsters() {
 
             if (monster.canAct()) {
                 if (!monster.getOnRoute()) {
-                    //set lastTargetSeen to false if we reach the position where the target was seen the last time
                     if (monster.getPosition() == monster.lastTargetPosition) {
                         monster.lastTargetSeen = false;
                     }
 
-                    // enough AP
-                    //searh for all players which can be attacked from the monster directly
-
-                    //get attackrange of the weapon
                     Item itl = monster.GetItemAt(LEFT_TOOL);
                     Item itr = monster.GetItemAt(RIGHT_TOOL);
 
@@ -697,40 +692,34 @@ void World::checkMonsters() {
                         range = Data::WeaponItems[itl.getId()].Range;;
                     }
 
-                    //===============================================
-                    const auto temp = Players.findAllAliveCharactersInRangeOf(monster.getPosition(), range);
+                    const auto temp = getTargetsInRange(monster.getPosition(), range);
                     bool has_attacked=false;
-                    //If we have found players which can be attacked directly and the monster can attack
-                    Player *foundP = nullptr;
+                    Character *target = nullptr;
 
                     if ((!temp.empty()) && monster.canAttack()) {
-                        if (!monStruct.script || !monStruct.script->setTarget(monsterPointer, temp, foundP)) {
-                            foundP = standardFightingScript->setTarget(monsterPointer, temp);
+                        if (!monStruct.script || !monStruct.script->setTarget(monsterPointer, temp, target)) {
+                            target = standardFightingScript->setTarget(monsterPointer, temp);
                         }
 
-                        if (foundP) {
-                            //let the monster attack the player with the lowest hp->assigned this player as target
-                            monster.enemyid = foundP->getId();
-                            monster.enemytype = Character::player;
-                            monster.lastTargetPosition = foundP->getPosition();
+                        if (target) {
+                            monster.enemyid = target->getId();
+                            monster.enemytype = Character::character_type(target->getType());
+                            monster.lastTargetPosition = target->getPosition();
                             monster.lastTargetSeen = true;
 
                             if (foundMonster) {
-                                //check if we have a pointer to a script
                                 if (monStruct.script) {
-                                    //Wenn Scriptaufruf erfolgreich den aktuellen schleifenablauf abbrechen.
-                                    if (monStruct.script->enemyNear(monsterPointer, foundP)) {
-                                        return; //Schleife fr dieses Monster abbrechen. Da es schon etwas diesne Schleifendurchlauf getan hat.
+                                    if (monStruct.script->enemyNear(monsterPointer, target)) {
+                                        return;
                                     }
                                 }
                             } else {
                                 Logger::error(LogFacility::Script) << "cant find a monster id for checking the script!" << Log::end;
                             }
 
-                            //attack the player which we have found
-                            monster.turn(foundP->getPosition());
+                            monster.turn(target->getPosition());
 
-                            if (monster.canFight()) {    // enough FP to fight?
+                            if (monster.canFight()) {
                                 has_attacked = characterAttacks(monsterPointer);
                             } else {
                                 has_attacked = true;
@@ -738,32 +727,31 @@ void World::checkMonsters() {
                         }
                     }
 
-                    if (!has_attacked) { //bewegen
-                        const auto temp = Players.findAllAliveCharactersInRangeOf(monster.getPosition(), MONSTERVIEWRANGE);
+                    if (!has_attacked) {
+                        const auto temp = getTargetsInRange(monster.getPosition(), MONSTERVIEWRANGE);
 
                         bool makeRandomStep=true;
 
                         if ((!temp.empty()) && (monster.canAttack())) {
-                            Player *foundP2 = nullptr;
+                            Character *target = nullptr;
 
-                            if (!monStruct.script || !monStruct.script->setTarget(monsterPointer, temp, foundP2)) {
-                                foundP2 = standardFightingScript->setTarget(monsterPointer, temp);
+                            if (!monStruct.script || !monStruct.script->setTarget(monsterPointer, temp, target)) {
+                                target = standardFightingScript->setTarget(monsterPointer, temp);
                             }
 
-                            if (foundP2) {  // if the script returned a valid character...
+                            if (target) {
                                 monster.lastTargetSeen = true;
-                                monster.lastTargetPosition = foundP2->getPosition();
+                                monster.lastTargetPosition = target->getPosition();
 
-                                //Call enemyNear Script when enemy found
                                 if (foundMonster) {
                                     if (monStruct.script) {
-                                        if (monStruct.script->enemyOnSight(monsterPointer, foundP2)) {
-                                            return; //abort all other walking actions because the script has returned TRUE
+                                        if (monStruct.script->enemyOnSight(monsterPointer, target)) {
+                                            return;
                                         }
                                     }
 
                                     makeRandomStep=false;
-                                    monster.performStep(foundP2->getPosition());
+                                    monster.performStep(target->getPosition());
                                 } else {
                                     Logger::notice(LogFacility::Script) << "cant find the monster id for calling a script!" << Log::end;
                                 }
@@ -775,7 +763,6 @@ void World::checkMonsters() {
                         }
 
                         if (makeRandomStep) {
-                            // No player in range or pig/sheep OR we didn't find anything in getTarget...
                             int tempr = Random::uniform(1, 25);
 
                             MonsterStruct monsterdef;
@@ -798,7 +785,6 @@ void World::checkMonsters() {
                                     int xoffs = monster.getPosition().x - spawn->get_x();
 
                                     if (abs(xoffs) > spawn->getRange() || abs(yoffs) > spawn->getRange()) {
-                                        // monster out of spawn range, remove it from spawn
                                         monster.setSpawn(nullptr);
                                         unsigned int type = monster.getMonsterType();
                                         spawn->dead(type);
@@ -879,9 +865,8 @@ void World::checkMonsters() {
                                 monster.increaseActionPoints(-20);
                             }
                         }
-                    }//angreifen/bewegen
-                } else { //Character is on route
-                    //get attackrange of the weapon
+                    }
+                } else {
                     Item itl = monster.GetItemAt(LEFT_TOOL);
                     Item itr = monster.GetItemAt(RIGHT_TOOL);
 
@@ -893,37 +878,36 @@ void World::checkMonsters() {
                         range = Data::WeaponItems[itl.getId()].Range;;
                     }
 
-                    //===============================================
-                    const auto temp = Players.findAllAliveCharactersInRangeOf(monster.getPosition(), range);
+                    const auto temp = getTargetsInRange(monster.getPosition(), range);
 
-                    //If we have found players which can be attacked directly and the monster can attack
                     if (!temp.empty()) {
-                        Player *foundP = standardFightingScript->setTarget(monsterPointer, temp);
+                        Character *target = nullptr;
+                        
+                        if (!monStruct.script || !monStruct.script->setTarget(monsterPointer, temp, target)) {
+                            target = standardFightingScript->setTarget(monsterPointer, temp);
+                        }
 
-                        if (foundP) {
+                        if (target) {
                             if (foundMonster && monStruct.script) {
-                                monStruct.script->enemyNear(monsterPointer, foundP);
+                                monStruct.script->enemyNear(monsterPointer, target);
                             } else {
                                 Logger::error(LogFacility::World) << "cant find a monster id for checking the script!" << Log::end;
                             }
                         }
                     }
 
-                    //check if there is a player on sight
-                    const auto temp2 = Players.findAllAliveCharactersInRangeOf(monster.getPosition(), MONSTERVIEWRANGE);
+                    const auto temp2 = getTargetsInRange(monster.getPosition(), MONSTERVIEWRANGE);
 
                     if (!temp2.empty()) {
-                        Player *foundP = nullptr;
+                        Character *target = nullptr;
 
-                        //search for the target via script or the player with the lowest hp
-                        if (!monStruct.script || !monStruct.script->setTarget(monsterPointer, temp2, foundP)) {
-                            foundP = standardFightingScript->setTarget(monsterPointer, temp2);
+                        if (!monStruct.script || !monStruct.script->setTarget(monsterPointer, temp2, target)) {
+                            target = standardFightingScript->setTarget(monsterPointer, temp2);
                         }
 
-                        if (foundP) {
-                            //Call enemyNear Script when enemy found
+                        if (target) {
                             if (foundMonster && monStruct.script) {
-                                monStruct.script->enemyOnSight(monsterPointer, foundP);
+                                monStruct.script->enemyOnSight(monsterPointer, target);
                             }
                         }
                     }
@@ -962,6 +946,21 @@ void World::checkMonsters() {
     newMonsters.clear();
 }
 
+
+std::vector<Character *> World::getTargetsInRange(const position &pos, int range) const {
+    const auto players = Players.findAllAliveCharactersInRangeOf(pos, range);
+    const auto monsters = Monsters.findAllAliveCharactersInRangeOf(pos, range);
+    std::vector<Character *> targets;
+    targets.insert(targets.end(), players.begin(), players.end());
+    
+    for (const auto &monster : monsters) {
+        if (not (pos == monster->getPosition())) {
+            targets.push_back(monster);
+        }
+    }
+
+    return targets;
+}
 
 
 void World::checkNPC() {

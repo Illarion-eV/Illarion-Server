@@ -26,7 +26,6 @@
 
 class World;
 class Character;
-class Player;
 struct WeaponStruct;
 
 class LuaWeaponScript : public LuaScript {
@@ -36,7 +35,7 @@ public:
     virtual ~LuaWeaponScript() throw();
 
     void onAttack(Character *Attacker, Character *Defender);
-    Player *setTarget(Character *Monster, const std::vector<Player *> &CandidateList);
+    Character *setTarget(Character *Monster, const std::vector<Character *> &CandidateList);
 
 private:
     LuaWeaponScript(const LuaWeaponScript &);

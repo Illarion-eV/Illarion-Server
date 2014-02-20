@@ -391,7 +391,7 @@ public:
     std::list<BlockingObject> LoS(const position &startingpos, const position &endingpos) const;
 
 
-    bool findPlayersInSight(const position &pos, uint8_t range, std::vector<Player *> &ret, Character::face_to direction);
+    bool findTargetsInSight(const position &pos, uint8_t range, std::vector<Character *> &ret, Character::face_to direction);
     Character *findCharacterOnField(const position &pos) const;
     Player *findPlayerOnField(const position &pos) const;
 
@@ -1144,6 +1144,8 @@ public:
     void addPlayerImmediateActionQueue(Player* player);
 
 private:
+    std::vector<Character *> getTargetsInRange(const position &pos, int range) const;
+    
     bool active_language_command(Player *cp, const std::string &language);
 
     // register any GM commands here...

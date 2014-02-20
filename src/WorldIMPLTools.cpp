@@ -68,17 +68,17 @@ void World::deleteAllLostNPC() {
     LostNpcs.clear();
 }
 
-bool World::findPlayersInSight(const position &pos, uint8_t range, std::vector<Player *> &ret, Character::face_to direction) {
+bool World::findTargetsInSight(const position &pos, uint8_t range, std::vector<Character *> &ret, Character::face_to direction) {
     bool found = false;
 
-    for (const auto &player : Players.findAllAliveCharactersInRangeOfOnSameMap(pos, range)) {
+    for (const auto &candidate : getTargetsInRange(pos, range)) {
         bool indir = false;
-        const position &playerPos = player->getPosition();
+        const position &candidatePos = candidate->getPosition();
 
         switch (direction) {
         case Character::north:
 
-            if (playerPos.y <= pos.y) {
+            if (candidatePos.y <= pos.y) {
                 indir = true;
             }
 
@@ -86,7 +86,7 @@ bool World::findPlayersInSight(const position &pos, uint8_t range, std::vector<P
 
         case Character::northeast:
 
-            if (playerPos.x - pos.x >= playerPos.y - pos.y) {
+            if (candidatePos.x - pos.x >= candidatePos.y - pos.y) {
                 indir = true;
             }
 
@@ -94,7 +94,7 @@ bool World::findPlayersInSight(const position &pos, uint8_t range, std::vector<P
 
         case Character::east:
 
-            if (playerPos.x >= pos.x) {
+            if (candidatePos.x >= pos.x) {
                 indir = true;
             }
 
@@ -102,7 +102,7 @@ bool World::findPlayersInSight(const position &pos, uint8_t range, std::vector<P
 
         case Character::southeast:
 
-            if (playerPos.y - pos.y >= pos.x - playerPos.x) {
+            if (candidatePos.y - pos.y >= pos.x - candidatePos.x) {
                 indir = true;
             }
 
@@ -110,7 +110,7 @@ bool World::findPlayersInSight(const position &pos, uint8_t range, std::vector<P
 
         case Character::south:
 
-            if (playerPos.y >= pos.y) {
+            if (candidatePos.y >= pos.y) {
                 indir = true;
             }
 
@@ -118,7 +118,7 @@ bool World::findPlayersInSight(const position &pos, uint8_t range, std::vector<P
 
         case Character::southwest:
 
-            if (playerPos.x - pos.x <= playerPos.y - pos.y) {
+            if (candidatePos.x - pos.x <= candidatePos.y - pos.y) {
                 indir = true;
             }
 
@@ -126,7 +126,7 @@ bool World::findPlayersInSight(const position &pos, uint8_t range, std::vector<P
 
         case Character::west:
 
-            if (playerPos.x <= pos.x) {
+            if (candidatePos.x <= pos.x) {
                 indir = true;
             }
 
@@ -134,7 +134,7 @@ bool World::findPlayersInSight(const position &pos, uint8_t range, std::vector<P
 
         case Character::northwest:
 
-            if (playerPos.y - pos.y >= pos.x - playerPos.x) {
+            if (candidatePos.y - pos.y >= pos.x - candidatePos.x) {
                 indir = true;
             }
 
@@ -146,10 +146,10 @@ bool World::findPlayersInSight(const position &pos, uint8_t range, std::vector<P
         }
 
         if (indir) {
-            std::list<BlockingObject> objects = LoS(pos, player->getPosition());
+            std::list<BlockingObject> objects = LoS(pos, candidate->getPosition());
 
             if (objects.empty()) {
-                ret.push_back(player);
+                ret.push_back(candidate);
                 found = true;
             }
         }
@@ -471,9 +471,9 @@ bool World::characterAttacks(Character *cp) {
                         }
                     } else {
                         //check for turning into attackackers direction
-                        std::vector<Player *>temp;
+                        std::vector<Character *>temp;
                         temp.clear();
-                        findPlayersInSight(temppl->getPosition(), static_cast<uint8_t>(9), temp, temppl->getFaceTo());
+                        findTargetsInSight(temppl->getPosition(), static_cast<uint8_t>(9), temp, temppl->getFaceTo());
 
                         //add the current attacker to the list
                         if (cp->getType() == Character::player) {
@@ -481,10 +481,10 @@ bool World::characterAttacks(Character *cp) {
                         }
 
                         if (!temp.empty()) {
-                            Player *foundPl = standardFightingScript->setTarget(temppl, temp);
+                            Character *target = standardFightingScript->setTarget(temppl, temp);
 
-                            if (foundPl) {
-                                temppl->turn(foundPl->getPosition());
+                            if (target) {
+                                temppl->turn(target->getPosition());
                             }
                         }
 

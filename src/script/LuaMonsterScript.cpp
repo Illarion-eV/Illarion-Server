@@ -22,7 +22,6 @@
 #include "Monster.hpp"
 #include "World.hpp"
 #include "Character.hpp"
-#include "Player.hpp"
 #include "character_ptr.hpp"
 
 LuaMonsterScript::LuaMonsterScript() throw(ScriptException)
@@ -104,8 +103,8 @@ void LuaMonsterScript::onSpawn(Character *Monster) {
     callEntrypoint("onSpawn", fuse_Monster);
 }
 
-bool LuaMonsterScript::setTarget(Character *Monster, const std::vector<Player *> &CandidateList, Player *&Target) {
-    Target = 0;
+bool LuaMonsterScript::setTarget(Character *Monster, const std::vector<Character *> &CandidateList, Character *&Target) {
+    Target = nullptr;
 
     if (!existsEntrypoint("setTarget")) {
         return false;
@@ -114,8 +113,8 @@ bool LuaMonsterScript::setTarget(Character *Monster, const std::vector<Player *>
     luabind::object luaCandidateList = luabind::newtable(_luaState);
     int index = 1;
 
-    for (const auto &player : CandidateList) {
-        character_ptr fuse_it(player);
+    for (const auto &candidate : CandidateList) {
+        character_ptr fuse_it(candidate);
         luaCandidateList[index++] = fuse_it;
     }
 

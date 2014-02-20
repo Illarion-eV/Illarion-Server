@@ -25,7 +25,6 @@
 #include "Item.hpp"
 #include "Character.hpp"
 
-class Player;
 class World;
 
 class LuaMonsterScript : public LuaScript {
@@ -47,7 +46,7 @@ public:
     bool enemyNear(Character *Monster, Character *enemy);
     void abortRoute(Character *Monster);
     void onSpawn(Character *Monster);
-    bool setTarget(Character *Monster, const std::vector<Player *> &CandidateList, Player *&Target);
+    bool setTarget(Character *Monster, const std::vector<Character *> &CandidateList, Character *&Target);
 
 private:
     LuaMonsterScript(const LuaMonsterScript &);

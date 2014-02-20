@@ -21,7 +21,6 @@
 #include "LuaWeaponScript.hpp"
 #include "Character.hpp"
 #include "character_ptr.hpp"
-#include "Player.hpp"
 
 LuaWeaponScript::LuaWeaponScript(const std::string &filename) throw(ScriptException)
     : LuaScript(filename) {
@@ -39,12 +38,12 @@ void LuaWeaponScript::onAttack(Character *Attacker, Character *Defender) {
     callEntrypoint("onAttack", fuse_Attacker, fuse_Defender);
 }
 
-Player *LuaWeaponScript::setTarget(Character *Monster, const std::vector<Player *> &CandidateList) {
+Character *LuaWeaponScript::setTarget(Character *Monster, const std::vector<Character *> &CandidateList) {
     luabind::object luaCandidateList = luabind::newtable(_luaState);
     int index = 1;
 
-    for (const auto &player : CandidateList) {
-        character_ptr fuse_it(player);
+    for (const auto &candidate : CandidateList) {
+        character_ptr fuse_it(candidate);
         luaCandidateList[index++] = fuse_it;
     }
 
