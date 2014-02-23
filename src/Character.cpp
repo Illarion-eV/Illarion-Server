@@ -1069,13 +1069,7 @@ void Character::deleteAllSkills() {
 
 bool Character::isInRange(Character *cc, unsigned short int distancemetric) const {
     if (cc) {
-        short int pz = cc->pos.z - pos.z;
-        short int px = cc->pos.x - pos.x;
-        short int py = cc->pos.y - pos.y;
-
-        if (((abs(px) + abs(py)) <= distancemetric) && (pz==0)) {
-            return true;
-        }
+        return isInRangeToField(cc->pos, distancemetric);
     }
 
     return false;
@@ -1086,11 +1080,11 @@ unsigned short int Character::getScreenRange() const {
 }
 
 bool Character::isInRangeToField(const position &m_pos, unsigned short int distancemetric) const {
-    short int pz = m_pos.z - pos.z;
-    short int px = m_pos.x - pos.x;
-    short int py = m_pos.y - pos.y;
+    short int dz = abs(m_pos.z - pos.z);
+    short int dx = abs(m_pos.x - pos.x);
+    short int dy = abs(m_pos.y - pos.y);
 
-    if (((abs(px) + abs(py)) <= distancemetric) && (pz == 0)) {
+    if (dx <= distancemetric && dy <= distancemetric && dz == 0) {
         return true;
     } else {
         return false;
@@ -1098,76 +1092,19 @@ bool Character::isInRangeToField(const position &m_pos, unsigned short int dista
 }
 
 unsigned short int Character::distanceMetricToPosition(const position &m_pos) const {
-    unsigned short int ret=0xFFFF;
-    short int pz = pos.z - m_pos.z;
-    short int px = pos.x - m_pos.x;
-    short int py = pos.y - m_pos.y;
+    short int dz = abs(pos.z - m_pos.z);
+    short int dx = abs(pos.x - m_pos.x);
+    short int dy = abs(pos.y - m_pos.y);
 
-    if (pz > 0) {
-        ret = pz;
-    } else {
-        ret = 0 - pz;
-    }
-
-    if (px > 0) {
-        if (px > ret) {
-            ret = px;
-        }
-    } else {
-        if ((0 - px) > ret) {
-            ret = 0 - px;
-        }
-    }
-
-    if (py > 0) {
-        if (py > ret) {
-            ret = py;
-        }
-    } else {
-        if ((0 - py) > ret) {
-            ret = 0 - py;
-        }
-    }
-
-    return ret;
+    return std::max(dx, std::max(dy, dz));
 }
 
 unsigned short int Character::distanceMetric(Character *cc) const {
-    unsigned short int ret=0xFFFF;
-
     if (cc) {
-        short int pz = pos.z - cc->pos.z;
-        short int px = pos.x - cc->pos.x;
-        short int py = pos.y - cc->pos.y;
-
-        if (pz > 0) {
-            ret = pz;
-        } else {
-            ret = 0 - pz;
-        }
-
-        if (px > 0) {
-            if (px > ret) {
-                ret = px;
-            }
-        } else {
-            if ((0 - px) > ret) {
-                ret = 0 - px;
-            }
-        }
-
-        if (py > 0) {
-            if (py > ret) {
-                ret = py;
-            }
-        } else {
-            if ((0 - py) > ret) {
-                ret = 0 - py;
-            }
-        }
+        return distanceMetricToPosition(cc->pos);
+    } else {
+        return 0xFFFF;
     }
-
-    return ret;
 }
 
 
