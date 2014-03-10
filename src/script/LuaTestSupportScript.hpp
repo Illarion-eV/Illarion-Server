@@ -22,8 +22,6 @@
 #define _LUA_TESTSUPPORT_SCRIPT_HPP_
 
 #include "LuaScript.hpp"
-#include "Item.hpp"
-#include "globals.hpp"
 
 class World;
 class Character;
@@ -33,10 +31,10 @@ public:
     LuaTestSupportScript(const std::string &code, const std::string &scriptname);
     virtual ~LuaTestSupportScript() noexcept;
 
-    Item item_test(const Item& in);
-    ScriptItem scriptitem_test(const ScriptItem& in);
-    int int_test(int arg);
-    position position_test(const position& pos);
+    template<typename T>
+    T test(const T& in) {
+        return callEntrypoint<T, T>("test", in);
+    }
 
 private:
 
