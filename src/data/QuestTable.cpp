@@ -51,10 +51,13 @@ void QuestTable::reloadScripts() {
 
     for (const auto &quest : *this) {
         const TYPE_OF_QUEST_ID id = quest.first;
+        auto questScript = script(id);
 
-        try {
-            questStarts.insert(std::make_pair(script(id)->start(), id));
-        } catch (std::logic_error &e) {
+        if (questScript != nullptr) {
+            try {
+                questStarts.insert(std::make_pair(questScript->start(), id));
+            } catch (std::logic_error &e) {
+            }
         }
     }
 }
