@@ -20,6 +20,10 @@
 
 #include "LuaTestSupportScript.hpp"
 
+LuaTestSupportScript::LuaTestSupportScript(const std::string &code)
+    : LuaScript(code, "test") {
+}
+
 LuaTestSupportScript::LuaTestSupportScript(const std::string &code, const std::string &scriptname)
     : LuaScript(code, scriptname) {
 }

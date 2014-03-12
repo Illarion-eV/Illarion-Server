@@ -28,12 +28,17 @@ class Character;
 
 class LuaTestSupportScript : public LuaScript {
 public:
+    LuaTestSupportScript(const std::string &code);
     LuaTestSupportScript(const std::string &code, const std::string &scriptname);
     virtual ~LuaTestSupportScript() noexcept;
 
     template<typename T>
     T test(const T& in) {
         return callEntrypoint<T, T>("test", in);
+    }
+
+    void test() {
+        callEntrypoint("test");
     }
 
 private:
