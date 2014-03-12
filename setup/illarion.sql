@@ -1334,6 +1334,20 @@ CREATE TABLE spawnpoint (
 
 
 --
+-- Name: COLUMN spawnpoint.spp_minspawntime; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN spawnpoint.spp_minspawntime IS 'in minutes';
+
+
+--
+-- Name: COLUMN spawnpoint.spp_maxspawntime; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN spawnpoint.spp_maxspawntime IS 'in minutes';
+
+
+--
 -- Name: spawnpoint_monster; Type: TABLE; Schema: server; Owner: -; Tablespace: 
 --
 

@@ -1087,7 +1087,8 @@ private:
     //! IG day of last turntheworld
     int lastTurnIGDay;
 
-    Timer monstertimer = {10};
+    // check spawns every minute
+    Timer monstertimer = {60};
 
     //! das home-Verzeichnis des Servers
     std::string directory;

@@ -646,8 +646,6 @@ bool World::initRespawns() {
 }
 
 void World::checkMonsters() {
-
-    // respawn ?
     if (monstertimer.next()) {
         if (isSpawnEnabled()) {
             for (auto &spawn : SpawnList) {
