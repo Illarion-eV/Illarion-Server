@@ -51,6 +51,7 @@
 #include "Scheduler.hpp"
 #include "character_ptr.hpp"
 
+#include "data/MonsterTable.hpp"
 #include "data/MonsterAttackTable.hpp"
 
 class Player;
@@ -281,6 +282,8 @@ public:
     void checkPlayers();
 
     void invalidatePlayerDialogs();
+
+    virtual bool getMonsterDefinition(TYPE_OF_CHARACTER_ID type, MonsterStruct &definition);
 
     /**
     *checks all actions of the monsters and updates them

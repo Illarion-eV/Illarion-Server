@@ -645,6 +645,10 @@ bool World::initRespawns() {
 
 }
 
+bool World::getMonsterDefinition(TYPE_OF_CHARACTER_ID type, MonsterStruct &definition) {
+    return MonsterDescriptions->find(type, definition);
+}
+
 void World::checkMonsters() {
     if (monstertimer.next()) {
         if (isSpawnEnabled()) {

@@ -21,13 +21,10 @@
 #include "Random.hpp"
 #include "tuningConstants.hpp"
 #include <iostream>
-#include "data/MonsterTable.hpp"
 #include "script/LuaMonsterScript.hpp"
 #include "World.hpp"
 #include "WaypointList.hpp"
 #include "Config.hpp"
-
-extern MonsterTable *MonsterDescriptions;
 
 uint32_t Monster::counter = 0;
 
@@ -62,7 +59,7 @@ void Monster::setMonsterType(const TYPE_OF_CHARACTER_ID &type) throw(unknownIDEx
 
     MonsterStruct monsterdef;
 
-    if (! MonsterDescriptions->find(type, monsterdef)) {
+    if (! World::get()->getMonsterDefinition(type, monsterdef)) {
         throw unknownIDException();
     }
 
@@ -146,7 +143,7 @@ void Monster::setAlive(bool t) {
 
         MonsterStruct monStruct;
 
-        if (MonsterDescriptions->find(getMonsterType(), monStruct)) {
+        if (World::get()->getMonsterDefinition(getMonsterType(), monStruct)) {
             if (monStruct.script) {
                 monStruct.script->onDeath(this);
             } else {
@@ -162,7 +159,7 @@ bool Monster::attack(Character *target) {
 
     MonsterStruct monStruct;
 
-    if (MonsterDescriptions->find(getMonsterType(), monStruct)) {
+    if (World::get()->getMonsterDefinition(getMonsterType(), monStruct)) {
         if (monStruct.script) {
             monStruct.script->onAttack(this,target);
         } else {
@@ -183,7 +180,7 @@ void Monster::heal() {
 void Monster::receiveText(talk_type tt, const std::string &message, Character *cc) {
     MonsterStruct monStruct;
 
-    if (MonsterDescriptions->find(getMonsterType(), monStruct)) {
+    if (World::get()->getMonsterDefinition(getMonsterType(), monStruct)) {
         if (monStruct.script && monStruct.script->existsEntrypoint("receiveText")) {
             if (this != cc) {
                 monStruct.script->receiveText(this, tt, message, cc);
