@@ -1,59 +1,62 @@
 #include <gmock/gmock.h>
 
 #include "script/LuaTestSupportScript.hpp"
-#include "Character.hpp"
+#include "Monster.hpp"
 #include "World.hpp"
-
-class MockCharacter : public Character {
-public:
-    TYPE_OF_CHARACTER_ID getId() const {return 1;};
-    unsigned short getType() const {return 0;};
-    std::string to_string() const {return {};};
-
-    MOCK_CONST_METHOD0(isNewPlayer, bool());
-    MOCK_METHOD1(pageGM, bool(const std::string &));
-    MOCK_METHOD1(requestInputDialog, void(InputDialog *));
-    MOCK_METHOD1(requestMessageDialog, void(MessageDialog *));
-    MOCK_METHOD1(requestMerchantDialog, void(MerchantDialog *));
-    MOCK_METHOD1(requestSelectionDialog, void(SelectionDialog *));
-    MOCK_METHOD1(requestCraftingDialog, void(CraftingDialog *));
-    MOCK_METHOD2(requestCraftingLookAt, void(unsigned int, ItemLookAt &));
-    MOCK_METHOD2(requestCraftingLookAtIngredient, void(unsigned int, ItemLookAt &));
-    MOCK_CONST_METHOD0(idleTime, uint32_t());
-};
 
 class MockWorld : public World {
 public:
-    MockCharacter *player;
-
     MockWorld() {
         World::_self = this;
-        player = new MockCharacter();
     }
 
-    ~MockWorld() {
-        delete player;
-    }
-
-    Character *findCharacter(TYPE_OF_CHARACTER_ID id) {return player;};
+    MOCK_METHOD1(findCharacter, Character*(TYPE_OF_CHARACTER_ID id));
+    MOCK_METHOD2(getMonsterDefinition, bool(TYPE_OF_CHARACTER_ID, MonsterStruct &));
 };
 
 using ::testing::Return;
+using ::testing::DoAll;
+using ::testing::SetArgReferee;
+using ::testing::AtLeast;
 using ::testing::_;
 
 class world_bindings : public ::testing::Test {
 public:
     MockWorld world;
+    MonsterStruct monsterDefinition;
+    Monster *monster;
 
     ~world_bindings() {
         LuaScript::shutdownLua();
+        delete monster;
+    }
+
+    world_bindings() {
+        ON_CALL(world, getMonsterDefinition(_, _)).WillByDefault(DoAll(SetArgReferee<1>(monsterDefinition), Return(true)));
+        EXPECT_CALL(world, getMonsterDefinition(_, _)).Times(AtLeast(0));
+        monster = new Monster(5, position(1, 2, 3));
+        ON_CALL(world, findCharacter(monster->getId())).WillByDefault(Return(monster));
+        EXPECT_CALL(world, findCharacter(monster->getId())).Times(AtLeast(0));
     }
 };
 
-TEST_F(world_bindings, character_methods) {
-    LuaTestSupportScript script {"function test(player) "
-        "player:isNewPlayer() "
-        "player:pageGM('test') "
+TEST_F(world_bindings, isNewPlayer) {
+    LuaTestSupportScript script {"function test(monster) return monster:isNewPlayer() end"};
+    bool result = script.test<Monster *, bool>(monster);
+    EXPECT_FALSE(result);
+}
+/*
+TEST_F(world_bindings, pageGM) {
+    LuaTestSupportScript script {"function test(monster) return monster:pageGM('test') end"};
+    EXPECT_FALSE(script.test(&monster));
+}
+
+TEST_F(world_bindings, requestInputDialog) {
+    LuaTestSupportScript script {"function test(monster) return monster:requestInputDialog() end"};
+    EXPECT_FALSE(script.test(&monster));
+}
+*/
+/*
         "player:requestInputDialog(nil) "
         "player:requestMessageDialog(nil) "
         "player:requestMerchantDialog(nil) "
@@ -81,7 +84,7 @@ TEST_F(world_bindings, character_methods) {
 
     script.test((Character*)&player);
 }
-
+*/
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
