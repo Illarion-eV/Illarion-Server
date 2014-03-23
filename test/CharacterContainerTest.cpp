@@ -3,6 +3,7 @@
 #include "World.hpp"
 #include "Character.hpp"
 
+using ::testing::AtLeast;
 using ::testing::Return;
 using ::testing::ReturnRef;
 
@@ -26,7 +27,9 @@ class CharacterContainerTest : public ::testing::Test {
 public:
     CharacterContainerTest() {
         ON_CALL(character, getId()).WillByDefault(Return(42));
+        EXPECT_CALL(character, getId()).Times(AtLeast(0));
         ON_CALL(character, getPosition()).WillByDefault(ReturnRef(pos0));
+        EXPECT_CALL(character, getPosition()).Times(AtLeast(0));
     }
 
     ~CharacterContainerTest() {

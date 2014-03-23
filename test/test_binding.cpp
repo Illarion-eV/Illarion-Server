@@ -35,6 +35,7 @@ public:
 };
 
 using ::testing::Return;
+using ::testing::AtLeast;
 using ::testing::_;
 using ::testing::Pointee;
 
@@ -52,7 +53,9 @@ public:
 
     world_bindings() {
         ON_CALL(player, getId()).WillByDefault(Return(1));
+        EXPECT_CALL(player, getId()).Times(AtLeast(0));
 	    ON_CALL(world, findCharacter(player.getId())).WillByDefault(Return(&player));
+        EXPECT_CALL(world, findCharacter(player.getId())).Times(AtLeast(0));
     }
 };
 

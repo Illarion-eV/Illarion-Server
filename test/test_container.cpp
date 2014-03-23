@@ -8,6 +8,7 @@ const Item::id_type itemid_2 = 0x42;
 
 using ::testing::Return;
 using ::testing::ReturnRef;
+using ::testing::AtLeast;
 using ::testing::_;
 
 class MockContainer : public Container {
@@ -33,6 +34,7 @@ class container_tests : public ::testing::Test {
 	public:
 		container_tests() : container{0x13} {
 			ON_CALL(container, getSlotCount()).WillByDefault(Return(100));
+            EXPECT_CALL(container, getSlotCount()).Times(AtLeast(0));
 		}
 
 		~container_tests() {

@@ -27,6 +27,7 @@ public:
 };
 
 using ::testing::Return;
+using ::testing::AtLeast;
 
 class scriptitem_bindings : public ::testing::Test {
 	public:
@@ -36,7 +37,9 @@ class scriptitem_bindings : public ::testing::Test {
 
 	scriptitem_bindings() {
 	    ON_CALL(character, getId()).WillByDefault(Return(1));
+        EXPECT_CALL(character, getId()).Times(AtLeast(0));
         ON_CALL(world, findCharacter(character.getId())).WillByDefault(Return(&character));
+        EXPECT_CALL(world, findCharacter(character.getId())).Times(AtLeast(0));
 	}
 };
 
