@@ -14,17 +14,21 @@ public:
     MOCK_METHOD2(getMonsterDefinition, bool(TYPE_OF_CHARACTER_ID, MonsterStruct &));
 };
 
+class MockMonster : public Monster {
+public:
+    MockMonster() : Monster(5, position(1, 2, 3), nullptr) {}
+
+    MOCK_CONST_METHOD0(isNewPlayer, bool());
+};
+
 using ::testing::Return;
-using ::testing::DoAll;
-using ::testing::SetArgReferee;
 using ::testing::AtLeast;
 using ::testing::_;
 
 class world_bindings : public ::testing::Test {
 public:
     MockWorld world;
-    MonsterStruct monsterDefinition;
-    Monster *monster;
+    MockMonster *monster;
 
     ~world_bindings() {
         LuaScript::shutdownLua();
@@ -32,28 +36,31 @@ public:
     }
 
     world_bindings() {
-        ON_CALL(world, getMonsterDefinition(_, _)).WillByDefault(DoAll(SetArgReferee<1>(monsterDefinition), Return(true)));
+        ON_CALL(world, getMonsterDefinition(_, _)).WillByDefault(Return(true));
         EXPECT_CALL(world, getMonsterDefinition(_, _)).Times(AtLeast(0));
-        monster = new Monster(5, position(1, 2, 3));
+        monster = new MockMonster();
         ON_CALL(world, findCharacter(monster->getId())).WillByDefault(Return(monster));
         EXPECT_CALL(world, findCharacter(monster->getId())).Times(AtLeast(0));
+
+        ON_CALL(*monster, isNewPlayer()).WillByDefault(Return(false));
     }
 };
 
 TEST_F(world_bindings, isNewPlayer) {
     LuaTestSupportScript script {"function test(monster) return monster:isNewPlayer() end"};
-    bool result = script.test<Monster *, bool>(monster);
-    EXPECT_FALSE(result);
+    EXPECT_CALL(*monster, isNewPlayer()).WillOnce(Return(false));
+    bool isNewPlayer = script.test<Monster *, bool>(monster);
+    EXPECT_FALSE(isNewPlayer);
 }
 /*
 TEST_F(world_bindings, pageGM) {
     LuaTestSupportScript script {"function test(monster) return monster:pageGM('test') end"};
-    EXPECT_FALSE(script.test(&monster));
+    bool result = script.test<Monster *, bool>(monster);
+    EXPECT_FALSE(result);
 }
 
 TEST_F(world_bindings, requestInputDialog) {
-    LuaTestSupportScript script {"function test(monster) return monster:requestInputDialog() end"};
-    EXPECT_FALSE(script.test(&monster));
+    LuaTestSupportScript script {"function test(monster) return monster:requestInutDialog('test', 'bla') end"};
 }
 */
 /*
