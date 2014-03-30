@@ -497,6 +497,7 @@ MapStripeTC::MapStripeTC(const position &pos, NewClientView::stripedirection dir
             }
         } else {
             addShortIntToBuffer(-1);
+            addUnsignedCharToBuffer(0);
             addShortIntToBuffer(0);
             addUnsignedCharToBuffer(0);
         }
