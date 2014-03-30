@@ -482,6 +482,7 @@ MapStripeTC::MapStripeTC(const position &pos, NewClientView::stripedirection dir
     for (int i = 0; i < numberOfTiles; ++i) {
         if (fields[i]) {
             addShortIntToBuffer(fields[i]->getTileCode());
+            addUnsignedCharToBuffer(fields[i]->getMovementCost());
             addShortIntToBuffer(fields[i]->getMusicId());
             addUnsignedCharToBuffer(static_cast<unsigned char>(fields[i]->items.size()));
 

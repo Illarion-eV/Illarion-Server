@@ -53,6 +53,8 @@ public:
 
     void Save(std::ostream &mapt, std::ostream &obj, std::ostream &warp);
 
+    TYPE_OF_WALKINGCOST getMovementCost() const;
+
     /**
     * changes the quality of the top item on this field
     * @return true if the item was deleted because of low quality

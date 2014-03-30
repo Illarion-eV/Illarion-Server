@@ -1388,18 +1388,7 @@ bool Character::moveToPossible(const Field *field) const {
 
 uint16_t Character::getMovementCost(const Field *sourcefield) const {
     uint16_t walkcost = 0;
-
-    auto tileId = sourcefield->getTileId();
-    const auto &primaryTile = Data::Tiles[tileId];
-    uint16_t tileWalkingCost = primaryTile.walkingCost;
-
-    tileId = sourcefield->getSecondaryTileId();
-    const auto &secondaryTile = Data::Tiles[tileId];
-    uint16_t secondaryWalkingCost = secondaryTile.walkingCost;
-
-    if (secondaryWalkingCost < tileWalkingCost) {
-        tileWalkingCost = secondaryWalkingCost;
-    }
+    uint16_t tileWalkingCost = sourcefield->getMovementCost();
 
     switch (_movement) {
     case walk:

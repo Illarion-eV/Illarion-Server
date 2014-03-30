@@ -21,6 +21,7 @@
 
 #include "data/Data.hpp"
 #include "globals.hpp"
+#include <limits>
 
 //#define Field_DEBUG
 
@@ -61,6 +62,26 @@ void Field::setMusicId(unsigned short int id) {
 
 unsigned short int Field::getMusicId() const {
     return music;
+}
+
+TYPE_OF_WALKINGCOST Field::getMovementCost() const {
+    if (IsPassable()) {
+        auto tileId = getTileId();
+        const auto &primaryTile = Data::Tiles[tileId];
+        TYPE_OF_WALKINGCOST tileWalkingCost = primaryTile.walkingCost;
+
+        tileId = getSecondaryTileId();
+        const auto &secondaryTile = Data::Tiles[tileId];
+        uint16_t secondaryWalkingCost = secondaryTile.walkingCost;
+
+        if (secondaryWalkingCost < tileWalkingCost) {
+            tileWalkingCost = secondaryWalkingCost;
+        }
+
+        return tileWalkingCost;
+    } else {
+        return std::numeric_limits<TYPE_OF_WALKINGCOST>::max();
+    }
 }
 
 ScriptItem Field::getStackItem(uint8_t spos) const {
