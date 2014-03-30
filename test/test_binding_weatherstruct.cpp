@@ -26,7 +26,7 @@ TEST_F(weather_bindings, test_cloud_density_property) {
 			"weather_cloud_density_test"
 	};
 
-	auto retval = script.test(weather);
+	auto retval = script.test<WeatherStruct, WeatherStruct>(weather);
 	EXPECT_EQ(42, retval.cloud_density);
 }
 
@@ -40,7 +40,7 @@ TEST_F(weather_bindings, test_fog_density_property) {
             "weather_fog_density_test"
     };
 
-    auto retval = script.test(weather);
+    auto retval = script.test<WeatherStruct, WeatherStruct>(weather);
     EXPECT_EQ(42, retval.fog_density);
 }
 
@@ -54,7 +54,7 @@ TEST_F(weather_bindings, test_win_ddir_property) {
             "weather_wind_dir_test"
     };
 
-    auto retval = script.test(weather);
+    auto retval = script.test<WeatherStruct, WeatherStruct>(weather);
     EXPECT_EQ(42, retval.wind_dir);
 }
 
@@ -68,7 +68,7 @@ TEST_F(weather_bindings, test_gust_strength_property) {
             "weather_gust_strength_test"
     };
 
-    auto retval = script.test(weather);
+    auto retval = script.test<WeatherStruct, WeatherStruct>(weather);
     EXPECT_EQ(42, retval.gust_strength);
 }
 
@@ -82,7 +82,7 @@ TEST_F(weather_bindings, test_percipitation_strength_property) {
             "weather_percipitation_strength_test"
     };
 
-    auto retval = script.test(weather);
+    auto retval = script.test<WeatherStruct, WeatherStruct>(weather);
     EXPECT_EQ(42, retval.percipitation_strength);
 }
 
@@ -96,7 +96,7 @@ TEST_F(weather_bindings, test_percipitation_type_property) {
             "weather_percipitation_type_test"
     };
 
-    auto retval = script.test(weather);
+    auto retval = script.test<WeatherStruct, WeatherStruct>(weather);
     EXPECT_EQ(42, retval.per_type);
 }
 
@@ -110,7 +110,7 @@ TEST_F(weather_bindings, test_thunderstorm_property) {
             "weather_thunderstorm_test"
     };
 
-    auto retval = script.test(weather);
+    auto retval = script.test<WeatherStruct, WeatherStruct>(weather);
     EXPECT_EQ(42, retval.thunderstorm);
 }
 
@@ -124,7 +124,7 @@ TEST_F(weather_bindings, test_temperature_property) {
             "weather_temperature_test"
     };
 
-    auto retval = script.test(weather);
+    auto retval = script.test<WeatherStruct, WeatherStruct>(weather);
     EXPECT_EQ(42, retval.temperature);
 }
 
@@ -137,7 +137,7 @@ TEST_F(weather_bindings, test_constructors) {
 			"end",
 			"weather_constructor1_test"
 	};
-	auto retval = script.test(weather);
+	auto retval = script.test<WeatherStruct, WeatherStruct>(weather);
 	EXPECT_EQ(23, retval.cloud_density);
 	}
 	{
@@ -147,7 +147,7 @@ TEST_F(weather_bindings, test_constructors) {
 			"end",
 			"weather_constructor2_test"
 	};
-	auto retval = script.test(weather);
+	auto retval = script.test<WeatherStruct, WeatherStruct>(weather);
 	EXPECT_EQ(23, retval.cloud_density);
 	}
 };

@@ -53,7 +53,7 @@ TEST_F(scriptitem_bindings, test_id_property) {
 			  "end",
 			  "item_id_test"
 			 };
-    auto retval = script.test(item);
+    auto retval = script.test<ScriptItem, ScriptItem>(item);
     EXPECT_EQ(42, retval.getId());
 }
 
@@ -66,7 +66,7 @@ TEST_F(scriptitem_bindings, test_wear_property) {
 			  "end",
 			  "item_id_test"
 			 };
-    auto retval = script.test(item);
+    auto retval = script.test<ScriptItem, ScriptItem>(item);
     EXPECT_EQ(42, retval.getWear());
 }
 
@@ -79,7 +79,7 @@ TEST_F(scriptitem_bindings, test_number_property) {
 			  "end",
 			  "item_id_test"
 			 };
-    auto retval = script.test(item);
+    auto retval = script.test<ScriptItem, ScriptItem>(item);
     EXPECT_EQ(42, retval.getNumber());
 }
 
@@ -92,7 +92,7 @@ TEST_F(scriptitem_bindings, test_quality_property) {
 			  "end",
 			  "item_id_test"
 			 };
-    auto retval = script.test(item);
+    auto retval = script.test<ScriptItem, ScriptItem>(item);
     EXPECT_EQ(42, retval.getQuality());
 }
 
@@ -108,7 +108,7 @@ TEST_F(scriptitem_bindings, test_data_property) {
 			  "end",
 			  "item_id_test"
 			 };
-    auto retval = script.test(item);
+    auto retval = script.test<ScriptItem, ScriptItem>(item);
     EXPECT_EQ(std::string("world"), retval.getData("hello"));
     EXPECT_EQ(std::string("42"), retval.getData("answer"));
 }
@@ -121,7 +121,7 @@ TEST_F(scriptitem_bindings, test_constructor) {
 			  "end",
 			  "scriptitem_constructor_test"
 			 };
-    auto retval = script.test(item);
+    auto retval = script.test<ScriptItem, ScriptItem>(item);
     EXPECT_EQ(23, retval.getId());
 }
 
@@ -141,7 +141,8 @@ TEST_F(scriptitem_bindings, test_constants) {
 		LuaTestSupportScript script {code,
 			  "scriptitem_constants_test"
 			  };
-		EXPECT_EQ(constant,  script.test(0));
+        auto retval = script.test<int, int>(0);
+		EXPECT_EQ(constant, retval);
 	};
 	for (auto entry : constants) {
 		function(entry.first, entry.second);
@@ -158,7 +159,7 @@ TEST_F(scriptitem_bindings, test_owner) {
 			  "end",
 			  "scriptitem_owner_test"
 			 };
-    auto retval = script.test(item);
+    auto retval = script.test<ScriptItem, ScriptItem>(item);
     EXPECT_EQ(23, retval.getId());
 }
 
@@ -172,7 +173,7 @@ TEST_F(scriptitem_bindings, test_pos) {
 			  "end",
 			  "scriptitem_pos_test"
 			 };
-    auto retval = script.test(item);
+    auto retval = script.test<ScriptItem, ScriptItem>(item);
     EXPECT_EQ(23, retval.getId());
 }
 
@@ -186,7 +187,7 @@ TEST_F(scriptitem_bindings, test_itempos) {
 			  "end",
 			  "scriptitem_itempos_test"
 			 };
-    auto retval = script.test(item);
+    auto retval = script.test<ScriptItem, ScriptItem>(item);
     EXPECT_EQ(23, retval.getId());
 }
 
@@ -200,7 +201,7 @@ TEST_F(scriptitem_bindings, test_gettype) {
 			  "end",
 			  "scriptitem_gettype_test"
 			 };
-    auto retval = script.test(item);
+    auto retval = script.test<ScriptItem, ScriptItem>(item);
     EXPECT_EQ(23, retval.getId());
 }
 
@@ -214,7 +215,7 @@ TEST_F(scriptitem_bindings, test_inside) {
 			  "end",
 			  "scriptitem_inside_test"
 			 };
-    auto retval = script.test(item);
+    auto retval = script.test<ScriptItem, ScriptItem>(item);
     EXPECT_EQ(23, retval.getId());
 }
 

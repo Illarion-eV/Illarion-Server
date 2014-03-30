@@ -32,18 +32,14 @@ public:
     LuaTestSupportScript(const std::string &code, const std::string &scriptname);
     virtual ~LuaTestSupportScript() noexcept;
 
-    template<typename T, typename U>
-    U test(const T& in) {
-        return callEntrypoint<U, T>("test", in);
+    template<typename... Args>
+    void test(const Args &... args) {
+        callEntrypoint("test", args...);
     }
 
-    template<typename T>
-    T test(const T& in) {
-        return callEntrypoint<T, T>("test", in);
-    }
-
-    void test() {
-        callEntrypoint("test");
+    template<typename T, typename... Args>
+    T test(const Args &... args) {
+        return callEntrypoint<T, Args...>("test", args...);
     }
 
 private:

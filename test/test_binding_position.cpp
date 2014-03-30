@@ -27,7 +27,7 @@ TEST_F(position_bindings, test_x_property) {
 			"position_x_test"
 	};
 
-	auto retval = script.test(pos);
+	auto retval = script.test<position, position>(pos);
 	EXPECT_EQ(42, retval.x);
 }
 
@@ -41,7 +41,7 @@ TEST_F(position_bindings, test_y_property) {
 			"position_y_test"
 	};
 
-	auto retval = script.test(pos);
+	auto retval = script.test<position, position>(pos);
 	EXPECT_EQ(42, retval.y);
 }
 
@@ -55,7 +55,7 @@ TEST_F(position_bindings, test_z_property) {
 			"position_z_test"
 	};
 
-	auto retval = script.test(pos);
+	auto retval = script.test<position, position>(pos);
 	EXPECT_EQ(42, retval.z);
 }
 
@@ -72,7 +72,7 @@ TEST_F(position_bindings, test_tostring) {
 			"position_tostring_test"
 	};
 
-	auto retval = script.test(pos);
+	auto retval = script.test<position, position>(pos);
 	EXPECT_EQ(42, retval.x);
 }
 
@@ -87,7 +87,7 @@ TEST_F(position_bindings, test_compare) {
 			"position_compare_test"
 	};
 
-	auto retval = script.test(pos);
+	auto retval = script.test<position, position>(pos);
 	EXPECT_EQ(42, retval.x);
 }
 
@@ -100,7 +100,7 @@ TEST_F(position_bindings, test_constructors) {
 			"end",
 			"position_constructor1_test"
 	};
-	auto retval = script.test(pos);
+	auto retval = script.test<position, position>(pos);
 	EXPECT_EQ(23, retval.x);
 	}
 	{
@@ -110,7 +110,7 @@ TEST_F(position_bindings, test_constructors) {
 			"end",
 			"position_constructor2_test"
 	};
-	auto retval = script.test(pos);
+	auto retval = script.test<position, position>(pos);
 	EXPECT_EQ(23, retval.x);
 	}
 };

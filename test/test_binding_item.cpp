@@ -28,7 +28,7 @@ TEST_F(item_bindings, test_id_property) {
 			  "end",
 			  "item_id_test"
 			 };
-    Item retval = script.test(item);
+    Item retval = script.test<Item, Item>(item);
     EXPECT_EQ(42, retval.getId());
 }
 
@@ -41,7 +41,7 @@ TEST_F(item_bindings, test_wear_property) {
 			  "end",
 			  "item_id_test"
 			 };
-    Item retval = script.test(item);
+    Item retval = script.test<Item, Item>(item);
     EXPECT_EQ(42, retval.getWear());
 }
 
@@ -54,7 +54,7 @@ TEST_F(item_bindings, test_number_property) {
 			  "end",
 			  "item_id_test"
 			 };
-    Item retval = script.test(item);
+    Item retval = script.test<Item, Item>(item);
     EXPECT_EQ(42, retval.getNumber());
 }
 
@@ -67,7 +67,7 @@ TEST_F(item_bindings, test_quality_property) {
 			  "end",
 			  "item_id_test"
 			 };
-    Item retval = script.test(item);
+    Item retval = script.test<Item, Item>(item);
     EXPECT_EQ(42, retval.getQuality());
 }
 
@@ -83,7 +83,7 @@ TEST_F(item_bindings, test_data_property) {
 			  "end",
 			  "item_id_test"
 			 };
-    Item retval = script.test(item);
+    Item retval = script.test<Item, Item>(item);
     EXPECT_EQ(std::string("world"), retval.getData("hello"));
     EXPECT_EQ(std::string("42"), retval.getData("answer"));
 }
@@ -97,7 +97,7 @@ TEST_F(item_bindings, test_constructors) {
 			  "end",
 			  "item_constructor_test"
 			 };
-    Item retval = script.test(item);
+    Item retval = script.test<Item, Item>(item);
     EXPECT_EQ(23, retval.getId());
     }
 
@@ -108,7 +108,7 @@ TEST_F(item_bindings, test_constructors) {
 			  "end",
 			  "item_constructor_test"
 			 };
-    Item retval = script.test(item);
+    Item retval = script.test<Item, Item>(item);
     EXPECT_EQ(1, retval.getId());
     EXPECT_EQ(2, retval.getNumber());
     EXPECT_EQ(3, retval.getWear());
