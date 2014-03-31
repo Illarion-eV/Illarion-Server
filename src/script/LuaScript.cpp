@@ -544,8 +544,6 @@ void LuaScript::init_base_functions() {
         .def("requestMerchantDialog", &Character::requestMerchantDialog, luabind::adopt(_2))
         .def("requestSelectionDialog", &Character::requestSelectionDialog, luabind::adopt(_2))
         .def("requestCraftingDialog", &Character::requestCraftingDialog, luabind::adopt(_2))
-        .def("requestCraftingLookAt", &Character::requestCraftingLookAt)
-        .def("requestCraftingLookAtIngredient", &Character::requestCraftingLookAtIngredient)
         .def("idleTime", &Character::idleTime)
         .def("sendBook", &Character::sendBook)
         .def("updateAppearance", &Character::forceUpdateAppearanceForAll)
