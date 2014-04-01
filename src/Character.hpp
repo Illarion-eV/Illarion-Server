@@ -226,16 +226,16 @@ public:
 
     virtual unsigned short getType() const = 0;
 
-    inline void changeRace(TYPE_OF_RACE_ID race) {
+    virtual void changeRace(TYPE_OF_RACE_ID race) {
         this->race = race;
         updateAppearanceForAll(true);
     }
 
-    inline TYPE_OF_RACE_ID getRace() const {
+    virtual TYPE_OF_RACE_ID getRace() const {
         return race;
     }
 
-    inline face_to getFaceTo() const {
+    virtual face_to getFaceTo() const {
         return faceto;
     }
 
@@ -250,11 +250,11 @@ public:
     virtual void changeQualityAt(unsigned char pos, short int amount);
     virtual void increasePoisonValue(short int value);
 
-    inline short int getPoisonValue() const {
+    virtual short int getPoisonValue() const {
         return poisonvalue;
     }
 
-    inline void setPoisonValue(short int value) {
+    virtual void setPoisonValue(short int value) {
         poisonvalue = value;
     }
 
@@ -307,17 +307,17 @@ public:
     inline virtual void changeTarget() {
     }
 
-    inline int getMentalCapacity() const {
+    virtual int getMentalCapacity() const {
         return mental_capacity;
     }
 
-    inline void setMentalCapacity(int value) {
+    virtual void setMentalCapacity(int value) {
         mental_capacity = value;
     }
 
     virtual void increaseMentalCapacity(int value);
 
-    int countItem(TYPE_OF_ITEM_ID itemid) const ;
+    virtual int countItem(TYPE_OF_ITEM_ID itemid) const ;
     // where determines where the items will be counted ("all", "belt", "body", "backpack")
     int countItemAt(const std::string &where, TYPE_OF_ITEM_ID itemid, script_data_exchangemap const *data = nullptr) const;
     virtual int eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangemap const *data = nullptr);
@@ -325,7 +325,7 @@ public:
     virtual int increaseAtPos(unsigned char pos, int count);
     virtual int createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count);
     virtual bool swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t newQuality = 0);
-    ScriptItem GetItemAt(unsigned char itempos);
+    virtual ScriptItem GetItemAt(unsigned char itempos);
     virtual Container *GetBackPack() const;
     Container *GetDepot(uint32_t depotid) const;
     std::vector<ScriptItem> getItemList(TYPE_OF_ITEM_ID id) const;
@@ -379,7 +379,7 @@ public:
     bool isInRangeToField(const position &m_pos, unsigned short int distancemetric) const;
     unsigned short int distanceMetricToPosition(const position &m_pos) const;
 
-    std::string alterSpokenMessage(const std::string &message, int languageSkill) const;
+    virtual std::string alterSpokenMessage(const std::string &message, int languageSkill) const;
     int getLanguageSkill(int languageSkillNumber) const;
 
     virtual void talk(talk_type tt, const std::string &message);
@@ -390,7 +390,7 @@ public:
 
     virtual bool move(direction dir, bool active=true);
 
-    bool getNextStepDir(const position &goal, direction &dir) const;
+    virtual bool getNextStepDir(const position &goal, direction &dir) const;
     bool getStepList(const position &goal, std::list<direction> &steps) const;
 
     virtual bool Warp(const position &newPos);
@@ -412,10 +412,10 @@ public:
     virtual void sendBook(uint16_t bookID);
 
     void updateAppearanceForAll(bool always);
-    void forceUpdateAppearanceForAll();
+    virtual void forceUpdateAppearanceForAll();
     void updateAppearanceForPlayer(Player *target, bool always);
 
-    void performAnimation(uint8_t animID);
+    virtual void performAnimation(uint8_t animID);
 
     typedef std::map<TYPE_OF_SKILL_ID, skillvalue> SKILLMAP;
 
