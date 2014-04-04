@@ -27,7 +27,7 @@
 
 #include <boost/asio.hpp>
 
-#include "tpvector.hpp"
+#include "thread_safe_vector.hpp"
 #include "Connection.hpp"
 
 class NetInterface;
@@ -44,7 +44,7 @@ class InitialConnection : public Connection {
 public:
 
 
-    typedef tpvector<std::shared_ptr<NetInterface>> TVECTORPLAYER;
+    typedef thread_safe_vector<std::shared_ptr<NetInterface>> TVECTORPLAYER;
 
     //! Konstruktor
     InitialConnection();

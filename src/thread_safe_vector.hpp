@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef __tpvector_hpp
-#define __tpvector_hpp
+#ifndef __thread_safe_vector_hpp
+#define __thread_safe_vector_hpp
 
 #include <list>
 #include <exception>
@@ -28,7 +28,7 @@
 #include <mutex>
 #include <chrono>
 
-template<class T> class tpvector : public std::list<T> {
+template<class T> class thread_safe_vector : public std::list<T> {
 public:
     inline size_t size() {
         std::lock_guard<std::mutex> lock(vlock);

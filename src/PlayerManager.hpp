@@ -25,7 +25,7 @@
 #include <mutex>
 
 #include "InitialConnection.hpp"
-#include "tpvector.hpp"
+#include "thread_safe_vector.hpp"
 
 
 class Player;
@@ -45,7 +45,7 @@ public:
 
     void setLoginLogout(bool val);
 
-    typedef tpvector<Player *> TPLAYERVECTOR;
+    typedef thread_safe_vector<Player *> TPLAYERVECTOR;
 
     TPLAYERVECTOR &getLogOutPlayers() {
         return loggedOutPlayers;
