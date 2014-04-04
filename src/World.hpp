@@ -40,7 +40,6 @@
 
 #include "NewClientView.hpp"
 #include "CharacterContainer.hpp"
-#include "tvector.hpp"
 #include "SpawnPoint.hpp"
 #include "TableStructs.hpp"
 #include "Character.hpp"
@@ -168,12 +167,6 @@ public:
     typedef CharacterContainer<NPC> NPCVECTOR;
 
     /**
-    *  a typedef for holding players which have logged out in a thread save
-    * vector
-    */
-    typedef tvector<Player *> TSPLAYERVECTOR;
-
-    /**
     *holds all active player on the world
     *@todo: change the three vectors @see PLAYERVECTOR, @see MONSTERVECTOR, @see NPCVECTOR so there is only one HARVECTOR
     */
@@ -183,12 +176,6 @@ public:
     *sets a new tile on the map
     */
     void setNextTile(Player *cp, unsigned char tilenumber);
-
-
-    /**
-    *holds all player which have logged out (for deleting them)
-    */
-    //TSPLAYERVECTOR LostPlayers;
 
     /**
     *holds all monsters on the world

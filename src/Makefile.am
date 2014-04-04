@@ -80,7 +80,7 @@ noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
 		 db/QueryTables.hpp db/UpdateQuery.hpp db/SelectQuery.hpp \
 		 globals.hpp make_unique.hpp World.hpp Item.hpp \
 		 CharacterContainer.hpp SchedulerTaskClasses.hpp \
-		 tpvector.hpp Random.hpp tvector.hpp NPC.hpp Scheduler.hpp Scheduler.tcc \
+		 tpvector.hpp Random.hpp NPC.hpp Scheduler.hpp Scheduler.tcc \
 		 MapException.hpp PlayerManager.hpp Character.hpp \
 		 Attribute.hpp InitialConnection.hpp Logger.hpp utility.hpp \
 		 MonitoringClients.hpp Field.hpp \

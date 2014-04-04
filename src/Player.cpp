@@ -32,7 +32,6 @@
 #include "Random.hpp"
 #include "SchedulerTaskClasses.hpp"
 #include "Logger.hpp"
-#include "tvector.hpp"
 #include "PlayerManager.hpp"
 #include "MonitoringClients.hpp"
 #include "Config.hpp"
