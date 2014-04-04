@@ -79,6 +79,9 @@ public:
     MOCK_METHOD3(swapAtPos, bool(unsigned char, TYPE_OF_ITEM_ID, uint16_t));
     MOCK_METHOD3(createAtPos, int(unsigned char, TYPE_OF_ITEM_ID, int));
     MOCK_METHOD1(GetItemAt, ScriptItem(unsigned char));
+    MOCK_CONST_METHOD1(getSkillName, std::string(TYPE_OF_SKILL_ID));
+    MOCK_CONST_METHOD1(getSkill, unsigned short(TYPE_OF_SKILL_ID));
+    MOCK_CONST_METHOD1(getMinorSkill, unsigned short(TYPE_OF_SKILL_ID));
 };
 
 using ::testing::Return;
@@ -484,7 +487,28 @@ TEST_F(monster_bindings, getItemAt) {
     item.setId(27);
     EXPECT_CALL(*monster, GetItemAt(13)).WillOnce(Return(item));
     auto result = script.test<ScriptItem, Monster *>(monster);
-    EXPECT_EQ(item, result);
+    EXPECT_EQ(27, result.getId());
+}
+
+TEST_F(monster_bindings, getSkillName) {
+    LuaTestSupportScript script {"function test(monster) return monster:getSkillName(12) end"};
+    EXPECT_CALL(*monster, getSkillName(12)).WillOnce(Return("someskill"));
+    auto result = script.test<std::string, Monster *>(monster);
+    EXPECT_EQ("someskill", result);
+}
+
+TEST_F(monster_bindings, getSkill) {
+    LuaTestSupportScript script {"function test(monster) return monster:getSkill(11) end"};
+    EXPECT_CALL(*monster, getSkill(11)).WillOnce(Return(77));
+    auto result = script.test<unsigned short, Monster *>(monster);
+    EXPECT_EQ(77, result);
+}
+
+TEST_F(monster_bindings, getMinorSkill) {
+    LuaTestSupportScript script {"function test(monster) return monster:getMinorSkill(10) end"};
+    EXPECT_CALL(*monster, getMinorSkill(10)).WillOnce(Return(74));
+    auto result = script.test<unsigned short, Monster *>(monster);
+    EXPECT_EQ(74, result);
 }
 
 int main(int argc, char **argv) {

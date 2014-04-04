@@ -331,9 +331,9 @@ public:
     std::vector<ScriptItem> getItemList(TYPE_OF_ITEM_ID id) const;
 
     virtual std::string getSkillName(TYPE_OF_SKILL_ID s) const;
-    unsigned short int getSkill(TYPE_OF_SKILL_ID s) const;
-    const skillvalue *getSkillValue(TYPE_OF_SKILL_ID s) const;
-    unsigned short int getMinorSkill(TYPE_OF_SKILL_ID s) const;
+    virtual unsigned short int getSkill(TYPE_OF_SKILL_ID s) const;
+    virtual const skillvalue *getSkillValue(TYPE_OF_SKILL_ID s) const;
+    virtual unsigned short int getMinorSkill(TYPE_OF_SKILL_ID s) const;
 
     void setSkinColor(uint8_t red, uint8_t green, uint8_t blue);
     void getSkinColor(uint8_t &red, uint8_t &green, uint8_t &blue) const;
