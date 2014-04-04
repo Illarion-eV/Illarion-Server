@@ -1135,18 +1135,18 @@ int Character::LoadWeight() const {
 
 
 bool Character::weightOK(TYPE_OF_ITEM_ID id, int count, Container *tcont) const {
-    bool ok;
+    if (count < 0) {
+        return true;
+    }
 
     int realweight = LoadWeight();
 
     if (tcont) {
-        ok = (realweight + weightContainer(id, 1, tcont)) <= maxLoadWeight();
+        return (realweight + weightContainer(id, 1, tcont)) <= maxLoadWeight();
     } else {
         const auto &common = Data::CommonItems[id];
-        ok = (realweight + common.Weight * count) <= maxLoadWeight();
+        return (realweight + common.Weight * count) <= maxLoadWeight();
     }
-
-    return ok;
 }
 
 
