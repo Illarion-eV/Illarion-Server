@@ -328,7 +328,7 @@ void World::talkto_command(Player *player, const std::string &text) {
             Logger::info(LogFacility::Player) << *player << " talks to " << *target << ": " << match[2].str() << Log::end;
 #endif
             target->inform(match[2].str(), Player::informGM);
-            std::string message = "to " + player->to_string() + ": " + match[2].str();
+            std::string message = "to " + target->to_string() + ": " + match[2].str();
             player->inform(message, Player::informScriptMediumPriority);
         }
     }
@@ -811,7 +811,7 @@ void World::gmhelp_command(Player *cp) {
         cp->inform(tmessage);
         tmessage = "!create <id> [<quantity> [<quality> [[<data_key>=<data_value>] ...]]] creates an item in your inventory.";
         cp->inform(tmessage);
-        tmessage = "!jumpto <playerid|name> - (!j) teleports you to the player.";
+        tmessage = "!jumpto <player> - (!j) teleports you to the player.";
         cp->inform(tmessage);
         tmessage = "!warp <x> <y> [<z>] | !warp <z> - (!w) change given coordinates.";
         cp->inform(tmessage);
@@ -838,7 +838,7 @@ void World::gmhelp_command(Player *cp) {
         cp->inform(tmessage);
         tmessage = "!forceintroduceall - (!fia) introduces all chars in sight to you.";
         cp->inform(tmessage);
-        tmessage = "!talkto <playername|id>, <message> - (!tt) sends a message to a specific player important is the , after the id or name!";
+        tmessage = "!talkto <player>, <message> - (!tt) sends a message to a specific player important is the , after the id or name!";
         cp->inform(tmessage);
         tmessage = "!broadcast <message> - (!bc) Broadcasts the message <message> to all players IG.";
         cp->inform(tmessage);
@@ -855,7 +855,7 @@ void World::gmhelp_command(Player *cp) {
         cp->inform(tmessage);
         tmessage = "!removewarpfield <x> <y> <z> - Removes the warpfield at the position <x> <y> <z>.";
         cp->inform(tmessage);
-        tmessage = "!jumpto <playerid|name> - (!j) teleports you to the player.";
+        tmessage = "!jumpto <player> - (!j) teleports you to the player.";
         cp->inform(tmessage);
 
     }
@@ -926,7 +926,7 @@ void World::gmhelp_command(Player *cp) {
     if (cp->hasGMRight(gmr_forcelogout)) {
         tmessage = "!kickall - Kicks all players out of the game.";
         cp->inform(tmessage);
-        tmessage = "!kick <playerid> - Kicks the player with the id out of the game.";
+        tmessage = "!kick <player> - Kicks the player with the id out of the game.";
         cp->inform(tmessage);
     }
 }
