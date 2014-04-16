@@ -112,16 +112,9 @@ std::string World::languageNumberToSkillName(int languageNumber) {
     }
 }
 
-void World::sendMessageToAllPlayers(const std::string &message) {
-    Players.for_each([&message](Player *player) {
-        player->inform(message, Player::informBroadcast);
-    });
-}
-
-void World::sendMessageToAllCharsInRange(const std::string &german, const std::string &english, Character::talk_type tt, Character *cc) {
+uint16_t World::getTalkRange(Character::talk_type tt) const {
     uint16_t range = 0;
 
-    // how far can we be heard?
     switch (tt) {
     case Character::tt_say:
         range = 14;
@@ -136,8 +129,18 @@ void World::sendMessageToAllCharsInRange(const std::string &german, const std::s
         break;
     }
 
-    std::string spokenMessage_german, spokenMessage_english, tempMessage;
+    return range;
+}
 
+void World::sendMessageToAllPlayers(const std::string &message) {
+    Players.for_each([&message](Player *player) {
+        player->inform(message, Player::informBroadcast);
+    });
+}
+
+void World::sendMessageToAllCharsInRange(const std::string &german, const std::string &english, Character::talk_type tt, Character *cc) {
+    auto range = getTalkRange(tt);
+    std::string spokenMessage_german, spokenMessage_english, tempMessage;
     bool is_action = german.substr(0, 3) == "#me";
 
     if (!is_action) {
@@ -178,24 +181,7 @@ void World::sendMessageToAllCharsInRange(const std::string &german, const std::s
 }
 
 void World::sendLanguageMessageToAllCharsInRange(const std::string &message, Character::talk_type tt, Language lang, Character *cc) {
-    uint16_t range = 0;
-
-    // how far can we be heard?
-    switch (tt) {
-    case Character::tt_say:
-        range = 14;
-        break;
-
-    case Character::tt_whisper:
-        range = 2;
-        break;
-
-    case Character::tt_yell:
-        range = 30;
-        break;
-    }
-
-    //determine spoken language skill
+    auto range = getTalkRange(tt);
 
     // get all Players
     std::vector<Player *> players = Players.findAllCharactersInRangeOf(cc->getPosition(), range);
