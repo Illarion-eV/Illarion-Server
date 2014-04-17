@@ -83,6 +83,7 @@ auto CharacterContainer<T>::find(const position &pos) const -> pointer {
     return nullptr;
 }
 
+
 template <class T>
 void CharacterContainer<T>::update(pointer p, const position& newPosition) {
     const auto id = p->getId();
@@ -102,7 +103,6 @@ void CharacterContainer<T>::update(pointer p, const position& newPosition) {
         }
     }
 }
-
 
 
 template <class T>
@@ -168,6 +168,7 @@ auto CharacterContainer<T>::findAllCharactersInScreen(const position &pos) const
     return temp;
 }
 
+
 template <class T>
 auto CharacterContainer<T>::findAllAliveCharactersInRangeOf(const position &pos, int distancemetric) const -> std::vector<pointer> {
     std::vector<pointer> temp;
@@ -187,27 +188,6 @@ auto CharacterContainer<T>::findAllAliveCharactersInRangeOf(const position &pos,
         }
     }
 
-    return temp;
-}
-
-template <class T>
-auto CharacterContainer<T>::findAllAliveCharactersInRangeOfOnSameMap(const position &pos, int distancemetric) const -> std::vector<pointer> {
-    std::vector<pointer> temp;
-    auto candidates = projection_x_axis(pos,distancemetric);
-    
-    for (auto& c : candidates) {
-        const position& p = c.first;
-        TYPE_OF_CHARACTER_ID id = c.second;
-        short int dx = p.x - pos.x;
-        short int dy = p.y - pos.y;
-        short int dz = p.z - pos.z;
-     
-        if (abs(dx) <= distancemetric && abs(dy) <= distancemetric && -RANGEDOWN <= dz && dz <= RANGEUP) {
-            if (auto character=find(id))
-                if (character->isAlive())
-                    temp.push_back(character);
-        }
-    }
     return temp;
 }
 
@@ -231,6 +211,7 @@ bool CharacterContainer<T>::findAllCharactersWithXInRangeOf(short int startx, sh
     
     return found_one;
 }
+
 
 template class CharacterContainer<Character>;
 template class CharacterContainer<Player>;
