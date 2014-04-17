@@ -205,64 +205,36 @@ std::list<BlockingObject> World::LoS(const position &startingpos, const position
         if (!(x == startx && y == starty) && !(x == endx && y == endy)) {
             BlockingObject bo;
             Field *temp;
+            position pos{x, y, startingpos.z};
 
             if (steep) {
-                const position pos(y, x, startingpos.z);
+                pos.x = y;
+                pos.y = x;
+            }
 
-                if (GetPToCFieldAt(temp, pos)) {
-                    if (temp->IsPlayerOnField()) {
-                        bo.blockingType = BlockingObject::BT_CHARACTER;
-                        bo.blockingChar = findCharacterOnField(pos);
+            if (GetPToCFieldAt(temp, pos)) {
+                if (temp->IsPlayerOnField()) {
+                    bo.blockingType = BlockingObject::BT_CHARACTER;
+                    bo.blockingChar = findCharacterOnField(pos);
 
-                        if (swapped) {
-                            ret.push_back(bo);
-                        } else {
-                            ret.push_front(bo);
-                        }
-                    } else if (!temp->IsPassable()) {
-                        ScriptItem it;
-
-                        if (temp->ViewTopItem(it)) {
-                            bo.blockingType = BlockingObject::BT_ITEM;
-                            it.pos = position(pos);
-                            it.type = ScriptItem::it_field;
-                            bo.blockingItem = it;
-
-                            if (swapped) {
-                                ret.push_back(bo);
-                            } else {
-                                ret.push_front(bo);
-                            }
-                        }
+                    if (swapped) {
+                        ret.push_back(bo);
+                    } else {
+                        ret.push_front(bo);
                     }
-                }
-            } else {
-                const position pos(x, y, startingpos.z);
+                } else if (!temp->IsPassable()) {
+                    ScriptItem it;
 
-                if (GetPToCFieldAt(temp, pos)) {
-                    if (temp->IsPlayerOnField()) {
-                        bo.blockingType = BlockingObject::BT_CHARACTER;
-                        bo.blockingChar = findCharacterOnField(pos);
+                    if (temp->ViewTopItem(it)) {
+                        bo.blockingType = BlockingObject::BT_ITEM;
+                        it.pos = pos;
+                        it.type = ScriptItem::it_field;
+                        bo.blockingItem = it;
 
                         if (swapped) {
                             ret.push_back(bo);
                         } else {
                             ret.push_front(bo);
-                        }
-                    } else if (!temp->IsPassable()) {
-                        ScriptItem it;
-
-                        if (temp->ViewTopItem(it)) {
-                            bo.blockingType = BlockingObject::BT_ITEM;
-                            it.pos = pos;
-                            it.type = ScriptItem::it_field;
-                            bo.blockingItem = it;
-
-                            if (swapped) {
-                                ret.push_back(bo);
-                            } else {
-                                ret.push_front(bo);
-                            }
                         }
                     }
                 }
