@@ -237,6 +237,7 @@ public:
     typedef std::unordered_map<std::string, std::string> datamap_type;
 
     static const number_type MAX_NUMBER = 250;
+    static const TYPE_OF_VOLUME LARGE_ITEM_VOLUME = 5000;
     static const wear_type PERMANENT_WEAR = 255;
 
     Item(): id(0), number(0), wear(0), quality(333), datamap(1) {}
@@ -310,9 +311,11 @@ public:
 
     bool survivesAgeing();
     bool isContainer() const;
+    TYPE_OF_VOLUME getVolume() const;
     TYPE_OF_WEIGHT getWeight() const;
     TYPE_OF_WORTH getWorth() const;
     number_type getMaxStack() const;
+    bool isLarge() const;
     bool isStackable() const;
     bool isPermanent() const;
     void makePermanent();

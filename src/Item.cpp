@@ -237,6 +237,16 @@ bool Item::isContainer() const {
     return Data::ContainerItems.exists(id);
 }
 
+TYPE_OF_VOLUME Item::getVolume() const {
+    const auto &common = Data::CommonItems[id];
+
+    if (common.isValid()) {
+        return common.Volume;
+    }
+
+    return 0;
+}
+
 TYPE_OF_WEIGHT Item::getWeight() const {
     const auto &common = Data::CommonItems[id];
 
@@ -265,6 +275,10 @@ auto Item::getMaxStack() const -> number_type {
     }
 
     return 0;
+}
+
+bool Item::isLarge() const {
+    return getVolume() >= LARGE_ITEM_VOLUME;
 }
 
 bool Item::isStackable() const {

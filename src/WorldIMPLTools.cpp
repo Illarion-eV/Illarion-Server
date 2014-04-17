@@ -222,10 +222,10 @@ std::list<BlockingObject> World::LoS(const position &startingpos, const position
                     } else {
                         ret.push_front(bo);
                     }
-                } else if (!temp->IsPassable()) {
+                } else {
                     ScriptItem it;
 
-                    if (temp->ViewTopItem(it)) {
+                    if (temp->ViewTopItem(it) && it.isLarge()) {
                         bo.blockingType = BlockingObject::BT_ITEM;
                         it.pos = pos;
                         it.type = ScriptItem::it_field;

@@ -31,6 +31,7 @@ class LuaLongTimeEffectScript;
 
 struct CommonStruct {
     TYPE_OF_ITEM_ID id;
+    TYPE_OF_VOLUME Volume;
     TYPE_OF_WEIGHT Weight;
     TYPE_OF_AGINGSPEED AgeingSpeed;
     TYPE_OF_ITEM_ID ObjectAfterRot;
@@ -43,6 +44,7 @@ struct CommonStruct {
 
     CommonStruct() {
         id = 0;
+        Volume = 0;
         Weight = 0;
         AgeingSpeed = 0;
         ObjectAfterRot = 0;

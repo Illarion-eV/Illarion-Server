@@ -27,6 +27,7 @@ std::string CommonObjectTable::getTableName() {
 std::vector<std::string> CommonObjectTable::getColumnNames() {
     return {
         "com_itemid",
+        "com_volume",
         "com_weight",
         "com_agingspeed",
         "com_objectafterrot",
@@ -46,7 +47,8 @@ TYPE_OF_ITEM_ID CommonObjectTable::assignId(const Database::ResultTuple &row) {
 CommonStruct CommonObjectTable::assignTable(const Database::ResultTuple &row) {
     CommonStruct common;
     common.id = assignId(row);
-    common.Weight = TYPE_OF_WEIGHT(row["com_weight"].as<int16_t>());
+    common.Volume = row["com_volume"].as<TYPE_OF_VOLUME>();
+    common.Weight = row["com_weight"].as<TYPE_OF_WEIGHT>();
     common.AgeingSpeed = TYPE_OF_AGINGSPEED(row["com_agingspeed"].as<int16_t>());
     common.ObjectAfterRot = row["com_objectafterrot"].as<TYPE_OF_ITEM_ID>();
     common.rotsInInventory = row["com_rotsininventory"].as<bool>();
