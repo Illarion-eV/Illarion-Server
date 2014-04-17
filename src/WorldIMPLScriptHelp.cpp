@@ -115,8 +115,10 @@ std::vector<NPC *> World::getNPCS() const {
     return list;
 }
 
-std::vector<Character *> World::getCharactersInRangeOf(const position &pos, uint8_t range) const {
+std::vector<Character *> World::getCharactersInRangeOf(const position &pos, uint8_t radius) const {
     std::vector<Character *> list;
+    Range range;
+    range.radius = radius;
 
     std::vector < Player * > tempP = Players.findAllCharactersInRangeOf(pos, range);
     list.insert(list.end(), tempP.begin(), tempP.end());
@@ -130,15 +132,21 @@ std::vector<Character *> World::getCharactersInRangeOf(const position &pos, uint
     return list;
 }
 
-std::vector<Player *> World::getPlayersInRangeOf(const position &pos, uint8_t range) const {
+std::vector<Player *> World::getPlayersInRangeOf(const position &pos, uint8_t radius) const {
+    Range range;
+    range.radius = radius;
     return Players.findAllCharactersInRangeOf(pos, range);
 }
 
-std::vector<Monster *> World::getMonstersInRangeOf(const position &pos, uint8_t range) const {
+std::vector<Monster *> World::getMonstersInRangeOf(const position &pos, uint8_t radius) const {
+    Range range;
+    range.radius = radius;
     return Monsters.findAllCharactersInRangeOf(pos, range);
 }
 
-std::vector<NPC *> World::getNPCSInRangeOf(const position &pos, uint8_t range) const {
+std::vector<NPC *> World::getNPCSInRangeOf(const position &pos, uint8_t radius) const {
+    Range range;
+    range.radius = radius;
     return Npc.findAllCharactersInRangeOf(pos, range);
 }
 
@@ -546,10 +554,12 @@ void World::changeTile(short int tileid, const position &pos) {
 }
 
 
-void World::sendMapUpdate(const position &pos, uint8_t range) {
+void World::sendMapUpdate(const position &pos, uint8_t radius) {
     std::vector<Player *> temp;
     std::vector<Player *>::iterator pIterator;
-    temp=Players.findAllCharactersInRangeOf(pos, range);
+    Range range;
+    range.radius = radius;
+    temp = Players.findAllCharactersInRangeOf(pos, range);
 
     for (pIterator = temp.begin(); pIterator != temp.end(); ++pIterator) {
         (*pIterator)->sendFullMap();

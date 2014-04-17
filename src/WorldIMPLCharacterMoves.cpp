@@ -182,13 +182,16 @@ void World::sendCharacterWarpToAllVisiblePlayers(Character *cc, const position &
 
 
 void World::sendAllVisibleCharactersToPlayer(Player *cp, bool sendSpin) {
-    std::vector < Player * > tempP = Players.findAllCharactersInRangeOf(cp->getPosition(), cp->getScreenRange());
+    Range range;
+    range.radius = cp->getScreenRange();
+
+    std::vector < Player * > tempP = Players.findAllCharactersInRangeOf(cp->getPosition(), range);
     sendCharsInVector< Player >(tempP, cp, sendSpin);
 
-    std::vector < Monster * > tempM = Monsters.findAllCharactersInRangeOf(cp->getPosition(), cp->getScreenRange());
+    std::vector < Monster * > tempM = Monsters.findAllCharactersInRangeOf(cp->getPosition(), range);
     sendCharsInVector< Monster >(tempM, cp, sendSpin);
 
-    std::vector < NPC * > tempN = Npc.findAllCharactersInRangeOf(cp->getPosition(), cp->getScreenRange());
+    std::vector < NPC * > tempN = Npc.findAllCharactersInRangeOf(cp->getPosition(), range);
     sendCharsInVector< NPC >(tempN, cp, sendSpin);
 
     cp->sendAvailableQuests();

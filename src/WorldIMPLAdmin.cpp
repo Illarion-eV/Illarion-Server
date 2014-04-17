@@ -381,7 +381,10 @@ void World::ForceIntroduceAll(Player *player) {
         return;
     }
 
-    for (const auto &p : Players.findAllCharactersInRangeOf(player->getPosition(), player->getScreenRange())) {
+    Range range;
+    range.radius = player->getScreenRange();
+
+    for (const auto &p : Players.findAllCharactersInRangeOf(player->getPosition(), range)) {
         if (player->getId() != p->getId()) {
             forceIntroducePlayer(p, player);
         }

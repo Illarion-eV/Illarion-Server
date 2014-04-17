@@ -74,9 +74,9 @@ public:
         position_to_id.clear();
     }
 
-    std::vector<pointer> findAllCharactersInRangeOf(const position &pos, int distancemetric) const;
+    std::vector<pointer> findAllCharactersInRangeOf(const position &pos, const Range &range) const;
     std::vector<pointer> findAllCharactersInScreen(const position &pos) const;
-    std::vector<pointer> findAllAliveCharactersInRangeOf(const position &pos, int distancemetric) const;
+    std::vector<pointer> findAllAliveCharactersInRangeOf(const position &pos, const Range &range) const;
     bool findAllCharactersWithXInRangeOf(short int startx, short int endx, std::vector<pointer> &ret) const;
 
     void for_each(const for_each_type &function) {

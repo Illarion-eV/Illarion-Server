@@ -125,9 +125,9 @@ bool CharacterContainer<T>::erase(TYPE_OF_CHARACTER_ID id) {
 
 
 template <class T>
-auto CharacterContainer<T>::findAllCharactersInRangeOf(const position &pos, int distancemetric) const -> std::vector<pointer> {
+auto CharacterContainer<T>::findAllCharactersInRangeOf(const position &pos, const Range &range) const -> std::vector<pointer> {
     std::vector<pointer> temp;
-    auto candidates = projection_x_axis(pos,distancemetric);
+    auto candidates = projection_x_axis(pos, range.radius);
     
     for (auto& c : candidates) {
         const position& p = c.first;
@@ -136,7 +136,7 @@ auto CharacterContainer<T>::findAllCharactersInRangeOf(const position &pos, int 
         short int dy = p.y - pos.y;
         short int dz = p.z - pos.z;
         
-        if (abs(dx) <= distancemetric && abs(dy) <= distancemetric && -RANGEDOWN <= dz && dz <= RANGEUP) {
+        if (abs(dx) <= range.radius && abs(dy) <= range.radius && -range.zRadius <= dz && dz <= range.zRadius) {
             if (auto character=find(id)) temp.push_back(character);
         }
     }
@@ -170,9 +170,9 @@ auto CharacterContainer<T>::findAllCharactersInScreen(const position &pos) const
 
 
 template <class T>
-auto CharacterContainer<T>::findAllAliveCharactersInRangeOf(const position &pos, int distancemetric) const -> std::vector<pointer> {
+auto CharacterContainer<T>::findAllAliveCharactersInRangeOf(const position &pos, const Range &range) const -> std::vector<pointer> {
     std::vector<pointer> temp;
-    auto candidates = projection_x_axis(pos,distancemetric);
+    auto candidates = projection_x_axis(pos, range.radius);
     
     for (auto& c : candidates) {
         const position& p = c.first;
@@ -181,7 +181,7 @@ auto CharacterContainer<T>::findAllAliveCharactersInRangeOf(const position &pos,
         short int dy = p.y - pos.y;
         short int dz = p.z - pos.z;
         
-        if (abs(dx) <= distancemetric && abs(dy) <= distancemetric && -RANGEDOWN <= dz && dz <= RANGEUP) {
+        if (abs(dx) <= range.radius && abs(dy) <= range.radius && -range.zRadius <= dz && dz <= range.zRadius) {
             if (auto character=find(id))
                 if (character->isAlive())
                     temp.push_back(character);

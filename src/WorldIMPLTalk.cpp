@@ -112,20 +112,20 @@ std::string World::languageNumberToSkillName(int languageNumber) {
     }
 }
 
-uint16_t World::getTalkRange(Character::talk_type tt) const {
-    uint16_t range = 0;
+Range World::getTalkRange(Character::talk_type tt) const {
+    Range range;
 
     switch (tt) {
     case Character::tt_say:
-        range = 14;
+        range.radius = 14;
         break;
 
     case Character::tt_whisper:
-        range = 2;
+        range.radius = 2;
         break;
 
     case Character::tt_yell:
-        range = 30;
+        range.radius = 30;
         break;
     }
 
@@ -235,16 +235,22 @@ void World::sendMessageToAllCharsInRange(const std::string &message, Character::
     sendMessageToAllCharsInRange(message, message, tt, cc);
 }
 
-void World::makeGFXForAllPlayersInRange(const position &pos, int distancemetric ,unsigned short int gfx) {
-    for (const auto &player : Players.findAllCharactersInRangeOf(pos, distancemetric)) {
+void World::makeGFXForAllPlayersInRange(const position &pos, int radius ,unsigned short int gfx) {
+    Range range;
+    range.radius = radius;
+
+    for (const auto &player : Players.findAllCharactersInRangeOf(pos, range)) {
         ServerCommandPointer cmd = std::make_shared<GraphicEffectTC>(pos, gfx);
         player->Connection->addCommand(cmd);
     }
 }
 
 
-void World::makeSoundForAllPlayersInRange(const position &pos, int distancemetric, unsigned short int sound) {
-    for (const auto &player : Players.findAllCharactersInRangeOf(pos, distancemetric)) {
+void World::makeSoundForAllPlayersInRange(const position &pos, int radius, unsigned short int sound) {
+    Range range;
+    range.radius = radius;
+
+    for (const auto &player : Players.findAllCharactersInRangeOf(pos, range)) {
         ServerCommandPointer cmd = std::make_shared<SoundTC>(pos, sound);
         player->Connection->addCommand(cmd);
     }
@@ -353,7 +359,10 @@ void World::forceIntroducePlayer(Player *cp, Player *Admin) {
 }
 
 void World::introduceMyself(Player *cp) {
-    for (const auto &player : Players.findAllCharactersInRangeOf(cp->getPosition(), 2)) {
+    Range range;
+    range.radius = 2;
+
+    for (const auto &player : Players.findAllCharactersInRangeOf(cp->getPosition(), range)) {
         player->introducePlayer(cp);
     }
 }

@@ -25,6 +25,7 @@
 #include <boost/functional/hash/hash.hpp>
 
 #include "types.hpp"
+#include "constants.hpp"
 
 struct position {
     short int x;
@@ -148,6 +149,11 @@ template<> struct hash<MAP_POSITION> {
     }
 };
 }
+
+struct Range {
+    int radius = 0;
+    int zRadius = RANGEUP;
+};
 
 enum QuestAvailability {
     questDefaultAvailable = 0,

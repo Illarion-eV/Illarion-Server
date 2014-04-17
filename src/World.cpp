@@ -949,7 +949,9 @@ void World::checkMonsters() {
 }
 
 
-std::vector<Character *> World::getTargetsInRange(const position &pos, int range) const {
+std::vector<Character *> World::getTargetsInRange(const position &pos, int radius) const {
+    Range range;
+    range.radius = radius;
     const auto players = Players.findAllAliveCharactersInRangeOf(pos, range);
     const auto monsters = Monsters.findAllAliveCharactersInRangeOf(pos, range);
     std::vector<Character *> targets;

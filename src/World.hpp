@@ -702,7 +702,7 @@ public:
     //\param language number
     std::string languagePrefix(int Language);
 
-    uint16_t getTalkRange(Character::talk_type tt) const;
+    Range getTalkRange(Character::talk_type tt) const;
 
     //! schickt an alle Spieler auf den Nachbarfeldern von cp dessen Namen
     // \param cp der Player der sich den anderen bekannt macht
