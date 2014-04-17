@@ -122,6 +122,7 @@ Range World::getTalkRange(Character::talk_type tt) const {
 
     case Character::tt_whisper:
         range.radius = 2;
+        range.zRadius = 0;
         break;
 
     case Character::tt_yell:
@@ -361,6 +362,7 @@ void World::forceIntroducePlayer(Player *cp, Player *Admin) {
 void World::introduceMyself(Player *cp) {
     Range range;
     range.radius = 2;
+    range.zRadius = 0;
 
     for (const auto &player : Players.findAllCharactersInRangeOf(cp->getPosition(), range)) {
         player->introducePlayer(cp);
