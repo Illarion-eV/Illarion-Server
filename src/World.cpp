@@ -783,19 +783,10 @@ void World::checkMonsters() {
                                 direction dir = (direction)Random::uniform(0,7);
 
                                 if (spawn) {
-                                    int yoffs = monster.getPosition().y - spawn->get_y();
-                                    int xoffs = monster.getPosition().x - spawn->get_x();
-
-                                    if (abs(xoffs) > spawn->getRange() || abs(yoffs) > spawn->getRange()) {
-                                        monster.setSpawn(nullptr);
-                                        unsigned int type = monster.getMonsterType();
-                                        spawn->dead(type);
-                                    }
-
                                     position newpos = monster.getPosition();
                                     newpos.move(dir);
-                                    yoffs = spawn->get_y() - newpos.y;
-                                    xoffs = spawn->get_x() - newpos.x;
+                                    int yoffs = spawn->get_y() - newpos.y;
+                                    int xoffs = spawn->get_x() - newpos.x;
 
                                     // if walking out of range, mirroring dir. at spawn area border lets the char stay in range with L_inf metric
                                     if (abs(xoffs) > spawn->getRange()) {
