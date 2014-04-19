@@ -433,15 +433,15 @@ bool Player::lookIntoContainerOnField(direction dir) {
     WorldMap::map_t map;
 
     if (World::get()->GetPToCFieldAt(cfold, containerPosition, map)) {
-        Item titem;
+        Item item;
 
-        if (cfold->ViewTopItem(titem)) {
-            if (titem.getId() != DEPOTITEM && titem.isContainer()) {
+        if (cfold->ViewTopItem(item)) {
+            if (item.getId() != DEPOTITEM && item.isContainer()) {
                 MAP_POSITION opos(containerPosition);
                 auto it = map->maincontainers.find(opos);
 
                 if (it != map->maincontainers.end()) {
-                    auto iv = it->second.find(titem.getNumber());
+                    auto iv = it->second.find(item.getNumber());
 
                     if (iv != it->second.end()) {
                         openShowcase(iv->second, false);
@@ -449,13 +449,13 @@ bool Player::lookIntoContainerOnField(direction dir) {
                     }
                 }
             } else {
-                if (titem.getId() == DEPOTITEM) {
+                if (item.getId() == DEPOTITEM) {
                     if (depotScript && depotScript->existsEntrypoint("onOpenDepot")) {
-                        if (depotScript->onOpenDepot(this, titem)) {
-                            openDepot(titem.getDepot());
+                        if (depotScript->onOpenDepot(this, item)) {
+                            openDepot(item.getDepot());
                         }
                     } else {
-                        openDepot(titem.getDepot());
+                        openDepot(item.getDepot());
                     }
                 } else {
 
