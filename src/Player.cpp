@@ -451,7 +451,11 @@ bool Player::lookIntoContainerOnField(direction dir) {
             } else {
                 if (item.getId() == DEPOTITEM) {
                     if (depotScript && depotScript->existsEntrypoint("onOpenDepot")) {
-                        if (depotScript->onOpenDepot(this, item)) {
+                        ScriptItem scriptItem(item);
+                        scriptItem.type = ScriptItem::it_field;
+                        scriptItem.pos = containerPosition;
+                        
+                        if (depotScript->onOpenDepot(this, scriptItem)) {
                             openDepot(item.getDepot());
                         }
                     } else {

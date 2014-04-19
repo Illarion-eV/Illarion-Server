@@ -32,7 +32,7 @@ public:
     LuaDepotScript(const std::string &filename) throw(ScriptException);
     virtual ~LuaDepotScript() throw();
 
-    bool onOpenDepot(Character *cc, const Item &itm);
+    bool onOpenDepot(Character *cc, const ScriptItem &itm);
 
 private:
 
