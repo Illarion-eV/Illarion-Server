@@ -1411,7 +1411,11 @@ uint16_t Character::getMovementCost(const Field *sourcefield) const {
         agility = std::min(agility, NP_MAX_WALK_AGI);
     }
 
-    walkcost = (walkcost * P_MOVECOSTFORMULA_walkingCost_MULTIPLIER) / (agility + P_MOVECOSTFORMULA_agility_ADD);
+    walkcost = (walkcost * MOVECOSTFORMULA_walkingCost_MULTIPLIER) / (agility + MOVECOSTFORMULA_agility_ADD);
+
+    if (walkcost < MIN_AP_WALK_COST) {
+        walkcost = MIN_AP_WALK_COST;
+    }
 
     return walkcost;
 }

@@ -66,11 +66,9 @@
 
 #define STANDARD_MONSTER_WALKING_COST 8
 
-#define P_MOVECOSTFORMULA_walkingCost_MULTIPLIER 10
-#define P_MOVECOSTFORMULA_agility_ADD 30
-
-#define NP_MOVECOSTFORMULA_walkingCost_MULTIPLIER 12
-#define NP_MOVECOSTFORMULA_agility_ADD 30
+#define MOVECOSTFORMULA_walkingCost_MULTIPLIER 12
+#define MOVECOSTFORMULA_agility_ADD 30
+#define MIN_AP_WALK_COST 6
 
 #define P_STANDARDWALKCOST 30
 #define NP_STANDARDWALKCOST 30
@@ -81,6 +79,6 @@
 #define MAXTHROWWEIGHT 99
 #define MAXDROPDISTANCE 2
 
-const unsigned short NP_MAX_WALK_AGI = 20;
+const unsigned short NP_MAX_WALK_AGI = 15;
 
 #endif
