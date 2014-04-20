@@ -236,7 +236,6 @@ public:
     typedef uint16_t quality_type;
     typedef std::unordered_map<std::string, std::string> datamap_type;
 
-    static const number_type MAX_NUMBER = 250;
     static const TYPE_OF_VOLUME LARGE_ITEM_VOLUME = 5000;
     static const wear_type PERMANENT_WEAR = 255;
 

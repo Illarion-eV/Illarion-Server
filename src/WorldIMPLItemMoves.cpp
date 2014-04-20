@@ -129,7 +129,7 @@ bool World::putItemOnInvPos(Character *cc, unsigned char pos) {
                             return false;
                         }
 
-                        if (g_item.getNumber() + cc->characterItems[pos].getNumber() < 250) {
+                        if (g_item.getNumber() + cc->characterItems[pos].getNumber() <= g_item.getMaxStack()) {
                             cc->characterItems[pos].setNumber(cc->characterItems[pos].getNumber() + g_item.getNumber());
                             cc->characterItems[pos].setMinQuality(g_item);
                             g_item.reset();
