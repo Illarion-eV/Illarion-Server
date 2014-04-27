@@ -37,13 +37,11 @@ std::string NetInterface::getIPAdress() {
 
 NetInterface::~NetInterface() {
     try {
-        //std::cout<<"destructing new netinterface"<<std::endl;
         online = false;
         sendQueue.clear();
         socket.close();
-        //std::cout<<"destruction done"<<std::endl;
     } catch (std::exception &e) {
-        std::cerr << e.what() << std::endl;
+        Logger::error(LogFacility::Other) << "Error in NetInterface destructor: " << e.what() << Log::end;
     } catch (...)
     {}
 
@@ -52,20 +50,18 @@ NetInterface::~NetInterface() {
 
 
 void NetInterface::closeConnection() {
-
-    //std::cerr<<getIPAdress()<<"closeConnection called"<<std::endl;
     online = false;
 }
 
 bool NetInterface::activate(Player* player) {
     try {
-	owner = player;
+    owner = player;
         boost::asio::async_read(socket,boost::asio::buffer(headerBuffer,6), std::bind(&NetInterface::handle_read_header, shared_from_this(), std::placeholders::_1));
         ipadress = socket.remote_endpoint().address().to_string();
         online = true;
         return true;
-    } catch (std::exception &ex) {
-        std::cerr<<"error during activate: "<<ex.what()<<std::endl;
+    } catch (std::exception &e) {
+        Logger::error(LogFacility::Other) << "Error in NetInterface::activate for " << player->to_string() << ": " << e.what() << Log::end;
         return false;
     }
 }
@@ -78,32 +74,36 @@ void NetInterface::handle_read_data(const boost::system::error_code &error) {
                 cmd->decodeData();
 
                 if (cmd->isDataOk()) {
-		    cmd->setReceivedTime();
-		    if (owner == nullptr) {
-			auto login = std::dynamic_pointer_cast<LoginCommandTS>(cmd);
-			if (!login) {
-				closeConnection();
-				return;
-			}
-			loginData = login;
-			return;
-		    } else {
-			owner->receiveCommand(cmd);
-		    }
-                } else {
-                    std::cout<<"error receiving command"<<std::endl;
+                    cmd->setReceivedTime();
+                    
+                    if (owner == nullptr) {
+                        auto login = std::dynamic_pointer_cast<LoginCommandTS>(cmd);
+                        
+                        if (!login) {
+                            closeConnection();
+                            return;
+                        }
+                        
+                        loginData = login;
+                        return;
+                    } else {
+                        owner->receiveCommand(cmd);
+                    }
                 }
             } catch (OverflowException &e) {
-                std::cerr << "overflow while reading from buffer from " << getIPAdress() << ": " << std::endl;
+                std::ostringstream message;
+                message << "Overflow while reading from buffer from ";
+                message << getIPAdress() << ": ";
 
                 unsigned char *data = cmd->msg_data();
-                std::cerr << std::hex << std::uppercase << std::setfill('0');
+                message << std::hex << std::uppercase << std::setfill('0');
 
                 for (int i = 0; i < cmd->getLength(); ++i) {
-                    std::cerr << std::setw(2) << (int)data[i] << " ";
+                    message << std::setw(2) << (int)data[i] << " ";
                 }
 
-                std::cerr << std::endl << std::dec << std::nouppercase;
+                message << std::dec << std::nouppercase;
+                Logger::error(LogFacility::Other) << message.str() << Log::end;
 
                 closeConnection();
             }
@@ -136,19 +136,15 @@ void NetInterface::handle_read_header(const boost::system::error_code &error) {
                 cmd->setHeaderData(length,checkSum);
                 boost::asio::async_read(socket,boost::asio::buffer(cmd->msg_data(),cmd->getLength()), std::bind(&NetInterface::handle_read_data, shared_from_this(), std::placeholders::_1));
                 return;
-            } else {
-                std::cout<<"No Command with id "<<headerBuffer[0]<<"found searching new Command"<<std::endl;
             }
         }
 
-        //Kein Correcter Header
-        std::cout<<"wrong header searching for command id"<<std::endl;
+        //no correct header
 
-        //Suchen im Header nach einer Command ID
+        // look for command id in header
         for (int i = 1 ; i < 5; ++i) {
-            //Korrekte Command ID gefunden
+            // found correct command id
             if ((headerBuffer[i] xor 255) == headerBuffer[i+1]) {
-                std::cout<<"found correct command id at pos "<<i<<std::endl;
                 //copy the rest of the correct message to the start of the buffer
                 int start = 0;
 
@@ -167,7 +163,11 @@ void NetInterface::handle_read_header(const boost::system::error_code &error) {
 
     } else {
         if (online) {
-            std::cerr<<"handle_read_header error during read "<<getIPAdress()<<" "<<error.message()<<" :"<< error<<std::endl;
+            if (owner) {
+                Logger::error(LogFacility::Other) << "Error in NetInterface::handle_read_header for " << owner->to_string() << " from " << getIPAdress() << ": " << error.message() << Log::end;
+            } else {
+                Logger::error(LogFacility::Other) << "Error in NetInterface::handle_read_header from " << getIPAdress() << ": " << error.message() << Log::end;
+            }
         }
 
         closeConnection();
@@ -188,8 +188,8 @@ void NetInterface::addCommand(const ServerCommandPointer &command) {
                 boost::asio::async_write(socket,boost::asio::buffer(sendQueue.front()->cmdData(),sendQueue.front()->getLength()),
                                          std::bind(&NetInterface::handle_write, shared_from_this(), std::placeholders::_1));
             }
-        } catch (std::exception &ex) {
-            std::cerr<<"addCommand error during write: "<<ex.what()<<std::endl;
+        } catch (std::exception &e) {
+            Logger::error(LogFacility::Other) << "Exception in NetInterface::addCommand: " << e.what() << Log::end;
             closeConnection();
         }
     }
@@ -201,8 +201,8 @@ void NetInterface::shutdownSend(const ServerCommandPointer &command) {
         shutdownCmd = command;
         boost::asio::async_write(socket,boost::asio::buffer(shutdownCmd->cmdData(),shutdownCmd->getLength()),
                                  std::bind(&NetInterface::handle_write_shutdown, shared_from_this(), std::placeholders::_1));
-    } catch (std::exception &ex) {
-        std::cerr<<"Exception beim Schreiben von Daten:"<<ex.what()<<std::endl;
+    } catch (std::exception &e) {
+        Logger::error(LogFacility::Other) << "Exception in NetInterface::shutownSend: " << e.what() << Log::end;
         closeConnection();
     }
 }
@@ -220,11 +220,11 @@ void NetInterface::handle_write(const boost::system::error_code &error) {
                 }
             }
         } else {
-            std::cerr<<"handle_write error during write: "<<error.message()<<" :"<<error<<std::endl;
+            Logger::error(LogFacility::Other) << "Error in NetInterface::handle_write: " << error.message() << Log::end;
             closeConnection();
         }
-    } catch (std::exception &ex) {
-        std::cout<<"caugth Exception on handle_write"<<ex.what()<<std::endl;
+    } catch (std::exception &e) {
+        Logger::error(LogFacility::Other) << "Exception in NetInterface::handle_write: " << e.what() << Log::end;
         closeConnection();
     }
 }
@@ -235,7 +235,7 @@ void NetInterface::handle_write_shutdown(const boost::system::error_code &error)
         shutdownCmd.reset();
     } else {
         if (online) {
-            std::cerr<<"handle_write_shutdown error during write: "<<error.message()<<" :"<<error<<std::endl;
+            Logger::error(LogFacility::Other) << "Error in NetInterface::handle_write_shutdown: " << error.message() << Log::end;
         }
 
         closeConnection();

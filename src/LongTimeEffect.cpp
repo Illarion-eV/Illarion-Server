@@ -115,7 +115,7 @@ bool LongTimeEffect::save(uint32_t playerid, int32_t currentTime) {
         connection->commitTransaction();
         return true;
     } catch (std::exception &e) {
-        std::cerr << "caught exception during saving lt effects: " << e.what() << std::endl;
+        Logger::error(LogFacility::Other) << "Exception while saving long time effects: " << e.what() << Log::end;
         connection->rollbackTransaction();
         return false;
     }

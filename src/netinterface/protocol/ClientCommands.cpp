@@ -410,17 +410,12 @@ void CastTS::performAction(Player *player) {
             }
         }
         else {
-            std::cerr<<"LuaMageScript false, paramOK = false!"<<std::endl;
             paramOK = false;
         }
 
         break;
 
     case UID_SHOWC:
-
-#ifdef World_DEBUG
-        std::cout << "showcase: " << (int) showcase << " pos: " << (int) pos << std::endl;
-#endif
 
         Logger::debug(LogFacility::Script) << *player << " is casting in showcas: " << showcase << " pos " << pos << Log::end;
 
@@ -429,17 +424,10 @@ void CastTS::performAction(Player *player) {
                 Container *ps = player->getShowcaseContainer(showcase);
 
                 if (ps != nullptr) {
-#ifdef World_DEBUG
-                    std::cout << "Container gefunden" << std::endl;
-#endif
                     ScriptItem tempi;
                     Container *tempc;
 
                     if (ps->viewItemNr(pos, tempi, tempc)) {
-#ifdef World_DEBUG
-                        std::cout << "pos gefunden" << std::endl;
-#endif
-
                         if (LuaMageScript) {
                             Target.Type = LUA_ITEM;
                             ps->viewItemNr(pos, Target.item, tempc);
@@ -451,27 +439,19 @@ void CastTS::performAction(Player *player) {
                             Target.pos = castPosition;
                         }
                     } else {
-                        std::cerr<<"ps->viewItemNr false, paramOK = false!"<<std::endl;
                         paramOK = false;
                     }
                 } else {
-                    std::cerr<<"ps!=Null false, paramOK = false!"<<std::endl;
                     paramOK = false;
                 }
             } else {
-                std::cerr << "showcase < MAXSHOWCASE false, paramOK = false!"<<std::endl;
                 paramOK = false;
             }
-        } // LuaMageScript == nullptr ?
+        }
 
         break;
 
     case UID_MAGICWAND:
-
-        //UID_MAGICWAND wird immer gesandt wenn kein Ziel gewaehlt wird.
-#ifdef World_DEBUG
-        std::cout << "UID_MAGICWAND" << std::endl;
-#endif
         Logger::debug(LogFacility::Script) << "Cast with Wand" << Log::end;
 
         if (player->getAttackMode() && (player->enemyid != 0) && (LuaMageScript)) {
@@ -483,7 +463,6 @@ void CastTS::performAction(Player *player) {
                 if (Data::WeaponItems.exists(weaponId)) {
                     if (Data::WeaponItems[weaponId].Type == 13) {
                         zauberstab = true;
-                        std::cout << "Zauberstab in der Hand -> OK" << std::endl;
                     }
                 }
             }
@@ -494,7 +473,6 @@ void CastTS::performAction(Player *player) {
                 if (Data::WeaponItems.exists(weaponId)) {
                     if (Data::WeaponItems[weaponId].Type == 13) {
                         zauberstab = true;
-                        std::cout << "Zauberstab in der Hand -> OK" << std::endl;
                     }
                 }
             }
@@ -502,13 +480,7 @@ void CastTS::performAction(Player *player) {
 
             if (zauberstab) {
                 switch (player->enemytype) {
-
-                    //Muss spaeter angepasst werden wenn es nur noch einen Charactervektor gibt.
-
                 case Character::player:
-#ifdef World_DEBUG
-                    std::cout << "Gegner ist ein Spieler" << std::endl;
-#endif
 
                     if (LuaMageScript) {
                         Target.Type = LUA_CHARACTER;
@@ -518,16 +490,12 @@ void CastTS::performAction(Player *player) {
                             Target.pos = Target.character->getPosition();
                         } else {
                             paramOK = false;
-                            std::cerr << "Kein geeignetes Ziel fr Zauberstab gefunden (Target.Character == nullptr)!" << std::endl;
                         }
                     }
 
                     break;
 
                 case Character::npc:
-#ifdef World_DEBUG
-                    std::cout << "Gegner ist ein NPC" << std::endl;
-#endif
 
                     if (LuaMageScript) {
                         Target.Type = LUA_CHARACTER;
@@ -537,16 +505,12 @@ void CastTS::performAction(Player *player) {
                             Target.pos = Target.character->getPosition();
                         } else {
                             paramOK = false;
-                            std::cerr << "Kein geeignetes Ziel fr Zauberstab gefunden (Target.Character == nullptr)!" << std::endl;
                         }
                     }
 
                     break;
 
                 case Character::monster:
-#ifdef World_DEBUG
-                    std::cout << "Gegner ist ein Monster" << std::endl;
-#endif
 
                     if (LuaMageScript) {
                         Target.Type = LUA_CHARACTER;
@@ -556,15 +520,13 @@ void CastTS::performAction(Player *player) {
                             Target.pos = Target.character->getPosition();
                         } else {
                             paramOK = false;
-                            std::cerr << "Kein geeignetes Ziel fr Zauberstab gefunden (Target.Character == nullptr)!" << std::endl;
                         }
                     }
 
                     break;
-                } // switch
-            } // zauberstab
+                }
+            }
             else {
-                std::cout<<"Zauberstab = false, paramOK = false!"<<std::endl;
                 paramOK = false;
             }
 
@@ -572,7 +534,6 @@ void CastTS::performAction(Player *player) {
         else {
 
             if (!LuaMageScript) {
-                std::cout<<"LuaMageScript nicht gesetzt, paramOK = false!"<<std::endl;
                 paramOK = false;
             }
         }
@@ -581,21 +542,12 @@ void CastTS::performAction(Player *player) {
 
     case UID_INV:
 
-#ifdef World_DEBUG
-        std::cout << "cast mit Inv" << std::endl;
-#endif
         Logger::debug(LogFacility::Script) << "cast in inventory" << Log::end;
 
         if (LuaMageScript) {
             if (pos < (MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
-#ifdef World_DEBUG
-                std::cout << "gltiger Wert" << std::endl;
-#endif
 
                 if (player->characterItems[ pos ].getId() != 0) {
-#ifdef World_DEBUG
-                    std::cout << "Position " << (int) pos << " am Koerper ist besetzt" << std::endl;
-#endif
 
                     if (LuaMageScript) {
                         Target.Type = LUA_ITEM;
@@ -613,37 +565,29 @@ void CastTS::performAction(Player *player) {
                         Target.pos = player->getPosition();
                     }
                 } else {
-                    std::cerr<<"cp->characterItems[pos].getId() != 0 false, paramOK = false!"<<std::endl;
                     paramOK = false;
                 }
             } else {
-                std::cerr<<"pos < (MAX_BELT_SLOTS + MAX_BODY_ITEMS), paramOK = false!"<<std::endl;
                 paramOK = false;
             }
-        } // skript != nullptr ?
+        }
 
         break;
 
-    } // end of switch ID
+    }
 
     if (LuaMageScript) {
         Logger::debug(LogFacility::Script) << "try to call magic script" << Log::end;
         player->ltAction->setLastAction(LuaMageScript, Source, Target, LongTimeAction::ACTION_MAGIC);
-        //std::string msg;
-#ifdef World_DEBUG
-        std::cout<<"paramOK: "<<paramOK<<std::endl;
-#endif
 
         if ((paramOK) && player->isAlive() && (player->GetStatus() < 10)) {
             switch (Target.Type) {
             case LUA_NONE:
                 LuaMageScript->CastMagic(player, static_cast<unsigned char>(LTS_NOLTACTION));
-                //msg = "Casted spell: " + Logger::toString(spellId);
                 break;
 
             case LUA_FIELD:
                 LuaMageScript->CastMagicOnField(player, Target.pos, static_cast<unsigned char>(LTS_NOLTACTION));
-                //msg = "Casted spell: " + Logger::toString(spellId) + " on field at pos(" + Logger::toString(Target.pos.x) + "," + Logger::toString(Target.pos.y) + "," + Logger::toString(Target.pos.z) + ")";
                 break;
 
             case LUA_CHARACTER:
@@ -657,28 +601,20 @@ void CastTS::performAction(Player *player) {
                         if (monStruct.script) {
                             monStruct.script->onCasted(temp,player);
                         }
-                    } else {
-                        std::cerr<<"Didn't finde Monster Description for: "<< temp->getMonsterType() << " can't call onCasted!"<<std::endl;
                     }
-
                 }
 
-                //msg = "Casted spell: " + Logger::toString(spellId) + " on character: " + Target.character->to_string() + "(" + Logger::toString(Target.character->getId()) + ")";
                 break;
 
             case LUA_ITEM:
                 LuaMageScript->CastMagicOnItem(player, Target.item, static_cast<unsigned char>(LTS_NOLTACTION));
-                //msg = "Casted spell: " + Logger::toString(spellId) + " on item: " + Logger::toString(Target.item.getId());
                 break;
 
             default:
                 LuaMageScript->CastMagic(player, static_cast<unsigned char>(LTS_NOLTACTION));
-                //msg = "Casted spell: " + Logger::toString(spellId) + " on item: " + Logger::toString(Target.item.getId());
                 break;
-            } //Ende Switch
-
-            //monitoringClientList->sendCommand( new SendActionTS( player->getId(), *player, 2, msg));
-        } //ENde if player->isAlive
+            }
+        }
 
         Logger::debug(LogFacility::Script) << "all succeeded" << Log::end;
     }

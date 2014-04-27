@@ -38,12 +38,6 @@ bool WorldMap::mapInRangeOf(const position &upperleft, unsigned short int dx, un
         if (map->Z_Level == upperleft.z) {
             if ((map->Max_X >= upperleft.x) && (map->Min_X <= downright_x)) {
                 if ((map->Max_Y >= upperleft.y) && (map->Min_Y <= downright_y)) {
-                    std::cout << "Map in range at Z:" << map->Z_Level <<
-                              " Min_X: " << map->Min_X <<
-                              " Max_X: " << map->Max_X <<
-                              " Min_Y: " << map->Min_Y <<
-                              " Max_Y: " << map->Max_Y <<
-                              std::endl;
                     return true;
                 }
             }
@@ -151,10 +145,7 @@ bool WorldMap::exportTo(const std::string &exportDir) const {
         std::ofstream warpsf((filebase + "warps.txt").c_str());
 
         if (!fieldsf.good() || !itemsf.good() || !warpsf.good()) {
-            std::cerr << "could not open output files for item export: " << std::endl;
-            std::cerr << filebase << "tiles.txt" << std::endl;
-            std::cerr << filebase << "items.txt" << std::endl;
-            std::cerr << filebase << "warps.txt" << std::endl;
+            Logger::error(LogFacility::World) << "Could not open output files for item export: " << filebase << "*.txt" << Log::end;
             return false;
         }
 
@@ -223,10 +214,7 @@ void WorldMap::saveToDisk(const std::string &prefix) const {
     std::ofstream mapinitfile((prefix + "_initmaps").c_str(), std::ios::binary | std::ios::out | std::ios::trunc);
 
     if (!mapinitfile.good()) {
-#ifdef World_DEBUG
-        std::cerr << "Could not create initmaps!" << std::endl;
-#endif
-
+        Logger::error(LogFacility::World) << "Could not create initmaps!" << Log::end;
     } else {
         unsigned short int size = maps.size();
         Logger::info(LogFacility::World) << "Saving " << size << " maps." << Log::end;

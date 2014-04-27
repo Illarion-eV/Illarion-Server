@@ -297,7 +297,6 @@ void World::save_command(Player *cp) {
         }
     });
 
-    std::cout << "Save maps" << std::endl;
     Save();
 
     Players.for_each([this](Player *player) {
@@ -942,7 +941,7 @@ bool World::parseGMCommands(Player *user, const std::string &text) {
 extern MonsterTable *MonsterDescriptions;
 
 void reportError(Player *cp, std::string msg) {
-    std::cerr << "ERROR: " << msg << std::endl;
+    Logger::error(LogFacility::World) << "ERROR: " << msg << Log::end;
     cp->inform("ERROR: " + msg);
 }
 
@@ -989,9 +988,7 @@ bool World::reload_defs(Player *cp) {
     }
 
     if (ok) {
-        std::cerr << "Attempting to reload Scheduler" << std::endl;
         ScheduledScripts_temp = new ScheduledScriptsTable();
-        std::cerr << "Created new Scheduler" << std::endl;
 
         if (ScheduledScripts_temp == nullptr || !ScheduledScripts_temp->dataOK()) {
             reportTableError(cp, "scheduledscripts");
@@ -1159,8 +1156,7 @@ void create_area_command(World *world, Player *player,const std::string &params)
     ss >> filltile;
 
     if (x==-65535 || y == -65535 || z == -65535 || w < 1 || h < 1 || filltile < 0) {
-        std::cout << "error in create_area_command issued by " << *player << "!" << std::endl;
-        std::cout << "positions: " << x << "\t" << y << '\t' << z << '\t' << w << '\t' << h << '\t' << std::endl;
+        Logger::error(LogFacility::World) << "Error in create_area_command issued by " << *player << "; input: " << x << " " << y << " " << z << " " << w << " " << h << Log::end;
         return;
     }
 
@@ -1175,17 +1171,16 @@ void create_area_command(World *world, Player *player,const std::string &params)
                 tempf->setTileId(filltile);
                 tempf->updateFlags();
             } else {
-                std::cerr << "error in create map: " << x << " " << y << " " << z << " " << _x << " " << _y << " " << filltile << std::endl;
+                Logger::error(LogFacility::World) << "Error in create map: " << x << " " << y << " " << z << " " << _x << " " << _y << " " << filltile << Log::end;
             }
 
         }
 
     world->maps.InsertMap(tempmap);
 
-    std::string tmessage = "map inserted.";
+    std::string tmessage = "Map inserted.";
     player->inform(tmessage);
-    std::cerr << "Map created by " << *player << " on " << x << " - " << y << " - " << z << " with w: " << w << " h: " << h << "ft: " << filltile << std::endl;
-
+    Logger::info(LogFacility::World) << "Map created by " << *player << " on " << x << " - " << y << " - " << z << " with w: " << w << " h: " << h << " ft: " << filltile << Log::end;
 }
 
 void World::set_login(Player *player, const std::string &text) {

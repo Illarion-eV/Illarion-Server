@@ -60,15 +60,12 @@ void SpawnPoint::addMonster(const TYPE_OF_CHARACTER_ID &typ, const short int &co
 
 //! do spawns if possible...
 void SpawnPoint::spawn() {
-    //std::cout<<"Spawntime for Spawn at pos x="<<spawnpos.x<<" y="<<spawnpos.y<<" z="<<spawnpos.z<<"Spawntime: "<<nextspawntime<<std::endl;
     if (nextspawntime <= 0) {
         //set new spawntime
         nextspawntime = Random::uniform(min_spawntime, max_spawntime);
 
-        //std::cout<<"time to spawn new monster: new spawntime = "<<nextspawntime<<std::endl;
         // do we want monsters to spawn?
         if (!World::get()->isSpawnEnabled()) {
-            std::cout << "spawning disabled!" << std::endl;
             return;
         }
 
@@ -93,23 +90,17 @@ void SpawnPoint::spawn() {
                         tempPos.y = (spawnpos.y - spawnrange) + Random::uniform(0, 2 * spawnrange);
                         tempPos.z = spawnpos.z;
 
-                        //std::cout<<"spawned new monster at pos: "<<tempPos.x<<" "<<tempPos.y<<" "<<tempPos.z<<std::endl;
                         //end of setting the new spawnpos
                         if (world->findEmptyCFieldNear(tempf, tempPos)) {
                             newmonster = new Monster(spawn.typ, tempPos, this);
-#ifdef SpawnPoint_DEBUG
-                            std::cout << "erschaffe Monster " << newmonster->name << " " << tempPos << std::endl;
-#endif
                             spawn.akt_count++;
                             world->newMonsters.push_back(newmonster);
                             tempf->SetPlayerOnField(true);
                             world->sendCharacterMoveToAllVisiblePlayers(newmonster, NORMALMOVE, 4);
-                        } else {
-                            //std::cout<<"cant find empty field at pos " << tempPos << std::endl;
                         }
                     }
                 } catch (Monster::unknownIDException &) {
-                    std::cerr << "couldn't create monster in SpawnPoint.cpp: " << spawn.typ << std::endl;
+                    Logger::error(LogFacility::Other) << "Could not create unknown monster " << spawn.typ << Log::end;
                 }
             }
         }
@@ -145,7 +136,7 @@ bool SpawnPoint::load(const int &id) {
             }
         }
     } catch (std::exception &e) {
-        std::cerr << "exception: " << e.what() << std::endl;
+        Logger::error(LogFacility::Other) << "Exception in SpawnPoint::load: " << e.what() << Log::end;
         return false;
     }
 

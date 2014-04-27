@@ -94,7 +94,7 @@ void ScriptVariablesTable::save() {
 
         connection->commitTransaction();
     } catch (std::exception &e) {
-        std::cerr << "exception while saving script variables: " << e.what() << std::endl;
+        Logger::error(LogFacility::Other) << "Exception in ScriptVariablesTable::save: " << e.what() << Log::end;
     }
 }
 

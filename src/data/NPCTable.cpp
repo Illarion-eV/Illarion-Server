@@ -141,7 +141,7 @@ void NPCTable::reload() {
 
                     newNPC = nullptr;
                 } catch (NoSpace &s) {
-                    std::cout << "no space available for npc: " << npcName << "(" << npcID << ") : " << s.what() << std::endl;
+                    Logger::error(LogFacility::Other) << "No space available for NPC " << npcName << "(" << npcID << "): " << s.what() << Log::end;
                 }
 
                 delete newNPC;
@@ -151,7 +151,7 @@ void NPCTable::reload() {
 
         m_dataOK = true;
     } catch (...) {
-        std::cerr << "error while loading npcs" << std::endl;
+        Logger::error(LogFacility::Other) << "Error while loading NPCs" << Log::end;
         m_dataOK = false;
     }
 }

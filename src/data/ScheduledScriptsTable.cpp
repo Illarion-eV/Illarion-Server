@@ -95,10 +95,6 @@ bool ScheduledScriptsTable::addData(ScriptData data) {
 }
 
 void ScheduledScriptsTable::reload() {
-#ifdef DataConnect_DEBUG
-    std::cout << "ScheduledScriptsTable: reload" << std::endl;
-#endif
-
     try {
         Database::SelectQuery query;
         query.addColumn("scheduledscripts", "sc_scriptname");
@@ -135,7 +131,7 @@ void ScheduledScriptsTable::reload() {
 
         m_dataOk = true;
     } catch (std::exception &e) {
-        std::cerr << "exception: " << e.what() << std::endl;
+        Logger::error(LogFacility::Other) << "Exception in ScheduledScriptsTable::reload: " << e.what() << Log::end;
         m_dataOk = false;
     }
 }

@@ -175,14 +175,12 @@ bool LongTimeCharacterEffects::save() {
     using namespace Database;
 
     if (owner && owner->getType() != Character::player) {
-        std::cerr << "called save for LongtimeCharacterEffects but owner was no player" << std::endl;
         return false;
     }
 
     Player *player = dynamic_cast<Player *>(owner);
 
     if (!owner) {
-        std::cout << "error saving long time effects owner was nullptr!" << std::endl;
         return false;
     }
 
@@ -204,12 +202,11 @@ bool LongTimeCharacterEffects::save() {
         }
         connection->commitTransaction();
     } catch (std::exception &e) {
-        std::cerr << "caught exception during saving LongTimeCharacterEffects effects: " << e.what() << std::endl;
+        Logger::error(LogFacility::Database) << "Error while saving long time effects for " << player->to_string() << ": " << e.what() << Log::end;
         connection->rollbackTransaction();
         return false;
     }
 
-    std::cout<<"deleting old data was successfull inserting new one"<<std::endl;
     bool allok = true;
 
     for (auto it = effects.begin(); it != effects.end(); ++it) {
@@ -223,7 +220,6 @@ bool LongTimeCharacterEffects::load() {
     using namespace Database;
 
     if (owner->getType() != Character::player) {
-        std::cerr << "called load for LongtimeCharacterEffects but owner was no player" << std::endl;
         return false;
     }
 
@@ -281,7 +277,7 @@ bool LongTimeCharacterEffects::load() {
 
         return true;
     } catch (std::exception &e) {
-        std::cerr << "Error while loading longtimeeffects for " << player->to_string() << ": " << e.what() << std::endl;
+        Logger::error(LogFacility::Database) << "Error while loading long time effects for " << player->to_string() << ": " << e.what() << Log::end;
         return false;
     }
 }

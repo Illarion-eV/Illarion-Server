@@ -24,6 +24,7 @@
 
 #include "make_unique.hpp"
 #include "Config.hpp"
+#include "Logger.hpp"
 
 #include "netinterface/NetInterface.hpp"
 
@@ -45,7 +46,7 @@ void InitialConnection::run_service() {
     auto newConnection = std::make_shared<NetInterface>(io_service);
     using std::placeholders::_1;
     acceptor->async_accept(newConnection->getSocket(), std::bind(&InitialConnection::accept_connection, this, newConnection, _1));
-    std::cout<<"Starting the IO Service!"<<std::endl;
+    Logger::info(LogFacility::Other) << "Starting the IO Service!" << Log::end;
     io_service.run();
 }
 
@@ -53,19 +54,17 @@ void InitialConnection::run_service() {
 void InitialConnection::accept_connection(std::shared_ptr<NetInterface> connection, const boost::system::error_code &error) {
     if (!error) {
         if (connection->activate()) {
-            //Verbindung in die Liste aufnehmen
             playerVector.push_back(connection);
         } else {
-            std::cerr<<"Fehler bei Aktivierung der Connection"<<std::endl;
+            Logger::error(LogFacility::Other) << "Error while activating connection!" << Log::end;
         }
 
         auto newConnection = std::make_shared<NetInterface>(io_service);
         using std::placeholders::_1;
         acceptor->async_accept(newConnection->getSocket(), std::bind(&InitialConnection::accept_connection, this, newConnection, _1));
     } else {
-        std::cerr<<"Fehler im Accept:" << error.message() << ": " <<error.value() <<std::endl;
+        Logger::error(LogFacility::Other) << "Could not accept connection: " << error.message() << Log::end;
     }
-
 }
 
 

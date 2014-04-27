@@ -260,13 +260,13 @@ void LuaScript::triggerScriptError(const std::string &msg) throw(luabind::error)
 }
 
 void LuaScript::writeErrorMsg() {
-    const char *cerr = lua_tostring(_luaState, -1);
+    const char *c_err = lua_tostring(_luaState, -1);
     lua_pop(_luaState, 1);
 
     std::string err;
 
-    if (cerr) {
-        err = cerr;
+    if (c_err) {
+        err = c_err;
     } else {
         err = "UNKNOWN ERROR, CONTACT SERVER DEVELOPER";
         lua_pushstring(_luaState, err.c_str());
@@ -369,7 +369,6 @@ static int dofile(lua_State *L, const char *fname) {
     char path[100];
     strcpy(path, Config::instance().scriptdir().c_str());
     strcat(path, fname);
-    std::cout << "loading file: " << path << std::endl;
     int n = lua_gettop(L);
     int status = luaL_loadfile(L, path);
 
@@ -379,10 +378,6 @@ static int dofile(lua_State *L, const char *fname) {
 
     lua_call(L, 0, LUA_MULTRET);
     return lua_gettop(L) - n;
-}
-
-void printerr(std::string err) {
-    std::cout << "script error: " << err << std::endl;
 }
 
 unsigned int LuaAnd(unsigned int operand1, unsigned int operand2) {
@@ -937,7 +932,6 @@ void LuaScript::init_base_functions() {
         .def_readwrite("g_item", &World::g_item)
         .def_readwrite("weather", &World::weather),
         luabind::def("dofile", &dofile, luabind::raw(_1)),
-        luabind::def("printerr", printerr),
         luabind::def("LuaAnd", LuaAnd),
         luabind::def("getCharForId",getCharForId),
         luabind::def("LuaOr", LuaOr),

@@ -170,20 +170,9 @@ void checkArguments(int argc, char *argv[]) {
 
 // Itemdefinitionen laden
 void loadData() {
-    bool ok = true;
-
     ScheduledScripts = new ScheduledScriptsTable();
     scheduledScripts = ScheduledScripts;
-
-    if (!ScheduledScripts->dataOK()) {
-        ok = false;
-    }
-
     MonsterDescriptions = new MonsterTable();
-
-    if (!MonsterDescriptions->dataOK()) {
-        ok=false;
-    }
 
     try {
         auto tmpScript = std::make_shared<LuaWeaponScript>("server.standardfighting");
@@ -240,11 +229,6 @@ void loadData() {
     } catch (ScriptException &e) {
         Logger::error(LogFacility::Script) << "Error while loading script: server.learn: " << e.what() << Log::end;
     }
-
-
-    if (!ok) {
-        std::cerr << "could not load tables from database!" << std::endl;
-    }
 }
 
 
@@ -252,48 +236,45 @@ void loadData() {
 // signal handling functions
 ////////////////////////////////////////
 
-//! falls false beendet sich das Programm
+// quit if true
 volatile bool running;
 
 struct sigaction act_segv, act_segv_o , act_pipe, act_pipe_o, act_term, act_term_o, act_usr;
 
-//! die signal handler for SIGTERM
+// signal handler for SIGTERM
 void sig_term(int) {
-    std::cout << "\nSIGTERM received !" << std::endl;
+    Logger::info(LogFacility::Other) << "SIGTERM received!" << Log::end;
     //  ignore signal
     act_term.sa_handler = SIG_IGN;
 
     if (sigaction(SIGTERM, &act_term, nullptr) < 0) {
-        std::cerr << "SIGTERM: sigaction failed" << std::endl;
+        Logger::error(LogFacility::Other) << "SIGTERM: sigaction failed" << Log::end;
     }
 
     World::get()->allowLogin(false);
     running = false;
 }
 
-//! die Signalbehandlung f�r SIGSEGV
+// signal handler for SIGSEGV
 void sig_segv(int) {
-    std::cout << "\nSIGSEGV received !" << std::endl;
-    std::cerr <<"SEGV received! last Script: "<<World::get()->currentScript->getFileName()<<std::endl;
+    Logger::error(LogFacility::Other) << "SIGSEGV received! Last Script: " << World::get()->currentScript->getFileName() << Log::end;
     // ignore signal
     act_segv.sa_handler = SIG_IGN;
 
     if (sigaction(SIGSEGV, &act_segv, nullptr) < 0) {
-        std::cerr << "SIGSEGV: sigaction failed" << std::endl;
+        Logger::error(LogFacility::Other) << "SIGSEGV: sigaction failed" << Log::end;
     }
-
 }
 
 void sig_usr(int) {
-    Logger::info(LogFacility::World) << "SIGUSR received Importing maps new!" << Log::end;
+    Logger::info(LogFacility::World) << "SIGUSR received! Importing new maps." << Log::end;
     act_usr.sa_handler = sig_usr;
 
-    Logger::info(LogFacility::World) << "disable login and force log out of all Players" << Log::end;
+    Logger::info(LogFacility::World) << "Disable login and force log out of all players." << Log::end;
     World *world = World::get();
     world->allowLogin(false);
     world->forceLogoutOfAllPlayers(); //Alle spieler ausloggen
     world->maps.clear(); //alte Karten l�schen
-    std::cout<<"loading maps"<<std::endl;
     world->load_maps();
     //alles importiert also noch ein save machen
     Logger::info(LogFacility::World) << "Saving World..." << Log::end;
@@ -311,7 +292,7 @@ bool init_sighandlers() {
 
     // ignore all signals while installing signal handlers
     if (sigfillset(&act_pipe.sa_mask) < 0) {
-        std::cerr << "main: sig..set failed" << std::endl;
+        Logger::error(LogFacility::Other) << "main: sigfillset failed" << Log::end;
         return false;
     }
 
@@ -321,30 +302,30 @@ bool init_sighandlers() {
 
     // install signal handlers
     if (sigaction(SIGPIPE, &act_pipe, &act_pipe_o) < 0) {
-        std::cerr << "main: sigaction failed" << std::endl;
+        Logger::error(LogFacility::Other) << "SIGPIPE: sigaction failed" << Log::end;
         return false;
     }
 
     if (sigaction(SIGCHLD, &act_pipe, nullptr) < 0) {
-        std::cerr << "main: sigaction failed" << std::endl;
+        Logger::error(LogFacility::Other) << "SIGCHLD: sigaction failed" << Log::end;
         return false;
     }
 
 
     if (sigaction(SIGINT, &act_pipe, nullptr) < 0) {
-        std::cerr << "main: sigaction failed" << std::endl;
+        Logger::error(LogFacility::Other) << "SIGINT: sigaction failed" << Log::end;
         return false;
     }
 
 
     if (sigaction(SIGQUIT, &act_pipe, nullptr) < 0) {
-        std::cerr << "main: sigaction failed" << std::endl;
+        Logger::error(LogFacility::Other) << "SIGQUIT: sigaction failed" << Log::end;
         return false;
     }
 
     // ignore all signals while installing signal handlers
     if (sigfillset(&act_term.sa_mask) < 0) {
-        std::cerr << "main: sig..set failed" << std::endl;
+        Logger::error(LogFacility::Other) << "main: failed to install signal handlers" << Log::end;
         return false;
     }
 
@@ -352,12 +333,12 @@ bool init_sighandlers() {
     act_term.sa_flags = SA_RESTART;
 
     if (sigaction(SIGTERM, &act_term, &act_term_o) < 0) {
-        std::cerr << "main: sigaction SIGTERM failed" << std::endl;
+        Logger::error(LogFacility::Other) << "SIGTERM: sigaction failed" << Log::end;
         return false;
     }
 
     if (sigfillset(&act_segv.sa_mask) < 0) {
-        std::cerr << "main: sig..set failed" << std::endl;
+        Logger::error(LogFacility::Other) << "main: failed to install signal handlers" << Log::end;
         return false;
     }
 
@@ -365,12 +346,12 @@ bool init_sighandlers() {
     act_segv.sa_flags = SA_RESTART;
 
     if (sigaction(SIGSEGV, &act_segv, &act_segv_o) < 0) {
-        std::cerr << "main: sigaction SIGSEGV failed" << std::endl;
+        Logger::error(LogFacility::Other) << "SIGSEGV: sigaction failed" << Log::end;
         return false;
     }
 
     if (sigfillset(&act_usr.sa_mask) < 0) {
-        std::cerr << "main: sig..set failed" <<std::endl;
+        Logger::error(LogFacility::Other) << "main: failed to install signal handlers" << Log::end;
         return false;
     }
 
@@ -378,7 +359,7 @@ bool init_sighandlers() {
     act_usr.sa_flags = SA_RESTART;
 
     if (sigaction(SIGUSR1, &act_usr, nullptr) < 0) {
-        std::cerr << "main: sigaction SIGUSR1 failed" << std::endl;
+        Logger::error(LogFacility::Other) << "SIGUSR1: sigaction failed" << Log::end;
         return false;
     }
 
@@ -387,51 +368,8 @@ bool init_sighandlers() {
 }
 
 void reset_sighandlers() {
-    std::cout << "reset of signal handlers...";
-
     sigaction(SIGPIPE, &act_pipe_o, nullptr);
-
     sigaction(SIGTERM, &act_term_o, nullptr);
-
     sigaction(SIGSEGV, &act_segv_o, nullptr);
-
-    std::cout << " done.";
 }
 
-////////////////////////////////////////
-// configuration reading funktions
-////////////////////////////////////////
-
-// cout/cerr logfiles
-std::ofstream coutfile, cerrfile;
-
-bool setup_files(time_t starttime) {
-
-    std::string cout_logfile = Config::instance().coutdir() + std::to_string(starttime) + std::string(".out");
-    std::string cerr_logfile =  Config::instance().coutdir() + std::to_string(starttime) + std::string(".err");
-
-    std::cout << "redirecting all further output to file: " << cout_logfile << std::endl;
-    std::cout << "redirecting error output to file: " << cerr_logfile << std::endl;
-
-    // open files for redirectings stdout/stderr
-    coutfile.open(cout_logfile.c_str(), std::ios::out | std::ios::trunc);
-    cerrfile.open(cerr_logfile.c_str(), std::ios::out | std::ios::trunc);
-
-    // check if files are ok
-    if (!coutfile.good()) {
-        std::cerr << "Could not open stdout log file for writing: " << cout_logfile << std::endl;
-        return false;
-    }
-
-    if (!cerrfile.good()) {
-        std::cerr << "Could not open stderr log file for writing: " << cerr_logfile << std::endl;
-        return false;
-    }
-
-    // redirect stdout/stderr
-    std::cout.rdbuf(coutfile.rdbuf());
-    std::cerr.rdbuf(cerrfile.rdbuf());
-
-    return true;
-
-}

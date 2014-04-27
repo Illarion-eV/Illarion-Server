@@ -42,9 +42,7 @@ MonsterTable::MonsterTable() : m_dataOK(false), world(World::get()) {
 
 
 void MonsterTable::reload() {
-#ifdef DataConnect_DEBUG
-    std::cout << "MonsterTable: reload" << std::endl;
-#endif
+    Logger::info(LogFacility::Other) << "MonsterTable::reload" << Log::end;    
 
     try {
         using namespace Database;
@@ -152,7 +150,7 @@ void MonsterTable::reload() {
                     } else if (attribute == "essence") {
                         temprecord.attributes.essence = std::make_pair(minValue, maxValue);
                     } else {
-                        std::cerr << "unknown attribute type: "<< attribute << std::endl;
+                        Logger::error(LogFacility::Other) << "Unknown attribute type for monster " << id << ": " << attribute << Log::end;
                     }
                 }
 
@@ -228,7 +226,7 @@ void MonsterTable::reload() {
                     } else if (position == "belt6") {
                         location = 17;
                     } else {
-                        std::cerr << "specified invalid itemslot: " <<  position << " for monster " << temprecord.nameEn << std::endl;
+                        Logger::error(LogFacility::Other) << "Invalid itemslot for monster " << id << ": " << position << Log::end;
                         location = 99;
                     }
 
@@ -238,7 +236,7 @@ void MonsterTable::reload() {
                         tempitem.AgeingSpeed = tempCommon.AgeingSpeed;
                         temprecord.items[location].push_back(tempitem);
                     } else if (location < 99) {
-                        std::cerr << "couldn't find item: " <<  tempitem.itemid << " for monster " << temprecord.nameEn << std::endl;
+                        Logger::error(LogFacility::Other) << "Invalid item for monster " << id << ": " << tempitem.itemid << Log::end;
                     }
                 }
 
@@ -248,11 +246,9 @@ void MonsterTable::reload() {
         }
 
         connection->commitTransaction();
-#ifdef DataConnect_DEBUG
-        std::cout << "loaded " << m_table.size() << " monsters!" << std::endl;
-#endif
+        Logger::info(LogFacility::Other) << "Loaded " << m_table.size() << " monsters!" << Log::end;
     } catch (std::exception &e) {
-        std::cerr << "exception: " << e.what() << std::endl;
+        Logger::error(LogFacility::Other) << "Exception in MonsterTable::reload: " << e.what() << Log::end;
         m_dataOK = false;
     }
 

@@ -93,11 +93,6 @@ int main(int argc, char *argv[]) {
 
     checkArguments(argc, argv);
 
-    // set up logfiles etc. and check if everything works
-    if (! setup_files(starttime)) {
-        return 1;
-    }
-
     Logger::info(LogFacility::Other) << "main: server requires clientversion: " << Config::instance().clientversion << Log::end;
     Logger::info(LogFacility::Other) << "main: listen port: " << Config::instance().port << Log::end;
     Logger::info(LogFacility::Other) << "main: data directory: " << Config::instance().datadir() << Log::end;
@@ -176,15 +171,12 @@ int main(int argc, char *argv[]) {
                         PlayerManager::get().getLogOutPlayers().push_back(newPlayer);
                     }
                 }
-            } else {
-                std::cout<<"try to get new player but was nullptr!"<<std::endl;
             }
-
-        } // get new players
+        }
 
         // run scheduler until next task or for 25ms
-	world->scheduler.run_once(std::chrono::seconds(1));
-	world->checkPlayerImmediateCommands();
+        world->scheduler.run_once(std::chrono::seconds(1));
+        world->checkPlayerImmediateCommands();
         Statistics::getInstance().stopTimer("cycle");
     }
 

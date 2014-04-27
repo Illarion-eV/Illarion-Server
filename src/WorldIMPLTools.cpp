@@ -255,7 +255,6 @@ std::list<BlockingObject> World::LoS(const position &startingpos, const position
 //function which updates the playerlist.
 void World::updatePlayerList() {
     using namespace Database;
-    std::cout<<"Updateplayerlist start"<<std::endl;
 
     PConnection connection = ConnectionManager::getInstance().getConnection();
 
@@ -280,11 +279,9 @@ void World::updatePlayerList() {
 
         connection->commitTransaction();
     } catch (std::exception &e) {
-        std::cerr<<"caught exception during online player save: "<<e.what()<<std::endl;
+        Logger::error(LogFacility::World) << "Exception during saving online player list: " << e.what() << Log::end;
         connection->rollbackTransaction();
     }
-
-    std::cout<<"updateplayerlist end"<<std::endl;
 }
 
 Character *World::findCharacterOnField(const position &pos) const {
@@ -377,9 +374,6 @@ bool World::characterAttacks(Character *cp) {
     if (cp->enemyid != cp->getId()) {
 
         if (cp->enemytype == Character::player) {
-#ifdef World_DEBUG
-            std::cout << "attack player" << std::endl;
-#endif
             Player *temppl = Players.find(cp->enemyid);
 
             // Ziel gefunden
@@ -418,7 +412,6 @@ bool World::characterAttacks(Character *cp) {
         } else if (cp->enemytype == Character::monster) {
             Monster *temppl = Monsters.find(cp->enemyid);
 
-            // Ziel gefunden
             if (temppl != nullptr) {
                 if (cp->isInRange(temppl, temppl->getScreenRange())) {
                     MonsterStruct monStruct;
@@ -426,14 +419,9 @@ bool World::characterAttacks(Character *cp) {
                     if (MonsterDescriptions->find(temppl->getMonsterType(), monStruct)) {
                         if (monStruct.script) {
                             monStruct.script->onAttacked(temppl,cp);
-                        } else {
-                            std::cerr<<"No script initialized for monster: "<<temppl->getMonsterType()<<" on Attack not called!"<<std::endl;
                         }
-                    } else {
-                        std::cerr<<"Didn't finde Monster Description for: "<< temppl->getMonsterType() << " can't call onAttacked!"<<std::endl;
                     }
 
-                    // Ziel ist tot
                     if (!cp->attack(temppl)) {
                         cp->setAttackMode(false);
 
@@ -674,15 +662,10 @@ void World::Save() {
     std::ofstream specialfile((path + "_specialfields").c_str(), std::ios::binary | std::ios::out | std::ios::trunc);
 
     if (! specialfile.good()) {
-#ifdef World_DEBUG
-        std::cerr << "World::Save: Fehler beim Speichern der speziellen Felder, konnte _specialfields nicht erstellen" << std::endl;
-#endif
-
+        Logger::error(LogFacility::World) << "World::Save: error writing specialfields!" << Log::end;
     } else {
         unsigned short int size = specialfields.size();
-#ifdef World_DEBUG
-        std::cout << "World::Save: speichere " << size << " spezielle Felder" << std::endl;
-#endif
+        Logger::error(LogFacility::World) << "World::Save: saving " << size << " special fields." << Log::end;
         specialfile.write((char *) & size, sizeof(size));
 
         for (const auto &field : specialfields) {

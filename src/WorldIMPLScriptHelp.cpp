@@ -89,7 +89,7 @@ bool World::createDynamicNPC(const std::string &name, TYPE_OF_RACE_ID type, cons
 
         return true;
     } catch (...) {
-        std::cerr << "World::createDynamicNPC: Unknown error while loading dynamic NPC: " << name << std::endl;
+        Logger::error(LogFacility::Script) << "World::createDynamicNPC: Unknown error while loading dynamic NPC: " << name << Log::end;
         return false;
     }
 }
@@ -470,9 +470,6 @@ character_ptr World::createMonster(unsigned short id, const position &pos, short
     if (GetPToCFieldAt(field, pos)) {
         try {
             Monster *newMonster = new Monster(id, pos);
-#ifdef LUASCRIPT_DEBUG
-            std::cout<<"Erschaffe neues Monster: " << newMonster->name << " an Position (x,y,z) " << pos.x << " " << pos.y << " " << pos.z << std::endl;
-#endif
             newMonster->setActionPoints(movepoints);
             newMonsters.push_back(newMonster);
             field->setChar();
@@ -575,7 +572,7 @@ bool World::createSavedArea(uint16_t tileid, const position &pos, uint16_t heigh
             const position testPos(akt_x, akt_y, pos.z);
 
             if (maps.findMapForPos(testPos, dummy)) {
-                std::cerr<<"World::createSavedArea: Aborted map insertion, map for field at "<< testPos << " found!"<<std::endl;
+                Logger::error(LogFacility::World) << "World::createSavedArea: Aborted map insertion, map for field at " << testPos << " found!" << Log::end;
                 return false;
             }
         }
@@ -592,13 +589,13 @@ bool World::createSavedArea(uint16_t tileid, const position &pos, uint16_t heigh
                 tempf->setTileId(tileid);
                 tempf->updateFlags();
             } else {
-                std::cerr << "World::createSavedArea: For map inserted at " << pos << " no Field was found for offset (" << _x << ", " << _y << ")!" << std::endl;
+                Logger::error(LogFacility::World) <<  "World::createSavedArea: For map inserted at " << pos << " no Field was found for offset (" << _x << ", " << _y << ")!" << Log::end;
             }
 
         }
 
     maps.InsertMap(tempmap);
-    std::cout<<" Map Created by createSavedArea command at " << pos <<" height: "<<height<<" width: "<<width<<" standard tile: "<<tileid<<"!"<<std::endl;
+    Logger::info(LogFacility::World) << "Map created by createSavedArea command at " << pos << " height: " << height << " width: " << width << " standard tile: " << tileid << "!" << Log::end;
     return true;
 }
 

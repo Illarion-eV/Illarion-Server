@@ -118,17 +118,9 @@ void Monster::setSpawn(SpawnPoint *sp) {
 }
 
 Monster::~Monster() {
-#ifdef Character_DEBUG
-    std::cout << "Monster Destruktor Start" << std::endl;
-#endif
-
     if (spawn) {
         spawn->dead(monstertype);
     }
-
-#ifdef Character_DEBUG
-    std::cout << "Monster Destruktor Ende" << std::endl;
-#endif
 }
 
 void Monster::remove() {
@@ -146,11 +138,7 @@ void Monster::setAlive(bool t) {
         if (World::get()->getMonsterDefinition(getMonsterType(), monStruct)) {
             if (monStruct.script) {
                 monStruct.script->onDeath(this);
-            } else {
-                std::cerr<<"Script for Monster: "<<getMonsterType()<<" not active!"<<std::endl;
             }
-        } else {
-            std::cerr<<"Can't finde Description for Monster: " << getMonsterType() << " on Death not called!"<<std::endl;
         }
     }
 }
@@ -162,11 +150,7 @@ bool Monster::attack(Character *target) {
     if (World::get()->getMonsterDefinition(getMonsterType(), monStruct)) {
         if (monStruct.script) {
             monStruct.script->onAttack(this,target);
-        } else {
-            std::cerr<<"Script for Monster: "<<getMonsterType()<<"not active!"<<std::endl;
         }
-    } else {
-        std::cerr<<"Can't find Description for Monster: " << getMonsterType() << " onAttack not called!" << std::endl;
     }
 
     return Character::attack(target);
@@ -186,8 +170,6 @@ void Monster::receiveText(talk_type tt, const std::string &message, Character *c
                 monStruct.script->receiveText(this, tt, message, cc);
             }
         }
-    } else {
-        std::cerr<<"Can't find description for monster: " << getMonsterType() << " receiveText not called!"<<std::endl;
     }
 }
 

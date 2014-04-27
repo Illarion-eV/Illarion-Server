@@ -1056,8 +1056,6 @@ void Character::learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opp
 
     if (learnScript) {
         learnScript->learn(this, skill, actionPoints, opponent);
-    } else {
-        std::cerr<<"learn called but script was not initialized"<<std::endl;
     }
 }
 
@@ -1172,7 +1170,6 @@ int Character::weightContainer(TYPE_OF_ITEM_ID id, int count, Container *tcont) 
                     temp -= tcont->weight();
                 }
             } catch (RekursionException &e) {
-                std::cerr << "weightContainer: maximale Rekursionstiefe " << MAXIMALEREKURSIONSTIEFE << " wurde bei Char " << name << " ueberschritten!" << std::endl;
                 return 30000;
             }
         }
@@ -1447,12 +1444,10 @@ bool Character::Warp(const position &targetPos) {
             _world->sendCharacterWarpToAllVisiblePlayers(this, oldpos, PUSH);
             return true;
         } else {
-            std::cout<< "Characterwarp, Zielfeld nicht gefunden! "<<std::endl;
             return false;
         }
 
     } else {
-        std::cout<< "Characterwarp, Quellfeld nicht gefunden! "<<std::endl;
         return false;
     }
 
@@ -1473,12 +1468,10 @@ bool Character::forceWarp(const position &newPos) {
             _world->sendCharacterWarpToAllVisiblePlayers(this, oldpos, PUSH);
             return true;
         } else {
-            std::cout<< "forceWarp, Zielfeld nicht gefunden! "<<std::endl;
             return false;
         }
 
     } else {
-        std::cout<< "forceWarp, Quellfeld nicht gefunden! "<<std::endl;
         return false;
     }
 
@@ -1504,7 +1497,6 @@ void Character::inform(const std::string &, const std::string &, informType type
 void Character::changeQualityAt(unsigned char pos, short int amount) {
     if (pos < MAX_BODY_ITEMS + MAX_BELT_SLOTS) {
         if ((characterItems[ pos ].getId() == 0) || (characterItems[pos].getId() == BLOCKEDITEM)) {
-            std::cerr<<"changeQualityAt, kein Item oder belegt an der position: "<<(int)pos<<" !"<<std::endl;
             return;
         }
 
@@ -1512,9 +1504,7 @@ void Character::changeQualityAt(unsigned char pos, short int amount) {
         short int tmpQuality = ((amount+characterItems[pos].getDurability())<100) ? (amount + characterItems[pos].getQuality()) : (characterItems[pos].getQuality() - characterItems[pos].getDurability() + 99);
 
         if (tmpQuality%100 > 1) {
-            std::cout<<"Qualit� des Items > 0"<<std::endl;
             characterItems[ pos ].setQuality(tmpQuality);
-            std::cout<<"Akt Qualit�: "<<characterItems[ pos ].getQuality()<<std::endl;
             return;
         } else {
 

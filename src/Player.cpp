@@ -75,10 +75,6 @@ extern std::shared_ptr<LuaDepotScript>depotScript;
 Player::Player(std::shared_ptr<NetInterface> newConnection) throw(Player::LogoutException)
     : Character(), onlinetime(0), Connection(newConnection), turtleActive(false),
       clippingActive(true), admin(false), questWriteLock(false), monitoringClient(false), dialogCounter(0) {
-#ifdef Player_DEBUG
-    std::cout << "Player Konstruktor Start" << std::endl;
-#endif
-
     screenwidth = 0;
     screenheight = 0;
     Character::setAlive(true);
@@ -999,8 +995,6 @@ void Player::check_logindata() throw(Player::LogoutException) {
             newPlayer = row["is_new_player"].as<bool>(false);
         }
 
-        std::cout << *this << " is " << (newPlayer ? "new" : "not new") << std::endl;
-
         Database::SelectQuery playerQuery(connection);
         playerQuery.addColumn("player", "ply_posx");
         playerQuery.addColumn("player", "ply_posy");
@@ -1090,7 +1084,7 @@ void Player::check_logindata() throw(Player::LogoutException) {
         _appearance.skin.green = playerRow["ply_skingreen"].as<uint16_t>();
         _appearance.skin.blue = playerRow["ply_skinblue"].as<uint16_t>();
     } catch (std::exception &e) {
-        std::cerr << "exception on load player: " << e.what() << std::endl;
+        Logger::error(LogFacility::Player) << "Exception on loading player: " << e.what() << Log::end;
         throw LogoutException(NOCHARACTERFOUND);
     }
 }
@@ -1641,13 +1635,11 @@ bool Player::load() throw() {
             }
         }
     } catch (std::exception &e) {
-        std::cerr << "exception: " << e.what() << std::endl;
+        Logger::error(LogFacility::Player) << "Exception on loading player: " << e.what() << Log::end;
         dataOK = false;
     }
 
     if (!dataOK) {
-        std::cerr<<"in load(): error while loading!"<<std::endl;
-        //Fehler beim laden aufgetreten
         std::map<int, Container *>::reverse_iterator rit;
         std::map<uint32_t,Container *>::reverse_iterator rit2;
 
@@ -1959,21 +1951,12 @@ bool Player::move(direction dir, uint8_t mode) {
 
         if (cfnew && fieldfound && (cfnew->moveToPossible() || (getClippingActive() == false && (isAdmin() || hasGMRight(gmr_isnotshownasgm))))) {
             uint16_t walkcost = getMovementCost(cfnew);
-#ifdef PLAYER_MOVE_DEBUG
-            std::cout<< "Player::move Walkcost beforce encumberance: " << walkcost << std::endl;
-#endif
 
             if (!encumberance(walkcost)) {
-#ifdef PLAYER_MOVE_DEBUG
-                std::cout<< "Player::move Walkcost after encumberance Char overloadet: " << walkcost << std::endl;
-#endif
                 ServerCommandPointer cmd = std::make_shared<MoveAckTC>(getId(), getPosition(), NOMOVE, 0);
                 Connection->addCommand(cmd);
                 return false;
             } else {
-#ifdef PLAYER_MOVE_DEBUG
-                std::cout<< "Player::move Walkcost after Char not overloadet encumberance: " << walkcost << std::endl;
-#endif
                 int16_t diff = (P_MIN_AP - getActionPoints() + walkcost) * 10;
 
                 // necessary to get smooth movement in client (dunno how this one is supposed to work exactly)

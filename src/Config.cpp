@@ -19,6 +19,7 @@
  */
 
 #include "Config.hpp"
+#include "Logger.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -56,7 +57,7 @@ bool Config::load(const std::string &config_file) {
         auto pos = config_options.find(temp);
 
         if (pos == config_options.end()) {
-            std::cerr << "invalid config entry: " << temp << std::endl;
+            Logger::error(LogFacility::Other) << "Invalid config entry: " << temp << Log::end;
             return false;
         }
 
@@ -69,7 +70,9 @@ bool Config::load(const std::string &config_file) {
 
     for (auto item : config_options) {
         if (!item.second->isInitialized()) {
-            std::cout << "[WARN] config entry missing for key: " << item.first << " using default value: " << *(item.second) << std::endl;
+            std::ostringstream msg;
+            msg << "Config entry missing for key: " << item.first << " using default value: " << *(item.second);
+            Logger::warn(LogFacility::Other) << msg.str() << Log::end;
         }
     }
 
