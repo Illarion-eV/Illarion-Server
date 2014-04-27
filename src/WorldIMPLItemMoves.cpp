@@ -89,7 +89,6 @@ bool World::putItemOnInvPos(Character *cc, unsigned char pos) {
                                 }
                             } else if ((pos == LEFT_TOOL) && (cc->characterItems[ RIGHT_TOOL ].getId() == 0)) {
                                 if (cc->characterItems[pos].getId() == 0 && g_item.getNumber() == 1) {
-                                    //std::cout << "Zweihaender rechts  platziert" << std::endl;
                                     cc->characterItems[ pos ] = g_item;
                                     cc->characterItems[ RIGHT_TOOL ].setId(BLOCKEDITEM);
                                     cc->characterItems[ RIGHT_TOOL ].makePermanent();
@@ -419,7 +418,6 @@ bool World::putItemInShowcase(Player *cc, uint8_t showcase, TYPE_OF_CONTAINERSLO
                         return true;
                     }
                 }
-                //Falls man eine Tasche in eine Tasche legen will dies unterbinden
                 else {
                     return false;
                 }
@@ -428,20 +426,12 @@ bool World::putItemInShowcase(Player *cc, uint8_t showcase, TYPE_OF_CONTAINERSLO
             if (ps->InsertItem(g_item, pos)) {
                 sendContainerSlotChange(ps, pos);
                 g_item.reset();
-#ifdef World_ItemMove_DEBUG
-                std::cout << "putItemInShowcase.. Ende 2" << std::endl;
-#endif
                 return true;
             }
         }
     }
 
-#ifdef World_ItemMove_DEBUG
-    std::cout << "putItemInShowcase.. Ende 3" << std::endl;
-#endif
-
     return false;
-
 }
 
 bool World::takeItemFromMap(Character *cc, const position &itemPosition) {

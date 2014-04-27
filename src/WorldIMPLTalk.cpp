@@ -197,7 +197,6 @@ void World::sendLanguageMessageToAllCharsInRange(const std::string &message, Cha
 
     // tell all OTHER players... (but tell them what they understand due to their inability to do so)
     // tell the player himself what he wanted to say
-    //std::cout << "message in WorldIMPLTalk:" << message;
     if (message.substr(0, 3) == "#me") {
         for (const auto &player : players) {
             if (player->getPlayerLanguage() == lang) {

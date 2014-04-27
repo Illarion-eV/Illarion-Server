@@ -139,7 +139,6 @@ void PlayerManager::loginLoop(PlayerManager *pmanager) {
                             Connection.reset();
                         } else {
                             if (Connection->nextInactive()) {
-                                std::cout<<Connection->getIPAdress()<<" logged out because inactive count!"<<std::endl;
                                 throw Player::LogoutException(UNSTABLECONNECTION);
                             }
 
@@ -147,12 +146,10 @@ void PlayerManager::loginLoop(PlayerManager *pmanager) {
                             Connection.reset();
                         }
                     } catch (Player::LogoutException &e) {
-                        std::cout<<"got logoutException durin loading! "<<std::endl;
                         ServerCommandPointer cmd = std::make_shared<LogOutTC>(e.getReason());
                         Connection->shutdownSend(cmd);
                     }
                 } else {
-                    std::cout<<"try to get connection but was nullptr!"<<std::endl;
                     Connection.reset();
                 }
 

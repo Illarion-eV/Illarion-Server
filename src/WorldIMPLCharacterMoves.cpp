@@ -227,12 +227,8 @@ void World::sendCharsInVector(const std::vector<T *> &vec, Player *cp, bool send
 
 
 bool World::addWarpField(const position &where, const position &target, unsigned short int starttilenr, Item::id_type startitemnr) {
-#ifdef World_CharMove_DEBUG
-    std::cout << "addWarpField: " << where << "\n";
-#endif
     Field *cfstart;
 
-    // Startfeld vorhanden
     if (GetPToCFieldAt(cfstart, where)) {
 
         if (starttilenr != 0) {
@@ -259,10 +255,8 @@ bool World::addWarpField(const position &where, const position &target, unsigned
 
 
 bool World::makeSpecialField(const position &where, s_fieldattrib which) {
-    std::cout << "addSpecialField: " << where << "\n";
     Field *cfstart;
 
-    // Startfeld vorhanden
     if (GetPToCFieldAt(cfstart, where)) {
         cfstart->SetSpecialField(true);
         specialfields.insert(FIELDATTRIBHASH::value_type(where, which));
@@ -285,7 +279,6 @@ bool World::makeSpecialField(short int x, short int y, short int z, unsigned cha
     which.flags = value;
 
     return makeSpecialField(where, which);
-
 }
 
 
@@ -293,10 +286,7 @@ bool World::addWarpField(const position &where, const position &target, unsigned
 
     if (addWarpField(where, target, starttilenr, startitemnr)) {
 
-        std::cout << "addWarp Unten -> Oben ist ok" << std::endl;
-
         if (addWarpField(target, where, targettilenr, targetitemnr)) {
-            std::cout << "adwarp Oben -> Unten ist ok" << std::endl;
             return true;
         } else {
             removeWarpField(where);
@@ -304,18 +294,13 @@ bool World::addWarpField(const position &where, const position &target, unsigned
     }
 
     return false;
-
 }
 
 
 bool World::removeWarpField(const position &where) {
-
-#ifdef World_CharMove_DEBUG
-    std::cout << "removeWarpField: " << where << "\n";
-#endif
     Field *cfstart;
 
-    if (GetPToCFieldAt(cfstart, where)) {     // Startfeld vorhanden
+    if (GetPToCFieldAt(cfstart, where)) {
         cfstart->UnsetWarpField();
         return true;
     }

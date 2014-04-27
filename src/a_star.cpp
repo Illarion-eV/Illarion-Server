@@ -98,14 +98,14 @@ int num_vertices(const world_map_graph &g) {
 }
 
 distance_heuristic::distance_heuristic(const Vertex &goal): goal(goal) {
-    // std::cout << "heuristic goal (" << this->goal.first << ", " << this->goal.second << ")" << std::endl;
+    Logger::debug(LogFacility::Other) << "heuristic goal (" << this->goal.first << ", " << this->goal.second << ")" << Log::end;
 }
 
 Cost distance_heuristic::operator()(const Vertex &u) {
     Cost dx = goal.first - u.first;
     Cost dy = goal.second - u.second;
     Cost d = sqrt(dx * dx + dy * dy);
-    // std::cout << "from (" << u.first << ", " << u.second << ") to (" << goal.first << ", " << goal.second << "): " << d << std::endl;
+    Logger::debug(LogFacility::Other) << "from (" << u.first << ", " << u.second << ") to (" << goal.first << ", " << goal.second << "): " << d << Log::end;
     return d;
 }
 

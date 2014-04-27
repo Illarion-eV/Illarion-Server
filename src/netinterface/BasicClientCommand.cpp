@@ -89,7 +89,6 @@ unsigned char BasicClientCommand::getUnsignedCharFromBuffer() throw(OverflowExce
     //we want to read more data than there is in the buffer
     else if (bytesRetrieved > length) {
         dataOk = false;
-        std::cout<<"try to read more data then in buffer for command:"<<std::hex<<static_cast<int>(getDefinitionByte())<<std::dec<<std::endl;
         throw OverflowException();
     }
     //all went well

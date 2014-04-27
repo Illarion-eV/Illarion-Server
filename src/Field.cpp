@@ -203,18 +203,9 @@ int Field::increaseTopItem(int count, bool &erased) {
 
     Item it;
     int temp = count;
-#ifdef Field_DEBUG
-    std::cout << "increaseTopItem " << count << "\n";
-#endif
 
     if (TakeTopItem(it)) {
         temp = count + it.getNumber();
-#ifdef Field_DEBUG
-        std::cout << "temp " << temp << "\n";
-#endif
-#ifdef Field_DEBUG
-        std::cout << "it.number:"<<it.getNumber()<<std::endl;
-#endif
         auto maxStack = it.getMaxStack();
 
         if (temp > maxStack) {
@@ -381,10 +372,6 @@ int8_t Field::DoAgeItems() {
                 const auto &tempCommon = Data::CommonItems[item.getId()];
 
                 if (tempCommon.isValid() && item.getId() != tempCommon.ObjectAfterRot) {
-#ifdef Field_DEBUG
-                    std::cout << "FIELD:Ein Item wird umgewandelt von: " << item.getId() << "  nach: " << tempCommon.ObjectAfterRot << "!\n";
-#endif
-
                     //only set ret to 1 if it wasn't -1 because -1 has the highest priority (forces update of the field and rots container)
                     if (item.getId() != tempCommon.ObjectAfterRot && ret != -1) {
                         ret = 1;
@@ -400,10 +387,6 @@ int8_t Field::DoAgeItems() {
 
                     ++it;
                 } else {
-#ifdef Field_DEBUG
-                    std::cout << "FIELD:Ein Item wird gel�cht,ID:" << item.getId() << "!\n";
-#endif
-
                     if (item.isContainer()) {
                         erasedcontainers.push_back(item.getNumber());
                         ret = -1;
@@ -414,7 +397,6 @@ int8_t Field::DoAgeItems() {
                     if (ret != -1) {
                         ret = 1;
                     }
-
                 }
             } else {
                 ++it;

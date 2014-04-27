@@ -25,6 +25,7 @@
 #include <malloc.h>
 #include "Connection.hpp"
 #include "netinterface/NetInterface.hpp"
+#include "Logger.hpp"
 
 BasicServerCommand::BasicServerCommand(unsigned char defByte) : BasicCommand(defByte) {
     STDBUFFERSIZE = 1000;
@@ -112,7 +113,7 @@ void BasicServerCommand::addUnsignedCharToBuffer(unsigned char data) {
 }
 
 void BasicServerCommand::resizeBuffer() {
-    std::cout<<"not enough memory resizing the sendbuffer"<<std::endl;
+    Logger::info(LogFacility::Other) << "Not enough memory. Resizing the send buffer. Current size: " << bufferSizeMod*STDBUFFERSIZE << " bytes." << Log::end;
     //increase the buffer size modifikator
     bufferSizeMod++;
     //store old data in temp
@@ -128,6 +129,6 @@ void BasicServerCommand::resizeBuffer() {
     //delete the temp buffer;
     delete[] temp;
     temp = nullptr;
-    std::cout<<"resizing the sendBuffer successfully"<<std::endl;
+    Logger::info(LogFacility::Other) << "Resizing the send buffer successful. New size: " << bufferSizeMod*STDBUFFERSIZE << " bytes." << Log::end;
 }
 

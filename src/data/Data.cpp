@@ -69,7 +69,8 @@ bool reloadTables() {
 
     Logger::notice(LogFacility::Script) << "Loading data and scripts ..." << Log::end;
 
-    system((Config::instance().datadir() + "pre-reload").c_str());
+    std::string preReloadCommand = "sh " + Config::instance().datadir() + "pre-reload 2>/dev/null >/dev/null";
+    system(preReloadCommand.c_str());
 
     for (auto &table : getTables()) {
         success = success && table->reloadBuffer();

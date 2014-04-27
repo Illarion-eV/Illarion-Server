@@ -55,22 +55,17 @@ bool Map::addItemToPos(Item it, MAP_POSITION pos) {
 
 
 bool Map::addContainerToPos(Item it, Container *cc, MAP_POSITION pos) {
-
-#ifdef Map_DEBUG
-    std::cout << "addContainerToPos: id: " << it.id << " x: " << pos.x << " y: " << pos.y << "\n";
-#endif
     Field *cfnew;
 
-    if (GetPToCFieldAt(cfnew, pos.x, pos.y)) {     // neues Feld vorhanden
-        if (cfnew->IsPassable()) {   // neues Feld begehbar
-            if (cfnew->items.size() < (MAXITEMS - 1)) {     // noch Platz auf dem Feld
-                if (it.isContainer()) {     // item ist ein Container
+    if (GetPToCFieldAt(cfnew, pos.x, pos.y)) {
+        if (cfnew->IsPassable()) {
+            if (cfnew->items.size() < (MAXITEMS - 1)) {
+                if (it.isContainer()) {
                     CONTAINERHASH::iterator conmapn = maincontainers.find(pos);
                     MAXCOUNTTYPE count = 0;
 
-                    if (conmapn != maincontainers.end()) {   // containermap fr das Zielfeld gefunden
+                    if (conmapn != maincontainers.end()) {
                         Container::CONTAINERMAP::iterator iterat;
-                        // n�hste freie ID fr den Container auf dem Zielfeld suchen
                         iterat = (*conmapn).second.find(count);
 
                         while ((iterat != (*conmapn).second.end()) && (count < (MAXITEMS - 2))) {
@@ -78,18 +73,13 @@ bool Map::addContainerToPos(Item it, Container *cc, MAP_POSITION pos) {
                             iterat = (*conmapn).second.find(count);
                         }
 
-                        // den Containerinhalt hinzufgen
                         if (count < (MAXITEMS - 1)) {
                             (*conmapn).second.insert(iterat, Container::CONTAINERMAP::value_type(count, cc));
                         } else {
                             return false;
                         }
-                    } else { // neue containermap fr das Zielfeld anlegen
-#ifdef Map_DEBUG
-                        std::cout << "addContainerToPos: neue Containermap fr das Feld angelegt\n";
-#endif
+                    } else {
                         conmapn = (maincontainers.insert(CONTAINERHASH::value_type(pos, Container::CONTAINERMAP()))).first;
-                        // den Containerinhalt hinzufgen
                         (*conmapn).second.insert(Container::CONTAINERMAP::value_type(count, cc));
                     }
 
@@ -100,10 +90,6 @@ bool Map::addContainerToPos(Item it, Container *cc, MAP_POSITION pos) {
                         (*conmapn).second.erase(count);
                     } else {
                         return true;
-#ifdef Map_DEBUG
-                        std::cout << "addContainerToPos: Container mit id: " << (short int) count << " auf das Feld gesetzt\n";
-#endif
-
                     }
                 }
             }
@@ -115,10 +101,6 @@ bool Map::addContainerToPos(Item it, Container *cc, MAP_POSITION pos) {
 
 
 bool Map::addAlwaysContainerToPos(Item it, Container *cc, MAP_POSITION pos) {
-
-#ifdef Map_DEBUG
-    std::cout << "addAlwaysContainerToPos: id: " << it.id << " x: " << pos.x << " y: " << pos.y << std::endl;
-#endif
     Field *cfnew;
 
     if (GetPToCFieldAt(cfnew, pos.x, pos.y)) {
@@ -128,7 +110,6 @@ bool Map::addAlwaysContainerToPos(Item it, Container *cc, MAP_POSITION pos) {
 
             if (conmapn != maincontainers.end()) {
                 Container::CONTAINERMAP::iterator iterat;
-                // n�hste freie ID fr den Container auf dem Zielfeld suchen
                 iterat = (*conmapn).second.find(count);
 
                 while ((iterat != (*conmapn).second.end()) && (count < (MAXITEMS - 2))) {
@@ -136,18 +117,13 @@ bool Map::addAlwaysContainerToPos(Item it, Container *cc, MAP_POSITION pos) {
                     iterat = (*conmapn).second.find(count);
                 }
 
-                // den Containerinhalt hinzufgen
                 if (count < (MAXITEMS - 1)) {
                     (*conmapn).second.insert(iterat, Container::CONTAINERMAP::value_type(count, cc));
                 } else {
                     return false;
                 }
-            } else { // neue containermap fr das Zielfeld anlegen
-#ifdef Map_DEBUG
-                std::cout << "addAlwaysContainerToPos: neue Containermap fr das Feld angelegt\n";
-#endif
+            } else {
                 conmapn = (maincontainers.insert(CONTAINERHASH::value_type(pos, Container::CONTAINERMAP()))).first;
-                // den Containerinhalt hinzufgen
                 (*conmapn).second.insert(Container::CONTAINERMAP::value_type(count, cc));
             }
 
@@ -158,10 +134,6 @@ bool Map::addAlwaysContainerToPos(Item it, Container *cc, MAP_POSITION pos) {
                 (*conmapn).second.erase(count);
             } else {
                 return true;
-#ifdef Map_DEBUG
-                std::cout << "addAlwaysContainerToPos: Container mit id: " << (short int) count << " auf das Feld gesetzt\n";
-#endif
-
             }
         }
 
@@ -172,19 +144,12 @@ bool Map::addAlwaysContainerToPos(Item it, Container *cc, MAP_POSITION pos) {
 
 
 void Map::Init(short int minx, short int miny, short int z) {
-
     Min_X = minx;
     Min_Y = miny;
     Max_X = Width + Min_X - 1;
     Max_Y = Height + Min_Y - 1;
     Z_Level = z;
-#ifdef Map_DEBUG
-    std::cout << "Map: Init, Min_X:" << Min_X << " Max_X:" << Max_X
-              << " Min_Y:" << Min_Y << " Max_Y:" << Max_Y << " Z:" << Z_Level << "\n";
-#endif
-
     Map_initialized = true;
-
 }
 
 
@@ -506,11 +471,10 @@ void Map::ageItems() {
                 for (const auto &erased : erasedcontainers) {
                     auto conmapn = maincontainers.find(pos);
 
-                    if (conmapn != maincontainers.end()) {   // containermap fr das Zielfeld gefunden
+                    if (conmapn != maincontainers.end()) {
                         auto iterat = conmapn->second.find(erased);
 
                         if (iterat != conmapn->second.end()) {
-                            std::cout << "Containerinhalt auf Feld wird geloescht !" << std::endl;
                             conmapn->second.erase(iterat);
                         }
 
@@ -528,10 +492,8 @@ void Map::ageItems() {
             if (rotstate != 0) {
                 position pos(Conv_To_X(x), Conv_To_Y(y), Z_Level);
                 Logger::debug(LogFacility::World) << "aged items, pos: " << pos << Log::end;
-                //a update is needed
                 std::vector<Player *> playersinview = World::get()->Players.findAllCharactersInScreen(pos);
 
-                //iterate through all the players in range and send the update for this field
                 for (const auto &player : playersinview) {
                     Logger::debug(LogFacility::World) << "aged items, update needed for: " << *player << Log::end;
                     ServerCommandPointer cmd = std::make_shared<ItemUpdate_TC>(pos, MainMap[x][y].items);

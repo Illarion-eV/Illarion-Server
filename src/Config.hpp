@@ -85,7 +85,6 @@ public:
         return *_instance;
     }
 
-    ConfigEntry<std::string> coutdir = { "coutdir", "./log/" };
     ConfigEntry<std::string> datadir = { "datadir", "./data/" };
     ConfigEntry<std::string> scriptdir = { "scriptdir", "./script/" };
 

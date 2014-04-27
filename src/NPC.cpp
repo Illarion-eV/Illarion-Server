@@ -31,9 +31,6 @@ uint32_t NPC::counter = 0;
 NPC::NPC(TYPE_OF_CHARACTER_ID _id, const std::string &_name, TYPE_OF_RACE_ID _race, const position &_pos, Character::face_to dir, bool ishealer, Character::sex_type sex,
          const Character::appearance &appearance) : Character(appearance),
     _ishealer(ishealer), _startpos(_pos) {
-#ifdef Character_DEBUG
-    cout << "NPC Konstruktor Start" << endl;
-#endif
     setName(_name);
     _startpos = _pos;
     setFaceTo(dir);
@@ -55,7 +52,7 @@ NPC::NPC(TYPE_OF_CHARACTER_ID _id, const std::string &_name, TYPE_OF_RACE_ID _ra
     }
 
     setPosition(_startpos);
-    std::cout << "NewNPC spwaned: pos: " << _startpos << " type: " << _race << " Name: " << _name<< " is_healer: " << _ishealer << " sex: " << getAttribute(Character::sex) << std::endl;
+    Logger::info(LogFacility::World) << "New NPC spwaned: pos: " << _startpos << " type: " << _race << " Name: " << _name<< " is_healer: " << _ishealer << " sex: " << getAttribute(Character::sex) << Log::end;
 
     tmpField->setChar();
 
@@ -63,17 +60,10 @@ NPC::NPC(TYPE_OF_CHARACTER_ID _id, const std::string &_name, TYPE_OF_RACE_ID _ra
     _world->sendSpinToAllVisiblePlayers(this);
 
     setAttribute(Character::hitpoints, MAXHPS);
-
-#ifdef Character_DEBUG
-    cout << "NPC Konstruktor Ende" << endl;
-#endif
 }
 
 
 NPC::~NPC() {
-#ifdef Character_DEBUG
-    cout << "NPC Destruktor Start/Ende" << endl;
-#endif
 }
 
 void NPC::receiveText(talk_type tt, const std::string &message, Character *cc) {
