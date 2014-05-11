@@ -58,7 +58,8 @@ bool Config::load(const std::string &config_file) {
 
         if (pos == config_options.end()) {
             Logger::error(LogFacility::Other) << "Invalid config entry: " << temp << Log::end;
-            return false;
+            configfile.ignore(255,'\n');
+            continue;
         }
 
         configfile >> *(pos->second);
