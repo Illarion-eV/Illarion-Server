@@ -225,7 +225,15 @@ std::list<BlockingObject> World::LoS(const position &startingpos, const position
                 } else {
                     ScriptItem it;
 
-                    if (temp->ViewTopItem(it) && it.isLarge()) {
+                    for (size_t i = 0; i < temp->NumberOfItems(); ++i) {
+                        auto testItem = temp->getStackItem(i);
+                        
+                        if (testItem.getVolume() > it.getVolume()) {
+                            it = testItem;
+                        }
+                    }
+                        
+                    if (it.isLarge()) {
                         bo.blockingType = BlockingObject::BT_ITEM;
                         it.pos = pos;
                         it.type = ScriptItem::it_field;
