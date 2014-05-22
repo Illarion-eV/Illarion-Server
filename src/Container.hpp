@@ -67,6 +67,7 @@ public:
     void Load(std::istream &where);
 
     void doAge(bool inventory = false);
+    void resetWear();
 
     virtual int countItem(Item::id_type itemid, script_data_exchangemap const *data = nullptr) const;
 

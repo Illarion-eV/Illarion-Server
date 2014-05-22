@@ -654,6 +654,16 @@ void Container::doAge(bool inventory) {
 
 }
 
+void Container::resetWear() {
+    for (auto &item : items) {
+        item.second.resetWear();
+    }
+
+    for (auto &container : containers) {
+        container.second->resetWear();
+    }
+}
+
 TYPE_OF_CONTAINERSLOTS Container::getSlotCount() const {
     return Data::ContainerItems[itemId];
 }

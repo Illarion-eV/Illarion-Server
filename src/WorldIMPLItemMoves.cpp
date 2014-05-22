@@ -368,7 +368,10 @@ bool World::takeItemFromShowcase(Player *cc, uint8_t showcase, unsigned char pos
 
     if (ps) {
         if (ps->TakeItemNr(pos, g_item, g_cont, count)) {
+            g_item.resetWear();
+
             if (g_cont) {
+                g_cont->resetWear();
                 sendContainerSlotChange(ps, pos, g_cont);
             } else {
                 sendContainerSlotChange(ps, pos);
@@ -489,6 +492,7 @@ bool World::takeItemFromMap(Character *cc, const position &itemPosition) {
                             // der Inhalt des angegebenen Containers mit der id g_item.getNumber() wurde gefunden
                             if (iv != (*conmapo).second.end()) {
                                 g_cont = (*iv).second;
+                                g_cont->resetWear();
 
                                 // Verweis auf den Container in der Containermap fr das Feld loeschen
                                 (*conmapo).second.erase(iv);
