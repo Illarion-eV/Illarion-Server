@@ -31,7 +31,11 @@
 #include "data/Data.hpp"
 
 void World::checkFieldAfterMove(Character *cc, Field *cfstart) {
-    if (cfstart->HasSpecialItem()) {
+    if (!cc) {
+        return;
+    }
+
+    if (cc->isAlive() && cfstart->HasSpecialItem()) {
 
         for (const auto &item : cfstart->items) {
             if (Data::TilesModItems.exists(item.getId())) {
@@ -59,7 +63,11 @@ void World::checkFieldAfterMove(Character *cc, Field *cfstart) {
 
             switch (which.type) {
             case SOUNDFIELD:
-                makeSoundForAllPlayersInRange(cc->getPosition(), 3, which.flags);
+
+                if (cc->isAlive()) {
+                    makeSoundForAllPlayersInRange(cc->getPosition(), 3, which.flags);
+                }
+
                 break;
 
             case MUSICFIELD:
@@ -73,7 +81,7 @@ void World::checkFieldAfterMove(Character *cc, Field *cfstart) {
         }
     }
 
-    if (cc && Data::Triggers.exists(cc->getPosition())) {
+    if (cc->isAlive() && Data::Triggers.exists(cc->getPosition())) {
         const auto &script = Data::Triggers.script(cc->getPosition());
 
         if (script) {
@@ -83,7 +91,7 @@ void World::checkFieldAfterMove(Character *cc, Field *cfstart) {
 }
 
 void World::TriggerFieldMove(Character *cc, bool moveto) {
-    if (cc && Data::Triggers.exists(cc->getPosition())) {
+    if (cc && cc->isAlive() && Data::Triggers.exists(cc->getPosition())) {
         const auto &script = Data::Triggers.script(cc->getPosition());
 
         if (script) {
