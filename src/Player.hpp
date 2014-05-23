@@ -572,6 +572,8 @@ public:
 
     void invalidateDialogs();
     void closeDialogsOnMove();
+
+    virtual void logAdmin(const std::string &message) override;
 private:
     void startCrafting(uint8_t stillToCraft, uint16_t craftingTime, uint16_t sfx, uint16_t sfxDuration, uint32_t dialogId);
 

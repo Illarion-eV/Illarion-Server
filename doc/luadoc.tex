@@ -55,11 +55,11 @@
 \makeindex
 \begin{document}
 \lstset{basicstyle=\small, keywordstyle=\ttfamily, identifierstyle=\ttfamily}
-\title{Lua documentation for Illarion scripting\\v5.13}
+\title{Lua documentation for Illarion scripting\\v5.14}
 \author{Martin \thanks{ \texttt{martin@illarion.org, http://www.illarion.org}},
 pharse \thanks{ \texttt{pharse@illarion.org, http://www.illarion.org}},
 vilarion \thanks{ \texttt{vilarion@illarion.org, http://www.illarion.org}}}
-\date{2004-2006/2010-2013}
+\date{2004-2006/2010-2014}
 \maketitle
 \tableofcontents
 \chapter{General}
@@ -619,6 +619,10 @@ Returns a list with all items of this \var{ItemID}.
 \bool \var{character}:\com{pageGM}{\txt \var{ticket}}
 \begin{quote}
        Returns \lua{true} iff \var{ticket} is successfully logged as message to the GM team. Differing from the normal !gm command, the originating player is not informed about success.
+\end{quote}
+\void \var{character}:\com{logAdmin}{\txt \var{message}}
+\begin{quote}
+       Writes \var{message} for the given user into the server log using the admin facility. Only used to record GM actions.
 \end{quote}
 
 \section{Variables}
@@ -2400,6 +2404,9 @@ It might be the case, and this is hoped much, that you want to create more compl
 \appendix
 
 \chapter{Versions}
+Version 5.14 (23 05 14)\\
+* Added Character:logAdmin\\
+\\
 Version 5.13 (15 09 13)\\
 * Added Character:isNewPlayer\\
 * Updated ItemLookAt\\

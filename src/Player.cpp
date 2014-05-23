@@ -2897,6 +2897,10 @@ void Player::closeDialogsOnMove() {
     }
 }
 
+void Player::logAdmin(const std::string &message) {
+    Logger::info(LogFacility::Admin) << to_string() << " uses admin tool: " << message << Log::end;
+}
+
 std::string Player::to_string() const {
     return (isAdmin()?"Admin ":"Player ") + getName() + "(" + std::to_string(getId()) + ")";
 }

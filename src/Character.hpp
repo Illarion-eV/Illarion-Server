@@ -498,6 +498,8 @@ public:
     virtual void requestCraftingLookAt(unsigned int dialogId, ItemLookAt &lookAt);
     virtual void requestCraftingLookAtIngredient(unsigned int dialogId, ItemLookAt &lookAt);
 
+    virtual void logAdmin(const std::string &message);
+
 protected:
     struct RaceStruct {
         std::string racename;

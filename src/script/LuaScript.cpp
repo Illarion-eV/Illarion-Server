@@ -645,6 +645,7 @@ void LuaScript::init_base_functions() {
         .def("getOnRoute",&Character::getOnRoute)
         .def("setOnRoute",&Character::setOnRoute)
         .def("getMonsterType", &Character::getMonsterType)
+        .def("logAdmin", &Character::logAdmin)
         .def_readonly("effects", &Character::effects)
         .def_readonly("waypoints", &Character::waypoints)
         .property("pos", &Character::getPosition)

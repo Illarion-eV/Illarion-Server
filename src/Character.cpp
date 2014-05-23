@@ -1626,6 +1626,9 @@ void Character::requestCraftingLookAtIngredient(unsigned int dialogId, ItemLookA
     // Nothing to do here, overloaded in Player
 }
 
+void Character::logAdmin(const std::string &message) {
+}
+
 void Character::updateAppearanceForPlayer(Player *target, bool always) {
     if (!isinvisible) {
         ServerCommandPointer cmd = std::make_shared<AppearanceTC>(this, target);
