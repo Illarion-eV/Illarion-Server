@@ -95,7 +95,7 @@ $$;
 
 CREATE FUNCTION is_new_player(account_id integer) RETURNS boolean
     LANGUAGE sql
-    AS $_$select max(chr_onlinetime) < 3*60*60 as is_new_player from chars where chr_accid = $1;$_$;
+    AS $_$select max(chr_onlinetime) < 10*60*60 as is_new_player from chars where chr_accid = $1;$_$;
 
 
 --
