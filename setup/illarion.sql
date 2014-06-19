@@ -576,22 +576,11 @@ CREATE TABLE armor (
 
 
 --
--- Name: itemname; Type: TABLE; Schema: server; Owner: -; Tablespace: 
---
-
-CREATE TABLE itemname (
-    itn_itemid integer DEFAULT 0 NOT NULL,
-    itn_german character varying(30) DEFAULT 'unbekannt'::character varying NOT NULL,
-    itn_english character varying(30) DEFAULT 'unknown'::character varying NOT NULL
-);
-
-
---
 -- Name: armor_info; Type: VIEW; Schema: server; Owner: -
 --
 
 CREATE VIEW armor_info AS
-    SELECT armor.arm_itemid AS itemid, itemname.itn_english AS itemname, floor((((armor.arm_stroke * 100) / 150))::double precision) AS stroke_armor, floor((((armor.arm_thrust * 100) / 150))::double precision) AS thrust_armor, floor((((armor.arm_puncture * 100) / 150))::double precision) AS puncture_armor, floor((((armor.arm_stiffness * 100) / 150))::double precision) AS stiffness FROM (armor JOIN itemname ON ((armor.arm_itemid = itemname.itn_itemid)));
+    SELECT armor.arm_itemid AS itemid, items.itm_name_english AS itemname, floor((((armor.arm_stroke * 100) / 150))::double precision) AS stroke_armor, floor((((armor.arm_thrust * 100) / 150))::double precision) AS thrust_armor, floor((((armor.arm_puncture * 100) / 150))::double precision) AS puncture_armor, floor((((armor.arm_stiffness * 100) / 150))::double precision) AS stiffness FROM (armor JOIN items ON ((armor.arm_itemid = items.itm_id)));
 
 
 SET default_with_oids = false;
@@ -1871,14 +1860,6 @@ ALTER TABLE ONLY introduction
 
 
 --
--- Name: itemname_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY itemname
-    ADD CONSTRAINT itemname_pkey PRIMARY KEY (itn_itemid);
-
-
---
 -- Name: longtimeeffects_lte_effectname_key; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
 --
 
@@ -2337,14 +2318,6 @@ SET search_path = server, pg_catalog;
 
 ALTER TABLE ONLY container
     ADD CONSTRAINT "$1" FOREIGN KEY (con_itemid) REFERENCES items(itm_id) MATCH FULL ON DELETE CASCADE DEFERRABLE;
-
-
---
--- Name: $1; Type: FK CONSTRAINT; Schema: server; Owner: -
---
-
-ALTER TABLE ONLY itemname
-    ADD CONSTRAINT "$1" FOREIGN KEY (itn_itemid) REFERENCES items(itm_id) MATCH FULL ON DELETE CASCADE DEFERRABLE;
 
 
 --

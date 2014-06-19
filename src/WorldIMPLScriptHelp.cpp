@@ -240,9 +240,9 @@ bool World::changeItem(ScriptItem item) {
 
 std::string World::getItemName(TYPE_OF_ITEM_ID itemid, uint8_t language) {
     if (language == 0) {
-        return Data::ItemNames[itemid].German;
+        return Data::CommonItems[itemid].German;
     } else {
-        return Data::ItemNames[itemid].English;
+        return Data::CommonItems[itemid].English;
     }
 }
 

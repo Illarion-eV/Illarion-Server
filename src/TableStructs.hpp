@@ -41,8 +41,10 @@ struct CommonStruct {
     TYPE_OF_MAX_STACK MaxStack;
     TYPE_OF_BUY_STACK BuyStack;
     bool rotsInInventory;
+    TYPE_OF_ENGLISH English;
+    TYPE_OF_GERMAN German;
 
-    CommonStruct() {
+    CommonStruct() : English(""), German("") {
         id = 0;
         Volume = 0;
         Weight = 0;
@@ -73,11 +75,6 @@ struct LongTimeEffectStruct {
     LongTimeEffectStruct(): effectname(""), scriptname("") {
         effectid = 0;
     }
-};
-
-struct NamesStruct {
-    TYPE_OF_GERMAN German;
-    TYPE_OF_ENGLISH English;
 };
 
 

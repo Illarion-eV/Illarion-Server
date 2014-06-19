@@ -37,7 +37,7 @@ main_help.cpp utility.cpp Logger.cpp Random.cpp Config.cpp Statistics.cpp a_star
 data/Data.cpp data/QuestNodeTable.cpp data/QuestTable.cpp \
 data/ArmorObjectTable.cpp data/CommonObjectTable.cpp data/ContainerObjectTable.cpp data/RaceAttributeTable.cpp \
 data/MonsterAttackTable.cpp data/ScheduledScriptsTable.cpp data/LongTimeEffectTable.cpp data/NaturalArmorTable.cpp \
-data/SpellTable.cpp data/ScriptVariablesTable.cpp data/NamesObjectTable.cpp data/NPCTable.cpp data/TriggerTable.cpp \
+data/SpellTable.cpp data/ScriptVariablesTable.cpp data/NPCTable.cpp data/TriggerTable.cpp \
 data/MonsterTable.cpp data/TilesModificatorTable.cpp data/TilesTable.cpp data/SkillTable.cpp data/WeaponObjectTable.cpp \
 \
 Map.cpp \
@@ -86,7 +86,7 @@ noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
 		 MonitoringClients.hpp Field.hpp \
 		 data/Data.hpp data/Table.hpp data/StructTable.hpp \
 		 data/ScriptStructTable.hpp data/QuestScriptStructTable.hpp \
-		 data/NamesObjectTable.hpp data/SpellTable.hpp \
+		 data/SpellTable.hpp \
 		 data/QuestNodeTable.hpp data/TriggerTable.hpp \
 		 data/CommonObjectTable.hpp data/ContainerObjectTable.hpp \
 		 data/QuestTable.hpp data/MonsterAttackTable.hpp \

@@ -18,7 +18,6 @@
 
 
 #include "World.hpp"
-#include "data/NamesObjectTable.hpp"
 #include "data/TilesTable.hpp"
 #include "script/LuaItemScript.hpp"
 #include "script/LuaLookAtItemScript.hpp"

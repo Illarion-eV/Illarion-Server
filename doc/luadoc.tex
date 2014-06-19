@@ -55,7 +55,7 @@
 \makeindex
 \begin{document}
 \lstset{basicstyle=\small, keywordstyle=\ttfamily, identifierstyle=\ttfamily}
-\title{Lua documentation for Illarion scripting\\v5.14}
+\title{Lua documentation for Illarion scripting\\v5.15}
 \author{Martin \thanks{ \texttt{martin@illarion.org, http://www.illarion.org}},
 pharse \thanks{ \texttt{pharse@illarion.org, http://www.illarion.org}},
 vilarion \thanks{ \texttt{vilarion@illarion.org, http://www.illarion.org}}}
@@ -990,6 +990,8 @@ This kind of item variable holds general information about an item (weight, ID,.
 \lua{r}:  \bool \var{Item}.\comm{rotsInInventory}\\
 \lua{r}:  \integer \var{Item}.\comm{Brightness}\\
 \lua{r}:  \integer \var{Item}.\comm{Worth}\\
+\lua{r}:  \txt \var{Item}.\comm{English}\\
+\lua{r}:  \txt \var{Item}.\comm{German}\\
 \begin{quote}
   These variables are accessible for common struct items and script items (where they refer to the corresponding common struct item!).\\
   \emph{Usage}:\\
@@ -2404,6 +2406,10 @@ It might be the case, and this is hoped much, that you want to create more compl
 \appendix
 
 \chapter{Versions}
+Version 5.15 (20 06 14)\\
+* Added CommonStruct member: English\\
+* Added CommonStruct member: German\\
+\\
 Version 5.14 (23 05 14)\\
 * Added Character:logAdmin\\
 \\

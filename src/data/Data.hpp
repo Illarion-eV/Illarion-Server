@@ -28,7 +28,6 @@
 #include "data/NaturalArmorTable.hpp"
 #include "data/MonsterAttackTable.hpp"
 #include "data/CommonObjectTable.hpp"
-#include "data/NamesObjectTable.hpp"
 #include "data/WeaponObjectTable.hpp"
 #include "data/ArmorObjectTable.hpp"
 #include "data/ContainerObjectTable.hpp"
@@ -47,7 +46,6 @@ extern RaceAttributeTable RaceAttributes;
 extern NaturalArmorTable NaturalArmors;
 extern MonsterAttackTable MonsterAttacks;
 extern CommonObjectTable CommonItems;
-extern NamesObjectTable ItemNames;
 extern WeaponObjectTable WeaponItems;
 extern ArmorObjectTable ArmorItems;
 extern ContainerObjectTable ContainerItems;

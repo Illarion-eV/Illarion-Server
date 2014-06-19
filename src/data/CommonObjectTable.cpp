@@ -36,7 +36,9 @@ std::vector<std::string> CommonObjectTable::getColumnNames() {
         "itm_brightness",
         "itm_worth",
         "itm_buystack",
-        "itm_maxstack"
+        "itm_maxstack",
+        "itm_name_english",
+        "itm_name_german"
     };
 }
 
@@ -56,6 +58,8 @@ CommonStruct CommonObjectTable::assignTable(const Database::ResultTuple &row) {
     common.Worth = row["itm_worth"].as<TYPE_OF_WORTH>();
     common.BuyStack = row["itm_buystack"].as<TYPE_OF_BUY_STACK>();
     common.MaxStack = row["itm_maxstack"].as<TYPE_OF_MAX_STACK>();
+    common.German = row["itm_name_german"].as<TYPE_OF_GERMAN>();
+    common.English = row["itm_name_english"].as<TYPE_OF_ENGLISH>();
     return common;
 }
 
