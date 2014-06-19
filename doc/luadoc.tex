@@ -992,6 +992,9 @@ This kind of item variable holds general information about an item (weight, ID,.
 \lua{r}:  \integer \var{Item}.\comm{Worth}\\
 \lua{r}:  \txt \var{Item}.\comm{English}\\
 \lua{r}:  \txt \var{Item}.\comm{German}\\
+\lua{r}:  \txt \var{Item}.\comm{EnglishDescription}\\
+\lua{r}:  \txt \var{Item}.\comm{GermanDescription}\\
+\lua{r}:  \integer \var{Item}.\comm{Rareness}\\
 \begin{quote}
   These variables are accessible for common struct items and script items (where they refer to the corresponding common struct item!).\\
   \emph{Usage}:\\
@@ -2409,6 +2412,9 @@ It might be the case, and this is hoped much, that you want to create more compl
 Version 5.15 (20 06 14)\\
 * Added CommonStruct member: English\\
 * Added CommonStruct member: German\\
+* Added CommonStruct member: EnglishDescription\\
+* Added CommonStruct member: GermanDescription\\
+* Added CommonStruct member: Rareness\\
 \\
 Version 5.14 (23 05 14)\\
 * Added Character:logAdmin\\

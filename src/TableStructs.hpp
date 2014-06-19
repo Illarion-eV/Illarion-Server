@@ -30,33 +30,22 @@ class LuaWeaponScript;
 class LuaLongTimeEffectScript;
 
 struct CommonStruct {
-    TYPE_OF_ITEM_ID id;
-    TYPE_OF_VOLUME Volume;
-    TYPE_OF_WEIGHT Weight;
-    TYPE_OF_AGINGSPEED AgeingSpeed;
-    TYPE_OF_ITEM_ID ObjectAfterRot;
-    TYPE_OF_ITEM_ID AfterInfiniteRot;
-    TYPE_OF_BRIGHTNESS Brightness;
-    TYPE_OF_WORTH Worth;
-    TYPE_OF_MAX_STACK MaxStack;
-    TYPE_OF_BUY_STACK BuyStack;
-    bool rotsInInventory;
-    TYPE_OF_ENGLISH English;
-    TYPE_OF_GERMAN German;
-
-    CommonStruct() : English(""), German("") {
-        id = 0;
-        Volume = 0;
-        Weight = 0;
-        AgeingSpeed = 0;
-        ObjectAfterRot = 0;
-        AfterInfiniteRot = 0;
-        Brightness = 0;
-        Worth = 0;
-        MaxStack = 1;
-        BuyStack = 1;
-        rotsInInventory = false;
-    }
+    TYPE_OF_ITEM_ID id = 0;
+    TYPE_OF_VOLUME Volume = 0;
+    TYPE_OF_WEIGHT Weight = 0;
+    TYPE_OF_AGINGSPEED AgeingSpeed = 0;
+    TYPE_OF_ITEM_ID ObjectAfterRot = 0;
+    TYPE_OF_ITEM_ID AfterInfiniteRot = 0;
+    TYPE_OF_BRIGHTNESS Brightness = 0;
+    TYPE_OF_WORTH Worth = 0;
+    TYPE_OF_MAX_STACK MaxStack = 1;
+    TYPE_OF_BUY_STACK BuyStack = 1;
+    bool rotsInInventory = false;
+    TYPE_OF_ENGLISH English = "";
+    TYPE_OF_GERMAN German = "";
+    TYPE_OF_ENGLISH EnglishDescription = "";
+    TYPE_OF_GERMAN GermanDescription = "";
+    int16_t Rareness = 1;
 
     bool isValid() const {
         return id != 0;

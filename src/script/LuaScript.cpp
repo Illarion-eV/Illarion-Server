@@ -953,7 +953,10 @@ void LuaScript::init_base_functions() {
         .def_readonly("MaxStack", &CommonStruct::MaxStack)
         .def_readonly("BuyStack", &CommonStruct::BuyStack)
         .def_readonly("English", &CommonStruct::English)
-        .def_readonly("German", &CommonStruct::German),
+        .def_readonly("German", &CommonStruct::German)
+        .def_readonly("EnglishDescription", &CommonStruct::EnglishDescription)
+        .def_readonly("GermanDescription", &CommonStruct::GermanDescription)
+        .def_readonly("Rareness", &CommonStruct::Rareness),
         luabind::class_<TilesStruct>("TilesStruct")
         .def_readonly("flags", &TilesStruct::flags)
         .def_readonly("German", &TilesStruct::German)

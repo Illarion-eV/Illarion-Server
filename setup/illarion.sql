@@ -679,6 +679,11 @@ CREATE TABLE items (
     itm_worth integer DEFAULT 0 NOT NULL,
     itm_buystack integer DEFAULT 1 NOT NULL,
     itm_maxstack smallint DEFAULT 1 NOT NULL,
+    itm_name_english character varying(30) DEFAULT 'unknown'::character varying NOT NULL,
+    itm_name_german character varying(30) DEFAULT 'unbekannt'::character varying NOT NULL,
+    itm_description_english character varying(255) DEFAULT ''::character varying NOT NULL,
+    itm_description_german character varying(255) DEFAULT ''::character varying NOT NULL,
+    itm_rareness smallint DEFAULT 1 NOT NULL,
     CONSTRAINT items_afterrot_check CHECK (((itm_objectafterrot > 0) OR (itm_id = 0))),
     CONSTRAINT items_aging_check CHECK ((itm_agingspeed >= 0)),
     CONSTRAINT items_buystack_check CHECK ((itm_buystack >= 1)),
@@ -687,7 +692,8 @@ CREATE TABLE items (
     CONSTRAINT items_itm_maxstack_check CHECK ((itm_maxstack <> 0)),
     CONSTRAINT items_script_check CHECK ((btrim((itm_script)::text) <> ''::text)),
     CONSTRAINT items_volume_check CHECK ((itm_volume >= 0)),
-    CONSTRAINT items_weight_check CHECK ((itm_weight >= 0))
+    CONSTRAINT items_weight_check CHECK ((itm_weight >= 0)),
+    CONSTRAINT items_itm_rareness_check CHECK (itm_rareness = ANY (ARRAY[1, 2, 3, 4]))
 );
 
 
