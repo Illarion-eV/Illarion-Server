@@ -21,46 +21,46 @@
 #include "data/CommonObjectTable.hpp"
 
 std::string CommonObjectTable::getTableName() {
-    return "common";
+    return "items";
 }
 
 std::vector<std::string> CommonObjectTable::getColumnNames() {
     return {
-        "com_itemid",
-        "com_volume",
-        "com_weight",
-        "com_agingspeed",
-        "com_objectafterrot",
-        "com_rotsininventory",
-        "com_script",
-        "com_brightness",
-        "com_worth",
-        "com_buystack",
-        "com_maxstack"
+        "itm_id",
+        "itm_volume",
+        "itm_weight",
+        "itm_agingspeed",
+        "itm_objectafterrot",
+        "itm_rotsininventory",
+        "itm_script",
+        "itm_brightness",
+        "itm_worth",
+        "itm_buystack",
+        "itm_maxstack"
     };
 }
 
 TYPE_OF_ITEM_ID CommonObjectTable::assignId(const Database::ResultTuple &row) {
-    return row["com_itemid"].as<TYPE_OF_ITEM_ID>();
+    return row["itm_id"].as<TYPE_OF_ITEM_ID>();
 }
 
 CommonStruct CommonObjectTable::assignTable(const Database::ResultTuple &row) {
     CommonStruct common;
     common.id = assignId(row);
-    common.Volume = row["com_volume"].as<TYPE_OF_VOLUME>();
-    common.Weight = row["com_weight"].as<TYPE_OF_WEIGHT>();
-    common.AgeingSpeed = TYPE_OF_AGINGSPEED(row["com_agingspeed"].as<int16_t>());
-    common.ObjectAfterRot = row["com_objectafterrot"].as<TYPE_OF_ITEM_ID>();
-    common.rotsInInventory = row["com_rotsininventory"].as<bool>();
-    common.Brightness = TYPE_OF_BRIGHTNESS(row["com_brightness"].as<int16_t>());
-    common.Worth = row["com_worth"].as<TYPE_OF_WORTH>();
-    common.BuyStack = row["com_buystack"].as<TYPE_OF_BUY_STACK>();
-    common.MaxStack = row["com_maxstack"].as<TYPE_OF_MAX_STACK>();
+    common.Volume = row["itm_volume"].as<TYPE_OF_VOLUME>();
+    common.Weight = row["itm_weight"].as<TYPE_OF_WEIGHT>();
+    common.AgeingSpeed = TYPE_OF_AGINGSPEED(row["itm_agingspeed"].as<int16_t>());
+    common.ObjectAfterRot = row["itm_objectafterrot"].as<TYPE_OF_ITEM_ID>();
+    common.rotsInInventory = row["itm_rotsininventory"].as<bool>();
+    common.Brightness = TYPE_OF_BRIGHTNESS(row["itm_brightness"].as<int16_t>());
+    common.Worth = row["itm_worth"].as<TYPE_OF_WORTH>();
+    common.BuyStack = row["itm_buystack"].as<TYPE_OF_BUY_STACK>();
+    common.MaxStack = row["itm_maxstack"].as<TYPE_OF_MAX_STACK>();
     return common;
 }
 
 std::string CommonObjectTable::assignScriptName(const Database::ResultTuple &row) {
-    return row["com_script"].as<std::string>("");
+    return row["itm_script"].as<std::string>("");
 }
 
 auto CommonObjectTable::getQuestScripts() -> NodeRange {

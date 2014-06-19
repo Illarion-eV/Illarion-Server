@@ -675,59 +675,59 @@ CREATE TABLE chars (
 
 
 --
--- Name: common; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+-- Name: items; Type: TABLE; Schema: server; Owner: -; Tablespace: 
 --
 
-CREATE TABLE common (
-    com_itemid integer NOT NULL,
-    com_volume integer NOT NULL,
-    com_weight integer NOT NULL,
-    com_agingspeed smallint DEFAULT (2)::smallint NOT NULL,
-    com_objectafterrot integer NOT NULL,
-    com_script character varying(50),
-    com_rotsininventory boolean DEFAULT false NOT NULL,
-    com_brightness smallint DEFAULT 0 NOT NULL,
-    com_worth integer DEFAULT 0 NOT NULL,
-    com_buystack integer DEFAULT 1 NOT NULL,
-    com_maxstack smallint DEFAULT 1 NOT NULL,
-    CONSTRAINT common_afterrot_check CHECK (((com_objectafterrot > 0) OR (com_itemid = 0))),
-    CONSTRAINT common_aging_check CHECK ((com_agingspeed >= 0)),
-    CONSTRAINT common_buystack_check CHECK ((com_buystack >= 1)),
-    CONSTRAINT common_check CHECK ((((com_worth >= 20) OR (com_worth = 0)) OR ((com_itemid = 3076) AND (com_worth = 1)))),
-    CONSTRAINT common_com_light_brightness_check CHECK (((com_brightness >= 0) AND (com_brightness <= 9))),
-    CONSTRAINT common_com_maxstack_check CHECK ((com_maxstack <> 0)),
-    CONSTRAINT common_script_check CHECK ((btrim((com_script)::text) <> ''::text)),
-    CONSTRAINT common_volume_check CHECK ((com_volume >= 0)),
-    CONSTRAINT common_weight_check CHECK ((com_weight >= 0))
+CREATE TABLE items (
+    itm_id integer NOT NULL,
+    itm_volume integer NOT NULL,
+    itm_weight integer NOT NULL,
+    itm_agingspeed smallint DEFAULT (2)::smallint NOT NULL,
+    itm_objectafterrot integer NOT NULL,
+    itm_script character varying(50),
+    itm_rotsininventory boolean DEFAULT false NOT NULL,
+    itm_brightness smallint DEFAULT 0 NOT NULL,
+    itm_worth integer DEFAULT 0 NOT NULL,
+    itm_buystack integer DEFAULT 1 NOT NULL,
+    itm_maxstack smallint DEFAULT 1 NOT NULL,
+    CONSTRAINT items_afterrot_check CHECK (((itm_objectafterrot > 0) OR (itm_id = 0))),
+    CONSTRAINT items_aging_check CHECK ((itm_agingspeed >= 0)),
+    CONSTRAINT items_buystack_check CHECK ((itm_buystack >= 1)),
+    CONSTRAINT items_check CHECK ((((itm_worth >= 20) OR (itm_worth = 0)) OR ((itm_id = 3076) AND (itm_worth = 1)))),
+    CONSTRAINT items_itm_light_brightness_check CHECK (((itm_brightness >= 0) AND (itm_brightness <= 9))),
+    CONSTRAINT items_itm_maxstack_check CHECK ((itm_maxstack <> 0)),
+    CONSTRAINT items_script_check CHECK ((btrim((itm_script)::text) <> ''::text)),
+    CONSTRAINT items_volume_check CHECK ((itm_volume >= 0)),
+    CONSTRAINT items_weight_check CHECK ((itm_weight >= 0))
 );
 
 
 --
--- Name: COLUMN common.com_itemid; Type: COMMENT; Schema: server; Owner: -
+-- Name: COLUMN items.itm_id; Type: COMMENT; Schema: server; Owner: -
 --
 
-COMMENT ON COLUMN common.com_itemid IS 'The unique ID of the item.';
-
-
---
--- Name: COLUMN common.com_script; Type: COMMENT; Schema: server; Owner: -
---
-
-COMMENT ON COLUMN common.com_script IS 'The name of the script module that handles his item.';
+COMMENT ON COLUMN items.itm_id IS 'The unique ID of the item.';
 
 
 --
--- Name: COLUMN common.com_worth; Type: COMMENT; Schema: server; Owner: -
+-- Name: COLUMN items.itm_script; Type: COMMENT; Schema: server; Owner: -
 --
 
-COMMENT ON COLUMN common.com_worth IS 'The base price of the item that is used by the trader NPCs in the game.';
+COMMENT ON COLUMN items.itm_script IS 'The name of the script module that handles his item.';
 
 
 --
--- Name: COLUMN common.com_buystack; Type: COMMENT; Schema: server; Owner: -
+-- Name: COLUMN items.itm_worth; Type: COMMENT; Schema: server; Owner: -
 --
 
-COMMENT ON COLUMN common.com_buystack IS 'Default stack size a vendor will offer of this item';
+COMMENT ON COLUMN items.itm_worth IS 'The base price of the item that is used by the trader NPCs in the game.';
+
+
+--
+-- Name: COLUMN items.itm_buystack; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN items.itm_buystack IS 'Default stack size a vendor will offer of this item';
 
 
 --
@@ -1839,11 +1839,11 @@ ALTER TABLE ONLY chars
 
 
 --
--- Name: common_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: items_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
 --
 
-ALTER TABLE ONLY common
-    ADD CONSTRAINT common_pkey PRIMARY KEY (com_itemid);
+ALTER TABLE ONLY items
+    ADD CONSTRAINT items_pkey PRIMARY KEY (itm_id);
 
 
 --
@@ -2336,7 +2336,7 @@ SET search_path = server, pg_catalog;
 --
 
 ALTER TABLE ONLY container
-    ADD CONSTRAINT "$1" FOREIGN KEY (con_itemid) REFERENCES common(com_itemid) MATCH FULL ON DELETE CASCADE DEFERRABLE;
+    ADD CONSTRAINT "$1" FOREIGN KEY (con_itemid) REFERENCES items(itm_id) MATCH FULL ON DELETE CASCADE DEFERRABLE;
 
 
 --
@@ -2344,7 +2344,7 @@ ALTER TABLE ONLY container
 --
 
 ALTER TABLE ONLY itemname
-    ADD CONSTRAINT "$1" FOREIGN KEY (itn_itemid) REFERENCES common(com_itemid) MATCH FULL ON DELETE CASCADE DEFERRABLE;
+    ADD CONSTRAINT "$1" FOREIGN KEY (itn_itemid) REFERENCES items(itm_id) MATCH FULL ON DELETE CASCADE DEFERRABLE;
 
 
 --
@@ -2392,7 +2392,7 @@ ALTER TABLE ONLY monster_items
 --
 
 ALTER TABLE ONLY monster_items
-    ADD CONSTRAINT "$3" FOREIGN KEY (mobit_itemid) REFERENCES common(com_itemid) MATCH FULL ON DELETE CASCADE DEFERRABLE;
+    ADD CONSTRAINT "$3" FOREIGN KEY (mobit_itemid) REFERENCES items(itm_id) MATCH FULL ON DELETE CASCADE DEFERRABLE;
 
 
 --
@@ -2408,15 +2408,15 @@ ALTER TABLE ONLY chars
 --
 
 ALTER TABLE ONLY armor
-    ADD CONSTRAINT armor_arm_itemid_fkey FOREIGN KEY (arm_itemid) REFERENCES common(com_itemid) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT armor_arm_itemid_fkey FOREIGN KEY (arm_itemid) REFERENCES items(itm_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
--- Name: common_com_objectafterrot_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: items_itm_objectafterrot_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
-ALTER TABLE ONLY common
-    ADD CONSTRAINT common_com_objectafterrot_fkey FOREIGN KEY (com_objectafterrot) REFERENCES common(com_itemid) MATCH FULL ON DELETE RESTRICT;
+ALTER TABLE ONLY items
+    ADD CONSTRAINT items_itm_objectafterrot_fkey FOREIGN KEY (itm_objectafterrot) REFERENCES items(itm_id) MATCH FULL ON DELETE RESTRICT;
 
 
 --
@@ -2528,7 +2528,7 @@ ALTER TABLE ONLY playeritem_datavalues
 --
 
 ALTER TABLE ONLY playeritems
-    ADD CONSTRAINT playeritems_pit_itemid_fkey FOREIGN KEY (pit_itemid) REFERENCES common(com_itemid) ON UPDATE CASCADE ON DELETE RESTRICT;
+    ADD CONSTRAINT playeritems_pit_itemid_fkey FOREIGN KEY (pit_itemid) REFERENCES items(itm_id) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
 --
@@ -2600,7 +2600,7 @@ ALTER TABLE ONLY startpack_items
 --
 
 ALTER TABLE ONLY startpack_items
-    ADD CONSTRAINT startpack_items_item_id_fkey FOREIGN KEY (spi_item_id) REFERENCES common(com_itemid) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT startpack_items_item_id_fkey FOREIGN KEY (spi_item_id) REFERENCES items(itm_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -2648,7 +2648,7 @@ ALTER TABLE ONLY chars
 --
 
 ALTER TABLE ONLY tilesmodificators
-    ADD CONSTRAINT tilesmodificators_tim_itemid_fkey FOREIGN KEY (tim_itemid) REFERENCES common(com_itemid) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT tilesmodificators_tim_itemid_fkey FOREIGN KEY (tim_itemid) REFERENCES items(itm_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -2656,7 +2656,7 @@ ALTER TABLE ONLY tilesmodificators
 --
 
 ALTER TABLE ONLY weapon
-    ADD CONSTRAINT weapon_wp_itemid_fkey FOREIGN KEY (wp_itemid) REFERENCES common(com_itemid) ON UPDATE CASCADE ON DELETE RESTRICT;
+    ADD CONSTRAINT weapon_wp_itemid_fkey FOREIGN KEY (wp_itemid) REFERENCES items(itm_id) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
 --
