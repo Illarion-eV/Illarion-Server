@@ -46,7 +46,6 @@
 #include "script/LuaWeaponScript.hpp"
 
 extern MonsterTable *MonsterDescriptions;
-extern std::vector<position> contpos;
 extern std::shared_ptr<LuaWeaponScript> standardFightingScript;
 
 void World::deleteAllLostNPC() {

@@ -22,15 +22,11 @@
 
 #include <vector>
 
-//! break out of the main loop if false
+// break out of the main loop if false
 extern volatile bool running;
 
-// in diesen std::vector fügen Fields die numbers der gelöschten containeritems ein,
-// damit die zugehörige Map die containerinhalte löschen kann
+// fields write numbers of deleted containeritems, the maps deletes them
 extern std::vector<int> erasedcontainers;
-
-// Koordinaten von gelöschten Containern, benötigt zum Schließen offener Showcases
-extern std::vector<position> contpos;
 
 // some forward declarations to not include unnecessary headers
 class Player;
@@ -39,19 +35,19 @@ void logout_save(Player *who, bool forced, unsigned long int thistime);
 
 void login_save(Player *who);
 
-//! process commandline arguments
+// process commandline arguments
 bool checkArguments(int argc, char *argv[]);
 
-//! setup file positions
+// setup file positions
 bool setup_files(time_t starttime);
 
-//! load item definitions
+// load item definitions
 void loadData();
 
-//! initialise signal handlers
+// initialise signal handlers
 bool init_sighandlers();
 
-//! reset signal handlers
+// reset signal handlers
 void reset_sighandlers();
 
 #endif

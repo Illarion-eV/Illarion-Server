@@ -18,14 +18,7 @@
 
 
 #include <string>
-#include <fstream>
-#include <map>
 #include <sstream>
-
-#include <sys/types.h>  // include this before any other sys headers
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 
 #include "data/MonsterTable.hpp"
 #include "data/ScheduledScriptsTable.hpp"
@@ -46,17 +39,13 @@
 
 #include "main_help.hpp"
 
-// in diesen std::vector f�gen Fields die numbers der gel�schten containeritems ein,
-//  damit die zugeh�rige Map die containerinhalte l�schen kann
+// fields write numbers of deleted containeritems, the maps deletes them
 std::vector<int> erasedcontainers;
 
-// Koordinaten von gel�schten Containern, ben�tigt zum Schlie�en offener Showcases
-std::vector<position> contpos;
+// a table with cyclically called scripts
+ScheduledScriptsTable *scheduledScripts;
 
-//! a Table with Scheduled Scripts
-ScheduledScriptsTable *ScheduledScripts;
-
-//! a table containing monster descriptions
+// a table containing monster descriptions
 MonsterTable *MonsterDescriptions;
 
 std::shared_ptr<LuaDepotScript>depotScript;
@@ -68,13 +57,14 @@ std::shared_ptr<LuaLogoutScript>logoutScript;
 std::shared_ptr<LuaLearnScript>learnScript;
 std::shared_ptr<LuaWeaponScript> standardFightingScript;
 
-ScheduledScriptsTable *scheduledScripts;  //< table witch holds the scheduled scripts
+// break out of the main loop if false
+volatile bool running;
 
 void logout_save(Player *who, bool forced, unsigned long int thistime) {
-    time_t acttime6;
-    time(&acttime6);
+    time_t acttime;
+    time(&acttime);
 
-    thistime = acttime6 - who->lastsavetime;
+    thistime = acttime - who->lastsavetime;
     who->onlinetime += thistime;
 
     unsigned int th = thistime / 3600;
@@ -88,12 +78,12 @@ void logout_save(Player *who, bool forced, unsigned long int thistime) {
     std::stringstream onlinetime;
     onlinetime << " after " << th << "h " << tm << "m " << ts << "s, onlinetime " << oh << "h " << om << "m " << os << "s";
 
-    Logger::info(LogFacility::Player) << (forced?"forced ":"") << "logout: " << who->Connection->getIPAdress() << *who << " on " << ctime(&acttime6) << onlinetime.str() << Log::end;
+    Logger::info(LogFacility::Player) << (forced?"forced ":"") << "logout: " << who->Connection->getIPAdress() << *who << " on " << ctime(&acttime) << onlinetime.str() << Log::end;
 }
 
 void login_save(Player *who) {
-    time_t acttime7;
-    time(&acttime7);
+    time_t acttime;
+    time(&acttime);
 
     unsigned int oh = who->onlinetime / 3600;
     unsigned int om = (who->onlinetime % 3600) / 60;
@@ -102,10 +92,10 @@ void login_save(Player *who) {
     std::stringstream onlinetime;
     onlinetime << " onlinetime till now: " << oh << "h " << om << "m " << os << "s";
 
-    Logger::info(LogFacility::Player) << "login of " << *who << " from " << who->Connection->getIPAdress() << " on " << ctime(&acttime7) << onlinetime.str() << Log::end;
+    Logger::info(LogFacility::Player) << "login of " << *who << " from " << who->Connection->getIPAdress() << " on " << ctime(&acttime) << onlinetime.str() << Log::end;
 }
 
-//! process commandline arguments
+// process commandline arguments
 bool checkArguments(int argc, char *argv[]) {
     if (argc == 2) {
         // config file specified on command line
@@ -124,10 +114,9 @@ bool checkArguments(int argc, char *argv[]) {
     }
 }
 
-//! load item definitions
+// load item definitions
 void loadData() {
-    ScheduledScripts = new ScheduledScriptsTable();
-    scheduledScripts = ScheduledScripts;
+    scheduledScripts = new ScheduledScriptsTable();
     MonsterDescriptions = new MonsterTable();
 
     try {
@@ -191,9 +180,6 @@ void loadData() {
 ////////////////////////////////////////
 // signal handling functions
 ////////////////////////////////////////
-
-// quit if true
-volatile bool running;
 
 struct sigaction act_segv, act_segv_o , act_pipe, act_pipe_o, act_term, act_term_o, act_usr;
 
@@ -267,12 +253,10 @@ bool init_sighandlers() {
         return false;
     }
 
-
     if (sigaction(SIGINT, &act_pipe, nullptr) < 0) {
         Logger::error(LogFacility::Other) << "SIGINT: sigaction failed" << Log::end;
         return false;
     }
-
 
     if (sigaction(SIGQUIT, &act_pipe, nullptr) < 0) {
         Logger::error(LogFacility::Other) << "SIGQUIT: sigaction failed" << Log::end;
@@ -319,7 +303,6 @@ bool init_sighandlers() {
         return false;
     }
 
-
     return true;
 }
 
@@ -328,4 +311,3 @@ void reset_sighandlers() {
     sigaction(SIGTERM, &act_term_o, nullptr);
     sigaction(SIGSEGV, &act_segv_o, nullptr);
 }
-

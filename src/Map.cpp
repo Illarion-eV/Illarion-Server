@@ -28,8 +28,6 @@
 
 #include "netinterface/protocol/ServerCommands.hpp"
 
-extern std::vector<position> contpos;
-
 Map::Map(unsigned short int sizex, unsigned short int sizey) : MainMap(sizex, std::vector<Field>(sizey, Field())) {
     Width = sizex;
     Height = sizey;
@@ -457,7 +455,6 @@ void Map::age() {
 }
 
 void Map::ageItems() {
-    position posZ;
     MAP_POSITION pos;
 
     for (short int x = 0; x < Width; ++x) {
@@ -477,11 +474,6 @@ void Map::ageItems() {
                         if (iterat != conmapn->second.end()) {
                             conmapn->second.erase(iterat);
                         }
-
-                        posZ.x=pos.x;
-                        posZ.y=pos.y;
-                        posZ.z=Z_Level;
-                        contpos.push_back(posZ);
                     }
                 }
 
