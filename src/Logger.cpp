@@ -19,8 +19,6 @@
 
 #include "Logger.hpp"
 
-#include <syslog.h>
-
 LogType<LogPriority::EMERGENCY>::type Logger::emergency;
 LogType<LogPriority::ALERT>::type Logger::alert;
 LogType<LogPriority::CRITICAL>::type Logger::critical;

@@ -23,6 +23,8 @@
 #include <string>
 #include <sstream>
 
+#include <syslog.h>
+
 #define LOGLEVEL_ERROR   3
 #define LOGLEVEL_WARNING 4
 #define LOGLEVEL_NOTICE  5
