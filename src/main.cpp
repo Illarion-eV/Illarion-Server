@@ -22,7 +22,6 @@
 #include <config.h>
 #endif
 
-#include <cstdlib>
 #include <ctime>
 #include <memory>
 #include <sstream>
@@ -71,10 +70,13 @@ int main(int argc, char *argv[]) {
 
     // initialize signalhandlers
     if (! init_sighandlers()) {
-        return  EXIT_FAILURE;
+        throw std::runtime_error("failed to initialise signal handlers");
     }
 
-    checkArguments(argc, argv);
+    // load configfile
+    if (! checkArguments(argc, argv)) {
+        throw std::runtime_error("failed to process commandline arguments");
+    }
 
     Logger::info(LogFacility::Other) << "main: server requires clientversion: " << Config::instance().clientversion << Log::end;
     Logger::info(LogFacility::Other) << "main: listen port: " << Config::instance().port << Log::end;
@@ -181,5 +183,5 @@ int main(int argc, char *argv[]) {
 
     Logger::info(LogFacility::Other) << "Illarion has been successfully terminated! " << Log::end;
 
-    return EXIT_SUCCESS;
+    return 0;
 }

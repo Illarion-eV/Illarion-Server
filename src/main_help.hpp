@@ -22,7 +22,7 @@
 
 #include <vector>
 
-//! falls false beendet sich das Programm
+//! break out of the main loop if false
 extern volatile bool running;
 
 // in diesen std::vector fügen Fields die numbers der gelöschten containeritems ein,
@@ -32,23 +32,20 @@ extern std::vector<int> erasedcontainers;
 // Koordinaten von gelöschten Containern, benötigt zum Schließen offener Showcases
 extern std::vector<position> contpos;
 
-// some forward declarations to not include unecessary headers
+// some forward declarations to not include unnecessary headers
 class Player;
 
 void logout_save(Player *who, bool forced, unsigned long int thistime);
 
 void login_save(Player *who);
 
-//! Die Initialisierung des Servers mit Daten aus einer Datei
-bool Init(const std::string &initfile);
-
-//! zur Prüfung der Kommandozeilenargumente
-void checkArguments(int argc, char *argv[]);
+//! process commandline arguments
+bool checkArguments(int argc, char *argv[]);
 
 //! setup file positions
 bool setup_files(time_t starttime);
 
-// Itemdefinitionen laden //
+//! load item definitions
 void loadData();
 
 //! initialise signal handlers

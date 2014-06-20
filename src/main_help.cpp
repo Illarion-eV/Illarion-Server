@@ -17,7 +17,6 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include <iostream>
 #include <string>
 #include <fstream>
 #include <map>
@@ -43,50 +42,6 @@
 #include "Logger.hpp"
 #include "World.hpp"
 #include "Config.hpp"
-
-
-/*
-learn, bbiwi, basic, schedscripts, Spawn, World_Debug, World_Imports, World, World_Inits, Monster , Player_Moves, Casting, Use, Use_Scripts
-*/
-
-//! Die Initialisierung des Servers mit Daten aus einer Datei
-bool Init(const std::string &initfile) {
-    return Config::load(initfile);
-#if 0
-    // first we try to open the file
-    std::ifstream configfile(initfile.c_str());
-
-    // can't read config file
-    if (!configfile.good()) {
-        return false;
-    }
-
-    std::string temp;
-    char buf[255];
-
-    // read first token of a line while there are any tokens left...
-    while (configfile >> temp && ! configfile.eof()) {
-
-        if (temp[0] == '#') {
-            // we found a comment... skip line
-            configfile.ignore(255,'\n'); // ignore up to 255 chars until \n is found
-            continue;
-        }
-
-        // store config options in map
-        configfile.ignore(1); // ignore the blank char following the token
-        configfile.getline(buf, 255, '\n');
-        configOptions[temp] = buf;
-
-        if (!configfile.good()) {
-            return false;
-        }
-    }
-
-    return true;
-#endif
-}
-
 #include "Player.hpp"
 
 #include "main_help.hpp"
@@ -150,25 +105,26 @@ void login_save(Player *who) {
     Logger::info(LogFacility::Player) << "login of " << *who << " from " << who->Connection->getIPAdress() << " on " << ctime(&acttime7) << onlinetime.str() << Log::end;
 }
 
-//! zur Pr�fung der Kommandozeilenargumente
-void checkArguments(int argc, char *argv[]) {
+//! process commandline arguments
+bool checkArguments(int argc, char *argv[]) {
     if (argc == 2) {
         // config file specified on command line
-        if (Init(std::string(argv[ 1 ]))) {
-            std::cout << "main: USING CONFIGFILE " << argv[ 1 ] << "\n";
-            std::cout << "main: LOADING..." << std::endl;
+        if (Config::load(std::string(argv[ 1 ]))) {
+            Logger::info(LogFacility::Other) << "main: using configfile: " << argv[ 1 ] << Log::end;
+            return true;
         } else {
-            std::cout << "main: ERROR READING CONFIGFILE " << argv[ 1 ] << " ! " << std::endl;
-            std::cout << "main: USAGE: " << argv[0] << " configfile" << std::endl;
-            exit(-1);
+            Logger::error(LogFacility::Other) << "main: error reading configfile: " << argv[ 1 ] << Log::end;
+            Logger::error(LogFacility::Other) << "main: USAGE: " << argv[0] << " configfile" << Log::end;
+            return false;
         }
     } else {
-        std::cout << "main: USAGE: " << argv[0] << " configfile" << std::endl;
-        exit(-1);
+        Logger::error(LogFacility::Other) << "main: invalid commandline arguments" << Log::end;
+        Logger::error(LogFacility::Other) << "main: USAGE: " << argv[0] << " configfile" << Log::end;
+        return false;
     }
 }
 
-// Itemdefinitionen laden
+//! load item definitions
 void loadData() {
     ScheduledScripts = new ScheduledScriptsTable();
     scheduledScripts = ScheduledScripts;
