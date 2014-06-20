@@ -52,7 +52,7 @@ NPC::NPC(TYPE_OF_CHARACTER_ID _id, const std::string &_name, TYPE_OF_RACE_ID _ra
     }
 
     setPosition(_startpos);
-    Logger::info(LogFacility::World) << "New NPC spwaned: pos: " << _startpos << " type: " << _race << " Name: " << _name<< " is_healer: " << _ishealer << " sex: " << getAttribute(Character::sex) << Log::end;
+    Logger::debug(LogFacility::World) << "New NPC spawned: pos: " << _startpos << " type: " << _race << " Name: " << _name<< " is_healer: " << _ishealer << " sex: " << getAttribute(Character::sex) << Log::end;
 
     tmpField->setChar();
 
