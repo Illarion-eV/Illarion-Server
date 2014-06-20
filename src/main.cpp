@@ -22,7 +22,6 @@
 #include <config.h>
 #endif
 
-#include <ctime>
 #include <memory>
 #include <sstream>
 
@@ -62,10 +61,6 @@ int main(int argc, char *argv[]) {
     // get more info for unspecified exceptions
     std::set_terminate(__gnu_cxx::__verbose_terminate_handler);
 
-    // save starting time
-    time_t starttime;
-    time(&starttime);
-
     Logger::info(LogFacility::Other) << "Starting Illarion!" << Log::end;
 
     // initialize signalhandlers
@@ -87,7 +82,7 @@ int main(int argc, char *argv[]) {
     Database::ConnectionManager::getInstance().setupManager();
     Database::SchemaHelper::setSchemata();
 
-    World *world = World::create(Config::instance().datadir, starttime);
+    World *world = World::create(Config::instance().datadir);
 
     if (!Data::Skills.reloadBuffer()) {
         throw std::runtime_error("failed to initialise skills");

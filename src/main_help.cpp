@@ -17,6 +17,7 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
+#include <ctime>
 #include <string>
 #include <sstream>
 

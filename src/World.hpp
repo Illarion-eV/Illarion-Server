@@ -337,7 +337,7 @@ public:
         return _is_spawn_enabled;
     }
 
-    static World *create(const std::string &dir, time_t starttime);
+    static World *create(const std::string &dir);
     static World *get() throw(std::runtime_error);
 
 
@@ -1072,7 +1072,7 @@ private:
     *@param dir the main directory of the server
     *@param time_t the starting time of the server
     */
-    World(const std::string &dir, time_t starttime);
+    World(const std::string &dir);
     World &operator=(const World &) = delete;
     World(const World &) = delete;
 

@@ -23,6 +23,7 @@
 #include <boost/regex.hpp>
 #include <boost/filesystem.hpp>
 #include <algorithm>
+#include <ctime>
 #include <sys/types.h>
 
 #include "make_unique.hpp"
@@ -68,9 +69,9 @@ extern std::shared_ptr<LuaWeaponScript> standardFightingScript;
 
 World *World::_self;
 
-World *World::create(const std::string &dir, time_t starttime) {
+World *World::create(const std::string &dir) {
     if (!(_self)) {
-        _self = new World(dir,starttime);
+        _self = new World(dir);
         // init spawnlocations...
         _self->initRespawns();
         // initialise list of GM Commands
@@ -91,10 +92,14 @@ World *World::get() throw(std::runtime_error) {
     return _self;
 }
 
-World::World(const std::string &dir, time_t starttime) {
+World::World(const std::string &dir) {
     lastTurnIGDay=getTime("day");
 
     usedAP = 0;
+
+    // save starting time
+    time_t starttime;
+    time(&starttime);
     timeStart = starttime*1000;
 
     currentScript = nullptr;
@@ -104,9 +109,6 @@ World::World(const std::string &dir, time_t starttime) {
 
     srand((unsigned) time(nullptr));
 
-    unsigned int templi = starttime;
-    char temparr[ 80 ];
-    sprintf(temparr, "%u", templi);
 }
 
 

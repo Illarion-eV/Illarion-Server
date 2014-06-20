@@ -38,9 +38,6 @@ void login_save(Player *who);
 // process commandline arguments
 bool checkArguments(int argc, char *argv[]);
 
-// setup file positions
-bool setup_files(time_t starttime);
-
 // load item definitions
 void loadData();
 
