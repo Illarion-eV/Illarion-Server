@@ -18,10 +18,8 @@
 
 
 #include "Logger.hpp"
-#include <string>
-#include <iostream>
-#include <fstream>
-#include <sstream>
+
+#include <syslog.h>
 
 LogType<LogPriority::EMERGENCY>::type Logger::emergency;
 LogType<LogPriority::ALERT>::type Logger::alert;

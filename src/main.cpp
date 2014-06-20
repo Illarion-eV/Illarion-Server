@@ -121,7 +121,6 @@ int main(int argc, char *argv[]) {
     }
 
     Logger::info(LogFacility::Other) << "scheduler is being initialised" << Log::end;
-    //Scheduler Initialisieren
     world->initScheduler();
 
     running = true;

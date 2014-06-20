@@ -208,6 +208,7 @@ void sig_segv(int) {
     }
 }
 
+// signal handler for SIGUSR1 - Used to reload maps
 void sig_usr(int) {
     Logger::info(LogFacility::World) << "SIGUSR received! Importing new maps." << Log::end;
     act_usr.sa_handler = sig_usr;
@@ -215,14 +216,14 @@ void sig_usr(int) {
     Logger::info(LogFacility::World) << "Disable login and force log out of all players." << Log::end;
     World *world = World::get();
     world->allowLogin(false);
-    world->forceLogoutOfAllPlayers(); //Alle spieler ausloggen
-    world->maps.clear(); //alte Karten l�schen
+    world->forceLogoutOfAllPlayers();
+    world->maps.clear();
     world->load_maps();
-    //alles importiert also noch ein save machen
+
     Logger::info(LogFacility::World) << "Saving World..." << Log::end;
     world->Save();
     world->allowLogin(true);
-    Logger::info(LogFacility::World) << "Map import finished" << Log::end;
+    Logger::info(LogFacility::World) << "Map import finished." << Log::end;
 
     if (sigaction(SIGUSR1, &act_usr, nullptr) < 0) {
         Logger::error(LogFacility::Other) << "SIGUSR1: sigaction failed" << Log::end;

@@ -21,8 +21,8 @@
 #include "Config.hpp"
 #include "Logger.hpp"
 
-#include <iostream>
 #include <fstream>
+#include <map>
 
 std::unique_ptr<Config> Config::_instance = nullptr;
 

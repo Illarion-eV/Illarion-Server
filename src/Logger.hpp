@@ -20,8 +20,8 @@
 #ifndef LOGGER_HPP
 #define LOGGER_HPP
 
+#include <string>
 #include <sstream>
-#include <syslog.h>
 
 #define LOGLEVEL_ERROR   3
 #define LOGLEVEL_WARNING 4
