@@ -22,14 +22,9 @@
 #include <config.h>
 #endif
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <iosfwd>
-#include <sys/types.h>  // include this before any other sys headers
-#include <sys/resource.h>
-#include <sys/time.h>
-
+#include <cstdlib>
+#include <ctime>
+#include <memory>
 #include <sstream>
 
 #include "Field.hpp"
@@ -65,21 +60,9 @@ extern ScriptVariablesTable *scriptVariables;
 
 int main(int argc, char *argv[]) {
 
-    rlimit rlp;
-    getrlimit(RLIMIT_CORE, &rlp);
-    std::cout<<"max core size: "<<rlp.rlim_cur<<std::endl;
-    std::cout<<"current core size: "<<rlp.rlim_max<<std::endl;
-    rlp.rlim_cur = 20000;
-    int res = getrlimit(RLIMIT_CORE, &rlp);
-
-    if (res < 0) {
-        std::cout<<"err: "<<errno<<std::endl;
-        perror("setrlimit: RLIMIT_CORE");
-        exit(-2);
-    }
-
     // get more info for unspecified exceptions
     std::set_terminate(__gnu_cxx::__verbose_terminate_handler);
+
     // save starting time
     time_t starttime;
     time(&starttime);
@@ -88,7 +71,7 @@ int main(int argc, char *argv[]) {
 
     // initialize signalhandlers
     if (! init_sighandlers()) {
-        return 1;
+        return  EXIT_FAILURE;
     }
 
     checkArguments(argc, argv);
