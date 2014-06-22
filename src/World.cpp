@@ -929,6 +929,9 @@ void World::checkMonsters() {
 
     for (auto &monster : newMonsters) {
         Monsters.insert(monster);
+
+        sendCharacterMoveToAllVisiblePlayers(monster, NORMALMOVE, 4);
+
         MonsterStruct monStruct;
         bool foundMonster = MonsterDescriptions->find(monster->getMonsterType(), monStruct) ;
 

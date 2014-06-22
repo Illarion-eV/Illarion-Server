@@ -473,7 +473,6 @@ character_ptr World::createMonster(unsigned short id, const position &pos, short
             newMonster->setActionPoints(movepoints);
             newMonsters.push_back(newMonster);
             field->setChar();
-            sendCharacterMoveToAllVisiblePlayers(newMonster, NORMALMOVE, 4);
             return character_ptr(newMonster);
 
         } catch (Monster::unknownIDException &) {
