@@ -296,6 +296,8 @@ bool World::erase(ScriptItem item, int amount) {
 
             if (erased) {
                 sendRemoveItemFromMapToAllVisibleCharacters(item.pos);
+            } else {
+                sendSwapItemOnMapToAllVisibleCharacter(item.getId(), item.pos, item);
             }
 
             return true;
