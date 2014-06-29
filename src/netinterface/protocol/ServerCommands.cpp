@@ -204,6 +204,16 @@ CloseDialogTC::CloseDialogTC(unsigned int dialogId) : BasicServerCommand(SC_CLOS
     addIntToBuffer(dialogId);
 }
 
+void addMovementCostToBuffer(BasicServerCommand *cmd, const position &pos) {
+    auto field = World::get()->GetField(pos);
+
+    if (field) {
+        cmd->addUnsignedCharToBuffer(field->getMovementCost());
+    } else {
+        cmd->addUnsignedCharToBuffer(255);
+    }
+}
+
 ItemUpdate_TC::ItemUpdate_TC(const position &pos, const ITEMVECTOR &items) : BasicServerCommand(SC_ITEMUPDATE_TC) {
     Logger::debug(LogFacility::World) << "sending new itemstack for pos " << pos << Log::end;
     addShortIntToBuffer(pos.x);
@@ -228,6 +238,8 @@ ItemUpdate_TC::ItemUpdate_TC(const position &pos, const ITEMVECTOR &items) : Bas
         Logger::debug(LogFacility::World) << "adding item id: " << item.getId() << " count: " << static_cast<int>(item.getNumber()) << Log::end;
         size--;
     }
+
+    addMovementCostToBuffer(this, pos);
 }
 
 CharDescription::CharDescription(TYPE_OF_CHARACTER_ID id, const std::string &description) : BasicServerCommand(SC_LOOKATCHARRESULT_TC) {
@@ -384,6 +396,8 @@ ItemPutTC::ItemPutTC(const position &pos, const Item &item) : BasicServerCommand
     } else {
         addShortIntToBuffer(item.getNumber());
     }
+
+    addMovementCostToBuffer(this, pos);
 }
 
 ItemSwapTC::ItemSwapTC(const position &pos, unsigned short int id, const Item &item) : BasicServerCommand(SC_MAPITEMSWAP) {
@@ -398,12 +412,15 @@ ItemSwapTC::ItemSwapTC(const position &pos, unsigned short int id, const Item &i
     } else {
         addShortIntToBuffer(item.getNumber());
     }
+
+    addMovementCostToBuffer(this, pos);
 }
 
 ItemRemoveTC::ItemRemoveTC(const position &pos) : BasicServerCommand(SC_ITEMREMOVE_TC) {
     addShortIntToBuffer(pos.x);
     addShortIntToBuffer(pos.y);
     addShortIntToBuffer(pos.z);
+    addMovementCostToBuffer(this, pos);
 }
 
 AdminViewPlayersTC::AdminViewPlayersTC() : BasicServerCommand(SC_ADMINVIEWPLAYERS_TC) {
