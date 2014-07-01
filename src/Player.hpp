@@ -330,8 +330,8 @@ public:
     virtual short int getMinFightPoints() const override;
     virtual short int getMaxFightPoints() const override;
 
-    void openShowcase(Container *container, bool carry);
-    void updateShowcase(Container *container) const;
+    void openShowcase(Container *container, const std::string &name, const std::string &description, bool carry);
+    void updateShowcase(Container *container, const std::string &name, const std::string &description) const;
     void updateShowcaseSlot(Container *container, TYPE_OF_CONTAINERSLOTS slot) const;
     bool isShowcaseOpen(uint8_t showcase) const;
     bool isShowcaseOpen(Container *container) const;

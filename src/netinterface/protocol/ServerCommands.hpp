@@ -277,7 +277,8 @@ public:
 
 class UpdateShowcaseTC : public BasicServerCommand {
 public:
-    UpdateShowcaseTC(unsigned char showcase, TYPE_OF_CONTAINERSLOTS volume, const Container::ITEMMAP &items);
+    UpdateShowcaseTC(unsigned char showcase, const std::string &name, const std::string &description,
+            TYPE_OF_CONTAINERSLOTS volume, const Container::ITEMMAP &items);
 };
 
 class UpdateShowcaseSlotTC : public BasicServerCommand {
