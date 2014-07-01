@@ -263,7 +263,7 @@ void World::lookAtMapItem(Player *cp, const position &pos) {
     Item titem;
 
     if (GetPToCFieldAt(field, pos)) {
-        // Feld vorhanden
+
         if (field->ViewTopItem(titem)) {
             std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(titem.getId());
             ScriptItem n_item = titem;
@@ -272,11 +272,18 @@ void World::lookAtMapItem(Player *cp, const position &pos) {
             n_item.owner = cp;
 
             if (script && script->existsEntrypoint("LookAtItem")) {
-                script->LookAtItem(cp, n_item);
-                return;
+                ItemLookAt lookAt = script->LookAtItem(cp, n_item);
+
+                if (lookAt.isValid()) {
+                    itemInform(cp, n_item, lookAt);
+                    return;
+                }
             }
 
-            if (!lookAtItemScript->lookAtItem(cp, n_item)) {
+            ItemLookAt lookAt = lookAtItemScript->lookAtItem(cp, n_item);
+            if (lookAt.isValid()) {
+                itemInform(cp, n_item, lookAt);
+            } else {
                 lookAtTile(cp, field->getTileId(), pos);
             }
         } else {
@@ -314,11 +321,19 @@ void World::lookAtShowcaseItem(Player *cp, uint8_t showcase, unsigned char posit
                 n_item.inside = ps;
 
                 if (script && script->existsEntrypoint("LookAtItem")) {
-                    script->LookAtItem(cp, n_item);
-                    return;
+                    ItemLookAt lookAt = script->LookAtItem(cp, n_item);
+                    
+                    if (lookAt.isValid()) {
+                        itemInform(cp, n_item, lookAt);
+                        return;
+                    }
                 }
 
-                lookAtItemScript->lookAtItem(cp, n_item);
+                ItemLookAt lookAt = lookAtItemScript->lookAtItem(cp, n_item);
+
+                if (lookAt.isValid()) {
+                    itemInform(cp, n_item, lookAt);
+                }
             }
         }
     }
@@ -345,11 +360,19 @@ void World::lookAtInventoryItem(Player *cp, unsigned char position) {
         n_item.owner = cp;
 
         if (script && script->existsEntrypoint("LookAtItem")) {
-            script->LookAtItem(cp, n_item);
-            return;
+            ItemLookAt lookAt = script->LookAtItem(cp, n_item);
+            
+            if (lookAt.isValid()) {
+                itemInform(cp, n_item, lookAt);
+                return;
+            }
         }
 
-        lookAtItemScript->lookAtItem(cp, n_item);
+        ItemLookAt lookAt = lookAtItemScript->lookAtItem(cp, n_item);
+
+        if (lookAt.isValid()) {
+            itemInform(cp, n_item, lookAt);
+        }
     }
 }
 

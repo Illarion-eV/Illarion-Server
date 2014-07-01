@@ -54,9 +54,9 @@ bool LuaItemScript::actionDisturbed(Character *performer, Character *disturber) 
     return callEntrypoint<bool>("actionDisturbed", fuse_performer, fuse_disturber);
 }
 
-void LuaItemScript::LookAtItem(Character *who, const ScriptItem &t_item) {
+ItemLookAt LuaItemScript::LookAtItem(Character *who, const ScriptItem &t_item) {
     character_ptr fuse_who(who);
-    callEntrypoint("LookAtItem", fuse_who, t_item);
+    return callEntrypoint<ItemLookAt>("LookAtItem", fuse_who, t_item);
 }
 
 bool LuaItemScript::MoveItemBeforeMove(Character *who, const ScriptItem &sourceItem, const ScriptItem &targetItem) {

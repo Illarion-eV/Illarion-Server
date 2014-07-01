@@ -24,6 +24,7 @@
 #include <map>
 #include <string>
 #include "LuaScript.hpp"
+#include "ItemLookAt.hpp"
 #include "TableStructs.hpp"
 
 class World;
@@ -40,7 +41,7 @@ public:
 
     void UseItem(Character *User, const ScriptItem &SourceItem, unsigned char ltastate);
     bool actionDisturbed(Character *performer, Character *disturber);
-    void LookAtItem(Character *who, const ScriptItem &t_item);
+    ItemLookAt LookAtItem(Character *who, const ScriptItem &t_item);
     bool MoveItemBeforeMove(Character *who, const ScriptItem &sourceItem, const ScriptItem &targetItem);
     void MoveItemAfterMove(Character *who, const ScriptItem &sourceItem, const ScriptItem &targetItem);
     void CharacterOnField(Character *who);

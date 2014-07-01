@@ -32,6 +32,7 @@
 #include "Language.hpp"
 #include "Attribute.hpp"
 #include "Item.hpp"
+#include "ItemLookAt.hpp"
 
 class World;
 class Container;

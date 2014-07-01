@@ -22,6 +22,7 @@
 #define _LUA_LOOK_AT_ITEM_SCRIPT_HPP_
 
 #include "LuaScript.hpp"
+#include "ItemLookAt.hpp"
 
 class Character;
 class ScriptItem;
@@ -31,7 +32,7 @@ public:
     LuaLookAtItemScript(const std::string &filename) throw(ScriptException);
     virtual ~LuaLookAtItemScript() throw();
 
-    bool lookAtItem(Character *character, const ScriptItem &item);
+    ItemLookAt lookAtItem(Character *character, const ScriptItem &item);
 
 private:
 

@@ -55,7 +55,7 @@
 \makeindex
 \begin{document}
 \lstset{basicstyle=\small, keywordstyle=\ttfamily, identifierstyle=\ttfamily}
-\title{Lua documentation for Illarion scripting\\v5.15}
+\title{Lua documentation for Illarion scripting\\v5.16}
 \author{Martin \thanks{ \texttt{martin@illarion.org, http://www.illarion.org}},
 pharse \thanks{ \texttt{pharse@illarion.org, http://www.illarion.org}},
 vilarion \thanks{ \texttt{vilarion@illarion.org, http://www.illarion.org}}}
@@ -1063,42 +1063,6 @@ Monsters can have these intrinsic armor properties:\\
 \begin{quote}
        Increases the item number of \var{Item} (\var{SourceItem}, \var{TargetItem}, ...) by \var{count}.
 \end{quote}
-\void \comm{world}:\com{itemInform}{\character \var{User}, \scripti \var{Item}, \ItemLookAt \var{lookAt}}
-\begin{quote}
-       Useable in \comm{LookAtItem}: Displays information about an item. ItemLookAt is a class where certain information about the item is stored. An empty instance can be created with lookAt = ItemLookAt(). ItemLookAt has the fields as listed in table \ref{ItemLookAt}. All fields are optional and some of them are coupled with a dedicated item data, storing the corresponding value.
-
-\begin{table}
-\begin{tabular}{l|p{3.8cm}|p{3cm}|p{3.5cm}}
-    ItemLookAt field & type & item data & description\\ \hline
-    name & string & "nameDe"\newline"nameEn"\\
-    rareness & ItemLookAt.\newline
-        \hspace*{5mm}commonItem\newline
-        \hspace*{5mm}uncommonItem\newline
-        \hspace*{5mm}rareItem\newline
-        \hspace*{5mm}epicItem & "rareness"\\
-    description & string & "descriptionDe"\newline"descriptionEn"\\
-    craftedBy & string & "craftedBy"\\
-    type & string & - & derived from WeaponStruct or ArmorStruct\\
-    level & number & - & 0..100\\
-    usable & boolean & - & can the player use this?\\
-    weight & number & -\\
-    worth & number & - & selling price in copper\\
-    qualityText & string & -\\
-    durabilityText & string & -\\
-    durabilityValue & number & - & 0..100 in percent\\
-    diamondLevel & number & "magicalDiamond" & magic gem level: 0..10\\
-    emeraldLevel & number & "magicalEmerald" & magic gem level: 0..10\\
-    rubyLevel & number & "magicalRuby" & magic gem level: 0..10\\
-    sapphireLevel & number & "magicalSapphire" & magic gem level: 0..10\\
-    amethystLevel & number & "magicalAmethyst" & magic gem level: 0..10\\
-    obsidianLevel & number & "magicalObsidian" & magic gem level: 0..10\\
-    topazLevel & number & "magicalTopaz" & magic gem level: 0..10\\
-    bonus & number & - & gem bonus: 0..255\\
-\end{tabular}
-\caption{ItemLookAt member variables}\label{ItemLookAt}
-\end{table}
-
-\end{quote}
 \void \comm{world}:\com{swap}{\scripti \var{Item},\integer \var{newItemID},\integer \var{quality}}
 \begin{quote}
   Exchanges \var{Item} (ScriptItem!) with a new one with \var{newItemId} and \var{quality}.
@@ -1722,10 +1686,42 @@ While using luac -p for finding compilation errors is very straight forward, it 
 \begin{quote}
 When one item is used. If it is used with another item, \var{TargetItem} is the ID of that item, otherwise it is 0.
 \end{quote}
-\lua{function} \com{LookAtItem}{\var{User}, \var{Item}}
+\lua{function} \ItemLookAt \com{LookAtItem}{\var{User}, \var{Item}}
 \begin{quote}
-       When someone looks at an item.
+       When someone looks at an item. Needs to return ItemLookAt as described in table \ref{ItemLookAt}.
 \end{quote}
+
+\begin{table}
+\begin{tabular}{l|p{3.8cm}|p{3cm}|p{3.5cm}}
+    ItemLookAt field & type & item data & description\\ \hline
+    name & string & "nameDe"\newline"nameEn"\\
+    rareness & ItemLookAt.\newline
+        \hspace*{5mm}commonItem\newline
+        \hspace*{5mm}uncommonItem\newline
+        \hspace*{5mm}rareItem\newline
+        \hspace*{5mm}epicItem & "rareness"\\
+    description & string & "descriptionDe"\newline"descriptionEn"\\
+    craftedBy & string & "craftedBy"\\
+    type & string & - & derived from WeaponStruct or ArmorStruct\\
+    level & number & - & 0..100\\
+    usable & boolean & - & can the player use this?\\
+    weight & number & -\\
+    worth & number & - & selling price in copper\\
+    qualityText & string & -\\
+    durabilityText & string & -\\
+    durabilityValue & number & - & 0..100 in percent\\
+    diamondLevel & number & "magicalDiamond" & magic gem level: 0..10\\
+    emeraldLevel & number & "magicalEmerald" & magic gem level: 0..10\\
+    rubyLevel & number & "magicalRuby" & magic gem level: 0..10\\
+    sapphireLevel & number & "magicalSapphire" & magic gem level: 0..10\\
+    amethystLevel & number & "magicalAmethyst" & magic gem level: 0..10\\
+    obsidianLevel & number & "magicalObsidian" & magic gem level: 0..10\\
+    topazLevel & number & "magicalTopaz" & magic gem level: 0..10\\
+    bonus & number & - & gem bonus: 0..255\\
+\end{tabular}
+\caption{ItemLookAt member variables}\label{ItemLookAt}
+\end{table}
+
 \lua{function} \com{MoveItemBeforeMove}{\var{User}, \var{SourceItem}, \var{TargetItem}}
 \begin{quote}
        Is invoked when someone tries to move an item before the move is commited.
@@ -1949,9 +1945,9 @@ This script is invoked when a player logs out. Here you can e.g. substitute GM f
 \end{quote}
 
 \subsection{Item LookAt (itemlookat.lua)}
-\lua{function} \com{lookAtItem}{\character \var{player}, \scripti \var{item}}
+\lua{function} \ItemLookAt \com{lookAtItem}{\character \var{player}, \scripti \var{item}}
 \begin{quote}
-        Handles basic item lookat if there is no lookat script attached to the given item. It has to return either \var{true} if a lookat was generated or \var{false} otherwise.
+        Handles basic item lookat if there is no lookat script attached to the given item. Has to return an ItemLookAt as described in table \ref{ItemLookAt}.
 \end{quote}
 
 \subsection{Reloading Scripts (reload.lua)}
@@ -2409,6 +2405,9 @@ It might be the case, and this is hoped much, that you want to create more compl
 \appendix
 
 \chapter{Versions}
+Version 5.16 (02 07 14)\\
+* Remove world:itemInform\\
+\\
 Version 5.15 (20 06 14)\\
 * Added CommonStruct member: English\\
 * Added CommonStruct member: German\\

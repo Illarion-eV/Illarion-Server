@@ -902,7 +902,6 @@ void LuaScript::init_base_functions() {
         .def("getMonsterAttack", &World::getMonsterAttack, luabind::pure_out_value(_3))
         .def("changeQualityOfTopItem", &World::changeQualityOfItemAt)
         .def("changeQuality", &World::changeQuality)
-        .def("itemInform", &World::itemInform)
         .def("changeItem", &World::changeItem)
         .def("isCharacterOnField", &World::isCharacterOnField)
         .def("getCharacterOnField", &World::getCharacterOnField)
