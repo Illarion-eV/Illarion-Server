@@ -22,7 +22,6 @@ public:
     }
 
     MOCK_METHOD2(getItemName, std::string(TYPE_OF_ITEM_ID itemid, uint8_t language));
-    MOCK_METHOD3(itemInform, void(Character *user, const ScriptItem &item, const ItemLookAt &lookAt));
     MOCK_METHOD1(findCharacter, Character*(TYPE_OF_CHARACTER_ID id));
 };
 
@@ -63,17 +62,16 @@ TEST_F(world_bindings, LookAtItem) {
     LuaItemScript script {"function LookAtItem(player, item)\n"
                           "local lookAt = ItemLookAt()\n"
                           "lookAt.name = world:getItemName(item.id,Player.english)\n"
-                          "world:itemInform(player, item, lookAt)\n"
-                          "return true\n"
+                          "return lookAt\n"
                           "end",
                           "lookat_test", itemdef
                          };
 
-    ItemLookAt itl;
-    itl.setName("itemname");
+    ItemLookAt lookAt;
+    lookAt.setName("itemname");
     EXPECT_CALL(world, getItemName(item.getId(), static_cast<uint8_t>(Language::english))).Times(1).WillOnce(Return("itemname"));
-    EXPECT_CALL(world, itemInform(&player, item, itl)).Times(1);
-    script.LookAtItem(&player, item);
+    ItemLookAt result = script.LookAtItem(&player, item);
+    EXPECT_EQ(lookAt, result);
 }
 
 TEST_F(world_bindings, UseItem) {
