@@ -31,6 +31,7 @@
 
 class Character;
 class Container;
+class ItemLookAt;
 
 class Item {
 public:
@@ -104,7 +105,7 @@ public:
         return datamap == item.datamap;
     }
 
-    uint16_t getDepot();
+    uint16_t getDepot() const;
 
     void reset();
     void resetWear();
@@ -118,6 +119,7 @@ public:
     TYPE_OF_WEIGHT getWeight() const;
     TYPE_OF_WORTH getWorth() const;
     number_type getMaxStack() const;
+    ItemLookAt getLookAt(Character *) const;
     bool isLarge() const;
     bool isStackable() const;
     bool isPermanent() const;

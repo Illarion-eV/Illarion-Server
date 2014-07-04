@@ -91,7 +91,7 @@ public:
     }
 
     static void shutdownLua();
-    bool existsEntrypoint(const std::string &entrypoint);
+    bool existsEntrypoint(const std::string &entrypoint) const;
     void addQuestScript(const std::string &entrypoint, const std::shared_ptr<LuaScript> &script);
 
     template<typename T>
@@ -167,7 +167,7 @@ private:
     void writeCastErrorMsg(const std::string &entryPoint, const luabind::cast_failed &e);
     void setCurrentWorldScript();
     luabind::object buildEntrypoint(const std::string &entrypoint) throw(luabind::error);
-    bool existsQuestEntrypoint(const std::string &entrypoint);
+    bool existsQuestEntrypoint(const std::string &entrypoint) const;
 
     template<typename... Args>
     bool callQuestEntrypoint(const std::string &entrypoint, const Args &... args) {

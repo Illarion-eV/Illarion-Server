@@ -33,6 +33,7 @@
 #include "Character.hpp"
 
 #include "Showcase.hpp"
+#include "Item.hpp"
 #include "netinterface/BasicServerCommand.hpp"
 #include "netinterface/NetInterface.hpp"
 #include "dialog/MerchantDialog.hpp"
@@ -330,8 +331,8 @@ public:
     virtual short int getMinFightPoints() const override;
     virtual short int getMaxFightPoints() const override;
 
-    void openShowcase(Container *container, const std::string &name, const std::string &description, bool carry);
-    void updateShowcase(Container *container, const std::string &name, const std::string &description) const;
+    void openShowcase(Container *container, const ScriptItem &item, bool carry);
+    void updateShowcase(Container *container) const;
     void updateShowcaseSlot(Container *container, TYPE_OF_CONTAINERSLOTS slot) const;
     bool isShowcaseOpen(uint8_t showcase) const;
     bool isShowcaseOpen(Container *container) const;
@@ -504,7 +505,7 @@ public:
     virtual bool Warp(const position &newPos) override;
     virtual bool forceWarp(const position &newPos) override;
 
-    void openDepot(uint16_t depotid);
+    void openDepot(const ScriptItem &item);
 
     virtual void setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS progress) override;
     void sendAvailableQuests();

@@ -19,8 +19,12 @@
 
 #include "Item.hpp"
 #include "data/Data.hpp"
+#include "script/LuaItemScript.hpp"
+#include "script/LuaLookAtItemScript.hpp"
 #include <sstream>
 #include <boost/lexical_cast.hpp>
+
+extern std::shared_ptr<LuaLookAtItemScript>lookAtItemScript;
 
 bool ItemLookAt::operator==(const ItemLookAt& rhs) const {
 	bool equal = true;
@@ -151,7 +155,7 @@ void Item::setData(const std::string &key, int32_t value) {
     setData(key, ss.str());
 }
 
-uint16_t Item::getDepot() {
+uint16_t Item::getDepot() const {
     uint16_t depotId;
 
     try {
@@ -275,6 +279,20 @@ auto Item::getMaxStack() const -> number_type {
     }
 
     return 0;
+}
+
+ItemLookAt Item::getLookAt(Character *character) const {
+    auto script = Data::CommonItems.script(id);
+    
+    if (script && script->existsEntrypoint("LookAtItem")) {
+        ItemLookAt lookAt = script->LookAtItem(character, *this);
+
+        if (lookAt.isValid()) {
+            return lookAt;
+        }
+    }
+
+    return lookAtItemScript->lookAtItem(character, *this);
 }
 
 bool Item::isLarge() const {

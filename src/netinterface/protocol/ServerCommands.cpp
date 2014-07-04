@@ -447,11 +447,11 @@ GraphicEffectTC::GraphicEffectTC(const position &pos, unsigned short int id) : B
     addShortIntToBuffer(id);
 }
 
-UpdateShowcaseTC::UpdateShowcaseTC(unsigned char showcase, const std::string &name, const std::string &description,
+UpdateShowcaseTC::UpdateShowcaseTC(unsigned char showcase, const ItemLookAt &lookAt,
         TYPE_OF_CONTAINERSLOTS volume, const Container::ITEMMAP &items) : BasicServerCommand(SC_UPDATESHOWCASE_TC) {
     addUnsignedCharToBuffer(showcase);
-    addStringToBuffer(name);
-    addStringToBuffer(description);
+    addStringToBuffer(lookAt.getName());
+    addStringToBuffer(lookAt.getDescription());
     addShortIntToBuffer(volume);
 
     TYPE_OF_CONTAINERSLOTS size = items.size();

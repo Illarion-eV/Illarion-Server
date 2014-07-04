@@ -341,11 +341,11 @@ void LuaScript::setCurrentWorldScript() {
     World::get()->setCurrentScript(this);
 }
 
-bool LuaScript::existsQuestEntrypoint(const std::string &entrypoint) {
+bool LuaScript::existsQuestEntrypoint(const std::string &entrypoint) const {
     return questScripts.find(entrypoint) != questScripts.end();
 }
 
-bool LuaScript::existsEntrypoint(const std::string &entrypoint) {
+bool LuaScript::existsEntrypoint(const std::string &entrypoint) const {
     luabind::object obj = luabind::globals(_luaState);
 
     for (auto it = vecPath.begin(); it != vecPath.end(); ++it) {

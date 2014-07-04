@@ -65,8 +65,14 @@ public:
         scriptNames.clear();
     }
 
-    const std::shared_ptr<ScriptType> &script(IdType id) {
-        return scripts[id];
+    const std::shared_ptr<ScriptType> script(IdType id) const {
+        auto it = scripts.find(id);
+
+        if (it != scripts.end()) {
+            return it->second;
+        } else {
+            return {};
+        }
     }
 
 protected:

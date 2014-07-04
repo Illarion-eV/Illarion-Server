@@ -243,10 +243,11 @@ void Player::setAlive(bool alive) {
     }
 }
 
-void Player::openShowcase(Container *container, const std::string &name, const std::string &description, bool carry) {
+void Player::openShowcase(Container *container, const ScriptItem &item, bool carry) {
     for (const auto &showcase : showcases) {
         if (showcase.second->contains(container)) {
-            ServerCommandPointer cmd = std::make_shared<UpdateShowcaseTC>(showcase.first, name, description, container->getSlotCount(), container->getItems());
+            const auto lookAt = item.getLookAt(this);
+            ServerCommandPointer cmd = std::make_shared<UpdateShowcaseTC>(showcase.first, lookAt, container->getSlotCount(), container->getItems());
             Connection->addCommand(cmd);
             return;
         }
@@ -266,18 +267,19 @@ void Player::openShowcase(Container *container, const std::string &name, const s
         }
 
         showcases[showcaseId] = std::make_unique<Showcase>(container, carry);
-
-        ServerCommandPointer cmd = std::make_shared<UpdateShowcaseTC>(showcaseId, name, description, container->getSlotCount(), container->getItems());
+        const auto lookAt = item.getLookAt(this);
+        ServerCommandPointer cmd = std::make_shared<UpdateShowcaseTC>(showcaseId, lookAt, container->getSlotCount(), container->getItems());
         Connection->addCommand(cmd);
     } else {
         inform("ERROR: Unable to open more than 100 containers.");
     }
 }
 
-void Player::updateShowcase(Container *container, const std::string &name, const std::string &description) const {
+void Player::updateShowcase(Container *container) const {
     if (isShowcaseOpen(container)) {
         auto id = getShowcaseId(container);
-        ServerCommandPointer cmd = std::make_shared<UpdateShowcaseTC>(id, name, description, container->getSlotCount(), container->getItems());
+        ItemLookAt lookAt;
+        ServerCommandPointer cmd = std::make_shared<UpdateShowcaseTC>(id, lookAt, container->getSlotCount(), container->getItems());
         Connection->addCommand(cmd);
     }
 }
@@ -405,7 +407,7 @@ void Player::lookIntoShowcaseContainer(uint8_t showcase, unsigned char pos) {
 
             if (top->viewItemNr(pos, tempi, tempc)) {
                 if (tempc) {
-                    openShowcase(tempc, {}, {}, isShowcaseInInventory(showcase));
+                    openShowcase(tempc, tempi, isShowcaseInInventory(showcase));
                 }
             }
         }
@@ -413,8 +415,8 @@ void Player::lookIntoShowcaseContainer(uint8_t showcase, unsigned char pos) {
 }
 
 bool Player::lookIntoBackPack() {
-    if ((characterItems[ BACKPACK ].getId() != 0) && backPackContents) {
-        openShowcase(backPackContents, {}, {}, true);
+    if ((characterItems[BACKPACK].getId() != 0) && backPackContents) {
+        openShowcase(backPackContents, characterItems[BACKPACK], true);
         return true;
     }
 
@@ -440,22 +442,22 @@ bool Player::lookIntoContainerOnField(direction dir) {
                     auto iv = it->second.find(item.getNumber());
 
                     if (iv != it->second.end()) {
-                        openShowcase(iv->second, {}, {}, false);
+                        openShowcase(iv->second, item, false);
                         return true;
                     }
                 }
             } else {
                 if (item.getId() == DEPOTITEM) {
+                    ScriptItem scriptItem(item);
+                    scriptItem.type = ScriptItem::it_field;
+                    scriptItem.pos = containerPosition;
+
                     if (depotScript && depotScript->existsEntrypoint("onOpenDepot")) {
-                        ScriptItem scriptItem(item);
-                        scriptItem.type = ScriptItem::it_field;
-                        scriptItem.pos = containerPosition;
-                        
                         if (depotScript->onOpenDepot(this, scriptItem)) {
-                            openDepot(item.getDepot());
+                            openDepot(scriptItem);
                         }
                     } else {
-                        openDepot(item.getDepot());
+                        openDepot(scriptItem);
                     }
                 } else {
 
@@ -526,7 +528,7 @@ void Player::ageInventory() {
 
         if (depot) {
             depot->doAge(true);
-            updateShowcase(depot, {}, {});
+            updateShowcase(depot);
         }
     }
 
@@ -666,7 +668,7 @@ bool Player::swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid , uint16_t newQu
 
 void Player::updateBackPackView() {
     if (backPackContents) {
-        updateShowcase(backPackContents, {}, {});
+        updateShowcase(backPackContents);
     }
 }
 
@@ -2079,14 +2081,16 @@ void Player::handleWarp() {
     _world->monitoringClientList->sendCommand(cmd);
 }
 
-void Player::openDepot(uint16_t depotid) {
+void Player::openDepot(const ScriptItem &item) {
+    const auto depotid = item.getDepot();
+
     if (depotContents.find(depotid) != depotContents.end()) {
         if (depotContents[depotid]) {
-            openShowcase(depotContents[depotid], {}, {}, false);
+            openShowcase(depotContents[depotid], item, false);
         }
     } else {
         depotContents[depotid] = new Container(DEPOTITEM);
-        openShowcase(depotContents[depotid], {}, {}, false);
+        openShowcase(depotContents[depotid], item, false);
     }
 }
 
