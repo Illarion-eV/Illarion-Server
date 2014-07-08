@@ -281,20 +281,6 @@ auto Item::getMaxStack() const -> number_type {
     return 0;
 }
 
-ItemLookAt Item::getLookAt(Character *character) const {
-    auto script = Data::CommonItems.script(id);
-    
-    if (script && script->existsEntrypoint("LookAtItem")) {
-        ItemLookAt lookAt = script->LookAtItem(character, *this);
-
-        if (lookAt.isValid()) {
-            return lookAt;
-        }
-    }
-
-    return lookAtItemScript->lookAtItem(character, *this);
-}
-
 bool Item::isLarge() const {
     return getVolume() >= LARGE_ITEM_VOLUME;
 }
@@ -310,3 +296,18 @@ bool Item::isPermanent() const {
 void Item::makePermanent() {
     wear = PERMANENT_WEAR;
 }
+
+ItemLookAt ScriptItem::getLookAt(Character *character) const {
+    auto script = Data::CommonItems.script(getId());
+
+    if (script && script->existsEntrypoint("LookAtItem")) {
+        ItemLookAt lookAt = script->LookAtItem(character, *this);
+
+        if (lookAt.isValid()) {
+            return lookAt;
+        }
+    }
+
+    return lookAtItemScript->lookAtItem(character, *this);
+}
+

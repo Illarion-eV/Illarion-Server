@@ -119,7 +119,6 @@ public:
     TYPE_OF_WEIGHT getWeight() const;
     TYPE_OF_WORTH getWorth() const;
     number_type getMaxStack() const;
-    ItemLookAt getLookAt(Character *) const;
     bool isLarge() const;
     bool isStackable() const;
     bool isPermanent() const;
@@ -164,6 +163,8 @@ public:
         owner = nullptr;
         inside = nullptr;
     }
+
+    ItemLookAt getLookAt(Character *) const;
 
     bool operator==(const ScriptItem& rhs) const;
 };
