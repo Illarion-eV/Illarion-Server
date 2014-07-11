@@ -526,13 +526,14 @@ MapStripeTC::MapStripeTC(const position &pos, NewClientView::stripedirection dir
 MapCompleteTC::MapCompleteTC() : BasicServerCommand(SC_MAPCOMPLETE_TC) {
 }
 
-MoveAckTC::MoveAckTC(TYPE_OF_CHARACTER_ID id, const position &pos, unsigned char mode, unsigned char waitpages) : BasicServerCommand(SC_MOVEACK_TC) {
+MoveAckTC::MoveAckTC(TYPE_OF_CHARACTER_ID id, const position &pos, unsigned char mode, TYPE_OF_WALKINGCOST duration) : BasicServerCommand(SC_MOVEACK_TC) {
     addIntToBuffer(id);
     addShortIntToBuffer(pos.x);
     addShortIntToBuffer(pos.y);
     addShortIntToBuffer(pos.z);
     addUnsignedCharToBuffer(mode);
-    addUnsignedCharToBuffer(waitpages);
+    //round to hundreds for now, to mirror action points
+    addShortIntToBuffer((duration/100)*100);
 }
 
 IntroduceTC::IntroduceTC(TYPE_OF_CHARACTER_ID id, const std::string &name) : BasicServerCommand(SC_INTRODUCE_TC) {

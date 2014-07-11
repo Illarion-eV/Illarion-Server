@@ -498,9 +498,7 @@ public:
     using Character::move;
     bool move(direction dir, uint8_t mode);
 
-    // Increase Movement Cost by encumburance
-    // \return true if walking possible else false
-    bool encumberance(uint16_t &movementCost);
+    bool isOvertaxed();
 
     virtual bool Warp(const position &newPos) override;
     virtual bool forceWarp(const position &newPos) override;
@@ -609,17 +607,7 @@ private:
 
     bool questWriteLock;
 
-    int relativeLoad() const;
-
-    enum class LoadLevel {
-        unburdened,
-        burdened,
-        overtaxed
-    };
-
     LoadLevel loadLevel = LoadLevel::unburdened;
-
-    LoadLevel loadFactor() const;
 
     bool monitoringClient;
 

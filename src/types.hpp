@@ -54,7 +54,7 @@ typedef uint8_t  TYPE_OF_ARMORTYPE;
 
 typedef uint16_t TYPE_OF_CONTAINERSLOTS;
 
-typedef uint8_t  TYPE_OF_WALKINGCOST;
+typedef uint16_t TYPE_OF_WALKINGCOST;
 
 typedef uint8_t  TYPE_OF_GROUNDLEVEL;
 typedef uint8_t  TYPE_OF_SPECIALTILE;

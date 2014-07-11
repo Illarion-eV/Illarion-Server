@@ -1839,22 +1839,6 @@ void Player::inform(const std::string &german, const std::string &english, infor
     inform(nls(german, english), type);
 }
 
-int Player::relativeLoad() const {
-    return LoadWeight() * 100 / maxLoadWeight();
-}
-
-auto Player::loadFactor() const -> LoadLevel {
-    int load = relativeLoad();
-
-    if (load > 100) {
-        return LoadLevel::overtaxed;
-    } else if (load > 75) {
-        return LoadLevel::burdened;
-    }
-
-    return LoadLevel::unburdened;
-}
-
 void Player::checkBurden() {
     auto currentLoadLevel = loadFactor();
 
@@ -1886,14 +1870,10 @@ void Player::checkBurden() {
     }
 }
 
-bool Player::encumberance(uint16_t &movementCost) {
-    int load = relativeLoad();
-    movementCost += movementCost * 3 * (load-75) / 25;
-
+bool Player::isOvertaxed() {
     checkBurden();
-
     auto level = loadFactor();
-    return level != LoadLevel::overtaxed;
+    return level == LoadLevel::overtaxed;
 }
 
 bool Player::move(direction dir, uint8_t mode) {
@@ -1920,7 +1900,7 @@ bool Player::move(direction dir, uint8_t mode) {
     }
 
     position newpos, oldpos;
-    uint8_t waitpages = 0;
+    TYPE_OF_WALKINGCOST walkcost = 0;
 
     while (j < steps && cont) {
 
@@ -1951,28 +1931,21 @@ bool Player::move(direction dir, uint8_t mode) {
             }
         }
 
-        if (cfnew && fieldfound && (cfnew->moveToPossible() || (getClippingActive() == false && (isAdmin() || hasGMRight(gmr_isnotshownasgm))))) {
-            uint16_t walkcost = getMovementCost(cfnew);
+        bool diagonalMove = oldpos.x != newpos.x && oldpos.y != newpos.y;
+        walkcost += getMoveTime(cfnew, diagonalMove, mode == RUNNING);
 
-            if (!encumberance(walkcost)) {
-                ServerCommandPointer cmd = std::make_shared<MoveAckTC>(getId(), getPosition(), NOMOVE, 0);
-                Connection->addCommand(cmd);
-                return false;
-            } else {
-                int16_t diff = (P_MIN_AP - getActionPoints() + walkcost) * 10;
-
-                // necessary to get smooth movement in client (dunno how this one is supposed to work exactly)
-                if (diff < 60) {
-                    waitpages = 4;
-                } else {
-                    waitpages = (diff * 667) / 10000;
-                }
-
-                if (mode != RUNNING || (j == 1 && cont)) {
-                    increaseActionPoints(-walkcost);
-                }
+        if (isOvertaxed()) {
+            ServerCommandPointer cmd = std::make_shared<MoveAckTC>(getId(), getPosition(), NOMOVE, 0);
+            Connection->addCommand(cmd);
+            return false;
+        } else {
+            if (mode != RUNNING || (j == 1 && cont)) {
+                //reduce a little less than the cost to prevent stuttering
+                increaseActionPoints(walkcost/100);
             }
+        }
 
+        if (cfnew && fieldfound && (cfnew->moveToPossible() || (getClippingActive() == false && (isAdmin() || hasGMRight(gmr_isnotshownasgm))))) {
             cfold->removeChar();
             cfnew->setChar();
 
@@ -1980,14 +1953,13 @@ bool Player::move(direction dir, uint8_t mode) {
                 setPosition(newpos);
                 ServerCommandPointer cmd = std::make_shared<MoveAckTC>(getId(), getPosition(), NOMOVE, 0);
                 Connection->addCommand(cmd);
-                // Koordinate
                 cmd = std::make_shared<SetCoordinateTC>(getPosition());
                 Connection->addCommand(cmd);
                 sendFullMap();
                 cont = false;
             } else {
                 if (mode != RUNNING || (j == 1 && cont)) {
-                    ServerCommandPointer cmd = std::make_shared<MoveAckTC>(getId(), newpos, mode, waitpages);
+                    ServerCommandPointer cmd = std::make_shared<MoveAckTC>(getId(), newpos, mode, walkcost);
                     Connection->addCommand(cmd);
                 }
 
@@ -2003,7 +1975,7 @@ bool Player::move(direction dir, uint8_t mode) {
             }
 
             if (mode != RUNNING || j == 1 || !cont) {
-                _world->sendCharacterMoveToAllVisiblePlayers(this, mode, waitpages);
+                _world->sendCharacterMoveToAllVisiblePlayers(this, mode, walkcost);
                 _world->sendAllVisibleCharactersToPlayer(this, true);
             }
 
@@ -2023,13 +1995,12 @@ bool Player::move(direction dir, uint8_t mode) {
             if (mode != RUNNING || j == 1) {
                 return true;
             }
-        }
-        else {
+        } else {
             if (j == 1) {
-                ServerCommandPointer cmd = std::make_shared<MoveAckTC>(getId(), getPosition(), NORMALMOVE, waitpages);
+                ServerCommandPointer cmd = std::make_shared<MoveAckTC>(getId(), getPosition(), NORMALMOVE, walkcost);
                 Connection->addCommand(cmd);
                 sendStepStripes(dir);
-                _world->sendCharacterMoveToAllVisiblePlayers(this, mode, waitpages);
+                _world->sendCharacterMoveToAllVisiblePlayers(this, mode, walkcost);
                 _world->sendAllVisibleCharactersToPlayer(this, true);
                 return true;
             } else if (j == 0) {

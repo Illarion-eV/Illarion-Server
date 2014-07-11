@@ -53,7 +53,7 @@ TilesStruct TilesTable::assignTable(const Database::ResultTuple &row) {
     tile.flags |= row["til_specialtile"].as<bool>() ? FLAG_SPECIALITEM : 0;
     tile.German = row["til_german"].as<std::string>();
     tile.English = row["til_english"].as<std::string>();
-    tile.walkingCost = TYPE_OF_WALKINGCOST(row["til_walkingcost"].as<int16_t>());
+    tile.walkingCost = row["til_walkingcost"].as<TYPE_OF_WALKINGCOST>();
     return tile;
 }
 

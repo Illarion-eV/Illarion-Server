@@ -148,12 +148,12 @@ void World::sendPassiveMoveToAllVisiblePlayers(Character *ccp) {
 }
 
 
-void World::sendCharacterMoveToAllVisibleChars(Character *cc, unsigned char waitpages) {
+void World::sendCharacterMoveToAllVisibleChars(Character *cc, TYPE_OF_WALKINGCOST duration) {
     // for now we only send events to players... TODO change this whole command
-    sendCharacterMoveToAllVisiblePlayers(cc, NORMALMOVE, waitpages);
+    sendCharacterMoveToAllVisiblePlayers(cc, NORMALMOVE, duration);
 }
 
-void World::sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char netid, unsigned char waitpages) {
+void World::sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char netid, TYPE_OF_WALKINGCOST duration) {
     if (!cc->isInvisible()) {
         char xoffs;
         char yoffs;
@@ -167,7 +167,7 @@ void World::sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char ne
             zoffs = charPos.z - playerPos.z + RANGEDOWN;
 
             if ((xoffs != 0) || (yoffs != 0) || (zoffs != RANGEDOWN)) {
-                ServerCommandPointer cmd = std::make_shared<MoveAckTC>(cc->getId(), charPos, netid, waitpages);
+                ServerCommandPointer cmd = std::make_shared<MoveAckTC>(cc->getId(), charPos, netid, duration);
                 p->Connection->addCommand(cmd);
             }
         }

@@ -22,6 +22,7 @@
 
 #include <map>
 #include <algorithm>
+#include <cmath>
 
 #include "character_ptr.hpp"
 #include "a_star.hpp"
@@ -231,7 +232,7 @@ void Character::increaseActionPoints(short int ap) {
 }
 
 bool Character::canAct() const {
-    return actionPoints >= getMinActionPoints();
+    return actionPoints >= getMaxActionPoints();
 }
 
 short int Character::getFightPoints() const {
@@ -1129,6 +1130,24 @@ int Character::LoadWeight() const {
 }
 
 
+float Character::relativeLoad() const {
+    return float(LoadWeight()) / maxLoadWeight();
+}
+
+
+auto Character::loadFactor() const -> LoadLevel {
+    auto load = relativeLoad();
+
+    if (load > 1.0) {
+        return LoadLevel::overtaxed;
+    } else if (load > 0.75) {
+        return LoadLevel::burdened;
+    }
+
+    return LoadLevel::unburdened;
+}
+
+
 bool Character::weightOK(TYPE_OF_ITEM_ID id, int count, Container *tcont) const {
     if (count < 0) {
         return true;
@@ -1334,31 +1353,18 @@ bool Character::move(direction dir, bool active) {
         }
     }
 
-    // did we find a target field?
     if (fieldfound && moveToPossible(cfnew)) {
-        uint16_t movementcost = getMovementCost(cfnew);
-        int16_t diff = (P_MIN_AP - actionPoints + movementcost) * 10;
-        uint8_t waitpages;
+        bool diagonalMove = pos.x != newpos.x && pos.y != newpos.y;
+        uint16_t movementcost = getMoveTime(cfnew, diagonalMove, false);
+        actionPoints -= movementcost/100;
 
-        // necessay to get smooth movement in client (dunno how this one is supposed to work exactly)
-        if (diff < 60) {
-            waitpages = 4;
-        } else {
-            waitpages = (diff * 667) / 10000;
-        }
-
-        actionPoints -= movementcost;
-
-        // mark fields as (un)occupied
         cfold->removeChar();
         cfnew->setChar();
 
-        // set new position
         setPosition(newpos);
 
-        // send word out to all chars in range
         if (active) {
-            _world->sendCharacterMoveToAllVisibleChars(this, waitpages);
+            _world->sendCharacterMoveToAllVisibleChars(this, movementcost);
         } else {
             _world->sendPassiveMoveToAllVisiblePlayers(this);
         }
@@ -1366,7 +1372,6 @@ bool Character::move(direction dir, bool active) {
         // check if there are teleporters or other special flags on this field
         _world->checkFieldAfterMove(this, cfnew);
 
-        // ggf Scriptausfhrung nachdem man sich auf das Feld drauf bewegt hat
         _world->TriggerFieldMove(this,true);
 
         return true;
@@ -1380,35 +1385,42 @@ bool Character::moveToPossible(const Field *field) const {
     return field->moveToPossible();
 }
 
-uint16_t Character::getMovementCost(const Field *sourcefield) const {
-    uint16_t walkcost = 0;
-    uint16_t tileWalkingCost = sourcefield->getMovementCost();
+TYPE_OF_WALKINGCOST Character::getMoveTime(const Field *targetField, bool diagonalMove, bool running) const {
+    static const float sqrt2 = std::sqrt(2.0);
+    TYPE_OF_WALKINGCOST walkcost;
 
     switch (_movement) {
-    case walk:
-        walkcost += tileWalkingCost;
+    case fly:
+        walkcost = NP_STANDARDFLYCOST;
         break;
 
-    case fly: // walking cost independent of source field
-        walkcost += NP_STANDARDFLYCOST;
-        break;
-
-    case crawl: // just double the ap necessary for walking
-        walkcost += 2 * tileWalkingCost;
+    default:
+        walkcost = targetField->getMovementCost();
         break;
     }
 
-    auto agility = getAttribute(Character::agility);
+    // tile costs are in 1/10s, walk cost in ms
+    walkcost *= 100;
+
+    auto agility = std::min(getAttribute(Character::agility), MAX_WALK_AGI);
 
     if (getType() != player) {
-        walkcost += STANDARD_MONSTER_WALKING_COST;
-        agility = std::min(agility, NP_MAX_WALK_AGI);
+        walkcost += ADDITIONAL_MONSTER_WALKING_COST;
     }
 
-    walkcost = (walkcost * MOVECOSTFORMULA_walkingCost_MULTIPLIER) / (agility + MOVECOSTFORMULA_agility_ADD);
+    float agilityModifier = float(10 - agility) / 100.0;
+    float loadModifier = relativeLoad() / 10.0 * 3.0;
 
-    if (walkcost < MIN_AP_WALK_COST) {
-        walkcost = MIN_AP_WALK_COST;
+    walkcost += walkcost * (agilityModifier + loadModifier);
+
+    walkcost = std::min(std::max(walkcost, MIN_WALK_COST), MAX_WALK_COST);
+
+    if (diagonalMove) {
+        walkcost *= sqrt2;
+    }
+
+    if (running) {
+        walkcost *= 0.6;
     }
 
     return walkcost;

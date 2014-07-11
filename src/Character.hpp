@@ -463,6 +463,15 @@ public:
 
     unsigned short int maxLoadWeight() const;
     int LoadWeight() const;
+    float relativeLoad() const;
+
+    enum class LoadLevel {
+        unburdened,
+        burdened,
+        overtaxed
+    };
+
+    LoadLevel loadFactor() const;
 
     /**
     * returns the weight of a container
@@ -542,13 +551,9 @@ protected:
     World *_world;
 
     virtual bool moveToPossible(const Field *field) const;
-
-    /**
-    * calculates movement costs for this character
-    * @param sourcefield from which we want to get the movement cost
-    * @return the movement costs
-    */
-    virtual uint16_t getMovementCost(const Field *sourcefield) const;
+    
+    // returns time of a move in ms
+    virtual TYPE_OF_WALKINGCOST getMoveTime(const Field *targetField, bool diagonalMove, bool running) const;
 
     appearance _appearance;
 

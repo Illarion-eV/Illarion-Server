@@ -299,7 +299,7 @@ public:
 
 class MoveAckTC : public BasicServerCommand {
 public:
-    MoveAckTC(TYPE_OF_CHARACTER_ID id, const position &pos, unsigned char mode, unsigned char waitpages);
+    MoveAckTC(TYPE_OF_CHARACTER_ID id, const position &pos, unsigned char mode, TYPE_OF_WALKINGCOST duration);
 };
 
 class IntroduceTC : public BasicServerCommand {

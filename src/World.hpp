@@ -588,65 +588,12 @@ public:
     **/
     bool pushPlayer(Player *cp, unsigned char d, short int &walkcost);
 
-    /**
-    *warps a Player through a warpfield
-    *
-    *@param cp pointer to the player which should be warped
-    *@param cfstart the field which should be proofed if it is a warpfield
-    *@return true if the warp was succesfull otherwise false
-    */
-    //bool warpPlayer( Player* cp, Field* cfstart );
-
-    /**
-    *warps a player to the next free field in the near of a given position
-    *
-    *@param cp a pointer to a player which should be warped
-    *@param pos the position to which the player should be warped
-    *@return true if the warp was succesfull otherwise false
-    */
-    //bool warpPlayer( Player* cp, position pos );
-
-    /**
-    *checks a field for special actions and activates this actions (Specielfield or items)
-    *
-    *@param cp a pointer to the character which walked on the field
-    *@param cfstart a pointer to the field which should be checked for special actions
-    */
     void checkFieldAfterMove(Character *cp, Field *cfstart);
-
-    //! schickt eine Verschiebungsmeldung (Player/NPC/Monster) an alle Player im Sichtbereich
-    // \param ccp der bewegte Character
     void sendPassiveMoveToAllVisiblePlayers(Character *ccp);
-
-    //! schickt eine Character-Drehung an alle Player im Sichtbereich von cc
-    // \param cc der Character der sich gedreht hat
     void sendSpinToAllVisiblePlayers(Character *cc);
-
-    //! schickt eine Character-Bewegungsmeldung an alle Player im Sichtbereich der Position
-    // von cc (alt und neu) ausser an cc selbst
-    // \param cc der bewegte Character
-    // \param direction Richtung der Bewegung
-    // \param netid PLAYERMOVE_TC, MONSTERMOVE_TC oder NPCMOVE_TC
-    // \param waitpages Anzahl der Animationen fr die Bewegung
-    void sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char netid, unsigned char waitpages);
-
-    //! send movement to all chars in range
-    // \param cc the moved player
-    // \param waitpages number of animations for movement
-    void sendCharacterMoveToAllVisibleChars(Character *cc, unsigned char waitpages);
-
-    //! schickt eine Character-Warpmeldung an alle Player im Sichtbereich der Position
-    // von cc (alt und neu) ausser an cc selbst
-    // \param cc der bewegte Character
-    // \param oldpos die alte Position
-    // \param netid PLAYERMOVE_TC, MONSTERMOVE_TC oder NPCMOVE_TC
+    void sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char movetype, TYPE_OF_WALKINGCOST duration);
+    void sendCharacterMoveToAllVisibleChars(Character *cc, TYPE_OF_WALKINGCOST duration);
     void sendCharacterWarpToAllVisiblePlayers(Character *cc, const position &oldpos, unsigned char netid);
-
-    //! sendet die Daten aller Chars in dem std::vector an cp
-    // fuer jeden Eintrag muss gelten: (cp->pos.z - RANGEDOWN) >= eintr->pos.z
-    // \param vec der std::vector mit den Character
-    // \param cp Player an den verschickt wird
-    // \param sendSpin falls true, wird auch die Blickrichtung mit verschickt
     template<class T> void sendCharsInVector(const std::vector<T *> &vec, Player *cp, bool sendSpin);
 
     void lookAtMapItem(Player *cp, const position &pos);

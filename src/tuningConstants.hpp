@@ -20,6 +20,8 @@
 #ifndef TUNINGCONSTANTS_HPP
 #define TUNINGCONSTANTS_HPP
 
+#include "types.hpp"
+
 #define CLIENT_TIMEOUT 50
 
 // how many players to process each turn (maximum)
@@ -64,21 +66,15 @@
 #define P_REGENERATE_COST 0
 #define NP_REGENERATE_COST 10
 
-#define STANDARD_MONSTER_WALKING_COST 8
+const unsigned short MAX_WALK_AGI = 20;
+const TYPE_OF_WALKINGCOST ADDITIONAL_MONSTER_WALKING_COST = 1;
+const TYPE_OF_WALKINGCOST MIN_WALK_COST = 300;
+const TYPE_OF_WALKINGCOST MAX_WALK_COST = 800;
 
-#define MOVECOSTFORMULA_walkingCost_MULTIPLIER 12
-#define MOVECOSTFORMULA_agility_ADD 30
-#define MIN_AP_WALK_COST 6
-
-#define P_STANDARDWALKCOST 30
-#define NP_STANDARDWALKCOST 30
-
-#define NP_STANDARDFLYCOST 20
+#define NP_STANDARDFLYCOST 5
 
 #define MAXTHROWDISTANCE 10
 #define MAXTHROWWEIGHT 99
 #define MAXDROPDISTANCE 2
-
-const unsigned short NP_MAX_WALK_AGI = 15;
 
 #endif
