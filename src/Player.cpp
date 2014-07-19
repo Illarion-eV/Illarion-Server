@@ -765,6 +765,10 @@ void Player::sendAttrib(Character::attributeIndex attribute) {
 void Player::handleAttributeChange(Character::attributeIndex attribute) {
     Character::handleAttributeChange(attribute);
     sendAttrib(attribute);
+
+    if (attribute == Character::strength) {
+        checkBurden();
+    }
 }
 
 
@@ -1840,34 +1844,9 @@ void Player::inform(const std::string &german, const std::string &english, infor
 }
 
 void Player::checkBurden() {
-    auto currentLoadLevel = loadFactor();
-
-    if (currentLoadLevel != loadLevel) {
-        loadLevel = currentLoadLevel;
-
-        switch (loadLevel) {
-        case LoadLevel::burdened: {
-            static const std::string german = "Deine Last bremst dich.";
-            static const std::string english = "Your burden slows you down.";
-            inform(nls(german, english), informScriptMediumPriority);
-            break;
-        }
-
-        case LoadLevel::overtaxed: {
-            static const std::string german = "Deine Last hindert dich daran zu laufen.";
-            static const std::string english = "Your burden keeps you from moving.";
-            inform(nls(german, english), informScriptMediumPriority);
-            break;
-        }
-
-        default: {
-            static const std::string german = "Eine schwere Last ist von deinen Schultern genommen.";
-            static const std::string english = "A heavy burden has been lifted from your shoulders.";
-            inform(nls(german, english), informScriptMediumPriority);
-            break;
-        }
-        }
-    }
+    loadLevel = loadFactor();
+    auto cmd = std::make_shared<UpdateLoadTC>(LoadWeight(), maxLoadWeight());
+    Connection->addCommand(cmd);
 }
 
 bool Player::isOvertaxed() {

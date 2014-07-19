@@ -47,6 +47,7 @@ enum ServerCommands {
     SC_UPDATESKILL_TC = 0xD1,
     SC_UPDATEMAGICFLAGS_TC = 0xB8,
     SC_UPDATEATTRIB_TC = 0xB9,
+    SC_UPDATELOAD_TC = 0xB0,
     SC_MUSIC_TC = 0xC8,
     SC_MUSICDEFAULT_TC = 0xCE,
     SC_SAY_TC = 0xD7,
@@ -340,6 +341,11 @@ public:
 class UpdateAttribTC : public BasicServerCommand {
 public:
     UpdateAttribTC(TYPE_OF_CHARACTER_ID id, const std::string &name, unsigned short int value);
+};
+
+class UpdateLoadTC : public BasicServerCommand {
+public:
+    UpdateLoadTC(uint16_t currentLoad, uint16_t maxLoad);
 };
 
 class UpdateMagicFlagsTC : public BasicServerCommand {

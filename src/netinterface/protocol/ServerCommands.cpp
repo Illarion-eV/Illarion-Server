@@ -580,6 +580,11 @@ UpdateAttribTC::UpdateAttribTC(TYPE_OF_CHARACTER_ID id, const std::string &name,
     addShortIntToBuffer(value);
 }
 
+UpdateLoadTC::UpdateLoadTC(uint16_t currentLoad, uint16_t maxLoad) : BasicServerCommand(SC_UPDATELOAD_TC) {
+    addShortIntToBuffer(currentLoad);
+    addShortIntToBuffer(maxLoad);
+}
+
 UpdateMagicFlagsTC::UpdateMagicFlagsTC(unsigned char type, uint32_t flags) : BasicServerCommand(SC_UPDATEMAGICFLAGS_TC) {
     addUnsignedCharToBuffer(type);
     addIntToBuffer(flags);
