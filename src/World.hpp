@@ -633,9 +633,8 @@ public:
     */
     void sendLanguageMessageToAllCharsInRange(const std::string &message, Character::talk_type tt, Language lang, Character *cc);
 
-    //! schickt an alle Player eine Nachricht
-    // \param message die Nachricht die geschickt werden soll
     void sendMessageToAllPlayers(const std::string &message);
+    void broadcast(const std::string &german, const std::string &english);
 
     //! schickt eine Nachricht an alle GM's im Spiel.
     // \param message die zu schickende Nachricht

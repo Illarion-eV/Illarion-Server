@@ -134,6 +134,12 @@ void World::sendMessageToAllPlayers(const std::string &message) {
     });
 }
 
+void World::broadcast(const std::string &german, const std::string &english) {
+    Players.for_each([&german, &english](Player *player) {
+        player->inform(german, english, Player::informBroadcast);
+    });
+}
+
 void World::sendMessageToAllCharsInRange(const std::string &german, const std::string &english, Character::talk_type tt, Character *cc) {
     auto range = getTalkRange(tt);
     std::string spokenMessage_german, spokenMessage_english, tempMessage;

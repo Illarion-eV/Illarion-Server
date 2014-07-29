@@ -55,7 +55,7 @@
 \makeindex
 \begin{document}
 \lstset{basicstyle=\small, keywordstyle=\ttfamily, identifierstyle=\ttfamily}
-\title{Lua documentation for Illarion scripting\\v5.16}
+\title{Lua documentation for Illarion scripting\\v5.17}
 \author{Martin \thanks{ \texttt{martin@illarion.org, http://www.illarion.org}},
 pharse \thanks{ \texttt{pharse@illarion.org, http://www.illarion.org}},
 vilarion \thanks{ \texttt{vilarion@illarion.org, http://www.illarion.org}}}
@@ -1222,6 +1222,10 @@ Monsters can have these intrinsic armor properties:\\
 \bool , \naturalarmor \comm{world}:\com{getNaturalArmor}{\integer \var{raceID}}
 \begin{quote}
        Returns two values: bool (true if that race has natural armor) and the naturalarmorstruct of the given race.
+\end{quote}
+\void \comm{world}:\com{broadcast}{\txt \var{germanText}, \txt \var{englishText}}
+\begin{quote}
+       Sends a broadcast to all players in the game. Players receive the text fitting their account language.
 \end{quote}
 
 \section{Variables}
@@ -2405,6 +2409,9 @@ It might be the case, and this is hoped much, that you want to create more compl
 \appendix
 
 \chapter{Versions}
+Version 5.17 (29 07 14)\\
+* Add world:broadcast\\
+\\
 Version 5.16 (02 07 14)\\
 * Remove world:itemInform\\
 \\
