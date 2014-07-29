@@ -79,23 +79,6 @@ public:
     }
 
     /**
-    * reduces the tiles which should be sended (for smaller areas )
-    * @param number the number which should be reduced
-    */
-    inline void removeLastTiles(uint8_t number) {
-        number -= (MAP_DIMENSION + 2 - maxtiles) < number ? (MAP_DIMENSION + 2 - maxtiles) : number;
-
-        if (number > 0) {
-            if (maxtiles <= number) {
-                maxtiles = 0;
-                exists = false;
-            } else {
-                maxtiles -= number;
-            }
-        }
-    }
-
-    /**
     * the stripedirection, in which direction the mapstripe shows
     * @return the current direction of the mapstripe
     */
