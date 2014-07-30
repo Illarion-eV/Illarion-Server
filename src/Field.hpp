@@ -37,6 +37,8 @@ extern std::vector<int> erasedcontainers;
 
 class Field {
 private:
+    static const unsigned short TRANSPARENT = 0;
+
     unsigned short int tile;
     unsigned short int music;
     unsigned char clientflags;
@@ -48,6 +50,7 @@ public:
     void setMusicId(unsigned short int id);
     unsigned short int getMusicId() const;
     unsigned short int getTileCode() const;
+    bool isTransparent() const;
 
     Field();
 

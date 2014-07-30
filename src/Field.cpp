@@ -64,6 +64,10 @@ unsigned short int Field::getMusicId() const {
     return music;
 }
 
+bool Field::isTransparent() const {
+    return getTileId() == TRANSPARENT;
+}
+
 TYPE_OF_WALKINGCOST Field::getMovementCost() const {
     if (IsPassable()) {
         auto tileId = getTileId();

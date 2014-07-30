@@ -188,10 +188,6 @@ const uint32_t MONSTERVIEWRANGE = 11;
 //! Code fr "kein Feld"
 #define NOFIELD 0xFFFF
 
-//! transparente Bodenplatte
-#define TRANSPARENT 0x0000
-
-
 
 //-------------- Client to Server ---------------------
 
