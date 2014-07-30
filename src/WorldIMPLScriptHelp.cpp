@@ -566,17 +566,9 @@ void World::sendMapUpdate(const position &pos, uint8_t radius) {
 }
 
 bool World::createSavedArea(uint16_t tileid, const position &pos, uint16_t height, uint16_t width) {
-    WorldMap::map_t dummy;
-
-    for (time_t akt_x = pos.x; akt_x < pos.x+width; ++akt_x) {
-        for (time_t akt_y = pos.y; akt_y < pos.y+height; ++akt_y) {
-            const position testPos(akt_x, akt_y, pos.z);
-
-            if (maps.findMapForPos(testPos, dummy)) {
-                Logger::error(LogFacility::World) << "World::createSavedArea: Aborted map insertion, map for field at " << testPos << " found!" << Log::end;
-                return false;
-            }
-        }
+    if (maps.mapInRangeOf(pos, height, width)) {
+        Logger::error(LogFacility::World) << "Cannot insert map with " << pos << ", width: " << width << ", height: " << height << Log::end;
+        return false;
     }
 
     auto tempmap = std::make_shared<Map>(width,height);

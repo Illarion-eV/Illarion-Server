@@ -54,9 +54,9 @@ void NewClientView::readFields(int length, const WorldMap &maps) {
     int y = viewPosition.y;
     int x_inc = (stripedir == dir_right) ? 1 : -1;
 
-    WorldMap::map_vector_t good_maps;
+    const auto good_maps = maps.findAllMapsInRangeOf(0, length-1, (stripedir == dir_right) ? length-1 : 0, (stripedir == dir_right) ? 0 : length-1, viewPosition);
 
-    if (maps.findAllMapsInRangeOf(0, length-1, (stripedir == dir_right) ? length-1 : 0, (stripedir == dir_right) ? 0 : length-1, viewPosition, good_maps)) {
+    if (!good_maps.empty()) {
         WorldMap::map_t map;
         int tmp_maxtiles = 1;
 

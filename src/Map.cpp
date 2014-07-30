@@ -673,3 +673,9 @@ bool Map::findEmptyCFieldNear(Field *&cf, short int &x, short int &y) {
 
 }
 
+bool Map::intersects(const MAP_POSITION &upleft, const MAP_POSITION &downright, short level) const {
+    return level == Z_Level &&
+           Max_X >= upleft.x && Min_X <= downright.x &&
+           Max_Y >= upleft.y && Min_Y <= downright.y;
+}
+

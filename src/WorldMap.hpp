@@ -40,9 +40,9 @@ public:
 
     void clear();
 
-    bool findAllMapsInRangeOf(char rnorth, char rsouth, char reast, char rwest, position pos, map_vector_t &ret) const;
-    bool mapInRangeOf(const position &upperleft, unsigned short int dx, unsigned short int dy) const;
-    bool findMapForPos(const position &pos, map_t &map) const;
+    map_vector_t findAllMapsInRangeOf(char rnorth, char rsouth, char reast, char rwest, position pos) const;
+    bool mapInRangeOf(const position &upperleft, unsigned short dx, unsigned short dy) const;
+    map_t findMapForPos(const position &pos) const;
 
     bool InsertMap(map_t newMap);
 

@@ -173,6 +173,8 @@ public:
 
     inline short int Conv_To_Y(unsigned short int y);
 
+    bool intersects(const MAP_POSITION &upleft, const MAP_POSITION &downright, short level) const;
+
 private:
     void ageItems();
     void ageContainers();

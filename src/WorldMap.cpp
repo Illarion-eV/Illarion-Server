@@ -21,6 +21,7 @@
 #include "Map.hpp"
 #include "Logger.hpp"
 
+#include <algorithm>
 #include <stdexcept>
 #include <boost/algorithm/string/replace.hpp>
 #include <chrono>
@@ -30,59 +31,38 @@ void WorldMap::clear() {
     world_map.clear();
 }
 
-bool WorldMap::mapInRangeOf(const position &upperleft, unsigned short int dx, unsigned short int dy) const {
-    short int downright_x = upperleft.x + dx - 1;
-    short int downright_y = upperleft.y + dy - 1;
+bool WorldMap::mapInRangeOf(const position &upperleft, unsigned short dx,
+                            unsigned short dy) const {
+    const MAP_POSITION downright(upperleft.x + dx - 1, upperleft.y + dy - 1);
+
+    return std::any_of(maps.begin(), maps.end(), [&](const map_t &map) {
+        return map->intersects(upperleft, downright, upperleft.z);
+    });
+}
+
+auto WorldMap::findAllMapsInRangeOf(char rnorth, char rsouth, char reast,
+                                    char rwest,
+                                    position pos) const -> map_vector_t {
+    map_vector_t result;
+
+    const MAP_POSITION upperleft(pos.x - rwest, pos.y - rnorth);
+    const MAP_POSITION downright(pos.x + reast, pos.y + rsouth);
 
     for (const auto &map : maps) {
-        if (map->Z_Level == upperleft.z) {
-            if ((map->Max_X >= upperleft.x) && (map->Min_X <= downright_x)) {
-                if ((map->Max_Y >= upperleft.y) && (map->Min_Y <= downright_y)) {
-                    return true;
-                }
-            }
+        if (map->intersects(upperleft, downright, pos.z)) {
+            result.push_back(map);
         }
     }
 
-    return false;
-
+    return result;
 }
 
-
-
-bool WorldMap::findAllMapsInRangeOf(char rnorth, char rsouth, char reast, char rwest, position pos, WorldMap::map_vector_t &ret) const {
-    bool found_one = false;
-    ret.clear();
-
-    short int upperleft_X = pos.x - rwest;
-    short int downright_X = pos.x + reast;
-
-    short int upperleft_Y = pos.y - rnorth;
-    short int downright_Y = pos.y + rsouth;
-
-    for (auto it = maps.begin(); it < maps.end(); ++it) {
-        if (pos.z == (*it)->Z_Level) {
-            if (((*it)->Max_X >= upperleft_X) && ((*it)->Min_X <= downright_X)) {
-                if (((*it)->Max_Y >= upperleft_Y) && ((*it)->Min_Y <= downright_Y)) {
-                    ret.push_back(*it);
-                    found_one = true;
-                }// y
-            }// x
-        }// z
-    }// iterator
-
-    return found_one;
-}
-
-bool WorldMap::findMapForPos(const position &pos, WorldMap::map_t &map) const {
+auto WorldMap::findMapForPos(const position &pos) const -> map_t {
     try {
-        map = world_map.at(pos);
-        return true;
+        return world_map.at(pos);
     } catch (std::out_of_range &e) {
-        map.reset();
+        return {};
     }
-
-    return false;
 }
 
 bool WorldMap::InsertMap(WorldMap::map_t newMap) {

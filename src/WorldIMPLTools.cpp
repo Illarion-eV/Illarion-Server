@@ -501,12 +501,12 @@ bool World::killMonster(TYPE_OF_CHARACTER_ID id) {
 
 
 Field *World::GetField(const position &pos) const {
-    WorldMap::map_t temp;
+    auto map = maps.findMapForPos(pos);
 
-    if (maps.findMapForPos(pos, temp)) {
+    if (map) {
         Field *field = nullptr;
 
-        if (temp->GetPToCFieldAt(field, pos.x, pos.y)) {
+        if (map->GetPToCFieldAt(field, pos.x, pos.y)) {
             return field;
         } else {
             return nullptr;
@@ -518,39 +518,35 @@ Field *World::GetField(const position &pos) const {
 
 
 bool World::GetPToCFieldAt(Field *&fip, const position &pos) const {
+    auto map = maps.findMapForPos(pos);
 
-    WorldMap::map_t temp;
-
-    if (maps.findMapForPos(pos, temp)) {
-        return temp->GetPToCFieldAt(fip, pos.x, pos.y);
-    }
-
-    return false;
-
-}
-
-
-bool World::GetPToCFieldAt(Field *&fip, const position &pos, WorldMap::map_t &map) const {
-
-    if (maps.findMapForPos(pos, map)) {
+    if (map) {
         return map->GetPToCFieldAt(fip, pos.x, pos.y);
     }
 
     return false;
+}
 
+
+bool World::GetPToCFieldAt(Field *&fip, const position &pos, WorldMap::map_t &map) const {
+    map = maps.findMapForPos(pos);
+
+    if (map) {
+        return map->GetPToCFieldAt(fip, pos.x, pos.y);
+    }
+
+    return false;
 }
 
 
 bool World::findEmptyCFieldNear(Field *&cf, position &pos) {
+    auto map = maps.findMapForPos(pos);
 
-    WorldMap::map_t temp;
-
-    if (maps.findMapForPos(pos, temp)) {
-        return temp->findEmptyCFieldNear(cf, pos.x, pos.y);
+    if (map) {
+        return map->findEmptyCFieldNear(cf, pos.x, pos.y);
     }
 
     return false;
-
 }
 
 
