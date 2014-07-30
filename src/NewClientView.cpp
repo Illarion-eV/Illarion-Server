@@ -75,7 +75,7 @@ void NewClientView::readFields(int length, const WorldMap &maps) {
             }
 
             if (field)
-                if (((field->getTileId() != TRANSPARENT) && (field->getTileId() != TRANSPARENTDISAPPEAR)) || !field->items.empty()) {
+                if (field->getTileId() != TRANSPARENT || !field->items.empty()) {
                     exists = true;
                     mapStripe[i] = field;
                     maxtiles = tmp_maxtiles;

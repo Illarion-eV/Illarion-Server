@@ -1904,7 +1904,7 @@ bool Player::move(direction dir, uint8_t mode) {
             fieldfound = _world->GetPToCFieldAt(cfnew, newpos, _world->tmap);
 
             // did we hit a targetfield?
-            if (!fieldfound || cfnew->getTileId() == TRANSPARENTDISAPPEAR || cfnew->getTileId() == TRANSPARENT) {
+            if (!fieldfound || cfnew->getTileId() == TRANSPARENT) {
                 fieldfound = false;
                 --newpos.z;
             }

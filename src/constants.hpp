@@ -188,9 +188,6 @@ const uint32_t MONSTERVIEWRANGE = 11;
 //! Code fr "kein Feld"
 #define NOFIELD 0xFFFF
 
-//! Code fr eine transparente Bodenplatte, die auch eine Ebene darunterliegende Tr/Fenster anzeigt
-#define TRANSPARENTDISAPPEAR 0xFFFE
-
 //! transparente Bodenplatte
 #define TRANSPARENT 0x0000
 

@@ -1347,7 +1347,7 @@ bool Character::move(direction dir, bool active) {
         fieldfound = _world->GetPToCFieldAt(cfnew, newpos);
 
         // did we hit a targetfield?
-        if (!fieldfound || cfnew->getTileId() == TRANSPARENTDISAPPEAR || cfnew->getTileId() == TRANSPARENT) {
+        if (!fieldfound || cfnew->getTileId() == TRANSPARENT) {
             fieldfound = false;
             --newpos.z;
         }
