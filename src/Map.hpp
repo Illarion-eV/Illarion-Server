@@ -72,13 +72,6 @@ public:
     // \return true falls das Feld existiert, false sonst
     bool GetCFieldAt(Field &fi, short int x, short int y);
 
-    //! f�gt eine Kopie des Feldes fi an den entsprechenden Koordinaten ein
-    // \param das Field zum Einf�gen
-    // \param x X-Koordinate
-    // \param y Y-Koordinate
-    // \return true falls die x,y Koordinate existiert, false sonst
-    bool PutCFieldAt(Field &fi, short int x, short int y);
-
     void age();
 
     //! setzt das Flag welches angibt, ob ein Spieler auf dem Feld ist auf t

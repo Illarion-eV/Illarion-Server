@@ -431,24 +431,6 @@ bool Map::GetCFieldAt(Field &fi, short int x, short int y) {
 }
 
 
-bool Map::PutCFieldAt(Field &fi, short int x, short int y) {
-
-    unsigned short int tempx;
-    unsigned short int tempy;
-
-    try {
-        tempx = Conv_X_Koord(x);
-        tempy = Conv_Y_Koord(y);
-    } catch (Exception_CoordinateOutOfRange &e) {
-        return false;
-    }
-
-    MainMap[ tempx ][ tempy ] = fi;
-
-    return true;
-
-}
-
 void Map::age() {
     ageContainers();
     ageItems();
