@@ -24,13 +24,16 @@
 
 NewClientView::~NewClientView() {}
 
-NewClientView::NewClientView() : viewPosition(position(0,0,0)), exists(false), stripedir(dir_right), maxtiles(0) {
-    for (int i = 0; i < 100; ++i) {
-        mapStripe[i] = nullptr;
+NewClientView::NewClientView()
+    : viewPosition(position(0, 0, 0)), exists(false), stripedir(dir_right),
+      maxtiles(0) {
+    for (auto &field : mapStripe) {
+        field = nullptr;
     }
 }
 
-void NewClientView::fillStripe(position pos, stripedirection dir, int length, const WorldMap &maps) {
+void NewClientView::fillStripe(position pos, stripedirection dir, int length,
+                               const WorldMap &maps) {
     clearStripe();
     viewPosition = pos;
     stripedir = dir;
@@ -38,8 +41,8 @@ void NewClientView::fillStripe(position pos, stripedirection dir, int length, co
 }
 
 void NewClientView::clearStripe() {
-    for (int i = 0; i < 100; ++i) {
-        mapStripe[i] = nullptr;
+    for (auto &field : mapStripe) {
+        field = nullptr;
     }
 
     exists = false;
@@ -54,7 +57,9 @@ void NewClientView::readFields(int length, const WorldMap &maps) {
     int y = viewPosition.y;
     int x_inc = (stripedir == dir_right) ? 1 : -1;
 
-    const auto good_maps = maps.findAllMapsInRangeOf(0, length-1, (stripedir == dir_right) ? length-1 : 0, (stripedir == dir_right) ? 0 : length-1, viewPosition);
+    const auto good_maps = maps.findAllMapsInRangeOf(
+        0, length - 1, (stripedir == dir_right) ? length - 1 : 0,
+        (stripedir == dir_right) ? 0 : length - 1, viewPosition);
 
     if (!good_maps.empty()) {
         WorldMap::map_t map;
@@ -66,9 +71,9 @@ void NewClientView::readFields(int length, const WorldMap &maps) {
             if (!map || !map->GetPToCFieldAt(field,x,y)) {
                 map.reset();
 
-                for (auto it = good_maps.begin(); it != good_maps.end(); ++it) {
-                    if ((*it)->GetPToCFieldAt(field,x,y)) {
-                        map = *it;
+                for (const auto &good_map : good_maps) {
+                    if (good_map->GetPToCFieldAt(field,x,y)) {
+                        map = good_map;
                         break;
                     }
                 }
