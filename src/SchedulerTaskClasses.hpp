@@ -18,9 +18,8 @@
 
 
 #ifndef SCHEDULERTASKCLASSES
-#define SCHEDULEDTASKCLASSES
+#define SCHEDULERTASKCLASSES
 
-#include "Scheduler.hpp"
 #include "Player.hpp"
 #include "Monster.hpp"
 #include "NPC.hpp"
