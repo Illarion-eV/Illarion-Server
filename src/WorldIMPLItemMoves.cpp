@@ -480,13 +480,13 @@ bool World::takeItemFromMap(Character *cc, const position &itemPosition) {
                     g_item.resetWear();
 
                     if (g_item.isContainer()) {
-                        MAP_POSITION opos;
+                        MapPosition opos;
                         opos.x = itemPosition.x;
                         opos.y = itemPosition.y;
-                        Map::CONTAINERHASH::iterator conmapo = tmap->maincontainers.find(opos);
+                        auto conmapo = tmap->containers.find(opos);
 
                         // containermap fr das Feld gefunden
-                        if (conmapo != tmap->maincontainers.end()) {
+                        if (conmapo != tmap->containers.end()) {
                             Container::CONTAINERMAP::iterator iv = (*conmapo).second.find(g_item.getNumber());
 
                             // der Inhalt des angegebenen Containers mit der id g_item.getNumber() wurde gefunden
@@ -499,7 +499,7 @@ bool World::takeItemFromMap(Character *cc, const position &itemPosition) {
 
                                 if ((*conmapo).second.empty()) {
                                     // kein Container mehr auf dem Feld -> Containermap fr das Feld loeschen
-                                    tmap->maincontainers.erase(conmapo);
+                                    tmap->containers.erase(conmapo);
                                 }
 
                                 sendRemoveItemFromMapToAllVisibleCharacters(itemPosition);
@@ -556,7 +556,7 @@ bool World::putItemOnMap(Character *cc, const position &itemPosition) {
     }
 
     if (GetPToCFieldAt(tempf, itemPosition, tmap)) {
-        MAP_POSITION npos(itemPosition);
+        MapPosition npos(itemPosition);
 
         if (Data::TilesModItems.nonPassable(g_item.getId())) {     // nicht passierbares Item, zB. eine grosse Kiste
             if (! tempf->moveToPossible()) {   // das Feld ist nicht betretbar
@@ -627,7 +627,7 @@ bool World::putItemAlwaysOnMap(Character *cc, const position &itemPosition) {
     Field *tempf;
 
     if (GetPToCFieldAt(tempf, itemPosition, tmap)) {
-        MAP_POSITION npos(itemPosition);
+        MapPosition npos(itemPosition);
 
         if (g_item.isContainer()) {
             // Container

@@ -81,7 +81,7 @@ noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
 		 globals.hpp make_unique.hpp World.hpp ItemLookAt.hpp Item.hpp \
 		 CharacterContainer.hpp SchedulerTaskClasses.hpp \
 		 thread_safe_vector.hpp Random.hpp NPC.hpp Scheduler.hpp Scheduler.tcc \
-		 MapException.hpp PlayerManager.hpp Character.hpp \
+		 PlayerManager.hpp Character.hpp \
 		 Attribute.hpp InitialConnection.hpp Logger.hpp utility.hpp \
 		 MonitoringClients.hpp Field.hpp \
 		 data/Data.hpp data/Table.hpp data/StructTable.hpp \

@@ -21,6 +21,8 @@
 #ifndef _SERVER_COMMANDS_HPP_
 #define _SERVER_COMMANDS_HPP_
 
+#include <vector>
+
 #include "NewClientView.hpp"
 #include "Container.hpp"
 #include "Character.hpp"
@@ -31,8 +33,6 @@ struct WeatherStruct;
 class Item;
 class ItemLookAt;
 class Player;
-
-typedef std::vector < Item > ITEMVECTOR;
 
 enum ServerCommands {
     SC_KEEPALIVE_TC = 0x00,
@@ -164,7 +164,7 @@ public:
 
 class ItemUpdate_TC : public BasicServerCommand {
 public:
-    ItemUpdate_TC(const position &pos, const ITEMVECTOR &items);
+    ItemUpdate_TC(const position &pos, const std::vector<Item> &items);
 };
 
 class CharDescription : public BasicServerCommand {

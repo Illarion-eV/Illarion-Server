@@ -1160,8 +1160,7 @@ void create_area_command(World *world, Player *player,const std::string &params)
         return;
     }
 
-    auto tempmap = std::make_shared<Map>(w,h);
-    tempmap->Init(x, y, z);
+    auto tempmap = std::make_shared<Map>(position(x, y, z), w, h);
 
     Field *tempf;
 

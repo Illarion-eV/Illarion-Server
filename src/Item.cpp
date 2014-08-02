@@ -195,13 +195,13 @@ void Item::save(std::ostream &obj) const {
     uint8_t mapsize = static_cast<uint8_t>(datamap.size());
     obj.write((char *) &mapsize, sizeof(uint8_t));
 
-    for (auto it = datamap.begin(); it != datamap.end(); ++it) {
-        uint8_t sz1 = static_cast<uint8_t>(it->first.size());
-        uint8_t sz2 = static_cast<uint8_t>(it->second.size());
+    for (const auto &data : datamap) {
+        uint8_t sz1 = static_cast<uint8_t>(data.first.size());
+        uint8_t sz2 = static_cast<uint8_t>(data.second.size());
         obj.write((char *) &sz1 , sizeof(uint8_t));
         obj.write((char *) &sz2 , sizeof(uint8_t));
-        obj.write((char *) it->first.data() , sz1);
-        obj.write((char *) it->second.data() , sz2);
+        obj.write((char *) data.first.data() , sz1);
+        obj.write((char *) data.second.data() , sz2);
     }
 }
 

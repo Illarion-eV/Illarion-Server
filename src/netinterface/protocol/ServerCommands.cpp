@@ -214,7 +214,7 @@ void addMovementCostToBuffer(BasicServerCommand *cmd, const position &pos) {
     }
 }
 
-ItemUpdate_TC::ItemUpdate_TC(const position &pos, const ITEMVECTOR &items) : BasicServerCommand(SC_ITEMUPDATE_TC) {
+ItemUpdate_TC::ItemUpdate_TC(const position &pos, const std::vector<Item> &items) : BasicServerCommand(SC_ITEMUPDATE_TC) {
     Logger::debug(LogFacility::World) << "sending new itemstack for pos " << pos << Log::end;
     addShortIntToBuffer(pos.x);
     addShortIntToBuffer(pos.y);

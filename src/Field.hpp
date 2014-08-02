@@ -54,7 +54,7 @@ public:
 
     Field();
 
-    void Save(std::ostream &mapt, std::ostream &obj, std::ostream &warp);
+    void Save(std::ostream &mapt, std::ostream &obj, std::ostream &warp) const;
 
     TYPE_OF_WALKINGCOST getMovementCost() const;
 
@@ -64,17 +64,7 @@ public:
     */
     bool changeQualityOfTopItem(short int amount);
 
-    /**
-    * finds all non passable items on a field
-    * @param nonpassitems byreference here the items are returned which are non passable
-    */
-    void giveNonPassableItems(ITEMVECTOR &nonpassitems) const;
-
-    /**
-    * finds all non movable items on a field
-    * @param nonmoveitems byreference here the items are returned which are non movable
-    */
-    void giveExportItems(ITEMVECTOR &nonmoveitems) const;
+    std::vector<Item> getExportItems() const;
 
     /**
     * loads this field from files
@@ -337,7 +327,7 @@ public:
     /**
     * stores the items on this field
     */
-    ITEMVECTOR items;
+    std::vector<Item> items;
 };
 
 #endif

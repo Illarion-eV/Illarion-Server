@@ -24,26 +24,18 @@
 #include "Logger.hpp"
 #include "World.hpp"
 #include "Player.hpp"
-#include "MapException.hpp"
 
 #include "netinterface/protocol/ServerCommands.hpp"
 
-Map::Map(unsigned short int sizex, unsigned short int sizey) : MainMap(sizex, std::vector<Field>(sizey, Field())) {
-    Width = sizex;
-    Height = sizey;
-    Min_X = 0;
-    Max_X = 0;
-    Min_Y = 0;
-    Max_Y = 0;
-    Z_Level = 0;
-    Map_initialized = false;
-}
+Map::Map(position origin, uint16_t width, uint16_t height)
+    : origin(std::move(origin)), width(width), height(height),
+      fields(width, std::vector<Field>(height, Field())) {}
 
-bool Map::addItemToPos(Item it, MAP_POSITION pos) {
+bool Map::addItemToPos(Item item, MapPosition pos) {
     Field *cfnew;
 
     if (GetPToCFieldAt(cfnew, pos.x, pos.y)) {
-        if (cfnew->addTopItem(it)) {
+        if (cfnew->addTopItem(item)) {
             return true;
         }
     }
@@ -52,19 +44,18 @@ bool Map::addItemToPos(Item it, MAP_POSITION pos) {
 }
 
 
-bool Map::addContainerToPos(Item it, Container *cc, MAP_POSITION pos) {
+bool Map::addContainerToPos(Item it, Container *cc, MapPosition pos) {
     Field *cfnew;
 
     if (GetPToCFieldAt(cfnew, pos.x, pos.y)) {
         if (cfnew->IsPassable()) {
             if (cfnew->items.size() < (MAXITEMS - 1)) {
                 if (it.isContainer()) {
-                    CONTAINERHASH::iterator conmapn = maincontainers.find(pos);
+                    auto conmapn = containers.find(pos);
                     MAXCOUNTTYPE count = 0;
 
-                    if (conmapn != maincontainers.end()) {
-                        Container::CONTAINERMAP::iterator iterat;
-                        iterat = (*conmapn).second.find(count);
+                    if (conmapn != containers.end()) {
+                        auto iterat = (*conmapn).second.find(count);
 
                         while ((iterat != (*conmapn).second.end()) && (count < (MAXITEMS - 2))) {
                             count++;
@@ -77,7 +68,7 @@ bool Map::addContainerToPos(Item it, Container *cc, MAP_POSITION pos) {
                             return false;
                         }
                     } else {
-                        conmapn = (maincontainers.insert(CONTAINERHASH::value_type(pos, Container::CONTAINERMAP()))).first;
+                        conmapn = (containers.emplace(pos, Container::CONTAINERMAP())).first;
                         (*conmapn).second.insert(Container::CONTAINERMAP::value_type(count, cc));
                     }
 
@@ -98,17 +89,16 @@ bool Map::addContainerToPos(Item it, Container *cc, MAP_POSITION pos) {
 }
 
 
-bool Map::addAlwaysContainerToPos(Item it, Container *cc, MAP_POSITION pos) {
+bool Map::addAlwaysContainerToPos(Item it, Container *cc, MapPosition pos) {
     Field *cfnew;
 
     if (GetPToCFieldAt(cfnew, pos.x, pos.y)) {
         if (it.isContainer()) {
-            CONTAINERHASH::iterator conmapn = maincontainers.find(pos);
+            auto conmapn = containers.find(pos);
             MAXCOUNTTYPE count = 0;
 
-            if (conmapn != maincontainers.end()) {
-                Container::CONTAINERMAP::iterator iterat;
-                iterat = (*conmapn).second.find(count);
+            if (conmapn != containers.end()) {
+                auto iterat = (*conmapn).second.find(count);
 
                 while ((iterat != (*conmapn).second.end()) && (count < (MAXITEMS - 2))) {
                     count++;
@@ -121,7 +111,7 @@ bool Map::addAlwaysContainerToPos(Item it, Container *cc, MAP_POSITION pos) {
                     return false;
                 }
             } else {
-                conmapn = (maincontainers.insert(CONTAINERHASH::value_type(pos, Container::CONTAINERMAP()))).first;
+                conmapn = (containers.emplace(pos, Container::CONTAINERMAP())).first;
                 (*conmapn).second.insert(Container::CONTAINERMAP::value_type(count, cc));
             }
 
@@ -141,23 +131,8 @@ bool Map::addAlwaysContainerToPos(Item it, Container *cc, MAP_POSITION pos) {
 }
 
 
-void Map::Init(short int minx, short int miny, short int z) {
-    Min_X = minx;
-    Min_Y = miny;
-    Max_X = Width + Min_X - 1;
-    Max_Y = Height + Min_Y - 1;
-    Z_Level = z;
-    Map_initialized = true;
-}
-
-
-bool Map::Save(const std::string &name) {
+bool Map::Save(const std::string &name) const {
     Logger::debug(LogFacility::World) << "Saving map " << name << Log::end;
-
-    if (! Map_initialized) {
-        Logger::warn(LogFacility::World) << "Can't save uninitialized map: " << name << Log::end;
-        return false;
-    }
 
     std::ofstream main_map { (name + "_map").c_str(), std::ios::binary | std::ios::out };
     std::ofstream main_item { (name + "_item").c_str(), std::ios::binary | std::ios::out };
@@ -165,59 +140,52 @@ bool Map::Save(const std::string &name) {
     std::ofstream all_container { (name + "_container").c_str(), std::ios::binary | std::ios::out };
 
     if ((main_map.good()) && (main_item.good()) && (main_warp.good()) && (all_container.good())) {
-        // Write Map Size
-        main_map.write((char *) & Width, sizeof(Width));
-        main_map.write((char *) & Height, sizeof(Height));
-        main_map.write((char *) & Min_X, sizeof(Min_X));
-        main_map.write((char *) & Min_Y, sizeof(Min_Y));
-        main_map.write((char *) & Z_Level, sizeof(Z_Level));
+        main_map.write((char *) & width, sizeof(width));
+        main_map.write((char *) & height, sizeof(height));
+        main_map.write((char *) & origin.x, sizeof(origin.x));
+        main_map.write((char *) & origin.y, sizeof(origin.y));
+        main_map.write((char *) & origin.z, sizeof(origin.z));
 
-        main_item.write((char *) & Width, sizeof(Width));
-        main_item.write((char *) & Height, sizeof(Height));
-        main_item.write((char *) & Min_X, sizeof(Min_X));
-        main_item.write((char *) & Min_Y, sizeof(Min_Y));
-        main_item.write((char *) & Z_Level, sizeof(Z_Level));
+        main_item.write((char *) & width, sizeof(width));
+        main_item.write((char *) & height, sizeof(height));
+        main_item.write((char *) & origin.x, sizeof(origin.x));
+        main_item.write((char *) & origin.y, sizeof(origin.y));
+        main_item.write((char *) & origin.z, sizeof(origin.z));
 
-        main_warp.write((char *) & Width, sizeof(Width));
-        main_warp.write((char *) & Height, sizeof(Height));
-        main_warp.write((char *) & Min_X, sizeof(Min_X));
-        main_warp.write((char *) & Min_Y, sizeof(Min_Y));
-        main_warp.write((char *) & Z_Level, sizeof(Z_Level));
+        main_warp.write((char *) & width, sizeof(width));
+        main_warp.write((char *) & height, sizeof(height));
+        main_warp.write((char *) & origin.x, sizeof(origin.x));
+        main_warp.write((char *) & origin.y, sizeof(origin.y));
+        main_warp.write((char *) & origin.z, sizeof(origin.z));
 
-        all_container.write((char *) & Width, sizeof(Width));
-        all_container.write((char *) & Height, sizeof(Height));
-        all_container.write((char *) & Min_X, sizeof(Min_X));
-        all_container.write((char *) & Min_Y, sizeof(Min_Y));
-        all_container.write((char *) & Z_Level, sizeof(Z_Level));
+        all_container.write((char *) & width, sizeof(width));
+        all_container.write((char *) & height, sizeof(height));
+        all_container.write((char *) & origin.x, sizeof(origin.x));
+        all_container.write((char *) & origin.y, sizeof(origin.y));
+        all_container.write((char *) & origin.z, sizeof(origin.z));
 
-        // Felder speichern - Store fields
-        for (unsigned short int x = 0; x < Width; ++x) {
-            for (unsigned short int y = 0; y < Height; ++y) {
-                MainMap[ x ][ y ].Save(main_map, main_item, main_warp);
+        for (uint16_t x = 0; x < width; ++x) {
+            for (uint16_t y = 0; y < height; ++y) {
+                fields[ x ][ y ].Save(main_map, main_item, main_warp);
             }
         }
 
         unsigned long int fcount;
         MAXCOUNTTYPE icount;
 
-        // Anzahl der Felder mit Eintr�en fr Containern
-        fcount = maincontainers.size();
+        fcount = containers.size();
         all_container.write((char *) & fcount, sizeof(fcount));
 
-        if (! maincontainers.empty()) {
-            for (auto ptr = maincontainers.begin(); ptr != maincontainers.end(); ++ptr) {
-                // die Koordinate schreiben
+        if (! containers.empty()) {
+            for (auto ptr = containers.begin(); ptr != containers.end(); ++ptr) {
                 all_container.write((char *) & ptr->first, sizeof ptr->first);
 
-                // die Anzahl Container in der CONTAINERMAP an der aktuellen Koordinate
                 icount = ptr->second.size();
                 all_container.write((char *) & icount, sizeof(icount));
 
                 if (!ptr->second.empty()) {
                     for (auto citer = ptr->second.begin(); citer != ptr->second.end(); ++citer) {
-                        // die Kennung des Container speichern
                         all_container.write((char *) & ((*citer).first), sizeof((*citer).first));
-                        // jeden Container speichern
                         (*citer).second->Save(all_container);
                     }
                 }
@@ -236,28 +204,28 @@ bool Map::Save(const std::string &name) {
 }
 
 
-bool Map::GetPToCFieldAt(Field *&fip, short int x, short int y) {
+bool Map::GetPToCFieldAt(Field *&fip, int16_t x, int16_t y) {
 
-    unsigned short int tempx;
-    unsigned short int tempy;
+    uint16_t tempx;
+    uint16_t tempy;
 
     try {
         tempx = Conv_X_Koord(x);
         tempy = Conv_Y_Koord(y);
-    } catch (Exception_CoordinateOutOfRange &e) {
+    } catch (FieldNotFound &e) {
         return false;
     }
 
-    fip = &MainMap[ tempx ][ tempy ];
+    fip = &fields[ tempx ][ tempy ];
 
     return true;
 
 }
 
 
-bool Map::Load(const std::string &name, unsigned short int x_offs, unsigned short int y_offs) {
+bool Map::Load(const std::string &name) {
 
-    Logger::debug(LogFacility::World) << "Loading map " << name  << " for position: " << x_offs << " " << y_offs << Log::end;
+    Logger::debug(LogFacility::World) << "Loading map " << name << Log::end;
 
     std::ifstream main_map { (name + "_map").c_str(), std::ios::binary | std::ios::in };
     std::ifstream main_item { (name + "_item").c_str(), std::ios::binary | std::ios::in };
@@ -265,80 +233,66 @@ bool Map::Load(const std::string &name, unsigned short int x_offs, unsigned shor
     std::ifstream all_container { (name + "_container").c_str(), std::ios::binary | std::ios::in };
 
     if ((main_map.good()) && (main_item.good()) && (main_warp.good()) && (all_container.good())) {
-        // Read map size and examine
-        short int twidth[ 4 ];
-        short int theight[ 4 ];
-        short int tminx[ 4 ];
-        short int tminy[ 4 ];
-        short int tzlevel[ 4 ];
+        int16_t twidth[ 4 ];
+        int16_t theight[ 4 ];
+        int16_t tminx[ 4 ];
+        int16_t tminy[ 4 ];
+        int16_t tzlevel[ 4 ];
 
-        main_map.read((char *) & twidth[ 0 ], sizeof(Width));
-        main_map.read((char *) & theight[ 0 ], sizeof(Height));
-        main_map.read((char *) & tminx[ 0 ], sizeof(Min_X));
-        main_map.read((char *) & tminy[ 0 ], sizeof(Min_Y));
-        main_map.read((char *) & tzlevel[ 0 ], sizeof(Z_Level));
+        main_map.read((char *) & twidth[ 0 ], sizeof(width));
+        main_map.read((char *) & theight[ 0 ], sizeof(height));
+        main_map.read((char *) & tminx[ 0 ], sizeof(origin.x));
+        main_map.read((char *) & tminy[ 0 ], sizeof(origin.y));
+        main_map.read((char *) & tzlevel[ 0 ], sizeof(origin.z));
 
-        main_item.read((char *) & twidth[ 1 ], sizeof(Width));
-        main_item.read((char *) & theight[ 1 ], sizeof(Height));
-        main_item.read((char *) & tminx[ 1 ], sizeof(Min_X));
-        main_item.read((char *) & tminy[ 1 ], sizeof(Min_Y));
-        main_item.read((char *) & tzlevel[ 1 ], sizeof(Z_Level));
+        main_item.read((char *) & twidth[ 1 ], sizeof(width));
+        main_item.read((char *) & theight[ 1 ], sizeof(height));
+        main_item.read((char *) & tminx[ 1 ], sizeof(origin.x));
+        main_item.read((char *) & tminy[ 1 ], sizeof(origin.y));
+        main_item.read((char *) & tzlevel[ 1 ], sizeof(origin.z));
 
-        main_warp.read((char *) & twidth[ 2 ], sizeof(Width));
-        main_warp.read((char *) & theight[ 2 ], sizeof(Height));
-        main_warp.read((char *) & tminx[ 2 ], sizeof(Min_X));
-        main_warp.read((char *) & tminy[ 2 ], sizeof(Min_Y));
-        main_warp.read((char *) & tzlevel[ 2 ], sizeof(Z_Level));
+        main_warp.read((char *) & twidth[ 2 ], sizeof(width));
+        main_warp.read((char *) & theight[ 2 ], sizeof(height));
+        main_warp.read((char *) & tminx[ 2 ], sizeof(origin.x));
+        main_warp.read((char *) & tminy[ 2 ], sizeof(origin.y));
+        main_warp.read((char *) & tzlevel[ 2 ], sizeof(origin.z));
 
-        all_container.read((char *) & twidth[ 3 ], sizeof(Width));
-        all_container.read((char *) & theight[ 3 ], sizeof(Height));
-        all_container.read((char *) & tminx[ 3 ], sizeof(Min_X));
-        all_container.read((char *) & tminy[ 3 ], sizeof(Min_Y));
-        all_container.read((char *) & tzlevel[ 3 ], sizeof(Z_Level));
+        all_container.read((char *) & twidth[ 3 ], sizeof(width));
+        all_container.read((char *) & theight[ 3 ], sizeof(height));
+        all_container.read((char *) & tminx[ 3 ], sizeof(origin.x));
+        all_container.read((char *) & tminy[ 3 ], sizeof(origin.y));
+        all_container.read((char *) & tzlevel[ 3 ], sizeof(origin.z));
 
         if ((twidth[ 0 ] == twidth[ 1 ]) && (twidth[ 1 ] == twidth[ 2 ]) && (twidth[ 2 ] == twidth[ 3 ])) {
             if ((theight[ 0 ] == theight[ 1 ]) && (theight[ 1 ] == theight[ 2 ]) && (theight[ 2 ] == theight[ 3 ])) {
                 if ((tminx[ 0 ] == tminx[ 1 ]) && (tminx[ 1 ] == tminx[ 2 ]) && (tminx[ 2 ] == tminx[ 3 ])) {
                     if ((tminy[ 0 ] == tminy[ 1 ]) && (tminy[ 1 ] == tminy[ 2 ]) && (tminy[ 2 ] == tminy[ 3 ])) {
                         if ((tzlevel[ 0 ] == tzlevel[ 1 ]) && (tzlevel[ 1 ] == tzlevel[ 2 ]) && (tzlevel[ 2 ] == tzlevel[ 3 ])) {
-                            // die Kartengr�en der verschiedenen Dateien stimmen berein
-                            Z_Level = tzlevel[ 0 ];
-                            unsigned short int rightedge = twidth[ 0 ] + x_offs;
-                            unsigned short int lowedge = theight[ 0 ] + y_offs;
+                            origin.z = tzlevel[ 0 ];
+                            uint16_t rightedge = twidth[ 0 ];
+                            uint16_t lowedge = theight[ 0 ];
 
-                            // geforderte Verschiebung beachten
-                            if ((rightedge <= Width) && (lowedge <= Height)) {        // zu ladende Karte pa� in das aktuelle Array
+                            if ((rightedge <= width) && (lowedge <= height)) {
 
-                                Min_X = tminx[ 0 ] - x_offs;
-                                Min_Y = tminy[ 0 ] - y_offs;
+                                origin.x = tminx[ 0 ];
+                                origin.y = tminy[ 0 ];
 
-                                Max_X = Width + Min_X - 1;
-                                Max_Y = Height + Min_Y - 1;
-
-                                CONTAINERHASH::iterator ptr;
-                                Container::CONTAINERMAP::iterator citer;
-
-                                if (! maincontainers.empty()) {
-                                    for (ptr = maincontainers.begin(); ptr != maincontainers.end(); ++ptr) {
-                                        if (! ptr->second.empty()) {
-                                            for (citer = ptr->second.begin(); citer != ptr->second.end(); ++citer) {
-                                                delete(*citer).second;
-                                                (*citer).second = nullptr;
-                                            }
-                                        }
+                                for (auto &c : containers) {
+                                    for (auto &c2 : c.second) {
+                                        delete c2.second;
+                                        c2.second = nullptr;
                                     }
                                 }
 
-                                maincontainers.clear();
+                                containers.clear();
 
                                 //////////////////////////////
                                 // Load the tiles and items //
                                 //////////////////////////////
-                                for (unsigned short int x = x_offs; x < rightedge; ++x) {
-                                    for (unsigned short int y = y_offs; y < lowedge; ++y) {
-                                        MainMap[ x ][ y ].Load(main_map, main_item, main_warp);
-                                        // Added 2002-12-29 //
-                                        MainMap[ x ][ y ].updateFlags();
+                                for (uint16_t x = 0; x < rightedge; ++x) {
+                                    for (uint16_t y = 0; y < lowedge; ++y) {
+                                        fields[ x ][ y ].Load(main_map, main_item, main_warp);
+                                        fields[ x ][ y ].updateFlags();
                                     }
                                 }
 
@@ -348,26 +302,20 @@ bool Map::Load(const std::string &name, unsigned short int x_offs, unsigned shor
                                 unsigned long int fcount;
                                 MAXCOUNTTYPE icount;
                                 MAXCOUNTTYPE key;
-                                MAP_POSITION pos;
+                                MapPosition pos;
                                 Container *tempc;
-                                CONTAINERHASH::iterator conmapn;
+                                decltype(containers)::iterator conmapn;
 
-                                // Anzahl der Felder mit Eintr�en fr Containern
                                 all_container.read((char *) & fcount, sizeof(fcount));
 
                                 for (unsigned long int i = 0; i < fcount; ++i) {
-                                    // die Koordinate lesen
                                     all_container.read((char *) & pos, sizeof pos);
-
-                                    // die Anzahl der Container in der CONTAINERMAP fr die aktuelle Koordinate lesen
                                     all_container.read((char *) & icount, sizeof(icount));
 
                                     if (icount > 0) {
-                                        // fr die Koordinate eine CONTAINERMAP anlegen
-                                        conmapn = (maincontainers.insert(CONTAINERHASH::value_type(pos, Container::CONTAINERMAP()))).first;
+                                        conmapn = (containers.emplace(pos, Container::CONTAINERMAP())).first;
 
                                         for (MAXCOUNTTYPE k = 0; k < icount; ++k) {
-                                            // die Kennung des Container lesen
                                             all_container.read((char *) & key, sizeof(key));
 
                                             Field field;
@@ -378,23 +326,16 @@ bool Map::Load(const std::string &name, unsigned short int x_offs, unsigned shor
 
                                                     if (iter->isContainer()) {
                                                         if (iter->getNumber() == key) {
-                                                            // Container laden
                                                             tempc = new Container(iter->getId());
                                                             tempc->Load(all_container);
-                                                            // den Containerinhalt hinzufgen
                                                             (*conmapn).second.insert(Container::CONTAINERMAP::value_type(key, tempc));
                                                         }
                                                     }
                                                 }
                                             }
-
-                                            //=======================================
-
                                         }
                                     }
                                 }
-
-                                Map_initialized = true;
 
                                 return true;
                             }
@@ -412,19 +353,19 @@ bool Map::Load(const std::string &name, unsigned short int x_offs, unsigned shor
 }
 
 
-bool Map::GetCFieldAt(Field &fi, short int x, short int y) {
+bool Map::GetCFieldAt(Field &fi, int16_t x, int16_t y) {
 
-    unsigned short int tempx;
-    unsigned short int tempy;
+    uint16_t tempx;
+    uint16_t tempy;
 
     try {
         tempx = Conv_X_Koord(x);
         tempy = Conv_Y_Koord(y);
-    } catch (Exception_CoordinateOutOfRange &e) {
+    } catch (FieldNotFound &e) {
         return false;
     }
 
-    fi = MainMap[ tempx ][ tempy ];
+    fi = fields[ tempx ][ tempy ];
 
     return true;
 
@@ -437,20 +378,20 @@ void Map::age() {
 }
 
 void Map::ageItems() {
-    MAP_POSITION pos;
+    MapPosition pos;
 
-    for (short int x = 0; x < Width; ++x) {
-        for (short int y = 0; y < Height; ++y) {
-            int8_t rotstate = MainMap[x][y].DoAgeItems();
+    for (int16_t x = 0; x < width; ++x) {
+        for (int16_t y = 0; y < height; ++y) {
+            int8_t rotstate = fields[x][y].DoAgeItems();
 
             if (rotstate == -1) {
                 pos.x=Conv_To_X(x);
                 pos.y=Conv_To_Y(y);
 
                 for (const auto &erased : erasedcontainers) {
-                    auto conmapn = maincontainers.find(pos);
+                    auto conmapn = containers.find(pos);
 
-                    if (conmapn != maincontainers.end()) {
+                    if (conmapn != containers.end()) {
                         auto iterat = conmapn->second.find(erased);
 
                         if (iterat != conmapn->second.end()) {
@@ -464,13 +405,13 @@ void Map::ageItems() {
             }
 
             if (rotstate != 0) {
-                position pos(Conv_To_X(x), Conv_To_Y(y), Z_Level);
+                position pos(Conv_To_X(x), Conv_To_Y(y), origin.z);
                 Logger::debug(LogFacility::World) << "aged items, pos: " << pos << Log::end;
                 std::vector<Player *> playersinview = World::get()->Players.findAllCharactersInScreen(pos);
 
                 for (const auto &player : playersinview) {
                     Logger::debug(LogFacility::World) << "aged items, update needed for: " << *player << Log::end;
-                    ServerCommandPointer cmd = std::make_shared<ItemUpdate_TC>(pos, MainMap[x][y].items);
+                    ServerCommandPointer cmd = std::make_shared<ItemUpdate_TC>(pos, fields[x][y].items);
                     player->Connection->addCommand(cmd);
                 }
             }
@@ -481,7 +422,7 @@ void Map::ageItems() {
 }
 
 void Map::ageContainers() {
-    for (const auto &key_container : maincontainers) {
+    for (const auto &key_container : containers) {
         const auto &container = key_container.second;
 
         for (const auto &content : container) {
@@ -492,7 +433,7 @@ void Map::ageContainers() {
     }
 }
 
-bool Map::SetPlayerAt(short int x, short int y, bool t) {
+bool Map::SetPlayerAt(int16_t x, int16_t y, bool t) {
 
     Field *temp;
 
@@ -502,108 +443,66 @@ bool Map::SetPlayerAt(short int x, short int y, bool t) {
     }
 
     return false;
-
 }
 
+uint16_t Map::getHeight() const { return height; }
 
-unsigned short int Map::GetHeight() {
+uint16_t Map::getWidth() const { return width; }
 
-    return Height;
+int16_t Map::getMinX() const { return origin.x; }
 
-}
+int16_t Map::getMinY() const { return origin.y; }
 
+int16_t Map::getMaxX() const { return origin.x + width - 1; }
 
-unsigned short int Map::GetWidth() {
+int16_t Map::getMaxY() const { return origin.y + height - 1; }
 
-    return Width;
+int16_t Map::getLevel() const { return origin.z; }
 
-}
+inline uint16_t Map::Conv_X_Koord(int16_t x) {
+    
+    uint16_t temp;
+    temp = x - origin.x;
 
-
-short Map::GetMinX(void) {
-
-    return Min_X;
-
-}
-
-
-short Map::GetMinY(void) {
-
-    return Min_Y;
-
-}
-
-
-short Map::GetMaxX(void) {
-
-    return Max_X;
-
-}
-
-
-short Map::GetMaxY(void) {
-
-    return Max_Y;
-
-}
-
-
-inline
-unsigned short int Map::Conv_X_Koord(short int x) {
-
-    unsigned short int temp;
-    temp = x - Min_X;
-
-    if (temp >= Width) {
-        throw Exception_CoordinateOutOfRange();
+    if (temp >= width) {
+        throw FieldNotFound();
     }
 
     return (temp);
-
 }
 
+inline uint16_t Map::Conv_Y_Koord(int16_t y) {
 
-inline
-unsigned short int Map::Conv_Y_Koord(short int y) {
+    uint16_t temp;
+    temp = y - origin.y;
 
-    unsigned short int temp;
-    temp = y - Min_Y;
-
-    if (temp >= Height) {
-        throw Exception_CoordinateOutOfRange();
+    if (temp >= height) {
+        throw FieldNotFound();
     }
 
     return (temp);
-
 }
 
+inline int16_t Map::Conv_To_X(uint16_t x) {
 
-inline
-short int Map::Conv_To_X(unsigned short int x) {
-
-    short int temp;
-    temp = x + Min_X;
+    int16_t temp;
+    temp = x + origin.x;
 
     return (temp);
-
 }
 
+inline int16_t Map::Conv_To_Y(uint16_t y) {
 
-inline
-short int Map::Conv_To_Y(unsigned short int y) {
-
-    short int temp;
-    temp = y + Min_Y;
+    int16_t temp;
+    temp = y + origin.y;
 
     return (temp);
-
 }
 
+bool Map::findEmptyCFieldNear(Field *&cf, int16_t &x, int16_t &y) {
 
-bool Map::findEmptyCFieldNear(Field *&cf, short int &x, short int &y) {
-
-    short int startx = x;
-    short int starty = y;
+    int16_t startx = x;
+    int16_t starty = y;
 
     unsigned char d = 0;
 
@@ -655,9 +554,16 @@ bool Map::findEmptyCFieldNear(Field *&cf, short int &x, short int &y) {
 
 }
 
-bool Map::intersects(const MAP_POSITION &upleft, const MAP_POSITION &downright, short level) const {
-    return level == Z_Level &&
-           Max_X >= upleft.x && Min_X <= downright.x &&
-           Max_Y >= upleft.y && Min_Y <= downright.y;
+bool Map::intersects(const position &origin2, uint16_t width,
+                     uint16_t height) const {
+    return origin2.z == origin.z && getMaxX() >= origin2.x &&
+           origin.x <= origin2.x + width - 1 && getMaxY() >= origin2.y &&
+           origin.y <= origin2.y + height - 1;
+}
+
+bool Map::intersects(const Map &map) const {
+    return map.origin.z == origin.z && getMaxX() >= map.origin.x &&
+           origin.x <= map.getMaxX() && getMaxY() >= map.origin.y &&
+           origin.y <= map.getMaxY();
 }
 

@@ -138,8 +138,7 @@ bool Field::PutGroundItem(const Item &it) {
         if (items.empty()) {
             items.push_back(it);
         } else {
-            ITEMVECTOR::iterator iterat = items.begin();
-            items.insert(iterat, it);
+            items.insert(items.begin(), it);
         }
 
         if (Data::TilesModItems.exists(it.getId())) {
@@ -273,7 +272,7 @@ MAXCOUNTTYPE Field::NumberOfItems() const {
 }
 
 
-void Field::Save(std::ostream &mapt, std::ostream &obj, std::ostream &warp) {
+void Field::Save(std::ostream &mapt, std::ostream &obj, std::ostream &warp) const {
 
     mapt.write((char *) & tile, sizeof(tile));
     mapt.write((char *) & music, sizeof(music));
@@ -283,8 +282,8 @@ void Field::Save(std::ostream &mapt, std::ostream &obj, std::ostream &warp) {
     unsigned char size = items.size();
     obj.write((char *) & size, sizeof(size));
 
-    for (auto it = items.begin(); it < items.end(); ++it) {
-        it->save(obj);
+    for (const auto &item : items) {
+        item.save(obj);
     }
 
     if (IsWarpField()) {
@@ -300,19 +299,12 @@ void Field::Save(std::ostream &mapt, std::ostream &obj, std::ostream &warp) {
 }
 
 
-void Field::giveNonPassableItems(ITEMVECTOR &nonpassitems) const {
-    for (const auto &item : items) {
-        if (Data::TilesModItems.nonPassable(item.getId())) {
-            nonpassitems.push_back(item);
-        }
-    }
-}
+std::vector<Item> Field::getExportItems() const {
+    std::vector<Item> result;
 
-
-void Field::giveExportItems(ITEMVECTOR &nonmoveitems) const {
     for (const auto &item : items) {
         if (item.isPermanent()) {
-            nonmoveitems.push_back(item);
+            result.push_back(item);
         } else {
             const auto &common = Data::CommonItems[item.getId()];
 
@@ -320,10 +312,12 @@ void Field::giveExportItems(ITEMVECTOR &nonmoveitems) const {
                 Item rottenItem = item;
                 rottenItem.setId(common.AfterInfiniteRot);
                 rottenItem.makePermanent();
-                nonmoveitems.push_back(rottenItem);
+                result.push_back(rottenItem);
             }
         }
     }
+
+    return result;
 }
 
 

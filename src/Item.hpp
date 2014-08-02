@@ -169,6 +169,4 @@ public:
     bool operator==(const ScriptItem& rhs) const;
 };
 
-typedef std::vector < Item > ITEMVECTOR;
-
 #endif

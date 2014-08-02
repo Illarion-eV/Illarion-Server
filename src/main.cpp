@@ -28,7 +28,6 @@
 #include "Field.hpp"
 #include "Player.hpp"
 #include "World.hpp"
-#include "MapException.hpp"
 #include "constants.hpp"
 #include "Config.hpp"
 #include "Logger.hpp"

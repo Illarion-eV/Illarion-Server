@@ -121,19 +121,19 @@ template<> struct hash<position> {
 };
 }
 
-struct MAP_POSITION {
+struct MapPosition {
     short int x;
     short int y;
 
-    MAP_POSITION() = default;
-    MAP_POSITION(short int x, short int y): x(x), y(y) {}
-    MAP_POSITION(const position &pos): x(pos.x), y(pos.y) {}
+    MapPosition() = default;
+    MapPosition(short int x, short int y): x(x), y(y) {}
+    MapPosition(const position &pos): x(pos.x), y(pos.y) {}
 
-    bool operator == (const MAP_POSITION &pos) const {
+    bool operator == (const MapPosition &pos) const {
         return (x == pos.x && y == pos.y);
     }
 
-    friend std::size_t hash_value(const MAP_POSITION &p) {
+    friend std::size_t hash_value(const MapPosition &p) {
         std::size_t seed = 0;
         boost::hash_combine(seed, p.x);
         boost::hash_combine(seed, p.y);
@@ -143,8 +143,8 @@ struct MAP_POSITION {
 };
 
 namespace std {
-template<> struct hash<MAP_POSITION> {
-    size_t operator()(const MAP_POSITION &p) const {
+template<> struct hash<MapPosition> {
+    size_t operator()(const MapPosition &p) const {
         return hash_value(p);
     }
 };

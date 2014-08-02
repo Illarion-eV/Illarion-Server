@@ -435,10 +435,10 @@ bool Player::lookIntoContainerOnField(direction dir) {
 
         if (cfold->ViewTopItem(item)) {
             if (item.getId() != DEPOTITEM && item.isContainer()) {
-                MAP_POSITION opos(containerPosition);
-                auto it = map->maincontainers.find(opos);
+                MapPosition opos(containerPosition);
+                auto it = map->containers.find(opos);
 
-                if (it != map->maincontainers.end()) {
+                if (it != map->containers.end()) {
                     auto iv = it->second.find(item.getNumber());
 
                     if (iv != it->second.end()) {

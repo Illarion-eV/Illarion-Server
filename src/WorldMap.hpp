@@ -27,12 +27,6 @@
 
 class Map;
 
-//falls nicht auskommentiert, werden mehr Bildschirmausgaben gemacht:
-/* #define WorldMap_DEBUG */
-
-//! eine std::vector-Klasse für Map-Objekte.
-// Die Klasse erweitert die Funktionalität von std::vector um
-// Map - spezifische Suchfunktionen
 class WorldMap {
 public:
     typedef std::shared_ptr<Map> map_t;
@@ -42,6 +36,7 @@ public:
 
     map_vector_t findAllMapsInRangeOf(char rnorth, char rsouth, char reast, char rwest, position pos) const;
     bool mapInRangeOf(const position &upperleft, unsigned short dx, unsigned short dy) const;
+    bool mapInRangeOf(const Map &map) const;
     map_t findMapForPos(const position &pos) const;
 
     bool InsertMap(map_t newMap);

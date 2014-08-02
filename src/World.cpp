@@ -272,8 +272,7 @@ bool World::load_from_editor(const std::string &filename) {
     }
 
     // generate new map
-    auto tempmap = std::make_shared<Map>(h_width, h_height);
-    tempmap->Init(h_x, h_y, h_level);
+    auto tempmap = std::make_shared<Map>(position(h_x, h_y, h_level), h_width, h_height);
 
     for (int x=0; x < h_width; ++x) {
         int index_start = x << 16;
