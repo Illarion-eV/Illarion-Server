@@ -23,11 +23,11 @@
 #include <list>
 #include <stdlib.h>
 
+#include "Map.hpp"
 #include "Player.hpp"
 #include "NPC.hpp"
 #include "Monster.hpp"
 #include "Field.hpp"
-#include "Map.hpp"
 
 #include "data/Data.hpp"
 #include "data/ArmorObjectTable.hpp"
@@ -49,14 +49,13 @@ extern MonsterTable *MonsterDescriptions;
 extern std::shared_ptr<LuaWeaponScript> standardFightingScript;
 
 void World::deleteAllLostNPC() {
-    Field *tempf;
-
     for (const TYPE_OF_CHARACTER_ID &npcToDelete : LostNpcs) {
         const auto &npc = Npc.find(npcToDelete);
 
         if (npc) {
-            if (GetPToCFieldAt(tempf, npc->getPosition())) {
-                tempf->removeChar();
+            try {
+                fieldAt(npc->getPosition()).removeChar();
+            } catch (FieldNotFound &) {
             }
 
             sendRemoveCharToVisiblePlayers(npc->getId(), npc->getPosition());
@@ -203,7 +202,6 @@ std::list<BlockingObject> World::LoS(const position &startingpos, const position
     for (short int x = startx; x <= endx; ++x) {
         if (!(x == startx && y == starty) && !(x == endx && y == endy)) {
             BlockingObject bo;
-            Field *temp;
             position pos{x, y, startingpos.z};
 
             if (steep) {
@@ -211,8 +209,10 @@ std::list<BlockingObject> World::LoS(const position &startingpos, const position
                 pos.y = x;
             }
 
-            if (GetPToCFieldAt(temp, pos)) {
-                if (temp->IsPlayerOnField()) {
+            try {
+                Field &field = fieldAt(pos);
+                
+                if (field.IsPlayerOnField()) {
                     bo.blockingType = BlockingObject::BT_CHARACTER;
                     bo.blockingChar = findCharacterOnField(pos);
 
@@ -224,8 +224,8 @@ std::list<BlockingObject> World::LoS(const position &startingpos, const position
                 } else {
                     ScriptItem it;
 
-                    for (size_t i = 0; i < temp->NumberOfItems(); ++i) {
-                        auto testItem = temp->getStackItem(i);
+                    for (size_t i = 0; i < field.NumberOfItems(); ++i) {
+                        auto testItem = field.getStackItem(i);
                         
                         if (testItem.getVolume() > it.getVolume()) {
                             it = testItem;
@@ -245,6 +245,7 @@ std::list<BlockingObject> World::LoS(const position &startingpos, const position
                         }
                     }
                 }
+            } catch (FieldNotFound &) {
             }
         }
 
@@ -351,20 +352,18 @@ Character *World::findCharacter(TYPE_OF_CHARACTER_ID id) {
 
 void World::takeMonsterAndNPCFromMap() {
     Monsters.for_each([this](Monster *monster) {
-        Field *tempf;
-
-        if (GetPToCFieldAt(tempf, monster->getPosition())) {
-            tempf->SetMonsterOnField(false);
+        try {
+            fieldAt(monster->getPosition()).SetMonsterOnField(false);
+        } catch (FieldNotFound &) {
         }
 
         delete monster;
     });
 
     Npc.for_each([this](NPC *npc) {
-        Field *tempf;
-
-        if (GetPToCFieldAt(tempf, npc->getPosition())) {
-            tempf->SetNPCOnField(false);
+        try {
+            fieldAt(npc->getPosition()).SetNPCOnField(false);
+        } catch (FieldNotFound &) {
         }
 
         delete npc;
@@ -483,10 +482,10 @@ bool World::killMonster(TYPE_OF_CHARACTER_ID id) {
 
     if (monster) {
         const auto &monsterPos = monster->getPosition();
-        Field *field;
 
-        if (GetPToCFieldAt(field, monsterPos)) {
-            field->removeChar();
+        try {
+            fieldAt(monsterPos).removeChar();
+        } catch (FieldNotFound &) {
         }
 
         sendRemoveCharToVisiblePlayers(monster->getId(), monsterPos);
@@ -500,53 +499,26 @@ bool World::killMonster(TYPE_OF_CHARACTER_ID id) {
 }
 
 
-Field *World::GetField(const position &pos) const {
-    auto map = maps.findMapForPos(pos);
+Field &World::fieldAt(const position &pos) const {
+    return maps.at(pos);
+}
 
-    if (map) {
-        Field *field = nullptr;
+Field &World::fieldAtOrBelow(position &pos) const {
+    for (size_t i = 0; i <= RANGEDOWN; ++i) {
+        Field &field = fieldAt(pos);
 
-        if (map->GetPToCFieldAt(field, pos.x, pos.y)) {
+        if (!field.isTransparent()) {
             return field;
-        } else {
-            return nullptr;
         }
-    } else {
-        return nullptr;
+
+        --pos.z;
     }
+
+    throw FieldNotFound();
 }
 
-
-bool World::GetPToCFieldAt(Field *&fip, const position &pos) const {
-    auto map = maps.findMapForPos(pos);
-
-    if (map) {
-        return map->GetPToCFieldAt(fip, pos.x, pos.y);
-    }
-
-    return false;
-}
-
-
-bool World::GetPToCFieldAt(Field *&fip, const position &pos, WorldMap::map_t &map) const {
-    map = maps.findMapForPos(pos);
-
-    if (map) {
-        return map->GetPToCFieldAt(fip, pos.x, pos.y);
-    }
-
-    return false;
-}
-
-
-bool World::findEmptyCFieldNear(Field *&cf, position &pos) {
-    auto map = maps.findMapForPos(pos);
-
-    if (map) {
-        return map->findEmptyCFieldNear(cf, pos.x, pos.y);
-    }
-
-    return false;
+Field &World::walkableFieldNear(position &pos) const {
+    return maps.walkableNear(pos);
 }
 
 
@@ -657,7 +629,7 @@ void World::ageInventory() {
 }
 
 
-void World::Save() {
+void World::Save() const {
     std::string path = directory + std::string(MAPDIR) + worldName;
 
     maps.saveToDisk(path);
@@ -722,7 +694,7 @@ void World::Load() {
             sprintf(mname, "%s_%6d_%6d_%6d", path.c_str(), tZ_Level, tMin_X, tMin_Y);
 
             if (tempMap->Load(mname)) {
-                maps.InsertMap(tempMap);    // insert it
+                maps.insert(tempMap);
             }
         }
 
@@ -854,11 +826,13 @@ int World::getTime(const std::string &timeType) {
 bool World::findWarpFieldsInRange(const position &pos, short int range, std::vector<position> &warppositions) {
     for (int x = pos.x - range; x <= pos.x + range; ++x) {
         for (int y = pos.y - range; y <= pos.y + range; ++y) {
-            const position p(x, y, pos.z);
-            Field *cf = 0;
+            try {
+                const position p(x, y, pos.z);
 
-            if (GetPToCFieldAt(cf, p) && cf->IsWarpField()) {
-                warppositions.push_back(p);
+                if (fieldAt(p).IsWarpField()) {
+                    warppositions.push_back(p);
+                }
+            } catch (FieldNotFound &) {
             }
         }
     }

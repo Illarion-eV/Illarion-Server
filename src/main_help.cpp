@@ -40,9 +40,6 @@
 
 #include "main_help.hpp"
 
-// fields write numbers of deleted containeritems, the maps deletes them
-std::vector<int> erasedcontainers;
-
 // a table with cyclically called scripts
 ScheduledScriptsTable *scheduledScripts;
 

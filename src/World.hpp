@@ -213,8 +213,6 @@ public:
 
     WorldMap maps; /**< a vector which holds all the maps*/
 
-    WorldMap::map_t tmap; /**< a temporary pointer to a map, used from different methods @see Map*/
-
     ClockBasedScheduler<std::chrono::steady_clock> scheduler;
 
     WeatherStruct weather;/**< a struct to the weather @see WeatherStruct */
@@ -411,31 +409,9 @@ public:
 
     bool killMonster(TYPE_OF_CHARACTER_ID id);
 
-    /**
-    * looks for a field on the map
-    * @param fip call by reference, the pointer to the field which was found
-    * @param pos the position where the field has to be found
-    * @return true if the field was found otherwise false
-    */
-    bool GetPToCFieldAt(Field *&fip, const position &pos) const;
-
-    /**
-    * looks for a field on the map
-    * @param pos the position at which the field should be
-    * @return a pointer to the field, nullptr if there is no field at this position
-    * @see GetPToCFieldAt()
-    */
-    Field *GetField(const position &pos) const;
-
-    /**
-    * looks for a field and the special map where it lies on
-    * @param fip call by reference, pointer to the field which was found
-    * @param map call by reference, pointer to the map on which the field lies
-    * @return true if the field was found otherwise false
-    */
-    bool GetPToCFieldAt(Field *&fip, const position &pos, WorldMap::map_t &map) const;
-
-    bool findEmptyCFieldNear(Field *&cf, position &pos);
+    Field &fieldAt(const position &pos) const;
+    Field &fieldAtOrBelow(position &pos) const;
+    Field &walkableFieldNear(position &pos) const;
 
     int getItemAttrib(const std::string &s, TYPE_OF_ITEM_ID ItemID);
 
@@ -448,7 +424,7 @@ public:
     void updatePlayerView(short int startx, short int endx);
 
     void Load();
-    void Save();
+    void Save() const;
 
     /**
     *@brief changes one part of the weather and sends the new weather to all players
@@ -588,7 +564,7 @@ public:
     **/
     bool pushPlayer(Player *cp, unsigned char d, short int &walkcost);
 
-    void checkFieldAfterMove(Character *cp, Field *cfstart);
+    void checkFieldAfterMove(Character *cp, Field &field);
     void sendPassiveMoveToAllVisiblePlayers(Character *ccp);
     void sendSpinToAllVisiblePlayers(Character *cc);
     void sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char movetype, TYPE_OF_WALKINGCOST duration);
@@ -791,7 +767,7 @@ public:
 
     bool takeItemFromShowcase(Player *cc, uint8_t showcase, unsigned char pos, Item::number_type count);
     bool putItemInShowcase(Player *cc, uint8_t showcase, TYPE_OF_CONTAINERSLOTS pos);
-    void checkField(Field *cfstart, const position &itemPosition);
+    void checkField(Field &field, const position &itemPosition);
 
     bool moveItemFromMapToMap(Player *cp, const position &oldPosition, const position &newPosition, Item::number_type count);
     void moveItemFromMapIntoShowcase(Player *cp, const position &sourcePosition, uint8_t showcase, unsigned char showcaseSlot, Item::number_type count);

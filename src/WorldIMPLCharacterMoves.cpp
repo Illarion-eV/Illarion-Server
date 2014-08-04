@@ -17,27 +17,28 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "World.hpp"
-#include "netinterface/protocol/ServerCommands.hpp"
-#include "script/LuaItemScript.hpp"
-#include "Logger.hpp"
-#include "netinterface/protocol/BBIWIServerCommands.hpp"
-#include "netinterface/NetInterface.hpp"
-#include "netinterface/BasicServerCommand.hpp"
-#include "Player.hpp"
 #include "Field.hpp"
+#include "Logger.hpp"
 #include "Monster.hpp"
 #include "NPC.hpp"
+#include "Player.hpp"
+#include "World.hpp"
 #include "data/Data.hpp"
+#include "netinterface/BasicServerCommand.hpp"
+#include "netinterface/NetInterface.hpp"
+#include "netinterface/protocol/BBIWIServerCommands.hpp"
+#include "netinterface/protocol/ServerCommands.hpp"
+#include "script/LuaItemScript.hpp"
 
-void World::checkFieldAfterMove(Character *cc, Field *cfstart) {
+
+void World::checkFieldAfterMove(Character *cc, Field &field) {
     if (!cc) {
         return;
     }
 
-    if (cc->isAlive() && cfstart->HasSpecialItem()) {
+    if (cc->isAlive() && field.HasSpecialItem()) {
 
-        for (const auto &item : cfstart->items) {
+        for (const auto &item : field.items) {
             if (Data::TilesModItems.exists(item.getId())) {
                 const auto &tmod = Data::TilesModItems[item.getId()];
 
@@ -54,12 +55,12 @@ void World::checkFieldAfterMove(Character *cc, Field *cfstart) {
         }
     }
 
-    if (cfstart->IsSpecialField()) {
+    if (field.IsSpecialField()) {
         s_fieldattrib which;
         FIELDATTRIBHASH::iterator temp = specialfields.find(cc->getPosition());
 
         if (specialfields.end() != temp) {
-            which = (*temp).second;
+            which = temp->second;
 
             switch (which.type) {
             case SOUNDFIELD:
@@ -235,12 +236,11 @@ void World::sendCharsInVector(const std::vector<T *> &vec, Player *cp, bool send
 
 
 bool World::addWarpField(const position &where, const position &target, unsigned short int starttilenr, Item::id_type startitemnr) {
-    Field *cfstart;
-
-    if (GetPToCFieldAt(cfstart, where)) {
+    try {
+        Field &field = fieldAt(where);
 
         if (starttilenr != 0) {
-            cfstart->setTileId(starttilenr);
+            field.setTileId(starttilenr);
         }
 
         if (startitemnr != 0) {
@@ -248,14 +248,14 @@ bool World::addWarpField(const position &where, const position &target, unsigned
             warpfi.setId(startitemnr);
             warpfi.setNumber(1);
             warpfi.makePermanent();
-            cfstart->PutTopItem(warpfi);
+            field.PutTopItem(warpfi);
         }
 
-        cfstart->SetWarpField(target);
-        cfstart->updateFlags();
+        field.SetWarpField(target);
+        field.updateFlags();
 
         return true;
-    } else {
+    } catch (FieldNotFound &) {
         return false;
     }
 
@@ -263,14 +263,14 @@ bool World::addWarpField(const position &where, const position &target, unsigned
 
 
 bool World::makeSpecialField(const position &where, s_fieldattrib which) {
-    Field *cfstart;
+    try {
+        Field &field = fieldAt(where);
 
-    if (GetPToCFieldAt(cfstart, where)) {
-        cfstart->SetSpecialField(true);
-        specialfields.insert(FIELDATTRIBHASH::value_type(where, which));
+        field.SetSpecialField(true);
+        specialfields.emplace(where, which);
 
         return true;
-    } else {
+    } catch (FieldNotFound &) {
         return false;
     }
 }
@@ -305,14 +305,12 @@ bool World::addWarpField(const position &where, const position &target, unsigned
 }
 
 
-bool World::removeWarpField(const position &where) {
-    Field *cfstart;
-
-    if (GetPToCFieldAt(cfstart, where)) {
-        cfstart->UnsetWarpField();
+bool World::removeWarpField(const position &pos) {
+    try {
+        fieldAt(pos).UnsetWarpField();
         return true;
+    } catch (FieldNotFound &) {
+        return false;
     }
-
-    return false;
 }
 

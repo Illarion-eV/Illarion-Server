@@ -50,14 +50,19 @@ bool character_out_edge_iterator::operator==(const character_out_edge_iterator &
 }
 
 void character_out_edge_iterator::valid_step() {
-    Position new_pos(position.first + character_moves[direction].first, position.second + character_moves[direction].second);
-    Field *new_field = World::get()->GetField(::position(new_pos.first, new_pos.second, graph->level));
+    Position new_pos;
+    bool moveToPossible = false;
 
-    while (direction < 8 && (new_field == 0 ||
-                             !(new_field->moveToPossible() || new_pos == graph->goal))) {
-        ++direction;
+    while (direction < 8 && !moveToPossible && !(new_pos == graph->goal)) {
         new_pos = Position(position.first + character_moves[direction].first, position.second + character_moves[direction].second);
-        new_field = World::get()->GetField(::position(new_pos.first, new_pos.second, graph->level));
+        
+        try {
+            Field &field = World::get()->fieldAt(::position(new_pos.first, new_pos.second, graph->level));
+            moveToPossible = field.moveToPossible();
+        } catch (FieldNotFound &) {
+        }
+
+        ++direction;
     }
 }
 
@@ -124,13 +129,13 @@ weight_calc::weight_calc(int level): level(level) {
 auto weight_calc::operator[](key_type const &k) -> mapped_type & {
     if (find(k) == end()) {
         auto v = k.second;
-        Field *field = World::get()->GetField(::position(v.first, v.second, level));
 
-        if (!field) {
-            insert(std::make_pair(k, 1));
-        } else {
-            auto tileId = field->getTileId();
+        try {
+            Field &field = World::get()->fieldAt(::position(v.first, v.second, level));
+            auto tileId = field.getTileId();
             insert(std::make_pair(k, Data::Tiles[tileId].walkingCost));
+        } catch (FieldNotFound &) {
+            insert(std::make_pair(k, 1));
         }
     }
 

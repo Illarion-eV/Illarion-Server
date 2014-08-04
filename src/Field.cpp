@@ -272,29 +272,99 @@ MAXCOUNTTYPE Field::NumberOfItems() const {
 }
 
 
-void Field::Save(std::ostream &mapt, std::ostream &obj, std::ostream &warp) const {
+bool Field::addContainer(Item item, Container *container) {
+    if (IsPassable()) {
+        if (items.size() < MAXITEMS - 1) {
+            if (item.isContainer()) {
+                MAXCOUNTTYPE count = 0;
 
-    mapt.write((char *) & tile, sizeof(tile));
-    mapt.write((char *) & music, sizeof(music));
-    mapt.write((char *) & clientflags, sizeof(clientflags));
-    mapt.write((char *) & extraflags, sizeof(extraflags));
+                auto iterat = containers.find(count);
 
-    unsigned char size = items.size();
-    obj.write((char *) & size, sizeof(size));
+                while ((iterat != containers.end()) && (count < (MAXITEMS - 2))) {
+                    ++count; 
+                    iterat = containers.find(count);
+                }
+
+                if (count < MAXITEMS - 1) {
+                    containers.insert(iterat, Container::CONTAINERMAP::value_type(count, container));
+                } else {
+                    return false;
+                }
+
+                item.setNumber(count);
+
+                if (!addTopItem(item)) {
+                    containers.erase(count);
+                } else {
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
+bool Field::addContainerAlways(Item item, Container *container) {
+    if (item.isContainer()) {
+        MAXCOUNTTYPE count = 0;
+
+        auto iterat = containers.find(count);
+
+        while ((iterat != containers.end()) && (count < MAXITEMS - 2)) {
+            ++count;
+            iterat = containers.find(count);
+        }
+
+        if (count < MAXITEMS - 1) {
+            containers.insert(iterat, Container::CONTAINERMAP::value_type(count, container));
+        } else {
+            return false;
+        }
+
+        item.setNumber(count);
+
+        if (!PutTopItem(item)) {
+            containers.erase(count);
+        } else {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void Field::save(std::ofstream &mapStream, std::ofstream &itemStream,
+                 std::ofstream &warpStream,
+                 std::ofstream &containerStream) const {
+
+    mapStream.write((char *) & tile, sizeof(tile));
+    mapStream.write((char *) & music, sizeof(music));
+    mapStream.write((char *) & clientflags, sizeof(clientflags));
+    mapStream.write((char *) & extraflags, sizeof(extraflags));
+
+    unsigned char itemsSize = items.size();
+    itemStream.write((char *) & itemsSize, sizeof(itemsSize));
 
     for (const auto &item : items) {
-        item.save(obj);
+        item.save(itemStream);
     }
 
     if (IsWarpField()) {
         char b = 1;
-        warp.write((char *) & b, sizeof(b));
-        warp.write((char *) & warptarget.x, sizeof(warptarget.x));
-        warp.write((char *) & warptarget.y, sizeof(warptarget.y));
-        warp.write((char *) & warptarget.z, sizeof(warptarget.z));
+        warpStream.write((char *) & b, sizeof(b));
+        warpStream.write((char *) & warptarget, sizeof(warptarget));
     } else {
         char b = 0;
-        warp.write((char *) & b, sizeof(b));
+        warpStream.write((char *) & b, sizeof(b));
+    }
+
+    unsigned char containersSize = containers.size();
+    containerStream.write((char *) & containersSize, sizeof(containersSize));
+    
+    for (const auto &container : containers) {
+        containerStream.write((char *) & container.first, sizeof(container.first));
+        container.second->Save(containerStream);
     }
 }
 
@@ -320,43 +390,68 @@ std::vector<Item> Field::getExportItems() const {
     return result;
 }
 
+void Field::load(std::ifstream &mapStream, std::ifstream &itemStream,
+                 std::ifstream &warpStream, std::ifstream &containerStream) {
 
-void Field::Load(std::istream &mapt, std::istream &obj, std::istream &warp) {
-
-    mapt.read((char *) & tile, sizeof(tile));
-    mapt.read((char *) & music, sizeof(music));
-    mapt.read((char *) & clientflags, sizeof(clientflags));
-    mapt.read((char *) & extraflags, sizeof(extraflags));
+    mapStream.read((char *) & tile, sizeof(tile));
+    mapStream.read((char *) & music, sizeof(music));
+    mapStream.read((char *) & clientflags, sizeof(clientflags));
+    mapStream.read((char *) & extraflags, sizeof(extraflags));
 
     unsigned char ftemp = 255 - FLAG_NPCONFIELD - FLAG_MONSTERONFIELD - FLAG_PLAYERONFIELD;
-
     clientflags = clientflags & ftemp;
 
     MAXCOUNTTYPE size;
-    obj.read((char *) & size, sizeof(size));
+    itemStream.read((char *) & size, sizeof(size));
 
     items.clear();
-    Item temp;
 
     for (int i = 0; i < size; ++i) {
-        temp.load(obj);
-        items.push_back(temp);
+        Item item;
+        item.load(itemStream);
+        items.push_back(item);
     }
 
-    char iswarp = 0;
-    warp.read((char *) & iswarp, sizeof(iswarp));
+    char isWarp = 0;
+    warpStream.read((char *) & isWarp, sizeof(isWarp));
 
-    if (iswarp == 1) {
-        short int x, y, z;
-        warp.read((char *) & x, sizeof(warptarget.x));
-        warp.read((char *) & y, sizeof(warptarget.y));
-        warp.read((char *) & z, sizeof(warptarget.z));
-        SetWarpField(position(x, y, z));
+    if (isWarp == 1) {
+        position target;
+        warpStream.read((char *) & target, sizeof(warptarget));
+        SetWarpField(target);
+    }
+
+    containerStream.read((char *) & size, sizeof(size));
+
+    for (auto &container : containers) {
+        delete container.second;
+        container.second = nullptr;
+    }
+
+    containers.clear();
+
+    for (int i = 0; i < size; ++i) {
+        MAXCOUNTTYPE key;
+        containerStream.read((char *) & key, sizeof(key));
+        
+        for (const auto &item : items) {
+
+            if (item.isContainer() && item.getNumber() == key) {
+                auto container = new Container(item.getId());
+                container->Load(containerStream);
+                containers.emplace(key, container);
+            }
+        }
     }
 
 }
 
-int8_t Field::DoAgeItems() {
+int8_t Field::age() {
+    for (const auto &container : containers) {
+        if (container.second) {
+            container.second->doAge();
+        }
+    }
 
     int8_t ret = 0;
 
@@ -370,8 +465,7 @@ int8_t Field::DoAgeItems() {
                 const auto &tempCommon = Data::CommonItems[item.getId()];
 
                 if (tempCommon.isValid() && item.getId() != tempCommon.ObjectAfterRot) {
-                    //only set ret to 1 if it wasn't -1 because -1 has the highest priority (forces update of the field and rots container)
-                    if (item.getId() != tempCommon.ObjectAfterRot && ret != -1) {
+                    if (item.getId() != tempCommon.ObjectAfterRot) {
                         ret = 1;
                     }
 
@@ -386,15 +480,17 @@ int8_t Field::DoAgeItems() {
                     ++it;
                 } else {
                     if (item.isContainer()) {
-                        erasedcontainers.push_back(item.getNumber());
-                        ret = -1;
+                        auto iterat = containers.find(item.getNumber());
+
+                        if (iterat != containers.end()) {
+                            delete iterat->second;
+                            containers.erase(iterat);
+                        }
                     }
 
                     it = items.erase(it);
 
-                    if (ret != -1) {
-                        ret = 1;
-                    }
+                    ret = 1;
                 }
             } else {
                 ++it;

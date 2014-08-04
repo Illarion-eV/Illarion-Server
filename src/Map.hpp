@@ -20,7 +20,6 @@
 #ifndef _MAP_HPP_
 #define _MAP_HPP_
 
-#include <exception>
 #include <string>
 #include <unordered_map>
 #include "globals.hpp"
@@ -34,8 +33,6 @@ class Map {
     std::vector<std::vector<Field>> fields;
 
 public:
-    std::unordered_map<MapPosition, Container::CONTAINERMAP> containers;
-
     Map(position origin, uint16_t width, uint16_t height);
     Map(const Map &) = delete;
     Map &operator=(const Map &) = delete;
@@ -45,15 +42,11 @@ public:
     bool Load(const std::string &name);
     bool Save(const std::string &name) const;
 
-    //Field &at(int16_t x, int16_t y) const;
-    //Field &near(int16_t x, int16_t y) const;
-    bool GetPToCFieldAt(Field *&fip, int16_t x, int16_t y);
-    bool GetCFieldAt(Field &fi, int16_t x, int16_t y);
-    bool findEmptyCFieldNear(Field *&cf, int16_t &x, int16_t &y);
+    Field &at(int16_t x, int16_t y);
+    Field &at(const MapPosition &);
+    Field &walkableNear(int16_t &x, int16_t &y);
 
     void age();
-
-    bool SetPlayerAt(int16_t x, int16_t y, bool t);
 
     int16_t getMinX() const;
     int16_t getMinY() const;
@@ -63,24 +56,15 @@ public:
     uint16_t getWidth() const;
     uint16_t getHeight() const;
 
-    bool addItemToPos(Item it, MapPosition pos);
-    bool addContainerToPos(Item it, Container *cc, MapPosition pos);
-    bool addAlwaysContainerToPos(Item it, Container *cc, MapPosition pos);
-
     bool intersects(const position &origin, uint16_t width,
                     uint16_t height) const;
     bool intersects(const Map &map) const;
 
-    struct FieldNotFound : std::exception {};
-
 private:
-    void ageItems();
-    void ageContainers();
-
-    inline uint16_t Conv_X_Koord(int16_t x);
-    inline uint16_t Conv_Y_Koord(int16_t y);
-    inline int16_t Conv_To_X(uint16_t x);
-    inline int16_t Conv_To_Y(uint16_t y);
+    inline uint16_t Conv_X_Koord(int16_t x) const;
+    inline uint16_t Conv_Y_Koord(int16_t y) const;
+    inline int16_t Conv_To_X(uint16_t x) const;
+    inline int16_t Conv_To_Y(uint16_t y) const;
 };
 
 #endif

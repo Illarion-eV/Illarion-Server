@@ -44,10 +44,6 @@ class SelectionDialog;
 class CraftingDialog;
 class Player;
 
-struct NoSpace : public std::runtime_error {
-    NoSpace(const std::string &s = "no space") : std::runtime_error(s) {}
-};
-
 enum magic_type {
     MAGE=0,
     PRIEST=1,
@@ -550,10 +546,10 @@ protected:
     int mental_capacity = 0;
     World *_world;
 
-    virtual bool moveToPossible(const Field *field) const;
+    virtual bool moveToPossible(const Field &field) const;
     
     // returns time of a move in ms
-    virtual TYPE_OF_WALKINGCOST getMoveTime(const Field *targetField, bool diagonalMove, bool running) const;
+    virtual TYPE_OF_WALKINGCOST getMoveTime(const Field &targetField, bool diagonalMove, bool running) const;
 
     appearance _appearance;
 

@@ -27,13 +27,11 @@
 
 #include "constants.hpp"
 #include "globals.hpp"
+#include "Container.hpp"
 #include "Item.hpp"
 
 class CommonObjectTable;
 class ContainerObjectTable;
-
-extern std::vector<int> erasedcontainers;
-
 
 class Field {
 private:
@@ -54,8 +52,6 @@ public:
 
     Field();
 
-    void Save(std::ostream &mapt, std::ostream &obj, std::ostream &warp) const;
-
     TYPE_OF_WALKINGCOST getMovementCost() const;
 
     /**
@@ -65,14 +61,10 @@ public:
     bool changeQualityOfTopItem(short int amount);
 
     std::vector<Item> getExportItems() const;
-
-    /**
-    * loads this field from files
-    * @param mapt mapfile where the tile id and the flags are loaded from
-    * @param obj the itemfile where the items are loaded from
-    * @param warp the file where the warpfield is loaded from
-    */
-    void Load(std::istream &mapt, std::istream &obj, std::istream &warp);
+    void save(std::ofstream &map, std::ofstream &items, std::ofstream &warps,
+              std::ofstream &containers) const;
+    void load(std::ifstream &map, std::ifstream &items, std::ifstream &warps,
+              std::ifstream &containers);
 
     /**
     * checks if a field is passable for characters
@@ -243,17 +235,15 @@ public:
     */
     MAXCOUNTTYPE NumberOfItems() const;
 
+    bool addContainer(Item item, Container *container);
+    bool addContainerAlways(Item item, Container *container);
+
     /**
     *=================================end of grouping script functions================
     */
     //@}
 
-    /**
-    * ages all items on this field calls funct for all Items on the field
-    * @param funct a function which takes a item as parameter
-    * @return -1 if a container was deleted (update needed), 0 if nothing has changed, 1 an item changed (update needed)
-    */
-    int8_t DoAgeItems();
+    int8_t age();
 
     /**
     * sets the player on this field state
@@ -328,6 +318,7 @@ public:
     * stores the items on this field
     */
     std::vector<Item> items;
+    Container::CONTAINERMAP containers;
 };
 
 #endif

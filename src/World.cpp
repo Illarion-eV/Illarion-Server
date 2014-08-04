@@ -29,13 +29,13 @@
 #include "make_unique.hpp"
 #include "Logger.hpp"
 #include "LongTimeAction.hpp"
+#include "Map.hpp"
 #include "PlayerManager.hpp"
 #include "Random.hpp"
 #include "SchedulerTaskClasses.hpp"
 #include "TableStructs.hpp"
 #include "WaypointList.hpp"
 #include "Config.hpp"
-#include "Map.hpp"
 #include "tuningConstants.hpp"
 
 #include "data/Data.hpp"
@@ -279,20 +279,15 @@ bool World::load_from_editor(const std::string &filename) {
 
         for (int y=0; y<h_height; ++y) {
             temp_tile = maptiles[index_start | y];
-            Field *tempf;
-
-            if (tempmap->GetPToCFieldAt(tempf, temp_tile.x+h_x, temp_tile.y+h_y)) {
-                tempf->setTileId(temp_tile.fieldID);
-                tempf->setMusicId(temp_tile.musicID);
-                tempf->updateFlags();
-            } else {
-                Logger::error(LogFacility::World) << "could not get field for: " << x << " " << y << Log::end;
-            }
+            Field &field = tempmap->at(temp_tile.x+h_x, temp_tile.y+h_y);
+            field.setTileId(temp_tile.fieldID);
+            field.setMusicId(temp_tile.musicID);
+            field.updateFlags();
         }
     }
 
     maptilesfile.close();
-    maps.InsertMap(tempmap);
+    maps.insert(tempmap);
 
     // now try to load warpfields
     std::ifstream warpfile((filename + ".warps.txt").c_str());
@@ -344,7 +339,11 @@ bool World::load_from_editor(const std::string &filename) {
 
         start.x += h_x;
         start.y += h_y;
-        GetField(start)->SetWarpField(target);
+
+        try {
+            fieldAt(start).SetWarpField(target);
+        } catch (FieldNotFound &) {
+        }
 
         warpfile >> start.x;
     }
@@ -546,10 +545,10 @@ void World::checkPlayers() {
             const position &pos = player.getPosition();
 
             Logger::info(LogFacility::World) << player << " is offline" << Log::end;
-            Field *tempf;
 
-            if (GetPToCFieldAt(tempf, pos)) {
-                tempf->SetPlayerOnField(false);
+            try {
+                fieldAt(pos).SetPlayerOnField(false);
+            } catch (FieldNotFound &) {
             }
 
             Logger::info(LogFacility::Player) << "logout of " << player << Log::end;
@@ -996,10 +995,9 @@ void World::workout_CommandBuffer(Player *&cp) {
 // Init method for NPC's
 void World::initNPC() {
     Npc.for_each([this](NPC *npc) {
-        Field *tempf;
-
-        if (GetPToCFieldAt(tempf, npc->getPosition())) {
-            tempf->removeChar();
+        try {
+            fieldAt(npc->getPosition()).removeChar();
+        } catch (FieldNotFound &) {
         }
 
         sendRemoveCharToVisiblePlayers(npc->getId(), npc->getPosition());

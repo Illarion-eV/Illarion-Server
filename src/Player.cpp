@@ -27,7 +27,6 @@
 
 #include "tuningConstants.hpp"
 #include "Field.hpp"
-#include "Map.hpp"
 #include "World.hpp"
 #include "Random.hpp"
 #include "SchedulerTaskClasses.hpp"
@@ -128,29 +127,22 @@ Player::Player(std::shared_ptr<NetInterface> newConnection) throw(Player::Logout
 }
 
 void Player::login() throw(Player::LogoutException) {
-    // find a position for our player...
-    bool target_position_found;
-    Field *target_position;
-
-    // try to find a targetposition near the logout place...
     position pos = getPosition();
-    target_position_found = _world->findEmptyCFieldNear(target_position, pos);
-
-    if (!target_position_found) {
-        // move player to startingpoint...
-        pos.x = Config::instance().playerstart_x;
-        pos.y = Config::instance().playerstart_y;
-        pos.z = Config::instance().playerstart_z;
-        target_position_found = _world->findEmptyCFieldNear(target_position, pos);
+    
+    try {
+        _world->walkableFieldNear(pos).SetPlayerOnField(true);
+    } catch (FieldNotFound &) {
+        try {
+            pos.x = Config::instance().playerstart_x;
+            pos.y = Config::instance().playerstart_y;
+            pos.z = Config::instance().playerstart_z;
+            _world->walkableFieldNear(pos).SetPlayerOnField(true);
+        } catch (FieldNotFound &) {
+            throw LogoutException(NOPLACE);
+        }
     }
 
-    if (!target_position_found) {
-        throw LogoutException(NOPLACE);
-    }
-
-    // set player on target field...
     setPosition(pos);
-    target_position->SetPlayerOnField(true);
 
     sendCompleteQuestProgress();
 
@@ -427,24 +419,17 @@ bool Player::lookIntoContainerOnField(direction dir) {
     position containerPosition = getPosition();
     containerPosition.move(dir);
 
-    Field *cfold;
-    WorldMap::map_t map;
-
-    if (World::get()->GetPToCFieldAt(cfold, containerPosition, map)) {
+    try {
+        Field &field = World::get()->fieldAt(containerPosition);
         Item item;
 
-        if (cfold->ViewTopItem(item)) {
+        if (field.ViewTopItem(item)) {
             if (item.getId() != DEPOTITEM && item.isContainer()) {
-                MapPosition opos(containerPosition);
-                auto it = map->containers.find(opos);
+                auto it = field.containers.find(item.getNumber());
 
-                if (it != map->containers.end()) {
-                    auto iv = it->second.find(item.getNumber());
-
-                    if (iv != it->second.end()) {
-                        openShowcase(iv->second, item, false);
-                        return true;
-                    }
+                if (it != field.containers.end()) {
+                    openShowcase(it->second, item, false);
+                    return true;
                 }
             } else {
                 if (item.getId() == DEPOTITEM) {
@@ -464,6 +449,7 @@ bool Player::lookIntoContainerOnField(direction dir) {
                 }
             }
         }
+    } catch (FieldNotFound &) {
     }
 
     return false;
@@ -1855,6 +1841,10 @@ bool Player::isOvertaxed() {
     return level == LoadLevel::overtaxed;
 }
 
+bool Player::moveToPossible(const Field &field) const {
+    return Character::moveToPossible(field) || (!getClippingActive() && (isAdmin() || hasGMRight(gmr_isnotshownasgm)));
+}
+
 bool Player::move(direction dir, uint8_t mode) {
     _world->TriggerFieldMove(this, false);
     closeOnMove();
@@ -1884,97 +1874,81 @@ bool Player::move(direction dir, uint8_t mode) {
     while (j < steps && cont) {
 
         // check if we can move to our target field
-        newpos = getPosition();
-        oldpos = getPosition();
+        try {
+            oldpos = getPosition();
+            newpos = getPosition();
+            newpos.move(dir);
 
-        newpos.move(dir);
+            Field &oldField = _world->fieldAt(oldpos);
+            Field &newField = _world->fieldAtOrBelow(newpos);
 
-        Field *cfold = nullptr;
-        Field *cfnew = nullptr;
+            bool diagonalMove = oldpos.x != newpos.x && oldpos.y != newpos.y;
+            walkcost += getMoveTime(newField, diagonalMove, mode == RUNNING);
 
-        bool fieldfound = false;
-
-        // get the old tile... we need it to update the old tile as well as for the walking cost
-        if (!_world->GetPToCFieldAt(cfold, getPosition())) {
-            return false;
-        }
-
-        // we need to search for tiles below this level
-        for (size_t i = 0; i < RANGEDOWN + 1 && !fieldfound; ++i) {
-            fieldfound = _world->GetPToCFieldAt(cfnew, newpos, _world->tmap);
-
-            // did we hit a targetfield?
-            if (!fieldfound || cfnew->isTransparent()) {
-                fieldfound = false;
-                --newpos.z;
-            }
-        }
-
-        bool diagonalMove = oldpos.x != newpos.x && oldpos.y != newpos.y;
-        walkcost += getMoveTime(cfnew, diagonalMove, mode == RUNNING);
-
-        if (isOvertaxed()) {
-            ServerCommandPointer cmd = std::make_shared<MoveAckTC>(getId(), getPosition(), NOMOVE, 0);
-            Connection->addCommand(cmd);
-            return false;
-        } else {
-            if (mode != RUNNING || (j == 1 && cont)) {
-                //reduce a little less than the cost to prevent stuttering
-                increaseActionPoints(walkcost/100);
-            }
-        }
-
-        if (cfnew && fieldfound && (cfnew->moveToPossible() || (getClippingActive() == false && (isAdmin() || hasGMRight(gmr_isnotshownasgm))))) {
-            cfold->removeChar();
-            cfnew->setChar();
-
-            if (newpos.z != oldpos.z) {
-                setPosition(newpos);
+            if (isOvertaxed()) {
                 ServerCommandPointer cmd = std::make_shared<MoveAckTC>(getId(), getPosition(), NOMOVE, 0);
                 Connection->addCommand(cmd);
-                cmd = std::make_shared<SetCoordinateTC>(getPosition());
-                Connection->addCommand(cmd);
-                sendFullMap();
-                cont = false;
+                return false;
             } else {
                 if (mode != RUNNING || (j == 1 && cont)) {
-                    ServerCommandPointer cmd = std::make_shared<MoveAckTC>(getId(), newpos, mode, walkcost);
+                    increaseActionPoints(walkcost/100);
+                }
+            }
+
+            if (moveToPossible(newField)) {
+                oldField.removeChar();
+                newField.setChar();
+
+                if (newpos.z != oldpos.z) {
+                    setPosition(newpos);
+                    ServerCommandPointer cmd = std::make_shared<MoveAckTC>(getId(), getPosition(), NOMOVE, 0);
                     Connection->addCommand(cmd);
+                    cmd = std::make_shared<SetCoordinateTC>(getPosition());
+                    Connection->addCommand(cmd);
+                    sendFullMap();
+                    cont = false;
+                } else {
+                    if (mode != RUNNING || (j == 1 && cont)) {
+                        ServerCommandPointer cmd = std::make_shared<MoveAckTC>(getId(), newpos, mode, walkcost);
+                        Connection->addCommand(cmd);
+                    }
+
+                    if (j == 1 && cont) {
+                        sendStepStripes(dir);
+                    }
+
+                    setPosition(newpos);
+
+                    if (mode != RUNNING || (j == 1 && cont)) {
+                        sendStepStripes(dir);
+                    }
                 }
 
-                if (j == 1 && cont) {
-                    sendStepStripes(dir);
+                if (mode != RUNNING || j == 1 || !cont) {
+                    _world->sendCharacterMoveToAllVisiblePlayers(this, mode, walkcost);
+                    _world->sendAllVisibleCharactersToPlayer(this, true);
                 }
 
-                setPosition(newpos);
-
-                if (mode != RUNNING || (j == 1 && cont)) {
-                    sendStepStripes(dir);
+                if (newField.IsWarpField()) {
+                    position newpos;
+                    newField.GetWarpField(newpos);
+                    Warp(newpos);
+                    cont = false;
                 }
+
+                _world->checkFieldAfterMove(this, newField);
+
+                _world->TriggerFieldMove(this, true);
+                ServerCommandPointer cmd = std::make_shared<BBPlayerMoveTC>(getId(), getPosition());
+                _world->monitoringClientList->sendCommand(cmd);
+
+                if (mode != RUNNING || j == 1) {
+                    return true;
+                }
+            } else {
+                throw FieldNotFound();
             }
-
-            if (mode != RUNNING || j == 1 || !cont) {
-                _world->sendCharacterMoveToAllVisiblePlayers(this, mode, walkcost);
-                _world->sendAllVisibleCharactersToPlayer(this, true);
-            }
-
-            if (cfnew->IsWarpField()) {
-                position newpos;
-                cfnew->GetWarpField(newpos);
-                Warp(newpos);
-                cont = false;
-            }
-
-            _world->checkFieldAfterMove(this, cfnew);
-
-            _world->TriggerFieldMove(this,true);
-            ServerCommandPointer cmd = std::make_shared<BBPlayerMoveTC>(getId(), getPosition());
-            _world->monitoringClientList->sendCommand(cmd);
-
-            if (mode != RUNNING || j == 1) {
-                return true;
-            }
-        } else {
+        } catch (FieldNotFound &) {
             if (j == 1) {
                 ServerCommandPointer cmd = std::make_shared<MoveAckTC>(getId(), getPosition(), NORMALMOVE, walkcost);
                 Connection->addCommand(cmd);

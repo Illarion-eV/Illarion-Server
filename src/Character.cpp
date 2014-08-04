@@ -1336,56 +1336,46 @@ bool Character::move(direction dir, bool active) {
     position newpos = pos;
     newpos.move(dir);
 
-    bool fieldfound = false;
-    Field *cfnew, *cfold;
+    try {
 
-    // get the old tile... we need it to update the old tile as well as for the walking cost
-    _world->GetPToCFieldAt(cfold, pos);
+        Field &oldField = _world->fieldAt(pos);
+        Field &newField = _world->fieldAtOrBelow(newpos);
 
-    // we need to search for tiles below this level
-    for (size_t i = 0; i < RANGEDOWN + 1 && !fieldfound; ++i) {
-        fieldfound = _world->GetPToCFieldAt(cfnew, newpos);
+        if (moveToPossible(newField)) {
+            bool diagonalMove = pos.x != newpos.x && pos.y != newpos.y;
+            uint16_t movementcost = getMoveTime(newField, diagonalMove, false);
+            actionPoints -= movementcost/100;
 
-        // did we hit a targetfield?
-        if (!fieldfound || cfnew->isTransparent()) {
-            fieldfound = false;
-            --newpos.z;
+            oldField.removeChar();
+            newField.setChar();
+
+            setPosition(newpos);
+
+            if (active) {
+                _world->sendCharacterMoveToAllVisibleChars(this, movementcost);
+            } else {
+                _world->sendPassiveMoveToAllVisiblePlayers(this);
+            }
+
+            // check if there are teleporters or other special flags on this field
+            _world->checkFieldAfterMove(this, newField);
+
+            _world->TriggerFieldMove(this, true);
+
+            return true;
         }
-    }
-
-    if (fieldfound && moveToPossible(cfnew)) {
-        bool diagonalMove = pos.x != newpos.x && pos.y != newpos.y;
-        uint16_t movementcost = getMoveTime(cfnew, diagonalMove, false);
-        actionPoints -= movementcost/100;
-
-        cfold->removeChar();
-        cfnew->setChar();
-
-        setPosition(newpos);
-
-        if (active) {
-            _world->sendCharacterMoveToAllVisibleChars(this, movementcost);
-        } else {
-            _world->sendPassiveMoveToAllVisiblePlayers(this);
-        }
-
-        // check if there are teleporters or other special flags on this field
-        _world->checkFieldAfterMove(this, cfnew);
-
-        _world->TriggerFieldMove(this,true);
-
-        return true;
+    } catch (FieldNotFound &) {
     }
 
     return false;
 }
 
-bool Character::moveToPossible(const Field *field) const {
+bool Character::moveToPossible(const Field &field) const {
     // for monsters/npcs we just use the field infos for now
-    return field->moveToPossible();
+    return field.moveToPossible();
 }
 
-TYPE_OF_WALKINGCOST Character::getMoveTime(const Field *targetField, bool diagonalMove, bool running) const {
+TYPE_OF_WALKINGCOST Character::getMoveTime(const Field &targetField, bool diagonalMove, bool running) const {
     static const float sqrt2 = std::sqrt(2.0);
     TYPE_OF_WALKINGCOST walkcost;
 
@@ -1395,7 +1385,7 @@ TYPE_OF_WALKINGCOST Character::getMoveTime(const Field *targetField, bool diagon
         break;
 
     default:
-        walkcost = targetField->getMovementCost();
+        walkcost = targetField.getMovementCost();
         break;
     }
 
@@ -1438,53 +1428,37 @@ void Character::teachMagic(unsigned char type, unsigned char flag) {
     // overloaded in Player
 }
 
-bool Character::Warp(const position &targetPos) {
+bool Character::Warp(const position &newPos) {
     position oldpos = pos;
-    Field *fold = nullptr;
+    position updatedPos = newPos;
 
-    if (_world->GetPToCFieldAt(fold, pos)) {
-        Field *fnew = nullptr;
-        position newPos = targetPos;
-
-        if (_world->findEmptyCFieldNear(fnew, newPos)) {
-            fold->removeChar();
-            setPosition(newPos);
-            fnew->setChar();
-            _world->sendCharacterWarpToAllVisiblePlayers(this, oldpos, PUSH);
-            return true;
-        } else {
-            return false;
-        }
-
-    } else {
+    try {
+        Field &oldField = _world->fieldAt(pos);
+        Field &newField = _world->walkableFieldNear(updatedPos);
+        oldField.removeChar();
+        setPosition(updatedPos);
+        newField.setChar();
+        _world->sendCharacterWarpToAllVisiblePlayers(this, oldpos, PUSH);
+        return true;
+    } catch (FieldNotFound &) {
         return false;
     }
-
-    return false;
 }
 
 bool Character::forceWarp(const position &newPos) {
     position oldpos = pos;
-    Field *fold = nullptr;
 
-    if (_world->GetPToCFieldAt(fold, pos)) {
-        Field *fnew = nullptr;
-
-        if (_world->GetPToCFieldAt(fnew, newPos)) {
-            fold->removeChar();
-            setPosition(newPos);
-            fnew->setChar();
-            _world->sendCharacterWarpToAllVisiblePlayers(this, oldpos, PUSH);
-            return true;
-        } else {
-            return false;
-        }
-
-    } else {
+    try {
+        Field &oldField = _world->fieldAt(pos);
+        Field &newField = _world->fieldAt(newPos);
+        oldField.removeChar();
+        setPosition(newPos);
+        newField.setChar();
+        _world->sendCharacterWarpToAllVisiblePlayers(this, oldpos, PUSH);
+        return true;
+    } catch (FieldNotFound &) {
         return false;
     }
-
-    return false;
 }
 
 void Character::startMusic(short int title) {

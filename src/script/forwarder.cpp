@@ -130,6 +130,14 @@ int container_erase_item2(Container *container, Item::id_type id, Item::number_t
     return container->eraseItem(id, number, convert_to_map(data).get());
 }
 
+Field *world_fieldAt(World *world, const position &pos) {
+    try {
+        return &world->fieldAt(pos);
+    } catch (FieldNotFound &) {
+        return nullptr;
+    }
+}
+
 ScriptItem world_createFromId(World *world, TYPE_OF_ITEM_ID id, unsigned short int count, position pos, bool always, int quali, const luabind::object &data) {
     return world->createFromId(id, count, pos, always, quali, convert_to_map(data).get());
 }

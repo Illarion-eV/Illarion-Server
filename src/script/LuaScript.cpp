@@ -907,7 +907,7 @@ void LuaScript::init_base_functions() {
         .def("getCharacterOnField", &World::getCharacterOnField)
         .def("putItemOnMap", &World::putItemOnMap)
         .def("putItemAlwaysOnMap", &World::putItemAlwaysOnMap)
-        .def("getField", &World::GetField)
+        .def("getField", &world_fieldAt)
         .def("getTime", &World::getTime)
         .def("erase", &World::erase)
         .def("increase", &World::increase)

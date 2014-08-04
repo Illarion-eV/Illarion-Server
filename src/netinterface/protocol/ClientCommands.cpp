@@ -354,13 +354,10 @@ void CastTS::performAction(Player *player) {
         Logger::debug(LogFacility::Script) << *player << " trys to cast on a coordinate pos " << castPosition << Log::end;
 
         if (LuaMageScript) {
-            Field *temp;
+            try {
+                Field &field = World::get()->fieldAt(castPosition);
 
-            if (!World::get()->GetPToCFieldAt(temp, castPosition)) {
-                Logger::error(LogFacility::Script) << "cant find field for casting at pos " << castPosition << Log::end;
-                paramOK = false;
-            } else {
-                if (temp->IsPlayerOnField() || temp->IsMonsterOnField() || temp->IsNPCOnField()) {
+                if (field.IsPlayerOnField() || field.IsMonsterOnField() || field.IsNPCOnField()) {
                     Character *tmpCharacter = World::get()->findCharacterOnField(castPosition);
 
                     if (tmpCharacter) {
@@ -385,15 +382,15 @@ void CastTS::performAction(Player *player) {
                         Target.Type = LUA_CHARACTER;
                     }
                 } else {
-                    Item it;
+                    Item item;
 
-                    if (temp->ViewTopItem(it)) {
+                    if (field.ViewTopItem(item)) {
                         Logger::debug(LogFacility::Script) << "Item found at target field!" << Log::end;
 
                         if (LuaMageScript) {
                             Target.pos = castPosition;
                             Target.Type = LUA_ITEM;
-                            Target.item = it;
+                            Target.item = item;
                             Target.item.type = ScriptItem::it_field;
                             Target.item.pos = castPosition;
                             Target.item.owner = player;
@@ -407,6 +404,9 @@ void CastTS::performAction(Player *player) {
                         }
                     }
                 }
+            } catch (FieldNotFound &) {
+                Logger::error(LogFacility::Script) << "cant find field for casting at pos " << castPosition << Log::end;
+                paramOK = false;
             }
         }
         else {
@@ -667,19 +667,13 @@ void UseTS::performAction(Player *player) {
     switch (useId) {
     case UID_KOORD:
 
-        Field *temp;
-
         Logger::debug(LogFacility::Script) << "UID_KOORD" << Log::end;
         Logger::debug(LogFacility::Script) << usePosition << Log::end;
 
-        if (!World::get()->GetPToCFieldAt(temp, usePosition)) {
-            Logger::debug(LogFacility::Script) << "Use UID_KOORD field not found!" << Log::end;
-            Logger::debug(LogFacility::Script) << "Use UID_KOORD field not found at pos " << usePosition << Log::end;
-            paramOK = false;
-        } else {
-            // Feld gefunden
-            //Prfen ob sich irgendeine art Char auf dem Feld befindet (Spaeter nur noch IsCharOnField vorerst noch alle Arten pruefen
-            if (temp->IsPlayerOnField() || temp->IsNPCOnField() || temp->IsMonsterOnField()) {
+        try {
+            Field &field = World::get()->fieldAt(usePosition);
+
+            if (field.IsPlayerOnField() || field.IsNPCOnField() || field.IsMonsterOnField()) {
                 Logger::debug(LogFacility::Script) << "Character on field found!" << Log::end;
                 Character *tmpCharacter = World::get()->findCharacterOnField(usePosition);
 
@@ -720,16 +714,16 @@ void UseTS::performAction(Player *player) {
                 }
             } else {
                 Logger::debug(LogFacility::Script) << "no character on field!" << Log::end;
-                Item it;
+                Item item;
 
-                if (temp->ViewTopItem(it)) {
+                if (field.ViewTopItem(item)) {
                     Logger::debug(LogFacility::Script) << "Item on field" << Log::end;
 
-                    LuaScript = Data::CommonItems.script(it.getId());
+                    LuaScript = Data::CommonItems.script(item.getId());
 
                     if (LuaScript) {
                         Source.Type = LUA_ITEM;
-                        temp->ViewTopItem(Source.item);
+                        field.ViewTopItem(Source.item);
                         Source.item.pos = usePosition;
                         Source.item.type = ScriptItem::it_field;
                         Source.item.owner = player;
@@ -738,7 +732,7 @@ void UseTS::performAction(Player *player) {
                 } else {
                     Logger::debug(LogFacility::Script) << "empty field!" << Log::end;
 
-                    auto &script = Data::Tiles.script(temp->getTileId());
+                    auto &script = Data::Tiles.script(field.getTileId());
 
                     if (script) {
                         LuaTileScript = script;
@@ -747,6 +741,10 @@ void UseTS::performAction(Player *player) {
                     }
                 }
             }
+        } catch (FieldNotFound &) {
+            Logger::debug(LogFacility::Script) << "Use UID_KOORD field not found!" << Log::end;
+            Logger::debug(LogFacility::Script) << "Use UID_KOORD field not found at pos " << usePosition << Log::end;
+            paramOK = false;
         }
 
         break;

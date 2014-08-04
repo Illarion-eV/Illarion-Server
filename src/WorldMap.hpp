@@ -25,30 +25,30 @@
 #include <unordered_map>
 #include "globals.hpp"
 
+class Field;
 class Map;
 
 class WorldMap {
-public:
-    typedef std::shared_ptr<Map> map_t;
-    typedef std::vector<map_t> map_vector_t;
+    using map_t = std::shared_ptr<Map>;
+    using map_vector_t = std::vector<map_t>;
 
+    map_vector_t maps;
+    std::unordered_map<position, map_t> world_map;
+    size_t ageIndex = 0;
+
+public:
     void clear();
 
-    map_vector_t findAllMapsInRangeOf(char rnorth, char rsouth, char reast, char rwest, position pos) const;
-    bool mapInRangeOf(const position &upperleft, unsigned short dx, unsigned short dy) const;
-    bool mapInRangeOf(const Map &map) const;
-    map_t findMapForPos(const position &pos) const;
+    Field &at(const position &pos) const;
+    Field &walkableNear(position &pos) const;
+    bool intersects(const position &upperleft, unsigned short dx, unsigned short dy) const;
+    bool intersects(const Map &map) const;
 
-    bool InsertMap(map_t newMap);
+    bool insert(map_t newMap);
 
     bool allMapsAged();
 
     bool exportTo(const std::string &exportDir) const;
     void saveToDisk(const std::string &prefix) const;
-
-private:
-    map_vector_t maps;
-    std::unordered_map<position, map_t> world_map;
-    size_t ageIndex = 0;
 };
 #endif

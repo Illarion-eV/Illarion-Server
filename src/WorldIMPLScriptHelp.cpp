@@ -17,45 +17,26 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "World.hpp"
-
-#include "Player.hpp"
-#include "NPC.hpp"
-#include "Monster.hpp"
-#include "Item.hpp"
+#include "character_ptr.hpp"
 #include "Field.hpp"
+#include "Item.hpp"
+#include "Logger.hpp"
 #include "Map.hpp"
 #include "MonitoringClients.hpp"
-#include "Logger.hpp"
-#include "character_ptr.hpp"
+#include "Monster.hpp"
+#include "NPC.hpp"
+#include "Player.hpp"
+#include "World.hpp"
 
 #include "data/Data.hpp"
 #include "data/NaturalArmorTable.hpp"
 
-#include "script/LuaNPCScript.hpp"
-
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
 
-bool World::deleteNPC(unsigned int npcid) {
-    /*
-    int posx,posy,posz;
-    Field* tempf; //alte NPC's l?chen
-    NPCVECTOR::iterator npcIterator;
-    for ( npcIterator = Npc.begin(); npcIterator < Npc.end(); ++npcIterator ) {
-        if (( *npcIterator )->id == npcid) {
-            if ( GetPToCFieldAt( tempf, ( *npcIterator )->pos.x, ( *npcIterator )->pos.y, ( *npcIterator )->pos.z ) ) {
-                //tempf->SetNPCOnField( false );
-                tempf->removeChar();
-            }
+#include "script/LuaNPCScript.hpp"
 
-            sendRemoveCharToVisiblePlayers( ( *npcIterator )->id, ( *npcIterator )->pos );
-            delete( *npcIterator );
-            Npc.erase( npcIterator );
-            return true;
-        }
-    }
-    return false;*/
+bool World::deleteNPC(unsigned int npcid) {
     LostNpcs.push_back(npcid);
     return true;
 }
@@ -69,13 +50,6 @@ bool World::createDynamicNPC(const std::string &name, TYPE_OF_RACE_ID type, cons
             // add npc to npc list
             Npc.insert(newNPC);
 
-            // set field to occupied
-            Field *tempf;
-
-            if (GetPToCFieldAt(tempf, pos)) {
-                tempf->setChar();
-            }
-
             try {
                 // try to load the script
                 std::shared_ptr<LuaNPCScript> script(new LuaNPCScript(scriptname, newNPC));
@@ -83,8 +57,8 @@ bool World::createDynamicNPC(const std::string &name, TYPE_OF_RACE_ID type, cons
             } catch (ScriptException &e) {
                 Logger::error(LogFacility::Script) << "World::createDynamicNPC: Error while loading dynamic NPC script: " << scriptname << ": " << e.what() << Log::end;
             }
-        } catch (NoSpace &s) {
-            Logger::error(LogFacility::Script) << "World::createDynamicNPC: No space available for dynamic NPC: " << name << ": " << s.what() << Log::end;
+        } catch (FieldNotFound &) {
+            Logger::error(LogFacility::Script) << "World::createDynamicNPC: No space available for dynamic NPC: " << name << " near " << pos << Log::end;
         }
 
         return true;
@@ -188,12 +162,11 @@ void World::changeQuality(ScriptItem item, short int amount) {
 }
 
 void World::changeQualityOfItemAt(const position &pos, short int amount) {
-    Field *field;
-
-    if (GetPToCFieldAt(field, pos)) {
-        if (field->changeQualityOfTopItem(amount)) {
+    try {
+        if (fieldAt(pos).changeQualityOfTopItem(amount)) {
             sendRemoveItemFromMapToAllVisibleCharacters(pos);
         }
+    } catch (FieldNotFound &) {
     }
 }
 
@@ -209,14 +182,12 @@ bool World::changeItem(ScriptItem item) {
         item.owner->updateAppearanceForAll(true);
         return true;
     } else if (item.type == ScriptItem::it_field) {
-        Field *field;
-        Item dummy;
-
-        if (GetPToCFieldAt(field, item.pos)) {
+        try {
+            Field &field = fieldAt(item.pos);
             Item it;
 
-            if (field->TakeTopItem(it)) {
-                field->PutTopItem(static_cast<Item>(item));
+            if (field.TakeTopItem(it)) {
+                field.PutTopItem(static_cast<Item>(item));
 
                 if (item.getId() != it.getId() || it.getNumber() != item.getNumber()) {
                     sendSwapItemOnMapToAllVisibleCharacter(it.getId(), item.pos, item);
@@ -224,7 +195,7 @@ bool World::changeItem(ScriptItem item) {
             }
 
             return true;
-        } else {
+        } catch (FieldNotFound &) {
             return false;
         }
     } else if (item.type == ScriptItem::it_container) {
@@ -287,12 +258,10 @@ bool World::erase(ScriptItem item, int amount) {
     }
     //Item befindet sich auf einen Feld am Boden liegend.
     else if (item.type == ScriptItem::it_field) {
-        Field *field;
-        Item dummy;
-
-        if (GetPToCFieldAt(field, item.pos)) {
+        try {
+            Field &field = fieldAt(item.pos);
             bool erased=false;
-            field->increaseTopItem(-amount, erased);
+            field.increaseTopItem(-amount, erased);
 
             if (erased) {
                 sendRemoveItemFromMapToAllVisibleCharacters(item.pos);
@@ -301,7 +270,7 @@ bool World::erase(ScriptItem item, int amount) {
             }
 
             return true;
-        } else {
+        } catch (FieldNotFound &) {
             logMissingField("erase", item.pos);
             return false;
         }
@@ -323,27 +292,21 @@ bool World::increase(ScriptItem item, short int count) {
     if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
         item.owner->increaseAtPos(item.itempos, count);
         return true;
-    }
-    //Item befindet sich auf einen Feld am Boden liegend.
-    else if (item.type == ScriptItem::it_field) {
-        Field *field;
-
-        if (GetPToCFieldAt(field, item.pos)) {
-            bool erased=false;
-            field->increaseTopItem(count, erased);
+    } else if (item.type == ScriptItem::it_field) {
+        try {
+            bool erased = false;
+            fieldAt(item.pos).increaseTopItem(count, erased);
 
             if (erased) {
                 sendRemoveItemFromMapToAllVisibleCharacters(item.pos);
             }
 
             return true;
-        } else {
+        } catch (FieldNotFound &) {
             logMissingField("increase", item.pos);
             return false;
         }
-    }
-
-    else if (item.type == ScriptItem::it_container) {
+    } else if (item.type == ScriptItem::it_container) {
         if (item.inside) {
             item.inside->increaseAtPos(item.itempos, count);
             sendContainerSlotChange(item.inside, item.itempos);
@@ -360,18 +323,14 @@ bool World::swap(ScriptItem item, TYPE_OF_ITEM_ID newitem, unsigned short int ne
     if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
         item.owner->swapAtPos(item.itempos, newitem, newQuality);
         return true;
-    }
-    //Item befindet sich auf einen Feld am Boden liegend.
-    else if (item.type == ScriptItem::it_field) {
-        Field *field;
-
-        if (GetPToCFieldAt(field, item.pos)) {
+    } else if (item.type == ScriptItem::it_field) {
+        try {
+            Field &field = fieldAt(item.pos);
             Item it;
 
-            if (field->ViewTopItem(it)) {
-                bool ok = field->swapTopItem(newitem, newQuality);
+            if (field.ViewTopItem(it)) {
 
-                if (ok) {
+                if (field.swapTopItem(newitem, newQuality)) {
                     Item dummy;
                     dummy.setId(newitem);
                     dummy.setNumber(it.getNumber());
@@ -384,13 +343,11 @@ bool World::swap(ScriptItem item, TYPE_OF_ITEM_ID newitem, unsigned short int ne
                     return false;
                 }
             }
-        } else {
+        } catch (FieldNotFound &) {
             logMissingField("swap", item.pos);
             return false;
         }
-    }
-
-    else if (item.type == ScriptItem::it_container) {
+    } else if (item.type == ScriptItem::it_container) {
         if (item.inside) {
             item.inside->swapAtPos(item.itempos, newitem, newQuality);
             sendContainerSlotChange(item.inside, item.itempos);
@@ -400,88 +357,68 @@ bool World::swap(ScriptItem item, TYPE_OF_ITEM_ID newitem, unsigned short int ne
         }
     }
 
-
     return false;
 }
 
 ScriptItem World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, const position &pos, bool always, int quality, script_data_exchangemap const *data) {
-    Field *field;
     ScriptItem sItem;
 
-    if (GetPToCFieldAt(field, pos)) {
-        const auto &com = Data::CommonItems[id];
+    const auto &com = Data::CommonItems[id];
 
-        if (com.isValid()) {
-            g_item.setId(id);
-            g_item.setNumber(count);
-            g_item.setWear(com.AgeingSpeed);
-            g_item.setQuality(quality);
-            g_item.setData(data);
-            g_cont = nullptr;
-            sItem = g_item;
-            sItem.pos = pos;
-            sItem.type = ScriptItem::it_field;
-            sItem.itempos = 255;
-            sItem.owner = nullptr;
-
-            if (always) {
-                putItemAlwaysOnMap(nullptr, pos);
-            } else {
-                putItemOnMap(nullptr, pos);
-            }
-
-            return sItem;
-        } else {
-            Logger::error(LogFacility::Script) << "World::createFromId: Item " << id << " was not found in CommonItems!" << Log::end;
-            return sItem;
-        }
-    } else {
-        logMissingField("createFromId", pos);
-        return sItem;
-    }
-
-    return sItem;
-
-}
-
-bool World::createFromItem(ScriptItem item, const position &pos, bool always) {
-    Field *field;
-
-    if (GetPToCFieldAt(field, pos)) {
-        g_item = static_cast<Item>(item);
+    if (com.isValid()) {
+        g_item.setId(id);
+        g_item.setNumber(count);
+        g_item.setWear(com.AgeingSpeed);
+        g_item.setQuality(quality);
+        g_item.setData(data);
         g_cont = nullptr;
+        sItem = g_item;
+        sItem.pos = pos;
+        sItem.type = ScriptItem::it_field;
+        sItem.itempos = 255;
+        sItem.owner = nullptr;
 
         if (always) {
             putItemAlwaysOnMap(nullptr, pos);
         } else {
             putItemOnMap(nullptr, pos);
         }
-
-        return true;
     } else {
-        logMissingField("createFromItem", pos);
-        return false;
+        Logger::error(LogFacility::Script) << "World::createFromId: Item " << id << " was not found in CommonItems!" << Log::end;
     }
 
-    return false;
+    return sItem;
+}
+
+bool World::createFromItem(ScriptItem item, const position &pos, bool always) {
+    g_item = static_cast<Item>(item);
+    g_cont = nullptr;
+
+    if (always) {
+        putItemAlwaysOnMap(nullptr, pos);
+    } else {
+        putItemOnMap(nullptr, pos);
+    }
+
+    return true;
 }
 
 character_ptr World::createMonster(unsigned short id, const position &pos, short movepoints) {
-    Field *field;
-
-    if (GetPToCFieldAt(field, pos)) {
+    try {
+        Field &field = fieldAt(pos);
+        
         try {
             Monster *newMonster = new Monster(id, pos);
             newMonster->setActionPoints(movepoints);
             newMonsters.push_back(newMonster);
-            field->setChar();
+            field.setChar();
             return character_ptr(newMonster);
 
         } catch (Monster::unknownIDException &) {
             Logger::error(LogFacility::Script) << "World::createMonster: Failed to create monster with unknown id " << id << "!" << Log::end;
             return character_ptr();
         }
-    } else {
+    } catch (FieldNotFound &) {
         logMissingField("createMonster", pos);
         return character_ptr();
     }
@@ -490,52 +427,41 @@ character_ptr World::createMonster(unsigned short id, const position &pos, short
 }
 
 void World::gfx(unsigned short int gfxid, const position &pos) {
-    std::vector < Player * > temp = Players.findAllCharactersInScreen(pos);
-    std::vector < Player * > ::iterator titerator;
-
-    for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
+    for (auto &player : Players.findAllCharactersInScreen(pos)) {
         ServerCommandPointer cmd = std::make_shared<GraphicEffectTC>(pos, gfxid);
-        (*titerator)->Connection->addCommand(cmd);
+        player->Connection->addCommand(cmd);
     }
 }
 
 void World::makeSound(unsigned short int soundid, const position &pos) {
-    std::vector < Player * > temp = Players.findAllCharactersInScreen(pos);
-    std::vector < Player * > ::iterator titerator;
-
-    for (titerator = temp.begin(); titerator < temp.end(); ++titerator) {
+    for (auto &player : Players.findAllCharactersInScreen(pos)) {
         ServerCommandPointer cmd = std::make_shared<SoundTC>(pos, soundid);
-        (*titerator)->Connection->addCommand(cmd);
+        player->Connection->addCommand(cmd);
     }
 }
 
 bool World::isItemOnField(const position &pos) {
-    Field *field;
-
-    if (GetPToCFieldAt(field, pos)) {
-        Item dummy;
-        return field->ViewTopItem(dummy);
-    } else {
+    try {
+        return fieldAt(pos).NumberOfItems() > 0;
+    } catch (FieldNotFound &) {
         logMissingField("isItemOnField", pos);
+        return false;
     }
-
-    return false;
 }
 
 ScriptItem World::getItemOnField(const position &pos) {
-    Field *field;
     ScriptItem item;
 
-    if (GetPToCFieldAt(field, pos)) {
-        Item It;
+    try {
+        Field &field = fieldAt(pos);
+        Item it;
 
-        if (field->ViewTopItem(It)) {
-            item = It;
+        if (field.ViewTopItem(it)) {
+            item = it;
             item.pos = pos;
             item.type = ScriptItem::it_field;
-            return item;
         }
-    } else {
+    } catch (FieldNotFound &) {
         logMissingField("getItemOnField", pos);
     }
 
@@ -543,50 +469,44 @@ ScriptItem World::getItemOnField(const position &pos) {
 }
 
 void World::changeTile(short int tileid, const position &pos) {
-    Field *field;
-
-    if (GetPToCFieldAt(field, pos)) {
-        field->setTileId(tileid);
-        field->updateFlags();
+    try {
+        Field &field = fieldAt(pos);
+        field.setTileId(tileid);
+        field.updateFlags();
+    } catch (FieldNotFound &) {
+        logMissingField("changeTile", pos);
     }
 }
 
 
 void World::sendMapUpdate(const position &pos, uint8_t radius) {
-    std::vector<Player *> temp;
-    std::vector<Player *>::iterator pIterator;
     Range range;
     range.radius = radius;
-    temp = Players.findAllCharactersInRangeOf(pos, range);
+    auto playersInRange = Players.findAllCharactersInRangeOf(pos, range);
 
-    for (pIterator = temp.begin(); pIterator != temp.end(); ++pIterator) {
-        (*pIterator)->sendFullMap();
-        sendAllVisibleCharactersToPlayer((*pIterator), true);
+    for (auto &player : playersInRange) {
+        player->sendFullMap();
+        sendAllVisibleCharactersToPlayer(player, true);
     }
 }
 
 bool World::createSavedArea(uint16_t tileid, const position &pos, uint16_t height, uint16_t width) {
-    if (maps.mapInRangeOf(pos, height, width)) {
+    if (maps.intersects(pos, height, width)) {
         Logger::error(LogFacility::World) << "Cannot insert map with " << pos << ", width: " << width << ", height: " << height << Log::end;
         return false;
     }
 
     auto tempmap = std::make_shared<Map>(pos, width, height);
 
-    Field *tempf;
-
-    for (int _x=0; _x<width; ++_x)
-        for (int _y=0; _y<height; ++_y) {
-            if (tempmap->GetPToCFieldAt(tempf, _x+pos.x, _y+pos.y)) {
-                tempf->setTileId(tileid);
-                tempf->updateFlags();
-            } else {
-                Logger::error(LogFacility::World) <<  "World::createSavedArea: For map inserted at " << pos << " no Field was found for offset (" << _x << ", " << _y << ")!" << Log::end;
-            }
-
+    for (int x=0; x<width; ++x) {
+        for (int y=0; y<height; ++y) {
+            Field &field = tempmap->at(x+pos.x, y+pos.y);
+            field.setTileId(tileid);
+            field.updateFlags();
         }
+    }
 
-    maps.InsertMap(tempmap);
+    maps.insert(tempmap);
     Logger::info(LogFacility::World) << "Map created by createSavedArea command at " << pos << " height: " << height << " width: " << width << " standard tile: " << tileid << "!" << Log::end;
     return true;
 }

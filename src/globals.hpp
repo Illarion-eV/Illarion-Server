@@ -20,12 +20,15 @@
 #ifndef globals_HH
 #define globals_HH
 
+#include <exception>
 #include <map>
 #include <iostream>
 #include <boost/functional/hash/hash.hpp>
 
 #include "types.hpp"
 #include "constants.hpp"
+
+struct FieldNotFound : std::exception {};
 
 struct position {
     short int x;

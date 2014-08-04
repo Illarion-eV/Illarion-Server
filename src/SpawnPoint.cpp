@@ -25,11 +25,11 @@
 #include "db/SelectQuery.hpp"
 #include "db/Result.hpp"
 
-#include "World.hpp"
-#include "Random.hpp"
+#include "Field.hpp"
 #include "Logger.hpp"
 #include "Monster.hpp"
-#include "Field.hpp"
+#include "Random.hpp"
+#include "World.hpp"
 
 
 //! Creates a new SpawnPoint at <pos>
@@ -69,7 +69,6 @@ void SpawnPoint::spawn() {
             return;
         }
 
-        Field *tempf;
         Monster *newmonster;
 
         // check all monstertyps...
@@ -91,12 +90,14 @@ void SpawnPoint::spawn() {
                         tempPos.z = spawnpos.z;
 
                         //end of setting the new spawnpos
-                        if (world->findEmptyCFieldNear(tempf, tempPos)) {
+                        try {
+                            Field &field = world->walkableFieldNear(tempPos);
                             newmonster = new Monster(spawn.typ, tempPos, this);
-                            spawn.akt_count++;
+                            ++spawn.akt_count;
                             world->newMonsters.push_back(newmonster);
-                            tempf->SetPlayerOnField(true);
+                            field.SetPlayerOnField(true);
                             world->sendCharacterMoveToAllVisiblePlayers(newmonster, NORMALMOVE, 4);
+                        } catch (FieldNotFound &) {
                         }
                     }
                 } catch (Monster::unknownIDException &) {

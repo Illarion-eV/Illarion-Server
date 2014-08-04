@@ -28,9 +28,9 @@
 #include "Logger.hpp"
 #include "constants.hpp"
 #include "Player.hpp"
+#include "Map.hpp"
 #include "Monster.hpp"
 #include "Field.hpp"
-#include "Map.hpp"
 
 #include "data/Data.hpp"
 #include "data/MonsterTable.hpp"
@@ -290,20 +290,18 @@ void World::save_command(Player *cp) {
     Logger::info(LogFacility::Admin) << *cp << " saves all maps" << Log::end;
 
     Players.for_each([this](Player *player) {
-        Field *tempf;
-
-        if (GetPToCFieldAt(tempf, player->getPosition())) {
-            tempf->SetPlayerOnField(false);
+        try {
+            fieldAt(player->getPosition()).SetPlayerOnField(false);
+        } catch (FieldNotFound &) {
         }
     });
 
     Save();
 
     Players.for_each([this](Player *player) {
-        Field *tempf;
-            
-        if (GetPToCFieldAt(tempf, player->getPosition())) {
-            tempf->SetPlayerOnField(true);
+        try {
+            fieldAt(player->getPosition()).SetPlayerOnField(true);
+        } catch (FieldNotFound &) {
         }
     });
 
@@ -405,10 +403,9 @@ void World::teleportPlayerToOther(Player *player, std::string text) {
 
 void World::forceLogoutOfAllPlayers() {
     Players.for_each([this](Player *player) {
-        Field *tempf;
-
-        if (GetPToCFieldAt(tempf, player->getPosition())) {
-            tempf->SetPlayerOnField(false);
+        try {
+            fieldAt(player->getPosition()).SetPlayerOnField(false);
+        } catch (FieldNotFound &) {
         }
 
         std::string message = "--- kicked: ";
@@ -641,11 +638,12 @@ void World::tile_command(Player *cp, const std::string &tile) {
 
 void World::setNextTile(Player *cp, unsigned char tilenumber) {
     const position &pos = cp->getFrontalPosition();
-    Field *tempf;
 
-    if (GetPToCFieldAt(tempf, pos)) {
-        tempf->setTileId(tilenumber);
-        tempf->updateFlags();
+    try {
+        Field &field = fieldAt(pos);
+        field.setTileId(tilenumber);
+        field.updateFlags();
+    } catch (FieldNotFound &) {
     }
 
     //update the current area
@@ -706,16 +704,16 @@ void World::what_command(Player *cp) {
 
     message << "- Position " << front;
     cp->inform(message.str());
-    Field *tempf;
 
-    if (GetPToCFieldAt(tempf, front)) {
+    try {
+        Field &field = fieldAt(front);
         message.str("");
 
-        message << "- Tile " << tempf->getTileId();
+        message << "- Tile " << field.getTileId();
         cp->inform(message.str());
         Item top;
 
-        if (tempf->ViewTopItem(top)) {
+        if (field.ViewTopItem(top)) {
             message.str("");
 
             message << "- Item " << top.getId();
@@ -744,7 +742,7 @@ void World::what_command(Player *cp) {
 
         Character *character = findCharacterOnField(front);
 
-        if (character != 0) {
+        if (character) {
             message.str("");
             uint32_t id = character->getId();
 
@@ -760,6 +758,7 @@ void World::what_command(Player *cp) {
 
             cp->inform(message.str());
         }
+    } catch (FieldNotFound &) {
     }
 }
 
@@ -1162,20 +1161,15 @@ void create_area_command(World *world, Player *player,const std::string &params)
 
     auto tempmap = std::make_shared<Map>(position(x, y, z), w, h);
 
-    Field *tempf;
-
-    for (int _x=0; _x<w; ++_x)
+    for (int _x=0; _x<w; ++_x) {
         for (int _y=0; _y<h; ++_y) {
-            if (tempmap->GetPToCFieldAt(tempf, _x+x, _y+y)) {
-                tempf->setTileId(filltile);
-                tempf->updateFlags();
-            } else {
-                Logger::error(LogFacility::World) << "Error in create map: " << x << " " << y << " " << z << " " << _x << " " << _y << " " << filltile << Log::end;
-            }
-
+            Field &field = tempmap->at(_x+x, _y+y);
+            field.setTileId(filltile);
+            field.updateFlags();
         }
+    }
 
-    world->maps.InsertMap(tempmap);
+    world->maps.insert(tempmap);
 
     std::string tmessage = "Map inserted.";
     player->inform(tmessage);
@@ -1249,10 +1243,13 @@ void World::showWarpFieldsInRange(Player *cp, const std::string &text) {
             cp->inform("List of warp fields:");
 
             for (const auto &warpfield : warpfieldsinrange) {
-                position target;
-                GetField(warpfield)->GetWarpField(target);
-                std::string message = warpfield.toString() + " -> " + target.toString();
-                cp->inform(message);
+                try {
+                    position target;
+                    fieldAt(warpfield).GetWarpField(target);
+                    std::string message = warpfield.toString() + " -> " + target.toString();
+                    cp->inform(message);
+                } catch (FieldNotFound &) {
+                }
             }
 
             cp->inform("---");

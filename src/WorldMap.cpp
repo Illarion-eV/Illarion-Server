@@ -31,48 +31,38 @@ void WorldMap::clear() {
     world_map.clear();
 }
 
-bool WorldMap::mapInRangeOf(const position &origin, uint16_t width,
-                            uint16_t height) const {
+bool WorldMap::intersects(const position &origin, uint16_t width,
+                          uint16_t height) const {
     return std::any_of(maps.begin(), maps.end(), [&](const map_t &map) {
         return map->intersects(origin, width, height);
     });
 }
 
-bool WorldMap::mapInRangeOf(const Map &map) const {
+bool WorldMap::intersects(const Map &map) const {
     return std::any_of(maps.begin(), maps.end(), [&](const map_t &testMap) {
         return testMap->intersects(map);
     });
 }
 
-auto WorldMap::findAllMapsInRangeOf(char rnorth, char rsouth, char reast,
-                                    char rwest,
-                                    position pos) const -> map_vector_t {
-    map_vector_t result;
-
-    const position upperleft(pos.x - rwest, pos.y - rnorth, pos.z);
-    const uint16_t width = reast + rwest + 1;
-    const uint16_t height = rnorth + rsouth + 1;
-
-    for (const auto &map : maps) {
-        if (map->intersects(upperleft, width, height)) {
-            result.push_back(map);
-        }
-    }
-
-    return result;
-}
-
-auto WorldMap::findMapForPos(const position &pos) const -> map_t {
+Field &WorldMap::at(const position &pos) const {
     try {
-        return world_map.at(pos);
+        return world_map.at(pos)->at(pos.x, pos.y);
     } catch (std::out_of_range &e) {
-        return {};
+        throw FieldNotFound();
     }
 }
 
-bool WorldMap::InsertMap(map_t newMap) {
+Field &WorldMap::walkableNear(position &pos) const {
+    try {
+        return world_map.at(pos)->walkableNear(pos.x, pos.y);
+    } catch (std::out_of_range &e) {
+        throw FieldNotFound();
+    }
+}
+
+bool WorldMap::insert(map_t newMap) {
     if (newMap) {
-        if (mapInRangeOf(*newMap)) return false;
+        if (intersects(*newMap)) return false;
 
         maps.push_back(newMap);
 
@@ -143,38 +133,36 @@ bool WorldMap::exportTo(const std::string &exportDir) const {
 
         for (y = minY; y <= map->getMaxY(); ++y) {
             for (x = minX; x <= map->getMaxX(); ++x) {
-                Field field;
+                Field &field = map->at(x, y);
 
-                if (map->GetCFieldAt(field, x, y)) {
-                    fieldsf << x-minX << ";" << y-minY << ";" << field.getTileCode() << ";" << field.getMusicId() << std::endl;
+                fieldsf << x-minX << ";" << y-minY << ";" << field.getTileCode() << ";" << field.getMusicId() << std::endl;
 
-                    if (field.IsWarpField()) {
-                        position target;
-                        field.GetWarpField(target);
-                        warpsf << x-minX << ";" << y-minY << ";" << target.x << ";" << target.y << ";" << target.z << std::endl;
-                    }
+                if (field.IsWarpField()) {
+                    position target;
+                    field.GetWarpField(target);
+                    warpsf << x-minX << ";" << y-minY << ";" << target.x << ";" << target.y << ";" << target.z << std::endl;
+                }
 
-                    for (const auto &item : field.getExportItems()) {
-                        itemsf << x-minX << ";" << y-minY << ";" << item.getId() << ";" << item.getQuality();
+                for (const auto &item : field.getExportItems()) {
+                    itemsf << x-minX << ";" << y-minY << ";" << item.getId() << ";" << item.getQuality();
 
-                        std::for_each(item.getDataBegin(), item.getDataEnd(), [&](const std::pair<std::string, std::string> &data) {
-                            using boost::algorithm::replace_all;
+                    std::for_each(item.getDataBegin(), item.getDataEnd(), [&](const std::pair<std::string, std::string> &data) {
+                        using boost::algorithm::replace_all;
 
-                            std::string key = data.first;
-                            std::string value = data.second;
+                        std::string key = data.first;
+                        std::string value = data.second;
 
-                            replace_all(key, "\\", "\\\\");
-                            replace_all(key, "=", "\\=");
-                            replace_all(key, ";", "\\;");
-                            replace_all(value, "\\", "\\\\");
-                            replace_all(value, "=", "\\=");
-                            replace_all(value, ";", "\\;");
+                        replace_all(key, "\\", "\\\\");
+                        replace_all(key, "=", "\\=");
+                        replace_all(key, ";", "\\;");
+                        replace_all(value, "\\", "\\\\");
+                        replace_all(value, "=", "\\=");
+                        replace_all(value, ";", "\\;");
 
-                            itemsf << ";" << key << "=" << value;
-                        });
+                        itemsf << ";" << key << "=" << value;
+                    });
 
-                        itemsf << std::endl;
-                    }
+                    itemsf << std::endl;
                 }
             }
         }

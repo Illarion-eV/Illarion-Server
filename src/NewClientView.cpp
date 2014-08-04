@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
+#include "Field.hpp"
 #include "NewClientView.hpp"
-#include "Map.hpp"
 #include "WorldMap.hpp"
 #include <iostream>
 
@@ -53,45 +53,27 @@ void NewClientView::clearStripe() {
 }
 
 void NewClientView::readFields(int length, const WorldMap &maps) {
-    int x = viewPosition.x;
-    int y = viewPosition.y;
+    position pos = viewPosition;
     int x_inc = (stripedir == dir_right) ? 1 : -1;
+    int tmp_maxtiles = 1;
 
-    const auto good_maps = maps.findAllMapsInRangeOf(
-        0, length - 1, (stripedir == dir_right) ? length - 1 : 0,
-        (stripedir == dir_right) ? 0 : length - 1, viewPosition);
+    for (int i = 0; i < length; ++i) {
+        try {
+            Field &field = maps.at(pos);
 
-    if (!good_maps.empty()) {
-        WorldMap::map_t map;
-        int tmp_maxtiles = 1;
-
-        for (int i = 0; i < length; ++i) {
-            Field *field = nullptr;
-
-            if (!map || !map->GetPToCFieldAt(field,x,y)) {
-                map.reset();
-
-                for (const auto &good_map : good_maps) {
-                    if (good_map->GetPToCFieldAt(field,x,y)) {
-                        map = good_map;
-                        break;
-                    }
-                }
+            if (!field.isTransparent() || !field.items.empty()) {
+                exists = true;
+                mapStripe[i] = &field;
+                maxtiles = tmp_maxtiles;
             }
-
-            if (field)
-                if (!field->isTransparent() || !field->items.empty()) {
-                    exists = true;
-                    mapStripe[i] = field;
-                    maxtiles = tmp_maxtiles;
-                }
-
-            ++tmp_maxtiles;
-            //increase x due to perspective
-            x += x_inc;
-            //increase y due to perspective
-            ++y;
+        } catch (FieldNotFound &) {
         }
+
+        ++tmp_maxtiles;
+        //increase x due to perspective
+        pos.x += x_inc;
+        //increase y due to perspective
+        ++pos.y;
     }
 }
 

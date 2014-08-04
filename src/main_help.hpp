@@ -25,10 +25,6 @@
 // break out of the main loop if false
 extern volatile bool running;
 
-// fields write numbers of deleted containeritems, the maps deletes them
-extern std::vector<int> erasedcontainers;
-
-// some forward declarations to not include unnecessary headers
 class Player;
 
 void logout_save(Player *who, bool forced, unsigned long int thistime);

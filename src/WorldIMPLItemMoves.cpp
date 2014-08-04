@@ -24,7 +24,6 @@
 #include "NPC.hpp"
 #include "data/Data.hpp"
 #include "Field.hpp"
-#include "Map.hpp"
 #include "tuningConstants.hpp"
 
 #include "netinterface/protocol/ServerCommands.hpp"
@@ -446,16 +445,15 @@ bool World::takeItemFromMap(Character *cc, const position &itemPosition) {
         return false;
     }
 
-    Field *tempf;
+    try {
+        Field &field = fieldAt(itemPosition);
 
-    if (GetPToCFieldAt(tempf, itemPosition, tmap)) {
-
-        if (tempf->ViewTopItem(g_item)) {
+        if (field.ViewTopItem(g_item)) {
             const auto &tempCommon = Data::CommonItems[g_item.getId()];
 
             if (tempCommon.isValid()) {
                 if (tempCommon.Weight < 30000 && !g_item.isPermanent()) {
-                    tempf->TakeTopItem(g_item);
+                    field.TakeTopItem(g_item);
 
                     if (!g_item.isStackable() && !g_item.isContainer()) {
                         if (g_item.getNumber() > 1) {
@@ -480,54 +478,27 @@ bool World::takeItemFromMap(Character *cc, const position &itemPosition) {
                     g_item.resetWear();
 
                     if (g_item.isContainer()) {
-                        MapPosition opos;
-                        opos.x = itemPosition.x;
-                        opos.y = itemPosition.y;
-                        auto conmapo = tmap->containers.find(opos);
+                        auto it = field.containers.find(g_item.getNumber());
 
-                        // containermap fr das Feld gefunden
-                        if (conmapo != tmap->containers.end()) {
-                            Container::CONTAINERMAP::iterator iv = (*conmapo).second.find(g_item.getNumber());
+                        if (it != field.containers.end()) {
+                            g_cont = it->second;
+                            g_cont->resetWear();
 
-                            // der Inhalt des angegebenen Containers mit der id g_item.getNumber() wurde gefunden
-                            if (iv != (*conmapo).second.end()) {
-                                g_cont = (*iv).second;
-                                g_cont->resetWear();
-
-                                // Verweis auf den Container in der Containermap fr das Feld loeschen
-                                (*conmapo).second.erase(iv);
-
-                                if ((*conmapo).second.empty()) {
-                                    // kein Container mehr auf dem Feld -> Containermap fr das Feld loeschen
-                                    tmap->containers.erase(conmapo);
-                                }
-
-                                sendRemoveItemFromMapToAllVisibleCharacters(itemPosition);
-
-                                return true;
-                            } else {
-                                g_cont = new Container(g_item.getId());
-                                sendRemoveItemFromMapToAllVisibleCharacters(itemPosition);
-
-                                return true;
-                            }
+                            field.containers.erase(it);
                         } else {
                             g_cont = new Container(g_item.getId());
-                            sendRemoveItemFromMapToAllVisibleCharacters(itemPosition);
-
-                            return true;
                         }
                     } else {
-                        // normales Item
                         g_cont = nullptr;
-                        sendRemoveItemFromMapToAllVisibleCharacters(itemPosition);
-
-                        return true;
                     }
-                } // tragbar
-            } // item bekannt
-        } // Item vorhanden ?
-    } // Feld vorhanden ?
+
+                    sendRemoveItemFromMapToAllVisibleCharacters(itemPosition);
+                    return true;
+                }
+            }
+        }
+    } catch (FieldNotFound &) {
+    }
 
     g_item.reset();
     g_cont = nullptr;
@@ -536,8 +507,6 @@ bool World::takeItemFromMap(Character *cc, const position &itemPosition) {
 }
 
 bool World::putItemOnMap(Character *cc, const position &itemPosition) {
-    Field *tempf;
-
     if (cc) {
         if (cc->getPosition().z != itemPosition.z ||
             !cc->isInRangeToField(itemPosition, MAXTHROWDISTANCE) ||
@@ -555,27 +524,23 @@ bool World::putItemOnMap(Character *cc, const position &itemPosition) {
         }
     }
 
-    if (GetPToCFieldAt(tempf, itemPosition, tmap)) {
-        MapPosition npos(itemPosition);
+    try {
+        Field &field = fieldAt(itemPosition);
 
-        if (Data::TilesModItems.nonPassable(g_item.getId())) {     // nicht passierbares Item, zB. eine grosse Kiste
-            if (! tempf->moveToPossible()) {   // das Feld ist nicht betretbar
-
+        if (Data::TilesModItems.nonPassable(g_item.getId())) {
+            if (!field.moveToPossible()) {
                 return false;
             }
         }
 
         if (g_item.isContainer()) {
-            // Container
             if (!g_cont) {
                 g_cont = new Container(g_item.getId());
-            } else
-                // close the showcase for everyone not in range
-            {
+            } else {
                 closeShowcaseIfNotInRange(g_cont, itemPosition);
             }
 
-            if (tmap->addContainerToPos(g_item, g_cont, npos)) {
+            if (field.addContainer(g_item, g_cont)) {
                 sendPutItemOnMapToAllVisibleCharacters(itemPosition, g_item);
 
                 if (cc && Data::Triggers.exists(itemPosition)) {
@@ -589,14 +554,14 @@ bool World::putItemOnMap(Character *cc, const position &itemPosition) {
                     }
                 }
 
-                checkField(tempf, itemPosition);
+                checkField(field, itemPosition);
                 g_item.reset();
                 g_cont = nullptr;
 
                 return true;
             }
         } else {
-            if (tempf->addTopItem(g_item)) {
+            if (field.addTopItem(g_item)) {
                 sendPutItemOnMapToAllVisibleCharacters(itemPosition, g_item);
 
                 if (cc && Data::Triggers.exists(itemPosition)) {
@@ -610,13 +575,14 @@ bool World::putItemOnMap(Character *cc, const position &itemPosition) {
                     }
                 }
 
-                checkField(tempf, itemPosition);
+                checkField(field, itemPosition);
                 g_cont = nullptr;
                 g_item.reset();
 
                 return true;
             }
         }
+    } catch (FieldNotFound &) {
     }
 
     return false;
@@ -624,10 +590,8 @@ bool World::putItemOnMap(Character *cc, const position &itemPosition) {
 }
 
 bool World::putItemAlwaysOnMap(Character *cc, const position &itemPosition) {
-    Field *tempf;
-
-    if (GetPToCFieldAt(tempf, itemPosition, tmap)) {
-        MapPosition npos(itemPosition);
+    try {
+        Field &field = fieldAt(itemPosition);
 
         if (g_item.isContainer()) {
             // Container
@@ -635,7 +599,7 @@ bool World::putItemAlwaysOnMap(Character *cc, const position &itemPosition) {
                 g_cont = new Container(g_item.getId());
             }
 
-            if (tmap->addAlwaysContainerToPos(g_item, g_cont, npos)) {
+            if (field.addContainerAlways(g_item, g_cont)) {
                 sendPutItemOnMapToAllVisibleCharacters(itemPosition, g_item);
 
                 if (cc && Data::Triggers.exists(itemPosition)) {
@@ -649,14 +613,14 @@ bool World::putItemAlwaysOnMap(Character *cc, const position &itemPosition) {
                     }
                 }
 
-                checkField(tempf, itemPosition);
+                checkField(field, itemPosition);
                 g_item.reset();
                 g_cont = nullptr;
 
                 return true;
             }
         } else {
-            if (tempf->PutTopItem(g_item)) {
+            if (field.PutTopItem(g_item)) {
                 sendPutItemOnMapToAllVisibleCharacters(itemPosition, g_item);
 
                 if (cc && Data::Triggers.exists(itemPosition)) {
@@ -671,40 +635,39 @@ bool World::putItemAlwaysOnMap(Character *cc, const position &itemPosition) {
                     }
                 }
 
-                checkField(tempf, itemPosition);
+                checkField(field, itemPosition);
                 g_cont = nullptr;
                 g_item.reset();
 
                 return true;
             }
         }
+    } catch (FieldNotFound &) {
     }
 
     return false;
 
 }
 
-void World::checkField(Field *cfstart, const position &itemPosition) {
-    if (cfstart) {
-        if (cfstart->HasSpecialItem()) {
-            if (cfstart->IsPlayerOnField()) {
-                Player *temp = Players.find(itemPosition);
+void World::checkField(Field &field, const position &itemPosition) {
+    if (field.HasSpecialItem()) {
+        if (field.IsPlayerOnField()) {
+            Player *temp = Players.find(itemPosition);
 
-                if (temp) {
-                    checkFieldAfterMove(temp, cfstart);
-                }
-            } else if (cfstart->IsMonsterOnField()) {
-                Monster *temp = Monsters.find(itemPosition);
+            if (temp) {
+                checkFieldAfterMove(temp, field);
+            }
+        } else if (field.IsMonsterOnField()) {
+            Monster *temp = Monsters.find(itemPosition);
 
-                if (temp) {
-                    checkFieldAfterMove(temp, cfstart);
-                }
-            } else if (cfstart->IsNPCOnField()) {
-                NPC *temp = Npc.find(itemPosition);;
+            if (temp) {
+                checkFieldAfterMove(temp, field);
+            }
+        } else if (field.IsNPCOnField()) {
+            NPC *temp = Npc.find(itemPosition);;
 
-                if (temp) {
-                    checkFieldAfterMove(temp, cfstart);
-                }
+            if (temp) {
+                checkFieldAfterMove(temp, field);
             }
         }
     }

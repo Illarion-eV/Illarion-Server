@@ -205,11 +205,10 @@ CloseDialogTC::CloseDialogTC(unsigned int dialogId) : BasicServerCommand(SC_CLOS
 }
 
 void addMovementCostToBuffer(BasicServerCommand *cmd, const position &pos) {
-    auto field = World::get()->GetField(pos);
-
-    if (field) {
-        cmd->addUnsignedCharToBuffer(field->getMovementCost());
-    } else {
+    try {
+        Field &field = World::get()->fieldAt(pos);
+        cmd->addUnsignedCharToBuffer(field.getMovementCost());
+    } catch (FieldNotFound &) {
         cmd->addUnsignedCharToBuffer(255);
     }
 }

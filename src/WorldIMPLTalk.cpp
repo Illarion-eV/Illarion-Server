@@ -260,13 +260,12 @@ void World::makeSoundForAllPlayersInRange(const position &pos, int radius, unsig
 
 
 void World::lookAtMapItem(Player *cp, const position &pos) {
-
-    Field *field;
     Item titem;
 
-    if (GetPToCFieldAt(field, pos)) {
+    try {
+        Field &field = fieldAt(pos);
 
-        if (field->ViewTopItem(titem)) {
+        if (field.ViewTopItem(titem)) {
             ScriptItem n_item = titem;
             n_item.type = ScriptItem::it_field;
             n_item.pos = pos;
@@ -277,11 +276,12 @@ void World::lookAtMapItem(Player *cp, const position &pos) {
             if (lookAt.isValid()) {
                 itemInform(cp, n_item, lookAt);
             } else {
-                lookAtTile(cp, field->getTileId(), pos);
+                lookAtTile(cp, field.getTileId(), pos);
             }
         } else {
-            lookAtTile(cp, field->getTileId(), pos);
+            lookAtTile(cp, field.getTileId(), pos);
         }
+    } catch (FieldNotFound &) {
     }
 }
 
