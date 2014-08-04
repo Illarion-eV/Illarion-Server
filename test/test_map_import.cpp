@@ -41,16 +41,15 @@ TEST_F(map_import_tests, importTiles) {
 
     for (unsigned short x = 0; x < map_w; ++x) {
         for (unsigned short y = 0; y < map_h; ++y) {
-            auto field = world.GetField(position(map_x + x, map_y + y, map_level));
+            auto &field = world.fieldAt(position(map_x + x, map_y + y, map_level));
             SimpleField &simple = tiles[x][y];
             
             std::ostringstream trace;
             trace << "x: " << x << ", y: " << y;
             SCOPED_TRACE(trace.str());
             
-            ASSERT_NE(nullptr, field);
-            EXPECT_EQ(simple.tile, field->getTileCode());
-            EXPECT_EQ(simple.music, field->getMusicId());
+            EXPECT_EQ(simple.tile, field.getTileCode());
+            EXPECT_EQ(simple.music, field.getMusicId());
         }
     }
 }
@@ -66,25 +65,23 @@ TEST_F(map_import_tests, importWarps) {
 
     for (unsigned short x = 0; x < map_w; ++x) {
         for (unsigned short y = 0; y < map_h; ++y) {
-            auto field = world.GetField(position(map_x + x, map_y + y, map_level));
+            auto &field = world.fieldAt(position(map_x + x, map_y + y, map_level));
 
             std::ostringstream trace;
             trace << "x: " << x << ", y: " << y;
             SCOPED_TRACE(trace.str());
 
-            ASSERT_NE(nullptr, field);
-
             const auto it = warps.find(std::make_pair(x, y));
 
             if (it == warps.end()) {
-                EXPECT_FALSE(field->IsWarpField());
+                EXPECT_FALSE(field.IsWarpField());
             } else {
                 auto &warp_target = it->second;
 
-                EXPECT_TRUE(field->IsWarpField());
+                EXPECT_TRUE(field.IsWarpField());
 
                 position target;
-                field->GetWarpField(target);
+                field.GetWarpField(target);
                 EXPECT_EQ(warp_target, target);
             }
         }
@@ -107,22 +104,20 @@ TEST_F(map_import_tests, importItems) {
 
     for (unsigned short x = 0; x < map_w; ++x) {
         for (unsigned short y = 0; y < map_h; ++y) {
-            auto field = world.GetField(position(map_x + x, map_y + y, map_level));
+            auto &field = world.fieldAt(position(map_x + x, map_y + y, map_level));
 
             std::ostringstream trace;
             trace << "x: " << x << ", y: " << y;
             SCOPED_TRACE(trace.str());
 
-            ASSERT_NE(nullptr, field);
-
             const auto it = items.find(std::make_pair(x, y));
 
             if (it == items.end()) {
-                EXPECT_EQ(0, field->NumberOfItems());
+                EXPECT_EQ(0, field.NumberOfItems());
             } else {
                 auto &itemStack = it->second;
 
-                EXPECT_EQ(itemStack.size(), field->NumberOfItems());
+                EXPECT_EQ(itemStack.size(), field.NumberOfItems());
 
                 for (size_t i = 0; i < itemStack.size(); ++i) {
                     auto &simple_item = itemStack[i];
@@ -131,7 +126,7 @@ TEST_F(map_import_tests, importItems) {
                     trace << "no. of item in stack: " << i;
                     SCOPED_TRACE(trace.str());
 
-                    auto item = field->getStackItem(i);
+                    auto item = field.getStackItem(i);
                     EXPECT_EQ(simple_item.id, item.getId());
                     EXPECT_EQ(1, item.getNumber());
                     EXPECT_EQ(simple_item.quality, item.getQuality());
