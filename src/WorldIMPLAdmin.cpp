@@ -599,7 +599,6 @@ void World::who_command(Player *cp, const std::string &tplayer) {
             tmessage = tmessage + " z" + std::to_string(pos.z);
             tmessage = tmessage + " HPs:" + std::to_string(tempPl->getAttribute(Character::hitpoints));
             tmessage = tmessage + ((tempPl->isAlive()) ? " Alive" : " Dead");
-            tmessage = tmessage + " Mental Capacity: " + std::to_string(tempPl->getMentalCapacity());
             std::string german = " German";
             std::string english = " English";
             tmessage = tmessage + tempPl->nls(german, english);
