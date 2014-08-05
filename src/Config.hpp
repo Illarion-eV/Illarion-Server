@@ -97,6 +97,8 @@ public:
     ConfigEntry<std::string> postgres_schema_server = { "postgres_schema_server", "server" };
     ConfigEntry<std::string> postgres_schema_account = { "postgres_schema_account", "accounts" };
 
+    ConfigEntry<int16_t> debug = { "debug", 0 };
+
     ConfigEntry<uint16_t> clientversion = { "clientversion", 122 };
     ConfigEntry<int16_t> playerstart_x = { "playerstart_x", 0 };
     ConfigEntry<int16_t> playerstart_y = { "playerstart_y", 0 };
