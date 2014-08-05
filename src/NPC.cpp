@@ -32,7 +32,6 @@ NPC::NPC(TYPE_OF_CHARACTER_ID _id, const std::string &_name, TYPE_OF_RACE_ID _ra
          const Character::appearance &appearance) : Character(appearance),
     _ishealer(ishealer), _startpos(_pos) {
     setName(_name);
-    _startpos = _pos;
     setFaceTo(dir);
     setRace(_race);
     setAttribute(Character::sex, sex);
@@ -45,7 +44,7 @@ NPC::NPC(TYPE_OF_CHARACTER_ID _id, const std::string &_name, TYPE_OF_RACE_ID _ra
         setId(NPC_BASE + _id);
     }
 
-    Field &field = _world->walkableFieldNear(_startpos);
+    Field &field = _world->fieldAt(_startpos);
 
     setPosition(_startpos);
     Logger::debug(LogFacility::World) << "New NPC spawned: pos: " << _startpos << " type: " << _race << " Name: " << _name<< " is_healer: " << _ishealer << " sex: " << getAttribute(Character::sex) << Log::end;
