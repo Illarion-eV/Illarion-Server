@@ -23,8 +23,6 @@
 #include "globals.hpp"
 #include <limits>
 
-//#define Field_DEBUG
-
 Field::Field() : warptarget{0, 0, 0} {
     tile = 0;
     music = 0;

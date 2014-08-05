@@ -60,9 +60,6 @@
 #include "Statistics.hpp"
 
 extern ScheduledScriptsTable *scheduledScripts;
-
-//#define World_DEBUG
-
 extern MonsterTable *MonsterDescriptions;
 extern std::shared_ptr<LuaLogoutScript> logoutScript;
 extern std::shared_ptr<LuaWeaponScript> standardFightingScript;

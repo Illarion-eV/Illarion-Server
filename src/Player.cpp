@@ -69,8 +69,6 @@
 extern std::shared_ptr<LuaPlayerDeathScript>playerDeathScript;
 extern std::shared_ptr<LuaDepotScript>depotScript;
 
-//#define PLAYER_MOVE_DEBUG
-
 Player::Player(std::shared_ptr<NetInterface> newConnection) throw(Player::LogoutException)
     : Character(), onlinetime(0), Connection(newConnection), turtleActive(false),
       clippingActive(true), admin(false), questWriteLock(false), monitoringClient(false), dialogCounter(0) {

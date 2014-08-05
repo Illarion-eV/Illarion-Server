@@ -21,15 +21,7 @@
 #ifndef WORLD_HH
 #define WORLD_HH
 
-//falls nicht auskommentiert, werden mehr Bildschirmausgaben gemacht:
-/*
-#define World_DEBUG
-#define World_ItemMove_DEBUG
-#define World_CharMove_DEBUG
-*/
-
-//falls nicht auskommentiert, werden die Gespraeche der Player gespeichert
-#define   LOG_TALK
+#define LOG_TALK
 
 #include <sys/timeb.h>
 

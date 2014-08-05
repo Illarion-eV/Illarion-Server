@@ -17,11 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef InitialConnection_HH
-#define InitialConnection_HH
-
-//falls nicht auskommentiert, werden mehr Bildschirmausgaben gemacht:
-//#define InitialConnection_DEBUG
+#ifndef _InitialConnection_HPP_
+#define _InitialConnection_HPP_
 
 #include <memory>
 

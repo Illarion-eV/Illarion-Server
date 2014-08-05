@@ -1,5 +1,5 @@
 AM_CXXFLAGS = -ggdb -pipe -Wall -Werror -Wno-deprecated -std=c++11 $(BOOST_CXXFLAGS) $(DEPS_CFLAGS) -fPIC
-AM_CPPFLAGS = -D_THREAD_SAFE -D_REENTRANT -DTESTSERVER -DCDataConnect_DEBUG -DAdminCommands_DEBUG $(subst -I,-isystem,$(BOOST_CPPFLAGS)) -I$(top_srcdir)/src -DPIC
+AM_CPPFLAGS = -D_THREAD_SAFE -D_REENTRANT -DTESTSERVER $(subst -I,-isystem,$(BOOST_CPPFLAGS)) -I$(top_srcdir)/src -DPIC
 
 noinst_LTLIBRARIES = libscriptbinding.la
 

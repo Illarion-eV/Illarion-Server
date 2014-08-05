@@ -17,11 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef PLAYER_HPP
-#define PLAYER_HPP
-
-//falls nicht auskommentiert, werden mehr Bildschirmausgaben gemacht:
-//#define Player_DEBUG
+#ifndef _PLAYER_HPP_
+#define _PLAYER_HPP_
 
 #include <memory>
 #include <string>
