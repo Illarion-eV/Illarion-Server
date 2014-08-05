@@ -134,7 +134,9 @@ bool World::load_maps() {
 
     Logger::info(LogFacility::World) << "Importing maps." << Log::end;
 
-    for (boost::filesystem::recursive_directory_iterator end, it(Config::instance().datadir() + "map/import/"); it != end; ++it) {
+    std::string importDir = Config::instance().datadir() + "map/import/";
+
+    for (boost::filesystem::recursive_directory_iterator end, it(importDir); it != end; ++it) {
         if (!boost::filesystem::is_regular_file(it->status())) continue;
         if (!boost::regex_match(it->path().filename().string(), tilesFilter)) continue;
     
@@ -142,10 +144,11 @@ bool World::load_maps() {
         
         // strip .tiles.txt from file name
         map.resize(map.length() - 10);
+        map.erase(0, importDir.length());
 
         Logger::debug(LogFacility::World) << "Importing: " << map << Log::end;
 
-        ok and_eq load_from_editor(map);
+        ok and_eq load_from_editor(importDir, map);
     
         ++numfiles;
     }
@@ -160,14 +163,13 @@ bool World::load_maps() {
     return ok;
 }
 
-//! create a new world from editor files (new format)
-bool World::load_from_editor(const std::string &filename) {
-    // first try to open mapfile
-    Logger::debug(LogFacility::World) << "try to Import map: " << filename << Log::end;
-    std::ifstream maptilesfile((filename + ".tiles.txt").c_str());
+bool World::load_from_editor(const std::string &importDir,
+                             const std::string &fileName) {
+    Logger::debug(LogFacility::World) << "try to Import map: " << fileName << Log::end;
+    std::ifstream maptilesfile((importDir + fileName + ".tiles.txt").c_str());
 
     if (!maptilesfile.good()) {
-        Logger::error(LogFacility::World) << "could not open file: " << filename << ".tiles.txt" << Log::end;
+        Logger::error(LogFacility::World) << "could not open file: " << fileName << ".tiles.txt" << Log::end;
         return false;
     }
 
@@ -192,11 +194,11 @@ bool World::load_from_editor(const std::string &filename) {
         maptilesfile >> version;
 
         if (version != 2) {
-            Logger::error(LogFacility::World) << "Invalid map format! Wrong version! Expected V2: " << filename << Log::end;
+            Logger::error(LogFacility::World) << "Invalid map format! Wrong version! Expected V2: " << fileName << Log::end;
             return false;
         }
     } else {
-        Logger::error(LogFacility::World) << "Invalid map format! No version: " << filename << Log::end;
+        Logger::error(LogFacility::World) << "Invalid map format! No version: " << fileName << Log::end;
         return false;
     }
 
@@ -217,7 +219,7 @@ bool World::load_from_editor(const std::string &filename) {
     maptilesfile >> h_height;  //read int (height)
     oldy = -1;
 
-    Logger::debug(LogFacility::World) << "try to Import tiles: " << filename << Log::end;
+    Logger::debug(LogFacility::World) << "try to Import tiles: " << fileName << Log::end;
     // load all tiles from the file
     maptilesfile >> temp_tile.x;  // read an int.
 
@@ -272,7 +274,7 @@ bool World::load_from_editor(const std::string &filename) {
     }
 
     // generate new map
-    auto tempmap = std::make_shared<Map>(position(h_x, h_y, h_level), h_width, h_height);
+    auto tempmap = std::make_shared<Map>(fileName, position(h_x, h_y, h_level), h_width, h_height);
 
     for (int x=0; x < h_width; ++x) {
         int index_start = x << 16;
@@ -287,13 +289,15 @@ bool World::load_from_editor(const std::string &filename) {
     }
 
     maptilesfile.close();
-    maps.insert(tempmap);
+    if (!maps.insert(tempmap)) {
+        return false;
+    }
 
     // now try to load warpfields
-    std::ifstream warpfile((filename + ".warps.txt").c_str());
+    std::ifstream warpfile((importDir + fileName + ".warps.txt").c_str());
 
     if (!warpfile.good()) {
-        Logger::error(LogFacility::World) << "could not open file: " << filename << ".warps.txt" << Log::end;
+        Logger::error(LogFacility::World) << "could not open file: " << fileName << ".warps.txt" << Log::end;
         return true;    // warps are not crucial
     }
 
@@ -349,10 +353,10 @@ bool World::load_from_editor(const std::string &filename) {
     }
 
     // next we try to load the items for the map
-    std::ifstream mapitemsfile((filename + ".items.txt").c_str());
+    std::ifstream mapitemsfile((importDir + fileName + ".items.txt").c_str());
 
     if (!mapitemsfile.good()) {
-        Logger::error(LogFacility::World) << "could not open file: " << filename << ".items.txt" << Log::end;
+        Logger::error(LogFacility::World) << "could not open file: " << fileName << ".items.txt" << Log::end;
         return true;    // items are not crucial
     }
 
@@ -363,7 +367,7 @@ bool World::load_from_editor(const std::string &filename) {
     Item::id_type itemId;
     Item::quality_type itemQuality;
     oldy = -1;
-    Logger::debug(LogFacility::World) << "try to import items: " << filename << Log::end;
+    Logger::debug(LogFacility::World) << "try to import items: " << fileName << Log::end;
     mapitemsfile >> x;
 
     while (mapitemsfile.good()) {
@@ -459,14 +463,14 @@ bool World::load_from_editor(const std::string &filename) {
         g_cont = nullptr;
 
         if (!putItemAlwaysOnMap(nullptr, position(x, y, h_level))) {
-            Logger::info(LogFacility::World) << "could not put item" << Log::end;
+            Logger::info(LogFacility::World) << "could not put item from " << fileName << Log::end;
         }
 
         mapitemsfile >> x;
     }
 
     mapitemsfile.close();
-    Logger::debug(LogFacility::World) << "Import map: " << filename << " was successful!" << Log::end;
+    Logger::debug(LogFacility::World) << "Import map: " << fileName << " was successful!" << Log::end;
 
     return true;
 }

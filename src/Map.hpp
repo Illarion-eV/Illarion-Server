@@ -31,9 +31,10 @@ class Map {
     uint16_t width;
     uint16_t height;
     std::vector<std::vector<Field>> fields;
+    std::string name;
 
 public:
-    Map(position origin, uint16_t width, uint16_t height);
+    Map(std::string name, position origin, uint16_t width, uint16_t height);
     Map(const Map &) = delete;
     Map &operator=(const Map &) = delete;
     Map(Map &&) = default;
@@ -55,9 +56,8 @@ public:
     int16_t getLevel() const;
     uint16_t getWidth() const;
     uint16_t getHeight() const;
+    const std::string &getName() const;
 
-    bool intersects(const position &origin, uint16_t width,
-                    uint16_t height) const;
     bool intersects(const Map &map) const;
 
 private:

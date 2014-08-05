@@ -299,21 +299,9 @@ public:
     */
     int getTime(const std::string &timeType);
 
-    /**
-        * function for maploading
-        *
-        *load several maps from the import dir
-        *@return true if loading was successful, false otherwise
-        */
     bool load_maps();
-
-    /**
-    *function for maploading
-    *this function loads a specified new map from the importdir
-    *@param filename name of the mapfile which should be loaded
-    *@return true if loading was successful, false otherwise
-    */
-    bool load_from_editor(const std::string &filename);
+    bool load_from_editor(const std::string &importDir,
+                          const std::string &filename);
 
     /**
     *checks the command list of one player and put them into practize

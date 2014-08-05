@@ -27,10 +27,10 @@
 
 #include "netinterface/protocol/ServerCommands.hpp"
 
-Map::Map(position origin, uint16_t width, uint16_t height)
+Map::Map(std::string name, position origin, uint16_t width, uint16_t height)
     : origin(std::move(origin)), width(width), height(height),
-      fields(width, std::vector<Field>(height, Field())) {}
-
+      fields(width, std::vector<Field>(height, Field())),
+      name(std::move(name)) {}
 
 Field &Map::at(int16_t x, int16_t y) {
     return fields[Conv_X_Koord(x)][Conv_Y_Koord(y)];
@@ -135,6 +135,8 @@ bool Map::Save(const std::string &name) const {
 bool Map::Load(const std::string &name) {
     Logger::debug(LogFacility::World) << "Loading map " << name << Log::end;
 
+    this->name = name;
+
     std::ifstream map { (name + "_map").c_str(), std::ios::binary | std::ios::in };
     std::ifstream items { (name + "_item").c_str(), std::ios::binary | std::ios::in };
     std::ifstream warps { (name + "_warp").c_str(), std::ios::binary | std::ios::in };
@@ -199,6 +201,8 @@ int16_t Map::getMaxY() const { return origin.y + height - 1; }
 
 int16_t Map::getLevel() const { return origin.z; }
 
+const std::string &Map::getName() const { return name; }
+
 inline uint16_t Map::Conv_X_Koord(int16_t x) const {
     uint16_t temp = x - origin.x;
 
@@ -225,13 +229,6 @@ inline int16_t Map::Conv_To_X(uint16_t x) const {
 
 inline int16_t Map::Conv_To_Y(uint16_t y) const {
     return y + origin.y;
-}
-
-bool Map::intersects(const position &origin2, uint16_t width,
-                     uint16_t height) const {
-    return origin2.z == origin.z && getMaxX() >= origin2.x &&
-           origin.x <= origin2.x + width - 1 && getMaxY() >= origin2.y &&
-           origin.y <= origin2.y + height - 1;
 }
 
 bool Map::intersects(const Map &map) const {

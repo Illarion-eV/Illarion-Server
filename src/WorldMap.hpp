@@ -41,7 +41,6 @@ public:
 
     Field &at(const position &pos) const;
     Field &walkableNear(position &pos) const;
-    bool intersects(const position &upperleft, unsigned short dx, unsigned short dy) const;
     bool intersects(const Map &map) const;
 
     bool insert(map_t newMap);

@@ -31,17 +31,19 @@ void WorldMap::clear() {
     world_map.clear();
 }
 
-bool WorldMap::intersects(const position &origin, uint16_t width,
-                          uint16_t height) const {
-    return std::any_of(maps.begin(), maps.end(), [&](const map_t &map) {
-        return map->intersects(origin, width, height);
-    });
-}
-
 bool WorldMap::intersects(const Map &map) const {
-    return std::any_of(maps.begin(), maps.end(), [&](const map_t &testMap) {
-        return testMap->intersects(map);
-    });
+    for(const auto &testMap : maps) {
+        if (testMap->intersects(map)) {
+            Logger::error(LogFacility::Script)
+                << "Could not insert map " << map.getName()
+                << " because it intersects with " << testMap->getName()
+                << Log::end;
+
+            return true;
+        }
+    }
+    
+    return false;
 }
 
 Field &WorldMap::at(const position &pos) const {

@@ -491,12 +491,7 @@ void World::sendMapUpdate(const position &pos, uint8_t radius) {
 }
 
 bool World::createSavedArea(uint16_t tileid, const position &pos, uint16_t height, uint16_t width) {
-    if (maps.intersects(pos, height, width)) {
-        Logger::error(LogFacility::World) << "Cannot insert map with " << pos << ", width: " << width << ", height: " << height << Log::end;
-        return false;
-    }
-
-    auto tempmap = std::make_shared<Map>(pos, width, height);
+    auto tempmap = std::make_shared<Map>("map created by createSavedArea", pos, width, height);
 
     for (int x=0; x<width; ++x) {
         for (int y=0; y<height; ++y) {
@@ -506,9 +501,15 @@ bool World::createSavedArea(uint16_t tileid, const position &pos, uint16_t heigh
         }
     }
 
-    maps.insert(tempmap);
-    Logger::info(LogFacility::World) << "Map created by createSavedArea command at " << pos << " height: " << height << " width: " << width << " standard tile: " << tileid << "!" << Log::end;
-    return true;
+    if (maps.insert(tempmap)) {
+        Logger::info(LogFacility::World)
+            << "Map created by createSavedArea command at " << pos
+            << " height: " << height << " width: " << width
+            << " standard tile: " << tileid << "!" << Log::end;
+        return true;
+    } else {
+        return false;
+    }
 }
 
 
