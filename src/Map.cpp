@@ -41,18 +41,65 @@ Field &Map::at(const MapPosition &pos) {
 }
 
 Field &Map::walkableNear(int16_t &x, int16_t &y) {
-    const int16_t r = 5;
+    auto startx = x;
+    auto starty = y;
 
-    for (int16_t testX = x-r; testX <= x+r; ++testX) {   
-        for (int16_t testY = y-r; testY <= y+r; ++testY) {
-            Field &field = at(testX, testY);
+    unsigned char d = 0;
 
-            if (field.moveToPossible()) {
-                x = testX;
-                y = testY;
-                return field;
+    while (d < 6) {
+        x = startx - d;
+
+        while (x <= startx + d) {
+            try {
+                Field &field = at(x, d + starty);
+                
+                if (field.moveToPossible()) {
+                    y = d + starty;
+                    return field;
+                }
+            } catch (FieldNotFound &) {
             }
+
+            try {
+                Field &field = at(x, starty - d);
+
+                if (field.moveToPossible()) {
+                    y = starty - d;
+                    return field;
+                }
+            } catch (FieldNotFound &) {
+            }
+
+            x++;
         }
+
+        y = starty - d;
+
+        while (y <= d + starty) {
+            try {
+                Field &field = at(d + startx, y);
+
+                if (field.moveToPossible()) {
+                    x = d + startx;
+                    return field;
+                }
+            } catch (FieldNotFound &) {
+            }
+
+            try {
+                Field &field = at(startx - d, y);
+
+                if (field.moveToPossible()) {
+                    x = startx - d;
+                    return field;
+                }
+            } catch (FieldNotFound &) {
+            }
+
+            y++;
+        }
+
+        d++;
     }
 
     throw FieldNotFound();
