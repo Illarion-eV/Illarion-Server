@@ -38,16 +38,12 @@ const uint32_t MONSTERVIEWRANGE = 11;
 #define BANNED 30
 #define BANNEDFORTIME 31
 
-#define LEFTHANDMODIFIER 2
-
 #define SOUNDFIELD 1
 #define MUSICFIELD 2
 
 #define DEPOTITEM 321
 #define DEPOTSIZE 100
 #define BLOCKEDITEM 228
-
-#define LANGUAGECOUNT 3
 
 #define FLAG_GROUNDLEVEL 3 //!< 0,1,2,3
 
