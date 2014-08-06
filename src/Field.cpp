@@ -577,19 +577,9 @@ void Field::SetPlayerOnField(bool t) {
 }
 
 
-
-void Field::SetLevel(unsigned char z) {
-    z <<= 4;     // bits an die richtige Position bringen
-    z &= FLAG_MAPLEVEL;     // andere bits l�chen
-    clientflags &= (255 - FLAG_MAPLEVEL);       // maplevel - bits l�chen
-    clientflags |= z;     // maplevel - bits setzen
-}
-
-
 bool Field::IsWarpField() const {
     return ((extraflags & FLAG_WARPFIELD) != 0);
 }
-
 
 
 void Field::SetWarpField(const position &pos) {

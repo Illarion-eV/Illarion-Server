@@ -306,15 +306,6 @@ public:
     */
     void SetSpecialField(bool t);
 
-    /**
-    * sets the height level of the field
-    * @param z the new heightlevel with 0 <= z <= 3
-    */
-    void SetLevel(unsigned char z);
-
-    /**
-    * stores the items on this field
-    */
     std::vector<Item> items;
     Container::CONTAINERMAP containers;
 };

@@ -65,8 +65,6 @@ const uint32_t MONSTERVIEWRANGE = 11;
 
 #define FLAG_NPCONFIELD 8 //!< 1 == true
 
-#define FLAG_MAPLEVEL 112 //!< 0 .. 7
-
 #define FLAG_PLAYERONFIELD 128 //!< 1 == true
 
 #define FLAG_SPECIALTILE 128  //!< 1 == true
@@ -84,11 +82,11 @@ const uint32_t MONSTERVIEWRANGE = 11;
 // ----+-------------------+-------------------+--------------------+-------------------+
 // 008 |                   |FLAG_SPECIALITEM   |FLAG_NPCONFIELD     |FLAG_SPECIALITEM   |
 // ----+-------------------+-------------------+--------------------+-------------------+
-// 016 |FLAG_PENETRATEABLE |FLAG_PENETRATEABLE |FLAG_MAPLEVEL       |FLAG_PENETRATEABLE |
+// 016 |FLAG_PENETRATEABLE |FLAG_PENETRATEABLE |                    |FLAG_PENETRATEABLE |
 // ----+-------------------+-------------------+--------------------+-------------------+
-// 032 |FLAG_TRANSPARENT   |FLAG_TRANSPARENT   |FLAG_MAPLEVEL       |FLAG_TRANSPARENT   |
+// 032 |FLAG_TRANSPARENT   |FLAG_TRANSPARENT   |                    |FLAG_TRANSPARENT   |
 // ----+-------------------+-------------------+--------------------+-------------------+
-// 064 |FLAG_PASSABLE      |FLAG_PASSABLE      |FLAG_MAPLEVEL       |FLAG_PASSABLE      |
+// 064 |FLAG_PASSABLE      |FLAG_PASSABLE      |                    |FLAG_PASSABLE      |
 // ----+-------------------+-------------------+--------------------+-------------------+
 // 128 |FLAG_SPECIALTILE   |                   |FLAG_PLAYERONFIELD  |FLAG_SPECIALTILE   |
 // ----+-------------------+-------------------+--------------------+-------------------+
