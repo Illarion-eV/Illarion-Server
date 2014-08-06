@@ -24,7 +24,7 @@
 
 #include "TableStructs.hpp"
 
-#include <unordered_map>
+#include <map>
 #include <iostream>
 #include <fstream>
 
@@ -36,8 +36,8 @@ class RekursionException: public std::exception {};
 
 class Container {
 public:
-    typedef std::unordered_map<TYPE_OF_CONTAINERSLOTS, Item> ITEMMAP;
-    typedef std::unordered_map<TYPE_OF_CONTAINERSLOTS, Container *> CONTAINERMAP;
+    typedef std::map<TYPE_OF_CONTAINERSLOTS, Item> ITEMMAP;
+    typedef std::map<TYPE_OF_CONTAINERSLOTS, Container *> CONTAINERMAP;
 
 private:
     Item::id_type itemId;

@@ -434,7 +434,7 @@ void Field::load(std::ifstream &mapStream, std::ifstream &itemStream,
             if (item.isContainer() && item.getNumber() == key) {
                 auto container = new Container(item.getId());
                 container->Load(containerStream);
-                containers.emplace(key, container);
+                containers.insert(decltype(containers)::value_type(key, container));
             }
         }
     }
