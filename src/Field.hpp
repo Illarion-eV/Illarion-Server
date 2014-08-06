@@ -125,12 +125,6 @@ public:
     bool moveToPossible() const;
 
     /**
-    * finds the height level of the field
-    * @return the height level of this field
-    */
-    unsigned char GroundLevel() const;
-
-    /**
     * calculates the flags for this field new
     */
     void updateFlags();

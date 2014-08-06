@@ -118,7 +118,6 @@ bool Field::addTopItem(const Item &it) {
 
             if (Data::TilesModItems.exists(it.getId())) {
                 const auto &temp = Data::TilesModItems[it.getId()];
-                clientflags = clientflags | (temp.Modificator & (FLAG_GROUNDLEVEL));
                 extraflags = extraflags | (temp.Modificator & (FLAG_SPECIALITEM + FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_MAKEPASSABLE));
             }
 
@@ -141,7 +140,6 @@ bool Field::PutGroundItem(const Item &it) {
 
         if (Data::TilesModItems.exists(it.getId())) {
             const auto &temp = Data::TilesModItems[it.getId()];
-            clientflags   = clientflags | (temp.Modificator & (FLAG_GROUNDLEVEL));
             extraflags   = extraflags | (temp.Modificator & (FLAG_SPECIALITEM + FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_MAKEPASSABLE));
         }
 
@@ -158,7 +156,6 @@ bool Field::PutTopItem(const Item &it) {
 
         if (Data::TilesModItems.exists(it.getId())) {
             const auto &temp = Data::TilesModItems[it.getId()];
-            clientflags   = clientflags | (temp.Modificator & (FLAG_GROUNDLEVEL));
             extraflags   = extraflags | (temp.Modificator & (FLAG_SPECIALITEM + FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_MAKEPASSABLE));
         }
 
@@ -504,20 +501,16 @@ int8_t Field::age() {
 
 void Field::updateFlags() {
 
-    // alle durch Items und Tiles modifizierte Flags l�chen
-    clientflags = clientflags & (255 - (FLAG_GROUNDLEVEL));
     extraflags = extraflags & (255 - (FLAG_SPECIALITEM + FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_MAKEPASSABLE));
 
     if (Data::Tiles.exists(tile)) {
         const TilesStruct &tt = Data::Tiles[tile];
-        clientflags = clientflags | (tt.flags & (FLAG_GROUNDLEVEL));
         extraflags = extraflags | (tt.flags & (FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_SPECIALTILE + FLAG_MAKEPASSABLE));
     }
 
     for (auto it = items.begin(); it < items.end(); ++it) {
         if (Data::TilesModItems.exists(it->getId())) {
             const auto &tmod = Data::TilesModItems[it->getId()];
-            clientflags = clientflags | (tmod.Modificator & (FLAG_GROUNDLEVEL));
             extraflags = extraflags | (tmod.Modificator & (FLAG_SPECIALITEM + FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_MAKEPASSABLE));
         }
     }
@@ -527,11 +520,6 @@ void Field::updateFlags() {
 void Field::DeleteAllItems() {
     items.clear();
     updateFlags();
-}
-
-
-unsigned char Field::GroundLevel() const {
-    return (clientflags & FLAG_GROUNDLEVEL);
 }
 
 

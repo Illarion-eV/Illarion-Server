@@ -1593,7 +1593,6 @@ CREATE TABLE tiles (
     til_isnottransparent smallint DEFAULT (0)::smallint NOT NULL,
     til_isnotpenetrateable smallint DEFAULT (0)::smallint NOT NULL,
     til_walkingcost smallint DEFAULT (0)::smallint NOT NULL,
-    til_groundlevel smallint DEFAULT (0)::smallint NOT NULL,
     til_specialtile smallint DEFAULT (0)::smallint NOT NULL,
     til_script character varying(50),
     CONSTRAINT tiles_notpassable_check CHECK (((til_isnotpassable = (0)::smallint) OR (til_isnotpassable = (1)::smallint))),
