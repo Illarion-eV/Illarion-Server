@@ -29,10 +29,6 @@ std::vector<std::string> TilesTable::getColumnNames() {
     return {
         "til_id",
         "til_isnotpassable",
-        "til_isnottransparent",
-        "til_isnotpenetrateable",
-        "til_specialtile",
-        "til_groundlevel",
         "til_german",
         "til_english",
         "til_walkingcost",
@@ -46,11 +42,7 @@ TYPE_OF_TILE_ID TilesTable::assignId(const Database::ResultTuple &row) {
 
 TilesStruct TilesTable::assignTable(const Database::ResultTuple &row) {
     TilesStruct tile;
-    tile.flags = uint8_t(row["til_groundlevel"].as<uint16_t>());
-    tile.flags |= row["til_isnotpassable"].as<bool>() ? FLAG_PASSABLE : 0;
-    tile.flags |= row["til_isnottransparent"].as<bool>() ? FLAG_TRANSPARENT : 0;
-    tile.flags |= row["til_isnotpenetrateable"].as<bool>() ? FLAG_TRANSPARENT : 0;
-    tile.flags |= row["til_specialtile"].as<bool>() ? FLAG_SPECIALITEM : 0;
+    tile.flags = row["til_isnotpassable"].as<bool>() ? FLAG_BLOCKPATH : 0;
     tile.German = row["til_german"].as<std::string>();
     tile.English = row["til_english"].as<std::string>();
     tile.walkingCost = row["til_walkingcost"].as<TYPE_OF_WALKINGCOST>();

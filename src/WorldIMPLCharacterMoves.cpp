@@ -36,7 +36,7 @@ void World::checkFieldAfterMove(Character *cc, Field &field) {
         return;
     }
 
-    if (cc->isAlive() && field.HasSpecialItem()) {
+    if (cc->isAlive() && field.hasSpecialItem()) {
 
         for (const auto &item : field.items) {
             if (Data::TilesModItems.exists(item.getId())) {
@@ -51,33 +51,6 @@ void World::checkFieldAfterMove(Character *cc, Field &field) {
                         return;
                     }
                 }
-            }
-        }
-    }
-
-    if (field.IsSpecialField()) {
-        s_fieldattrib which;
-        FIELDATTRIBHASH::iterator temp = specialfields.find(cc->getPosition());
-
-        if (specialfields.end() != temp) {
-            which = temp->second;
-
-            switch (which.type) {
-            case SOUNDFIELD:
-
-                if (cc->isAlive()) {
-                    makeSoundForAllPlayersInRange(cc->getPosition(), 3, which.flags);
-                }
-
-                break;
-
-            case MUSICFIELD:
-
-                if (cc->getType() == Character::player) {
-                    dynamic_cast<Player *>(cc)->startMusic(which.flags);
-                }
-
-                break;
             }
         }
     }
@@ -248,45 +221,16 @@ bool World::addWarpField(const position &where, const position &target, unsigned
             warpfi.setId(startitemnr);
             warpfi.setNumber(1);
             warpfi.makePermanent();
-            field.PutTopItem(warpfi);
+            field.addItemOnStack(warpfi);
         }
 
-        field.SetWarpField(target);
-        field.updateFlags();
+        field.setWarp(target);
 
         return true;
     } catch (FieldNotFound &) {
         return false;
     }
 
-}
-
-
-bool World::makeSpecialField(const position &where, s_fieldattrib which) {
-    try {
-        Field &field = fieldAt(where);
-
-        field.SetSpecialField(true);
-        specialfields.emplace(where, which);
-
-        return true;
-    } catch (FieldNotFound &) {
-        return false;
-    }
-}
-
-
-bool World::makeSpecialField(short int x, short int y, short int z, unsigned char type, unsigned long int value) {
-
-    position where;
-    s_fieldattrib which;
-    where.x = x;
-    where.y = y;
-    where.z = z;
-    which.type = type;
-    which.flags = value;
-
-    return makeSpecialField(where, which);
 }
 
 
@@ -307,7 +251,7 @@ bool World::addWarpField(const position &where, const position &target, unsigned
 
 bool World::removeWarpField(const position &pos) {
     try {
-        fieldAt(pos).UnsetWarpField();
+        fieldAt(pos).removeWarp();
         return true;
     } catch (FieldNotFound &) {
         return false;

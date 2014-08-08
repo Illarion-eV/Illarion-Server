@@ -357,7 +357,7 @@ void CastTS::performAction(Player *player) {
             try {
                 Field &field = World::get()->fieldAt(castPosition);
 
-                if (field.IsPlayerOnField() || field.IsMonsterOnField() || field.IsNPCOnField()) {
+                if (field.hasPlayer() || field.hasMonster() || field.hasNPC()) {
                     Character *tmpCharacter = World::get()->findCharacterOnField(castPosition);
 
                     if (tmpCharacter) {
@@ -384,7 +384,7 @@ void CastTS::performAction(Player *player) {
                 } else {
                     Item item;
 
-                    if (field.ViewTopItem(item)) {
+                    if (field.viewItemOnStack(item)) {
                         Logger::debug(LogFacility::Script) << "Item found at target field!" << Log::end;
 
                         if (LuaMageScript) {
@@ -673,7 +673,7 @@ void UseTS::performAction(Player *player) {
         try {
             Field &field = World::get()->fieldAt(usePosition);
 
-            if (field.IsPlayerOnField() || field.IsNPCOnField() || field.IsMonsterOnField()) {
+            if (field.hasPlayer() || field.hasNPC() || field.hasMonster()) {
                 Logger::debug(LogFacility::Script) << "Character on field found!" << Log::end;
                 Character *tmpCharacter = World::get()->findCharacterOnField(usePosition);
 
@@ -716,14 +716,14 @@ void UseTS::performAction(Player *player) {
                 Logger::debug(LogFacility::Script) << "no character on field!" << Log::end;
                 Item item;
 
-                if (field.ViewTopItem(item)) {
+                if (field.viewItemOnStack(item)) {
                     Logger::debug(LogFacility::Script) << "Item on field" << Log::end;
 
                     LuaScript = Data::CommonItems.script(item.getId());
 
                     if (LuaScript) {
                         Source.Type = LUA_ITEM;
-                        field.ViewTopItem(Source.item);
+                        field.viewItemOnStack(Source.item);
                         Source.item.pos = usePosition;
                         Source.item.type = ScriptItem::it_field;
                         Source.item.owner = player;

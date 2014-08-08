@@ -95,7 +95,7 @@ void SpawnPoint::spawn() {
                             newmonster = new Monster(spawn.typ, tempPos, this);
                             ++spawn.akt_count;
                             world->newMonsters.push_back(newmonster);
-                            field.SetPlayerOnField(true);
+                            field.setPlayer();
                             world->sendCharacterMoveToAllVisiblePlayers(newmonster, NORMALMOVE, 4);
                         } catch (FieldNotFound &) {
                         }

@@ -56,10 +56,7 @@ typedef uint16_t TYPE_OF_CONTAINERSLOTS;
 
 typedef uint16_t TYPE_OF_WALKINGCOST;
 
-typedef uint8_t  TYPE_OF_GROUNDLEVEL;
-typedef uint8_t  TYPE_OF_SPECIALTILE;
 typedef uint8_t  TYPE_OF_SPECIALITEM;
-typedef uint16_t TYPE_OF_CATEGORY;
 typedef uint8_t  TYPE_OF_AMMUNITIONTYPE;
 typedef uint8_t  TYPE_OF_ACTIONPOINTS;
 

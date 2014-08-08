@@ -1237,8 +1237,6 @@ Monsters can have these intrinsic armor properties:\\
 \chapter{Fields}
 \section{Functions}
 In general, these functions will be combined with \comm{world}:\com{getField}{\position \var{position}} most of the time.\\
-\void \var{field}:\com{swapTopItem}{\integer \var{newId}, \integer \var{quality}}
-\\
 \integer \var{field}:\com{countItems}{}
 \begin{quote}
     Returns the number of items that are placed on top of that field.
@@ -1247,14 +1245,6 @@ In general, these functions will be combined with \comm{world}:\com{getField}{\p
 \begin{quote}
     Returns the item with position \var{stackpos} (0 being the bottom item) within the pile of items on this field. If \var{stackpos}
     exceeds the number of items on that field, a 0-item is returned (id=0), therefore it is a good idea to check the number of items on that field first.
-\end{quote}
-
-\begin{quote}
-       Changes the top item on a field to newId with quality. 0 to let the quality unchanged.
-\end{quote}
-\void \var{field}:\com{changeQualityOfTopItem}{\integer \var{amount}}
-\begin{quote}
-       An easy way to change the quality of that item which the player would pick up.
 \end{quote}
 \bool \var{field}:\com{isPassable}{}
 \begin{quote}

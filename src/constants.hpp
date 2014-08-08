@@ -38,54 +38,37 @@ const uint32_t MONSTERVIEWRANGE = 11;
 #define BANNED 30
 #define BANNEDFORTIME 31
 
-#define SOUNDFIELD 1
-#define MUSICFIELD 2
-
 #define DEPOTITEM 321
 #define DEPOTSIZE 100
 #define BLOCKEDITEM 228
 
-#define FLAG_GROUNDLEVEL 3 //!< 0,1,2,3
-
-#define FLAG_SPECIALITEM 8 //!< 1 == true
-
-#define FLAG_PENETRATEABLE 16 //!< 0 == true
-
-#define FLAG_TRANSPARENT 32 //!< 0 == true
-
-#define FLAG_PASSABLE 64 //!< 0 == true
-
-#define FLAG_MAKEPASSABLE 128 //!< 1 == true
-
-#define FLAG_MONSTERONFIELD 4 //!< 1 == true
-
-#define FLAG_NPCONFIELD 8 //!< 1 == true
-
-#define FLAG_PLAYERONFIELD 128 //!< 1 == true
-
-#define FLAG_SPECIALTILE 128  //!< 1 == true
-
-#define FLAG_WARPFIELD 1 //!< 1 == true
+#define FLAG_WARPFIELD 1
+#define FLAG_SPECIALITEM 2
+#define FLAG_BLOCKPATH 4
+#define FLAG_MAKEPASSABLE 8
+#define FLAG_MONSTERONFIELD 16
+#define FLAG_NPCONFIELD 32
+#define FLAG_PLAYERONFIELD 64
 
 // Verwendung siehe Tabelle:
-// WERT|      tiles        |   tilesmoditems   |    clientflags     |     extraflags    |
-// ----+-------------------+-------------------+--------------------+-------------------+
-// 001 |FLAG_GROUNDLEVEL   |FLAG_GROUNDLEVEL   |FLAG_GROUNDLEVEL    |FLAG_WARPFIELD     |
-// ----+-------------------+-------------------+--------------------+-------------------+
-// 002 |FLAG_GROUNDLEVEL   |FLAG_GROUNDLEVEL   |FLAG_GROUNDLEVEL    |                   |
-// ----+-------------------+-------------------+--------------------+-------------------+
-// 004 |                   |                   |FLAG_MONSTERONFIELD |                   |
-// ----+-------------------+-------------------+--------------------+-------------------+
-// 008 |                   |FLAG_SPECIALITEM   |FLAG_NPCONFIELD     |FLAG_SPECIALITEM   |
-// ----+-------------------+-------------------+--------------------+-------------------+
-// 016 |FLAG_PENETRATEABLE |FLAG_PENETRATEABLE |                    |FLAG_PENETRATEABLE |
-// ----+-------------------+-------------------+--------------------+-------------------+
-// 032 |FLAG_TRANSPARENT   |FLAG_TRANSPARENT   |                    |FLAG_TRANSPARENT   |
-// ----+-------------------+-------------------+--------------------+-------------------+
-// 064 |FLAG_PASSABLE      |FLAG_PASSABLE      |                    |FLAG_PASSABLE      |
-// ----+-------------------+-------------------+--------------------+-------------------+
-// 128 |FLAG_SPECIALTILE   |                   |FLAG_PLAYERONFIELD  |FLAG_SPECIALTILE   |
-// ----+-------------------+-------------------+--------------------+-------------------+
+// WERT|      tiles        |   tilesmoditems   |       flags        |
+// ----+-------------------+-------------------+--------------------+
+// 001 |                   |                   |FLAG_WARPFIELD      |
+// ----+-------------------+-------------------+--------------------+
+// 002 |                   |FLAG_SPECIALITEM   |FLAG_SPECIALITEM    |
+// ----+-------------------+-------------------+--------------------+
+// 004 |FLAG_BLOCKPATH     |FLAG_BLOCKPATH     |FLAG_BLOCKPATH      |
+// ----+-------------------+-------------------+--------------------+
+// 008 |                   |FLAG_MAKEPASSABLE  |FLAG_MAKEPASSABLE   |
+// ----+-------------------+-------------------+--------------------+
+// 016 |                   |                   |FLAG_MONSTERONFIELD |
+// ----+-------------------+-------------------+--------------------+
+// 032 |                   |                   |FLAG_NPCONFIELD     |
+// ----+-------------------+-------------------+--------------------+
+// 064 |                   |                   |FLAG_PLAYERONFIELD  |
+// ----+-------------------+-------------------+--------------------+
+// 128 |                   |                   |                    |
+// ----+-------------------+-------------------+--------------------+
 
 //! das Verzeichnis der Karte, relativ zum DEFAULTMUDDIR
 #define MAPDIR          "map/"

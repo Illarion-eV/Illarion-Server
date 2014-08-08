@@ -139,9 +139,9 @@ bool WorldMap::exportTo(const std::string &exportDir) const {
 
                 fieldsf << x-minX << ";" << y-minY << ";" << field.getTileCode() << ";" << field.getMusicId() << std::endl;
 
-                if (field.IsWarpField()) {
+                if (field.isWarp()) {
                     position target;
-                    field.GetWarpField(target);
+                    field.getWarp(target);
                     warpsf << x-minX << ";" << y-minY << ";" << target.x << ";" << target.y << ";" << target.z << std::endl;
                 }
 

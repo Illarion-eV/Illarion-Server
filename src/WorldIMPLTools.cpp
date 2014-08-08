@@ -212,7 +212,7 @@ std::list<BlockingObject> World::LoS(const position &startingpos, const position
             try {
                 Field &field = fieldAt(pos);
                 
-                if (field.IsPlayerOnField()) {
+                if (field.hasPlayer()) {
                     bo.blockingType = BlockingObject::BT_CHARACTER;
                     bo.blockingChar = findCharacterOnField(pos);
 
@@ -224,7 +224,7 @@ std::list<BlockingObject> World::LoS(const position &startingpos, const position
                 } else {
                     ScriptItem it;
 
-                    for (size_t i = 0; i < field.NumberOfItems(); ++i) {
+                    for (size_t i = 0; i < field.itemCount(); ++i) {
                         auto testItem = field.getStackItem(i);
                         
                         if (testItem.getVolume() > it.getVolume()) {
@@ -353,7 +353,7 @@ Character *World::findCharacter(TYPE_OF_CHARACTER_ID id) {
 void World::takeMonsterAndNPCFromMap() {
     Monsters.for_each([this](Monster *monster) {
         try {
-            fieldAt(monster->getPosition()).SetMonsterOnField(false);
+            fieldAt(monster->getPosition()).removeMonster();
         } catch (FieldNotFound &) {
         }
 
@@ -362,7 +362,7 @@ void World::takeMonsterAndNPCFromMap() {
 
     Npc.for_each([this](NPC *npc) {
         try {
-            fieldAt(npc->getPosition()).SetNPCOnField(false);
+            fieldAt(npc->getPosition()).removeNPC();
         } catch (FieldNotFound &) {
         }
 
@@ -631,27 +631,7 @@ void World::ageInventory() {
 
 void World::Save() const {
     std::string path = directory + std::string(MAPDIR) + worldName;
-
     maps.saveToDisk(path);
-
-    std::ofstream specialfile((path + "_specialfields").c_str(), std::ios::binary | std::ios::out | std::ios::trunc);
-
-    if (! specialfile.good()) {
-        Logger::error(LogFacility::World) << "World::Save: error writing specialfields!" << Log::end;
-    } else {
-        unsigned short int size = specialfields.size();
-        Logger::error(LogFacility::World) << "World::Save: saving " << size << " special fields." << Log::end;
-        specialfile.write((char *) & size, sizeof(size));
-
-        for (const auto &field : specialfields) {
-            specialfile.write((char *) & (field.first), sizeof(field.first));
-            specialfile.write((char *) & (field.second.type), sizeof(field.second.type));
-            specialfile.write((char *) & (field.second.flags), sizeof(field.second.flags));
-        }
-
-        specialfile.close();
-    }
-
 }
 
 
@@ -701,32 +681,6 @@ void World::Load() {
 
         mapinitfile.close();
     }
-
-    std::ifstream specialfile((path + "_specialfields").c_str(), std::ios::binary | std::ios::in);
-
-    if (! specialfile.good()) {
-        Logger::error(LogFacility::World) << "Error while loading maps: could not open " << (path + "_specialfields") << Log::end;
-        // TODO propably should terminate the server due to a severe error here...
-        return;
-    } else {
-        unsigned short int size3;
-        specialfile.read((char *) & size3, sizeof(size3));
-        Logger::info(LogFacility::World) << "Loading " << size3 << " special fields" << Log::end;
-
-        position start;
-        s_fieldattrib attrib;
-
-        for (int i = 0 ; i < size3; ++i) {
-            specialfile.read((char *) & start, sizeof(start));
-            specialfile.read((char *) & (attrib.type), sizeof(attrib.type));
-            specialfile.read((char *) & (attrib.flags), sizeof(attrib.flags));
-
-            makeSpecialField(start, attrib);
-        }
-
-        specialfile.close();
-    }
-
 }
 
 int World::getTime(const std::string &timeType) {
@@ -830,7 +784,7 @@ bool World::findWarpFieldsInRange(const position &pos, short int range, std::vec
             try {
                 const position p(x, y, pos.z);
 
-                if (fieldAt(p).IsWarpField()) {
+                if (fieldAt(p).isWarp()) {
                     warppositions.push_back(p);
                 }
             } catch (FieldNotFound &) {

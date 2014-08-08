@@ -154,7 +154,6 @@ bool Map::Load(const std::string &name) {
             for (auto &column : fields) {
                 for (auto &field : column) {
                     field.load(map, items, warps, containers);
-                    field.updateFlags();
                 }
             }
 

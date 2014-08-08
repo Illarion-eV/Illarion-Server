@@ -791,18 +791,9 @@ void LuaScript::init_base_functions() {
         .def("find", (bool(LongTimeCharacterEffects:: *)(const std::string &,LongTimeEffect *&))&LongTimeCharacterEffects::find,luabind::pure_out_value(_3)),
         luabind::class_<Field>("Field")
         .def("tile", &Field::getTileId)
-        //.def("changeQualityOfTopItem", &Field::changeQualityOfTopItem)
         .def("getStackItem", &Field::getStackItem)
-        .def("createItemAlways", &Field::PutTopItem)
-        .def("createItem", &Field::addTopItem)
-        .def("createItemGround", &Field::PutGroundItem)
-        .def("takeTopItem", &Field::TakeTopItem, luabind::pure_out_value(_2))
-        .def("increaseTopItem", &Field::increaseTopItem, luabind::pure_out_value(_3))
-        .def("swapTopItem", &Field::swapTopItem)
-        .def("viewTopItem", &Field::ViewTopItem)
-        .def("countItems", &Field::NumberOfItems)
-        .def("deleteAllItems", &Field::DeleteAllItems)
-        .def("isPassable", &Field::IsPassable),
+        .def("countItems", &Field::itemCount)
+        .def("isPassable", &Field::isWalkable),
         luabind::class_<ItemLookAt>("ItemLookAt")
         .def(luabind::constructor<>())
         .enum_("Rareness")
@@ -899,7 +890,6 @@ void LuaScript::init_base_functions() {
         .def("getWeaponStruct", &World::getWeaponStruct, luabind::pure_out_value(_3))
         .def("getNaturalArmor", &World::getNaturalArmor, luabind::pure_out_value(_3))
         .def("getMonsterAttack", &World::getMonsterAttack, luabind::pure_out_value(_3))
-        .def("changeQualityOfTopItem", &World::changeQualityOfItemAt)
         .def("changeQuality", &World::changeQuality)
         .def("changeItem", &World::changeItem)
         .def("isCharacterOnField", &World::isCharacterOnField)

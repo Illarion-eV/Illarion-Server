@@ -161,15 +161,6 @@ void World::changeQuality(ScriptItem item, short int amount) {
     }
 }
 
-void World::changeQualityOfItemAt(const position &pos, short int amount) {
-    try {
-        if (fieldAt(pos).changeQualityOfTopItem(amount)) {
-            sendRemoveItemFromMapToAllVisibleCharacters(pos);
-        }
-    } catch (FieldNotFound &) {
-    }
-}
-
 bool World::changeItem(ScriptItem item) {
     if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
         item.owner->characterItems[ item.itempos ] = (Item)item;
@@ -186,8 +177,8 @@ bool World::changeItem(ScriptItem item) {
             Field &field = fieldAt(item.pos);
             Item it;
 
-            if (field.TakeTopItem(it)) {
-                field.PutTopItem(static_cast<Item>(item));
+            if (field.takeItemFromStack(it)) {
+                field.addItemOnStack(static_cast<Item>(item));
 
                 if (item.getId() != it.getId() || it.getNumber() != item.getNumber()) {
                     sendSwapItemOnMapToAllVisibleCharacter(it.getId(), item.pos, item);
@@ -261,7 +252,7 @@ bool World::erase(ScriptItem item, int amount) {
         try {
             Field &field = fieldAt(item.pos);
             bool erased=false;
-            field.increaseTopItem(-amount, erased);
+            field.increaseItemOnStack(-amount, erased);
 
             if (erased) {
                 sendRemoveItemFromMapToAllVisibleCharacters(item.pos);
@@ -295,7 +286,7 @@ bool World::increase(ScriptItem item, short int count) {
     } else if (item.type == ScriptItem::it_field) {
         try {
             bool erased = false;
-            fieldAt(item.pos).increaseTopItem(count, erased);
+            fieldAt(item.pos).increaseItemOnStack(count, erased);
 
             if (erased) {
                 sendRemoveItemFromMapToAllVisibleCharacters(item.pos);
@@ -328,9 +319,9 @@ bool World::swap(ScriptItem item, TYPE_OF_ITEM_ID newitem, unsigned short int ne
             Field &field = fieldAt(item.pos);
             Item it;
 
-            if (field.ViewTopItem(it)) {
+            if (field.viewItemOnStack(it)) {
 
-                if (field.swapTopItem(newitem, newQuality)) {
+                if (field.swapItemOnStack(newitem, newQuality)) {
                     Item dummy;
                     dummy.setId(newitem);
                     dummy.setNumber(it.getNumber());
@@ -442,7 +433,7 @@ void World::makeSound(unsigned short int soundid, const position &pos) {
 
 bool World::isItemOnField(const position &pos) {
     try {
-        return fieldAt(pos).NumberOfItems() > 0;
+        return fieldAt(pos).itemCount() > 0;
     } catch (FieldNotFound &) {
         logMissingField("isItemOnField", pos);
         return false;
@@ -456,7 +447,7 @@ ScriptItem World::getItemOnField(const position &pos) {
         Field &field = fieldAt(pos);
         Item it;
 
-        if (field.ViewTopItem(it)) {
+        if (field.viewItemOnStack(it)) {
             item = it;
             item.pos = pos;
             item.type = ScriptItem::it_field;
@@ -472,7 +463,6 @@ void World::changeTile(short int tileid, const position &pos) {
     try {
         Field &field = fieldAt(pos);
         field.setTileId(tileid);
-        field.updateFlags();
     } catch (FieldNotFound &) {
         logMissingField("changeTile", pos);
     }
@@ -497,7 +487,6 @@ bool World::createSavedArea(uint16_t tileid, const position &pos, uint16_t heigh
         for (int y=0; y<height; ++y) {
             Field &field = tempmap->at(x+pos.x, y+pos.y);
             field.setTileId(tileid);
-            field.updateFlags();
         }
     }
 

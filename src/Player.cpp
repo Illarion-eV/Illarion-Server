@@ -128,13 +128,13 @@ void Player::login() throw(Player::LogoutException) {
     position pos = getPosition();
     
     try {
-        _world->walkableFieldNear(pos).SetPlayerOnField(true);
+        _world->walkableFieldNear(pos).setPlayer();
     } catch (FieldNotFound &) {
         try {
             pos.x = Config::instance().playerstart_x;
             pos.y = Config::instance().playerstart_y;
             pos.z = Config::instance().playerstart_z;
-            _world->walkableFieldNear(pos).SetPlayerOnField(true);
+            _world->walkableFieldNear(pos).setPlayer();
         } catch (FieldNotFound &) {
             throw LogoutException(NOPLACE);
         }
@@ -421,7 +421,7 @@ bool Player::lookIntoContainerOnField(direction dir) {
         Field &field = World::get()->fieldAt(containerPosition);
         Item item;
 
-        if (field.ViewTopItem(item)) {
+        if (field.viewItemOnStack(item)) {
             if (item.getId() != DEPOTITEM && item.isContainer()) {
                 auto it = field.containers.find(item.getNumber());
 
@@ -1927,9 +1927,9 @@ bool Player::move(direction dir, uint8_t mode) {
                     _world->sendAllVisibleCharactersToPlayer(this, true);
                 }
 
-                if (newField.IsWarpField()) {
+                if (newField.isWarp()) {
                     position newpos;
-                    newField.GetWarpField(newpos);
+                    newField.getWarp(newpos);
                     Warp(newpos);
                     cont = false;
                 }

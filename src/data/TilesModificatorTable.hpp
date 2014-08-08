@@ -31,7 +31,7 @@ public:
     virtual std::vector<std::string> getColumnNames() override;
     virtual TYPE_OF_ITEM_ID assignId(const Database::ResultTuple &row) override;
     virtual TilesModificatorStruct assignTable(const Database::ResultTuple &row) override;
-    bool nonPassable(TYPE_OF_ITEM_ID id);
+    bool passable(TYPE_OF_ITEM_ID id);
 };
 
 #endif

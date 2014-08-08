@@ -265,7 +265,7 @@ void World::lookAtMapItem(Player *cp, const position &pos) {
     try {
         Field &field = fieldAt(pos);
 
-        if (field.ViewTopItem(titem)) {
+        if (field.viewItemOnStack(titem)) {
             ScriptItem n_item = titem;
             n_item.type = ScriptItem::it_field;
             n_item.pos = pos;

@@ -74,14 +74,14 @@ TEST_F(map_import_tests, importWarps) {
             const auto it = warps.find(std::make_pair(x, y));
 
             if (it == warps.end()) {
-                EXPECT_FALSE(field.IsWarpField());
+                EXPECT_FALSE(field.isWarp());
             } else {
                 auto &warp_target = it->second;
 
-                EXPECT_TRUE(field.IsWarpField());
+                EXPECT_TRUE(field.isWarp());
 
                 position target;
-                field.GetWarpField(target);
+                field.getWarp(target);
                 EXPECT_EQ(warp_target, target);
             }
         }
@@ -113,11 +113,11 @@ TEST_F(map_import_tests, importItems) {
             const auto it = items.find(std::make_pair(x, y));
 
             if (it == items.end()) {
-                EXPECT_EQ(0, field.NumberOfItems());
+                EXPECT_EQ(0, field.itemCount());
             } else {
                 auto &itemStack = it->second;
 
-                EXPECT_EQ(itemStack.size(), field.NumberOfItems());
+                EXPECT_EQ(itemStack.size(), field.itemCount());
 
                 for (size_t i = 0; i < itemStack.size(); ++i) {
                     auto &simple_item = itemStack[i];

@@ -223,25 +223,6 @@ public:
     bool parsePlayerCommands(Player *cp, const std::string &text);
 
     /**
-    *a struct for saving different field attributes
-    */
-    typedef struct {
-        unsigned char type;/**< type of the field*/
-        unsigned long int flags; /**< flags of the field*/
-    }
-    s_fieldattrib;
-
-    /**
-    *definition of a map which holds the special attribs of fields
-    */
-    typedef std::unordered_map<position, s_fieldattrib> FIELDATTRIBHASH;
-
-    /**
-    *the map which holds the information of all the special fields of the map
-    */
-    FIELDATTRIBHASH specialfields;
-
-    /**
     *the current script which is called
     */
     LuaScript *currentScript;
@@ -461,29 +442,6 @@ public:
     *@return true if the adding of the warpfield was succesfull otherwise false
     */
     bool addWarpField(const position &where, const position &target, unsigned short int starttilenr, Item::id_type startitemnr, unsigned short int targettilenr, Item::id_type targetitemnr);
-
-    /**
-    *adds a special field to a specific position
-    *
-    *@param where the position where the special field should be added
-    *@param which which type of special field should be added
-    *@see s_fieldattrib
-    *@return true if the adding was succesfully otherwise false
-    */
-    bool makeSpecialField(const position &where, s_fieldattrib which);
-
-    /**
-    *adds a special field to a specific position
-    *
-    *@param x the x coordinate of the new special field
-    *@param y the y coordinate of the new special field
-    *@param z the z coordinate of the new special field
-    *@param type the type of the new special field
-    *@see s_fieldattrib.type
-    *@param value the flags of the new special field
-    *@return true if the adding was succesfully otherwise false
-    */
-    bool makeSpecialField(short int x, short int y, short int z, unsigned char type, unsigned long int value);
 
     /**
     *removes a warpfield at a given position
@@ -834,8 +792,6 @@ public:
 
     //Aendert ein ScriptItem
     bool changeItem(ScriptItem item);
-
-    void changeQualityOfItemAt(const position &pos, short int amount);
 
     //Prft ob sich auf dem Feld ein Character befindet
     //\param position die zu prfen ist

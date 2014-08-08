@@ -448,12 +448,12 @@ bool World::takeItemFromMap(Character *cc, const position &itemPosition) {
     try {
         Field &field = fieldAt(itemPosition);
 
-        if (field.ViewTopItem(g_item)) {
+        if (field.viewItemOnStack(g_item)) {
             const auto &tempCommon = Data::CommonItems[g_item.getId()];
 
             if (tempCommon.isValid()) {
                 if (tempCommon.Weight < 30000 && !g_item.isPermanent()) {
-                    field.TakeTopItem(g_item);
+                    field.takeItemFromStack(g_item);
 
                     if (!g_item.isStackable() && !g_item.isContainer()) {
                         if (g_item.getNumber() > 1) {
@@ -527,7 +527,7 @@ bool World::putItemOnMap(Character *cc, const position &itemPosition) {
     try {
         Field &field = fieldAt(itemPosition);
 
-        if (Data::TilesModItems.nonPassable(g_item.getId())) {
+        if (!Data::TilesModItems.passable(g_item.getId())) {
             if (!field.moveToPossible()) {
                 return false;
             }
@@ -540,7 +540,7 @@ bool World::putItemOnMap(Character *cc, const position &itemPosition) {
                 closeShowcaseIfNotInRange(g_cont, itemPosition);
             }
 
-            if (field.addContainer(g_item, g_cont)) {
+            if (field.addContainerOnStackIfWalkable(g_item, g_cont)) {
                 sendPutItemOnMapToAllVisibleCharacters(itemPosition, g_item);
 
                 if (cc && Data::Triggers.exists(itemPosition)) {
@@ -561,7 +561,7 @@ bool World::putItemOnMap(Character *cc, const position &itemPosition) {
                 return true;
             }
         } else {
-            if (field.addTopItem(g_item)) {
+            if (field.addItemOnStackIfWalkable(g_item)) {
                 sendPutItemOnMapToAllVisibleCharacters(itemPosition, g_item);
 
                 if (cc && Data::Triggers.exists(itemPosition)) {
@@ -599,7 +599,7 @@ bool World::putItemAlwaysOnMap(Character *cc, const position &itemPosition) {
                 g_cont = new Container(g_item.getId());
             }
 
-            if (field.addContainerAlways(g_item, g_cont)) {
+            if (field.addContainerOnStack(g_item, g_cont)) {
                 sendPutItemOnMapToAllVisibleCharacters(itemPosition, g_item);
 
                 if (cc && Data::Triggers.exists(itemPosition)) {
@@ -620,7 +620,7 @@ bool World::putItemAlwaysOnMap(Character *cc, const position &itemPosition) {
                 return true;
             }
         } else {
-            if (field.PutTopItem(g_item)) {
+            if (field.addItemOnStack(g_item)) {
                 sendPutItemOnMapToAllVisibleCharacters(itemPosition, g_item);
 
                 if (cc && Data::Triggers.exists(itemPosition)) {
@@ -650,20 +650,20 @@ bool World::putItemAlwaysOnMap(Character *cc, const position &itemPosition) {
 }
 
 void World::checkField(Field &field, const position &itemPosition) {
-    if (field.HasSpecialItem()) {
-        if (field.IsPlayerOnField()) {
+    if (field.hasSpecialItem()) {
+        if (field.hasPlayer()) {
             Player *temp = Players.find(itemPosition);
 
             if (temp) {
                 checkFieldAfterMove(temp, field);
             }
-        } else if (field.IsMonsterOnField()) {
+        } else if (field.hasMonster()) {
             Monster *temp = Monsters.find(itemPosition);
 
             if (temp) {
                 checkFieldAfterMove(temp, field);
             }
-        } else if (field.IsNPCOnField()) {
+        } else if (field.hasNPC()) {
             NPC *temp = Npc.find(itemPosition);;
 
             if (temp) {

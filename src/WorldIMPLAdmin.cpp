@@ -284,7 +284,7 @@ void World::save_command(Player *cp) {
 
     Players.for_each([this](Player *player) {
         try {
-            fieldAt(player->getPosition()).SetPlayerOnField(false);
+            fieldAt(player->getPosition()).removePlayer();
         } catch (FieldNotFound &) {
         }
     });
@@ -293,7 +293,7 @@ void World::save_command(Player *cp) {
 
     Players.for_each([this](Player *player) {
         try {
-            fieldAt(player->getPosition()).SetPlayerOnField(true);
+            fieldAt(player->getPosition()).setPlayer();
         } catch (FieldNotFound &) {
         }
     });
@@ -397,7 +397,7 @@ void World::teleportPlayerToOther(Player *player, std::string text) {
 void World::forceLogoutOfAllPlayers() {
     Players.for_each([this](Player *player) {
         try {
-            fieldAt(player->getPosition()).SetPlayerOnField(false);
+            fieldAt(player->getPosition()).removePlayer();
         } catch (FieldNotFound &) {
         }
 
@@ -627,7 +627,6 @@ void World::setNextTile(Player *cp, unsigned char tilenumber) {
     try {
         Field &field = fieldAt(pos);
         field.setTileId(tilenumber);
-        field.updateFlags();
     } catch (FieldNotFound &) {
     }
 
@@ -698,7 +697,7 @@ void World::what_command(Player *cp) {
         cp->inform(message.str());
         Item top;
 
-        if (field.ViewTopItem(top)) {
+        if (field.viewItemOnStack(top)) {
             message.str("");
 
             message << "- Item " << top.getId();
@@ -1147,7 +1146,6 @@ void create_area_command(World *world, Player *player,const std::string &params)
         for (int _y=0; _y<h; ++_y) {
             Field &field = tempmap->at(_x+x, _y+y);
             field.setTileId(filltile);
-            field.updateFlags();
         }
     }
 
@@ -1227,7 +1225,7 @@ void World::showWarpFieldsInRange(Player *cp, const std::string &text) {
             for (const auto &warpfield : warpfieldsinrange) {
                 try {
                     position target;
-                    fieldAt(warpfield).GetWarpField(target);
+                    fieldAt(warpfield).getWarp(target);
                     std::string message = warpfield.toString() + " -> " + target.toString();
                     cp->inform(message);
                 } catch (FieldNotFound &) {

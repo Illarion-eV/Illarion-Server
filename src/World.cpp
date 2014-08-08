@@ -281,7 +281,6 @@ bool World::load_from_editor(const std::string &importDir,
             Field &field = tempmap->at(temp_tile.x+h_x, temp_tile.y+h_y);
             field.setTileId(temp_tile.fieldID);
             field.setMusicId(temp_tile.musicID);
-            field.updateFlags();
         }
     }
 
@@ -342,7 +341,7 @@ bool World::load_from_editor(const std::string &importDir,
         start.y += h_y;
 
         try {
-            fieldAt(start).SetWarpField(target);
+            fieldAt(start).setWarp(target);
         } catch (FieldNotFound &) {
         }
 
@@ -548,7 +547,7 @@ void World::checkPlayers() {
             Logger::info(LogFacility::World) << player << " is offline" << Log::end;
 
             try {
-                fieldAt(pos).SetPlayerOnField(false);
+                fieldAt(pos).removePlayer();
             } catch (FieldNotFound &) {
             }
 

@@ -23,22 +23,17 @@
 #include "globals.hpp"
 #include <limits>
 
-Field::Field() : warptarget{0, 0, 0} {
-    tile = 0;
-    music = 0;
-    clientflags = 0;
-    extraflags = 0;
-}
 
-void Field::setTileId(unsigned short int id) {
+void Field::setTileId(uint16_t id) {
     tile = id;
+    updateFlags();
 }
 
-unsigned short int Field::getTileCode() const {
+uint16_t Field::getTileCode() const {
     return tile;
 }
 
-unsigned short int Field::getTileId() const {
+uint16_t Field::getTileId() const {
     if (((tile & 0xFC00) >> 10) > 0) {
         return tile & 0x001F;
     } else {
@@ -46,7 +41,7 @@ unsigned short int Field::getTileId() const {
     }
 }
 
-unsigned short int Field::getSecondaryTileId() const {
+uint16_t Field::getSecondaryTileId() const {
     if (((tile & 0xFC00) >> 10) > 0) {
         return (tile & 0x03E0) >> 5;
     } else {
@@ -54,11 +49,11 @@ unsigned short int Field::getSecondaryTileId() const {
     }
 }
 
-void Field::setMusicId(unsigned short int id) {
+void Field::setMusicId(uint16_t id) {
     music = id;
 }
 
-unsigned short int Field::getMusicId() const {
+uint16_t Field::getMusicId() const {
     return music;
 }
 
@@ -67,7 +62,7 @@ bool Field::isTransparent() const {
 }
 
 TYPE_OF_WALKINGCOST Field::getMovementCost() const {
-    if (IsPassable()) {
+    if (isWalkable()) {
         auto tileId = getTileId();
         const auto &primaryTile = Data::Tiles[tileId];
         TYPE_OF_WALKINGCOST tileWalkingCost = primaryTile.walkingCost;
@@ -86,62 +81,22 @@ TYPE_OF_WALKINGCOST Field::getMovementCost() const {
     }
 }
 
-ScriptItem Field::getStackItem(uint8_t spos) const {
-    ScriptItem retItem;
-
-    if (items.empty()) {
-        return retItem;
-    } else {
-        uint8_t counter = 0;
-
-        for (const auto &item : items) {
-            if (counter >= spos) {
-                retItem = item;
-                retItem.type = ScriptItem::it_field;
-                retItem.itempos = counter;
-                return retItem;
-            }
-
-            ++counter;
-        }
-
-        return retItem;
+ScriptItem Field::getStackItem(uint8_t pos) const {
+    if (pos < items.size()) {
+        ScriptItem result = items.at(pos);
+        result.type = ScriptItem::it_field;
+        result.itempos = pos;
+        return result;
     }
+
+    return {};
 }
 
 
-bool Field::addTopItem(const Item &it) {
-
-    if (IsPassable()) {
-        if (items.size() < MAXITEMS) {
-            items.push_back(it);
-
-            if (Data::TilesModItems.exists(it.getId())) {
-                const auto &temp = Data::TilesModItems[it.getId()];
-                extraflags = extraflags | (temp.Modificator & (FLAG_SPECIALITEM + FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_MAKEPASSABLE));
-            }
-
-            return true;
-        }
-    }
-
-    return false;
-
-}
-
-
-bool Field::PutGroundItem(const Item &it) {
+bool Field::addItemOnStack(const Item &item) {
     if (items.size() < MAXITEMS) {
-        if (items.empty()) {
-            items.push_back(it);
-        } else {
-            items.insert(items.begin(), it);
-        }
-
-        if (Data::TilesModItems.exists(it.getId())) {
-            const auto &temp = Data::TilesModItems[it.getId()];
-            extraflags   = extraflags | (temp.Modificator & (FLAG_SPECIALITEM + FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_MAKEPASSABLE));
-        }
+        items.push_back(item);
+        updateFlags();
 
         return true;
     }
@@ -150,108 +105,79 @@ bool Field::PutGroundItem(const Item &it) {
 }
 
 
-bool Field::PutTopItem(const Item &it) {
-    if (items.size() < MAXITEMS) {
-        items.push_back(it);
-
-        if (Data::TilesModItems.exists(it.getId())) {
-            const auto &temp = Data::TilesModItems[it.getId()];
-            extraflags   = extraflags | (temp.Modificator & (FLAG_SPECIALITEM + FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_MAKEPASSABLE));
-        }
-
-        return true;
+bool Field::addItemOnStackIfWalkable(const Item &item) {
+    if (isWalkable()) {
+        return addItemOnStack(item);
     }
 
     return false;
 }
 
 
-bool Field::TakeTopItem(Item &it) {
+bool Field::takeItemFromStack(Item &item) {
     if (items.empty()) {
         return false;
     }
 
-    it = items.back();
+    item = items.back();
     items.pop_back();
     updateFlags();
 
     return true;
 }
 
-bool Field::changeQualityOfTopItem(short int amount) {
-    Item it;
 
-    if (TakeTopItem(it)) {
-        short int tmpQuality = ((amount+it.getDurability())<100) ? (amount + it.getQuality()) : (it.getQuality() - it.getDurability() + 99);
+int Field::increaseItemOnStack(int count, bool &erased) {
+    if (items.empty()) {
+        return false;
+    }
+    
+    Item &item = items.back();
+    count += item.getNumber();
+    auto maxStack = item.getMaxStack();
 
-        if (tmpQuality%100 > 1) {
-            it.setQuality(tmpQuality);
-            PutTopItem(it);
-            return false;
-        } else {
-            return true;
-        }
+    if (count > maxStack) {
+        item.setNumber(maxStack);
+        count -= maxStack;
+        erased = false;
+    } else if (count <= 0) {
+        items.pop_back();
+        updateFlags();
+        erased = true;
+    } else {
+        item.setNumber(count);
+        count = 0;
+        erased = false;
     }
 
-    return false;
+    return count;
 }
 
 
-int Field::increaseTopItem(int count, bool &erased) {
-
-    Item it;
-    int temp = count;
-
-    if (TakeTopItem(it)) {
-        temp = count + it.getNumber();
-        auto maxStack = it.getMaxStack();
-
-        if (temp > maxStack) {
-            it.setNumber(maxStack);
-            temp = temp - maxStack;
-            PutTopItem(it);
-            erased = false;
-        } else if (temp <= 0) {
-            temp = count + it.getNumber();
-            erased = true;
-        } else {
-            it.setNumber(temp);
-            temp = 0;
-            PutTopItem(it);
-            erased = false;
-        }
+bool Field::swapItemOnStack(TYPE_OF_ITEM_ID newId, uint16_t newQuality) {
+    if (items.empty()) {
+        return false;
     }
 
-    return temp;
+    Item &item = items.back();
+    item.setId(newId);
+
+    if (newQuality > 0) {
+        item.setQuality(newQuality);
+    }
+
+    const auto &common = Data::CommonItems[newId];
+
+    if (common.isValid()) {
+        item.setWear(common.AgeingSpeed);
+    }
+
+    updateFlags();
+    return true;
 }
 
 
-bool Field::swapTopItem(TYPE_OF_ITEM_ID newid, uint16_t newQuality) {
-    Item temp;
-
-    if (TakeTopItem(temp)) {
-        temp.setId(newid);
-
-        if (newQuality > 0) {
-            temp.setQuality(newQuality);
-        }
-
-        const auto &common = Data::CommonItems[newid];
-
-        if (common.isValid()) {
-            temp.setWear(common.AgeingSpeed);
-        }
-
-        PutTopItem(temp);
-        return true;
-    }
-
-    return false;
-}
-
-
-bool Field::ViewTopItem(Item &it) const {
-
+bool Field::viewItemOnStack(Item &it) const {
     if (items.empty()) {
         return false;
     }
@@ -262,13 +188,13 @@ bool Field::ViewTopItem(Item &it) const {
 }
 
 
-MAXCOUNTTYPE Field::NumberOfItems() const {
+MAXCOUNTTYPE Field::itemCount() const {
     return items.size();
 }
 
 
-bool Field::addContainer(Item item, Container *container) {
-    if (IsPassable()) {
+bool Field::addContainerOnStackIfWalkable(Item item, Container *container) {
+    if (isWalkable()) {
         if (items.size() < MAXITEMS - 1) {
             if (item.isContainer()) {
                 MAXCOUNTTYPE count = 0;
@@ -288,7 +214,7 @@ bool Field::addContainer(Item item, Container *container) {
 
                 item.setNumber(count);
 
-                if (!addTopItem(item)) {
+                if (!addItemOnStackIfWalkable(item)) {
                     containers.erase(count);
                 } else {
                     return true;
@@ -300,7 +226,7 @@ bool Field::addContainer(Item item, Container *container) {
     return false;
 }
 
-bool Field::addContainerAlways(Item item, Container *container) {
+bool Field::addContainerOnStack(Item item, Container *container) {
     if (item.isContainer()) {
         MAXCOUNTTYPE count = 0;
 
@@ -319,7 +245,7 @@ bool Field::addContainerAlways(Item item, Container *container) {
 
         item.setNumber(count);
 
-        if (!PutTopItem(item)) {
+        if (!addItemOnStack(item)) {
             containers.erase(count);
         } else {
             return true;
@@ -335,17 +261,16 @@ void Field::save(std::ofstream &mapStream, std::ofstream &itemStream,
 
     mapStream.write((char *) & tile, sizeof(tile));
     mapStream.write((char *) & music, sizeof(music));
-    mapStream.write((char *) & clientflags, sizeof(clientflags));
-    mapStream.write((char *) & extraflags, sizeof(extraflags));
+    mapStream.write((char *) & flags, sizeof(flags));
 
-    unsigned char itemsSize = items.size();
+    uint8_t itemsSize = items.size();
     itemStream.write((char *) & itemsSize, sizeof(itemsSize));
 
     for (const auto &item : items) {
         item.save(itemStream);
     }
 
-    if (IsWarpField()) {
+    if (isWarp()) {
         char b = 1;
         warpStream.write((char *) & b, sizeof(b));
         warpStream.write((char *) & warptarget, sizeof(warptarget));
@@ -354,7 +279,7 @@ void Field::save(std::ofstream &mapStream, std::ofstream &itemStream,
         warpStream.write((char *) & b, sizeof(b));
     }
 
-    unsigned char containersSize = containers.size();
+    uint8_t containersSize = containers.size();
     containerStream.write((char *) & containersSize, sizeof(containersSize));
     
     for (const auto &container : containers) {
@@ -390,11 +315,9 @@ void Field::load(std::ifstream &mapStream, std::ifstream &itemStream,
 
     mapStream.read((char *) & tile, sizeof(tile));
     mapStream.read((char *) & music, sizeof(music));
-    mapStream.read((char *) & clientflags, sizeof(clientflags));
-    mapStream.read((char *) & extraflags, sizeof(extraflags));
+    mapStream.read((char *) & flags, sizeof(flags));
 
-    unsigned char ftemp = 255 - FLAG_NPCONFIELD - FLAG_MONSTERONFIELD - FLAG_PLAYERONFIELD;
-    clientflags = clientflags & ftemp;
+    unsetBits(FLAG_NPCONFIELD | FLAG_MONSTERONFIELD | FLAG_PLAYERONFIELD);
 
     MAXCOUNTTYPE size;
     itemStream.read((char *) & size, sizeof(size));
@@ -413,7 +336,7 @@ void Field::load(std::ifstream &mapStream, std::ifstream &itemStream,
     if (isWarp == 1) {
         position target;
         warpStream.read((char *) & target, sizeof(warptarget));
-        SetWarpField(target);
+        setWarp(target);
     }
 
     containerStream.read((char *) & size, sizeof(size));
@@ -439,6 +362,7 @@ void Field::load(std::ifstream &mapStream, std::ifstream &itemStream,
         }
     }
 
+    updateFlags();
 }
 
 int8_t Field::age() {
@@ -501,146 +425,110 @@ int8_t Field::age() {
 
 void Field::updateFlags() {
 
-    extraflags = extraflags & (255 - (FLAG_SPECIALITEM + FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_MAKEPASSABLE));
+    unsetBits(FLAG_SPECIALITEM | FLAG_BLOCKPATH | FLAG_MAKEPASSABLE);
 
     if (Data::Tiles.exists(tile)) {
         const TilesStruct &tt = Data::Tiles[tile];
-        extraflags = extraflags | (tt.flags & (FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_SPECIALTILE + FLAG_MAKEPASSABLE));
+        setBits(tt.flags & (FLAG_BLOCKPATH | FLAG_MAKEPASSABLE));
     }
 
-    for (auto it = items.begin(); it < items.end(); ++it) {
-        if (Data::TilesModItems.exists(it->getId())) {
-            const auto &tmod = Data::TilesModItems[it->getId()];
-            extraflags = extraflags | (tmod.Modificator & (FLAG_SPECIALITEM + FLAG_PENETRATEABLE + FLAG_TRANSPARENT + FLAG_PASSABLE + FLAG_MAKEPASSABLE));
+    for (const auto &item : items) {
+        if (Data::TilesModItems.exists(item.getId())) {
+            const auto &mod = Data::TilesModItems[item.getId()];
+            setBits(mod.Modificator &
+                    (FLAG_SPECIALITEM | FLAG_BLOCKPATH | FLAG_MAKEPASSABLE));
         }
     }
 }
 
+bool Field::hasMonster() const {
+    return anyBitSet(FLAG_MONSTERONFIELD);
+}
 
-void Field::DeleteAllItems() {
-    items.clear();
-    updateFlags();
+void Field::setMonster() {
+    setBits(FLAG_MONSTERONFIELD);
+}
+
+void Field::removeMonster() {
+    unsetBits(FLAG_MONSTERONFIELD);
+}
+
+bool Field::hasNPC() const {
+    return anyBitSet(FLAG_NPCONFIELD);
+}
+
+void Field::setNPC() {
+    setBits(FLAG_NPCONFIELD);
+}
+
+void Field::removeNPC() {
+    unsetBits(FLAG_NPCONFIELD);
+}
+
+bool Field::hasPlayer() const {
+    return anyBitSet(FLAG_PLAYERONFIELD);
+}
+
+void Field::setPlayer() {
+    setBits(FLAG_PLAYERONFIELD);
+}
+
+void Field::removePlayer() {
+    unsetBits(FLAG_PLAYERONFIELD);
+}
+
+bool Field::isWarp() const {
+    return anyBitSet(FLAG_WARPFIELD);
 }
 
 
-bool Field::IsMonsterOnField() const {
-    return ((clientflags & FLAG_MONSTERONFIELD) != 0);
-}
-
-
-void Field::SetMonsterOnField(bool t) {
-    if (t) {
-        clientflags = clientflags | FLAG_MONSTERONFIELD;
-    } else {
-        clientflags = clientflags & (255 - FLAG_MONSTERONFIELD);
-    }
-}
-
-
-bool Field::IsNPCOnField() const {
-    return ((clientflags & FLAG_NPCONFIELD) != 0);
-}
-
-
-void Field::SetNPCOnField(bool t) {
-    if (t) {
-        clientflags = clientflags | FLAG_NPCONFIELD;
-    } else {
-        clientflags = clientflags & (255 - FLAG_NPCONFIELD);
-    }
-}
-
-
-bool Field::IsPlayerOnField() const {
-    return ((clientflags & FLAG_PLAYERONFIELD) != 0);
-}
-
-
-void Field::SetPlayerOnField(bool t) {
-    if (t) {
-        clientflags = clientflags | FLAG_PLAYERONFIELD;
-    } else {
-        clientflags = clientflags & (255 - FLAG_PLAYERONFIELD);
-    }
-}
-
-
-bool Field::IsWarpField() const {
-    return ((extraflags & FLAG_WARPFIELD) != 0);
-}
-
-
-void Field::SetWarpField(const position &pos) {
+void Field::setWarp(const position &pos) {
     warptarget = pos;
-    extraflags = extraflags | FLAG_WARPFIELD;
+    setBits(FLAG_WARPFIELD);
 }
 
 
-void Field::UnsetWarpField() {
-    extraflags = extraflags & (255 - FLAG_WARPFIELD);
+void Field::removeWarp() {
+    unsetBits(FLAG_WARPFIELD);
 }
 
 
-void Field::GetWarpField(position &pos) const {
+void Field::getWarp(position &pos) const {
     pos = warptarget;
 }
 
 
-bool Field::HasSpecialItem() const {
-    return ((extraflags & FLAG_SPECIALITEM) != 0);
+bool Field::hasSpecialItem() const {
+    return anyBitSet(FLAG_SPECIALITEM);
 }
 
 
-void Field::SetSpecialItem(bool t) {
-    if (t) {
-        extraflags = extraflags | FLAG_SPECIALITEM;
-    } else {
-        extraflags = extraflags & (255 - FLAG_SPECIALITEM);
-    }
-}
-
-
-bool Field::IsSpecialField() const {
-    return ((extraflags & FLAG_SPECIALTILE) != 0);
-}
-
-
-void Field::SetSpecialField(bool t) {
-    if (t) {
-        extraflags = extraflags | FLAG_SPECIALTILE;
-    } else {
-        extraflags = extraflags & (255 - FLAG_SPECIALTILE);
-    }
-}
-
-
-bool Field::IsTransparent() const {
-    return ((extraflags & FLAG_TRANSPARENT) == 0);
-}
-
-
-bool Field::IsPassable() const {
-    return (((extraflags & FLAG_PASSABLE) == 0) || ((extraflags & FLAG_MAKEPASSABLE) != 0));
-}
-
-
-bool Field::IsPenetrateable() const {
-    return ((extraflags & FLAG_PENETRATEABLE) == 0);
+bool Field::isWalkable() const {
+    return !anyBitSet(FLAG_BLOCKPATH) || anyBitSet(FLAG_MAKEPASSABLE);
 }
 
 
 bool Field::moveToPossible() const {
-    return (
-               (IsPassable()  &&
-                ((clientflags & (FLAG_MONSTERONFIELD | FLAG_NPCONFIELD | FLAG_PLAYERONFIELD)) == 0))
-           );
+    return isWalkable() && !anyBitSet(FLAG_MONSTERONFIELD | FLAG_NPCONFIELD | FLAG_PLAYERONFIELD);
 }
 
 void Field::setChar() {
-    clientflags |= FLAG_PLAYERONFIELD;
+    setBits(FLAG_PLAYERONFIELD);
 }
 
 void Field::removeChar() {
-    clientflags &= ~FLAG_PLAYERONFIELD;
+    unsetBits(FLAG_PLAYERONFIELD);
+}
+
+inline void Field::setBits(uint8_t bits) {
+    flags |= bits;
+}
+
+inline void Field::unsetBits(uint8_t bits) {
+    flags &= ~bits;
+}
+
+inline bool Field::anyBitSet(uint8_t bits) const {
+    return (flags & bits) != 0;
 }
 
