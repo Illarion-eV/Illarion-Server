@@ -37,7 +37,7 @@ TEST_F(map_import_tests, importTiles) {
         {{6, 0}, {4646, 0}, {10790, 0}, {3622, 0}, {6, 0}, {0, 0}}
     };
 
-    ASSERT_TRUE(world.load_from_editor("maps/test"));
+    ASSERT_TRUE(world.load_from_editor("maps/", "test"));
 
     for (unsigned short x = 0; x < map_w; ++x) {
         for (unsigned short y = 0; y < map_h; ++y) {
@@ -61,7 +61,7 @@ TEST_F(map_import_tests, importWarps) {
     warps[std::make_pair(0, 5)] = {0, 28, 4};
     warps[std::make_pair(4, 3)] = {1, 23, 54};
 
-    ASSERT_TRUE(world.load_from_editor("maps/test"));
+    ASSERT_TRUE(world.load_from_editor("maps/", "test"));
 
     for (unsigned short x = 0; x < map_w; ++x) {
         for (unsigned short y = 0; y < map_h; ++y) {
@@ -100,7 +100,7 @@ TEST_F(map_import_tests, importItems) {
     items[std::make_pair(3, 2)] = {{2609, 123, {{";\\=crazy=;", ";=\\crazy\\\\"}}}};
     items[std::make_pair(4, 1)] = {{651, 42, {}}, {2579, 0, {{"nameDe", "German Äöß"}, {"nameEn", "English"}}}};
 
-    ASSERT_TRUE(world.load_from_editor("maps/test"));
+    ASSERT_TRUE(world.load_from_editor("maps/", "test"));
 
     for (unsigned short x = 0; x < map_w; ++x) {
         for (unsigned short y = 0; y < map_h; ++y) {
