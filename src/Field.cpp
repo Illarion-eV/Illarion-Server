@@ -429,14 +429,21 @@ void Field::updateFlags() {
 
     if (Data::Tiles.exists(tile)) {
         const TilesStruct &tt = Data::Tiles[tile];
-        setBits(tt.flags & (FLAG_BLOCKPATH | FLAG_MAKEPASSABLE));
+        setBits(tt.flags & FLAG_BLOCKPATH);
     }
 
     for (const auto &item : items) {
         if (Data::TilesModItems.exists(item.getId())) {
             const auto &mod = Data::TilesModItems[item.getId()];
-            setBits(mod.Modificator &
-                    (FLAG_SPECIALITEM | FLAG_BLOCKPATH | FLAG_MAKEPASSABLE));
+            setBits(mod.Modificator & FLAG_SPECIALITEM);
+
+            if (mod.Modificator & FLAG_MAKEPASSABLE) {
+                unsetBits(FLAG_BLOCKPATH);
+                setBits(FLAG_MAKEPASSABLE);
+            } else if (mod.Modificator & FLAG_BLOCKPATH) {
+                unsetBits(FLAG_MAKEPASSABLE);
+                setBits(FLAG_BLOCKPATH);
+            }
         }
     }
 }
