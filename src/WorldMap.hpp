@@ -47,7 +47,15 @@ public:
 
     bool allMapsAged();
 
+    bool import(const std::string &importDir, const std::string &mapName);
     bool exportTo(const std::string &exportDir) const;
     void saveToDisk(const std::string &prefix) const;
+
+private:
+  static map_t createMapFromHeaderFile(const std::string &importDir,
+                                      const std::string &mapName);
+  static int16_t readHeaderLine(const std::string &mapName, char header,
+                                std::ifstream &headerFile, int &lineNumber);
+  static bool isCommentOrEmpty(const std::string &line);
 };
 #endif

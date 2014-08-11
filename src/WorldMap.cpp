@@ -24,6 +24,8 @@
 #include <algorithm>
 #include <stdexcept>
 #include <boost/algorithm/string/replace.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/regex.hpp>
 #include <chrono>
 
 void WorldMap::clear() {
@@ -100,6 +102,125 @@ bool WorldMap::allMapsAged() {
 
     ageIndex = 0;
     return true;
+}
+
+bool WorldMap::import(const std::string &importDir,
+                      const std::string &mapName) {
+    bool success = true;
+
+    try {
+        auto map = createMapFromHeaderFile(importDir, mapName);
+        success = map->import(importDir, mapName) && insert(map);
+    } catch (MapError &) {
+        success = false;
+    }
+
+    if (!success) {
+        Logger::alert(LogFacility::Script) << "---> Could not import " << mapName
+                                          << Log::end;
+    }
+
+    return success;
+}
+
+auto WorldMap::createMapFromHeaderFile(const std::string &importDir,
+                                       const std::string &mapName) -> map_t {
+    const std::string fileName = mapName + ".tiles.txt";
+    std::ifstream headerFile(importDir + fileName);
+
+    if (!headerFile) {
+        Logger::error(LogFacility::Script) << "Could not open file: " << fileName
+                                          << Log::end;
+        throw MapError();
+    }
+
+    int lineNumber = 0;
+
+    auto version = readHeaderLine(mapName, 'V', headerFile, lineNumber);
+
+    if (version != 2) {
+        Logger::error(LogFacility::Script)
+            << fileName << ": incorrect version in line " << lineNumber
+            << "! Expected: 2" << Log::end;
+        throw MapError();
+    }
+
+    position origin;
+    origin.z = readHeaderLine(mapName, 'L', headerFile, lineNumber);
+    origin.x = readHeaderLine(mapName, 'X', headerFile, lineNumber);
+    origin.y = readHeaderLine(mapName, 'Y', headerFile, lineNumber);
+    
+    auto width = readHeaderLine(mapName, 'W', headerFile, lineNumber);
+
+    if (width <= 0) {
+        Logger::error(LogFacility::Script)
+            << fileName << ": width has to be positive in line " << lineNumber
+            << Log::end;
+        throw MapError();
+    }
+
+    if (origin.x > std::numeric_limits<int16_t>::max() - width + 1) {
+        Logger::error(LogFacility::Script)
+            << fileName << ": x + width - 1 must not exceed "
+            << std::numeric_limits<int16_t>::max() << " in line " << lineNumber
+            << Log::end;
+        throw MapError();
+    }
+
+    auto height = readHeaderLine(mapName, 'H', headerFile, lineNumber);
+
+    if (height <= 0) {
+        Logger::error(LogFacility::Script)
+            << fileName << ": height has to be positive in line " << lineNumber
+            << Log::end;
+        throw MapError();
+    }
+
+    if (origin.y > std::numeric_limits<int16_t>::max() - height + 1) {
+        Logger::error(LogFacility::Script)
+            << fileName << ": y + height - 1 must not exceed "
+            << std::numeric_limits<int16_t>::max() << " in line " << lineNumber
+            << Log::end;
+        throw MapError();
+    }
+
+    return std::make_shared<Map>(mapName, origin, width, height);
+}
+
+const boost::regex headerExpression {R"(^(.): (-?\d+)$)"};
+
+int16_t WorldMap::readHeaderLine(const std::string &mapName, char header,
+                                 std::ifstream &headerFile, int &lineNumber) {
+    using boost::regex_match;
+    using boost::smatch;
+    std::string line;
+
+    while (std::getline(headerFile, line)) {
+        ++lineNumber;
+
+        if (!isCommentOrEmpty(line)) {
+            smatch matches;
+
+            if (regex_match(line, matches, headerExpression) &&
+                matches[1] == header) {
+                try {
+                    return boost::lexical_cast<int16_t>(matches[2]);
+                } catch (boost::bad_lexical_cast &) {
+                    break;
+                }
+            }
+        }
+    }
+
+    Logger::error(LogFacility::Script) << mapName << ": expected header '"
+                                      << header << ": <int16_t>' but found '"
+                                      << line << "' in line " << lineNumber
+                                      << Log::end;
+    throw MapError();
+}
+
+bool WorldMap::isCommentOrEmpty(const std::string &line) {
+    return line.length() == 0 || line[0] == '#';
 }
 
 bool WorldMap::exportTo(const std::string &exportDir) const {

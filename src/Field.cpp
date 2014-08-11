@@ -207,6 +207,10 @@ bool Field::addContainerOnStackIfWalkable(Item item, Container *container) {
                 }
 
                 if (count < MAXITEMS - 1) {
+                    if (!container) {
+                        container = new Container(item.getId());
+                    }
+
                     containers.insert(iterat, Container::CONTAINERMAP::value_type(count, container));
                 } else {
                     return false;
@@ -238,6 +242,10 @@ bool Field::addContainerOnStack(Item item, Container *container) {
         }
 
         if (count < MAXITEMS - 1) {
+            if (!container) {
+                container = new Container(item.getId());
+            }
+
             containers.insert(iterat, Container::CONTAINERMAP::value_type(count, container));
         } else {
             return false;

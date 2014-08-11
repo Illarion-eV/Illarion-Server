@@ -670,7 +670,7 @@ void World::Load() {
             mapinitfile.read((char *) & tHeight, sizeof(tHeight));
 
 
-            auto tempMap = std::make_shared<Map>("priviously saved map", position(tMin_X, tMin_Y, tZ_Level), tWidth, tHeight);
+            auto tempMap = std::make_shared<Map>("previously saved map", position(tMin_X, tMin_Y, tZ_Level), tWidth, tHeight);
 
             sprintf(mname, "%s_%6d_%6d_%6d", path.c_str(), tZ_Level, tMin_X, tMin_Y);
 

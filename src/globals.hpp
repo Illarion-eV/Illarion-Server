@@ -29,6 +29,7 @@
 #include "constants.hpp"
 
 struct FieldNotFound : std::exception {};
+struct MapError : std::exception {};
 
 struct position {
     short int x;

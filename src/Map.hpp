@@ -40,6 +40,7 @@ public:
     Map(Map &&) = default;
     Map &operator=(Map &&) = default;
 
+    bool import(const std::string &importDir, const std::string &mapName);
     bool Load(const std::string &name);
     bool Save(const std::string &name) const;
 
@@ -61,6 +62,11 @@ public:
     bool intersects(const Map &map) const;
 
 private:
+    bool importFields(const std::string &importDir, const std::string &mapName);
+    bool importItems(const std::string &importDir, const std::string &mapName);
+    bool importWarps(const std::string &importDir, const std::string &mapName);
+    static void unescape(std::string &input);
+
     inline uint16_t Conv_X_Koord(int16_t x) const;
     inline uint16_t Conv_Y_Koord(int16_t y) const;
     inline int16_t Conv_To_X(uint16_t x) const;

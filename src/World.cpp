@@ -119,9 +119,9 @@ struct editor_maptile {
 
 bool World::load_maps() {
     int numfiles = 0;
-    bool ok = true;
+    int errors = 0;
 
-    Logger::info(LogFacility::World) << "Removing old maps." << Log::end;
+    Logger::notice(LogFacility::Script) << "Removing old maps." << Log::end;
     
     for (boost::filesystem::directory_iterator end, it(Config::instance().datadir() + "map/"); it != end; ++it) {
         if (boost::regex_match(it->path().filename().string(), mapFilter)) {
@@ -129,7 +129,7 @@ bool World::load_maps() {
         }
     }
 
-    Logger::info(LogFacility::World) << "Importing maps." << Log::end;
+    Logger::notice(LogFacility::Script) << "Importing maps..." << Log::end;
 
     std::string importDir = Config::instance().datadir() + "map/import/";
 
@@ -145,7 +145,9 @@ bool World::load_maps() {
 
         Logger::debug(LogFacility::World) << "Importing: " << map << Log::end;
 
-        ok and_eq load_from_editor(importDir, map);
+        if (!maps.import(importDir, map)) {
+            ++errors;
+        }
     
         ++numfiles;
     }
@@ -155,334 +157,18 @@ bool World::load_maps() {
         return false;
     }
 
-    Logger::info(LogFacility::World) << "Imported " << numfiles << " maps." << Log::end;
+    Logger::notice(LogFacility::Script) << "Imported " << numfiles - errors
+                                        << " out of " << numfiles << " maps."
+                                        << Log::end;
 
-    return ok;
+    if (errors) {
+        Logger::alert(LogFacility::Script) << "Failed to import " << errors
+                                           << " maps!" << Log::end;
+    }
+
+    return errors == 0;
 }
 
-bool World::load_from_editor(const std::string &importDir,
-                             const std::string &fileName) {
-    Logger::debug(LogFacility::World) << "try to Import map: " << fileName << Log::end;
-    std::ifstream maptilesfile((importDir + fileName + ".tiles.txt").c_str());
-
-    if (!maptilesfile.good()) {
-        Logger::error(LogFacility::World) << "could not open file: " << fileName << ".tiles.txt" << Log::end;
-        return false;
-    }
-
-    int mapstartx = -1, mapstarty = -1;
-
-    std::map<unsigned int, editor_maptile> maptiles;
-
-    editor_maptile temp_tile;
-
-    char dummy;
-
-    int h_level, h_x, h_y, h_width, h_height, oldy;
-
-    ignoreComments(maptilesfile);
-
-    // load map file header information
-    maptilesfile >> dummy;
-
-    if (dummy == 'V') {
-        maptilesfile >> dummy;
-        int version;
-        maptilesfile >> version;
-
-        if (version != 2) {
-            Logger::error(LogFacility::World) << "Invalid map format! Wrong version! Expected V2: " << fileName << Log::end;
-            return false;
-        }
-    } else {
-        Logger::error(LogFacility::World) << "Invalid map format! No version: " << fileName << Log::end;
-        return false;
-    }
-
-    maptilesfile >> dummy;
-    maptilesfile >> dummy;  // read 'L: '
-    maptilesfile >> h_level;  //read int (level)
-    maptilesfile >> dummy;
-    maptilesfile >> dummy;  // read 'X: '
-    maptilesfile >> h_x;  //read int (x coord)
-    maptilesfile >> dummy;
-    maptilesfile >> dummy;  // read 'Y: '
-    maptilesfile >> h_y;  //read int (y coord)
-    maptilesfile >> dummy;
-    maptilesfile >> dummy;  // read 'W: '
-    maptilesfile >> h_width;  //read int (width)
-    maptilesfile >> dummy;
-    maptilesfile >> dummy;  // read 'H: '
-    maptilesfile >> h_height;  //read int (height)
-    oldy = -1;
-
-    Logger::debug(LogFacility::World) << "try to Import tiles: " << fileName << Log::end;
-    // load all tiles from the file
-    maptilesfile >> temp_tile.x;  // read an int.
-
-    while (maptilesfile.good()) {
-        if (mapstartx == -1) {
-            mapstartx = temp_tile.x;
-        }
-
-        temp_tile.x -= mapstartx;
-
-        maptilesfile >> dummy;   // read a char (;)
-
-        if (dummy != ';') {
-            Logger::error(LogFacility::World) << "maptile file contains errors! : " << dummy << Log::end;
-            return false;
-        }
-
-        maptilesfile >> temp_tile.y;    //read next int
-
-        if (oldy != temp_tile.y) { //log if we have read one complete line of the map
-            oldy = temp_tile.y;
-        }
-
-        if (mapstarty == -1) {
-            mapstarty = temp_tile.y;
-        }
-
-        temp_tile.y -= mapstarty;
-
-        maptilesfile >> dummy;          // read a char (;)
-
-        if (dummy != ';') {
-            Logger::error(LogFacility::World) << "maptile file contains errors! : " << dummy << Log::end;
-            return false;
-        }
-
-        maptilesfile >> temp_tile.fieldID;      // read an int (tile-id)
-
-        maptilesfile >> dummy;          // read a char (;)
-
-        if (dummy != ';') {
-            Logger::error(LogFacility::World) << "maptile file contains errors! : " << dummy << Log::end;
-            return false;
-        }
-
-        maptilesfile >> temp_tile.musicID;      // read a short uint (music-id)
-
-        // store the tile in our map
-        maptiles[temp_tile.x<<16|temp_tile.y] = temp_tile;
-
-        maptilesfile >> temp_tile.x;    // read next x (int); if there is none, while will end
-    }
-
-    // generate new map
-    auto tempmap = std::make_shared<Map>(fileName, position(h_x, h_y, h_level), h_width, h_height);
-
-    for (int x=0; x < h_width; ++x) {
-        int index_start = x << 16;
-
-        for (int y=0; y<h_height; ++y) {
-            temp_tile = maptiles[index_start | y];
-            Field &field = tempmap->at(temp_tile.x+h_x, temp_tile.y+h_y);
-            field.setTileId(temp_tile.fieldID);
-            field.setMusicId(temp_tile.musicID);
-        }
-    }
-
-    maptilesfile.close();
-    if (!maps.insert(tempmap)) {
-        return false;
-    }
-
-    // now try to load warpfields
-    std::ifstream warpfile((importDir + fileName + ".warps.txt").c_str());
-
-    if (!warpfile.good()) {
-        Logger::error(LogFacility::World) << "could not open file: " << fileName << ".warps.txt" << Log::end;
-        return true;    // warps are not crucial
-    }
-
-    ignoreComments(warpfile);
-
-    position start, target;
-    start.z = h_level;
-    warpfile >> start.x;
-
-    while (warpfile.good()) {
-        warpfile >> dummy;
-
-        if (dummy != ';') {
-            Logger::error(LogFacility::World) << "warp file contains errors! : " << dummy << Log::end;
-            return false;
-        }
-
-        warpfile >> start.y;
-        warpfile >> dummy;
-
-        if (dummy != ';') {
-            Logger::error(LogFacility::World) << "warp file contains errors! : " << dummy << Log::end;
-            return false;
-        }
-
-        warpfile >> target.x;
-        warpfile >> dummy;
-
-        if (dummy != ';') {
-            Logger::error(LogFacility::World) << "warp file contains errors! : " << dummy << Log::end;
-            return false;
-        }
-
-        warpfile >> target.y;
-        warpfile >> dummy;
-
-        if (dummy != ';') {
-            Logger::error(LogFacility::World) << "warp file contains errors! : " << dummy << Log::end;
-            return false;
-        }
-
-        warpfile >> target.z;
-
-        start.x += h_x;
-        start.y += h_y;
-
-        try {
-            fieldAt(start).setWarp(target);
-        } catch (FieldNotFound &) {
-        }
-
-        warpfile >> start.x;
-    }
-
-    // next we try to load the items for the map
-    std::ifstream mapitemsfile((importDir + fileName + ".items.txt").c_str());
-
-    if (!mapitemsfile.good()) {
-        Logger::error(LogFacility::World) << "could not open file: " << fileName << ".items.txt" << Log::end;
-        return true;    // items are not crucial
-    }
-
-    ignoreComments(mapitemsfile);
-
-    int x,y;
-    Item it;
-    Item::id_type itemId;
-    Item::quality_type itemQuality;
-    oldy = -1;
-    Logger::debug(LogFacility::World) << "try to import items: " << fileName << Log::end;
-    mapitemsfile >> x;
-
-    while (mapitemsfile.good()) {
-        it.reset();
-        it.makePermanent();
-        it.setNumber(1);
-        x -= mapstartx;
-        x += h_x;
-        mapitemsfile >> dummy;
-
-        if (dummy != ';') {
-            Logger::error(LogFacility::World) << "mapitem file contains errors! : " << dummy << Log::end;
-            return false;
-        }
-
-        mapitemsfile >> y;
-
-        if (oldy != y) { //log if we have read one complete line of the map
-            oldy = y;
-        }
-
-        y -= mapstarty;
-        y += h_y;
-        mapitemsfile >> dummy;
-
-        if (dummy != ';') {
-            Logger::error(LogFacility::World) << "mapitem file contains errors! : " << dummy << Log::end;
-            return false;
-        }
-
-        mapitemsfile >> itemId;
-        it.setId(itemId);
-
-        mapitemsfile >> dummy;
-
-        if (dummy != ';') {
-            Logger::error(LogFacility::World) << "mapitem file contains errors! : " << dummy << Log::end;
-            return false;
-        }
-
-        mapitemsfile >> itemQuality;
-        it.setQuality(itemQuality);
-
-        if (mapitemsfile.good()) {
-            if (mapitemsfile.get() == ';') {
-                std::string dataSequence;
-                std::getline(mapitemsfile, dataSequence);
-                std::string key, value;
-                bool isKey = true;
-
-                for (size_t i = 0; i < dataSequence.length(); ++i) {
-                    char c = dataSequence[i];
-
-                    switch (c) {
-                    case ';':
-                        it.setData(key, value);
-                        key = "";
-                        value = "";
-                        isKey = true;
-                        break;
-
-                    case '=':
-                        isKey = false;
-                        break;
-
-                    case '\\':
-                        ++i;
-
-                        if (i == dataSequence.length()) {
-                            return false;
-                        }
-
-                        c = dataSequence[i];
-
-                    default:
-
-                        if (isKey) {
-                            key = key + c;
-                        } else {
-                            value = value + c;
-                        }
-                    }
-                }
-
-                it.setData(key, value);
-            } else {
-                mapitemsfile.unget();
-            }
-        }
-
-        // store the item in our map
-        g_item = it;
-        g_cont = nullptr;
-
-        if (!putItemAlwaysOnMap(nullptr, position(x, y, h_level))) {
-            Logger::info(LogFacility::World) << "could not put item from " << fileName << Log::end;
-        }
-
-        mapitemsfile >> x;
-    }
-
-    mapitemsfile.close();
-    Logger::debug(LogFacility::World) << "Import map: " << fileName << " was successful!" << Log::end;
-
-    return true;
-}
-
-void World::ignoreComments(std::ifstream &inputStream) {
-    while (true) {
-        char firstCharacter = inputStream.get();
-
-        if (firstCharacter == '#') {
-            inputStream.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        } else {
-            inputStream.unget();
-            break;
-        }
-    }
-}
 
 World::~World() {
 }

@@ -20,6 +20,9 @@
 #include "Map.hpp"
 
 #include <vector>
+#include <boost/algorithm/string/replace.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/regex.hpp>
 
 #include "Logger.hpp"
 #include "World.hpp"
@@ -130,6 +133,341 @@ bool Map::Save(const std::string &name) const {
         Logger::error(LogFacility::World) << "Saving map failed: " << name << Log::end;
         return false;
     }
+}
+
+const boost::regex headerExpression {R"(^[VLXYWH]: -?\d+$)"};
+const boost::regex tileExpression {R"(^(\d+);(\d+);(\d+);(\d+)$)"};
+//const boost::regex itemExpression {R"(^(\d+);(\d+);(\d+);(\d+)(;.*)?$)"};
+const boost::regex itemExpression {R"(^(\d+);(\d+);(\d+);(-?\d+)(;.*)?$)"};
+const boost::regex warpExpression {R"(^(\d+);(\d+);(-?\d+);(-?\d+);(-?\d+)$)"};
+const boost::regex dataExpression {R"(;([^\\;=]*(?:\\[\\;=][^\\;=]*)*)=([^\\;=]*(?:\\[\\;=][^\\;=]*)*)(?:;.*)?)"};
+
+bool Map::import(const std::string &importDir, const std::string &mapName) {
+    bool success = importFields(importDir, mapName);
+    success and_eq importWarps(importDir, mapName);
+    success and_eq importItems(importDir, mapName);
+    return success;
+}
+
+bool Map::importFields(const std::string &importDir,
+                       const std::string &mapName) {
+    using boost::smatch;
+    using boost::regex_match;
+
+    const std::string fileName = mapName + ".tiles.txt";
+    std::ifstream mapFile(importDir + fileName);
+
+    if (!mapFile) {
+        Logger::error(LogFacility::Script)
+            << "Could not open file: " << fileName << Log::end;
+        return false;
+    }
+
+    std::string line;
+    int lineNumber = 0;
+    int headerLinesSkipped = 0;
+    bool success = true;
+
+    while (std::getline(mapFile, line)) {
+        ++lineNumber;
+
+        if (line.length() != 0 && line[0] != '#') {
+            if (headerLinesSkipped < 6 && regex_match(line, headerExpression)) {
+                ++headerLinesSkipped;
+                continue;
+            }
+
+            smatch matches;
+
+            if (regex_match(line, matches, tileExpression)) {
+                try {
+                    auto x = boost::lexical_cast<uint16_t>(matches[1]);
+
+                    if (x >= width) {
+                        Logger::error(LogFacility::Script)
+                            << fileName
+                            << ": x must be less than width in line "
+                            << lineNumber << Log::end;
+                        success = false;
+                    }
+
+                    auto y = boost::lexical_cast<uint16_t>(matches[2]);
+
+                    if (y >= height) {
+                        Logger::error(LogFacility::Script)
+                            << fileName
+                            << ": y must be less than height in line "
+                            << lineNumber << Log::end;
+                        success = false;
+                    }
+
+                    auto tile = boost::lexical_cast<uint16_t>(matches[3]);
+                    auto music = boost::lexical_cast<uint16_t>(matches[4]);
+
+                    if (success) {
+                        auto &field = fields[x][y];
+
+                        if (field.getTileCode() || field.getMusicId()) {
+                            Logger::warn(LogFacility::Script)
+                                << fileName << ": tile on (" << x << ", " << y
+                                << ") is already present, ignoring line "
+                                << lineNumber << Log::end;
+                        } else {
+                            field.setTileId(tile);
+                            field.setMusicId(music);
+                        }
+                    }
+                } catch (boost::bad_lexical_cast &) {
+                    Logger::error(LogFacility::Script)
+                        << fileName << ": expected "
+                                       "<uint16_t>;<uint16_t>;<uint16_t>;<"
+                                       "uint16_t> but found '" << line
+                        << "' in line " << lineNumber << Log::end;
+
+                    success = false;
+                }
+            } else {
+                Logger::error(LogFacility::Script)
+                    << fileName
+                    << ": expected <uint16_t>;<uint16_t>;<uint16_t>;<uint16_t> "
+                       "but found '" << line << "' in line " << lineNumber
+                    << Log::end;
+                success = false;
+            }
+        }
+    }
+
+    return success;
+}
+
+bool Map::importItems(const std::string &importDir,
+                      const std::string &mapName) {
+    using boost::smatch;
+    using boost::regex_match;
+
+    const std::string fileName = mapName + ".items.txt";
+    std::ifstream itemFile(importDir + fileName);
+
+    if (!itemFile) {
+        Logger::error(LogFacility::Script)
+            << "Could not open file: " << fileName << Log::end;
+        return false;
+    }
+
+    std::string line;
+    int lineNumber = 0;
+    bool success = true;
+
+    while (std::getline(itemFile, line)) {
+        ++lineNumber;
+
+        if (line.length() != 0 && line[0] != '#') {
+            smatch matches;
+
+            if (regex_match(line, matches, itemExpression)) {
+                try {
+                    auto x = boost::lexical_cast<uint16_t>(matches[1]);
+
+                    if (x >= width) {
+                        Logger::error(LogFacility::Script)
+                            << fileName
+                            << ": x must be less than width in line "
+                            << lineNumber << Log::end;
+                        success = false;
+                    }
+
+                    auto y = boost::lexical_cast<uint16_t>(matches[2]);
+
+                    if (y >= height) {
+                        Logger::error(LogFacility::Script)
+                            << fileName
+                            << ": y must be less than height in line "
+                            << lineNumber << Log::end;
+                        success = false;
+                    }
+
+                    auto itemId = boost::lexical_cast<uint16_t>(matches[3]);
+                    auto quality = boost::lexical_cast<uint16_t>(matches[4]);
+
+                    if (quality > 999) {
+                        Logger::error(LogFacility::Script)
+                            << fileName
+                            << ": quality must be less than 1000 in line "
+                            << lineNumber << Log::end;
+                        success = false;
+                    }
+
+                    Item item;
+                    item.setId(itemId);
+                    item.setQuality(quality);
+                    item.setNumber(1);
+                    item.makePermanent();
+
+                    std::string data = matches[5];
+
+                    while (data.length() > 0) {
+                        boost::smatch match;
+
+                        if (boost::regex_match(data, match, dataExpression)) {
+                            std::string key = match[1];
+                            std::string value = match[2];
+
+                            if (key.length() == 0) {
+                                Logger::error(LogFacility::Script)
+                                    << fileName << ": data key must not have "
+                                                   "zero length in line "
+                                    << lineNumber << Log::end;
+                                success = false;
+                            }
+
+                            if (value.length() == 0) {
+                                Logger::error(LogFacility::Script)
+                                    << fileName << ": data value must not have "
+                                                   "zero length in line "
+                                    << lineNumber << Log::end;
+                                success = false;
+                            }
+
+                            data.erase(0, key.length() + value.length() + 2);
+
+                            unescape(key);
+                            unescape(value);
+
+                            item.setData(key, value);
+                        } else {
+                            Logger::error(LogFacility::Script)
+                                << fileName << ": invalid data sequence '"
+                                << data << "' in line " << lineNumber
+                                << Log::end;
+                            success = false;
+                            break;
+                        }
+                    }
+
+                    if (success) {
+                        auto &field = fields[x][y];
+
+                        if (item.isContainer()) {
+                            field.addContainerOnStack(item, nullptr);
+                        } else {
+                            field.addItemOnStack(item);
+                        }
+                    }
+                } catch (boost::bad_lexical_cast &) {
+                    Logger::error(LogFacility::Script)
+                        << fileName << ": expected "
+                                       "<uint16_t>;<uint16_t>;<uint16_t>;<"
+                                       "uint16_t> but found '" << line
+                        << "' in line " << lineNumber << Log::end;
+                    success = false;
+                }
+            } else {
+                Logger::error(LogFacility::Script)
+                    << fileName
+                    << ": expected "
+                       "<uint16_t>;<uint16_t>;<uint16_t>;<uint16_t> "
+                       "but found '" << line << "' in line " << lineNumber
+                    << Log::end;
+                success = false;
+            }
+        }
+    }
+
+    return success;
+}
+
+void Map::unescape(std::string &input) {
+    using boost::algorithm::replace_all;
+
+    replace_all(input, "\\\\", "\\");
+    replace_all(input, "\\=", "=");
+    replace_all(input, "\\;", ";");
+}
+
+bool Map::importWarps(const std::string &importDir,
+                      const std::string &mapName) {
+    using boost::smatch;
+    using boost::regex_match;
+
+    const std::string fileName = mapName + ".warps.txt";
+    std::ifstream warpFile(importDir + fileName);
+
+    if (!warpFile) {
+        Logger::error(LogFacility::Script)
+            << "Could not open file: " << fileName << Log::end;
+        return false;
+    }
+
+    std::string line;
+    int lineNumber = 0;
+    bool success = true;
+
+    while (std::getline(warpFile, line)) {
+        ++lineNumber;
+
+        if (line.length() != 0 && line[0] != '#') {
+            smatch matches;
+
+            if (regex_match(line, matches, warpExpression)) {
+                try {
+                    auto x = boost::lexical_cast<uint16_t>(matches[1]);
+
+                    if (x >= width) {
+                        Logger::error(LogFacility::Script)
+                            << fileName
+                            << ": x must be less than width in line "
+                            << lineNumber << Log::end;
+                        success = false;
+                    }
+
+                    auto y = boost::lexical_cast<uint16_t>(matches[2]);
+
+                    if (y >= height) {
+                        Logger::error(LogFacility::Script)
+                            << fileName
+                            << ": y must be less than height in line "
+                            << lineNumber << Log::end;
+                        success = false;
+                    }
+
+                    position target;
+                    target.x = boost::lexical_cast<int16_t>(matches[3]);
+                    target.y = boost::lexical_cast<int16_t>(matches[4]);
+                    target.z = boost::lexical_cast<int16_t>(matches[5]);
+
+                    if (success) {
+                        auto &field = fields[x][y];
+
+                        if (field.isWarp()) {
+                            Logger::warn(LogFacility::Script)
+                                << fileName << ": warp on (" << x << ", " << y
+                                << ") is already present, ignoring line "
+                                << lineNumber << Log::end;
+                        } else {
+                            field.setWarp(target);
+                        }
+                    }
+                } catch (boost::bad_lexical_cast &) {
+                    Logger::error(LogFacility::Script)
+                        << fileName << ": expected "
+                                       "<uint16_t>;<uint16_t>;<int16_t>;<"
+                                       "int16_t>;<int16_t> but found '" << line
+                        << "' in line " << lineNumber << Log::end;
+                    success = false;
+                }
+            } else {
+                Logger::error(LogFacility::Script)
+                    << fileName
+                    << ": expected "
+                       "<uint16_t>;<uint16_t>;<int16_t>;<int16_t>;<int16_t> "
+                       "but found '" << line << "' in line " << lineNumber
+                    << Log::end;
+                success = false;
+            }
+        }
+    }
+
+    return success;
 }
 
 bool Map::Load(const std::string &name) {

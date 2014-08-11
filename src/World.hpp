@@ -273,8 +273,6 @@ public:
     int getTime(const std::string &timeType);
 
     bool load_maps();
-    bool load_from_editor(const std::string &importDir,
-                          const std::string &filename);
 
     /**
     *checks the command list of one player and put them into practize
