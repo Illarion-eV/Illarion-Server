@@ -330,3 +330,8 @@ void WorldMap::saveToDisk(const std::string &prefix) const {
     }
 }
 
+bool WorldMap::createMap(const std::string &name, const position &origin,
+                         uint16_t width, uint16_t height, uint16_t tile) {
+    auto map = std::make_shared<Map>(name, origin, width, height, tile);
+    return insert(map);
+}

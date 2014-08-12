@@ -31,9 +31,20 @@
 #include "netinterface/protocol/ServerCommands.hpp"
 
 Map::Map(std::string name, position origin, uint16_t width, uint16_t height)
-    : origin(std::move(origin)), width(width), height(height),
+    : origin(origin), width(width), height(height),
       fields(width, std::vector<Field>(height, Field())),
       name(std::move(name)) {}
+
+Map::Map(std::string name, position origin, uint16_t width, uint16_t height,
+         uint16_t tile)
+    : Map(std::move(name), origin, width, height) {
+
+    for (auto &column : fields) {
+        for (auto &field : column) {
+            field.setTileId(tile);
+        }
+    }
+}
 
 Field &Map::at(int16_t x, int16_t y) {
     return fields[Conv_X_Koord(x)][Conv_Y_Koord(y)];

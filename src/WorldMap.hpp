@@ -50,6 +50,8 @@ public:
     bool import(const std::string &importDir, const std::string &mapName);
     bool exportTo(const std::string &exportDir) const;
     void saveToDisk(const std::string &prefix) const;
+    bool createMap(const std::string &name, const position &origin,
+                   uint16_t width, uint16_t height, uint16_t tile);
 
 private:
   static map_t createMapFromHeaderFile(const std::string &importDir,

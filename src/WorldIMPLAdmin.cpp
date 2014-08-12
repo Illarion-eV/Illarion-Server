@@ -1126,34 +1126,32 @@ void create_area_command(World *world, Player *player,const std::string &params)
     }
 
     std::stringstream ss(params);
-    int x,y,z,w,h, filltile;
-    x=y=z=w=h=filltile=-65535;
+    int x,y,z,w,h, tile;
+    x=y=z=w=h=tile=-65535;
     ss >> x;
     ss >> y;
     ss >> z;
     ss >> w;
     ss >> h;
-    ss >> filltile;
+    ss >> tile;
 
-    if (x==-65535 || y == -65535 || z == -65535 || w < 1 || h < 1 || filltile < 0) {
+    if (x==-65535 || y == -65535 || z == -65535 || w < 1 || h < 1 || tile < 0) {
         Logger::error(LogFacility::World) << "Error in create_area_command issued by " << *player << "; input: " << x << " " << y << " " << z << " " << w << " " << h << Log::end;
         return;
     }
 
-    auto tempmap = std::make_shared<Map>("created ingame by " + player->to_string(), position(x, y, z), w, h);
-
-    for (int _x=0; _x<w; ++_x) {
-        for (int _y=0; _y<h; ++_y) {
-            Field &field = tempmap->at(_x+x, _y+y);
-            field.setTileId(filltile);
-        }
+    if (world->maps.createMap("by " + player->to_string(), position(x, y, z), w,
+                              h, tile)) {
+        std::string tmessage = "Map inserted.";
+        player->inform(tmessage);
+        Logger::info(LogFacility::World) << "Map created by " << *player
+                                         << " on " << x << " - " << y << " - "
+                                         << z << " with w: " << w << " h: " << h
+                                         << " tile: " << tile << Log::end;
+    } else {
+        std::string tmessage = "Failed to insert map.";
+        player->inform(tmessage);
     }
-
-    world->maps.insert(tempmap);
-
-    std::string tmessage = "Map inserted.";
-    player->inform(tmessage);
-    Logger::info(LogFacility::World) << "Map created by " << *player << " on " << x << " - " << y << " - " << z << " with w: " << w << " h: " << h << " ft: " << filltile << Log::end;
 }
 
 void World::set_login(Player *player, const std::string &text) {

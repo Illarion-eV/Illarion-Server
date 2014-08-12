@@ -35,6 +35,8 @@ class Map {
 
 public:
     Map(std::string name, position origin, uint16_t width, uint16_t height);
+    Map(std::string name, position origin, uint16_t width, uint16_t height,
+        uint16_t tile);
     Map(const Map &) = delete;
     Map &operator=(const Map &) = delete;
     Map(Map &&) = default;

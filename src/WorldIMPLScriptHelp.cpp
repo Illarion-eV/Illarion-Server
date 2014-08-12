@@ -480,21 +480,13 @@ void World::sendMapUpdate(const position &pos, uint8_t radius) {
     }
 }
 
-bool World::createSavedArea(uint16_t tileid, const position &pos, uint16_t height, uint16_t width) {
-    auto tempmap = std::make_shared<Map>("map created by createSavedArea", pos, width, height);
-
-    for (int x=0; x<width; ++x) {
-        for (int y=0; y<height; ++y) {
-            Field &field = tempmap->at(x+pos.x, y+pos.y);
-            field.setTileId(tileid);
-        }
-    }
-
-    if (maps.insert(tempmap)) {
+bool World::createSavedArea(uint16_t tile, const position &origin,
+                            uint16_t height, uint16_t width) {
+    if (maps.createMap("by createSavedArea", origin, width, height, tile)) {
         Logger::info(LogFacility::World)
-            << "Map created by createSavedArea command at " << pos
+            << "Map created by createSavedArea command at " << origin
             << " height: " << height << " width: " << width
-            << " standard tile: " << tileid << "!" << Log::end;
+            << " standard tile: " << tile << "!" << Log::end;
         return true;
     } else {
         return false;
