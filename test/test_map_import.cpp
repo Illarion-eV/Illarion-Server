@@ -11,6 +11,10 @@ public:
     MockWorld() {
         World::_self = this;
     }
+
+    bool load_from_editor(const std::string &dir, const std::string &map) {
+        return maps.import(dir, map);
+    }
 };
 
 class map_import_tests : public ::testing::Test {
