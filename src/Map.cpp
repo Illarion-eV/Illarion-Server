@@ -137,8 +137,7 @@ bool Map::Save(const std::string &name) const {
 
 const boost::regex headerExpression {R"(^[VLXYWH]: -?\d+$)"};
 const boost::regex tileExpression {R"(^(\d+);(\d+);(\d+);(\d+)$)"};
-//const boost::regex itemExpression {R"(^(\d+);(\d+);(\d+);(\d+)(;.*)?$)"};
-const boost::regex itemExpression {R"(^(\d+);(\d+);(\d+);(-?\d+)(;.*)?$)"};
+const boost::regex itemExpression {R"(^(\d+);(\d+);(\d+);(\d+)(;.*)?$)"};
 const boost::regex warpExpression {R"(^(\d+);(\d+);(-?\d+);(-?\d+);(-?\d+)$)"};
 const boost::regex dataExpression {R"(;([^\\;=]*(?:\\[\\;=][^\\;=]*)*)=([^\\;=]*(?:\\[\\;=][^\\;=]*)*)(?:;.*)?)"};
 
