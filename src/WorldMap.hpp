@@ -43,8 +43,6 @@ public:
     Field &walkableNear(position &pos) const;
     bool intersects(const Map &map) const;
 
-    bool insert(map_t newMap);
-
     bool allMapsAged();
 
     bool import(const std::string &importDir, const std::string &mapName);
@@ -55,10 +53,11 @@ public:
                    uint16_t width, uint16_t height, uint16_t tile);
 
 private:
-  static map_t createMapFromHeaderFile(const std::string &importDir,
-                                      const std::string &mapName);
-  static int16_t readHeaderLine(const std::string &mapName, char header,
-                                std::ifstream &headerFile, int &lineNumber);
-  static bool isCommentOrEmpty(const std::string &line);
+    bool insert(map_t newMap);
+    static map_t createMapFromHeaderFile(const std::string &importDir,
+                                         const std::string &mapName);
+    static int16_t readHeaderLine(const std::string &mapName, char header,
+                                  std::ifstream &headerFile, int &lineNumber);
+    static bool isCommentOrEmpty(const std::string &line);
 };
 #endif
