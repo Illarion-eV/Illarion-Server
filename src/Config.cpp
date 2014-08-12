@@ -34,7 +34,7 @@ bool Config::load(const std::string &config_file) {
     // make sure Config is instanciated
     Config::instance();
 
-    std::ifstream configfile(config_file.c_str());
+    std::ifstream configfile(config_file);
 
     // can't read config file
     if (!configfile.good()) {

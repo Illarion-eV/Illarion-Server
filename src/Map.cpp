@@ -122,10 +122,10 @@ Field &Map::walkableNear(int16_t &x, int16_t &y) {
 bool Map::Save(const std::string &name) const {
     Logger::debug(LogFacility::World) << "Saving map " << name << Log::end;
 
-    std::ofstream map { (name + "_map").c_str(), std::ios::binary | std::ios::out };
-    std::ofstream items { (name + "_item").c_str(), std::ios::binary | std::ios::out };
-    std::ofstream warps { (name + "_warp").c_str(), std::ios::binary | std::ios::out };
-    std::ofstream containers { (name + "_container").c_str(), std::ios::binary | std::ios::out };
+    std::ofstream map { name + "_map", std::ios::binary | std::ios::out };
+    std::ofstream items { name + "_item", std::ios::binary | std::ios::out };
+    std::ofstream warps { name + "_warp", std::ios::binary | std::ios::out };
+    std::ofstream containers { name + "_container", std::ios::binary | std::ios::out };
 
     if (map.good() && items.good() && warps.good() && containers.good()) {
         map.write((char *) & width, sizeof(width));
@@ -485,10 +485,10 @@ bool Map::Load(const std::string &name) {
 
     this->name = name;
 
-    std::ifstream map { (name + "_map").c_str(), std::ios::binary | std::ios::in };
-    std::ifstream items { (name + "_item").c_str(), std::ios::binary | std::ios::in };
-    std::ifstream warps { (name + "_warp").c_str(), std::ios::binary | std::ios::in };
-    std::ifstream containers { (name + "_container").c_str(), std::ios::binary | std::ios::in };
+    std::ifstream map { name + "_map", std::ios::binary | std::ios::in };
+    std::ifstream items { name + "_item", std::ios::binary | std::ios::in };
+    std::ifstream warps { name + "_warp", std::ios::binary | std::ios::in };
+    std::ifstream containers { name + "_container", std::ios::binary | std::ios::in };
 
     if (map.good() && items.good() && warps.good() && containers.good()) {
         int16_t newWidth, newHeight;

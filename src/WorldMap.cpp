@@ -232,11 +232,11 @@ bool WorldMap::exportTo(const std::string &exportDir) const {
                                + "_" + std::to_string(minY)
                                + "_" + std::to_string(map->getLevel()) + ".";
         // export fields file
-        std::ofstream fieldsf((filebase + "tiles.txt").c_str());
+        std::ofstream fieldsf(filebase + "tiles.txt");
         // export items file
-        std::ofstream itemsf((filebase + "items.txt").c_str());
+        std::ofstream itemsf(filebase + "items.txt");
         // export warps file
-        std::ofstream warpsf((filebase + "warps.txt").c_str());
+        std::ofstream warpsf(filebase + "warps.txt");
 
         if (!fieldsf.good() || !itemsf.good() || !warpsf.good()) {
             Logger::error(LogFacility::World) << "Could not open output files for item export: " << filebase << "*.txt" << Log::end;
