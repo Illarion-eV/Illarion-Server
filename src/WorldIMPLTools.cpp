@@ -638,48 +638,11 @@ void World::Save() const {
 void World::Load() {
     std::string path = directory + std::string(MAPDIR) + worldName;
 
-    std::ifstream mapinitfile((path + "_initmaps").c_str(), std::ios::binary | std::ios::in);
-
-    if (! mapinitfile.good()) {
-        Logger::error(LogFacility::World) << "Error while loading maps: could not open " << (path + "_initmaps") << Log::end;
+    if (!maps.loadFromDisk(path)) {
         Logger::info(LogFacility::World) << "trying to import maps" << Log::end;
         load_maps();
         Logger::info(LogFacility::World) << "Saving World..." << Log::end;
         Save();
-        return;
-    } else {
-        unsigned short int size;
-        mapinitfile.read((char *) & size, sizeof(size));
-        Logger::info(LogFacility::World) << "Loading " << size << " maps." << Log::end;
-
-        short int tZ_Level;
-        short int tMin_X;
-        short int tMin_Y;
-
-        short int tWidth;
-        short int tHeight;
-
-        char mname[ 200 ];
-
-        for (int i = 0; i < size; ++i) {
-            mapinitfile.read((char *) & tZ_Level, sizeof(tZ_Level));
-            mapinitfile.read((char *) & tMin_X, sizeof(tMin_X));
-            mapinitfile.read((char *) & tMin_Y, sizeof(tMin_Y));
-
-            mapinitfile.read((char *) & tWidth, sizeof(tWidth));
-            mapinitfile.read((char *) & tHeight, sizeof(tHeight));
-
-
-            auto tempMap = std::make_shared<Map>("previously saved map", position(tMin_X, tMin_Y, tZ_Level), tWidth, tHeight);
-
-            sprintf(mname, "%s_%6d_%6d_%6d", path.c_str(), tZ_Level, tMin_X, tMin_Y);
-
-            if (tempMap->Load(mname)) {
-                maps.insert(tempMap);
-            }
-        }
-
-        mapinitfile.close();
     }
 }
 

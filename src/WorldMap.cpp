@@ -299,8 +299,56 @@ bool WorldMap::exportTo(const std::string &exportDir) const {
     return true;
 }
 
+bool WorldMap::loadFromDisk(const std::string &path) {
+    std::ifstream mapinitfile(path + "_initmaps",
+                              std::ios::binary | std::ios::in);
+
+    if (!mapinitfile) {
+        Logger::error(LogFacility::World)
+            << "Error while loading maps: could not open "
+            << (path + "_initmaps") << Log::end;
+        return false;
+    } else {
+        unsigned short int size;
+        mapinitfile.read((char *) & size, sizeof(size));
+        Logger::info(LogFacility::World) << "Loading " << size << " maps."
+                                         << Log::end;
+
+        short int tZ_Level;
+        short int tMin_X;
+        short int tMin_Y;
+
+        short int tWidth;
+        short int tHeight;
+
+        char mname[ 200 ];
+
+        for (int i = 0; i < size; ++i) {
+            mapinitfile.read((char *) & tZ_Level, sizeof(tZ_Level));
+            mapinitfile.read((char *) & tMin_X, sizeof(tMin_X));
+            mapinitfile.read((char *) & tMin_Y, sizeof(tMin_Y));
+
+            mapinitfile.read((char *) & tWidth, sizeof(tWidth));
+            mapinitfile.read((char *) & tHeight, sizeof(tHeight));
+
+            auto map = std::make_shared<Map>("previously saved map",
+                                             position(tMin_X, tMin_Y, tZ_Level),
+                                             tWidth, tHeight);
+
+            sprintf(mname, "%s_%6d_%6d_%6d", path.c_str(), tZ_Level, tMin_X,
+                    tMin_Y);
+
+            if (map->Load(mname)) {
+                insert(map);
+            }
+        }
+
+        return true;
+    }
+}
+
 void WorldMap::saveToDisk(const std::string &prefix) const {
-    std::ofstream mapinitfile((prefix + "_initmaps").c_str(), std::ios::binary | std::ios::out | std::ios::trunc);
+    std::ofstream mapinitfile(prefix + "_initmaps", std::ios::binary | std::ios::out | std::ios::trunc);
 
     if (!mapinitfile.good()) {
         Logger::error(LogFacility::World) << "Could not create initmaps!" << Log::end;
