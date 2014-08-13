@@ -38,7 +38,7 @@ void World::checkFieldAfterMove(Character *cc, Field &field) {
 
     if (cc->isAlive() && field.hasSpecialItem()) {
 
-        for (const auto &item : field.items) {
+        for (const auto &item : field.getItemStack()) {
             if (Data::TilesModItems.exists(item.getId())) {
                 const auto &tmod = Data::TilesModItems[item.getId()];
 

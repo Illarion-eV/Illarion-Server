@@ -526,7 +526,7 @@ void Map::age() {
                 std::vector<Player *> playersinview = World::get()->Players.findAllCharactersInScreen(pos);
 
                 for (const auto &player : playersinview) {
-                    ServerCommandPointer cmd = std::make_shared<ItemUpdate_TC>(pos, fields[x][y].items);
+                    ServerCommandPointer cmd = std::make_shared<ItemUpdate_TC>(pos, fields[x][y].getItemStack());
                     player->Connection->addCommand(cmd);
                 }
             }

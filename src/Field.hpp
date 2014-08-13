@@ -39,6 +39,10 @@ private:
     uint16_t music = 0;
     uint8_t flags = 0;
     position warptarget;
+    std::vector<Item> items;
+
+public:
+    Container::CONTAINERMAP containers;
 
 public:
     void setTileId(uint16_t id);
@@ -62,6 +66,7 @@ public:
     bool swapItemOnStack(TYPE_OF_ITEM_ID newid, uint16_t newQuality = 0);
     bool viewItemOnStack(Item &item) const;
     ScriptItem getStackItem(uint8_t spos) const;
+    const std::vector<Item> &getItemStack() const;
     MAXCOUNTTYPE itemCount() const;
 
     bool addContainerOnStackIfWalkable(Item item, Container *container);
@@ -91,9 +96,6 @@ public:
               std::ofstream &containers) const;
     void load(std::ifstream &map, std::ifstream &items, std::ifstream &warps,
               std::ifstream &containers);
-
-    std::vector<Item> items;
-    Container::CONTAINERMAP containers;
 
 private:
     void updateFlags();

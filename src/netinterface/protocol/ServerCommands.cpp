@@ -502,9 +502,9 @@ MapStripeTC::MapStripeTC(const position &pos, NewClientView::stripedirection dir
             addShortIntToBuffer(fields[i]->getTileCode());
             addUnsignedCharToBuffer(fields[i]->getMovementCost());
             addShortIntToBuffer(fields[i]->getMusicId());
-            addUnsignedCharToBuffer(static_cast<unsigned char>(fields[i]->items.size()));
+            addUnsignedCharToBuffer(static_cast<unsigned char>(fields[i]->itemCount()));
 
-            for (const auto &item : fields[i]->items) {
+            for (const auto &item : fields[i]->getItemStack()) {
                 addShortIntToBuffer(item.getId());
 
                 if (item.isContainer()) {

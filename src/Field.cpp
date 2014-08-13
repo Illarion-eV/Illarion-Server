@@ -92,6 +92,9 @@ ScriptItem Field::getStackItem(uint8_t pos) const {
     return {};
 }
 
+const std::vector<Item> &Field::getItemStack() const {
+    return items;
+}
 
 bool Field::addItemOnStack(const Item &item) {
     if (items.size() < MAXITEMS) {

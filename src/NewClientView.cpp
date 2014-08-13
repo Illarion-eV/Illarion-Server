@@ -61,7 +61,7 @@ void NewClientView::readFields(int length, const WorldMap &maps) {
         try {
             Field &field = maps.at(pos);
 
-            if (!field.isTransparent() || !field.items.empty()) {
+            if (!field.isTransparent() || field.itemCount() > 0) {
                 exists = true;
                 mapStripe[i] = &field;
                 maxtiles = tmp_maxtiles;
