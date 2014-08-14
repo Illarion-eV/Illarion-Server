@@ -338,6 +338,23 @@ bool Map::importItems(const std::string &importDir,
                                 success = false;
                             }
 
+                            if (key.length() > 255) {
+                                Logger::error(LogFacility::Script)
+                                    << fileName << ": data key must not exceed "
+                                                   "255 characters in line "
+                                    << lineNumber << Log::end;
+                                success = false;
+                            }
+
+                            if (value.length() > 255) {
+                                Logger::error(LogFacility::Script)
+                                    << fileName
+                                    << ": data value must not exceed 255 "
+                                       "characters in line " << lineNumber
+                                    << Log::end;
+                                success = false;
+                            }
+
                             data.erase(0, key.length() + value.length() + 2);
 
                             unescape(key);
