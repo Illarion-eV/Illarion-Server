@@ -189,11 +189,10 @@ Character::~Character() {
         backPackContents = nullptr;
     }
 
-    std::map<uint32_t,Container *>::reverse_iterator rit;
-
-    for (rit = depotContents.rbegin(); rit != depotContents.rend(); ++rit) {
-        delete rit->second;
-    }
+    std::for_each(depotContents.rbegin(), depotContents.rend(),
+                  [](decltype(depotContents)::value_type &value) {
+        delete value.second;
+    });
 }
 
 TYPE_OF_CHARACTER_ID Character::getId() const {
@@ -295,14 +294,14 @@ void Character::setInvisible(bool invisible) {
 int Character::countItem(TYPE_OF_ITEM_ID itemid) const {
     int temp = 0;
 
-    for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
-        if (items[ i ].getId() == itemid) {
-            temp = temp + items[ i ].getNumber();
+    for (const auto &item: items) {
+        if (item.getId() == itemid) {
+            temp += item.getNumber();
         }
     }
 
     if ((items[ BACKPACK ].getId() != 0) && backPackContents) {
-        temp = temp + backPackContents->countItem(itemid);
+        temp += backPackContents->countItem(itemid);
     }
 
     return temp;
@@ -312,14 +311,15 @@ int Character::countItemAt(const std::string &where, TYPE_OF_ITEM_ID itemid, scr
     int temp = 0;
 
     if (where == "all") {
-        for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
-            if (items[ i ].getId() == itemid && (data == nullptr || items[i].hasData(*data))) {
-                temp = temp + items[ i ].getNumber();
+        for (const auto &item: items) {
+            if (item.getId() == itemid &&
+                (data == nullptr || item.hasData(*data))) {
+                temp += item.getNumber();
             }
         }
 
         if ((items[ BACKPACK ].getId() != 0) && backPackContents) {
-            temp = temp + backPackContents->countItem(itemid, data);
+            temp += backPackContents->countItem(itemid, data);
         }
 
         return temp;
@@ -328,7 +328,7 @@ int Character::countItemAt(const std::string &where, TYPE_OF_ITEM_ID itemid, scr
     if (where == "belt") {
         for (unsigned char i = MAX_BODY_ITEMS; i < MAX_BODY_ITEMS + MAX_BELT_SLOTS; ++i) {
             if (items[ i ].getId() == itemid && (data == nullptr || items[i].hasData(*data))) {
-                temp = temp + items[ i ].getNumber();
+                temp += items[ i ].getNumber();
             }
         }
 
@@ -338,7 +338,7 @@ int Character::countItemAt(const std::string &where, TYPE_OF_ITEM_ID itemid, scr
     if (where == "body") {
         for (unsigned char i = 0; i < MAX_BODY_ITEMS; ++i) {
             if (items[ i ].getId() == itemid && (data == nullptr || items[i].hasData(*data))) {
-                temp = temp + items[ i ].getNumber();
+                temp += items[ i ].getNumber();
             }
         }
 
@@ -347,7 +347,7 @@ int Character::countItemAt(const std::string &where, TYPE_OF_ITEM_ID itemid, scr
 
     if (where == "backpack") {
         if ((items[ BACKPACK ].getId() != 0) && backPackContents) {
-            temp = temp + backPackContents->countItem(itemid , data);
+            temp += backPackContents->countItem(itemid , data);
         }
 
         return temp;
@@ -472,7 +472,7 @@ int Character::createItem(Item::id_type id, Item::number_type number, Item::qual
                     if (!backPackContents->InsertContainer(it, new Container(it.getId()))) {
                         i = 0;
                     } else {
-                        temp = temp - 1;
+                        --temp;
                     }
                 }
             } else {
@@ -611,24 +611,24 @@ bool Character::swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t new
 
 
 void Character::ageInventory() {
-    for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
-        auto itemId = items[i].getId();
+    for (auto &item: items) {
+        auto itemId = item.getId();
 
         if (itemId != 0) {
-            const auto &tempCommon = Data::CommonItems[items[ i ].getId()];
+            const auto &tempCommon = Data::CommonItems[itemId];
 
             if (tempCommon.isValid() && tempCommon.rotsInInventory) {
-                if (!items[i].survivesAgeing()) {
+                if (!item.survivesAgeing()) {
                     if (itemId != tempCommon.ObjectAfterRot) {
-                        items[i].setId(tempCommon.ObjectAfterRot);
+                        item.setId(tempCommon.ObjectAfterRot);
 
                         const auto &afterRotCommon = Data::CommonItems[tempCommon.ObjectAfterRot];
 
                         if (afterRotCommon.isValid()) {
-                            items[i].setWear(afterRotCommon.AgeingSpeed);
+                            item.setWear(afterRotCommon.AgeingSpeed);
                         }
                     } else {
-                        items[i ].reset();
+                        item.reset();
                     }
                 }
             }
