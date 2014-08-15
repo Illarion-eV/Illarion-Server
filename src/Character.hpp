@@ -434,7 +434,7 @@ public:
     * 0 = backpack, 1 to MAX_BODY_ITEMS - 1: equipped items
     * MAX_BODY_ITEMS - 1 to MAX_BODY_ITEMS + MAX_BELT_SLOTS - 1: items in the belt
     */
-    Item characterItems[ MAX_BODY_ITEMS + MAX_BELT_SLOTS ];
+    Item items[ MAX_BODY_ITEMS + MAX_BELT_SLOTS ];
 
     Container *backPackContents;
 

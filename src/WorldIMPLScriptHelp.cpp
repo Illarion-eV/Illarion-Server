@@ -163,7 +163,7 @@ void World::changeQuality(ScriptItem item, short int amount) {
 
 bool World::changeItem(ScriptItem item) {
     if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
-        item.owner->characterItems[ item.itempos ] = (Item)item;
+        item.owner->items[ item.itempos ] = (Item)item;
 
         //Wenn character ein Spieler ist ein update schicken
         if (item.owner->getType() == Character::player) {

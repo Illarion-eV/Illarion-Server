@@ -457,8 +457,8 @@ void CastTS::performAction(Player *player) {
         if (player->getAttackMode() && (player->enemyid != 0) && (LuaMageScript)) {
             bool zauberstab=false;
 
-            if ((player->characterItems[ LEFT_TOOL ].getId() != 0) && (player->characterItems[ LEFT_TOOL ].getId() != BLOCKEDITEM)) {
-                const auto weaponId = player->characterItems[LEFT_TOOL].getId();
+            if ((player->items[ LEFT_TOOL ].getId() != 0) && (player->items[ LEFT_TOOL ].getId() != BLOCKEDITEM)) {
+                const auto weaponId = player->items[LEFT_TOOL].getId();
 
                 if (Data::WeaponItems.exists(weaponId)) {
                     if (Data::WeaponItems[weaponId].Type == 13) {
@@ -467,8 +467,8 @@ void CastTS::performAction(Player *player) {
                 }
             }
 
-            if ((player->characterItems[ RIGHT_TOOL ].getId() != 0) && (player->characterItems[ RIGHT_TOOL ].getId() != BLOCKEDITEM)) {
-                const auto weaponId = player->characterItems[RIGHT_TOOL].getId();
+            if ((player->items[ RIGHT_TOOL ].getId() != 0) && (player->items[ RIGHT_TOOL ].getId() != BLOCKEDITEM)) {
+                const auto weaponId = player->items[RIGHT_TOOL].getId();
 
                 if (Data::WeaponItems.exists(weaponId)) {
                     if (Data::WeaponItems[weaponId].Type == 13) {
@@ -547,11 +547,11 @@ void CastTS::performAction(Player *player) {
         if (LuaMageScript) {
             if (pos < (MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
 
-                if (player->characterItems[ pos ].getId() != 0) {
+                if (player->items[ pos ].getId() != 0) {
 
                     if (LuaMageScript) {
                         Target.Type = LUA_ITEM;
-                        Target.item = (ScriptItem)player->characterItems[ pos ];
+                        Target.item = (ScriptItem)player->items[ pos ];
                         Target.item.pos = player->getPosition();
 
                         if (pos < MAX_BODY_ITEMS) {
@@ -792,14 +792,14 @@ void UseTS::performAction(Player *player) {
         if (pos < (MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
             Logger::debug(LogFacility::Script) << "position approved!" << Log::end;
 
-            if (player->characterItems[ pos ].getId() != 0) {
-                Logger::debug(LogFacility::Script) << "at position " << static_cast<int>(pos) << " on body, is an item with id: " << player->characterItems[ pos ].getId() << Log::end;
+            if (player->items[ pos ].getId() != 0) {
+                Logger::debug(LogFacility::Script) << "at position " << static_cast<int>(pos) << " on body, is an item with id: " << player->items[ pos ].getId() << Log::end;
 
-                LuaScript = Data::CommonItems.script(player->characterItems[ pos ].getId()) ;
+                LuaScript = Data::CommonItems.script(player->items[ pos ].getId()) ;
 
                 if (LuaScript) {
                     Source.Type = LUA_ITEM;
-                    Source.item = (ScriptItem)player->characterItems[ pos ];
+                    Source.item = (ScriptItem)player->items[ pos ];
                     Source.item.pos = player->getPosition();
 
                     if (pos < MAX_BODY_ITEMS) {
