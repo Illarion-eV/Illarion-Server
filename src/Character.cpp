@@ -155,9 +155,6 @@ bool Character::getNextStepDir(const position &goal, direction &dir) const {
 
 Character::Character(const appearance &appearance) : effects(this), waypoints(this), _world(World::get()), _appearance(appearance), attributes(ATTRIBUTECOUNT) {
     setAlive(true);
-    for (int i = 0; i < MAX_BODY_ITEMS + MAX_BELT_SLOTS; ++i) {
-        items[ i ].reset();
-    }
 
     attributes[strength] = Attribute(0, MAXATTRIB);
     attributes[dexterity] = Attribute(0, MAXATTRIB);

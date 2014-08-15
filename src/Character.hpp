@@ -20,6 +20,7 @@
 #ifndef CHARACTER_HPP
 #define CHARACTER_HPP
 
+#include <array>
 #include <stdexcept>
 #include <string>
 #include <fstream>
@@ -434,7 +435,7 @@ public:
     * 0 = backpack, 1 to MAX_BODY_ITEMS - 1: equipped items
     * MAX_BODY_ITEMS - 1 to MAX_BODY_ITEMS + MAX_BELT_SLOTS - 1: items in the belt
     */
-    Item items[ MAX_BODY_ITEMS + MAX_BELT_SLOTS ];
+    std::array<Item, MAX_BODY_ITEMS + MAX_BELT_SLOTS> items = {};
 
     Container *backPackContents;
 
