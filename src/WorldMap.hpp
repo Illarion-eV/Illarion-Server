@@ -20,7 +20,6 @@
 #ifndef _WORLDMAP_HPP_
 #define _WORLDMAP_HPP_
 
-#include <memory>
 #include <vector>
 #include <unordered_map>
 #include "globals.hpp"
@@ -29,18 +28,17 @@ class Field;
 class Map;
 
 class WorldMap {
-    using map_t = std::shared_ptr<Map>;
-    using map_vector_t = std::vector<map_t>;
-
-    map_vector_t maps;
-    std::unordered_map<position, map_t> world_map;
+    std::vector<Map> maps;
+    std::unordered_map<position, int> world_map;
     size_t ageIndex = 0;
 
 public:
     void clear();
 
-    Field &at(const position &pos) const;
-    Field &walkableNear(position &pos) const;
+    Field &at(const position &pos);
+    const Field &at(const position &pos) const;
+    Field &walkableNear(position &pos);
+    const Field &walkableNear(position &pos) const;
     bool intersects(const Map &map) const;
 
     bool allMapsAged();
@@ -53,9 +51,9 @@ public:
                    uint16_t width, uint16_t height, uint16_t tile);
 
 private:
-    bool insert(map_t newMap);
-    static map_t createMapFromHeaderFile(const std::string &importDir,
-                                         const std::string &mapName);
+    bool insert(Map map);
+    static Map createMapFromHeaderFile(const std::string &importDir,
+                                       const std::string &mapName);
     static int16_t readHeaderLine(const std::string &mapName, char header,
                                   std::ifstream &headerFile, int &lineNumber);
     static bool isCommentOrEmpty(const std::string &line);

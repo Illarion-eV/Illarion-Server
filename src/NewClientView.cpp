@@ -33,7 +33,7 @@ NewClientView::NewClientView()
 }
 
 void NewClientView::fillStripe(position pos, stripedirection dir, int length,
-                               const WorldMap &maps) {
+                               WorldMap &maps) {
     clearStripe();
     viewPosition = pos;
     stripedir = dir;
@@ -52,7 +52,7 @@ void NewClientView::clearStripe() {
     maxtiles = 0;
 }
 
-void NewClientView::readFields(int length, const WorldMap &maps) {
+void NewClientView::readFields(int length, WorldMap &maps) {
     position pos = viewPosition;
     int x_inc = (stripedir == dir_right) ? 1 : -1;
     int tmp_maxtiles = 1;

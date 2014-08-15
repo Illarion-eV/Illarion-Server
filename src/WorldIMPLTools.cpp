@@ -210,7 +210,7 @@ std::list<BlockingObject> World::LoS(const position &startingpos, const position
             }
 
             try {
-                Field &field = fieldAt(pos);
+                const Field &field = fieldAt(pos);
                 
                 if (field.hasPlayer()) {
                     bo.blockingType = BlockingObject::BT_CHARACTER;
@@ -499,11 +499,15 @@ bool World::killMonster(TYPE_OF_CHARACTER_ID id) {
 }
 
 
-Field &World::fieldAt(const position &pos) const {
+Field &World::fieldAt(const position &pos) {
     return maps.at(pos);
 }
 
-Field &World::fieldAtOrBelow(position &pos) const {
+const Field &World::fieldAt(const position &pos) const {
+    return maps.at(pos);
+}
+
+Field &World::fieldAtOrBelow(position &pos) {
     for (size_t i = 0; i <= RANGEDOWN; ++i) {
         Field &field = fieldAt(pos);
 
@@ -517,7 +521,7 @@ Field &World::fieldAtOrBelow(position &pos) const {
     throw FieldNotFound();
 }
 
-Field &World::walkableFieldNear(position &pos) const {
+Field &World::walkableFieldNear(position &pos) {
     return maps.walkableNear(pos);
 }
 

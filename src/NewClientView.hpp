@@ -103,7 +103,7 @@ public:
         * @param length number of tiles to be read
     * @param maps the maps from which we want to calculate the stripes
     */
-    void fillStripe(position pos, stripedirection dir, int length, const WorldMap &maps);
+    void fillStripe(position pos, stripedirection dir, int length, WorldMap &maps);
 
     /**
     * clears all current stripe infos
@@ -117,7 +117,7 @@ private:
         * @param length number of tiles to be read
     * @param maps the map vector from which we want to read the fields
     */
-    void readFields(int length, const WorldMap &maps);
+    void readFields(int length, WorldMap &maps);
 
     /**
     * the starting position of the current view

@@ -50,11 +50,24 @@ Field &Map::at(int16_t x, int16_t y) {
     return fields[Conv_X_Koord(x)][Conv_Y_Koord(y)];
 }
 
+const Field &Map::at(int16_t x, int16_t y) const {
+    return fields[Conv_X_Koord(x)][Conv_Y_Koord(y)];
+}
+
 Field &Map::at(const MapPosition &pos) {
     return at(pos.x, pos.y);
 }
 
+const Field &Map::at(const MapPosition &pos) const {
+    return at(pos.x, pos.y);
+}
+
 Field &Map::walkableNear(int16_t &x, int16_t &y) {
+    return const_cast<Field &>(
+        static_cast<const Map &>(*this).walkableNear(x, y));
+}
+
+const Field &Map::walkableNear(int16_t &x, int16_t &y) const {
     auto startx = x;
     auto starty = y;
 
@@ -65,7 +78,7 @@ Field &Map::walkableNear(int16_t &x, int16_t &y) {
 
         while (x <= startx + d) {
             try {
-                Field &field = at(x, d + starty);
+                const Field &field = at(x, d + starty);
                 
                 if (field.moveToPossible()) {
                     y = d + starty;
@@ -75,7 +88,7 @@ Field &Map::walkableNear(int16_t &x, int16_t &y) {
             }
 
             try {
-                Field &field = at(x, starty - d);
+                const Field &field = at(x, starty - d);
 
                 if (field.moveToPossible()) {
                     y = starty - d;
@@ -91,7 +104,7 @@ Field &Map::walkableNear(int16_t &x, int16_t &y) {
 
         while (y <= d + starty) {
             try {
-                Field &field = at(d + startx, y);
+                const Field &field = at(d + startx, y);
 
                 if (field.moveToPossible()) {
                     x = d + startx;
@@ -101,7 +114,7 @@ Field &Map::walkableNear(int16_t &x, int16_t &y) {
             }
 
             try {
-                Field &field = at(startx - d, y);
+                const Field &field = at(startx - d, y);
 
                 if (field.moveToPossible()) {
                     x = startx - d;

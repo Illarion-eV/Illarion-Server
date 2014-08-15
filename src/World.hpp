@@ -368,9 +368,10 @@ public:
 
     bool killMonster(TYPE_OF_CHARACTER_ID id);
 
-    Field &fieldAt(const position &pos) const;
-    Field &fieldAtOrBelow(position &pos) const;
-    Field &walkableFieldNear(position &pos) const;
+    Field &fieldAt(const position &pos);
+    const Field &fieldAt(const position &pos) const;
+    Field &fieldAtOrBelow(position &pos);
+    Field &walkableFieldNear(position &pos);
 
     int getItemAttrib(const std::string &s, TYPE_OF_ITEM_ID ItemID);
 

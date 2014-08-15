@@ -29,16 +29,16 @@
 #include <chrono>
 
 void WorldMap::clear() {
-    maps.clear();
     world_map.clear();
+    maps.clear();
 }
 
 bool WorldMap::intersects(const Map &map) const {
     for(const auto &testMap : maps) {
-        if (testMap->intersects(map)) {
+        if (map.intersects(testMap)) {
             Logger::error(LogFacility::Script)
                 << "Could not insert map " << map.getName()
-                << " because it intersects with " << testMap->getName()
+                << " because it intersects with " << testMap.getName()
                 << Log::end;
 
             return true;
@@ -48,42 +48,54 @@ bool WorldMap::intersects(const Map &map) const {
     return false;
 }
 
-Field &WorldMap::at(const position &pos) const {
+Field &WorldMap::at(const position &pos) {
     try {
-        return world_map.at(pos)->at(pos.x, pos.y);
+        return maps.at(world_map.at(pos)).at(pos.x, pos.y);
     } catch (std::out_of_range &e) {
         throw FieldNotFound();
     }
 }
 
-Field &WorldMap::walkableNear(position &pos) const {
+const Field &WorldMap::at(const position &pos) const {
     try {
-        return world_map.at(pos)->walkableNear(pos.x, pos.y);
+        return maps.at(world_map.at(pos)).at(pos.x, pos.y);
     } catch (std::out_of_range &e) {
         throw FieldNotFound();
     }
 }
 
-bool WorldMap::insert(map_t newMap) {
-    if (newMap) {
-        if (intersects(*newMap)) return false;
+Field &WorldMap::walkableNear(position &pos) {
+    try {
+        return maps.at(world_map.at(pos)).walkableNear(pos.x, pos.y);
+    } catch (std::out_of_range &e) {
+        throw FieldNotFound();
+    }
+}
 
-        maps.push_back(newMap);
+const Field &WorldMap::walkableNear(position &pos) const {
+    try {
+        return maps.at(world_map.at(pos)).walkableNear(pos.x, pos.y);
+    } catch (std::out_of_range &e) {
+        throw FieldNotFound();
+    }
+}
 
-        auto z = newMap->getLevel();
+bool WorldMap::insert(Map newMap) {
+    if (intersects(newMap)) return false;
 
-        for (auto x = newMap->getMinX(); x <= newMap->getMaxX(); ++x) {
-            for (auto y = newMap->getMinY(); y <= newMap->getMaxY(); ++y) {
-                position p(x, y, z);
-                world_map[p] = newMap;
-            }
+    maps.push_back(std::move(newMap));
+
+    auto &map = maps.back();
+    const auto z = map.getLevel();
+
+    for (auto x = map.getMinX(); x <= map.getMaxX(); ++x) {
+        for (auto y = map.getMinY(); y <= map.getMaxY(); ++y) {
+            position p(x, y, z);
+            world_map[p] = maps.size() - 1;
         }
-
-        return true;
     }
 
-    return false;
-
+    return true;
 }
 
 bool WorldMap::allMapsAged() {
@@ -92,8 +104,9 @@ bool WorldMap::allMapsAged() {
 
     auto startTime = steady_clock::now();
 
-    while (ageIndex < maps.size() && steady_clock::now() - startTime < milliseconds(10)) {
-        maps[ageIndex++]->age();
+    while (ageIndex < maps.size() &&
+           steady_clock::now() - startTime < milliseconds(10)) {
+        maps[ageIndex++].age();
     }
 
     if (ageIndex < maps.size()) {
@@ -110,7 +123,7 @@ bool WorldMap::import(const std::string &importDir,
 
     try {
         auto map = createMapFromHeaderFile(importDir, mapName);
-        success = map->import(importDir, mapName) && insert(map);
+        success = map.import(importDir, mapName) && insert(std::move(map));
     } catch (MapError &) {
         success = false;
     }
@@ -123,8 +136,8 @@ bool WorldMap::import(const std::string &importDir,
     return success;
 }
 
-auto WorldMap::createMapFromHeaderFile(const std::string &importDir,
-                                       const std::string &mapName) -> map_t {
+Map WorldMap::createMapFromHeaderFile(const std::string &importDir,
+                                      const std::string &mapName) {
     const std::string fileName = mapName + ".tiles.txt";
     std::ifstream headerFile(importDir + fileName);
 
@@ -184,7 +197,7 @@ auto WorldMap::createMapFromHeaderFile(const std::string &importDir,
         throw MapError();
     }
 
-    return std::make_shared<Map>(mapName, origin, width, height);
+    return Map(mapName, origin, width, height);
 }
 
 const boost::regex headerExpression {R"(^(.): (-?\d+)$)"};
@@ -225,12 +238,12 @@ bool WorldMap::isCommentOrEmpty(const std::string &line) {
 
 bool WorldMap::exportTo(const std::string &exportDir) const {
     for (const auto &map : maps) {
-        int16_t minX = map->getMinX();
-        int16_t minY = map->getMinY();
+        int16_t minX = map.getMinX();
+        int16_t minY = map.getMinY();
         // create base filename
         std::string filebase = exportDir + "e_" + std::to_string(minX)
                                + "_" + std::to_string(minY)
-                               + "_" + std::to_string(map->getLevel()) + ".";
+                               + "_" + std::to_string(map.getLevel()) + ".";
         // export fields file
         std::ofstream fieldsf(filebase + "tiles.txt");
         // export items file
@@ -245,18 +258,18 @@ bool WorldMap::exportTo(const std::string &exportDir) const {
 
         // export tiles header
         fieldsf << "V: 2" << std::endl;
-        fieldsf << "L: " << map->getLevel() << std::endl;
+        fieldsf << "L: " << map.getLevel() << std::endl;
         fieldsf << "X: " << minX << std::endl;
         fieldsf << "Y: " << minY << std::endl;
-        fieldsf << "W: " << map->getWidth() << std::endl;
-        fieldsf << "H: " << map->getHeight() << std::endl;
+        fieldsf << "W: " << map.getWidth() << std::endl;
+        fieldsf << "H: " << map.getHeight() << std::endl;
 
         // iterate over the map and export...
         short int x, y;
 
-        for (y = minY; y <= map->getMaxY(); ++y) {
-            for (x = minX; x <= map->getMaxX(); ++x) {
-                Field &field = map->at(x, y);
+        for (y = minY; y <= map.getMaxY(); ++y) {
+            for (x = minX; x <= map.getMaxX(); ++x) {
+                const Field &field = map.at(x, y);
 
                 fieldsf << x-minX << ";" << y-minY << ";" << field.getTileCode() << ";" << field.getMusicId() << std::endl;
 
@@ -314,12 +327,12 @@ bool WorldMap::loadFromDisk(const std::string &path) {
         Logger::info(LogFacility::World) << "Loading " << size << " maps."
                                          << Log::end;
 
-        short int tZ_Level;
-        short int tMin_X;
-        short int tMin_Y;
+        int16_t tZ_Level;
+        int16_t tMin_X;
+        int16_t tMin_Y;
 
-        short int tWidth;
-        short int tHeight;
+        uint16_t tWidth;
+        uint16_t tHeight;
 
         char mname[ 200 ];
 
@@ -331,15 +344,14 @@ bool WorldMap::loadFromDisk(const std::string &path) {
             mapinitfile.read((char *) & tWidth, sizeof(tWidth));
             mapinitfile.read((char *) & tHeight, sizeof(tHeight));
 
-            auto map = std::make_shared<Map>("previously saved map",
-                                             position(tMin_X, tMin_Y, tZ_Level),
-                                             tWidth, tHeight);
+            auto map = Map{"previously saved map",
+                           position{tMin_X, tMin_Y, tZ_Level}, tWidth, tHeight};
 
             sprintf(mname, "%s_%6d_%6d_%6d", path.c_str(), tZ_Level, tMin_X,
                     tMin_Y);
 
-            if (map->Load(mname)) {
-                insert(map);
+            if (map.Load(mname)) {
+                insert(std::move(map));
             }
         }
 
@@ -359,19 +371,19 @@ void WorldMap::saveToDisk(const std::string &prefix) const {
         char mname[200];
 
         for (const auto &map : maps) {
-            const auto level = map->getLevel();
-            const auto x = map->getMinX();
-            const auto y = map->getMinY();
-            const auto width = map->getWidth();
-            const auto height = map->getHeight();
+            const auto level = map.getLevel();
+            const auto x = map.getMinX();
+            const auto y = map.getMinY();
+            const auto width = map.getWidth();
+            const auto height = map.getHeight();
             mapinitfile.write((char *) &level, sizeof(level));
             mapinitfile.write((char *) &x, sizeof(x));
             mapinitfile.write((char *) &y, sizeof(y));
             mapinitfile.write((char *) &width, sizeof(width));
             mapinitfile.write((char *) &height, sizeof(height));
 
-            sprintf(mname, "%s_%6d_%6d_%6d", prefix.c_str(), map->getLevel(), map->getMinX(), map->getMinY());
-            map->Save(mname);
+            sprintf(mname, "%s_%6d_%6d_%6d", prefix.c_str(), level, x, y);
+            map.Save(mname);
         }
 
         mapinitfile.close();
@@ -380,6 +392,6 @@ void WorldMap::saveToDisk(const std::string &prefix) const {
 
 bool WorldMap::createMap(const std::string &name, const position &origin,
                          uint16_t width, uint16_t height, uint16_t tile) {
-    auto map = std::make_shared<Map>(name, origin, width, height, tile);
-    return insert(map);
+    Map map{name, origin, width, height, tile};
+    return insert(std::move(map));
 }
