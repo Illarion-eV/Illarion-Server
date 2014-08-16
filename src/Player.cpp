@@ -2024,7 +2024,7 @@ void Player::changeQualityAt(unsigned char pos, short int amount) {
 }
 
 bool Player::hasGMRight(gm_rights right) const {
-    return ((right & admin) == static_cast<uint32_t>(right));
+    return (((right & admin) == static_cast<uint32_t>(right)) || Config::instance().debug);
 }
 
 void Player::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS progress) {

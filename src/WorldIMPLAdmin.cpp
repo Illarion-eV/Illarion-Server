@@ -24,7 +24,6 @@
 #include <iostream>
 #include <boost/regex.hpp>
 
-#include "Config.hpp"
 #include "PlayerManager.hpp"
 #include "Logger.hpp"
 #include "constants.hpp"
@@ -168,7 +167,7 @@ void World::spawn_command(Player *cp, const std::string &monid) {
 }
 
 void World::create_command(Player *cp, const std::string &itemid) {
-    if (cp->hasGMRight(gmr_basiccommands) || Config::instance().debug) {
+    if (cp->hasGMRight(gmr_basiccommands)) {
         TYPE_OF_ITEM_ID item;
         uint16_t quantity = 1;
         uint16_t quality = 333;
@@ -267,7 +266,7 @@ void World::showIPS_Command(Player *cp) {
 }
 
 void World::jumpto_command(Player *cp,const std::string &player) {
-    if (cp->hasGMRight(gmr_warp) || Config::instance().debug) {
+    if (cp->hasGMRight(gmr_warp)) {
         cp->closeAllShowcasesOfMapContainers();
         teleportPlayerToOther(cp, player);
         Logger::info(LogFacility::Admin) << *cp << " jumps to player " << player
@@ -442,7 +441,7 @@ void World::sendAdminAllPlayerData(Player *admin) {
 
 
 void World::warpto_command(Player *p, const std::string &text) {
-    if (!p->hasGMRight(gmr_warp) && !Config::instance().debug) {
+    if (!p->hasGMRight(gmr_warp)) {
         return;
     }
 
@@ -567,7 +566,7 @@ void World::ban(Player *cp, int bantime, TYPE_OF_CHARACTER_ID gmid) {
 
 // !who [player]
 void World::who_command(Player *cp, const std::string &tplayer) {
-    if (!cp->hasGMRight(gmr_basiccommands) && !Config::instance().debug) {
+    if (!cp->hasGMRight(gmr_basiccommands)) {
         return;
     }
 
@@ -702,7 +701,7 @@ void World::what_command(Player *cp) {
 
             message << "- Item " << top.getId();
 
-            if (cp->hasGMRight(gmr_basiccommands) || Config::instance().debug) {
+            if (cp->hasGMRight(gmr_basiccommands)) {
                 message << ", Stack of " << top.getNumber();
                 message << ", Quality " << top.getQuality();
 
@@ -787,24 +786,8 @@ void World::teleport_command(Player *cp, const std::string &text) {
 
 void World::gmhelp_command(Player *cp) {
     if (!cp->hasGMRight(gmr_basiccommands)) {
-        if (Config::instance().debug) {
-            std::string tmessage = " <> - parameter.  [] - optional.  | = choice.  () = shortcut";
-            cp->inform(tmessage);
-            tmessage = "!create <id> [<quantity> [<quality> [[<data_key>=<data_value>] ...]]] creates an item in your inventory.";
-            cp->inform(tmessage);
-            tmessage = "!jumpto <player> - (!j) teleports you to the player.";
-            cp->inform(tmessage);
-            tmessage = "!warp <x> <y> [<z>] | !warp <z> - (!w) change given coordinates.";
-            cp->inform(tmessage);
-            tmessage = "!what - sends various information of the field or the character in front of you.";
-            cp->inform(tmessage);
-            tmessage = "!who [<player>] - List all players online or a single player if specified.";
-            cp->inform(tmessage);
-        } else {
-            std::string tmessage = "!what - sends various information of the field or the character in front of you.";
-            cp->inform(tmessage);
-        }
-
+        std::string tmessage = "!what - sends various information of the field or the character in front of you.";
+        cp->inform(tmessage);
         return;
     }
 
