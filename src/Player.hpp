@@ -20,6 +20,7 @@
 #ifndef _PLAYER_HPP_
 #define _PLAYER_HPP_
 
+#include <chrono>
 #include <memory>
 #include <string>
 #include <set>
@@ -137,6 +138,8 @@ public:
 
     //! Zeitpunkt der letzten Aktion des Spielers
     time_t lastaction;
+
+    std::chrono::time_point<std::chrono::steady_clock> reachingTargetField = {};
 
     //! Location
     std::string location;

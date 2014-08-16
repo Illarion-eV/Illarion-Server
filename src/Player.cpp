@@ -1844,6 +1844,19 @@ bool Player::moveToPossible(const Field &field) const {
 }
 
 bool Player::move(direction dir, uint8_t mode) {
+    using std::chrono::steady_clock;
+    using std::chrono::milliseconds;
+    auto now = steady_clock::now();
+
+    if (now + milliseconds(800) < reachingTargetField) {
+        auto cmd =
+            std::make_shared<MoveAckTC>(getId(), getPosition(), STILLMOVING, 0);
+        Connection->addCommand(cmd);
+        return false;
+    } else if (now > reachingTargetField) {
+        reachingTargetField = now;
+    }
+
     _world->TriggerFieldMove(this, false);
     closeOnMove();
 
@@ -1907,6 +1920,7 @@ bool Player::move(direction dir, uint8_t mode) {
                     cont = false;
                 } else {
                     if (mode != RUNNING || (j == 1 && cont)) {
+                        reachingTargetField += milliseconds(walkcost);
                         ServerCommandPointer cmd = std::make_shared<MoveAckTC>(getId(), newpos, mode, walkcost);
                         Connection->addCommand(cmd);
                     }
@@ -1948,6 +1962,7 @@ bool Player::move(direction dir, uint8_t mode) {
             }
         } catch (FieldNotFound &) {
             if (j == 1) {
+                reachingTargetField += milliseconds(walkcost);
                 ServerCommandPointer cmd = std::make_shared<MoveAckTC>(getId(), getPosition(), NORMALMOVE, walkcost);
                 Connection->addCommand(cmd);
                 sendStepStripes(dir);

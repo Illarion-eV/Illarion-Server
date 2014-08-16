@@ -185,7 +185,7 @@ const uint32_t MONSTERVIEWRANGE = 11;
 
 //-------------- Server to Client ---------------------
 
-//! Code fr "keine Bewegung" (anstatt der Richtung zu senden)
+#define STILLMOVING 0x09
 #define NOMOVE 0x0A
 #define NORMALMOVE 0x0B
 #define PUSH 0x0C
