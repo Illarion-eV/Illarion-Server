@@ -17,7 +17,7 @@
 #   along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-noinst_PROGRAMS = illarion
+bin_PROGRAMS = illarion
 noinst_LTLIBRARIES = libserver.la
 
 AM_CXXFLAGS = -ggdb -pipe -Wall -Wformat-security -Wunused-result -Werror -Wno-deprecated -std=c++11 $(BOOST_CXXFLAGS) $(DEPS_CFLAGS) -fPIC
