@@ -98,7 +98,7 @@ private:
     /**
     * initial connection to get the new connections
     */
-    InitialConnection incon;
+    std::shared_ptr<InitialConnection> incon = InitialConnection::create();
 
     std::unique_ptr<std::thread> login_thread = nullptr;
     std::unique_ptr<std::thread> save_thread = nullptr;
