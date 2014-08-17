@@ -17,7 +17,7 @@
 #   along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-noinst_PROGRAMS = testserver
+noinst_PROGRAMS = illarion
 noinst_LTLIBRARIES = libserver.la
 
 AM_CXXFLAGS = -ggdb -pipe -Wall -Werror -Wno-deprecated -std=c++11 $(BOOST_CXXFLAGS) $(DEPS_CFLAGS) -fPIC
@@ -67,7 +67,7 @@ netinterface/protocol/BBIWIServerCommands.cpp netinterface/protocol/BBIWIClientC
 
 libserver_la_LIBADD = $(top_builddir)/src/script/libscriptbinding.la
 
-testserver_SOURCES = main.cpp
+illarion_SOURCES = main.cpp
 
 noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
 		 dialog/CraftingDialog.hpp dialog/MessageDialog.hpp \
