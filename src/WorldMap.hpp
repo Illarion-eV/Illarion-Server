@@ -23,9 +23,9 @@
 #include <vector>
 #include <unordered_map>
 #include "globals.hpp"
+#include "Map.hpp"
 
 class Field;
-class Map;
 
 class WorldMap {
     std::vector<Map> maps;
