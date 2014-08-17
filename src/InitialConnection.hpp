@@ -29,47 +29,28 @@
 
 class NetInterface;
 
-//! die maximal Anzahl von noch nicht bearbeiteten Verbindungen in der Warteschlange
 #define BACKLOG 10
 
-//! erstellt Verbindungen zu neuen Clients
-// Eine Instanz dieser Klasse wartet auf Verbindungsanfragen
-// von Clients �ber einen speziellen Port und erstellt die ben�tigten
-// Kommunikationsendpunkte (Socket).
 class InitialConnection : public Connection {
 
 public:
+    using NewPlayerVector = thread_safe_vector<std::shared_ptr<NetInterface>>;
 
-
-    typedef thread_safe_vector<std::shared_ptr<NetInterface>> TVECTORPLAYER;
-
-    //! Konstruktor
     InitialConnection();
-
-    //! Destruktor
     ~InitialConnection();
 
-    //! liefert alle neu erstellten Player zur�ck
-    // \return f�r die angemeldeten Clients mit richtiger Clientversion
-    // einen Player mit player.name und player.pw, entsprechend der gesendeten Daten
-    // besetzt
-    TVECTORPLAYER &get_Player_Vector();
+    NewPlayerVector &getNewPlayers();
 
 private:
-
     void run_service();
 
     boost::asio::io_service io_service;
     std::unique_ptr<boost::asio::ip::tcp::acceptor> acceptor = nullptr;
 
+    void accept_connection(std::shared_ptr<NetInterface> connection,
+                           const boost::system::error_code &error);
 
-    //! wartet auf eine neue Verbindung (blockierend)
-    // \return eine neue Verbindung oder nullptr
-    //CInternetConnection* accept_connection();
-    void accept_connection(std::shared_ptr<NetInterface> connection, const boost::system::error_code &error);
-
-    //! std::vector for new players...
-    TVECTORPLAYER playerVector;
+    NewPlayerVector newPlayers;
 };
 
 #endif

@@ -87,7 +87,7 @@ void PlayerManager::setLoginLogout(bool val) {
 
 void PlayerManager::loginLoop(PlayerManager *pmanager) {
     try {
-        auto &newplayers = pmanager->incon.get_Player_Vector();
+        auto &newplayers = pmanager->incon.getNewPlayers();
         timespec waittime;
         waittime.tv_sec = 0;
         waittime.tv_nsec = 100000000;

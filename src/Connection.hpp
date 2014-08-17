@@ -25,16 +25,9 @@
 #include <netinet/in.h>
 
 
-//! Grundelemente einer Verbindung
-class Connection {
-public:
-    //! die ID des Empfangssockets
+struct Connection {
     int m_read_socket;
-
-    //! Empfangs - Adresse innerhalb des Kommunikations-Adressraumes
     struct sockaddr_in m_read_addr;
-
-    //! Sende - Adresse innerhalb des Kommunikations-Adressraumes
     struct sockaddr_in m_write_addr;
 };
 
