@@ -26,3 +26,6 @@ EXTRA_DIST = .astylerc
 
 style: .astylerc
 	astyle -n --options=$(top_srcdir)/.astylerc "${top_srcdir}/*.cpp" "${top_srcdir}/*.hpp"
+
+clean-local:
+	-rm -rf $(top_builddir)/src/version.hpp
