@@ -28,9 +28,12 @@
 
 #include "netinterface/NetInterface.hpp"
 
-InitialConnection::InitialConnection() {
-    std::thread servicethread(std::bind(&InitialConnection::run_service, this));
+std::shared_ptr<InitialConnection> InitialConnection::create() {
+    std::shared_ptr<InitialConnection> ptr(new InitialConnection());
+    std::thread servicethread(
+        std::bind(&InitialConnection::run_service, ptr->shared_from_this()));
     servicethread.detach();
+    return ptr;
 }
 
 
@@ -49,7 +52,7 @@ void InitialConnection::run_service() {
     using std::placeholders::_1;
     acceptor->async_accept(newConnection->getSocket(),
                            std::bind(&InitialConnection::accept_connection,
-                                     this, newConnection, _1));
+                                     shared_from_this(), newConnection, _1));
     Logger::info(LogFacility::Other) << "Starting the IO Service!" << Log::end;
     io_service.run();
 }
@@ -69,7 +72,8 @@ InitialConnection::accept_connection(std::shared_ptr<NetInterface> connection,
         using std::placeholders::_1;
         acceptor->async_accept(newConnection->getSocket(),
                                std::bind(&InitialConnection::accept_connection,
-                                         this, newConnection, _1));
+                                         shared_from_this(), newConnection,
+                                         _1));
     } else {
         Logger::error(LogFacility::Other)
             << "Could not accept connection: " << error.message() << Log::end;

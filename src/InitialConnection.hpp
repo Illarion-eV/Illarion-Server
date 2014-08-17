@@ -31,17 +31,20 @@ class NetInterface;
 
 #define BACKLOG 10
 
-class InitialConnection : public Connection {
+class InitialConnection
+    : public Connection,
+      public std::enable_shared_from_this<InitialConnection> {
 
 public:
     using NewPlayerVector = thread_safe_vector<std::shared_ptr<NetInterface>>;
 
-    InitialConnection();
+    static std::shared_ptr<InitialConnection> create();
     ~InitialConnection();
 
     NewPlayerVector &getNewPlayers();
 
 private:
+    InitialConnection() = default;
     void run_service();
 
     boost::asio::io_service io_service;
