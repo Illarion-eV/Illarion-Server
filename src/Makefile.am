@@ -22,10 +22,10 @@ noinst_LTLIBRARIES = libserver.la
 
 AM_CXXFLAGS = -ggdb -pipe -Wall -Wformat-security -Wunused-result -Werror -Wno-deprecated -std=c++11 $(BOOST_CXXFLAGS) $(DEPS_CFLAGS) -fPIC
 AM_CPPFLAGS = -D_THREAD_SAFE -D_REENTRANT -D_FORTIFY_SOURCE=2 $(subst -I,-isystem,$(BOOST_CPPFLAGS)) -I$(top_srcdir)/src -DPIC
-AM_LDFLAGS = $(BOOST_THREAD_LDFLAGS) $(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS) $(BOOST_REGEX_LDFLAGS)
-LDADD = -L/usr/local/lib -lpthread -lssl $(DEPS_LIBS) libserver.la $(top_builddir)/src/script/libscriptbinding.la
+AM_LDFLAGS = $(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS) $(BOOST_REGEX_LDFLAGS)
+LDADD = $(DEPS_LIBS) libserver.la $(top_builddir)/src/script/libscriptbinding.la
 
-LIBS = $(BOOST_THREAD_LIBS) $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS) $(BOOST_REGEX_LIBS)
+LIBS = $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS) $(BOOST_REGEX_LIBS)
 
 SUBDIRS = script .
 
