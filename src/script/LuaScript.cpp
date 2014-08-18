@@ -154,8 +154,11 @@ void LuaScript::initialize() {
         char path[100];
         strcpy(path, Config::instance().scriptdir().c_str());
         strcat(path, "?.lua");
+
+        lua_pushglobaltable(_luaState);
         lua_pushstring(_luaState, "package");
-        lua_gettable(_luaState, LUA_GLOBALSINDEX);
+        lua_gettable(_luaState, -2);
+        
         lua_pushstring(_luaState, "path");
         lua_pushstring(_luaState, path);
         lua_settable(_luaState, -3);
@@ -429,7 +432,7 @@ Character *getCharForId(TYPE_OF_CHARACTER_ID id) {
 
 void LuaScript::init_base_functions() {
     static const luaL_Reg lualibs[] = {
-        {"", luaopen_base},
+        {"_G", luaopen_base},
         {LUA_LOADLIBNAME, luaopen_package},
         {LUA_TABLIBNAME, luaopen_table},
         {LUA_IOLIBNAME, luaopen_io},
@@ -442,9 +445,8 @@ void LuaScript::init_base_functions() {
     const luaL_Reg *lib = lualibs;
 
     for (; lib->func; lib++) {
-        lua_pushcfunction(_luaState, lib->func);
-        lua_pushstring(_luaState, lib->name);
-        lua_call(_luaState, 1, 0);
+        luaL_requiref(_luaState, lib->name, lib->func, 1);
+        lua_pop(_luaState, 1);  // remove lib
     }
 
     luabind::value_vector skills;
