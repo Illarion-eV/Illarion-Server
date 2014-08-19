@@ -37,6 +37,7 @@ using ::testing::Return;
 using ::testing::AtLeast;
 using ::testing::_;
 using ::testing::Pointee;
+using ::testing::AnyOf;
 
 class world_bindings : public ::testing::Test {
 public:
@@ -93,10 +94,11 @@ TEST_F(world_bindings, ContainerCountItem) {
                           "end",
                           "container_countitem_test", itemdef
                          };
-    const script_data_exchangemap data {{"key1", "value1"}, {"key2", "value2"}};
+    const script_data_exchangemap data1 {{"key1", "value1"}, {"key2", "value2"}};
+    const script_data_exchangemap data2 {{"key2", "value2"}, {"key1", "value1"}};
 
     EXPECT_CALL(player, GetBackPack()).Times(1).WillOnce(Return(&container));
-    EXPECT_CALL(container, countItem(1, Pointee(data))).Times(1);
+    EXPECT_CALL(container, countItem(1, Pointee(AnyOf(data1, data2)))).Times(1);
     script.UseItem(&player, item, 1);
 }
 
@@ -107,10 +109,11 @@ TEST_F(world_bindings, ContainerEraseItem) {
                           "end",
                           "container_eraseitem_test", itemdef
                          };
-    const script_data_exchangemap data {{"key1", "value1"}, {"key2", "value2"}};
+    const script_data_exchangemap data1 {{"key1", "value1"}, {"key2", "value2"}};
+    const script_data_exchangemap data2 {{"key2", "value2"}, {"key1", "value1"}};
 
     EXPECT_CALL(player, GetBackPack()).Times(1).WillOnce(Return(&container));
-    EXPECT_CALL(container, eraseItem(1, 1, Pointee(data))).Times(1);
+    EXPECT_CALL(container, eraseItem(1, 1, Pointee(AnyOf(data1, data2)))).Times(1);
     script.UseItem(&player, item, 1);
 }
 
