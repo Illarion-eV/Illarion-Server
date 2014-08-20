@@ -61,7 +61,7 @@ AC_CONFIG_LINKS([test/maps/test.tiles.txt:test/maps/test.tiles.txt
 
 AC_LANG(C++)
 
-DEPS_CFLAGS="$lua_CFLAGS $libpqxx_CFLAGS $luabind_CFLAGS"
+DEPS_CFLAGS="$lua_CFLAGS $libpqxx_CFLAGS"
 DEPS_LIBS="$lua_LIBS $libpqxx_LIBS $luabind_LIBS"
 
 ac_gtest_dir="/usr/src/gtest"
