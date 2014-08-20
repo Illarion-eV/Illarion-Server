@@ -24,6 +24,8 @@ SUBDIRS = src test
 
 EXTRA_DIST = .astylerc
 
+dist_sysconf_DATA=setup/illarion.conf
+
 style: .astylerc
 	astyle -n --options=$(top_srcdir)/.astylerc "${top_srcdir}/*.cpp" "${top_srcdir}/*.hpp"
 
