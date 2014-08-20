@@ -17,7 +17,7 @@
 #   along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-check_LTLIBRARIES = libgmock.la
+check_LIBRARIES = libgmock.a
 check_PROGRAMS = test_binding ItemTest CharacterContainerTest test_container \
                  test_binding_item test_binding_scriptitem test_binding_position \
                  test_binding_longtimeaction test_binding_weatherstruct \
@@ -25,13 +25,13 @@ check_PROGRAMS = test_binding ItemTest CharacterContainerTest test_container \
 
 AM_CXXFLAGS = -ggdb -pipe -Wall -Wno-deprecated -std=c++11 $(BOOST_CXXFLAGS) $(DEPS_CFLAGS)
 AM_CPPFLAGS = -D_THREAD_SAFE -D_REENTRANT $(BOOST_CPPFLAGS) -I$(top_srcdir)/src
-AM_LDFLAGS = $(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS)
-LDADD = $(DEPS_LIBS) $(top_builddir)/src/libserver.la libgmock.la
+AM_LDFLAGS = $(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS) $(BOOST_REGEX_LDFLAGS)
+LDADD = $(DEPS_LIBS) $(top_builddir)/src/libserver.a $(top_builddir)/src/script/libscriptbinding.a libgmock.a
 
-LIBS = $(BOOST_THREAD_LIBS) $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS)
+LIBS = $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS) $(BOOST_REGEX_LIBS)
 
-nodist_libgmock_la_SOURCES = $(GMOCK_DIR)/src/gmock-all.cc $(GTEST_DIR)/src/gtest-all.cc
-libgmock_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(GMOCK_DIR) -I$(GTEST_DIR)
+nodist_libgmock_a_SOURCES = $(GMOCK_DIR)/src/gmock-all.cc $(GTEST_DIR)/src/gtest-all.cc
+libgmock_a_CPPFLAGS = $(AM_CPPFLAGS) -I$(GMOCK_DIR) -I$(GTEST_DIR)
 
 TESTS = $(check_PROGRAMS)
 

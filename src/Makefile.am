@@ -18,12 +18,12 @@
 
 
 bin_PROGRAMS = illarion
-noinst_LTLIBRARIES = libserver.la
+noinst_LIBRARIES = libserver.a
 
-AM_CXXFLAGS = -ggdb -pipe -Wall -Wformat-security -Wunused-result -Werror -Wno-deprecated -std=c++11 $(BOOST_CXXFLAGS) $(DEPS_CFLAGS) -fPIC
-AM_CPPFLAGS = -D_THREAD_SAFE -D_REENTRANT -D_FORTIFY_SOURCE=2 $(subst -I,-isystem,$(BOOST_CPPFLAGS)) -I$(top_srcdir)/src -DPIC
+AM_CXXFLAGS = -ggdb -pipe -Wall -Wformat-security -Wunused-result -Werror -Wno-deprecated -std=c++11 $(BOOST_CXXFLAGS) $(DEPS_CFLAGS)
+AM_CPPFLAGS = -D_THREAD_SAFE -D_REENTRANT -D_FORTIFY_SOURCE=2 $(subst -I,-isystem,$(BOOST_CPPFLAGS)) -I$(top_srcdir)/src
 AM_LDFLAGS = $(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS) $(BOOST_REGEX_LDFLAGS)
-LDADD = $(DEPS_LIBS) libserver.la $(top_builddir)/src/script/libscriptbinding.la
+LDADD = $(DEPS_LIBS) libserver.a $(top_builddir)/src/script/libscriptbinding.a
 
 LIBS = $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS) $(BOOST_REGEX_LIBS)
 
@@ -31,7 +31,7 @@ SUBDIRS = script .
 
 BUILT_SOURCES = version.hpp
 
-libserver_la_SOURCES = \
+libserver_a_SOURCES = \
 main_help.cpp utility.cpp Logger.cpp Random.cpp Config.cpp Statistics.cpp a_star.cpp character_ptr.cpp \
 \
 data/Data.cpp data/QuestNodeTable.cpp data/QuestTable.cpp \
@@ -65,7 +65,7 @@ netinterface/BasicCommand.cpp netinterface/BasicServerCommand.cpp netinterface/B
 netinterface/protocol/ServerCommands.cpp netinterface/protocol/ClientCommands.cpp netinterface/ByteBuffer.cpp \
 netinterface/protocol/BBIWIServerCommands.cpp netinterface/protocol/BBIWIClientCommands.cpp
 
-libserver_la_LIBADD = $(top_builddir)/src/script/libscriptbinding.la
+libserver_a_LIBADD = $(top_builddir)/src/script/libscriptbinding.a
 
 illarion_SOURCES = main.cpp
 
@@ -112,7 +112,7 @@ noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
 		 LongTimeCharacterEffects.hpp LongTimeAction.hpp character_ptr.hpp \
 		 Player.hpp SpawnPoint.hpp LongTimeEffect.hpp Monster.hpp
 
-version.hpp: $(HEADERS) $(SOURCES) $(top_builddir)/src/script/libscriptbinding.la
+version.hpp: $(HEADERS) $(SOURCES) $(top_builddir)/src/script/libscriptbinding.a
 	echo "#define SERVER_VERSION \"`git describe --long`\"" > version.hpp
 
-$(top_builddir)/src/script/libscriptbinding.la: script
+$(top_builddir)/src/script/libscriptbinding.a: script

@@ -1,9 +1,9 @@
-AM_CXXFLAGS = -ggdb -pipe -Wall -Werror -Wno-deprecated -std=c++11 $(BOOST_CXXFLAGS) $(DEPS_CFLAGS) -fPIC
-AM_CPPFLAGS = -D_THREAD_SAFE -D_REENTRANT $(subst -I,-isystem,$(BOOST_CPPFLAGS)) -I$(top_srcdir)/src -DPIC
+AM_CXXFLAGS = -ggdb -pipe -Wall -Werror -Wno-deprecated -std=c++11 $(BOOST_CXXFLAGS) $(DEPS_CFLAGS)
+AM_CPPFLAGS = -D_THREAD_SAFE -D_REENTRANT $(subst -I,-isystem,$(BOOST_CPPFLAGS)) -I$(top_srcdir)/src
 
-noinst_LTLIBRARIES = libscriptbinding.la
+noinst_LIBRARIES = libscriptbinding.a
 
-libscriptbinding_la_SOURCES = LuaScript.cpp forwarder.cpp LuaTestSupportScript.cpp \
+libscriptbinding_a_SOURCES = LuaScript.cpp forwarder.cpp LuaTestSupportScript.cpp \
 			     LuaNPCScript.cpp LuaItemScript.cpp LuaMonsterScript.cpp \
 			     LuaMagicScript.cpp LuaTileScript.cpp LuaTriggerScript.cpp \
 			     LuaWeaponScript.cpp LuaScheduledScript.cpp LuaLongTimeEffectScript.cpp \
