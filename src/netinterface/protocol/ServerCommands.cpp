@@ -355,10 +355,11 @@ LookAtShowCaseItemTC::LookAtShowCaseItemTC(unsigned char showcase, unsigned char
     addItemLookAt(this, lookAt);
 }
 
-LookAtMapItemTC::LookAtMapItemTC(const position &pos, const ItemLookAt &lookAt) : BasicServerCommand(SC_LOOKATMAPITEM_TC) {
+LookAtMapItemTC::LookAtMapItemTC(const position &pos, uint8_t stackPos, const ItemLookAt &lookAt) : BasicServerCommand(SC_LOOKATMAPITEM_TC) {
     addShortIntToBuffer(pos.x);
     addShortIntToBuffer(pos.y);
     addShortIntToBuffer(pos.z);
+    addUnsignedCharToBuffer(stackPos);
     addItemLookAt(this, lookAt);
 }
 

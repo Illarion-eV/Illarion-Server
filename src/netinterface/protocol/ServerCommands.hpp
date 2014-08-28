@@ -228,7 +228,7 @@ public:
 
 class LookAtMapItemTC : public BasicServerCommand {
 public:
-    LookAtMapItemTC(const position &pos, const ItemLookAt &lookAt);
+    LookAtMapItemTC(const position &pos, uint8_t stackPos, const ItemLookAt &lookAt);
 };
 
 class LookAtDialogItemTC : public BasicServerCommand {

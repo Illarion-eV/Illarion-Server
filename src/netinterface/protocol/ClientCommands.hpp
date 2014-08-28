@@ -538,6 +538,7 @@ public:
 class LookAtMapItemTS : public BasicClientCommand {
 private:
     position pos;
+    uint8_t stackPos;
 
 public:
     LookAtMapItemTS();

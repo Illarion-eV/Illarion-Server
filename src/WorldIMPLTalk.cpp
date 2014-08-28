@@ -257,29 +257,27 @@ void World::makeSoundForAllPlayersInRange(const position &pos, int radius, unsig
     }
 }
 
-
-
-void World::lookAtMapItem(Player *cp, const position &pos) {
-    Item titem;
-
+void World::lookAtMapItem(Player *player, const position &pos,
+                          uint8_t stackPos) {
     try {
         Field &field = fieldAt(pos);
+        ScriptItem item = field.getStackItem(stackPos);
 
-        if (field.viewItemOnStack(titem)) {
-            ScriptItem n_item = titem;
-            n_item.type = ScriptItem::it_field;
-            n_item.pos = pos;
-            n_item.owner = cp;
+        if (item.getId()) {
+            item.type = ScriptItem::it_field;
+            item.pos = pos;
+            item.itempos = stackPos;
+            item.owner = player;
 
-            ItemLookAt lookAt = n_item.getLookAt(cp);
+            ItemLookAt lookAt = item.getLookAt(player);
 
             if (lookAt.isValid()) {
-                itemInform(cp, n_item, lookAt);
+                itemInform(player, item, lookAt);
             } else {
-                lookAtTile(cp, field.getTileId(), pos);
+                lookAtTile(player, field.getTileId(), pos);
             }
         } else {
-            lookAtTile(cp, field.getTileId(), pos);
+            lookAtTile(player, field.getTileId(), pos);
         }
     } catch (FieldNotFound &) {
     }

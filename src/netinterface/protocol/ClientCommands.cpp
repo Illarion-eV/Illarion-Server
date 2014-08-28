@@ -1530,13 +1530,14 @@ void LookAtMapItemTS::decodeData() {
     pos.x = getShortIntFromBuffer();
     pos.y = getShortIntFromBuffer();
     pos.z = getShortIntFromBuffer();
+    stackPos = getUnsignedCharFromBuffer();
 }
 
 void LookAtMapItemTS::performAction(Player *player) {
     Logger::debug(LogFacility::World) << *player << " looks at a map item." << Log::end;
 
     if (player->isAlive()) {
-        World::get()->lookAtMapItem(player, pos);
+        World::get()->lookAtMapItem(player, pos, stackPos);
         player->increaseActionPoints(-P_LOOK_COST);
     }
 

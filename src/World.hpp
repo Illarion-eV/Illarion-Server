@@ -509,7 +509,7 @@ public:
     void sendCharacterWarpToAllVisiblePlayers(Character *cc, const position &oldpos, unsigned char netid);
     template<class T> void sendCharsInVector(const std::vector<T *> &vec, Player *cp, bool sendSpin);
 
-    void lookAtMapItem(Player *cp, const position &pos);
+    void lookAtMapItem(Player *player, const position &pos, uint8_t stackPos);
 
 private:
     void lookAtTile(Player *cp, unsigned short int tile, const position &pos);

@@ -144,7 +144,7 @@ void World::itemInform(Character *user, const ScriptItem &item, const ItemLookAt
         ServerCommandPointer cmd = std::make_shared<LookAtInventoryItemTC>(item.itempos, lookAt);
         cp->Connection->addCommand(cmd);
     } else if (item.type == ScriptItem::it_field) {
-        ServerCommandPointer cmd = std::make_shared<LookAtMapItemTC>(item.pos, lookAt);
+        ServerCommandPointer cmd = std::make_shared<LookAtMapItemTC>(item.pos, item.itempos, lookAt);
         cp->Connection->addCommand(cmd);
     }
 }
