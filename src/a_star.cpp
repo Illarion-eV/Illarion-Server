@@ -50,10 +50,18 @@ bool character_out_edge_iterator::operator==(const character_out_edge_iterator &
 }
 
 void character_out_edge_iterator::valid_step() {
-    Position new_pos;
+    Position new_pos(position.first + character_moves[direction].first, position.second + character_moves[direction].second);
     bool moveToPossible = false;
 
+    try {
+        Field &field = World::get()->fieldAt(::position(new_pos.first, new_pos.second, graph->level));
+        moveToPossible = field.moveToPossible();
+    } catch (FieldNotFound &) {
+    }
+
     while (direction < 8 && !moveToPossible && !(new_pos == graph->goal)) {
+        ++direction;
+        
         new_pos = Position(position.first + character_moves[direction].first, position.second + character_moves[direction].second);
         
         try {
@@ -61,8 +69,6 @@ void character_out_edge_iterator::valid_step() {
             moveToPossible = field.moveToPossible();
         } catch (FieldNotFound &) {
         }
-
-        ++direction;
     }
 }
 
