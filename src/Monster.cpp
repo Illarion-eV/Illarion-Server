@@ -28,7 +28,7 @@
 
 uint32_t Monster::counter = 0;
 
-Monster::Monster(const TYPE_OF_CHARACTER_ID &type, const position &newpos, SpawnPoint *spawnpoint) throw(unknownIDException)
+Monster::Monster(const TYPE_OF_CHARACTER_ID &type, const position &newpos, SpawnPoint *spawnpoint)
     : Character(),lastTargetPosition(position(0,0,0)),lastTargetSeen(false), spawn(spawnpoint), monstertype(type) {
     setId(MONSTER_BASE + counter++ % (NPC_BASE-MONSTER_BASE));
     setAlive(true);
@@ -53,7 +53,7 @@ void Monster::performStep(position targetpos) {
     }
 }
 
-void Monster::setMonsterType(const TYPE_OF_CHARACTER_ID &type) throw(unknownIDException) {
+void Monster::setMonsterType(const TYPE_OF_CHARACTER_ID &type) {
     deleteAllSkills();
 
 

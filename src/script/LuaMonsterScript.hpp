@@ -29,8 +29,8 @@ class World;
 
 class LuaMonsterScript : public LuaScript {
 public:
-    LuaMonsterScript() throw(ScriptException);
-    LuaMonsterScript(const std::string &filename) throw(ScriptException);
+    LuaMonsterScript();
+    LuaMonsterScript(const std::string &filename);
 
     virtual ~LuaMonsterScript();
 

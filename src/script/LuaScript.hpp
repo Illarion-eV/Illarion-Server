@@ -77,8 +77,8 @@ struct SouTar {
 class LuaScript {
 public:
     LuaScript();
-    LuaScript(std::string filename) throw(ScriptException);
-    LuaScript(const std::string &code, const std::string &scriptname) throw(ScriptException);
+    LuaScript(std::string filename);
+    LuaScript(const std::string &code, const std::string &scriptname);
 
     virtual ~LuaScript();
 
@@ -135,7 +135,7 @@ public:
         return U();
     }
 
-    static void triggerScriptError(const std::string &msg) throw(luabind::error);
+    static void triggerScriptError(const std::string &msg);
     static void writeDeprecatedMsg(const std::string &deprecatedEntity);
     static void writeDebugMsg(const std::string &msg);
 
@@ -166,7 +166,7 @@ private:
     void writeErrorMsg();
     void writeCastErrorMsg(const std::string &entryPoint, const luabind::cast_failed &e);
     void setCurrentWorldScript();
-    luabind::object buildEntrypoint(const std::string &entrypoint) throw(luabind::error);
+    luabind::object buildEntrypoint(const std::string &entrypoint);
     bool existsQuestEntrypoint(const std::string &entrypoint) const;
 
     template<typename... Args>

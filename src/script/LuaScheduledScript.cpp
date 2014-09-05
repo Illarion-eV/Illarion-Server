@@ -20,7 +20,7 @@
 
 #include "LuaScheduledScript.hpp"
 
-LuaScheduledScript::LuaScheduledScript(const std::string &filename) throw(ScriptException)
+LuaScheduledScript::LuaScheduledScript(const std::string &filename)
     : LuaScript(filename) {
 }
 

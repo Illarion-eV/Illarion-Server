@@ -69,7 +69,7 @@
 extern std::shared_ptr<LuaPlayerDeathScript>playerDeathScript;
 extern std::shared_ptr<LuaDepotScript>depotScript;
 
-Player::Player(std::shared_ptr<NetInterface> newConnection) throw(Player::LogoutException)
+Player::Player(std::shared_ptr<NetInterface> newConnection)
     : Character(), onlinetime(0), Connection(newConnection), turtleActive(false),
       clippingActive(true), admin(false), questWriteLock(false), monitoringClient(false), dialogCounter(0) {
     screenwidth = 0;
@@ -124,7 +124,7 @@ Player::Player(std::shared_ptr<NetInterface> newConnection) throw(Player::Logout
     }
 }
 
-void Player::login() throw(Player::LogoutException) {
+void Player::login() {
     position pos = getPosition();
     
     try {
@@ -872,7 +872,7 @@ bool Player::isAdmin() const {
 }
 
 
-void Player::check_logindata() throw(Player::LogoutException) {
+void Player::check_logindata() {
     Database::PConnection connection = Database::ConnectionManager::getInstance().getConnection();
 
     try {

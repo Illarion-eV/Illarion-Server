@@ -23,7 +23,7 @@
 #include <string>
 #include "character_ptr.hpp"
 
-LuaLearnScript::LuaLearnScript(const std::string &filename) throw(ScriptException)
+LuaLearnScript::LuaLearnScript(const std::string &filename)
     : LuaScript(filename) {
 }
 

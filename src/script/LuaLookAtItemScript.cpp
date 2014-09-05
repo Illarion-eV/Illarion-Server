@@ -23,7 +23,7 @@
 #include "Item.hpp"
 #include "character_ptr.hpp"
 
-LuaLookAtItemScript::LuaLookAtItemScript(const std::string &filename) throw(ScriptException)
+LuaLookAtItemScript::LuaLookAtItemScript(const std::string &filename)
     : LuaScript(filename) {
 }
 

@@ -33,8 +33,8 @@ private:
     bool oneTable;
 
 public:
-    void addServerTable(const std::string &table) throw(std::logic_error);
-    void addAccountTable(const std::string &table) throw(std::logic_error);
+    void addServerTable(const std::string &table);
+    void addAccountTable(const std::string &table);
 
     void setServerTable(const std::string &table);
     void setAccountTable(const std::string &table);

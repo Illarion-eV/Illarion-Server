@@ -81,7 +81,7 @@ World *World::create(const std::string &dir) {
     return _self;
 }
 
-World *World::get() throw(std::runtime_error) {
+World *World::get() {
     if (!(_self)) {
         throw std::runtime_error("world was not created");
     }

@@ -28,8 +28,8 @@ class World;
 
 class LuaTriggerScript: public LuaScript {
 public:
-    LuaTriggerScript() throw(ScriptException);
-    LuaTriggerScript(const std::string &filename, const position &pos) throw(ScriptException);
+    LuaTriggerScript();
+    LuaTriggerScript(const std::string &filename, const position &pos);
     virtual ~LuaTriggerScript();
 
     void CharacterOnField(Character *Character);

@@ -31,7 +31,7 @@ class Player;
 
 class LuaLongTimeEffectScript : public LuaScript {
 public:
-    LuaLongTimeEffectScript(const std::string &filename, const LongTimeEffectStruct &effectStruct) throw(ScriptException);
+    LuaLongTimeEffectScript(const std::string &filename, const LongTimeEffectStruct &effectStruct);
     virtual ~LuaLongTimeEffectScript();
 
     bool callEffect(LongTimeEffect *effect, Character *target);

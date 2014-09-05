@@ -31,7 +31,7 @@ class Character;
 
 class LuaQuestScript : public LuaScript {
 public:
-    LuaQuestScript(const std::string &filename, TYPE_OF_QUEST_ID quest) throw(ScriptException);
+    LuaQuestScript(const std::string &filename, TYPE_OF_QUEST_ID quest);
     LuaQuestScript(const LuaQuestScript &) = delete;
     LuaQuestScript &operator=(const LuaQuestScript &) = delete;
     virtual ~LuaQuestScript();

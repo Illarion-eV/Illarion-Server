@@ -30,7 +30,7 @@ class World;
 
 class LuaNPCScript : public LuaScript {
 public:
-    LuaNPCScript(const std::string &filename, NPC *thisnpc) throw(ScriptException);
+    LuaNPCScript(const std::string &filename, NPC *thisnpc);
     virtual ~LuaNPCScript();
 
     void nextCycle();

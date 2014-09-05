@@ -24,7 +24,7 @@
 #include <iostream>
 #include "Logger.hpp"
 
-LuaReloadScript::LuaReloadScript(const std::string &filename) throw(ScriptException)
+LuaReloadScript::LuaReloadScript(const std::string &filename)
     : LuaScript(filename) {
 }
 

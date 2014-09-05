@@ -22,7 +22,7 @@
 #include "Character.hpp"
 #include "character_ptr.hpp"
 
-LuaLoginScript::LuaLoginScript(const std::string &filename) throw(ScriptException)
+LuaLoginScript::LuaLoginScript(const std::string &filename)
     : LuaScript(filename) {
 }
 

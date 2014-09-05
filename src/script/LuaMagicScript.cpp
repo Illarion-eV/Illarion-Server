@@ -23,7 +23,7 @@
 #include "Item.hpp"
 #include "character_ptr.hpp"
 
-LuaMagicScript::LuaMagicScript(const std::string &filename, const SpellStruct &) throw(ScriptException)
+LuaMagicScript::LuaMagicScript(const std::string &filename, const SpellStruct &)
     : LuaScript(filename) {
     init_functions();
 }

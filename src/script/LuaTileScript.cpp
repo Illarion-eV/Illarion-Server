@@ -22,7 +22,7 @@
 #include "Character.hpp"
 #include "character_ptr.hpp"
 
-LuaTileScript::LuaTileScript(const std::string &filename, const TilesStruct &tile) throw(ScriptException)
+LuaTileScript::LuaTileScript(const std::string &filename, const TilesStruct &tile)
     : LuaScript(filename), thisTile(tile) {
     init_functions();
 }

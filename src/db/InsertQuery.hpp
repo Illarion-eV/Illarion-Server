@@ -52,11 +52,11 @@ public:
     InsertQuery &operator=(const InsertQuery &org) = delete;
     virtual ~InsertQuery();
 
-    template <typename T> void addValue(const QueryColumns::columnIndex &column, const T &value) throw(std::invalid_argument) {
+    template <typename T> void addValue(const QueryColumns::columnIndex &column, const T &value) {
         addValues(column, value, 1);
     };
 
-    template <typename T> void addValues(const QueryColumns::columnIndex &column, const T &value, uint32_t count) throw(std::invalid_argument)  {
+    template <typename T> void addValues(const QueryColumns::columnIndex &column, const T &value, uint32_t count)  {
         if (count == 0) {
             return;
         }
@@ -98,7 +98,7 @@ public:
         }
     };
 
-    template <typename T> void addValues(const QueryColumns::columnIndex &column, std::vector<T> &values) throw(std::invalid_argument) {
+    template <typename T> void addValues(const QueryColumns::columnIndex &column, std::vector<T> &values) {
         for (const auto &value : values) {
             addValue<T>(column, value);
         }
@@ -106,21 +106,21 @@ public:
 
     template <typename Key, typename T>
     void addValues(const QueryColumns::columnIndex &column, std::map<Key,T> &values,
-                   MapInsertMode mode = keysAndValues) throw(std::invalid_argument) {
+                   MapInsertMode mode = keysAndValues) {
         addValues<Key, T, std::less<Key> >(column, values);
     };
 
     template <typename Key, typename T, class Compare>
     void addValues(const QueryColumns::columnIndex &column,
                    std::map<Key,T,Compare> &values,
-                   MapInsertMode mode = keysAndValues) throw(std::invalid_argument) {
+                   MapInsertMode mode = keysAndValues) {
         addValues<Key, T, Compare, std::allocator<std::pair<const Key, T> > >(column, values);
     };
 
     template <typename Key, typename T, class Compare,class Allocator>
     void addValues(const QueryColumns::columnIndex &column,
                    std::map<Key,T,Compare, Allocator> &values,
-                   MapInsertMode mode = keysAndValues) throw(std::invalid_argument) {
+                   MapInsertMode mode = keysAndValues) {
         for (const auto &key_value : values) {
             switch (mode) {
             case onlyKeys:

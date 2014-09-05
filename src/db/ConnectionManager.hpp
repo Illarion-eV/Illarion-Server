@@ -40,7 +40,7 @@ private:
 public:
     static ConnectionManager &getInstance();
     void setupManager();
-    PConnection getConnection() throw(std::logic_error);
+    PConnection getConnection();
 private:
     ConnectionManager();
     ConnectionManager(const ConnectionManager &org);

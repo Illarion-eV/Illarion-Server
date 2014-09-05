@@ -78,7 +78,7 @@ LuaScript::LuaScript() {
     _filename = "";
 }
 
-LuaScript::LuaScript(std::string filename) throw(ScriptException) {
+LuaScript::LuaScript(std::string filename) {
     initialize();
 
     _filename = filename;
@@ -91,7 +91,7 @@ LuaScript::LuaScript(std::string filename) throw(ScriptException) {
     loadIntoLuaState();
 }
 
-LuaScript::LuaScript(const std::string &code, const std::string &scriptname) throw(ScriptException) {
+LuaScript::LuaScript(const std::string &code, const std::string &scriptname) {
     initialize();
 
     int err = luaL_loadbuffer(_luaState, code.c_str(), code.length(), scriptname.c_str());
@@ -257,7 +257,7 @@ int LuaScript::add_backtrace(lua_State *L) {
     return 1;
 }
 
-void LuaScript::triggerScriptError(const std::string &msg) throw(luabind::error) {
+void LuaScript::triggerScriptError(const std::string &msg) {
     lua_pushstring(_luaState, msg.c_str());
     throw luabind::error(_luaState);
 }
@@ -314,7 +314,7 @@ void LuaScript::writeDeprecatedMsg(const std::string &deprecatedEntity) {
     }
 }
 
-luabind::object LuaScript::buildEntrypoint(const std::string &entrypoint) throw(luabind::error) {
+luabind::object LuaScript::buildEntrypoint(const std::string &entrypoint) {
     luabind::object obj = luabind::globals(_luaState);
     std::string currentpath = "";
 

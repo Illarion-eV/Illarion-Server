@@ -25,7 +25,7 @@
 #include "LongTimeEffect.hpp"
 #include "character_ptr.hpp"
 
-LuaLongTimeEffectScript::LuaLongTimeEffectScript(const std::string &filename, const LongTimeEffectStruct &effectStruct) throw(ScriptException)
+LuaLongTimeEffectScript::LuaLongTimeEffectScript(const std::string &filename, const LongTimeEffectStruct &effectStruct)
     : LuaScript(filename), _effectStruct(effectStruct) {
     init_functions();
 }

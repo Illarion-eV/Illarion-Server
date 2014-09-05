@@ -295,7 +295,7 @@ public:
     }
 
     static World *create(const std::string &dir);
-    static World *get() throw(std::runtime_error);
+    static World *get();
 
 
     /**============ WorldIMPLTools.cpp ==================*/

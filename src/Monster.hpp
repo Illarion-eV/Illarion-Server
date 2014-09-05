@@ -43,7 +43,7 @@ public:
     * @param newpos the position where the monster should be spawned
     * @param spawnpoint the spawnpoint from which the monster was spawned ( 0 if there is no spawnpoint )
     */
-    Monster(const TYPE_OF_CHARACTER_ID &type, const position &newpos, SpawnPoint *spawnpoint=0) throw(unknownIDException);
+    Monster(const TYPE_OF_CHARACTER_ID &type, const position &newpos, SpawnPoint *spawnpoint=0);
 
     virtual unsigned short getType() const override {
         return monster;
@@ -55,7 +55,7 @@ public:
     * @param type the new type of the monster
     * @throw unknownIDException
     */
-    void setMonsterType(const TYPE_OF_CHARACTER_ID &type) throw(unknownIDException);
+    void setMonsterType(const TYPE_OF_CHARACTER_ID &type);
 
     /**
     * sets the spawnpoint for thins monster to a new one

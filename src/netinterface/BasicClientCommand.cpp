@@ -79,7 +79,7 @@ volatile bool BasicClientCommand::getData( ByteBuffer * recvBuffer )
     return false;
 }*/
 
-unsigned char BasicClientCommand::getUnsignedCharFromBuffer() throw(OverflowException) {
+unsigned char BasicClientCommand::getUnsignedCharFromBuffer() {
     unsigned char ret = 0;
 
     //no buffer available but we want to read from it

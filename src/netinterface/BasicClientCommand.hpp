@@ -81,7 +81,7 @@ public:
     * reads an unsigned char from the local command buffer
     * @return the char which was found in the buffer
     */
-    unsigned char getUnsignedCharFromBuffer() throw(OverflowException);
+    unsigned char getUnsignedCharFromBuffer();
 
     /**
     * read a string from the local command buffer

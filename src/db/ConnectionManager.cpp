@@ -49,7 +49,7 @@ void ConnectionManager::setupManager() {
     isOperational = true;
 }
 
-PConnection ConnectionManager::getConnection() throw(std::logic_error) {
+PConnection ConnectionManager::getConnection() {
     if (!isOperational) {
         throw std::logic_error("Connection Manager is not set up yet");
     }
