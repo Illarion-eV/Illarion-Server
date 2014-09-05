@@ -30,7 +30,7 @@ LuaWeaponScript::LuaWeaponScript(const std::string &filename, const WeaponStruct
     : LuaScript(filename) {
 }
 
-LuaWeaponScript::~LuaWeaponScript() throw() {}
+LuaWeaponScript::~LuaWeaponScript() {}
 
 void LuaWeaponScript::onAttack(Character *Attacker, Character *Defender) {
     character_ptr fuse_Attacker(Attacker);

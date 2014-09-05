@@ -26,7 +26,7 @@ LuaPlayerDeathScript::LuaPlayerDeathScript(const std::string &filename) throw(Sc
     : LuaScript(filename) {
 }
 
-LuaPlayerDeathScript::~LuaPlayerDeathScript() throw() {}
+LuaPlayerDeathScript::~LuaPlayerDeathScript() {}
 
 void LuaPlayerDeathScript::playerDeath(Character *deadPlayer) {
     character_ptr fuse_deadPlayer(deadPlayer);

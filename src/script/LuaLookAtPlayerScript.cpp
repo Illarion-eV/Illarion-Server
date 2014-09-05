@@ -26,7 +26,7 @@ LuaLookAtPlayerScript::LuaLookAtPlayerScript(const std::string &filename) throw(
     : LuaScript(filename) {
 }
 
-LuaLookAtPlayerScript::~LuaLookAtPlayerScript() throw() {}
+LuaLookAtPlayerScript::~LuaLookAtPlayerScript() {}
 
 void LuaLookAtPlayerScript::lookAtPlayer(Character *source, Character *target, unsigned char mode) {
     character_ptr fuse_source(source);

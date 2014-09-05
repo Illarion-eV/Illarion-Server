@@ -32,7 +32,7 @@ public:
     LuaMonsterScript() throw(ScriptException);
     LuaMonsterScript(const std::string &filename) throw(ScriptException);
 
-    virtual ~LuaMonsterScript() throw();
+    virtual ~LuaMonsterScript();
 
     void receiveText(Character *Monster, Character::talk_type tt, const std::string &message, Character *cc);
     void onDeath(Character *Monster);

@@ -32,7 +32,7 @@ LuaMonsterScript::LuaMonsterScript(const std::string &filename) throw(ScriptExce
     : LuaScript(filename) {
 }
 
-LuaMonsterScript::~LuaMonsterScript() throw() {}
+LuaMonsterScript::~LuaMonsterScript() {}
 
 void LuaMonsterScript::onDeath(Character *Monster) {
     character_ptr fuse_Monster(Monster);

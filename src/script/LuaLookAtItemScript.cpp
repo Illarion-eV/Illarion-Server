@@ -27,7 +27,7 @@ LuaLookAtItemScript::LuaLookAtItemScript(const std::string &filename) throw(Scri
     : LuaScript(filename) {
 }
 
-LuaLookAtItemScript::~LuaLookAtItemScript() throw() {}
+LuaLookAtItemScript::~LuaLookAtItemScript() {}
 
 ItemLookAt LuaLookAtItemScript::lookAtItem(Character *character, const ScriptItem &item) {
     character_ptr fuse_character(character);

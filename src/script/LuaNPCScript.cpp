@@ -26,7 +26,7 @@ LuaNPCScript::LuaNPCScript(const std::string &filename, NPC *thisnpc) throw(Scri
     : LuaScript(filename), _thisnpc(thisnpc) {
 }
 
-LuaNPCScript::~LuaNPCScript() throw() {}
+LuaNPCScript::~LuaNPCScript() {}
 
 void LuaNPCScript::nextCycle() {
     character_ptr fuse_thisnpc(_thisnpc);

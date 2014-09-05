@@ -26,7 +26,7 @@
 class LuaReloadScript : public LuaScript {
 public:
     LuaReloadScript(const std::string &filename) throw(ScriptException);
-    virtual ~LuaReloadScript() throw();
+    virtual ~LuaReloadScript();
 
     void onReload();
 

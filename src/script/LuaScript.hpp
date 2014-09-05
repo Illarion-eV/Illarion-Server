@@ -41,7 +41,7 @@ class Dialog;
 
 class ScriptException : public std::runtime_error {
 public:
-    ScriptException(const std::string &s) throw() : std::runtime_error(s) {}
+    ScriptException(const std::string &s) : std::runtime_error(s) {}
 };
 
 enum SouTarTypes {
@@ -80,7 +80,7 @@ public:
     LuaScript(std::string filename) throw(ScriptException);
     LuaScript(const std::string &code, const std::string &scriptname) throw(ScriptException);
 
-    virtual ~LuaScript() throw();
+    virtual ~LuaScript();
 
     std::string getFileName() {
         return _filename;

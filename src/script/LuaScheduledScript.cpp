@@ -24,7 +24,7 @@ LuaScheduledScript::LuaScheduledScript(const std::string &filename) throw(Script
     : LuaScript(filename) {
 }
 
-LuaScheduledScript::~LuaScheduledScript() throw() {}
+LuaScheduledScript::~LuaScheduledScript() {}
 
 void LuaScheduledScript::callFunction(const std::string &name, uint32_t currentCycle, uint32_t lastCycle, uint32_t nextCycle) {
     callEntrypoint(name, currentCycle, lastCycle, nextCycle);

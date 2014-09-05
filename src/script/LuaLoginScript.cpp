@@ -26,7 +26,7 @@ LuaLoginScript::LuaLoginScript(const std::string &filename) throw(ScriptExceptio
     : LuaScript(filename) {
 }
 
-LuaLoginScript::~LuaLoginScript() throw() {}
+LuaLoginScript::~LuaLoginScript() {}
 
 void LuaLoginScript::onLogin(Character *cc) {
     character_ptr fuse_cc(cc);

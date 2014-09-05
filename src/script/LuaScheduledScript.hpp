@@ -29,7 +29,7 @@ class LuaScheduledScript : public LuaScript {
 public:
 
     LuaScheduledScript(const std::string &filename) throw(ScriptException);
-    virtual ~LuaScheduledScript() throw();
+    virtual ~LuaScheduledScript();
 
     void callFunction(const std::string &name, uint32_t currentCycle, uint32_t lastCycle, uint32_t nextCycle);
 

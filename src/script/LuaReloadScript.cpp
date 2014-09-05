@@ -28,7 +28,7 @@ LuaReloadScript::LuaReloadScript(const std::string &filename) throw(ScriptExcept
     : LuaScript(filename) {
 }
 
-LuaReloadScript::~LuaReloadScript() throw() {}
+LuaReloadScript::~LuaReloadScript() {}
 
 void LuaReloadScript::onReload() {
     callEntrypoint("onReload");

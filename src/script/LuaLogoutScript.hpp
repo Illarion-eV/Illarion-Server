@@ -29,7 +29,7 @@ class Character;
 class LuaLogoutScript : public LuaScript {
 public:
     LuaLogoutScript(const std::string &filename) throw(ScriptException);
-    virtual ~LuaLogoutScript() throw();
+    virtual ~LuaLogoutScript();
 
     void onLogout(Character *cc);
 

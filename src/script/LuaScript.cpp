@@ -211,7 +211,7 @@ void LuaScript::loadIntoLuaState() {
     }
 }
 
-LuaScript::~LuaScript() throw() {
+LuaScript::~LuaScript() {
 }
 
 void LuaScript::shutdownLua() {

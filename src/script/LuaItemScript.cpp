@@ -36,7 +36,7 @@ LuaItemScript::LuaItemScript(const std::string &code, const std::string &codenam
     init_functions();
 }
 
-LuaItemScript::~LuaItemScript() throw() {}
+LuaItemScript::~LuaItemScript() {}
 
 void LuaItemScript::init_functions() {
     luabind::object globals = luabind::globals(_luaState);

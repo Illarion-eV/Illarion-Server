@@ -26,7 +26,7 @@ LuaLogoutScript::LuaLogoutScript(const std::string &filename) throw(ScriptExcept
     : LuaScript(filename) {
 }
 
-LuaLogoutScript::~LuaLogoutScript() throw() {}
+LuaLogoutScript::~LuaLogoutScript() {}
 
 void LuaLogoutScript::onLogout(Character *cc) {
     character_ptr fuse_cc(cc);
