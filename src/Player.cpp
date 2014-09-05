@@ -1089,7 +1089,7 @@ struct container_struct {
 }
 ;
 
-bool Player::save() throw() {
+bool Player::save() noexcept {
     using namespace Database;
 
     Logger::info(LogFacility::Player) << "Saving " << to_string() << Log::end;
@@ -1357,7 +1357,7 @@ bool Player::save() throw() {
     }
 }
 
-bool Player::loadGMFlags() throw() {
+bool Player::loadGMFlags() noexcept {
     try {
         using namespace Database;
         SelectQuery query;
@@ -1382,7 +1382,7 @@ bool Player::loadGMFlags() throw() {
     return false;
 }
 
-bool Player::load() throw() {
+bool Player::load() noexcept {
     std::map<int, Container *> depots, containers;
     std::map<int, Container *>::iterator it;
 

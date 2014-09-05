@@ -284,16 +284,16 @@ public:
     bool hasGMRight(gm_rights right) const;
 
     //! save char to db
-    bool save() throw();
+    bool save() noexcept;
 
     //! load data from db
     // \param no_attributes don't load contents of table "player"
-    bool load() throw();
+    bool load() noexcept;
 
     void login() throw(LogoutException);
 
     //Loads the GM Flag of the character
-    bool loadGMFlags() throw();
+    bool loadGMFlags() noexcept;
 
     /**
     * sends one area relative to the current z coordinate to the player
