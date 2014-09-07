@@ -24,7 +24,9 @@ Requirements
    PostgreSQL 9.1.7
    libpqxx 3.1
    Lua 5.2.1
-   Luabind 0.9.1 with some bugfixes from http://illarion.org/repos/apt/debian
+   Luabind 0.9.1 with some bugfixes from
+        http://illarion.org/repos/apt/debian (binary)
+     or https://github.com/vilarion/luabind/tree/debian (source)
 
 Build
 
