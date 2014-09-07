@@ -23,8 +23,8 @@ Requirements
    Boost 1.49.0
    PostgreSQL 9.1.7
    libpqxx 3.1
-   Lua 5.1.4
-   Luabind 0.9.1 with some bugfixes: https://github.com/vilarion/luabind
+   Lua 5.2.1
+   Luabind 0.9.1 with some bugfixes from http://illarion.org/repos/apt/debian
 
 Build
 
