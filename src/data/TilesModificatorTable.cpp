@@ -57,6 +57,6 @@ bool TilesModificatorTable::passable(TYPE_OF_ITEM_ID id) {
         return (modStruct.Modificator & FLAG_BLOCKPATH) == 0 || (modStruct.Modificator & FLAG_MAKEPASSABLE) != 0;
     }
 
-    return false;
+    return true;
 }
 
