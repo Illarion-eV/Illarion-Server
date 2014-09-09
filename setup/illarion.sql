@@ -1590,16 +1590,10 @@ CREATE TABLE tiles (
     til_german character varying(30) DEFAULT 'unbekannt'::character varying NOT NULL,
     til_english character varying(30) DEFAULT 'unknown'::character varying NOT NULL,
     til_isnotpassable smallint DEFAULT (0)::smallint NOT NULL,
-    til_isnottransparent smallint DEFAULT (0)::smallint NOT NULL,
-    til_isnotpenetrateable smallint DEFAULT (0)::smallint NOT NULL,
     til_walkingcost smallint DEFAULT (0)::smallint NOT NULL,
-    til_specialtile smallint DEFAULT (0)::smallint NOT NULL,
     til_script character varying(50),
     CONSTRAINT tiles_notpassable_check CHECK (((til_isnotpassable = (0)::smallint) OR (til_isnotpassable = (1)::smallint))),
-    CONSTRAINT tiles_notpenetrateable_check CHECK (((til_isnotpenetrateable = (0)::smallint) OR (til_isnotpenetrateable = (1)::smallint))),
-    CONSTRAINT tiles_nottransparent_check CHECK (((til_isnottransparent = (0)::smallint) OR (til_isnottransparent = (1)::smallint))),
     CONSTRAINT tiles_script_check CHECK ((btrim((til_script)::text) <> ''::text)),
-    CONSTRAINT tiles_specialtile_check CHECK (((til_specialtile = (0)::smallint) OR (til_specialtile = (1)::smallint))),
     CONSTRAINT tiles_walkingcost_check CHECK ((til_walkingcost >= 0))
 );
 
@@ -1611,15 +1605,10 @@ CREATE TABLE tiles (
 CREATE TABLE tilesmodificators (
     tim_itemid integer DEFAULT 0 NOT NULL,
     tim_isnotpassable smallint DEFAULT 0 NOT NULL,
-    tim_isnottransparent smallint DEFAULT 0 NOT NULL,
-    tim_isnotpenetrateable smallint DEFAULT 0 NOT NULL,
     tim_specialitem smallint DEFAULT 0 NOT NULL,
-    tim_groundlevel smallint DEFAULT 0 NOT NULL,
     tim_makepassable smallint DEFAULT 0 NOT NULL,
     CONSTRAINT tilesmod_makepassable_check CHECK (((tim_makepassable = (0)::smallint) OR (tim_makepassable = (1)::smallint))),
     CONSTRAINT tilesmod_notpassable_check CHECK (((tim_isnotpassable = (0)::smallint) OR (tim_isnotpassable = (1)::smallint))),
-    CONSTRAINT tilesmod_notpenetrateable_check CHECK (((tim_isnotpenetrateable = (0)::smallint) OR (tim_isnotpenetrateable = (1)::smallint))),
-    CONSTRAINT tilesmod_nottransparent_check CHECK (((tim_isnottransparent = (0)::smallint) OR (tim_isnottransparent = (1)::smallint))),
     CONSTRAINT tilesmod_specialitem_check CHECK (((tim_specialitem = (0)::smallint) OR (tim_specialitem = (1)::smallint)))
 );
 
