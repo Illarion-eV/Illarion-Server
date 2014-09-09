@@ -51,7 +51,7 @@ public:
                    uint16_t width, uint16_t height, uint16_t tile);
 
 private:
-    bool insert(Map map);
+    bool insert(Map&& map);
     static Map createMapFromHeaderFile(const std::string &importDir,
                                        const std::string &mapName);
     static int16_t readHeaderLine(const std::string &mapName, char header,
