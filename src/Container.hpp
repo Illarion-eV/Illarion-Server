@@ -97,6 +97,10 @@ public:
 
     TYPE_OF_CONTAINERSLOTS getFirstFreeSlot() const;
 
+    inline bool isDepot() const {
+        return itemId == DEPOTITEM;
+    }
+
 private:
     bool isItemStackable(Item item);
     void insertIntoFirstFreeSlot(Item &item);

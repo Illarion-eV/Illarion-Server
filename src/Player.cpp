@@ -248,8 +248,14 @@ void Player::openShowcase(Container *container, const ScriptItem &item, bool car
 
         if (container == backPackContents) {
             showcaseId = BACKPACK_SHOWCASE;
+        } else if (container->isDepot()) {
+            showcaseId = 1;
+
+            while (isShowcaseOpen(showcaseId)) {
+                ++showcaseId;
+            }
         } else {
-            while (isShowcaseOpen(showcaseCounter) || showcaseCounter == BACKPACK_SHOWCASE) {
+            while (isShowcaseOpen(showcaseCounter) || showcaseCounter <= MAX_DEPOT_SHOWCASE) {
                 ++showcaseCounter;
             }
 
@@ -261,7 +267,7 @@ void Player::openShowcase(Container *container, const ScriptItem &item, bool car
         ServerCommandPointer cmd = std::make_shared<UpdateShowcaseTC>(showcaseId, lookAt, container->getSlotCount(), container->getItems());
         Connection->addCommand(cmd);
     } else {
-        inform("ERROR: Unable to open more than 100 containers.");
+        inform("ERROR: Unable to open more containers.");
     }
 }
 

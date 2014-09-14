@@ -159,8 +159,8 @@ const uint32_t MONSTERVIEWRANGE = 11;
 //! Coat-Flag
 #define FLAG_COAT 16
 
-//! Die maximale Anzahl von dargestellten showcases
 #define MAXSHOWCASES 100
+#define MAX_DEPOT_SHOWCASE 9
 
 //! Code fr "kein Feld"
 #define NOFIELD 0xFFFF
