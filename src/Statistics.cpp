@@ -37,6 +37,7 @@ namespace Statistic {
 Statistics *Statistics::instance = nullptr;
 
 Statistics::Statistics() {
+/*
     loadTypes();
     auto typesCount = types.size();
 
@@ -56,6 +57,7 @@ Statistics::Statistics() {
     versionId = getVersionId();
     lastSaveTime = getMillisecondsSinceEpoch();
     load();
+*/
 }
 
 Statistics &Statistics::getInstance() {
@@ -67,6 +69,7 @@ Statistics &Statistics::getInstance() {
 }
 
 void Statistics::startTimer(const std::string &type) {
+/*
     int intType;
 
     try {
@@ -76,9 +79,11 @@ void Statistics::startTimer(const std::string &type) {
     }
 
     startTimes[intType] = getMillisecondsSinceEpoch();
+*/
 }
 
 void Statistics::stopTimer(const std::string &type) {
+/*
     int intType;
 
     try {
@@ -105,9 +110,11 @@ void Statistics::stopTimer(const std::string &type) {
         std::thread t(&Statistics::save, this);
         t.detach();
     }
+*/
 }
 
 void Statistics::logTime(const std::string& type, int duration) {
+/*
     int intType;
 
     try {
@@ -131,6 +138,7 @@ void Statistics::logTime(const std::string& type, int duration) {
         std::thread t(&Statistics::save, this);
         t.detach();
     }
+*/
 }
 
 int Statistics::typeToInt(const std::string &type) {
