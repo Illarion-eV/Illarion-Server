@@ -34,6 +34,7 @@ CommandFactory::CommandFactory() {
     templateList[C_USE_TS ] = std::make_unique<UseTS>();
     templateList[C_CAST_TS ] = std::make_unique<CastTS>();
     templateList[C_ATTACKPLAYER_TS ] = std::make_unique<AttackPlayerTS>();
+    templateList[C_CUSTOMNAME_TS] = std::make_unique<CustomNameTS>();
     templateList[C_INTRODUCE_TS ] = std::make_unique<IntroduceTS>();
     templateList[C_SAY_TS ] = std::make_unique<SayTS>();
     templateList[C_SHOUT_TS ] = std::make_unique<ShoutTS>();
