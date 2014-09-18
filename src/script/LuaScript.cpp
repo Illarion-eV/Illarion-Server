@@ -94,49 +94,11 @@ LuaScript::LuaScript(std::string filename) {
 LuaScript::LuaScript(const std::string &code, const std::string &scriptname) {
     initialize();
 
-    int err = luaL_loadbuffer(_luaState, code.c_str(), code.length(), scriptname.c_str());
+    int errorCode = luaL_loadbuffer(_luaState, code.c_str(), code.length(), scriptname.c_str());
+    handleLuaLoadError(errorCode);
 
-    if (err != 0) {
-        std::string errstr(luafile);
-
-        switch (err) {
-        case LUA_ERRFILE:
-            throw ScriptException("Could not access script file: " + errstr);
-            break;
-
-        case LUA_ERRSYNTAX:
-            throw ScriptException("Syntax error in script file: " + errstr);
-            break;
-
-        case LUA_ERRMEM:
-            throw ScriptException("Insufficient memory for loading script file: " + errstr);
-            break;
-
-        default:
-            throw ScriptException("Could not load script file: " + errstr);
-            break;
-        }
-    }
-
-    err = lua_pcall(_luaState, 0, LUA_MULTRET, 0);
-
-    if (err != 0) {
-        std::string errstr(luafile);
-
-        switch (err) {
-        case LUA_ERRRUN:
-            writeErrorMsg();
-            break;
-
-        case LUA_ERRMEM:
-            throw ScriptException("Insufficient memory for running script file: " + errstr);
-            break;
-
-        default:
-            throw ScriptException("Could not load script file: " + errstr);
-            break;
-        }
-    }
+    errorCode = lua_pcall(_luaState, 0, LUA_MULTRET, 0);
+    handleLuaCallError(errorCode);
 }
 
 void LuaScript::initialize() {
@@ -166,46 +128,52 @@ void LuaScript::initialize() {
 }
 
 void LuaScript::loadIntoLuaState() {
-    int err = luaL_loadfile(_luaState, luafile);
+    int errorCode = luaL_loadfile(_luaState, luafile);
+    handleLuaLoadError(errorCode);
 
-    if (err != 0) {
-        std::string errstr(luafile);
+    errorCode = lua_pcall(_luaState, 0, LUA_MULTRET, 0);
+    handleLuaCallError(errorCode);
+}
 
-        switch (err) {
+void LuaScript::handleLuaLoadError(int errorCode) {
+    if (errorCode) {
+        std::string errorFile(luafile);
+
+        switch (errorCode) {
         case LUA_ERRFILE:
-            throw ScriptException("Could not access script file: " + errstr);
+            throw ScriptException("Could not access script file: " + errorFile);
             break;
 
         case LUA_ERRSYNTAX:
-            throw ScriptException("Syntax error in script file: " + errstr);
+            throw ScriptException("Syntax error in script file: " + errorFile);
             break;
 
         case LUA_ERRMEM:
-            throw ScriptException("Insufficient memory for loading script file: " + errstr);
+            throw ScriptException("Insufficient memory for loading script file: " + errorFile);
             break;
 
         default:
-            throw ScriptException("Could not load script file: " + errstr);
+            throw ScriptException("Could not load script file: " + errorFile);
             break;
         }
     }
+}
 
-    err = lua_pcall(_luaState, 0, LUA_MULTRET, 0);
+void LuaScript::handleLuaCallError(int errorCode) {
+    if (errorCode) {
+        std::string errorFile(luafile);
 
-    if (err != 0) {
-        std::string errstr(luafile);
-
-        switch (err) {
+        switch (errorCode) {
         case LUA_ERRRUN:
             writeErrorMsg();
             break;
 
         case LUA_ERRMEM:
-            throw ScriptException("Insufficient memory for running script file: " + errstr);
+            throw ScriptException("Insufficient memory for running script file: " + errorFile);
             break;
 
         default:
-            throw ScriptException("Could not load script file: " + errstr);
+            throw ScriptException("Could not load script file: " + errorFile);
             break;
         }
     }

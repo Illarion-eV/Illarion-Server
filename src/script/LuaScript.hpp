@@ -161,6 +161,8 @@ protected:
 private:
     void initialize();
     void loadIntoLuaState();
+    void handleLuaLoadError(int errorCode);
+    void handleLuaCallError(int errorCode);
     static void init_base_functions();
     static int add_backtrace(lua_State *L);
     void writeErrorMsg();
