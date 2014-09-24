@@ -211,7 +211,6 @@ private:
     LuaScript &operator=(const LuaScript &);
 
     std::string _filename;
-    std::vector<std::string> vecPath;
     char luafile[200];
     typedef std::multimap<const std::string, std::shared_ptr<LuaScript> > QuestScripts;
     QuestScripts questScripts;

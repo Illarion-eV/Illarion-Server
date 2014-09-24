@@ -82,7 +82,6 @@ LuaScript::LuaScript(std::string filename) {
     initialize();
 
     _filename = filename;
-    boost::split(vecPath, filename, boost::is_any_of("."));
 
     strcpy(luafile, Config::instance().scriptdir().c_str());
     std::replace(filename.begin(), filename.end(), '.', '/');
@@ -128,11 +127,18 @@ void LuaScript::initialize() {
 }
 
 void LuaScript::loadIntoLuaState() {
+    luaL_getsubtable(_luaState, LUA_REGISTRYINDEX, "_LOADED");
+
     int errorCode = luaL_loadfile(_luaState, luafile);
     handleLuaLoadError(errorCode);
+    if (errorCode) return;
 
-    errorCode = lua_pcall(_luaState, 0, LUA_MULTRET, 0);
+    errorCode = lua_pcall(_luaState, 0, 1, 0);
     handleLuaCallError(errorCode);
+    if (errorCode) return;
+
+    lua_setfield(_luaState, -2, _filename.c_str());
+    lua_pop(_luaState, 1);
 }
 
 void LuaScript::handleLuaLoadError(int errorCode) {
@@ -283,20 +289,13 @@ void LuaScript::writeDeprecatedMsg(const std::string &deprecatedEntity) {
 }
 
 luabind::object LuaScript::buildEntrypoint(const std::string &entrypoint) {
-    luabind::object obj = luabind::globals(_luaState);
-    std::string currentpath = "";
+    luabind::object obj = luabind::registry(_luaState);
+    obj = obj["_LOADED"][_filename];
 
-    for (std::vector<std::string>::iterator it = vecPath.begin(); it != vecPath.end(); ++it) {
-        obj = obj[*it];
-        currentpath = currentpath + "." + *it;
-
-        if (luabind::type(obj) != LUA_TTABLE) {
-            triggerScriptError("Error while loading entrypoint '" + entrypoint
-                               + "': " + currentpath.erase(0,1)
-                               + " does not exist! Check module statement in "
-                               + _filename + "!"
-                              );
-        }
+    if (luabind::type(obj) != LUA_TTABLE) {
+        triggerScriptError(
+            "Error while loading entrypoint '" + entrypoint + "' from module " +
+            _filename + ". Check if the script returns its module as table.");
     }
 
     luabind::object callee = obj[entrypoint];
@@ -316,14 +315,11 @@ bool LuaScript::existsQuestEntrypoint(const std::string &entrypoint) const {
 }
 
 bool LuaScript::existsEntrypoint(const std::string &entrypoint) const {
-    luabind::object obj = luabind::globals(_luaState);
+    luabind::object obj = luabind::registry(_luaState);
+    obj = obj["_LOADED"][_filename];
 
-    for (auto it = vecPath.begin(); it != vecPath.end(); ++it) {
-        obj = obj[*it];
-
-        if (luabind::type(obj) != LUA_TTABLE) {
-            return existsQuestEntrypoint(entrypoint);
-        }
+    if (luabind::type(obj) != LUA_TTABLE) {
+        return existsQuestEntrypoint(entrypoint);
     }
 
     obj = obj[entrypoint];
