@@ -83,6 +83,8 @@ int main(int argc, char *argv[]) {
 
     World *world = World::create(Config::instance().datadir);
 
+    Data::preReload();
+
     if (!Data::Skills.reloadBuffer()) {
         throw std::runtime_error("failed to initialise skills");
     }

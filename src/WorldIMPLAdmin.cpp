@@ -939,6 +939,8 @@ bool World::reload_defs(Player *cp) {
         return false;
     }
 
+    Data::preReload();
+
     sendMessageToAllPlayers("### The server is reloading, this may cause some lag ###");
 
     bool ok = Data::Skills.reloadBuffer();

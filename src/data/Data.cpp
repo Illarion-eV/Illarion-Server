@@ -67,11 +67,6 @@ bool reloadTables() {
 
     Logger::notice(LogFacility::Script) << "Loading data and scripts ..." << Log::end;
 
-    std::string preReloadCommand = "sh " + Config::instance().datadir() + "pre-reload 2>/dev/null >/dev/null";
-    if (!system(preReloadCommand.c_str())) {
-        Logger::info(LogFacility::Other) << "Error calling pre-reload hook." << Log::end;
-    }
-
     for (auto &table : getTables()) {
         success = success && table->reloadBuffer();
 
@@ -103,6 +98,14 @@ bool reload() {
     }
 
     return false;
+}
+
+void preReload() {
+    std::string preReloadCommand = "sh " + Config::instance().datadir() + "pre-reload 2>/dev/null >/dev/null";
+
+    if (!system(preReloadCommand.c_str())) {
+        Logger::info(LogFacility::Other) << "Error calling pre-reload hook." << Log::end;
+    }
 }
 
 }

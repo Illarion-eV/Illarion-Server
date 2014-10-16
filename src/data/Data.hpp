@@ -60,6 +60,7 @@ bool reloadTables();
 void reloadScripts();
 void activateTables();
 bool reload();
+void preReload();
 
 }
 
