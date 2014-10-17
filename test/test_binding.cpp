@@ -64,7 +64,8 @@ TEST_F(world_bindings, LookAtItem) {
                           "local lookAt = ItemLookAt()\n"
                           "lookAt.name = world:getItemName(item.id,Player.english)\n"
                           "return lookAt\n"
-                          "end",
+                          "end\n"
+                          "return {LookAtItem = LookAtItem}",
                           "lookat_test", itemdef
                          };
 
@@ -78,7 +79,8 @@ TEST_F(world_bindings, LookAtItem) {
 TEST_F(world_bindings, UseItem) {
     LuaItemScript script {"function UseItem(User, SourceItem, ltstate)\n"
                           "User:inform(\"You have used the item with the name '\"..world:getItemName(SourceItem.id,Player.english)..\"' and the ID \"..tonumber(SourceItem.id)..\".\")\n"
-                          "end",
+                          "end\n" 
+                          "return {UseItem = UseItem}",
                           "useitem_test", itemdef
                          };
 
@@ -91,7 +93,8 @@ TEST_F(world_bindings, ContainerCountItem) {
     LuaItemScript script {"function UseItem(User, SourceItem, ltstate)\n"
                           "local container = User:getBackPack()\n"
                           "container:countItem(1, {key1 = \"value1\", key2 = \"value2\"})"
-                          "end",
+                          "end\n"
+                          "return {UseItem = UseItem}",
                           "container_countitem_test", itemdef
                          };
     const script_data_exchangemap data1 {{"key1", "value1"}, {"key2", "value2"}};
@@ -106,7 +109,8 @@ TEST_F(world_bindings, ContainerEraseItem) {
     LuaItemScript script {"function UseItem(User, SourceItem, ltstate)\n"
                           "local container = User:getBackPack()\n"
                           "container:eraseItem(1, 1, {key1 = \"value1\", key2 = \"value2\"})"
-                          "end",
+                          "end\n"
+                          "return {UseItem = UseItem}",
                           "container_eraseitem_test", itemdef
                          };
     const script_data_exchangemap data1 {{"key1", "value1"}, {"key2", "value2"}};

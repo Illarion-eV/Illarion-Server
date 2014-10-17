@@ -93,11 +93,16 @@ LuaScript::LuaScript(std::string filename) {
 LuaScript::LuaScript(const std::string &code, const std::string &scriptname) {
     initialize();
 
+    luaL_getsubtable(_luaState, LUA_REGISTRYINDEX, "_LOADED");
+
     int errorCode = luaL_loadbuffer(_luaState, code.c_str(), code.length(), scriptname.c_str());
     handleLuaLoadError(errorCode);
 
     errorCode = lua_pcall(_luaState, 0, LUA_MULTRET, 0);
     handleLuaCallError(errorCode);
+
+    lua_setfield(_luaState, -2, _filename.c_str());
+    lua_pop(_luaState, 1);
 }
 
 void LuaScript::initialize() {
