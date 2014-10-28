@@ -2443,14 +2443,6 @@ ALTER TABLE ONLY monster_skills
 
 
 --
--- Name: naming_name_named_player_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
---
-
-ALTER TABLE ONLY naming
-    ADD CONSTRAINT naming_name_named_player_fkey FOREIGN KEY (name_named_player) REFERENCES chars(chr_playerid) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
 -- Name: naming_name_player_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
