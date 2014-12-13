@@ -55,7 +55,7 @@
 \makeindex
 \begin{document}
 \lstset{basicstyle=\small, keywordstyle=\ttfamily, identifierstyle=\ttfamily}
-\title{Lua documentation for Illarion scripting\\v5.17}
+\title{Lua documentation for Illarion scripting\\v5.18}
 \author{Martin \thanks{ \texttt{martin@illarion.org, http://www.illarion.org}},
 pharse \thanks{ \texttt{pharse@illarion.org, http://www.illarion.org}},
 vilarion \thanks{ \texttt{vilarion@illarion.org, http://www.illarion.org}}}
@@ -920,6 +920,10 @@ This kind of item variable holds the individual information about the item (posi
 \integer \var{Item}:\com{getType}{}
 \begin{quote}
        Return values: \texttt{notdefined=0, showcase1=1, showcase2=2, field=3, inventory=4, belt=5}
+\end{quote}
+\bool \var{Item}:\com{isLarge}{}
+\begin{quote}
+       Returns true iff the item is large enough to block the view.
 \end{quote}
 \void \var{Item}:\com{setData}{\txt \var{key}, \txt \var{value}}\\
 \void \var{Item}:\com{setData}{\txt \var{key}, \integer \var{value}}
@@ -2399,6 +2403,9 @@ It might be the case, and this is hoped much, that you want to create more compl
 \appendix
 
 \chapter{Versions}
+Version 5.18 (13 12 14)\\
+* Add Item:isLarge\\
+\\
 Version 5.17 (29 07 14)\\
 * Add world:broadcast\\
 \\

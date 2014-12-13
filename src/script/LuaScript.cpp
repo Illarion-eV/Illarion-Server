@@ -811,7 +811,8 @@ void LuaScript::init_base_functions() {
         .property("quality", &Item::getQuality, &Item::setQuality)
         .def("setData", (void(Item:: *)(const std::string &, const std::string &))&Item::setData)
         .def("setData", (void(Item:: *)(const std::string &, int32_t))&Item::setData)
-        .def("getData", (std::string(Item:: *)(const std::string &))&Item::getData),
+        .def("getData", (std::string(Item:: *)(const std::string &))&Item::getData)
+        .def("isLarge", &Item::isLarge),
         luabind::class_<ScriptItem,Item>("scriptItem")
         .def(luabind::constructor<>())
         .def_readonly("owner", &ScriptItem::getOwnerForLua)
