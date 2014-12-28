@@ -196,17 +196,17 @@ luabind::object world_LuaLoS(const World *world, const position &startingpos, co
     lua_State *luaState = world->getCurrentScript()->getLuaState();
     luabind::object list = luabind::newtable(luaState);
     int index = 1;
-    std::list<BlockingObject> objects = world->LoS(startingpos, endingpos);
+    auto objects = world->LoS(startingpos, endingpos);
 
-    for (std::list<BlockingObject>::iterator boIterator = objects.begin(); boIterator != objects.end(); ++boIterator) {
+    for (auto &blocker: objects) {
         luabind::object innerlist = luabind::newtable(luaState);
 
-        if (boIterator->blockingType == BlockingObject::BT_CHARACTER) {
+        if (blocker.blockingType == BlockingObject::BT_CHARACTER) {
             innerlist["TYPE"] = "CHARACTER";
-            innerlist["OBJECT"] = character_ptr(boIterator->blockingChar);
-        } else if (boIterator->blockingType == BlockingObject::BT_ITEM) {
+            innerlist["OBJECT"] = character_ptr(blocker.blockingChar);
+        } else if (blocker.blockingType == BlockingObject::BT_ITEM) {
             innerlist["TYPE"] = "ITEM";
-            innerlist["OBJECT"] = boIterator->blockingItem;
+            innerlist["OBJECT"] = blocker.blockingItem;
         }
 
         list[index] = innerlist;
