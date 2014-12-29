@@ -34,6 +34,7 @@
 #include "Attribute.hpp"
 #include "Item.hpp"
 #include "ItemLookAt.hpp"
+#include "TableStructs.hpp"
 
 class World;
 class Container;
@@ -51,6 +52,8 @@ enum magic_type {
     BARD=2,
     DRUID=3
 };
+
+class NoLootFound: public std::exception {};
 
 class Character {
     Character(const Character &) = delete;
@@ -140,12 +143,6 @@ public:
     struct skillvalue {
         unsigned short int major = 0;
         unsigned short int minor = 0;
-    };
-
-    enum movement_type {
-        walk = 0,
-        fly = 1,
-        crawl = 2
     };
 
     struct s_magic {
@@ -507,6 +504,8 @@ public:
 
     virtual void logAdmin(const std::string &message);
 
+    virtual const MonsterStruct::loottype &getLoot() const;
+
 protected:
     struct RaceStruct {
         std::string racename;
@@ -557,7 +556,7 @@ protected:
 private:
     TYPE_OF_CHARACTER_ID id;
     std::string name;
-    movement_type _movement = walk;
+    movement_type _movement = movement_type::walk;
     std::vector<Attribute> attributes;
     bool alive = true;
     short int actionPoints = NP_MAX_AP;

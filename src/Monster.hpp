@@ -20,6 +20,7 @@
 #ifndef MONSTER_HPP
 #define MONSTER_HPP
 
+#include "data/MonsterTable.hpp"
 #include "Character.hpp"
 
 class SpawnPoint;
@@ -44,6 +45,8 @@ public:
     * @param spawnpoint the spawnpoint from which the monster was spawned ( 0 if there is no spawnpoint )
     */
     Monster(const TYPE_OF_CHARACTER_ID &type, const position &newpos, SpawnPoint *spawnpoint=0);
+
+    virtual const MonsterStruct::loottype &getLoot() const override;
 
     virtual unsigned short getType() const override {
         return monster;

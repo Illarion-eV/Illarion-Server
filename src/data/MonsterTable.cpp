@@ -73,6 +73,21 @@ void MonsterTable::reload() {
             auto questItr = questNodes.first;
             auto questEnd = questNodes.second;
 
+            SelectQuery monLootDataQuery(connection);
+            monLootDataQuery.addColumn("monster_drop_data", "mdd_id");
+            monLootDataQuery.addColumn("monster_drop_data", "mdd_key");
+            monLootDataQuery.addColumn("monster_drop_data", "mdd_value");
+            monLootDataQuery.addServerTable("monster_drop_data");
+            auto lootDataResults = monLootDataQuery.execute();
+
+            std::map<uint32_t, std::map<std::string, std::string>> lootData;
+
+            for (const auto &row: lootDataResults) {
+                auto &lootDataEntry = lootData[row["mdd_id"].as<uint32_t>()];
+                lootDataEntry.insert(std::make_pair(row["mdd_key"].as<std::string>(),
+                                                    row["mdd_value"].as<std::string>()));
+            }
+
             for (const auto &row : monresults) {
                 MonsterStruct temprecord;
                 const uint32_t id = row["mob_monsterid"].as<uint32_t>();
@@ -88,14 +103,14 @@ void MonsterTable::reload() {
                 const std::string movementType = row["mob_movementtype"].as<std::string>("");
 
                 if (movementType == "walk") {
-                    temprecord.movement = Character::walk;
+                    temprecord.movement = movement_type::walk;
                 } else if (movementType == "fly") {
-                    temprecord.movement = Character::fly;
+                    temprecord.movement = movement_type::fly;
                 } else if (movementType == "crawl") {
-                    temprecord.movement = Character::crawl;
+                    temprecord.movement = movement_type::crawl;
                 } else {
                     //TODO: Some proper error handling for invalid data
-                    temprecord.movement = Character::walk;
+                    temprecord.movement = movement_type::walk;
                 }
 
                 if (!row["script"].is_null()) {
@@ -240,6 +255,44 @@ void MonsterTable::reload() {
                     }
                 }
 
+                SelectQuery monLootQuery(connection);
+                monLootQuery.addColumn("monster_drop", "md_id");
+                monLootQuery.addColumn("monster_drop", "md_category");
+                monLootQuery.addColumn("monster_drop", "md_probability");
+                monLootQuery.addColumn("monster_drop", "md_itemid");
+                monLootQuery.addColumn("monster_drop", "md_amount_min");
+                monLootQuery.addColumn("monster_drop", "md_amount_max");
+                monLootQuery.addColumn("monster_drop", "md_quality_min");
+                monLootQuery.addColumn("monster_drop", "md_quality_max");
+                monLootQuery.addColumn("monster_drop", "md_durability_min");
+                monLootQuery.addColumn("monster_drop", "md_durability_max");
+                monLootQuery.addEqualCondition("monster_drop", "md_monsterid", id);
+                monLootQuery.addServerTable("monster_drop");
+
+                const auto monLootResults = monLootQuery.execute();
+
+                for (const auto &row : monLootResults) {
+                    auto lootId = row["md_id"].as<uint32_t>();
+                    auto categoryId = row["md_category"].as<uint16_t>();
+
+                    auto &category = temprecord.loot[categoryId];
+                    auto &lootItem = category[lootId];
+
+                    lootItem.itemId = row["md_itemid"].as<TYPE_OF_ITEM_ID>();
+                    lootItem.probability = row["md_probability"].as<double>();
+                    lootItem.amount = std::make_pair(row["md_amount_min"].as<uint16_t>(),
+                                                     row["md_amount_max"].as<uint16_t>());
+                    lootItem.quality = std::make_pair(row["md_quality_min"].as<uint16_t>(),
+                                                      row["md_quality_max"].as<uint16_t>());
+                    lootItem.durability = std::make_pair(row["md_durability_min"].as<uint16_t>(),
+                                                         row["md_durability_max"].as<uint16_t>());
+                    lootItem.data = std::move(lootData[lootId]);
+                }
+
+
+
+
+
                 m_table[id] = temprecord;
                 m_dataOK = true;
             }
@@ -254,15 +307,16 @@ void MonsterTable::reload() {
 
 }
 
-bool MonsterTable::find(TYPE_OF_CHARACTER_ID Id, MonsterStruct &ret) {
-    TABLE::iterator iterator;
-    iterator = m_table.find(Id);
+bool MonsterTable::exists(TYPE_OF_CHARACTER_ID id) const {
+    return m_table.count(id) > 0;
+}
 
-    if (iterator == m_table.end()) {
-        return false;
-    } else {
-        ret = (*iterator).second;
-        return true;
+const MonsterStruct &MonsterTable::operator[](TYPE_OF_CHARACTER_ID id) {
+    try {
+        return m_table.at(id);
+    } catch (std::out_of_range &) {
+        Logger::error(LogFacility::Script) << "Table monster" << ": entry " << id << " was not found!" << Log::end;
+        return m_table[id];
     }
 }
 

@@ -554,6 +554,7 @@ void LuaScript::init_base_functions() {
         .def("getFaceTo", &Character::getFaceTo)
         .def("getType", &Character::getType)
         .def("createItem", create_item)
+        .def("getLoot", getLoot)
         .def("increasePoisonValue", &Character::increasePoisonValue)
         .def("getPoisonValue", &Character::getPoisonValue)
         .def("setPoisonValue", &Character::setPoisonValue)

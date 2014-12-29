@@ -241,8 +241,6 @@ public:
 
     void invalidatePlayerDialogs();
 
-    virtual bool getMonsterDefinition(TYPE_OF_CHARACTER_ID type, MonsterStruct &definition);
-
     /**
     *checks all actions of the monsters and updates them
     */

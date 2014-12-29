@@ -42,6 +42,8 @@ int erase_item2(Character *, TYPE_OF_ITEM_ID, int, const luabind::object &);
 
 int create_item(Character *, Item::id_type id, Item::number_type number, Item::quality_type quality, const luabind::object &);
 
+luabind::object getLoot(const Character *character);
+
 int container_count_item1(Container *, Item::id_type);
 int container_count_item2(Container *, Item::id_type, const luabind::object &data);
 

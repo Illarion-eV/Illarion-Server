@@ -25,6 +25,9 @@
 #include "World.hpp"
 #include "WaypointList.hpp"
 #include "Config.hpp"
+#include "data/MonsterTable.hpp"
+
+extern MonsterTable *MonsterDescriptions;
 
 uint32_t Monster::counter = 0;
 
@@ -34,6 +37,16 @@ Monster::Monster(const TYPE_OF_CHARACTER_ID &type, const position &newpos, Spawn
     setAlive(true);
     setMonsterType(type);
     setPosition(newpos);
+}
+
+const MonsterStruct::loottype &Monster::getLoot() const {
+    const auto monsterType = getMonsterType();
+
+    if (MonsterDescriptions->exists(monsterType)) {
+        return (*MonsterDescriptions)[monsterType].loot;
+    } else {
+        throw NoLootFound();
+    }
 }
 
 void Monster::performStep(position targetpos) {
@@ -56,12 +69,11 @@ void Monster::performStep(position targetpos) {
 void Monster::setMonsterType(const TYPE_OF_CHARACTER_ID &type) {
     deleteAllSkills();
 
-
-    MonsterStruct monsterdef;
-
-    if (! World::get()->getMonsterDefinition(type, monsterdef)) {
+    if (!MonsterDescriptions->exists(type)) {
         throw unknownIDException();
     }
+
+    const auto &monsterdef = (*MonsterDescriptions)[type];
 
     // set attributes
     setAttribute(Character::luck, Random::uniform(monsterdef.attributes.luck.first, monsterdef.attributes.luck.second));
@@ -77,15 +89,15 @@ void Monster::setMonsterType(const TYPE_OF_CHARACTER_ID &type) {
     setAttribute(Character::height, Random::uniform(monsterdef.minsize, monsterdef.maxsize));
 
     // set skills
-    for (auto it = monsterdef.skills.begin(); it != monsterdef.skills.end(); ++it) {
-        increaseSkill(it->first, Random::uniform(it->second.first, it->second.second));
+    for (const auto &skill: monsterdef.skills) {
+        increaseSkill(skill.first, Random::uniform(skill.second.first, skill.second.second));
     }
 
     // add items
-    for (auto it = monsterdef.items.begin(); it != monsterdef.items.end(); ++it) {
+    for (const auto &item: monsterdef.items) {
 
-        auto inventorySlot = it->first;
-        auto possibleItems = it->second;
+        auto inventorySlot = item.first;
+        auto possibleItems = item.second;
         int numberOfPossibleItems = possibleItems.size();
 
         if (numberOfPossibleItems > 0) {
@@ -133,9 +145,9 @@ void Monster::setAlive(bool t) {
 
     if (!t && wasAlive) {
 
-        MonsterStruct monStruct;
+        if (MonsterDescriptions->exists(getMonsterType())) {
+            const auto &monStruct = (*MonsterDescriptions)[getMonsterType()];
 
-        if (World::get()->getMonsterDefinition(getMonsterType(), monStruct)) {
             if (monStruct.script) {
                 monStruct.script->onDeath(this);
             }
@@ -144,10 +156,9 @@ void Monster::setAlive(bool t) {
 }
 
 bool Monster::attack(Character *target) {
+    if (MonsterDescriptions->exists(getMonsterType())) {
+        const auto &monStruct = (*MonsterDescriptions)[getMonsterType()];
 
-    MonsterStruct monStruct;
-
-    if (World::get()->getMonsterDefinition(getMonsterType(), monStruct)) {
         if (monStruct.script) {
             monStruct.script->onAttack(this,target);
         }
@@ -162,9 +173,9 @@ void Monster::heal() {
 }
 
 void Monster::receiveText(talk_type tt, const std::string &message, Character *cc) {
-    MonsterStruct monStruct;
+    if (MonsterDescriptions->exists(getMonsterType())) {
+        const auto &monStruct = (*MonsterDescriptions)[getMonsterType()];
 
-    if (World::get()->getMonsterDefinition(getMonsterType(), monStruct)) {
         if (monStruct.script && monStruct.script->existsEntrypoint("receiveText")) {
             if (this != cc) {
                 monStruct.script->receiveText(this, tt, message, cc);

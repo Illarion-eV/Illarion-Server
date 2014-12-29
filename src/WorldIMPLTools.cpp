@@ -420,9 +420,11 @@ bool World::characterAttacks(Character *cp) {
 
             if (temppl != nullptr) {
                 if (cp->isInRange(temppl, temppl->getScreenRange())) {
-                    MonsterStruct monStruct;
+                    const auto monsterType = temppl->getMonsterType();
 
-                    if (MonsterDescriptions->find(temppl->getMonsterType(), monStruct)) {
+                    if (MonsterDescriptions->exists(monsterType)) {
+                        const auto &monStruct = (*MonsterDescriptions)[monsterType];
+
                         if (monStruct.script) {
                             monStruct.script->onAttacked(temppl,cp);
                         }

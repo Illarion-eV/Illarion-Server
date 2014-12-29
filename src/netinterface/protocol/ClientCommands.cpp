@@ -266,9 +266,11 @@ void LookAtCharacterTS::performAction(Player *player) {
         Monster *monster = World::get()->Monsters.find(id);
 
         if (monster) {
-            MonsterStruct mon;
+            const auto monsterType = monster->getMonsterType();
 
-            if (MonsterDescriptions->find(monster->getMonsterType(), mon)) {
+            if (MonsterDescriptions->exists(monsterType)) {
+                const auto &mon = (*MonsterDescriptions)[monsterType];
+
                 if (mon.script && mon.script->existsEntrypoint("lookAtMonster")) {
                     mon.script->lookAtMonster(player, monster, mode);
                     return;
@@ -603,10 +605,12 @@ void CastTS::performAction(Player *player) {
                 LuaMageScript->CastMagicOnCharacter(player, Target.character, static_cast<unsigned char>(LTS_NOLTACTION));
 
                 if (Target.character->getType() == Character::monster) {
-                    MonsterStruct monStruct;
                     Monster *temp = dynamic_cast<Monster *>(Target.character);
+                    const auto monsterType = temp->getMonsterType();
 
-                    if (MonsterDescriptions->find(temp->getMonsterType(), monStruct)) {
+                    if (MonsterDescriptions->exists(monsterType)) {
+                        const auto &monStruct = (*MonsterDescriptions)[monsterType];
+
                         if (monStruct.script) {
                             monStruct.script->onCasted(temp,player);
                         }
@@ -704,10 +708,10 @@ void UseTS::performAction(Player *player) {
                         Logger::debug(LogFacility::Script) << "Character is a monster!" << Log::end;
 
                         Monster *scriptMonster = dynamic_cast<Monster *>(tmpCharacter);
-                        MonsterStruct monStruct;
+                        const auto monsterType = scriptMonster->getMonsterType();
 
-                        if (MonsterDescriptions->find(scriptMonster->getMonsterType(),monStruct)) {
-                            LuaMonsterScript = monStruct.script;
+                        if (MonsterDescriptions->exists(monsterType)) {
+                            LuaMonsterScript = (*MonsterDescriptions)[monsterType].script;
                         } else {
                             Logger::error(LogFacility::Script) << "try to use Monster but id: " << scriptMonster->getMonsterType() << " not found in database!" << Log::end;
                         }

@@ -75,7 +75,7 @@ Player::Player(std::shared_ptr<NetInterface> newConnection)
     screenwidth = 0;
     screenheight = 0;
     Character::setAlive(true);
-    SetMovement(walk);
+    SetMovement(movement_type::walk);
 
     time(&lastaction);
     time(&lastkeepalive);

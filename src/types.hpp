@@ -82,5 +82,11 @@ enum direction {
     dir_none = 10
 };
 
+enum class movement_type {
+    walk = 0,
+    fly = 1,
+    crawl = 2
+};
+
 #endif
 

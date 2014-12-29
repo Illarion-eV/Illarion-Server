@@ -20,12 +20,15 @@
 #ifndef _TABLESTRUCTS_HPP_
 #define _TABLESTRUCTS_HPP_
 
+#include <map>
 #include <memory>
 #include <string>
+#include <vector>
 #include "types.hpp"
 
 class LuaTileScript;
 class LuaItemScript;
+class LuaMonsterScript;
 class LuaWeaponScript;
 class LuaLongTimeEffectScript;
 
@@ -143,6 +146,66 @@ struct MonsterArmor {
     short int punctureArmor;
     short int thrustArmor;
     MonsterArmor() : strokeArmor(0), punctureArmor(0), thrustArmor(0) {}
+};
+
+struct itemdef_t {
+    TYPE_OF_ITEM_ID itemid;
+    std::pair<unsigned short, unsigned short> amount;
+    TYPE_OF_AGINGSPEED AgeingSpeed;
+};
+
+struct attributedef_t {
+    std::pair<unsigned short, unsigned short> luck;
+    std::pair<unsigned short, unsigned short> strength;
+    std::pair<unsigned short, unsigned short> dexterity;
+    std::pair<unsigned short, unsigned short> constitution;
+    std::pair<unsigned short, unsigned short> agility;
+    std::pair<unsigned short, unsigned short> intelligence;
+    std::pair<unsigned short, unsigned short> perception;
+    std::pair<unsigned short, unsigned short> willpower;
+    std::pair<unsigned short, unsigned short> essence;
+
+    attributedef_t():
+            luck(std::make_pair(10, 10)),
+            strength(std::make_pair(15, 15)),
+            dexterity(std::make_pair(10, 10)),
+            constitution(std::make_pair(8, 8)),
+            agility(std::make_pair(10, 10)),
+            intelligence(std::make_pair(10, 10)),
+            perception(std::make_pair(10, 10)),
+            willpower(std::make_pair(10, 10)),
+            essence(std::make_pair(10, 10))
+    {}
+
+};
+
+struct MonsterStruct {
+    struct LootStruct {
+        TYPE_OF_ITEM_ID itemId;
+        double probability;
+        std::pair<uint16_t, uint16_t> amount;
+        std::pair<uint16_t, uint16_t> quality;
+        std::pair<uint16_t, uint16_t> durability;
+        std::map<std::string, std::string> data;
+    };
+
+    using skilltype = std::map<TYPE_OF_SKILL_ID, std::pair<unsigned short, unsigned short>>;
+    using itemtype = std::map<unsigned short, std::vector<itemdef_t>>;
+    using loottype = std::map<uint16_t, std::map<uint16_t, LootStruct>>;
+    std::string nameDe;
+    std::string nameEn;
+    TYPE_OF_RACE_ID race;
+    unsigned short hitpoints;
+    bool canselfheal;
+    movement_type movement;
+    bool canattack;
+    attributedef_t  attributes;
+    skilltype skills;
+    itemtype items;
+    loottype loot;
+    std::shared_ptr<LuaMonsterScript> script;
+    uint16_t minsize;
+    uint16_t maxsize;
 };
 
 #endif // TABLESTRUCTS_HPP

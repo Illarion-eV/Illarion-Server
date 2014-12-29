@@ -1195,7 +1195,7 @@ int Character::weightContainer(TYPE_OF_ITEM_ID id, int count, Container *tcont) 
     }
 }
 
-Character::movement_type Character::GetMovement() const {
+movement_type Character::GetMovement() const {
     return _movement;
 }
 
@@ -1377,7 +1377,7 @@ TYPE_OF_WALKINGCOST Character::getMoveTime(const Field &targetField, bool diagon
     TYPE_OF_WALKINGCOST walkcost;
 
     switch (_movement) {
-    case fly:
+    case movement_type::fly:
         walkcost = NP_STANDARDFLYCOST;
         break;
 
@@ -1680,3 +1680,7 @@ void Character::setMagicFlags(magic_type type, uint64_t flags) {
 std::ostream &operator<<(std::ostream &os, const Character &character) {
     return os << character.to_string();
 };
+
+const MonsterStruct::loottype &Character::getLoot() const {
+    throw NoLootFound();
+}
