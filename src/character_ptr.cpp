@@ -44,7 +44,7 @@ Character *character_ptr::get() const {
     if (ptr) {
         return ptr;
     } else {
-        throw std::logic_error("Usage of invalid Character! Use isCharValid( char ) to check if a Character is still valid.");
+        throw std::logic_error("Usage of invalid Character! Use isValidChar( char ) to check if a Character is still valid.");
     }
 }
 
