@@ -25,9 +25,9 @@
 #include "data/StructTable.hpp"
 #include "types.hpp"
 
-struct RaceAttributeStruct {
-    uint16_t minSize = 100;
-    uint16_t maxSize = 100;
+struct RaceStruct {
+    uint16_t minSize = 140;
+    uint16_t maxSize = 220;
     uint8_t minAgility = 2;
     uint8_t maxAgility = 20;
     uint8_t minConstitution = 2;
@@ -47,12 +47,12 @@ struct RaceAttributeStruct {
     uint8_t maxAttribs = 84;
 };
 
-class RaceTable : public StructTable<uint16_t, RaceAttributeStruct> {
+class RaceTable : public StructTable<uint16_t, RaceStruct> {
 public:
     virtual std::string getTableName() override;
     virtual std::vector<std::string> getColumnNames() override;
     virtual uint16_t assignId(const Database::ResultTuple &row) override;
-    virtual RaceAttributeStruct assignTable(const Database::ResultTuple &row) override;
+    virtual RaceStruct assignTable(const Database::ResultTuple &row) override;
     uint8_t getRelativeSize(TYPE_OF_RACE_ID race, uint16_t size) const;
     bool isBaseAttributeInLimits(TYPE_OF_RACE_ID race, Character::attributeIndex attribute, Attribute::attribute_t value) const;
     uint8_t getMaxAttributePoints(TYPE_OF_RACE_ID race) const;

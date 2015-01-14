@@ -289,7 +289,7 @@ void MonsterTable::reload() {
                     lootItem.data = std::move(lootData[lootId]);
                 }
 
-
+                
 
 
 

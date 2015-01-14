@@ -30,7 +30,7 @@ namespace Data {
 ScriptVariablesTable ScriptVariables;
 SkillTable Skills;
 QuestTable Quests;
-RaceAttributeTable RaceAttributes;
+RaceTable RaceAttributes;
 NaturalArmorTable NaturalArmors;
 MonsterAttackTable MonsterAttacks;
 CommonObjectTable CommonItems;

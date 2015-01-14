@@ -24,7 +24,7 @@
 #include "data/ScriptVariablesTable.hpp"
 #include "data/SkillTable.hpp"
 #include "data/QuestTable.hpp"
-#include "data/RaceAttributeTable.hpp"
+#include "RaceTable.hpp"
 #include "data/NaturalArmorTable.hpp"
 #include "data/MonsterAttackTable.hpp"
 #include "data/CommonObjectTable.hpp"
@@ -42,7 +42,7 @@ namespace Data {
 extern ScriptVariablesTable ScriptVariables;
 extern SkillTable Skills;
 extern QuestTable Quests;
-extern RaceAttributeTable RaceAttributes;
+extern RaceTable RaceAttributes;
 extern NaturalArmorTable NaturalArmors;
 extern MonsterAttackTable MonsterAttacks;
 extern CommonObjectTable CommonItems;
