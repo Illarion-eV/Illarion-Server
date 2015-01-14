@@ -21,11 +21,9 @@
 #ifndef _MONSTER_TABLE_HPP_
 #define _MONSTER_TABLE_HPP_
 
-#include <memory>
 #include <boost/unordered_map.hpp>
 #include <TableStructs.hpp>
 #include "script/LuaMonsterScript.hpp"
-#include "types.hpp"
 
 
 class MonsterTable {
@@ -48,8 +46,6 @@ private:
 
     void reload();
     bool m_dataOK;
-
-    World *world;
 };
 #endif
 

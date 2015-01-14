@@ -19,24 +19,17 @@
  */
 
 #include "data/MonsterTable.hpp"
-
-#include <iostream>
-#include <sstream>
-
 #include "data/QuestNodeTable.hpp"
-
 #include "db/Connection.hpp"
 #include "db/ConnectionManager.hpp"
 #include "db/SelectQuery.hpp"
 #include "db/Result.hpp"
-
-#include "World.hpp"
 #include "Logger.hpp"
 #include "data/Data.hpp"
 
 //! table with item attributes
 
-MonsterTable::MonsterTable() : m_dataOK(false), world(World::get()) {
+MonsterTable::MonsterTable() : m_dataOK(false) {
     reload();
 }
 

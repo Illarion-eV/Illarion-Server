@@ -25,27 +25,6 @@
 #include "data/StructTable.hpp"
 #include "types.hpp"
 
-struct RaceStruct {
-    uint16_t minSize = 140;
-    uint16_t maxSize = 220;
-    uint8_t minAgility = 2;
-    uint8_t maxAgility = 20;
-    uint8_t minConstitution = 2;
-    uint8_t maxConstitution = 20;
-    uint8_t minDexterity = 2;
-    uint8_t maxDexterity = 20;
-    uint8_t minEssence = 2;
-    uint8_t maxEssence = 20;
-    uint8_t minIntelligence = 2;
-    uint8_t maxIntelligence = 20;
-    uint8_t minPerception = 2;
-    uint8_t maxPerception = 20;
-    uint8_t minStrength = 2;
-    uint8_t maxStrength = 20;
-    uint8_t minWillpower = 2;
-    uint8_t maxWillpower = 20;
-    uint8_t maxAttribs = 84;
-};
 
 class RaceTable : public StructTable<uint16_t, RaceStruct> {
 public:
