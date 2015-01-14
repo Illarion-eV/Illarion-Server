@@ -47,7 +47,7 @@ struct RaceAttributeStruct {
     uint8_t maxAttribs = 84;
 };
 
-class RaceAttributeTable : public StructTable<uint16_t, RaceAttributeStruct> {
+class RaceTable : public StructTable<uint16_t, RaceAttributeStruct> {
 public:
     virtual std::string getTableName() override;
     virtual std::vector<std::string> getColumnNames() override;
