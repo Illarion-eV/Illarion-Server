@@ -32,6 +32,7 @@ public:
     character_ptr();
     character_ptr(Character *p);
     character_ptr(character_ptr const &p);
+    character_ptr& operator=(character_ptr const &p);
 
     Character *get() const;
     operator Character *() const;

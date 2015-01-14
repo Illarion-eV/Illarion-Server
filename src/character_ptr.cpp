@@ -38,6 +38,11 @@ character_ptr::character_ptr(character_ptr const &p) {
     id = p.id;
 }
 
+character_ptr& character_ptr::operator=(character_ptr const &p) {
+    this->id = p.id;
+    return *this;
+}
+
 Character *character_ptr::get() const {
     auto ptr = getPointerFromId();
     
