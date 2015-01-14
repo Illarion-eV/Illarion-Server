@@ -275,12 +275,8 @@ AppearanceTC::AppearanceTC(Character *cc, const Player *receivingPlayer) : Basic
     const Character::appearance appearance = cc->getAppearance();
     addUnsignedCharToBuffer(appearance.hairtype);
     addUnsignedCharToBuffer(appearance.beardtype);
-    addUnsignedCharToBuffer(appearance.hair.red);
-    addUnsignedCharToBuffer(appearance.hair.green);
-    addUnsignedCharToBuffer(appearance.hair.blue);
-    addUnsignedCharToBuffer(appearance.skin.red);
-    addUnsignedCharToBuffer(appearance.skin.green);
-    addUnsignedCharToBuffer(appearance.skin.blue);
+    addColourToBuffer(appearance.hair);
+    addColourToBuffer(appearance.skin);
 
     for (unsigned char i = 0; i < MAX_BODY_ITEMS + MAX_BELT_SLOTS; ++i) {
         addShortIntToBuffer(cc->GetItemAt(i).getId());

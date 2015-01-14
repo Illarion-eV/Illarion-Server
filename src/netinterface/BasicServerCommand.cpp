@@ -132,3 +132,8 @@ void BasicServerCommand::resizeBuffer() {
     Logger::info(LogFacility::Other) << "Resizing the send buffer successful. New size: " << bufferSizeMod*STDBUFFERSIZE << " bytes." << Log::end;
 }
 
+void BasicServerCommand::addColourToBuffer(const colour &c) {
+    addUnsignedCharToBuffer(c.red);
+    addUnsignedCharToBuffer(c.green);
+    addUnsignedCharToBuffer(c.blue);
+}

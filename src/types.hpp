@@ -88,5 +88,9 @@ enum class movement_type {
     crawl = 2
 };
 
+struct colour {
+    uint8_t red, green, blue;
+};
+
 #endif
 

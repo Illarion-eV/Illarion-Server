@@ -25,6 +25,7 @@
 #include <stdint.h>
 #include <vector>
 #include <memory>
+#include <types.hpp>
 
 class BasicServerCommand;
 typedef std::shared_ptr<BasicServerCommand> ServerCommandPointer;
@@ -74,29 +75,11 @@ public:
      */
     int getLength();
 
-    /**
-    * Function which adds a string to the buffer of the command
-    * @param data The string to be added to the command
-    */
     void addStringToBuffer(const std::string &data);
-
-    /**
-    * Function which adds an integer to the buffer of the command
-    * @param data The integer to be added to the command
-    */
     void addIntToBuffer(int data);
-
-    /**
-    * Function which adds a short int to the buffer of the command
-    * @param data The short int to be added to the command
-    */
     void addShortIntToBuffer(short int data);
-
-    /**
-    * Function which adds an unsigned char to the buffer of the command
-    * @param data The unsigned char to be added to the command
-    */
     void addUnsignedCharToBuffer(unsigned char data);
+    void addColourToBuffer(const colour &c);
 
     /**
     * Adds all the header information to the top of the buffer

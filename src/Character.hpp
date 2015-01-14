@@ -62,14 +62,10 @@ class Character {
 public:
     struct appearance {
 
-        struct color {
-            uint8_t red, green, blue;
-        };
-
         uint8_t hairtype = 0;
         uint8_t beardtype = 0;
-        color hair = { 255, 255, 255 };
-        color skin = { 255, 255, 255 };
+        colour hair = { 255, 255, 255 };
+        colour skin = { 255, 255, 255 };
 
         appearance() {};
     };
