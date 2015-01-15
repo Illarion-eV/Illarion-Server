@@ -90,6 +90,32 @@ $$;
 
 
 --
+-- Name: in_owned_map(integer, smallint, smallint); Type: FUNCTION; Schema: server; Owner: -
+--
+
+CREATE FUNCTION in_owned_map(map integer, x smallint, y smallint) RETURNS boolean
+    LANGUAGE sql
+    AS $_$SELECT exists (
+    SELECT 1
+    FROM owned_maps
+    WHERE $1 = om_id AND $2 < om_width AND $3 < om_height
+);$_$;
+
+
+--
+-- Name: includes_all_tiles(integer, smallint, smallint); Type: FUNCTION; Schema: server; Owner: -
+--
+
+CREATE FUNCTION includes_all_tiles(map integer, width smallint, height smallint) RETURNS boolean
+    LANGUAGE sql
+    AS $_$SELECT not exists (
+    SELECT 1
+    FROM owned_map_tiles
+    WHERE $1 = omt_map_id AND (omt_x >= $2 OR omt_y >= $3)
+);$_$;
+
+
+--
 -- Name: is_new_player(integer); Type: FUNCTION; Schema: server; Owner: -
 --
 
@@ -576,6 +602,68 @@ CREATE TABLE armor (
 
 
 --
+-- Name: items; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+--
+
+CREATE TABLE items (
+    itm_id integer NOT NULL,
+    itm_volume integer NOT NULL,
+    itm_weight integer NOT NULL,
+    itm_agingspeed smallint DEFAULT (2)::smallint NOT NULL,
+    itm_objectafterrot integer NOT NULL,
+    itm_script character varying(50),
+    itm_rotsininventory boolean DEFAULT false NOT NULL,
+    itm_brightness smallint DEFAULT 0 NOT NULL,
+    itm_worth integer DEFAULT 0 NOT NULL,
+    itm_buystack integer DEFAULT 1 NOT NULL,
+    itm_maxstack smallint DEFAULT 1 NOT NULL,
+    itm_name_german character varying(30) DEFAULT 'unbekannt'::character varying NOT NULL,
+    itm_name_english character varying(30) DEFAULT 'unknown'::character varying NOT NULL,
+    itm_description_german character varying(255) DEFAULT ''::character varying NOT NULL,
+    itm_description_english character varying(255) DEFAULT ''::character varying NOT NULL,
+    itm_rareness smallint DEFAULT 1 NOT NULL,
+    CONSTRAINT common_afterrot_check CHECK (((itm_objectafterrot > 0) OR (itm_id = 0))),
+    CONSTRAINT common_aging_check CHECK ((itm_agingspeed >= 0)),
+    CONSTRAINT common_buystack_check CHECK ((itm_buystack >= 1)),
+    CONSTRAINT common_check CHECK ((((itm_worth >= 20) OR (itm_worth = 0)) OR ((itm_id = 3076) AND (itm_worth = 1)))),
+    CONSTRAINT common_com_light_brightness_check CHECK (((itm_brightness >= 0) AND (itm_brightness <= 9))),
+    CONSTRAINT common_com_maxstack_check CHECK ((itm_maxstack <> 0)),
+    CONSTRAINT common_script_check CHECK ((btrim((itm_script)::text) <> ''::text)),
+    CONSTRAINT common_volume_check CHECK ((itm_volume >= 0)),
+    CONSTRAINT common_weight_check CHECK ((itm_weight >= 0)),
+    CONSTRAINT items_itm_rareness_check CHECK ((itm_rareness = ANY (ARRAY[1, 2, 3, 4])))
+);
+
+
+--
+-- Name: COLUMN items.itm_id; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN items.itm_id IS 'The unique ID of the item.';
+
+
+--
+-- Name: COLUMN items.itm_script; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN items.itm_script IS 'The name of the script module that handles his item.';
+
+
+--
+-- Name: COLUMN items.itm_worth; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN items.itm_worth IS 'The base price of the item that is used by the trader NPCs in the game.';
+
+
+--
+-- Name: COLUMN items.itm_buystack; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN items.itm_buystack IS 'Default stack size a vendor will offer of this item';
+
+
+--
 -- Name: armor_info; Type: VIEW; Schema: server; Owner: -
 --
 
@@ -661,68 +749,6 @@ CREATE TABLE chars (
     chr_shortdesc_us character varying(255) DEFAULT ''::character varying NOT NULL,
     CONSTRAINT character_sex CHECK (((chr_sex = (0)::smallint) OR (chr_sex = (1)::smallint)))
 );
-
-
---
--- Name: items; Type: TABLE; Schema: server; Owner: -; Tablespace: 
---
-
-CREATE TABLE items (
-    itm_id integer NOT NULL,
-    itm_volume integer NOT NULL,
-    itm_weight integer NOT NULL,
-    itm_agingspeed smallint DEFAULT (2)::smallint NOT NULL,
-    itm_objectafterrot integer NOT NULL,
-    itm_script character varying(50),
-    itm_rotsininventory boolean DEFAULT false NOT NULL,
-    itm_brightness smallint DEFAULT 0 NOT NULL,
-    itm_worth integer DEFAULT 0 NOT NULL,
-    itm_buystack integer DEFAULT 1 NOT NULL,
-    itm_maxstack smallint DEFAULT 1 NOT NULL,
-    itm_name_german character varying(30) DEFAULT 'unbekannt'::character varying NOT NULL,
-    itm_name_english character varying(30) DEFAULT 'unknown'::character varying NOT NULL,
-    itm_description_german character varying(255) DEFAULT ''::character varying NOT NULL,
-    itm_description_english character varying(255) DEFAULT ''::character varying NOT NULL,
-    itm_rareness smallint DEFAULT 1 NOT NULL,
-    CONSTRAINT items_afterrot_check CHECK (((itm_objectafterrot > 0) OR (itm_id = 0))),
-    CONSTRAINT items_aging_check CHECK ((itm_agingspeed >= 0)),
-    CONSTRAINT items_buystack_check CHECK ((itm_buystack >= 1)),
-    CONSTRAINT items_check CHECK ((((itm_worth >= 20) OR (itm_worth = 0)) OR ((itm_id = 3076) AND (itm_worth = 1)))),
-    CONSTRAINT items_itm_light_brightness_check CHECK (((itm_brightness >= 0) AND (itm_brightness <= 9))),
-    CONSTRAINT items_itm_maxstack_check CHECK ((itm_maxstack <> 0)),
-    CONSTRAINT items_script_check CHECK ((btrim((itm_script)::text) <> ''::text)),
-    CONSTRAINT items_volume_check CHECK ((itm_volume >= 0)),
-    CONSTRAINT items_weight_check CHECK ((itm_weight >= 0)),
-    CONSTRAINT items_itm_rareness_check CHECK (itm_rareness = ANY (ARRAY[1, 2, 3, 4]))
-);
-
-
---
--- Name: COLUMN items.itm_id; Type: COMMENT; Schema: server; Owner: -
---
-
-COMMENT ON COLUMN items.itm_id IS 'The unique ID of the item.';
-
-
---
--- Name: COLUMN items.itm_script; Type: COMMENT; Schema: server; Owner: -
---
-
-COMMENT ON COLUMN items.itm_script IS 'The name of the script module that handles his item.';
-
-
---
--- Name: COLUMN items.itm_worth; Type: COMMENT; Schema: server; Owner: -
---
-
-COMMENT ON COLUMN items.itm_worth IS 'The base price of the item that is used by the trader NPCs in the game.';
-
-
---
--- Name: COLUMN items.itm_buystack; Type: COMMENT; Schema: server; Owner: -
---
-
-COMMENT ON COLUMN items.itm_buystack IS 'Default stack size a vendor will offer of this item';
 
 
 --
@@ -840,6 +866,25 @@ CREATE TABLE longtimeeffects (
 
 
 --
+-- Name: mon_drop_seq; Type: SEQUENCE; Schema: server; Owner: -
+--
+
+CREATE SEQUENCE mon_drop_seq
+    START WITH 0
+    INCREMENT BY 1
+    MINVALUE 0
+    MAXVALUE 4294967296
+    CACHE 1;
+
+
+--
+-- Name: SEQUENCE mon_drop_seq; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON SEQUENCE mon_drop_seq IS 'The sequence for the index in the monster drop table.';
+
+
+--
 -- Name: monster; Type: TABLE; Schema: server; Owner: -; Tablespace: 
 --
 
@@ -851,7 +896,7 @@ CREATE TABLE monster (
     mob_movementtype character varying(10) DEFAULT 'walk'::character varying NOT NULL,
     mob_canattack boolean DEFAULT true NOT NULL,
     mob_canhealself boolean DEFAULT true NOT NULL,
-    script character varying(50),
+    script character varying(100),
     mob_minsize integer DEFAULT 0 NOT NULL,
     mob_maxsize integer DEFAULT 0 NOT NULL,
     mob_name_de character varying(50) NOT NULL,
@@ -874,6 +919,159 @@ CREATE TABLE monster_attributes (
 
 
 --
+-- Name: monster_drop; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+--
+
+CREATE TABLE monster_drop (
+    md_id integer DEFAULT (nextval('mon_drop_seq'::regclass))::integer NOT NULL,
+    md_monsterid integer NOT NULL,
+    md_category smallint NOT NULL,
+    md_probability double precision NOT NULL,
+    md_itemid integer NOT NULL,
+    md_amount_min smallint DEFAULT 1 NOT NULL,
+    md_amount_max smallint DEFAULT 1 NOT NULL,
+    md_quality_min smallint DEFAULT 5 NOT NULL,
+    md_quality_max smallint DEFAULT 5 NOT NULL,
+    md_durability_min smallint DEFAULT 55 NOT NULL,
+    md_durability_max smallint DEFAULT 55 NOT NULL,
+    CONSTRAINT check_md_amount CHECK ((md_amount_min <= md_amount_max)),
+    CONSTRAINT check_md_amount_min CHECK ((md_amount_min > 0)),
+    CONSTRAINT check_md_durability CHECK ((md_durability_min <= md_durability_max)),
+    CONSTRAINT check_md_durability_max CHECK ((md_durability_max < 100)),
+    CONSTRAINT check_md_durability_min CHECK ((md_durability_min > 0)),
+    CONSTRAINT check_md_quality CHECK ((md_quality_min <= md_quality_max)),
+    CONSTRAINT check_md_quality_max CHECK ((md_quality_max < 10)),
+    CONSTRAINT check_md_quality_min CHECK ((md_quality_min > 0)),
+    CONSTRAINT md_probability CHECK (((md_probability > (0.0)::double precision) AND (md_probability <= (1.0)::double precision)))
+);
+
+
+--
+-- Name: TABLE monster_drop; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON TABLE monster_drop IS 'This table contains the items that are dropped by the monsters on death by default.';
+
+
+--
+-- Name: COLUMN monster_drop.md_id; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN monster_drop.md_id IS 'The primary index. This one is required to reference the data values that belong to this entry.';
+
+
+--
+-- Name: COLUMN monster_drop.md_monsterid; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN monster_drop.md_monsterid IS 'The ID of the monster';
+
+
+--
+-- Name: COLUMN monster_drop.md_category; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN monster_drop.md_category IS 'The ID of the drop category. There is only one item dropped from each category.';
+
+
+--
+-- Name: COLUMN monster_drop.md_probability; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN monster_drop.md_probability IS 'The probability of dropping this item. Ranges from 0.0 (0%) to 1.0 (100%) The total probability in a category has to be less or equal 100%.';
+
+
+--
+-- Name: COLUMN monster_drop.md_itemid; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN monster_drop.md_itemid IS 'The ID of the item that is dropped';
+
+
+--
+-- Name: COLUMN monster_drop.md_amount_min; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN monster_drop.md_amount_min IS 'The minimal amount of items that are dropped.';
+
+
+--
+-- Name: COLUMN monster_drop.md_amount_max; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN monster_drop.md_amount_max IS 'The maximal amount of items that are dropped.';
+
+
+--
+-- Name: COLUMN monster_drop.md_quality_min; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN monster_drop.md_quality_min IS 'The minimal quality of the item that is dropped.';
+
+
+--
+-- Name: COLUMN monster_drop.md_quality_max; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN monster_drop.md_quality_max IS 'The maximal quality of the item that is dropped.';
+
+
+--
+-- Name: COLUMN monster_drop.md_durability_min; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN monster_drop.md_durability_min IS 'The minimal durability of the item that is dropped.';
+
+
+--
+-- Name: COLUMN monster_drop.md_durability_max; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN monster_drop.md_durability_max IS 'The maximal durability of the item that is dropped.';
+
+
+--
+-- Name: monster_drop_data; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+--
+
+CREATE TABLE monster_drop_data (
+    mdd_id integer NOT NULL,
+    mdd_key character varying(255) NOT NULL,
+    mdd_value character varying(255) NOT NULL,
+    CONSTRAINT check_mdd_key_not_empty CHECK (((mdd_key)::text <> ''::text)),
+    CONSTRAINT check_mdd_value_not_empty CHECK (((mdd_value)::text <> ''::text))
+);
+
+
+--
+-- Name: TABLE monster_drop_data; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON TABLE monster_drop_data IS 'The data values for the items dropped by the monster.';
+
+
+--
+-- Name: COLUMN monster_drop_data.mdd_id; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN monster_drop_data.mdd_id IS 'The index that has to match the referenced item in the monster_drop table.';
+
+
+--
+-- Name: COLUMN monster_drop_data.mdd_key; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN monster_drop_data.mdd_key IS 'The key of the data entry';
+
+
+--
+-- Name: COLUMN monster_drop_data.mdd_value; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN monster_drop_data.mdd_value IS 'The value of the data entry';
+
+
+--
 -- Name: monster_items; Type: TABLE; Schema: server; Owner: -; Tablespace: 
 --
 
@@ -884,8 +1082,7 @@ CREATE TABLE monster_items (
     mobit_mincount smallint NOT NULL,
     mobit_maxcount smallint NOT NULL,
     CONSTRAINT "$1" CHECK (((((((((((((((((((mobit_position)::text = 'head'::text) OR ((mobit_position)::text = 'neck'::text)) OR ((mobit_position)::text = 'breast'::text)) OR ((mobit_position)::text = 'hands'::text)) OR ((mobit_position)::text = 'left hand'::text)) OR ((mobit_position)::text = 'right hand'::text)) OR ((mobit_position)::text = 'left finger'::text)) OR ((mobit_position)::text = 'right finger'::text)) OR ((mobit_position)::text = 'legs'::text)) OR ((mobit_position)::text = 'feet'::text)) OR ((mobit_position)::text = 'coat'::text)) OR ((mobit_position)::text = 'belt1'::text)) OR ((mobit_position)::text = 'belt2'::text)) OR ((mobit_position)::text = 'belt3'::text)) OR ((mobit_position)::text = 'belt4'::text)) OR ((mobit_position)::text = 'belt5'::text)) OR ((mobit_position)::text = 'belt6'::text))),
-    CONSTRAINT monster_items_count_check CHECK (((mobit_mincount <= mobit_maxcount) AND (mobit_mincount > 0))),
-    CONSTRAINT monster_items_mobit_itemid_check CHECK ((mobit_itemid > 0))
+    CONSTRAINT monster_items_check CHECK (((mobit_mincount >= 1) AND (mobit_mincount <= mobit_maxcount)))
 );
 
 
@@ -987,10 +1184,14 @@ CREATE TABLE npc (
     npc_skinred smallint DEFAULT 255 NOT NULL,
     npc_skingreen smallint DEFAULT 255 NOT NULL,
     npc_skinblue smallint DEFAULT 255 NOT NULL,
+    npc_hairalpha smallint DEFAULT 255 NOT NULL,
+    npc_skinalpha smallint DEFAULT 255 NOT NULL,
     CONSTRAINT npc_beard_check CHECK ((npc_beard >= 0)),
     CONSTRAINT npc_faceto_check CHECK (((npc_faceto >= 0) AND (npc_faceto <= 7))),
     CONSTRAINT npc_hair_check CHECK ((npc_hair >= 0)),
     CONSTRAINT npc_hair_color_check CHECK ((((npc_hairred >= 0) AND (npc_hairblue >= 0)) AND (npc_hairgreen >= 0))),
+    CONSTRAINT npc_npc_hairalpha_check CHECK (((npc_hairalpha >= 0) AND (npc_hairalpha <= 255))),
+    CONSTRAINT npc_npc_skinalpha_check CHECK (((npc_skinalpha >= 0) AND (npc_skinalpha <= 255))),
     CONSTRAINT npc_script_check CHECK ((btrim((npc_script)::text) <> ''::text)),
     CONSTRAINT npc_sex_check CHECK (((npc_sex = 0) OR (npc_sex = 1))),
     CONSTRAINT npc_skincolor_check CHECK ((((npc_skinred >= 0) AND (npc_skinblue >= 0)) AND (npc_skingreen >= 0))),
@@ -1006,6 +1207,73 @@ CREATE TABLE onlineplayer (
     on_playerid integer NOT NULL
 );
 
+
+SET default_with_oids = false;
+
+--
+-- Name: owned_map_items; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+--
+
+CREATE TABLE owned_map_items (
+    omi_map_id integer NOT NULL,
+    omi_x smallint NOT NULL,
+    omi_y smallint NOT NULL,
+    omi_stack_pos smallint NOT NULL,
+    omi_item smallint NOT NULL,
+    omi_quality smallint NOT NULL,
+    omi_number smallint NOT NULL,
+    omi_wear smallint NOT NULL,
+    CONSTRAINT number_range CHECK ((omi_number > 0)),
+    CONSTRAINT quality_range CHECK (((omi_quality >= 0) AND (omi_quality <= 999))),
+    CONSTRAINT wear_range CHECK (((omi_wear >= 0) AND (omi_wear <= 255)))
+);
+
+
+--
+-- Name: owned_map_tiles; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+--
+
+CREATE TABLE owned_map_tiles (
+    omt_map_id integer NOT NULL,
+    omt_x smallint NOT NULL,
+    omt_y smallint NOT NULL,
+    omt_tile smallint DEFAULT 0 NOT NULL,
+    omt_music smallint DEFAULT 0 NOT NULL,
+    CONSTRAINT in_map CHECK (in_owned_map(omt_map_id, omt_x, omt_y))
+);
+
+
+--
+-- Name: owned_maps_seq; Type: SEQUENCE; Schema: server; Owner: -
+--
+
+CREATE SEQUENCE owned_maps_seq
+    START WITH 0
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: owned_maps; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+--
+
+CREATE TABLE owned_maps (
+    om_id integer DEFAULT nextval('owned_maps_seq'::regclass) NOT NULL,
+    om_owner integer NOT NULL,
+    om_origin_x smallint NOT NULL,
+    om_origin_y smallint NOT NULL,
+    om_origin_z smallint NOT NULL,
+    om_width smallint NOT NULL,
+    om_height smallint NOT NULL,
+    CONSTRAINT includes_tiles CHECK (includes_all_tiles(om_id, om_width, om_height)),
+    CONSTRAINT positive_height CHECK ((om_height > 0)),
+    CONSTRAINT positive_width CHECK ((om_width > 0))
+);
+
+
+SET default_with_oids = true;
 
 --
 -- Name: player; Type: TABLE; Schema: server; Owner: -; Tablespace: 
@@ -1052,6 +1320,8 @@ CREATE TABLE player (
     ply_skinred smallint DEFAULT 255 NOT NULL,
     ply_skingreen smallint DEFAULT 255 NOT NULL,
     ply_skinblue smallint DEFAULT 255 NOT NULL,
+    ply_hairalpha smallint DEFAULT 255 NOT NULL,
+    ply_skinalpha smallint DEFAULT 255 NOT NULL,
     CONSTRAINT player_age_check CHECK ((ply_age >= 18)),
     CONSTRAINT player_agility_check CHECK (((ply_agility >= 0) AND (ply_agility <= 250))),
     CONSTRAINT player_appearance_check CHECK ((ply_appearance >= 0)),
@@ -1077,6 +1347,8 @@ CREATE TABLE player (
     CONSTRAINT player_mana_check CHECK (((ply_mana >= 0) AND (ply_mana <= 10000))),
     CONSTRAINT player_mental_capacity_check CHECK ((ply_mental_capacity >= 0)),
     CONSTRAINT player_perception_check CHECK (((ply_perception >= 0) AND (ply_perception <= 250))),
+    CONSTRAINT player_ply_hairalpha_check CHECK (((ply_hairalpha >= 0) AND (ply_hairalpha <= 255))),
+    CONSTRAINT player_ply_skinalpha_check CHECK (((ply_skinalpha >= 0) AND (ply_skinalpha <= 255))),
     CONSTRAINT player_poison_check CHECK (((ply_poison >= 0) AND (ply_poison <= 10000))),
     CONSTRAINT player_skincolor_check CHECK ((((ply_skinred >= 0) AND (ply_skingreen >= 0)) AND (ply_skinblue >= 0))),
     CONSTRAINT player_strength_check CHECK (((ply_strength >= 0) AND (ply_strength <= 250))),
@@ -1183,6 +1455,175 @@ CREATE TABLE questprogress (
 CREATE TABLE quests (
     qst_id smallint NOT NULL,
     qst_script character varying(50) NOT NULL
+);
+
+
+SET default_with_oids = true;
+
+--
+-- Name: race; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+--
+
+CREATE TABLE race (
+    race_id smallint NOT NULL,
+    race_name_de character varying(100) NOT NULL,
+    race_name_en character varying(100) NOT NULL,
+    race_age_min smallint DEFAULT 18 NOT NULL,
+    race_age_max smallint DEFAULT 80 NOT NULL,
+    race_weight_min integer DEFAULT 40000 NOT NULL,
+    race_weight_max integer DEFAULT 120000 NOT NULL,
+    race_height_min smallint DEFAULT 140 NOT NULL,
+    race_height_max smallint DEFAULT 220 NOT NULL,
+    race_agility_min smallint DEFAULT 2 NOT NULL,
+    race_agility_max smallint DEFAULT 20 NOT NULL,
+    race_constitution_min smallint DEFAULT 2 NOT NULL,
+    race_constitution_max smallint DEFAULT 20 NOT NULL,
+    race_dexterity_min smallint DEFAULT 2 NOT NULL,
+    race_dexterity_max smallint DEFAULT 20 NOT NULL,
+    race_essence_min smallint DEFAULT 2 NOT NULL,
+    race_essence_max smallint DEFAULT 20 NOT NULL,
+    race_intelligence_min smallint DEFAULT 2 NOT NULL,
+    race_intelligence_max smallint DEFAULT 20 NOT NULL,
+    race_perception_min smallint DEFAULT 2 NOT NULL,
+    race_perception_max smallint DEFAULT 20 NOT NULL,
+    race_strength_min smallint DEFAULT 2 NOT NULL,
+    race_strength_max smallint DEFAULT 20 NOT NULL,
+    race_willpower_min smallint DEFAULT 2 NOT NULL,
+    race_willpower_max smallint DEFAULT 20 NOT NULL,
+    race_attribute_points_max smallint DEFAULT 84 NOT NULL,
+    CONSTRAINT race_check CHECK ((race_age_max >= race_age_min)),
+    CONSTRAINT race_check1 CHECK ((race_weight_max >= race_weight_min)),
+    CONSTRAINT race_check10 CHECK ((race_willpower_max >= race_willpower_min)),
+    CONSTRAINT race_check2 CHECK ((race_height_max >= race_height_min)),
+    CONSTRAINT race_check3 CHECK ((race_agility_max >= race_agility_min)),
+    CONSTRAINT race_check4 CHECK ((race_constitution_max >= race_constitution_min)),
+    CONSTRAINT race_check5 CHECK ((race_dexterity_max >= race_dexterity_min)),
+    CONSTRAINT race_check6 CHECK ((race_essence_max >= race_essence_min)),
+    CONSTRAINT race_check7 CHECK ((race_intelligence_max >= race_intelligence_min)),
+    CONSTRAINT race_check8 CHECK ((race_perception_max >= race_perception_min)),
+    CONSTRAINT race_check9 CHECK ((race_strength_max >= race_strength_min)),
+    CONSTRAINT race_race_age_min_check CHECK ((race_age_min > 0)),
+    CONSTRAINT race_race_agility_min_check CHECK ((race_agility_min > 0)),
+    CONSTRAINT race_race_attribute_points_max_check CHECK ((race_attribute_points_max > 0)),
+    CONSTRAINT race_race_constitution_min_check CHECK ((race_constitution_min > 0)),
+    CONSTRAINT race_race_dexterity_min_check CHECK ((race_dexterity_min > 0)),
+    CONSTRAINT race_race_essence_min_check CHECK ((race_essence_min > 0)),
+    CONSTRAINT race_race_height_min_check CHECK ((race_height_min > 0)),
+    CONSTRAINT race_race_intelligence_min_check CHECK ((race_intelligence_min > 0)),
+    CONSTRAINT race_race_name_de_check CHECK (((race_name_de)::text <> ''::text)),
+    CONSTRAINT race_race_name_en_check CHECK (((race_name_en)::text <> ''::text)),
+    CONSTRAINT race_race_perception_min_check CHECK ((race_perception_min > 0)),
+    CONSTRAINT race_race_strength_min_check CHECK ((race_strength_min > 0)),
+    CONSTRAINT race_race_weight_min_check CHECK ((race_weight_min > 0)),
+    CONSTRAINT race_race_willpower_min_check CHECK ((race_willpower_min > 0))
+);
+
+
+--
+-- Name: COLUMN race.race_weight_min; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN race.race_weight_min IS 'The minimal weight for this race measured in gram.';
+
+
+--
+-- Name: COLUMN race.race_weight_max; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN race.race_weight_max IS 'The maximal weight for this race measured in gram.';
+
+
+--
+-- Name: COLUMN race.race_height_min; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN race.race_height_min IS 'The minimal height for this race measured in centimeter.';
+
+
+--
+-- Name: COLUMN race.race_height_max; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN race.race_height_max IS 'The maximal height for this race measured in centimeter.';
+
+
+SET default_with_oids = false;
+
+--
+-- Name: race_beard; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+--
+
+CREATE TABLE race_beard (
+    rb_race_id smallint NOT NULL,
+    rb_type_id smallint NOT NULL,
+    rb_beard_id smallint NOT NULL,
+    rb_name_de character varying(100) NOT NULL,
+    rb_name_en character varying(100) NOT NULL,
+    CONSTRAINT race_beard_rb_beard_id_check CHECK ((rb_beard_id > 0)),
+    CONSTRAINT race_beard_rb_name_de_check CHECK (((rb_name_de)::text <> ''::text)),
+    CONSTRAINT race_beard_rb_name_en_check CHECK (((rb_name_en)::text <> ''::text))
+);
+
+
+--
+-- Name: race_hair; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+--
+
+CREATE TABLE race_hair (
+    rh_race_id smallint NOT NULL,
+    rh_type_id smallint NOT NULL,
+    rh_hair_id smallint NOT NULL,
+    rh_name_de character varying(100) NOT NULL,
+    rh_name_en character varying(100) NOT NULL,
+    CONSTRAINT race_hair_rh_hair_id_check CHECK ((rh_hair_id > 0)),
+    CONSTRAINT race_hair_rh_name_de_check CHECK (((rh_name_de)::text <> ''::text)),
+    CONSTRAINT race_hair_rh_name_en_check CHECK (((rh_name_en)::text <> ''::text))
+);
+
+
+--
+-- Name: race_hair_colour; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+--
+
+CREATE TABLE race_hair_colour (
+    rhc_race_id smallint NOT NULL,
+    rhc_type_id integer NOT NULL,
+    rhc_red smallint DEFAULT 255 NOT NULL,
+    rhc_green smallint DEFAULT 255 NOT NULL,
+    rhc_blue smallint DEFAULT 255 NOT NULL,
+    rhc_alpha smallint DEFAULT 255 NOT NULL,
+    CONSTRAINT race_hair_color_rhc_alpha_check CHECK (((rhc_alpha >= 0) AND (rhc_alpha <= 255))),
+    CONSTRAINT race_hair_color_rhc_blue_check CHECK (((rhc_blue >= 0) AND (rhc_blue <= 255))),
+    CONSTRAINT race_hair_color_rhc_green_check CHECK (((rhc_green >= 0) AND (rhc_green <= 255))),
+    CONSTRAINT race_hair_color_rhc_red_check CHECK (((rhc_red >= 0) AND (rhc_red <= 255)))
+);
+
+
+--
+-- Name: race_skin_colour; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+--
+
+CREATE TABLE race_skin_colour (
+    rsc_race_id smallint NOT NULL,
+    rsc_type_id integer NOT NULL,
+    rsc_red smallint DEFAULT 255 NOT NULL,
+    rsc_green smallint DEFAULT 255 NOT NULL,
+    rsc_blue smallint DEFAULT 255 NOT NULL,
+    rsc_alpha smallint DEFAULT 255 NOT NULL,
+    CONSTRAINT race_skin_color_rsc_alpha_check CHECK (((rsc_alpha >= 0) AND (rsc_alpha <= 255))),
+    CONSTRAINT race_skin_color_rsc_blue_check CHECK (((rsc_blue >= 0) AND (rsc_blue <= 255))),
+    CONSTRAINT race_skin_color_rsc_green_check CHECK (((rsc_green >= 0) AND (rsc_green <= 255))),
+    CONSTRAINT race_skin_color_rsc_red_check CHECK (((rsc_red >= 0) AND (rsc_red <= 255)))
+);
+
+
+--
+-- Name: race_types; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+--
+
+CREATE TABLE race_types (
+    rt_race_id smallint NOT NULL,
+    rt_type_id smallint NOT NULL
 );
 
 
@@ -1822,11 +2263,11 @@ ALTER TABLE ONLY chars
 
 
 --
--- Name: items_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+-- Name: common_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY items
-    ADD CONSTRAINT items_pkey PRIMARY KEY (itm_id);
+    ADD CONSTRAINT common_pkey PRIMARY KEY (itm_id);
 
 
 --
@@ -1878,6 +2319,22 @@ ALTER TABLE ONLY monster_attributes
 
 
 --
+-- Name: monster_drop_data_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY monster_drop_data
+    ADD CONSTRAINT monster_drop_data_pkey PRIMARY KEY (mdd_id, mdd_key);
+
+
+--
+-- Name: monster_drop_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY monster_drop
+    ADD CONSTRAINT monster_drop_pkey PRIMARY KEY (md_id);
+
+
+--
 -- Name: monster_items_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
 --
 
@@ -1926,6 +2383,14 @@ ALTER TABLE ONLY naturalarmor
 
 
 --
+-- Name: no_overlapping; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY owned_maps
+    ADD CONSTRAINT no_overlapping EXCLUDE USING gist (om_origin_z WITH =, box(point((om_origin_x)::double precision, (om_origin_y)::double precision), point((((om_origin_x + om_width) - 1))::double precision, (((om_origin_y + om_height) - 1))::double precision)) WITH &&);
+
+
+--
 -- Name: npc_npc_posx_key; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
 --
 
@@ -1947,6 +2412,30 @@ ALTER TABLE ONLY npc
 
 ALTER TABLE ONLY onlineplayer
     ADD CONSTRAINT onlineplayer_pkey PRIMARY KEY (on_playerid);
+
+
+--
+-- Name: owned_map_items_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY owned_map_items
+    ADD CONSTRAINT owned_map_items_pkey PRIMARY KEY (omi_map_id, omi_x, omi_y, omi_stack_pos);
+
+
+--
+-- Name: owned_map_tiles_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY owned_map_tiles
+    ADD CONSTRAINT owned_map_tiles_pkey PRIMARY KEY (omt_map_id, omt_x, omt_y);
+
+
+--
+-- Name: owned_maps_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY owned_maps
+    ADD CONSTRAINT owned_maps_pkey PRIMARY KEY (om_id);
 
 
 --
@@ -2013,6 +2502,86 @@ ALTER TABLE ONLY questprogress
 
 ALTER TABLE ONLY quests
     ADD CONSTRAINT quests_pkey PRIMARY KEY (qst_id);
+
+
+--
+-- Name: race_beard_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY race_beard
+    ADD CONSTRAINT race_beard_pkey PRIMARY KEY (rb_race_id, rb_type_id, rb_beard_id);
+
+
+--
+-- Name: race_beard_rb_race_id_rb_sex_id_rb_name_de_key; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY race_beard
+    ADD CONSTRAINT race_beard_rb_race_id_rb_sex_id_rb_name_de_key UNIQUE (rb_race_id, rb_type_id, rb_name_de);
+
+
+--
+-- Name: race_beard_rb_race_id_rb_sex_id_rb_name_en_key; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY race_beard
+    ADD CONSTRAINT race_beard_rb_race_id_rb_sex_id_rb_name_en_key UNIQUE (rb_race_id, rb_type_id, rb_name_en);
+
+
+--
+-- Name: race_hair_color_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY race_hair_colour
+    ADD CONSTRAINT race_hair_color_pkey PRIMARY KEY (rhc_race_id, rhc_type_id, rhc_red, rhc_green, rhc_blue, rhc_alpha);
+
+
+--
+-- Name: race_hair_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY race_hair
+    ADD CONSTRAINT race_hair_pkey PRIMARY KEY (rh_race_id, rh_type_id, rh_hair_id);
+
+
+--
+-- Name: race_hair_rh_race_id_rh_sex_id_rh_name_de_key; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY race_hair
+    ADD CONSTRAINT race_hair_rh_race_id_rh_sex_id_rh_name_de_key UNIQUE (rh_race_id, rh_type_id, rh_name_de);
+
+
+--
+-- Name: race_hair_rh_race_id_rh_sex_id_rh_name_en_key; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY race_hair
+    ADD CONSTRAINT race_hair_rh_race_id_rh_sex_id_rh_name_en_key UNIQUE (rh_race_id, rh_type_id, rh_name_en);
+
+
+--
+-- Name: race_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY race
+    ADD CONSTRAINT race_pkey PRIMARY KEY (race_id);
+
+
+--
+-- Name: race_skin_color_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY race_skin_colour
+    ADD CONSTRAINT race_skin_color_pkey PRIMARY KEY (rsc_race_id, rsc_type_id, rsc_red, rsc_green, rsc_blue, rsc_alpha);
+
+
+--
+-- Name: race_types_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY race_types
+    ADD CONSTRAINT race_types_pkey PRIMARY KEY (rt_race_id, rt_type_id);
 
 
 --
@@ -2318,14 +2887,6 @@ ALTER TABLE ONLY container
 -- Name: $1; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
-ALTER TABLE ONLY monster_skills
-    ADD CONSTRAINT "$1" FOREIGN KEY (mobsk_monsterid) REFERENCES monster(mob_monsterid) MATCH FULL ON DELETE CASCADE DEFERRABLE;
-
-
---
--- Name: $1; Type: FK CONSTRAINT; Schema: server; Owner: -
---
-
 ALTER TABLE ONLY playerskills
     ADD CONSTRAINT "$1" FOREIGN KEY (psk_playerid) REFERENCES player(ply_playerid) MATCH FULL ON DELETE CASCADE DEFERRABLE;
 
@@ -2336,30 +2897,6 @@ ALTER TABLE ONLY playerskills
 
 ALTER TABLE ONLY gmpager
     ADD CONSTRAINT "$1" FOREIGN KEY (pager_user) REFERENCES player(ply_playerid) MATCH FULL ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE;
-
-
---
--- Name: $2; Type: FK CONSTRAINT; Schema: server; Owner: -
---
-
-ALTER TABLE ONLY monster_attributes
-    ADD CONSTRAINT "$2" FOREIGN KEY (mobattr_monsterid) REFERENCES monster(mob_monsterid) MATCH FULL ON DELETE CASCADE;
-
-
---
--- Name: $2; Type: FK CONSTRAINT; Schema: server; Owner: -
---
-
-ALTER TABLE ONLY monster_items
-    ADD CONSTRAINT "$2" FOREIGN KEY (mobit_monsterid) REFERENCES monster(mob_monsterid) MATCH FULL ON DELETE CASCADE DEFERRABLE;
-
-
---
--- Name: $3; Type: FK CONSTRAINT; Schema: server; Owner: -
---
-
-ALTER TABLE ONLY monster_items
-    ADD CONSTRAINT "$3" FOREIGN KEY (mobit_itemid) REFERENCES items(itm_id) MATCH FULL ON DELETE CASCADE DEFERRABLE;
 
 
 --
@@ -2379,11 +2916,19 @@ ALTER TABLE ONLY armor
 
 
 --
--- Name: items_itm_objectafterrot_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+-- Name: chars_chr_race_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+--
+
+ALTER TABLE ONLY chars
+    ADD CONSTRAINT chars_chr_race_fkey FOREIGN KEY (chr_race, chr_sex) REFERENCES race_types(rt_race_id, rt_type_id) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- Name: common_com_objectafterrot_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY items
-    ADD CONSTRAINT items_itm_objectafterrot_fkey FOREIGN KEY (itm_objectafterrot) REFERENCES items(itm_id) MATCH FULL ON DELETE RESTRICT;
+    ADD CONSTRAINT common_com_objectafterrot_fkey FOREIGN KEY (itm_objectafterrot) REFERENCES items(itm_id) MATCH FULL ON DELETE RESTRICT;
 
 
 --
@@ -2435,11 +2980,75 @@ ALTER TABLE ONLY introduction
 
 
 --
+-- Name: md_itemid_itm_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+--
+
+ALTER TABLE ONLY monster_drop
+    ADD CONSTRAINT md_itemid_itm_id_fkey FOREIGN KEY (md_itemid) REFERENCES items(itm_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: md_monsterid_mon_monsterid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+--
+
+ALTER TABLE ONLY monster_drop
+    ADD CONSTRAINT md_monsterid_mon_monsterid_fkey FOREIGN KEY (md_monsterid) REFERENCES monster(mob_monsterid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: mdd_id_md_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+--
+
+ALTER TABLE ONLY monster_drop_data
+    ADD CONSTRAINT mdd_id_md_id_fkey FOREIGN KEY (mdd_id) REFERENCES monster_drop(md_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: mobsk_skill_id_key; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY monster_skills
     ADD CONSTRAINT mobsk_skill_id_key FOREIGN KEY (mobsk_skill_id) REFERENCES skills(skl_skill_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: monster_attributes_mobattr_monsterid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+--
+
+ALTER TABLE ONLY monster_attributes
+    ADD CONSTRAINT monster_attributes_mobattr_monsterid_fkey FOREIGN KEY (mobattr_monsterid) REFERENCES monster(mob_monsterid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: monster_items_mobit_itemid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+--
+
+ALTER TABLE ONLY monster_items
+    ADD CONSTRAINT monster_items_mobit_itemid_fkey FOREIGN KEY (mobit_itemid) REFERENCES items(itm_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: monster_items_mobit_monsterid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+--
+
+ALTER TABLE ONLY monster_items
+    ADD CONSTRAINT monster_items_mobit_monsterid_fkey FOREIGN KEY (mobit_monsterid) REFERENCES monster(mob_monsterid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: monster_mob_race_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+--
+
+ALTER TABLE ONLY monster
+    ADD CONSTRAINT monster_mob_race_fkey FOREIGN KEY (mob_race) REFERENCES race(race_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: monster_skills_mobsk_monsterid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+--
+
+ALTER TABLE ONLY monster_skills
+    ADD CONSTRAINT monster_skills_mobsk_monsterid_fkey FOREIGN KEY (mobsk_monsterid) REFERENCES monster(mob_monsterid) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -2451,11 +3060,51 @@ ALTER TABLE ONLY naming
 
 
 --
+-- Name: npc_npc_type_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+--
+
+ALTER TABLE ONLY npc
+    ADD CONSTRAINT npc_npc_type_fkey FOREIGN KEY (npc_type, npc_sex) REFERENCES race_types(rt_race_id, rt_type_id) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
 -- Name: onlineplayer_on_playerid_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
 --
 
 ALTER TABLE ONLY onlineplayer
     ADD CONSTRAINT onlineplayer_on_playerid_fkey FOREIGN KEY (on_playerid) REFERENCES player(ply_playerid) MATCH FULL ON DELETE CASCADE DEFERRABLE;
+
+
+--
+-- Name: owned_map_items_omi_item_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+--
+
+ALTER TABLE ONLY owned_map_items
+    ADD CONSTRAINT owned_map_items_omi_item_fkey FOREIGN KEY (omi_item) REFERENCES items(itm_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: owned_map_items_omi_map_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+--
+
+ALTER TABLE ONLY owned_map_items
+    ADD CONSTRAINT owned_map_items_omi_map_id_fkey FOREIGN KEY (omi_map_id, omi_x, omi_y) REFERENCES owned_map_tiles(omt_map_id, omt_x, omt_y) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: owned_map_tiles_omt_map_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+--
+
+ALTER TABLE ONLY owned_map_tiles
+    ADD CONSTRAINT owned_map_tiles_omt_map_id_fkey FOREIGN KEY (omt_map_id) REFERENCES owned_maps(om_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: owned_maps_om_owner_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+--
+
+ALTER TABLE ONLY owned_maps
+    ADD CONSTRAINT owned_maps_om_owner_fkey FOREIGN KEY (om_owner) REFERENCES chars(chr_playerid) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -2520,6 +3169,46 @@ ALTER TABLE ONLY playerskills
 
 ALTER TABLE ONLY questprogress
     ADD CONSTRAINT questprogress_qpg_userid_fkey FOREIGN KEY (qpg_userid) REFERENCES player(ply_playerid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: race_beard_rb_race_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+--
+
+ALTER TABLE ONLY race_beard
+    ADD CONSTRAINT race_beard_rb_race_id_fkey FOREIGN KEY (rb_race_id, rb_type_id) REFERENCES race_types(rt_race_id, rt_type_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: race_hair_color_rhc_race_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+--
+
+ALTER TABLE ONLY race_hair_colour
+    ADD CONSTRAINT race_hair_color_rhc_race_id_fkey FOREIGN KEY (rhc_race_id, rhc_type_id) REFERENCES race_types(rt_race_id, rt_type_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: race_hair_rh_race_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+--
+
+ALTER TABLE ONLY race_hair
+    ADD CONSTRAINT race_hair_rh_race_id_fkey FOREIGN KEY (rh_race_id, rh_type_id) REFERENCES race_types(rt_race_id, rt_type_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: race_skin_color_rsc_race_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+--
+
+ALTER TABLE ONLY race_skin_colour
+    ADD CONSTRAINT race_skin_color_rsc_race_id_fkey FOREIGN KEY (rsc_race_id, rsc_type_id) REFERENCES race_types(rt_race_id, rt_type_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: race_types_rs_race_id_fkey; Type: FK CONSTRAINT; Schema: server; Owner: -
+--
+
+ALTER TABLE ONLY race_types
+    ADD CONSTRAINT race_types_rs_race_id_fkey FOREIGN KEY (rt_race_id) REFERENCES race(race_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
