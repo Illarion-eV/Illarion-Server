@@ -39,6 +39,7 @@
 \newcommand{\commoni}{\textsl{comItem }}
 \newcommand{\bool}{\textsl{boolean }}
 \newcommand{\effect}{\textsl{effStruct }}
+\newcommand{\colour}{\textsl{colour }}
 \newcommand{\position}{\textsl{posStruct }}
 \newcommand{\character}{\textsl{Character }}
 \newcommand{\player}{\textsl{Player }}
@@ -55,11 +56,11 @@
 \makeindex
 \begin{document}
 \lstset{basicstyle=\small, keywordstyle=\ttfamily, identifierstyle=\ttfamily}
-\title{Lua documentation for Illarion scripting\\v5.18}
+\title{Lua documentation for Illarion scripting\\v5.19}
 \author{Martin \thanks{ \texttt{martin@illarion.org, http://www.illarion.org}},
 pharse \thanks{ \texttt{pharse@illarion.org, http://www.illarion.org}},
 vilarion \thanks{ \texttt{vilarion@illarion.org, http://www.illarion.org}}}
-\date{2004-2006/2010-2014}
+\date{2004-2006/2010-2015}
 \maketitle
 \tableofcontents
 \chapter{General}
@@ -163,9 +164,9 @@ Commit this script to the svn-repository, log into the testserver (if you haven'
 \chapter{Positions}
 
 \section{Functions}
-\position \var{position}=\com{position}{\integer \var{x},\integer \var{y},\integer \var{z}}
+\position \var{position}=\com{position}{\integer \var{x}, \integer \var{y}, \integer \var{z}}
 \begin{quote}
-Creates position-structure for the point (x,y,z).\\
+Creates position-structure for the point (x, y, z).\\
 \end{quote}
 \bool \position \var{posA} == \position \var{posB}
 \begin{quote}
@@ -194,6 +195,22 @@ User:forceWarp( position(1,1,1) );		-- now User.pos AND testPos is (1,1,1)
 
 Avoid this by copying the single x,y and z coordinates in a new position struct.
 
+\chapter{Colours}
+
+\section{Functions}
+\com{colour}{\integer \var{red}, \integer \var{green}, \integer \var{blue} [, \integer \var{alpha} = 255]}
+\begin{quote}
+Creates colour structure for given RGBA values. All parameters range from 0 to 255. For the optional \var{alpha} 0 means transparent, 255 means opaque.\\
+\end{quote}
+
+\section{Variables}
+\lua{rw}: \integer \var{colour}.\comm{red}\\
+\lua{rw}: \integer \var{colour}.\comm{green}\\
+\lua{rw}: \integer \var{colour}.\comm{blue}\\
+\lua{rw}: \integer \var{colour}.\comm{alpha}\\
+%\begin{quote}
+\emph{Usage:} alpha = c.alpha
+%\end{quote}
 
 \chapter{Characters}
 
@@ -362,21 +379,21 @@ If \com{isBaseAttributeValid}{...} would return \var{true}, increases or decreas
 \begin{quote}
 Saves the eight primary base attributes to the database, iff \com{getBaseAttributeSum}{} == \com{getMaxAttributePoints}{}. On failure resets primary attribute values to database values. Returns whether the operation was successful or not.
 \end{quote}
-\void \var{character}:\com{setSkinColor}{\integer \var{red}, \integer \var{green}, \integer \var{blue}}
+\void \var{character}:\com{setSkinColour}{\colour \var{c}}
 \begin{quote}
-    Sets the color of the skin to the given rgb-values. \var{red}, \var{green} and \var{blue} must be between 0 and 255.
+    Sets skin colour.
 \end{quote}
-\void \var{character}:\com{setHairColor}{\integer \var{red}, \integer \var{green}, \integer \var{blue}}
+\void \var{character}:\com{setHairColour}{\colour \var{c}}
 \begin{quote}
-    Sets the color of the hair and beard to the given rgb-values. \var{red}, \var{green} and \var{blue} must be between 0 and 255.
+    Sets hair and beard colour.
 \end{quote}
-\integer, \integer, \integer \var{character}:\com{getSkinColor}{}
+\colour \var{character}:\com{getSkinColour}{}
 \begin{quote}
-    Returns the \var{red}, \var{green} and \var{blue} values of the skin color, each being between 0 and 255.
+    Returns skin colour.
 \end{quote}
-\integer, \integer, \integer \var{character}:\com{getHairColor}{}
+\colour \var{character}:\com{getHairColour}{}
 \begin{quote}
-    Returns the \var{red}, \var{green} and \var{blue} values of the hair color, each being between 0 and 255.
+    Returns hair color.
 \end{quote}
 \void \var{character}:\com{setHair}{\integer \var{hairID}}
 \begin{quote}
@@ -2403,6 +2420,10 @@ It might be the case, and this is hoped much, that you want to create more compl
 \appendix
 
 \chapter{Versions}
+Version 5.19 (15 01 15)\\
+* Add colour class, which represents RGBA values\\
+* Rename colour related methods and change their signature to use colour objects\\
+\\
 Version 5.18 (13 12 14)\\
 * Add Item:isLarge\\
 \\
