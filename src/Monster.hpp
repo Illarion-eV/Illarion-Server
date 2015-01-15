@@ -58,7 +58,7 @@ public:
     * @param type the new type of the monster
     * @throw unknownIDException
     */
-    void setMonsterType(const TYPE_OF_CHARACTER_ID &type);
+    void setMonsterType(TYPE_OF_CHARACTER_ID type);
 
     /**
     * sets the spawnpoint for thins monster to a new one
@@ -135,10 +135,13 @@ public:
 
     std::string nameDe;
 
+protected:
+    Monster() {};
+
 private:
 
     static uint32_t counter;
-    SpawnPoint *spawn;
+    SpawnPoint *spawn = nullptr;
     TYPE_OF_CHARACTER_ID monstertype;
     bool _canAttack;
 };

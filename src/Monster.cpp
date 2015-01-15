@@ -69,7 +69,7 @@ void Monster::performStep(position targetpos) {
     }
 }
 
-void Monster::setMonsterType(const TYPE_OF_CHARACTER_ID &type) {
+void Monster::setMonsterType(TYPE_OF_CHARACTER_ID type) {
     deleteAllSkills();
 
     if (!monsterDescriptions->exists(type)) {

@@ -16,14 +16,13 @@ public:
     }
 
     MOCK_METHOD1(findCharacter, Character*(TYPE_OF_CHARACTER_ID id));
-    MOCK_METHOD2(getMonsterDefinition, bool(TYPE_OF_CHARACTER_ID, MonsterStruct &));
 };
 
 class Player {};
 
 class MockMonster : public Monster {
 public:
-    MockMonster() : Monster(5, position(1, 2, 3), nullptr) {}
+    MockMonster() {};
 
     MOCK_CONST_METHOD0(isNewPlayer, bool());
     MOCK_METHOD1(pageGM, bool(const std::string &));
@@ -102,8 +101,6 @@ public:
     }
 
     monster_bindings() {
-        ON_CALL(world, getMonsterDefinition(_, _)).WillByDefault(Return(true));
-        EXPECT_CALL(world, getMonsterDefinition(_, _)).Times(AtLeast(0));
         monster = new MockMonster();
         ON_CALL(world, findCharacter(monster->getId())).WillByDefault(Return(monster));
         EXPECT_CALL(world, findCharacter(monster->getId())).Times(AtLeast(0));
