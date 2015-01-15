@@ -132,7 +132,6 @@ const RaceConfiguration RaceTypeTable::getRandomRaceConfiguration(TYPE_OF_RACE_I
     const auto subTypeCount = table.count(race);
 
     if (subTypeCount == 0) {
-        Logger::error(LogFacility::Other) << "No subtypes defined for race " << race << Log::end;
         return raceConfiguration;
     }
 
@@ -151,29 +150,21 @@ const RaceConfiguration RaceTypeTable::getRandomRaceConfiguration(TYPE_OF_RACE_I
     if (raceType.hair.size() > 0) {
         const auto randomHairId = Random::uniform(0, raceType.hair.size() - 1);
         raceConfiguration.hair = raceType.hair[randomHairId];
-    } else {
-        Logger::error(LogFacility::Other) << "No hair defined for race " << race << ", type " << subType << Log::end;
     }
 
     if (raceType.beard.size() > 0) {
         const auto randomBeardId = Random::uniform(0, raceType.beard.size() - 1);
         raceConfiguration.beard = raceType.beard[randomBeardId];
-    } else {
-        Logger::error(LogFacility::Other) << "No beard defined for race " << race << ", type " << subType << Log::end;
     }
 
     if (raceType.hairColour.size() > 0) {
         const auto randomHairColourId = Random::uniform(0, raceType.hairColour.size() - 1);
         raceConfiguration.hairColour = raceType.hairColour[randomHairColourId];
-    } else {
-        Logger::error(LogFacility::Other) << "No hair colour defined for race " << race << ", type " << subType << Log::end;
     }
 
     if (raceType.skinColour.size() > 0) {
         const auto randomSkinColourId = Random::uniform(0, raceType.skinColour.size() - 1);
         raceConfiguration.skinColour = raceType.skinColour[randomSkinColourId];
-    } else {
-        Logger::error(LogFacility::Other) << "No skin colour defined for race " << race << ", type " << subType << Log::end;
     }
 
     return raceConfiguration;
