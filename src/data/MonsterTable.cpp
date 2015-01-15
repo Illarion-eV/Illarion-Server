@@ -27,15 +27,9 @@
 #include "Logger.hpp"
 #include "data/Data.hpp"
 
-//! table with item attributes
 
-MonsterTable::MonsterTable() : m_dataOK(false) {
-    reload();
-}
-
-
-void MonsterTable::reload() {
-    Logger::info(LogFacility::Other) << "MonsterTable::reload" << Log::end;    
+MonsterTable::MonsterTable() {
+    Logger::info(LogFacility::Other) << "MonsterTable::constructor" << Log::end;
 
     try {
         using namespace Database;
@@ -60,8 +54,6 @@ void MonsterTable::reload() {
         Database::Result monresults = monquery.execute();
 
         if (!monresults.empty()) {
-            clearOldTable();
-
             auto questNodes = QuestNodeTable::getInstance().getMonsterNodes();
             auto questItr = questNodes.first;
             auto questEnd = questNodes.second;
@@ -286,37 +278,29 @@ void MonsterTable::reload() {
 
 
 
-                m_table[id] = temprecord;
-                m_dataOK = true;
+                table[id] = temprecord;
+                dataOK = true;
             }
         }
 
         connection->commitTransaction();
-        Logger::info(LogFacility::Other) << "Loaded " << m_table.size() << " monsters!" << Log::end;
+        Logger::info(LogFacility::Other) << "Loaded " << table.size() << " monsters!" << Log::end;
     } catch (std::exception &e) {
         Logger::error(LogFacility::Other) << "Exception in MonsterTable::reload: " << e.what() << Log::end;
-        m_dataOK = false;
+        dataOK = false;
     }
 
 }
 
 bool MonsterTable::exists(TYPE_OF_CHARACTER_ID id) const {
-    return m_table.count(id) > 0;
+    return table.count(id) > 0;
 }
 
 const MonsterStruct &MonsterTable::operator[](TYPE_OF_CHARACTER_ID id) {
     try {
-        return m_table.at(id);
+        return table.at(id);
     } catch (std::out_of_range &) {
         Logger::error(LogFacility::Script) << "Table monster" << ": entry " << id << " was not found!" << Log::end;
-        return m_table[id];
+        return table[id];
     }
-}
-
-void MonsterTable::clearOldTable() {
-    m_table.clear();
-}
-
-MonsterTable::~MonsterTable() {
-    clearOldTable();
 }

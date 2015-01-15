@@ -27,6 +27,7 @@ typedef uint16_t TYPE_OF_ITEM_ID;
 typedef uint16_t TYPE_OF_TILE_ID;
 typedef uint32_t TYPE_OF_CHARACTER_ID;
 typedef uint16_t TYPE_OF_RACE_ID;
+typedef uint16_t TYPE_OF_RACE_TYPE_ID;
 
 typedef uint16_t TYPE_OF_VOLUME;
 typedef uint16_t TYPE_OF_WEIGHT;
@@ -89,7 +90,10 @@ enum class movement_type {
 };
 
 struct colour {
-    uint8_t red, green, blue;
+    uint8_t red = 0xFF, green = 0xFF, blue = 0xFF, alpha = 0xFF;
+    colour() = default;
+    colour(uint8_t red, uint8_t green, uint8_t blue): red(red), green(green), blue(blue) {}
+    colour(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha): red(red), green(green), blue(blue), alpha(alpha) {}
 };
 
 #endif

@@ -136,4 +136,5 @@ void BasicServerCommand::addColourToBuffer(const colour &c) {
     addUnsignedCharToBuffer(c.red);
     addUnsignedCharToBuffer(c.green);
     addUnsignedCharToBuffer(c.blue);
+    addUnsignedCharToBuffer(c.alpha);
 }

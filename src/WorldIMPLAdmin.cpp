@@ -35,6 +35,7 @@
 
 #include "data/Data.hpp"
 #include "data/MonsterTable.hpp"
+#include "data/RaceTypeTable.hpp"
 #include "data/ScheduledScriptsTable.hpp"
 #include "data/QuestNodeTable.hpp"
 
@@ -58,7 +59,9 @@ extern std::shared_ptr<LuaLoginScript>loginScript;
 extern std::shared_ptr<LuaLogoutScript>logoutScript;
 extern std::shared_ptr<LuaLearnScript>learnScript;
 extern std::shared_ptr<LuaDepotScript>depotScript;
-extern ScheduledScriptsTable *scheduledScripts;
+extern std::unique_ptr<RaceTypeTable> raceTypes;
+extern std::unique_ptr<MonsterTable> monsterDescriptions;
+extern std::unique_ptr<ScheduledScriptsTable> scheduledScripts;
 extern std::shared_ptr<LuaWeaponScript> standardFightingScript;
 
 void set_spawn_command(World *, Player *, const std::string &);
@@ -918,8 +921,6 @@ bool World::parseGMCommands(Player *user, const std::string &text) {
     return executeUserCommand(user, text, GMCommands);
 }
 
-extern MonsterTable *MonsterDescriptions;
-
 void reportError(Player *cp, std::string msg) {
     Logger::error(LogFacility::World) << "ERROR: " << msg << Log::end;
     cp->inform("ERROR: " + msg);
@@ -949,8 +950,9 @@ bool World::reload_defs(Player *cp) {
         Data::Skills.activateBuffer();
     }
 
-    MonsterTable *MonsterDescriptions_temp = 0;
-    ScheduledScriptsTable *ScheduledScripts_temp = 0;
+    std::unique_ptr<MonsterTable> monsterDescriptionsTemp;
+    std::unique_ptr<RaceTypeTable> raceTypesTemp;
+    std::unique_ptr<ScheduledScriptsTable> scheduledScriptsTemp;
 
     if (ok) {
         QuestNodeTable::getInstance().reload();
@@ -961,39 +963,39 @@ bool World::reload_defs(Player *cp) {
     }
 
     if (ok) {
-        MonsterDescriptions_temp = new MonsterTable();
+        monsterDescriptionsTemp = std::make_unique<MonsterTable>();
 
-        if (MonsterDescriptions_temp == nullptr || !MonsterDescriptions_temp->dataOK()) {
+        if (!monsterDescriptionsTemp || !monsterDescriptionsTemp->isDataOK()) {
             reportTableError(cp, "monster");
             ok = false;
         }
     }
 
     if (ok) {
-        ScheduledScripts_temp = new ScheduledScriptsTable();
+        raceTypesTemp = std::make_unique<RaceTypeTable>();
 
-        if (ScheduledScripts_temp == nullptr || !ScheduledScripts_temp->dataOK()) {
+        if (!raceTypesTemp || !raceTypesTemp->isDataOK()) {
+            reportTableError(cp, "race_types");
+            ok = false;
+        }
+    }
+
+    if (ok) {
+        scheduledScriptsTemp = std::make_unique<ScheduledScriptsTable>();
+
+        if (!scheduledScriptsTemp || !scheduledScriptsTemp->isDataOK()) {
             reportTableError(cp, "scheduledscripts");
             ok = false;
         }
     }
 
-    if (!ok) {
-        if (MonsterDescriptions_temp != nullptr) {
-            delete MonsterDescriptions_temp;
-        }
-
-        if (ScheduledScripts_temp != nullptr) {
-            delete ScheduledScripts_temp;
-        }
-    } else {
+    if (ok) {
         // if everything went well, delete old tables and set up new tables
         //Mutex für login logout sperren so das aktuell keiner mehr einloggen kann
         PlayerManager::get().setLoginLogout(true);
-        delete MonsterDescriptions;
-        MonsterDescriptions = MonsterDescriptions_temp;
-        delete scheduledScripts;
-        scheduledScripts = ScheduledScripts_temp;
+        monsterDescriptions = std::move(monsterDescriptionsTemp);
+        raceTypes = std::move(raceTypesTemp);
+        scheduledScripts = std::move(scheduledScriptsTemp);
         //Mutex entsperren.
         PlayerManager::get().setLoginLogout(false);
 

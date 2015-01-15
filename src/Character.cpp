@@ -714,33 +714,25 @@ unsigned short int Character::getMinorSkill(TYPE_OF_SKILL_ID s) const {
 }
 
 
-void Character::setSkinColor(uint8_t red, uint8_t green, uint8_t blue) {
-    _appearance.skin.red = red;
-    _appearance.skin.green = green;
-    _appearance.skin.blue = blue;
+void Character::setSkinColour(const colour &c) {
+    _appearance.skin = c;
     updateAppearanceForAll(true);
 }
 
 
-void Character::getSkinColor(uint8_t &red, uint8_t &green, uint8_t &blue) const {
-    red = _appearance.skin.red;
-    green =_appearance.skin.green;
-    blue = _appearance.skin.blue;
+colour Character::getSkinColour() const {
+    return _appearance.skin;
 }
 
 
-void Character::setHairColor(uint8_t red, uint8_t green, uint8_t blue) {
-    _appearance.hair.red = red;
-    _appearance.hair.green = green;
-    _appearance.hair.blue = blue;
+void Character::setHairColour(const colour &c) {
+    _appearance.hair = c;
     updateAppearanceForAll(true);
 }
 
 
-void Character::getHairColor(uint8_t &red, uint8_t &green, uint8_t &blue) const {
-    red = _appearance.hair.red;
-    green = _appearance.hair.green;
-    blue = _appearance.hair.blue;
+colour Character::getHairColour() const {
+    return _appearance.hair;
 }
 
 

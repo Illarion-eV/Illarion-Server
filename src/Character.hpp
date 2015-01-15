@@ -64,8 +64,8 @@ public:
 
         uint8_t hairtype = 0;
         uint8_t beardtype = 0;
-        colour hair = { 255, 255, 255 };
-        colour skin = { 255, 255, 255 };
+        colour hair;
+        colour skin;
 
         appearance() {};
     };
@@ -326,10 +326,10 @@ public:
     virtual const skillvalue *getSkillValue(TYPE_OF_SKILL_ID s) const;
     virtual unsigned short int getMinorSkill(TYPE_OF_SKILL_ID s) const;
 
-    void setSkinColor(uint8_t red, uint8_t green, uint8_t blue);
-    void getSkinColor(uint8_t &red, uint8_t &green, uint8_t &blue) const;
-    void setHairColor(uint8_t red, uint8_t green, uint8_t blue);
-    void getHairColor(uint8_t &red, uint8_t &green, uint8_t &blue) const;
+    void setSkinColour(const colour &c);
+    colour getSkinColour() const;
+    void setHairColour(const colour &c);
+    colour getHairColour() const;
     void setHair(uint8_t hairID);
     uint8_t getHair() const;
     void setBeard(uint8_t beardID);

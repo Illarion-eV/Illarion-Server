@@ -21,13 +21,16 @@
 #include "Random.hpp"
 #include "tuningConstants.hpp"
 #include <iostream>
+#include <memory>
 #include "script/LuaMonsterScript.hpp"
 #include "World.hpp"
 #include "WaypointList.hpp"
 #include "Config.hpp"
 #include "data/MonsterTable.hpp"
+#include "data/RaceTypeTable.hpp"
 
-extern MonsterTable *MonsterDescriptions;
+extern std::unique_ptr<MonsterTable> monsterDescriptions;
+extern std::unique_ptr<RaceTypeTable> raceTypes;
 
 uint32_t Monster::counter = 0;
 
@@ -42,8 +45,8 @@ Monster::Monster(const TYPE_OF_CHARACTER_ID &type, const position &newpos, Spawn
 const MonsterStruct::loottype &Monster::getLoot() const {
     const auto monsterType = getMonsterType();
 
-    if (MonsterDescriptions->exists(monsterType)) {
-        return (*MonsterDescriptions)[monsterType].loot;
+    if (monsterDescriptions->exists(monsterType)) {
+        return (*monsterDescriptions)[monsterType].loot;
     } else {
         throw NoLootFound();
     }
@@ -69,11 +72,11 @@ void Monster::performStep(position targetpos) {
 void Monster::setMonsterType(const TYPE_OF_CHARACTER_ID &type) {
     deleteAllSkills();
 
-    if (!MonsterDescriptions->exists(type)) {
+    if (!monsterDescriptions->exists(type)) {
         throw unknownIDException();
     }
 
-    const auto &monsterdef = (*MonsterDescriptions)[type];
+    const auto &monsterdef = (*monsterDescriptions)[type];
 
     // set attributes
     setAttribute(Character::luck, Random::uniform(monsterdef.attributes.luck.first, monsterdef.attributes.luck.second));
@@ -123,6 +126,14 @@ void Monster::setMonsterType(const TYPE_OF_CHARACTER_ID &type) {
     _canAttack = monsterdef.canattack;
     setName(monsterdef.nameEn);
     nameDe = monsterdef.nameDe;
+
+    const auto raceConfiguration = raceTypes->getRandomRaceConfiguration(monsterdef.race);
+    setAttribute(sex, raceConfiguration.subType);
+    setHair(raceConfiguration.hair);
+    setBeard(raceConfiguration.beard);
+    setHairColour(raceConfiguration.hairColour);
+    setSkinColour(raceConfiguration.skinColour);
+    setSkinColour(raceConfiguration.skinColour);
 }
 
 void Monster::setSpawn(SpawnPoint *sp) {
@@ -145,8 +156,8 @@ void Monster::setAlive(bool t) {
 
     if (!t && wasAlive) {
 
-        if (MonsterDescriptions->exists(getMonsterType())) {
-            const auto &monStruct = (*MonsterDescriptions)[getMonsterType()];
+        if (monsterDescriptions->exists(getMonsterType())) {
+            const auto &monStruct = (*monsterDescriptions)[getMonsterType()];
 
             if (monStruct.script) {
                 monStruct.script->onDeath(this);
@@ -156,8 +167,8 @@ void Monster::setAlive(bool t) {
 }
 
 bool Monster::attack(Character *target) {
-    if (MonsterDescriptions->exists(getMonsterType())) {
-        const auto &monStruct = (*MonsterDescriptions)[getMonsterType()];
+    if (monsterDescriptions->exists(getMonsterType())) {
+        const auto &monStruct = (*monsterDescriptions)[getMonsterType()];
 
         if (monStruct.script) {
             monStruct.script->onAttack(this,target);
@@ -173,8 +184,8 @@ void Monster::heal() {
 }
 
 void Monster::receiveText(talk_type tt, const std::string &message, Character *cc) {
-    if (MonsterDescriptions->exists(getMonsterType())) {
-        const auto &monStruct = (*MonsterDescriptions)[getMonsterType()];
+    if (monsterDescriptions->exists(getMonsterType())) {
+        const auto &monStruct = (*monsterDescriptions)[getMonsterType()];
 
         if (monStruct.script && monStruct.script->existsEntrypoint("receiveText")) {
             if (this != cc) {

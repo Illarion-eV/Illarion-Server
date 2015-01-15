@@ -1025,9 +1025,11 @@ void Player::check_logindata() {
         playerQuery.addColumn("player", "ply_hairred");
         playerQuery.addColumn("player", "ply_hairgreen");
         playerQuery.addColumn("player", "ply_hairblue");
+        playerQuery.addColumn("player", "ply_hairalpha");
         playerQuery.addColumn("player", "ply_skinred");
         playerQuery.addColumn("player", "ply_skingreen");
         playerQuery.addColumn("player", "ply_skinblue");
+        playerQuery.addColumn("player", "ply_skinalpha");
         playerQuery.addEqualCondition("player", "ply_playerid", getId());
         playerQuery.addServerTable("player");
 
@@ -1076,9 +1078,11 @@ void Player::check_logindata() {
         _appearance.hair.red = playerRow["ply_hairred"].as<uint16_t>();
         _appearance.hair.green = playerRow["ply_hairgreen"].as<uint16_t>();
         _appearance.hair.blue = playerRow["ply_hairblue"].as<uint16_t>();
+        _appearance.hair.alpha = playerRow["ply_hairalpha"].as<uint16_t>();
         _appearance.skin.red = playerRow["ply_skinred"].as<uint16_t>();
         _appearance.skin.green = playerRow["ply_skingreen"].as<uint16_t>();
         _appearance.skin.blue = playerRow["ply_skinblue"].as<uint16_t>();
+        _appearance.skin.alpha = playerRow["ply_skinalpha"].as<uint16_t>();
     } catch (std::exception &e) {
         Logger::error(LogFacility::Player) << "Exception on loading player: " << e.what() << Log::end;
         throw LogoutException(NOCHARACTERFOUND);
@@ -1195,9 +1199,11 @@ bool Player::save() noexcept {
             query.addAssignColumn<uint16_t>("ply_hairred", _appearance.hair.red);
             query.addAssignColumn<uint16_t>("ply_hairgreen", _appearance.hair.green);
             query.addAssignColumn<uint16_t>("ply_hairblue", _appearance.hair.blue);
+            query.addAssignColumn<uint16_t>("ply_hairalpha", _appearance.hair.alpha);
             query.addAssignColumn<uint16_t>("ply_skinred", _appearance.skin.red);
             query.addAssignColumn<uint16_t>("ply_skingreen", _appearance.skin.green);
             query.addAssignColumn<uint16_t>("ply_skinblue", _appearance.skin.blue);
+            query.addAssignColumn<uint16_t>("ply_skinalpha", _appearance.skin.alpha);
             query.addEqualCondition<TYPE_OF_CHARACTER_ID>("player", "ply_playerid", getId());
             query.addServerTable("player");
             query.execute();

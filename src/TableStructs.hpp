@@ -230,11 +230,12 @@ struct RaceStruct {
     uint8_t maxAttribs = 84;
 };
 
-struct RaceTypeStruct {
-    std::vector<uint16_t> hair;
-    std::vector<uint16_t> beard;
-    std::vector<colour> hairColour;
-    std::vector<colour> beardColour;
+struct RaceConfiguration {
+    uint32_t subType = 0;
+    uint16_t hair = 0;
+    uint16_t beard = 0;
+    colour hairColour;
+    colour skinColour;
 };
 
-#endif // TABLESTRUCTS_HPP
+#endif

@@ -18,11 +18,14 @@
 
 
 #include <ctime>
+#include "make_unique.hpp"
+#include <memory>
 #include <string>
 #include <sstream>
 
 #include "data/MonsterTable.hpp"
 #include "data/ScheduledScriptsTable.hpp"
+#include "data/RaceTypeTable.hpp"
 #include "script/LuaWeaponScript.hpp" //For standard fighting script.
 #include "script/LuaLookAtPlayerScript.hpp"
 #include "script/LuaLookAtItemScript.hpp"
@@ -40,11 +43,10 @@
 
 #include "main_help.hpp"
 
-// a table with cyclically called scripts
-ScheduledScriptsTable *scheduledScripts;
+std::unique_ptr<ScheduledScriptsTable> scheduledScripts;
+std::unique_ptr<MonsterTable> monsterDescriptions;
+std::unique_ptr<RaceTypeTable> raceTypes;
 
-// a table containing monster descriptions
-MonsterTable *MonsterDescriptions;
 
 std::shared_ptr<LuaDepotScript>depotScript;
 std::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
@@ -114,8 +116,9 @@ bool checkArguments(int argc, char *argv[]) {
 
 // load item definitions
 void loadData() {
-    scheduledScripts = new ScheduledScriptsTable();
-    MonsterDescriptions = new MonsterTable();
+    scheduledScripts = std::make_unique<ScheduledScriptsTable>();
+    monsterDescriptions = std::make_unique<MonsterTable>();
+    raceTypes = std::make_unique<RaceTypeTable>();
 
     try {
         auto tmpScript = std::make_shared<LuaWeaponScript>("server.standardfighting");

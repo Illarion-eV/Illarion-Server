@@ -81,7 +81,7 @@ auto CommonObjectTable::getQuestScripts() -> NodeRange {
 TYPE_OF_ITEM_ID CommonObjectTable::calcInfiniteRot(TYPE_OF_ITEM_ID id, std::map<TYPE_OF_ITEM_ID, bool> &visited, std::map<TYPE_OF_ITEM_ID, bool> &assigned) {
     if (visited[ id ]) {
         if (assigned[ id ]) {
-            return m_table[ id ].AfterInfiniteRot;
+            return table[ id ].AfterInfiniteRot;
         }
 
         return 0;
@@ -89,21 +89,21 @@ TYPE_OF_ITEM_ID CommonObjectTable::calcInfiniteRot(TYPE_OF_ITEM_ID id, std::map<
 
     visited[ id ] = true;
 
-    if (id == m_table[ id ].ObjectAfterRot) {
-        if (m_table[ id ].AgeingSpeed >= 255) {
-            m_table[ id ].AfterInfiniteRot = id;
+    if (id == table[ id ].ObjectAfterRot) {
+        if (table[ id ].AgeingSpeed >= 255) {
+            table[ id ].AfterInfiniteRot = id;
             assigned[ id ] = true;
             return id;
         }
 
-        m_table[ id ].AfterInfiniteRot = 0;
+        table[ id ].AfterInfiniteRot = 0;
         assigned[ id ] = true;
         return 0;
     }
 
-    m_table[ id ].AfterInfiniteRot = calcInfiniteRot(m_table[ id ].ObjectAfterRot, visited, assigned);
+    table[ id ].AfterInfiniteRot = calcInfiniteRot(table[ id ].ObjectAfterRot, visited, assigned);
     assigned[ id ] = true;
-    return m_table[ id ].AfterInfiniteRot;
+    return table[ id ].AfterInfiniteRot;
 }
 */
 

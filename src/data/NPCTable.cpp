@@ -60,9 +60,11 @@ void NPCTable::reload() {
         query.addColumn("npc", "npc_hairred");
         query.addColumn("npc", "npc_hairgreen");
         query.addColumn("npc", "npc_hairblue");
+        query.addColumn("npc", "npc_hairalpha");
         query.addColumn("npc", "npc_skinred");
         query.addColumn("npc", "npc_skingreen");
         query.addColumn("npc", "npc_skinblue");
+        query.addColumn("npc", "npc_skinalpha");
         query.addServerTable("npc");
         query.addOrderBy("npc", "npc_id", Database::SelectQuery::ASC);
 
@@ -90,12 +92,14 @@ void NPCTable::reload() {
                 appearance.hair = {
                     uint8_t(row["npc_hairred"].as<int16_t>()),
                     uint8_t(row["npc_hairgreen"].as<int16_t>()),
-                    uint8_t(row["npc_hairblue"].as<int16_t>())
+                    uint8_t(row["npc_hairblue"].as<int16_t>()),
+                    uint8_t(row["npc_hairalpha"].as<int16_t>())
                 };
                 appearance.skin = {
                     (uint8_t)(row["npc_skinred"].as<int16_t>()),
                     (uint8_t)(row["npc_skingreen"].as<int16_t>()),
-                    (uint8_t)(row["npc_skinblue"].as<int16_t>())
+                    (uint8_t)(row["npc_skinblue"].as<int16_t>()),
+                    (uint8_t)(row["npc_skinalpha"].as<int16_t>())
                 };
 
                 NPC *newNPC = nullptr;

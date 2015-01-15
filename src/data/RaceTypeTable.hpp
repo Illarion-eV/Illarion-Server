@@ -18,27 +18,34 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _MONSTER_TABLE_HPP_
-#define _MONSTER_TABLE_HPP_
+#ifndef _RACE_TYPE_TABLE_HPP_
+#define _RACE_TYPE_TABLE_HPP_
 
-#include <boost/unordered_map.hpp>
+
+#include <map>
 #include <TableStructs.hpp>
-#include "script/LuaMonsterScript.hpp"
+#include "types.hpp"
+#include <vector>
 
 
-class MonsterTable {
+class RaceTypeTable {
 public:
-    MonsterTable();
+    RaceTypeTable();
 
     inline bool isDataOK() {
         return dataOK;
     }
 
-    bool exists(TYPE_OF_CHARACTER_ID id) const;
-    const MonsterStruct &operator[](TYPE_OF_CHARACTER_ID id);
+    const RaceConfiguration getRandomRaceConfiguration(TYPE_OF_RACE_ID race) const;
 
 private:
-    typedef boost::unordered_map<TYPE_OF_CHARACTER_ID, MonsterStruct> TABLE;
+    struct RaceTypeStruct {
+        std::vector<uint16_t> hair;
+        std::vector<uint16_t> beard;
+        std::vector<colour> hairColour;
+        std::vector<colour> skinColour;
+    };
+    typedef std::map<TYPE_OF_RACE_ID, std::map<TYPE_OF_RACE_TYPE_ID, RaceTypeStruct>> TABLE;
     TABLE table;
     bool dataOK = false;
 };
