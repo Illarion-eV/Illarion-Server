@@ -34,7 +34,7 @@ BUILT_SOURCES = version.hpp
 libserver_a_SOURCES = \
 main_help.cpp utility.cpp Logger.cpp Random.cpp Config.cpp Statistics.cpp a_star.cpp character_ptr.cpp \
 \
-data/Data.cpp data/QuestNodeTable.cpp data/QuestTable.cpp data/RaceTypeTable.hpp \
+data/Data.cpp data/QuestNodeTable.cpp data/QuestTable.cpp data/RaceTypeTable.cpp \
 data/ArmorObjectTable.cpp data/CommonObjectTable.cpp data/ContainerObjectTable.cpp data/RaceTable.cpp \
 data/MonsterAttackTable.cpp data/ScheduledScriptsTable.cpp data/LongTimeEffectTable.cpp data/NaturalArmorTable.cpp \
 data/SpellTable.cpp data/ScriptVariablesTable.cpp data/NPCTable.cpp data/TriggerTable.cpp \
