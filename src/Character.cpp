@@ -36,6 +36,7 @@
 #include "LongTimeAction.hpp"
 
 #include "data/Data.hpp"
+#include "data/RaceTypeTable.hpp"
 #include "data/TilesTable.hpp"
 
 #include "script/LuaWeaponScript.hpp"
@@ -48,6 +49,7 @@
 
 extern std::shared_ptr<LuaLearnScript>learnScript;
 extern std::shared_ptr<LuaWeaponScript> standardFightingScript;
+extern std::unique_ptr<RaceTypeTable> raceTypes;
 
 Character::attribute_map_t Character::attributeMap = {
     {"strength", strength},
@@ -737,8 +739,15 @@ colour Character::getHairColour() const {
 
 
 void Character::setHair(uint8_t hairID) {
-    _appearance.hairtype = hairID;
-    updateAppearanceForAll(true);
+    if (raceTypes->isHairAvailable(race, getAttribute(sex), hairID)) {
+        _appearance.hairtype = hairID;
+        updateAppearanceForAll(true);
+    } else {
+        Logger::error(LogFacility::Script) << "Race " << race << " subtype "
+                << getAttribute(sex) << " has no hair with id "
+                << hairID << ". Leaving hair unchanged at "
+                << _appearance.hairtype << "." << Log::end;
+    }
 }
 
 
@@ -748,8 +757,15 @@ uint8_t Character::getHair() const {
 
 
 void Character::setBeard(uint8_t beardID) {
-    _appearance.beardtype = beardID;
-    updateAppearanceForAll(true);
+    if (raceTypes->isBeardAvailable(race, getAttribute(sex), beardID)) {
+        _appearance.beardtype = beardID;
+        updateAppearanceForAll(true);
+    } else {
+        Logger::error(LogFacility::Script) << "Race " << race << " subtype "
+                << getAttribute(sex) << " has no beard with id "
+                << beardID << ". Leaving beard unchanged at "
+                << _appearance.beardtype << "." << Log::end;
+    }
 }
 
 

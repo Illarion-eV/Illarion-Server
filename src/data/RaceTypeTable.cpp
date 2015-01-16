@@ -18,6 +18,7 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <algorithm>
 #include "data/RaceTypeTable.hpp"
 #include "db/Connection.hpp"
 #include "db/ConnectionManager.hpp"
@@ -33,6 +34,22 @@ RaceTypeTable::RaceTypeTable() {
         using namespace Database;
         PConnection connection = ConnectionManager::getInstance().getConnection();
         connection->beginTransaction();
+
+        {
+            SelectQuery query(connection);
+            query.addColumn("race_types", "rt_race_id");
+            query.addColumn("race_types", "rt_type_id");
+            query.addServerTable("race_types");
+
+            Database::Result results = query.execute();
+
+            for (const auto &row : results) {
+                const auto id = row["rt_race_id"].as<TYPE_OF_RACE_ID>();
+                const auto type = row["rt_type_id"].as<TYPE_OF_RACE_TYPE_ID>();
+
+                table[id][type];
+            }
+        }
 
         {
             SelectQuery query(connection);
@@ -132,6 +149,7 @@ const RaceConfiguration RaceTypeTable::getRandomRaceConfiguration(TYPE_OF_RACE_I
     const auto subTypeCount = table.count(race);
 
     if (subTypeCount == 0) {
+        Logger::error(LogFacility::Script) << "No subtypes defined for race " << race << Log::end;
         return raceConfiguration;
     }
 
@@ -168,4 +186,22 @@ const RaceConfiguration RaceTypeTable::getRandomRaceConfiguration(TYPE_OF_RACE_I
     }
 
     return raceConfiguration;
+}
+
+bool RaceTypeTable::isHairAvailable(TYPE_OF_RACE_ID race, TYPE_OF_RACE_TYPE_ID type, uint16_t hair) const {
+    try {
+        const auto &availableHair = table.at(race).at(type).hair;
+        return std::find(availableHair.begin(), availableHair.end(), hair) != availableHair.end();
+    } catch (std::out_of_range &) {
+        return false;
+    }
+}
+
+bool RaceTypeTable::isBeardAvailable(TYPE_OF_RACE_ID race, TYPE_OF_RACE_TYPE_ID type, uint16_t beard) const {
+    try {
+        const auto &availableBeards = table.at(race).at(type).beard;
+        return std::find(availableBeards.begin(), availableBeards.end(), beard) != availableBeards.end();
+    } catch (std::out_of_range &) {
+        return false;
+    }
 }

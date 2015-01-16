@@ -37,6 +37,8 @@ public:
     }
 
     const RaceConfiguration getRandomRaceConfiguration(TYPE_OF_RACE_ID race) const;
+    bool isHairAvailable(TYPE_OF_RACE_ID race, TYPE_OF_RACE_TYPE_ID type, uint16_t hair) const;
+    bool isBeardAvailable(TYPE_OF_RACE_ID race, TYPE_OF_RACE_TYPE_ID type, uint16_t beard) const;
 
 private:
     struct RaceTypeStruct {
