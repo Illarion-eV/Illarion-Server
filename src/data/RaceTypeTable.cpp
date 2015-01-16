@@ -191,16 +191,16 @@ const RaceConfiguration RaceTypeTable::getRandomRaceConfiguration(TYPE_OF_RACE_I
 bool RaceTypeTable::isHairAvailable(TYPE_OF_RACE_ID race, TYPE_OF_RACE_TYPE_ID type, uint16_t hair) const {
     try {
         const auto &availableHair = table.at(race).at(type).hair;
-        return std::find(availableHair.begin(), availableHair.end(), hair) != availableHair.end();
+        return hair == 0 || std::find(availableHair.begin(), availableHair.end(), hair) != availableHair.end();
     } catch (std::out_of_range &) {
         return false;
     }
 }
 
-bool RaceTypeTable::isBeardAvailable(TYPE_OF_RACE_ID race, TYPE_OF_RACE_TYPE_ID type, uint16_t beard) const {
+bool RaceTypeTable::isBeardAvailable(TYPE_OF_RACE_ID race, TYPE_OF_RACE_TYPE_ID type, uint16_t beard) const {    
     try {
         const auto &availableBeards = table.at(race).at(type).beard;
-        return std::find(availableBeards.begin(), availableBeards.end(), beard) != availableBeards.end();
+        return beard == 0 || std::find(availableBeards.begin(), availableBeards.end(), beard) != availableBeards.end();
     } catch (std::out_of_range &) {
         return false;
     }
