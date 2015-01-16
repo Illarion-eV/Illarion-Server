@@ -745,8 +745,8 @@ void Character::setHair(uint8_t hairID) {
     } else {
         Logger::error(LogFacility::Script) << "Race " << race << " subtype "
                 << getAttribute(sex) << " has no hair with id "
-                << hairID << ". Leaving hair unchanged at "
-                << _appearance.hairtype << "." << Log::end;
+                << int(hairID) << ". Leaving hair unchanged at "
+                << int(_appearance.hairtype) << "." << Log::end;
     }
 }
 
@@ -763,8 +763,8 @@ void Character::setBeard(uint8_t beardID) {
     } else {
         Logger::error(LogFacility::Script) << "Race " << race << " subtype "
                 << getAttribute(sex) << " has no beard with id "
-                << beardID << ". Leaving beard unchanged at "
-                << _appearance.beardtype << "." << Log::end;
+                << int(beardID) << ". Leaving beard unchanged at "
+                << int(_appearance.beardtype) << "." << Log::end;
     }
 }
 
