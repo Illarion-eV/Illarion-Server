@@ -34,32 +34,17 @@ extern "C" {
 
 #include <boost/algorithm/string.hpp>
 
-#include "Character.hpp"
 #include "Monster.hpp"
 #include "NPC.hpp"
-#include "Field.hpp"
-#include "Item.hpp"
 #include "Player.hpp"
 #include "World.hpp"
-#include "globals.hpp"
-#include "TableStructs.hpp"
-#include "Container.hpp"
-#include "LongTimeAction.hpp"
-#include "LongTimeEffect.hpp"
-#include "LongTimeCharacterEffects.hpp"
 #include "Logger.hpp"
-#include "WaypointList.hpp"
-#include "character_ptr.hpp"
-#include "Random.hpp"
 #include "Config.hpp"
 
-#include "data/ScriptVariablesTable.hpp"
 #include "data/Data.hpp"
 
 #include "script/forwarder.hpp"
 #include "script/binding/binding.hpp"
-
-extern ScriptVariablesTable *scriptVariables;
 
 lua_State *LuaScript::_luaState = 0;
 bool LuaScript::initialized = false;
