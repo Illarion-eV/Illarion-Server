@@ -79,7 +79,7 @@ public:
     void addIntToBuffer(int data);
     void addShortIntToBuffer(short int data);
     void addUnsignedCharToBuffer(unsigned char data);
-    void addColourToBuffer(const colour &c);
+    void addColourToBuffer(const Colour &c);
 
     /**
     * Adds all the header information to the top of the buffer

@@ -209,6 +209,7 @@ struct MonsterStruct {
 };
 
 struct RaceStruct {
+    std::string serverName;
     uint16_t minSize = 140;
     uint16_t maxSize = 220;
     uint8_t minAgility = 2;
@@ -234,8 +235,8 @@ struct RaceConfiguration {
     uint32_t subType = 0;
     uint16_t hair = 0;
     uint16_t beard = 0;
-    colour hairColour;
-    colour skinColour;
+    Colour hairColour;
+    Colour skinColour;
 };
 
 #endif

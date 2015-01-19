@@ -42,7 +42,7 @@ namespace Data {
 extern ScriptVariablesTable ScriptVariables;
 extern SkillTable Skills;
 extern QuestTable Quests;
-extern RaceTable RaceAttributes;
+extern RaceTable Races;
 extern NaturalArmorTable NaturalArmors;
 extern MonsterAttackTable MonsterAttacks;
 extern CommonObjectTable CommonItems;

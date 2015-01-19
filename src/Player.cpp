@@ -120,7 +120,7 @@ Player::Player(std::shared_ptr<NetInterface> newConnection)
 
     // now load inventory...
     if (!load()) {
-        throw LogoutException(ORRUPTDATA);
+        throw LogoutException(CORRUPTDATA);
     }
 }
 

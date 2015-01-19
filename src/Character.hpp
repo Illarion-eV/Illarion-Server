@@ -27,6 +27,11 @@
 #include <map>
 #include <unordered_map>
 #include "constants.hpp"
+#include "dialog/CraftingDialog.hpp"
+#include "dialog/InputDialog.hpp"
+#include "dialog/MerchantDialog.hpp"
+#include "dialog/MessageDialog.hpp"
+#include "dialog/SelectionDialog.hpp"
 #include "tuningConstants.hpp"
 #include "LongTimeCharacterEffects.hpp"
 #include "WaypointList.hpp"
@@ -39,11 +44,6 @@
 class World;
 class Container;
 class Field;
-class InputDialog;
-class MessageDialog;
-class MerchantDialog;
-class SelectionDialog;
-class CraftingDialog;
 class Player;
 
 enum magic_type {
@@ -64,8 +64,8 @@ public:
 
         uint8_t hairtype = 0;
         uint8_t beardtype = 0;
-        colour hair;
-        colour skin;
+        Colour hair;
+        Colour skin;
 
         appearance() {};
     };
@@ -326,10 +326,10 @@ public:
     virtual const skillvalue *getSkillValue(TYPE_OF_SKILL_ID s) const;
     virtual unsigned short int getMinorSkill(TYPE_OF_SKILL_ID s) const;
 
-    void setSkinColour(const colour &c);
-    colour getSkinColour() const;
-    void setHairColour(const colour &c);
-    colour getHairColour() const;
+    void setSkinColour(const Colour &c);
+    Colour getSkinColour() const;
+    void setHairColour(const Colour &c);
+    Colour getHairColour() const;
     void setHair(uint8_t hairID);
     uint8_t getHair() const;
     void setBeard(uint8_t beardID);

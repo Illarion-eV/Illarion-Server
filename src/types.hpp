@@ -89,11 +89,11 @@ enum class movement_type {
     crawl = 2
 };
 
-struct colour {
+struct Colour {
     uint8_t red = 0xFF, green = 0xFF, blue = 0xFF, alpha = 0xFF;
-    colour() = default;
-    colour(uint8_t red, uint8_t green, uint8_t blue): red(red), green(green), blue(blue) {}
-    colour(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha): red(red), green(green), blue(blue), alpha(alpha) {}
+    Colour() = default;
+    Colour(uint8_t red, uint8_t green, uint8_t blue): red(red), green(green), blue(blue) {}
+    Colour(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha): red(red), green(green), blue(blue), alpha(alpha) {}
 };
 
 #endif

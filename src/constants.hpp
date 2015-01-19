@@ -231,6 +231,6 @@ const uint32_t MONSTERVIEWRANGE = 11;
 #define NOSKILLS 0x0C
 
 //! Grund fuer Verbindungsabbruch: Spielerdaten korrupt
-#define ORRUPTDATA 0x0D
+#define CORRUPTDATA 0x0D
 
 #endif

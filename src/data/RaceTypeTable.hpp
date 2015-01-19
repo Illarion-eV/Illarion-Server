@@ -44,8 +44,8 @@ private:
     struct RaceTypeStruct {
         std::vector<uint16_t> hair;
         std::vector<uint16_t> beard;
-        std::vector<colour> hairColour;
-        std::vector<colour> skinColour;
+        std::vector<Colour> hairColour;
+        std::vector<Colour> skinColour;
     };
     typedef std::map<TYPE_OF_RACE_ID, std::map<TYPE_OF_RACE_TYPE_ID, RaceTypeStruct>> TABLE;
     TABLE table;

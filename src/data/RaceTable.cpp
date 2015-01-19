@@ -27,6 +27,7 @@ std::string RaceTable::getTableName() {
 std::vector<std::string> RaceTable::getColumnNames() {
     return {
         "race_id",
+        "race_name"
         "race_height_min",
         "race_height_max",
         "race_agility_min",
@@ -54,27 +55,28 @@ TYPE_OF_ITEM_ID RaceTable::assignId(const Database::ResultTuple &row) {
 }
 
 RaceStruct RaceTable::assignTable(const Database::ResultTuple &row) {
-    RaceStruct attributes;
-    attributes.minSize = uint16_t(row["race_height_min"].as<int32_t>(100));
-    attributes.maxSize = uint16_t(row["race_height_max"].as<int32_t>(100));
-    attributes.minAgility = uint8_t(row["race_agility_min"].as<int32_t>(2));
-    attributes.maxAgility = uint8_t(row["race_agility_max"].as<int32_t>(20));
-    attributes.minConstitution = uint8_t(row["race_constitution_min"].as<int32_t>(2));
-    attributes.maxConstitution = uint8_t(row["race_constitution_max"].as<int32_t>(20));
-    attributes.minDexterity = uint8_t(row["race_dexterity_min"].as<int32_t>(2));
-    attributes.maxDexterity = uint8_t(row["race_dexterity_max"].as<int32_t>(20));
-    attributes.minEssence = uint8_t(row["race_essence_min"].as<int32_t>(2));
-    attributes.maxEssence = uint8_t(row["race_essence_max"].as<int32_t>(20));
-    attributes.minIntelligence = uint8_t(row["race_intelligence_min"].as<int32_t>(2));
-    attributes.maxIntelligence = uint8_t(row["race_intelligence_max"].as<int32_t>(20));
-    attributes.minPerception = uint8_t(row["race_perception_min"].as<int32_t>(2));
-    attributes.maxPerception = uint8_t(row["race_perception_max"].as<int32_t>(20));
-    attributes.minStrength = uint8_t(row["race_strength_min"].as<int32_t>(2));
-    attributes.maxStrength = uint8_t(row["race_strength_max"].as<int32_t>(20));
-    attributes.minWillpower = uint8_t(row["race_willpower_min"].as<int32_t>(2));
-    attributes.maxWillpower = uint8_t(row["race_willpower_max"].as<int32_t>(20));
-    attributes.maxAttribs = uint8_t(row["race_attribute_points_max"].as<int16_t>(84));
-    return attributes;
+    RaceStruct race;
+    race.serverName = row["race_name"].as<std::string>("unknown");
+    race.minSize = uint16_t(row["race_height_min"].as<int32_t>(100));
+    race.maxSize = uint16_t(row["race_height_max"].as<int32_t>(100));
+    race.minAgility = uint8_t(row["race_agility_min"].as<int32_t>(2));
+    race.maxAgility = uint8_t(row["race_agility_max"].as<int32_t>(20));
+    race.minConstitution = uint8_t(row["race_constitution_min"].as<int32_t>(2));
+    race.maxConstitution = uint8_t(row["race_constitution_max"].as<int32_t>(20));
+    race.minDexterity = uint8_t(row["race_dexterity_min"].as<int32_t>(2));
+    race.maxDexterity = uint8_t(row["race_dexterity_max"].as<int32_t>(20));
+    race.minEssence = uint8_t(row["race_essence_min"].as<int32_t>(2));
+    race.maxEssence = uint8_t(row["race_essence_max"].as<int32_t>(20));
+    race.minIntelligence = uint8_t(row["race_intelligence_min"].as<int32_t>(2));
+    race.maxIntelligence = uint8_t(row["race_intelligence_max"].as<int32_t>(20));
+    race.minPerception = uint8_t(row["race_perception_min"].as<int32_t>(2));
+    race.maxPerception = uint8_t(row["race_perception_max"].as<int32_t>(20));
+    race.minStrength = uint8_t(row["race_strength_min"].as<int32_t>(2));
+    race.maxStrength = uint8_t(row["race_strength_max"].as<int32_t>(20));
+    race.minWillpower = uint8_t(row["race_willpower_min"].as<int32_t>(2));
+    race.maxWillpower = uint8_t(row["race_willpower_max"].as<int32_t>(20));
+    race.maxAttribs = uint8_t(row["race_attribute_points_max"].as<int16_t>(84));
+    return race;
 }
 
 uint8_t RaceTable::getRelativeSize(TYPE_OF_RACE_ID race, uint16_t size) const {

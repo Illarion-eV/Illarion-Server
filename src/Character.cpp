@@ -716,24 +716,24 @@ unsigned short int Character::getMinorSkill(TYPE_OF_SKILL_ID s) const {
 }
 
 
-void Character::setSkinColour(const colour &c) {
+void Character::setSkinColour(const Colour &c) {
     _appearance.skin = c;
     updateAppearanceForAll(true);
 }
 
 
-colour Character::getSkinColour() const {
+Colour Character::getSkinColour() const {
     return _appearance.skin;
 }
 
 
-void Character::setHairColour(const colour &c) {
+void Character::setHairColour(const Colour &c) {
     _appearance.hair = c;
     updateAppearanceForAll(true);
 }
 
 
-colour Character::getHairColour() const {
+Colour Character::getHairColour() const {
     return _appearance.hair;
 }
 
@@ -842,7 +842,7 @@ Attribute::attribute_t Character::increaseAttribute(Character::attributeIndex at
 }
 
 bool Character::isBaseAttributeValid(Character::attributeIndex attribute, Attribute::attribute_t value) const {
-    return Data::RaceAttributes.isBaseAttributeInLimits(getRace(), attribute, value);
+    return Data::Races.isBaseAttributeInLimits(getRace(), attribute, value);
 }
 
 uint16_t Character::getBaseAttributeSum() const {
@@ -857,7 +857,7 @@ uint16_t Character::getBaseAttributeSum() const {
 }
 
 uint16_t Character::getMaxAttributePoints() const {
-    return Data::RaceAttributes.getMaxAttributePoints(getRace());
+    return Data::Races.getMaxAttributePoints(getRace());
 }
 
 bool Character::saveBaseAttributes() {
