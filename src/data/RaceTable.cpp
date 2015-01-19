@@ -27,7 +27,7 @@ std::string RaceTable::getTableName() {
 std::vector<std::string> RaceTable::getColumnNames() {
     return {
         "race_id",
-        "race_name"
+        "race_name",
         "race_height_min",
         "race_height_max",
         "race_agility_min",
