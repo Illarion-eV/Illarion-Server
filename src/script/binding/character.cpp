@@ -235,7 +235,7 @@ namespace binding {
                     luabind::value("northeast", Character::northeast),
                     luabind::value("east", Character::east),
                     luabind::value("southeast", Character::southeast),
-                    luabind::value("south", Character::west),
+                    luabind::value("south", Character::south),
                     luabind::value("southwest", Character::southwest),
                     luabind::value("west", Character::west),
                     luabind::value("northwest", Character::northwest)
