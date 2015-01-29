@@ -687,6 +687,16 @@ bool Character::attack(Character *target) {
     return false;
 }
 
+void Character::stopAttack() {
+    setAttackMode(false);
+    enemyid = 0;
+}
+
+character_ptr Character::getAttackTarget() const {
+    auto target = _world->findCharacter(enemyid);
+    return character_ptr(target);
+}
+
 std::string Character::getSkillName(TYPE_OF_SKILL_ID s) const {
     if (Data::Skills.exists(s)) {
         return Data::Skills[s].englishName;

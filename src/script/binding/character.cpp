@@ -170,6 +170,8 @@ namespace binding {
                 .property("fightpoints", &Character::getFightPoints, &Character::setFightPoints)
                 .property("isinvisible", &Character::isInvisible, &Character::setInvisible)
                 .property("attackmode", &Character::getAttackMode)
+                .def("stopAttack", &Character::stopAttack)
+                .def("getAttackTarget", &Character::getAttackTarget)
                 //.def_readonly("isTarget", &Character::isTarget)
                 .enum_("body_pos")
                 [

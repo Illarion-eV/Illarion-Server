@@ -2539,6 +2539,13 @@ void Player::sendBook(uint16_t bookID) {
     Connection->addCommand(cmd);
 }
 
+void Player::stopAttack() {
+    Character::stopAttack();
+
+    ServerCommandPointer cmd = std::make_shared<TargetLostTC>();
+    Connection->addCommand(cmd);
+}
+
 bool Player::isNewPlayer() const {
     return newPlayer;
 }

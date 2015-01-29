@@ -171,6 +171,8 @@ private:
 public:
     void receiveCommand(ClientCommandPointer cmd);
 
+    virtual void stopAttack() override;
+
     virtual bool isNewPlayer() const override;
     
     const std::string &nls(const std::string &german, const std::string &english) const;

@@ -450,6 +450,8 @@ public:
     character_type enemytype;
     TYPE_OF_CHARACTER_ID enemyid;
     virtual bool attack(Character *target);
+    virtual void stopAttack();
+    character_ptr getAttackTarget() const;
 
     unsigned short int maxLoadWeight() const;
     int LoadWeight() const;
