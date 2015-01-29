@@ -399,9 +399,6 @@ bool World::characterAttacks(Character *cp) {
                             mon->lastTargetSeen = false;
                         }
 
-                        // dead people cannot be attacked, reset counter
-                        //temppl->nrOfAttackers=0;
-
                         if (cp->getType() == Character::player) {
                             ServerCommandPointer cmd = std::make_shared<TargetLostTC>();
                             dynamic_cast<Player *>(cp)->Connection->addCommand(cmd);
