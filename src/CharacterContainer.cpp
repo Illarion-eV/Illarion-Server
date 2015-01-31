@@ -152,14 +152,10 @@ auto CharacterContainer<T>::findAllCharactersInScreen(const position &pos) const
     auto candidates = projection_x_axis(pos,MAX_SCREEN_RANGE);
     
     for (auto& c : candidates) {
-        const position& p = c.first;
         TYPE_OF_CHARACTER_ID id = c.second;
-        short int dx = p.x - pos.x;
-        short int dy = p.y - pos.y;
-        short int dz = p.z - pos.z;
     
         if (auto character=find(id)) {
-            if ((abs(dx) + abs(dy) <= character->getScreenRange()) && (-RANGEDOWN <= dz) && (dz <= RANGEUP)) {
+            if (character->isInScreen(pos)) {
                 temp.push_back(character);
             }
         }

@@ -365,6 +365,7 @@ public:
     virtual void teachMagic(unsigned char type, unsigned char flag);
 
     bool isInRange(Character *cc, unsigned short int distancemetric) const;
+    bool isInScreen(const position &pos) const;
     virtual unsigned short int getScreenRange() const;
     unsigned short int distanceMetric(Character *cc) const;
     bool isInRangeToField(const position &m_pos, unsigned short int distancemetric) const;

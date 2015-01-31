@@ -1086,6 +1086,14 @@ bool Character::isInRange(Character *cc, unsigned short int distancemetric) cons
     return false;
 }
 
+bool Character::isInScreen(const position &pos) const {
+    short int dx = abs(this->pos.x - pos.x);
+    short int dy = abs(this->pos.y - pos.y);
+    short int dz = abs(this->pos.z - pos.z);
+
+    return dx + dy <= getScreenRange() && -RANGEDOWN <= dz && dz <= RANGEUP;
+}
+
 unsigned short int Character::getScreenRange() const {
     return 14;
 }
@@ -1095,11 +1103,7 @@ bool Character::isInRangeToField(const position &m_pos, unsigned short int dista
     short int dx = abs(m_pos.x - pos.x);
     short int dy = abs(m_pos.y - pos.y);
 
-    if (dx <= distancemetric && dy <= distancemetric && dz == 0) {
-        return true;
-    } else {
-        return false;
-    }
+    return dx <= distancemetric && dy <= distancemetric && dz == 0;
 }
 
 unsigned short int Character::distanceMetricToPosition(const position &m_pos) const {

@@ -151,7 +151,15 @@ void World::sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char ne
 
 void World::sendCharacterWarpToAllVisiblePlayers(Character *cc, const position &oldpos, unsigned char netid) {
     if (!cc->isInvisible()) {
-        sendRemoveCharToVisiblePlayers(cc->getId(), oldpos);
+        {
+            ServerCommandPointer cmd = std::make_shared<RemoveCharTC>(cc->getId());
+
+            for (const auto &player : Players.findAllCharactersInScreen(oldpos)) {
+                if (!player->isInScreen(cc->getPosition())) {
+                    player->sendCharRemove(cc->getId(), cmd);
+                }
+            }
+        }
 
         for (const auto &p : Players.findAllCharactersInScreen(cc->getPosition())) {
             if (cc != p) {
