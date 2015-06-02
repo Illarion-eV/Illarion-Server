@@ -21,8 +21,7 @@ check_LIBRARIES = libgmock.a
 check_PROGRAMS = test_binding ItemTest CharacterContainerTest test_container \
                  test_binding_item test_binding_scriptitem test_binding_position \
                  test_binding_longtimeaction test_binding_weatherstruct \
-                 test_binding_character test_map_import \
-                 test_issue_10631
+                 test_binding_character test_map_import 
 
 AM_CXXFLAGS = -ggdb -pipe -Wall -Wno-deprecated -std=c++11 $(BOOST_CXXFLAGS) $(DEPS_CFLAGS)
 AM_CPPFLAGS = -D_THREAD_SAFE -D_REENTRANT $(BOOST_CPPFLAGS) -I$(top_srcdir)/src
@@ -53,4 +52,3 @@ test_container_SOURCES = test_container.cpp
 
 test_map_import_SOURCES = test_map_import.cpp
 
-test_issue_10631_SOURCES = test_issue_10631.cpp
