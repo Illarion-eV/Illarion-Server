@@ -2123,42 +2123,45 @@ Example 4: Tables
  MyTable[2][3]="Hi there!";
 \end{verbatim}
 
-\section{Modules: Calling functions and variables of other lua files}
+\section{Modules: Using functions and variables of other lua files}
 Each script is in its own module. This is defined by: \\
-\lua{module}("myscript", package.seeall) \\
-The \lua{package.seeall} is added in order to provide the functions for other scripts and should never be dropped for consistency reasons. \\
-The directory and file hirarchy in the repository represents the module hierarchy. So a script with the relative path \texttt{"npc/base/myscript.lua"} has to have this module definition: \\
-\texttt{module}("npc.base.myscript", package.seeall) \\
-\\
-Now I can define in another script, that I need the functions of that module by: \\
-\lua{require}("npc.base.myscript") \\
-and I can call its functions like this: \\
-\texttt{npc.base.myscript.myfunction()} \\
-\\
-This works for global variables too. \\
+\begin{verbatim}
+ local M = {}
+ return M
+\end{verbatim}
+Now we can use this module, say npc/base/myscript.lua in another script:
+\begin{verbatim}
+ local myscript = require("npc.base.myscript")
+\end{verbatim}
+and we can use its variables like this:
+\texttt{myscript.myfunction()} \\
 \\
 Example:\\
 \\
 \texttt{base/file1.lua}:
 \begin{verbatim}
- module("base.file1", package.seeall);
+ local M = {}
 
- testNumber = 3;
+ M.testNumber = 3
 
- function DoSomething(User,text)
-     User:inform(text);
+ function M.DoSomething(User,text)
+     User:inform(text)
  end
+
+ return M
 \end{verbatim}
 \texttt{npc/file2.lua}:
 \begin{verbatim}
- require("base.file1");
- module("npc.file2", package.seeall);
+ local M = {}
+ local file1 = require("base.file1");
 
- function TestingModules(Character)
-     if ( base.file1.testNumber == 3 ) then
-         base.file1.DoSomething(Character, "Testing this feature!");
+ function M.TestingModules(Character)
+     if (file1.testNumber == 3) then
+         file1.DoSomething(Character, "Testing this feature!")
      end
  end
+
+ return M
 \end{verbatim}
 
 \section{A note on namespaces, ambiguities and variable declaration}
@@ -2400,6 +2403,7 @@ It might be the case, and this is hoped much, that you want to create more compl
 \chapter{Versions}
 Version 5.20 (15 06 07)\\
 * Remove obsolete bit manipulation functions\\
+* Update section about modules\\
 \\
 Version 5.19 (15 01 15)\\
 * Add colour class, which represents RGBA values\\
