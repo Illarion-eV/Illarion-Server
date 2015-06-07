@@ -56,7 +56,7 @@
 \makeindex
 \begin{document}
 \lstset{basicstyle=\small, keywordstyle=\ttfamily, identifierstyle=\ttfamily}
-\title{Lua documentation for Illarion scripting\\v5.19}
+\title{Lua documentation for Illarion scripting\\v5.20}
 \author{Martin \thanks{ \texttt{martin@illarion.org, http://www.illarion.org}},
 pharse \thanks{ \texttt{pharse@illarion.org, http://www.illarion.org}},
 vilarion \thanks{ \texttt{vilarion@illarion.org, http://www.illarion.org}}}
@@ -2123,28 +2123,6 @@ Example 4: Tables
  MyTable[2][3]="Hi there!";
 \end{verbatim}
 
-\section{Bitoperation}
-There are these built in functions: \\
-\lua{LuaAnd}{\var{value1}, \var{value2}}
-\begin{quote}
-Applies a bitwise AND operation on \var{value1} and \var{value2}. The result is a 32 bit integer.
-\end{quote}
-\lua{LuaOr}(\var{value1}, \var{value2}) \\
-\\
-These functions are added for the Illarion server scripts: \\
-\lua{LuaAnd64}(\var{value1}, \var{value2}) \\
-\lua{LuaOr64}(\var{value1}, \var{value2})
-\begin{quote}
-These are 64 bit versions of the standard \lua{LuaAnd} and \lua{LuaOr} functions.
-\end{quote}
-\lua{LuaLShift32}(\var{value}, \var{shift})
-\begin{quote}
-Shifts the \var{value} \var{shift} bits to the left. The result is a 32 bit integer value.
-\end{quote}
-\lua{LuaRShift32}(\var{value}, \var{shift})\\
-\lua{LuaLShift64}(\var{value}, \var{shift})\\
-\lua{LuaRShift64}(\var{value}, \var{shift})\\
-
 \section{Modules: Calling functions and variables of other lua files}
 Each script is in its own module. This is defined by: \\
 \lua{module}("myscript", package.seeall) \\
@@ -2420,6 +2398,9 @@ It might be the case, and this is hoped much, that you want to create more compl
 \appendix
 
 \chapter{Versions}
+Version 5.20 (15 06 07)\\
+* Remove obsolete bit manipulation functions\\
+\\
 Version 5.19 (15 01 15)\\
 * Add colour class, which represents RGBA values\\
 * Rename colour related methods and change their signature to use colour objects\\
