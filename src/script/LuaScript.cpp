@@ -386,6 +386,7 @@ void LuaScript::init_base_functions() {
         {LUA_STRLIBNAME, luaopen_string},
         {LUA_MATHLIBNAME, luaopen_math},
         // {LUA_DBLIBNAME, luaopen_debug},
+        {LUA_BITLIBNAME, luaopen_bit32},
         {nullptr, nullptr}
     };
     const luaL_Reg *lib = lualibs;
