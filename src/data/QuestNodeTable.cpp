@@ -27,7 +27,6 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
-#include "make_unique.hpp"
 
 #include "Logger.hpp"
 #include "Config.hpp"

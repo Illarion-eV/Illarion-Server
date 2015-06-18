@@ -1,4 +1,4 @@
-AM_CXXFLAGS = -ggdb -pipe -Wall -Werror -Wno-deprecated -std=c++11 $(BOOST_CXXFLAGS) $(DEPS_CFLAGS)
+AM_CXXFLAGS = -ggdb -pipe -Wall -Werror -Wno-deprecated -std=c++14 $(BOOST_CXXFLAGS) $(DEPS_CFLAGS)
 AM_CPPFLAGS = -D_THREAD_SAFE -D_REENTRANT $(subst -I,-isystem,$(BOOST_CPPFLAGS)) -I$(top_srcdir)/src
 
 noinst_LIBRARIES = libscriptbinding.a

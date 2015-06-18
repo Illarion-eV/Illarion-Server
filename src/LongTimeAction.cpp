@@ -19,7 +19,8 @@
 
 #include "LongTimeAction.hpp"
 
-#include "make_unique.hpp"
+#include <memory>
+
 #include "World.hpp"
 #include "Character.hpp"
 #include "Player.hpp"

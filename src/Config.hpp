@@ -22,7 +22,6 @@
 #include <memory>
 #include <string>
 #include <iostream>
-#include "make_unique.hpp"
 
 class ConfigEntryBase {
 public:

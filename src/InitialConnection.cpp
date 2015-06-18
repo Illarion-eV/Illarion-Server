@@ -20,9 +20,9 @@
 #include "InitialConnection.hpp"
 
 #include <functional>
+#include <memory>
 #include <thread>
 
-#include "make_unique.hpp"
 #include "Config.hpp"
 #include "Logger.hpp"
 

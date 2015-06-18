@@ -20,10 +20,10 @@
 
 #include "Connection.hpp"
 
+#include <memory>
 #include <stdexcept>
 #include <pqxx/connection.hxx>
 #include <pqxx/transaction.hxx>
-#include "make_unique.hpp"
 
 using namespace Database;
 

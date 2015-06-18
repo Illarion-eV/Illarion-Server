@@ -17,7 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "make_unique.hpp"
+#include <memory>
+
 #include "netinterface/CommandFactory.hpp"
 #include "netinterface/protocol/ClientCommands.hpp"
 #include "netinterface/protocol/BBIWIClientCommands.hpp"

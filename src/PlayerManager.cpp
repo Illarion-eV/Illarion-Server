@@ -16,10 +16,10 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <memory>
 
 #include "PlayerManager.hpp"
 
-#include "make_unique.hpp"
 #include "World.hpp"
 #include "Player.hpp"
 #include "Logger.hpp"

@@ -24,9 +24,9 @@
 #include <boost/filesystem.hpp>
 #include <algorithm>
 #include <ctime>
+#include <memory>
 #include <sys/types.h>
 
-#include "make_unique.hpp"
 #include "Logger.hpp"
 #include "LongTimeAction.hpp"
 #include "Map.hpp"

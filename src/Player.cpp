@@ -23,6 +23,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include <memory>
 #include <sstream>
 
 #include "tuningConstants.hpp"
@@ -34,7 +35,6 @@
 #include "PlayerManager.hpp"
 #include "MonitoringClients.hpp"
 #include "Config.hpp"
-#include "make_unique.hpp"
 #include "Showcase.hpp"
 #include "LongTimeAction.hpp"
 

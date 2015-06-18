@@ -20,7 +20,7 @@
 bin_PROGRAMS = illarion
 noinst_LIBRARIES = libserver.a
 
-AM_CXXFLAGS = -ggdb -pipe -Wall -Wformat-security -Wunused-result -Werror -Wno-deprecated -std=c++11 $(BOOST_CXXFLAGS) $(DEPS_CFLAGS)
+AM_CXXFLAGS = -ggdb -pipe -Wall -Wformat-security -Wunused-result -Werror -Wno-deprecated -std=c++14 $(BOOST_CXXFLAGS) $(DEPS_CFLAGS)
 AM_CPPFLAGS = -D_THREAD_SAFE -D_REENTRANT -D_FORTIFY_SOURCE=2 $(subst -I,-isystem,$(BOOST_CPPFLAGS)) -I$(top_srcdir)/src
 AM_LDFLAGS = $(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS) $(BOOST_REGEX_LDFLAGS) -lpthread
 LDADD = $(DEPS_LIBS) libserver.a $(top_builddir)/src/script/libscriptbinding.a
@@ -78,7 +78,7 @@ noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
 		 db/QueryAssign.hpp db/Query.hpp db/Connection.hpp \
 		 db/InsertQuery.hpp db/ConnectionManager.hpp \
 		 db/QueryTables.hpp db/UpdateQuery.hpp db/SelectQuery.hpp \
-		 globals.hpp make_unique.hpp World.hpp ItemLookAt.hpp Item.hpp \
+		 globals.hpp World.hpp ItemLookAt.hpp Item.hpp \
 		 CharacterContainer.hpp SchedulerTaskClasses.hpp \
 		 thread_safe_vector.hpp Random.hpp NPC.hpp Scheduler.hpp Scheduler.tcc \
 		 PlayerManager.hpp Character.hpp \
