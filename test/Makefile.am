@@ -25,10 +25,10 @@ check_PROGRAMS = test_binding ItemTest CharacterContainerTest test_container \
 
 AM_CXXFLAGS = -ggdb -pipe -Wall -Wno-deprecated -std=c++14 $(BOOST_CXXFLAGS) $(DEPS_CFLAGS)
 AM_CPPFLAGS = -D_THREAD_SAFE -D_REENTRANT $(BOOST_CPPFLAGS) -I$(top_srcdir)/src
-AM_LDFLAGS = $(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS) $(BOOST_REGEX_LDFLAGS) -lpthread
+AM_LDFLAGS = $(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS) -lpthread
 LDADD = $(DEPS_LIBS) $(top_builddir)/src/libserver.a $(top_builddir)/src/script/libscriptbinding.a libgmock.a
 
-LIBS = $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS) $(BOOST_REGEX_LIBS)
+LIBS = $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS)
 
 nodist_libgmock_a_SOURCES = $(GMOCK_DIR)/src/gmock-all.cc $(GTEST_DIR)/src/gtest-all.cc
 libgmock_a_CPPFLAGS = $(AM_CPPFLAGS) -I$(GMOCK_DIR) -I$(GTEST_DIR)

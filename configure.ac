@@ -47,10 +47,9 @@ AC_STRUCT_TM
 # Checks for library functions.
 AC_CHECK_FUNCS([bzero ftime gethostbyname inet_ntoa memset select socket strerror strtol strtoul])
 
-BOOST_REQUIRE([1.49])
+BOOST_REQUIRE([1.55])
 BOOST_FILESYSTEM
 BOOST_SYSTEM
-BOOST_REGEX
 BOOST_GRAPH
 
 PKG_CHECK_MODULES([lua], [lua5.2])

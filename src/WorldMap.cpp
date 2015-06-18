@@ -22,10 +22,10 @@
 #include "Logger.hpp"
 
 #include <algorithm>
+#include <regex>
 #include <stdexcept>
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/regex.hpp>
 #include <chrono>
 
 void WorldMap::clear() {
@@ -200,12 +200,12 @@ Map WorldMap::createMapFromHeaderFile(const std::string &importDir,
     return Map(mapName, origin, width, height);
 }
 
-const boost::regex headerExpression {R"(^(.): (-?\d+)$)"};
+const std::regex headerExpression {R"(^(.): (-?\d+)$)"};
 
 int16_t WorldMap::readHeaderLine(const std::string &mapName, char header,
                                  std::ifstream &headerFile, int &lineNumber) {
-    using boost::regex_match;
-    using boost::smatch;
+    using std::regex_match;
+    using std::smatch;
     std::string line;
 
     while (std::getline(headerFile, line)) {

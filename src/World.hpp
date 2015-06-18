@@ -28,7 +28,7 @@
 #include <memory>
 #include <list>
 #include <unordered_map>
-#include <boost/regex.hpp>
+#include <regex>
 
 #include "NewClientView.hpp"
 #include "CharacterContainer.hpp"
@@ -1015,8 +1015,8 @@ private:
     std::mutex immediatePlayerCommandsMutex;
     std::queue<Player*> immediatePlayerCommands;
     const std::string worldName{"Illarion"};
-    const boost::regex tilesFilter{".*\\.tiles\\.txt"};
-    const boost::regex mapFilter{worldName + ".*"};
+    const std::regex tilesFilter{".*\\.tiles\\.txt"};
+    const std::regex mapFilter{worldName + ".*"};
 };
 
 #endif

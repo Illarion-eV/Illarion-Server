@@ -22,7 +22,7 @@
 #include <sstream>
 #include <list>
 #include <iostream>
-#include <boost/regex.hpp>
+#include <regex>
 
 #include "Config.hpp"
 #include "PlayerManager.hpp"
@@ -310,10 +310,10 @@ void World::talkto_command(Player *player, const std::string &text) {
         return;
     }
 
-    static const boost::regex pattern("^(.*?),(.*)$");
-    boost::smatch match;
+    static const std::regex pattern("^(.*?),(.*)$");
+    std::smatch match;
 
-    if (boost::regex_match(text, match, pattern)) {
+    if (std::regex_match(text, match, pattern)) {
         Player *target = Players.find(match[1].str());
 
         if (target) {
@@ -449,10 +449,10 @@ void World::warpto_command(Player *p, const std::string &text) {
         return;
     }
 
-    static const boost::regex pattern(R"(^(-?\d+)[ ,]?(-?\d+)?[ ,]?(-?\d+)?$)");
-    boost::smatch match;
+    static const std::regex pattern(R"(^(-?\d+)[ ,]?(-?\d+)?[ ,]?(-?\d+)?$)");
+    std::smatch match;
 
-    if (boost::regex_match(text, match, pattern)) {
+    if (std::regex_match(text, match, pattern)) {
         try {
             position warpto = p->getPosition();
             auto a = boost::lexical_cast<short int>(match[1].str());
@@ -500,10 +500,10 @@ void World::ban_command(Player *cp, const std::string &text) {
         return;
     }
 
-    static const boost::regex pattern(R"(^(?:(\d+) ?([mhd]) ?)?(.+)$)");
-    boost::smatch match;
+    static const std::regex pattern(R"(^(?:(\d+) ?([mhd]) ?)?(.+)$)");
+    std::smatch match;
 
-    if (boost::regex_match(text, match, pattern)) {
+    if (std::regex_match(text, match, pattern)) {
         auto target = Players.find(match[3].str());
 
         if (target) {
@@ -767,10 +767,10 @@ void World::teleport_command(Player *cp, const std::string &text) {
         return;
     }
 
-    static const boost::regex pattern(R"(^(-?\d+)[, ](-?\d+)[, ](-?\d+)$)");
-    boost::smatch match;
+    static const std::regex pattern(R"(^(-?\d+)[, ](-?\d+)[, ](-?\d+)$)");
+    std::smatch match;
 
-    if (boost::regex_match(text, match, pattern)) {
+    if (std::regex_match(text, match, pattern)) {
         try {
             auto x = boost::lexical_cast<short int>(match[1].str());
             auto y = boost::lexical_cast<short int>(match[2].str());
@@ -1192,10 +1192,10 @@ void World::removeTeleporter(Player *cp, const std::string &text) {
         return;
     }
 
-    static const boost::regex pattern(R"(^(-?\d+)[, ](-?\d+)[, ](-?\d+)$)");
-    boost::smatch match;
+    static const std::regex pattern(R"(^(-?\d+)[, ](-?\d+)[, ](-?\d+)$)");
+    std::smatch match;
 
-    if (boost::regex_match(text, match, pattern)) {
+    if (std::regex_match(text, match, pattern)) {
         try {
             auto x = boost::lexical_cast<short int>(match[1].str());
             auto y = boost::lexical_cast<short int>(match[2].str());

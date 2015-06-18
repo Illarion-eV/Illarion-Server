@@ -20,7 +20,7 @@
 
 #include "World.hpp"
 
-#include <boost/regex.hpp>
+#include <regex>
 #include "Player.hpp"
 #include "MonitoringClients.hpp"
 

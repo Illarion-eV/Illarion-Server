@@ -20,11 +20,11 @@
 
 #include "World.hpp"
 
-#include <boost/regex.hpp>
 #include <boost/filesystem.hpp>
 #include <algorithm>
 #include <ctime>
 #include <memory>
+#include <regex>
 #include <sys/types.h>
 
 #include "Logger.hpp"
@@ -124,7 +124,7 @@ bool World::load_maps() {
     Logger::notice(LogFacility::Script) << "Removing old maps." << Log::end;
     
     for (boost::filesystem::directory_iterator end, it(Config::instance().datadir() + "map/"); it != end; ++it) {
-        if (boost::regex_match(it->path().filename().string(), mapFilter)) {
+        if (std::regex_match(it->path().filename().string(), mapFilter)) {
              boost::filesystem::remove(it->path());
         }
     }
@@ -135,7 +135,7 @@ bool World::load_maps() {
 
     for (boost::filesystem::recursive_directory_iterator end, it(importDir); it != end; ++it) {
         if (!boost::filesystem::is_regular_file(it->status())) continue;
-        if (!boost::regex_match(it->path().filename().string(), tilesFilter)) continue;
+        if (!std::regex_match(it->path().filename().string(), tilesFilter)) continue;
     
         std::string map = it->path().string();
         
@@ -723,10 +723,10 @@ void World::initScheduler() {
 bool World::executeUserCommand(Player *user, const std::string &input, const CommandMap &commands) {
     bool found = false;
 
-    static const boost::regex pattern("^!([^ ]+) ?(.*)?$");
-    boost::smatch match;
+    static const std::regex pattern("^!([^ ]+) ?(.*)?$");
+    std::smatch match;
 
-    if (boost::regex_match(input, match, pattern)) {
+    if (std::regex_match(input, match, pattern)) {
         auto it = commands.find(match[1].str());
 
         if (it != commands.end()) {

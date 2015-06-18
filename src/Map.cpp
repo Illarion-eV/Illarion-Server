@@ -19,10 +19,10 @@
 
 #include "Map.hpp"
 
+#include <regex>
 #include <vector>
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/regex.hpp>
 
 #include "Logger.hpp"
 #include "World.hpp"
@@ -159,11 +159,11 @@ bool Map::Save(const std::string &name) const {
     }
 }
 
-const boost::regex headerExpression {R"(^[VLXYWH]: -?\d+$)"};
-const boost::regex tileExpression {R"(^(\d+);(\d+);(\d+);(\d+)$)"};
-const boost::regex itemExpression {R"(^(\d+);(\d+);(\d+);(\d+)(;.*)?$)"};
-const boost::regex warpExpression {R"(^(\d+);(\d+);(-?\d+);(-?\d+);(-?\d+)$)"};
-const boost::regex dataExpression {R"(;([^\\;=]*(?:\\[\\;=][^\\;=]*)*)=([^\\;=]*(?:\\[\\;=][^\\;=]*)*)(?:;.*)?)"};
+const std::regex headerExpression {R"(^[VLXYWH]: -?\d+$)"};
+const std::regex tileExpression {R"(^(\d+);(\d+);(\d+);(\d+)$)"};
+const std::regex itemExpression {R"(^(\d+);(\d+);(\d+);(\d+)(;.*)?$)"};
+const std::regex warpExpression {R"(^(\d+);(\d+);(-?\d+);(-?\d+);(-?\d+)$)"};
+const std::regex dataExpression {R"(;([^\\;=]*(?:\\[\\;=][^\\;=]*)*)=([^\\;=]*(?:\\[\\;=][^\\;=]*)*)(?:;.*)?)"};
 
 bool Map::import(const std::string &importDir, const std::string &mapName) {
     bool success = importFields(importDir, mapName);
@@ -174,8 +174,8 @@ bool Map::import(const std::string &importDir, const std::string &mapName) {
 
 bool Map::importFields(const std::string &importDir,
                        const std::string &mapName) {
-    using boost::smatch;
-    using boost::regex_match;
+    using std::smatch;
+    using std::regex_match;
 
     const std::string fileName = mapName + ".tiles.txt";
     std::ifstream mapFile(importDir + fileName);
@@ -265,8 +265,8 @@ bool Map::importFields(const std::string &importDir,
 
 bool Map::importItems(const std::string &importDir,
                       const std::string &mapName) {
-    using boost::smatch;
-    using boost::regex_match;
+    using std::smatch;
+    using std::regex_match;
 
     const std::string fileName = mapName + ".items.txt";
     std::ifstream itemFile(importDir + fileName);
@@ -329,9 +329,9 @@ bool Map::importItems(const std::string &importDir,
                     std::string data = matches[5];
 
                     while (data.length() > 0) {
-                        boost::smatch match;
+                        std::smatch match;
 
-                        if (boost::regex_match(data, match, dataExpression)) {
+                        if (std::regex_match(data, match, dataExpression)) {
                             std::string key = match[1];
                             std::string value = match[2];
 
@@ -426,8 +426,8 @@ void Map::unescape(std::string &input) {
 
 bool Map::importWarps(const std::string &importDir,
                       const std::string &mapName) {
-    using boost::smatch;
-    using boost::regex_match;
+    using std::smatch;
+    using std::regex_match;
 
     const std::string fileName = mapName + ".warps.txt";
     std::ifstream warpFile(importDir + fileName);
