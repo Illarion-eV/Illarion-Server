@@ -17,13 +17,13 @@ Details
 
 Requirements
 
-   GCC 4.7.2 OR clang 3.1
-   GNU Make 3.81
-   Automake 1.11.6
-   Boost 1.49.0
-   PostgreSQL 9.1.7
-   libpqxx 3.1
-   Lua 5.2.1
+   GCC 4.9.2 OR clang 3.5
+   GNU Make 4.0
+   Automake 1.14.1
+   Boost 1.55.0
+   PostgreSQL 9.4.3
+   libpqxx 4.0.1
+   Lua 5.2.3
    Luabind 0.9.1 with some bugfixes from
         http://illarion.org/repos/apt/debian (binary)
      or https://github.com/vilarion/luabind/tree/debian (source)
