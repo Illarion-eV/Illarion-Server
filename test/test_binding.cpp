@@ -44,7 +44,7 @@ public:
     MockWorld world;
     MockCharacter player;
     ScriptItem item;
-    CommonStruct itemdef;
+    ItemStruct itemdef;
     MockContainer container;
 
     ~world_bindings() {

@@ -25,12 +25,12 @@
 #include "script/LuaItemScript.hpp"
 #include "TableStructs.hpp"
 
-class CommonObjectTable : public QuestScriptStructTable<TYPE_OF_ITEM_ID, CommonStruct, LuaItemScript> {
+class ItemTable : public QuestScriptStructTable<TYPE_OF_ITEM_ID, ItemStruct, LuaItemScript> {
 public:
     virtual std::string getTableName() override;
     virtual std::vector<std::string> getColumnNames() override;
     virtual TYPE_OF_ITEM_ID assignId(const Database::ResultTuple &row) override;
-    virtual CommonStruct assignTable(const Database::ResultTuple &row) override;
+    virtual ItemStruct assignTable(const Database::ResultTuple &row) override;
     virtual std::string assignScriptName(const Database::ResultTuple &row) override;
     virtual NodeRange getQuestScripts() override;
 

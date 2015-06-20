@@ -771,8 +771,8 @@ public:
 
     //Sucht zu einem Item die gesamten Stats wie Gewicht heraus
     //\param item, das Item zu dem die Stats heraus gesucht werden sollen.
-    CommonStruct getItemStats(ScriptItem item);
-    CommonStruct getItemStatsFromId(TYPE_OF_ITEM_ID id);
+    ItemStruct getItemStats(ScriptItem item);
+    ItemStruct getItemStatsFromId(TYPE_OF_ITEM_ID id);
 
     //Aendert die Qualitaet eines ScriptItems.
     //param item, das Item das geaendert werden soll

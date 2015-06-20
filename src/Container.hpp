@@ -30,9 +30,9 @@
 
 #include "Item.hpp"
 
-class CommonObjectTable;
+class ItemTable;
 
-class RekursionException: public std::exception {};
+class RecursionException : public std::exception {};
 
 class Container {
 public:

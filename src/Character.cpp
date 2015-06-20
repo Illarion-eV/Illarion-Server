@@ -412,7 +412,7 @@ int Character::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) 
     Item it;
 
     if (weightOK(newid, count, nullptr)) {
-        const auto &cos = Data::CommonItems[newid];
+        const auto &cos = Data::Items[newid];
 
         if (cos.isValid()) {
             if (!Data::ContainerItems.exists(newid)) {
@@ -446,7 +446,7 @@ int Character::createItem(Item::id_type id, Item::number_type number, Item::qual
     Item it;
 
     if (weightOK(id, number, nullptr)) {
-        const auto &cos = Data::CommonItems[id];
+        const auto &cos = Data::Items[id];
 
         if (cos.isValid()) {
             if (Data::ContainerItems.exists(id)) {
@@ -617,17 +617,17 @@ void Character::ageInventory() {
         auto itemId = item.getId();
 
         if (itemId != 0) {
-            const auto &tempCommon = Data::CommonItems[itemId];
+            const auto &itemStruct = Data::Items[itemId];
 
-            if (tempCommon.isValid() && tempCommon.rotsInInventory) {
+            if (itemStruct.isValid() && itemStruct.rotsInInventory) {
                 if (!item.survivesAgeing()) {
-                    if (itemId != tempCommon.ObjectAfterRot) {
-                        item.setId(tempCommon.ObjectAfterRot);
+                    if (itemId != itemStruct.ObjectAfterRot) {
+                        item.setId(itemStruct.ObjectAfterRot);
 
-                        const auto &afterRotCommon = Data::CommonItems[tempCommon.ObjectAfterRot];
+                        const auto &afterRotItemStruct = Data::Items[itemStruct.ObjectAfterRot];
 
-                        if (afterRotCommon.isValid()) {
-                            item.setWear(afterRotCommon.AgeingSpeed);
+                        if (afterRotItemStruct.isValid()) {
+                            item.setWear(afterRotItemStruct.AgeingSpeed);
                         }
                     } else {
                         item.reset();
@@ -1177,8 +1177,8 @@ bool Character::weightOK(TYPE_OF_ITEM_ID id, int count, Container *tcont) const 
     if (tcont) {
         return (realweight + weightContainer(id, 1, tcont)) <= maxLoadWeight();
     } else {
-        const auto &common = Data::CommonItems[id];
-        return (realweight + common.Weight * count) <= maxLoadWeight();
+        const auto &itemStruct = Data::Items[id];
+        return (realweight + itemStruct.Weight * count) <= maxLoadWeight();
     }
 }
 
@@ -1187,13 +1187,13 @@ int Character::weightContainer(TYPE_OF_ITEM_ID id, int count, Container *tcont) 
     int temp=0;
 
     if (id != 0) {
-        const auto &tempCommon = Data::CommonItems[id];
+        const auto &itemStruct = Data::Items[id];
 
-        if (tempCommon.isValid()) {
+        if (itemStruct.isValid()) {
             if (count > 0) {
-                temp = tempCommon.Weight;
+                temp = itemStruct.Weight;
             } else {
-                temp = 0 - tempCommon.Weight;
+                temp = 0 - itemStruct.Weight;
             }
         }
 
@@ -1204,7 +1204,7 @@ int Character::weightContainer(TYPE_OF_ITEM_ID id, int count, Container *tcont) 
                 } else {
                     temp -= tcont->weight();
                 }
-            } catch (RekursionException &e) {
+            } catch (RecursionException &e) {
                 return 30000;
             }
         }

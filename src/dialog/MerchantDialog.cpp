@@ -61,8 +61,8 @@ auto MerchantDialog::getOffersEnd() const -> offer_iterator {
 }
 
 void MerchantDialog::addOffer(TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price) {
-    const auto &common = Data::CommonItems[item];
-    addOffer(item, name, price, common.BuyStack);
+    const auto &itemStruct = Data::Items[item];
+    addOffer(item, name, price, itemStruct.BuyStack);
 }
 
 void MerchantDialog::addOffer(TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price, TYPE_OF_BUY_STACK stack) {

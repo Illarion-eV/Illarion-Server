@@ -33,7 +33,7 @@ QuestTable Quests;
 RaceTable Races;
 NaturalArmorTable NaturalArmors;
 MonsterAttackTable MonsterAttacks;
-CommonObjectTable CommonItems;
+ItemTable Items;
 WeaponObjectTable WeaponItems;
 ArmorObjectTable ArmorItems;
 ContainerObjectTable ContainerItems;
@@ -50,7 +50,7 @@ std::vector<Table *> getTables() {
         &Races,
         &NaturalArmors,
         &MonsterAttacks,
-        &CommonItems,
+        &Items,
         &WeaponItems,
         &ArmorItems,
         &ContainerItems,

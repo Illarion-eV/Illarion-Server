@@ -546,24 +546,24 @@ int World::getItemAttrib(const std::string &s, TYPE_OF_ITEM_ID ItemID) {
         }
     }
 
-    // Common //
+    // Item //
     else if (s == "agingspeed") {
-        const auto &common = Data::CommonItems[ItemID];
+        const auto &itemStruct = Data::Items[ItemID];
 
-        if (common.isValid()) {
-            return common.AgeingSpeed;
+        if (itemStruct.isValid()) {
+            return itemStruct.AgeingSpeed;
         }
     } else if (s == "objectafterrot") {
-        const auto &common = Data::CommonItems[ItemID];
+        const auto &itemStruct = Data::Items[ItemID];
 
-        if (common.isValid()) {
-            return common.ObjectAfterRot;
+        if (itemStruct.isValid()) {
+            return itemStruct.ObjectAfterRot;
         }
     } else if (s == "weight") {
-        const auto &common = Data::CommonItems[ItemID];
+        const auto &itemStruct = Data::Items[ItemID];
 
-        if (common.isValid()) {
-            return common.Weight;
+        if (itemStruct.isValid()) {
+            return itemStruct.Weight;
         }
     }
 

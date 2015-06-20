@@ -32,7 +32,7 @@ class LuaMonsterScript;
 class LuaWeaponScript;
 class LuaLongTimeEffectScript;
 
-struct CommonStruct {
+struct ItemStruct {
     TYPE_OF_ITEM_ID id = 0;
     TYPE_OF_VOLUME Volume = 0;
     TYPE_OF_WEIGHT Weight = 0;

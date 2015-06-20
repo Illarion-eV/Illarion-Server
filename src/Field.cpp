@@ -169,10 +169,10 @@ bool Field::swapItemOnStack(TYPE_OF_ITEM_ID newId, uint16_t newQuality) {
         item.setQuality(newQuality);
     }
 
-    const auto &common = Data::CommonItems[newId];
+    const auto &itemStruct = Data::Items[newId];
 
-    if (common.isValid()) {
-        item.setWear(common.AgeingSpeed);
+    if (itemStruct.isValid()) {
+        item.setWear(itemStruct.AgeingSpeed);
     }
 
     updateFlags();
@@ -307,11 +307,11 @@ std::vector<Item> Field::getExportItems() const {
         if (item.isPermanent()) {
             result.push_back(item);
         } else {
-            const auto &common = Data::CommonItems[item.getId()];
+            const auto &itemStruct = Data::Items[item.getId()];
 
-            if (common.isValid() && common.AfterInfiniteRot > 0) {
+            if (itemStruct.isValid() && itemStruct.AfterInfiniteRot > 0) {
                 Item rottenItem = item;
-                rottenItem.setId(common.AfterInfiniteRot);
+                rottenItem.setId(itemStruct.AfterInfiniteRot);
                 rottenItem.makePermanent();
                 result.push_back(rottenItem);
             }
@@ -392,19 +392,19 @@ int8_t Field::age() {
             Item &item = *it;
 
             if (!item.survivesAgeing()) {
-                const auto &tempCommon = Data::CommonItems[item.getId()];
+                const auto &itemStruct = Data::Items[item.getId()];
 
-                if (tempCommon.isValid() && item.getId() != tempCommon.ObjectAfterRot) {
-                    if (item.getId() != tempCommon.ObjectAfterRot) {
+                if (itemStruct.isValid() && item.getId() != itemStruct.ObjectAfterRot) {
+                    if (item.getId() != itemStruct.ObjectAfterRot) {
                         ret = 1;
                     }
 
-                    item.setId(tempCommon.ObjectAfterRot);
+                    item.setId(itemStruct.ObjectAfterRot);
 
-                    const auto &afterRotCommon = Data::CommonItems[tempCommon.ObjectAfterRot];
+                    const auto &afterRotItemStruct = Data::Items[itemStruct.ObjectAfterRot];
 
-                    if (afterRotCommon.isValid()) {
-                        item.setWear(afterRotCommon.AgeingSpeed);
+                    if (afterRotItemStruct.isValid()) {
+                        item.setWear(afterRotItemStruct.AgeingSpeed);
                     }
 
                     ++it;

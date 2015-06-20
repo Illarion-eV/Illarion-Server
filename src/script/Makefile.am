@@ -12,7 +12,7 @@ libscriptbinding_a_SOURCES = LuaScript.cpp forwarder.cpp LuaTestSupportScript.cp
 			     LuaPlayerDeathScript.cpp LuaLookAtItemScript.cpp LuaQuestScript.cpp \
 			     binding/armor_struct.cpp binding/attack_boni.cpp binding/binding.hpp \
 				 binding/character.cpp binding/character_skillvalue.cpp binding/colour.cpp \
-				 binding/common_struct.cpp binding/container.cpp binding/crafting_dialog.cpp \
+				 binding/item_struct.cpp binding/container.cpp binding/crafting_dialog.cpp \
 				 binding/field.cpp binding/input_dialog.cpp binding/item.cpp \
 				 binding/item_look_at.cpp binding/long_time_action.cpp binding/long_time_character_effects.cpp \
 				 binding/long_time_effect.cpp binding/long_time_effect_struct.cpp binding/merchant_dialog.cpp \

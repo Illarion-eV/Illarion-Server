@@ -18,13 +18,13 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "data/CommonObjectTable.hpp"
+#include "ItemTable.hpp"
 
-std::string CommonObjectTable::getTableName() {
+std::string ItemTable::getTableName() {
     return "items";
 }
 
-std::vector<std::string> CommonObjectTable::getColumnNames() {
+std::vector<std::string> ItemTable::getColumnNames() {
     return {
         "itm_id",
         "itm_volume",
@@ -45,40 +45,40 @@ std::vector<std::string> CommonObjectTable::getColumnNames() {
     };
 }
 
-TYPE_OF_ITEM_ID CommonObjectTable::assignId(const Database::ResultTuple &row) {
+TYPE_OF_ITEM_ID ItemTable::assignId(const Database::ResultTuple &row) {
     return row["itm_id"].as<TYPE_OF_ITEM_ID>();
 }
 
-CommonStruct CommonObjectTable::assignTable(const Database::ResultTuple &row) {
-    CommonStruct common;
-    common.id = assignId(row);
-    common.Volume = row["itm_volume"].as<TYPE_OF_VOLUME>();
-    common.Weight = row["itm_weight"].as<TYPE_OF_WEIGHT>();
-    common.AgeingSpeed = TYPE_OF_AGINGSPEED(row["itm_agingspeed"].as<int16_t>());
-    common.ObjectAfterRot = row["itm_objectafterrot"].as<TYPE_OF_ITEM_ID>();
-    common.rotsInInventory = row["itm_rotsininventory"].as<bool>();
-    common.Brightness = TYPE_OF_BRIGHTNESS(row["itm_brightness"].as<int16_t>());
-    common.Worth = row["itm_worth"].as<TYPE_OF_WORTH>();
-    common.BuyStack = row["itm_buystack"].as<TYPE_OF_BUY_STACK>();
-    common.MaxStack = row["itm_maxstack"].as<TYPE_OF_MAX_STACK>();
-    common.German = row["itm_name_german"].as<TYPE_OF_GERMAN>();
-    common.English = row["itm_name_english"].as<TYPE_OF_ENGLISH>();
-    common.GermanDescription = row["itm_description_german"].as<TYPE_OF_GERMAN>();
-    common.EnglishDescription = row["itm_description_english"].as<TYPE_OF_ENGLISH>();
-    common.Rareness = row["itm_rareness"].as<int16_t>();
-    return common;
+ItemStruct ItemTable::assignTable(const Database::ResultTuple &row) {
+    ItemStruct item;
+    item.id = assignId(row);
+    item.Volume = row["itm_volume"].as<TYPE_OF_VOLUME>();
+    item.Weight = row["itm_weight"].as<TYPE_OF_WEIGHT>();
+    item.AgeingSpeed = TYPE_OF_AGINGSPEED(row["itm_agingspeed"].as<int16_t>());
+    item.ObjectAfterRot = row["itm_objectafterrot"].as<TYPE_OF_ITEM_ID>();
+    item.rotsInInventory = row["itm_rotsininventory"].as<bool>();
+    item.Brightness = TYPE_OF_BRIGHTNESS(row["itm_brightness"].as<int16_t>());
+    item.Worth = row["itm_worth"].as<TYPE_OF_WORTH>();
+    item.BuyStack = row["itm_buystack"].as<TYPE_OF_BUY_STACK>();
+    item.MaxStack = row["itm_maxstack"].as<TYPE_OF_MAX_STACK>();
+    item.German = row["itm_name_german"].as<TYPE_OF_GERMAN>();
+    item.English = row["itm_name_english"].as<TYPE_OF_ENGLISH>();
+    item.GermanDescription = row["itm_description_german"].as<TYPE_OF_GERMAN>();
+    item.EnglishDescription = row["itm_description_english"].as<TYPE_OF_ENGLISH>();
+    item.Rareness = row["itm_rareness"].as<int16_t>();
+    return item;
 }
 
-std::string CommonObjectTable::assignScriptName(const Database::ResultTuple &row) {
+std::string ItemTable::assignScriptName(const Database::ResultTuple &row) {
     return row["itm_script"].as<std::string>("");
 }
 
-auto CommonObjectTable::getQuestScripts() -> NodeRange {
+auto ItemTable::getQuestScripts() -> NodeRange {
     return QuestNodeTable::getInstance().getItemNodes();
 }
 
 /*
-TYPE_OF_ITEM_ID CommonObjectTable::calcInfiniteRot(TYPE_OF_ITEM_ID id, std::map<TYPE_OF_ITEM_ID, bool> &visited, std::map<TYPE_OF_ITEM_ID, bool> &assigned) {
+TYPE_OF_ITEM_ID ItemTable::calcInfiniteRot(TYPE_OF_ITEM_ID id, std::map<TYPE_OF_ITEM_ID, bool> &visited, std::map<TYPE_OF_ITEM_ID, bool> &assigned) {
     if (visited[ id ]) {
         if (assigned[ id ]) {
             return table[ id ].AfterInfiniteRot;

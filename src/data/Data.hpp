@@ -24,10 +24,10 @@
 #include "data/ScriptVariablesTable.hpp"
 #include "data/SkillTable.hpp"
 #include "data/QuestTable.hpp"
-#include "RaceTable.hpp"
+#include "data/RaceTable.hpp"
 #include "data/NaturalArmorTable.hpp"
 #include "data/MonsterAttackTable.hpp"
-#include "data/CommonObjectTable.hpp"
+#include "data/ItemTable.hpp"
 #include "data/WeaponObjectTable.hpp"
 #include "data/ArmorObjectTable.hpp"
 #include "data/ContainerObjectTable.hpp"
@@ -45,7 +45,7 @@ extern QuestTable Quests;
 extern RaceTable Races;
 extern NaturalArmorTable NaturalArmors;
 extern MonsterAttackTable MonsterAttacks;
-extern CommonObjectTable CommonItems;
+extern ItemTable Items;
 extern WeaponObjectTable WeaponItems;
 extern ArmorObjectTable ArmorItems;
 extern ContainerObjectTable ContainerItems;

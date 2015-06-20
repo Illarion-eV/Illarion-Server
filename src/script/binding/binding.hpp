@@ -27,7 +27,7 @@ namespace binding {
     luabind::scope character();
     luabind::scope character_skillvalue();
     luabind::scope colour();
-    luabind::scope common_struct();
+    luabind::scope item_struct();
     luabind::scope container();
     luabind::scope crafting_dialog();
     luabind::scope field();

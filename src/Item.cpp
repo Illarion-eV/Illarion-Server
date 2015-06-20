@@ -77,14 +77,14 @@ Item::Item(id_type id, number_type number, wear_type wear, quality_type quality,
 }
 
 auto Item::increaseNumberBy(Item::number_type count) -> number_type {
-    const auto &common = Data::CommonItems[id];
+    const auto &itemStruct = Data::Items[id];
 
-    if (common.isValid()) {
+    if (itemStruct.isValid()) {
         count += getNumber();
 
-        if (count >= common.MaxStack) {
-            setNumber(common.MaxStack);
-            count -= common.MaxStack;
+        if (count >= itemStruct.MaxStack) {
+            setNumber(itemStruct.MaxStack);
+            count -= itemStruct.MaxStack;
         } else {
             setNumber(count);
             count = 0;
@@ -177,11 +177,11 @@ void Item::reset() {
 
 
 void Item::resetWear() {
-    const auto &common = Data::CommonItems[id];
+    const auto &itemStruct = Data::Items[id];
 
-    if (common.isValid()) {
-        if (!common.rotsInInventory && common.AgeingSpeed > wear) {
-            wear = common.AgeingSpeed;
+    if (itemStruct.isValid()) {
+        if (!itemStruct.rotsInInventory && itemStruct.AgeingSpeed > wear) {
+            wear = itemStruct.AgeingSpeed;
         }
     }
 }
@@ -242,40 +242,40 @@ bool Item::isContainer() const {
 }
 
 TYPE_OF_VOLUME Item::getVolume() const {
-    const auto &common = Data::CommonItems[id];
+    const auto &itemStruct = Data::Items[id];
 
-    if (common.isValid()) {
-        return common.Volume;
+    if (itemStruct.isValid()) {
+        return itemStruct.Volume;
     }
 
     return 0;
 }
 
 TYPE_OF_WEIGHT Item::getWeight() const {
-    const auto &common = Data::CommonItems[id];
+    const auto &itemStruct = Data::Items[id];
 
-    if (common.isValid()) {
-        return common.Weight * number;
+    if (itemStruct.isValid()) {
+        return itemStruct.Weight * number;
     }
 
     return 0;
 }
 
 TYPE_OF_WORTH Item::getWorth() const {
-    const auto &common = Data::CommonItems[id];
+    const auto &itemStruct = Data::Items[id];
 
-    if (common.isValid()) {
-        return common.Worth * number;
+    if (itemStruct.isValid()) {
+        return itemStruct.Worth * number;
     }
 
     return 0;
 }
 
 auto Item::getMaxStack() const -> number_type {
-    const auto &common = Data::CommonItems[id];;
+    const auto &itemStruct = Data::Items[id];;
 
-    if (common.isValid()) {
-        return common.MaxStack;
+    if (itemStruct.isValid()) {
+        return itemStruct.MaxStack;
     }
 
     return 0;
@@ -298,7 +298,7 @@ void Item::makePermanent() {
 }
 
 ItemLookAt ScriptItem::getLookAt(Character *character) const {
-    auto script = Data::CommonItems.script(getId());
+    auto script = Data::Items.script(getId());
 
     if (script && script->existsEntrypoint("LookAtItem")) {
         ItemLookAt lookAt = script->LookAtItem(character, *this);

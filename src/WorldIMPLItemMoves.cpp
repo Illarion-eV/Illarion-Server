@@ -449,10 +449,10 @@ bool World::takeItemFromMap(Character *cc, const position &itemPosition) {
         Field &field = fieldAt(itemPosition);
 
         if (field.viewItemOnStack(g_item)) {
-            const auto &tempCommon = Data::CommonItems[g_item.getId()];
+            const auto &itemStruct = Data::Items[g_item.getId()];
 
-            if (tempCommon.isValid()) {
-                if (tempCommon.Weight < 30000 && !g_item.isPermanent()) {
+            if (itemStruct.isValid()) {
+                if (itemStruct.Weight < 30000 && !g_item.isPermanent()) {
                     field.takeItemFromStack(g_item);
 
                     if (!g_item.isStackable() && !g_item.isContainer()) {
@@ -690,7 +690,7 @@ void World::dropItemFromShowcaseOnMap(Player *cp, uint8_t showcase, unsigned cha
         t_item.pos = newPosition;
         t_item.type = ScriptItem::it_field;
         t_item.owner = cp;
-        std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(t_item.getId());
+        std::shared_ptr<LuaItemScript> script = Data::Items.script(t_item.getId());
 
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
@@ -742,7 +742,7 @@ void World::moveItemFromShowcaseToPlayer(Player *cp, uint8_t showcase, unsigned 
         }
 
         t_item.owner = cp;
-        std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(t_item.getId());
+        std::shared_ptr<LuaItemScript> script = Data::Items.script(t_item.getId());
 
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item,t_item)) {
@@ -805,7 +805,7 @@ void World::dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, const positi
         t_item.pos = newPosition;
         t_item.type = ScriptItem::it_field;
         t_item.owner = cp;
-        std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(t_item.getId());
+        std::shared_ptr<LuaItemScript> script = Data::Items.script(t_item.getId());
 
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
@@ -863,7 +863,7 @@ void World::moveItemBetweenBodyParts(Player *cp, unsigned char opos, unsigned ch
         }
 
         t_item.itempos = npos;
-        std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(t_item.getId());
+        std::shared_ptr<LuaItemScript> script = Data::Items.script(t_item.getId());
 
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
@@ -915,7 +915,7 @@ void World::moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, uint8
         t_item.pos = cp->getPosition();
         t_item.owner = cp;
         t_item.itempos = pos;
-        std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(t_item.getId());
+        std::shared_ptr<LuaItemScript> script = Data::Items.script(t_item.getId());
 
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
@@ -963,7 +963,7 @@ void World::moveItemFromMapIntoShowcase(Player *cp, const position &sourcePositi
             t_item.itempos = showcaseSlot;
             t_item.owner = cp;
 
-            std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(t_item.getId());
+            std::shared_ptr<LuaItemScript> script = Data::Items.script(t_item.getId());
 
             if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
                 if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
@@ -1053,7 +1053,7 @@ void World::moveItemFromMapToPlayer(Player *cp, const position &sourcePosition, 
 
             t_item.owner = cp;
             t_item.itempos = inventorySlot;
-            std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(t_item.getId());
+            std::shared_ptr<LuaItemScript> script = Data::Items.script(t_item.getId());
 
             if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
                 if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
@@ -1138,7 +1138,7 @@ void World::moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char p
         t_item.inside = cp->getShowcaseContainer(dest);
         t_item.itempos = pos2;
         t_item.owner = cp;
-        std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(t_item.getId());
+        std::shared_ptr<LuaItemScript> script = Data::Items.script(t_item.getId());
 
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
@@ -1199,7 +1199,7 @@ bool World::moveItemFromMapToMap(Player *cp, const position &oldPosition, const 
             t_item.type = ScriptItem::it_field;
             t_item.owner = cp;
 
-            std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(t_item.getId());
+            std::shared_ptr<LuaItemScript> script = Data::Items.script(t_item.getId());
 
             if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
                 if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
@@ -1267,7 +1267,7 @@ bool World::pickUpItemFromMap(Player *cp, const position &sourcePosition) {
             t_item.pos = cp->getPosition();
             t_item.owner = cp;
 
-            std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(t_item.getId());
+            std::shared_ptr<LuaItemScript> script = Data::Items.script(t_item.getId());
 
             if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
                 if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {

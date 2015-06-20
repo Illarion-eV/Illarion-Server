@@ -26,12 +26,12 @@ LuaItemScript::LuaItemScript() : LuaScript() {
     init_functions();
 }
 
-LuaItemScript::LuaItemScript(const std::string &filename, const CommonStruct &comstr)
+LuaItemScript::LuaItemScript(const std::string &filename, const ItemStruct &comstr)
     : LuaScript(filename) , _comstr(comstr) {
     init_functions();
 }
 
-LuaItemScript::LuaItemScript(const std::string &code, const std::string &codename, const CommonStruct &comstr)
+LuaItemScript::LuaItemScript(const std::string &code, const std::string &codename, const ItemStruct &comstr)
     : LuaScript(code, codename), _comstr(comstr) {
     init_functions();
 }

@@ -5,7 +5,7 @@ add_library(script
     binding/character.cpp
     binding/character_skillvalue.cpp
     binding/colour.cpp
-    binding/common_struct.cpp
+    binding/item_struct.cpp
     binding/container.cpp
     binding/crafting_dialog.cpp
     binding/field.cpp

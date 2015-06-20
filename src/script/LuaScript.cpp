@@ -373,7 +373,7 @@ void LuaScript::init_base_functions() {
         binding::character(),
         binding::character_skillvalue(),
         binding::colour(),
-        binding::common_struct(),
+        binding::item_struct(),
         binding::container(),
         binding::crafting_dialog(),
         binding::field(),

@@ -31,12 +31,12 @@ add_subdirectory(script)
 add_library(server
     data/ArmorObjectTable.cpp
     data/ArmorObjectTable.hpp
-    data/CommonObjectTable.cpp
-    data/CommonObjectTable.hpp
     data/ContainerObjectTable.cpp
     data/ContainerObjectTable.hpp
     data/Data.cpp
     data/Data.hpp
+    data/ItemTable.cpp
+    data/ItemTable.hpp
     data/LongTimeEffectTable.cpp
     data/LongTimeEffectTable.hpp
     data/MonsterAttackTable.cpp

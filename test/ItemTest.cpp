@@ -5,13 +5,13 @@
 static const Item::id_type TESTITEM = 42;
 static const Item::id_type MAXSTACK = 50;
 
-class CommonTest: public CommonObjectTable {
+class ItemTest : public ItemTable {
 public:
-    CommonTest() {
-        CommonStruct common;
-        common.id = TESTITEM;
-        common.MaxStack = MAXSTACK;
-        emplace(TESTITEM, common);
+    ItemTest() {
+        ItemStruct itemStruct;
+        itemStruct.id = TESTITEM;
+        itemStruct.MaxStack = MAXSTACK;
+        emplace(TESTITEM, itemStruct);
         activateBuffer();
     }
 };
@@ -19,7 +19,7 @@ public:
 class ItemEnvironment: public ::testing::Environment {
 public:
     virtual void SetUp() override {
-        Data::CommonItems = CommonTest();
+        Data::Items = ItemTest();
     }
 };
 

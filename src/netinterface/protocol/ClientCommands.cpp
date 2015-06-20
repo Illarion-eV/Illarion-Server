@@ -675,7 +675,7 @@ void UseTS::performAction(Player *player) {
     std::shared_ptr<LuaMonsterScript> LuaMonsterScript;
     std::shared_ptr<LuaTileScript> LuaTileScript;
     SouTar Source, Target;
-    CommonStruct com;
+    ItemStruct com;
 
     switch (useId) {
     case UID_KOORD:
@@ -732,7 +732,7 @@ void UseTS::performAction(Player *player) {
                 if (field.viewItemOnStack(item)) {
                     Logger::debug(LogFacility::Script) << "Item on field" << Log::end;
 
-                    LuaScript = Data::CommonItems.script(item.getId());
+                    LuaScript = Data::Items.script(item.getId());
 
                     if (LuaScript) {
                         Source.Type = LUA_ITEM;
@@ -776,7 +776,7 @@ void UseTS::performAction(Player *player) {
                 if (ps->viewItemNr(pos, tempi, tempc)) {
                     Logger::debug(LogFacility::Script) << "pos found item id: " << tempi.getId() << Log::end;
 
-                    LuaScript = Data::CommonItems.script(tempi.getId());
+                    LuaScript = Data::Items.script(tempi.getId());
 
                     if (LuaScript) {
                         Source.Type = LUA_ITEM;
@@ -808,7 +808,7 @@ void UseTS::performAction(Player *player) {
             if (player->items[ pos ].getId() != 0) {
                 Logger::debug(LogFacility::Script) << "at position " << static_cast<int>(pos) << " on body, is an item with id: " << player->items[ pos ].getId() << Log::end;
 
-                LuaScript = Data::CommonItems.script(player->items[ pos ].getId()) ;
+                LuaScript = Data::Items.script(player->items[ pos ].getId()) ;
 
                 if (LuaScript) {
                     Source.Type = LUA_ITEM;

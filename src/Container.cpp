@@ -538,7 +538,7 @@ int Container::recursiveWeight(int rekt) {
     int temprekt = rekt + 1;
 
     if (rekt > MAXIMALEREKURSIONSTIEFE) {
-        throw RekursionException();
+        throw RecursionException();
     }
 
     uint32_t temp = 0;
@@ -546,7 +546,7 @@ int Container::recursiveWeight(int rekt) {
     for (auto it = items.begin(); it != items.end(); ++it) {
         Item &item = it->second;
 
-        const auto &tempCommon = Data::CommonItems[item.getId()];
+        const auto &itemStruct = Data::Items[item.getId()];
 
         if (item.isContainer()) {
             auto iterat = containers.find(it->first);
@@ -555,9 +555,9 @@ int Container::recursiveWeight(int rekt) {
                 temp += iterat->second->recursiveWeight(temprekt);
             }
 
-            temp += tempCommon.Weight;
+            temp += itemStruct.Weight;
         } else {
-            temp += (tempCommon.Weight * item.getNumber());
+            temp += (itemStruct.Weight * item.getNumber());
         }
     }
 
@@ -611,17 +611,17 @@ void Container::doAge(bool inventory) {
         while (it != items.end()) {
             Item &item = it->second;
 
-            const auto &tempCommon = Data::CommonItems[item.getId()];
+            const auto &itemStruct = Data::Items[item.getId()];
 
-            if (!inventory || (inventory && tempCommon.rotsInInventory)) {
+            if (!inventory || (inventory && itemStruct.rotsInInventory)) {
                 if (!item.survivesAgeing()) {
-                    if (item.getId() != tempCommon.ObjectAfterRot) {
-                        item.setId(tempCommon.ObjectAfterRot);
+                    if (item.getId() != itemStruct.ObjectAfterRot) {
+                        item.setId(itemStruct.ObjectAfterRot);
 
-                        const auto &afterRotCommon = Data::CommonItems[tempCommon.ObjectAfterRot];
+                        const auto &afterRotItemStruct = Data::Items[itemStruct.ObjectAfterRot];
 
-                        if (afterRotCommon.isValid()) {
-                            item.setWear(tempCommon.AgeingSpeed);
+                        if (afterRotItemStruct.isValid()) {
+                            item.setWear(itemStruct.AgeingSpeed);
                         }
 
                         ++it;
@@ -669,7 +669,7 @@ TYPE_OF_CONTAINERSLOTS Container::getSlotCount() const {
 }
 
 bool Container::isItemStackable(Item item) {
-    const auto &com = Data::CommonItems[item.getId()];
+    const auto &com = Data::Items[item.getId()];
     return com.MaxStack > 1;
 }
 

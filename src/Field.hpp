@@ -28,7 +28,7 @@
 #include "Container.hpp"
 #include "Item.hpp"
 
-class CommonObjectTable;
+class ItemTable;
 class ContainerObjectTable;
 
 class Field {

@@ -44,7 +44,7 @@ void World::checkFieldAfterMove(Character *cc, Field &field) {
 
                 if ((tmod.Modificator & FLAG_SPECIALITEM) != 0) {
 
-                    std::shared_ptr<LuaItemScript> script = Data::CommonItems.script(item.getId());
+                    std::shared_ptr<LuaItemScript> script = Data::Items.script(item.getId());
 
                     if (script) {
                         script->CharacterOnField(cc);

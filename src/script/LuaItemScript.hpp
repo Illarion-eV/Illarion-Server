@@ -35,8 +35,8 @@ class ScriptItem;
 class LuaItemScript : public LuaScript {
 public:
     LuaItemScript();
-    LuaItemScript(const std::string &filename, const CommonStruct &comstr);
-    LuaItemScript(const std::string &code, const std::string &codename, const CommonStruct &comstr);
+    LuaItemScript(const std::string &filename, const ItemStruct &comstr);
+    LuaItemScript(const std::string &code, const std::string &codename, const ItemStruct &comstr);
     virtual ~LuaItemScript();
 
     void UseItem(Character *User, const ScriptItem &SourceItem, unsigned char ltastate);
@@ -47,7 +47,7 @@ public:
     void CharacterOnField(Character *who);
 
 private:
-    CommonStruct _comstr;
+    ItemStruct _comstr;
     LuaItemScript(const LuaItemScript &);
     LuaItemScript &operator=(const LuaItemScript &);
     void init_functions();

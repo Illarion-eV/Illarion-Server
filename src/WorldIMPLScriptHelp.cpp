@@ -202,20 +202,20 @@ bool World::changeItem(ScriptItem item) {
 
 std::string World::getItemName(TYPE_OF_ITEM_ID itemid, uint8_t language) {
     if (language == 0) {
-        return Data::CommonItems[itemid].German;
+        return Data::Items[itemid].German;
     } else {
-        return Data::CommonItems[itemid].English;
+        return Data::Items[itemid].English;
     }
 }
 
 
-CommonStruct World::getItemStats(ScriptItem item) {
-    const auto &data = Data::CommonItems[item.getId()];
+ItemStruct World::getItemStats(ScriptItem item) {
+    const auto &data = Data::Items[item.getId()];
     return data;
 }
 
-CommonStruct World::getItemStatsFromId(TYPE_OF_ITEM_ID id) {
-    const auto &data = Data::CommonItems[id];
+ItemStruct World::getItemStatsFromId(TYPE_OF_ITEM_ID id) {
+    const auto &data = Data::Items[id];
     return data;
 }
 
@@ -354,7 +354,7 @@ bool World::swap(ScriptItem item, TYPE_OF_ITEM_ID newitem, unsigned short int ne
 ScriptItem World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, const position &pos, bool always, int quality, script_data_exchangemap const *data) {
     ScriptItem sItem;
 
-    const auto &com = Data::CommonItems[id];
+    const auto &com = Data::Items[id];
 
     if (com.isValid()) {
         g_item.setId(id);
@@ -375,7 +375,7 @@ ScriptItem World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, con
             putItemOnMap(nullptr, pos);
         }
     } else {
-        Logger::error(LogFacility::Script) << "World::createFromId: Item " << id << " was not found in CommonItems!" << Log::end;
+        Logger::error(LogFacility::Script) << "World::createFromId: Item " << id << " was not found in items!" << Log::end;
     }
 
     return sItem;

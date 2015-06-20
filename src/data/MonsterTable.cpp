@@ -230,10 +230,10 @@ MonsterTable::MonsterTable() {
                         location = 99;
                     }
 
-                    const auto &tempCommon = Data::CommonItems[tempitem.itemid];
+                    const auto &itemStruct = Data::Items[tempitem.itemid];
 
-                    if (location < 99 && tempCommon.isValid()) {
-                        tempitem.AgeingSpeed = tempCommon.AgeingSpeed;
+                    if (location < 99 && itemStruct.isValid()) {
+                        tempitem.AgeingSpeed = itemStruct.AgeingSpeed;
                         temprecord.items[location].push_back(tempitem);
                     } else if (location < 99) {
                         Logger::error(LogFacility::Other) << "Invalid item for monster " << id << ": " << tempitem.itemid << Log::end;

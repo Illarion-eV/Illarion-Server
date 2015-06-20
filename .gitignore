@@ -1,4 +1,6 @@
 *.o
+compile
+test-driver
 config.guess
 config.sub
 libtool
