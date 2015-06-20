@@ -37,6 +37,7 @@ std::vector<std::string> ItemTable::getColumnNames() {
         "itm_worth",
         "itm_buystack",
         "itm_maxstack",
+        "itm_name",
         "itm_name_english",
         "itm_name_german",
         "itm_description_english",
@@ -61,6 +62,7 @@ ItemStruct ItemTable::assignTable(const Database::ResultTuple &row) {
     item.Worth = row["itm_worth"].as<TYPE_OF_WORTH>();
     item.BuyStack = row["itm_buystack"].as<TYPE_OF_BUY_STACK>();
     item.MaxStack = row["itm_maxstack"].as<TYPE_OF_MAX_STACK>();
+    item.serverName = row["itm_name"].as<TYPE_OF_ENGLISH>("");
     item.German = row["itm_name_german"].as<TYPE_OF_GERMAN>();
     item.English = row["itm_name_english"].as<TYPE_OF_ENGLISH>();
     item.GermanDescription = row["itm_description_german"].as<TYPE_OF_GERMAN>();

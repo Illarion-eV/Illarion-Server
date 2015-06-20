@@ -44,6 +44,7 @@ struct ItemStruct {
     TYPE_OF_MAX_STACK MaxStack = 1;
     TYPE_OF_BUY_STACK BuyStack = 1;
     bool rotsInInventory = false;
+    TYPE_OF_ENGLISH serverName = "";
     TYPE_OF_ENGLISH English = "";
     TYPE_OF_GERMAN German = "";
     TYPE_OF_ENGLISH EnglishDescription = "";

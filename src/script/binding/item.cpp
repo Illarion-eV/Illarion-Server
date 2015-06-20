@@ -19,14 +19,29 @@
  */
 
 #include "Item.hpp"
+#include <data/Data.hpp>
 #include "script/binding/binding.hpp"
 
 namespace binding {
 
     luabind::scope item() {
+        luabind::value_vector items;
+
+        for (const auto &item: Data::Items) {
+            const auto &name = item.second.serverName;
+
+            if (name.length() > 0) {
+                items.push_back(luabind::value(name.c_str(), item.second.id));
+            }
+        }
+
         return luabind::class_<Item>("Item")
                 .def(luabind::constructor<>())
                 .def(luabind::constructor<Item::id_type, Item::number_type, Item::wear_type, Item::quality_type>())
+                .enum_("items")
+                [
+                    items
+                ]
                 .property("id", &Item::getId, &Item::setId)
                 .property("wear", &Item::getWear, &Item::setWear)
                 .property("number", &Item::getNumber, &Item::setNumber)
