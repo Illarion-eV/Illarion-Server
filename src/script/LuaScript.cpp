@@ -328,38 +328,6 @@ static int dofile(lua_State *L, const char *fname) {
     return lua_gettop(L) - n;
 }
 
-unsigned int LuaAnd(unsigned int operand1, unsigned int operand2) {
-    return (operand1 & operand2);
-}
-
-uint64_t LuaAnd64(uint64_t operand1, uint64_t operand2) {
-    return (operand1 & operand2);
-}
-
-unsigned int LuaOr(unsigned int operand1, unsigned int operand2) {
-    return (operand1 | operand2);
-}
-
-uint64_t LuaOr64(uint64_t operand1, uint64_t operand2) {
-    return (operand1 | operand2);
-}
-
-uint32_t LuaLShift32(uint32_t value, unsigned char bits) {
-    return value << bits;
-}
-
-uint32_t LuaRShift32(uint32_t value, unsigned char bits) {
-    return value >> bits;
-}
-
-uint64_t LuaRShift64(uint64_t value, unsigned char bits) {
-    return value >> bits;
-}
-
-uint64_t LuaLShift64(uint64_t value, unsigned char bits) {
-    return value << bits;
-}
-
 Character *getCharForId(TYPE_OF_CHARACTER_ID id) {
     Character *ret = nullptr;
 
@@ -434,15 +402,7 @@ void LuaScript::init_base_functions() {
         binding::world(),
 
         luabind::def("dofile", &dofile, luabind::raw(_1)),
-        luabind::def("LuaAnd", LuaAnd),
         luabind::def("getCharForId",getCharForId),
-        luabind::def("LuaOr", LuaOr),
-        luabind::def("LuaAnd64", LuaAnd64),
-        luabind::def("LuaOr64", LuaOr64),
-        luabind::def("LuaLShift32",LuaLShift32),
-        luabind::def("LuaRShift32",LuaRShift32),
-        luabind::def("LuaLShift64",LuaLShift64),
-        luabind::def("LuaRShift64",LuaRShift64),
         luabind::def("isValidChar", &isValid),
         luabind::def("debug", &LuaScript::writeDebugMsg),
         luabind::def("log", log_lua)
