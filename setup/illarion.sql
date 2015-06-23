@@ -3,6 +3,7 @@
 --
 
 SET statement_timeout = 0;
+SET lock_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
@@ -315,6 +316,18 @@ CREATE SEQUENCE account_seq
 
 
 --
+-- Name: account_sessions; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+--
+
+CREATE TABLE account_sessions (
+    as_id character varying(32) DEFAULT 0 NOT NULL,
+    as_account_id integer DEFAULT 0 NOT NULL,
+    as_ip inet NOT NULL,
+    as_created timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+--
 -- Name: attribtemp; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
 --
 
@@ -555,7 +568,12 @@ CREATE SEQUENCE story_seq
 --
 
 CREATE VIEW test AS
-    SELECT raceapplys.ra_accid, raceapplys.ra_answer, gm_stats_race.gm_name FROM (raceapplys JOIN gm_stats_race ON ((raceapplys.oid = (gm_stats_race.gm_apply_id)::oid))) WHERE ((raceapplys.ra_race = 7) AND (raceapplys.ra_status = 2));
+ SELECT raceapplys.ra_accid,
+    raceapplys.ra_answer,
+    gm_stats_race.gm_name
+   FROM (raceapplys
+     JOIN gm_stats_race ON ((raceapplys.oid = (gm_stats_race.gm_apply_id)::oid)))
+  WHERE ((raceapplys.ra_race = 7) AND (raceapplys.ra_status = 2));
 
 
 SET default_with_oids = true;
@@ -599,76 +617,6 @@ CREATE TABLE armor (
     CONSTRAINT armor_thrust_check CHECK (((arm_thrust >= 0) AND (arm_thrust <= 200))),
     CONSTRAINT armor_type_check CHECK (((arm_type >= 0) AND (arm_type < 6)))
 );
-
-
---
--- Name: items; Type: TABLE; Schema: server; Owner: -; Tablespace: 
---
-
-CREATE TABLE items (
-    itm_id integer NOT NULL,
-    itm_volume integer NOT NULL,
-    itm_weight integer NOT NULL,
-    itm_agingspeed smallint DEFAULT (2)::smallint NOT NULL,
-    itm_objectafterrot integer NOT NULL,
-    itm_script character varying(50),
-    itm_rotsininventory boolean DEFAULT false NOT NULL,
-    itm_brightness smallint DEFAULT 0 NOT NULL,
-    itm_worth integer DEFAULT 0 NOT NULL,
-    itm_buystack integer DEFAULT 1 NOT NULL,
-    itm_maxstack smallint DEFAULT 1 NOT NULL,
-    itm_name_german character varying(30) DEFAULT 'unbekannt'::character varying NOT NULL,
-    itm_name_english character varying(30) DEFAULT 'unknown'::character varying NOT NULL,
-    itm_description_german character varying(255) DEFAULT ''::character varying NOT NULL,
-    itm_description_english character varying(255) DEFAULT ''::character varying NOT NULL,
-    itm_rareness smallint DEFAULT 1 NOT NULL,
-    CONSTRAINT common_afterrot_check CHECK (((itm_objectafterrot > 0) OR (itm_id = 0))),
-    CONSTRAINT common_aging_check CHECK ((itm_agingspeed >= 0)),
-    CONSTRAINT common_buystack_check CHECK ((itm_buystack >= 1)),
-    CONSTRAINT common_check CHECK ((((itm_worth >= 20) OR (itm_worth = 0)) OR ((itm_id = 3076) AND (itm_worth = 1)))),
-    CONSTRAINT common_com_light_brightness_check CHECK (((itm_brightness >= 0) AND (itm_brightness <= 9))),
-    CONSTRAINT common_com_maxstack_check CHECK ((itm_maxstack <> 0)),
-    CONSTRAINT common_script_check CHECK ((btrim((itm_script)::text) <> ''::text)),
-    CONSTRAINT common_volume_check CHECK ((itm_volume >= 0)),
-    CONSTRAINT common_weight_check CHECK ((itm_weight >= 0)),
-    CONSTRAINT items_itm_rareness_check CHECK ((itm_rareness = ANY (ARRAY[1, 2, 3, 4])))
-);
-
-
---
--- Name: COLUMN items.itm_id; Type: COMMENT; Schema: server; Owner: -
---
-
-COMMENT ON COLUMN items.itm_id IS 'The unique ID of the item.';
-
-
---
--- Name: COLUMN items.itm_script; Type: COMMENT; Schema: server; Owner: -
---
-
-COMMENT ON COLUMN items.itm_script IS 'The name of the script module that handles his item.';
-
-
---
--- Name: COLUMN items.itm_worth; Type: COMMENT; Schema: server; Owner: -
---
-
-COMMENT ON COLUMN items.itm_worth IS 'The base price of the item that is used by the trader NPCs in the game.';
-
-
---
--- Name: COLUMN items.itm_buystack; Type: COMMENT; Schema: server; Owner: -
---
-
-COMMENT ON COLUMN items.itm_buystack IS 'Default stack size a vendor will offer of this item';
-
-
---
--- Name: armor_info; Type: VIEW; Schema: server; Owner: -
---
-
-CREATE VIEW armor_info AS
-    SELECT armor.arm_itemid AS itemid, items.itm_name_english AS itemname, floor((((armor.arm_stroke * 100) / 150))::double precision) AS stroke_armor, floor((((armor.arm_thrust * 100) / 150))::double precision) AS thrust_armor, floor((((armor.arm_puncture * 100) / 150))::double precision) AS puncture_armor, floor((((armor.arm_stiffness * 100) / 150))::double precision) AS stiffness FROM (armor JOIN items ON ((armor.arm_itemid = items.itm_id)));
 
 
 SET default_with_oids = false;
@@ -836,7 +784,25 @@ CREATE TABLE gms (
 --
 
 CREATE VIEW gmrights AS
-    SELECT gms.gm_login, ((gms.gm_rights_server & 1) > 0) AS allow_login, ((gms.gm_rights_server & 2) > 0) AS basic_commands, ((gms.gm_rights_server & 4) > 0) AS warp, ((gms.gm_rights_server & 8) > 0) AS summon, ((gms.gm_rights_server & 16) > 0) AS prison, ((gms.gm_rights_server & 32) > 0) AS settiles, ((gms.gm_rights_server & 64) > 0) AS clipping, ((gms.gm_rights_server & 128) > 0) AS warp_field_edit, ((gms.gm_rights_server & 256) > 0) AS import, ((gms.gm_rights_server & 512) > 0) AS visibility, ((gms.gm_rights_server & 1024) > 0) AS table_reload, ((gms.gm_rights_server & 2048) > 0) AS ban, ((gms.gm_rights_server & 4096) > 0) AS toggle_login, ((gms.gm_rights_server & 8192) > 0) AS save, ((gms.gm_rights_server & 16384) > 0) AS broadcast, ((gms.gm_rights_server & 32768) > 0) AS forcelogout, ((gms.gm_rights_server & 65536) > 0) AS receive_gmcalls FROM gms;
+ SELECT gms.gm_login,
+    ((gms.gm_rights_server & 1) > 0) AS allow_login,
+    ((gms.gm_rights_server & 2) > 0) AS basic_commands,
+    ((gms.gm_rights_server & 4) > 0) AS warp,
+    ((gms.gm_rights_server & 8) > 0) AS summon,
+    ((gms.gm_rights_server & 16) > 0) AS prison,
+    ((gms.gm_rights_server & 32) > 0) AS settiles,
+    ((gms.gm_rights_server & 64) > 0) AS clipping,
+    ((gms.gm_rights_server & 128) > 0) AS warp_field_edit,
+    ((gms.gm_rights_server & 256) > 0) AS import,
+    ((gms.gm_rights_server & 512) > 0) AS visibility,
+    ((gms.gm_rights_server & 1024) > 0) AS table_reload,
+    ((gms.gm_rights_server & 2048) > 0) AS ban,
+    ((gms.gm_rights_server & 4096) > 0) AS toggle_login,
+    ((gms.gm_rights_server & 8192) > 0) AS save,
+    ((gms.gm_rights_server & 16384) > 0) AS broadcast,
+    ((gms.gm_rights_server & 32768) > 0) AS forcelogout,
+    ((gms.gm_rights_server & 65536) > 0) AS receive_gmcalls
+   FROM gms;
 
 
 SET default_with_oids = false;
@@ -852,6 +818,74 @@ CREATE TABLE introduction (
 
 
 SET default_with_oids = true;
+
+--
+-- Name: items; Type: TABLE; Schema: server; Owner: -; Tablespace: 
+--
+
+CREATE TABLE items (
+    itm_id integer NOT NULL,
+    itm_volume integer NOT NULL,
+    itm_weight integer NOT NULL,
+    itm_agingspeed smallint DEFAULT (2)::smallint NOT NULL,
+    itm_objectafterrot integer NOT NULL,
+    itm_script character varying(50),
+    itm_rotsininventory boolean DEFAULT false NOT NULL,
+    itm_brightness smallint DEFAULT 0 NOT NULL,
+    itm_worth integer DEFAULT 0 NOT NULL,
+    itm_buystack integer DEFAULT 1 NOT NULL,
+    itm_maxstack smallint DEFAULT 1 NOT NULL,
+    itm_name_german character varying(100) DEFAULT 'unbekannt'::character varying NOT NULL,
+    itm_name_english character varying(100) DEFAULT 'unknown'::character varying NOT NULL,
+    itm_description_german character varying(255) DEFAULT ''::character varying NOT NULL,
+    itm_description_english character varying(255) DEFAULT ''::character varying NOT NULL,
+    itm_rareness smallint DEFAULT 1 NOT NULL,
+    itm_name character varying(50),
+    itm_level smallint DEFAULT 0 NOT NULL,
+    CONSTRAINT common_afterrot_check CHECK (((itm_objectafterrot > 0) OR (itm_id = 0))),
+    CONSTRAINT common_aging_check CHECK ((itm_agingspeed >= 0)),
+    CONSTRAINT common_buystack_check CHECK ((itm_buystack >= 1)),
+    CONSTRAINT common_check CHECK ((((itm_worth >= 20) OR (itm_worth = 0)) OR ((itm_id = 3076) AND (itm_worth = 1)))),
+    CONSTRAINT common_com_light_brightness_check CHECK (((itm_brightness >= 0) AND (itm_brightness <= 9))),
+    CONSTRAINT common_com_maxstack_check CHECK ((itm_maxstack <> 0)),
+    CONSTRAINT common_script_check CHECK ((btrim((itm_script)::text) <> ''::text)),
+    CONSTRAINT common_volume_check CHECK ((itm_volume >= 0)),
+    CONSTRAINT common_weight_check CHECK ((itm_weight >= 0)),
+    CONSTRAINT items_itm_level_check CHECK (((itm_level >= 0) AND (itm_level <= 100))),
+    CONSTRAINT items_itm_name_check CHECK (((itm_name)::text ~ similar_escape('[a-z][a-zA-Z]*'::text, NULL::text))),
+    CONSTRAINT items_itm_name_english_check CHECK (((itm_name_english)::text <> ''::text)),
+    CONSTRAINT items_itm_name_german_check CHECK (((itm_name_german)::text <> ''::text)),
+    CONSTRAINT items_itm_rareness_check CHECK ((itm_rareness = ANY (ARRAY[1, 2, 3, 4])))
+);
+
+
+--
+-- Name: COLUMN items.itm_id; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN items.itm_id IS 'The unique ID of the item.';
+
+
+--
+-- Name: COLUMN items.itm_script; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN items.itm_script IS 'The name of the script module that handles his item.';
+
+
+--
+-- Name: COLUMN items.itm_worth; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN items.itm_worth IS 'The base price of the item that is used by the trader NPCs in the game.';
+
+
+--
+-- Name: COLUMN items.itm_buystack; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN items.itm_buystack IS 'Default stack size a vendor will offer of this item';
+
 
 --
 -- Name: longtimeeffects; Type: TABLE; Schema: server; Owner: -; Tablespace: 
@@ -1491,6 +1525,7 @@ CREATE TABLE race (
     race_willpower_min smallint DEFAULT 2 NOT NULL,
     race_willpower_max smallint DEFAULT 20 NOT NULL,
     race_attribute_points_max smallint DEFAULT 84 NOT NULL,
+    race_name character varying(100) NOT NULL,
     CONSTRAINT race_check CHECK ((race_age_max >= race_age_min)),
     CONSTRAINT race_check1 CHECK ((race_weight_max >= race_weight_min)),
     CONSTRAINT race_check10 CHECK ((race_willpower_max >= race_willpower_min)),
@@ -1510,6 +1545,7 @@ CREATE TABLE race (
     CONSTRAINT race_race_essence_min_check CHECK ((race_essence_min > 0)),
     CONSTRAINT race_race_height_min_check CHECK ((race_height_min > 0)),
     CONSTRAINT race_race_intelligence_min_check CHECK ((race_intelligence_min > 0)),
+    CONSTRAINT race_race_name_check CHECK (((race_name)::text ~ similar_escape('[a-zA-Z]+'::text, NULL::text))),
     CONSTRAINT race_race_name_de_check CHECK (((race_name_de)::text <> ''::text)),
     CONSTRAINT race_race_name_en_check CHECK (((race_name_en)::text <> ''::text)),
     CONSTRAINT race_race_perception_min_check CHECK ((race_perception_min > 0)),
@@ -1545,6 +1581,13 @@ COMMENT ON COLUMN race.race_height_min IS 'The minimal height for this race meas
 --
 
 COMMENT ON COLUMN race.race_height_max IS 'The maximal height for this race measured in centimeter.';
+
+
+--
+-- Name: COLUMN race.race_name; Type: COMMENT; Schema: server; Owner: -
+--
+
+COMMENT ON COLUMN race.race_name IS 'This is the name used to refer to this race in the scripts';
 
 
 SET default_with_oids = false;
@@ -2165,6 +2208,14 @@ ALTER TABLE ONLY account
 
 
 --
+-- Name: account_sessions_pkey; Type: CONSTRAINT; Schema: accounts; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY account_sessions
+    ADD CONSTRAINT account_sessions_pkey PRIMARY KEY (as_id);
+
+
+--
 -- Name: attribtemp_attr_id_key; Type: CONSTRAINT; Schema: accounts; Owner: -; Tablespace: 
 --
 
@@ -2292,6 +2343,14 @@ ALTER TABLE ONLY gms
 
 ALTER TABLE ONLY introduction
     ADD CONSTRAINT introduction_pkey PRIMARY KEY (intro_player, intro_known_player);
+
+
+--
+-- Name: items_itm_name_key; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY items
+    ADD CONSTRAINT items_itm_name_key UNIQUE (itm_name);
 
 
 --
@@ -2569,6 +2628,14 @@ ALTER TABLE ONLY race
 
 
 --
+-- Name: race_race_name_key; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY race
+    ADD CONSTRAINT race_race_name_key UNIQUE (race_name);
+
+
+--
 -- Name: race_skin_color_pkey; Type: CONSTRAINT; Schema: server; Owner: -; Tablespace: 
 --
 
@@ -2820,7 +2887,9 @@ CREATE INDEX playerskills_searchindex ON playerskills USING btree (psk_playerid)
 -- Name: gmrights_update; Type: RULE; Schema: server; Owner: -
 --
 
-CREATE RULE gmrights_update AS ON UPDATE TO gmrights DO INSTEAD UPDATE gms SET gm_rights_server = ((((((((((((((((cast_bool(new.allow_login) + (cast_bool(new.basic_commands) << 1)) + (cast_bool(new.warp) << 2)) + (cast_bool(new.summon) << 3)) + (cast_bool(new.prison) << 4)) + (cast_bool(new.settiles) << 5)) + (cast_bool(new.clipping) << 6)) + (cast_bool(new.warp_field_edit) << 7)) + (cast_bool(new.import) << 8)) + (cast_bool(new.visibility) << 9)) + (cast_bool(new.table_reload) << 10)) + (cast_bool(new.ban) << 11)) + (cast_bool(new.toggle_login) << 12)) + (cast_bool(new.save) << 13)) + (cast_bool(new.broadcast) << 14)) + (cast_bool(new.forcelogout) << 15)) + (cast_bool(new.receive_gmcalls) << 16)) WHERE ((gms.gm_login)::text = (new.gm_login)::text);
+CREATE RULE gmrights_update AS
+    ON UPDATE TO gmrights DO INSTEAD  UPDATE gms SET gm_rights_server = ((((((((((((((((cast_bool(new.allow_login) + (cast_bool(new.basic_commands) << 1)) + (cast_bool(new.warp) << 2)) + (cast_bool(new.summon) << 3)) + (cast_bool(new.prison) << 4)) + (cast_bool(new.settiles) << 5)) + (cast_bool(new.clipping) << 6)) + (cast_bool(new.warp_field_edit) << 7)) + (cast_bool(new.import) << 8)) + (cast_bool(new.visibility) << 9)) + (cast_bool(new.table_reload) << 10)) + (cast_bool(new.ban) << 11)) + (cast_bool(new.toggle_login) << 12)) + (cast_bool(new.save) << 13)) + (cast_bool(new.broadcast) << 14)) + (cast_bool(new.forcelogout) << 15)) + (cast_bool(new.receive_gmcalls) << 16))
+  WHERE ((gms.gm_login)::text = (new.gm_login)::text);
 
 
 SET search_path = accounts, pg_catalog;
@@ -2871,6 +2940,14 @@ ALTER TABLE ONLY account_log
 
 ALTER TABLE ONLY account_log
     ADD CONSTRAINT account_log_al_user_id_fkey FOREIGN KEY (al_user_id) REFERENCES account(acc_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: account_sessions_as_account_id_fkey; Type: FK CONSTRAINT; Schema: accounts; Owner: -
+--
+
+ALTER TABLE ONLY account_sessions
+    ADD CONSTRAINT account_sessions_as_account_id_fkey FOREIGN KEY (as_account_id) REFERENCES account(acc_id) MATCH FULL ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 SET search_path = server, pg_catalog;
