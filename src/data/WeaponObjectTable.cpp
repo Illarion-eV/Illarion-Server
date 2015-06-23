@@ -36,8 +36,7 @@ std::vector<std::string> WeaponObjectTable::getColumnNames() {
         "wp_actionpoints",
         "wp_magicdisturbance",
         "wp_poison",
-        "wp_fightingscript",
-        "wp_level"
+        "wp_fightingscript"
     };
 }
 
@@ -56,7 +55,6 @@ WeaponStruct WeaponObjectTable::assignTable(const Database::ResultTuple &row) {
     weapon.ActionPoints = TYPE_OF_ACTIONPOINTS(row["wp_actionpoints"].as<uint16_t>());
     weapon.MagicDisturbance = TYPE_OF_MAGICDISTURBANCE(row["wp_magicdisturbance"].as<uint16_t>());
     weapon.PoisonStrength = TYPE_OF_POISONSTRENGTH(row["wp_poison"].as<uint16_t>());
-    weapon.Level = TYPE_OF_ITEMLEVEL(row["wp_level"].as<uint16_t>());
     return weapon;
 }
 

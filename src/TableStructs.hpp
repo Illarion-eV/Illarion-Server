@@ -50,6 +50,7 @@ struct ItemStruct {
     TYPE_OF_ENGLISH EnglishDescription = "";
     TYPE_OF_GERMAN GermanDescription = "";
     int16_t Rareness = 1;
+    TYPE_OF_ITEMLEVEL Level = 0;
 
     bool isValid() const {
         return id != 0;
@@ -81,8 +82,7 @@ struct WeaponStruct {
     TYPE_OF_ACTIONPOINTS ActionPoints;
     TYPE_OF_MAGICDISTURBANCE MagicDisturbance;
     TYPE_OF_POISONSTRENGTH PoisonStrength;
-    TYPE_OF_ITEMLEVEL Level;
-    WeaponStruct() : Attack(0) , Defence(0) , Accuracy(0) , Range(0) , Type(0) , AmmunitionType(0) , ActionPoints(0) , MagicDisturbance(0) , PoisonStrength(0), Level(0) {}
+    WeaponStruct() : Attack(0) , Defence(0) , Accuracy(0) , Range(0) , Type(0) , AmmunitionType(0) , ActionPoints(0) , MagicDisturbance(0) , PoisonStrength(0) {}
 };
 
 
@@ -94,9 +94,8 @@ struct ArmorStruct {
     TYPE_OF_MAGICDISTURBANCE MagicDisturbance;
     int16_t Absorb;
     int16_t Stiffness;
-    TYPE_OF_ITEMLEVEL Level;
     TYPE_OF_ARMORTYPE Type;
-    ArmorStruct() : BodyParts(0) , PunctureArmor(0), StrokeArmor(0), ThrustArmor(0),MagicDisturbance(0),Absorb(0), Stiffness(0), Level(0), Type(0) {}
+    ArmorStruct() : BodyParts(0) , PunctureArmor(0), StrokeArmor(0), ThrustArmor(0),MagicDisturbance(0),Absorb(0), Stiffness(0), Type(0) {}
 };
 
 

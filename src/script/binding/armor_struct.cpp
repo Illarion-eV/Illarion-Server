@@ -42,7 +42,6 @@ namespace binding {
         .def_readonly("MagicDisturbance", &ArmorStruct::MagicDisturbance)
         .def_readonly("Absorb", &ArmorStruct::Absorb)
         .def_readonly("Stiffness", &ArmorStruct::Stiffness)
-        .def_readonly("Level", &ArmorStruct::Level)
         .def_readonly("Type", &ArmorStruct::Type);
     }
 

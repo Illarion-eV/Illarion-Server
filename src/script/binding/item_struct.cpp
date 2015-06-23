@@ -38,7 +38,8 @@ namespace binding {
                 .def_readonly("German", &ItemStruct::German)
                 .def_readonly("EnglishDescription", &ItemStruct::EnglishDescription)
                 .def_readonly("GermanDescription", &ItemStruct::GermanDescription)
-                .def_readonly("Rareness", &ItemStruct::Rareness);
+                .def_readonly("Rareness", &ItemStruct::Rareness)
+                .def_readonly("Level", &ItemStruct::Level);
     }
 
 }

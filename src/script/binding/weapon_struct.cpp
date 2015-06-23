@@ -49,8 +49,7 @@ namespace binding {
         .def_readonly("AmmunitionType", &WeaponStruct::AmmunitionType)
         .def_readonly("ActionPoints", &WeaponStruct::ActionPoints)
         .def_readonly("MagicDisturbance", &WeaponStruct::MagicDisturbance)
-        .def_readonly("PoisonStrength", &WeaponStruct::PoisonStrength)
-        .def_readonly("Level", &WeaponStruct::Level);
+        .def_readonly("PoisonStrength", &WeaponStruct::PoisonStrength);
     }
 
 }

@@ -42,7 +42,8 @@ std::vector<std::string> ItemTable::getColumnNames() {
         "itm_name_german",
         "itm_description_english",
         "itm_description_german",
-        "itm_rareness"
+        "itm_rareness",
+        "itm_level"
     };
 }
 
@@ -68,6 +69,7 @@ ItemStruct ItemTable::assignTable(const Database::ResultTuple &row) {
     item.GermanDescription = row["itm_description_german"].as<TYPE_OF_GERMAN>();
     item.EnglishDescription = row["itm_description_english"].as<TYPE_OF_ENGLISH>();
     item.Rareness = row["itm_rareness"].as<int16_t>();
+    item.Level = TYPE_OF_ITEMLEVEL(row["itm_level"].as<int16_t>());
     return item;
 }
 

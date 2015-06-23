@@ -34,7 +34,6 @@ std::vector<std::string> ArmorObjectTable::getColumnNames() {
         "arm_magicdisturbance",
         "arm_absorb",
         "arm_stiffness",
-        "arm_level",
         "arm_type"
     };
 }
@@ -52,7 +51,6 @@ ArmorStruct ArmorObjectTable::assignTable(const Database::ResultTuple &row) {
     armor.MagicDisturbance = TYPE_OF_MAGICDISTURBANCE(row["arm_magicdisturbance"].as<int32_t>());
     armor.Absorb = row["arm_absorb"].as<int16_t>();
     armor.Stiffness = row["arm_stiffness"].as<int16_t>();
-    armor.Level = TYPE_OF_ITEMLEVEL(row["arm_level"].as<int16_t>());
     armor.Type = TYPE_OF_ARMORTYPE(row["arm_type"].as<int16_t>());
     return armor;
 }
