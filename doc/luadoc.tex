@@ -56,7 +56,7 @@
 \makeindex
 \begin{document}
 \lstset{basicstyle=\small, keywordstyle=\ttfamily, identifierstyle=\ttfamily}
-\title{Lua documentation for Illarion scripting\\v5.20}
+\title{Lua documentation for Illarion scripting\\v5.21}
 \author{Martin \thanks{ \texttt{martin@illarion.org, http://www.illarion.org}},
 pharse \thanks{ \texttt{pharse@illarion.org, http://www.illarion.org}},
 vilarion \thanks{ \texttt{vilarion@illarion.org, http://www.illarion.org}}}
@@ -995,10 +995,11 @@ This kind of item variable holds the individual information about the item (posi
 \begin{quote}
        The number of items on that stack.
 \end{quote}
+\section{Constants}
+If an item has an entry "itemName" in itm\_name in the items table, you can get its id with Item.itemName.
 
 
-\chapter{Items (commonStruct)}
-There are unfortunately two types of items. This refers to commonStruct-Items.
+\chapter{Items (ItemStruct)}
 Note that there are important functions for items in the chapter "World".
 This kind of item variable holds general information about an item (weight, ID,...), not individual ones like, for example, the current position or things like that. It is, so to say, a generalized item.
 
@@ -1016,6 +1017,7 @@ This kind of item variable holds general information about an item (weight, ID,.
 \lua{r}:  \txt \var{Item}.\comm{EnglishDescription}\\
 \lua{r}:  \txt \var{Item}.\comm{GermanDescription}\\
 \lua{r}:  \integer \var{Item}.\comm{Rareness}\\
+\lua{r}:  \integer \var{Item}.\comm{Level}\\
 \begin{quote}
   These variables are accessible for common struct items and script items (where they refer to the corresponding common struct item!).\\
   \emph{Usage}:\\
@@ -1034,7 +1036,6 @@ This kind of item variable holds general information about an item (weight, ID,.
 \lua{r}:  \integer \var{weaponstruct}.\comm{ActionPoints}\\
 \lua{r}:  \integer \var{weaponstruct}.\comm{MagicDisturbance}\\
 \lua{r}:  \integer \var{weaponstruct}.\comm{PoisonStrength}\\
-\lua{r}:  \integer \var{weaponstruct}.\comm{Level}\\
 \\
 WeaponType can be one of the following: WeaponStruct.\{slashing, concussion, puncture, slashingTwoHand, concussionTwoHand, punctureTwoHand, firearm, arrow, bolt, stone, stave, shield\}
 \section{ArmorStruct}
@@ -1044,7 +1045,6 @@ WeaponType can be one of the following: WeaponStruct.\{slashing, concussion, pun
 \lua{r}:  \integer \var{armorstruct}.\comm{ThrustArmor}\\
 \lua{r}:  \integer \var{armorstruct}.\comm{MagicDisturbance}\\
 \lua{r}:  \integer \var{armorstruct}.\comm{Stiffness}\\
-\lua{r}:  \integer \var{armorstruct}.\comm{Level}\\
 \lua{r}:  \integer \var{armorstruct}.\comm{Type}\\
 \\
 Type can be one of the following: ArmorStruct.\{clothing, general, light, medium, heavy, jewellery\}
@@ -2401,6 +2401,9 @@ It might be the case, and this is hoped much, that you want to create more compl
 \appendix
 
 \chapter{Versions}
+Version 5.21 (15 06 23)\\
+* Add item id constants\\
+* Move item level from weapons and armors to item struct\\
 Version 5.20 (15 06 07)\\
 * Remove obsolete bit manipulation functions\\
 * Update section about modules\\
