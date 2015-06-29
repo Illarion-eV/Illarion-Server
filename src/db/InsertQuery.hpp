@@ -68,7 +68,6 @@ public:
         }
 
         std::string strValue = quote<T>(value);
-        std::vector<std::string *> *dataRow;
 
         if (!dataStorage.empty()) {
             for (const auto &dataRow : dataStorage) {
@@ -90,6 +89,8 @@ public:
         if (count == FILL) {
             return;
         }
+
+        std::vector<std::string *> *dataRow;
 
         while (count-- > 0) {
             dataRow = new std::vector<std::string *>(columns, 0);
