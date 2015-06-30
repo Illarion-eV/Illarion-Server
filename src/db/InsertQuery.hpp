@@ -90,10 +90,8 @@ public:
             return;
         }
 
-        std::vector<std::string *> *dataRow;
-
         while (count-- > 0) {
-            dataRow = new std::vector<std::string *>(columns, 0);
+            auto dataRow = new std::vector<std::string *>(columns, 0);
             dataStorage.push_back(dataRow);
             dataRow->at(column) = new std::string(strValue);
         }
