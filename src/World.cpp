@@ -108,15 +108,6 @@ World::World(const std::string &dir) {
 
 }
 
-
-struct editor_maptile {
-    int32_t x;
-    int32_t y;
-    unsigned short fieldID;
-    unsigned short int musicID;
-};
-
-
 bool World::load_maps() {
     int numfiles = 0;
     int errors = 0;
