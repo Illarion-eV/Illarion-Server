@@ -25,7 +25,7 @@
 
 class ConfigEntryBase {
 public:
-    ConfigEntryBase(const std::string &config_name);
+    explicit ConfigEntryBase(const std::string &config_name);
 
     friend std::istream &operator>>(std::istream &is, ConfigEntryBase &);
     virtual void read(std::istream &is) = 0;

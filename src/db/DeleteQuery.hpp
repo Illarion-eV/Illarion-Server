@@ -30,7 +30,7 @@ namespace Database {
 class DeleteQuery : Query, public QueryTables, public QueryWhere {
 public:
     DeleteQuery();
-    DeleteQuery(const PConnection connection);
+    explicit DeleteQuery(const PConnection connection);
     DeleteQuery(const DeleteQuery &org) = delete;
     DeleteQuery &operator=(const DeleteQuery &org) = delete;
 

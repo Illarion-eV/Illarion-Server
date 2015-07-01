@@ -131,7 +131,7 @@ struct MapPosition {
 
     MapPosition() = default;
     MapPosition(short int x, short int y): x(x), y(y) {}
-    MapPosition(const position &pos): x(pos.x), y(pos.y) {}
+    explicit MapPosition(const position &pos): x(pos.x), y(pos.y) {}
 
     bool operator == (const MapPosition &pos) const {
         return (x == pos.x && y == pos.y);

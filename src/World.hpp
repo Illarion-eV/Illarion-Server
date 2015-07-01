@@ -927,7 +927,7 @@ private:
     *@param dir the main directory of the server
     *@param time_t the starting time of the server
     */
-    World(const std::string &dir);
+    explicit World(const std::string &dir);
     World &operator=(const World &) = delete;
     World(const World &) = delete;
 
@@ -935,7 +935,7 @@ private:
     int lastTurnIGDay;
 
     // check spawns every minute
-    Timer monstertimer = {60};
+    Timer monstertimer {60};
 
     //! das home-Verzeichnis des Servers
     std::string directory;

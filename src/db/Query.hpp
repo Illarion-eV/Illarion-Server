@@ -33,7 +33,7 @@ private:
     std::string dbQuery;
 
 public:
-    Query(const std::string &query);
+    explicit Query(const std::string &query);
     Query(const PConnection connection, const std::string &query);
 
     static std::string escapeKey(const std::string &key);
@@ -47,7 +47,7 @@ public:
 
 protected:
     Query();
-    Query(const PConnection connection);
+    explicit Query(const PConnection connection);
     Query(const Query &org) = delete;
     Query &operator=(const Query &org) = delete;
 

@@ -30,7 +30,7 @@ class character_ptr {
 
 public:
     character_ptr();
-    character_ptr(Character *p);
+    explicit character_ptr(Character *p);
     character_ptr(character_ptr const &p);
     character_ptr& operator=(character_ptr const &p);
 

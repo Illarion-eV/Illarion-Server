@@ -42,7 +42,7 @@ public:
 
 private:
     LongTimeEffectStruct _effectStruct;
-    LuaLongTimeEffectScript(const LuaItemScript &);
+    explicit LuaLongTimeEffectScript(const LuaItemScript &);
     LuaLongTimeEffectScript &operator=(const LuaLongTimeEffectScript &);
     void init_functions();
 };

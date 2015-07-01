@@ -29,7 +29,7 @@ class Character;
 
 class LongTimeCharacterEffects {
 public:
-    LongTimeCharacterEffects(Character *owner);
+    explicit LongTimeCharacterEffects(Character *owner);
 
     void addEffect(LongTimeEffect *effect);
     bool find(uint16_t effectid, LongTimeEffect *&effect);

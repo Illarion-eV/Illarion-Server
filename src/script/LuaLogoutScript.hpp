@@ -28,7 +28,7 @@ class Character;
 
 class LuaLogoutScript : public LuaScript {
 public:
-    LuaLogoutScript(const std::string &filename);
+    explicit LuaLogoutScript(const std::string &filename);
     virtual ~LuaLogoutScript();
 
     void onLogout(Character *cc);

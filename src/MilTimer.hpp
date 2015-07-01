@@ -23,14 +23,14 @@
 #include <sys/timeb.h>
 
 
-//! ein Timer mit Millisekunden-Auflösung
+//! ein Timer mit Millisekunden-Auflï¿½sung
 class MilTimer {
 
 public:
 
     //! Konstruktor
     // \param milsec Anzahl der Millisekunden zwischen zwei Schritten
-    MilTimer(long milsec);
+    explicit MilTimer(long milsec);
 
     //! dient zur Abfrage, ob die Zeit schon abgelaufen ist
     // \return true falls die im Konstruktor angegebene Zeit seit

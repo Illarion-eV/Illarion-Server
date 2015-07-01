@@ -107,7 +107,7 @@ public:
 
 class AbortQuestTC : public BasicServerCommand {
 public:
-    AbortQuestTC(TYPE_OF_QUEST_ID id);
+    explicit AbortQuestTC(TYPE_OF_QUEST_ID id);
 };
 
 class AvailableQuestsTC : public BasicServerCommand {
@@ -150,16 +150,16 @@ public:
 };
 class CraftingDialogCraftingCompleteTC : public BasicServerCommand {
 public:
-    CraftingDialogCraftingCompleteTC(unsigned int dialogId);
+    explicit CraftingDialogCraftingCompleteTC(unsigned int dialogId);
 };
 class CraftingDialogCraftingAbortedTC : public BasicServerCommand {
 public:
-    CraftingDialogCraftingAbortedTC(unsigned int dialogId);
+    explicit CraftingDialogCraftingAbortedTC(unsigned int dialogId);
 };
 
 class CloseDialogTC : public BasicServerCommand {
 public:
-    CloseDialogTC(unsigned int dialogId);
+    explicit CloseDialogTC(unsigned int dialogId);
 };
 
 class ItemUpdate_TC : public BasicServerCommand {
@@ -185,13 +185,13 @@ public:
 
 class BookTC : public BasicServerCommand {
 public:
-    BookTC(uint16_t bookID);
+    explicit BookTC(uint16_t bookID);
 };
 
 
 class RemoveCharTC : public BasicServerCommand {
 public:
-    RemoveCharTC(TYPE_OF_CHARACTER_ID id);
+    explicit RemoveCharTC(TYPE_OF_CHARACTER_ID id);
 };
 
 class UpdateTimeTC : public BasicServerCommand {
@@ -201,7 +201,7 @@ public:
 
 class LogOutTC : public BasicServerCommand {
 public:
-    LogOutTC(unsigned char reason);
+    explicit LogOutTC(unsigned char reason);
 };
 
 class TargetLostTC : public BasicServerCommand {
@@ -258,7 +258,7 @@ public:
 
 class ItemRemoveTC : public BasicServerCommand {
 public:
-    ItemRemoveTC(const position &pos);
+    explicit ItemRemoveTC(const position &pos);
 };
 
 class AdminViewPlayersTC : public BasicServerCommand {
@@ -330,7 +330,7 @@ public:
 
 class MusicTC : public BasicServerCommand {
 public:
-    MusicTC(short int title);
+    explicit MusicTC(short int title);
 };
 
 class MusicDefaultTC : public BasicServerCommand {
@@ -355,7 +355,7 @@ public:
 
 class ClearShowCaseTC : public BasicServerCommand {
 public:
-    ClearShowCaseTC(unsigned char id);
+    explicit ClearShowCaseTC(unsigned char id);
 };
 
 class UpdateSkillTC : public BasicServerCommand {
@@ -365,12 +365,12 @@ public:
 
 class UpdateWeatherTC : public BasicServerCommand {
 public:
-    UpdateWeatherTC(const WeatherStruct &weather);
+    explicit UpdateWeatherTC(const WeatherStruct &weather);
 };
 
 class IdTC : public BasicServerCommand {
 public:
-    IdTC(int id);
+    explicit IdTC(int id);
 };
 
 class UpdateInventoryPosTC : public BasicServerCommand {
@@ -380,7 +380,7 @@ public:
 
 class SetCoordinateTC : public BasicServerCommand {
 public:
-    SetCoordinateTC(const position &pos);
+    explicit SetCoordinateTC(const position &pos);
 };
 
 class PlayerSpinTC : public BasicServerCommand {

@@ -34,7 +34,7 @@ private:
     uint8_t number;
 
 public:
-    Ingredient(TYPE_OF_ITEM_ID item): item(item), number(1) {};
+    explicit Ingredient(TYPE_OF_ITEM_ID item): item(item), number(1) {};
     Ingredient(TYPE_OF_ITEM_ID item, uint8_t number): item(item), number(number) {};
     TYPE_OF_ITEM_ID getItem() const {
         return item;

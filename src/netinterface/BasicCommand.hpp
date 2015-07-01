@@ -33,7 +33,7 @@ public:
      *Constructor which sets the definition byte
      *\param defByte A unique command id
      */
-    BasicCommand(unsigned char defByte);
+    explicit BasicCommand(unsigned char defByte);
 
     /**
      *Provides read access to the definition byte

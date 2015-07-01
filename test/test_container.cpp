@@ -13,7 +13,7 @@ using ::testing::_;
 
 class MockContainer : public Container {
 	public:
-		MockContainer(Item::id_type id) : Container(id) {
+	    explicit MockContainer(Item::id_type id) : Container(id) {
 		}
 
 		MOCK_CONST_METHOD0(getSlotCount, TYPE_OF_CONTAINERSLOTS());

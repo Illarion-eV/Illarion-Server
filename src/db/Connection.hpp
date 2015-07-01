@@ -38,7 +38,7 @@ private:
     std::unique_ptr<pqxx::transaction_base> transaction = nullptr;
 
 public:
-    Connection(const std::string &connectionString);
+    explicit Connection(const std::string &connectionString);
     void beginTransaction(void);
     pqxx::result query(const std::string &query);
     void commitTransaction(void);

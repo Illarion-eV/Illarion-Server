@@ -32,7 +32,7 @@ private:
 
 public:
     Attribute();
-    Attribute(attribute_t value);
+    explicit Attribute(attribute_t value);
     Attribute(attribute_t value, attribute_t maximum);
     void setBaseValue(attribute_t value);
     void setValue(attribute_t value);

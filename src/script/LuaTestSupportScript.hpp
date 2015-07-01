@@ -28,7 +28,7 @@ class Character;
 
 class LuaTestSupportScript : public LuaScript {
 public:
-    LuaTestSupportScript(const std::string &code);
+    explicit LuaTestSupportScript(const std::string &code);
     LuaTestSupportScript(const std::string &code, const std::string &scriptname);
     virtual ~LuaTestSupportScript() noexcept;
 

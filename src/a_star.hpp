@@ -101,7 +101,7 @@ typedef float Cost;
 class distance_heuristic : public astar_heuristic<world_map_graph, Cost> {
 public:
     typedef graph_traits<world_map_graph>::vertex_descriptor Vertex;
-    distance_heuristic(const Vertex &goal);
+    explicit distance_heuristic(const Vertex &goal);
     Cost operator()(const Vertex &u);
 
 private:
@@ -113,7 +113,7 @@ struct edge_hash : std::unary_function<std::pair<Position, Position>, std::size_
 };
 
 struct weight_calc: public boost::unordered_map<std::pair<Position, Position>, Cost, edge_hash> {
-    weight_calc(int level);
+    explicit weight_calc(int level);
     mapped_type &operator[](const key_type &v);
 
 private:
@@ -135,7 +135,7 @@ private:
 };
 
 struct astar_ex_visitor: public boost::default_astar_visitor {
-    astar_ex_visitor(const Position &goal);
+    explicit astar_ex_visitor(const Position &goal);
 
     void examine_vertex(const Position &u, const world_map_graph &);
     void discover_vertex(const Position &u, const world_map_graph &);

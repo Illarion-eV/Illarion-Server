@@ -30,7 +30,7 @@ class World;
 class LuaMonsterScript : public LuaScript {
 public:
     LuaMonsterScript();
-    LuaMonsterScript(const std::string &filename);
+    explicit LuaMonsterScript(const std::string &filename);
 
     virtual ~LuaMonsterScript();
 

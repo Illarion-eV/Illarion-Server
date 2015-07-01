@@ -22,21 +22,21 @@
 
 #include <ctime>
 
-//! Timer für Sekundenabstände
+//! Timer fï¿½r Sekundenabstï¿½nde
 class Timer {
 
 public:
 
     //! Konstruktor
     // \param timegap Anzahl der Sekunden zwischen zwei Timer-Ereignissen
-    Timer(unsigned long int timegap);
+    explicit Timer(unsigned long int timegap);
 
     //! Destruktor
     ~Timer();
 
-    //! prüft, ob schon genügend Zeit seit dem letzten Timer-Ereignis
+    //! prï¿½ft, ob schon genï¿½gend Zeit seit dem letzten Timer-Ereignis
     // (bzw. dem Konstruktor) vergangen ist
-    // \return true, falls das nächste Ereignis anliegt, false sonst
+    // \return true, falls das nï¿½chste Ereignis anliegt, false sonst
     bool next();
 
 private:

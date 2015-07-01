@@ -46,7 +46,7 @@ private:
     CONTAINERMAP containers;
 
 public:
-    Container(Item::id_type itemId);
+    explicit Container(Item::id_type itemId);
     Container(const Container &source);
     virtual ~Container();
     Container &operator =(const Container &source);

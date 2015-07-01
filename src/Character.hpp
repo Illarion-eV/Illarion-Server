@@ -70,7 +70,7 @@ public:
         appearance() {};
     };
 
-    Character(const appearance &appearance = {});
+    explicit Character(const appearance &appearance = {});
     virtual ~Character();
 
     enum character_type {

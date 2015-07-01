@@ -49,7 +49,7 @@ public:
     * In this case the internal data buffer is 1000 bytes large.
     * @param defByte The id of this command
     */
-    BasicServerCommand(unsigned char defByte);
+    explicit BasicServerCommand(unsigned char defByte);
 
     /**
     * Constructor which creates the server command.

@@ -30,7 +30,7 @@ struct WeaponStruct;
 
 class LuaWeaponScript : public LuaScript {
 public:
-    LuaWeaponScript(const std::string &filename);
+    explicit LuaWeaponScript(const std::string &filename);
     LuaWeaponScript(const std::string &filename, const WeaponStruct &weapon);
     virtual ~LuaWeaponScript();
 

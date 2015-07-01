@@ -60,7 +60,7 @@ public:
 
 class BBLogOutTC : public BasicServerCommand {
 public:
-    BBLogOutTC(TYPE_OF_CHARACTER_ID id);
+    explicit BBLogOutTC(TYPE_OF_CHARACTER_ID id);
 };
 
 class BBTalkTC : public BasicServerCommand {

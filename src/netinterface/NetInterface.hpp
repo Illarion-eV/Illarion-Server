@@ -54,7 +54,7 @@ public:
     /**
     * standard constructor, creates the two thread class receiver and sender
     */
-    NetInterface(boost::asio::io_service &io_servicen);
+    explicit NetInterface(boost::asio::io_service &io_servicen);
 
     /**
     * destructor deletes all the classes which are constructed in the constructor
