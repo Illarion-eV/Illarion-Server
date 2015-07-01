@@ -79,19 +79,13 @@ public:
     std::vector<pointer> findAllAliveCharactersInRangeOf(const position &pos, const Range &range) const;
     bool findAllCharactersWithXInRangeOf(short int startx, short int endx, std::vector<pointer> &ret) const;
 
-    void for_each(const for_each_type &function) {
-        for (const auto &key_value : container) {
-            function(key_value.second);
-        }
-    }
-
     void for_each(const for_each_type &function) const {
         for (const auto &key_value : container) {
             function(key_value.second);
         }
     }
 
-    void for_each(const for_each_member_type &function) {
+    void for_each(const for_each_member_type &function) const {
         for (const auto &key_value : container) {
             (key_value.second->*function)();
         }

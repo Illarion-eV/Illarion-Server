@@ -372,25 +372,24 @@ void CastTS::performAction(Player *player) {
                     Character *tmpCharacter = World::get()->findCharacterOnField(castPosition);
 
                     if (tmpCharacter) {
-                    } else {
                         Logger::debug(LogFacility::Script) << "Character found at target field!" << Log::end;
-                    }
 
-                    if ((tmpCharacter->getType() == Character::player) && (LuaMageScript)) {
-                        Logger::debug(LogFacility::Script) << "Target Character: player" << Log::end;
-                        Target.character = tmpCharacter;
-                        Target.pos = tmpCharacter->getPosition();
-                        Target.Type = LUA_CHARACTER;
-                    } else if ((tmpCharacter->getType() == Character::npc) && (LuaMageScript)) {
-                        Logger::debug(LogFacility::Script) << "Target Character: NPC" << Log::end;
-                        Target.character = tmpCharacter;
-                        Target.pos = tmpCharacter->getPosition();
-                        Target.Type = LUA_CHARACTER;
-                    } else if ((tmpCharacter->getType() == Character::monster) && (LuaMageScript)) {
-                        Logger::debug(LogFacility::Script) << "Target Character: monster" << Log::end;
-                        Target.character = tmpCharacter;
-                        Target.pos = tmpCharacter->getPosition();
-                        Target.Type = LUA_CHARACTER;
+                        if ((tmpCharacter->getType() == Character::player) && (LuaMageScript)) {
+                            Logger::debug(LogFacility::Script) << "Target Character: player" << Log::end;
+                            Target.character = tmpCharacter;
+                            Target.pos = tmpCharacter->getPosition();
+                            Target.Type = LUA_CHARACTER;
+                        } else if ((tmpCharacter->getType() == Character::npc) && (LuaMageScript)) {
+                            Logger::debug(LogFacility::Script) << "Target Character: NPC" << Log::end;
+                            Target.character = tmpCharacter;
+                            Target.pos = tmpCharacter->getPosition();
+                            Target.Type = LUA_CHARACTER;
+                        } else if ((tmpCharacter->getType() == Character::monster) && (LuaMageScript)) {
+                            Logger::debug(LogFacility::Script) << "Target Character: monster" << Log::end;
+                            Target.character = tmpCharacter;
+                            Target.pos = tmpCharacter->getPosition();
+                            Target.Type = LUA_CHARACTER;
+                        }
                     }
                 } else {
                     Item item;

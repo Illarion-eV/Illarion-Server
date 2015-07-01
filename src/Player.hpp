@@ -77,7 +77,7 @@ public:
     class LogoutException {
     public:
         LogoutException(const char &reason) : m_reason(reason) {}
-        inline const char &getReason() {
+        inline const char &getReason() const {
             return m_reason;
         }
     private:
@@ -353,7 +353,7 @@ public:
     //�dert die Qualit� eines Items an einer bestimmten Stelle
     void changeQualityAt(unsigned char pos, short int amount);
 
-    inline bool isMonitoringClient() {
+    inline bool isMonitoringClient() const {
         return monitoringClient;
     }
 

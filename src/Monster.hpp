@@ -123,7 +123,7 @@ public:
     virtual ~Monster() override;
 
     position lastTargetPosition; /**< last position of the last seen target */
-    bool lastTargetSeen; /**< if true the monster trys to reach the last targetposition if there is no other enemy*/
+    bool lastTargetSeen = false; /**< if true the monster trys to reach the last targetposition if there is no other enemy*/
 
     /**
     * checks if the monster can attack onther one or it is a peacefull monster
@@ -142,8 +142,8 @@ private:
 
     static uint32_t counter;
     SpawnPoint *spawn = nullptr;
-    TYPE_OF_CHARACTER_ID monstertype;
-    bool _canAttack;
+    TYPE_OF_CHARACTER_ID monstertype = 0;
+    bool _canAttack = true;
 };
 
 #endif // MONSTER_HPP

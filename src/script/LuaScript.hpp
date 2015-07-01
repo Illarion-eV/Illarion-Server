@@ -82,7 +82,7 @@ public:
 
     virtual ~LuaScript();
 
-    std::string getFileName() {
+    std::string getFileName() const {
         return _filename;
     }
 
@@ -211,7 +211,7 @@ private:
     LuaScript &operator=(const LuaScript &);
 
     std::string _filename;
-    char luafile[200];
+    char luafile[200] = "";
     typedef std::multimap<const std::string, std::shared_ptr<LuaScript> > QuestScripts;
     QuestScripts questScripts;
 };

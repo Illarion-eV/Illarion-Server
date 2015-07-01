@@ -181,9 +181,9 @@ private:
     SouTar _source; /**< source of the last script*/
     SouTar _target; /**< target of the last script*/
 
-    TYPE_OF_CHARACTER_ID _targetId; /**< id of the target if its an character*/
-    TYPE_OF_CHARACTER_ID _sourceId; /**< id of the source if its an character*/
-    uint8_t _sourceCharType; /**< type of the source*/
+    TYPE_OF_CHARACTER_ID _targetId = 0; /**< id of the target if its an character*/
+    TYPE_OF_CHARACTER_ID _sourceId = 0; /**< id of the source if its an character*/
+    uint8_t _sourceCharType = 0; /**< type of the source*/
 
     Player *_owner;  /**< the owner of the LongTimeAction Objectt*/
     World *_world;  /**< pointer to the gameworld*/

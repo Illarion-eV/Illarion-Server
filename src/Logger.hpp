@@ -101,7 +101,7 @@ public:
 
 private:
     std::stringstream _ss;
-    LogFacility _facility;
+    LogFacility _facility = LogFacility::Other;
 };
 
 template<LogPriority priority>

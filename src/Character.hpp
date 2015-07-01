@@ -448,8 +448,8 @@ public:
 
     virtual void setAlive(bool t);
 
-    character_type enemytype;
-    TYPE_OF_CHARACTER_ID enemyid;
+    character_type enemytype = player;
+    TYPE_OF_CHARACTER_ID enemyid = 0;
     virtual bool attack(Character *target);
     virtual void stopAttack();
     character_ptr getAttackTarget() const;
@@ -553,7 +553,7 @@ protected:
     appearance _appearance;
 
 private:
-    TYPE_OF_CHARACTER_ID id;
+    TYPE_OF_CHARACTER_ID id = 0;
     std::string name;
     movement_type _movement = movement_type::walk;
     std::vector<Attribute> attributes;

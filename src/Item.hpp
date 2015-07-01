@@ -153,7 +153,7 @@ public:
     };
     Container *inside;
     ScriptItem() : Item(0,0,0), type(notdefined), pos(position(0, 0, 0)), itempos(255), owner(nullptr), inside(nullptr) {}
-    unsigned char getType() {
+    unsigned char getType() const {
         return type;
     }
     ScriptItem(const ScriptItem &source) = default;
