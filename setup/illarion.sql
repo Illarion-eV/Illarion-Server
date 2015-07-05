@@ -126,6 +126,27 @@ CREATE FUNCTION is_new_player(account_id integer) RETURNS boolean
 
 
 --
+-- Name: protect_itm_name(); Type: FUNCTION; Schema: server; Owner: -
+--
+
+CREATE FUNCTION protect_itm_name() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$BEGIN
+
+    IF (TG_OP = 'UPDATE') THEN
+
+        IF OLD.itm_name IS NOT NULL AND NEW.itm_name <> OLD.itm_name THEN
+            RAISE EXCEPTION 'itm_name is protected, cannot replace % with %.', OLD.itm_name, NEW.itm_name;
+        END IF;
+
+    END IF;
+
+    RETURN NEW;
+
+END;$$;
+
+
+--
 -- Name: resort_items(integer); Type: FUNCTION; Schema: server; Owner: -
 --
 
@@ -605,11 +626,9 @@ CREATE TABLE armor (
     arm_magicdisturbance integer NOT NULL,
     arm_absorb smallint DEFAULT 0 NOT NULL,
     arm_stiffness smallint DEFAULT 0 NOT NULL,
-    arm_level smallint DEFAULT 0 NOT NULL,
     arm_type smallint DEFAULT 0 NOT NULL,
     CONSTRAINT armor_absorb_check CHECK ((arm_absorb >= 0)),
     CONSTRAINT armor_bodyparts_check CHECK (((arm_bodyparts >= 0) AND (arm_bodyparts < 256))),
-    CONSTRAINT armor_level_check CHECK (((arm_level >= 0) AND (arm_level <= 100))),
     CONSTRAINT armor_magicdist_check CHECK (((arm_magicdisturbance >= 0) AND (arm_magicdisturbance <= 100))),
     CONSTRAINT armor_puncture_check CHECK (((arm_puncture >= 0) AND (arm_puncture <= 200))),
     CONSTRAINT armor_stiffness_check CHECK (((arm_stiffness >= 0) AND (arm_stiffness <= 200))),
@@ -1344,7 +1363,7 @@ CREATE TABLE player (
     ply_magicflagsdruid bigint DEFAULT 0 NOT NULL,
     ply_lastmusic integer DEFAULT 0 NOT NULL,
     ply_poison smallint DEFAULT 0 NOT NULL,
-    ply_mental_capacity integer DEFAULT 2000000 NOT NULL,
+    ply_mental_capacity integer DEFAULT 5000000 NOT NULL,
     ply_dob integer DEFAULT 0 NOT NULL,
     ply_hair smallint DEFAULT 0 NOT NULL,
     ply_beard smallint DEFAULT 0 NOT NULL,
@@ -2152,12 +2171,10 @@ CREATE TABLE weapon (
     wp_magicdisturbance integer NOT NULL,
     wp_poison smallint NOT NULL,
     wp_fightingscript character varying(50),
-    wp_level smallint DEFAULT 0 NOT NULL,
     CONSTRAINT weapon_accuracy_check CHECK (((wp_accuracy > 0) AND (wp_accuracy <= 100))),
     CONSTRAINT weapon_ap_check CHECK (((wp_actionpoints > 0) AND (wp_actionpoints <= 100))),
     CONSTRAINT weapon_attack_check CHECK (((wp_attack >= 0) AND (wp_attack <= 200))),
     CONSTRAINT weapon_defence_check CHECK (((wp_defence >= 0) AND (wp_defence <= 200))),
-    CONSTRAINT weapon_level_check CHECK (((wp_level >= 0) AND (wp_level <= 100))),
     CONSTRAINT weapon_magicdist_check CHECK (((wp_magicdisturbance >= 0) AND (wp_magicdisturbance <= 200))),
     CONSTRAINT weapon_poison_check CHECK (((wp_poison >= 0) AND (wp_poison <= 100))),
     CONSTRAINT weapon_range_check CHECK (((wp_range > 0) AND (wp_range <= 10))),
@@ -2890,6 +2907,13 @@ CREATE INDEX playerskills_searchindex ON playerskills USING btree (psk_playerid)
 CREATE RULE gmrights_update AS
     ON UPDATE TO gmrights DO INSTEAD  UPDATE gms SET gm_rights_server = ((((((((((((((((cast_bool(new.allow_login) + (cast_bool(new.basic_commands) << 1)) + (cast_bool(new.warp) << 2)) + (cast_bool(new.summon) << 3)) + (cast_bool(new.prison) << 4)) + (cast_bool(new.settiles) << 5)) + (cast_bool(new.clipping) << 6)) + (cast_bool(new.warp_field_edit) << 7)) + (cast_bool(new.import) << 8)) + (cast_bool(new.visibility) << 9)) + (cast_bool(new.table_reload) << 10)) + (cast_bool(new.ban) << 11)) + (cast_bool(new.toggle_login) << 12)) + (cast_bool(new.save) << 13)) + (cast_bool(new.broadcast) << 14)) + (cast_bool(new.forcelogout) << 15)) + (cast_bool(new.receive_gmcalls) << 16))
   WHERE ((gms.gm_login)::text = (new.gm_login)::text);
+
+
+--
+-- Name: protect_itm_name; Type: TRIGGER; Schema: server; Owner: -
+--
+
+CREATE TRIGGER protect_itm_name BEFORE UPDATE ON items FOR EACH ROW EXECUTE PROCEDURE protect_itm_name();
 
 
 SET search_path = accounts, pg_catalog;
