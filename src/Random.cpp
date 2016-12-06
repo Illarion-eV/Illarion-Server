@@ -17,6 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Random.hpp"
+#include <stdexcept>
+#include <sstream>
 
 std::mt19937 Random::rng;
 
@@ -26,6 +28,13 @@ double Random::uniform() {
 }
 
 int Random::uniform(int min, int max) {
+    if (max < min ) {
+        std::stringstream error;
+        error << "Random::uniform: Invalid arguments, min("
+              << min << ") > max(" << max << ")";
+        throw std::invalid_argument(error.str());
+    }
+
     std::uniform_int_distribution<int> uniform(min, max);
     return uniform(rng);
 }
