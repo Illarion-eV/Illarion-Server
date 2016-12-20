@@ -271,7 +271,7 @@ CREATE TABLE account (
     acc_id integer DEFAULT nextval(('account_seq'::text)::regclass) NOT NULL,
     acc_login character varying(50) DEFAULT 'noname'::character varying NOT NULL,
     acc_passwd character varying(50) DEFAULT 'nopasswd'::character varying NOT NULL,
-    acc_email character varying(50) DEFAULT 'noemail'::character varying NOT NULL,
+    acc_email character varying(50),
     acc_registerdate timestamp without time zone,
     acc_lastip inet NOT NULL,
     acc_state integer DEFAULT 1 NOT NULL,
@@ -346,6 +346,45 @@ CREATE TABLE account_sessions (
     as_ip inet NOT NULL,
     as_created timestamp without time zone DEFAULT now() NOT NULL
 );
+
+
+--
+-- Name: account_unconfirmed; Type: TABLE; Schema: accounts; Owner: -; Tablespace: 
+--
+
+CREATE TABLE account_unconfirmed (
+    au_id uuid NOT NULL,
+    au_acc_id integer NOT NULL,
+    au_mail character varying(50) NOT NULL
+);
+
+
+--
+-- Name: TABLE account_unconfirmed; Type: COMMENT; Schema: accounts; Owner: -
+--
+
+COMMENT ON TABLE account_unconfirmed IS 'This table contains the unconfirmed e-mail addresses.';
+
+
+--
+-- Name: COLUMN account_unconfirmed.au_id; Type: COMMENT; Schema: accounts; Owner: -
+--
+
+COMMENT ON COLUMN account_unconfirmed.au_id IS 'The ID that is part of the activation link';
+
+
+--
+-- Name: COLUMN account_unconfirmed.au_acc_id; Type: COMMENT; Schema: accounts; Owner: -
+--
+
+COMMENT ON COLUMN account_unconfirmed.au_acc_id IS 'The ID of the linked account.';
+
+
+--
+-- Name: COLUMN account_unconfirmed.au_mail; Type: COMMENT; Schema: accounts; Owner: -
+--
+
+COMMENT ON COLUMN account_unconfirmed.au_mail IS 'The new e-mail address of the account.';
 
 
 --
@@ -2233,6 +2272,14 @@ ALTER TABLE ONLY account_sessions
 
 
 --
+-- Name: account_unconfirmed_pkey; Type: CONSTRAINT; Schema: accounts; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY account_unconfirmed
+    ADD CONSTRAINT account_unconfirmed_pkey PRIMARY KEY (au_id);
+
+
+--
 -- Name: attribtemp_attr_id_key; Type: CONSTRAINT; Schema: accounts; Owner: -; Tablespace: 
 --
 
@@ -2972,6 +3019,14 @@ ALTER TABLE ONLY account_log
 
 ALTER TABLE ONLY account_sessions
     ADD CONSTRAINT account_sessions_as_account_id_fkey FOREIGN KEY (as_account_id) REFERENCES account(acc_id) MATCH FULL ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: account_unconfirmed_au_acc_id_fkey; Type: FK CONSTRAINT; Schema: accounts; Owner: -
+--
+
+ALTER TABLE ONLY account_unconfirmed
+    ADD CONSTRAINT account_unconfirmed_au_acc_id_fkey FOREIGN KEY (au_acc_id) REFERENCES account(acc_id) MATCH FULL ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 SET search_path = server, pg_catalog;
