@@ -44,22 +44,22 @@
 #define P_ATTACK_COST 15
 #define NP_ATTACK_COST 20
 
-#define P_PUSH_COST 40
-#define NP_PUSH_COST 40
+#define P_PUSH_COST 1
+#define NP_PUSH_COST 1
 
-#define P_CAST_COST 10
-#define NP_CAST_COST 10
+#define P_CAST_COST 1
+#define NP_CAST_COST 1
 
-#define P_USE_COST 10
-#define NP_USE_COST 10
+#define P_USE_COST 1
+#define NP_USE_COST 1
 
 #define P_LOOK_COST 0
 
-#define P_SAY_COST 3
-#define P_SHOUT_COST 9
+#define P_SAY_COST 1
+#define P_SHOUT_COST 1
 #define P_WHISPER_COST 1
 
-#define P_ITEMMOVE_COST 3
+#define P_ITEMMOVE_COST 1
 
 #define P_SPIN_COST 1
 
