@@ -1791,7 +1791,7 @@ SET default_with_oids = false;
 
 CREATE TABLE scriptvariables (
     svt_ids character varying(255) NOT NULL,
-    svt_string character varying(255) NOT NULL
+    svt_string text NOT NULL
 );
 
 
