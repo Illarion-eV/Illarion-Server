@@ -22,14 +22,15 @@
 #define _RESULT_HPP_
 
 #include <pqxx/result.hxx>
+#include <pqxx/result_iterator.hxx>
 
 namespace Database {
 /* This file contains just some namespaces that hide the pqxx implementation
  * of the SQL Query result handling.
  */
 typedef pqxx::result Result;
-typedef pqxx::result::tuple ResultTuple;
-typedef pqxx::result::tuple::reference ResultField;
+typedef pqxx::row ResultTuple;
+typedef pqxx::field ResultField;
 typedef Result *PResult;
 }
 

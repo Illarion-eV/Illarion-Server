@@ -160,7 +160,7 @@ uint16_t Item::getDepot() const {
 
     try {
         depotId = boost::lexical_cast<uint16_t>(getData("depot"));
-    } catch (boost::bad_lexical_cast) {
+    } catch (const boost::bad_lexical_cast&) {
         depotId = 1;
     }
 

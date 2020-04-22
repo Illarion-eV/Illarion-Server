@@ -43,7 +43,7 @@ public:
             }
 
             query.setServerTable(getTableName());
-            Database::Result results = query.execute();
+            const auto results = query.execute();
 
             clear();
 

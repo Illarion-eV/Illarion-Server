@@ -47,13 +47,13 @@ AC_STRUCT_TM
 # Checks for library functions.
 AC_CHECK_FUNCS([bzero ftime gethostbyname inet_ntoa memset select socket strerror strtol strtoul])
 
-BOOST_REQUIRE([1.55])
+BOOST_REQUIRE([1.67])
 BOOST_FILESYSTEM
 BOOST_SYSTEM
 BOOST_GRAPH
 
 PKG_CHECK_MODULES([lua], [lua5.2])
-PKG_CHECK_MODULES([libpqxx], [libpqxx >= 3.1])
+PKG_CHECK_MODULES([libpqxx], [libpqxx >= 6.2])
 PKG_CHECK_MODULES([luabind], [luabind >= 0.9.1])
 
 AC_CONFIG_LINKS([test/maps/test.tiles.txt:test/maps/test.tiles.txt

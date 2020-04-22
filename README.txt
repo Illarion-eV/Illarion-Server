@@ -17,18 +17,18 @@ Details
 
 Requirements
 
-   GCC 4.9.2 OR clang 3.5
-   GNU Make 4.0
-   Automake 1.14.1
-   Boost 1.55.0
+   GCC 8.3
+   GNU Make 4.2.1
+   Automake 1.15.1
+   Boost 1.67.0
    PostgreSQL 9.4.3
-   libpqxx 4.0.1
-   Lua 5.2.3
+   libpqxx 6.2.5
+   Lua 5.2.4
    Luabind 0.9.1 with some bugfixes from
         http://illarion.org/repos/apt/debian (binary)
      or https://github.com/vilarion/luabind/tree/debian (source)
-   gtest 1.7.0
-   google-mock 1.7.0
+   gtest 1.8.1
+   google-mock 1.8.1
 
 Build
 

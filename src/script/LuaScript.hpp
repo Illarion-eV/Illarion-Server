@@ -188,7 +188,7 @@ private:
         try {
             auto luaEntrypoint = buildEntrypoint(entrypoint);
             luaEntrypoint(args...);
-        } catch (luabind::error &e) {
+        } catch (const luabind::error &e) {
             writeErrorMsg();
         }
     };
