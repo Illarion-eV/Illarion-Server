@@ -19,7 +19,7 @@
 
 # Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.50)
-AC_INIT(Illarion Server, 0.9.5.1, http://mantis.illarion.org, illarion, http://illarion.org)
+AC_INIT(Illarion Server, 0.9.6, http://mantis.illarion.org, illarion, http://illarion.org)
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([-Wno-portability foreign 1.11])
 AC_CONFIG_HEADERS(config.h)
