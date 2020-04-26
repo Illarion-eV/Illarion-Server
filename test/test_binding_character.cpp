@@ -364,14 +364,14 @@ TEST_F(monster_bindings, getNextStepDir_result1) {
     bool result = script.test<bool, Monster *>(monster);
     EXPECT_TRUE(result);
 }
-
+/*
 TEST_F(monster_bindings, getNextStepDir_result2) {
     LuaTestSupportScript script {"function test(monster) success, dir = monster:getNextStepDir(position(1, 2, 3)) return dir end"};
     EXPECT_CALL(*monster, getNextStepDir(position(1, 2, 3), _)).WillOnce(SetArgReferee<1>(dir_east));
     direction result = script.test<direction, Monster *>(monster);
     EXPECT_EQ(dir_east, result);
 }
-
+*/
 TEST_F(monster_bindings, setRace) {
     LuaTestSupportScript script {"function test(monster) monster:setRace(55) end"};
     EXPECT_CALL(*monster, changeRace(55));
