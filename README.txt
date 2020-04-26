@@ -19,7 +19,7 @@ Requirements
 
    GCC 8.3
    GNU Make 4.2.1
-   Automake 1.15.1
+   Automake 1.16.1
    Boost 1.67.0
    PostgreSQL 9.4.3
    libpqxx 6.2.5
