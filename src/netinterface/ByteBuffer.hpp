@@ -70,7 +70,7 @@ public:
     * return how much data is available in the buffer
     * @return the number of bytes which are currently in the buffer
     */
-    uint16_t dataAvailable();
+    uint16_t dataAvailable() const;
 
 private:
 

@@ -73,7 +73,7 @@ public:
      * Returns the length of the command in bytes
      * @return The length of the command
      */
-    int getLength();
+    int getLength() const;
 
     void addStringToBuffer(const std::string &data);
     void addIntToBuffer(int data);

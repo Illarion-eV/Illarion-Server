@@ -336,7 +336,7 @@ public:
     std::list<BlockingObject> LoS(const position &startingpos, const position &endingpos) const;
 
 
-    bool findTargetsInSight(const position &pos, uint8_t range, std::vector<Character *> &ret, Character::face_to direction);
+    bool findTargetsInSight(const position &pos, uint8_t range, std::vector<Character *> &ret, Character::face_to direction) const;
     Character *findCharacterOnField(const position &pos) const;
     Player *findPlayerOnField(const position &pos) const;
 
@@ -793,12 +793,12 @@ public:
     //Prft ob sich auf dem Feld ein Character befindet
     //\param position die zu prfen ist
     //\return true oder false
-    bool isCharacterOnField(const position &pos);
+    bool isCharacterOnField(const position &pos) const;
 
     //Liefert einen Zeiger auf einen Character
     //\param pos, die Position auf der sich der Character befinden soll
     //\return Zeiger auf den Character
-    character_ptr getCharacterOnField(const position &pos);
+    character_ptr getCharacterOnField(const position &pos) const;
 
     //Loescht ein ScriptItem
     //\ param Item, das Item welches geloescht werden soll
@@ -1003,7 +1003,7 @@ private:
     bool executeUserCommand(Player *user, const std::string &input, const CommandMap &commands);
 
     // export maps to mapdir/export
-    bool exportMaps(Player *cp);
+    bool exportMaps(Player *cp) const;
 
     void ignoreComments(std::ifstream &inputStream);
 

@@ -70,7 +70,7 @@ void BasicServerCommand::addHeader() {
     }
 }
 
-int BasicServerCommand::getLength() {
+int BasicServerCommand::getLength() const {
     return bufferPos;
 }
 

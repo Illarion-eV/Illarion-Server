@@ -126,7 +126,7 @@ short int BasicClientCommand::getShortIntFromBuffer() {
     return ret;
 }
 
-bool BasicClientCommand::isDataOk() {
+bool BasicClientCommand::isDataOk() const {
     uint16_t crcCheck = static_cast<uint16_t>(crc % 0xFFFF);
     return (dataOk && (length == bytesRetrieved) && (crcCheck==checkSum));
 }

@@ -46,7 +46,7 @@ std::string &QueryColumns::buildQuerySegment() {
     return columns;
 }
 
-uint32_t QueryColumns::getColumnCount() {
+uint32_t QueryColumns::getColumnCount() const {
     return (uint32_t) nextColumn;
 }
 

@@ -71,7 +71,7 @@ private:
 };
 
 struct LTEPriority {
-    bool operator()(const LongTimeEffect *lhs, const LongTimeEffect *rhs) {
+    bool operator()(const LongTimeEffect *lhs, const LongTimeEffect *rhs) const {
         // effects with higher execution time have lower priority
         return lhs->getExecutionTime() > rhs->getExecutionTime();
     }

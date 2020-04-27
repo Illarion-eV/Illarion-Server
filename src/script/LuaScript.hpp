@@ -166,7 +166,7 @@ private:
     static void init_base_functions();
     static int add_backtrace(lua_State *L);
     void writeErrorMsg();
-    void writeCastErrorMsg(const std::string &entryPoint, const luabind::cast_failed &e);
+    void writeCastErrorMsg(const std::string &entryPoint, const luabind::cast_failed &e) const;
     void setCurrentWorldScript();
     luabind::object buildEntrypoint(const std::string &entrypoint);
     bool existsQuestEntrypoint(const std::string &entrypoint) const;

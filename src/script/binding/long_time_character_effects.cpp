@@ -32,8 +32,8 @@ namespace binding {
         .def("removeEffect", (bool(LongTimeCharacterEffects:: *)(uint16_t))&LongTimeCharacterEffects::removeEffect)
         .def("removeEffect", (bool(LongTimeCharacterEffects:: *)(const std::string &))&LongTimeCharacterEffects::removeEffect)
         .def("removeEffect", (bool(LongTimeCharacterEffects:: *)(LongTimeEffect *))&LongTimeCharacterEffects::removeEffect)
-        .def("find", (bool(LongTimeCharacterEffects:: *)(uint16_t,LongTimeEffect *&))&LongTimeCharacterEffects::find,luabind::pure_out_value(_3))
-        .def("find", (bool(LongTimeCharacterEffects:: *)(const std::string &,LongTimeEffect *&))&LongTimeCharacterEffects::find,luabind::pure_out_value(_3));
+        .def("find", (bool(LongTimeCharacterEffects:: *)(uint16_t,LongTimeEffect *&) const)&LongTimeCharacterEffects::find,luabind::pure_out_value(_3))
+        .def("find", (bool(LongTimeCharacterEffects:: *)(const std::string &,LongTimeEffect *&) const)&LongTimeCharacterEffects::find,luabind::pure_out_value(_3));
     }
 
 }

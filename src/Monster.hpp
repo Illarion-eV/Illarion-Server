@@ -129,7 +129,7 @@ public:
     * checks if the monster can attack onther one or it is a peacefull monster
     * @return true if the monster is aggresive otherwise false
     */
-    inline const bool canAttack() {
+    inline const bool canAttack() const {
         return _canAttack;
     }
 

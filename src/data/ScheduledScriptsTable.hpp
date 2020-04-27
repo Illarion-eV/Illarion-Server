@@ -58,7 +58,7 @@ public:
     ScheduledScriptsTable();
     ~ScheduledScriptsTable();
 
-    inline bool isDataOK() {
+    inline bool isDataOK() const {
         return m_dataOk;
     }
 

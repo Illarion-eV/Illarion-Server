@@ -37,7 +37,7 @@
 LongTimeCharacterEffects::LongTimeCharacterEffects(Character *owner) : owner(owner), time(0) {
 }
 
-bool LongTimeCharacterEffects::find(uint16_t effectid, LongTimeEffect *&effect) {
+bool LongTimeCharacterEffects::find(uint16_t effectid, LongTimeEffect *&effect) const {
     for (const auto &e : effects) {
         if (e->getEffectId() == effectid) {
             effect = e;
@@ -49,7 +49,7 @@ bool LongTimeCharacterEffects::find(uint16_t effectid, LongTimeEffect *&effect) 
     return false;
 }
 
-bool LongTimeCharacterEffects::find(const std::string &effectname, LongTimeEffect *&effect) {
+bool LongTimeCharacterEffects::find(const std::string &effectname, LongTimeEffect *&effect) const {
 
     for (const auto &e : effects) {
         if (e->getEffectName() == effectname) {

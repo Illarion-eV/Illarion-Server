@@ -30,7 +30,7 @@ class MonsterTable {
 public:
     MonsterTable();
 
-    inline bool isDataOK() {
+    inline bool isDataOK() const {
         return dataOK;
     }
 

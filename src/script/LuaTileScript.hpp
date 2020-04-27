@@ -41,7 +41,7 @@ private:
     LuaTileScript(const LuaTileScript &);
     LuaTileScript &operator=(const LuaTileScript &);
     TilesStruct thisTile;
-    void init_functions();
+    void init_functions() const;
 };
 
 #endif

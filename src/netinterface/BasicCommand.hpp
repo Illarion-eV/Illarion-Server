@@ -39,7 +39,7 @@ public:
      *Provides read access to the definition byte
      *\return The unique command id
     */
-    unsigned char getDefinitionByte() {
+    unsigned char getDefinitionByte() const {
         return definitionByte;
     };
 };

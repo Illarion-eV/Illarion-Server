@@ -61,7 +61,7 @@ protected:
     QueryColumns &operator=(const QueryColumns &org) = delete;
 
     std::string &buildQuerySegment();
-    uint32_t getColumnCount();
+    uint32_t getColumnCount() const;
 
     void setHideTable(const bool hide);
 };

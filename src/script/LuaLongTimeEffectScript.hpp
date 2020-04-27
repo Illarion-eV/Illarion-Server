@@ -44,7 +44,7 @@ private:
     LongTimeEffectStruct _effectStruct;
     explicit LuaLongTimeEffectScript(const LuaItemScript &);
     LuaLongTimeEffectScript &operator=(const LuaLongTimeEffectScript &);
-    void init_functions();
+    void init_functions() const;
 };
 
 #endif

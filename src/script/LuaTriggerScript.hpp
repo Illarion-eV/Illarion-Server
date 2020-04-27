@@ -44,7 +44,7 @@ private:
     position _pos;
     LuaTriggerScript(const LuaTriggerScript &);
     LuaTriggerScript &operator=(const LuaTriggerScript &);
-    void init_functions();
+    void init_functions() const;
 };
 
 #endif

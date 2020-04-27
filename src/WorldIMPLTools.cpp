@@ -66,7 +66,7 @@ void World::deleteAllLostNPC() {
     LostNpcs.clear();
 }
 
-bool World::findTargetsInSight(const position &pos, uint8_t range, std::vector<Character *> &ret, Character::face_to direction) {
+bool World::findTargetsInSight(const position &pos, uint8_t range, std::vector<Character *> &ret, Character::face_to direction) const {
     bool found = false;
 
     for (const auto &candidate : getTargetsInRange(pos, range)) {

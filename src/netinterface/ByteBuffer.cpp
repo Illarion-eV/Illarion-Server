@@ -34,7 +34,7 @@ ByteBuffer::~ByteBuffer() {
 }
 
 
-uint16_t ByteBuffer::dataAvailable() {
+uint16_t ByteBuffer::dataAvailable() const {
     return (bytesAvailable);
 }
 

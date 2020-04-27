@@ -58,10 +58,10 @@ public:
 
     static QuestNodeTable &getInstance();
     void reload();
-    TableRange<TYPE_OF_ITEM_ID> getItemNodes();
-    TableRange<unsigned int> getNpcNodes();
-    TableRange<unsigned int> getMonsterNodes();
-    TableRange<position> getTriggerNodes();
+    TableRange<TYPE_OF_ITEM_ID> getItemNodes() const;
+    TableRange<unsigned int> getNpcNodes() const ;
+    TableRange<unsigned int> getMonsterNodes() const ;
+    TableRange<position> getTriggerNodes() const;
 
 private:
     void readQuest(boost::filesystem::ifstream &questFile, boost::filesystem::path &questPath);

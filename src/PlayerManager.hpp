@@ -37,7 +37,7 @@ public:
     void activate();
     void stop();
 
-    bool threadOK() {
+    bool threadOK() const {
         return threadOk;
     }
 

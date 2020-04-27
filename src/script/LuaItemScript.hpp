@@ -50,7 +50,7 @@ private:
     ItemStruct _comstr;
     LuaItemScript(const LuaItemScript &);
     LuaItemScript &operator=(const LuaItemScript &);
-    void init_functions();
+    void init_functions() const;
 };
 
 #endif

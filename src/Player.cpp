@@ -2646,7 +2646,7 @@ void Player::executeMerchantDialogAbort(unsigned int dialogId) {
     dialogs.erase(dialogId);
 }
 
-void Player::executeMerchantDialogBuy(unsigned int dialogId, MerchantDialog::index_type index, Item::number_type amount) {
+void Player::executeMerchantDialogBuy(unsigned int dialogId, MerchantDialog::index_type index, Item::number_type amount) const {
     auto merchantDialog = getDialog<MerchantDialog>(dialogId);
 
     if (merchantDialog) {

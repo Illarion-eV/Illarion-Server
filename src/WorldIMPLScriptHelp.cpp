@@ -219,7 +219,7 @@ ItemStruct World::getItemStatsFromId(TYPE_OF_ITEM_ID id) {
     return data;
 }
 
-bool World::isCharacterOnField(const position &pos) {
+bool World::isCharacterOnField(const position &pos) const {
     if (findCharacterOnField(pos)) {
         return true;
     } else {
@@ -227,7 +227,7 @@ bool World::isCharacterOnField(const position &pos) {
     }
 }
 
-character_ptr World::getCharacterOnField(const position &pos) {
+character_ptr World::getCharacterOnField(const position &pos) const {
     return character_ptr(findCharacterOnField(pos));
 }
 

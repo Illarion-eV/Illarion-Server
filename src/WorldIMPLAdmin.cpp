@@ -1178,7 +1178,7 @@ void World::set_login(Player *player, const std::string &text) {
     player->inform(message);
 }
 
-bool World::exportMaps(Player *cp) {
+bool World::exportMaps(Player *cp) const {
     if (!cp->hasGMRight(gmr_import)) {
         return false;
     }

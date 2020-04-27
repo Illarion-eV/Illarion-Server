@@ -32,8 +32,8 @@ public:
     explicit LongTimeCharacterEffects(Character *owner);
 
     void addEffect(LongTimeEffect *effect);
-    bool find(uint16_t effectid, LongTimeEffect *&effect);
-    bool find(const std::string &effectname, LongTimeEffect *&effect);
+    bool find(uint16_t effectid, LongTimeEffect *&effect) const;
+    bool find(const std::string &effectname, LongTimeEffect *&effect) const;
     bool removeEffect(uint16_t effectid);
     bool removeEffect(const std::string &name);
     bool removeEffect(LongTimeEffect *effect);

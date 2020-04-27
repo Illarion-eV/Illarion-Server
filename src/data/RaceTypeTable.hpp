@@ -32,7 +32,7 @@ class RaceTypeTable {
 public:
     RaceTypeTable();
 
-    inline bool isDataOK() {
+    inline bool isDataOK() const {
         return dataOK;
     }
 

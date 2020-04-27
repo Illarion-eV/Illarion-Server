@@ -170,7 +170,7 @@ public:
     *checks if currently an action is running or not
     * @return true if there is a action running
     */
-    inline bool actionRunning() {
+    inline bool actionRunning() const {
         return _actionrunning;
     }
 
