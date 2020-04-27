@@ -157,7 +157,7 @@ public:
         return type;
     }
     ScriptItem(const ScriptItem &source) = default;
-    ScriptItem(const Item &source) : Item(source), pos(position(0, 0, 0)) {
+    explicit ScriptItem(const Item &source) : Item(source), pos(position(0, 0, 0)) {
         itempos = 0;
         type = notdefined;
         owner = nullptr;

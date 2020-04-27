@@ -32,7 +32,7 @@ class SpawnPoint {
 
 public:
     //! Creates a new SpawnPoint at <pos>
-    SpawnPoint(const position &pos, int Range = 20, uint16_t Spawnrange = 0, uint16_t Min_Spawntime = 1, uint16_t Max_Spawntime = 1, bool Spawnall = false);
+    explicit SpawnPoint(const position &pos, int Range = 20, uint16_t Spawnrange = 0, uint16_t Min_Spawntime = 1, uint16_t Max_Spawntime = 1, bool Spawnall = false);
 
     //! Destructor
     ~SpawnPoint();

@@ -362,7 +362,7 @@ ScriptItem Character::GetItemAt(unsigned char itempos) {
     ScriptItem item;
 
     if (itempos < MAX_BODY_ITEMS + MAX_BELT_SLOTS) {
-        item = items[ itempos ];
+        item = static_cast<ScriptItem>(items[ itempos ]);
         item.pos = pos;
         item.itempos = itempos;
         item.owner = this;
@@ -1552,7 +1552,7 @@ std::vector<ScriptItem> Character::getItemList(TYPE_OF_ITEM_ID id) const {
 
     for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
         if (items[ i ].getId() == id) {
-            ScriptItem item = items[ i ];
+            ScriptItem item(items[ i ]);
 
             if (i < MAX_BODY_ITEMS) {
                 item.type = ScriptItem::it_inventory;

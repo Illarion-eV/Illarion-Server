@@ -363,7 +363,7 @@ ScriptItem World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, con
         g_item.setQuality(quality);
         g_item.setData(data);
         g_cont = nullptr;
-        sItem = g_item;
+        sItem = static_cast<ScriptItem>(g_item);
         sItem.pos = pos;
         sItem.type = ScriptItem::it_field;
         sItem.itempos = 255;
@@ -448,7 +448,7 @@ ScriptItem World::getItemOnField(const position &pos) {
         Item it;
 
         if (field.viewItemOnStack(it)) {
-            item = it;
+            item = static_cast<ScriptItem>(it);
             item.pos = pos;
             item.type = ScriptItem::it_field;
         }

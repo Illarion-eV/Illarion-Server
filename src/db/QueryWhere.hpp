@@ -56,7 +56,7 @@ public:
     void andConditions();
     void orConditions();
 protected:
-    QueryWhere(const Connection &connection);
+    explicit QueryWhere(const Connection &connection);
     QueryWhere(const QueryWhere &org) = delete;
     QueryWhere &operator=(const QueryWhere &org) = delete;
 

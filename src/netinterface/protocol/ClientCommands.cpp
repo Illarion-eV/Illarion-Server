@@ -400,7 +400,7 @@ void CastTS::performAction(Player *player) {
                         if (LuaMageScript) {
                             Target.pos = castPosition;
                             Target.Type = LUA_ITEM;
-                            Target.item = item;
+                            Target.item = static_cast<ScriptItem>(item);
                             Target.item.type = ScriptItem::it_field;
                             Target.item.pos = castPosition;
                             Target.item.owner = player;
@@ -561,7 +561,7 @@ void CastTS::performAction(Player *player) {
 
                     if (LuaMageScript) {
                         Target.Type = LUA_ITEM;
-                        Target.item = (ScriptItem)player->items[ pos ];
+                        Target.item = static_cast<ScriptItem>(player->items[ pos ]);
                         Target.item.pos = player->getPosition();
 
                         if (pos < MAX_BODY_ITEMS) {
@@ -811,7 +811,7 @@ void UseTS::performAction(Player *player) {
 
                 if (LuaScript) {
                     Source.Type = LUA_ITEM;
-                    Source.item = (ScriptItem)player->items[ pos ];
+                    Source.item = static_cast<ScriptItem>(player->items[ pos ]);
                     Source.item.pos = player->getPosition();
 
                     if (pos < MAX_BODY_ITEMS) {

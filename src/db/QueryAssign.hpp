@@ -39,7 +39,7 @@ public:
 
     void addAssignColumnNull(const std::string &column);
 protected:
-    QueryAssign(const Connection &connection);
+    explicit QueryAssign(const Connection &connection);
     QueryAssign(const QueryAssign &org) = delete;
     QueryAssign &operator=(const QueryAssign &org) = delete;
 

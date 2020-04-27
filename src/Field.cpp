@@ -83,7 +83,7 @@ TYPE_OF_WALKINGCOST Field::getMovementCost() const {
 
 ScriptItem Field::getStackItem(uint8_t pos) const {
     if (pos < items.size()) {
-        ScriptItem result = items.at(pos);
+        ScriptItem result(items.at(pos));
         result.type = ScriptItem::it_field;
         result.itempos = pos;
         return result;

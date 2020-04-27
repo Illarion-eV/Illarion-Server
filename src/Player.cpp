@@ -412,7 +412,7 @@ void Player::lookIntoShowcaseContainer(uint8_t showcase, unsigned char pos) {
 
 bool Player::lookIntoBackPack() {
     if ((items[BACKPACK].getId() != 0) && backPackContents) {
-        openShowcase(backPackContents, items[BACKPACK], true);
+        openShowcase(backPackContents, static_cast<ScriptItem>(items[BACKPACK]), true);
         return true;
     }
 
@@ -432,7 +432,7 @@ bool Player::lookIntoContainerOnField(direction dir) {
                 auto it = field.containers.find(item.getNumber());
 
                 if (it != field.containers.end()) {
-                    openShowcase(it->second, item, false);
+                    openShowcase(it->second, static_cast<ScriptItem>(item), false);
                     return true;
                 }
             } else {

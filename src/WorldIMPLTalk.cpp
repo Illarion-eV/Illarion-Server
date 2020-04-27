@@ -326,7 +326,7 @@ void World::lookAtInventoryItem(Player *cp, unsigned char position) {
     if (cp->items[ position ].getId() != 0) {
 
         Item titem = cp->items[ position ];
-        ScriptItem n_item = cp->items[ position ];
+        ScriptItem n_item(cp->items[ position ]);
 
         if (position < MAX_BODY_ITEMS) {
             n_item.type = ScriptItem::it_inventory;

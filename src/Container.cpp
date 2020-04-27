@@ -270,7 +270,7 @@ std::vector<ScriptItem> Container::getItemList() {
 
     for (auto it = items.begin(); it != items.end(); ++it) {
 
-        ScriptItem item = it->second;
+        ScriptItem item(it->second);
         item.type = ScriptItem::it_container;
         item.itempos = it->first;
         item.inside = this;
@@ -296,7 +296,7 @@ std::vector<ScriptItem> Container::getItemList(Item::id_type itemid) {
         Item &item = it->second;
 
         if (item.getId() == itemid) {
-            ScriptItem item = it->second;
+            ScriptItem item(it->second);
             item.type = ScriptItem::it_container;
             item.itempos = it->first;
             item.inside = this;
@@ -321,7 +321,7 @@ void Container::addContentToList(Item::id_type itemid, std::vector<ScriptItem> &
         const Item &item = it->second;
 
         if (item.getId() == itemid) {
-            ScriptItem item = it->second;
+            ScriptItem item(it->second);
             item.type = ScriptItem::it_container;
             item.itempos = it->first;
             item.inside = this;
@@ -342,7 +342,7 @@ void Container::addContentToList(Item::id_type itemid, std::vector<ScriptItem> &
 void Container::addContentToList(std::vector<ScriptItem> &list) {
     for (auto it = items.begin(); it != items.end(); ++it) {
 
-        ScriptItem item = it->second;
+        ScriptItem item(it->second);
         item.type = ScriptItem::it_container;
         item.itempos = it->first;
         item.inside = this;
@@ -363,7 +363,7 @@ bool Container::viewItemNr(TYPE_OF_CONTAINERSLOTS nr, ScriptItem &item, Containe
     auto it = items.find(nr);
 
     if (it != items.end()) {
-        item = it->second;
+        item = (ScriptItem)it->second;
         item.type = ScriptItem::it_container;
         item.itempos = nr;
         item.inside = this;
