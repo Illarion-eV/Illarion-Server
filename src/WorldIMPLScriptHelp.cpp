@@ -209,7 +209,7 @@ std::string World::getItemName(TYPE_OF_ITEM_ID itemid, uint8_t language) {
 }
 
 
-ItemStruct World::getItemStats(ScriptItem item) {
+ItemStruct World::getItemStats(const ScriptItem &item) {
     const auto &data = Data::Items[item.getId()];
     return data;
 }

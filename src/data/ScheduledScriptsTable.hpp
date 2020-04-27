@@ -45,7 +45,8 @@ struct ScriptData {
         nextCycleTime = 0;
         lastCycleTime = 0;
     }
-    ScriptData(uint32_t minCT, uint32_t maxCT, uint32_t nextCT, uint32_t lastCT, std::string fname, std::string sname): functionName(fname), scriptName(sname) {
+    ScriptData(uint32_t minCT, uint32_t maxCT, uint32_t nextCT, uint32_t lastCT,
+            const std::string &fname, const std::string &sname): functionName(fname), scriptName(sname) {
         minCycleTime = minCT;
         maxCycleTime = maxCT;
         nextCycleTime = nextCT;

@@ -54,12 +54,12 @@ public:
     bool TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &it, Container *&cc, Item::number_type count);
     bool viewItemNr(TYPE_OF_CONTAINERSLOTS nr, ScriptItem &it, Container *&cc);
     bool changeQualityAt(TYPE_OF_CONTAINERSLOTS nr, short int amount);
-    bool InsertContainer(Item it, Container *cc);
-    bool InsertContainer(Item it, Container *cc, TYPE_OF_CONTAINERSLOTS pos);
+    bool InsertContainer(const Item &it, Container *cc);
+    bool InsertContainer(const Item &it, Container *cc, TYPE_OF_CONTAINERSLOTS pos);
     Item::number_type mergeItem(Item item);
     bool InsertItem(Item it, bool merge);
     bool InsertItem(Item it, TYPE_OF_CONTAINERSLOTS);
-    bool InsertItem(Item it);
+    bool InsertItem(const Item &it);
 
     void Save(std::ofstream &where);
     void Load(std::istream &where);
@@ -102,7 +102,7 @@ public:
     }
 
 private:
-    bool isItemStackable(Item item);
+    bool isItemStackable(const Item &item);
     void insertIntoFirstFreeSlot(Item &item);
     void insertIntoFirstFreeSlot(Item &item, Container *container);
     int recursiveWeight(int rekt);

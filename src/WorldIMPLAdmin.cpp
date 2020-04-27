@@ -269,7 +269,7 @@ void World::showIPS_Command(Player *cp) {
     }
 }
 
-void World::jumpto_command(Player *cp,const std::string &player) {
+void World::jumpto_command(Player *cp, const std::string &player) {
     if (cp->hasGMRight(gmr_warp) || Config::instance().debug) {
         cp->closeAllShowcasesOfMapContainers();
         teleportPlayerToOther(cp, player);
@@ -384,7 +384,7 @@ void World::ForceIntroduceAll(Player *player) {
     }
 }
 
-void World::teleportPlayerToOther(Player *player, std::string text) {
+void World::teleportPlayerToOther(Player *player, const std::string &text) {
     if (!player->hasGMRight(gmr_warp)) {
         return;
     }
@@ -921,16 +921,16 @@ bool World::parseGMCommands(Player *user, const std::string &text) {
     return executeUserCommand(user, text, GMCommands);
 }
 
-void reportError(Player *cp, std::string msg) {
+void reportError(Player *cp, const std::string &msg) {
     Logger::error(LogFacility::World) << "ERROR: " << msg << Log::end;
     cp->inform("ERROR: " + msg);
 }
 
-void reportScriptError(Player *cp, std::string serverscript, std::string what) {
+void reportScriptError(Player *cp, const std::string &serverscript, const std::string &what) {
     reportError(cp, "Failed to reload server." + serverscript + ": " + what);
 }
 
-void reportTableError(Player *cp, std::string dbtable) {
+void reportTableError(Player *cp, const std::string &dbtable) {
     reportError(cp, "Failed to reload DB table: " + dbtable);
 }
 

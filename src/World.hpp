@@ -627,7 +627,7 @@ public:
     //! teleportiert einen Player zu einem anderen
     // \param cp der zu teleportierende Player
     // \param ts der Name des Ziel - Player
-    void teleportPlayerToOther(Player *cp, const std::string ts);
+    void teleportPlayerToOther(Player *cp, const std::string &ts);
 
     //! toetet alles auf der Karte befindlichen Monster
     void kill_command(Player *cp);
@@ -771,7 +771,7 @@ public:
 
     //Sucht zu einem Item die gesamten Stats wie Gewicht heraus
     //\param item, das Item zu dem die Stats heraus gesucht werden sollen.
-    ItemStruct getItemStats(ScriptItem item);
+    ItemStruct getItemStats(const ScriptItem &item);
     ItemStruct getItemStatsFromId(TYPE_OF_ITEM_ID id);
 
     //Aendert die Qualitaet eines ScriptItems.

@@ -92,7 +92,7 @@ Item::number_type Container::mergeItem(Item item) {
     return item.getNumber();
 }
 
-bool Container::InsertItem(Item it) {
+bool Container::InsertItem(const Item &it) {
     return InsertItem(it, true);
 }
 
@@ -159,7 +159,7 @@ bool Container::InsertItem(Item item, TYPE_OF_CONTAINERSLOTS pos) {
     return false;
 }
 
-bool Container::InsertContainer(Item it, Container *cc) {
+bool Container::InsertContainer(const Item &it, Container *cc) {
     if ((this != cc) && (items.size() < getSlotCount())) {
         Item titem = it;
         insertIntoFirstFreeSlot(titem, cc);
@@ -170,7 +170,7 @@ bool Container::InsertContainer(Item it, Container *cc) {
 
 }
 
-bool Container::InsertContainer(Item it, Container *cc, TYPE_OF_CONTAINERSLOTS pos) {
+bool Container::InsertContainer(const Item &it, Container *cc, TYPE_OF_CONTAINERSLOTS pos) {
     if ((this != cc) && (pos < getSlotCount())) {
         Item titem = it;
 
@@ -668,7 +668,7 @@ TYPE_OF_CONTAINERSLOTS Container::getSlotCount() const {
     return Data::ContainerItems[itemId];
 }
 
-bool Container::isItemStackable(Item item) {
+bool Container::isItemStackable(const Item &item) {
     const auto &com = Data::Items[item.getId()];
     return com.MaxStack > 1;
 }
