@@ -393,12 +393,9 @@ int8_t Field::age() {
 
             if (!item.survivesAgeing()) {
                 const auto &itemStruct = Data::Items[item.getId()];
+                ret = 1;
 
                 if (itemStruct.isValid() && item.getId() != itemStruct.ObjectAfterRot) {
-                    if (item.getId() != itemStruct.ObjectAfterRot) {
-                        ret = 1;
-                    }
-
                     item.setId(itemStruct.ObjectAfterRot);
 
                     const auto &afterRotItemStruct = Data::Items[itemStruct.ObjectAfterRot];
@@ -419,8 +416,6 @@ int8_t Field::age() {
                     }
 
                     it = items.erase(it);
-
-                    ret = 1;
                 }
             } else {
                 ++it;

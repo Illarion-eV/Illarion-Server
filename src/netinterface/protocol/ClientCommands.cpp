@@ -438,16 +438,14 @@ void CastTS::performAction(Player *player) {
                     Container *tempc;
 
                     if (ps->viewItemNr(pos, tempi, tempc)) {
-                        if (LuaMageScript) {
-                            Target.Type = LUA_ITEM;
-                            ps->viewItemNr(pos, Target.item, tempc);
-                            Target.item.pos = castPosition;
-                            Target.item.type = ScriptItem::it_container;
-                            Target.item.itempos = pos;
-                            Target.item.owner = player;
-                            Target.item.inside = ps;
-                            Target.pos = castPosition;
-                        }
+                        Target.Type = LUA_ITEM;
+                        ps->viewItemNr(pos, Target.item, tempc);
+                        Target.item.pos = castPosition;
+                        Target.item.type = ScriptItem::it_container;
+                        Target.item.itempos = pos;
+                        Target.item.owner = player;
+                        Target.item.inside = ps;
+                        Target.pos = castPosition;
                     } else {
                         paramOK = false;
                     }
@@ -556,24 +554,20 @@ void CastTS::performAction(Player *player) {
 
         if (LuaMageScript) {
             if (pos < (MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
-
                 if (player->items[ pos ].getId() != 0) {
+                    Target.Type = LUA_ITEM;
+                    Target.item = static_cast<ScriptItem>(player->items[ pos ]);
+                    Target.item.pos = player->getPosition();
 
-                    if (LuaMageScript) {
-                        Target.Type = LUA_ITEM;
-                        Target.item = static_cast<ScriptItem>(player->items[ pos ]);
-                        Target.item.pos = player->getPosition();
-
-                        if (pos < MAX_BODY_ITEMS) {
-                            Target.item.type = ScriptItem::it_inventory;
-                        } else {
-                            Target.item.type = ScriptItem::it_belt;
-                        }
-
-                        Target.item.itempos = pos;
-                        Target.item.owner = player;
-                        Target.pos = player->getPosition();
+                    if (pos < MAX_BODY_ITEMS) {
+                        Target.item.type = ScriptItem::it_inventory;
+                    } else {
+                        Target.item.type = ScriptItem::it_belt;
                     }
+
+                    Target.item.itempos = pos;
+                    Target.item.owner = player;
+                    Target.pos = player->getPosition();
                 } else {
                     paramOK = false;
                 }
