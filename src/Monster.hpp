@@ -83,7 +83,7 @@ public:
     * @param message the message which is spoken
     * @param cc the character who has spoken the message
     */
-    void receiveText(talk_type tt, const std::string &message, Character *cc);
+    virtual void receiveText(talk_type tt, const std::string &message, Character *cc) override;
 
     /**
     * returns the spawnpoint of the monster

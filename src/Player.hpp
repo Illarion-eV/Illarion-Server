@@ -350,8 +350,7 @@ public:
     bool lookIntoBackPack();
     bool lookIntoContainerOnField(direction dir);
 
-    //�dert die Qualit� eines Items an einer bestimmten Stelle
-    void changeQualityAt(unsigned char pos, short int amount);
+    virtual void changeQualityAt(unsigned char pos, short int amount) override;
 
     inline bool isMonitoringClient() const {
         return monitoringClient;
@@ -387,7 +386,7 @@ public:
     */
     void sendWeather(WeatherStruct weather);
 
-    void ageInventory();
+    virtual void ageInventory() override;
 
     virtual int createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, script_data_exchangemap const *data) override;
 
@@ -410,16 +409,16 @@ public:
     // \param pos die Stelle im Inventory die ge�dert werden soll
     // \param count die �derungsanzahl
     // \return der Rest von count, der nicht ge�dert werden konnnte
-    int increaseAtPos(unsigned char pos, int count);
+    virtual int increaseAtPos(unsigned char pos, int count) override;
 
-    int createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count);
+    virtual int createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) override;
 
     //! setzt die Id des Item an der Position pos auf newid
     // und schickt ein Update an den Spieler
     // \param pos die Stelle im Inventory die ge�dert werden soll
     // \param newid die neue Id des Item
     // \return true falls erfolgreich, false sonst
-    bool swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t newQuality = 0);
+    virtual bool swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t newQuality = 0) override;
 
     //! schickt ein Update der Ansicht des Rucksackinhalts an den Client
     void updateBackPackView();
@@ -433,7 +432,7 @@ public:
 
     void sendSkill(TYPE_OF_SKILL_ID skill, unsigned short int major, unsigned short int minor);
 
-    unsigned short int setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor);
+    virtual unsigned short int setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor) override;
 
     virtual bool saveBaseAttributes() override;
 
@@ -445,8 +444,8 @@ public:
     virtual void handleAttributeChange(Character::attributeIndex attribute) override;
 
 
-    void startMusic(short int which);
-    void defaultMusic();
+    virtual void startMusic(short int which) override;
+    virtual void defaultMusic() override;
 
     bool sendTextInFile(const std::string &filename);
 
@@ -473,8 +472,8 @@ public:
     unsigned char getTurtleTile() const;
 
     // Clipping on/off (default to on)
-    void setClippingActive(bool tclippingActive);
-    bool getClippingActive() const;
+    virtual void setClippingActive(bool tclippingActive) override;
+    virtual bool getClippingActive() const override;
 
     //Set for Admin state, uin32_t bit flag
     void setAdmin(uint32_t tAdmin);
