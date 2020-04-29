@@ -23,6 +23,7 @@
 #include <boost/filesystem.hpp>
 #include <algorithm>
 #include <ctime>
+#include <iterator>
 #include <memory>
 #include <regex>
 #include <sys/types.h>
@@ -624,12 +625,8 @@ std::vector<Character *> World::getTargetsInRange(const position &pos, int radiu
     const auto monsters = Monsters.findAllAliveCharactersInRangeOf(pos, range);
     std::vector<Character *> targets;
     targets.insert(targets.end(), players.begin(), players.end());
-    
-    for (const auto &monster : monsters) {
-        if (not (pos == monster->getPosition())) {
-            targets.push_back(monster);
-        }
-    }
+    std::remove_copy_if(monsters.begin(), monsters.end(), std::back_inserter(targets),
+            [&](const auto &monster){return pos == monster->getPosition();});
 
     return targets;
 }
