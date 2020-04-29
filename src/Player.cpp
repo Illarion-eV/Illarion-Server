@@ -1586,13 +1586,13 @@ bool Player::load() noexcept {
             }
 
             // item is in a container?
-            if (dataOK && tempincont && (it = containers.find(tempincont)) == containers.end()) {
+            if (tempincont && (it = containers.find(tempincont)) == containers.end()) {
                 // serious error occured! player data corrupted!
                 Logger::error(LogFacility::Player) << to_string() << " has invalid depot contents 2!" << Log::end;
                 throw std::exception();
             }
 
-            if ((dataOK && ((!tempincont && ! tempdepot) && linenumber > MAX_BODY_ITEMS + MAX_BELT_SLOTS)) || (tempincont && tempdepot)) {
+            if (((!tempincont && ! tempdepot) && linenumber > MAX_BODY_ITEMS + MAX_BELT_SLOTS) || (tempincont && tempdepot)) {
                 // serious error occured! player data corrupted!
                 Logger::error(LogFacility::Player) << to_string() << " has invalid items!" << Log::end;
                 throw std::exception();
@@ -1913,7 +1913,7 @@ bool Player::move(direction dir, uint8_t mode) {
                 Connection->addCommand(cmd);
                 return false;
             } else {
-                if (mode != RUNNING || (j == 1 && cont)) {
+                if (mode != RUNNING || j == 1) {
                     increaseActionPoints(walkcost/100);
                 }
             }
@@ -1931,19 +1931,19 @@ bool Player::move(direction dir, uint8_t mode) {
                     sendFullMap();
                     cont = false;
                 } else {
-                    if (mode != RUNNING || (j == 1 && cont)) {
+                    if (mode != RUNNING || j == 1) {
                         reachingTargetField += milliseconds(walkcost);
                         ServerCommandPointer cmd = std::make_shared<MoveAckTC>(getId(), newpos, mode, walkcost);
                         Connection->addCommand(cmd);
                     }
 
-                    if (j == 1 && cont) {
+                    if (j == 1) {
                         sendStepStripes(dir);
                     }
 
                     setPosition(newpos);
 
-                    if (mode != RUNNING || (j == 1 && cont)) {
+                    if (mode != RUNNING || j == 1) {
                         sendStepStripes(dir);
                     }
                 }

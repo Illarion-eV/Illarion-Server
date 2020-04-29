@@ -374,17 +374,17 @@ void CastTS::performAction(Player *player) {
                     if (tmpCharacter) {
                         Logger::debug(LogFacility::Script) << "Character found at target field!" << Log::end;
 
-                        if ((tmpCharacter->getType() == Character::player) && (LuaMageScript)) {
+                        if (tmpCharacter->getType() == Character::player) {
                             Logger::debug(LogFacility::Script) << "Target Character: player" << Log::end;
                             Target.character = tmpCharacter;
                             Target.pos = tmpCharacter->getPosition();
                             Target.Type = LUA_CHARACTER;
-                        } else if ((tmpCharacter->getType() == Character::npc) && (LuaMageScript)) {
+                        } else if (tmpCharacter->getType() == Character::npc) {
                             Logger::debug(LogFacility::Script) << "Target Character: NPC" << Log::end;
                             Target.character = tmpCharacter;
                             Target.pos = tmpCharacter->getPosition();
                             Target.Type = LUA_CHARACTER;
-                        } else if ((tmpCharacter->getType() == Character::monster) && (LuaMageScript)) {
+                        } else if (tmpCharacter->getType() == Character::monster) {
                             Logger::debug(LogFacility::Script) << "Target Character: monster" << Log::end;
                             Target.character = tmpCharacter;
                             Target.pos = tmpCharacter->getPosition();
@@ -396,22 +396,16 @@ void CastTS::performAction(Player *player) {
 
                     if (field.viewItemOnStack(item)) {
                         Logger::debug(LogFacility::Script) << "Item found at target field!" << Log::end;
-
-                        if (LuaMageScript) {
-                            Target.pos = castPosition;
-                            Target.Type = LUA_ITEM;
-                            Target.item = static_cast<ScriptItem>(item);
-                            Target.item.type = ScriptItem::it_field;
-                            Target.item.pos = castPosition;
-                            Target.item.owner = player;
-                        }
+                        Target.pos = castPosition;
+                        Target.Type = LUA_ITEM;
+                        Target.item = static_cast<ScriptItem>(item);
+                        Target.item.type = ScriptItem::it_field;
+                        Target.item.pos = castPosition;
+                        Target.item.owner = player;
                     } else {
                         Logger::debug(LogFacility::Script) << "empty field!" << Log::end;
-
-                        if (LuaMageScript) {
-                            Target.pos = castPosition;
-                            Target.Type = LUA_FIELD;
-                        }
+                        Target.pos = castPosition;
+                        Target.Type = LUA_FIELD;
                     }
                 }
             } catch (FieldNotFound &) {
