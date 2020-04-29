@@ -62,10 +62,6 @@ ConnectionManager::ConnectionManager() {
     isOperational = false;
 };
 
-ConnectionManager::ConnectionManager(const ConnectionManager &org) {
-    throw std::domain_error("Copy constructor not supported.");
-}
-
 void ConnectionManager::addConnectionParameterIfValid(const string &param,
         const string &value) {
     if (value.size() > 0) {

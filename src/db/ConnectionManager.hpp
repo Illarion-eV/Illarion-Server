@@ -43,7 +43,8 @@ public:
     PConnection getConnection();
 private:
     ConnectionManager();
-    ConnectionManager(const ConnectionManager &org);
+    ConnectionManager(const ConnectionManager &org) = delete;
+    ConnectionManager &operator=(const ConnectionManager &org) = delete;
     void addConnectionParameterIfValid(const string &param, const string &value);
 };
 }
