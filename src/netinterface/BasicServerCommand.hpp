@@ -58,6 +58,7 @@ public:
     */
     BasicServerCommand(unsigned char defByte, uint16_t bsize);
 
+    BasicServerCommand &operator=(const BasicServerCommand &) = delete;
     /**
     * Standard destructor
     */
