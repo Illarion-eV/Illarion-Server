@@ -58,6 +58,8 @@ Statistics::Statistics() {
     lastSaveTime = getMillisecondsSinceEpoch();
     load();
 */
+    versionId = 0;
+    lastSaveTime = 0;
 }
 
 Statistics &Statistics::getInstance() {
