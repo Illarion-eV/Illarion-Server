@@ -20,16 +20,14 @@
 #include "Field.hpp"
 #include "NewClientView.hpp"
 #include "WorldMap.hpp"
+#include <algorithm>
 #include <iostream>
 
 NewClientView::~NewClientView() {}
 
 NewClientView::NewClientView()
-    : viewPosition(position(0, 0, 0)), exists(false), stripedir(dir_right),
+    : mapStripe{nullptr}, viewPosition(position(0, 0, 0)), exists(false), stripedir(dir_right),
       maxtiles(0) {
-    for (auto &field : mapStripe) {
-        field = nullptr;
-    }
 }
 
 void NewClientView::fillStripe(position pos, stripedirection dir, int length,
@@ -41,10 +39,7 @@ void NewClientView::fillStripe(position pos, stripedirection dir, int length,
 }
 
 void NewClientView::clearStripe() {
-    for (auto &field : mapStripe) {
-        field = nullptr;
-    }
-
+    std::fill(std::begin(mapStripe), std::end(mapStripe), nullptr);
     exists = false;
     viewPosition.x = 0;
     viewPosition.y = 0;

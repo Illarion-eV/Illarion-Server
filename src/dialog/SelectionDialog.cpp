@@ -24,6 +24,7 @@ SelectionDialog::SelectionDialog(const string &title, const string &text, const 
     :Dialog(title, "SelectionDialog", callback), text(text) {
     success = false;
     close = false;
+    selectedIndex = 0;
 }
 
 SelectionDialog::SelectionDialog(const SelectionDialog &selectionDialog) : Dialog(selectionDialog) {

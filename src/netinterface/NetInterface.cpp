@@ -26,7 +26,8 @@
 
 #include "netinterface/NetInterface.hpp"
 
-NetInterface::NetInterface(boost::asio::io_service &io_servicen) : online(false), socket(io_servicen), inactive(0) {
+NetInterface::NetInterface(boost::asio::io_service &io_servicen) : online(false), headerBuffer{0},
+        socket(io_servicen), inactive(0), owner(nullptr) {
     cmd.reset();
 }
 

@@ -51,7 +51,7 @@ public:
 };
 
 class BBSpeakAsTS : public BasicClientCommand {
-    TYPE_OF_CHARACTER_ID id;
+    TYPE_OF_CHARACTER_ID id = 0;
     std::string message;
     
 public:
@@ -64,8 +64,8 @@ public:
 };
 
 class BBWarpPlayerTS : public BasicClientCommand {
-    TYPE_OF_CHARACTER_ID id;
-    int16_t posx, posy, posz;
+    TYPE_OF_CHARACTER_ID id = 0;
+    int16_t posx = 0, posy = 0, posz = 0;
 
 public:
     BBWarpPlayerTS();
@@ -89,7 +89,7 @@ public:
 };
 
 class BBChangeAttribTS : public BasicClientCommand {
-    TYPE_OF_CHARACTER_ID id;
+    TYPE_OF_CHARACTER_ID id = 0;
     std::string attrib;
     short int value;
 
@@ -103,8 +103,8 @@ public:
 };
 
 class BBChangeSkillTS : public BasicClientCommand {
-    TYPE_OF_CHARACTER_ID id;
-    TYPE_OF_SKILL_ID skill;
+    TYPE_OF_CHARACTER_ID id = 0;
+    TYPE_OF_SKILL_ID skill = 0;
     short int value;
 
 public:
@@ -117,7 +117,7 @@ public:
 };
 
 class BBTalktoTS : public BasicClientCommand {
-    TYPE_OF_CHARACTER_ID id;
+    TYPE_OF_CHARACTER_ID id = 0;
     std::string msg;
     
 public:
@@ -150,8 +150,8 @@ public:
 };
 
 class BBBanTS : public BasicClientCommand {
-    TYPE_OF_CHARACTER_ID id;
-    uint32_t time;
+    TYPE_OF_CHARACTER_ID id = 0;
+    uint32_t time = 0;
 
 public:
     BBBanTS();

@@ -23,6 +23,7 @@
 
 MerchantDialog::MerchantDialog(const string &title, const luabind::object &callback)
     :Dialog(title, "MerchantDialog", callback) {
+    lookAtList = listSell;
     result = playerAborts;
     purchaseIndex = 0;
     purchaseAmount = 0;

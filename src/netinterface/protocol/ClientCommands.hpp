@@ -73,8 +73,8 @@ enum clientcommands {
 
 class InputDialogTS : public BasicClientCommand {
 private:
-    unsigned int dialogId;
-    bool success;
+    unsigned int dialogId = 0;
+    bool success = false;
     std::string input;
 
 public:
@@ -87,7 +87,7 @@ public:
 
 class MessageDialogTS : public BasicClientCommand {
 private:
-    unsigned int dialogId;
+    unsigned int dialogId = 0;
 
 public:
     MessageDialogTS();
@@ -99,15 +99,15 @@ public:
 
 class MerchantDialogTS : public BasicClientCommand {
 private:
-    unsigned int dialogId;
-    uint8_t result;
-    uint8_t purchaseIndex;
-    uint16_t purchaseAmount;
-    uint8_t saleLocation;
-    uint16_t saleSlot;
-    uint16_t saleAmount;
-    uint8_t lookAtList;
-    uint8_t lookAtSlot;
+    unsigned int dialogId = 0;
+    uint8_t result = 0;
+    uint8_t purchaseIndex = 0;
+    uint16_t purchaseAmount = 0;
+    uint8_t saleLocation = 0;
+    uint16_t saleSlot = 0;
+    uint16_t saleAmount = 0;
+    uint8_t lookAtList = 0;
+    uint8_t lookAtSlot = 0;
 
 public:
     MerchantDialogTS();
@@ -119,9 +119,9 @@ public:
 
 class SelectionDialogTS : public BasicClientCommand {
 private:
-    unsigned int dialogId;
-    bool success;
-    uint8_t selectedIndex;
+    unsigned int dialogId = 0;
+    bool success = false;
+    uint8_t selectedIndex = 0;
 
 public:
     SelectionDialogTS();
@@ -133,11 +133,11 @@ public:
 
 class CraftingDialogTS : public BasicClientCommand {
 private:
-    unsigned int dialogId;
-    uint8_t result;
-    uint8_t craftIndex;
-    uint8_t craftAmount;
-    uint8_t craftIngredient;
+    unsigned int dialogId = 0;
+    uint8_t result = 0;
+    uint8_t craftIndex = 0;
+    uint8_t craftAmount = 0;
+    uint8_t craftIngredient = 0;
 
 public:
     CraftingDialogTS();
@@ -149,7 +149,7 @@ public:
 
 class RequestAppearanceTS : public BasicClientCommand {
 private:
-    TYPE_OF_CHARACTER_ID id;
+    TYPE_OF_CHARACTER_ID id = 0;
 
 public:
     RequestAppearanceTS();
@@ -161,8 +161,8 @@ public:
 
 class LookAtCharacterTS : public BasicClientCommand {
 private:
-    TYPE_OF_CHARACTER_ID id;
-    uint8_t mode;
+    TYPE_OF_CHARACTER_ID id = 0;
+    uint8_t mode = 0;
 
 public:
     LookAtCharacterTS();
@@ -174,11 +174,11 @@ public:
 
 class CastTS : public BasicClientCommand {
 private:
-    unsigned char showcase;
-    unsigned char pos;
+    unsigned char showcase = 0;
+    unsigned char pos = 0;
     position castPosition;
-    unsigned char cid;
-    unsigned long int spellId;
+    unsigned char cid = 0;
+    unsigned long int spellId = 0;
 
 public:
     CastTS();
@@ -190,9 +190,9 @@ public:
 
 class UseTS : public BasicClientCommand {
 private:
-    unsigned char useId;
-    unsigned char showcase;
-    unsigned char pos;
+    unsigned char useId = 0;
+    unsigned char showcase = 0;
+    unsigned char pos = 0;
     position usePosition;
 
 public:
@@ -232,7 +232,7 @@ public:
 
 class LookAtInventoryItemTS : public BasicClientCommand {
 private:
-    unsigned char pos;
+    unsigned char pos = 0;
 
 public:
     LookAtInventoryItemTS();
@@ -244,8 +244,8 @@ public:
 
 class LookAtShowCaseItemTS : public BasicClientCommand {
 private:
-    unsigned char showcase;
-    unsigned char pos;
+    unsigned char showcase = 0;
+    unsigned char pos = 0;
 
 public:
     LookAtShowCaseItemTS();
@@ -257,10 +257,10 @@ public:
 
 class MoveItemFromPlayerToShowCaseTS : public BasicClientCommand {
 private:
-    unsigned char showcase;
-    unsigned char pos;
-    unsigned char cpos;
-    unsigned short count;
+    unsigned char showcase = 0;
+    unsigned char pos = 0;
+    unsigned char cpos = 0;
+    unsigned short count = 0;
 
 public:
     MoveItemFromPlayerToShowCaseTS();
@@ -272,10 +272,10 @@ public:
 
 class MoveItemFromShowCaseToPlayerTS : public BasicClientCommand {
 private:
-    unsigned char showcase;
-    unsigned char pos;
-    unsigned char cpos;
-    unsigned short count;
+    unsigned char showcase = 0;
+    unsigned char pos = 0;
+    unsigned char cpos = 0;
+    unsigned short count = 0;
 
 public:
     MoveItemFromShowCaseToPlayerTS();
@@ -287,9 +287,9 @@ public:
 
 class MoveItemInsideInventoryTS : public BasicClientCommand {
 private:
-    unsigned char opos;
-    unsigned char npos;
-    unsigned short count;
+    unsigned char opos = 0;
+    unsigned char npos = 0;
+    unsigned short count = 0;
 
 public:
     MoveItemInsideInventoryTS();
@@ -301,9 +301,9 @@ public:
 
 class DropItemFromInventoryOnMapTS : public BasicClientCommand {
 private:
-    unsigned char pos;
+    unsigned char pos = 0;
     position mapPosition;
-    unsigned short count;
+    unsigned short count = 0;
 
 public:
     DropItemFromInventoryOnMapTS();
@@ -316,8 +316,8 @@ public:
 class MoveItemFromMapToPlayerTS : public BasicClientCommand {
 private:
     position sourcePosition;
-    unsigned char inventorySlot;
-    unsigned short count;
+    unsigned char inventorySlot = 0;
+    unsigned short count = 0;
 
 public:
     MoveItemFromMapToPlayerTS();
@@ -330,9 +330,9 @@ public:
 class MoveItemFromMapIntoShowCaseTS : public BasicClientCommand {
 private:
     position sourcePosition;
-    unsigned char showcase;
-    unsigned char showcaseSlot;
-    unsigned short count;
+    unsigned char showcase = 0;
+    unsigned char showcaseSlot = 0;
+    unsigned short count = 0;
 
 public:
     MoveItemFromMapIntoShowCaseTS();
@@ -346,7 +346,7 @@ class MoveItemFromMapToMapTS : public BasicClientCommand {
 private:
     position sourcePosition;
     position targetPosition;
-    unsigned short count;
+    unsigned short count = 0;
 
 public:
     MoveItemFromMapToMapTS();
@@ -358,11 +358,11 @@ public:
 
 class MoveItemBetweenShowCasesTS : public BasicClientCommand {
 private:
-    unsigned char source;
-    unsigned char spos;
-    unsigned char dest;
-    unsigned char dpos;
-    unsigned short count;
+    unsigned char source = 0;
+    unsigned char spos = 0;
+    unsigned char dest = 0;
+    unsigned char dpos = 0;
+    unsigned short count = 0;
 
 public:
     MoveItemBetweenShowCasesTS();
@@ -374,10 +374,10 @@ public:
 
 class DropItemFromShowCaseOnMapTS : public BasicClientCommand {
 private:
-    unsigned char showcase;
-    unsigned char pos;
+    unsigned char showcase = 0;
+    unsigned char pos = 0;
     position mapPosition;
-    unsigned short count;
+    unsigned short count = 0;
 
 public:
     DropItemFromShowCaseOnMapTS();
@@ -389,7 +389,7 @@ public:
 
 class CloseContainerInShowCaseTS : public BasicClientCommand {
 private:
-    unsigned char showcase;
+    unsigned char showcase = 0;
 
 public:
     CloseContainerInShowCaseTS();
@@ -400,8 +400,8 @@ public:
 
 
 class LookIntoShowCaseContainerTS : public BasicClientCommand {
-    unsigned char showcase;
-    unsigned char pos;
+    unsigned char showcase = 0;
+    unsigned char pos = 0;
 
 public:
     LookIntoShowCaseContainerTS();
@@ -421,7 +421,7 @@ public:
 
 class LookIntoContainerOnFieldTS : public BasicClientCommand {
 private:
-    direction dir;
+    direction dir = dir_north;
 
 public:
     LookIntoContainerOnFieldTS();
@@ -514,7 +514,7 @@ public:
 
 class CustomNameTS : public BasicClientCommand {
 private:
-    TYPE_OF_CHARACTER_ID playerId;
+    TYPE_OF_CHARACTER_ID playerId = 0;
     std::string playerName;
     
 public:
@@ -527,7 +527,7 @@ public:
 
 class AttackPlayerTS : public BasicClientCommand {
 private:
-    uint32_t enemyid;
+    uint32_t enemyid = 0;
 
 public:
     AttackPlayerTS();
@@ -540,7 +540,7 @@ public:
 class LookAtMapItemTS : public BasicClientCommand {
 private:
     position pos;
-    uint8_t stackPos;
+    uint8_t stackPos = 0;
 
 public:
     LookAtMapItemTS();
@@ -552,7 +552,7 @@ public:
 
 class PlayerSpinTS : public BasicClientCommand {
 private:
-    direction dir;
+    direction dir = dir_north;
 
 public:
     PlayerSpinTS();
@@ -564,9 +564,9 @@ public:
 
 class CharMoveTS : public BasicClientCommand {
 private:
-    TYPE_OF_CHARACTER_ID charid;
-    unsigned char dir;
-    unsigned char mode;
+    TYPE_OF_CHARACTER_ID charid = 0;
+    unsigned char dir = 0;
+    unsigned char mode = 0;
 
 public:
     CharMoveTS();
@@ -578,7 +578,7 @@ public:
 
 class LoginCommandTS : public BasicClientCommand {
 private:
-    unsigned short clientVersion;
+    unsigned short clientVersion = 0;
     std::string loginName;
     std::string password;
 
@@ -596,8 +596,8 @@ public:
 
 class ScreenSizeCommandTS : public BasicClientCommand {
 private:
-    uint8_t width;
-    uint8_t height;
+    uint8_t width = 0;
+    uint8_t height = 0;
 
 public:
     ScreenSizeCommandTS();
