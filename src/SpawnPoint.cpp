@@ -60,7 +60,7 @@ void SpawnPoint::addMonster(const TYPE_OF_CHARACTER_ID &typ, const short int &co
 
 //! do spawns if possible...
 void SpawnPoint::spawn() {
-    if (nextspawntime <= 0) {
+    if (nextspawntime == 0) {
         //set new spawntime
         nextspawntime = Random::uniform(min_spawntime, max_spawntime);
 
