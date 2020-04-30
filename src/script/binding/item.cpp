@@ -27,11 +27,11 @@ namespace binding {
     luabind::scope item() {
         luabind::value_vector items;
 
-        for (const auto &item: Data::Items) {
-            const auto &name = item.second.serverName;
+        for (const auto &dataItem: Data::Items) {
+            const auto &name = dataItem.second.serverName;
 
             if (name.length() > 0) {
-                items.push_back(luabind::value(name.c_str(), item.second.id));
+                items.push_back(luabind::value(name.c_str(), dataItem.second.id));
             }
         }
 
