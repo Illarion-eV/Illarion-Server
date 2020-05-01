@@ -325,23 +325,22 @@ void World::lookAtShowcaseItem(Player *cp, uint8_t showcase, unsigned char posit
 void World::lookAtInventoryItem(Player *cp, unsigned char position) {
     if (cp->items[ position ].getId() != 0) {
 
-        Item titem = cp->items[ position ];
-        ScriptItem n_item(cp->items[ position ]);
+        ScriptItem item(cp->items[ position ]);
 
         if (position < MAX_BODY_ITEMS) {
-            n_item.type = ScriptItem::it_inventory;
+            item.type = ScriptItem::it_inventory;
         } else {
-            n_item.type = ScriptItem::it_belt;
+            item.type = ScriptItem::it_belt;
         }
 
-        n_item.itempos = position;
-        n_item.pos = cp->getPosition();
-        n_item.owner = cp;
+        item.itempos = position;
+        item.pos = cp->getPosition();
+        item.owner = cp;
 
-        ItemLookAt lookAt = n_item.getLookAt(cp);
+        ItemLookAt lookAt = item.getLookAt(cp);
 
         if (lookAt.isValid()) {
-            itemInform(cp, n_item, lookAt);
+            itemInform(cp, item, lookAt);
         }
     }
 }
