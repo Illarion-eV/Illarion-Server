@@ -956,9 +956,6 @@ bool World::reload_defs(Player *cp) {
 
     if (ok) {
         QuestNodeTable::getInstance().reload();
-    }
-
-    if (ok) {
         ok = Data::reload();
     }
 
