@@ -42,7 +42,7 @@ protected:
 };
 
 std::istream &operator>>(std::istream &is, ConfigEntryBase &config_entry);
-std::ostream &operator<<(std::ostream &os, ConfigEntryBase &config_entry);
+std::ostream &operator<<(std::ostream &os, const ConfigEntryBase &config_entry);
 
 template<typename T>
 class ConfigEntry : public ConfigEntryBase {

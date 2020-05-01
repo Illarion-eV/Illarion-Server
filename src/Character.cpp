@@ -192,7 +192,7 @@ Character::~Character() {
     }
 
     std::for_each(depotContents.rbegin(), depotContents.rend(),
-                  [](decltype(depotContents)::value_type &value) {
+                  [](const decltype(depotContents)::value_type &value) {
         delete value.second;
     });
 }

@@ -648,7 +648,7 @@ bool World::putItemAlwaysOnMap(Character *cc, const position &itemPosition) {
 
 }
 
-void World::checkField(Field &field, const position &itemPosition) {
+void World::checkField(const Field &field, const position &itemPosition) {
     if (field.hasSpecialItem()) {
         if (field.hasPlayer()) {
             Player *temp = Players.find(itemPosition);

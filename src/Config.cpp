@@ -85,7 +85,7 @@ std::istream &operator>>(std::istream &is, ConfigEntryBase &config_entry) {
     return is;
 }
 
-std::ostream &operator<<(std::ostream &os, ConfigEntryBase &config_entry) {
+std::ostream &operator<<(std::ostream &os, const ConfigEntryBase &config_entry) {
     config_entry.write(os);
     return os;
 }

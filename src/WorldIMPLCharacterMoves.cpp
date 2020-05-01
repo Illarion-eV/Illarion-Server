@@ -31,7 +31,7 @@
 #include "script/LuaItemScript.hpp"
 
 
-void World::checkFieldAfterMove(Character *cc, Field &field) {
+void World::checkFieldAfterMove(Character *cc, const Field &field) {
     if (!cc) {
         return;
     }

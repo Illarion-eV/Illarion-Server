@@ -499,7 +499,7 @@ public:
     **/
     bool pushPlayer(Player *cp, unsigned char d, short int &walkcost);
 
-    void checkFieldAfterMove(Character *cp, Field &field);
+    void checkFieldAfterMove(Character *cp, const Field &field);
     void sendPassiveMoveToAllVisiblePlayers(Character *ccp);
     void sendSpinToAllVisiblePlayers(Character *cc);
     void sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char movetype, TYPE_OF_WALKINGCOST duration);
@@ -702,7 +702,7 @@ public:
 
     bool takeItemFromShowcase(Player *cc, uint8_t showcase, unsigned char pos, Item::number_type count);
     bool putItemInShowcase(Player *cc, uint8_t showcase, TYPE_OF_CONTAINERSLOTS pos);
-    void checkField(Field &field, const position &itemPosition);
+    void checkField(const Field &field, const position &itemPosition);
 
     bool moveItemFromMapToMap(Player *cp, const position &oldPosition, const position &newPosition, Item::number_type count);
     void moveItemFromMapIntoShowcase(Player *cp, const position &sourcePosition, uint8_t showcase, unsigned char showcaseSlot, Item::number_type count);
