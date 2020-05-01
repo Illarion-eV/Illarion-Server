@@ -102,16 +102,13 @@ void World::sendSpinToAllVisiblePlayers(Character *cc) {
 
 
 void World::sendPassiveMoveToAllVisiblePlayers(Character *ccp) {
-    char xoffs;
-    char yoffs;
-    char zoffs;
     const auto &charPos = ccp->getPosition();
 
     for (const auto &p : Players.findAllCharactersInScreen(charPos)) {
         const auto &playerPos = p->getPosition();
-        xoffs = charPos.x - playerPos.x;
-        yoffs = charPos.y - playerPos.y;
-        zoffs = charPos.z - playerPos.z + RANGEDOWN;
+        char xoffs = charPos.x - playerPos.x;
+        char yoffs = charPos.y - playerPos.y;
+        char zoffs = charPos.z - playerPos.z + RANGEDOWN;
 
         if ((xoffs != 0) || (yoffs != 0) || (zoffs != RANGEDOWN)) {
             ServerCommandPointer cmd = std::make_shared<MoveAckTC>(ccp->getId(), charPos, PUSH, 0);
@@ -128,16 +125,13 @@ void World::sendCharacterMoveToAllVisibleChars(Character *cc, TYPE_OF_WALKINGCOS
 
 void World::sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char moveType, TYPE_OF_WALKINGCOST duration) {
     if (!cc->isInvisible()) {
-        char xoffs;
-        char yoffs;
-        char zoffs;
         const auto &charPos = cc->getPosition();
 
         for (const auto &p : Players.findAllCharactersInScreen(charPos)) {
             const auto &playerPos = p->getPosition();
-            xoffs = charPos.x - playerPos.x;
-            yoffs = charPos.y - playerPos.y;
-            zoffs = charPos.z - playerPos.z + RANGEDOWN;
+            char xoffs = charPos.x - playerPos.x;
+            char yoffs = charPos.y - playerPos.y;
+            char zoffs = charPos.z - playerPos.z + RANGEDOWN;
 
             if ((xoffs != 0) || (yoffs != 0) || (zoffs != RANGEDOWN)) {
                 ServerCommandPointer cmd = std::make_shared<MoveAckTC>(cc->getId(), charPos, moveType, duration);

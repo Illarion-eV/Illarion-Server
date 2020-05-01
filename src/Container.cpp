@@ -129,9 +129,9 @@ bool Container::InsertItem(Item item, TYPE_OF_CONTAINERSLOTS pos) {
         auto it = items.find(pos);
 
         if (it != items.end()) {
-            Item &selectedItem = it->second;
-
             if (isItemStackable(item)) {
+                Item &selectedItem = it->second;
+
                 if (selectedItem.getId() == item.getId() && selectedItem.equalData(item)) {
                     int temp = selectedItem.getNumber() + item.getNumber();
 

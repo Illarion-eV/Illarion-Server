@@ -795,15 +795,12 @@ void World::sendRemoveCharToVisiblePlayers(TYPE_OF_CHARACTER_ID id, const positi
 void World::sendHealthToAllVisiblePlayers(Character *cc, Attribute::attribute_t health) {
     if (!cc->isInvisible()) {
         const auto &charPos = cc->getPosition();
-        char xoffs;
-        char yoffs;
-        char zoffs;
 
         for (const auto &player : Players.findAllCharactersInScreen(cc->getPosition())) {
             const auto &playerPos = player->getPosition();
-            xoffs = charPos.x - playerPos.x;
-            yoffs = charPos.y - playerPos.y;
-            zoffs = charPos.z - playerPos.z + RANGEDOWN;
+            char xoffs = charPos.x - playerPos.x;
+            char yoffs = charPos.y - playerPos.y;
+            char zoffs = charPos.z - playerPos.z + RANGEDOWN;
 
             if ((xoffs != 0) || (yoffs != 0) || (zoffs != RANGEDOWN)) {
                 ServerCommandPointer cmd = std::make_shared<UpdateAttribTC>(cc->getId(), "hitpoints", health);
