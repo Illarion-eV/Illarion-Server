@@ -24,8 +24,8 @@ MessageDialog::MessageDialog(const string &title, const string &text, const luab
     :Dialog(title, "MessageDialog", callback), text(text) {
 }
 
-MessageDialog::MessageDialog(const MessageDialog &messageDialog) : Dialog(messageDialog) {
-    text = messageDialog.text;
+MessageDialog::MessageDialog(const MessageDialog &messageDialog): Dialog(messageDialog),
+    text(messageDialog.text) {
 }
 
 const string &MessageDialog::getText() const {

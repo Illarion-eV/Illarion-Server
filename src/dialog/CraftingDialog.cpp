@@ -30,16 +30,16 @@ CraftingDialog::CraftingDialog(const string &title, uint16_t sfx, uint16_t sfxDu
     lastAddedCraftableId = 0;
 }
 
-CraftingDialog::CraftingDialog(const CraftingDialog &craftingDialog): Dialog(craftingDialog) {
-    sfx = craftingDialog.sfx;
-    sfxDuration = craftingDialog.sfxDuration;
-    result = craftingDialog.result;
-    craftableId = craftingDialog.craftableId;
-    craftableAmount = craftingDialog.craftableAmount;
-    ingredientIndex = craftingDialog.ingredientIndex;
-    groups = craftingDialog.groups;
-    lastAddedCraftableId = craftingDialog.lastAddedCraftableId;
-    craftables = craftingDialog.craftables;
+CraftingDialog::CraftingDialog(const CraftingDialog &craftingDialog): Dialog(craftingDialog),
+    sfx(craftingDialog.sfx),
+    sfxDuration(craftingDialog.sfxDuration),
+    groups(craftingDialog.groups),
+    craftables(craftingDialog.craftables),
+    result(craftingDialog.result),
+    craftableId(craftingDialog.craftableId),
+    craftableAmount(craftingDialog.craftableAmount),
+    ingredientIndex(craftingDialog.ingredientIndex),
+    lastAddedCraftableId(craftingDialog.lastAddedCraftableId) {
 }
 
 uint16_t CraftingDialog::getSfx() const {

@@ -61,15 +61,13 @@ private:
     uint8_t craftedStackSize;
 
 public:
-    Craftable(uint8_t group, TYPE_OF_ITEM_ID item, const string &name, uint16_t decisecondsToCraft): group(group), item(item), name(name), decisecondsToCraft(decisecondsToCraft), craftedStackSize(1) {};
-    Craftable(uint8_t group, TYPE_OF_ITEM_ID item, const string &name, uint16_t decisecondsToCraft, uint8_t craftedStackSize): group(group), item(item), name(name), decisecondsToCraft(decisecondsToCraft), craftedStackSize(craftedStackSize) {};
-    Craftable(const Craftable &craftable) {
-        group = craftable.group;
-        item = craftable.item;
-        name = craftable.name;
-        decisecondsToCraft = craftable.decisecondsToCraft;
-        craftedStackSize = craftable.craftedStackSize;
-
+    Craftable(uint8_t group, TYPE_OF_ITEM_ID item, const string &name, uint16_t decisecondsToCraft):
+        group(group), item(item), name(name), decisecondsToCraft(decisecondsToCraft), craftedStackSize(1) {};
+    Craftable(uint8_t group, TYPE_OF_ITEM_ID item, const string &name, uint16_t decisecondsToCraft, uint8_t craftedStackSize):
+        group(group), item(item), name(name), decisecondsToCraft(decisecondsToCraft), craftedStackSize(craftedStackSize) {};
+    Craftable(const Craftable &craftable): group(craftable.group), item(craftable.item), name(craftable.name),
+        decisecondsToCraft(craftable.decisecondsToCraft), craftedStackSize(craftable.craftedStackSize)
+    {
         for (const auto &ingredient : craftable.ingredients) {
             addIngredient(ingredient.getItem(), ingredient.getNumber());
         }

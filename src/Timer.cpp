@@ -19,9 +19,7 @@
 
 #include "Timer.hpp"
 
-Timer::Timer(unsigned long int timegap) {
-    gap = timegap;
-    last = time(nullptr) - timegap;
+Timer::Timer(unsigned long int timegap): last(time(nullptr) - timegap), gap(timegap) {
 }
 
 

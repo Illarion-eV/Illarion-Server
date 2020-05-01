@@ -27,16 +27,12 @@ SelectionDialog::SelectionDialog(const string &title, const string &text, const 
     selectedIndex = 0;
 }
 
-SelectionDialog::SelectionDialog(const SelectionDialog &selectionDialog) : Dialog(selectionDialog) {
-    text = selectionDialog.text;
-
+SelectionDialog::SelectionDialog(const SelectionDialog &selectionDialog) : Dialog(selectionDialog),
+        text(selectionDialog.text), success(selectionDialog.success),
+        selectedIndex(selectionDialog.selectedIndex), close(selectionDialog.close) {
     for (const auto &option : selectionDialog.options) {
         addOption(option.getItem(), option.getName());
     }
-
-    success = selectionDialog.success;
-    selectedIndex = selectionDialog.selectedIndex;
-    close = selectionDialog.close;
 }
 
 const string &SelectionDialog::getText() const {

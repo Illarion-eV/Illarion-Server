@@ -27,8 +27,8 @@
 
 using namespace Database;
 
-Connection::Connection(const std::string &connectionString) {
-    internalConnection = std::make_unique<pqxx::connection>(connectionString);
+Connection::Connection(const std::string &connectionString):
+    internalConnection(std::make_unique<pqxx::connection>(connectionString)) {
 }
 
 void Connection::beginTransaction() {

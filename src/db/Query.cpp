@@ -26,8 +26,7 @@
 
 using namespace Database;
 
-Query::Query() {
-    dbConnection = ConnectionManager::getInstance().getConnection();
+Query::Query(): dbConnection(ConnectionManager::getInstance().getConnection()) {
 }
 
 Query::Query(const PConnection connection) {
