@@ -613,7 +613,7 @@ void Container::doAge(bool inventory) {
 
             const auto &itemStruct = Data::Items[item.getId()];
 
-            if (!inventory || (inventory && itemStruct.rotsInInventory)) {
+            if (!inventory || itemStruct.rotsInInventory) {
                 if (!item.survivesAgeing()) {
                     if (item.getId() != itemStruct.ObjectAfterRot) {
                         item.setId(itemStruct.ObjectAfterRot);
