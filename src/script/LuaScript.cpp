@@ -408,7 +408,7 @@ void LuaScript::init_base_functions() {
         luabind::def("log", log_lua)
     ];
 
-    luabind::object globals = luabind::globals(_luaState);
+    const luabind::object &globals = luabind::globals(_luaState);
     globals["world"] = World::get();
     globals["ScriptVars"] = &Data::ScriptVariables;
 }

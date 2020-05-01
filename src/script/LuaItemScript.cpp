@@ -39,7 +39,7 @@ LuaItemScript::LuaItemScript(const std::string &code, const std::string &codenam
 LuaItemScript::~LuaItemScript() {}
 
 void LuaItemScript::init_functions() const {
-    luabind::object globals = luabind::globals(_luaState);
+    const luabind::object &globals = luabind::globals(_luaState);
     globals["thisItem"] = _comstr;
 }
 
