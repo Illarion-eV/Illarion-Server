@@ -31,7 +31,6 @@ LuaMagicScript::LuaMagicScript(const std::string &filename, const SpellStruct &)
 LuaMagicScript::~LuaMagicScript() {}
 
 void LuaMagicScript::init_functions() {
-    luabind::object globals = luabind::globals(_luaState);
 }
 
 void LuaMagicScript::CastMagic(Character *caster, unsigned char ltastate) {
