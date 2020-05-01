@@ -45,13 +45,13 @@ iterator_range<typename CharacterContainer<T>::position_to_id_type::const_iterat
 
 
 template <class T>
-auto CharacterContainer<T>::find(const std::string &text) const -> pointer {
+auto CharacterContainer<T>::find(const std::string &name) const -> pointer {
     try {
-        auto id = boost::lexical_cast<TYPE_OF_CHARACTER_ID>(text);
+        auto id = boost::lexical_cast<TYPE_OF_CHARACTER_ID>(name);
         return find(id);
     } catch (boost::bad_lexical_cast &) {
         for (const auto &character : container) {
-            if (comparestrings_nocase(character.second->getName(), text)) {
+            if (comparestrings_nocase(character.second->getName(), name)) {
                 return character.second;
             }
         }

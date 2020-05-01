@@ -51,15 +51,15 @@ public:
     virtual ~Container();
     Container &operator =(const Container &source);
 
-    bool TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &it, Container *&cc, Item::number_type count);
-    bool viewItemNr(TYPE_OF_CONTAINERSLOTS nr, ScriptItem &it, Container *&cc);
+    bool TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &item, Container *&cc, Item::number_type count);
+    bool viewItemNr(TYPE_OF_CONTAINERSLOTS nr, ScriptItem &item, Container *&cc);
     bool changeQualityAt(TYPE_OF_CONTAINERSLOTS nr, short int amount);
-    bool InsertContainer(const Item &it, Container *cc);
-    bool InsertContainer(const Item &it, Container *cc, TYPE_OF_CONTAINERSLOTS pos);
+    bool InsertContainer(const Item &item, Container *cc);
+    bool InsertContainer(const Item &item, Container *cc, TYPE_OF_CONTAINERSLOTS pos);
     Item::number_type mergeItem(Item item);
-    bool InsertItem(Item it, bool merge);
-    bool InsertItem(Item it, TYPE_OF_CONTAINERSLOTS);
-    bool InsertItem(const Item &it);
+    bool InsertItem(Item item, bool merge);
+    bool InsertItem(Item item, TYPE_OF_CONTAINERSLOTS);
+    bool InsertItem(const Item &item);
 
     void Save(std::ofstream &where);
     void Load(std::istream &where);
@@ -82,7 +82,7 @@ public:
 
     bool swapAtPos(unsigned char pos, Item::id_type newid, Item::quality_type newQuality = 0);
 
-    bool changeItem(ScriptItem &it);
+    bool changeItem(ScriptItem &item);
 
     int weight();
 

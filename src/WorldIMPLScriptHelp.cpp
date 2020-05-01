@@ -310,9 +310,9 @@ bool World::increase(ScriptItem item, short int count) {
     return false;
 }
 
-bool World::swap(ScriptItem item, TYPE_OF_ITEM_ID newitem, unsigned short int newQuality) {
+bool World::swap(ScriptItem item, TYPE_OF_ITEM_ID newItem, unsigned short int newQuality) {
     if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
-        item.owner->swapAtPos(item.itempos, newitem, newQuality);
+        item.owner->swapAtPos(item.itempos, newItem, newQuality);
         return true;
     } else if (item.type == ScriptItem::it_field) {
         try {
@@ -321,12 +321,12 @@ bool World::swap(ScriptItem item, TYPE_OF_ITEM_ID newitem, unsigned short int ne
 
             if (field.viewItemOnStack(it)) {
 
-                if (field.swapItemOnStack(newitem, newQuality)) {
+                if (field.swapItemOnStack(newItem, newQuality)) {
                     Item dummy;
-                    dummy.setId(newitem);
+                    dummy.setId(newItem);
                     dummy.setNumber(it.getNumber());
 
-                    if (it.getId() != newitem) {
+                    if (it.getId() != newItem) {
                         sendSwapItemOnMapToAllVisibleCharacter(it.getId(), item.pos, dummy);
                     }
                 } else {
@@ -340,7 +340,7 @@ bool World::swap(ScriptItem item, TYPE_OF_ITEM_ID newitem, unsigned short int ne
         }
     } else if (item.type == ScriptItem::it_container) {
         if (item.inside) {
-            item.inside->swapAtPos(item.itempos, newitem, newQuality);
+            item.inside->swapAtPos(item.itempos, newItem, newQuality);
             sendContainerSlotChange(item.inside, item.itempos);
             return true;
         } else {

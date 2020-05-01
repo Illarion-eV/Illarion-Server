@@ -776,29 +776,29 @@ void Player::defaultMusic() {
 
 // Setters and Getters //
 
-unsigned char Player::GetStatus() const {
+unsigned char Player::getStatus() const {
     return status;
 }
 
 
-void Player::SetStatus(unsigned char thisStatus) {
-    status = thisStatus;
+void Player::setStatus(unsigned char status) {
+    this->status = status;
 }
 
 
 // What time does the status get reset?
-time_t Player::GetStatusTime() const {
+time_t Player::getStatusTime() const {
     return statustime;
 }
 
 
-void Player::SetStatusTime(time_t thisStatustime) {
-    statustime = thisStatustime;
+void Player::setStatusTime(time_t time) {
+    statustime = time;
 }
 
 
 // Who banned/jailed the player?
-std::string Player::GetStatusGM() const {
+std::string Player::getStatusGM() const {
     using namespace Database;
     SelectQuery query;
     query.addColumn("chars", "chr_playerid");
@@ -821,19 +821,19 @@ std::string Player::GetStatusGM() const {
 }
 
 
-void Player::SetStatusGM(TYPE_OF_CHARACTER_ID thisStatusgm) {
-    statusgm = thisStatusgm;
+void Player::setStatusGM(TYPE_OF_CHARACTER_ID gm) {
+    statusgm = gm;
 }
 
 
 // Why where they banned/jailed?
-std::string Player::GetStatusReason() const {
+std::string Player::getStatusReason() const {
     return statusreason;
 }
 
 
-void Player::SetStatusReason(const std::string &thisStatusreason) {
-    statusreason = thisStatusreason;
+void Player::setStatusReason(const std::string &reason) {
+    statusreason = reason;
 }
 
 // World Map Turtle Graphics
@@ -2735,12 +2735,12 @@ void Player::executeCraftingDialogAbort(unsigned int dialogId) {
     dialogs.erase(dialogId);
 }
 
-void Player::executeCraftingDialogCraft(unsigned int dialogId, uint8_t craftId, uint8_t craftAmount) {
+void Player::executeCraftingDialogCraft(unsigned int dialogId, uint8_t craftIndex, uint8_t craftAmount) {
     auto craftingDialog = getDialog<CraftingDialog>(dialogId);
 
     if (craftingDialog) {
         craftingDialog->setResult(CraftingDialog::playerCrafts);
-        craftingDialog->setCraftableId(craftId);
+        craftingDialog->setCraftableId(craftIndex);
         craftingDialog->setCraftableAmount(craftAmount);
         bool craftingPossible = LuaScript::executeDialogCallback<bool>(*craftingDialog);
 
@@ -2774,8 +2774,8 @@ void Player::executeCraftingDialogCraftingComplete(unsigned int dialogId) {
         auto stillToCraft = craftingDialog->getCraftableAmount() - 1;
 
         if (stillToCraft > 0) {
-            auto craftId = craftingDialog->getCraftableId();
-            executeCraftingDialogCraft(dialogId, craftId, stillToCraft);
+            auto craftIndex = craftingDialog->getCraftableId();
+            executeCraftingDialogCraft(dialogId, craftIndex, stillToCraft);
         }
     }
 }
@@ -2792,23 +2792,23 @@ void Player::executeCraftingDialogCraftingAborted(unsigned int dialogId) {
     }
 }
 
-void Player::executeCraftingDialogLookAtCraftable(unsigned int dialogId, uint8_t craftId) {
+void Player::executeCraftingDialogLookAtCraftable(unsigned int dialogId, uint8_t craftIndex) {
     auto craftingDialog = getDialog<CraftingDialog>(dialogId);
 
     if (craftingDialog) {
         craftingDialog->setResult(CraftingDialog::playerLooksAtCraftable);
-        craftingDialog->setCraftableId(craftId);
+        craftingDialog->setCraftableId(craftIndex);
         ItemLookAt lookAt = LuaScript::executeDialogCallback<ItemLookAt>(*craftingDialog);
         requestCraftingLookAt(dialogId, lookAt);
     }
 }
 
-void Player::executeCraftingDialogLookAtIngredient(unsigned int dialogId, uint8_t craftId, uint8_t craftIngredient) {
+void Player::executeCraftingDialogLookAtIngredient(unsigned int dialogId, uint8_t craftIndex, uint8_t craftIngredient) {
     auto craftingDialog = getDialog<CraftingDialog>(dialogId);
 
     if (craftingDialog) {
         craftingDialog->setResult(CraftingDialog::playerLooksAtIngredient);
-        craftingDialog->setCraftableId(craftId);
+        craftingDialog->setCraftableId(craftIndex);
         craftingDialog->setIngredientIndex(craftIngredient);
         ItemLookAt lookAt = LuaScript::executeDialogCallback<ItemLookAt>(*craftingDialog);
         requestCraftingLookAtIngredient(dialogId, lookAt);

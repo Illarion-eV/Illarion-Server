@@ -218,9 +218,9 @@ public:
     }
 
     //! parse GMCommands of the Form !<string1> <string2> and process them
-    bool parseGMCommands(Player *cp, const std::string &text);
+    bool parseGMCommands(Player *user, const std::string &text);
     //! parse PlayerCommands of the Form !<string1> <string2> and process them
-    bool parsePlayerCommands(Player *cp, const std::string &text);
+    bool parsePlayerCommands(Player *player, const std::string &text);
 
     /**
     *the current script which is called
@@ -446,7 +446,7 @@ public:
     *@param where the position of the warpfield which should be removed
     *@return true if the removing was succesfull otherwise false
     */
-    bool removeWarpField(const position &where);
+    bool removeWarpField(const position &pos);
 
     /**
     * looks for the targetposition of a Warpfield
@@ -499,12 +499,12 @@ public:
     **/
     bool pushPlayer(Player *cp, unsigned char d, short int &walkcost);
 
-    void checkFieldAfterMove(Character *cp, const Field &field);
+    void checkFieldAfterMove(Character *character, const Field &field);
     void sendPassiveMoveToAllVisiblePlayers(Character *ccp);
     void sendSpinToAllVisiblePlayers(Character *cc);
-    void sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char movetype, TYPE_OF_WALKINGCOST duration);
+    void sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char moveType, TYPE_OF_WALKINGCOST duration);
     void sendCharacterMoveToAllVisibleChars(Character *cc, TYPE_OF_WALKINGCOST duration);
-    void sendCharacterWarpToAllVisiblePlayers(Character *cc, const position &oldpos, unsigned char netid);
+    void sendCharacterWarpToAllVisiblePlayers(Character *cc, const position &oldpos, unsigned char moveType);
     template<class T> void sendCharsInVector(const std::vector<T *> &vec, Player *cp, bool sendSpin);
 
     void lookAtMapItem(Player *player, const position &pos, uint8_t stackPos);
@@ -524,8 +524,8 @@ public:
     // \param position die Position des Item im Inventory
     void lookAtInventoryItem(Player *cp, unsigned char position);
 
-    void makeSoundForAllPlayersInRange(const position &pos, int distancemetric, unsigned short int sound);
-    void makeGFXForAllPlayersInRange(const position &pos, int distancemetric, unsigned short int gfx);
+    void makeSoundForAllPlayersInRange(const position &pos, int radius, unsigned short int sound);
+    void makeGFXForAllPlayersInRange(const position &pos, int radius, unsigned short int gfx);
 
     //! send a message to all chars near pos
     //! \param message what the char says
@@ -569,10 +569,10 @@ public:
     void forceIntroducePlayer(Player *cp, Player *admin);
 
     //GM Funktion um eine Vorstellen zu erzwingen.
-    void ForceIntroduce(Player *cp, const std::string &ts);
+    void ForceIntroduce(Player *player, const std::string &text);
 
     //GM Funktion um ein Vorstellen aller Personen im Sichtbereich zu erzwingen
-    void ForceIntroduceAll(Player *cp);
+    void ForceIntroduceAll(Player *player);
 
     //Sends the current weather to one player
     void sendWeather(Player *cp);
@@ -612,7 +612,7 @@ public:
     */
     void create_command(Player *cp, const std::string &itemid);
 
-    void spawn_command(Player *cp, const std::string &monsterid);
+    void spawn_command(Player *cp, const std::string &monsterId);
 
     /**
     * activates a specific logfile
@@ -627,7 +627,7 @@ public:
     //! teleportiert einen Player zu einem anderen
     // \param cp der zu teleportierende Player
     // \param ts der Name des Ziel - Player
-    void teleportPlayerToOther(Player *cp, const std::string &ts);
+    void teleportPlayerToOther(Player *player, const std::string &target);
 
     //! toetet alles auf der Karte befindlichen Monster
     void kill_command(Player *cp);
@@ -639,7 +639,7 @@ public:
     //! substitutes #j <name>, jump to a player of a given name
     // \param cp is the jumping GM
     // \param ts name of the player to jump to
-    void jumpto_command(Player *cp, const std::string &ts);
+    void jumpto_command(Player *cp, const std::string &player);
 
     //! resambles the former #mapsave command, saves the map
     // \param cp the corresponding GM with correct rights who initiates this mapsave
@@ -648,7 +648,7 @@ public:
     //! Macht spieler cp unsichtbar
     void makeInvisible(Player *cp);
 
-    void talkto_command(Player *cp, const std::string &ts);
+    void talkto_command(Player *player, const std::string &text);
 
     //! Macht spieler cp sichtbar
     void makeVisible(Player *cp);
@@ -666,10 +666,10 @@ public:
     void sendAdminAllPlayerData(Player *admin);
 
     // ! Server side implemented !warp_to x y z
-    void warpto_command(Player *cp, const std::string &ts);
+    void warpto_command(Player *player, const std::string &text);
 
     // ! Server side implemented !summon Player
-    void summon_command(Player *cp, const std::string &ts);
+    void summon_command(Player *player, const std::string &text);
 
     // ! relaods only the definition from the db no Monsterspawns and no NPC's are loaded.
     bool reload_defs(Player *cp);
@@ -678,10 +678,10 @@ public:
     bool importWarpFields(Player *cp,const std::string &filename);
 
     // ! Deletes a Warpfield
-    void removeTeleporter(Player *cp, const std::string &ts);
+    void removeTeleporter(Player *cp, const std::string &text);
 
     // ! Shows a list of Warpfields
-    void showWarpFieldsInRange(Player *cp, const std::string &ts);
+    void showWarpFieldsInRange(Player *cp, const std::string &text);
     //////////////////////////////////////////////////////////////////
 
     //////////// in WorldIMPLItemMoves.cpp ////////////////
@@ -764,10 +764,10 @@ public:
     *@param range the range around the position for calculating
     *@return a list with all the characters (including monsters, npcs, players) around this char
     */
-    std::vector<Character *> getCharactersInRangeOf(const position &posi, uint8_t range) const;
-    std::vector<Player *> getPlayersInRangeOf(const position &posi, uint8_t range) const;
-    std::vector<Monster *> getMonstersInRangeOf(const position &posi, uint8_t range) const;
-    std::vector<NPC *> getNPCSInRangeOf(const position &posi, uint8_t range) const;
+    std::vector<Character *> getCharactersInRangeOf(const position &pos, uint8_t radius) const;
+    std::vector<Player *> getPlayersInRangeOf(const position &pos, uint8_t radius) const;
+    std::vector<Monster *> getMonstersInRangeOf(const position &pos, uint8_t radius) const;
+    std::vector<NPC *> getNPCSInRangeOf(const position &pos, uint8_t radius) const;
 
     //Sucht zu einem Item die gesamten Stats wie Gewicht heraus
     //\param item, das Item zu dem die Stats heraus gesucht werden sollen.
@@ -825,13 +825,13 @@ public:
     //\ param pos Position des Items
     //\ return bool Wert ob das Erstellen geklappt hat.
     //\ quali int, das die qualitaet angibt
-    ScriptItem createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, const position &pos, bool always, int quali, script_data_exchangemap const *data);
+    ScriptItem createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, const position &pos, bool always, int quality, script_data_exchangemap const *data);
 
     //Erzeugt auf den Angegebenen Feld ein bestimmtes Item
     //\ param item, das Item was erzeugt werden soll
     //\ param pos, Position des Items
     //\ return bool Wert der angibt ob das Erstellen geklappt hat.
-    bool createFromItem(ScriptItem item, const position &pos, bool allways);
+    bool createFromItem(ScriptItem item, const position &pos, bool always);
 
     //Erzeugt ein Monster mit der entsprechenden ID auf dem Feld
     //\ param id, das Monster welches Erzeugt werden soll
@@ -868,7 +868,7 @@ public:
     //!Sendet ein Map update zu allen spielern in bereich range um pos
     //\pos, position von der ausgegangen wird
     //\bereich von dem die Spieler genommen werden sollen.
-    void sendMapUpdate(const position &pos, uint8_t range);
+    void sendMapUpdate(const position &pos, uint8_t radius);
 
     //!Sicherer CreateArea command, prft erst ab ob er eine vorhandene Map berschreibt.
     //\tileid: standard Tile
@@ -876,7 +876,7 @@ public:
     //\height: Hoehe der neuen Karte
     //\width: breite der neuen Karte
     //\return true wenn das einfgen klappte, ansonsten false wenns zu berlagerungen kommt.
-    bool createSavedArea(uint16_t tileid, const position &pos, uint16_t height, uint16_t width);
+    bool createSavedArea(uint16_t tile, const position &origin, uint16_t height, uint16_t width);
 
     //! Laedt eine Armor Struct anhand einer id.
     //\return true false der Armorstruct gefunden wurde
@@ -960,10 +960,10 @@ private:
     void who_command(Player *cp, const std::string &tplayer);
 
     // Change tile in front of admin
-    void tile_command(Player *cp, const std::string &ttilenumber);
+    void tile_command(Player *cp, const std::string &tile);
 
     // Turtle tile commands
-    void turtleon_command(Player *cp, const std::string &ttilenumber);
+    void turtleon_command(Player *cp, const std::string &tile);
     void turtleoff_command(Player *cp);
 
     // Clipping on/off command
@@ -977,7 +977,7 @@ private:
     void playersave_command(Player *cp);
 
     // Create telport warp on current tile to x, y, z
-    void teleport_command(Player *cp, const std::string &tplayer);
+    void teleport_command(Player *cp, const std::string &text);
 
     // Give help for GM commands
     void gmhelp_command(Player *cp);
@@ -986,13 +986,13 @@ private:
     bool gmpage_command(Player *player, const std::string &ticket);
 
 public:
-    void ban_command(Player *cp, const std::string &timeplayer);
-    void logGMTicket(Player *Player, const std::string &ticket, bool automatic);
+    void ban_command(Player *cp, const std::string &text);
+    void logGMTicket(Player *player, const std::string &ticket, bool automatic);
     void checkPlayerImmediateCommands();
     void addPlayerImmediateActionQueue(Player* player);
 
 private:
-    std::vector<Character *> getTargetsInRange(const position &pos, int range) const;
+    std::vector<Character *> getTargetsInRange(const position &pos, int radius) const;
     
     bool active_language_command(Player *cp, const std::string &language);
 

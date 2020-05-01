@@ -32,11 +32,11 @@ public:
     LuaTriggerScript(const std::string &filename, const position &pos);
     virtual ~LuaTriggerScript();
 
-    void CharacterOnField(Character *Character);
-    void MoveToField(Character *Character);
-    void MoveFromField(Character *Character);
-    void PutItemOnField(const ScriptItem &item, Character *Character);
-    void TakeItemFromField(const ScriptItem &item, Character *Character);
+    void CharacterOnField(Character *character);
+    void MoveToField(Character *character);
+    void MoveFromField(Character *character);
+    void PutItemOnField(const ScriptItem &item, Character *character);
+    void TakeItemFromField(const ScriptItem &item, Character *character);
     void ItemRotsOnField(const ScriptItem &oldItem, const ScriptItem &newItem);
 
 private:

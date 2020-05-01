@@ -1255,12 +1255,12 @@ bool World::moveItemFromMapToMap(Player *cp, const position &oldPosition, const 
     return false;
 }
 
-bool World::pickUpItemFromMap(Player *cp, const position &sourcePosition) {
+bool World::pickUpItemFromMap(Player *cp, const position &itemPosition) {
     if (cp) {
 
-        if (takeItemFromMap(cp, sourcePosition)) {
+        if (takeItemFromMap(cp, itemPosition)) {
             ScriptItem s_item(g_item), t_item(g_item);
-            s_item.pos = sourcePosition;
+            s_item.pos = itemPosition;
             s_item.type = ScriptItem::it_field;
             s_item.owner = cp;
             t_item.pos = cp->getPosition();
@@ -1270,7 +1270,7 @@ bool World::pickUpItemFromMap(Player *cp, const position &sourcePosition) {
 
             if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
                 if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
-                    if (!putItemOnMap(cp, sourcePosition)) {
+                    if (!putItemOnMap(cp, itemPosition)) {
                         Logger::error(LogFacility::Player) << "pickUpItemFromMap failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
                         g_cont = nullptr;
                         g_item.reset();
@@ -1341,7 +1341,7 @@ bool World::pickUpItemFromMap(Player *cp, const position &sourcePosition) {
             if (NOK) {
                 g_item = tempitem;
 
-                if (!putItemOnMap(cp, sourcePosition)) {
+                if (!putItemOnMap(cp, itemPosition)) {
                     Logger::error(LogFacility::Player) << "moveItemFromMapIntoShowcase failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
                     g_cont = nullptr;
                     g_item.reset();

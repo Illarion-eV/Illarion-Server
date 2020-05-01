@@ -28,26 +28,26 @@
 
 uint32_t NPC::counter = 0;
 
-NPC::NPC(TYPE_OF_CHARACTER_ID _id, const std::string &_name, TYPE_OF_RACE_ID _race, const position &_pos, Character::face_to dir, bool ishealer, Character::sex_type sex,
+NPC::NPC(TYPE_OF_CHARACTER_ID id, const std::string &name, TYPE_OF_RACE_ID race, const position &pos, Character::face_to dir, bool ishealer, Character::sex_type sex,
          const Character::appearance &appearance) : Character(appearance),
-    _ishealer(ishealer), _startpos(_pos) {
-    setName(_name);
+    _ishealer(ishealer), _startpos(pos) {
+    setName(name);
     setFaceTo(dir);
-    setRace(_race);
+    setRace(race);
     setAttribute(Character::sex, sex);
 
     // take database id as npc id with appropriate offset so that npc ids are constant
-    if (_id == DYNNPC_BASE) {
+    if (id == DYNNPC_BASE) {
         setId(DYNNPC_BASE + counter);
         ++counter;
     } else {
-        setId(NPC_BASE + _id);
+        setId(NPC_BASE + id);
     }
 
     Field &field = _world->fieldAt(_startpos);
 
     setPosition(_startpos);
-    Logger::debug(LogFacility::World) << "New NPC spawned: pos: " << _startpos << " type: " << _race << " Name: " << _name<< " is_healer: " << _ishealer << " sex: " << getAttribute(Character::sex) << Log::end;
+    Logger::debug(LogFacility::World) << "New NPC spawned: pos: " << _startpos << " type: " << race << " Name: " << name<< " is_healer: " << _ishealer << " sex: " << getAttribute(Character::sex) << Log::end;
 
     field.setChar();
 

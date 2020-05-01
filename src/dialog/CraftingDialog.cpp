@@ -129,9 +129,9 @@ uint8_t CraftingDialog::getCraftableId() const {
     return craftableId;
 }
 
-void CraftingDialog::setCraftableId(uint8_t id) {
-    if (craftables.find(id) != craftables.end()) {
-        craftableId = id;
+void CraftingDialog::setCraftableId(uint8_t index) {
+    if (craftables.find(index) != craftables.end()) {
+        craftableId = index;
     } else {
         craftableId = 0;
     }

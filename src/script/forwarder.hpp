@@ -51,7 +51,7 @@ int container_erase_item1(Container *, Item::id_type, Item::number_type);
 int container_erase_item2(Container *, Item::id_type, Item::number_type, const luabind::object &data);
 
 Field *world_fieldAt(World *world, const position &pos);
-ScriptItem world_createFromId(World *world, TYPE_OF_ITEM_ID id, unsigned short int count, position pos, bool allways, int quali, const luabind::object &data);
+ScriptItem world_createFromId(World *world, TYPE_OF_ITEM_ID id, unsigned short int count, position pos, bool always, int quali, const luabind::object &data);
 
 void log_lua(const std::string &message);
 

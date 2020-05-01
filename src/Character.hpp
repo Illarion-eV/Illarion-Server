@@ -497,7 +497,7 @@ public:
     virtual void requestMessageDialog(MessageDialog *messageDialog);
     virtual void requestMerchantDialog(MerchantDialog *merchantDialog);
     virtual void requestSelectionDialog(SelectionDialog *selectionDialog);
-    virtual void requestCraftingDialog(CraftingDialog *craftingDIalog);
+    virtual void requestCraftingDialog(CraftingDialog *craftingDialog);
     virtual void requestCraftingLookAt(unsigned int dialogId, ItemLookAt &lookAt);
     virtual void requestCraftingLookAtIngredient(unsigned int dialogId, ItemLookAt &lookAt);
 

@@ -92,8 +92,8 @@ Item::number_type Container::mergeItem(Item item) {
     return item.getNumber();
 }
 
-bool Container::InsertItem(const Item &it) {
-    return InsertItem(it, true);
+bool Container::InsertItem(const Item &item) {
+    return InsertItem(item, true);
 }
 
 bool Container::InsertItem(Item item, bool merge) {
@@ -159,9 +159,9 @@ bool Container::InsertItem(Item item, TYPE_OF_CONTAINERSLOTS pos) {
     return false;
 }
 
-bool Container::InsertContainer(const Item &it, Container *cc) {
+bool Container::InsertContainer(const Item &item, Container *cc) {
     if ((this != cc) && (items.size() < getSlotCount())) {
-        Item titem = it;
+        Item titem = item;
         insertIntoFirstFreeSlot(titem, cc);
         return true;
     }
@@ -170,14 +170,14 @@ bool Container::InsertContainer(const Item &it, Container *cc) {
 
 }
 
-bool Container::InsertContainer(const Item &it, Container *cc, TYPE_OF_CONTAINERSLOTS pos) {
+bool Container::InsertContainer(const Item &item, Container *cc, TYPE_OF_CONTAINERSLOTS pos) {
     if ((this != cc) && (pos < getSlotCount())) {
-        Item titem = it;
+        Item titem = item;
 
         auto iterat = items.find(pos);
 
         if (iterat != items.end()) {
-            return InsertContainer(it, cc);
+            return InsertContainer(item, cc);
         } else {
             items.insert(ITEMMAP::value_type(pos, titem));
             containers.insert(CONTAINERMAP::value_type(pos, cc));

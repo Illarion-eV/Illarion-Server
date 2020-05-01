@@ -444,26 +444,26 @@ public:
     virtual void handleAttributeChange(Character::attributeIndex attribute) override;
 
 
-    virtual void startMusic(short int which) override;
+    virtual void startMusic(short int title) override;
     virtual void defaultMusic() override;
 
     bool sendTextInFile(const std::string &filename);
 
     // Setters and Getters //
-    unsigned char GetStatus() const;
-    void SetStatus(unsigned char thisStatus);
+    unsigned char getStatus() const;
+    void setStatus(unsigned char status);
 
     // What time does the status get reset?
-    time_t GetStatusTime() const;
-    void SetStatusTime(time_t thisStatustime);
+    time_t getStatusTime() const;
+    void setStatusTime(time_t time);
 
     // Who banned/jailed the player?
-    std::string GetStatusGM() const;
-    void SetStatusGM(TYPE_OF_CHARACTER_ID thisStatusGM);
+    std::string getStatusGM() const;
+    void setStatusGM(TYPE_OF_CHARACTER_ID gm);
 
     // Why where they banned/jailed?
-    std::string GetStatusReason() const;
-    void SetStatusReason(const std::string &thisStatusreason);
+    std::string getStatusReason() const;
+    void setStatusReason(const std::string &reason);
 
     // World Map Turtle Graphics
     void setTurtleActive(bool tturtleActive);
@@ -480,11 +480,11 @@ public:
     virtual bool isAdmin() const override;
 
     // player gets informed about something
-    virtual void inform(const std::string &text, informType type = informServer) const override;
+    virtual void inform(const std::string &message, informType type = informServer) const override;
     virtual void inform(const std::string &german, const std::string &english, informType type = informServer) const override;
 
     virtual void turn(direction dir) override;
-    virtual void turn(const position &posi) override;
+    virtual void turn(const position &pos) override;
 
     // player heard something
     virtual void receiveText(talk_type tt, const std::string &message, Character *cc) override;

@@ -156,15 +156,15 @@ void World::InitGMCommands() {
 
 }
 
-void World::spawn_command(Player *cp, const std::string &monid) {
+void World::spawn_command(Player *cp, const std::string &monsterId) {
     if (cp->hasGMRight(gmr_basiccommands)) {
         uint16_t id;
         std::stringstream ss;
-        ss.str(monid);
+        ss.str(monsterId);
         ss >> id;
         position pos = cp->getPosition();
         pos.x++;
-        Logger::info(LogFacility::Admin) << *cp << " creates monster " << monid
+        Logger::info(LogFacility::Admin) << *cp << " creates monster " << monsterId
                                          << " at " << pos << Log::end;
         createMonster(id, pos, 0);
     }
@@ -384,15 +384,15 @@ void World::ForceIntroduceAll(Player *player) {
     }
 }
 
-void World::teleportPlayerToOther(Player *player, const std::string &text) {
+void World::teleportPlayerToOther(Player *player, const std::string &target) {
     if (!player->hasGMRight(gmr_warp)) {
         return;
     }
 
-    auto target = Players.find(text);
+    auto targetPlayer = Players.find(target);
 
-    if (target && target->getId() != player->getId()) {
-        player->Warp(target->getPosition());
+    if (targetPlayer && targetPlayer->getId() != player->getId()) {
+        player->Warp(targetPlayer->getPosition());
     }
 }
 
@@ -444,8 +444,8 @@ void World::sendAdminAllPlayerData(Player *admin) {
 }
 
 
-void World::warpto_command(Player *p, const std::string &text) {
-    if (!p->hasGMRight(gmr_warp) && !Config::instance().debug) {
+void World::warpto_command(Player *player, const std::string &text) {
+    if (!player->hasGMRight(gmr_warp) && !Config::instance().debug) {
         return;
     }
 
@@ -454,7 +454,7 @@ void World::warpto_command(Player *p, const std::string &text) {
 
     if (std::regex_match(text, match, pattern)) {
         try {
-            position warpto = p->getPosition();
+            position warpto = player->getPosition();
             auto a = boost::lexical_cast<short int>(match[1].str());
 
             if (!match[2].str().empty()) {
@@ -471,8 +471,8 @@ void World::warpto_command(Player *p, const std::string &text) {
                 warpto.z = a;
             }
 
-            p->forceWarp(warpto);
-            Logger::info(LogFacility::Admin) << *p << " warps to " << warpto << Log::end;
+            player->forceWarp(warpto);
+            Logger::info(LogFacility::Admin) << *player << " warps to " << warpto << Log::end;
         } catch (boost::bad_lexical_cast &) {
         }
     }
@@ -552,16 +552,16 @@ void World::ban_command(Player *cp, const std::string &text) {
 
 void World::ban(Player *cp, int bantime, TYPE_OF_CHARACTER_ID gmid) {
     if (bantime == 0) {
-        cp->SetStatus(BANNED);
-        cp->SetStatusTime(0);
-        cp->SetStatusGM(gmid);
+        cp->setStatus(BANNED);
+        cp->setStatusTime(0);
+        cp->setStatusGM(gmid);
     } else if (bantime > 0) {
-        cp->SetStatus(BANNEDFORTIME);
+        cp->setStatus(BANNEDFORTIME);
         time_t ttime;
         time(&ttime);
         // Banned for seconds
-        cp->SetStatusTime(ttime + bantime);
-        cp->SetStatusGM(gmid);
+        cp->setStatusTime(ttime + bantime);
+        cp->setStatusGM(gmid);
     }
 
     forceLogoutOfPlayer(cp->getName());

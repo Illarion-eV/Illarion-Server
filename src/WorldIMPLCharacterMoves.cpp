@@ -31,12 +31,12 @@
 #include "script/LuaItemScript.hpp"
 
 
-void World::checkFieldAfterMove(Character *cc, const Field &field) {
-    if (!cc) {
+void World::checkFieldAfterMove(Character *character, const Field &field) {
+    if (!character) {
         return;
     }
 
-    if (cc->isAlive() && field.hasSpecialItem()) {
+    if (character->isAlive() && field.hasSpecialItem()) {
 
         for (const auto &item : field.getItemStack()) {
             if (Data::TilesModItems.exists(item.getId())) {
@@ -47,7 +47,7 @@ void World::checkFieldAfterMove(Character *cc, const Field &field) {
                     std::shared_ptr<LuaItemScript> script = Data::Items.script(item.getId());
 
                     if (script) {
-                        script->CharacterOnField(cc);
+                        script->CharacterOnField(character);
                         return;
                     }
                 }
@@ -55,11 +55,11 @@ void World::checkFieldAfterMove(Character *cc, const Field &field) {
         }
     }
 
-    if (cc->isAlive() && Data::Triggers.exists(cc->getPosition())) {
-        const auto &script = Data::Triggers.script(cc->getPosition());
+    if (character->isAlive() && Data::Triggers.exists(character->getPosition())) {
+        const auto &script = Data::Triggers.script(character->getPosition());
 
         if (script) {
-            script->CharacterOnField(cc);
+            script->CharacterOnField(character);
         }
     }
 }
@@ -123,11 +123,10 @@ void World::sendPassiveMoveToAllVisiblePlayers(Character *ccp) {
 
 
 void World::sendCharacterMoveToAllVisibleChars(Character *cc, TYPE_OF_WALKINGCOST duration) {
-    // for now we only send events to players... TODO change this whole command
     sendCharacterMoveToAllVisiblePlayers(cc, NORMALMOVE, duration);
 }
 
-void World::sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char netid, TYPE_OF_WALKINGCOST duration) {
+void World::sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char moveType, TYPE_OF_WALKINGCOST duration) {
     if (!cc->isInvisible()) {
         char xoffs;
         char yoffs;
@@ -141,7 +140,7 @@ void World::sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char ne
             zoffs = charPos.z - playerPos.z + RANGEDOWN;
 
             if ((xoffs != 0) || (yoffs != 0) || (zoffs != RANGEDOWN)) {
-                ServerCommandPointer cmd = std::make_shared<MoveAckTC>(cc->getId(), charPos, netid, duration);
+                ServerCommandPointer cmd = std::make_shared<MoveAckTC>(cc->getId(), charPos, moveType, duration);
                 p->Connection->addCommand(cmd);
             }
         }
@@ -149,7 +148,7 @@ void World::sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char ne
 }
 
 
-void World::sendCharacterWarpToAllVisiblePlayers(Character *cc, const position &oldpos, unsigned char netid) {
+void World::sendCharacterWarpToAllVisiblePlayers(Character *cc, const position &oldpos, unsigned char moveType) {
     if (!cc->isInvisible()) {
         {
             ServerCommandPointer cmd = std::make_shared<RemoveCharTC>(cc->getId());

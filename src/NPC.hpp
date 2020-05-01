@@ -59,7 +59,7 @@ public:
     * @param ishealer if true the npc ressurects death players
     * @param sex the sex of the npc
     */
-    NPC(TYPE_OF_CHARACTER_ID id, const std::string &name, TYPE_OF_RACE_ID type, const position &pos, Character::face_to dir, bool ishealer, Character::sex_type sex,
+    NPC(TYPE_OF_CHARACTER_ID id, const std::string &name, TYPE_OF_RACE_ID race, const position &pos, Character::face_to dir, bool ishealer, Character::sex_type sex,
         const appearance &appearance);
 
     /**

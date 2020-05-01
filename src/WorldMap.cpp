@@ -359,8 +359,8 @@ bool WorldMap::loadFromDisk(const std::string &path) {
     }
 }
 
-void WorldMap::saveToDisk(const std::string &prefix) const {
-    std::ofstream mapinitfile(prefix + "_initmaps", std::ios::binary | std::ios::out | std::ios::trunc);
+void WorldMap::saveToDisk(const std::string &path) const {
+    std::ofstream mapinitfile(path + "_initmaps", std::ios::binary | std::ios::out | std::ios::trunc);
 
     if (!mapinitfile.good()) {
         Logger::error(LogFacility::World) << "Could not create initmaps!" << Log::end;
@@ -382,7 +382,7 @@ void WorldMap::saveToDisk(const std::string &prefix) const {
             mapinitfile.write((char *) &width, sizeof(width));
             mapinitfile.write((char *) &height, sizeof(height));
 
-            sprintf(mname, "%s_%6d_%6d_%6d", prefix.c_str(), level, x, y);
+            sprintf(mname, "%s_%6d_%6d_%6d", path.c_str(), level, x, y);
             map.Save(mname);
         }
 

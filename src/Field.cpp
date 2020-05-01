@@ -180,12 +180,12 @@ bool Field::swapItemOnStack(TYPE_OF_ITEM_ID newId, uint16_t newQuality) {
 }
 
 
-bool Field::viewItemOnStack(Item &it) const {
+bool Field::viewItemOnStack(Item &item) const {
     if (items.empty()) {
         return false;
     }
 
-    it = items.back();
+    item = items.back();
 
     return true;
 }

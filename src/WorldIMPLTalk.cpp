@@ -345,8 +345,8 @@ void World::lookAtInventoryItem(Player *cp, unsigned char position) {
     }
 }
 
-void World::forceIntroducePlayer(Player *cp, Player *Admin) {
-    Admin->introducePlayer(cp);
+void World::forceIntroducePlayer(Player *cp, Player *admin) {
+    admin->introducePlayer(cp);
 }
 
 void World::introduceMyself(Player *cp) {

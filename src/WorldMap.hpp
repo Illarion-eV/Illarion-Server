@@ -45,13 +45,13 @@ public:
 
     bool import(const std::string &importDir, const std::string &mapName);
     bool exportTo(const std::string &exportDir) const;
-    bool loadFromDisk(const std::string &prefix);
-    void saveToDisk(const std::string &prefix) const;
+    bool loadFromDisk(const std::string &path);
+    void saveToDisk(const std::string &path) const;
     bool createMap(const std::string &name, const position &origin,
                    uint16_t width, uint16_t height, uint16_t tile);
 
 private:
-    bool insert(Map&& map);
+    bool insert(Map&& newMap);
     static Map createMapFromHeaderFile(const std::string &importDir,
                                        const std::string &mapName);
     static int16_t readHeaderLine(const std::string &mapName, char header,

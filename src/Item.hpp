@@ -62,7 +62,7 @@ public:
     inline void setNumber(number_type number) {
         this->number = number;
     }
-    number_type increaseNumberBy(number_type number);
+    number_type increaseNumberBy(number_type count);
 
     inline wear_type getWear() const {
         return wear;

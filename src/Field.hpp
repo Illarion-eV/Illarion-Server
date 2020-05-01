@@ -63,9 +63,9 @@ public:
     bool addItemOnStackIfWalkable(const Item &item);
     bool takeItemFromStack(Item &item);
     int increaseItemOnStack(int count, bool &erased);
-    bool swapItemOnStack(TYPE_OF_ITEM_ID newid, uint16_t newQuality = 0);
+    bool swapItemOnStack(TYPE_OF_ITEM_ID newId, uint16_t newQuality = 0);
     bool viewItemOnStack(Item &item) const;
-    ScriptItem getStackItem(uint8_t spos) const;
+    ScriptItem getStackItem(uint8_t pos) const;
     const std::vector<Item> &getItemStack() const;
     MAXCOUNTTYPE itemCount() const;
 
@@ -92,10 +92,10 @@ public:
     bool isWarp() const;
 
     std::vector<Item> getExportItems() const;
-    void save(std::ofstream &map, std::ofstream &items, std::ofstream &warps,
-              std::ofstream &containers) const;
-    void load(std::ifstream &map, std::ifstream &items, std::ifstream &warps,
-              std::ifstream &containers);
+    void save(std::ofstream &mapStream, std::ofstream &itemStream,
+            std::ofstream &warpStream, std::ofstream &containerStream) const;
+    void load(std::ifstream &mapStream, std::ifstream &itemStream,
+            std::ifstream &warpStream, std::ifstream &containerStream);
 
 private:
     void updateFlags();

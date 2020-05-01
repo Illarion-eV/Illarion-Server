@@ -1488,7 +1488,7 @@ void Character::defaultMusic() {
     //Nothing to do here, overloaded for players
 }
 
-void Character::inform(const std::string &text, informType type) const {
+void Character::inform(const std::string &message, informType type) const {
     // override for char types that need this kind of information
 }
 

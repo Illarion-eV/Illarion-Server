@@ -578,7 +578,7 @@ void CastTS::performAction(Player *player) {
         Logger::debug(LogFacility::Script) << "try to call magic script" << Log::end;
         player->ltAction->setLastAction(LuaMageScript, Source, Target, LongTimeAction::ACTION_MAGIC);
 
-        if ((paramOK) && player->isAlive() && (player->GetStatus() < 10)) {
+        if ((paramOK) && player->isAlive() && (player->getStatus() < 10)) {
             switch (Target.Type) {
             case LUA_NONE:
                 LuaMageScript->CastMagic(player, static_cast<unsigned char>(LTS_NOLTACTION));
@@ -1492,7 +1492,7 @@ void AttackPlayerTS::decodeData() {
 void AttackPlayerTS::performAction(Player *player) {
     time(&(player->lastaction));
 
-    if (player->isAlive() && player->GetStatus() < 10) {
+    if (player->isAlive() && player->getStatus() < 10) {
         player->ltAction->abortAction();
 
         if (player->isAlive()) {
