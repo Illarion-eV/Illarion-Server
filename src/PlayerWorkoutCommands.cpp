@@ -25,8 +25,6 @@
 #include "netinterface/NetInterface.hpp"
 #include "netinterface/protocol/ClientCommands.hpp"
 
-#include "Statistics.hpp"
-
 void Player::workoutCommands() {
     std::unique_lock<std::mutex> lock(commandMutex);
     while (!immediateCommands.empty()) {
@@ -34,8 +32,6 @@ void Player::workoutCommands() {
 	    immediateCommands.pop();
 	    lock.unlock();
 	    cmd->performAction(this);
-	    using namespace Statistic;
-	    Statistics::getInstance().logTime("command_incoming_done", std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - cmd->getIncomingTime()).count());
 	    lock.lock();
     }
 
@@ -44,8 +40,6 @@ void Player::workoutCommands() {
 	    queuedCommands.pop();
 	    lock.unlock();
 	    cmd->performAction(this);
-	    using namespace Statistic;
-	    Statistics::getInstance().logTime("command_incoming_done_ap", std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - cmd->getIncomingTime()).count());
 	    lock.lock();
     }
 }

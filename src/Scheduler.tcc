@@ -16,17 +16,12 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "Statistics.hpp"
-
 template<typename clock_type>
 Task<clock_type>::Task(std::function<void()> task, typename clock_type::time_point start_point, std::chrono::nanoseconds interval, const std::string& name) : _task(task), _next(start_point), _interval(interval), _name(name) { }
 
 template<typename clock_type>
 bool Task<clock_type>::run() {
-    using Statistic::Statistics;
-    Statistics::getInstance().startTimer(_name);
 	_task();
-    Statistics::getInstance().stopTimer(_name);
 
 	if (_interval > std::chrono::nanoseconds::zero()) {
 		_next += std::chrono::duration_cast<typename clock_type::duration>(_interval);

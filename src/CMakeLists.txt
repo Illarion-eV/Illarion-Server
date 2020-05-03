@@ -168,8 +168,6 @@ add_library(server
     Showcase.hpp
     SpawnPoint.cpp
     SpawnPoint.hpp
-    Statistics.cpp
-    Statistics.hpp
     TableStructs.hpp
     thread_safe_vector.hpp
     Timer.cpp

@@ -32,7 +32,7 @@ SUBDIRS = script .
 BUILT_SOURCES = version.hpp
 
 libserver_a_SOURCES = \
-main_help.cpp utility.cpp Logger.cpp Random.cpp Config.cpp Statistics.cpp a_star.cpp character_ptr.cpp \
+main_help.cpp utility.cpp Logger.cpp Random.cpp Config.cpp a_star.cpp character_ptr.cpp \
 \
 data/Data.cpp data/QuestNodeTable.cpp data/QuestTable.cpp data/RaceTypeTable.cpp \
 data/ArmorObjectTable.cpp data/ItemTable.cpp data/ContainerObjectTable.cpp data/RaceTable.cpp \
@@ -108,7 +108,7 @@ noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
 		 netinterface/protocol/BBIWIServerCommands.hpp \
 		 netinterface/protocol/ClientCommands.hpp \
 		 netinterface/protocol/ServerCommands.hpp WaypointList.hpp \
-		 Config.hpp Statistics.hpp Timer.hpp constants.hpp types.hpp \
+		 Config.hpp Timer.hpp constants.hpp types.hpp \
 		 LongTimeCharacterEffects.hpp LongTimeAction.hpp character_ptr.hpp \
 		 Player.hpp SpawnPoint.hpp LongTimeEffect.hpp Monster.hpp
 

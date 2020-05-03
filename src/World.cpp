@@ -58,8 +58,6 @@
 #include "netinterface/NetInterface.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
 
-#include "Statistics.hpp"
-
 extern ScheduledScriptsTable *scheduledScripts;
 extern MonsterTable *monsterDescriptions;
 extern std::shared_ptr<LuaLogoutScript> logoutScript;
@@ -175,19 +173,9 @@ void World::turntheworld() {
     if (ap > 0) {
         usedAP += ap;
 
-        using namespace Statistic;
-
-        Statistics::getInstance().startTimer("cycle player");
         checkPlayers();
-        Statistics::getInstance().stopTimer("cycle player");
-
-        Statistics::getInstance().startTimer("cycle monster");
         checkMonsters();
-        Statistics::getInstance().stopTimer("cycle monster");
-
-        Statistics::getInstance().startTimer("cycle npc");
         checkNPC();
-        Statistics::getInstance().stopTimer("cycle npc");
     }
 }
 

@@ -50,8 +50,6 @@
 #include "script/LuaLoginScript.hpp"
 #include "script/LuaReloadScript.hpp"
 
-#include "Statistics.hpp"
-
 extern std::shared_ptr<LuaLoginScript>loginScript;
 extern ScriptVariablesTable *scriptVariables;
 
@@ -121,9 +119,6 @@ int main(int argc, char *argv[]) {
 
     running = true;
 
-    using namespace Statistic;
-    Statistics::getInstance().startTimer("cycle");
-
     while (running) {
         // make sure we don't block the server with processing new players...
         int new_players_processed = 0;
@@ -157,7 +152,6 @@ int main(int argc, char *argv[]) {
         // run scheduler until next task or for 25ms
         world->scheduler.run_once(std::chrono::seconds(1));
         world->checkPlayerImmediateCommands();
-        Statistics::getInstance().stopTimer("cycle");
     }
 
 
