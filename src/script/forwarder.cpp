@@ -28,7 +28,7 @@ std::shared_ptr<script_data_exchangemap> convert_to_map(const luabind::object &d
 
         try {
             key = luabind::object_cast<std::string>(it.key());
-        } catch (luabind::cast_failed &e) {
+        } catch (luabind::cast_failed &) {
             throw std::logic_error("Usage of invalid data map key. Data map keys must be strings.");
         }
 
@@ -36,13 +36,13 @@ std::shared_ptr<script_data_exchangemap> convert_to_map(const luabind::object &d
 
         try {
             value = luabind::object_cast<std::string>(*it);
-        } catch (luabind::cast_failed &e) {
+        } catch (luabind::cast_failed &) {
             try {
                 int32_t intValue = luabind::object_cast<int32_t>(*it);
                 std::stringstream ss;
                 ss << intValue;
                 value = ss.str();
-            } catch (luabind::cast_failed &e) {
+            } catch (luabind::cast_failed &) {
                 throw std::logic_error("Usage of invalid data map value. Data map values must be numbers or strings.");
             }
         }
