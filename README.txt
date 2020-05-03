@@ -26,7 +26,7 @@ Requirements
    Lua 5.2.4
    Luabind 0.9.1 with some bugfixes from
         http://illarion.org/repos/apt/debian (binary)
-     or https://github.com/vilarion/luabind/tree/debian (source)
+     or https://github.com/vilarion/luabind/tree/illarion (source)
    gtest 1.8.1
    google-mock 1.8.1
 

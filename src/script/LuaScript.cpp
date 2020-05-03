@@ -27,7 +27,6 @@ extern "C" {
 
 #include <iostream>
 #include <algorithm>
-#include <cxxabi.h>
 
 #include "luabind/luabind.hpp"
 #include <luabind/raw_policy.hpp>
@@ -241,9 +240,8 @@ void LuaScript::writeErrorMsg() {
 
 void LuaScript::writeCastErrorMsg(const std::string &entryPoint, const luabind::cast_failed &e) const {
     std::string script = getFileName();
-    char *expectedType = abi::__cxa_demangle(e.info().name(), 0, 0, 0);
+    const std::string &expectedType = e.info().name();
     Logger::error(LogFacility::Script) << "Invalid return type in " << script << "." << entryPoint << ": " << "Expected type " << expectedType << Log::end;
-    free(expectedType);
 }
 
 void LuaScript::writeDebugMsg(const std::string &msg) {
