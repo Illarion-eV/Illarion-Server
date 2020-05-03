@@ -1,2 +1,4 @@
 missingInclude
 knownConditionTrueFalse:src/script/LuaScript.cpp:205
+functionStatic:src/db/QueryColumns.hpp:44
+functionStatic:src/db/QueryColumns.hpp:51
