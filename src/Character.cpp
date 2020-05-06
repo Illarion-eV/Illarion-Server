@@ -23,6 +23,7 @@
 #include <map>
 #include <algorithm>
 #include <cmath>
+#include <range/v3/all.hpp>
 
 #include "character_ptr.hpp"
 #include "a_star.hpp"
@@ -293,69 +294,60 @@ void Character::setInvisible(bool invisible) {
     isinvisible = invisible;
 }
 
-int Character::countItem(TYPE_OF_ITEM_ID itemid) const {
-    int temp = 0;
+auto toNumber = [](const Item &item) {return item.getNumber();};
 
-    for (const auto &item: items) {
-        if (item.getId() == itemid) {
-            temp += item.getNumber();
-        }
-    }
+int Character::countItem(TYPE_OF_ITEM_ID itemid) const {
+    using namespace ranges;
+    auto hasItemId = [itemid](const Item &item) {return item.getId() == itemid;};
+    int count = accumulate(items | view::filter(hasItemId)
+                                 | view::transform(toNumber), 0);
 
     if ((items[ BACKPACK ].getId() != 0) && backPackContents) {
-        temp += backPackContents->countItem(itemid);
+        count += backPackContents->countItem(itemid);
     }
 
-    return temp;
+    return count;
 }
 
 int Character::countItemAt(const std::string &where, TYPE_OF_ITEM_ID itemid, script_data_exchangemap const *data) const {
-    int temp = 0;
+    using namespace ranges;
+    auto hasItemIdAndData = [itemid, data](const Item &item) {
+        return item.getId() == itemid && (data == nullptr || item.hasData(*data));
+    };
 
     if (where == "all") {
-        for (const auto &item: items) {
-            if (item.getId() == itemid &&
-                (data == nullptr || item.hasData(*data))) {
-                temp += item.getNumber();
-            }
-        }
+        int count = accumulate(items | view::filter(hasItemIdAndData)
+                                     | view::transform(toNumber), 0);
 
         if ((items[ BACKPACK ].getId() != 0) && backPackContents) {
-            temp += backPackContents->countItem(itemid, data);
+            count += backPackContents->countItem(itemid, data);
         }
 
-        return temp;
+        return count;
     }
 
     if (where == "belt") {
-        for (unsigned char i = MAX_BODY_ITEMS; i < MAX_BODY_ITEMS + MAX_BELT_SLOTS; ++i) {
-            if (items[ i ].getId() == itemid && (data == nullptr || items[i].hasData(*data))) {
-                temp += items[ i ].getNumber();
-            }
-        }
-
-        return temp;
+        return accumulate(items | view::slice(MAX_BODY_ITEMS, MAX_BODY_ITEMS + MAX_BELT_SLOTS)
+                                | view::filter(hasItemIdAndData)
+                                | view::transform(toNumber), 0);
     }
 
     if (where == "body") {
-        for (unsigned char i = 0; i < MAX_BODY_ITEMS; ++i) {
-            if (items[ i ].getId() == itemid && (data == nullptr || items[i].hasData(*data))) {
-                temp += items[ i ].getNumber();
-            }
-        }
-
-        return temp;
+        return accumulate(items | view::take(MAX_BODY_ITEMS)
+                                | view::filter(hasItemIdAndData)
+                                | view::transform(toNumber), 0);
     }
 
     if (where == "backpack") {
+        int count = 0;
         if ((items[ BACKPACK ].getId() != 0) && backPackContents) {
-            temp += backPackContents->countItem(itemid , data);
+            count += backPackContents->countItem(itemid , data);
         }
 
-        return temp;
+        return count;
     }
 
-    return temp;
+    return 0;
 }
 
 ScriptItem Character::GetItemAt(unsigned char itempos) {
