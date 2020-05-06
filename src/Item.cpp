@@ -23,6 +23,7 @@
 #include "script/LuaLookAtItemScript.hpp"
 #include <sstream>
 #include <boost/lexical_cast.hpp>
+#include <range/v3/all.hpp>
 
 extern std::shared_ptr<LuaLookAtItemScript>lookAtItemScript;
 
@@ -118,13 +119,9 @@ bool Item::hasData(const script_data_exchangemap &datamap) const {
         return false;
     }
 
-    for (const auto& item : datamap) {
-        if (getData(item.first) != item.second) {
-            return false;
-        }
-    }
-
-    return true;
+    using namespace ranges;
+    auto dataEqual = [this](const auto &dataKeyValue) {return getData(dataKeyValue.first) == dataKeyValue.second;};
+    return all_of(datamap, dataEqual);
 }
 
 bool Item::hasNoData() const {

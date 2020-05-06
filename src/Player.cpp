@@ -392,21 +392,16 @@ void Player::closeAllShowcases() {
 
 void Player::lookIntoShowcaseContainer(uint8_t showcase, unsigned char pos) {
     if (isShowcaseOpen(showcase)) {
-        Container *top = getShowcaseContainer(showcase);
-        bool allowedToOpenContainer = false;
+        Container *showcaseContainer = getShowcaseContainer(showcase);
+        
+        auto isShowcaseContainer = [showcaseContainer](auto container) {return container == showcaseContainer;};
+        bool allowedToOpenContainer = ranges::any_of(depotContents | ranges::view::values, isShowcaseContainer);
 
-        for (const auto &depot : depotContents) {
-            if (depot.second == top) {
-                allowedToOpenContainer = true;
-                break;
-            }
-        }
-
-        if (top && allowedToOpenContainer) {
+        if (showcaseContainer && allowedToOpenContainer) {
             Container *tempc;
             ScriptItem tempi;
 
-            if (top->viewItemNr(pos, tempi, tempc)) {
+            if (showcaseContainer->viewItemNr(pos, tempi, tempc)) {
                 if (tempc) {
                     openShowcase(tempc, tempi, isShowcaseInInventory(showcase));
                 }

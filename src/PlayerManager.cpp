@@ -17,6 +17,7 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <memory>
+#include <range/v3/all.hpp>
 
 #include "PlayerManager.hpp"
 
@@ -67,14 +68,10 @@ void PlayerManager::stop() {
 
 bool PlayerManager::findPlayer(const std::string &name) const {
     std::lock_guard<std::mutex> lock(mut);
-
-    for (auto const &player : loggedOutPlayers) {
-        if (player->getName() == name) {
-            return true;
-        }
-    }
-
-    return false;
+    
+    using namespace ranges;
+    auto hasThisName = [&name](const auto &player) {return player->getName() == name;};
+    return any_of(loggedOutPlayers, hasThisName);
 }
 
 void PlayerManager::setLoginLogout(bool val) {

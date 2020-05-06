@@ -398,31 +398,17 @@ bool World::putItemInShowcase(Player *cc, uint8_t showcase, TYPE_OF_CONTAINERSLO
 
     if (ps) {
         if (g_cont) {
+            if (ps != g_cont) {
+                if (ps->InsertContainer(g_item, g_cont, pos)) {
+                    sendContainerSlotChange(ps, pos, g_cont);
+                    g_item.reset();
+                    g_cont = nullptr;
 
-#ifdef World_BagOnlyInDepot
-
-            for (const auto &depot : cc->depotContents) {
-                if (depot.second == ps) {
-                    isdepot = true;
-                    break;
+                    return true;
                 }
             }
-
-            if (isdepot)
-#endif
-            {
-                if (ps != g_cont) {
-                    if (ps->InsertContainer(g_item, g_cont, pos)) {
-                        sendContainerSlotChange(ps, pos, g_cont);
-                        g_item.reset();
-                        g_cont = nullptr;
-
-                        return true;
-                    }
-                }
-                else {
-                    return false;
-                }
+            else {
+                return false;
             }
         } else {
             if (ps->InsertItem(g_item, pos)) {
