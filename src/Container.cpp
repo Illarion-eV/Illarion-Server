@@ -296,11 +296,11 @@ std::vector<ScriptItem> Container::getItemList(Item::id_type itemid) {
         Item &item = it->second;
 
         if (item.getId() == itemid) {
-            ScriptItem item(it->second);
-            item.type = ScriptItem::it_container;
-            item.itempos = it->first;
-            item.inside = this;
-            list.push_back(item);
+            ScriptItem scriptItem(item);
+            scriptItem.type = ScriptItem::it_container;
+            scriptItem.itempos = it->first;
+            scriptItem.inside = this;
+            list.push_back(scriptItem);
         }
 
         if (item.isContainer()) {
@@ -321,11 +321,11 @@ void Container::addContentToList(Item::id_type itemid, std::vector<ScriptItem> &
         const Item &item = it->second;
 
         if (item.getId() == itemid) {
-            ScriptItem item(it->second);
-            item.type = ScriptItem::it_container;
-            item.itempos = it->first;
-            item.inside = this;
-            list.push_back(item);
+            ScriptItem scriptItem(item);
+            scriptItem.type = ScriptItem::it_container;
+            scriptItem.itempos = it->first;
+            scriptItem.inside = this;
+            list.push_back(scriptItem);
         }
 
         if (item.isContainer()) {

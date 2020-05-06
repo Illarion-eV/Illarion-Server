@@ -1627,12 +1627,12 @@ bool Player::load() noexcept {
         }
 
         for (const auto &depot : depots) {
-            auto it = depotContents.find(depot.first);
+            auto depotIt = depotContents.find(depot.first);
 
-            if (it != depotContents.end()) {
-                it->second = depot.second;
+            if (depotIt != depotContents.end()) {
+                depotIt->second = depot.second;
             } else {
-                it->second = nullptr;
+                depotIt->second = nullptr;
             }
         }
     } catch (std::exception &e) {
@@ -1953,9 +1953,9 @@ bool Player::move(direction dir, uint8_t mode) {
                 }
 
                 if (newField.isWarp()) {
-                    position newpos;
-                    newField.getWarp(newpos);
-                    Warp(newpos);
+                    position warpPos;
+                    newField.getWarp(warpPos);
+                    Warp(warpPos);
                     cont = false;
                 }
 
@@ -2766,7 +2766,7 @@ void Player::executeCraftingDialogCraftingComplete(unsigned int dialogId) {
         Connection->addCommand(cmd);
 
         if (renewProductList) {
-            ServerCommandPointer cmd = std::make_shared<CraftingDialogTC>(*craftingDialog, dialogId);
+            cmd = std::make_shared<CraftingDialogTC>(*craftingDialog, dialogId);
             Connection->addCommand(cmd);
         }
 

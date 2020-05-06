@@ -392,30 +392,30 @@ void World::checkMonsters() {
                     }
 
                     if (!has_attacked) {
-                        const auto temp = getTargetsInRange(monster.getPosition(), MONSTERVIEWRANGE);
+                        const auto targets = getTargetsInRange(monster.getPosition(), MONSTERVIEWRANGE);
 
                         bool makeRandomStep=true;
 
-                        if ((!temp.empty()) && (monster.canAttack())) {
-                            Character *target = nullptr;
+                        if ((!targets.empty()) && (monster.canAttack())) {
+                            Character *targetChar = nullptr;
 
-                            if (!monStruct.script || !monStruct.script->setTarget(monsterPointer, temp, target)) {
-                                target = standardFightingScript->setTarget(monsterPointer, temp);
+                            if (!monStruct.script || !monStruct.script->setTarget(monsterPointer, targets, targetChar)) {
+                                targetChar = standardFightingScript->setTarget(monsterPointer, targets);
                             }
 
-                            if (target) {
+                            if (targetChar) {
                                 monster.lastTargetSeen = true;
-                                monster.lastTargetPosition = target->getPosition();
+                                monster.lastTargetPosition = targetChar->getPosition();
 
                                 if (foundMonster) {
                                     if (monStruct.script) {
-                                        if (monStruct.script->enemyOnSight(monsterPointer, target)) {
+                                        if (monStruct.script->enemyOnSight(monsterPointer, targetChar)) {
                                             return;
                                         }
                                     }
 
                                     makeRandomStep=false;
-                                    monster.performStep(target->getPosition());
+                                    monster.performStep(targetChar->getPosition());
                                 } else {
                                     Logger::notice(LogFacility::Script) << "cant find the monster id for calling a script!" << Log::end;
                                 }

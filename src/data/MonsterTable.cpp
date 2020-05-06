@@ -126,10 +126,10 @@ MonsterTable::MonsterTable() {
 
                 Database::Result monAttrResults = monAttrQuery.execute();
 
-                for (const auto &row : monAttrResults) {
-                    const std::string attribute = row["mobattr_name"].as<std::string>("");
-                    uint16_t minValue = row["mobattr_min"].as<uint16_t>();
-                    uint16_t maxValue = row["mobattr_max"].as<uint16_t>();
+                for (const auto &attrRow : monAttrResults) {
+                    const std::string attribute = attrRow["mobattr_name"].as<std::string>("");
+                    uint16_t minValue = attrRow["mobattr_min"].as<uint16_t>();
+                    uint16_t maxValue = attrRow["mobattr_max"].as<uint16_t>();
 
                     if (attribute == "luck") {
                         temprecord.attributes.luck = std::make_pair(minValue, maxValue);
@@ -163,10 +163,10 @@ MonsterTable::MonsterTable() {
 
                 Database::Result monSkillResults = monSkillQuery.execute();
 
-                for (const auto &row : monSkillResults) {
-                    TYPE_OF_SKILL_ID skill = TYPE_OF_SKILL_ID(row["mobsk_skill_id"].as<uint16_t>());
-                    uint16_t minValue = row["mobsk_minvalue"].as<uint16_t>();
-                    uint16_t maxValue = row["mobsk_maxvalue"].as<uint16_t>();
+                for (const auto &skillRow : monSkillResults) {
+                    TYPE_OF_SKILL_ID skill = TYPE_OF_SKILL_ID(skillRow["mobsk_skill_id"].as<uint16_t>());
+                    uint16_t minValue = skillRow["mobsk_minvalue"].as<uint16_t>();
+                    uint16_t maxValue = skillRow["mobsk_maxvalue"].as<uint16_t>();
 
                     temprecord.skills[skill] = std::make_pair(minValue, maxValue);
                 }
@@ -181,14 +181,14 @@ MonsterTable::MonsterTable() {
 
                 Database::Result monItemResults = monItemQuery.execute();
 
-                for (const auto &row : monItemResults) {
+                for (const auto &itemRow : monItemResults) {
                     itemdef_t tempitem;
-                    tempitem.itemid = row["mobit_itemid"].as<TYPE_OF_ITEM_ID>();
+                    tempitem.itemid = itemRow["mobit_itemid"].as<TYPE_OF_ITEM_ID>();
                     tempitem.amount = std::make_pair(
-                                          row["mobit_mincount"].as<uint16_t>(),
-                                          row["mobit_maxcount"].as<uint16_t>());
+                                          itemRow["mobit_mincount"].as<uint16_t>(),
+                                          itemRow["mobit_maxcount"].as<uint16_t>());
 
-                    const std::string position = row["mobit_position"].as<std::string>("");
+                    const std::string position = itemRow["mobit_position"].as<std::string>("");
                     uint16_t location;
 
                     if (position == "head") {
@@ -256,21 +256,21 @@ MonsterTable::MonsterTable() {
 
                 const auto monLootResults = monLootQuery.execute();
 
-                for (const auto &row : monLootResults) {
-                    auto lootId = row["md_id"].as<uint32_t>();
-                    auto categoryId = row["md_category"].as<uint16_t>();
+                for (const auto &lootRow : monLootResults) {
+                    auto lootId = lootRow["md_id"].as<uint32_t>();
+                    auto categoryId = lootRow["md_category"].as<uint16_t>();
 
                     auto &category = temprecord.loot[categoryId];
                     auto &lootItem = category[lootId];
 
-                    lootItem.itemId = row["md_itemid"].as<TYPE_OF_ITEM_ID>();
-                    lootItem.probability = row["md_probability"].as<double>();
-                    lootItem.amount = std::make_pair(row["md_amount_min"].as<uint16_t>(),
-                                                     row["md_amount_max"].as<uint16_t>());
-                    lootItem.quality = std::make_pair(row["md_quality_min"].as<uint16_t>(),
-                                                      row["md_quality_max"].as<uint16_t>());
-                    lootItem.durability = std::make_pair(row["md_durability_min"].as<uint16_t>(),
-                                                         row["md_durability_max"].as<uint16_t>());
+                    lootItem.itemId = lootRow["md_itemid"].as<TYPE_OF_ITEM_ID>();
+                    lootItem.probability = lootRow["md_probability"].as<double>();
+                    lootItem.amount = std::make_pair(lootRow["md_amount_min"].as<uint16_t>(),
+                                                     lootRow["md_amount_max"].as<uint16_t>());
+                    lootItem.quality = std::make_pair(lootRow["md_quality_min"].as<uint16_t>(),
+                                                      lootRow["md_quality_max"].as<uint16_t>());
+                    lootItem.durability = std::make_pair(lootRow["md_durability_min"].as<uint16_t>(),
+                                                         lootRow["md_durability_max"].as<uint16_t>());
                     lootItem.data = std::move(lootData[lootId]);
                 }
 
