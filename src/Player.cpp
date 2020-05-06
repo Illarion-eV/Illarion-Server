@@ -25,6 +25,7 @@
 
 #include <memory>
 #include <sstream>
+#include <range/v3/all.hpp>
 
 #include "tuningConstants.hpp"
 #include "Field.hpp"
@@ -234,13 +235,17 @@ void Player::setAlive(bool alive) {
 }
 
 void Player::openShowcase(Container *container, const ScriptItem &item, bool carry) {
-    for (const auto &showcase : showcases) {
-        if (showcase.second->contains(container)) {
-            const auto lookAt = item.getLookAt(this);
-            ServerCommandPointer cmd = std::make_shared<UpdateShowcaseTC>(showcase.first, lookAt, container->getSlotCount(), container->getItems());
-            Connection->addCommand(cmd);
-            return;
-        }
+    using namespace ranges;
+    auto containsContainer = [container](const auto &showcase) {return showcase.second->contains(container);};
+    auto result = find_if(showcases, containsContainer);
+
+    if (result != showcases.end()) {
+        const auto lookAt = item.getLookAt(this);
+        ServerCommandPointer cmd = std::make_shared<UpdateShowcaseTC>(result->first, lookAt,
+                                                                      container->getSlotCount(),
+                                                                      container->getItems());
+        Connection->addCommand(cmd);
+        return;
     }
 
     if (showcases.size() < MAXSHOWCASES) {
@@ -302,13 +307,11 @@ bool Player::isShowcaseOpen(uint8_t showcase) const {
 }
 
 bool Player::isShowcaseOpen(Container *container) const {
-    for (const auto &showcase : showcases) {
-        if (showcase.second->contains(container)) {
-            return true;
-        }
-    }
-
-    return false;
+    using namespace ranges;
+    auto containsContainer = [container](const auto &showcase) {return showcase->contains(container);};
+    auto showcaseView = showcases | view::values;
+    auto result = find_if(showcaseView, containsContainer);
+    return result != showcaseView.end();
 }
 
 bool Player::isShowcaseInInventory(uint8_t showcase) const {
@@ -320,10 +323,12 @@ bool Player::isShowcaseInInventory(uint8_t showcase) const {
 }
 
 uint8_t Player::getShowcaseId(Container *container) const {
-    for (const auto &showcase : showcases) {
-        if (showcase.second->contains(container)) {
-            return showcase.first;
-        }
+    using namespace ranges;
+    auto containsContainer = [container](const auto &showcase) {return showcase.second->contains(container);};
+    auto result = find_if(showcases, containsContainer);
+    
+    if (result != showcases.end()) {
+        return result->first;
     }
 
     throw std::logic_error("container has no showcase!");

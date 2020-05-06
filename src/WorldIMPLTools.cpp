@@ -22,6 +22,7 @@
 
 #include <list>
 #include <stdlib.h>
+#include <range/v3/all.hpp>
 
 #include "Map.hpp"
 #include "Player.hpp"
@@ -332,10 +333,12 @@ Character *World::findCharacter(TYPE_OF_CHARACTER_ID id) {
         if (tmpChr) {
             return tmpChr;
         } else {
-            for (const auto &monster : newMonsters) {
-                if (id == monster->getId()) {
-                    return monster;
-                }
+            using namespace ranges;
+            auto idsMatch = [id](const auto &monster) {return monster->getId() == id;};
+            auto result = find_if(newMonsters, idsMatch);
+
+            if (result != newMonsters.end()) {
+                return *result;
             }
         }
     } else {

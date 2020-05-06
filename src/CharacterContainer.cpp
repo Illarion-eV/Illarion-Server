@@ -18,6 +18,7 @@
 
 #include <map>
 #include <unordered_map>
+#include <range/v3/all.hpp>
 
 #include "globals.hpp"
 #include "CharacterContainer.hpp"
@@ -50,10 +51,13 @@ auto CharacterContainer<T>::find(const std::string &name) const -> pointer {
         auto id = boost::lexical_cast<TYPE_OF_CHARACTER_ID>(name);
         return find(id);
     } catch (boost::bad_lexical_cast &) {
-        for (const auto &character : container) {
-            if (comparestrings_nocase(character.second->getName(), name)) {
-                return character.second;
-            }
+        using namespace ranges;
+        auto namesMatch = [&name](pointer character) {return comparestrings_nocase(character->getName(), name);};
+        auto characters = container | view::values;
+        auto result = find_if(characters, namesMatch);
+        
+        if (result != characters.end()) {
+            return *result;
         }
     }
 

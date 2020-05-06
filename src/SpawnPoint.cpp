@@ -21,6 +21,7 @@
 #include "SpawnPoint.hpp"
 
 #include <boost/cstdint.hpp>
+#include <range/v3/all.hpp>
 
 #include "db/SelectQuery.hpp"
 #include "db/Result.hpp"
@@ -41,21 +42,20 @@ SpawnPoint::SpawnPoint(const position &pos, int Range, uint16_t Spawnrange, uint
 SpawnPoint::~SpawnPoint() {}
 
 //! add new Monstertyp to SpawnList...
-void SpawnPoint::addMonster(const TYPE_OF_CHARACTER_ID &typ, const short int &count) {
-    for (auto &spawn : SpawnTypes) {
-        if (spawn.typ == typ) {
-            // monster type already there... just raise max_count
-            spawn.max_count += count;
-            return;
-        }
-    }
+void SpawnPoint::addMonster(TYPE_OF_CHARACTER_ID type, short int count) {
+    using namespace ranges;
+    auto isType = [type](const auto &spawn) {return spawn.typ == type;};
+    auto result = find_if(SpawnTypes, isType);
 
-    // no entry found... create new one..
-    struct SpawnEntryStruct SEtemp;
-    SEtemp.typ = typ;
-    SEtemp.max_count = count;
-    SEtemp.akt_count = 0;
-    SpawnTypes.push_back(SEtemp);
+    if (result != SpawnTypes.end()) {
+        result->max_count += count;
+    } else {
+        struct SpawnEntryStruct SEtemp;
+        SEtemp.typ = type;
+        SEtemp.max_count = count;
+        SEtemp.akt_count = 0;
+        SpawnTypes.push_back(SEtemp);
+    }
 }
 
 //! do spawns if possible...
@@ -110,9 +110,9 @@ void SpawnPoint::spawn() {
     }
 }
 
-void SpawnPoint::dead(const TYPE_OF_CHARACTER_ID &typ) {
+void SpawnPoint::dead(TYPE_OF_CHARACTER_ID type) {
     for (auto &spawn : SpawnTypes) {
-        if (spawn.typ == typ) {
+        if (spawn.typ == type) {
             spawn.akt_count--;
         }
     }

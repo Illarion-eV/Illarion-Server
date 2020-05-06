@@ -22,6 +22,7 @@
 
 #include <string>
 #include <algorithm>
+#include <range/v3/all.hpp>
 
 #include "db/Connection.hpp"
 #include "db/ConnectionManager.hpp"
@@ -38,28 +39,33 @@ LongTimeCharacterEffects::LongTimeCharacterEffects(Character *owner) : owner(own
 }
 
 bool LongTimeCharacterEffects::find(uint16_t effectid, LongTimeEffect *&effect) const {
-    for (const auto &e : effects) {
-        if (e->getEffectId() == effectid) {
-            effect = e;
-            return true;
-        }
+    using namespace ranges;
+    auto doesIdMatch = [effectid](LongTimeEffect *e) {return e->getEffectId() == effectid;};
+    auto result = find_if(effects, doesIdMatch);
+    bool success = result != effects.end();
+
+    if (success) {
+        effect = *result;
+    } else {
+        effect = nullptr;
     }
 
-    effect = nullptr;
-    return false;
+    return success;
 }
 
 bool LongTimeCharacterEffects::find(const std::string &effectname, LongTimeEffect *&effect) const {
+    using namespace ranges;
+    auto doesNameMatch = [&effectname](LongTimeEffect *e) {return e->getEffectName() == effectname;};
+    auto result = find_if(effects, doesNameMatch);
+    bool success = result != effects.end();
 
-    for (const auto &e : effects) {
-        if (e->getEffectName() == effectname) {
-            effect = e;
-            return true;
-        }
+    if (success) {
+        effect = *result;
+    } else {
+        effect = nullptr;
     }
 
-    effect = nullptr;
-    return false;
+    return success;
 }
 
 void LongTimeCharacterEffects::addEffect(LongTimeEffect *effect) {

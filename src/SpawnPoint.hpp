@@ -37,7 +37,7 @@ public:
     //! Destructor
     ~SpawnPoint();
 
-    void addMonster(const TYPE_OF_CHARACTER_ID &typ, const short int &count);
+    void addMonster(TYPE_OF_CHARACTER_ID type, short int count);
 
     //! load spawnpoints from database
     bool load(const int &id);
@@ -45,7 +45,7 @@ public:
     void spawn();
 
     //! callback called by dying monsters belonging to spawnpoint
-    void dead(const TYPE_OF_CHARACTER_ID &typ);
+    void dead(TYPE_OF_CHARACTER_ID type);
 
     inline int get_x() const {
         return spawnpos.x;

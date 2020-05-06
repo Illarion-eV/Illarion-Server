@@ -27,6 +27,7 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/lexical_cast.hpp>
 #include <chrono>
+#include <range/v3/all.hpp>
 
 void WorldMap::clear() {
     world_map.clear();
@@ -34,18 +35,19 @@ void WorldMap::clear() {
 }
 
 bool WorldMap::intersects(const Map &map) const {
-    for(const auto &testMap : maps) {
-        if (map.intersects(testMap)) {
-            Logger::error(LogFacility::Script)
-                << "Could not insert map " << map.getName()
-                << " because it intersects with " << testMap.getName()
-                << Log::end;
+    using namespace ranges;
+    auto doIntersectMap = [&map](const auto &testMap) {return map.intersects(testMap);};
+    auto overlap = find_if(maps, doIntersectMap);
+    bool foundIntersection = overlap != maps.end();
 
-            return true;
-        }
+    if (foundIntersection) {
+        Logger::error(LogFacility::Script)
+            << "Could not insert map " << map.getName()
+            << " because it intersects with " << overlap->getName()
+            << Log::end;
     }
     
-    return false;
+    return foundIntersection;
 }
 
 Field &WorldMap::at(const position &pos) {
