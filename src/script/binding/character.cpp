@@ -18,13 +18,15 @@
  *  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <luabind/adopt_policy.hpp>
+#include <luabind/out_value_policy.hpp>
+#include <range/v3/all.hpp>
+
 #include "Character.hpp"
 #include "Player.hpp"
 #include "globals.hpp"
-#include <luabind/adopt_policy.hpp>
-#include <luabind/out_value_policy.hpp>
-#include <script/forwarder.hpp>
-#include <data/Data.hpp>
+#include "script/forwarder.hpp"
+#include "data/Data.hpp"
 #include "script/binding/binding.hpp"
 
 namespace binding {
@@ -34,15 +36,15 @@ namespace binding {
 
         luabind::value_vector skills;
 
-        for (const auto &skill: Data::Skills) {
+        ranges::for_each(Data::Skills, [&skills] (const auto &skill) {
             skills.push_back(luabind::value(skill.second.serverName.c_str(), skill.first));
-        }
+        });
 
         luabind::value_vector races;
 
-        for (const auto &race: Data::Races) {
+        ranges::for_each(Data::Races, [&races] (const auto &race) {
             races.push_back(luabind::value(race.second.serverName.c_str(), race.first));
-        }
+        });
 
         return luabind::class_<Character>("Character")
                 .def("isNewPlayer", &Character::isNewPlayer)

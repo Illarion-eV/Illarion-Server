@@ -1258,9 +1258,8 @@ bool Player::save() noexcept {
             }
 
             // add depot to containerlist
-            for (const auto &depot : depotContents) {
-                containers.push_back(container_struct(depot.second, 0, depot.first));
-            }
+            ranges::transform(depotContents, ranges::back_inserter(containers), [](const auto &depot)
+                    {return container_struct(depot.second, 0, depot.first);});
 
             InsertQuery itemsQuery(connection);
             const InsertQuery::columnIndex itemsPlyIdColumn = itemsQuery.addColumn("pit_playerid");
@@ -1546,9 +1545,9 @@ bool Player::load() noexcept {
 
             Result results = query.execute();
 
-            for (const auto &row : results) {
+            ranges::for_each(results, [&depotid](const ResultTuple &row) {
                 depotid.push_back(row["pit_depot"].as<uint32_t>());
-            }
+            });
         }
 
         size_t depotRows = depotid.size();
