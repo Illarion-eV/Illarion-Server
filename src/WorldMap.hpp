@@ -44,13 +44,15 @@ public:
     bool allMapsAged();
 
     bool import(const std::string &importDir, const std::string &mapName);
-    bool exportTo(const std::string &exportDir) const;
-    bool loadFromDisk(const std::string &path);
-    void saveToDisk(const std::string &path) const;
+    bool exportTo() const;
+    bool importFromEditor();
+    bool loadFromDisk();
+    void saveToDisk() const;
     bool createMap(const std::string &name, const position &origin,
                    uint16_t width, uint16_t height, uint16_t tile);
 
 private:
+    const std::string worldName{"Illarion"};
     bool insert(Map&& newMap);
     static Map createMapFromHeaderFile(const std::string &importDir,
                                        const std::string &mapName);

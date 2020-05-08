@@ -28,7 +28,6 @@
 #include <memory>
 #include <list>
 #include <unordered_map>
-#include <regex>
 
 #include "NewClientView.hpp"
 #include "CharacterContainer.hpp"
@@ -270,8 +269,6 @@ public:
     */
     int getTime(const std::string &timeType);
 
-    bool load_maps();
-
     /**
     *checks the command list of one player and put them into practize
     *@param cp the player which buffer is currently processed
@@ -292,7 +289,7 @@ public:
         return _is_spawn_enabled;
     }
 
-    static World *create(const std::string &dir);
+    static World *create();
     static World *get();
 
 
@@ -912,7 +909,7 @@ public:
     void set_login(Player *player, const std::string &text);
 
 protected:
-    World() = default; // used for testcases
+    World(); // used for testcases
     static World *_self;
 
 private:
@@ -936,9 +933,6 @@ private:
 
     // check spawns every minute
     Timer monstertimer {60};
-
-    //! das home-Verzeichnis des Servers
-    std::string directory;
 
     void ageMaps();
     void ageInventory();
@@ -1014,9 +1008,6 @@ private:
 
     std::mutex immediatePlayerCommandsMutex;
     std::queue<Player*> immediatePlayerCommands;
-    const std::string worldName{"Illarion"};
-    const std::regex tilesFilter{".*\\.tiles\\.txt"};
-    const std::regex mapFilter{worldName + ".*"};
 };
 
 #endif

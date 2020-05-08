@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
     Database::ConnectionManager::getInstance().setupManager();
     Database::SchemaHelper::setSchemata();
 
-    World *world = World::create(Config::instance().datadir);
+    World *world = World::create();
 
     Data::preReload();
 

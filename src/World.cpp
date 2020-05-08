@@ -20,7 +20,6 @@
 
 #include "World.hpp"
 
-#include <boost/filesystem.hpp>
 #include <algorithm>
 #include <ctime>
 #include <iterator>
@@ -28,6 +27,7 @@
 #include <regex>
 #include <sys/types.h>
 
+#include "Config.hpp"
 #include "Logger.hpp"
 #include "LongTimeAction.hpp"
 #include "Map.hpp"
@@ -36,7 +36,6 @@
 #include "SchedulerTaskClasses.hpp"
 #include "TableStructs.hpp"
 #include "WaypointList.hpp"
-#include "Config.hpp"
 #include "tuningConstants.hpp"
 
 #include "data/Data.hpp"
@@ -65,9 +64,9 @@ extern std::shared_ptr<LuaWeaponScript> standardFightingScript;
 
 World *World::_self;
 
-World *World::create(const std::string &dir) {
+World *World::create() {
     if (!(_self)) {
-        _self = new World(dir);
+        _self = new World();
         // init spawnlocations...
         _self->initRespawns();
         // initialise list of GM Commands
@@ -88,7 +87,7 @@ World *World::get() {
     return _self;
 }
 
-World::World(const std::string &dir) {
+World::World() {
     lastTurnIGDay=getTime("day");
 
     usedAP = 0;
@@ -100,63 +99,10 @@ World::World(const std::string &dir) {
 
     currentScript = nullptr;
 
-    directory = dir;
-    scriptDir = dir + std::string(SCRIPTSDIR);
+    scriptDir = Config::instance().datadir() + std::string(SCRIPTSDIR);
 
     srand((unsigned) time(nullptr));
 
-}
-
-bool World::load_maps() {
-    int numfiles = 0;
-    int errors = 0;
-
-    Logger::notice(LogFacility::Script) << "Removing old maps." << Log::end;
-    
-    for (boost::filesystem::directory_iterator end, it(Config::instance().datadir() + "map/"); it != end; ++it) {
-        if (std::regex_match(it->path().filename().string(), mapFilter)) {
-             boost::filesystem::remove(it->path());
-        }
-    }
-
-    Logger::notice(LogFacility::Script) << "Importing maps..." << Log::end;
-
-    std::string importDir = Config::instance().datadir() + "map/import/";
-
-    for (boost::filesystem::recursive_directory_iterator end, it(importDir); it != end; ++it) {
-        if (!boost::filesystem::is_regular_file(it->status())) continue;
-        if (!std::regex_match(it->path().filename().string(), tilesFilter)) continue;
-    
-        std::string map = it->path().string();
-        
-        // strip .tiles.txt from file name
-        map.resize(map.length() - 10);
-        map.erase(0, importDir.length());
-
-        Logger::debug(LogFacility::World) << "Importing: " << map << Log::end;
-
-        if (!maps.import(importDir, map)) {
-            ++errors;
-        }
-    
-        ++numfiles;
-    }
-
-    if (numfiles <= 0) {
-        perror("Could not import maps");
-        return false;
-    }
-
-    Logger::notice(LogFacility::Script) << "Imported " << numfiles - errors
-                                        << " out of " << numfiles << " maps."
-                                        << Log::end;
-
-    if (errors) {
-        Logger::alert(LogFacility::Script) << "Failed to import " << errors
-                                           << " maps!" << Log::end;
-    }
-
-    return errors == 0;
 }
 
 

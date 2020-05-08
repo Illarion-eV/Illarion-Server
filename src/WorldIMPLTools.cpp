@@ -636,17 +636,14 @@ void World::ageInventory() {
 
 
 void World::Save() const {
-    std::string path = directory + std::string(MAPDIR) + worldName;
-    maps.saveToDisk(path);
+    maps.saveToDisk();
 }
 
 
 void World::Load() {
-    std::string path = directory + std::string(MAPDIR) + worldName;
-
-    if (!maps.loadFromDisk(path)) {
+    if (!maps.loadFromDisk()) {
         Logger::info(LogFacility::World) << "trying to import maps" << Log::end;
-        load_maps();
+        maps.importFromEditor();
         Logger::info(LogFacility::World) << "Saving World..." << Log::end;
         Save();
     }

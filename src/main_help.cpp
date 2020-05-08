@@ -218,7 +218,7 @@ void sig_usr(int) {
     world->allowLogin(false);
     world->forceLogoutOfAllPlayers();
     world->maps.clear();
-    world->load_maps();
+    world->maps.importFromEditor();
 
     Logger::info(LogFacility::World) << "Saving World..." << Log::end;
     world->Save();

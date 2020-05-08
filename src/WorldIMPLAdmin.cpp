@@ -1180,8 +1180,7 @@ bool World::exportMaps(Player *cp) const {
         return false;
     }
 
-    std::string exportDir = directory + std::string(MAPDIR) + "export/";
-    return maps.exportTo(exportDir);
+    return maps.exportTo();
 }
 
 void World::removeTeleporter(Player *cp, const std::string &text) {

@@ -18,6 +18,7 @@
 
 
 #include "WorldMap.hpp"
+#include "Config.hpp"
 #include "Map.hpp"
 #include "Logger.hpp"
 
@@ -25,6 +26,7 @@
 #include <regex>
 #include <stdexcept>
 #include <boost/algorithm/string/replace.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 #include <chrono>
 #include <range/v3/all.hpp>
@@ -238,7 +240,9 @@ bool WorldMap::isCommentOrEmpty(const std::string &line) {
     return line.length() == 0 || line[0] == '#';
 }
 
-bool WorldMap::exportTo(const std::string &exportDir) const {
+bool WorldMap::exportTo() const {
+    const std::string exportDir = Config::instance().datadir() + std::string(MAPDIR) + "export/";
+
     for (const auto &map : maps) {
         int16_t minX = map.getMinX();
         int16_t minY = map.getMinY();
@@ -314,7 +318,64 @@ bool WorldMap::exportTo(const std::string &exportDir) const {
     return true;
 }
 
-bool WorldMap::loadFromDisk(const std::string &path) {
+bool WorldMap::importFromEditor() {
+    int numfiles = 0;
+    int errors = 0;
+    const std::regex tilesFilter{".*\\.tiles\\.txt"};
+    const std::regex mapFilter{worldName + ".*"};
+    const std::string path = Config::instance().datadir() + std::string(MAPDIR) + worldName;
+
+    Logger::notice(LogFacility::Script) << "Removing old maps." << Log::end;
+    
+    for (boost::filesystem::directory_iterator end, it(Config::instance().datadir() + std::string(MAPDIR)); it != end; ++it) {
+        if (std::regex_match(it->path().filename().string(), mapFilter)) {
+             boost::filesystem::remove(it->path());
+        }
+    }
+
+    Logger::notice(LogFacility::Script) << "Importing maps..." << Log::end;
+
+    std::string importDir = Config::instance().datadir() + std::string(MAPDIR) + "import/";
+
+    for (boost::filesystem::recursive_directory_iterator end, it(importDir); it != end; ++it) {
+        if (!boost::filesystem::is_regular_file(it->status())) continue;
+        if (!std::regex_match(it->path().filename().string(), tilesFilter)) continue;
+    
+        std::string map = it->path().string();
+        
+        // strip .tiles.txt from file name
+        map.resize(map.length() - 10);
+        map.erase(0, importDir.length());
+
+        Logger::debug(LogFacility::World) << "Importing: " << map << Log::end;
+
+        if (!import(importDir, map)) {
+            ++errors;
+        }
+    
+        ++numfiles;
+    }
+
+    if (numfiles <= 0) {
+        perror("Could not import maps");
+        return false;
+    }
+
+    Logger::notice(LogFacility::Script) << "Imported " << numfiles - errors
+                                        << " out of " << numfiles << " maps."
+                                        << Log::end;
+
+    if (errors) {
+        Logger::alert(LogFacility::Script) << "Failed to import " << errors
+                                           << " maps!" << Log::end;
+    }
+
+    return errors == 0;
+
+}
+
+bool WorldMap::loadFromDisk() {
+    const std::string path = Config::instance().datadir() + std::string(MAPDIR) + worldName;
     std::ifstream mapinitfile(path + "_initmaps",
                               std::ios::binary | std::ios::in);
 
@@ -361,7 +422,8 @@ bool WorldMap::loadFromDisk(const std::string &path) {
     }
 }
 
-void WorldMap::saveToDisk(const std::string &path) const {
+void WorldMap::saveToDisk() const {
+    const std::string path = Config::instance().datadir() + std::string(MAPDIR) + worldName;
     std::ofstream mapinitfile(path + "_initmaps", std::ios::binary | std::ios::out | std::ios::trunc);
 
     if (!mapinitfile.good()) {
