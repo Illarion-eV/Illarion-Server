@@ -23,7 +23,7 @@ check_PROGRAMS = test_binding ItemTest CharacterContainerTest test_container \
                  test_binding_longtimeaction test_binding_weatherstruct \
                  test_binding_character test_binding_random test_random test_map_import 
 
-AM_CXXFLAGS = -ggdb -pipe -Wall -Wno-deprecated -std=c++14 $(BOOST_CXXFLAGS) $(DEPS_CFLAGS)
+AM_CXXFLAGS = -ggdb -pipe -Wall -Wno-deprecated -std=c++17 $(BOOST_CXXFLAGS) $(DEPS_CFLAGS)
 AM_CPPFLAGS = -D_THREAD_SAFE -D_REENTRANT $(BOOST_CPPFLAGS) -I$(top_srcdir)/src
 AM_LDFLAGS = $(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS) -lpthread
 LDADD = $(DEPS_LIBS) $(top_builddir)/src/libserver.a $(top_builddir)/src/script/libscriptbinding.a libgmock.a
