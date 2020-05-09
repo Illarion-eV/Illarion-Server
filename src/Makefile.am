@@ -21,11 +21,11 @@ bin_PROGRAMS = illarion
 noinst_LIBRARIES = libserver.a
 
 AM_CXXFLAGS = -ggdb -pipe -Wall -Wformat-security -Wunused-result -Werror -Wno-deprecated -std=c++17 $(BOOST_CXXFLAGS) $(DEPS_CFLAGS)
-AM_CPPFLAGS = -D_THREAD_SAFE -D_REENTRANT -D_FORTIFY_SOURCE=2 $(subst -I,-isystem,$(BOOST_CPPFLAGS)) -I$(top_srcdir)/src
-AM_LDFLAGS = $(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS) -lpthread
-LDADD = $(DEPS_LIBS) libserver.a $(top_builddir)/src/script/libscriptbinding.a
+AM_CPPFLAGS = -D_THREAD_SAFE -D_REENTRANT -D_FORTIFY_SOURCE=2 -I$(top_srcdir)/src
+AM_LDFLAGS = $(BOOST_SYSTEM_LDFLAGS) -lpthread
+LDADD = $(DEPS_LIBS) libserver.a $(top_builddir)/src/script/libscriptbinding.a -lstdc++fs
 
-LIBS = $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS)
+LIBS = $(BOOST_SYSTEM_LIBS)
 
 SUBDIRS = script .
 

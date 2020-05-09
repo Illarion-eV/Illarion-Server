@@ -21,11 +21,11 @@
 #ifndef _QUEST_NODE_TABLE_HPP_
 #define _QUEST_NODE_TABLE_HPP_
 
+#include <filesystem>
+#include <fstream>
 #include <string>
 #include <unordered_map>
 #include <memory>
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/fstream.hpp>
 
 #include "types.hpp"
 #include "globals.hpp"
@@ -64,7 +64,7 @@ public:
     TableRange<position> getTriggerNodes() const;
 
 private:
-    void readQuest(boost::filesystem::ifstream &questFile, boost::filesystem::path &questPath);
+    void readQuest(std::ifstream &questFile, std::filesystem::path &questPath);
     void clear();
 
     QuestNodeTable(const QuestNodeTable &) = delete;

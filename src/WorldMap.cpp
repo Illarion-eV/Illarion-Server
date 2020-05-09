@@ -23,10 +23,10 @@
 #include "Logger.hpp"
 
 #include <algorithm>
+#include <filesystem>
 #include <regex>
 #include <stdexcept>
 #include <boost/algorithm/string/replace.hpp>
-#include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 #include <chrono>
 #include <range/v3/all.hpp>
@@ -327,9 +327,9 @@ bool WorldMap::importFromEditor() {
 
     Logger::notice(LogFacility::Script) << "Removing old maps." << Log::end;
     
-    for (boost::filesystem::directory_iterator end, it(Config::instance().datadir() + std::string(MAPDIR)); it != end; ++it) {
+    for (std::filesystem::directory_iterator end, it(Config::instance().datadir() + std::string(MAPDIR)); it != end; ++it) {
         if (std::regex_match(it->path().filename().string(), mapFilter)) {
-             boost::filesystem::remove(it->path());
+             std::filesystem::remove(it->path());
         }
     }
 
@@ -337,8 +337,8 @@ bool WorldMap::importFromEditor() {
 
     std::string importDir = Config::instance().datadir() + std::string(MAPDIR) + "import/";
 
-    for (boost::filesystem::recursive_directory_iterator end, it(importDir); it != end; ++it) {
-        if (!boost::filesystem::is_regular_file(it->status())) continue;
+    for (std::filesystem::recursive_directory_iterator end, it(importDir); it != end; ++it) {
+        if (!std::filesystem::is_regular_file(it->status())) continue;
         if (!std::regex_match(it->path().filename().string(), tilesFilter)) continue;
     
         std::string map = it->path().string();

@@ -195,7 +195,7 @@ target_link_libraries(server db script)
 find_package(Lua 5.2 REQUIRED)
 include_directories(${LUA_INCLUDE_DIR})
 
-find_package(Boost 1.55.0 REQUIRED COMPONENTS filesystem system graph)
+find_package(Boost 1.67.0 REQUIRED COMPONENTS system graph)
 include_directories(${Boost_INCLUDE_DIRS})
 target_link_libraries(server ${Boost_LIBRARIES})
 

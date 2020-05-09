@@ -20,11 +20,11 @@
 
 #include "data/QuestNodeTable.hpp"
 
+#include <filesystem>
+#include <fstream>
 #include <memory>
 #include <vector>
 #include <string>
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/fstream.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 
@@ -64,7 +64,7 @@ auto QuestNodeTable::getTriggerNodes() const -> TableRange<position> {
 }
 
 void QuestNodeTable::reload() {
-    using namespace boost::filesystem;
+    using namespace std::filesystem;
     path dirPath = path(Config::instance().scriptdir() + "questsystem");
     path filename = path("quest.txt");
 
@@ -77,7 +77,7 @@ void QuestNodeTable::reload() {
             path filePath(itr->path() / filename);
 
             if (exists(filePath)) {
-                ifstream questFile(filePath);
+                std::ifstream questFile(filePath);
 
                 if (questFile.is_open()) {
                     path questPath(itr->path());
@@ -89,7 +89,7 @@ void QuestNodeTable::reload() {
     }
 }
 
-void QuestNodeTable::readQuest(boost::filesystem::ifstream &questFile, boost::filesystem::path &questPath) {
+void QuestNodeTable::readQuest(std::ifstream &questFile, std::filesystem::path &questPath) {
     std::string line;
 
     while (std::getline(questFile,line)) {

@@ -48,7 +48,6 @@ AC_STRUCT_TM
 AC_CHECK_FUNCS([bzero ftime gethostbyname inet_ntoa memset select socket strerror strtol strtoul])
 
 BOOST_REQUIRE([1.67])
-BOOST_FILESYSTEM
 BOOST_SYSTEM
 BOOST_GRAPH
 
