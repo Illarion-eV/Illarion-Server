@@ -19,7 +19,7 @@
 
 #include "Field.hpp"
 #include "NewClientView.hpp"
-#include "WorldMap.hpp"
+#include "World.hpp"
 #include <algorithm>
 #include <iostream>
 
@@ -30,12 +30,11 @@ NewClientView::NewClientView()
       maxtiles(0) {
 }
 
-void NewClientView::fillStripe(position pos, stripedirection dir, int length,
-                               WorldMap &maps) {
+void NewClientView::fillStripe(position pos, stripedirection dir, int length) {
     clearStripe();
     viewPosition = pos;
     stripedir = dir;
-    readFields(length, maps);
+    readFields(length);
 }
 
 void NewClientView::clearStripe() {
@@ -47,14 +46,14 @@ void NewClientView::clearStripe() {
     maxtiles = 0;
 }
 
-void NewClientView::readFields(int length, WorldMap &maps) {
+void NewClientView::readFields(int length) {
     position pos = viewPosition;
     int x_inc = (stripedir == dir_right) ? 1 : -1;
     int tmp_maxtiles = 1;
 
     for (int i = 0; i < length; ++i) {
         try {
-            Field &field = maps.at(pos);
+            Field &field = World::get()->fieldAt(pos);
 
             if (!field.isTransparent() || field.itemCount() > 0) {
                 exists = true;

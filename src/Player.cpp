@@ -2268,7 +2268,7 @@ void Player::sendRelativeArea(int8_t zoffs) {
         World *world = World::get();
 
         for (int i=0; i <= (MAP_DIMENSION + MAP_DOWN_EXTRA + e) * 2; ++i) {
-            world->clientview.fillStripe(position(x,y,z), NewClientView::dir_right, MAP_DIMENSION+1-(i%2), World::get()->maps);
+            world->clientview.fillStripe(position(x,y,z), NewClientView::dir_right, MAP_DIMENSION+1-(i%2));
 
             if (world->clientview.getExists()) {
                 Connection->addCommand(std::make_shared<MapStripeTC>(position(x,y,z), NewClientView::dir_right));
@@ -2297,7 +2297,7 @@ void Player::sendRelativeArea(int8_t zoffs) {
         World *world = World::get();
 
         for (int i=0; i <= (2*screenheight + MAP_DOWN_EXTRA + e) * 2; ++i) {
-            world->clientview.fillStripe(position(x,y,z), NewClientView::dir_right, 2*screenwidth+1-(i%2), World::get()->maps);
+            world->clientview.fillStripe(position(x,y,z), NewClientView::dir_right, 2*screenwidth+1-(i%2));
 
             if (world->clientview.getExists()) {
                 Connection->addCommand(std::make_shared<MapStripeTC>(position(x,y,z), NewClientView::dir_right));
@@ -2387,7 +2387,7 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
                 ++l;
             }
 
-            view->fillStripe(position(x-z*3+e,y+z*3-e,pos.z+z), dir, length+l, World::get()->maps);
+            view->fillStripe(position(x-z*3+e,y+z*3-e,pos.z+z), dir, length+l);
 
             if (view->getExists()) {
                 Connection->addCommand(std::make_shared<MapStripeTC>(position(x-z*3+e,y+z*3-e,pos.z+z), dir));
@@ -2459,7 +2459,7 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
                 ++l;
             }
 
-            view->fillStripe(position(x-z*3+e,y+z*3-e,pos.z+z), dir, length+l, World::get()->maps);
+            view->fillStripe(position(x-z*3+e,y+z*3-e,pos.z+z), dir, length+l);
 
             if (view->getExists()) {
                 Connection->addCommand(std::make_shared<MapStripeTC>(position(x-z*3+e,y+z*3-e,pos.z+z), dir));

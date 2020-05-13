@@ -40,6 +40,7 @@
 #include "MonitoringClients.hpp"
 #include "Scheduler.hpp"
 #include "character_ptr.hpp"
+#include "WorldMap.hpp"
 
 #include "data/MonsterTable.hpp"
 #include "data/MonsterAttackTable.hpp"

@@ -24,7 +24,6 @@
 #define MAP_DOWN_EXTRA 3 // extra downwards extension
 
 #include "globals.hpp"
-#include "WorldMap.hpp"
 
 // forward declarations
 class Field;
@@ -103,7 +102,7 @@ public:
         * @param length number of tiles to be read
     * @param maps the maps from which we want to calculate the stripes
     */
-    void fillStripe(position pos, stripedirection dir, int length, WorldMap &maps);
+    void fillStripe(position pos, stripedirection dir, int length);
 
     /**
     * clears all current stripe infos
@@ -117,7 +116,7 @@ private:
         * @param length number of tiles to be read
     * @param maps the map vector from which we want to read the fields
     */
-    void readFields(int length, WorldMap &maps);
+    void readFields(int length);
 
     /**
     * the starting position of the current view
