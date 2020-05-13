@@ -527,6 +527,16 @@ Field &World::walkableFieldNear(position &pos) {
     return maps.walkableNear(pos);
 }
 
+void World::makePersistentAt(const position &pos) {
+}
+
+void World::removePersistenceAt(const position &pos) {
+}
+
+bool World::isPersistentAt(const position &pos) const {
+    return false;
+}
+
 
 int World::getItemAttrib(const std::string &s, TYPE_OF_ITEM_ID ItemID) {
 

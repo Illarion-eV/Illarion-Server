@@ -40,6 +40,7 @@ private:
     uint8_t flags = 0;
     position warptarget;
     std::vector<Item> items;
+    bool persistent = false;
 
 public:
     Container::CONTAINERMAP containers;
@@ -96,6 +97,10 @@ public:
             std::ofstream &warpStream, std::ofstream &containerStream) const;
     void load(std::ifstream &mapStream, std::ifstream &itemStream,
             std::ifstream &warpStream, std::ifstream &containerStream);
+
+    void makePersistent();
+    void removePersistence();
+    bool isPersistent() const;
 
 private:
     void updateFlags();

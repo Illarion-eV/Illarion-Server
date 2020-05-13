@@ -376,6 +376,18 @@ void Field::load(std::ifstream &mapStream, std::ifstream &itemStream,
     updateFlags();
 }
 
+void Field::makePersistent() {
+    persistent = true;
+}
+
+void Field::removePersistence() {
+    persistent = false;
+}
+
+bool Field::isPersistent() const {
+    return persistent;
+}
+
 int8_t Field::age() {
     for (const auto &container : containers) {
         if (container.second) {

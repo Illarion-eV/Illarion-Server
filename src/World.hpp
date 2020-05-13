@@ -366,6 +366,9 @@ public:
     const Field &fieldAt(const position &pos) const;
     Field &fieldAtOrBelow(position &pos);
     Field &walkableFieldNear(position &pos);
+    void makePersistentAt(const position &pos);
+    void removePersistenceAt(const position &pos);
+    bool isPersistentAt(const position &pos) const;
 
     int getItemAttrib(const std::string &s, TYPE_OF_ITEM_ID ItemID);
 
