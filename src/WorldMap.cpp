@@ -319,6 +319,8 @@ bool WorldMap::exportTo() const {
 }
 
 bool WorldMap::importFromEditor() {
+    clear();
+
     int numfiles = 0;
     int errors = 0;
     const std::regex tilesFilter{".*\\.tiles\\.txt"};
@@ -370,11 +372,13 @@ bool WorldMap::importFromEditor() {
                                            << " maps!" << Log::end;
     }
 
+    saveToDisk();
     return errors == 0;
 
 }
 
 bool WorldMap::loadFromDisk() {
+    clear();
     const std::string path = Config::instance().datadir() + std::string(MAPDIR) + worldName;
     std::ifstream mapinitfile(path + "_initmaps",
                               std::ios::binary | std::ios::in);
@@ -418,6 +422,7 @@ bool WorldMap::loadFromDisk() {
             }
         }
 
+        saveToDisk();
         return true;
     }
 }

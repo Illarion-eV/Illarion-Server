@@ -642,11 +642,12 @@ void World::Save() const {
 
 void World::Load() {
     if (!maps.loadFromDisk()) {
-        Logger::info(LogFacility::World) << "trying to import maps" << Log::end;
         maps.importFromEditor();
-        Logger::info(LogFacility::World) << "Saving World..." << Log::end;
-        Save();
     }
+}
+
+void World::import() {
+    maps.importFromEditor();
 }
 
 int World::getTime(const std::string &timeType) {

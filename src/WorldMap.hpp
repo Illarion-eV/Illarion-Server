@@ -33,8 +33,6 @@ class WorldMap {
     size_t ageIndex = 0;
 
 public:
-    void clear();
-
     Field &at(const position &pos);
     const Field &at(const position &pos) const;
     Field &walkableNear(position &pos);
@@ -54,6 +52,7 @@ public:
 private:
     const std::string worldName{"Illarion"};
     bool insert(Map&& newMap);
+    void clear();
     static Map createMapFromHeaderFile(const std::string &importDir,
                                        const std::string &mapName);
     static int16_t readHeaderLine(const std::string &mapName, char header,

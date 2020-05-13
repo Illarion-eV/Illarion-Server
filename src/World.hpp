@@ -203,8 +203,6 @@ public:
 
     short int ap; /**< actionpoints since the last loop call **/
 
-    WorldMap maps; /**< a vector which holds all the maps*/
-
     ClockBasedScheduler<std::chrono::steady_clock> scheduler;
 
     WeatherStruct weather;/**< a struct to the weather @see WeatherStruct */
@@ -381,6 +379,13 @@ public:
 
     void Load();
     void Save() const;
+    void import();
+    bool createMap(const std::string &name, const position &origin,
+                   uint16_t width, uint16_t height, uint16_t tile) {
+        return maps.createMap(name, origin, width, height, tile);
+    }
+
+
 
     /**
     *@brief changes one part of the weather and sends the new weather to all players
@@ -987,6 +992,8 @@ public:
     void addPlayerImmediateActionQueue(Player* player);
 
 private:
+    WorldMap maps;
+
     std::vector<Character *> getTargetsInRange(const position &pos, int radius) const;
     
     bool active_language_command(Player *cp, const std::string &language);

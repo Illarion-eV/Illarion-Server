@@ -1141,7 +1141,7 @@ void create_area_command(World *world, Player *player,const std::string &params)
         return;
     }
 
-    if (world->maps.createMap("by " + player->to_string(), position(x, y, z), w,
+    if (world->createMap("by " + player->to_string(), position(x, y, z), w,
                               h, tile)) {
         std::string tmessage = "Map inserted.";
         player->inform(tmessage);
