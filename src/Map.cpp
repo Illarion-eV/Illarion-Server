@@ -32,8 +32,18 @@
 
 Map::Map(std::string name, position origin, uint16_t width, uint16_t height)
     : origin(origin), width(width), height(height),
-      fields(width, std::vector<Field>(height, Field())),
-      name(std::move(name)) {}
+      fields(),
+      name(std::move(name)) {
+    for (auto x = origin.x; x < origin.x + width; ++x) {
+        std::vector<Field> column;
+
+        for (auto y = origin.y; y < origin.y + height; ++y) {
+            column.emplace_back(position(x, y, origin.z));
+        }
+
+        fields.push_back(column);
+    }
+}
 
 Map::Map(std::string name, position origin, uint16_t width, uint16_t height,
          uint16_t tile)

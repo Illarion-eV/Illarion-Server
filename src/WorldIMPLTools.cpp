@@ -528,13 +528,33 @@ Field &World::walkableFieldNear(position &pos) {
 }
 
 void World::makePersistentAt(const position &pos) {
+    try {
+        Field &field = maps.at(pos);
+        field.makePersistent();
+    } catch (FieldNotFound &) {
+        Field newField(pos);
+        newField.makePersistent();
+    }
 }
 
 void World::removePersistenceAt(const position &pos) {
+    try {
+        Field &field = maps.at(pos);
+        field.removePersistence();
+    } catch (FieldNotFound &) {
+    }
 }
 
 bool World::isPersistentAt(const position &pos) const {
-    return false;
+    bool persistent = false;
+
+    try {
+        const Field &field = maps.at(pos);
+        persistent = field.isPersistent();
+    } catch (FieldNotFound &) {
+    }
+
+    return persistent;
 }
 
 

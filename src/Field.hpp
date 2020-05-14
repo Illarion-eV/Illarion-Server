@@ -38,6 +38,7 @@ private:
     uint16_t tile = 0;
     uint16_t music = 0;
     uint8_t flags = 0;
+    position here;
     position warptarget;
     std::vector<Item> items;
     bool persistent = false;
@@ -46,6 +47,8 @@ public:
     Container::CONTAINERMAP containers;
 
 public:
+    explicit Field(const position &here): here(here) {};
+
     void setTileId(uint16_t id);
     uint16_t getTileId() const;
     uint16_t getSecondaryTileId() const;
