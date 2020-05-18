@@ -30,7 +30,7 @@ class Field;
 class WorldMap {
     std::vector<Map> maps;
     std::unordered_map<position, int> world_map;
-    std::unordered_map<position, Field> freeFields;
+    std::unordered_map<position, Field> persistentFields;
     size_t ageIndex = 0;
 
 public:

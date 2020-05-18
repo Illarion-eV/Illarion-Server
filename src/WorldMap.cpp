@@ -103,7 +103,7 @@ bool WorldMap::insert(Map&& newMap) {
 }
 
 bool WorldMap::insert(Field&& newField) {
-    return freeFields.insert({newField.getPosition(), std::move(newField)}).second;
+    return persistentFields.insert({newField.getPosition(), std::move(newField)}).second;
 }
 
 bool WorldMap::allMapsAged() {
