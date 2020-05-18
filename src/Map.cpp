@@ -41,7 +41,7 @@ Map::Map(std::string name, position origin, uint16_t width, uint16_t height)
             column.emplace_back(position(x, y, origin.z));
         }
 
-        fields.push_back(column);
+        fields.push_back(std::move(column));
     }
 }
 

@@ -30,6 +30,7 @@ class Field;
 class WorldMap {
     std::vector<Map> maps;
     std::unordered_map<position, int> world_map;
+    std::unordered_map<position, Field> freeFields;
     size_t ageIndex = 0;
 
 public:
@@ -49,9 +50,14 @@ public:
     bool createMap(const std::string &name, const position &origin,
                    uint16_t width, uint16_t height, uint16_t tile);
 
+    void makePersistentAt(const position &pos);
+    void removePersistenceAt(const position &pos);
+    bool isPersistentAt(const position &pos) const;
+
 private:
     const std::string worldName{"Illarion"};
     bool insert(Map&& newMap);
+    bool insert(Field&& newField);
     void clear();
     static Map createMapFromHeaderFile(const std::string &importDir,
                                        const std::string &mapName);

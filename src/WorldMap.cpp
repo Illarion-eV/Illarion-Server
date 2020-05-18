@@ -102,6 +102,10 @@ bool WorldMap::insert(Map&& newMap) {
     return true;
 }
 
+bool WorldMap::insert(Field&& newField) {
+    return freeFields.insert({newField.getPosition(), std::move(newField)}).second;
+}
+
 bool WorldMap::allMapsAged() {
     using std::chrono::steady_clock;
     using std::chrono::milliseconds;
@@ -462,4 +466,35 @@ void WorldMap::saveToDisk() const {
 bool WorldMap::createMap(const std::string &name, const position &origin,
                          uint16_t width, uint16_t height, uint16_t tile) {
     return insert({name, origin, width, height, tile});
+}
+
+void WorldMap::makePersistentAt(const position &pos) {
+    try {
+        Field &field = at(pos);
+        field.makePersistent();
+    } catch (FieldNotFound &) {
+        Field newField(pos);
+        newField.makePersistent();
+        insert(std::move(newField));
+    }
+}
+
+void WorldMap::removePersistenceAt(const position &pos) {
+    try {
+        Field &field = at(pos);
+        field.removePersistence();
+    } catch (FieldNotFound &) {
+    }
+}
+
+bool WorldMap::isPersistentAt(const position &pos) const {
+    bool persistent = false;
+
+    try {
+        const Field &field = at(pos);
+        persistent = field.isPersistent();
+    } catch (FieldNotFound &) {
+    }
+
+    return persistent;
 }

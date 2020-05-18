@@ -48,6 +48,10 @@ public:
 
 public:
     explicit Field(const position &here): here(here) {};
+    Field(const Field &) = delete;
+    Field &operator=(const Field &) = delete;
+    Field(Field &&) = default;
+    Field &operator=(Field &&) = default;
 
     void setTileId(uint16_t id);
     uint16_t getTileId() const;
@@ -100,6 +104,8 @@ public:
             std::ofstream &warpStream, std::ofstream &containerStream) const;
     void load(std::ifstream &mapStream, std::ifstream &itemStream,
             std::ifstream &warpStream, std::ifstream &containerStream);
+
+    const position &getPosition() const;
 
     void makePersistent();
     void removePersistence();

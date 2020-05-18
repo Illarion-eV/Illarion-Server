@@ -376,6 +376,10 @@ void Field::load(std::ifstream &mapStream, std::ifstream &itemStream,
     updateFlags();
 }
 
+const position &Field::getPosition() const {
+    return here;
+}
+
 void Field::makePersistent() {
     persistent = true;
 }
