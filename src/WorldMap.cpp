@@ -53,11 +53,7 @@ bool WorldMap::intersects(const Map &map) const {
 }
 
 Field &WorldMap::at(const position &pos) {
-    try {
-        return maps.at(world_map.at(pos)).at(pos.x, pos.y);
-    } catch (std::out_of_range &e) {
-        throw FieldNotFound();
-    }
+    return const_cast<Field &>(static_cast<const WorldMap &>(*this).at(pos));
 }
 
 const Field &WorldMap::at(const position &pos) const {
@@ -69,11 +65,7 @@ const Field &WorldMap::at(const position &pos) const {
 }
 
 Field &WorldMap::walkableNear(position &pos) {
-    try {
-        return maps.at(world_map.at(pos)).walkableNear(pos.x, pos.y);
-    } catch (std::out_of_range &e) {
-        throw FieldNotFound();
-    }
+    return const_cast<Field &>(static_cast<const WorldMap &>(*this).walkableNear(pos));
 }
 
 const Field &WorldMap::walkableNear(position &pos) const {
