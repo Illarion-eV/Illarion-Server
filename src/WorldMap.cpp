@@ -102,7 +102,8 @@ bool WorldMap::insert(Map&& newMap) {
     return true;
 }
 
-bool WorldMap::insert(Field&& newField) {
+bool WorldMap::insertPersistent(Field&& newField) {
+    newField.makePersistent();
     return persistentFields.insert({newField.getPosition(), std::move(newField)}).second;
 }
 
@@ -470,20 +471,31 @@ bool WorldMap::createMap(const std::string &name, const position &origin,
 
 void WorldMap::makePersistentAt(const position &pos) {
     try {
-        Field &field = at(pos);
+        Field &field = persistentFields.at(pos);
         field.makePersistent();
-    } catch (FieldNotFound &) {
-        Field newField(pos);
-        newField.makePersistent();
-        insert(std::move(newField));
+    } catch (std::out_of_range &) {
+        try {
+            Field &field = at(pos);
+            Field newField(field);
+            insertPersistent(std::move(newField));
+        } catch (FieldNotFound &) {
+            Field newField(pos);
+            insertPersistent(std::move(newField));
+        }
     }
 }
 
 void WorldMap::removePersistenceAt(const position &pos) {
-    try {
-        Field &field = at(pos);
-        field.removePersistence();
-    } catch (FieldNotFound &) {
+    auto fieldNode = persistentFields.extract(pos);
+
+    if (!fieldNode.empty()) {
+        fieldNode.mapped().removePersistence();
+
+        try {
+            Field &field = at(pos);
+            field = fieldNode.mapped();
+        } catch (FieldNotFound &) {
+        }
     }
 }
 
@@ -491,9 +503,9 @@ bool WorldMap::isPersistentAt(const position &pos) const {
     bool persistent = false;
 
     try {
-        const Field &field = at(pos);
+        const Field &field = persistentFields.at(pos);
         persistent = field.isPersistent();
-    } catch (FieldNotFound &) {
+    } catch (std::out_of_range &) {
     }
 
     return persistent;

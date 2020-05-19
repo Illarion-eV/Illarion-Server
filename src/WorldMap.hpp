@@ -57,7 +57,7 @@ public:
 private:
     const std::string worldName{"Illarion"};
     bool insert(Map&& newMap);
-    bool insert(Field&& newField);
+    bool insertPersistent(Field&& newField);
     void clear();
     static Map createMapFromHeaderFile(const std::string &importDir,
                                        const std::string &mapName);

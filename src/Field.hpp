@@ -48,8 +48,8 @@ public:
 
 public:
     explicit Field(const position &here): here(here) {};
-    Field(const Field &) = delete;
-    Field &operator=(const Field &) = delete;
+    Field(const Field &) = default;
+    Field &operator=(const Field &) = default;
     Field(Field &&) = default;
     Field &operator=(Field &&) = default;
 
