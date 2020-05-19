@@ -58,9 +58,13 @@ Field &WorldMap::at(const position &pos) {
 
 const Field &WorldMap::at(const position &pos) const {
     try {
-        return maps.at(world_map.at(pos)).at(pos.x, pos.y);
+        return persistentFields.at(pos);
     } catch (std::out_of_range &e) {
-        throw FieldNotFound();
+        try {
+            return maps.at(world_map.at(pos)).at(pos.x, pos.y);
+        } catch (std::out_of_range &e) {
+            throw FieldNotFound();
+        }
     }
 }
 
