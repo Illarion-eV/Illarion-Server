@@ -59,10 +59,10 @@ Field &WorldMap::at(const position &pos) {
 const Field &WorldMap::at(const position &pos) const {
     try {
         return persistentFields.at(pos);
-    } catch (std::out_of_range &e) {
+    } catch (std::out_of_range &) {
         try {
             return maps.at(world_map.at(pos)).at(pos.x, pos.y);
-        } catch (std::out_of_range &e) {
+        } catch (std::out_of_range &) {
             throw FieldNotFound();
         }
     }
@@ -75,7 +75,7 @@ Field &WorldMap::walkableNear(position &pos) {
 const Field &WorldMap::walkableNear(position &pos) const {
     try {
         return maps.at(world_map.at(pos)).walkableNear(pos.x, pos.y);
-    } catch (std::out_of_range &e) {
+    } catch (std::out_of_range &) {
         throw FieldNotFound();
     }
 }
