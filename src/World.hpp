@@ -40,7 +40,7 @@
 #include "MonitoringClients.hpp"
 #include "Scheduler.hpp"
 #include "character_ptr.hpp"
-#include "WorldMap.hpp"
+#include "map/WorldMap.hpp"
 
 #include "data/MonsterTable.hpp"
 #include "data/MonsterAttackTable.hpp"
@@ -362,10 +362,10 @@ public:
 
     bool killMonster(TYPE_OF_CHARACTER_ID id);
 
-    Field &fieldAt(const position &pos);
-    const Field &fieldAt(const position &pos) const;
-    Field &fieldAtOrBelow(position &pos);
-    Field &walkableFieldNear(position &pos);
+    map::Field &fieldAt(const position &pos);
+    const map::Field &fieldAt(const position &pos) const;
+    map::Field &fieldAtOrBelow(position &pos);
+    map::Field &walkableFieldNear(position &pos);
     void makePersistentAt(const position &pos);
     void removePersistenceAt(const position &pos);
     bool isPersistentAt(const position &pos) const;
@@ -505,7 +505,7 @@ public:
     **/
     bool pushPlayer(Player *cp, unsigned char d, short int &walkcost);
 
-    void checkFieldAfterMove(Character *character, const Field &field);
+    void checkFieldAfterMove(Character *character, const map::Field &field);
     void sendPassiveMoveToAllVisiblePlayers(Character *ccp);
     void sendSpinToAllVisiblePlayers(Character *cc);
     void sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char moveType, TYPE_OF_WALKINGCOST duration);
@@ -708,7 +708,7 @@ public:
 
     bool takeItemFromShowcase(Player *cc, uint8_t showcase, unsigned char pos, Item::number_type count);
     bool putItemInShowcase(Player *cc, uint8_t showcase, TYPE_OF_CONTAINERSLOTS pos);
-    void checkField(const Field &field, const position &itemPosition);
+    void checkField(const map::Field &field, const position &itemPosition);
 
     bool moveItemFromMapToMap(Player *cp, const position &oldPosition, const position &newPosition, Item::number_type count);
     void moveItemFromMapIntoShowcase(Player *cp, const position &sourcePosition, uint8_t showcase, unsigned char showcaseSlot, Item::number_type count);
@@ -995,7 +995,7 @@ public:
     void addPlayerImmediateActionQueue(Player* player);
 
 private:
-    WorldMap maps;
+    map::WorldMap maps;
 
     std::vector<Character *> getTargetsInRange(const position &pos, int radius) const;
     

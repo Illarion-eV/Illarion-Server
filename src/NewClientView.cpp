@@ -17,7 +17,7 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "Field.hpp"
+#include "map/Field.hpp"
 #include "NewClientView.hpp"
 #include "World.hpp"
 #include <algorithm>
@@ -53,7 +53,7 @@ void NewClientView::readFields(int length) {
 
     for (int i = 0; i < length; ++i) {
         try {
-            Field &field = World::get()->fieldAt(pos);
+            map::Field &field = World::get()->fieldAt(pos);
 
             if (!field.isTransparent() || field.itemCount() > 0) {
                 exists = true;

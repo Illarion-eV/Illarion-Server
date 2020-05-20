@@ -19,7 +19,6 @@
 
 #include "WaypointList.hpp"
 #include "World.hpp"
-#include "Field.hpp"
 #include "Logger.hpp"
 
 WaypointList::WaypointList(Character *movechar) : _movechar(movechar) {

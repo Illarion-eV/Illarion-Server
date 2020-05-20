@@ -18,10 +18,12 @@
  *  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Field.hpp"
+#include "map/Field.hpp"
 #include "script/binding/binding.hpp"
 
 namespace binding {
+
+    using map::Field;
 
     luabind::scope field() {
         return luabind::class_<Field>("Field")

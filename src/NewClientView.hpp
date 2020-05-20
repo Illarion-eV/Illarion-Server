@@ -26,7 +26,9 @@
 #include "globals.hpp"
 
 // forward declarations
-class Field;
+namespace map {
+    class Field;
+}
 
 /**
 * class which holds isometric view specific data
@@ -46,7 +48,7 @@ public:
     /**
     * defines one mapstripe
     */
-    typedef Field *MAPSTRIPE[ 100 /*MAP_DIMENSION + 1 + MAP_DOWN_EXTRA + 6*/ ];
+    typedef map::Field *MAPSTRIPE[ 100 /*MAP_DIMENSION + 1 + MAP_DOWN_EXTRA + 6*/ ];
 
     /**
     * stores the pointers to the fields inside a specific mapstripe

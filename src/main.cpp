@@ -25,7 +25,6 @@
 #include <memory>
 #include <sstream>
 
-#include "Field.hpp"
 #include "Player.hpp"
 #include "World.hpp"
 #include "constants.hpp"

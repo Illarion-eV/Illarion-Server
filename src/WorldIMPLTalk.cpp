@@ -23,7 +23,7 @@
 #include "Player.hpp"
 #include "NPC.hpp"
 #include "Monster.hpp"
-#include "Field.hpp"
+#include "map/Field.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "Logger.hpp"
 #include "data/Data.hpp"
@@ -260,7 +260,7 @@ void World::makeSoundForAllPlayersInRange(const position &pos, int radius, unsig
 void World::lookAtMapItem(Player *player, const position &pos,
                           uint8_t stackPos) {
     try {
-        Field &field = fieldAt(pos);
+        map::Field &field = fieldAt(pos);
         ScriptItem item = field.getStackItem(stackPos);
 
         if (item.getId()) {

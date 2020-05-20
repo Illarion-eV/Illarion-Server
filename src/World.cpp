@@ -30,7 +30,6 @@
 #include "Config.hpp"
 #include "Logger.hpp"
 #include "LongTimeAction.hpp"
-#include "Map.hpp"
 #include "PlayerManager.hpp"
 #include "Random.hpp"
 #include "SchedulerTaskClasses.hpp"

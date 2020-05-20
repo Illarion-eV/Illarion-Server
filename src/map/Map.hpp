@@ -23,8 +23,10 @@
 #include <string>
 #include <unordered_map>
 #include "globals.hpp"
-#include "Field.hpp"
+#include "map/Field.hpp"
 #include "Container.hpp"
+
+namespace map {
 
 class Map {
     position origin;
@@ -75,5 +77,7 @@ private:
     inline int16_t Conv_To_X(uint16_t x) const;
     inline int16_t Conv_To_Y(uint16_t y) const;
 };
+
+}
 
 #endif

@@ -6,6 +6,7 @@
 #include "Player.hpp"
 #include "Monster.hpp"
 #include "NPC.hpp"
+#include "map/Field.hpp"
 
 #include "script/LuaScript.hpp"
 
@@ -177,7 +178,7 @@ int container_erase_item2(Container *container, Item::id_type id, Item::number_t
     return container->eraseItem(id, number, convert_to_map(data).get());
 }
 
-Field *world_fieldAt(World *world, const position &pos) {
+map::Field *world_fieldAt(World *world, const position &pos) {
     try {
         return &world->fieldAt(pos);
     } catch (FieldNotFound &) {

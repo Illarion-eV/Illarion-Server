@@ -17,7 +17,7 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "Map.hpp"
+#include "map/Map.hpp"
 
 #include <regex>
 #include <vector>
@@ -29,6 +29,8 @@
 #include "Player.hpp"
 
 #include "netinterface/protocol/ServerCommands.hpp"
+
+namespace map {
 
 Map::Map(std::string name, position origin, uint16_t width, uint16_t height)
     : origin(origin), width(width), height(height),
@@ -554,3 +556,4 @@ bool Map::intersects(const Map &map) const {
            origin.y <= map.getMaxY();
 }
 
+}

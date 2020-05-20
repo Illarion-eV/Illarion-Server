@@ -17,7 +17,7 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "WorldMap.hpp"
+#include "map/WorldMap.hpp"
 #include "Config.hpp"
 #include "Map.hpp"
 #include "Logger.hpp"
@@ -30,6 +30,8 @@
 #include <boost/lexical_cast.hpp>
 #include <chrono>
 #include <range/v3/all.hpp>
+
+namespace map {
 
 void WorldMap::clear() {
     world_map.clear();
@@ -562,4 +564,6 @@ bool WorldMap::isPersistentAt(const position &pos) const {
     }
 
     return persistent;
+}
+
 }

@@ -40,8 +40,8 @@ data/MonsterAttackTable.cpp data/ScheduledScriptsTable.cpp data/LongTimeEffectTa
 data/SpellTable.cpp data/ScriptVariablesTable.cpp data/NPCTable.cpp data/TriggerTable.cpp \
 data/MonsterTable.cpp data/TilesModificatorTable.cpp data/TilesTable.cpp data/SkillTable.cpp data/WeaponObjectTable.cpp \
 \
-Map.cpp \
-WorldMap.cpp Container.cpp NewClientView.cpp Item.cpp Showcase.cpp Field.cpp SpawnPoint.cpp \
+map/WorldMap.cpp map/Map.cpp map/Field.cpp \
+Container.cpp NewClientView.cpp Item.cpp Showcase.cpp SpawnPoint.cpp \
 \
 World.cpp \
 WorldIMPLAdmin.cpp WorldIMPLCharacterMoves.cpp WorldIMPLItemMoves.cpp WorldIMPLTalk.cpp \
@@ -83,7 +83,8 @@ noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
 		 thread_safe_vector.hpp Random.hpp NPC.hpp Scheduler.hpp Scheduler.tcc \
 		 PlayerManager.hpp Character.hpp \
 		 Attribute.hpp InitialConnection.hpp Logger.hpp utility.hpp \
-		 MonitoringClients.hpp Field.hpp \
+		 MonitoringClients.hpp \
+         map/WorldMap.hpp map/Map.hpp map/Field.hpp \
 		 data/Data.hpp data/Table.hpp data/StructTable.hpp \
 		 data/ScriptStructTable.hpp data/QuestScriptStructTable.hpp \
 		 data/SpellTable.hpp data/RaceTypeTable.hpp \
@@ -97,7 +98,7 @@ noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
 		 data/ScheduledScriptsTable.hpp data/TilesTable.hpp \
 		 data/Table.hpp data/WeaponObjectTable.hpp \
 		 data/NaturalArmorTable.hpp main_help.hpp TableStructs.hpp \
-		 WorldMap.hpp Connection.hpp Map.hpp Language.hpp \
+		 Connection.hpp Language.hpp \
 		 NewClientView.hpp \
 		 netinterface/BasicCommand.hpp \
 		 netinterface/BasicClientCommand.hpp \

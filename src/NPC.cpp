@@ -20,7 +20,7 @@
 
 #include "tuningConstants.hpp"
 #include "World.hpp"
-#include "Field.hpp"
+#include "map/Field.hpp"
 
 #include "db/ConnectionManager.hpp"
 
@@ -44,7 +44,7 @@ NPC::NPC(TYPE_OF_CHARACTER_ID id, const std::string &name, TYPE_OF_RACE_ID race,
         setId(NPC_BASE + id);
     }
 
-    Field &field = _world->fieldAt(_startpos);
+    map::Field &field = _world->fieldAt(_startpos);
 
     setPosition(_startpos);
     Logger::debug(LogFacility::World) << "New NPC spawned: pos: " << _startpos << " type: " << race << " Name: " << name<< " is_healer: " << _ishealer << " sex: " << getAttribute(Character::sex) << Log::end;

@@ -23,7 +23,7 @@
 #include "Monster.hpp"
 #include "NPC.hpp"
 #include "data/Data.hpp"
-#include "Field.hpp"
+#include "map/Field.hpp"
 #include "tuningConstants.hpp"
 
 #include "netinterface/protocol/ServerCommands.hpp"
@@ -432,7 +432,7 @@ bool World::takeItemFromMap(Character *cc, const position &itemPosition) {
     }
 
     try {
-        Field &field = fieldAt(itemPosition);
+        map::Field &field = fieldAt(itemPosition);
 
         if (field.viewItemOnStack(g_item)) {
             const auto &itemStruct = Data::Items[g_item.getId()];
@@ -511,7 +511,7 @@ bool World::putItemOnMap(Character *cc, const position &itemPosition) {
     }
 
     try {
-        Field &field = fieldAt(itemPosition);
+        map::Field &field = fieldAt(itemPosition);
 
         if (!Data::TilesModItems.passable(g_item.getId())) {
             if (!field.moveToPossible()) {
@@ -577,7 +577,7 @@ bool World::putItemOnMap(Character *cc, const position &itemPosition) {
 
 bool World::putItemAlwaysOnMap(Character *cc, const position &itemPosition) {
     try {
-        Field &field = fieldAt(itemPosition);
+        map::Field &field = fieldAt(itemPosition);
 
         if (g_item.isContainer()) {
             // Container
@@ -634,7 +634,7 @@ bool World::putItemAlwaysOnMap(Character *cc, const position &itemPosition) {
 
 }
 
-void World::checkField(const Field &field, const position &itemPosition) {
+void World::checkField(const map::Field &field, const position &itemPosition) {
     if (field.hasSpecialItem()) {
         if (field.hasPlayer()) {
             Player *temp = Players.find(itemPosition);

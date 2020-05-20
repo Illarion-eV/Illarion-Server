@@ -22,7 +22,7 @@
 #include "Item.hpp"
 #include "Player.hpp"
 #include "Monster.hpp"
-#include "Field.hpp"
+#include "map/Field.hpp"
 #include "World.hpp"
 #include "Logger.hpp"
 
@@ -206,7 +206,7 @@ CloseDialogTC::CloseDialogTC(unsigned int dialogId) : BasicServerCommand(SC_CLOS
 
 void addMovementCostToBuffer(BasicServerCommand *cmd, const position &pos) {
     try {
-        Field &field = World::get()->fieldAt(pos);
+        map::Field &field = World::get()->fieldAt(pos);
         cmd->addUnsignedCharToBuffer(field.getMovementCost());
     } catch (FieldNotFound &) {
         cmd->addUnsignedCharToBuffer(255);
@@ -490,7 +490,7 @@ MapStripeTC::MapStripeTC(const position &pos, NewClientView::stripedirection dir
     addShortIntToBuffer(pos.y);
     addShortIntToBuffer(pos.z);
     addUnsignedCharToBuffer(static_cast<unsigned char>(dir));
-    Field **fields =  World::get()->clientview.mapStripe;
+    map::Field **fields =  World::get()->clientview.mapStripe;
     uint8_t numberOfTiles = World::get()->clientview.getMaxTiles();
     addUnsignedCharToBuffer(numberOfTiles);
 

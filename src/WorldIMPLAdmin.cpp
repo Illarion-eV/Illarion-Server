@@ -29,9 +29,8 @@
 #include "Logger.hpp"
 #include "constants.hpp"
 #include "Player.hpp"
-#include "Map.hpp"
 #include "Monster.hpp"
-#include "Field.hpp"
+#include "map/Field.hpp"
 
 #include "data/Data.hpp"
 #include "data/MonsterTable.hpp"
@@ -628,7 +627,7 @@ void World::setNextTile(Player *cp, unsigned char tilenumber) {
     const position &pos = cp->getFrontalPosition();
 
     try {
-        Field &field = fieldAt(pos);
+        map::Field &field = fieldAt(pos);
         field.setTileId(tilenumber);
     } catch (FieldNotFound &) {
     }
@@ -693,7 +692,7 @@ void World::what_command(Player *cp) {
     cp->inform(message.str());
 
     try {
-        Field &field = fieldAt(front);
+        map::Field &field = fieldAt(front);
         message.str("");
 
         message << "- Tile " << field.getTileId();

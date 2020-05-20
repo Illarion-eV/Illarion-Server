@@ -27,6 +27,10 @@
 #include "Container.hpp"
 #include <luabind/object.hpp>
 
+namespace map {
+    class Field;
+}
+
 uint32_t getPlayerLanguageLua(const Character *);
 
 void inform_lua2(const Character *character, const std::string &message, Character::informType type);
@@ -50,7 +54,7 @@ int container_count_item2(Container *, Item::id_type, const luabind::object &dat
 int container_erase_item1(Container *, Item::id_type, Item::number_type);
 int container_erase_item2(Container *, Item::id_type, Item::number_type, const luabind::object &data);
 
-Field *world_fieldAt(World *world, const position &pos);
+map::Field *world_fieldAt(World *world, const position &pos);
 ScriptItem world_createFromId(World *world, TYPE_OF_ITEM_ID id, unsigned short int count, position pos, bool always, int quali, const luabind::object &data);
 
 void log_lua(const std::string &message);

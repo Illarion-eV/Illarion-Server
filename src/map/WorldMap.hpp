@@ -23,7 +23,9 @@
 #include <vector>
 #include <unordered_map>
 #include "globals.hpp"
-#include "Map.hpp"
+#include "map/Map.hpp"
+
+namespace map {
 
 class Field;
 
@@ -65,4 +67,7 @@ private:
                                   std::ifstream &headerFile, int &lineNumber);
     static bool isCommentOrEmpty(const std::string &line);
 };
+
+}
+
 #endif

@@ -31,7 +31,7 @@
 #include "Player.hpp"
 #include "Random.hpp"
 #include "World.hpp"
-#include "Field.hpp"
+#include "map/Field.hpp"
 #include "Logger.hpp"
 #include "MonitoringClients.hpp"
 #include "LongTimeAction.hpp"
@@ -1349,8 +1349,8 @@ bool Character::move(direction dir, bool active) {
 
     try {
 
-        Field &oldField = _world->fieldAt(pos);
-        Field &newField = _world->fieldAtOrBelow(newpos);
+        map::Field &oldField = _world->fieldAt(pos);
+        map::Field &newField = _world->fieldAtOrBelow(newpos);
 
         if (moveToPossible(newField)) {
             bool diagonalMove = pos.x != newpos.x && pos.y != newpos.y;
@@ -1381,12 +1381,12 @@ bool Character::move(direction dir, bool active) {
     return false;
 }
 
-bool Character::moveToPossible(const Field &field) const {
+bool Character::moveToPossible(const map::Field &field) const {
     // for monsters/npcs we just use the field infos for now
     return field.moveToPossible();
 }
 
-TYPE_OF_WALKINGCOST Character::getMoveTime(const Field &targetField, bool diagonalMove, bool running) const {
+TYPE_OF_WALKINGCOST Character::getMoveTime(const map::Field &targetField, bool diagonalMove, bool running) const {
     static const float sqrt2 = std::sqrt(2.0);
     TYPE_OF_WALKINGCOST walkcost;
 
@@ -1444,8 +1444,8 @@ bool Character::Warp(const position &newPos) {
     position updatedPos = newPos;
 
     try {
-        Field &oldField = _world->fieldAt(pos);
-        Field &newField = _world->walkableFieldNear(updatedPos);
+        map::Field &oldField = _world->fieldAt(pos);
+        map::Field &newField = _world->walkableFieldNear(updatedPos);
         oldField.removeChar();
         setPosition(updatedPos);
         newField.setChar();
@@ -1460,8 +1460,8 @@ bool Character::forceWarp(const position &newPos) {
     position oldpos = pos;
 
     try {
-        Field &oldField = _world->fieldAt(pos);
-        Field &newField = _world->fieldAt(newPos);
+        map::Field &oldField = _world->fieldAt(pos);
+        map::Field &newField = _world->fieldAt(newPos);
         oldField.removeChar();
         setPosition(newPos);
         newField.setChar();

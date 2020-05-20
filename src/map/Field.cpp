@@ -17,12 +17,13 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "Field.hpp"
+#include "map/Field.hpp"
 
 #include "data/Data.hpp"
 #include "globals.hpp"
 #include <limits>
 
+namespace map {
 
 void Field::setTileId(uint16_t id) {
     tile = id;
@@ -561,3 +562,4 @@ inline bool Field::anyBitSet(uint8_t bits) const {
     return (flags & bits) != 0;
 }
 
+}

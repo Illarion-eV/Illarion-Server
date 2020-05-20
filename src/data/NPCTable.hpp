@@ -27,7 +27,6 @@
 #include "globals.hpp"
 #include "World.hpp"
 #include "NPC.hpp"
-#include "Field.hpp"
 
 class World;
 

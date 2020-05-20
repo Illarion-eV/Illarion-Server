@@ -21,7 +21,7 @@
 #include "a_star.hpp"
 
 #include "World.hpp"
-#include "Field.hpp"
+#include "map/Field.hpp"
 #include "data/TilesTable.hpp"
 #include "data/Data.hpp"
 
@@ -54,7 +54,7 @@ void character_out_edge_iterator::valid_step() {
     bool moveToPossible = false;
 
     try {
-        Field &field = World::get()->fieldAt(::position(new_pos.first, new_pos.second, graph->level));
+        map::Field &field = World::get()->fieldAt(::position(new_pos.first, new_pos.second, graph->level));
         moveToPossible = field.moveToPossible();
     } catch (FieldNotFound &) {
     }
@@ -65,7 +65,7 @@ void character_out_edge_iterator::valid_step() {
         new_pos = Position(position.first + character_moves[direction].first, position.second + character_moves[direction].second);
         
         try {
-            Field &field = World::get()->fieldAt(::position(new_pos.first, new_pos.second, graph->level));
+            map::Field &field = World::get()->fieldAt(::position(new_pos.first, new_pos.second, graph->level));
             moveToPossible = field.moveToPossible();
         } catch (FieldNotFound &) {
         }
@@ -137,7 +137,7 @@ auto weight_calc::operator[](key_type const &k) -> mapped_type & {
         auto v = k.second;
 
         try {
-            Field &field = World::get()->fieldAt(::position(v.first, v.second, level));
+            map::Field &field = World::get()->fieldAt(::position(v.first, v.second, level));
             auto tileId = field.getTileId();
             insert(std::make_pair(k, Data::Tiles[tileId].walkingCost));
         } catch (FieldNotFound &) {

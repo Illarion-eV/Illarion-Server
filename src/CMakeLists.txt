@@ -87,6 +87,12 @@ add_library(server
     dialog/MessageDialog.hpp
     dialog/SelectionDialog.cpp
     dialog/SelectionDialog.hpp
+    map/Field.cpp
+    map/Field.hpp
+    map/Map.cpp
+    map/Map.hpp
+    map/WorldMap.cpp
+    map/WorldMap.hpp
     netinterface/protocol/BBIWIClientCommands.cpp
     netinterface/protocol/BBIWIClientCommands.hpp
     netinterface/protocol/BBIWIServerCommands.cpp
@@ -123,8 +129,6 @@ add_library(server
     constants.hpp
     Container.cpp
     Container.hpp
-    Field.cpp
-    Field.hpp
     globals.hpp
     InitialConnection.cpp
     InitialConnection.hpp
@@ -142,8 +146,6 @@ add_library(server
     LongTimeEffect.hpp
     main_help.cpp
     main_help.hpp
-    Map.cpp
-    Map.hpp
     MilTimer.cpp
     MilTimer.hpp
     MonitoringClients.cpp
@@ -186,9 +188,7 @@ add_library(server
     WorldIMPLPlayer.cpp
     WorldIMPLScriptHelp.cpp
     WorldIMPLTalk.cpp
-    WorldIMPLTools.cpp
-    WorldMap.cpp
-    WorldMap.hpp)
+    WorldIMPLTools.cpp)
 
 target_link_libraries(server db script)
 

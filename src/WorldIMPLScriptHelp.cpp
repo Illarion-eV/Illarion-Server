@@ -18,10 +18,9 @@
 
 
 #include "character_ptr.hpp"
-#include "Field.hpp"
+#include "map/Field.hpp"
 #include "Item.hpp"
 #include "Logger.hpp"
-#include "Map.hpp"
 #include "MonitoringClients.hpp"
 #include "Monster.hpp"
 #include "NPC.hpp"
@@ -174,7 +173,7 @@ bool World::changeItem(ScriptItem item) {
         return true;
     } else if (item.type == ScriptItem::it_field) {
         try {
-            Field &field = fieldAt(item.pos);
+            map::Field &field = fieldAt(item.pos);
             Item it;
 
             if (field.takeItemFromStack(it)) {
@@ -250,7 +249,7 @@ bool World::erase(ScriptItem item, int amount) {
     //Item befindet sich auf einen Feld am Boden liegend.
     else if (item.type == ScriptItem::it_field) {
         try {
-            Field &field = fieldAt(item.pos);
+            map::Field &field = fieldAt(item.pos);
             bool erased=false;
             field.increaseItemOnStack(-amount, erased);
 
@@ -316,7 +315,7 @@ bool World::swap(ScriptItem item, TYPE_OF_ITEM_ID newItem, unsigned short int ne
         return true;
     } else if (item.type == ScriptItem::it_field) {
         try {
-            Field &field = fieldAt(item.pos);
+            map::Field &field = fieldAt(item.pos);
             Item it;
 
             if (field.viewItemOnStack(it)) {
@@ -396,7 +395,7 @@ bool World::createFromItem(ScriptItem item, const position &pos, bool always) {
 
 character_ptr World::createMonster(unsigned short id, const position &pos, short movepoints) {
     try {
-        Field &field = fieldAt(pos);
+        map::Field &field = fieldAt(pos);
         
         try {
             Monster *newMonster = new Monster(id, pos);
@@ -444,7 +443,7 @@ ScriptItem World::getItemOnField(const position &pos) {
     ScriptItem item;
 
     try {
-        Field &field = fieldAt(pos);
+        map::Field &field = fieldAt(pos);
         Item it;
 
         if (field.viewItemOnStack(it)) {
@@ -461,7 +460,7 @@ ScriptItem World::getItemOnField(const position &pos) {
 
 void World::changeTile(short int tileid, const position &pos) {
     try {
-        Field &field = fieldAt(pos);
+        map::Field &field = fieldAt(pos);
         field.setTileId(tileid);
     } catch (FieldNotFound &) {
         logMissingField("changeTile", pos);

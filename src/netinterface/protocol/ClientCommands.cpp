@@ -21,7 +21,7 @@
 #include <string>
 
 #include "types.hpp"
-#include "Field.hpp"
+#include "map/Field.hpp"
 #include "World.hpp"
 #include "Character.hpp"
 #include "Player.hpp"
@@ -366,7 +366,7 @@ void CastTS::performAction(Player *player) {
 
         if (LuaMageScript) {
             try {
-                Field &field = World::get()->fieldAt(castPosition);
+                map::Field &field = World::get()->fieldAt(castPosition);
 
                 if (field.hasPlayer() || field.hasMonster() || field.hasNPC()) {
                     Character *tmpCharacter = World::get()->findCharacterOnField(castPosition);
@@ -671,7 +671,7 @@ void UseTS::performAction(Player *player) {
         Logger::debug(LogFacility::Script) << usePosition << Log::end;
 
         try {
-            Field &field = World::get()->fieldAt(usePosition);
+            map::Field &field = World::get()->fieldAt(usePosition);
 
             if (field.hasPlayer() || field.hasNPC() || field.hasMonster()) {
                 Logger::debug(LogFacility::Script) << "Character on field found!" << Log::end;

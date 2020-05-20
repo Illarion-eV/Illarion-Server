@@ -26,7 +26,7 @@
 #include "db/SelectQuery.hpp"
 #include "db/Result.hpp"
 
-#include "Field.hpp"
+#include "map/Field.hpp"
 #include "Logger.hpp"
 #include "Monster.hpp"
 #include "Random.hpp"
@@ -91,7 +91,7 @@ void SpawnPoint::spawn() {
 
                         //end of setting the new spawnpos
                         try {
-                            Field &field = world->walkableFieldNear(tempPos);
+                            map::Field &field = world->walkableFieldNear(tempPos);
                             newmonster = new Monster(spawn.typ, tempPos, this);
                             ++spawn.akt_count;
                             world->newMonsters.push_back(newmonster);

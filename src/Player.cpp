@@ -28,7 +28,7 @@
 #include <range/v3/all.hpp>
 
 #include "tuningConstants.hpp"
-#include "Field.hpp"
+#include "map/Field.hpp"
 #include "World.hpp"
 #include "Random.hpp"
 #include "SchedulerTaskClasses.hpp"
@@ -424,7 +424,7 @@ bool Player::lookIntoContainerOnField(direction dir) {
     containerPosition.move(dir);
 
     try {
-        Field &field = World::get()->fieldAt(containerPosition);
+        map::Field &field = World::get()->fieldAt(containerPosition);
         Item item;
 
         if (field.viewItemOnStack(item)) {
@@ -1850,7 +1850,7 @@ bool Player::isOvertaxed() {
     return level == LoadLevel::overtaxed;
 }
 
-bool Player::moveToPossible(const Field &field) const {
+bool Player::moveToPossible(const map::Field &field) const {
     return Character::moveToPossible(field) || (!getClippingActive() && (isAdmin() || hasGMRight(gmr_isnotshownasgm)));
 }
 
@@ -1901,8 +1901,8 @@ bool Player::move(direction dir, uint8_t mode) {
             newpos = getPosition();
             newpos.move(dir);
 
-            Field &oldField = _world->fieldAt(oldpos);
-            Field &newField = _world->fieldAtOrBelow(newpos);
+            map::Field &oldField = _world->fieldAt(oldpos);
+            map::Field &newField = _world->fieldAtOrBelow(newpos);
 
             bool diagonalMove = oldpos.x != newpos.x && oldpos.y != newpos.y;
             walkcost += getMoveTime(newField, diagonalMove, mode == RUNNING);

@@ -24,11 +24,10 @@
 #include <stdlib.h>
 #include <range/v3/all.hpp>
 
-#include "Map.hpp"
 #include "Player.hpp"
 #include "NPC.hpp"
 #include "Monster.hpp"
-#include "Field.hpp"
+#include "map/Field.hpp"
 
 #include "data/Data.hpp"
 #include "data/ArmorObjectTable.hpp"
@@ -211,7 +210,7 @@ std::list<BlockingObject> World::LoS(const position &startingpos, const position
             }
 
             try {
-                const Field &field = fieldAt(pos);
+                const map::Field &field = fieldAt(pos);
                 
                 if (field.hasPlayer()) {
                     bo.blockingType = BlockingObject::BT_CHARACTER;
@@ -501,17 +500,17 @@ bool World::killMonster(TYPE_OF_CHARACTER_ID id) {
 }
 
 
-Field &World::fieldAt(const position &pos) {
+map::Field &World::fieldAt(const position &pos) {
     return maps.at(pos);
 }
 
-const Field &World::fieldAt(const position &pos) const {
+const map::Field &World::fieldAt(const position &pos) const {
     return maps.at(pos);
 }
 
-Field &World::fieldAtOrBelow(position &pos) {
+map::Field &World::fieldAtOrBelow(position &pos) {
     for (size_t i = 0; i <= RANGEDOWN; ++i) {
-        Field &field = fieldAt(pos);
+        map::Field &field = fieldAt(pos);
 
         if (!field.isTransparent()) {
             return field;
@@ -523,7 +522,7 @@ Field &World::fieldAtOrBelow(position &pos) {
     throw FieldNotFound();
 }
 
-Field &World::walkableFieldNear(position &pos) {
+map::Field &World::walkableFieldNear(position &pos) {
     return maps.walkableNear(pos);
 }
 

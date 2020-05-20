@@ -17,7 +17,7 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "Field.hpp"
+#include "map/Field.hpp"
 #include "Logger.hpp"
 #include "Monster.hpp"
 #include "NPC.hpp"
@@ -31,7 +31,7 @@
 #include "script/LuaItemScript.hpp"
 
 
-void World::checkFieldAfterMove(Character *character, const Field &field) {
+void World::checkFieldAfterMove(Character *character, const map::Field &field) {
     if (!character) {
         return;
     }
@@ -211,7 +211,7 @@ void World::sendCharsInVector(const std::vector<T *> &vec, Player *cp, bool send
 
 bool World::addWarpField(const position &where, const position &target, unsigned short int starttilenr, Item::id_type startitemnr) {
     try {
-        Field &field = fieldAt(where);
+        map::Field &field = fieldAt(where);
 
         if (starttilenr != 0) {
             field.setTileId(starttilenr);

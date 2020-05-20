@@ -495,7 +495,7 @@ public:
     void namePlayer(TYPE_OF_CHARACTER_ID playerId, const std::string &name);
     std::string getCustomNameOf(Player *player) const;
 
-    virtual bool moveToPossible(const Field &field) const override;
+    virtual bool moveToPossible(const map::Field &field) const override;
     // Move the Player
     using Character::move;
     bool move(direction dir, uint8_t mode);

@@ -28,8 +28,7 @@
 #include "Container.hpp"
 #include "Item.hpp"
 
-class ItemTable;
-class ContainerObjectTable;
+namespace map {
 
 class Field {
 private:
@@ -117,5 +116,7 @@ private:
     inline void unsetBits(uint8_t);
     inline bool anyBitSet(uint8_t) const;
 };
+
+}
 
 #endif

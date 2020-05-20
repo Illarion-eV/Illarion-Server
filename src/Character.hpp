@@ -43,7 +43,9 @@
 
 class World;
 class Container;
-class Field;
+namespace map {
+    class Field;
+}
 class Player;
 
 enum magic_type {
@@ -545,10 +547,10 @@ protected:
     int mental_capacity = 0;
     World *_world;
 
-    virtual bool moveToPossible(const Field &field) const;
+    virtual bool moveToPossible(const map::Field &field) const;
     
     // returns time of a move in ms
-    virtual TYPE_OF_WALKINGCOST getMoveTime(const Field &targetField, bool diagonalMove, bool running) const;
+    virtual TYPE_OF_WALKINGCOST getMoveTime(const map::Field &targetField, bool diagonalMove, bool running) const;
 
     appearance _appearance;
 
