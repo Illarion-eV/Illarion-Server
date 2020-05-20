@@ -73,12 +73,69 @@ Field &WorldMap::walkableNear(position &pos) {
 }
 
 const Field &WorldMap::walkableNear(position &pos) const {
-    try {
-        return maps.at(world_map.at(pos)).walkableNear(pos.x, pos.y);
-    } catch (std::out_of_range &) {
-        throw FieldNotFound();
+    auto start = pos;
+
+    unsigned char d = 0;
+
+    while (d < 6) {
+        pos.x = start.x - d;
+
+        while (pos.x <= start.x + d) {
+            try {
+                pos.y = d + start.y;
+                const Field &field = at(pos);
+                
+                if (field.moveToPossible()) {
+                    return field;
+                }
+            } catch (FieldNotFound &) {
+            }
+
+            try {
+                pos.y = start.y - d;
+                const Field &field = at(pos);
+
+                if (field.moveToPossible()) {
+                    return field;
+                }
+            } catch (FieldNotFound &) {
+            }
+
+            pos.x++;
+        }
+
+        pos.y = start.y - d;
+
+        while (pos.y <= d + start.y) {
+            try {
+                pos.x = d + start.x;
+                const Field &field = at(pos);
+
+                if (field.moveToPossible()) {
+                    return field;
+                }
+            } catch (FieldNotFound &) {
+            }
+
+            try {
+                pos.x = start.x - d;
+                const Field &field = at(pos);
+
+                if (field.moveToPossible()) {
+                    return field;
+                }
+            } catch (FieldNotFound &) {
+            }
+
+            pos.y++;
+        }
+
+        d++;
     }
+
+    throw FieldNotFound();
 }
+
 
 bool WorldMap::insert(Map&& newMap) {
     if (intersects(newMap)) return false;

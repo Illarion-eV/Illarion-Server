@@ -50,8 +50,6 @@ public:
     const Field &at(int16_t x, int16_t y) const;
     Field &at(const MapPosition &);
     const Field &at(const MapPosition &) const;
-    Field &walkableNear(int16_t &x, int16_t &y);
-    const Field &walkableNear(int16_t &x, int16_t &y) const;
 
     void age();
 
