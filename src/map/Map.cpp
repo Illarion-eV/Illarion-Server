@@ -528,14 +528,6 @@ inline uint16_t Map::Conv_Y_Koord(int16_t y) const {
     return temp;
 }
 
-inline int16_t Map::Conv_To_X(uint16_t x) const {
-    return x + origin.x;
-}
-
-inline int16_t Map::Conv_To_Y(uint16_t y) const {
-    return y + origin.y;
-}
-
 bool Map::intersects(const Map &map) const {
     return map.origin.z == origin.z && getMaxX() >= map.origin.x &&
            origin.x <= map.getMaxX() && getMaxY() >= map.origin.y &&

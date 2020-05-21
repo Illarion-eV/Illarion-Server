@@ -74,8 +74,6 @@ private:
 
     inline uint16_t Conv_X_Koord(int16_t x) const;
     inline uint16_t Conv_Y_Koord(int16_t y) const;
-    inline int16_t Conv_To_X(uint16_t x) const;
-    inline int16_t Conv_To_Y(uint16_t y) const;
 };
 
 }
