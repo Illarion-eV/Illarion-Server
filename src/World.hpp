@@ -365,7 +365,7 @@ public:
     map::Field &fieldAt(const position &pos);
     const map::Field &fieldAt(const position &pos) const;
     map::Field &fieldAtOrBelow(position &pos);
-    map::Field &walkableFieldNear(position &pos);
+    map::Field &walkableFieldNear(const position &pos);
     void makePersistentAt(const position &pos);
     void removePersistenceAt(const position &pos);
     bool isPersistentAt(const position &pos) const;

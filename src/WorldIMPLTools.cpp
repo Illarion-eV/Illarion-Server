@@ -522,7 +522,7 @@ map::Field &World::fieldAtOrBelow(position &pos) {
     throw FieldNotFound();
 }
 
-map::Field &World::walkableFieldNear(position &pos) {
+map::Field &World::walkableFieldNear(const position &pos) {
     return maps.walkableNear(pos);
 }
 

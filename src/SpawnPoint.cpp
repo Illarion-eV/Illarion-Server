@@ -83,16 +83,15 @@ void SpawnPoint::spawn() {
                     }
 
                     for (int i = 0; i < num; ++i) {
-                        position tempPos;
                         //set the new spawnpos in the range of the spawnrange around the spawnpoint
-                        tempPos.x = (spawnpos.x - spawnrange) + Random::uniform(0, 2 * spawnrange);
-                        tempPos.y = (spawnpos.y - spawnrange) + Random::uniform(0, 2 * spawnrange);
-                        tempPos.z = spawnpos.z;
+                        const position tempPos ((spawnpos.x - spawnrange) + Random::uniform(0, 2 * spawnrange),
+                                                (spawnpos.y - spawnrange) + Random::uniform(0, 2 * spawnrange),
+                                                spawnpos.z);
 
                         //end of setting the new spawnpos
                         try {
                             map::Field &field = world->walkableFieldNear(tempPos);
-                            newmonster = new Monster(spawn.typ, tempPos, this);
+                            newmonster = new Monster(spawn.typ, field.getPosition(), this);
                             ++spawn.akt_count;
                             world->newMonsters.push_back(newmonster);
                             field.setPlayer();

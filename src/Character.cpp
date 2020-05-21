@@ -1441,13 +1441,12 @@ void Character::teachMagic(unsigned char type, unsigned char flag) {
 
 bool Character::Warp(const position &newPos) {
     position oldpos = pos;
-    position updatedPos = newPos;
 
     try {
         map::Field &oldField = _world->fieldAt(pos);
-        map::Field &newField = _world->walkableFieldNear(updatedPos);
+        map::Field &newField = _world->walkableFieldNear(newPos);
         oldField.removeChar();
-        setPosition(updatedPos);
+        setPosition(newField.getPosition());
         newField.setChar();
         _world->sendCharacterWarpToAllVisiblePlayers(this, oldpos, PUSH);
         return true;

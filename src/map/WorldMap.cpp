@@ -70,22 +70,23 @@ const Field &WorldMap::at(const position &pos) const {
     }
 }
 
-Field &WorldMap::walkableNear(position &pos) {
+Field &WorldMap::walkableNear(const position &pos) {
     return const_cast<Field &>(static_cast<const WorldMap &>(*this).walkableNear(pos));
 }
 
-const Field &WorldMap::walkableNear(position &pos) const {
+const Field &WorldMap::walkableNear(const position &pos) const {
     auto start = pos;
+    auto testPos = pos;
 
     unsigned char d = 0;
 
     while (d < 6) {
-        pos.x = start.x - d;
+        testPos.x = start.x - d;
 
-        while (pos.x <= start.x + d) {
+        while (testPos.x <= start.x + d) {
             try {
-                pos.y = d + start.y;
-                const Field &field = at(pos);
+                testPos.y = d + start.y;
+                const Field &field = at(testPos);
                 
                 if (field.moveToPossible()) {
                     return field;
@@ -94,8 +95,8 @@ const Field &WorldMap::walkableNear(position &pos) const {
             }
 
             try {
-                pos.y = start.y - d;
-                const Field &field = at(pos);
+                testPos.y = start.y - d;
+                const Field &field = at(testPos);
 
                 if (field.moveToPossible()) {
                     return field;
@@ -103,15 +104,15 @@ const Field &WorldMap::walkableNear(position &pos) const {
             } catch (FieldNotFound &) {
             }
 
-            pos.x++;
+            testPos.x++;
         }
 
-        pos.y = start.y - d;
+        testPos.y = start.y - d;
 
-        while (pos.y <= d + start.y) {
+        while (testPos.y <= d + start.y) {
             try {
-                pos.x = d + start.x;
-                const Field &field = at(pos);
+                testPos.x = d + start.x;
+                const Field &field = at(testPos);
 
                 if (field.moveToPossible()) {
                     return field;
@@ -120,8 +121,8 @@ const Field &WorldMap::walkableNear(position &pos) const {
             }
 
             try {
-                pos.x = start.x - d;
-                const Field &field = at(pos);
+                testPos.x = start.x - d;
+                const Field &field = at(testPos);
 
                 if (field.moveToPossible()) {
                     return field;
@@ -129,7 +130,7 @@ const Field &WorldMap::walkableNear(position &pos) const {
             } catch (FieldNotFound &) {
             }
 
-            pos.y++;
+            testPos.y++;
         }
 
         d++;

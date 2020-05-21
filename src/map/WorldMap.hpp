@@ -38,8 +38,8 @@ class WorldMap {
 public:
     Field &at(const position &pos);
     const Field &at(const position &pos) const;
-    Field &walkableNear(position &pos);
-    const Field &walkableNear(position &pos) const;
+    Field &walkableNear(const position &pos);
+    const Field &walkableNear(const position &pos) const;
     bool intersects(const Map &map) const;
 
     bool allMapsAged();
