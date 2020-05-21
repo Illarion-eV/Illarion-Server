@@ -108,6 +108,9 @@ bool WorldMap::allMapsAged() {
         return false;
     }
 
+    using namespace ranges;
+    for_each(persistentFields | view::values, [](auto &field){field.age();});
+
     ageIndex = 0;
     return true;
 }
