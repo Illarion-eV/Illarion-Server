@@ -485,9 +485,9 @@ bool Map::Load(const std::string &name) {
 
 
 void Map::age() {
-    for (int16_t x = 0; x < width; ++x) {
-        for (int16_t y = 0; y < height; ++y) {
-            fields[x][y].age();
+    for ( auto &row : fields) {
+        for (auto &field : row) {
+            field.age();
         }
     }
 }
