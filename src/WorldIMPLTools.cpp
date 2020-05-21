@@ -523,7 +523,7 @@ map::Field &World::fieldAtOrBelow(position &pos) {
 }
 
 map::Field &World::walkableFieldNear(const position &pos) {
-    return maps.walkableNear(pos);
+    return walkableNear(maps, pos);
 }
 
 void World::makePersistentAt(const position &pos) {

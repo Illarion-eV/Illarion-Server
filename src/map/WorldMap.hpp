@@ -38,8 +38,6 @@ class WorldMap {
 public:
     Field &at(const position &pos);
     const Field &at(const position &pos) const;
-    Field &walkableNear(const position &pos);
-    const Field &walkableNear(const position &pos) const;
     bool intersects(const Map &map) const;
 
     bool allMapsAged();
@@ -67,6 +65,9 @@ private:
                                   std::ifstream &headerFile, int &lineNumber);
     static bool isCommentOrEmpty(const std::string &line);
 };
+
+Field &walkableNear(WorldMap &worldMap, const position &pos);
+const Field &walkableNear(const WorldMap &worldMap, const position &pos);
 
 }
 

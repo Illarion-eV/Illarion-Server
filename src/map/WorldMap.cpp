@@ -70,76 +70,6 @@ const Field &WorldMap::at(const position &pos) const {
     }
 }
 
-Field &WorldMap::walkableNear(const position &pos) {
-    return const_cast<Field &>(static_cast<const WorldMap &>(*this).walkableNear(pos));
-}
-
-const Field &WorldMap::walkableNear(const position &pos) const {
-    auto start = pos;
-    auto testPos = pos;
-
-    unsigned char d = 0;
-
-    while (d < 6) {
-        testPos.x = start.x - d;
-
-        while (testPos.x <= start.x + d) {
-            try {
-                testPos.y = d + start.y;
-                const Field &field = at(testPos);
-                
-                if (field.moveToPossible()) {
-                    return field;
-                }
-            } catch (FieldNotFound &) {
-            }
-
-            try {
-                testPos.y = start.y - d;
-                const Field &field = at(testPos);
-
-                if (field.moveToPossible()) {
-                    return field;
-                }
-            } catch (FieldNotFound &) {
-            }
-
-            testPos.x++;
-        }
-
-        testPos.y = start.y - d;
-
-        while (testPos.y <= d + start.y) {
-            try {
-                testPos.x = d + start.x;
-                const Field &field = at(testPos);
-
-                if (field.moveToPossible()) {
-                    return field;
-                }
-            } catch (FieldNotFound &) {
-            }
-
-            try {
-                testPos.x = start.x - d;
-                const Field &field = at(testPos);
-
-                if (field.moveToPossible()) {
-                    return field;
-                }
-            } catch (FieldNotFound &) {
-            }
-
-            testPos.y++;
-        }
-
-        d++;
-    }
-
-    throw FieldNotFound();
-}
-
-
 bool WorldMap::insert(Map&& newMap) {
     if (intersects(newMap)) return false;
 
@@ -565,6 +495,75 @@ bool WorldMap::isPersistentAt(const position &pos) const {
     }
 
     return persistent;
+}
+
+Field &walkableNear(WorldMap &worldMap, const position &pos) {
+    return const_cast<Field &>(walkableNear(static_cast<const WorldMap &>(worldMap), pos));
+}
+
+const Field &walkableNear(const WorldMap &worldMap, const position &pos) {
+    auto start = pos;
+    auto testPos = pos;
+
+    unsigned char d = 0;
+
+    while (d < 6) {
+        testPos.x = start.x - d;
+
+        while (testPos.x <= start.x + d) {
+            try {
+                testPos.y = d + start.y;
+                const Field &field = worldMap.at(testPos);
+
+                if (field.moveToPossible()) {
+                    return field;
+                }
+            } catch (FieldNotFound &) {
+            }
+
+            try {
+                testPos.y = start.y - d;
+                const Field &field = worldMap.at(testPos);
+
+                if (field.moveToPossible()) {
+                    return field;
+                }
+            } catch (FieldNotFound &) {
+            }
+
+            testPos.x++;
+        }
+
+        testPos.y = start.y - d;
+
+        while (testPos.y <= d + start.y) {
+            try {
+                testPos.x = d + start.x;
+                const Field &field = worldMap.at(testPos);
+
+                if (field.moveToPossible()) {
+                    return field;
+                }
+            } catch (FieldNotFound &) {
+            }
+
+            try {
+                testPos.x = start.x - d;
+                const Field &field = worldMap.at(testPos);
+
+                if (field.moveToPossible()) {
+                    return field;
+                }
+            } catch (FieldNotFound &) {
+            }
+
+            testPos.y++;
+        }
+
+        d++;
+    }
+
+    throw FieldNotFound();
 }
 
 }
