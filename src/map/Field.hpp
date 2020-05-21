@@ -79,7 +79,7 @@ public:
     bool addContainerOnStackIfWalkable(Item item, Container *container);
     bool addContainerOnStack(Item item, Container *container);
 
-    int8_t age();
+    void age();
 
     void setPlayer();
     void setNPC();

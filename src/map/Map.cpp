@@ -25,10 +25,6 @@
 #include <boost/lexical_cast.hpp>
 
 #include "Logger.hpp"
-#include "World.hpp"
-#include "Player.hpp"
-
-#include "netinterface/protocol/ServerCommands.hpp"
 
 namespace map {
 
@@ -491,17 +487,7 @@ bool Map::Load(const std::string &name) {
 void Map::age() {
     for (int16_t x = 0; x < width; ++x) {
         for (int16_t y = 0; y < height; ++y) {
-            int8_t rotstate = fields[x][y].age();
-
-            if (rotstate != 0) {
-                position pos(Conv_To_X(x), Conv_To_Y(y), origin.z);
-                std::vector<Player *> playersinview = World::get()->Players.findAllCharactersInScreen(pos);
-
-                for (const auto &player : playersinview) {
-                    ServerCommandPointer cmd = std::make_shared<ItemUpdate_TC>(pos, fields[x][y].getItemStack());
-                    player->Connection->addCommand(cmd);
-                }
-            }
+            fields[x][y].age();
         }
     }
 }

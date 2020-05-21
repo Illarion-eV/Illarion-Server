@@ -21,6 +21,9 @@
 
 #include "data/Data.hpp"
 #include "globals.hpp"
+#include "netinterface/protocol/ServerCommands.hpp"
+#include "World.hpp"
+#include "Player.hpp"
 #include <limits>
 
 namespace map {
@@ -393,24 +396,23 @@ bool Field::isPersistent() const {
     return persistent;
 }
 
-int8_t Field::age() {
+void Field::age() {
     for (const auto &container : containers) {
         if (container.second) {
             container.second->doAge();
         }
     }
 
-    int8_t ret = 0;
-
     if (!items.empty()) {
         auto it = items.begin();
+        bool refreshItems = false;
 
         while (it < items.end()) {
             Item &item = *it;
 
             if (!item.survivesAgeing()) {
                 const auto &itemStruct = Data::Items[item.getId()];
-                ret = 1;
+                refreshItems = true;
 
                 if (itemStruct.isValid() && item.getId() != itemStruct.ObjectAfterRot) {
                     item.setId(itemStruct.ObjectAfterRot);
@@ -438,12 +440,18 @@ int8_t Field::age() {
                 ++it;
             }
         }
+
+        if (refreshItems) {
+            std::vector<Player *> playersinview = World::get()->Players.findAllCharactersInScreen(here);
+
+            for (const auto &player : playersinview) {
+                ServerCommandPointer cmd = std::make_shared<ItemUpdate_TC>(here, getItemStack());
+                player->Connection->addCommand(cmd);
+            }
+        }
     }
 
     updateFlags();
-
-    return ret;
-
 }
 
 void Field::updateFlags() {
