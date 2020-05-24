@@ -114,6 +114,6 @@ noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
 		 Player.hpp SpawnPoint.hpp LongTimeEffect.hpp Monster.hpp
 
 version.hpp: $(HEADERS) $(SOURCES) $(top_builddir)/src/script/libscriptbinding.a
-	echo "#define SERVER_VERSION \"`git describe --long`\"" > version.hpp
+	echo "#define SERVER_VERSION \"`cd $(top_srcdir) && git describe --long`\"" > version.hpp
 
 $(top_builddir)/src/script/libscriptbinding.a: script
