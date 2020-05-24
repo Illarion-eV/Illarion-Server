@@ -465,7 +465,8 @@ void WorldMap::makePersistentAt(const position &pos) {
     } catch (std::out_of_range &) {
         try {
             Field &field = at(pos);
-            Field newField(field);
+            Field newField(pos);
+            std::swap(newField, field);
             insertPersistent(std::move(newField));
         } catch (FieldNotFound &) {
             Field newField(pos);
@@ -482,7 +483,7 @@ void WorldMap::removePersistenceAt(const position &pos) {
 
         try {
             Field &field = at(pos);
-            field = fieldNode.mapped();
+            std::swap(field, fieldNode.mapped());
         } catch (FieldNotFound &) {
         }
     }
