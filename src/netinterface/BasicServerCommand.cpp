@@ -22,7 +22,6 @@
 #include <sys/socket.h>
 #include <iostream>
 #include <assert.h>
-#include <malloc.h>
 #include "Connection.hpp"
 #include "netinterface/NetInterface.hpp"
 #include "Logger.hpp"
