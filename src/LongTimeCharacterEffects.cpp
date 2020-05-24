@@ -71,7 +71,7 @@ bool LongTimeCharacterEffects::find(const std::string &effectname, LongTimeEffec
 void LongTimeCharacterEffects::addEffect(LongTimeEffect *effect) {
     LongTimeEffect *foundeffect;
 
-    if (effect == 0) {
+    if (effect == nullptr) {
         LuaScript::triggerScriptError("LTE must not be nil!");
     }
 

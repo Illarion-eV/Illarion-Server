@@ -518,7 +518,7 @@ private:
 
     template<class DialogType, class DialogCommandType>
     void requestDialog(DialogType *dialog) {
-        if (dialog == 0) {
+        if (dialog == nullptr) {
             LuaScript::triggerScriptError("Dialog must not be nil!");
         }
 
