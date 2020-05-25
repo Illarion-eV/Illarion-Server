@@ -631,9 +631,55 @@ void Field::insertIntoDatabase() const noexcept {
 }
 
 void Field::removeFromDatabase() const noexcept {
+    if (isPersistent()) {
+        return;
+    }
+
+    using namespace Database;
+    auto connection = ConnectionManager::getInstance().getConnection();
+
+    try {
+        connection->beginTransaction();
+
+        DeleteQuery fieldQuery(connection);
+        fieldQuery.addEqualCondition<int16_t>("map_tiles", "mt_x", here.x);
+        fieldQuery.addEqualCondition<int16_t>("map_tiles", "mt_y", here.y);
+        fieldQuery.addEqualCondition<int16_t>("map_tiles", "mt_z", here.z);
+        fieldQuery.addServerTable("map_tiles");
+        fieldQuery.execute();
+
+        connection->commitTransaction();
+    } catch (std::exception &e) {
+        Logger::error(LogFacility::World) << "Error while deleting field from database: " << e.what() << Log::end;
+        connection->rollbackTransaction();
+    }
 }
 
 void Field::updateDatabaseField() const noexcept {
+    if (!isPersistent()) {
+        return;
+    }
+
+    using namespace Database;
+    auto connection = ConnectionManager::getInstance().getConnection();
+
+    try {
+        connection->beginTransaction();
+
+        UpdateQuery fieldQuery(connection);
+        fieldQuery.addAssignColumn<uint16_t>("mt_tile", tile);
+        fieldQuery.addAssignColumn<uint16_t>("mt_music", music);
+        fieldQuery.addEqualCondition<int16_t>("map_tiles", "mt_x", here.x);
+        fieldQuery.addEqualCondition<int16_t>("map_tiles", "mt_y", here.y);
+        fieldQuery.addEqualCondition<int16_t>("map_tiles", "mt_z", here.z);
+        fieldQuery.addServerTable("map_tiles");
+        fieldQuery.execute();
+
+        connection->commitTransaction();
+    } catch (std::exception &e) {
+        Logger::error(LogFacility::World) << "Error while updating field in database: " << e.what() << Log::end;
+        connection->rollbackTransaction();
+    }
 }
 
 void Field::updateDatabaseItems() const noexcept {
