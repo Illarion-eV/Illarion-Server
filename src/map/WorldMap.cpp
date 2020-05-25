@@ -485,6 +485,7 @@ void WorldMap::removePersistenceAt(const position &pos) {
             Field &field = at(pos);
             std::swap(field, fieldNode.mapped());
         } catch (FieldNotFound &) {
+            // Field got removed, send updates
         }
     }
 }
