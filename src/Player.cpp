@@ -50,7 +50,6 @@
 
 #include "db/ConnectionManager.hpp"
 #include "db/Connection.hpp"
-#include "db/ConnectionManager.hpp"
 #include "db/DeleteQuery.hpp"
 #include "db/InsertQuery.hpp"
 #include "db/SelectQuery.hpp"
