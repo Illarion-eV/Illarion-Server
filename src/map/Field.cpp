@@ -26,10 +26,19 @@
 #include "Player.hpp"
 #include <limits>
 
+#include "db/ConnectionManager.hpp"
+#include "db/Connection.hpp"
+#include "db/DeleteQuery.hpp"
+#include "db/InsertQuery.hpp"
+#include "db/SelectQuery.hpp"
+#include "db/UpdateQuery.hpp"
+#include "db/Result.hpp"
+
 namespace map {
 
 void Field::setTileId(uint16_t id) {
     tile = id;
+    updateDatabaseField();
     updateFlags();
 }
 
@@ -55,6 +64,7 @@ uint16_t Field::getSecondaryTileId() const {
 
 void Field::setMusicId(uint16_t id) {
     music = id;
+    updateDatabaseField();
 }
 
 uint16_t Field::getMusicId() const {
@@ -103,6 +113,7 @@ const std::vector<Item> &Field::getItemStack() const {
 bool Field::addItemOnStack(const Item &item) {
     if (items.size() < MAXITEMS) {
         items.push_back(item);
+        updateDatabaseItems();
         updateFlags();
 
         return true;
@@ -128,6 +139,7 @@ bool Field::takeItemFromStack(Item &item) {
 
     item = items.back();
     items.pop_back();
+    updateDatabaseItems();
     updateFlags();
 
     return true;
@@ -157,6 +169,7 @@ int Field::increaseItemOnStack(int count, bool &erased) {
         erased = false;
     }
 
+    updateDatabaseItems();
     return count;
 }
 
@@ -179,6 +192,7 @@ bool Field::swapItemOnStack(TYPE_OF_ITEM_ID newId, uint16_t newQuality) {
         item.setWear(itemStruct.AgeingSpeed);
     }
 
+    updateDatabaseItems();
     updateFlags();
     return true;
 }
@@ -385,11 +399,19 @@ const position &Field::getPosition() const {
 }
 
 void Field::makePersistent() {
-    persistent = true;
+    if (!isPersistent()) {
+        persistent = true;
+        insertIntoDatabase();
+        updateDatabaseItems();
+        updateDatabaseWarp();
+    }
 }
 
 void Field::removePersistence() {
-    persistent = false;
+    if (isPersistent()) {
+        persistent = false;
+        removeFromDatabase();
+    }
 }
 
 bool Field::isPersistent() const {
@@ -448,6 +470,8 @@ void Field::age() {
                 ServerCommandPointer cmd = std::make_shared<ItemUpdate_TC>(here, getItemStack());
                 player->Connection->addCommand(cmd);
             }
+
+            updateDatabaseItems();
         }
     }
 
@@ -523,11 +547,13 @@ bool Field::isWarp() const {
 void Field::setWarp(const position &pos) {
     warptarget = pos;
     setBits(FLAG_WARPFIELD);
+    updateDatabaseWarp();
 }
 
 
 void Field::removeWarp() {
     unsetBits(FLAG_WARPFIELD);
+    updateDatabaseWarp();
 }
 
 
@@ -568,6 +594,52 @@ inline void Field::unsetBits(uint8_t bits) {
 
 inline bool Field::anyBitSet(uint8_t bits) const {
     return (flags & bits) != 0;
+}
+
+void Field::insertIntoDatabase() const noexcept {
+    if (!isPersistent()) {
+        return;
+    }
+
+    using namespace Database;
+    auto connection = ConnectionManager::getInstance().getConnection();
+
+    try {
+        connection->beginTransaction();
+
+        InsertQuery fieldQuery(connection);
+        const auto xColumn = fieldQuery.addColumn("mt_x");
+        const auto yColumn = fieldQuery.addColumn("mt_y");
+        const auto zColumn = fieldQuery.addColumn("mt_z");
+        const auto tileColumn = fieldQuery.addColumn("mt_tile");
+        const auto musicColumn = fieldQuery.addColumn("mt_music");
+        fieldQuery.addServerTable("map_tiles");
+
+        fieldQuery.addValue<int16_t>(xColumn, here.x);
+        fieldQuery.addValue<int16_t>(yColumn, here.y);
+        fieldQuery.addValue<int16_t>(zColumn, here.z);
+        fieldQuery.addValue<uint16_t>(tileColumn, tile);
+        fieldQuery.addValue<uint16_t>(musicColumn, music);
+
+        fieldQuery.execute();
+
+        connection->commitTransaction();
+    } catch (std::exception &e) {
+        Logger::error(LogFacility::World) << "Error while inserting field into database: " << e.what() << Log::end;
+        connection->rollbackTransaction();
+    }
+}
+
+void Field::removeFromDatabase() const noexcept {
+}
+
+void Field::updateDatabaseField() const noexcept {
+}
+
+void Field::updateDatabaseItems() const noexcept {
+}
+
+void Field::updateDatabaseWarp() const noexcept {
 }
 
 }

@@ -115,6 +115,12 @@ private:
     inline void setBits(uint8_t);
     inline void unsetBits(uint8_t);
     inline bool anyBitSet(uint8_t) const;
+
+    void insertIntoDatabase() const noexcept;
+    void removeFromDatabase() const noexcept;
+    void updateDatabaseField() const noexcept;
+    void updateDatabaseItems() const noexcept;
+    void updateDatabaseWarp() const noexcept;
 };
 
 }
