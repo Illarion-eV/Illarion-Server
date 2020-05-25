@@ -686,6 +686,51 @@ void Field::updateDatabaseItems() const noexcept {
 }
 
 void Field::updateDatabaseWarp() const noexcept {
+    if (!isPersistent()) {
+        return;
+    }
+
+    using namespace Database;
+    auto connection = ConnectionManager::getInstance().getConnection();
+
+    try {
+        connection->beginTransaction();
+
+        {
+            DeleteQuery warpQuery(connection);
+            warpQuery.addEqualCondition<int16_t>("map_warps", "mw_start_x", here.x);
+            warpQuery.addEqualCondition<int16_t>("map_warps", "mw_start_y", here.y);
+            warpQuery.addEqualCondition<int16_t>("map_warps", "mw_start_z", here.z);
+            warpQuery.addServerTable("map_warps");
+            warpQuery.execute();
+        }
+
+        if (isWarp()) {
+            InsertQuery warpQuery(connection);
+            const auto xStartColumn = warpQuery.addColumn("mw_start_x");
+            const auto yStartColumn = warpQuery.addColumn("mw_start_y");
+            const auto zStartColumn = warpQuery.addColumn("mw_start_z");
+            const auto xTargetColumn = warpQuery.addColumn("mw_target_x");
+            const auto yTargetColumn = warpQuery.addColumn("mw_target_y");
+            const auto zTargetColumn = warpQuery.addColumn("mw_target_z");
+
+            warpQuery.addServerTable("map_warps");
+
+            warpQuery.addValue<int16_t>(xStartColumn, here.x);
+            warpQuery.addValue<int16_t>(yStartColumn, here.y);
+            warpQuery.addValue<int16_t>(zStartColumn, here.z);
+            warpQuery.addValue<int16_t>(xTargetColumn, warptarget.x);
+            warpQuery.addValue<int16_t>(yTargetColumn, warptarget.y);
+            warpQuery.addValue<int16_t>(zTargetColumn, warptarget.z);
+
+            warpQuery.execute();
+        }
+
+        connection->commitTransaction();
+    } catch (std::exception &e) {
+        Logger::error(LogFacility::World) << "Error while updating warp in database: " << e.what() << Log::end;
+        connection->rollbackTransaction();
+    }
 }
 
 }
