@@ -164,7 +164,6 @@ bool World::changeItem(ScriptItem item) {
     if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
         item.owner->items[ item.itempos ] = (Item)item;
 
-        //Wenn character ein Spieler ist ein update schicken
         if (item.owner->getType() == Character::player) {
             dynamic_cast<Player *>(item.owner)->sendCharacterItemAtPos(item.itempos);
         }
@@ -236,7 +235,6 @@ bool World::erase(ScriptItem item, int amount) {
     }
 
     if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
-        //Wenn Item rechts belegt und links ein Belegt ist [Zweihanditem] das Belegt mit l�schen
         if (item.itempos == RIGHT_TOOL && (item.owner->GetItemAt(LEFT_TOOL)).getId() == BLOCKEDITEM) {
             item.owner->increaseAtPos(LEFT_TOOL, -255);
         } else if (item.itempos == LEFT_TOOL && (item.owner->GetItemAt(RIGHT_TOOL)).getId() == BLOCKEDITEM) {
@@ -245,9 +243,7 @@ bool World::erase(ScriptItem item, int amount) {
 
         item.owner->increaseAtPos(item.itempos, -amount);
         return true;
-    }
-    //Item befindet sich auf einen Feld am Boden liegend.
-    else if (item.type == ScriptItem::it_field) {
+    } else if (item.type == ScriptItem::it_field) {
         try {
             map::Field &field = fieldAt(item.pos);
             bool erased=false;
