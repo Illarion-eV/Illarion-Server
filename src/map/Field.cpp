@@ -19,12 +19,14 @@
 
 #include "map/Field.hpp"
 
+#include <algorithm>
+#include <range/v3/all.hpp>
+
 #include "data/Data.hpp"
 #include "globals.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "World.hpp"
 #include "Player.hpp"
-#include <limits>
 
 #include "db/ConnectionManager.hpp"
 #include "db/Connection.hpp"
@@ -683,6 +685,80 @@ void Field::updateDatabaseField() const noexcept {
 }
 
 void Field::updateDatabaseItems() const noexcept {
+    if (!isPersistent()) {
+        return;
+    }
+
+    using namespace Database;
+    auto connection = ConnectionManager::getInstance().getConnection();
+
+    try {
+        connection->beginTransaction();
+
+        {
+            DeleteQuery itemQuery(connection);
+            itemQuery.addEqualCondition<int16_t>("map_items", "mi_x", here.x);
+            itemQuery.addEqualCondition<int16_t>("map_items", "mi_y", here.y);
+            itemQuery.addEqualCondition<int16_t>("map_items", "mi_z", here.z);
+            itemQuery.addServerTable("map_items");
+            itemQuery.execute();
+        }
+
+        if (itemCount() > 0) {
+            InsertQuery itemQuery(connection);
+            const auto xColumn = itemQuery.addColumn("mi_x");
+            const auto yColumn = itemQuery.addColumn("mi_y");
+            const auto zColumn = itemQuery.addColumn("mi_z");
+            const auto stackPosColumn = itemQuery.addColumn("mi_stack_pos");
+            const auto itemColumn = itemQuery.addColumn("mi_item");
+            const auto qualityColumn = itemQuery.addColumn("mi_quality");
+            const auto numberColumn = itemQuery.addColumn("mi_number");
+            const auto wearColumn = itemQuery.addColumn("mi_wear");
+            itemQuery.addServerTable("map_items");
+
+            InsertQuery dataQuery(connection);
+            const auto xDataColumn = dataQuery.addColumn("mid_x");
+            const auto yDataColumn = dataQuery.addColumn("mid_y");
+            const auto zDataColumn = dataQuery.addColumn("mid_z");
+            const auto stackPosDataColumn = dataQuery.addColumn("mid_stack_pos");
+            const auto keyDataColumn = dataQuery.addColumn("mid_key");
+            const auto valueDataColumn = dataQuery.addColumn("mid_value");
+            dataQuery.addServerTable("map_item_data");
+
+            uint16_t stackPos = 0;
+
+            ranges::for_each(items, [&](const auto &item) {
+                itemQuery.addValue<int16_t>(xColumn, here.x);
+                itemQuery.addValue<int16_t>(yColumn, here.y);
+                itemQuery.addValue<int16_t>(zColumn, here.z);
+
+                itemQuery.addValue<uint16_t>(stackPosColumn, stackPos);
+                itemQuery.addValue<TYPE_OF_ITEM_ID>(itemColumn, item.getId());
+                itemQuery.addValue<uint16_t>(qualityColumn, item.getQuality());
+                itemQuery.addValue<uint16_t>(numberColumn, item.getNumber());
+                itemQuery.addValue<uint16_t>(wearColumn, item.getWear());
+
+                std::for_each(item.getDataBegin(), item.getDataEnd(), [&](const auto &data) {
+                    dataQuery.addValue<int16_t>(xDataColumn, here.x);
+                    dataQuery.addValue<int16_t>(yDataColumn, here.y);
+                    dataQuery.addValue<int16_t>(zDataColumn, here.z);
+                    dataQuery.addValue<uint16_t>(stackPosDataColumn, stackPos);
+                    dataQuery.addValue<std::string>(keyDataColumn, data.first);
+                    dataQuery.addValue<std::string>(valueDataColumn, data.second);
+                });
+
+                ++stackPos;
+            });
+
+            itemQuery.execute();
+            dataQuery.execute();
+        }
+
+        connection->commitTransaction();
+    } catch (std::exception &e) {
+        Logger::error(LogFacility::World) << "Error while updating items in database: " << e.what() << Log::end;
+        connection->rollbackTransaction();
+    }
 }
 
 void Field::updateDatabaseWarp() const noexcept {
