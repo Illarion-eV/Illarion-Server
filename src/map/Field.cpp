@@ -29,12 +29,9 @@
 #include "Player.hpp"
 
 #include "db/ConnectionManager.hpp"
-#include "db/Connection.hpp"
 #include "db/DeleteQuery.hpp"
 #include "db/InsertQuery.hpp"
-#include "db/SelectQuery.hpp"
 #include "db/UpdateQuery.hpp"
-#include "db/Result.hpp"
 
 namespace map {
 
