@@ -55,9 +55,9 @@ PKG_CHECK_MODULES([lua], [lua5.2])
 PKG_CHECK_MODULES([libpqxx], [libpqxx >= 6.2])
 PKG_CHECK_MODULES([luabind], [luabind >= 0.9.1])
 
-AC_CONFIG_LINKS([test/maps/test.tiles.txt:test/maps/test.tiles.txt
-       test/maps/test.items.txt:test/maps/test.items.txt
-       test/maps/test.warps.txt:test/maps/test.warps.txt
+AC_CONFIG_LINKS([test/data/map/import/test.tiles.txt:test/maps/test.tiles.txt
+       test/data/map/import/test.items.txt:test/maps/test.items.txt
+       test/data/map/import/test.warps.txt:test/maps/test.warps.txt
        script/issue_10631_a.lua:test/script/issue_10631_a.lua
        script/issue_10631_b.lua:test/script/issue_10631_b.lua
 ])
