@@ -416,7 +416,6 @@ bool WorldMap::loadFromDisk() {
             }
         }
 
-        saveToDisk();
         return true;
     }
 }
