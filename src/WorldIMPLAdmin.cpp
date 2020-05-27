@@ -632,10 +632,7 @@ void World::setNextTile(Player *cp, unsigned char tilenumber) {
     } catch (FieldNotFound &) {
     }
 
-    //update the current area
-    cp->sendRelativeArea(0);
     sendAllVisibleCharactersToPlayer(cp, true);
-
 }
 
 

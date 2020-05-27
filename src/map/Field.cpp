@@ -49,6 +49,7 @@ void Field::setTileId(uint16_t id) {
     tile = id;
     updateDatabaseField();
     updateFlags();
+    updateFieldToPlayersInScreen(here);
 }
 
 uint16_t Field::getTileCode() const {
@@ -74,6 +75,7 @@ uint16_t Field::getSecondaryTileId() const {
 void Field::setMusicId(uint16_t id) {
     music = id;
     updateDatabaseField();
+    updateFieldToPlayersInScreen(here);
 }
 
 uint16_t Field::getMusicId() const {
@@ -887,6 +889,14 @@ void Field::loadDatabaseItems() noexcept {
     }
 
     updateFlags();
+}
+
+void updateFieldToPlayersInScreen(const position &pos) {
+    auto playersInScreen = World::get()->Players.findAllCharactersInScreen(pos);
+
+    for (const auto &player : playersInScreen) {
+        player->sendField(pos);
+    }
 }
 
 }

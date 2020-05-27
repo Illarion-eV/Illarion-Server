@@ -317,12 +317,7 @@ public:
 
     void sendStepStripes(direction dir);
 
-    /**
-    * sends one single mapstripe to the client
-    * @param direction of the single stripe
-    * @param zoffs the offset to the z direction which should be sended
-    */
-    void sendSingleStripe(viewdir direction, int8_t zoffs);
+    void sendField(const position &pos);
 
     virtual bool actionRunning() const override;
 

@@ -2522,8 +2522,13 @@ void Player::sendStepStripes(direction dir) {
     }
 }
 
-void Player::sendSingleStripe(viewdir direction, int8_t zoffs) {
-    // NOT USED YET
+void Player::sendField(const position &pos) {
+    auto &view = World::get()->clientview;
+    view.fillStripe(pos, NewClientView::dir_right, 1);
+
+    if (view.getExists()) {
+        Connection->addCommand(std::make_shared<MapStripeTC>(pos, NewClientView::dir_right));
+    }
 }
 
 uint32_t Player::idleTime() const {

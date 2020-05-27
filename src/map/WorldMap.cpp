@@ -24,6 +24,8 @@
 #include "Config.hpp"
 #include "Map.hpp"
 #include "Logger.hpp"
+#include "Player.hpp"
+#include "World.hpp"
 
 #include <algorithm>
 #include <filesystem>
@@ -521,7 +523,7 @@ void WorldMap::removePersistenceAt(const position &pos) {
             Field &field = at(pos);
             std::swap(field, fieldNode.mapped());
         } catch (FieldNotFound &) {
-            // Field got removed, send updates
+            updateFieldToPlayersInScreen(pos);
         }
     }
 }

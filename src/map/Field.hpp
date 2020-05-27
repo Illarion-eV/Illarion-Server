@@ -126,6 +126,8 @@ private:
     void loadDatabaseItems() noexcept;
 };
 
+void updateFieldToPlayersInScreen(const position &pos);
+
 }
 
 #endif
