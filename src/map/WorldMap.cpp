@@ -411,7 +411,7 @@ bool WorldMap::loadFromDisk() {
             sprintf(mname, "%s_%6d_%6d_%6d", path.c_str(), tZ_Level, tMin_X,
                     tMin_Y);
 
-            if (map.Load(mname)) {
+            if (map.load(mname)) {
                 insert(std::move(map));
             }
         }
@@ -446,7 +446,7 @@ void WorldMap::saveToDisk() const {
             mapinitfile.write((char *) &height, sizeof(height));
 
             sprintf(mname, "%s_%6d_%6d_%6d", path.c_str(), level, x, y);
-            map.Save(mname);
+            map.save(mname);
         }
 
         mapinitfile.close();

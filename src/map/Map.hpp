@@ -45,8 +45,8 @@ public:
     Map &operator=(Map &&) = default;
 
     bool import(const std::string &importDir, const std::string &mapName);
-    bool Load(const std::string &name);
-    bool Save(const std::string &name) const;
+    bool load(const std::string &name);
+    bool save(const std::string &name) const;
 
     Field &at(int16_t x, int16_t y);
     const Field &at(int16_t x, int16_t y) const;
@@ -72,8 +72,8 @@ private:
     bool importWarps(const std::string &importDir, const std::string &mapName);
     static void unescape(std::string &input);
 
-    inline uint16_t Conv_X_Koord(int16_t x) const;
-    inline uint16_t Conv_Y_Koord(int16_t y) const;
+    inline uint16_t convertWorldXToMap(int16_t x) const;
+    inline uint16_t convertWorldYToMap(int16_t y) const;
 };
 
 }

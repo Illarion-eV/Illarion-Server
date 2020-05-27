@@ -55,11 +55,11 @@ Map::Map(std::string name, position origin, uint16_t width, uint16_t height,
 }
 
 Field &Map::at(int16_t x, int16_t y) {
-    return fields[Conv_X_Koord(x)][Conv_Y_Koord(y)];
+    return fields[convertWorldXToMap(x)][convertWorldYToMap(y)];
 }
 
 const Field &Map::at(int16_t x, int16_t y) const {
-    return fields[Conv_X_Koord(x)][Conv_Y_Koord(y)];
+    return fields[convertWorldXToMap(x)][convertWorldYToMap(y)];
 }
 
 Field &Map::at(const MapPosition &pos) {
@@ -70,7 +70,7 @@ const Field &Map::at(const MapPosition &pos) const {
     return at(pos.x, pos.y);
 }
 
-bool Map::Save(const std::string &name) const {
+bool Map::save(const std::string &name) const {
     Logger::debug(LogFacility::World) << "Saving map " << name << Log::end;
 
     std::ofstream map { name + "_map", std::ios::binary | std::ios::out };
@@ -448,7 +448,7 @@ bool Map::importWarps(const std::string &importDir,
     return success;
 }
 
-bool Map::Load(const std::string &name) {
+bool Map::load(const std::string &name) {
     Logger::debug(LogFacility::World) << "Loading map " << name << Log::end;
 
     this->name = name;
@@ -508,7 +508,7 @@ int16_t Map::getLevel() const { return origin.z; }
 
 const std::string &Map::getName() const { return name; }
 
-inline uint16_t Map::Conv_X_Koord(int16_t x) const {
+inline uint16_t Map::convertWorldXToMap(int16_t x) const {
     uint16_t temp = x - origin.x;
 
     if (temp >= width) {
@@ -518,7 +518,7 @@ inline uint16_t Map::Conv_X_Koord(int16_t x) const {
     return temp;
 }
 
-inline uint16_t Map::Conv_Y_Koord(int16_t y) const {
+inline uint16_t Map::convertWorldYToMap(int16_t y) const {
     uint16_t temp = y - origin.y;
 
     if (temp >= height) {
