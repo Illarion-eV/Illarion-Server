@@ -439,6 +439,8 @@ void WorldMap::loadPersistentFields() {
     query.addServerTable("map_tiles");
 
     auto result = query.execute();
+    Logger::info(LogFacility::World) << "Loading " << result.size() << " persistent fields." << Log::end;
+
     const bool isPersistent = true;
 
     for (const auto &row : result) {
