@@ -18,6 +18,9 @@
 
 
 #include "map/WorldMap.hpp"
+
+#include "db/Result.hpp"
+#include "db/SelectQuery.hpp"
 #include "Config.hpp"
 #include "Map.hpp"
 #include "Logger.hpp"
@@ -416,7 +419,39 @@ bool WorldMap::loadFromDisk() {
             }
         }
 
+        loadPersistentFields();
+
         return true;
+    }
+}
+
+void WorldMap::loadPersistentFields() {
+    persistentFields.clear();
+
+    using namespace Database;
+
+    SelectQuery query;
+    query.addColumn("map_tiles", "mt_x");
+    query.addColumn("map_tiles", "mt_y");
+    query.addColumn("map_tiles", "mt_z");
+    query.addColumn("map_tiles", "mt_tile");
+    query.addColumn("map_tiles", "mt_music");
+    query.addServerTable("map_tiles");
+
+    auto result = query.execute();
+    const bool isPersistent = true;
+
+    for (const auto &row : result) {
+        position pos(row["mt_x"].as<int16_t>(),
+                     row["mt_y"].as<int16_t>(),
+                     row["mt_z"].as<int16_t>()
+        );
+
+        auto tile = row["mt_tile"].as<uint16_t>();
+        auto music = row["mt_music"].as<uint16_t>();
+        Field field(tile, music, pos, isPersistent);
+
+        persistentFields.emplace(pos, std::move(field));
     }
 }
 

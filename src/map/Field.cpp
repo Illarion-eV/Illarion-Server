@@ -31,9 +31,19 @@
 #include "db/ConnectionManager.hpp"
 #include "db/DeleteQuery.hpp"
 #include "db/InsertQuery.hpp"
+#include "db/SelectQuery.hpp"
 #include "db/UpdateQuery.hpp"
+#include "db/Result.hpp"
 
 namespace map {
+
+Field::Field(uint16_t tile, uint16_t music, const position &here, bool persistent) :
+        tile(tile), music(music), here(here), persistent(persistent) {
+    if (persistent) {
+        loadDatabaseWarp();
+        loadDatabaseItems();
+    }
+}
 
 void Field::setTileId(uint16_t id) {
     tile = id;
@@ -805,6 +815,78 @@ void Field::updateDatabaseWarp() const noexcept {
         Logger::error(LogFacility::World) << "Error while updating warp in database: " << e.what() << Log::end;
         connection->rollbackTransaction();
     }
+}
+
+void Field::loadDatabaseWarp() noexcept {
+    using namespace Database;
+
+    SelectQuery query;
+    query.addColumn("map_warps", "mw_target_x");
+    query.addColumn("map_warps", "mw_target_y");
+    query.addColumn("map_warps", "mw_target_z");
+    query.addEqualCondition<int16_t>("map_warps", "mw_start_x", here.x);
+    query.addEqualCondition<int16_t>("map_warps", "mw_start_y", here.y);
+    query.addEqualCondition<int16_t>("map_warps", "mw_start_z", here.z);
+    query.addServerTable("map_warps");
+
+    auto result = query.execute();
+
+    if (not result.empty()) {
+        const auto &row = result.front();
+        warptarget.x = row["mw_target_x"].as<int16_t>();
+        warptarget.y = row["mw_target_y"].as<int16_t>();
+        warptarget.z = row["mw_target_z"].as<int16_t>();
+        setBits(FLAG_WARPFIELD);
+    }
+}
+
+void Field::loadDatabaseItems() noexcept {
+    using namespace Database;
+
+    SelectQuery query;
+    query.addColumn("map_items", "mi_stack_pos");
+    query.addColumn("map_items", "mi_item");
+    query.addColumn("map_items", "mi_quality");
+    query.addColumn("map_items", "mi_number");
+    query.addColumn("map_items", "mi_wear");
+    query.addEqualCondition<int16_t>("map_items", "mi_x", here.x);
+    query.addEqualCondition<int16_t>("map_items", "mi_y", here.y);
+    query.addEqualCondition<int16_t>("map_items", "mi_z", here.z);
+    query.addOrderBy("map_items", "mi_stack_pos", SelectQuery::ASC);
+    query.addServerTable("map_items");
+
+    SelectQuery dataQuery;
+    dataQuery.addColumn("map_item_data", "mid_stack_pos");
+    dataQuery.addColumn("map_item_data", "mid_key");
+    dataQuery.addColumn("map_item_data", "mid_value");
+    dataQuery.addEqualCondition<int16_t>("map_item_data", "mid_x", here.x);
+    dataQuery.addEqualCondition<int16_t>("map_item_data", "mid_y", here.y);
+    dataQuery.addEqualCondition<int16_t>("map_item_data", "mid_z", here.z);
+    dataQuery.addOrderBy("map_item_data", "mid_stack_pos", SelectQuery::ASC);
+    dataQuery.addServerTable("map_item_data");
+
+    auto result = query.execute();
+    auto dataResult = dataQuery.execute();
+    auto dataIterator = dataResult.cbegin();
+    auto dataEnd = dataResult.cend();
+
+    for (const auto &row : result) {
+        auto stackPos = row["mi_stack_pos"].as<uint16_t>();
+        auto item = row["mi_item"].as<TYPE_OF_ITEM_ID>();
+        auto quality = row["mi_quality"].as<uint16_t>();
+        auto number = row["mi_number"].as<uint16_t>();
+        auto wear = row["mi_wear"].as<uint16_t>();
+
+        items.emplace_back(item, number, wear, quality);
+
+        while (dataIterator < dataEnd && (*dataIterator)["mid_stack_pos"].as<uint16_t>() == stackPos) {
+            items.back().setData((*dataIterator)["mid_key"].as<std::string>(),
+                                 (*dataIterator)["mid_value"].as<std::string>());
+            ++dataIterator;
+        }
+    }
+
+    updateFlags();
 }
 
 }

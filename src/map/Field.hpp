@@ -47,6 +47,7 @@ public:
 
 public:
     explicit Field(const position &here): here(here) {};
+    Field(uint16_t tile, uint16_t music, const position &here, bool persistent = false);
     Field(const Field &) = delete;
     Field &operator=(const Field &) = delete;
     Field(Field &&) = default;
@@ -121,6 +122,8 @@ private:
     void updateDatabaseField() const noexcept;
     void updateDatabaseItems() const noexcept;
     void updateDatabaseWarp() const noexcept;
+    void loadDatabaseWarp() noexcept;
+    void loadDatabaseItems() noexcept;
 };
 
 }
