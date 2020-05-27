@@ -7,7 +7,7 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 find_package(Lua 5.2 REQUIRED)
 include_directories(${LUA_INCLUDE_DIR})
 
-file(COPY maps DESTINATION ${CMAKE_BINARY_DIR}/test)
+file(COPY maps/* DESTINATION ${CMAKE_BINARY_DIR}/test/data/map/import)
 
 macro (run_test name)
     add_executable(${name} ${name}.cpp)
