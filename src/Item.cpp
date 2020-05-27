@@ -18,6 +18,7 @@
 
 
 #include "Item.hpp"
+#include "constants.hpp"
 #include "data/Data.hpp"
 #include "script/LuaItemScript.hpp"
 #include "script/LuaLookAtItemScript.hpp"
@@ -269,7 +270,7 @@ TYPE_OF_WORTH Item::getWorth() const {
 }
 
 auto Item::getMaxStack() const -> number_type {
-    const auto &itemStruct = Data::Items[id];;
+    const auto &itemStruct = Data::Items[id];
 
     if (itemStruct.isValid()) {
         return itemStruct.MaxStack;
@@ -288,6 +289,16 @@ bool Item::isStackable() const {
 
 bool Item::isPermanent() const {
     return wear == PERMANENT_WEAR;
+}
+
+bool Item::isMovable() const {
+    const auto &itemStruct = Data::Items[id];
+
+    if (itemStruct.isValid()) {
+        return itemStruct.Weight < MAXWEIGHT && !isPermanent();
+    }
+
+    return false;
 }
 
 void Item::makePermanent() {

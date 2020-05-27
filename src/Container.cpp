@@ -17,6 +17,7 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Container.hpp"
+#include "constants.hpp"
 #include "data/Data.hpp"
 #include "World.hpp"
 
@@ -561,8 +562,8 @@ int Container::recursiveWeight(int rekt) {
         }
     }
 
-    if (temp > 30000) {
-        return 30000;
+    if (temp > MAXWEIGHT) {
+        return MAXWEIGHT;
     } else {
         return temp;
     }

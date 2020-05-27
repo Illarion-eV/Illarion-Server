@@ -435,52 +435,48 @@ bool World::takeItemFromMap(Character *cc, const position &itemPosition) {
         map::Field &field = fieldAt(itemPosition);
 
         if (field.viewItemOnStack(g_item)) {
-            const auto &itemStruct = Data::Items[g_item.getId()];
+            if (g_item.isMovable()) {
+                field.takeItemFromStack(g_item);
 
-            if (itemStruct.isValid()) {
-                if (itemStruct.Weight < 30000 && !g_item.isPermanent()) {
-                    field.takeItemFromStack(g_item);
-
-                    if (!g_item.isStackable() && !g_item.isContainer()) {
-                        if (g_item.getNumber() > 1) {
-                            g_item.reset();
-                            g_cont = nullptr;
-                            return false;
-                        }
-
-                    }
-
-                    if (Data::Triggers.exists(itemPosition)) {
-                        const auto &script = Data::Triggers.script(itemPosition);
-
-                        if (script) {
-                            ScriptItem sItem(g_item);
-                            sItem.pos = itemPosition;
-                            sItem.type = ScriptItem::it_field;
-                            script->TakeItemFromField(sItem, cc);
-                        }
-                    }
-
-                    g_item.resetWear();
-
-                    if (g_item.isContainer()) {
-                        auto it = field.containers.find(g_item.getNumber());
-
-                        if (it != field.containers.end()) {
-                            g_cont = it->second;
-                            g_cont->resetWear();
-
-                            field.containers.erase(it);
-                        } else {
-                            g_cont = new Container(g_item.getId());
-                        }
-                    } else {
+                if (!g_item.isStackable() && !g_item.isContainer()) {
+                    if (g_item.getNumber() > 1) {
+                        g_item.reset();
                         g_cont = nullptr;
+                        return false;
                     }
 
-                    sendRemoveItemFromMapToAllVisibleCharacters(itemPosition);
-                    return true;
                 }
+
+                if (Data::Triggers.exists(itemPosition)) {
+                    const auto &script = Data::Triggers.script(itemPosition);
+
+                    if (script) {
+                        ScriptItem sItem(g_item);
+                        sItem.pos = itemPosition;
+                        sItem.type = ScriptItem::it_field;
+                        script->TakeItemFromField(sItem, cc);
+                    }
+                }
+
+                g_item.resetWear();
+
+                if (g_item.isContainer()) {
+                    auto it = field.containers.find(g_item.getNumber());
+
+                    if (it != field.containers.end()) {
+                        g_cont = it->second;
+                        g_cont->resetWear();
+
+                        field.containers.erase(it);
+                    } else {
+                        g_cont = new Container(g_item.getId());
+                    }
+                } else {
+                    g_cont = nullptr;
+                }
+
+                sendRemoveItemFromMapToAllVisibleCharacters(itemPosition);
+                return true;
             }
         }
     } catch (FieldNotFound &) {

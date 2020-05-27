@@ -25,6 +25,7 @@
 #include <cmath>
 #include <range/v3/all.hpp>
 
+#include "constants.hpp"
 #include "character_ptr.hpp"
 #include "a_star.hpp"
 #include "Container.hpp"
@@ -1131,8 +1132,8 @@ int Character::LoadWeight() const {
     // Rucksack
     load += weightContainer(items[0].getId(), 1, backPackContents);
 
-    if (load > 30000) {
-        return 30000;
+    if (load > MAXWEIGHT) {
+        return MAXWEIGHT;
     } else if (load < 0) {
         return 0;
     } else {
@@ -1197,13 +1198,13 @@ int Character::weightContainer(TYPE_OF_ITEM_ID id, int count, Container *tcont) 
                     temp -= tcont->weight();
                 }
             } catch (RecursionException &e) {
-                return 30000;
+                return MAXWEIGHT;
             }
         }
     }
 
-    if (temp > 30000) {
-        return 30000;
+    if (temp > MAXWEIGHT) {
+        return MAXWEIGHT;
     } else {
         return temp;
     }

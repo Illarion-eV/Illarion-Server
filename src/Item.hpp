@@ -122,6 +122,7 @@ public:
     bool isLarge() const;
     bool isStackable() const;
     bool isPermanent() const;
+    bool isMovable() const;
     void makePermanent();
 
     bool operator==(const Item& rhs) const;
