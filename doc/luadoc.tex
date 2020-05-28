@@ -56,11 +56,11 @@
 \makeindex
 \begin{document}
 \lstset{basicstyle=\small, keywordstyle=\ttfamily, identifierstyle=\ttfamily}
-\title{Lua documentation for Illarion scripting\\v5.21}
+\title{Lua documentation for Illarion scripting\\v5.22}
 \author{Martin \thanks{ \texttt{martin@illarion.org, http://www.illarion.org}},
 pharse \thanks{ \texttt{pharse@illarion.org, http://www.illarion.org}},
 vilarion \thanks{ \texttt{vilarion@illarion.org, http://www.illarion.org}}}
-\date{2004-2006/2010-2015}
+\date{2004-2006/2010-2015/2020}
 \maketitle
 \tableofcontents
 \chapter{General}
@@ -138,7 +138,7 @@ Before you start, you need
 \end{itemize}
 
 \section{Level 1: Your first script}
-As your first script, we recommend to use the item with the ID 2. It is bound to the script named "{\tt I\_2\_mehl.lua}". Open it in your text editor and delete the whole file except for the following lines:
+As your first script, we recommend to use the item with the ID 2. It is bound to the script named "{\normalfont \ttfamily I\_2\_mehl.lua}". Open it in your text editor and delete the whole file except for the following lines:
 \begin{verbatim}
     function UseItem(User, SourceItem, ltstate)
 
@@ -146,12 +146,12 @@ As your first script, we recommend to use the item with the ID 2. It is bound to
 \end{verbatim}
 What does this mean?
 
-Every time someone "uses" (=shift clicks) an item with ID 2 (flour), the function {\tt UseItem(...)} inside the script {\tt I\_2\_mehl.lua} is called. The server provides this script with the following information:
+Every time someone "uses" (=shift clicks) an item with ID 2 (flour), the function {\normalfont \ttfamily UseItem(...)} inside the script {\normalfont \ttfamily I\_2\_mehl.lua} is called. The server provides this script with the following information:
 \begin{itemize}
-    \item {\tt User} contains all information about the character "using" the flour, like his position on the map, his hitpoints, skills, attributes and so on.
-    \item {\tt SourceItem} contains all information about the "used" item---the flour in our case---like where it is on the map, what {\tt data}-value it has and so on.
-    \item {\tt TargetItem} is only used in case you "used" the flour with some other item. In that case, it contains all information about the second item.
-    \item {\tt ltstate} can be ignored for now as it is not important for our scripts.
+    \item {\normalfont \ttfamily User} contains all information about the character "using" the flour, like his position on the map, his hitpoints, skills, attributes and so on.
+    \item {\normalfont \ttfamily SourceItem} contains all information about the "used" item---the flour in our case---like where it is on the map, what {\normalfont \ttfamily data}-value it has and so on.
+    \item {\normalfont \ttfamily TargetItem} is only used in case you "used" the flour with some other item. In that case, it contains all information about the second item.
+    \item {\normalfont \ttfamily ltstate} can be ignored for now as it is not important for our scripts.
 \end{itemize}
 Let's try the following script:
 \begin{verbatim}
@@ -159,7 +159,7 @@ Let's try the following script:
         User:inform(User.name.." has used me!");
     end
 \end{verbatim}
-Commit this script to the svn-repository, log into the testserver (if you haven't already), reload the item-scripts by saying "{\tt !rd}" with your character and wait until it finishes with "***Definitions reloaded***". Then produce flour (by saying "{\tt !create 2}", you get one) and shift-click it. In my case, what appears is: {\tt Ciryon: Ciryon has used me!}
+Commit this script to the svn-repository, log into the testserver (if you haven't already), reload the item-scripts by saying "{\normalfont \ttfamily !rd}" with your character and wait until it finishes with "***Definitions reloaded***". Then produce flour (by saying "{\normalfont \ttfamily !create 2}", you get one) and shift-click it. In my case, what appears is: {\normalfont \ttfamily Ciryon: Ciryon has used me!}
 
 \chapter{Positions}
 
@@ -539,7 +539,7 @@ Saves the eight primary base attributes to the database, iff \com{getBaseAttribu
 \void \var{character}:\com{increaseAtPos}{\integer \var{Position\_body},\integer \var{count}}\\
 \void \var{character}:\com{swapAtPos}{\integer \var{Position\_body},\integer \var{itemID},\integer \var{quality}}
 \begin{quote}
-       Position\_body: {\tt BACKPACK=0, HEAD=1, NECK=2, BREAST=3, HANDS=4,
+       Position\_body: {\normalfont \ttfamily BACKPACK=0, HEAD=1, NECK=2, BREAST=3, HANDS=4,
        LEFT\_TOOL=5, RIGHT\_TOOL=6, FINGER\_LEFT\_HAND=7,
        FINGER\_RIGHT\_HAND=8, LEGS=9, FEET=10, COAT=11,
        LAST\_WEARABLE=11}\\
@@ -549,7 +549,7 @@ Saves the eight primary base attributes to the database, iff \com{getBaseAttribu
 \end{quote}
 \scripti \var{character}:\com{getItemAt}{\integer \var{Position\_body}}
 \begin{quote}
-       \var{Position\_body}: {\tt
+       \var{Position\_body}: {\normalfont \ttfamily
        Character.backpack=0, Character.head=1, Character.neck=2,\\
        Character.breast=3, Character.hands=4, Character.left\_tool=5,\\
        Character.right\_tool=6, Character.finger\_left\_hand=7, \\
@@ -1200,11 +1200,19 @@ Monsters can have these intrinsic armor properties:\\
 \end{quote}
 \void \comm{world}:\com{changeTile}{\integer \var{tileid},\position \var{position}}
 \begin{quote}
-       Changes the tile on position-struct "position" to tileid. To be combined with the following command.
+       Changes the tile on position-struct "position" to tileid.
 \end{quote}
-\void \comm{world}:\com{sendMapUpdate}{\position \var{position},\integer \var{range}}
+\void \comm{world}:\com{makePersistentAt}{\position \var{position}}
 \begin{quote}
-       Send a map update to all clients of characters that stand in range of that position.
+       Makes the map persistent over server shutdowns and map imports at \var{position}. If no field exists at \var{position}, it is created empty.
+\end{quote}
+\bool \comm{world}:\com{isPersistentAt}{\position \var{position}}
+\begin{quote}
+       Returns \lua{true} if there is a persistent field at \var{position} and \lua{false} otherwise.
+\end{quote}
+\bool \comm{world}:\com{removePersistenceAt}{\position \var{position}}
+\begin{quote}
+       Removes persistence from a field at \var{position}. If no regular map exists there, the field is removed. In this case the server will clean up all characters on this field. Monsters and NPCs are removed, while players will be warped to a nearby field on the same level if possible, or to the starting position otherwise. The script is responsible for cleaning up the field before removal, since those defaults are generally not desirable for players.
 \end{quote}
 \txt \comm{world}:\com{getItemName}{\integer \var{Itemid},\integer \var{PlayerLanguage}}
 \begin{quote}
@@ -1345,9 +1353,9 @@ LTEs are bound to a character. They basically consist of:
 \item Several self defined variables that can be accessed by a key string and that can hold an integer.
 \end{itemize}
 
-First, one has to add the LTE to the database with a unique ID, a name and a script name, e.g. {\tt 42} is the ID, {\tt myeffect} the name and {\tt myeffect.lua} the script.
+First, one has to add the LTE to the database with a unique ID, a name and a script name, e.g. {\normalfont \ttfamily 42} is the ID, {\normalfont \ttfamily myeffect} the name and {\normalfont \ttfamily myeffect.lua} the script.
 
-Then one has to add the effect to a character, e.g. inside an item script. How the effect works has to be defined in its script {\tt myeffect.lua}. Everytime the LTE is called, its script is invoked; to be exact, the function \comm{callEffect} is invoked, see the section about Entry Points. There one can change the character's attributes etc. Note that you should always save any change of fixed attributes as a value of the LTE, so you can restore everything when the LTE ends.
+Then one has to add the effect to a character, e.g. inside an item script. How the effect works has to be defined in its script {\normalfont \ttfamily myeffect.lua}. Everytime the LTE is called, its script is invoked; to be exact, the function \comm{callEffect} is invoked, see the section about Entry Points. There one can change the character's attributes etc. Note that you should always save any change of fixed attributes as a value of the LTE, so you can restore everything when the LTE ends.
 
 If the character logs out, all values are saved. If he logs in again, the function \comm{loadEffect} in the LTE script is invoked. Any temporary change of attributes will be gone by now, so here you can read the value you have saved and do the change again.
 
@@ -1365,12 +1373,12 @@ The example at the end of this chapter will help you a lot.
 \end{quote}
 \bool , \integer \var{effect}:\com{findValue}{\txt \var{name}}
 \begin{quote}
-       This function returns {\tt true} if a value \var{name} is found plus its value and {\tt false} otherwise. Note that these are two values!
+       This function returns {\normalfont \ttfamily true} if a value \var{name} is found plus its value and {\normalfont \ttfamily false} otherwise. Note that these are two values!
 \end{quote}
 \bool, \effect  \var{Character}.\comm{effects}:\com{find}{\var{effect-ID}}
 \begin{quote}
-		This function returns {\tt true} if an effect with \var{effect-ID} was
-		found and the respective \var{effect}, {\tt false} otherwise.
+		This function returns {\normalfont \ttfamily true} if an effect with \var{effect-ID} was
+		found and the respective \var{effect}, {\normalfont \ttfamily false} otherwise.
 \end{quote}
 \void \var{Character}.\comm{effects}:\com{addEffect}{\com{LongTimeEffect}{\var{effect-ID},\integer \var{nextCalled}}}
 \begin{quote}
@@ -1395,7 +1403,7 @@ This function adds the effect \var{effect-ID} to a character. One also has to se
 Inside that script which was invoked, there are several possible entry points that can be called:\\
 \lua{function} \com{callEffect}{\var{Effect}, \var{Character}}
 \begin{quote}
-       MUST either return {\tt true} if the effect should be called again or {\tt false} if not! \var{Effect}.\comm{nextCalled} has to be set. It will be lowered by 1 every $\frac 1 {10^{\mathrm {th}}}$ second and \comm{callEffect} will be called as soon as it reaches $0$.
+       MUST either return {\normalfont \ttfamily true} if the effect should be called again or {\normalfont \ttfamily false} if not! \var{Effect}.\comm{nextCalled} has to be set. It will be lowered by 1 every $\frac 1 {10^{\mathrm {th}}}$ second and \comm{callEffect} will be called as soon as it reaches $0$.
 \end{quote}
 \lua{function} \com{addEffect}{\var{Effect}, \var{Character}}
 \begin{quote}
@@ -1403,7 +1411,7 @@ Inside that script which was invoked, there are several possible entry points th
 \end{quote}
 \lua{function} \com{removeEffect}{\var{Effect}, \var{Character}}
 \begin{quote}
-       Is invoked after an effect ended (by having \comm{callEffect} return {\tt false}.
+       Is invoked after an effect ended (by having \comm{callEffect} return {\normalfont \ttfamily false}.
 \end{quote}
 \lua{function} \com{doubleEffect}{\var{Effect}, \var{Character}}
 \begin{quote}
@@ -1417,13 +1425,13 @@ This function is currently bugged, as all effect values are deleted when the eff
 
 \section{Example: Adding long time effects to characters}
 Imagine the following situation: You drink a potion of a fluid and after that, you get "drunk", that means that your perception and agility are lowered and you sometimes make uncontrolled steps for the next 4 minutes.
-The first thing to do is to create a table entry in {\tt longtimeeffects} in the following way:
+The first thing to do is to create a table entry in {\normalfont \ttfamily longtimeeffects} in the following way:
 \begin{verbatim}
  lte_effectid | lte_effectname | lte_scriptname
 --------------+----------------+-----------------
           666 | alcohol        | lte_alcohol.lua
 \end{verbatim}
-To start with, we need to script the bottle ({\tt bottle.lua}) which adds the effect 666 ({\tt alcohol}) to the character drinking that bottle.
+To start with, we need to script the bottle ({\normalfont \ttfamily bottle.lua}) which adds the effect 666 ({\normalfont \ttfamily alcohol}) to the character drinking that bottle.
 %\begin{boxedminipage}[h]{4cm}
 %\begin{lstlisting}[numbers=left, frame=shadowbox, caption=test]
 \begin{verbatim}
@@ -1450,9 +1458,9 @@ end
 \end{verbatim}
 %\end{lstlisting}
 %\end{boxedminipage}
-So, this script simply adds {\tt alcEffect} (666) to the {\tt User} of the bottle and adds the value {\tt alcLevel} to this effect and sets it to 10.
+So, this script simply adds {\normalfont \ttfamily alcEffect} (666) to the {\normalfont \ttfamily User} of the bottle and adds the value {\normalfont \ttfamily alcLevel} to this effect and sets it to 10.
 
-The next thing to be done is to define this effect. This is done in the actual long time script we defined in the database before, {\tt lte\_alcohol.lua}:
+The next thing to be done is to define this effect. This is done in the actual long time script we defined in the database before, {\normalfont \ttfamily lte\_alcohol.lua}:
 \begin{verbatim}
 function addEffect(myEffect, Character)     -- called only the first time
     Character:inform("You feel a little bit dizzy.");
@@ -1896,7 +1904,7 @@ While you can create quests with setQuestProgress and getQuestProgress, it is mu
 Scheduled scripts allow the execution of functions in arbitrary scripts in certain intervals.\\
 \lua{function} \var{functionname}()
 \begin{quote}
-       This script is invoked by having an entry in the database table \index{scheduledscripts}"{\tt scheduledscripts}" after some given time intervall.\\
+       This script is invoked by having an entry in the database table \index{scheduledscripts}"{\normalfont \ttfamily scheduledscripts}" after some given time intervall.\\
        Example:
        \begin{verbatim}
   sc_scriptname   | sc_mincycletime | sc_maxcycletime | sc_functionname
@@ -1904,7 +1912,7 @@ Scheduled scripts allow the execution of functions in arbitrary scripts in certa
  scheduletest.lua |              14 |              16 | makeeffect
 
        \end{verbatim}
-       This will invoke the function \com{makeeffect}{} in the script {\tt scheduletest.lua} every 14-16 seconds (a random time between 14 and 16 seconds).
+       This will invoke the function \com{makeeffect}{} in the script {\normalfont \ttfamily scheduletest.lua} every 14-16 seconds (a random time between 14 and 16 seconds).
 \end{quote}
 
 \section{Server Scripts}
@@ -2187,14 +2195,14 @@ Example:
 \end{verbatim}
 \begin{itemize}
 \item Expressions in brackets "(...)" are returned to the variables. Without them, we would just have a and b.
-\item "{\tt .}" means: any character, digit, just anything.
-\item "{\tt *}" means: repetition of the previous, including 0 repetitions; '.*' therefore could mean any string, including an empty one ("").
-\item "{\tt +}" means nearly the same as '*', except that it has to have at least 1 repetition, therefore the empty string is not included.
-\item "{\tt \%s}" simply means a space (" "). "{\tt a\%sb}" therefore means "{\tt a b}".
-\item "{\tt \%d}" means any digit. Together with "{tt +}" we have "{\tt \%d+}", which means: at least one digit, but it can be more.
-\item "{\tt [Ff]}" would mean: The character must be a "{\tt F}" or a "{\tt f}". "{\tt [Hh][Ee][Ll]+[Oo]}" therefore can be "{\tt hello}" or "{\tt helo"} or "{\tt HeLlo}" or "{\tt heLLLlO}" or...
+\item "{\normalfont \ttfamily .}" means: any character, digit, just anything.
+\item "{\normalfont \ttfamily *}" means: repetition of the previous, including 0 repetitions; '.*' therefore could mean any string, including an empty one ("").
+\item "{\normalfont \ttfamily +}" means nearly the same as '*', except that it has to have at least 1 repetition, therefore the empty string is not included.
+\item "{\normalfont \ttfamily \%s}" simply means a space (" "). "{\normalfont \ttfamily a\%sb}" therefore means "{\normalfont \ttfamily a b}".
+\item "{\normalfont \ttfamily \%d}" means any digit. Together with "{tt +}" we have "{\normalfont \ttfamily \%d+}", which means: at least one digit, but it can be more.
+\item "{\normalfont \ttfamily [Ff]}" would mean: The character must be a "{\normalfont \ttfamily F}" or a "{\normalfont \ttfamily f}". "{\normalfont \ttfamily [Hh][Ee][Ll]+[Oo]}" therefore can be "{\normalfont \ttfamily hello}" or "{\normalfont \ttfamily helo"} or "{\normalfont \ttfamily HeLlo}" or "{\normalfont \ttfamily heLLLlO}" or...
 \end{itemize}
-Therefore the above "{\tt .*buy (\%d+) (.+)}" means:
+Therefore the above "{\normalfont \ttfamily .*buy (\%d+) (.+)}" means:
 Search for a string where you have:
 \begin{enumerate}
 \item any characters or nothing
@@ -2204,7 +2212,7 @@ Search for a string where you have:
 \item followed by space
 \item followed by one or more characters of any type (could be "shoes", but could also be "!!98(jj" or "hallo" or "9982")
 \end{enumerate}
-Beware: c and d are both strings, even if they contain a number like "23". If you perform mathematical operations with them (c*2), they behave like numbers, if you compare them (\comm{if c==23}), they behave like strings, meaning that ({\tt c="23"; if c==23 then...}) will NOT work, whereas ({\tt c="23"; if c*1==23 then...}) WILL work, because c*1 is converted into a number.
+Beware: c and d are both strings, even if they contain a number like "23". If you perform mathematical operations with them (c*2), they behave like numbers, if you compare them (\comm{if c==23}), they behave like strings, meaning that ({\normalfont \ttfamily c="23"; if c==23 then...}) will NOT work, whereas ({\normalfont \ttfamily c="23"; if c*1==23 then...}) WILL work, because c*1 is converted into a number.
 
 If a string is not found inside another string, it returns \lua{nil}.
 \section{File I/O}
@@ -2222,7 +2230,7 @@ Example:
  filepoint:write("User "..User.name.." called that script!");
  filepoint:close();
 \end{verbatim}
-For further information see the official lua documentation ({\tt http://www.lua.org})
+For further information see the official lua documentation ({\normalfont \ttfamily http://www.lua.org})
 
 \chapter{Examples}
 \section{Items}
@@ -2383,7 +2391,7 @@ It might be the case, and this is hoped much, that you want to create more compl
 \end{verbatim}
 \chapter{Common bugs}
 \begin{itemize}
-\item Missing {\tt end}, missing {\tt (} or {\tt )}, script name and db-entry do not match (take care of invisible characters! Try a search in the db with e.g. \texttt{SELECT FROM testserver.spells WHERE spl\_scriptname='spells.p\_28')}
+\item Missing {\normalfont \ttfamily end}, missing {\normalfont \ttfamily (} or {\normalfont \ttfamily )}, script name and db-entry do not match (take care of invisible characters! Try a search in the db with e.g. \texttt{SELECT FROM testserver.spells WHERE spl\_scriptname='spells.p\_28')}
 \item A "." instead of the seperator ":" or vice versa. ("." is for variables, ":" for functions)
 \item Missing \texttt{()} for functions that don't need parameters.
 \item Incorrect number of parameters for functions.
@@ -2401,9 +2409,17 @@ It might be the case, and this is hoped much, that you want to create more compl
 \appendix
 
 \chapter{Versions}
+Version 5.22 (20 05 28)\\
+* Add map persistence\\
+* Add world::makePersistentAt\\
+* Add world::isPersistentAt\\
+* Add world::removePersistenceAt\\
+* Remove world::sendMapUpdate\\
+\\
 Version 5.21 (15 06 23)\\
 * Add item id constants\\
 * Move item level from weapons and armors to item struct\\
+\\
 Version 5.20 (15 06 07)\\
 * Remove obsolete bit manipulation functions\\
 * Update section about modules\\
