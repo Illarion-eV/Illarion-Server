@@ -44,7 +44,7 @@ public:
     bool load();
 
 private:
-    typedef std::vector<LongTimeEffect *> EFFECTS;
+    using EFFECTS = std::vector<LongTimeEffect *>;
     EFFECTS effects;
 
     Character *owner;

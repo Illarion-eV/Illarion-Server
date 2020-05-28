@@ -35,11 +35,11 @@ class ItemLookAt;
 
 class Item {
 public:
-    typedef uint16_t id_type;
-    typedef uint16_t number_type;
-    typedef uint8_t  wear_type;
-    typedef uint16_t quality_type;
-    typedef std::unordered_map<std::string, std::string> datamap_type;
+    using id_type = uint16_t;
+    using number_type = uint16_t;
+    using wear_type = uint8_t;
+    using quality_type = uint16_t;
+    using datamap_type = std::unordered_map<std::string, std::string>;
 
     static const TYPE_OF_VOLUME LARGE_ITEM_VOLUME = 5000;
     static const wear_type PERMANENT_WEAR = 255;

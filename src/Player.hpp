@@ -91,13 +91,6 @@ public:
         left = 3
     };
 
-    typedef enum {
-        upperleft = 0,
-        upperright = 1,
-        lowerleft = 2,
-        lowerright = 3
-    } mapreferences;
-
     virtual unsigned short getType() const override {
         return player;
     }
@@ -106,9 +99,6 @@ public:
 
     void workoutCommands();
     void checkFightMode();
-
-    //! definiert eine "Zweiseitige Warteschlange" vom Typ unsigned char
-    //typedef deque<unsigned char> BYTEDEQUE;
 
     //! die letzte IP des Spielers als std::string
     std::string last_ip;
@@ -163,7 +153,7 @@ private:
     std::set<uint32_t> visibleChars;
     std::unordered_set<TYPE_OF_CHARACTER_ID> knownPlayers;
     std::unordered_map<TYPE_OF_CHARACTER_ID, std::string> namedPlayers;
-    typedef std::queue<ClientCommandPointer> CLIENTCOMMANDLIST;
+    using CLIENTCOMMANDLIST = std::queue<ClientCommandPointer>;
     CLIENTCOMMANDLIST immediateCommands;
     CLIENTCOMMANDLIST queuedCommands;
     std::mutex commandMutex;
@@ -608,15 +598,15 @@ private:
 
     const uint8_t BACKPACK_SHOWCASE = 0;
     uint8_t showcaseCounter;
-    typedef std::unordered_map<uint8_t, std::unique_ptr<Showcase>> ShowcaseMap;
+    using ShowcaseMap = std::unordered_map<uint8_t, std::unique_ptr<Showcase>>;
     ShowcaseMap showcases;
 
     unsigned int dialogCounter;
-    typedef std::unordered_map<unsigned int, std::shared_ptr<Dialog>> DialogMap;
+    using DialogMap = std::unordered_map<unsigned int, std::shared_ptr<Dialog>>;
     DialogMap dialogs;
 
-    typedef std::pair<TYPE_OF_QUESTSTATUS, int> QuestStatusTimePair;
-    typedef std::unordered_map<TYPE_OF_QUEST_ID, QuestStatusTimePair> QuestMap;
+    using QuestStatusTimePair = std::pair<TYPE_OF_QUESTSTATUS, int>;
+    using QuestMap = std::unordered_map<TYPE_OF_QUEST_ID, QuestStatusTimePair>;
     QuestMap quests;
 };
 

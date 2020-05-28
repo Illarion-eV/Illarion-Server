@@ -47,9 +47,9 @@ public:
 
 class Craftable {
 public:
-    typedef uint8_t index_t;
-    typedef vector<Ingredient> ingredients_t;
-    typedef ingredients_t::const_iterator ingredient_iterator;
+    using index_t = uint8_t;
+    using ingredients_t = vector<Ingredient>;
+    using ingredient_iterator = ingredients_t::const_iterator;
 
 private:
     static const uint32_t MAXINGREDIENTS = 256;
@@ -111,11 +111,11 @@ public:
 
 class CraftingDialog: public Dialog {
 public:
-    typedef uint8_t index_t;
-    typedef vector<string> groups_t;
-    typedef groups_t::const_iterator group_iterator;
-    typedef std::unordered_map<uint8_t, Craftable> craftables_t;
-    typedef craftables_t::const_iterator craftable_iterator;
+    using index_t = uint8_t;
+    using groups_t = vector<string>;
+    using group_iterator = groups_t::const_iterator;
+    using craftables_t = std::unordered_map<uint8_t, Craftable>;
+    using craftable_iterator = craftables_t::const_iterator;
 
     enum Result {
         playerAborts = 0,

@@ -32,7 +32,7 @@
 
 template<typename IdType, typename StructType>
 class StructTable : public Table {
-    typedef std::unordered_map<IdType, StructType> ContainerType;
+    using ContainerType = std::unordered_map<IdType, StructType>;
 public:
     virtual bool reloadBuffer() override {
         try {

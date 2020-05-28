@@ -29,7 +29,7 @@
 namespace Database {
 class Connection;
 
-typedef std::shared_ptr<Connection> PConnection;
+using PConnection = std::shared_ptr<Connection>;
 
 class Connection {
 private:

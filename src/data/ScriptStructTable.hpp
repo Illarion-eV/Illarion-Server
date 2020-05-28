@@ -45,7 +45,7 @@ void detailAssign(std::unordered_map<IdType, std::shared_ptr<ScriptType>> &scrip
 template<typename IdType, typename StructType, typename ScriptType, typename ScriptParameter = StructType>
 class ScriptStructTable : public StructTable<IdType, StructType> {
 public:
-    typedef StructTable<IdType, StructType> Base;
+    using Base = StructTable<IdType, StructType>;
 
     virtual void reloadScripts() override {
         scripts.clear();
@@ -96,12 +96,12 @@ protected:
     }
 
 private:
-    typedef std::unordered_map<IdType, std::shared_ptr<ScriptType>> ScriptsType;
+    using ScriptsType = std::unordered_map<IdType, std::shared_ptr<ScriptType>>;
 
     template<typename T>
     void internalAssign(const IdType &id, const std::string &name, const StructType &data);
 
-    typedef std::vector<std::pair<IdType, std::string>> NamesType;
+    using NamesType = std::vector<std::pair<IdType, std::string>>;
     NamesType scriptNames;
     ScriptsType scripts;
 };

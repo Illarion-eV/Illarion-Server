@@ -23,7 +23,7 @@
 
 class Attribute {
 public:
-    typedef unsigned short attribute_t;
+    using attribute_t = unsigned short;
 
 private:
     attribute_t baseValue;

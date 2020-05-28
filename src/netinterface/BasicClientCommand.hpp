@@ -30,7 +30,7 @@ class Player;
 class OverflowException {};
 
 class BasicClientCommand;
-typedef std::shared_ptr<BasicClientCommand> ClientCommandPointer;
+using ClientCommandPointer = std::shared_ptr<BasicClientCommand>;
 
 class BasicClientCommand : public BasicCommand {
 public:

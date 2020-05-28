@@ -61,11 +61,11 @@ public:
 
 class MerchantDialog: public Dialog {
 public:
-    typedef uint8_t index_type;
-    typedef vector<Product> product_list;
-    typedef product_list::const_iterator product_iterator;
-    typedef vector<OfferProduct> offer_list;
-    typedef offer_list::const_iterator offer_iterator;
+    using index_type = uint8_t;
+    using product_list = vector<Product>;
+    using product_iterator = product_list::const_iterator;
+    using offer_list = vector<OfferProduct>;
+    using offer_iterator = offer_list::const_iterator;
 
     enum Result {
         playerAborts = 0,

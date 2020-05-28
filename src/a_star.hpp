@@ -34,7 +34,7 @@ namespace pathfinding {
 
 using namespace boost;
 
-typedef std::pair<int, int> Position;
+using Position = std::pair<int, int>;
 static const std::vector<Position> character_moves = {Position(0, -1), Position(1, -1), Position(1, 0), Position(1, 1), Position(0, 1), Position(-1, 1), Position(-1, 0), Position(-1, -1)};
 static const unordered_map<Position, direction> character_directions = assign::map_list_of
         (Position(0, -1), dir_north)
@@ -64,19 +64,19 @@ protected:
 };
 
 struct world_map_graph {
-    typedef Position vertex_descriptor;
-    typedef std::pair<vertex_descriptor, vertex_descriptor> edge_descriptor;
-    typedef void adjacency_iterator;
-    typedef character_out_edge_iterator out_edge_iterator;
-    typedef void in_edge_iterator;
-    typedef void edge_iterator;
-    typedef void vertex_iterator;
-    typedef int degree_size_type;
-    typedef int vertices_size_type;
-    typedef int edges_size_type;
-    typedef directed_tag directed_category;
-    typedef disallow_parallel_edge_tag edge_parallel_category;
-    typedef incidence_graph_tag traversal_category;
+    using vertex_descriptor = Position;
+    using edge_descriptor = std::pair<vertex_descriptor, vertex_descriptor>;
+    using adjacency_iterator = void;
+    using out_edge_iterator = character_out_edge_iterator;
+    using in_edge_iterator = void;
+    using edge_iterator = void;
+    using vertex_iterator = void;
+    using degree_size_type = int;
+    using vertices_size_type = int;
+    using edges_size_type = int;
+    using directed_category = directed_tag;
+    using edge_parallel_category = disallow_parallel_edge_tag;
+    using traversal_category = incidence_graph_tag;
     world_map_graph(const Position &goal, int level);
     Position goal;
     int level;
@@ -96,11 +96,11 @@ out_degree(const world_map_graph::vertex_descriptor &v, const world_map_graph &g
 
 int num_vertices(const world_map_graph &g);
 
-typedef float Cost;
+using Cost = float;
 
 class distance_heuristic : public astar_heuristic<world_map_graph, Cost> {
 public:
-    typedef graph_traits<world_map_graph>::vertex_descriptor Vertex;
+    using Vertex = graph_traits<world_map_graph>::vertex_descriptor;
     explicit distance_heuristic(const Vertex &goal);
     Cost operator()(const Vertex &u);
 

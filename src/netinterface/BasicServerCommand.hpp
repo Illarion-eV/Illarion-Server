@@ -28,7 +28,7 @@
 #include <types.hpp>
 
 class BasicServerCommand;
-typedef std::shared_ptr<BasicServerCommand> ServerCommandPointer;
+using ServerCommandPointer = std::shared_ptr<BasicServerCommand>;
 
 /**
 *@ingroup Netinterface

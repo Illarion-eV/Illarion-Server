@@ -50,11 +50,10 @@ class Monster;
 class NPC;
 class LuaScript;
 
-// typedef for gm commands...
 /**
 * a class for holding gm or player commands
 */
-typedef std::function<bool(World *, Player *, const std::string &)> CommandType;
+using CommandType = std::function<bool (World *, Player *, const std::string &)>;
 
 /**
 * a struct for holding Weather informations
@@ -141,22 +140,19 @@ public:
     /////////////////////////
 
     /**
-    *a typedef for holding Players
     *@todo: change the three vectors @see PLAYERVECTOR, @see MONSTERVECTOR, @see NPCVECTOR so there is only one HARVECTOR
     */
-    typedef CharacterContainer<Player> PLAYERVECTOR;
+    using PLAYERVECTOR = CharacterContainer<Player>;
 
     /**
-    *a typedef for holding monsters
     *@todo: change the three vectors @see PLAYERVECTOR, @see MONSTERVECTOR, @see NPCVECTOR so there is only one HARVECTOR
     */
-    typedef CharacterContainer<Monster> MONSTERVECTOR;
+    using MONSTERVECTOR = CharacterContainer<Monster>;
 
     /**
-    *a typedef for holding npc's
     *@todo: change the three vectors @see PLAYERVECTOR, @see MONSTERVECTOR, @see NPCVECTOR so there is only one HARVECTOR
     */
-    typedef CharacterContainer<NPC> NPCVECTOR;
+    using NPCVECTOR = CharacterContainer<NPC>;
 
     /**
     *holds all active player on the world
@@ -949,7 +945,7 @@ private:
     // initmethod for spawn places...
     bool initRespawns();
 
-    typedef std::map<std::string, CommandType> CommandMap;
+    using CommandMap = std::map<std::string, CommandType>;
     CommandMap GMCommands;
     CommandMap PlayerCommands;
 

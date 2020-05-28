@@ -66,7 +66,7 @@ private:
     uint32_t numberOfCalls = 0;
     bool firstadd = true;
 
-    typedef std::unordered_map<std::string, uint32_t> VALUES;
+    using VALUES = std::unordered_map<std::string, uint32_t>;
     VALUES values;
 };
 

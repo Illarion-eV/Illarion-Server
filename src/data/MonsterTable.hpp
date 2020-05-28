@@ -38,7 +38,7 @@ public:
     const MonsterStruct &operator[](TYPE_OF_CHARACTER_ID id);
 
 private:
-    typedef boost::unordered_map<TYPE_OF_CHARACTER_ID, MonsterStruct> TABLE;
+    using TABLE = boost::unordered_map<TYPE_OF_CHARACTER_ID, MonsterStruct>;
     TABLE table;
     bool dataOK = false;
 };

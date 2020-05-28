@@ -45,7 +45,7 @@ public:
 
     void setLoginLogout(bool val);
 
-    typedef thread_safe_vector<Player *> TPLAYERVECTOR;
+    using TPLAYERVECTOR = thread_safe_vector<Player *>;
 
     TPLAYERVECTOR &getLogOutPlayers() {
         return loggedOutPlayers;

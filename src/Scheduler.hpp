@@ -71,7 +71,7 @@ class ClockBasedScheduler {
 		std::mutex _new_action_signal_mutex;
 		std::condition_variable _new_action_available_cond;
 
-		typedef std::priority_queue<Task<clock_type>> task_container_t;
+		using task_container_t = std::priority_queue<Task<std::chrono::steady_clock> >;
 		task_container_t _tasks;
 		std::mutex _container_mutex;
 };

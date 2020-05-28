@@ -41,7 +41,7 @@ public:
     virtual void activateBuffer() override;
 
 private:
-    typedef StructTable<std::string, std::string> Base;
+    using Base = StructTable<std::string, std::string>;
     bool first = true;
 };
 

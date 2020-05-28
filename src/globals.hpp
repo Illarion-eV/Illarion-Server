@@ -166,6 +166,6 @@ enum QuestAvailability {
     questNotAvailable = 3
 };
 
-typedef std::vector<std::pair<std::string, std::string>> script_data_exchangemap;
+using script_data_exchangemap = std::vector<std::pair<std::string, std::string>>;
 
 #endif

@@ -33,13 +33,13 @@
 template <class T>
 class CharacterContainer {
 public:
-    typedef T* pointer;
+    using pointer = T *;
 
 private:
-    typedef std::function<void(pointer)> for_each_type;
-    typedef void(T::*for_each_member_type)();
-    typedef typename std::unordered_map<TYPE_OF_CHARACTER_ID, pointer> container_type;
-    typedef typename std::multimap<position, TYPE_OF_CHARACTER_ID,PositionComparison> position_to_id_type;
+    using for_each_type = std::function<void (pointer)>;
+    using for_each_member_type = void (T::*)();
+    using container_type = std::unordered_map<TYPE_OF_CHARACTER_ID, pointer>;
+    using position_to_id_type = std::multimap<position, TYPE_OF_CHARACTER_ID,PositionComparison>;
     position_to_id_type position_to_id;
     container_type container;
 

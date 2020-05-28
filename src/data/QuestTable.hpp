@@ -33,8 +33,8 @@ struct QuestStruct {
 
 class QuestTable : public ScriptStructTable<TYPE_OF_QUEST_ID, QuestStruct, LuaQuestScript, TYPE_OF_QUEST_ID> {
 private:
-    typedef ScriptStructTable<TYPE_OF_QUEST_ID, QuestStruct, LuaQuestScript, TYPE_OF_QUEST_ID> Base;
-    typedef std::multimap<position, TYPE_OF_QUEST_ID, PositionComparison> quest_starts_type;
+    using Base = ScriptStructTable<TYPE_OF_QUEST_ID, QuestStruct, LuaQuestScript, TYPE_OF_QUEST_ID>;
+    using quest_starts_type = std::multimap<position, TYPE_OF_QUEST_ID, PositionComparison>;
 
 public:
     virtual std::string getTableName() override;
@@ -44,7 +44,7 @@ public:
     virtual std::string assignScriptName(const Database::ResultTuple &row) override;
     virtual void reloadScripts() override;
 
-    typedef std::map<TYPE_OF_QUEST_ID, position> QuestStartMap;
+    using QuestStartMap = std::map<TYPE_OF_QUEST_ID, position>;
     QuestStartMap getQuestsInRange(const position &pos, int radius) const;
 private:
     quest_starts_type questStarts;

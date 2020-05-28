@@ -87,13 +87,13 @@ target(const world_map_graph::edge_descriptor &e, const world_map_graph &g) {
 
 std::pair<world_map_graph::out_edge_iterator, world_map_graph::out_edge_iterator>
 out_edges(const world_map_graph::vertex_descriptor &v, const world_map_graph &g) {
-    typedef world_map_graph::out_edge_iterator Iterator;
+    using Iterator = world_map_graph::out_edge_iterator;
     return std::make_pair(Iterator(0, v, g), Iterator(8, v, g));
 }
 
 world_map_graph::degree_size_type
 out_degree(const world_map_graph::vertex_descriptor &v, const world_map_graph &g) {
-    typedef world_map_graph::out_edge_iterator Iterator;
+    using Iterator = world_map_graph::out_edge_iterator;
     world_map_graph::degree_size_type count = 0;
     Iterator end(8, v, g);
 
@@ -210,7 +210,7 @@ bool a_star(const ::position &start_pos, const ::position &goal_pos, std::list<d
         return false;
     }
 
-    typedef graph_traits<world_map_graph>::vertex_descriptor vertex;
+    using vertex = graph_traits<world_map_graph>::vertex_descriptor;
 
     vertex start(start_pos.x, start_pos.y);
     vertex goal(goal_pos.x, goal_pos.y);
@@ -238,7 +238,7 @@ bool a_star(const ::position &start_pos, const ::position &goal_pos, std::list<d
 
     astar_ex_visitor visitor(goal);
 
-    typedef boost::unordered_map<Position, default_color_type, vertex_hash> color_map_t;
+    using color_map_t = boost::unordered_map<Position, default_color_type, vertex_hash>;
     color_map_t color_map;
     boost::associative_property_map<color_map_t> color(color_map);
 

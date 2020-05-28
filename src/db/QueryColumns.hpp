@@ -29,7 +29,7 @@
 namespace Database {
 class QueryColumns {
 public:
-    typedef uint8_t columnIndex;
+    using columnIndex = uint8_t;
 
 private:
     std::string columns;

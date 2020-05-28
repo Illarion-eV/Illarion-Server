@@ -43,7 +43,7 @@ public:
 
 private:
 
-    typedef std::unordered_map<unsigned char, std::unique_ptr<BasicClientCommand>> COMMANDLIST;
+    using COMMANDLIST = std::unordered_map<unsigned char, std::unique_ptr<BasicClientCommand>>;
     COMMANDLIST templateList;
 
 };

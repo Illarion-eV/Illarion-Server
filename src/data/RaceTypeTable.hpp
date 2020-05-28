@@ -47,7 +47,7 @@ private:
         std::vector<Colour> hairColour;
         std::vector<Colour> skinColour;
     };
-    typedef std::map<TYPE_OF_RACE_ID, std::map<TYPE_OF_RACE_TYPE_ID, RaceTypeStruct>> TABLE;
+    using TABLE = std::map<TYPE_OF_RACE_ID, std::map<TYPE_OF_RACE_TYPE_ID, RaceTypeStruct>>;
     TABLE table;
     bool dataOK = false;
 };

@@ -36,8 +36,8 @@ class RecursionException : public std::exception {};
 
 class Container {
 public:
-    typedef std::map<TYPE_OF_CONTAINERSLOTS, Item> ITEMMAP;
-    typedef std::map<TYPE_OF_CONTAINERSLOTS, Container *> CONTAINERMAP;
+    using ITEMMAP = std::map<TYPE_OF_CONTAINERSLOTS, Item>;
+    using CONTAINERMAP = std::map<TYPE_OF_CONTAINERSLOTS, Container *>;
 
 private:
     Item::id_type itemId;

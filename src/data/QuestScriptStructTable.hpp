@@ -28,7 +28,7 @@
 template<typename IdType, typename StructType, typename ScriptType, typename ScriptParameter = StructType>
 class QuestScriptStructTable : public ScriptStructTable<IdType, StructType, ScriptType, ScriptParameter> {
 public:
-    typedef ScriptStructTable<IdType, StructType, ScriptType, ScriptParameter> Base;
+    using Base = ScriptStructTable<IdType, StructType, ScriptType, ScriptParameter>;
 
     virtual void reloadScripts() override {
         Base::reloadScripts();
@@ -53,7 +53,7 @@ public:
     }
 
 protected:
-    typedef QuestNodeTable::TableRange<IdType> NodeRange;
+    using NodeRange = QuestNodeTable::TableRange<IdType>;
 
     using Base::getTableName;
     using Base::getColumnNames;

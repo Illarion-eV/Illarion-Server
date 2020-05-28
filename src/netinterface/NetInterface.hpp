@@ -78,7 +78,7 @@ public:
 
     volatile bool online; /*< if connection is active*/
 
-    typedef std::deque<ServerCommandPointer> SERVERCOMMANDLIST;
+    using SERVERCOMMANDLIST = std::deque<ServerCommandPointer>;
 
     boost::asio::ip::tcp::socket &getSocket() {
         return socket;

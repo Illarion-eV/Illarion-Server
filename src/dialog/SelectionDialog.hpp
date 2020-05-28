@@ -44,9 +44,9 @@ public:
 
 class SelectionDialog: public Dialog {
 public:
-    typedef uint8_t index_type;
-    typedef vector<Option> options_type;
-    typedef options_type::const_iterator iterator_type;
+    using index_type = uint8_t;
+    using options_type = vector<Option>;
+    using iterator_type = options_type::const_iterator;
 
 private:
     string text;

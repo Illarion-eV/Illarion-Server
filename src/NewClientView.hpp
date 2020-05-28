@@ -48,7 +48,7 @@ public:
     /**
     * defines one mapstripe
     */
-    typedef map::Field *MAPSTRIPE[ 100 /*MAP_DIMENSION + 1 + MAP_DOWN_EXTRA + 6*/ ];
+    using MAPSTRIPE = map::Field *[ 100 /*MAP_DIMENSION + 1 + MAP_DOWN_EXTRA + 6*/ ];
 
     /**
     * stores the pointers to the fields inside a specific mapstripe

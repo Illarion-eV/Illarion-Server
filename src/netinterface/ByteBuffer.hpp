@@ -42,10 +42,10 @@ public:
     /**
     * struct which represens the internal structur of the buffer
     */
-    typedef struct {
+    using t_rbuffer = struct {
         uint16_t fill; /*<how much data is currently in this buffer section*/
         unsigned char buff[ RECV_BUFFERSIZE ]; /*<a pointer to this buffer section*/
-    } t_rbuffer;
+    };
 
     /**
     * gives the current writing buffer so that data can be added to it

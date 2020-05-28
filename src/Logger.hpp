@@ -107,14 +107,14 @@ private:
 template<LogPriority priority>
 class LogType {
 public:
-    typedef LogStream<priority> type;
+    using type = LogStream<(LogPriority)2>;
 };
 
 #define DEACTIVATE_LOG(priority) \
 template<> \
 class LogType<priority> { \
     public: \
-        typedef NullStream type; \
+        using type = NullStream; \
 };
 
 #if MIN_LOGLEVEL < LOGLEVEL_DEBUG

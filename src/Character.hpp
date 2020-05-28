@@ -102,8 +102,8 @@ public:
         ATTRIBUTECOUNT
     };
 
-    typedef std::unordered_map<std::string, attributeIndex> attribute_map_t;
-    typedef std::unordered_map<attributeIndex, std::string, std::hash<int>> attribute_string_map_t;
+    using attribute_map_t = std::unordered_map<std::string, attributeIndex>;
+    using attribute_string_map_t = std::unordered_map<attributeIndex, std::string, std::hash<int>>;
     static attribute_map_t attributeMap;
     static attribute_string_map_t attributeStringMap;
 
@@ -411,7 +411,7 @@ public:
 
     virtual void performAnimation(uint8_t animID);
 
-    typedef std::map<TYPE_OF_SKILL_ID, skillvalue> SKILLMAP;
+    using SKILLMAP = std::map<TYPE_OF_SKILL_ID, skillvalue>;
 
     movement_type GetMovement() const;
     void SetMovement(movement_type tmovement);

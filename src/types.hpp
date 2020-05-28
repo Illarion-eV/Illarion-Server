@@ -23,51 +23,51 @@
 #include <stdint.h>
 #include <string>
 
-typedef uint16_t TYPE_OF_ITEM_ID;
-typedef uint16_t TYPE_OF_TILE_ID;
-typedef uint32_t TYPE_OF_CHARACTER_ID;
-typedef uint16_t TYPE_OF_RACE_ID;
-typedef uint16_t TYPE_OF_RACE_TYPE_ID;
+using TYPE_OF_ITEM_ID = uint16_t;
+using TYPE_OF_TILE_ID = uint16_t;
+using TYPE_OF_CHARACTER_ID = uint32_t;
+using TYPE_OF_RACE_ID = uint16_t;
+using TYPE_OF_RACE_TYPE_ID = uint16_t;
 
-typedef uint16_t TYPE_OF_VOLUME;
-typedef uint16_t TYPE_OF_WEIGHT;
-typedef uint8_t  TYPE_OF_AGINGSPEED;
-typedef uint8_t  TYPE_OF_BRIGHTNESS;
-typedef uint32_t TYPE_OF_WORTH;
-typedef uint16_t TYPE_OF_MAX_STACK;
-typedef uint16_t TYPE_OF_BUY_STACK;
+using TYPE_OF_VOLUME = uint16_t;
+using TYPE_OF_WEIGHT = uint16_t;
+using TYPE_OF_AGINGSPEED = uint8_t;
+using TYPE_OF_BRIGHTNESS = uint8_t;
+using TYPE_OF_WORTH = uint32_t;
+using TYPE_OF_MAX_STACK = uint16_t;
+using TYPE_OF_BUY_STACK = uint16_t;
 
-typedef uint8_t  TYPE_OF_ITEMLEVEL;
+using TYPE_OF_ITEMLEVEL = uint8_t;
 
-typedef uint8_t  TYPE_OF_ATTACK;
-typedef uint8_t  TYPE_OF_DEFENCE;
-typedef uint8_t  TYPE_OF_ACCURACY;
-typedef uint8_t  TYPE_OF_RANGE;
-typedef uint8_t  TYPE_OF_WEAPONTYPE;
-typedef uint8_t  TYPE_OF_POISONSTRENGTH;
+using TYPE_OF_ATTACK = uint8_t;
+using TYPE_OF_DEFENCE = uint8_t;
+using TYPE_OF_ACCURACY = uint8_t;
+using TYPE_OF_RANGE = uint8_t;
+using TYPE_OF_WEAPONTYPE = uint8_t;
+using TYPE_OF_POISONSTRENGTH = uint8_t;
 
-typedef uint8_t  TYPE_OF_BODYPARTS;
-typedef uint8_t  TYPE_OF_STROKEARMOR;
-typedef uint8_t  TYPE_OF_PUNCTUREARMOR;
-typedef uint8_t  TYPE_OF_THRUSTARMOR;
-typedef uint16_t TYPE_OF_MAGICDISTURBANCE;
-typedef uint8_t  TYPE_OF_ARMORTYPE;
+using TYPE_OF_BODYPARTS = uint8_t;
+using TYPE_OF_STROKEARMOR = uint8_t;
+using TYPE_OF_PUNCTUREARMOR = uint8_t;
+using TYPE_OF_THRUSTARMOR = uint8_t;
+using TYPE_OF_MAGICDISTURBANCE = uint16_t;
+using TYPE_OF_ARMORTYPE = uint8_t;
 
-typedef uint16_t TYPE_OF_CONTAINERSLOTS;
+using TYPE_OF_CONTAINERSLOTS = uint16_t;
 
-typedef uint16_t TYPE_OF_WALKINGCOST;
+using TYPE_OF_WALKINGCOST = uint16_t;
 
-typedef uint8_t  TYPE_OF_SPECIALITEM;
-typedef uint8_t  TYPE_OF_AMMUNITIONTYPE;
-typedef uint8_t  TYPE_OF_ACTIONPOINTS;
+using TYPE_OF_SPECIALITEM = uint8_t;
+using TYPE_OF_AMMUNITIONTYPE = uint8_t;
+using TYPE_OF_ACTIONPOINTS = uint8_t;
 
-typedef uint8_t  TYPE_OF_SKILL_ID;
+using TYPE_OF_SKILL_ID = uint8_t;
 
-typedef uint16_t TYPE_OF_QUEST_ID;
-typedef int32_t TYPE_OF_QUESTSTATUS;
+using TYPE_OF_QUEST_ID = uint16_t;
+using TYPE_OF_QUESTSTATUS = int32_t;
 
-typedef std::string TYPE_OF_GERMAN;
-typedef std::string TYPE_OF_ENGLISH;
+using TYPE_OF_GERMAN = std::string;
+using TYPE_OF_ENGLISH = std::string;
 
 enum direction {
     dir_north = 0,
