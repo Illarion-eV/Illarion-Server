@@ -49,21 +49,19 @@ void NewClientView::clearStripe() {
 void NewClientView::readFields(int length) {
     position pos = viewPosition;
     int x_inc = (stripedir == dir_right) ? 1 : -1;
-    int tmp_maxtiles = 1;
+    maxtiles = length;
+    exists = true;
 
     for (int i = 0; i < length; ++i) {
         try {
             map::Field &field = World::get()->fieldAt(pos);
 
             if (!field.isTransparent() || field.itemCount() > 0) {
-                exists = true;
                 mapStripe[i] = &field;
-                maxtiles = tmp_maxtiles;
             }
         } catch (FieldNotFound &) {
         }
 
-        ++tmp_maxtiles;
         //increase x due to perspective
         pos.x += x_inc;
         //increase y due to perspective
