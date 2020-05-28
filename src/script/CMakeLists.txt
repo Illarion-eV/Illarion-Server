@@ -78,4 +78,4 @@ add_library(script
 find_package(Lua 5.2 REQUIRED)
 include_directories(${LUA_INCLUDE_DIR})
 target_link_libraries(script ${LUA_LIBRARIES})
-target_link_libraries(script /usr/lib/libluabind.so)
+target_link_libraries(script /usr/lib/x86_64-linux-gnu/libluabind.so)

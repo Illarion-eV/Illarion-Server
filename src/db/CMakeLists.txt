@@ -25,4 +25,4 @@ add_library(db
     UpdateQuery.cpp
     UpdateQuery.hpp)
 
-target_link_libraries(db /usr/lib/x86_64-linux-gnu/libpqxx-4.0.so)
+target_link_libraries(db /usr/lib/x86_64-linux-gnu/libpqxx-6.2.so)

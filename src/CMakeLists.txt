@@ -204,6 +204,7 @@ target_link_libraries(server ${CMAKE_THREAD_LIBS_INIT})
 
 add_executable(illarion main.cpp)
 target_link_libraries(illarion server)
+target_link_libraries(illarion stdc++fs)
 
 install (TARGETS illarion DESTINATION bin)
 
