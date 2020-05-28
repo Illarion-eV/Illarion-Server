@@ -25,6 +25,8 @@
 #include "Map.hpp"
 #include "Logger.hpp"
 #include "Player.hpp"
+#include "Monster.hpp"
+#include "NPC.hpp"
 #include "World.hpp"
 
 #include <algorithm>
@@ -64,9 +66,9 @@ Field &WorldMap::at(const position &pos) {
 }
 
 const Field &WorldMap::at(const position &pos) const {
-    try {
+    if (persistentFields.count(pos) > 0) {
         return persistentFields.at(pos);
-    } catch (std::out_of_range &) {
+    } else {
         try {
             return maps.at(world_map.at(pos)).at(pos.x, pos.y);
         } catch (std::out_of_range &) {
@@ -514,6 +516,39 @@ void WorldMap::makePersistentAt(const position &pos) {
 }
 
 void WorldMap::removePersistenceAt(const position &pos) {
+    bool existsInMap = world_map.count(pos) > 0;
+    bool existsPersistent =  persistentFields.count(pos) > 0;
+
+    if (!existsInMap && existsPersistent) {
+        // Clean up the Field, since it will be removed.
+        // Usually a script should handle this, but we still
+        // need a default to avoid an illegal server state!
+
+        Range range{0, 0};
+        auto players = World::get()->Players.findAllCharactersInRangeOf(pos, range);
+        
+        for (auto player : players) {
+            if (not player->Warp(pos)) {
+                position start(Config::instance().playerstart_x,
+                               Config::instance().playerstart_y,
+                               Config::instance().playerstart_z);
+                player->Warp(start);
+            }
+        }
+
+        auto monsters = World::get()->Monsters.findAllCharactersInRangeOf(pos, range);
+        
+        for (auto monster : monsters) {
+            monster->remove();
+        }
+
+        auto npcs = World::get()->Npc.findAllCharactersInRangeOf(pos, range);
+        
+        for (auto npc : npcs) {
+            World::get()->deleteNPC(npc->getId());
+        }
+    }
+    
     auto fieldNode = persistentFields.extract(pos);
 
     if (!fieldNode.empty()) {
