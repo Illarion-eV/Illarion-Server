@@ -463,18 +463,6 @@ void World::changeTile(short int tileid, const position &pos) {
     }
 }
 
-
-void World::sendMapUpdate(const position &pos, uint8_t radius) {
-    Range range;
-    range.radius = radius;
-    auto playersInRange = Players.findAllCharactersInRangeOf(pos, range);
-
-    for (auto &player : playersInRange) {
-        player->sendFullMap();
-        sendAllVisibleCharactersToPlayer(player, true);
-    }
-}
-
 bool World::createSavedArea(uint16_t tile, const position &origin,
                             uint16_t height, uint16_t width) {
     if (maps.createMap("by createSavedArea", origin, width, height, tile)) {
@@ -487,7 +475,6 @@ bool World::createSavedArea(uint16_t tile, const position &origin,
         return false;
     }
 }
-
 
 bool World::getArmorStruct(TYPE_OF_ITEM_ID id, ArmorStruct &ret) {
     //Has to be an own function cant give a pointer of Armor items to the script

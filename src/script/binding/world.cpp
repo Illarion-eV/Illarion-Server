@@ -68,7 +68,6 @@ namespace binding {
                 .def("isItemOnField", &World::isItemOnField)
                 .def("getItemOnField", &World::getItemOnField)
                 .def("changeTile", &World::changeTile)
-                .def("sendMapUpdate", &World::sendMapUpdate)
                 .def("getItemName", &World::getItemName)
                 .def("createSavedArea", &World::createSavedArea)
                 .def("broadcast", &World::broadcast)

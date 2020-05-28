@@ -870,12 +870,6 @@ public:
     //\pos, Position des zu aendernden Bodentiles.
     void changeTile(short int tileid, const position &pos);
 
-
-    //!Sendet ein Map update zu allen spielern in bereich range um pos
-    //\pos, position von der ausgegangen wird
-    //\bereich von dem die Spieler genommen werden sollen.
-    void sendMapUpdate(const position &pos, uint8_t radius);
-
     //!Sicherer CreateArea command, prft erst ab ob er eine vorhandene Map berschreibt.
     //\tileid: standard Tile
     //\pos: begin der neuen Karte
