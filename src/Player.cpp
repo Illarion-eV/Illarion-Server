@@ -340,7 +340,7 @@ Container *Player::getShowcaseContainer(uint8_t showcase) const {
         return it->second->getContainer();
     }
 
-    return 0;
+    return nullptr;
 }
 
 void Player::closeShowcase(uint8_t showcase) {
@@ -2675,7 +2675,7 @@ void Player::executeMerchantDialogSell(unsigned int dialogId, uint8_t location, 
             item = GetItemAt(slot);
         } else {
             if (isShowcaseOpen(location-1)) {
-                Container *container = 0;
+                Container *container = nullptr;
                 getShowcaseContainer(location-1)->viewItemNr(slot, item, container);
             }
         }

@@ -45,7 +45,7 @@ extern "C" {
 #include "script/forwarder.hpp"
 #include "script/binding/binding.hpp"
 
-lua_State *LuaScript::_luaState = 0;
+lua_State *LuaScript::_luaState = nullptr;
 bool LuaScript::initialized = false;
 
 LuaScript::LuaScript() {
@@ -175,7 +175,7 @@ void LuaScript::shutdownLua() {
     if (initialized) {
         initialized = false;
         lua_close(_luaState);
-        _luaState = 0;
+        _luaState = nullptr;
     }
 }
 
@@ -195,7 +195,7 @@ int LuaScript::add_backtrace(lua_State *L) {
         lua_getinfo(L, "Sln", &d);
         msg << "#" << level << " called by: " << d.short_src << ":" << d.currentline;
 
-        if (d.name != 0) {
+        if (d.name != nullptr) {
             msg << "(" << d.namewhat << " " << d.name << ")";
         }
 

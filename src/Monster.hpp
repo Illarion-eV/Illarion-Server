@@ -44,7 +44,7 @@ public:
     * @param newpos the position where the monster should be spawned
     * @param spawnpoint the spawnpoint from which the monster was spawned ( 0 if there is no spawnpoint )
     */
-    Monster(const TYPE_OF_CHARACTER_ID &type, const position &newpos, SpawnPoint *spawnpoint=0);
+    Monster(const TYPE_OF_CHARACTER_ID &type, const position &newpos, SpawnPoint *spawnpoint=nullptr);
 
     const MonsterStruct::loottype &getLoot() const override;
 

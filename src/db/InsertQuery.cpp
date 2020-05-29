@@ -81,7 +81,7 @@ Result InsertQuery::execute() {
             }
 
             delete dataRow->at(column);
-            dataRow->at(column) = 0;
+            dataRow->at(column) = nullptr;
         }
 
         delete dataRow;
