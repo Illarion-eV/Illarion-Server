@@ -35,7 +35,7 @@ BasicClientCommand::~BasicClientCommand() {
     delete[] msg_buffer;
 }
 
-unsigned char *BasicClientCommand::msg_data() {
+auto BasicClientCommand::msg_data() -> unsigned char * {
     return msg_buffer;
 }
 
@@ -79,7 +79,7 @@ volatile bool BasicClientCommand::getData( ByteBuffer * recvBuffer )
     return false;
 }*/
 
-unsigned char BasicClientCommand::getUnsignedCharFromBuffer() {
+auto BasicClientCommand::getUnsignedCharFromBuffer() -> unsigned char {
     unsigned char ret = 0;
 
     //no buffer available but we want to read from it
@@ -100,7 +100,7 @@ unsigned char BasicClientCommand::getUnsignedCharFromBuffer() {
     return ret;
 }
 
-std::string BasicClientCommand::getStringFromBuffer() {
+auto BasicClientCommand::getStringFromBuffer() -> std::string {
     unsigned short int len = getShortIntFromBuffer();
 
     std::string ret = "";
@@ -112,7 +112,7 @@ std::string BasicClientCommand::getStringFromBuffer() {
     return ret;
 }
 
-int BasicClientCommand::getIntFromBuffer() {
+auto BasicClientCommand::getIntFromBuffer() -> int {
     int ret = getUnsignedCharFromBuffer() << 24;
     ret = ret | (getUnsignedCharFromBuffer() << 16);
     ret = ret | (getUnsignedCharFromBuffer() << 8);
@@ -120,13 +120,13 @@ int BasicClientCommand::getIntFromBuffer() {
     return ret;
 }
 
-short int BasicClientCommand::getShortIntFromBuffer() {
+auto BasicClientCommand::getShortIntFromBuffer() -> short int {
     short int ret = getUnsignedCharFromBuffer() << 8;
     ret = ret | getUnsignedCharFromBuffer();
     return ret;
 }
 
-bool BasicClientCommand::isDataOk() const {
+auto BasicClientCommand::isDataOk() const -> bool {
     uint16_t crcCheck = static_cast<uint16_t>(crc % 0xFFFF);
     return (dataOk && (length == bytesRetrieved) && (crcCheck==checkSum));
 }

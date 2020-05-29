@@ -61,7 +61,7 @@ protected:
     using Base::assignTable;
     using Base::assignScriptName;
 
-    virtual NodeRange getQuestScripts() = 0;
+    virtual auto getQuestScripts() -> NodeRange = 0;
 };
 
 #endif

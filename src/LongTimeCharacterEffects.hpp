@@ -32,16 +32,16 @@ public:
     explicit LongTimeCharacterEffects(Character *owner);
 
     void addEffect(LongTimeEffect *effect);
-    bool find(uint16_t effectid, LongTimeEffect *&effect) const;
-    bool find(const std::string &effectname, LongTimeEffect *&effect) const;
-    bool removeEffect(uint16_t effectid);
-    bool removeEffect(const std::string &name);
-    bool removeEffect(LongTimeEffect *effect);
+    auto find(uint16_t effectid, LongTimeEffect *&effect) const -> bool;
+    auto find(const std::string &effectname, LongTimeEffect *&effect) const -> bool;
+    auto removeEffect(uint16_t effectid) -> bool;
+    auto removeEffect(const std::string &name) -> bool;
+    auto removeEffect(LongTimeEffect *effect) -> bool;
 
     void push_backEffect(LongTimeEffect *effect);
     void checkEffects();
-    bool save();
-    bool load();
+    auto save() -> bool;
+    auto load() -> bool;
 
 private:
     using EFFECTS = std::vector<LongTimeEffect *>;

@@ -178,7 +178,7 @@ void LuaScript::shutdownLua() {
     }
 }
 
-int LuaScript::add_backtrace(lua_State *L) {
+auto LuaScript::add_backtrace(lua_State *L) -> int {
     lua_Debug d;
     std::stringstream msg;
 
@@ -267,7 +267,7 @@ void LuaScript::writeDeprecatedMsg(const std::string &deprecatedEntity) {
     }
 }
 
-luabind::object LuaScript::buildEntrypoint(const std::string &entrypoint) {
+auto LuaScript::buildEntrypoint(const std::string &entrypoint) -> luabind::object {
     luabind::object obj = luabind::registry(_luaState);
     obj = obj["_LOADED"][_filename];
 
@@ -289,11 +289,11 @@ void LuaScript::setCurrentWorldScript() {
     World::get()->setCurrentScript(this);
 }
 
-bool LuaScript::existsQuestEntrypoint(const std::string &entrypoint) const {
+auto LuaScript::existsQuestEntrypoint(const std::string &entrypoint) const -> bool {
     return questScripts.find(entrypoint) != questScripts.end();
 }
 
-bool LuaScript::existsEntrypoint(const std::string &entrypoint) const {
+auto LuaScript::existsEntrypoint(const std::string &entrypoint) const -> bool {
     luabind::object obj = luabind::registry(_luaState);
     obj = obj["_LOADED"][_filename];
 
@@ -310,7 +310,7 @@ bool LuaScript::existsEntrypoint(const std::string &entrypoint) const {
     return true;
 }
 
-static int dofile(lua_State *L, const char *fname) {
+static auto dofile(lua_State *L, const char *fname) -> int {
     char path[100];
     strcpy(path, Config::instance().scriptdir().c_str());
     strcat(path, fname);
@@ -325,7 +325,7 @@ static int dofile(lua_State *L, const char *fname) {
     return lua_gettop(L) - n;
 }
 
-Character *getCharForId(TYPE_OF_CHARACTER_ID id) {
+auto getCharForId(TYPE_OF_CHARACTER_ID id) -> Character * {
     Character *ret = nullptr;
 
     if (id < MONSTER_BASE) {

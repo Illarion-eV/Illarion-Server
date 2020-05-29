@@ -23,7 +23,7 @@
 
 namespace binding {
 
-    luabind::scope merchant_dialog() {
+    auto merchant_dialog() -> luabind::scope {
         return luabind::class_<MerchantDialog>("MerchantDialog")
                 .enum_("Result")
                 [

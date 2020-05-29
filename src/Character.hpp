@@ -59,7 +59,7 @@ class NoLootFound: public std::exception {};
 
 class Character {
     Character(const Character &) = delete;
-    Character &operator=(const Character &) = delete;
+    auto operator=(const Character &) -> Character & = delete;
 
 public:
     struct appearance {
@@ -149,47 +149,47 @@ public:
         unsigned long int flags[ 4 ];
     };
 
-    virtual TYPE_OF_CHARACTER_ID getId() const;
-    const std::string &getName() const;
-    virtual std::string to_string() const = 0;
+    virtual auto getId() const -> TYPE_OF_CHARACTER_ID;
+    auto getName() const -> const std::string &;
+    virtual auto to_string() const -> std::string = 0;
 
-    short int getActionPoints() const;
-    virtual short int getMinActionPoints() const;
-    virtual short int getMaxActionPoints() const;
+    auto getActionPoints() const -> short int;
+    virtual auto getMinActionPoints() const -> short int;
+    virtual auto getMaxActionPoints() const -> short int;
     void setActionPoints(short int ap);
     void increaseActionPoints(short int ap);
-    bool canAct() const;
+    auto canAct() const -> bool;
 
-    short int getFightPoints() const;
-    virtual short int getMinFightPoints() const;
-    virtual short int getMaxFightPoints() const;
+    auto getFightPoints() const -> short int;
+    virtual auto getMinFightPoints() const -> short int;
+    virtual auto getMaxFightPoints() const -> short int;
     void setFightPoints(short int fp);
     void increaseFightPoints(short int fp);
-    bool canFight() const;
+    auto canFight() const -> bool;
 
-    short int getActiveLanguage() const;
+    auto getActiveLanguage() const -> short int;
     void setActiveLanguage(short int l);
 
-    virtual const position &getPosition() const;
+    virtual auto getPosition() const -> const position &;
 
-    bool getAttackMode() const;
+    auto getAttackMode() const -> bool;
     void setAttackMode(bool attack);
 
-    const std::string &getLastSpokenText() const;
+    auto getLastSpokenText() const -> const std::string &;
 
-    bool isInvisible() const;
+    auto isInvisible() const -> bool;
     void setInvisible(bool invisible);
 
     LongTimeCharacterEffects effects;
     WaypointList waypoints;
 
-    position getFrontalPosition() const;
+    auto getFrontalPosition() const -> position;
 
-    virtual bool actionRunning() const {
+    virtual auto actionRunning() const -> bool {
         return false;
     }
 
-    inline unsigned short getMagicType() const {
+    inline auto getMagicType() const -> unsigned short {
         return magic.type;
     }
 
@@ -201,16 +201,16 @@ public:
         _is_on_route = onr;
     }
 
-    bool getOnRoute() const {
+    auto getOnRoute() const -> bool {
         return _is_on_route;
     }
 
-    virtual Language getPlayerLanguage() const {
+    virtual auto getPlayerLanguage() const -> Language {
         return Language::english;
     }
 
 
-    inline unsigned long int getMagicFlags(unsigned char type) const {
+    inline auto getMagicFlags(unsigned char type) const -> unsigned long int {
         if (type < 4) {
             return magic.flags[type];
         } else {
@@ -218,33 +218,33 @@ public:
         }
     }
 
-    virtual unsigned short getType() const = 0;
+    virtual auto getType() const -> unsigned short = 0;
 
     virtual void changeRace(TYPE_OF_RACE_ID race) {
         this->race = race;
         updateAppearanceForAll(true);
     }
 
-    virtual TYPE_OF_RACE_ID getRace() const {
+    virtual auto getRace() const -> TYPE_OF_RACE_ID {
         return race;
     }
 
-    virtual face_to getFaceTo() const {
+    virtual auto getFaceTo() const -> face_to {
         return faceto;
     }
 
-    virtual bool isAdmin() const {
+    virtual auto isAdmin() const -> bool {
         return false;
     }
 
-    virtual TYPE_OF_CHARACTER_ID getMonsterType() const {
+    virtual auto getMonsterType() const -> TYPE_OF_CHARACTER_ID {
         return 0;
     }
 
     virtual void changeQualityAt(unsigned char pos, short int amount);
     virtual void increasePoisonValue(short int value);
 
-    virtual short int getPoisonValue() const {
+    virtual auto getPoisonValue() const -> short int {
         return poisonvalue;
     }
 
@@ -301,7 +301,7 @@ public:
     inline virtual void changeTarget() {
     }
 
-    virtual int getMentalCapacity() const {
+    virtual auto getMentalCapacity() const -> int {
         return mental_capacity;
     }
 
@@ -311,71 +311,71 @@ public:
 
     virtual void increaseMentalCapacity(int value);
 
-    virtual int countItem(TYPE_OF_ITEM_ID itemid) const ;
+    virtual auto countItem(TYPE_OF_ITEM_ID itemid) const -> int ;
     // where determines where the items will be counted ("all", "belt", "body", "backpack")
-    int countItemAt(const std::string &where, TYPE_OF_ITEM_ID itemid, script_data_exchangemap const *data = nullptr) const;
-    virtual int eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangemap const *data = nullptr);
-    virtual int createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, script_data_exchangemap const *data);
-    virtual int increaseAtPos(unsigned char pos, int count);
-    virtual int createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count);
-    virtual bool swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t newQuality = 0);
-    virtual ScriptItem GetItemAt(unsigned char itempos);
-    virtual Container *GetBackPack() const;
-    Container *GetDepot(uint32_t depotid) const;
-    std::vector<ScriptItem> getItemList(TYPE_OF_ITEM_ID id) const;
+    auto countItemAt(const std::string &where, TYPE_OF_ITEM_ID itemid, script_data_exchangemap const *data = nullptr) const -> int;
+    virtual auto eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangemap const *data = nullptr) -> int;
+    virtual auto createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, script_data_exchangemap const *data) -> int;
+    virtual auto increaseAtPos(unsigned char pos, int count) -> int;
+    virtual auto createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) -> int;
+    virtual auto swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t newQuality = 0) -> bool;
+    virtual auto GetItemAt(unsigned char itempos) -> ScriptItem;
+    virtual auto GetBackPack() const -> Container *;
+    auto GetDepot(uint32_t depotid) const -> Container *;
+    auto getItemList(TYPE_OF_ITEM_ID id) const -> std::vector<ScriptItem>;
 
-    virtual std::string getSkillName(TYPE_OF_SKILL_ID s) const;
-    virtual unsigned short int getSkill(TYPE_OF_SKILL_ID s) const;
-    virtual const skillvalue *getSkillValue(TYPE_OF_SKILL_ID s) const;
-    virtual unsigned short int getMinorSkill(TYPE_OF_SKILL_ID s) const;
+    virtual auto getSkillName(TYPE_OF_SKILL_ID s) const -> std::string;
+    virtual auto getSkill(TYPE_OF_SKILL_ID s) const -> unsigned short int;
+    virtual auto getSkillValue(TYPE_OF_SKILL_ID s) const -> const skillvalue *;
+    virtual auto getMinorSkill(TYPE_OF_SKILL_ID s) const -> unsigned short int;
 
     void setSkinColour(const Colour &c);
-    Colour getSkinColour() const;
+    auto getSkinColour() const -> Colour;
     void setHairColour(const Colour &c);
-    Colour getHairColour() const;
+    auto getHairColour() const -> Colour;
     void setHair(uint8_t hairID);
-    uint8_t getHair() const;
+    auto getHair() const -> uint8_t;
     void setBeard(uint8_t beardID);
-    uint8_t getBeard() const;
+    auto getBeard() const -> uint8_t;
 
-    appearance getAppearance() const {
+    auto getAppearance() const -> appearance {
         return _appearance;
     }
 
-    bool setBaseAttribute(Character::attributeIndex attribute, Attribute::attribute_t value);
+    auto setBaseAttribute(Character::attributeIndex attribute, Attribute::attribute_t value) -> bool;
     void setAttribute(Character::attributeIndex attribute, Attribute::attribute_t value);
-    Attribute::attribute_t getBaseAttribute(Character::attributeIndex attribute) const;
-    Attribute::attribute_t getAttribute(Character::attributeIndex attribute) const;
-    bool increaseBaseAttribute(Character::attributeIndex attribute, int amount);
-    Attribute::attribute_t increaseAttribute(Character::attributeIndex attribute, int amount);
-    bool isBaseAttributeValid(Character::attributeIndex attribute, Attribute::attribute_t value) const;
-    uint16_t getBaseAttributeSum() const;
-    uint16_t getMaxAttributePoints() const;
-    virtual bool saveBaseAttributes();
+    auto getBaseAttribute(Character::attributeIndex attribute) const -> Attribute::attribute_t;
+    auto getAttribute(Character::attributeIndex attribute) const -> Attribute::attribute_t;
+    auto increaseBaseAttribute(Character::attributeIndex attribute, int amount) -> bool;
+    auto increaseAttribute(Character::attributeIndex attribute, int amount) -> Attribute::attribute_t;
+    auto isBaseAttributeValid(Character::attributeIndex attribute, Attribute::attribute_t value) const -> bool;
+    auto getBaseAttributeSum() const -> uint16_t;
+    auto getMaxAttributePoints() const -> uint16_t;
+    virtual auto saveBaseAttributes() -> bool;
     virtual void handleAttributeChange(Character::attributeIndex attribute);
-    bool isBaseAttribValid(const std::string &name, Attribute::attribute_t value) const;
-    bool setBaseAttrib(const std::string &name, Attribute::attribute_t value);
+    auto isBaseAttribValid(const std::string &name, Attribute::attribute_t value) const -> bool;
+    auto setBaseAttrib(const std::string &name, Attribute::attribute_t value) -> bool;
     void setAttrib(const std::string &name, Attribute::attribute_t value);
-    Attribute::attribute_t getBaseAttrib(const std::string &name);
-    bool increaseBaseAttrib(const std::string &name, int amount);
-    Attribute::attribute_t increaseAttrib(const std::string &name, int amount);
+    auto getBaseAttrib(const std::string &name) -> Attribute::attribute_t;
+    auto increaseBaseAttrib(const std::string &name, int amount) -> bool;
+    auto increaseAttrib(const std::string &name, int amount) -> Attribute::attribute_t;
 
-    virtual unsigned short int increaseSkill(TYPE_OF_SKILL_ID skill, short int amount);
-    virtual unsigned short int increaseMinorSkill(TYPE_OF_SKILL_ID skill, short int amount);
-    virtual unsigned short int setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor);
+    virtual auto increaseSkill(TYPE_OF_SKILL_ID skill, short int amount) -> unsigned short int;
+    virtual auto increaseMinorSkill(TYPE_OF_SKILL_ID skill, short int amount) -> unsigned short int;
+    virtual auto setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor) -> unsigned short int;
     virtual void deleteAllSkills();
     virtual void learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opponent);
     virtual void teachMagic(unsigned char type, unsigned char flag);
 
-    bool isInRange(Character *cc, unsigned short int distancemetric) const;
-    bool isInScreen(const position &pos) const;
-    virtual unsigned short int getScreenRange() const;
-    unsigned short int distanceMetric(Character *cc) const;
-    bool isInRangeToField(const position &m_pos, unsigned short int distancemetric) const;
-    unsigned short int distanceMetricToPosition(const position &m_pos) const;
+    auto isInRange(Character *cc, unsigned short int distancemetric) const -> bool;
+    auto isInScreen(const position &pos) const -> bool;
+    virtual auto getScreenRange() const -> unsigned short int;
+    auto distanceMetric(Character *cc) const -> unsigned short int;
+    auto isInRangeToField(const position &m_pos, unsigned short int distancemetric) const -> bool;
+    auto distanceMetricToPosition(const position &m_pos) const -> unsigned short int;
 
-    virtual std::string alterSpokenMessage(const std::string &message, int languageSkill) const;
-    int getLanguageSkill(int languageSkillNumber) const;
+    virtual auto alterSpokenMessage(const std::string &message, int languageSkill) const -> std::string;
+    auto getLanguageSkill(int languageSkillNumber) const -> int;
 
     virtual void talk(talk_type tt, const std::string &message);
     virtual void talk(talk_type tt, const std::string &german, const std::string &english);
@@ -383,26 +383,26 @@ public:
     virtual void inform(const std::string &message, informType type = informServer) const;
     virtual void inform(const std::string &german, const std::string &english, informType type = informServer) const;
 
-    virtual bool move(direction dir, bool active=true);
+    virtual auto move(direction dir, bool active=true) -> bool;
 
-    virtual bool getNextStepDir(const position &goal, direction &dir) const;
-    bool getStepList(const position &goal, std::list<direction> &steps) const;
+    virtual auto getNextStepDir(const position &goal, direction &dir) const -> bool;
+    auto getStepList(const position &goal, std::list<direction> &steps) const -> bool;
 
-    virtual bool Warp(const position &newPos);
-    virtual bool forceWarp(const position &newPos);
+    virtual auto Warp(const position &newPos) -> bool;
+    virtual auto forceWarp(const position &newPos) -> bool;
 
     virtual void startMusic(short int title);
     virtual void defaultMusic();
 
     virtual void setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS progress);
-    virtual TYPE_OF_QUESTSTATUS getQuestProgress(TYPE_OF_QUEST_ID questid, int &time) const;
+    virtual auto getQuestProgress(TYPE_OF_QUEST_ID questid, int &time) const -> TYPE_OF_QUESTSTATUS;
 
     virtual void sendCharDescription(TYPE_OF_CHARACTER_ID id, const std::string &desc);
 
-    virtual bool isNewPlayer() const;
-    virtual bool pageGM(const std::string &ticket);
+    virtual auto isNewPlayer() const -> bool;
+    virtual auto pageGM(const std::string &ticket) -> bool;
 
-    virtual uint32_t idleTime() const;
+    virtual auto idleTime() const -> uint32_t;
 
     virtual void sendBook(uint16_t bookID);
 
@@ -414,14 +414,14 @@ public:
 
     using SKILLMAP = std::map<TYPE_OF_SKILL_ID, skillvalue>;
 
-    movement_type GetMovement() const;
+    auto GetMovement() const -> movement_type;
     void SetMovement(movement_type tmovement);
 
     void AddWeight();
     void SubWeight();
 
     inline virtual void setClippingActive(bool tclippingActive) {}
-    inline virtual bool getClippingActive() const {
+    inline virtual auto getClippingActive() const -> bool {
         return true;
     }
 
@@ -445,7 +445,7 @@ public:
 
     virtual void ageInventory();
 
-    inline bool isAlive() const {
+    inline auto isAlive() const -> bool {
         return alive;
     }
 
@@ -453,13 +453,13 @@ public:
 
     character_type enemytype = player;
     TYPE_OF_CHARACTER_ID enemyid = 0;
-    virtual bool attack(Character *target);
+    virtual auto attack(Character *target) -> bool;
     virtual void stopAttack();
-    character_ptr getAttackTarget() const;
+    auto getAttackTarget() const -> character_ptr;
 
-    unsigned short int maxLoadWeight() const;
-    int LoadWeight() const;
-    float relativeLoad() const;
+    auto maxLoadWeight() const -> unsigned short int;
+    auto LoadWeight() const -> int;
+    auto relativeLoad() const -> float;
 
     enum class LoadLevel {
         unburdened,
@@ -467,7 +467,7 @@ public:
         overtaxed
     };
 
-    LoadLevel loadFactor() const;
+    auto loadFactor() const -> LoadLevel;
 
     /**
     * returns the weight of a container
@@ -476,7 +476,7 @@ public:
     * @param tcont the container from which we want to get the weight
     * @return the +/- weight of the container
     */
-    int weightContainer(unsigned short int id, int count, Container *tcont) const;
+    auto weightContainer(unsigned short int id, int count, Container *tcont) const -> int;
 
     /**
     * checks if in tcont is enough place for count items with id
@@ -485,7 +485,7 @@ public:
     * @param tcont pointer to the container (items inside the container)
     * @return true if count items of id can be added otherwise false
     */
-    bool weightOK(TYPE_OF_ITEM_ID id, int count, Container *tcont) const;
+    auto weightOK(TYPE_OF_ITEM_ID id, int count, Container *tcont) const -> bool;
 
     virtual void turn(direction dir);
     virtual void turn(const position &posi);
@@ -506,7 +506,7 @@ public:
 
     virtual void logAdmin(const std::string &message);
 
-    virtual const MonsterStruct::loottype &getLoot() const;
+    virtual auto getLoot() const -> const MonsterStruct::loottype &;
 
 protected:
     struct RaceStruct {
@@ -548,10 +548,10 @@ protected:
     int mental_capacity = 0;
     World *_world;
 
-    virtual bool moveToPossible(const map::Field &field) const;
+    virtual auto moveToPossible(const map::Field &field) const -> bool;
     
     // returns time of a move in ms
-    virtual TYPE_OF_WALKINGCOST getMoveTime(const map::Field &targetField, bool diagonalMove, bool running) const;
+    virtual auto getMoveTime(const map::Field &targetField, bool diagonalMove, bool running) const -> TYPE_OF_WALKINGCOST;
 
     appearance _appearance;
 
@@ -573,6 +573,6 @@ private:
     s_magic magic;
 };
 
-std::ostream &operator<<(std::ostream &os, const Character &character);
+auto operator<<(std::ostream &os, const Character &character) -> std::ostream &;
 
 #endif

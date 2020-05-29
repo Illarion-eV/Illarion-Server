@@ -27,7 +27,7 @@ MessageDialog::MessageDialog(const string &title, const string &text, const luab
 MessageDialog::MessageDialog(const MessageDialog &messageDialog)
     = default;
 
-const string &MessageDialog::getText() const {
+auto MessageDialog::getText() const -> const string & {
     return text;
 }
 

@@ -33,11 +33,11 @@ CraftingDialog::CraftingDialog(const string &title, uint16_t sfx, uint16_t sfxDu
 CraftingDialog::CraftingDialog(const CraftingDialog &craftingDialog)
     = default;
 
-uint16_t CraftingDialog::getSfx() const {
+auto CraftingDialog::getSfx() const -> uint16_t {
     return sfx;
 }
 
-uint16_t CraftingDialog::getSfxDuration() const {
+auto CraftingDialog::getSfxDuration() const -> uint16_t {
     return sfxDuration;
 }
 
@@ -108,7 +108,7 @@ void CraftingDialog::addCraftableIngredient(TYPE_OF_ITEM_ID item, uint8_t number
     }
 }
 
-CraftingDialog::Result CraftingDialog::getResult() const {
+auto CraftingDialog::getResult() const -> CraftingDialog::Result {
     return result;
 }
 
@@ -116,7 +116,7 @@ void CraftingDialog::setResult(Result result) {
     this->result = result;
 }
 
-uint8_t CraftingDialog::getCraftableId() const {
+auto CraftingDialog::getCraftableId() const -> uint8_t {
     return craftableId;
 }
 
@@ -128,7 +128,7 @@ void CraftingDialog::setCraftableId(uint8_t index) {
     }
 }
 
-Item::number_type CraftingDialog::getCraftableAmount() const {
+auto CraftingDialog::getCraftableAmount() const -> Item::number_type {
     return craftableAmount;
 }
 
@@ -144,7 +144,7 @@ void CraftingDialog::setIngredientIndex(index_t index) {
     ingredientIndex = index;
 }
 
-uint16_t CraftingDialog::getCraftableTime() const {
+auto CraftingDialog::getCraftableTime() const -> uint16_t {
     try {
         return craftables.at(craftableId).getDecisecondsToCraft();
     } catch (std::out_of_range &) {
@@ -152,11 +152,11 @@ uint16_t CraftingDialog::getCraftableTime() const {
     }
 }
 
-bool CraftingDialog::closeOnMove() const {
+auto CraftingDialog::closeOnMove() const -> bool {
     return true;
 }
 
-bool CraftingDialog::canAddCraftable(uint8_t group) {
+auto CraftingDialog::canAddCraftable(uint8_t group) -> bool {
     return (groups.size()-1 >= group) && (craftables.size() < MAXCRAFTABLES);
 }
 

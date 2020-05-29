@@ -209,7 +209,7 @@ void World::sendCharsInVector(const std::vector<T *> &vec, Player *cp, bool send
 }
 
 
-bool World::addWarpField(const position &where, const position &target, unsigned short int starttilenr, Item::id_type startitemnr) {
+auto World::addWarpField(const position &where, const position &target, unsigned short int starttilenr, Item::id_type startitemnr) -> bool {
     try {
         map::Field &field = fieldAt(where);
 
@@ -235,7 +235,7 @@ bool World::addWarpField(const position &where, const position &target, unsigned
 }
 
 
-bool World::addWarpField(const position &where, const position &target, unsigned short int starttilenr, Item::id_type startitemnr, unsigned short int targettilenr, Item::id_type targetitemnr) {
+auto World::addWarpField(const position &where, const position &target, unsigned short int starttilenr, Item::id_type startitemnr, unsigned short int targettilenr, Item::id_type targetitemnr) -> bool {
 
     if (addWarpField(where, target, starttilenr, startitemnr)) {
 
@@ -250,7 +250,7 @@ bool World::addWarpField(const position &where, const position &target, unsigned
 }
 
 
-bool World::removeWarpField(const position &pos) {
+auto World::removeWarpField(const position &pos) -> bool {
     try {
         fieldAt(pos).removeWarp();
         return true;

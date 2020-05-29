@@ -35,7 +35,7 @@ character_out_edge_iterator::character_out_edge_iterator(int i, const Position &
     valid_step();
 }
 
-std::pair<Position, Position> character_out_edge_iterator::operator*() const {
+auto character_out_edge_iterator::operator*() const -> std::pair<Position, Position> {
     return std::make_pair(position, Position(position.first + character_moves[direction].first, position.second + character_moves[direction].second));
 }
 
@@ -44,7 +44,7 @@ void character_out_edge_iterator::operator++() {
     valid_step();
 }
 
-bool character_out_edge_iterator::operator==(const character_out_edge_iterator &iterator) const {
+auto character_out_edge_iterator::operator==(const character_out_edge_iterator &iterator) const -> bool {
     return direction == iterator.direction;
 }
 
@@ -74,24 +74,24 @@ void character_out_edge_iterator::valid_step() {
 world_map_graph::world_map_graph(const Position &goal, int level): goal(goal), level(level) {
 }
 
-world_map_graph::vertex_descriptor
-source(const world_map_graph::edge_descriptor &e, const world_map_graph &g) {
+auto
+source(const world_map_graph::edge_descriptor &e, const world_map_graph &g) -> world_map_graph::vertex_descriptor {
     return e.first;
 }
 
-world_map_graph::vertex_descriptor
-target(const world_map_graph::edge_descriptor &e, const world_map_graph &g) {
+auto
+target(const world_map_graph::edge_descriptor &e, const world_map_graph &g) -> world_map_graph::vertex_descriptor {
     return e.second;
 }
 
-std::pair<world_map_graph::out_edge_iterator, world_map_graph::out_edge_iterator>
-out_edges(const world_map_graph::vertex_descriptor &v, const world_map_graph &g) {
+auto
+out_edges(const world_map_graph::vertex_descriptor &v, const world_map_graph &g) -> std::pair<world_map_graph::out_edge_iterator, world_map_graph::out_edge_iterator> {
     using Iterator = world_map_graph::out_edge_iterator;
     return std::make_pair(Iterator(0, v, g), Iterator(8, v, g));
 }
 
-world_map_graph::degree_size_type
-out_degree(const world_map_graph::vertex_descriptor &v, const world_map_graph &g) {
+auto
+out_degree(const world_map_graph::vertex_descriptor &v, const world_map_graph &g) -> world_map_graph::degree_size_type {
     using Iterator = world_map_graph::out_edge_iterator;
     world_map_graph::degree_size_type count = 0;
     Iterator end(8, v, g);
@@ -103,7 +103,7 @@ out_degree(const world_map_graph::vertex_descriptor &v, const world_map_graph &g
     return count;
 }
 
-int num_vertices(const world_map_graph &g) {
+auto num_vertices(const world_map_graph &g) -> int {
     return 1000;
 }
 
@@ -111,7 +111,7 @@ distance_heuristic::distance_heuristic(const Vertex &goal): goal(goal) {
     Logger::debug(LogFacility::Other) << "heuristic goal (" << this->goal.first << ", " << this->goal.second << ")" << Log::end;
 }
 
-Cost distance_heuristic::operator()(const Vertex &u) {
+auto distance_heuristic::operator()(const Vertex &u) -> Cost {
     Cost dx = goal.first - u.first;
     Cost dy = goal.second - u.second;
     Cost d = sqrt(dx * dx + dy * dy);
@@ -119,7 +119,7 @@ Cost distance_heuristic::operator()(const Vertex &u) {
     return d;
 }
 
-std::size_t edge_hash::operator()(std::pair<Position, Position> const &e) const {
+auto edge_hash::operator()(std::pair<Position, Position> const &e) const -> std::size_t {
     std::size_t seed = 0;
     boost::hash_combine(seed, e.first.first);
     boost::hash_combine(seed, e.first.second);
@@ -147,7 +147,7 @@ auto weight_calc::operator[](key_type const &k) -> mapped_type & {
     return at(k);
 }
 
-std::size_t vertex_hash::operator()(Position const &u) const {
+auto vertex_hash::operator()(Position const &u) const -> std::size_t {
     std::size_t seed = 0;
     boost::hash_combine(seed, u.first);
     boost::hash_combine(seed, u.second);
@@ -202,7 +202,7 @@ auto pred_map::operator[](key_type const &k) -> mapped_type & {
     return at(k);
 }
 
-bool a_star(const ::position &start_pos, const ::position &goal_pos, std::list<direction> &steps) {
+auto a_star(const ::position &start_pos, const ::position &goal_pos, std::list<direction> &steps) -> bool {
     steps.clear();
 
     if (start_pos.z != goal_pos.z || start_pos == goal_pos) {

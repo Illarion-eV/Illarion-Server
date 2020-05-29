@@ -34,7 +34,7 @@ void QueryWhere::orConditions() {
     mergeConditions("OR");
 }
 
-std::string QueryWhere::buildQuerySegment() {
+auto QueryWhere::buildQuerySegment() -> std::string {
     while (!conditionsStack.empty()) {
         andConditions();
     }

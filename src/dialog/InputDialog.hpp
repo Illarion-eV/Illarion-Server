@@ -34,12 +34,12 @@ private:
 public:
     InputDialog(const string &title, const string &description, bool multiline, unsigned short maxChars, const luabind::object &callback);
     InputDialog(const InputDialog &inputDialog);
-    const string &getDescription() const;
-    bool isMultiline() const;
-    unsigned short getMaxChars() const;
-    bool getSuccess() const;
+    auto getDescription() const -> const string &;
+    auto isMultiline() const -> bool;
+    auto getMaxChars() const -> unsigned short;
+    auto getSuccess() const -> bool;
     void setSuccess(bool success);
-    const string &getInput() const;
+    auto getInput() const -> const string &;
     void setInput(string input);
 };
 

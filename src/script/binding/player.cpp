@@ -23,7 +23,7 @@
 
 namespace binding {
 
-    luabind::scope player() {
+    auto player() -> luabind::scope {
         return luabind::class_<Player, Character>("Player")
                 .enum_("player_language")
                 [

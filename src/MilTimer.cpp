@@ -26,7 +26,7 @@ MilTimer::MilTimer(long milsec) {
 
 
 
-bool MilTimer::Next() {
+auto MilTimer::Next() -> bool {
     timeb now;
     ftime(&now);
 

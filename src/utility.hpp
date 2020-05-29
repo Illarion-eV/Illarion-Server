@@ -21,17 +21,17 @@
 
 #include "types.hpp"
 
-extern bool mypred(char c1, char c2);
-extern bool comparestrings_nocase(const std::string &s1, const std::string &s2);
-extern direction to_direction(uint8_t dir);
+extern auto mypred(char c1, char c2) -> bool;
+extern auto comparestrings_nocase(const std::string &s1, const std::string &s2) -> bool;
+extern auto to_direction(uint8_t dir) -> direction;
 
 
 template <class T>
 struct iterator_range {
-    T begin() const {
+    auto begin() const -> T {
         return p.first;
     }
-    T end() const {
+    auto end() const -> T {
         return p.second;
     }
     std::pair<T,T> p;

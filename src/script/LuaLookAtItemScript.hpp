@@ -32,12 +32,12 @@ public:
     explicit LuaLookAtItemScript(const std::string &filename);
     ~LuaLookAtItemScript() override;
 
-    ItemLookAt lookAtItem(Character *character, const ScriptItem &item);
+    auto lookAtItem(Character *character, const ScriptItem &item) -> ItemLookAt;
 
 private:
 
     LuaLookAtItemScript(const LuaLookAtItemScript &) = delete;
-    LuaLookAtItemScript &operator=(const LuaLookAtItemScript &) = delete;
+    auto operator=(const LuaLookAtItemScript &) -> LuaLookAtItemScript & = delete;
 };
 
 #endif

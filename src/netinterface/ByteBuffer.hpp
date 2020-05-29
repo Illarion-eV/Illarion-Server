@@ -36,7 +36,7 @@ class ByteBuffer {
 public:
     ByteBuffer();
     ByteBuffer(const ByteBuffer &) = delete;
-    ByteBuffer &operator=(const ByteBuffer &) = delete;
+    auto operator=(const ByteBuffer &) -> ByteBuffer & = delete;
     ~ByteBuffer();
 
     /**
@@ -51,26 +51,26 @@ public:
     * gives the current writing buffer so that data can be added to it
     * @return a pointer to the current write buffer
     */
-    unsigned char *writeBuff();
+    auto writeBuff() -> unsigned char *;
 
     /**
     * adds the size of bytes which was written in the current write buff and sets the new write buffer
     * @param size how many bytes are written to the Buffer
     * @return true if the writing was successfull and a new empty write buffer is ready otherwise false
     */
-    bool writeToBuf(uint16_t size);
+    auto writeToBuf(uint16_t size) -> bool;
 
     /**
     * returns one byte from the buffer
     * @return the byte from the buffer
     */
-    unsigned char getByte();
+    auto getByte() -> unsigned char;
 
     /**
     * return how much data is available in the buffer
     * @return the number of bytes which are currently in the buffer
     */
-    uint16_t dataAvailable() const;
+    auto dataAvailable() const -> uint16_t;
 
 private:
 
@@ -78,7 +78,7 @@ private:
     * gets a new and empty readBuffer
     * @return true if there is a new readBuffer available otherwise false so we have to wait for some data to be read before we can try it again
     */
-    bool getReadBuffer();
+    auto getReadBuffer() -> bool;
 
     std::mutex vlock; /*<mutex for thread safety*/
     uint16_t bytesAvailable{0}; /*<stores how much bytes are currently in the buffer*/

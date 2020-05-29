@@ -41,7 +41,7 @@ Query::Query(const PConnection connection, const std::string &query) {
     dbQuery = query;
 }
 
-Result Query::execute() {
+auto Query::execute() -> Result {
     if (!dbConnection || dbQuery.empty()) {
         throw std::domain_error(
             "Connection and query string are required to execute the query.");
@@ -66,11 +66,11 @@ void Query::setQuery(const std::string &query) {
     dbQuery = query;
 }
 
-PConnection Query::getConnection() {
+auto Query::getConnection() -> PConnection {
     return dbConnection;
 }
 
-std::string Query::escapeKey(const std::string &key) {
+auto Query::escapeKey(const std::string &key) -> std::string {
     if (key.at(0) == '"' && key.at(key.length() - 1) == '"' && !key.empty()) {
         return key;
     }
@@ -78,7 +78,7 @@ std::string Query::escapeKey(const std::string &key) {
     return "\"" + key + "\"";
 }
 
-std::string Query::escapeAndChainKeys(const std::string &key1, const std::string &key2) {
+auto Query::escapeAndChainKeys(const std::string &key1, const std::string &key2) -> std::string {
     if (!key1.empty() && !key2.empty()) {
         return escapeKey(key1) + "." + escapeKey(key2);
     } else if (key1.empty()) {

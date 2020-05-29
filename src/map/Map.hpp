@@ -40,40 +40,40 @@ public:
     Map(std::string name, position origin, uint16_t width, uint16_t height,
         uint16_t tile);
     Map(const Map &) = delete;
-    Map &operator=(const Map &) = delete;
+    auto operator=(const Map &) -> Map & = delete;
     Map(Map &&) = default;
-    Map &operator=(Map &&) = default;
+    auto operator=(Map &&) -> Map & = default;
 
-    bool import(const std::string &importDir, const std::string &mapName);
-    bool load(const std::string &name);
-    bool save(const std::string &name) const;
+    auto import(const std::string &importDir, const std::string &mapName) -> bool;
+    auto load(const std::string &name) -> bool;
+    auto save(const std::string &name) const -> bool;
 
-    Field &at(int16_t x, int16_t y);
-    const Field &at(int16_t x, int16_t y) const;
-    Field &at(const MapPosition &);
-    const Field &at(const MapPosition &) const;
+    auto at(int16_t x, int16_t y) -> Field &;
+    auto at(int16_t x, int16_t y) const -> const Field &;
+    auto at(const MapPosition &) -> Field &;
+    auto at(const MapPosition &) const -> const Field &;
 
     void age();
 
-    int16_t getMinX() const;
-    int16_t getMinY() const;
-    int16_t getMaxX() const;
-    int16_t getMaxY() const;
-    int16_t getLevel() const;
-    uint16_t getWidth() const;
-    uint16_t getHeight() const;
-    const std::string &getName() const;
+    auto getMinX() const -> int16_t;
+    auto getMinY() const -> int16_t;
+    auto getMaxX() const -> int16_t;
+    auto getMaxY() const -> int16_t;
+    auto getLevel() const -> int16_t;
+    auto getWidth() const -> uint16_t;
+    auto getHeight() const -> uint16_t;
+    auto getName() const -> const std::string &;
 
-    bool intersects(const Map &map) const;
+    auto intersects(const Map &map) const -> bool;
 
 private:
-    bool importFields(const std::string &importDir, const std::string &mapName);
-    bool importItems(const std::string &importDir, const std::string &mapName);
-    bool importWarps(const std::string &importDir, const std::string &mapName);
+    auto importFields(const std::string &importDir, const std::string &mapName) -> bool;
+    auto importItems(const std::string &importDir, const std::string &mapName) -> bool;
+    auto importWarps(const std::string &importDir, const std::string &mapName) -> bool;
     static void unescape(std::string &input);
 
-    inline uint16_t convertWorldXToMap(int16_t x) const;
-    inline uint16_t convertWorldYToMap(int16_t y) const;
+    inline auto convertWorldXToMap(int16_t x) const -> uint16_t;
+    inline auto convertWorldYToMap(int16_t y) const -> uint16_t;
 };
 
 }

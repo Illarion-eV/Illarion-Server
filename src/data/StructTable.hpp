@@ -34,7 +34,7 @@ template<typename IdType, typename StructType>
 class StructTable : public Table {
     using ContainerType = std::unordered_map<IdType, StructType>;
 public:
-    bool reloadBuffer() override {
+    auto reloadBuffer() -> bool override {
         try {
             Database::SelectQuery query;
 
@@ -68,11 +68,11 @@ public:
         clear();
     }
 
-    bool exists(const IdType &id) const {
+    auto exists(const IdType &id) const -> bool {
         return structs.count(id) > 0;
     }
 
-    const StructType &operator[](const IdType &id) {
+    auto operator[](const IdType &id) -> const StructType & {
         try {
             return structs.at(id);
         } catch (std::out_of_range &) {
@@ -81,23 +81,23 @@ public:
         }
     }
 
-    const StructType &get(const IdType &id) const {
+    auto get(const IdType &id) const -> const StructType & {
         return structs.at(id);
     }
 
-    typename ContainerType::const_iterator begin() const {
+    auto begin() const -> typename ContainerType::const_iterator {
         return structs.cbegin();
     }
 
-    typename ContainerType::const_iterator end() const {
+    auto end() const -> typename ContainerType::const_iterator {
         return structs.cend();
     }
 
 protected:
-    virtual std::string getTableName() = 0;
-    virtual std::vector<std::string> getColumnNames() = 0;
-    virtual IdType assignId(const Database::ResultTuple &row) = 0;
-    virtual StructType assignTable(const Database::ResultTuple &row) = 0;
+    virtual auto getTableName() -> std::string = 0;
+    virtual auto getColumnNames() -> std::vector<std::string> = 0;
+    virtual auto assignId(const Database::ResultTuple &row) -> IdType = 0;
+    virtual auto assignTable(const Database::ResultTuple &row) -> StructType = 0;
 
     virtual void clear() {
         structBuffer.clear();
@@ -111,11 +111,11 @@ protected:
         structBuffer.emplace(id, data);
     }
 
-    bool erase(const IdType &id) {
+    auto erase(const IdType &id) -> bool {
         return structs.erase(id) > 0;
     }
 
-    StructType &get(const IdType &id) {
+    auto get(const IdType &id) -> StructType & {
         return structs[id];
     }
 

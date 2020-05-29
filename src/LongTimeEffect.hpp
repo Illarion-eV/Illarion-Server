@@ -35,25 +35,25 @@ public:
 
     void addValue(const std::string &name, uint32_t value);
     void removeValue(const std::string &name);
-    bool findValue(const std::string &name, uint32_t &ret);
+    auto findValue(const std::string &name, uint32_t &ret) -> bool;
 
-    bool callEffect(Character *target);
-    bool save(uint32_t playerid, int32_t currentTime);
+    auto callEffect(Character *target) -> bool;
+    auto save(uint32_t playerid, int32_t currentTime) -> bool;
 
-    bool isFirstAdd() const {
+    auto isFirstAdd() const -> bool {
         return firstadd;
     }
     void firstAdd() {
         firstadd = false;
     }
 
-    uint16_t getEffectId() const;
-    std::string getEffectName() const;
-    int32_t getExecuteIn() const;
+    auto getEffectId() const -> uint16_t;
+    auto getEffectName() const -> std::string;
+    auto getExecuteIn() const -> int32_t;
     void setExecuteIn(int32_t time);
-    int32_t getExecutionTime() const;
+    auto getExecutionTime() const -> int32_t;
     void setExecutionTime(int32_t offset);
-    uint32_t getNumberOfCalls() const;
+    auto getNumberOfCalls() const -> uint32_t;
     void setNumberOfCalls(uint32_t calls);
 
     static LTEPriority priority;
@@ -71,7 +71,7 @@ private:
 };
 
 struct LTEPriority {
-    bool operator()(const LongTimeEffect *lhs, const LongTimeEffect *rhs) const {
+    auto operator()(const LongTimeEffect *lhs, const LongTimeEffect *rhs) const -> bool {
         // effects with higher execution time have lower priority
         return lhs->getExecutionTime() > rhs->getExecutionTime();
     }

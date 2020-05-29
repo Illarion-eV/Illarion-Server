@@ -35,7 +35,7 @@ public:
 
 private:
     LuaLogoutScript(const LuaLogoutScript &) = delete;
-    LuaLogoutScript &operator=(const LuaLogoutScript &) = delete;
+    auto operator=(const LuaLogoutScript &) -> LuaLogoutScript & = delete;
 };
 
 #endif

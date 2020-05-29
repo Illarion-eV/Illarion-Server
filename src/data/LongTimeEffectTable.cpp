@@ -20,11 +20,11 @@
 
 #include "data/LongTimeEffectTable.hpp"
 
-std::string LongTimeEffectTable::getTableName() {
+auto LongTimeEffectTable::getTableName() -> std::string {
     return "longtimeeffects";
 }
 
-std::vector<std::string> LongTimeEffectTable::getColumnNames() {
+auto LongTimeEffectTable::getColumnNames() -> std::vector<std::string> {
     return {
         "lte_effectid",
         "lte_effectname",
@@ -32,18 +32,18 @@ std::vector<std::string> LongTimeEffectTable::getColumnNames() {
     };
 }
 
-uint16_t LongTimeEffectTable::assignId(const Database::ResultTuple &row) {
+auto LongTimeEffectTable::assignId(const Database::ResultTuple &row) -> uint16_t {
     return row["lte_effectid"].as<uint16_t>();
 }
 
-LongTimeEffectStruct LongTimeEffectTable::assignTable(const Database::ResultTuple &row) {
+auto LongTimeEffectTable::assignTable(const Database::ResultTuple &row) -> LongTimeEffectStruct {
     LongTimeEffectStruct lte;
     lte.effectid = assignId(row);
     lte.effectname = row["lte_effectid"].as<std::string>();
     return lte;
 }
 
-std::string LongTimeEffectTable::assignScriptName(const Database::ResultTuple &row) {
+auto LongTimeEffectTable::assignScriptName(const Database::ResultTuple &row) -> std::string {
     return row["lte_scriptname"].as<std::string>("");
 }
 

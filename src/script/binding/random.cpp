@@ -23,7 +23,7 @@
 
 namespace binding {
 
-    luabind::scope random() {
+    auto random() -> luabind::scope {
         return luabind::class_<Random>("Random")
                 .scope
                 [

@@ -36,10 +36,10 @@ private:
 public:
     explicit Ingredient(TYPE_OF_ITEM_ID item): item(item), number(1) {};
     Ingredient(TYPE_OF_ITEM_ID item, uint8_t number): item(item), number(number) {};
-    TYPE_OF_ITEM_ID getItem() const {
+    auto getItem() const -> TYPE_OF_ITEM_ID {
         return item;
     };
-    uint8_t getNumber() const {
+    auto getNumber() const -> uint8_t {
         return number;
     };
 };
@@ -72,19 +72,19 @@ public:
             addIngredient(ingredient.getItem(), ingredient.getNumber());
         }
     };
-    uint8_t getGroup() const {
+    auto getGroup() const -> uint8_t {
         return group;
     };
-    TYPE_OF_ITEM_ID getItem() const {
+    auto getItem() const -> TYPE_OF_ITEM_ID {
         return item;
     };
-    const string &getName() const {
+    auto getName() const -> const string & {
         return name;
     };
-    uint16_t getDecisecondsToCraft() const {
+    auto getDecisecondsToCraft() const -> uint16_t {
         return decisecondsToCraft;
     };
-    uint8_t getCraftedStackSize() const {
+    auto getCraftedStackSize() const -> uint8_t {
         return craftedStackSize;
     };
     void addIngredient(TYPE_OF_ITEM_ID item) {
@@ -97,13 +97,13 @@ public:
             ingredients.emplace_back(item, number);
         }
     };
-    index_t getIngredientsSize() const {
+    auto getIngredientsSize() const -> index_t {
         return ingredients.size();
     };
-    ingredient_iterator begin() const {
+    auto begin() const -> ingredient_iterator {
         return ingredients.cbegin();
     };
-    ingredient_iterator end() const {
+    auto end() const -> ingredient_iterator {
         return ingredients.cend();
     };
 };
@@ -145,39 +145,39 @@ public:
     CraftingDialog(const string &title, uint16_t sfx, uint16_t sfxDuration, const luabind::object &callback);
     CraftingDialog(const CraftingDialog &craftingDialog);
 
-    uint16_t getSfx() const;
-    uint16_t getSfxDuration() const;
+    auto getSfx() const -> uint16_t;
+    auto getSfxDuration() const -> uint16_t;
 
     void clearGroupsAndProducts();
 
-    index_t getGroupsSize() const;
-    group_iterator getGroupsBegin() const;
-    group_iterator getGroupsEnd() const;
+    auto getGroupsSize() const -> index_t;
+    auto getGroupsBegin() const -> group_iterator;
+    auto getGroupsEnd() const -> group_iterator;
     void addGroup(const string &name);
 
-    index_t getCraftablesSize() const;
-    craftable_iterator getCraftablesBegin() const;
-    craftable_iterator getCraftablesEnd() const;
+    auto getCraftablesSize() const -> index_t;
+    auto getCraftablesBegin() const -> craftable_iterator;
+    auto getCraftablesEnd() const -> craftable_iterator;
     void addCraftable(uint8_t id, uint8_t group, TYPE_OF_ITEM_ID item, const string &name, uint16_t decisecondsToCraft);
     void addCraftable(uint8_t id, uint8_t group, TYPE_OF_ITEM_ID item, const string &name, uint16_t decisecondsToCraft, uint8_t craftedStackSize);
     void addCraftableIngredient(TYPE_OF_ITEM_ID item);
     void addCraftableIngredient(TYPE_OF_ITEM_ID item, uint8_t number);
 
-    Result getResult() const;
+    auto getResult() const -> Result;
     void setResult(Result result);
 
-    uint8_t getCraftableId() const;
+    auto getCraftableId() const -> uint8_t;
     void setCraftableId(uint8_t index);
-    Item::number_type getCraftableAmount() const;
+    auto getCraftableAmount() const -> Item::number_type;
     void setCraftableAmount(Item::number_type amount);
-    index_t getIngredientIndex() const;
+    auto getIngredientIndex() const -> index_t;
     void setIngredientIndex(index_t index);
-    uint16_t getCraftableTime() const;
+    auto getCraftableTime() const -> uint16_t;
 
-    bool closeOnMove() const override;
+    auto closeOnMove() const -> bool override;
 
 private:
-    bool canAddCraftable(uint8_t group);
+    auto canAddCraftable(uint8_t group) -> bool;
 };
 
 #endif

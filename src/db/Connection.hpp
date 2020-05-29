@@ -40,21 +40,21 @@ private:
 public:
     explicit Connection(const std::string &connectionString);
     void beginTransaction(void);
-    pqxx::result query(const std::string &query);
+    auto query(const std::string &query) -> pqxx::result;
     void commitTransaction(void);
     void rollbackTransaction(void);
 
-    template<typename T> inline std::string quote(const T &t) const {
+    template<typename T> inline auto quote(const T &t) const -> std::string {
         return internalConnection->quote(t);
     }
 
-    inline bool transactionActive() const {
+    inline auto transactionActive() const -> bool {
         return bool(transaction);
     }
 
 private:
     Connection(const Connection &org) = delete;
-    Connection &operator=(const Connection &org) = delete;
+    auto operator=(const Connection &org) -> Connection & = delete;
 };
 
 }

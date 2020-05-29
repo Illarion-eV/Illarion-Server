@@ -37,7 +37,7 @@ void BBBroadCastTS::performAction(Player *player) {
     World::get()->broadcast_command(player, msg);
 }
 
-ClientCommandPointer BBBroadCastTS::clone() {
+auto BBBroadCastTS::clone() -> ClientCommandPointer {
     ClientCommandPointer cmd = std::make_shared<BBBroadCastTS>();
     return cmd;
 }
@@ -61,7 +61,7 @@ void BBSpeakAsTS::performAction(Player *player) {
     }
 }
 
-ClientCommandPointer BBSpeakAsTS::clone() {
+auto BBSpeakAsTS::clone() -> ClientCommandPointer {
     ClientCommandPointer cmd = std::make_shared<BBSpeakAsTS>();
     return cmd;
 }
@@ -86,7 +86,7 @@ void BBWarpPlayerTS::performAction(Player *player) {
     }
 }
 
-ClientCommandPointer BBWarpPlayerTS::clone() {
+auto BBWarpPlayerTS::clone() -> ClientCommandPointer {
     ClientCommandPointer cmd = std::make_shared<BBWarpPlayerTS>();
     return cmd;
 }
@@ -122,7 +122,7 @@ void BBServerCommandTS::performAction(Player *player) {
     }
 }
 
-ClientCommandPointer BBServerCommandTS::clone() {
+auto BBServerCommandTS::clone() -> ClientCommandPointer {
     ClientCommandPointer cmd = std::make_shared<BBServerCommandTS>();
     return cmd;
 }
@@ -149,7 +149,7 @@ void BBChangeAttribTS::performAction(Player *player) {
     }
 }
 
-ClientCommandPointer BBChangeAttribTS::clone() {
+auto BBChangeAttribTS::clone() -> ClientCommandPointer {
     ClientCommandPointer cmd = std::make_shared<BBChangeAttribTS>();
     return cmd;
 }
@@ -175,7 +175,7 @@ void BBChangeSkillTS::performAction(Player *player) {
     }
 }
 
-ClientCommandPointer BBChangeSkillTS::clone() {
+auto BBChangeSkillTS::clone() -> ClientCommandPointer {
     ClientCommandPointer cmd = std::make_shared<BBChangeSkillTS>();
     return cmd;
 }
@@ -194,7 +194,7 @@ void BBTalktoTS::performAction(Player *player) {
     World::get()->talkto_command(player, std::to_string(id) + "," + msg);
 }
 
-ClientCommandPointer BBTalktoTS::clone() {
+auto BBTalktoTS::clone() -> ClientCommandPointer {
     ClientCommandPointer cmd = std::make_shared<BBTalktoTS>();
     return cmd;
 }
@@ -211,7 +211,7 @@ void BBDisconnectTS::performAction(Player *player) {
     player->Connection->closeConnection();
 }
 
-ClientCommandPointer BBDisconnectTS::clone() {
+auto BBDisconnectTS::clone() -> ClientCommandPointer {
     ClientCommandPointer cmd = std::make_shared<BBDisconnectTS>();
     return cmd;
 }
@@ -228,7 +228,7 @@ void BBKeepAliveTS::performAction(Player *player) {
     time(&(player->lastkeepalive));
 }
 
-ClientCommandPointer BBKeepAliveTS::clone() {
+auto BBKeepAliveTS::clone() -> ClientCommandPointer {
     ClientCommandPointer cmd = std::make_shared<BBKeepAliveTS>();
     return cmd;
 }
@@ -255,7 +255,7 @@ void BBBanTS::performAction(Player *player) {
     World::get()->ban_command(player, banString);
 }
 
-ClientCommandPointer BBBanTS::clone() {
+auto BBBanTS::clone() -> ClientCommandPointer {
     ClientCommandPointer cmd = std::make_shared<BBBanTS>();
     return cmd;
 }

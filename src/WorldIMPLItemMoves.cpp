@@ -38,7 +38,7 @@ static const std::string message_overweight_english { "You can't carry that much
 
 // atomic functions //
 
-bool World::putItemOnInvPos(Character *cc, unsigned char pos) {
+auto World::putItemOnInvPos(Character *cc, unsigned char pos) -> bool {
     if (pos == BACKPACK) {
         if (cc->items[ BACKPACK ].getId() == 0) {
 
@@ -234,7 +234,7 @@ bool World::putItemOnInvPos(Character *cc, unsigned char pos) {
     return false;
 }
 
-bool World::putItemOnInvPos(Player *cc, unsigned char pos) {
+auto World::putItemOnInvPos(Player *cc, unsigned char pos) -> bool {
     if (putItemOnInvPos(dynamic_cast<Character *>(cc), pos)) {
         if (pos == LEFT_TOOL) {
             cc->sendCharacterItemAtPos(pos);
@@ -252,7 +252,7 @@ bool World::putItemOnInvPos(Player *cc, unsigned char pos) {
     }
 }
 
-bool World::takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_type count) {
+auto World::takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_type count) -> bool {
     if (pos == BACKPACK) {
         if (cc->items[ BACKPACK ].getId() != 0) {
             g_item = cc->items[ BACKPACK ];
@@ -336,7 +336,7 @@ bool World::takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_ty
     return false;
 }
 
-bool World::takeItemFromInvPos(Player *cc, unsigned char pos, Item::number_type count) {
+auto World::takeItemFromInvPos(Player *cc, unsigned char pos, Item::number_type count) -> bool {
     if (pos == BACKPACK) {
         if (cc->items[ BACKPACK ].getId() != 0) {
             if (cc->backPackContents) {
@@ -362,7 +362,7 @@ bool World::takeItemFromInvPos(Player *cc, unsigned char pos, Item::number_type 
     }
 }
 
-bool World::takeItemFromShowcase(Player *cc, uint8_t showcase, unsigned char pos, Item::number_type count) {
+auto World::takeItemFromShowcase(Player *cc, uint8_t showcase, unsigned char pos, Item::number_type count) -> bool {
     Container *ps = cc->getShowcaseContainer(showcase);
 
     if (ps) {
@@ -387,7 +387,7 @@ bool World::takeItemFromShowcase(Player *cc, uint8_t showcase, unsigned char pos
 
 }
 
-bool World::putItemInShowcase(Player *cc, uint8_t showcase, TYPE_OF_CONTAINERSLOTS pos) {
+auto World::putItemInShowcase(Player *cc, uint8_t showcase, TYPE_OF_CONTAINERSLOTS pos) -> bool {
     if (!g_item.isStackable() && !g_item.isContainer()) {
         if (g_item.getNumber() > 1) {
             return false;
@@ -422,7 +422,7 @@ bool World::putItemInShowcase(Player *cc, uint8_t showcase, TYPE_OF_CONTAINERSLO
     return false;
 }
 
-bool World::takeItemFromMap(Character *cc, const position &itemPosition) {
+auto World::takeItemFromMap(Character *cc, const position &itemPosition) -> bool {
     auto dx = abs(itemPosition.x - cc->getPosition().x);
     auto dy = abs(itemPosition.y - cc->getPosition().y);
     auto dz = abs(itemPosition.z - cc->getPosition().z);
@@ -488,7 +488,7 @@ bool World::takeItemFromMap(Character *cc, const position &itemPosition) {
     return false;
 }
 
-bool World::putItemOnMap(Character *cc, const position &itemPosition) {
+auto World::putItemOnMap(Character *cc, const position &itemPosition) -> bool {
     if (cc) {
         if (cc->getPosition().z != itemPosition.z ||
             !cc->isInRangeToField(itemPosition, MAXTHROWDISTANCE) ||
@@ -571,7 +571,7 @@ bool World::putItemOnMap(Character *cc, const position &itemPosition) {
 
 }
 
-bool World::putItemAlwaysOnMap(Character *cc, const position &itemPosition) {
+auto World::putItemAlwaysOnMap(Character *cc, const position &itemPosition) -> bool {
     try {
         map::Field &field = fieldAt(itemPosition);
 
@@ -1164,7 +1164,7 @@ void World::moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char p
     }
 }
 
-bool World::moveItemFromMapToMap(Player *cp, const position &oldPosition, const position &newPosition, Item::number_type count) {
+auto World::moveItemFromMapToMap(Player *cp, const position &oldPosition, const position &newPosition, Item::number_type count) -> bool {
     if (count == 0) {
         return false;
     }
@@ -1237,7 +1237,7 @@ bool World::moveItemFromMapToMap(Player *cp, const position &oldPosition, const 
     return false;
 }
 
-bool World::pickUpItemFromMap(Player *cp, const position &itemPosition) {
+auto World::pickUpItemFromMap(Player *cp, const position &itemPosition) -> bool {
     if (cp) {
 
         if (takeItemFromMap(cp, itemPosition)) {

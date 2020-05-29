@@ -31,10 +31,10 @@ struct AttackBoni {
 
 class MonsterAttackTable : public StructTable<uint16_t, AttackBoni> {
 public:
-    std::string getTableName() override;
-    std::vector<std::string> getColumnNames() override;
-    uint16_t assignId(const Database::ResultTuple &row) override;
-    AttackBoni assignTable(const Database::ResultTuple &row) override;
+    auto getTableName() -> std::string override;
+    auto getColumnNames() -> std::vector<std::string> override;
+    auto assignId(const Database::ResultTuple &row) -> uint16_t override;
+    auto assignTable(const Database::ResultTuple &row) -> AttackBoni override;
 };
 
 #endif

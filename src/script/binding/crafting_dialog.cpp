@@ -23,7 +23,7 @@
 
 namespace binding {
 
-    luabind::scope crafting_dialog() {
+    auto crafting_dialog() -> luabind::scope {
         return luabind::class_<CraftingDialog>("CraftingDialog")
                 .enum_("Result")
                 [

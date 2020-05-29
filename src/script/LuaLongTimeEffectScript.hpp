@@ -34,7 +34,7 @@ public:
     LuaLongTimeEffectScript(const std::string &filename, const LongTimeEffectStruct &effectStruct);
     ~LuaLongTimeEffectScript() override;
 
-    bool callEffect(LongTimeEffect *effect, Character *target);
+    auto callEffect(LongTimeEffect *effect, Character *target) -> bool;
     void doubleEffect(LongTimeEffect *effect, Character *target);
     void loadEffect(LongTimeEffect *effect, Character *target);
     void addEffect(LongTimeEffect *effect, Character *target);
@@ -43,7 +43,7 @@ public:
 private:
     LongTimeEffectStruct _effectStruct;
     explicit LuaLongTimeEffectScript(const LuaItemScript &);
-    LuaLongTimeEffectScript &operator=(const LuaLongTimeEffectScript &);
+    auto operator=(const LuaLongTimeEffectScript &) -> LuaLongTimeEffectScript &;
     void init_functions() const;
 };
 

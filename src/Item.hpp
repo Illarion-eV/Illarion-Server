@@ -49,35 +49,35 @@ public:
         id(id), number(number), wear(wear), quality(quality), datamap(1) {}
     Item(id_type id, number_type number, wear_type wear, quality_type quality, const script_data_exchangemap &datamap);
 
-    inline id_type getId() const {
+    inline auto getId() const -> id_type {
         return id;
     }
     inline void setId(id_type id) {
         this->id = id;
     }
 
-    inline number_type getNumber() const {
+    inline auto getNumber() const -> number_type {
         return number;
     }
     inline void setNumber(number_type number) {
         this->number = number;
     }
-    number_type increaseNumberBy(number_type count);
+    auto increaseNumberBy(number_type count) -> number_type;
 
-    inline wear_type getWear() const {
+    inline auto getWear() const -> wear_type {
         return wear;
     }
     inline void setWear(wear_type wear) {
         this->wear = wear;
     }
 
-    inline quality_type getQuality() const {
+    inline auto getQuality() const -> quality_type {
         return quality;
     }
     inline void setQuality(quality_type quality) {
         this->quality = quality;
     }
-    inline quality_type getDurability() const {
+    inline auto getDurability() const -> quality_type {
         return quality % 100;
     }
     void setMinQuality(const Item &item);
@@ -85,27 +85,27 @@ public:
     // setData actually does either a clear (if the datamap is nil) or a merge of the keys in datamap
     // TODO split into clear and add or merge function to make usage more obvious
     void setData(script_data_exchangemap const *datamap);
-    bool hasData(const script_data_exchangemap &datamap) const;
-    bool hasNoData() const;
-    std::string getData(const std::string &key) const;
+    auto hasData(const script_data_exchangemap &datamap) const -> bool;
+    auto hasNoData() const -> bool;
+    auto getData(const std::string &key) const -> std::string;
     void setData(const std::string &key, const std::string &value);
     void setData(const std::string &key, int32_t value);
-    inline datamap_type::const_iterator getDataBegin() const {
+    inline auto getDataBegin() const -> datamap_type::const_iterator {
         return datamap.cbegin();
     }
-    inline datamap_type::const_iterator getDataEnd() const {
+    inline auto getDataEnd() const -> datamap_type::const_iterator {
         return datamap.cend();
     }
-    inline bool equalData(script_data_exchangemap const *data) const {
+    inline auto equalData(script_data_exchangemap const *data) const -> bool {
         Item item;
         item.setData(data);
         return equalData(item);
     }
-    inline bool equalData(const Item &item) const {
+    inline auto equalData(const Item &item) const -> bool {
         return datamap == item.datamap;
     }
 
-    uint16_t getDepot() const;
+    auto getDepot() const -> uint16_t;
 
     void reset();
     void resetWear();
@@ -113,19 +113,19 @@ public:
     void save(std::ostream &obj) const;
     void load(std::istream &obj);
 
-    bool survivesAgeing();
-    bool isContainer() const;
-    TYPE_OF_VOLUME getVolume() const;
-    TYPE_OF_WEIGHT getWeight() const;
-    TYPE_OF_WORTH getWorth() const;
-    number_type getMaxStack() const;
-    bool isLarge() const;
-    bool isStackable() const;
-    bool isPermanent() const;
-    bool isMovable() const;
+    auto survivesAgeing() -> bool;
+    auto isContainer() const -> bool;
+    auto getVolume() const -> TYPE_OF_VOLUME;
+    auto getWeight() const -> TYPE_OF_WEIGHT;
+    auto getWorth() const -> TYPE_OF_WORTH;
+    auto getMaxStack() const -> number_type;
+    auto isLarge() const -> bool;
+    auto isStackable() const -> bool;
+    auto isPermanent() const -> bool;
+    auto isMovable() const -> bool;
     void makePermanent();
 
-    bool operator==(const Item& rhs) const;
+    auto operator==(const Item& rhs) const -> bool;
 private:
     id_type id{0};
     number_type number{0};
@@ -148,13 +148,13 @@ public:
     position pos;
     unsigned char itempos{255};
     Character *owner{nullptr};
-    character_ptr getOwnerForLua() {
+    auto getOwnerForLua() -> character_ptr {
         character_ptr fuse_owner(owner);
         return fuse_owner;
     };
     Container *inside{nullptr};
     ScriptItem() : Item(0,0,0),  pos(position(0, 0, 0)) {}
-    unsigned char getType() const {
+    auto getType() const -> unsigned char {
         return type;
     }
     ScriptItem(const ScriptItem &source) = default;
@@ -165,9 +165,9 @@ public:
         inside = nullptr;
     }
 
-    ItemLookAt getLookAt(Character *) const;
+    auto getLookAt(Character *) const -> ItemLookAt;
 
-    bool operator==(const ScriptItem& rhs) const;
+    auto operator==(const ScriptItem& rhs) const -> bool;
 };
 
 #endif

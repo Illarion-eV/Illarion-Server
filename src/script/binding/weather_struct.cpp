@@ -23,7 +23,7 @@
 
 namespace binding {
 
-    luabind::scope weather_struct() {
+    auto weather_struct() -> luabind::scope {
         return luabind::class_<WeatherStruct>("WeatherStruct")
                 .def(luabind::constructor<>())
                 .def(luabind::constructor<char, char, char, char, char, char, char, char>())

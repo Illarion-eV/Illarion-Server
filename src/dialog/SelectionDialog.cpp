@@ -35,7 +35,7 @@ SelectionDialog::SelectionDialog(const SelectionDialog &selectionDialog) : Dialo
     }
 }
 
-const string &SelectionDialog::getText() const {
+auto SelectionDialog::getText() const -> const string & {
     return text;
 }
 
@@ -57,7 +57,7 @@ void SelectionDialog::addOption(TYPE_OF_ITEM_ID item, const string &name) {
     }
 }
 
-bool SelectionDialog::getSuccess() const {
+auto SelectionDialog::getSuccess() const -> bool {
     return success;
 }
 
@@ -77,7 +77,7 @@ void SelectionDialog::setCloseOnMove() {
     close = true;
 }
 
-bool SelectionDialog::closeOnMove() const {
+auto SelectionDialog::closeOnMove() const -> bool {
     return close;
 }
 

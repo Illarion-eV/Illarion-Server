@@ -35,13 +35,13 @@ private:
 
 public:
     Product(TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price): item(item), name(name), price(price) {};
-    TYPE_OF_ITEM_ID getItem() const {
+    auto getItem() const -> TYPE_OF_ITEM_ID {
         return item;
     };
-    const string &getName() const {
+    auto getName() const -> const string & {
         return name;
     };
-    TYPE_OF_WORTH getPrice() const {
+    auto getPrice() const -> TYPE_OF_WORTH {
         return price;
     };
 };
@@ -53,7 +53,7 @@ private:
 
 public:
     OfferProduct(TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price, TYPE_OF_BUY_STACK stack): Product(item, name, price), stack(stack) {};
-    TYPE_OF_BUY_STACK getStack() const {
+    auto getStack() const -> TYPE_OF_BUY_STACK {
         return stack;
     };
 };
@@ -99,45 +99,45 @@ public:
     MerchantDialog(const string &title, const luabind::object &callback);
     MerchantDialog(const MerchantDialog &merchantDialog);
 
-    index_type getOffersSize() const;
-    offer_iterator getOffersBegin() const;
-    offer_iterator getOffersEnd() const;
+    auto getOffersSize() const -> index_type;
+    auto getOffersBegin() const -> offer_iterator;
+    auto getOffersEnd() const -> offer_iterator;
     void addOffer(TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price);
     void addOffer(TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price, TYPE_OF_BUY_STACK stack);
 
-    index_type getPrimaryRequestsSize() const;
-    product_iterator getPrimaryRequestsBegin() const;
-    product_iterator getPrimaryRequestsEnd() const;
+    auto getPrimaryRequestsSize() const -> index_type;
+    auto getPrimaryRequestsBegin() const -> product_iterator;
+    auto getPrimaryRequestsEnd() const -> product_iterator;
     void addPrimaryRequest(TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price);
 
-    index_type getSecondaryRequestsSize() const;
-    product_iterator getSecondaryRequestsBegin() const;
-    product_iterator getSecondaryRequestsEnd() const;
+    auto getSecondaryRequestsSize() const -> index_type;
+    auto getSecondaryRequestsBegin() const -> product_iterator;
+    auto getSecondaryRequestsEnd() const -> product_iterator;
     void addSecondaryRequest(TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price);
 
-    Result getResult() const;
+    auto getResult() const -> Result;
     void setResult(Result result);
 
-    index_type getPurchaseIndex() const;
+    auto getPurchaseIndex() const -> index_type;
     void setPurchaseIndex(index_type index);
-    Item::number_type getPurchaseAmount() const;
+    auto getPurchaseAmount() const -> Item::number_type;
     void setPurchaseAmount(Item::number_type amount);
 
-    const ScriptItem &getSaleItem() const;
+    auto getSaleItem() const -> const ScriptItem &;
     void setSaleItem(const ScriptItem &item);
 
-    ListType getLookAtList() const;
+    auto getLookAtList() const -> ListType;
     void setLookAtList(ListType list);
 
-    bool closeOnMove() const override;
+    auto closeOnMove() const -> bool override;
 private:
-    index_type getProductsSize(const product_list &products) const;
-    product_iterator getProductsBegin(const product_list &products) const;
-    product_iterator getProductsEnd(const product_list &products) const;
+    auto getProductsSize(const product_list &products) const -> index_type;
+    auto getProductsBegin(const product_list &products) const -> product_iterator;
+    auto getProductsEnd(const product_list &products) const -> product_iterator;
     void addProduct(product_list &products, TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price);
     void addProduct(product_list &products, TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price, TYPE_OF_BUY_STACK stack);
-    bool canAddOffer() const;
-    bool canAddProduct(const product_list &products) const;
+    auto canAddOffer() const -> bool;
+    auto canAddProduct(const product_list &products) const -> bool;
 };
 
 #endif

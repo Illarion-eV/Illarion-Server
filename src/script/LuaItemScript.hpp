@@ -40,16 +40,16 @@ public:
     ~LuaItemScript() override;
 
     void UseItem(Character *User, const ScriptItem &SourceItem, unsigned char ltastate);
-    bool actionDisturbed(Character *performer, Character *disturber);
-    ItemLookAt LookAtItem(Character *who, const ScriptItem &t_item);
-    bool MoveItemBeforeMove(Character *who, const ScriptItem &sourceItem, const ScriptItem &targetItem);
+    auto actionDisturbed(Character *performer, Character *disturber) -> bool;
+    auto LookAtItem(Character *who, const ScriptItem &t_item) -> ItemLookAt;
+    auto MoveItemBeforeMove(Character *who, const ScriptItem &sourceItem, const ScriptItem &targetItem) -> bool;
     void MoveItemAfterMove(Character *who, const ScriptItem &sourceItem, const ScriptItem &targetItem);
     void CharacterOnField(Character *who);
 
 private:
     ItemStruct _comstr;
     LuaItemScript(const LuaItemScript &) = delete;
-    LuaItemScript &operator=(const LuaItemScript &) = delete;
+    auto operator=(const LuaItemScript &) -> LuaItemScript & = delete;
     void init_functions() const;
 };
 

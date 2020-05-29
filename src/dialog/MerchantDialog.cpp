@@ -121,7 +121,7 @@ void MerchantDialog::setPurchaseIndex(index_type index) {
     purchaseIndex = index;
 }
 
-Item::number_type MerchantDialog::getPurchaseAmount() const {
+auto MerchantDialog::getPurchaseAmount() const -> Item::number_type {
     return purchaseAmount;
 }
 
@@ -129,7 +129,7 @@ void MerchantDialog::setPurchaseAmount(Item::number_type amount) {
     purchaseAmount = amount;
 }
 
-const ScriptItem &MerchantDialog::getSaleItem() const {
+auto MerchantDialog::getSaleItem() const -> const ScriptItem & {
     return saleItem;
 }
 
@@ -145,7 +145,7 @@ void MerchantDialog::setLookAtList(ListType list) {
     lookAtList = list;
 }
 
-bool MerchantDialog::closeOnMove() const {
+auto MerchantDialog::closeOnMove() const -> bool {
     return true;
 }
 
@@ -167,11 +167,11 @@ void MerchantDialog::addProduct(product_list &products, TYPE_OF_ITEM_ID item, co
     }
 }
 
-bool MerchantDialog::canAddOffer() const {
+auto MerchantDialog::canAddOffer() const -> bool {
     return offers.size() < MAXPRODUCTS;
 }
 
-bool MerchantDialog::canAddProduct(const product_list &products) const {
+auto MerchantDialog::canAddProduct(const product_list &products) const -> bool {
     return products.size() < MAXPRODUCTS;
 }
 

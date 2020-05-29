@@ -43,11 +43,11 @@ private:
     position_to_id_type position_to_id;
     container_type container;
 
-    bool getPosition(TYPE_OF_CHARACTER_ID id,position& pos);
-    iterator_range<position_to_id_type::const_iterator> projection_x_axis(const position& pos, int r) const;
+    auto getPosition(TYPE_OF_CHARACTER_ID id,position& pos) -> bool;
+    auto projection_x_axis(const position& pos, int r) const -> iterator_range<position_to_id_type::const_iterator>;
 
 public:
-    bool empty() const {
+    auto empty() const -> bool {
         return container.empty();
     }
 
@@ -64,20 +64,20 @@ public:
         }
     }
 
-    pointer find(const std::string &name) const;
-    pointer find(TYPE_OF_CHARACTER_ID id) const;
-    pointer find(const position &pos) const;
+    auto find(const std::string &name) const -> pointer;
+    auto find(TYPE_OF_CHARACTER_ID id) const -> pointer;
+    auto find(const position &pos) const -> pointer;
     void update(pointer p, const position& newPosition);
-    bool erase(TYPE_OF_CHARACTER_ID id);
+    auto erase(TYPE_OF_CHARACTER_ID id) -> bool;
     void clear() {
         container.clear();
         position_to_id.clear();
     }
 
-    std::vector<pointer> findAllCharactersInRangeOf(const position &pos, const Range &range) const;
-    std::vector<pointer> findAllCharactersInScreen(const position &pos) const;
-    std::vector<pointer> findAllAliveCharactersInRangeOf(const position &pos, const Range &range) const;
-    bool findAllCharactersWithXInRangeOf(short int startx, short int endx, std::vector<pointer> &ret) const;
+    auto findAllCharactersInRangeOf(const position &pos, const Range &range) const -> std::vector<pointer>;
+    auto findAllCharactersInScreen(const position &pos) const -> std::vector<pointer>;
+    auto findAllAliveCharactersInRangeOf(const position &pos, const Range &range) const -> std::vector<pointer>;
+    auto findAllCharactersWithXInRangeOf(short int startx, short int endx, std::vector<pointer> &ret) const -> bool;
 
     void for_each(const for_each_type &function) const {
         for (const auto &key_value : container) {

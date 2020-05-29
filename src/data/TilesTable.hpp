@@ -28,11 +28,11 @@
 
 class TilesTable : public ScriptStructTable<TYPE_OF_TILE_ID, TilesStruct, LuaTileScript> {
 public:
-    std::string getTableName() override;
-    std::vector<std::string> getColumnNames() override;
-    TYPE_OF_TILE_ID assignId(const Database::ResultTuple &row) override;
-    TilesStruct assignTable(const Database::ResultTuple &row) override;
-    std::string assignScriptName(const Database::ResultTuple &row) override;
+    auto getTableName() -> std::string override;
+    auto getColumnNames() -> std::vector<std::string> override;
+    auto assignId(const Database::ResultTuple &row) -> TYPE_OF_TILE_ID override;
+    auto assignTable(const Database::ResultTuple &row) -> TilesStruct override;
+    auto assignScriptName(const Database::ResultTuple &row) -> std::string override;
 };
 
 #endif

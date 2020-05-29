@@ -20,11 +20,11 @@
 
 #include "RaceTable.hpp"
 
-std::string RaceTable::getTableName() {
+auto RaceTable::getTableName() -> std::string {
     return "race";
 }
 
-std::vector<std::string> RaceTable::getColumnNames() {
+auto RaceTable::getColumnNames() -> std::vector<std::string> {
     return {
         "race_id",
         "race_name",
@@ -50,11 +50,11 @@ std::vector<std::string> RaceTable::getColumnNames() {
     };
 }
 
-TYPE_OF_ITEM_ID RaceTable::assignId(const Database::ResultTuple &row) {
+auto RaceTable::assignId(const Database::ResultTuple &row) -> TYPE_OF_ITEM_ID {
     return uint16_t(row["race_id"].as<int32_t>());
 }
 
-RaceStruct RaceTable::assignTable(const Database::ResultTuple &row) {
+auto RaceTable::assignTable(const Database::ResultTuple &row) -> RaceStruct {
     RaceStruct race;
     race.serverName = row["race_name"].as<std::string>("unknown");
     race.minSize = uint16_t(row["race_height_min"].as<int32_t>(100));
@@ -79,7 +79,7 @@ RaceStruct RaceTable::assignTable(const Database::ResultTuple &row) {
     return race;
 }
 
-uint8_t RaceTable::getRelativeSize(TYPE_OF_RACE_ID race, uint16_t size) const {
+auto RaceTable::getRelativeSize(TYPE_OF_RACE_ID race, uint16_t size) const -> uint8_t {
     // relative size is between 50 and 120 (in percent) and a linear interploation between min and max size
     if (!exists(race)) {
         return 100;
@@ -98,7 +98,7 @@ uint8_t RaceTable::getRelativeSize(TYPE_OF_RACE_ID race, uint16_t size) const {
     }
 }
 
-bool RaceTable::isBaseAttributeInLimits(TYPE_OF_RACE_ID race, Character::attributeIndex attribute, Attribute::attribute_t value) const {
+auto RaceTable::isBaseAttributeInLimits(TYPE_OF_RACE_ID race, Character::attributeIndex attribute, Attribute::attribute_t value) const -> bool {
     if (!exists(race)) {
         return false;
     }
@@ -134,7 +134,7 @@ bool RaceTable::isBaseAttributeInLimits(TYPE_OF_RACE_ID race, Character::attribu
     }
 }
 
-uint8_t RaceTable::getMaxAttributePoints(TYPE_OF_RACE_ID race) const {
+auto RaceTable::getMaxAttributePoints(TYPE_OF_RACE_ID race) const -> uint8_t {
     if (!exists(race)) {
         return 0;
     }

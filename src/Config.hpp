@@ -27,13 +27,13 @@ class ConfigEntryBase {
 public:
     explicit ConfigEntryBase(const std::string &config_name);
 
-    friend std::istream &operator>>(std::istream &is, ConfigEntryBase &);
+    friend auto operator>>(std::istream &is, ConfigEntryBase &) -> std::istream &;
     virtual void read(std::istream &is) = 0;
     virtual void write(std::ostream &os) const= 0;
 
     virtual ~ConfigEntryBase() = default;
 
-    bool isInitialized() const {
+    auto isInitialized() const -> bool {
         return _initialized;
     }
 protected:
@@ -41,8 +41,8 @@ protected:
     bool _initialized = { false };
 };
 
-std::istream &operator>>(std::istream &is, ConfigEntryBase &config_entry);
-std::ostream &operator<<(std::ostream &os, const ConfigEntryBase &config_entry);
+auto operator>>(std::istream &is, ConfigEntryBase &config_entry) -> std::istream &;
+auto operator<<(std::ostream &os, const ConfigEntryBase &config_entry) -> std::ostream &;
 
 template<typename T>
 class ConfigEntry : public ConfigEntryBase {
@@ -54,7 +54,7 @@ public:
         return _item;
     }
 
-    T operator()() const {
+    auto operator()() const -> T {
         return _item;
     }
 
@@ -72,10 +72,10 @@ private:
 
 class Config {
 public:
-    static bool load(const std::string &config_file);
+    static auto load(const std::string &config_file) -> bool;
     static void register_entry(const std::string &config_name, ConfigEntryBase *entry);
 
-    static Config &instance() {
+    static auto instance() -> Config & {
         if (!_instance) {
             _instance = std::make_unique<Config>();
         }

@@ -55,11 +55,11 @@ extern SpellTable Spells;
 extern TriggerTable Triggers;
 extern LongTimeEffectTable LongTimeEffects;
 
-std::vector<Table *> getTables();
-bool reloadTables();
+auto getTables() -> std::vector<Table *>;
+auto reloadTables() -> bool;
 void reloadScripts();
 void activateTables();
-bool reload();
+auto reload() -> bool;
 void preReload();
 
 }

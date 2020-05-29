@@ -28,7 +28,7 @@ Container::Container(const Container &source) {
     *this = source;
 }
 
-Container &Container::operator=(const Container &source) {
+auto Container::operator=(const Container &source) -> Container & {
     if (this != &source) {
         itemId = source.itemId;
 
@@ -70,7 +70,7 @@ Container::~Container() {
     }
 }
 
-Item::number_type Container::mergeItem(Item item) {
+auto Container::mergeItem(Item item) -> Item::number_type {
     if (isItemStackable(item)) {
         auto it = items.begin();
 
@@ -93,11 +93,11 @@ Item::number_type Container::mergeItem(Item item) {
     return item.getNumber();
 }
 
-bool Container::InsertItem(const Item &item) {
+auto Container::InsertItem(const Item &item) -> bool {
     return InsertItem(item, true);
 }
 
-bool Container::InsertItem(Item item, bool merge) {
+auto Container::InsertItem(Item item, bool merge) -> bool {
     if (items.size() < getSlotCount()) {
         if (item.isContainer()) {
             return InsertContainer(item, new Container(item.getId()));
@@ -121,7 +121,7 @@ bool Container::InsertItem(Item item, bool merge) {
 
 }
 
-bool Container::InsertItem(Item item, TYPE_OF_CONTAINERSLOTS pos) {
+auto Container::InsertItem(Item item, TYPE_OF_CONTAINERSLOTS pos) -> bool {
     if (pos < getSlotCount()) {
         if (item.isContainer()) {
             return InsertContainer(item, new Container(item.getId()), pos);
@@ -160,7 +160,7 @@ bool Container::InsertItem(Item item, TYPE_OF_CONTAINERSLOTS pos) {
     return false;
 }
 
-bool Container::InsertContainer(const Item &item, Container *cc) {
+auto Container::InsertContainer(const Item &item, Container *cc) -> bool {
     if ((this != cc) && (items.size() < getSlotCount())) {
         Item titem = item;
         insertIntoFirstFreeSlot(titem, cc);
@@ -171,7 +171,7 @@ bool Container::InsertContainer(const Item &item, Container *cc) {
 
 }
 
-bool Container::InsertContainer(const Item &item, Container *cc, TYPE_OF_CONTAINERSLOTS pos) {
+auto Container::InsertContainer(const Item &item, Container *cc, TYPE_OF_CONTAINERSLOTS pos) -> bool {
     if ((this != cc) && (pos < getSlotCount())) {
         Item titem = item;
 
@@ -191,7 +191,7 @@ bool Container::InsertContainer(const Item &item, Container *cc, TYPE_OF_CONTAIN
 
 }
 
-bool Container::changeQualityAt(TYPE_OF_CONTAINERSLOTS nr, short int amount) {
+auto Container::changeQualityAt(TYPE_OF_CONTAINERSLOTS nr, short int amount) -> bool {
     auto it = items.find(nr);
 
     if (it != items.end()) {
@@ -218,7 +218,7 @@ bool Container::changeQualityAt(TYPE_OF_CONTAINERSLOTS nr, short int amount) {
     return false;
 }
 
-bool Container::TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &item, Container *&cc, Item::number_type count) {
+auto Container::TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &item, Container *&cc, Item::number_type count) -> bool {
     auto it = items.find(nr);
 
     if (it != items.end()) {
@@ -266,7 +266,7 @@ bool Container::TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &item, Container *&cc
     }
 }
 
-std::vector<ScriptItem> Container::getItemList() {
+auto Container::getItemList() -> std::vector<ScriptItem> {
     std::vector<ScriptItem> list;
 
     for (auto it = items.begin(); it != items.end(); ++it) {
@@ -290,7 +290,7 @@ std::vector<ScriptItem> Container::getItemList() {
     return list;
 }
 
-std::vector<ScriptItem> Container::getItemList(Item::id_type itemid) {
+auto Container::getItemList(Item::id_type itemid) -> std::vector<ScriptItem> {
     std::vector<ScriptItem> list;
 
     for (auto it = items.begin(); it != items.end(); ++it) {
@@ -360,7 +360,7 @@ void Container::addContentToList(std::vector<ScriptItem> &list) {
     }
 }
 
-bool Container::viewItemNr(TYPE_OF_CONTAINERSLOTS nr, ScriptItem &item, Container *&cc) {
+auto Container::viewItemNr(TYPE_OF_CONTAINERSLOTS nr, ScriptItem &item, Container *&cc) -> bool {
     auto it = items.find(nr);
 
     if (it != items.end()) {
@@ -389,7 +389,7 @@ bool Container::viewItemNr(TYPE_OF_CONTAINERSLOTS nr, ScriptItem &item, Containe
     }
 }
 
-int Container::increaseAtPos(unsigned char pos, int count) {
+auto Container::increaseAtPos(unsigned char pos, int count) -> int {
     auto it = items.find(pos);
     int temp = 0;
 
@@ -419,7 +419,7 @@ int Container::increaseAtPos(unsigned char pos, int count) {
     return temp;
 }
 
-bool Container::changeItem(ScriptItem &item) {
+auto Container::changeItem(ScriptItem &item) -> bool {
     auto it = items.find(item.itempos);
 
     if (it != items.end()) {
@@ -432,7 +432,7 @@ bool Container::changeItem(ScriptItem &item) {
     return false;
 }
 
-bool Container::swapAtPos(unsigned char pos, Item::id_type newid, Item::quality_type newQuality) {
+auto Container::swapAtPos(unsigned char pos, Item::id_type newid, Item::quality_type newQuality) -> bool {
     auto it = items.find(pos);
 
     if (it != items.end()) {
@@ -509,7 +509,7 @@ void Container::Load(std::istream &where) {
     }
 }
 
-int Container::countItem(Item::id_type itemid, script_data_exchangemap const *data) const {
+auto Container::countItem(Item::id_type itemid, script_data_exchangemap const *data) const -> int {
     int temp = 0;
 
     for (auto it = items.begin(); it != items.end(); ++it) {
@@ -531,11 +531,11 @@ int Container::countItem(Item::id_type itemid, script_data_exchangemap const *da
     return temp;
 }
 
-int Container::weight() {
+auto Container::weight() -> int {
     return recursiveWeight(0);
 }
 
-int Container::recursiveWeight(int rekt) {
+auto Container::recursiveWeight(int rekt) -> int {
     int temprekt = rekt + 1;
 
     if (rekt > MAXIMALEREKURSIONSTIEFE) {
@@ -569,7 +569,7 @@ int Container::recursiveWeight(int rekt) {
     }
 }
 
-int Container::eraseItem(Item::id_type itemid, Item::number_type count, script_data_exchangemap const *data) {
+auto Container::eraseItem(Item::id_type itemid, Item::number_type count, script_data_exchangemap const *data) -> int {
 
     int temp = count;
 
@@ -665,11 +665,11 @@ void Container::resetWear() {
     }
 }
 
-TYPE_OF_CONTAINERSLOTS Container::getSlotCount() const {
+auto Container::getSlotCount() const -> TYPE_OF_CONTAINERSLOTS {
     return Data::ContainerItems[itemId];
 }
 
-bool Container::isItemStackable(const Item &item) {
+auto Container::isItemStackable(const Item &item) -> bool {
     const auto &com = Data::Items[item.getId()];
     return com.MaxStack > 1;
 }
@@ -695,7 +695,7 @@ void Container::insertIntoFirstFreeSlot(Item &item, Container *container) {
     }
 }
 
-TYPE_OF_CONTAINERSLOTS Container::getFirstFreeSlot() const {
+auto Container::getFirstFreeSlot() const -> TYPE_OF_CONTAINERSLOTS {
     TYPE_OF_CONTAINERSLOTS slotCount = getSlotCount();
     TYPE_OF_CONTAINERSLOTS i = 0;
 

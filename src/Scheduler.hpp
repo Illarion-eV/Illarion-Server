@@ -32,17 +32,17 @@ class Task {
 	public:
 		Task(std::function<void()> task, typename clock_type::time_point start_point, std::chrono::nanoseconds interval, const std::string& name);
 
-		inline bool operator<(const Task& other) const {
+		inline auto operator<(const Task& other) const -> bool {
 			return other._next < _next;
 		}
 
-		bool run();
+		auto run() -> bool;
 
-		inline std::string getName() const {
+		inline auto getName() const -> std::string {
 			return _name;
 		}
 
-		inline typename clock_type::time_point getNextTime() const {
+		inline auto getNextTime() const -> typename clock_type::time_point {
 			return _next;
 		}
 
@@ -65,7 +65,7 @@ class ClockBasedScheduler {
 		void run_once(std::chrono::nanoseconds max_timeout);
 
 	private:
-		std::chrono::nanoseconds getNextTaskTime();
+		auto getNextTaskTime() -> std::chrono::nanoseconds;
 		void execute_tasks();
 
 		std::mutex _new_action_signal_mutex;

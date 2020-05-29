@@ -49,17 +49,17 @@ public:
     explicit Container(Item::id_type itemId);
     Container(const Container &source);
     virtual ~Container();
-    Container &operator =(const Container &source);
+    auto operator =(const Container &source) -> Container &;
 
-    bool TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &item, Container *&cc, Item::number_type count);
-    bool viewItemNr(TYPE_OF_CONTAINERSLOTS nr, ScriptItem &item, Container *&cc);
-    bool changeQualityAt(TYPE_OF_CONTAINERSLOTS nr, short int amount);
-    bool InsertContainer(const Item &item, Container *cc);
-    bool InsertContainer(const Item &item, Container *cc, TYPE_OF_CONTAINERSLOTS pos);
-    Item::number_type mergeItem(Item item);
-    bool InsertItem(Item item, bool merge);
-    bool InsertItem(Item item, TYPE_OF_CONTAINERSLOTS);
-    bool InsertItem(const Item &item);
+    auto TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &item, Container *&cc, Item::number_type count) -> bool;
+    auto viewItemNr(TYPE_OF_CONTAINERSLOTS nr, ScriptItem &item, Container *&cc) -> bool;
+    auto changeQualityAt(TYPE_OF_CONTAINERSLOTS nr, short int amount) -> bool;
+    auto InsertContainer(const Item &item, Container *cc) -> bool;
+    auto InsertContainer(const Item &item, Container *cc, TYPE_OF_CONTAINERSLOTS pos) -> bool;
+    auto mergeItem(Item item) -> Item::number_type;
+    auto InsertItem(Item item, bool merge) -> bool;
+    auto InsertItem(Item item, TYPE_OF_CONTAINERSLOTS) -> bool;
+    auto InsertItem(const Item &item) -> bool;
 
     void Save(std::ofstream &where);
     void Load(std::istream &where);
@@ -67,45 +67,45 @@ public:
     void doAge(bool inventory = false);
     void resetWear();
 
-    virtual int countItem(Item::id_type itemid, script_data_exchangemap const *data = nullptr) const;
+    virtual auto countItem(Item::id_type itemid, script_data_exchangemap const *data = nullptr) const -> int;
 
     // TODO merge implementations of both addContentToList variations
     void addContentToList(Item::id_type itemid, std::vector<ScriptItem> &list);
     void addContentToList(std::vector<ScriptItem> &list);
 
-    std::vector<ScriptItem> getItemList(Item::id_type itemid);
-    std::vector<ScriptItem> getItemList();
+    auto getItemList(Item::id_type itemid) -> std::vector<ScriptItem>;
+    auto getItemList() -> std::vector<ScriptItem>;
 
-    virtual int eraseItem(Item::id_type itemid, Item::number_type count, script_data_exchangemap const *data = nullptr);
+    virtual auto eraseItem(Item::id_type itemid, Item::number_type count, script_data_exchangemap const *data = nullptr) -> int;
 
-    int increaseAtPos(unsigned char pos, int count);
+    auto increaseAtPos(unsigned char pos, int count) -> int;
 
-    bool swapAtPos(unsigned char pos, Item::id_type newid, Item::quality_type newQuality = 0);
+    auto swapAtPos(unsigned char pos, Item::id_type newid, Item::quality_type newQuality = 0) -> bool;
 
-    bool changeItem(ScriptItem &item);
+    auto changeItem(ScriptItem &item) -> bool;
 
-    int weight();
+    auto weight() -> int;
 
-    virtual TYPE_OF_CONTAINERSLOTS getSlotCount() const;
+    virtual auto getSlotCount() const -> TYPE_OF_CONTAINERSLOTS;
 
-    inline const ITEMMAP &getItems() const {
+    inline auto getItems() const -> const ITEMMAP & {
         return items;
     }
-    inline const CONTAINERMAP &getContainers() const {
+    inline auto getContainers() const -> const CONTAINERMAP & {
         return containers;
     }
 
-    TYPE_OF_CONTAINERSLOTS getFirstFreeSlot() const;
+    auto getFirstFreeSlot() const -> TYPE_OF_CONTAINERSLOTS;
 
-    inline bool isDepot() const {
+    inline auto isDepot() const -> bool {
         return itemId == DEPOTITEM;
     }
 
 private:
-    bool isItemStackable(const Item &item);
+    auto isItemStackable(const Item &item) -> bool;
     void insertIntoFirstFreeSlot(Item &item);
     void insertIntoFirstFreeSlot(Item &item, Container *container);
-    int recursiveWeight(int rekt);
+    auto recursiveWeight(int rekt) -> int;
 };
 
 #endif

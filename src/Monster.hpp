@@ -46,9 +46,9 @@ public:
     */
     Monster(const TYPE_OF_CHARACTER_ID &type, const position &newpos, SpawnPoint *spawnpoint=nullptr);
 
-    const MonsterStruct::loottype &getLoot() const override;
+    auto getLoot() const -> const MonsterStruct::loottype & override;
 
-    unsigned short getType() const override {
+    auto getType() const -> unsigned short override {
         return monster;
     }
 
@@ -75,7 +75,7 @@ public:
 
     void remove();
 
-    std::string to_string() const override;
+    auto to_string() const -> std::string override;
 
     /**
     * the monster gets a talked text from a character near starts a script entry point
@@ -89,7 +89,7 @@ public:
     * returns the spawnpoint of the monster
     * @return the spawnpoint of this monster
     */
-    inline SpawnPoint *getSpawn() const {
+    inline auto getSpawn() const -> SpawnPoint * {
         return spawn;
     }
 
@@ -97,7 +97,7 @@ public:
     * returns the type of this monster
     * @return the type
     */
-    TYPE_OF_CHARACTER_ID getMonsterType() const override {
+    auto getMonsterType() const -> TYPE_OF_CHARACTER_ID override {
         return monstertype;
     }
 
@@ -106,7 +106,7 @@ public:
     * @param target the character which is attacked
     * @return no usage at this time anything can be returned
     */
-    bool attack(Character *target) override;
+    auto attack(Character *target) -> bool override;
 
     void heal();
 
@@ -129,7 +129,7 @@ public:
     * checks if the monster can attack onther one or it is a peacefull monster
     * @return true if the monster is aggresive otherwise false
     */
-    inline const bool canAttack() const {
+    inline auto canAttack() const -> const bool {
         return _canAttack;
     }
 

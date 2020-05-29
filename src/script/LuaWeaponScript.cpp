@@ -38,7 +38,7 @@ void LuaWeaponScript::onAttack(Character *Attacker, Character *Defender) {
     callEntrypoint("onAttack", fuse_Attacker, fuse_Defender);
 }
 
-Character *LuaWeaponScript::setTarget(Character *Monster, const std::vector<Character *> &CandidateList) {
+auto LuaWeaponScript::setTarget(Character *Monster, const std::vector<Character *> &CandidateList) -> Character * {
     luabind::object luaCandidateList = luabind::newtable(_luaState);
     int index = 1;
 

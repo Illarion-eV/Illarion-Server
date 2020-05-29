@@ -58,7 +58,7 @@ public:
     */
     BasicServerCommand(unsigned char defByte, uint16_t bsize);
 
-    BasicServerCommand &operator=(const BasicServerCommand &) = delete;
+    auto operator=(const BasicServerCommand &) -> BasicServerCommand & = delete;
     BasicServerCommand (const BasicServerCommand &) = delete;    
     /**
     * Standard destructor
@@ -69,13 +69,13 @@ public:
     * Function which returns the data buffer of the command.
     * @return The data buffer of the command
     */
-    char *cmdData();
+    auto cmdData() -> char *;
 
     /**
      * Returns the length of the command in bytes
      * @return The length of the command
      */
-    int getLength() const;
+    auto getLength() const -> int;
 
     void addStringToBuffer(const std::string &data);
     void addIntToBuffer(int data);

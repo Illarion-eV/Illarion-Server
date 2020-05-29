@@ -58,9 +58,9 @@ public:
 protected:
     explicit QueryWhere(const Connection &connection);
     QueryWhere(const QueryWhere &org) = delete;
-    QueryWhere &operator=(const QueryWhere &org) = delete;
+    auto operator=(const QueryWhere &org) -> QueryWhere & = delete;
 
-    std::string buildQuerySegment();
+    auto buildQuerySegment() -> std::string;
 private:
     void mergeConditions(const std::string &operation);
 };

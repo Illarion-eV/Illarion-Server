@@ -148,7 +148,7 @@ public:
     *checks if the last action is abborted or  (Action is disturbed by another player or event)
     *@return true, if the action should be aborted
     */
-    bool actionDisturbed(Character *disturber);
+    auto actionDisturbed(Character *disturber) -> bool;
 
     /**
     *aborts the last action without checking
@@ -164,13 +164,13 @@ public:
     *checks the last Action of the player if its maybe succseful
     *@return true if the action was successfully performed
     */
-    bool checkAction();
+    auto checkAction() -> bool;
 
     /**
     *checks if currently an action is running or not
     * @return true if there is a action running
     */
-    inline bool actionRunning() const {
+    inline auto actionRunning() const -> bool {
         return _actionrunning;
     }
 

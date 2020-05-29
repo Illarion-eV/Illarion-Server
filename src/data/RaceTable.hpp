@@ -28,13 +28,13 @@
 
 class RaceTable : public StructTable<uint16_t, RaceStruct> {
 public:
-    std::string getTableName() override;
-    std::vector<std::string> getColumnNames() override;
-    uint16_t assignId(const Database::ResultTuple &row) override;
-    RaceStruct assignTable(const Database::ResultTuple &row) override;
-    uint8_t getRelativeSize(TYPE_OF_RACE_ID race, uint16_t size) const;
-    bool isBaseAttributeInLimits(TYPE_OF_RACE_ID race, Character::attributeIndex attribute, Attribute::attribute_t value) const;
-    uint8_t getMaxAttributePoints(TYPE_OF_RACE_ID race) const;
+    auto getTableName() -> std::string override;
+    auto getColumnNames() -> std::vector<std::string> override;
+    auto assignId(const Database::ResultTuple &row) -> uint16_t override;
+    auto assignTable(const Database::ResultTuple &row) -> RaceStruct override;
+    auto getRelativeSize(TYPE_OF_RACE_ID race, uint16_t size) const -> uint8_t;
+    auto isBaseAttributeInLimits(TYPE_OF_RACE_ID race, Character::attributeIndex attribute, Attribute::attribute_t value) const -> bool;
+    auto getMaxAttributePoints(TYPE_OF_RACE_ID race) const -> uint8_t;
 };
 
 #endif

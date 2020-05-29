@@ -25,7 +25,7 @@
 
 namespace binding {
 
-    luabind::scope long_time_effect() {
+    auto long_time_effect() -> luabind::scope {
         return luabind::class_<LongTimeEffect>("LongTimeEffect")
                 .def(luabind::constructor<uint16_t, uint32_t>())
                 .def("addValue", &LongTimeEffect::addValue)

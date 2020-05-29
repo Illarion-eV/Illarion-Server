@@ -38,14 +38,14 @@ public:
     }
 
     template<typename T, typename... Args>
-    T test(const Args &... args) {
+    auto test(const Args &... args) -> T {
         return callEntrypoint<T, Args...>("test", args...);
     }
 
 private:
 
     LuaTestSupportScript(const LuaTestSupportScript &) = delete;
-    LuaTestSupportScript &operator=(const LuaTestSupportScript &) = delete;
+    auto operator=(const LuaTestSupportScript &) -> LuaTestSupportScript & = delete;
 };
 
 #endif

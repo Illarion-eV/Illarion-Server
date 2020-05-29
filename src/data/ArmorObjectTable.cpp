@@ -20,11 +20,11 @@
 
 #include "data/ArmorObjectTable.hpp"
 
-std::string ArmorObjectTable::getTableName() {
+auto ArmorObjectTable::getTableName() -> std::string {
     return "armor";
 }
 
-std::vector<std::string> ArmorObjectTable::getColumnNames() {
+auto ArmorObjectTable::getColumnNames() -> std::vector<std::string> {
     return {
         "arm_itemid",
         "arm_bodyparts",
@@ -38,11 +38,11 @@ std::vector<std::string> ArmorObjectTable::getColumnNames() {
     };
 }
 
-TYPE_OF_ITEM_ID ArmorObjectTable::assignId(const Database::ResultTuple &row) {
+auto ArmorObjectTable::assignId(const Database::ResultTuple &row) -> TYPE_OF_ITEM_ID {
     return row["arm_itemid"].as<TYPE_OF_ITEM_ID>();
 }
 
-ArmorStruct ArmorObjectTable::assignTable(const Database::ResultTuple &row) {
+auto ArmorObjectTable::assignTable(const Database::ResultTuple &row) -> ArmorStruct {
     ArmorStruct armor;
     armor.BodyParts = TYPE_OF_BODYPARTS(row["arm_bodyparts"].as<int16_t>());
     armor.PunctureArmor = TYPE_OF_PUNCTUREARMOR(row["arm_puncture"].as<int16_t>());

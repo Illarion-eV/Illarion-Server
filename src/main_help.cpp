@@ -95,7 +95,7 @@ void login_save(Player *who) {
 }
 
 // process commandline arguments
-bool checkArguments(int argc, char *argv[]) {
+auto checkArguments(int argc, char *argv[]) -> bool {
     if (argc == 2) {
         // config file specified on command line
         if (Config::load(std::string(argv[ 1 ]))) {
@@ -227,7 +227,7 @@ void sig_usr(int) {
 
 }
 
-bool init_sighandlers() {
+auto init_sighandlers() -> bool {
 
     // ignore all signals while installing signal handlers
     if (sigfillset(&act_pipe.sa_mask) < 0) {

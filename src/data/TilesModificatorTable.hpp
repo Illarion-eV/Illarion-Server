@@ -27,11 +27,11 @@
 
 class TilesModificatorTable : public StructTable<TYPE_OF_ITEM_ID, TilesModificatorStruct> {
 public:
-    std::string getTableName() override;
-    std::vector<std::string> getColumnNames() override;
-    TYPE_OF_ITEM_ID assignId(const Database::ResultTuple &row) override;
-    TilesModificatorStruct assignTable(const Database::ResultTuple &row) override;
-    bool passable(TYPE_OF_ITEM_ID id);
+    auto getTableName() -> std::string override;
+    auto getColumnNames() -> std::vector<std::string> override;
+    auto assignId(const Database::ResultTuple &row) -> TYPE_OF_ITEM_ID override;
+    auto assignTable(const Database::ResultTuple &row) -> TilesModificatorStruct override;
+    auto passable(TYPE_OF_ITEM_ID id) -> bool;
 };
 
 #endif

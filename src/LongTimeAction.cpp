@@ -52,7 +52,7 @@ void LongTimeAction::setLastAction(std::shared_ptr<LuaScript> script, SouTar src
     }
 }
 
-bool LongTimeAction::checkAction() {
+auto LongTimeAction::checkAction() -> bool {
     if (_actionrunning) {
         //check if timetowaittimer is initialized and if we hit the next time
         if (_timetowaitTimer && _timetowaitTimer->Next()) {
@@ -105,7 +105,7 @@ void LongTimeAction::startLongTimeAction(unsigned short int timetowait, unsigned
 
 }
 
-bool LongTimeAction::actionDisturbed(Character *disturber) {
+auto LongTimeAction::actionDisturbed(Character *disturber) -> bool {
     checkSource();
     checkTarget();
 

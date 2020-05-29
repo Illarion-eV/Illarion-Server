@@ -30,7 +30,7 @@ namespace {
 static std::map<std::string, ConfigEntryBase *> config_options;
 }
 
-bool Config::load(const std::string &config_file) {
+auto Config::load(const std::string &config_file) -> bool {
     // make sure Config is instanciated
     Config::instance();
 
@@ -80,12 +80,12 @@ bool Config::load(const std::string &config_file) {
     return true;
 }
 
-std::istream &operator>>(std::istream &is, ConfigEntryBase &config_entry) {
+auto operator>>(std::istream &is, ConfigEntryBase &config_entry) -> std::istream & {
     config_entry.read(is);
     return is;
 }
 
-std::ostream &operator<<(std::ostream &os, const ConfigEntryBase &config_entry) {
+auto operator<<(std::ostream &os, const ConfigEntryBase &config_entry) -> std::ostream & {
     config_entry.write(os);
     return os;
 }

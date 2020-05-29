@@ -39,7 +39,7 @@ void LuaTileScript::useTile(Character *user, const position &pos, unsigned char 
     callEntrypoint("useTile", fuse_user, pos, ltastate);
 }
 
-bool LuaTileScript::actionDisturbed(Character *performer, Character *disturber) {
+auto LuaTileScript::actionDisturbed(Character *performer, Character *disturber) -> bool {
     character_ptr fuse_performer(performer);
     character_ptr fuse_disturber(disturber);
     return callEntrypoint<bool>("actionDisturbed", fuse_performer, fuse_disturber);

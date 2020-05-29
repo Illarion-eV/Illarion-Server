@@ -20,11 +20,11 @@
 
 #include "data/SkillTable.hpp"
 
-std::string SkillTable::getTableName() {
+auto SkillTable::getTableName() -> std::string {
     return "skills";
 }
 
-std::vector<std::string> SkillTable::getColumnNames() {
+auto SkillTable::getColumnNames() -> std::vector<std::string> {
     return {
         "skl_skill_id",
         "skl_name",
@@ -33,11 +33,11 @@ std::vector<std::string> SkillTable::getColumnNames() {
     };
 }
 
-TYPE_OF_SKILL_ID SkillTable::assignId(const Database::ResultTuple &row) {
+auto SkillTable::assignId(const Database::ResultTuple &row) -> TYPE_OF_SKILL_ID {
     return TYPE_OF_SKILL_ID(row["skl_skill_id"].as<uint16_t>());
 }
 
-SkillStruct SkillTable::assignTable(const Database::ResultTuple &row) {
+auto SkillTable::assignTable(const Database::ResultTuple &row) -> SkillStruct {
     SkillStruct skill;
     skill.serverName = row["skl_name"].as<std::string>();
     skill.englishName = row["skl_name_english"].as<std::string>();

@@ -31,11 +31,11 @@ struct Spell {
     uint8_t magicType;
     uint32_t spellId;
 
-    bool operator==(const Spell &spell) const {
+    auto operator==(const Spell &spell) const -> bool {
         return (magicType == spell.magicType && spellId == spell.spellId);
     }
 
-    friend std::ostream &operator<<(std::ostream &out, const Spell &spell) {
+    friend auto operator<<(std::ostream &out, const Spell &spell) -> std::ostream & {
         out << "magic: " << spell.magicType << ", spell: " << spell.spellId;
         return out;
     }
@@ -43,7 +43,7 @@ struct Spell {
 
 namespace std {
 template<> struct hash<Spell> {
-    size_t operator()(const Spell &s) const {
+    auto operator()(const Spell &s) const -> size_t {
         std::size_t seed = 0;
         boost::hash_combine(seed, s.magicType);
         boost::hash_combine(seed, s.spellId);
@@ -57,11 +57,11 @@ struct SpellStruct {
 
 class SpellTable : public ScriptStructTable<Spell, SpellStruct, LuaMagicScript> {
 public:
-    std::string getTableName() override;
-    std::vector<std::string> getColumnNames() override;
-    Spell assignId(const Database::ResultTuple &row) override;
-    SpellStruct assignTable(const Database::ResultTuple &row) override;
-    std::string assignScriptName(const Database::ResultTuple &row) override;
+    auto getTableName() -> std::string override;
+    auto getColumnNames() -> std::vector<std::string> override;
+    auto assignId(const Database::ResultTuple &row) -> Spell override;
+    auto assignTable(const Database::ResultTuple &row) -> SpellStruct override;
+    auto assignScriptName(const Database::ResultTuple &row) -> std::string override;
 };
 
 #endif

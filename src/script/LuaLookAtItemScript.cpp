@@ -29,7 +29,7 @@ LuaLookAtItemScript::LuaLookAtItemScript(const std::string &filename)
 
 LuaLookAtItemScript::~LuaLookAtItemScript() = default;
 
-ItemLookAt LuaLookAtItemScript::lookAtItem(Character *character, const ScriptItem &item) {
+auto LuaLookAtItemScript::lookAtItem(Character *character, const ScriptItem &item) -> ItemLookAt {
     character_ptr fuse_character(character);
     return callEntrypoint<ItemLookAt>("lookAtItem", fuse_character, item);
 }

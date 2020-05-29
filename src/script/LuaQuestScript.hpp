@@ -33,19 +33,19 @@ class LuaQuestScript : public LuaScript {
 public:
     LuaQuestScript(const std::string &filename, TYPE_OF_QUEST_ID quest);
     LuaQuestScript(const LuaQuestScript &) = delete;
-    LuaQuestScript &operator=(const LuaQuestScript &) = delete;
+    auto operator=(const LuaQuestScript &) -> LuaQuestScript & = delete;
     ~LuaQuestScript() override;
 
-    std::string title(Character *user);
-    std::string description(Character *user, TYPE_OF_QUESTSTATUS status);
-    QuestAvailability available(Character *user, TYPE_OF_QUESTSTATUS status);
-    position start();
+    auto title(Character *user) -> std::string;
+    auto description(Character *user, TYPE_OF_QUESTSTATUS status) -> std::string;
+    auto available(Character *user, TYPE_OF_QUESTSTATUS status) -> QuestAvailability;
+    auto start() -> position;
     void targets(Character *user, TYPE_OF_QUESTSTATUS status, std::vector<position> &targets);
-    TYPE_OF_QUESTSTATUS finalStatus();
+    auto finalStatus() -> TYPE_OF_QUESTSTATUS;
 
 private:
     TYPE_OF_QUEST_ID quest;
-    static position getPosition(const luabind::object &potentialPosition);
+    static auto getPosition(const luabind::object &potentialPosition) -> position;
 };
 
 #endif

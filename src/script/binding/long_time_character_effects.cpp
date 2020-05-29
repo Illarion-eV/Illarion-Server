@@ -26,7 +26,7 @@
 
 namespace binding {
 
-    luabind::scope long_time_character_effects() {
+    auto long_time_character_effects() -> luabind::scope {
         return luabind::class_<LongTimeCharacterEffects>("LongTimeCharacterEffects")
         .def("addEffect",&LongTimeCharacterEffects::addEffect, luabind::adopt(_2))
         .def("removeEffect", (bool(LongTimeCharacterEffects:: *)(uint16_t))&LongTimeCharacterEffects::removeEffect)

@@ -35,7 +35,7 @@ public:
 
 private:
     LuaScheduledScript(const LuaScheduledScript &) = delete;
-    LuaScheduledScript &operator=(LuaScheduledScript &) = delete;
+    auto operator=(LuaScheduledScript &) -> LuaScheduledScript & = delete;
 };
 
 #endif

@@ -42,7 +42,7 @@ LongTimeEffect::LongTimeEffect(uint16_t effectId, int32_t executeIn):
     executeIn(executeIn) {
 }
 
-bool LongTimeEffect::callEffect(Character *target) {
+auto LongTimeEffect::callEffect(Character *target) -> bool {
     bool ret = false;
     const auto &script = Data::LongTimeEffects.script(effectId);
 
@@ -62,7 +62,7 @@ void LongTimeEffect::removeValue(const std::string &name) {
     values.erase(name);
 }
 
-bool LongTimeEffect::findValue(const std::string &name, uint32_t &ret) {
+auto LongTimeEffect::findValue(const std::string &name, uint32_t &ret) -> bool {
     auto it = values.find(name);
 
     if (it != values.end()) {
@@ -73,7 +73,7 @@ bool LongTimeEffect::findValue(const std::string &name, uint32_t &ret) {
     }
 }
 
-bool LongTimeEffect::save(uint32_t playerid, int32_t currentTime) {
+auto LongTimeEffect::save(uint32_t playerid, int32_t currentTime) -> bool {
     using namespace Database;
     PConnection connection = ConnectionManager::getInstance().getConnection();
 
@@ -123,15 +123,15 @@ bool LongTimeEffect::save(uint32_t playerid, int32_t currentTime) {
     return true;
 }
 
-uint16_t LongTimeEffect::getEffectId() const {
+auto LongTimeEffect::getEffectId() const -> uint16_t {
     return effectId;
 }
 
-std::string LongTimeEffect::getEffectName() const {
+auto LongTimeEffect::getEffectName() const -> std::string {
     return effectName;
 }
 
-int32_t LongTimeEffect::getExecuteIn() const {
+auto LongTimeEffect::getExecuteIn() const -> int32_t {
     return executeIn;
 }
 
@@ -139,7 +139,7 @@ void LongTimeEffect::setExecuteIn(int32_t time) {
     executeIn = time;
 }
 
-int32_t LongTimeEffect::getExecutionTime() const {
+auto LongTimeEffect::getExecutionTime() const -> int32_t {
     return executionTime;
 }
 
@@ -147,7 +147,7 @@ void LongTimeEffect::setExecutionTime(int32_t offset) {
     executionTime = offset + executeIn;
 }
 
-uint32_t LongTimeEffect::getNumberOfCalls() const {
+auto LongTimeEffect::getNumberOfCalls() const -> uint32_t {
     return numberOfCalls;
 }
 

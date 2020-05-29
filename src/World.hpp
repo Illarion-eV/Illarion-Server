@@ -212,9 +212,9 @@ public:
     }
 
     //! parse GMCommands of the Form !<string1> <string2> and process them
-    bool parseGMCommands(Player *user, const std::string &text);
+    auto parseGMCommands(Player *user, const std::string &text) -> bool;
     //! parse PlayerCommands of the Form !<string1> <string2> and process them
-    bool parsePlayerCommands(Player *player, const std::string &text);
+    auto parsePlayerCommands(Player *player, const std::string &text) -> bool;
 
     /**
     *the current script which is called
@@ -262,7 +262,7 @@ public:
     *@param timeType <"year"|"month"|"day"|"hour"|"minute"|"second">
     *@return an int which is the current illarion time from the type
     */
-    int getTime(const std::string &timeType);
+    auto getTime(const std::string &timeType) -> int;
 
     /**
     *checks the command list of one player and put them into practize
@@ -273,19 +273,19 @@ public:
     void allowLogin(bool allow) {
         _is_login_allowed = allow;
     }
-    bool isLoginAllowed() const {
+    auto isLoginAllowed() const -> bool {
         return _is_login_allowed;
     }
 
     void enableSpawn(bool enable) {
         _is_spawn_enabled = enable;
     }
-    bool isSpawnEnabled() const {
+    auto isSpawnEnabled() const -> bool {
         return _is_spawn_enabled;
     }
 
-    static World *create();
-    static World *get();
+    static auto create() -> World *;
+    static auto get() -> World *;
 
 
     /**============ WorldIMPLTools.cpp ==================*/
@@ -297,7 +297,7 @@ public:
     */
     void deleteAllLostNPC();
 
-    inline LuaScript *getCurrentScript() const {
+    inline auto getCurrentScript() const -> LuaScript * {
         return currentScript;
     }
     inline void setCurrentScript(LuaScript *script) {
@@ -317,7 +317,7 @@ public:
     * @param range the roung around pos which should be searched for warpfields
     * @param call by reference, returns a hashmap with the warpfields which where found
     */
-    bool findWarpFieldsInRange(const position &pos, short int range, std::vector<position> &warppositions);
+    auto findWarpFieldsInRange(const position &pos, short int range, std::vector<position> &warppositions) -> bool;
 
     /**
     * returns a list of blocking objects between a startin position and a ending position
@@ -325,12 +325,12 @@ public:
     * @param endingpos the end of the line of sight calculation
     * @return list of all blocking objects between startingpos and endingpos.
     */
-    std::list<BlockingObject> LoS(const position &startingpos, const position &endingpos) const;
+    auto LoS(const position &startingpos, const position &endingpos) const -> std::list<BlockingObject>;
 
 
-    bool findTargetsInSight(const position &pos, uint8_t range, std::vector<Character *> &ret, Character::face_to direction) const;
-    Character *findCharacterOnField(const position &pos) const;
-    Player *findPlayerOnField(const position &pos) const;
+    auto findTargetsInSight(const position &pos, uint8_t range, std::vector<Character *> &ret, Character::face_to direction) const -> bool;
+    auto findCharacterOnField(const position &pos) const -> Character *;
+    auto findPlayerOnField(const position &pos) const -> Player *;
 
 
     /**
@@ -341,7 +341,7 @@ public:
     * @return a pointer to the character, nullptr if the character wasn't found
     * @todo has to be changed for only one charactervetor
     */
-    virtual Character *findCharacter(TYPE_OF_CHARACTER_ID id);
+    virtual auto findCharacter(TYPE_OF_CHARACTER_ID id) -> Character *;
 
     /**
             *deletes all monsters and npcs from the map and emptys the lists
@@ -354,19 +354,19 @@ public:
     * a player attacks
     * @param cp the player who is attacking
     */
-    bool characterAttacks(Character *cp);
+    auto characterAttacks(Character *cp) -> bool;
 
-    bool killMonster(TYPE_OF_CHARACTER_ID id);
+    auto killMonster(TYPE_OF_CHARACTER_ID id) -> bool;
 
-    map::Field &fieldAt(const position &pos);
-    const map::Field &fieldAt(const position &pos) const;
-    map::Field &fieldAtOrBelow(position &pos);
-    map::Field &walkableFieldNear(const position &pos);
+    auto fieldAt(const position &pos) -> map::Field &;
+    auto fieldAt(const position &pos) const -> const map::Field &;
+    auto fieldAtOrBelow(position &pos) -> map::Field &;
+    auto walkableFieldNear(const position &pos) -> map::Field &;
     void makePersistentAt(const position &pos);
     void removePersistenceAt(const position &pos);
-    bool isPersistentAt(const position &pos) const;
+    auto isPersistentAt(const position &pos) const -> bool;
 
-    int getItemAttrib(const std::string &s, TYPE_OF_ITEM_ID ItemID);
+    auto getItemAttrib(const std::string &s, TYPE_OF_ITEM_ID ItemID) -> int;
 
     /**
     *sends all players in sight of the tiles line the map
@@ -379,8 +379,8 @@ public:
     void Load();
     void Save() const;
     void import();
-    bool createMap(const std::string &name, const position &origin,
-                   uint16_t width, uint16_t height, uint16_t tile) {
+    auto createMap(const std::string &name, const position &origin,
+                   uint16_t width, uint16_t height, uint16_t tile) -> bool {
         return maps.createMap(name, origin, width, height, tile);
     }
 
@@ -425,7 +425,7 @@ public:
     *@param startitemnr the id of a new item which should be placed at the start position. 0 for no changes
     *@return true if the adding of the warpfield was succesfull otherwise false
     */
-    bool addWarpField(const position &where, const position &target, unsigned short int starttilenr, Item::id_type startitemnr);
+    auto addWarpField(const position &where, const position &target, unsigned short int starttilenr, Item::id_type startitemnr) -> bool;
 
     /**
     *adds a two way warpfield to the map
@@ -440,7 +440,7 @@ public:
     *@param targetitemnr the id of a new item which should be added at the target pos. 0 for no changes
     *@return true if the adding of the warpfield was succesfull otherwise false
     */
-    bool addWarpField(const position &where, const position &target, unsigned short int starttilenr, Item::id_type startitemnr, unsigned short int targettilenr, Item::id_type targetitemnr);
+    auto addWarpField(const position &where, const position &target, unsigned short int starttilenr, Item::id_type startitemnr, unsigned short int targettilenr, Item::id_type targetitemnr) -> bool;
 
     /**
     *removes a warpfield at a given position
@@ -448,7 +448,7 @@ public:
     *@param where the position of the warpfield which should be removed
     *@return true if the removing was succesfull otherwise false
     */
-    bool removeWarpField(const position &pos);
+    auto removeWarpField(const position &pos) -> bool;
 
     /**
     * looks for the targetposition of a Warpfield
@@ -499,7 +499,7 @@ public:
     *@return true if the movement was succesful otherwise false
     *@todo Player->move was implemented this function can be deleted
     **/
-    bool pushPlayer(Player *cp, unsigned char d, short int &walkcost);
+    auto pushPlayer(Player *cp, unsigned char d, short int &walkcost) -> bool;
 
     void checkFieldAfterMove(Character *character, const map::Field &field);
     void sendPassiveMoveToAllVisiblePlayers(Character *ccp);
@@ -555,13 +555,13 @@ public:
 
     //! converts the number of a language to the proper skill name.
     // \param language number
-    std::string languageNumberToSkillName(int languageNumber);
+    auto languageNumberToSkillName(int languageNumber) -> std::string;
 
     //! converts the language number into the proper language prefix for talking
     //\param language number
-    std::string languagePrefix(int Language);
+    auto languagePrefix(int Language) -> std::string;
 
-    Range getTalkRange(Character::talk_type tt) const;
+    auto getTalkRange(Character::talk_type tt) const -> Range;
 
     //! schickt an alle Spieler auf den Nachbarfeldern von cp dessen Namen
     // \param cp der Player der sich den anderen bekannt macht
@@ -661,7 +661,7 @@ public:
     //! wirft einen aktiven Player aus dem Spiel
     // \param name der Spieler der herausgeworfen werden soll
     // \return true falls der Player gefunden wurde, false sonst
-    bool forceLogoutOfPlayer(const std::string &name);
+    auto forceLogoutOfPlayer(const std::string &name) -> bool;
 
     //! sendet einem Admin die Daten aller aktiven Player
     // \param admin der Admin an den die Daten gesandt werden sollen
@@ -674,10 +674,10 @@ public:
     void summon_command(Player *player, const std::string &text);
 
     // ! relaods only the definition from the db no Monsterspawns and no NPC's are loaded.
-    bool reload_defs(Player *cp);
+    auto reload_defs(Player *cp) -> bool;
 
     // ! adds Warpfields to map from textfile
-    bool importWarpFields(Player *cp,const std::string &filename);
+    auto importWarpFields(Player *cp,const std::string &filename) -> bool;
 
     // ! Deletes a Warpfield
     void removeTeleporter(Player *cp, const std::string &text);
@@ -691,22 +691,22 @@ public:
     Item g_item;
     Container *g_cont;
 
-    bool takeItemFromMap(Character *cc, const position &itemPosition);
-    bool putItemOnMap(Character *cc, const position &itemPosition);
-    bool putItemAlwaysOnMap(Character *cc, const position &itemPosition);
-    bool takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_type count);
-    bool putItemOnInvPos(Character *cc, unsigned char pos);
-    bool takeItemFromInvPos(Player *cc, unsigned char pos, Item::number_type count);
-    bool putItemOnInvPos(Player *cc, unsigned char pos);
+    auto takeItemFromMap(Character *cc, const position &itemPosition) -> bool;
+    auto putItemOnMap(Character *cc, const position &itemPosition) -> bool;
+    auto putItemAlwaysOnMap(Character *cc, const position &itemPosition) -> bool;
+    auto takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_type count) -> bool;
+    auto putItemOnInvPos(Character *cc, unsigned char pos) -> bool;
+    auto takeItemFromInvPos(Player *cc, unsigned char pos, Item::number_type count) -> bool;
+    auto putItemOnInvPos(Player *cc, unsigned char pos) -> bool;
 
     void closeShowcaseForOthers(Player *target, Container *moved);
     void closeShowcaseIfNotInRange(Container *moved, const position &showcasePosition);
 
-    bool takeItemFromShowcase(Player *cc, uint8_t showcase, unsigned char pos, Item::number_type count);
-    bool putItemInShowcase(Player *cc, uint8_t showcase, TYPE_OF_CONTAINERSLOTS pos);
+    auto takeItemFromShowcase(Player *cc, uint8_t showcase, unsigned char pos, Item::number_type count) -> bool;
+    auto putItemInShowcase(Player *cc, uint8_t showcase, TYPE_OF_CONTAINERSLOTS pos) -> bool;
     void checkField(const map::Field &field, const position &itemPosition);
 
-    bool moveItemFromMapToMap(Player *cp, const position &oldPosition, const position &newPosition, Item::number_type count);
+    auto moveItemFromMapToMap(Player *cp, const position &oldPosition, const position &newPosition, Item::number_type count) -> bool;
     void moveItemFromMapIntoShowcase(Player *cp, const position &sourcePosition, uint8_t showcase, unsigned char showcaseSlot, Item::number_type count);
     void moveItemFromMapToPlayer(Player *cp, const position &sourcePosition, unsigned char inventorySlot, Item::number_type count);
     void moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char pos, uint8_t dest, unsigned char pos2, Item::number_type count);
@@ -715,7 +715,7 @@ public:
     void moveItemBetweenBodyParts(Player *cp, unsigned char opos, unsigned char npos, Item::number_type count);
     void dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, const position &newPosition, Item::number_type count);
     void moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, uint8_t showcase, unsigned char pos, Item::number_type count);
-    bool pickUpItemFromMap(Player *cp, const position &itemPosition);
+    auto pickUpItemFromMap(Player *cp, const position &itemPosition) -> bool;
     void pickUpAllItemsFromMap(Player *cp);
 
     void sendRemoveItemFromMapToAllVisibleCharacters(const position &itemPosition);
@@ -732,7 +732,7 @@ public:
     *@param npc The npc to be deleted
     *@return success of deletion
     */
-    bool deleteNPC(unsigned int npcid);
+    auto deleteNPC(unsigned int npcid) -> bool;
 
     /**
     *creates a dynamic NPC
@@ -744,21 +744,21 @@ public:
     *@param scriptname scriptname
     *@return success of creation
     */
-    bool createDynamicNPC(const std::string &name, TYPE_OF_RACE_ID type, const position &pos, /*CCharacter::face_to dir,*/ Character::sex_type sex, const std::string &scriptname);
+    auto createDynamicNPC(const std::string &name, TYPE_OF_RACE_ID type, const position &pos, /*CCharacter::face_to dir,*/ Character::sex_type sex, const std::string &scriptname) -> bool;
 
     /**
     *creates a list with all the players which are currently online and returns it
     *to lua
     *@return the list with all the players currently online
     */
-    std::vector<Player *> getPlayersOnline() const;
+    auto getPlayersOnline() const -> std::vector<Player *>;
 
     /**
     *creates a list with all the npcs which are currently online and returns it
     *to lua
     *@return the list with all the npcs currently online
     */
-    std::vector<NPC *> getNPCS() const;
+    auto getNPCS() const -> std::vector<NPC *>;
 
     /**
     *creates a list with all the characters in range around a specific position
@@ -766,15 +766,15 @@ public:
     *@param range the range around the position for calculating
     *@return a list with all the characters (including monsters, npcs, players) around this char
     */
-    std::vector<Character *> getCharactersInRangeOf(const position &pos, uint8_t radius) const;
-    std::vector<Player *> getPlayersInRangeOf(const position &pos, uint8_t radius) const;
-    std::vector<Monster *> getMonstersInRangeOf(const position &pos, uint8_t radius) const;
-    std::vector<NPC *> getNPCSInRangeOf(const position &pos, uint8_t radius) const;
+    auto getCharactersInRangeOf(const position &pos, uint8_t radius) const -> std::vector<Character *>;
+    auto getPlayersInRangeOf(const position &pos, uint8_t radius) const -> std::vector<Player *>;
+    auto getMonstersInRangeOf(const position &pos, uint8_t radius) const -> std::vector<Monster *>;
+    auto getNPCSInRangeOf(const position &pos, uint8_t radius) const -> std::vector<NPC *>;
 
     //Sucht zu einem Item die gesamten Stats wie Gewicht heraus
     //\param item, das Item zu dem die Stats heraus gesucht werden sollen.
-    ItemStruct getItemStats(const ScriptItem &item);
-    ItemStruct getItemStatsFromId(TYPE_OF_ITEM_ID id);
+    auto getItemStats(const ScriptItem &item) -> ItemStruct;
+    auto getItemStatsFromId(TYPE_OF_ITEM_ID id) -> ItemStruct;
 
     //Aendert die Qualitaet eines ScriptItems.
     //param item, das Item das geaendert werden soll
@@ -787,38 +787,38 @@ public:
     //\param itemid, id des items zu dem der Name geliefert werden soll
     //\param language, die Sprache in der der Name zurck gegeben werden sollte
     //\ret der name in der entsprechenden Sprache.
-    virtual std::string getItemName(TYPE_OF_ITEM_ID itemid, uint8_t language);
+    virtual auto getItemName(TYPE_OF_ITEM_ID itemid, uint8_t language) -> std::string;
 
     //Aendert ein ScriptItem
-    bool changeItem(ScriptItem item);
+    auto changeItem(ScriptItem item) -> bool;
 
     //Prft ob sich auf dem Feld ein Character befindet
     //\param position die zu prfen ist
     //\return true oder false
-    bool isCharacterOnField(const position &pos) const;
+    auto isCharacterOnField(const position &pos) const -> bool;
 
     //Liefert einen Zeiger auf einen Character
     //\param pos, die Position auf der sich der Character befinden soll
     //\return Zeiger auf den Character
-    character_ptr getCharacterOnField(const position &pos) const;
+    auto getCharacterOnField(const position &pos) const -> character_ptr;
 
     //Loescht ein ScriptItem
     //\ param Item, das Item welches geloescht werden soll
     //\ param amount, Anzahl der Items
     //\ return bool Wert der Angibt ob das Item erfolgreich geloescht werden konnte
-    bool erase(ScriptItem item, int amount); //, int amount);
+    auto erase(ScriptItem item, int amount) -> bool; //, int amount);
 
     //Tauscht ein ScriptItem durch ein anderes Item aus
     //\ param Item, das Item welches ausgetauscht werden soll
     //\ param newItem, Id des neuen Items welches erstellt werden soll
     //\ return bool Wert der Angibt ob das Item erfolgreich getauscht wurde
-    bool swap(ScriptItem item, TYPE_OF_ITEM_ID newItem, unsigned short int newQuality=0);
+    auto swap(ScriptItem item, TYPE_OF_ITEM_ID newItem, unsigned short int newQuality=0) -> bool;
 
     //Erhoeht die Anzahl eines ScriptItems um einen bestimmten Wert
     //\ param Item, das Item welches erhoeht werden soll
     //\ param count, die anzahl um die erhoeht werden soll
     //\ return bool Wert ob das erhoehen der Anzahl erfolgreich war.
-    bool increase(ScriptItem item, short int count);
+    auto increase(ScriptItem item, short int count) -> bool;
 
 
     //Erzeugt auf dem Angegebenen Feld ein Item mit einer bestimmten ID
@@ -827,19 +827,19 @@ public:
     //\ param pos Position des Items
     //\ return bool Wert ob das Erstellen geklappt hat.
     //\ quali int, das die qualitaet angibt
-    ScriptItem createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, const position &pos, bool always, int quality, script_data_exchangemap const *data);
+    auto createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, const position &pos, bool always, int quality, script_data_exchangemap const *data) -> ScriptItem;
 
     //Erzeugt auf den Angegebenen Feld ein bestimmtes Item
     //\ param item, das Item was erzeugt werden soll
     //\ param pos, Position des Items
     //\ return bool Wert der angibt ob das Erstellen geklappt hat.
-    bool createFromItem(ScriptItem item, const position &pos, bool always);
+    auto createFromItem(ScriptItem item, const position &pos, bool always) -> bool;
 
     //Erzeugt ein Monster mit der entsprechenden ID auf dem Feld
     //\ param id, das Monster welches Erzeugt werden soll
     //\ param pos, die Position des Monsters
     //\ return character_ptr Valid monster on success, invalid monster on failure
-    character_ptr createMonster(unsigned short id, const position &pos, short movepoints);
+    auto createMonster(unsigned short id, const position &pos, short movepoints) -> character_ptr;
 
     //Zeigt eine Grafik auf einem bestimmten Feld an
     //\gfxid, ID der anzuzeigenden Grafik
@@ -854,12 +854,12 @@ public:
     //!Prft ob auf einen FEld ein ITem liegt
     //\pos die Position des feldes
     //\return true wenn auf den Feld ein ITem liegt
-    bool isItemOnField(const position &pos);
+    auto isItemOnField(const position &pos) -> bool;
 
     //!Liefert ein Item zurck welches auf dem Feld liegt
     //\pos die Position des Feldes
     //\return das ScriptITem auf dem Feld;
-    ScriptItem getItemOnField(const position &pos);
+    auto getItemOnField(const position &pos) -> ScriptItem;
 
     //!Aendert ein Bodentile
     //\tileid, neue Id des bodentiles
@@ -872,23 +872,23 @@ public:
     //\height: Hoehe der neuen Karte
     //\width: breite der neuen Karte
     //\return true wenn das einfgen klappte, ansonsten false wenns zu berlagerungen kommt.
-    bool createSavedArea(uint16_t tile, const position &origin, uint16_t height, uint16_t width);
+    auto createSavedArea(uint16_t tile, const position &origin, uint16_t height, uint16_t width) -> bool;
 
     //! Laedt eine Armor Struct anhand einer id.
     //\return true false der Armorstruct gefunden wurde
-    bool getArmorStruct(TYPE_OF_ITEM_ID id, ArmorStruct &ret);
+    auto getArmorStruct(TYPE_OF_ITEM_ID id, ArmorStruct &ret) -> bool;
 
     //! Laedt einen Weapon Struct anhand einer id.
     //\return true false der WeaponStruct gefunden wurde.
-    bool getWeaponStruct(TYPE_OF_ITEM_ID id, WeaponStruct &ret);
+    auto getWeaponStruct(TYPE_OF_ITEM_ID id, WeaponStruct &ret) -> bool;
 
     //! Laedt ein MonsterRst Struct anhand einer id.
     //\return true false der Struct gefunden wurde.
-    bool getNaturalArmor(TYPE_OF_RACE_ID id, MonsterArmor &ret);
+    auto getNaturalArmor(TYPE_OF_RACE_ID id, MonsterArmor &ret) -> bool;
 
     //! Laedt ein Attack Boni struct anhand einer id
     //\return true wenn das Struct gefunden wurde
-    bool getMonsterAttack(TYPE_OF_RACE_ID id, AttackBoni &ret);
+    auto getMonsterAttack(TYPE_OF_RACE_ID id, AttackBoni &ret) -> bool;
 
     /**
     *sends a Message to All Monitoring Clients
@@ -924,7 +924,7 @@ private:
     *@param time_t the starting time of the server
     */
     explicit World(const std::string &dir);
-    World &operator=(const World &) = delete;
+    auto operator=(const World &) -> World & = delete;
     World(const World &) = delete;
 
     //! IG day of last turntheworld
@@ -943,7 +943,7 @@ private:
     std::list<SpawnPoint> SpawnList;
 
     // initmethod for spawn places...
-    bool initRespawns();
+    auto initRespawns() -> bool;
 
     using CommandMap = std::map<std::string, CommandType>;
     CommandMap GMCommands;
@@ -976,7 +976,7 @@ private:
     void gmhelp_command(Player *cp);
 
     //Sendet eine Nachricht an alle GM's
-    bool gmpage_command(Player *player, const std::string &ticket);
+    auto gmpage_command(Player *player, const std::string &ticket) -> bool;
 
 public:
     void ban_command(Player *cp, const std::string &text);
@@ -987,23 +987,23 @@ public:
 private:
     map::WorldMap maps;
 
-    std::vector<Character *> getTargetsInRange(const position &pos, int radius) const;
+    auto getTargetsInRange(const position &pos, int radius) const -> std::vector<Character *>;
     
-    bool active_language_command(Player *cp, const std::string &language);
+    auto active_language_command(Player *cp, const std::string &language) -> bool;
 
     // register any GM commands here...
     void InitGMCommands();
     // register any Player commands here...
     void InitPlayerCommands();
-    bool executeUserCommand(Player *user, const std::string &input, const CommandMap &commands);
+    auto executeUserCommand(Player *user, const std::string &input, const CommandMap &commands) -> bool;
 
     // export maps to mapdir/export
-    bool exportMaps(Player *cp) const;
+    auto exportMaps(Player *cp) const -> bool;
 
     void ignoreComments(std::ifstream &inputStream);
 
     //! reload all tables
-    bool reload_tables(Player *cp);
+    auto reload_tables(Player *cp) -> bool;
 
     void version_command(Player *player);
 

@@ -23,7 +23,7 @@
 
 namespace binding {
 
-    luabind::scope long_time_action() {
+    auto long_time_action() -> luabind::scope {
         return luabind::class_<LongTimeAction>("Action")
                 .enum_("state")
                 [

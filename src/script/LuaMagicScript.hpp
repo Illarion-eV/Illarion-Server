@@ -37,11 +37,11 @@ public:
     void CastMagicOnItem(Character *caster, const ScriptItem &TargetItem, unsigned char ltastate);
     void CastMagicOnCharacter(Character *caster, Character *target, unsigned char ltastate);
     void CastMagicOnField(Character *caster, const position &pos, unsigned char ltastate);
-    bool actionDisturbed(Character *performer, Character *disturber);
+    auto actionDisturbed(Character *performer, Character *disturber) -> bool;
 
 private:
     LuaMagicScript(const LuaMagicScript &) = delete;
-    LuaMagicScript &operator=(const LuaMagicScript &) = delete;
+    auto operator=(const LuaMagicScript &) -> LuaMagicScript & = delete;
 
     void init_functions();
 };

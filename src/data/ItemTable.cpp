@@ -20,11 +20,11 @@
 
 #include "ItemTable.hpp"
 
-std::string ItemTable::getTableName() {
+auto ItemTable::getTableName() -> std::string {
     return "items";
 }
 
-std::vector<std::string> ItemTable::getColumnNames() {
+auto ItemTable::getColumnNames() -> std::vector<std::string> {
     return {
         "itm_id",
         "itm_volume",
@@ -47,11 +47,11 @@ std::vector<std::string> ItemTable::getColumnNames() {
     };
 }
 
-TYPE_OF_ITEM_ID ItemTable::assignId(const Database::ResultTuple &row) {
+auto ItemTable::assignId(const Database::ResultTuple &row) -> TYPE_OF_ITEM_ID {
     return row["itm_id"].as<TYPE_OF_ITEM_ID>();
 }
 
-ItemStruct ItemTable::assignTable(const Database::ResultTuple &row) {
+auto ItemTable::assignTable(const Database::ResultTuple &row) -> ItemStruct {
     ItemStruct item;
     item.id = assignId(row);
     item.Volume = row["itm_volume"].as<TYPE_OF_VOLUME>();
@@ -73,7 +73,7 @@ ItemStruct ItemTable::assignTable(const Database::ResultTuple &row) {
     return item;
 }
 
-std::string ItemTable::assignScriptName(const Database::ResultTuple &row) {
+auto ItemTable::assignScriptName(const Database::ResultTuple &row) -> std::string {
     return row["itm_script"].as<std::string>("");
 }
 

@@ -35,7 +35,7 @@ UpdateQuery::UpdateQuery(const PConnection connection) : Query(connection), Quer
     setOnlyOneTable(true);
 };
 
-Result UpdateQuery::execute() {
+auto UpdateQuery::execute() -> Result {
     std::stringstream ss;
     ss << "UPDATE ";
     ss << QueryTables::buildQuerySegment();

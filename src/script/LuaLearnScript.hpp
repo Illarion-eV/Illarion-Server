@@ -37,7 +37,7 @@ public:
 private:
 
     LuaLearnScript(const LuaLearnScript &) = delete;
-    LuaLearnScript &operator=(const LuaLearnScript &) = delete;
+    auto operator=(const LuaLearnScript &) -> LuaLearnScript & = delete;
 };
 
 #endif

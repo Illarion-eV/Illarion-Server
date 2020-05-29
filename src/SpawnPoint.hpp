@@ -40,24 +40,24 @@ public:
     void addMonster(TYPE_OF_CHARACTER_ID type, short int count);
 
     //! load spawnpoints from database
-    bool load(const int &id);
+    auto load(const int &id) -> bool;
 
     void spawn();
 
     //! callback called by dying monsters belonging to spawnpoint
     void dead(TYPE_OF_CHARACTER_ID type);
 
-    inline int get_x() const {
+    inline auto get_x() const -> int {
         return spawnpos.x;
     }
-    inline int get_y() const {
+    inline auto get_y() const -> int {
         return spawnpos.y;
     }
-    inline int get_z() const {
+    inline auto get_z() const -> int {
         return spawnpos.z;
     }
 
-    inline int getRange() const {
+    inline auto getRange() const -> int {
         return range;
     }
 

@@ -63,7 +63,7 @@ extern std::shared_ptr<LuaWeaponScript> standardFightingScript;
 
 World *World::_self;
 
-World *World::create() {
+auto World::create() -> World * {
     if (!(_self)) {
         _self = new World();
         // init spawnlocations...
@@ -78,7 +78,7 @@ World *World::create() {
     return _self;
 }
 
-World *World::get() {
+auto World::get() -> World * {
     if (!(_self)) {
         throw std::runtime_error("world was not created");
     }
@@ -199,7 +199,7 @@ void World::invalidatePlayerDialogs() {
 }
 
 // init the respawn locations... for now still hardcoded...
-bool World::initRespawns() {
+auto World::initRespawns() -> bool {
     Monsters.for_each([](Monster *monster) {
         monster->remove();
         monster->setSpawn(nullptr);
@@ -549,7 +549,7 @@ void World::checkMonsters() {
 }
 
 
-std::vector<Character *> World::getTargetsInRange(const position &pos, int radius) const {
+auto World::getTargetsInRange(const position &pos, int radius) const -> std::vector<Character *> {
     Range range;
     range.radius = radius;
     range.zRadius = 0;
@@ -611,7 +611,7 @@ void World::initNPC() {
 }
 
 // calculate when the next day change for illarion time will be
-static std::chrono::steady_clock::time_point getNextIGDayTime() {
+static auto getNextIGDayTime() -> std::chrono::steady_clock::time_point {
     // next day is at ((current unix timestamp - 950742000 + (is_dst?3600:0)) / 28800 + 1) * 28800
     time_t curr_unixtime = time(nullptr);
     struct tm *timestamp = localtime(&curr_unixtime);
@@ -640,7 +640,7 @@ void World::initScheduler() {
     scheduler.addRecurringTask([&] { sendIGTimeToAllPlayers(); }, std::chrono::hours(8), getNextIGDayTime(), "update_ig_day");
 }
 
-bool World::executeUserCommand(Player *user, const std::string &input, const CommandMap &commands) {
+auto World::executeUserCommand(Player *user, const std::string &input, const CommandMap &commands) -> bool {
     bool found = false;
 
     static const std::regex pattern("^!([^ ]+) ?(.*)?$");

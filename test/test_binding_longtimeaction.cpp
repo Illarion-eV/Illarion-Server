@@ -50,7 +50,7 @@ TEST_F(longtimeaction_bindings, test_state_success) {
     EXPECT_EQ(LongTimeAction::ST_SUCCESS, success);
 }
 
-int main(int argc, char **argv) {
+auto main(int argc, char **argv) -> int {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

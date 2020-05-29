@@ -46,7 +46,7 @@ InsertQuery::~InsertQuery() {
     }
 }
 
-Result InsertQuery::execute() {
+auto InsertQuery::execute() -> Result {
     if (dataStorage.empty()) {
         Result result;
         return result;

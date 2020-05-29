@@ -23,7 +23,7 @@
 
 namespace binding {
 
-    luabind::scope message_dialog() {
+    auto message_dialog() -> luabind::scope {
         return luabind::class_<MessageDialog>("MessageDialog")
                 .def(luabind::constructor<std::string, std::string, luabind::object>());
     }

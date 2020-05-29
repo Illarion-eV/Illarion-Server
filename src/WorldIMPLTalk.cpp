@@ -38,7 +38,7 @@ void World::sendMessageToAdmin(const std::string &message) {
 }
 
 
-std::string World::languagePrefix(int Language) {
+auto World::languagePrefix(int Language) -> std::string {
     if (Language==0) {
         return "";
     } else if (Language==1) {
@@ -66,7 +66,7 @@ std::string World::languagePrefix(int Language) {
     }
 }
 
-std::string World::languageNumberToSkillName(int languageNumber) {
+auto World::languageNumberToSkillName(int languageNumber) -> std::string {
     switch (languageNumber) {
     case 0:
         return "common language";
@@ -107,7 +107,7 @@ std::string World::languageNumberToSkillName(int languageNumber) {
     }
 }
 
-Range World::getTalkRange(Character::talk_type tt) const {
+auto World::getTalkRange(Character::talk_type tt) const -> Range {
     Range range;
 
     switch (tt) {

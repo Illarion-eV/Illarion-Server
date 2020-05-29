@@ -23,7 +23,7 @@
 
 namespace binding {
 
-    luabind::scope weapon_struct() {
+    auto weapon_struct() -> luabind::scope {
         return luabind::class_<WeaponStruct>("WeaponStruct")
         .def(luabind::constructor<>())
         .enum_("type")

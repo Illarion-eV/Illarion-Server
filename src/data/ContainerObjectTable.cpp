@@ -20,22 +20,22 @@
 
 #include "data/ContainerObjectTable.hpp"
 
-std::string ContainerObjectTable::getTableName() {
+auto ContainerObjectTable::getTableName() -> std::string {
     return "container";
 }
 
-std::vector<std::string> ContainerObjectTable::getColumnNames() {
+auto ContainerObjectTable::getColumnNames() -> std::vector<std::string> {
     return {
         "con_itemid",
         "con_slots"
     };
 }
 
-TYPE_OF_ITEM_ID ContainerObjectTable::assignId(const Database::ResultTuple &row) {
+auto ContainerObjectTable::assignId(const Database::ResultTuple &row) -> TYPE_OF_ITEM_ID {
     return row["con_itemid"].as<TYPE_OF_ITEM_ID>();
 }
 
-TYPE_OF_CONTAINERSLOTS ContainerObjectTable::assignTable(const Database::ResultTuple &row) {
+auto ContainerObjectTable::assignTable(const Database::ResultTuple &row) -> TYPE_OF_CONTAINERSLOTS {
     return row["con_slots"].as<TYPE_OF_CONTAINERSLOTS>();
 }
 

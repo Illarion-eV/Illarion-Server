@@ -25,7 +25,7 @@
 
 namespace binding {
 
-    luabind::scope script_item() {
+    auto script_item() -> luabind::scope {
         return luabind::class_<ScriptItem,Item>("scriptItem")
                 .def(luabind::constructor<>())
                 .def_readonly("owner", &ScriptItem::getOwnerForLua)

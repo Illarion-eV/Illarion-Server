@@ -32,25 +32,25 @@ class Player;
 
 class PlayerManager {
 public:
-    static PlayerManager &get();
+    static auto get() -> PlayerManager &;
 
     void activate();
     void stop();
 
-    bool threadOK() const {
+    auto threadOK() const -> bool {
         return threadOk;
     }
 
-    bool findPlayer(const std::string &name) const;
+    auto findPlayer(const std::string &name) const -> bool;
 
     void setLoginLogout(bool val);
 
     using TPLAYERVECTOR = thread_safe_vector<Player *>;
 
-    TPLAYERVECTOR &getLogOutPlayers() {
+    auto getLogOutPlayers() -> TPLAYERVECTOR & {
         return loggedOutPlayers;
     }
-    TPLAYERVECTOR &getLogInPlayers() {
+    auto getLogInPlayers() -> TPLAYERVECTOR & {
         return loggedInPlayers;
     }
 

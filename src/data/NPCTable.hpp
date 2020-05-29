@@ -46,7 +46,7 @@ public:
     NPCTable();
     ~NPCTable();
 
-    bool dataOK() const {
+    auto dataOK() const -> bool {
         return m_dataOK;
     };
 

@@ -32,20 +32,20 @@ public:
     character_ptr();
     explicit character_ptr(Character *p);
     character_ptr(character_ptr const &p);
-    character_ptr& operator=(character_ptr const &p);
+    auto operator=(character_ptr const &p) -> character_ptr&;
 
-    Character *get() const;
+    auto get() const -> Character *;
     operator Character *() const;
-    Character *operator->() const;
+    auto operator->() const -> Character *;
     operator bool() const;
 
 private:
-    Character *getPointerFromId() const;
+    auto getPointerFromId() const -> Character *;
 };
 
-Character *get_pointer(character_ptr const &p);
+auto get_pointer(character_ptr const &p) -> Character *;
 
-bool isValid(character_ptr const &p);
+auto isValid(character_ptr const &p) -> bool;
 
 #endif
 

@@ -23,7 +23,7 @@
 
 class Table {
 public:
-    virtual bool reloadBuffer() = 0;
+    virtual auto reloadBuffer() -> bool = 0;
     virtual void reloadScripts() = 0;
     virtual void activateBuffer() = 0;
     virtual ~Table() = default;

@@ -37,7 +37,7 @@ void LuaLongTimeEffectScript::init_functions() const {
     globals["thisEffect"] = _effectStruct;
 }
 
-bool LuaLongTimeEffectScript::callEffect(LongTimeEffect *effect, Character *target) {
+auto LuaLongTimeEffectScript::callEffect(LongTimeEffect *effect, Character *target) -> bool {
     character_ptr fuse_target(target);
     return callEntrypoint<bool>("callEffect", effect, fuse_target);
 }

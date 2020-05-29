@@ -21,11 +21,11 @@
 #include "data/TilesTable.hpp"
 #include "constants.hpp"
 
-std::string TilesTable::getTableName() {
+auto TilesTable::getTableName() -> std::string {
     return "tiles";
 }
 
-std::vector<std::string> TilesTable::getColumnNames() {
+auto TilesTable::getColumnNames() -> std::vector<std::string> {
     return {
         "til_id",
         "til_isnotpassable",
@@ -36,11 +36,11 @@ std::vector<std::string> TilesTable::getColumnNames() {
     };
 }
 
-TYPE_OF_TILE_ID TilesTable::assignId(const Database::ResultTuple &row) {
+auto TilesTable::assignId(const Database::ResultTuple &row) -> TYPE_OF_TILE_ID {
     return row["til_id"].as<TYPE_OF_TILE_ID>();
 }
 
-TilesStruct TilesTable::assignTable(const Database::ResultTuple &row) {
+auto TilesTable::assignTable(const Database::ResultTuple &row) -> TilesStruct {
     TilesStruct tile;
     tile.flags = row["til_isnotpassable"].as<bool>() ? FLAG_BLOCKPATH : 0;
     tile.German = row["til_german"].as<std::string>();
@@ -49,7 +49,7 @@ TilesStruct TilesTable::assignTable(const Database::ResultTuple &row) {
     return tile;
 }
 
-std::string TilesTable::assignScriptName(const Database::ResultTuple &row) {
+auto TilesTable::assignScriptName(const Database::ResultTuple &row) -> std::string {
     return row["til_script"].as<std::string>("");
 }
 

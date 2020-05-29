@@ -77,7 +77,7 @@ public:
     class LogoutException {
     public:
         explicit LogoutException(const char &reason) : m_reason(reason) {}
-        inline const char &getReason() const {
+        inline auto getReason() const -> const char & {
             return m_reason;
         }
     private:
@@ -91,11 +91,11 @@ public:
         left = 3
     };
 
-    unsigned short getType() const override {
+    auto getType() const -> unsigned short override {
         return player;
     }
 
-    std::string to_string() const override;
+    auto to_string() const -> std::string override;
 
     void workoutCommands();
     void checkFightMode();
@@ -141,7 +141,7 @@ public:
     uint8_t screenwidth;
     uint8_t screenheight;
 
-    unsigned short int getScreenRange() const override;
+    auto getScreenRange() const -> unsigned short int override;
 
     //! die Verbindung zum Spieler, -- Achtung ! Die Verbindung wird NICHT im Destruktor gel�cht
     // , da sie auch extern erstellt wird und durch das Einfgen in diverse
@@ -163,15 +163,15 @@ public:
 
     void stopAttack() override;
 
-    bool isNewPlayer() const override;
+    auto isNewPlayer() const -> bool override;
     
-    const std::string &nls(const std::string &german, const std::string &english) const;
+    auto nls(const std::string &german, const std::string &english) const -> const std::string &;
 
     void setAlive(bool alive) override;
 
     void checkBurden();
 
-    bool pageGM(const std::string &ticket) override;
+    auto pageGM(const std::string &ticket) -> bool override;
 
     // send a char appearance; always or only if char not yet visible
     void sendCharAppearance(TYPE_OF_CHARACTER_ID id, const ServerCommandPointer &appearance, bool always);
@@ -249,7 +249,7 @@ public:
     * <b>Lua: [:idleTime]</b>
     * @return number of seconds the player has been idle
     */
-    uint32_t idleTime() const override;
+    auto idleTime() const -> uint32_t override;
 
     /**
     * send a book ID to the client
@@ -273,19 +273,19 @@ public:
     void check_logindata();
 
     //Checks if a Player has a special GM right
-    bool hasGMRight(gm_rights right) const;
+    auto hasGMRight(gm_rights right) const -> bool;
 
     //! save char to db
-    bool save() noexcept;
+    auto save() noexcept -> bool;
 
     //! load data from db
     // \param no_attributes don't load contents of table "player"
-    bool load() noexcept;
+    auto load() noexcept -> bool;
 
     void login();
 
     //Loads the GM Flag of the character
-    bool loadGMFlags() noexcept;
+    auto loadGMFlags() noexcept -> bool;
 
     /**
     * sends one area relative to the current z coordinate to the player
@@ -309,35 +309,35 @@ public:
 
     void sendField(const position &pos);
 
-    bool actionRunning() const override;
+    auto actionRunning() const -> bool override;
 
     void increasePoisonValue(short int value) override;
 
-    short int getMinActionPoints() const override;
-    short int getMaxActionPoints() const override;
-    short int getMinFightPoints() const override;
-    short int getMaxFightPoints() const override;
+    auto getMinActionPoints() const -> short int override;
+    auto getMaxActionPoints() const -> short int override;
+    auto getMinFightPoints() const -> short int override;
+    auto getMaxFightPoints() const -> short int override;
 
     void openShowcase(Container *container, const ScriptItem &item, bool carry);
     void updateShowcase(Container *container) const;
     void updateShowcaseSlot(Container *container, TYPE_OF_CONTAINERSLOTS slot) const;
-    bool isShowcaseOpen(uint8_t showcase) const;
-    bool isShowcaseOpen(Container *container) const;
-    bool isShowcaseInInventory(uint8_t showcase) const;
-    uint8_t getShowcaseId(Container *container) const;
-    Container *getShowcaseContainer(uint8_t showcase) const;
+    auto isShowcaseOpen(uint8_t showcase) const -> bool;
+    auto isShowcaseOpen(Container *container) const -> bool;
+    auto isShowcaseInInventory(uint8_t showcase) const -> bool;
+    auto getShowcaseId(Container *container) const -> uint8_t;
+    auto getShowcaseContainer(uint8_t showcase) const -> Container *;
     void closeShowcase(uint8_t showcase);
     void closeShowcase(Container *container);
     void closeOnMove();
     void closeAllShowcasesOfMapContainers();
     void closeAllShowcases();
     void lookIntoShowcaseContainer(uint8_t showcase, unsigned char pos);
-    bool lookIntoBackPack();
-    bool lookIntoContainerOnField(direction dir);
+    auto lookIntoBackPack() -> bool;
+    auto lookIntoContainerOnField(direction dir) -> bool;
 
     void changeQualityAt(unsigned char pos, short int amount) override;
 
-    inline bool isMonitoringClient() const {
+    inline auto isMonitoringClient() const -> bool {
         return monitoringClient;
     }
 
@@ -353,9 +353,9 @@ public:
         sendMagicFlags(newMagType);
     }
 
-    std::string getSkillName(TYPE_OF_SKILL_ID s) const override;
+    auto getSkillName(TYPE_OF_SKILL_ID s) const -> std::string override;
     //! Returns the language which the player specified when creating the Character (german/english)
-    Language getPlayerLanguage() const override;
+    auto getPlayerLanguage() const -> Language override;
 
     void sendCharacters();
 
@@ -373,11 +373,11 @@ public:
 
     void ageInventory() override;
 
-    int createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, script_data_exchangemap const *data) override;
+    auto createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, script_data_exchangemap const *data) -> int override;
 
     void learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opponent) override;
 
-    unsigned short int increaseSkill(TYPE_OF_SKILL_ID skill, short int amount) override;
+    auto increaseSkill(TYPE_OF_SKILL_ID skill, short int amount) -> unsigned short int override;
 
     void deleteAllSkills() override;
 
@@ -387,23 +387,23 @@ public:
     // \param count die Anzahl der zu löschenden Items
     // \oaram data Datawert der zu löschenden Items
     // \return Anzahl der Items, die nicht gelöscht werden konnten
-    int eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangemap const *data = nullptr) override;
+    auto eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangemap const *data = nullptr) -> int override;
 
     //! ver�dert die Anzahl des Item an der Position pos um count
     // und schickt ein Update an den Spieler
     // \param pos die Stelle im Inventory die ge�dert werden soll
     // \param count die �derungsanzahl
     // \return der Rest von count, der nicht ge�dert werden konnnte
-    int increaseAtPos(unsigned char pos, int count) override;
+    auto increaseAtPos(unsigned char pos, int count) -> int override;
 
-    int createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) override;
+    auto createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) -> int override;
 
     //! setzt die Id des Item an der Position pos auf newid
     // und schickt ein Update an den Spieler
     // \param pos die Stelle im Inventory die ge�dert werden soll
     // \param newid die neue Id des Item
     // \return true falls erfolgreich, false sonst
-    bool swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t newQuality = 0) override;
+    auto swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t newQuality = 0) -> bool override;
 
     //! schickt ein Update der Ansicht des Rucksackinhalts an den Client
     void updateBackPackView();
@@ -417,9 +417,9 @@ public:
 
     void sendSkill(TYPE_OF_SKILL_ID skill, unsigned short int major, unsigned short int minor);
 
-    unsigned short int setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor) override;
+    auto setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor) -> unsigned short int override;
 
-    bool saveBaseAttributes() override;
+    auto saveBaseAttributes() -> bool override;
 
     //! sendet ein Attributupdate an den Client
     // \param name der Name des Attributs
@@ -432,37 +432,37 @@ public:
     void startMusic(short int title) override;
     void defaultMusic() override;
 
-    bool sendTextInFile(const std::string &filename);
+    auto sendTextInFile(const std::string &filename) -> bool;
 
     // Setters and Getters //
-    unsigned char getStatus() const;
+    auto getStatus() const -> unsigned char;
     void setStatus(unsigned char status);
 
     // What time does the status get reset?
-    time_t getStatusTime() const;
+    auto getStatusTime() const -> time_t;
     void setStatusTime(time_t time);
 
     // Who banned/jailed the player?
-    std::string getStatusGM() const;
+    auto getStatusGM() const -> std::string;
     void setStatusGM(TYPE_OF_CHARACTER_ID gm);
 
     // Why where they banned/jailed?
-    std::string getStatusReason() const;
+    auto getStatusReason() const -> std::string;
     void setStatusReason(const std::string &reason);
 
     // World Map Turtle Graphics
     void setTurtleActive(bool tturtleActive);
-    bool getTurtleActive() const;
+    auto getTurtleActive() const -> bool;
     void setTurtleTile(unsigned char tturtletile);
-    unsigned char getTurtleTile() const;
+    auto getTurtleTile() const -> unsigned char;
 
     // Clipping on/off (default to on)
     void setClippingActive(bool tclippingActive) override;
-    bool getClippingActive() const override;
+    auto getClippingActive() const -> bool override;
 
     //Set for Admin state, uin32_t bit flag
     void setAdmin(uint32_t tAdmin);
-    bool isAdmin() const override;
+    auto isAdmin() const -> bool override;
 
     // player gets informed about something
     void inform(const std::string &message, informType type = informServer) const override;
@@ -474,21 +474,21 @@ public:
     // player heard something
     void receiveText(talk_type tt, const std::string &message, Character *cc) override;
 
-    bool knows(Player *player) const;
+    auto knows(Player *player) const -> bool;
     void getToKnow(Player *player);
     void introducePlayer(Player *player) override;
     void namePlayer(TYPE_OF_CHARACTER_ID playerId, const std::string &name);
-    std::string getCustomNameOf(Player *player) const;
+    auto getCustomNameOf(Player *player) const -> std::string;
 
-    bool moveToPossible(const map::Field &field) const override;
+    auto moveToPossible(const map::Field &field) const -> bool override;
     // Move the Player
     using Character::move;
-    bool move(direction dir, uint8_t mode);
+    auto move(direction dir, uint8_t mode) -> bool;
 
-    bool isOvertaxed();
+    auto isOvertaxed() -> bool;
 
-    bool Warp(const position &newPos) override;
-    bool forceWarp(const position &newPos) override;
+    auto Warp(const position &newPos) -> bool override;
+    auto forceWarp(const position &newPos) -> bool override;
 
     void openDepot(const ScriptItem &item);
 
@@ -496,7 +496,7 @@ public:
     void sendAvailableQuests();
     void sendQuestProgress(TYPE_OF_QUEST_ID questId, TYPE_OF_QUESTSTATUS progress);
     void sendCompleteQuestProgress();
-    TYPE_OF_QUESTSTATUS getQuestProgress(TYPE_OF_QUEST_ID questid, int &time) const override;
+    auto getQuestProgress(TYPE_OF_QUEST_ID questid, int &time) const -> TYPE_OF_QUESTSTATUS override;
 
 private:
     void handleWarp();
@@ -523,7 +523,7 @@ private:
     }
 
     template<class DialogType>
-    std::shared_ptr<DialogType> getDialog(unsigned int dialogId) const {
+    auto getDialog(unsigned int dialogId) const -> std::shared_ptr<DialogType> {
         try {
             return std::dynamic_pointer_cast<DialogType>(dialogs.at(dialogId));
         } catch (std::out_of_range &e) {

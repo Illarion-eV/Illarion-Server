@@ -38,10 +38,10 @@ class InitialConnection
 public:
     using NewPlayerVector = thread_safe_vector<std::shared_ptr<NetInterface>>;
 
-    static std::shared_ptr<InitialConnection> create();
+    static auto create() -> std::shared_ptr<InitialConnection>;
     ~InitialConnection();
 
-    NewPlayerVector &getNewPlayers();
+    auto getNewPlayers() -> NewPlayerVector &;
 
 private:
     InitialConnection() = default;

@@ -66,7 +66,7 @@ void World::deleteAllLostNPC() {
     LostNpcs.clear();
 }
 
-bool World::findTargetsInSight(const position &pos, uint8_t range, std::vector<Character *> &ret, Character::face_to direction) const {
+auto World::findTargetsInSight(const position &pos, uint8_t range, std::vector<Character *> &ret, Character::face_to direction) const -> bool {
     bool found = false;
 
     for (const auto &candidate : getTargetsInRange(pos, range)) {
@@ -156,7 +156,7 @@ bool World::findTargetsInSight(const position &pos, uint8_t range, std::vector<C
     return found;
 }
 
-std::list<BlockingObject> World::LoS(const position &startingpos, const position &endingpos) const {
+auto World::LoS(const position &startingpos, const position &endingpos) const -> std::list<BlockingObject> {
     std::list<BlockingObject> ret;
     ret.clear();
     bool steep = std::abs(startingpos.y - endingpos.y) > std::abs(startingpos.x - endingpos.x);
@@ -292,7 +292,7 @@ void World::updatePlayerList() {
     }
 }
 
-Character *World::findCharacterOnField(const position &pos) const {
+auto World::findCharacterOnField(const position &pos) const -> Character * {
     Character *tmpChr;
     tmpChr = Players.find(pos);
 
@@ -315,11 +315,11 @@ Character *World::findCharacterOnField(const position &pos) const {
     return nullptr;
 }
 
-Player *World::findPlayerOnField(const position &pos) const {
+auto World::findPlayerOnField(const position &pos) const -> Player * {
     return Players.find(pos);
 }
 
-Character *World::findCharacter(TYPE_OF_CHARACTER_ID id) {
+auto World::findCharacter(TYPE_OF_CHARACTER_ID id) -> Character * {
     if (id < MONSTER_BASE) {
         auto tmpChr = dynamic_cast<Character *>(Players.find(id));
 
@@ -377,7 +377,7 @@ void World::takeMonsterAndNPCFromMap() {
 
 
 // only invoked when ATTACK***_TS is received or when a monster attacks
-bool World::characterAttacks(Character *cp) {
+auto World::characterAttacks(Character *cp) -> bool {
 
     if (cp->enemyid != cp->getId()) {
 
@@ -478,7 +478,7 @@ bool World::characterAttacks(Character *cp) {
 }
 
 
-bool World::killMonster(TYPE_OF_CHARACTER_ID id) {
+auto World::killMonster(TYPE_OF_CHARACTER_ID id) -> bool {
     auto monster = Monsters.find(id);
 
     if (monster) {
@@ -500,15 +500,15 @@ bool World::killMonster(TYPE_OF_CHARACTER_ID id) {
 }
 
 
-map::Field &World::fieldAt(const position &pos) {
+auto World::fieldAt(const position &pos) -> map::Field & {
     return maps.at(pos);
 }
 
-const map::Field &World::fieldAt(const position &pos) const {
+auto World::fieldAt(const position &pos) const -> const map::Field & {
     return maps.at(pos);
 }
 
-map::Field &World::fieldAtOrBelow(position &pos) {
+auto World::fieldAtOrBelow(position &pos) -> map::Field & {
     for (size_t i = 0; i <= RANGEDOWN; ++i) {
         map::Field &field = fieldAt(pos);
 
@@ -522,7 +522,7 @@ map::Field &World::fieldAtOrBelow(position &pos) {
     throw FieldNotFound();
 }
 
-map::Field &World::walkableFieldNear(const position &pos) {
+auto World::walkableFieldNear(const position &pos) -> map::Field & {
     return walkableNear(maps, pos);
 }
 
@@ -534,12 +534,12 @@ void World::removePersistenceAt(const position &pos) {
     maps.removePersistenceAt(pos);
 }
 
-bool World::isPersistentAt(const position &pos) const {
+auto World::isPersistentAt(const position &pos) const -> bool {
     return maps.isPersistentAt(pos);
 }
 
 
-int World::getItemAttrib(const std::string &s, TYPE_OF_ITEM_ID ItemID) {
+auto World::getItemAttrib(const std::string &s, TYPE_OF_ITEM_ID ItemID) -> int {
 
     // Armor //
     if (s == "bodyparts") {
@@ -661,7 +661,7 @@ void World::import() {
     maps.importFromEditor();
 }
 
-int World::getTime(const std::string &timeType) {
+auto World::getTime(const std::string &timeType) -> int {
     int minute,hour,day,month,year,illaTime;
     time_t curr_unixtime;
     struct tm *timestamp;
@@ -756,7 +756,7 @@ int World::getTime(const std::string &timeType) {
 }
 
 
-bool World::findWarpFieldsInRange(const position &pos, short int range, std::vector<position> &warppositions) {
+auto World::findWarpFieldsInRange(const position &pos, short int range, std::vector<position> &warppositions) -> bool {
     for (int x = pos.x - range; x <= pos.x + range; ++x) {
         for (int y = pos.y - range; y <= pos.y + range; ++y) {
             try {

@@ -27,9 +27,9 @@ private:
     static std::mt19937 rng;
     Random() = default;
 public:
-    static double uniform();
-    static int uniform(int min, int max);
-    static double normal(double mean, double sd);
+    static auto uniform() -> double;
+    static auto uniform(int min, int max) -> int;
+    static auto normal(double mean, double sd) -> double;
 };
 
 #endif

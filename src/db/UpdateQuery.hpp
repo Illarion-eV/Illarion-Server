@@ -38,9 +38,9 @@ public:
     UpdateQuery();
     explicit UpdateQuery(const PConnection connection);
     UpdateQuery(const UpdateQuery &org) = delete;
-    UpdateQuery &operator=(const UpdateQuery &org) = delete;
+    auto operator=(const UpdateQuery &org) -> UpdateQuery & = delete;
 
-    Result execute() override;
+    auto execute() -> Result override;
 };
 }
 

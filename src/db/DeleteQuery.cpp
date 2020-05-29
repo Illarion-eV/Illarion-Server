@@ -34,7 +34,7 @@ DeleteQuery::DeleteQuery(const PConnection connection) : Query(connection), Quer
     setOnlyOneTable(true);
 }
 
-Result DeleteQuery::execute() {
+auto DeleteQuery::execute() -> Result {
     std::stringstream ss;
     ss << "DELETE FROM ";
     ss << QueryTables::buildQuerySegment();

@@ -37,7 +37,7 @@ ScheduledScriptsTable::~ScheduledScriptsTable() {
     m_table.clear();
 }
 
-bool ScheduledScriptsTable::nextCycle() {
+auto ScheduledScriptsTable::nextCycle() -> bool {
     currentCycle++;
     ScriptData data; /**< holds the current task*/
     int emexit = 0; /**< emergency counter which breaks the loop if to much execution*/
@@ -71,7 +71,7 @@ bool ScheduledScriptsTable::nextCycle() {
     return false;
 }
 
-bool ScheduledScriptsTable::addData(ScriptData data) {
+auto ScheduledScriptsTable::addData(ScriptData data) -> bool {
     Logger::debug(LogFacility::Script) << "insert new Task task.nextCycle: " << data.nextCycleTime << " current Cycle: " << currentCycle << Log::end;
     bool inserted = false;
 

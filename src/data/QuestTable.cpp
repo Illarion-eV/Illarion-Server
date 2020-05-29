@@ -21,26 +21,26 @@
 #include "data/QuestTable.hpp"
 #include "constants.hpp"
 
-std::string QuestTable::getTableName() {
+auto QuestTable::getTableName() -> std::string {
     return "quests";
 }
 
-std::vector<std::string> QuestTable::getColumnNames() {
+auto QuestTable::getColumnNames() -> std::vector<std::string> {
     return {
         "qst_id",
         "qst_script"
     };
 }
 
-TYPE_OF_QUEST_ID QuestTable::assignId(const Database::ResultTuple &row) {
+auto QuestTable::assignId(const Database::ResultTuple &row) -> TYPE_OF_QUEST_ID {
     return row["qst_id"].as<TYPE_OF_QUEST_ID>();
 }
 
-QuestStruct QuestTable::assignTable(const Database::ResultTuple &row) {
+auto QuestTable::assignTable(const Database::ResultTuple &row) -> QuestStruct {
     return QuestStruct();
 }
 
-std::string QuestTable::assignScriptName(const Database::ResultTuple &row) {
+auto QuestTable::assignScriptName(const Database::ResultTuple &row) -> std::string {
     return row["qst_script"].as<std::string>("");
 }
 

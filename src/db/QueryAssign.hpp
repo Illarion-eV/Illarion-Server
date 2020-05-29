@@ -41,9 +41,9 @@ public:
 protected:
     explicit QueryAssign(const Connection &connection);
     QueryAssign(const QueryAssign &org) = delete;
-    QueryAssign &operator=(const QueryAssign &org) = delete;
+    auto operator=(const QueryAssign &org) -> QueryAssign & = delete;
 
-    std::string &buildQuerySegment();
+    auto buildQuerySegment() -> std::string &;
 };
 }
 

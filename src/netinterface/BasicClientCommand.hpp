@@ -45,12 +45,12 @@ public:
     virtual ~BasicClientCommand();
 
     //! no copy operator for pure virtual types
-    BasicClientCommand &operator=(const BasicClientCommand &) = delete;
+    auto operator=(const BasicClientCommand &) -> BasicClientCommand & = delete;
 
     /**
      * returns the data ptr for the command message
      **/
-    unsigned char *msg_data();
+    auto msg_data() -> unsigned char *;
 
 
     /**
@@ -69,50 +69,50 @@ public:
     * a copy function which returns an empty version of the command
     * (for usage of the commandFactory class
     */
-    virtual ClientCommandPointer clone() = 0;
+    virtual auto clone() -> ClientCommandPointer = 0;
 
     /**
     * returns if the receiving of the command was sucessfull
     * @return true if the command was receuved complete and without problems
     */
-    bool isDataOk() const;
+    auto isDataOk() const -> bool;
 
     /**
     * reads an unsigned char from the local command buffer
     * @return the char which was found in the buffer
     */
-    unsigned char getUnsignedCharFromBuffer();
+    auto getUnsignedCharFromBuffer() -> unsigned char;
 
     /**
     * read a string from the local command buffer
     * @return the string which was found in the buffer
     */
-    std::string getStringFromBuffer();
+    auto getStringFromBuffer() -> std::string;
 
     /**
     * reads an int from the local command buffer
     * @return the int which was in the buffer (32 bit)
     */
-    int getIntFromBuffer();
+    auto getIntFromBuffer() -> int;
 
     /**
     * reads a short int from the local command buffer
     * @return the short int which was in the buffer (16 bit)
     */
-    short int getShortIntFromBuffer();
+    auto getShortIntFromBuffer() -> short int;
 
     /**
      *returns the length of the command without the header in bytes
      */
-    uint16_t getLength() const {
+    auto getLength() const -> uint16_t {
         return length;
     }
 
-    inline uint16_t getMinAP() const {
+    inline auto getMinAP() const -> uint16_t {
         return minAP;
     }
 
-    inline std::chrono::steady_clock::time_point getIncomingTime() const {
+    inline auto getIncomingTime() const -> std::chrono::steady_clock::time_point {
 	    return incomingTime;
     }
 

@@ -81,16 +81,16 @@ public:
 
     virtual ~LuaScript();
 
-    std::string getFileName() const {
+    auto getFileName() const -> std::string {
         return _filename;
     }
 
-    static lua_State *getLuaState() {
+    static auto getLuaState() -> lua_State * {
         return _luaState;
     }
 
     static void shutdownLua();
-    bool existsEntrypoint(const std::string &entrypoint) const;
+    auto existsEntrypoint(const std::string &entrypoint) const -> bool;
     void addQuestScript(const std::string &entrypoint, const std::shared_ptr<LuaScript> &script);
 
     template<typename T>
@@ -112,7 +112,7 @@ public:
     }
 
     template<typename U, typename T>
-    static U executeDialogCallback(T &dialog) {
+    static auto executeDialogCallback(T &dialog) -> U {
         luabind::object callback = dialog.getCallback();
 
         if (luabind::type(callback) != LUA_TFUNCTION) {
@@ -150,7 +150,7 @@ protected:
         }
     };
     template<typename T, typename... Args>
-    T callEntrypoint(const std::string &entrypoint, const Args &... args) {
+    auto callEntrypoint(const std::string &entrypoint, const Args &... args) -> T {
         setCurrentWorldScript();
         callQuestEntrypoint(entrypoint, args...);
         return safeCall<T, Args...>(entrypoint, args...);
@@ -162,15 +162,15 @@ private:
     void handleLuaLoadError(int errorCode);
     void handleLuaCallError(int errorCode);
     static void init_base_functions();
-    static int add_backtrace(lua_State *L);
+    static auto add_backtrace(lua_State *L) -> int;
     void writeErrorMsg();
     void writeCastErrorMsg(const std::string &entryPoint, const luabind::cast_failed &e) const;
     void setCurrentWorldScript();
-    luabind::object buildEntrypoint(const std::string &entrypoint);
-    bool existsQuestEntrypoint(const std::string &entrypoint) const;
+    auto buildEntrypoint(const std::string &entrypoint) -> luabind::object;
+    auto existsQuestEntrypoint(const std::string &entrypoint) const -> bool;
 
     template<typename... Args>
-    bool callQuestEntrypoint(const std::string &entrypoint, const Args &... args) {
+    auto callQuestEntrypoint(const std::string &entrypoint, const Args &... args) -> bool {
         auto entrypointRange = questScripts.equal_range(entrypoint);
         bool foundQuest = false;
 
@@ -191,7 +191,7 @@ private:
         }
     };
     template<typename T, typename... Args>
-    T safeCall(const std::string &entrypoint, const Args &... args) {
+    auto safeCall(const std::string &entrypoint, const Args &... args) -> T {
         try {
             auto luaEntrypoint = buildEntrypoint(entrypoint);
             auto result = luaEntrypoint(args...);
@@ -206,7 +206,7 @@ private:
     };
 
     LuaScript(const LuaScript &) = delete;
-    LuaScript &operator=(const LuaScript &) = delete;
+    auto operator=(const LuaScript &) -> LuaScript & = delete;
 
     std::string _filename;
     char luafile[200] = {};

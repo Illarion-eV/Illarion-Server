@@ -42,7 +42,7 @@ Monster::Monster(const TYPE_OF_CHARACTER_ID &type, const position &newpos, Spawn
     setPosition(newpos);
 }
 
-const MonsterStruct::loottype &Monster::getLoot() const {
+auto Monster::getLoot() const -> const MonsterStruct::loottype & {
     const auto monsterType = getMonsterType();
 
     if (monsterDescriptions->exists(monsterType)) {
@@ -166,7 +166,7 @@ void Monster::setAlive(bool t) {
     }
 }
 
-bool Monster::attack(Character *target) {
+auto Monster::attack(Character *target) -> bool {
     if (monsterDescriptions->exists(getMonsterType())) {
         const auto &monStruct = (*monsterDescriptions)[getMonsterType()];
 
@@ -195,6 +195,6 @@ void Monster::receiveText(talk_type tt, const std::string &message, Character *c
     }
 }
 
-std::string Monster::to_string() const {
+auto Monster::to_string() const -> std::string {
     return "Monster of race " + std::to_string((int)getRace()) + "(" + std::to_string(getId()) + ")";
 }

@@ -23,7 +23,7 @@
 
 namespace binding {
 
-    luabind::scope colour() {
+    auto colour() -> luabind::scope {
         return luabind::class_<Colour>("colour")
         .def(luabind::constructor<>())
         .def(luabind::constructor<uint8_t, uint8_t, uint8_t>())

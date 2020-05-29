@@ -35,7 +35,7 @@ public:
     //! dient zur Abfrage, ob die Zeit schon abgelaufen ist
     // \return true falls die im Konstruktor angegebene Zeit seit
     // dem letzten erfolgreichen Aufruf abgelaufen ist, sonst false
-    bool Next();
+    auto Next() -> bool;
 
 
 private:

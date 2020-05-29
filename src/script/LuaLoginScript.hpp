@@ -36,7 +36,7 @@ public:
 private:
 
     LuaLoginScript(const LuaLoginScript &) = delete;
-    LuaLoginScript &operator=(const LuaLoginScript &) = delete;
+    auto operator=(const LuaLoginScript &) -> LuaLoginScript & = delete;
 };
 
 #endif

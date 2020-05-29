@@ -416,7 +416,7 @@ void World::forceLogoutOfAllPlayers() {
 }
 
 
-bool World::forceLogoutOfPlayer(const std::string &name) {
+auto World::forceLogoutOfPlayer(const std::string &name) -> bool {
     Player *temp = Players.find(name);
 
     if (temp) {
@@ -913,7 +913,7 @@ void World::gmhelp_command(Player *cp) {
 }
 
 //! parse GMCommands of the form !<string1> <string2> and process them
-bool World::parseGMCommands(Player *user, const std::string &text) {
+auto World::parseGMCommands(Player *user, const std::string &text) -> bool {
     return executeUserCommand(user, text, GMCommands);
 }
 
@@ -931,7 +931,7 @@ void reportTableError(Player *cp, const std::string &dbtable) {
 }
 
 
-bool World::reload_defs(Player *cp) {
+auto World::reload_defs(Player *cp) -> bool {
     if (!cp->hasGMRight(gmr_reload)) {
         return false;
     }
@@ -1070,7 +1070,7 @@ bool World::reload_defs(Player *cp) {
 }
 
 
-bool World::reload_tables(Player *cp) {
+auto World::reload_tables(Player *cp) -> bool {
 
     LuaScript::shutdownLua();
 
@@ -1171,7 +1171,7 @@ void World::set_login(Player *player, const std::string &text) {
     player->inform(message);
 }
 
-bool World::exportMaps(Player *cp) const {
+auto World::exportMaps(Player *cp) const -> bool {
     if (!cp->hasGMRight(gmr_import)) {
         return false;
     }

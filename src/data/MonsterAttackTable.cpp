@@ -20,11 +20,11 @@
 
 #include "data/MonsterAttackTable.hpp"
 
-std::string MonsterAttackTable::getTableName() {
+auto MonsterAttackTable::getTableName() -> std::string {
     return "monsterattack";
 }
 
-std::vector<std::string> MonsterAttackTable::getColumnNames() {
+auto MonsterAttackTable::getColumnNames() -> std::vector<std::string> {
     return {
         "mat_race_type",
         "mat_attack_type",
@@ -33,11 +33,11 @@ std::vector<std::string> MonsterAttackTable::getColumnNames() {
     };
 }
 
-uint16_t MonsterAttackTable::assignId(const Database::ResultTuple &row) {
+auto MonsterAttackTable::assignId(const Database::ResultTuple &row) -> uint16_t {
     return uint16_t(row["mat_race_type"].as<int16_t>());
 }
 
-AttackBoni MonsterAttackTable::assignTable(const Database::ResultTuple &row) {
+auto MonsterAttackTable::assignTable(const Database::ResultTuple &row) -> AttackBoni {
     AttackBoni attack;
     attack.attackType = uint8_t(row["mat_attack_type"].as<int16_t>());
     attack.attackValue = row["mat_attack_value"].as<int16_t>();

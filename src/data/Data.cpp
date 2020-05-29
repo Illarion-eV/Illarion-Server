@@ -43,7 +43,7 @@ SpellTable Spells;
 TriggerTable Triggers;
 LongTimeEffectTable LongTimeEffects;
 
-std::vector<Table *> getTables() {
+auto getTables() -> std::vector<Table *> {
     return {
         &ScriptVariables,
         &Quests,
@@ -62,7 +62,7 @@ std::vector<Table *> getTables() {
     };
 }
 
-bool reloadTables() {
+auto reloadTables() -> bool {
     bool success = true;
 
     Logger::notice(LogFacility::Script) << "Loading data and scripts ..." << Log::end;
@@ -90,7 +90,7 @@ void activateTables() {
     }
 }
 
-bool reload() {
+auto reload() -> bool {
     if (reloadTables()) {
         activateTables();
         reloadScripts();

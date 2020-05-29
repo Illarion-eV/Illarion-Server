@@ -30,8 +30,8 @@ private:
     static std::string accountSchema;
 public:
     static void setSchemata();
-    static const std::string &getServerSchema();
-    static const std::string &getAccountSchema();
+    static auto getServerSchema() -> const std::string &;
+    static auto getAccountSchema() -> const std::string &;
 };
 }
 

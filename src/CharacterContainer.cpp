@@ -28,7 +28,7 @@
 
 
 template <class T>
-bool CharacterContainer<T>::getPosition(TYPE_OF_CHARACTER_ID id,position& pos) {
+auto CharacterContainer<T>::getPosition(TYPE_OF_CHARACTER_ID id,position& pos) -> bool {
     auto i = container.find(id);
     if (i!=container.end()) {
         pos = (i->second)->getPosition();
@@ -40,7 +40,7 @@ bool CharacterContainer<T>::getPosition(TYPE_OF_CHARACTER_ID id,position& pos) {
 
 
 template <class T>
-iterator_range<typename CharacterContainer<T>::position_to_id_type::const_iterator> CharacterContainer<T>::projection_x_axis(const position& pos, int r) const {
+auto CharacterContainer<T>::projection_x_axis(const position& pos, int r) const -> iterator_range<typename CharacterContainer<T>::position_to_id_type::const_iterator> {
     return {{position_to_id.upper_bound(position(pos.x-r-1,0,0)),position_to_id.upper_bound(position(pos.x+r+1,0,0))}};
 }
 
@@ -110,7 +110,7 @@ void CharacterContainer<T>::update(pointer p, const position& newPosition) {
 
 
 template <class T>
-bool CharacterContainer<T>::erase(TYPE_OF_CHARACTER_ID id) {
+auto CharacterContainer<T>::erase(TYPE_OF_CHARACTER_ID id) -> bool {
     position pos;
     
     if (getPosition(id, pos)) {
@@ -193,7 +193,7 @@ auto CharacterContainer<T>::findAllAliveCharactersInRangeOf(const position &pos,
 
 
 template <class T>
-bool CharacterContainer<T>::findAllCharactersWithXInRangeOf(short int startx, short int endx, std::vector<pointer> &ret) const {
+auto CharacterContainer<T>::findAllCharactersWithXInRangeOf(short int startx, short int endx, std::vector<pointer> &ret) const -> bool {
     bool found_one = false;
     int r = (endx-startx)/2+1;
     int x = startx + (endx-startx)/2;

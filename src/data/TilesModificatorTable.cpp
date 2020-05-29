@@ -25,11 +25,11 @@
 #include "data/TilesModificatorTable.hpp"
 #include "constants.hpp"
 
-std::string TilesModificatorTable::getTableName() {
+auto TilesModificatorTable::getTableName() -> std::string {
     return "tilesmodificators";
 }
 
-std::vector<std::string> TilesModificatorTable::getColumnNames() {
+auto TilesModificatorTable::getColumnNames() -> std::vector<std::string> {
     return {
         "tim_itemid",
         "tim_isnotpassable",
@@ -38,11 +38,11 @@ std::vector<std::string> TilesModificatorTable::getColumnNames() {
     };
 }
 
-TYPE_OF_ITEM_ID TilesModificatorTable::assignId(const Database::ResultTuple &row) {
+auto TilesModificatorTable::assignId(const Database::ResultTuple &row) -> TYPE_OF_ITEM_ID {
     return row["tim_itemid"].as<TYPE_OF_ITEM_ID>();
 }
 
-TilesModificatorStruct TilesModificatorTable::assignTable(const Database::ResultTuple &row) {
+auto TilesModificatorTable::assignTable(const Database::ResultTuple &row) -> TilesModificatorStruct {
     TilesModificatorStruct modStruct;
     modStruct.Modificator = 0;
     modStruct.Modificator |= row["tim_isnotpassable"].as<bool>() ? FLAG_BLOCKPATH : 0;
@@ -51,7 +51,7 @@ TilesModificatorStruct TilesModificatorTable::assignTable(const Database::Result
     return modStruct;
 }
 
-bool TilesModificatorTable::passable(TYPE_OF_ITEM_ID id) {
+auto TilesModificatorTable::passable(TYPE_OF_ITEM_ID id) -> bool {
     if (exists(id)) {
         const auto &modStruct = (*this)[id];
         return (modStruct.Modificator & FLAG_BLOCKPATH) == 0 || (modStruct.Modificator & FLAG_MAKEPASSABLE) != 0;

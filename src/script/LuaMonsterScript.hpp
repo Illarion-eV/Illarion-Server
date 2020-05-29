@@ -40,17 +40,17 @@ public:
     void onCasted(Character *Monster, Character *caster);
     void useMonster(Character *Monster, Character *user, unsigned char ltastate);
     void lookAtMonster(Character *source, Character *target, unsigned char mode);
-    bool actionDisturbed(Character *performer, Character *disturber);
+    auto actionDisturbed(Character *performer, Character *disturber) -> bool;
     void onAttack(Character *Monster, Character *target);
-    bool enemyOnSight(Character *Monster, Character *enemy);
-    bool enemyNear(Character *Monster, Character *enemy);
+    auto enemyOnSight(Character *Monster, Character *enemy) -> bool;
+    auto enemyNear(Character *Monster, Character *enemy) -> bool;
     void abortRoute(Character *Monster);
     void onSpawn(Character *Monster);
-    bool setTarget(Character *Monster, const std::vector<Character *> &CandidateList, Character *&Target);
+    auto setTarget(Character *Monster, const std::vector<Character *> &CandidateList, Character *&Target) -> bool;
 
 private:
     LuaMonsterScript(const LuaMonsterScript &) = delete;
-    LuaMonsterScript &operator=(const LuaMonsterScript &) = delete;
+    auto operator=(const LuaMonsterScript &) -> LuaMonsterScript & = delete;
 };
 
 #endif

@@ -43,7 +43,7 @@ private:
 
     position _pos;
     LuaTriggerScript(const LuaTriggerScript &) = delete;
-    LuaTriggerScript &operator=(const LuaTriggerScript &) = delete;
+    auto operator=(const LuaTriggerScript &) -> LuaTriggerScript & = delete;
     void init_functions() const;
 };
 

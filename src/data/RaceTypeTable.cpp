@@ -144,7 +144,7 @@ RaceTypeTable::RaceTypeTable() {
     }
 }
 
-const RaceConfiguration RaceTypeTable::getRandomRaceConfiguration(TYPE_OF_RACE_ID race) const {
+auto RaceTypeTable::getRandomRaceConfiguration(TYPE_OF_RACE_ID race) const -> const RaceConfiguration {
     RaceConfiguration raceConfiguration;
     const auto subTypeCount = table.count(race);
 
@@ -188,7 +188,7 @@ const RaceConfiguration RaceTypeTable::getRandomRaceConfiguration(TYPE_OF_RACE_I
     return raceConfiguration;
 }
 
-bool RaceTypeTable::isHairAvailable(TYPE_OF_RACE_ID race, TYPE_OF_RACE_TYPE_ID type, uint16_t hair) const {
+auto RaceTypeTable::isHairAvailable(TYPE_OF_RACE_ID race, TYPE_OF_RACE_TYPE_ID type, uint16_t hair) const -> bool {
     try {
         const auto &availableHair = table.at(race).at(type).hair;
         return hair == 0 || std::find(availableHair.begin(), availableHair.end(), hair) != availableHair.end();
@@ -197,7 +197,7 @@ bool RaceTypeTable::isHairAvailable(TYPE_OF_RACE_ID race, TYPE_OF_RACE_TYPE_ID t
     }
 }
 
-bool RaceTypeTable::isBeardAvailable(TYPE_OF_RACE_ID race, TYPE_OF_RACE_TYPE_ID type, uint16_t beard) const {    
+auto RaceTypeTable::isBeardAvailable(TYPE_OF_RACE_ID race, TYPE_OF_RACE_TYPE_ID type, uint16_t beard) const -> bool {    
     try {
         const auto &availableBeards = table.at(race).at(type).beard;
         return beard == 0 || std::find(availableBeards.begin(), availableBeards.end(), beard) != availableBeards.end();

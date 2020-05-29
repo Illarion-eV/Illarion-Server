@@ -69,11 +69,11 @@ void BasicServerCommand::addHeader() {
     }
 }
 
-int BasicServerCommand::getLength() const {
+auto BasicServerCommand::getLength() const -> int {
     return bufferPos;
 }
 
-char *BasicServerCommand::cmdData() {
+auto BasicServerCommand::cmdData() -> char * {
     return buffer;
 
 }

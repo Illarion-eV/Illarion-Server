@@ -31,10 +31,10 @@ void SchemaHelper::setSchemata() {
     accountSchema = std::string("\"") + (Config::instance().postgres_schema_account()) + "\"";
 }
 
-const std::string &SchemaHelper::getServerSchema() {
+auto SchemaHelper::getServerSchema() -> const std::string & {
     return serverSchema;
 }
 
-const std::string &SchemaHelper::getAccountSchema() {
+auto SchemaHelper::getAccountSchema() -> const std::string & {
     return accountSchema;
 }

@@ -32,12 +32,12 @@ public:
     explicit LuaDepotScript(const std::string &filename);
     ~LuaDepotScript() override;
 
-    bool onOpenDepot(Character *cc, const ScriptItem &itm);
+    auto onOpenDepot(Character *cc, const ScriptItem &itm) -> bool;
 
 private:
 
     LuaDepotScript(const LuaDepotScript &) = delete;
-    LuaDepotScript &operator=(const LuaDepotScript &) = delete;
+    auto operator=(const LuaDepotScript &) -> LuaDepotScript & = delete;
 };
 
 #endif

@@ -47,7 +47,7 @@ public:
 
     void decodeData() override;
     void performAction(Player *player) override;
-    ClientCommandPointer clone() override;
+    auto clone() -> ClientCommandPointer override;
 };
 
 class BBSpeakAsTS : public BasicClientCommand {
@@ -60,7 +60,7 @@ public:
 
     void decodeData() override;
     void performAction(Player *player) override;
-    ClientCommandPointer clone() override;
+    auto clone() -> ClientCommandPointer override;
 };
 
 class BBWarpPlayerTS : public BasicClientCommand {
@@ -73,7 +73,7 @@ public:
 
     void decodeData() override;
     void performAction(Player *player) override;
-    ClientCommandPointer clone() override;
+    auto clone() -> ClientCommandPointer override;
 };
 
 class BBServerCommandTS : public BasicClientCommand {
@@ -85,7 +85,7 @@ public:
 
     void decodeData() override;
     void performAction(Player *player) override;
-    ClientCommandPointer clone() override;
+    auto clone() -> ClientCommandPointer override;
 };
 
 class BBChangeAttribTS : public BasicClientCommand {
@@ -99,7 +99,7 @@ public:
 
     void decodeData() override;
     void performAction(Player *player) override;
-    ClientCommandPointer clone() override;
+    auto clone() -> ClientCommandPointer override;
 };
 
 class BBChangeSkillTS : public BasicClientCommand {
@@ -113,7 +113,7 @@ public:
 
     void decodeData() override;
     void performAction(Player *player) override;
-    ClientCommandPointer clone() override;
+    auto clone() -> ClientCommandPointer override;
 };
 
 class BBTalktoTS : public BasicClientCommand {
@@ -126,7 +126,7 @@ public:
 
     void decodeData() override;
     void performAction(Player *player) override;
-    ClientCommandPointer clone() override;
+    auto clone() -> ClientCommandPointer override;
 };
 
 class BBDisconnectTS : public BasicClientCommand {
@@ -136,7 +136,7 @@ public:
     
     void decodeData() override;
     void performAction(Player *player) override;
-    ClientCommandPointer clone() override;
+    auto clone() -> ClientCommandPointer override;
 };
 
 class BBKeepAliveTS : public BasicClientCommand {
@@ -146,7 +146,7 @@ public:
 
     void decodeData() override;
     void performAction(Player *player) override;
-    ClientCommandPointer clone() override;
+    auto clone() -> ClientCommandPointer override;
 };
 
 class BBBanTS : public BasicClientCommand {
@@ -159,7 +159,7 @@ public:
 
     void decodeData() override;
     void performAction(Player *player) override;
-    ClientCommandPointer clone() override;
+    auto clone() -> ClientCommandPointer override;
 };
 
 #endif

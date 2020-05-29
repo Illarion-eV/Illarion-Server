@@ -54,7 +54,7 @@ void LuaMagicScript::CastMagicOnItem(Character *caster, const ScriptItem &Target
     callEntrypoint("CastMagicOnItem", fuse_caster, TargetItem, ltastate);
 }
 
-bool LuaMagicScript::actionDisturbed(Character *performer, Character *disturber) {
+auto LuaMagicScript::actionDisturbed(Character *performer, Character *disturber) -> bool {
     character_ptr fuse_performer(performer);
     character_ptr fuse_disturber(disturber);
     return callEntrypoint<bool>("actionDisturbed", fuse_performer, fuse_disturber);

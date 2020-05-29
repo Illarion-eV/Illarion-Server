@@ -28,12 +28,12 @@ QueryColumns::QueryColumns() {
     nextColumn = 0;
 };
 
-QueryColumns::columnIndex QueryColumns::addColumn(const std::string &column) {
+auto QueryColumns::addColumn(const std::string &column) -> QueryColumns::columnIndex {
     Query::appendToStringList(columns, Query::escapeKey(column));
     return nextColumn++;
 }
 
-QueryColumns::columnIndex QueryColumns::addColumn(const std::string &table, const std::string &column) {
+auto QueryColumns::addColumn(const std::string &table, const std::string &column) -> QueryColumns::columnIndex {
     if (hideTable) {
         return addColumn(column);
     }
@@ -42,11 +42,11 @@ QueryColumns::columnIndex QueryColumns::addColumn(const std::string &table, cons
     return nextColumn++;
 }
 
-std::string &QueryColumns::buildQuerySegment() {
+auto QueryColumns::buildQuerySegment() -> std::string & {
     return columns;
 }
 
-uint32_t QueryColumns::getColumnCount() const {
+auto QueryColumns::getColumnCount() const -> uint32_t {
     return (uint32_t) nextColumn;
 }
 

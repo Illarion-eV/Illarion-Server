@@ -23,7 +23,7 @@
 
 namespace binding {
 
-    luabind::scope item_struct() {
+    auto item_struct() -> luabind::scope {
         return luabind::class_<ItemStruct>("ItemStruct")
                 .def_readonly("id", &ItemStruct::id)
                 .def_readonly("AgeingSpeed", &ItemStruct::AgeingSpeed)

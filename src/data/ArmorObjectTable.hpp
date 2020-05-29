@@ -27,10 +27,10 @@
 
 class ArmorObjectTable : public StructTable<TYPE_OF_ITEM_ID, ArmorStruct> {
 public:
-    std::string getTableName() override;
-    std::vector<std::string> getColumnNames() override;
-    TYPE_OF_ITEM_ID assignId(const Database::ResultTuple &row) override;
-    ArmorStruct assignTable(const Database::ResultTuple &row) override;
+    auto getTableName() -> std::string override;
+    auto getColumnNames() -> std::vector<std::string> override;
+    auto assignId(const Database::ResultTuple &row) -> TYPE_OF_ITEM_ID override;
+    auto assignTable(const Database::ResultTuple &row) -> ArmorStruct override;
 };
 
 #endif

@@ -31,46 +31,46 @@ namespace map {
     class Field;
 }
 
-uint32_t getPlayerLanguageLua(const Character *);
+auto getPlayerLanguageLua(const Character *) -> uint32_t;
 
 void inform_lua2(const Character *character, const std::string &message, Character::informType type);
 void inform_lua4(const Character *character, const std::string &message);
 void inform_lua1(const Character *character, const std::string &german, const std::string &english, Character::informType type);
 void inform_lua3(const Character *character, const std::string &german, const std::string &english);
 
-int count_item_at1(const Character *, const std::string &where, TYPE_OF_ITEM_ID id);
-int count_item_at2(const Character *, const std::string &where, TYPE_OF_ITEM_ID id, const luabind::object &);
+auto count_item_at1(const Character *, const std::string &where, TYPE_OF_ITEM_ID id) -> int;
+auto count_item_at2(const Character *, const std::string &where, TYPE_OF_ITEM_ID id, const luabind::object &) -> int;
 
-int erase_item1(Character *, TYPE_OF_ITEM_ID, int);
-int erase_item2(Character *, TYPE_OF_ITEM_ID, int, const luabind::object &);
+auto erase_item1(Character *, TYPE_OF_ITEM_ID, int) -> int;
+auto erase_item2(Character *, TYPE_OF_ITEM_ID, int, const luabind::object &) -> int;
 
-int create_item(Character *, Item::id_type id, Item::number_type number, Item::quality_type quality, const luabind::object &);
+auto create_item(Character *, Item::id_type id, Item::number_type number, Item::quality_type quality, const luabind::object &) -> int;
 
-luabind::object getLoot(const Character *character);
+auto getLoot(const Character *character) -> luabind::object;
 
-int container_count_item1(Container *, Item::id_type);
-int container_count_item2(Container *, Item::id_type, const luabind::object &data);
+auto container_count_item1(Container *, Item::id_type) -> int;
+auto container_count_item2(Container *, Item::id_type, const luabind::object &data) -> int;
 
-int container_erase_item1(Container *, Item::id_type, Item::number_type);
-int container_erase_item2(Container *, Item::id_type, Item::number_type, const luabind::object &data);
+auto container_erase_item1(Container *, Item::id_type, Item::number_type) -> int;
+auto container_erase_item2(Container *, Item::id_type, Item::number_type, const luabind::object &data) -> int;
 
-map::Field *world_fieldAt(World *world, const position &pos);
-ScriptItem world_createFromId(World *world, TYPE_OF_ITEM_ID id, unsigned short int count, position pos, bool always, int quali, const luabind::object &data);
+auto world_fieldAt(World *world, const position &pos) -> map::Field *;
+auto world_createFromId(World *world, TYPE_OF_ITEM_ID id, unsigned short int count, position pos, bool always, int quali, const luabind::object &data) -> ScriptItem;
 
 void log_lua(const std::string &message);
 
-luabind::object character_getItemList(const Character *, TYPE_OF_ITEM_ID id);
+auto character_getItemList(const Character *, TYPE_OF_ITEM_ID id) -> luabind::object;
 
 void waypointlist_addFromList(WaypointList *wpl, const luabind::object &list);
-luabind::object waypointlist_getWaypoints(const WaypointList *wpl);
+auto waypointlist_getWaypoints(const WaypointList *wpl) -> luabind::object;
 
-luabind::object world_LuaLoS(const World *world, const position &startingpos, const position &endingpos);
-luabind::object world_getPlayersOnline(const World *world);
-luabind::object world_getNPCS(const World *world);
+auto world_LuaLoS(const World *world, const position &startingpos, const position &endingpos) -> luabind::object;
+auto world_getPlayersOnline(const World *world) -> luabind::object;
+auto world_getNPCS(const World *world) -> luabind::object;
 
-luabind::object world_getCharactersInRangeOf(const World *world, const position &posi, uint8_t range);
-luabind::object world_getPlayersInRangeOf(const World *world, const position &posi, uint8_t range);
-luabind::object world_getMonstersInRangeOf(const World *world, const position &posi, uint8_t range);
-luabind::object world_getNPCSInRangeOf(const World *world, const position &posi, uint8_t range);
+auto world_getCharactersInRangeOf(const World *world, const position &posi, uint8_t range) -> luabind::object;
+auto world_getPlayersInRangeOf(const World *world, const position &posi, uint8_t range) -> luabind::object;
+auto world_getMonstersInRangeOf(const World *world, const position &posi, uint8_t range) -> luabind::object;
+auto world_getNPCSInRangeOf(const World *world, const position &posi, uint8_t range) -> luabind::object;
 
 #endif

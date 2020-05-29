@@ -31,18 +31,18 @@ class WaypointList {
 public:
     static const uint8_t max_fields_for_waypoints = 12;
     explicit WaypointList(Character *movechar);
-    const std::list<position> &getWaypoints() const;
+    auto getWaypoints() const -> const std::list<position> &;
     void addWaypoint(const position &pos);
-    bool getNextWaypoint(position &pos) const;
+    auto getNextWaypoint(position &pos) const -> bool;
     void clear();
-    bool makeMove();
-    bool recalcStepList();
+    auto makeMove() -> bool;
+    auto recalcStepList() -> bool;
 
 private:
     std::list<position> positions;
     Character *_movechar;
     std::list<direction> steplist;
-    bool checkPosition();
+    auto checkPosition() -> bool;
 };
 #endif
 

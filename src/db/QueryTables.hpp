@@ -41,10 +41,10 @@ public:
 protected:
     QueryTables();
     QueryTables(const QueryTables &org) = delete;
-    QueryTables &operator=(const QueryTables &org) = delete;
+    auto operator=(const QueryTables &org) -> QueryTables & = delete;
 
     void setOnlyOneTable(const bool &enabled);
-    std::string &buildQuerySegment();
+    auto buildQuerySegment() -> std::string &;
 };
 }
 

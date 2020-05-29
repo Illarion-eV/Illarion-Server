@@ -37,7 +37,7 @@ public:
     //! pr�ft, ob schon gen�gend Zeit seit dem letzten Timer-Ereignis
     // (bzw. dem Konstruktor) vergangen ist
     // \return true, falls das n�chste Ereignis anliegt, false sonst
-    bool next();
+    auto next() -> bool;
 
 private:
 

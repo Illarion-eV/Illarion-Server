@@ -30,7 +30,7 @@
 
 template<class T> class thread_safe_vector : public std::list<T> {
 public:
-    inline size_t size() {
+    inline auto size() -> size_t {
         std::lock_guard<std::mutex> lock(vlock);
         uint16_t s = std::list<T>::size();
         return s;
@@ -46,12 +46,12 @@ public:
         std::list<T>::push_back(item);
     }
 
-    inline bool empty() {
+    inline auto empty() -> bool {
         std::lock_guard<std::mutex> lock(vlock);
         return std::list<T>::empty();
     }
 
-    inline T pop_front() {
+    inline auto pop_front() -> T {
         std::lock_guard<std::mutex> lock(vlock);
         T item = std::list<T>::front();
         std::list<T>::pop_front();

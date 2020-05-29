@@ -23,7 +23,7 @@
 
 namespace binding {
 
-    luabind::scope armor_struct() {
+    auto armor_struct() -> luabind::scope {
         return luabind::class_<ArmorStruct>("ArmorStruct")
         .def(luabind::constructor<>())
         .enum_("type")

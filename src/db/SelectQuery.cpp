@@ -63,7 +63,7 @@ void SelectQuery::setDistinct(const bool &distinct) {
     isDistinct = distinct;
 }
 
-Result SelectQuery::execute() {
+auto SelectQuery::execute() -> Result {
     std::stringstream ss;
     ss << "SELECT ";
 

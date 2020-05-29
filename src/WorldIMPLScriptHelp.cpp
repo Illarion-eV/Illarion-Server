@@ -35,12 +35,12 @@
 
 #include "script/LuaNPCScript.hpp"
 
-bool World::deleteNPC(unsigned int npcid) {
+auto World::deleteNPC(unsigned int npcid) -> bool {
     LostNpcs.push_back(npcid);
     return true;
 }
 
-bool World::createDynamicNPC(const std::string &name, TYPE_OF_RACE_ID type, const position &pos, /*CCharacter::face_to dir,*/ Character::sex_type sex, const std::string &scriptname) {
+auto World::createDynamicNPC(const std::string &name, TYPE_OF_RACE_ID type, const position &pos, /*CCharacter::face_to dir,*/ Character::sex_type sex, const std::string &scriptname) -> bool {
     try {
 
         try {
@@ -68,7 +68,7 @@ bool World::createDynamicNPC(const std::string &name, TYPE_OF_RACE_ID type, cons
 }
 
 
-std::vector<Player *> World::getPlayersOnline() const {
+auto World::getPlayersOnline() const -> std::vector<Player *> {
     std::vector<Player *> list;
 
     Players.for_each([&list](Player *player) {
@@ -78,7 +78,7 @@ std::vector<Player *> World::getPlayersOnline() const {
     return list;
 }
 
-std::vector<NPC *> World::getNPCS() const {
+auto World::getNPCS() const -> std::vector<NPC *> {
     std::vector<NPC *> list;
 
     Npc.for_each([&list](NPC *npc) {
@@ -88,7 +88,7 @@ std::vector<NPC *> World::getNPCS() const {
     return list;
 }
 
-std::vector<Character *> World::getCharactersInRangeOf(const position &pos, uint8_t radius) const {
+auto World::getCharactersInRangeOf(const position &pos, uint8_t radius) const -> std::vector<Character *> {
     std::vector<Character *> list;
     Range range;
     range.radius = radius;
@@ -105,19 +105,19 @@ std::vector<Character *> World::getCharactersInRangeOf(const position &pos, uint
     return list;
 }
 
-std::vector<Player *> World::getPlayersInRangeOf(const position &pos, uint8_t radius) const {
+auto World::getPlayersInRangeOf(const position &pos, uint8_t radius) const -> std::vector<Player *> {
     Range range;
     range.radius = radius;
     return Players.findAllCharactersInRangeOf(pos, range);
 }
 
-std::vector<Monster *> World::getMonstersInRangeOf(const position &pos, uint8_t radius) const {
+auto World::getMonstersInRangeOf(const position &pos, uint8_t radius) const -> std::vector<Monster *> {
     Range range;
     range.radius = radius;
     return Monsters.findAllCharactersInRangeOf(pos, range);
 }
 
-std::vector<NPC *> World::getNPCSInRangeOf(const position &pos, uint8_t radius) const {
+auto World::getNPCSInRangeOf(const position &pos, uint8_t radius) const -> std::vector<NPC *> {
     Range range;
     range.radius = radius;
     return Npc.findAllCharactersInRangeOf(pos, range);
@@ -160,7 +160,7 @@ void World::changeQuality(ScriptItem item, short int amount) {
     }
 }
 
-bool World::changeItem(ScriptItem item) {
+auto World::changeItem(ScriptItem item) -> bool {
     if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
         item.owner->items[ item.itempos ] = (Item)item;
 
@@ -198,7 +198,7 @@ bool World::changeItem(ScriptItem item) {
     return false;
 }
 
-std::string World::getItemName(TYPE_OF_ITEM_ID itemid, uint8_t language) {
+auto World::getItemName(TYPE_OF_ITEM_ID itemid, uint8_t language) -> std::string {
     if (language == 0) {
         return Data::Items[itemid].German;
     } else {
@@ -207,17 +207,17 @@ std::string World::getItemName(TYPE_OF_ITEM_ID itemid, uint8_t language) {
 }
 
 
-ItemStruct World::getItemStats(const ScriptItem &item) {
+auto World::getItemStats(const ScriptItem &item) -> ItemStruct {
     const auto &data = Data::Items[item.getId()];
     return data;
 }
 
-ItemStruct World::getItemStatsFromId(TYPE_OF_ITEM_ID id) {
+auto World::getItemStatsFromId(TYPE_OF_ITEM_ID id) -> ItemStruct {
     const auto &data = Data::Items[id];
     return data;
 }
 
-bool World::isCharacterOnField(const position &pos) const {
+auto World::isCharacterOnField(const position &pos) const -> bool {
     if (findCharacterOnField(pos)) {
         return true;
     } else {
@@ -225,11 +225,11 @@ bool World::isCharacterOnField(const position &pos) const {
     }
 }
 
-character_ptr World::getCharacterOnField(const position &pos) const {
+auto World::getCharacterOnField(const position &pos) const -> character_ptr {
     return character_ptr(findCharacterOnField(pos));
 }
 
-bool World::erase(ScriptItem item, int amount) {
+auto World::erase(ScriptItem item, int amount) -> bool {
     if (amount > item.getNumber()) {
         amount = item.getNumber();
     }
@@ -274,7 +274,7 @@ bool World::erase(ScriptItem item, int amount) {
 }
 
 
-bool World::increase(ScriptItem item, short int count) {
+auto World::increase(ScriptItem item, short int count) -> bool {
     if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
         item.owner->increaseAtPos(item.itempos, count);
         return true;
@@ -305,7 +305,7 @@ bool World::increase(ScriptItem item, short int count) {
     return false;
 }
 
-bool World::swap(ScriptItem item, TYPE_OF_ITEM_ID newItem, unsigned short int newQuality) {
+auto World::swap(ScriptItem item, TYPE_OF_ITEM_ID newItem, unsigned short int newQuality) -> bool {
     if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
         item.owner->swapAtPos(item.itempos, newItem, newQuality);
         return true;
@@ -346,7 +346,7 @@ bool World::swap(ScriptItem item, TYPE_OF_ITEM_ID newItem, unsigned short int ne
     return false;
 }
 
-ScriptItem World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, const position &pos, bool always, int quality, script_data_exchangemap const *data) {
+auto World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, const position &pos, bool always, int quality, script_data_exchangemap const *data) -> ScriptItem {
     ScriptItem sItem;
 
     const auto &com = Data::Items[id];
@@ -376,7 +376,7 @@ ScriptItem World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, con
     return sItem;
 }
 
-bool World::createFromItem(ScriptItem item, const position &pos, bool always) {
+auto World::createFromItem(ScriptItem item, const position &pos, bool always) -> bool {
     g_item = static_cast<Item>(item);
     g_cont = nullptr;
 
@@ -389,7 +389,7 @@ bool World::createFromItem(ScriptItem item, const position &pos, bool always) {
     return true;
 }
 
-character_ptr World::createMonster(unsigned short id, const position &pos, short movepoints) {
+auto World::createMonster(unsigned short id, const position &pos, short movepoints) -> character_ptr {
     try {
         map::Field &field = fieldAt(pos);
         
@@ -426,7 +426,7 @@ void World::makeSound(unsigned short int soundid, const position &pos) {
     }
 }
 
-bool World::isItemOnField(const position &pos) {
+auto World::isItemOnField(const position &pos) -> bool {
     try {
         return fieldAt(pos).itemCount() > 0;
     } catch (FieldNotFound &) {
@@ -435,7 +435,7 @@ bool World::isItemOnField(const position &pos) {
     }
 }
 
-ScriptItem World::getItemOnField(const position &pos) {
+auto World::getItemOnField(const position &pos) -> ScriptItem {
     ScriptItem item;
 
     try {
@@ -463,8 +463,8 @@ void World::changeTile(short int tileid, const position &pos) {
     }
 }
 
-bool World::createSavedArea(uint16_t tile, const position &origin,
-                            uint16_t height, uint16_t width) {
+auto World::createSavedArea(uint16_t tile, const position &origin,
+                            uint16_t height, uint16_t width) -> bool {
     if (maps.createMap("by createSavedArea", origin, width, height, tile)) {
         Logger::info(LogFacility::World)
             << "Map created by createSavedArea command at " << origin
@@ -476,7 +476,7 @@ bool World::createSavedArea(uint16_t tile, const position &origin,
     }
 }
 
-bool World::getArmorStruct(TYPE_OF_ITEM_ID id, ArmorStruct &ret) {
+auto World::getArmorStruct(TYPE_OF_ITEM_ID id, ArmorStruct &ret) -> bool {
     //Has to be an own function cant give a pointer of Armor items to the script
 
     if (Data::ArmorItems.exists(id)) {
@@ -487,7 +487,7 @@ bool World::getArmorStruct(TYPE_OF_ITEM_ID id, ArmorStruct &ret) {
     }
 }
 
-bool World::getWeaponStruct(TYPE_OF_ITEM_ID id, WeaponStruct &ret) {
+auto World::getWeaponStruct(TYPE_OF_ITEM_ID id, WeaponStruct &ret) -> bool {
     //Has to be an own function cant give a pointer of Armor items to the script
 
     if (Data::WeaponItems.exists(id)) {
@@ -498,7 +498,7 @@ bool World::getWeaponStruct(TYPE_OF_ITEM_ID id, WeaponStruct &ret) {
     }
 }
 
-bool World::getNaturalArmor(TYPE_OF_RACE_ID id, MonsterArmor &ret) {
+auto World::getNaturalArmor(TYPE_OF_RACE_ID id, MonsterArmor &ret) -> bool {
 
     if (Data::NaturalArmors.exists(id)) {
         ret = Data::NaturalArmors[id];
@@ -508,7 +508,7 @@ bool World::getNaturalArmor(TYPE_OF_RACE_ID id, MonsterArmor &ret) {
     }
 }
 
-bool World::getMonsterAttack(TYPE_OF_RACE_ID id, AttackBoni &ret) {
+auto World::getMonsterAttack(TYPE_OF_RACE_ID id, AttackBoni &ret) -> bool {
 
     if (Data::MonsterAttacks.exists(id)) {
         ret = Data::MonsterAttacks[id];

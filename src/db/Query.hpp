@@ -36,23 +36,23 @@ public:
     explicit Query(const std::string &query);
     Query(const PConnection connection, const std::string &query);
 
-    static std::string escapeKey(const std::string &key);
-    static std::string escapeAndChainKeys(const std::string &key1, const std::string &key2);
+    static auto escapeKey(const std::string &key) -> std::string;
+    static auto escapeAndChainKeys(const std::string &key1, const std::string &key2) -> std::string;
     static void appendToStringList(std::string &list, const std::string &newEntry);
-    template <typename T> std::string quote(T value) const {
+    template <typename T> auto quote(T value) const -> std::string {
         return dbConnection->quote<T>(value);
     };
 
-    virtual Result execute();
+    virtual auto execute() -> Result;
 
 protected:
     Query();
     explicit Query(const PConnection connection);
     Query(const Query &org) = delete;
-    Query &operator=(const Query &org) = delete;
+    auto operator=(const Query &org) -> Query & = delete;
 
     void setQuery(const std::string &query);
-    PConnection getConnection();
+    auto getConnection() -> PConnection;
 };
 }
 

@@ -35,7 +35,7 @@ public:
 private:
 
     LuaPlayerDeathScript(const LuaPlayerDeathScript &) = delete;
-    LuaPlayerDeathScript &operator=(const LuaPlayerDeathScript &) = delete;
+    auto operator=(const LuaPlayerDeathScript &) -> LuaPlayerDeathScript & = delete;
 };
 
 #endif

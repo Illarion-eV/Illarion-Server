@@ -55,7 +55,7 @@ void Connection::rollbackTransaction() {
     }
 };
 
-pqxx::result Connection::query(const std::string &query) {
+auto Connection::query(const std::string &query) -> pqxx::result {
     if (transaction) {
         return transaction->exec(query);
     }

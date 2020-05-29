@@ -39,7 +39,7 @@ public:
     *@param commandId the id of the command which we want to use
     *@return a pointer to an empty command with the given commandId
     */
-    ClientCommandPointer getCommand(unsigned char commandId);
+    auto getCommand(unsigned char commandId) -> ClientCommandPointer;
 
 private:
 

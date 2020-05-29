@@ -52,9 +52,9 @@ struct character_out_edge_iterator: public boost::forward_iterator_helper<charac
     character_out_edge_iterator();
     character_out_edge_iterator(int i, const Position &p, const world_map_graph &g);
 
-    std::pair<Position, Position> operator*() const;
+    auto operator*() const -> std::pair<Position, Position>;
     void operator++();
-    bool operator==(const character_out_edge_iterator &iterator) const;
+    auto operator==(const character_out_edge_iterator &iterator) const -> bool;
 
 protected:
     void valid_step();
@@ -82,19 +82,19 @@ struct world_map_graph {
     int level;
 };
 
-world_map_graph::vertex_descriptor
-source(const world_map_graph::edge_descriptor &e, const world_map_graph &g);
+auto
+source(const world_map_graph::edge_descriptor &e, const world_map_graph &g) -> world_map_graph::vertex_descriptor;
 
-world_map_graph::vertex_descriptor
-target(const world_map_graph::edge_descriptor &e, const world_map_graph &g);
+auto
+target(const world_map_graph::edge_descriptor &e, const world_map_graph &g) -> world_map_graph::vertex_descriptor;
 
-std::pair<world_map_graph::out_edge_iterator, world_map_graph::out_edge_iterator>
-out_edges(const world_map_graph::vertex_descriptor &v, const world_map_graph &g);
+auto
+out_edges(const world_map_graph::vertex_descriptor &v, const world_map_graph &g) -> std::pair<world_map_graph::out_edge_iterator, world_map_graph::out_edge_iterator>;
 
-world_map_graph::degree_size_type
-out_degree(const world_map_graph::vertex_descriptor &v, const world_map_graph &g);
+auto
+out_degree(const world_map_graph::vertex_descriptor &v, const world_map_graph &g) -> world_map_graph::degree_size_type;
 
-int num_vertices(const world_map_graph &g);
+auto num_vertices(const world_map_graph &g) -> int;
 
 using Cost = float;
 
@@ -102,33 +102,33 @@ class distance_heuristic : public astar_heuristic<world_map_graph, Cost> {
 public:
     using Vertex = graph_traits<world_map_graph>::vertex_descriptor;
     explicit distance_heuristic(const Vertex &goal);
-    Cost operator()(const Vertex &u);
+    auto operator()(const Vertex &u) -> Cost;
 
 private:
     Vertex goal;
 };
 
 struct edge_hash : std::unary_function<std::pair<Position, Position>, std::size_t> {
-    std::size_t operator()(std::pair<Position, Position> const &e) const;
+    auto operator()(std::pair<Position, Position> const &e) const -> std::size_t;
 };
 
 struct weight_calc: public boost::unordered_map<std::pair<Position, Position>, Cost, edge_hash> {
     explicit weight_calc(int level);
-    mapped_type &operator[](const key_type &k);
+    auto operator[](const key_type &k) -> mapped_type &;
 
 private:
     const int level;
 };
 
 struct vertex_hash : std::unary_function<Position, std::size_t> {
-    std::size_t operator()(Position const &u) const;
+    auto operator()(Position const &u) const -> std::size_t;
 };
 
 struct found_goal {};
 struct not_found {};
 
 struct vertex_index_hash: public unordered_map<Position, int, vertex_hash> {
-    mapped_type &operator[](const key_type &k);
+    auto operator[](const key_type &k) -> mapped_type &;
 
 private:
     mutable int discovery_counter = 0;
@@ -147,15 +147,15 @@ private:
 
 class dist_map: public boost::unordered_map<Position, Cost, vertex_hash> {
 public:
-    mapped_type &operator[](key_type const &k);
+    auto operator[](key_type const &k) -> mapped_type &;
 };
 
 class pred_map: public boost::unordered_map<Position, Position, vertex_hash> {
 public:
-    mapped_type &operator[](key_type const &k);
+    auto operator[](key_type const &k) -> mapped_type &;
 };
 
-bool a_star(const ::position &start_pos, const ::position &goal_pos, std::list<direction> &steps);
+auto a_star(const ::position &start_pos, const ::position &goal_pos, std::list<direction> &steps) -> bool;
 
 }
 

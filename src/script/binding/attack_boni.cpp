@@ -23,7 +23,7 @@
 
 namespace binding {
 
-    luabind::scope attack_boni() {
+    auto attack_boni() -> luabind::scope {
         return luabind::class_<AttackBoni>("AttackBoni")
                 .def(luabind::constructor<>())
                 .def_readonly("attackType", &AttackBoni::attackType)

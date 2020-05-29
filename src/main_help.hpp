@@ -32,13 +32,13 @@ void logout_save(Player *who, bool forced, unsigned long int thistime);
 void login_save(Player *who);
 
 // process commandline arguments
-bool checkArguments(int argc, char *argv[]);
+auto checkArguments(int argc, char *argv[]) -> bool;
 
 // load item definitions
 void loadData();
 
 // initialise signal handlers
-bool init_sighandlers();
+auto init_sighandlers() -> bool;
 
 // reset signal handlers
 void reset_sighandlers();

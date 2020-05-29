@@ -20,7 +20,7 @@ template<typename clock_type>
 Task<clock_type>::Task(std::function<void()> task, typename clock_type::time_point start_point, std::chrono::nanoseconds interval, const std::string& name) : _task(task), _next(start_point), _interval(interval), _name(name) { }
 
 template<typename clock_type>
-bool Task<clock_type>::run() {
+auto Task<clock_type>::run() -> bool {
 	_task();
 
 	if (_interval > std::chrono::nanoseconds::zero()) {
@@ -73,7 +73,7 @@ void ClockBasedScheduler<clock_type>::run_once(std::chrono::nanoseconds max_time
 }
 
 template<typename clock_type>
-std::chrono::nanoseconds ClockBasedScheduler<clock_type>::getNextTaskTime() {
+auto ClockBasedScheduler<clock_type>::getNextTaskTime() -> std::chrono::nanoseconds {
 	std::unique_lock<std::mutex> lock(_container_mutex);
 	if (_tasks.empty())
 		return std::chrono::nanoseconds::max();

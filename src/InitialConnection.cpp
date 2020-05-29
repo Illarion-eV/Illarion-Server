@@ -28,7 +28,7 @@
 
 #include "netinterface/NetInterface.hpp"
 
-std::shared_ptr<InitialConnection> InitialConnection::create() {
+auto InitialConnection::create() -> std::shared_ptr<InitialConnection> {
     std::shared_ptr<InitialConnection> ptr(new InitialConnection());
     std::thread servicethread(
         std::bind(&InitialConnection::run_service, ptr->shared_from_this()));

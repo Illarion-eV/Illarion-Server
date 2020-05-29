@@ -39,7 +39,7 @@ struct position {
     position() = default;
     position(short int x, short int y, short int z) : x(x), y(y), z(z) {}
     
-    bool operator == (const position &pos) const {
+    auto operator == (const position &pos) const -> bool {
         return (x == pos.x && y == pos.y && z == pos.z);
     }
 
@@ -84,16 +84,16 @@ struct position {
         }
     }
 
-    std::string toString() const {
+    auto toString() const -> std::string {
         return "(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ")";
     }
 
-    friend std::ostream &operator<<(std::ostream &out, const position &pos) {
+    friend auto operator<<(std::ostream &out, const position &pos) -> std::ostream & {
         out << "(" << pos.x << ", " << pos.y << ", " << pos.z << ")";
         return out;
     }
 
-    friend std::size_t hash_value(const position &p) {
+    friend auto hash_value(const position &p) -> std::size_t {
         std::size_t seed = 0;
         boost::hash_combine(seed, p.x);
         boost::hash_combine(seed, p.y);
@@ -104,7 +104,7 @@ struct position {
 };
 
 struct PositionComparison {
-    bool operator()(const position& pos1, const position& pos2) const {
+    auto operator()(const position& pos1, const position& pos2) const -> bool {
         if(pos1.x == pos2.x) {
             if(pos1.y == pos2.y) {
                 return pos1.z < pos2.z;
@@ -119,7 +119,7 @@ struct PositionComparison {
 
 namespace std {
 template<> struct hash<position> {
-    size_t operator()(const position &p) const {
+    auto operator()(const position &p) const -> size_t {
         return hash_value(p);
     }
 };
@@ -133,11 +133,11 @@ struct MapPosition {
     MapPosition(short int x, short int y): x(x), y(y) {}
     explicit MapPosition(const position &pos): x(pos.x), y(pos.y) {}
 
-    bool operator == (const MapPosition &pos) const {
+    auto operator == (const MapPosition &pos) const -> bool {
         return (x == pos.x && y == pos.y);
     }
 
-    friend std::size_t hash_value(const MapPosition &p) {
+    friend auto hash_value(const MapPosition &p) -> std::size_t {
         std::size_t seed = 0;
         boost::hash_combine(seed, p.x);
         boost::hash_combine(seed, p.y);
@@ -148,7 +148,7 @@ struct MapPosition {
 
 namespace std {
 template<> struct hash<MapPosition> {
-    size_t operator()(const MapPosition &p) const {
+    auto operator()(const MapPosition &p) const -> size_t {
         return hash_value(p);
     }
 };

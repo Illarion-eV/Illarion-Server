@@ -52,7 +52,7 @@
 extern std::shared_ptr<LuaLoginScript>loginScript;
 extern ScriptVariablesTable *scriptVariables;
 
-int main(int argc, char *argv[]) {
+auto main(int argc, char *argv[]) -> int {
 
     // get more info for unspecified exceptions
     std::set_terminate(__gnu_cxx::__verbose_terminate_handler);

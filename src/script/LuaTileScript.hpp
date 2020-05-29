@@ -34,12 +34,12 @@ public:
     ~LuaTileScript() override;
 
     void useTile(Character *user, const position &pos, unsigned char ltastate);
-    bool actionDisturbed(Character *performer, Character *disturber);
+    auto actionDisturbed(Character *performer, Character *disturber) -> bool;
 
 private:
 
     LuaTileScript(const LuaTileScript &) = delete;
-    LuaTileScript &operator=(const LuaTileScript &) = delete;
+    auto operator=(const LuaTileScript &) -> LuaTileScript & = delete;
     TilesStruct thisTile;
     void init_functions() const;
 };

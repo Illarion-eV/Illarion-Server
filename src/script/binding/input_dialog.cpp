@@ -23,7 +23,7 @@
 
 namespace binding {
 
-    luabind::scope input_dialog() {
+    auto input_dialog() -> luabind::scope {
         return luabind::class_<InputDialog>("InputDialog")
                 .def(luabind::constructor<std::string, std::string, bool, unsigned short, luabind::object>())
                 .def("getSuccess", &InputDialog::getSuccess)

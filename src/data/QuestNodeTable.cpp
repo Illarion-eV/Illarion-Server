@@ -35,7 +35,7 @@
 
 std::unique_ptr<QuestNodeTable> QuestNodeTable::instance = nullptr;
 
-QuestNodeTable &QuestNodeTable::getInstance() {
+auto QuestNodeTable::getInstance() -> QuestNodeTable & {
     if (!instance) {
         instance = std::make_unique<QuestNodeTable>();
     }

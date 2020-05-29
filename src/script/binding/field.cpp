@@ -25,7 +25,7 @@ namespace binding {
 
     using map::Field;
 
-    luabind::scope field() {
+    auto field() -> luabind::scope {
         return luabind::class_<Field>("Field")
         .def("tile", &Field::getTileId)
         .def("getStackItem", &Field::getStackItem)

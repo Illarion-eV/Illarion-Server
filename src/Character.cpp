@@ -93,7 +93,7 @@ Character::attribute_string_map_t Character::attributeStringMap = {
     {luck, "luck"}
 };
 
-position Character::getFrontalPosition() const {
+auto Character::getFrontalPosition() const -> position {
     position front = pos;
 
     switch (faceto) {
@@ -137,13 +137,13 @@ position Character::getFrontalPosition() const {
     return front;
 }
 
-bool Character::getStepList(const position &goal, std::list<direction> &steps) const {
+auto Character::getStepList(const position &goal, std::list<direction> &steps) const -> bool {
     return pathfinding::a_star(pos, goal, steps);
 }
 
 
 
-bool Character::getNextStepDir(const position &goal, direction &dir) const {
+auto Character::getNextStepDir(const position &goal, direction &dir) const -> bool {
     std::list<direction> steps;
 
     getStepList(goal, steps);
@@ -200,23 +200,23 @@ Character::~Character() {
     });
 }
 
-TYPE_OF_CHARACTER_ID Character::getId() const {
+auto Character::getId() const -> TYPE_OF_CHARACTER_ID {
     return id;
 }
 
-const std::string &Character::getName() const {
+auto Character::getName() const -> const std::string & {
     return name;
 }
 
-short int Character::getActionPoints() const {
+auto Character::getActionPoints() const -> short int {
     return actionPoints;
 }
 
-short int Character::getMinActionPoints() const {
+auto Character::getMinActionPoints() const -> short int {
     return NP_MIN_AP;
 }
 
-short int Character::getMaxActionPoints() const {
+auto Character::getMaxActionPoints() const -> short int {
     return NP_MAX_AP;
 }
 
@@ -232,19 +232,19 @@ void Character::increaseActionPoints(short int ap) {
     setActionPoints(actionPoints + ap);
 }
 
-bool Character::canAct() const {
+auto Character::canAct() const -> bool {
     return actionPoints >= getMaxActionPoints();
 }
 
-short int Character::getFightPoints() const {
+auto Character::getFightPoints() const -> short int {
     return fightPoints;
 }
 
-short int Character::getMinFightPoints() const {
+auto Character::getMinFightPoints() const -> short int {
     return NP_MIN_FP;
 }
 
-short int Character::getMaxFightPoints() const {
+auto Character::getMaxFightPoints() const -> short int {
     return NP_MAX_FP;
 }
 
@@ -260,11 +260,11 @@ void Character::increaseFightPoints(short int fp) {
     setFightPoints(fightPoints + fp);
 }
 
-bool Character::canFight() const {
+auto Character::canFight() const -> bool {
     return fightPoints >= getMinFightPoints();
 }
 
-short int Character::getActiveLanguage() const {
+auto Character::getActiveLanguage() const -> short int {
     return activeLanguage;
 }
 
@@ -272,11 +272,11 @@ void Character::setActiveLanguage(short int l) {
     activeLanguage = l;
 }
 
-const position &Character::getPosition() const {
+auto Character::getPosition() const -> const position & {
     return pos;
 }
 
-bool Character::getAttackMode() const {
+auto Character::getAttackMode() const -> bool {
     return attackmode;
 }
 
@@ -284,11 +284,11 @@ void Character::setAttackMode(bool attack) {
     attackmode = attack;
 }
 
-const std::string &Character::getLastSpokenText() const {
+auto Character::getLastSpokenText() const -> const std::string & {
     return lastSpokenText;
 }
 
-bool Character::isInvisible() const {
+auto Character::isInvisible() const -> bool {
     return isinvisible;
 }
 
@@ -298,7 +298,7 @@ void Character::setInvisible(bool invisible) {
 
 auto toNumber = [](const Item &item) {return item.getNumber();};
 
-int Character::countItem(TYPE_OF_ITEM_ID itemid) const {
+auto Character::countItem(TYPE_OF_ITEM_ID itemid) const -> int {
     using namespace ranges;
     auto hasItemId = [itemid](const Item &item) {return item.getId() == itemid;};
     int count = accumulate(items | view::filter(hasItemId)
@@ -311,7 +311,7 @@ int Character::countItem(TYPE_OF_ITEM_ID itemid) const {
     return count;
 }
 
-int Character::countItemAt(const std::string &where, TYPE_OF_ITEM_ID itemid, script_data_exchangemap const *data) const {
+auto Character::countItemAt(const std::string &where, TYPE_OF_ITEM_ID itemid, script_data_exchangemap const *data) const -> int {
     using namespace ranges;
     auto hasItemIdAndData = [itemid, data](const Item &item) {
         return item.getId() == itemid && (data == nullptr || item.hasData(*data));
@@ -352,7 +352,7 @@ int Character::countItemAt(const std::string &where, TYPE_OF_ITEM_ID itemid, scr
     return 0;
 }
 
-ScriptItem Character::GetItemAt(unsigned char itempos) {
+auto Character::GetItemAt(unsigned char itempos) -> ScriptItem {
     ScriptItem item;
 
     if (itempos < MAX_BODY_ITEMS + MAX_BELT_SLOTS) {
@@ -372,7 +372,7 @@ ScriptItem Character::GetItemAt(unsigned char itempos) {
 }
 
 
-int Character::eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangemap const *data) {
+auto Character::eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangemap const *data) -> int {
     int temp = count;
 
     if ((items[ BACKPACK ].getId() != 0) && backPackContents) {
@@ -401,7 +401,7 @@ int Character::eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchange
     return temp;
 }
 
-int Character::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) {
+auto Character::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) -> int {
     int temp = count;
     Item it;
 
@@ -435,7 +435,7 @@ int Character::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) 
 }
 
 
-int Character::createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, script_data_exchangemap const *data) {
+auto Character::createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, script_data_exchangemap const *data) -> int {
     int temp = number;
     Item it;
 
@@ -555,7 +555,7 @@ int Character::createItem(Item::id_type id, Item::number_type number, Item::qual
 }
 
 
-int Character::increaseAtPos(unsigned char pos, int count) {
+auto Character::increaseAtPos(unsigned char pos, int count) -> int {
     int temp = count;
 
     if ((pos > 0) && (pos < MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
@@ -586,7 +586,7 @@ int Character::increaseAtPos(unsigned char pos, int count) {
 }
 
 
-bool Character::swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t newQuality) {
+auto Character::swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t newQuality) -> bool {
     if ((pos > 0) && (pos < MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
         bool updateBrightness = World::get()->getItemStatsFromId(items[ pos ].getId()).Brightness > 0 || World::get()->getItemStatsFromId(newid).Brightness > 0;
         items[ pos ].setId(newid);
@@ -647,7 +647,7 @@ void Character::setAlive(bool t) {
 }
 
 
-bool Character::attack(Character *target) {
+auto Character::attack(Character *target) -> bool {
     if (target && target->isAlive()) {
         if (!actionRunning()) {
             if (target->isAlive()) {
@@ -686,12 +686,12 @@ void Character::stopAttack() {
     enemyid = 0;
 }
 
-character_ptr Character::getAttackTarget() const {
+auto Character::getAttackTarget() const -> character_ptr {
     auto target = _world->findCharacter(enemyid);
     return character_ptr(target);
 }
 
-std::string Character::getSkillName(TYPE_OF_SKILL_ID s) const {
+auto Character::getSkillName(TYPE_OF_SKILL_ID s) const -> std::string {
     if (Data::Skills.exists(s)) {
         return Data::Skills[s].englishName;
     } else {
@@ -699,7 +699,7 @@ std::string Character::getSkillName(TYPE_OF_SKILL_ID s) const {
     }
 }
 
-unsigned short int Character::getSkill(TYPE_OF_SKILL_ID s) const {
+auto Character::getSkill(TYPE_OF_SKILL_ID s) const -> unsigned short int {
     auto iterator = skills.find(s);
 
     if (iterator == skills.end()) {
@@ -709,7 +709,7 @@ unsigned short int Character::getSkill(TYPE_OF_SKILL_ID s) const {
     }
 }
 
-unsigned short int Character::getMinorSkill(TYPE_OF_SKILL_ID s) const {
+auto Character::getMinorSkill(TYPE_OF_SKILL_ID s) const -> unsigned short int {
     auto iterator = skills.find(s);
 
     if (iterator == skills.end()) {
@@ -726,7 +726,7 @@ void Character::setSkinColour(const Colour &c) {
 }
 
 
-Colour Character::getSkinColour() const {
+auto Character::getSkinColour() const -> Colour {
     return _appearance.skin;
 }
 
@@ -737,7 +737,7 @@ void Character::setHairColour(const Colour &c) {
 }
 
 
-Colour Character::getHairColour() const {
+auto Character::getHairColour() const -> Colour {
     return _appearance.hair;
 }
 
@@ -755,7 +755,7 @@ void Character::setHair(uint8_t hairID) {
 }
 
 
-uint8_t Character::getHair() const {
+auto Character::getHair() const -> uint8_t {
     return _appearance.hairtype;
 }
 
@@ -773,11 +773,11 @@ void Character::setBeard(uint8_t beardID) {
 }
 
 
-uint8_t Character::getBeard() const {
+auto Character::getBeard() const -> uint8_t {
     return _appearance.beardtype;
 }
 
-bool Character::setBaseAttribute(Character::attributeIndex attribute, Attribute::attribute_t value) {
+auto Character::setBaseAttribute(Character::attributeIndex attribute, Attribute::attribute_t value) -> bool {
     auto &attrib = attributes[attribute];
     auto oldValue = attrib.getValue();
 
@@ -806,15 +806,15 @@ void Character::setAttribute(Character::attributeIndex attribute, Attribute::att
     }
 }
 
-Attribute::attribute_t Character::getBaseAttribute(Character::attributeIndex attribute) const {
+auto Character::getBaseAttribute(Character::attributeIndex attribute) const -> Attribute::attribute_t {
     return attributes[attribute].getBaseValue();
 }
 
-Attribute::attribute_t Character::getAttribute(Character::attributeIndex attribute) const {
+auto Character::getAttribute(Character::attributeIndex attribute) const -> Attribute::attribute_t {
     return attributes[attribute].getValue();
 }
 
-bool Character::increaseBaseAttribute(Character::attributeIndex attribute, int amount) {
+auto Character::increaseBaseAttribute(Character::attributeIndex attribute, int amount) -> bool {
     auto &attrib = attributes[attribute];
     auto oldValue = attrib.getValue();
     
@@ -832,7 +832,7 @@ bool Character::increaseBaseAttribute(Character::attributeIndex attribute, int a
     }
 }
 
-Attribute::attribute_t Character::increaseAttribute(Character::attributeIndex attribute, int amount) {
+auto Character::increaseAttribute(Character::attributeIndex attribute, int amount) -> Attribute::attribute_t {
     auto &attrib = attributes[attribute];
     auto oldValue = attrib.getValue();
     attrib.increaseValue(amount);
@@ -845,11 +845,11 @@ Attribute::attribute_t Character::increaseAttribute(Character::attributeIndex at
     return newValue;
 }
 
-bool Character::isBaseAttributeValid(Character::attributeIndex attribute, Attribute::attribute_t value) const {
+auto Character::isBaseAttributeValid(Character::attributeIndex attribute, Attribute::attribute_t value) const -> bool {
     return Data::Races.isBaseAttributeInLimits(getRace(), attribute, value);
 }
 
-uint16_t Character::getBaseAttributeSum() const {
+auto Character::getBaseAttributeSum() const -> uint16_t {
     return attributes[Character::agility].getBaseValue()
         + attributes[Character::constitution].getBaseValue()
         + attributes[Character::dexterity].getBaseValue()
@@ -860,11 +860,11 @@ uint16_t Character::getBaseAttributeSum() const {
         + attributes[Character::willpower].getBaseValue();
 }
 
-uint16_t Character::getMaxAttributePoints() const {
+auto Character::getMaxAttributePoints() const -> uint16_t {
     return Data::Races.getMaxAttributePoints(getRace());
 }
 
-bool Character::saveBaseAttributes() {
+auto Character::saveBaseAttributes() -> bool {
     return false;
 }
 
@@ -875,7 +875,7 @@ void Character::handleAttributeChange(Character::attributeIndex attribute) {
     }
 }
 
-bool Character::isBaseAttribValid(const std::string &name, Attribute::attribute_t value) const {
+auto Character::isBaseAttribValid(const std::string &name, Attribute::attribute_t value) const -> bool {
     try {
         Character::attributeIndex attribute = attributeMap.at(name);
         return isBaseAttributeValid(attribute, value);
@@ -884,7 +884,7 @@ bool Character::isBaseAttribValid(const std::string &name, Attribute::attribute_
     }
 }
 
-bool Character::setBaseAttrib(const std::string &name, Attribute::attribute_t value) {
+auto Character::setBaseAttrib(const std::string &name, Attribute::attribute_t value) -> bool {
     try {
         Character::attributeIndex attribute = attributeMap.at(name);
         return setBaseAttribute(attribute, value);
@@ -902,7 +902,7 @@ void Character::setAttrib(const std::string &name, Attribute::attribute_t value)
     }
 }
 
-Attribute::attribute_t Character::getBaseAttrib(const std::string &name) {
+auto Character::getBaseAttrib(const std::string &name) -> Attribute::attribute_t {
     try {
         Character::attributeIndex attribute = attributeMap.at(name);
         return getBaseAttribute(attribute);
@@ -913,7 +913,7 @@ Attribute::attribute_t Character::getBaseAttrib(const std::string &name) {
 
 
 
-bool Character::increaseBaseAttrib(const std::string &name, int amount) {
+auto Character::increaseBaseAttrib(const std::string &name, int amount) -> bool {
     try {
         Character::attributeIndex attribute = attributeMap.at(name);
         return increaseBaseAttribute(attribute, amount);
@@ -923,7 +923,7 @@ bool Character::increaseBaseAttrib(const std::string &name, int amount) {
 }
 
 
-Attribute::attribute_t Character::increaseAttrib(const std::string &name, int amount) {
+auto Character::increaseAttrib(const std::string &name, int amount) -> Attribute::attribute_t {
     if (name == "sex") {
         return getAttribute(Character::sex);
     }
@@ -938,7 +938,7 @@ Attribute::attribute_t Character::increaseAttrib(const std::string &name, int am
     return 0;
 }
 
-unsigned short int Character::setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor) {
+auto Character::setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor) -> unsigned short int {
     if (!Data::Skills.exists(skill)) {
         return 0;
     }
@@ -959,7 +959,7 @@ unsigned short int Character::setSkill(TYPE_OF_SKILL_ID skill, short int major, 
     }
 }
 
-unsigned short int Character::increaseSkill(TYPE_OF_SKILL_ID skill, short int amount) {
+auto Character::increaseSkill(TYPE_OF_SKILL_ID skill, short int amount) -> unsigned short int {
     if (!Data::Skills.exists(skill)) {
         return 0;
     }
@@ -996,7 +996,7 @@ unsigned short int Character::increaseSkill(TYPE_OF_SKILL_ID skill, short int am
 }
 
 
-unsigned short int Character::increaseMinorSkill(TYPE_OF_SKILL_ID skill, short int amount) {
+auto Character::increaseMinorSkill(TYPE_OF_SKILL_ID skill, short int amount) -> unsigned short int {
     if (!Data::Skills.exists(skill)) {
         return 0;
     }
@@ -1072,7 +1072,7 @@ void Character::deleteAllSkills() {
 }
 
 
-bool Character::isInRange(Character *cc, unsigned short int distancemetric) const {
+auto Character::isInRange(Character *cc, unsigned short int distancemetric) const -> bool {
     if (cc) {
         return isInRangeToField(cc->pos, distancemetric);
     }
@@ -1080,7 +1080,7 @@ bool Character::isInRange(Character *cc, unsigned short int distancemetric) cons
     return false;
 }
 
-bool Character::isInScreen(const position &pos) const {
+auto Character::isInScreen(const position &pos) const -> bool {
     short int dx = abs(this->pos.x - pos.x);
     short int dy = abs(this->pos.y - pos.y);
     short int dz = abs(this->pos.z - pos.z);
@@ -1088,11 +1088,11 @@ bool Character::isInScreen(const position &pos) const {
     return dx + dy <= getScreenRange() && -RANGEDOWN <= dz && dz <= RANGEUP;
 }
 
-unsigned short int Character::getScreenRange() const {
+auto Character::getScreenRange() const -> unsigned short int {
     return 14;
 }
 
-bool Character::isInRangeToField(const position &m_pos, unsigned short int distancemetric) const {
+auto Character::isInRangeToField(const position &m_pos, unsigned short int distancemetric) const -> bool {
     short int dz = abs(m_pos.z - pos.z);
     short int dx = abs(m_pos.x - pos.x);
     short int dy = abs(m_pos.y - pos.y);
@@ -1100,7 +1100,7 @@ bool Character::isInRangeToField(const position &m_pos, unsigned short int dista
     return dx <= distancemetric && dy <= distancemetric && dz == 0;
 }
 
-unsigned short int Character::distanceMetricToPosition(const position &m_pos) const {
+auto Character::distanceMetricToPosition(const position &m_pos) const -> unsigned short int {
     short int dz = abs(pos.z - m_pos.z);
     short int dx = abs(pos.x - m_pos.x);
     short int dy = abs(pos.y - m_pos.y);
@@ -1108,7 +1108,7 @@ unsigned short int Character::distanceMetricToPosition(const position &m_pos) co
     return std::max(dx, std::max(dy, dz));
 }
 
-unsigned short int Character::distanceMetric(Character *cc) const {
+auto Character::distanceMetric(Character *cc) const -> unsigned short int {
     if (cc) {
         return distanceMetricToPosition(cc->pos);
     } else {
@@ -1117,12 +1117,12 @@ unsigned short int Character::distanceMetric(Character *cc) const {
 }
 
 
-unsigned short int Character::maxLoadWeight() const {
+auto Character::maxLoadWeight() const -> unsigned short int {
     return getAttribute(Character::strength) * 500 + 5000;
 }
 
 
-int Character::LoadWeight() const {
+auto Character::LoadWeight() const -> int {
     int load=0;
 
     // alle Items bis auf den Rucksack
@@ -1143,7 +1143,7 @@ int Character::LoadWeight() const {
 }
 
 
-float Character::relativeLoad() const {
+auto Character::relativeLoad() const -> float {
     return float(LoadWeight()) / maxLoadWeight();
 }
 
@@ -1161,7 +1161,7 @@ auto Character::loadFactor() const -> LoadLevel {
 }
 
 
-bool Character::weightOK(TYPE_OF_ITEM_ID id, int count, Container *tcont) const {
+auto Character::weightOK(TYPE_OF_ITEM_ID id, int count, Container *tcont) const -> bool {
     if (count < 0) {
         return true;
     }
@@ -1177,7 +1177,7 @@ bool Character::weightOK(TYPE_OF_ITEM_ID id, int count, Container *tcont) const 
 }
 
 
-int Character::weightContainer(TYPE_OF_ITEM_ID id, int count, Container *tcont) const {
+auto Character::weightContainer(TYPE_OF_ITEM_ID id, int count, Container *tcont) const -> int {
     int temp=0;
 
     if (id != 0) {
@@ -1211,7 +1211,7 @@ int Character::weightContainer(TYPE_OF_ITEM_ID id, int count, Container *tcont) 
     }
 }
 
-movement_type Character::GetMovement() const {
+auto Character::GetMovement() const -> movement_type {
     return _movement;
 }
 
@@ -1238,7 +1238,7 @@ void Character::increaseMentalCapacity(int value) {
     }
 }
 
-std::string Character::alterSpokenMessage(const std::string &message, int languageSkill) const {
+auto Character::alterSpokenMessage(const std::string &message, int languageSkill) const -> std::string {
     int counter=0;
     std::string alteredMessage;
 
@@ -1255,7 +1255,7 @@ std::string Character::alterSpokenMessage(const std::string &message, int langua
     return alteredMessage;
 }
 
-int Character::getLanguageSkill(int languageSkillNumber) const {
+auto Character::getLanguageSkill(int languageSkillNumber) const -> int {
     return 100;
 }
 
@@ -1337,7 +1337,7 @@ void Character::turn(const position &posi) {
     }
 }
 
-bool Character::move(direction dir, bool active) {
+auto Character::move(direction dir, bool active) -> bool {
     _world->TriggerFieldMove(this,false);
 
     // if we move we look into that direction...
@@ -1383,12 +1383,12 @@ bool Character::move(direction dir, bool active) {
     return false;
 }
 
-bool Character::moveToPossible(const map::Field &field) const {
+auto Character::moveToPossible(const map::Field &field) const -> bool {
     // for monsters/npcs we just use the field infos for now
     return field.moveToPossible();
 }
 
-TYPE_OF_WALKINGCOST Character::getMoveTime(const map::Field &targetField, bool diagonalMove, bool running) const {
+auto Character::getMoveTime(const map::Field &targetField, bool diagonalMove, bool running) const -> TYPE_OF_WALKINGCOST {
     static const float sqrt2 = std::sqrt(2.0);
     TYPE_OF_WALKINGCOST walkcost;
 
@@ -1441,7 +1441,7 @@ void Character::teachMagic(unsigned char type, unsigned char flag) {
     // overloaded in Player
 }
 
-bool Character::Warp(const position &newPos) {
+auto Character::Warp(const position &newPos) -> bool {
     position oldpos = pos;
 
     try {
@@ -1457,7 +1457,7 @@ bool Character::Warp(const position &newPos) {
     }
 }
 
-bool Character::forceWarp(const position &newPos) {
+auto Character::forceWarp(const position &newPos) -> bool {
     position oldpos = pos;
 
     try {
@@ -1535,12 +1535,12 @@ void Character::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS p
     // Nothing to do here, overridden for players
 }
 
-TYPE_OF_QUESTSTATUS Character::getQuestProgress(TYPE_OF_QUEST_ID questid, int &time) const {
+auto Character::getQuestProgress(TYPE_OF_QUEST_ID questid, int &time) const -> TYPE_OF_QUESTSTATUS {
     // Nothing to do here, overridden for players
     return 0;
 }
 
-std::vector<ScriptItem> Character::getItemList(TYPE_OF_ITEM_ID id) const {
+auto Character::getItemList(TYPE_OF_ITEM_ID id) const -> std::vector<ScriptItem> {
     std::vector<ScriptItem> list;
 
     for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
@@ -1568,11 +1568,11 @@ std::vector<ScriptItem> Character::getItemList(TYPE_OF_ITEM_ID id) const {
 }
 
 
-Container *Character::GetBackPack() const {
+auto Character::GetBackPack() const -> Container * {
     return backPackContents;
 }
 
-Container *Character::GetDepot(uint32_t depotid) const {
+auto Character::GetDepot(uint32_t depotid) const -> Container * {
     auto it = depotContents.find(depotid + 1);
 
     if (it == depotContents.end()) {
@@ -1583,7 +1583,7 @@ Container *Character::GetDepot(uint32_t depotid) const {
 }
 
 
-uint32_t Character::idleTime() const {
+auto Character::idleTime() const -> uint32_t {
     // Nothing to do here, overloaded in Player
     return 0;
 }
@@ -1658,11 +1658,11 @@ void Character::performAnimation(uint8_t animID) {
     }
 }
 
-bool Character::isNewPlayer() const {
+auto Character::isNewPlayer() const -> bool {
     return false;
 }
 
-bool Character::pageGM(const std::string &ticket) {
+auto Character::pageGM(const std::string &ticket) -> bool {
     //Nothing to do here, overloaded in Player
     return false;
 }
@@ -1692,10 +1692,10 @@ void Character::setMagicFlags(magic_type type, uint64_t flags) {
     magic.flags[type] = flags;
 }
 
-std::ostream &operator<<(std::ostream &os, const Character &character) {
+auto operator<<(std::ostream &os, const Character &character) -> std::ostream & {
     return os << character.to_string();
 };
 
-const MonsterStruct::loottype &Character::getLoot() const {
+auto Character::getLoot() const -> const MonsterStruct::loottype & {
     throw NoLootFound();
 }

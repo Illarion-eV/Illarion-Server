@@ -22,12 +22,12 @@
 
 std::mt19937 Random::rng;
 
-double Random::uniform() {
+auto Random::uniform() -> double {
     std::uniform_real_distribution<double> uniform(0, 1);
     return uniform(rng);
 }
 
-int Random::uniform(int min, int max) {
+auto Random::uniform(int min, int max) -> int {
     if (max < min ) {
         std::stringstream error;
         error << "Random::uniform: Invalid arguments, min("
@@ -39,7 +39,7 @@ int Random::uniform(int min, int max) {
     return uniform(rng);
 }
 
-double Random::normal(double mean, double sd) {
+auto Random::normal(double mean, double sd) -> double {
     std::normal_distribution<double> norm(mean, sd);
     return norm(rng);
 }

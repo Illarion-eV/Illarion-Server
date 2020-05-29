@@ -54,23 +54,23 @@ Map::Map(std::string name, position origin, uint16_t width, uint16_t height,
     }
 }
 
-Field &Map::at(int16_t x, int16_t y) {
+auto Map::at(int16_t x, int16_t y) -> Field & {
     return fields[convertWorldXToMap(x)][convertWorldYToMap(y)];
 }
 
-const Field &Map::at(int16_t x, int16_t y) const {
+auto Map::at(int16_t x, int16_t y) const -> const Field & {
     return fields[convertWorldXToMap(x)][convertWorldYToMap(y)];
 }
 
-Field &Map::at(const MapPosition &pos) {
+auto Map::at(const MapPosition &pos) -> Field & {
     return at(pos.x, pos.y);
 }
 
-const Field &Map::at(const MapPosition &pos) const {
+auto Map::at(const MapPosition &pos) const -> const Field & {
     return at(pos.x, pos.y);
 }
 
-bool Map::save(const std::string &name) const {
+auto Map::save(const std::string &name) const -> bool {
     Logger::debug(LogFacility::World) << "Saving map " << name << Log::end;
 
     std::ofstream map { name + "_map", std::ios::binary | std::ios::out };
@@ -103,15 +103,15 @@ const std::regex itemExpression {R"(^(\d+);(\d+);(\d+);(\d+)(;.*)?$)"};
 const std::regex warpExpression {R"(^(\d+);(\d+);(-?\d+);(-?\d+);(-?\d+)$)"};
 const std::regex dataExpression {R"(;([^\\;=]*(?:\\[\\;=][^\\;=]*)*)=([^\\;=]*(?:\\[\\;=][^\\;=]*)*)(?:;.*)?)"};
 
-bool Map::import(const std::string &importDir, const std::string &mapName) {
+auto Map::import(const std::string &importDir, const std::string &mapName) -> bool {
     bool success = importFields(importDir, mapName);
     success and_eq importWarps(importDir, mapName);
     success and_eq importItems(importDir, mapName);
     return success;
 }
 
-bool Map::importFields(const std::string &importDir,
-                       const std::string &mapName) {
+auto Map::importFields(const std::string &importDir,
+                       const std::string &mapName) -> bool {
     using std::smatch;
     using std::regex_match;
 
@@ -201,8 +201,8 @@ bool Map::importFields(const std::string &importDir,
     return success;
 }
 
-bool Map::importItems(const std::string &importDir,
-                      const std::string &mapName) {
+auto Map::importItems(const std::string &importDir,
+                      const std::string &mapName) -> bool {
     using std::smatch;
     using std::regex_match;
 
@@ -362,8 +362,8 @@ void Map::unescape(std::string &input) {
     replace_all(input, "\\;", ";");
 }
 
-bool Map::importWarps(const std::string &importDir,
-                      const std::string &mapName) {
+auto Map::importWarps(const std::string &importDir,
+                      const std::string &mapName) -> bool {
     using std::smatch;
     using std::regex_match;
 
@@ -448,7 +448,7 @@ bool Map::importWarps(const std::string &importDir,
     return success;
 }
 
-bool Map::load(const std::string &name) {
+auto Map::load(const std::string &name) -> bool {
     Logger::debug(LogFacility::World) << "Loading map " << name << Log::end;
 
     this->name = name;
@@ -492,23 +492,23 @@ void Map::age() {
     }
 }
 
-uint16_t Map::getHeight() const { return height; }
+auto Map::getHeight() const -> uint16_t { return height; }
 
-uint16_t Map::getWidth() const { return width; }
+auto Map::getWidth() const -> uint16_t { return width; }
 
-int16_t Map::getMinX() const { return origin.x; }
+auto Map::getMinX() const -> int16_t { return origin.x; }
 
-int16_t Map::getMinY() const { return origin.y; }
+auto Map::getMinY() const -> int16_t { return origin.y; }
 
-int16_t Map::getMaxX() const { return origin.x + width - 1; }
+auto Map::getMaxX() const -> int16_t { return origin.x + width - 1; }
 
-int16_t Map::getMaxY() const { return origin.y + height - 1; }
+auto Map::getMaxY() const -> int16_t { return origin.y + height - 1; }
 
-int16_t Map::getLevel() const { return origin.z; }
+auto Map::getLevel() const -> int16_t { return origin.z; }
 
-const std::string &Map::getName() const { return name; }
+auto Map::getName() const -> const std::string & { return name; }
 
-inline uint16_t Map::convertWorldXToMap(int16_t x) const {
+inline auto Map::convertWorldXToMap(int16_t x) const -> uint16_t {
     uint16_t temp = x - origin.x;
 
     if (temp >= width) {
@@ -518,7 +518,7 @@ inline uint16_t Map::convertWorldXToMap(int16_t x) const {
     return temp;
 }
 
-inline uint16_t Map::convertWorldYToMap(int16_t y) const {
+inline auto Map::convertWorldYToMap(int16_t y) const -> uint16_t {
     uint16_t temp = y - origin.y;
 
     if (temp >= height) {
@@ -528,7 +528,7 @@ inline uint16_t Map::convertWorldYToMap(int16_t y) const {
     return temp;
 }
 
-bool Map::intersects(const Map &map) const {
+auto Map::intersects(const Map &map) const -> bool {
     return map.origin.z == origin.z && getMaxX() >= map.origin.x &&
            origin.x <= map.getMaxX() && getMaxY() >= map.origin.y &&
            origin.y <= map.getMaxY();

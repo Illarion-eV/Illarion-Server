@@ -186,7 +186,7 @@ TEST(ItemTest, hasDataMultiple) {
     EXPECT_FALSE(item.hasData( {std::make_pair("testKey", "testValue"), std::make_pair("wrongKey", "wrongValue")}));
 }
 
-int main(int argc, char **argv) {
+auto main(int argc, char **argv) -> int {
     ::testing::InitGoogleTest(&argc, argv);
     ::testing::AddGlobalTestEnvironment(new ItemEnvironment);
     return RUN_ALL_TESTS();

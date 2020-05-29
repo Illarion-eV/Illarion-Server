@@ -56,6 +56,6 @@ void QueryTables::setOnlyOneTable(const bool &enabled) {
     oneTable = enabled;
 }
 
-std::string &QueryTables::buildQuerySegment() {
+auto QueryTables::buildQuerySegment() -> std::string & {
     return tables;
 }

@@ -24,7 +24,7 @@
 
 namespace binding {
 
-    luabind::scope item() {
+    auto item() -> luabind::scope {
         luabind::value_vector items;
 
         for (const auto &dataItem: Data::Items) {

@@ -51,7 +51,7 @@ void LuaNPCScript::useNPC(Character *user, unsigned char ltastate) {
     callEntrypoint("useNPC", fuse_thisnpc, fuse_user, ltastate);
 }
 
-bool LuaNPCScript::actionDisturbed(Character *performer, Character *disturber) {
+auto LuaNPCScript::actionDisturbed(Character *performer, Character *disturber) -> bool {
     character_ptr fuse_thisnpc(_thisnpc);
     character_ptr fuse_performer(performer);
     character_ptr fuse_disturber(disturber);

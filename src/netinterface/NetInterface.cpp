@@ -31,7 +31,7 @@ NetInterface::NetInterface(boost::asio::io_service &io_servicen) : online(false)
     cmd.reset();
 }
 
-std::string NetInterface::getIPAdress() {
+auto NetInterface::getIPAdress() -> std::string {
     return ipadress;
 }
 
@@ -54,7 +54,7 @@ void NetInterface::closeConnection() {
     online = false;
 }
 
-bool NetInterface::activate(Player* player) {
+auto NetInterface::activate(Player* player) -> bool {
     try {
     owner = player;
         boost::asio::async_read(socket,boost::asio::buffer(headerBuffer,6), std::bind(&NetInterface::handle_read_header, shared_from_this(), std::placeholders::_1));
@@ -118,7 +118,7 @@ void NetInterface::handle_read_data(const boost::system::error_code &error) {
     }
 }
 
-bool NetInterface::nextInactive() {
+auto NetInterface::nextInactive() -> bool {
     inactive++;
     return (inactive > 1000);
 }

@@ -63,8 +63,8 @@ public:
     ~NetInterface();
 
     void closeConnection(); /*<closes the connection to the client*/
-    bool activate(Player* = nullptr); /*<activates the connection starts the sending and receiving threads, if player == nullptr only login command is accepted and processing stops afterwards*/
-    bool nextInactive();
+    auto activate(Player* = nullptr) -> bool; /*<activates the connection starts the sending and receiving threads, if player == nullptr only login command is accepted and processing stops afterwards*/
+    auto nextInactive() -> bool;
 
     /**
     * adds a command to the send queue so it will be sended correctly to the connection
@@ -74,17 +74,17 @@ public:
 
     void shutdownSend(const ServerCommandPointer &command);
 
-    std::string getIPAdress();
+    auto getIPAdress() -> std::string;
 
     volatile bool online; /*< if connection is active*/
 
     using SERVERCOMMANDLIST = std::deque<ServerCommandPointer>;
 
-    boost::asio::ip::tcp::socket &getSocket() {
+    auto getSocket() -> boost::asio::ip::tcp::socket & {
         return socket;
     }
 
-    std::shared_ptr<LoginCommandTS> getLoginData() const {
+    auto getLoginData() const -> std::shared_ptr<LoginCommandTS> {
 	    return loginData;
     }
 

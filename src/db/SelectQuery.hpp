@@ -45,14 +45,14 @@ public:
     SelectQuery();
     explicit SelectQuery(const PConnection connection);
     SelectQuery(const SelectQuery &org) = delete;
-    SelectQuery &operator=(const SelectQuery &org) = delete;
+    auto operator=(const SelectQuery &org) -> SelectQuery & = delete;
 
     void addOrderBy(const std::string &column, const OrderDirection &dir);
     void addOrderBy(const std::string &table, const std::string &column, const OrderDirection &dir);
 
     void setDistinct(const bool &distinct);
 
-    Result execute() override;
+    auto execute() -> Result override;
 };
 }
 

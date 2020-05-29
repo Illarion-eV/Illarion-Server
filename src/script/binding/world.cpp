@@ -26,7 +26,7 @@
 
 namespace binding {
 
-    luabind::scope world() {
+    auto world() -> luabind::scope {
         return luabind::class_<World>("World")
                 .def("LoS", &world_LuaLoS)
                 .def("deleteNPC", &World::deleteNPC)

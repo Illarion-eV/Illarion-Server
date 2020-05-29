@@ -69,7 +69,7 @@ void LuaMonsterScript::useMonster(Character *Monster, Character *user, unsigned 
     callEntrypoint("useMonster", fuse_Monster, fuse_user, ltastate);
 }
 
-bool LuaMonsterScript::actionDisturbed(Character *performer, Character *disturber) {
+auto LuaMonsterScript::actionDisturbed(Character *performer, Character *disturber) -> bool {
     character_ptr fuse_performer(performer);
     character_ptr fuse_disturber(disturber);
     return callEntrypoint<bool>("actionDisturbed", fuse_performer, fuse_disturber);
@@ -81,13 +81,13 @@ void LuaMonsterScript::onAttack(Character *Monster, Character *target) {
     callEntrypoint("onAttack", fuse_Monster, fuse_target);
 }
 
-bool LuaMonsterScript::enemyOnSight(Character *Monster, Character *enemy) {
+auto LuaMonsterScript::enemyOnSight(Character *Monster, Character *enemy) -> bool {
     character_ptr fuse_Monster(Monster);
     character_ptr fuse_enemy(enemy);
     return callEntrypoint<bool>("enemyOnSight", fuse_Monster, fuse_enemy);
 }
 
-bool LuaMonsterScript::enemyNear(Character *Monster, Character *enemy) {
+auto LuaMonsterScript::enemyNear(Character *Monster, Character *enemy) -> bool {
     character_ptr fuse_Monster(Monster);
     character_ptr fuse_enemy(enemy);
     return callEntrypoint<bool>("enemyNear", fuse_Monster, fuse_enemy);
@@ -103,7 +103,7 @@ void LuaMonsterScript::onSpawn(Character *Monster) {
     callEntrypoint("onSpawn", fuse_Monster);
 }
 
-bool LuaMonsterScript::setTarget(Character *Monster, const std::vector<Character *> &CandidateList, Character *&Target) {
+auto LuaMonsterScript::setTarget(Character *Monster, const std::vector<Character *> &CandidateList, Character *&Target) -> bool {
     Target = nullptr;
 
     if (!existsEntrypoint("setTarget")) {

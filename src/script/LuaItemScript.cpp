@@ -48,18 +48,18 @@ void LuaItemScript::UseItem(Character *User, const ScriptItem &SourceItem, unsig
     callEntrypoint("UseItem", fuse_User, SourceItem, ltastate);
 }
 
-bool LuaItemScript::actionDisturbed(Character *performer, Character *disturber) {
+auto LuaItemScript::actionDisturbed(Character *performer, Character *disturber) -> bool {
     character_ptr fuse_performer(performer);
     character_ptr fuse_disturber(disturber);
     return callEntrypoint<bool>("actionDisturbed", fuse_performer, fuse_disturber);
 }
 
-ItemLookAt LuaItemScript::LookAtItem(Character *who, const ScriptItem &t_item) {
+auto LuaItemScript::LookAtItem(Character *who, const ScriptItem &t_item) -> ItemLookAt {
     character_ptr fuse_who(who);
     return callEntrypoint<ItemLookAt>("LookAtItem", fuse_who, t_item);
 }
 
-bool LuaItemScript::MoveItemBeforeMove(Character *who, const ScriptItem &sourceItem, const ScriptItem &targetItem) {
+auto LuaItemScript::MoveItemBeforeMove(Character *who, const ScriptItem &sourceItem, const ScriptItem &targetItem) -> bool {
     character_ptr fuse_who(who);
     return callEntrypoint<bool>("MoveItemBeforeMove", fuse_who, sourceItem, targetItem);
 }

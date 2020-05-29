@@ -29,19 +29,19 @@ InputDialog::InputDialog(const string &title, const string &description, bool mu
 InputDialog::InputDialog(const InputDialog &inputDialog) 
     = default;
 
-const string &InputDialog::getDescription() const {
+auto InputDialog::getDescription() const -> const string & {
     return description;
 }
 
-bool InputDialog::isMultiline() const {
+auto InputDialog::isMultiline() const -> bool {
     return multiline;
 }
 
-unsigned short InputDialog::getMaxChars() const {
+auto InputDialog::getMaxChars() const -> unsigned short {
     return maxChars;
 }
 
-bool InputDialog::getSuccess() const {
+auto InputDialog::getSuccess() const -> bool {
     return success;
 }
 
@@ -49,7 +49,7 @@ void InputDialog::setSuccess(bool success) {
     this->success = success;
 }
 
-const string &InputDialog::getInput() const {
+auto InputDialog::getInput() const -> const string & {
     return input;
 }
 

@@ -292,11 +292,11 @@ MonsterTable::MonsterTable() {
 
 }
 
-bool MonsterTable::exists(TYPE_OF_CHARACTER_ID id) const {
+auto MonsterTable::exists(TYPE_OF_CHARACTER_ID id) const -> bool {
     return table.count(id) > 0;
 }
 
-const MonsterStruct &MonsterTable::operator[](TYPE_OF_CHARACTER_ID id) {
+auto MonsterTable::operator[](TYPE_OF_CHARACTER_ID id) -> const MonsterStruct & {
     try {
         return table.at(id);
     } catch (std::out_of_range &) {

@@ -32,7 +32,7 @@ public:
 
 private:
     LuaReloadScript(const LuaReloadScript &) = delete;
-    LuaReloadScript &operator=(const LuaReloadScript &) = delete;
+    auto operator=(const LuaReloadScript &) -> LuaReloadScript & = delete;
 };
 
 #endif

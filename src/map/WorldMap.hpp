@@ -36,39 +36,39 @@ class WorldMap {
     size_t ageIndex = 0;
 
 public:
-    Field &at(const position &pos);
-    const Field &at(const position &pos) const;
-    bool intersects(const Map &map) const;
+    auto at(const position &pos) -> Field &;
+    auto at(const position &pos) const -> const Field &;
+    auto intersects(const Map &map) const -> bool;
 
-    bool allMapsAged();
+    auto allMapsAged() -> bool;
 
-    bool import(const std::string &importDir, const std::string &mapName);
-    bool exportTo() const;
-    bool importFromEditor();
-    bool loadFromDisk();
+    auto import(const std::string &importDir, const std::string &mapName) -> bool;
+    auto exportTo() const -> bool;
+    auto importFromEditor() -> bool;
+    auto loadFromDisk() -> bool;
     void saveToDisk() const;
-    bool createMap(const std::string &name, const position &origin,
-                   uint16_t width, uint16_t height, uint16_t tile);
+    auto createMap(const std::string &name, const position &origin,
+                   uint16_t width, uint16_t height, uint16_t tile) -> bool;
 
     void makePersistentAt(const position &pos);
     void removePersistenceAt(const position &pos);
-    bool isPersistentAt(const position &pos) const;
+    auto isPersistentAt(const position &pos) const -> bool;
 
 private:
     const std::string worldName{"Illarion"};
-    bool insert(Map&& newMap);
-    bool insertPersistent(Field&& newField);
+    auto insert(Map&& newMap) -> bool;
+    auto insertPersistent(Field&& newField) -> bool;
     void loadPersistentFields();
     void clear();
-    static Map createMapFromHeaderFile(const std::string &importDir,
-                                       const std::string &mapName);
-    static int16_t readHeaderLine(const std::string &mapName, char header,
-                                  std::ifstream &headerFile, int &lineNumber);
-    static bool isCommentOrEmpty(const std::string &line);
+    static auto createMapFromHeaderFile(const std::string &importDir,
+                                       const std::string &mapName) -> Map;
+    static auto readHeaderLine(const std::string &mapName, char header,
+                                  std::ifstream &headerFile, int &lineNumber) -> int16_t;
+    static auto isCommentOrEmpty(const std::string &line) -> bool;
 };
 
-Field &walkableNear(WorldMap &worldMap, const position &pos);
-const Field &walkableNear(const WorldMap &worldMap, const position &pos);
+auto walkableNear(WorldMap &worldMap, const position &pos) -> Field &;
+auto walkableNear(const WorldMap &worldMap, const position &pos) -> const Field &;
 
 }
 

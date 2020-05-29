@@ -67,12 +67,12 @@ static end_t end __attribute__((unused));
 class NullStream {
 public:
     inline constexpr NullStream() = default;
-    inline NullStream &operator()(LogFacility facility) {
+    inline auto operator()(LogFacility facility) -> NullStream & {
         return *this;
     }
 
     template<typename T>
-    inline NullStream &operator<<(const T &) {
+    inline auto operator<<(const T &) -> NullStream & {
         return *this;
     }
 };
@@ -80,20 +80,20 @@ public:
 template<LogPriority priority>
 class LogStream {
 public:
-    inline LogStream &operator()(LogFacility facility) {
+    inline auto operator()(LogFacility facility) -> LogStream & {
         _facility = facility;
         return *this;
     }
 
     inline LogStream() = default;
     template<typename T>
-    inline LogStream &operator<<(const T &data) {
+    inline auto operator<<(const T &data) -> LogStream & {
         static_assert(!std::is_pointer<T>::value || std::is_same<T, const char *>::value || std::is_same<T, char *>::value, "Logger cannot log pointers!");
         _ss << data;
         return *this;
     }
 
-    LogStream &operator<<(const Log::end_t &) {
+    auto operator<<(const Log::end_t &) -> LogStream & {
         log_message(priority, _facility, _ss.str());
         _ss.str( {});
         return *this;

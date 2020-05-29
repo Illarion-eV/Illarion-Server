@@ -32,9 +32,9 @@ public:
     DeleteQuery();
     explicit DeleteQuery(const PConnection connection);
     DeleteQuery(const DeleteQuery &org) = delete;
-    DeleteQuery &operator=(const DeleteQuery &org) = delete;
+    auto operator=(const DeleteQuery &org) -> DeleteQuery & = delete;
 
-    Result execute() override;
+    auto execute() -> Result override;
 };
 
 }

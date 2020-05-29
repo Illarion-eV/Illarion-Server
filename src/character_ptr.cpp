@@ -38,9 +38,9 @@ character_ptr::character_ptr(character_ptr const &p) {
     id = p.id;
 }
 
-character_ptr& character_ptr::operator=(character_ptr const &p) = default;
+auto character_ptr::operator=(character_ptr const &p) -> character_ptr& = default;
 
-Character *character_ptr::get() const {
+auto character_ptr::get() const -> Character * {
     auto ptr = getPointerFromId();
     
     if (ptr) {
@@ -54,7 +54,7 @@ character_ptr::operator Character *() const {
     return get();
 }
 
-Character *character_ptr::operator->() const {
+auto character_ptr::operator->() const -> Character * {
     return get();
 }
 
@@ -62,7 +62,7 @@ character_ptr::operator bool() const {
     return getPointerFromId() != nullptr;
 }
 
-Character *character_ptr::getPointerFromId() const {
+auto character_ptr::getPointerFromId() const -> Character * {
     if (id != 0) {
         return World::get()->findCharacter(id);
     }
@@ -70,11 +70,11 @@ Character *character_ptr::getPointerFromId() const {
     return nullptr;
 }
 
-Character *get_pointer(character_ptr const &p) {
+auto get_pointer(character_ptr const &p) -> Character * {
     return p.get();
 }
 
-bool isValid(character_ptr const &p) {
+auto isValid(character_ptr const &p) -> bool {
     return bool(p);
 }
 

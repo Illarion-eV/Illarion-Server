@@ -67,6 +67,6 @@ void NPC::receiveText(talk_type tt, const std::string &message, Character *cc) {
     }
 }
 
-std::string NPC::to_string() const {
+auto NPC::to_string() const -> std::string {
     return "NPC " + getName() + "(" + std::to_string(getId()) + ")";
 }

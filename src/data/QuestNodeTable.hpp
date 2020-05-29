@@ -56,19 +56,19 @@ public:
     template <typename Key>
     using TableRange = std::pair<TableIterator<Key>, TableIterator<Key>>;
 
-    static QuestNodeTable &getInstance();
+    static auto getInstance() -> QuestNodeTable &;
     void reload();
-    TableRange<TYPE_OF_ITEM_ID> getItemNodes() const;
-    TableRange<unsigned int> getNpcNodes() const ;
-    TableRange<unsigned int> getMonsterNodes() const ;
-    TableRange<position> getTriggerNodes() const;
+    auto getItemNodes() const -> TableRange<TYPE_OF_ITEM_ID>;
+    auto getNpcNodes() const -> TableRange<unsigned int> ;
+    auto getMonsterNodes() const -> TableRange<unsigned int> ;
+    auto getTriggerNodes() const -> TableRange<position>;
 
 private:
     void readQuest(std::ifstream &questFile, std::filesystem::path &questPath);
     void clear();
 
     QuestNodeTable(const QuestNodeTable &) = delete;
-    QuestNodeTable &operator=(const QuestNodeTable &) = delete;
+    auto operator=(const QuestNodeTable &) -> QuestNodeTable & = delete;
 };
 
 #endif

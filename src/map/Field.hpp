@@ -49,36 +49,36 @@ public:
     explicit Field(const position &here): here(here) {};
     Field(uint16_t tile, uint16_t music, const position &here, bool persistent = false);
     Field(const Field &) = delete;
-    Field &operator=(const Field &) = delete;
+    auto operator=(const Field &) -> Field & = delete;
     Field(Field &&) = default;
-    Field &operator=(Field &&) = default;
+    auto operator=(Field &&) -> Field & = default;
 
     void setTileId(uint16_t id);
-    uint16_t getTileId() const;
-    uint16_t getSecondaryTileId() const;
-    uint16_t getTileCode() const;
-    bool isTransparent() const;
+    auto getTileId() const -> uint16_t;
+    auto getSecondaryTileId() const -> uint16_t;
+    auto getTileCode() const -> uint16_t;
+    auto isTransparent() const -> bool;
 
     void setMusicId(uint16_t id);
-    uint16_t getMusicId() const;
+    auto getMusicId() const -> uint16_t;
 
-    bool isWalkable() const;
-    bool moveToPossible() const;
-    TYPE_OF_WALKINGCOST getMovementCost() const;
-    bool hasSpecialItem() const;
+    auto isWalkable() const -> bool;
+    auto moveToPossible() const -> bool;
+    auto getMovementCost() const -> TYPE_OF_WALKINGCOST;
+    auto hasSpecialItem() const -> bool;
 
-    bool addItemOnStack(const Item &item);
-    bool addItemOnStackIfWalkable(const Item &item);
-    bool takeItemFromStack(Item &item);
-    int increaseItemOnStack(int count, bool &erased);
-    bool swapItemOnStack(TYPE_OF_ITEM_ID newId, uint16_t newQuality = 0);
-    bool viewItemOnStack(Item &item) const;
-    ScriptItem getStackItem(uint8_t pos) const;
-    const std::vector<Item> &getItemStack() const;
-    MAXCOUNTTYPE itemCount() const;
+    auto addItemOnStack(const Item &item) -> bool;
+    auto addItemOnStackIfWalkable(const Item &item) -> bool;
+    auto takeItemFromStack(Item &item) -> bool;
+    auto increaseItemOnStack(int count, bool &erased) -> int;
+    auto swapItemOnStack(TYPE_OF_ITEM_ID newId, uint16_t newQuality = 0) -> bool;
+    auto viewItemOnStack(Item &item) const -> bool;
+    auto getStackItem(uint8_t pos) const -> ScriptItem;
+    auto getItemStack() const -> const std::vector<Item> &;
+    auto itemCount() const -> MAXCOUNTTYPE;
 
-    bool addContainerOnStackIfWalkable(Item item, Container *container);
-    bool addContainerOnStack(Item item, Container *container);
+    auto addContainerOnStackIfWalkable(Item item, Container *container) -> bool;
+    auto addContainerOnStack(Item item, Container *container) -> bool;
 
     void age();
 
@@ -88,34 +88,34 @@ public:
     void removePlayer();
     void removeNPC();
     void removeMonster();
-    bool hasPlayer() const;
-    bool hasNPC() const;
-    bool hasMonster() const;
+    auto hasPlayer() const -> bool;
+    auto hasNPC() const -> bool;
+    auto hasMonster() const -> bool;
     void setChar();
     void removeChar();
 
     void setWarp(const position &pos);
     void removeWarp();
     void getWarp(position &pos) const;
-    bool isWarp() const;
+    auto isWarp() const -> bool;
 
-    std::vector<Item> getExportItems() const;
+    auto getExportItems() const -> std::vector<Item>;
     void save(std::ofstream &mapStream, std::ofstream &itemStream,
             std::ofstream &warpStream, std::ofstream &containerStream) const;
     void load(std::ifstream &mapStream, std::ifstream &itemStream,
             std::ifstream &warpStream, std::ifstream &containerStream);
 
-    const position &getPosition() const;
+    auto getPosition() const -> const position &;
 
     void makePersistent();
     void removePersistence();
-    bool isPersistent() const;
+    auto isPersistent() const -> bool;
 
 private:
     void updateFlags();
     inline void setBits(uint8_t);
     inline void unsetBits(uint8_t);
-    inline bool anyBitSet(uint8_t) const;
+    inline auto anyBitSet(uint8_t) const -> bool;
 
     void insertIntoDatabase() const noexcept;
     void removeFromDatabase() const noexcept;

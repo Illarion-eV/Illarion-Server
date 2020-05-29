@@ -32,13 +32,13 @@ class RaceTypeTable {
 public:
     RaceTypeTable();
 
-    inline bool isDataOK() const {
+    inline auto isDataOK() const -> bool {
         return dataOK;
     }
 
-    const RaceConfiguration getRandomRaceConfiguration(TYPE_OF_RACE_ID race) const;
-    bool isHairAvailable(TYPE_OF_RACE_ID race, TYPE_OF_RACE_TYPE_ID type, uint16_t hair) const;
-    bool isBeardAvailable(TYPE_OF_RACE_ID race, TYPE_OF_RACE_TYPE_ID type, uint16_t beard) const;
+    auto getRandomRaceConfiguration(TYPE_OF_RACE_ID race) const -> const RaceConfiguration;
+    auto isHairAvailable(TYPE_OF_RACE_ID race, TYPE_OF_RACE_TYPE_ID type, uint16_t hair) const -> bool;
+    auto isBeardAvailable(TYPE_OF_RACE_ID race, TYPE_OF_RACE_TYPE_ID type, uint16_t beard) const -> bool;
 
 private:
     struct RaceTypeStruct {

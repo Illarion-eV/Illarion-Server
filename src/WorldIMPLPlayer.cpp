@@ -43,12 +43,12 @@ void World::InitPlayerCommands() {
 }
 
 //! parse PlayerCommands of the form !<string1> <string2> and process them
-bool World::parsePlayerCommands(Player *player, const std::string &text) {
+auto World::parsePlayerCommands(Player *player, const std::string &text) -> bool {
     return executeUserCommand(player, text, PlayerCommands);
 }
 
 // GM page (!gm <text>)
-bool World::gmpage_command(Player *player, const std::string &ticket) {
+auto World::gmpage_command(Player *player, const std::string &ticket) -> bool {
     try {
         logGMTicket(player, ticket, false);
         player->inform("--- Die Nachricht wurde an das GM-Team gesendet. ---",
@@ -86,7 +86,7 @@ void World::logGMTicket(Player *player, const std::string &ticket, bool automati
 }
 
 // !language <language>, language=common, human, dwarfen, elven, lizard, orc, ...
-bool World::active_language_command(Player *cp, const std::string &language) {
+auto World::active_language_command(Player *cp, const std::string &language) -> bool {
     if (language == "common") {
         cp->setActiveLanguage(0);
     }

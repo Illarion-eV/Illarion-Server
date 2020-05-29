@@ -34,11 +34,11 @@ ByteBuffer::~ByteBuffer() {
 }
 
 
-uint16_t ByteBuffer::dataAvailable() const {
+auto ByteBuffer::dataAvailable() const -> uint16_t {
     return (bytesAvailable);
 }
 
-unsigned char ByteBuffer::getByte() {
+auto ByteBuffer::getByte() -> unsigned char {
     if (bytesAvailable > 0) {
         if (recvBuffer[rBuff].fill > readPos) {
             bytesAvailable--;
@@ -63,11 +63,11 @@ unsigned char ByteBuffer::getByte() {
     return 0;
 }
 
-unsigned char *ByteBuffer::writeBuff() {
+auto ByteBuffer::writeBuff() -> unsigned char * {
     return recvBuffer[ wBuff ].buff;
 }
 
-bool ByteBuffer::getReadBuffer() {
+auto ByteBuffer::getReadBuffer() -> bool {
     if (vlock.try_lock()) {
         uint8_t nr = (rBuff + 1) % NUMBEROFBUFFERS;   //get next buffer number
 
@@ -82,7 +82,7 @@ bool ByteBuffer::getReadBuffer() {
     return false;
 }
 
-bool ByteBuffer::writeToBuf(uint16_t size) {
+auto ByteBuffer::writeToBuf(uint16_t size) -> bool {
     std::lock_guard<std::mutex> lock(vlock);
     uint8_t nr = (wBuff + 1) % NUMBEROFBUFFERS;
 

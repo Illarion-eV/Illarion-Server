@@ -30,12 +30,12 @@ class MonsterTable {
 public:
     MonsterTable();
 
-    inline bool isDataOK() const {
+    inline auto isDataOK() const -> bool {
         return dataOK;
     }
 
-    bool exists(TYPE_OF_CHARACTER_ID id) const;
-    const MonsterStruct &operator[](TYPE_OF_CHARACTER_ID id);
+    auto exists(TYPE_OF_CHARACTER_ID id) const -> bool;
+    auto operator[](TYPE_OF_CHARACTER_ID id) -> const MonsterStruct &;
 
 private:
     using TABLE = boost::unordered_map<TYPE_OF_CHARACTER_ID, MonsterStruct>;

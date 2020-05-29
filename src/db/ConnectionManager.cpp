@@ -35,7 +35,7 @@ using std::string;
 
 ConnectionManager ConnectionManager::instance;
 
-ConnectionManager &ConnectionManager::getInstance() {
+auto ConnectionManager::getInstance() -> ConnectionManager & {
     return ConnectionManager::instance;
 }
 
@@ -49,7 +49,7 @@ void ConnectionManager::setupManager() {
     isOperational = true;
 }
 
-PConnection ConnectionManager::getConnection() {
+auto ConnectionManager::getConnection() -> PConnection {
     if (!isOperational) {
         throw std::logic_error("Connection Manager is not set up yet");
     }

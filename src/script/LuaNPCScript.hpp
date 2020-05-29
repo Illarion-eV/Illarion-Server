@@ -37,7 +37,7 @@ public:
     void receiveText(Character::talk_type tt, const std::string &message, Character *cc);
     void useNPC(Character *user, unsigned char ltastate);
     void lookAtNpc(Character *source, unsigned char mode);
-    bool actionDisturbed(Character *performer, Character *disturber);
+    auto actionDisturbed(Character *performer, Character *disturber) -> bool;
     void beforeReload();
     void characterOnSight(Character *enemy);
     void characterNear(Character *enemy);
@@ -47,7 +47,7 @@ private:
     NPC *_thisnpc;
 
     LuaNPCScript(const LuaNPCScript &);
-    LuaNPCScript &operator=(const LuaNPCScript &);
+    auto operator=(const LuaNPCScript &) -> LuaNPCScript &;
     void init_functions();
 };
 

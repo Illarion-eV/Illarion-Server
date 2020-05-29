@@ -59,13 +59,13 @@ public:
     ScheduledScriptsTable();
     ~ScheduledScriptsTable();
 
-    inline bool isDataOK() const {
+    inline auto isDataOK() const -> bool {
         return m_dataOk;
     }
 
-    bool nextCycle();
+    auto nextCycle() -> bool;
 
-    bool addData(ScriptData data);
+    auto addData(ScriptData data) -> bool;
 
 private:
     void reload();

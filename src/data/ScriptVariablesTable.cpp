@@ -25,26 +25,26 @@
 #include "db/DeleteQuery.hpp"
 #include "db/InsertQuery.hpp"
 
-std::string ScriptVariablesTable::getTableName() {
+auto ScriptVariablesTable::getTableName() -> std::string {
     return "scriptvariables";
 }
 
-std::vector<std::string> ScriptVariablesTable::getColumnNames() {
+auto ScriptVariablesTable::getColumnNames() -> std::vector<std::string> {
     return {
         "svt_ids",
         "svt_string"
     };
 }
 
-std::string ScriptVariablesTable::assignId(const Database::ResultTuple &row) {
+auto ScriptVariablesTable::assignId(const Database::ResultTuple &row) -> std::string {
     return row["svt_ids"].as<std::string>();
 }
 
-std::string ScriptVariablesTable::assignTable(const Database::ResultTuple &row) {
+auto ScriptVariablesTable::assignTable(const Database::ResultTuple &row) -> std::string {
     return row["svt_string"].as<std::string>();
 }
 
-bool ScriptVariablesTable::find(const std::string &id, std::string &ret) {
+auto ScriptVariablesTable::find(const std::string &id, std::string &ret) -> bool {
     if (exists(id)) {
         ret = (*this)[id];
         return true;
@@ -64,7 +64,7 @@ void ScriptVariablesTable::set(const std::string &id, int32_t value) {
     set(id, ss.str());
 }
 
-bool ScriptVariablesTable::remove(const std::string &id) {
+auto ScriptVariablesTable::remove(const std::string &id) -> bool {
     return erase(id);
 }
 
@@ -98,7 +98,7 @@ void ScriptVariablesTable::save() {
     }
 }
 
-bool ScriptVariablesTable::reloadBuffer() {
+auto ScriptVariablesTable::reloadBuffer() -> bool {
     if (first) {
         if (Base::reloadBuffer()) {
             Base::activateBuffer();

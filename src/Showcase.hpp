@@ -26,9 +26,9 @@ class Showcase {
 public:
     Showcase(Container *container, bool carry);
 
-    bool inInventory() const;
-    Container *getContainer() const;
-    bool contains(Container *container) const;
+    auto inInventory() const -> bool;
+    auto getContainer() const -> Container *;
+    auto contains(Container *container) const -> bool;
 
 private:
     Container *openContainer;

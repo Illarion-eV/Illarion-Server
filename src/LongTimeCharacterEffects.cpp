@@ -38,7 +38,7 @@
 LongTimeCharacterEffects::LongTimeCharacterEffects(Character *owner) : owner(owner), time(0) {
 }
 
-bool LongTimeCharacterEffects::find(uint16_t effectid, LongTimeEffect *&effect) const {
+auto LongTimeCharacterEffects::find(uint16_t effectid, LongTimeEffect *&effect) const -> bool {
     using namespace ranges;
     auto doesIdMatch = [effectid](LongTimeEffect *e) {return e->getEffectId() == effectid;};
     auto result = find_if(effects, doesIdMatch);
@@ -53,7 +53,7 @@ bool LongTimeCharacterEffects::find(uint16_t effectid, LongTimeEffect *&effect) 
     return success;
 }
 
-bool LongTimeCharacterEffects::find(const std::string &effectname, LongTimeEffect *&effect) const {
+auto LongTimeCharacterEffects::find(const std::string &effectname, LongTimeEffect *&effect) const -> bool {
     using namespace ranges;
     auto doesNameMatch = [&effectname](LongTimeEffect *e) {return e->getEffectName() == effectname;};
     auto result = find_if(effects, doesNameMatch);
@@ -98,7 +98,7 @@ void LongTimeCharacterEffects::addEffect(LongTimeEffect *effect) {
     effect->firstAdd(); //set first add for this effect
 }
 
-bool LongTimeCharacterEffects::removeEffect(uint16_t effectid) {
+auto LongTimeCharacterEffects::removeEffect(uint16_t effectid) -> bool {
     for (auto it = effects.begin(); it != effects.end(); ++it) {
         if ((*it)->getEffectId() == effectid) {
             const auto &script = Data::LongTimeEffects.script(effectid);
@@ -117,7 +117,7 @@ bool LongTimeCharacterEffects::removeEffect(uint16_t effectid) {
     return false;
 }
 
-bool LongTimeCharacterEffects::removeEffect(const std::string &name) {
+auto LongTimeCharacterEffects::removeEffect(const std::string &name) -> bool {
     for (auto it = effects.begin(); it != effects.end(); ++it) {
         if ((*it)->getEffectName() == name) {
             const auto &script = Data::LongTimeEffects.script((*it)->getEffectId());
@@ -136,7 +136,7 @@ bool LongTimeCharacterEffects::removeEffect(const std::string &name) {
     return false;
 }
 
-bool LongTimeCharacterEffects::removeEffect(LongTimeEffect *effect) {
+auto LongTimeCharacterEffects::removeEffect(LongTimeEffect *effect) -> bool {
     for (auto it = effects.begin(); it != effects.end(); ++it) {
         if (*it == effect) {
             const auto &script = Data::LongTimeEffects.script((*it)->getEffectId());
@@ -177,7 +177,7 @@ void LongTimeCharacterEffects::checkEffects() {
     }
 }
 
-bool LongTimeCharacterEffects::save() {
+auto LongTimeCharacterEffects::save() -> bool {
     using namespace Database;
 
     if (owner && owner->getType() != Character::player) {
@@ -222,7 +222,7 @@ bool LongTimeCharacterEffects::save() {
     return allok;
 }
 
-bool LongTimeCharacterEffects::load() {
+auto LongTimeCharacterEffects::load() -> bool {
     using namespace Database;
 
     if (owner->getType() != Character::player) {

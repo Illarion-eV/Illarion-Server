@@ -35,11 +35,11 @@ public:
     ~LuaWeaponScript() override;
 
     void onAttack(Character *Attacker, Character *Defender);
-    Character *setTarget(Character *Monster, const std::vector<Character *> &CandidateList);
+    auto setTarget(Character *Monster, const std::vector<Character *> &CandidateList) -> Character *;
 
 private:
     LuaWeaponScript(const LuaWeaponScript &) = delete;
-    LuaWeaponScript &operator=(const LuaWeaponScript &) = delete;
+    auto operator=(const LuaWeaponScript &) -> LuaWeaponScript & = delete;
 };
 
 #endif

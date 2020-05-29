@@ -29,7 +29,7 @@ LuaDepotScript::LuaDepotScript(const std::string &filename)
 
 LuaDepotScript::~LuaDepotScript() = default;
 
-bool LuaDepotScript::onOpenDepot(Character *cc, const ScriptItem &itm) {
+auto LuaDepotScript::onOpenDepot(Character *cc, const ScriptItem &itm) -> bool {
     character_ptr fuse_cc(cc);
     return callEntrypoint<bool>("onOpenDepot", fuse_cc, itm);
 }

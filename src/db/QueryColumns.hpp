@@ -38,8 +38,8 @@ private:
 
 public:
 
-    columnIndex addColumn(const std::string &column);
-    columnIndex addColumn(const std::string &table, const std::string &column);
+    auto addColumn(const std::string &column) -> columnIndex;
+    auto addColumn(const std::string &table, const std::string &column) -> columnIndex;
 
     void addColumns() {}
     template<typename... Args>
@@ -58,10 +58,10 @@ public:
 protected:
     QueryColumns();
     QueryColumns(const QueryColumns &org) = delete;
-    QueryColumns &operator=(const QueryColumns &org) = delete;
+    auto operator=(const QueryColumns &org) -> QueryColumns & = delete;
 
-    std::string &buildQuerySegment();
-    uint32_t getColumnCount() const;
+    auto buildQuerySegment() -> std::string &;
+    auto getColumnCount() const -> uint32_t;
 
     void setHideTable(const bool hide);
 };

@@ -21,15 +21,15 @@
 
 Showcase::Showcase(Container *container, bool carry): openContainer(container), isInInventory(carry) {}
 
-bool Showcase::contains(Container *container) const {
+auto Showcase::contains(Container *container) const -> bool {
     return openContainer == container;
 }
 
-Container *Showcase::getContainer() const {
+auto Showcase::getContainer() const -> Container * {
     return openContainer;
 }
 
-bool Showcase::inInventory() const {
+auto Showcase::inInventory() const -> bool {
     return isInInventory;
 }
 

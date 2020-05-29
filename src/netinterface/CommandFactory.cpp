@@ -83,7 +83,7 @@ CommandFactory::~CommandFactory() {
     templateList.clear();
 }
 
-ClientCommandPointer  CommandFactory::getCommand(unsigned char commandId) {
+auto  CommandFactory::getCommand(unsigned char commandId) -> ClientCommandPointer {
     COMMANDLIST::iterator it;
     it = templateList.find(commandId);
 

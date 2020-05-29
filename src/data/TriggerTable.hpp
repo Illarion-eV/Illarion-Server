@@ -33,12 +33,12 @@ struct TriggerStruct {
 
 class TriggerTable : public QuestScriptStructTable<position, TriggerStruct, LuaTriggerScript, position> {
 public:
-    std::string getTableName() override;
-    std::vector<std::string> getColumnNames() override;
-    position assignId(const Database::ResultTuple &row) override;
-    TriggerStruct assignTable(const Database::ResultTuple &row) override;
-    std::string assignScriptName(const Database::ResultTuple &row) override;
-    NodeRange getQuestScripts() override;
+    auto getTableName() -> std::string override;
+    auto getColumnNames() -> std::vector<std::string> override;
+    auto assignId(const Database::ResultTuple &row) -> position override;
+    auto assignTable(const Database::ResultTuple &row) -> TriggerStruct override;
+    auto assignScriptName(const Database::ResultTuple &row) -> std::string override;
+    auto getQuestScripts() -> NodeRange override;
 };
 
 #endif

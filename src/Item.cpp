@@ -28,7 +28,7 @@
 
 extern std::shared_ptr<LuaLookAtItemScript>lookAtItemScript;
 
-bool ItemLookAt::operator==(const ItemLookAt& rhs) const {
+auto ItemLookAt::operator==(const ItemLookAt& rhs) const -> bool {
 	bool equal = true;
 	equal &= (name == rhs.name);
 	equal &= (rareness == rhs.rareness);
@@ -51,7 +51,7 @@ bool ItemLookAt::operator==(const ItemLookAt& rhs) const {
 	return equal;
 }
 
-bool ScriptItem::operator==(const ScriptItem& rhs) const {
+auto ScriptItem::operator==(const ScriptItem& rhs) const -> bool {
 	bool equal = (static_cast<const Item&>(*this) == rhs);
 	equal &= (type == rhs.type);
 	equal &= (pos == rhs.pos);
@@ -62,7 +62,7 @@ bool ScriptItem::operator==(const ScriptItem& rhs) const {
 	return equal;
 }
 
-bool Item::operator==(const Item& rhs) const {
+auto Item::operator==(const Item& rhs) const -> bool {
 	bool equal = true;
 	equal &= (id == rhs.id);
 	equal &= (number == rhs.number);
@@ -115,7 +115,7 @@ void Item::setData(script_data_exchangemap const *datamap) {
 }
 
 
-bool Item::hasData(const script_data_exchangemap &datamap) const {
+auto Item::hasData(const script_data_exchangemap &datamap) const -> bool {
     if (datamap.empty() && !hasNoData()) {
         return false;
     }
@@ -125,11 +125,11 @@ bool Item::hasData(const script_data_exchangemap &datamap) const {
     return all_of(datamap, dataEqual);
 }
 
-bool Item::hasNoData() const {
+auto Item::hasNoData() const -> bool {
     return datamap.empty();
 }
 
-std::string Item::getData(const std::string &key) const {
+auto Item::getData(const std::string &key) const -> std::string {
     if (datamap.find(key) != datamap.end()) {
         return datamap.at(key);
     } else {
@@ -153,7 +153,7 @@ void Item::setData(const std::string &key, int32_t value) {
     setData(key, ss.str());
 }
 
-uint16_t Item::getDepot() const {
+auto Item::getDepot() const -> uint16_t {
     uint16_t depotId;
 
     try {
@@ -227,7 +227,7 @@ void Item::load(std::istream &obj) {
 }
 
 
-bool Item::survivesAgeing() {
+auto Item::survivesAgeing() -> bool {
     if (wear != 255 && wear != 0) {
         --wear;
     }
@@ -235,11 +235,11 @@ bool Item::survivesAgeing() {
     return wear > 0;
 }
 
-bool Item::isContainer() const {
+auto Item::isContainer() const -> bool {
     return Data::ContainerItems.exists(id);
 }
 
-TYPE_OF_VOLUME Item::getVolume() const {
+auto Item::getVolume() const -> TYPE_OF_VOLUME {
     const auto &itemStruct = Data::Items[id];
 
     if (itemStruct.isValid()) {
@@ -249,7 +249,7 @@ TYPE_OF_VOLUME Item::getVolume() const {
     return 0;
 }
 
-TYPE_OF_WEIGHT Item::getWeight() const {
+auto Item::getWeight() const -> TYPE_OF_WEIGHT {
     const auto &itemStruct = Data::Items[id];
 
     if (itemStruct.isValid()) {
@@ -259,7 +259,7 @@ TYPE_OF_WEIGHT Item::getWeight() const {
     return 0;
 }
 
-TYPE_OF_WORTH Item::getWorth() const {
+auto Item::getWorth() const -> TYPE_OF_WORTH {
     const auto &itemStruct = Data::Items[id];
 
     if (itemStruct.isValid()) {
@@ -279,19 +279,19 @@ auto Item::getMaxStack() const -> number_type {
     return 0;
 }
 
-bool Item::isLarge() const {
+auto Item::isLarge() const -> bool {
     return getVolume() >= LARGE_ITEM_VOLUME;
 }
 
-bool Item::isStackable() const {
+auto Item::isStackable() const -> bool {
     return getMaxStack() > 1;
 }
 
-bool Item::isPermanent() const {
+auto Item::isPermanent() const -> bool {
     return wear == PERMANENT_WEAR;
 }
 
-bool Item::isMovable() const {
+auto Item::isMovable() const -> bool {
     const auto &itemStruct = Data::Items[id];
 
     if (itemStruct.isValid()) {
@@ -305,7 +305,7 @@ void Item::makePermanent() {
     wear = PERMANENT_WEAR;
 }
 
-ItemLookAt ScriptItem::getLookAt(Character *character) const {
+auto ScriptItem::getLookAt(Character *character) const -> ItemLookAt {
     auto script = Data::Items.script(getId());
 
     if (script && script->existsEntrypoint("LookAtItem")) {

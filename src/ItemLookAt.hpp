@@ -40,35 +40,35 @@ public:
     void setName(const std::string &name) {
         this->name = name;
     }
-    const std::string &getName() const {
+    auto getName() const -> const std::string & {
         return name;
     }
 
     void setRareness(Rareness rareness) {
         this->rareness = rareness;
     }
-    Rareness getRareness() const {
+    auto getRareness() const -> Rareness {
         return rareness;
     }
 
     void setDescription(const std::string &description) {
         this->description = description;
     }
-    const std::string &getDescription() const {
+    auto getDescription() const -> const std::string & {
         return description;
     }
 
     void setCraftedBy(const std::string &craftedBy) {
         this->craftedBy = craftedBy;
     }
-    const std::string &getCraftedBy() const {
+    auto getCraftedBy() const -> const std::string & {
         return craftedBy;
     }
 
     void setType(const std::string &type) {
         this->type = type;
     }
-    const std::string &getType() const {
+    auto getType() const -> const std::string & {
         return type;
     }
 
@@ -77,42 +77,42 @@ public:
             this->level = level;
         }
     }
-    TYPE_OF_ITEMLEVEL getLevel() const {
+    auto getLevel() const -> TYPE_OF_ITEMLEVEL {
         return level;
     }
 
     void setUsable(bool usable) {
         this->usable = usable;
     }
-    bool isUsable() const {
+    auto isUsable() const -> bool {
         return usable;
     }
 
     void setWeight(TYPE_OF_WEIGHT weight) {
         this->weight = weight;
     }
-    TYPE_OF_WEIGHT getWeight() const {
+    auto getWeight() const -> TYPE_OF_WEIGHT {
         return weight;
     }
 
     void setWorth(TYPE_OF_WORTH worth) {
         this->worth = worth;
     }
-    TYPE_OF_WORTH getWorth() const {
+    auto getWorth() const -> TYPE_OF_WORTH {
         return worth;
     }
 
     void setQualityText(const std::string &qualityText) {
         this->qualityText = qualityText;
     }
-    const std::string &getQualityText() const {
+    auto getQualityText() const -> const std::string & {
         return qualityText;
     }
 
     void setDurabilityText(const std::string &durabilityText) {
         this->durabilityText = durabilityText;
     }
-    const std::string &getDurabilityText() const {
+    auto getDurabilityText() const -> const std::string & {
         return durabilityText;
     }
 
@@ -121,7 +121,7 @@ public:
             this->durabilityValue = durabilityValue;
         }
     }
-    uint8_t getDurabilityValue() const {
+    auto getDurabilityValue() const -> uint8_t {
         return durabilityValue;
     }
 
@@ -130,7 +130,7 @@ public:
             this->diamondLevel = diamondLevel;
         }
     }
-    uint8_t getDiamondLevel() const {
+    auto getDiamondLevel() const -> uint8_t {
         return diamondLevel;
     }
 
@@ -139,7 +139,7 @@ public:
             this->emeraldLevel = emeraldLevel;
         }
     }
-    uint8_t getEmeraldLevel() const {
+    auto getEmeraldLevel() const -> uint8_t {
         return emeraldLevel;
     }
 
@@ -148,7 +148,7 @@ public:
             this->rubyLevel = rubyLevel;
         }
     }
-    uint8_t getRubyLevel() const {
+    auto getRubyLevel() const -> uint8_t {
         return rubyLevel;
     }
 
@@ -157,7 +157,7 @@ public:
             this->sapphireLevel = sapphireLevel;
         }
     }
-    uint8_t getSapphireLevel() const {
+    auto getSapphireLevel() const -> uint8_t {
         return sapphireLevel;
     }
 
@@ -166,7 +166,7 @@ public:
             this->amethystLevel = amethystLevel;
         }
     }
-    uint8_t getAmethystLevel() const {
+    auto getAmethystLevel() const -> uint8_t {
         return amethystLevel;
     }
 
@@ -175,7 +175,7 @@ public:
             this->obsidianLevel = obsidianLevel;
         }
     }
-    uint8_t getObsidianLevel() const {
+    auto getObsidianLevel() const -> uint8_t {
         return obsidianLevel;
     }
 
@@ -184,20 +184,20 @@ public:
             this->topazLevel = topazLevel;
         }
     }
-    uint8_t getTopazLevel() const {
+    auto getTopazLevel() const -> uint8_t {
         return topazLevel;
     }
 
     void setBonus(uint8_t bonus) {
         this->bonus = bonus;
     }
-    uint8_t getBonus() const {
+    auto getBonus() const -> uint8_t {
         return bonus;
     }
 
-    bool operator==(const ItemLookAt& rhs) const;
+    auto operator==(const ItemLookAt& rhs) const -> bool;
 
-    bool isValid() const {
+    auto isValid() const -> bool {
         return name.length() > 0;
     }
 

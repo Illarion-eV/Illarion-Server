@@ -219,7 +219,7 @@ TEST_F(scriptitem_bindings, test_inside) {
     EXPECT_EQ(23, retval.getId());
 }
 
-int main(int argc, char **argv) {
+auto main(int argc, char **argv) -> int {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

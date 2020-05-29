@@ -21,11 +21,11 @@
 #include "data/NaturalArmorTable.hpp"
 #include "types.hpp"
 
-std::string NaturalArmorTable::getTableName() {
+auto NaturalArmorTable::getTableName() -> std::string {
     return "naturalarmor";
 }
 
-std::vector<std::string> NaturalArmorTable::getColumnNames() {
+auto NaturalArmorTable::getColumnNames() -> std::vector<std::string> {
     return {
         "nar_race",
         "nar_strokearmor",
@@ -34,11 +34,11 @@ std::vector<std::string> NaturalArmorTable::getColumnNames() {
     };
 }
 
-uint16_t NaturalArmorTable::assignId(const Database::ResultTuple &row) {
+auto NaturalArmorTable::assignId(const Database::ResultTuple &row) -> uint16_t {
     return uint16_t(row["nar_race"].as<int32_t>());
 }
 
-MonsterArmor NaturalArmorTable::assignTable(const Database::ResultTuple &row) {
+auto NaturalArmorTable::assignTable(const Database::ResultTuple &row) -> MonsterArmor {
     MonsterArmor armor;
     armor.strokeArmor = TYPE_OF_STROKEARMOR(row["nar_strokearmor"].as<int16_t>());
     armor.punctureArmor = TYPE_OF_PUNCTUREARMOR(row["nar_puncturearmor"].as<int16_t>());

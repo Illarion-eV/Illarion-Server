@@ -65,7 +65,7 @@ public:
         scriptNames.clear();
     }
 
-    const std::shared_ptr<ScriptType> script(IdType id) const {
+    auto script(IdType id) const -> const std::shared_ptr<ScriptType> {
         auto it = scripts.find(id);
 
         if (it != scripts.end()) {
@@ -80,7 +80,7 @@ protected:
     using Base::getColumnNames;
     using Base::assignId;
     using Base::assignTable;
-    virtual std::string assignScriptName(const Database::ResultTuple &row) = 0;
+    virtual auto assignScriptName(const Database::ResultTuple &row) -> std::string = 0;
 
     void evaluateRow(const Database::ResultTuple &row) override {
         Base::evaluateRow(row);
@@ -91,7 +91,7 @@ protected:
         }
     }
 
-    std::shared_ptr<ScriptType> &scriptNonConst(IdType id) {
+    auto scriptNonConst(IdType id) -> std::shared_ptr<ScriptType> & {
         return scripts[id];
     }
 

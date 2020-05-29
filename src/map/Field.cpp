@@ -52,11 +52,11 @@ void Field::setTileId(uint16_t id) {
     updateFieldToPlayersInScreen(here);
 }
 
-uint16_t Field::getTileCode() const {
+auto Field::getTileCode() const -> uint16_t {
     return tile;
 }
 
-uint16_t Field::getTileId() const {
+auto Field::getTileId() const -> uint16_t {
     if (((tile & 0xFC00) >> 10) > 0) {
         return tile & 0x001F;
     } else {
@@ -64,7 +64,7 @@ uint16_t Field::getTileId() const {
     }
 }
 
-uint16_t Field::getSecondaryTileId() const {
+auto Field::getSecondaryTileId() const -> uint16_t {
     if (((tile & 0xFC00) >> 10) > 0) {
         return (tile & 0x03E0) >> 5;
     } else {
@@ -78,15 +78,15 @@ void Field::setMusicId(uint16_t id) {
     updateFieldToPlayersInScreen(here);
 }
 
-uint16_t Field::getMusicId() const {
+auto Field::getMusicId() const -> uint16_t {
     return music;
 }
 
-bool Field::isTransparent() const {
+auto Field::isTransparent() const -> bool {
     return getTileId() == TRANSPARENT;
 }
 
-TYPE_OF_WALKINGCOST Field::getMovementCost() const {
+auto Field::getMovementCost() const -> TYPE_OF_WALKINGCOST {
     if (isWalkable()) {
         auto tileId = getTileId();
         const auto &primaryTile = Data::Tiles[tileId];
@@ -106,7 +106,7 @@ TYPE_OF_WALKINGCOST Field::getMovementCost() const {
     }
 }
 
-ScriptItem Field::getStackItem(uint8_t pos) const {
+auto Field::getStackItem(uint8_t pos) const -> ScriptItem {
     if (pos < items.size()) {
         ScriptItem result(items.at(pos));
         result.type = ScriptItem::it_field;
@@ -117,11 +117,11 @@ ScriptItem Field::getStackItem(uint8_t pos) const {
     return {};
 }
 
-const std::vector<Item> &Field::getItemStack() const {
+auto Field::getItemStack() const -> const std::vector<Item> & {
     return items;
 }
 
-bool Field::addItemOnStack(const Item &item) {
+auto Field::addItemOnStack(const Item &item) -> bool {
     if (items.size() < MAXITEMS) {
         items.push_back(item);
         updateDatabaseItems();
@@ -134,7 +134,7 @@ bool Field::addItemOnStack(const Item &item) {
 }
 
 
-bool Field::addItemOnStackIfWalkable(const Item &item) {
+auto Field::addItemOnStackIfWalkable(const Item &item) -> bool {
     if (isWalkable()) {
         return addItemOnStack(item);
     }
@@ -143,7 +143,7 @@ bool Field::addItemOnStackIfWalkable(const Item &item) {
 }
 
 
-bool Field::takeItemFromStack(Item &item) {
+auto Field::takeItemFromStack(Item &item) -> bool {
     if (items.empty()) {
         return false;
     }
@@ -157,7 +157,7 @@ bool Field::takeItemFromStack(Item &item) {
 }
 
 
-int Field::increaseItemOnStack(int count, bool &erased) {
+auto Field::increaseItemOnStack(int count, bool &erased) -> int {
     if (items.empty()) {
         return false;
     }
@@ -185,7 +185,7 @@ int Field::increaseItemOnStack(int count, bool &erased) {
 }
 
 
-bool Field::swapItemOnStack(TYPE_OF_ITEM_ID newId, uint16_t newQuality) {
+auto Field::swapItemOnStack(TYPE_OF_ITEM_ID newId, uint16_t newQuality) -> bool {
     if (items.empty()) {
         return false;
     }
@@ -209,7 +209,7 @@ bool Field::swapItemOnStack(TYPE_OF_ITEM_ID newId, uint16_t newQuality) {
 }
 
 
-bool Field::viewItemOnStack(Item &item) const {
+auto Field::viewItemOnStack(Item &item) const -> bool {
     if (items.empty()) {
         return false;
     }
@@ -220,12 +220,12 @@ bool Field::viewItemOnStack(Item &item) const {
 }
 
 
-MAXCOUNTTYPE Field::itemCount() const {
+auto Field::itemCount() const -> MAXCOUNTTYPE {
     return items.size();
 }
 
 
-bool Field::addContainerOnStackIfWalkable(Item item, Container *container) {
+auto Field::addContainerOnStackIfWalkable(Item item, Container *container) -> bool {
     if (isWalkable()) {
         if (items.size() < MAXITEMS - 1) {
             if (item.isContainer()) {
@@ -262,7 +262,7 @@ bool Field::addContainerOnStackIfWalkable(Item item, Container *container) {
     return false;
 }
 
-bool Field::addContainerOnStack(Item item, Container *container) {
+auto Field::addContainerOnStack(Item item, Container *container) -> bool {
     if (item.isContainer()) {
         MAXCOUNTTYPE count = 0;
 
@@ -329,7 +329,7 @@ void Field::save(std::ofstream &mapStream, std::ofstream &itemStream,
 }
 
 
-std::vector<Item> Field::getExportItems() const {
+auto Field::getExportItems() const -> std::vector<Item> {
     std::vector<Item> result;
 
     for (const auto &item : items) {
@@ -405,7 +405,7 @@ void Field::load(std::ifstream &mapStream, std::ifstream &itemStream,
     updateFlags();
 }
 
-const position &Field::getPosition() const {
+auto Field::getPosition() const -> const position & {
     return here;
 }
 
@@ -425,7 +425,7 @@ void Field::removePersistence() {
     }
 }
 
-bool Field::isPersistent() const {
+auto Field::isPersistent() const -> bool {
     return persistent;
 }
 
@@ -514,7 +514,7 @@ void Field::updateFlags() {
     }
 }
 
-bool Field::hasMonster() const {
+auto Field::hasMonster() const -> bool {
     return anyBitSet(FLAG_MONSTERONFIELD);
 }
 
@@ -526,7 +526,7 @@ void Field::removeMonster() {
     unsetBits(FLAG_MONSTERONFIELD);
 }
 
-bool Field::hasNPC() const {
+auto Field::hasNPC() const -> bool {
     return anyBitSet(FLAG_NPCONFIELD);
 }
 
@@ -538,7 +538,7 @@ void Field::removeNPC() {
     unsetBits(FLAG_NPCONFIELD);
 }
 
-bool Field::hasPlayer() const {
+auto Field::hasPlayer() const -> bool {
     return anyBitSet(FLAG_PLAYERONFIELD);
 }
 
@@ -550,7 +550,7 @@ void Field::removePlayer() {
     unsetBits(FLAG_PLAYERONFIELD);
 }
 
-bool Field::isWarp() const {
+auto Field::isWarp() const -> bool {
     return anyBitSet(FLAG_WARPFIELD);
 }
 
@@ -573,17 +573,17 @@ void Field::getWarp(position &pos) const {
 }
 
 
-bool Field::hasSpecialItem() const {
+auto Field::hasSpecialItem() const -> bool {
     return anyBitSet(FLAG_SPECIALITEM);
 }
 
 
-bool Field::isWalkable() const {
+auto Field::isWalkable() const -> bool {
     return !anyBitSet(FLAG_BLOCKPATH) || anyBitSet(FLAG_MAKEPASSABLE);
 }
 
 
-bool Field::moveToPossible() const {
+auto Field::moveToPossible() const -> bool {
     return isWalkable() && !anyBitSet(FLAG_MONSTERONFIELD | FLAG_NPCONFIELD | FLAG_PLAYERONFIELD);
 }
 
@@ -603,7 +603,7 @@ inline void Field::unsetBits(uint8_t bits) {
     flags &= ~bits;
 }
 
-inline bool Field::anyBitSet(uint8_t bits) const {
+inline auto Field::anyBitSet(uint8_t bits) const -> bool {
     return (flags & bits) != 0;
 }
 

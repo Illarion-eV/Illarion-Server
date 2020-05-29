@@ -45,7 +45,7 @@ void WorldMap::clear() {
     maps.clear();
 }
 
-bool WorldMap::intersects(const Map &map) const {
+auto WorldMap::intersects(const Map &map) const -> bool {
     using namespace ranges;
     auto doIntersectMap = [&map](const auto &testMap) {return map.intersects(testMap);};
     auto overlap = find_if(maps, doIntersectMap);
@@ -61,11 +61,11 @@ bool WorldMap::intersects(const Map &map) const {
     return foundIntersection;
 }
 
-Field &WorldMap::at(const position &pos) {
+auto WorldMap::at(const position &pos) -> Field & {
     return const_cast<Field &>(static_cast<const WorldMap &>(*this).at(pos));
 }
 
-const Field &WorldMap::at(const position &pos) const {
+auto WorldMap::at(const position &pos) const -> const Field & {
     if (persistentFields.count(pos) > 0) {
         return persistentFields.at(pos);
     } else {
@@ -77,7 +77,7 @@ const Field &WorldMap::at(const position &pos) const {
     }
 }
 
-bool WorldMap::insert(Map&& newMap) {
+auto WorldMap::insert(Map&& newMap) -> bool {
     if (intersects(newMap)) return false;
 
     maps.push_back(std::move(newMap));
@@ -95,12 +95,12 @@ bool WorldMap::insert(Map&& newMap) {
     return true;
 }
 
-bool WorldMap::insertPersistent(Field&& newField) {
+auto WorldMap::insertPersistent(Field&& newField) -> bool {
     newField.makePersistent();
     return persistentFields.insert({newField.getPosition(), std::move(newField)}).second;
 }
 
-bool WorldMap::allMapsAged() {
+auto WorldMap::allMapsAged() -> bool {
     using std::chrono::steady_clock;
     using std::chrono::milliseconds;
 
@@ -122,8 +122,8 @@ bool WorldMap::allMapsAged() {
     return true;
 }
 
-bool WorldMap::import(const std::string &importDir,
-                      const std::string &mapName) {
+auto WorldMap::import(const std::string &importDir,
+                      const std::string &mapName) -> bool {
     bool success = true;
 
     try {
@@ -141,8 +141,8 @@ bool WorldMap::import(const std::string &importDir,
     return success;
 }
 
-Map WorldMap::createMapFromHeaderFile(const std::string &importDir,
-                                      const std::string &mapName) {
+auto WorldMap::createMapFromHeaderFile(const std::string &importDir,
+                                      const std::string &mapName) -> Map {
     const std::string fileName = mapName + ".tiles.txt";
     std::ifstream headerFile(importDir + fileName);
 
@@ -207,8 +207,8 @@ Map WorldMap::createMapFromHeaderFile(const std::string &importDir,
 
 const std::regex headerExpression {R"(^(.): (-?\d+)$)"};
 
-int16_t WorldMap::readHeaderLine(const std::string &mapName, char header,
-                                 std::ifstream &headerFile, int &lineNumber) {
+auto WorldMap::readHeaderLine(const std::string &mapName, char header,
+                                 std::ifstream &headerFile, int &lineNumber) -> int16_t {
     using std::regex_match;
     using std::smatch;
     std::string line;
@@ -237,11 +237,11 @@ int16_t WorldMap::readHeaderLine(const std::string &mapName, char header,
     throw MapError();
 }
 
-bool WorldMap::isCommentOrEmpty(const std::string &line) {
+auto WorldMap::isCommentOrEmpty(const std::string &line) -> bool {
     return line.length() == 0 || line[0] == '#';
 }
 
-bool WorldMap::exportTo() const {
+auto WorldMap::exportTo() const -> bool {
     const std::string exportDir = Config::instance().datadir() + std::string(MAPDIR) + "export/";
 
     for (const auto &map : maps) {
@@ -319,7 +319,7 @@ bool WorldMap::exportTo() const {
     return true;
 }
 
-bool WorldMap::importFromEditor() {
+auto WorldMap::importFromEditor() -> bool {
     clear();
 
     int numfiles = 0;
@@ -378,7 +378,7 @@ bool WorldMap::importFromEditor() {
 
 }
 
-bool WorldMap::loadFromDisk() {
+auto WorldMap::loadFromDisk() -> bool {
     clear();
     const std::string path = Config::instance().datadir() + std::string(MAPDIR) + worldName;
     std::ifstream mapinitfile(path + "_initmaps",
@@ -493,8 +493,8 @@ void WorldMap::saveToDisk() const {
     }
 }
 
-bool WorldMap::createMap(const std::string &name, const position &origin,
-                         uint16_t width, uint16_t height, uint16_t tile) {
+auto WorldMap::createMap(const std::string &name, const position &origin,
+                         uint16_t width, uint16_t height, uint16_t tile) -> bool {
     return insert({name, origin, width, height, tile});
 }
 
@@ -563,7 +563,7 @@ void WorldMap::removePersistenceAt(const position &pos) {
     }
 }
 
-bool WorldMap::isPersistentAt(const position &pos) const {
+auto WorldMap::isPersistentAt(const position &pos) const -> bool {
     bool persistent = false;
 
     try {
@@ -575,11 +575,11 @@ bool WorldMap::isPersistentAt(const position &pos) const {
     return persistent;
 }
 
-Field &walkableNear(WorldMap &worldMap, const position &pos) {
+auto walkableNear(WorldMap &worldMap, const position &pos) -> Field & {
     return const_cast<Field &>(walkableNear(static_cast<const WorldMap &>(worldMap), pos));
 }
 
-const Field &walkableNear(const WorldMap &worldMap, const position &pos) {
+auto walkableNear(const WorldMap &worldMap, const position &pos) -> const Field & {
     auto start = pos;
     auto testPos = pos;
 

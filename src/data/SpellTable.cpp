@@ -20,11 +20,11 @@
 
 #include "data/SpellTable.hpp"
 
-std::string SpellTable::getTableName() {
+auto SpellTable::getTableName() -> std::string {
     return "spells";
 }
 
-std::vector<std::string> SpellTable::getColumnNames() {
+auto SpellTable::getColumnNames() -> std::vector<std::string> {
     return {
         "spl_spellid",
         "spl_magictype",
@@ -32,18 +32,18 @@ std::vector<std::string> SpellTable::getColumnNames() {
     };
 }
 
-Spell SpellTable::assignId(const Database::ResultTuple &row) {
+auto SpellTable::assignId(const Database::ResultTuple &row) -> Spell {
     Spell spell;
     spell.magicType = uint8_t(row["spl_magictype"].as<uint16_t>());
     spell.spellId = row["spl_spellid"].as<uint32_t>();
     return spell;
 }
 
-SpellStruct SpellTable::assignTable(const Database::ResultTuple &row) {
+auto SpellTable::assignTable(const Database::ResultTuple &row) -> SpellStruct {
     return SpellStruct();
 }
 
-std::string SpellTable::assignScriptName(const Database::ResultTuple &row) {
+auto SpellTable::assignScriptName(const Database::ResultTuple &row) -> std::string {
     return row["spl_scriptname"].as<std::string>("");
 }
 

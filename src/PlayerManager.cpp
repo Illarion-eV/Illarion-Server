@@ -39,7 +39,7 @@ std::unique_ptr<PlayerManager> PlayerManager::instance = nullptr;
 std::mutex PlayerManager::mut;
 std::mutex PlayerManager::reloadmutex;
 
-PlayerManager &PlayerManager::get() {
+auto PlayerManager::get() -> PlayerManager & {
     if (!instance) {
         instance = std::make_unique<PlayerManager>();
     }
@@ -66,7 +66,7 @@ void PlayerManager::stop() {
     Logger::info(LogFacility::Other) << "Player manager terminated!" << Log::end;
 }
 
-bool PlayerManager::findPlayer(const std::string &name) const {
+auto PlayerManager::findPlayer(const std::string &name) const -> bool {
     std::lock_guard<std::mutex> lock(mut);
     
     using namespace ranges;

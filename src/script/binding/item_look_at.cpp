@@ -23,7 +23,7 @@
 
 namespace binding {
 
-    luabind::scope item_look_at() {
+    auto item_look_at() -> luabind::scope {
         return luabind::class_<ItemLookAt>("ItemLookAt")
                 .def(luabind::constructor<>())
                 .enum_("Rareness")

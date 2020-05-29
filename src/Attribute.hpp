@@ -36,8 +36,8 @@ public:
     Attribute(attribute_t value, attribute_t maximum);
     void setBaseValue(attribute_t value);
     void setValue(attribute_t value);
-    attribute_t getBaseValue() const;
-    attribute_t getValue() const;
+    auto getBaseValue() const -> attribute_t;
+    auto getValue() const -> attribute_t;
     void increaseBaseValue(int amount);
     void increaseValue(int amount);
 };

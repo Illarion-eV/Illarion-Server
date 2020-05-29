@@ -28,17 +28,17 @@ LuaQuestScript::LuaQuestScript(const std::string &filename, TYPE_OF_QUEST_ID que
 
 LuaQuestScript::~LuaQuestScript() = default;
 
-std::string LuaQuestScript::title(Character *user) {
+auto LuaQuestScript::title(Character *user) -> std::string {
     character_ptr fuse_user(user);
     return callEntrypoint<std::string>("QuestTitle", fuse_user);
 }
 
-std::string LuaQuestScript::description(Character *user, TYPE_OF_QUESTSTATUS status) {
+auto LuaQuestScript::description(Character *user, TYPE_OF_QUESTSTATUS status) -> std::string {
     character_ptr fuse_user(user);
     return callEntrypoint<std::string>("QuestDescription", fuse_user, status);
 }
 
-QuestAvailability LuaQuestScript::available(Character *user, TYPE_OF_QUESTSTATUS status) {
+auto LuaQuestScript::available(Character *user, TYPE_OF_QUESTSTATUS status) -> QuestAvailability {
     if (!existsEntrypoint("QuestAvailability")) {
         return questDefaultAvailable;
     }
@@ -47,7 +47,7 @@ QuestAvailability LuaQuestScript::available(Character *user, TYPE_OF_QUESTSTATUS
     return callEntrypoint<QuestAvailability>("QuestAvailability", fuse_user, status);
 }
 
-position LuaQuestScript::start() {
+auto LuaQuestScript::start() -> position {
     using namespace luabind;
     auto startPosition = callEntrypoint<object>("QuestStart");
     
@@ -105,11 +105,11 @@ void LuaQuestScript::targets(Character *user, TYPE_OF_QUESTSTATUS status, std::v
     }
 }
 
-TYPE_OF_QUESTSTATUS LuaQuestScript::finalStatus() {
+auto LuaQuestScript::finalStatus() -> TYPE_OF_QUESTSTATUS {
     return callEntrypoint<TYPE_OF_QUESTSTATUS>("QuestFinalStatus");
 }
 
-position LuaQuestScript::getPosition(const luabind::object &potentialPosition) {
+auto LuaQuestScript::getPosition(const luabind::object &potentialPosition) -> position {
     using namespace luabind;
 
     if (!potentialPosition.is_valid()) {

@@ -27,10 +27,10 @@
 
 class SkillTable : public StructTable<TYPE_OF_SKILL_ID, SkillStruct> {
 public:
-    std::string getTableName() override;
-    std::vector<std::string> getColumnNames() override;
-    TYPE_OF_SKILL_ID assignId(const Database::ResultTuple &row) override;
-    SkillStruct assignTable(const Database::ResultTuple &row) override;
+    auto getTableName() -> std::string override;
+    auto getColumnNames() -> std::vector<std::string> override;
+    auto assignId(const Database::ResultTuple &row) -> TYPE_OF_SKILL_ID override;
+    auto assignTable(const Database::ResultTuple &row) -> SkillStruct override;
 };
 
 #endif

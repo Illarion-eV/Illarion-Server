@@ -117,7 +117,7 @@ void SpawnPoint::dead(TYPE_OF_CHARACTER_ID type) {
     }
 }
 
-bool SpawnPoint::load(const int &id) {
+auto SpawnPoint::load(const int &id) -> bool {
     try {
         Database::SelectQuery query;
         query.addColumn("spawnpoint_monster", "spm_race");

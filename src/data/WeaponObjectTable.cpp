@@ -20,11 +20,11 @@
 
 #include "data/WeaponObjectTable.hpp"
 
-std::string WeaponObjectTable::getTableName() {
+auto WeaponObjectTable::getTableName() -> std::string {
     return "weapon";
 }
 
-std::vector<std::string> WeaponObjectTable::getColumnNames() {
+auto WeaponObjectTable::getColumnNames() -> std::vector<std::string> {
     return {
         "wp_itemid",
         "wp_attack",
@@ -40,11 +40,11 @@ std::vector<std::string> WeaponObjectTable::getColumnNames() {
     };
 }
 
-TYPE_OF_ITEM_ID WeaponObjectTable::assignId(const Database::ResultTuple &row) {
+auto WeaponObjectTable::assignId(const Database::ResultTuple &row) -> TYPE_OF_ITEM_ID {
     return row["wp_itemid"].as<TYPE_OF_ITEM_ID>();
 }
 
-WeaponStruct WeaponObjectTable::assignTable(const Database::ResultTuple &row) {
+auto WeaponObjectTable::assignTable(const Database::ResultTuple &row) -> WeaponStruct {
     WeaponStruct weapon;
     weapon.Attack = TYPE_OF_ATTACK(row["wp_attack"].as<uint16_t>());
     weapon.Defence = TYPE_OF_DEFENCE(row["wp_defence"].as<uint16_t>());
@@ -58,7 +58,7 @@ WeaponStruct WeaponObjectTable::assignTable(const Database::ResultTuple &row) {
     return weapon;
 }
 
-std::string WeaponObjectTable::assignScriptName(const Database::ResultTuple &row) {
+auto WeaponObjectTable::assignScriptName(const Database::ResultTuple &row) -> std::string {
     return row["wp_fightingscript"].as<std::string>("");
 }
 

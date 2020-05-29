@@ -10,7 +10,7 @@
 
 #include "script/LuaScript.hpp"
 
-std::shared_ptr<script_data_exchangemap> convert_to_map(const luabind::object &data) {
+auto convert_to_map(const luabind::object &data) -> std::shared_ptr<script_data_exchangemap> {
     auto mapType = luabind::type(data);
 
     if (mapType == LUA_TNIL)
@@ -54,7 +54,7 @@ std::shared_ptr<script_data_exchangemap> convert_to_map(const luabind::object &d
     return result;
 }
 
-uint32_t getPlayerLanguageLua(const Character *character) {
+auto getPlayerLanguageLua(const Character *character) -> uint32_t {
     return static_cast<uint32_t>(character->getPlayerLanguage());
 }
 
@@ -94,28 +94,28 @@ void inform_lua3(const Character *character, const std::string &german, const st
     character->inform(german, english, Character::informScriptMediumPriority);
 }
 
-int count_item_at1(const Character *character, const std::string &where, TYPE_OF_ITEM_ID id) {
+auto count_item_at1(const Character *character, const std::string &where, TYPE_OF_ITEM_ID id) -> int {
     return character->countItemAt(where, id);
 }
 
-int count_item_at2(const Character *character, const std::string &where, TYPE_OF_ITEM_ID id, const luabind::object &data) {
+auto count_item_at2(const Character *character, const std::string &where, TYPE_OF_ITEM_ID id, const luabind::object &data) -> int {
     return character->countItemAt(where, id, convert_to_map(data).get());
 }
 
 
-int erase_item1(Character *character, TYPE_OF_ITEM_ID id, int count) {
+auto erase_item1(Character *character, TYPE_OF_ITEM_ID id, int count) -> int {
     return character->eraseItem(id, count);
 }
 
-int erase_item2(Character *character, TYPE_OF_ITEM_ID id, int count, const luabind::object &data) {
+auto erase_item2(Character *character, TYPE_OF_ITEM_ID id, int count, const luabind::object &data) -> int {
     return character->eraseItem(id, count, convert_to_map(data).get());
 }
 
-int create_item(Character *character, Item::id_type id, Item::number_type number, Item::quality_type quality, const luabind::object &data) {
+auto create_item(Character *character, Item::id_type id, Item::number_type number, Item::quality_type quality, const luabind::object &data) -> int {
     return character->createItem(id, number, quality, convert_to_map(data).get());
 }
 
-luabind::object getLoot(const Character *character) {
+auto getLoot(const Character *character) -> luabind::object {
     lua_State *_luaState = World::get()->getCurrentScript()->getLuaState();
     luabind::object lootTable = luabind::newtable(_luaState);
 
@@ -162,23 +162,23 @@ luabind::object getLoot(const Character *character) {
     return lootTable;
 }
 
-int container_count_item1(Container *container, Item::id_type id) {
+auto container_count_item1(Container *container, Item::id_type id) -> int {
     return container->countItem(id);
 }
 
-int container_count_item2(Container *container, Item::id_type id, const luabind::object &data) {
+auto container_count_item2(Container *container, Item::id_type id, const luabind::object &data) -> int {
     return container->countItem(id, convert_to_map(data).get());
 }
 
-int container_erase_item1(Container *container, Item::id_type id, Item::number_type number) {
+auto container_erase_item1(Container *container, Item::id_type id, Item::number_type number) -> int {
     return container->eraseItem(id, number);
 }
 
-int container_erase_item2(Container *container, Item::id_type id, Item::number_type number, const luabind::object &data) {
+auto container_erase_item2(Container *container, Item::id_type id, Item::number_type number, const luabind::object &data) -> int {
     return container->eraseItem(id, number, convert_to_map(data).get());
 }
 
-map::Field *world_fieldAt(World *world, const position &pos) {
+auto world_fieldAt(World *world, const position &pos) -> map::Field * {
     try {
         return &world->fieldAt(pos);
     } catch (FieldNotFound &) {
@@ -186,7 +186,7 @@ map::Field *world_fieldAt(World *world, const position &pos) {
     }
 }
 
-ScriptItem world_createFromId(World *world, TYPE_OF_ITEM_ID id, unsigned short int count, position pos, bool always, int quali, const luabind::object &data) {
+auto world_createFromId(World *world, TYPE_OF_ITEM_ID id, unsigned short int count, position pos, bool always, int quali, const luabind::object &data) -> ScriptItem {
     return world->createFromId(id, count, pos, always, quali, convert_to_map(data).get());
 }
 
@@ -194,7 +194,7 @@ void log_lua(const std::string &message) {
     Logger::info(LogFacility::Script) << message << Log::end;
 }
 
-luabind::object character_getItemList(const Character *character, TYPE_OF_ITEM_ID id) {
+auto character_getItemList(const Character *character, TYPE_OF_ITEM_ID id) -> luabind::object {
     const auto &content = character->getItemList(id);
     lua_State *_luaState = World::get()->getCurrentScript()->getLuaState();
     luabind::object list = luabind::newtable(_luaState);
@@ -208,7 +208,7 @@ luabind::object character_getItemList(const Character *character, TYPE_OF_ITEM_I
     return list;
 }
 
-luabind::object waypointlist_getWaypoints(const WaypointList *wpl) {
+auto waypointlist_getWaypoints(const WaypointList *wpl) -> luabind::object {
     lua_State *luaState = World::get()->getCurrentScript()->getLuaState();
     luabind::object list = luabind::newtable(luaState);
 
@@ -240,7 +240,7 @@ void waypointlist_addFromList(WaypointList *wpl, const luabind::object &list) {
     }
 }
 
-luabind::object world_LuaLoS(const World *world, const position &startingpos, const position &endingpos) {
+auto world_LuaLoS(const World *world, const position &startingpos, const position &endingpos) -> luabind::object {
     lua_State *luaState = world->getCurrentScript()->getLuaState();
     luabind::object list = luabind::newtable(luaState);
     int index = 1;
@@ -264,7 +264,7 @@ luabind::object world_LuaLoS(const World *world, const position &startingpos, co
     return list;
 }
 
-luabind::object world_getPlayersOnline(const World *world) {
+auto world_getPlayersOnline(const World *world) -> luabind::object {
     lua_State *luaState = world->getCurrentScript()->getLuaState();
     luabind::object list = luabind::newtable(luaState);
     int index = 1;
@@ -280,7 +280,7 @@ luabind::object world_getPlayersOnline(const World *world) {
 }
 
 template<typename Container>
-luabind::object convert_to_fuselist(const Container &container) {
+auto convert_to_fuselist(const Container &container) -> luabind::object {
     lua_State *luaState = World::get()->getCurrentScript()->getLuaState();
     luabind::object list = luabind::newtable(luaState);
     int index = 1;
@@ -293,22 +293,22 @@ luabind::object convert_to_fuselist(const Container &container) {
     return list;
 }
 
-luabind::object world_getNPCS(const World *world) {
+auto world_getNPCS(const World *world) -> luabind::object {
     return convert_to_fuselist(world->getNPCS());
 }
 
-luabind::object world_getCharactersInRangeOf(const World *world, const position &posi, uint8_t range) {
+auto world_getCharactersInRangeOf(const World *world, const position &posi, uint8_t range) -> luabind::object {
     return convert_to_fuselist(world->getCharactersInRangeOf(posi, range));
 }
 
-luabind::object world_getPlayersInRangeOf(const World *world, const position &posi, uint8_t range) {
+auto world_getPlayersInRangeOf(const World *world, const position &posi, uint8_t range) -> luabind::object {
     return convert_to_fuselist(world->getPlayersInRangeOf(posi, range));
 }
 
-luabind::object world_getMonstersInRangeOf(const World *world, const position &posi, uint8_t range) {
+auto world_getMonstersInRangeOf(const World *world, const position &posi, uint8_t range) -> luabind::object {
     return convert_to_fuselist(world->getMonstersInRangeOf(posi, range));
 }
 
-luabind::object world_getNPCSInRangeOf(const World *world, const position &posi, uint8_t range) {
+auto world_getNPCSInRangeOf(const World *world, const position &posi, uint8_t range) -> luabind::object {
     return convert_to_fuselist(world->getNPCSInRangeOf(posi, range));
 }

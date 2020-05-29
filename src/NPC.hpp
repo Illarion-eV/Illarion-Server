@@ -67,7 +67,7 @@ public:
     */
     ~NPC() override;
 
-    unsigned short getType() const override {
+    auto getType() const -> unsigned short override {
         return npc;
     }
 
@@ -75,7 +75,7 @@ public:
     * gets the healer state of this npc
     * @return if the npc is a healer or not
     */
-    bool getHealer() const {
+    auto getHealer() const -> bool {
         return _ishealer;
     }
 
@@ -83,7 +83,7 @@ public:
     * gets the initial position of the npc
     * @return the starting position of this npc
     */
-    position getStartPos() const {
+    auto getStartPos() const -> position {
         return _startpos;
     }
 
@@ -91,7 +91,7 @@ public:
     * gets a pointer to the script for this npc
     * @return the pointer for the script
     */
-    std::shared_ptr<LuaNPCScript> getScript() const {
+    auto getScript() const -> std::shared_ptr<LuaNPCScript> {
         return _script;
     }
 
@@ -112,7 +112,7 @@ public:
     */
     void receiveText(talk_type tt, const std::string &message, Character *cc) override;
 
-    std::string to_string() const override;
+    auto to_string() const -> std::string override;
 
 protected:
 

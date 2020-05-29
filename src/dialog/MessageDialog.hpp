@@ -30,7 +30,7 @@ private:
 public:
     MessageDialog(const string &title, const string &text, const luabind::object &callback);
     MessageDialog(const MessageDialog &messageDialog);
-    const string &getText() const;
+    auto getText() const -> const string &;
 };
 
 #endif

@@ -70,7 +70,7 @@ TEST_F(container_tests, eraseItemWithoutDataDoesntDeleteDataItem) {
 	EXPECT_EQ(8, container.eraseItem(itemid_1, 10));
 }
 
-int main(int argc, char **argv) {
+auto main(int argc, char **argv) -> int {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

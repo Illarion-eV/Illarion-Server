@@ -31,7 +31,7 @@
 
 namespace binding {
 
-    luabind::scope character() {
+    auto character() -> luabind::scope {
         using ::position;
 
         luabind::value_vector skills;

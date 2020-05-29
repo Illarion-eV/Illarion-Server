@@ -214,7 +214,7 @@ void Player::login() {
     Connection->activate(this);
 }
 
-unsigned short int Player::getScreenRange() const {
+auto Player::getScreenRange() const -> unsigned short int {
     return (screenwidth > screenheight) ? 2*screenwidth : 2*screenheight;
 }
 
@@ -301,11 +301,11 @@ void Player::updateShowcaseSlot(Container *container, TYPE_OF_CONTAINERSLOTS slo
     }
 }
 
-bool Player::isShowcaseOpen(uint8_t showcase) const {
+auto Player::isShowcaseOpen(uint8_t showcase) const -> bool {
     return showcases.find(showcase) != showcases.cend();
 }
 
-bool Player::isShowcaseOpen(Container *container) const {
+auto Player::isShowcaseOpen(Container *container) const -> bool {
     using namespace ranges;
     auto containsContainer = [container](const auto &showcase) {return showcase->contains(container);};
     auto showcaseView = showcases | view::values;
@@ -313,7 +313,7 @@ bool Player::isShowcaseOpen(Container *container) const {
     return result != showcaseView.end();
 }
 
-bool Player::isShowcaseInInventory(uint8_t showcase) const {
+auto Player::isShowcaseInInventory(uint8_t showcase) const -> bool {
     if (isShowcaseOpen(showcase)) {
         return showcases.at(showcase)->inInventory();
     }
@@ -321,7 +321,7 @@ bool Player::isShowcaseInInventory(uint8_t showcase) const {
     return false;
 }
 
-uint8_t Player::getShowcaseId(Container *container) const {
+auto Player::getShowcaseId(Container *container) const -> uint8_t {
     using namespace ranges;
     auto containsContainer = [container](const auto &showcase) {return showcase.second->contains(container);};
     auto result = find_if(showcases, containsContainer);
@@ -333,7 +333,7 @@ uint8_t Player::getShowcaseId(Container *container) const {
     throw std::logic_error("container has no showcase!");
 }
 
-Container *Player::getShowcaseContainer(uint8_t showcase) const {
+auto Player::getShowcaseContainer(uint8_t showcase) const -> Container * {
     auto it = showcases.find(showcase);
 
     if (it != showcases.end()) {
@@ -409,7 +409,7 @@ void Player::lookIntoShowcaseContainer(uint8_t showcase, unsigned char pos) {
     }
 }
 
-bool Player::lookIntoBackPack() {
+auto Player::lookIntoBackPack() -> bool {
     if ((items[BACKPACK].getId() != 0) && backPackContents) {
         openShowcase(backPackContents, static_cast<ScriptItem>(items[BACKPACK]), true);
         return true;
@@ -418,7 +418,7 @@ bool Player::lookIntoBackPack() {
     return false;
 }
 
-bool Player::lookIntoContainerOnField(direction dir) {
+auto Player::lookIntoContainerOnField(direction dir) -> bool {
     position containerPosition = getPosition();
     containerPosition.move(dir);
 
@@ -540,7 +540,7 @@ void Player::learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t oppone
 }
 
 
-int Player::createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, script_data_exchangemap const *data) {
+auto Player::createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, script_data_exchangemap const *data) -> int {
     int temp = Character::createItem(id, number, quality, data);
 
     for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
@@ -556,7 +556,7 @@ int Player::createItem(Item::id_type id, Item::number_type number, Item::quality
 }
 
 
-int Player::eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangemap const *data) {
+auto Player::eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangemap const *data) -> int {
     int temp = count;
 
     if ((items[ BACKPACK ].getId() != 0) && backPackContents) {
@@ -599,7 +599,7 @@ int Player::eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangemap
     return temp;
 }
 
-int Player::increaseAtPos(unsigned char pos, int count) {
+auto Player::increaseAtPos(unsigned char pos, int count) -> int {
     int temp = count;
 
     if ((pos > 0) && (pos < MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
@@ -636,7 +636,7 @@ int Player::increaseAtPos(unsigned char pos, int count) {
     return temp;
 }
 
-int Player::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) {
+auto Player::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) -> int {
     int temp = Character::createAtPos(pos,newid,count);
     sendCharacterItemAtPos(pos);
     checkBurden();
@@ -644,7 +644,7 @@ int Player::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) {
 
 }
 
-bool Player::swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid , uint16_t newQuality) {
+auto Player::swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid , uint16_t newQuality) -> bool {
     if (Character::swapAtPos(pos, newid, newQuality)) {
         sendCharacterItemAtPos(pos);
         checkBurden();
@@ -687,7 +687,7 @@ void Player::sendMagicFlags(int type) {
 }
 
 
-bool Player::saveBaseAttributes() {
+auto Player::saveBaseAttributes() -> bool {
     if (getBaseAttributeSum() != getMaxAttributePoints()) {
         Database::SelectQuery query;
         query.addColumn("player", "ply_strength");
@@ -775,7 +775,7 @@ void Player::defaultMusic() {
 
 // Setters and Getters //
 
-unsigned char Player::getStatus() const {
+auto Player::getStatus() const -> unsigned char {
     return status;
 }
 
@@ -786,7 +786,7 @@ void Player::setStatus(unsigned char status) {
 
 
 // What time does the status get reset?
-time_t Player::getStatusTime() const {
+auto Player::getStatusTime() const -> time_t {
     return statustime;
 }
 
@@ -797,7 +797,7 @@ void Player::setStatusTime(time_t time) {
 
 
 // Who banned/jailed the player?
-std::string Player::getStatusGM() const {
+auto Player::getStatusGM() const -> std::string {
     using namespace Database;
     SelectQuery query;
     query.addColumn("chars", "chr_playerid");
@@ -826,7 +826,7 @@ void Player::setStatusGM(TYPE_OF_CHARACTER_ID gm) {
 
 
 // Why where they banned/jailed?
-std::string Player::getStatusReason() const {
+auto Player::getStatusReason() const -> std::string {
     return statusreason;
 }
 
@@ -847,12 +847,12 @@ void Player::setClippingActive(bool tclippingActive) {
 }
 
 
-bool Player::getTurtleActive() const {
+auto Player::getTurtleActive() const -> bool {
     return turtleActive;
 }
 
 
-bool Player::getClippingActive() const {
+auto Player::getClippingActive() const -> bool {
     return clippingActive;
 }
 
@@ -862,7 +862,7 @@ void Player::setTurtleTile(unsigned char tturtletile) {
 }
 
 
-unsigned char Player::getTurtleTile() const {
+auto Player::getTurtleTile() const -> unsigned char {
     return turtletile;
 }
 
@@ -872,7 +872,7 @@ void Player::setAdmin(uint32_t tAdmin) {
 }
 
 
-bool Player::isAdmin() const {
+auto Player::isAdmin() const -> bool {
     return (admin>0 && !hasGMRight(gmr_isnotshownasgm));
 }
 
@@ -1098,7 +1098,7 @@ struct container_struct {
 }
 ;
 
-bool Player::save() noexcept {
+auto Player::save() noexcept -> bool {
     using namespace Database;
 
     Logger::info(LogFacility::Player) << "Saving " << to_string() << Log::end;
@@ -1367,7 +1367,7 @@ bool Player::save() noexcept {
     }
 }
 
-bool Player::loadGMFlags() noexcept {
+auto Player::loadGMFlags() noexcept -> bool {
     try {
         using namespace Database;
         SelectQuery query;
@@ -1392,7 +1392,7 @@ bool Player::loadGMFlags() noexcept {
     return false;
 }
 
-bool Player::load() noexcept {
+auto Player::load() noexcept -> bool {
     std::map<int, Container *> depots, containers;
     std::map<int, Container *>::iterator it;
 
@@ -1682,29 +1682,29 @@ void Player::increasePoisonValue(short int value) {
     }
 }
 
-short int Player::getMinActionPoints() const {
+auto Player::getMinActionPoints() const -> short int {
     return P_MIN_AP;
 }
 
-short int Player::getMaxActionPoints() const {
+auto Player::getMaxActionPoints() const -> short int {
     return P_MAX_AP;
 }
 
-short int Player::getMinFightPoints() const {
+auto Player::getMinFightPoints() const -> short int {
     return P_MIN_FP;
 }
 
-short int Player::getMaxFightPoints() const {
+auto Player::getMaxFightPoints() const -> short int {
     return P_MAX_FP;
 }
 
-unsigned short int Player::setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor) {
+auto Player::setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor) -> unsigned short int {
     Character::setSkill(skill, major, minor);
     sendSkill(skill, major, minor);
     return major;
 }
 
-unsigned short int Player::increaseSkill(TYPE_OF_SKILL_ID skill, short int amount) {
+auto Player::increaseSkill(TYPE_OF_SKILL_ID skill, short int amount) -> unsigned short int {
     Character::increaseSkill(skill, amount);
     int major = getSkill(skill);
     int minor = getMinorSkill(skill);
@@ -1742,7 +1742,7 @@ void Player::receiveText(talk_type tt, const std::string &message, Character *cc
     }
 }
 
-bool Player::knows(Player *player) const {
+auto Player::knows(Player *player) const -> bool {
     return this == player || knownPlayers.find(player->getId()) != knownPlayers.cend();
 }
 
@@ -1771,7 +1771,7 @@ void Player::namePlayer(TYPE_OF_CHARACTER_ID playerId, const std::string &name) 
     }
 }
 
-std::string Player::getCustomNameOf(Player *player) const {
+auto Player::getCustomNameOf(Player *player) const -> std::string {
     const auto it = namedPlayers.find(player->getId());
 
     if (it != namedPlayers.cend()) {
@@ -1843,17 +1843,17 @@ void Player::checkBurden() {
     Connection->addCommand(cmd);
 }
 
-bool Player::isOvertaxed() {
+auto Player::isOvertaxed() -> bool {
     checkBurden();
     auto level = loadFactor();
     return level == LoadLevel::overtaxed;
 }
 
-bool Player::moveToPossible(const map::Field &field) const {
+auto Player::moveToPossible(const map::Field &field) const -> bool {
     return Character::moveToPossible(field) || (!getClippingActive() && (isAdmin() || hasGMRight(gmr_isnotshownasgm)));
 }
 
-bool Player::move(direction dir, uint8_t mode) {
+auto Player::move(direction dir, uint8_t mode) -> bool {
     using std::chrono::steady_clock;
     using std::chrono::milliseconds;
     auto now = steady_clock::now();
@@ -1995,7 +1995,7 @@ bool Player::move(direction dir, uint8_t mode) {
 }
 
 
-bool Player::Warp(const position &newPos) {
+auto Player::Warp(const position &newPos) -> bool {
     bool warped = Character::Warp(newPos);
 
     if (warped) {
@@ -2006,7 +2006,7 @@ bool Player::Warp(const position &newPos) {
     return false;
 }
 
-bool Player::forceWarp(const position &newPos) {
+auto Player::forceWarp(const position &newPos) -> bool {
     bool warped = Character::forceWarp(newPos);
 
     if (warped) {
@@ -2048,7 +2048,7 @@ void Player::changeQualityAt(unsigned char pos, short int amount) {
     sendCharacterItemAtPos(RIGHT_TOOL);
 }
 
-bool Player::hasGMRight(gm_rights right) const {
+auto Player::hasGMRight(gm_rights right) const -> bool {
     return ((right & admin) == static_cast<uint32_t>(right));
 }
 
@@ -2174,7 +2174,7 @@ void Player::sendCompleteQuestProgress() {
     }
 }
 
-TYPE_OF_QUESTSTATUS Player::getQuestProgress(TYPE_OF_QUEST_ID questid, int &time) const {
+auto Player::getQuestProgress(TYPE_OF_QUEST_ID questid, int &time) const -> TYPE_OF_QUESTSTATUS {
     const auto it = quests.find(questid);
 
     if (it != quests.end()) {
@@ -2234,7 +2234,7 @@ void Player::changeTarget() {
     ltAction->changeTarget();
 }
 
-std::string Player::getSkillName(TYPE_OF_SKILL_ID s) const  {
+auto Player::getSkillName(TYPE_OF_SKILL_ID s) const -> std::string  {
     if (Data::Skills.exists(s)) {
         const auto &skill = Data::Skills[s];
         return nls(skill.germanName, skill.englishName);
@@ -2245,7 +2245,7 @@ std::string Player::getSkillName(TYPE_OF_SKILL_ID s) const  {
     }
 }
 
-Language Player::getPlayerLanguage() const {
+auto Player::getPlayerLanguage() const -> Language {
     return _player_language;
 }
 
@@ -2531,7 +2531,7 @@ void Player::sendField(const position &pos) {
     }
 }
 
-uint32_t Player::idleTime() const {
+auto Player::idleTime() const -> uint32_t {
     time_t now;
     time(&now);
     return now - lastaction;
@@ -2549,11 +2549,11 @@ void Player::stopAttack() {
     Connection->addCommand(cmd);
 }
 
-bool Player::isNewPlayer() const {
+auto Player::isNewPlayer() const -> bool {
     return newPlayer;
 }
 
-const std::string &Player::nls(const std::string &german, const std::string &english) const {
+auto Player::nls(const std::string &german, const std::string &english) const -> const std::string & {
     switch (getPlayerLanguage()) {
     case Language::german:
         return german;
@@ -2566,7 +2566,7 @@ const std::string &Player::nls(const std::string &german, const std::string &eng
     }
 }
 
-bool Player::pageGM(const std::string &ticket) {
+auto Player::pageGM(const std::string &ticket) -> bool {
     try {
         _world->logGMTicket(this, "[Auto] " + ticket, true);
         return true;
@@ -2878,10 +2878,10 @@ void Player::logAdmin(const std::string &message) {
     Logger::info(LogFacility::Admin) << to_string() << " uses admin tool: " << message << Log::end;
 }
 
-std::string Player::to_string() const {
+auto Player::to_string() const -> std::string {
     return (isAdmin()?"Admin ":"Player ") + getName() + "(" + std::to_string(getId()) + ")";
 }
 
-bool Player::actionRunning() const {
+auto Player::actionRunning() const -> bool {
 	return ltAction->actionRunning();
 }
