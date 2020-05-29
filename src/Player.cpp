@@ -1253,7 +1253,7 @@ bool Player::save() noexcept {
 
             // add backpack to containerlist
             if (items[ BACKPACK ].getId() != 0 && backPackContents) {
-                containers.push_back(container_struct(backPackContents, BACKPACK+1));
+                containers.emplace_back(backPackContents, BACKPACK+1);
             }
 
             // add depot to containerlist
@@ -1338,7 +1338,7 @@ bool Player::save() noexcept {
                         auto iterat = containedContainers.find(slotAndItem.first);
 
                         if (iterat != containedContainers.end()) {
-                            containers.push_back(container_struct(iterat->second, linenumber));
+                            containers.emplace_back(iterat->second, linenumber);
                         }
                     }
                 }
