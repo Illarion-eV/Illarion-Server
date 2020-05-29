@@ -652,7 +652,7 @@ auto Character::attack(Character *target) -> bool {
         if (!actionRunning()) {
             if (target->isAlive()) {
                 if (target->getType() == player) {
-                    Player *pl = dynamic_cast<Player *>(target);
+                    auto *pl = dynamic_cast<Player *>(target);
                     pl->ltAction->actionDisturbed(this);
                 }
 

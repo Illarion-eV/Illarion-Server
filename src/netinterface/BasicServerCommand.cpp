@@ -61,7 +61,7 @@ BasicServerCommand::~BasicServerCommand() {
 void BasicServerCommand::addHeader() {
     //at place 2 and 3 add the length
     if (bufferPos >= 6) { //check if the buffer is large enough to add the data
-        int16_t crc = static_cast<int16_t>(checkSum % 0xFFFF);
+        auto crc = static_cast<int16_t>(checkSum % 0xFFFF);
         buffer[2] = ((bufferPos-6) >> 8);
         buffer[3] = ((bufferPos-6) & 255);
         buffer[4] = (crc >> 8);

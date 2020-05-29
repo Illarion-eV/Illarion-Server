@@ -125,9 +125,9 @@ auto LuaQuestScript::getPosition(const luabind::object &potentialPosition) -> po
 
     if (positionType == LUA_TTABLE) {
         try {
-            int16_t x = object_cast<int16_t>(potentialPosition[1]);
-            int16_t y = object_cast<int16_t>(potentialPosition[2]);
-            int16_t z = object_cast<int16_t>(potentialPosition[3]);
+            auto x = object_cast<int16_t>(potentialPosition[1]);
+            auto y = object_cast<int16_t>(potentialPosition[2]);
+            auto z = object_cast<int16_t>(potentialPosition[3]);
             return position(x, y, z);
         } catch (cast_failed &e) {
         }

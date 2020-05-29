@@ -75,7 +75,7 @@ MonsterTable::MonsterTable() {
 
             for (const auto &row : monresults) {
                 MonsterStruct temprecord;
-                const uint32_t id = row["mob_monsterid"].as<uint32_t>();
+                const auto id = row["mob_monsterid"].as<uint32_t>();
                 temprecord.nameDe = row["mob_name_de"].as<std::string>();
                 temprecord.nameEn = row["mob_name_en"].as<std::string>();
                 temprecord.race = row["mob_race"].as<TYPE_OF_RACE_ID>();
@@ -85,7 +85,7 @@ MonsterTable::MonsterTable() {
                 temprecord.minsize = row["mob_minsize"].as<uint16_t>();
                 temprecord.maxsize = row["mob_maxsize"].as<uint16_t>();
 
-                const std::string movementType = row["mob_movementtype"].as<std::string>("");
+                const auto movementType = row["mob_movementtype"].as<std::string>("");
 
                 if (movementType == "walk") {
                     temprecord.movement = movement_type::walk;
@@ -99,7 +99,7 @@ MonsterTable::MonsterTable() {
                 }
 
                 if (!row["script"].is_null()) {
-                    const std::string scriptname = row["script"].as<std::string>();
+                    const auto scriptname = row["script"].as<std::string>();
 
                     try {
                         std::shared_ptr<LuaMonsterScript> script(new LuaMonsterScript(scriptname));
@@ -127,9 +127,9 @@ MonsterTable::MonsterTable() {
                 Database::Result monAttrResults = monAttrQuery.execute();
 
                 for (const auto &attrRow : monAttrResults) {
-                    const std::string attribute = attrRow["mobattr_name"].as<std::string>("");
-                    uint16_t minValue = attrRow["mobattr_min"].as<uint16_t>();
-                    uint16_t maxValue = attrRow["mobattr_max"].as<uint16_t>();
+                    const auto attribute = attrRow["mobattr_name"].as<std::string>("");
+                    auto minValue = attrRow["mobattr_min"].as<uint16_t>();
+                    auto maxValue = attrRow["mobattr_max"].as<uint16_t>();
 
                     if (attribute == "luck") {
                         temprecord.attributes.luck = std::make_pair(minValue, maxValue);
@@ -165,8 +165,8 @@ MonsterTable::MonsterTable() {
 
                 for (const auto &skillRow : monSkillResults) {
                     TYPE_OF_SKILL_ID skill = TYPE_OF_SKILL_ID(skillRow["mobsk_skill_id"].as<uint16_t>());
-                    uint16_t minValue = skillRow["mobsk_minvalue"].as<uint16_t>();
-                    uint16_t maxValue = skillRow["mobsk_maxvalue"].as<uint16_t>();
+                    auto minValue = skillRow["mobsk_minvalue"].as<uint16_t>();
+                    auto maxValue = skillRow["mobsk_maxvalue"].as<uint16_t>();
 
                     temprecord.skills[skill] = std::make_pair(minValue, maxValue);
                 }
@@ -188,7 +188,7 @@ MonsterTable::MonsterTable() {
                                           itemRow["mobit_mincount"].as<uint16_t>(),
                                           itemRow["mobit_maxcount"].as<uint16_t>());
 
-                    const std::string position = itemRow["mobit_position"].as<std::string>("");
+                    const auto position = itemRow["mobit_position"].as<std::string>("");
                     uint16_t location;
 
                     if (position == "head") {

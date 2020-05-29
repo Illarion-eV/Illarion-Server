@@ -1597,7 +1597,7 @@ auto Player::load() noexcept -> bool {
             }
 
             if (tempi.isContainer()) {
-                Container *tempc = new Container(tempi.getId());
+                auto *tempc = new Container(tempi.getId());
 
                 if (linenumber > MAX_BODY_ITEMS + MAX_BELT_SLOTS) {
                     if (!it->second->InsertContainer(tempi, tempc, itemcontainerslot[tuple])) {
@@ -2696,7 +2696,7 @@ void Player::executeMerchantDialogLookAt(unsigned int dialogId, uint8_t list, ui
         merchantDialog->setResult(MerchantDialog::playerLooksAt);
         merchantDialog->setLookAtList(static_cast<MerchantDialog::ListType>(list));
         merchantDialog->setPurchaseIndex(slot);
-        ItemLookAt lookAt = LuaScript::executeDialogCallback<ItemLookAt>(*merchantDialog);
+        auto lookAt = LuaScript::executeDialogCallback<ItemLookAt>(*merchantDialog);
 
         ServerCommandPointer cmd = std::make_shared<LookAtDialogGroupItemTC>(dialogId, list, slot, lookAt);
         Connection->addCommand(cmd);        
@@ -2801,7 +2801,7 @@ void Player::executeCraftingDialogLookAtCraftable(unsigned int dialogId, uint8_t
     if (craftingDialog) {
         craftingDialog->setResult(CraftingDialog::playerLooksAtCraftable);
         craftingDialog->setCraftableId(craftIndex);
-        ItemLookAt lookAt = LuaScript::executeDialogCallback<ItemLookAt>(*craftingDialog);
+        auto lookAt = LuaScript::executeDialogCallback<ItemLookAt>(*craftingDialog);
         requestCraftingLookAt(dialogId, lookAt);
     }
 }
@@ -2813,7 +2813,7 @@ void Player::executeCraftingDialogLookAtIngredient(unsigned int dialogId, uint8_
         craftingDialog->setResult(CraftingDialog::playerLooksAtIngredient);
         craftingDialog->setCraftableId(craftIndex);
         craftingDialog->setIngredientIndex(craftIngredient);
-        ItemLookAt lookAt = LuaScript::executeDialogCallback<ItemLookAt>(*craftingDialog);
+        auto lookAt = LuaScript::executeDialogCallback<ItemLookAt>(*craftingDialog);
         requestCraftingLookAtIngredient(dialogId, lookAt);
     }
 }

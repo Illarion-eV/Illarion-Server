@@ -397,7 +397,7 @@ auto World::characterAttacks(Character *cp) -> bool {
 
                         //set lasttargetseen to false if the player who was attacked is death
                         if (cp->getType() == Character::monster) {
-                            Monster *mon = dynamic_cast<Monster *>(cp);
+                            auto *mon = dynamic_cast<Monster *>(cp);
                             mon->lastTargetSeen = false;
                         }
 

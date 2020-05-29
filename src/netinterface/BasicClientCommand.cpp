@@ -127,6 +127,6 @@ auto BasicClientCommand::getShortIntFromBuffer() -> short int {
 }
 
 auto BasicClientCommand::isDataOk() const -> bool {
-    uint16_t crcCheck = static_cast<uint16_t>(crc % 0xFFFF);
+    auto crcCheck = static_cast<uint16_t>(crc % 0xFFFF);
     return (dataOk && (length == bytesRetrieved) && (crcCheck==checkSum));
 }

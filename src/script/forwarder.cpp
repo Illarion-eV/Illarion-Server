@@ -39,7 +39,7 @@ auto convert_to_map(const luabind::object &data) -> std::shared_ptr<script_data_
             value = luabind::object_cast<std::string>(*it);
         } catch (luabind::cast_failed &) {
             try {
-                int32_t intValue = luabind::object_cast<int32_t>(*it);
+                auto intValue = luabind::object_cast<int32_t>(*it);
                 std::stringstream ss;
                 ss << intValue;
                 value = ss.str();
@@ -229,7 +229,7 @@ void waypointlist_addFromList(WaypointList *wpl, const luabind::object &list) {
         if (luabind::type(list) == LUA_TTABLE) {
             for (luabind::iterator it(list), end; it != end; ++it) {
                 try {
-                    position pos = luabind::object_cast<position>(*it);
+                    auto pos = luabind::object_cast<position>(*it);
                     wpl->addWaypoint(pos);
                 } catch (luabind::cast_failed &e) {
                     const std::string script = World::get()->getCurrentScript()->getFileName();

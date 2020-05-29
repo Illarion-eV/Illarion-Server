@@ -227,7 +227,7 @@ auto World::initRespawns() -> bool {
         if (!results.empty()) {
 
             for (const auto &row : results) {
-                const uint32_t spawnId = row["spp_id"].as<uint32_t>();
+                const auto spawnId = row["spp_id"].as<uint32_t>();
                 const position pos(row["spp_x"].as<int16_t>(),
                                    row["spp_y"].as<int16_t>(),
                                    row["spp_z"].as<int16_t>());
@@ -385,7 +385,7 @@ void World::checkMonsters() {
                             } else {
                                 SpawnPoint *spawn = monster.getSpawn();
 
-                                direction dir = (direction)Random::uniform(0,7);
+                                auto dir = (direction)Random::uniform(0,7);
 
                                 if (spawn) {
                                     position newpos = monster.getPosition();

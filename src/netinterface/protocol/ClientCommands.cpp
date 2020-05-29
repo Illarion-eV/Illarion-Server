@@ -592,7 +592,7 @@ void CastTS::performAction(Player *player) {
                 LuaMageScript->CastMagicOnCharacter(player, Target.character, static_cast<unsigned char>(LTS_NOLTACTION));
 
                 if (Target.character->getType() == Character::monster) {
-                    Monster *temp = dynamic_cast<Monster *>(Target.character);
+                    auto *temp = dynamic_cast<Monster *>(Target.character);
                     const auto monsterType = temp->getMonsterType();
 
                     if (monsterDescriptions->exists(monsterType)) {
@@ -694,7 +694,7 @@ void UseTS::performAction(Player *player) {
                     } else if (tmpCharacter->getType() == Character::monster) {
                         Logger::debug(LogFacility::Script) << "Character is a monster!" << Log::end;
 
-                        Monster *scriptMonster = dynamic_cast<Monster *>(tmpCharacter);
+                        auto *scriptMonster = dynamic_cast<Monster *>(tmpCharacter);
                         const auto monsterType = scriptMonster->getMonsterType();
 
                         if (monsterDescriptions->exists(monsterType)) {

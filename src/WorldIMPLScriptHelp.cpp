@@ -128,7 +128,7 @@ void World::itemInform(Character *user, const ScriptItem &item, const ItemLookAt
         return;
     }
 
-    Player *cp = dynamic_cast<Player *>(user);
+    auto *cp = dynamic_cast<Player *>(user);
 
     if (item.type == ScriptItem::it_container) {
         if (item.inside) {
@@ -394,7 +394,7 @@ auto World::createMonster(unsigned short id, const position &pos, short movepoin
         map::Field &field = fieldAt(pos);
         
         try {
-            Monster *newMonster = new Monster(id, pos);
+            auto *newMonster = new Monster(id, pos);
             newMonster->setActionPoints(movepoints);
             newMonsters.push_back(newMonster);
             field.setChar();

@@ -190,12 +190,12 @@ void Item::save(std::ostream &obj) const {
     obj.write((char *) &number, sizeof(number_type));
     obj.write((char *) &wear, sizeof(wear_type));
     obj.write((char *) &quality, sizeof(quality_type));
-    uint8_t mapsize = static_cast<uint8_t>(datamap.size());
+    auto mapsize = static_cast<uint8_t>(datamap.size());
     obj.write((char *) &mapsize, sizeof(uint8_t));
 
     for (const auto &data : datamap) {
-        uint8_t sz1 = static_cast<uint8_t>(data.first.size());
-        uint8_t sz2 = static_cast<uint8_t>(data.second.size());
+        auto sz1 = static_cast<uint8_t>(data.first.size());
+        auto sz2 = static_cast<uint8_t>(data.second.size());
         obj.write((char *) &sz1 , sizeof(uint8_t));
         obj.write((char *) &sz2 , sizeof(uint8_t));
         obj.write((char *) data.first.data() , sz1);

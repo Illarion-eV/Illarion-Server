@@ -250,7 +250,7 @@ AppearanceTC::AppearanceTC(Character *cc, const Player *receivingPlayer) : Basic
     addIntToBuffer(cc->getId());
 
     if (cc->getType() == Character::player) {
-        Player *player = dynamic_cast<Player *>(cc);
+        auto *player = dynamic_cast<Player *>(cc);
 
         if (receivingPlayer->knows(player)) {
             addStringToBuffer(player->getName());
@@ -260,7 +260,7 @@ AppearanceTC::AppearanceTC(Character *cc, const Player *receivingPlayer) : Basic
 
         addStringToBuffer(receivingPlayer->getCustomNameOf(player));
     } else if (cc->getType() == Character::monster) {
-        Monster *monster = dynamic_cast<Monster *>(cc);
+        auto *monster = dynamic_cast<Monster *>(cc);
         addStringToBuffer(receivingPlayer->nls(monster->nameDe, monster->getName()));
         addStringToBuffer("");
     } else {

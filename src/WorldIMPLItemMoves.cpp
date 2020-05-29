@@ -49,7 +49,7 @@ auto World::putItemOnInvPos(Character *cc, unsigned char pos) -> bool {
                 if (!g_cont) {
                     g_cont = new Container(g_item.getId());
                 } else {
-                    Player *temp = dynamic_cast<Player *>(cc);
+                    auto *temp = dynamic_cast<Player *>(cc);
 
                     if (temp) {
                         closeShowcaseForOthers(temp, g_cont);

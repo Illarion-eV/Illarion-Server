@@ -184,7 +184,7 @@ auto LongTimeCharacterEffects::save() -> bool {
         return false;
     }
 
-    Player *player = dynamic_cast<Player *>(owner);
+    auto *player = dynamic_cast<Player *>(owner);
 
     if (!owner) {
         return false;
@@ -229,7 +229,7 @@ auto LongTimeCharacterEffects::load() -> bool {
         return false;
     }
 
-    Player *player = dynamic_cast<Player *>(owner);
+    auto *player = dynamic_cast<Player *>(owner);
 
     PConnection connection = ConnectionManager::getInstance().getConnection();
 
@@ -246,8 +246,8 @@ auto LongTimeCharacterEffects::load() -> bool {
 
         if (!results.empty()) {
             for (const auto &row : results) {
-                uint16_t effectId = row["plte_effectid"].as<uint16_t>();
-                LongTimeEffect *effect = new LongTimeEffect(effectId, row["plte_nextcalled"].as<int32_t>());
+                auto effectId = row["plte_effectid"].as<uint16_t>();
+                auto *effect = new LongTimeEffect(effectId, row["plte_nextcalled"].as<int32_t>());
 
                 effect->setExecutionTime(time);
                 effect->firstAdd();

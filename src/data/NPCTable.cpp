@@ -76,7 +76,7 @@ void NPCTable::reload() {
             auto questEnd = questNodes.second;
 
             for (const auto &row : results) {
-                TYPE_OF_CHARACTER_ID npcID = row["npc_id"].as<TYPE_OF_CHARACTER_ID>();
+                auto npcID = row["npc_id"].as<TYPE_OF_CHARACTER_ID>();
 
                 const position pos(
                     row["npc_posx"].as<int16_t>(),
@@ -84,7 +84,7 @@ void NPCTable::reload() {
                     row["npc_posz"].as<int16_t>()
                 );
 
-                std::string npcName = row["npc_name"].as<std::string>();
+                auto npcName = row["npc_name"].as<std::string>();
 
                 Character::appearance appearance;
                 appearance.hairtype = uint8_t(row["npc_hair"].as<int16_t>());
@@ -118,7 +118,7 @@ void NPCTable::reload() {
                     _world->Npc.insert(newNPC);
 
                     if (!row["npc_script"].is_null()) {
-                        const std::string scriptname = row["npc_script"].as<std::string>();
+                        const auto scriptname = row["npc_script"].as<std::string>();
 
                         try {
                             std::shared_ptr<LuaNPCScript> script(new LuaNPCScript(scriptname, newNPC));
