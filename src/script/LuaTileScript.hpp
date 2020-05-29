@@ -38,8 +38,8 @@ public:
 
 private:
 
-    LuaTileScript(const LuaTileScript &);
-    LuaTileScript &operator=(const LuaTileScript &);
+    LuaTileScript(const LuaTileScript &) = delete;
+    LuaTileScript &operator=(const LuaTileScript &) = delete;
     TilesStruct thisTile;
     void init_functions() const;
 };

@@ -36,8 +36,8 @@ public:
 
 private:
 
-    LuaLookAtItemScript(const LuaLookAtItemScript &);
-    LuaLookAtItemScript &operator=(const LuaLookAtItemScript &);
+    LuaLookAtItemScript(const LuaLookAtItemScript &) = delete;
+    LuaLookAtItemScript &operator=(const LuaLookAtItemScript &) = delete;
 };
 
 #endif

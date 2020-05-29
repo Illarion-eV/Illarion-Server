@@ -205,8 +205,8 @@ private:
         return T();
     };
 
-    LuaScript(const LuaScript &);
-    LuaScript &operator=(const LuaScript &);
+    LuaScript(const LuaScript &) = delete;
+    LuaScript &operator=(const LuaScript &) = delete;
 
     std::string _filename;
     char luafile[200] = {};

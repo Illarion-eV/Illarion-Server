@@ -31,8 +31,8 @@ public:
     void onReload();
 
 private:
-    LuaReloadScript(const LuaReloadScript &);
-    LuaReloadScript &operator=(const LuaReloadScript &);
+    LuaReloadScript(const LuaReloadScript &) = delete;
+    LuaReloadScript &operator=(const LuaReloadScript &) = delete;
 };
 
 #endif

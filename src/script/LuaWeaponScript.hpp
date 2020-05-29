@@ -38,8 +38,8 @@ public:
     Character *setTarget(Character *Monster, const std::vector<Character *> &CandidateList);
 
 private:
-    LuaWeaponScript(const LuaWeaponScript &);
-    LuaWeaponScript &operator=(const LuaWeaponScript &);
+    LuaWeaponScript(const LuaWeaponScript &) = delete;
+    LuaWeaponScript &operator=(const LuaWeaponScript &) = delete;
 };
 
 #endif

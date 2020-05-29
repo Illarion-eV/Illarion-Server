@@ -34,8 +34,8 @@ public:
     void callFunction(const std::string &name, uint32_t currentCycle, uint32_t lastCycle, uint32_t nextCycle);
 
 private:
-    LuaScheduledScript(const LuaScheduledScript &);
-    LuaScheduledScript &operator=(LuaScheduledScript &);
+    LuaScheduledScript(const LuaScheduledScript &) = delete;
+    LuaScheduledScript &operator=(LuaScheduledScript &) = delete;
 };
 
 #endif

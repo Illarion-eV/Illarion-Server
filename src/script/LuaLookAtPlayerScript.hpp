@@ -34,8 +34,8 @@ public:
 
 private:
 
-    LuaLookAtPlayerScript(const LuaLookAtPlayerScript &);
-    LuaLookAtPlayerScript &operator=(const LuaLookAtPlayerScript &);
+    LuaLookAtPlayerScript(const LuaLookAtPlayerScript &) = delete;
+    LuaLookAtPlayerScript &operator=(const LuaLookAtPlayerScript &) = delete;
 };
 
 #endif

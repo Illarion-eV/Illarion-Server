@@ -40,8 +40,8 @@ public:
     bool actionDisturbed(Character *performer, Character *disturber);
 
 private:
-    LuaMagicScript(const LuaMagicScript &);
-    LuaMagicScript &operator=(const LuaMagicScript &);
+    LuaMagicScript(const LuaMagicScript &) = delete;
+    LuaMagicScript &operator=(const LuaMagicScript &) = delete;
 
     void init_functions();
 };

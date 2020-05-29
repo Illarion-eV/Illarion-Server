@@ -42,8 +42,8 @@ public:
 private:
 
     position _pos;
-    LuaTriggerScript(const LuaTriggerScript &);
-    LuaTriggerScript &operator=(const LuaTriggerScript &);
+    LuaTriggerScript(const LuaTriggerScript &) = delete;
+    LuaTriggerScript &operator=(const LuaTriggerScript &) = delete;
     void init_functions() const;
 };
 

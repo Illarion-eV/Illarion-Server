@@ -49,8 +49,8 @@ public:
     bool setTarget(Character *Monster, const std::vector<Character *> &CandidateList, Character *&Target);
 
 private:
-    LuaMonsterScript(const LuaMonsterScript &);
-    LuaMonsterScript &operator=(const LuaMonsterScript &);
+    LuaMonsterScript(const LuaMonsterScript &) = delete;
+    LuaMonsterScript &operator=(const LuaMonsterScript &) = delete;
 };
 
 #endif

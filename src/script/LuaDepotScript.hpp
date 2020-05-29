@@ -36,8 +36,8 @@ public:
 
 private:
 
-    LuaDepotScript(const LuaDepotScript &);
-    LuaDepotScript &operator=(const LuaDepotScript &);
+    LuaDepotScript(const LuaDepotScript &) = delete;
+    LuaDepotScript &operator=(const LuaDepotScript &) = delete;
 };
 
 #endif

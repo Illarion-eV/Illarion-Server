@@ -34,8 +34,8 @@ public:
     void onLogout(Character *cc);
 
 private:
-    LuaLogoutScript(const LuaLogoutScript &);
-    LuaLogoutScript &operator=(const LuaLogoutScript &);
+    LuaLogoutScript(const LuaLogoutScript &) = delete;
+    LuaLogoutScript &operator=(const LuaLogoutScript &) = delete;
 };
 
 #endif

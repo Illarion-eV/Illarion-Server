@@ -48,8 +48,8 @@ public:
 
 private:
     ItemStruct _comstr;
-    LuaItemScript(const LuaItemScript &);
-    LuaItemScript &operator=(const LuaItemScript &);
+    LuaItemScript(const LuaItemScript &) = delete;
+    LuaItemScript &operator=(const LuaItemScript &) = delete;
     void init_functions() const;
 };
 
