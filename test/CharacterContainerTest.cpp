@@ -32,7 +32,7 @@ public:
         EXPECT_CALL(character, getPosition()).Times(AtLeast(0));
     }
 
-    ~CharacterContainerTest() {
+    ~CharacterContainerTest() override {
     }
 
     position pos {1, 2, 3};

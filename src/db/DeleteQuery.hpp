@@ -34,7 +34,7 @@ public:
     DeleteQuery(const DeleteQuery &org) = delete;
     DeleteQuery &operator=(const DeleteQuery &org) = delete;
 
-    virtual Result execute() override;
+    Result execute() override;
 };
 
 }

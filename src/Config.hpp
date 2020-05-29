@@ -58,11 +58,11 @@ public:
         return _item;
     }
 
-    virtual void read(std::istream &is) override {
+    void read(std::istream &is) override {
         is >> _item;
         _initialized = true;
     }
-    virtual void write(std::ostream &os) const override {
+    void write(std::ostream &os) const override {
         os << _item;
     }
 

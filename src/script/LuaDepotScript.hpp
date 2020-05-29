@@ -30,7 +30,7 @@ class Character;
 class LuaDepotScript : public LuaScript {
 public:
     explicit LuaDepotScript(const std::string &filename);
-    virtual ~LuaDepotScript();
+    ~LuaDepotScript() override;
 
     bool onOpenDepot(Character *cc, const ScriptItem &itm);
 

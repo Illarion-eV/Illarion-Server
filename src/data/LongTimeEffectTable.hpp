@@ -27,11 +27,11 @@
 
 class LongTimeEffectTable : public ScriptStructTable<uint16_t, LongTimeEffectStruct, LuaLongTimeEffectScript> {
 public:
-    virtual std::string getTableName() override;
-    virtual std::vector<std::string> getColumnNames() override;
-    virtual uint16_t assignId(const Database::ResultTuple &row) override;
-    virtual LongTimeEffectStruct assignTable(const Database::ResultTuple &row) override;
-    virtual std::string assignScriptName(const Database::ResultTuple &row) override;
+    std::string getTableName() override;
+    std::vector<std::string> getColumnNames() override;
+    uint16_t assignId(const Database::ResultTuple &row) override;
+    LongTimeEffectStruct assignTable(const Database::ResultTuple &row) override;
+    std::string assignScriptName(const Database::ResultTuple &row) override;
 };
 
 #endif

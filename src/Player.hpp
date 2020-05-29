@@ -91,11 +91,11 @@ public:
         left = 3
     };
 
-    virtual unsigned short getType() const override {
+    unsigned short getType() const override {
         return player;
     }
 
-    virtual std::string to_string() const override;
+    std::string to_string() const override;
 
     void workoutCommands();
     void checkFightMode();
@@ -141,7 +141,7 @@ public:
     uint8_t screenwidth;
     uint8_t screenheight;
 
-    virtual unsigned short int getScreenRange() const override;
+    unsigned short int getScreenRange() const override;
 
     //! die Verbindung zum Spieler, -- Achtung ! Die Verbindung wird NICHT im Destruktor gel�cht
     // , da sie auch extern erstellt wird und durch das Einfgen in diverse
@@ -161,17 +161,17 @@ private:
 public:
     void receiveCommand(ClientCommandPointer cmd);
 
-    virtual void stopAttack() override;
+    void stopAttack() override;
 
-    virtual bool isNewPlayer() const override;
+    bool isNewPlayer() const override;
     
     const std::string &nls(const std::string &german, const std::string &english) const;
 
-    virtual void setAlive(bool alive) override;
+    void setAlive(bool alive) override;
 
     void checkBurden();
 
-    virtual bool pageGM(const std::string &ticket) override;
+    bool pageGM(const std::string &ticket) override;
 
     // send a char appearance; always or only if char not yet visible
     void sendCharAppearance(TYPE_OF_CHARACTER_ID id, const ServerCommandPointer &appearance, bool always);
@@ -185,78 +185,78 @@ public:
     */
     std::unique_ptr<LongTimeAction> ltAction;
 
-    virtual void startAction(unsigned short int wait, unsigned short int ani=0, unsigned short int redoani=0, unsigned short int sound=0, unsigned short int redosound=0) override;
-    virtual void abortAction() override;
-    virtual void successAction() override;
-    virtual void actionDisturbed(Character *disturber) override;
+    void startAction(unsigned short int wait, unsigned short int ani=0, unsigned short int redoani=0, unsigned short int sound=0, unsigned short int redosound=0) override;
+    void abortAction() override;
+    void successAction() override;
+    void actionDisturbed(Character *disturber) override;
 
     /**
     *changes the source of the last action of this Player
     *<b>Lua: [:changeSource]</b>
     *@param cc source is a character the pointer to this character
     */
-    virtual void changeSource(Character *cc) override;
+    void changeSource(Character *cc) override;
 
     /**
     *changes the source of the last action for this player
     *<b>Lua: [:changeSource]</b>
     *@param sI source is a item the new item
     */
-    inline virtual void changeSource(const ScriptItem &sI) override;
+    inline void changeSource(const ScriptItem &sI) override;
 
     /**
     *changes the Source of the last action for this player.
     *<b>Lua: [:changeSource]</b>
     *@param pos source is a position the new position
     */
-    inline virtual void changeSource(const position &pos) override;
+    inline void changeSource(const position &pos) override;
 
     /**
     *changes the Source of the last action to nothing for this player
     *<b>Lua: [:changeSource]</b>
     */
-    inline virtual void changeSource() override;
+    inline void changeSource() override;
 
     /**
     *changes the Target of the last action for this player.
     *<b>Lua: [:changeTarget]</b>
     *@param cc target is a character the pointer to this character
     */
-    inline virtual void changeTarget(Character *cc) override;
+    inline void changeTarget(Character *cc) override;
 
     /**
     *changes the Target of the last action for this player.
     *<b>Lua: [:changeTarget]</b>
     *@param sI target is a item the new item
     */
-    inline virtual void changeTarget(const ScriptItem &sI) override;
+    inline void changeTarget(const ScriptItem &sI) override;
 
     /**
     *changes the target of the last action for this player.
     *<b>Lua: [:changeTarget]</b>
     *@param pos Target is a position the new position
     */
-    inline virtual void changeTarget(const position &pos) override;
+    inline void changeTarget(const position &pos) override;
 
     /**
     *changes the Target of the last action to nothing for this player
     *<b>Lua: [:changeTarget]</b>
     */
-    inline virtual void changeTarget() override;
+    inline void changeTarget() override;
 
     /**
     * returns the number of seconds the player has been idle, not actively issuing commands
     * <b>Lua: [:idleTime]</b>
     * @return number of seconds the player has been idle
     */
-    virtual uint32_t idleTime() const override;
+    uint32_t idleTime() const override;
 
     /**
     * send a book ID to the client
     * <b>Lua: [:sendBook]</b>
     * @param bookID id of the book
     */
-    virtual void sendBook(uint16_t bookID) override;
+    void sendBook(uint16_t bookID) override;
 
     /**
     * send a character description to the player if the  char is a player
@@ -264,7 +264,7 @@ public:
     * @param id of the character from which the description is sended
     * @param desc the current descpription
     */
-    virtual void sendCharDescription(TYPE_OF_CHARACTER_ID id,const std::string &desc) override;
+    void sendCharDescription(TYPE_OF_CHARACTER_ID id,const std::string &desc) override;
 
     //! normal constructor
     explicit Player(std::shared_ptr<NetInterface> newConnection);
@@ -309,14 +309,14 @@ public:
 
     void sendField(const position &pos);
 
-    virtual bool actionRunning() const override;
+    bool actionRunning() const override;
 
-    virtual void increasePoisonValue(short int value) override;
+    void increasePoisonValue(short int value) override;
 
-    virtual short int getMinActionPoints() const override;
-    virtual short int getMaxActionPoints() const override;
-    virtual short int getMinFightPoints() const override;
-    virtual short int getMaxFightPoints() const override;
+    short int getMinActionPoints() const override;
+    short int getMaxActionPoints() const override;
+    short int getMinFightPoints() const override;
+    short int getMaxFightPoints() const override;
 
     void openShowcase(Container *container, const ScriptItem &item, bool carry);
     void updateShowcase(Container *container) const;
@@ -335,7 +335,7 @@ public:
     bool lookIntoBackPack();
     bool lookIntoContainerOnField(direction dir);
 
-    virtual void changeQualityAt(unsigned char pos, short int amount) override;
+    void changeQualityAt(unsigned char pos, short int amount) override;
 
     inline bool isMonitoringClient() const {
         return monitoringClient;
@@ -344,18 +344,18 @@ public:
     //! L�st den Player Magie lernen. Fr standard Charactere keine Funktion in Player berladen
     //\param type Magierichtung die gelernt werden soll (0 Magier, 1 Priester, 2 Barde, 3 Druide)
     //\param flag Magieflags die gelernt werden sollen
-    virtual void teachMagic(unsigned char type, unsigned char flag) override;
+    void teachMagic(unsigned char type, unsigned char flag) override;
 
     //! Sets the active magic type of a player (druid/mage/...)
     //\param newMagType Magierichtung, die jetzt aktiv ist (0 Magier, 1 Priester, 2 Barde, 3 Druide)
-    virtual void setMagicType(magic_type newMagType) override {
+    void setMagicType(magic_type newMagType) override {
         Character::setMagicType(newMagType);
         sendMagicFlags(newMagType);
     }
 
-    virtual std::string getSkillName(TYPE_OF_SKILL_ID s) const override;
+    std::string getSkillName(TYPE_OF_SKILL_ID s) const override;
     //! Returns the language which the player specified when creating the Character (german/english)
-    virtual Language getPlayerLanguage() const override;
+    Language getPlayerLanguage() const override;
 
     void sendCharacters();
 
@@ -371,15 +371,15 @@ public:
     */
     void sendWeather(WeatherStruct weather);
 
-    virtual void ageInventory() override;
+    void ageInventory() override;
 
-    virtual int createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, script_data_exchangemap const *data) override;
+    int createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, script_data_exchangemap const *data) override;
 
-    virtual void learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opponent) override;
+    void learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opponent) override;
 
-    virtual unsigned short int increaseSkill(TYPE_OF_SKILL_ID skill, short int amount) override;
+    unsigned short int increaseSkill(TYPE_OF_SKILL_ID skill, short int amount) override;
 
-    virtual void deleteAllSkills() override;
+    void deleteAllSkills() override;
 
     //! löscht count Items mit der ID itemid aus dem Inventory des Player
     // und schickt ein Update an den Spieler
@@ -387,23 +387,23 @@ public:
     // \param count die Anzahl der zu löschenden Items
     // \oaram data Datawert der zu löschenden Items
     // \return Anzahl der Items, die nicht gelöscht werden konnten
-    virtual int eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangemap const *data = nullptr) override;
+    int eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangemap const *data = nullptr) override;
 
     //! ver�dert die Anzahl des Item an der Position pos um count
     // und schickt ein Update an den Spieler
     // \param pos die Stelle im Inventory die ge�dert werden soll
     // \param count die �derungsanzahl
     // \return der Rest von count, der nicht ge�dert werden konnnte
-    virtual int increaseAtPos(unsigned char pos, int count) override;
+    int increaseAtPos(unsigned char pos, int count) override;
 
-    virtual int createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) override;
+    int createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) override;
 
     //! setzt die Id des Item an der Position pos auf newid
     // und schickt ein Update an den Spieler
     // \param pos die Stelle im Inventory die ge�dert werden soll
     // \param newid die neue Id des Item
     // \return true falls erfolgreich, false sonst
-    virtual bool swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t newQuality = 0) override;
+    bool swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t newQuality = 0) override;
 
     //! schickt ein Update der Ansicht des Rucksackinhalts an den Client
     void updateBackPackView();
@@ -417,20 +417,20 @@ public:
 
     void sendSkill(TYPE_OF_SKILL_ID skill, unsigned short int major, unsigned short int minor);
 
-    virtual unsigned short int setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor) override;
+    unsigned short int setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor) override;
 
-    virtual bool saveBaseAttributes() override;
+    bool saveBaseAttributes() override;
 
     //! sendet ein Attributupdate an den Client
     // \param name der Name des Attributs
     // \param value der Wert des Attributs
     void sendAttrib(Character::attributeIndex attribute);
 
-    virtual void handleAttributeChange(Character::attributeIndex attribute) override;
+    void handleAttributeChange(Character::attributeIndex attribute) override;
 
 
-    virtual void startMusic(short int title) override;
-    virtual void defaultMusic() override;
+    void startMusic(short int title) override;
+    void defaultMusic() override;
 
     bool sendTextInFile(const std::string &filename);
 
@@ -457,46 +457,46 @@ public:
     unsigned char getTurtleTile() const;
 
     // Clipping on/off (default to on)
-    virtual void setClippingActive(bool tclippingActive) override;
-    virtual bool getClippingActive() const override;
+    void setClippingActive(bool tclippingActive) override;
+    bool getClippingActive() const override;
 
     //Set for Admin state, uin32_t bit flag
     void setAdmin(uint32_t tAdmin);
-    virtual bool isAdmin() const override;
+    bool isAdmin() const override;
 
     // player gets informed about something
-    virtual void inform(const std::string &message, informType type = informServer) const override;
-    virtual void inform(const std::string &german, const std::string &english, informType type = informServer) const override;
+    void inform(const std::string &message, informType type = informServer) const override;
+    void inform(const std::string &german, const std::string &english, informType type = informServer) const override;
 
-    virtual void turn(direction dir) override;
-    virtual void turn(const position &pos) override;
+    void turn(direction dir) override;
+    void turn(const position &pos) override;
 
     // player heard something
-    virtual void receiveText(talk_type tt, const std::string &message, Character *cc) override;
+    void receiveText(talk_type tt, const std::string &message, Character *cc) override;
 
     bool knows(Player *player) const;
     void getToKnow(Player *player);
-    virtual void introducePlayer(Player *player) override;
+    void introducePlayer(Player *player) override;
     void namePlayer(TYPE_OF_CHARACTER_ID playerId, const std::string &name);
     std::string getCustomNameOf(Player *player) const;
 
-    virtual bool moveToPossible(const map::Field &field) const override;
+    bool moveToPossible(const map::Field &field) const override;
     // Move the Player
     using Character::move;
     bool move(direction dir, uint8_t mode);
 
     bool isOvertaxed();
 
-    virtual bool Warp(const position &newPos) override;
-    virtual bool forceWarp(const position &newPos) override;
+    bool Warp(const position &newPos) override;
+    bool forceWarp(const position &newPos) override;
 
     void openDepot(const ScriptItem &item);
 
-    virtual void setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS progress) override;
+    void setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS progress) override;
     void sendAvailableQuests();
     void sendQuestProgress(TYPE_OF_QUEST_ID questId, TYPE_OF_QUESTSTATUS progress);
     void sendCompleteQuestProgress();
-    virtual TYPE_OF_QUESTSTATUS getQuestProgress(TYPE_OF_QUEST_ID questid, int &time) const override;
+    TYPE_OF_QUESTSTATUS getQuestProgress(TYPE_OF_QUEST_ID questid, int &time) const override;
 
 private:
     void handleWarp();
@@ -532,35 +532,35 @@ private:
     }
 
 public:
-    virtual void requestInputDialog(InputDialog *inputDialog) override;
+    void requestInputDialog(InputDialog *inputDialog) override;
     void executeInputDialog(unsigned int dialogId, bool success, const std::string &input);
 
-    virtual void requestMessageDialog(MessageDialog *messageDialog) override;
+    void requestMessageDialog(MessageDialog *messageDialog) override;
     void executeMessageDialog(unsigned int dialogId);
 
-    virtual void requestMerchantDialog(MerchantDialog *merchantDialog) override;
+    void requestMerchantDialog(MerchantDialog *merchantDialog) override;
     void executeMerchantDialogAbort(unsigned int dialogId);
     void executeMerchantDialogBuy(unsigned int dialogId, MerchantDialog::index_type index, Item::number_type amount) const;
     void executeMerchantDialogSell(unsigned int dialogId, uint8_t location, TYPE_OF_CONTAINERSLOTS slot, Item::number_type amount);
     void executeMerchantDialogLookAt(unsigned int dialogId, uint8_t list, uint8_t slot);
 
-    virtual void requestSelectionDialog(SelectionDialog *selectionDialog) override;
+    void requestSelectionDialog(SelectionDialog *selectionDialog) override;
     void executeSelectionDialog(unsigned int dialogId, bool success, SelectionDialog::index_type index);
 
-    virtual void requestCraftingDialog(CraftingDialog *craftingDialog) override;
+    void requestCraftingDialog(CraftingDialog *craftingDialog) override;
     void executeCraftingDialogAbort(unsigned int dialogId);
     void executeCraftingDialogCraft(unsigned int dialogId, uint8_t craftIndex, uint8_t craftAmount);
     void executeCraftingDialogCraftingComplete(unsigned int dialogId);
     void executeCraftingDialogCraftingAborted(unsigned int dialogId);
     void executeCraftingDialogLookAtCraftable(unsigned int dialogId, uint8_t craftIndex);
     void executeCraftingDialogLookAtIngredient(unsigned int dialogId, uint8_t craftIndex, uint8_t craftIngredient);
-    virtual void requestCraftingLookAt(unsigned int dialogId, ItemLookAt &lookAt) override;
-    virtual void requestCraftingLookAtIngredient(unsigned int dialogId, ItemLookAt &lookAt) override;
+    void requestCraftingLookAt(unsigned int dialogId, ItemLookAt &lookAt) override;
+    void requestCraftingLookAtIngredient(unsigned int dialogId, ItemLookAt &lookAt) override;
 
     void invalidateDialogs();
     void closeDialogsOnMove();
 
-    virtual void logAdmin(const std::string &message) override;
+    void logAdmin(const std::string &message) override;
 private:
     void startCrafting(uint8_t stillToCraft, uint16_t craftingTime, uint16_t sfx, uint16_t sfxDuration, uint32_t dialogId);
 

@@ -65,9 +65,9 @@ public:
     /**
     * the destructor
     */
-    virtual ~NPC() override;
+    ~NPC() override;
 
-    virtual unsigned short getType() const override {
+    unsigned short getType() const override {
         return npc;
     }
 
@@ -110,9 +110,9 @@ public:
     * @param message the text which is spoken
     * @param cc the character who has spokenthe text
     */
-    virtual void receiveText(talk_type tt, const std::string &message, Character *cc) override;
+    void receiveText(talk_type tt, const std::string &message, Character *cc) override;
 
-    virtual std::string to_string() const override;
+    std::string to_string() const override;
 
 protected:
 

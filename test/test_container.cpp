@@ -37,7 +37,7 @@ class container_tests : public ::testing::Test {
             EXPECT_CALL(container, getSlotCount()).Times(AtLeast(0));
 		}
 
-		~container_tests() {
+		~container_tests() override {
 		}
 
 		MockContainer container;

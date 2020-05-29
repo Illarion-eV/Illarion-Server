@@ -28,11 +28,11 @@
 
 class WeaponObjectTable : public ScriptStructTable<TYPE_OF_ITEM_ID, WeaponStruct, LuaWeaponScript> {
 public:
-    virtual std::string getTableName() override;
-    virtual std::vector<std::string> getColumnNames() override;
-    virtual TYPE_OF_ITEM_ID assignId(const Database::ResultTuple &row) override;
-    virtual WeaponStruct assignTable(const Database::ResultTuple &row) override;
-    virtual std::string assignScriptName(const Database::ResultTuple &row) override;
+    std::string getTableName() override;
+    std::vector<std::string> getColumnNames() override;
+    TYPE_OF_ITEM_ID assignId(const Database::ResultTuple &row) override;
+    WeaponStruct assignTable(const Database::ResultTuple &row) override;
+    std::string assignScriptName(const Database::ResultTuple &row) override;
 };
 
 #endif

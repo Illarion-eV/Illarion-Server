@@ -138,7 +138,7 @@ public:
         }
     };
 
-    virtual Result execute() override;
+    Result execute() override;
 };
 }
 

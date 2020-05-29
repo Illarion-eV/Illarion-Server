@@ -28,7 +28,7 @@ class Character;
 class LuaLookAtPlayerScript : public LuaScript {
 public:
     explicit LuaLookAtPlayerScript(const std::string &filename);
-    virtual ~LuaLookAtPlayerScript();
+    ~LuaLookAtPlayerScript() override;
 
     void lookAtPlayer(Character *source, Character *target, unsigned char mode);
 

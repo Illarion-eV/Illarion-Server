@@ -27,12 +27,12 @@
 
 class ItemTable : public QuestScriptStructTable<TYPE_OF_ITEM_ID, ItemStruct, LuaItemScript> {
 public:
-    virtual std::string getTableName() override;
-    virtual std::vector<std::string> getColumnNames() override;
-    virtual TYPE_OF_ITEM_ID assignId(const Database::ResultTuple &row) override;
-    virtual ItemStruct assignTable(const Database::ResultTuple &row) override;
-    virtual std::string assignScriptName(const Database::ResultTuple &row) override;
-    virtual NodeRange getQuestScripts() override;
+    std::string getTableName() override;
+    std::vector<std::string> getColumnNames() override;
+    TYPE_OF_ITEM_ID assignId(const Database::ResultTuple &row) override;
+    ItemStruct assignTable(const Database::ResultTuple &row) override;
+    std::string assignScriptName(const Database::ResultTuple &row) override;
+    NodeRange getQuestScripts() override;
 
 private:
     //TYPE_OF_ITEM_ID calcInfiniteRot(TYPE_OF_ITEM_ID id, std::map<TYPE_OF_ITEM_ID, bool> &visited, std::map<TYPE_OF_ITEM_ID, bool> &assigned);

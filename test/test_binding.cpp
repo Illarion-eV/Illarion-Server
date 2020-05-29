@@ -47,7 +47,7 @@ public:
     ItemStruct itemdef;
     MockContainer container;
 
-    ~world_bindings() {
+    ~world_bindings() override {
         LuaScript::shutdownLua();
     }
 

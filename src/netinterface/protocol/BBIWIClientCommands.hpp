@@ -43,11 +43,11 @@ class BBBroadCastTS : public BasicClientCommand {
 
 public:
     BBBroadCastTS();
-    virtual ~BBBroadCastTS();
+    ~BBBroadCastTS() override;
 
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 class BBSpeakAsTS : public BasicClientCommand {
@@ -56,11 +56,11 @@ class BBSpeakAsTS : public BasicClientCommand {
     
 public:
     BBSpeakAsTS();
-    virtual ~BBSpeakAsTS();
+    ~BBSpeakAsTS() override;
 
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 class BBWarpPlayerTS : public BasicClientCommand {
@@ -69,11 +69,11 @@ class BBWarpPlayerTS : public BasicClientCommand {
 
 public:
     BBWarpPlayerTS();
-    virtual ~BBWarpPlayerTS();
+    ~BBWarpPlayerTS() override;
 
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 class BBServerCommandTS : public BasicClientCommand {
@@ -81,11 +81,11 @@ class BBServerCommandTS : public BasicClientCommand {
 
 public:
     BBServerCommandTS();
-    virtual ~BBServerCommandTS();
+    ~BBServerCommandTS() override;
 
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 class BBChangeAttribTS : public BasicClientCommand {
@@ -95,11 +95,11 @@ class BBChangeAttribTS : public BasicClientCommand {
 
 public:
     BBChangeAttribTS();
-    virtual ~BBChangeAttribTS();
+    ~BBChangeAttribTS() override;
 
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 class BBChangeSkillTS : public BasicClientCommand {
@@ -109,11 +109,11 @@ class BBChangeSkillTS : public BasicClientCommand {
 
 public:
     BBChangeSkillTS();
-    virtual ~BBChangeSkillTS();
+    ~BBChangeSkillTS() override;
 
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 class BBTalktoTS : public BasicClientCommand {
@@ -122,31 +122,31 @@ class BBTalktoTS : public BasicClientCommand {
     
 public:
     BBTalktoTS();
-    virtual ~BBTalktoTS();
+    ~BBTalktoTS() override;
 
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 class BBDisconnectTS : public BasicClientCommand {
 public:
     BBDisconnectTS();
-    virtual ~BBDisconnectTS();
+    ~BBDisconnectTS() override;
     
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 class BBKeepAliveTS : public BasicClientCommand {
 public:
     BBKeepAliveTS();
-    virtual ~BBKeepAliveTS();
+    ~BBKeepAliveTS() override;
 
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 class BBBanTS : public BasicClientCommand {
@@ -155,11 +155,11 @@ class BBBanTS : public BasicClientCommand {
 
 public:
     BBBanTS();
-    virtual ~BBBanTS();
+    ~BBBanTS() override;
 
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 #endif

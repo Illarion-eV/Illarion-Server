@@ -18,7 +18,7 @@ public:
 
 class ItemEnvironment: public ::testing::Environment {
 public:
-    virtual void SetUp() override {
+    void SetUp() override {
         Data::Items = ItemTest();
     }
 };

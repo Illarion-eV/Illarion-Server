@@ -46,9 +46,9 @@ public:
     */
     Monster(const TYPE_OF_CHARACTER_ID &type, const position &newpos, SpawnPoint *spawnpoint=0);
 
-    virtual const MonsterStruct::loottype &getLoot() const override;
+    const MonsterStruct::loottype &getLoot() const override;
 
-    virtual unsigned short getType() const override {
+    unsigned short getType() const override {
         return monster;
     }
 
@@ -71,11 +71,11 @@ public:
     * if a monster is killed it will be removed from his spawnpoint
     * @param t the new lifestate true = alive false = death
     */
-    virtual void setAlive(bool t) override;
+    void setAlive(bool t) override;
 
     void remove();
 
-    virtual std::string to_string() const override;
+    std::string to_string() const override;
 
     /**
     * the monster gets a talked text from a character near starts a script entry point
@@ -83,7 +83,7 @@ public:
     * @param message the message which is spoken
     * @param cc the character who has spoken the message
     */
-    virtual void receiveText(talk_type tt, const std::string &message, Character *cc) override;
+    void receiveText(talk_type tt, const std::string &message, Character *cc) override;
 
     /**
     * returns the spawnpoint of the monster
@@ -97,7 +97,7 @@ public:
     * returns the type of this monster
     * @return the type
     */
-    virtual TYPE_OF_CHARACTER_ID getMonsterType() const override {
+    TYPE_OF_CHARACTER_ID getMonsterType() const override {
         return monstertype;
     }
 
@@ -106,7 +106,7 @@ public:
     * @param target the character which is attacked
     * @return no usage at this time anything can be returned
     */
-    virtual bool attack(Character *target) override;
+    bool attack(Character *target) override;
 
     void heal();
 
@@ -120,7 +120,7 @@ public:
     /**
     * destructor
     */
-    virtual ~Monster() override;
+    ~Monster() override;
 
     position lastTargetPosition; /**< last position of the last seen target */
     bool lastTargetSeen = false; /**< if true the monster trys to reach the last targetposition if there is no other enemy*/

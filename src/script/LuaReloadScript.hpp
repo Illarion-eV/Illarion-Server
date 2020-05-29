@@ -26,7 +26,7 @@
 class LuaReloadScript : public LuaScript {
 public:
     explicit LuaReloadScript(const std::string &filename);
-    virtual ~LuaReloadScript();
+    ~LuaReloadScript() override;
 
     void onReload();
 

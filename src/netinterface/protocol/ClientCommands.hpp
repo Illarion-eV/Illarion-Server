@@ -79,9 +79,9 @@ private:
 
 public:
     InputDialogTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
@@ -91,9 +91,9 @@ private:
 
 public:
     MessageDialogTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
@@ -111,9 +111,9 @@ private:
 
 public:
     MerchantDialogTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
@@ -125,9 +125,9 @@ private:
 
 public:
     SelectionDialogTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
@@ -141,9 +141,9 @@ private:
 
 public:
     CraftingDialogTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
@@ -153,9 +153,9 @@ private:
 
 public:
     RequestAppearanceTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
@@ -166,9 +166,9 @@ private:
 
 public:
     LookAtCharacterTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
@@ -182,9 +182,9 @@ private:
 
 public:
     CastTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
@@ -197,36 +197,36 @@ private:
 
 public:
     UseTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
 class KeepAliveTS : public BasicClientCommand {
 public:
     KeepAliveTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
 class RequestSkillsTS : public BasicClientCommand {
 public:
     RequestSkillsTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
 class AttackStopTS : public BasicClientCommand {
 public:
     AttackStopTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
@@ -236,9 +236,9 @@ private:
 
 public:
     LookAtInventoryItemTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
@@ -249,9 +249,9 @@ private:
 
 public:
     LookAtShowCaseItemTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
@@ -264,9 +264,9 @@ private:
 
 public:
     MoveItemFromPlayerToShowCaseTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
@@ -279,9 +279,9 @@ private:
 
 public:
     MoveItemFromShowCaseToPlayerTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
@@ -293,9 +293,9 @@ private:
 
 public:
     MoveItemInsideInventoryTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
@@ -307,9 +307,9 @@ private:
 
 public:
     DropItemFromInventoryOnMapTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
@@ -321,9 +321,9 @@ private:
 
 public:
     MoveItemFromMapToPlayerTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
@@ -336,9 +336,9 @@ private:
 
 public:
     MoveItemFromMapIntoShowCaseTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
@@ -350,9 +350,9 @@ private:
 
 public:
     MoveItemFromMapToMapTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
@@ -366,9 +366,9 @@ private:
 
 public:
     MoveItemBetweenShowCasesTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
@@ -381,9 +381,9 @@ private:
 
 public:
     DropItemFromShowCaseOnMapTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
@@ -393,9 +393,9 @@ private:
 
 public:
     CloseContainerInShowCaseTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
@@ -405,18 +405,18 @@ class LookIntoShowCaseContainerTS : public BasicClientCommand {
 
 public:
     LookIntoShowCaseContainerTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
 class LookIntoInventoryTS : public BasicClientCommand {
 public:
     LookIntoInventoryTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 class LookIntoContainerOnFieldTS : public BasicClientCommand {
@@ -425,9 +425,9 @@ private:
 
 public:
     LookIntoContainerOnFieldTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 class PickUpItemTS : public BasicClientCommand {
@@ -436,25 +436,25 @@ private:
 
 public:
     PickUpItemTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 class PickUpAllItemsTS : public BasicClientCommand {
 public:
     PickUpAllItemsTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 class LogOutTS : public BasicClientCommand {
 public:
     LogOutTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
@@ -464,9 +464,9 @@ private:
 
 public:
     WhisperTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
@@ -476,9 +476,9 @@ private:
 
 public:
     ShoutTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
@@ -488,27 +488,27 @@ private:
 
 public:
     SayTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
 class RefreshTS : public BasicClientCommand {
 public:
     RefreshTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
 class IntroduceTS : public BasicClientCommand {
 public:
     IntroduceTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
@@ -519,9 +519,9 @@ private:
     
 public:
     CustomNameTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
@@ -531,9 +531,9 @@ private:
 
 public:
     AttackPlayerTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
@@ -544,9 +544,9 @@ private:
 
 public:
     LookAtMapItemTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
@@ -556,9 +556,9 @@ private:
 
 public:
     PlayerSpinTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
@@ -570,9 +570,9 @@ private:
 
 public:
     CharMoveTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 
@@ -584,9 +584,9 @@ private:
 
 public:
     LoginCommandTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 
     unsigned short getClientVersion() const;
     const std::string &getLoginName() const;
@@ -601,9 +601,9 @@ private:
 
 public:
     ScreenSizeCommandTS();
-    virtual void decodeData() override;
-    virtual void performAction(Player *player) override;
-    virtual ClientCommandPointer clone() override;
+    void decodeData() override;
+    void performAction(Player *player) override;
+    ClientCommandPointer clone() override;
 };
 
 #endif

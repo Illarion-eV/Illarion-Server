@@ -95,7 +95,7 @@ public:
     MockWorld world;
     MockMonster *monster;
 
-    ~monster_bindings() {
+    ~monster_bindings() override {
         LuaScript::shutdownLua();
         delete monster;
     }

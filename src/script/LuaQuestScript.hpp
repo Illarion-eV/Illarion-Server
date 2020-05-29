@@ -34,7 +34,7 @@ public:
     LuaQuestScript(const std::string &filename, TYPE_OF_QUEST_ID quest);
     LuaQuestScript(const LuaQuestScript &) = delete;
     LuaQuestScript &operator=(const LuaQuestScript &) = delete;
-    virtual ~LuaQuestScript();
+    ~LuaQuestScript() override;
 
     std::string title(Character *user);
     std::string description(Character *user, TYPE_OF_QUESTSTATUS status);

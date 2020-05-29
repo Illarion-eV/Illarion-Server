@@ -29,7 +29,7 @@ class LuaScheduledScript : public LuaScript {
 public:
 
     explicit LuaScheduledScript(const std::string &filename);
-    virtual ~LuaScheduledScript();
+    ~LuaScheduledScript() override;
 
     void callFunction(const std::string &name, uint32_t currentCycle, uint32_t lastCycle, uint32_t nextCycle);
 

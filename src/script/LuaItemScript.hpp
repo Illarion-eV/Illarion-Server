@@ -37,7 +37,7 @@ public:
     LuaItemScript();
     LuaItemScript(const std::string &filename, const ItemStruct &comstr);
     LuaItemScript(const std::string &code, const std::string &codename, const ItemStruct &comstr);
-    virtual ~LuaItemScript();
+    ~LuaItemScript() override;
 
     void UseItem(Character *User, const ScriptItem &SourceItem, unsigned char ltastate);
     bool actionDisturbed(Character *performer, Character *disturber);

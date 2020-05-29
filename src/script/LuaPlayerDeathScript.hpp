@@ -28,7 +28,7 @@ class Character;
 class LuaPlayerDeathScript : public LuaScript {
 public:
     explicit LuaPlayerDeathScript(const std::string &filename);
-    virtual ~LuaPlayerDeathScript();
+    ~LuaPlayerDeathScript() override;
 
     void playerDeath(Character *deadPlayer);
 

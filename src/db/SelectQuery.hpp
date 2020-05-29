@@ -52,7 +52,7 @@ public:
 
     void setDistinct(const bool &distinct);
 
-    virtual Result execute() override;
+    Result execute() override;
 };
 }
 

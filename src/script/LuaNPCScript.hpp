@@ -31,7 +31,7 @@ class World;
 class LuaNPCScript : public LuaScript {
 public:
     LuaNPCScript(const std::string &filename, NPC *thisnpc);
-    virtual ~LuaNPCScript();
+    ~LuaNPCScript() override;
 
     void nextCycle();
     void receiveText(Character::talk_type tt, const std::string &message, Character *cc);

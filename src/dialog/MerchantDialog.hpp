@@ -129,7 +129,7 @@ public:
     ListType getLookAtList() const;
     void setLookAtList(ListType list);
 
-    virtual bool closeOnMove() const override;
+    bool closeOnMove() const override;
 private:
     index_type getProductsSize(const product_list &products) const;
     product_iterator getProductsBegin(const product_list &products) const;

@@ -28,10 +28,10 @@
 
 class RaceTable : public StructTable<uint16_t, RaceStruct> {
 public:
-    virtual std::string getTableName() override;
-    virtual std::vector<std::string> getColumnNames() override;
-    virtual uint16_t assignId(const Database::ResultTuple &row) override;
-    virtual RaceStruct assignTable(const Database::ResultTuple &row) override;
+    std::string getTableName() override;
+    std::vector<std::string> getColumnNames() override;
+    uint16_t assignId(const Database::ResultTuple &row) override;
+    RaceStruct assignTable(const Database::ResultTuple &row) override;
     uint8_t getRelativeSize(TYPE_OF_RACE_ID race, uint16_t size) const;
     bool isBaseAttributeInLimits(TYPE_OF_RACE_ID race, Character::attributeIndex attribute, Attribute::attribute_t value) const;
     uint8_t getMaxAttributePoints(TYPE_OF_RACE_ID race) const;

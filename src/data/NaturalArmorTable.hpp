@@ -26,10 +26,10 @@
 
 class NaturalArmorTable : public StructTable<uint16_t, MonsterArmor> {
 public:
-    virtual std::string getTableName() override;
-    virtual std::vector<std::string> getColumnNames() override;
-    virtual uint16_t assignId(const Database::ResultTuple &row) override;
-    virtual MonsterArmor assignTable(const Database::ResultTuple &row) override;
+    std::string getTableName() override;
+    std::vector<std::string> getColumnNames() override;
+    uint16_t assignId(const Database::ResultTuple &row) override;
+    MonsterArmor assignTable(const Database::ResultTuple &row) override;
 };
 
 #endif

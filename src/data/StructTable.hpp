@@ -34,7 +34,7 @@ template<typename IdType, typename StructType>
 class StructTable : public Table {
     using ContainerType = std::unordered_map<IdType, StructType>;
 public:
-    virtual bool reloadBuffer() override {
+    bool reloadBuffer() override {
         try {
             Database::SelectQuery query;
 
@@ -60,9 +60,9 @@ public:
         return isBufferValid;
     }
 
-    virtual void reloadScripts() {}
+    void reloadScripts() override {}
 
-    virtual void activateBuffer() override {
+    void activateBuffer() override {
         structs.swap(structBuffer);
         isBufferValid = false;
         clear();

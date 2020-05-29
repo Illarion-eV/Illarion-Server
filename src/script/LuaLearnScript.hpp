@@ -29,7 +29,7 @@ class Character;
 class LuaLearnScript : public LuaScript {
 public:
     explicit LuaLearnScript(const std::string &filename);
-    virtual ~LuaLearnScript();
+    ~LuaLearnScript() override;
 
     void learn(Character *cc, TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opponent);
     void reduceMC(Character *cc);

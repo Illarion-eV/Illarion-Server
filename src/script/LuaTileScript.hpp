@@ -31,7 +31,7 @@ class Character;
 class LuaTileScript : public LuaScript {
 public:
     LuaTileScript(const std::string &filename, const TilesStruct &tile);
-    virtual ~LuaTileScript();
+    ~LuaTileScript() override;
 
     void useTile(Character *user, const position &pos, unsigned char ltastate);
     bool actionDisturbed(Character *performer, Character *disturber);

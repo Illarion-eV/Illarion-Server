@@ -32,7 +32,7 @@ class LuaWeaponScript : public LuaScript {
 public:
     explicit LuaWeaponScript(const std::string &filename);
     LuaWeaponScript(const std::string &filename, const WeaponStruct &weapon);
-    virtual ~LuaWeaponScript();
+    ~LuaWeaponScript() override;
 
     void onAttack(Character *Attacker, Character *Defender);
     Character *setTarget(Character *Monster, const std::vector<Character *> &CandidateList);

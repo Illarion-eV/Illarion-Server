@@ -32,7 +32,7 @@ public:
     LuaMonsterScript();
     explicit LuaMonsterScript(const std::string &filename);
 
-    virtual ~LuaMonsterScript();
+    ~LuaMonsterScript() override;
 
     void receiveText(Character *Monster, Character::talk_type tt, const std::string &message, Character *cc);
     void onDeath(Character *Monster);

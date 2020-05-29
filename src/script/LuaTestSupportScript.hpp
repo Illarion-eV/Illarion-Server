@@ -30,7 +30,7 @@ class LuaTestSupportScript : public LuaScript {
 public:
     explicit LuaTestSupportScript(const std::string &code);
     LuaTestSupportScript(const std::string &code, const std::string &scriptname);
-    virtual ~LuaTestSupportScript() noexcept;
+    ~LuaTestSupportScript() noexcept override;
 
     template<typename... Args>
     void test(const Args &... args) {

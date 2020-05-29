@@ -57,11 +57,11 @@ struct SpellStruct {
 
 class SpellTable : public ScriptStructTable<Spell, SpellStruct, LuaMagicScript> {
 public:
-    virtual std::string getTableName() override;
-    virtual std::vector<std::string> getColumnNames() override;
-    virtual Spell assignId(const Database::ResultTuple &row) override;
-    virtual SpellStruct assignTable(const Database::ResultTuple &row) override;
-    virtual std::string assignScriptName(const Database::ResultTuple &row) override;
+    std::string getTableName() override;
+    std::vector<std::string> getColumnNames() override;
+    Spell assignId(const Database::ResultTuple &row) override;
+    SpellStruct assignTable(const Database::ResultTuple &row) override;
+    std::string assignScriptName(const Database::ResultTuple &row) override;
 };
 
 #endif

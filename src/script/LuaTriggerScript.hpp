@@ -30,7 +30,7 @@ class LuaTriggerScript: public LuaScript {
 public:
     LuaTriggerScript();
     LuaTriggerScript(const std::string &filename, const position &pos);
-    virtual ~LuaTriggerScript();
+    ~LuaTriggerScript() override;
 
     void CharacterOnField(Character *character);
     void MoveToField(Character *character);

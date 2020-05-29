@@ -30,7 +30,7 @@ class QuestScriptStructTable : public ScriptStructTable<IdType, StructType, Scri
 public:
     using Base = ScriptStructTable<IdType, StructType, ScriptType, ScriptParameter>;
 
-    virtual void reloadScripts() override {
+    void reloadScripts() override {
         Base::reloadScripts();
         auto questNodes = getQuestScripts();
 

@@ -29,7 +29,7 @@ class Character;
 class LuaLoginScript : public LuaScript {
 public:
     explicit LuaLoginScript(const std::string &filename);
-    virtual ~LuaLoginScript();
+    ~LuaLoginScript() override;
 
     void onLogin(Character *cc);
 

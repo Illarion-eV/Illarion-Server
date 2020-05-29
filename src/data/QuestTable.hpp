@@ -37,12 +37,12 @@ private:
     using quest_starts_type = std::multimap<position, TYPE_OF_QUEST_ID, PositionComparison>;
 
 public:
-    virtual std::string getTableName() override;
-    virtual std::vector<std::string> getColumnNames() override;
-    virtual TYPE_OF_QUEST_ID assignId(const Database::ResultTuple &row) override;
-    virtual QuestStruct assignTable(const Database::ResultTuple &row) override;
-    virtual std::string assignScriptName(const Database::ResultTuple &row) override;
-    virtual void reloadScripts() override;
+    std::string getTableName() override;
+    std::vector<std::string> getColumnNames() override;
+    TYPE_OF_QUEST_ID assignId(const Database::ResultTuple &row) override;
+    QuestStruct assignTable(const Database::ResultTuple &row) override;
+    std::string assignScriptName(const Database::ResultTuple &row) override;
+    void reloadScripts() override;
 
     using QuestStartMap = std::map<TYPE_OF_QUEST_ID, position>;
     QuestStartMap getQuestsInRange(const position &pos, int radius) const;

@@ -47,7 +47,7 @@ class ScriptStructTable : public StructTable<IdType, StructType> {
 public:
     using Base = StructTable<IdType, StructType>;
 
-    virtual void reloadScripts() override {
+    void reloadScripts() override {
         scripts.clear();
 
         for (const auto &scriptNameEntry : scriptNames) {
@@ -82,7 +82,7 @@ protected:
     using Base::assignTable;
     virtual std::string assignScriptName(const Database::ResultTuple &row) = 0;
 
-    virtual void evaluateRow(const Database::ResultTuple &row) override {
+    void evaluateRow(const Database::ResultTuple &row) override {
         Base::evaluateRow(row);
         std::string scriptName = assignScriptName(row);
 
