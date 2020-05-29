@@ -42,7 +42,7 @@ public:
     static auto escapeKey(const std::string &key) -> std::string;
     static auto escapeAndChainKeys(const std::string &key1, const std::string &key2) -> std::string;
     static void appendToStringList(std::string &list, const std::string &newEntry);
-    template <typename T> [[nodiscard]] [[nodiscard]] auto quote(T value) const -> std::string {
+    template <typename T> [[nodiscard]] auto quote(T value) const -> std::string {
         return dbConnection->quote<T>(value);
     };
 

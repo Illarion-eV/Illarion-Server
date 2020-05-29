@@ -47,7 +47,7 @@ public:
     void commitTransaction();
     void rollbackTransaction();
 
-    template<typename T> [[nodiscard]] [[nodiscard]] inline auto quote(const T &t) const -> std::string {
+    template<typename T> [[nodiscard]] inline auto quote(const T &t) const -> std::string {
         return internalConnection->quote(t);
     }
 
