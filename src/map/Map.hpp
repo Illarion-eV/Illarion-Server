@@ -46,7 +46,7 @@ public:
 
     auto import(const std::string &importDir, const std::string &mapName) -> bool;
     auto load(const std::string &name) -> bool;
-    [[nodiscard]] auto save(const std::string &name) const -> bool;
+    void save(const std::string &name) const;
 
     auto at(int16_t x, int16_t y) -> Field &;
     [[nodiscard]] auto at(int16_t x, int16_t y) const -> const Field &;

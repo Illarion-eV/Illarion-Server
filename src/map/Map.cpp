@@ -70,7 +70,7 @@ auto Map::at(const MapPosition &pos) const -> const Field & {
     return at(pos.x, pos.y);
 }
 
-auto Map::save(const std::string &name) const -> bool {
+void Map::save(const std::string &name) const {
     Logger::debug(LogFacility::World) << "Saving map " << name << Log::end;
 
     std::ofstream map { name + "_map", std::ios::binary | std::ios::out };
@@ -88,12 +88,8 @@ auto Map::save(const std::string &name) const -> bool {
                 field.save(map, items, warps, containers);
             }
         }
-
-        return true;
-
     } else {
         Logger::error(LogFacility::World) << "Saving map failed: " << name << Log::end;
-        return false;
     }
 }
 
