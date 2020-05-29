@@ -18,7 +18,6 @@
 
 
 #include <iomanip>
-#include <functional>
 #include "netinterface/BasicClientCommand.hpp"
 #include "netinterface/protocol/ClientCommands.hpp"
 #include "CommandFactory.hpp"
@@ -56,8 +55,14 @@ void NetInterface::closeConnection() {
 
 auto NetInterface::activate(Player* player) -> bool {
     try {
-    owner = player;
-        boost::asio::async_read(socket,boost::asio::buffer(headerBuffer,6), std::bind(&NetInterface::handle_read_header, shared_from_this(), std::placeholders::_1));
+        owner = player;
+        boost::asio::async_read(
+            socket,
+            boost::asio::buffer(headerBuffer, 6),
+            [shared_this = shared_from_this()] (const auto &error, auto bytes_transferred) {
+                shared_this->handle_read_header(error);
+            }
+        );
         ipadress = socket.remote_endpoint().address().to_string();
         online = true;
         return true;
@@ -110,11 +115,23 @@ void NetInterface::handle_read_data(const boost::system::error_code &error) {
             }
 
             cmd.reset();
-            boost::asio::async_read(socket,boost::asio::buffer(headerBuffer,6), std::bind(&NetInterface::handle_read_header, shared_from_this(), std::placeholders::_1));
+            boost::asio::async_read(
+                socket,
+                boost::asio::buffer(headerBuffer, 6),
+                [shared_this = shared_from_this()] (const auto &error, auto bytes_transferred) {
+                    shared_this->handle_read_header(error);
+                }
+            );
         }
     } else {
         closeConnection();
-        boost::asio::async_read(socket,boost::asio::buffer(headerBuffer,6), std::bind(&NetInterface::handle_read_header, shared_from_this(), std::placeholders::_1));
+        boost::asio::async_read(
+            socket,
+            boost::asio::buffer(headerBuffer, 6),
+            [shared_this = shared_from_this()] (const auto &error, auto bytes_transferred) {
+                shared_this->handle_read_header(error);
+            }
+        );
     }
 }
 
@@ -135,7 +152,14 @@ void NetInterface::handle_read_header(const boost::system::error_code &error) {
 
             if (cmd) {
                 cmd->setHeaderData(length,checkSum);
-                boost::asio::async_read(socket,boost::asio::buffer(cmd->msg_data(),cmd->getLength()), std::bind(&NetInterface::handle_read_data, shared_from_this(), std::placeholders::_1));
+                boost::asio::async_read(
+                    socket,
+                    boost::asio::buffer(cmd->msg_data(), cmd->getLength()),
+                    [shared_this = shared_from_this()] (const auto &error, auto bytes_transferred) {
+                        shared_this->handle_read_data(error);
+                    }
+                );
+
                 return;
             }
         }
@@ -154,13 +178,26 @@ void NetInterface::handle_read_header(const boost::system::error_code &error) {
                 }
 
                 //restheader empfangen
-                boost::asio::async_read(socket,boost::asio::buffer(&headerBuffer[start],6-start), std::bind(&NetInterface::handle_read_header, shared_from_this(), std::placeholders::_1));
+                boost::asio::async_read(
+                    socket,
+                    boost::asio::buffer(&headerBuffer[start], 6-start),
+                    [shared_this = shared_from_this()] (const auto &error, auto bytes_transferred) {
+                        shared_this->handle_read_header(error);
+                    }
+                );
+
                 return;
             }
         }
 
         //Keine Command Signature gefunden wieder 6 Byte Header auslesen
-        boost::asio::async_read(socket,boost::asio::buffer(headerBuffer,6), std::bind(&NetInterface::handle_read_header, shared_from_this(), std::placeholders::_1));
+        boost::asio::async_read(
+            socket,
+            boost::asio::buffer(headerBuffer, 6),
+            [shared_this = shared_from_this()] (const auto &error, auto bytes_transferred) {
+                shared_this->handle_read_header(error);
+            }
+        );
 
     } else {
         if (online) {
@@ -186,8 +223,13 @@ void NetInterface::addCommand(const ServerCommandPointer &command) {
 
         try {
             if (!write_in_progress && online) {
-                boost::asio::async_write(socket,boost::asio::buffer(sendQueue.front()->cmdData(),sendQueue.front()->getLength()),
-                                         std::bind(&NetInterface::handle_write, shared_from_this(), std::placeholders::_1));
+                boost::asio::async_write(
+                    socket,
+                    boost::asio::buffer(sendQueue.front()->cmdData(), sendQueue.front()->getLength()),
+                    [shared_this = shared_from_this()] (const auto &error, auto bytes_transferred) {
+                        shared_this->handle_write(error);
+                    }
+                );
             }
         } catch (std::exception &e) {
             Logger::error(LogFacility::Other) << "Exception in NetInterface::addCommand: " << e.what() << Log::end;
@@ -200,8 +242,13 @@ void NetInterface::shutdownSend(const ServerCommandPointer &command) {
     try {
         command->addHeader();
         shutdownCmd = command;
-        boost::asio::async_write(socket,boost::asio::buffer(shutdownCmd->cmdData(),shutdownCmd->getLength()),
-                                 std::bind(&NetInterface::handle_write_shutdown, shared_from_this(), std::placeholders::_1));
+        boost::asio::async_write(
+            socket,
+            boost::asio::buffer(shutdownCmd->cmdData(), shutdownCmd->getLength()),
+            [shared_this = shared_from_this()] (const auto &error, auto bytes_transferred) {
+                shared_this->handle_write_shutdown(error);
+            }
+        );
     } catch (std::exception &e) {
         Logger::error(LogFacility::Other) << "Exception in NetInterface::shutownSend: " << e.what() << Log::end;
         closeConnection();
@@ -216,8 +263,13 @@ void NetInterface::handle_write(const boost::system::error_code &error) {
                 sendQueue.pop_front();
 
                 if (!sendQueue.empty() && online) {
-                    boost::asio::async_write(socket,boost::asio::buffer(sendQueue.front()->cmdData(),sendQueue.front()->getLength()),
-                                             std::bind(&NetInterface::handle_write, shared_from_this(), std::placeholders::_1));
+                    boost::asio::async_write(
+                        socket,
+                        boost::asio::buffer(sendQueue.front()->cmdData(), sendQueue.front()->getLength()),
+                        [shared_this = shared_from_this()] (const auto &error, auto bytes_transferred) {
+                            shared_this->handle_write(error);
+                        }
+                    );
                 }
             }
         } else {

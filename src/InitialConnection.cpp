@@ -19,7 +19,6 @@
 
 #include "InitialConnection.hpp"
 
-#include <functional>
 #include <memory>
 #include <thread>
 
@@ -31,7 +30,7 @@
 auto InitialConnection::create() -> std::shared_ptr<InitialConnection> {
     std::shared_ptr<InitialConnection> ptr(new InitialConnection());
     std::thread servicethread(
-        std::bind(&InitialConnection::run_service, ptr->shared_from_this()));
+        [shared_this = ptr->shared_from_this()] { shared_this->run_service(); });
     servicethread.detach();
     return ptr;
 }
@@ -51,8 +50,9 @@ void InitialConnection::run_service() {
     auto newConnection = std::make_shared<NetInterface>(io_service);
     using std::placeholders::_1;
     acceptor->async_accept(newConnection->getSocket(),
-                           std::bind(&InitialConnection::accept_connection,
-                                     shared_from_this(), newConnection, _1));
+        [shared_this = shared_from_this(), newConnection](auto && PH1) {
+            shared_this->accept_connection(newConnection, PH1);
+        });
     Logger::info(LogFacility::Other) << "Starting the IO Service!" << Log::end;
     io_service.run();
 }
@@ -71,9 +71,9 @@ InitialConnection::accept_connection(std::shared_ptr<NetInterface> connection,
         auto newConnection = std::make_shared<NetInterface>(io_service);
         using std::placeholders::_1;
         acceptor->async_accept(newConnection->getSocket(),
-                               std::bind(&InitialConnection::accept_connection,
-                                         shared_from_this(), newConnection,
-                                         _1));
+            [shared_this = shared_from_this(), newConnection](auto && PH1) {
+                shared_this->accept_connection(newConnection, PH1);
+            });
     } else {
         Logger::error(LogFacility::Other)
             << "Could not accept connection: " << error.message() << Log::end;
