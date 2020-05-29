@@ -52,6 +52,8 @@ private:
 
 public:
     QuestNodeTable();
+    QuestNodeTable(const QuestNodeTable &) = delete;
+    auto operator=(const QuestNodeTable &) -> QuestNodeTable & = delete;
 
     template <typename Key>
     using TableRange = std::pair<TableIterator<Key>, TableIterator<Key>>;
@@ -66,9 +68,6 @@ public:
 private:
     void readQuest(std::ifstream &questFile, std::filesystem::path &questPath);
     void clear();
-
-    QuestNodeTable(const QuestNodeTable &) = delete;
-    auto operator=(const QuestNodeTable &) -> QuestNodeTable & = delete;
 };
 
 #endif

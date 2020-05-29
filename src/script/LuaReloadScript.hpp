@@ -27,12 +27,10 @@ class LuaReloadScript : public LuaScript {
 public:
     explicit LuaReloadScript(const std::string &filename);
     ~LuaReloadScript() override;
-
-    void onReload();
-
-private:
     LuaReloadScript(const LuaReloadScript &) = delete;
     auto operator=(const LuaReloadScript &) -> LuaReloadScript & = delete;
+
+    void onReload();
 };
 
 #endif

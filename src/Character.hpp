@@ -58,8 +58,6 @@ enum magic_type {
 class NoLootFound: public std::exception {};
 
 class Character {
-    Character(const Character &) = delete;
-    auto operator=(const Character &) -> Character & = delete;
 
 public:
     struct appearance {
@@ -75,6 +73,8 @@ public:
     Character();
     explicit Character(const appearance &appearance);
     virtual ~Character();
+    Character(const Character &) = delete;
+    auto operator=(const Character &) -> Character & = delete;
 
     enum character_type {
         player = 0,

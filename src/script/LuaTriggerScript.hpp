@@ -31,6 +31,8 @@ public:
     LuaTriggerScript();
     LuaTriggerScript(const std::string &filename, const position &pos);
     ~LuaTriggerScript() override;
+    LuaTriggerScript(const LuaTriggerScript &) = delete;
+    auto operator=(const LuaTriggerScript &) -> LuaTriggerScript & = delete;
 
     void CharacterOnField(Character *character);
     void MoveToField(Character *character);
@@ -42,8 +44,6 @@ public:
 private:
 
     position _pos;
-    LuaTriggerScript(const LuaTriggerScript &) = delete;
-    auto operator=(const LuaTriggerScript &) -> LuaTriggerScript & = delete;
     void init_functions() const;
 };
 

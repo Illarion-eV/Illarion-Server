@@ -37,6 +37,9 @@ private:
     std::string conditions;
 
 public:
+    QueryWhere(const QueryWhere &org) = delete;
+    auto operator=(const QueryWhere &org) -> QueryWhere & = delete;
+
     template<typename T> void addEqualCondition(const std::string &column, const T &value) {
         addEqualCondition<T>("", column, value);
     };
@@ -57,9 +60,7 @@ public:
     void orConditions();
 protected:
     explicit QueryWhere(const Connection &connection);
-    QueryWhere(const QueryWhere &org) = delete;
-    auto operator=(const QueryWhere &org) -> QueryWhere & = delete;
-
+    
     auto buildQuerySegment() -> std::string;
 private:
     void mergeConditions(const std::string &operation);

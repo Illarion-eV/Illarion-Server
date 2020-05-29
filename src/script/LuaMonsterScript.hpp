@@ -31,7 +31,8 @@ class LuaMonsterScript : public LuaScript {
 public:
     LuaMonsterScript();
     explicit LuaMonsterScript(const std::string &filename);
-
+    LuaMonsterScript(const LuaMonsterScript &) = delete;
+    auto operator=(const LuaMonsterScript &) -> LuaMonsterScript & = delete;
     ~LuaMonsterScript() override;
 
     void receiveText(Character *Monster, Character::talk_type tt, const std::string &message, Character *cc);
@@ -47,10 +48,6 @@ public:
     void abortRoute(Character *Monster);
     void onSpawn(Character *Monster);
     auto setTarget(Character *Monster, const std::vector<Character *> &CandidateList, Character *&Target) -> bool;
-
-private:
-    LuaMonsterScript(const LuaMonsterScript &) = delete;
-    auto operator=(const LuaMonsterScript &) -> LuaMonsterScript & = delete;
 };
 
 #endif

@@ -30,13 +30,10 @@ class LuaLoginScript : public LuaScript {
 public:
     explicit LuaLoginScript(const std::string &filename);
     ~LuaLoginScript() override;
-
-    void onLogin(Character *cc);
-
-private:
-
     LuaLoginScript(const LuaLoginScript &) = delete;
     auto operator=(const LuaLoginScript &) -> LuaLoginScript & = delete;
+
+    void onLogin(Character *cc);
 };
 
 #endif

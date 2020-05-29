@@ -29,13 +29,10 @@ class LuaPlayerDeathScript : public LuaScript {
 public:
     explicit LuaPlayerDeathScript(const std::string &filename);
     ~LuaPlayerDeathScript() override;
-
-    void playerDeath(Character *deadPlayer);
-
-private:
-
     LuaPlayerDeathScript(const LuaPlayerDeathScript &) = delete;
     auto operator=(const LuaPlayerDeathScript &) -> LuaPlayerDeathScript & = delete;
+
+    void playerDeath(Character *deadPlayer);
 };
 
 #endif

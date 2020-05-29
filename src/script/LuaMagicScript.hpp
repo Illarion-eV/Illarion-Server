@@ -32,6 +32,8 @@ class LuaMagicScript : public LuaScript {
 public:
     LuaMagicScript(const std::string &filename, const SpellStruct &);
     ~LuaMagicScript() override;
+    LuaMagicScript(const LuaMagicScript &) = delete;
+    auto operator=(const LuaMagicScript &) -> LuaMagicScript & = delete;
 
     void CastMagic(Character *caster, unsigned char ltastate);
     void CastMagicOnItem(Character *caster, const ScriptItem &TargetItem, unsigned char ltastate);
@@ -40,9 +42,6 @@ public:
     auto actionDisturbed(Character *performer, Character *disturber) -> bool;
 
 private:
-    LuaMagicScript(const LuaMagicScript &) = delete;
-    auto operator=(const LuaMagicScript &) -> LuaMagicScript & = delete;
-
     void init_functions();
 };
 

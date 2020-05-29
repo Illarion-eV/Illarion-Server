@@ -31,13 +31,10 @@ class LuaLookAtItemScript : public LuaScript {
 public:
     explicit LuaLookAtItemScript(const std::string &filename);
     ~LuaLookAtItemScript() override;
-
-    auto lookAtItem(Character *character, const ScriptItem &item) -> ItemLookAt;
-
-private:
-
     LuaLookAtItemScript(const LuaLookAtItemScript &) = delete;
     auto operator=(const LuaLookAtItemScript &) -> LuaLookAtItemScript & = delete;
+
+    auto lookAtItem(Character *character, const ScriptItem &item) -> ItemLookAt;
 };
 
 #endif

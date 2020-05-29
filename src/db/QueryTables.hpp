@@ -33,6 +33,9 @@ private:
     bool oneTable;
 
 public:
+    QueryTables(const QueryTables &org) = delete;
+    auto operator=(const QueryTables &org) -> QueryTables & = delete;
+
     void addServerTable(const std::string &table);
     void addAccountTable(const std::string &table);
 
@@ -40,9 +43,7 @@ public:
     void setAccountTable(const std::string &table);
 protected:
     QueryTables();
-    QueryTables(const QueryTables &org) = delete;
-    auto operator=(const QueryTables &org) -> QueryTables & = delete;
-
+    
     void setOnlyOneTable(const bool &enabled);
     auto buildQuerySegment() -> std::string &;
 };

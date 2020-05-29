@@ -31,6 +31,9 @@ class QueryColumns {
 public:
     using columnIndex = uint8_t;
 
+    QueryColumns(const QueryColumns &org) = delete;
+    auto operator=(const QueryColumns &org) -> QueryColumns & = delete;
+
 private:
     std::string columns;
     bool hideTable;
@@ -57,9 +60,7 @@ public:
 
 protected:
     QueryColumns();
-    QueryColumns(const QueryColumns &org) = delete;
-    auto operator=(const QueryColumns &org) -> QueryColumns & = delete;
-
+    
     auto buildQuerySegment() -> std::string &;
     [[nodiscard]] auto getColumnCount() const -> uint32_t;
 

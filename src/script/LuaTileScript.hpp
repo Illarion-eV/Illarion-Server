@@ -32,14 +32,13 @@ class LuaTileScript : public LuaScript {
 public:
     LuaTileScript(const std::string &filename, const TilesStruct &tile);
     ~LuaTileScript() override;
+    LuaTileScript(const LuaTileScript &) = delete;
+    auto operator=(const LuaTileScript &) -> LuaTileScript & = delete;
 
     void useTile(Character *user, const position &pos, unsigned char ltastate);
     auto actionDisturbed(Character *performer, Character *disturber) -> bool;
 
 private:
-
-    LuaTileScript(const LuaTileScript &) = delete;
-    auto operator=(const LuaTileScript &) -> LuaTileScript & = delete;
     TilesStruct thisTile;
     void init_functions() const;
 };

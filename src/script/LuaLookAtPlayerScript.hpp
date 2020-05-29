@@ -29,13 +29,10 @@ class LuaLookAtPlayerScript : public LuaScript {
 public:
     explicit LuaLookAtPlayerScript(const std::string &filename);
     ~LuaLookAtPlayerScript() override;
-
-    void lookAtPlayer(Character *source, Character *target, unsigned char mode);
-
-private:
-
     LuaLookAtPlayerScript(const LuaLookAtPlayerScript &) = delete;
     auto operator=(const LuaLookAtPlayerScript &) -> LuaLookAtPlayerScript & = delete;
+
+    void lookAtPlayer(Character *source, Character *target, unsigned char mode);
 };
 
 #endif

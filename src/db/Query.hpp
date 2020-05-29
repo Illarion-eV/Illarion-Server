@@ -35,6 +35,9 @@ private:
 public:
     explicit Query(const std::string &query);
     Query(const PConnection connection, const std::string &query);
+    Query(const Query &org) = delete;
+    auto operator=(const Query &org) -> Query & = delete;
+
 
     static auto escapeKey(const std::string &key) -> std::string;
     static auto escapeAndChainKeys(const std::string &key1, const std::string &key2) -> std::string;
@@ -48,9 +51,7 @@ public:
 protected:
     Query();
     explicit Query(const PConnection connection);
-    Query(const Query &org) = delete;
-    auto operator=(const Query &org) -> Query & = delete;
-
+    
     void setQuery(const std::string &query);
     auto getConnection() -> PConnection;
 };

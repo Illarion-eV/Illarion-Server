@@ -31,13 +31,10 @@ class LuaDepotScript : public LuaScript {
 public:
     explicit LuaDepotScript(const std::string &filename);
     ~LuaDepotScript() override;
-
-    auto onOpenDepot(Character *cc, const ScriptItem &itm) -> bool;
-
-private:
-
     LuaDepotScript(const LuaDepotScript &) = delete;
     auto operator=(const LuaDepotScript &) -> LuaDepotScript & = delete;
+
+    auto onOpenDepot(Character *cc, const ScriptItem &itm) -> bool;
 };
 
 #endif

@@ -135,6 +135,9 @@ struct BlockingObject {
 class World {
 
 public:
+    auto operator=(const World &) -> World & = delete;
+    World(const World &) = delete;
+
     /////////////////////////
     NewClientView clientview;
     /////////////////////////
@@ -924,8 +927,6 @@ private:
     *@param time_t the starting time of the server
     */
     explicit World(const std::string &dir);
-    auto operator=(const World &) -> World & = delete;
-    World(const World &) = delete;
 
     //! IG day of last turntheworld
     int lastTurnIGDay;

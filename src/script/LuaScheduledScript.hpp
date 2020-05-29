@@ -30,12 +30,10 @@ public:
 
     explicit LuaScheduledScript(const std::string &filename);
     ~LuaScheduledScript() override;
-
-    void callFunction(const std::string &name, uint32_t currentCycle, uint32_t lastCycle, uint32_t nextCycle);
-
-private:
     LuaScheduledScript(const LuaScheduledScript &) = delete;
     auto operator=(LuaScheduledScript &) -> LuaScheduledScript & = delete;
+
+    void callFunction(const std::string &name, uint32_t currentCycle, uint32_t lastCycle, uint32_t nextCycle);
 };
 
 #endif

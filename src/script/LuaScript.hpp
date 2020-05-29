@@ -78,7 +78,8 @@ public:
     LuaScript();
     explicit LuaScript(std::string filename);
     LuaScript(const std::string &code, const std::string &scriptname);
-
+    LuaScript(const LuaScript &) = delete;
+    auto operator=(const LuaScript &) -> LuaScript & = delete;
     virtual ~LuaScript();
 
     [[nodiscard]] auto getFileName() const -> std::string {
@@ -204,9 +205,6 @@ private:
 
         return T();
     };
-
-    LuaScript(const LuaScript &) = delete;
-    auto operator=(const LuaScript &) -> LuaScript & = delete;
 
     std::string _filename;
     char luafile[200] = {};

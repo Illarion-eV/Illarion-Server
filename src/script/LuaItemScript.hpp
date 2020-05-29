@@ -38,6 +38,8 @@ public:
     LuaItemScript(const std::string &filename, const ItemStruct &comstr);
     LuaItemScript(const std::string &code, const std::string &codename, const ItemStruct &comstr);
     ~LuaItemScript() override;
+    LuaItemScript(const LuaItemScript &) = delete;
+    auto operator=(const LuaItemScript &) -> LuaItemScript & = delete;
 
     void UseItem(Character *User, const ScriptItem &SourceItem, unsigned char ltastate);
     auto actionDisturbed(Character *performer, Character *disturber) -> bool;
@@ -48,8 +50,6 @@ public:
 
 private:
     ItemStruct _comstr;
-    LuaItemScript(const LuaItemScript &) = delete;
-    auto operator=(const LuaItemScript &) -> LuaItemScript & = delete;
     void init_functions() const;
 };
 

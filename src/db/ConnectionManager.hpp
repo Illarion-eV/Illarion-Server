@@ -38,13 +38,13 @@ private:
     bool isOperational;
 
 public:
+    ConnectionManager(const ConnectionManager &org) = delete;
+    auto operator=(const ConnectionManager &org) -> ConnectionManager & = delete;
     static auto getInstance() -> ConnectionManager &;
     void setupManager();
     auto getConnection() -> PConnection;
 private:
     ConnectionManager();
-    ConnectionManager(const ConnectionManager &org) = delete;
-    auto operator=(const ConnectionManager &org) -> ConnectionManager & = delete;
     void addConnectionParameterIfValid(const string &param, const string &value);
 };
 }

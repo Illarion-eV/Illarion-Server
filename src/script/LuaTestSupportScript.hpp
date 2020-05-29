@@ -31,6 +31,8 @@ public:
     explicit LuaTestSupportScript(const std::string &code);
     LuaTestSupportScript(const std::string &code, const std::string &scriptname);
     ~LuaTestSupportScript() noexcept override;
+    LuaTestSupportScript(const LuaTestSupportScript &) = delete;
+    auto operator=(const LuaTestSupportScript &) -> LuaTestSupportScript & = delete;
 
     template<typename... Args>
     void test(const Args &... args) {
@@ -41,11 +43,6 @@ public:
     auto test(const Args &... args) -> T {
         return callEntrypoint<T, Args...>("test", args...);
     }
-
-private:
-
-    LuaTestSupportScript(const LuaTestSupportScript &) = delete;
-    auto operator=(const LuaTestSupportScript &) -> LuaTestSupportScript & = delete;
 };
 
 #endif

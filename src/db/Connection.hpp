@@ -39,6 +39,9 @@ private:
 
 public:
     explicit Connection(const std::string &connectionString);
+    Connection(const Connection &org) = delete;
+    auto operator=(const Connection &org) -> Connection & = delete;
+
     void beginTransaction();
     auto query(const std::string &query) -> pqxx::result;
     void commitTransaction();
@@ -51,10 +54,6 @@ public:
     [[nodiscard]] inline auto transactionActive() const -> bool {
         return bool(transaction);
     }
-
-private:
-    Connection(const Connection &org) = delete;
-    auto operator=(const Connection &org) -> Connection & = delete;
 };
 
 }
