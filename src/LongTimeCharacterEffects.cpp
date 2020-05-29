@@ -215,8 +215,8 @@ auto LongTimeCharacterEffects::save() -> bool {
 
     bool allok = true;
 
-    for (auto it = effects.begin(); it != effects.end(); ++it) {
-        allok and_eq(*it)->save(player->getId(), time);
+    for (auto & effect : effects) {
+        allok and_eq effect->save(player->getId(), time);
     }
 
     return allok;

@@ -36,9 +36,9 @@ auto Container::operator=(const Container &source) -> Container & {
         items = source.items;
 
         if (!containers.empty()) {
-            for (auto it = containers.begin(); it != containers.end(); ++it) {
-                delete it->second;
-                it->second = nullptr;
+            for (auto & container : containers) {
+                delete container.second;
+                container.second = nullptr;
             }
 
             containers.clear();
@@ -46,8 +46,8 @@ auto Container::operator=(const Container &source) -> Container & {
 
         if (!source.containers.empty()) {
 
-            for (auto it = source.containers.cbegin(); it != source.containers.cend(); ++it) {
-                containers.insert(CONTAINERMAP::value_type(it->first, new Container(*(it->second))));
+            for (auto container : source.containers) {
+                containers.insert(CONTAINERMAP::value_type(container.first, new Container(*(container.second))));
             }
         }
 
@@ -61,9 +61,9 @@ Container::~Container() {
 
     if (!containers.empty()) {
 
-        for (auto it = containers.begin(); it != containers.end(); ++it) {
-            delete it->second;
-            it->second = nullptr;
+        for (auto & container : containers) {
+            delete container.second;
+            container.second = nullptr;
         }
 
         containers.clear();
@@ -269,16 +269,16 @@ auto Container::TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &item, Container *&cc
 auto Container::getItemList() -> std::vector<ScriptItem> {
     std::vector<ScriptItem> list;
 
-    for (auto it = items.begin(); it != items.end(); ++it) {
+    for (auto & it : items) {
 
-        ScriptItem item(it->second);
+        ScriptItem item(it.second);
         item.type = ScriptItem::it_container;
-        item.itempos = it->first;
+        item.itempos = it.first;
         item.inside = this;
         list.push_back(item);
 
         if (item.isContainer()) {
-            auto iterat = containers.find(it->first);
+            auto iterat = containers.find(it.first);
 
             if (iterat != containers.end()) {
                 iterat->second->addContentToList(list);
@@ -293,19 +293,19 @@ auto Container::getItemList() -> std::vector<ScriptItem> {
 auto Container::getItemList(Item::id_type itemid) -> std::vector<ScriptItem> {
     std::vector<ScriptItem> list;
 
-    for (auto it = items.begin(); it != items.end(); ++it) {
-        Item &item = it->second;
+    for (auto & it : items) {
+        Item &item = it.second;
 
         if (item.getId() == itemid) {
             ScriptItem scriptItem(item);
             scriptItem.type = ScriptItem::it_container;
-            scriptItem.itempos = it->first;
+            scriptItem.itempos = it.first;
             scriptItem.inside = this;
             list.push_back(scriptItem);
         }
 
         if (item.isContainer()) {
-            auto iterat = containers.find(it->first);
+            auto iterat = containers.find(it.first);
 
             if (iterat != containers.end()) {
                 iterat->second->addContentToList(itemid , list);
@@ -318,19 +318,19 @@ auto Container::getItemList(Item::id_type itemid) -> std::vector<ScriptItem> {
 }
 
 void Container::addContentToList(Item::id_type itemid, std::vector<ScriptItem> &list) {
-    for (auto it = items.begin(); it != items.end(); ++it) {
-        const Item &item = it->second;
+    for (auto & it : items) {
+        const Item &item = it.second;
 
         if (item.getId() == itemid) {
             ScriptItem scriptItem(item);
             scriptItem.type = ScriptItem::it_container;
-            scriptItem.itempos = it->first;
+            scriptItem.itempos = it.first;
             scriptItem.inside = this;
             list.push_back(scriptItem);
         }
 
         if (item.isContainer()) {
-            auto iterat = containers.find(it->first);
+            auto iterat = containers.find(it.first);
 
             if (iterat != containers.end()) {
                 iterat->second->addContentToList(itemid, list);
@@ -341,16 +341,16 @@ void Container::addContentToList(Item::id_type itemid, std::vector<ScriptItem> &
 }
 
 void Container::addContentToList(std::vector<ScriptItem> &list) {
-    for (auto it = items.begin(); it != items.end(); ++it) {
+    for (auto & it : items) {
 
-        ScriptItem item(it->second);
+        ScriptItem item(it.second);
         item.type = ScriptItem::it_container;
-        item.itempos = it->first;
+        item.itempos = it.first;
         item.inside = this;
         list.push_back(item);
 
         if (item.isContainer()) {
-            auto iterat = containers.find(it->first);
+            auto iterat = containers.find(it.first);
 
             if (iterat != containers.end()) {
                 iterat->second->addContentToList(list);
@@ -456,13 +456,13 @@ void Container::Save(std::ofstream &where) {
     MAXCOUNTTYPE size = items.size();
     where.write((char *) & size, sizeof(size));
 
-    for (auto it = items.begin(); it != items.end(); ++it) {
-        Item &item = it->second;
-        where.write((char *) &(it->first), sizeof(TYPE_OF_CONTAINERSLOTS));
+    for (auto & it : items) {
+        Item &item = it.second;
+        where.write((char *) &(it.first), sizeof(TYPE_OF_CONTAINERSLOTS));
         where.write((char *) &item, sizeof(Item));
 
         if (item.isContainer()) {
-            auto iterat = containers.find(it->first);
+            auto iterat = containers.find(it.first);
 
             if (iterat != containers.end()) {
                 (*iterat).second->Save(where);
@@ -478,9 +478,9 @@ void Container::Load(std::istream &where) {
 
     if (!containers.empty()) {
 
-        for (auto it = containers.begin(); it != containers.end(); ++it) {
-            delete it->second;
-            it->second = nullptr;
+        for (auto & container : containers) {
+            delete container.second;
+            container.second = nullptr;
         }
     }
 
@@ -512,15 +512,15 @@ void Container::Load(std::istream &where) {
 auto Container::countItem(Item::id_type itemid, script_data_exchangemap const *data) const -> int {
     int temp = 0;
 
-    for (auto it = items.begin(); it != items.end(); ++it) {
-        const Item &item = it->second;
+    for (const auto & it : items) {
+        const Item &item = it.second;
 
         if (item.getId() == itemid && (data == nullptr || item.hasData(*data))) {
             temp = temp + item.getNumber();
         }
 
         if (item.isContainer()) {
-            auto iterat = containers.find(it->first);
+            auto iterat = containers.find(it.first);
 
             if (iterat != containers.end()) {
                 temp = temp + iterat->second->countItem(itemid, data);
@@ -544,13 +544,13 @@ auto Container::recursiveWeight(int rekt) -> int {
 
     uint32_t temp = 0;
 
-    for (auto it = items.begin(); it != items.end(); ++it) {
-        Item &item = it->second;
+    for (auto & it : items) {
+        Item &item = it.second;
 
         const auto &itemStruct = Data::Items[item.getId()];
 
         if (item.isContainer()) {
-            auto iterat = containers.find(it->first);
+            auto iterat = containers.find(it.first);
 
             if (iterat != containers.end()) {
                 temp += iterat->second->recursiveWeight(temprekt);
@@ -648,8 +648,8 @@ void Container::doAge(bool inventory) {
     }
 
     if (!containers.empty()) {
-        for (auto it = containers.begin(); it != containers.end(); ++it) {
-            it->second->doAge(inventory);
+        for (auto & container : containers) {
+            container.second->doAge(inventory);
         }
     }
 
