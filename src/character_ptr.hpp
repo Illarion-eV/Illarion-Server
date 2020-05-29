@@ -34,13 +34,13 @@ public:
     character_ptr(character_ptr const &p);
     auto operator=(character_ptr const &p) -> character_ptr&;
 
-    auto get() const -> Character *;
+    [[nodiscard]] auto get() const -> Character *;
     operator Character *() const;
     auto operator->() const -> Character *;
     operator bool() const;
 
 private:
-    auto getPointerFromId() const -> Character *;
+    [[nodiscard]] auto getPointerFromId() const -> Character *;
 };
 
 auto get_pointer(character_ptr const &p) -> Character *;

@@ -33,7 +33,7 @@ public:
 
     virtual ~ConfigEntryBase() = default;
 
-    auto isInitialized() const -> bool {
+    [[nodiscard]] auto isInitialized() const -> bool {
         return _initialized;
     }
 protected:

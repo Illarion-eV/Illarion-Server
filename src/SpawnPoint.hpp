@@ -47,17 +47,17 @@ public:
     //! callback called by dying monsters belonging to spawnpoint
     void dead(TYPE_OF_CHARACTER_ID type);
 
-    inline auto get_x() const -> int {
+    [[nodiscard]] inline auto get_x() const -> int {
         return spawnpos.x;
     }
-    inline auto get_y() const -> int {
+    [[nodiscard]] inline auto get_y() const -> int {
         return spawnpos.y;
     }
-    inline auto get_z() const -> int {
+    [[nodiscard]] inline auto get_z() const -> int {
         return spawnpos.z;
     }
 
-    inline auto getRange() const -> int {
+    [[nodiscard]] inline auto getRange() const -> int {
         return range;
     }
 

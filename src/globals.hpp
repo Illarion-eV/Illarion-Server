@@ -84,7 +84,7 @@ struct position {
         }
     }
 
-    auto toString() const -> std::string {
+    [[nodiscard]] auto toString() const -> std::string {
         return "(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ")";
     }
 

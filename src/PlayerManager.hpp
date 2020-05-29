@@ -37,11 +37,11 @@ public:
     void activate();
     void stop();
 
-    auto threadOK() const -> bool {
+    [[nodiscard]] auto threadOK() const -> bool {
         return threadOk;
     }
 
-    auto findPlayer(const std::string &name) const -> bool;
+    [[nodiscard]] auto findPlayer(const std::string &name) const -> bool;
 
     void setLoginLogout(bool val);
 

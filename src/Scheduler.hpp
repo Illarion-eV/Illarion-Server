@@ -38,11 +38,11 @@ class Task {
 
 		auto run() -> bool;
 
-		inline auto getName() const -> std::string {
+		[[nodiscard]] inline auto getName() const -> std::string {
 			return _name;
 		}
 
-		inline auto getNextTime() const -> typename clock_type::time_point {
+		[[nodiscard]] inline auto getNextTime() const -> typename clock_type::time_point {
 			return _next;
 		}
 

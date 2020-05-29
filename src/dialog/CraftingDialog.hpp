@@ -36,10 +36,10 @@ private:
 public:
     explicit Ingredient(TYPE_OF_ITEM_ID item): item(item), number(1) {};
     Ingredient(TYPE_OF_ITEM_ID item, uint8_t number): item(item), number(number) {};
-    auto getItem() const -> TYPE_OF_ITEM_ID {
+    [[nodiscard]] auto getItem() const -> TYPE_OF_ITEM_ID {
         return item;
     };
-    auto getNumber() const -> uint8_t {
+    [[nodiscard]] auto getNumber() const -> uint8_t {
         return number;
     };
 };
@@ -72,19 +72,19 @@ public:
             addIngredient(ingredient.getItem(), ingredient.getNumber());
         }
     };
-    auto getGroup() const -> uint8_t {
+    [[nodiscard]] auto getGroup() const -> uint8_t {
         return group;
     };
-    auto getItem() const -> TYPE_OF_ITEM_ID {
+    [[nodiscard]] auto getItem() const -> TYPE_OF_ITEM_ID {
         return item;
     };
-    auto getName() const -> const string & {
+    [[nodiscard]] auto getName() const -> const string & {
         return name;
     };
-    auto getDecisecondsToCraft() const -> uint16_t {
+    [[nodiscard]] auto getDecisecondsToCraft() const -> uint16_t {
         return decisecondsToCraft;
     };
-    auto getCraftedStackSize() const -> uint8_t {
+    [[nodiscard]] auto getCraftedStackSize() const -> uint8_t {
         return craftedStackSize;
     };
     void addIngredient(TYPE_OF_ITEM_ID item) {
@@ -97,13 +97,13 @@ public:
             ingredients.emplace_back(item, number);
         }
     };
-    auto getIngredientsSize() const -> index_t {
+    [[nodiscard]] auto getIngredientsSize() const -> index_t {
         return ingredients.size();
     };
-    auto begin() const -> ingredient_iterator {
+    [[nodiscard]] auto begin() const -> ingredient_iterator {
         return ingredients.cbegin();
     };
-    auto end() const -> ingredient_iterator {
+    [[nodiscard]] auto end() const -> ingredient_iterator {
         return ingredients.cend();
     };
 };

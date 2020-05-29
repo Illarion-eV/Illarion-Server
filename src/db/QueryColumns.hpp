@@ -61,7 +61,7 @@ protected:
     auto operator=(const QueryColumns &org) -> QueryColumns & = delete;
 
     auto buildQuerySegment() -> std::string &;
-    auto getColumnCount() const -> uint32_t;
+    [[nodiscard]] auto getColumnCount() const -> uint32_t;
 
     void setHideTable(const bool hide);
 };

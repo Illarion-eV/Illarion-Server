@@ -46,25 +46,25 @@ public:
 
     auto import(const std::string &importDir, const std::string &mapName) -> bool;
     auto load(const std::string &name) -> bool;
-    auto save(const std::string &name) const -> bool;
+    [[nodiscard]] auto save(const std::string &name) const -> bool;
 
     auto at(int16_t x, int16_t y) -> Field &;
-    auto at(int16_t x, int16_t y) const -> const Field &;
+    [[nodiscard]] auto at(int16_t x, int16_t y) const -> const Field &;
     auto at(const MapPosition &) -> Field &;
-    auto at(const MapPosition &) const -> const Field &;
+    [[nodiscard]] auto at(const MapPosition &) const -> const Field &;
 
     void age();
 
-    auto getMinX() const -> int16_t;
-    auto getMinY() const -> int16_t;
-    auto getMaxX() const -> int16_t;
-    auto getMaxY() const -> int16_t;
-    auto getLevel() const -> int16_t;
-    auto getWidth() const -> uint16_t;
-    auto getHeight() const -> uint16_t;
-    auto getName() const -> const std::string &;
+    [[nodiscard]] auto getMinX() const -> int16_t;
+    [[nodiscard]] auto getMinY() const -> int16_t;
+    [[nodiscard]] auto getMaxX() const -> int16_t;
+    [[nodiscard]] auto getMaxY() const -> int16_t;
+    [[nodiscard]] auto getLevel() const -> int16_t;
+    [[nodiscard]] auto getWidth() const -> uint16_t;
+    [[nodiscard]] auto getHeight() const -> uint16_t;
+    [[nodiscard]] auto getName() const -> const std::string &;
 
-    auto intersects(const Map &map) const -> bool;
+    [[nodiscard]] auto intersects(const Map &map) const -> bool;
 
 private:
     auto importFields(const std::string &importDir, const std::string &mapName) -> bool;
@@ -72,8 +72,8 @@ private:
     auto importWarps(const std::string &importDir, const std::string &mapName) -> bool;
     static void unescape(std::string &input);
 
-    inline auto convertWorldXToMap(int16_t x) const -> uint16_t;
-    inline auto convertWorldYToMap(int16_t y) const -> uint16_t;
+    [[nodiscard]] inline auto convertWorldXToMap(int16_t x) const -> uint16_t;
+    [[nodiscard]] inline auto convertWorldYToMap(int16_t y) const -> uint16_t;
 };
 
 }

@@ -59,7 +59,7 @@ public:
     * returns the initial position of this stripe
     * @return the starting position of the stripe
     */
-    auto getViewPosition() const -> position {
+    [[nodiscard]] auto getViewPosition() const -> position {
         return viewPosition;
     }
 
@@ -67,7 +67,7 @@ public:
     * returns if the stripe exists
     * @return true if the stripe exists otherwise false
     */
-    auto getExists() const -> bool {
+    [[nodiscard]] auto getExists() const -> bool {
         return exists;
     }
 
@@ -75,7 +75,7 @@ public:
     * returns the number of tiles in the view
     * @return the number of maximal tiles in the view
     */
-    auto getMaxTiles() const -> uint8_t {
+    [[nodiscard]] auto getMaxTiles() const -> uint8_t {
         return maxtiles;
     }
 
@@ -83,7 +83,7 @@ public:
     * the stripedirection, in which direction the mapstripe shows
     * @return the current direction of the mapstripe
     */
-    auto getStripeDirection() const -> stripedirection {
+    [[nodiscard]] auto getStripeDirection() const -> stripedirection {
         return stripedir;
     }
 

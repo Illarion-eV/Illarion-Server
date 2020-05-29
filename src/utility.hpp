@@ -28,10 +28,10 @@ extern auto to_direction(uint8_t dir) -> direction;
 
 template <class T>
 struct iterator_range {
-    auto begin() const -> T {
+    [[nodiscard]] auto begin() const -> T {
         return p.first;
     }
-    auto end() const -> T {
+    [[nodiscard]] auto end() const -> T {
         return p.second;
     }
     std::pair<T,T> p;

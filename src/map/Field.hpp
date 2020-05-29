@@ -54,18 +54,18 @@ public:
     auto operator=(Field &&) -> Field & = default;
 
     void setTileId(uint16_t id);
-    auto getTileId() const -> uint16_t;
-    auto getSecondaryTileId() const -> uint16_t;
-    auto getTileCode() const -> uint16_t;
-    auto isTransparent() const -> bool;
+    [[nodiscard]] auto getTileId() const -> uint16_t;
+    [[nodiscard]] auto getSecondaryTileId() const -> uint16_t;
+    [[nodiscard]] auto getTileCode() const -> uint16_t;
+    [[nodiscard]] auto isTransparent() const -> bool;
 
     void setMusicId(uint16_t id);
-    auto getMusicId() const -> uint16_t;
+    [[nodiscard]] auto getMusicId() const -> uint16_t;
 
-    auto isWalkable() const -> bool;
-    auto moveToPossible() const -> bool;
-    auto getMovementCost() const -> TYPE_OF_WALKINGCOST;
-    auto hasSpecialItem() const -> bool;
+    [[nodiscard]] auto isWalkable() const -> bool;
+    [[nodiscard]] auto moveToPossible() const -> bool;
+    [[nodiscard]] auto getMovementCost() const -> TYPE_OF_WALKINGCOST;
+    [[nodiscard]] auto hasSpecialItem() const -> bool;
 
     auto addItemOnStack(const Item &item) -> bool;
     auto addItemOnStackIfWalkable(const Item &item) -> bool;
@@ -73,9 +73,9 @@ public:
     auto increaseItemOnStack(int count, bool &erased) -> int;
     auto swapItemOnStack(TYPE_OF_ITEM_ID newId, uint16_t newQuality = 0) -> bool;
     auto viewItemOnStack(Item &item) const -> bool;
-    auto getStackItem(uint8_t pos) const -> ScriptItem;
-    auto getItemStack() const -> const std::vector<Item> &;
-    auto itemCount() const -> MAXCOUNTTYPE;
+    [[nodiscard]] auto getStackItem(uint8_t pos) const -> ScriptItem;
+    [[nodiscard]] auto getItemStack() const -> const std::vector<Item> &;
+    [[nodiscard]] auto itemCount() const -> MAXCOUNTTYPE;
 
     auto addContainerOnStackIfWalkable(Item item, Container *container) -> bool;
     auto addContainerOnStack(Item item, Container *container) -> bool;
@@ -88,34 +88,34 @@ public:
     void removePlayer();
     void removeNPC();
     void removeMonster();
-    auto hasPlayer() const -> bool;
-    auto hasNPC() const -> bool;
-    auto hasMonster() const -> bool;
+    [[nodiscard]] auto hasPlayer() const -> bool;
+    [[nodiscard]] auto hasNPC() const -> bool;
+    [[nodiscard]] auto hasMonster() const -> bool;
     void setChar();
     void removeChar();
 
     void setWarp(const position &pos);
     void removeWarp();
     void getWarp(position &pos) const;
-    auto isWarp() const -> bool;
+    [[nodiscard]] auto isWarp() const -> bool;
 
-    auto getExportItems() const -> std::vector<Item>;
+    [[nodiscard]] auto getExportItems() const -> std::vector<Item>;
     void save(std::ofstream &mapStream, std::ofstream &itemStream,
             std::ofstream &warpStream, std::ofstream &containerStream) const;
     void load(std::ifstream &mapStream, std::ifstream &itemStream,
             std::ifstream &warpStream, std::ifstream &containerStream);
 
-    auto getPosition() const -> const position &;
+    [[nodiscard]] auto getPosition() const -> const position &;
 
     void makePersistent();
     void removePersistence();
-    auto isPersistent() const -> bool;
+    [[nodiscard]] auto isPersistent() const -> bool;
 
 private:
     void updateFlags();
     inline void setBits(uint8_t);
     inline void unsetBits(uint8_t);
-    inline auto anyBitSet(uint8_t) const -> bool;
+    [[nodiscard]] inline auto anyBitSet(uint8_t) const -> bool;
 
     void insertIntoDatabase() const noexcept;
     void removeFromDatabase() const noexcept;

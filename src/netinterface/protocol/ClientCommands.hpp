@@ -588,9 +588,9 @@ public:
     void performAction(Player *player) override;
     auto clone() -> ClientCommandPointer override;
 
-    auto getClientVersion() const -> unsigned short;
-    auto getLoginName() const -> const std::string &;
-    auto getPassword() const -> const std::string &;
+    [[nodiscard]] auto getClientVersion() const -> unsigned short;
+    [[nodiscard]] auto getLoginName() const -> const std::string &;
+    [[nodiscard]] auto getPassword() const -> const std::string &;
 };
 
 

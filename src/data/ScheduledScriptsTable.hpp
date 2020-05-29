@@ -59,7 +59,7 @@ public:
     ScheduledScriptsTable();
     ~ScheduledScriptsTable();
 
-    inline auto isDataOK() const -> bool {
+    [[nodiscard]] inline auto isDataOK() const -> bool {
         return m_dataOk;
     }
 

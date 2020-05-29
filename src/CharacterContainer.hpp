@@ -44,10 +44,10 @@ private:
     container_type container;
 
     auto getPosition(TYPE_OF_CHARACTER_ID id,position& pos) -> bool;
-    auto projection_x_axis(const position& pos, int r) const -> iterator_range<position_to_id_type::const_iterator>;
+    [[nodiscard]] auto projection_x_axis(const position& pos, int r) const -> iterator_range<position_to_id_type::const_iterator>;
 
 public:
-    auto empty() const -> bool {
+    [[nodiscard]] auto empty() const -> bool {
         return container.empty();
     }
 

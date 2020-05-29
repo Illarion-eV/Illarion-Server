@@ -86,18 +86,18 @@ public:
 
     auto weight() -> int;
 
-    virtual auto getSlotCount() const -> TYPE_OF_CONTAINERSLOTS;
+    [[nodiscard]] virtual auto getSlotCount() const -> TYPE_OF_CONTAINERSLOTS;
 
-    inline auto getItems() const -> const ITEMMAP & {
+    [[nodiscard]] inline auto getItems() const -> const ITEMMAP & {
         return items;
     }
-    inline auto getContainers() const -> const CONTAINERMAP & {
+    [[nodiscard]] inline auto getContainers() const -> const CONTAINERMAP & {
         return containers;
     }
 
-    auto getFirstFreeSlot() const -> TYPE_OF_CONTAINERSLOTS;
+    [[nodiscard]] auto getFirstFreeSlot() const -> TYPE_OF_CONTAINERSLOTS;
 
-    inline auto isDepot() const -> bool {
+    [[nodiscard]] inline auto isDepot() const -> bool {
         return itemId == DEPOTITEM;
     }
 

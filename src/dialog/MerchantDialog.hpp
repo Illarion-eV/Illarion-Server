@@ -35,13 +35,13 @@ private:
 
 public:
     Product(TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price): item(item), name(name), price(price) {};
-    auto getItem() const -> TYPE_OF_ITEM_ID {
+    [[nodiscard]] auto getItem() const -> TYPE_OF_ITEM_ID {
         return item;
     };
-    auto getName() const -> const string & {
+    [[nodiscard]] auto getName() const -> const string & {
         return name;
     };
-    auto getPrice() const -> TYPE_OF_WORTH {
+    [[nodiscard]] auto getPrice() const -> TYPE_OF_WORTH {
         return price;
     };
 };
@@ -53,7 +53,7 @@ private:
 
 public:
     OfferProduct(TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price, TYPE_OF_BUY_STACK stack): Product(item, name, price), stack(stack) {};
-    auto getStack() const -> TYPE_OF_BUY_STACK {
+    [[nodiscard]] auto getStack() const -> TYPE_OF_BUY_STACK {
         return stack;
     };
 };

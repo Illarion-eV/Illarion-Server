@@ -30,11 +30,11 @@ class MonsterTable {
 public:
     MonsterTable();
 
-    inline auto isDataOK() const -> bool {
+    [[nodiscard]] inline auto isDataOK() const -> bool {
         return dataOK;
     }
 
-    auto exists(TYPE_OF_CHARACTER_ID id) const -> bool;
+    [[nodiscard]] auto exists(TYPE_OF_CHARACTER_ID id) const -> bool;
     auto operator[](TYPE_OF_CHARACTER_ID id) -> const MonsterStruct &;
 
 private:

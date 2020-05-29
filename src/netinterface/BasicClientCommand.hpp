@@ -75,7 +75,7 @@ public:
     * returns if the receiving of the command was sucessfull
     * @return true if the command was receuved complete and without problems
     */
-    auto isDataOk() const -> bool;
+    [[nodiscard]] auto isDataOk() const -> bool;
 
     /**
     * reads an unsigned char from the local command buffer
@@ -104,15 +104,15 @@ public:
     /**
      *returns the length of the command without the header in bytes
      */
-    auto getLength() const -> uint16_t {
+    [[nodiscard]] auto getLength() const -> uint16_t {
         return length;
     }
 
-    inline auto getMinAP() const -> uint16_t {
+    [[nodiscard]] inline auto getMinAP() const -> uint16_t {
         return minAP;
     }
 
-    inline auto getIncomingTime() const -> std::chrono::steady_clock::time_point {
+    [[nodiscard]] inline auto getIncomingTime() const -> std::chrono::steady_clock::time_point {
 	    return incomingTime;
     }
 

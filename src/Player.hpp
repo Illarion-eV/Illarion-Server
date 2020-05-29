@@ -77,7 +77,7 @@ public:
     class LogoutException {
     public:
         explicit LogoutException(const char &reason) : m_reason(reason) {}
-        inline auto getReason() const -> const char & {
+        [[nodiscard]] inline auto getReason() const -> const char & {
             return m_reason;
         }
     private:

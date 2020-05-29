@@ -52,7 +52,7 @@ struct ItemStruct {
     int16_t Rareness = 1;
     TYPE_OF_ITEMLEVEL Level = 0;
 
-    auto isValid() const -> bool {
+    [[nodiscard]] auto isValid() const -> bool {
         return id != 0;
     }
 };

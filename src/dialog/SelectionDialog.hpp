@@ -34,10 +34,10 @@ private:
 
 public:
     Option(TYPE_OF_ITEM_ID item, string name): item(item), name(name) {};
-    auto getItem() const -> TYPE_OF_ITEM_ID {
+    [[nodiscard]] auto getItem() const -> TYPE_OF_ITEM_ID {
         return item;
     };
-    auto getName() const -> const string & {
+    [[nodiscard]] auto getName() const -> const string & {
         return name;
     };
 };
@@ -64,21 +64,21 @@ public:
     SelectionDialog(const string &title, const string &text, const luabind::object &callback);
     SelectionDialog(const SelectionDialog &selectionDialog);
 
-    auto getText() const -> const string &;
+    [[nodiscard]] auto getText() const -> const string &;
 
-    auto getOptionsSize() const -> index_type;
-    auto begin() const -> iterator_type;
-    auto end() const -> iterator_type;
+    [[nodiscard]] auto getOptionsSize() const -> index_type;
+    [[nodiscard]] auto begin() const -> iterator_type;
+    [[nodiscard]] auto end() const -> iterator_type;
     void addOption(TYPE_OF_ITEM_ID item, const string &name);
 
-    auto getSuccess() const -> bool;
+    [[nodiscard]] auto getSuccess() const -> bool;
     void setSuccess(bool success);
 
-    auto getSelectedIndex() const -> index_type;
+    [[nodiscard]] auto getSelectedIndex() const -> index_type;
     void setSelectedIndex(index_type index);
 
     void setCloseOnMove();
-    auto closeOnMove() const -> bool override;
+    [[nodiscard]] auto closeOnMove() const -> bool override;
 };
 
 #endif

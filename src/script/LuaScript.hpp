@@ -81,7 +81,7 @@ public:
 
     virtual ~LuaScript();
 
-    auto getFileName() const -> std::string {
+    [[nodiscard]] auto getFileName() const -> std::string {
         return _filename;
     }
 
@@ -90,7 +90,7 @@ public:
     }
 
     static void shutdownLua();
-    auto existsEntrypoint(const std::string &entrypoint) const -> bool;
+    [[nodiscard]] auto existsEntrypoint(const std::string &entrypoint) const -> bool;
     void addQuestScript(const std::string &entrypoint, const std::shared_ptr<LuaScript> &script);
 
     template<typename T>
@@ -167,7 +167,7 @@ private:
     void writeCastErrorMsg(const std::string &entryPoint, const luabind::cast_failed &e) const;
     void setCurrentWorldScript();
     auto buildEntrypoint(const std::string &entrypoint) -> luabind::object;
-    auto existsQuestEntrypoint(const std::string &entrypoint) const -> bool;
+    [[nodiscard]] auto existsQuestEntrypoint(const std::string &entrypoint) const -> bool;
 
     template<typename... Args>
     auto callQuestEntrypoint(const std::string &entrypoint, const Args &... args) -> bool {

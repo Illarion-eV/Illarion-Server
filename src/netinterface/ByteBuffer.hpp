@@ -70,7 +70,7 @@ public:
     * return how much data is available in the buffer
     * @return the number of bytes which are currently in the buffer
     */
-    auto dataAvailable() const -> uint16_t;
+    [[nodiscard]] auto dataAvailable() const -> uint16_t;
 
 private:
 
