@@ -19,11 +19,15 @@
  */
 
 #include "LuaTileScript.hpp"
+
+
+#include <utility>
+
 #include "Character.hpp"
 #include "character_ptr.hpp"
 
-LuaTileScript::LuaTileScript(const std::string &filename, const TilesStruct &tile)
-    : LuaScript(filename), thisTile(tile) {
+LuaTileScript::LuaTileScript(const std::string &filename, TilesStruct tile)
+    : LuaScript(filename), thisTile(std::move(tile)) {
     init_functions();
 }
 

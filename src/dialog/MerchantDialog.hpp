@@ -21,8 +21,10 @@
 #ifndef _MERCHANT_DIALOG_HPP_
 #define _MERCHANT_DIALOG_HPP_
 
-#include "dialog/Dialog.hpp"
 #include "Item.hpp"
+#include "dialog/Dialog.hpp"
+#include <utility>
+
 #include <vector>
 
 using std::vector;
@@ -34,7 +36,7 @@ private:
     TYPE_OF_WORTH price;
 
 public:
-    Product(TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price): item(item), name(name), price(price) {};
+    Product(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price): item(item), name(std::move(name)), price(price) {};
     [[nodiscard]] auto getItem() const -> TYPE_OF_ITEM_ID {
         return item;
     };

@@ -35,8 +35,8 @@ class ScriptItem;
 class LuaItemScript : public LuaScript {
 public:
     LuaItemScript();
-    LuaItemScript(const std::string &filename, const ItemStruct &comstr);
-    LuaItemScript(const std::string &code, const std::string &codename, const ItemStruct &comstr);
+    LuaItemScript(const std::string &filename, ItemStruct comstr);
+    LuaItemScript(const std::string &code, const std::string &codename, ItemStruct comstr);
     ~LuaItemScript() override;
     LuaItemScript(const LuaItemScript &) = delete;
     auto operator=(const LuaItemScript &) -> LuaItemScript & = delete;

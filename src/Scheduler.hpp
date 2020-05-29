@@ -30,7 +30,7 @@
 template<typename clock_type>
 class Task {
 	public:
-		Task(std::function<void()> task, typename clock_type::time_point start_point, std::chrono::nanoseconds interval, const std::string& name);
+		Task(std::function<void()> task, typename clock_type::time_point start_point, std::chrono::nanoseconds interval, std::string  name);
 
 		inline auto operator<(const Task& other) const -> bool {
 			return other._next < _next;

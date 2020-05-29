@@ -20,6 +20,10 @@
 
 #include "a_star.hpp"
 
+
+#include <utility>
+
+
 #include "World.hpp"
 #include "map/Field.hpp"
 #include "data/TilesTable.hpp"
@@ -31,7 +35,7 @@ using namespace boost;
 
 character_out_edge_iterator::character_out_edge_iterator() = default;
 
-character_out_edge_iterator::character_out_edge_iterator(int i, const Position &p, const world_map_graph &g): position(p), graph(&g), direction(i) {
+character_out_edge_iterator::character_out_edge_iterator(int i, Position p, const world_map_graph &g): position(std::move(p)), graph(&g), direction(i) {
     valid_step();
 }
 
@@ -71,7 +75,7 @@ void character_out_edge_iterator::valid_step() {
     }
 }
 
-world_map_graph::world_map_graph(const Position &goal, int level): goal(goal), level(level) {
+world_map_graph::world_map_graph(Position goal, int level): goal(std::move(goal)), level(level) {
 }
 
 auto
@@ -107,7 +111,7 @@ auto num_vertices(const world_map_graph &g) -> int {
     return 1000;
 }
 
-distance_heuristic::distance_heuristic(const Vertex &goal): goal(goal) {
+distance_heuristic::distance_heuristic(Vertex goal): goal(std::move(goal)) {
     Logger::debug(LogFacility::Other) << "heuristic goal (" << this->goal.first << ", " << this->goal.second << ")" << Log::end;
 }
 
@@ -167,7 +171,7 @@ auto vertex_index_hash::operator[](key_type const &k) -> mapped_type & {
     return at(k);
 }
 
-astar_ex_visitor::astar_ex_visitor(const Position &goal): goal(goal) {
+astar_ex_visitor::astar_ex_visitor(Position goal): goal(std::move(goal)) {
 }
 
 void astar_ex_visitor::examine_vertex(const Position &u, const world_map_graph &) {

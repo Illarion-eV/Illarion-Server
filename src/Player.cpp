@@ -24,8 +24,10 @@
 #include <arpa/inet.h>
 
 #include <memory>
-#include <sstream>
 #include <range/v3/all.hpp>
+#include <sstream>
+#include <utility>
+
 
 #include "tuningConstants.hpp"
 #include "map/Field.hpp"
@@ -70,7 +72,7 @@ extern std::shared_ptr<LuaPlayerDeathScript>playerDeathScript;
 extern std::shared_ptr<LuaDepotScript>depotScript;
 
 Player::Player(std::shared_ptr<NetInterface> newConnection)
-    : Character(), onlinetime(0), Connection(newConnection), turtleActive(false),
+    : Character(), onlinetime(0), Connection(std::move(newConnection)), turtleActive(false),
       clippingActive(true), admin(false), questWriteLock(false), monitoringClient(false), dialogCounter(0) {
     screenwidth = 0;
     screenheight = 0;

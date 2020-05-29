@@ -33,7 +33,7 @@ private:
     luabind::object callback;
 
 public:
-    Dialog(const string &title, const string &className, const luabind::object &callback);
+    Dialog(string title, string className, const luabind::object &callback);
     Dialog(const Dialog &dialog);
     virtual ~Dialog() = default;
     [[nodiscard]] auto getTitle() const -> const string &;

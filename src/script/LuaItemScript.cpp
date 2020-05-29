@@ -18,6 +18,10 @@
 
 
 #include "LuaItemScript.hpp"
+
+
+#include <utility>
+
 #include "character_ptr.hpp"
 #include "Item.hpp"
 #include "Character.hpp"
@@ -26,13 +30,13 @@ LuaItemScript::LuaItemScript() : LuaScript() {
     init_functions();
 }
 
-LuaItemScript::LuaItemScript(const std::string &filename, const ItemStruct &comstr)
-    : LuaScript(filename) , _comstr(comstr) {
+LuaItemScript::LuaItemScript(const std::string &filename, ItemStruct comstr)
+    : LuaScript(filename) , _comstr(std::move(comstr)) {
     init_functions();
 }
 
-LuaItemScript::LuaItemScript(const std::string &code, const std::string &codename, const ItemStruct &comstr)
-    : LuaScript(code, codename), _comstr(comstr) {
+LuaItemScript::LuaItemScript(const std::string &code, const std::string &codename, ItemStruct comstr)
+    : LuaScript(code, codename), _comstr(std::move(comstr)) {
     init_functions();
 }
 

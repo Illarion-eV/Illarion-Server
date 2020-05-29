@@ -20,13 +20,17 @@
 
 #include "LuaLongTimeEffectScript.hpp"
 
+
+#include <utility>
+
+
 #include "luabind/luabind.hpp"
 #include "Character.hpp"
 #include "LongTimeEffect.hpp"
 #include "character_ptr.hpp"
 
-LuaLongTimeEffectScript::LuaLongTimeEffectScript(const std::string &filename, const LongTimeEffectStruct &effectStruct)
-    : LuaScript(filename), _effectStruct(effectStruct) {
+LuaLongTimeEffectScript::LuaLongTimeEffectScript(const std::string &filename, LongTimeEffectStruct effectStruct)
+    : LuaScript(filename), _effectStruct(std::move(effectStruct)) {
     init_functions();
 }
 

@@ -32,7 +32,7 @@ private:
     string input;
 
 public:
-    InputDialog(const string &title, const string &description, bool multiline, unsigned short maxChars, const luabind::object &callback);
+    InputDialog(const string &title, string description, bool multiline, unsigned short maxChars, const luabind::object &callback);
     InputDialog(const InputDialog &inputDialog);
     [[nodiscard]] auto getDescription() const -> const string &;
     [[nodiscard]] auto isMultiline() const -> bool;

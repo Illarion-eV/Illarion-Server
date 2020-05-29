@@ -19,9 +19,11 @@
 #ifndef __CONFIG_HPP__
 #define __CONFIG_HPP__
 
+#include <iostream>
 #include <memory>
 #include <string>
-#include <iostream>
+#include <utility>
+
 
 class ConfigEntryBase {
 public:
@@ -48,7 +50,7 @@ template<typename T>
 class ConfigEntry : public ConfigEntryBase {
 public:
 
-    ConfigEntry(const std::string &config_name, const T &default_value = {}) : ConfigEntryBase { config_name }, _item { default_value } {}
+    ConfigEntry(const std::string &config_name, T default_value = {}) : ConfigEntryBase { config_name }, _item {std::move( default_value )} {}
 
     operator T() const {
         return _item;

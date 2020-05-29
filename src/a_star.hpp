@@ -50,7 +50,7 @@ struct world_map_graph;
 
 struct character_out_edge_iterator: public boost::forward_iterator_helper<character_out_edge_iterator, Position, std::ptrdiff_t, Position *, Position> {
     character_out_edge_iterator();
-    character_out_edge_iterator(int i, const Position &p, const world_map_graph &g);
+    character_out_edge_iterator(int i, Position p, const world_map_graph &g);
 
     auto operator*() const -> std::pair<Position, Position>;
     void operator++();
@@ -77,7 +77,7 @@ struct world_map_graph {
     using directed_category = directed_tag;
     using edge_parallel_category = disallow_parallel_edge_tag;
     using traversal_category = incidence_graph_tag;
-    world_map_graph(const Position &goal, int level);
+    world_map_graph(Position goal, int level);
     Position goal;
     int level;
 };
@@ -101,7 +101,7 @@ using Cost = float;
 class distance_heuristic : public astar_heuristic<world_map_graph, Cost> {
 public:
     using Vertex = graph_traits<world_map_graph>::vertex_descriptor;
-    explicit distance_heuristic(const Vertex &goal);
+    explicit distance_heuristic(Vertex goal);
     auto operator()(const Vertex &u) -> Cost;
 
 private:
@@ -135,7 +135,7 @@ private:
 };
 
 struct astar_ex_visitor: public boost::default_astar_visitor {
-    explicit astar_ex_visitor(const Position &goal);
+    explicit astar_ex_visitor(Position goal);
 
     void examine_vertex(const Position &u, const world_map_graph &);
     void discover_vertex(const Position &u, const world_map_graph &);

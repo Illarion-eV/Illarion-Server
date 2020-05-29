@@ -21,8 +21,10 @@
 #ifndef _SELECTION_DIALOG_HPP_
 #define _SELECTION_DIALOG_HPP_
 
-#include "dialog/Dialog.hpp"
 #include "Item.hpp"
+#include "dialog/Dialog.hpp"
+#include <utility>
+
 #include <vector>
 
 using std::vector;
@@ -33,7 +35,7 @@ private:
     string name;
 
 public:
-    Option(TYPE_OF_ITEM_ID item, string name): item(item), name(name) {};
+    Option(TYPE_OF_ITEM_ID item, string name): item(item), name(std::move(name)) {};
     [[nodiscard]] auto getItem() const -> TYPE_OF_ITEM_ID {
         return item;
     };
@@ -61,7 +63,7 @@ private:
     bool close;
 
 public:
-    SelectionDialog(const string &title, const string &text, const luabind::object &callback);
+    SelectionDialog(const string &title, string text, const luabind::object &callback);
     SelectionDialog(const SelectionDialog &selectionDialog);
 
     [[nodiscard]] auto getText() const -> const string &;

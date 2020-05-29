@@ -30,7 +30,7 @@ class Character;
 
 class LuaTileScript : public LuaScript {
 public:
-    LuaTileScript(const std::string &filename, const TilesStruct &tile);
+    LuaTileScript(const std::string &filename, TilesStruct tile);
     ~LuaTileScript() override;
     LuaTileScript(const LuaTileScript &) = delete;
     auto operator=(const LuaTileScript &) -> LuaTileScript & = delete;

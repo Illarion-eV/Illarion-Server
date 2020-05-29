@@ -1,3 +1,7 @@
+#include <utility>
+
+
+
 //  illarionserver - server for the game Illarion
 //  Copyright 2011 Illarion e.V.
 //
@@ -17,7 +21,7 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 template<typename clock_type>
-Task<clock_type>::Task(std::function<void()> task, typename clock_type::time_point start_point, std::chrono::nanoseconds interval, const std::string& name) : _task(task), _next(start_point), _interval(interval), _name(name) { }
+Task<clock_type>::Task(std::function<void()> task, typename clock_type::time_point start_point, std::chrono::nanoseconds interval, std::string  name) : _task(std::move(task)), _next(start_point), _interval(interval), _name(std::move(name)) { }
 
 template<typename clock_type>
 auto Task<clock_type>::run() -> bool {

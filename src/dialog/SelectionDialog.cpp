@@ -20,8 +20,12 @@
 
 #include "dialog/SelectionDialog.hpp"
 
-SelectionDialog::SelectionDialog(const string &title, const string &text, const luabind::object &callback)
-    :Dialog(title, "SelectionDialog", callback), text(text) {
+
+#include <utility>
+
+
+SelectionDialog::SelectionDialog(const string &title, string text, const luabind::object &callback)
+    :Dialog(title, "SelectionDialog", callback), text(std::move(text)) {
     success = false;
     close = false;
     selectedIndex = 0;
