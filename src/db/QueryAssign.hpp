@@ -33,6 +33,8 @@ private:
     std::string assignColumns;
 
 public:
+    QueryAssign(const QueryAssign &org) = delete;
+    auto operator=(const QueryAssign &org) -> QueryAssign & = delete;
     template<typename T> void addAssignColumn(const std::string &column, const T &value) {
         Query::appendToStringList(assignColumns, Query::escapeAndChainKeys("", column) + " = " + connection.quote<T>(value));
     };
@@ -40,8 +42,6 @@ public:
     void addAssignColumnNull(const std::string &column);
 protected:
     explicit QueryAssign(const Connection &connection);
-    QueryAssign(const QueryAssign &org) = delete;
-    auto operator=(const QueryAssign &org) -> QueryAssign & = delete;
 
     auto buildQuerySegment() -> std::string &;
 };
