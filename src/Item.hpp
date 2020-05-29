@@ -44,7 +44,7 @@ public:
     static const TYPE_OF_VOLUME LARGE_ITEM_VOLUME = 5000;
     static const wear_type PERMANENT_WEAR = 255;
 
-    Item(): id(0), number(0), wear(0), quality(333), datamap(1) {}
+    Item() = default;
     Item(id_type id, number_type number, wear_type wear, quality_type quality = 333) :
         id(id), number(number), wear(wear), quality(quality), datamap(1) {}
     Item(id_type id, number_type number, wear_type wear, quality_type quality, const script_data_exchangemap &datamap);
@@ -127,11 +127,11 @@ public:
 
     bool operator==(const Item& rhs) const;
 private:
-    id_type id;
-    number_type number;
-    wear_type wear;
-    quality_type quality;
-    datamap_type datamap;
+    id_type id{0};
+    number_type number{0};
+    wear_type wear{0};
+    quality_type quality{333};
+    datamap_type datamap{1};
 };
 
 class ScriptItem : public Item {
@@ -144,16 +144,16 @@ public:
         it_container = 6
     };
 
-    itemtype type;
+    itemtype type{notdefined};
     position pos;
-    unsigned char itempos;
-    Character *owner;
+    unsigned char itempos{255};
+    Character *owner{nullptr};
     character_ptr getOwnerForLua() {
         character_ptr fuse_owner(owner);
         return fuse_owner;
     };
-    Container *inside;
-    ScriptItem() : Item(0,0,0), type(notdefined), pos(position(0, 0, 0)), itempos(255), owner(nullptr), inside(nullptr) {}
+    Container *inside{nullptr};
+    ScriptItem() : Item(0,0,0),  pos(position(0, 0, 0)) {}
     unsigned char getType() const {
         return type;
     }

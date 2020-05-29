@@ -53,7 +53,7 @@ public:
     /**
     * stores the pointers to the fields inside a specific mapstripe
     */
-    MAPSTRIPE mapStripe;
+    MAPSTRIPE mapStripe{nullptr};
 
     /**
     * returns the initial position of this stripe
@@ -128,17 +128,17 @@ private:
     /**
     * if there is a view stripe
     */
-    bool exists;
+    bool exists{false};
 
     /**
     * which direction do we read
     */
-    stripedirection stripedir;
+    stripedirection stripedir{dir_right};
 
     /**
     * how many tiles are stored
     */
-    uint8_t maxtiles;
+    uint8_t maxtiles{0};
 };
 
 #endif

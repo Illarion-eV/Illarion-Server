@@ -21,7 +21,7 @@
 #include <iostream>
 #include "ByteBuffer.hpp"
 
-ByteBuffer::ByteBuffer() : bytesAvailable(0), rBuff(0), wBuff(1), readPos(0) {
+ByteBuffer::ByteBuffer()  {
     recvBuffer = new t_rbuffer[ NUMBEROFBUFFERS ];
 
     for (int i = 0 ; i < NUMBEROFBUFFERS; ++i) {

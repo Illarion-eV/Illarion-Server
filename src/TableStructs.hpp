@@ -63,39 +63,39 @@ struct TilesModificatorStruct {
 
 struct LongTimeEffectStruct {
     uint16_t effectid;
-    std::string effectname;
-    std::string scriptname;
+    std::string effectname{""};
+    std::string scriptname{""};
     std::shared_ptr<LuaLongTimeEffectScript> script;
-    LongTimeEffectStruct(): effectname(""), scriptname("") {
+    LongTimeEffectStruct() {
         effectid = 0;
     }
 };
 
 
 struct WeaponStruct {
-    TYPE_OF_ATTACK Attack;
-    TYPE_OF_DEFENCE Defence;
-    TYPE_OF_ACCURACY Accuracy;
-    TYPE_OF_RANGE Range;
-    TYPE_OF_WEAPONTYPE Type;
-    TYPE_OF_AMMUNITIONTYPE AmmunitionType;
-    TYPE_OF_ACTIONPOINTS ActionPoints;
-    TYPE_OF_MAGICDISTURBANCE MagicDisturbance;
-    TYPE_OF_POISONSTRENGTH PoisonStrength;
-    WeaponStruct() : Attack(0) , Defence(0) , Accuracy(0) , Range(0) , Type(0) , AmmunitionType(0) , ActionPoints(0) , MagicDisturbance(0) , PoisonStrength(0) {}
+    TYPE_OF_ATTACK Attack{0};
+    TYPE_OF_DEFENCE Defence{0};
+    TYPE_OF_ACCURACY Accuracy{0};
+    TYPE_OF_RANGE Range{0};
+    TYPE_OF_WEAPONTYPE Type{0};
+    TYPE_OF_AMMUNITIONTYPE AmmunitionType{0};
+    TYPE_OF_ACTIONPOINTS ActionPoints{0};
+    TYPE_OF_MAGICDISTURBANCE MagicDisturbance{0};
+    TYPE_OF_POISONSTRENGTH PoisonStrength{0};
+    WeaponStruct()  = default;
 };
 
 
 struct ArmorStruct {
-    TYPE_OF_BODYPARTS BodyParts;
-    TYPE_OF_PUNCTUREARMOR PunctureArmor;
-    TYPE_OF_STROKEARMOR StrokeArmor;
-    TYPE_OF_THRUSTARMOR ThrustArmor;
-    TYPE_OF_MAGICDISTURBANCE MagicDisturbance;
-    int16_t Absorb;
-    int16_t Stiffness;
-    TYPE_OF_ARMORTYPE Type;
-    ArmorStruct() : BodyParts(0) , PunctureArmor(0), StrokeArmor(0), ThrustArmor(0),MagicDisturbance(0),Absorb(0), Stiffness(0), Type(0) {}
+    TYPE_OF_BODYPARTS BodyParts{0};
+    TYPE_OF_PUNCTUREARMOR PunctureArmor{0};
+    TYPE_OF_STROKEARMOR StrokeArmor{0};
+    TYPE_OF_THRUSTARMOR ThrustArmor{0};
+    TYPE_OF_MAGICDISTURBANCE MagicDisturbance{0};
+    int16_t Absorb{0};
+    int16_t Stiffness{0};
+    TYPE_OF_ARMORTYPE Type{0};
+    ArmorStruct()  = default;
 };
 
 
@@ -142,10 +142,10 @@ struct PlayerraceStruct {
 };
 
 struct MonsterArmor {
-    short int strokeArmor;
-    short int punctureArmor;
-    short int thrustArmor;
-    MonsterArmor() : strokeArmor(0), punctureArmor(0), thrustArmor(0) {}
+    short int strokeArmor{0};
+    short int punctureArmor{0};
+    short int thrustArmor{0};
+    MonsterArmor()  = default;
 };
 
 struct itemdef_t {

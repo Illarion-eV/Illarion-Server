@@ -32,14 +32,14 @@ public:
 
 class container_tests : public ::testing::Test {
 	public:
-		container_tests() : container{0x13} {
+		container_tests()  {
 			ON_CALL(container, getSlotCount()).WillByDefault(Return(100));
             EXPECT_CALL(container, getSlotCount()).Times(AtLeast(0));
 		}
 
 		~container_tests() override = default;
 
-		MockContainer container;
+		MockContainer container{0x13};
         MockWorld world;
         uint16_t size_c1 = 1;
 		uint16_t size_c2 = 1;

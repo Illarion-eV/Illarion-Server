@@ -35,11 +35,11 @@ struct ScriptData {
     uint32_t maxCycleTime;
     uint32_t nextCycleTime;
     uint32_t lastCycleTime;
-    std::string functionName;
-    std::string scriptName;
+    std::string functionName{""};
+    std::string scriptName{""};
     std::shared_ptr<LuaScheduledScript>scriptptr;
 
-    ScriptData(): functionName(""), scriptName("") {
+    ScriptData() {
         minCycleTime = 0;
         maxCycleTime = 0;
         nextCycleTime = 0;
@@ -71,8 +71,8 @@ private:
     void reload();
 
     std::list<ScriptData> m_table;
-    uint32_t currentCycle;
-    bool m_dataOk;
+    uint32_t currentCycle{0};
+    bool m_dataOk{false};
 
     void clearOldTable();
 };

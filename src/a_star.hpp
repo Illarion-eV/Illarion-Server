@@ -59,8 +59,8 @@ struct character_out_edge_iterator: public boost::forward_iterator_helper<charac
 protected:
     void valid_step();
     Position position;
-    const world_map_graph *graph;
-    int direction;
+    const world_map_graph *graph{nullptr};
+    int direction{8};
 };
 
 struct world_map_graph {

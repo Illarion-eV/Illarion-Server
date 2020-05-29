@@ -91,7 +91,7 @@ public:
 class BBChangeAttribTS : public BasicClientCommand {
     TYPE_OF_CHARACTER_ID id = 0;
     std::string attrib;
-    short int value;
+    short int value{0};
 
 public:
     BBChangeAttribTS();
@@ -105,7 +105,7 @@ public:
 class BBChangeSkillTS : public BasicClientCommand {
     TYPE_OF_CHARACTER_ID id = 0;
     TYPE_OF_SKILL_ID skill = 0;
-    short int value;
+    short int value{0};
 
 public:
     BBChangeSkillTS();

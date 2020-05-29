@@ -26,8 +26,8 @@
 NewClientView::~NewClientView() = default;
 
 NewClientView::NewClientView()
-    : mapStripe{nullptr}, viewPosition(position(0, 0, 0)), exists(false), stripedir(dir_right),
-      maxtiles(0) {
+    :  viewPosition(position(0, 0, 0))
+      {
 }
 
 void NewClientView::fillStripe(position pos, stripedirection dir, int length) {

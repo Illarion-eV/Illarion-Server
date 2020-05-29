@@ -81,11 +81,11 @@ private:
     bool getReadBuffer();
 
     std::mutex vlock; /*<mutex for thread safety*/
-    uint16_t bytesAvailable; /*<stores how much bytes are currently in the buffer*/
+    uint16_t bytesAvailable{0}; /*<stores how much bytes are currently in the buffer*/
 
-    volatile uint8_t rBuff; /*<number of current read buffer*/
-    volatile uint8_t wBuff; /*<number of the current write buffer*/
-    volatile uint16_t readPos; /*<current reading position inside the read buffer*/
+    volatile uint8_t rBuff{0}; /*<number of current read buffer*/
+    volatile uint8_t wBuff{1}; /*<number of the current write buffer*/
+    volatile uint16_t readPos{0}; /*<current reading position inside the read buffer*/
     t_rbuffer *recvBuffer;  /*<pointer to a internal buffer struct which holds the buffer in a array*/
 
 };

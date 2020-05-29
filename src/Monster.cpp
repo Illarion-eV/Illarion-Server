@@ -35,7 +35,7 @@ extern std::unique_ptr<RaceTypeTable> raceTypes;
 uint32_t Monster::counter = 0;
 
 Monster::Monster(const TYPE_OF_CHARACTER_ID &type, const position &newpos, SpawnPoint *spawnpoint)
-    : Character(),lastTargetPosition(position(0,0,0)),lastTargetSeen(false), spawn(spawnpoint), monstertype(type) {
+    : Character(),lastTargetPosition(position(0,0,0)), spawn(spawnpoint), monstertype(type) {
     setId(MONSTER_BASE + counter++ % (NPC_BASE-MONSTER_BASE));
     setAlive(true);
     setMonsterType(type);

@@ -127,7 +127,7 @@ ClientCommandPointer BBServerCommandTS::clone() {
     return cmd;
 }
 
-BBChangeAttribTS::BBChangeAttribTS() : BasicClientCommand(BB_CHANGEATTRIB_TS), value(0) {
+BBChangeAttribTS::BBChangeAttribTS() : BasicClientCommand(BB_CHANGEATTRIB_TS) {
 }
 
 BBChangeAttribTS::~BBChangeAttribTS() = default;
@@ -154,7 +154,7 @@ ClientCommandPointer BBChangeAttribTS::clone() {
     return cmd;
 }
 
-BBChangeSkillTS::BBChangeSkillTS() : BasicClientCommand(BB_CHANGEATTRIB_TS), value(0) {
+BBChangeSkillTS::BBChangeSkillTS() : BasicClientCommand(BB_CHANGEATTRIB_TS) {
 }
 
 BBChangeSkillTS::~BBChangeSkillTS() = default;

@@ -29,8 +29,7 @@ namespace pathfinding {
 
 using namespace boost;
 
-character_out_edge_iterator::character_out_edge_iterator(): graph(nullptr), direction(8) {
-}
+character_out_edge_iterator::character_out_edge_iterator() = default;
 
 character_out_edge_iterator::character_out_edge_iterator(int i, const Position &p, const world_map_graph &g): position(p), graph(&g), direction(i) {
     valid_step();

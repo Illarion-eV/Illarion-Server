@@ -28,7 +28,7 @@
 #include "Logger.hpp"
 #include "Random.hpp"
 
-ScheduledScriptsTable::ScheduledScriptsTable() : currentCycle(0), m_dataOk(false) {
+ScheduledScriptsTable::ScheduledScriptsTable()  {
     reload();
 }
 
