@@ -645,7 +645,7 @@ void World::checkField(const map::Field &field, const position &itemPosition) {
                 checkFieldAfterMove(temp, field);
             }
         } else if (field.hasNPC()) {
-            NPC *temp = Npc.find(itemPosition);;
+            NPC *temp = Npc.find(itemPosition);
 
             if (temp) {
                 checkFieldAfterMove(temp, field);
@@ -1407,7 +1407,7 @@ void World::closeShowcaseIfNotInRange(Container *moved, const position &showcase
             if (abs(showcasePosition.x - pos.x) > 1
                     || abs(showcasePosition.y - pos.y) > 1
                     || showcasePosition.z != pos.z) {
-                player->closeShowcase(moved);;
+                player->closeShowcase(moved);
             }
         });
     }

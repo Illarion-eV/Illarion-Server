@@ -51,7 +51,7 @@ void Attribute::setValue(attribute_t value) {
         if (value > maximum && maximum != 0) {
             offset = maximum - baseValue;
         } else {
-            offset = value - baseValue;;
+            offset = value - baseValue;
         }
     }
 }

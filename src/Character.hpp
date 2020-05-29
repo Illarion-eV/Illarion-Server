@@ -69,7 +69,7 @@ public:
         Colour hair;
         Colour skin;
 
-        appearance() = default;;
+        appearance() = default;
     };
 
     explicit Character(const appearance &appearance = {});

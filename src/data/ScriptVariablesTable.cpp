@@ -41,7 +41,7 @@ std::string ScriptVariablesTable::assignId(const Database::ResultTuple &row) {
 }
 
 std::string ScriptVariablesTable::assignTable(const Database::ResultTuple &row) {
-    return row["svt_string"].as<std::string>();;
+    return row["svt_string"].as<std::string>();
 }
 
 bool ScriptVariablesTable::find(const std::string &id, std::string &ret) {

@@ -1572,7 +1572,7 @@ Container *Character::GetBackPack() const {
 }
 
 Container *Character::GetDepot(uint32_t depotid) const {
-    auto it = depotContents.find(depotid + 1);;
+    auto it = depotContents.find(depotid + 1);
 
     if (it == depotContents.end()) {
         return nullptr;

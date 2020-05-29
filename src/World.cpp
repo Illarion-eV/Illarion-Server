@@ -297,7 +297,7 @@ void World::checkMonsters() {
                     if (Data::WeaponItems.exists(itr.getId())) {
                         range = Data::WeaponItems[itr.getId()].Range;
                     } else if (Data::WeaponItems.exists(itl.getId())) {
-                        range = Data::WeaponItems[itl.getId()].Range;;
+                        range = Data::WeaponItems[itl.getId()].Range;
                     }
 
                     const auto temp = getTargetsInRange(monster.getPosition(), range);
@@ -473,7 +473,7 @@ void World::checkMonsters() {
                     if (Data::WeaponItems.exists(itr.getId())) {
                         range = Data::WeaponItems[itr.getId()].Range;
                     } else if (Data::WeaponItems.exists(itl.getId())) {
-                        range = Data::WeaponItems[itl.getId()].Range;;
+                        range = Data::WeaponItems[itl.getId()].Range;
                     }
 
                     const auto temp = getTargetsInRange(monster.getPosition(), range);
