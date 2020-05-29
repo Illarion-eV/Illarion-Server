@@ -23,7 +23,7 @@ Timer::Timer(unsigned long int timegap): last(time(nullptr) - timegap), gap(time
 }
 
 
-Timer::~Timer() {}
+Timer::~Timer() = default;
 
 
 bool Timer::next() {

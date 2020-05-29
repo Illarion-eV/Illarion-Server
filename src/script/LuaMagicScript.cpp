@@ -28,7 +28,7 @@ LuaMagicScript::LuaMagicScript(const std::string &filename, const SpellStruct &)
     init_functions();
 }
 
-LuaMagicScript::~LuaMagicScript() {}
+LuaMagicScript::~LuaMagicScript() = default;
 
 void LuaMagicScript::init_functions() {
 }

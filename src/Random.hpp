@@ -25,7 +25,7 @@
 class Random {
 private:
     static std::mt19937 rng;
-    Random() {};
+    Random() = default;;
 public:
     static double uniform();
     static int uniform(int min, int max);

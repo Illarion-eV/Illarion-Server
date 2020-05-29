@@ -28,5 +28,5 @@ LuaTestSupportScript::LuaTestSupportScript(const std::string &code, const std::s
     : LuaScript(code + " return {test=test}", scriptname) {
 }
 
-LuaTestSupportScript::~LuaTestSupportScript() noexcept {}
+LuaTestSupportScript::~LuaTestSupportScript() noexcept = default;
 

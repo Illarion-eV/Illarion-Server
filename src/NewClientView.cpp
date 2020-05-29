@@ -23,7 +23,7 @@
 #include <algorithm>
 #include <iostream>
 
-NewClientView::~NewClientView() {}
+NewClientView::~NewClientView() = default;
 
 NewClientView::NewClientView()
     : mapStripe{nullptr}, viewPosition(position(0, 0, 0)), exists(false), stripedir(dir_right),

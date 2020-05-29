@@ -27,7 +27,7 @@ LuaTileScript::LuaTileScript(const std::string &filename, const TilesStruct &til
     init_functions();
 }
 
-LuaTileScript::~LuaTileScript() {}
+LuaTileScript::~LuaTileScript() = default;
 
 void LuaTileScript::init_functions() const {
     const luabind::object &globals = luabind::globals(_luaState);

@@ -66,7 +66,7 @@ static end_t end __attribute__((unused));
 
 class NullStream {
 public:
-    inline constexpr NullStream() { }
+    inline constexpr NullStream() = default;
     inline NullStream &operator()(LogFacility facility) {
         return *this;
     }
@@ -85,7 +85,7 @@ public:
         return *this;
     }
 
-    inline LogStream() { }
+    inline LogStream() = default;
     template<typename T>
     inline LogStream &operator<<(const T &data) {
         static_assert(!std::is_pointer<T>::value || std::is_same<T, const char *>::value || std::is_same<T, char *>::value, "Logger cannot log pointers!");

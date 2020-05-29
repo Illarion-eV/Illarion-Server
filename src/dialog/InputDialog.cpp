@@ -26,13 +26,8 @@ InputDialog::InputDialog(const string &title, const string &description, bool mu
     success = false;
 }
 
-InputDialog::InputDialog(const InputDialog &inputDialog) : Dialog(inputDialog),
-    description(inputDialog.description),
-    multiline(inputDialog.multiline),
-    maxChars(inputDialog.maxChars),
-    success(inputDialog.success),
-    input(inputDialog.input) {
-}
+InputDialog::InputDialog(const InputDialog &inputDialog) 
+    = default;
 
 const string &InputDialog::getDescription() const {
     return description;

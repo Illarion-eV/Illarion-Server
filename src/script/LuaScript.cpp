@@ -166,8 +166,7 @@ void LuaScript::handleLuaCallError(int errorCode) {
     }
 }
 
-LuaScript::~LuaScript() {
-}
+LuaScript::~LuaScript() = default;
 
 void LuaScript::shutdownLua() {
     World::get()->invalidatePlayerDialogs();

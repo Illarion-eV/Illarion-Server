@@ -27,7 +27,7 @@ LuaLearnScript::LuaLearnScript(const std::string &filename)
     : LuaScript(filename) {
 }
 
-LuaLearnScript::~LuaLearnScript() {}
+LuaLearnScript::~LuaLearnScript() = default;
 
 void LuaLearnScript::learn(Character *cc, TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opponent) {
     character_ptr fuse_cc(cc);

@@ -32,7 +32,7 @@ LuaMonsterScript::LuaMonsterScript(const std::string &filename)
     : LuaScript(filename) {
 }
 
-LuaMonsterScript::~LuaMonsterScript() {}
+LuaMonsterScript::~LuaMonsterScript() = default;
 
 void LuaMonsterScript::onDeath(Character *Monster) {
     character_ptr fuse_Monster(Monster);

@@ -32,9 +32,7 @@ Dialog::Dialog(const string &title, const string &className, const luabind::obje
     }
 }
 
-Dialog::Dialog(const Dialog &dialog):
-    title(dialog.title), className(dialog.className), callback(dialog.callback) {
-}
+Dialog::Dialog(const Dialog &dialog) = default;
 
 const string &Dialog::getClassName() const {
     return className;

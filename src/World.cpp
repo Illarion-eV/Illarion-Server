@@ -105,8 +105,7 @@ World::World() {
 }
 
 
-World::~World() {
-}
+World::~World() = default;
 
 
 void World::turntheworld() {

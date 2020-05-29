@@ -136,7 +136,7 @@ public:
     std::string nameDe;
 
 protected:
-    Monster() {};
+    Monster() = default;;
 
 private:
 

@@ -39,7 +39,7 @@ SpawnPoint::SpawnPoint(const position &pos, int Range, uint16_t Spawnrange, uint
 }
 
 //! Destructor
-SpawnPoint::~SpawnPoint() {}
+SpawnPoint::~SpawnPoint() = default;
 
 //! add new Monstertyp to SpawnList...
 void SpawnPoint::addMonster(TYPE_OF_CHARACTER_ID type, short int count) {

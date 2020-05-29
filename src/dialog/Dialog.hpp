@@ -35,7 +35,7 @@ private:
 public:
     Dialog(const string &title, const string &className, const luabind::object &callback);
     Dialog(const Dialog &dialog);
-    virtual ~Dialog() {};
+    virtual ~Dialog() = default;;
     const string &getTitle() const;
     const string &getClassName() const;
     const luabind::object &getCallback() const;

@@ -58,8 +58,7 @@ NPC::NPC(TYPE_OF_CHARACTER_ID id, const std::string &name, TYPE_OF_RACE_ID race,
 }
 
 
-NPC::~NPC() {
-}
+NPC::~NPC() = default;
 
 void NPC::receiveText(talk_type tt, const std::string &message, Character *cc) {
     if (_script && cc != this && _script->existsEntrypoint("receiveText")) {

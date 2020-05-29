@@ -32,7 +32,7 @@ LuaTriggerScript::LuaTriggerScript(const std::string &filename, const position &
     init_functions();
 }
 
-LuaTriggerScript::~LuaTriggerScript() {}
+LuaTriggerScript::~LuaTriggerScript() = default;
 
 void LuaTriggerScript::init_functions() const {
     const luabind::object &globals = luabind::globals(_luaState);

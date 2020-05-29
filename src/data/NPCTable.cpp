@@ -40,7 +40,7 @@ NPCTable::NPCTable() : _world(World::get()) {
     reload();
 }
 
-NPCTable::~NPCTable() {}
+NPCTable::~NPCTable() = default;
 
 void NPCTable::reload() {
     try {

@@ -27,7 +27,7 @@ LuaDepotScript::LuaDepotScript(const std::string &filename)
     : LuaScript(filename) {
 }
 
-LuaDepotScript::~LuaDepotScript() {}
+LuaDepotScript::~LuaDepotScript() = default;
 
 bool LuaDepotScript::onOpenDepot(Character *cc, const ScriptItem &itm) {
     character_ptr fuse_cc(cc);
