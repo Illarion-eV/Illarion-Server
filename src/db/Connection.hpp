@@ -39,10 +39,10 @@ private:
 
 public:
     explicit Connection(const std::string &connectionString);
-    void beginTransaction(void);
+    void beginTransaction();
     auto query(const std::string &query) -> pqxx::result;
-    void commitTransaction(void);
-    void rollbackTransaction(void);
+    void commitTransaction();
+    void rollbackTransaction();
 
     template<typename T> inline auto quote(const T &t) const -> std::string {
         return internalConnection->quote(t);
