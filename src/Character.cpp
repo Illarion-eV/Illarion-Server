@@ -156,6 +156,7 @@ bool Character::getNextStepDir(const position &goal, direction &dir) const {
     }
 }
 
+Character::Character() : Character(appearance()) {}
 
 Character::Character(const appearance &appearance) : effects(this), waypoints(this), _world(World::get()), _appearance(appearance), attributes(ATTRIBUTECOUNT) {
     setAlive(true);

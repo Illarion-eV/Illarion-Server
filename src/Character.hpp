@@ -72,7 +72,8 @@ public:
         appearance() = default;
     };
 
-    explicit Character(const appearance &appearance = {});
+    Character();
+    explicit Character(const appearance &appearance);
     virtual ~Character();
 
     enum character_type {
