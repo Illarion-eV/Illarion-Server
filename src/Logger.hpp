@@ -107,7 +107,7 @@ private:
 template<LogPriority priority>
 class LogType {
 public:
-    using type = LogStream<(LogPriority)2>;
+    using type = LogStream<priority>;
 };
 
 #define DEACTIVATE_LOG(priority) \
