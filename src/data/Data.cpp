@@ -23,7 +23,7 @@
 #include "script/LuaLongTimeEffectScript.hpp"
 #include "Config.hpp"
 
-#include <stdlib.h>
+#include <cstdlib>
 
 namespace Data {
 

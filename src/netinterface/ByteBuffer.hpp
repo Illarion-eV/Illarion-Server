@@ -20,7 +20,7 @@
 #ifndef _CBYTE_BUFFER_HPP_
 #define _CBYTE_BUFFER_HPP_
 
-#include <stdint.h>
+#include <cstdint>
 #include <mutex>
 
 #define RECV_BUFFERSIZE 100

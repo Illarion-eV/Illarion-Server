@@ -20,7 +20,7 @@
 #ifndef _CONSTANTS_HPP_
 #define _CONSTANTS_HPP_
 
-#include <stdint.h>
+#include <cstdint>
 
 const uint32_t DYNNPC_BASE = 0xFF800000;
 const uint32_t NPC_BASE = 0xFF000000;

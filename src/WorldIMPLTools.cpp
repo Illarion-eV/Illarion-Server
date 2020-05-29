@@ -20,8 +20,8 @@
 
 #include "World.hpp"
 
+#include <cstdlib>
 #include <list>
-#include <stdlib.h>
 #include <range/v3/all.hpp>
 
 #include "Player.hpp"

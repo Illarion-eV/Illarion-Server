@@ -21,11 +21,11 @@
 #define _CBASICSERVERCOMMAND_HPP_
 
 #include "netinterface/BasicCommand.hpp"
-#include <string>
-#include <stdint.h>
-#include <vector>
+#include <cstdint>
 #include <memory>
+#include <string>
 #include <types.hpp>
+#include <vector>
 
 class BasicServerCommand;
 using ServerCommandPointer = std::shared_ptr<BasicServerCommand>;

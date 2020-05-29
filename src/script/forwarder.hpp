@@ -21,11 +21,11 @@
 #ifndef _SCRIPT_FOWARDER_HPP_
 #define _SCRIPT_FOWARDER_HPP_
 
-#include <stdint.h>
-#include <string>
 #include "Character.hpp"
 #include "Container.hpp"
+#include <cstdint>
 #include <luabind/object.hpp>
+#include <string>
 
 namespace map {
     class Field;

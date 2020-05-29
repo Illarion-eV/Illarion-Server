@@ -20,7 +20,7 @@
 #ifndef _TYPES_HPP_
 #define _TYPES_HPP_
 
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 
 using TYPE_OF_ITEM_ID = uint16_t;

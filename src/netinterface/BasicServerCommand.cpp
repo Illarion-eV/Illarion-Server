@@ -19,12 +19,12 @@
 
 #include "BasicServerCommand.hpp"
 #include "BasicCommand.hpp"
-#include <sys/socket.h>
-#include <iostream>
-#include <assert.h>
 #include "Connection.hpp"
-#include "netinterface/NetInterface.hpp"
 #include "Logger.hpp"
+#include "netinterface/NetInterface.hpp"
+#include <cassert>
+#include <iostream>
+#include <sys/socket.h>
 
 BasicServerCommand::BasicServerCommand(unsigned char defByte) : BasicCommand(defByte) {
     STDBUFFERSIZE = 1000;

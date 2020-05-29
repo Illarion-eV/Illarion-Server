@@ -21,10 +21,10 @@
 #define _CBASICCLIENTCOMMAND_HPP_
 
 #include "netinterface/BasicCommand.hpp"
-#include <stdint.h>
+#include <chrono>
+#include <cstdint>
 #include <iostream>
 #include <memory>
-#include <chrono>
 
 class Player;
 class OverflowException {};
