@@ -20,6 +20,7 @@
 #ifndef _CBYTE_BUFFER_HPP_
 #define _CBYTE_BUFFER_HPP_
 
+#include <array>
 #include <cstdint>
 #include <mutex>
 
@@ -44,14 +45,8 @@ public:
     */
     using t_rbuffer = struct {
         uint16_t fill; /*<how much data is currently in this buffer section*/
-        unsigned char buff[ RECV_BUFFERSIZE ]; /*<a pointer to this buffer section*/
+	std::array<unsigned char, RECV_BUFFERSIZE> buff;
     };
-
-    /**
-    * gives the current writing buffer so that data can be added to it
-    * @return a pointer to the current write buffer
-    */
-    auto writeBuff() -> unsigned char *;
 
     /**
     * adds the size of bytes which was written in the current write buff and sets the new write buffer

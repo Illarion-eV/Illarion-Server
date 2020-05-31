@@ -32,6 +32,7 @@
 #include "netinterface/BasicClientCommand.hpp"
 #include "netinterface/BasicServerCommand.hpp"
 #include "netinterface/CommandFactory.hpp"
+#include <array>
 #include <memory>
 #include <boost/asio.hpp>
 #include <deque>
@@ -97,7 +98,7 @@ private:
     void handle_write_shutdown(const boost::system::error_code &error);
 
     //Buffer for the header of messages
-    unsigned char headerBuffer[6];
+    std::array<unsigned char, 6> headerBuffer;
 
     ClientCommandPointer cmd;
     ServerCommandPointer shutdownCmd;

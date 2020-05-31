@@ -490,7 +490,7 @@ MapStripeTC::MapStripeTC(const position &pos, NewClientView::stripedirection dir
     addShortIntToBuffer(pos.y);
     addShortIntToBuffer(pos.z);
     addUnsignedCharToBuffer(static_cast<unsigned char>(dir));
-    map::Field **fields =  World::get()->clientview.mapStripe;
+    const auto &fields =  World::get()->clientview.mapStripe;
     uint8_t numberOfTiles = World::get()->clientview.getMaxTiles();
     addUnsignedCharToBuffer(numberOfTiles);
 

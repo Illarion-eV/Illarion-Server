@@ -63,10 +63,6 @@ auto ByteBuffer::getByte() -> unsigned char {
     return 0;
 }
 
-auto ByteBuffer::writeBuff() -> unsigned char * {
-    return recvBuffer[ wBuff ].buff;
-}
-
 auto ByteBuffer::getReadBuffer() -> bool {
     if (vlock.try_lock()) {
         uint8_t nr = (rBuff + 1) % NUMBEROFBUFFERS;   //get next buffer number

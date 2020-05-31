@@ -59,9 +59,9 @@ LuaScript::LuaScript(std::string filename) {
 
     _filename = filename;
 
-    strcpy(luafile, Config::instance().scriptdir().c_str());
+    luafile = Config::instance().scriptdir();
     std::replace(filename.begin(), filename.end(), '.', '/');
-    strcat(luafile, (filename + ".lua").c_str());
+    luafile = luafile + filename + ".lua";
 
     loadIntoLuaState();
 }
@@ -93,16 +93,14 @@ void LuaScript::initialize() {
 
         init_base_functions();
 
-        char path[100];
-        strcpy(path, Config::instance().scriptdir().c_str());
-        strcat(path, "?.lua");
+        const auto path = Config::instance().scriptdir() + "?.lua";
 
         lua_pushglobaltable(_luaState);
         lua_pushstring(_luaState, "package");
         lua_gettable(_luaState, -2);
         
         lua_pushstring(_luaState, "path");
-        lua_pushstring(_luaState, path);
+        lua_pushstring(_luaState, path.c_str());
         lua_settable(_luaState, -3);
     }
 }
@@ -110,7 +108,7 @@ void LuaScript::initialize() {
 void LuaScript::loadIntoLuaState() {
     luaL_getsubtable(_luaState, LUA_REGISTRYINDEX, "_LOADED");
 
-    int errorCode = luaL_loadfile(_luaState, luafile);
+    int errorCode = luaL_loadfile(_luaState, luafile.c_str());
     handleLuaLoadError(errorCode);
     if (errorCode) return;
 
@@ -124,23 +122,22 @@ void LuaScript::loadIntoLuaState() {
 
 void LuaScript::handleLuaLoadError(int errorCode) {
     if (errorCode) {
-        std::string errorFile(luafile);
 
         switch (errorCode) {
         case LUA_ERRFILE:
-            throw ScriptException("Could not access script file: " + errorFile);
+            throw ScriptException("Could not access script file: " + luafile);
             break;
 
         case LUA_ERRSYNTAX:
-            throw ScriptException("Syntax error in script file: " + errorFile);
+            throw ScriptException("Syntax error in script file: " + luafile);
             break;
 
         case LUA_ERRMEM:
-            throw ScriptException("Insufficient memory for loading script file: " + errorFile);
+            throw ScriptException("Insufficient memory for loading script file: " + luafile);
             break;
 
         default:
-            throw ScriptException("Could not load script file: " + errorFile);
+            throw ScriptException("Could not load script file: " + luafile);
             break;
         }
     }
@@ -148,7 +145,6 @@ void LuaScript::handleLuaLoadError(int errorCode) {
 
 void LuaScript::handleLuaCallError(int errorCode) {
     if (errorCode) {
-        std::string errorFile(luafile);
 
         switch (errorCode) {
         case LUA_ERRRUN:
@@ -156,11 +152,11 @@ void LuaScript::handleLuaCallError(int errorCode) {
             break;
 
         case LUA_ERRMEM:
-            throw ScriptException("Insufficient memory for running script file: " + errorFile);
+            throw ScriptException("Insufficient memory for running script file: " + luafile);
             break;
 
         default:
-            throw ScriptException("Could not load script file: " + errorFile);
+            throw ScriptException("Could not load script file: " + luafile);
             break;
         }
     }
@@ -311,11 +307,9 @@ auto LuaScript::existsEntrypoint(const std::string &entrypoint) const -> bool {
 }
 
 static auto dofile(lua_State *L, const char *fname) -> int {
-    char path[100];
-    strcpy(path, Config::instance().scriptdir().c_str());
-    strcat(path, fname);
+    const auto path = Config::instance().scriptdir() + std::string(fname);
     int n = lua_gettop(L);
-    int status = luaL_loadfile(L, path);
+    int status = luaL_loadfile(L, path.c_str());
 
     if (status != 0) {
         lua_error(L);
@@ -342,7 +336,7 @@ auto getCharForId(TYPE_OF_CHARACTER_ID id) -> Character * {
 }
 
 void LuaScript::init_base_functions() {
-    static const luaL_Reg lualibs[] = {
+    static constexpr std::array<luaL_Reg, 7> lualibs = {{
         {"_G", luaopen_base},
         {LUA_LOADLIBNAME, luaopen_package},
         {LUA_TABLIBNAME, luaopen_table},
@@ -351,13 +345,11 @@ void LuaScript::init_base_functions() {
         {LUA_STRLIBNAME, luaopen_string},
         {LUA_MATHLIBNAME, luaopen_math},
         // {LUA_DBLIBNAME, luaopen_debug},
-        {LUA_BITLIBNAME, luaopen_bit32},
-        {nullptr, nullptr}
-    };
-    const luaL_Reg *lib = lualibs;
+        {LUA_BITLIBNAME, luaopen_bit32}
+    }};
 
-    for (; lib->func; lib++) {
-        luaL_requiref(_luaState, lib->name, lib->func, 1);
+    for (const auto &lib : lualibs) {
+        luaL_requiref(_luaState, lib.name, lib.func, 1);
         lua_pop(_luaState, 1);  // remove lib
     }
 

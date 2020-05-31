@@ -146,7 +146,7 @@ public:
 
     struct s_magic {
         magic_type type;
-        unsigned long int flags[ 4 ];
+	std::array<unsigned long int, 4> flags;
     };
 
     virtual auto getId() const -> TYPE_OF_CHARACTER_ID;
