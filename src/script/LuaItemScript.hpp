@@ -28,7 +28,9 @@
 #include "TableStructs.hpp"
 
 class World;
-class Field;
+namespace map {
+    class Field;
+}
 class Character;
 class ScriptItem;
 
