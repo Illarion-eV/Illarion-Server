@@ -2560,9 +2560,6 @@ auto Player::nls(const std::string &german, const std::string &english) const ->
     case Language::german:
         return german;
 
-    case Language::english:
-        return english;
-
     default:
         return english;
     }

@@ -481,51 +481,15 @@ void CastTS::performAction(Player *player) {
 
 
             if (zauberstab) {
-                switch (player->enemytype) {
-                case Character::player:
+                if (LuaMageScript) {
+                    Target.Type = LUA_CHARACTER;
+                    Target.character = World::get()->findCharacter(player->enemyid);
 
-                    if (LuaMageScript) {
-                        Target.Type = LUA_CHARACTER;
-                        Target.character = World::get()->findCharacter(player->enemyid);
-
-                        if (Target.character != nullptr) {
-                            Target.pos = Target.character->getPosition();
-                        } else {
-                            paramOK = false;
-                        }
+                    if (Target.character != nullptr) {
+                        Target.pos = Target.character->getPosition();
+                    } else {
+                        paramOK = false;
                     }
-
-                    break;
-
-                case Character::npc:
-
-                    if (LuaMageScript) {
-                        Target.Type = LUA_CHARACTER;
-                        Target.character = World::get()->findCharacter(player->enemyid);
-
-                        if (Target.character != nullptr) {
-                            Target.pos = Target.character->getPosition();
-                        } else {
-                            paramOK = false;
-                        }
-                    }
-
-                    break;
-
-                case Character::monster:
-
-                    if (LuaMageScript) {
-                        Target.Type = LUA_CHARACTER;
-                        Target.character = World::get()->findCharacter(player->enemyid);
-
-                        if (Target.character != nullptr) {
-                            Target.pos = Target.character->getPosition();
-                        } else {
-                            paramOK = false;
-                        }
-                    }
-
-                    break;
                 }
             }
             else {

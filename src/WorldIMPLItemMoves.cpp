@@ -161,9 +161,6 @@ auto World::putItemOnInvPos(Character *cc, unsigned char pos) -> bool {
                                 break;
 
                             case FINGER_LEFT_HAND :
-                                flag = FLAG_FINGER;
-                                break;
-
                             case FINGER_RIGHT_HAND :
                                 flag = FLAG_FINGER;
                                 break;

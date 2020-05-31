@@ -39,9 +39,7 @@ void World::sendMessageToAdmin(const std::string &message) {
 
 
 auto World::languagePrefix(int Language) -> std::string {
-    if (Language==0) {
-        return "";
-    } else if (Language==1) {
+    if (Language==1) {
         return "[hum] ";
     } else if (Language==2) {
         return "[dwa] ";

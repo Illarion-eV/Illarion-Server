@@ -94,8 +94,8 @@ MonsterTable::MonsterTable() {
                 } else if (movementType == "crawl") {
                     temprecord.movement = movement_type::crawl;
                 } else {
-                    //TODO: Some proper error handling for invalid data
                     temprecord.movement = movement_type::walk;
+                    Logger::error(LogFacility::Script) << "Monster " << temprecord.nameEn << " ( " << id << ") has illegal movement type: " << movementType << Log::end;
                 }
 
                 if (!row["script"].is_null()) {
