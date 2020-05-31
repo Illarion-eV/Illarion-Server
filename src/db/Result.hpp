@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _RESULT_HPP_
-#define _RESULT_HPP_
+#ifndef RESULT_HPP
+#define RESULT_HPP
 
 #include <pqxx/result.hxx>
 #include <pqxx/result_iterator.hxx>
@@ -34,4 +34,4 @@ using ResultField = pqxx::field;
 using PResult = Result *;
 }
 
-#endif // _RESULT_HPP_
+#endif

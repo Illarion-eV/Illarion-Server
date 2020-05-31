@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef _CBASICCOMMAND_HPP_
-#define _CBASICCOMMAND_HPP_
+#ifndef CBASICCOMMAND_HPP
+#define CBASICCOMMAND_HPP
 
 /**
 *@ingroup Netinterface

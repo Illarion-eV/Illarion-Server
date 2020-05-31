@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef _MAP_HPP_
-#define _MAP_HPP_
+#ifndef MAP_HPP
+#define MAP_HPP
 
 #include <string>
 #include <unordered_map>

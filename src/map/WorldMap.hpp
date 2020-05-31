@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef _WORLDMAP_HPP_
-#define _WORLDMAP_HPP_
+#ifndef WORLDMAP_HPP
+#define WORLDMAP_HPP
 
 #include <vector>
 #include <unordered_map>

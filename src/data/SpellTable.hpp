@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _SPELL_TABLE_HPP_
-#define _SPELL_TABLE_HPP_
+#ifndef SPELL_TABLE_HPP
+#define SPELL_TABLE_HPP
 
 #include <boost/functional/hash/hash.hpp>
 

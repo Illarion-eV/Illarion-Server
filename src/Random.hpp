@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef _RANDOM_HPP_
-#define _RANDOM_HPP_
+#ifndef RANDOM_HPP
+#define RANDOM_HPP
 
 #include <random>
 

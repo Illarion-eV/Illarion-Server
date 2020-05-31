@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _SELECTION_DIALOG_HPP_
-#define _SELECTION_DIALOG_HPP_
+#ifndef SELECTION_DIALOG_HPP
+#define SELECTION_DIALOG_HPP
 
 #include "Item.hpp"
 #include "dialog/Dialog.hpp"

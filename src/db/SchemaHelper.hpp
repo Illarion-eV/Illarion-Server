@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _SCHEMA_HELPER_HPP_
-#define _SCHEMA_HELPER_HPP_
+#ifndef SCHEMA_HELPER_HPP
+#define SCHEMA_HELPER_HPP
 
 #include <string>
 
@@ -35,4 +35,4 @@ public:
 };
 }
 
-#endif // _SCHEMA_HELPER_HPP_
+#endif

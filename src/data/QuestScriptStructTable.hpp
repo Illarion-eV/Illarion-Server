@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _QUEST_SCRIPT_STRUCT_TABLE_HPP_
-#define _QUEST_SCRIPT_STRUCT_TABLE_HPP_
+#ifndef QUEST_SCRIPT_STRUCT_TABLE_HPP
+#define QUEST_SCRIPT_STRUCT_TABLE_HPP
 
 #include "data/ScriptStructTable.hpp"
 #include "data/QuestNodeTable.hpp"

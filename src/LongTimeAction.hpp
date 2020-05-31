@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef _CLONGTIMEACTION_HPP_
-#define _CLONGTIMEACTION_HPP_
+#ifndef CLONGTIMEACTION_HPP
+#define CLONGTIMEACTION_HPP
 
 #include <memory>
 #include "MilTimer.hpp"

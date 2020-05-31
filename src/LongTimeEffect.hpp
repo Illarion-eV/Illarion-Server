@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _LONGTIMEEFFECT_HPP_
-#define _LONGTIMEEFFECT_HPP_
+#ifndef LONGTIMEEFFECT_HPP
+#define LONGTIMEEFFECT_HPP
 
 
 #include <string>

@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef _FIELD_HPP_
-#define _FIELD_HPP_
+#ifndef FIELD_HPP
+#define FIELD_HPP
 
 #include <vector>
 #include <sys/socket.h>

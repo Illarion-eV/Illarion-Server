@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _TABLE_HPP_
-#define _TABLE_HPP_
+#ifndef TABLE_HPP
+#define TABLE_HPP
 
 class Table {
 public:

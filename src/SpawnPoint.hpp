@@ -92,4 +92,4 @@ private:
     std::list<struct SpawnEntryStruct> SpawnTypes;
 };
 
-#endif // NPC_HPP
+#endif

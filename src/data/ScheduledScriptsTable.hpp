@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _SCHEDULED_SCRIPTS_TABLE_HPP_
-#define _SCHEDULED_SCRIPTS_TABLE_HPP_
+#ifndef SCHEDULED_SCRIPTS_TABLE_HPP
+#define SCHEDULED_SCRIPTS_TABLE_HPP
 
 #include <boost/unordered_map.hpp>
 #include <list>

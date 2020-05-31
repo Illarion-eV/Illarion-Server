@@ -18,8 +18,8 @@
  * along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _CLIENT_COMMANDS_HPP_
-#define _CLIENT_COMMANDS_HPP_
+#ifndef CLIENT_COMMANDS_HPP
+#define CLIENT_COMMANDS_HPP
 
 #include <string>
 #include "types.hpp"

@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef _CBASICSERVERCOMMAND_HPP_
-#define _CBASICSERVERCOMMAND_HPP_
+#ifndef CBASICSERVERCOMMAND_HPP
+#define CBASICSERVERCOMMAND_HPP
 
 #include "netinterface/BasicCommand.hpp"
 #include <cstdint>

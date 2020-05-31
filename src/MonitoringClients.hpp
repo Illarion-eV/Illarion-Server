@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef _CMONITORINGCLIENTS_
-#define _CMONITORINGCLIENTS_
+#ifndef CMONITORINGCLIENTS
+#define CMONITORINGCLIENTS
 
 #include <list>
 
@@ -57,4 +57,4 @@ private:
     std::list<Player *> client_list;
     World *_world;  /*< pointer to the gameworld*/
 };
-#endif //_CMONITORINGCLIENTS_
+#endif

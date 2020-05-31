@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _CONTAINER_OBJECT_TABLE_HPP_
-#define _CONTAINER_OBJECT_TABLE_HPP_
+#ifndef CONTAINER_OBJECT_TABLE_HPP
+#define CONTAINER_OBJECT_TABLE_HPP
 
 #include "types.hpp"
 #include "data/StructTable.hpp"

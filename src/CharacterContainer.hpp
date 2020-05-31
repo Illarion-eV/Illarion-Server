@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef _CHARACTERCONTAINER_HPP_
-#define _CHARACTERCONTAINER_HPP_
+#ifndef CHARACTERCONTAINER_HPP
+#define CHARACTERCONTAINER_HPP
 
 #include <string>
 #include <vector>

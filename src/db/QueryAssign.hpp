@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _QUERY_ASSIGN_HPP_
-#define _QUERY_ASSIGN_HPP_
+#ifndef QUERY_ASSIGN_HPP
+#define QUERY_ASSIGN_HPP
 
 #include <string>
 
@@ -47,4 +47,4 @@ protected:
 };
 }
 
-#endif // _QUERY_ASSIGN_HPP_
+#endif

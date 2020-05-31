@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _ARMOR_OBJECT_TABLE_HPP_
-#define _ARMOR_OBJECT_TABLE_HPP_
+#ifndef ARMOR_OBJECT_TABLE_HPP
+#define ARMOR_OBJECT_TABLE_HPP
 
 #include "data/StructTable.hpp"
 #include "types.hpp"

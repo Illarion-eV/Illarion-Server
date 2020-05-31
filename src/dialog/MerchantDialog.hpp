@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _MERCHANT_DIALOG_HPP_
-#define _MERCHANT_DIALOG_HPP_
+#ifndef MERCHANT_DIALOG_HPP
+#define MERCHANT_DIALOG_HPP
 
 #include "Item.hpp"
 #include "dialog/Dialog.hpp"

@@ -18,8 +18,8 @@
  *  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _LUA_SCRIPT_HPP_
-#define _LUA_SCRIPT_HPP_
+#ifndef LUA_SCRIPT_HPP
+#define LUA_SCRIPT_HPP
 
 extern "C" {
 #include <lua.h>

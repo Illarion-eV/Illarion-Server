@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef _CONTAINER_HPP_
-#define _CONTAINER_HPP_
+#ifndef CONTAINER_HPP
+#define CONTAINER_HPP
 
 #define MAXIMALEREKURSIONSTIEFE 100
 

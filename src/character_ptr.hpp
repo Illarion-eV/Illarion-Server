@@ -18,8 +18,8 @@
  *  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _CHARACTER_PTR_HPP_
-#define _CHARACTER_PTR_HPP_
+#ifndef CHARACTER_PTR_HPP
+#define CHARACTER_PTR_HPP
 
 #include "types.hpp"
 

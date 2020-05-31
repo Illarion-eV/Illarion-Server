@@ -122,4 +122,4 @@ protected:
     std::shared_ptr<LuaNPCScript> _script;
 };
 
-#endif // NPC_HPP
+#endif

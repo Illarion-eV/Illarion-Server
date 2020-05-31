@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _DELETE_QUERY_HPP_
-#define _DELETE_QUERY_HPP_
+#ifndef DELETE_QUERY_HPP
+#define DELETE_QUERY_HPP
 
 #include "db/Connection.hpp"
 #include "db/Result.hpp"
@@ -39,4 +39,4 @@ public:
 
 }
 
-#endif // _DELETE_QUERY_HPP_
+#endif

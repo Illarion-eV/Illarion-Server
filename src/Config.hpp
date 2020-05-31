@@ -16,8 +16,8 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __CONFIG_HPP__
-#define __CONFIG_HPP__
+#ifndef CONFIG_HPP
+#define CONFIG_HPP
 
 #include <iostream>
 #include <memory>

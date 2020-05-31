@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _NPC_TABLE_HPP_
-#define _NPC_TABLE_HPP_
+#ifndef NPC_TABLE_HPP
+#define NPC_TABLE_HPP
 
 #include <string>
 #include <list>

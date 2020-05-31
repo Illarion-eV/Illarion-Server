@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef __thread_safe_vector_hpp
-#define __thread_safe_vector_hpp
+#ifndef THREAD_SAFE_VECTOR_HPP
+#define THREAD_SAFE_VECTOR_HPP
 
 #include <list>
 #include <exception>

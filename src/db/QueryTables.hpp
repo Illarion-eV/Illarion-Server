@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _QUERY_TABLES_HPP_
-#define _QUERY_TABLES_HPP_
+#ifndef QUERY_TABLES_HPP
+#define QUERY_TABLES_HPP
 
 #include <string>
 #include <stdexcept>
@@ -49,4 +49,4 @@ protected:
 };
 }
 
-#endif // _QUERY_TABLES_HPP_
+#endif

@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _QUEST_NODE_TABLE_HPP_
-#define _QUEST_NODE_TABLE_HPP_
+#ifndef QUEST_NODE_TABLE_HPP
+#define QUEST_NODE_TABLE_HPP
 
 #include <filesystem>
 #include <fstream>

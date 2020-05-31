@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _DATA_HPP_
-#define _DATA_HPP_
+#ifndef DATA_HPP
+#define DATA_HPP
 
 #include "data/ScriptVariablesTable.hpp"
 #include "data/SkillTable.hpp"

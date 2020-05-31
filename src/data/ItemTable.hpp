@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _COMMON_OBJECT_TABLE_HPP_
-#define _COMMON_OBJECT_TABLE_HPP_
+#ifndef COMMON_OBJECT_TABLE_HPP
+#define COMMON_OBJECT_TABLE_HPP
 
 #include "data/QuestScriptStructTable.hpp"
 #include "script/LuaItemScript.hpp"

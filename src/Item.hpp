@@ -18,8 +18,8 @@
  * along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _ITEM_HPP_
-#define _ITEM_HPP_
+#ifndef ITEM_HPP
+#define ITEM_HPP
 
 #include <vector>
 #include <string>

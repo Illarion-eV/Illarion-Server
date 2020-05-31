@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef _WAYPOINTLIST_HPP_
-#define _WAYPOINTLIST_HPP_
+#ifndef WAYPOINTLIST_HPP
+#define WAYPOINTLIST_HPP
 
 
 #include "globals.hpp"

@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef _TABLESTRUCTS_HPP_
-#define _TABLESTRUCTS_HPP_
+#ifndef TABLESTRUCTS_HPP
+#define TABLESTRUCTS_HPP
 
 #include <map>
 #include <memory>

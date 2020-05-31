@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef _CBYTE_BUFFER_HPP_
-#define _CBYTE_BUFFER_HPP_
+#ifndef CBYTE_BUFFER_HPP
+#define CBYTE_BUFFER_HPP
 
 #include <array>
 #include <cstdint>

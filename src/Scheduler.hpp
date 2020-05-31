@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef _SCHEDULER_HPP_
-#define _SCHEDULER_HPP_
+#ifndef SCHEDULER_HPP
+#define SCHEDULER_HPP
 
 #include <memory>
 #include <string>

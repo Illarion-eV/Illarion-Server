@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _DIALOG_HPP_
-#define _DIALOG_HPP_
+#ifndef DIALOG_HPP
+#define DIALOG_HPP
 
 #include <string>
 #include <luabind/object.hpp>

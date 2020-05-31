@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef _BBIWI_SERVER_COMMANDS_HPP_
-#define _BBIWI_SERVER_COMMANDS_HPP_
+#ifndef BBIWI_SERVER_COMMANDS_HPP
+#define BBIWI_SERVER_COMMANDS_HPP
 
 #include "netinterface/BasicServerCommand.hpp"
 #include "globals.hpp"

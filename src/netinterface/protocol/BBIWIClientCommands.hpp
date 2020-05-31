@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef _BBIWI_CLIENT_COMMANDS_HPP_
-#define _BBIWI_CLIENT_COMMANDS_HPP_
+#ifndef BBIWI_CLIENT_COMMANDS_HPP
+#define BBIWI_CLIENT_COMMANDS_HPP
 
 #include "netinterface/BasicClientCommand.hpp"
 #include "types.hpp"

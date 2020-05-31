@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _MONSTER_ATTACK_TABLE_
-#define _MONSTER_ATTACK_TABLE_
+#ifndef MONSTER_ATTACK_TABLE
+#define MONSTER_ATTACK_TABLE
 
 #include "data/StructTable.hpp"
 

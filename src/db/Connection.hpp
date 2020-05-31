@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _CONNECTION_HPP_
-#define _CONNECTION_HPP_
+#ifndef DB_CONNECTION_HPP
+#define DB_CONNECTION_HPP
 
 #include <memory>
 #include <string>
@@ -58,4 +58,4 @@ public:
 
 }
 
-#endif // _CONNECTION_HPP_
+#endif

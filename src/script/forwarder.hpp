@@ -18,8 +18,8 @@
  *  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _SCRIPT_FOWARDER_HPP_
-#define _SCRIPT_FOWARDER_HPP_
+#ifndef SCRIPT_FOWARDER_HPP
+#define SCRIPT_FOWARDER_HPP
 
 #include "Character.hpp"
 #include "Container.hpp"

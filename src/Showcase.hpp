@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef _SHOWCASE_HPP_
-#define _SHOWCASE_HPP_
+#ifndef SHOWCASE_HPP
+#define SHOWCASE_HPP
 
 class Container;
 

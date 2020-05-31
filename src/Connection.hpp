@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef __CONNECTION_HPP__
-#define __CONNECTION_HPP__
+#ifndef CONNECTION_HPP
+#define CONNECTION_HPP
 
 #include <sys/types.h>
 #include <sys/socket.h>

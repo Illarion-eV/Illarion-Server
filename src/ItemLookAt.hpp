@@ -18,8 +18,8 @@
  * along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _ITEMLOOKAT_HPP_
-#define _ITEMLOOKAT_HPP_
+#ifndef ITEMLOOKAT_HPP
+#define ITEMLOOKAT_HPP
 
 #include <string>
 #include "types.hpp"

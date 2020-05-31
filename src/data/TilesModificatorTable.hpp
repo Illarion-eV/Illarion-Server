@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _TILES_MODIFICATOR_TABLE_HPP_
-#define _TILES_MODIFICATOR_TABLE_HPP_
+#ifndef TILES_MODIFICATOR_TABLE_HPP
+#define TILES_MODIFICATOR_TABLE_HPP
 
 #include "data/StructTable.hpp"
 #include "types.hpp"

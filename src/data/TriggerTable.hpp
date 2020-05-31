@@ -17,8 +17,8 @@
  * You should have received a copy of the GNU Affero General Public License along with
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _TRIGGER_TABLE_HPP_
-#define _TRIGGER_TABLE_HPP_
+#ifndef TRIGGER_TABLE_HPP
+#define TRIGGER_TABLE_HPP
 
 #include "data/QuestScriptStructTable.hpp"
 #include "globals.hpp"

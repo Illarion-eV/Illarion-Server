@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef _CNETINTERFACE_HPP_
-#define _CNETINTERFACE_HPP_
+#ifndef CNETINTERFACE_HPP
+#define CNETINTERFACE_HPP
 
 /**
 *@ingroup Netinterface

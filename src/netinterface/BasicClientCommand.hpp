@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef _CBASICCLIENTCOMMAND_HPP_
-#define _CBASICCLIENTCOMMAND_HPP_
+#ifndef CBASICCLIENTCOMMAND_HPP
+#define CBASICCLIENTCOMMAND_HPP
 
 #include "netinterface/BasicCommand.hpp"
 #include <chrono>

@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _INPUT_DIALOG_HPP_
-#define _INPUT_DIALOG_HPP_
+#ifndef INPUT_DIALOG_HPP
+#define INPUT_DIALOG_HPP
 
 #include "dialog/Dialog.hpp"
 

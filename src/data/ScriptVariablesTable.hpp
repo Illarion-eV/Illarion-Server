@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _SCRIPT_VARIABLES_TABLE_HPP_
-#define _SCRIPT_VARIABLES_TABLE_HPP_
+#ifndef SCRIPT_VARIABLES_TABLE_HPP
+#define SCRIPT_VARIABLES_TABLE_HPP
 
 #include "data/StructTable.hpp"
 

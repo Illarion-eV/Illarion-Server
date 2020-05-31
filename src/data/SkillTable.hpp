@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _SKILL_TABLE_HPP_
-#define _SKILL_TABLE_HPP_
+#ifndef SKILL_TABLE_HPP
+#define SKILL_TABLE_HPP
 
 #include "data/StructTable.hpp"
 #include "types.hpp"

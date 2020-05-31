@@ -18,8 +18,8 @@
  *  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _ATTRIBUTE_HPP_
-#define _ATTRIBUTE_HPP_
+#ifndef ATTRIBUTE_HPP
+#define ATTRIBUTE_HPP
 
 class Attribute {
 public:

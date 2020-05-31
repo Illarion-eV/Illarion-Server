@@ -18,8 +18,8 @@
  * along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _SERVER_COMMANDS_HPP_
-#define _SERVER_COMMANDS_HPP_
+#ifndef SERVER_COMMANDS_HPP
+#define SERVER_COMMANDS_HPP
 
 #include <vector>
 

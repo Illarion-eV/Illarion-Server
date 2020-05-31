@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _A_STAR_HPP_
-#define _A_STAR_HPP_
+#ifndef A_STAR_HPP
+#define A_STAR_HPP
 
 #include <vector>
 #include <boost/assign/list_of.hpp>

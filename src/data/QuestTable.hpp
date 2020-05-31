@@ -17,8 +17,8 @@
  * You should have received a copy of the GNU Affero General Public License along with
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _QUEST_TABLE_HPP_
-#define _QUEST_TABLE_HPP_
+#ifndef QUEST_TABLE_HPP
+#define QUEST_TABLE_HPP
 
 #include "data/ScriptStructTable.hpp"
 

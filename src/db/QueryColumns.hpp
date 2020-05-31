@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _QUERY_COLUMNS_HPP_
-#define _QUERY_COLUMNS_HPP_
+#ifndef QUERY_COLUMNS_HPP
+#define QUERY_COLUMNS_HPP
 
 #include <string>
 #include <boost/cstdint.hpp>
@@ -68,4 +68,4 @@ protected:
 };
 }
 
-#endif // _QUERY_COLUMNS_HPP_
+#endif

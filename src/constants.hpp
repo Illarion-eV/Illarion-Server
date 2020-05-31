@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef _CONSTANTS_HPP_
-#define _CONSTANTS_HPP_
+#ifndef CONSTANTS_HPP
+#define CONSTANTS_HPP
 
 #include <cstdint>
 

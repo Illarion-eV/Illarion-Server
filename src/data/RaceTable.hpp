@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _RACE_ATTRIBUTE_TABLE_HPP_
-#define _RACE_ATTRIBUTE_TABLE_HPP_
+#ifndef RACE_ATTRIBUTE_TABLE_HPP
+#define RACE_ATTRIBUTE_TABLE_HPP
 
 #include "Character.hpp"
 #include "data/StructTable.hpp"

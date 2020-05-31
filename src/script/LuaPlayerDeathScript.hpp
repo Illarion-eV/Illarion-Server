@@ -18,8 +18,8 @@
  *  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _LUA_PLAYER_DEATH_SCRIPT_HPP_
-#define _LUA_PLAYER_DEATH_SCRIPT_HPP_
+#ifndef LUA_PLAYER_DEATH_SCRIPT_HPP
+#define LUA_PLAYER_DEATH_SCRIPT_HPP
 
 #include "LuaScript.hpp"
 

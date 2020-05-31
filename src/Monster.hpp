@@ -146,4 +146,4 @@ private:
     bool _canAttack = true;
 };
 
-#endif // MONSTER_HPP
+#endif

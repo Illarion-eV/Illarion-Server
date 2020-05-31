@@ -18,8 +18,8 @@
  *  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _LUA_LEARN_SCRIPT_HPP_
-#define _LUA_LEARN_SCRIPT_HPP_
+#ifndef LUA_LEARN_SCRIPT_HPP
+#define LUA_LEARN_SCRIPT_HPP
 
 #include "LuaScript.hpp"
 

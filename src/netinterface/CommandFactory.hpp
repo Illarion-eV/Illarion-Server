@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef _CCOMMANDFACTORY_HPP_
-#define _CCOMMANDFACTORY_HPP_
+#ifndef CCOMMANDFACTORY_HPP
+#define CCOMMANDFACTORY_HPP
 
 #include <memory>
 #include <unordered_map>

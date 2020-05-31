@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef _PLAYER_HPP_
-#define _PLAYER_HPP_
+#ifndef PLAYER_HPP
+#define PLAYER_HPP
 
 #include <chrono>
 #include <memory>

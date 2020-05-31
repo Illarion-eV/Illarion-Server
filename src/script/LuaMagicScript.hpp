@@ -18,8 +18,8 @@
  *  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _LUA_MAGIC_SCRIPT_
-#define _LUA_MAGIC_SCRIPT_
+#ifndef LUA_MAGIC_SCRIPT
+#define LUA_MAGIC_SCRIPT
 
 #include "LuaScript.hpp"
 #include "TableStructs.hpp"

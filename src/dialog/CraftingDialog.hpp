@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _CRAFTING_DIALOG_HPP_
-#define _CRAFTING_DIALOG_HPP_
+#ifndef CRAFTING_DIALOG_HPP
+#define CRAFTING_DIALOG_HPP
 
 #include "Item.hpp"
 #include "dialog/Dialog.hpp"

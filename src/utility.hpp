@@ -16,8 +16,8 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _UTILITY_HPP_
-#define _UTILITY_HPP_
+#ifndef UTILITY_HPP
+#define UTILITY_HPP
 
 #include "types.hpp"
 

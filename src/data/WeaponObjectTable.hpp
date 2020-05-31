@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _WEAPON_OBJECT_TABLE_HPP_
-#define _WEAPON_OBJECT_TABLE_HPP_
+#ifndef WEAPON_OBJECT_TABLE_HPP
+#define WEAPON_OBJECT_TABLE_HPP
 
 #include "data/ScriptStructTable.hpp"
 #include "types.hpp"

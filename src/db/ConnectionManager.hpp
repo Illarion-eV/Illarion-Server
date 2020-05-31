@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _CONNECTION_MANAGER_HPP_
-#define _CONNECTION_MANAGER_HPP_
+#ifndef CONNECTION_MANAGER_HPP
+#define CONNECTION_MANAGER_HPP
 
 #include <string>
 #include <stdexcept>

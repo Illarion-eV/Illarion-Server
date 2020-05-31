@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _QUERY_WHERE_HPP_
-#define _QUERY_WHERE_HPP_
+#ifndef QUERY_WHERE_HPP
+#define QUERY_WHERE_HPP
 
 #include <string>
 #include <stack>
@@ -67,4 +67,4 @@ private:
 };
 }
 
-#endif // _QUERY_WHERE_HPP_
+#endif

@@ -17,8 +17,8 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef _InitialConnection_HPP_
-#define _InitialConnection_HPP_
+#ifndef InitialConnection_HPP
+#define InitialConnection_HPP
 
 #include <memory>
 

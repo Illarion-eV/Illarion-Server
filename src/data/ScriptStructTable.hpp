@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _SCRIPT_STRUCT_TABLE_HPP_
-#define _SCRIPT_STRUCT_TABLE_HPP_
+#ifndef SCRIPT_STRUCT_TABLE_HPP
+#define SCRIPT_STRUCT_TABLE_HPP
 
 #include <string>
 #include <vector>

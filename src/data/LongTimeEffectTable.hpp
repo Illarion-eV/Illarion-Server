@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _LONG_TIME_EFFECT_TABLE_HPP_
-#define _LONG_TIME_EFFECT_TABLE_HPP_
+#ifndef LONG_TIME_EFFECT_TABLE_HPP
+#define LONG_TIME_EFFECT_TABLE_HPP
 
 #include "data/ScriptStructTable.hpp"
 #include "TableStructs.hpp"

@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _MONSTER_TABLE_HPP_
-#define _MONSTER_TABLE_HPP_
+#ifndef MONSTER_TABLE_HPP
+#define MONSTER_TABLE_HPP
 
 #include <boost/unordered_map.hpp>
 #include <TableStructs.hpp>
