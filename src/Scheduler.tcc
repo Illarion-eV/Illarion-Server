@@ -36,14 +36,14 @@ auto Task<clock_type>::run() -> bool {
 }
 
 template<typename clock_type>
-void ClockBasedScheduler<clock_type>::addOneshotTask(std::function<void()> task, const std::chrono::nanoseconds delay, const std::string& taskname) {
+void ClockBasedScheduler<clock_type>::addOneshotTask(std::function<void()> task, std::chrono::nanoseconds delay, const std::string& taskname) {
 	std::unique_lock<std::mutex> lock(_container_mutex);
 	typename clock_type::time_point start_time = clock_type::now() + std::chrono::duration_cast<typename clock_type::duration>(delay);
 	_tasks.emplace(task, start_time, std::chrono::nanoseconds::zero(), taskname);
 }
 
 template<typename clock_type>
-void ClockBasedScheduler<clock_type>::addRecurringTask(std::function<void()> task, const std::chrono::nanoseconds interval, const std::string& taskname, bool start_immediately) {
+void ClockBasedScheduler<clock_type>::addRecurringTask(std::function<void()> task, std::chrono::nanoseconds interval, const std::string& taskname, bool start_immediately) {
 	std::unique_lock<std::mutex> lock(_container_mutex);
 	typename clock_type::time_point start_time = clock_type::now();
 	if (!start_immediately)
@@ -52,7 +52,7 @@ void ClockBasedScheduler<clock_type>::addRecurringTask(std::function<void()> tas
 }
 
 template<typename clock_type>
-void ClockBasedScheduler<clock_type>::addRecurringTask(std::function<void()> task, const std::chrono::nanoseconds interval, typename clock_type::time_point first_time, const std::string& taskname) {
+void ClockBasedScheduler<clock_type>::addRecurringTask(std::function<void()> task, std::chrono::nanoseconds interval, typename clock_type::time_point first_time, const std::string& taskname) {
 	std::unique_lock<std::mutex> lock(_container_mutex);
 	_tasks.emplace(task, first_time, interval, taskname);
 }

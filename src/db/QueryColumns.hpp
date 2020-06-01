@@ -64,7 +64,7 @@ protected:
     auto buildQuerySegment() -> std::string &;
     [[nodiscard]] auto getColumnCount() const -> uint32_t;
 
-    void setHideTable(const bool hide);
+    void setHideTable(bool hide);
 };
 }
 

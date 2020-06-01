@@ -50,6 +50,6 @@ auto QueryColumns::getColumnCount() const -> uint32_t {
     return (uint32_t) nextColumn;
 }
 
-void QueryColumns::setHideTable(const bool hide) {
+void QueryColumns::setHideTable(bool hide) {
     hideTable = hide;
 }
