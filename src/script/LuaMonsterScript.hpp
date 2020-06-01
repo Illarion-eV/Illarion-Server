@@ -29,11 +29,11 @@ class World;
 
 class LuaMonsterScript : public LuaScript {
 public:
-    LuaMonsterScript();
+    LuaMonsterScript() = default;
     explicit LuaMonsterScript(const std::string &filename);
     LuaMonsterScript(const LuaMonsterScript &) = delete;
     auto operator=(const LuaMonsterScript &) -> LuaMonsterScript & = delete;
-    ~LuaMonsterScript() override;
+    ~LuaMonsterScript() override = default;
 
     void receiveText(Character *Monster, Character::talk_type tt, const std::string &message, Character *cc);
     void onDeath(Character *Monster);
