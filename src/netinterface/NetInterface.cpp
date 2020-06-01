@@ -56,8 +56,14 @@ auto NetInterface::activate(Player *player) -> bool {
         online = true;
         return true;
     } catch (std::exception &e) {
-        Logger::error(LogFacility::Other)
-                << "Error in NetInterface::activate for " << player->to_string() << ": " << e.what() << Log::end;
+        if (player != nullptr) {
+            Logger::error(LogFacility::Other)
+                    << "Error in NetInterface::activate for " << player->to_string() << ": " << e.what() << Log::end;
+        } else {
+            Logger::error(LogFacility::Other)
+                    << "Error in NetInterface::activate: " << e.what() << Log::end;
+        }
+
         return false;
     }
 }
