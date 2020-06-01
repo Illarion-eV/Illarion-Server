@@ -116,7 +116,7 @@ auto create_item(Character *character, Item::id_type id, Item::number_type numbe
 }
 
 auto getLoot(const Character *character) -> luabind::object {
-    lua_State *_luaState = World::get()->getCurrentScript()->getLuaState();
+    lua_State *_luaState = LuaScript::getLuaState();
     luabind::object lootTable = luabind::newtable(_luaState);
 
     try {
@@ -196,7 +196,7 @@ void log_lua(const std::string &message) {
 
 auto character_getItemList(const Character *character, TYPE_OF_ITEM_ID id) -> luabind::object {
     const auto &content = character->getItemList(id);
-    lua_State *_luaState = World::get()->getCurrentScript()->getLuaState();
+    lua_State *_luaState = LuaScript::getLuaState();
     luabind::object list = luabind::newtable(_luaState);
 
     int index = 1;
@@ -209,7 +209,7 @@ auto character_getItemList(const Character *character, TYPE_OF_ITEM_ID id) -> lu
 }
 
 auto waypointlist_getWaypoints(const WaypointList *wpl) -> luabind::object {
-    lua_State *luaState = World::get()->getCurrentScript()->getLuaState();
+    lua_State *luaState = LuaScript::getLuaState();
     luabind::object list = luabind::newtable(luaState);
 
     int index = 1;
@@ -241,7 +241,7 @@ void waypointlist_addFromList(WaypointList *wpl, const luabind::object &list) {
 }
 
 auto world_LuaLoS(const World *world, const position &startingpos, const position &endingpos) -> luabind::object {
-    lua_State *luaState = world->getCurrentScript()->getLuaState();
+    lua_State *luaState = LuaScript::getLuaState();
     luabind::object list = luabind::newtable(luaState);
     int index = 1;
     auto objects = world->LoS(startingpos, endingpos);
@@ -265,7 +265,7 @@ auto world_LuaLoS(const World *world, const position &startingpos, const positio
 }
 
 auto world_getPlayersOnline(const World *world) -> luabind::object {
-    lua_State *luaState = world->getCurrentScript()->getLuaState();
+    lua_State *luaState = LuaScript::getLuaState();
     luabind::object list = luabind::newtable(luaState);
     int index = 1;
 
