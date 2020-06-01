@@ -19,7 +19,6 @@
  */
 
 #include "Config.hpp"
-
 #include "Logger.hpp"
 
 #include <fstream>
@@ -28,7 +27,7 @@
 std::unique_ptr<Config> Config::_instance = nullptr;
 
 namespace {
-static std::map<std::string, ConfigEntryBase *> config_options;
+std::map<std::string, ConfigEntryBase *> config_options;
 }
 
 auto Config::load(const std::string &config_file) -> bool {
