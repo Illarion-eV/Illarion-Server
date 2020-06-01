@@ -2049,7 +2049,7 @@ void Player::sendAvailableQuests() {
         }
     }
 
-    if (questsAvailableNow.size() > 0 || questsAvailableSoon.size() > 0) {
+    if (!questsAvailableNow.empty() || !questsAvailableSoon.empty()) {
         ServerCommandPointer cmd = std::make_shared<AvailableQuestsTC>(questsAvailableNow, questsAvailableSoon);
         Connection->addCommand(cmd);
     }

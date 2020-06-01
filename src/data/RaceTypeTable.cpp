@@ -167,22 +167,22 @@ auto RaceTypeTable::getRandomRaceConfiguration(TYPE_OF_RACE_ID race) const -> co
     const auto &raceType = it->second;
     raceConfiguration.subType = subType;
 
-    if (raceType.hair.size() > 0) {
+    if (!raceType.hair.empty()) {
         const auto randomHairId = Random::uniform(0, raceType.hair.size() - 1);
         raceConfiguration.hair = raceType.hair[randomHairId];
     }
 
-    if (raceType.beard.size() > 0) {
+    if (!raceType.beard.empty()) {
         const auto randomBeardId = Random::uniform(0, raceType.beard.size() - 1);
         raceConfiguration.beard = raceType.beard[randomBeardId];
     }
 
-    if (raceType.hairColour.size() > 0) {
+    if (!raceType.hairColour.empty()) {
         const auto randomHairColourId = Random::uniform(0, raceType.hairColour.size() - 1);
         raceConfiguration.hairColour = raceType.hairColour[randomHairColourId];
     }
 
-    if (raceType.skinColour.size() > 0) {
+    if (!raceType.skinColour.empty()) {
         const auto randomSkinColourId = Random::uniform(0, raceType.skinColour.size() - 1);
         raceConfiguration.skinColour = raceType.skinColour[randomSkinColourId];
     }

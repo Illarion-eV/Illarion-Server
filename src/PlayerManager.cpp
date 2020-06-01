@@ -117,7 +117,7 @@ void PlayerManager::loginLoop(PlayerManager *pmanager) {
                             }
 
                             // TODO is this check really necessary?
-                            if (loginData->getLoginName() == "" || loginData->getPassword() == "") {
+                            if (loginData->getLoginName().empty() || loginData->getPassword().empty()) {
                                 throw Player::LogoutException(WRONGPWD);
                             }
 
