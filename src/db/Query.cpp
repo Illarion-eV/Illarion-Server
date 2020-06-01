@@ -28,9 +28,7 @@ using namespace Database;
 
 Query::Query() : dbConnection(ConnectionManager::getInstance().getConnection()) {}
 
-Query::Query(const PConnection &connection) {
-    dbConnection = connection;
-}
+Query::Query(const PConnection &connection) { dbConnection = connection; }
 
 Query::Query(const std::string &query) : Query(ConnectionManager::getInstance().getConnection(), query) {}
 
@@ -59,13 +57,9 @@ auto Query::execute() -> Result {
     return result;
 }
 
-void Query::setQuery(const std::string &query) {
-    dbQuery = query;
-}
+void Query::setQuery(const std::string &query) { dbQuery = query; }
 
-auto Query::getConnection() -> PConnection {
-    return dbConnection;
-}
+auto Query::getConnection() -> PConnection { return dbConnection; }
 
 auto Query::escapeKey(const std::string &key) -> std::string {
     if (key.at(0) == '"' && key.at(key.length() - 1) == '"' && !key.empty()) {

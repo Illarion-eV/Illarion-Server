@@ -20,9 +20,7 @@
 
 #include "RaceTable.hpp"
 
-auto RaceTable::getTableName() -> std::string {
-    return "race";
-}
+auto RaceTable::getTableName() -> std::string { return "race"; }
 
 auto RaceTable::getColumnNames() -> std::vector<std::string> {
     return {"race_id",

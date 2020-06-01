@@ -19,10 +19,6 @@
 #ifndef LANGUAGE_HPP
 #define LANGUAGE_HPP
 
-enum class Language
-{
-    german = 0,
-    english = 1
-};
+enum class Language { german = 0, english = 1 };
 
 #endif

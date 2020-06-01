@@ -45,9 +45,7 @@ public:
     NPCTable();
     ~NPCTable();
 
-    [[nodiscard]] auto dataOK() const -> bool {
-        return m_dataOK;
-    };
+    [[nodiscard]] auto dataOK() const -> bool { return m_dataOK; };
 
 private:
     void reload();

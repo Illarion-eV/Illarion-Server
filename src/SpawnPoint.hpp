@@ -48,19 +48,11 @@ public:
     //! callback called by dying monsters belonging to spawnpoint
     void dead(TYPE_OF_CHARACTER_ID type);
 
-    [[nodiscard]] inline auto get_x() const -> int {
-        return spawnpos.x;
-    }
-    [[nodiscard]] inline auto get_y() const -> int {
-        return spawnpos.y;
-    }
-    [[nodiscard]] inline auto get_z() const -> int {
-        return spawnpos.z;
-    }
+    [[nodiscard]] inline auto get_x() const -> int { return spawnpos.x; }
+    [[nodiscard]] inline auto get_y() const -> int { return spawnpos.y; }
+    [[nodiscard]] inline auto get_z() const -> int { return spawnpos.z; }
 
-    [[nodiscard]] inline auto getRange() const -> int {
-        return range;
-    }
+    [[nodiscard]] inline auto getRange() const -> int { return range; }
 
 private:
     // our link to the world...

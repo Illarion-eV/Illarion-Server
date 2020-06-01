@@ -31,29 +31,17 @@ InputDialog::InputDialog(const string &title, string description, bool multiline
 
 InputDialog::InputDialog(const InputDialog &inputDialog) = default;
 
-auto InputDialog::getDescription() const -> const string & {
-    return description;
-}
+auto InputDialog::getDescription() const -> const string & { return description; }
 
-auto InputDialog::isMultiline() const -> bool {
-    return multiline;
-}
+auto InputDialog::isMultiline() const -> bool { return multiline; }
 
-auto InputDialog::getMaxChars() const -> unsigned short {
-    return maxChars;
-}
+auto InputDialog::getMaxChars() const -> unsigned short { return maxChars; }
 
-auto InputDialog::getSuccess() const -> bool {
-    return success;
-}
+auto InputDialog::getSuccess() const -> bool { return success; }
 
-void InputDialog::setSuccess(bool success) {
-    this->success = success;
-}
+void InputDialog::setSuccess(bool success) { this->success = success; }
 
-auto InputDialog::getInput() const -> const string & {
-    return input;
-}
+auto InputDialog::getInput() const -> const string & { return input; }
 
 void InputDialog::setInput(string input) {
     if (maxChars > 0) {

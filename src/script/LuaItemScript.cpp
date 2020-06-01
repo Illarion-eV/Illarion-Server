@@ -24,9 +24,7 @@
 
 #include <utility>
 
-LuaItemScript::LuaItemScript() {
-    init_functions();
-}
+LuaItemScript::LuaItemScript() { init_functions(); }
 
 LuaItemScript::LuaItemScript(const std::string &filename, ItemStruct comstr)
         : LuaScript(filename), _comstr(std::move(comstr)) {

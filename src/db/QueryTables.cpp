@@ -25,9 +25,7 @@
 
 using namespace Database;
 
-QueryTables::QueryTables() {
-    oneTable = false;
-};
+QueryTables::QueryTables() { oneTable = false; };
 
 void QueryTables::addServerTable(const std::string &table) {
     if (oneTable && !tables.empty()) {
@@ -53,10 +51,6 @@ void QueryTables::setAccountTable(const std::string &table) {
     tables = Query::escapeAndChainKeys(Database::SchemaHelper::getAccountSchema(), table);
 }
 
-void QueryTables::setOnlyOneTable(const bool &enabled) {
-    oneTable = enabled;
-}
+void QueryTables::setOnlyOneTable(const bool &enabled) { oneTable = enabled; }
 
-auto QueryTables::buildQuerySegment() -> std::string & {
-    return tables;
-}
+auto QueryTables::buildQuerySegment() -> std::string & { return tables; }

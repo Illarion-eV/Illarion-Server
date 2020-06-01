@@ -70,9 +70,7 @@ public:
         clear();
     }
 
-    auto exists(const IdType &id) const -> bool {
-        return structs.count(id) > 0;
-    }
+    auto exists(const IdType &id) const -> bool { return structs.count(id) > 0; }
 
     auto operator[](const IdType &id) -> const StructType & {
         try {
@@ -84,17 +82,11 @@ public:
         }
     }
 
-    auto get(const IdType &id) const -> const StructType & {
-        return structs.at(id);
-    }
+    auto get(const IdType &id) const -> const StructType & { return structs.at(id); }
 
-    auto begin() const -> typename ContainerType::const_iterator {
-        return structs.cbegin();
-    }
+    auto begin() const -> typename ContainerType::const_iterator { return structs.cbegin(); }
 
-    auto end() const -> typename ContainerType::const_iterator {
-        return structs.cend();
-    }
+    auto end() const -> typename ContainerType::const_iterator { return structs.cend(); }
 
 protected:
     virtual auto getTableName() -> std::string = 0;
@@ -102,25 +94,15 @@ protected:
     virtual auto assignId(const Database::ResultTuple &row) -> IdType = 0;
     virtual auto assignTable(const Database::ResultTuple &row) -> StructType = 0;
 
-    virtual void clear() {
-        structBuffer.clear();
-    }
+    virtual void clear() { structBuffer.clear(); }
 
-    virtual void evaluateRow(const Database::ResultTuple &row) {
-        emplace(assignId(row), assignTable(row));
-    }
+    virtual void evaluateRow(const Database::ResultTuple &row) { emplace(assignId(row), assignTable(row)); }
 
-    virtual void emplace(const IdType &id, const StructType &data) {
-        structBuffer.emplace(id, data);
-    }
+    virtual void emplace(const IdType &id, const StructType &data) { structBuffer.emplace(id, data); }
 
-    auto erase(const IdType &id) -> bool {
-        return structs.erase(id) > 0;
-    }
+    auto erase(const IdType &id) -> bool { return structs.erase(id) > 0; }
 
-    auto get(const IdType &id) -> StructType & {
-        return structs[id];
-    }
+    auto get(const IdType &id) -> StructType & { return structs[id]; }
 
 private:
     ContainerType structs;

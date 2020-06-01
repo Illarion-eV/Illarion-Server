@@ -187,9 +187,7 @@ void World::addPlayerImmediateActionQueue(Player *player) {
     immediatePlayerCommands.push(player);
 }
 
-void World::invalidatePlayerDialogs() {
-    Players.for_each(&Player::invalidateDialogs);
-}
+void World::invalidatePlayerDialogs() { Players.for_each(&Player::invalidateDialogs); }
 
 // init the respawn locations... for now still hardcoded...
 auto World::initRespawns() -> bool {
@@ -548,9 +546,8 @@ auto World::getTargetsInRange(const position &pos, int radius) const -> std::vec
     const auto monsters = Monsters.findAllAliveCharactersInRangeOf(pos, range);
     std::vector<Character *> targets;
     targets.insert(targets.end(), players.begin(), players.end());
-    std::remove_copy_if(monsters.begin(), monsters.end(), std::back_inserter(targets), [&](const auto &monster) {
-        return pos == monster->getPosition();
-    });
+    std::remove_copy_if(monsters.begin(), monsters.end(), std::back_inserter(targets),
+                        [&](const auto &monster) { return pos == monster->getPosition(); });
 
     return targets;
 }
@@ -619,47 +616,23 @@ static auto getNextIGDayTime() -> std::chrono::steady_clock::time_point {
 }
 
 void World::initScheduler() {
-    scheduler.addRecurringTask(
-            [&] {
-                Players.for_each(reduceMC);
-            },
-            std::chrono::seconds(10), "increase_player_learn_points");
+    scheduler.addRecurringTask([&] { Players.for_each(reduceMC); }, std::chrono::seconds(10),
+                               "increase_player_learn_points");
     scheduler.addRecurringTask(
             [&] {
                 Monsters.for_each(reduceMC);
                 Npc.for_each(reduceMC);
             },
             std::chrono::seconds(10), "increase_monster_learn_points");
-    scheduler.addRecurringTask(
-            [&] {
-                monitoringClientList->CheckClients();
-            },
-            std::chrono::milliseconds(250), "check_monitoring_clients");
-    scheduler.addRecurringTask(
-            [&] {
-                scheduledScripts->nextCycle();
-            },
-            std::chrono::seconds(1), "check_scheduled_scripts");
-    scheduler.addRecurringTask(
-            [&] {
-                ageInventory();
-            },
-            std::chrono::minutes(3), "age_inventory");
-    scheduler.addRecurringTask(
-            [&] {
-                ageMaps();
-            },
-            std::chrono::minutes(3), "age_maps");
-    scheduler.addRecurringTask(
-            [&] {
-                turntheworld();
-            },
-            std::chrono::milliseconds(100), "turntheworld");
-    scheduler.addRecurringTask(
-            [&] {
-                sendIGTimeToAllPlayers();
-            },
-            std::chrono::hours(8), getNextIGDayTime(), "update_ig_day");
+    scheduler.addRecurringTask([&] { monitoringClientList->CheckClients(); }, std::chrono::milliseconds(250),
+                               "check_monitoring_clients");
+    scheduler.addRecurringTask([&] { scheduledScripts->nextCycle(); }, std::chrono::seconds(1),
+                               "check_scheduled_scripts");
+    scheduler.addRecurringTask([&] { ageInventory(); }, std::chrono::minutes(3), "age_inventory");
+    scheduler.addRecurringTask([&] { ageMaps(); }, std::chrono::minutes(3), "age_maps");
+    scheduler.addRecurringTask([&] { turntheworld(); }, std::chrono::milliseconds(100), "turntheworld");
+    scheduler.addRecurringTask([&] { sendIGTimeToAllPlayers(); }, std::chrono::hours(8), getNextIGDayTime(),
+                               "update_ig_day");
 }
 
 auto World::executeUserCommand(Player *user, const std::string &input, const CommandMap &commands) -> bool {

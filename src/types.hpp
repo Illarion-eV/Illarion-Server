@@ -68,8 +68,7 @@ using TYPE_OF_QUESTSTATUS = int32_t;
 using TYPE_OF_GERMAN = std::string;
 using TYPE_OF_ENGLISH = std::string;
 
-enum direction
-{
+enum direction {
     dir_north = 0,
     dir_northeast = 1,
     dir_east = 2,
@@ -83,12 +82,7 @@ enum direction
     dir_none = 10
 };
 
-enum class movement_type
-{
-    walk = 0,
-    fly = 1,
-    crawl = 2
-};
+enum class movement_type { walk = 0, fly = 1, crawl = 2 };
 
 struct Colour {
     uint8_t red = 0xFF, green = 0xFF, blue = 0xFF, alpha = 0xFF;

@@ -58,9 +58,7 @@ QuestProgressTC::QuestProgressTC(TYPE_OF_QUEST_ID id, const std::string &title, 
     }
 }
 
-AbortQuestTC::AbortQuestTC(TYPE_OF_QUEST_ID id) : BasicServerCommand(SC_ABORTQUEST_TC) {
-    addShortIntToBuffer(id);
-}
+AbortQuestTC::AbortQuestTC(TYPE_OF_QUEST_ID id) : BasicServerCommand(SC_ABORTQUEST_TC) { addShortIntToBuffer(id); }
 
 AvailableQuestsTC::AvailableQuestsTC(const std::vector<position> &availableNow,
                                      const std::vector<position> &availableSoon)
@@ -297,13 +295,9 @@ AnimationTC::AnimationTC(TYPE_OF_CHARACTER_ID id, uint8_t animID) : BasicServerC
     addUnsignedCharToBuffer(animID);
 }
 
-BookTC::BookTC(uint16_t bookID) : BasicServerCommand(SC_BOOK_TC) {
-    addShortIntToBuffer(bookID);
-}
+BookTC::BookTC(uint16_t bookID) : BasicServerCommand(SC_BOOK_TC) { addShortIntToBuffer(bookID); }
 
-RemoveCharTC::RemoveCharTC(TYPE_OF_CHARACTER_ID id) : BasicServerCommand(SC_REMOVECHAR_TC) {
-    addIntToBuffer(id);
-}
+RemoveCharTC::RemoveCharTC(TYPE_OF_CHARACTER_ID id) : BasicServerCommand(SC_REMOVECHAR_TC) { addIntToBuffer(id); }
 
 UpdateTimeTC::UpdateTimeTC(unsigned char hour, unsigned char minute, unsigned char day, unsigned char month,
                            short int year)
@@ -315,9 +309,7 @@ UpdateTimeTC::UpdateTimeTC(unsigned char hour, unsigned char minute, unsigned ch
     addShortIntToBuffer(year);
 }
 
-LogOutTC::LogOutTC(unsigned char reason) : BasicServerCommand(SC_LOGOUT_TC) {
-    addUnsignedCharToBuffer(reason);
-}
+LogOutTC::LogOutTC(unsigned char reason) : BasicServerCommand(SC_LOGOUT_TC) { addUnsignedCharToBuffer(reason); }
 
 TargetLostTC::TargetLostTC() : BasicServerCommand(SC_TARGETLOST_TC) {}
 
@@ -580,9 +572,7 @@ InformTC::InformTC(Character::informType type, const std::string &text) : BasicS
     addStringToBuffer(text);
 }
 
-MusicTC::MusicTC(short int title) : BasicServerCommand(SC_MUSIC_TC) {
-    addShortIntToBuffer(title);
-}
+MusicTC::MusicTC(short int title) : BasicServerCommand(SC_MUSIC_TC) { addShortIntToBuffer(title); }
 
 MusicDefaultTC::MusicDefaultTC() : BasicServerCommand(SC_MUSICDEFAULT_TC) {}
 
@@ -626,9 +616,7 @@ UpdateWeatherTC::UpdateWeatherTC(const WeatherStruct &weather) : BasicServerComm
     addUnsignedCharToBuffer(weather.temperature);
 }
 
-IdTC::IdTC(int id) : BasicServerCommand(SC_ID_TC) {
-    addIntToBuffer(id);
-}
+IdTC::IdTC(int id) : BasicServerCommand(SC_ID_TC) { addIntToBuffer(id); }
 
 UpdateInventoryPosTC::UpdateInventoryPosTC(unsigned char pos, TYPE_OF_ITEM_ID id, Item::number_type number)
         : BasicServerCommand(SC_UPDATEINVENTORYPOS_TC) {

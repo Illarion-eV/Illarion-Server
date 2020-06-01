@@ -69,13 +69,9 @@ void BasicServerCommand::addHeader() {
     }
 }
 
-auto BasicServerCommand::getLength() const -> int {
-    return bufferPos;
-}
+auto BasicServerCommand::getLength() const -> int { return bufferPos; }
 
-auto BasicServerCommand::cmdData() -> char * {
-    return buffer;
-}
+auto BasicServerCommand::cmdData() -> char * { return buffer; }
 
 void BasicServerCommand::addStringToBuffer(const std::string &data) {
     unsigned short int count = data.length();

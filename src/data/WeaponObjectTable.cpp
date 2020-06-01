@@ -20,9 +20,7 @@
 
 #include "data/WeaponObjectTable.hpp"
 
-auto WeaponObjectTable::getTableName() -> std::string {
-    return "weapon";
-}
+auto WeaponObjectTable::getTableName() -> std::string { return "weapon"; }
 
 auto WeaponObjectTable::getColumnNames() -> std::vector<std::string> {
     return {"wp_itemid",        "wp_attack",         "wp_defence",      "wp_accuracy",         "wp_range",

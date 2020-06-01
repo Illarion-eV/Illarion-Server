@@ -33,9 +33,7 @@
 
 #include <iostream>
 
-NPCTable::NPCTable() : _world(World::get()) {
-    reload();
-}
+NPCTable::NPCTable() : _world(World::get()) { reload(); }
 
 NPCTable::~NPCTable() = default;
 

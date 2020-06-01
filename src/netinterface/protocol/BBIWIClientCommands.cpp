@@ -28,13 +28,9 @@ BBBroadCastTS::BBBroadCastTS() : BasicClientCommand(BB_BROADCAST_TS) {}
 
 BBBroadCastTS::~BBBroadCastTS() = default;
 
-void BBBroadCastTS::decodeData() {
-    msg = getStringFromBuffer();
-}
+void BBBroadCastTS::decodeData() { msg = getStringFromBuffer(); }
 
-void BBBroadCastTS::performAction(Player *player) {
-    World::get()->broadcast_command(player, msg);
-}
+void BBBroadCastTS::performAction(Player *player) { World::get()->broadcast_command(player, msg); }
 
 auto BBBroadCastTS::clone() -> ClientCommandPointer {
     ClientCommandPointer cmd = std::make_shared<BBBroadCastTS>();
@@ -92,9 +88,7 @@ BBServerCommandTS::BBServerCommandTS() : BasicClientCommand(BB_SERVERCOMMAND_TS)
 
 BBServerCommandTS::~BBServerCommandTS() = default;
 
-void BBServerCommandTS::decodeData() {
-    _command = getStringFromBuffer();
-}
+void BBServerCommandTS::decodeData() { _command = getStringFromBuffer(); }
 
 void BBServerCommandTS::performAction(Player *player) {
     if (_command == "nuke") {
@@ -185,9 +179,7 @@ void BBTalktoTS::decodeData() {
     msg = getStringFromBuffer();
 }
 
-void BBTalktoTS::performAction(Player *player) {
-    World::get()->talkto_command(player, std::to_string(id) + "," + msg);
-}
+void BBTalktoTS::performAction(Player *player) { World::get()->talkto_command(player, std::to_string(id) + "," + msg); }
 
 auto BBTalktoTS::clone() -> ClientCommandPointer {
     ClientCommandPointer cmd = std::make_shared<BBTalktoTS>();
@@ -200,9 +192,7 @@ BBDisconnectTS::~BBDisconnectTS() = default;
 
 void BBDisconnectTS::decodeData() {}
 
-void BBDisconnectTS::performAction(Player *player) {
-    player->Connection->closeConnection();
-}
+void BBDisconnectTS::performAction(Player *player) { player->Connection->closeConnection(); }
 
 auto BBDisconnectTS::clone() -> ClientCommandPointer {
     ClientCommandPointer cmd = std::make_shared<BBDisconnectTS>();
@@ -215,9 +205,7 @@ BBKeepAliveTS::~BBKeepAliveTS() = default;
 
 void BBKeepAliveTS::decodeData() {}
 
-void BBKeepAliveTS::performAction(Player *player) {
-    time(&(player->lastkeepalive));
-}
+void BBKeepAliveTS::performAction(Player *player) { time(&(player->lastkeepalive)); }
 
 auto BBKeepAliveTS::clone() -> ClientCommandPointer {
     ClientCommandPointer cmd = std::make_shared<BBKeepAliveTS>();

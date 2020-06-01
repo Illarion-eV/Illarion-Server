@@ -20,9 +20,7 @@
 
 #include "ItemTable.hpp"
 
-auto ItemTable::getTableName() -> std::string {
-    return "items";
-}
+auto ItemTable::getTableName() -> std::string { return "items"; }
 
 auto ItemTable::getColumnNames() -> std::vector<std::string> {
     return {"itm_id",
@@ -75,9 +73,7 @@ auto ItemTable::assignScriptName(const Database::ResultTuple &row) -> std::strin
     return row["itm_script"].as<std::string>("");
 }
 
-auto ItemTable::getQuestScripts() -> NodeRange {
-    return QuestNodeTable::getInstance().getItemNodes();
-}
+auto ItemTable::getQuestScripts() -> NodeRange { return QuestNodeTable::getInstance().getItemNodes(); }
 
 /*
 TYPE_OF_ITEM_ID ItemTable::calcInfiniteRot(TYPE_OF_ITEM_ID id, std::map<TYPE_OF_ITEM_ID, bool> &visited,

@@ -22,9 +22,7 @@
 #include <cctype>
 #include <string>
 
-auto mypred(char c1, char c2) -> bool {
-    return tolower(c1) == tolower(c2);
-}
+auto mypred(char c1, char c2) -> bool { return tolower(c1) == tolower(c2); }
 
 auto comparestrings_nocase(const std::string &s1, const std::string &s2) -> bool {
     if (s1.size() != s2.size()) {

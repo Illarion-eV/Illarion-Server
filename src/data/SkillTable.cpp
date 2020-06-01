@@ -20,9 +20,7 @@
 
 #include "data/SkillTable.hpp"
 
-auto SkillTable::getTableName() -> std::string {
-    return "skills";
-}
+auto SkillTable::getTableName() -> std::string { return "skills"; }
 
 auto SkillTable::getColumnNames() -> std::vector<std::string> {
     return {"skl_skill_id", "skl_name", "skl_name_english", "skl_name_german"};

@@ -33,8 +33,7 @@
 #define MIN_LOGLEVEL 6
 #endif
 
-enum class LogFacility
-{
+enum class LogFacility {
     Database = LOG_LOCAL1,
     World = LOG_LOCAL2,
     Script = LOG_LOCAL3,
@@ -44,8 +43,7 @@ enum class LogFacility
     Other = LOG_LOCAL7
 };
 
-enum class LogPriority
-{
+enum class LogPriority {
     EMERGENCY = LOG_EMERG,
     ALERT = LOG_ALERT,
     CRITICAL = LOG_CRIT,
@@ -66,13 +64,9 @@ static end_t end __attribute__((unused));
 class NullStream {
 public:
     inline constexpr NullStream() = default;
-    inline auto operator()(LogFacility facility) -> NullStream & {
-        return *this;
-    }
+    inline auto operator()(LogFacility facility) -> NullStream & { return *this; }
 
-    template <typename T> inline auto operator<<(const T & /*unused*/) -> NullStream & {
-        return *this;
-    }
+    template <typename T> inline auto operator<<(const T & /*unused*/) -> NullStream & { return *this; }
 };
 
 template <LogPriority priority> class LogStream {

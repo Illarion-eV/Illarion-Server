@@ -27,8 +27,7 @@
 
 #include <string>
 
-enum clientcommands
-{
+enum clientcommands {
     C_LOGIN_TS = 0x0D,
     C_SCREENSIZE_TS = 0xA0,
     C_CHARMOVE_TS = 0x10,

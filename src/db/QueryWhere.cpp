@@ -26,13 +26,9 @@ using namespace Database;
 
 QueryWhere::QueryWhere(const Connection &connection) : connection(connection) {}
 
-void QueryWhere::andConditions() {
-    mergeConditions("AND");
-}
+void QueryWhere::andConditions() { mergeConditions("AND"); }
 
-void QueryWhere::orConditions() {
-    mergeConditions("OR");
-}
+void QueryWhere::orConditions() { mergeConditions("OR"); }
 
 auto QueryWhere::buildQuerySegment() -> std::string {
     while (!conditionsStack.empty()) {

@@ -45,9 +45,7 @@ SpawnPoint::~SpawnPoint() = default;
 //! add new Monstertyp to SpawnList...
 void SpawnPoint::addMonster(TYPE_OF_CHARACTER_ID type, short int count) {
     using namespace ranges;
-    auto isType = [type](const auto &spawn) {
-        return spawn.typ == type;
-    };
+    auto isType = [type](const auto &spawn) { return spawn.typ == type; };
     auto result = find_if(SpawnTypes, isType);
 
     if (result != SpawnTypes.end()) {

@@ -38,12 +38,8 @@ private:
 public:
     explicit Ingredient(TYPE_OF_ITEM_ID item) : item(item), number(1){};
     Ingredient(TYPE_OF_ITEM_ID item, uint8_t number) : item(item), number(number){};
-    [[nodiscard]] auto getItem() const -> TYPE_OF_ITEM_ID {
-        return item;
-    };
-    [[nodiscard]] auto getNumber() const -> uint8_t {
-        return number;
-    };
+    [[nodiscard]] auto getItem() const -> TYPE_OF_ITEM_ID { return item; };
+    [[nodiscard]] auto getNumber() const -> uint8_t { return number; };
 };
 
 class Craftable {
@@ -75,21 +71,11 @@ public:
             addIngredient(ingredient.getItem(), ingredient.getNumber());
         }
     };
-    [[nodiscard]] auto getGroup() const -> uint8_t {
-        return group;
-    };
-    [[nodiscard]] auto getItem() const -> TYPE_OF_ITEM_ID {
-        return item;
-    };
-    [[nodiscard]] auto getName() const -> const string & {
-        return name;
-    };
-    [[nodiscard]] auto getDecisecondsToCraft() const -> uint16_t {
-        return decisecondsToCraft;
-    };
-    [[nodiscard]] auto getCraftedStackSize() const -> uint8_t {
-        return craftedStackSize;
-    };
+    [[nodiscard]] auto getGroup() const -> uint8_t { return group; };
+    [[nodiscard]] auto getItem() const -> TYPE_OF_ITEM_ID { return item; };
+    [[nodiscard]] auto getName() const -> const string & { return name; };
+    [[nodiscard]] auto getDecisecondsToCraft() const -> uint16_t { return decisecondsToCraft; };
+    [[nodiscard]] auto getCraftedStackSize() const -> uint8_t { return craftedStackSize; };
     void addIngredient(TYPE_OF_ITEM_ID item) {
         if (ingredients.size() < MAXINGREDIENTS) {
             ingredients.emplace_back(item);
@@ -100,15 +86,9 @@ public:
             ingredients.emplace_back(item, number);
         }
     };
-    [[nodiscard]] auto getIngredientsSize() const -> index_t {
-        return ingredients.size();
-    };
-    [[nodiscard]] auto begin() const -> ingredient_iterator {
-        return ingredients.cbegin();
-    };
-    [[nodiscard]] auto end() const -> ingredient_iterator {
-        return ingredients.cend();
-    };
+    [[nodiscard]] auto getIngredientsSize() const -> index_t { return ingredients.size(); };
+    [[nodiscard]] auto begin() const -> ingredient_iterator { return ingredients.cbegin(); };
+    [[nodiscard]] auto end() const -> ingredient_iterator { return ingredients.cend(); };
 };
 
 class CraftingDialog : public Dialog {
@@ -119,8 +99,7 @@ public:
     using craftables_t = std::unordered_map<uint8_t, Craftable>;
     using craftable_iterator = craftables_t::const_iterator;
 
-    enum Result
-    {
+    enum Result {
         playerAborts = 0,
         playerCrafts = 1,
         playerLooksAtCraftable = 2,

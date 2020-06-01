@@ -31,177 +31,112 @@ public:
     static const uint8_t MAX_GEM_LEVEL = 10;
     static const uint8_t MAX_DURABILITY = 100;
 
-    enum Rareness
-    {
+    enum Rareness {
         commonItem = 1,
         uncommonItem = 2,
         rareItem = 3,
         epicItem = 4,
     };
 
-    void setName(const std::string &name) {
-        this->name = name;
-    }
-    [[nodiscard]] auto getName() const -> const std::string & {
-        return name;
-    }
+    void setName(const std::string &name) { this->name = name; }
+    [[nodiscard]] auto getName() const -> const std::string & { return name; }
 
-    void setRareness(Rareness rareness) {
-        this->rareness = rareness;
-    }
-    [[nodiscard]] auto getRareness() const -> Rareness {
-        return rareness;
-    }
+    void setRareness(Rareness rareness) { this->rareness = rareness; }
+    [[nodiscard]] auto getRareness() const -> Rareness { return rareness; }
 
-    void setDescription(const std::string &description) {
-        this->description = description;
-    }
-    [[nodiscard]] auto getDescription() const -> const std::string & {
-        return description;
-    }
+    void setDescription(const std::string &description) { this->description = description; }
+    [[nodiscard]] auto getDescription() const -> const std::string & { return description; }
 
-    void setCraftedBy(const std::string &craftedBy) {
-        this->craftedBy = craftedBy;
-    }
-    [[nodiscard]] auto getCraftedBy() const -> const std::string & {
-        return craftedBy;
-    }
+    void setCraftedBy(const std::string &craftedBy) { this->craftedBy = craftedBy; }
+    [[nodiscard]] auto getCraftedBy() const -> const std::string & { return craftedBy; }
 
-    void setType(const std::string &type) {
-        this->type = type;
-    }
-    [[nodiscard]] auto getType() const -> const std::string & {
-        return type;
-    }
+    void setType(const std::string &type) { this->type = type; }
+    [[nodiscard]] auto getType() const -> const std::string & { return type; }
 
     void setLevel(TYPE_OF_ITEMLEVEL level) {
         if (level <= MAX_ITEMLEVEL) {
             this->level = level;
         }
     }
-    [[nodiscard]] auto getLevel() const -> TYPE_OF_ITEMLEVEL {
-        return level;
-    }
+    [[nodiscard]] auto getLevel() const -> TYPE_OF_ITEMLEVEL { return level; }
 
-    void setUsable(bool usable) {
-        this->usable = usable;
-    }
-    [[nodiscard]] auto isUsable() const -> bool {
-        return usable;
-    }
+    void setUsable(bool usable) { this->usable = usable; }
+    [[nodiscard]] auto isUsable() const -> bool { return usable; }
 
-    void setWeight(TYPE_OF_WEIGHT weight) {
-        this->weight = weight;
-    }
-    [[nodiscard]] auto getWeight() const -> TYPE_OF_WEIGHT {
-        return weight;
-    }
+    void setWeight(TYPE_OF_WEIGHT weight) { this->weight = weight; }
+    [[nodiscard]] auto getWeight() const -> TYPE_OF_WEIGHT { return weight; }
 
-    void setWorth(TYPE_OF_WORTH worth) {
-        this->worth = worth;
-    }
-    [[nodiscard]] auto getWorth() const -> TYPE_OF_WORTH {
-        return worth;
-    }
+    void setWorth(TYPE_OF_WORTH worth) { this->worth = worth; }
+    [[nodiscard]] auto getWorth() const -> TYPE_OF_WORTH { return worth; }
 
-    void setQualityText(const std::string &qualityText) {
-        this->qualityText = qualityText;
-    }
-    [[nodiscard]] auto getQualityText() const -> const std::string & {
-        return qualityText;
-    }
+    void setQualityText(const std::string &qualityText) { this->qualityText = qualityText; }
+    [[nodiscard]] auto getQualityText() const -> const std::string & { return qualityText; }
 
-    void setDurabilityText(const std::string &durabilityText) {
-        this->durabilityText = durabilityText;
-    }
-    [[nodiscard]] auto getDurabilityText() const -> const std::string & {
-        return durabilityText;
-    }
+    void setDurabilityText(const std::string &durabilityText) { this->durabilityText = durabilityText; }
+    [[nodiscard]] auto getDurabilityText() const -> const std::string & { return durabilityText; }
 
     void setDurabilityValue(uint8_t durabilityValue) {
         if (durabilityValue <= MAX_DURABILITY) {
             this->durabilityValue = durabilityValue;
         }
     }
-    [[nodiscard]] auto getDurabilityValue() const -> uint8_t {
-        return durabilityValue;
-    }
+    [[nodiscard]] auto getDurabilityValue() const -> uint8_t { return durabilityValue; }
 
     void setDiamondLevel(uint8_t diamondLevel) {
         if (diamondLevel <= MAX_GEM_LEVEL) {
             this->diamondLevel = diamondLevel;
         }
     }
-    [[nodiscard]] auto getDiamondLevel() const -> uint8_t {
-        return diamondLevel;
-    }
+    [[nodiscard]] auto getDiamondLevel() const -> uint8_t { return diamondLevel; }
 
     void setEmeraldLevel(uint8_t emeraldLevel) {
         if (emeraldLevel <= MAX_GEM_LEVEL) {
             this->emeraldLevel = emeraldLevel;
         }
     }
-    [[nodiscard]] auto getEmeraldLevel() const -> uint8_t {
-        return emeraldLevel;
-    }
+    [[nodiscard]] auto getEmeraldLevel() const -> uint8_t { return emeraldLevel; }
 
     void setRubyLevel(uint8_t rubyLevel) {
         if (rubyLevel <= MAX_GEM_LEVEL) {
             this->rubyLevel = rubyLevel;
         }
     }
-    [[nodiscard]] auto getRubyLevel() const -> uint8_t {
-        return rubyLevel;
-    }
+    [[nodiscard]] auto getRubyLevel() const -> uint8_t { return rubyLevel; }
 
     void setSapphireLevel(uint8_t sapphireLevel) {
         if (sapphireLevel <= MAX_GEM_LEVEL) {
             this->sapphireLevel = sapphireLevel;
         }
     }
-    [[nodiscard]] auto getSapphireLevel() const -> uint8_t {
-        return sapphireLevel;
-    }
+    [[nodiscard]] auto getSapphireLevel() const -> uint8_t { return sapphireLevel; }
 
     void setAmethystLevel(uint8_t amethystLevel) {
         if (amethystLevel <= MAX_GEM_LEVEL) {
             this->amethystLevel = amethystLevel;
         }
     }
-    [[nodiscard]] auto getAmethystLevel() const -> uint8_t {
-        return amethystLevel;
-    }
+    [[nodiscard]] auto getAmethystLevel() const -> uint8_t { return amethystLevel; }
 
     void setObsidianLevel(uint8_t obsidianLevel) {
         if (obsidianLevel <= MAX_GEM_LEVEL) {
             this->obsidianLevel = obsidianLevel;
         }
     }
-    [[nodiscard]] auto getObsidianLevel() const -> uint8_t {
-        return obsidianLevel;
-    }
+    [[nodiscard]] auto getObsidianLevel() const -> uint8_t { return obsidianLevel; }
 
     void setTopazLevel(uint8_t topazLevel) {
         if (topazLevel <= MAX_GEM_LEVEL) {
             this->topazLevel = topazLevel;
         }
     }
-    [[nodiscard]] auto getTopazLevel() const -> uint8_t {
-        return topazLevel;
-    }
+    [[nodiscard]] auto getTopazLevel() const -> uint8_t { return topazLevel; }
 
-    void setBonus(uint8_t bonus) {
-        this->bonus = bonus;
-    }
-    [[nodiscard]] auto getBonus() const -> uint8_t {
-        return bonus;
-    }
+    void setBonus(uint8_t bonus) { this->bonus = bonus; }
+    [[nodiscard]] auto getBonus() const -> uint8_t { return bonus; }
 
     auto operator==(const ItemLookAt &rhs) const -> bool;
 
-    [[nodiscard]] auto isValid() const -> bool {
-        return name.length() > 0;
-    }
+    [[nodiscard]] auto isValid() const -> bool { return name.length() > 0; }
 
 private:
     std::string name;

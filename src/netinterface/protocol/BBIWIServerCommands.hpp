@@ -25,8 +25,7 @@
 
 #include <string>
 
-enum bbservercommands
-{
+enum bbservercommands {
     BB_LOGINSUCCESSFUL_TC = 0x00,
     BB_MESSAGE_TC = 0x01,    /*<message send from the Server to the client*/
     BB_PLAYER_TC = 0x02,     /*<a complete package of player data is send*/

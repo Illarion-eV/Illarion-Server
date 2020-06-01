@@ -36,12 +36,8 @@ private:
 
 public:
     Option(TYPE_OF_ITEM_ID item, string name) : item(item), name(std::move(name)){};
-    [[nodiscard]] auto getItem() const -> TYPE_OF_ITEM_ID {
-        return item;
-    };
-    [[nodiscard]] auto getName() const -> const string & {
-        return name;
-    };
+    [[nodiscard]] auto getItem() const -> TYPE_OF_ITEM_ID { return item; };
+    [[nodiscard]] auto getName() const -> const string & { return name; };
 };
 
 class SelectionDialog : public Dialog {

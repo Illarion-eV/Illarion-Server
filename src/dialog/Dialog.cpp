@@ -37,18 +37,10 @@ Dialog::Dialog(string title, string className, const luabind::object &callback)
 
 Dialog::Dialog(const Dialog &dialog) = default;
 
-auto Dialog::getClassName() const -> const string & {
-    return className;
-}
+auto Dialog::getClassName() const -> const string & { return className; }
 
-auto Dialog::getTitle() const -> const string & {
-    return title;
-}
+auto Dialog::getTitle() const -> const string & { return title; }
 
-auto Dialog::getCallback() const -> const luabind::object & {
-    return callback;
-}
+auto Dialog::getCallback() const -> const luabind::object & { return callback; }
 
-auto Dialog::closeOnMove() const -> bool {
-    return false;
-}
+auto Dialog::closeOnMove() const -> bool { return false; }

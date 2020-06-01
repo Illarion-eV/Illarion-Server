@@ -66,9 +66,7 @@ auto InputDialogTS::clone() -> ClientCommandPointer {
 
 MessageDialogTS::MessageDialogTS() : BasicClientCommand(C_MESSAGEDIALOG_TS) {}
 
-void MessageDialogTS::decodeData() {
-    dialogId = getIntFromBuffer();
-}
+void MessageDialogTS::decodeData() { dialogId = getIntFromBuffer(); }
 
 void MessageDialogTS::performAction(Player *player) {
     time(&(player->lastaction));
@@ -208,9 +206,7 @@ auto CraftingDialogTS::clone() -> ClientCommandPointer {
 
 RequestAppearanceTS::RequestAppearanceTS() : BasicClientCommand(C_REQUESTAPPEARANCE_TS) {}
 
-void RequestAppearanceTS::decodeData() {
-    id = getIntFromBuffer();
-}
+void RequestAppearanceTS::decodeData() { id = getIntFromBuffer(); }
 
 void RequestAppearanceTS::performAction(Player *player) {
     Character *ch = World::get()->Players.find(id);
@@ -889,9 +885,7 @@ auto AttackStopTS::clone() -> ClientCommandPointer {
 
 LookAtInventoryItemTS::LookAtInventoryItemTS() : BasicClientCommand(C_LOOKATINVENTORYITEM_TS, P_LOOK_COST) {}
 
-void LookAtInventoryItemTS::decodeData() {
-    pos = getUnsignedCharFromBuffer();
-}
+void LookAtInventoryItemTS::decodeData() { pos = getUnsignedCharFromBuffer(); }
 
 void LookAtInventoryItemTS::performAction(Player *player) {
     Logger::debug(LogFacility::World) << *player << " looks at an item in the inventory." << Log::end;
@@ -1169,9 +1163,7 @@ auto DropItemFromShowCaseOnMapTS::clone() -> ClientCommandPointer {
 
 CloseContainerInShowCaseTS::CloseContainerInShowCaseTS() : BasicClientCommand(C_CLOSECONTAINERINSHOWCASE_TS) {}
 
-void CloseContainerInShowCaseTS::decodeData() {
-    showcase = getUnsignedCharFromBuffer();
-}
+void CloseContainerInShowCaseTS::decodeData() { showcase = getUnsignedCharFromBuffer(); }
 
 void CloseContainerInShowCaseTS::performAction(Player *player) {
     time(&(player->lastaction));
@@ -1229,9 +1221,7 @@ auto LookIntoInventoryTS::clone() -> ClientCommandPointer {
 LookIntoContainerOnFieldTS::LookIntoContainerOnFieldTS()
         : BasicClientCommand(C_LOOKINTOCONTAINERONFIELD_TS, P_LOOK_COST) {}
 
-void LookIntoContainerOnFieldTS::decodeData() {
-    dir = to_direction(getUnsignedCharFromBuffer());
-}
+void LookIntoContainerOnFieldTS::decodeData() { dir = to_direction(getUnsignedCharFromBuffer()); }
 
 void LookIntoContainerOnFieldTS::performAction(Player *player) {
     time(&(player->lastaction));
@@ -1310,9 +1300,7 @@ auto LogOutTS::clone() -> ClientCommandPointer {
 
 WhisperTS::WhisperTS() : BasicClientCommand(C_WHISPER_TS) {}
 
-void WhisperTS::decodeData() {
-    text = getStringFromBuffer();
-}
+void WhisperTS::decodeData() { text = getStringFromBuffer(); }
 
 void WhisperTS::performAction(Player *player) {
     time(&(player->lastaction));
@@ -1327,9 +1315,7 @@ auto WhisperTS::clone() -> ClientCommandPointer {
 
 ShoutTS::ShoutTS() : BasicClientCommand(C_SHOUT_TS) {}
 
-void ShoutTS::decodeData() {
-    text = getStringFromBuffer();
-}
+void ShoutTS::decodeData() { text = getStringFromBuffer(); }
 
 void ShoutTS::performAction(Player *player) {
     time(&(player->lastaction));
@@ -1343,9 +1329,7 @@ auto ShoutTS::clone() -> ClientCommandPointer {
 
 SayTS::SayTS() : BasicClientCommand(C_SAY_TS) {}
 
-void SayTS::decodeData() {
-    text = getStringFromBuffer();
-}
+void SayTS::decodeData() { text = getStringFromBuffer(); }
 
 void SayTS::performAction(Player *player) {
     time(&(player->lastaction));
@@ -1417,9 +1401,7 @@ auto CustomNameTS::clone() -> ClientCommandPointer {
 
 AttackPlayerTS::AttackPlayerTS() : BasicClientCommand(C_ATTACKPLAYER_TS) {}
 
-void AttackPlayerTS::decodeData() {
-    enemyid = getIntFromBuffer();
-}
+void AttackPlayerTS::decodeData() { enemyid = getIntFromBuffer(); }
 
 void AttackPlayerTS::performAction(Player *player) {
     time(&(player->lastaction));
@@ -1481,9 +1463,7 @@ auto LookAtMapItemTS::clone() -> ClientCommandPointer {
 
 PlayerSpinTS::PlayerSpinTS() : BasicClientCommand(C_PLAYERSPIN_TS, P_SPIN_COST) {}
 
-void PlayerSpinTS::decodeData() {
-    dir = to_direction(getUnsignedCharFromBuffer());
-}
+void PlayerSpinTS::decodeData() { dir = to_direction(getUnsignedCharFromBuffer()); }
 
 void PlayerSpinTS::performAction(Player *player) {
     time(&(player->lastaction));
@@ -1538,26 +1518,18 @@ void LoginCommandTS::decodeData() {
     password = getStringFromBuffer();
 }
 
-void LoginCommandTS::performAction(Player *player) {
-    time(&(player->lastaction));
-}
+void LoginCommandTS::performAction(Player *player) { time(&(player->lastaction)); }
 
 auto LoginCommandTS::clone() -> ClientCommandPointer {
     ClientCommandPointer cmd = std::make_shared<LoginCommandTS>();
     return cmd;
 }
 
-auto LoginCommandTS::getClientVersion() const -> unsigned short {
-    return clientVersion;
-}
+auto LoginCommandTS::getClientVersion() const -> unsigned short { return clientVersion; }
 
-auto LoginCommandTS::getLoginName() const -> const std::string & {
-    return loginName;
-}
+auto LoginCommandTS::getLoginName() const -> const std::string & { return loginName; }
 
-auto LoginCommandTS::getPassword() const -> const std::string & {
-    return password;
-}
+auto LoginCommandTS::getPassword() const -> const std::string & { return password; }
 
 ScreenSizeCommandTS::ScreenSizeCommandTS() : BasicClientCommand(C_SCREENSIZE_TS) {}
 

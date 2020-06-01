@@ -43,14 +43,8 @@ auto QueryColumns::addColumn(const std::string &table, const std::string &column
     return nextColumn++;
 }
 
-auto QueryColumns::buildQuerySegment() -> std::string & {
-    return columns;
-}
+auto QueryColumns::buildQuerySegment() -> std::string & { return columns; }
 
-auto QueryColumns::getColumnCount() const -> uint32_t {
-    return (uint32_t)nextColumn;
-}
+auto QueryColumns::getColumnCount() const -> uint32_t { return (uint32_t)nextColumn; }
 
-void QueryColumns::setHideTable(bool hide) {
-    hideTable = hide;
-}
+void QueryColumns::setHideTable(bool hide) { hideTable = hide; }

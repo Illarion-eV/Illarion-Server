@@ -114,12 +114,7 @@ struct WeatherStruct {
 };
 
 struct BlockingObject {
-    enum BlockingType
-    {
-        BT_ITEM = 0,
-        BT_CHARACTER = 1,
-        BT_NONE = 2
-    };
+    enum BlockingType { BT_ITEM = 0, BT_CHARACTER = 1, BT_NONE = 2 };
     BlockingType blockingType;
     Character *blockingChar;
     ScriptItem blockingItem;
@@ -280,19 +275,11 @@ public:
      */
     void workout_CommandBuffer(Player *&cp);
 
-    void allowLogin(bool allow) {
-        _is_login_allowed = allow;
-    }
-    auto isLoginAllowed() const -> bool {
-        return _is_login_allowed;
-    }
+    void allowLogin(bool allow) { _is_login_allowed = allow; }
+    auto isLoginAllowed() const -> bool { return _is_login_allowed; }
 
-    void enableSpawn(bool enable) {
-        _is_spawn_enabled = enable;
-    }
-    auto isSpawnEnabled() const -> bool {
-        return _is_spawn_enabled;
-    }
+    void enableSpawn(bool enable) { _is_spawn_enabled = enable; }
+    auto isSpawnEnabled() const -> bool { return _is_spawn_enabled; }
 
     static auto create() -> World *;
     static auto get() -> World *;
@@ -306,12 +293,8 @@ public:
      */
     void deleteAllLostNPC();
 
-    inline auto getCurrentScript() const -> LuaScript * {
-        return currentScript;
-    }
-    inline void setCurrentScript(LuaScript *script) {
-        currentScript = script;
-    }
+    inline auto getCurrentScript() const -> LuaScript * { return currentScript; }
+    inline void setCurrentScript(LuaScript *script) { currentScript = script; }
 
     /**
      *saves all online players a table in the db

@@ -281,9 +281,7 @@ void LuaScript::addQuestScript(const std::string &entrypoint, const std::shared_
     questScripts.insert(std::pair<const std::string, std::shared_ptr<LuaScript>>(entrypoint, script));
 }
 
-void LuaScript::setCurrentWorldScript() {
-    World::get()->setCurrentScript(this);
-}
+void LuaScript::setCurrentWorldScript() { World::get()->setCurrentScript(this); }
 
 auto LuaScript::existsQuestEntrypoint(const std::string &entrypoint) const -> bool {
     return questScripts.find(entrypoint) != questScripts.end();

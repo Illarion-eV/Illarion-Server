@@ -46,9 +46,7 @@ void WorldMap::clear() {
 
 auto WorldMap::intersects(const Map &map) const -> bool {
     using namespace ranges;
-    auto doIntersectMap = [&map](const auto &testMap) {
-        return map.intersects(testMap);
-    };
+    auto doIntersectMap = [&map](const auto &testMap) { return map.intersects(testMap); };
     auto overlap = find_if(maps, doIntersectMap);
     bool foundIntersection = overlap != maps.end();
 
@@ -116,9 +114,7 @@ auto WorldMap::allMapsAged() -> bool {
     }
 
     using namespace ranges;
-    for_each(persistentFields | view::values, [](auto &field) {
-        field.age();
-    });
+    for_each(persistentFields | view::values, [](auto &field) { field.age(); });
 
     ageIndex = 0;
     return true;
@@ -227,9 +223,7 @@ auto WorldMap::readHeaderLine(const std::string &mapName, char header, std::ifst
     throw MapError();
 }
 
-auto WorldMap::isCommentOrEmpty(const std::string &line) -> bool {
-    return line.length() == 0 || line[0] == '#';
-}
+auto WorldMap::isCommentOrEmpty(const std::string &line) -> bool { return line.length() == 0 || line[0] == '#'; }
 
 auto WorldMap::exportTo() const -> bool {
     const std::string exportDir = Config::instance().datadir() + std::string(MAPDIR) + "export/";

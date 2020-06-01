@@ -23,9 +23,7 @@
 #include "Character.hpp"
 #include "character_ptr.hpp"
 
-LuaTriggerScript::LuaTriggerScript() {
-    init_functions();
-}
+LuaTriggerScript::LuaTriggerScript() { init_functions(); }
 
 LuaTriggerScript::LuaTriggerScript(const std::string &filename, const position &pos) : LuaScript(filename), _pos(pos) {
     init_functions();

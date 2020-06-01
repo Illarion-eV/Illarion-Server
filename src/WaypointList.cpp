@@ -23,13 +23,9 @@
 
 WaypointList::WaypointList(Character *movechar) : _movechar(movechar) {}
 
-auto WaypointList::getWaypoints() const -> const std::list<position> & {
-    return positions;
-}
+auto WaypointList::getWaypoints() const -> const std::list<position> & { return positions; }
 
-void WaypointList::addWaypoint(const position &pos) {
-    positions.push_back(pos);
-}
+void WaypointList::addWaypoint(const position &pos) { positions.push_back(pos); }
 
 auto WaypointList::getNextWaypoint(position &pos) const -> bool {
     if (positions.empty()) {
@@ -40,9 +36,7 @@ auto WaypointList::getNextWaypoint(position &pos) const -> bool {
     return true;
 }
 
-void WaypointList::clear() {
-    positions.clear();
-}
+void WaypointList::clear() { positions.clear(); }
 
 auto WaypointList::checkPosition() -> bool {
     if (positions.empty()) {

@@ -61,9 +61,7 @@ public:
     ScheduledScriptsTable();
     ~ScheduledScriptsTable();
 
-    [[nodiscard]] inline auto isDataOK() const -> bool {
-        return m_dataOk;
-    }
+    [[nodiscard]] inline auto isDataOK() const -> bool { return m_dataOk; }
 
     auto nextCycle() -> bool;
 

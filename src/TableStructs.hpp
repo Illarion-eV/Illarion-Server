@@ -52,9 +52,7 @@ struct ItemStruct {
     int16_t Rareness = 1;
     TYPE_OF_ITEMLEVEL Level = 0;
 
-    [[nodiscard]] auto isValid() const -> bool {
-        return id != 0;
-    }
+    [[nodiscard]] auto isValid() const -> bool { return id != 0; }
 };
 
 struct TilesModificatorStruct {
@@ -66,9 +64,7 @@ struct LongTimeEffectStruct {
     std::string effectname;
     std::string scriptname;
     std::shared_ptr<LuaLongTimeEffectScript> script;
-    LongTimeEffectStruct() {
-        effectid = 0;
-    }
+    LongTimeEffectStruct() { effectid = 0; }
 };
 
 struct WeaponStruct {

@@ -106,9 +106,7 @@ auto out_degree(const world_map_graph::vertex_descriptor &v, const world_map_gra
     return count;
 }
 
-auto num_vertices(const world_map_graph &g) -> int {
-    return 1000;
-}
+auto num_vertices(const world_map_graph &g) -> int { return 1000; }
 
 distance_heuristic::distance_heuristic(Vertex goal) : goal(std::move(goal)) {
     Logger::debug(LogFacility::Other) << "heuristic goal (" << this->goal.first << ", " << this->goal.second << ")"

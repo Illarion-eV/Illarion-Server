@@ -27,16 +27,12 @@
 
 auto InitialConnection::create() -> std::shared_ptr<InitialConnection> {
     std::shared_ptr<InitialConnection> ptr(new InitialConnection());
-    std::thread servicethread([shared_this = ptr->shared_from_this()] {
-        shared_this->run_service();
-    });
+    std::thread servicethread([shared_this = ptr->shared_from_this()] { shared_this->run_service(); });
     servicethread.detach();
     return ptr;
 }
 
-auto InitialConnection::getNewPlayers() -> NewPlayerVector & {
-    return newPlayers;
-}
+auto InitialConnection::getNewPlayers() -> NewPlayerVector & { return newPlayers; }
 
 void InitialConnection::run_service() {
     using boost::asio::ip::tcp;
@@ -74,6 +70,4 @@ void InitialConnection::accept_connection(const std::shared_ptr<NetInterface> &c
     }
 }
 
-InitialConnection::~InitialConnection() {
-    io_service.stop();
-}
+InitialConnection::~InitialConnection() { io_service.stop(); }

@@ -423,6 +423,4 @@ void LongTimeAction::changeTarget(position pos) {
     _targetId = 0;
 }
 
-void LongTimeAction::changeTarget() {
-    _target.Type = LUA_NONE;
-}
+void LongTimeAction::changeTarget() { _target.Type = LUA_NONE; }

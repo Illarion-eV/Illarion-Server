@@ -45,9 +45,7 @@ public:
 
     auto getLoot() const -> const MonsterStruct::loottype & override;
 
-    auto getType() const -> unsigned short override {
-        return monster;
-    }
+    auto getType() const -> unsigned short override { return monster; }
 
     /**
      * sets the type of the monster and changes
@@ -86,17 +84,13 @@ public:
      * returns the spawnpoint of the monster
      * @return the spawnpoint of this monster
      */
-    inline auto getSpawn() const -> SpawnPoint * {
-        return spawn;
-    }
+    inline auto getSpawn() const -> SpawnPoint * { return spawn; }
 
     /**
      * returns the type of this monster
      * @return the type
      */
-    auto getMonsterType() const -> TYPE_OF_CHARACTER_ID override {
-        return monstertype;
-    }
+    auto getMonsterType() const -> TYPE_OF_CHARACTER_ID override { return monstertype; }
 
     /**
      * the monster is attacking another character starts a script entry
@@ -127,9 +121,7 @@ public:
      * checks if the monster can attack onther one or it is a peacefull monster
      * @return true if the monster is aggresive otherwise false
      */
-    inline auto canAttack() const -> const bool {
-        return _canAttack;
-    }
+    inline auto canAttack() const -> const bool { return _canAttack; }
 
     std::string nameDe;
 

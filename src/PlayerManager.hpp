@@ -35,9 +35,7 @@ public:
     void activate();
     void stop();
 
-    [[nodiscard]] auto threadOK() const -> bool {
-        return threadOk;
-    }
+    [[nodiscard]] auto threadOK() const -> bool { return threadOk; }
 
     [[nodiscard]] auto findPlayer(const std::string &name) const -> bool;
 
@@ -45,12 +43,8 @@ public:
 
     using TPLAYERVECTOR = thread_safe_vector<Player *>;
 
-    auto getLogOutPlayers() -> TPLAYERVECTOR & {
-        return loggedOutPlayers;
-    }
-    auto getLogInPlayers() -> TPLAYERVECTOR & {
-        return loggedInPlayers;
-    }
+    auto getLogOutPlayers() -> TPLAYERVECTOR & { return loggedOutPlayers; }
+    auto getLogInPlayers() -> TPLAYERVECTOR & { return loggedInPlayers; }
 
 private:
     static std::unique_ptr<PlayerManager> instance;

@@ -38,11 +38,7 @@ private:
     bool isDistinct;
 
 public:
-    enum OrderDirection
-    {
-        ASC,
-        DESC
-    };
+    enum OrderDirection { ASC, DESC };
 
     SelectQuery();
     explicit SelectQuery(const PConnection &connection);

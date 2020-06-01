@@ -20,9 +20,7 @@
 
 #include "data/MonsterAttackTable.hpp"
 
-auto MonsterAttackTable::getTableName() -> std::string {
-    return "monsterattack";
-}
+auto MonsterAttackTable::getTableName() -> std::string { return "monsterattack"; }
 
 auto MonsterAttackTable::getColumnNames() -> std::vector<std::string> {
     return {"mat_race_type", "mat_attack_type", "mat_attack_value", "mat_actionpointslost"};

@@ -22,21 +22,15 @@
 
 #include "constants.hpp"
 
-auto QuestTable::getTableName() -> std::string {
-    return "quests";
-}
+auto QuestTable::getTableName() -> std::string { return "quests"; }
 
-auto QuestTable::getColumnNames() -> std::vector<std::string> {
-    return {"qst_id", "qst_script"};
-}
+auto QuestTable::getColumnNames() -> std::vector<std::string> { return {"qst_id", "qst_script"}; }
 
 auto QuestTable::assignId(const Database::ResultTuple &row) -> TYPE_OF_QUEST_ID {
     return row["qst_id"].as<TYPE_OF_QUEST_ID>();
 }
 
-auto QuestTable::assignTable(const Database::ResultTuple &row) -> QuestStruct {
-    return QuestStruct();
-}
+auto QuestTable::assignTable(const Database::ResultTuple &row) -> QuestStruct { return QuestStruct(); }
 
 auto QuestTable::assignScriptName(const Database::ResultTuple &row) -> std::string {
     return row["qst_script"].as<std::string>("");

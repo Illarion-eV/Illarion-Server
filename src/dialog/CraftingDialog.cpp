@@ -33,30 +33,20 @@ CraftingDialog::CraftingDialog(const string &title, uint16_t sfx, uint16_t sfxDu
 
 CraftingDialog::CraftingDialog(const CraftingDialog &craftingDialog) = default;
 
-auto CraftingDialog::getSfx() const -> uint16_t {
-    return sfx;
-}
+auto CraftingDialog::getSfx() const -> uint16_t { return sfx; }
 
-auto CraftingDialog::getSfxDuration() const -> uint16_t {
-    return sfxDuration;
-}
+auto CraftingDialog::getSfxDuration() const -> uint16_t { return sfxDuration; }
 
 void CraftingDialog::clearGroupsAndProducts() {
     groups.clear();
     craftables.clear();
 }
 
-auto CraftingDialog::getGroupsSize() const -> index_t {
-    return groups.size();
-}
+auto CraftingDialog::getGroupsSize() const -> index_t { return groups.size(); }
 
-auto CraftingDialog::getGroupsBegin() const -> group_iterator {
-    return groups.cbegin();
-}
+auto CraftingDialog::getGroupsBegin() const -> group_iterator { return groups.cbegin(); }
 
-auto CraftingDialog::getGroupsEnd() const -> group_iterator {
-    return groups.cend();
-}
+auto CraftingDialog::getGroupsEnd() const -> group_iterator { return groups.cend(); }
 
 void CraftingDialog::addGroup(const string &name) {
     if (groups.size() < 256) {
@@ -64,17 +54,11 @@ void CraftingDialog::addGroup(const string &name) {
     }
 }
 
-auto CraftingDialog::getCraftablesSize() const -> index_t {
-    return craftables.size();
-}
+auto CraftingDialog::getCraftablesSize() const -> index_t { return craftables.size(); }
 
-auto CraftingDialog::getCraftablesBegin() const -> craftable_iterator {
-    return craftables.cbegin();
-}
+auto CraftingDialog::getCraftablesBegin() const -> craftable_iterator { return craftables.cbegin(); }
 
-auto CraftingDialog::getCraftablesEnd() const -> craftable_iterator {
-    return craftables.cend();
-}
+auto CraftingDialog::getCraftablesEnd() const -> craftable_iterator { return craftables.cend(); }
 
 void CraftingDialog::addCraftable(uint8_t id, uint8_t group, TYPE_OF_ITEM_ID item, const string &name,
                                   uint16_t decisecondsToCraft) {
@@ -110,17 +94,11 @@ void CraftingDialog::addCraftableIngredient(TYPE_OF_ITEM_ID item, uint8_t number
     }
 }
 
-auto CraftingDialog::getResult() const -> CraftingDialog::Result {
-    return result;
-}
+auto CraftingDialog::getResult() const -> CraftingDialog::Result { return result; }
 
-void CraftingDialog::setResult(Result result) {
-    this->result = result;
-}
+void CraftingDialog::setResult(Result result) { this->result = result; }
 
-auto CraftingDialog::getCraftableId() const -> uint8_t {
-    return craftableId;
-}
+auto CraftingDialog::getCraftableId() const -> uint8_t { return craftableId; }
 
 void CraftingDialog::setCraftableId(uint8_t index) {
     if (craftables.find(index) != craftables.end()) {
@@ -130,21 +108,13 @@ void CraftingDialog::setCraftableId(uint8_t index) {
     }
 }
 
-auto CraftingDialog::getCraftableAmount() const -> Item::number_type {
-    return craftableAmount;
-}
+auto CraftingDialog::getCraftableAmount() const -> Item::number_type { return craftableAmount; }
 
-void CraftingDialog::setCraftableAmount(Item::number_type amount) {
-    craftableAmount = amount;
-}
+void CraftingDialog::setCraftableAmount(Item::number_type amount) { craftableAmount = amount; }
 
-auto CraftingDialog::getIngredientIndex() const -> index_t {
-    return ingredientIndex;
-}
+auto CraftingDialog::getIngredientIndex() const -> index_t { return ingredientIndex; }
 
-void CraftingDialog::setIngredientIndex(index_t index) {
-    ingredientIndex = index;
-}
+void CraftingDialog::setIngredientIndex(index_t index) { ingredientIndex = index; }
 
 auto CraftingDialog::getCraftableTime() const -> uint16_t {
     try {
@@ -154,9 +124,7 @@ auto CraftingDialog::getCraftableTime() const -> uint16_t {
     }
 }
 
-auto CraftingDialog::closeOnMove() const -> bool {
-    return true;
-}
+auto CraftingDialog::closeOnMove() const -> bool { return true; }
 
 auto CraftingDialog::canAddCraftable(uint8_t group) -> bool {
     return (groups.size() - 1 >= group) && (craftables.size() < MAXCRAFTABLES);

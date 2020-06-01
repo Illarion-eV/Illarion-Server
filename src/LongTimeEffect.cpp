@@ -48,13 +48,9 @@ auto LongTimeEffect::callEffect(Character *target) -> bool {
     return ret;
 }
 
-void LongTimeEffect::addValue(const std::string &name, uint32_t value) {
-    values[name] = value;
-}
+void LongTimeEffect::addValue(const std::string &name, uint32_t value) { values[name] = value; }
 
-void LongTimeEffect::removeValue(const std::string &name) {
-    values.erase(name);
-}
+void LongTimeEffect::removeValue(const std::string &name) { values.erase(name); }
 
 auto LongTimeEffect::findValue(const std::string &name, uint32_t &ret) -> bool {
     auto it = values.find(name);
@@ -117,36 +113,20 @@ auto LongTimeEffect::save(uint32_t playerid, int32_t currentTime) -> bool {
     return true;
 }
 
-auto LongTimeEffect::getEffectId() const -> uint16_t {
-    return effectId;
-}
+auto LongTimeEffect::getEffectId() const -> uint16_t { return effectId; }
 
-auto LongTimeEffect::getEffectName() const -> std::string {
-    return effectName;
-}
+auto LongTimeEffect::getEffectName() const -> std::string { return effectName; }
 
-auto LongTimeEffect::getExecuteIn() const -> int32_t {
-    return executeIn;
-}
+auto LongTimeEffect::getExecuteIn() const -> int32_t { return executeIn; }
 
-void LongTimeEffect::setExecuteIn(int32_t time) {
-    executeIn = time;
-}
+void LongTimeEffect::setExecuteIn(int32_t time) { executeIn = time; }
 
-auto LongTimeEffect::getExecutionTime() const -> int32_t {
-    return executionTime;
-}
+auto LongTimeEffect::getExecutionTime() const -> int32_t { return executionTime; }
 
-void LongTimeEffect::setExecutionTime(int32_t offset) {
-    executionTime = offset + executeIn;
-}
+void LongTimeEffect::setExecutionTime(int32_t offset) { executionTime = offset + executeIn; }
 
-auto LongTimeEffect::getNumberOfCalls() const -> uint32_t {
-    return numberOfCalls;
-}
+auto LongTimeEffect::getNumberOfCalls() const -> uint32_t { return numberOfCalls; }
 
-void LongTimeEffect::setNumberOfCalls(uint32_t calls) {
-    numberOfCalls = calls;
-}
+void LongTimeEffect::setNumberOfCalls(uint32_t calls) { numberOfCalls = calls; }
 
 LTEPriority LongTimeEffect::priority = LTEPriority();

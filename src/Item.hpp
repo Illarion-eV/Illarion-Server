@@ -49,37 +49,19 @@ public:
             : id(id), number(number), wear(wear), quality(quality), datamap(1) {}
     Item(id_type id, number_type number, wear_type wear, quality_type quality, const script_data_exchangemap &datamap);
 
-    inline auto getId() const -> id_type {
-        return id;
-    }
-    inline void setId(id_type id) {
-        this->id = id;
-    }
+    inline auto getId() const -> id_type { return id; }
+    inline void setId(id_type id) { this->id = id; }
 
-    inline auto getNumber() const -> number_type {
-        return number;
-    }
-    inline void setNumber(number_type number) {
-        this->number = number;
-    }
+    inline auto getNumber() const -> number_type { return number; }
+    inline void setNumber(number_type number) { this->number = number; }
     auto increaseNumberBy(number_type count) -> number_type;
 
-    inline auto getWear() const -> wear_type {
-        return wear;
-    }
-    inline void setWear(wear_type wear) {
-        this->wear = wear;
-    }
+    inline auto getWear() const -> wear_type { return wear; }
+    inline void setWear(wear_type wear) { this->wear = wear; }
 
-    inline auto getQuality() const -> quality_type {
-        return quality;
-    }
-    inline void setQuality(quality_type quality) {
-        this->quality = quality;
-    }
-    inline auto getDurability() const -> quality_type {
-        return quality % 100;
-    }
+    inline auto getQuality() const -> quality_type { return quality; }
+    inline void setQuality(quality_type quality) { this->quality = quality; }
+    inline auto getDurability() const -> quality_type { return quality % 100; }
     void setMinQuality(const Item &item);
 
     // setData actually does either a clear (if the datamap is nil) or a merge of the keys in datamap
@@ -90,20 +72,14 @@ public:
     auto getData(const std::string &key) const -> std::string;
     void setData(const std::string &key, const std::string &value);
     void setData(const std::string &key, int32_t value);
-    inline auto getDataBegin() const -> datamap_type::const_iterator {
-        return datamap.cbegin();
-    }
-    inline auto getDataEnd() const -> datamap_type::const_iterator {
-        return datamap.cend();
-    }
+    inline auto getDataBegin() const -> datamap_type::const_iterator { return datamap.cbegin(); }
+    inline auto getDataEnd() const -> datamap_type::const_iterator { return datamap.cend(); }
     inline auto equalData(script_data_exchangemap const *data) const -> bool {
         Item item;
         item.setData(data);
         return equalData(item);
     }
-    inline auto equalData(const Item &item) const -> bool {
-        return datamap == item.datamap;
-    }
+    inline auto equalData(const Item &item) const -> bool { return datamap == item.datamap; }
 
     auto getDepot() const -> uint16_t;
 
@@ -137,14 +113,7 @@ private:
 
 class ScriptItem : public Item {
 public:
-    enum itemtype
-    {
-        notdefined = 0,
-        it_field = 3,
-        it_inventory = 4,
-        it_belt = 5,
-        it_container = 6
-    };
+    enum itemtype { notdefined = 0, it_field = 3, it_inventory = 4, it_belt = 5, it_container = 6 };
 
     itemtype type{notdefined};
     position pos;
@@ -156,9 +125,7 @@ public:
     };
     Container *inside{nullptr};
     ScriptItem() : Item(0, 0, 0), pos(position(0, 0, 0)) {}
-    auto getType() const -> unsigned char {
-        return type;
-    }
+    auto getType() const -> unsigned char { return type; }
     ScriptItem(const ScriptItem &source) = default;
     explicit ScriptItem(const Item &source) : Item(source), pos(position(0, 0, 0)) {
         itempos = 0;

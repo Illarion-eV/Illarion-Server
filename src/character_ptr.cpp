@@ -23,9 +23,7 @@
 
 #include <stdexcept>
 
-character_ptr::character_ptr() {
-    id = 0;
-}
+character_ptr::character_ptr() { id = 0; }
 
 character_ptr::character_ptr(Character *p) {
     if (p != nullptr) {
@@ -35,9 +33,7 @@ character_ptr::character_ptr(Character *p) {
     }
 }
 
-character_ptr::character_ptr(character_ptr const &p) {
-    id = p.id;
-}
+character_ptr::character_ptr(character_ptr const &p) { id = p.id; }
 
 auto character_ptr::operator=(character_ptr const &p) -> character_ptr & = default;
 
@@ -52,17 +48,11 @@ auto character_ptr::get() const -> Character * {
     }
 }
 
-character_ptr::operator Character *() const {
-    return get();
-}
+character_ptr::operator Character *() const { return get(); }
 
-auto character_ptr::operator->() const -> Character * {
-    return get();
-}
+auto character_ptr::operator->() const -> Character * { return get(); }
 
-character_ptr::operator bool() const {
-    return getPointerFromId() != nullptr;
-}
+character_ptr::operator bool() const { return getPointerFromId() != nullptr; }
 
 auto character_ptr::getPointerFromId() const -> Character * {
     if (id != 0) {
@@ -72,10 +62,6 @@ auto character_ptr::getPointerFromId() const -> Character * {
     return nullptr;
 }
 
-auto get_pointer(character_ptr const &p) -> Character * {
-    return p.get();
-}
+auto get_pointer(character_ptr const &p) -> Character * { return p.get(); }
 
-auto isValid(character_ptr const &p) -> bool {
-    return bool(p);
-}
+auto isValid(character_ptr const &p) -> bool { return bool(p); }

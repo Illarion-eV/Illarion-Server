@@ -20,9 +20,7 @@
 
 #include "data/SpellTable.hpp"
 
-auto SpellTable::getTableName() -> std::string {
-    return "spells";
-}
+auto SpellTable::getTableName() -> std::string { return "spells"; }
 
 auto SpellTable::getColumnNames() -> std::vector<std::string> {
     return {"spl_spellid", "spl_magictype", "spl_scriptname"};
@@ -35,9 +33,7 @@ auto SpellTable::assignId(const Database::ResultTuple &row) -> Spell {
     return spell;
 }
 
-auto SpellTable::assignTable(const Database::ResultTuple &row) -> SpellStruct {
-    return SpellStruct();
-}
+auto SpellTable::assignTable(const Database::ResultTuple &row) -> SpellStruct { return SpellStruct(); }
 
 auto SpellTable::assignScriptName(const Database::ResultTuple &row) -> std::string {
     return row["spl_scriptname"].as<std::string>("");

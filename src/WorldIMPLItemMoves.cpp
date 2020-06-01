@@ -1395,9 +1395,7 @@ void World::sendContainerSlotChange(Container *cc, TYPE_OF_CONTAINERSLOTS slot, 
 
 void World::sendContainerSlotChange(Container *cc, TYPE_OF_CONTAINERSLOTS slot) {
     if (cc != nullptr) {
-        Players.for_each([cc, slot](Player *player) {
-            player->updateShowcaseSlot(cc, slot);
-        });
+        Players.for_each([cc, slot](Player *player) { player->updateShowcaseSlot(cc, slot); });
     }
 }
 

@@ -44,8 +44,7 @@ public:
     explicit ScriptException(const std::string &s) : std::runtime_error(s) {}
 };
 
-enum SouTarTypes
-{
+enum SouTarTypes {
     LUA_NONE = 0,      /**< not a correct type (only for initialisation) */
     LUA_FIELD = 1,     /**< target was a field */
     LUA_ITEM = 2,      /**< target was a item */
@@ -53,8 +52,7 @@ enum SouTarTypes
     LUA_DIALOG = 4
 };
 
-enum LtaStates
-{
+enum LtaStates {
     LTS_NOLTACTION = 0,       /**< no longtime action in this script */
     LTS_ACTIONABORTED = 1,    /**< long time action was aborted */
     LTS_ACTIONSUCCESSFULL = 2 /**< long time action was performed sucessfulle*/
@@ -85,13 +83,9 @@ public:
     auto operator=(const LuaScript &) -> LuaScript & = delete;
     virtual ~LuaScript();
 
-    [[nodiscard]] auto getFileName() const -> std::string {
-        return _filename;
-    }
+    [[nodiscard]] auto getFileName() const -> std::string { return _filename; }
 
-    static auto getLuaState() -> lua_State * {
-        return _luaState;
-    }
+    static auto getLuaState() -> lua_State * { return _luaState; }
 
     static void shutdownLua();
     [[nodiscard]] auto existsEntrypoint(const std::string &entrypoint) const -> bool;

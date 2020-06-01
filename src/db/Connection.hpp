@@ -51,9 +51,7 @@ public:
         return internalConnection->quote(t);
     }
 
-    [[nodiscard]] inline auto transactionActive() const -> bool {
-        return bool(transaction);
-    }
+    [[nodiscard]] inline auto transactionActive() const -> bool { return bool(transaction); }
 };
 
 } // namespace Database

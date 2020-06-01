@@ -50,9 +50,7 @@ void Field::setTileId(uint16_t id) {
     updateFieldToPlayersInScreen(here);
 }
 
-auto Field::getTileCode() const -> uint16_t {
-    return tile;
-}
+auto Field::getTileCode() const -> uint16_t { return tile; }
 
 auto Field::getTileId() const -> uint16_t {
     if (((tile & 0xFC00) >> 10) > 0) {
@@ -76,13 +74,9 @@ void Field::setMusicId(uint16_t id) {
     updateFieldToPlayersInScreen(here);
 }
 
-auto Field::getMusicId() const -> uint16_t {
-    return music;
-}
+auto Field::getMusicId() const -> uint16_t { return music; }
 
-auto Field::isTransparent() const -> bool {
-    return getTileId() == TRANSPARENT;
-}
+auto Field::isTransparent() const -> bool { return getTileId() == TRANSPARENT; }
 
 auto Field::getMovementCost() const -> TYPE_OF_WALKINGCOST {
     if (isWalkable()) {
@@ -115,9 +109,7 @@ auto Field::getStackItem(uint8_t pos) const -> ScriptItem {
     return {};
 }
 
-auto Field::getItemStack() const -> const std::vector<Item> & {
-    return items;
-}
+auto Field::getItemStack() const -> const std::vector<Item> & { return items; }
 
 auto Field::addItemOnStack(const Item &item) -> bool {
     if (items.size() < MAXITEMS) {
@@ -212,9 +204,7 @@ auto Field::viewItemOnStack(Item &item) const -> bool {
     return true;
 }
 
-auto Field::itemCount() const -> MAXCOUNTTYPE {
-    return items.size();
-}
+auto Field::itemCount() const -> MAXCOUNTTYPE { return items.size(); }
 
 auto Field::addContainerOnStackIfWalkable(Item item, Container *container) -> bool {
     if (isWalkable()) {
@@ -391,9 +381,7 @@ void Field::load(std::ifstream &mapStream, std::ifstream &itemStream, std::ifstr
     updateFlags();
 }
 
-auto Field::getPosition() const -> const position & {
-    return here;
-}
+auto Field::getPosition() const -> const position & { return here; }
 
 void Field::makePersistent() {
     if (!isPersistent()) {
@@ -411,9 +399,7 @@ void Field::removePersistence() {
     }
 }
 
-auto Field::isPersistent() const -> bool {
-    return persistent;
-}
+auto Field::isPersistent() const -> bool { return persistent; }
 
 void Field::age() {
     for (const auto &container : containers) {
@@ -499,45 +485,25 @@ void Field::updateFlags() {
     }
 }
 
-auto Field::hasMonster() const -> bool {
-    return anyBitSet(FLAG_MONSTERONFIELD);
-}
+auto Field::hasMonster() const -> bool { return anyBitSet(FLAG_MONSTERONFIELD); }
 
-void Field::setMonster() {
-    setBits(FLAG_MONSTERONFIELD);
-}
+void Field::setMonster() { setBits(FLAG_MONSTERONFIELD); }
 
-void Field::removeMonster() {
-    unsetBits(FLAG_MONSTERONFIELD);
-}
+void Field::removeMonster() { unsetBits(FLAG_MONSTERONFIELD); }
 
-auto Field::hasNPC() const -> bool {
-    return anyBitSet(FLAG_NPCONFIELD);
-}
+auto Field::hasNPC() const -> bool { return anyBitSet(FLAG_NPCONFIELD); }
 
-void Field::setNPC() {
-    setBits(FLAG_NPCONFIELD);
-}
+void Field::setNPC() { setBits(FLAG_NPCONFIELD); }
 
-void Field::removeNPC() {
-    unsetBits(FLAG_NPCONFIELD);
-}
+void Field::removeNPC() { unsetBits(FLAG_NPCONFIELD); }
 
-auto Field::hasPlayer() const -> bool {
-    return anyBitSet(FLAG_PLAYERONFIELD);
-}
+auto Field::hasPlayer() const -> bool { return anyBitSet(FLAG_PLAYERONFIELD); }
 
-void Field::setPlayer() {
-    setBits(FLAG_PLAYERONFIELD);
-}
+void Field::setPlayer() { setBits(FLAG_PLAYERONFIELD); }
 
-void Field::removePlayer() {
-    unsetBits(FLAG_PLAYERONFIELD);
-}
+void Field::removePlayer() { unsetBits(FLAG_PLAYERONFIELD); }
 
-auto Field::isWarp() const -> bool {
-    return anyBitSet(FLAG_WARPFIELD);
-}
+auto Field::isWarp() const -> bool { return anyBitSet(FLAG_WARPFIELD); }
 
 void Field::setWarp(const position &pos) {
     warptarget = pos;
@@ -550,41 +516,25 @@ void Field::removeWarp() {
     updateDatabaseWarp();
 }
 
-void Field::getWarp(position &pos) const {
-    pos = warptarget;
-}
+void Field::getWarp(position &pos) const { pos = warptarget; }
 
-auto Field::hasSpecialItem() const -> bool {
-    return anyBitSet(FLAG_SPECIALITEM);
-}
+auto Field::hasSpecialItem() const -> bool { return anyBitSet(FLAG_SPECIALITEM); }
 
-auto Field::isWalkable() const -> bool {
-    return !anyBitSet(FLAG_BLOCKPATH) || anyBitSet(FLAG_MAKEPASSABLE);
-}
+auto Field::isWalkable() const -> bool { return !anyBitSet(FLAG_BLOCKPATH) || anyBitSet(FLAG_MAKEPASSABLE); }
 
 auto Field::moveToPossible() const -> bool {
     return isWalkable() && !anyBitSet(FLAG_MONSTERONFIELD | FLAG_NPCONFIELD | FLAG_PLAYERONFIELD);
 }
 
-void Field::setChar() {
-    setBits(FLAG_PLAYERONFIELD);
-}
+void Field::setChar() { setBits(FLAG_PLAYERONFIELD); }
 
-void Field::removeChar() {
-    unsetBits(FLAG_PLAYERONFIELD);
-}
+void Field::removeChar() { unsetBits(FLAG_PLAYERONFIELD); }
 
-inline void Field::setBits(uint8_t bits) {
-    flags |= bits;
-}
+inline void Field::setBits(uint8_t bits) { flags |= bits; }
 
-inline void Field::unsetBits(uint8_t bits) {
-    flags &= ~bits;
-}
+inline void Field::unsetBits(uint8_t bits) { flags &= ~bits; }
 
-inline auto Field::anyBitSet(uint8_t bits) const -> bool {
-    return (flags & bits) != 0;
-}
+inline auto Field::anyBitSet(uint8_t bits) const -> bool { return (flags & bits) != 0; }
 
 void Field::insertIntoDatabase() const noexcept {
     if (!isPersistent()) {
@@ -714,9 +664,7 @@ void Field::updateDatabaseItems() const noexcept {
             dataQuery.addServerTable("map_item_data");
 
             uint16_t stackPos = 0;
-            auto nonMovable = ranges::view::filter([](const Item &item) {
-                return not item.isMovable();
-            });
+            auto nonMovable = ranges::view::filter([](const Item &item) { return not item.isMovable(); });
 
             ranges::for_each(items | nonMovable, [&](const auto &item) {
                 itemQuery.addValue<int16_t>(xColumn, here.x);

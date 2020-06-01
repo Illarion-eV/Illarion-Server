@@ -95,9 +95,7 @@ protected:
         }
     }
 
-    auto scriptNonConst(IdType id) -> std::shared_ptr<ScriptType> & {
-        return scripts[id];
-    }
+    auto scriptNonConst(IdType id) -> std::shared_ptr<ScriptType> & { return scripts[id]; }
 
 private:
     using ScriptsType = std::unordered_map<IdType, std::shared_ptr<ScriptType>>;

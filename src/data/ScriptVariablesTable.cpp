@@ -27,13 +27,9 @@
 
 #include <iostream>
 
-auto ScriptVariablesTable::getTableName() -> std::string {
-    return "scriptvariables";
-}
+auto ScriptVariablesTable::getTableName() -> std::string { return "scriptvariables"; }
 
-auto ScriptVariablesTable::getColumnNames() -> std::vector<std::string> {
-    return {"svt_ids", "svt_string"};
-}
+auto ScriptVariablesTable::getColumnNames() -> std::vector<std::string> { return {"svt_ids", "svt_string"}; }
 
 auto ScriptVariablesTable::assignId(const Database::ResultTuple &row) -> std::string {
     return row["svt_ids"].as<std::string>();
@@ -53,9 +49,7 @@ auto ScriptVariablesTable::find(const std::string &id, std::string &ret) -> bool
     }
 }
 
-void ScriptVariablesTable::set(const std::string &id, const std::string &value) {
-    get(id) = value;
-}
+void ScriptVariablesTable::set(const std::string &id, const std::string &value) { get(id) = value; }
 
 void ScriptVariablesTable::set(const std::string &id, int32_t value) {
     std::stringstream ss;
@@ -63,9 +57,7 @@ void ScriptVariablesTable::set(const std::string &id, int32_t value) {
     set(id, ss.str());
 }
 
-auto ScriptVariablesTable::remove(const std::string &id) -> bool {
-    return erase(id);
-}
+auto ScriptVariablesTable::remove(const std::string &id) -> bool { return erase(id); }
 
 void ScriptVariablesTable::save() {
     try {

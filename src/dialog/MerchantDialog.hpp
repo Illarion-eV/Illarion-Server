@@ -37,15 +37,9 @@ private:
 
 public:
     Product(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price) : item(item), name(std::move(name)), price(price){};
-    [[nodiscard]] auto getItem() const -> TYPE_OF_ITEM_ID {
-        return item;
-    };
-    [[nodiscard]] auto getName() const -> const string & {
-        return name;
-    };
-    [[nodiscard]] auto getPrice() const -> TYPE_OF_WORTH {
-        return price;
-    };
+    [[nodiscard]] auto getItem() const -> TYPE_OF_ITEM_ID { return item; };
+    [[nodiscard]] auto getName() const -> const string & { return name; };
+    [[nodiscard]] auto getPrice() const -> TYPE_OF_WORTH { return price; };
 };
 
 class OfferProduct : public Product {
@@ -55,9 +49,7 @@ private:
 public:
     OfferProduct(TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price, TYPE_OF_BUY_STACK stack)
             : Product(item, name, price), stack(stack){};
-    [[nodiscard]] auto getStack() const -> TYPE_OF_BUY_STACK {
-        return stack;
-    };
+    [[nodiscard]] auto getStack() const -> TYPE_OF_BUY_STACK { return stack; };
 };
 
 class MerchantDialog : public Dialog {
@@ -68,20 +60,9 @@ public:
     using offer_list = vector<OfferProduct>;
     using offer_iterator = offer_list::const_iterator;
 
-    enum Result
-    {
-        playerAborts = 0,
-        playerSells = 1,
-        playerBuys = 2,
-        playerLooksAt = 3
-    };
+    enum Result { playerAborts = 0, playerSells = 1, playerBuys = 2, playerLooksAt = 3 };
 
-    enum ListType
-    {
-        listSell = 0,
-        listBuyPrimary = 1,
-        listBuySecondary = 2
-    };
+    enum ListType { listSell = 0, listBuyPrimary = 1, listBuySecondary = 2 };
 
 private:
     static const uint32_t MAXPRODUCTS = 256;

@@ -38,9 +38,7 @@ struct position {
     position() = default;
     position(short int x, short int y, short int z) : x(x), y(y), z(z) {}
 
-    auto operator==(const position &pos) const -> bool {
-        return (x == pos.x && y == pos.y && z == pos.z);
-    }
+    auto operator==(const position &pos) const -> bool { return (x == pos.x && y == pos.y && z == pos.z); }
 
     void move(direction dir) {
         switch (dir) {
@@ -118,9 +116,7 @@ struct PositionComparison {
 
 namespace std {
 template <> struct hash<position> {
-    auto operator()(const position &p) const -> size_t {
-        return hash_value(p);
-    }
+    auto operator()(const position &p) const -> size_t { return hash_value(p); }
 };
 } // namespace std
 
@@ -132,9 +128,7 @@ struct MapPosition {
     MapPosition(short int x, short int y) : x(x), y(y) {}
     explicit MapPosition(const position &pos) : x(pos.x), y(pos.y) {}
 
-    auto operator==(const MapPosition &pos) const -> bool {
-        return (x == pos.x && y == pos.y);
-    }
+    auto operator==(const MapPosition &pos) const -> bool { return (x == pos.x && y == pos.y); }
 
     friend auto hash_value(const MapPosition &p) -> std::size_t {
         std::size_t seed = 0;
@@ -147,9 +141,7 @@ struct MapPosition {
 
 namespace std {
 template <> struct hash<MapPosition> {
-    auto operator()(const MapPosition &p) const -> size_t {
-        return hash_value(p);
-    }
+    auto operator()(const MapPosition &p) const -> size_t { return hash_value(p); }
 };
 } // namespace std
 
@@ -158,8 +150,7 @@ struct Range {
     int zRadius = RANGEUP;
 };
 
-enum QuestAvailability
-{
+enum QuestAvailability {
     questDefaultAvailable = 0,
     questAvailable = 1,
     questWillBeAvailable = 2,

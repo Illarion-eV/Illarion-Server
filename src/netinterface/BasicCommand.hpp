@@ -38,9 +38,7 @@ public:
      *Provides read access to the definition byte
      *\return The unique command id
      */
-    [[nodiscard]] auto getDefinitionByte() const -> unsigned char {
-        return definitionByte;
-    };
+    [[nodiscard]] auto getDefinitionByte() const -> unsigned char { return definitionByte; };
 };
 
 #endif

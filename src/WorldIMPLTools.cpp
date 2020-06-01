@@ -273,9 +273,7 @@ void World::updatePlayerList() {
             insQuery.setServerTable("onlineplayer");
             const InsertQuery::columnIndex column = insQuery.addColumn("on_playerid");
 
-            Players.for_each([&](Player *player) {
-                insQuery.addValue<TYPE_OF_CHARACTER_ID>(column, player->getId());
-            });
+            Players.for_each([&](Player *player) { insQuery.addValue<TYPE_OF_CHARACTER_ID>(column, player->getId()); });
 
             insQuery.execute();
         }
@@ -310,9 +308,7 @@ auto World::findCharacterOnField(const position &pos) const -> Character * {
     return nullptr;
 }
 
-auto World::findPlayerOnField(const position &pos) const -> Player * {
-    return Players.find(pos);
-}
+auto World::findPlayerOnField(const position &pos) const -> Player * { return Players.find(pos); }
 
 auto World::findCharacter(TYPE_OF_CHARACTER_ID id) -> Character * {
     if (id < MONSTER_BASE) {
@@ -328,9 +324,7 @@ auto World::findCharacter(TYPE_OF_CHARACTER_ID id) -> Character * {
             return tmpChr;
         } else {
             using namespace ranges;
-            auto idsMatch = [id](const auto &monster) {
-                return monster->getId() == id;
-            };
+            auto idsMatch = [id](const auto &monster) { return monster->getId() == id; };
             auto result = find_if(newMonsters, idsMatch);
 
             if (result != newMonsters.end()) {
@@ -488,13 +482,9 @@ auto World::killMonster(TYPE_OF_CHARACTER_ID id) -> bool {
     return false;
 }
 
-auto World::fieldAt(const position &pos) -> map::Field & {
-    return maps.at(pos);
-}
+auto World::fieldAt(const position &pos) -> map::Field & { return maps.at(pos); }
 
-auto World::fieldAt(const position &pos) const -> const map::Field & {
-    return maps.at(pos);
-}
+auto World::fieldAt(const position &pos) const -> const map::Field & { return maps.at(pos); }
 
 auto World::fieldAtOrBelow(position &pos) -> map::Field & {
     for (size_t i = 0; i <= RANGEDOWN; ++i) {
@@ -510,21 +500,13 @@ auto World::fieldAtOrBelow(position &pos) -> map::Field & {
     throw FieldNotFound();
 }
 
-auto World::walkableFieldNear(const position &pos) -> map::Field & {
-    return walkableNear(maps, pos);
-}
+auto World::walkableFieldNear(const position &pos) -> map::Field & { return walkableNear(maps, pos); }
 
-void World::makePersistentAt(const position &pos) {
-    maps.makePersistentAt(pos);
-}
+void World::makePersistentAt(const position &pos) { maps.makePersistentAt(pos); }
 
-void World::removePersistenceAt(const position &pos) {
-    maps.removePersistenceAt(pos);
-}
+void World::removePersistenceAt(const position &pos) { maps.removePersistenceAt(pos); }
 
-auto World::isPersistentAt(const position &pos) const -> bool {
-    return maps.isPersistentAt(pos);
-}
+auto World::isPersistentAt(const position &pos) const -> bool { return maps.isPersistentAt(pos); }
 
 auto World::getItemAttrib(const std::string &s, TYPE_OF_ITEM_ID ItemID) -> int {
     // Armor //
@@ -617,11 +599,7 @@ void World::updatePlayerView(short int startx, short int endx) {
 
 void World::ageMaps() {
     if (not maps.allMapsAged()) {
-        scheduler.addOneshotTask(
-                [&] {
-                    ageMaps();
-                },
-                std::chrono::seconds(1), "age_maps");
+        scheduler.addOneshotTask([&] { ageMaps(); }, std::chrono::seconds(1), "age_maps");
     }
 }
 
@@ -630,9 +608,7 @@ void World::ageInventory() {
     Monsters.for_each(&Monster::ageInventory);
 }
 
-void World::Save() const {
-    maps.saveToDisk();
-}
+void World::Save() const { maps.saveToDisk(); }
 
 void World::Load() {
     if (!maps.loadFromDisk()) {
@@ -640,9 +616,7 @@ void World::Load() {
     }
 }
 
-void World::import() {
-    maps.importFromEditor();
-}
+void World::import() { maps.importFromEditor(); }
 
 auto World::getTime(const std::string &timeType) -> int {
     int minute, hour, day, month, year, illaTime;

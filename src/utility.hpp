@@ -26,12 +26,8 @@ extern auto comparestrings_nocase(const std::string &s1, const std::string &s2) 
 extern auto to_direction(uint8_t dir) -> direction;
 
 template <class T> struct iterator_range {
-    [[nodiscard]] auto begin() const -> T {
-        return p.first;
-    }
-    [[nodiscard]] auto end() const -> T {
-        return p.second;
-    }
+    [[nodiscard]] auto begin() const -> T { return p.first; }
+    [[nodiscard]] auto end() const -> T { return p.second; }
     std::pair<T, T> p;
 };
 

@@ -124,15 +124,11 @@ auto World::getTalkRange(Character::talk_type tt) const -> Range {
 }
 
 void World::sendMessageToAllPlayers(const std::string &message) {
-    Players.for_each([&message](Player *player) {
-        player->inform(message, Player::informBroadcast);
-    });
+    Players.for_each([&message](Player *player) { player->inform(message, Player::informBroadcast); });
 }
 
 void World::broadcast(const std::string &german, const std::string &english) {
-    Players.for_each([&german, &english](Player *player) {
-        player->inform(german, english, Player::informBroadcast);
-    });
+    Players.for_each([&german, &english](Player *player) { player->inform(german, english, Player::informBroadcast); });
 }
 
 void World::sendMessageToAllCharsInRange(const std::string &german, const std::string &english, Character::talk_type tt,
@@ -337,9 +333,7 @@ void World::lookAtInventoryItem(Player *cp, unsigned char position) {
     }
 }
 
-void World::forceIntroducePlayer(Player *cp, Player *admin) {
-    admin->introducePlayer(cp);
-}
+void World::forceIntroducePlayer(Player *cp, Player *admin) { admin->introducePlayer(cp); }
 
 void World::introduceMyself(Player *cp) {
     Range range;
@@ -351,9 +345,7 @@ void World::introduceMyself(Player *cp) {
     }
 }
 
-void World::sendWeather(Player *cp) {
-    cp->sendWeather(weather);
-}
+void World::sendWeather(Player *cp) { cp->sendWeather(weather); }
 
 void World::sendIGTime(Player *cp) {
     ServerCommandPointer cmd = std::make_shared<UpdateTimeTC>(
@@ -364,13 +356,9 @@ void World::sendIGTime(Player *cp) {
 }
 
 void World::sendIGTimeToAllPlayers() {
-    Players.for_each([this](Player *player) {
-        sendIGTime(player);
-    });
+    Players.for_each([this](Player *player) { sendIGTime(player); });
 }
 
 void World::sendWeatherToAllPlayers() {
-    Players.for_each([this](Player *player) {
-        player->sendWeather(weather);
-    });
+    Players.for_each([this](Player *player) { player->sendWeather(weather); });
 }

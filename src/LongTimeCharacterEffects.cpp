@@ -37,9 +37,7 @@ LongTimeCharacterEffects::LongTimeCharacterEffects(Character *owner) : owner(own
 
 auto LongTimeCharacterEffects::find(uint16_t effectid, LongTimeEffect *&effect) const -> bool {
     using namespace ranges;
-    auto doesIdMatch = [effectid](LongTimeEffect *e) {
-        return e->getEffectId() == effectid;
-    };
+    auto doesIdMatch = [effectid](LongTimeEffect *e) { return e->getEffectId() == effectid; };
     auto result = find_if(effects, doesIdMatch);
     bool success = result != effects.end();
 
@@ -54,9 +52,7 @@ auto LongTimeCharacterEffects::find(uint16_t effectid, LongTimeEffect *&effect) 
 
 auto LongTimeCharacterEffects::find(const std::string &effectname, LongTimeEffect *&effect) const -> bool {
     using namespace ranges;
-    auto doesNameMatch = [&effectname](LongTimeEffect *e) {
-        return e->getEffectName() == effectname;
-    };
+    auto doesNameMatch = [&effectname](LongTimeEffect *e) { return e->getEffectName() == effectname; };
     auto result = find_if(effects, doesNameMatch);
     bool success = result != effects.end();
 

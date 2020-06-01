@@ -291,9 +291,7 @@ MonsterTable::MonsterTable() {
     }
 }
 
-auto MonsterTable::exists(TYPE_OF_CHARACTER_ID id) const -> bool {
-    return table.count(id) > 0;
-}
+auto MonsterTable::exists(TYPE_OF_CHARACTER_ID id) const -> bool { return table.count(id) > 0; }
 
 auto MonsterTable::operator[](TYPE_OF_CHARACTER_ID id) -> const MonsterStruct & {
     try {

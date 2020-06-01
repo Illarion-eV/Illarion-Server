@@ -31,19 +31,13 @@ public:
     Task(std::function<void()> task, typename clock_type::time_point start_point, std::chrono::nanoseconds interval,
          std::string name);
 
-    inline auto operator<(const Task &other) const -> bool {
-        return other._next < _next;
-    }
+    inline auto operator<(const Task &other) const -> bool { return other._next < _next; }
 
     auto run() -> bool;
 
-    [[nodiscard]] inline auto getName() const -> std::string {
-        return _name;
-    }
+    [[nodiscard]] inline auto getName() const -> std::string { return _name; }
 
-    [[nodiscard]] inline auto getNextTime() const -> typename clock_type::time_point {
-        return _next;
-    }
+    [[nodiscard]] inline auto getNextTime() const -> typename clock_type::time_point { return _next; }
 
 private:
     std::function<void()> _task;

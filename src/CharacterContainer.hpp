@@ -46,13 +46,9 @@ private:
             -> iterator_range<position_to_id_type::const_iterator>;
 
 public:
-    [[nodiscard]] auto empty() const -> bool {
-        return container.empty();
-    }
+    [[nodiscard]] auto empty() const -> bool { return container.empty(); }
 
-    auto size() const -> decltype(container.size()) {
-        return container.size();
-    }
+    auto size() const -> decltype(container.size()) { return container.size(); }
 
     void insert(pointer p) {
         const auto id = p->getId();

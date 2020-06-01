@@ -24,8 +24,7 @@
 
 class Player;
 
-enum bbclientcommands
-{
+enum bbclientcommands {
     BB_KEEPALIVE_TS = 0x01,
     BB_BROADCAST_TS = 0x02,
     BB_DISCONNECT_TS = 0x03,

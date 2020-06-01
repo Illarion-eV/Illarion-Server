@@ -26,9 +26,7 @@
 
 #include "constants.hpp"
 
-auto TilesModificatorTable::getTableName() -> std::string {
-    return "tilesmodificators";
-}
+auto TilesModificatorTable::getTableName() -> std::string { return "tilesmodificators"; }
 
 auto TilesModificatorTable::getColumnNames() -> std::vector<std::string> {
     return {"tim_itemid", "tim_isnotpassable", "tim_specialitem", "tim_makepassable"};

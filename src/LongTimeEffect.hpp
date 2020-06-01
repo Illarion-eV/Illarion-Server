@@ -39,12 +39,8 @@ public:
     auto callEffect(Character *target) -> bool;
     auto save(uint32_t playerid, int32_t currentTime) -> bool;
 
-    auto isFirstAdd() const -> bool {
-        return firstadd;
-    }
-    void firstAdd() {
-        firstadd = false;
-    }
+    auto isFirstAdd() const -> bool { return firstadd; }
+    void firstAdd() { firstadd = false; }
 
     auto getEffectId() const -> uint16_t;
     auto getEffectName() const -> std::string;

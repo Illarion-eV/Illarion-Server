@@ -68,9 +68,7 @@ auto PlayerManager::findPlayer(const std::string &name) const -> bool {
     std::lock_guard<std::mutex> lock(mut);
 
     using namespace ranges;
-    auto hasThisName = [&name](const auto &player) {
-        return player->getName() == name;
-    };
+    auto hasThisName = [&name](const auto &player) { return player->getName() == name; };
     return any_of(loggedOutPlayers, hasThisName);
 }
 

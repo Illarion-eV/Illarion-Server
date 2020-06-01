@@ -33,8 +33,7 @@ class Item;
 class ItemLookAt;
 class Player;
 
-enum ServerCommands
-{
+enum ServerCommands {
     SC_KEEPALIVE_TC = 0x00,
     SC_ID_TC = 0xCA,
     SC_SETCOORDINATE_TC = 0xBD,

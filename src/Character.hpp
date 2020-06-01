@@ -48,13 +48,7 @@ class Field;
 }
 class Player;
 
-enum magic_type
-{
-    MAGE = 0,
-    PRIEST = 1,
-    BARD = 2,
-    DRUID = 3
-};
+enum magic_type { MAGE = 0, PRIEST = 1, BARD = 2, DRUID = 3 };
 
 class NoLootFound : public std::exception {};
 
@@ -75,15 +69,9 @@ public:
     Character(const Character &) = delete;
     auto operator=(const Character &) -> Character & = delete;
 
-    enum character_type
-    {
-        player = 0,
-        monster = 1,
-        npc = 2
-    };
+    enum character_type { player = 0, monster = 1, npc = 2 };
 
-    enum attributeIndex
-    {
+    enum attributeIndex {
         strength,
         dexterity,
         constitution,
@@ -109,21 +97,11 @@ public:
     static attribute_map_t attributeMap;
     static attribute_string_map_t attributeStringMap;
 
-    enum talk_type
-    {
-        tt_say = 0,
-        tt_whisper = 1,
-        tt_yell = 2
-    };
+    enum talk_type { tt_say = 0, tt_whisper = 1, tt_yell = 2 };
 
-    enum sex_type
-    {
-        male = 0,
-        female = 1
-    };
+    enum sex_type { male = 0, female = 1 };
 
-    enum face_to
-    {
+    enum face_to {
         north = dir_north,
         northeast = dir_northeast,
         east = dir_east,
@@ -134,8 +112,7 @@ public:
         northwest = dir_northwest
     };
 
-    enum informType
-    {
+    enum informType {
         informServer = 0,
         informBroadcast = 1,
         informGM = 2,
@@ -190,29 +167,17 @@ public:
 
     auto getFrontalPosition() const -> position;
 
-    virtual auto actionRunning() const -> bool {
-        return false;
-    }
+    virtual auto actionRunning() const -> bool { return false; }
 
-    inline auto getMagicType() const -> unsigned short {
-        return magic.type;
-    }
+    inline auto getMagicType() const -> unsigned short { return magic.type; }
 
-    inline virtual void setMagicType(magic_type newMagType) {
-        magic.type = newMagType;
-    }
+    inline virtual void setMagicType(magic_type newMagType) { magic.type = newMagType; }
 
-    void setOnRoute(bool onr) {
-        _is_on_route = onr;
-    }
+    void setOnRoute(bool onr) { _is_on_route = onr; }
 
-    auto getOnRoute() const -> bool {
-        return _is_on_route;
-    }
+    auto getOnRoute() const -> bool { return _is_on_route; }
 
-    virtual auto getPlayerLanguage() const -> Language {
-        return Language::english;
-    }
+    virtual auto getPlayerLanguage() const -> Language { return Language::english; }
 
     inline auto getMagicFlags(unsigned char type) const -> unsigned long int {
         if (type < 4) {
@@ -229,32 +194,20 @@ public:
         updateAppearanceForAll(true);
     }
 
-    virtual auto getRace() const -> TYPE_OF_RACE_ID {
-        return race;
-    }
+    virtual auto getRace() const -> TYPE_OF_RACE_ID { return race; }
 
-    virtual auto getFaceTo() const -> face_to {
-        return faceto;
-    }
+    virtual auto getFaceTo() const -> face_to { return faceto; }
 
-    virtual auto isAdmin() const -> bool {
-        return false;
-    }
+    virtual auto isAdmin() const -> bool { return false; }
 
-    virtual auto getMonsterType() const -> TYPE_OF_CHARACTER_ID {
-        return 0;
-    }
+    virtual auto getMonsterType() const -> TYPE_OF_CHARACTER_ID { return 0; }
 
     virtual void changeQualityAt(unsigned char pos, short int amount);
     virtual void increasePoisonValue(short int value);
 
-    virtual auto getPoisonValue() const -> short int {
-        return poisonvalue;
-    }
+    virtual auto getPoisonValue() const -> short int { return poisonvalue; }
 
-    virtual void setPoisonValue(short int value) {
-        poisonvalue = value;
-    }
+    virtual void setPoisonValue(short int value) { poisonvalue = value; }
 
     /**
      * starts a new longtime action for this character (overloaded in Player)
@@ -290,13 +243,9 @@ public:
 
     inline virtual void changeTarget() {}
 
-    virtual auto getMentalCapacity() const -> int {
-        return mental_capacity;
-    }
+    virtual auto getMentalCapacity() const -> int { return mental_capacity; }
 
-    virtual void setMentalCapacity(int value) {
-        mental_capacity = value;
-    }
+    virtual void setMentalCapacity(int value) { mental_capacity = value; }
 
     virtual void increaseMentalCapacity(int value);
 
@@ -329,9 +278,7 @@ public:
     void setBeard(uint8_t beardID);
     auto getBeard() const -> uint8_t;
 
-    auto getAppearance() const -> appearance {
-        return _appearance;
-    }
+    auto getAppearance() const -> appearance { return _appearance; }
 
     auto setBaseAttribute(Character::attributeIndex attribute, Attribute::attribute_t value) -> bool;
     void setAttribute(Character::attributeIndex attribute, Attribute::attribute_t value);
@@ -412,9 +359,7 @@ public:
     void SubWeight();
 
     inline virtual void setClippingActive(bool tclippingActive) {}
-    inline virtual auto getClippingActive() const -> bool {
-        return true;
-    }
+    inline virtual auto getClippingActive() const -> bool { return true; }
 
     SKILLMAP skills;
 
@@ -436,9 +381,7 @@ public:
 
     virtual void ageInventory();
 
-    inline auto isAlive() const -> bool {
-        return alive;
-    }
+    inline auto isAlive() const -> bool { return alive; }
 
     virtual void setAlive(bool t);
 
@@ -452,12 +395,7 @@ public:
     auto LoadWeight() const -> int;
     auto relativeLoad() const -> float;
 
-    enum class LoadLevel
-    {
-        unburdened,
-        burdened,
-        overtaxed
-    };
+    enum class LoadLevel { unburdened, burdened, overtaxed };
 
     auto loadFactor() const -> LoadLevel;
 

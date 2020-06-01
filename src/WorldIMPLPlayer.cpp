@@ -136,6 +136,4 @@ auto World::active_language_command(Player *cp, const std::string &language) -> 
     return true;
 }
 
-void World::version_command(Player *player) {
-    player->inform("Version: " SERVER_VERSION);
-}
+void World::version_command(Player *player) { player->inform("Version: " SERVER_VERSION); }

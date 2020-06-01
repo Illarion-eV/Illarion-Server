@@ -87,18 +87,12 @@ public:
 
     [[nodiscard]] virtual auto getSlotCount() const -> TYPE_OF_CONTAINERSLOTS;
 
-    [[nodiscard]] inline auto getItems() const -> const ITEMMAP & {
-        return items;
-    }
-    [[nodiscard]] inline auto getContainers() const -> const CONTAINERMAP & {
-        return containers;
-    }
+    [[nodiscard]] inline auto getItems() const -> const ITEMMAP & { return items; }
+    [[nodiscard]] inline auto getContainers() const -> const CONTAINERMAP & { return containers; }
 
     [[nodiscard]] auto getFirstFreeSlot() const -> TYPE_OF_CONTAINERSLOTS;
 
-    [[nodiscard]] inline auto isDepot() const -> bool {
-        return itemId == DEPOTITEM;
-    }
+    [[nodiscard]] inline auto isDepot() const -> bool { return itemId == DEPOTITEM; }
 
 private:
     auto isItemStackable(const Item &item) -> bool;

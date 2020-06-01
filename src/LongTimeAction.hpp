@@ -39,12 +39,7 @@ public:
     /**
      * what type of action was invoked
      */
-    enum ActionType
-    {
-        ACTION_USE = 0,
-        ACTION_MAGIC = 1,
-        ACTION_CRAFT = 2
-    };
+    enum ActionType { ACTION_USE = 0, ACTION_MAGIC = 1, ACTION_CRAFT = 2 };
 
     /**
      *@name Lua Definitions:
@@ -60,8 +55,7 @@ public:
     /**
      *holds the state of a long time action
      */
-    enum LtaState
-    {
+    enum LtaState {
         ST_NONE = 0,   /**< no action invoked or started*/
         ST_ABORT = 1,  /**< action was aborted*/
         ST_SUCCESS = 2 /**< action was sucessfully*/
@@ -171,9 +165,7 @@ public:
      *checks if currently an action is running or not
      * @return true if there is a action running
      */
-    inline auto actionRunning() const -> bool {
-        return _actionrunning;
-    }
+    inline auto actionRunning() const -> bool { return _actionrunning; }
 
 private:
     std::shared_ptr<LuaScript> _script = nullptr; /**< pointer to the last script*/

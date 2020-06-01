@@ -78,9 +78,7 @@ CommandFactory::CommandFactory() {
     templateList[C_REQUESTAPPEARANCE_TS] = std::make_unique<RequestAppearanceTS>();
 }
 
-CommandFactory::~CommandFactory() {
-    templateList.clear();
-}
+CommandFactory::~CommandFactory() { templateList.clear(); }
 
 auto CommandFactory::getCommand(unsigned char commandId) -> ClientCommandPointer {
     COMMANDLIST::iterator it;

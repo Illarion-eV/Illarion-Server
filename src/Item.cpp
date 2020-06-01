@@ -121,15 +121,11 @@ auto Item::hasData(const script_data_exchangemap &datamap) const -> bool {
     }
 
     using namespace ranges;
-    auto dataEqual = [this](const auto &dataKeyValue) {
-        return getData(dataKeyValue.first) == dataKeyValue.second;
-    };
+    auto dataEqual = [this](const auto &dataKeyValue) { return getData(dataKeyValue.first) == dataKeyValue.second; };
     return all_of(datamap, dataEqual);
 }
 
-auto Item::hasNoData() const -> bool {
-    return datamap.empty();
-}
+auto Item::hasNoData() const -> bool { return datamap.empty(); }
 
 auto Item::getData(const std::string &key) const -> std::string {
     if (datamap.find(key) != datamap.end()) {
@@ -231,9 +227,7 @@ auto Item::survivesAgeing() -> bool {
     return wear > 0;
 }
 
-auto Item::isContainer() const -> bool {
-    return Data::ContainerItems.exists(id);
-}
+auto Item::isContainer() const -> bool { return Data::ContainerItems.exists(id); }
 
 auto Item::getVolume() const -> TYPE_OF_VOLUME {
     const auto &itemStruct = Data::Items[id];
@@ -275,17 +269,11 @@ auto Item::getMaxStack() const -> number_type {
     return 0;
 }
 
-auto Item::isLarge() const -> bool {
-    return getVolume() >= LARGE_ITEM_VOLUME;
-}
+auto Item::isLarge() const -> bool { return getVolume() >= LARGE_ITEM_VOLUME; }
 
-auto Item::isStackable() const -> bool {
-    return getMaxStack() > 1;
-}
+auto Item::isStackable() const -> bool { return getMaxStack() > 1; }
 
-auto Item::isPermanent() const -> bool {
-    return wear == PERMANENT_WEAR;
-}
+auto Item::isPermanent() const -> bool { return wear == PERMANENT_WEAR; }
 
 auto Item::isMovable() const -> bool {
     const auto &itemStruct = Data::Items[id];
@@ -297,9 +285,7 @@ auto Item::isMovable() const -> bool {
     return false;
 }
 
-void Item::makePermanent() {
-    wear = PERMANENT_WEAR;
-}
+void Item::makePermanent() { wear = PERMANENT_WEAR; }
 
 auto ScriptItem::getLookAt(Character *character) const -> ItemLookAt {
     auto script = Data::Items.script(getId());

@@ -42,17 +42,13 @@ auto QuestNodeTable::getInstance() -> QuestNodeTable & {
     return *instance;
 }
 
-QuestNodeTable::QuestNodeTable() {
-    reload();
-}
+QuestNodeTable::QuestNodeTable() { reload(); }
 
 auto QuestNodeTable::getItemNodes() const -> TableRange<TYPE_OF_ITEM_ID> {
     return {itemNodes.cbegin(), itemNodes.cend()};
 }
 
-auto QuestNodeTable::getNpcNodes() const -> TableRange<unsigned int> {
-    return {npcNodes.cbegin(), npcNodes.cend()};
-}
+auto QuestNodeTable::getNpcNodes() const -> TableRange<unsigned int> { return {npcNodes.cbegin(), npcNodes.cend()}; }
 
 auto QuestNodeTable::getMonsterNodes() const -> TableRange<unsigned int> {
     return {monsterNodes.cbegin(), monsterNodes.cend()};

@@ -34,9 +34,7 @@ public:
 
     virtual ~ConfigEntryBase() = default;
 
-    [[nodiscard]] auto isInitialized() const -> bool {
-        return _initialized;
-    }
+    [[nodiscard]] auto isInitialized() const -> bool { return _initialized; }
 
 protected:
     std::string _config_name;
@@ -51,21 +49,15 @@ public:
     ConfigEntry(const std::string &config_name, T default_value = {})
             : ConfigEntryBase{config_name}, _item{std::move(default_value)} {}
 
-    operator T() const {
-        return _item;
-    }
+    operator T() const { return _item; }
 
-    auto operator()() const -> T {
-        return _item;
-    }
+    auto operator()() const -> T { return _item; }
 
     void read(std::istream &is) override {
         is >> _item;
         _initialized = true;
     }
-    void write(std::ostream &os) const override {
-        os << _item;
-    }
+    void write(std::ostream &os) const override { os << _item; }
 
 private:
     T _item;

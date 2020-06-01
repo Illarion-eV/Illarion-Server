@@ -56,9 +56,7 @@ void Attribute::setValue(attribute_t value) {
     }
 }
 
-auto Attribute::getBaseValue() const -> attribute_t {
-    return baseValue;
-}
+auto Attribute::getBaseValue() const -> attribute_t { return baseValue; }
 
 auto Attribute::getValue() const -> attribute_t {
     int value = baseValue + offset;

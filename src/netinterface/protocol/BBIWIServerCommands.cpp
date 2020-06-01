@@ -42,9 +42,7 @@ BBSendAttribTC::BBSendAttribTC(TYPE_OF_CHARACTER_ID id, const std::string &attri
     addShortIntToBuffer(value);
 }
 
-BBLogOutTC::BBLogOutTC(TYPE_OF_CHARACTER_ID id) : BasicServerCommand(BB_LOGOUT_TC) {
-    addIntToBuffer(id);
-}
+BBLogOutTC::BBLogOutTC(TYPE_OF_CHARACTER_ID id) : BasicServerCommand(BB_LOGOUT_TC) { addIntToBuffer(id); }
 
 BBTalkTC::BBTalkTC(TYPE_OF_CHARACTER_ID id, uint8_t tt, const std::string &msg) : BasicServerCommand(BB_TALK_TC) {
     addIntToBuffer(id);

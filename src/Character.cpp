@@ -186,30 +186,19 @@ Character::~Character() {
         backPackContents = nullptr;
     }
 
-    std::for_each(depotContents.rbegin(), depotContents.rend(), [](const decltype(depotContents)::value_type &value) {
-        delete value.second;
-    });
+    std::for_each(depotContents.rbegin(), depotContents.rend(),
+                  [](const decltype(depotContents)::value_type &value) { delete value.second; });
 }
 
-auto Character::getId() const -> TYPE_OF_CHARACTER_ID {
-    return id;
-}
+auto Character::getId() const -> TYPE_OF_CHARACTER_ID { return id; }
 
-auto Character::getName() const -> const std::string & {
-    return name;
-}
+auto Character::getName() const -> const std::string & { return name; }
 
-auto Character::getActionPoints() const -> short int {
-    return actionPoints;
-}
+auto Character::getActionPoints() const -> short int { return actionPoints; }
 
-auto Character::getMinActionPoints() const -> short int {
-    return NP_MIN_AP;
-}
+auto Character::getMinActionPoints() const -> short int { return NP_MIN_AP; }
 
-auto Character::getMaxActionPoints() const -> short int {
-    return NP_MAX_AP;
-}
+auto Character::getMaxActionPoints() const -> short int { return NP_MAX_AP; }
 
 void Character::setActionPoints(short int ap) {
     if (ap > getMaxActionPoints()) {
@@ -219,25 +208,15 @@ void Character::setActionPoints(short int ap) {
     }
 }
 
-void Character::increaseActionPoints(short int ap) {
-    setActionPoints(actionPoints + ap);
-}
+void Character::increaseActionPoints(short int ap) { setActionPoints(actionPoints + ap); }
 
-auto Character::canAct() const -> bool {
-    return actionPoints >= getMaxActionPoints();
-}
+auto Character::canAct() const -> bool { return actionPoints >= getMaxActionPoints(); }
 
-auto Character::getFightPoints() const -> short int {
-    return fightPoints;
-}
+auto Character::getFightPoints() const -> short int { return fightPoints; }
 
-auto Character::getMinFightPoints() const -> short int {
-    return NP_MIN_FP;
-}
+auto Character::getMinFightPoints() const -> short int { return NP_MIN_FP; }
 
-auto Character::getMaxFightPoints() const -> short int {
-    return NP_MAX_FP;
-}
+auto Character::getMaxFightPoints() const -> short int { return NP_MAX_FP; }
 
 void Character::setFightPoints(short int fp) {
     if (fp > getMaxFightPoints()) {
@@ -247,55 +226,31 @@ void Character::setFightPoints(short int fp) {
     }
 }
 
-void Character::increaseFightPoints(short int fp) {
-    setFightPoints(fightPoints + fp);
-}
+void Character::increaseFightPoints(short int fp) { setFightPoints(fightPoints + fp); }
 
-auto Character::canFight() const -> bool {
-    return fightPoints >= getMinFightPoints();
-}
+auto Character::canFight() const -> bool { return fightPoints >= getMinFightPoints(); }
 
-auto Character::getActiveLanguage() const -> short int {
-    return activeLanguage;
-}
+auto Character::getActiveLanguage() const -> short int { return activeLanguage; }
 
-void Character::setActiveLanguage(short int l) {
-    activeLanguage = l;
-}
+void Character::setActiveLanguage(short int l) { activeLanguage = l; }
 
-auto Character::getPosition() const -> const position & {
-    return pos;
-}
+auto Character::getPosition() const -> const position & { return pos; }
 
-auto Character::getAttackMode() const -> bool {
-    return attackmode;
-}
+auto Character::getAttackMode() const -> bool { return attackmode; }
 
-void Character::setAttackMode(bool attack) {
-    attackmode = attack;
-}
+void Character::setAttackMode(bool attack) { attackmode = attack; }
 
-auto Character::getLastSpokenText() const -> const std::string & {
-    return lastSpokenText;
-}
+auto Character::getLastSpokenText() const -> const std::string & { return lastSpokenText; }
 
-auto Character::isInvisible() const -> bool {
-    return isinvisible;
-}
+auto Character::isInvisible() const -> bool { return isinvisible; }
 
-void Character::setInvisible(bool invisible) {
-    isinvisible = invisible;
-}
+void Character::setInvisible(bool invisible) { isinvisible = invisible; }
 
-auto toNumber = [](const Item &item) {
-    return item.getNumber();
-};
+auto toNumber = [](const Item &item) { return item.getNumber(); };
 
 auto Character::countItem(TYPE_OF_ITEM_ID itemid) const -> int {
     using namespace ranges;
-    auto hasItemId = [itemid](const Item &item) {
-        return item.getId() == itemid;
-    };
+    auto hasItemId = [itemid](const Item &item) { return item.getId() == itemid; };
     int count = accumulate(items | view::filter(hasItemId) | view::transform(toNumber), 0);
 
     if ((items[BACKPACK].getId() != 0) && (backPackContents != nullptr)) {
@@ -631,9 +586,7 @@ void Character::ageInventory() {
     }
 }
 
-void Character::setAlive(bool t) {
-    alive = t;
-}
+void Character::setAlive(bool t) { alive = t; }
 
 auto Character::attack(Character *target) -> bool {
     if ((target != nullptr) && target->isAlive()) {
@@ -712,18 +665,14 @@ void Character::setSkinColour(const Colour &c) {
     updateAppearanceForAll(true);
 }
 
-auto Character::getSkinColour() const -> Colour {
-    return _appearance.skin;
-}
+auto Character::getSkinColour() const -> Colour { return _appearance.skin; }
 
 void Character::setHairColour(const Colour &c) {
     _appearance.hair = c;
     updateAppearanceForAll(true);
 }
 
-auto Character::getHairColour() const -> Colour {
-    return _appearance.hair;
-}
+auto Character::getHairColour() const -> Colour { return _appearance.hair; }
 
 void Character::setHair(uint8_t hairID) {
     if (raceTypes->isHairAvailable(race, getAttribute(sex), hairID)) {
@@ -736,9 +685,7 @@ void Character::setHair(uint8_t hairID) {
     }
 }
 
-auto Character::getHair() const -> uint8_t {
-    return _appearance.hairtype;
-}
+auto Character::getHair() const -> uint8_t { return _appearance.hairtype; }
 
 void Character::setBeard(uint8_t beardID) {
     if (raceTypes->isBeardAvailable(race, getAttribute(sex), beardID)) {
@@ -751,9 +698,7 @@ void Character::setBeard(uint8_t beardID) {
     }
 }
 
-auto Character::getBeard() const -> uint8_t {
-    return _appearance.beardtype;
-}
+auto Character::getBeard() const -> uint8_t { return _appearance.beardtype; }
 
 auto Character::setBaseAttribute(Character::attributeIndex attribute, Attribute::attribute_t value) -> bool {
     auto &attrib = attributes[attribute];
@@ -834,13 +779,9 @@ auto Character::getBaseAttributeSum() const -> uint16_t {
            attributes[Character::strength].getBaseValue() + attributes[Character::willpower].getBaseValue();
 }
 
-auto Character::getMaxAttributePoints() const -> uint16_t {
-    return Data::Races.getMaxAttributePoints(getRace());
-}
+auto Character::getMaxAttributePoints() const -> uint16_t { return Data::Races.getMaxAttributePoints(getRace()); }
 
-auto Character::saveBaseAttributes() -> bool {
-    return false;
-}
+auto Character::saveBaseAttributes() -> bool { return false; }
 
 void Character::handleAttributeChange(Character::attributeIndex attribute) {
     if (attribute == Character::hitpoints) {
@@ -1034,9 +975,7 @@ void Character::learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opp
     }
 }
 
-void Character::deleteAllSkills() {
-    skills.clear();
-}
+void Character::deleteAllSkills() { skills.clear(); }
 
 auto Character::isInRange(Character *cc, unsigned short int distancemetric) const -> bool {
     if (cc != nullptr) {
@@ -1054,9 +993,7 @@ auto Character::isInScreen(const position &pos) const -> bool {
     return dx + dy <= getScreenRange() && -RANGEDOWN <= dz && dz <= RANGEUP;
 }
 
-auto Character::getScreenRange() const -> unsigned short int {
-    return 14;
-}
+auto Character::getScreenRange() const -> unsigned short int { return 14; }
 
 auto Character::isInRangeToField(const position &m_pos, unsigned short int distancemetric) const -> bool {
     short int dz = abs(m_pos.z - pos.z);
@@ -1082,9 +1019,7 @@ auto Character::distanceMetric(Character *cc) const -> unsigned short int {
     }
 }
 
-auto Character::maxLoadWeight() const -> unsigned short int {
-    return getAttribute(Character::strength) * 500 + 5000;
-}
+auto Character::maxLoadWeight() const -> unsigned short int { return getAttribute(Character::strength) * 500 + 5000; }
 
 auto Character::LoadWeight() const -> int {
     int load = 0;
@@ -1106,9 +1041,7 @@ auto Character::LoadWeight() const -> int {
     }
 }
 
-auto Character::relativeLoad() const -> float {
-    return float(LoadWeight()) / maxLoadWeight();
-}
+auto Character::relativeLoad() const -> float { return float(LoadWeight()) / maxLoadWeight(); }
 
 auto Character::loadFactor() const -> LoadLevel {
     auto load = relativeLoad();
@@ -1171,13 +1104,9 @@ auto Character::weightContainer(TYPE_OF_ITEM_ID id, int count, Container *tcont)
     }
 }
 
-auto Character::GetMovement() const -> movement_type {
-    return _movement;
-}
+auto Character::GetMovement() const -> movement_type { return _movement; }
 
-void Character::SetMovement(movement_type tmovement) {
-    _movement = tmovement;
-}
+void Character::SetMovement(movement_type tmovement) { _movement = tmovement; }
 
 void Character::increasePoisonValue(short int value) {
     if ((poisonvalue + value) >= MAXPOISONVALUE) {
@@ -1214,9 +1143,7 @@ auto Character::alterSpokenMessage(const std::string &message, int languageSkill
     return alteredMessage;
 }
 
-auto Character::getLanguageSkill(int languageSkillNumber) const -> int {
-    return 100;
-}
+auto Character::getLanguageSkill(int languageSkillNumber) const -> int { return 100; }
 
 void Character::talk(talk_type tt, const std::string &message) { // only for say, whisper, shout
     talk(tt, message, message);
@@ -1527,9 +1454,7 @@ auto Character::getItemList(TYPE_OF_ITEM_ID id) const -> std::vector<ScriptItem>
     return list;
 }
 
-auto Character::GetBackPack() const -> Container * {
-    return backPackContents;
-}
+auto Character::GetBackPack() const -> Container * { return backPackContents; }
 
 auto Character::GetDepot(uint32_t depotid) const -> Container * {
     auto it = depotContents.find(depotid + 1);
@@ -1596,9 +1521,7 @@ void Character::updateAppearanceForAll(bool always) {
     }
 }
 
-void Character::forceUpdateAppearanceForAll() {
-    updateAppearanceForAll(true);
-}
+void Character::forceUpdateAppearanceForAll() { updateAppearanceForAll(true); }
 
 void Character::sendCharDescription(TYPE_OF_CHARACTER_ID id, const std::string &desc) {
     // Nothing to do here, overloaded in Player
@@ -1614,44 +1537,28 @@ void Character::performAnimation(uint8_t animID) {
     }
 }
 
-auto Character::isNewPlayer() const -> bool {
-    return false;
-}
+auto Character::isNewPlayer() const -> bool { return false; }
 
 auto Character::pageGM(const std::string &ticket) -> bool {
     // Nothing to do here, overloaded in Player
     return false;
 }
 
-void Character::setId(TYPE_OF_CHARACTER_ID id) {
-    this->id = id;
-}
+void Character::setId(TYPE_OF_CHARACTER_ID id) { this->id = id; }
 
-void Character::setName(const std::string &name) {
-    this->name = name;
-}
+void Character::setName(const std::string &name) { this->name = name; }
 
 void Character::setPosition(const position &pos) {
     _world->moveTo(this, pos);
     this->pos = pos;
 }
 
-void Character::setRace(TYPE_OF_RACE_ID race) {
-    this->race = race;
-}
+void Character::setRace(TYPE_OF_RACE_ID race) { this->race = race; }
 
-void Character::setFaceTo(face_to faceTo) {
-    faceto = faceTo;
-}
+void Character::setFaceTo(face_to faceTo) { faceto = faceTo; }
 
-void Character::setMagicFlags(magic_type type, uint64_t flags) {
-    magic.flags[type] = flags;
-}
+void Character::setMagicFlags(magic_type type, uint64_t flags) { magic.flags[type] = flags; }
 
-auto operator<<(std::ostream &os, const Character &character) -> std::ostream & {
-    return os << character.to_string();
-};
+auto operator<<(std::ostream &os, const Character &character) -> std::ostream & { return os << character.to_string(); };
 
-auto Character::getLoot() const -> const MonsterStruct::loottype & {
-    throw NoLootFound();
-}
+auto Character::getLoot() const -> const MonsterStruct::loottype & { throw NoLootFound(); }

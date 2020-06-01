@@ -41,8 +41,7 @@ class Dialog;
 class Timer;
 class LongTimeAction;
 
-enum gm_rights
-{
+enum gm_rights {
     gmr_allowlogin = 1,    // GM is allowed to login if nologin is true
     gmr_basiccommands = 2, // Basic Commands like !who !what !? !fi and !inform
     gmr_warp = 4,          // GM is allowed to Warp (includes #jump_to)
@@ -55,7 +54,7 @@ enum gm_rights
     gmr_visible = 512,    // GM is allowed to change his visiblity state
     gmr_reload = 1024, // GM is allowed to reload the tabels (With #r or !rd) includes the right to set the spawnstate
                        // !setspawn
-    gmr_ban = 2048,             // GM is allowed to ban players.
+    gmr_ban = 2048,    // GM is allowed to ban players.
     gmr_loginstate = 4096,      // GM is allowed to change loginstate
     gmr_save = 8192,            // GM is allowed to save players and maps (!playersave and #mapsave)
     gmr_broadcast = 16384,      // GM is allowed to broadcast messages
@@ -74,25 +73,15 @@ public:
     class LogoutException {
     public:
         explicit LogoutException(const char &reason) : m_reason(reason) {}
-        [[nodiscard]] inline auto getReason() const -> const char & {
-            return m_reason;
-        }
+        [[nodiscard]] inline auto getReason() const -> const char & { return m_reason; }
 
     private:
         char m_reason;
     };
 
-    enum viewdir
-    {
-        upper = 0,
-        right = 1,
-        lower = 2,
-        left = 3
-    };
+    enum viewdir { upper = 0, right = 1, lower = 2, left = 3 };
 
-    auto getType() const -> unsigned short override {
-        return player;
-    }
+    auto getType() const -> unsigned short override { return player; }
 
     auto to_string() const -> std::string override;
 
@@ -336,9 +325,7 @@ public:
 
     void changeQualityAt(unsigned char pos, short int amount) override;
 
-    inline auto isMonitoringClient() const -> bool {
-        return monitoringClient;
-    }
+    inline auto isMonitoringClient() const -> bool { return monitoringClient; }
 
     //! L�st den Player Magie lernen. Fr standard Charactere keine Funktion in Player berladen
     //\param type Magierichtung die gelernt werden soll (0 Magier, 1 Priester, 2 Barde, 3 Druide)

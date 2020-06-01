@@ -29,13 +29,9 @@ ByteBuffer::ByteBuffer() {
     }
 }
 
-ByteBuffer::~ByteBuffer() {
-    delete[] recvBuffer;
-}
+ByteBuffer::~ByteBuffer() { delete[] recvBuffer; }
 
-auto ByteBuffer::dataAvailable() const -> uint16_t {
-    return (bytesAvailable);
-}
+auto ByteBuffer::dataAvailable() const -> uint16_t { return (bytesAvailable); }
 
 auto ByteBuffer::getByte() -> unsigned char {
     if (bytesAvailable > 0) {

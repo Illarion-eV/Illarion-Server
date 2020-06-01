@@ -143,9 +143,7 @@ void Monster::setMonsterType(TYPE_OF_CHARACTER_ID type) {
     setSkinColour(raceConfiguration.skinColour);
 }
 
-void Monster::setSpawn(SpawnPoint *sp) {
-    spawn = sp;
-}
+void Monster::setSpawn(SpawnPoint *sp) { spawn = sp; }
 
 Monster::~Monster() {
     if (spawn != nullptr) {
@@ -153,9 +151,7 @@ Monster::~Monster() {
     }
 }
 
-void Monster::remove() {
-    Character::setAlive(false);
-}
+void Monster::remove() { Character::setAlive(false); }
 
 void Monster::setAlive(bool t) {
     bool wasAlive = Character::isAlive();

@@ -27,6 +27,4 @@ MessageDialog::MessageDialog(const string &title, string text, const luabind::ob
 
 MessageDialog::MessageDialog(const MessageDialog &messageDialog) = default;
 
-auto MessageDialog::getText() const -> const string & {
-    return text;
-}
+auto MessageDialog::getText() const -> const string & { return text; }

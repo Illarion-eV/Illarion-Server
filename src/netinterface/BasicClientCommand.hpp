@@ -103,21 +103,13 @@ public:
     /**
      *returns the length of the command without the header in bytes
      */
-    [[nodiscard]] auto getLength() const -> uint16_t {
-        return length;
-    }
+    [[nodiscard]] auto getLength() const -> uint16_t { return length; }
 
-    [[nodiscard]] inline auto getMinAP() const -> uint16_t {
-        return minAP;
-    }
+    [[nodiscard]] inline auto getMinAP() const -> uint16_t { return minAP; }
 
-    [[nodiscard]] inline auto getIncomingTime() const -> std::chrono::steady_clock::time_point {
-        return incomingTime;
-    }
+    [[nodiscard]] inline auto getIncomingTime() const -> std::chrono::steady_clock::time_point { return incomingTime; }
 
-    inline void setReceivedTime() {
-        incomingTime = std::chrono::steady_clock::now();
-    }
+    inline void setReceivedTime() { incomingTime = std::chrono::steady_clock::now(); }
 
 protected:
     bool dataOk; /*<true if data is ok, will set to false if a command wants to read more data from the buffer as is in

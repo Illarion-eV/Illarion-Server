@@ -27,9 +27,7 @@
 
 #include <iostream>
 
-ScheduledScriptsTable::ScheduledScriptsTable() {
-    reload();
-}
+ScheduledScriptsTable::ScheduledScriptsTable() { reload(); }
 
 ScheduledScriptsTable::~ScheduledScriptsTable() {
     /**@todo destructor implementatiotn*/
@@ -139,6 +137,4 @@ void ScheduledScriptsTable::reload() {
     }
 }
 
-void ScheduledScriptsTable::clearOldTable() {
-    m_table.clear();
-}
+void ScheduledScriptsTable::clearOldTable() { m_table.clear(); }

@@ -51,21 +51,15 @@ Map::Map(std::string name, position origin, uint16_t width, uint16_t height, uin
     }
 }
 
-auto Map::at(int16_t x, int16_t y) -> Field & {
-    return fields[convertWorldXToMap(x)][convertWorldYToMap(y)];
-}
+auto Map::at(int16_t x, int16_t y) -> Field & { return fields[convertWorldXToMap(x)][convertWorldYToMap(y)]; }
 
 auto Map::at(int16_t x, int16_t y) const -> const Field & {
     return fields[convertWorldXToMap(x)][convertWorldYToMap(y)];
 }
 
-auto Map::at(const MapPosition &pos) -> Field & {
-    return at(pos.x, pos.y);
-}
+auto Map::at(const MapPosition &pos) -> Field & { return at(pos.x, pos.y); }
 
-auto Map::at(const MapPosition &pos) const -> const Field & {
-    return at(pos.x, pos.y);
-}
+auto Map::at(const MapPosition &pos) const -> const Field & { return at(pos.x, pos.y); }
 
 void Map::save(const std::string &name) const {
     Logger::debug(LogFacility::World) << "Saving map " << name << Log::end;
@@ -454,37 +448,21 @@ void Map::age() {
     }
 }
 
-auto Map::getHeight() const -> uint16_t {
-    return height;
-}
+auto Map::getHeight() const -> uint16_t { return height; }
 
-auto Map::getWidth() const -> uint16_t {
-    return width;
-}
+auto Map::getWidth() const -> uint16_t { return width; }
 
-auto Map::getMinX() const -> int16_t {
-    return origin.x;
-}
+auto Map::getMinX() const -> int16_t { return origin.x; }
 
-auto Map::getMinY() const -> int16_t {
-    return origin.y;
-}
+auto Map::getMinY() const -> int16_t { return origin.y; }
 
-auto Map::getMaxX() const -> int16_t {
-    return origin.x + width - 1;
-}
+auto Map::getMaxX() const -> int16_t { return origin.x + width - 1; }
 
-auto Map::getMaxY() const -> int16_t {
-    return origin.y + height - 1;
-}
+auto Map::getMaxY() const -> int16_t { return origin.y + height - 1; }
 
-auto Map::getLevel() const -> int16_t {
-    return origin.z;
-}
+auto Map::getLevel() const -> int16_t { return origin.z; }
 
-auto Map::getName() const -> const std::string & {
-    return name;
-}
+auto Map::getName() const -> const std::string & { return name; }
 
 inline auto Map::convertWorldXToMap(int16_t x) const -> uint16_t {
     uint16_t temp = x - origin.x;

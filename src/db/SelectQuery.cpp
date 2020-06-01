@@ -36,9 +36,7 @@ SelectQuery::SelectQuery(const PConnection &connection) : Query(connection), Que
     isDistinct = false;
 };
 
-void SelectQuery::addOrderBy(const std::string &column, const OrderDirection &dir) {
-    addOrderBy("", column, dir);
-}
+void SelectQuery::addOrderBy(const std::string &column, const OrderDirection &dir) { addOrderBy("", column, dir); }
 
 void SelectQuery::addOrderBy(const std::string &table, const std::string &column, const OrderDirection &dir) {
     if (!orderBy.empty()) {
@@ -59,9 +57,7 @@ void SelectQuery::addOrderBy(const std::string &table, const std::string &column
     }
 }
 
-void SelectQuery::setDistinct(const bool &distinct) {
-    isDistinct = distinct;
-}
+void SelectQuery::setDistinct(const bool &distinct) { isDistinct = distinct; }
 
 auto SelectQuery::execute() -> Result {
     std::stringstream ss;

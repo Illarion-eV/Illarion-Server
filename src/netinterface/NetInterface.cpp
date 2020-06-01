@@ -30,9 +30,7 @@ NetInterface::NetInterface(boost::asio::io_service &io_servicen)
     cmd.reset();
 }
 
-auto NetInterface::getIPAdress() -> std::string {
-    return ipadress;
-}
+auto NetInterface::getIPAdress() -> std::string { return ipadress; }
 
 NetInterface::~NetInterface() {
     try {
@@ -45,9 +43,7 @@ NetInterface::~NetInterface() {
     }
 }
 
-void NetInterface::closeConnection() {
-    online = false;
-}
+void NetInterface::closeConnection() { online = false; }
 
 auto NetInterface::activate(Player *player) -> bool {
     try {

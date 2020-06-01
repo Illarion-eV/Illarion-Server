@@ -80,13 +80,9 @@ public:
 
     using SERVERCOMMANDLIST = std::deque<ServerCommandPointer>;
 
-    auto getSocket() -> boost::asio::ip::tcp::socket & {
-        return socket;
-    }
+    auto getSocket() -> boost::asio::ip::tcp::socket & { return socket; }
 
-    auto getLoginData() const -> std::shared_ptr<LoginCommandTS> {
-        return loginData;
-    }
+    auto getLoginData() const -> std::shared_ptr<LoginCommandTS> { return loginData; }
 
 private:
     void handle_read_header(const boost::system::error_code &error);

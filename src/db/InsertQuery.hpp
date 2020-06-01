@@ -39,12 +39,7 @@ private:
     std::vector<std::vector<std::string *> *> dataStorage;
 
 public:
-    enum MapInsertMode
-    {
-        onlyKeys,
-        onlyValues,
-        keysAndValues
-    };
+    enum MapInsertMode { onlyKeys, onlyValues, keysAndValues };
 
     static const uint32_t FILL = UINT32_C(0xFFFFFFFF);
 

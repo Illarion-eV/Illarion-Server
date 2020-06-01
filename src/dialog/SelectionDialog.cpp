@@ -37,21 +37,13 @@ SelectionDialog::SelectionDialog(const SelectionDialog &selectionDialog)
     }
 }
 
-auto SelectionDialog::getText() const -> const string & {
-    return text;
-}
+auto SelectionDialog::getText() const -> const string & { return text; }
 
-auto SelectionDialog::getOptionsSize() const -> index_type {
-    return options.size();
-}
+auto SelectionDialog::getOptionsSize() const -> index_type { return options.size(); }
 
-auto SelectionDialog::begin() const -> iterator_type {
-    return options.cbegin();
-}
+auto SelectionDialog::begin() const -> iterator_type { return options.cbegin(); }
 
-auto SelectionDialog::end() const -> iterator_type {
-    return options.cend();
-}
+auto SelectionDialog::end() const -> iterator_type { return options.cend(); }
 
 void SelectionDialog::addOption(TYPE_OF_ITEM_ID item, const string &name) {
     if (options.size() < MAXOPTIONS) {
@@ -59,26 +51,14 @@ void SelectionDialog::addOption(TYPE_OF_ITEM_ID item, const string &name) {
     }
 }
 
-auto SelectionDialog::getSuccess() const -> bool {
-    return success;
-}
+auto SelectionDialog::getSuccess() const -> bool { return success; }
 
-void SelectionDialog::setSuccess(bool success) {
-    this->success = success;
-}
+void SelectionDialog::setSuccess(bool success) { this->success = success; }
 
-auto SelectionDialog::getSelectedIndex() const -> index_type {
-    return selectedIndex;
-}
+auto SelectionDialog::getSelectedIndex() const -> index_type { return selectedIndex; }
 
-void SelectionDialog::setSelectedIndex(index_type index) {
-    selectedIndex = index;
-}
+void SelectionDialog::setSelectedIndex(index_type index) { selectedIndex = index; }
 
-void SelectionDialog::setCloseOnMove() {
-    close = true;
-}
+void SelectionDialog::setCloseOnMove() { close = true; }
 
-auto SelectionDialog::closeOnMove() const -> bool {
-    return close;
-}
+auto SelectionDialog::closeOnMove() const -> bool { return close; }

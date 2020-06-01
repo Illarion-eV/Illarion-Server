@@ -37,11 +37,7 @@ public:
     /**
      * in which direction is the stripe
      */
-    enum stripedirection
-    {
-        dir_right,
-        dir_down
-    };
+    enum stripedirection { dir_right, dir_down };
 
     /**
      * defines one mapstripe
@@ -57,33 +53,25 @@ public:
      * returns the initial position of this stripe
      * @return the starting position of the stripe
      */
-    [[nodiscard]] auto getViewPosition() const -> position {
-        return viewPosition;
-    }
+    [[nodiscard]] auto getViewPosition() const -> position { return viewPosition; }
 
     /**
      * returns if the stripe exists
      * @return true if the stripe exists otherwise false
      */
-    [[nodiscard]] auto getExists() const -> bool {
-        return exists;
-    }
+    [[nodiscard]] auto getExists() const -> bool { return exists; }
 
     /**
      * returns the number of tiles in the view
      * @return the number of maximal tiles in the view
      */
-    [[nodiscard]] auto getMaxTiles() const -> uint8_t {
-        return maxtiles;
-    }
+    [[nodiscard]] auto getMaxTiles() const -> uint8_t { return maxtiles; }
 
     /**
      * the stripedirection, in which direction the mapstripe shows
      * @return the current direction of the mapstripe
      */
-    [[nodiscard]] auto getStripeDirection() const -> stripedirection {
-        return stripedir;
-    }
+    [[nodiscard]] auto getStripeDirection() const -> stripedirection { return stripedir; }
 
     /**
      * constructor

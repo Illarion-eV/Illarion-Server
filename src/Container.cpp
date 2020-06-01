@@ -24,9 +24,7 @@
 
 Container::Container(Item::id_type itemId) : itemId(itemId) {}
 
-Container::Container(const Container &source) {
-    *this = source;
-}
+Container::Container(const Container &source) { *this = source; }
 
 auto Container::operator=(const Container &source) -> Container & {
     if (this != &source) {
@@ -90,9 +88,7 @@ auto Container::mergeItem(Item item) -> Item::number_type {
     return item.getNumber();
 }
 
-auto Container::InsertItem(const Item &item) -> bool {
-    return InsertItem(item, true);
-}
+auto Container::InsertItem(const Item &item) -> bool { return InsertItem(item, true); }
 
 auto Container::InsertItem(Item item, bool merge) -> bool {
     if (items.size() < getSlotCount()) {
@@ -519,9 +515,7 @@ auto Container::countItem(Item::id_type itemid, script_data_exchangemap const *d
     return temp;
 }
 
-auto Container::weight() -> int {
-    return recursiveWeight(0);
-}
+auto Container::weight() -> int { return recursiveWeight(0); }
 
 auto Container::recursiveWeight(int rekt) -> int {
     int temprekt = rekt + 1;
@@ -649,9 +643,7 @@ void Container::resetWear() {
     }
 }
 
-auto Container::getSlotCount() const -> TYPE_OF_CONTAINERSLOTS {
-    return Data::ContainerItems[itemId];
-}
+auto Container::getSlotCount() const -> TYPE_OF_CONTAINERSLOTS { return Data::ContainerItems[itemId]; }
 
 auto Container::isItemStackable(const Item &item) -> bool {
     const auto &com = Data::Items[item.getId()];

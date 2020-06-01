@@ -104,9 +104,7 @@ auto count_item_at2(const Character *character, const std::string &where, TYPE_O
     return character->countItemAt(where, id, convert_to_map(data).get());
 }
 
-auto erase_item1(Character *character, TYPE_OF_ITEM_ID id, int count) -> int {
-    return character->eraseItem(id, count);
-}
+auto erase_item1(Character *character, TYPE_OF_ITEM_ID id, int count) -> int { return character->eraseItem(id, count); }
 
 auto erase_item2(Character *character, TYPE_OF_ITEM_ID id, int count, const luabind::object &data) -> int {
     return character->eraseItem(id, count, convert_to_map(data).get());
@@ -164,9 +162,7 @@ auto getLoot(const Character *character) -> luabind::object {
     return lootTable;
 }
 
-auto container_count_item1(Container *container, Item::id_type id) -> int {
-    return container->countItem(id);
-}
+auto container_count_item1(Container *container, Item::id_type id) -> int { return container->countItem(id); }
 
 auto container_count_item2(Container *container, Item::id_type id, const luabind::object &data) -> int {
     return container->countItem(id, convert_to_map(data).get());
@@ -194,9 +190,7 @@ auto world_createFromId(World *world, TYPE_OF_ITEM_ID id, unsigned short int cou
     return world->createFromId(id, count, pos, always, quali, convert_to_map(data).get());
 }
 
-void log_lua(const std::string &message) {
-    Logger::info(LogFacility::Script) << message << Log::end;
-}
+void log_lua(const std::string &message) { Logger::info(LogFacility::Script) << message << Log::end; }
 
 auto character_getItemList(const Character *character, TYPE_OF_ITEM_ID id) -> luabind::object {
     const auto &content = character->getItemList(id);
@@ -297,9 +291,7 @@ template <typename Container> auto convert_to_fuselist(const Container &containe
     return list;
 }
 
-auto world_getNPCS(const World *world) -> luabind::object {
-    return convert_to_fuselist(world->getNPCS());
-}
+auto world_getNPCS(const World *world) -> luabind::object { return convert_to_fuselist(world->getNPCS()); }
 
 auto world_getCharactersInRangeOf(const World *world, const position &posi, uint8_t range) -> luabind::object {
     return convert_to_fuselist(world->getCharactersInRangeOf(posi, range));

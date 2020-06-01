@@ -20,13 +20,9 @@
 
 #include "data/ContainerObjectTable.hpp"
 
-auto ContainerObjectTable::getTableName() -> std::string {
-    return "container";
-}
+auto ContainerObjectTable::getTableName() -> std::string { return "container"; }
 
-auto ContainerObjectTable::getColumnNames() -> std::vector<std::string> {
-    return {"con_itemid", "con_slots"};
-}
+auto ContainerObjectTable::getColumnNames() -> std::vector<std::string> { return {"con_itemid", "con_slots"}; }
 
 auto ContainerObjectTable::assignId(const Database::ResultTuple &row) -> TYPE_OF_ITEM_ID {
     return row["con_itemid"].as<TYPE_OF_ITEM_ID>();

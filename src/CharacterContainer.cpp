@@ -50,9 +50,7 @@ template <class T> auto CharacterContainer<T>::find(const std::string &name) con
         return find(id);
     } catch (boost::bad_lexical_cast &) {
         using namespace ranges;
-        auto namesMatch = [&name](pointer character) {
-            return comparestrings_nocase(character->getName(), name);
-        };
+        auto namesMatch = [&name](pointer character) { return comparestrings_nocase(character->getName(), name); };
         auto characters = container | view::values;
         auto result = find_if(characters, namesMatch);
 

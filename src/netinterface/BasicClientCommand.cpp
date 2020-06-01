@@ -31,13 +31,9 @@ void BasicClientCommand::setHeaderData(uint16_t mlength, uint16_t mcheckSum) {
     msg_buffer = new unsigned char[length];
 }
 
-BasicClientCommand::~BasicClientCommand() {
-    delete[] msg_buffer;
-}
+BasicClientCommand::~BasicClientCommand() { delete[] msg_buffer; }
 
-auto BasicClientCommand::msg_data() -> unsigned char * {
-    return msg_buffer;
-}
+auto BasicClientCommand::msg_data() -> unsigned char * { return msg_buffer; }
 
 /*
 volatile bool BasicClientCommand::getData( ByteBuffer * recvBuffer )

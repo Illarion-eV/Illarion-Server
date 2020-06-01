@@ -24,8 +24,6 @@
 
 namespace binding {
 
-auto monster() -> luabind::scope {
-    return luabind::class_<Monster, Character>("Monster");
-}
+auto monster() -> luabind::scope { return luabind::class_<Monster, Character>("Monster"); }
 
 } // namespace binding
