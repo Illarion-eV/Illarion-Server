@@ -19,6 +19,7 @@
  */
 
 #include "Config.hpp"
+
 #include "Logger.hpp"
 
 #include <fstream>
