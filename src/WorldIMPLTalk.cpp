@@ -261,7 +261,7 @@ void World::lookAtMapItem(Player *player, const position &pos,
         map::Field &field = fieldAt(pos);
         ScriptItem item = field.getStackItem(stackPos);
 
-        if (item.getId() != 0u) {
+        if (item.getId() != 0) {
             item.type = ScriptItem::it_field;
             item.pos = pos;
             item.itempos = stackPos;

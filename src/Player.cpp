@@ -73,7 +73,7 @@ extern std::shared_ptr<LuaDepotScript>depotScript;
 
 Player::Player(std::shared_ptr<NetInterface> newConnection)
     :  onlinetime(0), Connection(std::move(newConnection)), turtleActive(false),
-      clippingActive(true), admin(0u), questWriteLock(false), monitoringClient(false), dialogCounter(0) {
+      clippingActive(true), admin(0), questWriteLock(false), monitoringClient(false), dialogCounter(0) {
     screenwidth = 0;
     screenheight = 0;
     Character::setAlive(true);
@@ -1579,20 +1579,20 @@ auto Player::load() noexcept -> bool {
             }
 
             // item is in a depot?
-            if ((tempdepot != 0u) && (it = depots.find(tempdepot)) == depots.end()) {
+            if ((tempdepot != 0) && (it = depots.find(tempdepot)) == depots.end()) {
                 // serious error occured! player data corrupted!
                 Logger::error(LogFacility::Player) << to_string() << " has invalid depot contents!" << Log::end;
                 throw std::exception();
             }
 
             // item is in a container?
-            if ((tempincont != 0u) && (it = containers.find(tempincont)) == containers.end()) {
+            if ((tempincont != 0) && (it = containers.find(tempincont)) == containers.end()) {
                 // serious error occured! player data corrupted!
                 Logger::error(LogFacility::Player) << to_string() << " has invalid depot contents 2!" << Log::end;
                 throw std::exception();
             }
 
-            if ((((tempincont == 0u) && (tempdepot == 0u)) && linenumber > MAX_BODY_ITEMS + MAX_BELT_SLOTS) || ((tempincont != 0u) && (tempdepot != 0u))) {
+            if ((((tempincont == 0) && (tempdepot == 0)) && linenumber > MAX_BODY_ITEMS + MAX_BELT_SLOTS) || ((tempincont != 0) && (tempdepot != 0))) {
                 // serious error occured! player data corrupted!
                 Logger::error(LogFacility::Player) << to_string() << " has invalid items!" << Log::end;
                 throw std::exception();
