@@ -218,12 +218,7 @@ auto World::getItemStatsFromId(TYPE_OF_ITEM_ID id) -> ItemStruct {
     return data;
 }
 
-auto World::isCharacterOnField(const position &pos) const -> bool {
-    if (findCharacterOnField(pos) != nullptr) {
-        return true;
-    }
-    return false;
-}
+auto World::isCharacterOnField(const position &pos) const -> bool { return findCharacterOnField(pos) != nullptr; }
 
 auto World::getCharacterOnField(const position &pos) const -> character_ptr {
     return character_ptr(findCharacterOnField(pos));
