@@ -65,12 +65,12 @@ auto WorldMap::at(const position &pos) -> Field & {
 auto WorldMap::at(const position &pos) const -> const Field & {
     if (persistentFields.count(pos) > 0) {
         return persistentFields.at(pos);
-    } else {
-        try {
-            return maps.at(world_map.at(pos)).at(pos.x, pos.y);
-        } catch (std::out_of_range &) {
-            throw FieldNotFound();
-        }
+    }
+    try {
+        return maps.at(world_map.at(pos)).at(pos.x, pos.y);
+
+    } catch (std::out_of_range &) {
+        throw FieldNotFound();
     }
 }
 
@@ -376,41 +376,48 @@ auto WorldMap::loadFromDisk() -> bool {
         Logger::error(LogFacility::World)
                 << "Error while loading maps: could not open " << (path + "_initmaps") << Log::end;
         return false;
-    } else {
-        unsigned short int size;
-        mapinitfile.read((char *)&size, sizeof(size));
-        Logger::info(LogFacility::World) << "Loading " << size << " maps." << Log::end;
-
-        int16_t tZ_Level;
-        int16_t tMin_X;
-        int16_t tMin_Y;
-
-        uint16_t tWidth;
-        uint16_t tHeight;
-
-        char mname[200];
-
-        for (int i = 0; i < size; ++i) {
-            mapinitfile.read((char *)&tZ_Level, sizeof(tZ_Level));
-            mapinitfile.read((char *)&tMin_X, sizeof(tMin_X));
-            mapinitfile.read((char *)&tMin_Y, sizeof(tMin_Y));
-
-            mapinitfile.read((char *)&tWidth, sizeof(tWidth));
-            mapinitfile.read((char *)&tHeight, sizeof(tHeight));
-
-            auto map = Map{"previously saved map", position{tMin_X, tMin_Y, tZ_Level}, tWidth, tHeight};
-
-            sprintf(mname, "%s_%6d_%6d_%6d", path.c_str(), tZ_Level, tMin_X, tMin_Y);
-
-            if (map.load(mname)) {
-                insert(std::move(map));
-            }
-        }
-
-        loadPersistentFields();
-
-        return true;
     }
+    unsigned short int size;
+
+    mapinitfile.read((char *)&size, sizeof(size));
+
+    Logger::info(LogFacility::World) << "Loading " << size << " maps." << Log::end;
+
+    int16_t tZ_Level;
+
+    int16_t tMin_X;
+
+    int16_t tMin_Y;
+
+    uint16_t tWidth;
+
+    uint16_t tHeight;
+
+    char mname[200];
+
+    for (int i = 0; i < size; ++i) {
+        mapinitfile.read((char *)&tZ_Level, sizeof(tZ_Level));
+
+        mapinitfile.read((char *)&tMin_X, sizeof(tMin_X));
+
+        mapinitfile.read((char *)&tMin_Y, sizeof(tMin_Y));
+
+        mapinitfile.read((char *)&tWidth, sizeof(tWidth));
+
+        mapinitfile.read((char *)&tHeight, sizeof(tHeight));
+
+        auto map = Map{"previously saved map", position{tMin_X, tMin_Y, tZ_Level}, tWidth, tHeight};
+
+        sprintf(mname, "%s_%6d_%6d_%6d", path.c_str(), tZ_Level, tMin_X, tMin_Y);
+
+        if (map.load(mname)) {
+            insert(std::move(map));
+        }
+    }
+
+    loadPersistentFields();
+
+    return true;
 }
 
 void WorldMap::loadPersistentFields() {

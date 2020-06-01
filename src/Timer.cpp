@@ -27,7 +27,6 @@ auto Timer::next() -> bool {
     if (realgap >= gap) {
         last = temp;
         return true;
-    } else {
-        return false;
     }
+    return false;
 }

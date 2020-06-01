@@ -76,7 +76,8 @@ public:
                     if (count <= 1) {
                         ;
                         return;
-                    } else if (count != FILL) {
+                    }
+                    if (count != FILL) {
                         count--;
                     }
                 }

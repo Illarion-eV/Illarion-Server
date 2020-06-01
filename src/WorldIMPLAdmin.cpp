@@ -521,9 +521,8 @@ auto World::forceLogoutOfPlayer(const std::string &name) -> bool {
         ServerCommandPointer cmd = std::make_shared<LogOutTC>(BYGAMEMASTER);
         temp->Connection->shutdownSend(cmd);
         return true;
-    } else {
-        return false;
     }
+    return false;
 }
 
 void World::sendAdminAllPlayerData(Player *admin) {

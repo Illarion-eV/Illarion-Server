@@ -105,12 +105,10 @@ struct PositionComparison {
         if (pos1.x == pos2.x) {
             if (pos1.y == pos2.y) {
                 return pos1.z < pos2.z;
-            } else {
-                return pos1.y < pos2.y;
             }
-        } else {
-            return pos1.x < pos2.x;
+            return pos1.y < pos2.y;
         }
+        return pos1.x < pos2.x;
     }
 };
 

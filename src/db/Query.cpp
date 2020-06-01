@@ -72,9 +72,11 @@ auto Query::escapeKey(const std::string &key) -> std::string {
 auto Query::escapeAndChainKeys(const std::string &key1, const std::string &key2) -> std::string {
     if (!key1.empty() && !key2.empty()) {
         return escapeKey(key1) + "." + escapeKey(key2);
-    } else if (key1.empty()) {
+    }
+    if (key1.empty()) {
         return escapeKey(key2);
-    } else if (key2.empty()) {
+    }
+    if (key2.empty()) {
         return escapeKey(key1);
     }
 

@@ -48,9 +48,8 @@ auto Monster::getLoot() const -> const MonsterStruct::loottype & {
 
     if (monsterDescriptions->exists(monsterType)) {
         return (*monsterDescriptions)[monsterType].loot;
-    } else {
-        throw NoLootFound();
     }
+    throw NoLootFound();
 }
 
 void Monster::performStep(position targetpos) {

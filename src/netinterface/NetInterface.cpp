@@ -81,9 +81,8 @@ void NetInterface::handle_read_data(const boost::system::error_code &error) {
 
                         loginData = login;
                         return;
-                    } else {
-                        owner->receiveCommand(cmd);
                     }
+                    owner->receiveCommand(cmd);
                 }
             } catch (OverflowException &e) {
                 std::ostringstream message;

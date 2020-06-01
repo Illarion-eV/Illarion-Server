@@ -167,9 +167,11 @@ auto World::changeItem(ScriptItem item) -> bool {
 
         item.owner->updateAppearanceForAll(true);
         return true;
-    } else if (item.type == ScriptItem::it_field) {
+    }
+    if (item.type == ScriptItem::it_field) {
         try {
             map::Field &field = fieldAt(item.pos);
+
             Item it;
 
             if (field.takeItemFromStack(it)) {
@@ -181,13 +183,17 @@ auto World::changeItem(ScriptItem item) -> bool {
             }
 
             return true;
+
         } catch (FieldNotFound &) {
             return false;
         }
+
     } else if (item.type == ScriptItem::it_container) {
         if (item.inside != nullptr) {
             item.inside->changeItem(item);
+
             sendContainerSlotChange(item.inside, item.itempos);
+
             return true;
         }
     }
@@ -198,9 +204,8 @@ auto World::changeItem(ScriptItem item) -> bool {
 auto World::getItemName(TYPE_OF_ITEM_ID itemid, uint8_t language) -> std::string {
     if (language == 0) {
         return Data::Items[itemid].German;
-    } else {
-        return Data::Items[itemid].English;
     }
+    return Data::Items[itemid].English;
 }
 
 auto World::getItemStats(const ScriptItem &item) -> ItemStruct {
@@ -216,9 +221,8 @@ auto World::getItemStatsFromId(TYPE_OF_ITEM_ID id) -> ItemStruct {
 auto World::isCharacterOnField(const position &pos) const -> bool {
     if (findCharacterOnField(pos) != nullptr) {
         return true;
-    } else {
-        return false;
     }
+    return false;
 }
 
 auto World::getCharacterOnField(const position &pos) const -> character_ptr {
@@ -239,31 +243,39 @@ auto World::erase(ScriptItem item, int amount) -> bool {
 
         item.owner->increaseAtPos(item.itempos, -amount);
         return true;
-    } else if (item.type == ScriptItem::it_field) {
+    }
+    if (item.type == ScriptItem::it_field) {
         try {
             map::Field &field = fieldAt(item.pos);
+
             bool erased = false;
+
             field.increaseItemOnStack(-amount, erased);
 
             if (erased) {
                 sendRemoveItemFromMapToAllVisibleCharacters(item.pos);
+
             } else {
                 sendSwapItemOnMapToAllVisibleCharacter(item.getId(), item.pos, item);
             }
 
             return true;
+
         } catch (FieldNotFound &) {
             logMissingField("erase", item.pos);
+
             return false;
         }
+
     } else if (item.type == ScriptItem::it_container) {
         if (item.inside != nullptr) {
             item.inside->increaseAtPos(item.itempos, -amount);
+
             sendContainerSlotChange(item.inside, item.itempos);
+
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     return false;
@@ -273,9 +285,11 @@ auto World::increase(ScriptItem item, short int count) -> bool {
     if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
         item.owner->increaseAtPos(item.itempos, count);
         return true;
-    } else if (item.type == ScriptItem::it_field) {
+    }
+    if (item.type == ScriptItem::it_field) {
         try {
             bool erased = false;
+
             fieldAt(item.pos).increaseItemOnStack(count, erased);
 
             if (erased) {
@@ -283,18 +297,22 @@ auto World::increase(ScriptItem item, short int count) -> bool {
             }
 
             return true;
+
         } catch (FieldNotFound &) {
             logMissingField("increase", item.pos);
+
             return false;
         }
+
     } else if (item.type == ScriptItem::it_container) {
         if (item.inside != nullptr) {
             item.inside->increaseAtPos(item.itempos, count);
+
             sendContainerSlotChange(item.inside, item.itempos);
+
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     return false;
@@ -304,38 +322,49 @@ auto World::swap(ScriptItem item, TYPE_OF_ITEM_ID newItem, unsigned short int ne
     if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
         item.owner->swapAtPos(item.itempos, newItem, newQuality);
         return true;
-    } else if (item.type == ScriptItem::it_field) {
+    }
+    if (item.type == ScriptItem::it_field) {
         try {
             map::Field &field = fieldAt(item.pos);
+
             Item it;
 
             if (field.viewItemOnStack(it)) {
                 if (field.swapItemOnStack(newItem, newQuality)) {
                     Item dummy;
+
                     dummy.setId(newItem);
+
                     dummy.setNumber(it.getNumber());
 
                     if (it.getId() != newItem) {
                         sendSwapItemOnMapToAllVisibleCharacter(it.getId(), item.pos, dummy);
                     }
+
                 } else {
                     Logger::error(LogFacility::Script)
+
                             << "World::swap: Swapping item on Field " << item.pos << " failed!" << Log::end;
+
                     return false;
                 }
             }
+
         } catch (FieldNotFound &) {
             logMissingField("swap", item.pos);
+
             return false;
         }
+
     } else if (item.type == ScriptItem::it_container) {
         if (item.inside != nullptr) {
             item.inside->swapAtPos(item.itempos, newItem, newQuality);
+
             sendContainerSlotChange(item.inside, item.itempos);
+
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     return false;
@@ -467,9 +496,8 @@ auto World::createSavedArea(uint16_t tile, const position &origin, uint16_t heig
                                          << " height: " << height << " width: " << width << " standard tile: " << tile
                                          << "!" << Log::end;
         return true;
-    } else {
-        return false;
     }
+    return false;
 }
 
 auto World::getArmorStruct(TYPE_OF_ITEM_ID id, ArmorStruct &ret) -> bool {
@@ -478,9 +506,8 @@ auto World::getArmorStruct(TYPE_OF_ITEM_ID id, ArmorStruct &ret) -> bool {
     if (Data::ArmorItems.exists(id)) {
         ret = Data::ArmorItems[id];
         return true;
-    } else {
-        return false;
     }
+    return false;
 }
 
 auto World::getWeaponStruct(TYPE_OF_ITEM_ID id, WeaponStruct &ret) -> bool {
@@ -489,27 +516,24 @@ auto World::getWeaponStruct(TYPE_OF_ITEM_ID id, WeaponStruct &ret) -> bool {
     if (Data::WeaponItems.exists(id)) {
         ret = Data::WeaponItems[id];
         return true;
-    } else {
-        return false;
     }
+    return false;
 }
 
 auto World::getNaturalArmor(TYPE_OF_RACE_ID id, MonsterArmor &ret) -> bool {
     if (Data::NaturalArmors.exists(id)) {
         ret = Data::NaturalArmors[id];
         return true;
-    } else {
-        return false;
     }
+    return false;
 }
 
 auto World::getMonsterAttack(TYPE_OF_RACE_ID id, AttackBoni &ret) -> bool {
     if (Data::MonsterAttacks.exists(id)) {
         ret = Data::MonsterAttacks[id];
         return true;
-    } else {
-        return false;
     }
+    return false;
 }
 
 void World::sendMonitoringMessage(const std::string &msg, unsigned char id) {

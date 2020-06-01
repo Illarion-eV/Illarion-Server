@@ -31,8 +31,8 @@ auto MilTimer::Next() -> bool {
 
     if (gap > temp) {
         return false;
-    } else {
-        last = now;
-        return true;
     }
+    last = now;
+
+    return true;
 }

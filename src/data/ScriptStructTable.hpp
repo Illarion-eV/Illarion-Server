@@ -74,9 +74,8 @@ public:
 
         if (it != scripts.end()) {
             return it->second;
-        } else {
-            return {};
         }
+        return {};
     }
 
 protected:

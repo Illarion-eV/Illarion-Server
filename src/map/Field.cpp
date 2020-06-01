@@ -55,17 +55,15 @@ auto Field::getTileCode() const -> uint16_t { return tile; }
 auto Field::getTileId() const -> uint16_t {
     if (((tile & 0xFC00) >> 10) > 0) {
         return tile & 0x001F;
-    } else {
-        return tile;
     }
+    return tile;
 }
 
 auto Field::getSecondaryTileId() const -> uint16_t {
     if (((tile & 0xFC00) >> 10) > 0) {
         return (tile & 0x03E0) >> 5;
-    } else {
-        return tile;
     }
+    return tile;
 }
 
 void Field::setMusicId(uint16_t id) {
@@ -93,9 +91,8 @@ auto Field::getMovementCost() const -> TYPE_OF_WALKINGCOST {
         }
 
         return tileWalkingCost;
-    } else {
-        return std::numeric_limits<TYPE_OF_WALKINGCOST>::max();
     }
+    return std::numeric_limits<TYPE_OF_WALKINGCOST>::max();
 }
 
 auto Field::getStackItem(uint8_t pos) const -> ScriptItem {

@@ -37,27 +37,38 @@ void World::sendMessageToAdmin(const std::string &message) {
 }
 
 auto World::languagePrefix(int Language) -> std::string {
-    if (Language == 1) {
+    switch (Language) {
+    case 1:
         return "[hum] ";
-    } else if (Language == 2) {
+
+    case 2:
         return "[dwa] ";
-    } else if (Language == 3) {
+
+    case 3:
         return "[elf] ";
-    } else if (Language == 4) {
+
+    case 4:
         return "[liz] ";
-    } else if (Language == 5) {
+
+    case 5:
         return "[orc] ";
-    } else if (Language == 6) {
+
+    case 6:
         return "[hal] ";
-    } else if (Language == 7) {
+
+    case 7:
         return "[fai] ";
-    } else if (Language == 8) {
+
+    case 8:
         return "[gno] ";
-    } else if (Language == 9) {
+
+    case 9:
         return "[gob] ";
-    } else if (Language == 10) {
+
+    case 10:
         return "[anc] ";
-    } else {
+
+    default:
         return "";
     }
 }

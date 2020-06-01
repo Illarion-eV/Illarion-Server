@@ -1693,9 +1693,8 @@ auto Player::getCustomNameOf(Player *player) const -> std::string {
 
     if (it != namedPlayers.cend()) {
         return it->second;
-    } else {
-        return {};
     }
+    return {};
 }
 
 void Player::deleteAllSkills() {
@@ -1778,7 +1777,8 @@ auto Player::move(direction dir, uint8_t mode) -> bool {
         auto cmd = std::make_shared<MoveAckTC>(getId(), getPosition(), STILLMOVING, 0);
         Connection->addCommand(cmd);
         return false;
-    } else if (now > reachingTargetField) {
+    }
+    if (now > reachingTargetField) {
         reachingTargetField = now;
     }
 
@@ -1824,10 +1824,9 @@ auto Player::move(direction dir, uint8_t mode) -> bool {
                 ServerCommandPointer cmd = std::make_shared<MoveAckTC>(getId(), getPosition(), NOMOVE, 0);
                 Connection->addCommand(cmd);
                 return false;
-            } else {
-                if (mode != RUNNING || j == 1) {
-                    increaseActionPoints(walkcost / 100);
-                }
+            }
+            if (mode != RUNNING || j == 1) {
+                increaseActionPoints(walkcost / 100);
             }
 
             if (moveToPossible(newField)) {
@@ -1893,9 +1892,12 @@ auto Player::move(direction dir, uint8_t mode) -> bool {
                 _world->sendCharacterMoveToAllVisiblePlayers(this, mode, walkcost);
                 _world->sendAllVisibleCharactersToPlayer(this, true);
                 return true;
-            } else if (j == 0) {
+            }
+            if (j == 0) {
                 ServerCommandPointer cmd = std::make_shared<MoveAckTC>(getId(), getPosition(), NOMOVE, 0);
+
                 Connection->addCommand(cmd);
+
                 return false;
             }
         }
@@ -2093,10 +2095,10 @@ auto Player::getQuestProgress(TYPE_OF_QUEST_ID questid, int &time) const -> TYPE
     if (it != quests.end()) {
         time = it->second.second;
         return it->second.first;
-    } else {
-        time = 0;
-        return TYPE_OF_QUESTSTATUS(0);
     }
+    time = 0;
+
+    return TYPE_OF_QUESTSTATUS(0);
 }
 
 void Player::startAction(unsigned short int wait, unsigned short int ani, unsigned short int redoani,
@@ -2130,11 +2132,12 @@ auto Player::getSkillName(TYPE_OF_SKILL_ID s) const -> std::string {
     if (Data::Skills.exists(s)) {
         const auto &skill = Data::Skills[s];
         return nls(skill.germanName, skill.englishName);
-    } else {
-        std::string german("unbekannter Skill");
-        std::string english("unknown skill");
-        return nls(german, english);
     }
+    std::string german("unbekannter Skill");
+
+    std::string english("unknown skill");
+
+    return nls(german, english);
 }
 
 auto Player::getPlayerLanguage() const -> Language { return _player_language; }

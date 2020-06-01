@@ -40,16 +40,17 @@ auto ByteBuffer::getByte() -> unsigned char {
             unsigned char ret = recvBuffer[rBuff].buff[readPos++];
             return ret;
 
-        } else {
-            // end of the current readbuffer
-            if (getReadBuffer()) {
-                readPos = 0;
+        } // end of the current readbuffer
 
-                if (recvBuffer[rBuff].fill > 0) {
-                    bytesAvailable--;
-                    unsigned char ret = recvBuffer[rBuff].buff[readPos++];
-                    return ret;
-                }
+        if (getReadBuffer()) {
+            readPos = 0;
+
+            if (recvBuffer[rBuff].fill > 0) {
+                bytesAvailable--;
+
+                unsigned char ret = recvBuffer[rBuff].buff[readPos++];
+
+                return ret;
             }
         }
     }
@@ -81,7 +82,6 @@ auto ByteBuffer::writeToBuf(uint16_t size) -> bool {
         wBuff = nr;
         bytesAvailable += size;
         return true;
-    } else {
-        return false;
     }
+    return false;
 }

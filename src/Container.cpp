@@ -134,11 +134,16 @@ auto Container::InsertItem(Item item, TYPE_OF_CONTAINERSLOTS pos) -> bool {
                         selectedItem.setMinQuality(item);
                         selectedItem.setNumber(temp);
                         return true;
-                    } else if (items.size() < getSlotCount()) {
+                    }
+                    if (items.size() < getSlotCount()) {
                         item.setNumber(item.getNumber() - maxStack + selectedItem.getNumber());
+
                         selectedItem.setMinQuality(item);
+
                         selectedItem.setNumber(maxStack);
+
                         insertIntoFirstFreeSlot(item);
+
                         return true;
                     }
                 }
@@ -170,12 +175,14 @@ auto Container::InsertContainer(const Item &item, Container *cc, TYPE_OF_CONTAIN
 
         if (iterat != items.end()) {
             return InsertContainer(item, cc);
-        } else {
-            items.insert(ITEMMAP::value_type(pos, titem));
-            containers.insert(CONTAINERMAP::value_type(pos, cc));
-            World::get()->sendContainerSlotChange(this, pos);
-            return true;
         }
+        items.insert(ITEMMAP::value_type(pos, titem));
+
+        containers.insert(CONTAINERMAP::value_type(pos, cc));
+
+        World::get()->sendContainerSlotChange(this, pos);
+
+        return true;
     }
 
     return false;
@@ -193,18 +200,18 @@ auto Container::changeQualityAt(TYPE_OF_CONTAINERSLOTS nr, short int amount) -> 
         if (tmpQuality % 100 > 1) {
             item.setQuality(tmpQuality);
             return true;
-        } else {
-            if (item.isContainer()) {
-                auto iterat = containers.find(nr);
-
-                if (iterat != containers.end()) {
-                    containers.erase(iterat);
-                }
-            }
-
-            items.erase(nr);
-            return true;
         }
+        if (item.isContainer()) {
+            auto iterat = containers.find(nr);
+
+            if (iterat != containers.end()) {
+                containers.erase(iterat);
+            }
+        }
+
+        items.erase(nr);
+
+        return true;
     }
 
     return false;
@@ -229,33 +236,37 @@ auto Container::TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &item, Container *&cc
             }
 
             return true;
+        }
+        cc = nullptr;
+
+        if (isItemStackable(item) && count > 1) {
+            if (selectedItem.getNumber() > count) {
+                selectedItem.setNumber(selectedItem.getNumber() - count);
+
+                item.setNumber(count);
+
+            } else {
+                items.erase(nr);
+            }
 
         } else {
-            cc = nullptr;
+            if (selectedItem.getNumber() > 1) {
+                selectedItem.setNumber(selectedItem.getNumber() - 1);
 
-            if (isItemStackable(item) && count > 1) {
-                if (selectedItem.getNumber() > count) {
-                    selectedItem.setNumber(selectedItem.getNumber() - count);
-                    item.setNumber(count);
-                } else {
-                    items.erase(nr);
-                }
+                item.setNumber(1);
+
             } else {
-                if (selectedItem.getNumber() > 1) {
-                    selectedItem.setNumber(selectedItem.getNumber() - 1);
-                    item.setNumber(1);
-                } else {
-                    items.erase(nr);
-                }
+                items.erase(nr);
             }
         }
 
         return true;
-    } else {
-        items.erase(nr);
-        cc = nullptr;
-        return false;
     }
+    items.erase(nr);
+
+    cc = nullptr;
+
+    return false;
 }
 
 auto Container::getItemList() -> std::vector<ScriptItem> {
@@ -368,11 +379,12 @@ auto Container::viewItemNr(TYPE_OF_CONTAINERSLOTS nr, ScriptItem &item, Containe
         }
 
         return true;
-    } else {
-        items.erase(nr);
-        cc = nullptr;
-        return false;
     }
+    items.erase(nr);
+
+    cc = nullptr;
+
+    return false;
 }
 
 auto Container::increaseAtPos(unsigned char pos, int count) -> int {
@@ -384,21 +396,25 @@ auto Container::increaseAtPos(unsigned char pos, int count) -> int {
 
         if (item.isContainer()) {
             return count;
+        }
+        temp = item.getNumber() + count;
+
+        auto maxStack = item.getMaxStack();
+
+        if (temp > maxStack) {
+            item.setNumber(maxStack);
+
+            temp = temp - maxStack;
+
+        } else if (temp <= 0) {
+            temp = count + item.getNumber();
+
+            items.erase(pos);
+
         } else {
-            temp = item.getNumber() + count;
+            item.setNumber(temp);
 
-            auto maxStack = item.getMaxStack();
-
-            if (temp > maxStack) {
-                item.setNumber(maxStack);
-                temp = temp - maxStack;
-            } else if (temp <= 0) {
-                temp = count + item.getNumber();
-                items.erase(pos);
-            } else {
-                item.setNumber(temp);
-                temp = 0;
-            }
+            temp = 0;
         }
     }
 
@@ -546,9 +562,8 @@ auto Container::recursiveWeight(int rekt) -> int {
 
     if (temp > MAXWEIGHT) {
         return MAXWEIGHT;
-    } else {
-        return temp;
     }
+    return temp;
 }
 
 auto Container::eraseItem(Item::id_type itemid, Item::number_type count, script_data_exchangemap const *data) -> int {

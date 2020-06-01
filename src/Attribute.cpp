@@ -63,11 +63,11 @@ auto Attribute::getValue() const -> attribute_t {
 
     if (value < 0) {
         return 0;
-    } else if (value > maximum && maximum != 0) {
-        return maximum;
-    } else {
-        return value;
     }
+    if (value > maximum && maximum != 0) {
+        return maximum;
+    }
+    return value;
 }
 
 void Attribute::increaseBaseValue(int amount) {

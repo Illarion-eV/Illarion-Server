@@ -227,9 +227,8 @@ auto World::addWarpField(const position &where, const position &target, unsigned
     if (addWarpField(where, target, starttilenr, startitemnr)) {
         if (addWarpField(target, where, targettilenr, targetitemnr)) {
             return true;
-        } else {
-            removeWarpField(where);
         }
+        removeWarpField(where);
     }
 
     return false;

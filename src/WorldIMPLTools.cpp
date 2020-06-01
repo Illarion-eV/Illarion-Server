@@ -322,15 +322,17 @@ auto World::findCharacter(TYPE_OF_CHARACTER_ID id) -> Character * {
 
         if (tmpChr != nullptr) {
             return tmpChr;
-        } else {
-            using namespace ranges;
-            auto idsMatch = [id](const auto &monster) { return monster->getId() == id; };
-            auto result = find_if(newMonsters, idsMatch);
-
-            if (result != newMonsters.end()) {
-                return *result;
-            }
         }
+        using namespace ranges;
+
+        auto idsMatch = [id](const auto &monster) { return monster->getId() == id; };
+
+        auto result = find_if(newMonsters, idsMatch);
+
+        if (result != newMonsters.end()) {
+            return *result;
+        }
+
     } else {
         auto *tmpChr = dynamic_cast<Character *>(Npc.find(id));
 
@@ -456,9 +458,8 @@ auto World::characterAttacks(Character *cp) -> bool {
         }
 
         return false;
-    } else {
-        return true;
     }
+    return true;
 }
 
 auto World::killMonster(TYPE_OF_CHARACTER_ID id) -> bool {
@@ -682,9 +683,11 @@ auto World::getTime(const std::string &timeType) -> int {
     // Date calculation is done, return the date if it was requested
     if (timeType == "year") {
         return year;
-    } else if (timeType == "month") {
+    }
+    if (timeType == "month") {
         return month;
-    } else if (timeType == "day") {
+    }
+    if (timeType == "day") {
         return day;
     }
 
@@ -703,13 +706,14 @@ auto World::getTime(const std::string &timeType) -> int {
     // returning the last possible values
     if (timeType == "hour") {
         return hour;
-    } else if (timeType == "minute") {
-        return minute;
-    } else if (timeType == "second") {
-        return illaTime;
-    } else {
-        return -1;
     }
+    if (timeType == "minute") {
+        return minute;
+    }
+    if (timeType == "second") {
+        return illaTime;
+    }
+    return -1;
 }
 
 auto World::findWarpFieldsInRange(const position &pos, short int range, std::vector<position> &warppositions) -> bool {

@@ -89,9 +89,8 @@ auto RaceTable::getRelativeSize(TYPE_OF_RACE_ID race, uint16_t size) const -> ui
 
     if (size >= minSize && size <= maxSize) {
         return uint8_t((40 * (size - minSize)) / (maxSize - minSize) + 80);
-    } else {
-        return 100;
     }
+    return 100;
 }
 
 auto RaceTable::isBaseAttributeInLimits(TYPE_OF_RACE_ID race, Character::attributeIndex attribute,

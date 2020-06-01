@@ -182,9 +182,8 @@ public:
     inline auto getMagicFlags(unsigned char type) const -> unsigned long int {
         if (type < 4) {
             return magic.flags[type];
-        } else {
-            return 0;
         }
+        return 0;
     }
 
     virtual auto getType() const -> unsigned short = 0;

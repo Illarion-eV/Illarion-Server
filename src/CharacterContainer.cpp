@@ -32,9 +32,8 @@ template <class T> auto CharacterContainer<T>::getPosition(TYPE_OF_CHARACTER_ID 
     if (i != container.end()) {
         pos = (i->second)->getPosition();
         return true;
-    } else {
-        return false;
     }
+    return false;
 }
 
 template <class T>

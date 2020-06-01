@@ -35,7 +35,6 @@ auto comparestrings_nocase(const std::string &s1, const std::string &s2) -> bool
 auto to_direction(uint8_t dir) -> direction {
     if (dir < 10) {
         return static_cast<direction>(dir);
-    } else {
-        return dir_none;
     }
+    return dir_none;
 }

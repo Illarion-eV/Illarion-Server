@@ -42,10 +42,10 @@ auto character_ptr::get() const -> Character * {
 
     if (ptr != nullptr) {
         return ptr;
-    } else {
-        throw std::logic_error(
-                "Usage of invalid Character! Use isValidChar( char ) to check if a Character is still valid.");
     }
+    throw std::logic_error(
+
+            "Usage of invalid Character! Use isValidChar( char ) to check if a Character is still valid.");
 }
 
 character_ptr::operator Character *() const { return get(); }

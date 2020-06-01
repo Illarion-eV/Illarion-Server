@@ -142,9 +142,8 @@ auto Character::getNextStepDir(const position &goal, direction &dir) const -> bo
     if (!steps.empty()) {
         dir = steps.front();
         return true;
-    } else {
-        return false;
     }
+    return false;
 }
 
 Character::Character() : Character(appearance()) {}
@@ -545,9 +544,8 @@ auto Character::swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t new
         }
 
         return true;
-    } else {
-        return false;
     }
+    return false;
 }
 
 void Character::ageInventory() {
@@ -635,9 +633,8 @@ auto Character::getAttackTarget() const -> character_ptr {
 auto Character::getSkillName(TYPE_OF_SKILL_ID s) const -> std::string {
     if (Data::Skills.exists(s)) {
         return Data::Skills[s].englishName;
-    } else {
-        return "unknown skill";
     }
+    return "unknown skill";
 }
 
 auto Character::getSkill(TYPE_OF_SKILL_ID s) const -> unsigned short int {
@@ -645,9 +642,8 @@ auto Character::getSkill(TYPE_OF_SKILL_ID s) const -> unsigned short int {
 
     if (iterator == skills.end()) {
         return 0;
-    } else {
-        return (*iterator).second.major;
     }
+    return (*iterator).second.major;
 }
 
 auto Character::getMinorSkill(TYPE_OF_SKILL_ID s) const -> unsigned short int {
@@ -655,9 +651,8 @@ auto Character::getMinorSkill(TYPE_OF_SKILL_ID s) const -> unsigned short int {
 
     if (iterator == skills.end()) {
         return 0;
-    } else {
-        return (*iterator).second.minor;
     }
+    return (*iterator).second.minor;
 }
 
 void Character::setSkinColour(const Colour &c) {
@@ -713,9 +708,8 @@ auto Character::setBaseAttribute(Character::attributeIndex attribute, Attribute:
         }
 
         return true;
-    } else {
-        return false;
     }
+    return false;
 }
 
 void Character::setAttribute(Character::attributeIndex attribute, Attribute::attribute_t value) {
@@ -750,9 +744,8 @@ auto Character::increaseBaseAttribute(Character::attributeIndex attribute, int a
         }
 
         return true;
-    } else {
-        return false;
     }
+    return false;
 }
 
 auto Character::increaseAttribute(Character::attributeIndex attribute, int amount) -> Attribute::attribute_t {
@@ -861,11 +854,12 @@ auto Character::setSkill(TYPE_OF_SKILL_ID skill, short int major, short int mino
             sv.minor = minor;
             skills[skill] = sv;
             return sv.major;
-        } else {
-            iterator->second.major = major;
-            iterator->second.minor = minor;
-            return iterator->second.major;
         }
+        iterator->second.major = major;
+
+        iterator->second.minor = minor;
+
+        return iterator->second.major;
     }
 }
 
@@ -881,28 +875,32 @@ auto Character::increaseSkill(TYPE_OF_SKILL_ID skill, short int amount) -> unsig
 
         if (amount <= 0) {
             return 0; // Don't add new skill if value <= 0
-        } else if (amount > MAJOR_SKILL_GAP) {
+        }
+        if (amount > MAJOR_SKILL_GAP) {
             sv.major = MAJOR_SKILL_GAP;
+
         } else {
             sv.major = amount;
         }
 
         skills[skill] = sv;
         return sv.major;
-    } else {
-        int temp = iterator->second.major + amount;
-
-        if (temp <= 0) {
-            iterator->second.major = 0;
-            skills.erase(iterator); // L�chen des Eintrags wenn value <= 0
-        } else if (temp > MAJOR_SKILL_GAP) {
-            iterator->second.major = MAJOR_SKILL_GAP;
-        } else {
-            iterator->second.major = temp;
-        }
-
-        return (iterator->second.major);
     }
+    int temp = iterator->second.major + amount;
+
+    if (temp <= 0) {
+        iterator->second.major = 0;
+
+        skills.erase(iterator); // L�chen des Eintrags wenn value <= 0
+
+    } else if (temp > MAJOR_SKILL_GAP) {
+        iterator->second.major = MAJOR_SKILL_GAP;
+
+    } else {
+        iterator->second.major = temp;
+    }
+
+    return (iterator->second.major);
 }
 
 auto Character::increaseMinorSkill(TYPE_OF_SKILL_ID skill, short int amount) -> unsigned short int {
@@ -917,8 +915,10 @@ auto Character::increaseMinorSkill(TYPE_OF_SKILL_ID skill, short int amount) -> 
 
         if (amount <= 0) {
             return 0; // Don't add new skill if value <= 0
-        } else if (amount > 10000) {
+        }
+        if (amount > 10000) {
             sv.minor = 10000;
+
         } else {
             sv.minor = amount;
         }
@@ -930,29 +930,32 @@ auto Character::increaseMinorSkill(TYPE_OF_SKILL_ID skill, short int amount) -> 
 
         skills[skill] = sv;
         return (sv.major);
-    } else {
-        int temp = iterator->second.minor + amount;
+    }
+    int temp = iterator->second.minor + amount;
 
-        if (temp <= 0) {
-            iterator->second.minor = 0;
-            iterator->second.major--;
+    if (temp <= 0) {
+        iterator->second.minor = 0;
 
-            if (iterator->second.major == 0) {
-                skills.erase(iterator); // delete if major == 0
-            }
-        } else if (temp >= 10000) {
-            iterator->second.minor = 0;
-            iterator->second.major++;
+        iterator->second.major--;
 
-            if (iterator->second.major > MAJOR_SKILL_GAP) {
-                iterator->second.major = MAJOR_SKILL_GAP;
-            }
-        } else {
-            iterator->second.minor = temp;
+        if (iterator->second.major == 0) {
+            skills.erase(iterator); // delete if major == 0
         }
 
-        return (iterator->second.major);
+    } else if (temp >= 10000) {
+        iterator->second.minor = 0;
+
+        iterator->second.major++;
+
+        if (iterator->second.major > MAJOR_SKILL_GAP) {
+            iterator->second.major = MAJOR_SKILL_GAP;
+        }
+
+    } else {
+        iterator->second.minor = temp;
     }
+
+    return (iterator->second.major);
 }
 
 auto Character::getSkillValue(TYPE_OF_SKILL_ID s) const -> const skillvalue * {
@@ -960,9 +963,8 @@ auto Character::getSkillValue(TYPE_OF_SKILL_ID s) const -> const skillvalue * {
 
     if (it == skills.end()) {
         return nullptr;
-    } else {
-        return &(it->second);
     }
+    return &(it->second);
 }
 
 void Character::learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opponent) {
@@ -1014,9 +1016,8 @@ auto Character::distanceMetricToPosition(const position &m_pos) const -> unsigne
 auto Character::distanceMetric(Character *cc) const -> unsigned short int {
     if (cc != nullptr) {
         return distanceMetricToPosition(cc->pos);
-    } else {
-        return 0xFFFF;
     }
+    return 0xFFFF;
 }
 
 auto Character::maxLoadWeight() const -> unsigned short int { return getAttribute(Character::strength) * 500 + 5000; }
@@ -1034,11 +1035,11 @@ auto Character::LoadWeight() const -> int {
 
     if (load > MAXWEIGHT) {
         return MAXWEIGHT;
-    } else if (load < 0) {
-        return 0;
-    } else {
-        return load;
     }
+    if (load < 0) {
+        return 0;
+    }
+    return load;
 }
 
 auto Character::relativeLoad() const -> float { return float(LoadWeight()) / maxLoadWeight(); }
@@ -1048,7 +1049,8 @@ auto Character::loadFactor() const -> LoadLevel {
 
     if (load > 1.0) {
         return LoadLevel::overtaxed;
-    } else if (load > 0.75) {
+    }
+    if (load > 0.75) {
         return LoadLevel::burdened;
     }
 
@@ -1064,10 +1066,10 @@ auto Character::weightOK(TYPE_OF_ITEM_ID id, int count, Container *tcont) const 
 
     if (tcont != nullptr) {
         return (realweight + weightContainer(id, 1, tcont)) <= maxLoadWeight();
-    } else {
-        const auto &itemStruct = Data::Items[id];
-        return (realweight + itemStruct.Weight * count) <= maxLoadWeight();
     }
+    const auto &itemStruct = Data::Items[id];
+
+    return (realweight + itemStruct.Weight * count) <= maxLoadWeight();
 }
 
 auto Character::weightContainer(TYPE_OF_ITEM_ID id, int count, Container *tcont) const -> int {
@@ -1099,9 +1101,8 @@ auto Character::weightContainer(TYPE_OF_ITEM_ID id, int count, Container *tcont)
 
     if (temp > MAXWEIGHT) {
         return MAXWEIGHT;
-    } else {
-        return temp;
     }
+    return temp;
 }
 
 auto Character::GetMovement() const -> movement_type { return _movement; }
@@ -1389,16 +1390,17 @@ void Character::changeQualityAt(unsigned char pos, short int amount) {
         if (tmpQuality % 100 > 1) {
             items[pos].setQuality(tmpQuality);
             return;
-        } else {
-            if (pos == RIGHT_TOOL && items[LEFT_TOOL].getId() == BLOCKEDITEM) {
-                items[LEFT_TOOL].reset();
-            } else if (pos == LEFT_TOOL && items[RIGHT_TOOL].getId() == BLOCKEDITEM) {
-                items[RIGHT_TOOL].reset();
-            }
-
-            items[pos].reset();
-            return;
         }
+        if (pos == RIGHT_TOOL && items[LEFT_TOOL].getId() == BLOCKEDITEM) {
+            items[LEFT_TOOL].reset();
+
+        } else if (pos == LEFT_TOOL && items[RIGHT_TOOL].getId() == BLOCKEDITEM) {
+            items[RIGHT_TOOL].reset();
+        }
+
+        items[pos].reset();
+
+        return;
     }
 }
 
@@ -1461,9 +1463,8 @@ auto Character::GetDepot(uint32_t depotid) const -> Container * {
 
     if (it == depotContents.end()) {
         return nullptr;
-    } else {
-        return it->second;
     }
+    return it->second;
 }
 
 auto Character::idleTime() const -> uint32_t {

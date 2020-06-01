@@ -102,16 +102,18 @@ auto checkArguments(int argc, char *argv[]) -> bool {
         if (Config::load(std::string(argv[1]))) {
             Logger::info(LogFacility::Other) << "main: using configfile: " << argv[1] << Log::end;
             return true;
-        } else {
-            Logger::error(LogFacility::Other) << "main: error reading configfile: " << argv[1] << Log::end;
-            Logger::error(LogFacility::Other) << "main: USAGE: " << argv[0] << " configfile" << Log::end;
-            return false;
         }
-    } else {
-        Logger::error(LogFacility::Other) << "main: invalid commandline arguments" << Log::end;
+        Logger::error(LogFacility::Other) << "main: error reading configfile: " << argv[1] << Log::end;
+
         Logger::error(LogFacility::Other) << "main: USAGE: " << argv[0] << " configfile" << Log::end;
+
         return false;
     }
+    Logger::error(LogFacility::Other) << "main: invalid commandline arguments" << Log::end;
+
+    Logger::error(LogFacility::Other) << "main: USAGE: " << argv[0] << " configfile" << Log::end;
+
+    return false;
 }
 
 // load item definitions

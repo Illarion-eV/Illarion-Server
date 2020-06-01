@@ -43,10 +43,10 @@ auto ScriptVariablesTable::find(const std::string &id, std::string &ret) -> bool
     if (exists(id)) {
         ret = (*this)[id];
         return true;
-    } else {
-        ret = "";
-        return false;
     }
+    ret = "";
+
+    return false;
 }
 
 void ScriptVariablesTable::set(const std::string &id, const std::string &value) { get(id) = value; }

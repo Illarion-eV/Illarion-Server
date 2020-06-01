@@ -130,9 +130,8 @@ auto Item::hasNoData() const -> bool { return datamap.empty(); }
 auto Item::getData(const std::string &key) const -> std::string {
     if (datamap.find(key) != datamap.end()) {
         return datamap.at(key);
-    } else {
-        return "";
     }
+    return "";
 }
 
 void Item::setData(const std::string &key, const std::string &value) {

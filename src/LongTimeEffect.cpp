@@ -58,9 +58,8 @@ auto LongTimeEffect::findValue(const std::string &name, uint32_t &ret) -> bool {
     if (it != values.end()) {
         ret = it->second;
         return true;
-    } else {
-        return false;
     }
+    return false;
 }
 
 auto LongTimeEffect::save(uint32_t playerid, int32_t currentTime) -> bool {

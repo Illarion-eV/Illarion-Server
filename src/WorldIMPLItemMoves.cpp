@@ -77,26 +77,30 @@ auto World::putItemOnInvPos(Character *cc, unsigned char pos) -> bool {
                                     return true;
                                 }
                                 // we don't want to add any more two handers...
-                                else {
-                                    return false;
-                                }
-                            } else if ((pos == LEFT_TOOL) && (cc->items[RIGHT_TOOL].getId() == 0)) {
-                                if (cc->items[pos].getId() == 0 && g_item.getNumber() == 1) {
-                                    cc->items[pos] = g_item;
-                                    cc->items[RIGHT_TOOL].setId(BLOCKEDITEM);
-                                    cc->items[RIGHT_TOOL].makePermanent();
-                                    cc->items[RIGHT_TOOL].setNumber(1);
-                                    g_item.reset();
-                                    cc->updateAppearanceForAll(true);
-                                    return true;
-                                }
-                                // we don't want to add any more two handers...
-                                else {
-                                    return false;
-                                }
-                            } else {
                                 return false;
                             }
+                            if ((pos == LEFT_TOOL) && (cc->items[RIGHT_TOOL].getId() == 0)) {
+                                if (cc->items[pos].getId() == 0 && g_item.getNumber() == 1) {
+                                    cc->items[pos] = g_item;
+
+                                    cc->items[RIGHT_TOOL].setId(BLOCKEDITEM);
+
+                                    cc->items[RIGHT_TOOL].makePermanent();
+
+                                    cc->items[RIGHT_TOOL].setNumber(1);
+
+                                    g_item.reset();
+
+                                    cc->updateAppearanceForAll(true);
+
+                                    return true;
+                                }
+
+                                // we don't want to add any more two handers...
+
+                                return false;
+                            }
+                            return false;
                         }
                     }
 
@@ -112,76 +116,100 @@ auto World::putItemOnInvPos(Character *cc, unsigned char pos) -> bool {
 
                         cc->updateAppearanceForAll(true);
                         return true;
-                    } else {
-                        if (!g_item.isStackable() && !g_item.isContainer()) {
-                            return false;
-                        }
-
-                        if (!cc->items[pos].equalData(g_item)) {
-                            return false;
-                        }
-
-                        if (g_item.getNumber() + cc->items[pos].getNumber() <= g_item.getMaxStack()) {
-                            cc->items[pos].setNumber(cc->items[pos].getNumber() + g_item.getNumber());
-                            cc->items[pos].setMinQuality(g_item);
-                            g_item.reset();
-                            cc->updateAppearanceForAll(true);
-                            return true;
-                        } else {
-                            return false;
-                        }
                     }
-                } else {
-                    if (g_item.getNumber() == 1 && cc->items[pos].getId() == 0) {
-                        if (Data::ArmorItems.exists(g_item.getId())) {
-                            const auto &armor = Data::ArmorItems[g_item.getId()];
-                            unsigned char flag;
+                    if (!g_item.isStackable() && !g_item.isContainer()) {
+                        return false;
+                    }
 
-                            switch (pos) {
-                            case HEAD:
-                                flag = FLAG_HEAD;
-                                break;
+                    if (!cc->items[pos].equalData(g_item)) {
+                        return false;
+                    }
 
-                            case NECK:
-                                flag = FLAG_NECK;
-                                break;
+                    if (g_item.getNumber() + cc->items[pos].getNumber() <= g_item.getMaxStack()) {
+                        cc->items[pos].setNumber(cc->items[pos].getNumber() + g_item.getNumber());
 
-                            case BREAST:
-                                flag = FLAG_BREAST;
-                                break;
+                        cc->items[pos].setMinQuality(g_item);
 
-                            case HANDS:
-                                flag = FLAG_HANDS;
-                                break;
+                        g_item.reset();
 
-                            case FINGER_LEFT_HAND:
-                            case FINGER_RIGHT_HAND:
-                                flag = FLAG_FINGER;
-                                break;
+                        cc->updateAppearanceForAll(true);
 
-                            case LEGS:
-                                flag = FLAG_LEGS;
-                                break;
+                        return true;
+                    }
+                    return false;
+                }
+                if (g_item.getNumber() == 1 && cc->items[pos].getId() == 0) {
+                    if (Data::ArmorItems.exists(g_item.getId())) {
+                        const auto &armor = Data::ArmorItems[g_item.getId()];
 
-                            case FEET:
-                                flag = FLAG_FEET;
-                                break;
+                        unsigned char flag;
 
-                            case COAT:
-                                flag = FLAG_COAT;
-                                break;
+                        switch (pos) {
+                        case HEAD:
 
-                            default:
-                                flag = 0xFF;
-                                break;
-                            }
+                            flag = FLAG_HEAD;
 
-                            if ((armor.BodyParts & flag) != 0) {
-                                cc->items[pos] = g_item;
-                                g_item.reset();
-                                cc->updateAppearanceForAll(true);
-                                return true;
-                            }
+                            break;
+
+                        case NECK:
+
+                            flag = FLAG_NECK;
+
+                            break;
+
+                        case BREAST:
+
+                            flag = FLAG_BREAST;
+
+                            break;
+
+                        case HANDS:
+
+                            flag = FLAG_HANDS;
+
+                            break;
+
+                        case FINGER_LEFT_HAND:
+
+                        case FINGER_RIGHT_HAND:
+
+                            flag = FLAG_FINGER;
+
+                            break;
+
+                        case LEGS:
+
+                            flag = FLAG_LEGS;
+
+                            break;
+
+                        case FEET:
+
+                            flag = FLAG_FEET;
+
+                            break;
+
+                        case COAT:
+
+                            flag = FLAG_COAT;
+
+                            break;
+
+                        default:
+
+                            flag = 0xFF;
+
+                            break;
+                        }
+
+                        if ((armor.BodyParts & flag) != 0) {
+                            cc->items[pos] = g_item;
+
+                            g_item.reset();
+
+                            cc->updateAppearanceForAll(true);
+
+                            return true;
                         }
                     }
                 }
@@ -198,7 +226,8 @@ auto World::putItemOnInvPos(Character *cc, unsigned char pos) -> bool {
                 g_item.reset();
                 cc->updateAppearanceForAll(true);
                 return true;
-            } else if (cc->items[pos].getId() == g_item.getId()) {
+            }
+            if (cc->items[pos].getId() == g_item.getId()) {
                 if (!g_item.isStackable() && !g_item.isContainer()) {
                     return false;
                 }
@@ -211,9 +240,13 @@ auto World::putItemOnInvPos(Character *cc, unsigned char pos) -> bool {
 
                 if (temp <= g_item.getMaxStack()) {
                     cc->items[pos].setNumber(temp);
+
                     cc->items[pos].setMinQuality(g_item);
+
                     g_item.reset();
+
                     cc->updateAppearanceForAll(true);
+
                     return true;
                 }
             }
@@ -236,9 +269,8 @@ auto World::putItemOnInvPos(Player *cc, unsigned char pos) -> bool {
         }
 
         return true;
-    } else {
-        return false;
     }
+    return false;
 }
 
 auto World::takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_type count) -> bool {
@@ -305,17 +337,19 @@ auto World::takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_ty
 
                 cc->updateAppearanceForAll(true);
                 return true;
-            } else {
-                if (g_item.getNumber() > 1) {
-                    cc->items[pos].setNumber(cc->items[pos].getNumber() - 1);
-                    g_item.setNumber(1);
-                } else {
-                    cc->items[pos].reset();
-                }
-
-                cc->updateAppearanceForAll(true);
-                return true;
             }
+            if (g_item.getNumber() > 1) {
+                cc->items[pos].setNumber(cc->items[pos].getNumber() - 1);
+
+                g_item.setNumber(1);
+
+            } else {
+                cc->items[pos].reset();
+            }
+
+            cc->updateAppearanceForAll(true);
+
+            return true;
         }
     } // Rucksack oder normal
 
@@ -346,9 +380,8 @@ auto World::takeItemFromInvPos(Player *cc, unsigned char pos, Item::number_type 
         }
 
         return true;
-    } else {
-        return false;
     }
+    return false;
 }
 
 auto World::takeItemFromShowcase(Player *cc, uint8_t showcase, unsigned char pos, Item::number_type count) -> bool {
