@@ -44,7 +44,6 @@ private:
 public:
     Container::CONTAINERMAP containers;
 
-public:
     explicit Field(const position &here) : here(here){};
     Field(uint16_t tile, uint16_t music, const position &here, bool persistent = false);
     Field(const Field &) = delete;

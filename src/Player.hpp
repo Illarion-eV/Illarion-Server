@@ -552,7 +552,6 @@ private:
     void startCrafting(uint8_t stillToCraft, uint16_t craftingTime, uint16_t sfx, uint16_t sfxDuration,
                        uint32_t dialogId);
 
-private:
     Language _player_language;
 
     // Status of the player, Okay, waiting authroization, jailed, banned, etc..
