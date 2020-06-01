@@ -21,20 +21,18 @@
 #include "Connection.hpp"
 
 #include <memory>
-#include <stdexcept>
 #include <pqxx/connection.hxx>
 #include <pqxx/transaction.hxx>
+#include <stdexcept>
 
 using namespace Database;
 
-Connection::Connection(const std::string &connectionString):
-    internalConnection(std::make_unique<pqxx::connection>(connectionString)) {
-}
+Connection::Connection(const std::string &connectionString)
+        : internalConnection(std::make_unique<pqxx::connection>(connectionString)) {}
 
 void Connection::beginTransaction() {
     if (!internalConnection) {
-        throw std::domain_error(
-            "Transaction not possible while internal connection is not set.");
+        throw std::domain_error("Transaction not possible while internal connection is not set.");
     }
 
     rollbackTransaction();
@@ -62,4 +60,3 @@ auto Connection::query(const std::string &query) -> pqxx::result {
 
     throw std::domain_error("No active transaction");
 }
-

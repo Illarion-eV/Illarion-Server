@@ -21,13 +21,12 @@
 #ifndef QUERY_WHERE_HPP
 #define QUERY_WHERE_HPP
 
-#include <string>
-#include <stack>
-
-#include <boost/cstdint.hpp>
-
 #include "db/Connection.hpp"
 #include "db/Query.hpp"
+
+#include <boost/cstdint.hpp>
+#include <stack>
+#include <string>
 
 namespace Database {
 class QueryWhere {
@@ -40,31 +39,36 @@ public:
     QueryWhere(const QueryWhere &org) = delete;
     auto operator=(const QueryWhere &org) -> QueryWhere & = delete;
 
-    template<typename T> void addEqualCondition(const std::string &column, const T &value) {
+    template <typename T> void addEqualCondition(const std::string &column, const T &value) {
         addEqualCondition<T>("", column, value);
     };
 
-    template<typename T> void addEqualCondition(const std::string &table, const std::string &column, const T &value) {
-        conditionsStack.push(std::move(std::string(Query::escapeAndChainKeys(table, column) + " = " + connection.quote<T>(value))));
+    template <typename T> void addEqualCondition(const std::string &table, const std::string &column, const T &value) {
+        conditionsStack.push(
+                std::move(std::string(Query::escapeAndChainKeys(table, column) + " = " + connection.quote<T>(value))));
     };
 
-    template<typename T> void addNotEqualCondition(const std::string &column, const T &value) {
+    template <typename T> void addNotEqualCondition(const std::string &column, const T &value) {
         addNotEqualCondition<T>("", column, value);
     };
 
-    template<typename T> void addNotEqualCondition(const std::string &table, const std::string &column, const T &value) {
-        conditionsStack.push(std::move(std::string(Query::escapeAndChainKeys(table, column) + " != " + connection.quote<T>(value))));
+    template <typename T>
+    void addNotEqualCondition(const std::string &table, const std::string &column, const T &value) {
+        conditionsStack.push(
+                std::move(std::string(Query::escapeAndChainKeys(table, column) + " != " + connection.quote<T>(value))));
     };
 
     void andConditions();
     void orConditions();
+
 protected:
     explicit QueryWhere(const Connection &connection);
-    
+
     auto buildQuerySegment() -> std::string;
+
 private:
     void mergeConditions(const std::string &operation);
 };
-}
+} // namespace Database
 
 #endif

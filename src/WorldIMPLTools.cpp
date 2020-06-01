@@ -18,32 +18,27 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "World.hpp"
-
-#include <cstdlib>
-#include <list>
-#include <range/v3/all.hpp>
-
-#include "Player.hpp"
-#include "NPC.hpp"
 #include "Monster.hpp"
-#include "map/Field.hpp"
-
-#include "data/Data.hpp"
+#include "NPC.hpp"
+#include "Player.hpp"
+#include "World.hpp"
 #include "data/ArmorObjectTable.hpp"
 #include "data/ContainerObjectTable.hpp"
+#include "data/Data.hpp"
 #include "data/MonsterTable.hpp"
 #include "data/TilesModificatorTable.hpp"
 #include "data/WeaponObjectTable.hpp"
-
 #include "db/Connection.hpp"
 #include "db/ConnectionManager.hpp"
 #include "db/DeleteQuery.hpp"
 #include "db/InsertQuery.hpp"
-
+#include "map/Field.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
-
 #include "script/LuaWeaponScript.hpp"
+
+#include <cstdlib>
+#include <list>
+#include <range/v3/all.hpp>
 
 extern MonsterTable *monsterDescriptions;
 extern std::shared_ptr<LuaWeaponScript> standardFightingScript;
@@ -66,7 +61,8 @@ void World::deleteAllLostNPC() {
     LostNpcs.clear();
 }
 
-auto World::findTargetsInSight(const position &pos, uint8_t range, std::vector<Character *> &ret, Character::face_to direction) const -> bool {
+auto World::findTargetsInSight(const position &pos, uint8_t range, std::vector<Character *> &ret,
+                               Character::face_to direction) const -> bool {
     bool found = false;
 
     for (const auto &candidate : getTargetsInRange(pos, range)) {
@@ -160,13 +156,13 @@ auto World::LoS(const position &startingpos, const position &endingpos) const ->
     std::list<BlockingObject> ret;
     ret.clear();
     bool steep = std::abs(startingpos.y - endingpos.y) > std::abs(startingpos.x - endingpos.x);
-    short int startx=startingpos.x;
-    short int starty=startingpos.y;
-    short int endx=endingpos.x;
-    short int endy=endingpos.y;
+    short int startx = startingpos.x;
+    short int starty = startingpos.y;
+    short int endx = endingpos.x;
+    short int endy = endingpos.y;
 
     if (steep) {
-        //change x,y values for correct algorithm in negativ range
+        // change x,y values for correct algorithm in negativ range
         short int change;
         change = startx;
         startx = starty;
@@ -186,13 +182,12 @@ auto World::LoS(const position &startingpos, const position &endingpos) const ->
         change = starty;
         starty = endy;
         endy = change;
-
     }
 
     short int deltax = endx - startx;
     short int deltay = std::abs(endy - starty);
     short int error = 0;
-    short int ystep=1;
+    short int ystep = 1;
     short int y = starty;
 
     if (starty > endy) {
@@ -211,7 +206,7 @@ auto World::LoS(const position &startingpos, const position &endingpos) const ->
 
             try {
                 const map::Field &field = fieldAt(pos);
-                
+
                 if (field.hasPlayer()) {
                     bo.blockingType = BlockingObject::BT_CHARACTER;
                     bo.blockingChar = findCharacterOnField(pos);
@@ -226,12 +221,12 @@ auto World::LoS(const position &startingpos, const position &endingpos) const ->
 
                     for (size_t i = 0; i < field.itemCount(); ++i) {
                         auto testItem = field.getStackItem(i);
-                        
+
                         if (testItem.getVolume() > it.getVolume()) {
                             it = testItem;
                         }
                     }
-                        
+
                     if (it.isLarge()) {
                         bo.blockingType = BlockingObject::BT_ITEM;
                         it.pos = pos;
@@ -251,8 +246,8 @@ auto World::LoS(const position &startingpos, const position &endingpos) const ->
 
         error += deltay;
 
-        if (2*error >= deltax) {
-            y+=ystep;
+        if (2 * error >= deltax) {
+            y += ystep;
             error -= deltax;
         }
     }
@@ -260,7 +255,7 @@ auto World::LoS(const position &startingpos, const position &endingpos) const ->
     return ret;
 }
 
-//function which updates the playerlist.
+// function which updates the playerlist.
 void World::updatePlayerList() {
     using namespace Database;
 
@@ -333,7 +328,9 @@ auto World::findCharacter(TYPE_OF_CHARACTER_ID id) -> Character * {
             return tmpChr;
         } else {
             using namespace ranges;
-            auto idsMatch = [id](const auto &monster) {return monster->getId() == id;};
+            auto idsMatch = [id](const auto &monster) {
+                return monster->getId() == id;
+            };
             auto result = find_if(newMonsters, idsMatch);
 
             if (result != newMonsters.end()) {
@@ -350,7 +347,6 @@ auto World::findCharacter(TYPE_OF_CHARACTER_ID id) -> Character * {
 
     return nullptr;
 }
-
 
 void World::takeMonsterAndNPCFromMap() {
     Monsters.for_each([this](Monster *monster) {
@@ -375,12 +371,9 @@ void World::takeMonsterAndNPCFromMap() {
     Npc.clear();
 }
 
-
 // only invoked when ATTACK***_TS is received or when a monster attacks
 auto World::characterAttacks(Character *cp) -> bool {
-
     if (cp->enemyid != cp->getId()) {
-
         if (cp->enemytype == Character::player) {
             Player *temppl = Players.find(cp->enemyid);
 
@@ -388,14 +381,13 @@ auto World::characterAttacks(Character *cp) -> bool {
             if (temppl != nullptr) {
                 // Ziel sichtbar
                 if (cp->isInRange(temppl, temppl->getScreenRange())) {
-
                     // Ziel ist tot
                     if (!cp->attack(temppl)) {
                         sendSpinToAllVisiblePlayers(temppl);
 
                         cp->setAttackMode(false);
 
-                        //set lasttargetseen to false if the player who was attacked is death
+                        // set lasttargetseen to false if the player who was attacked is death
                         if (cp->getType() == Character::monster) {
                             auto *mon = dynamic_cast<Monster *>(cp);
                             mon->lastTargetSeen = false;
@@ -425,7 +417,7 @@ auto World::characterAttacks(Character *cp) -> bool {
                         const auto &monStruct = (*monsterDescriptions)[monsterType];
 
                         if (monStruct.script) {
-                            monStruct.script->onAttacked(temppl,cp);
+                            monStruct.script->onAttacked(temppl, cp);
                         }
                     }
 
@@ -437,12 +429,12 @@ auto World::characterAttacks(Character *cp) -> bool {
                             dynamic_cast<Player *>(cp)->Connection->addCommand(cmd);
                         }
                     } else {
-                        //check for turning into attackackers direction
-                        std::vector<Character *>temp;
+                        // check for turning into attackackers direction
+                        std::vector<Character *> temp;
                         temp.clear();
                         findTargetsInSight(temppl->getPosition(), static_cast<uint8_t>(9), temp, temppl->getFaceTo());
 
-                        //add the current attacker to the list
+                        // add the current attacker to the list
                         if (cp->getType() == Character::player) {
                             temp.push_back(dynamic_cast<Player *>(cp));
                         }
@@ -454,7 +446,6 @@ auto World::characterAttacks(Character *cp) -> bool {
                                 temppl->turn(target->getPosition());
                             }
                         }
-
                     }
 
                     return true;
@@ -474,9 +465,7 @@ auto World::characterAttacks(Character *cp) -> bool {
     } else {
         return true;
     }
-
 }
-
 
 auto World::killMonster(TYPE_OF_CHARACTER_ID id) -> bool {
     auto *monster = Monsters.find(id);
@@ -498,7 +487,6 @@ auto World::killMonster(TYPE_OF_CHARACTER_ID id) -> bool {
 
     return false;
 }
-
 
 auto World::fieldAt(const position &pos) -> map::Field & {
     return maps.at(pos);
@@ -538,9 +526,7 @@ auto World::isPersistentAt(const position &pos) const -> bool {
     return maps.isPersistentAt(pos);
 }
 
-
 auto World::getItemAttrib(const std::string &s, TYPE_OF_ITEM_ID ItemID) -> int {
-
     // Armor //
     if (s == "bodyparts") {
         if (Data::ArmorItems.exists(ItemID)) {
@@ -616,9 +602,7 @@ auto World::getItemAttrib(const std::string &s, TYPE_OF_ITEM_ID ItemID) -> int {
     }
 
     return 0;
-
 }
-
 
 void World::updatePlayerView(short int startx, short int endx) {
     std::vector<Player *> temp;
@@ -629,27 +613,26 @@ void World::updatePlayerView(short int startx, short int endx) {
             sendAllVisibleCharactersToPlayer(player, true);
         }
     }
-
 }
-
 
 void World::ageMaps() {
     if (not maps.allMapsAged()) {
-        scheduler.addOneshotTask([&] { ageMaps(); }, std::chrono::seconds(1), "age_maps");
+        scheduler.addOneshotTask(
+                [&] {
+                    ageMaps();
+                },
+                std::chrono::seconds(1), "age_maps");
     }
 }
-
 
 void World::ageInventory() {
     Players.for_each(&Player::ageInventory);
     Monsters.for_each(&Monster::ageInventory);
 }
 
-
 void World::Save() const {
     maps.saveToDisk();
 }
-
 
 void World::Load() {
     if (!maps.loadFromDisk()) {
@@ -662,12 +645,12 @@ void World::import() {
 }
 
 auto World::getTime(const std::string &timeType) -> int {
-    int minute,hour,day,month,year,illaTime;
+    int minute, hour, day, month, year, illaTime;
     time_t curr_unixtime;
     struct tm *timestamp;
 
     // return unix timestamp if requsted and quit function
-    if (timeType=="unix") {
+    if (timeType == "unix") {
         return (int)time(nullptr);
     }
 
@@ -679,14 +662,14 @@ auto World::getTime(const std::string &timeType) -> int {
 
     // in case its currently dst, correct the timestamp so the illarion time changes the timestamp as well
     if (timestamp->tm_isdst != 0) {
-        illaTime+=3600;
+        illaTime += 3600;
     }
 
     // Illarion seconds since 17th February 2000
     // RL Seconds * 3
     illaTime = (illaTime - 950742000) * 3;
 
-    if (timeType=="illarion") {
+    if (timeType == "illarion") {
         return (int)illaTime;
     }
 
@@ -723,11 +706,11 @@ auto World::getTime(const std::string &timeType) -> int {
     }
 
     // Date calculation is done, return the date if it was requested
-    if (timeType=="year") {
+    if (timeType == "year") {
         return year;
-    } else if (timeType=="month") {
+    } else if (timeType == "month") {
         return month;
-    } else if (timeType=="day") {
+    } else if (timeType == "day") {
         return day;
     }
 
@@ -737,24 +720,23 @@ auto World::getTime(const std::string &timeType) -> int {
     hour = (int)(illaTime / 3600);
     illaTime -= hour * 3600;
 
-    //Calculating minute
+    // Calculating minute
     minute = (int)(illaTime / 60);
 
-    //Calculating seconds
+    // Calculating seconds
     illaTime -= minute * 60;
 
     // returning the last possible values
-    if (timeType=="hour") {
+    if (timeType == "hour") {
         return hour;
-    } else if (timeType=="minute") {
+    } else if (timeType == "minute") {
         return minute;
-    } else if (timeType=="second") {
+    } else if (timeType == "second") {
         return illaTime;
     } else {
         return -1;
     }
 }
-
 
 auto World::findWarpFieldsInRange(const position &pos, short int range, std::vector<position> &warppositions) -> bool {
     for (int x = pos.x - range; x <= pos.x + range; ++x) {
@@ -772,7 +754,6 @@ auto World::findWarpFieldsInRange(const position &pos, short int range, std::vec
 
     return !warppositions.empty();
 }
-
 
 void World::setWeatherPart(const std::string &type, char value) {
     if (type == "cloud_density") {
@@ -821,4 +802,3 @@ void World::sendHealthToAllVisiblePlayers(Character *cc, Attribute::attribute_t 
         }
     }
 }
-

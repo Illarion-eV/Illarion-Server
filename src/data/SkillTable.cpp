@@ -25,12 +25,7 @@ auto SkillTable::getTableName() -> std::string {
 }
 
 auto SkillTable::getColumnNames() -> std::vector<std::string> {
-    return {
-        "skl_skill_id",
-        "skl_name",
-        "skl_name_english",
-        "skl_name_german"
-    };
+    return {"skl_skill_id", "skl_name", "skl_name_english", "skl_name_german"};
 }
 
 auto SkillTable::assignId(const Database::ResultTuple &row) -> TYPE_OF_SKILL_ID {
@@ -44,4 +39,3 @@ auto SkillTable::assignTable(const Database::ResultTuple &row) -> SkillStruct {
     skill.germanName = row["skl_name_german"].as<std::string>();
     return skill;
 }
-

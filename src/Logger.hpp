@@ -16,26 +16,25 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef LOGGER_HPP
 #define LOGGER_HPP
 
-#include <string>
 #include <sstream>
-
+#include <string>
 #include <syslog.h>
 
-#define LOGLEVEL_ERROR   3
+#define LOGLEVEL_ERROR 3
 #define LOGLEVEL_WARNING 4
-#define LOGLEVEL_NOTICE  5
-#define LOGLEVEL_INFO    6
-#define LOGLEVEL_DEBUG   7
+#define LOGLEVEL_NOTICE 5
+#define LOGLEVEL_INFO 6
+#define LOGLEVEL_DEBUG 7
 
 #ifndef MIN_LOGLEVEL
-#define MIN_LOGLEVEL     6
+#define MIN_LOGLEVEL 6
 #endif
 
-enum class LogFacility {
+enum class LogFacility
+{
     Database = LOG_LOCAL1,
     World = LOG_LOCAL2,
     Script = LOG_LOCAL3,
@@ -45,7 +44,8 @@ enum class LogFacility {
     Other = LOG_LOCAL7
 };
 
-enum class LogPriority {
+enum class LogPriority
+{
     EMERGENCY = LOG_EMERG,
     ALERT = LOG_ALERT,
     CRITICAL = LOG_CRIT,
@@ -59,10 +59,9 @@ enum class LogPriority {
 void log_message(LogPriority priority, LogFacility facility, const std::string &message);
 
 namespace Log {
-class end_t {
-};
+class end_t {};
 static end_t end __attribute__((unused));
-}
+} // namespace Log
 
 class NullStream {
 public:
@@ -71,14 +70,12 @@ public:
         return *this;
     }
 
-    template<typename T>
-    inline auto operator<<(const T & /*unused*/) -> NullStream & {
+    template <typename T> inline auto operator<<(const T & /*unused*/) -> NullStream & {
         return *this;
     }
 };
 
-template<LogPriority priority>
-class LogStream {
+template <LogPriority priority> class LogStream {
 public:
     inline auto operator()(LogFacility facility) -> LogStream & {
         _facility = facility;
@@ -86,16 +83,17 @@ public:
     }
 
     inline LogStream() = default;
-    template<typename T>
-    inline auto operator<<(const T &data) -> LogStream & {
-        static_assert(!std::is_pointer<T>::value || std::is_same<T, const char *>::value || std::is_same<T, char *>::value, "Logger cannot log pointers!");
+    template <typename T> inline auto operator<<(const T &data) -> LogStream & {
+        static_assert(!std::is_pointer<T>::value || std::is_same<T, const char *>::value ||
+                              std::is_same<T, char *>::value,
+                      "Logger cannot log pointers!");
         _ss << data;
         return *this;
     }
 
     auto operator<<(const Log::end_t & /*unused*/) -> LogStream & {
         log_message(priority, _facility, _ss.str());
-        _ss.str( {});
+        _ss.str({});
         return *this;
     }
 
@@ -104,18 +102,16 @@ private:
     LogFacility _facility = LogFacility::Other;
 };
 
-template<LogPriority priority>
-class LogType {
+template <LogPriority priority> class LogType {
 public:
     using type = LogStream<priority>;
 };
 
-#define DEACTIVATE_LOG(priority) \
-template<> \
-class LogType<priority> { \
-    public: \
-        using type = NullStream; \
-};
+#define DEACTIVATE_LOG(priority)                                                                                       \
+    template <> class LogType<priority> {                                                                              \
+    public:                                                                                                            \
+        using type = NullStream;                                                                                       \
+    };
 
 #if MIN_LOGLEVEL < LOGLEVEL_DEBUG
 DEACTIVATE_LOG(LogPriority::DEBUG)
@@ -142,4 +138,3 @@ public:
 };
 
 #endif
-

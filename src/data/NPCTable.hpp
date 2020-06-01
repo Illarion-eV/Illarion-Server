@@ -21,12 +21,12 @@
 #ifndef NPC_TABLE_HPP
 #define NPC_TABLE_HPP
 
-#include <string>
-#include <list>
-
-#include "globals.hpp"
-#include "World.hpp"
 #include "NPC.hpp"
+#include "World.hpp"
+#include "globals.hpp"
+
+#include <list>
+#include <string>
 
 class World;
 
@@ -39,7 +39,6 @@ struct NPCStruct {
     unsigned short int walk_range;
     bool ishealer;
 };
-
 
 class NPCTable {
 public:
@@ -55,8 +54,7 @@ private:
     bool m_dataOK;
 
     World *_world;
-    std::list<struct NPCStruct> NPCList; //List zum aufnehmen aller Werte aus der DB
+    std::list<struct NPCStruct> NPCList; // List zum aufnehmen aller Werte aus der DB
 };
 
 #endif
-

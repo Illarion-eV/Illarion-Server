@@ -21,27 +21,29 @@
 #ifndef INSERT_QUERY_HPP
 #define INSERT_QUERY_HPP
 
-#include <map>
-#include <string>
-#include <vector>
-#include <stdexcept>
-
-#include <boost/cstdint.hpp>
-
 #include "db/Connection.hpp"
-#include "db/Result.hpp"
+#include "db/Query.hpp"
 #include "db/QueryColumns.hpp"
 #include "db/QueryTables.hpp"
-#include "db/Query.hpp"
+#include "db/Result.hpp"
+
+#include <boost/cstdint.hpp>
+#include <map>
+#include <stdexcept>
+#include <string>
+#include <vector>
 
 namespace Database {
 class InsertQuery : Query, public QueryColumns, public QueryTables {
 private:
-    std::vector<std::vector<std::string *>*> dataStorage;
+    std::vector<std::vector<std::string *> *> dataStorage;
 
 public:
-    enum MapInsertMode {
-        onlyKeys, onlyValues, keysAndValues
+    enum MapInsertMode
+    {
+        onlyKeys,
+        onlyValues,
+        keysAndValues
     };
 
     static const uint32_t FILL = UINT32_C(0xFFFFFFFF);
@@ -56,7 +58,7 @@ public:
         addValues(column, value, 1);
     };
 
-    template <typename T> void addValues(const QueryColumns::columnIndex &column, const T &value, uint32_t count)  {
+    template <typename T> void addValues(const QueryColumns::columnIndex &column, const T &value, uint32_t count) {
         if (count == 0) {
             return;
         }
@@ -104,21 +106,19 @@ public:
     };
 
     template <typename Key, typename T>
-    void addValues(const QueryColumns::columnIndex &column, const std::map<Key,T> &values,
+    void addValues(const QueryColumns::columnIndex &column, const std::map<Key, T> &values,
                    MapInsertMode mode = keysAndValues) {
-        addValues<Key, T, std::less<Key> >(column, values);
+        addValues<Key, T, std::less<Key>>(column, values);
     };
 
     template <typename Key, typename T, class Compare>
-    void addValues(const QueryColumns::columnIndex &column,
-                   const std::map<Key,T,Compare> &values,
+    void addValues(const QueryColumns::columnIndex &column, const std::map<Key, T, Compare> &values,
                    MapInsertMode mode = keysAndValues) {
-        addValues<Key, T, Compare, std::allocator<std::pair<const Key, T> > >(column, values);
+        addValues<Key, T, Compare, std::allocator<std::pair<const Key, T>>>(column, values);
     };
 
     template <typename Key, typename T, class Compare, class Allocator>
-    void addValues(const QueryColumns::columnIndex &column,
-                   const std::map<Key, T, Compare, Allocator> &values,
+    void addValues(const QueryColumns::columnIndex &column, const std::map<Key, T, Compare, Allocator> &values,
                    MapInsertMode mode = keysAndValues) {
         for (const auto &key_value : values) {
             switch (mode) {
@@ -140,6 +140,6 @@ public:
 
     auto execute() -> Result override;
 };
-}
+} // namespace Database
 
 #endif

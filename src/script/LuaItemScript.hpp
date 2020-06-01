@@ -21,15 +21,16 @@
 #ifndef LUA_ITEM_SCRIPT_HPP
 #define LUA_ITEM_SCRIPT_HPP
 
+#include "ItemLookAt.hpp"
+#include "LuaScript.hpp"
+#include "TableStructs.hpp"
+
 #include <map>
 #include <string>
-#include "LuaScript.hpp"
-#include "ItemLookAt.hpp"
-#include "TableStructs.hpp"
 
 class World;
 namespace map {
-    class Field;
+class Field;
 }
 class Character;
 class ScriptItem;
@@ -56,4 +57,3 @@ private:
 };
 
 #endif
-

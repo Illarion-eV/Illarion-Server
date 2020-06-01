@@ -21,12 +21,14 @@
 #ifndef CLIENT_COMMANDS_HPP
 #define CLIENT_COMMANDS_HPP
 
-#include <string>
-#include "types.hpp"
 #include "globals.hpp"
 #include "netinterface/BasicClientCommand.hpp"
+#include "types.hpp"
 
-enum clientcommands {
+#include <string>
+
+enum clientcommands
+{
     C_LOGIN_TS = 0x0D,
     C_SCREENSIZE_TS = 0xA0,
     C_CHARMOVE_TS = 0x10,
@@ -84,7 +86,6 @@ public:
     auto clone() -> ClientCommandPointer override;
 };
 
-
 class MessageDialogTS : public BasicClientCommand {
 private:
     unsigned int dialogId = 0;
@@ -95,7 +96,6 @@ public:
     void performAction(Player *player) override;
     auto clone() -> ClientCommandPointer override;
 };
-
 
 class MerchantDialogTS : public BasicClientCommand {
 private:
@@ -116,7 +116,6 @@ public:
     auto clone() -> ClientCommandPointer override;
 };
 
-
 class SelectionDialogTS : public BasicClientCommand {
 private:
     unsigned int dialogId = 0;
@@ -129,7 +128,6 @@ public:
     void performAction(Player *player) override;
     auto clone() -> ClientCommandPointer override;
 };
-
 
 class CraftingDialogTS : public BasicClientCommand {
 private:
@@ -146,7 +144,6 @@ public:
     auto clone() -> ClientCommandPointer override;
 };
 
-
 class RequestAppearanceTS : public BasicClientCommand {
 private:
     TYPE_OF_CHARACTER_ID id = 0;
@@ -157,7 +154,6 @@ public:
     void performAction(Player *player) override;
     auto clone() -> ClientCommandPointer override;
 };
-
 
 class LookAtCharacterTS : public BasicClientCommand {
 private:
@@ -170,7 +166,6 @@ public:
     void performAction(Player *player) override;
     auto clone() -> ClientCommandPointer override;
 };
-
 
 class CastTS : public BasicClientCommand {
 private:
@@ -187,7 +182,6 @@ public:
     auto clone() -> ClientCommandPointer override;
 };
 
-
 class UseTS : public BasicClientCommand {
 private:
     unsigned char useId = 0;
@@ -202,7 +196,6 @@ public:
     auto clone() -> ClientCommandPointer override;
 };
 
-
 class KeepAliveTS : public BasicClientCommand {
 public:
     KeepAliveTS();
@@ -210,7 +203,6 @@ public:
     void performAction(Player *player) override;
     auto clone() -> ClientCommandPointer override;
 };
-
 
 class RequestSkillsTS : public BasicClientCommand {
 public:
@@ -220,7 +212,6 @@ public:
     auto clone() -> ClientCommandPointer override;
 };
 
-
 class AttackStopTS : public BasicClientCommand {
 public:
     AttackStopTS();
@@ -228,7 +219,6 @@ public:
     void performAction(Player *player) override;
     auto clone() -> ClientCommandPointer override;
 };
-
 
 class LookAtInventoryItemTS : public BasicClientCommand {
 private:
@@ -241,7 +231,6 @@ public:
     auto clone() -> ClientCommandPointer override;
 };
 
-
 class LookAtShowCaseItemTS : public BasicClientCommand {
 private:
     unsigned char showcase = 0;
@@ -253,7 +242,6 @@ public:
     void performAction(Player *player) override;
     auto clone() -> ClientCommandPointer override;
 };
-
 
 class MoveItemFromPlayerToShowCaseTS : public BasicClientCommand {
 private:
@@ -269,7 +257,6 @@ public:
     auto clone() -> ClientCommandPointer override;
 };
 
-
 class MoveItemFromShowCaseToPlayerTS : public BasicClientCommand {
 private:
     unsigned char showcase = 0;
@@ -284,7 +271,6 @@ public:
     auto clone() -> ClientCommandPointer override;
 };
 
-
 class MoveItemInsideInventoryTS : public BasicClientCommand {
 private:
     unsigned char opos = 0;
@@ -297,7 +283,6 @@ public:
     void performAction(Player *player) override;
     auto clone() -> ClientCommandPointer override;
 };
-
 
 class DropItemFromInventoryOnMapTS : public BasicClientCommand {
 private:
@@ -312,7 +297,6 @@ public:
     auto clone() -> ClientCommandPointer override;
 };
 
-
 class MoveItemFromMapToPlayerTS : public BasicClientCommand {
 private:
     position sourcePosition;
@@ -325,7 +309,6 @@ public:
     void performAction(Player *player) override;
     auto clone() -> ClientCommandPointer override;
 };
-
 
 class MoveItemFromMapIntoShowCaseTS : public BasicClientCommand {
 private:
@@ -341,7 +324,6 @@ public:
     auto clone() -> ClientCommandPointer override;
 };
 
-
 class MoveItemFromMapToMapTS : public BasicClientCommand {
 private:
     position sourcePosition;
@@ -354,7 +336,6 @@ public:
     void performAction(Player *player) override;
     auto clone() -> ClientCommandPointer override;
 };
-
 
 class MoveItemBetweenShowCasesTS : public BasicClientCommand {
 private:
@@ -371,7 +352,6 @@ public:
     auto clone() -> ClientCommandPointer override;
 };
 
-
 class DropItemFromShowCaseOnMapTS : public BasicClientCommand {
 private:
     unsigned char showcase = 0;
@@ -386,7 +366,6 @@ public:
     auto clone() -> ClientCommandPointer override;
 };
 
-
 class CloseContainerInShowCaseTS : public BasicClientCommand {
 private:
     unsigned char showcase = 0;
@@ -398,7 +377,6 @@ public:
     auto clone() -> ClientCommandPointer override;
 };
 
-
 class LookIntoShowCaseContainerTS : public BasicClientCommand {
     unsigned char showcase = 0;
     unsigned char pos = 0;
@@ -409,7 +387,6 @@ public:
     void performAction(Player *player) override;
     auto clone() -> ClientCommandPointer override;
 };
-
 
 class LookIntoInventoryTS : public BasicClientCommand {
 public:
@@ -457,7 +434,6 @@ public:
     auto clone() -> ClientCommandPointer override;
 };
 
-
 class WhisperTS : public BasicClientCommand {
 private:
     std::string text;
@@ -468,7 +444,6 @@ public:
     void performAction(Player *player) override;
     auto clone() -> ClientCommandPointer override;
 };
-
 
 class ShoutTS : public BasicClientCommand {
 private:
@@ -481,7 +456,6 @@ public:
     auto clone() -> ClientCommandPointer override;
 };
 
-
 class SayTS : public BasicClientCommand {
 private:
     std::string text;
@@ -493,7 +467,6 @@ public:
     auto clone() -> ClientCommandPointer override;
 };
 
-
 class RefreshTS : public BasicClientCommand {
 public:
     RefreshTS();
@@ -501,7 +474,6 @@ public:
     void performAction(Player *player) override;
     auto clone() -> ClientCommandPointer override;
 };
-
 
 class IntroduceTS : public BasicClientCommand {
 public:
@@ -511,19 +483,17 @@ public:
     auto clone() -> ClientCommandPointer override;
 };
 
-
 class CustomNameTS : public BasicClientCommand {
 private:
     TYPE_OF_CHARACTER_ID playerId = 0;
     std::string playerName;
-    
+
 public:
     CustomNameTS();
     void decodeData() override;
     void performAction(Player *player) override;
     auto clone() -> ClientCommandPointer override;
 };
-
 
 class AttackPlayerTS : public BasicClientCommand {
 private:
@@ -535,7 +505,6 @@ public:
     void performAction(Player *player) override;
     auto clone() -> ClientCommandPointer override;
 };
-
 
 class LookAtMapItemTS : public BasicClientCommand {
 private:
@@ -549,7 +518,6 @@ public:
     auto clone() -> ClientCommandPointer override;
 };
 
-
 class PlayerSpinTS : public BasicClientCommand {
 private:
     direction dir = dir_north;
@@ -560,7 +528,6 @@ public:
     void performAction(Player *player) override;
     auto clone() -> ClientCommandPointer override;
 };
-
 
 class CharMoveTS : public BasicClientCommand {
 private:
@@ -574,7 +541,6 @@ public:
     void performAction(Player *player) override;
     auto clone() -> ClientCommandPointer override;
 };
-
 
 class LoginCommandTS : public BasicClientCommand {
 private:
@@ -593,7 +559,6 @@ public:
     [[nodiscard]] auto getPassword() const -> const std::string &;
 };
 
-
 class ScreenSizeCommandTS : public BasicClientCommand {
 private:
     uint8_t width = 0;
@@ -607,4 +572,3 @@ public:
 };
 
 #endif
-

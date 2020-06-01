@@ -16,20 +16,18 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
-#include "map/Field.hpp"
 #include "Logger.hpp"
 #include "Monster.hpp"
 #include "NPC.hpp"
 #include "Player.hpp"
 #include "World.hpp"
 #include "data/Data.hpp"
+#include "map/Field.hpp"
 #include "netinterface/BasicServerCommand.hpp"
 #include "netinterface/NetInterface.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "script/LuaItemScript.hpp"
-
 
 void World::checkFieldAfterMove(Character *character, const map::Field &field) {
     if (character == nullptr) {
@@ -37,13 +35,11 @@ void World::checkFieldAfterMove(Character *character, const map::Field &field) {
     }
 
     if (character->isAlive() && field.hasSpecialItem()) {
-
         for (const auto &item : field.getItemStack()) {
             if (Data::TilesModItems.exists(item.getId())) {
                 const auto &tmod = Data::TilesModItems[item.getId()];
 
                 if ((tmod.Modificator & FLAG_SPECIALITEM) != 0) {
-
                     std::shared_ptr<LuaItemScript> script = Data::Items.script(item.getId());
 
                     if (script) {
@@ -78,20 +74,19 @@ void World::TriggerFieldMove(Character *cc, bool moveto) {
     }
 }
 
-void World::moveTo(Character *cc, const position& to) {
-    switch(cc->getType()) {
-        case Character::player:
-            Players.update(dynamic_cast<Player *>(cc), to);
-            break;
-        case Character::monster:
-            Monsters.update(dynamic_cast<Monster *>(cc), to);
-            break;
-        case Character::npc:
-            Npc.update(dynamic_cast<NPC *>(cc), to);
-            break;
+void World::moveTo(Character *cc, const position &to) {
+    switch (cc->getType()) {
+    case Character::player:
+        Players.update(dynamic_cast<Player *>(cc), to);
+        break;
+    case Character::monster:
+        Monsters.update(dynamic_cast<Monster *>(cc), to);
+        break;
+    case Character::npc:
+        Npc.update(dynamic_cast<NPC *>(cc), to);
+        break;
     }
 }
-
 
 void World::sendSpinToAllVisiblePlayers(Character *cc) {
     for (const auto &p : Players.findAllCharactersInScreen(cc->getPosition())) {
@@ -99,7 +94,6 @@ void World::sendSpinToAllVisiblePlayers(Character *cc) {
         p->Connection->addCommand(cmd);
     }
 }
-
 
 void World::sendPassiveMoveToAllVisiblePlayers(Character *ccp) {
     const auto &charPos = ccp->getPosition();
@@ -115,9 +109,7 @@ void World::sendPassiveMoveToAllVisiblePlayers(Character *ccp) {
             p->Connection->addCommand(cmd);
         }
     }
-
 }
-
 
 void World::sendCharacterMoveToAllVisibleChars(Character *cc, TYPE_OF_WALKINGCOST duration) {
     sendCharacterMoveToAllVisiblePlayers(cc, NORMALMOVE, duration);
@@ -141,7 +133,6 @@ void World::sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char mo
     }
 }
 
-
 void World::sendCharacterWarpToAllVisiblePlayers(Character *cc, const position &oldpos, unsigned char moveType) {
     if (!cc->isInvisible()) {
         {
@@ -163,26 +154,23 @@ void World::sendCharacterWarpToAllVisiblePlayers(Character *cc, const position &
     }
 }
 
-
 void World::sendAllVisibleCharactersToPlayer(Player *cp, bool sendSpin) {
     Range range;
     range.radius = cp->getScreenRange();
 
-    std::vector < Player * > tempP = Players.findAllCharactersInRangeOf(cp->getPosition(), range);
-    sendCharsInVector< Player >(tempP, cp, sendSpin);
+    std::vector<Player *> tempP = Players.findAllCharactersInRangeOf(cp->getPosition(), range);
+    sendCharsInVector<Player>(tempP, cp, sendSpin);
 
-    std::vector < Monster * > tempM = Monsters.findAllCharactersInRangeOf(cp->getPosition(), range);
-    sendCharsInVector< Monster >(tempM, cp, sendSpin);
+    std::vector<Monster *> tempM = Monsters.findAllCharactersInRangeOf(cp->getPosition(), range);
+    sendCharsInVector<Monster>(tempM, cp, sendSpin);
 
-    std::vector < NPC * > tempN = Npc.findAllCharactersInRangeOf(cp->getPosition(), range);
-    sendCharsInVector< NPC >(tempN, cp, sendSpin);
+    std::vector<NPC *> tempN = Npc.findAllCharactersInRangeOf(cp->getPosition(), range);
+    sendCharsInVector<NPC>(tempN, cp, sendSpin);
 
     cp->sendAvailableQuests();
 }
 
-
-template<class T>
-void World::sendCharsInVector(const std::vector<T *> &vec, Player *cp, bool sendSpin) {
+template <class T> void World::sendCharsInVector(const std::vector<T *> &vec, Player *cp, bool sendSpin) {
     char xoffs;
     char yoffs;
     char zoffs;
@@ -208,8 +196,8 @@ void World::sendCharsInVector(const std::vector<T *> &vec, Player *cp, bool send
     }
 }
 
-
-auto World::addWarpField(const position &where, const position &target, unsigned short int starttilenr, Item::id_type startitemnr) -> bool {
+auto World::addWarpField(const position &where, const position &target, unsigned short int starttilenr,
+                         Item::id_type startitemnr) -> bool {
     try {
         map::Field &field = fieldAt(where);
 
@@ -231,14 +219,12 @@ auto World::addWarpField(const position &where, const position &target, unsigned
     } catch (FieldNotFound &) {
         return false;
     }
-
 }
 
-
-auto World::addWarpField(const position &where, const position &target, unsigned short int starttilenr, Item::id_type startitemnr, unsigned short int targettilenr, Item::id_type targetitemnr) -> bool {
-
+auto World::addWarpField(const position &where, const position &target, unsigned short int starttilenr,
+                         Item::id_type startitemnr, unsigned short int targettilenr, Item::id_type targetitemnr)
+        -> bool {
     if (addWarpField(where, target, starttilenr, startitemnr)) {
-
         if (addWarpField(target, where, targettilenr, targetitemnr)) {
             return true;
         } else {
@@ -249,7 +235,6 @@ auto World::addWarpField(const position &where, const position &target, unsigned
     return false;
 }
 
-
 auto World::removeWarpField(const position &pos) -> bool {
     try {
         fieldAt(pos).removeWarp();
@@ -258,4 +243,3 @@ auto World::removeWarpField(const position &pos) -> bool {
         return false;
     }
 }
-

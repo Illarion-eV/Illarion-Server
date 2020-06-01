@@ -28,11 +28,12 @@ class SchemaHelper {
 private:
     static std::string serverSchema;
     static std::string accountSchema;
+
 public:
     static void setSchemata();
     static auto getServerSchema() -> const std::string &;
     static auto getAccountSchema() -> const std::string &;
 };
-}
+} // namespace Database
 
 #endif

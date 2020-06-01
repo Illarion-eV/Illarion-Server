@@ -23,14 +23,10 @@
 
 namespace binding {
 
-    auto long_time_action() -> luabind::scope {
-        return luabind::class_<LongTimeAction>("Action")
-                .enum_("state")
-                [
-                    luabind::value("none", LongTimeAction::ST_NONE),
-                    luabind::value("abort", LongTimeAction::ST_ABORT),
-                    luabind::value("success", LongTimeAction::ST_SUCCESS)
-                ];
-    }
-
+auto long_time_action() -> luabind::scope {
+    return luabind::class_<LongTimeAction>("Action").enum_(
+            "state")[luabind::value("none", LongTimeAction::ST_NONE), luabind::value("abort", LongTimeAction::ST_ABORT),
+                     luabind::value("success", LongTimeAction::ST_SUCCESS)];
 }
+
+} // namespace binding

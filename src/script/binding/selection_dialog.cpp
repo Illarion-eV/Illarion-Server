@@ -23,14 +23,13 @@
 
 namespace binding {
 
-    auto selection_dialog() -> luabind::scope {
-        return
-                luabind::class_<SelectionDialog>("SelectionDialog")
-                        .def(luabind::constructor<std::string, std::string, luabind::object>())
-                        .def("addOption", &SelectionDialog::addOption)
-                        .def("getSuccess", &SelectionDialog::getSuccess)
-                        .def("getSelectedIndex", &SelectionDialog::getSelectedIndex)
-                        .def("setCloseOnMove", &SelectionDialog::setCloseOnMove);
-    }
-
+auto selection_dialog() -> luabind::scope {
+    return luabind::class_<SelectionDialog>("SelectionDialog")
+            .def(luabind::constructor<std::string, std::string, luabind::object>())
+            .def("addOption", &SelectionDialog::addOption)
+            .def("getSuccess", &SelectionDialog::getSuccess)
+            .def("getSelectedIndex", &SelectionDialog::getSelectedIndex)
+            .def("setCloseOnMove", &SelectionDialog::setCloseOnMove);
 }
+
+} // namespace binding

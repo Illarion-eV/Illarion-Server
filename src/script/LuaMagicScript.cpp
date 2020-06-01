@@ -19,19 +19,18 @@
  */
 
 #include "LuaMagicScript.hpp"
+
 #include "Character.hpp"
 #include "Item.hpp"
 #include "character_ptr.hpp"
 
-LuaMagicScript::LuaMagicScript(const std::string &filename, const SpellStruct & /*unused*/)
-    : LuaScript(filename) {
+LuaMagicScript::LuaMagicScript(const std::string &filename, const SpellStruct & /*unused*/) : LuaScript(filename) {
     init_functions();
 }
 
 LuaMagicScript::~LuaMagicScript() = default;
 
-void LuaMagicScript::init_functions() {
-}
+void LuaMagicScript::init_functions() {}
 
 void LuaMagicScript::CastMagic(Character *caster, unsigned char ltastate) {
     character_ptr fuse_caster(caster);
@@ -59,4 +58,3 @@ auto LuaMagicScript::actionDisturbed(Character *performer, Character *disturber)
     character_ptr fuse_disturber(disturber);
     return callEntrypoint<bool>("actionDisturbed", fuse_performer, fuse_disturber);
 }
-

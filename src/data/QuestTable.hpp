@@ -21,15 +21,13 @@
 #define QUEST_TABLE_HPP
 
 #include "data/ScriptStructTable.hpp"
+#include "globals.hpp"
+#include "script/LuaQuestScript.hpp"
+#include "types.hpp"
 
 #include <map>
 
-#include "types.hpp"
-#include "globals.hpp"
-#include "script/LuaQuestScript.hpp"
-
-struct QuestStruct {
-};
+struct QuestStruct {};
 
 class QuestTable : public ScriptStructTable<TYPE_OF_QUEST_ID, QuestStruct, LuaQuestScript, TYPE_OF_QUEST_ID> {
 private:
@@ -46,9 +44,9 @@ public:
 
     using QuestStartMap = std::map<TYPE_OF_QUEST_ID, position>;
     auto getQuestsInRange(const position &pos, int radius) const -> QuestStartMap;
+
 private:
     quest_starts_type questStarts;
 };
 
 #endif
-

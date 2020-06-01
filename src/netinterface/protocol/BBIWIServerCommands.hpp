@@ -16,25 +16,25 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef BBIWI_SERVER_COMMANDS_HPP
 #define BBIWI_SERVER_COMMANDS_HPP
 
-#include "netinterface/BasicServerCommand.hpp"
 #include "globals.hpp"
+#include "netinterface/BasicServerCommand.hpp"
 #include "types.hpp"
+
 #include <string>
 
-
-enum bbservercommands {
+enum bbservercommands
+{
     BB_LOGINSUCCESSFUL_TC = 0x00,
-    BB_MESSAGE_TC = 0x01, /*<message send from the Server to the client*/
-    BB_PLAYER_TC = 0x02, /*<a complete package of player data is send*/
-    BB_TALK_TC = 0x03, /*<a player says something*/
-    BB_LOGOUT_TC = 0x04, /*<a player logs out*/
+    BB_MESSAGE_TC = 0x01,    /*<message send from the Server to the client*/
+    BB_PLAYER_TC = 0x02,     /*<a complete package of player data is send*/
+    BB_TALK_TC = 0x03,       /*<a player says something*/
+    BB_LOGOUT_TC = 0x04,     /*<a player logs out*/
     BB_PLAYERMOVE_TC = 0x05, /*<a player moves*/
     BB_SENDATTRIB_TC = 0x06, /*<we got a attrib change*/
-    BB_SENDSKILL_TC = 0x07, /*<we got a skillchange*/
+    BB_SENDSKILL_TC = 0x07,  /*<we got a skillchange*/
     BB_SENDACTION_TC = 0x08
 };
 

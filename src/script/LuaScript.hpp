@@ -25,14 +25,15 @@ extern "C" {
 #include <lua.h>
 }
 
-#include <stdexcept>
-#include "globals.hpp"
 #include "Item.hpp"
 #include "Logger.hpp"
+#include "character_ptr.hpp"
+#include "globals.hpp"
+
 #include <luabind/luabind.hpp>
 #include <luabind/object.hpp>
-#include "character_ptr.hpp"
 #include <map>
+#include <stdexcept>
 
 class Character;
 class World;
@@ -43,29 +44,31 @@ public:
     explicit ScriptException(const std::string &s) : std::runtime_error(s) {}
 };
 
-enum SouTarTypes {
-    LUA_NONE = 0, /**< not a correct type (only for initialisation) */
-    LUA_FIELD = 1,  /**< target was a field */
-    LUA_ITEM = 2, /**< target was a item */
+enum SouTarTypes
+{
+    LUA_NONE = 0,      /**< not a correct type (only for initialisation) */
+    LUA_FIELD = 1,     /**< target was a field */
+    LUA_ITEM = 2,      /**< target was a item */
     LUA_CHARACTER = 3, /**< target was character*/
     LUA_DIALOG = 4
 };
 
-enum LtaStates {
-    LTS_NOLTACTION = 0, /**< no longtime action in this script */
-    LTS_ACTIONABORTED = 1, /**< long time action was aborted */
-    LTS_ACTIONSUCCESSFULL = 2  /**< long time action was performed sucessfulle*/
+enum LtaStates
+{
+    LTS_NOLTACTION = 0,       /**< no longtime action in this script */
+    LTS_ACTIONABORTED = 1,    /**< long time action was aborted */
+    LTS_ACTIONSUCCESSFULL = 2 /**< long time action was performed sucessfulle*/
 };
 
 struct SouTar {
-    Character *character;  /**< Source or target is a character, this is the pointer to it, otherwise nullptr */
-    ScriptItem item; /**< Source or target is a Item, this holds the information of the item */
-    SouTarTypes Type; /**< Source or Target Type (if its an character, field or item) */
-    position pos; /**< aboslute position of the object */
+    Character *character; /**< Source or target is a character, this is the pointer to it, otherwise nullptr */
+    ScriptItem item;      /**< Source or target is a Item, this holds the information of the item */
+    SouTarTypes Type;     /**< Source or Target Type (if its an character, field or item) */
+    position pos;         /**< aboslute position of the object */
     unsigned int dialog;
     /**
-    * constructor which intializes the values
-    */
+     * constructor which intializes the values
+     */
     SouTar() {
         Type = LUA_NONE;
         character = nullptr;
@@ -94,8 +97,7 @@ public:
     [[nodiscard]] auto existsEntrypoint(const std::string &entrypoint) const -> bool;
     void addQuestScript(const std::string &entrypoint, const std::shared_ptr<LuaScript> &script);
 
-    template<typename T>
-    static void executeDialogCallback(T &dialog) {
+    template <typename T> static void executeDialogCallback(T &dialog) {
         luabind::object callback = dialog.getCallback();
 
         if (luabind::type(callback) != LUA_TFUNCTION) {
@@ -112,8 +114,7 @@ public:
         }
     }
 
-    template<typename U, typename T>
-    static auto executeDialogCallback(T &dialog) -> U {
+    template <typename U, typename T> static auto executeDialogCallback(T &dialog) -> U {
         luabind::object callback = dialog.getCallback();
 
         if (luabind::type(callback) != LUA_TFUNCTION) {
@@ -124,10 +125,12 @@ public:
             return luabind::object_cast<U>(callback(dialog));
         } catch (luabind::cast_failed &e) {
             const std::string &expectedType = e.info().name();
-            Logger::error(LogFacility::Script) << "Invalid return type in " << dialog.getClassName() << " callback: " << " Expected type " << expectedType << Log::end;
+            Logger::error(LogFacility::Script) << "Invalid return type in " << dialog.getClassName() << " callback: "
+                                               << " Expected type " << expectedType << Log::end;
         } catch (luabind::error &e) {
             lua_State *L = e.state();
-            Logger::error(LogFacility::Script) << "Exception in " << dialog.getClassName() << " callback" << ": " << lua_tostring(L, -1) << Log::end;
+            Logger::error(LogFacility::Script) << "Exception in " << dialog.getClassName() << " callback"
+                                               << ": " << lua_tostring(L, -1) << Log::end;
             lua_pop(L, 1);
         }
 
@@ -142,15 +145,14 @@ protected:
     static lua_State *_luaState;
     static bool initialized;
 
-    template<typename... Args>
-    void callEntrypoint(const std::string &entrypoint, const Args &... args) {
+    template <typename... Args> void callEntrypoint(const std::string &entrypoint, const Args &... args) {
         setCurrentWorldScript();
 
         if (!callQuestEntrypoint(entrypoint, args...)) {
             safeCall(entrypoint, args...);
         }
     };
-    template<typename T, typename... Args>
+    template <typename T, typename... Args>
     auto callEntrypoint(const std::string &entrypoint, const Args &... args) -> T {
         setCurrentWorldScript();
         callQuestEntrypoint(entrypoint, args...);
@@ -170,8 +172,7 @@ private:
     auto buildEntrypoint(const std::string &entrypoint) -> luabind::object;
     [[nodiscard]] auto existsQuestEntrypoint(const std::string &entrypoint) const -> bool;
 
-    template<typename... Args>
-    auto callQuestEntrypoint(const std::string &entrypoint, const Args &... args) -> bool {
+    template <typename... Args> auto callQuestEntrypoint(const std::string &entrypoint, const Args &... args) -> bool {
         auto entrypointRange = questScripts.equal_range(entrypoint);
         bool foundQuest = false;
 
@@ -182,8 +183,7 @@ private:
         return foundQuest;
     }
 
-    template<typename... Args>
-    void safeCall(const std::string &entrypoint, const Args &... args) {
+    template <typename... Args> void safeCall(const std::string &entrypoint, const Args &... args) {
         try {
             auto luaEntrypoint = buildEntrypoint(entrypoint);
             luaEntrypoint(args...);
@@ -191,8 +191,7 @@ private:
             writeErrorMsg();
         }
     };
-    template<typename T, typename... Args>
-    auto safeCall(const std::string &entrypoint, const Args &... args) -> T {
+    template <typename T, typename... Args> auto safeCall(const std::string &entrypoint, const Args &... args) -> T {
         try {
             auto luaEntrypoint = buildEntrypoint(entrypoint);
             auto result = luaEntrypoint(args...);
@@ -213,4 +212,3 @@ private:
 };
 
 #endif
-

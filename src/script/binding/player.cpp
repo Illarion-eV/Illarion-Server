@@ -19,23 +19,19 @@
  */
 
 #include "Player.hpp"
+
 #include "script/binding/binding.hpp"
 
 namespace binding {
 
-    auto player() -> luabind::scope {
-        return luabind::class_<Player, Character>("Player")
-                .enum_("player_language")
-                [
-                    luabind::value("german", static_cast<uint32_t>(Language::german)),
-                    luabind::value("english", static_cast<uint32_t>(Language::english))
-                ]
-                .enum_("quest_availability")
-                [
-                    luabind::value("questAvailable", static_cast<uint32_t>(questAvailable)),
-                    luabind::value("questWillBeAvailable", static_cast<uint32_t>(questWillBeAvailable)),
-                    luabind::value("questNotAvailable", static_cast<uint32_t>(questNotAvailable))
-                ];
-    }
-
+auto player() -> luabind::scope {
+    return luabind::class_<Player, Character>("Player")
+            .enum_("player_language")[luabind::value("german", static_cast<uint32_t>(Language::german)),
+                                      luabind::value("english", static_cast<uint32_t>(Language::english))]
+            .enum_("quest_availability")[luabind::value("questAvailable", static_cast<uint32_t>(questAvailable)),
+                                         luabind::value("questWillBeAvailable",
+                                                        static_cast<uint32_t>(questWillBeAvailable)),
+                                         luabind::value("questNotAvailable", static_cast<uint32_t>(questNotAvailable))];
 }
+
+} // namespace binding

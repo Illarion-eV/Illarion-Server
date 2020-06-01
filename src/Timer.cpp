@@ -16,14 +16,12 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "Timer.hpp"
 
-Timer::Timer(unsigned long int timegap): last(time(nullptr) - timegap), gap(timegap) {
-}
+Timer::Timer(unsigned long int timegap) : last(time(nullptr) - timegap), gap(timegap) {}
 
 auto Timer::next() -> bool {
-    time_t temp = time(nullptr);       // liefert die Sekunden seit dem 1.1.1970
+    time_t temp = time(nullptr); // liefert die Sekunden seit dem 1.1.1970
     long realgap = temp - last;
 
     if (realgap >= gap) {

@@ -16,13 +16,12 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef WAYPOINTLIST_HPP
 #define WAYPOINTLIST_HPP
 
-
 #include "globals.hpp"
 #include "types.hpp"
+
 #include <list>
 
 class Character;
@@ -45,4 +44,3 @@ private:
     auto checkPosition() -> bool;
 };
 #endif
-

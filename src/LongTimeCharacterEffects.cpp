@@ -20,27 +20,26 @@
 
 #include "LongTimeCharacterEffects.hpp"
 
-#include <string>
-#include <algorithm>
-#include <range/v3/all.hpp>
-
+#include "LongTimeEffect.hpp"
+#include "Player.hpp"
+#include "data/Data.hpp"
 #include "db/Connection.hpp"
 #include "db/ConnectionManager.hpp"
 #include "db/DeleteQuery.hpp"
 #include "db/Result.hpp"
 #include "db/SelectQuery.hpp"
 
-#include "data/Data.hpp"
+#include <algorithm>
+#include <range/v3/all.hpp>
+#include <string>
 
-#include "LongTimeEffect.hpp"
-#include "Player.hpp"
-
-LongTimeCharacterEffects::LongTimeCharacterEffects(Character *owner) : owner(owner), time(0) {
-}
+LongTimeCharacterEffects::LongTimeCharacterEffects(Character *owner) : owner(owner), time(0) {}
 
 auto LongTimeCharacterEffects::find(uint16_t effectid, LongTimeEffect *&effect) const -> bool {
     using namespace ranges;
-    auto doesIdMatch = [effectid](LongTimeEffect *e) {return e->getEffectId() == effectid;};
+    auto doesIdMatch = [effectid](LongTimeEffect *e) {
+        return e->getEffectId() == effectid;
+    };
     auto result = find_if(effects, doesIdMatch);
     bool success = result != effects.end();
 
@@ -55,7 +54,9 @@ auto LongTimeCharacterEffects::find(uint16_t effectid, LongTimeEffect *&effect) 
 
 auto LongTimeCharacterEffects::find(const std::string &effectname, LongTimeEffect *&effect) const -> bool {
     using namespace ranges;
-    auto doesNameMatch = [&effectname](LongTimeEffect *e) {return e->getEffectName() == effectname;};
+    auto doesNameMatch = [&effectname](LongTimeEffect *e) {
+        return e->getEffectName() == effectname;
+    };
     auto result = find_if(effects, doesNameMatch);
     bool success = result != effects.end();
 
@@ -95,7 +96,7 @@ void LongTimeCharacterEffects::addEffect(LongTimeEffect *effect) {
         }
     }
 
-    effect->firstAdd(); //set first add for this effect
+    effect->firstAdd(); // set first add for this effect
 }
 
 auto LongTimeCharacterEffects::removeEffect(uint16_t effectid) -> bool {
@@ -208,14 +209,15 @@ auto LongTimeCharacterEffects::save() -> bool {
         }
         connection->commitTransaction();
     } catch (std::exception &e) {
-        Logger::error(LogFacility::Database) << "Error while saving long time effects for " << player->to_string() << ": " << e.what() << Log::end;
+        Logger::error(LogFacility::Database)
+                << "Error while saving long time effects for " << player->to_string() << ": " << e.what() << Log::end;
         connection->rollbackTransaction();
         return false;
     }
 
     bool allok = true;
 
-    for (auto & effect : effects) {
+    for (auto &effect : effects) {
         allok and_eq effect->save(player->getId(), time);
     }
 
@@ -256,7 +258,8 @@ auto LongTimeCharacterEffects::load() -> bool {
                 SelectQuery valuesQuery(connection);
                 valuesQuery.addColumn("playerlteffectvalues", "pev_name");
                 valuesQuery.addColumn("playerlteffectvalues", "pev_value");
-                valuesQuery.addEqualCondition<TYPE_OF_CHARACTER_ID>("playerlteffectvalues", "pev_playerid", player->getId());
+                valuesQuery.addEqualCondition<TYPE_OF_CHARACTER_ID>("playerlteffectvalues", "pev_playerid",
+                                                                    player->getId());
                 valuesQuery.addEqualCondition<uint16_t>("playerlteffectvalues", "pev_effectid", effectId);
                 valuesQuery.addServerTable("playerlteffectvalues");
 
@@ -264,9 +267,7 @@ auto LongTimeCharacterEffects::load() -> bool {
 
                 if (!valuesResults.empty()) {
                     for (const auto &valueRow : valuesResults) {
-                        effect->addValue(
-                            valueRow["pev_name"].as<std::string>(),
-                            valueRow["pev_value"].as<uint32_t>());
+                        effect->addValue(valueRow["pev_name"].as<std::string>(), valueRow["pev_value"].as<uint32_t>());
                     }
                 }
 
@@ -283,8 +284,8 @@ auto LongTimeCharacterEffects::load() -> bool {
 
         return true;
     } catch (std::exception &e) {
-        Logger::error(LogFacility::Database) << "Error while loading long time effects for " << player->to_string() << ": " << e.what() << Log::end;
+        Logger::error(LogFacility::Database)
+                << "Error while loading long time effects for " << player->to_string() << ": " << e.what() << Log::end;
         return false;
     }
 }
-

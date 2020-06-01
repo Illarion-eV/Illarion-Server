@@ -1,13 +1,12 @@
 #include "script/forwarder.hpp"
 
-#include "globals.hpp"
-#include "World.hpp"
 #include "Logger.hpp"
-#include "Player.hpp"
 #include "Monster.hpp"
 #include "NPC.hpp"
+#include "Player.hpp"
+#include "World.hpp"
+#include "globals.hpp"
 #include "map/Field.hpp"
-
 #include "script/LuaScript.hpp"
 
 auto convert_to_map(const luabind::object &data) -> std::shared_ptr<script_data_exchangemap> {
@@ -67,7 +66,7 @@ void inform_lua2(const Character *character, const std::string &message, Charact
         break;
 
     default:
-        type=Character::informScriptMediumPriority;
+        type = Character::informScriptMediumPriority;
     }
 
     character->inform(message, type);
@@ -77,7 +76,8 @@ void inform_lua4(const Character *character, const std::string &message) {
     character->inform(message, Character::informScriptMediumPriority);
 }
 
-void inform_lua1(const Character *character, const std::string &german, const std::string &english, Character::informType type) {
+void inform_lua1(const Character *character, const std::string &german, const std::string &english,
+                 Character::informType type) {
     switch (type) {
     case Character::informScriptLowPriority:
     case Character::informScriptMediumPriority:
@@ -85,7 +85,7 @@ void inform_lua1(const Character *character, const std::string &german, const st
         break;
 
     default:
-        type=Character::informScriptMediumPriority;
+        type = Character::informScriptMediumPriority;
     }
 
     character->inform(german, english, type);
@@ -99,10 +99,10 @@ auto count_item_at1(const Character *character, const std::string &where, TYPE_O
     return character->countItemAt(where, id);
 }
 
-auto count_item_at2(const Character *character, const std::string &where, TYPE_OF_ITEM_ID id, const luabind::object &data) -> int {
+auto count_item_at2(const Character *character, const std::string &where, TYPE_OF_ITEM_ID id,
+                    const luabind::object &data) -> int {
     return character->countItemAt(where, id, convert_to_map(data).get());
 }
-
 
 auto erase_item1(Character *character, TYPE_OF_ITEM_ID id, int count) -> int {
     return character->eraseItem(id, count);
@@ -112,7 +112,8 @@ auto erase_item2(Character *character, TYPE_OF_ITEM_ID id, int count, const luab
     return character->eraseItem(id, count, convert_to_map(data).get());
 }
 
-auto create_item(Character *character, Item::id_type id, Item::number_type number, Item::quality_type quality, const luabind::object &data) -> int {
+auto create_item(Character *character, Item::id_type id, Item::number_type number, Item::quality_type quality,
+                 const luabind::object &data) -> int {
     return character->createItem(id, number, quality, convert_to_map(data).get());
 }
 
@@ -123,18 +124,18 @@ auto getLoot(const Character *character) -> luabind::object {
     try {
         const auto &loot = character->getLoot();
 
-        for (const auto &category: loot) {
+        for (const auto &category : loot) {
             const auto categoryId = category.first;
             const auto &categoryItems = category.second;
 
             luabind::object lootTableCategory = luabind::newtable(_luaState);
 
-            for (const auto &item: categoryItems) {
+            for (const auto &item : categoryItems) {
                 const auto lootId = item.first;
                 const auto &lootItem = item.second;
-                //auto &lootTableItem = lootTable[categoryId][lootId];
+                // auto &lootTableItem = lootTable[categoryId][lootId];
 
-                //probability, itemId, minAmount, maxAmount, minQuality, maxQuality, minDurability, maxDurability
+                // probability, itemId, minAmount, maxAmount, minQuality, maxQuality, minDurability, maxDurability
                 luabind::object lootTableItem = luabind::newtable(_luaState);
                 lootTableItem["probability"] = lootItem.probability;
                 lootTableItem["itemId"] = lootItem.itemId;
@@ -146,8 +147,8 @@ auto getLoot(const Character *character) -> luabind::object {
                 lootTableItem["maxDurability"] = lootItem.durability.second;
 
                 luabind::object lootTableItemData = luabind::newtable(_luaState);
-                
-                for (const auto &data: lootItem.data) {
+
+                for (const auto &data : lootItem.data) {
                     lootTableItemData[data.first] = data.second;
                 }
 
@@ -175,7 +176,8 @@ auto container_erase_item1(Container *container, Item::id_type id, Item::number_
     return container->eraseItem(id, number);
 }
 
-auto container_erase_item2(Container *container, Item::id_type id, Item::number_type number, const luabind::object &data) -> int {
+auto container_erase_item2(Container *container, Item::id_type id, Item::number_type number,
+                           const luabind::object &data) -> int {
     return container->eraseItem(id, number, convert_to_map(data).get());
 }
 
@@ -187,7 +189,8 @@ auto world_fieldAt(World *world, const position &pos) -> map::Field * {
     }
 }
 
-auto world_createFromId(World *world, TYPE_OF_ITEM_ID id, unsigned short int count, position pos, bool always, int quali, const luabind::object &data) -> ScriptItem {
+auto world_createFromId(World *world, TYPE_OF_ITEM_ID id, unsigned short int count, position pos, bool always,
+                        int quali, const luabind::object &data) -> ScriptItem {
     return world->createFromId(id, count, pos, always, quali, convert_to_map(data).get());
 }
 
@@ -217,12 +220,11 @@ auto waypointlist_getWaypoints(const WaypointList *wpl) -> luabind::object {
 
     const auto &waypoints = wpl->getWaypoints();
 
-    for (const auto& waypoint : waypoints) {
+    for (const auto &waypoint : waypoints) {
         list[index++] = waypoint;
     }
 
     return list;
-
 }
 
 void waypointlist_addFromList(WaypointList *wpl, const luabind::object &list) {
@@ -234,7 +236,9 @@ void waypointlist_addFromList(WaypointList *wpl, const luabind::object &list) {
                     wpl->addWaypoint(pos);
                 } catch (luabind::cast_failed &e) {
                     const std::string script = World::get()->getCurrentScript()->getFileName();
-                    Logger::error(LogFacility::Script) << "Invalid type in parameter list of WaypointList:addFromList in " << script << ": " << "Expected type position" << Log::end;
+                    Logger::error(LogFacility::Script)
+                            << "Invalid type in parameter list of WaypointList:addFromList in " << script << ": "
+                            << "Expected type position" << Log::end;
                 }
             }
         }
@@ -247,7 +251,7 @@ auto world_LuaLoS(const World *world, const position &startingpos, const positio
     int index = 1;
     auto objects = world->LoS(startingpos, endingpos);
 
-    for (auto &blocker: objects) {
+    for (auto &blocker : objects) {
         luabind::object innerlist = luabind::newtable(luaState);
 
         if (blocker.blockingType == BlockingObject::BT_CHARACTER) {
@@ -280,8 +284,7 @@ auto world_getPlayersOnline(const World *world) -> luabind::object {
     return list;
 }
 
-template<typename Container>
-auto convert_to_fuselist(const Container &container) -> luabind::object {
+template <typename Container> auto convert_to_fuselist(const Container &container) -> luabind::object {
     lua_State *luaState = World::get()->getCurrentScript()->getLuaState();
     luabind::object list = luabind::newtable(luaState);
     int index = 1;

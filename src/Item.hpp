@@ -21,13 +21,13 @@
 #ifndef ITEM_HPP
 #define ITEM_HPP
 
-#include <vector>
+#include "character_ptr.hpp"
+#include "globals.hpp"
+#include "types.hpp"
+
 #include <string>
 #include <unordered_map>
-
-#include "types.hpp"
-#include "globals.hpp"
-#include "character_ptr.hpp"
+#include <vector>
 
 class Character;
 class Container;
@@ -45,8 +45,8 @@ public:
     static const wear_type PERMANENT_WEAR = 255;
 
     Item() = default;
-    Item(id_type id, number_type number, wear_type wear, quality_type quality = 333) :
-        id(id), number(number), wear(wear), quality(quality), datamap(1) {}
+    Item(id_type id, number_type number, wear_type wear, quality_type quality = 333)
+            : id(id), number(number), wear(wear), quality(quality), datamap(1) {}
     Item(id_type id, number_type number, wear_type wear, quality_type quality, const script_data_exchangemap &datamap);
 
     inline auto getId() const -> id_type {
@@ -125,7 +125,8 @@ public:
     auto isMovable() const -> bool;
     void makePermanent();
 
-    auto operator==(const Item& rhs) const -> bool;
+    auto operator==(const Item &rhs) const -> bool;
+
 private:
     id_type id{0};
     number_type number{0};
@@ -136,7 +137,8 @@ private:
 
 class ScriptItem : public Item {
 public:
-    enum itemtype {
+    enum itemtype
+    {
         notdefined = 0,
         it_field = 3,
         it_inventory = 4,
@@ -153,7 +155,7 @@ public:
         return fuse_owner;
     };
     Container *inside{nullptr};
-    ScriptItem() : Item(0,0,0),  pos(position(0, 0, 0)) {}
+    ScriptItem() : Item(0, 0, 0), pos(position(0, 0, 0)) {}
     auto getType() const -> unsigned char {
         return type;
     }
@@ -167,7 +169,7 @@ public:
 
     auto getLookAt(Character * /*character*/) const -> ItemLookAt;
 
-    auto operator==(const ScriptItem& rhs) const -> bool;
+    auto operator==(const ScriptItem &rhs) const -> bool;
 };
 
 #endif

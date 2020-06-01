@@ -18,38 +18,35 @@
 
 #include "netinterface/protocol/ClientCommands.hpp"
 
-#include <string>
-
-#include "types.hpp"
-#include "map/Field.hpp"
-#include "World.hpp"
 #include "Character.hpp"
-#include "Player.hpp"
+#include "Logger.hpp"
+#include "LongTimeAction.hpp"
+#include "MonitoringClients.hpp"
 #include "Monster.hpp"
 #include "NPC.hpp"
-#include "Logger.hpp"
-#include "MonitoringClients.hpp"
-#include "tuningConstants.hpp"
-#include "LongTimeAction.hpp"
-
+#include "Player.hpp"
+#include "World.hpp"
 #include "data/Data.hpp"
 #include "data/MonsterTable.hpp"
-
-#include "script/LuaNPCScript.hpp"
-#include "script/LuaScript.hpp"
+#include "map/Field.hpp"
+#include "netinterface/protocol/BBIWIServerCommands.hpp"
+#include "netinterface/protocol/ServerCommands.hpp"
 #include "script/LuaItemScript.hpp"
+#include "script/LuaLookAtPlayerScript.hpp"
 #include "script/LuaMagicScript.hpp"
 #include "script/LuaMonsterScript.hpp"
+#include "script/LuaNPCScript.hpp"
+#include "script/LuaScript.hpp"
 #include "script/LuaTileScript.hpp"
-#include "script/LuaLookAtPlayerScript.hpp"
-#include "netinterface/protocol/ServerCommands.hpp"
-#include "netinterface/protocol/BBIWIServerCommands.hpp"
+#include "tuningConstants.hpp"
+#include "types.hpp"
+
+#include <string>
 
 extern MonsterTable *monsterDescriptions;
-extern std::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
+extern std::shared_ptr<LuaLookAtPlayerScript> lookAtPlayerScript;
 
-InputDialogTS::InputDialogTS() : BasicClientCommand(C_INPUTDIALOG_TS) {
-}
+InputDialogTS::InputDialogTS() : BasicClientCommand(C_INPUTDIALOG_TS) {}
 
 void InputDialogTS::decodeData() {
     dialogId = getIntFromBuffer();
@@ -67,8 +64,7 @@ auto InputDialogTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-MessageDialogTS::MessageDialogTS() : BasicClientCommand(C_MESSAGEDIALOG_TS) {
-}
+MessageDialogTS::MessageDialogTS() : BasicClientCommand(C_MESSAGEDIALOG_TS) {}
 
 void MessageDialogTS::decodeData() {
     dialogId = getIntFromBuffer();
@@ -84,8 +80,7 @@ auto MessageDialogTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-MerchantDialogTS::MerchantDialogTS() : BasicClientCommand(C_MERCHANTDIALOG_TS) {
-}
+MerchantDialogTS::MerchantDialogTS() : BasicClientCommand(C_MERCHANTDIALOG_TS) {}
 
 void MerchantDialogTS::decodeData() {
     dialogId = getIntFromBuffer();
@@ -140,8 +135,7 @@ auto MerchantDialogTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-SelectionDialogTS::SelectionDialogTS() : BasicClientCommand(C_SELECTIONDIALOG_TS) {
-}
+SelectionDialogTS::SelectionDialogTS() : BasicClientCommand(C_SELECTIONDIALOG_TS) {}
 
 void SelectionDialogTS::decodeData() {
     dialogId = getIntFromBuffer();
@@ -159,8 +153,7 @@ auto SelectionDialogTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-CraftingDialogTS::CraftingDialogTS() : BasicClientCommand(C_CRAFTINGDIALOG_TS) {
-}
+CraftingDialogTS::CraftingDialogTS() : BasicClientCommand(C_CRAFTINGDIALOG_TS) {}
 
 void CraftingDialogTS::decodeData() {
     dialogId = getIntFromBuffer();
@@ -213,8 +206,7 @@ auto CraftingDialogTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-RequestAppearanceTS::RequestAppearanceTS() : BasicClientCommand(C_REQUESTAPPEARANCE_TS) {
-}
+RequestAppearanceTS::RequestAppearanceTS() : BasicClientCommand(C_REQUESTAPPEARANCE_TS) {}
 
 void RequestAppearanceTS::decodeData() {
     id = getIntFromBuffer();
@@ -231,11 +223,10 @@ void RequestAppearanceTS::performAction(Player *player) {
         }
     }
 
-    //check if we found a character befor
+    // check if we found a character befor
     if (ch != nullptr) {
         ch->updateAppearanceForPlayer(player, true);
     }
-
 }
 
 auto RequestAppearanceTS::clone() -> ClientCommandPointer {
@@ -243,8 +234,7 @@ auto RequestAppearanceTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-LookAtCharacterTS::LookAtCharacterTS() : BasicClientCommand(C_LOOKATCHARACTER_TS, P_LOOK_COST) {
-}
+LookAtCharacterTS::LookAtCharacterTS() : BasicClientCommand(C_LOOKATCHARACTER_TS, P_LOOK_COST) {}
 
 void LookAtCharacterTS::decodeData() {
     id = getIntFromBuffer();
@@ -261,7 +251,7 @@ void LookAtCharacterTS::performAction(Player *player) {
             }
         }
 
-        //code for player handling
+        // code for player handling
     } else if (id >= MONSTER_BASE && id < NPC_BASE) {
         Monster *monster = World::get()->Monsters.find(id);
 
@@ -297,11 +287,8 @@ void LookAtCharacterTS::performAction(Player *player) {
 
             ServerCommandPointer cmd = std::make_shared<CharDescription>(id, player->nls(german, english));
             player->Connection->addCommand(cmd);
-
         }
     }
-
-
 }
 
 auto LookAtCharacterTS::clone() -> ClientCommandPointer {
@@ -309,8 +296,7 @@ auto LookAtCharacterTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-CastTS::CastTS() : BasicClientCommand(C_CAST_TS) {
-}
+CastTS::CastTS() : BasicClientCommand(C_CAST_TS) {}
 
 void CastTS::decodeData() {
     spellId = static_cast<unsigned long int>(getIntFromBuffer());
@@ -362,7 +348,8 @@ void CastTS::performAction(Player *player) {
 
     switch (cid) {
     case UID_KOORD:
-        Logger::debug(LogFacility::Script) << *player << " trys to cast on a coordinate pos " << castPosition << Log::end;
+        Logger::debug(LogFacility::Script)
+                << *player << " trys to cast on a coordinate pos " << castPosition << Log::end;
 
         if (LuaMageScript) {
             try {
@@ -412,8 +399,7 @@ void CastTS::performAction(Player *player) {
                 Logger::error(LogFacility::Script) << "cant find field for casting at pos " << castPosition << Log::end;
                 paramOK = false;
             }
-        }
-        else {
+        } else {
             paramOK = false;
         }
 
@@ -421,7 +407,8 @@ void CastTS::performAction(Player *player) {
 
     case UID_SHOWC:
 
-        Logger::debug(LogFacility::Script) << *player << " is casting in showcas: " << showcase << " pos " << pos << Log::end;
+        Logger::debug(LogFacility::Script)
+                << *player << " is casting in showcas: " << showcase << " pos " << pos << Log::end;
 
         if (LuaMageScript) {
             if (player->isShowcaseOpen(showcase)) {
@@ -457,9 +444,9 @@ void CastTS::performAction(Player *player) {
         Logger::debug(LogFacility::Script) << "Cast with Wand" << Log::end;
 
         if (player->getAttackMode() && (player->enemyid != 0) && (LuaMageScript)) {
-            bool zauberstab=false;
+            bool zauberstab = false;
 
-            if ((player->items[ LEFT_TOOL ].getId() != 0) && (player->items[ LEFT_TOOL ].getId() != BLOCKEDITEM)) {
+            if ((player->items[LEFT_TOOL].getId() != 0) && (player->items[LEFT_TOOL].getId() != BLOCKEDITEM)) {
                 const auto weaponId = player->items[LEFT_TOOL].getId();
 
                 if (Data::WeaponItems.exists(weaponId)) {
@@ -469,7 +456,7 @@ void CastTS::performAction(Player *player) {
                 }
             }
 
-            if ((player->items[ RIGHT_TOOL ].getId() != 0) && (player->items[ RIGHT_TOOL ].getId() != BLOCKEDITEM)) {
+            if ((player->items[RIGHT_TOOL].getId() != 0) && (player->items[RIGHT_TOOL].getId() != BLOCKEDITEM)) {
                 const auto weaponId = player->items[RIGHT_TOOL].getId();
 
                 if (Data::WeaponItems.exists(weaponId)) {
@@ -478,7 +465,6 @@ void CastTS::performAction(Player *player) {
                     }
                 }
             }
-
 
             if (zauberstab) {
                 if (LuaMageScript) {
@@ -491,14 +477,12 @@ void CastTS::performAction(Player *player) {
                         paramOK = false;
                     }
                 }
-            }
-            else {
+            } else {
                 paramOK = false;
             }
 
         } // enemyid != 0
         else {
-
             if (!LuaMageScript) {
                 paramOK = false;
             }
@@ -512,9 +496,9 @@ void CastTS::performAction(Player *player) {
 
         if (LuaMageScript) {
             if (pos < (MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
-                if (player->items[ pos ].getId() != 0) {
+                if (player->items[pos].getId() != 0) {
                     Target.Type = LUA_ITEM;
-                    Target.item = static_cast<ScriptItem>(player->items[ pos ]);
+                    Target.item = static_cast<ScriptItem>(player->items[pos]);
                     Target.item.pos = player->getPosition();
 
                     if (pos < MAX_BODY_ITEMS) {
@@ -535,7 +519,6 @@ void CastTS::performAction(Player *player) {
         }
 
         break;
-
     }
 
     if (LuaMageScript) {
@@ -553,7 +536,8 @@ void CastTS::performAction(Player *player) {
                 break;
 
             case LUA_CHARACTER:
-                LuaMageScript->CastMagicOnCharacter(player, Target.character, static_cast<unsigned char>(LTS_NOLTACTION));
+                LuaMageScript->CastMagicOnCharacter(player, Target.character,
+                                                    static_cast<unsigned char>(LTS_NOLTACTION));
 
                 if (Target.character->getType() == Character::monster) {
                     auto *temp = dynamic_cast<Monster *>(Target.character);
@@ -563,7 +547,7 @@ void CastTS::performAction(Player *player) {
                         const auto &monStruct = (*monsterDescriptions)[monsterType];
 
                         if (monStruct.script) {
-                            monStruct.script->onCasted(temp,player);
+                            monStruct.script->onCasted(temp, player);
                         }
                     }
                 }
@@ -589,8 +573,7 @@ auto CastTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-UseTS::UseTS() : BasicClientCommand(C_USE_TS, P_MIN_AP) {
-}
+UseTS::UseTS() : BasicClientCommand(C_USE_TS, P_MIN_AP) {}
 
 void UseTS::decodeData() {
     useId = getUnsignedCharFromBuffer();
@@ -664,7 +647,9 @@ void UseTS::performAction(Player *player) {
                         if (monsterDescriptions->exists(monsterType)) {
                             LuaMonsterScript = (*monsterDescriptions)[monsterType].script;
                         } else {
-                            Logger::error(LogFacility::Script) << "try to use Monster but id: " << scriptMonster->getMonsterType() << " not found in database!" << Log::end;
+                            Logger::error(LogFacility::Script)
+                                    << "try to use Monster but id: " << scriptMonster->getMonsterType()
+                                    << " not found in database!" << Log::end;
                         }
 
                         if (LuaMonsterScript) {
@@ -674,7 +659,8 @@ void UseTS::performAction(Player *player) {
                         }
                     }
                 } else {
-                    Logger::error(LogFacility::Script) << "Character on field " << usePosition << " not found!" << Log::end;
+                    Logger::error(LogFacility::Script)
+                            << "Character on field " << usePosition << " not found!" << Log::end;
                 }
             } else {
                 Logger::debug(LogFacility::Script) << "no character on field!" << Log::end;
@@ -714,7 +700,8 @@ void UseTS::performAction(Player *player) {
         break;
 
     case UID_SHOWC:
-        Logger::debug(LogFacility::Script) << "showcase: " << static_cast<int>(showcase) << " pos: " << static_cast<int>(pos) << Log::end;
+        Logger::debug(LogFacility::Script)
+                << "showcase: " << static_cast<int>(showcase) << " pos: " << static_cast<int>(pos) << Log::end;
 
         if (player->isShowcaseOpen(showcase)) {
             Container *ps = player->getShowcaseContainer(showcase);
@@ -756,14 +743,16 @@ void UseTS::performAction(Player *player) {
         if (pos < (MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
             Logger::debug(LogFacility::Script) << "position approved!" << Log::end;
 
-            if (player->items[ pos ].getId() != 0) {
-                Logger::debug(LogFacility::Script) << "at position " << static_cast<int>(pos) << " on body, is an item with id: " << player->items[ pos ].getId() << Log::end;
+            if (player->items[pos].getId() != 0) {
+                Logger::debug(LogFacility::Script)
+                        << "at position " << static_cast<int>(pos)
+                        << " on body, is an item with id: " << player->items[pos].getId() << Log::end;
 
-                LuaScript = Data::Items.script(player->items[ pos ].getId()) ;
+                LuaScript = Data::Items.script(player->items[pos].getId());
 
                 if (LuaScript) {
                     Source.Type = LUA_ITEM;
-                    Source.item = static_cast<ScriptItem>(player->items[ pos ]);
+                    Source.item = static_cast<ScriptItem>(player->items[pos]);
                     Source.item.pos = player->getPosition();
 
                     if (pos < MAX_BODY_ITEMS) {
@@ -791,10 +780,12 @@ void UseTS::performAction(Player *player) {
     }
 
     Logger::debug(LogFacility::Script) << "=========Use Script Start=============" << Log::end;
-    Logger::debug(LogFacility::Script) << "Source pos (" << Source.pos.x << "," << Source.pos.y << "," << Source.pos.z << ")" << Log::end;
+    Logger::debug(LogFacility::Script) << "Source pos (" << Source.pos.x << "," << Source.pos.y << "," << Source.pos.z
+                                       << ")" << Log::end;
     Logger::debug(LogFacility::Script) << "Source type: " << Source.Type << Log::end;
     Logger::debug(LogFacility::Script) << "Source Character: " << *Source.character << Log::end;
-    Logger::debug(LogFacility::Script) << "Target pos (" << Target.pos.x << "," << Target.pos.y << "," << Target.pos.z << ")" << Log::end;
+    Logger::debug(LogFacility::Script) << "Target pos (" << Target.pos.x << "," << Target.pos.y << "," << Target.pos.z
+                                       << ")" << Log::end;
     Logger::debug(LogFacility::Script) << "Target Type: " << Target.Type << Log::end;
     Logger::debug(LogFacility::Script) << "Target Character: " << *Target.character << Log::end;
     Logger::debug(LogFacility::Script) << "==========Use Script End=============" << Log::end;
@@ -805,10 +796,10 @@ void UseTS::performAction(Player *player) {
         player->ltAction->setLastAction(LuaScript, Source, Target, LongTimeAction::ACTION_USE);
 
         if ((paramOK) && player->isAlive()) {
-
             if (Source.Type == LUA_ITEM) {
                 LuaScript->UseItem(player, Source.item, static_cast<unsigned char>(LTS_NOLTACTION));
-                msg = "Used Item: " + std::to_string(Source.item.getId()) + " with item: " + std::to_string(Target.item.getId());
+                msg = "Used Item: " + std::to_string(Source.item.getId()) +
+                      " with item: " + std::to_string(Target.item.getId());
             }
         }
     } else if (LuaNPCScript) {
@@ -840,7 +831,7 @@ void UseTS::performAction(Player *player) {
         }
     }
 
-    ServerCommandPointer cmd = std::make_shared<BBSendActionTC>(player->getId(), 3,msg);
+    ServerCommandPointer cmd = std::make_shared<BBSendActionTC>(player->getId(), 3, msg);
     World::get()->monitoringClientList->sendCommand(cmd);
 }
 
@@ -849,11 +840,9 @@ auto UseTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-KeepAliveTS::KeepAliveTS() : BasicClientCommand(C_KEEPALIVE_TS) {
-}
+KeepAliveTS::KeepAliveTS() : BasicClientCommand(C_KEEPALIVE_TS) {}
 
-void KeepAliveTS::decodeData() {
-}
+void KeepAliveTS::decodeData() {}
 
 void KeepAliveTS::performAction(Player *player) {
     Logger::debug(LogFacility::Player) << "KEEPALIVE_TS from player " << *player << Log::end;
@@ -867,11 +856,9 @@ auto KeepAliveTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-RequestSkillsTS::RequestSkillsTS() : BasicClientCommand(C_REQUESTSKILLS_TS) {
-}
+RequestSkillsTS::RequestSkillsTS() : BasicClientCommand(C_REQUESTSKILLS_TS) {}
 
-void RequestSkillsTS::decodeData() {
-}
+void RequestSkillsTS::decodeData() {}
 
 void RequestSkillsTS::performAction(Player *player) {
     time(&(player->lastaction));
@@ -883,11 +870,9 @@ auto RequestSkillsTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-AttackStopTS::AttackStopTS() : BasicClientCommand(C_ATTACKSTOP_TS) {
-}
+AttackStopTS::AttackStopTS() : BasicClientCommand(C_ATTACKSTOP_TS) {}
 
-void AttackStopTS::decodeData() {
-}
+void AttackStopTS::decodeData() {}
 
 void AttackStopTS::performAction(Player *player) {
     time(&(player->lastaction));
@@ -902,8 +887,7 @@ auto AttackStopTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-LookAtInventoryItemTS::LookAtInventoryItemTS() : BasicClientCommand(C_LOOKATINVENTORYITEM_TS, P_LOOK_COST) {
-}
+LookAtInventoryItemTS::LookAtInventoryItemTS() : BasicClientCommand(C_LOOKATINVENTORYITEM_TS, P_LOOK_COST) {}
 
 void LookAtInventoryItemTS::decodeData() {
     pos = getUnsignedCharFromBuffer();
@@ -923,8 +907,7 @@ auto LookAtInventoryItemTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-LookAtShowCaseItemTS::LookAtShowCaseItemTS() : BasicClientCommand(C_LOOKATSHOWCASEITEM_TS, P_LOOK_COST) {
-}
+LookAtShowCaseItemTS::LookAtShowCaseItemTS() : BasicClientCommand(C_LOOKATSHOWCASEITEM_TS, P_LOOK_COST) {}
 
 void LookAtShowCaseItemTS::decodeData() {
     showcase = getUnsignedCharFromBuffer();
@@ -945,8 +928,8 @@ auto LookAtShowCaseItemTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-MoveItemFromPlayerToShowCaseTS::MoveItemFromPlayerToShowCaseTS() : BasicClientCommand(C_MOVEITEMFROMPLAYERTOSHOWCASE_TS, P_ITEMMOVE_COST) {
-}
+MoveItemFromPlayerToShowCaseTS::MoveItemFromPlayerToShowCaseTS()
+        : BasicClientCommand(C_MOVEITEMFROMPLAYERTOSHOWCASE_TS, P_ITEMMOVE_COST) {}
 
 void MoveItemFromPlayerToShowCaseTS::decodeData() {
     cpos = getUnsignedCharFromBuffer();
@@ -971,8 +954,8 @@ auto MoveItemFromPlayerToShowCaseTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-MoveItemFromShowCaseToPlayerTS::MoveItemFromShowCaseToPlayerTS() : BasicClientCommand(C_MOVEITEMFROMSHOWCASETOPLAYER_TS, P_ITEMMOVE_COST) {
-}
+MoveItemFromShowCaseToPlayerTS::MoveItemFromShowCaseToPlayerTS()
+        : BasicClientCommand(C_MOVEITEMFROMSHOWCASETOPLAYER_TS, P_ITEMMOVE_COST) {}
 
 void MoveItemFromShowCaseToPlayerTS::decodeData() {
     showcase = getUnsignedCharFromBuffer();
@@ -997,8 +980,8 @@ auto MoveItemFromShowCaseToPlayerTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-MoveItemInsideInventoryTS::MoveItemInsideInventoryTS() : BasicClientCommand(C_MOVEITEMINSIDEINVENTORY_TS, P_ITEMMOVE_COST) {
-}
+MoveItemInsideInventoryTS::MoveItemInsideInventoryTS()
+        : BasicClientCommand(C_MOVEITEMINSIDEINVENTORY_TS, P_ITEMMOVE_COST) {}
 
 void MoveItemInsideInventoryTS::decodeData() {
     opos = getUnsignedCharFromBuffer();
@@ -1022,8 +1005,8 @@ auto MoveItemInsideInventoryTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-DropItemFromInventoryOnMapTS::DropItemFromInventoryOnMapTS() : BasicClientCommand(C_DROPITEMFROMPLAYERONMAP_TS, P_ITEMMOVE_COST) {
-}
+DropItemFromInventoryOnMapTS::DropItemFromInventoryOnMapTS()
+        : BasicClientCommand(C_DROPITEMFROMPLAYERONMAP_TS, P_ITEMMOVE_COST) {}
 
 void DropItemFromInventoryOnMapTS::decodeData() {
     pos = getUnsignedCharFromBuffer();
@@ -1046,8 +1029,8 @@ auto DropItemFromInventoryOnMapTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-MoveItemFromMapToPlayerTS::MoveItemFromMapToPlayerTS() : BasicClientCommand(C_MOVEITEMFROMMAPTOPLAYER_TS, P_ITEMMOVE_COST) {
-}
+MoveItemFromMapToPlayerTS::MoveItemFromMapToPlayerTS()
+        : BasicClientCommand(C_MOVEITEMFROMMAPTOPLAYER_TS, P_ITEMMOVE_COST) {}
 
 void MoveItemFromMapToPlayerTS::decodeData() {
     sourcePosition.x = getShortIntFromBuffer();
@@ -1060,7 +1043,8 @@ void MoveItemFromMapToPlayerTS::decodeData() {
 void MoveItemFromMapToPlayerTS::performAction(Player *player) {
     time(&(player->lastaction));
     player->ltAction->abortAction();
-    Logger::debug(LogFacility::World) << *player << " moves an item from map " << sourcePosition << " to inventory slot " << inventorySlot << Log::end;
+    Logger::debug(LogFacility::World) << *player << " moves an item from map " << sourcePosition
+                                      << " to inventory slot " << inventorySlot << Log::end;
 
     if (player->isAlive()) {
         World::get()->moveItemFromMapToPlayer(player, sourcePosition, inventorySlot, count);
@@ -1073,8 +1057,8 @@ auto MoveItemFromMapToPlayerTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-MoveItemFromMapIntoShowCaseTS::MoveItemFromMapIntoShowCaseTS() : BasicClientCommand(C_MOVEITEMFROMMAPINTOSHOWCASE_TS, P_ITEMMOVE_COST) {
-}
+MoveItemFromMapIntoShowCaseTS::MoveItemFromMapIntoShowCaseTS()
+        : BasicClientCommand(C_MOVEITEMFROMMAPINTOSHOWCASE_TS, P_ITEMMOVE_COST) {}
 
 void MoveItemFromMapIntoShowCaseTS::decodeData() {
     sourcePosition.x = getShortIntFromBuffer();
@@ -1088,7 +1072,8 @@ void MoveItemFromMapIntoShowCaseTS::decodeData() {
 void MoveItemFromMapIntoShowCaseTS::performAction(Player *player) {
     time(&(player->lastaction));
     player->ltAction->abortAction();
-    Logger::debug(LogFacility::World) << *player << " moves an item from map " << sourcePosition << " to showcase " << (int)showcase << " slot " << (int)showcaseSlot << Log::end;
+    Logger::debug(LogFacility::World) << *player << " moves an item from map " << sourcePosition << " to showcase "
+                                      << (int)showcase << " slot " << (int)showcaseSlot << Log::end;
 
     if (player->isAlive()) {
         World::get()->moveItemFromMapIntoShowcase(player, sourcePosition, showcase, showcaseSlot, count);
@@ -1101,8 +1086,7 @@ auto MoveItemFromMapIntoShowCaseTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-MoveItemFromMapToMapTS::MoveItemFromMapToMapTS() : BasicClientCommand(C_MOVEITEMFROMMAPTOMAP_TS, P_ITEMMOVE_COST) {
-}
+MoveItemFromMapToMapTS::MoveItemFromMapToMapTS() : BasicClientCommand(C_MOVEITEMFROMMAPTOMAP_TS, P_ITEMMOVE_COST) {}
 
 void MoveItemFromMapToMapTS::decodeData() {
     sourcePosition.x = getShortIntFromBuffer();
@@ -1117,7 +1101,8 @@ void MoveItemFromMapToMapTS::decodeData() {
 void MoveItemFromMapToMapTS::performAction(Player *player) {
     time(&(player->lastaction));
     player->ltAction->abortAction();
-    Logger::debug(LogFacility::World) << *player << " moves an item from map " << sourcePosition << " to map " << targetPosition << Log::end;
+    Logger::debug(LogFacility::World) << *player << " moves an item from map " << sourcePosition << " to map "
+                                      << targetPosition << Log::end;
 
     if (player->isAlive()) {
         World::get()->moveItemFromMapToMap(player, sourcePosition, targetPosition, count);
@@ -1130,8 +1115,8 @@ auto MoveItemFromMapToMapTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-MoveItemBetweenShowCasesTS::MoveItemBetweenShowCasesTS() : BasicClientCommand(C_MOVEITEMBETWEENSHOWCASES_TS, P_ITEMMOVE_COST) {
-}
+MoveItemBetweenShowCasesTS::MoveItemBetweenShowCasesTS()
+        : BasicClientCommand(C_MOVEITEMBETWEENSHOWCASES_TS, P_ITEMMOVE_COST) {}
 
 void MoveItemBetweenShowCasesTS::decodeData() {
     source = getUnsignedCharFromBuffer();
@@ -1157,8 +1142,8 @@ auto MoveItemBetweenShowCasesTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-DropItemFromShowCaseOnMapTS::DropItemFromShowCaseOnMapTS() : BasicClientCommand(C_DROPITEMFROMSHOWCASEONMAP_TS, P_ITEMMOVE_COST) {
-}
+DropItemFromShowCaseOnMapTS::DropItemFromShowCaseOnMapTS()
+        : BasicClientCommand(C_DROPITEMFROMSHOWCASEONMAP_TS, P_ITEMMOVE_COST) {}
 
 void DropItemFromShowCaseOnMapTS::decodeData() {
     showcase = getUnsignedCharFromBuffer();
@@ -1182,8 +1167,7 @@ auto DropItemFromShowCaseOnMapTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-CloseContainerInShowCaseTS::CloseContainerInShowCaseTS() : BasicClientCommand(C_CLOSECONTAINERINSHOWCASE_TS) {
-}
+CloseContainerInShowCaseTS::CloseContainerInShowCaseTS() : BasicClientCommand(C_CLOSECONTAINERINSHOWCASE_TS) {}
 
 void CloseContainerInShowCaseTS::decodeData() {
     showcase = getUnsignedCharFromBuffer();
@@ -1204,8 +1188,8 @@ auto CloseContainerInShowCaseTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-LookIntoShowCaseContainerTS::LookIntoShowCaseContainerTS() : BasicClientCommand(C_LOOKINTOSHOWCASECONTAINER_TS, P_LOOK_COST) {
-}
+LookIntoShowCaseContainerTS::LookIntoShowCaseContainerTS()
+        : BasicClientCommand(C_LOOKINTOSHOWCASECONTAINER_TS, P_LOOK_COST) {}
 
 void LookIntoShowCaseContainerTS::decodeData() {
     showcase = getUnsignedCharFromBuffer();
@@ -1225,11 +1209,9 @@ auto LookIntoShowCaseContainerTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-LookIntoInventoryTS::LookIntoInventoryTS() : BasicClientCommand(C_LOOKINTOINVENTORY_TS, P_LOOK_COST) {
-}
+LookIntoInventoryTS::LookIntoInventoryTS() : BasicClientCommand(C_LOOKINTOINVENTORY_TS, P_LOOK_COST) {}
 
-void LookIntoInventoryTS::decodeData() {
-}
+void LookIntoInventoryTS::decodeData() {}
 
 void LookIntoInventoryTS::performAction(Player *player) {
     time(&(player->lastaction));
@@ -1244,8 +1226,8 @@ auto LookIntoInventoryTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-LookIntoContainerOnFieldTS::LookIntoContainerOnFieldTS() : BasicClientCommand(C_LOOKINTOCONTAINERONFIELD_TS, P_LOOK_COST) {
-}
+LookIntoContainerOnFieldTS::LookIntoContainerOnFieldTS()
+        : BasicClientCommand(C_LOOKINTOCONTAINERONFIELD_TS, P_LOOK_COST) {}
 
 void LookIntoContainerOnFieldTS::decodeData() {
     dir = to_direction(getUnsignedCharFromBuffer());
@@ -1267,8 +1249,7 @@ auto LookIntoContainerOnFieldTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-PickUpItemTS::PickUpItemTS() : BasicClientCommand(C_PICKUPITEM_TS, P_ITEMMOVE_COST) {
-}
+PickUpItemTS::PickUpItemTS() : BasicClientCommand(C_PICKUPITEM_TS, P_ITEMMOVE_COST) {}
 
 void PickUpItemTS::decodeData() {
     pos.x = getShortIntFromBuffer();
@@ -1292,11 +1273,9 @@ auto PickUpItemTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-PickUpAllItemsTS::PickUpAllItemsTS() : BasicClientCommand(C_PICKUPALLITEMS_TS, P_ITEMMOVE_COST) {
-}
+PickUpAllItemsTS::PickUpAllItemsTS() : BasicClientCommand(C_PICKUPALLITEMS_TS, P_ITEMMOVE_COST) {}
 
-void PickUpAllItemsTS::decodeData() {
-}
+void PickUpAllItemsTS::decodeData() {}
 
 void PickUpAllItemsTS::performAction(Player *player) {
     time(&(player->lastaction));
@@ -1314,11 +1293,9 @@ auto PickUpAllItemsTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-LogOutTS::LogOutTS() : BasicClientCommand(C_LOGOUT_TS) {
-}
+LogOutTS::LogOutTS() : BasicClientCommand(C_LOGOUT_TS) {}
 
-void LogOutTS::decodeData() {
-}
+void LogOutTS::decodeData() {}
 
 void LogOutTS::performAction(Player *player) {
     player->ltAction->abortAction();
@@ -1331,8 +1308,7 @@ auto LogOutTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-WhisperTS::WhisperTS() : BasicClientCommand(C_WHISPER_TS) {
-}
+WhisperTS::WhisperTS() : BasicClientCommand(C_WHISPER_TS) {}
 
 void WhisperTS::decodeData() {
     text = getStringFromBuffer();
@@ -1349,8 +1325,7 @@ auto WhisperTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-ShoutTS::ShoutTS() : BasicClientCommand(C_SHOUT_TS) {
-}
+ShoutTS::ShoutTS() : BasicClientCommand(C_SHOUT_TS) {}
 
 void ShoutTS::decodeData() {
     text = getStringFromBuffer();
@@ -1366,8 +1341,7 @@ auto ShoutTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-SayTS::SayTS() : BasicClientCommand(C_SAY_TS) {
-}
+SayTS::SayTS() : BasicClientCommand(C_SAY_TS) {}
 
 void SayTS::decodeData() {
     text = getStringFromBuffer();
@@ -1378,7 +1352,7 @@ void SayTS::performAction(Player *player) {
     Logger::debug(LogFacility::World) << *player << " whispers something!" << Log::end;
 
     if (!World::get()->parseGMCommands(player, text)) {
-        if (!World::get()->parsePlayerCommands(player, text)) {    // did we issue a player command?
+        if (!World::get()->parsePlayerCommands(player, text)) { // did we issue a player command?
             player->talk(Character::tt_say, text);
         }
     }
@@ -1389,11 +1363,9 @@ auto SayTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-RefreshTS::RefreshTS() : BasicClientCommand(C_REFRESH_TS) {
-}
+RefreshTS::RefreshTS() : BasicClientCommand(C_REFRESH_TS) {}
 
-void RefreshTS::decodeData() {
-}
+void RefreshTS::decodeData() {}
 
 void RefreshTS::performAction(Player *player) {
     Logger::debug(LogFacility::World) << *player << " want sended a refresh_ts, sending map!" << Log::end;
@@ -1406,11 +1378,9 @@ auto RefreshTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-IntroduceTS::IntroduceTS() : BasicClientCommand(C_INTRODUCE_TS) {
-}
+IntroduceTS::IntroduceTS() : BasicClientCommand(C_INTRODUCE_TS) {}
 
-void IntroduceTS::decodeData() {
-}
+void IntroduceTS::decodeData() {}
 
 void IntroduceTS::performAction(Player *player) {
     time(&(player->lastaction));
@@ -1426,8 +1396,7 @@ auto IntroduceTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-CustomNameTS::CustomNameTS() : BasicClientCommand(C_CUSTOMNAME_TS) {
-}
+CustomNameTS::CustomNameTS() : BasicClientCommand(C_CUSTOMNAME_TS) {}
 
 void CustomNameTS::decodeData() {
     playerId = getIntFromBuffer();
@@ -1446,8 +1415,7 @@ auto CustomNameTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-AttackPlayerTS::AttackPlayerTS() : BasicClientCommand(C_ATTACKPLAYER_TS) {
-}
+AttackPlayerTS::AttackPlayerTS() : BasicClientCommand(C_ATTACKPLAYER_TS) {}
 
 void AttackPlayerTS::decodeData() {
     enemyid = getIntFromBuffer();
@@ -1474,7 +1442,8 @@ void AttackPlayerTS::performAction(Player *player) {
 
             ServerCommandPointer cmd = std::make_shared<AttackAcknowledgedTC>();
             player->Connection->addCommand(cmd);
-            //monitoringClientList->sendCommand( new SendActionTS(player->getId(), player->getName(), 0, "Starts an attack: " + Logger::toString(player->enemyid) ) );
+            // monitoringClientList->sendCommand( new SendActionTS(player->getId(), player->getName(), 0, "Starts an
+            // attack: " + Logger::toString(player->enemyid) ) );
             World::get()->characterAttacks(player);
         } else {
             player->setAttackMode(false);
@@ -1487,8 +1456,7 @@ auto AttackPlayerTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-LookAtMapItemTS::LookAtMapItemTS() : BasicClientCommand(C_LOOKATMAPITEM_TS, P_LOOK_COST) {
-}
+LookAtMapItemTS::LookAtMapItemTS() : BasicClientCommand(C_LOOKATMAPITEM_TS, P_LOOK_COST) {}
 
 void LookAtMapItemTS::decodeData() {
     pos.x = getShortIntFromBuffer();
@@ -1504,7 +1472,6 @@ void LookAtMapItemTS::performAction(Player *player) {
         World::get()->lookAtMapItem(player, pos, stackPos);
         player->increaseActionPoints(-P_LOOK_COST);
     }
-
 }
 
 auto LookAtMapItemTS::clone() -> ClientCommandPointer {
@@ -1512,8 +1479,7 @@ auto LookAtMapItemTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-PlayerSpinTS::PlayerSpinTS() : BasicClientCommand(C_PLAYERSPIN_TS, P_SPIN_COST) {
-}
+PlayerSpinTS::PlayerSpinTS() : BasicClientCommand(C_PLAYERSPIN_TS, P_SPIN_COST) {}
 
 void PlayerSpinTS::decodeData() {
     dir = to_direction(getUnsignedCharFromBuffer());
@@ -1532,8 +1498,7 @@ auto PlayerSpinTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-CharMoveTS::CharMoveTS() : BasicClientCommand(C_CHARMOVE_TS, P_MIN_AP) {
-}
+CharMoveTS::CharMoveTS() : BasicClientCommand(C_CHARMOVE_TS, P_MIN_AP) {}
 
 void CharMoveTS::decodeData() {
     charid = getIntFromBuffer();
@@ -1550,7 +1515,8 @@ void CharMoveTS::performAction(Player *player) {
 
         if (player->getTurtleActive() && player->hasGMRight(gmr_settiles) && mode == NORMALMOVE) {
             World::get()->setNextTile(player, player->getTurtleTile());
-            Logger::info(LogFacility::World) << "Turtle was active, new tile set at pos: " << player->getPosition() << " tile: " << player->getTurtleTile() << Log::end;
+            Logger::info(LogFacility::World) << "Turtle was active, new tile set at pos: " << player->getPosition()
+                                             << " tile: " << player->getTurtleTile() << Log::end;
         }
 
         if (player->move(static_cast<direction>(dir), mode)) {
@@ -1564,8 +1530,7 @@ auto CharMoveTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-LoginCommandTS::LoginCommandTS() : BasicClientCommand(C_LOGIN_TS) {
-}
+LoginCommandTS::LoginCommandTS() : BasicClientCommand(C_LOGIN_TS) {}
 
 void LoginCommandTS::decodeData() {
     clientVersion = getUnsignedCharFromBuffer();
@@ -1594,8 +1559,7 @@ auto LoginCommandTS::getPassword() const -> const std::string & {
     return password;
 }
 
-ScreenSizeCommandTS::ScreenSizeCommandTS() : BasicClientCommand(C_SCREENSIZE_TS) {
-}
+ScreenSizeCommandTS::ScreenSizeCommandTS() : BasicClientCommand(C_SCREENSIZE_TS) {}
 
 void ScreenSizeCommandTS::decodeData() {
     width = getUnsignedCharFromBuffer();
@@ -1613,4 +1577,3 @@ auto ScreenSizeCommandTS::clone() -> ClientCommandPointer {
     ClientCommandPointer cmd = std::make_shared<ScreenSizeCommandTS>();
     return cmd;
 }
-

@@ -18,20 +18,20 @@
  *  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "types.hpp"
 #include "script/binding/binding.hpp"
+#include "types.hpp"
 
 namespace binding {
 
-    auto colour() -> luabind::scope {
-        return luabind::class_<Colour>("colour")
-        .def(luabind::constructor<>())
-        .def(luabind::constructor<uint8_t, uint8_t, uint8_t>())
-        .def(luabind::constructor<uint8_t, uint8_t, uint8_t, uint8_t>())
-        .def_readwrite("red", &Colour::red)
-        .def_readwrite("green", &Colour::green)
-        .def_readwrite("blue", &Colour::blue)
-        .def_readwrite("alpha", &Colour::alpha);
-    }
-
+auto colour() -> luabind::scope {
+    return luabind::class_<Colour>("colour")
+            .def(luabind::constructor<>())
+            .def(luabind::constructor<uint8_t, uint8_t, uint8_t>())
+            .def(luabind::constructor<uint8_t, uint8_t, uint8_t, uint8_t>())
+            .def_readwrite("red", &Colour::red)
+            .def_readwrite("green", &Colour::green)
+            .def_readwrite("blue", &Colour::blue)
+            .def_readwrite("alpha", &Colour::alpha);
 }
+
+} // namespace binding

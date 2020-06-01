@@ -22,8 +22,7 @@
 
 using namespace Database;
 
-QueryAssign::QueryAssign(const Connection &connection) : connection(connection) {
-}
+QueryAssign::QueryAssign(const Connection &connection) : connection(connection) {}
 
 void QueryAssign::addAssignColumnNull(const std::string &column) {
     Query::appendToStringList(assignColumns, Query::escapeAndChainKeys("", column) + " = NULL");

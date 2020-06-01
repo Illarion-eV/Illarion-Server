@@ -16,9 +16,6 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
-#include "character_ptr.hpp"
-#include "map/Field.hpp"
 #include "Item.hpp"
 #include "Logger.hpp"
 #include "MonitoringClients.hpp"
@@ -26,13 +23,12 @@
 #include "NPC.hpp"
 #include "Player.hpp"
 #include "World.hpp"
-
+#include "character_ptr.hpp"
 #include "data/Data.hpp"
 #include "data/NaturalArmorTable.hpp"
-
-#include "netinterface/protocol/ServerCommands.hpp"
+#include "map/Field.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
-
+#include "netinterface/protocol/ServerCommands.hpp"
 #include "script/LuaNPCScript.hpp"
 
 auto World::deleteNPC(unsigned int npcid) -> bool {
@@ -40,11 +36,12 @@ auto World::deleteNPC(unsigned int npcid) -> bool {
     return true;
 }
 
-auto World::createDynamicNPC(const std::string &name, TYPE_OF_RACE_ID type, const position &pos, /*CCharacter::face_to dir,*/ Character::sex_type sex, const std::string &scriptname) -> bool {
+auto World::createDynamicNPC(const std::string &name, TYPE_OF_RACE_ID type, const position &pos,
+                             /*CCharacter::face_to dir,*/ Character::sex_type sex, const std::string &scriptname)
+        -> bool {
     try {
-
         try {
-            NPC *newNPC = new NPC(DYNNPC_BASE, name, type, pos, (Character::face_to)4/*dir*/, false, sex, {});
+            NPC *newNPC = new NPC(DYNNPC_BASE, name, type, pos, (Character::face_to)4 /*dir*/, false, sex, {});
 
             // add npc to npc list
             Npc.insert(newNPC);
@@ -54,19 +51,23 @@ auto World::createDynamicNPC(const std::string &name, TYPE_OF_RACE_ID type, cons
                 std::shared_ptr<LuaNPCScript> script(new LuaNPCScript(scriptname, newNPC));
                 newNPC->setScript(script);
             } catch (ScriptException &e) {
-                Logger::error(LogFacility::Script) << "World::createDynamicNPC: Error while loading dynamic NPC script: " << scriptname << ": " << e.what() << Log::end;
+                Logger::error(LogFacility::Script)
+                        << "World::createDynamicNPC: Error while loading dynamic NPC script: " << scriptname << ": "
+                        << e.what() << Log::end;
             }
         } catch (FieldNotFound &) {
-            Logger::error(LogFacility::Script) << "World::createDynamicNPC: No space available for dynamic NPC: " << name << " near " << pos << Log::end;
+            Logger::error(LogFacility::Script)
+                    << "World::createDynamicNPC: No space available for dynamic NPC: " << name << " near " << pos
+                    << Log::end;
         }
 
         return true;
     } catch (...) {
-        Logger::error(LogFacility::Script) << "World::createDynamicNPC: Unknown error while loading dynamic NPC: " << name << Log::end;
+        Logger::error(LogFacility::Script)
+                << "World::createDynamicNPC: Unknown error while loading dynamic NPC: " << name << Log::end;
         return false;
     }
 }
-
 
 auto World::getPlayersOnline() const -> std::vector<Player *> {
     std::vector<Player *> list;
@@ -93,13 +94,13 @@ auto World::getCharactersInRangeOf(const position &pos, uint8_t radius) const ->
     Range range;
     range.radius = radius;
 
-    std::vector < Player * > tempP = Players.findAllCharactersInRangeOf(pos, range);
+    std::vector<Player *> tempP = Players.findAllCharactersInRangeOf(pos, range);
     list.insert(list.end(), tempP.begin(), tempP.end());
 
-    std::vector < Monster * > tempM = Monsters.findAllCharactersInRangeOf(pos, range);
+    std::vector<Monster *> tempM = Monsters.findAllCharactersInRangeOf(pos, range);
     list.insert(list.end(), tempM.begin(), tempM.end());
 
-    std::vector < NPC * > tempN = Npc.findAllCharactersInRangeOf(pos, range);
+    std::vector<NPC *> tempN = Npc.findAllCharactersInRangeOf(pos, range);
     list.insert(list.end(), tempN.begin(), tempN.end());
 
     return list;
@@ -148,11 +149,11 @@ void World::itemInform(Character *user, const ScriptItem &item, const ItemLookAt
     }
 }
 
-
 void World::changeQuality(ScriptItem item, short int amount) {
-    short int tmpQuality = ((amount+item.getDurability())<100) ? (amount + item.getQuality()) : (item.getQuality() - item.getDurability() + 99);
+    short int tmpQuality = ((amount + item.getDurability()) < 100) ? (amount + item.getQuality())
+                                                                   : (item.getQuality() - item.getDurability() + 99);
 
-    if (tmpQuality%100 > 0) {
+    if (tmpQuality % 100 > 0) {
         item.setQuality(tmpQuality);
         changeItem(item);
     } else {
@@ -162,7 +163,7 @@ void World::changeQuality(ScriptItem item, short int amount) {
 
 auto World::changeItem(ScriptItem item) -> bool {
     if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
-        item.owner->items[ item.itempos ] = (Item)item;
+        item.owner->items[item.itempos] = (Item)item;
 
         if (item.owner->getType() == Character::player) {
             dynamic_cast<Player *>(item.owner)->sendCharacterItemAtPos(item.itempos);
@@ -206,7 +207,6 @@ auto World::getItemName(TYPE_OF_ITEM_ID itemid, uint8_t language) -> std::string
     }
 }
 
-
 auto World::getItemStats(const ScriptItem &item) -> ItemStruct {
     const auto &data = Data::Items[item.getId()];
     return data;
@@ -246,7 +246,7 @@ auto World::erase(ScriptItem item, int amount) -> bool {
     } else if (item.type == ScriptItem::it_field) {
         try {
             map::Field &field = fieldAt(item.pos);
-            bool erased=false;
+            bool erased = false;
             field.increaseItemOnStack(-amount, erased);
 
             if (erased) {
@@ -272,7 +272,6 @@ auto World::erase(ScriptItem item, int amount) -> bool {
 
     return false;
 }
-
 
 auto World::increase(ScriptItem item, short int count) -> bool {
     if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
@@ -315,7 +314,6 @@ auto World::swap(ScriptItem item, TYPE_OF_ITEM_ID newItem, unsigned short int ne
             Item it;
 
             if (field.viewItemOnStack(it)) {
-
                 if (field.swapItemOnStack(newItem, newQuality)) {
                     Item dummy;
                     dummy.setId(newItem);
@@ -325,7 +323,8 @@ auto World::swap(ScriptItem item, TYPE_OF_ITEM_ID newItem, unsigned short int ne
                         sendSwapItemOnMapToAllVisibleCharacter(it.getId(), item.pos, dummy);
                     }
                 } else {
-                    Logger::error(LogFacility::Script) << "World::swap: Swapping item on Field " << item.pos << " failed!" << Log::end;
+                    Logger::error(LogFacility::Script)
+                            << "World::swap: Swapping item on Field " << item.pos << " failed!" << Log::end;
                     return false;
                 }
             }
@@ -346,7 +345,8 @@ auto World::swap(ScriptItem item, TYPE_OF_ITEM_ID newItem, unsigned short int ne
     return false;
 }
 
-auto World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, const position &pos, bool always, int quality, script_data_exchangemap const *data) -> ScriptItem {
+auto World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, const position &pos, bool always, int quality,
+                         script_data_exchangemap const *data) -> ScriptItem {
     ScriptItem sItem;
 
     const auto &com = Data::Items[id];
@@ -370,7 +370,8 @@ auto World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, const pos
             putItemOnMap(nullptr, pos);
         }
     } else {
-        Logger::error(LogFacility::Script) << "World::createFromId: Item " << id << " was not found in items!" << Log::end;
+        Logger::error(LogFacility::Script)
+                << "World::createFromId: Item " << id << " was not found in items!" << Log::end;
     }
 
     return sItem;
@@ -392,7 +393,7 @@ auto World::createFromItem(const ScriptItem &item, const position &pos, bool alw
 auto World::createMonster(unsigned short id, const position &pos, short movepoints) -> character_ptr {
     try {
         map::Field &field = fieldAt(pos);
-        
+
         try {
             auto *newMonster = new Monster(id, pos);
             newMonster->setActionPoints(movepoints);
@@ -401,7 +402,8 @@ auto World::createMonster(unsigned short id, const position &pos, short movepoin
             return character_ptr(newMonster);
 
         } catch (Monster::unknownIDException &) {
-            Logger::error(LogFacility::Script) << "World::createMonster: Failed to create monster with unknown id " << id << "!" << Log::end;
+            Logger::error(LogFacility::Script)
+                    << "World::createMonster: Failed to create monster with unknown id " << id << "!" << Log::end;
             return character_ptr();
         }
     } catch (FieldNotFound &) {
@@ -463,13 +465,11 @@ void World::changeTile(short int tileid, const position &pos) {
     }
 }
 
-auto World::createSavedArea(uint16_t tile, const position &origin,
-                            uint16_t height, uint16_t width) -> bool {
+auto World::createSavedArea(uint16_t tile, const position &origin, uint16_t height, uint16_t width) -> bool {
     if (maps.createMap("by createSavedArea", origin, width, height, tile)) {
-        Logger::info(LogFacility::World)
-            << "Map created by createSavedArea command at " << origin
-            << " height: " << height << " width: " << width
-            << " standard tile: " << tile << "!" << Log::end;
+        Logger::info(LogFacility::World) << "Map created by createSavedArea command at " << origin
+                                         << " height: " << height << " width: " << width << " standard tile: " << tile
+                                         << "!" << Log::end;
         return true;
     } else {
         return false;
@@ -477,7 +477,7 @@ auto World::createSavedArea(uint16_t tile, const position &origin,
 }
 
 auto World::getArmorStruct(TYPE_OF_ITEM_ID id, ArmorStruct &ret) -> bool {
-    //Has to be an own function cant give a pointer of Armor items to the script
+    // Has to be an own function cant give a pointer of Armor items to the script
 
     if (Data::ArmorItems.exists(id)) {
         ret = Data::ArmorItems[id];
@@ -488,7 +488,7 @@ auto World::getArmorStruct(TYPE_OF_ITEM_ID id, ArmorStruct &ret) -> bool {
 }
 
 auto World::getWeaponStruct(TYPE_OF_ITEM_ID id, WeaponStruct &ret) -> bool {
-    //Has to be an own function cant give a pointer of Armor items to the script
+    // Has to be an own function cant give a pointer of Armor items to the script
 
     if (Data::WeaponItems.exists(id)) {
         ret = Data::WeaponItems[id];
@@ -499,7 +499,6 @@ auto World::getWeaponStruct(TYPE_OF_ITEM_ID id, WeaponStruct &ret) -> bool {
 }
 
 auto World::getNaturalArmor(TYPE_OF_RACE_ID id, MonsterArmor &ret) -> bool {
-
     if (Data::NaturalArmors.exists(id)) {
         ret = Data::NaturalArmors[id];
         return true;
@@ -509,7 +508,6 @@ auto World::getNaturalArmor(TYPE_OF_RACE_ID id, MonsterArmor &ret) -> bool {
 }
 
 auto World::getMonsterAttack(TYPE_OF_RACE_ID id, AttackBoni &ret) -> bool {
-
     if (Data::MonsterAttacks.exists(id)) {
         ret = Data::MonsterAttacks[id];
         return true;
@@ -519,7 +517,7 @@ auto World::getMonsterAttack(TYPE_OF_RACE_ID id, AttackBoni &ret) -> bool {
 }
 
 void World::sendMonitoringMessage(const std::string &msg, unsigned char id) {
-    //send this Command to all Monitoring Clients
+    // send this Command to all Monitoring Clients
     ServerCommandPointer cmd = std::make_shared<BBMessageTC>(msg, id);
     monitoringClientList->sendCommand(cmd);
 }
@@ -527,4 +525,3 @@ void World::sendMonitoringMessage(const std::string &msg, unsigned char id) {
 void World::logMissingField(const std::string &function, const position &field) {
     Logger::error(LogFacility::Script) << "World::" << function << ": Field " << field << " was not found!" << Log::end;
 }
-

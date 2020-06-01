@@ -21,8 +21,8 @@
 #ifndef LUA_LOOK_AT_ITEM_SCRIPT_HPP
 #define LUA_LOOK_AT_ITEM_SCRIPT_HPP
 
-#include "LuaScript.hpp"
 #include "ItemLookAt.hpp"
+#include "LuaScript.hpp"
 
 class Character;
 class ScriptItem;
@@ -38,4 +38,3 @@ public:
 };
 
 #endif
-

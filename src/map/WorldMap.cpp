@@ -16,27 +16,26 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "map/WorldMap.hpp"
 
-#include "db/Result.hpp"
-#include "db/SelectQuery.hpp"
 #include "Config.hpp"
-#include "Map.hpp"
 #include "Logger.hpp"
-#include "Player.hpp"
+#include "Map.hpp"
 #include "Monster.hpp"
 #include "NPC.hpp"
+#include "Player.hpp"
 #include "World.hpp"
+#include "db/Result.hpp"
+#include "db/SelectQuery.hpp"
 
 #include <algorithm>
-#include <filesystem>
-#include <regex>
-#include <stdexcept>
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/lexical_cast.hpp>
 #include <chrono>
+#include <filesystem>
 #include <range/v3/all.hpp>
+#include <regex>
+#include <stdexcept>
 
 namespace map {
 
@@ -47,17 +46,17 @@ void WorldMap::clear() {
 
 auto WorldMap::intersects(const Map &map) const -> bool {
     using namespace ranges;
-    auto doIntersectMap = [&map](const auto &testMap) {return map.intersects(testMap);};
+    auto doIntersectMap = [&map](const auto &testMap) {
+        return map.intersects(testMap);
+    };
     auto overlap = find_if(maps, doIntersectMap);
     bool foundIntersection = overlap != maps.end();
 
     if (foundIntersection) {
-        Logger::error(LogFacility::Script)
-            << "Could not insert map " << map.getName()
-            << " because it intersects with " << overlap->getName()
-            << Log::end;
+        Logger::error(LogFacility::Script) << "Could not insert map " << map.getName() << " because it intersects with "
+                                           << overlap->getName() << Log::end;
     }
-    
+
     return foundIntersection;
 }
 
@@ -77,7 +76,7 @@ auto WorldMap::at(const position &pos) const -> const Field & {
     }
 }
 
-auto WorldMap::insert(Map&& newMap) -> bool {
+auto WorldMap::insert(Map &&newMap) -> bool {
     if (intersects(newMap)) {
         return false;
     }
@@ -97,19 +96,18 @@ auto WorldMap::insert(Map&& newMap) -> bool {
     return true;
 }
 
-auto WorldMap::insertPersistent(Field&& newField) -> bool {
+auto WorldMap::insertPersistent(Field &&newField) -> bool {
     newField.makePersistent();
     return persistentFields.insert({newField.getPosition(), std::move(newField)}).second;
 }
 
 auto WorldMap::allMapsAged() -> bool {
-    using std::chrono::steady_clock;
     using std::chrono::milliseconds;
+    using std::chrono::steady_clock;
 
     auto startTime = steady_clock::now();
 
-    while (ageIndex < maps.size() &&
-           steady_clock::now() - startTime < milliseconds(10)) {
+    while (ageIndex < maps.size() && steady_clock::now() - startTime < milliseconds(10)) {
         maps[ageIndex++].age();
     }
 
@@ -118,14 +116,15 @@ auto WorldMap::allMapsAged() -> bool {
     }
 
     using namespace ranges;
-    for_each(persistentFields | view::values, [](auto &field){field.age();});
+    for_each(persistentFields | view::values, [](auto &field) {
+        field.age();
+    });
 
     ageIndex = 0;
     return true;
 }
 
-auto WorldMap::import(const std::string &importDir,
-                      const std::string &mapName) -> bool {
+auto WorldMap::import(const std::string &importDir, const std::string &mapName) -> bool {
     bool success = true;
 
     try {
@@ -136,21 +135,18 @@ auto WorldMap::import(const std::string &importDir,
     }
 
     if (!success) {
-        Logger::alert(LogFacility::Script) << "---> Could not import " << mapName
-                                          << Log::end;
+        Logger::alert(LogFacility::Script) << "---> Could not import " << mapName << Log::end;
     }
 
     return success;
 }
 
-auto WorldMap::createMapFromHeaderFile(const std::string &importDir,
-                                      const std::string &mapName) -> Map {
+auto WorldMap::createMapFromHeaderFile(const std::string &importDir, const std::string &mapName) -> Map {
     const std::string fileName = mapName + ".tiles.txt";
     std::ifstream headerFile(importDir + fileName);
 
     if (!headerFile) {
-        Logger::error(LogFacility::Script) << "Could not open file: " << fileName
-                                          << Log::end;
+        Logger::error(LogFacility::Script) << "Could not open file: " << fileName << Log::end;
         throw MapError();
     }
 
@@ -160,8 +156,7 @@ auto WorldMap::createMapFromHeaderFile(const std::string &importDir,
 
     if (version != 2) {
         Logger::error(LogFacility::Script)
-            << fileName << ": incorrect version in line " << lineNumber
-            << "! Expected: 2" << Log::end;
+                << fileName << ": incorrect version in line " << lineNumber << "! Expected: 2" << Log::end;
         throw MapError();
     }
 
@@ -169,21 +164,19 @@ auto WorldMap::createMapFromHeaderFile(const std::string &importDir,
     origin.z = readHeaderLine(mapName, 'L', headerFile, lineNumber);
     origin.x = readHeaderLine(mapName, 'X', headerFile, lineNumber);
     origin.y = readHeaderLine(mapName, 'Y', headerFile, lineNumber);
-    
+
     auto width = readHeaderLine(mapName, 'W', headerFile, lineNumber);
 
     if (width <= 0) {
         Logger::error(LogFacility::Script)
-            << fileName << ": width has to be positive in line " << lineNumber
-            << Log::end;
+                << fileName << ": width has to be positive in line " << lineNumber << Log::end;
         throw MapError();
     }
 
     if (origin.x > std::numeric_limits<int16_t>::max() - width + 1) {
         Logger::error(LogFacility::Script)
-            << fileName << ": x + width - 1 must not exceed "
-            << std::numeric_limits<int16_t>::max() << " in line " << lineNumber
-            << Log::end;
+                << fileName << ": x + width - 1 must not exceed " << std::numeric_limits<int16_t>::max() << " in line "
+                << lineNumber << Log::end;
         throw MapError();
     }
 
@@ -191,26 +184,24 @@ auto WorldMap::createMapFromHeaderFile(const std::string &importDir,
 
     if (height <= 0) {
         Logger::error(LogFacility::Script)
-            << fileName << ": height has to be positive in line " << lineNumber
-            << Log::end;
+                << fileName << ": height has to be positive in line " << lineNumber << Log::end;
         throw MapError();
     }
 
     if (origin.y > std::numeric_limits<int16_t>::max() - height + 1) {
         Logger::error(LogFacility::Script)
-            << fileName << ": y + height - 1 must not exceed "
-            << std::numeric_limits<int16_t>::max() << " in line " << lineNumber
-            << Log::end;
+                << fileName << ": y + height - 1 must not exceed " << std::numeric_limits<int16_t>::max() << " in line "
+                << lineNumber << Log::end;
         throw MapError();
     }
 
     return Map(mapName, origin, width, height);
 }
 
-const std::regex headerExpression {R"(^(.): (-?\d+)$)"};
+const std::regex headerExpression{R"(^(.): (-?\d+)$)"};
 
-auto WorldMap::readHeaderLine(const std::string &mapName, char header,
-                                 std::ifstream &headerFile, int &lineNumber) -> int16_t {
+auto WorldMap::readHeaderLine(const std::string &mapName, char header, std::ifstream &headerFile, int &lineNumber)
+        -> int16_t {
     using std::regex_match;
     using std::smatch;
     std::string line;
@@ -221,8 +212,7 @@ auto WorldMap::readHeaderLine(const std::string &mapName, char header,
         if (!isCommentOrEmpty(line)) {
             smatch matches;
 
-            if (regex_match(line, matches, headerExpression) &&
-                matches[1] == header) {
+            if (regex_match(line, matches, headerExpression) && matches[1] == header) {
                 try {
                     return boost::lexical_cast<int16_t>(matches[2]);
                 } catch (boost::bad_lexical_cast &) {
@@ -232,10 +222,8 @@ auto WorldMap::readHeaderLine(const std::string &mapName, char header,
         }
     }
 
-    Logger::error(LogFacility::Script) << mapName << ": expected header '"
-                                      << header << ": <int16_t>' but found '"
-                                      << line << "' in line " << lineNumber
-                                      << Log::end;
+    Logger::error(LogFacility::Script) << mapName << ": expected header '" << header << ": <int16_t>' but found '"
+                                       << line << "' in line " << lineNumber << Log::end;
     throw MapError();
 }
 
@@ -250,9 +238,8 @@ auto WorldMap::exportTo() const -> bool {
         int16_t minX = map.getMinX();
         int16_t minY = map.getMinY();
         // create base filename
-        std::string filebase = exportDir + "e_" + std::to_string(minX)
-                               + "_" + std::to_string(minY)
-                               + "_" + std::to_string(map.getLevel()) + ".";
+        std::string filebase = exportDir + "e_" + std::to_string(minX) + "_" + std::to_string(minY) + "_" +
+                               std::to_string(map.getLevel()) + ".";
         // export fields file
         std::ofstream fieldsf(filebase + "tiles.txt");
         // export items file
@@ -261,7 +248,8 @@ auto WorldMap::exportTo() const -> bool {
         std::ofstream warpsf(filebase + "warps.txt");
 
         if (!fieldsf.good() || !itemsf.good() || !warpsf.good()) {
-            Logger::error(LogFacility::World) << "Could not open output files for item export: " << filebase << "*.txt" << Log::end;
+            Logger::error(LogFacility::World)
+                    << "Could not open output files for item export: " << filebase << "*.txt" << Log::end;
             return false;
         }
 
@@ -280,32 +268,35 @@ auto WorldMap::exportTo() const -> bool {
             for (x = minX; x <= map.getMaxX(); ++x) {
                 const Field &field = map.at(x, y);
 
-                fieldsf << x-minX << ";" << y-minY << ";" << field.getTileCode() << ";" << field.getMusicId() << std::endl;
+                fieldsf << x - minX << ";" << y - minY << ";" << field.getTileCode() << ";" << field.getMusicId()
+                        << std::endl;
 
                 if (field.isWarp()) {
                     position target;
                     field.getWarp(target);
-                    warpsf << x-minX << ";" << y-minY << ";" << target.x << ";" << target.y << ";" << target.z << std::endl;
+                    warpsf << x - minX << ";" << y - minY << ";" << target.x << ";" << target.y << ";" << target.z
+                           << std::endl;
                 }
 
                 for (const auto &item : field.getExportItems()) {
-                    itemsf << x-minX << ";" << y-minY << ";" << item.getId() << ";" << item.getQuality();
+                    itemsf << x - minX << ";" << y - minY << ";" << item.getId() << ";" << item.getQuality();
 
-                    std::for_each(item.getDataBegin(), item.getDataEnd(), [&](const std::pair<std::string, std::string> &data) {
-                        using boost::algorithm::replace_all;
+                    std::for_each(item.getDataBegin(), item.getDataEnd(),
+                                  [&](const std::pair<std::string, std::string> &data) {
+                                      using boost::algorithm::replace_all;
 
-                        std::string key = data.first;
-                        std::string value = data.second;
+                                      std::string key = data.first;
+                                      std::string value = data.second;
 
-                        replace_all(key, "\\", "\\\\");
-                        replace_all(key, "=", "\\=");
-                        replace_all(key, ";", "\\;");
-                        replace_all(value, "\\", "\\\\");
-                        replace_all(value, "=", "\\=");
-                        replace_all(value, ";", "\\;");
+                                      replace_all(key, "\\", "\\\\");
+                                      replace_all(key, "=", "\\=");
+                                      replace_all(key, ";", "\\;");
+                                      replace_all(value, "\\", "\\\\");
+                                      replace_all(value, "=", "\\=");
+                                      replace_all(value, ";", "\\;");
 
-                        itemsf << ";" << key << "=" << value;
-                    });
+                                      itemsf << ";" << key << "=" << value;
+                                  });
 
                     itemsf << std::endl;
                 }
@@ -315,7 +306,6 @@ auto WorldMap::exportTo() const -> bool {
         fieldsf.close();
         itemsf.close();
         warpsf.close();
-
     }
 
     return true;
@@ -331,10 +321,11 @@ auto WorldMap::importFromEditor() -> bool {
     const std::string path = Config::instance().datadir() + std::string(MAPDIR) + worldName;
 
     Logger::notice(LogFacility::Script) << "Removing old maps." << Log::end;
-    
-    for (std::filesystem::directory_iterator end, it(Config::instance().datadir() + std::string(MAPDIR)); it != end; ++it) {
+
+    for (std::filesystem::directory_iterator end, it(Config::instance().datadir() + std::string(MAPDIR)); it != end;
+         ++it) {
         if (std::regex_match(it->path().filename().string(), mapFilter)) {
-             std::filesystem::remove(it->path());
+            std::filesystem::remove(it->path());
         }
     }
 
@@ -350,9 +341,9 @@ auto WorldMap::importFromEditor() -> bool {
         if (!std::regex_match(it->path().filename().string(), tilesFilter)) {
             continue;
         }
-    
+
         std::string map = it->path().string();
-        
+
         // strip .tiles.txt from file name
         map.resize(map.length() - 10);
         map.erase(0, importDir.length());
@@ -362,7 +353,7 @@ auto WorldMap::importFromEditor() -> bool {
         if (!import(importDir, map)) {
             ++errors;
         }
-    
+
         ++numfiles;
     }
 
@@ -371,36 +362,30 @@ auto WorldMap::importFromEditor() -> bool {
         return false;
     }
 
-    Logger::notice(LogFacility::Script) << "Imported " << numfiles - errors
-                                        << " out of " << numfiles << " maps."
+    Logger::notice(LogFacility::Script) << "Imported " << numfiles - errors << " out of " << numfiles << " maps."
                                         << Log::end;
 
     if (errors != 0) {
-        Logger::alert(LogFacility::Script) << "Failed to import " << errors
-                                           << " maps!" << Log::end;
+        Logger::alert(LogFacility::Script) << "Failed to import " << errors << " maps!" << Log::end;
     }
 
     saveToDisk();
     return errors == 0;
-
 }
 
 auto WorldMap::loadFromDisk() -> bool {
     clear();
     const std::string path = Config::instance().datadir() + std::string(MAPDIR) + worldName;
-    std::ifstream mapinitfile(path + "_initmaps",
-                              std::ios::binary | std::ios::in);
+    std::ifstream mapinitfile(path + "_initmaps", std::ios::binary | std::ios::in);
 
     if (!mapinitfile) {
         Logger::error(LogFacility::World)
-            << "Error while loading maps: could not open "
-            << (path + "_initmaps") << Log::end;
+                << "Error while loading maps: could not open " << (path + "_initmaps") << Log::end;
         return false;
     } else {
         unsigned short int size;
-        mapinitfile.read((char *) & size, sizeof(size));
-        Logger::info(LogFacility::World) << "Loading " << size << " maps."
-                                         << Log::end;
+        mapinitfile.read((char *)&size, sizeof(size));
+        Logger::info(LogFacility::World) << "Loading " << size << " maps." << Log::end;
 
         int16_t tZ_Level;
         int16_t tMin_X;
@@ -409,21 +394,19 @@ auto WorldMap::loadFromDisk() -> bool {
         uint16_t tWidth;
         uint16_t tHeight;
 
-        char mname[ 200 ];
+        char mname[200];
 
         for (int i = 0; i < size; ++i) {
-            mapinitfile.read((char *) & tZ_Level, sizeof(tZ_Level));
-            mapinitfile.read((char *) & tMin_X, sizeof(tMin_X));
-            mapinitfile.read((char *) & tMin_Y, sizeof(tMin_Y));
+            mapinitfile.read((char *)&tZ_Level, sizeof(tZ_Level));
+            mapinitfile.read((char *)&tMin_X, sizeof(tMin_X));
+            mapinitfile.read((char *)&tMin_Y, sizeof(tMin_Y));
 
-            mapinitfile.read((char *) & tWidth, sizeof(tWidth));
-            mapinitfile.read((char *) & tHeight, sizeof(tHeight));
+            mapinitfile.read((char *)&tWidth, sizeof(tWidth));
+            mapinitfile.read((char *)&tHeight, sizeof(tHeight));
 
-            auto map = Map{"previously saved map",
-                           position{tMin_X, tMin_Y, tZ_Level}, tWidth, tHeight};
+            auto map = Map{"previously saved map", position{tMin_X, tMin_Y, tZ_Level}, tWidth, tHeight};
 
-            sprintf(mname, "%s_%6d_%6d_%6d", path.c_str(), tZ_Level, tMin_X,
-                    tMin_Y);
+            sprintf(mname, "%s_%6d_%6d_%6d", path.c_str(), tZ_Level, tMin_X, tMin_Y);
 
             if (map.load(mname)) {
                 insert(std::move(map));
@@ -455,10 +438,7 @@ void WorldMap::loadPersistentFields() {
     const bool isPersistent = true;
 
     for (const auto &row : result) {
-        position pos(row["mt_x"].as<int16_t>(),
-                     row["mt_y"].as<int16_t>(),
-                     row["mt_z"].as<int16_t>()
-        );
+        position pos(row["mt_x"].as<int16_t>(), row["mt_y"].as<int16_t>(), row["mt_z"].as<int16_t>());
 
         auto tile = row["mt_tile"].as<uint16_t>();
         auto music = row["mt_music"].as<uint16_t>();
@@ -477,7 +457,7 @@ void WorldMap::saveToDisk() const {
     } else {
         uint16_t size = maps.size();
         Logger::info(LogFacility::World) << "Saving " << size << " maps." << Log::end;
-        mapinitfile.write((char *) & size, sizeof(size));
+        mapinitfile.write((char *)&size, sizeof(size));
         char mname[200];
 
         for (const auto &map : maps) {
@@ -486,11 +466,11 @@ void WorldMap::saveToDisk() const {
             const auto y = map.getMinY();
             const auto width = map.getWidth();
             const auto height = map.getHeight();
-            mapinitfile.write((char *) &level, sizeof(level));
-            mapinitfile.write((char *) &x, sizeof(x));
-            mapinitfile.write((char *) &y, sizeof(y));
-            mapinitfile.write((char *) &width, sizeof(width));
-            mapinitfile.write((char *) &height, sizeof(height));
+            mapinitfile.write((char *)&level, sizeof(level));
+            mapinitfile.write((char *)&x, sizeof(x));
+            mapinitfile.write((char *)&y, sizeof(y));
+            mapinitfile.write((char *)&width, sizeof(width));
+            mapinitfile.write((char *)&height, sizeof(height));
 
             sprintf(mname, "%s_%6d_%6d_%6d", path.c_str(), level, x, y);
             map.save(mname);
@@ -500,8 +480,8 @@ void WorldMap::saveToDisk() const {
     }
 }
 
-auto WorldMap::createMap(const std::string &name, const position &origin,
-                         uint16_t width, uint16_t height, uint16_t tile) -> bool {
+auto WorldMap::createMap(const std::string &name, const position &origin, uint16_t width, uint16_t height,
+                         uint16_t tile) -> bool {
     return insert({name, origin, width, height, tile});
 }
 
@@ -524,7 +504,7 @@ void WorldMap::makePersistentAt(const position &pos) {
 
 void WorldMap::removePersistenceAt(const position &pos) {
     bool existsInMap = world_map.count(pos) > 0;
-    bool existsPersistent =  persistentFields.count(pos) > 0;
+    bool existsPersistent = persistentFields.count(pos) > 0;
 
     if (!existsInMap && existsPersistent) {
         // Clean up the Field, since it will be removed.
@@ -533,29 +513,28 @@ void WorldMap::removePersistenceAt(const position &pos) {
 
         Range range{0, 0};
         auto players = World::get()->Players.findAllCharactersInRangeOf(pos, range);
-        
+
         for (auto *player : players) {
             if (not player->Warp(pos)) {
-                position start(Config::instance().playerstart_x,
-                               Config::instance().playerstart_y,
+                position start(Config::instance().playerstart_x, Config::instance().playerstart_y,
                                Config::instance().playerstart_z);
                 player->Warp(start);
             }
         }
 
         auto monsters = World::get()->Monsters.findAllCharactersInRangeOf(pos, range);
-        
+
         for (auto *monster : monsters) {
             monster->remove();
         }
 
         auto npcs = World::get()->Npc.findAllCharactersInRangeOf(pos, range);
-        
+
         for (auto *npc : npcs) {
             World::get()->deleteNPC(npc->getId());
         }
     }
-    
+
     auto fieldNode = persistentFields.extract(pos);
 
     if (!fieldNode.empty()) {
@@ -651,4 +630,4 @@ auto walkableNear(const WorldMap &worldMap, const position &pos) -> const Field 
     throw FieldNotFound();
 }
 
-}
+} // namespace map

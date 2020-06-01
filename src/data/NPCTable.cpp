@@ -24,17 +24,14 @@
 
 #include "data/NPCTable.hpp"
 
-#include <iostream>
-
 #include "Logger.hpp"
+#include "data/QuestNodeTable.hpp"
+#include "db/Result.hpp"
+#include "db/SelectQuery.hpp"
+#include "script/LuaNPCScript.hpp"
 #include "types.hpp"
 
-#include "db/SelectQuery.hpp"
-#include "db/Result.hpp"
-
-#include "data/QuestNodeTable.hpp"
-
-#include "script/LuaNPCScript.hpp"
+#include <iostream>
 
 NPCTable::NPCTable() : _world(World::get()) {
     reload();
@@ -78,11 +75,8 @@ void NPCTable::reload() {
             for (const auto &row : results) {
                 auto npcID = row["npc_id"].as<TYPE_OF_CHARACTER_ID>();
 
-                const position pos(
-                    row["npc_posx"].as<int16_t>(),
-                    row["npc_posy"].as<int16_t>(),
-                    row["npc_posz"].as<int16_t>()
-                );
+                const position pos(row["npc_posx"].as<int16_t>(), row["npc_posy"].as<int16_t>(),
+                                   row["npc_posz"].as<int16_t>());
 
                 auto npcName = row["npc_name"].as<std::string>();
 
@@ -90,29 +84,19 @@ void NPCTable::reload() {
                 appearance.hairtype = uint8_t(row["npc_hair"].as<int16_t>());
                 appearance.beardtype = uint8_t(row["npc_hair"].as<int16_t>());
                 appearance.hair = {
-                    uint8_t(row["npc_hairred"].as<int16_t>()),
-                    uint8_t(row["npc_hairgreen"].as<int16_t>()),
-                    uint8_t(row["npc_hairblue"].as<int16_t>()),
-                    uint8_t(row["npc_hairalpha"].as<int16_t>())
-                };
+                        uint8_t(row["npc_hairred"].as<int16_t>()), uint8_t(row["npc_hairgreen"].as<int16_t>()),
+                        uint8_t(row["npc_hairblue"].as<int16_t>()), uint8_t(row["npc_hairalpha"].as<int16_t>())};
                 appearance.skin = {
-                    (uint8_t)(row["npc_skinred"].as<int16_t>()),
-                    (uint8_t)(row["npc_skingreen"].as<int16_t>()),
-                    (uint8_t)(row["npc_skinblue"].as<int16_t>()),
-                    (uint8_t)(row["npc_skinalpha"].as<int16_t>())
-                };
+                        (uint8_t)(row["npc_skinred"].as<int16_t>()), (uint8_t)(row["npc_skingreen"].as<int16_t>()),
+                        (uint8_t)(row["npc_skinblue"].as<int16_t>()), (uint8_t)(row["npc_skinalpha"].as<int16_t>())};
 
                 NPC *newNPC = nullptr;
 
                 try {
-                    newNPC = new NPC(
-                        npcID, npcName,
-                        row["npc_type"].as<TYPE_OF_RACE_ID>(),
-                        pos,
-                        Character::face_to(row["npc_faceto"].as<uint32_t>()),
-                        row["npc_is_healer"].as<bool>(),
-                        Character::sex_type(row["npc_sex"].as<uint32_t>()),
-                        appearance);
+                    newNPC = new NPC(npcID, npcName, row["npc_type"].as<TYPE_OF_RACE_ID>(), pos,
+                                     Character::face_to(row["npc_faceto"].as<uint32_t>()),
+                                     row["npc_is_healer"].as<bool>(),
+                                     Character::sex_type(row["npc_sex"].as<uint32_t>()), appearance);
 
                     // add npc to npc list
                     _world->Npc.insert(newNPC);
@@ -130,18 +114,19 @@ void NPCTable::reload() {
 
                             newNPC->setScript(script);
                         } catch (ScriptException &e) {
-                            Logger::error(LogFacility::Script) << "Error while loading npc script: " << scriptname << ": " << e.what() << Log::end;
+                            Logger::error(LogFacility::Script)
+                                    << "Error while loading npc script: " << scriptname << ": " << e.what() << Log::end;
                         }
                     }
 
                     newNPC = nullptr;
                 } catch (FieldNotFound &) {
-                    Logger::error(LogFacility::Other) << "No space available for NPC " << npcName << "(" << npcID << ") near " << pos << Log::end;
+                    Logger::error(LogFacility::Other)
+                            << "No space available for NPC " << npcName << "(" << npcID << ") near " << pos << Log::end;
                 }
 
                 delete newNPC;
             }
-
         }
 
         m_dataOK = true;

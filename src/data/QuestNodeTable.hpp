@@ -21,14 +21,14 @@
 #ifndef QUEST_NODE_TABLE_HPP
 #define QUEST_NODE_TABLE_HPP
 
+#include "globals.hpp"
+#include "types.hpp"
+
 #include <filesystem>
 #include <fstream>
+#include <memory>
 #include <string>
 #include <unordered_map>
-#include <memory>
-
-#include "types.hpp"
-#include "globals.hpp"
 
 class LuaScript;
 
@@ -39,10 +39,8 @@ struct NodeStruct {
 
 class QuestNodeTable {
 private:
-    template <typename Key>
-    using Table = std::unordered_multimap<Key, NodeStruct>;
-    template <typename Key>
-    using TableIterator = typename Table<Key>::const_iterator;
+    template <typename Key> using Table = std::unordered_multimap<Key, NodeStruct>;
+    template <typename Key> using TableIterator = typename Table<Key>::const_iterator;
 
     static std::unique_ptr<QuestNodeTable> instance;
     Table<TYPE_OF_ITEM_ID> itemNodes;
@@ -55,14 +53,13 @@ public:
     QuestNodeTable(const QuestNodeTable &) = delete;
     auto operator=(const QuestNodeTable &) -> QuestNodeTable & = delete;
 
-    template <typename Key>
-    using TableRange = std::pair<TableIterator<Key>, TableIterator<Key>>;
+    template <typename Key> using TableRange = std::pair<TableIterator<Key>, TableIterator<Key>>;
 
     static auto getInstance() -> QuestNodeTable &;
     void reload();
     auto getItemNodes() const -> TableRange<TYPE_OF_ITEM_ID>;
-    auto getNpcNodes() const -> TableRange<unsigned int> ;
-    auto getMonsterNodes() const -> TableRange<unsigned int> ;
+    auto getNpcNodes() const -> TableRange<unsigned int>;
+    auto getMonsterNodes() const -> TableRange<unsigned int>;
     auto getTriggerNodes() const -> TableRange<position>;
 
 private:
@@ -71,4 +68,3 @@ private:
 };
 
 #endif
-

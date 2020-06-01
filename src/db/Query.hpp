@@ -21,10 +21,10 @@
 #ifndef QUERY_HPP
 #define QUERY_HPP
 
-#include <string>
-
 #include "db/Connection.hpp"
 #include "db/Result.hpp"
+
+#include <string>
 
 namespace Database {
 class Query {
@@ -38,7 +38,6 @@ public:
     Query(const Query &org) = delete;
     auto operator=(const Query &org) -> Query & = delete;
 
-
     static auto escapeKey(const std::string &key) -> std::string;
     static auto escapeAndChainKeys(const std::string &key1, const std::string &key2) -> std::string;
     static void appendToStringList(std::string &list, const std::string &newEntry);
@@ -51,10 +50,10 @@ public:
 protected:
     Query();
     explicit Query(const PConnection &connection);
-    
+
     void setQuery(const std::string &query);
     auto getConnection() -> PConnection;
 };
-}
+} // namespace Database
 
 #endif

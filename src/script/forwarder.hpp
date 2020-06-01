@@ -23,28 +23,33 @@
 
 #include "Character.hpp"
 #include "Container.hpp"
+
 #include <cstdint>
 #include <luabind/object.hpp>
 #include <string>
 
 namespace map {
-    class Field;
+class Field;
 }
 
 auto getPlayerLanguageLua(const Character * /*character*/) -> uint32_t;
 
 void inform_lua2(const Character *character, const std::string &message, Character::informType type);
 void inform_lua4(const Character *character, const std::string &message);
-void inform_lua1(const Character *character, const std::string &german, const std::string &english, Character::informType type);
+void inform_lua1(const Character *character, const std::string &german, const std::string &english,
+                 Character::informType type);
 void inform_lua3(const Character *character, const std::string &german, const std::string &english);
 
 auto count_item_at1(const Character * /*character*/, const std::string &where, TYPE_OF_ITEM_ID id) -> int;
-auto count_item_at2(const Character * /*character*/, const std::string &where, TYPE_OF_ITEM_ID id, const luabind::object & /*data*/) -> int;
+auto count_item_at2(const Character * /*character*/, const std::string &where, TYPE_OF_ITEM_ID id,
+                    const luabind::object & /*data*/) -> int;
 
 auto erase_item1(Character * /*character*/, TYPE_OF_ITEM_ID /*id*/, int /*count*/) -> int;
-auto erase_item2(Character * /*character*/, TYPE_OF_ITEM_ID /*id*/, int /*count*/, const luabind::object & /*data*/) -> int;
+auto erase_item2(Character * /*character*/, TYPE_OF_ITEM_ID /*id*/, int /*count*/, const luabind::object & /*data*/)
+        -> int;
 
-auto create_item(Character * /*character*/, Item::id_type id, Item::number_type number, Item::quality_type quality, const luabind::object & /*data*/) -> int;
+auto create_item(Character * /*character*/, Item::id_type id, Item::number_type number, Item::quality_type quality,
+                 const luabind::object & /*data*/) -> int;
 
 auto getLoot(const Character *character) -> luabind::object;
 
@@ -52,10 +57,12 @@ auto container_count_item1(Container * /*container*/, Item::id_type /*id*/) -> i
 auto container_count_item2(Container * /*container*/, Item::id_type /*id*/, const luabind::object &data) -> int;
 
 auto container_erase_item1(Container * /*container*/, Item::id_type /*id*/, Item::number_type /*number*/) -> int;
-auto container_erase_item2(Container * /*container*/, Item::id_type /*id*/, Item::number_type /*number*/, const luabind::object &data) -> int;
+auto container_erase_item2(Container * /*container*/, Item::id_type /*id*/, Item::number_type /*number*/,
+                           const luabind::object &data) -> int;
 
 auto world_fieldAt(World *world, const position &pos) -> map::Field *;
-auto world_createFromId(World *world, TYPE_OF_ITEM_ID id, unsigned short int count, position pos, bool always, int quali, const luabind::object &data) -> ScriptItem;
+auto world_createFromId(World *world, TYPE_OF_ITEM_ID id, unsigned short int count, position pos, bool always,
+                        int quali, const luabind::object &data) -> ScriptItem;
 
 void log_lua(const std::string &message);
 

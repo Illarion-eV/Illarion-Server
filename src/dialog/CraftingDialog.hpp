@@ -23,10 +23,10 @@
 
 #include "Item.hpp"
 #include "dialog/Dialog.hpp"
-#include <utility>
 
-#include <vector>
 #include <unordered_map>
+#include <utility>
+#include <vector>
 
 using std::vector;
 
@@ -36,8 +36,8 @@ private:
     uint8_t number;
 
 public:
-    explicit Ingredient(TYPE_OF_ITEM_ID item): item(item), number(1) {};
-    Ingredient(TYPE_OF_ITEM_ID item, uint8_t number): item(item), number(number) {};
+    explicit Ingredient(TYPE_OF_ITEM_ID item) : item(item), number(1){};
+    Ingredient(TYPE_OF_ITEM_ID item, uint8_t number) : item(item), number(number){};
     [[nodiscard]] auto getItem() const -> TYPE_OF_ITEM_ID {
         return item;
     };
@@ -45,7 +45,6 @@ public:
         return number;
     };
 };
-
 
 class Craftable {
 public:
@@ -63,13 +62,15 @@ private:
     uint8_t craftedStackSize;
 
 public:
-    Craftable(uint8_t group, TYPE_OF_ITEM_ID item, string name, uint16_t decisecondsToCraft):
-        group(group), item(item), name(std::move(name)), decisecondsToCraft(decisecondsToCraft), craftedStackSize(1) {};
-    Craftable(uint8_t group, TYPE_OF_ITEM_ID item, string name, uint16_t decisecondsToCraft, uint8_t craftedStackSize):
-        group(group), item(item), name(std::move(name)), decisecondsToCraft(decisecondsToCraft), craftedStackSize(craftedStackSize) {};
-    Craftable(const Craftable &craftable): group(craftable.group), item(craftable.item), name(craftable.name),
-        decisecondsToCraft(craftable.decisecondsToCraft), craftedStackSize(craftable.craftedStackSize)
-    {
+    Craftable(uint8_t group, TYPE_OF_ITEM_ID item, string name, uint16_t decisecondsToCraft)
+            : group(group), item(item), name(std::move(name)), decisecondsToCraft(decisecondsToCraft),
+              craftedStackSize(1){};
+    Craftable(uint8_t group, TYPE_OF_ITEM_ID item, string name, uint16_t decisecondsToCraft, uint8_t craftedStackSize)
+            : group(group), item(item), name(std::move(name)), decisecondsToCraft(decisecondsToCraft),
+              craftedStackSize(craftedStackSize){};
+    Craftable(const Craftable &craftable)
+            : group(craftable.group), item(craftable.item), name(craftable.name),
+              decisecondsToCraft(craftable.decisecondsToCraft), craftedStackSize(craftable.craftedStackSize) {
         for (const auto &ingredient : craftable.ingredients) {
             addIngredient(ingredient.getItem(), ingredient.getNumber());
         }
@@ -110,8 +111,7 @@ public:
     };
 };
 
-
-class CraftingDialog: public Dialog {
+class CraftingDialog : public Dialog {
 public:
     using index_t = uint8_t;
     using groups_t = vector<string>;
@@ -119,7 +119,8 @@ public:
     using craftables_t = std::unordered_map<uint8_t, Craftable>;
     using craftable_iterator = craftables_t::const_iterator;
 
-    enum Result {
+    enum Result
+    {
         playerAborts = 0,
         playerCrafts = 1,
         playerLooksAtCraftable = 2,
@@ -161,7 +162,8 @@ public:
     auto getCraftablesBegin() const -> craftable_iterator;
     auto getCraftablesEnd() const -> craftable_iterator;
     void addCraftable(uint8_t id, uint8_t group, TYPE_OF_ITEM_ID item, const string &name, uint16_t decisecondsToCraft);
-    void addCraftable(uint8_t id, uint8_t group, TYPE_OF_ITEM_ID item, const string &name, uint16_t decisecondsToCraft, uint8_t craftedStackSize);
+    void addCraftable(uint8_t id, uint8_t group, TYPE_OF_ITEM_ID item, const string &name, uint16_t decisecondsToCraft,
+                      uint8_t craftedStackSize);
     void addCraftableIngredient(TYPE_OF_ITEM_ID item);
     void addCraftableIngredient(TYPE_OF_ITEM_ID item, uint8_t number);
 
@@ -183,4 +185,3 @@ private:
 };
 
 #endif
-

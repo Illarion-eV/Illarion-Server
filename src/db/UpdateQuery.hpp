@@ -21,16 +21,15 @@
 #ifndef UPDATE_QUERY_HPP
 #define UPDATE_QUERY_HPP
 
-#include <string>
-
-#include <boost/cstdint.hpp>
-
 #include "db/Connection.hpp"
-#include "db/Result.hpp"
 #include "db/Query.hpp"
 #include "db/QueryAssign.hpp"
 #include "db/QueryTables.hpp"
 #include "db/QueryWhere.hpp"
+#include "db/Result.hpp"
+
+#include <boost/cstdint.hpp>
+#include <string>
 
 namespace Database {
 class UpdateQuery : Query, public QueryAssign, public QueryTables, public QueryWhere {
@@ -42,6 +41,6 @@ public:
 
     auto execute() -> Result override;
 };
-}
+} // namespace Database
 
 #endif

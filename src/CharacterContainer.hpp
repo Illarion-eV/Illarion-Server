@@ -16,35 +16,34 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef CHARACTERCONTAINER_HPP
 #define CHARACTERCONTAINER_HPP
 
-#include <string>
-#include <vector>
-#include <unordered_map>
-#include <functional>
-#include <boost/lexical_cast.hpp>
+#include "constants.hpp"
 #include "globals.hpp"
 #include "utility.hpp"
-#include "constants.hpp"
 
+#include <boost/lexical_cast.hpp>
+#include <functional>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
-template <class T>
-class CharacterContainer {
+template <class T> class CharacterContainer {
 public:
     using pointer = T *;
 
 private:
-    using for_each_type = std::function<void (pointer)>;
+    using for_each_type = std::function<void(pointer)>;
     using for_each_member_type = void (T::*)();
     using container_type = std::unordered_map<TYPE_OF_CHARACTER_ID, pointer>;
-    using position_to_id_type = std::multimap<position, TYPE_OF_CHARACTER_ID,PositionComparison>;
+    using position_to_id_type = std::multimap<position, TYPE_OF_CHARACTER_ID, PositionComparison>;
     position_to_id_type position_to_id;
     container_type container;
 
-    auto getPosition(TYPE_OF_CHARACTER_ID id,position& pos) -> bool;
-    [[nodiscard]] auto projection_x_axis(const position& pos, int r) const -> iterator_range<position_to_id_type::const_iterator>;
+    auto getPosition(TYPE_OF_CHARACTER_ID id, position &pos) -> bool;
+    [[nodiscard]] auto projection_x_axis(const position &pos, int r) const
+            -> iterator_range<position_to_id_type::const_iterator>;
 
 public:
     [[nodiscard]] auto empty() const -> bool {
@@ -57,7 +56,7 @@ public:
 
     void insert(pointer p) {
         const auto id = p->getId();
-        
+
         if (!find(id)) {
             container.emplace(id, p);
             position_to_id.insert(std::make_pair(p->getPosition(), id));
@@ -67,7 +66,7 @@ public:
     auto find(const std::string &name) const -> pointer;
     auto find(TYPE_OF_CHARACTER_ID id) const -> pointer;
     auto find(const position &pos) const -> pointer;
-    void update(pointer p, const position& newPosition);
+    void update(pointer p, const position &newPosition);
     auto erase(TYPE_OF_CHARACTER_ID id) -> bool;
     void clear() {
         container.clear();
@@ -91,7 +90,5 @@ public:
         }
     }
 };
-
-
 
 #endif

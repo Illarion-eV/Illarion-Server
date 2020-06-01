@@ -16,16 +16,16 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef CHARACTER_HPP
 #define CHARACTER_HPP
 
-#include <array>
-#include <stdexcept>
-#include <string>
-#include <fstream>
-#include <map>
-#include <unordered_map>
+#include "Attribute.hpp"
+#include "Item.hpp"
+#include "ItemLookAt.hpp"
+#include "Language.hpp"
+#include "LongTimeCharacterEffects.hpp"
+#include "TableStructs.hpp"
+#include "WaypointList.hpp"
 #include "constants.hpp"
 #include "dialog/CraftingDialog.hpp"
 #include "dialog/InputDialog.hpp"
@@ -33,35 +33,34 @@
 #include "dialog/MessageDialog.hpp"
 #include "dialog/SelectionDialog.hpp"
 #include "tuningConstants.hpp"
-#include "LongTimeCharacterEffects.hpp"
-#include "WaypointList.hpp"
-#include "Language.hpp"
-#include "Attribute.hpp"
-#include "Item.hpp"
-#include "ItemLookAt.hpp"
-#include "TableStructs.hpp"
+
+#include <array>
+#include <fstream>
+#include <map>
+#include <stdexcept>
+#include <string>
+#include <unordered_map>
 
 class World;
 class Container;
 namespace map {
-    class Field;
+class Field;
 }
 class Player;
 
-enum magic_type {
-    MAGE=0,
-    PRIEST=1,
-    BARD=2,
-    DRUID=3
+enum magic_type
+{
+    MAGE = 0,
+    PRIEST = 1,
+    BARD = 2,
+    DRUID = 3
 };
 
-class NoLootFound: public std::exception {};
+class NoLootFound : public std::exception {};
 
 class Character {
-
 public:
     struct appearance {
-
         uint8_t hairtype = 0;
         uint8_t beardtype = 0;
         Colour hair;
@@ -76,13 +75,15 @@ public:
     Character(const Character &) = delete;
     auto operator=(const Character &) -> Character & = delete;
 
-    enum character_type {
+    enum character_type
+    {
         player = 0,
         monster = 1,
         npc = 2
     };
 
-    enum attributeIndex {
+    enum attributeIndex
+    {
         strength,
         dexterity,
         constitution,
@@ -108,18 +109,21 @@ public:
     static attribute_map_t attributeMap;
     static attribute_string_map_t attributeStringMap;
 
-    enum talk_type {
-        tt_say=0,
-        tt_whisper=1,
-        tt_yell=2
+    enum talk_type
+    {
+        tt_say = 0,
+        tt_whisper = 1,
+        tt_yell = 2
     };
 
-    enum sex_type {
+    enum sex_type
+    {
         male = 0,
         female = 1
     };
 
-    enum face_to {
+    enum face_to
+    {
         north = dir_north,
         northeast = dir_northeast,
         east = dir_east,
@@ -130,7 +134,8 @@ public:
         northwest = dir_northwest
     };
 
-    enum informType {
+    enum informType
+    {
         informServer = 0,
         informBroadcast = 1,
         informGM = 2,
@@ -146,7 +151,7 @@ public:
 
     struct s_magic {
         magic_type type;
-	std::array<unsigned long int, 4> flags;
+        std::array<unsigned long int, 4> flags;
     };
 
     virtual auto getId() const -> TYPE_OF_CHARACTER_ID;
@@ -209,7 +214,6 @@ public:
         return Language::english;
     }
 
-
     inline auto getMagicFlags(unsigned char type) const -> unsigned long int {
         if (type < 4) {
             return magic.flags[type];
@@ -253,53 +257,38 @@ public:
     }
 
     /**
-    * starts a new longtime action for this character (overloaded in Player)
-    * <b>Lua: [:startAction]</b>
-    * @param wait time to wait until the action is successfull
-    * @param ani the animation which should be shown for this action, if not set this value is 0
-    * @param redoani after how much 1/10s the animation should be shown again, if not set this value is 0 (0 never)
-    * @param sound the sound which should be played for this action, if not set this value is 0
-    * @param redosound after hoch much 1/10s the sound is played again, if not set this value is 0, 0 means never
-    */
-    inline virtual void startAction(unsigned short int wait,
-                                    unsigned short int ani = 0,
-                                    unsigned short int redoani = 0,
-                                    unsigned short int sound = 0,
-                                    unsigned short int redosound = 0) {
-    }
+     * starts a new longtime action for this character (overloaded in Player)
+     * <b>Lua: [:startAction]</b>
+     * @param wait time to wait until the action is successfull
+     * @param ani the animation which should be shown for this action, if not set this value is 0
+     * @param redoani after how much 1/10s the animation should be shown again, if not set this value is 0 (0 never)
+     * @param sound the sound which should be played for this action, if not set this value is 0
+     * @param redosound after hoch much 1/10s the sound is played again, if not set this value is 0, 0 means never
+     */
+    inline virtual void startAction(unsigned short int wait, unsigned short int ani = 0, unsigned short int redoani = 0,
+                                    unsigned short int sound = 0, unsigned short int redosound = 0) {}
 
-    inline virtual void abortAction() {
-    }
+    inline virtual void abortAction() {}
 
-    inline virtual void successAction() {
-    }
+    inline virtual void successAction() {}
 
-    inline virtual void actionDisturbed(Character *disturber) {
-    }
+    inline virtual void actionDisturbed(Character *disturber) {}
 
-    inline virtual void changeSource(Character *cc) {
-    }
+    inline virtual void changeSource(Character *cc) {}
 
-    inline virtual void changeSource(const ScriptItem &sI) {
-    }
+    inline virtual void changeSource(const ScriptItem &sI) {}
 
-    inline virtual void changeSource(const position &pos) {
-    }
+    inline virtual void changeSource(const position &pos) {}
 
-    inline virtual void changeSource() {
-    }
+    inline virtual void changeSource() {}
 
-    inline virtual void changeTarget(Character *cc) {
-    }
+    inline virtual void changeTarget(Character *cc) {}
 
-    inline virtual void changeTarget(const ScriptItem &sI) {
-    }
+    inline virtual void changeTarget(const ScriptItem &sI) {}
 
-    inline virtual void changeTarget(const position &pos) {
-    }
+    inline virtual void changeTarget(const position &pos) {}
 
-    inline virtual void changeTarget() {
-    }
+    inline virtual void changeTarget() {}
 
     virtual auto getMentalCapacity() const -> int {
         return mental_capacity;
@@ -311,11 +300,13 @@ public:
 
     virtual void increaseMentalCapacity(int value);
 
-    virtual auto countItem(TYPE_OF_ITEM_ID itemid) const -> int ;
+    virtual auto countItem(TYPE_OF_ITEM_ID itemid) const -> int;
     // where determines where the items will be counted ("all", "belt", "body", "backpack")
-    auto countItemAt(const std::string &where, TYPE_OF_ITEM_ID itemid, script_data_exchangemap const *data = nullptr) const -> int;
+    auto countItemAt(const std::string &where, TYPE_OF_ITEM_ID itemid,
+                     script_data_exchangemap const *data = nullptr) const -> int;
     virtual auto eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangemap const *data = nullptr) -> int;
-    virtual auto createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, script_data_exchangemap const *data) -> int;
+    virtual auto createItem(Item::id_type id, Item::number_type number, Item::quality_type quality,
+                            script_data_exchangemap const *data) -> int;
     virtual auto increaseAtPos(unsigned char pos, int count) -> int;
     virtual auto createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) -> int;
     virtual auto swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t newQuality = 0) -> bool;
@@ -383,7 +374,7 @@ public:
     virtual void inform(const std::string &message, informType type = informServer) const;
     virtual void inform(const std::string &german, const std::string &english, informType type = informServer) const;
 
-    virtual auto move(direction dir, bool active=true) -> bool;
+    virtual auto move(direction dir, bool active = true) -> bool;
 
     virtual auto getNextStepDir(const position &goal, direction &dir) const -> bool;
     auto getStepList(const position &goal, std::list<direction> &steps) const -> bool;
@@ -428,19 +419,19 @@ public:
     SKILLMAP skills;
 
     /**
-    * array for the items of the character
-    * 0 = backpack, 1 to MAX_BODY_ITEMS - 1: equipped items
-    * MAX_BODY_ITEMS - 1 to MAX_BODY_ITEMS + MAX_BELT_SLOTS - 1: items in the belt
-    */
+     * array for the items of the character
+     * 0 = backpack, 1 to MAX_BODY_ITEMS - 1: equipped items
+     * MAX_BODY_ITEMS - 1 to MAX_BODY_ITEMS + MAX_BELT_SLOTS - 1: items in the belt
+     */
     std::array<Item, MAX_BODY_ITEMS + MAX_BELT_SLOTS> items = {};
 
     Container *backPackContents;
 
     /**
-    * map to the different depots
-    * first param is the depot id
-    * second param is the pointer to the container which stores the items in this depot
-    */
+     * map to the different depots
+     * first param is the depot id
+     * second param is the pointer to the container which stores the items in this depot
+     */
     std::map<uint32_t, Container *> depotContents;
 
     virtual void ageInventory();
@@ -461,7 +452,8 @@ public:
     auto LoadWeight() const -> int;
     auto relativeLoad() const -> float;
 
-    enum class LoadLevel {
+    enum class LoadLevel
+    {
         unburdened,
         burdened,
         overtaxed
@@ -470,21 +462,21 @@ public:
     auto loadFactor() const -> LoadLevel;
 
     /**
-    * returns the weight of a container
-    * @param id of the container from which we want to get the weight
-    * @param count if the weight should be positive or negative
-    * @param tcont the container from which we want to get the weight
-    * @return the +/- weight of the container
-    */
+     * returns the weight of a container
+     * @param id of the container from which we want to get the weight
+     * @param count if the weight should be positive or negative
+     * @param tcont the container from which we want to get the weight
+     * @return the +/- weight of the container
+     */
     auto weightContainer(unsigned short int id, int count, Container *tcont) const -> int;
 
     /**
-    * checks if in tcont is enough place for count items with id
-    * @param id the item which should be placed in the container
-    * @param count how much items should be added to the container
-    * @param tcont pointer to the container (items inside the container)
-    * @return true if count items of id can be added otherwise false
-    */
+     * checks if in tcont is enough place for count items with id
+     * @param id the item which should be placed in the container
+     * @param count how much items should be added to the container
+     * @param tcont pointer to the container (items inside the container)
+     * @return true if count items of id can be added otherwise false
+     */
     auto weightOK(TYPE_OF_ITEM_ID id, int count, Container *tcont) const -> bool;
 
     virtual void turn(direction dir);
@@ -549,9 +541,10 @@ protected:
     World *_world;
 
     virtual auto moveToPossible(const map::Field &field) const -> bool;
-    
+
     // returns time of a move in ms
-    virtual auto getMoveTime(const map::Field &targetField, bool diagonalMove, bool running) const -> TYPE_OF_WALKINGCOST;
+    virtual auto getMoveTime(const map::Field &targetField, bool diagonalMove, bool running) const
+            -> TYPE_OF_WALKINGCOST;
 
     appearance _appearance;
 
@@ -569,7 +562,7 @@ private:
     std::string lastSpokenText = {};
     bool isinvisible = false;
     TYPE_OF_RACE_ID race = 0;
-    face_to faceto = north;    
+    face_to faceto = north;
     s_magic magic;
 };
 

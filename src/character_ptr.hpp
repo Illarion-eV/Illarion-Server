@@ -32,7 +32,7 @@ public:
     character_ptr();
     explicit character_ptr(Character *p);
     character_ptr(character_ptr const &p);
-    auto operator=(character_ptr const &p) -> character_ptr&;
+    auto operator=(character_ptr const &p) -> character_ptr &;
 
     [[nodiscard]] auto get() const -> Character *;
     operator Character *() const;
@@ -48,4 +48,3 @@ auto get_pointer(character_ptr const &p) -> Character *;
 auto isValid(character_ptr const &p) -> bool;
 
 #endif
-

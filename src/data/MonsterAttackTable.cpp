@@ -25,12 +25,7 @@ auto MonsterAttackTable::getTableName() -> std::string {
 }
 
 auto MonsterAttackTable::getColumnNames() -> std::vector<std::string> {
-    return {
-        "mat_race_type",
-        "mat_attack_type",
-        "mat_attack_value",
-        "mat_actionpointslost"
-    };
+    return {"mat_race_type", "mat_attack_type", "mat_attack_value", "mat_actionpointslost"};
 }
 
 auto MonsterAttackTable::assignId(const Database::ResultTuple &row) -> uint16_t {
@@ -44,4 +39,3 @@ auto MonsterAttackTable::assignTable(const Database::ResultTuple &row) -> Attack
     attack.actionPointsLost = row["mat_actionpointslost"].as<int16_t>();
     return attack;
 }
-

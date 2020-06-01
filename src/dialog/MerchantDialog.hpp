@@ -23,8 +23,8 @@
 
 #include "Item.hpp"
 #include "dialog/Dialog.hpp"
-#include <utility>
 
+#include <utility>
 #include <vector>
 
 using std::vector;
@@ -36,7 +36,7 @@ private:
     TYPE_OF_WORTH price;
 
 public:
-    Product(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price): item(item), name(std::move(name)), price(price) {};
+    Product(TYPE_OF_ITEM_ID item, string name, TYPE_OF_WORTH price) : item(item), name(std::move(name)), price(price){};
     [[nodiscard]] auto getItem() const -> TYPE_OF_ITEM_ID {
         return item;
     };
@@ -48,20 +48,19 @@ public:
     };
 };
 
-
-class OfferProduct: public Product {
+class OfferProduct : public Product {
 private:
     TYPE_OF_BUY_STACK stack;
 
 public:
-    OfferProduct(TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price, TYPE_OF_BUY_STACK stack): Product(item, name, price), stack(stack) {};
+    OfferProduct(TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price, TYPE_OF_BUY_STACK stack)
+            : Product(item, name, price), stack(stack){};
     [[nodiscard]] auto getStack() const -> TYPE_OF_BUY_STACK {
         return stack;
     };
 };
 
-
-class MerchantDialog: public Dialog {
+class MerchantDialog : public Dialog {
 public:
     using index_type = uint8_t;
     using product_list = vector<Product>;
@@ -69,14 +68,16 @@ public:
     using offer_list = vector<OfferProduct>;
     using offer_iterator = offer_list::const_iterator;
 
-    enum Result {
+    enum Result
+    {
         playerAborts = 0,
         playerSells = 1,
         playerBuys = 2,
         playerLooksAt = 3
     };
 
-    enum ListType {
+    enum ListType
+    {
         listSell = 0,
         listBuyPrimary = 1,
         listBuySecondary = 2
@@ -132,15 +133,16 @@ public:
     void setLookAtList(ListType list);
 
     auto closeOnMove() const -> bool override;
+
 private:
     auto getProductsSize(const product_list &products) const -> index_type;
     auto getProductsBegin(const product_list &products) const -> product_iterator;
     auto getProductsEnd(const product_list &products) const -> product_iterator;
     void addProduct(product_list &products, TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price);
-    void addProduct(product_list &products, TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price, TYPE_OF_BUY_STACK stack);
+    void addProduct(product_list &products, TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price,
+                    TYPE_OF_BUY_STACK stack);
     auto canAddOffer() const -> bool;
     auto canAddProduct(const product_list &products) const -> bool;
 };
 
 #endif
-

@@ -16,14 +16,12 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "WaypointList.hpp"
-#include "World.hpp"
+
 #include "Logger.hpp"
+#include "World.hpp"
 
-WaypointList::WaypointList(Character *movechar) : _movechar(movechar) {
-
-}
+WaypointList::WaypointList(Character *movechar) : _movechar(movechar) {}
 
 auto WaypointList::getWaypoints() const -> const std::list<position> & {
     return positions;

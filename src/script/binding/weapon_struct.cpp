@@ -18,38 +18,29 @@
  *  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <TableStructs.hpp>
 #include "script/binding/binding.hpp"
+
+#include <TableStructs.hpp>
 
 namespace binding {
 
-    auto weapon_struct() -> luabind::scope {
-        return luabind::class_<WeaponStruct>("WeaponStruct")
-        .def(luabind::constructor<>())
-        .enum_("type")
-        [
-            luabind::value("slashing", 1),
-            luabind::value("concussion", 2),
-            luabind::value("puncture", 3),
-            luabind::value("slashingTwoHand", 4),
-            luabind::value("concussionTwoHand", 5),
-            luabind::value("punctureTwoHand", 6),
-            luabind::value("firearm", 7),
-            luabind::value("arrow", 10),
-            luabind::value("bolt", 11),
-            luabind::value("stone", 12),
-            luabind::value("stave", 13),
-            luabind::value("shield", 14)
-        ]
-        .def_readonly("Attack", &WeaponStruct::Attack)
-        .def_readonly("Defence", &WeaponStruct::Defence)
-        .def_readonly("Accuracy", &WeaponStruct::Accuracy)
-        .def_readonly("Range", &WeaponStruct::Range)
-        .def_readonly("WeaponType", &WeaponStruct::Type)
-        .def_readonly("AmmunitionType", &WeaponStruct::AmmunitionType)
-        .def_readonly("ActionPoints", &WeaponStruct::ActionPoints)
-        .def_readonly("MagicDisturbance", &WeaponStruct::MagicDisturbance)
-        .def_readonly("PoisonStrength", &WeaponStruct::PoisonStrength);
-    }
-
+auto weapon_struct() -> luabind::scope {
+    return luabind::class_<WeaponStruct>("WeaponStruct")
+            .def(luabind::constructor<>())
+            .enum_("type")[luabind::value("slashing", 1), luabind::value("concussion", 2),
+                           luabind::value("puncture", 3), luabind::value("slashingTwoHand", 4),
+                           luabind::value("concussionTwoHand", 5), luabind::value("punctureTwoHand", 6),
+                           luabind::value("firearm", 7), luabind::value("arrow", 10), luabind::value("bolt", 11),
+                           luabind::value("stone", 12), luabind::value("stave", 13), luabind::value("shield", 14)]
+            .def_readonly("Attack", &WeaponStruct::Attack)
+            .def_readonly("Defence", &WeaponStruct::Defence)
+            .def_readonly("Accuracy", &WeaponStruct::Accuracy)
+            .def_readonly("Range", &WeaponStruct::Range)
+            .def_readonly("WeaponType", &WeaponStruct::Type)
+            .def_readonly("AmmunitionType", &WeaponStruct::AmmunitionType)
+            .def_readonly("ActionPoints", &WeaponStruct::ActionPoints)
+            .def_readonly("MagicDisturbance", &WeaponStruct::MagicDisturbance)
+            .def_readonly("PoisonStrength", &WeaponStruct::PoisonStrength);
 }
+
+} // namespace binding

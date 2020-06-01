@@ -19,13 +19,12 @@
  */
 
 #include "LuaDepotScript.hpp"
+
 #include "Character.hpp"
 #include "Item.hpp"
 #include "character_ptr.hpp"
 
-LuaDepotScript::LuaDepotScript(const std::string &filename)
-    : LuaScript(filename) {
-}
+LuaDepotScript::LuaDepotScript(const std::string &filename) : LuaScript(filename) {}
 
 LuaDepotScript::~LuaDepotScript() = default;
 
@@ -33,4 +32,3 @@ auto LuaDepotScript::onOpenDepot(Character *cc, const ScriptItem &itm) -> bool {
     character_ptr fuse_cc(cc);
     return callEntrypoint<bool>("onOpenDepot", fuse_cc, itm);
 }
-

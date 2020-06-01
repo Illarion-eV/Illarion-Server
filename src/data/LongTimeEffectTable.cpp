@@ -25,11 +25,7 @@ auto LongTimeEffectTable::getTableName() -> std::string {
 }
 
 auto LongTimeEffectTable::getColumnNames() -> std::vector<std::string> {
-    return {
-        "lte_effectid",
-        "lte_effectname",
-        "lte_scriptname"
-    };
+    return {"lte_effectid", "lte_effectname", "lte_scriptname"};
 }
 
 auto LongTimeEffectTable::assignId(const Database::ResultTuple &row) -> uint16_t {
@@ -46,4 +42,3 @@ auto LongTimeEffectTable::assignTable(const Database::ResultTuple &row) -> LongT
 auto LongTimeEffectTable::assignScriptName(const Database::ResultTuple &row) -> std::string {
     return row["lte_scriptname"].as<std::string>("");
 }
-

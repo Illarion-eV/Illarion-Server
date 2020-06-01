@@ -16,60 +16,57 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
 
-#include <chrono>
-#include <memory>
-#include <string>
-#include <set>
-#include <queue>
-#include <unordered_set>
-#include <unordered_map>
-
 #include "Character.hpp"
-
-#include "Showcase.hpp"
 #include "Item.hpp"
-#include "netinterface/BasicServerCommand.hpp"
-#include "netinterface/NetInterface.hpp"
+#include "Showcase.hpp"
 #include "dialog/MerchantDialog.hpp"
 #include "dialog/SelectionDialog.hpp"
+#include "netinterface/BasicServerCommand.hpp"
+#include "netinterface/NetInterface.hpp"
 #include "script/LuaScript.hpp"
 
+#include <chrono>
+#include <memory>
+#include <queue>
+#include <set>
+#include <string>
+#include <unordered_map>
+#include <unordered_set>
 
 struct WeatherStruct;
 class Dialog;
 class Timer;
 class LongTimeAction;
 
-enum gm_rights {
-    gmr_allowlogin = 1, //GM is allowed to login if nologin is true
-    gmr_basiccommands = 2, //Basic Commands like !who !what !? !fi and !inform
-    gmr_warp = 4, //GM is allowed to Warp (includes #jump_to)
-    gmr_summon = 8, // GM is allowed to Summon
+enum gm_rights
+{
+    gmr_allowlogin = 1,    // GM is allowed to login if nologin is true
+    gmr_basiccommands = 2, // Basic Commands like !who !what !? !fi and !inform
+    gmr_warp = 4,          // GM is allowed to Warp (includes #jump_to)
+    gmr_summon = 8,        // GM is allowed to Summon
     gmr_undef = 16,
-    gmr_settiles = 32, //GM is allowed to change tiles (includes ton and toff command)
-    gmr_clipping = 64, //GM is allowed to change his clipping state (Walk trough walls)
-    gmr_warpfields = 128, //GM is allowed to manipulate Warpfields
-    gmr_import = 256, //GM is allowed to import maps and Warpfields. includes also createArea
-    gmr_visible = 512, //GM is allowed to change his visiblity state
-    gmr_reload = 1024, //GM is allowed to reload the tabels (With #r or !rd) includes the right to set the spawnstate !setspawn
-    gmr_ban = 2048, //GM is allowed to ban players.
-    gmr_loginstate = 4096, //GM is allowed to change loginstate
-    gmr_save = 8192, //GM is allowed to save players and maps (!playersave and #mapsave)
-    gmr_broadcast = 16384, //GM is allowed to broadcast messages
-    gmr_forcelogout = 32768, //GM is allowed to force a logout of players
-    gmr_getgmcalls = 65536, //Char gets GM messages
-    gmr_isnotshownasgm = 131072 //Char is not shown at gm in the list/ has no officially gm state.
+    gmr_settiles = 32,    // GM is allowed to change tiles (includes ton and toff command)
+    gmr_clipping = 64,    // GM is allowed to change his clipping state (Walk trough walls)
+    gmr_warpfields = 128, // GM is allowed to manipulate Warpfields
+    gmr_import = 256,     // GM is allowed to import maps and Warpfields. includes also createArea
+    gmr_visible = 512,    // GM is allowed to change his visiblity state
+    gmr_reload = 1024, // GM is allowed to reload the tabels (With #r or !rd) includes the right to set the spawnstate
+                       // !setspawn
+    gmr_ban = 2048,             // GM is allowed to ban players.
+    gmr_loginstate = 4096,      // GM is allowed to change loginstate
+    gmr_save = 8192,            // GM is allowed to save players and maps (!playersave and #mapsave)
+    gmr_broadcast = 16384,      // GM is allowed to broadcast messages
+    gmr_forcelogout = 32768,    // GM is allowed to force a logout of players
+    gmr_getgmcalls = 65536,     // Char gets GM messages
+    gmr_isnotshownasgm = 131072 // Char is not shown at gm in the list/ has no officially gm state.
 };
 
 //! ein Spieler in newmud
 class Player : public Character {
-
 public:
-
     ////////////////////////////////////////
     // possible Exceptions thrown by Player
     ////////////////////////////////////////
@@ -80,11 +77,13 @@ public:
         [[nodiscard]] inline auto getReason() const -> const char & {
             return m_reason;
         }
+
     private:
         char m_reason;
     };
 
-    enum viewdir {
+    enum viewdir
+    {
         upper = 0,
         right = 1,
         lower = 2,
@@ -103,7 +102,7 @@ public:
     //! die letzte IP des Spielers als std::string
     std::string last_ip;
 
-    //BYTEDEQUE//
+    // BYTEDEQUE//
     //! alle Langzeiteffekte die auf den Spieler einwirken
     int longTimeEffects;
 
@@ -164,7 +163,7 @@ public:
     void stopAttack() override;
 
     auto isNewPlayer() const -> bool override;
-    
+
     auto nls(const std::string &german, const std::string &english) const -> const std::string &;
 
     void setAlive(bool alive) override;
@@ -179,92 +178,92 @@ public:
     // removes a Char from sight
     void sendCharRemove(TYPE_OF_CHARACTER_ID id, const ServerCommandPointer &removechar);
 
-
     /**
-    *a long time needed action for the player
-    */
+     *a long time needed action for the player
+     */
     std::unique_ptr<LongTimeAction> ltAction;
 
-    void startAction(unsigned short int wait, unsigned short int ani=0, unsigned short int redoani=0, unsigned short int sound=0, unsigned short int redosound=0) override;
+    void startAction(unsigned short int wait, unsigned short int ani = 0, unsigned short int redoani = 0,
+                     unsigned short int sound = 0, unsigned short int redosound = 0) override;
     void abortAction() override;
     void successAction() override;
     void actionDisturbed(Character *disturber) override;
 
     /**
-    *changes the source of the last action of this Player
-    *<b>Lua: [:changeSource]</b>
-    *@param cc source is a character the pointer to this character
-    */
+     *changes the source of the last action of this Player
+     *<b>Lua: [:changeSource]</b>
+     *@param cc source is a character the pointer to this character
+     */
     void changeSource(Character *cc) override;
 
     /**
-    *changes the source of the last action for this player
-    *<b>Lua: [:changeSource]</b>
-    *@param sI source is a item the new item
-    */
+     *changes the source of the last action for this player
+     *<b>Lua: [:changeSource]</b>
+     *@param sI source is a item the new item
+     */
     inline void changeSource(const ScriptItem &sI) override;
 
     /**
-    *changes the Source of the last action for this player.
-    *<b>Lua: [:changeSource]</b>
-    *@param pos source is a position the new position
-    */
+     *changes the Source of the last action for this player.
+     *<b>Lua: [:changeSource]</b>
+     *@param pos source is a position the new position
+     */
     inline void changeSource(const position &pos) override;
 
     /**
-    *changes the Source of the last action to nothing for this player
-    *<b>Lua: [:changeSource]</b>
-    */
+     *changes the Source of the last action to nothing for this player
+     *<b>Lua: [:changeSource]</b>
+     */
     inline void changeSource() override;
 
     /**
-    *changes the Target of the last action for this player.
-    *<b>Lua: [:changeTarget]</b>
-    *@param cc target is a character the pointer to this character
-    */
+     *changes the Target of the last action for this player.
+     *<b>Lua: [:changeTarget]</b>
+     *@param cc target is a character the pointer to this character
+     */
     inline void changeTarget(Character *cc) override;
 
     /**
-    *changes the Target of the last action for this player.
-    *<b>Lua: [:changeTarget]</b>
-    *@param sI target is a item the new item
-    */
+     *changes the Target of the last action for this player.
+     *<b>Lua: [:changeTarget]</b>
+     *@param sI target is a item the new item
+     */
     inline void changeTarget(const ScriptItem &sI) override;
 
     /**
-    *changes the target of the last action for this player.
-    *<b>Lua: [:changeTarget]</b>
-    *@param pos Target is a position the new position
-    */
+     *changes the target of the last action for this player.
+     *<b>Lua: [:changeTarget]</b>
+     *@param pos Target is a position the new position
+     */
     inline void changeTarget(const position &pos) override;
 
     /**
-    *changes the Target of the last action to nothing for this player
-    *<b>Lua: [:changeTarget]</b>
-    */
+     *changes the Target of the last action to nothing for this player
+     *<b>Lua: [:changeTarget]</b>
+     */
     inline void changeTarget() override;
 
     /**
-    * returns the number of seconds the player has been idle, not actively issuing commands
-    * <b>Lua: [:idleTime]</b>
-    * @return number of seconds the player has been idle
-    */
+     * returns the number of seconds the player has been idle, not actively issuing commands
+     * <b>Lua: [:idleTime]</b>
+     * @return number of seconds the player has been idle
+     */
     auto idleTime() const -> uint32_t override;
 
     /**
-    * send a book ID to the client
-    * <b>Lua: [:sendBook]</b>
-    * @param bookID id of the book
-    */
+     * send a book ID to the client
+     * <b>Lua: [:sendBook]</b>
+     * @param bookID id of the book
+     */
     void sendBook(uint16_t bookID) override;
 
     /**
-    * send a character description to the player if the  char is a player
-    * <b>Lua: [:sendCharDescription]</b>
-    * @param id of the character from which the description is sended
-    * @param desc the current descpription
-    */
-    void sendCharDescription(TYPE_OF_CHARACTER_ID id,const std::string &desc) override;
+     * send a character description to the player if the  char is a player
+     * <b>Lua: [:sendCharDescription]</b>
+     * @param id of the character from which the description is sended
+     * @param desc the current descpription
+     */
+    void sendCharDescription(TYPE_OF_CHARACTER_ID id, const std::string &desc) override;
 
     //! normal constructor
     explicit Player(std::shared_ptr<NetInterface> newConnection);
@@ -272,7 +271,7 @@ public:
     //! check if username/password is ok
     void check_logindata();
 
-    //Checks if a Player has a special GM right
+    // Checks if a Player has a special GM right
     auto hasGMRight(gm_rights right) const -> bool;
 
     //! save char to db
@@ -284,25 +283,25 @@ public:
 
     void login();
 
-    //Loads the GM Flag of the character
+    // Loads the GM Flag of the character
     auto loadGMFlags() noexcept -> bool;
 
     /**
-    * sends one area relative to the current z coordinate to the player
-    * @param zoffs the offset of the z param of the area which should be sended
-    */
+     * sends one area relative to the current z coordinate to the player
+     * @param zoffs the offset of the z param of the area which should be sended
+     */
     void sendRelativeArea(int8_t zoffs);
 
     /**
-         * sends all areas
-         */
+     * sends all areas
+     */
     void sendFullMap();
 
     /**
-    * sends one complete mapstripe ( z-2, z-1, z, z+1, z+2) to the client
-    * @param direction the direction from which the whole stripe has to be sent
-    * @param extraStripeForDiagonalMove send an additional stripe for diagonal moves
-    */
+     * sends one complete mapstripe ( z-2, z-1, z, z+1, z+2) to the client
+     * @param direction the direction from which the whole stripe has to be sent
+     * @param extraStripeForDiagonalMove send an additional stripe for diagonal moves
+     */
     void sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove);
 
     void sendStepStripes(direction dir);
@@ -365,15 +364,16 @@ public:
     void sendCharacterItemAtPos(unsigned char cpos);
 
     /**
-    *Sends the weather to the client
-    *@weather the weather struct of the weather which is sended
-    *@interior ist the player inside outside?
-    */
+     *Sends the weather to the client
+     *@weather the weather struct of the weather which is sended
+     *@interior ist the player inside outside?
+     */
     void sendWeather(WeatherStruct weather);
 
     void ageInventory() override;
 
-    auto createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, script_data_exchangemap const *data) -> int override;
+    auto createItem(Item::id_type id, Item::number_type number, Item::quality_type quality,
+                    script_data_exchangemap const *data) -> int override;
 
     void learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opponent) override;
 
@@ -428,7 +428,6 @@ public:
 
     void handleAttributeChange(Character::attributeIndex attribute) override;
 
-
     void startMusic(short int title) override;
     void defaultMusic() override;
 
@@ -460,7 +459,7 @@ public:
     void setClippingActive(bool tclippingActive) override;
     auto getClippingActive() const -> bool override;
 
-    //Set for Admin state, uin32_t bit flag
+    // Set for Admin state, uin32_t bit flag
     void setAdmin(uint32_t tAdmin);
     auto isAdmin() const -> bool override;
 
@@ -501,8 +500,7 @@ public:
 private:
     void handleWarp();
 
-    template<class DialogType, class DialogCommandType>
-    void requestDialog(DialogType *dialog) {
+    template <class DialogType, class DialogCommandType> void requestDialog(DialogType *dialog) {
         if (dialog == nullptr) {
             LuaScript::triggerScriptError("Dialog must not be nil!");
         }
@@ -522,8 +520,7 @@ private:
         }
     }
 
-    template<class DialogType>
-    auto getDialog(unsigned int dialogId) const -> std::shared_ptr<DialogType> {
+    template <class DialogType> auto getDialog(unsigned int dialogId) const -> std::shared_ptr<DialogType> {
         try {
             return std::dynamic_pointer_cast<DialogType>(dialogs.at(dialogId));
         } catch (std::out_of_range &e) {
@@ -540,8 +537,10 @@ public:
 
     void requestMerchantDialog(MerchantDialog *merchantDialog) override;
     void executeMerchantDialogAbort(unsigned int dialogId);
-    void executeMerchantDialogBuy(unsigned int dialogId, MerchantDialog::index_type index, Item::number_type amount) const;
-    void executeMerchantDialogSell(unsigned int dialogId, uint8_t location, TYPE_OF_CONTAINERSLOTS slot, Item::number_type amount);
+    void executeMerchantDialogBuy(unsigned int dialogId, MerchantDialog::index_type index,
+                                  Item::number_type amount) const;
+    void executeMerchantDialogSell(unsigned int dialogId, uint8_t location, TYPE_OF_CONTAINERSLOTS slot,
+                                   Item::number_type amount);
     void executeMerchantDialogLookAt(unsigned int dialogId, uint8_t list, uint8_t slot);
 
     void requestSelectionDialog(SelectionDialog *selectionDialog) override;
@@ -561,11 +560,12 @@ public:
     void closeDialogsOnMove();
 
     void logAdmin(const std::string &message) override;
-private:
-    void startCrafting(uint8_t stillToCraft, uint16_t craftingTime, uint16_t sfx, uint16_t sfxDuration, uint32_t dialogId);
 
 private:
+    void startCrafting(uint8_t stillToCraft, uint16_t craftingTime, uint16_t sfx, uint16_t sfxDuration,
+                       uint32_t dialogId);
 
+private:
     Language _player_language;
 
     // Status of the player, Okay, waiting authroization, jailed, banned, etc..
@@ -611,4 +611,3 @@ private:
 };
 
 #endif
-

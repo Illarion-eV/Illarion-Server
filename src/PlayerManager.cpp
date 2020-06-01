@@ -16,24 +16,22 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <memory>
-#include <range/v3/all.hpp>
-
 #include "PlayerManager.hpp"
 
-#include "World.hpp"
-#include "Player.hpp"
-#include "Logger.hpp"
-#include "main_help.hpp"
-#include "MonitoringClients.hpp"
-#include "LongTimeAction.hpp"
 #include "Config.hpp"
-
-#include "script/LuaLogoutScript.hpp"
-
+#include "Logger.hpp"
+#include "LongTimeAction.hpp"
+#include "MonitoringClients.hpp"
+#include "Player.hpp"
+#include "World.hpp"
+#include "main_help.hpp"
+#include "netinterface/protocol/BBIWIServerCommands.hpp"
 #include "netinterface/protocol/ClientCommands.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
-#include "netinterface/protocol/BBIWIServerCommands.hpp"
+#include "script/LuaLogoutScript.hpp"
+
+#include <memory>
+#include <range/v3/all.hpp>
 
 std::unique_ptr<PlayerManager> PlayerManager::instance = nullptr;
 std::mutex PlayerManager::mut;
@@ -56,7 +54,7 @@ void PlayerManager::activate() {
 
 void PlayerManager::stop() {
     running = false;
-    
+
     Logger::info(LogFacility::Other) << "Waiting for login thread to terminate ..." << Log::end;
     login_thread->join();
 
@@ -68,9 +66,11 @@ void PlayerManager::stop() {
 
 auto PlayerManager::findPlayer(const std::string &name) const -> bool {
     std::lock_guard<std::mutex> lock(mut);
-    
+
     using namespace ranges;
-    auto hasThisName = [&name](const auto &player) {return player->getName() == name;};
+    auto hasThisName = [&name](const auto &player) {
+        return player->getName() == name;
+    };
     return any_of(loggedOutPlayers, hasThisName);
 }
 
@@ -91,9 +91,10 @@ void PlayerManager::loginLoop(PlayerManager *pmanager) {
         pmanager->threadOk = true;
 
         while (pmanager->running) {
-            //loop must be steered by counter so we parse every connection only one time bevor we getting to the other loop
+            // loop must be steered by counter so we parse every connection only one time bevor we getting to the other
+            // loop
             int curconn = newplayers.size();
-	    unsigned short acceptVersion = Config::instance().clientversion;
+            unsigned short acceptVersion = Config::instance().clientversion;
 
             for (int i = 0; i < curconn; ++i) {
                 auto Connection = newplayers.pop_front();
@@ -104,35 +105,41 @@ void PlayerManager::loginLoop(PlayerManager *pmanager) {
                             throw Player::LogoutException(UNSTABLECONNECTION);
                         }
 
-			auto loginData = Connection->getLoginData();
-			if (loginData != nullptr) {
-			    unsigned short int clientversion = loginData->getClientVersion();
-			    if (clientversion == 200) {
-				    // TODO handle login for BBIWI Clients...
-			    } else if (clientversion != acceptVersion) {
-				    Logger::error(LogFacility::Player) << loginData->getLoginName() << " tried to login with an old client (version " << clientversion << ") but version " << acceptVersion << " is required" << Log::end;
-				    throw Player::LogoutException(OLDCLIENT);
-			    }
+                        auto loginData = Connection->getLoginData();
+                        if (loginData != nullptr) {
+                            unsigned short int clientversion = loginData->getClientVersion();
+                            if (clientversion == 200) {
+                                // TODO handle login for BBIWI Clients...
+                            } else if (clientversion != acceptVersion) {
+                                Logger::error(LogFacility::Player)
+                                        << loginData->getLoginName() << " tried to login with an old client (version "
+                                        << clientversion << ") but version " << acceptVersion << " is required"
+                                        << Log::end;
+                                throw Player::LogoutException(OLDCLIENT);
+                            }
 
-			    // TODO is this check really necessary?
-			    if (loginData->getLoginName() == "" || loginData->getPassword() == "") {
-				    throw Player::LogoutException(WRONGPWD);
-                }
+                            // TODO is this check really necessary?
+                            if (loginData->getLoginName() == "" || loginData->getPassword() == "") {
+                                throw Player::LogoutException(WRONGPWD);
+                            }
 
-			    // player already online?
-			    if ((World::get()->Players.find(loginData->getLoginName()) != nullptr) || PlayerManager::get().findPlayer(loginData->getLoginName())) {
-				    Logger::alert(LogFacility::Player) << loginData->getLoginName() << " tried to login twice from ip: " << Connection->getIPAdress() << Log::end;
-				    throw Player::LogoutException(DOUBLEPLAYER);
-			    }
+                            // player already online?
+                            if ((World::get()->Players.find(loginData->getLoginName()) != nullptr) ||
+                                PlayerManager::get().findPlayer(loginData->getLoginName())) {
+                                Logger::alert(LogFacility::Player)
+                                        << loginData->getLoginName()
+                                        << " tried to login twice from ip: " << Connection->getIPAdress() << Log::end;
+                                throw Player::LogoutException(DOUBLEPLAYER);
+                            }
 
                             Player *newPlayer = nullptr;
                             {
                                 std::lock_guard<std::mutex> lock(reloadmutex);
                                 newPlayer = new Player(Connection);
                             }
-                            
-			    pmanager->loggedInPlayers.push_back(newPlayer);
-			    World::get()->scheduler.signalNewPlayerAction();
+
+                            pmanager->loggedInPlayers.push_back(newPlayer);
+                            World::get()->scheduler.signalNewPlayerAction();
 
                             Connection.reset();
                         } else {
@@ -156,7 +163,6 @@ void PlayerManager::loginLoop(PlayerManager *pmanager) {
             nanosleep(&waittime, nullptr);
         }
     } catch (std::exception &e) {
-
     } catch (...) {
         throw;
     }
@@ -205,9 +211,7 @@ void PlayerManager::playerSaveLoop(PlayerManager *pmanager) {
         }
 
     } catch (std::exception &e) {
-
     } catch (...) {
         throw;
     }
 }
-

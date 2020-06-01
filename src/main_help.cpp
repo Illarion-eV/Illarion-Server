@@ -16,44 +16,42 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "main_help.hpp"
+
+#include "Config.hpp"
+#include "Connection.hpp"
+#include "Logger.hpp"
+#include "Player.hpp"
+#include "World.hpp"
+#include "data/MonsterTable.hpp"
+#include "data/RaceTypeTable.hpp"
+#include "data/ScheduledScriptsTable.hpp"
+#include "netinterface/NetInterface.hpp"
+#include "script/LuaDepotScript.hpp"
+#include "script/LuaLearnScript.hpp"
+#include "script/LuaLoginScript.hpp"
+#include "script/LuaLogoutScript.hpp"
+#include "script/LuaLookAtItemScript.hpp"
+#include "script/LuaLookAtPlayerScript.hpp"
+#include "script/LuaPlayerDeathScript.hpp"
+#include "script/LuaWeaponScript.hpp" //For standard fighting script.
 
 #include <ctime>
 #include <memory>
-#include <string>
 #include <sstream>
-
-#include "data/MonsterTable.hpp"
-#include "data/ScheduledScriptsTable.hpp"
-#include "data/RaceTypeTable.hpp"
-#include "script/LuaWeaponScript.hpp" //For standard fighting script.
-#include "script/LuaLookAtPlayerScript.hpp"
-#include "script/LuaLookAtItemScript.hpp"
-#include "script/LuaPlayerDeathScript.hpp"
-#include "script/LuaDepotScript.hpp"
-#include "script/LuaLoginScript.hpp"
-#include "script/LuaLogoutScript.hpp"
-#include "script/LuaLearnScript.hpp"
-#include "Connection.hpp"
-#include "netinterface/NetInterface.hpp"
-#include "Logger.hpp"
-#include "World.hpp"
-#include "Config.hpp"
-#include "Player.hpp"
-
-#include "main_help.hpp"
+#include <string>
 
 std::unique_ptr<ScheduledScriptsTable> scheduledScripts;
 std::unique_ptr<MonsterTable> monsterDescriptions;
 std::unique_ptr<RaceTypeTable> raceTypes;
 
-
-std::shared_ptr<LuaDepotScript>depotScript;
-std::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
-std::shared_ptr<LuaLookAtItemScript>lookAtItemScript;
-std::shared_ptr<LuaPlayerDeathScript>playerDeathScript;
-std::shared_ptr<LuaLoginScript>loginScript;
-std::shared_ptr<LuaLogoutScript>logoutScript;
-std::shared_ptr<LuaLearnScript>learnScript;
+std::shared_ptr<LuaDepotScript> depotScript;
+std::shared_ptr<LuaLookAtPlayerScript> lookAtPlayerScript;
+std::shared_ptr<LuaLookAtItemScript> lookAtItemScript;
+std::shared_ptr<LuaPlayerDeathScript> playerDeathScript;
+std::shared_ptr<LuaLoginScript> loginScript;
+std::shared_ptr<LuaLogoutScript> logoutScript;
+std::shared_ptr<LuaLearnScript> learnScript;
 std::shared_ptr<LuaWeaponScript> standardFightingScript;
 
 // break out of the main loop if false
@@ -75,9 +73,11 @@ void logout_save(Player *who, bool forced, unsigned long int thistime) {
     unsigned int os = (who->onlinetime % 3600) % 60;
 
     std::stringstream onlinetime;
-    onlinetime << " after " << th << "h " << tm << "m " << ts << "s, onlinetime " << oh << "h " << om << "m " << os << "s";
+    onlinetime << " after " << th << "h " << tm << "m " << ts << "s, onlinetime " << oh << "h " << om << "m " << os
+               << "s";
 
-    Logger::info(LogFacility::Player) << (forced?"forced ":"") << "logout: " << who->Connection->getIPAdress() << *who << " on " << ctime(&acttime) << onlinetime.str() << Log::end;
+    Logger::info(LogFacility::Player) << (forced ? "forced " : "") << "logout: " << who->Connection->getIPAdress()
+                                      << *who << " on " << ctime(&acttime) << onlinetime.str() << Log::end;
 }
 
 void login_save(Player *who) {
@@ -91,18 +91,19 @@ void login_save(Player *who) {
     std::stringstream onlinetime;
     onlinetime << " onlinetime till now: " << oh << "h " << om << "m " << os << "s";
 
-    Logger::info(LogFacility::Player) << "login of " << *who << " from " << who->Connection->getIPAdress() << " on " << ctime(&acttime) << onlinetime.str() << Log::end;
+    Logger::info(LogFacility::Player) << "login of " << *who << " from " << who->Connection->getIPAdress() << " on "
+                                      << ctime(&acttime) << onlinetime.str() << Log::end;
 }
 
 // process commandline arguments
 auto checkArguments(int argc, char *argv[]) -> bool {
     if (argc == 2) {
         // config file specified on command line
-        if (Config::load(std::string(argv[ 1 ]))) {
-            Logger::info(LogFacility::Other) << "main: using configfile: " << argv[ 1 ] << Log::end;
+        if (Config::load(std::string(argv[1]))) {
+            Logger::info(LogFacility::Other) << "main: using configfile: " << argv[1] << Log::end;
             return true;
         } else {
-            Logger::error(LogFacility::Other) << "main: error reading configfile: " << argv[ 1 ] << Log::end;
+            Logger::error(LogFacility::Other) << "main: error reading configfile: " << argv[1] << Log::end;
             Logger::error(LogFacility::Other) << "main: USAGE: " << argv[0] << " configfile" << Log::end;
             return false;
         }
@@ -123,14 +124,16 @@ void loadData() {
         auto tmpScript = std::make_shared<LuaWeaponScript>("server.standardfighting");
         standardFightingScript = tmpScript;
     } catch (ScriptException &e) {
-        Logger::error(LogFacility::Script) << "Error while loading script: server.standardfighting: " << e.what() << Log::end;
+        Logger::error(LogFacility::Script)
+                << "Error while loading script: server.standardfighting: " << e.what() << Log::end;
     }
 
     try {
         auto tmpScript = std::make_shared<LuaLookAtPlayerScript>("server.playerlookat");
         lookAtPlayerScript = tmpScript;
     } catch (ScriptException &e) {
-        Logger::error(LogFacility::Script) << "Error while loading script: server.playerlookat: " << e.what() << Log::end;
+        Logger::error(LogFacility::Script)
+                << "Error while loading script: server.playerlookat: " << e.what() << Log::end;
     }
 
     try {
@@ -144,7 +147,8 @@ void loadData() {
         auto tmpScript = std::make_shared<LuaPlayerDeathScript>("server.playerdeath");
         playerDeathScript = tmpScript;
     } catch (ScriptException &e) {
-        Logger::error(LogFacility::Script) << "Error while loading script: server.playerdeath: " << e.what() << Log::end;
+        Logger::error(LogFacility::Script)
+                << "Error while loading script: server.playerdeath: " << e.what() << Log::end;
     }
 
     try {
@@ -176,12 +180,11 @@ void loadData() {
     }
 }
 
-
 ////////////////////////////////////////
 // signal handling functions
 ////////////////////////////////////////
 
-struct sigaction act_segv, act_segv_o , act_pipe, act_pipe_o, act_term, act_term_o, act_usr;
+struct sigaction act_segv, act_segv_o, act_pipe, act_pipe_o, act_term, act_term_o, act_usr;
 
 // signal handler for SIGTERM
 void sig_term(int /*unused*/) {
@@ -199,7 +202,8 @@ void sig_term(int /*unused*/) {
 
 // signal handler for SIGSEGV
 void sig_segv(int /*unused*/) {
-    Logger::error(LogFacility::Other) << "SIGSEGV received! Last Script: " << World::get()->currentScript->getFileName() << Log::end;
+    Logger::error(LogFacility::Other) << "SIGSEGV received! Last Script: " << World::get()->currentScript->getFileName()
+                                      << Log::end;
     // ignore signal
     act_segv.sa_handler = SIG_IGN;
 
@@ -224,11 +228,9 @@ void sig_usr(int /*unused*/) {
     if (sigaction(SIGUSR1, &act_usr, nullptr) < 0) {
         Logger::error(LogFacility::Other) << "SIGUSR1: sigaction failed" << Log::end;
     }
-
 }
 
 auto init_sighandlers() -> bool {
-
     // ignore all signals while installing signal handlers
     if (sigfillset(&act_pipe.sa_mask) < 0) {
         Logger::error(LogFacility::Other) << "main: sigfillset failed" << Log::end;

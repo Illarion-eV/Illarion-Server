@@ -19,6 +19,7 @@
  */
 
 #include "db/QueryColumns.hpp"
+
 #include "db/Query.hpp"
 
 using namespace Database;
@@ -47,7 +48,7 @@ auto QueryColumns::buildQuerySegment() -> std::string & {
 }
 
 auto QueryColumns::getColumnCount() const -> uint32_t {
-    return (uint32_t) nextColumn;
+    return (uint32_t)nextColumn;
 }
 
 void QueryColumns::setHideTable(bool hide) {

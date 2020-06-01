@@ -21,14 +21,14 @@
 #ifndef SCHEDULED_SCRIPTS_TABLE_HPP
 #define SCHEDULED_SCRIPTS_TABLE_HPP
 
+#include "script/LuaScheduledScript.hpp"
+
 #include <boost/unordered_map.hpp>
 #include <list>
 #include <map>
 #include <memory>
 #include <string>
 #include <utility>
-
-#include "script/LuaScheduledScript.hpp"
 
 class World;
 
@@ -39,7 +39,7 @@ struct ScriptData {
     uint32_t lastCycleTime;
     std::string functionName;
     std::string scriptName;
-    std::shared_ptr<LuaScheduledScript>scriptptr;
+    std::shared_ptr<LuaScheduledScript> scriptptr;
 
     ScriptData() {
         minCycleTime = 0;
@@ -47,8 +47,8 @@ struct ScriptData {
         nextCycleTime = 0;
         lastCycleTime = 0;
     }
-    ScriptData(uint32_t minCT, uint32_t maxCT, uint32_t nextCT, uint32_t lastCT,
-            std::string fname, std::string sname): functionName(std::move(fname)), scriptName(std::move(sname)) {
+    ScriptData(uint32_t minCT, uint32_t maxCT, uint32_t nextCT, uint32_t lastCT, std::string fname, std::string sname)
+            : functionName(std::move(fname)), scriptName(std::move(sname)) {
         minCycleTime = minCT;
         maxCycleTime = maxCT;
         nextCycleTime = nextCT;
@@ -79,4 +79,3 @@ private:
     void clearOldTable();
 };
 #endif
-

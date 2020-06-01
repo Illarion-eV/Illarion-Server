@@ -32,6 +32,6 @@ using Result = pqxx::result;
 using ResultTuple = pqxx::row;
 using ResultField = pqxx::field;
 using PResult = Result *;
-}
+} // namespace Database
 
 #endif

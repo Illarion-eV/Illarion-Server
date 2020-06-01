@@ -20,13 +20,11 @@
 
 #include "LuaScheduledScript.hpp"
 
-LuaScheduledScript::LuaScheduledScript(const std::string &filename)
-    : LuaScript(filename) {
-}
+LuaScheduledScript::LuaScheduledScript(const std::string &filename) : LuaScript(filename) {}
 
 LuaScheduledScript::~LuaScheduledScript() = default;
 
-void LuaScheduledScript::callFunction(const std::string &name, uint32_t currentCycle, uint32_t lastCycle, uint32_t nextCycle) {
+void LuaScheduledScript::callFunction(const std::string &name, uint32_t currentCycle, uint32_t lastCycle,
+                                      uint32_t nextCycle) {
     callEntrypoint(name, currentCycle, lastCycle, nextCycle);
 }
-

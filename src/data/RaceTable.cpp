@@ -25,29 +25,27 @@ auto RaceTable::getTableName() -> std::string {
 }
 
 auto RaceTable::getColumnNames() -> std::vector<std::string> {
-    return {
-        "race_id",
-        "race_name",
-        "race_height_min",
-        "race_height_max",
-        "race_agility_min",
-        "race_agility_max",
-        "race_constitution_min",
-        "race_constitution_max",
-        "race_dexterity_min",
-        "race_dexterity_max",
-        "race_essence_min",
-        "race_essence_max",
-        "race_intelligence_min",
-        "race_intelligence_max",
-        "race_perception_min",
-        "race_perception_max",
-        "race_strength_min",
-        "race_strength_max",
-        "race_willpower_min",
-        "race_willpower_max",
-        "race_attribute_points_max"
-    };
+    return {"race_id",
+            "race_name",
+            "race_height_min",
+            "race_height_max",
+            "race_agility_min",
+            "race_agility_max",
+            "race_constitution_min",
+            "race_constitution_max",
+            "race_dexterity_min",
+            "race_dexterity_max",
+            "race_essence_min",
+            "race_essence_max",
+            "race_intelligence_min",
+            "race_intelligence_max",
+            "race_perception_min",
+            "race_perception_max",
+            "race_strength_min",
+            "race_strength_max",
+            "race_willpower_min",
+            "race_willpower_max",
+            "race_attribute_points_max"};
 }
 
 auto RaceTable::assignId(const Database::ResultTuple &row) -> TYPE_OF_ITEM_ID {
@@ -92,13 +90,14 @@ auto RaceTable::getRelativeSize(TYPE_OF_RACE_ID race, uint16_t size) const -> ui
     const auto maxSize = sizes.maxSize;
 
     if (size >= minSize && size <= maxSize) {
-        return uint8_t((40*(size - minSize))/(maxSize - minSize) + 80);
+        return uint8_t((40 * (size - minSize)) / (maxSize - minSize) + 80);
     } else {
         return 100;
     }
 }
 
-auto RaceTable::isBaseAttributeInLimits(TYPE_OF_RACE_ID race, Character::attributeIndex attribute, Attribute::attribute_t value) const -> bool {
+auto RaceTable::isBaseAttributeInLimits(TYPE_OF_RACE_ID race, Character::attributeIndex attribute,
+                                        Attribute::attribute_t value) const -> bool {
     if (!exists(race)) {
         return false;
     }
@@ -106,31 +105,32 @@ auto RaceTable::isBaseAttributeInLimits(TYPE_OF_RACE_ID race, Character::attribu
     const auto &attributes = this->get(race);
 
     switch (attribute) {
-        case Character::agility:
-            return value >= attributes.minAgility && value <= attributes.maxAgility;
-        
-        case Character::constitution:
-            return value >= attributes.minConstitution && value <= attributes.maxConstitution;
-        
-        case Character::dexterity:
-            return value >= attributes.minDexterity && value <= attributes.maxDexterity;
-        
-        case Character::essence:
-            return value >= attributes.minEssence && value <= attributes.maxEssence;
-        
-        case Character::intelligence:
-            return value >= attributes.minIntelligence && value <= attributes.maxIntelligence;
-        
-        case Character::perception:
-            return value >= attributes.minPerception && value <= attributes.maxPerception;
-        
-        case Character::strength:
-            return value >= attributes.minStrength && value <= attributes.maxStrength;
-        
-        case Character::willpower:
-            return value >= attributes.minWillpower && value <= attributes.maxWillpower;
+    case Character::agility:
+        return value >= attributes.minAgility && value <= attributes.maxAgility;
 
-        default: return false;
+    case Character::constitution:
+        return value >= attributes.minConstitution && value <= attributes.maxConstitution;
+
+    case Character::dexterity:
+        return value >= attributes.minDexterity && value <= attributes.maxDexterity;
+
+    case Character::essence:
+        return value >= attributes.minEssence && value <= attributes.maxEssence;
+
+    case Character::intelligence:
+        return value >= attributes.minIntelligence && value <= attributes.maxIntelligence;
+
+    case Character::perception:
+        return value >= attributes.minPerception && value <= attributes.maxPerception;
+
+    case Character::strength:
+        return value >= attributes.minStrength && value <= attributes.maxStrength;
+
+    case Character::willpower:
+        return value >= attributes.minWillpower && value <= attributes.maxWillpower;
+
+    default:
+        return false;
     }
 }
 
@@ -142,4 +142,3 @@ auto RaceTable::getMaxAttributePoints(TYPE_OF_RACE_ID race) const -> uint8_t {
     const auto &attributes = this->get(race);
     return attributes.maxAttribs;
 }
-

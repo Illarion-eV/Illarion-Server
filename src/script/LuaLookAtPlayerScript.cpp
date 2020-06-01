@@ -19,12 +19,11 @@
  */
 
 #include "LuaLookAtPlayerScript.hpp"
+
 #include "Character.hpp"
 #include "character_ptr.hpp"
 
-LuaLookAtPlayerScript::LuaLookAtPlayerScript(const std::string &filename)
-    : LuaScript(filename) {
-}
+LuaLookAtPlayerScript::LuaLookAtPlayerScript(const std::string &filename) : LuaScript(filename) {}
 
 LuaLookAtPlayerScript::~LuaLookAtPlayerScript() = default;
 
@@ -33,4 +32,3 @@ void LuaLookAtPlayerScript::lookAtPlayer(Character *source, Character *target, u
     character_ptr fuse_target(target);
     callEntrypoint("lookAtPlayer", fuse_source, fuse_target, mode);
 }
-

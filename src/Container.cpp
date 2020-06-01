@@ -17,12 +17,12 @@
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Container.hpp"
+
+#include "World.hpp"
 #include "constants.hpp"
 #include "data/Data.hpp"
-#include "World.hpp"
 
-Container::Container(Item::id_type itemId): itemId(itemId) {
-}
+Container::Container(Item::id_type itemId) : itemId(itemId) {}
 
 Container::Container(const Container &source) {
     *this = source;
@@ -36,7 +36,7 @@ auto Container::operator=(const Container &source) -> Container & {
         items = source.items;
 
         if (!containers.empty()) {
-            for (auto & container : containers) {
+            for (auto &container : containers) {
                 delete container.second;
                 container.second = nullptr;
             }
@@ -45,12 +45,10 @@ auto Container::operator=(const Container &source) -> Container & {
         }
 
         if (!source.containers.empty()) {
-
             for (auto container : source.containers) {
                 containers.insert(CONTAINERMAP::value_type(container.first, new Container(*(container.second))));
             }
         }
-
     }
 
     return *this;
@@ -60,8 +58,7 @@ Container::~Container() {
     items.clear();
 
     if (!containers.empty()) {
-
-        for (auto & container : containers) {
+        for (auto &container : containers) {
             delete container.second;
             container.second = nullptr;
         }
@@ -118,7 +115,6 @@ auto Container::InsertItem(Item item, bool merge) -> bool {
     }
 
     return false;
-
 }
 
 auto Container::InsertItem(Item item, TYPE_OF_CONTAINERSLOTS pos) -> bool {
@@ -168,7 +164,6 @@ auto Container::InsertContainer(const Item &item, Container *cc) -> bool {
     }
 
     return false;
-
 }
 
 auto Container::InsertContainer(const Item &item, Container *cc, TYPE_OF_CONTAINERSLOTS pos) -> bool {
@@ -188,7 +183,6 @@ auto Container::InsertContainer(const Item &item, Container *cc, TYPE_OF_CONTAIN
     }
 
     return false;
-
 }
 
 auto Container::changeQualityAt(TYPE_OF_CONTAINERSLOTS nr, short int amount) -> bool {
@@ -196,9 +190,11 @@ auto Container::changeQualityAt(TYPE_OF_CONTAINERSLOTS nr, short int amount) -> 
 
     if (it != items.end()) {
         Item &item = it->second;
-        Item::quality_type tmpQuality = ((amount+item.getDurability())<100) ? (amount + item.getQuality()) : (item.getQuality() - item.getDurability() + 99);
+        Item::quality_type tmpQuality = ((amount + item.getDurability()) < 100)
+                                                ? (amount + item.getQuality())
+                                                : (item.getQuality() - item.getDurability() + 99);
 
-        if (tmpQuality%100 > 1) {
+        if (tmpQuality % 100 > 1) {
             item.setQuality(tmpQuality);
             return true;
         } else {
@@ -269,8 +265,7 @@ auto Container::TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &item, Container *&cc
 auto Container::getItemList() -> std::vector<ScriptItem> {
     std::vector<ScriptItem> list;
 
-    for (auto & it : items) {
-
+    for (auto &it : items) {
         ScriptItem item(it.second);
         item.type = ScriptItem::it_container;
         item.itempos = it.first;
@@ -284,7 +279,6 @@ auto Container::getItemList() -> std::vector<ScriptItem> {
                 iterat->second->addContentToList(list);
             }
         }
-
     }
 
     return list;
@@ -293,7 +287,7 @@ auto Container::getItemList() -> std::vector<ScriptItem> {
 auto Container::getItemList(Item::id_type itemid) -> std::vector<ScriptItem> {
     std::vector<ScriptItem> list;
 
-    for (auto & it : items) {
+    for (auto &it : items) {
         Item &item = it.second;
 
         if (item.getId() == itemid) {
@@ -308,17 +302,16 @@ auto Container::getItemList(Item::id_type itemid) -> std::vector<ScriptItem> {
             auto iterat = containers.find(it.first);
 
             if (iterat != containers.end()) {
-                iterat->second->addContentToList(itemid , list);
+                iterat->second->addContentToList(itemid, list);
             }
         }
-
     }
 
     return list;
 }
 
 void Container::addContentToList(Item::id_type itemid, std::vector<ScriptItem> &list) {
-    for (auto & it : items) {
+    for (auto &it : items) {
         const Item &item = it.second;
 
         if (item.getId() == itemid) {
@@ -336,13 +329,11 @@ void Container::addContentToList(Item::id_type itemid, std::vector<ScriptItem> &
                 iterat->second->addContentToList(itemid, list);
             }
         }
-
     }
 }
 
 void Container::addContentToList(std::vector<ScriptItem> &list) {
-    for (auto & it : items) {
-
+    for (auto &it : items) {
         ScriptItem item(it.second);
         item.type = ScriptItem::it_container;
         item.itempos = it.first;
@@ -356,7 +347,6 @@ void Container::addContentToList(std::vector<ScriptItem> &list) {
                 iterat->second->addContentToList(list);
             }
         }
-
     }
 }
 
@@ -454,12 +444,12 @@ auto Container::swapAtPos(unsigned char pos, Item::id_type newid, Item::quality_
 
 void Container::Save(std::ofstream &where) {
     MAXCOUNTTYPE size = items.size();
-    where.write((char *) & size, sizeof(size));
+    where.write((char *)&size, sizeof(size));
 
-    for (auto & it : items) {
+    for (auto &it : items) {
         Item &item = it.second;
-        where.write((char *) &(it.first), sizeof(TYPE_OF_CONTAINERSLOTS));
-        where.write((char *) &item, sizeof(Item));
+        where.write((char *)&(it.first), sizeof(TYPE_OF_CONTAINERSLOTS));
+        where.write((char *)&item, sizeof(Item));
 
         if (item.isContainer()) {
             auto iterat = containers.find(it.first);
@@ -468,17 +458,15 @@ void Container::Save(std::ofstream &where) {
                 (*iterat).second->Save(where);
             } else {
                 size = 0;
-                where.write((char *) & size, sizeof(size));
+                where.write((char *)&size, sizeof(size));
             }
         }
     }
 }
 
 void Container::Load(std::istream &where) {
-
     if (!containers.empty()) {
-
-        for (auto & container : containers) {
+        for (auto &container : containers) {
             delete container.second;
             container.second = nullptr;
         }
@@ -488,7 +476,7 @@ void Container::Load(std::istream &where) {
     containers.clear();
 
     MAXCOUNTTYPE size;
-    where.read((char *) & size, sizeof(size));
+    where.read((char *)&size, sizeof(size));
 
     Container *tempc;
 
@@ -496,8 +484,8 @@ void Container::Load(std::istream &where) {
     Item tempi;
 
     for (int i = 0; i < size; ++i) {
-        where.read((char *) & slot, sizeof(TYPE_OF_CONTAINERSLOTS));
-        where.read((char *) & tempi, sizeof(tempi));
+        where.read((char *)&slot, sizeof(TYPE_OF_CONTAINERSLOTS));
+        where.read((char *)&tempi, sizeof(tempi));
 
         if (tempi.isContainer()) {
             tempc = new Container(tempi.getId());
@@ -512,7 +500,7 @@ void Container::Load(std::istream &where) {
 auto Container::countItem(Item::id_type itemid, script_data_exchangemap const *data) const -> int {
     int temp = 0;
 
-    for (const auto & it : items) {
+    for (const auto &it : items) {
         const Item &item = it.second;
 
         if (item.getId() == itemid && (data == nullptr || item.hasData(*data))) {
@@ -544,7 +532,7 @@ auto Container::recursiveWeight(int rekt) -> int {
 
     uint32_t temp = 0;
 
-    for (auto & it : items) {
+    for (auto &it : items) {
         Item &item = it.second;
 
         const auto &itemStruct = Data::Items[item.getId()];
@@ -570,7 +558,6 @@ auto Container::recursiveWeight(int rekt) -> int {
 }
 
 auto Container::eraseItem(Item::id_type itemid, Item::number_type count, script_data_exchangemap const *data) -> int {
-
     int temp = count;
 
     auto it = items.begin();
@@ -587,7 +574,6 @@ auto Container::eraseItem(Item::id_type itemid, Item::number_type count, script_
 
             ++it;
         } else if ((item.getId() == itemid && (data == nullptr || item.hasData(*data))) && (temp > 0)) {
-
             if (temp >= item.getNumber()) {
                 temp = temp - item.getNumber();
                 it = items.erase(it);
@@ -627,7 +613,6 @@ void Container::doAge(bool inventory) {
 
                         ++it;
                     } else {
-
                         if (item.isContainer()) {
                             auto iterat = containers.find(it->first);
 
@@ -648,11 +633,10 @@ void Container::doAge(bool inventory) {
     }
 
     if (!containers.empty()) {
-        for (auto & container : containers) {
+        for (auto &container : containers) {
             container.second->doAge(inventory);
         }
     }
-
 }
 
 void Container::resetWear() {

@@ -20,13 +20,9 @@
 
 #include "LuaTestSupportScript.hpp"
 
-LuaTestSupportScript::LuaTestSupportScript(const std::string &code)
-    : LuaScript(code + " return {test=test}", "test") {
-}
+LuaTestSupportScript::LuaTestSupportScript(const std::string &code) : LuaScript(code + " return {test=test}", "test") {}
 
 LuaTestSupportScript::LuaTestSupportScript(const std::string &code, const std::string &scriptname)
-    : LuaScript(code + " return {test=test}", scriptname) {
-}
+        : LuaScript(code + " return {test=test}", scriptname) {}
 
 LuaTestSupportScript::~LuaTestSupportScript() noexcept = default;
-

@@ -21,34 +21,33 @@
 #ifndef A_STAR_HPP
 #define A_STAR_HPP
 
-#include <vector>
-#include <boost/assign/list_of.hpp>
-#include <boost/graph/graph_concepts.hpp>
-#include <boost/unordered_map.hpp>
-#include <boost/graph/astar_search.hpp>
-#include <boost/operators.hpp>
-#include "types.hpp"
 #include "globals.hpp"
+#include "types.hpp"
+
+#include <boost/assign/list_of.hpp>
+#include <boost/graph/astar_search.hpp>
+#include <boost/graph/graph_concepts.hpp>
+#include <boost/operators.hpp>
+#include <boost/unordered_map.hpp>
+#include <vector>
 
 namespace pathfinding {
 
 using namespace boost;
 
 using Position = std::pair<int, int>;
-static const std::vector<Position> character_moves = {Position(0, -1), Position(1, -1), Position(1, 0), Position(1, 1), Position(0, 1), Position(-1, 1), Position(-1, 0), Position(-1, -1)};
-static const unordered_map<Position, direction> character_directions = assign::map_list_of
-        (Position(0, -1), dir_north)
-        (Position(1, -1), dir_northeast)
-        (Position(1, 0), dir_east)
-        (Position(1, 1), dir_southeast)
-        (Position(0, 1), dir_south)
-        (Position(-1, 1), dir_southwest)
-        (Position(-1, 0), dir_west)
-        (Position(-1, -1), dir_northwest);
+static const std::vector<Position> character_moves = {Position(0, -1), Position(1, -1), Position(1, 0),
+                                                      Position(1, 1),  Position(0, 1),  Position(-1, 1),
+                                                      Position(-1, 0), Position(-1, -1)};
+static const unordered_map<Position, direction> character_directions =
+        assign::map_list_of(Position(0, -1), dir_north)(Position(1, -1), dir_northeast)(Position(1, 0), dir_east)(
+                Position(1, 1), dir_southeast)(Position(0, 1), dir_south)(Position(-1, 1), dir_southwest)(
+                Position(-1, 0), dir_west)(Position(-1, -1), dir_northwest);
 
 struct world_map_graph;
 
-struct character_out_edge_iterator: public boost::forward_iterator_helper<character_out_edge_iterator, Position, std::ptrdiff_t, Position *, Position> {
+struct character_out_edge_iterator : public boost::forward_iterator_helper<character_out_edge_iterator, Position,
+                                                                           std::ptrdiff_t, Position *, Position> {
     character_out_edge_iterator();
     character_out_edge_iterator(int i, Position p, const world_map_graph &g);
 
@@ -82,17 +81,15 @@ struct world_map_graph {
     int level;
 };
 
-auto
-source(const world_map_graph::edge_descriptor &e, const world_map_graph &g) -> world_map_graph::vertex_descriptor;
+auto source(const world_map_graph::edge_descriptor &e, const world_map_graph &g) -> world_map_graph::vertex_descriptor;
 
-auto
-target(const world_map_graph::edge_descriptor &e, const world_map_graph &g) -> world_map_graph::vertex_descriptor;
+auto target(const world_map_graph::edge_descriptor &e, const world_map_graph &g) -> world_map_graph::vertex_descriptor;
 
-auto
-out_edges(const world_map_graph::vertex_descriptor &v, const world_map_graph &g) -> std::pair<world_map_graph::out_edge_iterator, world_map_graph::out_edge_iterator>;
+auto out_edges(const world_map_graph::vertex_descriptor &v, const world_map_graph &g)
+        -> std::pair<world_map_graph::out_edge_iterator, world_map_graph::out_edge_iterator>;
 
-auto
-out_degree(const world_map_graph::vertex_descriptor &v, const world_map_graph &g) -> world_map_graph::degree_size_type;
+auto out_degree(const world_map_graph::vertex_descriptor &v, const world_map_graph &g)
+        -> world_map_graph::degree_size_type;
 
 auto num_vertices(const world_map_graph &g) -> int;
 
@@ -112,7 +109,7 @@ struct edge_hash : std::unary_function<std::pair<Position, Position>, std::size_
     auto operator()(std::pair<Position, Position> const &e) const -> std::size_t;
 };
 
-struct weight_calc: public boost::unordered_map<std::pair<Position, Position>, Cost, edge_hash> {
+struct weight_calc : public boost::unordered_map<std::pair<Position, Position>, Cost, edge_hash> {
     explicit weight_calc(int level);
     auto operator[](const key_type &k) -> mapped_type &;
 
@@ -127,14 +124,14 @@ struct vertex_hash : std::unary_function<Position, std::size_t> {
 struct found_goal {};
 struct not_found {};
 
-struct vertex_index_hash: public unordered_map<Position, int, vertex_hash> {
+struct vertex_index_hash : public unordered_map<Position, int, vertex_hash> {
     auto operator[](const key_type &k) -> mapped_type &;
 
 private:
     mutable int discovery_counter = 0;
 };
 
-struct astar_ex_visitor: public boost::default_astar_visitor {
+struct astar_ex_visitor : public boost::default_astar_visitor {
     explicit astar_ex_visitor(Position goal);
 
     void examine_vertex(const Position &u, const world_map_graph & /*unused*/);
@@ -145,19 +142,18 @@ private:
     int node_counter = 0;
 };
 
-class dist_map: public boost::unordered_map<Position, Cost, vertex_hash> {
+class dist_map : public boost::unordered_map<Position, Cost, vertex_hash> {
 public:
     auto operator[](key_type const &k) -> mapped_type &;
 };
 
-class pred_map: public boost::unordered_map<Position, Position, vertex_hash> {
+class pred_map : public boost::unordered_map<Position, Position, vertex_hash> {
 public:
     auto operator[](key_type const &k) -> mapped_type &;
 };
 
 auto a_star(const ::position &start_pos, const ::position &goal_pos, std::list<direction> &steps) -> bool;
 
-}
+} // namespace pathfinding
 
 #endif
-

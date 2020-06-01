@@ -21,10 +21,10 @@
 #ifndef WEAPON_OBJECT_TABLE_HPP
 #define WEAPON_OBJECT_TABLE_HPP
 
-#include "data/ScriptStructTable.hpp"
-#include "types.hpp"
 #include "TableStructs.hpp"
+#include "data/ScriptStructTable.hpp"
 #include "script/LuaWeaponScript.hpp"
+#include "types.hpp"
 
 class WeaponObjectTable : public ScriptStructTable<TYPE_OF_ITEM_ID, WeaponStruct, LuaWeaponScript> {
 public:
@@ -36,4 +36,3 @@ public:
 };
 
 #endif
-

@@ -16,35 +16,29 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
-#include "World.hpp"
 #include "Container.hpp"
-#include "Player.hpp"
 #include "Monster.hpp"
 #include "NPC.hpp"
+#include "Player.hpp"
+#include "World.hpp"
 #include "data/Data.hpp"
 #include "map/Field.hpp"
+#include "netinterface/protocol/ServerCommands.hpp"
+#include "script/LuaItemScript.hpp"
 #include "tuningConstants.hpp"
 
-#include "netinterface/protocol/ServerCommands.hpp"
-
-#include "script/LuaItemScript.hpp"
-
 // TODO find a better place for the constants
-static const std::string message_overweight_german { "Du kannst nicht so viel tragen!"
-};
-static const std::string message_overweight_english { "You can't carry that much!"
-};
+static const std::string message_overweight_german{"Du kannst nicht so viel tragen!"};
+static const std::string message_overweight_english{"You can't carry that much!"};
 
 // atomic functions //
 
 auto World::putItemOnInvPos(Character *cc, unsigned char pos) -> bool {
     if (pos == BACKPACK) {
-        if (cc->items[ BACKPACK ].getId() == 0) {
-
+        if (cc->items[BACKPACK].getId() == 0) {
             if (g_item.isContainer()) {
-                cc->items[ BACKPACK ] = g_item;
-                cc->items[ BACKPACK ].setNumber(1);
+                cc->items[BACKPACK] = g_item;
+                cc->items[BACKPACK].setNumber(1);
 
                 if (g_cont == nullptr) {
                     g_cont = new Container(g_item.getId());
@@ -66,18 +60,18 @@ auto World::putItemOnInvPos(Character *cc, unsigned char pos) -> bool {
         }
     } else if (g_cont == nullptr) {
         if (pos < MAX_BODY_ITEMS) {
-            if (cc->items[ pos ].getId() == 0 || cc->items[pos].getId() == g_item.getId()) {
+            if (cc->items[pos].getId() == 0 || cc->items[pos].getId() == g_item.getId()) {
                 if ((pos == RIGHT_TOOL) || (pos == LEFT_TOOL)) {
                     if (Data::WeaponItems.exists(g_item.getId())) {
                         const auto &weapon = Data::WeaponItems[g_item.getId()];
 
-                        if ((weapon.Type==4) || (weapon.Type==5) || (weapon.Type==6) || (weapon.Type==13)) {
-                            if ((pos == RIGHT_TOOL) && (cc->items[ LEFT_TOOL ].getId() == 0)) {
+                        if ((weapon.Type == 4) || (weapon.Type == 5) || (weapon.Type == 6) || (weapon.Type == 13)) {
+                            if ((pos == RIGHT_TOOL) && (cc->items[LEFT_TOOL].getId() == 0)) {
                                 if (cc->items[pos].getId() == 0 && g_item.getNumber() == 1) {
-                                    cc->items[ pos ] = g_item;
-                                    cc->items[ LEFT_TOOL ].setId(BLOCKEDITEM);
-                                    cc->items[ LEFT_TOOL ].makePermanent();
-                                    cc->items[ LEFT_TOOL ].setNumber(1);
+                                    cc->items[pos] = g_item;
+                                    cc->items[LEFT_TOOL].setId(BLOCKEDITEM);
+                                    cc->items[LEFT_TOOL].makePermanent();
+                                    cc->items[LEFT_TOOL].setNumber(1);
                                     g_item.reset();
                                     cc->updateAppearanceForAll(true);
                                     return true;
@@ -86,12 +80,12 @@ auto World::putItemOnInvPos(Character *cc, unsigned char pos) -> bool {
                                 else {
                                     return false;
                                 }
-                            } else if ((pos == LEFT_TOOL) && (cc->items[ RIGHT_TOOL ].getId() == 0)) {
+                            } else if ((pos == LEFT_TOOL) && (cc->items[RIGHT_TOOL].getId() == 0)) {
                                 if (cc->items[pos].getId() == 0 && g_item.getNumber() == 1) {
-                                    cc->items[ pos ] = g_item;
-                                    cc->items[ RIGHT_TOOL ].setId(BLOCKEDITEM);
-                                    cc->items[ RIGHT_TOOL ].makePermanent();
-                                    cc->items[ RIGHT_TOOL ].setNumber(1);
+                                    cc->items[pos] = g_item;
+                                    cc->items[RIGHT_TOOL].setId(BLOCKEDITEM);
+                                    cc->items[RIGHT_TOOL].makePermanent();
+                                    cc->items[RIGHT_TOOL].setNumber(1);
                                     g_item.reset();
                                     cc->updateAppearanceForAll(true);
                                     return true;
@@ -113,7 +107,7 @@ auto World::putItemOnInvPos(Character *cc, unsigned char pos) -> bool {
                             }
                         }
 
-                        cc->items[ pos ] = g_item;
+                        cc->items[pos] = g_item;
                         g_item.reset();
 
                         cc->updateAppearanceForAll(true);
@@ -144,46 +138,46 @@ auto World::putItemOnInvPos(Character *cc, unsigned char pos) -> bool {
                             unsigned char flag;
 
                             switch (pos) {
-                            case HEAD :
+                            case HEAD:
                                 flag = FLAG_HEAD;
                                 break;
 
-                            case NECK :
+                            case NECK:
                                 flag = FLAG_NECK;
                                 break;
 
-                            case BREAST :
+                            case BREAST:
                                 flag = FLAG_BREAST;
                                 break;
 
-                            case HANDS :
+                            case HANDS:
                                 flag = FLAG_HANDS;
                                 break;
 
-                            case FINGER_LEFT_HAND :
-                            case FINGER_RIGHT_HAND :
+                            case FINGER_LEFT_HAND:
+                            case FINGER_RIGHT_HAND:
                                 flag = FLAG_FINGER;
                                 break;
 
-                            case LEGS :
+                            case LEGS:
                                 flag = FLAG_LEGS;
                                 break;
 
-                            case FEET :
+                            case FEET:
                                 flag = FLAG_FEET;
                                 break;
 
-                            case COAT :
+                            case COAT:
                                 flag = FLAG_COAT;
                                 break;
 
-                            default :
+                            default:
                                 flag = 0xFF;
                                 break;
                             }
 
                             if ((armor.BodyParts & flag) != 0) {
-                                cc->items[ pos ] = g_item;
+                                cc->items[pos] = g_item;
                                 g_item.reset();
                                 cc->updateAppearanceForAll(true);
                                 return true;
@@ -193,20 +187,18 @@ auto World::putItemOnInvPos(Character *cc, unsigned char pos) -> bool {
                 }
             }
         } else if (pos < MAX_BODY_ITEMS + MAX_BELT_SLOTS) {
-            if (cc->items[ pos ].getId() == 0) {
-
+            if (cc->items[pos].getId() == 0) {
                 if (!g_item.isStackable() && !g_item.isContainer()) {
                     if (g_item.getNumber() > 1) {
                         return false;
                     }
                 }
 
-                cc->items[ pos ] = g_item;
+                cc->items[pos] = g_item;
                 g_item.reset();
                 cc->updateAppearanceForAll(true);
                 return true;
-            } else if (cc->items[ pos ].getId() == g_item.getId()) {
-
+            } else if (cc->items[pos].getId() == g_item.getId()) {
                 if (!g_item.isStackable() && !g_item.isContainer()) {
                     return false;
                 }
@@ -215,11 +207,11 @@ auto World::putItemOnInvPos(Character *cc, unsigned char pos) -> bool {
                     return false;
                 }
 
-                int temp = cc->items[ pos ].getNumber() + g_item.getNumber();
+                int temp = cc->items[pos].getNumber() + g_item.getNumber();
 
                 if (temp <= g_item.getMaxStack()) {
-                    cc->items[ pos ].setNumber(temp);
-                    cc->items[ pos ].setMinQuality(g_item);
+                    cc->items[pos].setNumber(temp);
+                    cc->items[pos].setMinQuality(g_item);
                     g_item.reset();
                     cc->updateAppearanceForAll(true);
                     return true;
@@ -251,26 +243,26 @@ auto World::putItemOnInvPos(Player *cc, unsigned char pos) -> bool {
 
 auto World::takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_type count) -> bool {
     if (pos == BACKPACK) {
-        if (cc->items[ BACKPACK ].getId() != 0) {
-            g_item = cc->items[ BACKPACK ];
+        if (cc->items[BACKPACK].getId() != 0) {
+            g_item = cc->items[BACKPACK];
             g_cont = cc->backPackContents;
 
             if (g_cont == nullptr) {
                 g_cont = new Container(g_item.getId());
             }
 
-            cc->items[ BACKPACK ].reset();
+            cc->items[BACKPACK].reset();
             cc->backPackContents = nullptr;
             cc->updateAppearanceForAll(true);
             return true;
         }
     } else if (pos < MAX_BODY_ITEMS + MAX_BELT_SLOTS) {
-        if ((cc->items[ pos ].getId() != 0) && (cc->items[ pos ].getId() != BLOCKEDITEM)) {
+        if ((cc->items[pos].getId() != 0) && (cc->items[pos].getId() != BLOCKEDITEM)) {
             if ((pos == RIGHT_TOOL) || (pos == LEFT_TOOL)) {
                 const auto weaponId = cc->items[pos].getId();
 
                 if (Data::WeaponItems.exists(weaponId)) {
-                    g_item = cc->items[ pos ];
+                    g_item = cc->items[pos];
                     g_cont = nullptr;
 
                     if (!g_item.isStackable() && !g_item.isContainer()) {
@@ -282,16 +274,16 @@ auto World::takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_ty
                     }
 
                     if (g_item.getNumber() > count) {
-                        cc->items[ pos ].setNumber(cc->items[pos].getNumber() - count);
+                        cc->items[pos].setNumber(cc->items[pos].getNumber() - count);
                         g_item.setNumber(count);
                     } else {
                         const auto &weapon = Data::WeaponItems[weaponId];
 
-                        if ((weapon.Type==4) || (weapon.Type==5) || (weapon.Type==6) || (weapon.Type==13)) {
-                            cc->items[ LEFT_TOOL ].reset();
-                            cc->items[ RIGHT_TOOL ].reset();
+                        if ((weapon.Type == 4) || (weapon.Type == 5) || (weapon.Type == 6) || (weapon.Type == 13)) {
+                            cc->items[LEFT_TOOL].reset();
+                            cc->items[RIGHT_TOOL].reset();
                         } else {
-                            cc->items[ pos ].reset();
+                            cc->items[pos].reset();
                         }
                     }
 
@@ -300,25 +292,25 @@ auto World::takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_ty
                 }
             }
 
-            g_item = cc->items[ pos ];
+            g_item = cc->items[pos];
             g_cont = nullptr;
 
             if (g_item.isStackable() && count > 1 && !g_item.isContainer()) {
                 if (g_item.getNumber() > count) {
-                    cc->items[ pos ].setNumber(cc->items[ pos ].getNumber() - count);
+                    cc->items[pos].setNumber(cc->items[pos].getNumber() - count);
                     g_item.setNumber(count);
                 } else {
-                    cc->items[ pos ].reset();
+                    cc->items[pos].reset();
                 }
 
                 cc->updateAppearanceForAll(true);
                 return true;
             } else {
                 if (g_item.getNumber() > 1) {
-                    cc->items[ pos ].setNumber(cc->items[ pos ].getNumber() - 1);
+                    cc->items[pos].setNumber(cc->items[pos].getNumber() - 1);
                     g_item.setNumber(1);
                 } else {
-                    cc->items[ pos ].reset();
+                    cc->items[pos].reset();
                 }
 
                 cc->updateAppearanceForAll(true);
@@ -335,7 +327,7 @@ auto World::takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_ty
 
 auto World::takeItemFromInvPos(Player *cc, unsigned char pos, Item::number_type count) -> bool {
     if (pos == BACKPACK) {
-        if (cc->items[ BACKPACK ].getId() != 0) {
+        if (cc->items[BACKPACK].getId() != 0) {
             if (cc->backPackContents != nullptr) {
                 cc->closeShowcase(cc->backPackContents);
             }
@@ -381,7 +373,6 @@ auto World::takeItemFromShowcase(Player *cc, uint8_t showcase, unsigned char pos
     g_cont = nullptr;
 
     return false;
-
 }
 
 auto World::putItemInShowcase(Player *cc, uint8_t showcase, TYPE_OF_CONTAINERSLOTS pos) -> bool {
@@ -403,8 +394,7 @@ auto World::putItemInShowcase(Player *cc, uint8_t showcase, TYPE_OF_CONTAINERSLO
 
                     return true;
                 }
-            }
-            else {
+            } else {
                 return false;
             }
         } else {
@@ -441,7 +431,6 @@ auto World::takeItemFromMap(Character *cc, const position &itemPosition) -> bool
                         g_cont = nullptr;
                         return false;
                     }
-
                 }
 
                 if (Data::Triggers.exists(itemPosition)) {
@@ -487,8 +476,7 @@ auto World::takeItemFromMap(Character *cc, const position &itemPosition) -> bool
 
 auto World::putItemOnMap(Character *cc, const position &itemPosition) -> bool {
     if (cc != nullptr) {
-        if (cc->getPosition().z != itemPosition.z ||
-            !cc->isInRangeToField(itemPosition, MAXTHROWDISTANCE) ||
+        if (cc->getPosition().z != itemPosition.z || !cc->isInRangeToField(itemPosition, MAXTHROWDISTANCE) ||
             (!cc->isInRangeToField(itemPosition, MAXDROPDISTANCE) && (g_item.getWeight() > MAXTHROWWEIGHT))) {
             static const std::string german = "Dies ist zu schwer um so weit geworfen zu werden.";
             static const std::string english = "This is too heavy to be thrown this far.";
@@ -529,7 +517,7 @@ auto World::putItemOnMap(Character *cc, const position &itemPosition) -> bool {
                         ScriptItem sItem(g_item);
                         sItem.pos = itemPosition;
                         sItem.type = ScriptItem::it_field;
-                        script->PutItemOnField(sItem,cc);
+                        script->PutItemOnField(sItem, cc);
                     }
                 }
 
@@ -550,7 +538,7 @@ auto World::putItemOnMap(Character *cc, const position &itemPosition) -> bool {
                         ScriptItem sItem(g_item);
                         sItem.pos = itemPosition;
                         sItem.type = ScriptItem::it_field;
-                        script->PutItemOnField(sItem,cc);
+                        script->PutItemOnField(sItem, cc);
                     }
                 }
 
@@ -565,7 +553,6 @@ auto World::putItemOnMap(Character *cc, const position &itemPosition) -> bool {
     }
 
     return false;
-
 }
 
 auto World::putItemAlwaysOnMap(Character *cc, const position &itemPosition) -> bool {
@@ -588,7 +575,7 @@ auto World::putItemAlwaysOnMap(Character *cc, const position &itemPosition) -> b
                         ScriptItem sItem(g_item);
                         sItem.pos = itemPosition;
                         sItem.type = ScriptItem::it_field;
-                        script->PutItemOnField(sItem,cc);
+                        script->PutItemOnField(sItem, cc);
                     }
                 }
 
@@ -609,7 +596,7 @@ auto World::putItemAlwaysOnMap(Character *cc, const position &itemPosition) -> b
                         ScriptItem sItem(g_item);
                         sItem.pos = itemPosition;
                         sItem.type = ScriptItem::it_field;
-                        script->PutItemOnField(sItem,cc);
+                        script->PutItemOnField(sItem, cc);
                     }
                 }
 
@@ -624,7 +611,6 @@ auto World::putItemAlwaysOnMap(Character *cc, const position &itemPosition) -> b
     }
 
     return false;
-
 }
 
 void World::checkField(const map::Field &field, const position &itemPosition) {
@@ -653,7 +639,8 @@ void World::checkField(const map::Field &field, const position &itemPosition) {
 
 // combined functions //
 
-void World::dropItemFromShowcaseOnMap(Player *cp, uint8_t showcase, unsigned char pos, const position &newPosition, Item::number_type count) {
+void World::dropItemFromShowcaseOnMap(Player *cp, uint8_t showcase, unsigned char pos, const position &newPosition,
+                                      Item::number_type count) {
     if (count == 0) {
         return;
     }
@@ -673,7 +660,8 @@ void World::dropItemFromShowcaseOnMap(Player *cp, uint8_t showcase, unsigned cha
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
                 if (!putItemInShowcase(cp, showcase, pos)) {
-                    Logger::error(LogFacility::Player) << "dropItemFromShowcaseOnMap failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
+                    Logger::error(LogFacility::Player) << "dropItemFromShowcaseOnMap failed: item " << g_item.getId()
+                                                       << " lost for " << *cp << Log::end;
                     g_cont = nullptr;
                     g_item.reset();
                 }
@@ -684,7 +672,8 @@ void World::dropItemFromShowcaseOnMap(Player *cp, uint8_t showcase, unsigned cha
 
         if (!putItemOnMap(cp, newPosition)) {
             if (!putItemInShowcase(cp, showcase, pos)) {
-                Logger::error(LogFacility::Player) << "dropItemFromShowcaseOnMap failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
+                Logger::error(LogFacility::Player) << "dropItemFromShowcaseOnMap failed: item " << g_item.getId()
+                                                   << " lost for " << *cp << Log::end;
                 g_cont = nullptr;
                 g_item.reset();
             }
@@ -698,7 +687,8 @@ void World::dropItemFromShowcaseOnMap(Player *cp, uint8_t showcase, unsigned cha
     }
 }
 
-void World::moveItemFromShowcaseToPlayer(Player *cp, uint8_t showcase, unsigned char pos, unsigned char cpos, Item::number_type count) {
+void World::moveItemFromShowcaseToPlayer(Player *cp, uint8_t showcase, unsigned char pos, unsigned char cpos,
+                                         Item::number_type count) {
     if (count == 0) {
         return;
     }
@@ -723,9 +713,10 @@ void World::moveItemFromShowcaseToPlayer(Player *cp, uint8_t showcase, unsigned 
         std::shared_ptr<LuaItemScript> script = Data::Items.script(t_item.getId());
 
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
-            if (!script->MoveItemBeforeMove(cp, s_item,t_item)) {
+            if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
                 if (!putItemInShowcase(cp, showcase, pos)) {
-                    Logger::error(LogFacility::Player) << "moveItemFromShowcaseToPlayer failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
+                    Logger::error(LogFacility::Player) << "moveItemFromShowcaseToPlayer failed: item " << g_item.getId()
+                                                       << " lost for " << *cp << Log::end;
                     g_cont = nullptr;
                     g_item.reset();
                 }
@@ -736,7 +727,7 @@ void World::moveItemFromShowcaseToPlayer(Player *cp, uint8_t showcase, unsigned 
 
         bool NOK = false;
 
-        if (! cp->weightOK(g_item.getId(), g_item.getNumber(), g_cont)) {
+        if (!cp->weightOK(g_item.getId(), g_item.getNumber(), g_cont)) {
             cp->inform(message_overweight_german, message_overweight_english, Character::informScriptMediumPriority);
             NOK = true;
         }
@@ -755,7 +746,8 @@ void World::moveItemFromShowcaseToPlayer(Player *cp, uint8_t showcase, unsigned 
 
         if (NOK) {
             if (!putItemInShowcase(cp, showcase, pos)) {
-                Logger::error(LogFacility::Player) << "moveItemFromShowcaseToPlayer failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
+                Logger::error(LogFacility::Player) << "moveItemFromShowcaseToPlayer failed: item " << g_item.getId()
+                                                   << " lost for " << *cp << Log::end;
                 g_cont = nullptr;
                 g_item.reset();
             }
@@ -763,7 +755,8 @@ void World::moveItemFromShowcaseToPlayer(Player *cp, uint8_t showcase, unsigned 
     }
 }
 
-void World::dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, const position &newPosition, Item::number_type count) {
+void World::dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, const position &newPosition,
+                                    Item::number_type count) {
     if (count == 0) {
         return;
     }
@@ -788,7 +781,8 @@ void World::dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, const positi
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
                 if (!putItemOnInvPos(cp, cpos)) {
-                    Logger::error(LogFacility::Player) << "dropItemFromPlayerOnMap failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
+                    Logger::error(LogFacility::Player) << "dropItemFromPlayerOnMap failed: item " << g_item.getId()
+                                                       << " lost for " << *cp << Log::end;
                     g_cont = nullptr;
                     g_item.reset();
                 }
@@ -799,7 +793,8 @@ void World::dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, const positi
 
         if (!putItemOnMap(cp, newPosition)) {
             if (!putItemOnInvPos(cp, cpos)) {
-                Logger::error(LogFacility::Player) << "dropItemFromPlayerOnMap failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
+                Logger::error(LogFacility::Player)
+                        << "dropItemFromPlayerOnMap failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
                 g_cont = nullptr;
                 g_item.reset();
             }
@@ -810,7 +805,6 @@ void World::dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, const positi
                 script->MoveItemAfterMove(cp, s_item, t_item);
             }
         }
-
     }
 }
 
@@ -846,7 +840,8 @@ void World::moveItemBetweenBodyParts(Player *cp, unsigned char opos, unsigned ch
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
                 if (!putItemOnInvPos(cp, opos)) {
-                    Logger::error(LogFacility::Player) << "moveItemBetweenBodyParts failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
+                    Logger::error(LogFacility::Player) << "moveItemBetweenBodyParts failed: item " << g_item.getId()
+                                                       << " lost for " << *cp << Log::end;
                     g_cont = nullptr;
                     g_item.reset();
                 }
@@ -856,9 +851,9 @@ void World::moveItemBetweenBodyParts(Player *cp, unsigned char opos, unsigned ch
         }
 
         if (!putItemOnInvPos(cp, npos)) {
-            
             if (!putItemOnInvPos(cp, opos)) {
-                Logger::error(LogFacility::Player) << "moveItemBetweenBodyParts failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
+                Logger::error(LogFacility::Player) << "moveItemBetweenBodyParts failed: item " << g_item.getId()
+                                                   << " lost for " << *cp << Log::end;
                 g_cont = nullptr;
                 g_item.reset();
             }
@@ -870,7 +865,8 @@ void World::moveItemBetweenBodyParts(Player *cp, unsigned char opos, unsigned ch
     }
 }
 
-void World::moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, uint8_t showcase, unsigned char pos, Item::number_type count) {
+void World::moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, uint8_t showcase, unsigned char pos,
+                                           Item::number_type count) {
     if (count == 0) {
         return;
     }
@@ -898,7 +894,8 @@ void World::moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, uint8
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
                 if (!putItemOnInvPos(cp, cpos)) {
-                    Logger::error(LogFacility::Player) << "moveItemFromPlayerIntoShowcase failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
+                    Logger::error(LogFacility::Player) << "moveItemFromPlayerIntoShowcase failed: item "
+                                                       << g_item.getId() << " lost for " << *cp << Log::end;
                     g_cont = nullptr;
                     g_item.reset();
                 }
@@ -909,7 +906,8 @@ void World::moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, uint8
 
         if (!putItemInShowcase(cp, showcase, pos)) {
             if (!putItemOnInvPos(cp, cpos)) {
-                Logger::error(LogFacility::Player) << "moveItemFromPlayerIntoShowcase failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
+                Logger::error(LogFacility::Player) << "moveItemFromPlayerIntoShowcase failed: item " << g_item.getId()
+                                                   << " lost for " << *cp << Log::end;
                 g_cont = nullptr;
                 g_item.reset();
             }
@@ -923,13 +921,13 @@ void World::moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, uint8
     }
 }
 
-void World::moveItemFromMapIntoShowcase(Player *cp, const position &sourcePosition, uint8_t showcase, unsigned char showcaseSlot, Item::number_type count) {
+void World::moveItemFromMapIntoShowcase(Player *cp, const position &sourcePosition, uint8_t showcase,
+                                        unsigned char showcaseSlot, Item::number_type count) {
     if (count == 0) {
         return;
     }
 
     if (cp != nullptr) {
-
         if (takeItemFromMap(cp, sourcePosition)) {
             ScriptItem s_item(g_item), t_item(g_item);
             s_item.pos = sourcePosition;
@@ -946,7 +944,8 @@ void World::moveItemFromMapIntoShowcase(Player *cp, const position &sourcePositi
             if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
                 if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
                     if (!putItemOnMap(cp, sourcePosition)) {
-                        Logger::error(LogFacility::Player) << "moveItemFromMapIntoShowcase failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
+                        Logger::error(LogFacility::Player) << "moveItemFromMapIntoShowcase failed: item "
+                                                           << g_item.getId() << " lost for " << *cp << Log::end;
                         g_cont = nullptr;
                         g_item.reset();
                     }
@@ -963,14 +962,15 @@ void World::moveItemFromMapIntoShowcase(Player *cp, const position &sourcePositi
 
             bool NOK = false;
 
-            if (! cp->weightOK(g_item.getId(), g_item.getNumber(), g_cont)) {
-                cp->inform(message_overweight_german, message_overweight_english, Character::informScriptMediumPriority);
+            if (!cp->weightOK(g_item.getId(), g_item.getNumber(), g_cont)) {
+                cp->inform(message_overweight_german, message_overweight_english,
+                           Character::informScriptMediumPriority);
                 NOK = true;
             }
 
             if (!NOK) {
                 if (!putItemInShowcase(cp, showcase, showcaseSlot)) {
-                    NOK =true;
+                    NOK = true;
                 } else {
                     cp->checkBurden();
 
@@ -984,7 +984,8 @@ void World::moveItemFromMapIntoShowcase(Player *cp, const position &sourcePositi
                 g_item = tempitem;
 
                 if (!putItemOnMap(cp, sourcePosition)) {
-                    Logger::error(LogFacility::Player) << "moveItemFromMapIntoShowcase failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
+                    Logger::error(LogFacility::Player) << "moveItemFromMapIntoShowcase failed: item " << g_item.getId()
+                                                       << " lost for " << *cp << Log::end;
                     g_cont = nullptr;
                     g_item.reset();
                 }
@@ -997,7 +998,8 @@ void World::moveItemFromMapIntoShowcase(Player *cp, const position &sourcePositi
                 g_item.setNumber(g_item.getNumber() - count);
 
                 if (!putItemOnMap(cp, sourcePosition)) {
-                    Logger::error(LogFacility::Player) << "moveItemFromMapIntoShowcase failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
+                    Logger::error(LogFacility::Player) << "moveItemFromMapIntoShowcase failed: item " << g_item.getId()
+                                                       << " lost for " << *cp << Log::end;
                     g_cont = nullptr;
                     g_item.reset();
                     return;
@@ -1009,13 +1011,13 @@ void World::moveItemFromMapIntoShowcase(Player *cp, const position &sourcePositi
     }
 }
 
-void World::moveItemFromMapToPlayer(Player *cp, const position &sourcePosition, unsigned char inventorySlot, Item::number_type count) {
+void World::moveItemFromMapToPlayer(Player *cp, const position &sourcePosition, unsigned char inventorySlot,
+                                    Item::number_type count) {
     if (count == 0) {
         return;
     }
 
     if (cp != nullptr) {
-
         if (takeItemFromMap(cp, sourcePosition)) {
             ScriptItem s_item(g_item), t_item(g_item);
             s_item.pos = sourcePosition;
@@ -1036,7 +1038,8 @@ void World::moveItemFromMapToPlayer(Player *cp, const position &sourcePosition, 
             if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
                 if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
                     if (!putItemOnMap(cp, sourcePosition)) {
-                        Logger::error(LogFacility::Player) << "moveItemFromMapToPlayer failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
+                        Logger::error(LogFacility::Player) << "moveItemFromMapToPlayer failed: item " << g_item.getId()
+                                                           << " lost for " << *cp << Log::end;
                         g_cont = nullptr;
                         g_item.reset();
                     }
@@ -1053,8 +1056,9 @@ void World::moveItemFromMapToPlayer(Player *cp, const position &sourcePosition, 
 
             bool NOK = false;
 
-            if (! cp->weightOK(g_item.getId(), g_item.getNumber(), g_cont)) {
-                cp->inform(message_overweight_german, message_overweight_english, Character::informScriptMediumPriority);
+            if (!cp->weightOK(g_item.getId(), g_item.getNumber(), g_cont)) {
+                cp->inform(message_overweight_german, message_overweight_english,
+                           Character::informScriptMediumPriority);
                 NOK = true;
             }
 
@@ -1073,8 +1077,9 @@ void World::moveItemFromMapToPlayer(Player *cp, const position &sourcePosition, 
             if (NOK) {
                 g_item = tempitem;
 
-                if (! putItemOnMap(cp, sourcePosition)) {
-                    Logger::error(LogFacility::Player) << "moveItemFromMapToPlayer failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
+                if (!putItemOnMap(cp, sourcePosition)) {
+                    Logger::error(LogFacility::Player) << "moveItemFromMapToPlayer failed: item " << g_item.getId()
+                                                       << " lost for " << *cp << Log::end;
                     g_cont = nullptr;
                     g_item.reset();
                 }
@@ -1087,7 +1092,8 @@ void World::moveItemFromMapToPlayer(Player *cp, const position &sourcePosition, 
                 g_item.setNumber(g_item.getNumber() - count);
 
                 if (!putItemOnMap(cp, sourcePosition)) {
-                    Logger::error(LogFacility::Player) << "moveItemFromMapToPlayer failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
+                    Logger::error(LogFacility::Player) << "moveItemFromMapToPlayer failed: item " << g_item.getId()
+                                                       << " lost for " << *cp << Log::end;
                     g_cont = nullptr;
                     g_item.reset();
                     return;
@@ -1099,7 +1105,8 @@ void World::moveItemFromMapToPlayer(Player *cp, const position &sourcePosition, 
     }
 }
 
-void World::moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char pos, uint8_t dest, unsigned char pos2, Item::number_type count) {
+void World::moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char pos, uint8_t dest, unsigned char pos2,
+                                     Item::number_type count) {
     if (count == 0) {
         return;
     }
@@ -1121,7 +1128,8 @@ void World::moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char p
         if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
             if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
                 if (!putItemInShowcase(cp, source, pos)) {
-                    Logger::error(LogFacility::Player) << "moveItemBetweenShowcases failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
+                    Logger::error(LogFacility::Player) << "moveItemBetweenShowcases failed: item " << g_item.getId()
+                                                       << " lost for " << *cp << Log::end;
                     g_cont = nullptr;
                     g_item.reset();
                 }
@@ -1133,8 +1141,9 @@ void World::moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char p
         bool success = true;
 
         if (cp->isShowcaseInInventory(dest)) {
-            if (! cp->weightOK(g_item.getId(), g_item.getNumber(), g_cont)) {
-                cp->inform(message_overweight_german, message_overweight_english, Character::informScriptMediumPriority);
+            if (!cp->weightOK(g_item.getId(), g_item.getNumber(), g_cont)) {
+                cp->inform(message_overweight_german, message_overweight_english,
+                           Character::informScriptMediumPriority);
                 success = false;
             }
         }
@@ -1152,8 +1161,9 @@ void World::moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char p
         }
 
         if (!success) {
-            if (! putItemInShowcase(cp, source, pos)) {
-                Logger::error(LogFacility::Player) << "moveItemBetweenShowcases failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
+            if (!putItemInShowcase(cp, source, pos)) {
+                Logger::error(LogFacility::Player) << "moveItemBetweenShowcases failed: item " << g_item.getId()
+                                                   << " lost for " << *cp << Log::end;
                 g_cont = nullptr;
                 g_item.reset();
             }
@@ -1161,13 +1171,13 @@ void World::moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char p
     }
 }
 
-auto World::moveItemFromMapToMap(Player *cp, const position &oldPosition, const position &newPosition, Item::number_type count) -> bool {
+auto World::moveItemFromMapToMap(Player *cp, const position &oldPosition, const position &newPosition,
+                                 Item::number_type count) -> bool {
     if (count == 0) {
         return false;
     }
 
     if (cp != nullptr) {
-
         if (takeItemFromMap(cp, oldPosition)) {
             ScriptItem s_item(g_item), t_item(g_item);
             s_item.pos = oldPosition;
@@ -1182,7 +1192,8 @@ auto World::moveItemFromMapToMap(Player *cp, const position &oldPosition, const 
             if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
                 if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
                     if (!putItemOnMap(cp, oldPosition)) {
-                        Logger::error(LogFacility::Player) << "moveItem failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
+                        Logger::error(LogFacility::Player)
+                                << "moveItem failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
                         g_cont = nullptr;
                         g_item.reset();
                     }
@@ -1201,7 +1212,8 @@ auto World::moveItemFromMapToMap(Player *cp, const position &oldPosition, const 
                 g_item = tempitem;
 
                 if (!putItemOnMap(cp, oldPosition)) {
-                    Logger::error(LogFacility::Player) << "moveItem failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
+                    Logger::error(LogFacility::Player)
+                            << "moveItem failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
                     g_cont = nullptr;
                     g_item.reset();
                 }
@@ -1214,7 +1226,8 @@ auto World::moveItemFromMapToMap(Player *cp, const position &oldPosition, const 
                 g_item.setNumber(g_item.getNumber() - count);
 
                 if (!putItemOnMap(cp, oldPosition)) {
-                    Logger::error(LogFacility::Player) << "moveItem failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
+                    Logger::error(LogFacility::Player)
+                            << "moveItem failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
                     g_cont = nullptr;
                     g_item.reset();
                 }
@@ -1227,7 +1240,6 @@ auto World::moveItemFromMapToMap(Player *cp, const position &oldPosition, const 
             }
 
             return true;
-
         }
     }
 
@@ -1236,7 +1248,6 @@ auto World::moveItemFromMapToMap(Player *cp, const position &oldPosition, const 
 
 auto World::pickUpItemFromMap(Player *cp, const position &itemPosition) -> bool {
     if (cp != nullptr) {
-
         if (takeItemFromMap(cp, itemPosition)) {
             ScriptItem s_item(g_item), t_item(g_item);
             s_item.pos = itemPosition;
@@ -1250,7 +1261,8 @@ auto World::pickUpItemFromMap(Player *cp, const position &itemPosition) -> bool 
             if (script && script->existsEntrypoint("MoveItemBeforeMove")) {
                 if (!script->MoveItemBeforeMove(cp, s_item, t_item)) {
                     if (!putItemOnMap(cp, itemPosition)) {
-                        Logger::error(LogFacility::Player) << "pickUpItemFromMap failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
+                        Logger::error(LogFacility::Player) << "pickUpItemFromMap failed: item " << g_item.getId()
+                                                           << " lost for " << *cp << Log::end;
                         g_cont = nullptr;
                         g_item.reset();
                     }
@@ -1262,8 +1274,9 @@ auto World::pickUpItemFromMap(Player *cp, const position &itemPosition) -> bool 
             Item tempitem = g_item;
             bool NOK = false;
 
-            if (! cp->weightOK(g_item.getId(), g_item.getNumber(), g_cont)) {
-                cp->inform(message_overweight_german, message_overweight_english, Character::informScriptMediumPriority);
+            if (!cp->weightOK(g_item.getId(), g_item.getNumber(), g_cont)) {
+                cp->inform(message_overweight_german, message_overweight_english,
+                           Character::informScriptMediumPriority);
                 NOK = true;
             }
 
@@ -1291,7 +1304,7 @@ auto World::pickUpItemFromMap(Player *cp, const position &itemPosition) -> bool 
                     cp->backPackContents->InsertContainer(g_item, g_cont, freeSlot);
                 } else {
                     if (cp->createItem(g_item.getId(), g_item.getNumber(), g_item.getQuality(), &data_map) > 0) {
-                        NOK =true;
+                        NOK = true;
                     } else {
                         if (g_item.isContainer()) {
                             if (g_cont == nullptr) {
@@ -1321,7 +1334,8 @@ auto World::pickUpItemFromMap(Player *cp, const position &itemPosition) -> bool 
                 g_item = tempitem;
 
                 if (!putItemOnMap(cp, itemPosition)) {
-                    Logger::error(LogFacility::Player) << "moveItemFromMapIntoShowcase failed: item " << g_item.getId() << " lost for " << *cp << Log::end;
+                    Logger::error(LogFacility::Player) << "moveItemFromMapIntoShowcase failed: item " << g_item.getId()
+                                                       << " lost for " << *cp << Log::end;
                     g_cont = nullptr;
                     g_item.reset();
                 }
@@ -1401,12 +1415,10 @@ void World::closeShowcaseIfNotInRange(Container *moved, const position &showcase
     if (moved != nullptr) {
         Players.for_each([&showcasePosition, moved](Player *player) {
             const auto &pos = player->getPosition();
-            if (abs(showcasePosition.x - pos.x) > 1
-                    || abs(showcasePosition.y - pos.y) > 1
-                    || showcasePosition.z != pos.z) {
+            if (abs(showcasePosition.x - pos.x) > 1 || abs(showcasePosition.y - pos.y) > 1 ||
+                showcasePosition.z != pos.z) {
                 player->closeShowcase(moved);
             }
         });
     }
 }
-

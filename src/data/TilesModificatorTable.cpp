@@ -23,6 +23,7 @@
  */
 
 #include "data/TilesModificatorTable.hpp"
+
 #include "constants.hpp"
 
 auto TilesModificatorTable::getTableName() -> std::string {
@@ -30,12 +31,7 @@ auto TilesModificatorTable::getTableName() -> std::string {
 }
 
 auto TilesModificatorTable::getColumnNames() -> std::vector<std::string> {
-    return {
-        "tim_itemid",
-        "tim_isnotpassable",
-        "tim_specialitem",
-        "tim_makepassable"
-    };
+    return {"tim_itemid", "tim_isnotpassable", "tim_specialitem", "tim_makepassable"};
 }
 
 auto TilesModificatorTable::assignId(const Database::ResultTuple &row) -> TYPE_OF_ITEM_ID {
@@ -59,4 +55,3 @@ auto TilesModificatorTable::passable(TYPE_OF_ITEM_ID id) -> bool {
 
     return true;
 }
-

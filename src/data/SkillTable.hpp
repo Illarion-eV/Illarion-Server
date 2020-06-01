@@ -21,9 +21,9 @@
 #ifndef SKILL_TABLE_HPP
 #define SKILL_TABLE_HPP
 
+#include "TableStructs.hpp"
 #include "data/StructTable.hpp"
 #include "types.hpp"
-#include "TableStructs.hpp"
 
 class SkillTable : public StructTable<TYPE_OF_SKILL_ID, SkillStruct> {
 public:
@@ -34,4 +34,3 @@ public:
 };
 
 #endif
-

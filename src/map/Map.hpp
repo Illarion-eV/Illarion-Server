@@ -16,15 +16,15 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef MAP_HPP
 #define MAP_HPP
 
-#include <string>
-#include <unordered_map>
+#include "Container.hpp"
 #include "globals.hpp"
 #include "map/Field.hpp"
-#include "Container.hpp"
+
+#include <string>
+#include <unordered_map>
 
 namespace map {
 
@@ -37,8 +37,7 @@ class Map {
 
 public:
     Map(std::string name, position origin, uint16_t width, uint16_t height);
-    Map(std::string name, position origin, uint16_t width, uint16_t height,
-        uint16_t tile);
+    Map(std::string name, position origin, uint16_t width, uint16_t height, uint16_t tile);
     Map(const Map &) = delete;
     auto operator=(const Map &) -> Map & = delete;
     Map(Map &&) = default;
@@ -76,6 +75,6 @@ private:
     [[nodiscard]] inline auto convertWorldYToMap(int16_t y) const -> uint16_t;
 };
 
-}
+} // namespace map
 
 #endif

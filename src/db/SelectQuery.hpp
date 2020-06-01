@@ -21,25 +21,27 @@
 #ifndef SELECT_QUERY_HPP
 #define SELECT_QUERY_HPP
 
-#include <string>
-
-#include <boost/cstdint.hpp>
-
 #include "db/Connection.hpp"
-#include "db/Result.hpp"
 #include "db/Query.hpp"
 #include "db/QueryColumns.hpp"
 #include "db/QueryTables.hpp"
 #include "db/QueryWhere.hpp"
+#include "db/Result.hpp"
+
+#include <boost/cstdint.hpp>
+#include <string>
 
 namespace Database {
 class SelectQuery : Query, public QueryColumns, public QueryTables, public QueryWhere {
 private:
     std::string orderBy;
     bool isDistinct;
+
 public:
-    enum OrderDirection {
-        ASC, DESC
+    enum OrderDirection
+    {
+        ASC,
+        DESC
     };
 
     SelectQuery();
@@ -54,6 +56,6 @@ public:
 
     auto execute() -> Result override;
 };
-}
+} // namespace Database
 
 #endif

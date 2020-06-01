@@ -20,18 +20,13 @@
 
 #include "dialog/MessageDialog.hpp"
 
-
 #include <utility>
 
-
 MessageDialog::MessageDialog(const string &title, string text, const luabind::object &callback)
-    :Dialog(title, "MessageDialog", callback), text(std::move(text)) {
-}
+        : Dialog(title, "MessageDialog", callback), text(std::move(text)) {}
 
-MessageDialog::MessageDialog(const MessageDialog &messageDialog)
-    = default;
+MessageDialog::MessageDialog(const MessageDialog &messageDialog) = default;
 
 auto MessageDialog::getText() const -> const string & {
     return text;
 }
-

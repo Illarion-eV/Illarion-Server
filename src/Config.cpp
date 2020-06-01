@@ -19,6 +19,7 @@
  */
 
 #include "Config.hpp"
+
 #include "Logger.hpp"
 
 #include <fstream>
@@ -44,11 +45,10 @@ auto Config::load(const std::string &config_file) -> bool {
     std::string temp;
 
     // read first token of a line while there are any tokens left...
-    while (configfile >> temp && ! configfile.eof()) {
-
+    while (configfile >> temp && !configfile.eof()) {
         if (temp[0] == '#') {
             // we found a comment... skip line
-            configfile.ignore(255,'\n'); // ignore up to 255 chars until \n is found
+            configfile.ignore(255, '\n'); // ignore up to 255 chars until \n is found
             continue;
         }
 
@@ -58,7 +58,7 @@ auto Config::load(const std::string &config_file) -> bool {
 
         if (pos == config_options.end()) {
             Logger::error(LogFacility::Other) << "Invalid config entry: " << temp << Log::end;
-            configfile.ignore(255,'\n');
+            configfile.ignore(255, '\n');
             continue;
         }
 
@@ -90,7 +90,7 @@ auto operator<<(std::ostream &os, const ConfigEntryBase &config_entry) -> std::o
     return os;
 }
 
-ConfigEntryBase::ConfigEntryBase(const std::string &config_name) : _config_name { config_name } {
+ConfigEntryBase::ConfigEntryBase(const std::string &config_name) : _config_name{config_name} {
     Config::register_entry(config_name, this);
 }
 

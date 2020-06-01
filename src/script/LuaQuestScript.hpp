@@ -22,10 +22,11 @@
 #define LUA_QUEST_SCRIPT_HPP
 
 #include "LuaScript.hpp"
-#include <string>
-#include <vector>
 #include "globals.hpp"
 #include "types.hpp"
+
+#include <string>
+#include <vector>
 
 class Character;
 
@@ -49,4 +50,3 @@ private:
 };
 
 #endif
-

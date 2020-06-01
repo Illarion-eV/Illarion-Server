@@ -16,25 +16,22 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef SCHEDULERTASKCLASSES
 #define SCHEDULERTASKCLASSES
 
-#include "Player.hpp"
 #include "Monster.hpp"
 #include "NPC.hpp"
-
+#include "Player.hpp"
 #include "script/LuaLearnScript.hpp"
 
-extern std::shared_ptr<LuaLearnScript>learnScript;
+extern std::shared_ptr<LuaLearnScript> learnScript;
 
 namespace {
-    auto reduceMC = [](Character * character) {
-        if (character->getMentalCapacity() > 0) {
-            learnScript->reduceMC(character);
-        }
-    };
+auto reduceMC = [](Character *character) {
+    if (character->getMentalCapacity() > 0) {
+        learnScript->reduceMC(character);
+    }
+};
 }
 
 #endif
-

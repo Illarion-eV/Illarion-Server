@@ -16,14 +16,14 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "BasicClientCommand.hpp"
+
 #include "BasicCommand.hpp"
 
-BasicClientCommand::BasicClientCommand(unsigned char defByte, uint16_t minAP) : BasicCommand(defByte), dataOk(true), length(0), bytesRetrieved(0), checkSum(0), crc(0), minAP(minAP) {
+BasicClientCommand::BasicClientCommand(unsigned char defByte, uint16_t minAP)
+        : BasicCommand(defByte), dataOk(true), length(0), bytesRetrieved(0), checkSum(0), crc(0), minAP(minAP) {
     msg_buffer = nullptr;
 }
-
 
 void BasicClientCommand::setHeaderData(uint16_t mlength, uint16_t mcheckSum) {
     length = mlength;
@@ -38,8 +38,6 @@ BasicClientCommand::~BasicClientCommand() {
 auto BasicClientCommand::msg_data() -> unsigned char * {
     return msg_buffer;
 }
-
-
 
 /*
 volatile bool BasicClientCommand::getData( ByteBuffer * recvBuffer )
@@ -82,18 +80,18 @@ volatile bool BasicClientCommand::getData( ByteBuffer * recvBuffer )
 auto BasicClientCommand::getUnsignedCharFromBuffer() -> unsigned char {
     unsigned char ret = 0;
 
-    //no buffer available but we want to read from it
+    // no buffer available but we want to read from it
     if (msg_buffer == nullptr) {
         dataOk = false;
     }
-    //we want to read more data than there is in the buffer
+    // we want to read more data than there is in the buffer
     else if (bytesRetrieved > length) {
         dataOk = false;
         throw OverflowException();
     }
-    //all went well
+    // all went well
     else {
-        ret = msg_buffer[ bytesRetrieved++ ];
+        ret = msg_buffer[bytesRetrieved++];
     }
 
     crc += ret;
@@ -128,5 +126,5 @@ auto BasicClientCommand::getShortIntFromBuffer() -> short int {
 
 auto BasicClientCommand::isDataOk() const -> bool {
     auto crcCheck = static_cast<uint16_t>(crc % 0xFFFF);
-    return (dataOk && (length == bytesRetrieved) && (crcCheck==checkSum));
+    return (dataOk && (length == bytesRetrieved) && (crcCheck == checkSum));
 }

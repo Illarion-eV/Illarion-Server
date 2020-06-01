@@ -16,17 +16,15 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef PLAYERMANAGER_HPP
 #define PLAYERMANAGER_HPP
-
-#include <memory>
-#include <thread>
-#include <mutex>
 
 #include "InitialConnection.hpp"
 #include "thread_safe_vector.hpp"
 
+#include <memory>
+#include <mutex>
+#include <thread>
 
 class Player;
 
@@ -54,50 +52,48 @@ public:
         return loggedInPlayers;
     }
 
-
 private:
     static std::unique_ptr<PlayerManager> instance;
 
     /**
-    * loop which is threaded to get new connections
-    * create players, or storing data and deleting old connections
-    */
+     * loop which is threaded to get new connections
+     * create players, or storing data and deleting old connections
+     */
     static void loginLoop(PlayerManager *pmanager);
     static void playerSaveLoop(PlayerManager *pmanager);
     static std::mutex mut;
 
-    //Mutex der gesetzt wird beim reloaden. (Als multi read single write lock)
+    // Mutex der gesetzt wird beim reloaden. (Als multi read single write lock)
     static std::mutex reloadmutex;
 
     /**
-    * true if the thread is running
-    */
+     * true if the thread is running
+     */
     volatile bool running = false;
 
     /**
-    * if false the thread was exited correctly
-    */
+     * if false the thread was exited correctly
+     */
     volatile bool threadOk = false;
 
     /**
-    * logged out players which connection wherent shutted down
-    */
-    //CInitialConnection::TVECTORPLAYER shutdownConnections;
+     * logged out players which connection wherent shutted down
+     */
+    // CInitialConnection::TVECTORPLAYER shutdownConnections;
 
     /**
-    * player which are not on the main map anymore
-    */
+     * player which are not on the main map anymore
+     */
     TPLAYERVECTOR loggedOutPlayers;
 
-
     /**
-    * players which are logged in and correctly loaded
-    */
+     * players which are logged in and correctly loaded
+     */
     TPLAYERVECTOR loggedInPlayers;
 
     /**
-    * initial connection to get the new connections
-    */
+     * initial connection to get the new connections
+     */
     std::shared_ptr<InitialConnection> incon = InitialConnection::create();
 
     std::unique_ptr<std::thread> login_thread = nullptr;
@@ -105,4 +101,3 @@ private:
 };
 
 #endif
-

@@ -21,8 +21,8 @@
 #ifndef LUA_DEPOT_SCRIPT_HPP
 #define LUA_DEPOT_SCRIPT_HPP
 
-#include "LuaScript.hpp"
 #include "Item.hpp"
+#include "LuaScript.hpp"
 
 class World;
 class Character;
@@ -38,4 +38,3 @@ public:
 };
 
 #endif
-

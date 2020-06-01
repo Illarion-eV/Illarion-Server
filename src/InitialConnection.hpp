@@ -16,25 +16,20 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef InitialConnection_HPP
 #define InitialConnection_HPP
 
-#include <memory>
+#include "Connection.hpp"
+#include "thread_safe_vector.hpp"
 
 #include <boost/asio.hpp>
-
-#include "thread_safe_vector.hpp"
-#include "Connection.hpp"
+#include <memory>
 
 class NetInterface;
 
 #define BACKLOG 10
 
-class InitialConnection
-    : public Connection,
-      public std::enable_shared_from_this<InitialConnection> {
-
+class InitialConnection : public Connection, public std::enable_shared_from_this<InitialConnection> {
 public:
     using NewPlayerVector = thread_safe_vector<std::shared_ptr<NetInterface>>;
 
@@ -50,8 +45,7 @@ private:
     boost::asio::io_service io_service;
     std::unique_ptr<boost::asio::ip::tcp::acceptor> acceptor = nullptr;
 
-    void accept_connection(const std::shared_ptr<NetInterface> &connection,
-                           const boost::system::error_code &error);
+    void accept_connection(const std::shared_ptr<NetInterface> &connection, const boost::system::error_code &error);
 
     NewPlayerVector newPlayers;
 };

@@ -20,10 +20,10 @@
 
 #include "db/UpdateQuery.hpp"
 
+#include "db/ConnectionManager.hpp"
+
 #include <sstream>
 #include <stdexcept>
-
-#include "db/ConnectionManager.hpp"
 
 using namespace Database;
 
@@ -31,7 +31,8 @@ UpdateQuery::UpdateQuery() : QueryAssign(*Query::getConnection()), QueryWhere(*Q
     setOnlyOneTable(true);
 }
 
-UpdateQuery::UpdateQuery(const PConnection &connection) : Query(connection), QueryAssign(*Query::getConnection()), QueryWhere(*connection) {
+UpdateQuery::UpdateQuery(const PConnection &connection)
+        : Query(connection), QueryAssign(*Query::getConnection()), QueryWhere(*connection) {
     setOnlyOneTable(true);
 };
 

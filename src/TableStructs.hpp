@@ -16,15 +16,15 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef TABLESTRUCTS_HPP
 #define TABLESTRUCTS_HPP
+
+#include "types.hpp"
 
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
-#include "types.hpp"
 
 class LuaTileScript;
 class LuaItemScript;
@@ -71,7 +71,6 @@ struct LongTimeEffectStruct {
     }
 };
 
-
 struct WeaponStruct {
     TYPE_OF_ATTACK Attack{0};
     TYPE_OF_DEFENCE Defence{0};
@@ -82,9 +81,8 @@ struct WeaponStruct {
     TYPE_OF_ACTIONPOINTS ActionPoints{0};
     TYPE_OF_MAGICDISTURBANCE MagicDisturbance{0};
     TYPE_OF_POISONSTRENGTH PoisonStrength{0};
-    WeaponStruct()  = default;
+    WeaponStruct() = default;
 };
-
 
 struct ArmorStruct {
     TYPE_OF_BODYPARTS BodyParts{0};
@@ -95,9 +93,8 @@ struct ArmorStruct {
     int16_t Absorb{0};
     int16_t Stiffness{0};
     TYPE_OF_ARMORTYPE Type{0};
-    ArmorStruct()  = default;
+    ArmorStruct() = default;
 };
-
 
 struct SkillStruct {
     std::string serverName;
@@ -105,14 +102,12 @@ struct SkillStruct {
     TYPE_OF_GERMAN germanName;
 };
 
-
 struct TilesStruct {
     unsigned char flags;
     TYPE_OF_WALKINGCOST walkingCost;
     TYPE_OF_GERMAN German;
     TYPE_OF_ENGLISH English;
 };
-
 
 struct PlayerraceStruct {
     std::string racename;
@@ -145,7 +140,7 @@ struct MonsterArmor {
     short int strokeArmor{0};
     short int punctureArmor{0};
     short int thrustArmor{0};
-    MonsterArmor()  = default;
+    MonsterArmor() = default;
 };
 
 struct itemdef_t {
@@ -165,18 +160,10 @@ struct attributedef_t {
     std::pair<unsigned short, unsigned short> willpower;
     std::pair<unsigned short, unsigned short> essence;
 
-    attributedef_t():
-            luck(std::make_pair(10, 10)),
-            strength(std::make_pair(15, 15)),
-            dexterity(std::make_pair(10, 10)),
-            constitution(std::make_pair(8, 8)),
-            agility(std::make_pair(10, 10)),
-            intelligence(std::make_pair(10, 10)),
-            perception(std::make_pair(10, 10)),
-            willpower(std::make_pair(10, 10)),
-            essence(std::make_pair(10, 10))
-    {}
-
+    attributedef_t()
+            : luck(std::make_pair(10, 10)), strength(std::make_pair(15, 15)), dexterity(std::make_pair(10, 10)),
+              constitution(std::make_pair(8, 8)), agility(std::make_pair(10, 10)), intelligence(std::make_pair(10, 10)),
+              perception(std::make_pair(10, 10)), willpower(std::make_pair(10, 10)), essence(std::make_pair(10, 10)) {}
 };
 
 struct MonsterStruct {
@@ -199,7 +186,7 @@ struct MonsterStruct {
     bool canselfheal;
     movement_type movement;
     bool canattack;
-    attributedef_t  attributes;
+    attributedef_t attributes;
     skilltype skills;
     itemtype items;
     loottype loot;

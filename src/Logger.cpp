@@ -16,7 +16,6 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "Logger.hpp"
 
 LogType<LogPriority::EMERGENCY>::type Logger::emergency;

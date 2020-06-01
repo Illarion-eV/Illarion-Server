@@ -24,7 +24,6 @@
 #include "globals.hpp"
 #include "script/LuaTriggerScript.hpp"
 
-
 struct TriggerStruct {
     position pos;
     std::string scriptname;
@@ -42,4 +41,3 @@ public:
 };
 
 #endif
-

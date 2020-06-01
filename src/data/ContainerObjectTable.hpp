@@ -21,8 +21,8 @@
 #ifndef CONTAINER_OBJECT_TABLE_HPP
 #define CONTAINER_OBJECT_TABLE_HPP
 
-#include "types.hpp"
 #include "data/StructTable.hpp"
+#include "types.hpp"
 
 class ContainerObjectTable : public StructTable<TYPE_OF_ITEM_ID, TYPE_OF_CONTAINERSLOTS> {
 public:
@@ -33,4 +33,3 @@ public:
 };
 
 #endif
-

@@ -16,65 +16,66 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "Item.hpp"
+
 #include "constants.hpp"
 #include "data/Data.hpp"
 #include "script/LuaItemScript.hpp"
 #include "script/LuaLookAtItemScript.hpp"
-#include <sstream>
+
 #include <boost/lexical_cast.hpp>
 #include <range/v3/all.hpp>
+#include <sstream>
 
-extern std::shared_ptr<LuaLookAtItemScript>lookAtItemScript;
+extern std::shared_ptr<LuaLookAtItemScript> lookAtItemScript;
 
-auto ItemLookAt::operator==(const ItemLookAt& rhs) const -> bool {
-	bool equal = true;
-	equal &= (name == rhs.name);
-	equal &= (rareness == rhs.rareness);
-	equal &= (description == rhs.description);
-	equal &= (craftedBy == rhs.craftedBy);
-	equal &= (weight == rhs.weight);
-	equal &= (worth == rhs.worth);
-	equal &= (qualityText == rhs.qualityText);
-	equal &= (durabilityText == rhs.durabilityText);
-	equal &= (durabilityValue == rhs.durabilityValue);
-	equal &= (diamondLevel == rhs.diamondLevel);
-	equal &= (emeraldLevel == rhs.emeraldLevel);
-	equal &= (rubyLevel == rhs.rubyLevel);
-	equal &= (sapphireLevel == rhs.sapphireLevel);
-	equal &= (amethystLevel == rhs.amethystLevel);
-	equal &= (obsidianLevel == rhs.obsidianLevel);
-	equal &= (topazLevel == rhs.topazLevel);
-	equal &= (bonus == rhs.bonus);
+auto ItemLookAt::operator==(const ItemLookAt &rhs) const -> bool {
+    bool equal = true;
+    equal &= (name == rhs.name);
+    equal &= (rareness == rhs.rareness);
+    equal &= (description == rhs.description);
+    equal &= (craftedBy == rhs.craftedBy);
+    equal &= (weight == rhs.weight);
+    equal &= (worth == rhs.worth);
+    equal &= (qualityText == rhs.qualityText);
+    equal &= (durabilityText == rhs.durabilityText);
+    equal &= (durabilityValue == rhs.durabilityValue);
+    equal &= (diamondLevel == rhs.diamondLevel);
+    equal &= (emeraldLevel == rhs.emeraldLevel);
+    equal &= (rubyLevel == rhs.rubyLevel);
+    equal &= (sapphireLevel == rhs.sapphireLevel);
+    equal &= (amethystLevel == rhs.amethystLevel);
+    equal &= (obsidianLevel == rhs.obsidianLevel);
+    equal &= (topazLevel == rhs.topazLevel);
+    equal &= (bonus == rhs.bonus);
 
-	return equal;
+    return equal;
 }
 
-auto ScriptItem::operator==(const ScriptItem& rhs) const -> bool {
-	bool equal = (static_cast<const Item&>(*this) == rhs);
-	equal &= (type == rhs.type);
-	equal &= (pos == rhs.pos);
-	equal &= (itempos == rhs.itempos);
-	equal &= (owner == rhs.owner);
-	equal &= (inside == rhs.inside);
+auto ScriptItem::operator==(const ScriptItem &rhs) const -> bool {
+    bool equal = (static_cast<const Item &>(*this) == rhs);
+    equal &= (type == rhs.type);
+    equal &= (pos == rhs.pos);
+    equal &= (itempos == rhs.itempos);
+    equal &= (owner == rhs.owner);
+    equal &= (inside == rhs.inside);
 
-	return equal;
+    return equal;
 }
 
-auto Item::operator==(const Item& rhs) const -> bool {
-	bool equal = true;
-	equal &= (id == rhs.id);
-	equal &= (number == rhs.number);
-	equal &= (wear == rhs.wear);
-	equal &= (quality == rhs.quality);
-	equal &= (datamap == rhs.datamap);
+auto Item::operator==(const Item &rhs) const -> bool {
+    bool equal = true;
+    equal &= (id == rhs.id);
+    equal &= (number == rhs.number);
+    equal &= (wear == rhs.wear);
+    equal &= (quality == rhs.quality);
+    equal &= (datamap == rhs.datamap);
 
-	return equal;
+    return equal;
 }
 
-Item::Item(id_type id, number_type number, wear_type wear, quality_type quality, const script_data_exchangemap &datamap):
-    id(id), number(number), wear(wear), quality(quality), datamap(1) {
+Item::Item(id_type id, number_type number, wear_type wear, quality_type quality, const script_data_exchangemap &datamap)
+        : id(id), number(number), wear(wear), quality(quality), datamap(1) {
     setData(&datamap);
 }
 
@@ -109,11 +110,10 @@ void Item::setData(script_data_exchangemap const *datamap) {
         return;
     }
 
-    for (const auto& item : *datamap) {
+    for (const auto &item : *datamap) {
         setData(item.first, item.second);
     }
 }
-
 
 auto Item::hasData(const script_data_exchangemap &datamap) const -> bool {
     if (datamap.empty() && !hasNoData()) {
@@ -121,7 +121,9 @@ auto Item::hasData(const script_data_exchangemap &datamap) const -> bool {
     }
 
     using namespace ranges;
-    auto dataEqual = [this](const auto &dataKeyValue) {return getData(dataKeyValue.first) == dataKeyValue.second;};
+    auto dataEqual = [this](const auto &dataKeyValue) {
+        return getData(dataKeyValue.first) == dataKeyValue.second;
+    };
     return all_of(datamap, dataEqual);
 }
 
@@ -137,7 +139,6 @@ auto Item::getData(const std::string &key) const -> std::string {
     }
 }
 
-
 void Item::setData(const std::string &key, const std::string &value) {
     if (value.length() > 0) {
         datamap[key] = value;
@@ -145,7 +146,6 @@ void Item::setData(const std::string &key, const std::string &value) {
         datamap.erase(key);
     }
 }
-
 
 void Item::setData(const std::string &key, int32_t value) {
     std::stringstream ss;
@@ -158,7 +158,7 @@ auto Item::getDepot() const -> uint16_t {
 
     try {
         depotId = boost::lexical_cast<uint16_t>(getData("depot"));
-    } catch (const boost::bad_lexical_cast&) {
+    } catch (const boost::bad_lexical_cast &) {
         depotId = 1;
     }
 
@@ -173,7 +173,6 @@ void Item::reset() {
     datamap.clear();
 }
 
-
 void Item::resetWear() {
     const auto &itemStruct = Data::Items[id];
 
@@ -184,48 +183,45 @@ void Item::resetWear() {
     }
 }
 
-
 void Item::save(std::ostream &obj) const {
-    obj.write((char *) &id, sizeof(id_type));
-    obj.write((char *) &number, sizeof(number_type));
-    obj.write((char *) &wear, sizeof(wear_type));
-    obj.write((char *) &quality, sizeof(quality_type));
+    obj.write((char *)&id, sizeof(id_type));
+    obj.write((char *)&number, sizeof(number_type));
+    obj.write((char *)&wear, sizeof(wear_type));
+    obj.write((char *)&quality, sizeof(quality_type));
     auto mapsize = static_cast<uint8_t>(datamap.size());
-    obj.write((char *) &mapsize, sizeof(uint8_t));
+    obj.write((char *)&mapsize, sizeof(uint8_t));
 
     for (const auto &data : datamap) {
         auto sz1 = static_cast<uint8_t>(data.first.size());
         auto sz2 = static_cast<uint8_t>(data.second.size());
-        obj.write((char *) &sz1 , sizeof(uint8_t));
-        obj.write((char *) &sz2 , sizeof(uint8_t));
-        obj.write((char *) data.first.data() , sz1);
-        obj.write((char *) data.second.data() , sz2);
+        obj.write((char *)&sz1, sizeof(uint8_t));
+        obj.write((char *)&sz2, sizeof(uint8_t));
+        obj.write((char *)data.first.data(), sz1);
+        obj.write((char *)data.second.data(), sz2);
     }
 }
 
-
 void Item::load(std::istream &obj) {
-    obj.read((char *) &id, sizeof(id_type));
-    obj.read((char *) &number, sizeof(number_type));
-    obj.read((char *) &wear, sizeof(wear_type));
-    obj.read((char *) &quality, sizeof(quality_type));
+    obj.read((char *)&id, sizeof(id_type));
+    obj.read((char *)&number, sizeof(number_type));
+    obj.read((char *)&wear, sizeof(wear_type));
+    obj.read((char *)&quality, sizeof(quality_type));
     uint8_t tempsize;
-    obj.read((char *) &tempsize, sizeof(uint8_t));
+    obj.read((char *)&tempsize, sizeof(uint8_t));
     char readStr[255];
 
     for (int i = 0; i < tempsize; ++i) {
         uint8_t sz1 = 0;
         uint8_t sz2 = 0;
-        obj.read((char *) &sz1, sizeof(uint8_t));
-        obj.read((char *) &sz2, sizeof(uint8_t));
-        obj.read((char *) readStr, sz1);
-        std::string key(readStr,sz1);
-        obj.read((char *) readStr, sz2);
-        std::string value(readStr,sz2);
+        obj.read((char *)&sz1, sizeof(uint8_t));
+        obj.read((char *)&sz2, sizeof(uint8_t));
+        obj.read((char *)readStr, sz1);
+        std::string key(readStr, sz1);
+        obj.read((char *)readStr, sz2);
+        std::string value(readStr, sz2);
         datamap[key] = value;
     }
 }
-
 
 auto Item::survivesAgeing() -> bool {
     if (wear != 255 && wear != 0) {
@@ -318,4 +314,3 @@ auto ScriptItem::getLookAt(Character *character) const -> ItemLookAt {
 
     return lookAtItemScript->lookAtItem(character, *this);
 }
-

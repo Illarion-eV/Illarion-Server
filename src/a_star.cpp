@@ -20,14 +20,12 @@
 
 #include "a_star.hpp"
 
+#include "World.hpp"
+#include "data/Data.hpp"
+#include "data/TilesTable.hpp"
+#include "map/Field.hpp"
 
 #include <utility>
-
-
-#include "World.hpp"
-#include "map/Field.hpp"
-#include "data/TilesTable.hpp"
-#include "data/Data.hpp"
 
 namespace pathfinding {
 
@@ -35,12 +33,14 @@ using namespace boost;
 
 character_out_edge_iterator::character_out_edge_iterator() = default;
 
-character_out_edge_iterator::character_out_edge_iterator(int i, Position p, const world_map_graph &g): position(std::move(p)), graph(&g), direction(i) {
+character_out_edge_iterator::character_out_edge_iterator(int i, Position p, const world_map_graph &g)
+        : position(std::move(p)), graph(&g), direction(i) {
     valid_step();
 }
 
 auto character_out_edge_iterator::operator*() const -> std::pair<Position, Position> {
-    return std::make_pair(position, Position(position.first + character_moves[direction].first, position.second + character_moves[direction].second));
+    return std::make_pair(position, Position(position.first + character_moves[direction].first,
+                                             position.second + character_moves[direction].second));
 }
 
 void character_out_edge_iterator::operator++() {
@@ -53,7 +53,8 @@ auto character_out_edge_iterator::operator==(const character_out_edge_iterator &
 }
 
 void character_out_edge_iterator::valid_step() {
-    Position new_pos(position.first + character_moves[direction].first, position.second + character_moves[direction].second);
+    Position new_pos(position.first + character_moves[direction].first,
+                     position.second + character_moves[direction].second);
     bool moveToPossible = false;
 
     try {
@@ -64,9 +65,10 @@ void character_out_edge_iterator::valid_step() {
 
     while (direction < 8 && !moveToPossible && !(new_pos == graph->goal)) {
         ++direction;
-        
-        new_pos = Position(position.first + character_moves[direction].first, position.second + character_moves[direction].second);
-        
+
+        new_pos = Position(position.first + character_moves[direction].first,
+                           position.second + character_moves[direction].second);
+
         try {
             map::Field &field = World::get()->fieldAt(::position(new_pos.first, new_pos.second, graph->level));
             moveToPossible = field.moveToPossible();
@@ -75,27 +77,24 @@ void character_out_edge_iterator::valid_step() {
     }
 }
 
-world_map_graph::world_map_graph(Position goal, int level): goal(std::move(goal)), level(level) {
-}
+world_map_graph::world_map_graph(Position goal, int level) : goal(std::move(goal)), level(level) {}
 
-auto
-source(const world_map_graph::edge_descriptor &e, const world_map_graph &g) -> world_map_graph::vertex_descriptor {
+auto source(const world_map_graph::edge_descriptor &e, const world_map_graph &g) -> world_map_graph::vertex_descriptor {
     return e.first;
 }
 
-auto
-target(const world_map_graph::edge_descriptor &e, const world_map_graph &g) -> world_map_graph::vertex_descriptor {
+auto target(const world_map_graph::edge_descriptor &e, const world_map_graph &g) -> world_map_graph::vertex_descriptor {
     return e.second;
 }
 
-auto
-out_edges(const world_map_graph::vertex_descriptor &v, const world_map_graph &g) -> std::pair<world_map_graph::out_edge_iterator, world_map_graph::out_edge_iterator> {
+auto out_edges(const world_map_graph::vertex_descriptor &v, const world_map_graph &g)
+        -> std::pair<world_map_graph::out_edge_iterator, world_map_graph::out_edge_iterator> {
     using Iterator = world_map_graph::out_edge_iterator;
     return std::make_pair(Iterator(0, v, g), Iterator(8, v, g));
 }
 
-auto
-out_degree(const world_map_graph::vertex_descriptor &v, const world_map_graph &g) -> world_map_graph::degree_size_type {
+auto out_degree(const world_map_graph::vertex_descriptor &v, const world_map_graph &g)
+        -> world_map_graph::degree_size_type {
     using Iterator = world_map_graph::out_edge_iterator;
     world_map_graph::degree_size_type count = 0;
     Iterator end(8, v, g);
@@ -111,15 +110,17 @@ auto num_vertices(const world_map_graph &g) -> int {
     return 1000;
 }
 
-distance_heuristic::distance_heuristic(Vertex goal): goal(std::move(goal)) {
-    Logger::debug(LogFacility::Other) << "heuristic goal (" << this->goal.first << ", " << this->goal.second << ")" << Log::end;
+distance_heuristic::distance_heuristic(Vertex goal) : goal(std::move(goal)) {
+    Logger::debug(LogFacility::Other) << "heuristic goal (" << this->goal.first << ", " << this->goal.second << ")"
+                                      << Log::end;
 }
 
 auto distance_heuristic::operator()(const Vertex &u) -> Cost {
     Cost dx = goal.first - u.first;
     Cost dy = goal.second - u.second;
     Cost d = sqrt(dx * dx + dy * dy);
-    Logger::debug(LogFacility::Other) << "from (" << u.first << ", " << u.second << ") to (" << goal.first << ", " << goal.second << "): " << d << Log::end;
+    Logger::debug(LogFacility::Other) << "from (" << u.first << ", " << u.second << ") to (" << goal.first << ", "
+                                      << goal.second << "): " << d << Log::end;
     return d;
 }
 
@@ -132,8 +133,7 @@ auto edge_hash::operator()(std::pair<Position, Position> const &e) const -> std:
     return seed;
 }
 
-weight_calc::weight_calc(int level): level(level) {
-}
+weight_calc::weight_calc(int level) : level(level) {}
 
 auto weight_calc::operator[](key_type const &k) -> mapped_type & {
     if (find(k) == end()) {
@@ -171,8 +171,7 @@ auto vertex_index_hash::operator[](key_type const &k) -> mapped_type & {
     return at(k);
 }
 
-astar_ex_visitor::astar_ex_visitor(Position goal): goal(std::move(goal)) {
-}
+astar_ex_visitor::astar_ex_visitor(Position goal) : goal(std::move(goal)) {}
 
 void astar_ex_visitor::examine_vertex(const Position &u, const world_map_graph & /*unused*/) {
     if (u == goal) {
@@ -246,8 +245,7 @@ auto a_star(const ::position &start_pos, const ::position &goal_pos, std::list<d
     boost::associative_property_map<color_map_t> color(color_map);
 
     try {
-        astar_search_no_init(g, start, h, visitor, pred_pmap, rank_pmap,
-                             dist_pmap, weight, color, index, std::less<>(),
+        astar_search_no_init(g, start, h, visitor, pred_pmap, rank_pmap, dist_pmap, weight, color, index, std::less<>(),
                              std::plus<>(), std::numeric_limits<Cost>::max(), Cost());
     } catch (found_goal &fg) {
         vertex v = goal;
@@ -261,7 +259,8 @@ auto a_star(const ::position &start_pos, const ::position &goal_pos, std::list<d
             try {
                 steps.push_front(character_directions.at(dir));
             } catch (std::out_of_range &) {
-                Logger::error(LogFacility::Other) << "direction (" << dir.first << ", " << dir.second << ") is invalid" << Log::end;
+                Logger::error(LogFacility::Other)
+                        << "direction (" << dir.first << ", " << dir.second << ") is invalid" << Log::end;
             }
 
             v = pre;
@@ -276,5 +275,4 @@ auto a_star(const ::position &start_pos, const ::position &goal_pos, std::list<d
     return false;
 }
 
-}
-
+} // namespace pathfinding

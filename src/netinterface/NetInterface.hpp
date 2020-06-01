@@ -16,61 +16,60 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef CNETINTERFACE_HPP
 #define CNETINTERFACE_HPP
 
 /**
-*@ingroup Netinterface
-*/
+ *@ingroup Netinterface
+ */
 
-
-//include thread save vector
-#include "thread_safe_vector.hpp"
-
+// include thread save vector
 #include "Connection.hpp"
 #include "netinterface/BasicClientCommand.hpp"
 #include "netinterface/BasicServerCommand.hpp"
 #include "netinterface/CommandFactory.hpp"
+#include "thread_safe_vector.hpp"
+
 #include <array>
-#include <memory>
 #include <boost/asio.hpp>
 #include <deque>
+#include <memory>
 #include <mutex>
 
 class LoginCommandTS;
 
 /**
-* @defgroup Netinterface Network Interface
-* This is the interface for server client communication.
-*/
+ * @defgroup Netinterface Network Interface
+ * This is the interface for server client communication.
+ */
 
 /**
-*@ingroup Netinterface
-*class which holds the network interface and its thread for sending and receiving data
-*/
+ *@ingroup Netinterface
+ *class which holds the network interface and its thread for sending and receiving data
+ */
 class NetInterface : public std::enable_shared_from_this<NetInterface> {
 public:
-
     /**
-    * standard constructor, creates the two thread class receiver and sender
-    */
+     * standard constructor, creates the two thread class receiver and sender
+     */
     explicit NetInterface(boost::asio::io_service &io_servicen);
 
     /**
-    * destructor deletes all the classes which are constructed in the constructor
-    * WARNING: shoudln't be called before the threads stopped correctly
-    */
+     * destructor deletes all the classes which are constructed in the constructor
+     * WARNING: shoudln't be called before the threads stopped correctly
+     */
     ~NetInterface();
 
     void closeConnection(); /*<closes the connection to the client*/
-    auto activate(Player*  /*player*/= nullptr) -> bool; /*<activates the connection starts the sending and receiving threads, if player == nullptr only login command is accepted and processing stops afterwards*/
+    auto activate(Player * /*player*/ = nullptr)
+            -> bool; /*<activates the connection starts the sending and receiving threads, if player == nullptr only
+                        login command is accepted and processing stops afterwards*/
     auto nextInactive() -> bool;
 
     /**
-    * adds a command to the send queue so it will be sended correctly to the connection
-    * @param command the command which should be added
-    */
+     * adds a command to the send queue so it will be sended correctly to the connection
+     * @param command the command which should be added
+     */
     void addCommand(const ServerCommandPointer &command);
 
     void shutdownSend(const ServerCommandPointer &command);
@@ -86,18 +85,17 @@ public:
     }
 
     auto getLoginData() const -> std::shared_ptr<LoginCommandTS> {
-	    return loginData;
+        return loginData;
     }
 
 private:
-
     void handle_read_header(const boost::system::error_code &error);
     void handle_read_data(const boost::system::error_code &error);
 
     void handle_write(const boost::system::error_code &error);
     void handle_write_shutdown(const boost::system::error_code &error);
 
-    //Buffer for the header of messages
+    // Buffer for the header of messages
     std::array<unsigned char, 6> headerBuffer;
 
     ClientCommandPointer cmd;
@@ -110,15 +108,13 @@ private:
 
     boost::asio::ip::tcp::socket socket;
 
-    //Factory für Commands vom Client
+    // Factory für Commands vom Client
     CommandFactory commandFactory;
     uint16_t inactive;
     std::mutex sendQueueMutex;
     std::shared_ptr<LoginCommandTS> loginData;
 
-    Player* owner;
+    Player *owner;
 };
 
-
 #endif
-

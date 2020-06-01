@@ -18,14 +18,16 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <algorithm>
 #include "data/RaceTypeTable.hpp"
-#include "db/Connection.hpp"
-#include "db/ConnectionManager.hpp"
-#include "db/SelectQuery.hpp"
-#include "db/Result.hpp"
+
 #include "Logger.hpp"
 #include "Random.hpp"
+#include "db/Connection.hpp"
+#include "db/ConnectionManager.hpp"
+#include "db/Result.hpp"
+#include "db/SelectQuery.hpp"
+
+#include <algorithm>
 
 RaceTypeTable::RaceTypeTable() {
     Logger::info(LogFacility::Other) << "RaceTypeTable::constructor" << Log::end;
@@ -197,7 +199,7 @@ auto RaceTypeTable::isHairAvailable(TYPE_OF_RACE_ID race, TYPE_OF_RACE_TYPE_ID t
     }
 }
 
-auto RaceTypeTable::isBeardAvailable(TYPE_OF_RACE_ID race, TYPE_OF_RACE_TYPE_ID type, uint16_t beard) const -> bool {    
+auto RaceTypeTable::isBeardAvailable(TYPE_OF_RACE_ID race, TYPE_OF_RACE_TYPE_ID type, uint16_t beard) const -> bool {
     try {
         const auto &availableBeards = table.at(race).at(type).beard;
         return beard == 0 || std::find(availableBeards.begin(), availableBeards.end(), beard) != availableBeards.end();

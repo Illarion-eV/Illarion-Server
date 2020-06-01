@@ -16,14 +16,14 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef WORLDMAP_HPP
 #define WORLDMAP_HPP
 
-#include <vector>
-#include <unordered_map>
 #include "globals.hpp"
 #include "map/Map.hpp"
+
+#include <unordered_map>
+#include <vector>
 
 namespace map {
 
@@ -47,8 +47,8 @@ public:
     auto importFromEditor() -> bool;
     auto loadFromDisk() -> bool;
     void saveToDisk() const;
-    auto createMap(const std::string &name, const position &origin,
-                   uint16_t width, uint16_t height, uint16_t tile) -> bool;
+    auto createMap(const std::string &name, const position &origin, uint16_t width, uint16_t height, uint16_t tile)
+            -> bool;
 
     void makePersistentAt(const position &pos);
     void removePersistenceAt(const position &pos);
@@ -56,20 +56,19 @@ public:
 
 private:
     const std::string worldName{"Illarion"};
-    auto insert(Map&& newMap) -> bool;
-    auto insertPersistent(Field&& newField) -> bool;
+    auto insert(Map &&newMap) -> bool;
+    auto insertPersistent(Field &&newField) -> bool;
     void loadPersistentFields();
     void clear();
-    static auto createMapFromHeaderFile(const std::string &importDir,
-                                       const std::string &mapName) -> Map;
-    static auto readHeaderLine(const std::string &mapName, char header,
-                                  std::ifstream &headerFile, int &lineNumber) -> int16_t;
+    static auto createMapFromHeaderFile(const std::string &importDir, const std::string &mapName) -> Map;
+    static auto readHeaderLine(const std::string &mapName, char header, std::ifstream &headerFile, int &lineNumber)
+            -> int16_t;
     static auto isCommentOrEmpty(const std::string &line) -> bool;
 };
 
 auto walkableNear(WorldMap &worldMap, const position &pos) -> Field &;
 auto walkableNear(const WorldMap &worldMap, const position &pos) -> const Field &;
 
-}
+} // namespace map
 
 #endif

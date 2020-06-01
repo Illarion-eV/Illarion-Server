@@ -19,6 +19,7 @@
  */
 
 #include "data/QuestTable.hpp"
+
 #include "constants.hpp"
 
 auto QuestTable::getTableName() -> std::string {
@@ -26,10 +27,7 @@ auto QuestTable::getTableName() -> std::string {
 }
 
 auto QuestTable::getColumnNames() -> std::vector<std::string> {
-    return {
-        "qst_id",
-        "qst_script"
-    };
+    return {"qst_id", "qst_script"};
 }
 
 auto QuestTable::assignId(const Database::ResultTuple &row) -> TYPE_OF_QUEST_ID {
@@ -83,4 +81,3 @@ auto QuestTable::getQuestsInRange(const position &pos, int radius) const -> Ques
 
     return result;
 }
-

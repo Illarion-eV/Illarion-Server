@@ -20,15 +20,14 @@
 
 #include "db/ConnectionManager.hpp"
 
-#include <sstream>
-#include <string>
+#include "Config.hpp"
+#include "db/Connection.hpp"
 
 #include <boost/cstdint.hpp>
 #include <boost/lexical_cast.hpp>
 #include <pqxx/connection.hxx>
-
-#include "db/Connection.hpp"
-#include "Config.hpp"
+#include <sstream>
+#include <string>
 
 using namespace Database;
 using std::string;
@@ -62,10 +61,8 @@ ConnectionManager::ConnectionManager() {
     isOperational = false;
 };
 
-void ConnectionManager::addConnectionParameterIfValid(const string &param,
-        const string &value) {
+void ConnectionManager::addConnectionParameterIfValid(const string &param, const string &value) {
     if (value.size() > 0) {
         connectionString += " " + param + "=" + value;
     }
 }
-

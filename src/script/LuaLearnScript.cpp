@@ -19,13 +19,13 @@
  */
 
 #include "LuaLearnScript.hpp"
+
 #include "Character.hpp"
-#include <string>
 #include "character_ptr.hpp"
 
-LuaLearnScript::LuaLearnScript(const std::string &filename)
-    : LuaScript(filename) {
-}
+#include <string>
+
+LuaLearnScript::LuaLearnScript(const std::string &filename) : LuaScript(filename) {}
 
 LuaLearnScript::~LuaLearnScript() = default;
 
@@ -38,4 +38,3 @@ void LuaLearnScript::reduceMC(Character *cc) {
     character_ptr fuse_cc(cc);
     callEntrypoint("reduceMC", fuse_cc);
 }
-

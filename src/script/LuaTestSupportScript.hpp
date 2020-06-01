@@ -34,16 +34,13 @@ public:
     LuaTestSupportScript(const LuaTestSupportScript &) = delete;
     auto operator=(const LuaTestSupportScript &) -> LuaTestSupportScript & = delete;
 
-    template<typename... Args>
-    void test(const Args &... args) {
+    template <typename... Args> void test(const Args &... args) {
         callEntrypoint("test", args...);
     }
 
-    template<typename T, typename... Args>
-    auto test(const Args &... args) -> T {
+    template <typename T, typename... Args> auto test(const Args &... args) -> T {
         return callEntrypoint<T, Args...>("test", args...);
     }
 };
 
 #endif
-

@@ -16,60 +16,56 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
-#include "World.hpp"
-
 #include "Player.hpp"
-#include "tuningConstants.hpp"
-
+#include "World.hpp"
 #include "netinterface/NetInterface.hpp"
 #include "netinterface/protocol/ClientCommands.hpp"
+#include "tuningConstants.hpp"
 
 void Player::workoutCommands() {
     std::unique_lock<std::mutex> lock(commandMutex);
     while (!immediateCommands.empty()) {
-	    ClientCommandPointer cmd = immediateCommands.front();
-	    immediateCommands.pop();
-	    lock.unlock();
-	    cmd->performAction(this);
-	    lock.lock();
+        ClientCommandPointer cmd = immediateCommands.front();
+        immediateCommands.pop();
+        lock.unlock();
+        cmd->performAction(this);
+        lock.lock();
     }
 
     while (!queuedCommands.empty() && queuedCommands.front()->getMinAP() <= getActionPoints()) {
-	    ClientCommandPointer cmd = queuedCommands.front();
-	    queuedCommands.pop();
-	    lock.unlock();
-	    cmd->performAction(this);
-	    lock.lock();
+        ClientCommandPointer cmd = queuedCommands.front();
+        queuedCommands.pop();
+        lock.unlock();
+        cmd->performAction(this);
+        lock.lock();
     }
 }
 
 void Player::checkFightMode() {
     if (getAttackMode() && canFight()) {
-	    //cp->ltAction->abortAction();
-	    World::get()->characterAttacks(this);
+        // cp->ltAction->abortAction();
+        World::get()->characterAttacks(this);
     }
 }
 
 void Player::receiveCommand(const ClientCommandPointer &cmd) {
-	bool notify = false;
-	{
-		std::unique_lock<std::mutex> lock(commandMutex);
-		if (cmd->getMinAP() == 0) {
-			immediateCommands.push(cmd);
-			notify = true;
-		} else {
-			if (getActionPoints() > cmd->getMinAP() && queuedCommands.empty()) {
-				notify = true;
+    bool notify = false;
+    {
+        std::unique_lock<std::mutex> lock(commandMutex);
+        if (cmd->getMinAP() == 0) {
+            immediateCommands.push(cmd);
+            notify = true;
+        } else {
+            if (getActionPoints() > cmd->getMinAP() && queuedCommands.empty()) {
+                notify = true;
             }
 
-			queuedCommands.push(cmd);
-		}
-	}
+            queuedCommands.push(cmd);
+        }
+    }
 
-	if (notify) {
-		World::get()->addPlayerImmediateActionQueue(this);
-		World::get()->scheduler.signalNewPlayerAction();
-	}
+    if (notify) {
+        World::get()->addPlayerImmediateActionQueue(this);
+        World::get()->scheduler.signalNewPlayerAction();
+    }
 }
-

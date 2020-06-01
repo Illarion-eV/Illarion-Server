@@ -18,62 +18,64 @@
  *  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "World.hpp"
+
+#include "script/binding/binding.hpp"
+#include "script/forwarder.hpp"
+
 #include <luabind/luabind.hpp>
 #include <luabind/out_value_policy.hpp>
-#include "World.hpp"
-#include "script/forwarder.hpp"
-#include "script/binding/binding.hpp"
 
 namespace binding {
 
-    auto world() -> luabind::scope {
-        return luabind::class_<World>("World")
-                .def("LoS", &world_LuaLoS)
-                .def("deleteNPC", &World::deleteNPC)
-                .def("createDynamicNPC", &World::createDynamicNPC)
-                .def("getPlayersOnline", &world_getPlayersOnline)
-                .def("getNPCS", &world_getNPCS)
-                .def("getCharactersInRangeOf", &world_getCharactersInRangeOf)
-                .def("getPlayersInRangeOf", &world_getPlayersInRangeOf)
-                .def("getMonstersInRangeOf", &world_getMonstersInRangeOf)
-                .def("getNPCSInRangeOf", &world_getNPCSInRangeOf)
-                .def("getArmorStruct", &World::getArmorStruct, luabind::pure_out_value(_3))
-                .def("getWeaponStruct", &World::getWeaponStruct, luabind::pure_out_value(_3))
-                .def("getNaturalArmor", &World::getNaturalArmor, luabind::pure_out_value(_3))
-                .def("getMonsterAttack", &World::getMonsterAttack, luabind::pure_out_value(_3))
-                .def("changeQuality", &World::changeQuality)
-                .def("changeItem", &World::changeItem)
-                .def("isCharacterOnField", &World::isCharacterOnField)
-                .def("getCharacterOnField", &World::getCharacterOnField)
-                .def("putItemOnMap", &World::putItemOnMap)
-                .def("putItemAlwaysOnMap", &World::putItemAlwaysOnMap)
-                .def("getField", &world_fieldAt)
-                .def("makePersistentAt", &World::makePersistentAt)
-                .def("removePersistenceAt", &World::removePersistenceAt)
-                .def("isPersistentAt", &World::isPersistentAt)
-                .def("getTime", &World::getTime)
-                .def("erase", &World::erase)
-                .def("increase", &World::increase)
-                .def("swap", &World::swap)
-                .def("createItemFromId", world_createFromId)
-                .def("createItemFromItem", &World::createFromItem)
-                .def("createMonster", &World::createMonster)
-                .def("gfx", &World::gfx)
-                .def("makeSound", &World::makeSound)
-                .def("getItemStats", &World::getItemStats)
-                .def("getItemStatsFromId", &World::getItemStatsFromId)
-                .def("sendWeatherToAllPlayers", &World::sendWeatherToAllPlayers)
-                .def("setWeatherPart", &World::setWeatherPart)
-                .def("setWeather", &World::setWeather)
-                .def("isItemOnField", &World::isItemOnField)
-                .def("getItemOnField", &World::getItemOnField)
-                .def("changeTile", &World::changeTile)
-                .def("getItemName", &World::getItemName)
-                .def("createSavedArea", &World::createSavedArea)
-                .def("broadcast", &World::broadcast)
-                .def("sendMonitoringMessage", &World::sendMonitoringMessage)
-                .def_readwrite("g_item", &World::g_item)
-                .def_readwrite("weather", &World::weather);
-    }
-
+auto world() -> luabind::scope {
+    return luabind::class_<World>("World")
+            .def("LoS", &world_LuaLoS)
+            .def("deleteNPC", &World::deleteNPC)
+            .def("createDynamicNPC", &World::createDynamicNPC)
+            .def("getPlayersOnline", &world_getPlayersOnline)
+            .def("getNPCS", &world_getNPCS)
+            .def("getCharactersInRangeOf", &world_getCharactersInRangeOf)
+            .def("getPlayersInRangeOf", &world_getPlayersInRangeOf)
+            .def("getMonstersInRangeOf", &world_getMonstersInRangeOf)
+            .def("getNPCSInRangeOf", &world_getNPCSInRangeOf)
+            .def("getArmorStruct", &World::getArmorStruct, luabind::pure_out_value(_3))
+            .def("getWeaponStruct", &World::getWeaponStruct, luabind::pure_out_value(_3))
+            .def("getNaturalArmor", &World::getNaturalArmor, luabind::pure_out_value(_3))
+            .def("getMonsterAttack", &World::getMonsterAttack, luabind::pure_out_value(_3))
+            .def("changeQuality", &World::changeQuality)
+            .def("changeItem", &World::changeItem)
+            .def("isCharacterOnField", &World::isCharacterOnField)
+            .def("getCharacterOnField", &World::getCharacterOnField)
+            .def("putItemOnMap", &World::putItemOnMap)
+            .def("putItemAlwaysOnMap", &World::putItemAlwaysOnMap)
+            .def("getField", &world_fieldAt)
+            .def("makePersistentAt", &World::makePersistentAt)
+            .def("removePersistenceAt", &World::removePersistenceAt)
+            .def("isPersistentAt", &World::isPersistentAt)
+            .def("getTime", &World::getTime)
+            .def("erase", &World::erase)
+            .def("increase", &World::increase)
+            .def("swap", &World::swap)
+            .def("createItemFromId", world_createFromId)
+            .def("createItemFromItem", &World::createFromItem)
+            .def("createMonster", &World::createMonster)
+            .def("gfx", &World::gfx)
+            .def("makeSound", &World::makeSound)
+            .def("getItemStats", &World::getItemStats)
+            .def("getItemStatsFromId", &World::getItemStatsFromId)
+            .def("sendWeatherToAllPlayers", &World::sendWeatherToAllPlayers)
+            .def("setWeatherPart", &World::setWeatherPart)
+            .def("setWeather", &World::setWeather)
+            .def("isItemOnField", &World::isItemOnField)
+            .def("getItemOnField", &World::getItemOnField)
+            .def("changeTile", &World::changeTile)
+            .def("getItemName", &World::getItemName)
+            .def("createSavedArea", &World::createSavedArea)
+            .def("broadcast", &World::broadcast)
+            .def("sendMonitoringMessage", &World::sendMonitoringMessage)
+            .def_readwrite("g_item", &World::g_item)
+            .def_readwrite("weather", &World::weather);
 }
+
+} // namespace binding

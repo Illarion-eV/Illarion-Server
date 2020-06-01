@@ -25,10 +25,7 @@ auto ContainerObjectTable::getTableName() -> std::string {
 }
 
 auto ContainerObjectTable::getColumnNames() -> std::vector<std::string> {
-    return {
-        "con_itemid",
-        "con_slots"
-    };
+    return {"con_itemid", "con_slots"};
 }
 
 auto ContainerObjectTable::assignId(const Database::ResultTuple &row) -> TYPE_OF_ITEM_ID {
@@ -38,4 +35,3 @@ auto ContainerObjectTable::assignId(const Database::ResultTuple &row) -> TYPE_OF
 auto ContainerObjectTable::assignTable(const Database::ResultTuple &row) -> TYPE_OF_CONTAINERSLOTS {
     return row["con_slots"].as<TYPE_OF_CONTAINERSLOTS>();
 }
-

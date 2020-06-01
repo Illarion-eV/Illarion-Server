@@ -22,6 +22,7 @@
 #define SPAWNPOINT_HPP
 
 #include "globals.hpp"
+
 #include <list>
 
 // just declare a class named World...
@@ -29,10 +30,10 @@ class World;
 
 //! defines a Spawnpoint
 class SpawnPoint {
-
 public:
     //! Creates a new SpawnPoint at <pos>
-    explicit SpawnPoint(const position &pos, int Range = 20, uint16_t Spawnrange = 0, uint16_t Min_Spawntime = 1, uint16_t Max_Spawntime = 1, bool Spawnall = false);
+    explicit SpawnPoint(const position &pos, int Range = 20, uint16_t Spawnrange = 0, uint16_t Min_Spawntime = 1,
+                        uint16_t Max_Spawntime = 1, bool Spawnall = false);
 
     //! Destructor
     ~SpawnPoint();
@@ -67,20 +68,20 @@ private:
 
     position spawnpos;
 
-    //walkrange of the monsters from the spawn
+    // walkrange of the monsters from the spawn
     int range;
 
-    //range of the spawns, in this area the creatures can be spawned
+    // range of the spawns, in this area the creatures can be spawned
     uint16_t spawnrange;
 
-    //the number of cycles untlin new monsters are spawned
+    // the number of cycles untlin new monsters are spawned
     uint16_t min_spawntime;
     uint16_t max_spawntime;
 
-    //the number of cycles until the next spawn
+    // the number of cycles until the next spawn
     uint16_t nextspawntime;
 
-    //should be all monsters respawned in every cycle
+    // should be all monsters respawned in every cycle
     bool spawnall;
 
     struct SpawnEntryStruct {

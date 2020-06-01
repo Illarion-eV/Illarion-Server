@@ -19,16 +19,15 @@
  */
 
 #include "LuaTriggerScript.hpp"
+
 #include "Character.hpp"
 #include "character_ptr.hpp"
 
-LuaTriggerScript::LuaTriggerScript()
-     {
+LuaTriggerScript::LuaTriggerScript() {
     init_functions();
 }
 
-LuaTriggerScript::LuaTriggerScript(const std::string &filename, const position &pos)
-    : LuaScript(filename), _pos(pos) {
+LuaTriggerScript::LuaTriggerScript(const std::string &filename, const position &pos) : LuaScript(filename), _pos(pos) {
     init_functions();
 }
 
@@ -67,4 +66,3 @@ void LuaTriggerScript::TakeItemFromField(const ScriptItem &item, Character *char
     character_ptr fuse_Character(character);
     callEntrypoint("TakeItemFromField", item, fuse_Character);
 }
-

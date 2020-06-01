@@ -22,12 +22,7 @@ ACLOCAL_AMFLAGS = -Im4
 
 SUBDIRS = src test
 
-EXTRA_DIST = .astylerc
-
 dist_sysconf_DATA=setup/illarion.conf
-
-style: .astylerc
-	astyle -n --options=$(top_srcdir)/.astylerc "${top_srcdir}/*.cpp" "${top_srcdir}/*.hpp"
 
 clean-local:
 	-rm -rf $(top_builddir)/src/version.hpp $(top_builddir)/test/data

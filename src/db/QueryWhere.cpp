@@ -19,12 +19,12 @@
  */
 
 #include "db/QueryWhere.hpp"
+
 #include "db/Query.hpp"
 
 using namespace Database;
 
-QueryWhere::QueryWhere(const Connection &connection) : connection(connection) {
-}
+QueryWhere::QueryWhere(const Connection &connection) : connection(connection) {}
 
 void QueryWhere::andConditions() {
     mergeConditions("AND");

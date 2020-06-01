@@ -21,8 +21,9 @@
 #ifndef ITEMLOOKAT_HPP
 #define ITEMLOOKAT_HPP
 
-#include <string>
 #include "types.hpp"
+
+#include <string>
 
 class ItemLookAt {
 public:
@@ -30,7 +31,8 @@ public:
     static const uint8_t MAX_GEM_LEVEL = 10;
     static const uint8_t MAX_DURABILITY = 100;
 
-    enum Rareness {
+    enum Rareness
+    {
         commonItem = 1,
         uncommonItem = 2,
         rareItem = 3,
@@ -195,7 +197,7 @@ public:
         return bonus;
     }
 
-    auto operator==(const ItemLookAt& rhs) const -> bool;
+    auto operator==(const ItemLookAt &rhs) const -> bool;
 
     [[nodiscard]] auto isValid() const -> bool {
         return name.length() > 0;
@@ -225,4 +227,3 @@ private:
 };
 
 #endif
-

@@ -19,6 +19,7 @@
  */
 
 #include "db/SchemaHelper.hpp"
+
 #include "Config.hpp"
 
 using namespace Database;

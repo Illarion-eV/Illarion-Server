@@ -16,19 +16,17 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef CONTAINER_HPP
 #define CONTAINER_HPP
 
 #define MAXIMALEREKURSIONSTIEFE 100
 
+#include "Item.hpp"
 #include "TableStructs.hpp"
 
-#include <map>
-#include <iostream>
 #include <fstream>
-
-#include "Item.hpp"
+#include <iostream>
+#include <map>
 
 class ItemTable;
 
@@ -49,7 +47,7 @@ public:
     explicit Container(Item::id_type itemId);
     Container(const Container &source);
     virtual ~Container();
-    auto operator =(const Container &source) -> Container &;
+    auto operator=(const Container &source) -> Container &;
 
     auto TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &item, Container *&cc, Item::number_type count) -> bool;
     auto viewItemNr(TYPE_OF_CONTAINERSLOTS nr, ScriptItem &item, Container *&cc) -> bool;
@@ -76,7 +74,8 @@ public:
     auto getItemList(Item::id_type itemid) -> std::vector<ScriptItem>;
     auto getItemList() -> std::vector<ScriptItem>;
 
-    virtual auto eraseItem(Item::id_type itemid, Item::number_type count, script_data_exchangemap const *data = nullptr) -> int;
+    virtual auto eraseItem(Item::id_type itemid, Item::number_type count, script_data_exchangemap const *data = nullptr)
+            -> int;
 
     auto increaseAtPos(unsigned char pos, int count) -> int;
 
@@ -109,4 +108,3 @@ private:
 };
 
 #endif
-

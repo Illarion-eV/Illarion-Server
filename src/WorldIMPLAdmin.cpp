@@ -16,48 +16,43 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
-#include "World.hpp"
-
-#include <sstream>
-#include <list>
-#include <iostream>
-#include <regex>
-
 #include "Config.hpp"
-#include "PlayerManager.hpp"
 #include "Logger.hpp"
-#include "constants.hpp"
-#include "Player.hpp"
 #include "Monster.hpp"
-#include "map/Field.hpp"
-
+#include "Player.hpp"
+#include "PlayerManager.hpp"
+#include "World.hpp"
+#include "constants.hpp"
 #include "data/Data.hpp"
 #include "data/MonsterTable.hpp"
+#include "data/QuestNodeTable.hpp"
 #include "data/RaceTypeTable.hpp"
 #include "data/ScheduledScriptsTable.hpp"
-#include "data/QuestNodeTable.hpp"
-
-#include "script/LuaLookAtPlayerScript.hpp"
-#include "script/LuaLookAtItemScript.hpp"
-#include "script/LuaPlayerDeathScript.hpp"
-#include "script/LuaWeaponScript.hpp"
-#include "script/LuaReloadScript.hpp"
+#include "map/Field.hpp"
+#include "netinterface/NetInterface.hpp"
+#include "netinterface/protocol/ServerCommands.hpp"
+#include "script/LuaDepotScript.hpp"
 #include "script/LuaLearnScript.hpp"
 #include "script/LuaLoginScript.hpp"
 #include "script/LuaLogoutScript.hpp"
-#include "script/LuaDepotScript.hpp"
+#include "script/LuaLookAtItemScript.hpp"
+#include "script/LuaLookAtPlayerScript.hpp"
+#include "script/LuaPlayerDeathScript.hpp"
+#include "script/LuaReloadScript.hpp"
+#include "script/LuaWeaponScript.hpp"
 
-#include "netinterface/protocol/ServerCommands.hpp"
-#include "netinterface/NetInterface.hpp"
+#include <iostream>
+#include <list>
+#include <regex>
+#include <sstream>
 
-extern std::shared_ptr<LuaLookAtPlayerScript>lookAtPlayerScript;
-extern std::shared_ptr<LuaLookAtItemScript>lookAtItemScript;
-extern std::shared_ptr<LuaPlayerDeathScript>playerDeathScript;
-extern std::shared_ptr<LuaLoginScript>loginScript;
-extern std::shared_ptr<LuaLogoutScript>logoutScript;
-extern std::shared_ptr<LuaLearnScript>learnScript;
-extern std::shared_ptr<LuaDepotScript>depotScript;
+extern std::shared_ptr<LuaLookAtPlayerScript> lookAtPlayerScript;
+extern std::shared_ptr<LuaLookAtItemScript> lookAtItemScript;
+extern std::shared_ptr<LuaPlayerDeathScript> playerDeathScript;
+extern std::shared_ptr<LuaLoginScript> loginScript;
+extern std::shared_ptr<LuaLogoutScript> logoutScript;
+extern std::shared_ptr<LuaLearnScript> learnScript;
+extern std::shared_ptr<LuaDepotScript> depotScript;
 extern std::unique_ptr<RaceTypeTable> raceTypes;
 extern std::unique_ptr<MonsterTable> monsterDescriptions;
 extern std::unique_ptr<ScheduledScriptsTable> scheduledScripts;
@@ -69,90 +64,189 @@ void set_login(World *, Player *, const std::string &);
 
 // register any gm commands here...
 void World::InitGMCommands() {
+    GMCommands["what"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool {
+        world->what_command(player);
+        return true;
+    };
 
-    GMCommands["what"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool { world->what_command(player); return true; };
+    GMCommands["?"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool {
+        world->gmhelp_command(player);
+        return true;
+    };
 
-    GMCommands["?"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool { world->gmhelp_command(player); return true; };
-
-    GMCommands["warp_to"] = [](World *world, Player *player, const std::string &text) -> bool { world->warpto_command(player, text); return true; };
+    GMCommands["warp_to"] = [](World *world, Player *player, const std::string &text) -> bool {
+        world->warpto_command(player, text);
+        return true;
+    };
     GMCommands["w"] = GMCommands["warp_to"];
 
-    GMCommands["summon"] = [](World *world, Player *player, const std::string &text) -> bool { world->summon_command(player, text); return true; };
+    GMCommands["summon"] = [](World *world, Player *player, const std::string &text) -> bool {
+        world->summon_command(player, text);
+        return true;
+    };
     GMCommands["s"] = GMCommands["summon"];
 
-    GMCommands["ban"] = [](World *world, Player *player, const std::string &text) -> bool { world->ban_command(player, text); return true; };
+    GMCommands["ban"] = [](World *world, Player *player, const std::string &text) -> bool {
+        world->ban_command(player, text);
+        return true;
+    };
     GMCommands["b"] = GMCommands["ban"];
 
-    GMCommands["tile"] = [](World *world, Player *player, const std::string &text) -> bool { world->tile_command(player, text); return true; };
+    GMCommands["tile"] = [](World *world, Player *player, const std::string &text) -> bool {
+        world->tile_command(player, text);
+        return true;
+    };
     GMCommands["t"] = GMCommands["tile"];
 
-    GMCommands["who"] = [](World *world, Player *player, const std::string &text) -> bool { world->who_command(player, text); return true; };
+    GMCommands["who"] = [](World *world, Player *player, const std::string &text) -> bool {
+        world->who_command(player, text);
+        return true;
+    };
 
-    GMCommands["turtleon"] = [](World *world, Player *player, const std::string &text) -> bool { world->turtleon_command(player, text); return true; };
+    GMCommands["turtleon"] = [](World *world, Player *player, const std::string &text) -> bool {
+        world->turtleon_command(player, text);
+        return true;
+    };
     GMCommands["ton"] = GMCommands["turtleon"];
-    GMCommands["turtleoff"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool { world->turtleoff_command(player); return true; };
+    GMCommands["turtleoff"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool {
+        world->turtleoff_command(player);
+        return true;
+    };
     GMCommands["toff"] = GMCommands["turtleoff"];
 
-    GMCommands["clippingon"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool { world->clippingon_command(player); return true; };
+    GMCommands["clippingon"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool {
+        world->clippingon_command(player);
+        return true;
+    };
     GMCommands["con"] = GMCommands["clippingon"];
-    GMCommands["clippingoff"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool { world->clippingoff_command(player); return true; };
+    GMCommands["clippingoff"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool {
+        world->clippingoff_command(player);
+        return true;
+    };
     GMCommands["coff"] = GMCommands["clippingoff"];
 
-    GMCommands["playersave"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool { world->playersave_command(player); return true; };
+    GMCommands["playersave"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool {
+        world->playersave_command(player);
+        return true;
+    };
     GMCommands["ps"] = GMCommands["playersave"];
 
-    GMCommands["add_teleport"] = [](World *world, Player *player, const std::string &text) -> bool { world->teleport_command(player, text); return true; };
+    GMCommands["add_teleport"] = [](World *world, Player *player, const std::string &text) -> bool {
+        world->teleport_command(player, text);
+        return true;
+    };
 
-    GMCommands["set_spawn"] = [](World *world, Player *player, const std::string &text) -> bool { set_spawn_command(world, player, text); return true; };
+    GMCommands["set_spawn"] = [](World *world, Player *player, const std::string &text) -> bool {
+        set_spawn_command(world, player, text);
+        return true;
+    };
 
-    GMCommands["create_area"] = [](World *world, Player *player, const std::string &text) -> bool { create_area_command(world, player, text); return true; };
+    GMCommands["create_area"] = [](World *world, Player *player, const std::string &text) -> bool {
+        create_area_command(world, player, text);
+        return true;
+    };
 
-    GMCommands["login"] = [](World *world, Player *player, const std::string &text) -> bool { world->set_login(player, text); return true; };
+    GMCommands["login"] = [](World *world, Player *player, const std::string &text) -> bool {
+        world->set_login(player, text);
+        return true;
+    };
 
-    GMCommands["forceintroduce"] = [](World *world, Player *player, const std::string &text) -> bool { world->ForceIntroduce(player, text); return true; };
+    GMCommands["forceintroduce"] = [](World *world, Player *player, const std::string &text) -> bool {
+        world->ForceIntroduce(player, text);
+        return true;
+    };
     GMCommands["fi"] = GMCommands["forceintroduce"];
-    GMCommands["forceintroduceall"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool { world->ForceIntroduceAll(player); return true; };
+    GMCommands["forceintroduceall"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool {
+        world->ForceIntroduceAll(player);
+        return true;
+    };
     GMCommands["fia"] = GMCommands["forceintroduceall"];
 
-    GMCommands["exportmaps"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool { return world->exportMaps(player); };
+    GMCommands["exportmaps"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool {
+        return world->exportMaps(player);
+    };
 
-    GMCommands["makeinvisible"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool { world->makeInvisible(player); return true; };
+    GMCommands["makeinvisible"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool {
+        world->makeInvisible(player);
+        return true;
+    };
     GMCommands["mi"] = GMCommands["makeinvisible"];
 
-    GMCommands["makevisible"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool { world->makeVisible(player); return true; };
+    GMCommands["makevisible"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool {
+        world->makeVisible(player);
+        return true;
+    };
     GMCommands["mv"] = GMCommands["makevisible"];
 
-    GMCommands["showwarpfields"] = [](World *world, Player *player, const std::string &text) -> bool { world->showWarpFieldsInRange(player, text); return true; };
+    GMCommands["showwarpfields"] = [](World *world, Player *player, const std::string &text) -> bool {
+        world->showWarpFieldsInRange(player, text);
+        return true;
+    };
 
-    GMCommands["removewarpfield"] = [](World *world, Player *player, const std::string &text) -> bool { world->removeTeleporter(player, text); return true; };
+    GMCommands["removewarpfield"] = [](World *world, Player *player, const std::string &text) -> bool {
+        world->removeTeleporter(player, text);
+        return true;
+    };
 
-    GMCommands["talkto"] = [](World *world, Player *player, const std::string &text) -> bool { world->talkto_command(player, text); return true; };
+    GMCommands["talkto"] = [](World *world, Player *player, const std::string &text) -> bool {
+        world->talkto_command(player, text);
+        return true;
+    };
     GMCommands["tt"] = GMCommands["talkto"];
 
-    GMCommands["nuke"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool { world->kill_command(player); return true; };
+    GMCommands["nuke"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool {
+        world->kill_command(player);
+        return true;
+    };
 
-    GMCommands["fullreload"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool { world->reload_command(player); return true; };
+    GMCommands["fullreload"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool {
+        world->reload_command(player);
+        return true;
+    };
     GMCommands["fr"] = GMCommands["fullreload"];
 
-    GMCommands["mapsave"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool { world->save_command(player); return true; };
+    GMCommands["mapsave"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool {
+        world->save_command(player);
+        return true;
+    };
 
-    GMCommands["jumpto"] = [](World *world, Player *player, const std::string &text) -> bool { world->jumpto_command(player, text); return true; };
+    GMCommands["jumpto"] = [](World *world, Player *player, const std::string &text) -> bool {
+        world->jumpto_command(player, text);
+        return true;
+    };
     GMCommands["j"] = GMCommands["jumpto"];
 
-    GMCommands["broadcast"] = [](World *world, Player *player, const std::string &text) -> bool { world->broadcast_command(player, text); return true; };
+    GMCommands["broadcast"] = [](World *world, Player *player, const std::string &text) -> bool {
+        world->broadcast_command(player, text);
+        return true;
+    };
     GMCommands["bc"] = GMCommands["broadcast"];
 
-    GMCommands["kickall"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool { world->kickall_command(player); return true; };
+    GMCommands["kickall"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool {
+        world->kickall_command(player);
+        return true;
+    };
     GMCommands["ka"] = GMCommands["kickall"];
 
-    GMCommands["kick"] = [](World *world, Player *player, const std::string &text) -> bool { world->kickplayer_command(player, text); return true; };
+    GMCommands["kick"] = [](World *world, Player *player, const std::string &text) -> bool {
+        world->kickplayer_command(player, text);
+        return true;
+    };
     GMCommands["k"] = GMCommands["kick"];
 
-    GMCommands["showips"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool { world->showIPS_Command(player); return true; };
-    GMCommands["create"] = [](World *world, Player *player, const std::string &text) -> bool { world->create_command(player, text); return true; };
+    GMCommands["showips"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool {
+        world->showIPS_Command(player);
+        return true;
+    };
+    GMCommands["create"] = [](World *world, Player *player, const std::string &text) -> bool {
+        world->create_command(player, text);
+        return true;
+    };
 
-    GMCommands["spawn"] = [](World *world, Player *player, const std::string &text) -> bool { world->spawn_command(player, text); return true; };
-
+    GMCommands["spawn"] = [](World *world, Player *player, const std::string &text) -> bool {
+        world->spawn_command(player, text);
+        return true;
+    };
 }
 
 void World::spawn_command(Player *cp, const std::string &monsterId) {
@@ -163,8 +257,7 @@ void World::spawn_command(Player *cp, const std::string &monsterId) {
         ss >> id;
         position pos = cp->getPosition();
         pos.x++;
-        Logger::info(LogFacility::Admin) << *cp << " creates monster " << monsterId
-                                         << " at " << pos << Log::end;
+        Logger::info(LogFacility::Admin) << *cp << " creates monster " << monsterId << " at " << pos << Log::end;
         createMonster(id, pos, 0);
     }
 }
@@ -199,11 +292,10 @@ void World::create_command(Player *cp, const std::string &itemid) {
             }
         }
 
-        Logger::info(LogFacility::Admin) << *cp << " creates item " << item << " with quantity "
-                                         << quantity << ", quality " << quality << ", data " << datalog << Log::end;
+        Logger::info(LogFacility::Admin) << *cp << " creates item " << item << " with quantity " << quantity
+                                         << ", quality " << quality << ", data " << datalog << Log::end;
         cp->createItem(item, quantity, quality, &dataList);
     }
-
 }
 
 void World::kill_command(Player *cp) {
@@ -275,8 +367,8 @@ void World::jumpto_command(Player *cp, const std::string &player) {
     if (cp->hasGMRight(gmr_warp) || (Config::instance().debug != 0)) {
         cp->closeAllShowcasesOfMapContainers();
         teleportPlayerToOther(cp, player);
-        Logger::info(LogFacility::Admin) << *cp << " jumps to player " << player
-                                         << " at " << cp->getPosition() << Log::end;
+        Logger::info(LogFacility::Admin) << *cp << " jumps to player " << player << " at " << cp->getPosition()
+                                         << Log::end;
     }
 }
 
@@ -320,7 +412,8 @@ void World::talkto_command(Player *player, const std::string &text) {
 
         if (target != nullptr) {
 #ifdef LOG_TALK
-            Logger::info(LogFacility::Player) << *player << " talks to " << *target << ": " << match[2].str() << Log::end;
+            Logger::info(LogFacility::Player)
+                    << *player << " talks to " << *target << ": " << match[2].str() << Log::end;
 #endif
             target->inform(match[2].str(), Player::informGM);
             std::string message = "to " + target->to_string() + ": " + match[2].str();
@@ -398,7 +491,6 @@ void World::teleportPlayerToOther(Player *player, const std::string &target) {
     }
 }
 
-
 void World::forceLogoutOfAllPlayers() {
     Players.for_each([this](Player *player) {
         try {
@@ -418,7 +510,6 @@ void World::forceLogoutOfAllPlayers() {
     Players.clear();
 }
 
-
 auto World::forceLogoutOfPlayer(const std::string &name) -> bool {
     Player *temp = Players.find(name);
 
@@ -435,7 +526,6 @@ auto World::forceLogoutOfPlayer(const std::string &name) -> bool {
     }
 }
 
-
 void World::sendAdminAllPlayerData(Player *admin) {
     if (!admin->hasGMRight(gmr_basiccommands)) {
         return;
@@ -444,7 +534,6 @@ void World::sendAdminAllPlayerData(Player *admin) {
     ServerCommandPointer cmd = std::make_shared<AdminViewPlayersTC>();
     admin->Connection->addCommand(cmd);
 }
-
 
 void World::warpto_command(Player *player, const std::string &text) {
     if (!player->hasGMRight(gmr_warp) && (Config::instance().debug == 0)) {
@@ -480,7 +569,6 @@ void World::warpto_command(Player *player, const std::string &text) {
     }
 }
 
-
 // !summon <player>
 void World::summon_command(Player *player, const std::string &text) {
     if (!player->hasGMRight(gmr_summon)) {
@@ -490,11 +578,11 @@ void World::summon_command(Player *player, const std::string &text) {
     auto *target = Players.find(text);
 
     if ((target != nullptr) && target->getId() != player->getId()) {
-        Logger::info(LogFacility::Admin) << *player << " summons player " << *target << " to " << player->getPosition() << Log::end;
+        Logger::info(LogFacility::Admin) << *player << " summons player " << *target << " to " << player->getPosition()
+                                         << Log::end;
         target->Warp(player->getPosition());
     }
 }
-
 
 // !ban <time> [m|h|d] <player>
 void World::ban_command(Player *cp, const std::string &text) {
@@ -523,19 +611,20 @@ void World::ban_command(Player *cp, const std::string &text) {
 
                     switch (timeunit) {
                     case 'd':
-                        ban(target, duration*86400, cp->getId());
+                        ban(target, duration * 86400, cp->getId());
                         break;
                     case 'h':
-                        ban(target, duration*3600, cp->getId());
+                        ban(target, duration * 3600, cp->getId());
                         break;
                     case 'm':
-                        ban(target, duration*60, cp->getId());
+                        ban(target, duration * 60, cp->getId());
                         break;
                     default:
                         break;
                     }
 
-                    std::string message = cp->to_string() + " bans player " + target->to_string() + " for " + std::to_string(duration) + timeunit;
+                    std::string message = cp->to_string() + " bans player " + target->to_string() + " for " +
+                                          std::to_string(duration) + timeunit;
                     Logger::info(LogFacility::Admin) << message << Log::end;
                     sendMonitoringMessage(message);
                     message = "*** Banned player " + target->to_string() + " for " + match[1].str() + match[2].str();
@@ -550,7 +639,6 @@ void World::ban_command(Player *cp, const std::string &text) {
         }
     }
 }
-
 
 void World::ban(Player *cp, int bantime, TYPE_OF_CHARACTER_ID gmid) {
     if (bantime == 0) {
@@ -569,7 +657,6 @@ void World::ban(Player *cp, int bantime, TYPE_OF_CHARACTER_ID gmid) {
     forceLogoutOfPlayer(cp->getName());
 }
 
-
 // !who [player]
 void World::who_command(Player *cp, const std::string &tplayer) {
     if (!cp->hasGMRight(gmr_basiccommands) && (Config::instance().debug == 0)) {
@@ -577,7 +664,6 @@ void World::who_command(Player *cp, const std::string &tplayer) {
     }
 
     if (tplayer == "") {
-
         std::string tmessage;
 
         Players.for_each([&tmessage](Player *p) {
@@ -592,7 +678,6 @@ void World::who_command(Player *cp, const std::string &tplayer) {
             cp->inform(tmessage);
         }
     } else {
-
         Player *tempPl = Players.find(tplayer);
 
         if (tempPl != nullptr) {
@@ -613,7 +698,6 @@ void World::who_command(Player *cp, const std::string &tplayer) {
     }
 }
 
-
 void World::tile_command(Player *cp, const std::string &tile) {
     if (!cp->hasGMRight(gmr_settiles)) {
         return;
@@ -624,7 +708,6 @@ void World::tile_command(Player *cp, const std::string &tile) {
     } catch (boost::bad_lexical_cast &) {
     }
 }
-
 
 void World::setNextTile(Player *cp, unsigned char tilenumber) {
     const position &pos = cp->getFrontalPosition();
@@ -637,7 +720,6 @@ void World::setNextTile(Player *cp, unsigned char tilenumber) {
 
     sendAllVisibleCharactersToPlayer(cp, true);
 }
-
 
 void World::turtleon_command(Player *cp, const std::string &tile) {
     if (!cp->hasGMRight(gmr_settiles)) {
@@ -652,7 +734,6 @@ void World::turtleon_command(Player *cp, const std::string &tile) {
     }
 }
 
-
 void World::turtleoff_command(Player *cp) {
     if (!cp->hasGMRight(gmr_settiles)) {
         return;
@@ -660,7 +741,6 @@ void World::turtleoff_command(Player *cp) {
 
     cp->setTurtleActive(false);
 }
-
 
 void World::clippingon_command(Player *cp) {
     if (!cp->hasGMRight(gmr_clipping)) {
@@ -671,7 +751,6 @@ void World::clippingon_command(Player *cp) {
     cp->setClippingActive(true);
 }
 
-
 void World::clippingoff_command(Player *cp) {
     if (!cp->hasGMRight(gmr_clipping)) {
         return;
@@ -680,7 +759,6 @@ void World::clippingoff_command(Player *cp) {
     Logger::info(LogFacility::Admin) << *cp << " turns off clipping" << Log::end;
     cp->setClippingActive(false);
 }
-
 
 void World::what_command(Player *cp) {
     position front = cp->getFrontalPosition();
@@ -731,7 +809,7 @@ void World::what_command(Player *cp) {
             if (id >= DYNNPC_BASE) {
                 message << "- Dynamic NPC";
             } else if (id >= NPC_BASE) {
-                message << "- NPC " << id-NPC_BASE;
+                message << "- NPC " << id - NPC_BASE;
             } else if (id >= MONSTER_BASE) {
                 message << "- Monster " << dynamic_cast<Monster *>(character)->getMonsterType();
             } else {
@@ -744,7 +822,6 @@ void World::what_command(Player *cp) {
     }
 }
 
-
 void World::playersave_command(Player *cp) {
     if (!cp->hasGMRight(gmr_save)) {
         return;
@@ -756,9 +833,7 @@ void World::playersave_command(Player *cp) {
 
     std::string tmessage = "*** All online players saved! ***";
     cp->inform(tmessage);
-
 }
-
 
 // !teleport X<,| >Y[<,| >Z]
 void World::teleport_command(Player *cp, const std::string &text) {
@@ -786,13 +861,13 @@ void World::teleport_command(Player *cp, const std::string &text) {
     }
 }
 
-
 void World::gmhelp_command(Player *cp) {
     if (!cp->hasGMRight(gmr_basiccommands)) {
         if (Config::instance().debug != 0) {
             std::string tmessage = " <> - parameter.  [] - optional.  | = choice.  () = shortcut";
             cp->inform(tmessage);
-            tmessage = "!create <id> [<quantity> [<quality> [[<data_key>=<data_value>] ...]]] creates an item in your inventory.";
+            tmessage = "!create <id> [<quantity> [<quality> [[<data_key>=<data_value>] ...]]] creates an item in your "
+                       "inventory.";
             cp->inform(tmessage);
             tmessage = "!jumpto <player> - (!j) teleports you to the player.";
             cp->inform(tmessage);
@@ -822,12 +897,13 @@ void World::gmhelp_command(Player *cp) {
         cp->inform(tmessage);
         tmessage = "!forceintroduceall - (!fia) introduces all chars in sight to you.";
         cp->inform(tmessage);
-        tmessage = "!talkto <player>, <message> - (!tt) sends a message to a specific player important is the , after the id or name!";
+        tmessage = "!talkto <player>, <message> - (!tt) sends a message to a specific player important is the , after "
+                   "the id or name!";
         cp->inform(tmessage);
         tmessage = "!broadcast <message> - (!bc) Broadcasts the message <message> to all players IG.";
         cp->inform(tmessage);
-        tmessage = "!create <id> [<quantity> [<quality> [[<data_key>=<data_value>] ...]]] creates an item in your inventory.";
-
+        tmessage = "!create <id> [<quantity> [<quality> [[<data_key>=<data_value>] ...]]] creates an item in your "
+                   "inventory.";
     }
 
     if (cp->hasGMRight(gmr_warp)) {
@@ -841,7 +917,6 @@ void World::gmhelp_command(Player *cp) {
         cp->inform(tmessage);
         tmessage = "!jumpto <player> - (!j) teleports you to the player.";
         cp->inform(tmessage);
-
     }
 
     if (cp->hasGMRight(gmr_summon)) {
@@ -850,7 +925,8 @@ void World::gmhelp_command(Player *cp) {
     }
 
     if (cp->hasGMRight(gmr_ban)) {
-        tmessage = "!ban <time> [<m|h|d>] <player> - (!b) Bans the player <player> for <time> [m]inutes/[h]ours/[d]ays.";
+        tmessage =
+                "!ban <time> [<m|h|d>] <player> - (!b) Bans the player <player> for <time> [m]inutes/[h]ours/[d]ays.";
         cp->inform(tmessage);
     }
 
@@ -880,7 +956,8 @@ void World::gmhelp_command(Player *cp) {
     if (cp->hasGMRight(gmr_reload)) {
         tmessage = "!set_spawn <true|false> - activates/deactivates the spawning of monsters.";
         cp->inform(tmessage);
-        tmessage = "!reloaddefinitions - (!rd) reloads all datas without spawnpoints, so no new monsters are spawned. (deactivated)";
+        tmessage = "!reloaddefinitions - (!rd) reloads all datas without spawnpoints, so no new monsters are spawned. "
+                   "(deactivated)";
         cp->inform(tmessage);
         tmessage = "!nuke - kills all Monster on the map (to clean the map after a spawn reload).";
         cp->inform(tmessage);
@@ -889,7 +966,8 @@ void World::gmhelp_command(Player *cp) {
     }
 
     if (cp->hasGMRight(gmr_import)) {
-        tmessage = "create_area <x> <y> <z> <width> <height> <tile> - Creates a new map at <x> <y> <z> with the dimensions <height> <width> and filled with <tile>.";
+        tmessage = "create_area <x> <y> <z> <width> <height> <tile> - Creates a new map at <x> <y> <z> with the "
+                   "dimensions <height> <width> and filled with <tile>.";
         cp->inform(tmessage);
         tmessage = "!exportmaps - Exports the current maps.";
         cp->inform(tmessage);
@@ -932,7 +1010,6 @@ void reportScriptError(Player *cp, const std::string &serverscript, const std::s
 void reportTableError(Player *cp, const std::string &dbtable) {
     reportError(cp, "Failed to reload DB table: " + dbtable);
 }
-
 
 auto World::reload_defs(Player *cp) -> bool {
     if (!cp->hasGMRight(gmr_reload)) {
@@ -987,15 +1064,15 @@ auto World::reload_defs(Player *cp) -> bool {
 
     if (ok) {
         // if everything went well, delete old tables and set up new tables
-        //Mutex für login logout sperren so das aktuell keiner mehr einloggen kann
+        // Mutex für login logout sperren so das aktuell keiner mehr einloggen kann
         PlayerManager::get().setLoginLogout(true);
         monsterDescriptions = std::move(monsterDescriptionsTemp);
         raceTypes = std::move(raceTypesTemp);
         scheduledScripts = std::move(scheduledScriptsTemp);
-        //Mutex entsperren.
+        // Mutex entsperren.
         PlayerManager::get().setLoginLogout(false);
 
-        //Reload the standard Fighting script
+        // Reload the standard Fighting script
         try {
             std::shared_ptr<LuaWeaponScript> tmpScript = std::make_shared<LuaWeaponScript>("server.standardfighting");
             standardFightingScript = tmpScript;
@@ -1005,7 +1082,8 @@ auto World::reload_defs(Player *cp) -> bool {
         }
 
         try {
-            std::shared_ptr<LuaLookAtPlayerScript>tmpScript = std::make_shared<LuaLookAtPlayerScript>("server.playerlookat");
+            std::shared_ptr<LuaLookAtPlayerScript> tmpScript =
+                    std::make_shared<LuaLookAtPlayerScript>("server.playerlookat");
             lookAtPlayerScript = tmpScript;
         } catch (ScriptException &e) {
             reportScriptError(cp, "playerlookat", e.what());
@@ -1013,7 +1091,7 @@ auto World::reload_defs(Player *cp) -> bool {
         }
 
         try {
-            std::shared_ptr<LuaLookAtItemScript>tmpScript = std::make_shared<LuaLookAtItemScript>("server.itemlookat");
+            std::shared_ptr<LuaLookAtItemScript> tmpScript = std::make_shared<LuaLookAtItemScript>("server.itemlookat");
             lookAtItemScript = tmpScript;
         } catch (ScriptException &e) {
             reportScriptError(cp, "itemlookat", e.what());
@@ -1021,7 +1099,8 @@ auto World::reload_defs(Player *cp) -> bool {
         }
 
         try {
-            std::shared_ptr<LuaPlayerDeathScript>tmpScript = std::make_shared<LuaPlayerDeathScript>("server.playerdeath");
+            std::shared_ptr<LuaPlayerDeathScript> tmpScript =
+                    std::make_shared<LuaPlayerDeathScript>("server.playerdeath");
             playerDeathScript = tmpScript;
         } catch (ScriptException &e) {
             reportScriptError(cp, "playerdeath", e.what());
@@ -1029,7 +1108,7 @@ auto World::reload_defs(Player *cp) -> bool {
         }
 
         try {
-            std::shared_ptr<LuaLoginScript>tmpScript = std::make_shared<LuaLoginScript>("server.login");
+            std::shared_ptr<LuaLoginScript> tmpScript = std::make_shared<LuaLoginScript>("server.login");
             loginScript = tmpScript;
         } catch (ScriptException &e) {
             reportScriptError(cp, "login", e.what());
@@ -1037,7 +1116,7 @@ auto World::reload_defs(Player *cp) -> bool {
         }
 
         try {
-            std::shared_ptr<LuaLogoutScript>tmpScript = std::make_shared<LuaLogoutScript>("server.logout");
+            std::shared_ptr<LuaLogoutScript> tmpScript = std::make_shared<LuaLogoutScript>("server.logout");
             logoutScript = tmpScript;
         } catch (ScriptException &e) {
             reportScriptError(cp, "logout", e.what());
@@ -1045,7 +1124,7 @@ auto World::reload_defs(Player *cp) -> bool {
         }
 
         try {
-            std::shared_ptr<LuaLearnScript>tmpScript = std::make_shared<LuaLearnScript>("server.learn");
+            std::shared_ptr<LuaLearnScript> tmpScript = std::make_shared<LuaLearnScript>("server.learn");
             learnScript = tmpScript;
         } catch (ScriptException &e) {
             reportScriptError(cp, "learn", e.what());
@@ -1053,15 +1132,13 @@ auto World::reload_defs(Player *cp) -> bool {
         }
 
         try {
-            std::shared_ptr<LuaDepotScript>tmpScript = std::make_shared<LuaDepotScript>("server.depot");
+            std::shared_ptr<LuaDepotScript> tmpScript = std::make_shared<LuaDepotScript>("server.depot");
             depotScript = tmpScript;
         } catch (ScriptException &e) {
             reportScriptError(cp, "depot", e.what());
             ok = false;
         }
-
     }
-
 
     if (ok) {
         cp->inform(" *** Definitions reloaded *** ");
@@ -1072,9 +1149,7 @@ auto World::reload_defs(Player *cp) -> bool {
     return ok;
 }
 
-
 auto World::reload_tables(Player *cp) -> bool {
-
     LuaScript::shutdownLua();
 
     bool ok = reload_defs(cp);
@@ -1083,7 +1158,7 @@ auto World::reload_tables(Player *cp) -> bool {
         // reload respawns
         initRespawns();
 
-        //reload NPC's
+        // reload NPC's
         initNPC();
 
         Players.for_each(&Player::sendCompleteQuestProgress);
@@ -1094,12 +1169,10 @@ auto World::reload_tables(Player *cp) -> bool {
         } catch (ScriptException &e) {
             reportScriptError(cp, "reload", e.what());
         }
-
     }
 
     return ok;
 }
-
 
 // enable/disable spawnpoints
 void set_spawn_command(World *world, Player *player, const std::string &in) {
@@ -1118,16 +1191,15 @@ void set_spawn_command(World *world, Player *player, const std::string &in) {
     world->enableSpawn(enable);
 }
 
-
 // create a new area starting at x,y,z with dimension w,h, filltile ft (create_area x y z w h ft)
-void create_area_command(World *world, Player *player,const std::string &params) {
+void create_area_command(World *world, Player *player, const std::string &params) {
     if (!player->hasGMRight(gmr_import)) {
         return;
     }
 
     std::stringstream ss(params);
-    int x,y,z,w,h, tile;
-    x=y=z=w=h=tile=-65535;
+    int x, y, z, w, h, tile;
+    x = y = z = w = h = tile = -65535;
     ss >> x;
     ss >> y;
     ss >> z;
@@ -1135,19 +1207,17 @@ void create_area_command(World *world, Player *player,const std::string &params)
     ss >> h;
     ss >> tile;
 
-    if (x==-65535 || y == -65535 || z == -65535 || w < 1 || h < 1 || tile < 0) {
-        Logger::error(LogFacility::World) << "Error in create_area_command issued by " << *player << "; input: " << x << " " << y << " " << z << " " << w << " " << h << Log::end;
+    if (x == -65535 || y == -65535 || z == -65535 || w < 1 || h < 1 || tile < 0) {
+        Logger::error(LogFacility::World) << "Error in create_area_command issued by " << *player << "; input: " << x
+                                          << " " << y << " " << z << " " << w << " " << h << Log::end;
         return;
     }
 
-    if (world->createMap("by " + player->to_string(), position(x, y, z), w,
-                              h, tile)) {
+    if (world->createMap("by " + player->to_string(), position(x, y, z), w, h, tile)) {
         std::string tmessage = "Map inserted.";
         player->inform(tmessage);
-        Logger::info(LogFacility::World) << "Map created by " << *player
-                                         << " on " << x << " - " << y << " - "
-                                         << z << " with w: " << w << " h: " << h
-                                         << " tile: " << tile << Log::end;
+        Logger::info(LogFacility::World) << "Map created by " << *player << " on " << x << " - " << y << " - " << z
+                                         << " with w: " << w << " h: " << h << " tile: " << tile << Log::end;
     } else {
         std::string tmessage = "Failed to insert map.";
         player->inform(tmessage);
@@ -1235,4 +1305,3 @@ void World::showWarpFieldsInRange(Player *cp, const std::string &text) {
         cp->inform("*** Error: could not parse range ***");
     }
 }
-

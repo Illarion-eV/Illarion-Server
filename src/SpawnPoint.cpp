@@ -20,21 +20,22 @@
 
 #include "SpawnPoint.hpp"
 
-#include <boost/cstdint.hpp>
-#include <range/v3/all.hpp>
-
-#include "db/SelectQuery.hpp"
-#include "db/Result.hpp"
-
-#include "map/Field.hpp"
 #include "Logger.hpp"
 #include "Monster.hpp"
 #include "Random.hpp"
 #include "World.hpp"
+#include "db/Result.hpp"
+#include "db/SelectQuery.hpp"
+#include "map/Field.hpp"
 
+#include <boost/cstdint.hpp>
+#include <range/v3/all.hpp>
 
 //! Creates a new SpawnPoint at <pos>
-SpawnPoint::SpawnPoint(const position &pos, int Range, uint16_t Spawnrange, uint16_t Min_Spawntime, uint16_t Max_Spawntime, bool Spawnall) : world(World::get()), spawnpos(pos), range(Range), spawnrange(Spawnrange), min_spawntime(Min_Spawntime), max_spawntime(Max_Spawntime), spawnall(Spawnall) {
+SpawnPoint::SpawnPoint(const position &pos, int Range, uint16_t Spawnrange, uint16_t Min_Spawntime,
+                       uint16_t Max_Spawntime, bool Spawnall)
+        : world(World::get()), spawnpos(pos), range(Range), spawnrange(Spawnrange), min_spawntime(Min_Spawntime),
+          max_spawntime(Max_Spawntime), spawnall(Spawnall) {
     nextspawntime = Random::uniform(min_spawntime, max_spawntime);
 }
 
@@ -44,7 +45,9 @@ SpawnPoint::~SpawnPoint() = default;
 //! add new Monstertyp to SpawnList...
 void SpawnPoint::addMonster(TYPE_OF_CHARACTER_ID type, short int count) {
     using namespace ranges;
-    auto isType = [type](const auto &spawn) {return spawn.typ == type;};
+    auto isType = [type](const auto &spawn) {
+        return spawn.typ == type;
+    };
     auto result = find_if(SpawnTypes, isType);
 
     if (result != SpawnTypes.end()) {
@@ -61,7 +64,7 @@ void SpawnPoint::addMonster(TYPE_OF_CHARACTER_ID type, short int count) {
 //! do spawns if possible...
 void SpawnPoint::spawn() {
     if (nextspawntime == 0) {
-        //set new spawntime
+        // set new spawntime
         nextspawntime = Random::uniform(min_spawntime, max_spawntime);
 
         // do we want monsters to spawn?
@@ -83,12 +86,12 @@ void SpawnPoint::spawn() {
                     }
 
                     for (int i = 0; i < num; ++i) {
-                        //set the new spawnpos in the range of the spawnrange around the spawnpoint
-                        const position tempPos ((spawnpos.x - spawnrange) + Random::uniform(0, 2 * spawnrange),
-                                                (spawnpos.y - spawnrange) + Random::uniform(0, 2 * spawnrange),
-                                                spawnpos.z);
+                        // set the new spawnpos in the range of the spawnrange around the spawnpoint
+                        const position tempPos((spawnpos.x - spawnrange) + Random::uniform(0, 2 * spawnrange),
+                                               (spawnpos.y - spawnrange) + Random::uniform(0, 2 * spawnrange),
+                                               spawnpos.z);
 
-                        //end of setting the new spawnpos
+                        // end of setting the new spawnpos
                         try {
                             map::Field &field = world->walkableFieldNear(tempPos);
                             newmonster = new Monster(spawn.typ, field.getPosition(), this);
@@ -131,8 +134,7 @@ auto SpawnPoint::load(const int &id) -> bool {
             SpawnTypes.clear();
 
             for (const auto &row : results) {
-                addMonster(row["spm_race"].as<TYPE_OF_CHARACTER_ID>(),
-                           row["spm_count"].as<int16_t>());
+                addMonster(row["spm_race"].as<TYPE_OF_CHARACTER_ID>(), row["spm_count"].as<int16_t>());
             }
         }
     } catch (std::exception &e) {

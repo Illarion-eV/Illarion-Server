@@ -21,9 +21,9 @@
 #ifndef LUA_TILE_SCRIPT_HPP
 #define LUA_TILE_SCRIPT_HPP
 
+#include "Item.hpp"
 #include "LuaScript.hpp"
 #include "TableStructs.hpp"
-#include "Item.hpp"
 
 class World;
 class Character;
@@ -44,4 +44,3 @@ private:
 };
 
 #endif
-

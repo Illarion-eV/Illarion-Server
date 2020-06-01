@@ -21,28 +21,31 @@
 #ifndef SCRIPT_STRUCT_TABLE_HPP
 #define SCRIPT_STRUCT_TABLE_HPP
 
-#include <string>
-#include <vector>
-#include <unordered_map>
-#include "data/StructTable.hpp"
 #include "Logger.hpp"
+#include "data/StructTable.hpp"
 #include "script/LuaScript.hpp"
+
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 namespace detail {
 
-template<typename IdType, typename StructType, typename ScriptType>
-void detailAssign(std::unordered_map<IdType, std::shared_ptr<ScriptType>> &scripts, const IdType &id, const std::string &name, const StructType &data, const StructType &dummy) {
+template <typename IdType, typename StructType, typename ScriptType>
+void detailAssign(std::unordered_map<IdType, std::shared_ptr<ScriptType>> &scripts, const IdType &id,
+                  const std::string &name, const StructType &data, const StructType &dummy) {
     scripts.emplace(id, std::make_shared<ScriptType>(name, data));
 }
 
-template<typename IdType, typename StructType, typename ScriptType>
-void detailAssign(std::unordered_map<IdType, std::shared_ptr<ScriptType>> &scripts, const IdType &id, const std::string &name, const StructType &data, const IdType &dummy) {
+template <typename IdType, typename StructType, typename ScriptType>
+void detailAssign(std::unordered_map<IdType, std::shared_ptr<ScriptType>> &scripts, const IdType &id,
+                  const std::string &name, const StructType &data, const IdType &dummy) {
     scripts.emplace(id, std::make_shared<ScriptType>(name, id));
 }
 
-}
+} // namespace detail
 
-template<typename IdType, typename StructType, typename ScriptType, typename ScriptParameter = StructType>
+template <typename IdType, typename StructType, typename ScriptType, typename ScriptParameter = StructType>
 class ScriptStructTable : public StructTable<IdType, StructType> {
 public:
     using Base = StructTable<IdType, StructType>;
@@ -58,7 +61,8 @@ public:
                 const auto &data = (*this)[id];
                 internalAssign<ScriptParameter>(id, scriptName, data);
             } catch (ScriptException &e) {
-                Logger::error(LogFacility::Script) << "Error while loading " << getTableName() << " script: " << scriptName << ": " << e.what() << Log::end;
+                Logger::error(LogFacility::Script) << "Error while loading " << getTableName()
+                                                   << " script: " << scriptName << ": " << e.what() << Log::end;
             }
         }
 
@@ -76,10 +80,10 @@ public:
     }
 
 protected:
-    using Base::getTableName;
-    using Base::getColumnNames;
     using Base::assignId;
     using Base::assignTable;
+    using Base::getColumnNames;
+    using Base::getTableName;
     virtual auto assignScriptName(const Database::ResultTuple &row) -> std::string = 0;
 
     void evaluateRow(const Database::ResultTuple &row) override {
@@ -98,19 +102,19 @@ protected:
 private:
     using ScriptsType = std::unordered_map<IdType, std::shared_ptr<ScriptType>>;
 
-    template<typename T>
-    void internalAssign(const IdType &id, const std::string &name, const StructType &data);
+    template <typename T> void internalAssign(const IdType &id, const std::string &name, const StructType &data);
 
     using NamesType = std::vector<std::pair<IdType, std::string>>;
     NamesType scriptNames;
     ScriptsType scripts;
 };
 
-template<typename IdType, typename StructType, typename ScriptType, typename ScriptParameter>
-template<typename T>
-void ScriptStructTable<IdType, StructType, ScriptType, ScriptParameter>::internalAssign(const IdType &id, const std::string &name, const StructType &data) {
+template <typename IdType, typename StructType, typename ScriptType, typename ScriptParameter>
+template <typename T>
+void ScriptStructTable<IdType, StructType, ScriptType, ScriptParameter>::internalAssign(const IdType &id,
+                                                                                        const std::string &name,
+                                                                                        const StructType &data) {
     detail::detailAssign<IdType, StructType, ScriptType>(scripts, id, name, data, ScriptParameter());
 }
 
 #endif
-

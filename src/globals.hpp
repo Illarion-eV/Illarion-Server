@@ -16,17 +16,16 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef globals_HH
 #define globals_HH
 
-#include <exception>
-#include <map>
-#include <iostream>
-#include <boost/functional/hash/hash.hpp>
-
-#include "types.hpp"
 #include "constants.hpp"
+#include "types.hpp"
+
+#include <boost/functional/hash/hash.hpp>
+#include <exception>
+#include <iostream>
+#include <map>
 
 struct FieldNotFound : std::exception {};
 struct MapError : std::exception {};
@@ -38,8 +37,8 @@ struct position {
 
     position() = default;
     position(short int x, short int y, short int z) : x(x), y(y), z(z) {}
-    
-    auto operator == (const position &pos) const -> bool {
+
+    auto operator==(const position &pos) const -> bool {
         return (x == pos.x && y == pos.y && z == pos.z);
     }
 
@@ -104,9 +103,9 @@ struct position {
 };
 
 struct PositionComparison {
-    auto operator()(const position& pos1, const position& pos2) const -> bool {
-        if(pos1.x == pos2.x) {
-            if(pos1.y == pos2.y) {
+    auto operator()(const position &pos1, const position &pos2) const -> bool {
+        if (pos1.x == pos2.x) {
+            if (pos1.y == pos2.y) {
                 return pos1.z < pos2.z;
             } else {
                 return pos1.y < pos2.y;
@@ -118,22 +117,22 @@ struct PositionComparison {
 };
 
 namespace std {
-template<> struct hash<position> {
+template <> struct hash<position> {
     auto operator()(const position &p) const -> size_t {
         return hash_value(p);
     }
 };
-}
+} // namespace std
 
 struct MapPosition {
     short int x;
     short int y;
 
     MapPosition() = default;
-    MapPosition(short int x, short int y): x(x), y(y) {}
-    explicit MapPosition(const position &pos): x(pos.x), y(pos.y) {}
+    MapPosition(short int x, short int y) : x(x), y(y) {}
+    explicit MapPosition(const position &pos) : x(pos.x), y(pos.y) {}
 
-    auto operator == (const MapPosition &pos) const -> bool {
+    auto operator==(const MapPosition &pos) const -> bool {
         return (x == pos.x && y == pos.y);
     }
 
@@ -147,19 +146,20 @@ struct MapPosition {
 };
 
 namespace std {
-template<> struct hash<MapPosition> {
+template <> struct hash<MapPosition> {
     auto operator()(const MapPosition &p) const -> size_t {
         return hash_value(p);
     }
 };
-}
+} // namespace std
 
 struct Range {
     int radius = 0;
     int zRadius = RANGEUP;
 };
 
-enum QuestAvailability {
+enum QuestAvailability
+{
     questDefaultAvailable = 0,
     questAvailable = 1,
     questWillBeAvailable = 2,

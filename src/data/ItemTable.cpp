@@ -25,26 +25,24 @@ auto ItemTable::getTableName() -> std::string {
 }
 
 auto ItemTable::getColumnNames() -> std::vector<std::string> {
-    return {
-        "itm_id",
-        "itm_volume",
-        "itm_weight",
-        "itm_agingspeed",
-        "itm_objectafterrot",
-        "itm_rotsininventory",
-        "itm_script",
-        "itm_brightness",
-        "itm_worth",
-        "itm_buystack",
-        "itm_maxstack",
-        "itm_name",
-        "itm_name_english",
-        "itm_name_german",
-        "itm_description_english",
-        "itm_description_german",
-        "itm_rareness",
-        "itm_level"
-    };
+    return {"itm_id",
+            "itm_volume",
+            "itm_weight",
+            "itm_agingspeed",
+            "itm_objectafterrot",
+            "itm_rotsininventory",
+            "itm_script",
+            "itm_brightness",
+            "itm_worth",
+            "itm_buystack",
+            "itm_maxstack",
+            "itm_name",
+            "itm_name_english",
+            "itm_name_german",
+            "itm_description_english",
+            "itm_description_german",
+            "itm_rareness",
+            "itm_level"};
 }
 
 auto ItemTable::assignId(const Database::ResultTuple &row) -> TYPE_OF_ITEM_ID {
@@ -82,10 +80,9 @@ auto ItemTable::getQuestScripts() -> NodeRange {
 }
 
 /*
-TYPE_OF_ITEM_ID ItemTable::calcInfiniteRot(TYPE_OF_ITEM_ID id, std::map<TYPE_OF_ITEM_ID, bool> &visited, std::map<TYPE_OF_ITEM_ID, bool> &assigned) {
-    if (visited[ id ]) {
-        if (assigned[ id ]) {
-            return table[ id ].AfterInfiniteRot;
+TYPE_OF_ITEM_ID ItemTable::calcInfiniteRot(TYPE_OF_ITEM_ID id, std::map<TYPE_OF_ITEM_ID, bool> &visited,
+std::map<TYPE_OF_ITEM_ID, bool> &assigned) { if (visited[ id ]) { if (assigned[ id ]) { return table[ id
+].AfterInfiniteRot;
         }
 
         return 0;
@@ -110,4 +107,3 @@ TYPE_OF_ITEM_ID ItemTable::calcInfiniteRot(TYPE_OF_ITEM_ID id, std::map<TYPE_OF_
     return table[ id ].AfterInfiniteRot;
 }
 */
-

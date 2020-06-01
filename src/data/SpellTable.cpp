@@ -25,11 +25,7 @@ auto SpellTable::getTableName() -> std::string {
 }
 
 auto SpellTable::getColumnNames() -> std::vector<std::string> {
-    return {
-        "spl_spellid",
-        "spl_magictype",
-        "spl_scriptname"
-    };
+    return {"spl_spellid", "spl_magictype", "spl_scriptname"};
 }
 
 auto SpellTable::assignId(const Database::ResultTuple &row) -> Spell {
@@ -46,4 +42,3 @@ auto SpellTable::assignTable(const Database::ResultTuple &row) -> SpellStruct {
 auto SpellTable::assignScriptName(const Database::ResultTuple &row) -> std::string {
     return row["spl_scriptname"].as<std::string>("");
 }
-

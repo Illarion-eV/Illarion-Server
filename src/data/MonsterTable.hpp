@@ -21,10 +21,10 @@
 #ifndef MONSTER_TABLE_HPP
 #define MONSTER_TABLE_HPP
 
-#include <boost/unordered_map.hpp>
-#include <TableStructs.hpp>
 #include "script/LuaMonsterScript.hpp"
 
+#include <TableStructs.hpp>
+#include <boost/unordered_map.hpp>
 
 class MonsterTable {
 public:
@@ -43,4 +43,3 @@ private:
     bool dataOK = false;
 };
 #endif
-

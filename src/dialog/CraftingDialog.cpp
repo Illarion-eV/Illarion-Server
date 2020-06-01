@@ -20,7 +20,8 @@
 
 #include "dialog/CraftingDialog.hpp"
 
-CraftingDialog::CraftingDialog(const string &title, uint16_t sfx, uint16_t sfxDuration, const luabind::object &callback): Dialog(title, "CraftingDialog", callback) {
+CraftingDialog::CraftingDialog(const string &title, uint16_t sfx, uint16_t sfxDuration, const luabind::object &callback)
+        : Dialog(title, "CraftingDialog", callback) {
     this->sfx = sfx;
     this->sfxDuration = sfxDuration;
     result = playerAborts;
@@ -30,8 +31,7 @@ CraftingDialog::CraftingDialog(const string &title, uint16_t sfx, uint16_t sfxDu
     lastAddedCraftableId = 0;
 }
 
-CraftingDialog::CraftingDialog(const CraftingDialog &craftingDialog)
-    = default;
+CraftingDialog::CraftingDialog(const CraftingDialog &craftingDialog) = default;
 
 auto CraftingDialog::getSfx() const -> uint16_t {
     return sfx;
@@ -76,14 +76,16 @@ auto CraftingDialog::getCraftablesEnd() const -> craftable_iterator {
     return craftables.cend();
 }
 
-void CraftingDialog::addCraftable(uint8_t id, uint8_t group, TYPE_OF_ITEM_ID item, const string &name, uint16_t decisecondsToCraft) {
+void CraftingDialog::addCraftable(uint8_t id, uint8_t group, TYPE_OF_ITEM_ID item, const string &name,
+                                  uint16_t decisecondsToCraft) {
     if (canAddCraftable(group)) {
         craftables.insert(std::make_pair(id, Craftable(group, item, name, decisecondsToCraft)));
         lastAddedCraftableId = id;
     }
 }
 
-void CraftingDialog::addCraftable(uint8_t id, uint8_t group, TYPE_OF_ITEM_ID item, const string &name, uint16_t decisecondsToCraft, uint8_t craftedStackSize) {
+void CraftingDialog::addCraftable(uint8_t id, uint8_t group, TYPE_OF_ITEM_ID item, const string &name,
+                                  uint16_t decisecondsToCraft, uint8_t craftedStackSize) {
     if (canAddCraftable(group)) {
         craftables.insert(std::make_pair(id, Craftable(group, item, name, decisecondsToCraft, craftedStackSize)));
         lastAddedCraftableId = id;
@@ -157,6 +159,5 @@ auto CraftingDialog::closeOnMove() const -> bool {
 }
 
 auto CraftingDialog::canAddCraftable(uint8_t group) -> bool {
-    return (groups.size()-1 >= group) && (craftables.size() < MAXCRAFTABLES);
+    return (groups.size() - 1 >= group) && (craftables.size() < MAXCRAFTABLES);
 }
-

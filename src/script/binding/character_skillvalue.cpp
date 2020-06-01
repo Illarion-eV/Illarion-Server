@@ -23,11 +23,11 @@
 
 namespace binding {
 
-    auto character_skillvalue() -> luabind::scope {
-        return luabind::class_<Character::skillvalue>("skillvalue")
-                .def(luabind::constructor<>())
-                .def_readwrite("major", &Character::skillvalue::major)
-                .def_readwrite("minor", &Character::skillvalue::minor);
-    }
-
+auto character_skillvalue() -> luabind::scope {
+    return luabind::class_<Character::skillvalue>("skillvalue")
+            .def(luabind::constructor<>())
+            .def_readwrite("major", &Character::skillvalue::major)
+            .def_readwrite("minor", &Character::skillvalue::minor);
 }
+
+} // namespace binding

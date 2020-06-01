@@ -25,22 +25,19 @@
 
 namespace binding {
 
-    auto script_item() -> luabind::scope {
-        return luabind::class_<ScriptItem,Item>("scriptItem")
-                .def(luabind::constructor<>())
-                .def_readonly("owner", &ScriptItem::getOwnerForLua)
-                .def_readonly("pos", &ScriptItem::pos)
-                .def("getType", &ScriptItem::getType)
-                .def_readonly("itempos", &ScriptItem::itempos)
-                .def_readonly("inside", &ScriptItem::inside)
-                .enum_("Types")
-                [
-                    luabind::value("notdefined", ScriptItem::notdefined),
-                    luabind::value("field", ScriptItem::it_field),
-                    luabind::value("inventory", ScriptItem::it_inventory),
-                    luabind::value("belt", ScriptItem::it_belt),
-                    luabind::value("container", ScriptItem::it_container)
-                ];
-    }
-
+auto script_item() -> luabind::scope {
+    return luabind::class_<ScriptItem, Item>("scriptItem")
+            .def(luabind::constructor<>())
+            .def_readonly("owner", &ScriptItem::getOwnerForLua)
+            .def_readonly("pos", &ScriptItem::pos)
+            .def("getType", &ScriptItem::getType)
+            .def_readonly("itempos", &ScriptItem::itempos)
+            .def_readonly("inside", &ScriptItem::inside)
+            .enum_("Types")[luabind::value("notdefined", ScriptItem::notdefined),
+                            luabind::value("field", ScriptItem::it_field),
+                            luabind::value("inventory", ScriptItem::it_inventory),
+                            luabind::value("belt", ScriptItem::it_belt),
+                            luabind::value("container", ScriptItem::it_container)];
 }
+
+} // namespace binding

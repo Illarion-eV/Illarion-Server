@@ -20,18 +20,16 @@
 
 #include "dialog/InputDialog.hpp"
 
-
 #include <utility>
 
-
-InputDialog::InputDialog(const string &title, string description, bool multiline,
-                         unsigned short maxChars, const luabind::object &callback)
-    :Dialog(title, "InputDialog", callback), description(std::move(description)), multiline(multiline), maxChars(maxChars) {
+InputDialog::InputDialog(const string &title, string description, bool multiline, unsigned short maxChars,
+                         const luabind::object &callback)
+        : Dialog(title, "InputDialog", callback), description(std::move(description)), multiline(multiline),
+          maxChars(maxChars) {
     success = false;
 }
 
-InputDialog::InputDialog(const InputDialog &inputDialog) 
-    = default;
+InputDialog::InputDialog(const InputDialog &inputDialog) = default;
 
 auto InputDialog::getDescription() const -> const string & {
     return description;
@@ -68,4 +66,3 @@ void InputDialog::setInput(string input) {
 
     this->input = input;
 }
-

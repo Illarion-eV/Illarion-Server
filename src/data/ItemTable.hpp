@@ -21,9 +21,9 @@
 #ifndef COMMON_OBJECT_TABLE_HPP
 #define COMMON_OBJECT_TABLE_HPP
 
+#include "TableStructs.hpp"
 #include "data/QuestScriptStructTable.hpp"
 #include "script/LuaItemScript.hpp"
-#include "TableStructs.hpp"
 
 class ItemTable : public QuestScriptStructTable<TYPE_OF_ITEM_ID, ItemStruct, LuaItemScript> {
 public:
@@ -35,8 +35,8 @@ public:
     auto getQuestScripts() -> NodeRange override;
 
 private:
-    //TYPE_OF_ITEM_ID calcInfiniteRot(TYPE_OF_ITEM_ID id, std::map<TYPE_OF_ITEM_ID, bool> &visited, std::map<TYPE_OF_ITEM_ID, bool> &assigned);
+    // TYPE_OF_ITEM_ID calcInfiniteRot(TYPE_OF_ITEM_ID id, std::map<TYPE_OF_ITEM_ID, bool> &visited,
+    // std::map<TYPE_OF_ITEM_ID, bool> &assigned);
 };
 
 #endif
-

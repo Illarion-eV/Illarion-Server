@@ -25,7 +25,6 @@
 #include "data/StructTable.hpp"
 #include "types.hpp"
 
-
 class RaceTable : public StructTable<uint16_t, RaceStruct> {
 public:
     auto getTableName() -> std::string override;
@@ -33,9 +32,9 @@ public:
     auto assignId(const Database::ResultTuple &row) -> uint16_t override;
     auto assignTable(const Database::ResultTuple &row) -> RaceStruct override;
     auto getRelativeSize(TYPE_OF_RACE_ID race, uint16_t size) const -> uint8_t;
-    auto isBaseAttributeInLimits(TYPE_OF_RACE_ID race, Character::attributeIndex attribute, Attribute::attribute_t value) const -> bool;
+    auto isBaseAttributeInLimits(TYPE_OF_RACE_ID race, Character::attributeIndex attribute,
+                                 Attribute::attribute_t value) const -> bool;
     auto getMaxAttributePoints(TYPE_OF_RACE_ID race) const -> uint8_t;
 };
 
 #endif
-

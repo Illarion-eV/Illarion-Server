@@ -19,9 +19,10 @@
  */
 
 #include "data/Data.hpp"
+
+#include "Config.hpp"
 #include "Logger.hpp"
 #include "script/LuaLongTimeEffectScript.hpp"
-#include "Config.hpp"
 
 #include <cstdlib>
 
@@ -44,22 +45,9 @@ TriggerTable Triggers;
 LongTimeEffectTable LongTimeEffects;
 
 auto getTables() -> std::vector<Table *> {
-    return {
-        &ScriptVariables,
-        &Quests,
-        &Races,
-        &NaturalArmors,
-        &MonsterAttacks,
-        &Items,
-        &WeaponItems,
-        &ArmorItems,
-        &ContainerItems,
-        &TilesModItems,
-        &Tiles,
-        &Spells,
-        &Triggers,
-        &LongTimeEffects
-    };
+    return {&ScriptVariables, &Quests,      &Races,      &NaturalArmors,  &MonsterAttacks,
+            &Items,           &WeaponItems, &ArmorItems, &ContainerItems, &TilesModItems,
+            &Tiles,           &Spells,      &Triggers,   &LongTimeEffects};
 }
 
 auto reloadTables() -> bool {
@@ -108,5 +96,4 @@ void preReload() {
     }
 }
 
-}
-
+} // namespace Data

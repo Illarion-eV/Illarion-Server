@@ -21,9 +21,9 @@
 #ifndef ARMOR_OBJECT_TABLE_HPP
 #define ARMOR_OBJECT_TABLE_HPP
 
+#include "TableStructs.hpp"
 #include "data/StructTable.hpp"
 #include "types.hpp"
-#include "TableStructs.hpp"
 
 class ArmorObjectTable : public StructTable<TYPE_OF_ITEM_ID, ArmorStruct> {
 public:
@@ -34,4 +34,3 @@ public:
 };
 
 #endif
-

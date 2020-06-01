@@ -21,21 +21,21 @@
 #ifndef DATA_HPP
 #define DATA_HPP
 
-#include "data/ScriptVariablesTable.hpp"
-#include "data/SkillTable.hpp"
-#include "data/QuestTable.hpp"
-#include "data/RaceTable.hpp"
-#include "data/NaturalArmorTable.hpp"
-#include "data/MonsterAttackTable.hpp"
-#include "data/ItemTable.hpp"
-#include "data/WeaponObjectTable.hpp"
 #include "data/ArmorObjectTable.hpp"
 #include "data/ContainerObjectTable.hpp"
+#include "data/ItemTable.hpp"
+#include "data/LongTimeEffectTable.hpp"
+#include "data/MonsterAttackTable.hpp"
+#include "data/NaturalArmorTable.hpp"
+#include "data/QuestTable.hpp"
+#include "data/RaceTable.hpp"
+#include "data/ScriptVariablesTable.hpp"
+#include "data/SkillTable.hpp"
+#include "data/SpellTable.hpp"
 #include "data/TilesModificatorTable.hpp"
 #include "data/TilesTable.hpp"
-#include "data/SpellTable.hpp"
 #include "data/TriggerTable.hpp"
-#include "data/LongTimeEffectTable.hpp"
+#include "data/WeaponObjectTable.hpp"
 
 namespace Data {
 
@@ -62,7 +62,6 @@ void activateTables();
 auto reload() -> bool;
 void preReload();
 
-}
+} // namespace Data
 
 #endif
-

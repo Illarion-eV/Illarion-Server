@@ -16,23 +16,22 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
-#include <string>
-#include <iostream>
 #include "ByteBuffer.hpp"
 
-ByteBuffer::ByteBuffer()  {
-    recvBuffer = new t_rbuffer[ NUMBEROFBUFFERS ];
+#include <iostream>
+#include <string>
 
-    for (int i = 0 ; i < NUMBEROFBUFFERS; ++i) {
-        recvBuffer[ i ].fill = 0;
+ByteBuffer::ByteBuffer() {
+    recvBuffer = new t_rbuffer[NUMBEROFBUFFERS];
+
+    for (int i = 0; i < NUMBEROFBUFFERS; ++i) {
+        recvBuffer[i].fill = 0;
     }
 }
 
 ByteBuffer::~ByteBuffer() {
-    delete [] recvBuffer;
+    delete[] recvBuffer;
 }
-
 
 auto ByteBuffer::dataAvailable() const -> uint16_t {
     return (bytesAvailable);
@@ -42,19 +41,18 @@ auto ByteBuffer::getByte() -> unsigned char {
     if (bytesAvailable > 0) {
         if (recvBuffer[rBuff].fill > readPos) {
             bytesAvailable--;
-            unsigned char ret  = recvBuffer[ rBuff ].buff[ readPos++ ];
+            unsigned char ret = recvBuffer[rBuff].buff[readPos++];
             return ret;
 
         } else {
-            //end of the current readbuffer
+            // end of the current readbuffer
             if (getReadBuffer()) {
                 readPos = 0;
 
-                if (recvBuffer[ rBuff ].fill > 0) {
+                if (recvBuffer[rBuff].fill > 0) {
                     bytesAvailable--;
-                    unsigned char ret = recvBuffer[ rBuff ].buff[ readPos++ ];
+                    unsigned char ret = recvBuffer[rBuff].buff[readPos++];
                     return ret;
-
                 }
             }
         }
@@ -65,7 +63,7 @@ auto ByteBuffer::getByte() -> unsigned char {
 
 auto ByteBuffer::getReadBuffer() -> bool {
     if (vlock.try_lock()) {
-        uint8_t nr = (rBuff + 1) % NUMBEROFBUFFERS;   //get next buffer number
+        uint8_t nr = (rBuff + 1) % NUMBEROFBUFFERS; // get next buffer number
 
         if (wBuff != nr) {
             rBuff = nr;
@@ -83,13 +81,11 @@ auto ByteBuffer::writeToBuf(uint16_t size) -> bool {
     uint8_t nr = (wBuff + 1) % NUMBEROFBUFFERS;
 
     if (nr != rBuff) {
-        recvBuffer[ wBuff ].fill = size;
+        recvBuffer[wBuff].fill = size;
         wBuff = nr;
         bytesAvailable += size;
         return true;
     } else {
         return false;
     }
-
 }
-

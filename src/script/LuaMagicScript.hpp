@@ -28,7 +28,6 @@ struct SpellStruct;
 class Character;
 
 class LuaMagicScript : public LuaScript {
-
 public:
     LuaMagicScript(const std::string &filename, const SpellStruct & /*unused*/);
     ~LuaMagicScript() override;
@@ -46,4 +45,3 @@ private:
 };
 
 #endif
-

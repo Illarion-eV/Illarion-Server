@@ -20,9 +20,9 @@
 
 #include "db/InsertQuery.hpp"
 
-#include <sstream>
-
 #include "db/ConnectionManager.hpp"
+
+#include <sstream>
 
 using namespace Database;
 
@@ -76,7 +76,7 @@ auto InsertQuery::execute() -> Result {
         for (uint32_t column = 0; column < columns; column++) {
             ss << *(dataRow->at(column));
 
-            if (column < columns-1) {
+            if (column < columns - 1) {
                 ss << ", ";
             }
 

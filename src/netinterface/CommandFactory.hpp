@@ -16,36 +16,33 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef CCOMMANDFACTORY_HPP
 #define CCOMMANDFACTORY_HPP
 
-#include <memory>
-#include <unordered_map>
 #include "netinterface/BasicClientCommand.hpp"
 
+#include <memory>
+#include <unordered_map>
+
 /**
-*factory class which holds templates of BasicServerCommand classes
-*an returns an empty command given by an id
-*/
+ *factory class which holds templates of BasicServerCommand classes
+ *an returns an empty command given by an id
+ */
 class CommandFactory {
 public:
-
     CommandFactory();
     ~CommandFactory();
 
     /**
-    *returns a pointer to an emtpy Server Command
-    *@param commandId the id of the command which we want to use
-    *@return a pointer to an empty command with the given commandId
-    */
+     *returns a pointer to an emtpy Server Command
+     *@param commandId the id of the command which we want to use
+     *@return a pointer to an empty command with the given commandId
+     */
     auto getCommand(unsigned char commandId) -> ClientCommandPointer;
 
 private:
-
     using COMMANDLIST = std::unordered_map<unsigned char, std::unique_ptr<BasicClientCommand>>;
     COMMANDLIST templateList;
-
 };
 
 #endif

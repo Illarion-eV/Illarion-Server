@@ -23,12 +23,12 @@
 
 namespace binding {
 
-    auto long_time_effect_struct() -> luabind::scope {
-        return luabind::class_<LongTimeEffectStruct>("LongTimeEffectStruct")
-                .def(luabind::constructor<>())
-                .def_readonly("effectId", &LongTimeEffectStruct::effectid)
-                .def_readonly("effectName", &LongTimeEffectStruct::effectname)
-                .def_readonly("scriptName", &LongTimeEffectStruct::scriptname);
-    }
-
+auto long_time_effect_struct() -> luabind::scope {
+    return luabind::class_<LongTimeEffectStruct>("LongTimeEffectStruct")
+            .def(luabind::constructor<>())
+            .def_readonly("effectId", &LongTimeEffectStruct::effectid)
+            .def_readonly("effectName", &LongTimeEffectStruct::effectname)
+            .def_readonly("scriptName", &LongTimeEffectStruct::scriptname);
 }
+
+} // namespace binding

@@ -18,9 +18,10 @@
  *  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdexcept>
 #include "Character.hpp"
 #include "World.hpp"
+
+#include <stdexcept>
 
 character_ptr::character_ptr() {
     id = 0;
@@ -38,15 +39,16 @@ character_ptr::character_ptr(character_ptr const &p) {
     id = p.id;
 }
 
-auto character_ptr::operator=(character_ptr const &p) -> character_ptr& = default;
+auto character_ptr::operator=(character_ptr const &p) -> character_ptr & = default;
 
 auto character_ptr::get() const -> Character * {
     auto *ptr = getPointerFromId();
-    
+
     if (ptr != nullptr) {
         return ptr;
     } else {
-        throw std::logic_error("Usage of invalid Character! Use isValidChar( char ) to check if a Character is still valid.");
+        throw std::logic_error(
+                "Usage of invalid Character! Use isValidChar( char ) to check if a Character is still valid.");
     }
 }
 
@@ -77,4 +79,3 @@ auto get_pointer(character_ptr const &p) -> Character * {
 auto isValid(character_ptr const &p) -> bool {
     return bool(p);
 }
-

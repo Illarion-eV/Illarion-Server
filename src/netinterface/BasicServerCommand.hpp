@@ -16,11 +16,11 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef CBASICSERVERCOMMAND_HPP
 #define CBASICSERVERCOMMAND_HPP
 
 #include "netinterface/BasicCommand.hpp"
+
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -31,44 +31,43 @@ class BasicServerCommand;
 using ServerCommandPointer = std::shared_ptr<BasicServerCommand>;
 
 /**
-*@ingroup Netinterface
-*Class which represents a basic command that is sent from the
-*server to the client. Each constructor prepares a 6 byte header as follows:
-*- Byte 1: Unique command id
-*- Byte 2: Byte 1 xor 0xFF (complement)
-*- Byte 3+4: Length of the following data segment
-*- Byte 5+6: Checksum consisting of the sum of all data bytes mod 0xFFFF
-*
-*Once all data has been added to the command, the header needs to be finalized with addHeader()
-*/
+ *@ingroup Netinterface
+ *Class which represents a basic command that is sent from the
+ *server to the client. Each constructor prepares a 6 byte header as follows:
+ *- Byte 1: Unique command id
+ *- Byte 2: Byte 1 xor 0xFF (complement)
+ *- Byte 3+4: Length of the following data segment
+ *- Byte 5+6: Checksum consisting of the sum of all data bytes mod 0xFFFF
+ *
+ *Once all data has been added to the command, the header needs to be finalized with addHeader()
+ */
 class BasicServerCommand : public BasicCommand {
 public:
-
     /**
-    * Constructor which creates the server command.
-    * In this case the internal data buffer is 1000 bytes large.
-    * @param defByte The id of this command
-    */
+     * Constructor which creates the server command.
+     * In this case the internal data buffer is 1000 bytes large.
+     * @param defByte The id of this command
+     */
     explicit BasicServerCommand(unsigned char defByte);
 
     /**
-    * Constructor which creates the server command.
-    * @param defByte The id of this command
-    * @param bsize The initial buffer size of this command
-    */
+     * Constructor which creates the server command.
+     * @param defByte The id of this command
+     * @param bsize The initial buffer size of this command
+     */
     BasicServerCommand(unsigned char defByte, uint16_t bsize);
 
     auto operator=(const BasicServerCommand &) -> BasicServerCommand & = delete;
-    BasicServerCommand (const BasicServerCommand &) = delete;    
+    BasicServerCommand(const BasicServerCommand &) = delete;
     /**
-    * Standard destructor
-    */
+     * Standard destructor
+     */
     ~BasicServerCommand();
 
     /**
-    * Function which returns the data buffer of the command.
-    * @return The data buffer of the command
-    */
+     * Function which returns the data buffer of the command.
+     * @return The data buffer of the command
+     */
     auto cmdData() -> char *;
 
     /**
@@ -84,28 +83,25 @@ public:
     void addColourToBuffer(const Colour &c);
 
     /**
-    * Adds all the header information to the top of the buffer
-    * which depends on the commands data, like length and checksum
-    */
+     * Adds all the header information to the top of the buffer
+     * which depends on the commands data, like length and checksum
+     */
     void addHeader();
 
 private:
     uint16_t STDBUFFERSIZE; /*<the size of the standard buffer*/
 
-    char *buffer;  /*<a pointer to the receive buffer*/
+    char *buffer;      /*<a pointer to the receive buffer*/
     uint32_t checkSum; /*<the checksum*/
 
-    uint16_t bufferPos; /*<stores the current buffer position and the size of the used buffer*/
+    uint16_t bufferPos;     /*<stores the current buffer position and the size of the used buffer*/
     uint16_t bufferSizeMod; /*<holds the current size of the buffer mod * stdbuffersize = current buffersize*/
 
     /**
-    * if there is a buffer overflow this function creates a 2*STDBUFFERSIZE
-    * large buffer and copies all the data into this new buffer and deletes the old one
-    */
+     * if there is a buffer overflow this function creates a 2*STDBUFFERSIZE
+     * large buffer and copies all the data into this new buffer and deletes the old one
+     */
     void resizeBuffer();
-
-
-
 };
 
 #endif

@@ -21,12 +21,11 @@
 #ifndef CONNECTION_MANAGER_HPP
 #define CONNECTION_MANAGER_HPP
 
-#include <string>
-#include <stdexcept>
+#include "db/Connection.hpp"
 
 #include <boost/cstdint.hpp>
-
-#include "db/Connection.hpp"
+#include <stdexcept>
+#include <string>
 
 using std::string;
 
@@ -43,10 +42,11 @@ public:
     static auto getInstance() -> ConnectionManager &;
     void setupManager();
     auto getConnection() -> PConnection;
+
 private:
     ConnectionManager();
     void addConnectionParameterIfValid(const string &param, const string &value);
 };
-}
+} // namespace Database
 
 #endif

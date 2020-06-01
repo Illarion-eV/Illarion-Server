@@ -25,20 +25,11 @@ auto TriggerTable::getTableName() -> std::string {
 }
 
 auto TriggerTable::getColumnNames() -> std::vector<std::string> {
-    return {
-        "tgf_posx",
-        "tgf_posy",
-        "tgf_posz",
-        "tgf_script"
-    };
+    return {"tgf_posx", "tgf_posy", "tgf_posz", "tgf_script"};
 }
 
 auto TriggerTable::assignId(const Database::ResultTuple &row) -> position {
-    return position(
-               row["tgf_posx"].as<int16_t>(),
-               row["tgf_posy"].as<int16_t>(),
-               row["tgf_posz"].as<int16_t>()
-           );
+    return position(row["tgf_posx"].as<int16_t>(), row["tgf_posy"].as<int16_t>(), row["tgf_posz"].as<int16_t>());
 }
 
 auto TriggerTable::assignTable(const Database::ResultTuple &row) -> TriggerStruct {
@@ -54,4 +45,3 @@ auto TriggerTable::assignScriptName(const Database::ResultTuple &row) -> std::st
 auto TriggerTable::getQuestScripts() -> NodeRange {
     return QuestNodeTable::getInstance().getTriggerNodes();
 }
-

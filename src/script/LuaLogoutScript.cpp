@@ -19,12 +19,11 @@
  */
 
 #include "LuaLogoutScript.hpp"
+
 #include "Character.hpp"
 #include "character_ptr.hpp"
 
-LuaLogoutScript::LuaLogoutScript(const std::string &filename)
-    : LuaScript(filename) {
-}
+LuaLogoutScript::LuaLogoutScript(const std::string &filename) : LuaScript(filename) {}
 
 LuaLogoutScript::~LuaLogoutScript() = default;
 
@@ -32,4 +31,3 @@ void LuaLogoutScript::onLogout(Character *cc) {
     character_ptr fuse_cc(cc);
     callEntrypoint("onLogout", fuse_cc);
 }
-

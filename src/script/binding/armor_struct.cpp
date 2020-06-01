@@ -23,26 +23,19 @@
 
 namespace binding {
 
-    auto armor_struct() -> luabind::scope {
-        return luabind::class_<ArmorStruct>("ArmorStruct")
-        .def(luabind::constructor<>())
-        .enum_("type")
-        [
-            luabind::value("clothing", 0),
-            luabind::value("general", 1),
-            luabind::value("light", 2),
-            luabind::value("medium", 3),
-            luabind::value("heavy", 4),
-            luabind::value("juwellery", 5)
-        ]
-        .def_readonly("BodyParts", &ArmorStruct::BodyParts)
-        .def_readonly("PunctureArmor", &ArmorStruct::PunctureArmor)
-        .def_readonly("StrokeArmor", &ArmorStruct::StrokeArmor)
-        .def_readonly("ThrustArmor", &ArmorStruct::ThrustArmor)
-        .def_readonly("MagicDisturbance", &ArmorStruct::MagicDisturbance)
-        .def_readonly("Absorb", &ArmorStruct::Absorb)
-        .def_readonly("Stiffness", &ArmorStruct::Stiffness)
-        .def_readonly("Type", &ArmorStruct::Type);
-    }
-
+auto armor_struct() -> luabind::scope {
+    return luabind::class_<ArmorStruct>("ArmorStruct")
+            .def(luabind::constructor<>())
+            .enum_("type")[luabind::value("clothing", 0), luabind::value("general", 1), luabind::value("light", 2),
+                           luabind::value("medium", 3), luabind::value("heavy", 4), luabind::value("juwellery", 5)]
+            .def_readonly("BodyParts", &ArmorStruct::BodyParts)
+            .def_readonly("PunctureArmor", &ArmorStruct::PunctureArmor)
+            .def_readonly("StrokeArmor", &ArmorStruct::StrokeArmor)
+            .def_readonly("ThrustArmor", &ArmorStruct::ThrustArmor)
+            .def_readonly("MagicDisturbance", &ArmorStruct::MagicDisturbance)
+            .def_readonly("Absorb", &ArmorStruct::Absorb)
+            .def_readonly("Stiffness", &ArmorStruct::Stiffness)
+            .def_readonly("Type", &ArmorStruct::Type);
 }
+
+} // namespace binding

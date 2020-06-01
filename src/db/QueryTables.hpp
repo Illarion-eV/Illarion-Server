@@ -21,10 +21,10 @@
 #ifndef QUERY_TABLES_HPP
 #define QUERY_TABLES_HPP
 
-#include <string>
-#include <stdexcept>
-
 #include "db/Connection.hpp"
+
+#include <stdexcept>
+#include <string>
 
 namespace Database {
 class QueryTables {
@@ -41,12 +41,13 @@ public:
 
     void setServerTable(const std::string &table);
     void setAccountTable(const std::string &table);
+
 protected:
     QueryTables();
-    
+
     void setOnlyOneTable(const bool &enabled);
     auto buildQuerySegment() -> std::string &;
 };
-}
+} // namespace Database
 
 #endif

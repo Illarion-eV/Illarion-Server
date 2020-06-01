@@ -16,15 +16,14 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef CBASICCOMMAND_HPP
 #define CBASICCOMMAND_HPP
 
 /**
-*@ingroup Netinterface
-*Basic class for commands which can be sent to a client or received by the server,
-*holding a unique byte to identify the command.
-*/
+ *@ingroup Netinterface
+ *Basic class for commands which can be sent to a client or received by the server,
+ *holding a unique byte to identify the command.
+ */
 class BasicCommand {
 private:
     unsigned char definitionByte; /*<Unique command id*/
@@ -38,7 +37,7 @@ public:
     /**
      *Provides read access to the definition byte
      *\return The unique command id
-    */
+     */
     [[nodiscard]] auto getDefinitionByte() const -> unsigned char {
         return definitionByte;
     };

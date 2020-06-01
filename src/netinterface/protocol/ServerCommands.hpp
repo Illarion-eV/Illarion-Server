@@ -21,20 +21,20 @@
 #ifndef SERVER_COMMANDS_HPP
 #define SERVER_COMMANDS_HPP
 
-#include <vector>
-
-#include "NewClientView.hpp"
-#include "Container.hpp"
 #include "Character.hpp"
-
+#include "Container.hpp"
+#include "NewClientView.hpp"
 #include "netinterface/BasicServerCommand.hpp"
+
+#include <vector>
 
 struct WeatherStruct;
 class Item;
 class ItemLookAt;
 class Player;
 
-enum ServerCommands {
+enum ServerCommands
+{
     SC_KEEPALIVE_TC = 0x00,
     SC_ID_TC = 0xCA,
     SC_SETCOORDINATE_TC = 0xBD,
@@ -98,11 +98,8 @@ public:
 
 class QuestProgressTC : public BasicServerCommand {
 public:
-    QuestProgressTC(TYPE_OF_QUEST_ID id,
-                    const std::string &title,
-                    const std::string &description,
-                    const std::vector<position> &targets,
-                    bool final);
+    QuestProgressTC(TYPE_OF_QUEST_ID id, const std::string &title, const std::string &description,
+                    const std::vector<position> &targets, bool final);
 };
 
 class AbortQuestTC : public BasicServerCommand {
@@ -187,7 +184,6 @@ class BookTC : public BasicServerCommand {
 public:
     explicit BookTC(uint16_t bookID);
 };
-
 
 class RemoveCharTC : public BasicServerCommand {
 public:
@@ -278,8 +274,8 @@ public:
 
 class UpdateShowcaseTC : public BasicServerCommand {
 public:
-    UpdateShowcaseTC(unsigned char showcase, const ItemLookAt &lookAt,
-            TYPE_OF_CONTAINERSLOTS volume, const Container::ITEMMAP &items);
+    UpdateShowcaseTC(unsigned char showcase, const ItemLookAt &lookAt, TYPE_OF_CONTAINERSLOTS volume,
+                     const Container::ITEMMAP &items);
 };
 
 class UpdateShowcaseSlotTC : public BasicServerCommand {
@@ -389,4 +385,3 @@ public:
 };
 
 #endif
-

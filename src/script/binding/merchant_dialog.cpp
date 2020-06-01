@@ -23,31 +23,28 @@
 
 namespace binding {
 
-    auto merchant_dialog() -> luabind::scope {
-        return luabind::class_<MerchantDialog>("MerchantDialog")
-                .enum_("Result")
-                [
-                    luabind::value("playerAborts", MerchantDialog::playerAborts),
-                    luabind::value("playerSells", MerchantDialog::playerSells),
-                    luabind::value("playerBuys", MerchantDialog::playerBuys),
-                    luabind::value("playerLooksAt", MerchantDialog::playerLooksAt)
-                ]
-                .enum_("ListType")
-                [
-                    luabind::value("listSell", MerchantDialog::listSell),
-                    luabind::value("listBuyPrimary", MerchantDialog::listBuyPrimary),
-                    luabind::value("listBuySecondary", MerchantDialog::listBuySecondary)
-                ]
-                .def(luabind::constructor<std::string, luabind::object>())
-                .def("addOffer", (void (MerchantDialog::*)(TYPE_OF_ITEM_ID, const std::string &, TYPE_OF_WORTH)) &MerchantDialog::addOffer)
-                .def("addOffer", (void (MerchantDialog::*)(TYPE_OF_ITEM_ID, const std::string &, TYPE_OF_WORTH, TYPE_OF_BUY_STACK)) &MerchantDialog::addOffer)
-                .def("addPrimaryRequest", &MerchantDialog::addPrimaryRequest)
-                .def("addSecondaryRequest", &MerchantDialog::addSecondaryRequest)
-                .def("getResult", &MerchantDialog::getResult)
-                .def("getPurchaseIndex", &MerchantDialog::getPurchaseIndex)
-                .def("getPurchaseAmount", &MerchantDialog::getPurchaseAmount)
-                .def("getSaleItem", &MerchantDialog::getSaleItem)
-                .def("getLookAtList", &MerchantDialog::getLookAtList);
-    }
-
+auto merchant_dialog() -> luabind::scope {
+    return luabind::class_<MerchantDialog>("MerchantDialog")
+            .enum_("Result")[luabind::value("playerAborts", MerchantDialog::playerAborts),
+                             luabind::value("playerSells", MerchantDialog::playerSells),
+                             luabind::value("playerBuys", MerchantDialog::playerBuys),
+                             luabind::value("playerLooksAt", MerchantDialog::playerLooksAt)]
+            .enum_("ListType")[luabind::value("listSell", MerchantDialog::listSell),
+                               luabind::value("listBuyPrimary", MerchantDialog::listBuyPrimary),
+                               luabind::value("listBuySecondary", MerchantDialog::listBuySecondary)]
+            .def(luabind::constructor<std::string, luabind::object>())
+            .def("addOffer", (void (MerchantDialog::*)(TYPE_OF_ITEM_ID, const std::string &, TYPE_OF_WORTH)) &
+                                     MerchantDialog::addOffer)
+            .def("addOffer",
+                 (void (MerchantDialog::*)(TYPE_OF_ITEM_ID, const std::string &, TYPE_OF_WORTH, TYPE_OF_BUY_STACK)) &
+                         MerchantDialog::addOffer)
+            .def("addPrimaryRequest", &MerchantDialog::addPrimaryRequest)
+            .def("addSecondaryRequest", &MerchantDialog::addSecondaryRequest)
+            .def("getResult", &MerchantDialog::getResult)
+            .def("getPurchaseIndex", &MerchantDialog::getPurchaseIndex)
+            .def("getPurchaseAmount", &MerchantDialog::getPurchaseAmount)
+            .def("getSaleItem", &MerchantDialog::getSaleItem)
+            .def("getLookAtList", &MerchantDialog::getLookAtList);
 }
+
+} // namespace binding

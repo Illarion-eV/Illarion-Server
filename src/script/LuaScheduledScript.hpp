@@ -27,7 +27,6 @@ class World;
 
 class LuaScheduledScript : public LuaScript {
 public:
-
     explicit LuaScheduledScript(const std::string &filename);
     ~LuaScheduledScript() override;
     LuaScheduledScript(const LuaScheduledScript &) = delete;
@@ -37,4 +36,3 @@ public:
 };
 
 #endif
-

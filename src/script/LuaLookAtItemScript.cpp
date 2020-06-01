@@ -19,13 +19,12 @@
  */
 
 #include "LuaLookAtItemScript.hpp"
+
 #include "Character.hpp"
 #include "Item.hpp"
 #include "character_ptr.hpp"
 
-LuaLookAtItemScript::LuaLookAtItemScript(const std::string &filename)
-    : LuaScript(filename) {
-}
+LuaLookAtItemScript::LuaLookAtItemScript(const std::string &filename) : LuaScript(filename) {}
 
 LuaLookAtItemScript::~LuaLookAtItemScript() = default;
 
@@ -33,4 +32,3 @@ auto LuaLookAtItemScript::lookAtItem(Character *character, const ScriptItem &ite
     character_ptr fuse_character(character);
     return callEntrypoint<ItemLookAt>("lookAtItem", fuse_character, item);
 }
-

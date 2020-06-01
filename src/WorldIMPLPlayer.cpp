@@ -18,27 +18,29 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "World.hpp"
-
-#include <regex>
-#include "Player.hpp"
 #include "MonitoringClients.hpp"
-
-#include "netinterface/protocol/ServerCommands.hpp"
-#include "netinterface/protocol/BBIWIServerCommands.hpp"
-
+#include "Player.hpp"
+#include "World.hpp"
 #include "db/InsertQuery.hpp"
-
+#include "netinterface/protocol/BBIWIServerCommands.hpp"
+#include "netinterface/protocol/ServerCommands.hpp"
 #include "version.hpp"
 
+#include <regex>
 
 // register any Player commands here...
 void World::InitPlayerCommands() {
-
-    PlayerCommands["gm"] = [](World *world, Player *player, const std::string &text) -> bool { return world->gmpage_command(player, text); };
-    PlayerCommands["language"] = [](World *world, Player *player, const std::string &text) -> bool { return world->active_language_command(player, text); };
+    PlayerCommands["gm"] = [](World *world, Player *player, const std::string &text) -> bool {
+        return world->gmpage_command(player, text);
+    };
+    PlayerCommands["language"] = [](World *world, Player *player, const std::string &text) -> bool {
+        return world->active_language_command(player, text);
+    };
     PlayerCommands["l"] = PlayerCommands["language"];
-    PlayerCommands["version"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool { world->version_command(player); return true; };
+    PlayerCommands["version"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool {
+        world->version_command(player);
+        return true;
+    };
     PlayerCommands["v"] = PlayerCommands["version"];
 }
 
@@ -81,7 +83,7 @@ void World::logGMTicket(Player *player, const std::string &ticket, bool automati
     }
 
     sendMessageToAdmin(message);
-    ServerCommandPointer cmd = std::make_shared<BBMessageTC>(message,2);
+    ServerCommandPointer cmd = std::make_shared<BBMessageTC>(message, 2);
     monitoringClientList->sendCommand(cmd);
 }
 
@@ -137,4 +139,3 @@ auto World::active_language_command(Player *cp, const std::string &language) -> 
 void World::version_command(Player *player) {
     player->inform("Version: " SERVER_VERSION);
 }
-

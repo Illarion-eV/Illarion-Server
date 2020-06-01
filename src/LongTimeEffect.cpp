@@ -20,27 +20,21 @@
 
 #include "LongTimeEffect.hpp"
 
-#include <sstream>
-#include <iostream>
-
-#include <boost/cstdint.hpp>
-
-#include "db/Connection.hpp"
-#include "db/ConnectionManager.hpp"
-#include "db/InsertQuery.hpp"
-
-#include "data/Data.hpp"
-
 #include "Character.hpp"
 #include "Player.hpp"
 #include "TableStructs.hpp"
 #include "World.hpp"
+#include "data/Data.hpp"
+#include "db/Connection.hpp"
+#include "db/ConnectionManager.hpp"
+#include "db/InsertQuery.hpp"
 
-LongTimeEffect::LongTimeEffect(uint16_t effectId, int32_t executeIn):
-    effectId(effectId),
-    effectName(Data::LongTimeEffects[effectId].effectname),
-    executeIn(executeIn) {
-}
+#include <boost/cstdint.hpp>
+#include <iostream>
+#include <sstream>
+
+LongTimeEffect::LongTimeEffect(uint16_t effectId, int32_t executeIn)
+        : effectId(effectId), effectName(Data::LongTimeEffects[effectId].effectname), executeIn(executeIn) {}
 
 auto LongTimeEffect::callEffect(Character *target) -> bool {
     bool ret = false;
@@ -156,4 +150,3 @@ void LongTimeEffect::setNumberOfCalls(uint32_t calls) {
 }
 
 LTEPriority LongTimeEffect::priority = LTEPriority();
-

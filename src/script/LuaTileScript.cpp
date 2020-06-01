@@ -20,14 +20,13 @@
 
 #include "LuaTileScript.hpp"
 
-
-#include <utility>
-
 #include "Character.hpp"
 #include "character_ptr.hpp"
 
+#include <utility>
+
 LuaTileScript::LuaTileScript(const std::string &filename, TilesStruct tile)
-    : LuaScript(filename), thisTile(std::move(tile)) {
+        : LuaScript(filename), thisTile(std::move(tile)) {
     init_functions();
 }
 
@@ -48,4 +47,3 @@ auto LuaTileScript::actionDisturbed(Character *performer, Character *disturber) 
     character_ptr fuse_disturber(disturber);
     return callEntrypoint<bool>("actionDisturbed", fuse_performer, fuse_disturber);
 }
-

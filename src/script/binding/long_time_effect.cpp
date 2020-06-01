@@ -18,23 +18,24 @@
  *  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <luabind/luabind.hpp>
-#include <luabind/out_value_policy.hpp>
 #include "LongTimeEffect.hpp"
 #include "script/binding/binding.hpp"
 
+#include <luabind/luabind.hpp>
+#include <luabind/out_value_policy.hpp>
+
 namespace binding {
 
-    auto long_time_effect() -> luabind::scope {
-        return luabind::class_<LongTimeEffect>("LongTimeEffect")
-                .def(luabind::constructor<uint16_t, uint32_t>())
-                .def("addValue", &LongTimeEffect::addValue)
-                .def("removeValue", &LongTimeEffect::removeValue)
-                .def("findValue", &LongTimeEffect::findValue, luabind::pure_out_value(_3))
-                .property("effectId", &LongTimeEffect::getEffectId)
-                .property("effectName", &LongTimeEffect::getEffectName)
-                .property("nextCalled", &LongTimeEffect::getExecuteIn, &LongTimeEffect::setExecuteIn)
-                .property("numberCalled", &LongTimeEffect::getNumberOfCalls);
-    }
-
+auto long_time_effect() -> luabind::scope {
+    return luabind::class_<LongTimeEffect>("LongTimeEffect")
+            .def(luabind::constructor<uint16_t, uint32_t>())
+            .def("addValue", &LongTimeEffect::addValue)
+            .def("removeValue", &LongTimeEffect::removeValue)
+            .def("findValue", &LongTimeEffect::findValue, luabind::pure_out_value(_3))
+            .property("effectId", &LongTimeEffect::getEffectId)
+            .property("effectName", &LongTimeEffect::getEffectName)
+            .property("nextCalled", &LongTimeEffect::getExecuteIn, &LongTimeEffect::setExecuteIn)
+            .property("numberCalled", &LongTimeEffect::getNumberOfCalls);
 }
+
+} // namespace binding

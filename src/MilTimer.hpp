@@ -16,18 +16,14 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef MILTIMER_HH
 #define MILTIMER_HH
 
 #include <sys/timeb.h>
 
-
 //! ein Timer mit Millisekunden-Aufl�sung
 class MilTimer {
-
 public:
-
     //! Konstruktor
     // \param milsec Anzahl der Millisekunden zwischen zwei Schritten
     explicit MilTimer(long milsec);
@@ -37,15 +33,12 @@ public:
     // dem letzten erfolgreichen Aufruf abgelaufen ist, sonst false
     auto Next() -> bool;
 
-
 private:
-
     //! letzte Alterung
     timeb last;
 
     //! die geforderte Zeitspanne in Millisekunden
     long gap;
-
 };
 
 #endif

@@ -25,25 +25,21 @@ extern "C" {
 #include <lualib.h>
 }
 
-#include <iostream>
-#include <algorithm>
-
-#include "luabind/luabind.hpp"
-#include <luabind/raw_policy.hpp>
-
-#include <boost/algorithm/string.hpp>
-
+#include "Config.hpp"
+#include "Logger.hpp"
 #include "Monster.hpp"
 #include "NPC.hpp"
 #include "Player.hpp"
 #include "World.hpp"
-#include "Logger.hpp"
-#include "Config.hpp"
-
 #include "data/Data.hpp"
-
-#include "script/forwarder.hpp"
+#include "luabind/luabind.hpp"
 #include "script/binding/binding.hpp"
+#include "script/forwarder.hpp"
+
+#include <algorithm>
+#include <boost/algorithm/string.hpp>
+#include <iostream>
+#include <luabind/raw_policy.hpp>
 
 lua_State *LuaScript::_luaState = nullptr;
 bool LuaScript::initialized = false;
@@ -98,7 +94,7 @@ void LuaScript::initialize() {
         lua_pushglobaltable(_luaState);
         lua_pushstring(_luaState, "package");
         lua_gettable(_luaState, -2);
-        
+
         lua_pushstring(_luaState, "path");
         lua_pushstring(_luaState, path.c_str());
         lua_settable(_luaState, -3);
@@ -117,7 +113,7 @@ void LuaScript::loadIntoLuaState() {
 
     errorCode = lua_pcall(_luaState, 0, 1, 0);
     handleLuaCallError(errorCode);
-    
+
     if (errorCode != 0) {
         return;
     }
@@ -128,7 +124,6 @@ void LuaScript::loadIntoLuaState() {
 
 void LuaScript::handleLuaLoadError(int errorCode) {
     if (errorCode != 0) {
-
         switch (errorCode) {
         case LUA_ERRFILE:
             throw ScriptException("Could not access script file: " + luafile);
@@ -151,7 +146,6 @@ void LuaScript::handleLuaLoadError(int errorCode) {
 
 void LuaScript::handleLuaCallError(int errorCode) {
     if (errorCode != 0) {
-
         switch (errorCode) {
         case LUA_ERRRUN:
             writeErrorMsg();
@@ -242,7 +236,8 @@ void LuaScript::writeErrorMsg() {
 void LuaScript::writeCastErrorMsg(const std::string &entryPoint, const luabind::cast_failed &e) const {
     std::string script = getFileName();
     const std::string &expectedType = e.info().name();
-    Logger::error(LogFacility::Script) << "Invalid return type in " << script << "." << entryPoint << ": " << "Expected type " << expectedType << Log::end;
+    Logger::error(LogFacility::Script) << "Invalid return type in " << script << "." << entryPoint << ": "
+                                       << "Expected type " << expectedType << Log::end;
 }
 
 void LuaScript::writeDebugMsg(const std::string &msg) {
@@ -274,9 +269,8 @@ auto LuaScript::buildEntrypoint(const std::string &entrypoint) -> luabind::objec
     obj = obj["_LOADED"][_filename];
 
     if (luabind::type(obj) != LUA_TTABLE) {
-        triggerScriptError(
-            "Error while loading entrypoint '" + entrypoint + "' from module " +
-            _filename + ". Check if the script returns its module as table.");
+        triggerScriptError("Error while loading entrypoint '" + entrypoint + "' from module " + _filename +
+                           ". Check if the script returns its module as table.");
     }
 
     luabind::object callee = obj[entrypoint];
@@ -284,7 +278,7 @@ auto LuaScript::buildEntrypoint(const std::string &entrypoint) -> luabind::objec
 }
 
 void LuaScript::addQuestScript(const std::string &entrypoint, const std::shared_ptr<LuaScript> &script) {
-    questScripts.insert(std::pair<const std::string, std::shared_ptr<LuaScript> >(entrypoint, script));
+    questScripts.insert(std::pair<const std::string, std::shared_ptr<LuaScript>>(entrypoint, script));
 }
 
 void LuaScript::setCurrentWorldScript() {
@@ -329,10 +323,10 @@ auto getCharForId(TYPE_OF_CHARACTER_ID id) -> Character * {
     Character *ret = nullptr;
 
     if (id < MONSTER_BASE) {
-        //player
+        // player
         ret = World::get()->Players.find(id);
     } else if (id < NPC_BASE) {
-        //monster
+        // monster
         ret = World::get()->Monsters.find(id);
     } else {
         ret = World::get()->Npc.find(id);
@@ -342,69 +336,37 @@ auto getCharForId(TYPE_OF_CHARACTER_ID id) -> Character * {
 }
 
 void LuaScript::init_base_functions() {
-    static constexpr std::array<luaL_Reg, 7> lualibs = {{
-        {"_G", luaopen_base},
-        {LUA_LOADLIBNAME, luaopen_package},
-        {LUA_TABLIBNAME, luaopen_table},
-        {LUA_IOLIBNAME, luaopen_io},
-        // {LUA_OSLIBNAME, luaopen_os},
-        {LUA_STRLIBNAME, luaopen_string},
-        {LUA_MATHLIBNAME, luaopen_math},
-        // {LUA_DBLIBNAME, luaopen_debug},
-        {LUA_BITLIBNAME, luaopen_bit32}
-    }};
+    static constexpr std::array<luaL_Reg, 7> lualibs = {{{"_G", luaopen_base},
+                                                         {LUA_LOADLIBNAME, luaopen_package},
+                                                         {LUA_TABLIBNAME, luaopen_table},
+                                                         {LUA_IOLIBNAME, luaopen_io},
+                                                         // {LUA_OSLIBNAME, luaopen_os},
+                                                         {LUA_STRLIBNAME, luaopen_string},
+                                                         {LUA_MATHLIBNAME, luaopen_math},
+                                                         // {LUA_DBLIBNAME, luaopen_debug},
+                                                         {LUA_BITLIBNAME, luaopen_bit32}}};
 
     for (const auto &lib : lualibs) {
         luaL_requiref(_luaState, lib.name, lib.func, 1);
-        lua_pop(_luaState, 1);  // remove lib
+        lua_pop(_luaState, 1); // remove lib
     }
 
+    luabind::module(
+            _luaState)[binding::armor_struct(), binding::attack_boni(), binding::character(),
+                       binding::character_skillvalue(), binding::colour(), binding::item_struct(), binding::container(),
+                       binding::crafting_dialog(), binding::field(), binding::input_dialog(), binding::item(),
+                       binding::item_look_at(), binding::long_time_action(), binding::long_time_character_effects(),
+                       binding::long_time_effect(), binding::long_time_effect_struct(), binding::merchant_dialog(),
+                       binding::message_dialog(), binding::monster(), binding::monster_armor(), binding::npc(),
+                       binding::player(), binding::position(), binding::random(), binding::script_item(),
+                       binding::script_variables_table(), binding::selection_dialog(), binding::tiles_struct(),
+                       binding::waypoint_list(), binding::weapon_struct(), binding::weather_struct(), binding::world(),
 
-
-    luabind::module(_luaState)
-    [
-        binding::armor_struct(),
-        binding::attack_boni(),
-        binding::character(),
-        binding::character_skillvalue(),
-        binding::colour(),
-        binding::item_struct(),
-        binding::container(),
-        binding::crafting_dialog(),
-        binding::field(),
-        binding::input_dialog(),
-        binding::item(),
-        binding::item_look_at(),
-        binding::long_time_action(),
-        binding::long_time_character_effects(),
-        binding::long_time_effect(),
-        binding::long_time_effect_struct(),
-        binding::merchant_dialog(),
-        binding::message_dialog(),
-        binding::monster(),
-        binding::monster_armor(),
-        binding::npc(),
-        binding::player(),
-        binding::position(),
-        binding::random(),
-        binding::script_item(),
-        binding::script_variables_table(),
-        binding::selection_dialog(),
-        binding::tiles_struct(),
-        binding::waypoint_list(),
-        binding::weapon_struct(),
-        binding::weather_struct(),
-        binding::world(),
-
-        luabind::def("dofile", &dofile, luabind::raw(_1)),
-        luabind::def("getCharForId",getCharForId),
-        luabind::def("isValidChar", &isValid),
-        luabind::def("debug", &LuaScript::writeDebugMsg),
-        luabind::def("log", log_lua)
-    ];
+                       luabind::def("dofile", &dofile, luabind::raw(_1)), luabind::def("getCharForId", getCharForId),
+                       luabind::def("isValidChar", &isValid), luabind::def("debug", &LuaScript::writeDebugMsg),
+                       luabind::def("log", log_lua)];
 
     const luabind::object &globals = luabind::globals(_luaState);
     globals["world"] = World::get();
     globals["ScriptVars"] = &Data::ScriptVariables;
 }
-

@@ -20,17 +20,15 @@
 
 #include "LuaLongTimeEffectScript.hpp"
 
-
-#include <utility>
-
-
-#include "luabind/luabind.hpp"
 #include "Character.hpp"
 #include "LongTimeEffect.hpp"
 #include "character_ptr.hpp"
+#include "luabind/luabind.hpp"
+
+#include <utility>
 
 LuaLongTimeEffectScript::LuaLongTimeEffectScript(const std::string &filename, LongTimeEffectStruct effectStruct)
-    : LuaScript(filename), _effectStruct(std::move(effectStruct)) {
+        : LuaScript(filename), _effectStruct(std::move(effectStruct)) {
     init_functions();
 }
 
@@ -65,4 +63,3 @@ void LuaLongTimeEffectScript::removeEffect(LongTimeEffect *effect, Character *ta
     character_ptr fuse_target(target);
     callEntrypoint("removeEffect", effect, fuse_target);
 }
-

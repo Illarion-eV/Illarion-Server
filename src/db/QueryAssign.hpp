@@ -21,10 +21,10 @@
 #ifndef QUERY_ASSIGN_HPP
 #define QUERY_ASSIGN_HPP
 
-#include <string>
-
 #include "db/Connection.hpp"
 #include "db/Query.hpp"
+
+#include <string>
 
 namespace Database {
 class QueryAssign {
@@ -35,16 +35,18 @@ private:
 public:
     QueryAssign(const QueryAssign &org) = delete;
     auto operator=(const QueryAssign &org) -> QueryAssign & = delete;
-    template<typename T> void addAssignColumn(const std::string &column, const T &value) {
-        Query::appendToStringList(assignColumns, Query::escapeAndChainKeys("", column) + " = " + connection.quote<T>(value));
+    template <typename T> void addAssignColumn(const std::string &column, const T &value) {
+        Query::appendToStringList(assignColumns,
+                                  Query::escapeAndChainKeys("", column) + " = " + connection.quote<T>(value));
     };
 
     void addAssignColumnNull(const std::string &column);
+
 protected:
     explicit QueryAssign(const Connection &connection);
 
     auto buildQuerySegment() -> std::string &;
 };
-}
+} // namespace Database
 
 #endif

@@ -21,9 +21,9 @@
 #ifndef TILES_MODIFICATOR_TABLE_HPP
 #define TILES_MODIFICATOR_TABLE_HPP
 
+#include "TableStructs.hpp"
 #include "data/StructTable.hpp"
 #include "types.hpp"
-#include "TableStructs.hpp"
 
 class TilesModificatorTable : public StructTable<TYPE_OF_ITEM_ID, TilesModificatorStruct> {
 public:
@@ -35,4 +35,3 @@ public:
 };
 
 #endif
-

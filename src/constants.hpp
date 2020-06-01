@@ -16,7 +16,6 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef CONSTANTS_HPP
 #define CONSTANTS_HPP
 
@@ -28,8 +27,8 @@ const uint32_t MONSTER_BASE = 0xFE000000;
 
 const uint32_t MONSTERVIEWRANGE = 11;
 
-#define MAXPOISONVALUE     400
-#define MAXMANA            10000
+#define MAXPOISONVALUE 400
+#define MAXMANA 10000
 #define MAXHPS 10000
 #define MAXFOOD 60000
 #define MAXATTRIB 255
@@ -72,16 +71,16 @@ const uint32_t MONSTERVIEWRANGE = 11;
 // ----+-------------------+-------------------+--------------------+
 
 //! das Verzeichnis der Karte, relativ zum DEFAULTMUDDIR
-#define MAPDIR          "map/"
+#define MAPDIR "map/"
 
 //! das Verzeichnis der Skripte, relativ zum DEFAULTMUDDIR
-#define SCRIPTSDIR          "scripts/"
+#define SCRIPTSDIR "scripts/"
 
 //! Anzahl der maximal sichtbaren Ebenen nach Oben
-#define RANGEUP       0x02
+#define RANGEUP 0x02
 
 //! Anzahl der maximal sichtbaren Ebenen nach Unten
-#define RANGEDOWN       0x02
+#define RANGEDOWN 0x02
 
 //! Anzahl der Felder zwischen zwei Ebenen
 #define LEVELDISTANCE 0x03
@@ -166,7 +165,6 @@ const uint32_t MONSTERVIEWRANGE = 11;
 //! Code fr "kein Feld"
 #define NOFIELD 0xFFFF
 
-
 //-------------- Client to Server ---------------------
 
 //! folgender Wert ist relative x und y Koordinaten eines Items/Bodenplatte/Charakters
@@ -181,7 +179,6 @@ const uint32_t MONSTERVIEWRANGE = 11;
 //! Eine Person wird benutzt
 #define UID_PERSON 0x05
 
-
 #define UID_MAGICWAND 0x06
 
 //-------------- Server to Client ---------------------
@@ -193,28 +190,28 @@ const uint32_t MONSTERVIEWRANGE = 11;
 #define RUNNING 0x0D
 
 //! Grund fr Verbindungsabbruch: Client logt aus
-#define NORMALLOGOUT       0x00
+#define NORMALLOGOUT 0x00
 
 //! Grund fr Verbindungsabbruch: zu alter Client
-#define OLDCLIENT       0x01
+#define OLDCLIENT 0x01
 
 //! Grund fr Verbindungsabbruch: Spieler ist schon online
-#define DOUBLEPLAYER       0x02
+#define DOUBLEPLAYER 0x02
 
 //! Grund fr Verbindungsabbruch: Falsches Pa�ort
-#define WRONGPWD         0x03
+#define WRONGPWD 0x03
 
 //! Grund fr Verbindungsabbruch: Servershutdown
-#define SERVERSHUTDOWN      0x04
+#define SERVERSHUTDOWN 0x04
 
 //! Grund fr Verbindungsabbruch: durch Gamemaster entfernt
-#define BYGAMEMASTER       0x05
+#define BYGAMEMASTER 0x05
 
 //! Grund fr Verbindungsabbruch: zum Erstellen eines neuen Player
-#define FORCREATE            0x06
+#define FORCREATE 0x06
 
 //! Grund fr Verbindungsabbruch: kein Platz fr den Player
-#define NOPLACE               0x07
+#define NOPLACE 0x07
 
 //! Grund fr Verbindungsabbruch: angegebener Spieler nicht gefunden
 #define NOCHARACTERFOUND 0x08

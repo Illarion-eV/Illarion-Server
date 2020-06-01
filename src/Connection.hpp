@@ -16,14 +16,12 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef CONNECTION_HPP
 #define CONNECTION_HPP
 
-#include <sys/types.h>
-#include <sys/socket.h>
 #include <netinet/in.h>
-
+#include <sys/socket.h>
+#include <sys/types.h>
 
 struct Connection {
     int m_read_socket;

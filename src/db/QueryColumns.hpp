@@ -21,10 +21,10 @@
 #ifndef QUERY_COLUMNS_HPP
 #define QUERY_COLUMNS_HPP
 
-#include <string>
-#include <boost/cstdint.hpp>
-
 #include "db/Connection.hpp"
+
+#include <boost/cstdint.hpp>
+#include <string>
 
 namespace Database {
 class QueryColumns {
@@ -40,19 +40,17 @@ private:
     columnIndex nextColumn;
 
 public:
-
     auto addColumn(const std::string &column) -> columnIndex;
     auto addColumn(const std::string &table, const std::string &column) -> columnIndex;
 
     void addColumns() {}
-    template<typename... Args>
-    void addColumns(const std::string &column, const Args &... args) {
+    template <typename... Args> void addColumns(const std::string &column, const Args &... args) {
         addColumn(column);
         addColumns(args...);
     }
 
     void addColumnsWithTable(const std::string &table) {}
-    template<typename... Args>
+    template <typename... Args>
     void addColumnsWithTable(const std::string &table, const std::string &column, const Args &... args) {
         addColumn(table, column);
         addColumnsWithTable(table, args...);
@@ -60,12 +58,12 @@ public:
 
 protected:
     QueryColumns();
-    
+
     auto buildQuerySegment() -> std::string &;
     [[nodiscard]] auto getColumnCount() const -> uint32_t;
 
     void setHideTable(bool hide);
 };
-}
+} // namespace Database
 
 #endif

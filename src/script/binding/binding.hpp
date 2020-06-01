@@ -22,37 +22,37 @@
 
 namespace binding {
 
-    auto armor_struct() -> luabind::scope;
-    auto attack_boni() -> luabind::scope;
-    auto character() -> luabind::scope;
-    auto character_skillvalue() -> luabind::scope;
-    auto colour() -> luabind::scope;
-    auto item_struct() -> luabind::scope;
-    auto container() -> luabind::scope;
-    auto crafting_dialog() -> luabind::scope;
-    auto field() -> luabind::scope;
-    auto input_dialog() -> luabind::scope;
-    auto item() -> luabind::scope;
-    auto item_look_at() -> luabind::scope;
-    auto long_time_action() -> luabind::scope;
-    auto long_time_character_effects() -> luabind::scope;
-    auto long_time_effect() -> luabind::scope;
-    auto long_time_effect_struct() -> luabind::scope;
-    auto merchant_dialog() -> luabind::scope;
-    auto message_dialog() -> luabind::scope;
-    auto monster() -> luabind::scope;
-    auto monster_armor() -> luabind::scope;
-    auto npc() -> luabind::scope;
-    auto player() -> luabind::scope;
-    auto position() -> luabind::scope;
-    auto random() -> luabind::scope;
-    auto script_item() -> luabind::scope;
-    auto script_variables_table() -> luabind::scope;
-    auto selection_dialog() -> luabind::scope;
-    auto tiles_struct() -> luabind::scope;
-    auto waypoint_list() -> luabind::scope;
-    auto weapon_struct() -> luabind::scope;
-    auto weather_struct() -> luabind::scope;
-    auto world() -> luabind::scope;
+auto armor_struct() -> luabind::scope;
+auto attack_boni() -> luabind::scope;
+auto character() -> luabind::scope;
+auto character_skillvalue() -> luabind::scope;
+auto colour() -> luabind::scope;
+auto item_struct() -> luabind::scope;
+auto container() -> luabind::scope;
+auto crafting_dialog() -> luabind::scope;
+auto field() -> luabind::scope;
+auto input_dialog() -> luabind::scope;
+auto item() -> luabind::scope;
+auto item_look_at() -> luabind::scope;
+auto long_time_action() -> luabind::scope;
+auto long_time_character_effects() -> luabind::scope;
+auto long_time_effect() -> luabind::scope;
+auto long_time_effect_struct() -> luabind::scope;
+auto merchant_dialog() -> luabind::scope;
+auto message_dialog() -> luabind::scope;
+auto monster() -> luabind::scope;
+auto monster_armor() -> luabind::scope;
+auto npc() -> luabind::scope;
+auto player() -> luabind::scope;
+auto position() -> luabind::scope;
+auto random() -> luabind::scope;
+auto script_item() -> luabind::scope;
+auto script_variables_table() -> luabind::scope;
+auto selection_dialog() -> luabind::scope;
+auto tiles_struct() -> luabind::scope;
+auto waypoint_list() -> luabind::scope;
+auto weapon_struct() -> luabind::scope;
+auto weather_struct() -> luabind::scope;
+auto world() -> luabind::scope;
 
-}
+} // namespace binding

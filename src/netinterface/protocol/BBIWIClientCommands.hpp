@@ -16,7 +16,6 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef BBIWI_CLIENT_COMMANDS_HPP
 #define BBIWI_CLIENT_COMMANDS_HPP
 
@@ -25,7 +24,8 @@
 
 class Player;
 
-enum bbclientcommands {
+enum bbclientcommands
+{
     BB_KEEPALIVE_TS = 0x01,
     BB_BROADCAST_TS = 0x02,
     BB_DISCONNECT_TS = 0x03,
@@ -53,7 +53,7 @@ public:
 class BBSpeakAsTS : public BasicClientCommand {
     TYPE_OF_CHARACTER_ID id = 0;
     std::string message;
-    
+
 public:
     BBSpeakAsTS();
     ~BBSpeakAsTS() override;
@@ -119,7 +119,7 @@ public:
 class BBTalktoTS : public BasicClientCommand {
     TYPE_OF_CHARACTER_ID id = 0;
     std::string msg;
-    
+
 public:
     BBTalktoTS();
     ~BBTalktoTS() override;
@@ -133,7 +133,7 @@ class BBDisconnectTS : public BasicClientCommand {
 public:
     BBDisconnectTS();
     ~BBDisconnectTS() override;
-    
+
     void decodeData() override;
     void performAction(Player *player) override;
     auto clone() -> ClientCommandPointer override;

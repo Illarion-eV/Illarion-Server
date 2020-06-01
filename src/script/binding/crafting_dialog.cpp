@@ -23,28 +23,31 @@
 
 namespace binding {
 
-    auto crafting_dialog() -> luabind::scope {
-        return luabind::class_<CraftingDialog>("CraftingDialog")
-                .enum_("Result")
-                [
-                    luabind::value("playerAborts", CraftingDialog::playerAborts),
-                    luabind::value("playerCrafts", CraftingDialog::playerCrafts),
-                    luabind::value("playerLooksAtItem", CraftingDialog::playerLooksAtCraftable),
-                    luabind::value("playerLooksAtIngredient", CraftingDialog::playerLooksAtIngredient),
-                    luabind::value("playerCraftingComplete", CraftingDialog::playerCraftingComplete),
-                    luabind::value("playerCraftingAborted", CraftingDialog::playerCraftingAborted)
-                ]
-                .def(luabind::constructor<std::string, uint16_t, uint16_t, luabind::object>())
-                .def("clearGroupsAndProducts", &CraftingDialog::clearGroupsAndProducts)
-                .def("addGroup", &CraftingDialog::addGroup)
-                .def("addCraftable", (void (CraftingDialog::*)(uint8_t, uint8_t, TYPE_OF_ITEM_ID, const std::string &, uint16_t)) &CraftingDialog::addCraftable)
-                .def("addCraftable", (void (CraftingDialog::*)(uint8_t, uint8_t, TYPE_OF_ITEM_ID, const std::string &, uint16_t, uint8_t)) &CraftingDialog::addCraftable)
-                .def("addCraftableIngredient", (void (CraftingDialog::*)(TYPE_OF_ITEM_ID)) &CraftingDialog::addCraftableIngredient)
-                .def("addCraftableIngredient", (void (CraftingDialog::*)(TYPE_OF_ITEM_ID, uint8_t)) &CraftingDialog::addCraftableIngredient)
-                .def("getResult", &CraftingDialog::getResult)
-                .def("getCraftableId", &CraftingDialog::getCraftableId)
-                .def("getCraftableAmount", &CraftingDialog::getCraftableAmount)
-                .def("getIngredientIndex", &CraftingDialog::getIngredientIndex);
-    }
-
+auto crafting_dialog() -> luabind::scope {
+    return luabind::class_<CraftingDialog>("CraftingDialog")
+            .enum_("Result")[luabind::value("playerAborts", CraftingDialog::playerAborts),
+                             luabind::value("playerCrafts", CraftingDialog::playerCrafts),
+                             luabind::value("playerLooksAtItem", CraftingDialog::playerLooksAtCraftable),
+                             luabind::value("playerLooksAtIngredient", CraftingDialog::playerLooksAtIngredient),
+                             luabind::value("playerCraftingComplete", CraftingDialog::playerCraftingComplete),
+                             luabind::value("playerCraftingAborted", CraftingDialog::playerCraftingAborted)]
+            .def(luabind::constructor<std::string, uint16_t, uint16_t, luabind::object>())
+            .def("clearGroupsAndProducts", &CraftingDialog::clearGroupsAndProducts)
+            .def("addGroup", &CraftingDialog::addGroup)
+            .def("addCraftable",
+                 (void (CraftingDialog::*)(uint8_t, uint8_t, TYPE_OF_ITEM_ID, const std::string &, uint16_t)) &
+                         CraftingDialog::addCraftable)
+            .def("addCraftable",
+                 (void (CraftingDialog::*)(uint8_t, uint8_t, TYPE_OF_ITEM_ID, const std::string &, uint16_t, uint8_t)) &
+                         CraftingDialog::addCraftable)
+            .def("addCraftableIngredient",
+                 (void (CraftingDialog::*)(TYPE_OF_ITEM_ID)) & CraftingDialog::addCraftableIngredient)
+            .def("addCraftableIngredient",
+                 (void (CraftingDialog::*)(TYPE_OF_ITEM_ID, uint8_t)) & CraftingDialog::addCraftableIngredient)
+            .def("getResult", &CraftingDialog::getResult)
+            .def("getCraftableId", &CraftingDialog::getCraftableId)
+            .def("getCraftableAmount", &CraftingDialog::getCraftableAmount)
+            .def("getIngredientIndex", &CraftingDialog::getIngredientIndex);
 }
+
+} // namespace binding

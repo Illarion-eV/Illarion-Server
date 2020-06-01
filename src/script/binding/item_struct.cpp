@@ -23,23 +23,23 @@
 
 namespace binding {
 
-    auto item_struct() -> luabind::scope {
-        return luabind::class_<ItemStruct>("ItemStruct")
-                .def_readonly("id", &ItemStruct::id)
-                .def_readonly("AgeingSpeed", &ItemStruct::AgeingSpeed)
-                .def_readonly("Weight", &ItemStruct::Weight)
-                .def_readonly("ObjectAfterRot", &ItemStruct::ObjectAfterRot)
-                .def_readonly("rotsInInventory", &ItemStruct::rotsInInventory)
-                .def_readonly("Brightness", &ItemStruct::Brightness)
-                .def_readonly("Worth", &ItemStruct::Worth)
-                .def_readonly("MaxStack", &ItemStruct::MaxStack)
-                .def_readonly("BuyStack", &ItemStruct::BuyStack)
-                .def_readonly("English", &ItemStruct::English)
-                .def_readonly("German", &ItemStruct::German)
-                .def_readonly("EnglishDescription", &ItemStruct::EnglishDescription)
-                .def_readonly("GermanDescription", &ItemStruct::GermanDescription)
-                .def_readonly("Rareness", &ItemStruct::Rareness)
-                .def_readonly("Level", &ItemStruct::Level);
-    }
-
+auto item_struct() -> luabind::scope {
+    return luabind::class_<ItemStruct>("ItemStruct")
+            .def_readonly("id", &ItemStruct::id)
+            .def_readonly("AgeingSpeed", &ItemStruct::AgeingSpeed)
+            .def_readonly("Weight", &ItemStruct::Weight)
+            .def_readonly("ObjectAfterRot", &ItemStruct::ObjectAfterRot)
+            .def_readonly("rotsInInventory", &ItemStruct::rotsInInventory)
+            .def_readonly("Brightness", &ItemStruct::Brightness)
+            .def_readonly("Worth", &ItemStruct::Worth)
+            .def_readonly("MaxStack", &ItemStruct::MaxStack)
+            .def_readonly("BuyStack", &ItemStruct::BuyStack)
+            .def_readonly("English", &ItemStruct::English)
+            .def_readonly("German", &ItemStruct::German)
+            .def_readonly("EnglishDescription", &ItemStruct::EnglishDescription)
+            .def_readonly("GermanDescription", &ItemStruct::GermanDescription)
+            .def_readonly("Rareness", &ItemStruct::Rareness)
+            .def_readonly("Level", &ItemStruct::Level);
 }
+
+} // namespace binding

@@ -22,6 +22,7 @@
 #define LUA_WEAPON_SCRIPT_HPP
 
 #include "LuaScript.hpp"
+
 #include <vector>
 
 class World;
@@ -41,4 +42,3 @@ public:
 };
 
 #endif
-

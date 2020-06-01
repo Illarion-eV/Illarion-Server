@@ -21,18 +21,19 @@
 #ifndef STRUCT_TABLE_HPP
 #define STRUCT_TABLE_HPP
 
-#include <iostream>
-#include <vector>
-#include <string>
-#include <unordered_map>
+#include "Logger.hpp"
 #include "data/Table.hpp"
 #include "db/Result.hpp"
 #include "db/SelectQuery.hpp"
-#include "Logger.hpp"
 
-template<typename IdType, typename StructType>
-class StructTable : public Table {
+#include <iostream>
+#include <string>
+#include <unordered_map>
+#include <vector>
+
+template <typename IdType, typename StructType> class StructTable : public Table {
     using ContainerType = std::unordered_map<IdType, StructType>;
+
 public:
     auto reloadBuffer() -> bool override {
         try {
@@ -53,7 +54,8 @@ public:
 
             isBufferValid = true;
         } catch (std::exception &e) {
-            Logger::warn(LogFacility::Database) << "Exception in loading table " << getTableName() << ": " << e.what() << Log::end;
+            Logger::warn(LogFacility::Database)
+                    << "Exception in loading table " << getTableName() << ": " << e.what() << Log::end;
             isBufferValid = false;
         }
 
@@ -76,7 +78,8 @@ public:
         try {
             return structs.at(id);
         } catch (std::out_of_range &) {
-            Logger::error(LogFacility::Script) << "Table " << getTableName() << ": entry " << id << " was not found!" << Log::end;
+            Logger::error(LogFacility::Script)
+                    << "Table " << getTableName() << ": entry " << id << " was not found!" << Log::end;
             return structs[id];
         }
     }
@@ -126,4 +129,3 @@ private:
 };
 
 #endif
-

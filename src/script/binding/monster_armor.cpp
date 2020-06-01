@@ -18,17 +18,18 @@
  *  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <TableStructs.hpp>
 #include "script/binding/binding.hpp"
+
+#include <TableStructs.hpp>
 
 namespace binding {
 
-    auto monster_armor() -> luabind::scope {
-        return luabind::class_<MonsterArmor>("NaturalArmor")
-                .def(luabind::constructor<>())
-                .def_readonly("strokeArmor", &MonsterArmor::strokeArmor)
-                .def_readonly("thrustArmor", &MonsterArmor::thrustArmor)
-                .def_readonly("punctureArmor", &MonsterArmor::punctureArmor);
-    }
-
+auto monster_armor() -> luabind::scope {
+    return luabind::class_<MonsterArmor>("NaturalArmor")
+            .def(luabind::constructor<>())
+            .def_readonly("strokeArmor", &MonsterArmor::strokeArmor)
+            .def_readonly("thrustArmor", &MonsterArmor::thrustArmor)
+            .def_readonly("punctureArmor", &MonsterArmor::punctureArmor);
 }
+
+} // namespace binding

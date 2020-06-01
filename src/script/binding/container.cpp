@@ -18,33 +18,36 @@
  *  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Container.hpp"
+
+#include "script/binding/binding.hpp"
+#include "script/forwarder.hpp"
+
 #include <luabind/luabind.hpp>
 #include <luabind/out_value_policy.hpp>
-#include "Container.hpp"
-#include "script/forwarder.hpp"
-#include "script/binding/binding.hpp"
 
 namespace binding {
 
-    auto container() -> luabind::scope {
-        return luabind::class_<Container>("Container")
-        .def(luabind::constructor<TYPE_OF_ITEM_ID>())
-        .def("getSlotCount", &Container::getSlotCount)
-        .def("takeItemNr", &Container::TakeItemNr, luabind::pure_out_value(_3) + luabind::pure_out_value(_4))
-        .def("viewItemNr", &Container::viewItemNr, luabind::pure_out_value(_3) + luabind::pure_out_value(_4))
-        .def("changeQualityAt", &Container::changeQualityAt)
-        .def("insertContainer", (bool(Container:: *)(const Item &, Container *))&Container::InsertContainer)
-        .def("insertContainer", (bool(Container:: *)(const Item &, Container *, TYPE_OF_CONTAINERSLOTS))&Container::InsertContainer)
-        .def("insertItem", (bool(Container:: *)(Item, bool))&Container::InsertItem)
-        .def("insertItem", (bool(Container:: *)(Item, TYPE_OF_CONTAINERSLOTS))&Container::InsertItem)
-        .def("insertItem", (bool(Container:: *)(const Item &))&Container::InsertItem)
-        .def("countItem", container_count_item1)
-        .def("countItem", container_count_item2)
-        .def("eraseItem", container_erase_item1)
-        .def("eraseItem", container_erase_item2)
-        .def("increaseAtPos", &Container::increaseAtPos)
-        .def("swapAtPos", &Container::swapAtPos)
-        .def("weight", &Container::weight);
-    }
-
+auto container() -> luabind::scope {
+    return luabind::class_<Container>("Container")
+            .def(luabind::constructor<TYPE_OF_ITEM_ID>())
+            .def("getSlotCount", &Container::getSlotCount)
+            .def("takeItemNr", &Container::TakeItemNr, luabind::pure_out_value(_3) + luabind::pure_out_value(_4))
+            .def("viewItemNr", &Container::viewItemNr, luabind::pure_out_value(_3) + luabind::pure_out_value(_4))
+            .def("changeQualityAt", &Container::changeQualityAt)
+            .def("insertContainer", (bool (Container::*)(const Item &, Container *)) & Container::InsertContainer)
+            .def("insertContainer",
+                 (bool (Container::*)(const Item &, Container *, TYPE_OF_CONTAINERSLOTS)) & Container::InsertContainer)
+            .def("insertItem", (bool (Container::*)(Item, bool)) & Container::InsertItem)
+            .def("insertItem", (bool (Container::*)(Item, TYPE_OF_CONTAINERSLOTS)) & Container::InsertItem)
+            .def("insertItem", (bool (Container::*)(const Item &)) & Container::InsertItem)
+            .def("countItem", container_count_item1)
+            .def("countItem", container_count_item2)
+            .def("eraseItem", container_erase_item1)
+            .def("eraseItem", container_erase_item2)
+            .def("increaseAtPos", &Container::increaseAtPos)
+            .def("swapAtPos", &Container::swapAtPos)
+            .def("weight", &Container::weight);
 }
+
+} // namespace binding

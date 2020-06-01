@@ -18,14 +18,13 @@
 
 #include "netinterface/protocol/BBIWIClientCommands.hpp"
 
-#include "Player.hpp"
-#include "World.hpp"
 #include "Logger.hpp"
 #include "MonitoringClients.hpp"
+#include "Player.hpp"
+#include "World.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
 
-BBBroadCastTS::BBBroadCastTS() : BasicClientCommand(BB_BROADCAST_TS) {
-}
+BBBroadCastTS::BBBroadCastTS() : BasicClientCommand(BB_BROADCAST_TS) {}
 
 BBBroadCastTS::~BBBroadCastTS() = default;
 
@@ -42,8 +41,7 @@ auto BBBroadCastTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-BBSpeakAsTS::BBSpeakAsTS() : BasicClientCommand(BB_SPEAKAS_TS) {
-}
+BBSpeakAsTS::BBSpeakAsTS() : BasicClientCommand(BB_SPEAKAS_TS) {}
 
 BBSpeakAsTS::~BBSpeakAsTS() = default;
 
@@ -54,7 +52,7 @@ void BBSpeakAsTS::decodeData() {
 
 void BBSpeakAsTS::performAction(Player *player) {
     Player *tempPlayer = World::get()->Players.find(id);
-    
+
     if (tempPlayer != nullptr) {
         tempPlayer->talk(Character::tt_say, message);
         Logger::info(LogFacility::Admin) << *player << " talks as " << *tempPlayer << ": " << message << Log::end;
@@ -66,8 +64,7 @@ auto BBSpeakAsTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-BBWarpPlayerTS::BBWarpPlayerTS() : BasicClientCommand(BB_WARPPLAYER_TS) {
-}
+BBWarpPlayerTS::BBWarpPlayerTS() : BasicClientCommand(BB_WARPPLAYER_TS) {}
 
 BBWarpPlayerTS::~BBWarpPlayerTS() = default;
 
@@ -91,8 +88,7 @@ auto BBWarpPlayerTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-BBServerCommandTS::BBServerCommandTS() : BasicClientCommand(BB_SERVERCOMMAND_TS) {
-}
+BBServerCommandTS::BBServerCommandTS() : BasicClientCommand(BB_SERVERCOMMAND_TS) {}
 
 BBServerCommandTS::~BBServerCommandTS() = default;
 
@@ -127,8 +123,7 @@ auto BBServerCommandTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-BBChangeAttribTS::BBChangeAttribTS() : BasicClientCommand(BB_CHANGEATTRIB_TS) {
-}
+BBChangeAttribTS::BBChangeAttribTS() : BasicClientCommand(BB_CHANGEATTRIB_TS) {}
 
 BBChangeAttribTS::~BBChangeAttribTS() = default;
 
@@ -140,12 +135,13 @@ void BBChangeAttribTS::decodeData() {
 
 void BBChangeAttribTS::performAction(Player *player) {
     Player *tempPlayer = World::get()->Players.find(id);
-    
+
     if (tempPlayer != nullptr) {
         auto oldValue = tempPlayer->increaseAttrib(attrib, 0);
         auto newValue = tempPlayer->increaseAttrib(attrib, value);
 
-        Logger::info(LogFacility::Admin) << *player << " increases attribute " << attrib << " for " << *tempPlayer << " from " << oldValue << " to " << newValue << Log::end;
+        Logger::info(LogFacility::Admin) << *player << " increases attribute " << attrib << " for " << *tempPlayer
+                                         << " from " << oldValue << " to " << newValue << Log::end;
     }
 }
 
@@ -154,8 +150,7 @@ auto BBChangeAttribTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-BBChangeSkillTS::BBChangeSkillTS() : BasicClientCommand(BB_CHANGEATTRIB_TS) {
-}
+BBChangeSkillTS::BBChangeSkillTS() : BasicClientCommand(BB_CHANGEATTRIB_TS) {}
 
 BBChangeSkillTS::~BBChangeSkillTS() = default;
 
@@ -171,7 +166,8 @@ void BBChangeSkillTS::performAction(Player *player) {
     if (tempPlayer != nullptr) {
         auto oldValue = tempPlayer->getSkill(skill);
         auto newValue = tempPlayer->increaseSkill(skill, value);
-        Logger::info(LogFacility::Admin) << *player << " increases skill " << player->getSkillName(skill) << " for " << *tempPlayer << " from " << oldValue << " to " << newValue << Log::end;
+        Logger::info(LogFacility::Admin) << *player << " increases skill " << player->getSkillName(skill) << " for "
+                                         << *tempPlayer << " from " << oldValue << " to " << newValue << Log::end;
     }
 }
 
@@ -180,8 +176,7 @@ auto BBChangeSkillTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-BBTalktoTS::BBTalktoTS() : BasicClientCommand(BB_TALKTO_TS) {
-}
+BBTalktoTS::BBTalktoTS() : BasicClientCommand(BB_TALKTO_TS) {}
 
 BBTalktoTS::~BBTalktoTS() = default;
 
@@ -199,13 +194,11 @@ auto BBTalktoTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-BBDisconnectTS::BBDisconnectTS() : BasicClientCommand(BB_DISCONNECT_TS) {
-}
+BBDisconnectTS::BBDisconnectTS() : BasicClientCommand(BB_DISCONNECT_TS) {}
 
 BBDisconnectTS::~BBDisconnectTS() = default;
 
-void BBDisconnectTS::decodeData() {
-}
+void BBDisconnectTS::decodeData() {}
 
 void BBDisconnectTS::performAction(Player *player) {
     player->Connection->closeConnection();
@@ -216,13 +209,11 @@ auto BBDisconnectTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-BBKeepAliveTS::BBKeepAliveTS() : BasicClientCommand(BB_KEEPALIVE_TS) {
-}
+BBKeepAliveTS::BBKeepAliveTS() : BasicClientCommand(BB_KEEPALIVE_TS) {}
 
 BBKeepAliveTS::~BBKeepAliveTS() = default;
 
-void BBKeepAliveTS::decodeData() {
-}
+void BBKeepAliveTS::decodeData() {}
 
 void BBKeepAliveTS::performAction(Player *player) {
     time(&(player->lastkeepalive));
@@ -233,8 +224,7 @@ auto BBKeepAliveTS::clone() -> ClientCommandPointer {
     return cmd;
 }
 
-BBBanTS::BBBanTS() : BasicClientCommand(BB_BAN_TS) {
-}
+BBBanTS::BBBanTS() : BasicClientCommand(BB_BAN_TS) {}
 
 BBBanTS::~BBBanTS() = default;
 
@@ -259,4 +249,3 @@ auto BBBanTS::clone() -> ClientCommandPointer {
     ClientCommandPointer cmd = std::make_shared<BBBanTS>();
     return cmd;
 }
-

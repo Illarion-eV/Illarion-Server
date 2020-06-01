@@ -21,10 +21,10 @@
 #ifndef TILES_TABLE_HPP
 #define TILES_TABLE_HPP
 
-#include "data/ScriptStructTable.hpp"
-#include "types.hpp"
 #include "TableStructs.hpp"
+#include "data/ScriptStructTable.hpp"
 #include "script/LuaTileScript.hpp"
+#include "types.hpp"
 
 class TilesTable : public ScriptStructTable<TYPE_OF_TILE_ID, TilesStruct, LuaTileScript> {
 public:
@@ -36,4 +36,3 @@ public:
 };
 
 #endif
-

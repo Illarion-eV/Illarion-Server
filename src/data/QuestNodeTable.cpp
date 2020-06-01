@@ -20,18 +20,17 @@
 
 #include "data/QuestNodeTable.hpp"
 
+#include "Config.hpp"
+#include "Logger.hpp"
+#include "script/LuaScript.hpp"
+
+#include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
 #include <filesystem>
 #include <fstream>
 #include <memory>
-#include <vector>
 #include <string>
-#include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
-
-#include "Logger.hpp"
-#include "Config.hpp"
-
-#include "script/LuaScript.hpp"
+#include <vector>
 
 std::unique_ptr<QuestNodeTable> QuestNodeTable::instance = nullptr;
 
@@ -92,7 +91,7 @@ void QuestNodeTable::reload() {
 void QuestNodeTable::readQuest(std::ifstream &questFile, std::filesystem::path &questPath) {
     std::string line;
 
-    while (std::getline(questFile,line)) {
+    while (std::getline(questFile, line)) {
         if (line.empty()) {
             continue;
         }
@@ -100,33 +99,37 @@ void QuestNodeTable::readQuest(std::ifstream &questFile, std::filesystem::path &
         std::vector<std::string> entries;
         boost::split(entries, line, boost::is_any_of(","));
 
-        if ((entries[0] != "triggerfield" && entries.size() != 4) || (entries[0] == "triggerfield" && entries.size() != 6)) {
-            Logger::error(LogFacility::Script) << "Syntax error while loading quest file: " << questPath.string() << "/quest.txt" << Log::end;
+        if ((entries[0] != "triggerfield" && entries.size() != 4) ||
+            (entries[0] == "triggerfield" && entries.size() != 6)) {
+            Logger::error(LogFacility::Script)
+                    << "Syntax error while loading quest file: " << questPath.string() << "/quest.txt" << Log::end;
             return;
         }
 
         if (entries[0] == "triggerfield") {
-
             position pos;
 
             try {
                 pos.x = boost::lexical_cast<signed short>(entries[1]);
             } catch (boost::bad_lexical_cast &) {
-                Logger::error(LogFacility::Script) << "Conversion error while loading quest file: " << entries[1] << " is not a map coordinate" << Log::end;
+                Logger::error(LogFacility::Script) << "Conversion error while loading quest file: " << entries[1]
+                                                   << " is not a map coordinate" << Log::end;
                 return;
             }
 
             try {
                 pos.y = boost::lexical_cast<signed short>(entries[2]);
             } catch (boost::bad_lexical_cast &) {
-                Logger::error(LogFacility::Script) << "Conversion error while loading quest file: " << entries[2] << " is not a map coordinate" << Log::end;
+                Logger::error(LogFacility::Script) << "Conversion error while loading quest file: " << entries[2]
+                                                   << " is not a map coordinate" << Log::end;
                 return;
             }
 
             try {
                 pos.z = boost::lexical_cast<signed short>(entries[3]);
             } catch (boost::bad_lexical_cast &) {
-                Logger::error(LogFacility::Script) << "Conversion error while loading quest file: " << entries[3] << " is not a map coordinate" << Log::end;
+                Logger::error(LogFacility::Script) << "Conversion error while loading quest file: " << entries[3]
+                                                   << " is not a map coordinate" << Log::end;
                 return;
             }
 
@@ -144,13 +147,13 @@ void QuestNodeTable::readQuest(std::ifstream &questFile, std::filesystem::path &
             triggerNodes.emplace(pos, node);
 
         } else {
-
             unsigned int id;
 
             try {
                 id = boost::lexical_cast<unsigned int>(entries[1]);
             } catch (boost::bad_lexical_cast &) {
-                Logger::error(LogFacility::Script) << "Conversion error while loading quest file: " << entries[1] << " is not an ID" << Log::end;
+                Logger::error(LogFacility::Script)
+                        << "Conversion error while loading quest file: " << entries[1] << " is not an ID" << Log::end;
                 return;
             }
 
@@ -182,4 +185,3 @@ void QuestNodeTable::clear() {
     monsterNodes.clear();
     triggerNodes.clear();
 }
-

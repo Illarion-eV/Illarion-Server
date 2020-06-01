@@ -19,14 +19,14 @@
  */
 
 #include "data/MonsterTable.hpp"
+
+#include "Logger.hpp"
+#include "data/Data.hpp"
 #include "data/QuestNodeTable.hpp"
 #include "db/Connection.hpp"
 #include "db/ConnectionManager.hpp"
-#include "db/SelectQuery.hpp"
 #include "db/Result.hpp"
-#include "Logger.hpp"
-#include "data/Data.hpp"
-
+#include "db/SelectQuery.hpp"
 
 MonsterTable::MonsterTable() {
     Logger::info(LogFacility::Other) << "MonsterTable::constructor" << Log::end;
@@ -67,10 +67,10 @@ MonsterTable::MonsterTable() {
 
             std::map<uint32_t, std::map<std::string, std::string>> lootData;
 
-            for (const auto &row: lootDataResults) {
+            for (const auto &row : lootDataResults) {
                 auto &lootDataEntry = lootData[row["mdd_id"].as<uint32_t>()];
-                lootDataEntry.insert(std::make_pair(row["mdd_key"].as<std::string>(),
-                                                    row["mdd_value"].as<std::string>()));
+                lootDataEntry.insert(
+                        std::make_pair(row["mdd_key"].as<std::string>(), row["mdd_value"].as<std::string>()));
             }
 
             for (const auto &row : monresults) {
@@ -95,7 +95,8 @@ MonsterTable::MonsterTable() {
                     temprecord.movement = movement_type::crawl;
                 } else {
                     temprecord.movement = movement_type::walk;
-                    Logger::error(LogFacility::Script) << "Monster " << temprecord.nameEn << " ( " << id << ") has illegal movement type: " << movementType << Log::end;
+                    Logger::error(LogFacility::Script) << "Monster " << temprecord.nameEn << " ( " << id
+                                                       << ") has illegal movement type: " << movementType << Log::end;
                 }
 
                 if (!row["script"].is_null()) {
@@ -105,7 +106,8 @@ MonsterTable::MonsterTable() {
                         std::shared_ptr<LuaMonsterScript> script(new LuaMonsterScript(scriptname));
                         temprecord.script = script;
                     } catch (ScriptException &e) {
-                        Logger::error(LogFacility::Script) << "Error while loading monster script: " << scriptname << ": " << e.what() << Log::end;
+                        Logger::error(LogFacility::Script)
+                                << "Error while loading monster script: " << scriptname << ": " << e.what() << Log::end;
                     }
                 } else if (questItr != questEnd && questItr->first == id) {
                     std::shared_ptr<LuaMonsterScript> tmpScript = std::make_shared<LuaMonsterScript>();
@@ -150,7 +152,8 @@ MonsterTable::MonsterTable() {
                     } else if (attribute == "essence") {
                         temprecord.attributes.essence = std::make_pair(minValue, maxValue);
                     } else {
-                        Logger::error(LogFacility::Other) << "Unknown attribute type for monster " << id << ": " << attribute << Log::end;
+                        Logger::error(LogFacility::Other)
+                                << "Unknown attribute type for monster " << id << ": " << attribute << Log::end;
                     }
                 }
 
@@ -184,9 +187,8 @@ MonsterTable::MonsterTable() {
                 for (const auto &itemRow : monItemResults) {
                     itemdef_t tempitem;
                     tempitem.itemid = itemRow["mobit_itemid"].as<TYPE_OF_ITEM_ID>();
-                    tempitem.amount = std::make_pair(
-                                          itemRow["mobit_mincount"].as<uint16_t>(),
-                                          itemRow["mobit_maxcount"].as<uint16_t>());
+                    tempitem.amount = std::make_pair(itemRow["mobit_mincount"].as<uint16_t>(),
+                                                     itemRow["mobit_maxcount"].as<uint16_t>());
 
                     const auto position = itemRow["mobit_position"].as<std::string>("");
                     uint16_t location;
@@ -226,7 +228,8 @@ MonsterTable::MonsterTable() {
                     } else if (position == "belt6") {
                         location = 17;
                     } else {
-                        Logger::error(LogFacility::Other) << "Invalid itemslot for monster " << id << ": " << position << Log::end;
+                        Logger::error(LogFacility::Other)
+                                << "Invalid itemslot for monster " << id << ": " << position << Log::end;
                         location = 99;
                     }
 
@@ -236,7 +239,8 @@ MonsterTable::MonsterTable() {
                         tempitem.AgeingSpeed = itemStruct.AgeingSpeed;
                         temprecord.items[location].push_back(tempitem);
                     } else if (location < 99) {
-                        Logger::error(LogFacility::Other) << "Invalid item for monster " << id << ": " << tempitem.itemid << Log::end;
+                        Logger::error(LogFacility::Other)
+                                << "Invalid item for monster " << id << ": " << tempitem.itemid << Log::end;
                     }
                 }
 
@@ -274,10 +278,6 @@ MonsterTable::MonsterTable() {
                     lootItem.data = std::move(lootData[lootId]);
                 }
 
-                
-
-
-
                 table[id] = temprecord;
                 dataOK = true;
             }
@@ -289,7 +289,6 @@ MonsterTable::MonsterTable() {
         Logger::error(LogFacility::Other) << "Exception in MonsterTable::reload: " << e.what() << Log::end;
         dataOK = false;
     }
-
 }
 
 auto MonsterTable::exists(TYPE_OF_CHARACTER_ID id) const -> bool {
@@ -300,7 +299,8 @@ auto MonsterTable::operator[](TYPE_OF_CHARACTER_ID id) -> const MonsterStruct & 
     try {
         return table.at(id);
     } catch (std::out_of_range &) {
-        Logger::error(LogFacility::Script) << "Table monster" << ": entry " << id << " was not found!" << Log::end;
+        Logger::error(LogFacility::Script) << "Table monster"
+                                           << ": entry " << id << " was not found!" << Log::end;
         return table[id];
     }
 }

@@ -19,18 +19,15 @@
  */
 
 #include "Random.hpp"
+
 #include "script/binding/binding.hpp"
 
 namespace binding {
 
-    auto random() -> luabind::scope {
-        return luabind::class_<Random>("Random")
-                .scope
-                [
-                    luabind::def("uniform", (double( *)()) &Random::uniform),
-                    luabind::def("uniform", (int( *)(int, int)) &Random::uniform),
-                    luabind::def("normal", &Random::normal)
-                ];
-    }
-
+auto random() -> luabind::scope {
+    return luabind::class_<Random>("Random").scope[luabind::def("uniform", (double (*)()) & Random::uniform),
+                                                   luabind::def("uniform", (int (*)(int, int)) & Random::uniform),
+                                                   luabind::def("normal", &Random::normal)];
 }
+
+} // namespace binding

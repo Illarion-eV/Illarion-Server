@@ -20,16 +20,17 @@
 
 #include "WaypointList.hpp"
 #include "script/binding/binding.hpp"
+
 #include <script/forwarder.hpp>
 
 namespace binding {
 
-    auto waypoint_list() -> luabind::scope {
-        return luabind::class_<WaypointList>("WaypointList")
-                .def("addFromList", &waypointlist_addFromList)
-                .def("getWaypoints", &waypointlist_getWaypoints)
-                .def("addWaypoint", &WaypointList::addWaypoint)
-                .def("clear", &WaypointList::clear);
-    }
-
+auto waypoint_list() -> luabind::scope {
+    return luabind::class_<WaypointList>("WaypointList")
+            .def("addFromList", &waypointlist_addFromList)
+            .def("getWaypoints", &waypointlist_getWaypoints)
+            .def("addWaypoint", &WaypointList::addWaypoint)
+            .def("clear", &WaypointList::clear);
 }
+
+} // namespace binding

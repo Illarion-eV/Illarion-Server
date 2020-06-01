@@ -21,12 +21,12 @@
 #ifndef LUA_TRIGGER_SCRIPT_HPP
 #define LUA_TRIGGER_SCRIPT_HPP
 
-#include "LuaScript.hpp"
 #include "Item.hpp"
+#include "LuaScript.hpp"
 
 class World;
 
-class LuaTriggerScript: public LuaScript {
+class LuaTriggerScript : public LuaScript {
 public:
     LuaTriggerScript();
     LuaTriggerScript(const std::string &filename, const position &pos);
@@ -42,10 +42,8 @@ public:
     void ItemRotsOnField(const ScriptItem &oldItem, const ScriptItem &newItem);
 
 private:
-
     position _pos;
     void init_functions() const;
 };
 
 #endif
-

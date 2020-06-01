@@ -19,37 +19,36 @@
  */
 
 #include "Item.hpp"
-#include <data/Data.hpp>
+
 #include "script/binding/binding.hpp"
+
+#include <data/Data.hpp>
 
 namespace binding {
 
-    auto item() -> luabind::scope {
-        luabind::value_vector items;
+auto item() -> luabind::scope {
+    luabind::value_vector items;
 
-        for (const auto &dataItem: Data::Items) {
-            const auto &name = dataItem.second.serverName;
+    for (const auto &dataItem : Data::Items) {
+        const auto &name = dataItem.second.serverName;
 
-            if (name.length() > 0) {
-                items.push_back(luabind::value(name.c_str(), dataItem.second.id));
-            }
+        if (name.length() > 0) {
+            items.push_back(luabind::value(name.c_str(), dataItem.second.id));
         }
-
-        return luabind::class_<Item>("Item")
-                .def(luabind::constructor<>())
-                .def(luabind::constructor<Item::id_type, Item::number_type, Item::wear_type, Item::quality_type>())
-                .enum_("items")
-                [
-                    items
-                ]
-                .property("id", &Item::getId, &Item::setId)
-                .property("wear", &Item::getWear, &Item::setWear)
-                .property("number", &Item::getNumber, &Item::setNumber)
-                .property("quality", &Item::getQuality, &Item::setQuality)
-                .def("setData", (void(Item:: *)(const std::string &, const std::string &))&Item::setData)
-                .def("setData", (void(Item:: *)(const std::string &, int32_t))&Item::setData)
-                .def("getData", (std::string(Item:: *)(const std::string &))&Item::getData)
-                .def("isLarge", &Item::isLarge);
     }
 
+    return luabind::class_<Item>("Item")
+            .def(luabind::constructor<>())
+            .def(luabind::constructor<Item::id_type, Item::number_type, Item::wear_type, Item::quality_type>())
+            .enum_("items")[items]
+            .property("id", &Item::getId, &Item::setId)
+            .property("wear", &Item::getWear, &Item::setWear)
+            .property("number", &Item::getNumber, &Item::setNumber)
+            .property("quality", &Item::getQuality, &Item::setQuality)
+            .def("setData", (void (Item::*)(const std::string &, const std::string &)) & Item::setData)
+            .def("setData", (void (Item::*)(const std::string &, int32_t)) & Item::setData)
+            .def("getData", (std::string(Item::*)(const std::string &)) & Item::getData)
+            .def("isLarge", &Item::isLarge);
 }
+
+} // namespace binding

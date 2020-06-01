@@ -23,16 +23,17 @@
 
 #include "dialog/Dialog.hpp"
 
-class InputDialog: public Dialog {
+class InputDialog : public Dialog {
 private:
     string description;
-    bool  multiline;
+    bool multiline;
     unsigned short maxChars;
     bool success;
     string input;
 
 public:
-    InputDialog(const string &title, string description, bool multiline, unsigned short maxChars, const luabind::object &callback);
+    InputDialog(const string &title, string description, bool multiline, unsigned short maxChars,
+                const luabind::object &callback);
     InputDialog(const InputDialog &inputDialog);
     [[nodiscard]] auto getDescription() const -> const string &;
     [[nodiscard]] auto isMultiline() const -> bool;
@@ -44,4 +45,3 @@ public:
 };
 
 #endif
-

@@ -16,15 +16,12 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "MilTimer.hpp"
 
 MilTimer::MilTimer(long milsec) {
     gap = milsec;
     ftime(&last);
 }
-
-
 
 auto MilTimer::Next() -> bool {
     timeb now;
@@ -39,4 +36,3 @@ auto MilTimer::Next() -> bool {
         return true;
     }
 }
-

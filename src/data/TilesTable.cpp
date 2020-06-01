@@ -19,6 +19,7 @@
  */
 
 #include "data/TilesTable.hpp"
+
 #include "constants.hpp"
 
 auto TilesTable::getTableName() -> std::string {
@@ -26,14 +27,7 @@ auto TilesTable::getTableName() -> std::string {
 }
 
 auto TilesTable::getColumnNames() -> std::vector<std::string> {
-    return {
-        "til_id",
-        "til_isnotpassable",
-        "til_german",
-        "til_english",
-        "til_walkingcost",
-        "til_script"
-    };
+    return {"til_id", "til_isnotpassable", "til_german", "til_english", "til_walkingcost", "til_script"};
 }
 
 auto TilesTable::assignId(const Database::ResultTuple &row) -> TYPE_OF_TILE_ID {
@@ -52,4 +46,3 @@ auto TilesTable::assignTable(const Database::ResultTuple &row) -> TilesStruct {
 auto TilesTable::assignScriptName(const Database::ResultTuple &row) -> std::string {
     return row["til_script"].as<std::string>("");
 }
-

@@ -18,33 +18,27 @@
 
 #include "ServerCommands.hpp"
 
-#include "globals.hpp"
 #include "Item.hpp"
-#include "Player.hpp"
-#include "Monster.hpp"
-#include "map/Field.hpp"
-#include "World.hpp"
 #include "Logger.hpp"
-
+#include "Monster.hpp"
+#include "Player.hpp"
+#include "World.hpp"
 #include "data/Data.hpp"
-
+#include "dialog/CraftingDialog.hpp"
+#include "dialog/InputDialog.hpp"
+#include "dialog/MerchantDialog.hpp"
+#include "dialog/MessageDialog.hpp"
+#include "dialog/SelectionDialog.hpp"
+#include "globals.hpp"
+#include "map/Field.hpp"
 #include "netinterface/BasicServerCommand.hpp"
 #include "netinterface/NetInterface.hpp"
 
-#include "dialog/InputDialog.hpp"
-#include "dialog/MessageDialog.hpp"
-#include "dialog/MerchantDialog.hpp"
-#include "dialog/SelectionDialog.hpp"
-#include "dialog/CraftingDialog.hpp"
+KeepAliveTC::KeepAliveTC() : BasicServerCommand(SC_KEEPALIVE_TC) {}
 
-KeepAliveTC::KeepAliveTC() : BasicServerCommand(SC_KEEPALIVE_TC) {
-}
-
-QuestProgressTC::QuestProgressTC(TYPE_OF_QUEST_ID id,
-                                 const std::string &title,
-                                 const std::string &description,
-                                 const std::vector<position> &targets,
-                                 bool final) : BasicServerCommand(SC_QUESTPROGRESS_TC) {
+QuestProgressTC::QuestProgressTC(TYPE_OF_QUEST_ID id, const std::string &title, const std::string &description,
+                                 const std::vector<position> &targets, bool final)
+        : BasicServerCommand(SC_QUESTPROGRESS_TC) {
     addShortIntToBuffer(id);
     addStringToBuffer(title);
     addStringToBuffer(description);
@@ -69,9 +63,10 @@ AbortQuestTC::AbortQuestTC(TYPE_OF_QUEST_ID id) : BasicServerCommand(SC_ABORTQUE
 }
 
 AvailableQuestsTC::AvailableQuestsTC(const std::vector<position> &availableNow,
-                                     const std::vector<position> &availableSoon) : BasicServerCommand(SC_AVAILABLEQUESTS_TC) {
+                                     const std::vector<position> &availableSoon)
+        : BasicServerCommand(SC_AVAILABLEQUESTS_TC) {
     addShortIntToBuffer(availableNow.size());
-    
+
     for (const auto &pos : availableNow) {
         addShortIntToBuffer(pos.x);
         addShortIntToBuffer(pos.y);
@@ -87,7 +82,8 @@ AvailableQuestsTC::AvailableQuestsTC(const std::vector<position> &availableNow,
     }
 }
 
-InputDialogTC::InputDialogTC(const InputDialog &inputDialog, unsigned int dialogId) : BasicServerCommand(SC_INPUTDIALOG_TC) {
+InputDialogTC::InputDialogTC(const InputDialog &inputDialog, unsigned int dialogId)
+        : BasicServerCommand(SC_INPUTDIALOG_TC) {
     addStringToBuffer(inputDialog.getTitle());
     addStringToBuffer(inputDialog.getDescription());
     addUnsignedCharToBuffer(inputDialog.isMultiline() ? 1 : 0);
@@ -95,13 +91,15 @@ InputDialogTC::InputDialogTC(const InputDialog &inputDialog, unsigned int dialog
     addIntToBuffer(dialogId);
 }
 
-MessageDialogTC::MessageDialogTC(const MessageDialog &messageDialog, unsigned int dialogId) : BasicServerCommand(SC_MESSAGEDIALOG_TC) {
+MessageDialogTC::MessageDialogTC(const MessageDialog &messageDialog, unsigned int dialogId)
+        : BasicServerCommand(SC_MESSAGEDIALOG_TC) {
     addStringToBuffer(messageDialog.getTitle());
     addStringToBuffer(messageDialog.getText());
     addIntToBuffer(dialogId);
 }
 
-MerchantDialogTC::MerchantDialogTC(const MerchantDialog &merchantDialog, unsigned int dialogId) : BasicServerCommand(SC_MERCHANTDIALOG_TC) {
+MerchantDialogTC::MerchantDialogTC(const MerchantDialog &merchantDialog, unsigned int dialogId)
+        : BasicServerCommand(SC_MERCHANTDIALOG_TC) {
     addStringToBuffer(merchantDialog.getTitle());
     MerchantDialog::index_type size = merchantDialog.getOffersSize();
     addUnsignedCharToBuffer(size);
@@ -135,7 +133,8 @@ MerchantDialogTC::MerchantDialogTC(const MerchantDialog &merchantDialog, unsigne
     addIntToBuffer(dialogId);
 }
 
-SelectionDialogTC::SelectionDialogTC(const SelectionDialog &selectionDialog, unsigned int dialogId) : BasicServerCommand(SC_SELECTIONDIALOG_TC) {
+SelectionDialogTC::SelectionDialogTC(const SelectionDialog &selectionDialog, unsigned int dialogId)
+        : BasicServerCommand(SC_SELECTIONDIALOG_TC) {
     addStringToBuffer(selectionDialog.getTitle());
     addStringToBuffer(selectionDialog.getText());
     SelectionDialog::index_type size = selectionDialog.getOptionsSize();
@@ -149,7 +148,8 @@ SelectionDialogTC::SelectionDialogTC(const SelectionDialog &selectionDialog, uns
     addIntToBuffer(dialogId);
 }
 
-CraftingDialogTC::CraftingDialogTC(const CraftingDialog &craftingDialog, unsigned int dialogId) : BasicServerCommand(SC_CRAFTINGDIALOG_TC) {
+CraftingDialogTC::CraftingDialogTC(const CraftingDialog &craftingDialog, unsigned int dialogId)
+        : BasicServerCommand(SC_CRAFTINGDIALOG_TC) {
     addStringToBuffer(craftingDialog.getTitle());
     CraftingDialog::index_t numberOfGroups = craftingDialog.getGroupsSize();
     addUnsignedCharToBuffer(numberOfGroups);
@@ -183,19 +183,22 @@ CraftingDialogTC::CraftingDialogTC(const CraftingDialog &craftingDialog, unsigne
     addIntToBuffer(dialogId);
 }
 
-CraftingDialogCraftTC::CraftingDialogCraftTC(uint8_t stillToCraft, uint16_t craftingTime, unsigned int dialogId) : BasicServerCommand(SC_CRAFTINGDIALOGUPDATE_TC) {
+CraftingDialogCraftTC::CraftingDialogCraftTC(uint8_t stillToCraft, uint16_t craftingTime, unsigned int dialogId)
+        : BasicServerCommand(SC_CRAFTINGDIALOGUPDATE_TC) {
     addUnsignedCharToBuffer(0);
     addUnsignedCharToBuffer(stillToCraft);
     addShortIntToBuffer(craftingTime);
     addIntToBuffer(dialogId);
 }
 
-CraftingDialogCraftingCompleteTC::CraftingDialogCraftingCompleteTC(unsigned int dialogId) : BasicServerCommand(SC_CRAFTINGDIALOGUPDATE_TC) {
+CraftingDialogCraftingCompleteTC::CraftingDialogCraftingCompleteTC(unsigned int dialogId)
+        : BasicServerCommand(SC_CRAFTINGDIALOGUPDATE_TC) {
     addUnsignedCharToBuffer(1);
     addIntToBuffer(dialogId);
 }
 
-CraftingDialogCraftingAbortedTC::CraftingDialogCraftingAbortedTC(unsigned int dialogId) : BasicServerCommand(SC_CRAFTINGDIALOGUPDATE_TC) {
+CraftingDialogCraftingAbortedTC::CraftingDialogCraftingAbortedTC(unsigned int dialogId)
+        : BasicServerCommand(SC_CRAFTINGDIALOGUPDATE_TC) {
     addUnsignedCharToBuffer(2);
     addIntToBuffer(dialogId);
 }
@@ -213,7 +216,8 @@ void addMovementCostToBuffer(BasicServerCommand *cmd, const position &pos) {
     }
 }
 
-ItemUpdate_TC::ItemUpdate_TC(const position &pos, const std::vector<Item> &items) : BasicServerCommand(SC_ITEMUPDATE_TC) {
+ItemUpdate_TC::ItemUpdate_TC(const position &pos, const std::vector<Item> &items)
+        : BasicServerCommand(SC_ITEMUPDATE_TC) {
     Logger::debug(LogFacility::World) << "sending new itemstack for pos " << pos << Log::end;
     addShortIntToBuffer(pos.x);
     addShortIntToBuffer(pos.y);
@@ -227,21 +231,23 @@ ItemUpdate_TC::ItemUpdate_TC(const position &pos, const std::vector<Item> &items
     addUnsignedCharToBuffer(static_cast<uint8_t>(size));
 
     for (const auto &item : items) {
-        //we added 255 items
+        // we added 255 items
         if (size <= 0) {
             break;
         }
 
         addShortIntToBuffer(item.getId());
         addShortIntToBuffer(item.getNumber());
-        Logger::debug(LogFacility::World) << "adding item id: " << item.getId() << " count: " << static_cast<int>(item.getNumber()) << Log::end;
+        Logger::debug(LogFacility::World)
+                << "adding item id: " << item.getId() << " count: " << static_cast<int>(item.getNumber()) << Log::end;
         size--;
     }
 
     addMovementCostToBuffer(this, pos);
 }
 
-CharDescription::CharDescription(TYPE_OF_CHARACTER_ID id, const std::string &description) : BasicServerCommand(SC_LOOKATCHARRESULT_TC) {
+CharDescription::CharDescription(TYPE_OF_CHARACTER_ID id, const std::string &description)
+        : BasicServerCommand(SC_LOOKATCHARRESULT_TC) {
     addIntToBuffer(id);
     addStringToBuffer(description);
 }
@@ -299,7 +305,9 @@ RemoveCharTC::RemoveCharTC(TYPE_OF_CHARACTER_ID id) : BasicServerCommand(SC_REMO
     addIntToBuffer(id);
 }
 
-UpdateTimeTC::UpdateTimeTC(unsigned char hour, unsigned char minute, unsigned char day, unsigned char month, short int year) : BasicServerCommand(SC_UPDATETIME_TC) {
+UpdateTimeTC::UpdateTimeTC(unsigned char hour, unsigned char minute, unsigned char day, unsigned char month,
+                           short int year)
+        : BasicServerCommand(SC_UPDATETIME_TC) {
     addUnsignedCharToBuffer(hour);
     addUnsignedCharToBuffer(minute);
     addUnsignedCharToBuffer(day);
@@ -311,11 +319,9 @@ LogOutTC::LogOutTC(unsigned char reason) : BasicServerCommand(SC_LOGOUT_TC) {
     addUnsignedCharToBuffer(reason);
 }
 
-TargetLostTC::TargetLostTC() : BasicServerCommand(SC_TARGETLOST_TC) {
-}
+TargetLostTC::TargetLostTC() : BasicServerCommand(SC_TARGETLOST_TC) {}
 
-AttackAcknowledgedTC::AttackAcknowledgedTC() : BasicServerCommand(SC_ATTACKACKNOWLEDGED_TC) {
-}
+AttackAcknowledgedTC::AttackAcknowledgedTC() : BasicServerCommand(SC_ATTACKACKNOWLEDGED_TC) {}
 
 void addItemLookAt(BasicServerCommand *cmd, const ItemLookAt &lookAt) {
     cmd->addStringToBuffer(lookAt.getName());
@@ -340,18 +346,21 @@ void addItemLookAt(BasicServerCommand *cmd, const ItemLookAt &lookAt) {
     cmd->addUnsignedCharToBuffer(lookAt.getBonus());
 }
 
-LookAtInventoryItemTC::LookAtInventoryItemTC(unsigned char pos, const ItemLookAt &lookAt) : BasicServerCommand(SC_LOOKATINVENTORYITEM_TC) {
+LookAtInventoryItemTC::LookAtInventoryItemTC(unsigned char pos, const ItemLookAt &lookAt)
+        : BasicServerCommand(SC_LOOKATINVENTORYITEM_TC) {
     addUnsignedCharToBuffer(pos);
     addItemLookAt(this, lookAt);
 }
 
-LookAtShowCaseItemTC::LookAtShowCaseItemTC(unsigned char showcase, unsigned char pos, const ItemLookAt &lookAt) : BasicServerCommand(SC_LOOKATSHOWCASEITEM_TC) {
+LookAtShowCaseItemTC::LookAtShowCaseItemTC(unsigned char showcase, unsigned char pos, const ItemLookAt &lookAt)
+        : BasicServerCommand(SC_LOOKATSHOWCASEITEM_TC) {
     addUnsignedCharToBuffer(showcase);
     addUnsignedCharToBuffer(pos);
     addItemLookAt(this, lookAt);
 }
 
-LookAtMapItemTC::LookAtMapItemTC(const position &pos, uint8_t stackPos, const ItemLookAt &lookAt) : BasicServerCommand(SC_LOOKATMAPITEM_TC) {
+LookAtMapItemTC::LookAtMapItemTC(const position &pos, uint8_t stackPos, const ItemLookAt &lookAt)
+        : BasicServerCommand(SC_LOOKATMAPITEM_TC) {
     addShortIntToBuffer(pos.x);
     addShortIntToBuffer(pos.y);
     addShortIntToBuffer(pos.z);
@@ -359,14 +368,17 @@ LookAtMapItemTC::LookAtMapItemTC(const position &pos, uint8_t stackPos, const It
     addItemLookAt(this, lookAt);
 }
 
-LookAtDialogItemTC::LookAtDialogItemTC(unsigned int dialogId, uint8_t itemIndex, const ItemLookAt &lookAt) : BasicServerCommand(SC_LOOKATDIALOGITEM_TC) {
+LookAtDialogItemTC::LookAtDialogItemTC(unsigned int dialogId, uint8_t itemIndex, const ItemLookAt &lookAt)
+        : BasicServerCommand(SC_LOOKATDIALOGITEM_TC) {
     addIntToBuffer(dialogId);
     addUnsignedCharToBuffer(0);
     addUnsignedCharToBuffer(itemIndex);
     addItemLookAt(this, lookAt);
 }
 
-LookAtDialogGroupItemTC::LookAtDialogGroupItemTC(unsigned int dialogId, uint8_t groupIndex, uint8_t itemIndex, const ItemLookAt &lookAt) : BasicServerCommand(SC_LOOKATDIALOGITEM_TC) {
+LookAtDialogGroupItemTC::LookAtDialogGroupItemTC(unsigned int dialogId, uint8_t groupIndex, uint8_t itemIndex,
+                                                 const ItemLookAt &lookAt)
+        : BasicServerCommand(SC_LOOKATDIALOGITEM_TC) {
     addIntToBuffer(dialogId);
     addUnsignedCharToBuffer(1);
     addUnsignedCharToBuffer(groupIndex);
@@ -396,7 +408,8 @@ ItemPutTC::ItemPutTC(const position &pos, const Item &item) : BasicServerCommand
     addMovementCostToBuffer(this, pos);
 }
 
-ItemSwapTC::ItemSwapTC(const position &pos, unsigned short int id, const Item &item) : BasicServerCommand(SC_MAPITEMSWAP) {
+ItemSwapTC::ItemSwapTC(const position &pos, unsigned short int id, const Item &item)
+        : BasicServerCommand(SC_MAPITEMSWAP) {
     addShortIntToBuffer(pos.x);
     addShortIntToBuffer(pos.y);
     addShortIntToBuffer(pos.z);
@@ -443,8 +456,9 @@ GraphicEffectTC::GraphicEffectTC(const position &pos, unsigned short int id) : B
     addShortIntToBuffer(id);
 }
 
-UpdateShowcaseTC::UpdateShowcaseTC(unsigned char showcase, const ItemLookAt &lookAt,
-        TYPE_OF_CONTAINERSLOTS volume, const Container::ITEMMAP &items) : BasicServerCommand(SC_UPDATESHOWCASE_TC) {
+UpdateShowcaseTC::UpdateShowcaseTC(unsigned char showcase, const ItemLookAt &lookAt, TYPE_OF_CONTAINERSLOTS volume,
+                                   const Container::ITEMMAP &items)
+        : BasicServerCommand(SC_UPDATESHOWCASE_TC) {
     addUnsignedCharToBuffer(showcase);
     addStringToBuffer(lookAt.getName());
     addStringToBuffer(lookAt.getDescription());
@@ -466,18 +480,20 @@ UpdateShowcaseTC::UpdateShowcaseTC(unsigned char showcase, const ItemLookAt &loo
     }
 }
 
-UpdateShowcaseSlotTC::UpdateShowcaseSlotTC(unsigned char showcase, TYPE_OF_CONTAINERSLOTS slot) : BasicServerCommand(SC_UPDATESHOWCASESLOT_TC) {
+UpdateShowcaseSlotTC::UpdateShowcaseSlotTC(unsigned char showcase, TYPE_OF_CONTAINERSLOTS slot)
+        : BasicServerCommand(SC_UPDATESHOWCASESLOT_TC) {
     addUnsignedCharToBuffer(showcase);
     addShortIntToBuffer(slot);
     addShortIntToBuffer(0);
     addShortIntToBuffer(0);
 }
 
-UpdateShowcaseSlotTC::UpdateShowcaseSlotTC(unsigned char showcase, TYPE_OF_CONTAINERSLOTS slot, const Item &item) : BasicServerCommand(SC_UPDATESHOWCASESLOT_TC) {
+UpdateShowcaseSlotTC::UpdateShowcaseSlotTC(unsigned char showcase, TYPE_OF_CONTAINERSLOTS slot, const Item &item)
+        : BasicServerCommand(SC_UPDATESHOWCASESLOT_TC) {
     addUnsignedCharToBuffer(showcase);
     addShortIntToBuffer(slot);
     addShortIntToBuffer(item.getId());
-    
+
     if (item.isContainer()) {
         addShortIntToBuffer(1);
     } else {
@@ -485,12 +501,13 @@ UpdateShowcaseSlotTC::UpdateShowcaseSlotTC(unsigned char showcase, TYPE_OF_CONTA
     }
 }
 
-MapStripeTC::MapStripeTC(const position &pos, NewClientView::stripedirection dir) : BasicServerCommand(SC_MAPSTRIPE_TC) {
+MapStripeTC::MapStripeTC(const position &pos, NewClientView::stripedirection dir)
+        : BasicServerCommand(SC_MAPSTRIPE_TC) {
     addShortIntToBuffer(pos.x);
     addShortIntToBuffer(pos.y);
     addShortIntToBuffer(pos.z);
     addUnsignedCharToBuffer(static_cast<unsigned char>(dir));
-    const auto &fields =  World::get()->clientview.mapStripe;
+    const auto &fields = World::get()->clientview.mapStripe;
     uint8_t numberOfTiles = World::get()->clientview.getMaxTiles();
     addUnsignedCharToBuffer(numberOfTiles);
 
@@ -519,17 +536,17 @@ MapStripeTC::MapStripeTC(const position &pos, NewClientView::stripedirection dir
     }
 }
 
-MapCompleteTC::MapCompleteTC() : BasicServerCommand(SC_MAPCOMPLETE_TC) {
-}
+MapCompleteTC::MapCompleteTC() : BasicServerCommand(SC_MAPCOMPLETE_TC) {}
 
-MoveAckTC::MoveAckTC(TYPE_OF_CHARACTER_ID id, const position &pos, unsigned char mode, TYPE_OF_WALKINGCOST duration) : BasicServerCommand(SC_MOVEACK_TC) {
+MoveAckTC::MoveAckTC(TYPE_OF_CHARACTER_ID id, const position &pos, unsigned char mode, TYPE_OF_WALKINGCOST duration)
+        : BasicServerCommand(SC_MOVEACK_TC) {
     addIntToBuffer(id);
     addShortIntToBuffer(pos.x);
     addShortIntToBuffer(pos.y);
     addShortIntToBuffer(pos.z);
     addUnsignedCharToBuffer(mode);
-    //round to hundreds for now, to mirror action points
-    addShortIntToBuffer((duration/100)*100);
+    // round to hundreds for now, to mirror action points
+    addShortIntToBuffer((duration / 100) * 100);
 }
 
 IntroduceTC::IntroduceTC(TYPE_OF_CHARACTER_ID id, const std::string &name) : BasicServerCommand(SC_INTRODUCE_TC) {
@@ -567,10 +584,10 @@ MusicTC::MusicTC(short int title) : BasicServerCommand(SC_MUSIC_TC) {
     addShortIntToBuffer(title);
 }
 
-MusicDefaultTC::MusicDefaultTC() : BasicServerCommand(SC_MUSICDEFAULT_TC) {
-}
+MusicDefaultTC::MusicDefaultTC() : BasicServerCommand(SC_MUSICDEFAULT_TC) {}
 
-UpdateAttribTC::UpdateAttribTC(TYPE_OF_CHARACTER_ID id, const std::string &name, unsigned short int value) : BasicServerCommand(SC_UPDATEATTRIB_TC) {
+UpdateAttribTC::UpdateAttribTC(TYPE_OF_CHARACTER_ID id, const std::string &name, unsigned short int value)
+        : BasicServerCommand(SC_UPDATEATTRIB_TC) {
     addIntToBuffer(id);
     addStringToBuffer(name);
     addShortIntToBuffer(value);
@@ -581,7 +598,8 @@ UpdateLoadTC::UpdateLoadTC(uint16_t currentLoad, uint16_t maxLoad) : BasicServer
     addShortIntToBuffer(maxLoad);
 }
 
-UpdateMagicFlagsTC::UpdateMagicFlagsTC(unsigned char type, uint32_t flags) : BasicServerCommand(SC_UPDATEMAGICFLAGS_TC) {
+UpdateMagicFlagsTC::UpdateMagicFlagsTC(unsigned char type, uint32_t flags)
+        : BasicServerCommand(SC_UPDATEMAGICFLAGS_TC) {
     addUnsignedCharToBuffer(type);
     addIntToBuffer(flags);
 }
@@ -590,7 +608,8 @@ ClearShowCaseTC::ClearShowCaseTC(unsigned char id) : BasicServerCommand(SC_CLEAR
     addUnsignedCharToBuffer(id);
 }
 
-UpdateSkillTC::UpdateSkillTC(TYPE_OF_SKILL_ID skill, unsigned short int major, unsigned short int minor) : BasicServerCommand(SC_UPDATESKILL_TC) {
+UpdateSkillTC::UpdateSkillTC(TYPE_OF_SKILL_ID skill, unsigned short int major, unsigned short int minor)
+        : BasicServerCommand(SC_UPDATESKILL_TC) {
     addUnsignedCharToBuffer(skill);
     addShortIntToBuffer(major);
     addShortIntToBuffer(minor);
@@ -611,7 +630,8 @@ IdTC::IdTC(int id) : BasicServerCommand(SC_ID_TC) {
     addIntToBuffer(id);
 }
 
-UpdateInventoryPosTC::UpdateInventoryPosTC(unsigned char pos, TYPE_OF_ITEM_ID id, Item::number_type number) : BasicServerCommand(SC_UPDATEINVENTORYPOS_TC) {
+UpdateInventoryPosTC::UpdateInventoryPosTC(unsigned char pos, TYPE_OF_ITEM_ID id, Item::number_type number)
+        : BasicServerCommand(SC_UPDATEINVENTORYPOS_TC) {
     addUnsignedCharToBuffer(pos);
     addShortIntToBuffer(id);
     addShortIntToBuffer(number);
@@ -627,4 +647,3 @@ PlayerSpinTC::PlayerSpinTC(unsigned char faceto, TYPE_OF_CHARACTER_ID id) : Basi
     addUnsignedCharToBuffer(faceto);
     addIntToBuffer(id);
 }
-

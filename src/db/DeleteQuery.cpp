@@ -20,9 +20,9 @@
 
 #include "db/DeleteQuery.hpp"
 
-#include <sstream>
-
 #include "db/ConnectionManager.hpp"
+
+#include <sstream>
 
 using namespace Database;
 

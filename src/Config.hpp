@@ -24,33 +24,32 @@
 #include <string>
 #include <utility>
 
-
 class ConfigEntryBase {
 public:
     explicit ConfigEntryBase(const std::string &config_name);
 
     friend auto operator>>(std::istream &is, ConfigEntryBase & /*config_entry*/) -> std::istream &;
     virtual void read(std::istream &is) = 0;
-    virtual void write(std::ostream &os) const= 0;
+    virtual void write(std::ostream &os) const = 0;
 
     virtual ~ConfigEntryBase() = default;
 
     [[nodiscard]] auto isInitialized() const -> bool {
         return _initialized;
     }
+
 protected:
     std::string _config_name;
-    bool _initialized = { false };
+    bool _initialized = {false};
 };
 
 auto operator>>(std::istream &is, ConfigEntryBase &config_entry) -> std::istream &;
 auto operator<<(std::ostream &os, const ConfigEntryBase &config_entry) -> std::ostream &;
 
-template<typename T>
-class ConfigEntry : public ConfigEntryBase {
+template <typename T> class ConfigEntry : public ConfigEntryBase {
 public:
-
-    ConfigEntry(const std::string &config_name, T default_value = {}) : ConfigEntryBase { config_name }, _item {std::move( default_value )} {}
+    ConfigEntry(const std::string &config_name, T default_value = {})
+            : ConfigEntryBase{config_name}, _item{std::move(default_value)} {}
 
     operator T() const {
         return _item;
@@ -85,25 +84,25 @@ public:
         return *_instance;
     }
 
-    ConfigEntry<std::string> datadir = { "datadir", "./data/" };
-    ConfigEntry<std::string> scriptdir = { "scriptdir", "./script/" };
+    ConfigEntry<std::string> datadir = {"datadir", "./data/"};
+    ConfigEntry<std::string> scriptdir = {"scriptdir", "./script/"};
 
-    ConfigEntry<uint16_t> port = { "port", 3012 };
+    ConfigEntry<uint16_t> port = {"port", 3012};
 
-    ConfigEntry<std::string> postgres_db = { "postgres_db", "illarion" };
-    ConfigEntry<std::string> postgres_user = { "postgres_user", "illarion" };
-    ConfigEntry<std::string> postgres_pwd = { "postgres_pwd", "illarion" };
-    ConfigEntry<std::string> postgres_host = { "postgres_host", "/var/run/postgresql" };
-    ConfigEntry<uint16_t> postgres_port = { "postgres_port", 5432 };
-    ConfigEntry<std::string> postgres_schema_server = { "postgres_schema_server", "server" };
-    ConfigEntry<std::string> postgres_schema_account = { "postgres_schema_account", "accounts" };
+    ConfigEntry<std::string> postgres_db = {"postgres_db", "illarion"};
+    ConfigEntry<std::string> postgres_user = {"postgres_user", "illarion"};
+    ConfigEntry<std::string> postgres_pwd = {"postgres_pwd", "illarion"};
+    ConfigEntry<std::string> postgres_host = {"postgres_host", "/var/run/postgresql"};
+    ConfigEntry<uint16_t> postgres_port = {"postgres_port", 5432};
+    ConfigEntry<std::string> postgres_schema_server = {"postgres_schema_server", "server"};
+    ConfigEntry<std::string> postgres_schema_account = {"postgres_schema_account", "accounts"};
 
-    ConfigEntry<int16_t> debug = { "debug", 0 };
+    ConfigEntry<int16_t> debug = {"debug", 0};
 
-    ConfigEntry<uint16_t> clientversion = { "clientversion", 122 };
-    ConfigEntry<int16_t> playerstart_x = { "playerstart_x", 0 };
-    ConfigEntry<int16_t> playerstart_y = { "playerstart_y", 0 };
-    ConfigEntry<int16_t> playerstart_z = { "playerstart_z", 0 };
+    ConfigEntry<uint16_t> clientversion = {"clientversion", 122};
+    ConfigEntry<int16_t> playerstart_x = {"playerstart_x", 0};
+    ConfigEntry<int16_t> playerstart_y = {"playerstart_y", 0};
+    ConfigEntry<int16_t> playerstart_z = {"playerstart_z", 0};
 
 private:
     static std::unique_ptr<Config> _instance;

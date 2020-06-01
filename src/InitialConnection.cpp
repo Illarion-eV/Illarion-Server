@@ -16,27 +16,25 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "InitialConnection.hpp"
+
+#include "Config.hpp"
+#include "Logger.hpp"
+#include "netinterface/NetInterface.hpp"
 
 #include <memory>
 #include <thread>
 
-#include "Config.hpp"
-#include "Logger.hpp"
-
-#include "netinterface/NetInterface.hpp"
-
 auto InitialConnection::create() -> std::shared_ptr<InitialConnection> {
     std::shared_ptr<InitialConnection> ptr(new InitialConnection());
-    std::thread servicethread(
-        [shared_this = ptr->shared_from_this()] { shared_this->run_service(); });
+    std::thread servicethread([shared_this = ptr->shared_from_this()] {
+        shared_this->run_service();
+    });
     servicethread.detach();
     return ptr;
 }
 
-
-auto InitialConnection::getNewPlayers() -> NewPlayerVector& {
+auto InitialConnection::getNewPlayers() -> NewPlayerVector & {
     return newPlayers;
 }
 
@@ -46,41 +44,35 @@ void InitialConnection::run_service() {
     int port = Config::instance().port;
 
     auto endpoint = tcp::endpoint(tcp::v4(), port);
-    acceptor = std::make_unique<tcp::acceptor>(io_service,endpoint);
+    acceptor = std::make_unique<tcp::acceptor>(io_service, endpoint);
     auto newConnection = std::make_shared<NetInterface>(io_service);
     using std::placeholders::_1;
-    acceptor->async_accept(newConnection->getSocket(),
-        [shared_this = shared_from_this(), newConnection](auto && PH1) {
-            shared_this->accept_connection(newConnection, PH1);
-        });
+    acceptor->async_accept(newConnection->getSocket(), [shared_this = shared_from_this(), newConnection](auto &&PH1) {
+        shared_this->accept_connection(newConnection, PH1);
+    });
     Logger::info(LogFacility::Other) << "Starting the IO Service!" << Log::end;
     io_service.run();
 }
 
-void
-InitialConnection::accept_connection(const std::shared_ptr<NetInterface> &connection,
-                                     const boost::system::error_code &error) {
+void InitialConnection::accept_connection(const std::shared_ptr<NetInterface> &connection,
+                                          const boost::system::error_code &error) {
     if (!error) {
         if (connection->activate()) {
             newPlayers.push_back(connection);
         } else {
-            Logger::error(LogFacility::Other)
-                << "Error while activating connection!" << Log::end;
+            Logger::error(LogFacility::Other) << "Error while activating connection!" << Log::end;
         }
 
         auto newConnection = std::make_shared<NetInterface>(io_service);
         using std::placeholders::_1;
         acceptor->async_accept(newConnection->getSocket(),
-            [shared_this = shared_from_this(), newConnection](auto && PH1) {
-                shared_this->accept_connection(newConnection, PH1);
-            });
+                               [shared_this = shared_from_this(), newConnection](auto &&PH1) {
+                                   shared_this->accept_connection(newConnection, PH1);
+                               });
     } else {
-        Logger::error(LogFacility::Other)
-            << "Could not accept connection: " << error.message() << Log::end;
+        Logger::error(LogFacility::Other) << "Could not accept connection: " << error.message() << Log::end;
     }
 }
-
-
 
 InitialConnection::~InitialConnection() {
     io_service.stop();

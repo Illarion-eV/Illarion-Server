@@ -18,17 +18,18 @@
  *  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <data/MonsterAttackTable.hpp>
 #include "script/binding/binding.hpp"
+
+#include <data/MonsterAttackTable.hpp>
 
 namespace binding {
 
-    auto attack_boni() -> luabind::scope {
-        return luabind::class_<AttackBoni>("AttackBoni")
-                .def(luabind::constructor<>())
-                .def_readonly("attackType", &AttackBoni::attackType)
-                .def_readonly("attackValue", &AttackBoni::attackValue)
-                .def_readonly("actionPointsLost", &AttackBoni::actionPointsLost);
-    }
-
+auto attack_boni() -> luabind::scope {
+    return luabind::class_<AttackBoni>("AttackBoni")
+            .def(luabind::constructor<>())
+            .def_readonly("attackType", &AttackBoni::attackType)
+            .def_readonly("attackValue", &AttackBoni::attackValue)
+            .def_readonly("actionPointsLost", &AttackBoni::actionPointsLost);
 }
+
+} // namespace binding

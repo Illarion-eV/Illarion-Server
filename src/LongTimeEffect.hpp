@@ -21,7 +21,6 @@
 #ifndef LONGTIMEEFFECT_HPP
 #define LONGTIMEEFFECT_HPP
 
-
 #include <string>
 #include <unordered_map>
 
@@ -78,4 +77,3 @@ struct LTEPriority {
 };
 
 #endif
-

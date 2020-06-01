@@ -19,21 +19,20 @@
  */
 
 #include "data/ScriptVariablesTable.hpp"
-#include <iostream>
+
 #include "db/Connection.hpp"
 #include "db/ConnectionManager.hpp"
 #include "db/DeleteQuery.hpp"
 #include "db/InsertQuery.hpp"
+
+#include <iostream>
 
 auto ScriptVariablesTable::getTableName() -> std::string {
     return "scriptvariables";
 }
 
 auto ScriptVariablesTable::getColumnNames() -> std::vector<std::string> {
-    return {
-        "svt_ids",
-        "svt_string"
-    };
+    return {"svt_ids", "svt_string"};
 }
 
 auto ScriptVariablesTable::assignId(const Database::ResultTuple &row) -> std::string {
@@ -113,6 +112,4 @@ auto ScriptVariablesTable::reloadBuffer() -> bool {
     return true;
 }
 
-void ScriptVariablesTable::activateBuffer() {
-}
-
+void ScriptVariablesTable::activateBuffer() {}

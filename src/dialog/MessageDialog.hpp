@@ -23,7 +23,7 @@
 
 #include "dialog/Dialog.hpp"
 
-class MessageDialog: public Dialog {
+class MessageDialog : public Dialog {
 private:
     string text;
 
@@ -34,4 +34,3 @@ public:
 };
 
 #endif
-

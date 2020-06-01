@@ -25,19 +25,9 @@ auto WeaponObjectTable::getTableName() -> std::string {
 }
 
 auto WeaponObjectTable::getColumnNames() -> std::vector<std::string> {
-    return {
-        "wp_itemid",
-        "wp_attack",
-        "wp_defence",
-        "wp_accuracy",
-        "wp_range",
-        "wp_weapontype",
-        "wp_ammunitiontype",
-        "wp_actionpoints",
-        "wp_magicdisturbance",
-        "wp_poison",
-        "wp_fightingscript"
-    };
+    return {"wp_itemid",        "wp_attack",         "wp_defence",      "wp_accuracy",         "wp_range",
+            "wp_weapontype",    "wp_ammunitiontype", "wp_actionpoints", "wp_magicdisturbance", "wp_poison",
+            "wp_fightingscript"};
 }
 
 auto WeaponObjectTable::assignId(const Database::ResultTuple &row) -> TYPE_OF_ITEM_ID {
@@ -61,4 +51,3 @@ auto WeaponObjectTable::assignTable(const Database::ResultTuple &row) -> WeaponS
 auto WeaponObjectTable::assignScriptName(const Database::ResultTuple &row) -> std::string {
     return row["wp_fightingscript"].as<std::string>("");
 }
-

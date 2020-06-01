@@ -23,8 +23,8 @@
 
 #include "Item.hpp"
 #include "dialog/Dialog.hpp"
-#include <utility>
 
+#include <utility>
 #include <vector>
 
 using std::vector;
@@ -35,7 +35,7 @@ private:
     string name;
 
 public:
-    Option(TYPE_OF_ITEM_ID item, string name): item(item), name(std::move(name)) {};
+    Option(TYPE_OF_ITEM_ID item, string name) : item(item), name(std::move(name)){};
     [[nodiscard]] auto getItem() const -> TYPE_OF_ITEM_ID {
         return item;
     };
@@ -44,7 +44,7 @@ public:
     };
 };
 
-class SelectionDialog: public Dialog {
+class SelectionDialog : public Dialog {
 public:
     using index_type = uint8_t;
     using options_type = vector<Option>;
@@ -84,4 +84,3 @@ public:
 };
 
 #endif
-

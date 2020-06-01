@@ -21,8 +21,8 @@
 #ifndef LONG_TIME_EFFECT_TABLE_HPP
 #define LONG_TIME_EFFECT_TABLE_HPP
 
-#include "data/ScriptStructTable.hpp"
 #include "TableStructs.hpp"
+#include "data/ScriptStructTable.hpp"
 #include "script/LuaLongTimeEffectScript.hpp"
 
 class LongTimeEffectTable : public ScriptStructTable<uint16_t, LongTimeEffectStruct, LuaLongTimeEffectScript> {
@@ -35,4 +35,3 @@ public:
 };
 
 #endif
-

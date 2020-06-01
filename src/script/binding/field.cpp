@@ -19,18 +19,19 @@
  */
 
 #include "map/Field.hpp"
+
 #include "script/binding/binding.hpp"
 
 namespace binding {
 
-    using map::Field;
+using map::Field;
 
-    auto field() -> luabind::scope {
-        return luabind::class_<Field>("Field")
-        .def("tile", &Field::getTileId)
-        .def("getStackItem", &Field::getStackItem)
-        .def("countItems", &Field::itemCount)
-        .def("isPassable", &Field::isWalkable);
-    }
-
+auto field() -> luabind::scope {
+    return luabind::class_<Field>("Field")
+            .def("tile", &Field::getTileId)
+            .def("getStackItem", &Field::getStackItem)
+            .def("countItems", &Field::itemCount)
+            .def("isPassable", &Field::isWalkable);
 }
+
+} // namespace binding

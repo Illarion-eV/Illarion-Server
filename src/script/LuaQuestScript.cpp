@@ -19,12 +19,12 @@
  */
 
 #include "LuaQuestScript.hpp"
+
 #include "Character.hpp"
 #include "character_ptr.hpp"
 
 LuaQuestScript::LuaQuestScript(const std::string &filename, TYPE_OF_QUEST_ID quest)
-    : LuaScript(filename), quest(quest) {
-}
+        : LuaScript(filename), quest(quest) {}
 
 LuaQuestScript::~LuaQuestScript() = default;
 
@@ -50,7 +50,7 @@ auto LuaQuestScript::available(Character *user, TYPE_OF_QUESTSTATUS status) -> Q
 auto LuaQuestScript::start() -> position {
     using namespace luabind;
     auto startPosition = callEntrypoint<object>("QuestStart");
-    
+
     try {
         return getPosition(startPosition);
     } catch (std::logic_error &e) {

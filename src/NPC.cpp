@@ -18,19 +18,17 @@
 
 #include "NPC.hpp"
 
-#include "tuningConstants.hpp"
 #include "World.hpp"
-#include "map/Field.hpp"
-
 #include "db/ConnectionManager.hpp"
-
+#include "map/Field.hpp"
 #include "script/LuaNPCScript.hpp"
+#include "tuningConstants.hpp"
 
 uint32_t NPC::counter = 0;
 
-NPC::NPC(TYPE_OF_CHARACTER_ID id, const std::string &name, TYPE_OF_RACE_ID race, const position &pos, Character::face_to dir, bool ishealer, Character::sex_type sex,
-         const Character::appearance &appearance) : Character(appearance),
-    _ishealer(ishealer), _startpos(pos) {
+NPC::NPC(TYPE_OF_CHARACTER_ID id, const std::string &name, TYPE_OF_RACE_ID race, const position &pos,
+         Character::face_to dir, bool ishealer, Character::sex_type sex, const Character::appearance &appearance)
+        : Character(appearance), _ishealer(ishealer), _startpos(pos) {
     setName(name);
     setFaceTo(dir);
     setRace(race);
@@ -47,7 +45,9 @@ NPC::NPC(TYPE_OF_CHARACTER_ID id, const std::string &name, TYPE_OF_RACE_ID race,
     map::Field &field = _world->fieldAt(_startpos);
 
     setPosition(_startpos);
-    Logger::debug(LogFacility::World) << "New NPC spawned: pos: " << _startpos << " type: " << race << " Name: " << name<< " is_healer: " << _ishealer << " sex: " << getAttribute(Character::sex) << Log::end;
+    Logger::debug(LogFacility::World) << "New NPC spawned: pos: " << _startpos << " type: " << race << " Name: " << name
+                                      << " is_healer: " << _ishealer << " sex: " << getAttribute(Character::sex)
+                                      << Log::end;
 
     field.setChar();
 
@@ -56,7 +56,6 @@ NPC::NPC(TYPE_OF_CHARACTER_ID id, const std::string &name, TYPE_OF_RACE_ID race,
 
     setAttribute(Character::hitpoints, MAXHPS);
 }
-
 
 NPC::~NPC() = default;
 

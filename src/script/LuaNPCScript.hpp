@@ -21,9 +21,9 @@
 #ifndef LUA_NPC_SCRIPT_HPP
 #define LUA_NPC_SCRIPT_HPP
 
-#include "LuaScript.hpp"
 #include "Character.hpp"
 #include "Item.hpp"
+#include "LuaScript.hpp"
 
 class NPC;
 class World;
@@ -52,4 +52,3 @@ private:
 };
 
 #endif
-

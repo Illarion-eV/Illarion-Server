@@ -16,11 +16,11 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef CBASICCLIENTCOMMAND_HPP
 #define CBASICCLIENTCOMMAND_HPP
 
 #include "netinterface/BasicCommand.hpp"
+
 #include <chrono>
 #include <cstdint>
 #include <iostream>
@@ -35,9 +35,9 @@ using ClientCommandPointer = std::shared_ptr<BasicClientCommand>;
 class BasicClientCommand : public BasicCommand {
 public:
     /**
-    * Constructor of a basic command
-    * @param defByte the initializing byte of the command
-    */
+     * Constructor of a basic command
+     * @param defByte the initializing byte of the command
+     */
     BasicClientCommand(unsigned char defByte, uint16_t minAP = 0);
 
     void setHeaderData(uint16_t mlength, uint16_t mcheckSum);
@@ -52,53 +52,52 @@ public:
      **/
     auto msg_data() -> unsigned char *;
 
-
     /**
-    * virtual function which should be overloaded in the concrete classes to get the data
-    * of the command
-    */
+     * virtual function which should be overloaded in the concrete classes to get the data
+     * of the command
+     */
     virtual void decodeData() = 0;
 
     /**
-    * performs the concrete action of the command
-    * @param player the player which received the command
-    */
+     * performs the concrete action of the command
+     * @param player the player which received the command
+     */
     virtual void performAction(Player *player) = 0;
 
     /**
-    * a copy function which returns an empty version of the command
-    * (for usage of the commandFactory class
-    */
+     * a copy function which returns an empty version of the command
+     * (for usage of the commandFactory class
+     */
     virtual auto clone() -> ClientCommandPointer = 0;
 
     /**
-    * returns if the receiving of the command was sucessfull
-    * @return true if the command was receuved complete and without problems
-    */
+     * returns if the receiving of the command was sucessfull
+     * @return true if the command was receuved complete and without problems
+     */
     [[nodiscard]] auto isDataOk() const -> bool;
 
     /**
-    * reads an unsigned char from the local command buffer
-    * @return the char which was found in the buffer
-    */
+     * reads an unsigned char from the local command buffer
+     * @return the char which was found in the buffer
+     */
     auto getUnsignedCharFromBuffer() -> unsigned char;
 
     /**
-    * read a string from the local command buffer
-    * @return the string which was found in the buffer
-    */
+     * read a string from the local command buffer
+     * @return the string which was found in the buffer
+     */
     auto getStringFromBuffer() -> std::string;
 
     /**
-    * reads an int from the local command buffer
-    * @return the int which was in the buffer (32 bit)
-    */
+     * reads an int from the local command buffer
+     * @return the int which was in the buffer (32 bit)
+     */
     auto getIntFromBuffer() -> int;
 
     /**
-    * reads a short int from the local command buffer
-    * @return the short int which was in the buffer (16 bit)
-    */
+     * reads a short int from the local command buffer
+     * @return the short int which was in the buffer (16 bit)
+     */
     auto getShortIntFromBuffer() -> short int;
 
     /**
@@ -113,21 +112,21 @@ public:
     }
 
     [[nodiscard]] inline auto getIncomingTime() const -> std::chrono::steady_clock::time_point {
-	    return incomingTime;
+        return incomingTime;
     }
 
     inline void setReceivedTime() {
-	    incomingTime = std::chrono::steady_clock::now();
+        incomingTime = std::chrono::steady_clock::now();
     }
 
 protected:
-
-    bool dataOk; /*<true if data is ok, will set to false if a command wants to read more data from the buffer as is in it, or if the checksum isn't the same*/
-    unsigned char *msg_buffer;  /*< the current buffer for this command*/
-    uint16_t length; /*< the length of this command */
-    uint16_t bytesRetrieved; /*< how much bytes are currently decoded */
-    uint16_t checkSum; /*< the checksum transmitted in the header*/
-    uint32_t crc; /*< the checksum of the data*/
+    bool dataOk; /*<true if data is ok, will set to false if a command wants to read more data from the buffer as is in
+                    it, or if the checksum isn't the same*/
+    unsigned char *msg_buffer; /*< the current buffer for this command*/
+    uint16_t length;           /*< the length of this command */
+    uint16_t bytesRetrieved;   /*< how much bytes are currently decoded */
+    uint16_t checkSum;         /*< the checksum transmitted in the header*/
+    uint32_t crc;              /*< the checksum of the data*/
 
     uint16_t minAP; /*< number of ap necessary to perform command */
     std::chrono::steady_clock::time_point incomingTime;

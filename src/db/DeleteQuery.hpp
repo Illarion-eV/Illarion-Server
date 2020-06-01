@@ -22,9 +22,9 @@
 #define DELETE_QUERY_HPP
 
 #include "db/Connection.hpp"
-#include "db/Result.hpp"
 #include "db/QueryTables.hpp"
 #include "db/QueryWhere.hpp"
+#include "db/Result.hpp"
 
 namespace Database {
 class DeleteQuery : Query, public QueryTables, public QueryWhere {
@@ -37,6 +37,6 @@ public:
     auto execute() -> Result override;
 };
 
-}
+} // namespace Database
 
 #endif

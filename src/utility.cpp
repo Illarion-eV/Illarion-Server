@@ -16,24 +16,22 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "utility.hpp"
 
-#include <string>
 #include <algorithm>
 #include <cctype>
-#include "utility.hpp"
+#include <string>
 
 auto mypred(char c1, char c2) -> bool {
     return tolower(c1) == tolower(c2);
 }
 
 auto comparestrings_nocase(const std::string &s1, const std::string &s2) -> bool {
-
     if (s1.size() != s2.size()) {
         return false;
     }
 
     return equal(s1.begin(), s1.end(), s2.begin(), mypred);
-
 }
 
 auto to_direction(uint8_t dir) -> direction {
@@ -43,4 +41,3 @@ auto to_direction(uint8_t dir) -> direction {
         return dir_none;
     }
 }
-

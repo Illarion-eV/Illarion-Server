@@ -16,7 +16,6 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef TYPES_HPP
 #define TYPES_HPP
 
@@ -69,7 +68,8 @@ using TYPE_OF_QUESTSTATUS = int32_t;
 using TYPE_OF_GERMAN = std::string;
 using TYPE_OF_ENGLISH = std::string;
 
-enum direction {
+enum direction
+{
     dir_north = 0,
     dir_northeast = 1,
     dir_east = 2,
@@ -83,7 +83,8 @@ enum direction {
     dir_none = 10
 };
 
-enum class movement_type {
+enum class movement_type
+{
     walk = 0,
     fly = 1,
     crawl = 2
@@ -92,9 +93,9 @@ enum class movement_type {
 struct Colour {
     uint8_t red = 0xFF, green = 0xFF, blue = 0xFF, alpha = 0xFF;
     Colour() = default;
-    Colour(uint8_t red, uint8_t green, uint8_t blue): red(red), green(green), blue(blue) {}
-    Colour(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha): red(red), green(green), blue(blue), alpha(alpha) {}
+    Colour(uint8_t red, uint8_t green, uint8_t blue) : red(red), green(green), blue(blue) {}
+    Colour(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
+            : red(red), green(green), blue(blue), alpha(alpha) {}
 };
 
 #endif
-

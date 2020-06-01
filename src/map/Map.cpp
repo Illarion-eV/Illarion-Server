@@ -16,22 +16,21 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "map/Map.hpp"
 
-#include <regex>
-#include <vector>
+#include "Logger.hpp"
+
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/lexical_cast.hpp>
-
-#include "Logger.hpp"
+#include <regex>
+#include <vector>
 
 namespace map {
 
 Map::Map(std::string name, position origin, uint16_t width, uint16_t height)
-    : origin(origin), width(width), height(height),
-      
-      name(std::move(name)) {
+        : origin(origin), width(width), height(height),
+
+          name(std::move(name)) {
     for (auto x = origin.x; x < origin.x + width; ++x) {
         std::vector<Field> column;
 
@@ -43,10 +42,8 @@ Map::Map(std::string name, position origin, uint16_t width, uint16_t height)
     }
 }
 
-Map::Map(std::string name, position origin, uint16_t width, uint16_t height,
-         uint16_t tile)
-    : Map(std::move(name), origin, width, height) {
-
+Map::Map(std::string name, position origin, uint16_t width, uint16_t height, uint16_t tile)
+        : Map(std::move(name), origin, width, height) {
     for (auto &column : fields) {
         for (auto &field : column) {
             field.setTileId(tile);
@@ -73,15 +70,15 @@ auto Map::at(const MapPosition &pos) const -> const Field & {
 void Map::save(const std::string &name) const {
     Logger::debug(LogFacility::World) << "Saving map " << name << Log::end;
 
-    std::ofstream map { name + "_map", std::ios::binary | std::ios::out };
-    std::ofstream items { name + "_item", std::ios::binary | std::ios::out };
-    std::ofstream warps { name + "_warp", std::ios::binary | std::ios::out };
-    std::ofstream containers { name + "_container", std::ios::binary | std::ios::out };
+    std::ofstream map{name + "_map", std::ios::binary | std::ios::out};
+    std::ofstream items{name + "_item", std::ios::binary | std::ios::out};
+    std::ofstream warps{name + "_warp", std::ios::binary | std::ios::out};
+    std::ofstream containers{name + "_container", std::ios::binary | std::ios::out};
 
     if (map.good() && items.good() && warps.good() && containers.good()) {
-        map.write((char *) & width, sizeof(width));
-        map.write((char *) & height, sizeof(height));
-        map.write((char *) & origin, sizeof(origin));
+        map.write((char *)&width, sizeof(width));
+        map.write((char *)&height, sizeof(height));
+        map.write((char *)&origin, sizeof(origin));
 
         for (const auto &column : fields) {
             for (const auto &field : column) {
@@ -93,11 +90,11 @@ void Map::save(const std::string &name) const {
     }
 }
 
-const std::regex headerExpression {R"(^[VLXYWH]: -?\d+$)"};
-const std::regex tileExpression {R"(^(\d+);(\d+);(\d+);(\d+)$)"};
-const std::regex itemExpression {R"(^(\d+);(\d+);(\d+);(\d+)(;.*)?$)"};
-const std::regex warpExpression {R"(^(\d+);(\d+);(-?\d+);(-?\d+);(-?\d+)$)"};
-const std::regex dataExpression {R"(;([^\\;=]*(?:\\[\\;=][^\\;=]*)*)=([^\\;=]*(?:\\[\\;=][^\\;=]*)*)(?:;.*)?)"};
+const std::regex headerExpression{R"(^[VLXYWH]: -?\d+$)"};
+const std::regex tileExpression{R"(^(\d+);(\d+);(\d+);(\d+)$)"};
+const std::regex itemExpression{R"(^(\d+);(\d+);(\d+);(\d+)(;.*)?$)"};
+const std::regex warpExpression{R"(^(\d+);(\d+);(-?\d+);(-?\d+);(-?\d+)$)"};
+const std::regex dataExpression{R"(;([^\\;=]*(?:\\[\\;=][^\\;=]*)*)=([^\\;=]*(?:\\[\\;=][^\\;=]*)*)(?:;.*)?)"};
 
 auto Map::import(const std::string &importDir, const std::string &mapName) -> bool {
     bool success = importFields(importDir, mapName);
@@ -106,17 +103,15 @@ auto Map::import(const std::string &importDir, const std::string &mapName) -> bo
     return success;
 }
 
-auto Map::importFields(const std::string &importDir,
-                       const std::string &mapName) -> bool {
-    using std::smatch;
+auto Map::importFields(const std::string &importDir, const std::string &mapName) -> bool {
     using std::regex_match;
+    using std::smatch;
 
     const std::string fileName = mapName + ".tiles.txt";
     std::ifstream mapFile(importDir + fileName);
 
     if (!mapFile) {
-        Logger::error(LogFacility::Script)
-            << "Could not open file: " << fileName << Log::end;
+        Logger::error(LogFacility::Script) << "Could not open file: " << fileName << Log::end;
         return false;
     }
 
@@ -142,9 +137,7 @@ auto Map::importFields(const std::string &importDir,
 
                     if (x >= width) {
                         Logger::error(LogFacility::Script)
-                            << fileName
-                            << ": x must be less than width in line "
-                            << lineNumber << Log::end;
+                                << fileName << ": x must be less than width in line " << lineNumber << Log::end;
                         success = false;
                     }
 
@@ -152,9 +145,7 @@ auto Map::importFields(const std::string &importDir,
 
                     if (y >= height) {
                         Logger::error(LogFacility::Script)
-                            << fileName
-                            << ": y must be less than height in line "
-                            << lineNumber << Log::end;
+                                << fileName << ": y must be less than height in line " << lineNumber << Log::end;
                         success = false;
                     }
 
@@ -166,29 +157,27 @@ auto Map::importFields(const std::string &importDir,
 
                         if ((field.getTileCode() != 0) || (field.getMusicId() != 0)) {
                             Logger::warn(LogFacility::Script)
-                                << fileName << ": tile on (" << x << ", " << y
-                                << ") is already present, ignoring line "
-                                << lineNumber << Log::end;
+                                    << fileName << ": tile on (" << x << ", " << y
+                                    << ") is already present, ignoring line " << lineNumber << Log::end;
                         } else {
                             field.setTileId(tile);
                             field.setMusicId(music);
                         }
                     }
                 } catch (boost::bad_lexical_cast &) {
-                    Logger::error(LogFacility::Script)
-                        << fileName << ": expected "
-                                       "<uint16_t>;<uint16_t>;<uint16_t>;<"
-                                       "uint16_t> but found '" << line
-                        << "' in line " << lineNumber << Log::end;
+                    Logger::error(LogFacility::Script) << fileName
+                                                       << ": expected "
+                                                          "<uint16_t>;<uint16_t>;<uint16_t>;<"
+                                                          "uint16_t> but found '"
+                                                       << line << "' in line " << lineNumber << Log::end;
 
                     success = false;
                 }
             } else {
-                Logger::error(LogFacility::Script)
-                    << fileName
-                    << ": expected <uint16_t>;<uint16_t>;<uint16_t>;<uint16_t> "
-                       "but found '" << line << "' in line " << lineNumber
-                    << Log::end;
+                Logger::error(LogFacility::Script) << fileName
+                                                   << ": expected <uint16_t>;<uint16_t>;<uint16_t>;<uint16_t> "
+                                                      "but found '"
+                                                   << line << "' in line " << lineNumber << Log::end;
                 success = false;
             }
         }
@@ -197,17 +186,15 @@ auto Map::importFields(const std::string &importDir,
     return success;
 }
 
-auto Map::importItems(const std::string &importDir,
-                      const std::string &mapName) -> bool {
-    using std::smatch;
+auto Map::importItems(const std::string &importDir, const std::string &mapName) -> bool {
     using std::regex_match;
+    using std::smatch;
 
     const std::string fileName = mapName + ".items.txt";
     std::ifstream itemFile(importDir + fileName);
 
     if (!itemFile) {
-        Logger::error(LogFacility::Script)
-            << "Could not open file: " << fileName << Log::end;
+        Logger::error(LogFacility::Script) << "Could not open file: " << fileName << Log::end;
         return false;
     }
 
@@ -227,9 +214,7 @@ auto Map::importItems(const std::string &importDir,
 
                     if (x >= width) {
                         Logger::error(LogFacility::Script)
-                            << fileName
-                            << ": x must be less than width in line "
-                            << lineNumber << Log::end;
+                                << fileName << ": x must be less than width in line " << lineNumber << Log::end;
                         success = false;
                     }
 
@@ -237,9 +222,7 @@ auto Map::importItems(const std::string &importDir,
 
                     if (y >= height) {
                         Logger::error(LogFacility::Script)
-                            << fileName
-                            << ": y must be less than height in line "
-                            << lineNumber << Log::end;
+                                << fileName << ": y must be less than height in line " << lineNumber << Log::end;
                         success = false;
                     }
 
@@ -248,9 +231,7 @@ auto Map::importItems(const std::string &importDir,
 
                     if (quality > 999) {
                         Logger::error(LogFacility::Script)
-                            << fileName
-                            << ": quality must be less than 1000 in line "
-                            << lineNumber << Log::end;
+                                << fileName << ": quality must be less than 1000 in line " << lineNumber << Log::end;
                         success = false;
                     }
 
@@ -270,35 +251,34 @@ auto Map::importItems(const std::string &importDir,
                             std::string value = match[2];
 
                             if (key.length() == 0) {
-                                Logger::error(LogFacility::Script)
-                                    << fileName << ": data key must not have "
-                                                   "zero length in line "
-                                    << lineNumber << Log::end;
+                                Logger::error(LogFacility::Script) << fileName
+                                                                   << ": data key must not have "
+                                                                      "zero length in line "
+                                                                   << lineNumber << Log::end;
                                 success = false;
                             }
 
                             if (value.length() == 0) {
-                                Logger::error(LogFacility::Script)
-                                    << fileName << ": data value must not have "
-                                                   "zero length in line "
-                                    << lineNumber << Log::end;
+                                Logger::error(LogFacility::Script) << fileName
+                                                                   << ": data value must not have "
+                                                                      "zero length in line "
+                                                                   << lineNumber << Log::end;
                                 success = false;
                             }
 
                             if (key.length() > 255) {
-                                Logger::error(LogFacility::Script)
-                                    << fileName << ": data key must not exceed "
-                                                   "255 characters in line "
-                                    << lineNumber << Log::end;
+                                Logger::error(LogFacility::Script) << fileName
+                                                                   << ": data key must not exceed "
+                                                                      "255 characters in line "
+                                                                   << lineNumber << Log::end;
                                 success = false;
                             }
 
                             if (value.length() > 255) {
-                                Logger::error(LogFacility::Script)
-                                    << fileName
-                                    << ": data value must not exceed 255 "
-                                       "characters in line " << lineNumber
-                                    << Log::end;
+                                Logger::error(LogFacility::Script) << fileName
+                                                                   << ": data value must not exceed 255 "
+                                                                      "characters in line "
+                                                                   << lineNumber << Log::end;
                                 success = false;
                             }
 
@@ -309,10 +289,8 @@ auto Map::importItems(const std::string &importDir,
 
                             item.setData(key, value);
                         } else {
-                            Logger::error(LogFacility::Script)
-                                << fileName << ": invalid data sequence '"
-                                << data << "' in line " << lineNumber
-                                << Log::end;
+                            Logger::error(LogFacility::Script) << fileName << ": invalid data sequence '" << data
+                                                               << "' in line " << lineNumber << Log::end;
                             success = false;
                             break;
                         }
@@ -328,20 +306,19 @@ auto Map::importItems(const std::string &importDir,
                         }
                     }
                 } catch (boost::bad_lexical_cast &) {
-                    Logger::error(LogFacility::Script)
-                        << fileName << ": expected "
-                                       "<uint16_t>;<uint16_t>;<uint16_t>;<"
-                                       "uint16_t> but found '" << line
-                        << "' in line " << lineNumber << Log::end;
+                    Logger::error(LogFacility::Script) << fileName
+                                                       << ": expected "
+                                                          "<uint16_t>;<uint16_t>;<uint16_t>;<"
+                                                          "uint16_t> but found '"
+                                                       << line << "' in line " << lineNumber << Log::end;
                     success = false;
                 }
             } else {
-                Logger::error(LogFacility::Script)
-                    << fileName
-                    << ": expected "
-                       "<uint16_t>;<uint16_t>;<uint16_t>;<uint16_t> "
-                       "but found '" << line << "' in line " << lineNumber
-                    << Log::end;
+                Logger::error(LogFacility::Script) << fileName
+                                                   << ": expected "
+                                                      "<uint16_t>;<uint16_t>;<uint16_t>;<uint16_t> "
+                                                      "but found '"
+                                                   << line << "' in line " << lineNumber << Log::end;
                 success = false;
             }
         }
@@ -358,17 +335,15 @@ void Map::unescape(std::string &input) {
     replace_all(input, "\\;", ";");
 }
 
-auto Map::importWarps(const std::string &importDir,
-                      const std::string &mapName) -> bool {
-    using std::smatch;
+auto Map::importWarps(const std::string &importDir, const std::string &mapName) -> bool {
     using std::regex_match;
+    using std::smatch;
 
     const std::string fileName = mapName + ".warps.txt";
     std::ifstream warpFile(importDir + fileName);
 
     if (!warpFile) {
-        Logger::error(LogFacility::Script)
-            << "Could not open file: " << fileName << Log::end;
+        Logger::error(LogFacility::Script) << "Could not open file: " << fileName << Log::end;
         return false;
     }
 
@@ -388,9 +363,7 @@ auto Map::importWarps(const std::string &importDir,
 
                     if (x >= width) {
                         Logger::error(LogFacility::Script)
-                            << fileName
-                            << ": x must be less than width in line "
-                            << lineNumber << Log::end;
+                                << fileName << ": x must be less than width in line " << lineNumber << Log::end;
                         success = false;
                     }
 
@@ -398,9 +371,7 @@ auto Map::importWarps(const std::string &importDir,
 
                     if (y >= height) {
                         Logger::error(LogFacility::Script)
-                            << fileName
-                            << ": y must be less than height in line "
-                            << lineNumber << Log::end;
+                                << fileName << ": y must be less than height in line " << lineNumber << Log::end;
                         success = false;
                     }
 
@@ -414,28 +385,26 @@ auto Map::importWarps(const std::string &importDir,
 
                         if (field.isWarp()) {
                             Logger::warn(LogFacility::Script)
-                                << fileName << ": warp on (" << x << ", " << y
-                                << ") is already present, ignoring line "
-                                << lineNumber << Log::end;
+                                    << fileName << ": warp on (" << x << ", " << y
+                                    << ") is already present, ignoring line " << lineNumber << Log::end;
                         } else {
                             field.setWarp(target);
                         }
                     }
                 } catch (boost::bad_lexical_cast &) {
-                    Logger::error(LogFacility::Script)
-                        << fileName << ": expected "
-                                       "<uint16_t>;<uint16_t>;<int16_t>;<"
-                                       "int16_t>;<int16_t> but found '" << line
-                        << "' in line " << lineNumber << Log::end;
+                    Logger::error(LogFacility::Script) << fileName
+                                                       << ": expected "
+                                                          "<uint16_t>;<uint16_t>;<int16_t>;<"
+                                                          "int16_t>;<int16_t> but found '"
+                                                       << line << "' in line " << lineNumber << Log::end;
                     success = false;
                 }
             } else {
-                Logger::error(LogFacility::Script)
-                    << fileName
-                    << ": expected "
-                       "<uint16_t>;<uint16_t>;<int16_t>;<int16_t>;<int16_t> "
-                       "but found '" << line << "' in line " << lineNumber
-                    << Log::end;
+                Logger::error(LogFacility::Script) << fileName
+                                                   << ": expected "
+                                                      "<uint16_t>;<uint16_t>;<int16_t>;<int16_t>;<int16_t> "
+                                                      "but found '"
+                                                   << line << "' in line " << lineNumber << Log::end;
                 success = false;
             }
         }
@@ -449,20 +418,19 @@ auto Map::load(const std::string &name) -> bool {
 
     this->name = name;
 
-    std::ifstream map { name + "_map", std::ios::binary | std::ios::in };
-    std::ifstream items { name + "_item", std::ios::binary | std::ios::in };
-    std::ifstream warps { name + "_warp", std::ios::binary | std::ios::in };
-    std::ifstream containers { name + "_container", std::ios::binary | std::ios::in };
+    std::ifstream map{name + "_map", std::ios::binary | std::ios::in};
+    std::ifstream items{name + "_item", std::ios::binary | std::ios::in};
+    std::ifstream warps{name + "_warp", std::ios::binary | std::ios::in};
+    std::ifstream containers{name + "_container", std::ios::binary | std::ios::in};
 
     if (map.good() && items.good() && warps.good() && containers.good()) {
         int16_t newWidth, newHeight;
 
-        map.read((char *) & newWidth, sizeof(width));
-        map.read((char *) & newHeight, sizeof(height));
-        map.read((char *) & origin, sizeof(origin));
+        map.read((char *)&newWidth, sizeof(width));
+        map.read((char *)&newHeight, sizeof(height));
+        map.read((char *)&origin, sizeof(origin));
 
         if (newWidth == width && newHeight == height) {
-
             for (auto &column : fields) {
                 for (auto &field : column) {
                     field.load(map, items, warps, containers);
@@ -476,33 +444,47 @@ auto Map::load(const std::string &name) -> bool {
     Logger::error(LogFacility::World) << "Map: ERROR LOADING FILES: " << name << Log::end;
 
     return false;
-
 }
 
-
 void Map::age() {
-    for ( auto &row : fields) {
+    for (auto &row : fields) {
         for (auto &field : row) {
             field.age();
         }
     }
 }
 
-auto Map::getHeight() const -> uint16_t { return height; }
+auto Map::getHeight() const -> uint16_t {
+    return height;
+}
 
-auto Map::getWidth() const -> uint16_t { return width; }
+auto Map::getWidth() const -> uint16_t {
+    return width;
+}
 
-auto Map::getMinX() const -> int16_t { return origin.x; }
+auto Map::getMinX() const -> int16_t {
+    return origin.x;
+}
 
-auto Map::getMinY() const -> int16_t { return origin.y; }
+auto Map::getMinY() const -> int16_t {
+    return origin.y;
+}
 
-auto Map::getMaxX() const -> int16_t { return origin.x + width - 1; }
+auto Map::getMaxX() const -> int16_t {
+    return origin.x + width - 1;
+}
 
-auto Map::getMaxY() const -> int16_t { return origin.y + height - 1; }
+auto Map::getMaxY() const -> int16_t {
+    return origin.y + height - 1;
+}
 
-auto Map::getLevel() const -> int16_t { return origin.z; }
+auto Map::getLevel() const -> int16_t {
+    return origin.z;
+}
 
-auto Map::getName() const -> const std::string & { return name; }
+auto Map::getName() const -> const std::string & {
+    return name;
+}
 
 inline auto Map::convertWorldXToMap(int16_t x) const -> uint16_t {
     uint16_t temp = x - origin.x;
@@ -525,9 +507,8 @@ inline auto Map::convertWorldYToMap(int16_t y) const -> uint16_t {
 }
 
 auto Map::intersects(const Map &map) const -> bool {
-    return map.origin.z == origin.z && getMaxX() >= map.origin.x &&
-           origin.x <= map.getMaxX() && getMaxY() >= map.origin.y &&
-           origin.y <= map.getMaxY();
+    return map.origin.z == origin.z && getMaxX() >= map.origin.x && origin.x <= map.getMaxX() &&
+           getMaxY() >= map.origin.y && origin.y <= map.getMaxY();
 }
 
-}
+} // namespace map

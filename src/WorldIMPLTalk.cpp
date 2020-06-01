@@ -16,17 +16,16 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
-#include "World.hpp"
-#include "data/TilesTable.hpp"
-#include "TableStructs.hpp"
-#include "Player.hpp"
-#include "NPC.hpp"
+#include "Logger.hpp"
 #include "Monster.hpp"
+#include "NPC.hpp"
+#include "Player.hpp"
+#include "TableStructs.hpp"
+#include "World.hpp"
+#include "data/Data.hpp"
+#include "data/TilesTable.hpp"
 #include "map/Field.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
-#include "Logger.hpp"
-#include "data/Data.hpp"
 
 void World::sendMessageToAdmin(const std::string &message) {
     Players.for_each([&message](Player *player) {
@@ -37,27 +36,26 @@ void World::sendMessageToAdmin(const std::string &message) {
     });
 }
 
-
 auto World::languagePrefix(int Language) -> std::string {
-    if (Language==1) {
+    if (Language == 1) {
         return "[hum] ";
-    } else if (Language==2) {
+    } else if (Language == 2) {
         return "[dwa] ";
-    } else if (Language==3) {
+    } else if (Language == 3) {
         return "[elf] ";
-    } else if (Language==4) {
+    } else if (Language == 4) {
         return "[liz] ";
-    } else if (Language==5) {
+    } else if (Language == 5) {
         return "[orc] ";
-    } else if (Language==6) {
+    } else if (Language == 6) {
         return "[hal] ";
-    } else if (Language==7) {
+    } else if (Language == 7) {
         return "[fai] ";
-    } else if (Language==8) {
+    } else if (Language == 8) {
         return "[gno] ";
-    } else if (Language==9) {
+    } else if (Language == 9) {
         return "[gob] ";
-    } else if (Language==10) {
+    } else if (Language == 10) {
         return "[anc] ";
     } else {
         return "";
@@ -101,7 +99,6 @@ auto World::languageNumberToSkillName(int languageNumber) -> std::string {
 
     default:
         return "";
-
     }
 }
 
@@ -138,7 +135,8 @@ void World::broadcast(const std::string &german, const std::string &english) {
     });
 }
 
-void World::sendMessageToAllCharsInRange(const std::string &german, const std::string &english, Character::talk_type tt, Character *cc) {
+void World::sendMessageToAllCharsInRange(const std::string &german, const std::string &english, Character::talk_type tt,
+                                         Character *cc) {
     auto range = getTalkRange(tt);
     std::string spokenMessage_german, spokenMessage_english, tempMessage;
     bool is_action = german.substr(0, 3) == "#me";
@@ -155,7 +153,8 @@ void World::sendMessageToAllCharsInRange(const std::string &german, const std::s
 
     for (const auto &player : Players.findAllCharactersInRangeOf(cc->getPosition(), range)) {
         if (!is_action && player->getId() != cc->getId()) {
-            tempMessage = prefix + player->alterSpokenMessage(player->nls(spokenMessage_german, spokenMessage_english), player->getLanguageSkill(cc->getActiveLanguage()));
+            tempMessage = prefix + player->alterSpokenMessage(player->nls(spokenMessage_german, spokenMessage_english),
+                                                              player->getLanguageSkill(cc->getActiveLanguage()));
             player->receiveText(tt, tempMessage, cc);
         } else {
             if (is_action) {
@@ -169,7 +168,7 @@ void World::sendMessageToAllCharsInRange(const std::string &german, const std::s
     if (cc->getType() == Character::player) {
         // tell all npcs
         for (const auto &npc : Npc.findAllCharactersInRangeOf(cc->getPosition(), range)) {
-            tempMessage=prefix + npc->alterSpokenMessage(english, npc->getLanguageSkill(cc->getActiveLanguage()));
+            tempMessage = prefix + npc->alterSpokenMessage(english, npc->getLanguageSkill(cc->getActiveLanguage()));
             npc->receiveText(tt, tempMessage, cc);
         }
 
@@ -180,7 +179,8 @@ void World::sendMessageToAllCharsInRange(const std::string &german, const std::s
     }
 }
 
-void World::sendLanguageMessageToAllCharsInRange(const std::string &message, Character::talk_type tt, Language lang, Character *cc) {
+void World::sendLanguageMessageToAllCharsInRange(const std::string &message, Character::talk_type tt, Language lang,
+                                                 Character *cc) {
     auto range = getTalkRange(tt);
 
     // get all Players
@@ -191,8 +191,8 @@ void World::sendLanguageMessageToAllCharsInRange(const std::string &message, Cha
     std::vector<Monster *> monsters = Monsters.findAllCharactersInRangeOf(cc->getPosition(), range);
 
     // alter message because of the speakers inability to speak...
-    std::string spokenMessage,tempMessage;
-    spokenMessage=cc->alterSpokenMessage(message,cc->getLanguageSkill(cc->getActiveLanguage()));
+    std::string spokenMessage, tempMessage;
+    spokenMessage = cc->alterSpokenMessage(message, cc->getLanguageSkill(cc->getActiveLanguage()));
 
     // tell all OTHER players... (but tell them what they understand due to their inability to do so)
     // tell the player himself what he wanted to say
@@ -206,10 +206,12 @@ void World::sendLanguageMessageToAllCharsInRange(const std::string &message, Cha
         for (const auto &player : players) {
             if (player->getPlayerLanguage() == lang) {
                 if (player->getId() != cc->getId()) {
-                    tempMessage=languagePrefix(cc->getActiveLanguage()) + player->alterSpokenMessage(spokenMessage, player->getLanguageSkill(cc->getActiveLanguage()));
+                    tempMessage = languagePrefix(cc->getActiveLanguage()) +
+                                  player->alterSpokenMessage(spokenMessage,
+                                                             player->getLanguageSkill(cc->getActiveLanguage()));
                     player->receiveText(tt, tempMessage, cc);
                 } else {
-                    player->receiveText(tt, languagePrefix(cc->getActiveLanguage())+message, cc);
+                    player->receiveText(tt, languagePrefix(cc->getActiveLanguage()) + message, cc);
                 }
             }
         }
@@ -218,7 +220,8 @@ void World::sendLanguageMessageToAllCharsInRange(const std::string &message, Cha
     if (cc->getType() == Character::player) {
         // tell all npcs
         for (const auto &npc : npcs) {
-            tempMessage=languagePrefix(cc->getActiveLanguage()) + npc->alterSpokenMessage(spokenMessage, npc->getLanguageSkill(cc->getActiveLanguage()));
+            tempMessage = languagePrefix(cc->getActiveLanguage()) +
+                          npc->alterSpokenMessage(spokenMessage, npc->getLanguageSkill(cc->getActiveLanguage()));
             npc->receiveText(tt, tempMessage, cc);
         }
 
@@ -229,12 +232,11 @@ void World::sendLanguageMessageToAllCharsInRange(const std::string &message, Cha
     }
 }
 
-
 void World::sendMessageToAllCharsInRange(const std::string &message, Character::talk_type tt, Character *cc) {
     sendMessageToAllCharsInRange(message, message, tt, cc);
 }
 
-void World::makeGFXForAllPlayersInRange(const position &pos, int radius ,unsigned short int gfx) {
+void World::makeGFXForAllPlayersInRange(const position &pos, int radius, unsigned short int gfx) {
     Range range;
     range.radius = radius;
 
@@ -243,7 +245,6 @@ void World::makeGFXForAllPlayersInRange(const position &pos, int radius ,unsigne
         player->Connection->addCommand(cmd);
     }
 }
-
 
 void World::makeSoundForAllPlayersInRange(const position &pos, int radius, unsigned short int sound) {
     Range range;
@@ -255,8 +256,7 @@ void World::makeSoundForAllPlayersInRange(const position &pos, int radius, unsig
     }
 }
 
-void World::lookAtMapItem(Player *player, const position &pos,
-                          uint8_t stackPos) {
+void World::lookAtMapItem(Player *player, const position &pos, uint8_t stackPos) {
     try {
         map::Field &field = fieldAt(pos);
         ScriptItem item = field.getStackItem(stackPos);
@@ -281,16 +281,13 @@ void World::lookAtMapItem(Player *player, const position &pos,
     }
 }
 
-
 void World::lookAtTile(Player *cp, unsigned short int tile, const position &pos) {
     const TilesStruct &tileStruct = Data::Tiles[tile];
     ServerCommandPointer cmd = std::make_shared<LookAtTileTC>(pos, cp->nls(tileStruct.German, tileStruct.English));
     cp->Connection->addCommand(cmd);
 }
 
-
 void World::lookAtShowcaseItem(Player *cp, uint8_t showcase, unsigned char position) {
-
     ScriptItem titem;
 
     if (cp->isShowcaseOpen(showcase)) {
@@ -318,12 +315,9 @@ void World::lookAtShowcaseItem(Player *cp, uint8_t showcase, unsigned char posit
     }
 }
 
-
-
 void World::lookAtInventoryItem(Player *cp, unsigned char position) {
-    if (cp->items[ position ].getId() != 0) {
-
-        ScriptItem item(cp->items[ position ]);
+    if (cp->items[position].getId() != 0) {
+        ScriptItem item(cp->items[position]);
 
         if (position < MAX_BODY_ITEMS) {
             item.type = ScriptItem::it_inventory;
@@ -362,7 +356,10 @@ void World::sendWeather(Player *cp) {
 }
 
 void World::sendIGTime(Player *cp) {
-    ServerCommandPointer cmd = std::make_shared<UpdateTimeTC>(static_cast<unsigned char>(getTime("hour")),static_cast<unsigned char>(getTime("minute")),static_cast<unsigned char>(getTime("day")),static_cast<unsigned char>(getTime("month")), static_cast<short int>(getTime("year")));
+    ServerCommandPointer cmd = std::make_shared<UpdateTimeTC>(
+            static_cast<unsigned char>(getTime("hour")), static_cast<unsigned char>(getTime("minute")),
+            static_cast<unsigned char>(getTime("day")), static_cast<unsigned char>(getTime("month")),
+            static_cast<short int>(getTime("year")));
     cp->Connection->addCommand(cmd);
 }
 
@@ -377,4 +374,3 @@ void World::sendWeatherToAllPlayers() {
         player->sendWeather(weather);
     });
 }
-

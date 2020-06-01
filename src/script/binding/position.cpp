@@ -18,22 +18,23 @@
  *  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <luabind/luabind.hpp>
-#include <luabind/operator.hpp>
 #include "globals.hpp"
 #include "script/binding/binding.hpp"
 
+#include <luabind/luabind.hpp>
+#include <luabind/operator.hpp>
+
 namespace binding {
 
-    auto position() -> luabind::scope {
-        return luabind::class_< ::position>("position")
-                .def(luabind::constructor<>())
-                .def(luabind::constructor<short int, short int, short int>())
-                .def(luabind::const_self == luabind::const_self)
-                .def(luabind::tostring(luabind::const_self))
-                .def_readwrite("x", &position::x)
-                .def_readwrite("y", &position::y)
-                .def_readwrite("z", &position::z);
-    }
-
+auto position() -> luabind::scope {
+    return luabind::class_<::position>("position")
+            .def(luabind::constructor<>())
+            .def(luabind::constructor<short int, short int, short int>())
+            .def(luabind::const_self == luabind::const_self)
+            .def(luabind::tostring(luabind::const_self))
+            .def_readwrite("x", &position::x)
+            .def_readwrite("y", &position::y)
+            .def_readwrite("z", &position::z);
 }
+
+} // namespace binding

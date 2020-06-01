@@ -19,16 +19,13 @@
  */
 
 #include "LuaWeaponScript.hpp"
+
 #include "Character.hpp"
 #include "character_ptr.hpp"
 
-LuaWeaponScript::LuaWeaponScript(const std::string &filename)
-    : LuaScript(filename) {
-}
+LuaWeaponScript::LuaWeaponScript(const std::string &filename) : LuaScript(filename) {}
 
-LuaWeaponScript::LuaWeaponScript(const std::string &filename, const WeaponStruct &weapon)
-    : LuaScript(filename) {
-}
+LuaWeaponScript::LuaWeaponScript(const std::string &filename, const WeaponStruct &weapon) : LuaScript(filename) {}
 
 LuaWeaponScript::~LuaWeaponScript() = default;
 
@@ -56,4 +53,3 @@ auto LuaWeaponScript::setTarget(Character *Monster, const std::vector<Character 
 
     return nullptr;
 }
-

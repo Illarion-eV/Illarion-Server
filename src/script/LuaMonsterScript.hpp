@@ -21,9 +21,9 @@
 #ifndef LUA_MONSTER_SCRIPT_HPP
 #define LUA_MONSTER_SCRIPT_HPP
 
-#include "LuaScript.hpp"
-#include "Item.hpp"
 #include "Character.hpp"
+#include "Item.hpp"
+#include "LuaScript.hpp"
 
 class World;
 
@@ -51,4 +51,3 @@ public:
 };
 
 #endif
-

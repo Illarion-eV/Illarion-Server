@@ -21,8 +21,8 @@
 #ifndef NATURAL_ARMOR_TABLE_HPP
 #define NATURAL_ARMOR_TABLE_HPP
 
-#include "data/StructTable.hpp"
 #include "TableStructs.hpp"
+#include "data/StructTable.hpp"
 
 class NaturalArmorTable : public StructTable<uint16_t, MonsterArmor> {
 public:
@@ -33,4 +33,3 @@ public:
 };
 
 #endif
-

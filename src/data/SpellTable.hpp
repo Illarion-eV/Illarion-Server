@@ -21,11 +21,10 @@
 #ifndef SPELL_TABLE_HPP
 #define SPELL_TABLE_HPP
 
-#include <boost/functional/hash/hash.hpp>
-
 #include "data/ScriptStructTable.hpp"
-
 #include "script/LuaMagicScript.hpp"
+
+#include <boost/functional/hash/hash.hpp>
 
 struct Spell {
     uint8_t magicType;
@@ -42,7 +41,7 @@ struct Spell {
 };
 
 namespace std {
-template<> struct hash<Spell> {
+template <> struct hash<Spell> {
     auto operator()(const Spell &s) const -> size_t {
         std::size_t seed = 0;
         boost::hash_combine(seed, s.magicType);
@@ -50,10 +49,9 @@ template<> struct hash<Spell> {
         return seed;
     }
 };
-}
+} // namespace std
 
-struct SpellStruct {
-};
+struct SpellStruct {};
 
 class SpellTable : public ScriptStructTable<Spell, SpellStruct, LuaMagicScript> {
 public:
@@ -65,4 +63,3 @@ public:
 };
 
 #endif
-

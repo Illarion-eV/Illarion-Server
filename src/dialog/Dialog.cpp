@@ -19,14 +19,15 @@
  */
 
 #include "dialog/Dialog.hpp"
+
 #include "Logger.hpp"
+
 #include <luabind/luabind.hpp>
 #include <stdexcept>
 #include <utility>
 
-
 Dialog::Dialog(string title, string className, const luabind::object &callback)
-    : title(std::move(title)), className(std::move(className)), callback(callback) {
+        : title(std::move(title)), className(std::move(className)), callback(callback) {
     auto type = luabind::type(callback);
 
     if (type != LUA_TFUNCTION && type != LUA_TNIL) {
@@ -51,4 +52,3 @@ auto Dialog::getCallback() const -> const luabind::object & {
 auto Dialog::closeOnMove() const -> bool {
     return false;
 }
-

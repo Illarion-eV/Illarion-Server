@@ -19,10 +19,11 @@
  */
 
 #include "dialog/MerchantDialog.hpp"
+
 #include "data/Data.hpp"
 
 MerchantDialog::MerchantDialog(const string &title, const luabind::object &callback)
-    :Dialog(title, "MerchantDialog", callback) {
+        : Dialog(title, "MerchantDialog", callback) {
     lookAtList = listSell;
     result = playerAborts;
     purchaseIndex = 0;
@@ -104,7 +105,6 @@ void MerchantDialog::addSecondaryRequest(TYPE_OF_ITEM_ID item, const string &nam
     addProduct(secondaryRequests, item, name, price);
 }
 
-
 auto MerchantDialog::getResult() const -> Result {
     return result;
 }
@@ -174,4 +174,3 @@ auto MerchantDialog::canAddOffer() const -> bool {
 auto MerchantDialog::canAddProduct(const product_list &products) const -> bool {
     return products.size() < MAXPRODUCTS;
 }
-

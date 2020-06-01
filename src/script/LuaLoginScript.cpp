@@ -19,12 +19,11 @@
  */
 
 #include "LuaLoginScript.hpp"
+
 #include "Character.hpp"
 #include "character_ptr.hpp"
 
-LuaLoginScript::LuaLoginScript(const std::string &filename)
-    : LuaScript(filename) {
-}
+LuaLoginScript::LuaLoginScript(const std::string &filename) : LuaScript(filename) {}
 
 LuaLoginScript::~LuaLoginScript() = default;
 

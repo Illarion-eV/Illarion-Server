@@ -16,13 +16,12 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef CMONITORINGCLIENTS
 #define CMONITORINGCLIENTS
 
-#include <list>
-
 #include "netinterface/BasicServerCommand.hpp"
+
+#include <list>
 
 class World;
 class Player;
@@ -55,6 +54,6 @@ public:
 
 private:
     std::list<Player *> client_list;
-    World *_world;  /*< pointer to the gameworld*/
+    World *_world; /*< pointer to the gameworld*/
 };
 #endif

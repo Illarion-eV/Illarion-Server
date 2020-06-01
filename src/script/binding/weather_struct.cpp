@@ -18,23 +18,24 @@
  *  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <World.hpp>
 #include "script/binding/binding.hpp"
+
+#include <World.hpp>
 
 namespace binding {
 
-    auto weather_struct() -> luabind::scope {
-        return luabind::class_<WeatherStruct>("WeatherStruct")
-                .def(luabind::constructor<>())
-                .def(luabind::constructor<char, char, char, char, char, char, char, char>())
-                .def_readwrite("cloud_density", &WeatherStruct::cloud_density)
-                .def_readwrite("fog_density", &WeatherStruct::fog_density)
-                .def_readwrite("wind_dir", &WeatherStruct::wind_dir)
-                .def_readwrite("gust_strength", &WeatherStruct::gust_strength)
-                .def_readwrite("percipitation_strength", &WeatherStruct::percipitation_strength)
-                .def_readwrite("percipitation_type", &WeatherStruct::per_type)
-                .def_readwrite("thunderstorm", &WeatherStruct::thunderstorm)
-                .def_readwrite("temperature", &WeatherStruct::temperature);
-    }
-
+auto weather_struct() -> luabind::scope {
+    return luabind::class_<WeatherStruct>("WeatherStruct")
+            .def(luabind::constructor<>())
+            .def(luabind::constructor<char, char, char, char, char, char, char, char>())
+            .def_readwrite("cloud_density", &WeatherStruct::cloud_density)
+            .def_readwrite("fog_density", &WeatherStruct::fog_density)
+            .def_readwrite("wind_dir", &WeatherStruct::wind_dir)
+            .def_readwrite("gust_strength", &WeatherStruct::gust_strength)
+            .def_readwrite("percipitation_strength", &WeatherStruct::percipitation_strength)
+            .def_readwrite("percipitation_type", &WeatherStruct::per_type)
+            .def_readwrite("thunderstorm", &WeatherStruct::thunderstorm)
+            .def_readwrite("temperature", &WeatherStruct::temperature);
 }
+
+} // namespace binding

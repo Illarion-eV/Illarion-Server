@@ -16,10 +16,9 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "Showcase.hpp"
 
-Showcase::Showcase(Container *container, bool carry): openContainer(container), isInInventory(carry) {}
+Showcase::Showcase(Container *container, bool carry) : openContainer(container), isInInventory(carry) {}
 
 auto Showcase::contains(Container *container) const -> bool {
     return openContainer == container;
@@ -32,4 +31,3 @@ auto Showcase::getContainer() const -> Container * {
 auto Showcase::inInventory() const -> bool {
     return isInInventory;
 }
-

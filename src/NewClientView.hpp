@@ -16,7 +16,6 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef NEWCLIENTVIEW_HPP_
 #define NEWCLIENTVIEW_HPP_
 
@@ -27,117 +26,115 @@
 
 // forward declarations
 namespace map {
-    class Field;
+class Field;
 }
 
 /**
-* class which holds isometric view specific data
-*/
+ * class which holds isometric view specific data
+ */
 class NewClientView {
-
 public:
-
     /**
-    * in which direction is the stripe
-    */
-    enum stripedirection {
+     * in which direction is the stripe
+     */
+    enum stripedirection
+    {
         dir_right,
         dir_down
     };
 
     /**
-    * defines one mapstripe
-    */
+     * defines one mapstripe
+     */
     using MAPSTRIPE = std::array<map::Field *, 100 /*MAP_DIMENSION + 1 + MAP_DOWN_EXTRA + 6*/>;
 
     /**
-    * stores the pointers to the fields inside a specific mapstripe
-    */
+     * stores the pointers to the fields inside a specific mapstripe
+     */
     MAPSTRIPE mapStripe{nullptr};
 
     /**
-    * returns the initial position of this stripe
-    * @return the starting position of the stripe
-    */
+     * returns the initial position of this stripe
+     * @return the starting position of the stripe
+     */
     [[nodiscard]] auto getViewPosition() const -> position {
         return viewPosition;
     }
 
     /**
-    * returns if the stripe exists
-    * @return true if the stripe exists otherwise false
-    */
+     * returns if the stripe exists
+     * @return true if the stripe exists otherwise false
+     */
     [[nodiscard]] auto getExists() const -> bool {
         return exists;
     }
 
     /**
-    * returns the number of tiles in the view
-    * @return the number of maximal tiles in the view
-    */
+     * returns the number of tiles in the view
+     * @return the number of maximal tiles in the view
+     */
     [[nodiscard]] auto getMaxTiles() const -> uint8_t {
         return maxtiles;
     }
 
     /**
-    * the stripedirection, in which direction the mapstripe shows
-    * @return the current direction of the mapstripe
-    */
+     * the stripedirection, in which direction the mapstripe shows
+     * @return the current direction of the mapstripe
+     */
     [[nodiscard]] auto getStripeDirection() const -> stripedirection {
         return stripedir;
     }
 
     /**
-    * constructor
-    */
+     * constructor
+     */
     NewClientView();
 
     /**
-    * destructor
-    */
+     * destructor
+     */
     ~NewClientView() = default;
 
     /**
-    * fills the stripe with the specific isometric data
-    * @param pos the starting position of the stripe
-    * @param dir the direction in which the stipe looks
-        * @param length number of tiles to be read
-    * @param maps the maps from which we want to calculate the stripes
-    */
+     * fills the stripe with the specific isometric data
+     * @param pos the starting position of the stripe
+     * @param dir the direction in which the stipe looks
+     * @param length number of tiles to be read
+     * @param maps the maps from which we want to calculate the stripes
+     */
     void fillStripe(position pos, stripedirection dir, int length);
 
     /**
-    * clears all current stripe infos
-    */
+     * clears all current stripe infos
+     */
     void clearStripe();
 
 private:
-
     /**
-    * reads all fields for the current stripe on a specific map from startingpos towards direction stripedir
-        * @param length number of tiles to be read
-    * @param maps the map vector from which we want to read the fields
-    */
+     * reads all fields for the current stripe on a specific map from startingpos towards direction stripedir
+     * @param length number of tiles to be read
+     * @param maps the map vector from which we want to read the fields
+     */
     void readFields(int length);
 
     /**
-    * the starting position of the current view
-    */
+     * the starting position of the current view
+     */
     position viewPosition;
 
     /**
-    * if there is a view stripe
-    */
+     * if there is a view stripe
+     */
     bool exists{false};
 
     /**
-    * which direction do we read
-    */
+     * which direction do we read
+     */
     stripedirection stripedir{dir_right};
 
     /**
-    * how many tiles are stored
-    */
+     * how many tiles are stored
+     */
     uint8_t maxtiles{0};
 };
 

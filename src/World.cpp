@@ -20,13 +20,6 @@
 
 #include "World.hpp"
 
-#include <algorithm>
-#include <ctime>
-#include <iterator>
-#include <memory>
-#include <regex>
-#include <sys/types.h>
-
 #include "Config.hpp"
 #include "Logger.hpp"
 #include "LongTimeAction.hpp"
@@ -35,26 +28,29 @@
 #include "SchedulerTaskClasses.hpp"
 #include "TableStructs.hpp"
 #include "WaypointList.hpp"
-#include "tuningConstants.hpp"
-
 #include "data/Data.hpp"
-#include "data/ScheduledScriptsTable.hpp"
-#include "data/NPCTable.hpp"
 #include "data/MonsterTable.hpp"
-#include "data/TilesTable.hpp"
+#include "data/NPCTable.hpp"
+#include "data/ScheduledScriptsTable.hpp"
 #include "data/SkillTable.hpp"
+#include "data/TilesTable.hpp"
 #include "data/WeaponObjectTable.hpp"
-
-#include "script/LuaLogoutScript.hpp"
-#include "script/LuaNPCScript.hpp"
-#include "script/LuaWeaponScript.hpp"
-
-#include "db/SelectQuery.hpp"
 #include "db/Result.hpp"
-
+#include "db/SelectQuery.hpp"
 #include "netinterface/BasicCommand.hpp"
 #include "netinterface/NetInterface.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
+#include "script/LuaLogoutScript.hpp"
+#include "script/LuaNPCScript.hpp"
+#include "script/LuaWeaponScript.hpp"
+#include "tuningConstants.hpp"
+
+#include <algorithm>
+#include <ctime>
+#include <iterator>
+#include <memory>
+#include <regex>
+#include <sys/types.h>
 
 extern ScheduledScriptsTable *scheduledScripts;
 extern MonsterTable *monsterDescriptions;
@@ -87,32 +83,29 @@ auto World::get() -> World * {
 }
 
 World::World() {
-    lastTurnIGDay=getTime("day");
+    lastTurnIGDay = getTime("day");
 
     usedAP = 0;
 
     // save starting time
     time_t starttime;
     time(&starttime);
-    timeStart = starttime*1000;
+    timeStart = starttime * 1000;
 
     currentScript = nullptr;
 
     scriptDir = Config::instance().datadir() + std::string(SCRIPTSDIR);
 
-    srand((unsigned) time(nullptr));
-
+    srand((unsigned)time(nullptr));
 }
-
 
 World::~World() = default;
 
-
 void World::turntheworld() {
     ftime(&now);
-    unsigned long timeNow = now.time*1000 + now.millitm;
+    unsigned long timeNow = now.time * 1000 + now.millitm;
 
-    ap = timeNow/MIN_AP_UPDATE - timeStart/MIN_AP_UPDATE - usedAP;
+    ap = timeNow / MIN_AP_UPDATE - timeStart / MIN_AP_UPDATE - usedAP;
 
     if (ap > 0) {
         usedAP += ap;
@@ -122,8 +115,6 @@ void World::turntheworld() {
         checkNPC();
     }
 }
-
-
 
 void World::checkPlayers() {
     time_t tempkeepalive;
@@ -191,7 +182,7 @@ void World::checkPlayerImmediateCommands() {
     }
 }
 
-void World::addPlayerImmediateActionQueue(Player* player) {
+void World::addPlayerImmediateActionQueue(Player *player) {
     std::unique_lock<std::mutex> lock(immediatePlayerCommandsMutex);
     immediatePlayerCommands.push(player);
 }
@@ -227,17 +218,11 @@ auto World::initRespawns() -> bool {
         Database::Result results = query.execute();
 
         if (!results.empty()) {
-
             for (const auto &row : results) {
                 const auto spawnId = row["spp_id"].as<uint32_t>();
-                const position pos(row["spp_x"].as<int16_t>(),
-                                   row["spp_y"].as<int16_t>(),
-                                   row["spp_z"].as<int16_t>());
-                SpawnPoint newSpawn(pos,
-                                    row["spp_range"].as<int>(),
-                                    row["spp_spawnrange"].as<uint16_t>(),
-                                    row["spp_minspawntime"].as<uint16_t>(),
-                                    row["spp_maxspawntime"].as<uint16_t>(),
+                const position pos(row["spp_x"].as<int16_t>(), row["spp_y"].as<int16_t>(), row["spp_z"].as<int16_t>());
+                SpawnPoint newSpawn(pos, row["spp_range"].as<int>(), row["spp_spawnrange"].as<uint16_t>(),
+                                    row["spp_minspawntime"].as<uint16_t>(), row["spp_maxspawntime"].as<uint16_t>(),
                                     row["spp_spawnall"].as<bool>());
                 Logger::debug(LogFacility::World) << "load spawnpoint " << spawnId << ":" << Log::end;
                 newSpawn.load(spawnId);
@@ -254,7 +239,6 @@ auto World::initRespawns() -> bool {
         Logger::error(LogFacility::World) << "got exception in load SpawnPoints: " << e.what() << Log::end;
         return false;
     }
-
 }
 
 void World::checkMonsters() {
@@ -294,7 +278,7 @@ void World::checkMonsters() {
                     Item itl = monster.GetItemAt(LEFT_TOOL);
                     Item itr = monster.GetItemAt(RIGHT_TOOL);
 
-                    uint16_t range=1;
+                    uint16_t range = 1;
 
                     if (Data::WeaponItems.exists(itr.getId())) {
                         range = Data::WeaponItems[itr.getId()].Range;
@@ -303,7 +287,7 @@ void World::checkMonsters() {
                     }
 
                     const auto temp = getTargetsInRange(monster.getPosition(), range);
-                    bool has_attacked=false;
+                    bool has_attacked = false;
                     Character *target = nullptr;
 
                     if ((!temp.empty()) && monster.canAttack()) {
@@ -324,7 +308,8 @@ void World::checkMonsters() {
                                     }
                                 }
                             } else {
-                                Logger::error(LogFacility::Script) << "cant find a monster id for checking the script!" << Log::end;
+                                Logger::error(LogFacility::Script)
+                                        << "cant find a monster id for checking the script!" << Log::end;
                             }
 
                             monster.turn(target->getPosition());
@@ -340,12 +325,13 @@ void World::checkMonsters() {
                     if (!has_attacked) {
                         const auto targets = getTargetsInRange(monster.getPosition(), MONSTERVIEWRANGE);
 
-                        bool makeRandomStep=true;
+                        bool makeRandomStep = true;
 
                         if ((!targets.empty()) && (monster.canAttack())) {
                             Character *targetChar = nullptr;
 
-                            if (!monStruct.script || !monStruct.script->setTarget(monsterPointer, targets, targetChar)) {
+                            if (!monStruct.script ||
+                                !monStruct.script->setTarget(monsterPointer, targets, targetChar)) {
                                 targetChar = standardFightingScript->setTarget(monsterPointer, targets);
                             }
 
@@ -360,15 +346,15 @@ void World::checkMonsters() {
                                         }
                                     }
 
-                                    makeRandomStep=false;
+                                    makeRandomStep = false;
                                     monster.performStep(targetChar->getPosition());
                                 } else {
-                                    Logger::notice(LogFacility::Script) << "cant find the monster id for calling a script!" << Log::end;
+                                    Logger::notice(LogFacility::Script)
+                                            << "cant find the monster id for calling a script!" << Log::end;
                                 }
-
                             }
                         } else if (monster.lastTargetSeen) {
-                            makeRandomStep=false;
+                            makeRandomStep = false;
                             monster.performStep(monster.lastTargetPosition);
                         }
 
@@ -379,7 +365,9 @@ void World::checkMonsters() {
                             const auto &monsterdef = (*monsterDescriptions)[monster.getMonsterType()];
 
                             if (!hasDefinition) {
-                                Logger::error(LogFacility::World) << "Data for Healing not Found for monsterrace: " << monster.getMonsterType() << Log::end;
+                                Logger::error(LogFacility::World)
+                                        << "Data for Healing not Found for monsterrace: " << monster.getMonsterType()
+                                        << Log::end;
                             }
 
                             if (tempr <= 5 && hasDefinition && monsterdef.canselfheal) {
@@ -387,7 +375,7 @@ void World::checkMonsters() {
                             } else {
                                 SpawnPoint *spawn = monster.getSpawn();
 
-                                auto dir = (direction)Random::uniform(0,7);
+                                auto dir = (direction)Random::uniform(0, 7);
 
                                 if (spawn != nullptr) {
                                     position newpos = monster.getPosition();
@@ -395,7 +383,8 @@ void World::checkMonsters() {
                                     int yoffs = spawn->get_y() - newpos.y;
                                     int xoffs = spawn->get_x() - newpos.x;
 
-                                    // if walking out of range, mirroring dir. at spawn area border lets the char stay in range with L_inf metric
+                                    // if walking out of range, mirroring dir. at spawn area border lets the char stay
+                                    // in range with L_inf metric
                                     if (abs(xoffs) > spawn->getRange()) {
                                         switch (dir) {
                                         case dir_northeast:
@@ -470,7 +459,7 @@ void World::checkMonsters() {
                     Item itl = monster.GetItemAt(LEFT_TOOL);
                     Item itr = monster.GetItemAt(RIGHT_TOOL);
 
-                    uint16_t range=1;
+                    uint16_t range = 1;
 
                     if (Data::WeaponItems.exists(itr.getId())) {
                         range = Data::WeaponItems[itr.getId()].Range;
@@ -482,7 +471,7 @@ void World::checkMonsters() {
 
                     if (!temp.empty()) {
                         Character *target = nullptr;
-                        
+
                         if (!monStruct.script || !monStruct.script->setTarget(monsterPointer, temp, target)) {
                             target = standardFightingScript->setTarget(monsterPointer, temp);
                         }
@@ -491,7 +480,8 @@ void World::checkMonsters() {
                             if (foundMonster && monStruct.script) {
                                 monStruct.script->enemyNear(monsterPointer, target);
                             } else {
-                                Logger::error(LogFacility::World) << "cant find a monster id for checking the script!" << Log::end;
+                                Logger::error(LogFacility::World)
+                                        << "cant find a monster id for checking the script!" << Log::end;
                             }
                         }
                     }
@@ -518,7 +508,8 @@ void World::checkMonsters() {
                         if (foundMonster && monStruct.script) {
                             monStruct.script->abortRoute(monsterPointer);
                         } else {
-                            Logger::notice(LogFacility::Script) << "cant find the monster id for calling a script!" << Log::end;
+                            Logger::notice(LogFacility::Script)
+                                    << "cant find the monster id for calling a script!" << Log::end;
                         }
                     }
                 }
@@ -544,12 +535,10 @@ void World::checkMonsters() {
         if (foundMonster && monStruct.script) {
             monStruct.script->onSpawn(monster);
         }
-
     }
 
     newMonsters.clear();
 }
-
 
 auto World::getTargetsInRange(const position &pos, int radius) const -> std::vector<Character *> {
     Range range;
@@ -559,18 +548,17 @@ auto World::getTargetsInRange(const position &pos, int radius) const -> std::vec
     const auto monsters = Monsters.findAllAliveCharactersInRangeOf(pos, range);
     std::vector<Character *> targets;
     targets.insert(targets.end(), players.begin(), players.end());
-    std::remove_copy_if(monsters.begin(), monsters.end(), std::back_inserter(targets),
-            [&](const auto &monster){return pos == monster->getPosition();});
+    std::remove_copy_if(monsters.begin(), monsters.end(), std::back_inserter(targets), [&](const auto &monster) {
+        return pos == monster->getPosition();
+    });
 
     return targets;
 }
 
-
 void World::checkNPC() {
     deleteAllLostNPC();
 
-    Npc.for_each([this](NPC* npc) {
-
+    Npc.for_each([this](NPC *npc) {
         if (npc->isAlive()) {
             npc->increaseActionPoints(ap);
             npc->effects.checkEffects();
@@ -591,10 +579,7 @@ void World::checkNPC() {
     });
 }
 
-
-void World::workout_CommandBuffer(Player *&cp) {
-}
-
+void World::workout_CommandBuffer(Player *&cp) {}
 
 // Init method for NPC's
 void World::initNPC() {
@@ -634,14 +619,47 @@ static auto getNextIGDayTime() -> std::chrono::steady_clock::time_point {
 }
 
 void World::initScheduler() {
-    scheduler.addRecurringTask([&] { Players.for_each(reduceMC); }, std::chrono::seconds(10), "increase_player_learn_points");
-    scheduler.addRecurringTask([&] { Monsters.for_each(reduceMC); Npc.for_each(reduceMC); }, std::chrono::seconds(10), "increase_monster_learn_points");
-    scheduler.addRecurringTask([&] { monitoringClientList->CheckClients(); }, std::chrono::milliseconds(250), "check_monitoring_clients");
-    scheduler.addRecurringTask([&] { scheduledScripts->nextCycle(); }, std::chrono::seconds(1), "check_scheduled_scripts");
-    scheduler.addRecurringTask([&] { ageInventory(); }, std::chrono::minutes(3), "age_inventory");
-    scheduler.addRecurringTask([&] { ageMaps(); }, std::chrono::minutes(3), "age_maps");
-    scheduler.addRecurringTask([&] { turntheworld(); }, std::chrono::milliseconds(100), "turntheworld");
-    scheduler.addRecurringTask([&] { sendIGTimeToAllPlayers(); }, std::chrono::hours(8), getNextIGDayTime(), "update_ig_day");
+    scheduler.addRecurringTask(
+            [&] {
+                Players.for_each(reduceMC);
+            },
+            std::chrono::seconds(10), "increase_player_learn_points");
+    scheduler.addRecurringTask(
+            [&] {
+                Monsters.for_each(reduceMC);
+                Npc.for_each(reduceMC);
+            },
+            std::chrono::seconds(10), "increase_monster_learn_points");
+    scheduler.addRecurringTask(
+            [&] {
+                monitoringClientList->CheckClients();
+            },
+            std::chrono::milliseconds(250), "check_monitoring_clients");
+    scheduler.addRecurringTask(
+            [&] {
+                scheduledScripts->nextCycle();
+            },
+            std::chrono::seconds(1), "check_scheduled_scripts");
+    scheduler.addRecurringTask(
+            [&] {
+                ageInventory();
+            },
+            std::chrono::minutes(3), "age_inventory");
+    scheduler.addRecurringTask(
+            [&] {
+                ageMaps();
+            },
+            std::chrono::minutes(3), "age_maps");
+    scheduler.addRecurringTask(
+            [&] {
+                turntheworld();
+            },
+            std::chrono::milliseconds(100), "turntheworld");
+    scheduler.addRecurringTask(
+            [&] {
+                sendIGTimeToAllPlayers();
+            },
+            std::chrono::hours(8), getNextIGDayTime(), "update_ig_day");
 }
 
 auto World::executeUserCommand(Player *user, const std::string &input, const CommandMap &commands) -> bool {
@@ -661,4 +679,3 @@ auto World::executeUserCommand(Player *user, const std::string &input, const Com
 
     return found;
 }
-

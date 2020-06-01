@@ -19,8 +19,9 @@
  */
 
 #include "db/QueryTables.hpp"
-#include "db/SchemaHelper.hpp"
+
 #include "db/Query.hpp"
+#include "db/SchemaHelper.hpp"
 
 using namespace Database;
 

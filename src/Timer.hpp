@@ -16,7 +16,6 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef TIMER_HH
 #define TIMER_HH
 
@@ -24,9 +23,7 @@
 
 //! Timer f�r Sekundenabst�nde
 class Timer {
-
 public:
-
     //! Konstruktor
     // \param timegap Anzahl der Sekunden zwischen zwei Timer-Ereignissen
     explicit Timer(unsigned long int timegap);
@@ -40,12 +37,10 @@ public:
     auto next() -> bool;
 
 private:
-
     //! Zeitpunkt der letzten Alterung (Anzahl der Sekunden seit 1.1.1970)
-    time_t last;     //(32 Bit Integer)
+    time_t last; //(32 Bit Integer)
 
     //! Anzahl der Sekunden zwischen den Schritten
     long gap;
 };
 #endif
-

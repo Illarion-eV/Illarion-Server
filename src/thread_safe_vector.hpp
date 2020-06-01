@@ -16,19 +16,18 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef THREAD_SAFE_VECTOR_HPP
 #define THREAD_SAFE_VECTOR_HPP
 
-#include <list>
+#include <chrono>
+#include <cstdint>
 #include <exception>
 #include <iostream>
-#include <cstdint>
-#include <thread>
+#include <list>
 #include <mutex>
-#include <chrono>
+#include <thread>
 
-template<class T> class thread_safe_vector : public std::list<T> {
+template <class T> class thread_safe_vector : public std::list<T> {
 public:
     inline auto size() -> size_t {
         std::lock_guard<std::mutex> lock(vlock);

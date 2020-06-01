@@ -21,11 +21,11 @@
 #ifndef QUEST_SCRIPT_STRUCT_TABLE_HPP
 #define QUEST_SCRIPT_STRUCT_TABLE_HPP
 
-#include "data/ScriptStructTable.hpp"
-#include "data/QuestNodeTable.hpp"
 #include "Logger.hpp"
+#include "data/QuestNodeTable.hpp"
+#include "data/ScriptStructTable.hpp"
 
-template<typename IdType, typename StructType, typename ScriptType, typename ScriptParameter = StructType>
+template <typename IdType, typename StructType, typename ScriptType, typename ScriptParameter = StructType>
 class QuestScriptStructTable : public ScriptStructTable<IdType, StructType, ScriptType, ScriptParameter> {
 public:
     using Base = ScriptStructTable<IdType, StructType, ScriptType, ScriptParameter>;
@@ -46,8 +46,9 @@ public:
             try {
                 scriptStack->addQuestScript(questNode.entrypoint, questNode.script);
             } catch (ScriptException &e) {
-                Logger::error(LogFacility::Script) << "Error while loading " << getTableName() << " quest script: "
-                                                   << questNode.script->getFileName() << ": " << e.what() << Log::end;
+                Logger::error(LogFacility::Script)
+                        << "Error while loading " << getTableName()
+                        << " quest script: " << questNode.script->getFileName() << ": " << e.what() << Log::end;
             }
         }
     }
@@ -55,14 +56,13 @@ public:
 protected:
     using NodeRange = QuestNodeTable::TableRange<IdType>;
 
-    using Base::getTableName;
-    using Base::getColumnNames;
     using Base::assignId;
-    using Base::assignTable;
     using Base::assignScriptName;
+    using Base::assignTable;
+    using Base::getColumnNames;
+    using Base::getTableName;
 
     virtual auto getQuestScripts() -> NodeRange = 0;
 };
 
 #endif
-

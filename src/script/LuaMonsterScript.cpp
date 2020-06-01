@@ -19,14 +19,13 @@
  */
 
 #include "LuaMonsterScript.hpp"
+
+#include "Character.hpp"
 #include "Monster.hpp"
 #include "World.hpp"
-#include "Character.hpp"
 #include "character_ptr.hpp"
 
-LuaMonsterScript::LuaMonsterScript(const std::string &filename)
-    : LuaScript(filename) {
-}
+LuaMonsterScript::LuaMonsterScript(const std::string &filename) : LuaScript(filename) {}
 
 void LuaMonsterScript::onDeath(Character *Monster) {
     character_ptr fuse_Monster(Monster);
@@ -39,7 +38,8 @@ void LuaMonsterScript::lookAtMonster(Character *source, Character *target, unsig
     callEntrypoint("lookAtMonster", fuse_source, fuse_target, mode);
 }
 
-void LuaMonsterScript::receiveText(Character *Monster, Character::talk_type tt, const std::string &message, Character *cc) {
+void LuaMonsterScript::receiveText(Character *Monster, Character::talk_type tt, const std::string &message,
+                                   Character *cc) {
     character_ptr fuse_Monster(Monster);
     character_ptr fuse_cc(cc);
     callEntrypoint("receiveText", fuse_Monster, (int)tt, message, fuse_cc);
@@ -97,7 +97,8 @@ void LuaMonsterScript::onSpawn(Character *Monster) {
     callEntrypoint("onSpawn", fuse_Monster);
 }
 
-auto LuaMonsterScript::setTarget(Character *Monster, const std::vector<Character *> &CandidateList, Character *&Target) -> bool {
+auto LuaMonsterScript::setTarget(Character *Monster, const std::vector<Character *> &CandidateList, Character *&Target)
+        -> bool {
     Target = nullptr;
 
     if (!existsEntrypoint("setTarget")) {
@@ -121,4 +122,3 @@ auto LuaMonsterScript::setTarget(Character *Monster, const std::vector<Character
 
     return true;
 }
-

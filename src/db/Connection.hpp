@@ -22,9 +22,9 @@
 #define DB_CONNECTION_HPP
 
 #include <memory>
-#include <string>
 #include <pqxx/connection.hxx>
 #include <pqxx/transaction.hxx>
+#include <string>
 
 namespace Database {
 class Connection;
@@ -47,7 +47,7 @@ public:
     void commitTransaction();
     void rollbackTransaction();
 
-    template<typename T> [[nodiscard]] inline auto quote(const T &t) const -> std::string {
+    template <typename T> [[nodiscard]] inline auto quote(const T &t) const -> std::string {
         return internalConnection->quote(t);
     }
 
@@ -56,6 +56,6 @@ public:
     }
 };
 
-}
+} // namespace Database
 
 #endif

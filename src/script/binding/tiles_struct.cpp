@@ -23,12 +23,12 @@
 
 namespace binding {
 
-    auto tiles_struct() -> luabind::scope {
-        return luabind::class_<TilesStruct>("TilesStruct")
-        .def_readonly("flags", &TilesStruct::flags)
-        .def_readonly("German", &TilesStruct::German)
-        .def_readonly("English", &TilesStruct::English)
-        .def_readonly("walkingCost", &TilesStruct::walkingCost);
-    }
-
+auto tiles_struct() -> luabind::scope {
+    return luabind::class_<TilesStruct>("TilesStruct")
+            .def_readonly("flags", &TilesStruct::flags)
+            .def_readonly("German", &TilesStruct::German)
+            .def_readonly("English", &TilesStruct::English)
+            .def_readonly("walkingCost", &TilesStruct::walkingCost);
 }
+
+} // namespace binding

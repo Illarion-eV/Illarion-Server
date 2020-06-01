@@ -16,18 +16,19 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "Monster.hpp"
-#include "Random.hpp"
-#include "tuningConstants.hpp"
-#include <iostream>
-#include <memory>
-#include "script/LuaMonsterScript.hpp"
-#include "World.hpp"
-#include "WaypointList.hpp"
+
 #include "Config.hpp"
+#include "Random.hpp"
+#include "WaypointList.hpp"
+#include "World.hpp"
 #include "data/MonsterTable.hpp"
 #include "data/RaceTypeTable.hpp"
+#include "script/LuaMonsterScript.hpp"
+#include "tuningConstants.hpp"
+
+#include <iostream>
+#include <memory>
 
 extern std::unique_ptr<MonsterTable> monsterDescriptions;
 extern std::unique_ptr<RaceTypeTable> raceTypes;
@@ -35,8 +36,8 @@ extern std::unique_ptr<RaceTypeTable> raceTypes;
 uint32_t Monster::counter = 0;
 
 Monster::Monster(const TYPE_OF_CHARACTER_ID &type, const position &newpos, SpawnPoint *spawnpoint)
-    : lastTargetPosition(position(0,0,0)), spawn(spawnpoint), monstertype(type) {
-    setId(MONSTER_BASE + counter++ % (NPC_BASE-MONSTER_BASE));
+        : lastTargetPosition(position(0, 0, 0)), spawn(spawnpoint), monstertype(type) {
+    setId(MONSTER_BASE + counter++ % (NPC_BASE - MONSTER_BASE));
     setAlive(true);
     setMonsterType(type);
     setPosition(newpos);
@@ -80,31 +81,37 @@ void Monster::setMonsterType(TYPE_OF_CHARACTER_ID type) {
 
     // set attributes
     setAttribute(Character::luck, Random::uniform(monsterdef.attributes.luck.first, monsterdef.attributes.luck.second));
-    setAttribute(Character::strength, Random::uniform(monsterdef.attributes.strength.first, monsterdef.attributes.strength.second));
-    setAttribute(Character::dexterity, Random::uniform(monsterdef.attributes.dexterity.first, monsterdef.attributes.dexterity.second));
-    setAttribute(Character::constitution, Random::uniform(monsterdef.attributes.constitution.first, monsterdef.attributes.constitution.second));
-    setAttribute(Character::agility, Random::uniform(monsterdef.attributes.agility.first, monsterdef.attributes.agility.second));
-    setAttribute(Character::intelligence, Random::uniform(monsterdef.attributes.intelligence.first, monsterdef.attributes.intelligence.second));
-    setAttribute(Character::perception, Random::uniform(monsterdef.attributes.perception.first, monsterdef.attributes.perception.second));
-    setAttribute(Character::willpower, Random::uniform(monsterdef.attributes.willpower.first, monsterdef.attributes.willpower.second));
-    setAttribute(Character::essence, Random::uniform(monsterdef.attributes.essence.first, monsterdef.attributes.essence.second));
+    setAttribute(Character::strength,
+                 Random::uniform(monsterdef.attributes.strength.first, monsterdef.attributes.strength.second));
+    setAttribute(Character::dexterity,
+                 Random::uniform(monsterdef.attributes.dexterity.first, monsterdef.attributes.dexterity.second));
+    setAttribute(Character::constitution,
+                 Random::uniform(monsterdef.attributes.constitution.first, monsterdef.attributes.constitution.second));
+    setAttribute(Character::agility,
+                 Random::uniform(monsterdef.attributes.agility.first, monsterdef.attributes.agility.second));
+    setAttribute(Character::intelligence,
+                 Random::uniform(monsterdef.attributes.intelligence.first, monsterdef.attributes.intelligence.second));
+    setAttribute(Character::perception,
+                 Random::uniform(monsterdef.attributes.perception.first, monsterdef.attributes.perception.second));
+    setAttribute(Character::willpower,
+                 Random::uniform(monsterdef.attributes.willpower.first, monsterdef.attributes.willpower.second));
+    setAttribute(Character::essence,
+                 Random::uniform(monsterdef.attributes.essence.first, monsterdef.attributes.essence.second));
     setAttribute(Character::hitpoints, monsterdef.hitpoints);
     setAttribute(Character::height, Random::uniform(monsterdef.minsize, monsterdef.maxsize));
 
     // set skills
-    for (const auto &skill: monsterdef.skills) {
+    for (const auto &skill : monsterdef.skills) {
         increaseSkill(skill.first, Random::uniform(skill.second.first, skill.second.second));
     }
 
     // add items
-    for (const auto &item: monsterdef.items) {
-
+    for (const auto &item : monsterdef.items) {
         auto inventorySlot = item.first;
         auto possibleItems = item.second;
         int numberOfPossibleItems = possibleItems.size();
 
         if (numberOfPossibleItems > 0) {
-
             int selectedItemIndex;
 
             if (numberOfPossibleItems == 1) {
@@ -155,7 +162,6 @@ void Monster::setAlive(bool t) {
     Character::setAlive(t);
 
     if (!t && wasAlive) {
-
         if (monsterDescriptions->exists(getMonsterType())) {
             const auto &monStruct = (*monsterDescriptions)[getMonsterType()];
 
@@ -171,7 +177,7 @@ auto Monster::attack(Character *target) -> bool {
         const auto &monStruct = (*monsterDescriptions)[getMonsterType()];
 
         if (monStruct.script) {
-            monStruct.script->onAttack(this,target);
+            monStruct.script->onAttack(this, target);
         }
     }
 

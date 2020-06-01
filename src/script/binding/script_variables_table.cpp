@@ -18,20 +18,22 @@
  *  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <luabind/luabind.hpp>
-#include <luabind/out_value_policy.hpp>
 #include "data/ScriptVariablesTable.hpp"
 #include "script/binding/binding.hpp"
 
+#include <luabind/luabind.hpp>
+#include <luabind/out_value_policy.hpp>
+
 namespace binding {
 
-    auto script_variables_table() -> luabind::scope {
-        return luabind::class_<ScriptVariablesTable>("ScriptVariables")
-                .def("find", &ScriptVariablesTable::find, luabind::pure_out_value(_3))
-                .def("set", (void(ScriptVariablesTable:: *)(const std::string &, const std::string &))&ScriptVariablesTable::set)
-                .def("set", (void(ScriptVariablesTable:: *)(const std::string &, int32_t))&ScriptVariablesTable::set)
-                .def("remove", &ScriptVariablesTable::remove)
-                .def("save" , &ScriptVariablesTable::save);
-    }
-
+auto script_variables_table() -> luabind::scope {
+    return luabind::class_<ScriptVariablesTable>("ScriptVariables")
+            .def("find", &ScriptVariablesTable::find, luabind::pure_out_value(_3))
+            .def("set",
+                 (void (ScriptVariablesTable::*)(const std::string &, const std::string &)) & ScriptVariablesTable::set)
+            .def("set", (void (ScriptVariablesTable::*)(const std::string &, int32_t)) & ScriptVariablesTable::set)
+            .def("remove", &ScriptVariablesTable::remove)
+            .def("save", &ScriptVariablesTable::save);
 }
+
+} // namespace binding

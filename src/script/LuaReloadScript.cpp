@@ -19,18 +19,17 @@
  */
 
 #include "LuaReloadScript.hpp"
+
+#include "Logger.hpp"
 #include "World.hpp"
 #include "luabind/luabind.hpp"
-#include <iostream>
-#include "Logger.hpp"
 
-LuaReloadScript::LuaReloadScript(const std::string &filename)
-    : LuaScript(filename) {
-}
+#include <iostream>
+
+LuaReloadScript::LuaReloadScript(const std::string &filename) : LuaScript(filename) {}
 
 LuaReloadScript::~LuaReloadScript() = default;
 
 void LuaReloadScript::onReload() {
     callEntrypoint("onReload");
 }
-

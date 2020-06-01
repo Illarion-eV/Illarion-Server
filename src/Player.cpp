@@ -18,62 +18,55 @@
 
 #include "Player.hpp"
 
-#include <unistd.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-
-#include <memory>
-#include <range/v3/all.hpp>
-#include <sstream>
-#include <utility>
-
-
-#include "tuningConstants.hpp"
-#include "map/Field.hpp"
-#include "World.hpp"
+#include "Config.hpp"
+#include "Logger.hpp"
+#include "LongTimeAction.hpp"
+#include "MonitoringClients.hpp"
+#include "PlayerManager.hpp"
 #include "Random.hpp"
 #include "SchedulerTaskClasses.hpp"
-#include "Logger.hpp"
-#include "PlayerManager.hpp"
-#include "MonitoringClients.hpp"
-#include "Config.hpp"
 #include "Showcase.hpp"
-#include "LongTimeAction.hpp"
-
-#include "data/Data.hpp"
+#include "World.hpp"
 #include "data/ContainerObjectTable.hpp"
-
-#include "netinterface/NetInterface.hpp"
-#include "netinterface/BasicClientCommand.hpp"
-#include "netinterface/protocol/ClientCommands.hpp"
-#include "netinterface/protocol/ServerCommands.hpp"
-#include "netinterface/protocol/BBIWIServerCommands.hpp"
-
-#include "db/ConnectionManager.hpp"
+#include "data/Data.hpp"
 #include "db/Connection.hpp"
+#include "db/ConnectionManager.hpp"
 #include "db/DeleteQuery.hpp"
 #include "db/InsertQuery.hpp"
-#include "db/SelectQuery.hpp"
-#include "db/UpdateQuery.hpp"
 #include "db/Result.hpp"
 #include "db/SchemaHelper.hpp"
-
-#include "dialog/InputDialog.hpp"
-#include "dialog/MessageDialog.hpp"
-#include "dialog/MerchantDialog.hpp"
-#include "dialog/SelectionDialog.hpp"
+#include "db/SelectQuery.hpp"
+#include "db/UpdateQuery.hpp"
 #include "dialog/CraftingDialog.hpp"
-
-#include "script/LuaPlayerDeathScript.hpp"
+#include "dialog/InputDialog.hpp"
+#include "dialog/MerchantDialog.hpp"
+#include "dialog/MessageDialog.hpp"
+#include "dialog/SelectionDialog.hpp"
+#include "map/Field.hpp"
+#include "netinterface/BasicClientCommand.hpp"
+#include "netinterface/NetInterface.hpp"
+#include "netinterface/protocol/BBIWIServerCommands.hpp"
+#include "netinterface/protocol/ClientCommands.hpp"
+#include "netinterface/protocol/ServerCommands.hpp"
 #include "script/LuaDepotScript.hpp"
+#include "script/LuaPlayerDeathScript.hpp"
+#include "tuningConstants.hpp"
 
-extern std::shared_ptr<LuaPlayerDeathScript>playerDeathScript;
-extern std::shared_ptr<LuaDepotScript>depotScript;
+#include <arpa/inet.h>
+#include <memory>
+#include <netinet/in.h>
+#include <range/v3/all.hpp>
+#include <sstream>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <utility>
+
+extern std::shared_ptr<LuaPlayerDeathScript> playerDeathScript;
+extern std::shared_ptr<LuaDepotScript> depotScript;
 
 Player::Player(std::shared_ptr<NetInterface> newConnection)
-    :  onlinetime(0), Connection(std::move(newConnection)), turtleActive(false),
-      clippingActive(true), admin(0), questWriteLock(false), monitoringClient(false), dialogCounter(0) {
+        : onlinetime(0), Connection(std::move(newConnection)), turtleActive(false), clippingActive(true), admin(0),
+          questWriteLock(false), monitoringClient(false), dialogCounter(0) {
     screenwidth = 0;
     screenheight = 0;
     Character::setAlive(true);
@@ -128,7 +121,7 @@ Player::Player(std::shared_ptr<NetInterface> newConnection)
 
 void Player::login() {
     position pos = getPosition();
-    
+
     try {
         _world->walkableFieldNear(pos).setPlayer();
     } catch (FieldNotFound &) {
@@ -157,7 +150,7 @@ void Player::login() {
 
     effects.load();
 
-    //send the basic data to the monitoring client
+    // send the basic data to the monitoring client
     cmd = std::make_shared<BBPlayerTC>(getId(), getName(), pos);
     _world->monitoringClientList->sendCommand(cmd);
 
@@ -167,7 +160,7 @@ void Player::login() {
 
     // send std::map, items and chars around...
     sendFullMap();
-    _world->sendAllVisibleCharactersToPlayer(this , true);
+    _world->sendAllVisibleCharactersToPlayer(this, true);
 
     // sent inventory
     for (unsigned short int i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
@@ -200,8 +193,7 @@ void Player::login() {
     sendAttrib(willpower);
     sendAttrib(essence);
     sendAttrib(agility);
-    //end of changes
-
+    // end of changes
 
     // send magic skills
     sendMagicFlags(getMagicType());
@@ -217,7 +209,7 @@ void Player::login() {
 }
 
 auto Player::getScreenRange() const -> unsigned short int {
-    return (screenwidth > screenheight) ? 2*screenwidth : 2*screenheight;
+    return (screenwidth > screenheight) ? 2 * screenwidth : 2 * screenheight;
 }
 
 void Player::setAlive(bool alive) {
@@ -237,13 +229,14 @@ void Player::setAlive(bool alive) {
 
 void Player::openShowcase(Container *container, const ScriptItem &item, bool carry) {
     using namespace ranges;
-    auto containsContainer = [container](const auto &showcase) {return showcase.second->contains(container);};
+    auto containsContainer = [container](const auto &showcase) {
+        return showcase.second->contains(container);
+    };
     auto result = find_if(showcases, containsContainer);
 
     if (result != showcases.end()) {
         const auto lookAt = item.getLookAt(this);
-        ServerCommandPointer cmd = std::make_shared<UpdateShowcaseTC>(result->first, lookAt,
-                                                                      container->getSlotCount(),
+        ServerCommandPointer cmd = std::make_shared<UpdateShowcaseTC>(result->first, lookAt, container->getSlotCount(),
                                                                       container->getItems());
         Connection->addCommand(cmd);
         return;
@@ -270,7 +263,8 @@ void Player::openShowcase(Container *container, const ScriptItem &item, bool car
 
         showcases[showcaseId] = std::make_unique<Showcase>(container, carry);
         const auto lookAt = item.getLookAt(this);
-        ServerCommandPointer cmd = std::make_shared<UpdateShowcaseTC>(showcaseId, lookAt, container->getSlotCount(), container->getItems());
+        ServerCommandPointer cmd = std::make_shared<UpdateShowcaseTC>(showcaseId, lookAt, container->getSlotCount(),
+                                                                      container->getItems());
         Connection->addCommand(cmd);
     } else {
         inform("ERROR: Unable to open more containers.");
@@ -281,7 +275,8 @@ void Player::updateShowcase(Container *container) const {
     if (isShowcaseOpen(container)) {
         auto id = getShowcaseId(container);
         ItemLookAt lookAt;
-        ServerCommandPointer cmd = std::make_shared<UpdateShowcaseTC>(id, lookAt, container->getSlotCount(), container->getItems());
+        ServerCommandPointer cmd =
+                std::make_shared<UpdateShowcaseTC>(id, lookAt, container->getSlotCount(), container->getItems());
         Connection->addCommand(cmd);
     }
 }
@@ -309,7 +304,9 @@ auto Player::isShowcaseOpen(uint8_t showcase) const -> bool {
 
 auto Player::isShowcaseOpen(Container *container) const -> bool {
     using namespace ranges;
-    auto containsContainer = [container](const auto &showcase) {return showcase->contains(container);};
+    auto containsContainer = [container](const auto &showcase) {
+        return showcase->contains(container);
+    };
     auto showcaseView = showcases | view::values;
     auto result = find_if(showcaseView, containsContainer);
     return result != showcaseView.end();
@@ -325,9 +322,11 @@ auto Player::isShowcaseInInventory(uint8_t showcase) const -> bool {
 
 auto Player::getShowcaseId(Container *container) const -> uint8_t {
     using namespace ranges;
-    auto containsContainer = [container](const auto &showcase) {return showcase.second->contains(container);};
+    auto containsContainer = [container](const auto &showcase) {
+        return showcase.second->contains(container);
+    };
     auto result = find_if(showcases, containsContainer);
-    
+
     if (result != showcases.end()) {
         return result->first;
     }
@@ -394,8 +393,10 @@ void Player::closeAllShowcases() {
 void Player::lookIntoShowcaseContainer(uint8_t showcase, unsigned char pos) {
     if (isShowcaseOpen(showcase)) {
         Container *showcaseContainer = getShowcaseContainer(showcase);
-        
-        auto isShowcaseContainer = [showcaseContainer](auto container) {return container == showcaseContainer;};
+
+        auto isShowcaseContainer = [showcaseContainer](auto container) {
+            return container == showcaseContainer;
+        };
         bool allowedToOpenContainer = ranges::any_of(depotContents | ranges::view::values, isShowcaseContainer);
 
         if ((showcaseContainer != nullptr) && allowedToOpenContainer) {
@@ -450,7 +451,6 @@ auto Player::lookIntoContainerOnField(direction dir) -> bool {
                         openDepot(scriptItem);
                     }
                 } else {
-
                 }
             }
         }
@@ -464,41 +464,39 @@ void Player::sendCharacters() {
     _world->sendAllVisibleCharactersToPlayer(this, true);
 }
 
-
 void Player::sendCharacterItemAtPos(unsigned char cpos) {
     if (cpos < (MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
         // gltiger Wert
-        ServerCommandPointer cmd = std::make_shared<UpdateInventoryPosTC>(cpos, items[cpos].getId(), items[cpos].getNumber());
+        ServerCommandPointer cmd =
+                std::make_shared<UpdateInventoryPosTC>(cpos, items[cpos].getId(), items[cpos].getNumber());
         Connection->addCommand(cmd);
     }
 }
-
 
 void Player::sendWeather(WeatherStruct weather) {
     ServerCommandPointer cmd = std::make_shared<UpdateWeatherTC>(weather);
     Connection->addCommand(cmd);
 }
 
-
 void Player::ageInventory() {
     for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
-        if (items[ i ].getId() != 0) {
-            const auto &itemStruct = Data::Items[items[ i ].getId()];
+        if (items[i].getId() != 0) {
+            const auto &itemStruct = Data::Items[items[i].getId()];
 
             if (itemStruct.rotsInInventory) {
-                if (!items[ i ].survivesAgeing()) {
-                    if (items[ i ].getId() != itemStruct.ObjectAfterRot) {
-                        items[ i ].setId(itemStruct.ObjectAfterRot);
+                if (!items[i].survivesAgeing()) {
+                    if (items[i].getId() != itemStruct.ObjectAfterRot) {
+                        items[i].setId(itemStruct.ObjectAfterRot);
 
                         const auto &afterRotItemStruct = Data::Items[itemStruct.ObjectAfterRot];
 
                         if (afterRotItemStruct.isValid()) {
-                            items[ i ].setWear(afterRotItemStruct.AgeingSpeed);
+                            items[i].setWear(afterRotItemStruct.AgeingSpeed);
                         }
 
                         sendCharacterItemAtPos(i);
                     } else {
-                        items[ i ].reset();
+                        items[i].reset();
                         sendCharacterItemAtPos(i);
                     }
 
@@ -509,7 +507,7 @@ void Player::ageInventory() {
         }
     }
 
-    if ((items[ BACKPACK ].getId() != 0) && (backPackContents != nullptr)) {
+    if ((items[BACKPACK].getId() != 0) && (backPackContents != nullptr)) {
         backPackContents->doAge(true);
         updateBackPackView();
     }
@@ -527,7 +525,6 @@ void Player::ageInventory() {
 }
 
 void Player::learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opponent) {
-
     uint16_t majorSkillValue = getSkill(skill);
     uint16_t minorSkillValue = getMinorSkill(skill);
 
@@ -541,12 +538,12 @@ void Player::learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t oppone
     }
 }
 
-
-auto Player::createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, script_data_exchangemap const *data) -> int {
+auto Player::createItem(Item::id_type id, Item::number_type number, Item::quality_type quality,
+                        script_data_exchangemap const *data) -> int {
     int temp = Character::createItem(id, number, quality, data);
 
     for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
-        if (items[ i ].getId() != 0) {
+        if (items[i].getId() != 0) {
             sendCharacterItemAtPos(i);
         }
     }
@@ -557,11 +554,10 @@ auto Player::createItem(Item::id_type id, Item::number_type number, Item::qualit
     return temp;
 }
 
-
 auto Player::eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangemap const *data) -> int {
     int temp = count;
 
-    if ((items[ BACKPACK ].getId() != 0) && (backPackContents != nullptr)) {
+    if ((items[BACKPACK].getId() != 0) && (backPackContents != nullptr)) {
         temp = backPackContents->eraseItem(itemid, temp, data);
         updateBackPackView();
     }
@@ -569,22 +565,22 @@ auto Player::eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangema
     if (temp > 0) {
         // BACKPACK als Item erstmal auslassen
         for (unsigned char i = MAX_BELT_SLOTS + MAX_BODY_ITEMS - 1; i > 0; --i) {
-            if ((items[ i ].getId() == itemid) && (data == nullptr || items[ i ].hasData(*data)) && (temp > 0)) {
-                if (temp >= items[ i ].getNumber()) {
-                    temp = temp - items[ i ].getNumber();
-                    items[ i ].reset();
+            if ((items[i].getId() == itemid) && (data == nullptr || items[i].hasData(*data)) && (temp > 0)) {
+                if (temp >= items[i].getNumber()) {
+                    temp = temp - items[i].getNumber();
+                    items[i].reset();
 
                     if (i == LEFT_TOOL || i == RIGHT_TOOL) {
-                        unsigned char offhand = (i==LEFT_TOOL)?RIGHT_TOOL:LEFT_TOOL;
+                        unsigned char offhand = (i == LEFT_TOOL) ? RIGHT_TOOL : LEFT_TOOL;
 
-                        if (items[ offhand ].getId() == BLOCKEDITEM) {
+                        if (items[offhand].getId() == BLOCKEDITEM) {
                             // delete the occupied slot if the item was a two hander...
-                            items[ offhand ].reset();
+                            items[offhand].reset();
                             sendCharacterItemAtPos(offhand);
                         }
                     }
                 } else {
-                    items[ i ].setNumber(items[ i ].getNumber() - temp);
+                    items[i].setNumber(items[i].getNumber() - temp);
                     temp = 0;
                 }
 
@@ -605,18 +601,17 @@ auto Player::increaseAtPos(unsigned char pos, int count) -> int {
     int temp = count;
 
     if ((pos > 0) && (pos < MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
-        if (weightOK(items[ pos ].getId(), count, nullptr)) {
-
-            temp = items[ pos ].getNumber() + count;
+        if (weightOK(items[pos].getId(), count, nullptr)) {
+            temp = items[pos].getNumber() + count;
             auto maxStack = items[pos].getMaxStack();
 
             if (temp > maxStack) {
-                items[ pos ].setNumber(maxStack);
+                items[pos].setNumber(maxStack);
                 temp = temp - maxStack;
             } else if (temp <= 0) {
-                bool updateBrightness = World::get()->getItemStatsFromId(items[ pos ].getId()).Brightness > 0;
-                temp = count + items[ pos ].getNumber();
-                items[ pos ].reset();
+                bool updateBrightness = World::get()->getItemStatsFromId(items[pos].getId()).Brightness > 0;
+                temp = count + items[pos].getNumber();
+                items[pos].reset();
 
                 if (pos == RIGHT_TOOL && items[LEFT_TOOL].getId() == BLOCKEDITEM) {
                     items[LEFT_TOOL].reset();
@@ -627,7 +622,7 @@ auto Player::increaseAtPos(unsigned char pos, int count) -> int {
                     updateAppearanceForAll(true);
                 }
             } else {
-                items[ pos ].setNumber(temp);
+                items[pos].setNumber(temp);
                 temp = 0;
             }
         }
@@ -639,14 +634,13 @@ auto Player::increaseAtPos(unsigned char pos, int count) -> int {
 }
 
 auto Player::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) -> int {
-    int temp = Character::createAtPos(pos,newid,count);
+    int temp = Character::createAtPos(pos, newid, count);
     sendCharacterItemAtPos(pos);
     checkBurden();
     return temp;
-
 }
 
-auto Player::swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid , uint16_t newQuality) -> bool {
+auto Player::swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t newQuality) -> bool {
     if (Character::swapAtPos(pos, newid, newQuality)) {
         sendCharacterItemAtPos(pos);
         checkBurden();
@@ -656,13 +650,11 @@ auto Player::swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid , uint16_t newQu
     return false;
 }
 
-
 void Player::updateBackPackView() {
     if (backPackContents != nullptr) {
         updateShowcase(backPackContents);
     }
 }
-
 
 void Player::sendSkill(TYPE_OF_SKILL_ID skill, unsigned short int major, unsigned short int minor) {
     ServerCommandPointer cmd = std::make_shared<UpdateSkillTC>(skill, major, minor);
@@ -671,15 +663,13 @@ void Player::sendSkill(TYPE_OF_SKILL_ID skill, unsigned short int major, unsigne
     _world->monitoringClientList->sendCommand(cmd);
 }
 
-
 void Player::sendAllSkills() {
     for (const auto &skill : skills) {
-        if (skill.second.major>0) {
+        if (skill.second.major > 0) {
             sendSkill(skill.first, skill.second.major, skill.second.minor);
         }
     }
 }
-
 
 void Player::sendMagicFlags(int type) {
     if ((type >= 0) && (type < 4) && !monitoringClient) {
@@ -687,7 +677,6 @@ void Player::sendMagicFlags(int type) {
         Connection->addCommand(cmd);
     }
 }
-
 
 auto Player::saveBaseAttributes() -> bool {
     if (getBaseAttributeSum() != getMaxAttributePoints()) {
@@ -739,7 +728,6 @@ auto Player::saveBaseAttributes() -> bool {
     return true;
 }
 
-
 void Player::sendAttrib(Character::attributeIndex attribute) {
     auto value = getAttribute(attribute);
 
@@ -752,7 +740,6 @@ void Player::sendAttrib(Character::attributeIndex attribute) {
     _world->monitoringClientList->sendCommand(cmd);
 }
 
-
 void Player::handleAttributeChange(Character::attributeIndex attribute) {
     Character::handleAttributeChange(attribute);
     sendAttrib(attribute);
@@ -762,18 +749,15 @@ void Player::handleAttributeChange(Character::attributeIndex attribute) {
     }
 }
 
-
 void Player::startMusic(short int title) {
     ServerCommandPointer cmd = std::make_shared<MusicTC>(title);
     Connection->addCommand(cmd);
 }
 
-
 void Player::defaultMusic() {
     ServerCommandPointer cmd = std::make_shared<MusicDefaultTC>();
     Connection->addCommand(cmd);
 }
-
 
 // Setters and Getters //
 
@@ -781,22 +765,18 @@ auto Player::getStatus() const -> unsigned char {
     return status;
 }
 
-
 void Player::setStatus(unsigned char status) {
     this->status = status;
 }
-
 
 // What time does the status get reset?
 auto Player::getStatusTime() const -> time_t {
     return statustime;
 }
 
-
 void Player::setStatusTime(time_t time) {
     statustime = time;
 }
-
 
 // Who banned/jailed the player?
 auto Player::getStatusGM() const -> std::string {
@@ -821,17 +801,14 @@ auto Player::getStatusGM() const -> std::string {
     return statusgmstring;
 }
 
-
 void Player::setStatusGM(TYPE_OF_CHARACTER_ID gm) {
     statusgm = gm;
 }
-
 
 // Why where they banned/jailed?
 auto Player::getStatusReason() const -> std::string {
     return statusreason;
 }
-
 
 void Player::setStatusReason(const std::string &reason) {
     statusreason = reason;
@@ -843,41 +820,33 @@ void Player::setTurtleActive(bool tturtleActive) {
     setClippingActive(!tturtleActive);
 }
 
-
 void Player::setClippingActive(bool tclippingActive) {
     clippingActive = tclippingActive;
 }
-
 
 auto Player::getTurtleActive() const -> bool {
     return turtleActive;
 }
 
-
 auto Player::getClippingActive() const -> bool {
     return clippingActive;
 }
-
 
 void Player::setTurtleTile(unsigned char tturtletile) {
     turtletile = tturtletile;
 }
 
-
 auto Player::getTurtleTile() const -> unsigned char {
     return turtletile;
 }
-
 
 void Player::setAdmin(uint32_t tAdmin) {
     admin = tAdmin;
 }
 
-
 auto Player::isAdmin() const -> bool {
-    return (admin>0 && !hasGMRight(gmr_isnotshownasgm));
+    return (admin > 0 && !hasGMRight(gmr_isnotshownasgm));
 }
-
 
 void Player::check_logindata() {
     Database::PConnection connection = Database::ConnectionManager::getInstance().getConnection();
@@ -931,7 +900,7 @@ void Player::check_logindata() {
             time(&time_now);
 
             if (time_now > statustime) {
-                status=statustime=0;
+                status = statustime = 0;
             } else {
                 throw LogoutException(BYGAMEMASTER);
             }
@@ -978,15 +947,17 @@ void Player::check_logindata() {
 
         // check password
         if (pw != real_pwd) {
-            Logger::alert(LogFacility::Player) << to_string() << " sent wrong password from ip: " << Connection->getIPAdress() << Log::end;
+            Logger::alert(LogFacility::Player)
+                    << to_string() << " sent wrong password from ip: " << Connection->getIPAdress() << Log::end;
             throw LogoutException(WRONGPWD);
         }
 
         std::stringstream newPlayerQueryString;
-        newPlayerQueryString << "SET search_path TO "<< Database::SchemaHelper::getServerSchema() << "; SELECT is_new_player(" << account_id << ");";
+        newPlayerQueryString << "SET search_path TO " << Database::SchemaHelper::getServerSchema()
+                             << "; SELECT is_new_player(" << account_id << ");";
         Database::Query newPlayerQuery(connection, newPlayerQueryString.str());
         auto newPlayerResult = newPlayerQuery.execute();
-        
+
         if (!newPlayerResult.empty()) {
             const auto &row = newPlayerResult.front();
             newPlayer = row["is_new_player"].as<bool>(false);
@@ -1047,7 +1018,7 @@ void Player::check_logindata() {
         pos.y = playerRow["ply_posy"].as<int32_t>();
         pos.z = playerRow["ply_posz"].as<int32_t>();
         setPosition(pos);
-        setFaceTo((Character::face_to) playerRow["ply_faceto"].as<uint16_t>());
+        setFaceTo((Character::face_to)playerRow["ply_faceto"].as<uint16_t>());
 
         setAttribute(Character::age, playerRow["ply_age"].as<uint16_t>());
         setAttribute(Character::weight, playerRow["ply_weight"].as<uint16_t>());
@@ -1096,9 +1067,8 @@ struct container_struct {
     unsigned int depotid;
 
     container_struct(Container *cc, unsigned int aboveid, unsigned int depot = 0)
-        : container(cc), id(aboveid), depotid(depot) { }
-}
-;
+            : container(cc), id(aboveid), depotid(depot) {}
+};
 
 auto Player::save() noexcept -> bool {
     using namespace Database;
@@ -1157,7 +1127,7 @@ auto Player::save() noexcept -> bool {
         time(&lastsavetime);
         {
             UpdateQuery query(connection);
-            query.addAssignColumn<uint16_t>("chr_status", (uint16_t) status);
+            query.addAssignColumn<uint16_t>("chr_status", (uint16_t)status);
             query.addAssignColumn<std::string>("chr_lastip", last_ip);
             query.addAssignColumn<uint32_t>("chr_onlinetime", onlinetime + lastsavetime - logintime);
             query.addAssignColumn<time_t>("chr_lastsavetime", lastsavetime);
@@ -1183,12 +1153,12 @@ auto Player::save() noexcept -> bool {
             query.addAssignColumn<int32_t>("ply_posx", getPosition().x);
             query.addAssignColumn<int32_t>("ply_posy", getPosition().y);
             query.addAssignColumn<int32_t>("ply_posz", getPosition().z);
-            query.addAssignColumn<uint16_t>("ply_faceto", (uint16_t) getFaceTo());
+            query.addAssignColumn<uint16_t>("ply_faceto", (uint16_t)getFaceTo());
             query.addAssignColumn<uint16_t>("ply_hitpoints", getAttribute(Character::hitpoints));
             query.addAssignColumn<uint16_t>("ply_mana", getAttribute(Character::mana));
             query.addAssignColumn<uint32_t>("ply_foodlevel", getAttribute(Character::foodlevel));
             query.addAssignColumn<uint32_t>("ply_lifestate", isAlive() ? 1 : 0);
-            query.addAssignColumn<uint32_t>("ply_magictype", (uint32_t) getMagicType());
+            query.addAssignColumn<uint32_t>("ply_magictype", (uint32_t)getMagicType());
             query.addAssignColumn<uint64_t>("ply_magicflagsmage", getMagicFlags(MAGE));
             query.addAssignColumn<uint64_t>("ply_magicflagspriest", getMagicFlags(PRIEST));
             query.addAssignColumn<uint64_t>("ply_magicflagsbard", getMagicFlags(BARD));
@@ -1227,8 +1197,8 @@ auto Player::save() noexcept -> bool {
             // now store the skills
             for (const auto &skill : skills) {
                 query.addValue<uint16_t>(skillIdColumn, skill.first);
-                query.addValue<uint16_t>(valueColumn, (uint16_t) skill.second.major);
-                query.addValue<uint16_t>(minorColumn, (uint16_t) skill.second.minor);
+                query.addValue<uint16_t>(valueColumn, (uint16_t)skill.second.major);
+                query.addValue<uint16_t>(minorColumn, (uint16_t)skill.second.minor);
             }
 
             query.addValues<TYPE_OF_CHARACTER_ID>(playerIdColumn, getId(), InsertQuery::FILL);
@@ -1254,13 +1224,14 @@ auto Player::save() noexcept -> bool {
             std::list<container_struct> containers;
 
             // add backpack to containerlist
-            if (items[ BACKPACK ].getId() != 0 && (backPackContents != nullptr)) {
-                containers.emplace_back(backPackContents, BACKPACK+1);
+            if (items[BACKPACK].getId() != 0 && (backPackContents != nullptr)) {
+                containers.emplace_back(backPackContents, BACKPACK + 1);
             }
 
             // add depot to containerlist
-            ranges::transform(depotContents, ranges::back_inserter(containers), [](const auto &depot)
-                    {return container_struct(depot.second, 0, depot.first);});
+            ranges::transform(depotContents, ranges::back_inserter(containers), [](const auto &depot) {
+                return container_struct(depot.second, 0, depot.first);
+            });
 
             InsertQuery itemsQuery(connection);
             const InsertQuery::columnIndex itemsPlyIdColumn = itemsQuery.addColumn("pit_playerid");
@@ -1287,8 +1258,8 @@ auto Player::save() noexcept -> bool {
             for (int thisItemSlot = 0; thisItemSlot < MAX_BODY_ITEMS + MAX_BELT_SLOTS; ++thisItemSlot) {
                 ++linenumber;
 
-                //if there is no item on this place, do not save it
-                if (items[ thisItemSlot ].getId() == 0) {
+                // if there is no item on this place, do not save it
+                if (items[thisItemSlot].getId() == 0) {
                     continue;
                 }
 
@@ -1301,7 +1272,7 @@ auto Player::save() noexcept -> bool {
                 itemsQuery.addValue<uint16_t>(itemsQualColumn, items[thisItemSlot].getQuality());
                 itemsQuery.addValue<TYPE_OF_CONTAINERSLOTS>(itemsSlotColumn, 0);
 
-                for (auto it = items[ thisItemSlot ].getDataBegin(); it != items[ thisItemSlot ].getDataEnd(); ++it) {
+                for (auto it = items[thisItemSlot].getDataBegin(); it != items[thisItemSlot].getDataEnd(); ++it) {
                     if (it->second.length() > 0) {
                         dataQuery.addValue<int32_t>(dataLineColumn, linenumber);
                         dataQuery.addValue<std::string>(dataKeyColumn, it->first);
@@ -1320,8 +1291,8 @@ auto Player::save() noexcept -> bool {
                 for (const auto &slotAndItem : containedItems) {
                     const Item &item = slotAndItem.second;
                     itemsQuery.addValue<int32_t>(itemsLineColumn, ++linenumber);
-                    itemsQuery.addValue<int16_t>(itemsContainerColumn, (int16_t) currentContainerStruct.id);
-                    itemsQuery.addValue<int32_t>(itemsDepotColumn, (int32_t) currentContainerStruct.depotid);
+                    itemsQuery.addValue<int16_t>(itemsContainerColumn, (int16_t)currentContainerStruct.id);
+                    itemsQuery.addValue<int32_t>(itemsDepotColumn, (int32_t)currentContainerStruct.depotid);
                     itemsQuery.addValue<TYPE_OF_ITEM_ID>(itemsItmIdColumn, item.getId());
                     itemsQuery.addValue<uint16_t>(itemsWearColumn, item.getWear());
                     itemsQuery.addValue<uint16_t>(itemsNumberColumn, item.getNumber());
@@ -1398,13 +1369,12 @@ auto Player::load() noexcept -> bool {
     std::map<int, Container *> depots, containers;
     std::map<int, Container *>::iterator it;
 
-    bool dataOK=true;
+    bool dataOK = true;
 
     using namespace Database;
     PConnection connection = ConnectionManager::getInstance().getConnection();
 
     try {
-
         {
             SelectQuery query;
             query.addColumn("questprogress", "qpg_questid");
@@ -1463,11 +1433,8 @@ auto Player::load() noexcept -> bool {
 
             if (!results.empty()) {
                 for (const auto &row : results) {
-                    setSkill(
-                        row["psk_skill_id"].as<uint16_t>(),
-                        row["psk_value"].as<uint16_t>(),
-                        row["psk_minor"].as<uint16_t>()
-                    );
+                    setSkill(row["psk_skill_id"].as<uint16_t>(), row["psk_value"].as<uint16_t>(),
+                             row["psk_minor"].as<uint16_t>());
                 }
             } else {
                 Logger::warn(LogFacility::Player) << to_string() << " has no skills" << Log::end;
@@ -1567,11 +1534,7 @@ auto Player::load() noexcept -> bool {
             unsigned int tempdepot = itemdepot[tuple];
             unsigned int linenumber = itemlinenumber[tuple];
 
-            Item tempi(itemid[tuple],
-                       itemnumber[tuple],
-                       itemwear[tuple],
-                       itemquality[tuple]
-                      );
+            Item tempi(itemid[tuple], itemnumber[tuple], itemwear[tuple], itemquality[tuple]);
 
             while (curdatalinenumber < dataRows && ditemlinenumber[curdatalinenumber] == linenumber) {
                 tempi.setData(key[curdatalinenumber], value[curdatalinenumber]);
@@ -1592,7 +1555,8 @@ auto Player::load() noexcept -> bool {
                 throw std::exception();
             }
 
-            if ((((tempincont == 0) && (tempdepot == 0)) && linenumber > MAX_BODY_ITEMS + MAX_BELT_SLOTS) || ((tempincont != 0) && (tempdepot != 0))) {
+            if ((((tempincont == 0) && (tempdepot == 0)) && linenumber > MAX_BODY_ITEMS + MAX_BELT_SLOTS) ||
+                ((tempincont != 0) && (tempdepot != 0))) {
                 // serious error occured! player data corrupted!
                 Logger::error(LogFacility::Player) << to_string() << " has invalid items!" << Log::end;
                 throw std::exception();
@@ -1603,12 +1567,12 @@ auto Player::load() noexcept -> bool {
 
                 if (linenumber > MAX_BODY_ITEMS + MAX_BELT_SLOTS) {
                     if (!it->second->InsertContainer(tempi, tempc, itemcontainerslot[tuple])) {
-                        Logger::error(LogFacility::Player) << to_string() << " insert Container wasn't sucessful!" << Log::end;
+                        Logger::error(LogFacility::Player)
+                                << to_string() << " insert Container wasn't sucessful!" << Log::end;
                     } else {
-
                     }
                 } else {
-                    items[ linenumber - 1 ] = tempi;
+                    items[linenumber - 1] = tempi;
                 }
 
                 containers[linenumber] = tempc;
@@ -1616,12 +1580,12 @@ auto Player::load() noexcept -> bool {
                 if (linenumber >= MAX_BODY_ITEMS + MAX_BELT_SLOTS + 1) {
                     it->second->InsertItem(tempi, itemcontainerslot[tuple]);
                 } else {
-                    items[ linenumber - 1 ] = tempi;
+                    items[linenumber - 1] = tempi;
                 }
             }
         }
 
-        if ((it=containers.find(BACKPACK + 1)) != containers.end()) {
+        if ((it = containers.find(BACKPACK + 1)) != containers.end()) {
             backPackContents = it->second;
         } else {
             backPackContents = nullptr;
@@ -1643,14 +1607,14 @@ auto Player::load() noexcept -> bool {
 
     if (!dataOK) {
         std::map<int, Container *>::reverse_iterator rit;
-        std::map<uint32_t,Container *>::reverse_iterator rit2;
+        std::map<uint32_t, Container *>::reverse_iterator rit2;
 
         // clean up...
-        for (rit=containers.rbegin(); rit != containers.rend(); ++rit) {
+        for (rit = containers.rbegin(); rit != containers.rend(); ++rit) {
             delete rit->second;
         }
 
-        for (rit=depots.rbegin(); rit != depots.rend(); ++rit) {
+        for (rit = depots.rbegin(); rit != depots.rend(); ++rit) {
             delete rit->second;
         }
 
@@ -1786,48 +1750,47 @@ auto Player::getCustomNameOf(Player *player) const -> std::string {
 void Player::deleteAllSkills() {
     Character::deleteAllSkills();
     sendAllSkills();
-
 }
 
-void Player::teachMagic(unsigned char type,unsigned char flag) {
-/*
-    if (type < 4) {
-        unsigned long int tflags=0;
+void Player::teachMagic(unsigned char type, unsigned char flag) {
+    /*
+        if (type < 4) {
+            unsigned long int tflags=0;
 
-        for (int i = 0; i < 4; ++i) {
-            tflags|=magic.flags[ i ];
-        }
-
-        if (tflags == 0) {
-            switch (type) {
-            case 0:
-                magic.type = MAGE;
-                break;
-
-            case 1:
-                magic.type = PRIEST;
-                break;
-
-            case 2:
-                magic.type = BARD;
-                break;
-
-            case 3:
-                magic.type = DRUID;
-                break;
-
-            default:
-                magic.type = MAGE;
-                break;
+            for (int i = 0; i < 4; ++i) {
+                tflags|=magic.flags[ i ];
             }
-        }
 
-        unsigned long int temp = 1;
-        temp <<= flag;
-        magic.flags[ type ] |= temp;
-        sendMagicFlags(magic.type);
-    }
-*/
+            if (tflags == 0) {
+                switch (type) {
+                case 0:
+                    magic.type = MAGE;
+                    break;
+
+                case 1:
+                    magic.type = PRIEST;
+                    break;
+
+                case 2:
+                    magic.type = BARD;
+                    break;
+
+                case 3:
+                    magic.type = DRUID;
+                    break;
+
+                default:
+                    magic.type = MAGE;
+                    break;
+                }
+            }
+
+            unsigned long int temp = 1;
+            temp <<= flag;
+            magic.flags[ type ] |= temp;
+            sendMagicFlags(magic.type);
+        }
+    */
 }
 
 void Player::inform(const std::string &message, informType type) const {
@@ -1856,13 +1819,12 @@ auto Player::moveToPossible(const map::Field &field) const -> bool {
 }
 
 auto Player::move(direction dir, uint8_t mode) -> bool {
-    using std::chrono::steady_clock;
     using std::chrono::milliseconds;
+    using std::chrono::steady_clock;
     auto now = steady_clock::now();
 
     if (now + milliseconds(800) < reachingTargetField) {
-        auto cmd =
-            std::make_shared<MoveAckTC>(getId(), getPosition(), STILLMOVING, 0);
+        auto cmd = std::make_shared<MoveAckTC>(getId(), getPosition(), STILLMOVING, 0);
         Connection->addCommand(cmd);
         return false;
     } else if (now > reachingTargetField) {
@@ -1895,7 +1857,6 @@ auto Player::move(direction dir, uint8_t mode) -> bool {
     TYPE_OF_WALKINGCOST walkcost = 0;
 
     while (j < steps && cont) {
-
         // check if we can move to our target field
         try {
             oldpos = getPosition();
@@ -1914,7 +1875,7 @@ auto Player::move(direction dir, uint8_t mode) -> bool {
                 return false;
             } else {
                 if (mode != RUNNING || j == 1) {
-                    increaseActionPoints(walkcost/100);
+                    increaseActionPoints(walkcost / 100);
                 }
             }
 
@@ -1996,7 +1957,6 @@ auto Player::move(direction dir, uint8_t mode) -> bool {
     return false;
 }
 
-
 auto Player::Warp(const position &newPos) -> bool {
     bool warped = Character::Warp(newPos);
 
@@ -2077,7 +2037,7 @@ void Player::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS prog
         Result results = query.execute();
 
         // TODO: Save player from dedicated thread only, see PlayerManager
-        //save();
+        // save();
 
         if (results.empty()) {
             InsertQuery insQuery;
@@ -2106,7 +2066,8 @@ void Player::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS prog
 
         connection->commitTransaction();
     } catch (std::exception &e) {
-        Logger::error(LogFacility::Script) << "Setting quest progress failed for " << to_string() << ": " << e.what() << Log::end;
+        Logger::error(LogFacility::Script)
+                << "Setting quest progress failed for " << to_string() << ": " << e.what() << Log::end;
         connection->rollbackTransaction();
         questWriteLock = false;
         return;
@@ -2161,7 +2122,8 @@ void Player::sendQuestProgress(TYPE_OF_QUEST_ID questId, TYPE_OF_QUESTSTATUS pro
                 std::vector<position> targets;
                 script->targets(this, progress, targets);
 
-                ServerCommandPointer cmd = std::make_shared<QuestProgressTC>(questId, title, description, targets, progress == finalStatus);
+                ServerCommandPointer cmd = std::make_shared<QuestProgressTC>(questId, title, description, targets,
+                                                                             progress == finalStatus);
                 Connection->addCommand(cmd);
             }
         }
@@ -2188,7 +2150,8 @@ auto Player::getQuestProgress(TYPE_OF_QUEST_ID questid, int &time) const -> TYPE
     }
 }
 
-void Player::startAction(unsigned short int wait, unsigned short int ani, unsigned short int redoani, unsigned short int sound, unsigned short int redosound) {
+void Player::startAction(unsigned short int wait, unsigned short int ani, unsigned short int redoani,
+                         unsigned short int sound, unsigned short int redosound) {
     ltAction->startLongTimeAction(wait, ani, redoani, sound, redosound);
 }
 
@@ -2236,7 +2199,7 @@ void Player::changeTarget() {
     ltAction->changeTarget();
 }
 
-auto Player::getSkillName(TYPE_OF_SKILL_ID s) const -> std::string  {
+auto Player::getSkillName(TYPE_OF_SKILL_ID s) const -> std::string {
     if (Data::Skills.exists(s)) {
         const auto &skill = Data::Skills[s];
         return nls(skill.germanName, skill.englishName);
@@ -2265,14 +2228,14 @@ void Player::sendRelativeArea(int8_t zoffs) {
             e = 0;
         }
 
-        //schleife von 0ben nach unten durch alle tiles
+        // schleife von 0ben nach unten durch alle tiles
         World *world = World::get();
 
-        for (int i=0; i <= (MAP_DIMENSION + MAP_DOWN_EXTRA + e) * 2; ++i) {
-            world->clientview.fillStripe(position(x,y,z), NewClientView::dir_right, MAP_DIMENSION+1-(i%2));
+        for (int i = 0; i <= (MAP_DIMENSION + MAP_DOWN_EXTRA + e) * 2; ++i) {
+            world->clientview.fillStripe(position(x, y, z), NewClientView::dir_right, MAP_DIMENSION + 1 - (i % 2));
 
             if (world->clientview.getExists()) {
-                Connection->addCommand(std::make_shared<MapStripeTC>(position(x,y,z), NewClientView::dir_right));
+                Connection->addCommand(std::make_shared<MapStripeTC>(position(x, y, z), NewClientView::dir_right));
             }
 
             if (i % 2 == 0) {
@@ -2294,14 +2257,14 @@ void Player::sendRelativeArea(int8_t zoffs) {
             e = 0;
         }
 
-        //schleife von 0ben nach unten durch alle tiles
+        // schleife von 0ben nach unten durch alle tiles
         World *world = World::get();
 
-        for (int i=0; i <= (2*screenheight + MAP_DOWN_EXTRA + e) * 2; ++i) {
-            world->clientview.fillStripe(position(x,y,z), NewClientView::dir_right, 2*screenwidth+1-(i%2));
+        for (int i = 0; i <= (2 * screenheight + MAP_DOWN_EXTRA + e) * 2; ++i) {
+            world->clientview.fillStripe(position(x, y, z), NewClientView::dir_right, 2 * screenwidth + 1 - (i % 2));
 
             if (world->clientview.getExists()) {
-                Connection->addCommand(std::make_shared<MapStripeTC>(position(x,y,z), NewClientView::dir_right));
+                Connection->addCommand(std::make_shared<MapStripeTC>(position(x, y, z), NewClientView::dir_right));
             }
 
             if (i % 2 == 0) {
@@ -2380,18 +2343,21 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
 
         NewClientView *view = &(World::get()->clientview);
 
-        for (int z = - 2; z <= 2; ++z) {
-            int e = (direction != lower && z > 0) ? z*3 : 0; // left, right and upper stripes moved up if z>0 to provide the client with info for detecting roofs
-            int l = (dir == NewClientView::dir_down && z > 0) ? e : 0; // right and left stripes have to become longer then
+        for (int z = -2; z <= 2; ++z) {
+            int e = (direction != lower && z > 0) ? z * 3 : 0; // left, right and upper stripes moved up if z>0 to
+                                                               // provide the client with info for detecting roofs
+            int l = (dir == NewClientView::dir_down && z > 0) ? e
+                                                              : 0; // right and left stripes have to become longer then
 
             if (extraStripeForDiagonalMove) {
                 ++l;
             }
 
-            view->fillStripe(position(x-z*3+e,y+z*3-e,pos.z+z), dir, length+l);
+            view->fillStripe(position(x - z * 3 + e, y + z * 3 - e, pos.z + z), dir, length + l);
 
             if (view->getExists()) {
-                Connection->addCommand(std::make_shared<MapStripeTC>(position(x-z*3+e,y+z*3-e,pos.z+z), dir));
+                Connection->addCommand(
+                        std::make_shared<MapStripeTC>(position(x - z * 3 + e, y + z * 3 - e, pos.z + z), dir));
             }
         }
     } else {
@@ -2405,7 +2371,7 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
             x = pos.x - screenwidth + screenheight;
             y = pos.y - screenwidth - screenheight;
             dir = NewClientView::dir_right;
-            length = 2*screenwidth + 1;
+            length = 2 * screenwidth + 1;
 
             if (extraStripeForDiagonalMove) {
                 --x;
@@ -2417,7 +2383,7 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
             x = pos.x - screenwidth + screenheight;
             y = pos.y - screenwidth - screenheight;
             dir = NewClientView::dir_down;
-            length = 2*screenheight + 1 + MAP_DOWN_EXTRA;
+            length = 2 * screenheight + 1 + MAP_DOWN_EXTRA;
 
             if (extraStripeForDiagonalMove) {
                 ++x;
@@ -2429,7 +2395,7 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
             x = pos.x + screenwidth + screenheight;
             y = pos.y + screenwidth - screenheight;
             dir = NewClientView::dir_down;
-            length = 2*screenheight + 1 + MAP_DOWN_EXTRA;
+            length = 2 * screenheight + 1 + MAP_DOWN_EXTRA;
 
             if (extraStripeForDiagonalMove) {
                 --y;
@@ -2441,7 +2407,7 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
             x = pos.x - screenwidth - screenheight - MAP_DOWN_EXTRA;
             y = pos.y - screenwidth + screenheight + MAP_DOWN_EXTRA;
             dir = NewClientView::dir_right;
-            length = 2*screenwidth + 1;
+            length = 2 * screenwidth + 1;
 
             if (extraStripeForDiagonalMove) {
                 --y;
@@ -2452,18 +2418,21 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
 
         NewClientView *view = &(World::get()->clientview);
 
-        for (int z = - 2; z <= 2; ++z) {
-            int e = (direction != lower && z > 0) ? z*3 : 0; // left, right and upper stripes moved up if z>0 to provide the client with info for detecting roofs
-            int l = (dir == NewClientView::dir_down && z > 0) ? e : 0; // right and left stripes have to become longer then
+        for (int z = -2; z <= 2; ++z) {
+            int e = (direction != lower && z > 0) ? z * 3 : 0; // left, right and upper stripes moved up if z>0 to
+                                                               // provide the client with info for detecting roofs
+            int l = (dir == NewClientView::dir_down && z > 0) ? e
+                                                              : 0; // right and left stripes have to become longer then
 
             if (extraStripeForDiagonalMove) {
                 ++l;
             }
 
-            view->fillStripe(position(x-z*3+e,y+z*3-e,pos.z+z), dir, length+l);
+            view->fillStripe(position(x - z * 3 + e, y + z * 3 - e, pos.z + z), dir, length + l);
 
             if (view->getExists()) {
-                Connection->addCommand(std::make_shared<MapStripeTC>(position(x-z*3+e,y+z*3-e,pos.z+z), dir));
+                Connection->addCommand(
+                        std::make_shared<MapStripeTC>(position(x - z * 3 + e, y + z * 3 - e, pos.z + z), dir));
             }
         }
     }
@@ -2472,49 +2441,49 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
 void Player::sendStepStripes(direction dir) {
     switch (dir) {
     case (dir_north):
-        //bewegung nach norden (Mapstripe links und oben)
+        // bewegung nach norden (Mapstripe links und oben)
         sendDirStripe(upper, false);
         sendDirStripe(left, false);
         break;
 
     case (dir_northeast):
-        //bewegung nach nordosten (Mapstripe oben)
+        // bewegung nach nordosten (Mapstripe oben)
         sendDirStripe(upper, true);
         sendDirStripe(upper, false);
         break;
 
-    case (dir_east) :
-        //bewegung nach osten (Mapstripe oben und rechts)
+    case (dir_east):
+        // bewegung nach osten (Mapstripe oben und rechts)
         sendDirStripe(upper, false);
         sendDirStripe(right, false);
         break;
 
     case (dir_southeast):
-        //bewegung suedosten (Mapstripe  rechts)
+        // bewegung suedosten (Mapstripe  rechts)
         sendDirStripe(right, true);
         sendDirStripe(right, false);
         break;
 
     case (dir_south):
-        //bewegung sueden (Mapstripe rechts und unten)
+        // bewegung sueden (Mapstripe rechts und unten)
         sendDirStripe(right, false);
         sendDirStripe(lower, false);
         break;
 
     case (dir_southwest):
-        //bewegung suedwesten ( Mapstripe unten )
+        // bewegung suedwesten ( Mapstripe unten )
         sendDirStripe(lower, true);
         sendDirStripe(lower, false);
         break;
 
     case (dir_west):
-        //bewegung westen ( Mapstripe unten und links)
+        // bewegung westen ( Mapstripe unten und links)
         sendDirStripe(lower, false);
         sendDirStripe(left, false);
         break;
 
     case (dir_northwest):
-        //bewegung nordwesten ( Mapstripe links )
+        // bewegung nordwesten ( Mapstripe links )
         sendDirStripe(left, true);
         sendDirStripe(left, false);
         break;
@@ -2575,14 +2544,13 @@ auto Player::pageGM(const std::string &ticket) -> bool {
     return false;
 }
 
-
 void Player::sendCharDescription(TYPE_OF_CHARACTER_ID id, const std::string &desc) {
     ServerCommandPointer cmd = std::make_shared<CharDescription>(id, desc);
     Connection->addCommand(cmd);
 }
 
 void Player::sendCharAppearance(TYPE_OF_CHARACTER_ID id, const ServerCommandPointer &appearance, bool always) {
-    //send appearance always or only if the char in question just appeared
+    // send appearance always or only if the char in question just appeared
     if (always || visibleChars.insert(id).second) {
         Connection->addCommand(appearance);
     }
@@ -2648,7 +2616,8 @@ void Player::executeMerchantDialogAbort(unsigned int dialogId) {
     dialogs.erase(dialogId);
 }
 
-void Player::executeMerchantDialogBuy(unsigned int dialogId, MerchantDialog::index_type index, Item::number_type amount) const {
+void Player::executeMerchantDialogBuy(unsigned int dialogId, MerchantDialog::index_type index,
+                                      Item::number_type amount) const {
     auto merchantDialog = getDialog<MerchantDialog>(dialogId);
 
     if (merchantDialog) {
@@ -2661,7 +2630,8 @@ void Player::executeMerchantDialogBuy(unsigned int dialogId, MerchantDialog::ind
     }
 }
 
-void Player::executeMerchantDialogSell(unsigned int dialogId, uint8_t location, TYPE_OF_CONTAINERSLOTS slot, Item::number_type amount) {
+void Player::executeMerchantDialogSell(unsigned int dialogId, uint8_t location, TYPE_OF_CONTAINERSLOTS slot,
+                                       Item::number_type amount) {
     auto merchantDialog = getDialog<MerchantDialog>(dialogId);
 
     if (merchantDialog) {
@@ -2673,9 +2643,9 @@ void Player::executeMerchantDialogSell(unsigned int dialogId, uint8_t location, 
         if (location == 0) {
             item = GetItemAt(slot);
         } else {
-            if (isShowcaseOpen(location-1)) {
+            if (isShowcaseOpen(location - 1)) {
                 Container *container = nullptr;
-                getShowcaseContainer(location-1)->viewItemNr(slot, item, container);
+                getShowcaseContainer(location - 1)->viewItemNr(slot, item, container);
             }
         }
 
@@ -2698,7 +2668,7 @@ void Player::executeMerchantDialogLookAt(unsigned int dialogId, uint8_t list, ui
         auto lookAt = LuaScript::executeDialogCallback<ItemLookAt>(*merchantDialog);
 
         ServerCommandPointer cmd = std::make_shared<LookAtDialogGroupItemTC>(dialogId, list, slot, lookAt);
-        Connection->addCommand(cmd);        
+        Connection->addCommand(cmd);
     }
 }
 
@@ -2821,7 +2791,8 @@ void Player::requestCraftingLookAt(unsigned int dialogId, ItemLookAt &lookAt) {
     auto craftingDialog = getDialog<CraftingDialog>(dialogId);
 
     if (craftingDialog) {
-        ServerCommandPointer cmd = std::make_shared<LookAtDialogItemTC>(dialogId, craftingDialog->getCraftableId(), lookAt);
+        ServerCommandPointer cmd =
+                std::make_shared<LookAtDialogItemTC>(dialogId, craftingDialog->getCraftableId(), lookAt);
         Connection->addCommand(cmd);
     }
 }
@@ -2830,12 +2801,14 @@ void Player::requestCraftingLookAtIngredient(unsigned int dialogId, ItemLookAt &
     auto craftingDialog = getDialog<CraftingDialog>(dialogId);
 
     if (craftingDialog) {
-        ServerCommandPointer cmd = std::make_shared<LookAtDialogGroupItemTC>(dialogId, craftingDialog->getCraftableId(), craftingDialog->getIngredientIndex(), lookAt);
+        ServerCommandPointer cmd = std::make_shared<LookAtDialogGroupItemTC>(
+                dialogId, craftingDialog->getCraftableId(), craftingDialog->getIngredientIndex(), lookAt);
         Connection->addCommand(cmd);
     }
 }
 
-void Player::startCrafting(uint8_t stillToCraft, uint16_t craftingTime, uint16_t sfx, uint16_t sfxDuration, uint32_t dialogId) {
+void Player::startCrafting(uint8_t stillToCraft, uint16_t craftingTime, uint16_t sfx, uint16_t sfxDuration,
+                           uint32_t dialogId) {
     SouTar source;
     source.Type = LUA_DIALOG;
     source.dialog = dialogId;
@@ -2860,7 +2833,6 @@ void Player::invalidateDialogs() {
 
 void Player::closeDialogsOnMove() {
     for (auto it = dialogs.begin(); it != dialogs.end();) {
-
         if (it->second && it->second->closeOnMove()) {
             ServerCommandPointer cmd = std::make_shared<CloseDialogTC>(it->first);
             Connection->addCommand(cmd);
@@ -2878,9 +2850,9 @@ void Player::logAdmin(const std::string &message) {
 }
 
 auto Player::to_string() const -> std::string {
-    return (isAdmin()?"Admin ":"Player ") + getName() + "(" + std::to_string(getId()) + ")";
+    return (isAdmin() ? "Admin " : "Player ") + getName() + "(" + std::to_string(getId()) + ")";
 }
 
 auto Player::actionRunning() const -> bool {
-	return ltAction->actionRunning();
+    return ltAction->actionRunning();
 }

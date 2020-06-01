@@ -16,17 +16,16 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef FIELD_HPP
 #define FIELD_HPP
 
-#include <vector>
-#include <sys/socket.h>
-
-#include "constants.hpp"
-#include "globals.hpp"
 #include "Container.hpp"
 #include "Item.hpp"
+#include "constants.hpp"
+#include "globals.hpp"
+
+#include <sys/socket.h>
+#include <vector>
 
 namespace map {
 
@@ -46,7 +45,7 @@ public:
     Container::CONTAINERMAP containers;
 
 public:
-    explicit Field(const position &here): here(here) {};
+    explicit Field(const position &here) : here(here){};
     Field(uint16_t tile, uint16_t music, const position &here, bool persistent = false);
     Field(const Field &) = delete;
     auto operator=(const Field &) -> Field & = delete;
@@ -100,10 +99,10 @@ public:
     [[nodiscard]] auto isWarp() const -> bool;
 
     [[nodiscard]] auto getExportItems() const -> std::vector<Item>;
-    void save(std::ofstream &mapStream, std::ofstream &itemStream,
-            std::ofstream &warpStream, std::ofstream &containerStream) const;
-    void load(std::ifstream &mapStream, std::ifstream &itemStream,
-            std::ifstream &warpStream, std::ifstream &containerStream);
+    void save(std::ofstream &mapStream, std::ofstream &itemStream, std::ofstream &warpStream,
+              std::ofstream &containerStream) const;
+    void load(std::ifstream &mapStream, std::ifstream &itemStream, std::ifstream &warpStream,
+              std::ifstream &containerStream);
 
     [[nodiscard]] auto getPosition() const -> const position &;
 
@@ -128,6 +127,6 @@ private:
 
 void updateFieldToPlayersInScreen(const position &pos);
 
-}
+} // namespace map
 
 #endif

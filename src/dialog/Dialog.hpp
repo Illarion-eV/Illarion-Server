@@ -21,8 +21,8 @@
 #ifndef DIALOG_HPP
 #define DIALOG_HPP
 
-#include <string>
 #include <luabind/object.hpp>
+#include <string>
 
 using std::string;
 
@@ -43,4 +43,3 @@ public:
 };
 
 #endif
-

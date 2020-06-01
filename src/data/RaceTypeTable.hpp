@@ -21,12 +21,11 @@
 #ifndef RACE_TYPE_TABLE_HPP
 #define RACE_TYPE_TABLE_HPP
 
-
-#include <map>
-#include <TableStructs.hpp>
 #include "types.hpp"
-#include <vector>
 
+#include <TableStructs.hpp>
+#include <map>
+#include <vector>
 
 class RaceTypeTable {
 public:
@@ -52,4 +51,3 @@ private:
     bool dataOK = false;
 };
 #endif
-

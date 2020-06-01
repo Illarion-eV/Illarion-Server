@@ -16,27 +16,25 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "LuaItemScript.hpp"
 
+#include "Character.hpp"
+#include "Item.hpp"
+#include "character_ptr.hpp"
 
 #include <utility>
 
-#include "character_ptr.hpp"
-#include "Item.hpp"
-#include "Character.hpp"
-
-LuaItemScript::LuaItemScript()  {
+LuaItemScript::LuaItemScript() {
     init_functions();
 }
 
 LuaItemScript::LuaItemScript(const std::string &filename, ItemStruct comstr)
-    : LuaScript(filename) , _comstr(std::move(comstr)) {
+        : LuaScript(filename), _comstr(std::move(comstr)) {
     init_functions();
 }
 
 LuaItemScript::LuaItemScript(const std::string &code, const std::string &codename, ItemStruct comstr)
-    : LuaScript(code, codename), _comstr(std::move(comstr)) {
+        : LuaScript(code, codename), _comstr(std::move(comstr)) {
     init_functions();
 }
 
@@ -63,7 +61,8 @@ auto LuaItemScript::LookAtItem(Character *who, const ScriptItem &t_item) -> Item
     return callEntrypoint<ItemLookAt>("LookAtItem", fuse_who, t_item);
 }
 
-auto LuaItemScript::MoveItemBeforeMove(Character *who, const ScriptItem &sourceItem, const ScriptItem &targetItem) -> bool {
+auto LuaItemScript::MoveItemBeforeMove(Character *who, const ScriptItem &sourceItem, const ScriptItem &targetItem)
+        -> bool {
     character_ptr fuse_who(who);
     return callEntrypoint<bool>("MoveItemBeforeMove", fuse_who, sourceItem, targetItem);
 }
@@ -77,4 +76,3 @@ void LuaItemScript::CharacterOnField(Character *who) {
     character_ptr fuse_who(who);
     callEntrypoint("CharacterOnField", fuse_who);
 }
-

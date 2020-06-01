@@ -20,78 +20,71 @@
 
 #include "Character.hpp"
 
-#include <map>
-#include <algorithm>
-#include <cmath>
-#include <range/v3/all.hpp>
-
-#include "constants.hpp"
-#include "character_ptr.hpp"
-#include "a_star.hpp"
 #include "Container.hpp"
+#include "Logger.hpp"
+#include "LongTimeAction.hpp"
+#include "MonitoringClients.hpp"
 #include "Player.hpp"
 #include "Random.hpp"
 #include "World.hpp"
-#include "map/Field.hpp"
-#include "Logger.hpp"
-#include "MonitoringClients.hpp"
-#include "LongTimeAction.hpp"
-
+#include "a_star.hpp"
+#include "character_ptr.hpp"
+#include "constants.hpp"
 #include "data/Data.hpp"
 #include "data/RaceTypeTable.hpp"
 #include "data/TilesTable.hpp"
-
-#include "script/LuaWeaponScript.hpp"
-#include "script/LuaLearnScript.hpp"
-
+#include "map/Field.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
+#include "script/LuaLearnScript.hpp"
+#include "script/LuaWeaponScript.hpp"
+
+#include <algorithm>
+#include <cmath>
+#include <map>
+#include <range/v3/all.hpp>
 
 #define MAJOR_SKILL_GAP 100
 
-extern std::shared_ptr<LuaLearnScript>learnScript;
+extern std::shared_ptr<LuaLearnScript> learnScript;
 extern std::shared_ptr<LuaWeaponScript> standardFightingScript;
 extern std::unique_ptr<RaceTypeTable> raceTypes;
 
-Character::attribute_map_t Character::attributeMap = {
-    {"strength", strength},
-    {"dexterity", dexterity},
-    {"constitution", constitution},
-    {"agility", agility},
-    {"intelligence", intelligence},
-    {"perception", perception},
-    {"willpower", willpower},
-    {"essence", essence},
-    {"hitpoints", hitpoints},
-    {"mana", mana},
-    {"foodlevel", foodlevel},
-    {"sex", sex},
-    {"age", age},
-    {"weight", weight},
-    {"height", height},
-    {"attitude", attitude},
-    {"luck", luck}
-};
+Character::attribute_map_t Character::attributeMap = {{"strength", strength},
+                                                      {"dexterity", dexterity},
+                                                      {"constitution", constitution},
+                                                      {"agility", agility},
+                                                      {"intelligence", intelligence},
+                                                      {"perception", perception},
+                                                      {"willpower", willpower},
+                                                      {"essence", essence},
+                                                      {"hitpoints", hitpoints},
+                                                      {"mana", mana},
+                                                      {"foodlevel", foodlevel},
+                                                      {"sex", sex},
+                                                      {"age", age},
+                                                      {"weight", weight},
+                                                      {"height", height},
+                                                      {"attitude", attitude},
+                                                      {"luck", luck}};
 
-Character::attribute_string_map_t Character::attributeStringMap = {
-    {strength, "strength"},
-    {dexterity, "dexterity"},
-    {constitution, "constitution"},
-    {agility, "agility"},
-    {intelligence, "intelligence"},
-    {perception, "perception"},
-    {willpower, "willpower"},
-    {essence, "essence"},
-    {hitpoints, "hitpoints"},
-    {mana, "mana"},
-    {foodlevel, "foodlevel"},
-    {sex, "sex"},
-    {age, "age"},
-    {weight, "weight"},
-    {height, "height"},
-    {attitude, "attitude"},
-    {luck, "luck"}
-};
+Character::attribute_string_map_t Character::attributeStringMap = {{strength, "strength"},
+                                                                   {dexterity, "dexterity"},
+                                                                   {constitution, "constitution"},
+                                                                   {agility, "agility"},
+                                                                   {intelligence, "intelligence"},
+                                                                   {perception, "perception"},
+                                                                   {willpower, "willpower"},
+                                                                   {essence, "essence"},
+                                                                   {hitpoints, "hitpoints"},
+                                                                   {mana, "mana"},
+                                                                   {foodlevel, "foodlevel"},
+                                                                   {sex, "sex"},
+                                                                   {age, "age"},
+                                                                   {weight, "weight"},
+                                                                   {height, "height"},
+                                                                   {attitude, "attitude"},
+                                                                   {luck, "luck"}};
 
 auto Character::getFrontalPosition() const -> position {
     position front = pos;
@@ -141,8 +134,6 @@ auto Character::getStepList(const position &goal, std::list<direction> &steps) c
     return pathfinding::a_star(pos, goal, steps);
 }
 
-
-
 auto Character::getNextStepDir(const position &goal, direction &dir) const -> bool {
     std::list<direction> steps;
 
@@ -158,7 +149,8 @@ auto Character::getNextStepDir(const position &goal, direction &dir) const -> bo
 
 Character::Character() : Character(appearance()) {}
 
-Character::Character(const appearance &appearance) : effects(this), waypoints(this), _world(World::get()), _appearance(appearance), attributes(ATTRIBUTECOUNT) {
+Character::Character(const appearance &appearance)
+        : effects(this), waypoints(this), _world(World::get()), _appearance(appearance), attributes(ATTRIBUTECOUNT) {
     setAlive(true);
 
     attributes[strength] = Attribute(0, MAXATTRIB);
@@ -182,10 +174,10 @@ Character::Character(const appearance &appearance) : effects(this), waypoints(th
     backPackContents = nullptr;
 
     magic.type = MAGE;
-    magic.flags[ MAGE ] = 0x00000000;
-    magic.flags[ PRIEST ] = 0x00000000;
-    magic.flags[ BARD ] = 0x00000000;
-    magic.flags[ DRUID ] = 0x00000000;
+    magic.flags[MAGE] = 0x00000000;
+    magic.flags[PRIEST] = 0x00000000;
+    magic.flags[BARD] = 0x00000000;
+    magic.flags[DRUID] = 0x00000000;
 }
 
 Character::~Character() {
@@ -194,8 +186,7 @@ Character::~Character() {
         backPackContents = nullptr;
     }
 
-    std::for_each(depotContents.rbegin(), depotContents.rend(),
-                  [](const decltype(depotContents)::value_type &value) {
+    std::for_each(depotContents.rbegin(), depotContents.rend(), [](const decltype(depotContents)::value_type &value) {
         delete value.second;
     });
 }
@@ -296,32 +287,35 @@ void Character::setInvisible(bool invisible) {
     isinvisible = invisible;
 }
 
-auto toNumber = [](const Item &item) {return item.getNumber();};
+auto toNumber = [](const Item &item) {
+    return item.getNumber();
+};
 
 auto Character::countItem(TYPE_OF_ITEM_ID itemid) const -> int {
     using namespace ranges;
-    auto hasItemId = [itemid](const Item &item) {return item.getId() == itemid;};
-    int count = accumulate(items | view::filter(hasItemId)
-                                 | view::transform(toNumber), 0);
+    auto hasItemId = [itemid](const Item &item) {
+        return item.getId() == itemid;
+    };
+    int count = accumulate(items | view::filter(hasItemId) | view::transform(toNumber), 0);
 
-    if ((items[ BACKPACK ].getId() != 0) && (backPackContents != nullptr)) {
+    if ((items[BACKPACK].getId() != 0) && (backPackContents != nullptr)) {
         count += backPackContents->countItem(itemid);
     }
 
     return count;
 }
 
-auto Character::countItemAt(const std::string &where, TYPE_OF_ITEM_ID itemid, script_data_exchangemap const *data) const -> int {
+auto Character::countItemAt(const std::string &where, TYPE_OF_ITEM_ID itemid, script_data_exchangemap const *data) const
+        -> int {
     using namespace ranges;
     auto hasItemIdAndData = [itemid, data](const Item &item) {
         return item.getId() == itemid && (data == nullptr || item.hasData(*data));
     };
 
     if (where == "all") {
-        int count = accumulate(items | view::filter(hasItemIdAndData)
-                                     | view::transform(toNumber), 0);
+        int count = accumulate(items | view::filter(hasItemIdAndData) | view::transform(toNumber), 0);
 
-        if ((items[ BACKPACK ].getId() != 0) && (backPackContents != nullptr)) {
+        if ((items[BACKPACK].getId() != 0) && (backPackContents != nullptr)) {
             count += backPackContents->countItem(itemid, data);
         }
 
@@ -329,21 +323,20 @@ auto Character::countItemAt(const std::string &where, TYPE_OF_ITEM_ID itemid, sc
     }
 
     if (where == "belt") {
-        return accumulate(items | view::slice(MAX_BODY_ITEMS, MAX_BODY_ITEMS + MAX_BELT_SLOTS)
-                                | view::filter(hasItemIdAndData)
-                                | view::transform(toNumber), 0);
+        return accumulate(items | view::slice(MAX_BODY_ITEMS, MAX_BODY_ITEMS + MAX_BELT_SLOTS) |
+                                  view::filter(hasItemIdAndData) | view::transform(toNumber),
+                          0);
     }
 
     if (where == "body") {
-        return accumulate(items | view::take(MAX_BODY_ITEMS)
-                                | view::filter(hasItemIdAndData)
-                                | view::transform(toNumber), 0);
+        return accumulate(
+                items | view::take(MAX_BODY_ITEMS) | view::filter(hasItemIdAndData) | view::transform(toNumber), 0);
     }
 
     if (where == "backpack") {
         int count = 0;
-        if ((items[ BACKPACK ].getId() != 0) && (backPackContents != nullptr)) {
-            count += backPackContents->countItem(itemid , data);
+        if ((items[BACKPACK].getId() != 0) && (backPackContents != nullptr)) {
+            count += backPackContents->countItem(itemid, data);
         }
 
         return count;
@@ -356,7 +349,7 @@ auto Character::GetItemAt(unsigned char itempos) -> ScriptItem {
     ScriptItem item;
 
     if (itempos < MAX_BODY_ITEMS + MAX_BELT_SLOTS) {
-        item = static_cast<ScriptItem>(items[ itempos ]);
+        item = static_cast<ScriptItem>(items[itempos]);
         item.pos = pos;
         item.itempos = itempos;
         item.owner = this;
@@ -371,23 +364,22 @@ auto Character::GetItemAt(unsigned char itempos) -> ScriptItem {
     return item;
 }
 
-
 auto Character::eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangemap const *data) -> int {
     int temp = count;
 
-    if ((items[ BACKPACK ].getId() != 0) && (backPackContents != nullptr)) {
+    if ((items[BACKPACK].getId() != 0) && (backPackContents != nullptr)) {
         temp = backPackContents->eraseItem(itemid, temp, data);
     }
 
     if (temp > 0) {
         // BACKPACK als Item erstmal auslassen
         for (unsigned char i = MAX_BELT_SLOTS + MAX_BODY_ITEMS - 1; i > 0; --i) {
-            if ((items[ i ].getId() == itemid && (data == nullptr || items[ i ].hasData(*data))) && (temp > 0)) {
-                if (temp >= items[ i ].getNumber()) {
-                    temp = temp - items[ i ].getNumber();
-                    items[ i ].reset();
+            if ((items[i].getId() == itemid && (data == nullptr || items[i].hasData(*data))) && (temp > 0)) {
+                if (temp >= items[i].getNumber()) {
+                    temp = temp - items[i].getNumber();
+                    items[i].reset();
                 } else {
-                    items[ i ].setNumber(items[ i ].getNumber() - temp);
+                    items[i].setNumber(items[i].getNumber() - temp);
                     temp = 0;
                 }
             }
@@ -410,16 +402,16 @@ auto Character::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count)
 
         if (cos.isValid()) {
             if (!Data::ContainerItems.exists(newid)) {
-                if (items[ pos ].getId() == 0) {
+                if (items[pos].getId() == 0) {
                     if (temp > cos.MaxStack) {
-                        items[ pos ].setId(newid);
-                        items[ pos ].setWear(cos.AgeingSpeed);
-                        items[ pos ].setNumber(cos.MaxStack);
+                        items[pos].setId(newid);
+                        items[pos].setWear(cos.AgeingSpeed);
+                        items[pos].setNumber(cos.MaxStack);
                         temp -= cos.MaxStack;
                     } else {
-                        items[ pos ].setId(newid);
-                        items[ pos ].setWear(cos.AgeingSpeed);
-                        items[ pos ].setNumber(temp);
+                        items[pos].setId(newid);
+                        items[pos].setWear(cos.AgeingSpeed);
+                        items[pos].setNumber(temp);
                         temp = 0;
                     }
 
@@ -434,8 +426,8 @@ auto Character::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count)
     return temp;
 }
 
-
-auto Character::createItem(Item::id_type id, Item::number_type number, Item::quality_type quality, script_data_exchangemap const *data) -> int {
+auto Character::createItem(Item::id_type id, Item::number_type number, Item::quality_type quality,
+                           script_data_exchangemap const *data) -> int {
     int temp = number;
     Item it;
 
@@ -444,12 +436,12 @@ auto Character::createItem(Item::id_type id, Item::number_type number, Item::qua
 
         if (cos.isValid()) {
             if (Data::ContainerItems.exists(id)) {
-                if (items[ BACKPACK ].getId() == 0) {
-                    items[ BACKPACK ].setId(id);
-                    items[ BACKPACK ].setWear(cos.AgeingSpeed);
-                    items[ BACKPACK ].setQuality(quality);
-                    items[ BACKPACK ].setData(data);
-                    items[ BACKPACK ].setNumber(1);
+                if (items[BACKPACK].getId() == 0) {
+                    items[BACKPACK].setId(id);
+                    items[BACKPACK].setWear(cos.AgeingSpeed);
+                    items[BACKPACK].setQuality(quality);
+                    items[BACKPACK].setData(data);
+                    items[BACKPACK].setNumber(1);
                     temp = temp - 1;
                     backPackContents = new Container(id);
 
@@ -500,13 +492,13 @@ auto Character::createItem(Item::id_type id, Item::number_type number, Item::qua
                     }
 
                     for (unsigned char i = MAX_BODY_ITEMS; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS && temp > 0; ++i) {
-                        if ((items[ i ].getId() == id) && (items[ i ].equalData(data))) {
+                        if ((items[i].getId() == id) && (items[i].equalData(data))) {
                             int itemsToCreate = temp;
-                            temp = items[ i ].increaseNumberBy(temp);
+                            temp = items[i].increaseNumberBy(temp);
 
                             if (itemsToCreate != temp) {
-                                items[ i ].setWear(cos.AgeingSpeed);
-                                items[ i ].setQuality(quality);
+                                items[i].setWear(cos.AgeingSpeed);
+                                items[i].setQuality(quality);
                             }
                         }
                     }
@@ -533,14 +525,14 @@ auto Character::createItem(Item::id_type id, Item::number_type number, Item::qua
                         }
                     }
                 }
-                
+
                 for (unsigned char i = MAX_BODY_ITEMS; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS && temp > 0; ++i) {
-                    if (items[ i ].getId() == 0) {
-                        items[ i ].setId(id);
-                        items[ i ].setWear(cos.AgeingSpeed);
-                        items[ i ].setQuality(quality);
-                        items[ i ].setData(data);
-                        temp = items[ i ].increaseNumberBy(temp);
+                    if (items[i].getId() == 0) {
+                        items[i].setId(id);
+                        items[i].setWear(cos.AgeingSpeed);
+                        items[i].setQuality(quality);
+                        items[i].setData(data);
+                        temp = items[i].increaseNumberBy(temp);
                     }
                 }
 
@@ -554,29 +546,27 @@ auto Character::createItem(Item::id_type id, Item::number_type number, Item::qua
     return temp;
 }
 
-
 auto Character::increaseAtPos(unsigned char pos, int count) -> int {
     int temp = count;
 
     if ((pos > 0) && (pos < MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
-        if (weightOK(items[ pos ].getId(), count, nullptr)) {
-
-            temp = items[ pos ].getNumber() + count;
+        if (weightOK(items[pos].getId(), count, nullptr)) {
+            temp = items[pos].getNumber() + count;
             auto maxStack = items[pos].getMaxStack();
 
             if (temp > maxStack) {
-                items[ pos ].setNumber(maxStack);
+                items[pos].setNumber(maxStack);
                 temp = temp - maxStack;
             } else if (temp <= 0) {
-                bool updateBrightness = World::get()->getItemStatsFromId(items[ pos ].getId()).Brightness > 0;
-                temp = count + items[ pos ].getNumber();
-                items[ pos ].reset();
+                bool updateBrightness = World::get()->getItemStatsFromId(items[pos].getId()).Brightness > 0;
+                temp = count + items[pos].getNumber();
+                items[pos].reset();
 
                 if (updateBrightness) {
                     updateAppearanceForAll(true);
                 }
             } else {
-                items[ pos ].setNumber(temp);
+                items[pos].setNumber(temp);
                 temp = 0;
             }
         }
@@ -585,18 +575,18 @@ auto Character::increaseAtPos(unsigned char pos, int count) -> int {
     return temp;
 }
 
-
 auto Character::swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t newQuality) -> bool {
     if ((pos > 0) && (pos < MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
-        bool updateBrightness = World::get()->getItemStatsFromId(items[ pos ].getId()).Brightness > 0 || World::get()->getItemStatsFromId(newid).Brightness > 0;
-        items[ pos ].setId(newid);
+        bool updateBrightness = World::get()->getItemStatsFromId(items[pos].getId()).Brightness > 0 ||
+                                World::get()->getItemStatsFromId(newid).Brightness > 0;
+        items[pos].setId(newid);
 
         if (updateBrightness) {
             updateAppearanceForAll(true);
         }
 
         if (newQuality > 0) {
-            items[ pos ].setQuality(newQuality);
+            items[pos].setQuality(newQuality);
         }
 
         return true;
@@ -605,9 +595,8 @@ auto Character::swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t new
     }
 }
 
-
 void Character::ageInventory() {
-    for (auto &item: items) {
+    for (auto &item : items) {
         auto itemId = item.getId();
 
         if (itemId != 0) {
@@ -631,7 +620,7 @@ void Character::ageInventory() {
         }
     }
 
-    if ((items[ BACKPACK ].getId() != 0) && (backPackContents != nullptr)) {
+    if ((items[BACKPACK].getId() != 0) && (backPackContents != nullptr)) {
         backPackContents->doAge(true);
     }
 
@@ -645,7 +634,6 @@ void Character::ageInventory() {
 void Character::setAlive(bool t) {
     alive = t;
 }
-
 
 auto Character::attack(Character *target) -> bool {
     if ((target != nullptr) && target->isAlive()) {
@@ -662,10 +650,10 @@ auto Character::attack(Character *target) -> bool {
 
         if (getType() == player) {
             if (target->isAlive()) {
-                ServerCommandPointer cmd = std::make_shared<BBSendActionTC>(id, 1 , "Attacks : " + target->to_string());
+                ServerCommandPointer cmd = std::make_shared<BBSendActionTC>(id, 1, "Attacks : " + target->to_string());
                 _world->monitoringClientList->sendCommand(cmd);
             } else {
-                ServerCommandPointer cmd = std::make_shared<BBSendActionTC>(id, 1 , "Killed : " + target->to_string());
+                ServerCommandPointer cmd = std::make_shared<BBSendActionTC>(id, 1, "Killed : " + target->to_string());
                 _world->monitoringClientList->sendCommand(cmd);
             }
         }
@@ -719,59 +707,49 @@ auto Character::getMinorSkill(TYPE_OF_SKILL_ID s) const -> unsigned short int {
     }
 }
 
-
 void Character::setSkinColour(const Colour &c) {
     _appearance.skin = c;
     updateAppearanceForAll(true);
 }
 
-
 auto Character::getSkinColour() const -> Colour {
     return _appearance.skin;
 }
-
 
 void Character::setHairColour(const Colour &c) {
     _appearance.hair = c;
     updateAppearanceForAll(true);
 }
 
-
 auto Character::getHairColour() const -> Colour {
     return _appearance.hair;
 }
-
 
 void Character::setHair(uint8_t hairID) {
     if (raceTypes->isHairAvailable(race, getAttribute(sex), hairID)) {
         _appearance.hairtype = hairID;
         updateAppearanceForAll(true);
     } else {
-        Logger::error(LogFacility::Script) << "Race " << race << " subtype "
-                << getAttribute(sex) << " has no hair with id "
-                << int(hairID) << ". Leaving hair unchanged at "
-                << int(_appearance.hairtype) << "." << Log::end;
+        Logger::error(LogFacility::Script)
+                << "Race " << race << " subtype " << getAttribute(sex) << " has no hair with id " << int(hairID)
+                << ". Leaving hair unchanged at " << int(_appearance.hairtype) << "." << Log::end;
     }
 }
-
 
 auto Character::getHair() const -> uint8_t {
     return _appearance.hairtype;
 }
-
 
 void Character::setBeard(uint8_t beardID) {
     if (raceTypes->isBeardAvailable(race, getAttribute(sex), beardID)) {
         _appearance.beardtype = beardID;
         updateAppearanceForAll(true);
     } else {
-        Logger::error(LogFacility::Script) << "Race " << race << " subtype "
-                << getAttribute(sex) << " has no beard with id "
-                << int(beardID) << ". Leaving beard unchanged at "
-                << int(_appearance.beardtype) << "." << Log::end;
+        Logger::error(LogFacility::Script)
+                << "Race " << race << " subtype " << getAttribute(sex) << " has no beard with id " << int(beardID)
+                << ". Leaving beard unchanged at " << int(_appearance.beardtype) << "." << Log::end;
     }
 }
-
 
 auto Character::getBeard() const -> uint8_t {
     return _appearance.beardtype;
@@ -817,7 +795,7 @@ auto Character::getAttribute(Character::attributeIndex attribute) const -> Attri
 auto Character::increaseBaseAttribute(Character::attributeIndex attribute, int amount) -> bool {
     auto &attrib = attributes[attribute];
     auto oldValue = attrib.getValue();
-    
+
     if (isBaseAttributeValid(attribute, attrib.getBaseValue() + amount)) {
         attrib.increaseBaseValue(amount);
         auto newValue = attrib.getValue();
@@ -850,14 +828,10 @@ auto Character::isBaseAttributeValid(Character::attributeIndex attribute, Attrib
 }
 
 auto Character::getBaseAttributeSum() const -> uint16_t {
-    return attributes[Character::agility].getBaseValue()
-        + attributes[Character::constitution].getBaseValue()
-        + attributes[Character::dexterity].getBaseValue()
-        + attributes[Character::essence].getBaseValue()
-        + attributes[Character::intelligence].getBaseValue()
-        + attributes[Character::perception].getBaseValue()
-        + attributes[Character::strength].getBaseValue()
-        + attributes[Character::willpower].getBaseValue();
+    return attributes[Character::agility].getBaseValue() + attributes[Character::constitution].getBaseValue() +
+           attributes[Character::dexterity].getBaseValue() + attributes[Character::essence].getBaseValue() +
+           attributes[Character::intelligence].getBaseValue() + attributes[Character::perception].getBaseValue() +
+           attributes[Character::strength].getBaseValue() + attributes[Character::willpower].getBaseValue();
 }
 
 auto Character::getMaxAttributePoints() const -> uint16_t {
@@ -898,7 +872,6 @@ void Character::setAttrib(const std::string &name, Attribute::attribute_t value)
         Character::attributeIndex attribute = attributeMap.at(name);
         setAttribute(attribute, value);
     } catch (...) {
-
     }
 }
 
@@ -911,8 +884,6 @@ auto Character::getBaseAttrib(const std::string &name) -> Attribute::attribute_t
     }
 }
 
-
-
 auto Character::increaseBaseAttrib(const std::string &name, int amount) -> bool {
     try {
         Character::attributeIndex attribute = attributeMap.at(name);
@@ -921,7 +892,6 @@ auto Character::increaseBaseAttrib(const std::string &name, int amount) -> bool 
         return false;
     }
 }
-
 
 auto Character::increaseAttrib(const std::string &name, int amount) -> Attribute::attribute_t {
     if (name == "sex") {
@@ -932,7 +902,6 @@ auto Character::increaseAttrib(const std::string &name, int amount) -> Attribute
         Character::attributeIndex attribute = attributeMap.at(name);
         return increaseAttribute(attribute, amount);
     } catch (...) {
-
     }
 
     return 0;
@@ -970,7 +939,7 @@ auto Character::increaseSkill(TYPE_OF_SKILL_ID skill, short int amount) -> unsig
         skillvalue sv;
 
         if (amount <= 0) {
-            return 0; //Don't add new skill if value <= 0
+            return 0; // Don't add new skill if value <= 0
         } else if (amount > MAJOR_SKILL_GAP) {
             sv.major = MAJOR_SKILL_GAP;
         } else {
@@ -980,11 +949,11 @@ auto Character::increaseSkill(TYPE_OF_SKILL_ID skill, short int amount) -> unsig
         skills[skill] = sv;
         return sv.major;
     } else {
-        int temp=iterator->second.major + amount;
+        int temp = iterator->second.major + amount;
 
         if (temp <= 0) {
             iterator->second.major = 0;
-            skills.erase(iterator); //L�chen des Eintrags wenn value <= 0
+            skills.erase(iterator); // L�chen des Eintrags wenn value <= 0
         } else if (temp > MAJOR_SKILL_GAP) {
             iterator->second.major = MAJOR_SKILL_GAP;
         } else {
@@ -994,7 +963,6 @@ auto Character::increaseSkill(TYPE_OF_SKILL_ID skill, short int amount) -> unsig
         return (iterator->second.major);
     }
 }
-
 
 auto Character::increaseMinorSkill(TYPE_OF_SKILL_ID skill, short int amount) -> unsigned short int {
     if (!Data::Skills.exists(skill)) {
@@ -1007,7 +975,7 @@ auto Character::increaseMinorSkill(TYPE_OF_SKILL_ID skill, short int amount) -> 
         skillvalue sv;
 
         if (amount <= 0) {
-            return 0; //Don't add new skill if value <= 0
+            return 0; // Don't add new skill if value <= 0
         } else if (amount > 10000) {
             sv.minor = 10000;
         } else {
@@ -1019,17 +987,17 @@ auto Character::increaseMinorSkill(TYPE_OF_SKILL_ID skill, short int amount) -> 
             sv.major++;
         }
 
-        skills[ skill ] = sv;
+        skills[skill] = sv;
         return (sv.major);
     } else {
-        int temp=iterator->second.minor + amount;
+        int temp = iterator->second.minor + amount;
 
         if (temp <= 0) {
             iterator->second.minor = 0;
             iterator->second.major--;
 
-            if (iterator->second.major==0) {
-                skills.erase(iterator);    //delete if major == 0
+            if (iterator->second.major == 0) {
+                skills.erase(iterator); // delete if major == 0
             }
         } else if (temp >= 10000) {
             iterator->second.minor = 0;
@@ -1066,11 +1034,9 @@ void Character::learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opp
     }
 }
 
-
 void Character::deleteAllSkills() {
     skills.clear();
 }
-
 
 auto Character::isInRange(Character *cc, unsigned short int distancemetric) const -> bool {
     if (cc != nullptr) {
@@ -1116,17 +1082,15 @@ auto Character::distanceMetric(Character *cc) const -> unsigned short int {
     }
 }
 
-
 auto Character::maxLoadWeight() const -> unsigned short int {
     return getAttribute(Character::strength) * 500 + 5000;
 }
 
-
 auto Character::LoadWeight() const -> int {
-    int load=0;
+    int load = 0;
 
     // alle Items bis auf den Rucksack
-    for (int i=1; i < MAX_BODY_ITEMS + MAX_BELT_SLOTS; ++i) {
+    for (int i = 1; i < MAX_BODY_ITEMS + MAX_BELT_SLOTS; ++i) {
         load += items[i].getWeight();
     }
 
@@ -1142,11 +1106,9 @@ auto Character::LoadWeight() const -> int {
     }
 }
 
-
 auto Character::relativeLoad() const -> float {
     return float(LoadWeight()) / maxLoadWeight();
 }
-
 
 auto Character::loadFactor() const -> LoadLevel {
     auto load = relativeLoad();
@@ -1159,7 +1121,6 @@ auto Character::loadFactor() const -> LoadLevel {
 
     return LoadLevel::unburdened;
 }
-
 
 auto Character::weightOK(TYPE_OF_ITEM_ID id, int count, Container *tcont) const -> bool {
     if (count < 0) {
@@ -1176,9 +1137,8 @@ auto Character::weightOK(TYPE_OF_ITEM_ID id, int count, Container *tcont) const 
     }
 }
 
-
 auto Character::weightContainer(TYPE_OF_ITEM_ID id, int count, Container *tcont) const -> int {
-    int temp=0;
+    int temp = 0;
 
     if (id != 0) {
         const auto &itemStruct = Data::Items[id];
@@ -1215,7 +1175,6 @@ auto Character::GetMovement() const -> movement_type {
     return _movement;
 }
 
-
 void Character::SetMovement(movement_type tmovement) {
     _movement = tmovement;
 }
@@ -1239,14 +1198,14 @@ void Character::increaseMentalCapacity(int value) {
 }
 
 auto Character::alterSpokenMessage(const std::string &message, int languageSkill) const -> std::string {
-    int counter=0;
+    int counter = 0;
     std::string alteredMessage;
 
-    alteredMessage=message;
+    alteredMessage = message;
 
-    while (message[counter]!=0) {
-        if (Random::uniform(0,70)>languageSkill) {
-            alteredMessage[counter]='*';
+    while (message[counter] != 0) {
+        if (Random::uniform(0, 70) > languageSkill) {
+            alteredMessage[counter] = '*';
         }
 
         counter++;
@@ -1259,7 +1218,7 @@ auto Character::getLanguageSkill(int languageSkillNumber) const -> int {
     return 100;
 }
 
-void Character::talk(talk_type tt, const std::string &message) { //only for say, whisper, shout
+void Character::talk(talk_type tt, const std::string &message) { // only for say, whisper, shout
     talk(tt, message, message);
 
     if (getType() == player) {
@@ -1287,7 +1246,8 @@ void Character::talk(talk_type tt, const std::string &message) { //only for say,
     }
 }
 
-void Character::talk(talk_type tt, const std::string &german, const std::string &english) { //only for say, whisper, shout
+void Character::talk(talk_type tt, const std::string &german,
+                     const std::string &english) { // only for say, whisper, shout
     uint16_t cost = 0;
     lastSpokenText = english;
 
@@ -1330,15 +1290,15 @@ void Character::turn(const position &posi) {
     short int xoffs = posi.x - pos.x;
     short int yoffs = posi.y - pos.y;
 
-    if (abs(xoffs)>abs(yoffs)) {
-        turn(static_cast<direction>((xoffs>0)?2:6));
+    if (abs(xoffs) > abs(yoffs)) {
+        turn(static_cast<direction>((xoffs > 0) ? 2 : 6));
     } else {
-        turn(static_cast<direction>((yoffs>0)?4:0));
+        turn(static_cast<direction>((yoffs > 0) ? 4 : 0));
     }
 }
 
 auto Character::move(direction dir, bool active) -> bool {
-    _world->TriggerFieldMove(this,false);
+    _world->TriggerFieldMove(this, false);
 
     // if we move we look into that direction...
     if (dir != dir_up && dir != dir_down) {
@@ -1350,14 +1310,13 @@ auto Character::move(direction dir, bool active) -> bool {
     newpos.move(dir);
 
     try {
-
         map::Field &oldField = _world->fieldAt(pos);
         map::Field &newField = _world->fieldAtOrBelow(newpos);
 
         if (moveToPossible(newField)) {
             bool diagonalMove = pos.x != newpos.x && pos.y != newpos.y;
             uint16_t movementcost = getMoveTime(newField, diagonalMove, false);
-            actionPoints -= movementcost/100;
+            actionPoints -= movementcost / 100;
 
             oldField.removeChar();
             newField.setChar();
@@ -1388,7 +1347,8 @@ auto Character::moveToPossible(const map::Field &field) const -> bool {
     return field.moveToPossible();
 }
 
-auto Character::getMoveTime(const map::Field &targetField, bool diagonalMove, bool running) const -> TYPE_OF_WALKINGCOST {
+auto Character::getMoveTime(const map::Field &targetField, bool diagonalMove, bool running) const
+        -> TYPE_OF_WALKINGCOST {
     static const float sqrt2 = std::sqrt(2.0);
     TYPE_OF_WALKINGCOST walkcost;
 
@@ -1474,11 +1434,11 @@ auto Character::forceWarp(const position &newPos) -> bool {
 }
 
 void Character::startMusic(short int title) {
-    //Nothing to do here, overloaded for players
+    // Nothing to do here, overloaded for players
 }
 
 void Character::defaultMusic() {
-    //Nothing to do here, overloaded for players
+    // Nothing to do here, overloaded for players
 }
 
 void Character::inform(const std::string &message, informType type) const {
@@ -1491,25 +1451,25 @@ void Character::inform(const std::string & /*unused*/, const std::string & /*unu
 
 void Character::changeQualityAt(unsigned char pos, short int amount) {
     if (pos < MAX_BODY_ITEMS + MAX_BELT_SLOTS) {
-        if ((items[ pos ].getId() == 0) || (items[pos].getId() == BLOCKEDITEM)) {
+        if ((items[pos].getId() == 0) || (items[pos].getId() == BLOCKEDITEM)) {
             return;
         }
 
+        short int tmpQuality = ((amount + items[pos].getDurability()) < 100)
+                                       ? (amount + items[pos].getQuality())
+                                       : (items[pos].getQuality() - items[pos].getDurability() + 99);
 
-        short int tmpQuality = ((amount+items[pos].getDurability())<100) ? (amount + items[pos].getQuality()) : (items[pos].getQuality() - items[pos].getDurability() + 99);
-
-        if (tmpQuality%100 > 1) {
-            items[ pos ].setQuality(tmpQuality);
+        if (tmpQuality % 100 > 1) {
+            items[pos].setQuality(tmpQuality);
             return;
         } else {
-
             if (pos == RIGHT_TOOL && items[LEFT_TOOL].getId() == BLOCKEDITEM) {
                 items[LEFT_TOOL].reset();
             } else if (pos == LEFT_TOOL && items[RIGHT_TOOL].getId() == BLOCKEDITEM) {
                 items[RIGHT_TOOL].reset();
             }
 
-            items[ pos ].reset();
+            items[pos].reset();
             return;
         }
     }
@@ -1544,8 +1504,8 @@ auto Character::getItemList(TYPE_OF_ITEM_ID id) const -> std::vector<ScriptItem>
     std::vector<ScriptItem> list;
 
     for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
-        if (items[ i ].getId() == id) {
-            ScriptItem item(items[ i ]);
+        if (items[i].getId() == id) {
+            ScriptItem item(items[i]);
 
             if (i < MAX_BODY_ITEMS) {
                 item.type = ScriptItem::it_inventory;
@@ -1560,13 +1520,12 @@ auto Character::getItemList(TYPE_OF_ITEM_ID id) const -> std::vector<ScriptItem>
         }
     }
 
-    if ((items[ BACKPACK ].getId() != 0) && (backPackContents != nullptr)) {
+    if ((items[BACKPACK].getId() != 0) && (backPackContents != nullptr)) {
         backPackContents->addContentToList(id, list);
     }
 
     return list;
 }
-
 
 auto Character::GetBackPack() const -> Container * {
     return backPackContents;
@@ -1582,12 +1541,10 @@ auto Character::GetDepot(uint32_t depotid) const -> Container * {
     }
 }
 
-
 auto Character::idleTime() const -> uint32_t {
     // Nothing to do here, overloaded in Player
     return 0;
 }
-
 
 void Character::sendBook(uint16_t bookID) {
     // Nothing to do here, overloaded in Player
@@ -1621,8 +1578,7 @@ void Character::requestCraftingLookAtIngredient(unsigned int dialogId, ItemLookA
     // Nothing to do here, overloaded in Player
 }
 
-void Character::logAdmin(const std::string &message) {
-}
+void Character::logAdmin(const std::string &message) {}
 
 void Character::updateAppearanceForPlayer(Player *target, bool always) {
     if (!isinvisible) {
@@ -1644,8 +1600,8 @@ void Character::forceUpdateAppearanceForAll() {
     updateAppearanceForAll(true);
 }
 
-void Character::sendCharDescription(TYPE_OF_CHARACTER_ID id,const std::string &desc) {
-    //Nothing to do here, overloaded in Player
+void Character::sendCharDescription(TYPE_OF_CHARACTER_ID id, const std::string &desc) {
+    // Nothing to do here, overloaded in Player
 }
 
 void Character::performAnimation(uint8_t animID) {
@@ -1663,7 +1619,7 @@ auto Character::isNewPlayer() const -> bool {
 }
 
 auto Character::pageGM(const std::string &ticket) -> bool {
-    //Nothing to do here, overloaded in Player
+    // Nothing to do here, overloaded in Player
     return false;
 }
 

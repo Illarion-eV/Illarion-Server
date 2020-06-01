@@ -16,7 +16,6 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #ifndef RANDOM_HPP
 #define RANDOM_HPP
 
@@ -26,6 +25,7 @@ class Random {
 private:
     static std::mt19937 rng;
     Random() = default;
+
 public:
     static auto uniform() -> double;
     static auto uniform(int min, int max) -> int;
@@ -33,4 +33,3 @@ public:
 };
 
 #endif
-

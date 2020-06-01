@@ -16,17 +16,15 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
-#include "map/Field.hpp"
 #include "NewClientView.hpp"
+
 #include "World.hpp"
+#include "map/Field.hpp"
+
 #include <algorithm>
 #include <iostream>
 
-NewClientView::NewClientView()
-    :  viewPosition(position(0, 0, 0))
-      {
-}
+NewClientView::NewClientView() : viewPosition(position(0, 0, 0)) {}
 
 void NewClientView::fillStripe(position pos, stripedirection dir, int length) {
     clearStripe();
@@ -60,10 +58,9 @@ void NewClientView::readFields(int length) {
         } catch (FieldNotFound &) {
         }
 
-        //increase x due to perspective
+        // increase x due to perspective
         pos.x += x_inc;
-        //increase y due to perspective
+        // increase y due to perspective
         ++pos.y;
     }
 }
-

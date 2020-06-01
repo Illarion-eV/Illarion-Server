@@ -20,15 +20,14 @@
 
 #include "data/ScheduledScriptsTable.hpp"
 
-#include <iostream>
-
-#include "db/SelectQuery.hpp"
-#include "db/Result.hpp"
-
 #include "Logger.hpp"
 #include "Random.hpp"
+#include "db/Result.hpp"
+#include "db/SelectQuery.hpp"
 
-ScheduledScriptsTable::ScheduledScriptsTable()  {
+#include <iostream>
+
+ScheduledScriptsTable::ScheduledScriptsTable() {
     reload();
 }
 
@@ -40,25 +39,25 @@ ScheduledScriptsTable::~ScheduledScriptsTable() {
 auto ScheduledScriptsTable::nextCycle() -> bool {
     currentCycle++;
     ScriptData data; /**< holds the current task*/
-    int emexit = 0; /**< emergency counter which breaks the loop if to much execution*/
+    int emexit = 0;  /**< emergency counter which breaks the loop if to much execution*/
 
     while (!m_table.empty() && (emexit < 200) && (m_table.front().nextCycleTime <= currentCycle)) {
         emexit++;
 
-        if (emexit>=200) {
-            break;    /**< emergency exit so we can't create an endless loop */
+        if (emexit >= 200) {
+            break; /**< emergency exit so we can't create an endless loop */
         }
 
         if (!m_table.empty()) {
             data = m_table.front(); /**< copy the first data in data*/
-            m_table.pop_front(); /**< deletes the first task */
+            m_table.pop_front();    /**< deletes the first task */
 
             if (data.scriptptr) {
                 /**calculate the next time where the script is invoked */
                 data.nextCycleTime = currentCycle + Random::uniform(data.minCycleTime, data.maxCycleTime);
 
                 /**call the script function */
-                data.scriptptr->callFunction(data.functionName,currentCycle,data.lastCycleTime,data.nextCycleTime);
+                data.scriptptr->callFunction(data.functionName, currentCycle, data.lastCycleTime, data.nextCycleTime);
 
                 data.lastCycleTime = currentCycle; /**< script was runned and so we can change the lastCycleTime*/
 
@@ -72,7 +71,8 @@ auto ScheduledScriptsTable::nextCycle() -> bool {
 }
 
 auto ScheduledScriptsTable::addData(ScriptData data) -> bool {
-    Logger::debug(LogFacility::Script) << "insert new Task task.nextCycle: " << data.nextCycleTime << " current Cycle: " << currentCycle << Log::end;
+    Logger::debug(LogFacility::Script) << "insert new Task task.nextCycle: " << data.nextCycleTime
+                                       << " current Cycle: " << currentCycle << Log::end;
     bool inserted = false;
 
     if (data.nextCycleTime <= currentCycle) {
@@ -119,11 +119,14 @@ void ScheduledScriptsTable::reload() {
                     tmpRecord.scriptName = row["sc_scriptname"].as<std::string>();
 
                     try {
-                        std::shared_ptr<LuaScheduledScript> tmpScript = std::make_shared<LuaScheduledScript>(tmpRecord.scriptName);
+                        std::shared_ptr<LuaScheduledScript> tmpScript =
+                                std::make_shared<LuaScheduledScript>(tmpRecord.scriptName);
                         tmpRecord.scriptptr = tmpScript;
                         addData(tmpRecord);
                     } catch (const ScriptException &e) {
-                        Logger::error(LogFacility::Script) << "Error while loading scheduled script: " << tmpRecord.scriptName << ": " << e.what() << Log::end;
+                        Logger::error(LogFacility::Script)
+                                << "Error while loading scheduled script: " << tmpRecord.scriptName << ": " << e.what()
+                                << Log::end;
                     }
                 }
             }
@@ -139,4 +142,3 @@ void ScheduledScriptsTable::reload() {
 void ScheduledScriptsTable::clearOldTable() {
     m_table.clear();
 }
-

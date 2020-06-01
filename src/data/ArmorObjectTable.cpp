@@ -25,17 +25,8 @@ auto ArmorObjectTable::getTableName() -> std::string {
 }
 
 auto ArmorObjectTable::getColumnNames() -> std::vector<std::string> {
-    return {
-        "arm_itemid",
-        "arm_bodyparts",
-        "arm_puncture",
-        "arm_stroke",
-        "arm_thrust",
-        "arm_magicdisturbance",
-        "arm_absorb",
-        "arm_stiffness",
-        "arm_type"
-    };
+    return {"arm_itemid",           "arm_bodyparts", "arm_puncture",  "arm_stroke", "arm_thrust",
+            "arm_magicdisturbance", "arm_absorb",    "arm_stiffness", "arm_type"};
 }
 
 auto ArmorObjectTable::assignId(const Database::ResultTuple &row) -> TYPE_OF_ITEM_ID {
@@ -54,4 +45,3 @@ auto ArmorObjectTable::assignTable(const Database::ResultTuple &row) -> ArmorStr
     armor.Type = TYPE_OF_ARMORTYPE(row["arm_type"].as<int16_t>());
     return armor;
 }
-

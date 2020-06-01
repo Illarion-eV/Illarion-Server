@@ -16,29 +16,27 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "map/Field.hpp"
+
+#include "Player.hpp"
+#include "World.hpp"
+#include "data/Data.hpp"
+#include "db/ConnectionManager.hpp"
+#include "db/DeleteQuery.hpp"
+#include "db/InsertQuery.hpp"
+#include "db/Result.hpp"
+#include "db/SelectQuery.hpp"
+#include "db/UpdateQuery.hpp"
+#include "globals.hpp"
+#include "netinterface/protocol/ServerCommands.hpp"
 
 #include <algorithm>
 #include <range/v3/all.hpp>
 
-#include "data/Data.hpp"
-#include "globals.hpp"
-#include "netinterface/protocol/ServerCommands.hpp"
-#include "World.hpp"
-#include "Player.hpp"
-
-#include "db/ConnectionManager.hpp"
-#include "db/DeleteQuery.hpp"
-#include "db/InsertQuery.hpp"
-#include "db/SelectQuery.hpp"
-#include "db/UpdateQuery.hpp"
-#include "db/Result.hpp"
-
 namespace map {
 
-Field::Field(uint16_t tile, uint16_t music, const position &here, bool persistent) :
-        tile(tile), music(music), here(here), persistent(persistent) {
+Field::Field(uint16_t tile, uint16_t music, const position &here, bool persistent)
+        : tile(tile), music(music), here(here), persistent(persistent) {
     if (persistent) {
         loadDatabaseWarp();
         loadDatabaseItems();
@@ -133,7 +131,6 @@ auto Field::addItemOnStack(const Item &item) -> bool {
     return false;
 }
 
-
 auto Field::addItemOnStackIfWalkable(const Item &item) -> bool {
     if (isWalkable()) {
         return addItemOnStack(item);
@@ -141,7 +138,6 @@ auto Field::addItemOnStackIfWalkable(const Item &item) -> bool {
 
     return false;
 }
-
 
 auto Field::takeItemFromStack(Item &item) -> bool {
     if (items.empty()) {
@@ -156,12 +152,11 @@ auto Field::takeItemFromStack(Item &item) -> bool {
     return true;
 }
 
-
 auto Field::increaseItemOnStack(int count, bool &erased) -> int {
     if (items.empty()) {
         return 0;
     }
-    
+
     Item &item = items.back();
     count += item.getNumber();
     auto maxStack = item.getMaxStack();
@@ -183,7 +178,6 @@ auto Field::increaseItemOnStack(int count, bool &erased) -> int {
     updateDatabaseItems();
     return count;
 }
-
 
 auto Field::swapItemOnStack(TYPE_OF_ITEM_ID newId, uint16_t newQuality) -> bool {
     if (items.empty()) {
@@ -208,7 +202,6 @@ auto Field::swapItemOnStack(TYPE_OF_ITEM_ID newId, uint16_t newQuality) -> bool 
     return true;
 }
 
-
 auto Field::viewItemOnStack(Item &item) const -> bool {
     if (items.empty()) {
         return false;
@@ -219,11 +212,9 @@ auto Field::viewItemOnStack(Item &item) const -> bool {
     return true;
 }
 
-
 auto Field::itemCount() const -> MAXCOUNTTYPE {
     return items.size();
 }
-
 
 auto Field::addContainerOnStackIfWalkable(Item item, Container *container) -> bool {
     if (isWalkable()) {
@@ -234,7 +225,7 @@ auto Field::addContainerOnStackIfWalkable(Item item, Container *container) -> bo
                 auto iterat = containers.find(count);
 
                 while ((iterat != containers.end()) && (count < (MAXITEMS - 2))) {
-                    ++count; 
+                    ++count;
                     iterat = containers.find(count);
                 }
 
@@ -295,16 +286,14 @@ auto Field::addContainerOnStack(Item item, Container *container) -> bool {
     return false;
 }
 
-void Field::save(std::ofstream &mapStream, std::ofstream &itemStream,
-                 std::ofstream &warpStream,
+void Field::save(std::ofstream &mapStream, std::ofstream &itemStream, std::ofstream &warpStream,
                  std::ofstream &containerStream) const {
-
-    mapStream.write((char *) & tile, sizeof(tile));
-    mapStream.write((char *) & music, sizeof(music));
-    mapStream.write((char *) & flags, sizeof(flags));
+    mapStream.write((char *)&tile, sizeof(tile));
+    mapStream.write((char *)&music, sizeof(music));
+    mapStream.write((char *)&flags, sizeof(flags));
 
     uint8_t itemsSize = items.size();
-    itemStream.write((char *) & itemsSize, sizeof(itemsSize));
+    itemStream.write((char *)&itemsSize, sizeof(itemsSize));
 
     for (const auto &item : items) {
         item.save(itemStream);
@@ -312,22 +301,21 @@ void Field::save(std::ofstream &mapStream, std::ofstream &itemStream,
 
     if (isWarp()) {
         char b = 1;
-        warpStream.write((char *) & b, sizeof(b));
-        warpStream.write((char *) & warptarget, sizeof(warptarget));
+        warpStream.write((char *)&b, sizeof(b));
+        warpStream.write((char *)&warptarget, sizeof(warptarget));
     } else {
         char b = 0;
-        warpStream.write((char *) & b, sizeof(b));
+        warpStream.write((char *)&b, sizeof(b));
     }
 
     uint8_t containersSize = containers.size();
-    containerStream.write((char *) & containersSize, sizeof(containersSize));
-    
+    containerStream.write((char *)&containersSize, sizeof(containersSize));
+
     for (const auto &container : containers) {
-        containerStream.write((char *) & container.first, sizeof(container.first));
+        containerStream.write((char *)&container.first, sizeof(container.first));
         container.second->Save(containerStream);
     }
 }
-
 
 auto Field::getExportItems() const -> std::vector<Item> {
     std::vector<Item> result;
@@ -350,17 +338,16 @@ auto Field::getExportItems() const -> std::vector<Item> {
     return result;
 }
 
-void Field::load(std::ifstream &mapStream, std::ifstream &itemStream,
-                 std::ifstream &warpStream, std::ifstream &containerStream) {
-
-    mapStream.read((char *) & tile, sizeof(tile));
-    mapStream.read((char *) & music, sizeof(music));
-    mapStream.read((char *) & flags, sizeof(flags));
+void Field::load(std::ifstream &mapStream, std::ifstream &itemStream, std::ifstream &warpStream,
+                 std::ifstream &containerStream) {
+    mapStream.read((char *)&tile, sizeof(tile));
+    mapStream.read((char *)&music, sizeof(music));
+    mapStream.read((char *)&flags, sizeof(flags));
 
     unsetBits(FLAG_NPCONFIELD | FLAG_MONSTERONFIELD | FLAG_PLAYERONFIELD);
 
     MAXCOUNTTYPE size;
-    itemStream.read((char *) & size, sizeof(size));
+    itemStream.read((char *)&size, sizeof(size));
 
     items.clear();
 
@@ -371,15 +358,15 @@ void Field::load(std::ifstream &mapStream, std::ifstream &itemStream,
     }
 
     char isWarp = 0;
-    warpStream.read((char *) & isWarp, sizeof(isWarp));
+    warpStream.read((char *)&isWarp, sizeof(isWarp));
 
     if (isWarp == 1) {
         position target;
-        warpStream.read((char *) & target, sizeof(warptarget));
+        warpStream.read((char *)&target, sizeof(warptarget));
         setWarp(target);
     }
 
-    containerStream.read((char *) & size, sizeof(size));
+    containerStream.read((char *)&size, sizeof(size));
 
     for (auto &container : containers) {
         delete container.second;
@@ -390,10 +377,9 @@ void Field::load(std::ifstream &mapStream, std::ifstream &itemStream,
 
     for (int i = 0; i < size; ++i) {
         MAXCOUNTTYPE key;
-        containerStream.read((char *) & key, sizeof(key));
-        
-        for (const auto &item : items) {
+        containerStream.read((char *)&key, sizeof(key));
 
+        for (const auto &item : items) {
             if (item.isContainer() && item.getNumber() == key) {
                 auto *container = new Container(item.getId());
                 container->Load(containerStream);
@@ -490,7 +476,6 @@ void Field::age() {
 }
 
 void Field::updateFlags() {
-
     unsetBits(FLAG_SPECIALITEM | FLAG_BLOCKPATH | FLAG_MAKEPASSABLE);
 
     if (Data::Tiles.exists(tile)) {
@@ -554,34 +539,28 @@ auto Field::isWarp() const -> bool {
     return anyBitSet(FLAG_WARPFIELD);
 }
 
-
 void Field::setWarp(const position &pos) {
     warptarget = pos;
     setBits(FLAG_WARPFIELD);
     updateDatabaseWarp();
 }
 
-
 void Field::removeWarp() {
     unsetBits(FLAG_WARPFIELD);
     updateDatabaseWarp();
 }
 
-
 void Field::getWarp(position &pos) const {
     pos = warptarget;
 }
-
 
 auto Field::hasSpecialItem() const -> bool {
     return anyBitSet(FLAG_SPECIALITEM);
 }
 
-
 auto Field::isWalkable() const -> bool {
     return !anyBitSet(FLAG_BLOCKPATH) || anyBitSet(FLAG_MAKEPASSABLE);
 }
-
 
 auto Field::moveToPossible() const -> bool {
     return isWalkable() && !anyBitSet(FLAG_MONSTERONFIELD | FLAG_NPCONFIELD | FLAG_PLAYERONFIELD);
@@ -735,7 +714,9 @@ void Field::updateDatabaseItems() const noexcept {
             dataQuery.addServerTable("map_item_data");
 
             uint16_t stackPos = 0;
-            auto nonMovable = ranges::view::filter([](const Item &item) {return not item.isMovable();});
+            auto nonMovable = ranges::view::filter([](const Item &item) {
+                return not item.isMovable();
+            });
 
             ranges::for_each(items | nonMovable, [&](const auto &item) {
                 itemQuery.addValue<int16_t>(xColumn, here.x);
@@ -899,4 +880,4 @@ void updateFieldToPlayersInScreen(const position &pos) {
     }
 }
 
-}
+} // namespace map
