@@ -34,7 +34,7 @@ private:
 
 public:
     explicit Query(const std::string &query);
-    Query(const PConnection connection, const std::string &query);
+    Query(const PConnection &connection, const std::string &query);
     Query(const Query &org) = delete;
     auto operator=(const Query &org) -> Query & = delete;
 
@@ -50,7 +50,7 @@ public:
 
 protected:
     Query();
-    explicit Query(const PConnection connection);
+    explicit Query(const PConnection &connection);
     
     void setQuery(const std::string &query);
     auto getConnection() -> PConnection;

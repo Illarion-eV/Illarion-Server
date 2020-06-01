@@ -159,7 +159,7 @@ private:
     std::mutex commandMutex;
 
 public:
-    void receiveCommand(ClientCommandPointer cmd);
+    void receiveCommand(const ClientCommandPointer &cmd);
 
     void stopAttack() override;
 

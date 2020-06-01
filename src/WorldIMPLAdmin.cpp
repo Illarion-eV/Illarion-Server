@@ -191,7 +191,10 @@ void World::create_command(Player *cp, const std::string &itemid) {
             if (found != string::npos) {
                 std::string key = data.substr(0, int(found));
                 std::string value = data.substr(int(found) + 1);
-                datalog += key + "=" + value + "; ";
+                datalog.append(key);
+                datalog.append("=");
+                datalog.append(value);
+                datalog.append("; ");
                 dataList.push_back(std::make_pair(key, value));
             }
         }

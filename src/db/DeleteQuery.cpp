@@ -30,7 +30,7 @@ DeleteQuery::DeleteQuery() : QueryWhere(*Query::getConnection()) {
     setOnlyOneTable(true);
 }
 
-DeleteQuery::DeleteQuery(const PConnection connection) : Query(connection), QueryWhere(*connection) {
+DeleteQuery::DeleteQuery(const PConnection &connection) : Query(connection), QueryWhere(*connection) {
     setOnlyOneTable(true);
 }
 

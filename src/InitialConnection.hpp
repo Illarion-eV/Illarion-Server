@@ -50,7 +50,7 @@ private:
     boost::asio::io_service io_service;
     std::unique_ptr<boost::asio::ip::tcp::acceptor> acceptor = nullptr;
 
-    void accept_connection(std::shared_ptr<NetInterface> connection,
+    void accept_connection(const std::shared_ptr<NetInterface> &connection,
                            const boost::system::error_code &error);
 
     NewPlayerVector newPlayers;

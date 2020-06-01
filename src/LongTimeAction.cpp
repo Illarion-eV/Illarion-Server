@@ -20,6 +20,7 @@
 #include "LongTimeAction.hpp"
 
 #include <memory>
+#include <utility>
 
 #include "World.hpp"
 #include "Character.hpp"
@@ -36,8 +37,8 @@
 LongTimeAction::LongTimeAction(Player *player, World *world) : _owner(player) , _world(world) {
 }
 
-void LongTimeAction::setLastAction(std::shared_ptr<LuaScript> script, SouTar srce, SouTar trgt, ActionType at) {
-    _script = script;
+void LongTimeAction::setLastAction(std::shared_ptr<LuaScript> script, const SouTar &srce, const SouTar &trgt, ActionType at) {
+    _script = std::move(script);
     _source = srce;
     _target = trgt;
     _at = at;
@@ -330,7 +331,7 @@ void LongTimeAction::changeSource(Character *cc) {
     _sourceCharType = cc->getType();
 }
 
-void LongTimeAction::changeSource(ScriptItem sI) {
+void LongTimeAction::changeSource(const ScriptItem &sI) {
     _source.Type = LUA_ITEM;
     _source.pos = sI.pos;
     _source.item = sI;
@@ -358,7 +359,7 @@ void LongTimeAction::changeTarget(Character *cc) {
     _targetId = cc->getId();
 }
 
-void LongTimeAction::changeTarget(ScriptItem sI) {
+void LongTimeAction::changeTarget(const ScriptItem &sI) {
     _target.Type = LUA_ITEM;
     _target.pos = sI.pos;
     _target.item = sI;

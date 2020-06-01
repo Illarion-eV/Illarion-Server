@@ -22,6 +22,7 @@
 
 #include "Character.hpp"
 #include <memory>
+#include <utility>
 
 class LuaNPCScript;
 
@@ -100,7 +101,7 @@ public:
     * @param script a pointer to a lua script for this npc
     */
     void setScript(std::shared_ptr<LuaNPCScript> script) {
-        _script = script;
+        _script = std::move(script);
     }
 
     /**

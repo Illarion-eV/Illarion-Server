@@ -43,7 +43,7 @@ public:
     };
 
     SelectQuery();
-    explicit SelectQuery(const PConnection connection);
+    explicit SelectQuery(const PConnection &connection);
     SelectQuery(const SelectQuery &org) = delete;
     auto operator=(const SelectQuery &org) -> SelectQuery & = delete;
 

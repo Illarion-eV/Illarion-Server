@@ -29,14 +29,14 @@ using namespace Database;
 Query::Query(): dbConnection(ConnectionManager::getInstance().getConnection()) {
 }
 
-Query::Query(const PConnection connection) {
+Query::Query(const PConnection &connection) {
     dbConnection = connection;
 }
 
 Query::Query(const std::string &query) : Query(ConnectionManager::getInstance().getConnection(), query) {
 }
 
-Query::Query(const PConnection connection, const std::string &query) {
+Query::Query(const PConnection &connection, const std::string &query) {
     dbConnection = connection;
     dbQuery = query;
 }

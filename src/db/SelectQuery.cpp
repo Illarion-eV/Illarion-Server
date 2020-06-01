@@ -31,7 +31,7 @@ SelectQuery::SelectQuery() : QueryWhere(*Query::getConnection()) {
     isDistinct = false;
 }
 
-SelectQuery::SelectQuery(const PConnection connection) : Query(connection), QueryWhere(*connection) {
+SelectQuery::SelectQuery(const PConnection &connection) : Query(connection), QueryWhere(*connection) {
     setOnlyOneTable(false);
     isDistinct = false;
 };

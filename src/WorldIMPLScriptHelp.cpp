@@ -376,7 +376,7 @@ auto World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, const pos
     return sItem;
 }
 
-auto World::createFromItem(ScriptItem item, const position &pos, bool always) -> bool {
+auto World::createFromItem(const ScriptItem &item, const position &pos, bool always) -> bool {
     g_item = static_cast<Item>(item);
     g_cont = nullptr;
 

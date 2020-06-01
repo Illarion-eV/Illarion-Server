@@ -69,7 +69,7 @@ auto Config::load(const std::string &config_file) -> bool {
         }
     }
 
-    for (auto item : config_options) {
+    for (const auto &item : config_options) {
         if (!item.second->isInitialized()) {
             std::ostringstream msg;
             msg << "Config entry missing for key: " << item.first << " using default value: " << *(item.second);

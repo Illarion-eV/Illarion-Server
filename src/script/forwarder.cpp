@@ -201,7 +201,7 @@ auto character_getItemList(const Character *character, TYPE_OF_ITEM_ID id) -> lu
 
     int index = 1;
 
-    for (auto item : content) {
+    for (const auto &item : content) {
         list[index++] = item;
     }
 

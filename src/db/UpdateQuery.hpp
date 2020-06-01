@@ -36,7 +36,7 @@ namespace Database {
 class UpdateQuery : Query, public QueryAssign, public QueryTables, public QueryWhere {
 public:
     UpdateQuery();
-    explicit UpdateQuery(const PConnection connection);
+    explicit UpdateQuery(const PConnection &connection);
     UpdateQuery(const UpdateQuery &org) = delete;
     auto operator=(const UpdateQuery &org) -> UpdateQuery & = delete;
 

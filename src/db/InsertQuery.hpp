@@ -47,7 +47,7 @@ public:
     static const uint32_t FILL = UINT32_C(0xFFFFFFFF);
 
     InsertQuery();
-    explicit InsertQuery(const PConnection connection);
+    explicit InsertQuery(const PConnection &connection);
     InsertQuery(const InsertQuery &org) = delete;
     auto operator=(const InsertQuery &org) -> InsertQuery & = delete;
     virtual ~InsertQuery();

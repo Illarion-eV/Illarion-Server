@@ -51,7 +51,7 @@ void Player::checkFightMode() {
     }
 }
 
-void Player::receiveCommand(ClientCommandPointer cmd) {
+void Player::receiveCommand(const ClientCommandPointer &cmd) {
 	bool notify = false;
 	{
 		std::unique_lock<std::mutex> lock(commandMutex);

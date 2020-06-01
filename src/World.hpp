@@ -836,7 +836,7 @@ public:
     //\ param item, das Item was erzeugt werden soll
     //\ param pos, Position des Items
     //\ return bool Wert der angibt ob das Erstellen geklappt hat.
-    auto createFromItem(ScriptItem item, const position &pos, bool always) -> bool;
+    auto createFromItem(const ScriptItem &item, const position &pos, bool always) -> bool;
 
     //Erzeugt ein Monster mit der entsprechenden ID auf dem Feld
     //\ param id, das Monster welches Erzeugt werden soll

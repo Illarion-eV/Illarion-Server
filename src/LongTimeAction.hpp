@@ -86,7 +86,7 @@ public:
     *@param trgt the target object for the last action so we can determine if it was an item at which pos etc
     *@param at the type of action lastly performed (cast or use)
     */
-    void setLastAction(std::shared_ptr<LuaScript> script, SouTar srce, SouTar trgt, ActionType at);
+    void setLastAction(std::shared_ptr<LuaScript> script, const SouTar &srce, const SouTar &trgt, ActionType at);
 
     /**
     *starts an long time action which is aborted if the player talks, is attacked ....
@@ -108,7 +108,7 @@ public:
     *changes the source of the last action.
     *@param sI source is a item the new item
     */
-    void changeSource(ScriptItem sI);
+    void changeSource(const ScriptItem &sI);
 
     /**
     *changes the Source of the last action.
@@ -131,7 +131,7 @@ public:
     *changes the Target of the last action.
     *@param sI target is a item the new item
     */
-    void changeTarget(ScriptItem sI);
+    void changeTarget(const ScriptItem &sI);
 
     /**
     *changes the target of the last action.

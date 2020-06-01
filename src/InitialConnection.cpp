@@ -58,7 +58,7 @@ void InitialConnection::run_service() {
 }
 
 void
-InitialConnection::accept_connection(std::shared_ptr<NetInterface> connection,
+InitialConnection::accept_connection(const std::shared_ptr<NetInterface> &connection,
                                      const boost::system::error_code &error) {
     if (!error) {
         if (connection->activate()) {
