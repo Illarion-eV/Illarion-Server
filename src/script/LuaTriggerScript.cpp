@@ -23,7 +23,7 @@
 #include "character_ptr.hpp"
 
 LuaTriggerScript::LuaTriggerScript()
-    : LuaScript() {
+     {
     init_functions();
 }
 

@@ -26,7 +26,7 @@
 
 InputDialog::InputDialog(const string &title, string description, bool multiline,
                          unsigned short maxChars, const luabind::object &callback)
-    :Dialog(title, "InputDialog", callback), description(std::move(description)), multiline(multiline), maxChars(maxChars), input() {
+    :Dialog(title, "InputDialog", callback), description(std::move(description)), multiline(multiline), maxChars(maxChars) {
     success = false;
 }
 

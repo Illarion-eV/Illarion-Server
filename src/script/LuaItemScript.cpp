@@ -26,7 +26,7 @@
 #include "Item.hpp"
 #include "Character.hpp"
 
-LuaItemScript::LuaItemScript() : LuaScript() {
+LuaItemScript::LuaItemScript()  {
     init_functions();
 }
 

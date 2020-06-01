@@ -30,7 +30,7 @@ namespace map {
 
 Map::Map(std::string name, position origin, uint16_t width, uint16_t height)
     : origin(origin), width(width), height(height),
-      fields(),
+      
       name(std::move(name)) {
     for (auto x = origin.x; x < origin.x + width; ++x) {
         std::vector<Field> column;

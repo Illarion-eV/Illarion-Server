@@ -25,7 +25,7 @@
 #include "character_ptr.hpp"
 
 LuaMonsterScript::LuaMonsterScript()
-    : LuaScript() {
+     {
 }
 
 LuaMonsterScript::LuaMonsterScript(const std::string &filename)
