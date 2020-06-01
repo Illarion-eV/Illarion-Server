@@ -37,8 +37,8 @@ struct ScriptData {
     uint32_t maxCycleTime;
     uint32_t nextCycleTime;
     uint32_t lastCycleTime;
-    std::string functionName{""};
-    std::string scriptName{""};
+    std::string functionName;
+    std::string scriptName;
     std::shared_ptr<LuaScheduledScript>scriptptr;
 
     ScriptData() {

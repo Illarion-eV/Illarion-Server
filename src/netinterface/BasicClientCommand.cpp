@@ -103,7 +103,7 @@ auto BasicClientCommand::getUnsignedCharFromBuffer() -> unsigned char {
 auto BasicClientCommand::getStringFromBuffer() -> std::string {
     unsigned short int len = getShortIntFromBuffer();
 
-    std::string ret = "";
+    std::string ret;
 
     for (int i = 0; i < len; ++i) {
         ret.append(1, getUnsignedCharFromBuffer());

@@ -578,7 +578,7 @@ void World::who_command(Player *cp, const std::string &tplayer) {
 
     if (tplayer == "") {
 
-        std::string tmessage = "";
+        std::string tmessage;
 
         Players.for_each([&tmessage](Player *p) {
             if (tmessage.length() > 0) {

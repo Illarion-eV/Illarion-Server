@@ -198,7 +198,7 @@ auto LuaScript::add_backtrace(lua_State *L) -> int {
     }
 
     if (level == 1) { // do not mind if an entry point is missing
-        std::string empty = "";
+        std::string empty;
         lua_pushstring(L, empty.c_str());
     } else {
         lua_pushstring(L, msg.str().c_str());

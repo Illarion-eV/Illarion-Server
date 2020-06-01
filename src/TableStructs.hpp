@@ -44,11 +44,11 @@ struct ItemStruct {
     TYPE_OF_MAX_STACK MaxStack = 1;
     TYPE_OF_BUY_STACK BuyStack = 1;
     bool rotsInInventory = false;
-    TYPE_OF_ENGLISH serverName = "";
-    TYPE_OF_ENGLISH English = "";
-    TYPE_OF_GERMAN German = "";
-    TYPE_OF_ENGLISH EnglishDescription = "";
-    TYPE_OF_GERMAN GermanDescription = "";
+    TYPE_OF_ENGLISH serverName;
+    TYPE_OF_ENGLISH English;
+    TYPE_OF_GERMAN German;
+    TYPE_OF_ENGLISH EnglishDescription;
+    TYPE_OF_GERMAN GermanDescription;
     int16_t Rareness = 1;
     TYPE_OF_ITEMLEVEL Level = 0;
 
@@ -63,8 +63,8 @@ struct TilesModificatorStruct {
 
 struct LongTimeEffectStruct {
     uint16_t effectid;
-    std::string effectname{""};
-    std::string scriptname{""};
+    std::string effectname;
+    std::string scriptname;
     std::shared_ptr<LuaLongTimeEffectScript> script;
     LongTimeEffectStruct() {
         effectid = 0;
