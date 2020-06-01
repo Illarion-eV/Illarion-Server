@@ -46,8 +46,10 @@ template<typename clock_type>
 void ClockBasedScheduler<clock_type>::addRecurringTask(std::function<void()> task, std::chrono::nanoseconds interval, const std::string& taskname, bool start_immediately) {
 	std::unique_lock<std::mutex> lock(_container_mutex);
 	typename clock_type::time_point start_time = clock_type::now();
-	if (!start_immediately)
+	if (!start_immediately) {
 		start_time += std::chrono::duration_cast<typename clock_type::duration>(interval);
+    }
+
 	_tasks.emplace(task, start_time, interval, taskname);
 }
 
@@ -66,8 +68,11 @@ void ClockBasedScheduler<clock_type>::signalNewPlayerAction() {
 template<typename clock_type>
 void ClockBasedScheduler<clock_type>::run_once(std::chrono::nanoseconds max_timeout) {
 	auto next_action_time = getNextTaskTime();
-	if (next_action_time > max_timeout)
+	if (next_action_time > max_timeout) {
 		next_action_time = max_timeout;
+
+    }
+
 	{
 		std::unique_lock<std::mutex> lock(_new_action_signal_mutex);
 		_new_action_available_cond.wait_for(lock, next_action_time);
@@ -79,8 +84,9 @@ void ClockBasedScheduler<clock_type>::run_once(std::chrono::nanoseconds max_time
 template<typename clock_type>
 auto ClockBasedScheduler<clock_type>::getNextTaskTime() -> std::chrono::nanoseconds {
 	std::unique_lock<std::mutex> lock(_container_mutex);
-	if (_tasks.empty())
+	if (_tasks.empty()) {
 		return std::chrono::nanoseconds::max();
+    }
 
 	return _tasks.top().getNextTime() - clock_type::now();
 }
@@ -98,8 +104,9 @@ void ClockBasedScheduler<clock_type>::execute_tasks() {
 		bool runResult = task.run();
 
 		lock.lock();
-		if (runResult)
+		if (runResult) {
 			_tasks.push(task);
+        }
 	}
 }
 

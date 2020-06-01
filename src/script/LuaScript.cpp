@@ -110,11 +110,17 @@ void LuaScript::loadIntoLuaState() {
 
     int errorCode = luaL_loadfile(_luaState, luafile.c_str());
     handleLuaLoadError(errorCode);
-    if (errorCode != 0) return;
+
+    if (errorCode != 0) {
+        return;
+    }
 
     errorCode = lua_pcall(_luaState, 0, 1, 0);
     handleLuaCallError(errorCode);
-    if (errorCode != 0) return;
+    
+    if (errorCode != 0) {
+        return;
+    }
 
     lua_setfield(_luaState, -2, _filename.c_str());
     lua_pop(_luaState, 1);

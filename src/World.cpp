@@ -179,13 +179,15 @@ void World::checkPlayers() {
 void World::checkPlayerImmediateCommands() {
     std::unique_lock<std::mutex> lock(immediatePlayerCommandsMutex);
     while (!immediatePlayerCommands.empty()) {
-	auto *player = immediatePlayerCommands.front();
-	immediatePlayerCommands.pop();
-	lock.unlock();
+        auto *player = immediatePlayerCommands.front();
+        immediatePlayerCommands.pop();
+        lock.unlock();
 
-        if (player->Connection->online)
-		player->workoutCommands();
-	lock.lock();
+        if (player->Connection->online) {
+            player->workoutCommands();
+        }
+
+        lock.lock();
     }
 }
 
@@ -615,8 +617,10 @@ static auto getNextIGDayTime() -> std::chrono::steady_clock::time_point {
     // next day is at ((current unix timestamp - 950742000 + (is_dst?3600:0)) / 28800 + 1) * 28800
     time_t curr_unixtime = time(nullptr);
     struct tm *timestamp = localtime(&curr_unixtime);
-    if (timestamp->tm_isdst != 0)
-	    curr_unixtime += 3600;
+    if (timestamp->tm_isdst != 0) {
+        curr_unixtime += 3600;
+    }
+
     curr_unixtime -= 950742000; // begin of illarion time, 17.2.2000
     curr_unixtime -= curr_unixtime % 28800;
     curr_unixtime += 28800;

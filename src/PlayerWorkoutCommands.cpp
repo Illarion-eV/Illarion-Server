@@ -59,8 +59,10 @@ void Player::receiveCommand(const ClientCommandPointer &cmd) {
 			immediateCommands.push(cmd);
 			notify = true;
 		} else {
-			if (getActionPoints() > cmd->getMinAP() && queuedCommands.empty())
+			if (getActionPoints() > cmd->getMinAP() && queuedCommands.empty()) {
 				notify = true;
+            }
+
 			queuedCommands.push(cmd);
 		}
 	}

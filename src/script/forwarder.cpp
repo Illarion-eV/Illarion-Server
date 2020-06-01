@@ -13,8 +13,9 @@
 auto convert_to_map(const luabind::object &data) -> std::shared_ptr<script_data_exchangemap> {
     auto mapType = luabind::type(data);
 
-    if (mapType == LUA_TNIL)
+    if (mapType == LUA_TNIL) {
         return {};
+    }
 
     if (mapType != LUA_TTABLE) {
         throw std::logic_error("Usage of invalid data map type. Data maps must be tables or nil.");

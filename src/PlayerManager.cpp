@@ -115,8 +115,9 @@ void PlayerManager::loginLoop(PlayerManager *pmanager) {
 			    }
 
 			    // TODO is this check really necessary?
-			    if (loginData->getLoginName() == "" || loginData->getPassword() == "")
+			    if (loginData->getLoginName() == "" || loginData->getPassword() == "") {
 				    throw Player::LogoutException(WRONGPWD);
+                }
 
 			    // player already online?
 			    if ((World::get()->Players.find(loginData->getLoginName()) != nullptr) || PlayerManager::get().findPlayer(loginData->getLoginName())) {

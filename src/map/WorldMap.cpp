@@ -78,7 +78,9 @@ auto WorldMap::at(const position &pos) const -> const Field & {
 }
 
 auto WorldMap::insert(Map&& newMap) -> bool {
-    if (intersects(newMap)) return false;
+    if (intersects(newMap)) {
+        return false;
+    }
 
     maps.push_back(std::move(newMap));
 
@@ -341,8 +343,13 @@ auto WorldMap::importFromEditor() -> bool {
     std::string importDir = Config::instance().datadir() + std::string(MAPDIR) + "import/";
 
     for (std::filesystem::recursive_directory_iterator end, it(importDir); it != end; ++it) {
-        if (!std::filesystem::is_regular_file(it->status())) continue;
-        if (!std::regex_match(it->path().filename().string(), tilesFilter)) continue;
+        if (!std::filesystem::is_regular_file(it->status())) {
+            continue;
+        }
+
+        if (!std::regex_match(it->path().filename().string(), tilesFilter)) {
+            continue;
+        }
     
         std::string map = it->path().string();
         
