@@ -184,7 +184,7 @@ void loadData() {
 struct sigaction act_segv, act_segv_o , act_pipe, act_pipe_o, act_term, act_term_o, act_usr;
 
 // signal handler for SIGTERM
-void sig_term(int) {
+void sig_term(int /*unused*/) {
     Logger::info(LogFacility::Other) << "SIGTERM received!" << Log::end;
     //  ignore signal
     act_term.sa_handler = SIG_IGN;
@@ -198,7 +198,7 @@ void sig_term(int) {
 }
 
 // signal handler for SIGSEGV
-void sig_segv(int) {
+void sig_segv(int /*unused*/) {
     Logger::error(LogFacility::Other) << "SIGSEGV received! Last Script: " << World::get()->currentScript->getFileName() << Log::end;
     // ignore signal
     act_segv.sa_handler = SIG_IGN;
@@ -209,7 +209,7 @@ void sig_segv(int) {
 }
 
 // signal handler for SIGUSR1 - Used to reload maps
-void sig_usr(int) {
+void sig_usr(int /*unused*/) {
     Logger::info(LogFacility::World) << "SIGUSR received! Importing new maps." << Log::end;
     act_usr.sa_handler = sig_usr;
 

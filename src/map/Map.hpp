@@ -50,8 +50,8 @@ public:
 
     auto at(int16_t x, int16_t y) -> Field &;
     [[nodiscard]] auto at(int16_t x, int16_t y) const -> const Field &;
-    auto at(const MapPosition &) -> Field &;
-    [[nodiscard]] auto at(const MapPosition &) const -> const Field &;
+    auto at(const MapPosition & /*pos*/) -> Field &;
+    [[nodiscard]] auto at(const MapPosition & /*pos*/) const -> const Field &;
 
     void age();
 

@@ -72,7 +72,7 @@ public:
     }
 
     template<typename T>
-    inline auto operator<<(const T &) -> NullStream & {
+    inline auto operator<<(const T & /*unused*/) -> NullStream & {
         return *this;
     }
 };
@@ -93,7 +93,7 @@ public:
         return *this;
     }
 
-    auto operator<<(const Log::end_t &) -> LogStream & {
+    auto operator<<(const Log::end_t & /*unused*/) -> LogStream & {
         log_message(priority, _facility, _ss.str());
         _ss.str( {});
         return *this;

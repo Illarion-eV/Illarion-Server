@@ -64,7 +64,7 @@ public:
     ~NetInterface();
 
     void closeConnection(); /*<closes the connection to the client*/
-    auto activate(Player* = nullptr) -> bool; /*<activates the connection starts the sending and receiving threads, if player == nullptr only login command is accepted and processing stops afterwards*/
+    auto activate(Player*  /*player*/= nullptr) -> bool; /*<activates the connection starts the sending and receiving threads, if player == nullptr only login command is accepted and processing stops afterwards*/
     auto nextInactive() -> bool;
 
     /**

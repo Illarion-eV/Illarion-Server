@@ -30,7 +30,7 @@ class Character;
 class LuaMagicScript : public LuaScript {
 
 public:
-    LuaMagicScript(const std::string &filename, const SpellStruct &);
+    LuaMagicScript(const std::string &filename, const SpellStruct & /*unused*/);
     ~LuaMagicScript() override;
     LuaMagicScript(const LuaMagicScript &) = delete;
     auto operator=(const LuaMagicScript &) -> LuaMagicScript & = delete;

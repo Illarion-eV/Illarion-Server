@@ -29,7 +29,7 @@ class ConfigEntryBase {
 public:
     explicit ConfigEntryBase(const std::string &config_name);
 
-    friend auto operator>>(std::istream &is, ConfigEntryBase &) -> std::istream &;
+    friend auto operator>>(std::istream &is, ConfigEntryBase & /*config_entry*/) -> std::istream &;
     virtual void read(std::istream &is) = 0;
     virtual void write(std::ostream &os) const= 0;
 

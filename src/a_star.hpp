@@ -137,8 +137,8 @@ private:
 struct astar_ex_visitor: public boost::default_astar_visitor {
     explicit astar_ex_visitor(Position goal);
 
-    void examine_vertex(const Position &u, const world_map_graph &);
-    void discover_vertex(const Position &u, const world_map_graph &);
+    void examine_vertex(const Position &u, const world_map_graph & /*unused*/);
+    void discover_vertex(const Position &u, const world_map_graph & /*unused*/);
 
 private:
     Position goal;

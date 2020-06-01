@@ -174,14 +174,14 @@ auto vertex_index_hash::operator[](key_type const &k) -> mapped_type & {
 astar_ex_visitor::astar_ex_visitor(Position goal): goal(std::move(goal)) {
 }
 
-void astar_ex_visitor::examine_vertex(const Position &u, const world_map_graph &) {
+void astar_ex_visitor::examine_vertex(const Position &u, const world_map_graph & /*unused*/) {
     if (u == goal) {
         Logger::debug(LogFacility::Other) << "[PATH FINDING] Path found in astar_ex_visitor!" << Log::end;
         throw found_goal();
     }
 }
 
-void astar_ex_visitor::discover_vertex(const Position &u, const world_map_graph &) {
+void astar_ex_visitor::discover_vertex(const Position &u, const world_map_graph & /*unused*/) {
     ++node_counter;
 
     if (node_counter > 400) {

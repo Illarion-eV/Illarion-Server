@@ -165,7 +165,7 @@ public:
         inside = nullptr;
     }
 
-    auto getLookAt(Character *) const -> ItemLookAt;
+    auto getLookAt(Character * /*character*/) const -> ItemLookAt;
 
     auto operator==(const ScriptItem& rhs) const -> bool;
 };

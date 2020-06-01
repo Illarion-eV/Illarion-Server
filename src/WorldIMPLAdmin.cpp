@@ -63,16 +63,16 @@ extern std::unique_ptr<MonsterTable> monsterDescriptions;
 extern std::unique_ptr<ScheduledScriptsTable> scheduledScripts;
 extern std::shared_ptr<LuaWeaponScript> standardFightingScript;
 
-void set_spawn_command(World *, Player *, const std::string &);
-void create_area_command(World *, Player *, const std::string &);
+void set_spawn_command(World * /*world*/, Player * /*player*/, const std::string & /*in*/);
+void create_area_command(World * /*world*/, Player * /*player*/, const std::string & /*params*/);
 void set_login(World *, Player *, const std::string &);
 
 // register any gm commands here...
 void World::InitGMCommands() {
 
-    GMCommands["what"] = [](World *world, Player *player, const std::string &) -> bool { world->what_command(player); return true; };
+    GMCommands["what"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool { world->what_command(player); return true; };
 
-    GMCommands["?"] = [](World *world, Player *player, const std::string &) -> bool { world->gmhelp_command(player); return true; };
+    GMCommands["?"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool { world->gmhelp_command(player); return true; };
 
     GMCommands["warp_to"] = [](World *world, Player *player, const std::string &text) -> bool { world->warpto_command(player, text); return true; };
     GMCommands["w"] = GMCommands["warp_to"];
@@ -90,15 +90,15 @@ void World::InitGMCommands() {
 
     GMCommands["turtleon"] = [](World *world, Player *player, const std::string &text) -> bool { world->turtleon_command(player, text); return true; };
     GMCommands["ton"] = GMCommands["turtleon"];
-    GMCommands["turtleoff"] = [](World *world, Player *player, const std::string &) -> bool { world->turtleoff_command(player); return true; };
+    GMCommands["turtleoff"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool { world->turtleoff_command(player); return true; };
     GMCommands["toff"] = GMCommands["turtleoff"];
 
-    GMCommands["clippingon"] = [](World *world, Player *player, const std::string &) -> bool { world->clippingon_command(player); return true; };
+    GMCommands["clippingon"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool { world->clippingon_command(player); return true; };
     GMCommands["con"] = GMCommands["clippingon"];
-    GMCommands["clippingoff"] = [](World *world, Player *player, const std::string &) -> bool { world->clippingoff_command(player); return true; };
+    GMCommands["clippingoff"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool { world->clippingoff_command(player); return true; };
     GMCommands["coff"] = GMCommands["clippingoff"];
 
-    GMCommands["playersave"] = [](World *world, Player *player, const std::string &) -> bool { world->playersave_command(player); return true; };
+    GMCommands["playersave"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool { world->playersave_command(player); return true; };
     GMCommands["ps"] = GMCommands["playersave"];
 
     GMCommands["add_teleport"] = [](World *world, Player *player, const std::string &text) -> bool { world->teleport_command(player, text); return true; };
@@ -111,15 +111,15 @@ void World::InitGMCommands() {
 
     GMCommands["forceintroduce"] = [](World *world, Player *player, const std::string &text) -> bool { world->ForceIntroduce(player, text); return true; };
     GMCommands["fi"] = GMCommands["forceintroduce"];
-    GMCommands["forceintroduceall"] = [](World *world, Player *player, const std::string &) -> bool { world->ForceIntroduceAll(player); return true; };
+    GMCommands["forceintroduceall"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool { world->ForceIntroduceAll(player); return true; };
     GMCommands["fia"] = GMCommands["forceintroduceall"];
 
-    GMCommands["exportmaps"] = [](World *world, Player *player, const std::string &) -> bool { return world->exportMaps(player); };
+    GMCommands["exportmaps"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool { return world->exportMaps(player); };
 
-    GMCommands["makeinvisible"] = [](World *world, Player *player, const std::string &) -> bool { world->makeInvisible(player); return true; };
+    GMCommands["makeinvisible"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool { world->makeInvisible(player); return true; };
     GMCommands["mi"] = GMCommands["makeinvisible"];
 
-    GMCommands["makevisible"] = [](World *world, Player *player, const std::string &) -> bool { world->makeVisible(player); return true; };
+    GMCommands["makevisible"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool { world->makeVisible(player); return true; };
     GMCommands["mv"] = GMCommands["makevisible"];
 
     GMCommands["showwarpfields"] = [](World *world, Player *player, const std::string &text) -> bool { world->showWarpFieldsInRange(player, text); return true; };
@@ -129,12 +129,12 @@ void World::InitGMCommands() {
     GMCommands["talkto"] = [](World *world, Player *player, const std::string &text) -> bool { world->talkto_command(player, text); return true; };
     GMCommands["tt"] = GMCommands["talkto"];
 
-    GMCommands["nuke"] = [](World *world, Player *player, const std::string &) -> bool { world->kill_command(player); return true; };
+    GMCommands["nuke"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool { world->kill_command(player); return true; };
 
-    GMCommands["fullreload"] = [](World *world, Player *player, const std::string &) -> bool { world->reload_command(player); return true; };
+    GMCommands["fullreload"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool { world->reload_command(player); return true; };
     GMCommands["fr"] = GMCommands["fullreload"];
 
-    GMCommands["mapsave"] = [](World *world, Player *player, const std::string &) -> bool { world->save_command(player); return true; };
+    GMCommands["mapsave"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool { world->save_command(player); return true; };
 
     GMCommands["jumpto"] = [](World *world, Player *player, const std::string &text) -> bool { world->jumpto_command(player, text); return true; };
     GMCommands["j"] = GMCommands["jumpto"];
@@ -142,13 +142,13 @@ void World::InitGMCommands() {
     GMCommands["broadcast"] = [](World *world, Player *player, const std::string &text) -> bool { world->broadcast_command(player, text); return true; };
     GMCommands["bc"] = GMCommands["broadcast"];
 
-    GMCommands["kickall"] = [](World *world, Player *player, const std::string &) -> bool { world->kickall_command(player); return true; };
+    GMCommands["kickall"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool { world->kickall_command(player); return true; };
     GMCommands["ka"] = GMCommands["kickall"];
 
     GMCommands["kick"] = [](World *world, Player *player, const std::string &text) -> bool { world->kickplayer_command(player, text); return true; };
     GMCommands["k"] = GMCommands["kick"];
 
-    GMCommands["showips"] = [](World *world, Player *player, const std::string &) -> bool { world->showIPS_Command(player); return true; };
+    GMCommands["showips"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool { world->showIPS_Command(player); return true; };
     GMCommands["create"] = [](World *world, Player *player, const std::string &text) -> bool { world->create_command(player, text); return true; };
 
     GMCommands["spawn"] = [](World *world, Player *player, const std::string &text) -> bool { world->spawn_command(player, text); return true; };

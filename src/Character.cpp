@@ -1433,7 +1433,7 @@ void Character::receiveText(talk_type tt, const std::string &message, Character 
     // overloaded where necessary
 }
 
-void Character::introducePlayer(Player *) {
+void Character::introducePlayer(Player * /*unused*/) {
     // overloaded in Player
 }
 
@@ -1485,7 +1485,7 @@ void Character::inform(const std::string &message, informType type) const {
     // override for char types that need this kind of information
 }
 
-void Character::inform(const std::string &, const std::string &, informType type) const {
+void Character::inform(const std::string & /*unused*/, const std::string & /*unused*/, informType type) const {
     // override for char types that need this kind of information
 }
 

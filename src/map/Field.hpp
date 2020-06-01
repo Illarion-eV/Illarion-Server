@@ -113,9 +113,9 @@ public:
 
 private:
     void updateFlags();
-    inline void setBits(uint8_t);
-    inline void unsetBits(uint8_t);
-    [[nodiscard]] inline auto anyBitSet(uint8_t) const -> bool;
+    inline void setBits(uint8_t /*bits*/);
+    inline void unsetBits(uint8_t /*bits*/);
+    [[nodiscard]] inline auto anyBitSet(uint8_t /*bits*/) const -> bool;
 
     void insertIntoDatabase() const noexcept;
     void removeFromDatabase() const noexcept;

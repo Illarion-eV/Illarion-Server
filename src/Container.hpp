@@ -58,7 +58,7 @@ public:
     auto InsertContainer(const Item &item, Container *cc, TYPE_OF_CONTAINERSLOTS pos) -> bool;
     auto mergeItem(Item item) -> Item::number_type;
     auto InsertItem(Item item, bool merge) -> bool;
-    auto InsertItem(Item item, TYPE_OF_CONTAINERSLOTS) -> bool;
+    auto InsertItem(Item item, TYPE_OF_CONTAINERSLOTS /*pos*/) -> bool;
     auto InsertItem(const Item &item) -> bool;
 
     void Save(std::ofstream &where);
