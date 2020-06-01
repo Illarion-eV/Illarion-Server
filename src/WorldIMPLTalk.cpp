@@ -145,7 +145,9 @@ void World::broadcast(const std::string &german, const std::string &english) {
 void World::sendMessageToAllCharsInRange(const std::string &german, const std::string &english, Character::talk_type tt,
                                          Character *cc) {
     auto range = getTalkRange(tt);
-    std::string spokenMessage_german, spokenMessage_english, tempMessage;
+    std::string spokenMessage_german;
+    std::string spokenMessage_english;
+    std::string tempMessage;
     bool is_action = german.substr(0, 3) == "#me";
 
     if (!is_action) {
@@ -198,7 +200,8 @@ void World::sendLanguageMessageToAllCharsInRange(const std::string &message, Cha
     std::vector<Monster *> monsters = Monsters.findAllCharactersInRangeOf(cc->getPosition(), range);
 
     // alter message because of the speakers inability to speak...
-    std::string spokenMessage, tempMessage;
+    std::string spokenMessage;
+    std::string tempMessage;
     spokenMessage = cc->alterSpokenMessage(message, cc->getLanguageSkill(cc->getActiveLanguage()));
 
     // tell all OTHER players... (but tell them what they understand due to their inability to do so)

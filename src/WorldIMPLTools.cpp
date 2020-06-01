@@ -620,7 +620,12 @@ void World::Load() {
 void World::import() { maps.importFromEditor(); }
 
 auto World::getTime(const std::string &timeType) -> int {
-    int minute, hour, day, month, year, illaTime;
+    int minute;
+    int hour;
+    int day;
+    int month;
+    int year;
+    int illaTime;
     time_t curr_unixtime;
     struct tm *timestamp;
 

@@ -16,12 +16,11 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "Player.hpp"
-
 #include "Config.hpp"
 #include "Logger.hpp"
 #include "LongTimeAction.hpp"
 #include "MonitoringClients.hpp"
+#include "Player.hpp"
 #include "PlayerManager.hpp"
 #include "Random.hpp"
 #include "SchedulerTaskClasses.hpp"
@@ -1325,7 +1324,8 @@ auto Player::loadGMFlags() noexcept -> bool {
 }
 
 auto Player::load() noexcept -> bool {
-    std::map<int, Container *> depots, containers;
+    std::map<int, Container *> depots;
+    std::map<int, Container *> containers;
     std::map<int, Container *>::iterator it;
 
     bool dataOK = true;
@@ -1804,7 +1804,8 @@ auto Player::move(direction dir, uint8_t mode) -> bool {
         steps = 2;
     }
 
-    position newpos, oldpos;
+    position newpos;
+    position oldpos;
     TYPE_OF_WALKINGCOST walkcost = 0;
 
     while (j < steps && cont) {
@@ -2217,7 +2218,8 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
 
     if ((screenwidth == 0) && (screenheight == 0)) {
         // static view
-        int x = {}, y = {};
+        int x = {};
+        int y = {};
         NewClientView::stripedirection dir = {};
         int length = MAP_DIMENSION + 1;
 
@@ -2290,7 +2292,8 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
         }
     } else {
         // dynamic view
-        int x = {}, y = {};
+        int x = {};
+        int y = {};
         NewClientView::stripedirection dir = {};
         int length = {};
 

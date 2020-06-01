@@ -1197,7 +1197,12 @@ void create_area_command(World *world, Player *player, const std::string &params
     }
 
     std::stringstream ss(params);
-    int x, y, z, w, h, tile;
+    int x;
+    int y;
+    int z;
+    int w;
+    int h;
+    int tile;
     x = y = z = w = h = tile = -65535;
     ss >> x;
     ss >> y;

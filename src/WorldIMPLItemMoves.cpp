@@ -679,7 +679,8 @@ void World::dropItemFromShowcaseOnMap(Player *cp, uint8_t showcase, unsigned cha
     }
 
     if (takeItemFromShowcase(cp, showcase, pos, count)) {
-        ScriptItem s_item(g_item), t_item(g_item);
+        ScriptItem s_item(g_item);
+        ScriptItem t_item(g_item);
         s_item.pos = cp->getPosition();
         s_item.itempos = pos;
         s_item.type = ScriptItem::it_container;
@@ -727,7 +728,8 @@ void World::moveItemFromShowcaseToPlayer(Player *cp, uint8_t showcase, unsigned 
     }
 
     if (takeItemFromShowcase(cp, showcase, pos, count)) {
-        ScriptItem s_item(g_item), t_item(g_item);
+        ScriptItem s_item(g_item);
+        ScriptItem t_item(g_item);
         s_item.pos = cp->getPosition();
         s_item.itempos = pos;
         s_item.type = ScriptItem::it_container;
@@ -795,7 +797,8 @@ void World::dropItemFromPlayerOnMap(Player *cp, unsigned char cpos, const positi
     }
 
     if (takeItemFromInvPos(cp, cpos, count)) {
-        ScriptItem s_item(g_item), t_item(g_item);
+        ScriptItem s_item(g_item);
+        ScriptItem t_item(g_item);
         s_item.pos = cp->getPosition();
 
         if (cpos < MAX_BODY_ITEMS) {
@@ -847,7 +850,8 @@ void World::moveItemBetweenBodyParts(Player *cp, unsigned char opos, unsigned ch
     }
 
     if (takeItemFromInvPos(cp, opos, count)) {
-        ScriptItem s_item(g_item), t_item(g_item);
+        ScriptItem s_item(g_item);
+        ScriptItem t_item(g_item);
         s_item.owner = cp;
         s_item.pos = cp->getPosition();
 
@@ -905,7 +909,8 @@ void World::moveItemFromPlayerIntoShowcase(Player *cp, unsigned char cpos, uint8
     }
 
     if (takeItemFromInvPos(cp, cpos, count)) {
-        ScriptItem s_item(g_item), t_item(g_item);
+        ScriptItem s_item(g_item);
+        ScriptItem t_item(g_item);
 
         if (cpos < MAX_BODY_ITEMS) {
             s_item.type = ScriptItem::it_inventory;
@@ -962,7 +967,8 @@ void World::moveItemFromMapIntoShowcase(Player *cp, const position &sourcePositi
 
     if (cp != nullptr) {
         if (takeItemFromMap(cp, sourcePosition)) {
-            ScriptItem s_item(g_item), t_item(g_item);
+            ScriptItem s_item(g_item);
+            ScriptItem t_item(g_item);
             s_item.pos = sourcePosition;
             s_item.type = ScriptItem::it_field;
             s_item.owner = cp;
@@ -1052,7 +1058,8 @@ void World::moveItemFromMapToPlayer(Player *cp, const position &sourcePosition, 
 
     if (cp != nullptr) {
         if (takeItemFromMap(cp, sourcePosition)) {
-            ScriptItem s_item(g_item), t_item(g_item);
+            ScriptItem s_item(g_item);
+            ScriptItem t_item(g_item);
             s_item.pos = sourcePosition;
             s_item.type = ScriptItem::it_field;
             s_item.owner = cp;
@@ -1145,7 +1152,8 @@ void World::moveItemBetweenShowcases(Player *cp, uint8_t source, unsigned char p
     }
 
     if (takeItemFromShowcase(cp, source, pos, count)) {
-        ScriptItem s_item(g_item), t_item(g_item);
+        ScriptItem s_item(g_item);
+        ScriptItem t_item(g_item);
         s_item.pos = cp->getPosition();
         s_item.type = ScriptItem::it_container;
         s_item.inside = cp->getShowcaseContainer(source);
@@ -1212,7 +1220,8 @@ auto World::moveItemFromMapToMap(Player *cp, const position &oldPosition, const 
 
     if (cp != nullptr) {
         if (takeItemFromMap(cp, oldPosition)) {
-            ScriptItem s_item(g_item), t_item(g_item);
+            ScriptItem s_item(g_item);
+            ScriptItem t_item(g_item);
             s_item.pos = oldPosition;
             s_item.type = ScriptItem::it_field;
             s_item.owner = cp;
@@ -1282,7 +1291,8 @@ auto World::moveItemFromMapToMap(Player *cp, const position &oldPosition, const 
 auto World::pickUpItemFromMap(Player *cp, const position &itemPosition) -> bool {
     if (cp != nullptr) {
         if (takeItemFromMap(cp, itemPosition)) {
-            ScriptItem s_item(g_item), t_item(g_item);
+            ScriptItem s_item(g_item);
+            ScriptItem t_item(g_item);
             s_item.pos = itemPosition;
             s_item.type = ScriptItem::it_field;
             s_item.owner = cp;

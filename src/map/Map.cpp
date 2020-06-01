@@ -16,9 +16,8 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "map/Map.hpp"
-
 #include "Logger.hpp"
+#include "map/Map.hpp"
 
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/lexical_cast.hpp>
@@ -418,7 +417,8 @@ auto Map::load(const std::string &name) -> bool {
     std::ifstream containers{name + "_container", std::ios::binary | std::ios::in};
 
     if (map.good() && items.good() && warps.good() && containers.good()) {
-        int16_t newWidth, newHeight;
+        int16_t newWidth;
+        int16_t newHeight;
 
         map.read((char *)&newWidth, sizeof(width));
         map.read((char *)&newHeight, sizeof(height));

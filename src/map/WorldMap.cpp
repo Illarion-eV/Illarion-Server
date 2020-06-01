@@ -16,8 +16,6 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "map/WorldMap.hpp"
-
 #include "Config.hpp"
 #include "Logger.hpp"
 #include "Map.hpp"
@@ -27,6 +25,7 @@
 #include "World.hpp"
 #include "db/Result.hpp"
 #include "db/SelectQuery.hpp"
+#include "map/WorldMap.hpp"
 
 #include <algorithm>
 #include <boost/algorithm/string/replace.hpp>
@@ -256,7 +255,8 @@ auto WorldMap::exportTo() const -> bool {
         fieldsf << "H: " << map.getHeight() << std::endl;
 
         // iterate over the map and export...
-        short int x, y;
+        short int x;
+        short int y;
 
         for (y = minY; y <= map.getMaxY(); ++y) {
             for (x = minX; x <= map.getMaxX(); ++x) {
