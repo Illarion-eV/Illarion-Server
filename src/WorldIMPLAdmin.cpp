@@ -1064,12 +1064,12 @@ auto World::reload_defs(Player *cp) const -> bool {
     if (ok) {
         // if everything went well, delete old tables and set up new tables
         // Mutex für login logout sperren so das aktuell keiner mehr einloggen kann
-        PlayerManager::get().setLoginLogout(true);
+        PlayerManager::setLoginLogout(true);
         monsterDescriptions = std::move(monsterDescriptionsTemp);
         raceTypes = std::move(raceTypesTemp);
         scheduledScripts = std::move(scheduledScriptsTemp);
         // Mutex entsperren.
-        PlayerManager::get().setLoginLogout(false);
+        PlayerManager::setLoginLogout(false);
 
         // Reload the standard Fighting script
         try {
