@@ -88,14 +88,14 @@ void World::moveTo(Character *cc, const position &to) {
     }
 }
 
-void World::sendSpinToAllVisiblePlayers(Character *cc) {
+void World::sendSpinToAllVisiblePlayers(Character *cc) const {
     for (const auto &p : Players.findAllCharactersInScreen(cc->getPosition())) {
         ServerCommandPointer cmd = std::make_shared<PlayerSpinTC>(cc->getFaceTo(), cc->getId());
         p->Connection->addCommand(cmd);
     }
 }
 
-void World::sendPassiveMoveToAllVisiblePlayers(Character *ccp) {
+void World::sendPassiveMoveToAllVisiblePlayers(Character *ccp) const {
     const auto &charPos = ccp->getPosition();
 
     for (const auto &p : Players.findAllCharactersInScreen(charPos)) {
@@ -111,11 +111,12 @@ void World::sendPassiveMoveToAllVisiblePlayers(Character *ccp) {
     }
 }
 
-void World::sendCharacterMoveToAllVisibleChars(Character *cc, TYPE_OF_WALKINGCOST duration) {
+void World::sendCharacterMoveToAllVisibleChars(Character *cc, TYPE_OF_WALKINGCOST duration) const {
     sendCharacterMoveToAllVisiblePlayers(cc, NORMALMOVE, duration);
 }
 
-void World::sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char moveType, TYPE_OF_WALKINGCOST duration) {
+void World::sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char moveType,
+                                                 TYPE_OF_WALKINGCOST duration) const {
     if (!cc->isInvisible()) {
         const auto &charPos = cc->getPosition();
 
@@ -133,7 +134,7 @@ void World::sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char mo
     }
 }
 
-void World::sendCharacterWarpToAllVisiblePlayers(Character *cc, const position &oldpos, unsigned char moveType) {
+void World::sendCharacterWarpToAllVisiblePlayers(Character *cc, const position &oldpos, unsigned char moveType) const {
     if (!cc->isInvisible()) {
         {
             ServerCommandPointer cmd = std::make_shared<RemoveCharTC>(cc->getId());

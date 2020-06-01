@@ -293,7 +293,7 @@ public:
     auto isBaseAttribValid(const std::string &name, Attribute::attribute_t value) const -> bool;
     auto setBaseAttrib(const std::string &name, Attribute::attribute_t value) -> bool;
     void setAttrib(const std::string &name, Attribute::attribute_t value);
-    auto getBaseAttrib(const std::string &name) -> Attribute::attribute_t;
+    auto getBaseAttrib(const std::string &name) const -> Attribute::attribute_t;
     auto increaseBaseAttrib(const std::string &name, int amount) -> bool;
     auto increaseAttrib(const std::string &name, int amount) -> Attribute::attribute_t;
 

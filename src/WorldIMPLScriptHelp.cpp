@@ -439,14 +439,14 @@ auto World::createMonster(unsigned short id, const position &pos, short movepoin
     return character_ptr();
 }
 
-void World::gfx(unsigned short int gfxid, const position &pos) {
+void World::gfx(unsigned short int gfxid, const position &pos) const {
     for (auto &player : Players.findAllCharactersInScreen(pos)) {
         ServerCommandPointer cmd = std::make_shared<GraphicEffectTC>(pos, gfxid);
         player->Connection->addCommand(cmd);
     }
 }
 
-void World::makeSound(unsigned short int soundid, const position &pos) {
+void World::makeSound(unsigned short int soundid, const position &pos) const {
     for (auto &player : Players.findAllCharactersInScreen(pos)) {
         ServerCommandPointer cmd = std::make_shared<SoundTC>(pos, soundid);
         player->Connection->addCommand(cmd);
@@ -536,7 +536,7 @@ auto World::getMonsterAttack(TYPE_OF_RACE_ID id, AttackBoni &ret) -> bool {
     return false;
 }
 
-void World::sendMonitoringMessage(const std::string &msg, unsigned char id) {
+void World::sendMonitoringMessage(const std::string &msg, unsigned char id) const {
     // send this Command to all Monitoring Clients
     ServerCommandPointer cmd = std::make_shared<BBMessageTC>(msg, id);
     monitoringClientList->sendCommand(cmd);

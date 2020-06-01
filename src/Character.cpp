@@ -809,7 +809,7 @@ void Character::setAttrib(const std::string &name, Attribute::attribute_t value)
     }
 }
 
-auto Character::getBaseAttrib(const std::string &name) -> Attribute::attribute_t {
+auto Character::getBaseAttrib(const std::string &name) const -> Attribute::attribute_t {
     try {
         Character::attributeIndex attribute = attributeMap.at(name);
         return getBaseAttribute(attribute);

@@ -119,7 +119,7 @@ public:
     position pos;
     unsigned char itempos{255};
     Character *owner{nullptr};
-    auto getOwnerForLua() -> character_ptr {
+    auto getOwnerForLua() const -> character_ptr {
         character_ptr fuse_owner(owner);
         return fuse_owner;
     };

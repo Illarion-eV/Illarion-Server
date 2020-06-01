@@ -99,7 +99,7 @@ class distance_heuristic : public astar_heuristic<world_map_graph, Cost> {
 public:
     using Vertex = graph_traits<world_map_graph>::vertex_descriptor;
     explicit distance_heuristic(Vertex goal);
-    auto operator()(const Vertex &u) -> Cost;
+    auto operator()(const Vertex &u) const -> Cost;
 
 private:
     Vertex goal;

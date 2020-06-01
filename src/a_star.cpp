@@ -113,7 +113,7 @@ distance_heuristic::distance_heuristic(Vertex goal) : goal(std::move(goal)) {
                                       << Log::end;
 }
 
-auto distance_heuristic::operator()(const Vertex &u) -> Cost {
+auto distance_heuristic::operator()(const Vertex &u) const -> Cost {
     Cost dx = goal.first - u.first;
     Cost dy = goal.second - u.second;
     Cost d = sqrt(dx * dx + dy * dy);

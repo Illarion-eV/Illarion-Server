@@ -256,7 +256,7 @@ auto World::LoS(const position &startingpos, const position &endingpos) const ->
 }
 
 // function which updates the playerlist.
-void World::updatePlayerList() {
+void World::updatePlayerList() const {
     using namespace Database;
 
     PConnection connection = ConnectionManager::getInstance().getConnection();
@@ -368,7 +368,7 @@ void World::takeMonsterAndNPCFromMap() {
 }
 
 // only invoked when ATTACK***_TS is received or when a monster attacks
-auto World::characterAttacks(Character *cp) -> bool {
+auto World::characterAttacks(Character *cp) const -> bool {
     if (cp->enemyid != cp->getId()) {
         if (cp->enemytype == Character::player) {
             Player *temppl = Players.find(cp->enemyid);
@@ -604,7 +604,7 @@ void World::ageMaps() {
     }
 }
 
-void World::ageInventory() {
+void World::ageInventory() const {
     Players.for_each(&Player::ageInventory);
     Monsters.for_each(&Monster::ageInventory);
 }
@@ -760,7 +760,7 @@ void World::setWeatherPart(const std::string &type, char value) {
     sendWeatherToAllPlayers();
 }
 
-void World::sendRemoveCharToVisiblePlayers(TYPE_OF_CHARACTER_ID id, const position &pos) {
+void World::sendRemoveCharToVisiblePlayers(TYPE_OF_CHARACTER_ID id, const position &pos) const {
     ServerCommandPointer cmd = std::make_shared<RemoveCharTC>(id);
 
     for (const auto &player : Players.findAllCharactersInScreen(pos)) {
@@ -768,7 +768,7 @@ void World::sendRemoveCharToVisiblePlayers(TYPE_OF_CHARACTER_ID id, const positi
     }
 }
 
-void World::sendHealthToAllVisiblePlayers(Character *cc, Attribute::attribute_t health) {
+void World::sendHealthToAllVisiblePlayers(Character *cc, Attribute::attribute_t health) const {
     if (!cc->isInvisible()) {
         const auto &charPos = cc->getPosition();
 

@@ -187,7 +187,7 @@ void World::addPlayerImmediateActionQueue(Player *player) {
     immediatePlayerCommands.push(player);
 }
 
-void World::invalidatePlayerDialogs() { Players.for_each(&Player::invalidateDialogs); }
+void World::invalidatePlayerDialogs() const { Players.for_each(&Player::invalidateDialogs); }
 
 // init the respawn locations... for now still hardcoded...
 auto World::initRespawns() -> bool {

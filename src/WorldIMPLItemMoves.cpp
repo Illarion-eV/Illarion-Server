@@ -1406,28 +1406,29 @@ void World::pickUpAllItemsFromMap(Player *cp) {
     }
 }
 
-void World::sendRemoveItemFromMapToAllVisibleCharacters(const position &itemPosition) {
+void World::sendRemoveItemFromMapToAllVisibleCharacters(const position &itemPosition) const {
     for (const auto &player : Players.findAllCharactersInScreen(itemPosition)) {
         ServerCommandPointer cmd = std::make_shared<ItemRemoveTC>(itemPosition);
         player->Connection->addCommand(cmd);
     }
 }
 
-void World::sendSwapItemOnMapToAllVisibleCharacter(TYPE_OF_ITEM_ID id, const position &itemPosition, const Item &it) {
+void World::sendSwapItemOnMapToAllVisibleCharacter(TYPE_OF_ITEM_ID id, const position &itemPosition,
+                                                   const Item &it) const {
     for (const auto &player : Players.findAllCharactersInScreen(itemPosition)) {
         ServerCommandPointer cmd = std::make_shared<ItemSwapTC>(itemPosition, id, it);
         player->Connection->addCommand(cmd);
     }
 }
 
-void World::sendPutItemOnMapToAllVisibleCharacters(const position &itemPosition, const Item &it) {
+void World::sendPutItemOnMapToAllVisibleCharacters(const position &itemPosition, const Item &it) const {
     for (const auto &player : Players.findAllCharactersInScreen(itemPosition)) {
         ServerCommandPointer cmd = std::make_shared<ItemPutTC>(itemPosition, it);
         player->Connection->addCommand(cmd);
     }
 }
 
-void World::sendContainerSlotChange(Container *cc, TYPE_OF_CONTAINERSLOTS slot, Container *moved) {
+void World::sendContainerSlotChange(Container *cc, TYPE_OF_CONTAINERSLOTS slot, Container *moved) const {
     if ((cc != nullptr) && (moved != nullptr)) {
         Players.for_each([cc, slot, moved](Player *player) {
             player->updateShowcaseSlot(cc, slot);
@@ -1436,13 +1437,13 @@ void World::sendContainerSlotChange(Container *cc, TYPE_OF_CONTAINERSLOTS slot, 
     }
 }
 
-void World::sendContainerSlotChange(Container *cc, TYPE_OF_CONTAINERSLOTS slot) {
+void World::sendContainerSlotChange(Container *cc, TYPE_OF_CONTAINERSLOTS slot) const {
     if (cc != nullptr) {
         Players.for_each([cc, slot](Player *player) { player->updateShowcaseSlot(cc, slot); });
     }
 }
 
-void World::closeShowcaseForOthers(Player *target, Container *moved) {
+void World::closeShowcaseForOthers(Player *target, Container *moved) const {
     if (moved != nullptr) {
         Players.for_each([target, moved](Player *player) {
             if (target != player) {
@@ -1452,7 +1453,7 @@ void World::closeShowcaseForOthers(Player *target, Container *moved) {
     }
 }
 
-void World::closeShowcaseIfNotInRange(Container *moved, const position &showcasePosition) {
+void World::closeShowcaseIfNotInRange(Container *moved, const position &showcasePosition) const {
     if (moved != nullptr) {
         Players.for_each([&showcasePosition, moved](Player *player) {
             const auto &pos = player->getPosition();

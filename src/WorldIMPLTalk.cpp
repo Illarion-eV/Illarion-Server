@@ -27,7 +27,7 @@
 #include "map/Field.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
 
-void World::sendMessageToAdmin(const std::string &message) {
+void World::sendMessageToAdmin(const std::string &message) const {
     Players.for_each([&message](Player *player) {
         if (player->hasGMRight(gmr_getgmcalls)) {
             ServerCommandPointer cmd = std::make_shared<SayTC>(player->getPosition(), message);
@@ -134,11 +134,11 @@ auto World::getTalkRange(Character::talk_type tt) const -> Range {
     return range;
 }
 
-void World::sendMessageToAllPlayers(const std::string &message) {
+void World::sendMessageToAllPlayers(const std::string &message) const {
     Players.for_each([&message](Player *player) { player->inform(message, Player::informBroadcast); });
 }
 
-void World::broadcast(const std::string &german, const std::string &english) {
+void World::broadcast(const std::string &german, const std::string &english) const {
     Players.for_each([&german, &english](Player *player) { player->inform(german, english, Player::informBroadcast); });
 }
 
@@ -246,7 +246,7 @@ void World::sendMessageToAllCharsInRange(const std::string &message, Character::
     sendMessageToAllCharsInRange(message, message, tt, cc);
 }
 
-void World::makeGFXForAllPlayersInRange(const position &pos, int radius, unsigned short int gfx) {
+void World::makeGFXForAllPlayersInRange(const position &pos, int radius, unsigned short int gfx) const {
     Range range;
     range.radius = radius;
 
@@ -256,7 +256,7 @@ void World::makeGFXForAllPlayersInRange(const position &pos, int radius, unsigne
     }
 }
 
-void World::makeSoundForAllPlayersInRange(const position &pos, int radius, unsigned short int sound) {
+void World::makeSoundForAllPlayersInRange(const position &pos, int radius, unsigned short int sound) const {
     Range range;
     range.radius = radius;
 
@@ -349,7 +349,7 @@ void World::lookAtInventoryItem(Player *cp, unsigned char position) {
 
 void World::forceIntroducePlayer(Player *cp, Player *admin) { admin->introducePlayer(cp); }
 
-void World::introduceMyself(Player *cp) {
+void World::introduceMyself(Player *cp) const {
     Range range;
     range.radius = 2;
     range.zRadius = 0;
@@ -359,7 +359,7 @@ void World::introduceMyself(Player *cp) {
     }
 }
 
-void World::sendWeather(Player *cp) { cp->sendWeather(weather); }
+void World::sendWeather(Player *cp) const { cp->sendWeather(weather); }
 
 void World::sendIGTime(Player *cp) {
     ServerCommandPointer cmd = std::make_shared<UpdateTimeTC>(

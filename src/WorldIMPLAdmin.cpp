@@ -298,7 +298,7 @@ void World::create_command(Player *cp, const std::string &itemid) {
     }
 }
 
-void World::kill_command(Player *cp) {
+void World::kill_command(Player *cp) const {
     if (!cp->hasGMRight(gmr_reload)) {
         return;
     }
@@ -329,7 +329,7 @@ void World::reload_command(Player *cp) {
     }
 }
 
-void World::broadcast_command(Player *cp, const std::string &message) {
+void World::broadcast_command(Player *cp, const std::string &message) const {
     if (cp->hasGMRight(gmr_broadcast)) {
         std::string logMsg = cp->to_string() + " broadcasts: " + message;
 #ifdef LOG_TALK
@@ -349,7 +349,7 @@ void World::kickall_command(Player *cp) {
     }
 }
 
-void World::kickplayer_command(Player *cp, const std::string &player) {
+void World::kickplayer_command(Player *cp, const std::string &player) const {
     if (cp->hasGMRight(gmr_forcelogout)) {
         Logger::info(LogFacility::Admin) << *cp << " kicks " << player << Log::end;
         forceLogoutOfPlayer(player);
@@ -363,7 +363,7 @@ void World::showIPS_Command(Player *cp) {
     }
 }
 
-void World::jumpto_command(Player *cp, const std::string &player) {
+void World::jumpto_command(Player *cp, const std::string &player) const {
     if (cp->hasGMRight(gmr_warp) || (Config::instance().debug != 0)) {
         cp->closeAllShowcasesOfMapContainers();
         teleportPlayerToOther(cp, player);
@@ -399,7 +399,7 @@ void World::save_command(Player *cp) {
     cp->inform(tmessage);
 }
 
-void World::talkto_command(Player *player, const std::string &text) {
+void World::talkto_command(Player *player, const std::string &text) const {
     if (!player->hasGMRight(gmr_basiccommands)) {
         return;
     }
@@ -422,7 +422,7 @@ void World::talkto_command(Player *player, const std::string &text) {
     }
 }
 
-void World::makeInvisible(Player *cp) {
+void World::makeInvisible(Player *cp) const {
     if (!cp->hasGMRight(gmr_visible)) {
         return;
     }
@@ -432,7 +432,7 @@ void World::makeInvisible(Player *cp) {
     sendRemoveCharToVisiblePlayers(cp->getId(), cp->getPosition());
 }
 
-void World::makeVisible(Player *cp) {
+void World::makeVisible(Player *cp) const {
     if (!cp->hasGMRight(gmr_visible)) {
         return;
     }
@@ -479,7 +479,7 @@ void World::ForceIntroduceAll(Player *player) {
     }
 }
 
-void World::teleportPlayerToOther(Player *player, const std::string &target) {
+void World::teleportPlayerToOther(Player *player, const std::string &target) const {
     if (!player->hasGMRight(gmr_warp)) {
         return;
     }
@@ -510,7 +510,7 @@ void World::forceLogoutOfAllPlayers() {
     Players.clear();
 }
 
-auto World::forceLogoutOfPlayer(const std::string &name) -> bool {
+auto World::forceLogoutOfPlayer(const std::string &name) const -> bool {
     Player *temp = Players.find(name);
 
     if (temp != nullptr) {
@@ -569,7 +569,7 @@ void World::warpto_command(Player *player, const std::string &text) {
 }
 
 // !summon <player>
-void World::summon_command(Player *player, const std::string &text) {
+void World::summon_command(Player *player, const std::string &text) const {
     if (!player->hasGMRight(gmr_summon)) {
         return;
     }
@@ -584,7 +584,7 @@ void World::summon_command(Player *player, const std::string &text) {
 }
 
 // !ban <time> [m|h|d] <player>
-void World::ban_command(Player *cp, const std::string &text) {
+void World::ban_command(Player *cp, const std::string &text) const {
     if (!cp->hasGMRight(gmr_ban)) {
         return;
     }
@@ -639,7 +639,7 @@ void World::ban_command(Player *cp, const std::string &text) {
     }
 }
 
-void World::ban(Player *cp, int bantime, TYPE_OF_CHARACTER_ID gmid) {
+void World::ban(Player *cp, int bantime, TYPE_OF_CHARACTER_ID gmid) const {
     if (bantime == 0) {
         cp->setStatus(BANNED);
         cp->setStatusTime(0);
@@ -657,7 +657,7 @@ void World::ban(Player *cp, int bantime, TYPE_OF_CHARACTER_ID gmid) {
 }
 
 // !who [player]
-void World::who_command(Player *cp, const std::string &tplayer) {
+void World::who_command(Player *cp, const std::string &tplayer) const {
     if (!cp->hasGMRight(gmr_basiccommands) && (Config::instance().debug == 0)) {
         return;
     }
@@ -821,7 +821,7 @@ void World::what_command(Player *cp) {
     }
 }
 
-void World::playersave_command(Player *cp) {
+void World::playersave_command(Player *cp) const {
     if (!cp->hasGMRight(gmr_save)) {
         return;
     }
@@ -1010,7 +1010,7 @@ void reportTableError(Player *cp, const std::string &dbtable) {
     reportError(cp, "Failed to reload DB table: " + dbtable);
 }
 
-auto World::reload_defs(Player *cp) -> bool {
+auto World::reload_defs(Player *cp) const -> bool {
     if (!cp->hasGMRight(gmr_reload)) {
         return false;
     }

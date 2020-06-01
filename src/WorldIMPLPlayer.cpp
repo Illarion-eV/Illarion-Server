@@ -50,7 +50,7 @@ auto World::parsePlayerCommands(Player *player, const std::string &text) -> bool
 }
 
 // GM page (!gm <text>)
-auto World::gmpage_command(Player *player, const std::string &ticket) -> bool {
+auto World::gmpage_command(Player *player, const std::string &ticket) const -> bool {
     try {
         logGMTicket(player, ticket, false);
         player->inform("--- Die Nachricht wurde an das GM-Team gesendet. ---",
@@ -62,7 +62,7 @@ auto World::gmpage_command(Player *player, const std::string &ticket) -> bool {
     return false;
 }
 
-void World::logGMTicket(Player *player, const std::string &ticket, bool automatic) {
+void World::logGMTicket(Player *player, const std::string &ticket, bool automatic) const {
     using namespace Database;
 
     InsertQuery insQuery;

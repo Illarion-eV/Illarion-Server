@@ -238,7 +238,7 @@ public:
      */
     void checkPlayers();
 
-    void invalidatePlayerDialogs();
+    void invalidatePlayerDialogs() const;
 
     /**
      *checks all actions of the monsters and updates them
@@ -299,7 +299,7 @@ public:
     /**
      *saves all online players a table in the db
      */
-    void updatePlayerList();
+    void updatePlayerList() const;
 
     /**
      * finds all warpfields in a given range
@@ -344,7 +344,7 @@ public:
      * a player attacks
      * @param cp the player who is attacking
      */
-    auto characterAttacks(Character *cp) -> bool;
+    auto characterAttacks(Character *cp) const -> bool;
 
     auto killMonster(TYPE_OF_CHARACTER_ID id) -> bool;
 
@@ -389,9 +389,9 @@ public:
      */
     void setWeatherPart(const std::string &type, char value);
 
-    void sendRemoveCharToVisiblePlayers(TYPE_OF_CHARACTER_ID id, const position &pos);
+    void sendRemoveCharToVisiblePlayers(TYPE_OF_CHARACTER_ID id, const position &pos) const;
 
-    void sendHealthToAllVisiblePlayers(Character *cc, Attribute::attribute_t health);
+    void sendHealthToAllVisiblePlayers(Character *cc, Attribute::attribute_t health) const;
 
     /**============in WorldIMPLCharacterMoves.cpp==================*/
 
@@ -491,11 +491,12 @@ public:
     auto pushPlayer(Player *cp, unsigned char d, short int &walkcost) -> bool;
 
     void checkFieldAfterMove(Character *character, const map::Field &field);
-    void sendPassiveMoveToAllVisiblePlayers(Character *ccp);
-    void sendSpinToAllVisiblePlayers(Character *cc);
-    void sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char moveType, TYPE_OF_WALKINGCOST duration);
-    void sendCharacterMoveToAllVisibleChars(Character *cc, TYPE_OF_WALKINGCOST duration);
-    void sendCharacterWarpToAllVisiblePlayers(Character *cc, const position &oldpos, unsigned char moveType);
+    void sendPassiveMoveToAllVisiblePlayers(Character *ccp) const;
+    void sendSpinToAllVisiblePlayers(Character *cc) const;
+    void sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char moveType,
+                                              TYPE_OF_WALKINGCOST duration) const;
+    void sendCharacterMoveToAllVisibleChars(Character *cc, TYPE_OF_WALKINGCOST duration) const;
+    void sendCharacterWarpToAllVisiblePlayers(Character *cc, const position &oldpos, unsigned char moveType) const;
     template <class T> void sendCharsInVector(const std::vector<T *> &vec, Player *cp, bool sendSpin);
 
     void lookAtMapItem(Player *player, const position &pos, uint8_t stackPos);
@@ -515,8 +516,8 @@ public:
     // \param position die Position des Item im Inventory
     void lookAtInventoryItem(Player *cp, unsigned char position);
 
-    void makeSoundForAllPlayersInRange(const position &pos, int radius, unsigned short int sound);
-    void makeGFXForAllPlayersInRange(const position &pos, int radius, unsigned short int gfx);
+    void makeSoundForAllPlayersInRange(const position &pos, int radius, unsigned short int sound) const;
+    void makeGFXForAllPlayersInRange(const position &pos, int radius, unsigned short int gfx) const;
 
     //! send a message to all chars near pos
     //! \param message what the char says
@@ -537,12 +538,12 @@ public:
     void sendLanguageMessageToAllCharsInRange(const std::string &message, Character::talk_type tt, Language lang,
                                               Character *cc);
 
-    void sendMessageToAllPlayers(const std::string &message);
-    void broadcast(const std::string &german, const std::string &english);
+    void sendMessageToAllPlayers(const std::string &message) const;
+    void broadcast(const std::string &german, const std::string &english) const;
 
     //! schickt eine Nachricht an alle GM's im Spiel.
     // \param message die zu schickende Nachricht
-    void sendMessageToAdmin(const std::string &message);
+    void sendMessageToAdmin(const std::string &message) const;
 
     //! converts the number of a language to the proper skill name.
     // \param language number
@@ -556,7 +557,7 @@ public:
 
     //! schickt an alle Spieler auf den Nachbarfeldern von cp dessen Namen
     // \param cp der Player der sich den anderen bekannt macht
-    void introduceMyself(Player *cp);
+    void introduceMyself(Player *cp) const;
 
     // Stellt den Player dem entsprechenden Admin vor
     void forceIntroducePlayer(Player *cp, Player *admin);
@@ -568,7 +569,7 @@ public:
     void ForceIntroduceAll(Player *player);
 
     // Sends the current weather to one player
-    void sendWeather(Player *cp);
+    void sendWeather(Player *cp) const;
 
     // Sends the current IG time to all players online
     void sendIGTimeToAllPlayers();
@@ -586,7 +587,7 @@ public:
     // Sendet eine Message an alle Spieler
     // param cp: der Spieler der die Message sendet
     // param message: die nachricht die geschickt wird
-    void broadcast_command(Player *cp, const std::string &message);
+    void broadcast_command(Player *cp, const std::string &message) const;
 
     // Kickt alle Spieler aus dem Spiel
     // param cp: der Spieler welche alle Spieler kickt
@@ -595,7 +596,7 @@ public:
     // Kickt einen einzelnen Spieler aus dem Spiel
     // param cp: der Spieler welcher jemanden kickt
     // param player: der Spieler welcher gekickt wird
-    void kickplayer_command(Player *cp, const std::string &player);
+    void kickplayer_command(Player *cp, const std::string &player) const;
 
     // Zeigt dem Spieler nutzerdaten (IP's) an
     void showIPS_Command(Player *cp);
@@ -620,10 +621,10 @@ public:
     //! teleportiert einen Player zu einem anderen
     // \param cp der zu teleportierende Player
     // \param ts der Name des Ziel - Player
-    void teleportPlayerToOther(Player *player, const std::string &target);
+    void teleportPlayerToOther(Player *player, const std::string &target) const;
 
     //! toetet alles auf der Karte befindlichen Monster
-    void kill_command(Player *cp);
+    void kill_command(Player *cp) const;
 
     //! resambles the former #r command, reloads all tables, definitions and scripts
     // \param cp is the GM performing this full reload
@@ -632,19 +633,19 @@ public:
     //! substitutes #j <name>, jump to a player of a given name
     // \param cp is the jumping GM
     // \param ts name of the player to jump to
-    void jumpto_command(Player *cp, const std::string &player);
+    void jumpto_command(Player *cp, const std::string &player) const;
 
     //! resambles the former #mapsave command, saves the map
     // \param cp the corresponding GM with correct rights who initiates this mapsave
     void save_command(Player *cp);
 
     //! Macht spieler cp unsichtbar
-    void makeInvisible(Player *cp);
+    void makeInvisible(Player *cp) const;
 
-    void talkto_command(Player *player, const std::string &text);
+    void talkto_command(Player *player, const std::string &text) const;
 
     //! Macht spieler cp sichtbar
-    void makeVisible(Player *cp);
+    void makeVisible(Player *cp) const;
 
     //! wirft alle Player aus dem Spiel
     void forceLogoutOfAllPlayers();
@@ -652,7 +653,7 @@ public:
     //! wirft einen aktiven Player aus dem Spiel
     // \param name der Spieler der herausgeworfen werden soll
     // \return true falls der Player gefunden wurde, false sonst
-    auto forceLogoutOfPlayer(const std::string &name) -> bool;
+    auto forceLogoutOfPlayer(const std::string &name) const -> bool;
 
     //! sendet einem Admin die Daten aller aktiven Player
     // \param admin der Admin an den die Daten gesandt werden sollen
@@ -662,10 +663,10 @@ public:
     void warpto_command(Player *player, const std::string &text);
 
     // ! Server side implemented !summon Player
-    void summon_command(Player *player, const std::string &text);
+    void summon_command(Player *player, const std::string &text) const;
 
     // ! relaods only the definition from the db no Monsterspawns and no NPC's are loaded.
-    auto reload_defs(Player *cp) -> bool;
+    auto reload_defs(Player *cp) const -> bool;
 
     // ! adds Warpfields to map from textfile
     auto importWarpFields(Player *cp, const std::string &filename) -> bool;
@@ -690,8 +691,8 @@ public:
     auto takeItemFromInvPos(Player *cc, unsigned char pos, Item::number_type count) -> bool;
     auto putItemOnInvPos(Player *cc, unsigned char pos) -> bool;
 
-    void closeShowcaseForOthers(Player *target, Container *moved);
-    void closeShowcaseIfNotInRange(Container *moved, const position &showcasePosition);
+    void closeShowcaseForOthers(Player *target, Container *moved) const;
+    void closeShowcaseIfNotInRange(Container *moved, const position &showcasePosition) const;
 
     auto takeItemFromShowcase(Player *cc, uint8_t showcase, unsigned char pos, Item::number_type count) -> bool;
     auto putItemInShowcase(Player *cc, uint8_t showcase, TYPE_OF_CONTAINERSLOTS pos) -> bool;
@@ -716,11 +717,11 @@ public:
     auto pickUpItemFromMap(Player *cp, const position &itemPosition) -> bool;
     void pickUpAllItemsFromMap(Player *cp);
 
-    void sendRemoveItemFromMapToAllVisibleCharacters(const position &itemPosition);
-    void sendPutItemOnMapToAllVisibleCharacters(const position &itemPosition, const Item &it);
-    void sendSwapItemOnMapToAllVisibleCharacter(TYPE_OF_ITEM_ID id, const position &itemPosition, const Item &it);
-    void sendContainerSlotChange(Container *cc, TYPE_OF_CONTAINERSLOTS slot, Container *moved);
-    void sendContainerSlotChange(Container *cc, TYPE_OF_CONTAINERSLOTS slot);
+    void sendRemoveItemFromMapToAllVisibleCharacters(const position &itemPosition) const;
+    void sendPutItemOnMapToAllVisibleCharacters(const position &itemPosition, const Item &it) const;
+    void sendSwapItemOnMapToAllVisibleCharacter(TYPE_OF_ITEM_ID id, const position &itemPosition, const Item &it) const;
+    void sendContainerSlotChange(Container *cc, TYPE_OF_CONTAINERSLOTS slot, Container *moved) const;
+    void sendContainerSlotChange(Container *cc, TYPE_OF_CONTAINERSLOTS slot) const;
 
     //////////////////////////////////////In WorldIMPLScriptHelp.cpp//////////////////////////////////////////
 
@@ -843,12 +844,12 @@ public:
     // Zeigt eine Grafik auf einem bestimmten Feld an
     //\gfxid, ID der anzuzeigenden Grafik
     //\pos, Position wo diese Grafik angezeigt werden soll
-    void gfx(unsigned short int gfxid, const position &pos);
+    void gfx(unsigned short int gfxid, const position &pos) const;
 
     // Spielt einen Soundeffekt auf einem bestimmten Feld ab
     //\soundid, ID des abzuspielenden Effektes
     //\pos, Position wo dieser Effekt abgespielt werden soll
-    void makeSound(unsigned short int soundid, const position &pos);
+    void makeSound(unsigned short int soundid, const position &pos) const;
 
     //! Prft ob auf einen FEld ein ITem liegt
     //\pos die Position des feldes
@@ -894,7 +895,7 @@ public:
      *@param msg the message string which should be sended
      *@param id the id of the msg ( 1 are message which displayed in a window 0 basic message)
      */
-    void sendMonitoringMessage(const std::string &msg, unsigned char id = 0);
+    void sendMonitoringMessage(const std::string &msg, unsigned char id = 0) const;
 
     /**
      * bans a player for the bantime
@@ -902,7 +903,7 @@ public:
      * @param bantime in seconds
      * @gmid the id of the gm which has banned the player
      */
-    void ban(Player *cp, int bantime, TYPE_OF_CHARACTER_ID gmid);
+    void ban(Player *cp, int bantime, TYPE_OF_CHARACTER_ID gmid) const;
 
     void set_login(Player *player, const std::string &text);
 
@@ -931,7 +932,7 @@ private:
     Timer monstertimer{60};
 
     void ageMaps();
-    void ageInventory();
+    void ageInventory() const;
 
     //! das Verzeichnis mit den Skripten
     std::string scriptDir;
@@ -947,7 +948,7 @@ private:
     CommandMap PlayerCommands;
 
     // Send player information to GMs
-    void who_command(Player *cp, const std::string &tplayer);
+    void who_command(Player *cp, const std::string &tplayer) const;
 
     // Change tile in front of admin
     void tile_command(Player *cp, const std::string &tile);
@@ -964,7 +965,7 @@ private:
     void what_command(Player *cp);
 
     // Save all online players
-    void playersave_command(Player *cp);
+    void playersave_command(Player *cp) const;
 
     // Create telport warp on current tile to x, y, z
     void teleport_command(Player *cp, const std::string &text);
@@ -973,11 +974,11 @@ private:
     void gmhelp_command(Player *cp);
 
     // Sendet eine Nachricht an alle GM's
-    auto gmpage_command(Player *player, const std::string &ticket) -> bool;
+    auto gmpage_command(Player *player, const std::string &ticket) const -> bool;
 
 public:
-    void ban_command(Player *cp, const std::string &text);
-    void logGMTicket(Player *player, const std::string &ticket, bool automatic);
+    void ban_command(Player *cp, const std::string &text) const;
+    void logGMTicket(Player *player, const std::string &ticket, bool automatic) const;
     void checkPlayerImmediateCommands();
     void addPlayerImmediateActionQueue(Player *player);
 
