@@ -46,12 +46,12 @@ auto World::putItemOnInvPos(Character *cc, unsigned char pos) -> bool {
                 cc->items[ BACKPACK ] = g_item;
                 cc->items[ BACKPACK ].setNumber(1);
 
-                if (!g_cont) {
+                if (g_cont == nullptr) {
                     g_cont = new Container(g_item.getId());
                 } else {
                     auto *temp = dynamic_cast<Player *>(cc);
 
-                    if (temp) {
+                    if (temp != nullptr) {
                         closeShowcaseForOthers(temp, g_cont);
                     }
                 }
@@ -64,7 +64,7 @@ auto World::putItemOnInvPos(Character *cc, unsigned char pos) -> bool {
                 return true;
             }
         }
-    } else if (!g_cont) {
+    } else if (g_cont == nullptr) {
         if (pos < MAX_BODY_ITEMS) {
             if (cc->items[ pos ].getId() == 0 || cc->items[pos].getId() == g_item.getId()) {
                 if ((pos == RIGHT_TOOL) || (pos == LEFT_TOOL)) {
@@ -255,7 +255,7 @@ auto World::takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_ty
             g_item = cc->items[ BACKPACK ];
             g_cont = cc->backPackContents;
 
-            if (!g_cont) {
+            if (g_cont == nullptr) {
                 g_cont = new Container(g_item.getId());
             }
 
@@ -336,7 +336,7 @@ auto World::takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_ty
 auto World::takeItemFromInvPos(Player *cc, unsigned char pos, Item::number_type count) -> bool {
     if (pos == BACKPACK) {
         if (cc->items[ BACKPACK ].getId() != 0) {
-            if (cc->backPackContents) {
+            if (cc->backPackContents != nullptr) {
                 cc->closeShowcase(cc->backPackContents);
             }
         }
@@ -362,11 +362,11 @@ auto World::takeItemFromInvPos(Player *cc, unsigned char pos, Item::number_type 
 auto World::takeItemFromShowcase(Player *cc, uint8_t showcase, unsigned char pos, Item::number_type count) -> bool {
     Container *ps = cc->getShowcaseContainer(showcase);
 
-    if (ps) {
+    if (ps != nullptr) {
         if (ps->TakeItemNr(pos, g_item, g_cont, count)) {
             g_item.resetWear();
 
-            if (g_cont) {
+            if (g_cont != nullptr) {
                 g_cont->resetWear();
                 sendContainerSlotChange(ps, pos, g_cont);
             } else {
@@ -393,8 +393,8 @@ auto World::putItemInShowcase(Player *cc, uint8_t showcase, TYPE_OF_CONTAINERSLO
 
     Container *ps = cc->getShowcaseContainer(showcase);
 
-    if (ps) {
-        if (g_cont) {
+    if (ps != nullptr) {
+        if (g_cont != nullptr) {
             if (ps != g_cont) {
                 if (ps->InsertContainer(g_item, g_cont, pos)) {
                     sendContainerSlotChange(ps, pos, g_cont);
@@ -486,7 +486,7 @@ auto World::takeItemFromMap(Character *cc, const position &itemPosition) -> bool
 }
 
 auto World::putItemOnMap(Character *cc, const position &itemPosition) -> bool {
-    if (cc) {
+    if (cc != nullptr) {
         if (cc->getPosition().z != itemPosition.z ||
             !cc->isInRangeToField(itemPosition, MAXTHROWDISTANCE) ||
             (!cc->isInRangeToField(itemPosition, MAXDROPDISTANCE) && (g_item.getWeight() > MAXTHROWWEIGHT))) {
@@ -513,7 +513,7 @@ auto World::putItemOnMap(Character *cc, const position &itemPosition) -> bool {
         }
 
         if (g_item.isContainer()) {
-            if (!g_cont) {
+            if (g_cont == nullptr) {
                 g_cont = new Container(g_item.getId());
             } else {
                 closeShowcaseIfNotInRange(g_cont, itemPosition);
@@ -522,7 +522,7 @@ auto World::putItemOnMap(Character *cc, const position &itemPosition) -> bool {
             if (field.addContainerOnStackIfWalkable(g_item, g_cont)) {
                 sendPutItemOnMapToAllVisibleCharacters(itemPosition, g_item);
 
-                if (cc && Data::Triggers.exists(itemPosition)) {
+                if ((cc != nullptr) && Data::Triggers.exists(itemPosition)) {
                     const auto &script = Data::Triggers.script(itemPosition);
 
                     if (script) {
@@ -543,7 +543,7 @@ auto World::putItemOnMap(Character *cc, const position &itemPosition) -> bool {
             if (field.addItemOnStackIfWalkable(g_item)) {
                 sendPutItemOnMapToAllVisibleCharacters(itemPosition, g_item);
 
-                if (cc && Data::Triggers.exists(itemPosition)) {
+                if ((cc != nullptr) && Data::Triggers.exists(itemPosition)) {
                     const auto &script = Data::Triggers.script(itemPosition);
 
                     if (script) {
@@ -574,14 +574,14 @@ auto World::putItemAlwaysOnMap(Character *cc, const position &itemPosition) -> b
 
         if (g_item.isContainer()) {
             // Container
-            if (!g_cont) {
+            if (g_cont == nullptr) {
                 g_cont = new Container(g_item.getId());
             }
 
             if (field.addContainerOnStack(g_item, g_cont)) {
                 sendPutItemOnMapToAllVisibleCharacters(itemPosition, g_item);
 
-                if (cc && Data::Triggers.exists(itemPosition)) {
+                if ((cc != nullptr) && Data::Triggers.exists(itemPosition)) {
                     const auto &script = Data::Triggers.script(itemPosition);
 
                     if (script) {
@@ -602,7 +602,7 @@ auto World::putItemAlwaysOnMap(Character *cc, const position &itemPosition) -> b
             if (field.addItemOnStack(g_item)) {
                 sendPutItemOnMapToAllVisibleCharacters(itemPosition, g_item);
 
-                if (cc && Data::Triggers.exists(itemPosition)) {
+                if ((cc != nullptr) && Data::Triggers.exists(itemPosition)) {
                     const auto &script = Data::Triggers.script(itemPosition);
 
                     if (script) {
@@ -632,19 +632,19 @@ void World::checkField(const map::Field &field, const position &itemPosition) {
         if (field.hasPlayer()) {
             Player *temp = Players.find(itemPosition);
 
-            if (temp) {
+            if (temp != nullptr) {
                 checkFieldAfterMove(temp, field);
             }
         } else if (field.hasMonster()) {
             Monster *temp = Monsters.find(itemPosition);
 
-            if (temp) {
+            if (temp != nullptr) {
                 checkFieldAfterMove(temp, field);
             }
         } else if (field.hasNPC()) {
             NPC *temp = Npc.find(itemPosition);
 
-            if (temp) {
+            if (temp != nullptr) {
                 checkFieldAfterMove(temp, field);
             }
         }
@@ -928,7 +928,7 @@ void World::moveItemFromMapIntoShowcase(Player *cp, const position &sourcePositi
         return;
     }
 
-    if (cp) {
+    if (cp != nullptr) {
 
         if (takeItemFromMap(cp, sourcePosition)) {
             ScriptItem s_item(g_item), t_item(g_item);
@@ -1014,7 +1014,7 @@ void World::moveItemFromMapToPlayer(Player *cp, const position &sourcePosition, 
         return;
     }
 
-    if (cp) {
+    if (cp != nullptr) {
 
         if (takeItemFromMap(cp, sourcePosition)) {
             ScriptItem s_item(g_item), t_item(g_item);
@@ -1166,7 +1166,7 @@ auto World::moveItemFromMapToMap(Player *cp, const position &oldPosition, const 
         return false;
     }
 
-    if (cp) {
+    if (cp != nullptr) {
 
         if (takeItemFromMap(cp, oldPosition)) {
             ScriptItem s_item(g_item), t_item(g_item);
@@ -1235,7 +1235,7 @@ auto World::moveItemFromMapToMap(Player *cp, const position &oldPosition, const 
 }
 
 auto World::pickUpItemFromMap(Player *cp, const position &itemPosition) -> bool {
-    if (cp) {
+    if (cp != nullptr) {
 
         if (takeItemFromMap(cp, itemPosition)) {
             ScriptItem s_item(g_item), t_item(g_item);
@@ -1282,7 +1282,7 @@ auto World::pickUpItemFromMap(Player *cp, const position &itemPosition) -> bool 
                 }
 
                 if (g_item.isContainer() && backpackPresent && freeSlot < cp->backPackContents->getSlotCount()) {
-                    if (!g_cont) {
+                    if (g_cont == nullptr) {
                         g_cont = new Container(g_item.getId());
                     } else {
                         closeShowcaseForOthers(cp, g_cont);
@@ -1294,7 +1294,7 @@ auto World::pickUpItemFromMap(Player *cp, const position &itemPosition) -> bool 
                         NOK =true;
                     } else {
                         if (g_item.isContainer()) {
-                            if (!g_cont) {
+                            if (g_cont == nullptr) {
                                 g_cont = new Container(g_item.getId());
                             } else {
                                 closeShowcaseForOthers(cp, g_cont);
@@ -1371,7 +1371,7 @@ void World::sendPutItemOnMapToAllVisibleCharacters(const position &itemPosition,
 }
 
 void World::sendContainerSlotChange(Container *cc, TYPE_OF_CONTAINERSLOTS slot, Container *moved) {
-    if (cc && moved) {
+    if ((cc != nullptr) && (moved != nullptr)) {
         Players.for_each([cc, slot, moved](Player *player) {
             player->updateShowcaseSlot(cc, slot);
             player->closeShowcase(moved);
@@ -1380,7 +1380,7 @@ void World::sendContainerSlotChange(Container *cc, TYPE_OF_CONTAINERSLOTS slot, 
 }
 
 void World::sendContainerSlotChange(Container *cc, TYPE_OF_CONTAINERSLOTS slot) {
-    if (cc) {
+    if (cc != nullptr) {
         Players.for_each([cc, slot](Player *player) {
             player->updateShowcaseSlot(cc, slot);
         });
@@ -1388,7 +1388,7 @@ void World::sendContainerSlotChange(Container *cc, TYPE_OF_CONTAINERSLOTS slot) 
 }
 
 void World::closeShowcaseForOthers(Player *target, Container *moved) {
-    if (moved) {
+    if (moved != nullptr) {
         Players.for_each([target, moved](Player *player) {
             if (target != player) {
                 player->closeShowcase(moved);
@@ -1398,7 +1398,7 @@ void World::closeShowcaseForOthers(Player *target, Container *moved) {
 }
 
 void World::closeShowcaseIfNotInRange(Container *moved, const position &showcasePosition) {
-    if (moved) {
+    if (moved != nullptr) {
         Players.for_each([&showcasePosition, moved](Player *player) {
             const auto &pos = player->getPosition();
             if (abs(showcasePosition.x - pos.x) > 1

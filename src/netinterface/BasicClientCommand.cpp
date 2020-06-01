@@ -83,7 +83,7 @@ auto BasicClientCommand::getUnsignedCharFromBuffer() -> unsigned char {
     unsigned char ret = 0;
 
     //no buffer available but we want to read from it
-    if (!msg_buffer) {
+    if (msg_buffer == nullptr) {
         dataOk = false;
     }
     //we want to read more data than there is in the buffer

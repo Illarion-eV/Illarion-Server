@@ -141,7 +141,7 @@ void Monster::setSpawn(SpawnPoint *sp) {
 }
 
 Monster::~Monster() {
-    if (spawn) {
+    if (spawn != nullptr) {
         spawn->dead(monstertype);
     }
 }

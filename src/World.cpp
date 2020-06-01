@@ -64,7 +64,7 @@ extern std::shared_ptr<LuaWeaponScript> standardFightingScript;
 World *World::_self;
 
 auto World::create() -> World * {
-    if (!(_self)) {
+    if ((_self) == nullptr) {
         _self = new World();
         // init spawnlocations...
         _self->initRespawns();
@@ -79,7 +79,7 @@ auto World::create() -> World * {
 }
 
 auto World::get() -> World * {
-    if (!(_self)) {
+    if ((_self) == nullptr) {
         throw std::runtime_error("world was not created");
     }
 
@@ -309,7 +309,7 @@ void World::checkMonsters() {
                             target = standardFightingScript->setTarget(monsterPointer, temp);
                         }
 
-                        if (target) {
+                        if (target != nullptr) {
                             monster.enemyid = target->getId();
                             monster.enemytype = Character::character_type(target->getType());
                             monster.lastTargetPosition = target->getPosition();
@@ -347,7 +347,7 @@ void World::checkMonsters() {
                                 targetChar = standardFightingScript->setTarget(monsterPointer, targets);
                             }
 
-                            if (targetChar) {
+                            if (targetChar != nullptr) {
                                 monster.lastTargetSeen = true;
                                 monster.lastTargetPosition = targetChar->getPosition();
 
@@ -387,7 +387,7 @@ void World::checkMonsters() {
 
                                 auto dir = (direction)Random::uniform(0,7);
 
-                                if (spawn) {
+                                if (spawn != nullptr) {
                                     position newpos = monster.getPosition();
                                     newpos.move(dir);
                                     int yoffs = spawn->get_y() - newpos.y;
@@ -485,7 +485,7 @@ void World::checkMonsters() {
                             target = standardFightingScript->setTarget(monsterPointer, temp);
                         }
 
-                        if (target) {
+                        if (target != nullptr) {
                             if (foundMonster && monStruct.script) {
                                 monStruct.script->enemyNear(monsterPointer, target);
                             } else {
@@ -503,7 +503,7 @@ void World::checkMonsters() {
                             target = standardFightingScript->setTarget(monsterPointer, temp2);
                         }
 
-                        if (target) {
+                        if (target != nullptr) {
                             if (foundMonster && monStruct.script) {
                                 monStruct.script->enemyOnSight(monsterPointer, target);
                             }
@@ -615,7 +615,7 @@ static auto getNextIGDayTime() -> std::chrono::steady_clock::time_point {
     // next day is at ((current unix timestamp - 950742000 + (is_dst?3600:0)) / 28800 + 1) * 28800
     time_t curr_unixtime = time(nullptr);
     struct tm *timestamp = localtime(&curr_unixtime);
-    if (timestamp->tm_isdst)
+    if (timestamp->tm_isdst != 0)
 	    curr_unixtime += 3600;
     curr_unixtime -= 950742000; // begin of illarion time, 17.2.2000
     curr_unixtime -= curr_unixtime % 28800;

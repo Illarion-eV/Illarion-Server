@@ -55,7 +55,7 @@ void BBSpeakAsTS::decodeData() {
 void BBSpeakAsTS::performAction(Player *player) {
     Player *tempPlayer = World::get()->Players.find(id);
     
-    if (tempPlayer) {
+    if (tempPlayer != nullptr) {
         tempPlayer->talk(Character::tt_say, message);
         Logger::info(LogFacility::Admin) << *player << " talks as " << *tempPlayer << ": " << message << Log::end;
     }
@@ -81,7 +81,7 @@ void BBWarpPlayerTS::decodeData() {
 void BBWarpPlayerTS::performAction(Player *player) {
     Player *tempPlayer = World::get()->Players.find(id);
 
-    if (tempPlayer) {
+    if (tempPlayer != nullptr) {
         tempPlayer->Warp(position(posx, posy, posz));
     }
 }
@@ -141,7 +141,7 @@ void BBChangeAttribTS::decodeData() {
 void BBChangeAttribTS::performAction(Player *player) {
     Player *tempPlayer = World::get()->Players.find(id);
     
-    if (tempPlayer) {
+    if (tempPlayer != nullptr) {
         auto oldValue = tempPlayer->increaseAttrib(attrib, 0);
         auto newValue = tempPlayer->increaseAttrib(attrib, value);
 
@@ -168,7 +168,7 @@ void BBChangeSkillTS::decodeData() {
 void BBChangeSkillTS::performAction(Player *player) {
     Player *tempPlayer = World::get()->Players.find(id);
 
-    if (tempPlayer) {
+    if (tempPlayer != nullptr) {
         auto oldValue = tempPlayer->getSkill(skill);
         auto newValue = tempPlayer->increaseSkill(skill, value);
         Logger::info(LogFacility::Admin) << *player << " increases skill " << player->getSkillName(skill) << " for " << *tempPlayer << " from " << oldValue << " to " << newValue << Log::end;

@@ -52,7 +52,7 @@ void World::deleteAllLostNPC() {
     for (const TYPE_OF_CHARACTER_ID &npcToDelete : LostNpcs) {
         const auto &npc = Npc.find(npcToDelete);
 
-        if (npc) {
+        if (npc != nullptr) {
             try {
                 fieldAt(npc->getPosition()).removeChar();
             } catch (FieldNotFound &) {
@@ -296,19 +296,19 @@ auto World::findCharacterOnField(const position &pos) const -> Character * {
     Character *tmpChr;
     tmpChr = Players.find(pos);
 
-    if (tmpChr) {
+    if (tmpChr != nullptr) {
         return tmpChr;
     }
 
     tmpChr = Monsters.find(pos);
 
-    if (tmpChr) {
+    if (tmpChr != nullptr) {
         return tmpChr;
     }
 
     tmpChr = Npc.find(pos);
 
-    if (tmpChr) {
+    if (tmpChr != nullptr) {
         return tmpChr;
     }
 
@@ -323,13 +323,13 @@ auto World::findCharacter(TYPE_OF_CHARACTER_ID id) -> Character * {
     if (id < MONSTER_BASE) {
         auto tmpChr = dynamic_cast<Character *>(Players.find(id));
 
-        if (tmpChr) {
+        if (tmpChr != nullptr) {
             return tmpChr;
         }
     } else if (id < NPC_BASE) {
         auto tmpChr = dynamic_cast<Character *>(Monsters.find(id));
 
-        if (tmpChr) {
+        if (tmpChr != nullptr) {
             return tmpChr;
         } else {
             using namespace ranges;
@@ -343,7 +343,7 @@ auto World::findCharacter(TYPE_OF_CHARACTER_ID id) -> Character * {
     } else {
         auto tmpChr = dynamic_cast<Character *>(Npc.find(id));
 
-        if (tmpChr) {
+        if (tmpChr != nullptr) {
             return tmpChr;
         }
     }
@@ -450,7 +450,7 @@ auto World::characterAttacks(Character *cp) -> bool {
                         if (!temp.empty()) {
                             Character *target = standardFightingScript->setTarget(temppl, temp);
 
-                            if (target) {
+                            if (target != nullptr) {
                                 temppl->turn(target->getPosition());
                             }
                         }
@@ -481,7 +481,7 @@ auto World::characterAttacks(Character *cp) -> bool {
 auto World::killMonster(TYPE_OF_CHARACTER_ID id) -> bool {
     auto monster = Monsters.find(id);
 
-    if (monster) {
+    if (monster != nullptr) {
         const auto &monsterPos = monster->getPosition();
 
         try {
@@ -678,7 +678,7 @@ auto World::getTime(const std::string &timeType) -> int {
     illaTime = (int)curr_unixtime;
 
     // in case its currently dst, correct the timestamp so the illarion time changes the timestamp as well
-    if (timestamp->tm_isdst) {
+    if (timestamp->tm_isdst != 0) {
         illaTime+=3600;
     }
 

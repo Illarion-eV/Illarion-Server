@@ -159,7 +159,7 @@ auto Field::takeItemFromStack(Item &item) -> bool {
 
 auto Field::increaseItemOnStack(int count, bool &erased) -> int {
     if (items.empty()) {
-        return false;
+        return 0;
     }
     
     Item &item = items.back();
@@ -239,7 +239,7 @@ auto Field::addContainerOnStackIfWalkable(Item item, Container *container) -> bo
                 }
 
                 if (count < MAXITEMS - 1) {
-                    if (!container) {
+                    if (container == nullptr) {
                         container = new Container(item.getId());
                     }
 
@@ -274,7 +274,7 @@ auto Field::addContainerOnStack(Item item, Container *container) -> bool {
         }
 
         if (count < MAXITEMS - 1) {
-            if (!container) {
+            if (container == nullptr) {
                 container = new Container(item.getId());
             }
 
@@ -431,7 +431,7 @@ auto Field::isPersistent() const -> bool {
 
 void Field::age() {
     for (const auto &container : containers) {
-        if (container.second) {
+        if (container.second != nullptr) {
             container.second->doAge();
         }
     }
@@ -503,10 +503,10 @@ void Field::updateFlags() {
             const auto &mod = Data::TilesModItems[item.getId()];
             setBits(mod.Modificator & FLAG_SPECIALITEM);
 
-            if (mod.Modificator & FLAG_MAKEPASSABLE) {
+            if ((mod.Modificator & FLAG_MAKEPASSABLE) != 0) {
                 unsetBits(FLAG_BLOCKPATH);
                 setBits(FLAG_MAKEPASSABLE);
-            } else if (mod.Modificator & FLAG_BLOCKPATH) {
+            } else if ((mod.Modificator & FLAG_BLOCKPATH) != 0) {
                 unsetBits(FLAG_MAKEPASSABLE);
                 setBits(FLAG_BLOCKPATH);
             }

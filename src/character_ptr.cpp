@@ -27,7 +27,7 @@ character_ptr::character_ptr() {
 }
 
 character_ptr::character_ptr(Character *p) {
-    if (p) {
+    if (p != nullptr) {
         id = p->getId();
     } else {
         id = 0;
@@ -43,7 +43,7 @@ auto character_ptr::operator=(character_ptr const &p) -> character_ptr& = defaul
 auto character_ptr::get() const -> Character * {
     auto ptr = getPointerFromId();
     
-    if (ptr) {
+    if (ptr != nullptr) {
         return ptr;
     } else {
         throw std::logic_error("Usage of invalid Character! Use isValidChar( char ) to check if a Character is still valid.");

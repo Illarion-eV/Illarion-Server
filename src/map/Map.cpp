@@ -164,7 +164,7 @@ auto Map::importFields(const std::string &importDir,
                     if (success) {
                         auto &field = fields[x][y];
 
-                        if (field.getTileCode() || field.getMusicId()) {
+                        if ((field.getTileCode() != 0u) || (field.getMusicId() != 0u)) {
                             Logger::warn(LogFacility::Script)
                                 << fileName << ": tile on (" << x << ", " << y
                                 << ") is already present, ignoring line "

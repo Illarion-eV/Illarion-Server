@@ -201,7 +201,7 @@ void NetInterface::handle_read_header(const boost::system::error_code &error) {
 
     } else {
         if (online) {
-            if (owner) {
+            if (owner != nullptr) {
                 Logger::error(LogFacility::Other) << "Error in NetInterface::handle_read_header for " << owner->to_string() << " from " << getIPAdress() << ": " << error.message() << Log::end;
             } else {
                 Logger::error(LogFacility::Other) << "Error in NetInterface::handle_read_header from " << getIPAdress() << ": " << error.message() << Log::end;

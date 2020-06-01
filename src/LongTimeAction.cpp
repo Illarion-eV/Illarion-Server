@@ -43,11 +43,11 @@ void LongTimeAction::setLastAction(std::shared_ptr<LuaScript> script, const SouT
     _target = trgt;
     _at = at;
 
-    if (trgt.character) {
+    if (trgt.character != nullptr) {
         _targetId = _target.character->getId();
     }
 
-    if (srce.character) {
+    if (srce.character != nullptr) {
         _sourceId = _source.character->getId();
         _sourceCharType = _source.character->getType();
     }

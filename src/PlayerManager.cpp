@@ -119,7 +119,7 @@ void PlayerManager::loginLoop(PlayerManager *pmanager) {
 				    throw Player::LogoutException(WRONGPWD);
 
 			    // player already online?
-			    if (World::get()->Players.find(loginData->getLoginName()) || PlayerManager::get().findPlayer(loginData->getLoginName())) {
+			    if ((World::get()->Players.find(loginData->getLoginName()) != nullptr) || PlayerManager::get().findPlayer(loginData->getLoginName())) {
 				    Logger::alert(LogFacility::Player) << loginData->getLoginName() << " tried to login twice from ip: " << Connection->getIPAdress() << Log::end;
 				    throw Player::LogoutException(DOUBLEPLAYER);
 			    }

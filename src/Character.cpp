@@ -189,7 +189,7 @@ Character::Character(const appearance &appearance) : effects(this), waypoints(th
 }
 
 Character::~Character() {
-    if (backPackContents) {
+    if (backPackContents != nullptr) {
         delete backPackContents;
         backPackContents = nullptr;
     }
@@ -304,7 +304,7 @@ auto Character::countItem(TYPE_OF_ITEM_ID itemid) const -> int {
     int count = accumulate(items | view::filter(hasItemId)
                                  | view::transform(toNumber), 0);
 
-    if ((items[ BACKPACK ].getId() != 0) && backPackContents) {
+    if ((items[ BACKPACK ].getId() != 0) && (backPackContents != nullptr)) {
         count += backPackContents->countItem(itemid);
     }
 
@@ -321,7 +321,7 @@ auto Character::countItemAt(const std::string &where, TYPE_OF_ITEM_ID itemid, sc
         int count = accumulate(items | view::filter(hasItemIdAndData)
                                      | view::transform(toNumber), 0);
 
-        if ((items[ BACKPACK ].getId() != 0) && backPackContents) {
+        if ((items[ BACKPACK ].getId() != 0) && (backPackContents != nullptr)) {
             count += backPackContents->countItem(itemid, data);
         }
 
@@ -342,7 +342,7 @@ auto Character::countItemAt(const std::string &where, TYPE_OF_ITEM_ID itemid, sc
 
     if (where == "backpack") {
         int count = 0;
-        if ((items[ BACKPACK ].getId() != 0) && backPackContents) {
+        if ((items[ BACKPACK ].getId() != 0) && (backPackContents != nullptr)) {
             count += backPackContents->countItem(itemid , data);
         }
 
@@ -375,7 +375,7 @@ auto Character::GetItemAt(unsigned char itempos) -> ScriptItem {
 auto Character::eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangemap const *data) -> int {
     int temp = count;
 
-    if ((items[ BACKPACK ].getId() != 0) && backPackContents) {
+    if ((items[ BACKPACK ].getId() != 0) && (backPackContents != nullptr)) {
         temp = backPackContents->eraseItem(itemid, temp, data);
     }
 
@@ -475,7 +475,7 @@ auto Character::createItem(Item::id_type id, Item::number_type number, Item::qua
                 int old_temp = temp;
 
                 if (cos.MaxStack > 1) {
-                    if (backPackContents) {
+                    if (backPackContents != nullptr) {
                         bool ok = true;
                         it.setId(id);
                         it.setQuality(quality);
@@ -512,7 +512,7 @@ auto Character::createItem(Item::id_type id, Item::number_type number, Item::qua
                     }
                 }
 
-                if ((temp > 0) && backPackContents) {
+                if ((temp > 0) && (backPackContents != nullptr)) {
                     bool ok = true;
                     it.setId(id);
                     it.setQuality(quality);
@@ -631,12 +631,12 @@ void Character::ageInventory() {
         }
     }
 
-    if ((items[ BACKPACK ].getId() != 0) && backPackContents) {
+    if ((items[ BACKPACK ].getId() != 0) && (backPackContents != nullptr)) {
         backPackContents->doAge(true);
     }
 
     for (const auto &depot : depotContents) {
-        if (depot.second) {
+        if (depot.second != nullptr) {
             depot.second->doAge(true);
         }
     }
@@ -648,7 +648,7 @@ void Character::setAlive(bool t) {
 
 
 auto Character::attack(Character *target) -> bool {
-    if (target && target->isAlive()) {
+    if ((target != nullptr) && target->isAlive()) {
         if (!actionRunning()) {
             if (target->isAlive()) {
                 if (target->getType() == player) {
@@ -1073,7 +1073,7 @@ void Character::deleteAllSkills() {
 
 
 auto Character::isInRange(Character *cc, unsigned short int distancemetric) const -> bool {
-    if (cc) {
+    if (cc != nullptr) {
         return isInRangeToField(cc->pos, distancemetric);
     }
 
@@ -1109,7 +1109,7 @@ auto Character::distanceMetricToPosition(const position &m_pos) const -> unsigne
 }
 
 auto Character::distanceMetric(Character *cc) const -> unsigned short int {
-    if (cc) {
+    if (cc != nullptr) {
         return distanceMetricToPosition(cc->pos);
     } else {
         return 0xFFFF;
@@ -1168,7 +1168,7 @@ auto Character::weightOK(TYPE_OF_ITEM_ID id, int count, Container *tcont) const 
 
     int realweight = LoadWeight();
 
-    if (tcont) {
+    if (tcont != nullptr) {
         return (realweight + weightContainer(id, 1, tcont)) <= maxLoadWeight();
     } else {
         const auto &itemStruct = Data::Items[id];
@@ -1191,7 +1191,7 @@ auto Character::weightContainer(TYPE_OF_ITEM_ID id, int count, Container *tcont)
             }
         }
 
-        if (tcont) {
+        if (tcont != nullptr) {
             try {
                 if (count > 0) {
                     temp += tcont->weight();
@@ -1560,7 +1560,7 @@ auto Character::getItemList(TYPE_OF_ITEM_ID id) const -> std::vector<ScriptItem>
         }
     }
 
-    if ((items[ BACKPACK ].getId() != 0) && backPackContents) {
+    if ((items[ BACKPACK ].getId() != 0) && (backPackContents != nullptr)) {
         backPackContents->addContentToList(id, list);
     }
 

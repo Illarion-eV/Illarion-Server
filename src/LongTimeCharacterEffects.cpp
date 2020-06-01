@@ -180,13 +180,13 @@ void LongTimeCharacterEffects::checkEffects() {
 auto LongTimeCharacterEffects::save() -> bool {
     using namespace Database;
 
-    if (owner && owner->getType() != Character::player) {
+    if ((owner != nullptr) && owner->getType() != Character::player) {
         return false;
     }
 
     auto *player = dynamic_cast<Player *>(owner);
 
-    if (!owner) {
+    if (owner == nullptr) {
         return false;
     }
 

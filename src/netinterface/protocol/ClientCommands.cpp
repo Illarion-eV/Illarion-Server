@@ -255,7 +255,7 @@ void LookAtCharacterTS::performAction(Player *player) {
     if (id < MONSTER_BASE) {
         Player *pl = World::get()->Players.find(id);
 
-        if (pl) {
+        if (pl != nullptr) {
             if (lookAtPlayerScript) {
                 lookAtPlayerScript->lookAtPlayer(player, pl, mode);
             }
@@ -265,7 +265,7 @@ void LookAtCharacterTS::performAction(Player *player) {
     } else if (id >= MONSTER_BASE && id < NPC_BASE) {
         Monster *monster = World::get()->Monsters.find(id);
 
-        if (monster) {
+        if (monster != nullptr) {
             const auto monsterType = monster->getMonsterType();
 
             if (monsterDescriptions->exists(monsterType)) {
@@ -286,7 +286,7 @@ void LookAtCharacterTS::performAction(Player *player) {
     } else {
         NPC *npc = World::get()->Npc.find(id);
 
-        if (npc) {
+        if (npc != nullptr) {
             if (npc->getScript() && npc->getScript()->existsEntrypoint("lookAtNpc")) {
                 npc->getScript()->lookAtNpc(player, mode);
                 return;
@@ -371,7 +371,7 @@ void CastTS::performAction(Player *player) {
                 if (field.hasPlayer() || field.hasMonster() || field.hasNPC()) {
                     Character *tmpCharacter = World::get()->findCharacterOnField(castPosition);
 
-                    if (tmpCharacter) {
+                    if (tmpCharacter != nullptr) {
                         Logger::debug(LogFacility::Script) << "Character found at target field!" << Log::end;
 
                         if (tmpCharacter->getType() == Character::player) {
@@ -641,7 +641,7 @@ void UseTS::performAction(Player *player) {
                 Logger::debug(LogFacility::Script) << "Character on field found!" << Log::end;
                 Character *tmpCharacter = World::get()->findCharacterOnField(usePosition);
 
-                if (tmpCharacter) {
+                if (tmpCharacter != nullptr) {
                     if (tmpCharacter->getType() == Character::player) {
                         Logger::debug(LogFacility::Script) << "Character is a player!" << Log::end;
                     } else if (tmpCharacter->getType() == Character::npc) {

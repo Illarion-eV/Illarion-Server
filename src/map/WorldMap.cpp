@@ -368,7 +368,7 @@ auto WorldMap::importFromEditor() -> bool {
                                         << " out of " << numfiles << " maps."
                                         << Log::end;
 
-    if (errors) {
+    if (errors != 0) {
         Logger::alert(LogFacility::Script) << "Failed to import " << errors
                                            << " maps!" << Log::end;
     }

@@ -170,7 +170,7 @@ void World::spawn_command(Player *cp, const std::string &monsterId) {
 }
 
 void World::create_command(Player *cp, const std::string &itemid) {
-    if (cp->hasGMRight(gmr_basiccommands) || Config::instance().debug) {
+    if (cp->hasGMRight(gmr_basiccommands) || (Config::instance().debug != 0)) {
         TYPE_OF_ITEM_ID item;
         uint16_t quantity = 1;
         uint16_t quality = 333;
@@ -272,7 +272,7 @@ void World::showIPS_Command(Player *cp) {
 }
 
 void World::jumpto_command(Player *cp, const std::string &player) {
-    if (cp->hasGMRight(gmr_warp) || Config::instance().debug) {
+    if (cp->hasGMRight(gmr_warp) || (Config::instance().debug != 0)) {
         cp->closeAllShowcasesOfMapContainers();
         teleportPlayerToOther(cp, player);
         Logger::info(LogFacility::Admin) << *cp << " jumps to player " << player
@@ -318,7 +318,7 @@ void World::talkto_command(Player *player, const std::string &text) {
     if (std::regex_match(text, match, pattern)) {
         Player *target = Players.find(match[1].str());
 
-        if (target) {
+        if (target != nullptr) {
 #ifdef LOG_TALK
             Logger::info(LogFacility::Player) << *player << " talks to " << *target << ": " << match[2].str() << Log::end;
 #endif
@@ -366,7 +366,7 @@ void World::ForceIntroduce(Player *player, const std::string &text) {
 
     auto target = Players.find(text);
 
-    if (target) {
+    if (target != nullptr) {
         forceIntroducePlayer(target, player);
     }
 }
@@ -393,7 +393,7 @@ void World::teleportPlayerToOther(Player *player, const std::string &target) {
 
     auto targetPlayer = Players.find(target);
 
-    if (targetPlayer && targetPlayer->getId() != player->getId()) {
+    if ((targetPlayer != nullptr) && targetPlayer->getId() != player->getId()) {
         player->Warp(targetPlayer->getPosition());
     }
 }
@@ -422,7 +422,7 @@ void World::forceLogoutOfAllPlayers() {
 auto World::forceLogoutOfPlayer(const std::string &name) -> bool {
     Player *temp = Players.find(name);
 
-    if (temp) {
+    if (temp != nullptr) {
         std::string message = "--- kicked: ";
         message = message + temp->to_string();
         Logger::info(LogFacility::Admin) << message << Log::end;
@@ -447,7 +447,7 @@ void World::sendAdminAllPlayerData(Player *admin) {
 
 
 void World::warpto_command(Player *player, const std::string &text) {
-    if (!player->hasGMRight(gmr_warp) && !Config::instance().debug) {
+    if (!player->hasGMRight(gmr_warp) && (Config::instance().debug == 0)) {
         return;
     }
 
@@ -489,7 +489,7 @@ void World::summon_command(Player *player, const std::string &text) {
 
     auto target = Players.find(text);
 
-    if (target && target->getId() != player->getId()) {
+    if ((target != nullptr) && target->getId() != player->getId()) {
         Logger::info(LogFacility::Admin) << *player << " summons player " << *target << " to " << player->getPosition() << Log::end;
         target->Warp(player->getPosition());
     }
@@ -508,7 +508,7 @@ void World::ban_command(Player *cp, const std::string &text) {
     if (std::regex_match(text, match, pattern)) {
         auto target = Players.find(match[3].str());
 
-        if (target) {
+        if (target != nullptr) {
             if (match[1].str().empty()) {
                 ban(target, 0, cp->getId());
                 std::string message = cp->to_string() + " bans player " + target->to_string() + " indefinately";
@@ -572,7 +572,7 @@ void World::ban(Player *cp, int bantime, TYPE_OF_CHARACTER_ID gmid) {
 
 // !who [player]
 void World::who_command(Player *cp, const std::string &tplayer) {
-    if (!cp->hasGMRight(gmr_basiccommands) && !Config::instance().debug) {
+    if (!cp->hasGMRight(gmr_basiccommands) && (Config::instance().debug == 0)) {
         return;
     }
 
@@ -595,7 +595,7 @@ void World::who_command(Player *cp, const std::string &tplayer) {
 
         Player *tempPl = Players.find(tplayer);
 
-        if (tempPl) {
+        if (tempPl != nullptr) {
             std::string tmessage = tempPl->to_string();
             const auto &pos = tempPl->getPosition();
 
@@ -704,7 +704,7 @@ void World::what_command(Player *cp) {
 
             message << "- Item " << top.getId();
 
-            if (cp->hasGMRight(gmr_basiccommands) || Config::instance().debug) {
+            if (cp->hasGMRight(gmr_basiccommands) || (Config::instance().debug != 0)) {
                 message << ", Stack of " << top.getNumber();
                 message << ", Quality " << top.getQuality();
 
@@ -724,7 +724,7 @@ void World::what_command(Player *cp) {
 
         Character *character = findCharacterOnField(front);
 
-        if (character) {
+        if (character != nullptr) {
             message.str("");
             uint32_t id = character->getId();
 
@@ -789,7 +789,7 @@ void World::teleport_command(Player *cp, const std::string &text) {
 
 void World::gmhelp_command(Player *cp) {
     if (!cp->hasGMRight(gmr_basiccommands)) {
-        if (Config::instance().debug) {
+        if (Config::instance().debug != 0) {
             std::string tmessage = " <> - parameter.  [] - optional.  | = choice.  () = shortcut";
             cp->inform(tmessage);
             tmessage = "!create <id> [<quantity> [<quality> [[<data_key>=<data_value>] ...]]] creates an item in your inventory.";

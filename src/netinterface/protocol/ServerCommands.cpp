@@ -324,7 +324,7 @@ void addItemLookAt(BasicServerCommand *cmd, const ItemLookAt &lookAt) {
     cmd->addStringToBuffer(lookAt.getCraftedBy());
     cmd->addStringToBuffer(lookAt.getType());
     cmd->addUnsignedCharToBuffer(lookAt.getLevel());
-    cmd->addUnsignedCharToBuffer(lookAt.isUsable());
+    cmd->addUnsignedCharToBuffer(static_cast<unsigned char>(lookAt.isUsable()));
     cmd->addShortIntToBuffer(lookAt.getWeight());
     cmd->addIntToBuffer(lookAt.getWorth());
     cmd->addStringToBuffer(lookAt.getQualityText());
@@ -495,7 +495,7 @@ MapStripeTC::MapStripeTC(const position &pos, NewClientView::stripedirection dir
     addUnsignedCharToBuffer(numberOfTiles);
 
     for (int i = 0; i < numberOfTiles; ++i) {
-        if (fields[i]) {
+        if (fields[i] != nullptr) {
             addShortIntToBuffer(fields[i]->getTileCode());
             addUnsignedCharToBuffer(fields[i]->getMovementCost());
             addShortIntToBuffer(fields[i]->getMusicId());

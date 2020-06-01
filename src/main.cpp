@@ -128,7 +128,7 @@ auto main(int argc, char *argv[]) -> int {
             new_players_processed++;
             Player *newPlayer = newplayers.pop_front();
 
-            if (newPlayer) {
+            if (newPlayer != nullptr) {
                 login_save(newPlayer);
 
                 if (newPlayer->isMonitoringClient()) {

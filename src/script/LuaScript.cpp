@@ -110,18 +110,18 @@ void LuaScript::loadIntoLuaState() {
 
     int errorCode = luaL_loadfile(_luaState, luafile.c_str());
     handleLuaLoadError(errorCode);
-    if (errorCode) return;
+    if (errorCode != 0) return;
 
     errorCode = lua_pcall(_luaState, 0, 1, 0);
     handleLuaCallError(errorCode);
-    if (errorCode) return;
+    if (errorCode != 0) return;
 
     lua_setfield(_luaState, -2, _filename.c_str());
     lua_pop(_luaState, 1);
 }
 
 void LuaScript::handleLuaLoadError(int errorCode) {
-    if (errorCode) {
+    if (errorCode != 0) {
 
         switch (errorCode) {
         case LUA_ERRFILE:
@@ -144,7 +144,7 @@ void LuaScript::handleLuaLoadError(int errorCode) {
 }
 
 void LuaScript::handleLuaCallError(int errorCode) {
-    if (errorCode) {
+    if (errorCode != 0) {
 
         switch (errorCode) {
         case LUA_ERRRUN:
@@ -186,7 +186,7 @@ auto LuaScript::add_backtrace(lua_State *L) -> int {
 
     int level = 0;
 
-    while (lua_getstack(L, ++level, &d)) {
+    while (lua_getstack(L, ++level, &d) != 0) {
         lua_getinfo(L, "Sln", &d);
         msg << "#" << level << " called by: " << d.short_src << ":" << d.currentline;
 
@@ -218,7 +218,7 @@ void LuaScript::writeErrorMsg() {
 
     std::string err;
 
-    if (c_err) {
+    if (c_err != nullptr) {
         err = c_err;
     } else {
         err = "UNKNOWN ERROR, CONTACT SERVER DEVELOPER";
@@ -240,7 +240,7 @@ void LuaScript::writeCastErrorMsg(const std::string &entryPoint, const luabind::
 }
 
 void LuaScript::writeDebugMsg(const std::string &msg) {
-    if (Config::instance().debug) {
+    if (Config::instance().debug != 0) {
         lua_pushstring(_luaState, ("Debug Message: " + msg).c_str());
         add_backtrace(_luaState);
         std::string backtrace = lua_tostring(_luaState, -1);

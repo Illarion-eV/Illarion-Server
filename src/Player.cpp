@@ -73,7 +73,7 @@ extern std::shared_ptr<LuaDepotScript>depotScript;
 
 Player::Player(std::shared_ptr<NetInterface> newConnection)
     :  onlinetime(0), Connection(std::move(newConnection)), turtleActive(false),
-      clippingActive(true), admin(false), questWriteLock(false), monitoringClient(false), dialogCounter(0) {
+      clippingActive(true), admin(0u), questWriteLock(false), monitoringClient(false), dialogCounter(0) {
     screenwidth = 0;
     screenheight = 0;
     Character::setAlive(true);
@@ -398,12 +398,12 @@ void Player::lookIntoShowcaseContainer(uint8_t showcase, unsigned char pos) {
         auto isShowcaseContainer = [showcaseContainer](auto container) {return container == showcaseContainer;};
         bool allowedToOpenContainer = ranges::any_of(depotContents | ranges::view::values, isShowcaseContainer);
 
-        if (showcaseContainer && allowedToOpenContainer) {
+        if ((showcaseContainer != nullptr) && allowedToOpenContainer) {
             Container *tempc;
             ScriptItem tempi;
 
             if (showcaseContainer->viewItemNr(pos, tempi, tempc)) {
-                if (tempc) {
+                if (tempc != nullptr) {
                     openShowcase(tempc, tempi, isShowcaseInInventory(showcase));
                 }
             }
@@ -412,7 +412,7 @@ void Player::lookIntoShowcaseContainer(uint8_t showcase, unsigned char pos) {
 }
 
 auto Player::lookIntoBackPack() -> bool {
-    if ((items[BACKPACK].getId() != 0) && backPackContents) {
+    if ((items[BACKPACK].getId() != 0) && (backPackContents != nullptr)) {
         openShowcase(backPackContents, static_cast<ScriptItem>(items[BACKPACK]), true);
         return true;
     }
@@ -509,7 +509,7 @@ void Player::ageInventory() {
         }
     }
 
-    if ((items[ BACKPACK ].getId() != 0) && backPackContents) {
+    if ((items[ BACKPACK ].getId() != 0) && (backPackContents != nullptr)) {
         backPackContents->doAge(true);
         updateBackPackView();
     }
@@ -517,7 +517,7 @@ void Player::ageInventory() {
     for (const auto &depotMapEntry : depotContents) {
         const auto &depot = depotMapEntry.second;
 
-        if (depot) {
+        if (depot != nullptr) {
             depot->doAge(true);
             updateShowcase(depot);
         }
@@ -561,7 +561,7 @@ auto Player::createItem(Item::id_type id, Item::number_type number, Item::qualit
 auto Player::eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangemap const *data) -> int {
     int temp = count;
 
-    if ((items[ BACKPACK ].getId() != 0) && backPackContents) {
+    if ((items[ BACKPACK ].getId() != 0) && (backPackContents != nullptr)) {
         temp = backPackContents->eraseItem(itemid, temp, data);
         updateBackPackView();
     }
@@ -658,7 +658,7 @@ auto Player::swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid , uint16_t newQu
 
 
 void Player::updateBackPackView() {
-    if (backPackContents) {
+    if (backPackContents != nullptr) {
         updateShowcase(backPackContents);
     }
 }
@@ -1254,7 +1254,7 @@ auto Player::save() noexcept -> bool {
             std::list<container_struct> containers;
 
             // add backpack to containerlist
-            if (items[ BACKPACK ].getId() != 0 && backPackContents) {
+            if (items[ BACKPACK ].getId() != 0 && (backPackContents != nullptr)) {
                 containers.emplace_back(backPackContents, BACKPACK+1);
             }
 
@@ -1579,20 +1579,20 @@ auto Player::load() noexcept -> bool {
             }
 
             // item is in a depot?
-            if (tempdepot && (it = depots.find(tempdepot)) == depots.end()) {
+            if ((tempdepot != 0u) && (it = depots.find(tempdepot)) == depots.end()) {
                 // serious error occured! player data corrupted!
                 Logger::error(LogFacility::Player) << to_string() << " has invalid depot contents!" << Log::end;
                 throw std::exception();
             }
 
             // item is in a container?
-            if (tempincont && (it = containers.find(tempincont)) == containers.end()) {
+            if ((tempincont != 0u) && (it = containers.find(tempincont)) == containers.end()) {
                 // serious error occured! player data corrupted!
                 Logger::error(LogFacility::Player) << to_string() << " has invalid depot contents 2!" << Log::end;
                 throw std::exception();
             }
 
-            if (((!tempincont && ! tempdepot) && linenumber > MAX_BODY_ITEMS + MAX_BELT_SLOTS) || (tempincont && tempdepot)) {
+            if ((((tempincont == 0u) && (tempdepot == 0u)) && linenumber > MAX_BODY_ITEMS + MAX_BELT_SLOTS) || ((tempincont != 0u) && (tempdepot != 0u))) {
                 // serious error occured! player data corrupted!
                 Logger::error(LogFacility::Player) << to_string() << " has invalid items!" << Log::end;
                 throw std::exception();
@@ -2034,7 +2034,7 @@ void Player::openDepot(const ScriptItem &item) {
     const auto depotid = item.getDepot();
 
     if (depotContents.find(depotid) != depotContents.end()) {
-        if (depotContents[depotid]) {
+        if (depotContents[depotid] != nullptr) {
             openShowcase(depotContents[depotid], item, false);
         }
     } else {

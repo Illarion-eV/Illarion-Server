@@ -131,7 +131,7 @@ void World::itemInform(Character *user, const ScriptItem &item, const ItemLookAt
     auto *cp = dynamic_cast<Player *>(user);
 
     if (item.type == ScriptItem::it_container) {
-        if (item.inside) {
+        if (item.inside != nullptr) {
             try {
                 uint8_t showcase = cp->getShowcaseId(item.inside);
                 ServerCommandPointer cmd = std::make_shared<LookAtShowCaseItemTC>(showcase, item.itempos, lookAt);
@@ -188,7 +188,7 @@ auto World::changeItem(ScriptItem item) -> bool {
             return false;
         }
     } else if (item.type == ScriptItem::it_container) {
-        if (item.inside) {
+        if (item.inside != nullptr) {
             item.inside->changeItem(item);
             sendContainerSlotChange(item.inside, item.itempos);
             return true;
@@ -218,7 +218,7 @@ auto World::getItemStatsFromId(TYPE_OF_ITEM_ID id) -> ItemStruct {
 }
 
 auto World::isCharacterOnField(const position &pos) const -> bool {
-    if (findCharacterOnField(pos)) {
+    if (findCharacterOnField(pos) != nullptr) {
         return true;
     } else {
         return false;
@@ -261,7 +261,7 @@ auto World::erase(ScriptItem item, int amount) -> bool {
             return false;
         }
     } else if (item.type == ScriptItem::it_container) {
-        if (item.inside) {
+        if (item.inside != nullptr) {
             item.inside->increaseAtPos(item.itempos, -amount);
             sendContainerSlotChange(item.inside, item.itempos);
             return true;
@@ -293,7 +293,7 @@ auto World::increase(ScriptItem item, short int count) -> bool {
             return false;
         }
     } else if (item.type == ScriptItem::it_container) {
-        if (item.inside) {
+        if (item.inside != nullptr) {
             item.inside->increaseAtPos(item.itempos, count);
             sendContainerSlotChange(item.inside, item.itempos);
             return true;
@@ -334,7 +334,7 @@ auto World::swap(ScriptItem item, TYPE_OF_ITEM_ID newItem, unsigned short int ne
             return false;
         }
     } else if (item.type == ScriptItem::it_container) {
-        if (item.inside) {
+        if (item.inside != nullptr) {
             item.inside->swapAtPos(item.itempos, newItem, newQuality);
             sendContainerSlotChange(item.inside, item.itempos);
             return true;
