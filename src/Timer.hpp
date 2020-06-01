@@ -32,7 +32,7 @@ public:
     explicit Timer(unsigned long int timegap);
 
     //! Destruktor
-    ~Timer();
+    ~Timer() = default;
 
     //! pr�ft, ob schon gen�gend Zeit seit dem letzten Timer-Ereignis
     // (bzw. dem Konstruktor) vergangen ist

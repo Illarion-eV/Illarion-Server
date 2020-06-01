@@ -23,8 +23,6 @@
 #include <algorithm>
 #include <iostream>
 
-NewClientView::~NewClientView() = default;
-
 NewClientView::NewClientView()
     :  viewPosition(position(0, 0, 0))
       {

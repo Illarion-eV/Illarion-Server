@@ -95,7 +95,7 @@ public:
     /**
     * destructor
     */
-    ~NewClientView();
+    ~NewClientView() = default;
 
     /**
     * fills the stripe with the specific isometric data

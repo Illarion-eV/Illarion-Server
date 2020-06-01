@@ -22,10 +22,6 @@
 Timer::Timer(unsigned long int timegap): last(time(nullptr) - timegap), gap(timegap) {
 }
 
-
-Timer::~Timer() = default;
-
-
 auto Timer::next() -> bool {
     time_t temp = time(nullptr);       // liefert die Sekunden seit dem 1.1.1970
     long realgap = temp - last;
