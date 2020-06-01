@@ -16,8 +16,9 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "Logger.hpp"
 #include "map/Map.hpp"
+
+#include "Logger.hpp"
 
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/lexical_cast.hpp>

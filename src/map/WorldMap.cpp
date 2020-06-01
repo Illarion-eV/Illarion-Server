@@ -16,6 +16,8 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "map/WorldMap.hpp"
+
 #include "Config.hpp"
 #include "Logger.hpp"
 #include "Map.hpp"
@@ -25,7 +27,6 @@
 #include "World.hpp"
 #include "db/Result.hpp"
 #include "db/SelectQuery.hpp"
-#include "map/WorldMap.hpp"
 
 #include <algorithm>
 #include <boost/algorithm/string/replace.hpp>

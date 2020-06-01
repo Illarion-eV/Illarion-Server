@@ -16,6 +16,8 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "netinterface/protocol/ClientCommands.hpp"
+
 #include "Character.hpp"
 #include "Logger.hpp"
 #include "LongTimeAction.hpp"
@@ -28,7 +30,6 @@
 #include "data/MonsterTable.hpp"
 #include "map/Field.hpp"
 #include "netinterface/protocol/BBIWIServerCommands.hpp"
-#include "netinterface/protocol/ClientCommands.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "script/LuaItemScript.hpp"
 #include "script/LuaLookAtPlayerScript.hpp"

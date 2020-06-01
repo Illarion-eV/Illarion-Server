@@ -16,11 +16,12 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "Player.hpp"
+
 #include "Config.hpp"
 #include "Logger.hpp"
 #include "LongTimeAction.hpp"
 #include "MonitoringClients.hpp"
-#include "Player.hpp"
 #include "PlayerManager.hpp"
 #include "Random.hpp"
 #include "SchedulerTaskClasses.hpp"
