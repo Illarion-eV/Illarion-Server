@@ -50,7 +50,7 @@ public:
     Field(uint16_t tile, uint16_t music, const position &here, bool persistent = false);
     Field(const Field &) = delete;
     auto operator=(const Field &) -> Field & = delete;
-    Field(Field &&) = default;
+    Field(Field &&) noexcept = default;
     auto operator=(Field &&) -> Field & = default;
 
     void setTileId(uint16_t id);
