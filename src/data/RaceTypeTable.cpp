@@ -146,7 +146,7 @@ RaceTypeTable::RaceTypeTable() {
     }
 }
 
-auto RaceTypeTable::getRandomRaceConfiguration(TYPE_OF_RACE_ID race) const -> const RaceConfiguration {
+auto RaceTypeTable::getRandomRaceConfiguration(TYPE_OF_RACE_ID race) const -> RaceConfiguration {
     RaceConfiguration raceConfiguration;
     const auto subTypeCount = table.count(race);
 

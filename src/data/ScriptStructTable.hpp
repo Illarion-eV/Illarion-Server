@@ -69,7 +69,7 @@ public:
         scriptNames.clear();
     }
 
-    auto script(IdType id) const -> const std::shared_ptr<ScriptType> {
+    auto script(IdType id) const -> std::shared_ptr<ScriptType> {
         auto it = scripts.find(id);
 
         if (it != scripts.end()) {

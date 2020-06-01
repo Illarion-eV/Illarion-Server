@@ -33,7 +33,7 @@ public:
 
     [[nodiscard]] inline auto isDataOK() const -> bool { return dataOK; }
 
-    [[nodiscard]] auto getRandomRaceConfiguration(TYPE_OF_RACE_ID race) const -> const RaceConfiguration;
+    [[nodiscard]] auto getRandomRaceConfiguration(TYPE_OF_RACE_ID race) const -> RaceConfiguration;
     [[nodiscard]] auto isHairAvailable(TYPE_OF_RACE_ID race, TYPE_OF_RACE_TYPE_ID type, uint16_t hair) const -> bool;
     [[nodiscard]] auto isBeardAvailable(TYPE_OF_RACE_ID race, TYPE_OF_RACE_TYPE_ID type, uint16_t beard) const -> bool;
 
