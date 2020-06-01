@@ -1072,7 +1072,7 @@ auto Character::weightOK(TYPE_OF_ITEM_ID id, int count, Container *tcont) const 
     return (realweight + itemStruct.Weight * count) <= maxLoadWeight();
 }
 
-auto Character::weightContainer(TYPE_OF_ITEM_ID id, int count, Container *tcont) const -> int {
+auto Character::weightContainer(TYPE_OF_ITEM_ID id, int count, Container *tcont) -> int {
     int temp = 0;
 
     if (id != 0) {

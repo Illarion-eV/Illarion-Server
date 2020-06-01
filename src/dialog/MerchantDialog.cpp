@@ -111,13 +111,11 @@ void MerchantDialog::setLookAtList(ListType list) { lookAtList = list; }
 
 auto MerchantDialog::closeOnMove() const -> bool { return true; }
 
-auto MerchantDialog::getProductsSize(const product_list &products) const -> index_type { return products.size(); }
+auto MerchantDialog::getProductsSize(const product_list &products) -> index_type { return products.size(); }
 
-auto MerchantDialog::getProductsBegin(const product_list &products) const -> product_iterator {
-    return products.cbegin();
-}
+auto MerchantDialog::getProductsBegin(const product_list &products) -> product_iterator { return products.cbegin(); }
 
-auto MerchantDialog::getProductsEnd(const product_list &products) const -> product_iterator { return products.cend(); }
+auto MerchantDialog::getProductsEnd(const product_list &products) -> product_iterator { return products.cend(); }
 
 void MerchantDialog::addProduct(product_list &products, TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price) {
     if (canAddProduct(products)) {
@@ -127,4 +125,4 @@ void MerchantDialog::addProduct(product_list &products, TYPE_OF_ITEM_ID item, co
 
 auto MerchantDialog::canAddOffer() const -> bool { return offers.size() < MAXPRODUCTS; }
 
-auto MerchantDialog::canAddProduct(const product_list &products) const -> bool { return products.size() < MAXPRODUCTS; }
+auto MerchantDialog::canAddProduct(const product_list &products) -> bool { return products.size() < MAXPRODUCTS; }

@@ -66,7 +66,7 @@ Container::~Container() {
 }
 
 auto Container::mergeItem(Item item) -> Item::number_type {
-    if (isItemStackable(item)) {
+    if (item.isStackable()) {
         auto it = items.begin();
 
         while ((it != items.end()) && (item.getNumber() > 0)) {
@@ -122,7 +122,7 @@ auto Container::InsertItem(Item item, TYPE_OF_CONTAINERSLOTS pos) -> bool {
         auto it = items.find(pos);
 
         if (it != items.end()) {
-            if (isItemStackable(item)) {
+            if (item.isStackable()) {
                 Item &selectedItem = it->second;
 
                 if (selectedItem.getId() == item.getId() && selectedItem.equalData(item)) {
@@ -239,7 +239,7 @@ auto Container::TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &item, Container *&cc
         }
         cc = nullptr;
 
-        if (isItemStackable(item) && count > 1) {
+        if (item.isStackable() && count > 1) {
             if (selectedItem.getNumber() > count) {
                 selectedItem.setNumber(selectedItem.getNumber() - count);
 
@@ -659,11 +659,6 @@ void Container::resetWear() {
 }
 
 auto Container::getSlotCount() const -> TYPE_OF_CONTAINERSLOTS { return Data::ContainerItems[itemId]; }
-
-auto Container::isItemStackable(const Item &item) -> bool {
-    const auto &com = Data::Items[item.getId()];
-    return com.MaxStack > 1;
-}
 
 void Container::insertIntoFirstFreeSlot(Item &item) {
     TYPE_OF_CONTAINERSLOTS freeSlot = getFirstFreeSlot();

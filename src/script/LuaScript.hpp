@@ -154,13 +154,13 @@ protected:
     };
 
 private:
-    void initialize();
+    static void initialize();
     void loadIntoLuaState();
     void handleLuaLoadError(int errorCode);
     void handleLuaCallError(int errorCode);
     static void init_base_functions();
     static auto add_backtrace(lua_State *L) -> int;
-    void writeErrorMsg();
+    static void writeErrorMsg();
     void writeCastErrorMsg(const std::string &entryPoint, const luabind::cast_failed &e) const;
     void setCurrentWorldScript();
     auto buildEntrypoint(const std::string &entrypoint) -> luabind::object;

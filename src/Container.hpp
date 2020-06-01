@@ -95,7 +95,6 @@ public:
     [[nodiscard]] inline auto isDepot() const -> bool { return itemId == DEPOTITEM; }
 
 private:
-    auto isItemStackable(const Item &item) -> bool;
     void insertIntoFirstFreeSlot(Item &item);
     void insertIntoFirstFreeSlot(Item &item, Container *container);
     auto recursiveWeight(int rekt) -> int;

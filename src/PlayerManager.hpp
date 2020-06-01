@@ -39,7 +39,7 @@ public:
 
     [[nodiscard]] auto findPlayer(const std::string &name) const -> bool;
 
-    void setLoginLogout(bool val);
+    static void setLoginLogout(bool val);
 
     using TPLAYERVECTOR = thread_safe_vector<Player *>;
 

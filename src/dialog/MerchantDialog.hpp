@@ -116,14 +116,12 @@ public:
     auto closeOnMove() const -> bool override;
 
 private:
-    auto getProductsSize(const product_list &products) const -> index_type;
-    auto getProductsBegin(const product_list &products) const -> product_iterator;
-    auto getProductsEnd(const product_list &products) const -> product_iterator;
-    void addProduct(product_list &products, TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price);
-    void addProduct(product_list &products, TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price,
-                    TYPE_OF_BUY_STACK stack);
+    static auto getProductsSize(const product_list &products) -> index_type;
+    static auto getProductsBegin(const product_list &products) -> product_iterator;
+    static auto getProductsEnd(const product_list &products) -> product_iterator;
+    static void addProduct(product_list &products, TYPE_OF_ITEM_ID item, const string &name, TYPE_OF_WORTH price);
     auto canAddOffer() const -> bool;
-    auto canAddProduct(const product_list &products) const -> bool;
+    static auto canAddProduct(const product_list &products) -> bool;
 };
 
 #endif

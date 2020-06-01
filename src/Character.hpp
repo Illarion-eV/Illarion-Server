@@ -405,7 +405,7 @@ public:
      * @param tcont the container from which we want to get the weight
      * @return the +/- weight of the container
      */
-    auto weightContainer(unsigned short int id, int count, Container *tcont) const -> int;
+    static auto weightContainer(unsigned short int id, int count, Container *tcont) -> int;
 
     /**
      * checks if in tcont is enough place for count items with id

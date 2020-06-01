@@ -279,7 +279,7 @@ auto world_getPlayersOnline(const World *world) -> luabind::object {
 }
 
 template <typename Container> auto convert_to_fuselist(const Container &container) -> luabind::object {
-    lua_State *luaState = World::get()->getCurrentScript()->getLuaState();
+    lua_State *luaState = LuaScript::getLuaState();
     luabind::object list = luabind::newtable(luaState);
     int index = 1;
 
