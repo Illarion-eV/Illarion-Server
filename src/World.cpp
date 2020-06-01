@@ -179,7 +179,7 @@ void World::checkPlayers() {
 void World::checkPlayerImmediateCommands() {
     std::unique_lock<std::mutex> lock(immediatePlayerCommandsMutex);
     while (!immediatePlayerCommands.empty()) {
-	auto player = immediatePlayerCommands.front();
+	auto *player = immediatePlayerCommands.front();
 	immediatePlayerCommands.pop();
 	lock.unlock();
 

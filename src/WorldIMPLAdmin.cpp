@@ -364,7 +364,7 @@ void World::ForceIntroduce(Player *player, const std::string &text) {
         return;
     }
 
-    auto target = Players.find(text);
+    auto *target = Players.find(text);
 
     if (target != nullptr) {
         forceIntroducePlayer(target, player);
@@ -391,7 +391,7 @@ void World::teleportPlayerToOther(Player *player, const std::string &target) {
         return;
     }
 
-    auto targetPlayer = Players.find(target);
+    auto *targetPlayer = Players.find(target);
 
     if ((targetPlayer != nullptr) && targetPlayer->getId() != player->getId()) {
         player->Warp(targetPlayer->getPosition());
@@ -487,7 +487,7 @@ void World::summon_command(Player *player, const std::string &text) {
         return;
     }
 
-    auto target = Players.find(text);
+    auto *target = Players.find(text);
 
     if ((target != nullptr) && target->getId() != player->getId()) {
         Logger::info(LogFacility::Admin) << *player << " summons player " << *target << " to " << player->getPosition() << Log::end;
@@ -506,7 +506,7 @@ void World::ban_command(Player *cp, const std::string &text) {
     std::smatch match;
 
     if (std::regex_match(text, match, pattern)) {
-        auto target = Players.find(match[3].str());
+        auto *target = Players.find(match[3].str());
 
         if (target != nullptr) {
             if (match[1].str().empty()) {

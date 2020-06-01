@@ -687,7 +687,7 @@ void Character::stopAttack() {
 }
 
 auto Character::getAttackTarget() const -> character_ptr {
-    auto target = _world->findCharacter(enemyid);
+    auto *target = _world->findCharacter(enemyid);
     return character_ptr(target);
 }
 

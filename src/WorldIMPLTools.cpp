@@ -321,13 +321,13 @@ auto World::findPlayerOnField(const position &pos) const -> Player * {
 
 auto World::findCharacter(TYPE_OF_CHARACTER_ID id) -> Character * {
     if (id < MONSTER_BASE) {
-        auto tmpChr = dynamic_cast<Character *>(Players.find(id));
+        auto *tmpChr = dynamic_cast<Character *>(Players.find(id));
 
         if (tmpChr != nullptr) {
             return tmpChr;
         }
     } else if (id < NPC_BASE) {
-        auto tmpChr = dynamic_cast<Character *>(Monsters.find(id));
+        auto *tmpChr = dynamic_cast<Character *>(Monsters.find(id));
 
         if (tmpChr != nullptr) {
             return tmpChr;
@@ -341,7 +341,7 @@ auto World::findCharacter(TYPE_OF_CHARACTER_ID id) -> Character * {
             }
         }
     } else {
-        auto tmpChr = dynamic_cast<Character *>(Npc.find(id));
+        auto *tmpChr = dynamic_cast<Character *>(Npc.find(id));
 
         if (tmpChr != nullptr) {
             return tmpChr;
@@ -479,7 +479,7 @@ auto World::characterAttacks(Character *cp) -> bool {
 
 
 auto World::killMonster(TYPE_OF_CHARACTER_ID id) -> bool {
-    auto monster = Monsters.find(id);
+    auto *monster = Monsters.find(id);
 
     if (monster != nullptr) {
         const auto &monsterPos = monster->getPosition();

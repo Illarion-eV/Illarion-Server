@@ -696,7 +696,7 @@ void UseTS::performAction(Player *player) {
                 } else {
                     Logger::debug(LogFacility::Script) << "empty field!" << Log::end;
 
-                    auto &script = Data::Tiles.script(field.getTileId());
+                    const auto &script = Data::Tiles.script(field.getTileId());
 
                     if (script) {
                         LuaTileScript = script;

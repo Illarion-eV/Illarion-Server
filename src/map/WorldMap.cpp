@@ -527,7 +527,7 @@ void WorldMap::removePersistenceAt(const position &pos) {
         Range range{0, 0};
         auto players = World::get()->Players.findAllCharactersInRangeOf(pos, range);
         
-        for (auto player : players) {
+        for (auto *player : players) {
             if (not player->Warp(pos)) {
                 position start(Config::instance().playerstart_x,
                                Config::instance().playerstart_y,
@@ -538,13 +538,13 @@ void WorldMap::removePersistenceAt(const position &pos) {
 
         auto monsters = World::get()->Monsters.findAllCharactersInRangeOf(pos, range);
         
-        for (auto monster : monsters) {
+        for (auto *monster : monsters) {
             monster->remove();
         }
 
         auto npcs = World::get()->Npc.findAllCharactersInRangeOf(pos, range);
         
-        for (auto npc : npcs) {
+        for (auto *npc : npcs) {
             World::get()->deleteNPC(npc->getId());
         }
     }

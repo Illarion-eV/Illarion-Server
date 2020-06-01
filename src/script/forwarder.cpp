@@ -271,7 +271,7 @@ auto world_getPlayersOnline(const World *world) -> luabind::object {
 
     const auto &players = world->getPlayersOnline();
 
-    for (auto player : players) {
+    for (auto *player : players) {
         list[index] = character_ptr(player);
         index++;
     }

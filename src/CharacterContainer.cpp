@@ -141,7 +141,7 @@ auto CharacterContainer<T>::findAllCharactersInRangeOf(const position &pos, cons
         short int dz = p.z - pos.z;
         
         if (abs(dx) <= range.radius && abs(dy) <= range.radius && -range.zRadius <= dz && dz <= range.zRadius) {
-            if (auto character=find(id)) temp.push_back(character);
+            if (auto *character=find(id)) temp.push_back(character);
         }
     }
     
@@ -158,7 +158,7 @@ auto CharacterContainer<T>::findAllCharactersInScreen(const position &pos) const
     for (auto& c : candidates) {
         TYPE_OF_CHARACTER_ID id = c.second;
     
-        if (auto character=find(id)) {
+        if (auto *character=find(id)) {
             if (character->isInScreen(pos)) {
                 temp.push_back(character);
             }
@@ -182,7 +182,7 @@ auto CharacterContainer<T>::findAllAliveCharactersInRangeOf(const position &pos,
         short int dz = p.z - pos.z;
         
         if (abs(dx) <= range.radius && abs(dy) <= range.radius && -range.zRadius <= dz && dz <= range.zRadius) {
-            if (auto character=find(id))
+            if (auto *character=find(id))
                 if (character->isAlive())
                     temp.push_back(character);
         }
@@ -204,7 +204,7 @@ auto CharacterContainer<T>::findAllCharactersWithXInRangeOf(short int startx, sh
         TYPE_OF_CHARACTER_ID id = c.second;
     
         if ((p.x >= startx) && (p.x <= endx)) {
-            if (auto character=find(id))
+            if (auto *character=find(id))
                 ret.push_back(character);
         }
     }
