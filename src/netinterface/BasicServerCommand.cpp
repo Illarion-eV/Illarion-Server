@@ -23,6 +23,7 @@
 #include "Logger.hpp"
 #include "netinterface/NetInterface.hpp"
 
+#include <algorithm>
 #include <cassert>
 #include <iostream>
 #include <sys/socket.h>
@@ -76,10 +77,7 @@ auto BasicServerCommand::cmdData() -> char * { return buffer; }
 void BasicServerCommand::addStringToBuffer(const std::string &data) {
     unsigned short int count = data.length();
     addShortIntToBuffer(count);
-
-    for (unsigned short int i = 0; i < count; ++i) {
-        addUnsignedCharToBuffer(data.at(i));
-    }
+    std::for_each(data.cbegin(), data.cend(), [this](auto c) { addUnsignedCharToBuffer(c); });
 }
 
 void BasicServerCommand::addIntToBuffer(int data) {
