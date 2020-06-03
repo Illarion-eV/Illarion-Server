@@ -70,12 +70,12 @@ void World::InitGMCommands() {
     };
 
     GMCommands["?"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool {
-        world->gmhelp_command(player);
+        gmhelp_command(player);
         return true;
     };
 
     GMCommands["warp_to"] = [](World *world, Player *player, const std::string &text) -> bool {
-        world->warpto_command(player, text);
+        warpto_command(player, text);
         return true;
     };
     GMCommands["w"] = GMCommands["warp_to"];
@@ -104,23 +104,23 @@ void World::InitGMCommands() {
     };
 
     GMCommands["turtleon"] = [](World *world, Player *player, const std::string &text) -> bool {
-        world->turtleon_command(player, text);
+        turtleon_command(player, text);
         return true;
     };
     GMCommands["ton"] = GMCommands["turtleon"];
     GMCommands["turtleoff"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool {
-        world->turtleoff_command(player);
+        turtleoff_command(player);
         return true;
     };
     GMCommands["toff"] = GMCommands["turtleoff"];
 
     GMCommands["clippingon"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool {
-        world->clippingon_command(player);
+        clippingon_command(player);
         return true;
     };
     GMCommands["con"] = GMCommands["clippingon"];
     GMCommands["clippingoff"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool {
-        world->clippingoff_command(player);
+        clippingoff_command(player);
         return true;
     };
     GMCommands["coff"] = GMCommands["clippingoff"];
@@ -235,11 +235,11 @@ void World::InitGMCommands() {
     GMCommands["k"] = GMCommands["kick"];
 
     GMCommands["showips"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool {
-        world->showIPS_Command(player);
+        World::showIPS_Command(player);
         return true;
     };
     GMCommands["create"] = [](World *world, Player *player, const std::string &text) -> bool {
-        world->create_command(player, text);
+        create_command(player, text);
         return true;
     };
 
@@ -452,7 +452,7 @@ void World::makeVisible(Player *cp) const {
     cp->Connection->addCommand(cmd);
 }
 
-void World::ForceIntroduce(Player *player, const std::string &text) {
+void World::ForceIntroduce(Player *player, const std::string &text) const {
     if (!player->hasGMRight(gmr_basiccommands)) {
         return;
     }
@@ -464,7 +464,7 @@ void World::ForceIntroduce(Player *player, const std::string &text) {
     }
 }
 
-void World::ForceIntroduceAll(Player *player) {
+void World::ForceIntroduceAll(Player *player) const {
     if (!player->hasGMRight(gmr_basiccommands)) {
         return;
     }

@@ -155,7 +155,7 @@ void Player::login() {
     _world->monitoringClientList->sendCommand(cmd);
 
     // send weather and time before sending the map, to display everything correctly from the start
-    _world->sendIGTime(this);
+    World::sendIGTime(this);
     _world->sendWeather(this);
 
     // send std::map, items and chars around...
@@ -576,7 +576,7 @@ auto Player::eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangema
             }
         }
 
-        if (World::get()->getItemStatsFromId(itemid).Brightness > 0) {
+        if (World::getItemStatsFromId(itemid).Brightness > 0) {
             updateAppearanceForAll(true);
         }
     }
@@ -597,7 +597,7 @@ auto Player::increaseAtPos(unsigned char pos, int count) -> int {
                 items[pos].setNumber(maxStack);
                 temp = temp - maxStack;
             } else if (temp <= 0) {
-                bool updateBrightness = World::get()->getItemStatsFromId(items[pos].getId()).Brightness > 0;
+                bool updateBrightness = World::getItemStatsFromId(items[pos].getId()).Brightness > 0;
                 temp = count + items[pos].getNumber();
                 items[pos].reset();
 
@@ -1783,7 +1783,7 @@ auto Player::move(direction dir, uint8_t mode) -> bool {
         reachingTargetField = now;
     }
 
-    _world->TriggerFieldMove(this, false);
+    World::triggerFieldMove(this, false);
     closeOnMove();
 
     // if we actively move we look into that direction...
@@ -1873,9 +1873,9 @@ auto Player::move(direction dir, uint8_t mode) -> bool {
                     cont = false;
                 }
 
-                _world->checkFieldAfterMove(this, newField);
+                World::checkFieldAfterMove(this, newField);
 
-                _world->TriggerFieldMove(this, true);
+                World::triggerFieldMove(this, true);
                 ServerCommandPointer cmd = std::make_shared<BBPlayerMoveTC>(getId(), getPosition());
                 _world->monitoringClientList->sendCommand(cmd);
 

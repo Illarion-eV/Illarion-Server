@@ -60,7 +60,7 @@ void World::checkFieldAfterMove(Character *character, const map::Field &field) {
     }
 }
 
-void World::TriggerFieldMove(Character *cc, bool moveto) {
+void World::triggerFieldMove(Character *cc, bool moveto) {
     if ((cc != nullptr) && cc->isAlive() && Data::Triggers.exists(cc->getPosition())) {
         const auto &script = Data::Triggers.script(cc->getPosition());
 

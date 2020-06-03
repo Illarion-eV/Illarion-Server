@@ -113,7 +113,7 @@ auto World::languageNumberToSkillName(int languageNumber) -> std::string {
     }
 }
 
-auto World::getTalkRange(Character::talk_type tt) const -> Range {
+auto World::getTalkRange(Character::talk_type tt) -> Range {
     Range range;
 
     switch (tt) {
@@ -143,7 +143,7 @@ void World::broadcast(const std::string &german, const std::string &english) con
 }
 
 void World::sendMessageToAllCharsInRange(const std::string &german, const std::string &english, Character::talk_type tt,
-                                         Character *cc) {
+                                         Character *cc) const {
     auto range = getTalkRange(tt);
     std::string spokenMessage_german;
     std::string spokenMessage_english;
@@ -152,8 +152,8 @@ void World::sendMessageToAllCharsInRange(const std::string &german, const std::s
 
     if (!is_action) {
         // alter message because of the speakers inability to speak...
-        spokenMessage_german = cc->alterSpokenMessage(german, cc->getLanguageSkill(cc->getActiveLanguage()));
-        spokenMessage_english = cc->alterSpokenMessage(english, cc->getLanguageSkill(cc->getActiveLanguage()));
+        spokenMessage_german = cc->alterSpokenMessage(german, Character::getLanguageSkill(cc->getActiveLanguage()));
+        spokenMessage_english = cc->alterSpokenMessage(english, Character::getLanguageSkill(cc->getActiveLanguage()));
     }
 
     // tell all OTHER players... (but tell them what they understand due to their inability to do so)
@@ -163,7 +163,7 @@ void World::sendMessageToAllCharsInRange(const std::string &german, const std::s
     for (const auto &player : Players.findAllCharactersInRangeOf(cc->getPosition(), range)) {
         if (!is_action && player->getId() != cc->getId()) {
             tempMessage = prefix + player->alterSpokenMessage(player->nls(spokenMessage_german, spokenMessage_english),
-                                                              player->getLanguageSkill(cc->getActiveLanguage()));
+                                                              Character::getLanguageSkill(cc->getActiveLanguage()));
             player->receiveText(tt, tempMessage, cc);
         } else {
             if (is_action) {
@@ -177,7 +177,8 @@ void World::sendMessageToAllCharsInRange(const std::string &german, const std::s
     if (cc->getType() == Character::player) {
         // tell all npcs
         for (const auto &npc : Npc.findAllCharactersInRangeOf(cc->getPosition(), range)) {
-            tempMessage = prefix + npc->alterSpokenMessage(english, npc->getLanguageSkill(cc->getActiveLanguage()));
+            tempMessage =
+                    prefix + npc->alterSpokenMessage(english, Character::getLanguageSkill(cc->getActiveLanguage()));
             npc->receiveText(tt, tempMessage, cc);
         }
 
@@ -189,7 +190,7 @@ void World::sendMessageToAllCharsInRange(const std::string &german, const std::s
 }
 
 void World::sendLanguageMessageToAllCharsInRange(const std::string &message, Character::talk_type tt, Language lang,
-                                                 Character *cc) {
+                                                 Character *cc) const {
     auto range = getTalkRange(tt);
 
     // get all Players
@@ -202,7 +203,7 @@ void World::sendLanguageMessageToAllCharsInRange(const std::string &message, Cha
     // alter message because of the speakers inability to speak...
     std::string spokenMessage;
     std::string tempMessage;
-    spokenMessage = cc->alterSpokenMessage(message, cc->getLanguageSkill(cc->getActiveLanguage()));
+    spokenMessage = cc->alterSpokenMessage(message, Character::getLanguageSkill(cc->getActiveLanguage()));
 
     // tell all OTHER players... (but tell them what they understand due to their inability to do so)
     // tell the player himself what he wanted to say
@@ -218,7 +219,7 @@ void World::sendLanguageMessageToAllCharsInRange(const std::string &message, Cha
                 if (player->getId() != cc->getId()) {
                     tempMessage = languagePrefix(cc->getActiveLanguage()) +
                                   player->alterSpokenMessage(spokenMessage,
-                                                             player->getLanguageSkill(cc->getActiveLanguage()));
+                                                             Character::getLanguageSkill(cc->getActiveLanguage()));
                     player->receiveText(tt, tempMessage, cc);
                 } else {
                     player->receiveText(tt, languagePrefix(cc->getActiveLanguage()) + message, cc);
@@ -231,7 +232,7 @@ void World::sendLanguageMessageToAllCharsInRange(const std::string &message, Cha
         // tell all npcs
         for (const auto &npc : npcs) {
             tempMessage = languagePrefix(cc->getActiveLanguage()) +
-                          npc->alterSpokenMessage(spokenMessage, npc->getLanguageSkill(cc->getActiveLanguage()));
+                          npc->alterSpokenMessage(spokenMessage, Character::getLanguageSkill(cc->getActiveLanguage()));
             npc->receiveText(tt, tempMessage, cc);
         }
 
@@ -242,7 +243,7 @@ void World::sendLanguageMessageToAllCharsInRange(const std::string &message, Cha
     }
 }
 
-void World::sendMessageToAllCharsInRange(const std::string &message, Character::talk_type tt, Character *cc) {
+void World::sendMessageToAllCharsInRange(const std::string &message, Character::talk_type tt, Character *cc) const {
     sendMessageToAllCharsInRange(message, message, tt, cc);
 }
 

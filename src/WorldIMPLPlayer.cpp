@@ -34,11 +34,11 @@ void World::InitPlayerCommands() {
         return world->gmpage_command(player, text);
     };
     PlayerCommands["language"] = [](World *world, Player *player, const std::string &text) -> bool {
-        return world->active_language_command(player, text);
+        return active_language_command(player, text);
     };
     PlayerCommands["l"] = PlayerCommands["language"];
     PlayerCommands["version"] = [](World *world, Player *player, const std::string & /*unused*/) -> bool {
-        world->version_command(player);
+        version_command(player);
         return true;
     };
     PlayerCommands["v"] = PlayerCommands["version"];

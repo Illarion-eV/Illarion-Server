@@ -339,7 +339,7 @@ auto Character::eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchang
             }
         }
 
-        if (World::get()->getItemStatsFromId(itemid).Brightness > 0) {
+        if (World::getItemStatsFromId(itemid).Brightness > 0) {
             updateAppearanceForAll(true);
         }
     }
@@ -512,7 +512,7 @@ auto Character::increaseAtPos(unsigned char pos, int count) -> int {
                 items[pos].setNumber(maxStack);
                 temp = temp - maxStack;
             } else if (temp <= 0) {
-                bool updateBrightness = World::get()->getItemStatsFromId(items[pos].getId()).Brightness > 0;
+                bool updateBrightness = World::getItemStatsFromId(items[pos].getId()).Brightness > 0;
                 temp = count + items[pos].getNumber();
                 items[pos].reset();
 
@@ -531,8 +531,8 @@ auto Character::increaseAtPos(unsigned char pos, int count) -> int {
 
 auto Character::swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t newQuality) -> bool {
     if ((pos > 0) && (pos < MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
-        bool updateBrightness = World::get()->getItemStatsFromId(items[pos].getId()).Brightness > 0 ||
-                                World::get()->getItemStatsFromId(newid).Brightness > 0;
+        bool updateBrightness = World::getItemStatsFromId(items[pos].getId()).Brightness > 0 ||
+                                World::getItemStatsFromId(newid).Brightness > 0;
         items[pos].setId(newid);
 
         if (updateBrightness) {
@@ -1144,7 +1144,7 @@ auto Character::alterSpokenMessage(const std::string &message, int languageSkill
     return alteredMessage;
 }
 
-auto Character::getLanguageSkill(int languageSkillNumber) const -> int { return 100; }
+auto Character::getLanguageSkill(int languageSkillNumber) -> int { return 100; }
 
 void Character::talk(talk_type tt, const std::string &message) { // only for say, whisper, shout
     talk(tt, message, message);
@@ -1226,7 +1226,7 @@ void Character::turn(const position &posi) {
 }
 
 auto Character::move(direction dir, bool active) -> bool {
-    _world->TriggerFieldMove(this, false);
+    World::triggerFieldMove(this, false);
 
     // if we move we look into that direction...
     if (dir != dir_up && dir != dir_down) {
@@ -1258,9 +1258,9 @@ auto Character::move(direction dir, bool active) -> bool {
             }
 
             // check if there are teleporters or other special flags on this field
-            _world->checkFieldAfterMove(this, newField);
+            World::checkFieldAfterMove(this, newField);
 
-            _world->TriggerFieldMove(this, true);
+            World::triggerFieldMove(this, true);
 
             return true;
         }

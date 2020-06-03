@@ -312,7 +312,7 @@ public:
     auto distanceMetricToPosition(const position &m_pos) const -> unsigned short int;
 
     virtual auto alterSpokenMessage(const std::string &message, int languageSkill) const -> std::string;
-    auto getLanguageSkill(int languageSkillNumber) const -> int;
+    static auto getLanguageSkill(int languageSkillNumber) -> int;
 
     virtual void talk(talk_type tt, const std::string &message);
     virtual void talk(talk_type tt, const std::string &german, const std::string &english);

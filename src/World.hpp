@@ -267,7 +267,7 @@ public:
      *@param timeType <"year"|"month"|"day"|"hour"|"minute"|"second">
      *@return an int which is the current illarion time from the type
      */
-    auto getTime(const std::string &timeType) -> int;
+    static auto getTime(const std::string &timeType) -> int;
 
     /**
      *checks the command list of one player and put them into practize
@@ -356,7 +356,7 @@ public:
     void removePersistenceAt(const position &pos);
     auto isPersistentAt(const position &pos) const -> bool;
 
-    auto getItemAttrib(const std::string &s, TYPE_OF_ITEM_ID ItemID) -> int;
+    static auto getItemAttrib(const std::string &s, TYPE_OF_ITEM_ID ItemID) -> int;
 
     /**
      *sends all players in sight of the tiles line the map
@@ -455,7 +455,7 @@ public:
      *@param cc the character which is moving
      *@param true if the char is moving to the field, false if he is moving away from the field
      */
-    void TriggerFieldMove(Character *cc, bool moveto);
+    static void triggerFieldMove(Character *cc, bool moveto);
 
     /**
      * update the character container about the position change
@@ -490,7 +490,7 @@ public:
      **/
     auto pushPlayer(Player *cp, unsigned char d, short int &walkcost) -> bool;
 
-    void checkFieldAfterMove(Character *character, const map::Field &field);
+    static void checkFieldAfterMove(Character *character, const map::Field &field);
     void sendPassiveMoveToAllVisiblePlayers(Character *ccp) const;
     void sendSpinToAllVisiblePlayers(Character *cc) const;
     void sendCharacterMoveToAllVisiblePlayers(Character *cc, unsigned char moveType,
@@ -502,7 +502,7 @@ public:
     void lookAtMapItem(Player *player, const position &pos, uint8_t stackPos);
 
 private:
-    void lookAtTile(Player *cp, unsigned short int tile, const position &pos);
+    static void lookAtTile(Player *cp, unsigned short int tile, const position &pos);
 
 public:
     //! sendet an den Spieler den Namen des Item an einer Position im showcase
@@ -523,9 +523,9 @@ public:
     //! \param message what the char says
     //! \param tt did he shout/talk/whisper?
     //! \param the talking char
-    void sendMessageToAllCharsInRange(const std::string &message, Character::talk_type tt, Character *cc);
+    void sendMessageToAllCharsInRange(const std::string &message, Character::talk_type tt, Character *cc) const;
     void sendMessageToAllCharsInRange(const std::string &german, const std::string &english, Character::talk_type tt,
-                                      Character *cc);
+                                      Character *cc) const;
 
     /**
      *Sends a message in a specific language to all chars in range with this language
@@ -536,7 +536,7 @@ public:
      *@todo remove deprecated function
      */
     void sendLanguageMessageToAllCharsInRange(const std::string &message, Character::talk_type tt, Language lang,
-                                              Character *cc);
+                                              Character *cc) const;
 
     void sendMessageToAllPlayers(const std::string &message) const;
     void broadcast(const std::string &german, const std::string &english) const;
@@ -547,26 +547,26 @@ public:
 
     //! converts the number of a language to the proper skill name.
     // \param language number
-    auto languageNumberToSkillName(int languageNumber) -> std::string;
+    static auto languageNumberToSkillName(int languageNumber) -> std::string;
 
     //! converts the language number into the proper language prefix for talking
     //\param language number
-    auto languagePrefix(int Language) -> std::string;
+    static auto languagePrefix(int Language) -> std::string;
 
-    auto getTalkRange(Character::talk_type tt) const -> Range;
+    static auto getTalkRange(Character::talk_type tt) -> Range;
 
     //! schickt an alle Spieler auf den Nachbarfeldern von cp dessen Namen
     // \param cp der Player der sich den anderen bekannt macht
     void introduceMyself(Player *cp) const;
 
     // Stellt den Player dem entsprechenden Admin vor
-    void forceIntroducePlayer(Player *cp, Player *admin);
+    static void forceIntroducePlayer(Player *cp, Player *admin);
 
     // GM Funktion um eine Vorstellen zu erzwingen.
-    void ForceIntroduce(Player *player, const std::string &text);
+    void ForceIntroduce(Player *player, const std::string &text) const;
 
     // GM Funktion um ein Vorstellen aller Personen im Sichtbereich zu erzwingen
-    void ForceIntroduceAll(Player *player);
+    void ForceIntroduceAll(Player *player) const;
 
     // Sends the current weather to one player
     void sendWeather(Player *cp) const;
@@ -575,7 +575,7 @@ public:
     void sendIGTimeToAllPlayers();
 
     // Sends the current IG Time to one player
-    void sendIGTime(Player *cp);
+    static void sendIGTime(Player *cp);
 
     /**
      *sends the current weather to all players online
@@ -599,12 +599,12 @@ public:
     void kickplayer_command(Player *cp, const std::string &player) const;
 
     // Zeigt dem Spieler nutzerdaten (IP's) an
-    void showIPS_Command(Player *cp);
+    static void showIPS_Command(Player *cp);
 
     /**
      *creates an item in the inventory of the gm
      */
-    void create_command(Player *cp, const std::string &itemid);
+    static void create_command(Player *cp, const std::string &itemid);
 
     void spawn_command(Player *cp, const std::string &monsterId);
 
@@ -657,10 +657,10 @@ public:
 
     //! sendet einem Admin die Daten aller aktiven Player
     // \param admin der Admin an den die Daten gesandt werden sollen
-    void sendAdminAllPlayerData(Player *admin);
+    static void sendAdminAllPlayerData(Player *admin);
 
     // ! Server side implemented !warp_to x y z
-    void warpto_command(Player *player, const std::string &text);
+    static void warpto_command(Player *player, const std::string &text);
 
     // ! Server side implemented !summon Player
     void summon_command(Player *player, const std::string &text) const;
@@ -696,7 +696,7 @@ public:
 
     auto takeItemFromShowcase(Player *cc, uint8_t showcase, unsigned char pos, Item::number_type count) -> bool;
     auto putItemInShowcase(Player *cc, uint8_t showcase, TYPE_OF_CONTAINERSLOTS pos) -> bool;
-    void checkField(const map::Field &field, const position &itemPosition);
+    void checkField(const map::Field &field, const position &itemPosition) const;
 
     auto moveItemFromMapToMap(Player *cp, const position &oldPosition, const position &newPosition,
                               Item::number_type count) -> bool;
@@ -773,8 +773,8 @@ public:
 
     // Sucht zu einem Item die gesamten Stats wie Gewicht heraus
     //\param item, das Item zu dem die Stats heraus gesucht werden sollen.
-    auto getItemStats(const ScriptItem &item) -> ItemStruct;
-    auto getItemStatsFromId(TYPE_OF_ITEM_ID id) -> ItemStruct;
+    static auto getItemStats(const ScriptItem &item) -> ItemStruct;
+    static auto getItemStatsFromId(TYPE_OF_ITEM_ID id) -> ItemStruct;
 
     // Aendert die Qualitaet eines ScriptItems.
     // param item, das Item das geaendert werden soll
@@ -876,19 +876,19 @@ public:
 
     //! Laedt eine Armor Struct anhand einer id.
     //\return true false der Armorstruct gefunden wurde
-    auto getArmorStruct(TYPE_OF_ITEM_ID id, ArmorStruct &ret) -> bool;
+    static auto getArmorStruct(TYPE_OF_ITEM_ID id, ArmorStruct &ret) -> bool;
 
     //! Laedt einen Weapon Struct anhand einer id.
     //\return true false der WeaponStruct gefunden wurde.
-    auto getWeaponStruct(TYPE_OF_ITEM_ID id, WeaponStruct &ret) -> bool;
+    static auto getWeaponStruct(TYPE_OF_ITEM_ID id, WeaponStruct &ret) -> bool;
 
     //! Laedt ein MonsterRst Struct anhand einer id.
     //\return true false der Struct gefunden wurde.
-    auto getNaturalArmor(TYPE_OF_RACE_ID id, MonsterArmor &ret) -> bool;
+    static auto getNaturalArmor(TYPE_OF_RACE_ID id, MonsterArmor &ret) -> bool;
 
     //! Laedt ein Attack Boni struct anhand einer id
     //\return true wenn das Struct gefunden wurde
-    auto getMonsterAttack(TYPE_OF_RACE_ID id, AttackBoni &ret) -> bool;
+    static auto getMonsterAttack(TYPE_OF_RACE_ID id, AttackBoni &ret) -> bool;
 
     /**
      *sends a Message to All Monitoring Clients
@@ -912,7 +912,7 @@ protected:
     static World *_self;
 
 private:
-    void logMissingField(const std::string &function, const position &field);
+    static void logMissingField(const std::string &function, const position &field);
 
     bool _is_login_allowed = true;
     bool _is_spawn_enabled = true;
@@ -954,12 +954,12 @@ private:
     void tile_command(Player *cp, const std::string &tile);
 
     // Turtle tile commands
-    void turtleon_command(Player *cp, const std::string &tile);
-    void turtleoff_command(Player *cp);
+    static void turtleon_command(Player *cp, const std::string &tile);
+    static void turtleoff_command(Player *cp);
 
     // Clipping on/off command
-    void clippingon_command(Player *cp);
-    void clippingoff_command(Player *cp);
+    static void clippingon_command(Player *cp);
+    static void clippingoff_command(Player *cp);
 
     // Describe to admin tile in front of them
     void what_command(Player *cp);
@@ -971,7 +971,7 @@ private:
     void teleport_command(Player *cp, const std::string &text);
 
     // Give help for GM commands
-    void gmhelp_command(Player *cp);
+    static void gmhelp_command(Player *cp);
 
     // Sendet eine Nachricht an alle GM's
     auto gmpage_command(Player *player, const std::string &ticket) const -> bool;
@@ -987,7 +987,7 @@ private:
 
     auto getTargetsInRange(const position &pos, int radius) const -> std::vector<Character *>;
 
-    auto active_language_command(Player *cp, const std::string &language) -> bool;
+    static auto active_language_command(Player *cp, const std::string &language) -> bool;
 
     // register any GM commands here...
     void InitGMCommands();
@@ -1003,7 +1003,7 @@ private:
     //! reload all tables
     auto reload_tables(Player *cp) -> bool;
 
-    void version_command(Player *player);
+    static void version_command(Player *player);
 
     std::mutex immediatePlayerCommandsMutex;
     std::queue<Player *> immediatePlayerCommands;

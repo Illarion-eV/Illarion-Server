@@ -646,7 +646,7 @@ auto World::putItemAlwaysOnMap(Character *cc, const position &itemPosition) -> b
     return false;
 }
 
-void World::checkField(const map::Field &field, const position &itemPosition) {
+void World::checkField(const map::Field &field, const position &itemPosition) const {
     if (field.hasSpecialItem()) {
         if (field.hasPlayer()) {
             Player *temp = Players.find(itemPosition);
