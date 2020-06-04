@@ -440,7 +440,7 @@ void CastTS::performAction(Player *player) {
     case UID_MAGICWAND:
         Logger::debug(LogFacility::Script) << "Cast with Wand" << Log::end;
 
-        if (player->getAttackMode() && (player->enemyid != 0) && (LuaMageScript)) {
+        if (player->getAttackMode() && player->enemyid != 0 && LuaMageScript) {
             bool zauberstab = false;
 
             if ((player->items[LEFT_TOOL].getId() != 0) && (player->items[LEFT_TOOL].getId() != BLOCKEDITEM)) {
@@ -464,15 +464,13 @@ void CastTS::performAction(Player *player) {
             }
 
             if (zauberstab) {
-                if (LuaMageScript) {
-                    Target.Type = LUA_CHARACTER;
-                    Target.character = World::get()->findCharacter(player->enemyid);
+                Target.Type = LUA_CHARACTER;
+                Target.character = World::get()->findCharacter(player->enemyid);
 
-                    if (Target.character != nullptr) {
-                        Target.pos = Target.character->getPosition();
-                    } else {
-                        paramOK = false;
-                    }
+                if (Target.character != nullptr) {
+                    Target.pos = Target.character->getPosition();
+                } else {
+                    paramOK = false;
                 }
             } else {
                 paramOK = false;
