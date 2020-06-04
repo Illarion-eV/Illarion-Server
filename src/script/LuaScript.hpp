@@ -131,7 +131,7 @@ public:
         return U();
     }
 
-    static void triggerScriptError(const std::string &msg);
+    [[noreturn]] static void triggerScriptError(const std::string &msg);
     static void writeDeprecatedMsg(const std::string &deprecatedEntity);
     static void writeDebugMsg(const std::string &msg);
 
