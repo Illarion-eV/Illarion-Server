@@ -28,11 +28,12 @@ using namespace Database;
 
 Query::Query() : dbConnection(ConnectionManager::getInstance().getConnection()) {}
 
-Query::Query(const PConnection &connection) : dbConnection(connection) {}
+Query::Query(PConnection connection) : dbConnection(std::move(connection)) {}
 
 Query::Query(const std::string &query) : Query(ConnectionManager::getInstance().getConnection(), query) {}
 
-Query::Query(const PConnection &connection, const std::string &query) : dbConnection(connection), dbQuery(query) {}
+Query::Query(PConnection connection, std::string query)
+        : dbConnection(std::move(connection)), dbQuery(std::move(query)) {}
 
 auto Query::execute() -> Result {
     if (!dbConnection || dbQuery.empty()) {
