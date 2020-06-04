@@ -833,7 +833,7 @@ void Player::check_logindata() {
         Database::ResultTuple charRow = charResult.front();
 
         setId(charRow["chr_playerid"].as<TYPE_OF_CHARACTER_ID>());
-        TYPE_OF_CHARACTER_ID account_id = charRow["chr_accid"].as<TYPE_OF_CHARACTER_ID>();
+        auto account_id = charRow["chr_accid"].as<TYPE_OF_CHARACTER_ID>();
         status = charRow["chr_status"].as<uint16_t>();
 
         if (!charRow["chr_statustime"].is_null()) {
@@ -889,7 +889,7 @@ void Player::check_logindata() {
 
         Database::ResultTuple accRow = accResult.front();
 
-        std::string real_pwd = accRow["acc_passwd"].as<std::string>();
+        auto real_pwd = accRow["acc_passwd"].as<std::string>();
         _player_language = static_cast<Language>(accRow["acc_lang"].as<uint16_t>());
         int acc_state = accRow["acc_state"].as<uint16_t>();
 
