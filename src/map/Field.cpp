@@ -333,7 +333,7 @@ void Field::load(std::ifstream &mapStream, std::ifstream &itemStream, std::ifstr
 
     unsetBits(FLAG_NPCONFIELD | FLAG_MONSTERONFIELD | FLAG_PLAYERONFIELD);
 
-    MAXCOUNTTYPE size;
+    MAXCOUNTTYPE size = 0;
     itemStream.read((char *)&size, sizeof(size));
 
     items.clear();
@@ -363,7 +363,7 @@ void Field::load(std::ifstream &mapStream, std::ifstream &itemStream, std::ifstr
     containers.clear();
 
     for (int i = 0; i < size; ++i) {
-        MAXCOUNTTYPE key;
+        MAXCOUNTTYPE key = 0;
         containerStream.read((char *)&key, sizeof(key));
 
         for (const auto &item : items) {

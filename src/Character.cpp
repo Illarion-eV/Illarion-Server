@@ -1277,8 +1277,8 @@ auto Character::moveToPossible(const map::Field &field) const -> bool {
 
 auto Character::getMoveTime(const map::Field &targetField, bool diagonalMove, bool running) const
         -> TYPE_OF_WALKINGCOST {
-    static const float sqrt2 = std::sqrt(2.0);
-    TYPE_OF_WALKINGCOST walkcost;
+    static constexpr float sqrt2 = std::sqrt(2.0);
+    TYPE_OF_WALKINGCOST walkcost = 0;
 
     switch (_movement) {
     case movement_type::fly:

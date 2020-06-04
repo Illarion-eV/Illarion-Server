@@ -413,7 +413,7 @@ void CastTS::performAction(Player *player) {
 
                 if (ps != nullptr) {
                     ScriptItem tempi;
-                    Container *tempc;
+                    Container *tempc = nullptr;
 
                     if (ps->viewItemNr(pos, tempi, tempc)) {
                         Target.Type = LUA_ITEM;
@@ -705,7 +705,7 @@ void UseTS::performAction(Player *player) {
             if (ps != nullptr) {
                 Logger::debug(LogFacility::Script) << "Container gefunden!" << Log::end;
                 ScriptItem tempi;
-                Container *tempc;
+                Container *tempc = nullptr;
 
                 if (ps->viewItemNr(pos, tempi, tempc)) {
                     Logger::debug(LogFacility::Script) << "pos found item id: " << tempi.getId() << Log::end;

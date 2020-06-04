@@ -149,15 +149,11 @@ void Item::setData(const std::string &key, int32_t value) {
 }
 
 auto Item::getDepot() const -> uint16_t {
-    uint16_t depotId;
-
     try {
-        depotId = boost::lexical_cast<uint16_t>(getData("depot"));
+        return boost::lexical_cast<uint16_t>(getData("depot"));
     } catch (const boost::bad_lexical_cast &) {
-        depotId = 1;
+        return 1;
     }
-
-    return depotId;
 }
 
 void Item::reset() {
@@ -201,7 +197,7 @@ void Item::load(std::istream &obj) {
     obj.read((char *)&number, sizeof(number_type));
     obj.read((char *)&wear, sizeof(wear_type));
     obj.read((char *)&quality, sizeof(quality_type));
-    uint8_t tempsize;
+    uint8_t tempsize = 0;
     obj.read((char *)&tempsize, sizeof(uint8_t));
     char readStr[255];
 

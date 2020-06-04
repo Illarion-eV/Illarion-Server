@@ -58,7 +58,7 @@ std::shared_ptr<LuaWeaponScript> standardFightingScript;
 volatile bool running;
 
 void logout_save(Player *who, bool forced, unsigned long int thistime) {
-    time_t acttime;
+    time_t acttime = 0;
     time(&acttime);
 
     thistime = acttime - who->lastsavetime;
@@ -81,7 +81,7 @@ void logout_save(Player *who, bool forced, unsigned long int thistime) {
 }
 
 void login_save(Player *who) {
-    time_t acttime;
+    time_t acttime = 0;
     time(&acttime);
 
     unsigned int oh = who->onlinetime / 3600;

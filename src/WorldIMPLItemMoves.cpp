@@ -142,65 +142,37 @@ auto World::putItemOnInvPos(Character *cc, unsigned char pos) -> bool {
                     if (Data::ArmorItems.exists(g_item.getId())) {
                         const auto &armor = Data::ArmorItems[g_item.getId()];
 
-                        unsigned char flag;
+                        const unsigned char flag = [&pos] {
+                            switch (pos) {
+                            case HEAD:
+                                return FLAG_HEAD;
 
-                        switch (pos) {
-                        case HEAD:
+                            case NECK:
+                                return FLAG_NECK;
 
-                            flag = FLAG_HEAD;
+                            case BREAST:
+                                return FLAG_BREAST;
 
-                            break;
+                            case HANDS:
+                                return FLAG_HANDS;
 
-                        case NECK:
+                            case FINGER_LEFT_HAND:
+                            case FINGER_RIGHT_HAND:
+                                return FLAG_FINGER;
 
-                            flag = FLAG_NECK;
+                            case LEGS:
+                                return FLAG_LEGS;
 
-                            break;
+                            case FEET:
+                                return FLAG_FEET;
 
-                        case BREAST:
+                            case COAT:
+                                return FLAG_COAT;
 
-                            flag = FLAG_BREAST;
-
-                            break;
-
-                        case HANDS:
-
-                            flag = FLAG_HANDS;
-
-                            break;
-
-                        case FINGER_LEFT_HAND:
-
-                        case FINGER_RIGHT_HAND:
-
-                            flag = FLAG_FINGER;
-
-                            break;
-
-                        case LEGS:
-
-                            flag = FLAG_LEGS;
-
-                            break;
-
-                        case FEET:
-
-                            flag = FLAG_FEET;
-
-                            break;
-
-                        case COAT:
-
-                            flag = FLAG_COAT;
-
-                            break;
-
-                        default:
-
-                            flag = 0xFF;
-
-                            break;
-                        }
+                            default:
+                                return 0xFF;
+                            }
+                        }();
 
                         if ((armor.BodyParts & flag) != 0) {
                             cc->items[pos] = g_item;

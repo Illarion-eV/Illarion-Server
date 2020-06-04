@@ -256,11 +256,9 @@ auto WorldMap::exportTo() const -> bool {
         fieldsf << "H: " << map.getHeight() << std::endl;
 
         // iterate over the map and export...
-        short int x;
-        short int y;
 
-        for (y = minY; y <= map.getMaxY(); ++y) {
-            for (x = minX; x <= map.getMaxX(); ++x) {
+        for (short int y = minY; y <= map.getMaxY(); ++y) {
+            for (short int x = minX; x <= map.getMaxX(); ++x) {
                 const Field &field = map.at(x, y);
 
                 fieldsf << x - minX << ";" << y - minY << ";" << field.getTileCode() << ";" << field.getMusicId()
@@ -378,21 +376,21 @@ auto WorldMap::loadFromDisk() -> bool {
                 << "Error while loading maps: could not open " << (path + "_initmaps") << Log::end;
         return false;
     }
-    unsigned short int size;
+    unsigned short int size = 0;
 
     mapinitfile.read((char *)&size, sizeof(size));
 
     Logger::info(LogFacility::World) << "Loading " << size << " maps." << Log::end;
 
-    int16_t tZ_Level;
+    int16_t tZ_Level = 0;
 
-    int16_t tMin_X;
+    int16_t tMin_X = 0;
 
-    int16_t tMin_Y;
+    int16_t tMin_Y = 0;
 
-    uint16_t tWidth;
+    uint16_t tWidth = 0;
 
-    uint16_t tHeight;
+    uint16_t tHeight = 0;
 
     char mname[200];
 

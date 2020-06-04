@@ -251,7 +251,7 @@ void World::InitGMCommands() {
 
 void World::spawn_command(Player *cp, const std::string &monsterId) {
     if (cp->hasGMRight(gmr_basiccommands)) {
-        uint16_t id;
+        uint16_t id = 0;
         std::stringstream ss;
         ss.str(monsterId);
         ss >> id;
@@ -264,7 +264,7 @@ void World::spawn_command(Player *cp, const std::string &monsterId) {
 
 void World::create_command(Player *cp, const std::string &itemid) {
     if (cp->hasGMRight(gmr_basiccommands) || (Config::instance().debug != 0)) {
-        TYPE_OF_ITEM_ID item;
+        TYPE_OF_ITEM_ID item = 0;
         uint16_t quantity = 1;
         uint16_t quality = 333;
         std::string data;
@@ -646,7 +646,7 @@ void World::ban(Player *cp, int bantime, TYPE_OF_CHARACTER_ID gmid) const {
         cp->setStatusGM(gmid);
     } else if (bantime > 0) {
         cp->setStatus(BANNEDFORTIME);
-        time_t ttime;
+        time_t ttime = 0;
         time(&ttime);
         // Banned for seconds
         cp->setStatusTime(ttime + bantime);
@@ -1197,12 +1197,12 @@ void create_area_command(World *world, Player *player, const std::string &params
     }
 
     std::stringstream ss(params);
-    int x;
-    int y;
-    int z;
-    int w;
-    int h;
-    int tile;
+    int x = 0;
+    int y = 0;
+    int z = 0;
+    int w = 0;
+    int h = 0;
+    int tile = 0;
     x = y = z = w = h = tile = -65535;
     ss >> x;
     ss >> y;

@@ -66,7 +66,7 @@ auto LongTimeCharacterEffects::find(const std::string &effectname, LongTimeEffec
 }
 
 void LongTimeCharacterEffects::addEffect(LongTimeEffect *effect) {
-    LongTimeEffect *foundeffect;
+    LongTimeEffect *foundeffect = nullptr;
 
     if (effect == nullptr) {
         LuaScript::triggerScriptError("LTE must not be nil!");

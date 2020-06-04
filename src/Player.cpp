@@ -241,7 +241,7 @@ void Player::openShowcase(Container *container, const ScriptItem &item, bool car
     }
 
     if (showcases.size() < MAXSHOWCASES) {
-        uint8_t showcaseId;
+        uint8_t showcaseId = 0;
 
         if (container == backPackContents) {
             showcaseId = BACKPACK_SHOWCASE;
@@ -390,7 +390,7 @@ void Player::lookIntoShowcaseContainer(uint8_t showcase, unsigned char pos) {
         bool allowedToOpenContainer = ranges::any_of(depotContents | ranges::view::values, isShowcaseContainer);
 
         if ((showcaseContainer != nullptr) && allowedToOpenContainer) {
-            Container *tempc;
+            Container *tempc = nullptr;
             ScriptItem tempi;
 
             if (showcaseContainer->viewItemNr(pos, tempi, tempc)) {
@@ -832,10 +832,8 @@ void Player::check_logindata() {
 
         Database::ResultTuple charRow = charResult.front();
 
-        TYPE_OF_CHARACTER_ID account_id;
-
         setId(charRow["chr_playerid"].as<TYPE_OF_CHARACTER_ID>());
-        account_id = charRow["chr_accid"].as<TYPE_OF_CHARACTER_ID>();
+        TYPE_OF_CHARACTER_ID account_id = charRow["chr_accid"].as<TYPE_OF_CHARACTER_ID>();
         status = charRow["chr_status"].as<uint16_t>();
 
         if (!charRow["chr_statustime"].is_null()) {
@@ -856,13 +854,15 @@ void Player::check_logindata() {
         case BANNEDFORTIME:
             // player banned for some time...
             // check if time is up?
-            time_t time_now;
-            time(&time_now);
+            {
+                time_t time_now = 0;
+                time(&time_now);
 
-            if (time_now > statustime) {
-                status = statustime = 0;
-            } else {
-                throw LogoutException(BYGAMEMASTER);
+                if (time_now > statustime) {
+                    status = statustime = 0;
+                } else {
+                    throw LogoutException(BYGAMEMASTER);
+                }
             }
 
             break;
@@ -889,12 +889,9 @@ void Player::check_logindata() {
 
         Database::ResultTuple accRow = accResult.front();
 
-        int acc_state;
-        std::string real_pwd;
-
-        real_pwd = accRow["acc_passwd"].as<std::string>();
+        std::string real_pwd = accRow["acc_passwd"].as<std::string>();
         _player_language = static_cast<Language>(accRow["acc_lang"].as<uint16_t>());
-        acc_state = accRow["acc_state"].as<uint16_t>();
+        int acc_state = accRow["acc_state"].as<uint16_t>();
 
         // check if account is active
         if (acc_state < 3) { // TODO how is acc_state defined??
@@ -1795,15 +1792,15 @@ auto Player::move(direction dir, uint8_t mode) -> bool {
         mode = NORMALMOVE;
     }
 
-    size_t steps;
     size_t j = 0;
     bool cont = true;
-
-    if (mode != RUNNING) {
-        steps = 1;
-    } else {
-        steps = 2;
-    }
+    const size_t steps = [&] {
+        if (mode != RUNNING) {
+            return 1;
+        } else {
+            return 2;
+        }
+    }();
 
     position newpos;
     position oldpos;
@@ -2033,7 +2030,7 @@ void Player::setQuestProgress(TYPE_OF_QUEST_ID questid, TYPE_OF_QUESTSTATUS prog
 
 void Player::sendAvailableQuests() {
     const auto quests = Data::Quests.getQuestsInRange(getPosition(), getScreenRange());
-    int someTime;
+    int someTime = 0;
     std::vector<position> questsAvailableNow;
     std::vector<position> questsAvailableSoon;
 
@@ -2435,7 +2432,7 @@ void Player::sendField(const position &pos) {
 }
 
 auto Player::idleTime() const -> uint32_t {
-    time_t now;
+    time_t now = 0;
     time(&now);
     return now - lastaction;
 }

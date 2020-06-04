@@ -305,7 +305,7 @@ void World::lookAtShowcaseItem(Player *cp, uint8_t showcase, unsigned char posit
         Container *ps = cp->getShowcaseContainer(showcase);
 
         if (ps != nullptr) {
-            Container *tc;
+            Container *tc = nullptr;
 
             if (ps->viewItemNr(position, titem, tc)) {
                 ScriptItem n_item = titem;

@@ -143,7 +143,7 @@ void QuestNodeTable::readQuest(std::ifstream &questFile, std::filesystem::path &
             triggerNodes.emplace(pos, node);
 
         } else {
-            unsigned int id;
+            unsigned int id = 0;
 
             try {
                 id = boost::lexical_cast<unsigned int>(entries[1]);

@@ -36,6 +36,7 @@
 #include "netinterface/protocol/ServerCommands.hpp"
 #include "script/LuaWeaponScript.hpp"
 
+#include <algorithm>
 #include <cstdlib>
 #include <list>
 #include <range/v3/all.hpp>
@@ -162,26 +163,16 @@ auto World::LoS(const position &startingpos, const position &endingpos) const ->
     short int endy = endingpos.y;
 
     if (steep) {
-        // change x,y values for correct algorithm in negativ range
-        short int change;
-        change = startx;
-        startx = starty;
-        starty = change;
-        change = endx;
-        endx = endy;
-        endy = change;
+        // swap x,y values for correct execution in negative range
+        std::swap(startx, starty);
+        std::swap(endx, endy);
     }
 
     bool swapped = startx > endx;
 
     if (swapped) {
-        short int change;
-        change = startx;
-        startx = endx;
-        endx = change;
-        change = starty;
-        starty = endy;
-        endy = change;
+        std::swap(startx, endx);
+        std::swap(starty, endy);
     }
 
     short int deltax = endx - startx;
@@ -286,8 +277,7 @@ void World::updatePlayerList() const {
 }
 
 auto World::findCharacterOnField(const position &pos) const -> Character * {
-    Character *tmpChr;
-    tmpChr = Players.find(pos);
+    Character *tmpChr = Players.find(pos);
 
     if (tmpChr != nullptr) {
         return tmpChr;
@@ -620,25 +610,16 @@ void World::Load() {
 void World::import() { maps.importFromEditor(); }
 
 auto World::getTime(const std::string &timeType) -> int {
-    int minute;
-    int hour;
-    int day;
-    int month;
-    int year;
-    int illaTime;
-    time_t curr_unixtime;
-    struct tm *timestamp;
-
     // return unix timestamp if requsted and quit function
     if (timeType == "unix") {
         return (int)time(nullptr);
     }
 
     // get current time and timezone data to get additional informations for time conversation
-    curr_unixtime = time(nullptr);
-    timestamp = localtime(&curr_unixtime);
+    time_t curr_unixtime = time(nullptr);
+    struct tm *timestamp = localtime(&curr_unixtime);
 
-    illaTime = (int)curr_unixtime;
+    auto illaTime = (int)curr_unixtime;
 
     // in case its currently dst, correct the timestamp so the illarion time changes the timestamp as well
     if (timestamp->tm_isdst != 0) {
@@ -655,18 +636,18 @@ auto World::getTime(const std::string &timeType) -> int {
 
     // Calculating year
     // 31536000 == 60*60*24*365
-    year = (int)(illaTime / 31536000);
+    auto year = (int)(illaTime / 31536000);
     illaTime -= year * 31536000;
 
     // Calculating day
     // 86400 = 60*60*24
-    day = (int)(illaTime / 86400);
+    auto day = (int)(illaTime / 86400);
     illaTime -= day * 86400;
     ++day;
 
     // Calculating month
     // 24 days per month
-    month = (int)(day / 24);
+    auto month = (int)(day / 24);
     day -= month * 24;
 
     // checking for range borders and fixing the date
@@ -699,11 +680,11 @@ auto World::getTime(const std::string &timeType) -> int {
     // Calculate the time of day
     // Calculating hour
     // 3600 = 60 * 60
-    hour = (int)(illaTime / 3600);
+    const auto hour = (int)(illaTime / 3600);
     illaTime -= hour * 3600;
 
     // Calculating minute
-    minute = (int)(illaTime / 60);
+    const auto minute = (int)(illaTime / 60);
 
     // Calculating seconds
     illaTime -= minute * 60;

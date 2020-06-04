@@ -172,17 +172,14 @@ void World::sendAllVisibleCharactersToPlayer(Player *cp, bool sendSpin) {
 }
 
 template <class T> void World::sendCharsInVector(const std::vector<T *> &vec, Player *cp, bool sendSpin) {
-    char xoffs;
-    char yoffs;
-    char zoffs;
     const auto &playerPos = cp->getPosition();
 
     for (const auto &cc : vec) {
         if (!cc->isInvisible()) {
             const auto &charPos = cc->getPosition();
-            xoffs = charPos.x - playerPos.x;
-            yoffs = charPos.y - playerPos.y;
-            zoffs = charPos.z - playerPos.z + RANGEDOWN;
+            const auto xoffs = charPos.x - playerPos.x;
+            const auto yoffs = charPos.y - playerPos.y;
+            const auto zoffs = charPos.z - playerPos.z + RANGEDOWN;
 
             if ((xoffs != 0) || (yoffs != 0) || (zoffs != RANGEDOWN)) {
                 ServerCommandPointer cmd = std::make_shared<MoveAckTC>(cc->getId(), charPos, PUSH, 0);

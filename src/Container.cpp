@@ -487,12 +487,12 @@ void Container::Load(std::istream &where) {
     items.clear();
     containers.clear();
 
-    MAXCOUNTTYPE size;
+    MAXCOUNTTYPE size = 0;
     where.read((char *)&size, sizeof(size));
 
-    Container *tempc;
+    Container *tempc = nullptr;
 
-    TYPE_OF_CONTAINERSLOTS slot;
+    TYPE_OF_CONTAINERSLOTS slot = 0;
     Item tempi;
 
     for (int i = 0; i < size; ++i) {

@@ -60,14 +60,13 @@ void MonitoringClients::sendCommand(const ServerCommandPointer &command) const {
 
 void MonitoringClients::CheckClients() {
     for (auto it = client_list.begin(); it != client_list.end(); ++it) {
-        time_t thetime;
+        time_t thetime = 0;
         time(&thetime);
 
         if ((*it)->Connection->online) {
-            time_t tempkeepalive;
+            time_t tempkeepalive = 0;
             time(&tempkeepalive);
-            int temptime;
-            temptime = tempkeepalive - (*it)->lastkeepalive;
+            const int temptime = tempkeepalive - (*it)->lastkeepalive;
 
             // check if we have a timeout
             if ((temptime >= 0) && (temptime < 20)) {

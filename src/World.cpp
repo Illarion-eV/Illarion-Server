@@ -88,7 +88,7 @@ World::World() {
     usedAP = 0;
 
     // save starting time
-    time_t starttime;
+    time_t starttime = 0;
     time(&starttime);
     timeStart = starttime * 1000;
 
@@ -117,7 +117,7 @@ void World::turntheworld() {
 }
 
 void World::checkPlayers() {
-    time_t tempkeepalive;
+    time_t tempkeepalive = 0;
     time(&tempkeepalive);
 
     std::vector<Player *> lostPlayers;

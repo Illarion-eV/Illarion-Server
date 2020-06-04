@@ -70,8 +70,6 @@ void SpawnPoint::spawn() {
             return;
         }
 
-        Monster *newmonster;
-
         // check all monstertyps...
         for (auto &spawn : SpawnTypes) {
             // less monster spawned than we need?
@@ -92,7 +90,7 @@ void SpawnPoint::spawn() {
                         // end of setting the new spawnpos
                         try {
                             map::Field &field = world->walkableFieldNear(tempPos);
-                            newmonster = new Monster(spawn.typ, field.getPosition(), this);
+                            auto *newmonster = new Monster(spawn.typ, field.getPosition(), this);
                             ++spawn.akt_count;
                             world->newMonsters.push_back(newmonster);
                             field.setPlayer();

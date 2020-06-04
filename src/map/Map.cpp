@@ -418,8 +418,8 @@ auto Map::load(const std::string &name) -> bool {
     std::ifstream containers{name + "_container", std::ios::binary | std::ios::in};
 
     if (map.good() && items.good() && warps.good() && containers.good()) {
-        int16_t newWidth;
-        int16_t newHeight;
+        int16_t newWidth = 0;
+        int16_t newHeight = 0;
 
         map.read((char *)&newWidth, sizeof(width));
         map.read((char *)&newHeight, sizeof(height));

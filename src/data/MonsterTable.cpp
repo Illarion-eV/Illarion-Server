@@ -191,47 +191,62 @@ MonsterTable::MonsterTable() {
                                                      itemRow["mobit_maxcount"].as<uint16_t>());
 
                     const auto position = itemRow["mobit_position"].as<std::string>("");
-                    uint16_t location;
-
-                    if (position == "head") {
-                        location = 1;
-                    } else if (position == "neck") {
-                        location = 2;
-                    } else if (position == "breast") {
-                        location = 3;
-                    } else if (position == "hands") {
-                        location = 4;
-                    } else if (position == "left hand") {
-                        location = 5;
-                    } else if (position == "right hand") {
-                        location = 6;
-                    } else if (position == "left finger") {
-                        location = 7;
-                    } else if (position == "right finger") {
-                        location = 8;
-                    } else if (position == "legs") {
-                        location = 9;
-                    } else if (position == "feet") {
-                        location = 10;
-                    } else if (position == "coat") {
-                        location = 11;
-                    } else if (position == "belt1") {
-                        location = 12;
-                    } else if (position == "belt2") {
-                        location = 13;
-                    } else if (position == "belt3") {
-                        location = 14;
-                    } else if (position == "belt4") {
-                        location = 15;
-                    } else if (position == "belt5") {
-                        location = 16;
-                    } else if (position == "belt6") {
-                        location = 17;
-                    } else {
+                    const uint16_t location = [id, &position] {
+                        if (position == "head") {
+                            return 1;
+                        }
+                        if (position == "neck") {
+                            return 2;
+                        }
+                        if (position == "breast") {
+                            return 3;
+                        }
+                        if (position == "hands") {
+                            return 4;
+                        }
+                        if (position == "left hand") {
+                            return 5;
+                        }
+                        if (position == "right hand") {
+                            return 6;
+                        }
+                        if (position == "left finger") {
+                            return 7;
+                        }
+                        if (position == "right finger") {
+                            return 8;
+                        }
+                        if (position == "legs") {
+                            return 9;
+                        }
+                        if (position == "feet") {
+                            return 10;
+                        }
+                        if (position == "coat") {
+                            return 11;
+                        }
+                        if (position == "belt1") {
+                            return 12;
+                        }
+                        if (position == "belt2") {
+                            return 13;
+                        }
+                        if (position == "belt3") {
+                            return 14;
+                        }
+                        if (position == "belt4") {
+                            return 15;
+                        }
+                        if (position == "belt5") {
+                            return 16;
+                        }
+                        if (position == "belt6") {
+                            return 17;
+                        }
                         Logger::error(LogFacility::Other)
                                 << "Invalid itemslot for monster " << id << ": " << position << Log::end;
-                        location = 99;
-                    }
+                        return 99;
+                    }();
 
                     const auto &itemStruct = Data::Items[tempitem.itemid];
 
