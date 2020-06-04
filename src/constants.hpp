@@ -20,35 +20,35 @@
 #define CONSTANTS_HPP
 
 #include <cstdint>
+#include <string>
 
-const uint32_t DYNNPC_BASE = 0xFF800000;
-const uint32_t NPC_BASE = 0xFF000000;
-const uint32_t MONSTER_BASE = 0xFE000000;
+constexpr uint32_t DYNNPC_BASE = 0xFF800000;
+constexpr uint32_t NPC_BASE = 0xFF000000;
+constexpr uint32_t MONSTER_BASE = 0xFE000000;
+constexpr auto MONSTERVIEWRANGE = 11;
 
-const uint32_t MONSTERVIEWRANGE = 11;
+constexpr auto MAXPOISONVALUE = 400;
+constexpr auto MAXMANA = 10000;
+constexpr auto MAXHPS = 10000;
+constexpr auto MAXFOOD = 60000;
+constexpr auto MAXATTRIB = 255;
+constexpr auto MAXWEIGHT = 30000;
 
-#define MAXPOISONVALUE 400
-#define MAXMANA 10000
-#define MAXHPS 10000
-#define MAXFOOD 60000
-#define MAXATTRIB 255
-#define MAXWEIGHT 30000
+constexpr auto WAITINGVALIDATION = 1;
+constexpr auto BANNED = 30;
+constexpr auto BANNEDFORTIME = 31;
 
-#define WAITINGVALIDATION 1
-#define BANNED 30
-#define BANNEDFORTIME 31
+constexpr auto DEPOTITEM = 321;
+constexpr auto DEPOTSIZE = 100;
+constexpr auto BLOCKEDITEM = 228;
 
-#define DEPOTITEM 321
-#define DEPOTSIZE 100
-#define BLOCKEDITEM 228
-
-#define FLAG_WARPFIELD 1
-#define FLAG_SPECIALITEM 2
-#define FLAG_BLOCKPATH 4
-#define FLAG_MAKEPASSABLE 8
-#define FLAG_MONSTERONFIELD 16
-#define FLAG_NPCONFIELD 32
-#define FLAG_PLAYERONFIELD 64
+constexpr auto FLAG_WARPFIELD = 1;
+constexpr auto FLAG_SPECIALITEM = 2;
+constexpr auto FLAG_BLOCKPATH = 4;
+constexpr auto FLAG_MAKEPASSABLE = 8;
+constexpr auto FLAG_MONSTERONFIELD = 16;
+constexpr auto FLAG_NPCONFIELD = 32;
+constexpr auto FLAG_PLAYERONFIELD = 64;
 
 // Verwendung siehe Tabelle:
 // WERT|      tiles        |   tilesmoditems   |       flags        |
@@ -71,164 +71,164 @@ const uint32_t MONSTERVIEWRANGE = 11;
 // ----+-------------------+-------------------+--------------------+
 
 //! das Verzeichnis der Karte, relativ zum DEFAULTMUDDIR
-#define MAPDIR "map/"
+const std::string MAPDIR("map/");
 
 //! das Verzeichnis der Skripte, relativ zum DEFAULTMUDDIR
-#define SCRIPTSDIR "scripts/"
+const std::string SCRIPTSDIR("scripts/");
 
 //! Anzahl der maximal sichtbaren Ebenen nach Oben
-#define RANGEUP 0x02
+constexpr auto RANGEUP = 0x02;
 
 //! Anzahl der maximal sichtbaren Ebenen nach Unten
-#define RANGEDOWN 0x02
+constexpr auto RANGEDOWN = 0x02;
 
 //! Anzahl der Felder zwischen zwei Ebenen
-#define LEVELDISTANCE 0x03
+constexpr auto LEVELDISTANCE = 0x03;
 
 //! Typ der maximalen Anzahl von Item in einem Container
-#define MAXCOUNTTYPE unsigned char
+using MAXCOUNTTYPE = unsigned char;
 
 //! Die maximale Anzahl von Item auf einem Feld
-#define MAXITEMS 250 // max 255 da oft als BYTE verwendet
+constexpr auto MAXITEMS = 250; // max 255 da oft als BYTE verwendet
 
 //! die maximale Anzahl von Item am Grtel
-#define MAX_BELT_SLOTS 6
+constexpr auto MAX_BELT_SLOTS = 6;
 
 //! Die maximale Anzahl von Item direkt am K�per
-#define MAX_BODY_ITEMS 12
+constexpr auto MAX_BODY_ITEMS = 12;
 
 //! Rucksack
-#define BACKPACK 0
+constexpr auto BACKPACK = 0;
 
 //! Kopf
-#define HEAD 1
+constexpr auto HEAD = 1;
 
 //! Kopf-Flag
-#define FLAG_HEAD 1
+constexpr auto FLAG_HEAD = 1;
 
 //! Hals
-#define NECK 2
+constexpr auto NECK = 2;
 
 //! Hals-Flag
-#define FLAG_NECK 2
+constexpr auto FLAG_NECK = 2;
 
 //! Brustkorb
-#define BREAST 3
+constexpr auto BREAST = 3;
 
 //! Brustkorb-Flag
-#define FLAG_BREAST 4
+constexpr auto FLAG_BREAST = 4;
 
 //! H�de (fr Handschuhe)
-#define HANDS 4
+constexpr auto HANDS = 4;
 
 //! H�de-Flag
-#define FLAG_HANDS 8
+constexpr auto FLAG_HANDS = 8;
 
 //! Werkzeug / Waffe in der linken Hand
-#define LEFT_TOOL 5
+constexpr auto LEFT_TOOL = 5;
 
 //! Werkzeug / Waffe in der rechten Hand
-#define RIGHT_TOOL 6
+constexpr auto RIGHT_TOOL = 6;
 
 //! Finger der linken Hand
-#define FINGER_LEFT_HAND 7
+constexpr auto FINGER_LEFT_HAND = 7;
 
 //! Finger der rechten Hand
-#define FINGER_RIGHT_HAND 8
+constexpr auto FINGER_RIGHT_HAND = 8;
 
 //! Finger-Flag
-#define FLAG_FINGER 32
+constexpr auto FLAG_FINGER = 32;
 
 //! Beine
-#define LEGS 9
+constexpr auto LEGS = 9;
 
 //! Beine-Flag
-#define FLAG_LEGS 64
+constexpr auto FLAG_LEGS = 64;
 
 //! F�
-#define FEET 10
+constexpr auto FEET = 10;
 
 //! F�-Flag
-#define FLAG_FEET 128
+constexpr auto FLAG_FEET = 128;
 
 //! Umhang
-#define COAT 11
+constexpr auto COAT = 11;
 
-#define LAST_WEARABLE 11
+constexpr auto LAST_WEARABLE = 11;
 
 //! Coat-Flag
-#define FLAG_COAT 16
+constexpr auto FLAG_COAT = 16;
 
-#define MAXSHOWCASES 100
-#define MAX_DEPOT_SHOWCASE 9
+constexpr auto MAXSHOWCASES = 100;
+constexpr auto MAX_DEPOT_SHOWCASE = 9;
 
 //! Code fr "kein Feld"
-#define NOFIELD 0xFFFF
+constexpr auto NOFIELD = 0xFFFF;
 
 //-------------- Client to Server ---------------------
 
 //! folgender Wert ist relative x und y Koordinaten eines Items/Bodenplatte/Charakters
-#define UID_KOORD 0x01
+constexpr auto UID_KOORD = 0x01;
 
 //! folgender Wert ist Showcasenummer+showcaseposition
-#define UID_SHOWC 0x02
+constexpr auto UID_SHOWC = 0x02;
 
 //! folgender Wert ist Inventory Position
-#define UID_INV 0x03
+constexpr auto UID_INV = 0x03;
 
 //! Eine Person wird benutzt
-#define UID_PERSON 0x05
+constexpr auto UID_PERSON = 0x05;
 
-#define UID_MAGICWAND 0x06
+constexpr auto UID_MAGICWAND = 0x06;
 
 //-------------- Server to Client ---------------------
 
-#define STILLMOVING 0x09
-#define NOMOVE 0x0A
-#define NORMALMOVE 0x0B
-#define PUSH 0x0C
-#define RUNNING 0x0D
+constexpr auto STILLMOVING = 0x09;
+constexpr auto NOMOVE = 0x0A;
+constexpr auto NORMALMOVE = 0x0B;
+constexpr auto PUSH = 0x0C;
+constexpr auto RUNNING = 0x0D;
 
 //! Grund fr Verbindungsabbruch: Client logt aus
-#define NORMALLOGOUT 0x00
+constexpr auto NORMALLOGOUT = 0x00;
 
 //! Grund fr Verbindungsabbruch: zu alter Client
-#define OLDCLIENT 0x01
+constexpr auto OLDCLIENT = 0x01;
 
 //! Grund fr Verbindungsabbruch: Spieler ist schon online
-#define DOUBLEPLAYER 0x02
+constexpr auto DOUBLEPLAYER = 0x02;
 
 //! Grund fr Verbindungsabbruch: Falsches Pa�ort
-#define WRONGPWD 0x03
+constexpr auto WRONGPWD = 0x03;
 
 //! Grund fr Verbindungsabbruch: Servershutdown
-#define SERVERSHUTDOWN 0x04
+constexpr auto SERVERSHUTDOWN = 0x04;
 
 //! Grund fr Verbindungsabbruch: durch Gamemaster entfernt
-#define BYGAMEMASTER 0x05
+constexpr auto BYGAMEMASTER = 0x05;
 
 //! Grund fr Verbindungsabbruch: zum Erstellen eines neuen Player
-#define FORCREATE 0x06
+constexpr auto FORCREATE = 0x06;
 
 //! Grund fr Verbindungsabbruch: kein Platz fr den Player
-#define NOPLACE 0x07
+constexpr auto NOPLACE = 0x07;
 
 //! Grund fr Verbindungsabbruch: angegebener Spieler nicht gefunden
-#define NOCHARACTERFOUND 0x08
+constexpr auto NOCHARACTERFOUND = 0x08;
 
 //! Grund fr Verbindungsabbruch: Spieler wurde erstellt
-#define PLAYERCREATED 0x09 // string name
+constexpr auto PLAYERCREATED = 0x09; // string name
 
 //! Grund fr Verbindungsabbruch: UNSTABLECONNECTION
-#define UNSTABLECONNECTION 0x0A // string name
+constexpr auto UNSTABLECONNECTION = 0x0A; // string name
 
 //! Reason for Connection shutdown: player has no account
-#define NOACCOUNT 0x0B
+constexpr auto NOACCOUNT = 0x0B;
 
 //! Grund fr Verbindungsabbruch: no skill package chosen
-#define NOSKILLS 0x0C
+constexpr auto NOSKILLS = 0x0C;
 
 //! Grund fuer Verbindungsabbruch: Spielerdaten korrupt
-#define CORRUPTDATA 0x0D
+constexpr auto CORRUPTDATA = 0x0D;
 
 #endif
