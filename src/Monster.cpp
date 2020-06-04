@@ -114,9 +114,9 @@ void Monster::setMonsterType(TYPE_OF_CHARACTER_ID type) {
             const int selectedItemIndex = [&] {
                 if (numberOfPossibleItems == 1) {
                     return 0;
-                } else {
-                    return Random::uniform(0, numberOfPossibleItems - 1);
                 }
+
+                return Random::uniform(0, numberOfPossibleItems - 1);
             }();
 
             auto &selectedItem = possibleItems[selectedItemIndex];

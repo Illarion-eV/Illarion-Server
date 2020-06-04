@@ -1797,9 +1797,9 @@ auto Player::move(direction dir, uint8_t mode) -> bool {
     const size_t steps = [&] {
         if (mode != RUNNING) {
             return 1;
-        } else {
-            return 2;
         }
+
+        return 2;
     }();
 
     position newpos;
