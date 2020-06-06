@@ -85,7 +85,12 @@ enum direction {
 enum class movement_type { walk = 0, fly = 1, crawl = 2 };
 
 struct Colour {
-    uint8_t red = 0xFF, green = 0xFF, blue = 0xFF, alpha = 0xFF;
+    static constexpr uint8_t maxColourValue = 0xFF;
+    uint8_t red = maxColourValue;
+    uint8_t green = maxColourValue;
+    uint8_t blue = maxColourValue;
+    uint8_t alpha = maxColourValue;
+
     Colour() = default;
     Colour(uint8_t red, uint8_t green, uint8_t blue) : red(red), green(green), blue(blue) {}
     Colour(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)

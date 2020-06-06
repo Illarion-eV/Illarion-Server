@@ -596,16 +596,19 @@ void World::initNPC() {
 
 // calculate when the next day change for illarion time will be
 static auto getNextIGDayTime() -> std::chrono::steady_clock::time_point {
-    // next day is at ((current unix timestamp - 950742000 + (is_dst?3600:0)) / 28800 + 1) * 28800
+    // next day is at ((current unix timestamp - illarionBirthTime + (is_dst?3600:0)) / 28800 + 1) * 28800
     time_t curr_unixtime = time(nullptr);
     struct tm *timestamp = localtime(&curr_unixtime);
+    static constexpr auto secondsInHour = 60 * 60;
+
     if (timestamp->tm_isdst != 0) {
-        curr_unixtime += 3600;
+        curr_unixtime += secondsInHour;
     }
 
-    curr_unixtime -= 950742000; // begin of illarion time, 17.2.2000
-    curr_unixtime -= curr_unixtime % 28800;
-    curr_unixtime += 28800;
+    static constexpr auto realSecondsInIllarionDay = secondsInHour * 24 / illarionTimeFactor;
+    curr_unixtime -= illarionBirthTime;
+    curr_unixtime -= curr_unixtime % realSecondsInIllarionDay;
+    curr_unixtime += realSecondsInIllarionDay;
 
     auto scheduler_ref = std::chrono::steady_clock::now();
     auto realtime_ref = std::chrono::system_clock::now();

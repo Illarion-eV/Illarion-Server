@@ -85,7 +85,8 @@ void PlayerManager::loginLoop(PlayerManager *pmanager) {
         auto &newplayers = pmanager->incon->getNewPlayers();
         timespec waittime;
         waittime.tv_sec = 0;
-        waittime.tv_nsec = 100000000;
+        static constexpr auto tenthOfSecond = 100000000;
+        waittime.tv_nsec = tenthOfSecond;
         pmanager->threadOk = true;
 
         while (pmanager->running) {
@@ -171,7 +172,8 @@ void PlayerManager::playerSaveLoop(PlayerManager *pmanager) {
         World *world = World::get();
         timespec waittime;
         waittime.tv_sec = 0;
-        waittime.tv_nsec = 100000000;
+        static constexpr auto tenthOfSecond = 100000000;
+        waittime.tv_nsec = tenthOfSecond;
         pmanager->threadOk = true;
         Player *tmpPl = nullptr;
 

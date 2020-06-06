@@ -266,7 +266,7 @@ void World::create_command(Player *cp, const std::string &itemid) {
     if (cp->hasGMRight(gmr_basiccommands) || (Config::instance().debug != 0)) {
         TYPE_OF_ITEM_ID item = 0;
         uint16_t quantity = 1;
-        uint16_t quality = 333;
+        uint16_t quality = Item::defaultQuality;
         std::string data;
         std::string datalog;
         script_data_exchangemap dataList;
@@ -607,16 +607,19 @@ void World::ban_command(Player *cp, const std::string &text) const {
                 try {
                     auto duration = boost::lexical_cast<int>(match[1].str());
                     char timeunit = match[2].str()[0];
+                    static constexpr auto secondsInMinute = 60;
+                    static constexpr auto secondsInHour = secondsInMinute * 60;
+                    static constexpr auto secondsInDay = secondsInHour * 24;
 
                     switch (timeunit) {
                     case 'd':
-                        ban(target, duration * 86400, cp->getId());
+                        ban(target, duration * secondsInDay, cp->getId());
                         break;
                     case 'h':
-                        ban(target, duration * 3600, cp->getId());
+                        ban(target, duration * secondsInHour, cp->getId());
                         break;
                     case 'm':
-                        ban(target, duration * 60, cp->getId());
+                        ban(target, duration * secondsInMinute, cp->getId());
                         break;
                     default:
                         break;

@@ -32,7 +32,7 @@ std::map<std::string, ConfigEntryBase *> config_options;
 }
 
 auto Config::load(const std::string &config_file) -> bool {
-    // make sure Config is instanciated
+    // make sure Config is instantiated
     Config::instance();
 
     std::ifstream configfile(config_file);

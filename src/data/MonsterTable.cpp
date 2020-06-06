@@ -28,6 +28,8 @@
 #include "db/Result.hpp"
 #include "db/SelectQuery.hpp"
 
+#include <optional>
+
 MonsterTable::MonsterTable() {
     Logger::info(LogFacility::Other) << "MonsterTable::constructor" << Log::end;
 
@@ -191,69 +193,69 @@ MonsterTable::MonsterTable() {
                                                      itemRow["mobit_maxcount"].as<uint16_t>());
 
                     const auto position = itemRow["mobit_position"].as<std::string>("");
-                    const uint16_t location = [id, &position] {
+                    const auto location = [&]() -> std::optional<uint16_t> {
                         if (position == "head") {
-                            return 1;
+                            return HEAD;
                         }
                         if (position == "neck") {
-                            return 2;
+                            return NECK;
                         }
                         if (position == "breast") {
-                            return 3;
+                            return BREAST;
                         }
                         if (position == "hands") {
-                            return 4;
+                            return HANDS;
                         }
                         if (position == "left hand") {
-                            return 5;
+                            return LEFT_TOOL;
                         }
                         if (position == "right hand") {
-                            return 6;
+                            return RIGHT_TOOL;
                         }
                         if (position == "left finger") {
-                            return 7;
+                            return FINGER_LEFT_HAND;
                         }
                         if (position == "right finger") {
-                            return 8;
+                            return FINGER_RIGHT_HAND;
                         }
                         if (position == "legs") {
-                            return 9;
+                            return LEGS;
                         }
                         if (position == "feet") {
-                            return 10;
+                            return FEET;
                         }
                         if (position == "coat") {
-                            return 11;
+                            return COAT;
                         }
                         if (position == "belt1") {
-                            return 12;
+                            return BELT1;
                         }
                         if (position == "belt2") {
-                            return 13;
+                            return BELT2;
                         }
                         if (position == "belt3") {
-                            return 14;
+                            return BELT3;
                         }
                         if (position == "belt4") {
-                            return 15;
+                            return BELT4;
                         }
                         if (position == "belt5") {
-                            return 16;
+                            return BELT5;
                         }
                         if (position == "belt6") {
-                            return 17;
+                            return BELT6;
                         }
                         Logger::error(LogFacility::Other)
                                 << "Invalid itemslot for monster " << id << ": " << position << Log::end;
-                        return 99;
+                        return std::nullopt;
                     }();
 
                     const auto &itemStruct = Data::Items[tempitem.itemid];
 
-                    if (location < 99 && itemStruct.isValid()) {
+                    if (location.has_value() && itemStruct.isValid()) {
                         tempitem.AgeingSpeed = itemStruct.AgeingSpeed;
-                        temprecord.items[location].push_back(tempitem);
-                    } else if (location < 99) {
+                        temprecord.items[location.value()].push_back(tempitem);
+                    } else if (location.has_value()) {
                         Logger::error(LogFacility::Other)
                                 << "Invalid item for monster " << id << ": " << tempitem.itemid << Log::end;
                     }

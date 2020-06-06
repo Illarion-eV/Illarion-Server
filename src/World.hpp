@@ -57,60 +57,23 @@ using CommandType = std::function<bool(World *, Player *, const std::string &)>;
  * a struct for holding Weather informations
  */
 struct WeatherStruct {
-    char cloud_density;          /**< how much clouds are on the illarion sky in percent*/
-    char fog_density;            /**< how much fog in percent*/
-    char wind_dir;               /**< wind direction -100 blowing from east to 100 */
-    char gust_strength;          /**< wind strength in percent*/
-    char percipitation_strength; /**< percipitation strength in percent*/
-    char per_type;               /**< what type of percipitation 0 rain 1 snow*/
-    char thunderstorm;           /**< how much thunderstorm, intensity in percent*/
-    char temperature;            /**< holds the current temperature in degree celsius*/
+    char cloud_density = defaultCloudDensity;                   // cloud density in percent
+    char fog_density = defaultFogDensity;                       // fog density in percent
+    char wind_dir = defaultWindDirection;                       // wind direction -100 blowing from east to 100 ???
+    char gust_strength = defaultGustStrength;                   // wind strength in percent
+    char percipitation_strength = defaultPercipitationStrength; // percipitation strength in percent
+    char per_type = defaultPercipitationType;                   // type of percipitation: 0 == rain, 1 == snow
+    char thunderstorm = defaultThunderstormIntensity;           // thunderstorm intensity in percent
+    char temperature = defaultTemperature;                      // current temperature in °C
 
-    /**
-     *small constructor for initializing
-     * cloud_density = 20%
-     * fog_density = 0%
-     * wind_dir = 50
-     * gust_strength = 10%
-     * percipitation_strength = 0%
-     * per_type = 0
-     * thunderstorm = 0%
-     * temperature = 20C
-     * the value from a normal not too cold/warm day
-     */
-    WeatherStruct() {
-        cloud_density = 20;
-        fog_density = 0;
-        wind_dir = 50;
-        gust_strength = 10;
-        percipitation_strength = 0;
-        per_type = 0;
-        thunderstorm = 0;
-        temperature = 20;
-    }
-
-    /**
-     * constructor for initializing weather struct with values
-     *
-     *@param cd for initializing cloud_density
-     *@param fd for intitializing fog_density
-     *@param wd for initializing wind_dir
-     *@param gs for initializing gust_strength
-     *@param ps for initializing percipitation_strength
-     *@param pt for initializing per_type
-     *@param ts for initializing thunderstorm
-     *@param te for initializing temperature
-     */
-    WeatherStruct(char cd, char fd, char wd, char gs, char ps, char pt, char ts, char te) {
-        cloud_density = cd;
-        fog_density = fd;
-        wind_dir = wd;
-        gust_strength = gs;
-        percipitation_strength = ps;
-        per_type = pt;
-        thunderstorm = ts;
-        temperature = te;
-    }
+    static constexpr char defaultCloudDensity = 20;
+    static constexpr char defaultFogDensity = 0;
+    static constexpr char defaultWindDirection = 50;
+    static constexpr char defaultGustStrength = 10;
+    static constexpr char defaultPercipitationStrength = 0;
+    static constexpr char defaultPercipitationType = 0;
+    static constexpr char defaultThunderstormIntensity = 0;
+    static constexpr char defaultTemperature = 20;
 };
 
 struct BlockingObject {
@@ -928,13 +891,12 @@ private:
     //! IG day of last turntheworld
     int lastTurnIGDay;
 
-    // check spawns every minute
-    Timer monstertimer{60};
+    static constexpr auto minute = 60;
+    Timer monstertimer{minute};
 
     void ageMaps();
     void ageInventory() const;
 
-    //! das Verzeichnis mit den Skripten
     std::string scriptDir;
 
     // spawnplaces...

@@ -160,7 +160,7 @@ void Item::reset() {
     id = 0;
     number = 0;
     wear = 0;
-    quality = 333;
+    quality = defaultQuality;
     datamap.clear();
 }
 

@@ -53,32 +53,34 @@ auto RaceTable::assignId(const Database::ResultTuple &row) -> TYPE_OF_ITEM_ID {
 auto RaceTable::assignTable(const Database::ResultTuple &row) -> RaceStruct {
     RaceStruct race;
     race.serverName = row["race_name"].as<std::string>("unknown");
-    race.minSize = uint16_t(row["race_height_min"].as<int32_t>(100));
-    race.maxSize = uint16_t(row["race_height_max"].as<int32_t>(100));
-    race.minAgility = uint8_t(row["race_agility_min"].as<int32_t>(2));
-    race.maxAgility = uint8_t(row["race_agility_max"].as<int32_t>(20));
-    race.minConstitution = uint8_t(row["race_constitution_min"].as<int32_t>(2));
-    race.maxConstitution = uint8_t(row["race_constitution_max"].as<int32_t>(20));
-    race.minDexterity = uint8_t(row["race_dexterity_min"].as<int32_t>(2));
-    race.maxDexterity = uint8_t(row["race_dexterity_max"].as<int32_t>(20));
-    race.minEssence = uint8_t(row["race_essence_min"].as<int32_t>(2));
-    race.maxEssence = uint8_t(row["race_essence_max"].as<int32_t>(20));
-    race.minIntelligence = uint8_t(row["race_intelligence_min"].as<int32_t>(2));
-    race.maxIntelligence = uint8_t(row["race_intelligence_max"].as<int32_t>(20));
-    race.minPerception = uint8_t(row["race_perception_min"].as<int32_t>(2));
-    race.maxPerception = uint8_t(row["race_perception_max"].as<int32_t>(20));
-    race.minStrength = uint8_t(row["race_strength_min"].as<int32_t>(2));
-    race.maxStrength = uint8_t(row["race_strength_max"].as<int32_t>(20));
-    race.minWillpower = uint8_t(row["race_willpower_min"].as<int32_t>(2));
-    race.maxWillpower = uint8_t(row["race_willpower_max"].as<int32_t>(20));
-    race.maxAttribs = uint8_t(row["race_attribute_points_max"].as<int16_t>(84));
+    race.minSize = uint16_t(row["race_height_min"].as<int32_t>(RaceStruct::defaultMinHeight));
+    race.maxSize = uint16_t(row["race_height_max"].as<int32_t>(RaceStruct::defaultMaxHeight));
+    race.minAgility = uint8_t(row["race_agility_min"].as<int32_t>(RaceStruct::defaultMinAttribute));
+    race.maxAgility = uint8_t(row["race_agility_max"].as<int32_t>(RaceStruct::defaultMaxAttribute));
+    race.minConstitution = uint8_t(row["race_constitution_min"].as<int32_t>(RaceStruct::defaultMinAttribute));
+    race.maxConstitution = uint8_t(row["race_constitution_max"].as<int32_t>(RaceStruct::defaultMaxAttribute));
+    race.minDexterity = uint8_t(row["race_dexterity_min"].as<int32_t>(RaceStruct::defaultMinAttribute));
+    race.maxDexterity = uint8_t(row["race_dexterity_max"].as<int32_t>(RaceStruct::defaultMaxAttribute));
+    race.minEssence = uint8_t(row["race_essence_min"].as<int32_t>(RaceStruct::defaultMinAttribute));
+    race.maxEssence = uint8_t(row["race_essence_max"].as<int32_t>(RaceStruct::defaultMaxAttribute));
+    race.minIntelligence = uint8_t(row["race_intelligence_min"].as<int32_t>(RaceStruct::defaultMinAttribute));
+    race.maxIntelligence = uint8_t(row["race_intelligence_max"].as<int32_t>(RaceStruct::defaultMaxAttribute));
+    race.minPerception = uint8_t(row["race_perception_min"].as<int32_t>(RaceStruct::defaultMinAttribute));
+    race.maxPerception = uint8_t(row["race_perception_max"].as<int32_t>(RaceStruct::defaultMaxAttribute));
+    race.minStrength = uint8_t(row["race_strength_min"].as<int32_t>(RaceStruct::defaultMinAttribute));
+    race.maxStrength = uint8_t(row["race_strength_max"].as<int32_t>(RaceStruct::defaultMaxAttribute));
+    race.minWillpower = uint8_t(row["race_willpower_min"].as<int32_t>(RaceStruct::defaultMinAttribute));
+    race.maxWillpower = uint8_t(row["race_willpower_max"].as<int32_t>(RaceStruct::defaultMaxAttribute));
+    race.maxAttribs = uint8_t(row["race_attribute_points_max"].as<int16_t>(RaceStruct::defaultMaxAttributePoints));
     return race;
 }
 
 auto RaceTable::getRelativeSize(TYPE_OF_RACE_ID race, uint16_t size) const -> uint8_t {
-    // relative size is between 50 and 120 (in percent) and a linear interploation between min and max size
+    // relative size is between 40 and 120 (in percent) and a linear interpolation between min and max size
+    constexpr auto defaultRelativeSize = 100;
+
     if (!exists(race)) {
-        return 100;
+        return defaultRelativeSize;
     }
 
     const auto &sizes = this->get(race);
@@ -87,10 +89,14 @@ auto RaceTable::getRelativeSize(TYPE_OF_RACE_ID race, uint16_t size) const -> ui
 
     const auto maxSize = sizes.maxSize;
 
+    constexpr auto minRelativeSize = 40;
+    constexpr auto maxRelativeSize = 120;
+
     if (size >= minSize && size <= maxSize) {
-        return uint8_t((40 * (size - minSize)) / (maxSize - minSize) + 80);
+        return uint8_t((minRelativeSize * (size - minSize)) / (maxSize - minSize) + maxRelativeSize - minRelativeSize);
     }
-    return 100;
+
+    return defaultRelativeSize;
 }
 
 auto RaceTable::isBaseAttributeInLimits(TYPE_OF_RACE_ID race, Character::attributeIndex attribute,

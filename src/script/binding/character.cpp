@@ -174,16 +174,16 @@ auto character() -> luabind::scope {
             .def("stopAttack", &Character::stopAttack)
             .def("getAttackTarget", &Character::getAttackTarget)
             //.def_readonly("isTarget", &Character::isTarget)
-            .enum_("body_pos")
-                    [luabind::value("backpack", BACKPACK), luabind::value("head", HEAD), luabind::value("neck", NECK),
-                     luabind::value("breast", BREAST), luabind::value("hands", HANDS),
-                     luabind::value("left_tool", LEFT_TOOL), luabind::value("right_tool", RIGHT_TOOL),
-                     luabind::value("finger_left_hand", FINGER_LEFT_HAND),
-                     luabind::value("finger_right_hand", FINGER_RIGHT_HAND), luabind::value("legs", LEGS),
-                     luabind::value("feet", FEET), luabind::value("coat", COAT),
-                     luabind::value("belt_pos_1", MAX_BODY_ITEMS), luabind::value("belt_pos_2", MAX_BODY_ITEMS + 1),
-                     luabind::value("belt_pos_3", MAX_BODY_ITEMS + 2), luabind::value("belt_pos_4", MAX_BODY_ITEMS + 3),
-                     luabind::value("belt_pos_5", MAX_BODY_ITEMS + 4), luabind::value("belt_pos_6", MAX_BODY_ITEMS + 5)]
+            .enum_("body_pos")[luabind::value("backpack", BACKPACK), luabind::value("head", HEAD),
+                               luabind::value("neck", NECK), luabind::value("breast", BREAST),
+                               luabind::value("hands", HANDS), luabind::value("left_tool", LEFT_TOOL),
+                               luabind::value("right_tool", RIGHT_TOOL),
+                               luabind::value("finger_left_hand", FINGER_LEFT_HAND),
+                               luabind::value("finger_right_hand", FINGER_RIGHT_HAND), luabind::value("legs", LEGS),
+                               luabind::value("feet", FEET), luabind::value("coat", COAT),
+                               luabind::value("belt_pos_1", BELT1), luabind::value("belt_pos_2", BELT2),
+                               luabind::value("belt_pos_3", BELT3), luabind::value("belt_pos_4", BELT4),
+                               luabind::value("belt_pos_5", BELT5), luabind::value("belt_pos_6", BELT6)]
             .enum_("magic_flags")[luabind::value("mage", MAGE), luabind::value("priest", PRIEST),
                                   luabind::value("bard", BARD), luabind::value("druid", DRUID)]
             .enum_("talk_type")[luabind::value("say", Character::tt_say),

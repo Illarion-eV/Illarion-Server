@@ -22,6 +22,9 @@
 #include <cstdint>
 #include <string>
 
+constexpr auto illarionBirthTime = 950742000; // 17.2.2000 (UTC+1)
+constexpr auto illarionTimeFactor = 3;
+
 constexpr uint32_t DYNNPC_BASE = 0xFF800000;
 constexpr uint32_t NPC_BASE = 0xFF000000;
 constexpr uint32_t MONSTER_BASE = 0xFE000000;
@@ -97,67 +100,34 @@ constexpr auto MAX_BELT_SLOTS = 6;
 //! Die maximale Anzahl von Item direkt am K�per
 constexpr auto MAX_BODY_ITEMS = 12;
 
-//! Rucksack
 constexpr auto BACKPACK = 0;
-
-//! Kopf
 constexpr auto HEAD = 1;
-
-//! Kopf-Flag
-constexpr auto FLAG_HEAD = 1;
-
-//! Hals
 constexpr auto NECK = 2;
-
-//! Hals-Flag
-constexpr auto FLAG_NECK = 2;
-
-//! Brustkorb
 constexpr auto BREAST = 3;
-
-//! Brustkorb-Flag
-constexpr auto FLAG_BREAST = 4;
-
-//! H�de (fr Handschuhe)
 constexpr auto HANDS = 4;
-
-//! H�de-Flag
-constexpr auto FLAG_HANDS = 8;
-
-//! Werkzeug / Waffe in der linken Hand
 constexpr auto LEFT_TOOL = 5;
-
-//! Werkzeug / Waffe in der rechten Hand
 constexpr auto RIGHT_TOOL = 6;
-
-//! Finger der linken Hand
 constexpr auto FINGER_LEFT_HAND = 7;
-
-//! Finger der rechten Hand
 constexpr auto FINGER_RIGHT_HAND = 8;
-
-//! Finger-Flag
-constexpr auto FLAG_FINGER = 32;
-
-//! Beine
 constexpr auto LEGS = 9;
-
-//! Beine-Flag
-constexpr auto FLAG_LEGS = 64;
-
-//! F�
 constexpr auto FEET = 10;
-
-//! F�-Flag
-constexpr auto FLAG_FEET = 128;
-
-//! Umhang
 constexpr auto COAT = 11;
-
 constexpr auto LAST_WEARABLE = 11;
+constexpr auto BELT1 = 12;
+constexpr auto BELT2 = 13;
+constexpr auto BELT3 = 14;
+constexpr auto BELT4 = 15;
+constexpr auto BELT5 = 16;
+constexpr auto BELT6 = 17;
 
-//! Coat-Flag
+constexpr auto FLAG_HEAD = 1;
+constexpr auto FLAG_NECK = 2;
+constexpr auto FLAG_BREAST = 4;
+constexpr auto FLAG_HANDS = 8;
 constexpr auto FLAG_COAT = 16;
+constexpr auto FLAG_FINGER = 32;
+constexpr auto FLAG_LEGS = 64;
+constexpr auto FLAG_FEET = 128;
 
 constexpr auto MAXSHOWCASES = 100;
 constexpr auto MAX_DEPOT_SHOWCASE = 9;

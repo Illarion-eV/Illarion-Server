@@ -620,35 +620,34 @@ auto World::getTime(const std::string &timeType) -> int {
     struct tm *timestamp = localtime(&curr_unixtime);
 
     auto illaTime = (int)curr_unixtime;
+    static constexpr auto secondsInHour = 60 * 60;
 
     // in case its currently dst, correct the timestamp so the illarion time changes the timestamp as well
     if (timestamp->tm_isdst != 0) {
-        illaTime += 3600;
+        illaTime += secondsInHour;
     }
 
-    // Illarion seconds since 17th February 2000
-    // RL Seconds * 3
-    illaTime = (illaTime - 950742000) * 3;
+    illaTime = (illaTime - illarionBirthTime) * illarionTimeFactor;
 
     if (timeType == "illarion") {
         return (int)illaTime;
     }
 
     // Calculating year
-    // 31536000 == 60*60*24*365
-    auto year = (int)(illaTime / 31536000);
-    illaTime -= year * 31536000;
+    static constexpr auto secondsInYear = 60 * 60 * 24 * 365;
+    auto year = (int)(illaTime / secondsInYear);
+    illaTime -= year * secondsInYear;
 
     // Calculating day
-    // 86400 = 60*60*24
-    auto day = (int)(illaTime / 86400);
-    illaTime -= day * 86400;
+    static constexpr auto secondsInDay = 60 * 60 * 24;
+    auto day = (int)(illaTime / secondsInDay);
+    illaTime -= day * secondsInDay;
     ++day;
 
     // Calculating month
-    // 24 days per month
-    auto month = (int)(day / 24);
-    day -= month * 24;
+    static constexpr auto daysInMonth = 24;
+    auto month = (int)(day / daysInMonth);
+    day -= month * daysInMonth;
 
     // checking for range borders and fixing the date
     if (day == 0) {
@@ -679,15 +678,15 @@ auto World::getTime(const std::string &timeType) -> int {
 
     // Calculate the time of day
     // Calculating hour
-    // 3600 = 60 * 60
-    const auto hour = (int)(illaTime / 3600);
-    illaTime -= hour * 3600;
+    const auto hour = (int)(illaTime / secondsInHour);
+    illaTime -= hour * secondsInHour;
 
     // Calculating minute
-    const auto minute = (int)(illaTime / 60);
+    static constexpr auto secondsInMinute = 60;
+    const auto minute = (int)(illaTime / secondsInMinute);
 
     // Calculating seconds
-    illaTime -= minute * 60;
+    illaTime -= minute * secondsInMinute;
 
     // returning the last possible values
     if (timeType == "hour") {

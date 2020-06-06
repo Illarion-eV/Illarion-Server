@@ -64,13 +64,16 @@ void logout_save(Player *who, bool forced, unsigned long int thistime) {
     thistime = acttime - who->lastsavetime;
     who->onlinetime += thistime;
 
-    unsigned int th = thistime / 3600;
-    unsigned int tm = (thistime % 3600) / 60;
-    unsigned int ts = (thistime % 3600) % 60;
+    static constexpr auto secondsInMinute = 60;
+    static constexpr auto secondsInHour = 60 * 60;
 
-    unsigned int oh = who->onlinetime / 3600;
-    unsigned int om = (who->onlinetime % 3600) / 60;
-    unsigned int os = (who->onlinetime % 3600) % 60;
+    unsigned int th = thistime / secondsInHour;
+    unsigned int tm = (thistime % secondsInHour) / secondsInMinute;
+    unsigned int ts = (thistime % secondsInHour) % secondsInMinute;
+
+    unsigned int oh = who->onlinetime / secondsInHour;
+    unsigned int om = (who->onlinetime % secondsInHour) / secondsInMinute;
+    unsigned int os = (who->onlinetime % secondsInHour) % secondsInMinute;
 
     std::stringstream onlinetime;
     onlinetime << " after " << th << "h " << tm << "m " << ts << "s, onlinetime " << oh << "h " << om << "m " << os
@@ -83,10 +86,12 @@ void logout_save(Player *who, bool forced, unsigned long int thistime) {
 void login_save(Player *who) {
     time_t acttime = 0;
     time(&acttime);
+    static constexpr auto secondsInMinute = 60;
+    static constexpr auto secondsInHour = 60 * 60;
 
-    unsigned int oh = who->onlinetime / 3600;
-    unsigned int om = (who->onlinetime % 3600) / 60;
-    unsigned int os = (who->onlinetime % 3600) % 60;
+    unsigned int oh = who->onlinetime / secondsInHour;
+    unsigned int om = (who->onlinetime % secondsInHour) / secondsInMinute;
+    unsigned int os = (who->onlinetime % secondsInHour) % secondsInMinute;
 
     std::stringstream onlinetime;
     onlinetime << " onlinetime till now: " << oh << "h " << om << "m " << os << "s";

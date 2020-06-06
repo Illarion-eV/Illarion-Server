@@ -157,9 +157,26 @@ struct attributedef_t {
     std::pair<unsigned short, unsigned short> essence;
 
     attributedef_t()
-            : luck(std::make_pair(10, 10)), strength(std::make_pair(15, 15)), dexterity(std::make_pair(10, 10)),
-              constitution(std::make_pair(8, 8)), agility(std::make_pair(10, 10)), intelligence(std::make_pair(10, 10)),
-              perception(std::make_pair(10, 10)), willpower(std::make_pair(10, 10)), essence(std::make_pair(10, 10)) {}
+            : luck(std::make_pair(defaultLuck, defaultLuck)),
+              strength(std::make_pair(defaultStrength, defaultStrength)),
+              dexterity(std::make_pair(defaultDexterity, defaultDexterity)),
+              constitution(std::make_pair(defaultConstitution, defaultConstitution)),
+              agility(std::make_pair(defaultAgility, defaultAgility)),
+              intelligence(std::make_pair(defaultIntelligence, defaultIntelligence)),
+              perception(std::make_pair(defaultPerception, defaultPerception)),
+              willpower(std::make_pair(defaultWillpower, defaultWillpower)),
+              essence(std::make_pair(defaultEssence, defaultEssence)) {}
+
+private:
+    static constexpr uint16_t defaultLuck = 10;
+    static constexpr uint16_t defaultStrength = 15;
+    static constexpr uint16_t defaultDexterity = 10;
+    static constexpr uint16_t defaultConstitution = 8;
+    static constexpr uint16_t defaultAgility = 10;
+    static constexpr uint16_t defaultIntelligence = 10;
+    static constexpr uint16_t defaultPerception = 10;
+    static constexpr uint16_t defaultWillpower = 10;
+    static constexpr uint16_t defaultEssence = 10;
 };
 
 struct MonsterStruct {
@@ -193,25 +210,31 @@ struct MonsterStruct {
 
 struct RaceStruct {
     std::string serverName;
-    uint16_t minSize = 140;
-    uint16_t maxSize = 220;
-    uint8_t minAgility = 2;
-    uint8_t maxAgility = 20;
-    uint8_t minConstitution = 2;
-    uint8_t maxConstitution = 20;
-    uint8_t minDexterity = 2;
-    uint8_t maxDexterity = 20;
-    uint8_t minEssence = 2;
-    uint8_t maxEssence = 20;
-    uint8_t minIntelligence = 2;
-    uint8_t maxIntelligence = 20;
-    uint8_t minPerception = 2;
-    uint8_t maxPerception = 20;
-    uint8_t minStrength = 2;
-    uint8_t maxStrength = 20;
-    uint8_t minWillpower = 2;
-    uint8_t maxWillpower = 20;
-    uint8_t maxAttribs = 84;
+    uint16_t minSize = defaultMinHeight;
+    uint16_t maxSize = defaultMaxHeight;
+    uint8_t minAgility = defaultMinAttribute;
+    uint8_t maxAgility = defaultMaxAttribute;
+    uint8_t minConstitution = defaultMinAttribute;
+    uint8_t maxConstitution = defaultMaxAttribute;
+    uint8_t minDexterity = defaultMinAttribute;
+    uint8_t maxDexterity = defaultMaxAttribute;
+    uint8_t minEssence = defaultMinAttribute;
+    uint8_t maxEssence = defaultMaxAttribute;
+    uint8_t minIntelligence = defaultMinAttribute;
+    uint8_t maxIntelligence = defaultMaxAttribute;
+    uint8_t minPerception = defaultMinAttribute;
+    uint8_t maxPerception = defaultMaxAttribute;
+    uint8_t minStrength = defaultMinAttribute;
+    uint8_t maxStrength = defaultMaxAttribute;
+    uint8_t minWillpower = defaultMinAttribute;
+    uint8_t maxWillpower = defaultMaxAttribute;
+    uint8_t maxAttribs = defaultMaxAttributePoints;
+
+    static constexpr uint16_t defaultMinHeight = 100;
+    static constexpr uint16_t defaultMaxHeight = 100;
+    static constexpr uint8_t defaultMinAttribute = 2;
+    static constexpr uint8_t defaultMaxAttribute = 20;
+    static constexpr uint8_t defaultMaxAttributePoints = 84;
 };
 
 struct RaceConfiguration {

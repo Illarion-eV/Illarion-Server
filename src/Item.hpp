@@ -41,11 +41,12 @@ public:
     using quality_type = uint16_t;
     using datamap_type = std::unordered_map<std::string, std::string>;
 
-    static const TYPE_OF_VOLUME LARGE_ITEM_VOLUME = 5000;
-    static const wear_type PERMANENT_WEAR = 255;
+    static constexpr TYPE_OF_VOLUME LARGE_ITEM_VOLUME = 5000;
+    static constexpr wear_type PERMANENT_WEAR = 255;
+    static constexpr quality_type defaultQuality = 333;
 
     Item() = default;
-    Item(id_type id, number_type number, wear_type wear, quality_type quality = 333)
+    Item(id_type id, number_type number, wear_type wear, quality_type quality = defaultQuality)
             : id(id), number(number), wear(wear), quality(quality), datamap(1) {}
     Item(id_type id, number_type number, wear_type wear, quality_type quality, const script_data_exchangemap &datamap);
 
@@ -107,17 +108,18 @@ private:
     id_type id{0};
     number_type number{0};
     wear_type wear{0};
-    quality_type quality{333};
+    quality_type quality{defaultQuality};
     datamap_type datamap{1};
 };
 
 class ScriptItem : public Item {
 public:
     enum itemtype { notdefined = 0, it_field = 3, it_inventory = 4, it_belt = 5, it_container = 6 };
+    static constexpr uint8_t maxItemPos = 255;
 
     itemtype type{notdefined};
     position pos;
-    unsigned char itempos{255};
+    unsigned char itempos{maxItemPos};
     Character *owner{nullptr};
     auto getOwnerForLua() const -> character_ptr {
         character_ptr fuse_owner(owner);

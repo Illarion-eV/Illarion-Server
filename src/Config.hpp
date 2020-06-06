@@ -76,25 +76,25 @@ public:
         return *_instance;
     }
 
-    ConfigEntry<std::string> datadir = {"datadir", "./data/"};
-    ConfigEntry<std::string> scriptdir = {"scriptdir", "./script/"};
+    const ConfigEntry<std::string> datadir = {"datadir", "./data/"};
+    const ConfigEntry<std::string> scriptdir = {"scriptdir", "./script/"};
 
-    ConfigEntry<uint16_t> port = {"port", 3012};
+    const ConfigEntry<uint16_t> port = {"port", 3012};
 
-    ConfigEntry<std::string> postgres_db = {"postgres_db", "illarion"};
-    ConfigEntry<std::string> postgres_user = {"postgres_user", "illarion"};
-    ConfigEntry<std::string> postgres_pwd = {"postgres_pwd", "illarion"};
-    ConfigEntry<std::string> postgres_host = {"postgres_host", "/var/run/postgresql"};
-    ConfigEntry<uint16_t> postgres_port = {"postgres_port", 5432};
-    ConfigEntry<std::string> postgres_schema_server = {"postgres_schema_server", "server"};
-    ConfigEntry<std::string> postgres_schema_account = {"postgres_schema_account", "accounts"};
+    const ConfigEntry<std::string> postgres_db = {"postgres_db", "illarion"};
+    const ConfigEntry<std::string> postgres_user = {"postgres_user", "illarion"};
+    const ConfigEntry<std::string> postgres_pwd = {"postgres_pwd", "illarion"};
+    const ConfigEntry<std::string> postgres_host = {"postgres_host", "/var/run/postgresql"};
+    const ConfigEntry<uint16_t> postgres_port = {"postgres_port", 5432};
+    const ConfigEntry<std::string> postgres_schema_server = {"postgres_schema_server", "server"};
+    const ConfigEntry<std::string> postgres_schema_account = {"postgres_schema_account", "accounts"};
 
-    ConfigEntry<int16_t> debug = {"debug", 0};
+    const ConfigEntry<int16_t> debug = {"debug", 0};
 
-    ConfigEntry<uint16_t> clientversion = {"clientversion", 122};
-    ConfigEntry<int16_t> playerstart_x = {"playerstart_x", 0};
-    ConfigEntry<int16_t> playerstart_y = {"playerstart_y", 0};
-    ConfigEntry<int16_t> playerstart_z = {"playerstart_z", 0};
+    const ConfigEntry<uint16_t> clientversion = {"clientversion", 122};
+    const ConfigEntry<int16_t> playerstart_x = {"playerstart_x", 0};
+    const ConfigEntry<int16_t> playerstart_y = {"playerstart_y", 0};
+    const ConfigEntry<int16_t> playerstart_z = {"playerstart_z", 0};
 
 private:
     static std::unique_ptr<Config> _instance;
