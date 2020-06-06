@@ -21,59 +21,59 @@
 
 #include "types.hpp"
 
-#define CLIENT_TIMEOUT 50
+constexpr auto CLIENT_TIMEOUT = 50;
 
 // how many players to process each turn (maximum)
-#define MAXPLAYERSPROCESSED 5
+constexpr auto MAXPLAYERSPROCESSED = 5;
 
-#define MIN_AP_UPDATE 100
+constexpr auto MIN_AP_UPDATE = 100;
 
-#define P_MIN_AP 7
-#define P_MAX_AP 21
+constexpr auto P_MIN_AP = 7;
+constexpr auto P_MAX_AP = 21;
 
-#define NP_MIN_AP 7
-#define NP_MAX_AP 21
+constexpr auto NP_MIN_AP = 7;
+constexpr auto NP_MAX_AP = 21;
 
-#define P_MIN_FP 0
-#define P_MAX_FP 0
+constexpr auto P_MIN_FP = 0;
+constexpr auto P_MAX_FP = 0;
 
-#define NP_MIN_FP 0
-#define NP_MAX_FP 0
+constexpr auto NP_MIN_FP = 0;
+constexpr auto NP_MAX_FP = 0;
 
-#define P_ATTACK_COST 15
-#define NP_ATTACK_COST 20
+constexpr auto P_ATTACK_COST = 15;
+constexpr auto NP_ATTACK_COST = 20;
 
-#define P_PUSH_COST 1
-#define NP_PUSH_COST 1
+constexpr auto P_PUSH_COST = 1;
+constexpr auto NP_PUSH_COST = 1;
 
-#define P_CAST_COST 1
-#define NP_CAST_COST 1
+constexpr auto P_CAST_COST = 1;
+constexpr auto NP_CAST_COST = 1;
 
-#define P_USE_COST 1
-#define NP_USE_COST 1
+constexpr auto P_USE_COST = 1;
+constexpr auto NP_USE_COST = 1;
 
-#define P_LOOK_COST 0
+constexpr auto P_LOOK_COST = 0;
 
-#define P_SAY_COST 1
-#define P_SHOUT_COST 1
-#define P_WHISPER_COST 1
+constexpr auto P_SAY_COST = 1;
+constexpr auto P_SHOUT_COST = 1;
+constexpr auto P_WHISPER_COST = 1;
 
-#define P_ITEMMOVE_COST 1
+constexpr auto P_ITEMMOVE_COST = 1;
 
-#define P_SPIN_COST 1
+constexpr auto P_SPIN_COST = 1;
 
-#define P_REGENERATE_COST 0
-#define NP_REGENERATE_COST 10
+constexpr auto P_REGENERATE_COST = 0;
+constexpr auto NP_REGENERATE_COST = 10;
 
-const unsigned short MAX_WALK_AGI = 20;
-const TYPE_OF_WALKINGCOST ADDITIONAL_MONSTER_WALKING_COST = 1;
-const TYPE_OF_WALKINGCOST MIN_WALK_COST = 300;
-const TYPE_OF_WALKINGCOST MAX_WALK_COST = 800;
+constexpr unsigned short MAX_WALK_AGI = 20;
+constexpr TYPE_OF_WALKINGCOST ADDITIONAL_MONSTER_WALKING_COST = 1;
+constexpr TYPE_OF_WALKINGCOST MIN_WALK_COST = 300;
+constexpr TYPE_OF_WALKINGCOST MAX_WALK_COST = 800;
 
-#define NP_STANDARDFLYCOST 5
+constexpr auto NP_STANDARDFLYCOST = 5;
 
-#define MAXTHROWDISTANCE 10
-#define MAXTHROWWEIGHT 99
-#define MAXDROPDISTANCE 2
+constexpr auto MAXTHROWDISTANCE = 10;
+constexpr auto MAXTHROWWEIGHT = 99;
+constexpr auto MAXDROPDISTANCE = 2;
 
 #endif
