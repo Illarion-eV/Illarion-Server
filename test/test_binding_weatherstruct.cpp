@@ -128,30 +128,6 @@ TEST_F(weather_bindings, test_temperature_property) {
     EXPECT_EQ(42, retval.temperature);
 }
 
-TEST_F(weather_bindings, test_constructors) {
-	{
-	LuaTestSupportScript script { "function test()\n"
-			"local foo = WeatherStruct()\n"
-			"foo.cloud_density = 23\n"
-			"return foo\n"
-			"end",
-			"weather_constructor1_test"
-	};
-	auto retval = script.test<WeatherStruct, WeatherStruct>(weather);
-	EXPECT_EQ(23, retval.cloud_density);
-	}
-	{
-	LuaTestSupportScript script { "function test()\n"
-			"local foo = WeatherStruct(23, 42, 5, 12, 6, 82, 9, 88)\n"
-			"return foo\n"
-			"end",
-			"weather_constructor2_test"
-	};
-	auto retval = script.test<WeatherStruct, WeatherStruct>(weather);
-	EXPECT_EQ(23, retval.cloud_density);
-	}
-};
-
 auto main(int argc, char **argv) -> int {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
