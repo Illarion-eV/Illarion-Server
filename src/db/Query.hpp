@@ -49,7 +49,7 @@ public:
 
 protected:
     Query();
-    explicit Query(PConnection);
+    explicit Query(PConnection /*connection*/);
 
     void setQuery(const std::string &query);
     auto getConnection() -> PConnection;
