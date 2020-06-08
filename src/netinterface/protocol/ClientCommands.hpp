@@ -170,7 +170,7 @@ class CastTS : public BasicClientCommand {
 private:
     unsigned char showcase = 0;
     unsigned char pos = 0;
-    position castPosition;
+    position castPosition{};
     unsigned char cid = 0;
     unsigned long int spellId = 0;
 
@@ -186,7 +186,7 @@ private:
     unsigned char useId = 0;
     unsigned char showcase = 0;
     unsigned char pos = 0;
-    position usePosition;
+    position usePosition{};
 
 public:
     UseTS();
@@ -286,7 +286,7 @@ public:
 class DropItemFromInventoryOnMapTS : public BasicClientCommand {
 private:
     unsigned char pos = 0;
-    position mapPosition;
+    position mapPosition{};
     unsigned short count = 0;
 
 public:
@@ -298,7 +298,7 @@ public:
 
 class MoveItemFromMapToPlayerTS : public BasicClientCommand {
 private:
-    position sourcePosition;
+    position sourcePosition{};
     unsigned char inventorySlot = 0;
     unsigned short count = 0;
 
@@ -311,7 +311,7 @@ public:
 
 class MoveItemFromMapIntoShowCaseTS : public BasicClientCommand {
 private:
-    position sourcePosition;
+    position sourcePosition{};
     unsigned char showcase = 0;
     unsigned char showcaseSlot = 0;
     unsigned short count = 0;
@@ -325,8 +325,8 @@ public:
 
 class MoveItemFromMapToMapTS : public BasicClientCommand {
 private:
-    position sourcePosition;
-    position targetPosition;
+    position sourcePosition{};
+    position targetPosition{};
     unsigned short count = 0;
 
 public:
@@ -355,7 +355,7 @@ class DropItemFromShowCaseOnMapTS : public BasicClientCommand {
 private:
     unsigned char showcase = 0;
     unsigned char pos = 0;
-    position mapPosition;
+    position mapPosition{};
     unsigned short count = 0;
 
 public:
@@ -408,7 +408,7 @@ public:
 
 class PickUpItemTS : public BasicClientCommand {
 private:
-    position pos;
+    position pos{};
 
 public:
     PickUpItemTS();
@@ -507,7 +507,7 @@ public:
 
 class LookAtMapItemTS : public BasicClientCommand {
 private:
-    position pos;
+    position pos{};
     uint8_t stackPos = 0;
 
 public:

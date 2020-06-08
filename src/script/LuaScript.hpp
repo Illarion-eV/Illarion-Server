@@ -59,19 +59,11 @@ enum LtaStates {
 };
 
 struct SouTar {
-    Character *character; /**< Source or target is a character, this is the pointer to it, otherwise nullptr */
-    ScriptItem item;      /**< Source or target is a Item, this holds the information of the item */
-    SouTarTypes Type;     /**< Source or Target Type (if its an character, field or item) */
-    position pos;         /**< aboslute position of the object */
-    unsigned int dialog;
-    /**
-     * constructor which intializes the values
-     */
-    SouTar() {
-        Type = LUA_NONE;
-        character = nullptr;
-        dialog = 0;
-    }
+    Character *character = nullptr;
+    ScriptItem item;
+    SouTarTypes Type = LUA_NONE;
+    position pos{};
+    unsigned int dialog = 0;
 };
 
 class LuaScript {

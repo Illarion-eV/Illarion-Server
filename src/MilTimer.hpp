@@ -35,7 +35,7 @@ public:
 
 private:
     //! letzte Alterung
-    timeb last;
+    timeb last{};
 
     //! die geforderte Zeitspanne in Millisekunden
     long gap;

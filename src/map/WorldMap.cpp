@@ -156,7 +156,7 @@ auto WorldMap::createMapFromHeaderFile(const std::string &importDir, const std::
         throw MapError();
     }
 
-    position origin;
+    position origin{};
     origin.z = readHeaderLine(mapName, 'L', headerFile, lineNumber);
     origin.x = readHeaderLine(mapName, 'X', headerFile, lineNumber);
     origin.y = readHeaderLine(mapName, 'Y', headerFile, lineNumber);
@@ -265,7 +265,7 @@ auto WorldMap::exportTo() const -> bool {
                         << std::endl;
 
                 if (field.isWarp()) {
-                    position target;
+                    position target{};
                     field.getWarp(target);
                     warpsf << x - minX << ";" << y - minY << ";" << target.x << ";" << target.y << ";" << target.z
                            << std::endl;

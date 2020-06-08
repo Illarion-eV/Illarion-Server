@@ -93,7 +93,7 @@ public:
 
     // BYTEDEQUE//
     //! alle Langzeiteffekte die auf den Spieler einwirken
-    int longTimeEffects;
+    int longTimeEffects{};
 
     //! Passwort
     std::string pw;
@@ -106,16 +106,16 @@ public:
     //! Zeit (in Sekunden) die der Spieler insgesamt online war
     unsigned long int onlinetime;
 
-    time_t logintime;
+    time_t logintime{};
 
     //! Zeitpunkt zu dem die Klasseninstanz erstellt bzw. das letzte mal gespeichert wurde
-    time_t lastsavetime;
+    time_t lastsavetime{};
 
     //! Zeitpunkt der letzten Lebensmeldung vom Client
-    time_t lastkeepalive;
+    time_t lastkeepalive{};
 
     //! Zeitpunkt der letzten Aktion des Spielers
-    time_t lastaction;
+    time_t lastaction{};
 
     std::chrono::time_point<std::chrono::steady_clock> reachingTargetField = {};
 
@@ -552,23 +552,23 @@ private:
     void startCrafting(uint8_t stillToCraft, uint16_t craftingTime, uint16_t sfx, uint16_t sfxDuration,
                        uint32_t dialogId);
 
-    Language _player_language;
+    Language _player_language{};
 
     // Status of the player, Okay, waiting authroization, jailed, banned, etc..
-    unsigned char status;
+    unsigned char status{};
 
     // What time does the status get reset?
-    time_t statustime;
+    time_t statustime{};
 
     // Who banned/jailed the player?
-    TYPE_OF_CHARACTER_ID statusgm;
+    TYPE_OF_CHARACTER_ID statusgm{};
 
     // Why where they banned/jailed?
     std::string statusreason;
 
     // World map turtle graphics
     bool turtleActive;
-    unsigned char turtletile;
+    unsigned char turtletile{};
 
     // Clipping on/off (default to on)
     bool clippingActive;
@@ -583,7 +583,7 @@ private:
     bool monitoringClient;
 
     const uint8_t BACKPACK_SHOWCASE = 0;
-    uint8_t showcaseCounter;
+    uint8_t showcaseCounter{};
     using ShowcaseMap = std::unordered_map<uint8_t, std::unique_ptr<Showcase>>;
     ShowcaseMap showcases;
 

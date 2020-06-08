@@ -24,7 +24,7 @@ MilTimer::MilTimer(long milsec) {
 }
 
 auto MilTimer::Next() -> bool {
-    timeb now;
+    timeb now{};
     ftime(&now);
 
     long temp = ((now.time - last.time) * 1000) + (now.millitm - last.millitm);

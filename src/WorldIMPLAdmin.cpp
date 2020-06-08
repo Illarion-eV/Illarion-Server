@@ -1298,7 +1298,7 @@ void World::showWarpFieldsInRange(Player *cp, const std::string &text) {
 
             for (const auto &warpfield : warpfieldsinrange) {
                 try {
-                    position target;
+                    position target{};
                     fieldAt(warpfield).getWarp(target);
                     std::string message = warpfield.toString() + " -> " + target.toString();
                     cp->inform(message);

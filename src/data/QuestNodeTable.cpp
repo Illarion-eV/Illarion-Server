@@ -103,7 +103,7 @@ void QuestNodeTable::readQuest(std::ifstream &questFile, std::filesystem::path &
         }
 
         if (entries[0] == "triggerfield") {
-            position pos;
+            position pos{};
 
             try {
                 pos.x = boost::lexical_cast<signed short>(entries[1]);

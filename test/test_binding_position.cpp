@@ -13,7 +13,7 @@ public:
 
 class position_bindings : public ::testing::Test {
 	public:
-		position pos;
+		position pos{};
 		MockWorld world;
 };
 

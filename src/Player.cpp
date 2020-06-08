@@ -970,7 +970,7 @@ void Player::check_logindata() {
 
         Database::ResultTuple playerRow = playerResult.front();
 
-        position pos;
+        position pos{};
         pos.x = playerRow["ply_posx"].as<int32_t>();
         pos.y = playerRow["ply_posy"].as<int32_t>();
         pos.z = playerRow["ply_posz"].as<int32_t>();
@@ -1802,8 +1802,8 @@ auto Player::move(direction dir, uint8_t mode) -> bool {
         return 2;
     }();
 
-    position newpos;
-    position oldpos;
+    position newpos{};
+    position oldpos{};
     TYPE_OF_WALKINGCOST walkcost = 0;
 
     while (j < steps && cont) {
@@ -1864,7 +1864,7 @@ auto Player::move(direction dir, uint8_t mode) -> bool {
                 }
 
                 if (newField.isWarp()) {
-                    position warpPos;
+                    position warpPos{};
                     newField.getWarp(warpPos);
                     Warp(warpPos);
                     cont = false;

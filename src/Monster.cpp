@@ -53,7 +53,7 @@ auto Monster::getLoot() const -> const MonsterStruct::loottype & {
 }
 
 void Monster::performStep(position targetpos) {
-    position currentTarget;
+    position currentTarget{};
     bool hasTarget = waypoints.getNextWaypoint(currentTarget);
 
     if (!(hasTarget && currentTarget == targetpos)) {

@@ -328,7 +328,7 @@ void CastTS::performAction(Player *player) {
     std::shared_ptr<LuaMagicScript> LuaMageScript;
 
     if ((spellId & player->getMagicFlags(player->getMagicType())) == spellId) {
-        Spell spell;
+        Spell spell{};
         spell.magicType = player->getMagicType();
         spell.spellId = spellId;
 

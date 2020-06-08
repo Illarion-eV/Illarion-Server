@@ -83,7 +83,7 @@ void PlayerManager::setLoginLogout(bool val) {
 void PlayerManager::loginLoop(PlayerManager *pmanager) {
     try {
         auto &newplayers = pmanager->incon->getNewPlayers();
-        timespec waittime;
+        timespec waittime{};
         waittime.tv_sec = 0;
         static constexpr auto tenthOfSecond = 100000000;
         waittime.tv_nsec = tenthOfSecond;
@@ -170,7 +170,7 @@ void PlayerManager::loginLoop(PlayerManager *pmanager) {
 void PlayerManager::playerSaveLoop(PlayerManager *pmanager) {
     try {
         World *world = World::get();
-        timespec waittime;
+        timespec waittime{};
         waittime.tv_sec = 0;
         static constexpr auto tenthOfSecond = 100000000;
         waittime.tv_nsec = tenthOfSecond;

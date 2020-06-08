@@ -99,8 +99,8 @@ struct SkillStruct {
 };
 
 struct TilesStruct {
-    unsigned char flags;
-    TYPE_OF_WALKINGCOST walkingCost;
+    unsigned char flags{};
+    TYPE_OF_WALKINGCOST walkingCost{};
     TYPE_OF_GERMAN German;
     TYPE_OF_ENGLISH English;
 };
@@ -140,9 +140,9 @@ struct MonsterArmor {
 };
 
 struct itemdef_t {
-    TYPE_OF_ITEM_ID itemid;
+    TYPE_OF_ITEM_ID itemid{};
     std::pair<unsigned short, unsigned short> amount;
-    TYPE_OF_AGINGSPEED AgeingSpeed;
+    TYPE_OF_AGINGSPEED AgeingSpeed{};
 };
 
 struct attributedef_t {
@@ -181,8 +181,8 @@ private:
 
 struct MonsterStruct {
     struct LootStruct {
-        TYPE_OF_ITEM_ID itemId;
-        double probability;
+        TYPE_OF_ITEM_ID itemId{};
+        double probability{};
         std::pair<uint16_t, uint16_t> amount;
         std::pair<uint16_t, uint16_t> quality;
         std::pair<uint16_t, uint16_t> durability;
@@ -194,18 +194,18 @@ struct MonsterStruct {
     using loottype = std::map<uint16_t, std::map<uint16_t, LootStruct>>;
     std::string nameDe;
     std::string nameEn;
-    TYPE_OF_RACE_ID race;
-    unsigned short hitpoints;
-    bool canselfheal;
-    movement_type movement;
-    bool canattack;
+    TYPE_OF_RACE_ID race{};
+    unsigned short hitpoints{};
+    bool canselfheal{};
+    movement_type movement{};
+    bool canattack{};
     attributedef_t attributes;
     skilltype skills;
     itemtype items;
     loottype loot;
     std::shared_ptr<LuaMonsterScript> script;
-    uint16_t minsize;
-    uint16_t maxsize;
+    uint16_t minsize{};
+    uint16_t maxsize{};
 };
 
 struct RaceStruct {

@@ -25,7 +25,7 @@
 #include "script/LuaTriggerScript.hpp"
 
 struct TriggerStruct {
-    position pos;
+    position pos{};
     std::string scriptname;
     std::shared_ptr<LuaTriggerScript> script;
 };

@@ -348,7 +348,7 @@ void Field::load(std::ifstream &mapStream, std::ifstream &itemStream, std::ifstr
     warpStream.read((char *)&isWarp, sizeof(isWarp));
 
     if (isWarp == 1) {
-        position target;
+        position target{};
         warpStream.read((char *)&target, sizeof(warptarget));
         setWarp(target);
     }

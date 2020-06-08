@@ -37,7 +37,7 @@ auto TilesModificatorTable::assignId(const Database::ResultTuple &row) -> TYPE_O
 }
 
 auto TilesModificatorTable::assignTable(const Database::ResultTuple &row) -> TilesModificatorStruct {
-    TilesModificatorStruct modStruct;
+    TilesModificatorStruct modStruct{};
     modStruct.Modificator = 0;
     modStruct.Modificator |= row["tim_isnotpassable"].as<bool>() ? FLAG_BLOCKPATH : 0;
     modStruct.Modificator |= row["tim_specialitem"].as<bool>() ? FLAG_SPECIALITEM : 0;

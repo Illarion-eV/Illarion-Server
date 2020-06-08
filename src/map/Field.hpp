@@ -37,7 +37,7 @@ private:
     uint16_t music = 0;
     uint8_t flags = 0;
     position here;
-    position warptarget;
+    position warptarget{};
     std::vector<Item> items;
     bool persistent = false;
 

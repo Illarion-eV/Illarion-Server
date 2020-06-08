@@ -113,7 +113,7 @@ public:
      */
     ~Monster() override;
 
-    position lastTargetPosition; /**< last position of the last seen target */
+    position lastTargetPosition{}; /**< last position of the last seen target */
     bool lastTargetSeen =
             false; /**< if true the monster trys to reach the last targetposition if there is no other enemy*/
 

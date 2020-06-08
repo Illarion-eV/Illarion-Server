@@ -27,7 +27,7 @@ auto SpellTable::getColumnNames() -> std::vector<std::string> {
 }
 
 auto SpellTable::assignId(const Database::ResultTuple &row) -> Spell {
-    Spell spell;
+    Spell spell{};
     spell.magicType = uint8_t(row["spl_magictype"].as<uint16_t>());
     spell.spellId = row["spl_spellid"].as<uint32_t>();
     return spell;

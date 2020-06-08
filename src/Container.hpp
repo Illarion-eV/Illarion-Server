@@ -38,7 +38,7 @@ public:
     using CONTAINERMAP = std::map<TYPE_OF_CONTAINERSLOTS, Container *>;
 
 private:
-    Item::id_type itemId;
+    Item::id_type itemId{};
 
     ITEMMAP items;
     CONTAINERMAP containers;

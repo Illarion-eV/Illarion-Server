@@ -160,12 +160,12 @@ public:
      */
     std::unique_ptr<MonitoringClients> monitoringClientList = nullptr;
 
-    timeb now; /**< current time of the server used in @see turntheworld() **/
+    timeb now{}; /**< current time of the server used in @see turntheworld() **/
 
     unsigned long int timeStart;
     unsigned long int usedAP;
 
-    short int ap; /**< actionpoints since the last loop call **/
+    short int ap{}; /**< actionpoints since the last loop call **/
 
     ClockBasedScheduler<std::chrono::steady_clock> scheduler;
 
@@ -644,7 +644,7 @@ public:
     //////////// in WorldIMPLItemMoves.cpp ////////////////
 
     Item g_item;
-    Container *g_cont;
+    Container *g_cont{};
 
     auto takeItemFromMap(Character *cc, const position &itemPosition) -> bool;
     auto putItemOnMap(Character *cc, const position &itemPosition) -> bool;

@@ -42,7 +42,7 @@ public:
     void ItemRotsOnField(const ScriptItem &oldItem, const ScriptItem &newItem);
 
 private:
-    position _pos;
+    position _pos{};
     void init_functions() const;
 };
 

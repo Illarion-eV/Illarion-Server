@@ -51,7 +51,7 @@ void SpawnPoint::addMonster(TYPE_OF_CHARACTER_ID type, short int count) {
     if (result != SpawnTypes.end()) {
         result->max_count += count;
     } else {
-        struct SpawnEntryStruct SEtemp;
+        struct SpawnEntryStruct SEtemp{};
         SEtemp.typ = type;
         SEtemp.max_count = count;
         SEtemp.akt_count = 0;

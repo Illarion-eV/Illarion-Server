@@ -100,7 +100,7 @@ template <class T> void CharacterContainer<T>::update(pointer p, const position 
 }
 
 template <class T> auto CharacterContainer<T>::erase(TYPE_OF_CHARACTER_ID id) -> bool {
-    position pos;
+    position pos{};
 
     if (getPosition(id, pos)) {
         const auto range = position_to_id.equal_range(pos);

@@ -26,9 +26,9 @@
 class InputDialog : public Dialog {
 private:
     string description;
-    bool multiline;
-    unsigned short maxChars;
-    bool success;
+    bool multiline{};
+    unsigned short maxChars{};
+    bool success{};
     string input;
 
 public:

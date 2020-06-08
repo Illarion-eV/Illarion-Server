@@ -500,7 +500,7 @@ private:
     bool isinvisible = false;
     TYPE_OF_RACE_ID race = 0;
     face_to faceto = north;
-    s_magic magic;
+    s_magic magic{};
 };
 
 auto operator<<(std::ostream &os, const Character &character) -> std::ostream &;

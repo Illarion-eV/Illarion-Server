@@ -49,7 +49,7 @@ public:
 
 private:
     void reload();
-    bool m_dataOK;
+    bool m_dataOK{};
 
     World *_world;
     std::list<struct NPCStruct> NPCList; // List zum aufnehmen aller Werte aus der DB

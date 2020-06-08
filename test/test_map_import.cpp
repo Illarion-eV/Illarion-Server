@@ -80,7 +80,7 @@ TEST_F(map_import_tests, importWarps) {
 
                 EXPECT_TRUE(field.isWarp());
 
-                position target;
+                position target{};
                 field.getWarp(target);
                 EXPECT_EQ(warp_target, target);
             }

@@ -369,7 +369,7 @@ auto Map::importWarps(const std::string &importDir, const std::string &mapName) 
                         success = false;
                     }
 
-                    position target;
+                    position target{};
                     target.x = boost::lexical_cast<int16_t>(matches[3]);
                     target.y = boost::lexical_cast<int16_t>(matches[4]);
                     target.z = boost::lexical_cast<int16_t>(matches[5]);
