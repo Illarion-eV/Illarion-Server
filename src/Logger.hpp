@@ -58,7 +58,7 @@ void log_message(LogPriority priority, LogFacility facility, const std::string &
 
 namespace Log {
 class end_t {};
-static end_t end __attribute__((unused));
+static const end_t end __attribute__((unused));
 } // namespace Log
 
 class NullStream {
