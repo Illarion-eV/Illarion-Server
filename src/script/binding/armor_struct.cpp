@@ -25,7 +25,6 @@ namespace binding {
 
 auto armor_struct() -> luabind::scope {
     return luabind::class_<ArmorStruct>("ArmorStruct")
-            .def(luabind::constructor<>())
             .enum_("type")[luabind::value("clothing", 0), luabind::value("general", 1), luabind::value("light", 2),
                            luabind::value("medium", 3), luabind::value("heavy", 4), luabind::value("juwellery", 5)]
             .def_readonly("BodyParts", &ArmorStruct::BodyParts)
