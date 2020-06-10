@@ -39,8 +39,11 @@ private:
 
 public:
     explicit Connection(const std::string &connectionString);
-    Connection(const Connection &org) = delete;
-    auto operator=(const Connection &org) -> Connection & = delete;
+    Connection(const Connection &) = delete;
+    Connection(Connection &&) = default;
+    auto operator=(const Connection &) -> Connection & = delete;
+    auto operator=(Connection &&) -> Connection & = default;
+    ~Connection() = default;
 
     void beginTransaction();
     auto query(const std::string &query) -> pqxx::result;

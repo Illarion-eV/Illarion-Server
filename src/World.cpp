@@ -99,8 +99,6 @@ World::World() {
     srand((unsigned)time(nullptr));
 }
 
-World::~World() = default;
-
 void World::turntheworld() {
     ftime(&now);
     unsigned long timeNow = now.time * 1000 + now.millitm;

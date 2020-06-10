@@ -35,9 +35,6 @@ public:
     explicit SpawnPoint(const position &pos, int Range = defaultWalkRange, uint16_t Spawnrange = 0,
                         uint16_t Min_Spawntime = 1, uint16_t Max_Spawntime = 1, bool Spawnall = false);
 
-    //! Destructor
-    ~SpawnPoint();
-
     void addMonster(TYPE_OF_CHARACTER_ID type, short int count);
 
     //! load spawnpoints from database

@@ -189,7 +189,7 @@ public:
      */
     LuaScript *currentScript;
 
-    virtual ~World();
+    virtual ~World() = default;
 
     /**
      *main loop for the world
