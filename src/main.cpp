@@ -73,7 +73,7 @@ auto main(int argc, char *argv[]) -> int {
     Database::ConnectionManager::getInstance().setupManager();
     Database::SchemaHelper::setSchemata();
 
-    World *world = World::create();
+    std::unique_ptr<World> world(World::create());
 
     Data::preReload();
 
@@ -156,8 +156,6 @@ auto main(int argc, char *argv[]) -> int {
     world->takeMonsterAndNPCFromMap();
 
     world->Save();
-    delete world;
-    world = nullptr;
 
     reset_sighandlers();
 
