@@ -24,34 +24,6 @@
 
 Container::Container(Item::id_type itemId) : itemId(itemId) {}
 
-Container::Container(const Container &source) { *this = source; }
-
-auto Container::operator=(const Container &source) -> Container & {
-    if (this != &source) {
-        itemId = source.itemId;
-
-        items.clear();
-        items = source.items;
-
-        if (!containers.empty()) {
-            for (auto &container : containers) {
-                delete container.second;
-                container.second = nullptr;
-            }
-
-            containers.clear();
-        }
-
-        if (!source.containers.empty()) {
-            for (auto container : source.containers) {
-                containers.insert(CONTAINERMAP::value_type(container.first, new Container(*(container.second))));
-            }
-        }
-    }
-
-    return *this;
-}
-
 Container::~Container() {
     items.clear();
 

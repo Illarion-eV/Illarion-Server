@@ -45,9 +45,11 @@ private:
 
 public:
     explicit Container(Item::id_type itemId);
-    Container(const Container &source);
+    Container(const Container &) = delete;
+    Container(Container &&) = delete;
+    auto operator=(const Container &) -> Container & = delete;
+    auto operator=(Container &&) -> Container & = delete;
     virtual ~Container();
-    auto operator=(const Container &source) -> Container &;
 
     auto TakeItemNr(TYPE_OF_CONTAINERSLOTS nr, Item &item, Container *&cc, Item::number_type count) -> bool;
     auto viewItemNr(TYPE_OF_CONTAINERSLOTS nr, ScriptItem &item, Container *&cc) -> bool;
