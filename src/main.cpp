@@ -55,12 +55,14 @@ auto main(int argc, char *argv[]) -> int {
 
     // initialize signalhandlers
     if (!init_sighandlers()) {
-        throw std::runtime_error("failed to initialise signal handlers");
+        Logger::critical(LogFacility::Other) << "failed to initialise signal handlers" << Log::end;
+        return 1;
     }
 
     // load configfile
     if (!checkArguments(argc, argv)) {
-        throw std::runtime_error("failed to process commandline arguments");
+        Logger::critical(LogFacility::Other) << "failed to process commandline arguments" << Log::end;
+        return 1;
     }
 
     Logger::info(LogFacility::Other) << "main: server requires clientversion: " << Config::instance().clientversion
@@ -78,13 +80,15 @@ auto main(int argc, char *argv[]) -> int {
     Data::preReload();
 
     if (!Data::Skills.reloadBuffer()) {
-        throw std::runtime_error("failed to initialise skills");
+        Logger::critical(LogFacility::Other) << "failed to initialise skills" << Log::end;
+        return 1;
     }
 
     Data::Skills.activateBuffer();
 
     if (!Data::reloadTables()) {
-        throw std::runtime_error("failed to initialise tables");
+        Logger::critical(LogFacility::Other) << "failed to initialise tables" << Log::end;
+        return 1;
     }
 
     Data::activateTables();
