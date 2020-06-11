@@ -74,7 +74,6 @@ auto world() -> luabind::scope {
             .def("createSavedArea", &World::createSavedArea)
             .def("broadcast", &World::broadcast)
             .def("sendMonitoringMessage", &World::sendMonitoringMessage)
-            .def_readwrite("g_item", &World::g_item)
             .def_readwrite("weather", &World::weather);
 }
 
