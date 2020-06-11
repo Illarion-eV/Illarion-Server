@@ -362,7 +362,7 @@ void World::introduceMyself(Player *cp) const {
 
 void World::sendWeather(Player *cp) const { cp->sendWeather(weather); }
 
-void World::sendIGTime(Player *cp) {
+void World::sendIGTime(Player *cp) const {
     ServerCommandPointer cmd = std::make_shared<UpdateTimeTC>(
             static_cast<unsigned char>(getTime("hour")), static_cast<unsigned char>(getTime("minute")),
             static_cast<unsigned char>(getTime("day")), static_cast<unsigned char>(getTime("month")),

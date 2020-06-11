@@ -33,6 +33,7 @@
 #include "SpawnPoint.hpp"
 #include "TableStructs.hpp"
 #include "Timer.hpp"
+#include "WorldScriptInterface.hpp"
 #include "character_ptr.hpp"
 #include "data/MonsterAttackTable.hpp"
 #include "data/MonsterTable.hpp"
@@ -92,7 +93,7 @@ struct BlockingObject {
  *this class contains the world of the gameserver
  *here is the main point for monsters, player, maps and npc's
  */
-class World {
+class World : public WorldScriptInterface {
 public:
     auto operator=(const World &) -> World & = delete;
     World(const World &) = delete;
@@ -189,7 +190,7 @@ public:
      */
     LuaScript *currentScript;
 
-    virtual ~World() = default;
+    ~World() override = default;
 
     /**
      *main loop for the world
@@ -230,7 +231,7 @@ public:
      *@param timeType <"year"|"month"|"day"|"hour"|"minute"|"second">
      *@return an int which is the current illarion time from the type
      */
-    static auto getTime(const std::string &timeType) -> int;
+    auto getTime(const std::string &timeType) const -> int override;
 
     /**
      *checks the command list of one player and put them into practize
@@ -273,13 +274,8 @@ public:
      */
     auto findWarpFieldsInRange(const position &pos, short int range, std::vector<position> &warppositions) -> bool;
 
-    /**
-     * returns a list of blocking objects between a startin position and a ending position
-     * @param startingpos the starting position of the line of sight
-     * @param endingpos the end of the line of sight calculation
-     * @return list of all blocking objects between startingpos and endingpos.
-     */
-    auto blockingLineOfSight(const position &startingpos, const position &endingpos) const -> std::list<BlockingObject>;
+    auto blockingLineOfSight(const position &startingpos, const position &endingpos) const
+            -> std::list<BlockingObject> override;
 
     auto findTargetsInSight(const position &pos, uint8_t range, std::vector<Character *> &ret,
                             Character::face_to direction) const -> bool;
@@ -311,13 +307,13 @@ public:
 
     auto killMonster(TYPE_OF_CHARACTER_ID id) -> bool;
 
-    auto fieldAt(const position &pos) -> map::Field &;
-    auto fieldAt(const position &pos) const -> const map::Field &;
+    auto fieldAt(const position &pos) -> map::Field & override;
+    auto fieldAt(const position &pos) const -> const map::Field & override;
     auto fieldAtOrBelow(position &pos) -> map::Field &;
     auto walkableFieldNear(const position &pos) -> map::Field &;
-    void makePersistentAt(const position &pos);
-    void removePersistenceAt(const position &pos);
-    auto isPersistentAt(const position &pos) const -> bool;
+    void makePersistentAt(const position &pos) override;
+    void removePersistenceAt(const position &pos) override;
+    auto isPersistentAt(const position &pos) const -> bool override;
 
     static auto getItemAttrib(const std::string &s, TYPE_OF_ITEM_ID ItemID) -> int;
 
@@ -502,7 +498,7 @@ public:
                                               Character *cc) const;
 
     void sendMessageToAllPlayers(const std::string &message) const;
-    void broadcast(const std::string &german, const std::string &english) const;
+    void broadcast(const std::string &german, const std::string &english) const override;
 
     //! schickt eine Nachricht an alle GM's im Spiel.
     // \param message die zu schickende Nachricht
@@ -538,7 +534,7 @@ public:
     void sendIGTimeToAllPlayers();
 
     // Sends the current IG Time to one player
-    static void sendIGTime(Player *cp);
+    void sendIGTime(Player *cp) const;
 
     /**
      *sends the current weather to all players online
@@ -688,146 +684,47 @@ public:
 
     //////////////////////////////////////In WorldIMPLScriptHelp.cpp//////////////////////////////////////////
 
-    /**
-    *deletes an NPC
+    auto deleteNPC(unsigned int npcid) -> bool override;
 
-    *@param npc The npc to be deleted
-    *@return success of deletion
-    */
-    auto deleteNPC(unsigned int npcid) -> bool;
+    auto createDynamicNPC(const std::string &name, TYPE_OF_RACE_ID type, const position &pos, Character::sex_type sex,
+                          const std::string &scriptname) -> bool override;
 
-    /**
-    *creates a dynamic NPC
+    auto getPlayersOnline() const -> std::vector<Player *> override;
 
-    *@param name Name of the NPC
-    *@param type Race type
-    *@param pos position
-    *@param sex gender
-    *@param scriptname scriptname
-    *@return success of creation
-    */
-    auto createDynamicNPC(const std::string &name, TYPE_OF_RACE_ID type, const position &pos,
-                          /*CCharacter::face_to dir,*/ Character::sex_type sex, const std::string &scriptname) -> bool;
+    auto getNPCS() const -> std::vector<NPC *> override;
 
-    /**
-     *creates a list with all the players which are currently online and returns it
-     *to lua
-     *@return the list with all the players currently online
-     */
-    auto getPlayersOnline() const -> std::vector<Player *>;
+    auto getCharactersInRangeOf(const position &pos, uint8_t radius) const -> std::vector<Character *> override;
+    auto getPlayersInRangeOf(const position &pos, uint8_t radius) const -> std::vector<Player *> override;
+    auto getMonstersInRangeOf(const position &pos, uint8_t radius) const -> std::vector<Monster *> override;
+    auto getNPCSInRangeOf(const position &pos, uint8_t radius) const -> std::vector<NPC *> override;
 
-    /**
-     *creates a list with all the npcs which are currently online and returns it
-     *to lua
-     *@return the list with all the npcs currently online
-     */
-    auto getNPCS() const -> std::vector<NPC *>;
-
-    /**
-     *creates a list with all the characters in range around a specific position
-     *@param posi the position from where the character around should be calculated
-     *@param range the range around the position for calculating
-     *@return a list with all the characters (including monsters, npcs, players) around this char
-     */
-    auto getCharactersInRangeOf(const position &pos, uint8_t radius) const -> std::vector<Character *>;
-    auto getPlayersInRangeOf(const position &pos, uint8_t radius) const -> std::vector<Player *>;
-    auto getMonstersInRangeOf(const position &pos, uint8_t radius) const -> std::vector<Monster *>;
-    auto getNPCSInRangeOf(const position &pos, uint8_t radius) const -> std::vector<NPC *>;
-
-    // Sucht zu einem Item die gesamten Stats wie Gewicht heraus
-    //\param item, das Item zu dem die Stats heraus gesucht werden sollen.
-    static auto getItemStats(const ScriptItem &item) -> ItemStruct;
-    static auto getItemStatsFromId(TYPE_OF_ITEM_ID id) -> ItemStruct;
-
-    // Aendert die Qualitaet eines ScriptItems.
-    // param item, das Item das geaendert werden soll
-    // param amount, der Wert um den die Qualitaet geaendert werden soll
-    void changeQuality(ScriptItem item, short int amount);
-
+    auto getItemStats(const ScriptItem &item) const -> ItemStruct override;
+    auto getItemStatsFromId(TYPE_OF_ITEM_ID id) const -> ItemStruct override;
+    void changeQuality(ScriptItem item, short int amount) override;
     virtual void itemInform(Character *user, const ScriptItem &item, const ItemLookAt &lookAt);
+    auto getItemName(TYPE_OF_ITEM_ID itemid, uint8_t language) const -> std::string override;
+    auto changeItem(ScriptItem item) -> bool override;
 
-    // Liefert den Namen eines Items mit einer bestimmten id zurck
-    //\param itemid, id des items zu dem der Name geliefert werden soll
-    //\param language, die Sprache in der der Name zurck gegeben werden sollte
-    //\ret der name in der entsprechenden Sprache.
-    virtual auto getItemName(TYPE_OF_ITEM_ID itemid, uint8_t language) -> std::string;
+    auto isCharacterOnField(const position &pos) const -> bool override;
+    auto getCharacterOnField(const position &pos) const -> character_ptr override;
 
-    // Aendert ein ScriptItem
-    auto changeItem(ScriptItem item) -> bool;
-
-    // Prft ob sich auf dem Feld ein Character befindet
-    //\param position die zu prfen ist
-    //\return true oder false
-    auto isCharacterOnField(const position &pos) const -> bool;
-
-    // Liefert einen Zeiger auf einen Character
-    //\param pos, die Position auf der sich der Character befinden soll
-    //\return Zeiger auf den Character
-    auto getCharacterOnField(const position &pos) const -> character_ptr;
-
-    // Loescht ein ScriptItem
-    //\ param Item, das Item welches geloescht werden soll
-    //\ param amount, Anzahl der Items
-    //\ return bool Wert der Angibt ob das Item erfolgreich geloescht werden konnte
-    auto erase(ScriptItem item, int amount) -> bool; //, int amount);
-
-    // Tauscht ein ScriptItem durch ein anderes Item aus
-    //\ param Item, das Item welches ausgetauscht werden soll
-    //\ param newItem, Id des neuen Items welches erstellt werden soll
-    //\ return bool Wert der Angibt ob das Item erfolgreich getauscht wurde
-    auto swap(ScriptItem item, TYPE_OF_ITEM_ID newItem, unsigned short int newQuality = 0) -> bool;
-
-    // Erhoeht die Anzahl eines ScriptItems um einen bestimmten Wert
-    //\ param Item, das Item welches erhoeht werden soll
-    //\ param count, die anzahl um die erhoeht werden soll
-    //\ return bool Wert ob das erhoehen der Anzahl erfolgreich war.
-    auto increase(ScriptItem item, short int count) -> bool;
-
-    // Erzeugt auf dem Angegebenen Feld ein Item mit einer bestimmten ID
-    //\ param id Id des neu zu erzeugenden Items
-    //\ param count Anzahl des Items
-    //\ param pos Position des Items
-    //\ return bool Wert ob das Erstellen geklappt hat.
-    //\ quali int, das die qualitaet angibt
+    auto erase(ScriptItem item, int amount) -> bool override;
+    auto swap(ScriptItem item, TYPE_OF_ITEM_ID newItem, unsigned short int newQuality = 0) -> bool override;
+    auto increase(ScriptItem item, short int count) -> bool override;
     auto createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, const position &pos, bool always, int quality,
-                      script_data_exchangemap const *data) -> ScriptItem;
+                      script_data_exchangemap const *data) -> ScriptItem override;
 
-    // Erzeugt auf den Angegebenen Feld ein bestimmtes Item
-    //\ param item, das Item was erzeugt werden soll
-    //\ param pos, Position des Items
-    //\ return bool Wert der angibt ob das Erstellen geklappt hat.
-    auto createFromItem(const ScriptItem &item, const position &pos, bool always) -> bool;
+    auto createFromItem(const ScriptItem &item, const position &pos, bool always) -> bool override;
 
-    // Erzeugt ein Monster mit der entsprechenden ID auf dem Feld
-    //\ param id, das Monster welches Erzeugt werden soll
-    //\ param pos, die Position des Monsters
-    //\ return character_ptr Valid monster on success, invalid monster on failure
-    auto createMonster(unsigned short id, const position &pos, short movepoints) -> character_ptr;
+    auto createMonster(unsigned short id, const position &pos, short movepoints) -> character_ptr override;
 
-    // Zeigt eine Grafik auf einem bestimmten Feld an
-    //\gfxid, ID der anzuzeigenden Grafik
-    //\pos, Position wo diese Grafik angezeigt werden soll
-    void gfx(unsigned short int gfxid, const position &pos) const;
+    void gfx(unsigned short int gfxid, const position &pos) const override;
+    void makeSound(unsigned short int soundid, const position &pos) const override;
 
-    // Spielt einen Soundeffekt auf einem bestimmten Feld ab
-    //\soundid, ID des abzuspielenden Effektes
-    //\pos, Position wo dieser Effekt abgespielt werden soll
-    void makeSound(unsigned short int soundid, const position &pos) const;
+    auto isItemOnField(const position &pos) -> bool override;
+    auto getItemOnField(const position &pos) -> ScriptItem override;
 
-    //! Prft ob auf einen FEld ein ITem liegt
-    //\pos die Position des feldes
-    //\return true wenn auf den Feld ein ITem liegt
-    auto isItemOnField(const position &pos) -> bool;
-
-    //! Liefert ein Item zurck welches auf dem Feld liegt
-    //\pos die Position des Feldes
-    //\return das ScriptITem auf dem Feld;
-    auto getItemOnField(const position &pos) -> ScriptItem;
-
-    //! Aendert ein Bodentile
-    //\tileid, neue Id des bodentiles
-    //\pos, Position des zu aendernden Bodentiles.
-    void changeTile(short int tileid, const position &pos);
+    void changeTile(short int tileid, const position &pos) override;
 
     //! Sicherer CreateArea command, prft erst ab ob er eine vorhandene Map berschreibt.
     //\tileid: standard Tile
@@ -835,30 +732,19 @@ public:
     //\height: Hoehe der neuen Karte
     //\width: breite der neuen Karte
     //\return true wenn das einfgen klappte, ansonsten false wenns zu berlagerungen kommt.
-    auto createSavedArea(uint16_t tile, const position &origin, uint16_t height, uint16_t width) -> bool;
+    auto createSavedArea(uint16_t tile, const position &origin, uint16_t height, uint16_t width) -> bool override;
 
-    //! Laedt eine Armor Struct anhand einer id.
-    //\return true false der Armorstruct gefunden wurde
-    static auto getArmorStruct(TYPE_OF_ITEM_ID id, ArmorStruct &ret) -> bool;
-
-    //! Laedt einen Weapon Struct anhand einer id.
-    //\return true false der WeaponStruct gefunden wurde.
-    static auto getWeaponStruct(TYPE_OF_ITEM_ID id, WeaponStruct &ret) -> bool;
-
-    //! Laedt ein MonsterRst Struct anhand einer id.
-    //\return true false der Struct gefunden wurde.
-    static auto getNaturalArmor(TYPE_OF_RACE_ID id, MonsterArmor &ret) -> bool;
-
-    //! Laedt ein Attack Boni struct anhand einer id
-    //\return true wenn das Struct gefunden wurde
-    static auto getMonsterAttack(TYPE_OF_RACE_ID id, AttackBoni &ret) -> bool;
+    auto getArmorStruct(TYPE_OF_ITEM_ID id, ArmorStruct &ret) -> bool override;
+    auto getWeaponStruct(TYPE_OF_ITEM_ID id, WeaponStruct &ret) -> bool override;
+    auto getNaturalArmor(TYPE_OF_RACE_ID id, MonsterArmor &ret) -> bool override;
+    auto getMonsterAttack(TYPE_OF_RACE_ID id, AttackBoni &ret) -> bool override;
 
     /**
      *sends a Message to All Monitoring Clients
      *@param msg the message string which should be sended
      *@param id the id of the msg ( 1 are message which displayed in a window 0 basic message)
      */
-    void sendMonitoringMessage(const std::string &msg, unsigned char id = 0) const;
+    void sendMonitoringMessage(const std::string &msg, unsigned char id = 0) const override;
 
     /**
      * bans a player for the bantime

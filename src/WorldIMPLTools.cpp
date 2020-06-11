@@ -610,7 +610,7 @@ void World::Load() {
 
 void World::import() { maps.importFromEditor(); }
 
-auto World::getTime(const std::string &timeType) -> int {
+auto World::getTime(const std::string &timeType) const -> int {
     // return unix timestamp if requsted and quit function
     if (timeType == "unix") {
         return (int)time(nullptr);

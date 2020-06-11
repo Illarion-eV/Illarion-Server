@@ -339,7 +339,7 @@ auto Character::eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchang
             }
         }
 
-        if (World::getItemStatsFromId(itemid).Brightness > 0) {
+        if (World::get()->getItemStatsFromId(itemid).Brightness > 0) {
             updateAppearanceForAll(true);
         }
     }
@@ -512,7 +512,7 @@ auto Character::increaseAtPos(unsigned char pos, int count) -> int {
                 items[pos].setNumber(maxStack);
                 temp = temp - maxStack;
             } else if (temp <= 0) {
-                bool updateBrightness = World::getItemStatsFromId(items[pos].getId()).Brightness > 0;
+                bool updateBrightness = World::get()->getItemStatsFromId(items[pos].getId()).Brightness > 0;
                 temp = count + items[pos].getNumber();
                 items[pos].reset();
 
@@ -531,8 +531,8 @@ auto Character::increaseAtPos(unsigned char pos, int count) -> int {
 
 auto Character::swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t newQuality) -> bool {
     if ((pos > 0) && (pos < MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
-        bool updateBrightness = World::getItemStatsFromId(items[pos].getId()).Brightness > 0 ||
-                                World::getItemStatsFromId(newid).Brightness > 0;
+        bool updateBrightness = World::get()->getItemStatsFromId(items[pos].getId()).Brightness > 0 ||
+                                World::get()->getItemStatsFromId(newid).Brightness > 0;
         items[pos].setId(newid);
 
         if (updateBrightness) {

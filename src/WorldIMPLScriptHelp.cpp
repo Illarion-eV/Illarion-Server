@@ -201,19 +201,19 @@ auto World::changeItem(ScriptItem item) -> bool {
     return false;
 }
 
-auto World::getItemName(TYPE_OF_ITEM_ID itemid, uint8_t language) -> std::string {
+auto World::getItemName(TYPE_OF_ITEM_ID itemid, uint8_t language) const -> std::string {
     if (language == 0) {
         return Data::Items[itemid].German;
     }
     return Data::Items[itemid].English;
 }
 
-auto World::getItemStats(const ScriptItem &item) -> ItemStruct {
+auto World::getItemStats(const ScriptItem &item) const -> ItemStruct {
     const auto &data = Data::Items[item.getId()];
     return data;
 }
 
-auto World::getItemStatsFromId(TYPE_OF_ITEM_ID id) -> ItemStruct {
+auto World::getItemStatsFromId(TYPE_OF_ITEM_ID id) const -> ItemStruct {
     const auto &data = Data::Items[id];
     return data;
 }

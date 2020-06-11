@@ -78,7 +78,7 @@ noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
 		 db/QueryAssign.hpp db/Query.hpp db/Connection.hpp \
 		 db/InsertQuery.hpp db/ConnectionManager.hpp \
 		 db/QueryTables.hpp db/UpdateQuery.hpp db/SelectQuery.hpp \
-		 globals.hpp World.hpp ItemLookAt.hpp Item.hpp \
+		 globals.hpp World.hpp WorldScriptInterface.hpp ItemLookAt.hpp Item.hpp \
 		 CharacterContainer.hpp SchedulerTaskClasses.hpp \
 		 thread_safe_vector.hpp Random.hpp NPC.hpp Scheduler.hpp Scheduler.tcc \
 		 PlayerManager.hpp Character.hpp \

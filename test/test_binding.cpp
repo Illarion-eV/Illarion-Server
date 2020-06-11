@@ -21,7 +21,7 @@ public:
         World::_self = this;
     }
 
-    MOCK_METHOD2(getItemName, std::string(TYPE_OF_ITEM_ID itemid, uint8_t language));
+    MOCK_CONST_METHOD2(getItemName, std::string(TYPE_OF_ITEM_ID itemid, uint8_t language));
     MOCK_METHOD1(findCharacter, Character*(TYPE_OF_CHARACTER_ID id));
 };
 
