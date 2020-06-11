@@ -243,7 +243,7 @@ auto world_LuaLoS(const World *world, const position &startingpos, const positio
     lua_State *luaState = LuaScript::getLuaState();
     luabind::object list = luabind::newtable(luaState);
     int index = 1;
-    auto objects = world->LoS(startingpos, endingpos);
+    auto objects = world->blockingLineOfSight(startingpos, endingpos);
 
     for (auto &blocker : objects) {
         luabind::object innerlist = luabind::newtable(luaState);

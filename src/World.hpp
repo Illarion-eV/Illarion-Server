@@ -18,8 +18,8 @@
  * Illarionserver. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WORLD_HH
-#define WORLD_HH
+#ifndef WORLD_HPP
+#define WORLD_HPP
 
 #define LOG_TALK
 
@@ -279,7 +279,7 @@ public:
      * @param endingpos the end of the line of sight calculation
      * @return list of all blocking objects between startingpos and endingpos.
      */
-    auto LoS(const position &startingpos, const position &endingpos) const -> std::list<BlockingObject>;
+    auto blockingLineOfSight(const position &startingpos, const position &endingpos) const -> std::list<BlockingObject>;
 
     auto findTargetsInSight(const position &pos, uint8_t range, std::vector<Character *> &ret,
                             Character::face_to direction) const -> bool;

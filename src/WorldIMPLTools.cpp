@@ -141,7 +141,7 @@ auto World::findTargetsInSight(const position &pos, uint8_t range, std::vector<C
         }
 
         if (indir) {
-            std::list<BlockingObject> objects = LoS(pos, candidate->getPosition());
+            std::list<BlockingObject> objects = blockingLineOfSight(pos, candidate->getPosition());
 
             if (objects.empty()) {
                 ret.push_back(candidate);
@@ -153,7 +153,8 @@ auto World::findTargetsInSight(const position &pos, uint8_t range, std::vector<C
     return found;
 }
 
-auto World::LoS(const position &startingpos, const position &endingpos) const -> std::list<BlockingObject> {
+auto World::blockingLineOfSight(const position &startingpos, const position &endingpos) const
+        -> std::list<BlockingObject> {
     std::list<BlockingObject> ret;
     ret.clear();
     bool steep = std::abs(startingpos.y - endingpos.y) > std::abs(startingpos.x - endingpos.x);
