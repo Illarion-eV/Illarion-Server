@@ -28,5 +28,6 @@ depcomp
 *.*~
 *.log
 !.gitignore
-
 /Debug
+*tags*
+compile_commands.json
