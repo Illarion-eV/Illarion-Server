@@ -22,7 +22,7 @@ check_PROGRAMS = test_binding ItemTest CharacterContainerTest test_container \
                  test_binding_item test_binding_scriptitem test_binding_position \
                  test_binding_longtimeaction test_binding_weatherstruct \
                  test_binding_character test_binding_random test_random test_map_import \
-                 test_binding_armorstruct
+                 test_binding_armorstruct test_binding_world
 
 AM_CXXFLAGS = -ggdb -pipe -Wall -Wno-deprecated -fsanitize=address -std=c++17 $(BOOST_CXXFLAGS) $(DEPS_CFLAGS)
 AM_CPPFLAGS = -D_THREAD_SAFE -D_REENTRANT $(BOOST_CPPFLAGS) -I$(top_srcdir)/src
@@ -46,6 +46,7 @@ test_binding_longtimeaction_SOURCES = test_binding_longtimeaction.cpp
 test_binding_weatherstruct_SOURCES = test_binding_weatherstruct.cpp
 test_binding_character_SOURCES = test_binding_character.cpp
 test_binding_random_SOURCES = test_binding_random.cpp
+test_binding_world_SOURCES = test_binding_world.cpp
 
 test_random_SOURCES = test_random.cpp
 
