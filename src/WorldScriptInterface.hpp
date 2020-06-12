@@ -51,11 +51,14 @@ public:
                                   Character::sex_type sex, const std::string &scriptname) -> bool = 0;
     virtual auto createMonster(unsigned short id, const position &pos, short movepoints) -> character_ptr = 0;
     virtual auto deleteNPC(unsigned int npcid) -> bool = 0;
-    [[nodiscard]] virtual auto getCharactersInRangeOf(const position &pos, uint8_t radius) const -> std::vector<Character *> = 0;
-    [[nodiscard]] virtual auto getMonstersInRangeOf(const position &pos, uint8_t radius) const -> std::vector<Monster *> = 0;
+    [[nodiscard]] virtual auto getCharactersInRangeOf(const position &pos, uint8_t radius) const
+            -> std::vector<Character *> = 0;
+    [[nodiscard]] virtual auto getMonstersInRangeOf(const position &pos, uint8_t radius) const
+            -> std::vector<Monster *> = 0;
     [[nodiscard]] virtual auto getNPCS() const -> std::vector<NPC *> = 0;
     [[nodiscard]] virtual auto getNPCSInRangeOf(const position &pos, uint8_t radius) const -> std::vector<NPC *> = 0;
-    [[nodiscard]] virtual auto getPlayersInRangeOf(const position &pos, uint8_t radius) const -> std::vector<Player *> = 0;
+    [[nodiscard]] virtual auto getPlayersInRangeOf(const position &pos, uint8_t radius) const
+            -> std::vector<Player *> = 0;
     [[nodiscard]] virtual auto getPlayersOnline() const -> std::vector<Player *> = 0;
 
     // Related to Data
