@@ -333,21 +333,6 @@ public:
         return maps.createMap(name, origin, width, height, tile);
     }
 
-    /**
-     *@brief changes one part of the weather and sends the new weather to all players
-     *@param value the new value of the weather part
-     *@param type the part of the weather which should be changed
-     *<ul>
-     *<li> "cloud_density" how much clouds are on the sky </li>
-     *<li> "fog_densitiy" how much fog </li>
-     *<li> "wind_dir" from which direction blows the wind </li>
-     *<li> "gust_strength" how strong are the wind gusts </li>
-     *<li> "percipitation_strength" how strong is the percipitation </li>
-     *<li> "thunderstorm" is there any thunderstorm and how strong is it </li>
-     *<li> "temperature" the temperature in C </li>
-     */
-    void setWeatherPart(const std::string &type, char value);
-
     void sendRemoveCharToVisiblePlayers(TYPE_OF_CHARACTER_ID id, const position &pos) const;
 
     void sendHealthToAllVisiblePlayers(Character *cc, Attribute::attribute_t health) const;

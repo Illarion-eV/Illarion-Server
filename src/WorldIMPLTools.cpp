@@ -719,28 +719,6 @@ auto World::findWarpFieldsInRange(const position &pos, short int range, std::vec
     return !warppositions.empty();
 }
 
-void World::setWeatherPart(const std::string &type, char value) {
-    if (type == "cloud_density") {
-        weather.cloud_density = value;
-    } else if (type == "fog_density") {
-        weather.fog_density = value;
-    } else if (type == "wind_dir") {
-        weather.wind_dir = value;
-    } else if (type == "gust_strength") {
-        weather.gust_strength = value;
-    } else if (type == "percipitation_strength") {
-        weather.percipitation_strength = value;
-    } else if (type == "percipitation_type") {
-        weather.per_type = value;
-    } else if (type == "thunderstorm") {
-        weather.thunderstorm = value;
-    } else if (type == "temperature") {
-        weather.temperature = value;
-    }
-
-    sendWeatherToAllPlayers();
-}
-
 void World::sendRemoveCharToVisiblePlayers(TYPE_OF_CHARACTER_ID id, const position &pos) const {
     ServerCommandPointer cmd = std::make_shared<RemoveCharTC>(id);
 
