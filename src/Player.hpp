@@ -190,47 +190,47 @@ public:
      *<b>Lua: [:changeSource]</b>
      *@param sI source is a item the new item
      */
-    inline void changeSource(const ScriptItem &sI) override;
+    void changeSource(const ScriptItem &sI) override;
 
     /**
      *changes the Source of the last action for this player.
      *<b>Lua: [:changeSource]</b>
      *@param pos source is a position the new position
      */
-    inline void changeSource(const position &pos) override;
+    void changeSource(const position &pos) override;
 
     /**
      *changes the Source of the last action to nothing for this player
      *<b>Lua: [:changeSource]</b>
      */
-    inline void changeSource() override;
+    void changeSource() override;
 
     /**
      *changes the Target of the last action for this player.
      *<b>Lua: [:changeTarget]</b>
      *@param cc target is a character the pointer to this character
      */
-    inline void changeTarget(Character *cc) override;
+    void changeTarget(Character *cc) override;
 
     /**
      *changes the Target of the last action for this player.
      *<b>Lua: [:changeTarget]</b>
      *@param sI target is a item the new item
      */
-    inline void changeTarget(const ScriptItem &sI) override;
+    void changeTarget(const ScriptItem &sI) override;
 
     /**
      *changes the target of the last action for this player.
      *<b>Lua: [:changeTarget]</b>
      *@param pos Target is a position the new position
      */
-    inline void changeTarget(const position &pos) override;
+    void changeTarget(const position &pos) override;
 
     /**
      *changes the Target of the last action to nothing for this player
      *<b>Lua: [:changeTarget]</b>
      */
-    inline void changeTarget() override;
+    void changeTarget() override;
 
     /**
      * returns the number of seconds the player has been idle, not actively issuing commands
@@ -256,6 +256,9 @@ public:
 
     //! normal constructor
     explicit Player(std::shared_ptr<NetInterface> newConnection);
+
+    // testing constructor
+    Player() = default;
 
     //! check if username/password is ok
     void check_logindata();

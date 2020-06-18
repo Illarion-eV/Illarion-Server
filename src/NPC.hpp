@@ -61,6 +61,9 @@ public:
     NPC(TYPE_OF_CHARACTER_ID id, const std::string &name, TYPE_OF_RACE_ID race, const position &pos,
         Character::face_to dir, bool ishealer, Character::sex_type sex, const appearance &appearance);
 
+    // testing constructor
+    NPC() = default;
+
     /**
      * the destructor
      */
