@@ -64,9 +64,7 @@
 extern std::shared_ptr<LuaPlayerDeathScript> playerDeathScript;
 extern std::shared_ptr<LuaDepotScript> depotScript;
 
-Player::Player(std::shared_ptr<NetInterface> newConnection)
-        : onlinetime(0), Connection(std::move(newConnection)), turtleActive(false), clippingActive(true), admin(0),
-          questWriteLock(false), monitoringClient(false), dialogCounter(0) {
+Player::Player(std::shared_ptr<NetInterface> newConnection) : Connection(std::move(newConnection)) {
     screenwidth = 0;
     screenheight = 0;
     Character::setAlive(true);

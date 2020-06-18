@@ -574,7 +574,7 @@ private:
     unsigned char turtletile{};
 
     // Clipping on/off (default to on)
-    bool clippingActive{};
+    bool clippingActive = true;
 
     //! gibt an, ob der Spieler erweiterte Rechte hat - are they an admin?
     uint32_t admin{};
