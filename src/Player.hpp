@@ -104,7 +104,7 @@ public:
     bool newPlayer = false;
 
     //! Zeit (in Sekunden) die der Spieler insgesamt online war
-    unsigned long int onlinetime;
+    unsigned long int onlinetime{};
 
     time_t logintime{};
 
@@ -126,8 +126,8 @@ public:
     std::string realname;
 
     //! Screen resolution;
-    uint8_t screenwidth;
-    uint8_t screenheight;
+    uint8_t screenwidth{};
+    uint8_t screenheight{};
 
     auto getScreenRange() const -> unsigned short int override;
 
@@ -570,27 +570,27 @@ private:
     std::string statusreason;
 
     // World map turtle graphics
-    bool turtleActive;
+    bool turtleActive{};
     unsigned char turtletile{};
 
     // Clipping on/off (default to on)
-    bool clippingActive;
+    bool clippingActive{};
 
     //! gibt an, ob der Spieler erweiterte Rechte hat - are they an admin?
-    uint32_t admin;
+    uint32_t admin{};
 
-    bool questWriteLock;
+    bool questWriteLock{};
 
     LoadLevel loadLevel = LoadLevel::unburdened;
 
-    bool monitoringClient;
+    bool monitoringClient{};
 
     const uint8_t BACKPACK_SHOWCASE = 0;
     uint8_t showcaseCounter{};
     using ShowcaseMap = std::unordered_map<uint8_t, std::unique_ptr<Showcase>>;
     ShowcaseMap showcases;
 
-    unsigned int dialogCounter;
+    unsigned int dialogCounter{};
     using DialogMap = std::unordered_map<unsigned int, std::shared_ptr<Dialog>>;
     DialogMap dialogs;
 

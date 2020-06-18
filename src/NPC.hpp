@@ -108,8 +108,8 @@ public:
 
 protected:
     static uint32_t counter;
-    bool _ishealer;
-    position _startpos;
+    bool _ishealer{};
+    position _startpos{};
     std::shared_ptr<LuaNPCScript> _script;
 };
 
