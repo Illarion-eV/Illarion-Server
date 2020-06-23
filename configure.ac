@@ -67,8 +67,8 @@ AC_LANG(C++)
 DEPS_CFLAGS="$lua_CFLAGS $libpqxx_CFLAGS"
 DEPS_LIBS="$lua_LIBS $libpqxx_LIBS $luabind_LIBS"
 
-ac_gtest_dir="/usr/src/gtest"
-ac_gmock_dir="/usr/src/gmock"
+ac_gtest_dir="${srcdir}/extern/googletest/googletest"
+ac_gmock_dir="${srcdir}/extern/googletest/googlemock"
 AC_ARG_WITH([gtest],
             [AS_HELP_STRING([--with-gtest],
               [set custom path for gtest source])],

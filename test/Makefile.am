@@ -24,15 +24,15 @@ check_PROGRAMS = test_binding ItemTest CharacterContainerTest test_container \
                  test_binding_character test_binding_random test_random test_map_import \
                  test_binding_armorstruct test_binding_world
 
-AM_CXXFLAGS = -ggdb -pipe -Wall -Wno-deprecated -fsanitize=address -std=c++17 $(BOOST_CXXFLAGS) $(DEPS_CFLAGS)
-AM_CPPFLAGS = -D_THREAD_SAFE -D_REENTRANT $(BOOST_CPPFLAGS) -I$(top_srcdir)/src
+AM_CXXFLAGS = -ggdb -pipe -Wall -Wno-deprecated -std=c++17 $(BOOST_CXXFLAGS) $(DEPS_CFLAGS)
+AM_CPPFLAGS = -D_THREAD_SAFE -D_REENTRANT $(BOOST_CPPFLAGS) -I../$(GMOCK_DIR)/include -I../$(GTEST_DIR)/include -I$(top_srcdir)/src
 AM_LDFLAGS = $(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS) -lpthread
 LDADD = $(DEPS_LIBS) $(top_builddir)/src/libserver.a $(top_builddir)/src/script/libscriptbinding.a -lstdc++fs libgmock.a
 
 LIBS = $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS)
 
 nodist_libgmock_a_SOURCES = $(GMOCK_DIR)/src/gmock-all.cc $(GTEST_DIR)/src/gtest-all.cc
-libgmock_a_CPPFLAGS = $(AM_CPPFLAGS) -I$(GMOCK_DIR) -I$(GTEST_DIR)
+libgmock_a_CPPFLAGS = $(AM_CPPFLAGS) -I../$(GMOCK_DIR) -I../$(GTEST_DIR)
 
 TESTS = $(check_PROGRAMS)
 
