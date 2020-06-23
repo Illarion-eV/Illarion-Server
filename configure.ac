@@ -19,7 +19,7 @@
 
 # Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.69)
-AC_INIT(Illarion Server, 0.9.9, https://github.com/Illarion-eV/Illarion-Server/issues, illarion, https://illarion.org)
+AC_INIT(Illarion Server, 0.9.10, https://github.com/Illarion-eV/Illarion-Server/issues, illarion, https://illarion.org)
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([-Wno-portability foreign 1.16])
 AC_CONFIG_HEADERS(config.h)
