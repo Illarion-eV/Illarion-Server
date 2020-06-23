@@ -121,13 +121,18 @@ void Player::login() {
     position pos = getPosition();
 
     try {
-        _world->walkableFieldNear(pos).setPlayer();
+        auto &field = _world->walkableFieldNear(pos);
+        field.setPlayer();
+        pos = field.getPosition();
     } catch (FieldNotFound &) {
         try {
             pos.x = Config::instance().playerstart_x;
             pos.y = Config::instance().playerstart_y;
             pos.z = Config::instance().playerstart_z;
-            _world->walkableFieldNear(pos).setPlayer();
+
+            auto &field = _world->walkableFieldNear(pos);
+            field.setPlayer();
+            pos = field.getPosition();
         } catch (FieldNotFound &) {
             throw LogoutException(NOPLACE);
         }
