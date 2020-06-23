@@ -24,7 +24,7 @@ TEST_F(armor_bindings, test_body_parts_property) {
                                 "end",
                                 "armor_body_parts_test"};
 
-    auto retval = script.test<ArmorStruct, ArmorStruct>(armor);
+    script.test<ArmorStruct, ArmorStruct>(armor);
     EXPECT_EQ(23, armor.BodyParts);
 }
 
@@ -38,7 +38,7 @@ TEST_F(armor_bindings, test_puncture_armor_property) {
                                 "end",
                                 "armor_puncture_armor_test"};
 
-    auto retval = script.test<ArmorStruct, ArmorStruct>(armor);
+    script.test<ArmorStruct, ArmorStruct>(armor);
     EXPECT_EQ(23, armor.PunctureArmor);
 }
 
@@ -52,7 +52,7 @@ TEST_F(armor_bindings, test_stroke_armor_property) {
                                 "end",
                                 "armor_stroke_armor_test"};
 
-    auto retval = script.test<ArmorStruct, ArmorStruct>(armor);
+    script.test<ArmorStruct, ArmorStruct>(armor);
     EXPECT_EQ(23, armor.StrokeArmor);
 }
 
@@ -66,7 +66,7 @@ TEST_F(armor_bindings, test_thrust_armor_property) {
                                 "end",
                                 "armor_thrust_armor_test"};
 
-    auto retval = script.test<ArmorStruct, ArmorStruct>(armor);
+    script.test<ArmorStruct, ArmorStruct>(armor);
     EXPECT_EQ(23, armor.ThrustArmor);
 }
 
@@ -80,7 +80,7 @@ TEST_F(armor_bindings, test_magic_disturbance_property) {
                                 "end",
                                 "armor_magic_disturbance_test"};
 
-    auto retval = script.test<ArmorStruct, ArmorStruct>(armor);
+    script.test<ArmorStruct, ArmorStruct>(armor);
     EXPECT_EQ(23, armor.MagicDisturbance);
 }
 
@@ -94,7 +94,7 @@ TEST_F(armor_bindings, test_absorb_property) {
                                 "end",
                                 "armor_absorb_test"};
 
-    auto retval = script.test<ArmorStruct, ArmorStruct>(armor);
+    script.test<ArmorStruct, ArmorStruct>(armor);
     EXPECT_EQ(23, armor.Absorb);
 }
 
@@ -108,7 +108,7 @@ TEST_F(armor_bindings, test_stiffness_property) {
                                 "end",
                                 "armor_stiffness_test"};
 
-    auto retval = script.test<ArmorStruct, ArmorStruct>(armor);
+    script.test<ArmorStruct, ArmorStruct>(armor);
     EXPECT_EQ(23, armor.Stiffness);
 }
 
@@ -122,7 +122,7 @@ TEST_F(armor_bindings, test_type_property) {
                                 "end",
                                 "armor_type_test"};
 
-    auto retval = script.test<ArmorStruct, ArmorStruct>(armor);
+    script.test<ArmorStruct, ArmorStruct>(armor);
     EXPECT_EQ(5, armor.Type);
 }
 
