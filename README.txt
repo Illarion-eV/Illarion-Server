@@ -19,9 +19,9 @@ Requirements
 
    GCC 8.3
    GNU Make 4.2.1
-   Automake 1.16.1
+   Automake 1.16.1 or CMake 3.13.4
    Boost 1.67.0
-   PostgreSQL 9.4.3
+   PostgreSQL 11.7
    libpqxx 6.2.5
    Lua 5.2.4
    Luabind 0.9.1 with some bugfixes from
@@ -29,23 +29,25 @@ Requirements
      or https://github.com/vilarion/luabind/tree/illarion (source)
    range-v3 0.4.0
 
-   gtest 1.8.1
-   google-mock 1.8.1
-
+   googletest 1.10 is included as a git submodule
 
 Build
 
-   Run inside the source directory:
-   ./bootstrap
-   ./configure OR ./configure CXX=clang
-   make
+   With Automake:
 
-   for non-standard locations of luabind (i.e. in /usr/local/lib and not in /usr/lib)
-   use LDFLAGS=-L/usr/local CPPFLAGS=-I/usr/local/include ./configure
+     ./bootstrap
+     mkdir .build
+     cd .build
+     ../configure
+     make
 
-   if you want to use multiple boost versions in parallel you should use the
-   flag --layout=versioned to b2 on installing this version to make sure we link against
-   the correct version
+   With CMake:
+
+     mkdir .build
+     cd .build
+     cmake ..
+     make
+
      ______________________________________________________________________
 
-   Last modified: Apr 30, 2013
+   Last modified: Jun 24, 2020
