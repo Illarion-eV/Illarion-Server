@@ -22,6 +22,11 @@ ACLOCAL_AMFLAGS = -Im4
 
 SUBDIRS = src test
 
+EXTRA_DIST = $(GTEST_DIR)/include \
+             $(GTEST_DIR)/src \
+             $(GMOCK_DIR)/include \
+             $(GMOCK_DIR)/src
+
 dist_sysconf_DATA=setup/illarion.conf
 
 clean-local:

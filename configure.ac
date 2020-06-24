@@ -21,7 +21,7 @@
 AC_PREREQ(2.69)
 AC_INIT(Illarion Server, 0.9.10, https://github.com/Illarion-eV/Illarion-Server/issues, illarion, https://illarion.org)
 AC_CONFIG_MACRO_DIR([m4])
-AM_INIT_AUTOMAKE([-Wno-portability foreign 1.16])
+AM_INIT_AUTOMAKE([subdir-objects -Wno-portability foreign 1.16])
 AC_CONFIG_HEADERS(config.h)
 
 # Reduce verbosity
