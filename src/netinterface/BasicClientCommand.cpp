@@ -35,44 +35,6 @@ BasicClientCommand::~BasicClientCommand() { delete[] msg_buffer; }
 
 auto BasicClientCommand::msg_data() -> unsigned char * { return msg_buffer; }
 
-/*
-volatile bool BasicClientCommand::getData( ByteBuffer * recvBuffer )
-{
-    if ( !headerComplete )
-    {
-        //try to get the header
-        if ( recvBuffer->dataAvailable() >= 4 )
-        {
-            length = recvBuffer->getByte() << 8;
-            length = length | recvBuffer->getByte();
-            checkSum = recvBuffer->getByte() << 8;
-            checkSum = checkSum | recvBuffer->getByte();
-            //create the new buffer
-            buffer = new unsigned char[length];
-            headerComplete = true;
-        }
-        else
-        {
-            //not enough data for reading the complete header so return false and wait
-            return false;
-        }
-    }
-    // not else because in the first step we can get the header
-    if ( headerComplete )
-    {
-        //try to get the data
-        //loop until we got enough bytes
-        while ( bytesReceived < length )
-        {
-            if ( recvBuffer->dataAvailable() <= 0 ) return false;
-            buffer[ bytesReceived ] = recvBuffer->getByte();
-            bytesReceived++;
-        }
-        return true;
-    }
-    return false;
-}*/
-
 auto BasicClientCommand::getUnsignedCharFromBuffer() -> unsigned char {
     unsigned char ret = 0;
 
