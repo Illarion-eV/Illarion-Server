@@ -159,7 +159,7 @@ void World::changeQuality(ScriptItem item, short int amount) {
 
 auto World::changeItem(ScriptItem item) -> bool {
     if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
-        item.owner->items[item.itempos] = (Item)item;
+        item.owner->items.at(item.itempos) = (Item)item;
 
         if (item.owner->getType() == Character::player) {
             dynamic_cast<Player *>(item.owner)->sendCharacterItemAtPos(item.itempos);

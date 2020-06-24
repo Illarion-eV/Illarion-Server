@@ -491,9 +491,9 @@ void CastTS::performAction(Player *player) {
 
         if (LuaMageScript) {
             if (pos < (MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
-                if (player->items[pos].getId() != 0) {
+                if (player->items.at(pos).getId() != 0) {
                     Target.Type = LUA_ITEM;
-                    Target.item = static_cast<ScriptItem>(player->items[pos]);
+                    Target.item = static_cast<ScriptItem>(player->items.at(pos));
                     Target.item.pos = player->getPosition();
 
                     if (pos < MAX_BODY_ITEMS) {
@@ -739,16 +739,16 @@ void UseTS::performAction(Player *player) {
         if (pos < (MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
             Logger::debug(LogFacility::Script) << "position approved!" << Log::end;
 
-            if (player->items[pos].getId() != 0) {
+            if (player->items.at(pos).getId() != 0) {
                 Logger::debug(LogFacility::Script)
                         << "at position " << static_cast<int>(pos)
-                        << " on body, is an item with id: " << player->items[pos].getId() << Log::end;
+                        << " on body, is an item with id: " << player->items.at(pos).getId() << Log::end;
 
-                LuaScript = Data::Items.script(player->items[pos].getId());
+                LuaScript = Data::Items.script(player->items.at(pos).getId());
 
                 if (LuaScript) {
                     Source.Type = LUA_ITEM;
-                    Source.item = static_cast<ScriptItem>(player->items[pos]);
+                    Source.item = static_cast<ScriptItem>(player->items.at(pos));
                     Source.item.pos = player->getPosition();
 
                     if (pos < MAX_BODY_ITEMS) {

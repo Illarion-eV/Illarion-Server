@@ -16,28 +16,28 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CBYTE_BUFFER_HPP
-#define CBYTE_BUFFER_HPP
+#ifndef BYTE_BUFFER_HPP
+#define BYTE_BUFFER_HPP
 
 #include <array>
 #include <cstdint>
 #include <mutex>
 
-#define RECV_BUFFERSIZE 100
-#define NUMBEROFBUFFERS 12
+constexpr int RECV_BUFFERSIZE = 100;
+constexpr int NUMBEROFBUFFERS = 12;
 
 /**
  *@ingroup Netinterface
- * a thread save ring buffer. Holds the date which are received from the socket
- * and stores them in 12 section a 100 bytes.
- * it guaranties that the read buffer cant be in front of the write buffer
+ * a thread safe ring buffer. Holds the data which is received from the socket
+ * and stores it in 12 sections of 100 bytes each.
+ * it guarantees that the read buffer cannot be in front of the write buffer
  */
 class ByteBuffer {
 public:
     ByteBuffer();
     ByteBuffer(const ByteBuffer &) = delete;
     auto operator=(const ByteBuffer &) -> ByteBuffer & = delete;
-    ~ByteBuffer();
+    ~ByteBuffer() = default;
 
     /**
      * struct which represens the internal structur of the buffer
@@ -80,7 +80,7 @@ private:
     volatile uint8_t rBuff{0};    /*<number of current read buffer*/
     volatile uint8_t wBuff{1};    /*<number of the current write buffer*/
     volatile uint16_t readPos{0}; /*<current reading position inside the read buffer*/
-    t_rbuffer *recvBuffer;        /*<pointer to a internal buffer struct which holds the buffer in a array*/
+    std::array<t_rbuffer, NUMBEROFBUFFERS> recvBuffer{}; /*<internal buffer collection*/
 };
 
 #endif

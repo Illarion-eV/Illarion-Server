@@ -327,8 +327,8 @@ void World::lookAtShowcaseItem(Player *cp, uint8_t showcase, unsigned char posit
 }
 
 void World::lookAtInventoryItem(Player *cp, unsigned char position) {
-    if (cp->items[position].getId() != 0) {
-        ScriptItem item(cp->items[position]);
+    if (cp->items.at(position).getId() != 0) {
+        ScriptItem item(cp->items.at(position));
 
         if (position < MAX_BODY_ITEMS) {
             item.type = ScriptItem::it_inventory;

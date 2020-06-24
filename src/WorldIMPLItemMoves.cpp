@@ -35,10 +35,10 @@ static const std::string message_overweight_english{"You can't carry that much!"
 
 auto World::putItemOnInvPos(Character *cc, unsigned char pos) -> bool {
     if (pos == BACKPACK) {
-        if (cc->items[BACKPACK].getId() == 0) {
+        if (cc->items.at(BACKPACK).getId() == 0) {
             if (g_item.isContainer()) {
-                cc->items[BACKPACK] = g_item;
-                cc->items[BACKPACK].setNumber(1);
+                cc->items.at(BACKPACK) = g_item;
+                cc->items.at(BACKPACK).setNumber(1);
 
                 if (g_cont == nullptr) {
                     g_cont = new Container(g_item.getId());
@@ -60,18 +60,18 @@ auto World::putItemOnInvPos(Character *cc, unsigned char pos) -> bool {
         }
     } else if (g_cont == nullptr) {
         if (pos < MAX_BODY_ITEMS) {
-            if (cc->items[pos].getId() == 0 || cc->items[pos].getId() == g_item.getId()) {
+            if (cc->items.at(pos).getId() == 0 || cc->items.at(pos).getId() == g_item.getId()) {
                 if ((pos == RIGHT_TOOL) || (pos == LEFT_TOOL)) {
                     if (Data::WeaponItems.exists(g_item.getId())) {
                         const auto &weapon = Data::WeaponItems[g_item.getId()];
 
                         if ((weapon.Type == 4) || (weapon.Type == 5) || (weapon.Type == 6) || (weapon.Type == 13)) {
-                            if ((pos == RIGHT_TOOL) && (cc->items[LEFT_TOOL].getId() == 0)) {
-                                if (cc->items[pos].getId() == 0 && g_item.getNumber() == 1) {
-                                    cc->items[pos] = g_item;
-                                    cc->items[LEFT_TOOL].setId(BLOCKEDITEM);
-                                    cc->items[LEFT_TOOL].makePermanent();
-                                    cc->items[LEFT_TOOL].setNumber(1);
+                            if ((pos == RIGHT_TOOL) && (cc->items.at(LEFT_TOOL).getId() == 0)) {
+                                if (cc->items.at(pos).getId() == 0 && g_item.getNumber() == 1) {
+                                    cc->items.at(pos) = g_item;
+                                    cc->items.at(LEFT_TOOL).setId(BLOCKEDITEM);
+                                    cc->items.at(LEFT_TOOL).makePermanent();
+                                    cc->items.at(LEFT_TOOL).setNumber(1);
                                     g_item.reset();
                                     cc->updateAppearanceForAll(true);
                                     return true;
@@ -79,15 +79,15 @@ auto World::putItemOnInvPos(Character *cc, unsigned char pos) -> bool {
                                 // we don't want to add any more two handers...
                                 return false;
                             }
-                            if ((pos == LEFT_TOOL) && (cc->items[RIGHT_TOOL].getId() == 0)) {
-                                if (cc->items[pos].getId() == 0 && g_item.getNumber() == 1) {
-                                    cc->items[pos] = g_item;
+                            if ((pos == LEFT_TOOL) && (cc->items.at(RIGHT_TOOL).getId() == 0)) {
+                                if (cc->items.at(pos).getId() == 0 && g_item.getNumber() == 1) {
+                                    cc->items.at(pos) = g_item;
 
-                                    cc->items[RIGHT_TOOL].setId(BLOCKEDITEM);
+                                    cc->items.at(RIGHT_TOOL).setId(BLOCKEDITEM);
 
-                                    cc->items[RIGHT_TOOL].makePermanent();
+                                    cc->items.at(RIGHT_TOOL).makePermanent();
 
-                                    cc->items[RIGHT_TOOL].setNumber(1);
+                                    cc->items.at(RIGHT_TOOL).setNumber(1);
 
                                     g_item.reset();
 
@@ -104,14 +104,14 @@ auto World::putItemOnInvPos(Character *cc, unsigned char pos) -> bool {
                         }
                     }
 
-                    if (cc->items[pos].getId() == 0) {
+                    if (cc->items.at(pos).getId() == 0) {
                         if (!g_item.isStackable() && !g_item.isContainer()) {
                             if (g_item.getNumber() > 1) {
                                 return false;
                             }
                         }
 
-                        cc->items[pos] = g_item;
+                        cc->items.at(pos) = g_item;
                         g_item.reset();
 
                         cc->updateAppearanceForAll(true);
@@ -121,14 +121,14 @@ auto World::putItemOnInvPos(Character *cc, unsigned char pos) -> bool {
                         return false;
                     }
 
-                    if (!cc->items[pos].equalData(g_item)) {
+                    if (!cc->items.at(pos).equalData(g_item)) {
                         return false;
                     }
 
-                    if (g_item.getNumber() + cc->items[pos].getNumber() <= g_item.getMaxStack()) {
-                        cc->items[pos].setNumber(cc->items[pos].getNumber() + g_item.getNumber());
+                    if (g_item.getNumber() + cc->items.at(pos).getNumber() <= g_item.getMaxStack()) {
+                        cc->items.at(pos).setNumber(cc->items.at(pos).getNumber() + g_item.getNumber());
 
-                        cc->items[pos].setMinQuality(g_item);
+                        cc->items.at(pos).setMinQuality(g_item);
 
                         g_item.reset();
 
@@ -138,7 +138,7 @@ auto World::putItemOnInvPos(Character *cc, unsigned char pos) -> bool {
                     }
                     return false;
                 }
-                if (g_item.getNumber() == 1 && cc->items[pos].getId() == 0) {
+                if (g_item.getNumber() == 1 && cc->items.at(pos).getId() == 0) {
                     if (Data::ArmorItems.exists(g_item.getId())) {
                         const auto &armor = Data::ArmorItems[g_item.getId()];
 
@@ -175,7 +175,7 @@ auto World::putItemOnInvPos(Character *cc, unsigned char pos) -> bool {
                         }();
 
                         if ((armor.BodyParts & flag) != 0) {
-                            cc->items[pos] = g_item;
+                            cc->items.at(pos) = g_item;
 
                             g_item.reset();
 
@@ -187,33 +187,33 @@ auto World::putItemOnInvPos(Character *cc, unsigned char pos) -> bool {
                 }
             }
         } else if (pos < MAX_BODY_ITEMS + MAX_BELT_SLOTS) {
-            if (cc->items[pos].getId() == 0) {
+            if (cc->items.at(pos).getId() == 0) {
                 if (!g_item.isStackable() && !g_item.isContainer()) {
                     if (g_item.getNumber() > 1) {
                         return false;
                     }
                 }
 
-                cc->items[pos] = g_item;
+                cc->items.at(pos) = g_item;
                 g_item.reset();
                 cc->updateAppearanceForAll(true);
                 return true;
             }
-            if (cc->items[pos].getId() == g_item.getId()) {
+            if (cc->items.at(pos).getId() == g_item.getId()) {
                 if (!g_item.isStackable() && !g_item.isContainer()) {
                     return false;
                 }
 
-                if (!cc->items[pos].equalData(g_item)) {
+                if (!cc->items.at(pos).equalData(g_item)) {
                     return false;
                 }
 
-                int temp = cc->items[pos].getNumber() + g_item.getNumber();
+                int temp = cc->items.at(pos).getNumber() + g_item.getNumber();
 
                 if (temp <= g_item.getMaxStack()) {
-                    cc->items[pos].setNumber(temp);
+                    cc->items.at(pos).setNumber(temp);
 
-                    cc->items[pos].setMinQuality(g_item);
+                    cc->items.at(pos).setMinQuality(g_item);
 
                     g_item.reset();
 
@@ -247,26 +247,26 @@ auto World::putItemOnInvPos(Player *cc, unsigned char pos) -> bool {
 
 auto World::takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_type count) -> bool {
     if (pos == BACKPACK) {
-        if (cc->items[BACKPACK].getId() != 0) {
-            g_item = cc->items[BACKPACK];
+        if (cc->items.at(BACKPACK).getId() != 0) {
+            g_item = cc->items.at(BACKPACK);
             g_cont = cc->backPackContents;
 
             if (g_cont == nullptr) {
                 g_cont = new Container(g_item.getId());
             }
 
-            cc->items[BACKPACK].reset();
+            cc->items.at(BACKPACK).reset();
             cc->backPackContents = nullptr;
             cc->updateAppearanceForAll(true);
             return true;
         }
     } else if (pos < MAX_BODY_ITEMS + MAX_BELT_SLOTS) {
-        if ((cc->items[pos].getId() != 0) && (cc->items[pos].getId() != BLOCKEDITEM)) {
+        if ((cc->items.at(pos).getId() != 0) && (cc->items.at(pos).getId() != BLOCKEDITEM)) {
             if ((pos == RIGHT_TOOL) || (pos == LEFT_TOOL)) {
-                const auto weaponId = cc->items[pos].getId();
+                const auto weaponId = cc->items.at(pos).getId();
 
                 if (Data::WeaponItems.exists(weaponId)) {
-                    g_item = cc->items[pos];
+                    g_item = cc->items.at(pos);
                     g_cont = nullptr;
 
                     if (!g_item.isStackable() && !g_item.isContainer()) {
@@ -278,16 +278,16 @@ auto World::takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_ty
                     }
 
                     if (g_item.getNumber() > count) {
-                        cc->items[pos].setNumber(cc->items[pos].getNumber() - count);
+                        cc->items.at(pos).setNumber(cc->items.at(pos).getNumber() - count);
                         g_item.setNumber(count);
                     } else {
                         const auto &weapon = Data::WeaponItems[weaponId];
 
                         if ((weapon.Type == 4) || (weapon.Type == 5) || (weapon.Type == 6) || (weapon.Type == 13)) {
-                            cc->items[LEFT_TOOL].reset();
-                            cc->items[RIGHT_TOOL].reset();
+                            cc->items.at(LEFT_TOOL).reset();
+                            cc->items.at(RIGHT_TOOL).reset();
                         } else {
-                            cc->items[pos].reset();
+                            cc->items.at(pos).reset();
                         }
                     }
 
@@ -296,27 +296,27 @@ auto World::takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_ty
                 }
             }
 
-            g_item = cc->items[pos];
+            g_item = cc->items.at(pos);
             g_cont = nullptr;
 
             if (g_item.isStackable() && count > 1 && !g_item.isContainer()) {
                 if (g_item.getNumber() > count) {
-                    cc->items[pos].setNumber(cc->items[pos].getNumber() - count);
+                    cc->items.at(pos).setNumber(cc->items.at(pos).getNumber() - count);
                     g_item.setNumber(count);
                 } else {
-                    cc->items[pos].reset();
+                    cc->items.at(pos).reset();
                 }
 
                 cc->updateAppearanceForAll(true);
                 return true;
             }
             if (g_item.getNumber() > 1) {
-                cc->items[pos].setNumber(cc->items[pos].getNumber() - 1);
+                cc->items.at(pos).setNumber(cc->items.at(pos).getNumber() - 1);
 
                 g_item.setNumber(1);
 
             } else {
-                cc->items[pos].reset();
+                cc->items.at(pos).reset();
             }
 
             cc->updateAppearanceForAll(true);
@@ -333,7 +333,7 @@ auto World::takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_ty
 
 auto World::takeItemFromInvPos(Player *cc, unsigned char pos, Item::number_type count) -> bool {
     if (pos == BACKPACK) {
-        if (cc->items[BACKPACK].getId() != 0) {
+        if (cc->items.at(BACKPACK).getId() != 0) {
             if (cc->backPackContents != nullptr) {
                 cc->closeShowcase(cc->backPackContents);
             }

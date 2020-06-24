@@ -153,16 +153,16 @@ void NetInterface::handle_read_header(const boost::system::error_code &error) {
         // look for command id in header
         for (int i = 1; i < 5; ++i) {
             // found correct command id
-            if ((headerBuffer[i] xor 255) == headerBuffer[i + 1]) {
+            if ((headerBuffer.at(i) xor 255) == headerBuffer.at(i + 1)) {
                 // copy the rest of the correct message to the start of the buffer
                 int start = 0;
 
                 while (i < 6) {
-                    headerBuffer[start++] = headerBuffer[i++];
+                    headerBuffer.at(start++) = headerBuffer.at(i++);
                 }
 
                 // restheader empfangen
-                boost::asio::async_read(socket, boost::asio::buffer(&headerBuffer[start], 6 - start),
+                boost::asio::async_read(socket, boost::asio::buffer(&headerBuffer.at(start), 6 - start),
                                         [shared_this = shared_from_this()](const auto &error, auto bytes_transferred) {
                                             shared_this->handle_read_header(error);
                                         });

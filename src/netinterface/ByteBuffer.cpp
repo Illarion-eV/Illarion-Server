@@ -22,22 +22,18 @@
 #include <string>
 
 ByteBuffer::ByteBuffer() {
-    recvBuffer = new t_rbuffer[NUMBEROFBUFFERS];
-
-    for (int i = 0; i < NUMBEROFBUFFERS; ++i) {
-        recvBuffer[i].fill = 0;
+    for (auto &buffer : recvBuffer) {
+        buffer.fill = 0;
     }
 }
-
-ByteBuffer::~ByteBuffer() { delete[] recvBuffer; }
 
 auto ByteBuffer::dataAvailable() const -> uint16_t { return (bytesAvailable); }
 
 auto ByteBuffer::getByte() -> unsigned char {
     if (bytesAvailable > 0) {
-        if (recvBuffer[rBuff].fill > readPos) {
+        if (recvBuffer.at(rBuff).fill > readPos) {
             bytesAvailable--;
-            unsigned char ret = recvBuffer[rBuff].buff[readPos++];
+            unsigned char ret = recvBuffer.at(rBuff).buff.at(readPos++);
             return ret;
 
         } // end of the current readbuffer
@@ -45,10 +41,10 @@ auto ByteBuffer::getByte() -> unsigned char {
         if (getReadBuffer()) {
             readPos = 0;
 
-            if (recvBuffer[rBuff].fill > 0) {
+            if (recvBuffer.at(rBuff).fill > 0) {
                 bytesAvailable--;
 
-                unsigned char ret = recvBuffer[rBuff].buff[readPos++];
+                unsigned char ret = recvBuffer.at(rBuff).buff.at(readPos++);
 
                 return ret;
             }
@@ -78,7 +74,7 @@ auto ByteBuffer::writeToBuf(uint16_t size) -> bool {
     uint8_t nr = (wBuff + 1) % NUMBEROFBUFFERS;
 
     if (nr != rBuff) {
-        recvBuffer[wBuff].fill = size;
+        recvBuffer.at(wBuff).fill = size;
         wBuff = nr;
         bytesAvailable += size;
         return true;

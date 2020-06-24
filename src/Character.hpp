@@ -181,7 +181,7 @@ public:
 
     inline auto getMagicFlags(unsigned char type) const -> unsigned long int {
         if (type < 4) {
-            return magic.flags[type];
+            return magic.flags.at(type);
         }
         return 0;
     }

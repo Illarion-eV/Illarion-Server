@@ -121,9 +121,9 @@ void Monster::setMonsterType(TYPE_OF_CHARACTER_ID type) {
 
             auto &selectedItem = possibleItems[selectedItemIndex];
 
-            items[inventorySlot].setId(selectedItem.itemid);
-            items[inventorySlot].setNumber(Random::uniform(selectedItem.amount.first, selectedItem.amount.second));
-            items[inventorySlot].setWear(selectedItem.AgeingSpeed);
+            items.at(inventorySlot).setId(selectedItem.itemid);
+            items.at(inventorySlot).setNumber(Random::uniform(selectedItem.amount.first, selectedItem.amount.second));
+            items.at(inventorySlot).setWear(selectedItem.AgeingSpeed);
         }
     }
 

@@ -34,6 +34,8 @@
 #include "netinterface/BasicServerCommand.hpp"
 #include "netinterface/NetInterface.hpp"
 
+#include <range/v3/all.hpp>
+
 KeepAliveTC::KeepAliveTC() : BasicServerCommand(SC_KEEPALIVE_TC) {}
 
 QuestProgressTC::QuestProgressTC(TYPE_OF_QUEST_ID id, const std::string &title, const std::string &description,
@@ -500,17 +502,17 @@ MapStripeTC::MapStripeTC(const position &pos, NewClientView::stripedirection dir
     addShortIntToBuffer(pos.z);
     addUnsignedCharToBuffer(static_cast<unsigned char>(dir));
     const auto &fields = World::get()->clientview.mapStripe;
-    uint8_t numberOfTiles = World::get()->clientview.getMaxTiles();
+    const uint8_t numberOfTiles = World::get()->clientview.getMaxTiles();
     addUnsignedCharToBuffer(numberOfTiles);
 
-    for (int i = 0; i < numberOfTiles; ++i) {
-        if (fields[i] != nullptr) {
-            addShortIntToBuffer(fields[i]->getTileCode());
-            addUnsignedCharToBuffer(fields[i]->getMovementCost());
-            addShortIntToBuffer(fields[i]->getMusicId());
-            addUnsignedCharToBuffer(static_cast<unsigned char>(fields[i]->itemCount()));
+    ranges::for_each(fields | ranges::view::take(numberOfTiles), [&](const auto &field) {
+        if (field != nullptr) {
+            addShortIntToBuffer(field->getTileCode());
+            addUnsignedCharToBuffer(field->getMovementCost());
+            addShortIntToBuffer(field->getMusicId());
+            addUnsignedCharToBuffer(static_cast<unsigned char>(field->itemCount()));
 
-            for (const auto &item : fields[i]->getItemStack()) {
+            for (const auto &item : field->getItemStack()) {
                 addShortIntToBuffer(item.getId());
 
                 if (item.isContainer()) {
@@ -525,7 +527,7 @@ MapStripeTC::MapStripeTC(const position &pos, NewClientView::stripedirection dir
             addShortIntToBuffer(0);
             addUnsignedCharToBuffer(0);
         }
-    }
+    });
 }
 
 MapCompleteTC::MapCompleteTC() : BasicServerCommand(SC_MAPCOMPLETE_TC) {}

@@ -406,8 +406,8 @@ void Player::lookIntoShowcaseContainer(uint8_t showcase, unsigned char pos) {
 }
 
 auto Player::lookIntoBackPack() -> bool {
-    if ((items[BACKPACK].getId() != 0) && (backPackContents != nullptr)) {
-        openShowcase(backPackContents, static_cast<ScriptItem>(items[BACKPACK]), true);
+    if ((items.at(BACKPACK).getId() != 0) && (backPackContents != nullptr)) {
+        openShowcase(backPackContents, static_cast<ScriptItem>(items.at(BACKPACK)), true);
         return true;
     }
 
@@ -459,7 +459,7 @@ void Player::sendCharacterItemAtPos(unsigned char cpos) {
     if (cpos < (MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
         // gltiger Wert
         ServerCommandPointer cmd =
-                std::make_shared<UpdateInventoryPosTC>(cpos, items[cpos].getId(), items[cpos].getNumber());
+                std::make_shared<UpdateInventoryPosTC>(cpos, items.at(cpos).getId(), items.at(cpos).getNumber());
         Connection->addCommand(cmd);
     }
 }
@@ -471,23 +471,23 @@ void Player::sendWeather(WeatherStruct weather) {
 
 void Player::ageInventory() {
     for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
-        if (items[i].getId() != 0) {
-            const auto &itemStruct = Data::Items[items[i].getId()];
+        if (items.at(i).getId() != 0) {
+            const auto &itemStruct = Data::Items[items.at(i).getId()];
 
             if (itemStruct.rotsInInventory) {
-                if (!items[i].survivesAgeing()) {
-                    if (items[i].getId() != itemStruct.ObjectAfterRot) {
-                        items[i].setId(itemStruct.ObjectAfterRot);
+                if (!items.at(i).survivesAgeing()) {
+                    if (items.at(i).getId() != itemStruct.ObjectAfterRot) {
+                        items.at(i).setId(itemStruct.ObjectAfterRot);
 
                         const auto &afterRotItemStruct = Data::Items[itemStruct.ObjectAfterRot];
 
                         if (afterRotItemStruct.isValid()) {
-                            items[i].setWear(afterRotItemStruct.AgeingSpeed);
+                            items.at(i).setWear(afterRotItemStruct.AgeingSpeed);
                         }
 
                         sendCharacterItemAtPos(i);
                     } else {
-                        items[i].reset();
+                        items.at(i).reset();
                         sendCharacterItemAtPos(i);
                     }
 
@@ -498,7 +498,7 @@ void Player::ageInventory() {
         }
     }
 
-    if ((items[BACKPACK].getId() != 0) && (backPackContents != nullptr)) {
+    if ((items.at(BACKPACK).getId() != 0) && (backPackContents != nullptr)) {
         backPackContents->doAge(true);
         updateBackPackView();
     }
@@ -534,7 +534,7 @@ auto Player::createItem(Item::id_type id, Item::number_type number, Item::qualit
     int temp = Character::createItem(id, number, quality, data);
 
     for (unsigned char i = 0; i < MAX_BELT_SLOTS + MAX_BODY_ITEMS; ++i) {
-        if (items[i].getId() != 0) {
+        if (items.at(i).getId() != 0) {
             sendCharacterItemAtPos(i);
         }
     }
@@ -548,7 +548,7 @@ auto Player::createItem(Item::id_type id, Item::number_type number, Item::qualit
 auto Player::eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangemap const *data) -> int {
     int temp = count;
 
-    if ((items[BACKPACK].getId() != 0) && (backPackContents != nullptr)) {
+    if ((items.at(BACKPACK).getId() != 0) && (backPackContents != nullptr)) {
         temp = backPackContents->eraseItem(itemid, temp, data);
         updateBackPackView();
     }
@@ -556,22 +556,22 @@ auto Player::eraseItem(TYPE_OF_ITEM_ID itemid, int count, script_data_exchangema
     if (temp > 0) {
         // BACKPACK als Item erstmal auslassen
         for (unsigned char i = MAX_BELT_SLOTS + MAX_BODY_ITEMS - 1; i > 0; --i) {
-            if ((items[i].getId() == itemid) && (data == nullptr || items[i].hasData(*data)) && (temp > 0)) {
-                if (temp >= items[i].getNumber()) {
-                    temp = temp - items[i].getNumber();
-                    items[i].reset();
+            if ((items.at(i).getId() == itemid) && (data == nullptr || items.at(i).hasData(*data)) && (temp > 0)) {
+                if (temp >= items.at(i).getNumber()) {
+                    temp = temp - items.at(i).getNumber();
+                    items.at(i).reset();
 
                     if (i == LEFT_TOOL || i == RIGHT_TOOL) {
                         unsigned char offhand = (i == LEFT_TOOL) ? RIGHT_TOOL : LEFT_TOOL;
 
-                        if (items[offhand].getId() == BLOCKEDITEM) {
+                        if (items.at(offhand).getId() == BLOCKEDITEM) {
                             // delete the occupied slot if the item was a two hander...
-                            items[offhand].reset();
+                            items.at(offhand).reset();
                             sendCharacterItemAtPos(offhand);
                         }
                     }
                 } else {
-                    items[i].setNumber(items[i].getNumber() - temp);
+                    items.at(i).setNumber(items.at(i).getNumber() - temp);
                     temp = 0;
                 }
 
@@ -592,20 +592,20 @@ auto Player::increaseAtPos(unsigned char pos, int count) -> int {
     int temp = count;
 
     if ((pos > 0) && (pos < MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
-        if (weightOK(items[pos].getId(), count, nullptr)) {
-            temp = items[pos].getNumber() + count;
-            auto maxStack = items[pos].getMaxStack();
+        if (weightOK(items.at(pos).getId(), count, nullptr)) {
+            temp = items.at(pos).getNumber() + count;
+            auto maxStack = items.at(pos).getMaxStack();
 
             if (temp > maxStack) {
-                items[pos].setNumber(maxStack);
+                items.at(pos).setNumber(maxStack);
                 temp = temp - maxStack;
             } else if (temp <= 0) {
-                bool updateBrightness = World::get()->getItemStatsFromId(items[pos].getId()).Brightness > 0;
-                temp = count + items[pos].getNumber();
-                items[pos].reset();
+                bool updateBrightness = World::get()->getItemStatsFromId(items.at(pos).getId()).Brightness > 0;
+                temp = count + items.at(pos).getNumber();
+                items.at(pos).reset();
 
-                if (pos == RIGHT_TOOL && items[LEFT_TOOL].getId() == BLOCKEDITEM) {
-                    items[LEFT_TOOL].reset();
+                if (pos == RIGHT_TOOL && items.at(LEFT_TOOL).getId() == BLOCKEDITEM) {
+                    items.at(LEFT_TOOL).reset();
                     sendCharacterItemAtPos(LEFT_TOOL);
                 }
 
@@ -613,7 +613,7 @@ auto Player::increaseAtPos(unsigned char pos, int count) -> int {
                     updateAppearanceForAll(true);
                 }
             } else {
-                items[pos].setNumber(temp);
+                items.at(pos).setNumber(temp);
                 temp = 0;
             }
         }
@@ -1184,7 +1184,7 @@ auto Player::save() noexcept -> bool {
             std::list<container_struct> containers;
 
             // add backpack to containerlist
-            if (items[BACKPACK].getId() != 0 && (backPackContents != nullptr)) {
+            if (items.at(BACKPACK).getId() != 0 && (backPackContents != nullptr)) {
                 containers.emplace_back(backPackContents, BACKPACK + 1);
             }
 
@@ -1218,20 +1218,20 @@ auto Player::save() noexcept -> bool {
                 ++linenumber;
 
                 // if there is no item on this place, do not save it
-                if (items[thisItemSlot].getId() == 0) {
+                if (items.at(thisItemSlot).getId() == 0) {
                     continue;
                 }
 
                 itemsQuery.addValue<int32_t>(itemsLineColumn, linenumber);
                 itemsQuery.addValue<int16_t>(itemsContainerColumn, 0);
                 itemsQuery.addValue<int32_t>(itemsDepotColumn, 0);
-                itemsQuery.addValue<TYPE_OF_ITEM_ID>(itemsItmIdColumn, items[thisItemSlot].getId());
-                itemsQuery.addValue<uint16_t>(itemsWearColumn, items[thisItemSlot].getWear());
-                itemsQuery.addValue<uint16_t>(itemsNumberColumn, items[thisItemSlot].getNumber());
-                itemsQuery.addValue<uint16_t>(itemsQualColumn, items[thisItemSlot].getQuality());
+                itemsQuery.addValue<TYPE_OF_ITEM_ID>(itemsItmIdColumn, items.at(thisItemSlot).getId());
+                itemsQuery.addValue<uint16_t>(itemsWearColumn, items.at(thisItemSlot).getWear());
+                itemsQuery.addValue<uint16_t>(itemsNumberColumn, items.at(thisItemSlot).getNumber());
+                itemsQuery.addValue<uint16_t>(itemsQualColumn, items.at(thisItemSlot).getQuality());
                 itemsQuery.addValue<TYPE_OF_CONTAINERSLOTS>(itemsSlotColumn, 0);
 
-                for (auto it = items[thisItemSlot].getDataBegin(); it != items[thisItemSlot].getDataEnd(); ++it) {
+                for (auto it = items.at(thisItemSlot).getDataBegin(); it != items.at(thisItemSlot).getDataEnd(); ++it) {
                     if (it->second.length() > 0) {
                         dataQuery.addValue<int32_t>(dataLineColumn, linenumber);
                         dataQuery.addValue<std::string>(dataKeyColumn, it->first);
@@ -1532,7 +1532,7 @@ auto Player::load() noexcept -> bool {
                     } else {
                     }
                 } else {
-                    items[linenumber - 1] = tempi;
+                    items.at(linenumber - 1) = tempi;
                 }
 
                 containers[linenumber] = tempc;
@@ -1540,7 +1540,7 @@ auto Player::load() noexcept -> bool {
                 if (linenumber >= MAX_BODY_ITEMS + MAX_BELT_SLOTS + 1) {
                     it->second->InsertItem(tempi, itemcontainerslot[tuple]);
                 } else {
-                    items[linenumber - 1] = tempi;
+                    items.at(linenumber - 1) = tempi;
                 }
             }
         }
