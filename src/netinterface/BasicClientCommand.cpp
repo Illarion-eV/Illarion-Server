@@ -20,26 +20,21 @@
 
 #include "BasicCommand.hpp"
 
-BasicClientCommand::BasicClientCommand(unsigned char defByte, uint16_t minAP)
-        : BasicCommand(defByte), dataOk(true), length(0), bytesRetrieved(0), checkSum(0), crc(0), minAP(minAP) {
-    msg_buffer = nullptr;
-}
+BasicClientCommand::BasicClientCommand(unsigned char defByte, uint16_t minAP) : BasicCommand(defByte), minAP(minAP) {}
 
 void BasicClientCommand::setHeaderData(uint16_t mlength, uint16_t mcheckSum) {
     length = mlength;
     checkSum = mcheckSum;
-    msg_buffer = new unsigned char[length];
+    msg_buffer.resize(length);
 }
 
-BasicClientCommand::~BasicClientCommand() { delete[] msg_buffer; }
-
-auto BasicClientCommand::msg_data() -> unsigned char * { return msg_buffer; }
+auto BasicClientCommand::msg_data() -> std::vector<unsigned char> & { return msg_buffer; }
 
 auto BasicClientCommand::getUnsignedCharFromBuffer() -> unsigned char {
     unsigned char ret = 0;
 
     // no buffer available but we want to read from it
-    if (msg_buffer == nullptr) {
+    if (length == 0) {
         dataOk = false;
     }
     // we want to read more data than there is in the buffer
@@ -49,7 +44,7 @@ auto BasicClientCommand::getUnsignedCharFromBuffer() -> unsigned char {
     }
     // all went well
     else {
-        ret = msg_buffer[bytesRetrieved++];
+        ret = msg_buffer.at(bytesRetrieved++);
     }
 
     crc += ret;

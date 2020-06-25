@@ -101,22 +101,24 @@ void login_save(Player *who) {
 }
 
 // process commandline arguments
-auto checkArguments(int argc, char *argv[]) -> bool {
-    if (argc == 2) {
+auto checkArguments(const std::vector<std::string> &args) -> bool {
+    if (args.size() == 2) {
         // config file specified on command line
-        if (Config::load(std::string(argv[1]))) {
-            Logger::info(LogFacility::Other) << "main: using configfile: " << argv[1] << Log::end;
+        if (Config::load(args.at(1))) {
+            Logger::info(LogFacility::Other) << "main: using configfile: " << args.at(1) << Log::end;
             return true;
         }
-        Logger::error(LogFacility::Other) << "main: error reading configfile: " << argv[1] << Log::end;
 
-        Logger::error(LogFacility::Other) << "main: USAGE: " << argv[0] << " configfile" << Log::end;
+        Logger::error(LogFacility::Other) << "main: error reading configfile: " << args.at(1) << Log::end;
+
+        Logger::error(LogFacility::Other) << "main: USAGE: " << args.at(0) << " configfile" << Log::end;
 
         return false;
     }
+
     Logger::error(LogFacility::Other) << "main: invalid commandline arguments" << Log::end;
 
-    Logger::error(LogFacility::Other) << "main: USAGE: " << argv[0] << " configfile" << Log::end;
+    Logger::error(LogFacility::Other) << "main: USAGE: " << args.at(0) << " configfile" << Log::end;
 
     return false;
 }

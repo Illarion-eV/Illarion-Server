@@ -43,6 +43,8 @@
 
 #include <memory>
 #include <sstream>
+#include <string>
+#include <vector>
 
 extern std::shared_ptr<LuaLoginScript> loginScript;
 extern ScriptVariablesTable *scriptVariables;
@@ -59,8 +61,10 @@ auto main(int argc, char *argv[]) -> int {
         return 1;
     }
 
+    const std::vector<std::string> args(argv, argv + argc);
+
     // load configfile
-    if (!checkArguments(argc, argv)) {
+    if (!checkArguments(args)) {
         Logger::critical(LogFacility::Other) << "failed to process commandline arguments" << Log::end;
         return 1;
     }

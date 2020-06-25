@@ -29,11 +29,7 @@
 #include <sys/socket.h>
 
 BasicServerCommand::BasicServerCommand(unsigned char defByte) : BasicCommand(defByte) {
-    STDBUFFERSIZE = 1000;
-    bufferPos = 0;
-    bufferSizeMod = 1;
-    checkSum = 0;
-    buffer = new char[STDBUFFERSIZE];
+    buffer.resize(STDBUFFERSIZE);
     this->addUnsignedCharToBuffer(getDefinitionByte());
     this->addUnsignedCharToBuffer(getDefinitionByte() xor static_cast<unsigned char>(255));
     this->addShortIntToBuffer(0); //<- dummy for the length
@@ -43,10 +39,7 @@ BasicServerCommand::BasicServerCommand(unsigned char defByte) : BasicCommand(def
 
 BasicServerCommand::BasicServerCommand(unsigned char defByte, uint16_t bsize) : BasicCommand(defByte) {
     STDBUFFERSIZE = bsize;
-    bufferPos = 0;
-    bufferSizeMod = 1;
-    checkSum = 0;
-    buffer = new char[STDBUFFERSIZE];
+    buffer.resize(STDBUFFERSIZE);
     this->addUnsignedCharToBuffer(getDefinitionByte());
     this->addUnsignedCharToBuffer(getDefinitionByte() xor static_cast<unsigned char>(255));
     this->addShortIntToBuffer(0); //<- dummy for the length
@@ -54,25 +47,20 @@ BasicServerCommand::BasicServerCommand(unsigned char defByte, uint16_t bsize) : 
     checkSum = 0;
 }
 
-BasicServerCommand::~BasicServerCommand() {
-    delete[] buffer;
-    buffer = nullptr;
-}
-
 void BasicServerCommand::addHeader() {
     // at place 2 and 3 add the length
     if (bufferPos >= 6) { // check if the buffer is large enough to add the data
         auto crc = static_cast<int16_t>(checkSum % 0xFFFF);
-        buffer[2] = ((bufferPos - 6) >> 8);
-        buffer[3] = ((bufferPos - 6) & 255);
-        buffer[4] = (crc >> 8);
-        buffer[5] = (crc & 255);
+        buffer.at(2) = ((bufferPos - 6) >> 8);
+        buffer.at(3) = ((bufferPos - 6) & 255);
+        buffer.at(4) = (crc >> 8);
+        buffer.at(5) = (crc & 255);
     }
 }
 
 auto BasicServerCommand::getLength() const -> int { return bufferPos; }
 
-auto BasicServerCommand::cmdData() -> char * { return buffer; }
+auto BasicServerCommand::cmdData() const -> const std::vector<char> & { return buffer; }
 
 void BasicServerCommand::addStringToBuffer(const std::string &data) {
     unsigned short int count = data.length();
@@ -99,7 +87,7 @@ void BasicServerCommand::addUnsignedCharToBuffer(unsigned char data) {
     }
 
     assert(bufferPos < (bufferSizeMod * STDBUFFERSIZE));
-    buffer[bufferPos] = data;
+    buffer.at(bufferPos) = data;
     checkSum += data; // add the data to the checksum
     bufferPos++;
 }
@@ -107,21 +95,8 @@ void BasicServerCommand::addUnsignedCharToBuffer(unsigned char data) {
 void BasicServerCommand::resizeBuffer() {
     Logger::info(LogFacility::Other) << "Not enough memory. Resizing the send buffer. Current size: "
                                      << bufferSizeMod * STDBUFFERSIZE << " bytes." << Log::end;
-    // increase the buffer size modifikator
     bufferSizeMod++;
-    // store old data in temp
-    char *temp = buffer;
-    // resize buffer
-    buffer = new char[bufferSizeMod * STDBUFFERSIZE];
-
-    // save data back to the buffer
-    for (uint32_t i = 0; i < bufferPos; ++i) {
-        buffer[i] = temp[i];
-    }
-
-    // delete the temp buffer;
-    delete[] temp;
-    temp = nullptr;
+    buffer.resize(bufferSizeMod * STDBUFFERSIZE);
     Logger::info(LogFacility::Other) << "Resizing the send buffer successful. New size: "
                                      << bufferSizeMod * STDBUFFERSIZE << " bytes." << Log::end;
 }

@@ -16,9 +16,10 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with illarionserver.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MAIN_HELP_H
-#define MAIN_HELP_H
+#ifndef MAIN_HELP_HPP
+#define MAIN_HELP_HPP
 
+#include <string>
 #include <vector>
 
 // break out of the main loop if false
@@ -31,7 +32,7 @@ void logout_save(Player *who, bool forced, unsigned long int thistime);
 void login_save(Player *who);
 
 // process commandline arguments
-auto checkArguments(int argc, char *argv[]) -> bool;
+auto checkArguments(const std::vector<std::string> &args) -> bool;
 
 // load item definitions
 void loadData();

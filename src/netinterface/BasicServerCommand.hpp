@@ -62,13 +62,13 @@ public:
     /**
      * Standard destructor
      */
-    ~BasicServerCommand();
+    ~BasicServerCommand() = default;
 
     /**
      * Function which returns the data buffer of the command.
      * @return The data buffer of the command
      */
-    auto cmdData() -> char *;
+    [[nodiscard]] auto cmdData() const -> const std::vector<char> &;
 
     /**
      * Returns the length of the command in bytes
@@ -89,13 +89,14 @@ public:
     void addHeader();
 
 private:
-    uint16_t STDBUFFERSIZE; /*<the size of the standard buffer*/
+    static constexpr uint16_t defaultBufferSize = 1000;
+    uint16_t STDBUFFERSIZE = defaultBufferSize;
 
-    char *buffer;      /*<a pointer to the receive buffer*/
-    uint32_t checkSum; /*<the checksum*/
+    std::vector<char> buffer;
+    uint32_t checkSum = 0;
 
-    uint16_t bufferPos;     /*<stores the current buffer position and the size of the used buffer*/
-    uint16_t bufferSizeMod; /*<holds the current size of the buffer mod * stdbuffersize = current buffersize*/
+    uint16_t bufferPos = 0;     /*<stores the current buffer position and the size of the used buffer*/
+    uint16_t bufferSizeMod = 1; /*<holds the current size of the buffer mod * stdbuffersize = current buffersize*/
 
     /**
      * if there is a buffer overflow this function creates a 2*STDBUFFERSIZE
