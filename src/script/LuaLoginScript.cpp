@@ -25,8 +25,6 @@
 
 LuaLoginScript::LuaLoginScript(const std::string &filename) : LuaScript(filename) {}
 
-LuaLoginScript::~LuaLoginScript() = default;
-
 void LuaLoginScript::onLogin(Character *cc) {
     character_ptr fuse_cc(cc);
     callEntrypoint("onLogin", fuse_cc);

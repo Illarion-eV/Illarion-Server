@@ -31,8 +31,6 @@ CraftingDialog::CraftingDialog(const string &title, uint16_t sfx, uint16_t sfxDu
     lastAddedCraftableId = 0;
 }
 
-CraftingDialog::CraftingDialog(const CraftingDialog &craftingDialog) = default;
-
 auto CraftingDialog::getSfx() const -> uint16_t { return sfx; }
 
 auto CraftingDialog::getSfxDuration() const -> uint16_t { return sfxDuration; }

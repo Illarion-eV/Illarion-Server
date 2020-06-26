@@ -52,6 +52,9 @@ public:
     QuestNodeTable();
     QuestNodeTable(const QuestNodeTable &) = delete;
     auto operator=(const QuestNodeTable &) -> QuestNodeTable & = delete;
+    QuestNodeTable(QuestNodeTable &&) = delete;
+    auto operator=(QuestNodeTable &&) -> QuestNodeTable & = delete;
+    ~QuestNodeTable() = default;
 
     template <typename Key> using TableRange = std::pair<TableIterator<Key>, TableIterator<Key>>;
 

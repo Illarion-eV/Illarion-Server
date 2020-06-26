@@ -25,8 +25,6 @@
 
 LuaLogoutScript::LuaLogoutScript(const std::string &filename) : LuaScript(filename) {}
 
-LuaLogoutScript::~LuaLogoutScript() = default;
-
 void LuaLogoutScript::onLogout(Character *cc) {
     character_ptr fuse_cc(cc);
     callEntrypoint("onLogout", fuse_cc);

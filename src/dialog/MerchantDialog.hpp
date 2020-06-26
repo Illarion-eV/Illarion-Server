@@ -81,7 +81,6 @@ private:
 
 public:
     MerchantDialog(const string &title, const luabind::object &callback);
-    MerchantDialog(const MerchantDialog &merchantDialog);
 
     auto getOffersSize() const -> index_type;
     auto getOffersBegin() const -> offer_iterator;

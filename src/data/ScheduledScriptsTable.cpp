@@ -29,11 +29,6 @@
 
 ScheduledScriptsTable::ScheduledScriptsTable() { reload(); }
 
-ScheduledScriptsTable::~ScheduledScriptsTable() {
-    /**@todo destructor implementatiotn*/
-    m_table.clear();
-}
-
 auto ScheduledScriptsTable::nextCycle() -> bool {
     currentCycle++;
     ScriptData data; /**< holds the current task*/

@@ -30,9 +30,11 @@ class LuaTestSupportScript : public LuaScript {
 public:
     explicit LuaTestSupportScript(const std::string &code);
     LuaTestSupportScript(const std::string &code, const std::string &scriptname);
-    ~LuaTestSupportScript() noexcept override;
+    ~LuaTestSupportScript() override = default;
     LuaTestSupportScript(const LuaTestSupportScript &) = delete;
     auto operator=(const LuaTestSupportScript &) -> LuaTestSupportScript & = delete;
+    LuaTestSupportScript(LuaTestSupportScript &&) = default;
+    auto operator=(LuaTestSupportScript &&) -> LuaTestSupportScript & = default;
 
     template <typename... Args> void test(const Args &... args) { callEntrypoint("test", args...); }
 

@@ -35,7 +35,9 @@ public:
     LuaQuestScript(const std::string &filename, TYPE_OF_QUEST_ID quest);
     LuaQuestScript(const LuaQuestScript &) = delete;
     auto operator=(const LuaQuestScript &) -> LuaQuestScript & = delete;
-    ~LuaQuestScript() override;
+    LuaQuestScript(LuaQuestScript &&) = default;
+    auto operator=(LuaQuestScript &&) -> LuaQuestScript & = default;
+    ~LuaQuestScript() override = default;
 
     auto title(Character *user) -> std::string;
     auto description(Character *user, TYPE_OF_QUESTSTATUS status) -> std::string;

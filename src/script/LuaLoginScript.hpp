@@ -29,9 +29,11 @@ class Character;
 class LuaLoginScript : public LuaScript {
 public:
     explicit LuaLoginScript(const std::string &filename);
-    ~LuaLoginScript() override;
+    ~LuaLoginScript() override = default;
     LuaLoginScript(const LuaLoginScript &) = delete;
     auto operator=(const LuaLoginScript &) -> LuaLoginScript & = delete;
+    LuaLoginScript(LuaLoginScript &&) = default;
+    auto operator=(LuaLoginScript &&) -> LuaLoginScript & = default;
 
     void onLogin(Character *cc);
 };

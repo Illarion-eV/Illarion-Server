@@ -33,6 +33,9 @@ public:
 
     QueryColumns(const QueryColumns &org) = delete;
     auto operator=(const QueryColumns &org) -> QueryColumns & = delete;
+    QueryColumns(QueryColumns &&) = default;
+    auto operator=(QueryColumns &&) -> QueryColumns & = default;
+    ~QueryColumns() = default;
 
 private:
     std::string columns;

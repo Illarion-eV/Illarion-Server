@@ -35,8 +35,6 @@ Dialog::Dialog(string title, string className, const luabind::object &callback)
     }
 }
 
-Dialog::Dialog(const Dialog &dialog) = default;
-
 auto Dialog::getClassName() const -> const string & { return className; }
 
 auto Dialog::getTitle() const -> const string & { return title; }

@@ -26,8 +26,6 @@
 LuaQuestScript::LuaQuestScript(const std::string &filename, TYPE_OF_QUEST_ID quest)
         : LuaScript(filename), quest(quest) {}
 
-LuaQuestScript::~LuaQuestScript() = default;
-
 auto LuaQuestScript::title(Character *user) -> std::string {
     character_ptr fuse_user(user);
     return callEntrypoint<std::string>("QuestTitle", fuse_user);

@@ -47,7 +47,9 @@ public:
     explicit InsertQuery(const PConnection &connection);
     InsertQuery(const InsertQuery &org) = delete;
     auto operator=(const InsertQuery &org) -> InsertQuery & = delete;
-    virtual ~InsertQuery();
+    InsertQuery(InsertQuery &&) = default;
+    auto operator=(InsertQuery &&) -> InsertQuery & = default;
+    ~InsertQuery() override;
 
     template <typename T> void addValue(const QueryColumns::columnIndex &column, const T &value) {
         addValues(column, value, 1);

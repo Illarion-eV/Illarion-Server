@@ -40,6 +40,10 @@ public:
     ConnectionManager(const ConnectionManager &org) = delete;
     auto operator=(const ConnectionManager &org) -> ConnectionManager & = delete;
     static auto getInstance() -> ConnectionManager &;
+    ConnectionManager(ConnectionManager &&) = delete;
+    auto operator=(ConnectionManager &&) -> ConnectionManager & = delete;
+    ~ConnectionManager() = default;
+
     void setupManager();
     auto getConnection() -> PConnection;
 

@@ -74,16 +74,6 @@ public:
     [[nodiscard]] auto getStripeDirection() const -> stripedirection { return stripedir; }
 
     /**
-     * constructor
-     */
-    NewClientView();
-
-    /**
-     * destructor
-     */
-    ~NewClientView() = default;
-
-    /**
      * fills the stripe with the specific isometric data
      * @param pos the starting position of the stripe
      * @param dir the direction in which the stipe looks
@@ -108,7 +98,7 @@ private:
     /**
      * the starting position of the current view
      */
-    position viewPosition;
+    position viewPosition{};
 
     /**
      * if there is a view stripe

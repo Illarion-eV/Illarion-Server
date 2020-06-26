@@ -31,7 +31,11 @@ class World;
 class LuaNPCScript : public LuaScript {
 public:
     LuaNPCScript(const std::string &filename, NPC *thisnpc);
-    ~LuaNPCScript() override;
+    ~LuaNPCScript() override = default;
+    LuaNPCScript(const LuaNPCScript &) = delete;
+    auto operator=(const LuaNPCScript &) -> LuaNPCScript & = delete;
+    LuaNPCScript(LuaNPCScript &&) = default;
+    auto operator=(LuaNPCScript &&) -> LuaNPCScript & = default;
 
     void nextCycle();
     void receiveText(Character::talk_type tt, const std::string &message, Character *cc);
@@ -46,8 +50,6 @@ public:
 private:
     NPC *_thisnpc;
 
-    LuaNPCScript(const LuaNPCScript &);
-    auto operator=(const LuaNPCScript &) -> LuaNPCScript &;
     void init_functions();
 };
 

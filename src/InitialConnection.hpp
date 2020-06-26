@@ -35,6 +35,10 @@ public:
 
     static auto create() -> std::shared_ptr<InitialConnection>;
     ~InitialConnection();
+    InitialConnection(const InitialConnection &) = delete;
+    auto operator=(const InitialConnection &) -> InitialConnection & = delete;
+    InitialConnection(InitialConnection &&) = delete;
+    auto operator=(InitialConnection &&) -> InitialConnection & = delete;
 
     auto getNewPlayers() -> NewPlayerVector &;
 

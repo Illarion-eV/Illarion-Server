@@ -35,6 +35,10 @@ private:
 public:
     QueryAssign(const QueryAssign &org) = delete;
     auto operator=(const QueryAssign &org) -> QueryAssign & = delete;
+    QueryAssign(QueryAssign &&) = delete;
+    auto operator=(QueryAssign &&) -> QueryAssign & = delete;
+    ~QueryAssign() = default;
+
     template <typename T> void addAssignColumn(const std::string &column, const T &value) {
         Query::appendToStringList(assignColumns,
                                   Query::escapeAndChainKeys("", column) + " = " + connection.quote<T>(value));

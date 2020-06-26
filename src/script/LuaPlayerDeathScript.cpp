@@ -25,8 +25,6 @@
 
 LuaPlayerDeathScript::LuaPlayerDeathScript(const std::string &filename) : LuaScript(filename) {}
 
-LuaPlayerDeathScript::~LuaPlayerDeathScript() = default;
-
 void LuaPlayerDeathScript::playerDeath(Character *deadPlayer) {
     character_ptr fuse_deadPlayer(deadPlayer);
     callEntrypoint("playerDeath", fuse_deadPlayer);

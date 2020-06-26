@@ -43,6 +43,8 @@ public:
     ~LuaItemScript() override;
     LuaItemScript(const LuaItemScript &) = delete;
     auto operator=(const LuaItemScript &) -> LuaItemScript & = delete;
+    LuaItemScript(LuaItemScript &&) = default;
+    auto operator=(LuaItemScript &&) -> LuaItemScript & = default;
 
     void UseItem(Character *User, const ScriptItem &SourceItem, unsigned char ltastate);
     auto actionDisturbed(Character *performer, Character *disturber) -> bool;

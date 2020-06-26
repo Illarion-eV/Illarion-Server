@@ -34,7 +34,10 @@ private:
 
 public:
     Dialog(string title, string className, const luabind::object &callback);
-    Dialog(const Dialog &dialog);
+    Dialog(const Dialog &dialog) = default;
+    auto operator=(const Dialog &) -> Dialog & = default;
+    Dialog(Dialog &&) = default;
+    auto operator=(Dialog &&) -> Dialog & = default;
     virtual ~Dialog() = default;
     [[nodiscard]] auto getTitle() const -> const string &;
     [[nodiscard]] auto getClassName() const -> const string &;

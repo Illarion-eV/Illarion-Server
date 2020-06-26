@@ -28,6 +28,4 @@
 
 LuaReloadScript::LuaReloadScript(const std::string &filename) : LuaScript(filename) {}
 
-LuaReloadScript::~LuaReloadScript() = default;
-
 void LuaReloadScript::onReload() { callEntrypoint("onReload"); }

@@ -32,6 +32,10 @@ public:
     virtual void read(std::istream &is) = 0;
     virtual void write(std::ostream &os) const = 0;
 
+    ConfigEntryBase(const ConfigEntryBase &) = default;
+    auto operator=(const ConfigEntryBase &) -> ConfigEntryBase & = default;
+    ConfigEntryBase(ConfigEntryBase &&) = default;
+    auto operator=(ConfigEntryBase &&) -> ConfigEntryBase & = default;
     virtual ~ConfigEntryBase() = default;
 
     [[nodiscard]] auto isInitialized() const -> bool { return _initialized; }

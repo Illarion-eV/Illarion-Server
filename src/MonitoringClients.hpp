@@ -33,7 +33,6 @@ class Player;
 class MonitoringClients {
 public:
     MonitoringClients();
-    ~MonitoringClients();
 
     /**
      * a new Monitoring client connects to the server

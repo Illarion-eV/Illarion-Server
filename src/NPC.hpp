@@ -64,10 +64,11 @@ public:
     // testing constructor
     NPC() = default;
 
-    /**
-     * the destructor
-     */
     ~NPC() override;
+    NPC(const NPC &) = delete;
+    auto operator=(const NPC &) -> NPC & = delete;
+    NPC(NPC &&) = default;
+    auto operator=(NPC &&) -> NPC & = default;
 
     auto getType() const -> unsigned short override { return npc; }
 

@@ -68,6 +68,8 @@ public:
     virtual ~Character();
     Character(const Character &) = delete;
     auto operator=(const Character &) -> Character & = delete;
+    Character(Character &&) = default;
+    auto operator=(Character &&) -> Character & = default;
 
     enum character_type { player = 0, monster = 1, npc = 2 };
 

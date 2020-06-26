@@ -33,6 +33,8 @@ public:
     explicit LuaMonsterScript(const std::string &filename);
     LuaMonsterScript(const LuaMonsterScript &) = delete;
     auto operator=(const LuaMonsterScript &) -> LuaMonsterScript & = delete;
+    LuaMonsterScript(LuaMonsterScript &&) = default;
+    auto operator=(LuaMonsterScript &&) -> LuaMonsterScript & = default;
     ~LuaMonsterScript() override = default;
 
     void receiveText(Character *Monster, Character::talk_type tt, const std::string &message, Character *cc);

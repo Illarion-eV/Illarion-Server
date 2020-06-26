@@ -33,9 +33,11 @@ class LuaWeaponScript : public LuaScript {
 public:
     explicit LuaWeaponScript(const std::string &filename);
     LuaWeaponScript(const std::string &filename, const WeaponStruct &weapon);
-    ~LuaWeaponScript() override;
+    ~LuaWeaponScript() override = default;
     LuaWeaponScript(const LuaWeaponScript &) = delete;
     auto operator=(const LuaWeaponScript &) -> LuaWeaponScript & = delete;
+    LuaWeaponScript(LuaWeaponScript &&) = default;
+    auto operator=(LuaWeaponScript &&) -> LuaWeaponScript & = default;
 
     void onAttack(Character *Attacker, Character *Defender);
     auto setTarget(Character *Monster, const std::vector<Character *> &CandidateList) -> Character *;

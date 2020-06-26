@@ -29,7 +29,6 @@ private:
 
 public:
     MessageDialog(const string &title, string text, const luabind::object &callback);
-    MessageDialog(const MessageDialog &messageDialog);
     [[nodiscard]] auto getText() const -> const string &;
 };
 

@@ -30,9 +30,11 @@ class ScriptItem;
 class LuaLookAtItemScript : public LuaScript {
 public:
     explicit LuaLookAtItemScript(const std::string &filename);
-    ~LuaLookAtItemScript() override;
+    ~LuaLookAtItemScript() override = default;
     LuaLookAtItemScript(const LuaLookAtItemScript &) = delete;
     auto operator=(const LuaLookAtItemScript &) -> LuaLookAtItemScript & = delete;
+    LuaLookAtItemScript(LuaLookAtItemScript &&) = default;
+    auto operator=(LuaLookAtItemScript &&) -> LuaLookAtItemScript & = default;
 
     auto lookAtItem(Character *character, const ScriptItem &item) -> ItemLookAt;
 };

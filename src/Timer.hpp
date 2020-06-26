@@ -24,12 +24,8 @@
 //! Timer f�r Sekundenabst�nde
 class Timer {
 public:
-    //! Konstruktor
     // \param timegap Anzahl der Sekunden zwischen zwei Timer-Ereignissen
     explicit Timer(unsigned long int timegap);
-
-    //! Destruktor
-    ~Timer() = default;
 
     //! pr�ft, ob schon gen�gend Zeit seit dem letzten Timer-Ereignis
     // (bzw. dem Konstruktor) vergangen ist

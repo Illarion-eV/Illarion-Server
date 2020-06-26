@@ -35,6 +35,9 @@ private:
 public:
     QueryTables(const QueryTables &org) = delete;
     auto operator=(const QueryTables &org) -> QueryTables & = delete;
+    QueryTables(QueryTables &&) = default;
+    auto operator=(QueryTables &&) -> QueryTables & = default;
+    ~QueryTables() = default;
 
     void addServerTable(const std::string &table);
     void addAccountTable(const std::string &table);

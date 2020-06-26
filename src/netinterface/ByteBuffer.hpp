@@ -37,6 +37,8 @@ public:
     ByteBuffer();
     ByteBuffer(const ByteBuffer &) = delete;
     auto operator=(const ByteBuffer &) -> ByteBuffer & = delete;
+    ByteBuffer(ByteBuffer &&) = delete;
+    auto operator=(ByteBuffer &&) -> ByteBuffer & = delete;
     ~ByteBuffer() = default;
 
     /**

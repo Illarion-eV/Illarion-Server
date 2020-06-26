@@ -30,26 +30,6 @@ MerchantDialog::MerchantDialog(const string &title, const luabind::object &callb
     purchaseAmount = 0;
 }
 
-MerchantDialog::MerchantDialog(const MerchantDialog &merchantDialog) : Dialog(merchantDialog) {
-    for (const auto &product : merchantDialog.offers) {
-        addOffer(product.getItem(), product.getName(), product.getPrice(), product.getStack());
-    }
-
-    for (const auto &product : merchantDialog.primaryRequests) {
-        addProduct(primaryRequests, product.getItem(), product.getName(), product.getPrice());
-    }
-
-    for (const auto &product : merchantDialog.secondaryRequests) {
-        addProduct(secondaryRequests, product.getItem(), product.getName(), product.getPrice());
-    }
-
-    result = merchantDialog.result;
-    purchaseIndex = merchantDialog.purchaseIndex;
-    purchaseAmount = merchantDialog.purchaseAmount;
-    saleItem = merchantDialog.saleItem;
-    lookAtList = merchantDialog.lookAtList;
-}
-
 auto MerchantDialog::getOffersSize() const -> index_type { return offers.size(); }
 
 auto MerchantDialog::getOffersBegin() const -> offer_iterator { return offers.cbegin(); }

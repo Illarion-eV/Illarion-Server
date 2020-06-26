@@ -45,8 +45,10 @@ public:
 
     virtual ~BasicClientCommand() = default;
 
-    //! no copy operator for pure virtual types
     auto operator=(const BasicClientCommand &) -> BasicClientCommand & = delete;
+    BasicClientCommand(BasicClientCommand const &) = delete;
+    BasicClientCommand(BasicClientCommand &&) = delete;
+    auto operator=(BasicClientCommand &&) -> BasicClientCommand & = delete;
 
     /**
      * returns the data ptr for the command message

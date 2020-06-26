@@ -27,8 +27,6 @@ LuaWeaponScript::LuaWeaponScript(const std::string &filename) : LuaScript(filena
 
 LuaWeaponScript::LuaWeaponScript(const std::string &filename, const WeaponStruct &weapon) : LuaScript(filename) {}
 
-LuaWeaponScript::~LuaWeaponScript() = default;
-
 void LuaWeaponScript::onAttack(Character *Attacker, Character *Defender) {
     character_ptr fuse_Attacker(Attacker);
     character_ptr fuse_Defender(Defender);

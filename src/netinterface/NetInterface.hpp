@@ -60,6 +60,11 @@ public:
      */
     ~NetInterface();
 
+    NetInterface(const NetInterface &) = delete;
+    auto operator=(const NetInterface &) -> NetInterface & = delete;
+    NetInterface(NetInterface &&) = delete;
+    auto operator=(NetInterface &&) -> NetInterface & = delete;
+
     void closeConnection(); /*<closes the connection to the client*/
     auto activate(Player * /*player*/ = nullptr)
             -> bool; /*<activates the connection starts the sending and receiving threads, if player == nullptr only

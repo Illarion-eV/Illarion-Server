@@ -35,8 +35,6 @@
 
 NPCTable::NPCTable() : _world(World::get()) { reload(); }
 
-NPCTable::~NPCTable() = default;
-
 void NPCTable::reload() {
     try {
         Database::SelectQuery query;

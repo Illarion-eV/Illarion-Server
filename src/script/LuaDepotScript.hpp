@@ -30,9 +30,11 @@ class Character;
 class LuaDepotScript : public LuaScript {
 public:
     explicit LuaDepotScript(const std::string &filename);
-    ~LuaDepotScript() override;
+    ~LuaDepotScript() override = default;
     LuaDepotScript(const LuaDepotScript &) = delete;
     auto operator=(const LuaDepotScript &) -> LuaDepotScript & = delete;
+    LuaDepotScript(LuaDepotScript &&) = default;
+    auto operator=(LuaDepotScript &&) -> LuaDepotScript & = default;
 
     auto onOpenDepot(Character *cc, const ScriptItem &itm) -> bool;
 };

@@ -43,7 +43,6 @@ struct NPCStruct {
 class NPCTable {
 public:
     NPCTable();
-    ~NPCTable();
 
     [[nodiscard]] auto dataOK() const -> bool { return m_dataOK; };
 
@@ -52,7 +51,7 @@ private:
     bool m_dataOK{};
 
     World *_world;
-    std::list<struct NPCStruct> NPCList; // List zum aufnehmen aller Werte aus der DB
+    std::list<struct NPCStruct> NPCList;
 };
 
 #endif

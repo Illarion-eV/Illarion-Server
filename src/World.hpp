@@ -97,6 +97,8 @@ class World : public WorldScriptInterface {
 public:
     auto operator=(const World &) -> World & = delete;
     World(const World &) = delete;
+    World(World &&) = delete;
+    auto operator=(World &&) -> World & = delete;
 
     /////////////////////////
     NewClientView clientview;

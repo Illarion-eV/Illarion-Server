@@ -29,14 +29,6 @@ SelectionDialog::SelectionDialog(const string &title, string text, const luabind
     selectedIndex = 0;
 }
 
-SelectionDialog::SelectionDialog(const SelectionDialog &selectionDialog)
-        : Dialog(selectionDialog), text(selectionDialog.text), success(selectionDialog.success),
-          selectedIndex(selectionDialog.selectedIndex), close(selectionDialog.close) {
-    for (const auto &option : selectionDialog.options) {
-        addOption(option.getItem(), option.getName());
-    }
-}
-
 auto SelectionDialog::getText() const -> const string & { return text; }
 
 auto SelectionDialog::getOptionsSize() const -> index_type { return options.size(); }

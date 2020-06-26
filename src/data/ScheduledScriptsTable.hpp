@@ -59,7 +59,6 @@ struct ScriptData {
 class ScheduledScriptsTable {
 public:
     ScheduledScriptsTable();
-    ~ScheduledScriptsTable();
 
     [[nodiscard]] inline auto isDataOK() const -> bool { return m_dataOk; }
 

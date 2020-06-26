@@ -30,9 +30,11 @@ class LuaTriggerScript : public LuaScript {
 public:
     LuaTriggerScript();
     LuaTriggerScript(const std::string &filename, const position &pos);
-    ~LuaTriggerScript() override;
+    ~LuaTriggerScript() override = default;
     LuaTriggerScript(const LuaTriggerScript &) = delete;
     auto operator=(const LuaTriggerScript &) -> LuaTriggerScript & = delete;
+    LuaTriggerScript(LuaTriggerScript &&) = default;
+    auto operator=(LuaTriggerScript &&) -> LuaTriggerScript & = default;
 
     void CharacterOnField(Character *character);
     void MoveToField(Character *character);

@@ -28,9 +28,11 @@ class World;
 class LuaScheduledScript : public LuaScript {
 public:
     explicit LuaScheduledScript(const std::string &filename);
-    ~LuaScheduledScript() override;
+    ~LuaScheduledScript() override = default;
     LuaScheduledScript(const LuaScheduledScript &) = delete;
     auto operator=(LuaScheduledScript &) -> LuaScheduledScript & = delete;
+    LuaScheduledScript(LuaScheduledScript &&) = default;
+    auto operator=(LuaScheduledScript &&) -> LuaScheduledScript & = default;
 
     void callFunction(const std::string &name, uint32_t currentCycle, uint32_t lastCycle, uint32_t nextCycle);
 };

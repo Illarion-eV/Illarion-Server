@@ -26,8 +26,6 @@
 
 BBBroadCastTS::BBBroadCastTS() : BasicClientCommand(BB_BROADCAST_TS) {}
 
-BBBroadCastTS::~BBBroadCastTS() = default;
-
 void BBBroadCastTS::decodeData() { msg = getStringFromBuffer(); }
 
 void BBBroadCastTS::performAction(Player *player) { World::get()->broadcast_command(player, msg); }
@@ -38,8 +36,6 @@ auto BBBroadCastTS::clone() -> ClientCommandPointer {
 }
 
 BBSpeakAsTS::BBSpeakAsTS() : BasicClientCommand(BB_SPEAKAS_TS) {}
-
-BBSpeakAsTS::~BBSpeakAsTS() = default;
 
 void BBSpeakAsTS::decodeData() {
     id = getIntFromBuffer();
@@ -62,8 +58,6 @@ auto BBSpeakAsTS::clone() -> ClientCommandPointer {
 
 BBWarpPlayerTS::BBWarpPlayerTS() : BasicClientCommand(BB_WARPPLAYER_TS) {}
 
-BBWarpPlayerTS::~BBWarpPlayerTS() = default;
-
 void BBWarpPlayerTS::decodeData() {
     id = getIntFromBuffer();
     posx = getShortIntFromBuffer();
@@ -85,8 +79,6 @@ auto BBWarpPlayerTS::clone() -> ClientCommandPointer {
 }
 
 BBServerCommandTS::BBServerCommandTS() : BasicClientCommand(BB_SERVERCOMMAND_TS) {}
-
-BBServerCommandTS::~BBServerCommandTS() = default;
 
 void BBServerCommandTS::decodeData() { _command = getStringFromBuffer(); }
 
@@ -119,8 +111,6 @@ auto BBServerCommandTS::clone() -> ClientCommandPointer {
 
 BBChangeAttribTS::BBChangeAttribTS() : BasicClientCommand(BB_CHANGEATTRIB_TS) {}
 
-BBChangeAttribTS::~BBChangeAttribTS() = default;
-
 void BBChangeAttribTS::decodeData() {
     id = getIntFromBuffer();
     attrib = getStringFromBuffer();
@@ -146,8 +136,6 @@ auto BBChangeAttribTS::clone() -> ClientCommandPointer {
 
 BBChangeSkillTS::BBChangeSkillTS() : BasicClientCommand(BB_CHANGEATTRIB_TS) {}
 
-BBChangeSkillTS::~BBChangeSkillTS() = default;
-
 void BBChangeSkillTS::decodeData() {
     id = getIntFromBuffer();
     skill = getUnsignedCharFromBuffer();
@@ -172,8 +160,6 @@ auto BBChangeSkillTS::clone() -> ClientCommandPointer {
 
 BBTalktoTS::BBTalktoTS() : BasicClientCommand(BB_TALKTO_TS) {}
 
-BBTalktoTS::~BBTalktoTS() = default;
-
 void BBTalktoTS::decodeData() {
     id = getIntFromBuffer();
     msg = getStringFromBuffer();
@@ -188,8 +174,6 @@ auto BBTalktoTS::clone() -> ClientCommandPointer {
 
 BBDisconnectTS::BBDisconnectTS() : BasicClientCommand(BB_DISCONNECT_TS) {}
 
-BBDisconnectTS::~BBDisconnectTS() = default;
-
 void BBDisconnectTS::decodeData() {}
 
 void BBDisconnectTS::performAction(Player *player) { player->Connection->closeConnection(); }
@@ -201,8 +185,6 @@ auto BBDisconnectTS::clone() -> ClientCommandPointer {
 
 BBKeepAliveTS::BBKeepAliveTS() : BasicClientCommand(BB_KEEPALIVE_TS) {}
 
-BBKeepAliveTS::~BBKeepAliveTS() = default;
-
 void BBKeepAliveTS::decodeData() {}
 
 void BBKeepAliveTS::performAction(Player *player) { time(&(player->lastkeepalive)); }
@@ -213,8 +195,6 @@ auto BBKeepAliveTS::clone() -> ClientCommandPointer {
 }
 
 BBBanTS::BBBanTS() : BasicClientCommand(BB_BAN_TS) {}
-
-BBBanTS::~BBBanTS() = default;
 
 void BBBanTS::decodeData() {
     id = getIntFromBuffer();

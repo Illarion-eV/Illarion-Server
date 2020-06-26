@@ -29,8 +29,6 @@
 
 MonitoringClients::MonitoringClients() : _world(World::get()) {}
 
-MonitoringClients::~MonitoringClients() { client_list.clear(); }
-
 void MonitoringClients::clientConnect(Player *player) {
     Logger::info(LogFacility::Admin) << "New BBIWI Client connects: " << *player
                                      << "; active clients online: " << client_list.size() << Log::end;

@@ -60,7 +60,6 @@ private:
 
 public:
     SelectionDialog(const string &title, string text, const luabind::object &callback);
-    SelectionDialog(const SelectionDialog &selectionDialog);
 
     [[nodiscard]] auto getText() const -> const string &;
 

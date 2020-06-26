@@ -29,8 +29,6 @@ InputDialog::InputDialog(const string &title, string description, bool multiline
     success = false;
 }
 
-InputDialog::InputDialog(const InputDialog &inputDialog) = default;
-
 auto InputDialog::getDescription() const -> const string & { return description; }
 
 auto InputDialog::isMultiline() const -> bool { return multiline; }

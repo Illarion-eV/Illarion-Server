@@ -32,7 +32,6 @@ class Player;
 class LuaLongTimeEffectScript : public LuaScript {
 public:
     LuaLongTimeEffectScript(const std::string &filename, LongTimeEffectStruct effectStruct);
-    ~LuaLongTimeEffectScript() override;
 
     auto callEffect(LongTimeEffect *effect, Character *target) -> bool;
     void doubleEffect(LongTimeEffect *effect, Character *target);
@@ -43,7 +42,6 @@ public:
 private:
     LongTimeEffectStruct _effectStruct;
     explicit LuaLongTimeEffectScript(const LuaItemScript &);
-    auto operator=(const LuaLongTimeEffectScript &) -> LuaLongTimeEffectScript &;
     void init_functions() const;
 };
 

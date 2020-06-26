@@ -38,6 +38,9 @@ private:
 public:
     QueryWhere(const QueryWhere &org) = delete;
     auto operator=(const QueryWhere &org) -> QueryWhere & = delete;
+    QueryWhere(QueryWhere &&) = delete;
+    auto operator=(QueryWhere &&) -> QueryWhere & = delete;
+    ~QueryWhere() = default;
 
     template <typename T> void addEqualCondition(const std::string &column, const T &value) {
         addEqualCondition<T>("", column, value);

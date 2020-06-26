@@ -50,6 +50,7 @@ public:
     auto operator=(const Field &) -> Field & = delete;
     Field(Field &&) noexcept = default;
     auto operator=(Field &&) -> Field & = default;
+    ~Field() = default;
 
     void setTileId(uint16_t id);
     [[nodiscard]] auto getTileId() const -> uint16_t;

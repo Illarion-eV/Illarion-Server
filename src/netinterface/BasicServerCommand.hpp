@@ -59,9 +59,8 @@ public:
 
     auto operator=(const BasicServerCommand &) -> BasicServerCommand & = delete;
     BasicServerCommand(const BasicServerCommand &) = delete;
-    /**
-     * Standard destructor
-     */
+    BasicServerCommand(BasicServerCommand &&) = default;
+    auto operator=(BasicServerCommand &&) -> BasicServerCommand & = default;
     ~BasicServerCommand() = default;
 
     /**

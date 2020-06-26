@@ -26,7 +26,12 @@ public:
     virtual auto reloadBuffer() -> bool = 0;
     virtual void reloadScripts() = 0;
     virtual void activateBuffer() = 0;
+    Table() = default;
     virtual ~Table() = default;
+    Table(const Table &) = default;
+    auto operator=(const Table &) -> Table & = default;
+    Table(Table &&) = default;
+    auto operator=(Table &&) -> Table & = default;
 };
 
 #endif

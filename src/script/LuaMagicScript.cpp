@@ -28,8 +28,6 @@ LuaMagicScript::LuaMagicScript(const std::string &filename, const SpellStruct & 
     init_functions();
 }
 
-LuaMagicScript::~LuaMagicScript() = default;
-
 void LuaMagicScript::init_functions() {}
 
 void LuaMagicScript::CastMagic(Character *caster, unsigned char ltastate) {

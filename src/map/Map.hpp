@@ -42,6 +42,7 @@ public:
     auto operator=(const Map &) -> Map & = delete;
     Map(Map &&) = default;
     auto operator=(Map &&) -> Map & = default;
+    ~Map() = default;
 
     auto import(const std::string &importDir, const std::string &mapName) -> bool;
     auto load(const std::string &name) -> bool;

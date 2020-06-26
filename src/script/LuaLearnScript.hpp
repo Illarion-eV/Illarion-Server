@@ -29,9 +29,11 @@ class Character;
 class LuaLearnScript : public LuaScript {
 public:
     explicit LuaLearnScript(const std::string &filename);
-    ~LuaLearnScript() override;
+    ~LuaLearnScript() override = default;
     LuaLearnScript(const LuaLearnScript &) = delete;
     auto operator=(const LuaLearnScript &) -> LuaLearnScript & = delete;
+    LuaLearnScript(LuaLearnScript &&) = default;
+    auto operator=(LuaLearnScript &&) -> LuaLearnScript & = default;
 
     void learn(Character *cc, TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opponent);
     void reduceMC(Character *cc);

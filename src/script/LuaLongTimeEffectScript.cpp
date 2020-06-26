@@ -32,8 +32,6 @@ LuaLongTimeEffectScript::LuaLongTimeEffectScript(const std::string &filename, Lo
     init_functions();
 }
 
-LuaLongTimeEffectScript::~LuaLongTimeEffectScript() = default;
-
 void LuaLongTimeEffectScript::init_functions() const {
     const luabind::object &globals = luabind::globals(_luaState);
     globals["thisEffect"] = _effectStruct;

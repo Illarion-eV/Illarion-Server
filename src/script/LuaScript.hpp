@@ -73,6 +73,8 @@ public:
     LuaScript(const std::string &code, const std::string &scriptname);
     LuaScript(const LuaScript &) = delete;
     auto operator=(const LuaScript &) -> LuaScript & = delete;
+    LuaScript(LuaScript &&) = default;
+    auto operator=(LuaScript &&) -> LuaScript & = default;
     virtual ~LuaScript();
 
     [[nodiscard]] auto getFileName() const -> std::string { return _filename; }

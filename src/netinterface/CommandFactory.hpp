@@ -31,7 +31,6 @@
 class CommandFactory {
 public:
     CommandFactory();
-    ~CommandFactory();
 
     /**
      *returns a pointer to an emtpy Server Command

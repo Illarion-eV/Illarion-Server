@@ -128,7 +128,6 @@ public:
     Container *inside{nullptr};
     ScriptItem() : Item(0, 0, 0), pos(position(0, 0, 0)) {}
     auto getType() const -> unsigned char { return type; }
-    ScriptItem(const ScriptItem &source) = default;
     explicit ScriptItem(const Item &source) : Item(source), pos(position(0, 0, 0)) {
         itempos = 0;
         type = notdefined;

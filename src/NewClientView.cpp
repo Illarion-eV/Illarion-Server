@@ -24,8 +24,6 @@
 #include <algorithm>
 #include <iostream>
 
-NewClientView::NewClientView() : viewPosition(position(0, 0, 0)) {}
-
 void NewClientView::fillStripe(position pos, stripedirection dir, int length) {
     clearStripe();
     viewPosition = pos;

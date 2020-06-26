@@ -108,10 +108,11 @@ public:
      */
     void performStep(position targetpos);
 
-    /**
-     * destructor
-     */
     ~Monster() override;
+    Monster(const Monster &) = delete;
+    auto operator=(const Monster &) -> Monster & = delete;
+    Monster(Monster &&) = delete;
+    auto operator=(Monster &&) -> Monster & = delete;
 
     position lastTargetPosition{}; /**< last position of the last seen target */
     bool lastTargetSeen =

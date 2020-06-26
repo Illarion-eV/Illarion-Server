@@ -42,7 +42,6 @@ class BBBroadCastTS : public BasicClientCommand {
 
 public:
     BBBroadCastTS();
-    ~BBBroadCastTS() override;
 
     void decodeData() override;
     void performAction(Player *player) override;
@@ -55,7 +54,6 @@ class BBSpeakAsTS : public BasicClientCommand {
 
 public:
     BBSpeakAsTS();
-    ~BBSpeakAsTS() override;
 
     void decodeData() override;
     void performAction(Player *player) override;
@@ -68,7 +66,6 @@ class BBWarpPlayerTS : public BasicClientCommand {
 
 public:
     BBWarpPlayerTS();
-    ~BBWarpPlayerTS() override;
 
     void decodeData() override;
     void performAction(Player *player) override;
@@ -80,7 +77,6 @@ class BBServerCommandTS : public BasicClientCommand {
 
 public:
     BBServerCommandTS();
-    ~BBServerCommandTS() override;
 
     void decodeData() override;
     void performAction(Player *player) override;
@@ -94,7 +90,6 @@ class BBChangeAttribTS : public BasicClientCommand {
 
 public:
     BBChangeAttribTS();
-    ~BBChangeAttribTS() override;
 
     void decodeData() override;
     void performAction(Player *player) override;
@@ -108,7 +103,6 @@ class BBChangeSkillTS : public BasicClientCommand {
 
 public:
     BBChangeSkillTS();
-    ~BBChangeSkillTS() override;
 
     void decodeData() override;
     void performAction(Player *player) override;
@@ -121,7 +115,6 @@ class BBTalktoTS : public BasicClientCommand {
 
 public:
     BBTalktoTS();
-    ~BBTalktoTS() override;
 
     void decodeData() override;
     void performAction(Player *player) override;
@@ -131,7 +124,6 @@ public:
 class BBDisconnectTS : public BasicClientCommand {
 public:
     BBDisconnectTS();
-    ~BBDisconnectTS() override;
 
     void decodeData() override;
     void performAction(Player *player) override;
@@ -141,7 +133,6 @@ public:
 class BBKeepAliveTS : public BasicClientCommand {
 public:
     BBKeepAliveTS();
-    ~BBKeepAliveTS() override;
 
     void decodeData() override;
     void performAction(Player *player) override;
@@ -154,7 +145,6 @@ class BBBanTS : public BasicClientCommand {
 
 public:
     BBBanTS();
-    ~BBBanTS() override;
 
     void decodeData() override;
     void performAction(Player *player) override;
