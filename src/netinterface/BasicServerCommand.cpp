@@ -30,20 +30,20 @@
 
 BasicServerCommand::BasicServerCommand(unsigned char defByte) : BasicCommand(defByte) {
     buffer.resize(baseBufferSize);
-    this->addUnsignedCharToBuffer(getDefinitionByte());
-    this->addUnsignedCharToBuffer(getDefinitionByte() xor static_cast<unsigned char>(255));
-    this->addShortIntToBuffer(0); //<- dummy for the length
-    this->addShortIntToBuffer(0); //<- dummy for the checksum
+    addUnsignedCharToBuffer(getDefinitionByte());
+    addUnsignedCharToBuffer(getDefinitionByte() xor static_cast<unsigned char>(255));
+    addShortIntToBuffer(0); //<- dummy for the length
+    addShortIntToBuffer(0); //<- dummy for the checksum
     checkSum = 0;
 }
 
 BasicServerCommand::BasicServerCommand(unsigned char defByte, uint16_t bsize) : BasicCommand(defByte) {
     baseBufferSize = bsize;
     buffer.resize(baseBufferSize);
-    this->addUnsignedCharToBuffer(getDefinitionByte());
-    this->addUnsignedCharToBuffer(getDefinitionByte() xor static_cast<unsigned char>(255));
-    this->addShortIntToBuffer(0); //<- dummy for the length
-    this->addShortIntToBuffer(0); //<- dummy for the checksum
+    addUnsignedCharToBuffer(getDefinitionByte());
+    addUnsignedCharToBuffer(getDefinitionByte() xor static_cast<unsigned char>(255));
+    addShortIntToBuffer(0); //<- dummy for the length
+    addShortIntToBuffer(0); //<- dummy for the checksum
     checkSum = 0;
 }
 
