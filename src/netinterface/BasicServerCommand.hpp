@@ -89,18 +89,15 @@ public:
 
 private:
     static constexpr uint16_t defaultBufferSize = 1000;
-    uint16_t STDBUFFERSIZE = defaultBufferSize;
+    uint16_t baseBufferSize = defaultBufferSize;
 
     std::vector<char> buffer;
     uint32_t checkSum = 0;
 
-    uint16_t bufferPos = 0;     /*<stores the current buffer position and the size of the used buffer*/
-    uint16_t bufferSizeMod = 1; /*<holds the current size of the buffer mod * stdbuffersize = current buffersize*/
+    uint16_t bufferPos = 0;     // stores the current buffer position and the size of the used buffer
+    uint16_t bufferSizeMod = 1; // bufferSizeMod * baseBufferSize = current buffer size
 
-    /**
-     * if there is a buffer overflow this function creates a 2*STDBUFFERSIZE
-     * large buffer and copies all the data into this new buffer and deletes the old one
-     */
+    // if there is a buffer overflow this function doubles buffer size
     void resizeBuffer();
 };
 

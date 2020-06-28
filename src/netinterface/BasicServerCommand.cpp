@@ -29,7 +29,7 @@
 #include <sys/socket.h>
 
 BasicServerCommand::BasicServerCommand(unsigned char defByte) : BasicCommand(defByte) {
-    buffer.resize(STDBUFFERSIZE);
+    buffer.resize(baseBufferSize);
     this->addUnsignedCharToBuffer(getDefinitionByte());
     this->addUnsignedCharToBuffer(getDefinitionByte() xor static_cast<unsigned char>(255));
     this->addShortIntToBuffer(0); //<- dummy for the length
@@ -38,8 +38,8 @@ BasicServerCommand::BasicServerCommand(unsigned char defByte) : BasicCommand(def
 }
 
 BasicServerCommand::BasicServerCommand(unsigned char defByte, uint16_t bsize) : BasicCommand(defByte) {
-    STDBUFFERSIZE = bsize;
-    buffer.resize(STDBUFFERSIZE);
+    baseBufferSize = bsize;
+    buffer.resize(baseBufferSize);
     this->addUnsignedCharToBuffer(getDefinitionByte());
     this->addUnsignedCharToBuffer(getDefinitionByte() xor static_cast<unsigned char>(255));
     this->addShortIntToBuffer(0); //<- dummy for the length
@@ -50,7 +50,8 @@ BasicServerCommand::BasicServerCommand(unsigned char defByte, uint16_t bsize) : 
 void BasicServerCommand::addHeader() {
     // at place 2 and 3 add the length
     if (bufferPos >= 6) { // check if the buffer is large enough to add the data
-        auto crc = static_cast<int16_t>(checkSum % 0xFFFF);
+        constexpr auto allBitsSet = 0xFFFF;
+        auto crc = static_cast<int16_t>(checkSum % allBitsSet);
         buffer.at(2) = ((bufferPos - 6) >> 8);
         buffer.at(3) = ((bufferPos - 6) & 255);
         buffer.at(4) = (crc >> 8);
@@ -82,11 +83,11 @@ void BasicServerCommand::addShortIntToBuffer(short int data) {
 
 void BasicServerCommand::addUnsignedCharToBuffer(unsigned char data) {
     // resize the buffer if there is not enough place to store
-    if ((bufferPos + 1) >= (bufferSizeMod * STDBUFFERSIZE)) {
+    if ((bufferPos + 1) >= (bufferSizeMod * baseBufferSize)) {
         resizeBuffer();
     }
 
-    assert(bufferPos < (bufferSizeMod * STDBUFFERSIZE));
+    assert(bufferPos < (bufferSizeMod * baseBufferSize));
     buffer.at(bufferPos) = data;
     checkSum += data; // add the data to the checksum
     bufferPos++;
@@ -94,11 +95,11 @@ void BasicServerCommand::addUnsignedCharToBuffer(unsigned char data) {
 
 void BasicServerCommand::resizeBuffer() {
     Logger::info(LogFacility::Other) << "Not enough memory. Resizing the send buffer. Current size: "
-                                     << bufferSizeMod * STDBUFFERSIZE << " bytes." << Log::end;
-    bufferSizeMod++;
-    buffer.resize(bufferSizeMod * STDBUFFERSIZE);
+                                     << bufferSizeMod * baseBufferSize << " bytes." << Log::end;
+    bufferSizeMod *= 2;
+    buffer.resize(bufferSizeMod * baseBufferSize);
     Logger::info(LogFacility::Other) << "Resizing the send buffer successful. New size: "
-                                     << bufferSizeMod * STDBUFFERSIZE << " bytes." << Log::end;
+                                     << bufferSizeMod * baseBufferSize << " bytes." << Log::end;
 }
 
 void BasicServerCommand::addColourToBuffer(const Colour &c) {
