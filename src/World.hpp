@@ -319,14 +319,6 @@ public:
 
     static auto getItemAttrib(const std::string &s, TYPE_OF_ITEM_ID ItemID) -> int;
 
-    /**
-     *sends all players in sight of the tiles line the map
-     *
-     *@param startx the starting x position of the line
-     *@param endx the ending x position of the line
-     */
-    void updatePlayerView(short int startx, short int endx);
-
     void Load();
     void Save() const;
     void import();

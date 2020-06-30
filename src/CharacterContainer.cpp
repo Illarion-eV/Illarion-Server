@@ -183,28 +183,6 @@ auto CharacterContainer<T>::findAllAliveCharactersInRangeOf(const position &pos,
     return temp;
 }
 
-template <class T>
-auto CharacterContainer<T>::findAllCharactersWithXInRangeOf(short int startx, short int endx,
-                                                            std::vector<pointer> &ret) const -> bool {
-    bool found_one = false;
-    int r = (endx - startx) / 2 + 1;
-    int x = startx + (endx - startx) / 2;
-    auto candidates = projection_x_axis(position(x, 0, 0), r);
-
-    for (auto &c : candidates) {
-        const position &p = c.first;
-        TYPE_OF_CHARACTER_ID id = c.second;
-
-        if ((p.x >= startx) && (p.x <= endx)) {
-            if (auto *character = find(id)) {
-                ret.push_back(character);
-            }
-        }
-    }
-
-    return found_one;
-}
-
 template class CharacterContainer<Character>;
 template class CharacterContainer<Player>;
 template class CharacterContainer<Monster>;

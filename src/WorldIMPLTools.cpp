@@ -578,17 +578,6 @@ auto World::getItemAttrib(const std::string &s, TYPE_OF_ITEM_ID ItemID) -> int {
     return 0;
 }
 
-void World::updatePlayerView(short int startx, short int endx) {
-    std::vector<Player *> temp;
-
-    if (Players.findAllCharactersWithXInRangeOf(startx - 20, endx + 20, temp)) {
-        for (const auto &player : temp) {
-            player->sendFullMap();
-            sendAllVisibleCharactersToPlayer(player, true);
-        }
-    }
-}
-
 void World::ageMaps() {
     if (not maps.allMapsAged()) {
         scheduler.addOneshotTask([&] { ageMaps(); }, std::chrono::seconds(1), "age_maps");

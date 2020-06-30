@@ -72,7 +72,6 @@ public:
     auto findAllCharactersInRangeOf(const position &pos, const Range &range) const -> std::vector<pointer>;
     auto findAllCharactersInScreen(const position &pos) const -> std::vector<pointer>;
     auto findAllAliveCharactersInRangeOf(const position &pos, const Range &range) const -> std::vector<pointer>;
-    auto findAllCharactersWithXInRangeOf(short int startx, short int endx, std::vector<pointer> &ret) const -> bool;
 
     void for_each(const for_each_type &function) const {
         for (const auto &key_value : container) {
