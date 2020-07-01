@@ -380,7 +380,7 @@ auto WorldMap::loadFromDisk() -> bool {
     }
     unsigned short int size = 0;
 
-    mapinitfile.read((char *)&size, sizeof(size));
+    mapinitfile.read((char *)&size, sizeof size);
 
     Logger::info(LogFacility::World) << "Loading " << size << " maps." << Log::end;
 
@@ -398,15 +398,15 @@ auto WorldMap::loadFromDisk() -> bool {
     char mname[mapNameMaxLength];
 
     for (int i = 0; i < size; ++i) {
-        mapinitfile.read((char *)&tZ_Level, sizeof(tZ_Level));
+        mapinitfile.read((char *)&tZ_Level, sizeof tZ_Level);
 
-        mapinitfile.read((char *)&tMin_X, sizeof(tMin_X));
+        mapinitfile.read((char *)&tMin_X, sizeof tMin_X);
 
-        mapinitfile.read((char *)&tMin_Y, sizeof(tMin_Y));
+        mapinitfile.read((char *)&tMin_Y, sizeof tMin_Y);
 
-        mapinitfile.read((char *)&tWidth, sizeof(tWidth));
+        mapinitfile.read((char *)&tWidth, sizeof tWidth);
 
-        mapinitfile.read((char *)&tHeight, sizeof(tHeight));
+        mapinitfile.read((char *)&tHeight, sizeof tHeight);
 
         auto map = Map{"previously saved map", position{tMin_X, tMin_Y, tZ_Level}, tWidth, tHeight};
 
@@ -460,7 +460,7 @@ void WorldMap::saveToDisk() const {
     } else {
         uint16_t size = maps.size();
         Logger::info(LogFacility::World) << "Saving " << size << " maps." << Log::end;
-        mapinitfile.write((char *)&size, sizeof(size));
+        mapinitfile.write((char *)&size, sizeof size);
         constexpr auto mapNameMaxLength = 200;
         char mname[mapNameMaxLength];
 
@@ -470,11 +470,11 @@ void WorldMap::saveToDisk() const {
             const auto y = map.getMinY();
             const auto width = map.getWidth();
             const auto height = map.getHeight();
-            mapinitfile.write((char *)&level, sizeof(level));
-            mapinitfile.write((char *)&x, sizeof(x));
-            mapinitfile.write((char *)&y, sizeof(y));
-            mapinitfile.write((char *)&width, sizeof(width));
-            mapinitfile.write((char *)&height, sizeof(height));
+            mapinitfile.write((char *)&level, sizeof level);
+            mapinitfile.write((char *)&x, sizeof x);
+            mapinitfile.write((char *)&y, sizeof y);
+            mapinitfile.write((char *)&width, sizeof width);
+            mapinitfile.write((char *)&height, sizeof height);
 
             sprintf(mname, "%s_%6d_%6d_%6d", path.c_str(), level, x, y);
             map.save(mname);

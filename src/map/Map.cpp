@@ -70,9 +70,9 @@ void Map::save(const std::string &name) const {
     std::ofstream containers{name + "_container", std::ios::binary | std::ios::out};
 
     if (map.good() && items.good() && warps.good() && containers.good()) {
-        map.write((char *)&width, sizeof(width));
-        map.write((char *)&height, sizeof(height));
-        map.write((char *)&origin, sizeof(origin));
+        map.write((char *)&width, sizeof width);
+        map.write((char *)&height, sizeof height);
+        map.write((char *)&origin, sizeof origin);
 
         for (const auto &column : fields) {
             for (const auto &field : column) {
@@ -428,9 +428,9 @@ auto Map::load(const std::string &name) -> bool {
         int16_t newWidth = 0;
         int16_t newHeight = 0;
 
-        map.read((char *)&newWidth, sizeof(width));
-        map.read((char *)&newHeight, sizeof(height));
-        map.read((char *)&origin, sizeof(origin));
+        map.read((char *)&newWidth, sizeof width);
+        map.read((char *)&newHeight, sizeof height);
+        map.read((char *)&origin, sizeof origin);
 
         if (newWidth == width && newHeight == height) {
             for (auto &column : fields) {
