@@ -34,10 +34,10 @@ using ServerCommandPointer = std::shared_ptr<BasicServerCommand>;
  *@ingroup Netinterface
  *Class which represents a basic command that is sent from the
  *server to the client. Each constructor prepares a 6 byte header as follows:
- *- Byte 1: Unique command id
- *- Byte 2: Byte 1 xor 0xFF (complement)
- *- Byte 3+4: Length of the following data segment
- *- Byte 5+6: Checksum consisting of the sum of all data bytes mod 0xFFFF
+ *- Byte 0: Unique command id
+ *- Byte 1: Byte 1 xor 0xFF (complement)
+ *- Byte 2+3: Length of the following data segment
+ *- Byte 4+5: Checksum consisting of the sum of all data bytes mod 0xFFFF
  *
  *Once all data has been added to the command, the header needs to be finalized with addHeader()
  */
@@ -86,8 +86,12 @@ public:
      * which depends on the commands data, like length and checksum
      */
     void addHeader();
+    void initHeader();
 
 private:
+    static constexpr uint16_t headerSize = 6;
+    static constexpr uint16_t lengthPosition = 2;
+    static constexpr uint16_t crcPosition = 4;
     static constexpr uint16_t defaultBufferSize = 1000;
     uint16_t baseBufferSize = defaultBufferSize;
 

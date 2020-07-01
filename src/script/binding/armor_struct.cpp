@@ -25,8 +25,10 @@ namespace binding {
 
 auto armor_struct() -> luabind::scope {
     return luabind::class_<ArmorStruct>("ArmorStruct")
-            .enum_("type")[luabind::value("clothing", 0), luabind::value("general", 1), luabind::value("light", 2),
-                           luabind::value("medium", 3), luabind::value("heavy", 4), luabind::value("juwellery", 5)]
+            .enum_("type")[luabind::value("clothing", ArmorStruct::clothing),
+                           luabind::value("general", ArmorStruct::general), luabind::value("light", ArmorStruct::light),
+                           luabind::value("medium", ArmorStruct::medium), luabind::value("heavy", ArmorStruct::heavy),
+                           luabind::value("juwellery", ArmorStruct::juwellery)]
             .def_readonly("BodyParts", &ArmorStruct::BodyParts)
             .def_readonly("PunctureArmor", &ArmorStruct::PunctureArmor)
             .def_readonly("StrokeArmor", &ArmorStruct::StrokeArmor)

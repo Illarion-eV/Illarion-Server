@@ -112,22 +112,22 @@ auto Map::importFields(const std::string &importDir, const std::string &mapName)
     std::string line;
     int lineNumber = 0;
     int headerLinesSkipped = 0;
+    const auto headerLines = 6;
     bool success = true;
 
     while (std::getline(mapFile, line)) {
         ++lineNumber;
 
         if (line.length() != 0 && line[0] != '#') {
-            if (headerLinesSkipped < 6 && regex_match(line, headerExpression)) {
+            if (headerLinesSkipped < headerLines && regex_match(line, headerExpression)) {
                 ++headerLinesSkipped;
                 continue;
             }
 
-            smatch matches;
-
-            if (regex_match(line, matches, tileExpression)) {
+            if (smatch fieldMatch; regex_match(line, fieldMatch, tileExpression)) {
                 try {
-                    auto x = boost::lexical_cast<uint16_t>(matches[1]);
+                    const auto xPosition = 1;
+                    const auto x = boost::lexical_cast<uint16_t>(fieldMatch[xPosition]);
 
                     if (x >= width) {
                         Logger::error(LogFacility::Script)
@@ -135,7 +135,8 @@ auto Map::importFields(const std::string &importDir, const std::string &mapName)
                         success = false;
                     }
 
-                    auto y = boost::lexical_cast<uint16_t>(matches[2]);
+                    const auto yPosition = 2;
+                    const auto y = boost::lexical_cast<uint16_t>(fieldMatch[yPosition]);
 
                     if (y >= height) {
                         Logger::error(LogFacility::Script)
@@ -143,8 +144,10 @@ auto Map::importFields(const std::string &importDir, const std::string &mapName)
                         success = false;
                     }
 
-                    auto tile = boost::lexical_cast<uint16_t>(matches[3]);
-                    auto music = boost::lexical_cast<uint16_t>(matches[4]);
+                    const auto tilePosition = 3;
+                    const auto musicPosition = 4;
+                    const auto tile = boost::lexical_cast<uint16_t>(fieldMatch[tilePosition]);
+                    const auto music = boost::lexical_cast<uint16_t>(fieldMatch[musicPosition]);
 
                     if (success) {
                         auto &field = fields[x][y];
@@ -200,11 +203,10 @@ auto Map::importItems(const std::string &importDir, const std::string &mapName) 
         ++lineNumber;
 
         if (line.length() != 0 && line[0] != '#') {
-            smatch matches;
-
-            if (regex_match(line, matches, itemExpression)) {
+            if (smatch itemMatch; regex_match(line, itemMatch, itemExpression)) {
                 try {
-                    auto x = boost::lexical_cast<uint16_t>(matches[1]);
+                    const auto xPosition = 1;
+                    const auto x = boost::lexical_cast<uint16_t>(itemMatch[xPosition]);
 
                     if (x >= width) {
                         Logger::error(LogFacility::Script)
@@ -212,7 +214,8 @@ auto Map::importItems(const std::string &importDir, const std::string &mapName) 
                         success = false;
                     }
 
-                    auto y = boost::lexical_cast<uint16_t>(matches[2]);
+                    const auto yPosition = 2;
+                    const auto y = boost::lexical_cast<uint16_t>(itemMatch[yPosition]);
 
                     if (y >= height) {
                         Logger::error(LogFacility::Script)
@@ -220,12 +223,15 @@ auto Map::importItems(const std::string &importDir, const std::string &mapName) 
                         success = false;
                     }
 
-                    auto itemId = boost::lexical_cast<uint16_t>(matches[3]);
-                    auto quality = boost::lexical_cast<uint16_t>(matches[4]);
+                    const auto idPosition = 3;
+                    const auto qualityPosition = 4;
+                    const auto itemId = boost::lexical_cast<uint16_t>(itemMatch[idPosition]);
+                    const auto quality = boost::lexical_cast<uint16_t>(itemMatch[qualityPosition]);
 
-                    if (quality > 999) {
+                    if (quality > Item::maximumQuality) {
                         Logger::error(LogFacility::Script)
-                                << fileName << ": quality must be less than 1000 in line " << lineNumber << Log::end;
+                                << fileName << ": quality must not exceed " << Item::maximumQuality << " in line "
+                                << lineNumber << Log::end;
                         success = false;
                     }
 
@@ -235,14 +241,15 @@ auto Map::importItems(const std::string &importDir, const std::string &mapName) 
                     item.setNumber(1);
                     item.makePermanent();
 
-                    std::string data = matches[5];
+                    const auto dataPosition = 5;
+                    std::string data = itemMatch[dataPosition];
 
                     while (data.length() > 0) {
-                        std::smatch match;
-
-                        if (std::regex_match(data, match, dataExpression)) {
-                            std::string key = match[1];
-                            std::string value = match[2];
+                        if (smatch dataMatch; regex_match(data, dataMatch, dataExpression)) {
+                            const auto keyPosition = 1;
+                            const auto valuePosition = 2;
+                            std::string key = dataMatch[keyPosition];
+                            std::string value = dataMatch[valuePosition];
 
                             if (key.length() == 0) {
                                 Logger::error(LogFacility::Script) << fileName
@@ -260,19 +267,17 @@ auto Map::importItems(const std::string &importDir, const std::string &mapName) 
                                 success = false;
                             }
 
-                            if (key.length() > 255) {
-                                Logger::error(LogFacility::Script) << fileName
-                                                                   << ": data key must not exceed "
-                                                                      "255 characters in line "
-                                                                   << lineNumber << Log::end;
+                            if (key.length() > maxDataKeyLength) {
+                                Logger::error(LogFacility::Script)
+                                        << fileName << ": data key must not exceed " << maxDataKeyLength
+                                        << " characters in line " << lineNumber << Log::end;
                                 success = false;
                             }
 
-                            if (value.length() > 255) {
-                                Logger::error(LogFacility::Script) << fileName
-                                                                   << ": data value must not exceed 255 "
-                                                                      "characters in line "
-                                                                   << lineNumber << Log::end;
+                            if (value.length() > maxDataValueLength) {
+                                Logger::error(LogFacility::Script)
+                                        << fileName << ": data value must not exceed " << maxDataValueLength
+                                        << " characters in line " << lineNumber << Log::end;
                                 success = false;
                             }
 
@@ -349,11 +354,10 @@ auto Map::importWarps(const std::string &importDir, const std::string &mapName) 
         ++lineNumber;
 
         if (line.length() != 0 && line[0] != '#') {
-            smatch matches;
-
-            if (regex_match(line, matches, warpExpression)) {
+            if (smatch warpMatch; regex_match(line, warpMatch, warpExpression)) {
                 try {
-                    auto x = boost::lexical_cast<uint16_t>(matches[1]);
+                    const auto warpXPosition = 1;
+                    const auto x = boost::lexical_cast<uint16_t>(warpMatch[warpXPosition]);
 
                     if (x >= width) {
                         Logger::error(LogFacility::Script)
@@ -361,7 +365,8 @@ auto Map::importWarps(const std::string &importDir, const std::string &mapName) 
                         success = false;
                     }
 
-                    auto y = boost::lexical_cast<uint16_t>(matches[2]);
+                    const auto warpYPosition = 2;
+                    const auto y = boost::lexical_cast<uint16_t>(warpMatch[warpYPosition]);
 
                     if (y >= height) {
                         Logger::error(LogFacility::Script)
@@ -369,10 +374,12 @@ auto Map::importWarps(const std::string &importDir, const std::string &mapName) 
                         success = false;
                     }
 
-                    position target{};
-                    target.x = boost::lexical_cast<int16_t>(matches[3]);
-                    target.y = boost::lexical_cast<int16_t>(matches[4]);
-                    target.z = boost::lexical_cast<int16_t>(matches[5]);
+                    const auto targetXPosition = 3;
+                    const auto targetYPosition = 4;
+                    const auto targetZPosition = 5;
+                    const position target{boost::lexical_cast<int16_t>(warpMatch[targetXPosition]),
+                                          boost::lexical_cast<int16_t>(warpMatch[targetYPosition]),
+                                          boost::lexical_cast<int16_t>(warpMatch[targetZPosition])};
 
                     if (success) {
                         auto &field = fields[x][y];

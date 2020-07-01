@@ -48,6 +48,19 @@ private:
     Table<unsigned int> monsterNodes;
     Table<position> triggerNodes;
 
+    static constexpr auto normalEntryCount = 4;
+    static constexpr auto triggerfieldEntryCount = 6;
+
+    static constexpr auto typePosition = 0;
+    static constexpr auto idPosition = 1;
+    static constexpr auto functionPosition = 2;
+    static constexpr auto scriptPosition = 3;
+    static constexpr auto triggerCoordinateXPosition = 1;
+    static constexpr auto triggerCoordinateYPosition = 2;
+    static constexpr auto triggerCoordinateZPosition = 3;
+    static constexpr auto triggerFunctionPosition = 4;
+    static constexpr auto triggerScriptPosition = 5;
+
 public:
     QuestNodeTable();
     QuestNodeTable(const QuestNodeTable &) = delete;

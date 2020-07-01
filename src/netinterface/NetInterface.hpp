@@ -97,7 +97,11 @@ private:
     void handle_write_shutdown(const boost::system::error_code &error);
 
     // Buffer for the header of messages
-    std::array<unsigned char, 6> headerBuffer;
+    static constexpr auto headerSize = 6;
+    static constexpr auto commandPosition = 0;
+    static constexpr auto lengthPosition = 2;
+    static constexpr auto crcPosition = 4;
+    std::array<unsigned char, headerSize> headerBuffer;
 
     ClientCommandPointer cmd;
     ServerCommandPointer shutdownCmd;
@@ -111,6 +115,7 @@ private:
 
     // Factory für Commands vom Client
     CommandFactory commandFactory;
+    static constexpr auto maxInactive = 1000;
     uint16_t inactive;
     std::mutex sendQueueMutex;
     std::shared_ptr<LoginCommandTS> loginData;

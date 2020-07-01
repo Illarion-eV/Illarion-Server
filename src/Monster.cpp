@@ -63,9 +63,9 @@ void Monster::performStep(position targetpos) {
     }
 
     if (!waypoints.makeMove()) {
-        auto dir = static_cast<direction>(Random::uniform(0, 7));
+        auto dir = static_cast<direction>(Random::uniform(minDirection, maxDirection));
         move(dir);
-        increaseActionPoints(-20);
+        increaseActionPoints(-NP_WALK_COST);
     }
 }
 
@@ -78,7 +78,6 @@ void Monster::setMonsterType(TYPE_OF_CHARACTER_ID type) {
 
     const auto &monsterdef = (*monsterDescriptions)[type];
 
-    // set attributes
     setAttribute(Character::luck, Random::uniform(monsterdef.attributes.luck.first, monsterdef.attributes.luck.second));
     setAttribute(Character::strength,
                  Random::uniform(monsterdef.attributes.strength.first, monsterdef.attributes.strength.second));
@@ -180,8 +179,8 @@ auto Monster::attack(Character *target) -> bool {
 }
 
 void Monster::heal() {
-    increaseAttrib("hitpoints", 150);
-    increaseAttrib("mana", 150);
+    increaseAttrib("hitpoints", monsterSelfHealAmount);
+    increaseAttrib("mana", monsterSelfHealAmount);
 }
 
 void Monster::receiveText(talk_type tt, const std::string &message, Character *cc) {

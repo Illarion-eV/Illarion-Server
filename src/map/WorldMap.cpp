@@ -102,10 +102,11 @@ auto WorldMap::insertPersistent(Field &&newField) -> bool {
 auto WorldMap::allMapsAged() -> bool {
     using std::chrono::milliseconds;
     using std::chrono::steady_clock;
+    constexpr auto ageInterval = milliseconds(10);
 
     auto startTime = steady_clock::now();
 
-    while (ageIndex < maps.size() && steady_clock::now() - startTime < milliseconds(10)) {
+    while (ageIndex < maps.size() && steady_clock::now() - startTime < ageInterval) {
         maps[ageIndex++].age();
     }
 
@@ -337,8 +338,9 @@ auto WorldMap::importFromEditor() -> bool {
 
         std::string map = it->path().string();
 
-        // strip .tiles.txt from file name
-        map.resize(map.length() - 10);
+        std::string_view suffix{".tiles.txt"};
+
+        map.resize(map.length() - suffix.length());
         map.erase(0, importDir.length());
 
         Logger::debug(LogFacility::World) << "Importing: " << map << Log::end;
@@ -392,7 +394,8 @@ auto WorldMap::loadFromDisk() -> bool {
 
     uint16_t tHeight = 0;
 
-    char mname[200];
+    constexpr auto mapNameMaxLength = 200;
+    char mname[mapNameMaxLength];
 
     for (int i = 0; i < size; ++i) {
         mapinitfile.read((char *)&tZ_Level, sizeof(tZ_Level));
@@ -458,7 +461,8 @@ void WorldMap::saveToDisk() const {
         uint16_t size = maps.size();
         Logger::info(LogFacility::World) << "Saving " << size << " maps." << Log::end;
         mapinitfile.write((char *)&size, sizeof(size));
-        char mname[200];
+        constexpr auto mapNameMaxLength = 200;
+        char mname[mapNameMaxLength];
 
         for (const auto &map : maps) {
             const auto level = map.getLevel();
@@ -571,7 +575,7 @@ auto walkableNear(const WorldMap &worldMap, const position &pos) -> const Field 
 
     unsigned char d = 0;
 
-    while (d < 6) {
+    while (d <= nearbyFieldRange) {
         testPos.x = start.x - d;
 
         while (testPos.x <= start.x + d) {

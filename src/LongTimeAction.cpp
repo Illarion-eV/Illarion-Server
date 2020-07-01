@@ -77,15 +77,16 @@ void LongTimeAction::startLongTimeAction(unsigned short int timetowait, unsigned
     _actionrunning = true;
     _ani = ani;
     _sound = sound;
+    constexpr auto dsToMsFactor = 100;
 
-    _timetowaitTimer = std::make_unique<MilTimer>(timetowait * 100);
+    _timetowaitTimer = std::make_unique<MilTimer>(timetowait * dsToMsFactor);
 
     if (_redoaniTimer) {
         _redoaniTimer.reset();
     }
 
     if (_ani != 0 && redoani != 0) {
-        _redoaniTimer = std::make_unique<MilTimer>(redoani * 100);
+        _redoaniTimer = std::make_unique<MilTimer>(redoani * dsToMsFactor);
     }
 
     if (_redosoundTimer) {
@@ -93,7 +94,7 @@ void LongTimeAction::startLongTimeAction(unsigned short int timetowait, unsigned
     }
 
     if (_sound != 0 && redosound != 0) {
-        _redosoundTimer = std::make_unique<MilTimer>(redosound * 100);
+        _redosoundTimer = std::make_unique<MilTimer>(redosound * dsToMsFactor);
     }
 
     if (_sound != 0) {

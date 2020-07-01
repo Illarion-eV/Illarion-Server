@@ -30,32 +30,34 @@
 
 BasicServerCommand::BasicServerCommand(unsigned char defByte) : BasicCommand(defByte) {
     buffer.resize(baseBufferSize);
-    addUnsignedCharToBuffer(getDefinitionByte());
-    addUnsignedCharToBuffer(getDefinitionByte() xor static_cast<unsigned char>(255));
-    addShortIntToBuffer(0); //<- dummy for the length
-    addShortIntToBuffer(0); //<- dummy for the checksum
-    checkSum = 0;
+    initHeader();
 }
 
 BasicServerCommand::BasicServerCommand(unsigned char defByte, uint16_t bsize) : BasicCommand(defByte) {
     baseBufferSize = bsize;
     buffer.resize(baseBufferSize);
+    initHeader();
+}
+
+void BasicServerCommand::initHeader() {
     addUnsignedCharToBuffer(getDefinitionByte());
-    addUnsignedCharToBuffer(getDefinitionByte() xor static_cast<unsigned char>(255));
-    addShortIntToBuffer(0); //<- dummy for the length
-    addShortIntToBuffer(0); //<- dummy for the checksum
-    checkSum = 0;
+    addUnsignedCharToBuffer(getDefinitionByte() xor static_cast<unsigned char>(255)); // NOLINT
+    addShortIntToBuffer(0); // dummy for the length
+    addShortIntToBuffer(0); // dummy for the checksum
+    checkSum = 0;           // reset checksum to 0, since the header is not included in checksum calculation
 }
 
 void BasicServerCommand::addHeader() {
-    // at place 2 and 3 add the length
-    if (bufferPos >= 6) { // check if the buffer is large enough to add the data
-        constexpr auto allBitsSet = 0xFFFF;
-        auto crc = static_cast<int16_t>(checkSum % allBitsSet);
-        buffer.at(2) = ((bufferPos - 6) >> 8);
-        buffer.at(3) = ((bufferPos - 6) & 255);
-        buffer.at(4) = (crc >> 8);
-        buffer.at(5) = (crc & 255);
+    if (bufferPos >= headerSize) { // check if the buffer is large enough to add the data
+        constexpr auto twoBytesSet = 0xFFFF;
+        const auto crc = static_cast<int16_t>(checkSum % twoBytesSet);
+        const auto dataSize = bufferPos - headerSize;
+
+        buffer.at(lengthPosition) = (dataSize >> 8);      // NOLINT
+        buffer.at(lengthPosition + 1) = (dataSize & 255); // NOLINT
+
+        buffer.at(crcPosition) = (crc >> 8);      // NOLINT
+        buffer.at(crcPosition + 1) = (crc & 255); // NOLINT
     }
 }
 
@@ -70,15 +72,15 @@ void BasicServerCommand::addStringToBuffer(const std::string &data) {
 }
 
 void BasicServerCommand::addIntToBuffer(int data) {
-    addUnsignedCharToBuffer((data >> 24));
-    addUnsignedCharToBuffer(((data >> 16) & 255));
-    addUnsignedCharToBuffer(((data >> 8) & 255));
-    addUnsignedCharToBuffer((data & 255));
+    addUnsignedCharToBuffer((data >> 24));         // NOLINT
+    addUnsignedCharToBuffer(((data >> 16) & 255)); // NOLINT
+    addUnsignedCharToBuffer(((data >> 8) & 255));  // NOLINT
+    addUnsignedCharToBuffer((data & 255));         // NOLINT
 }
 
 void BasicServerCommand::addShortIntToBuffer(short int data) {
-    addUnsignedCharToBuffer((data >> 8));
-    addUnsignedCharToBuffer((data & 255));
+    addUnsignedCharToBuffer((data >> 8));  // NOLINT
+    addUnsignedCharToBuffer((data & 255)); // NOLINT
 }
 
 void BasicServerCommand::addUnsignedCharToBuffer(unsigned char data) {

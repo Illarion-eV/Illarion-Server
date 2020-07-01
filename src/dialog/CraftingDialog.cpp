@@ -47,7 +47,7 @@ auto CraftingDialog::getGroupsBegin() const -> group_iterator { return groups.cb
 auto CraftingDialog::getGroupsEnd() const -> group_iterator { return groups.cend(); }
 
 void CraftingDialog::addGroup(const string &name) {
-    if (groups.size() < 256) {
+    if (groups.size() < maximumGroups) {
         groups.push_back(name);
     }
 }
@@ -125,5 +125,5 @@ auto CraftingDialog::getCraftableTime() const -> uint16_t {
 auto CraftingDialog::closeOnMove() const -> bool { return true; }
 
 auto CraftingDialog::canAddCraftable(uint8_t group) -> bool {
-    return (groups.size() - 1 >= group) && (craftables.size() < MAXCRAFTABLES);
+    return (groups.size() - 1 >= group) && (craftables.size() < maximumCraftables);
 }

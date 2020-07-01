@@ -52,7 +52,7 @@ struct ItemStruct {
     int16_t Rareness = 1;
     TYPE_OF_ITEMLEVEL Level = 0;
 
-    [[nodiscard]] auto isValid() const -> bool { return id != 0; }
+    [[nodiscard]] inline auto isValid() const -> bool { return id != 0; }
 };
 
 struct TilesModificatorStruct {
@@ -68,6 +68,18 @@ struct LongTimeEffectStruct {
 };
 
 struct WeaponStruct {
+    static constexpr auto slashing = 1;
+    static constexpr auto concussion = 2;
+    static constexpr auto puncture = 3;
+    static constexpr auto slashingTwoHand = 4;
+    static constexpr auto concussionTwoHand = 5;
+    static constexpr auto punctureTwoHand = 6;
+    static constexpr auto firearm = 7;
+    static constexpr auto arrow = 10;
+    static constexpr auto bolt = 11;
+    static constexpr auto stone = 12;
+    static constexpr auto stave = 13;
+    static constexpr auto shield = 14;
     TYPE_OF_ATTACK Attack{0};
     TYPE_OF_DEFENCE Defence{0};
     TYPE_OF_ACCURACY Accuracy{0};
@@ -78,9 +90,19 @@ struct WeaponStruct {
     TYPE_OF_MAGICDISTURBANCE MagicDisturbance{0};
     TYPE_OF_POISONSTRENGTH PoisonStrength{0};
     WeaponStruct() = default;
+
+    [[nodiscard]] inline auto isTwoHanded() const -> bool {
+        return Type == slashingTwoHand || Type == concussionTwoHand || Type == punctureTwoHand || Type == stave;
+    };
 };
 
 struct ArmorStruct {
+    static constexpr auto clothing = 0;
+    static constexpr auto general = 1;
+    static constexpr auto light = 2;
+    static constexpr auto medium = 3;
+    static constexpr auto heavy = 4;
+    static constexpr auto juwellery = 5;
     TYPE_OF_BODYPARTS BodyParts{0};
     TYPE_OF_PUNCTUREARMOR PunctureArmor{0};
     TYPE_OF_STROKEARMOR StrokeArmor{0};

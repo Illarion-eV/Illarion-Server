@@ -81,7 +81,7 @@ Player::Player(std::shared_ptr<NetInterface> newConnection) : Connection(std::mo
 
     check_logindata();
 
-    if (status == 7) {
+    if (status == dbStatusNoSkills) {
         Logger::error(LogFacility::Player) << to_string() << " did not select a skill package" << Log::end;
         throw LogoutException(NOSKILLS);
     }
@@ -1774,7 +1774,7 @@ auto Player::move(direction dir, uint8_t mode) -> bool {
     using std::chrono::steady_clock;
     auto now = steady_clock::now();
 
-    if (now + milliseconds(800) < reachingTargetField) {
+    if (now + milliseconds(MAX_WALK_COST) < reachingTargetField) {
         auto cmd = std::make_shared<MoveAckTC>(getId(), getPosition(), STILLMOVING, 0);
         Connection->addCommand(cmd);
         return false;
@@ -1828,7 +1828,7 @@ auto Player::move(direction dir, uint8_t mode) -> bool {
                 return false;
             }
             if (mode != RUNNING || j == 1) {
-                increaseActionPoints(walkcost / 100);
+                increaseActionPoints(walkcost / Character::actionPointUnit);
             }
 
             if (moveToPossible(newField)) {

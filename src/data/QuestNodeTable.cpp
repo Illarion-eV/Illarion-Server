@@ -94,44 +94,52 @@ void QuestNodeTable::readQuest(std::ifstream &questFile, std::filesystem::path &
 
         std::vector<std::string> entries;
         boost::split(entries, line, boost::is_any_of(","));
+        const auto &type = entries[typePosition];
 
-        if ((entries[0] != "triggerfield" && entries.size() != 4) ||
-            (entries[0] == "triggerfield" && entries.size() != 6)) {
+        if ((type != "triggerfield" && entries.size() != normalEntryCount) ||
+            (type == "triggerfield" && entries.size() != triggerfieldEntryCount)) {
             Logger::error(LogFacility::Script)
                     << "Syntax error while loading quest file: " << questPath.string() << "/quest.txt" << Log::end;
             return;
         }
 
-        if (entries[0] == "triggerfield") {
+        if (type == "triggerfield") {
             position pos{};
+            const auto &x = entries[triggerCoordinateXPosition];
 
             try {
-                pos.x = boost::lexical_cast<signed short>(entries[1]);
+                pos.x = boost::lexical_cast<signed short>(x);
             } catch (boost::bad_lexical_cast &) {
-                Logger::error(LogFacility::Script) << "Conversion error while loading quest file: " << entries[1]
-                                                   << " is not a map coordinate" << Log::end;
+                Logger::error(LogFacility::Script)
+                        << "Conversion error while loading quest file: " << x << " is not a map coordinate" << Log::end;
                 return;
             }
 
+            const auto &y = entries[triggerCoordinateYPosition];
+
             try {
-                pos.y = boost::lexical_cast<signed short>(entries[2]);
+                pos.y = boost::lexical_cast<signed short>(y);
             } catch (boost::bad_lexical_cast &) {
-                Logger::error(LogFacility::Script) << "Conversion error while loading quest file: " << entries[2]
-                                                   << " is not a map coordinate" << Log::end;
+                Logger::error(LogFacility::Script)
+                        << "Conversion error while loading quest file: " << y << " is not a map coordinate" << Log::end;
                 return;
             }
 
+            const auto &z = entries[triggerCoordinateZPosition];
+
             try {
-                pos.z = boost::lexical_cast<signed short>(entries[3]);
+                pos.z = boost::lexical_cast<signed short>(z);
             } catch (boost::bad_lexical_cast &) {
-                Logger::error(LogFacility::Script) << "Conversion error while loading quest file: " << entries[3]
-                                                   << " is not a map coordinate" << Log::end;
+                Logger::error(LogFacility::Script)
+                        << "Conversion error while loading quest file: " << z << " is not a map coordinate" << Log::end;
                 return;
             }
 
+            const auto &functionName = entries[triggerFunctionPosition];
+            const auto &scriptName = entries[triggerScriptPosition];
             NodeStruct node;
-            node.entrypoint = entries[4];
-            std::string scriptPath = "questsystem." + questPath.filename().string() + "." + entries[5];
+            node.entrypoint = functionName;
+            std::string scriptPath = "questsystem." + questPath.filename().string() + "." + scriptName;
 
             try {
                 node.script = std::make_shared<LuaScript>(scriptPath);
@@ -145,17 +153,21 @@ void QuestNodeTable::readQuest(std::ifstream &questFile, std::filesystem::path &
         } else {
             unsigned int id = 0;
 
+            const auto &idString = entries[idPosition];
+
             try {
-                id = boost::lexical_cast<unsigned int>(entries[1]);
+                id = boost::lexical_cast<unsigned int>(idString);
             } catch (boost::bad_lexical_cast &) {
                 Logger::error(LogFacility::Script)
-                        << "Conversion error while loading quest file: " << entries[1] << " is not an ID" << Log::end;
+                        << "Conversion error while loading quest file: " << idString << " is not an ID" << Log::end;
                 return;
             }
 
+            const auto &functionName = entries[functionPosition];
+            const auto &scriptName = entries[scriptPosition];
             NodeStruct node;
-            node.entrypoint = entries[2];
-            std::string scriptPath = "questsystem." + questPath.filename().string() + "." + entries[3];
+            node.entrypoint = functionName;
+            std::string scriptPath = "questsystem." + questPath.filename().string() + "." + scriptName;
 
             try {
                 node.script = std::make_shared<LuaScript>(scriptPath);
@@ -164,11 +176,11 @@ void QuestNodeTable::readQuest(std::ifstream &questFile, std::filesystem::path &
                 return;
             }
 
-            if (entries[0] == "item") {
+            if (type == "item") {
                 itemNodes.insert(std::pair<unsigned int, NodeStruct>(id, node));
-            } else if (entries[0] == "npc") {
+            } else if (type == "npc") {
                 npcNodes.insert(std::pair<unsigned int, NodeStruct>(id, node));
-            } else if (entries[0] == "monster") {
+            } else if (type == "monster") {
                 monsterNodes.insert(std::pair<unsigned int, NodeStruct>(id, node));
             }
         }

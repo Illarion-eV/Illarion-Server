@@ -146,10 +146,11 @@ void World::itemInform(Character *user, const ScriptItem &item, const ItemLookAt
 }
 
 void World::changeQuality(ScriptItem item, short int amount) {
-    short int tmpQuality = ((amount + item.getDurability()) < 100) ? (amount + item.getQuality())
-                                                                   : (item.getQuality() - item.getDurability() + 99);
+    short int tmpQuality = ((amount + item.getDurability()) <= Item::maximumDurability)
+                                   ? (amount + item.getQuality())
+                                   : (item.getQuality() - item.getDurability() + Item::maximumDurability);
 
-    if (tmpQuality % 100 > 0) {
+    if (tmpQuality % (Item::maximumDurability + 1) > 0) {
         item.setQuality(tmpQuality);
         changeItem(item);
     } else {
@@ -231,9 +232,9 @@ auto World::erase(ScriptItem item, int amount) -> bool {
 
     if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
         if (item.itempos == RIGHT_TOOL && (item.owner->GetItemAt(LEFT_TOOL)).getId() == BLOCKEDITEM) {
-            item.owner->increaseAtPos(LEFT_TOOL, -255);
+            item.owner->increaseAtPos(LEFT_TOOL, -MAXITEMS);
         } else if (item.itempos == LEFT_TOOL && (item.owner->GetItemAt(RIGHT_TOOL)).getId() == BLOCKEDITEM) {
-            item.owner->increaseAtPos(RIGHT_TOOL, -255);
+            item.owner->increaseAtPos(RIGHT_TOOL, -MAXITEMS);
         }
 
         item.owner->increaseAtPos(item.itempos, -amount);
@@ -381,7 +382,7 @@ auto World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, const pos
         sItem = static_cast<ScriptItem>(g_item);
         sItem.pos = pos;
         sItem.type = ScriptItem::it_field;
-        sItem.itempos = 255;
+        sItem.itempos = ScriptItem::maxItemPos;
         sItem.owner = nullptr;
 
         if (always) {

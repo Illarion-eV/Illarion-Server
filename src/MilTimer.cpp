@@ -26,8 +26,9 @@ MilTimer::MilTimer(long milsec) {
 auto MilTimer::Next() -> bool {
     timeb now{};
     ftime(&now);
+    constexpr auto sToMsFactor = 1000;
 
-    long temp = ((now.time - last.time) * 1000) + (now.millitm - last.millitm);
+    long temp = ((now.time - last.time) * sToMsFactor) + (now.millitm - last.millitm);
 
     if (gap > temp) {
         return false;

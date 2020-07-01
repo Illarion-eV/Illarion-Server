@@ -90,7 +90,8 @@ World::World() {
     // save starting time
     time_t starttime = 0;
     time(&starttime);
-    timeStart = starttime * 1000;
+    constexpr auto sToMsFactor = 1000;
+    timeStart = starttime * sToMsFactor;
 
     currentScript = nullptr;
 
@@ -101,7 +102,8 @@ World::World() {
 
 void World::turntheworld() {
     ftime(&now);
-    unsigned long timeNow = now.time * 1000 + now.millitm;
+    constexpr auto sToMsFactor = 1000;
+    unsigned long timeNow = now.time * sToMsFactor + now.millitm;
 
     ap = timeNow / MIN_AP_UPDATE - timeStart / MIN_AP_UPDATE - usedAP;
 
@@ -321,7 +323,7 @@ void World::checkMonsters() {
                     if (!has_attacked) {
                         const auto targets = getTargetsInRange(monster.getPosition(), MONSTERVIEWRANGE);
 
-                        bool makeRandomStep = true;
+                        bool canMakeRandomStep = true;
 
                         if ((!targets.empty()) && (monster.canAttack())) {
                             Character *targetChar = nullptr;
@@ -342,7 +344,7 @@ void World::checkMonsters() {
                                         }
                                     }
 
-                                    makeRandomStep = false;
+                                    canMakeRandomStep = false;
                                     monster.performStep(targetChar->getPosition());
                                 } else {
                                     Logger::notice(LogFacility::Script)
@@ -350,12 +352,12 @@ void World::checkMonsters() {
                                 }
                             }
                         } else if (monster.lastTargetSeen) {
-                            makeRandomStep = false;
+                            canMakeRandomStep = false;
                             monster.performStep(monster.lastTargetPosition);
                         }
 
-                        if (makeRandomStep) {
-                            int tempr = Random::uniform(1, 25);
+                        if (canMakeRandomStep) {
+                            bool makesRandomStep = Random::uniform() < randomMonsterMoveProbability;
 
                             bool hasDefinition = monsterDescriptions->exists(monster.getMonsterType());
                             const auto &monsterdef = (*monsterDescriptions)[monster.getMonsterType()];
@@ -366,12 +368,12 @@ void World::checkMonsters() {
                                         << Log::end;
                             }
 
-                            if (tempr <= 5 && hasDefinition && monsterdef.canselfheal) {
+                            if (makesRandomStep && hasDefinition && monsterdef.canselfheal) {
                                 monster.heal();
                             } else {
                                 SpawnPoint *spawn = monster.getSpawn();
 
-                                auto dir = (direction)Random::uniform(0, 7);
+                                auto dir = (direction)Random::uniform(minDirection, maxDirection);
 
                                 if (spawn != nullptr) {
                                     position newpos = monster.getPosition();
@@ -447,7 +449,7 @@ void World::checkMonsters() {
                                 monster.move(dir);
 
                                 // movementrate below normal if noone is near
-                                monster.increaseActionPoints(-20);
+                                monster.increaseActionPoints(-NP_WALK_COST);
                             }
                         }
                     }
@@ -617,22 +619,22 @@ static auto getNextIGDayTime() -> std::chrono::steady_clock::time_point {
 }
 
 void World::initScheduler() {
-    scheduler.addRecurringTask([&] { Players.for_each(reduceMC); }, std::chrono::seconds(10),
+    scheduler.addRecurringTask([&] { Players.for_each(reduceMC); }, reduceMentalCapacityInterval,
                                "increase_player_learn_points");
     scheduler.addRecurringTask(
             [&] {
                 Monsters.for_each(reduceMC);
                 Npc.for_each(reduceMC);
             },
-            std::chrono::seconds(10), "increase_monster_learn_points");
-    scheduler.addRecurringTask([&] { monitoringClientList->CheckClients(); }, std::chrono::milliseconds(250),
+            reduceMentalCapacityInterval, "increase_monster_learn_points");
+    scheduler.addRecurringTask([&] { monitoringClientList->CheckClients(); }, checkMonitoringClientsInterval,
                                "check_monitoring_clients");
-    scheduler.addRecurringTask([&] { scheduledScripts->nextCycle(); }, std::chrono::seconds(1),
+    scheduler.addRecurringTask([&] { scheduledScripts->nextCycle(); }, scheduledScriptsInterval,
                                "check_scheduled_scripts");
-    scheduler.addRecurringTask([&] { ageInventory(); }, std::chrono::minutes(3), "age_inventory");
-    scheduler.addRecurringTask([&] { ageMaps(); }, std::chrono::minutes(3), "age_maps");
-    scheduler.addRecurringTask([&] { turntheworld(); }, std::chrono::milliseconds(100), "turntheworld");
-    scheduler.addRecurringTask([&] { sendIGTimeToAllPlayers(); }, std::chrono::hours(8), getNextIGDayTime(),
+    scheduler.addRecurringTask([&] { ageInventory(); }, wearReductionInterval, "age_inventory");
+    scheduler.addRecurringTask([&] { ageMaps(); }, wearReductionInterval, "age_maps");
+    scheduler.addRecurringTask([&] { turntheworld(); }, gameLoopInterval, "turntheworld");
+    scheduler.addRecurringTask([&] { sendIGTimeToAllPlayers(); }, ingameTimeUpdateInterval, getNextIGDayTime(),
                                "update_ig_day");
 }
 

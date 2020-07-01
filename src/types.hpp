@@ -82,6 +82,9 @@ enum direction {
     dir_none = 10
 };
 
+constexpr auto minDirection = 0;
+constexpr auto maxDirection = 7;
+
 enum class movement_type { walk = 0, fly = 1, crawl = 2 };
 
 struct Colour {

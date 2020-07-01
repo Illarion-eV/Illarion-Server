@@ -32,15 +32,10 @@ ScheduledScriptsTable::ScheduledScriptsTable() { reload(); }
 auto ScheduledScriptsTable::nextCycle() -> bool {
     currentCycle++;
     ScriptData data; /**< holds the current task*/
-    int emexit = 0;  /**< emergency counter which breaks the loop if to much execution*/
+    constexpr auto scriptLimit = 200;
+    int emexit = 0; /**< emergency counter which breaks the loop if too much execution*/
 
-    while (!m_table.empty() && (emexit < 200) && (m_table.front().nextCycleTime <= currentCycle)) {
-        emexit++;
-
-        if (emexit >= 200) {
-            break; /**< emergency exit so we can't create an endless loop */
-        }
-
+    while (!m_table.empty() && (emexit++ < scriptLimit) && (m_table.front().nextCycleTime <= currentCycle)) {
         if (!m_table.empty()) {
             data = m_table.front(); /**< copy the first data in data*/
             m_table.pop_front();    /**< deletes the first task */

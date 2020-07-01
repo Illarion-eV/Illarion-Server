@@ -36,36 +36,36 @@ void World::sendMessageToAdmin(const std::string &message) const {
     });
 }
 
-auto World::languagePrefix(int Language) -> std::string {
-    switch (Language) {
-    case 1:
+auto World::languagePrefix(int languageId) -> std::string {
+    switch (languageId) {
+    case languageHuman:
         return "[hum] ";
 
-    case 2:
+    case languageDwarf:
         return "[dwa] ";
 
-    case 3:
+    case languageElf:
         return "[elf] ";
 
-    case 4:
+    case languageLizard:
         return "[liz] ";
 
-    case 5:
+    case languageOrc:
         return "[orc] ";
 
-    case 6:
+    case languageHalfling:
         return "[hal] ";
 
-    case 7:
+    case languageFairy:
         return "[fai] ";
 
-    case 8:
+    case languageGnome:
         return "[gno] ";
 
-    case 9:
+    case languageGoblin:
         return "[gob] ";
 
-    case 10:
+    case languageAncient:
         return "[anc] ";
 
     default:
@@ -73,39 +73,39 @@ auto World::languagePrefix(int Language) -> std::string {
     }
 }
 
-auto World::languageNumberToSkillName(int languageNumber) -> std::string {
-    switch (languageNumber) {
-    case 0:
+auto World::languageNumberToSkillName(int languageId) -> std::string {
+    switch (languageId) {
+    case languageCommon:
         return "common language";
 
-    case 1:
+    case languageHuman:
         return "human language";
 
-    case 2:
+    case languageDwarf:
         return "dwarf language";
 
-    case 3:
+    case languageElf:
         return "elf language";
 
-    case 4:
+    case languageLizard:
         return "lizard language";
 
-    case 5:
+    case languageOrc:
         return "orc language";
 
-    case 6:
+    case languageHalfling:
         return "halfling language";
 
-    case 7:
+    case languageFairy:
         return "fairy language";
 
-    case 8:
+    case languageGnome:
         return "gnome language";
 
-    case 9:
+    case languageGoblin:
         return "goblin language";
 
-    case 10:
+    case languageAncient:
         return "ancient language";
 
     default:
@@ -118,16 +118,16 @@ auto World::getTalkRange(Character::talk_type tt) -> Range {
 
     switch (tt) {
     case Character::tt_say:
-        range.radius = 14;
+        range.radius = talkRange;
         break;
 
     case Character::tt_whisper:
-        range.radius = 2;
+        range.radius = whisperRange;
         range.zRadius = 0;
         break;
 
     case Character::tt_yell:
-        range.radius = 30;
+        range.radius = yellRange;
         break;
     }
 

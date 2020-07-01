@@ -102,7 +102,8 @@ public:
     };
 
 private:
-    static const uint32_t MAXCRAFTABLES = 256;
+    static constexpr auto maximumCraftables = 256;
+    static constexpr auto maximumGroups = 256;
     uint16_t sfx{};
     uint16_t sfxDuration{};
     groups_t groups;

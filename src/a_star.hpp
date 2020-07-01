@@ -33,6 +33,8 @@
 
 namespace pathfinding {
 
+static constexpr auto numberOfVertices = 1000;
+
 using namespace boost;
 
 using Position = std::pair<int, int>;
@@ -59,7 +61,7 @@ protected:
     void valid_step();
     Position position;
     const world_map_graph *graph{nullptr};
-    int direction{8};
+    int direction{maxDirection + 1};
 };
 
 struct world_map_graph {

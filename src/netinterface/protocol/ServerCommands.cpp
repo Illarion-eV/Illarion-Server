@@ -34,6 +34,7 @@
 #include "netinterface/BasicServerCommand.hpp"
 #include "netinterface/NetInterface.hpp"
 
+#include <limits>
 #include <range/v3/all.hpp>
 
 KeepAliveTC::KeepAliveTC() : BasicServerCommand(SC_KEEPALIVE_TC) {}
@@ -45,15 +46,9 @@ QuestProgressTC::QuestProgressTC(TYPE_OF_QUEST_ID id, const std::string &title, 
     addStringToBuffer(title);
     addStringToBuffer(description);
     addUnsignedCharToBuffer(final ? 1 : 0);
+    addUnsignedCharToBuffer(targets.size());
 
-    if (targets.size() > 255) {
-        addUnsignedCharToBuffer(255);
-    } else {
-        addUnsignedCharToBuffer(targets.size());
-    }
-
-    for (size_t i = 0; (i < targets.size()) && (i < 255); ++i) {
-        const position &pos = targets[i];
+    for (const auto &pos : targets) {
         addShortIntToBuffer(pos.x);
         addShortIntToBuffer(pos.y);
         addShortIntToBuffer(pos.z);
@@ -212,7 +207,7 @@ void addMovementCostToBuffer(BasicServerCommand *cmd, const position &pos) {
         map::Field &field = World::get()->fieldAt(pos);
         cmd->addUnsignedCharToBuffer(field.getMovementCost());
     } catch (FieldNotFound &) {
-        cmd->addUnsignedCharToBuffer(255);
+        cmd->addUnsignedCharToBuffer(std::numeric_limits<unsigned char>::max());
     }
 }
 
@@ -222,16 +217,11 @@ ItemUpdate_TC::ItemUpdate_TC(const position &pos, const std::vector<Item> &items
     addShortIntToBuffer(pos.x);
     addShortIntToBuffer(pos.y);
     addShortIntToBuffer(pos.z);
-    int16_t size = static_cast<unsigned char>(items.size());
-
-    if (size > 255) {
-        size = 255;
-    }
-
-    addUnsignedCharToBuffer(static_cast<uint8_t>(size));
+    auto size = static_cast<uint8_t>(items.size());
+    addUnsignedCharToBuffer(size);
 
     for (const auto &item : items) {
-        // we added 255 items
+        // we added MAXITEMS items
         if (size <= 0) {
             break;
         }
@@ -539,8 +529,7 @@ MoveAckTC::MoveAckTC(TYPE_OF_CHARACTER_ID id, const position &pos, unsigned char
     addShortIntToBuffer(pos.y);
     addShortIntToBuffer(pos.z);
     addUnsignedCharToBuffer(mode);
-    // round to hundreds for now, to mirror action points
-    addShortIntToBuffer((duration / 100) * 100);
+    addShortIntToBuffer((duration / Character::actionPointUnit) * Character::actionPointUnit);
 }
 
 IntroduceTC::IntroduceTC(TYPE_OF_CHARACTER_ID id, const std::string &name) : BasicServerCommand(SC_INTRODUCE_TC) {

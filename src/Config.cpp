@@ -23,6 +23,7 @@
 #include "Logger.hpp"
 
 #include <fstream>
+#include <limits>
 #include <map>
 
 std::unique_ptr<Config> Config::_instance = nullptr;
@@ -48,7 +49,7 @@ auto Config::load(const std::string &config_file) -> bool {
     while (configfile >> temp && !configfile.eof()) {
         if (temp[0] == '#') {
             // we found a comment... skip line
-            configfile.ignore(255, '\n'); // ignore up to 255 chars until \n is found
+            configfile.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // ignore chars until \n is found
             continue;
         }
 
@@ -58,7 +59,7 @@ auto Config::load(const std::string &config_file) -> bool {
 
         if (pos == config_options.end()) {
             Logger::error(LogFacility::Other) << "Invalid config entry: " << temp << Log::end;
-            configfile.ignore(255, '\n');
+            configfile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             continue;
         }
 

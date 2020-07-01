@@ -137,6 +137,8 @@ public:
     auto getName() const -> const std::string &;
     virtual auto to_string() const -> std::string = 0;
 
+    static constexpr auto actionPointUnit = 100;
+
     auto getActionPoints() const -> short int;
     virtual auto getMinActionPoints() const -> short int;
     virtual auto getMaxActionPoints() const -> short int;
@@ -503,6 +505,7 @@ private:
     TYPE_OF_RACE_ID race = 0;
     face_to faceto = north;
     s_magic magic{};
+    static constexpr auto defaultLanguageSkill = 100;
 };
 
 auto operator<<(std::ostream &os, const Character &character) -> std::ostream &;

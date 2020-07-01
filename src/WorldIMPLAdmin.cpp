@@ -42,6 +42,7 @@
 #include "script/LuaWeaponScript.hpp"
 
 #include <iostream>
+#include <limits>
 #include <list>
 #include <regex>
 #include <sstream>
@@ -1200,13 +1201,13 @@ void create_area_command(World *world, Player *player, const std::string &params
     }
 
     std::stringstream ss(params);
-    int x = 0;
-    int y = 0;
-    int z = 0;
-    int w = 0;
-    int h = 0;
-    int tile = 0;
-    x = y = z = w = h = tile = -65535;
+    constexpr int illegalValue = std::numeric_limits<int>::min();
+    int x = illegalValue;
+    int y = illegalValue;
+    int z = illegalValue;
+    int w = illegalValue;
+    int h = illegalValue;
+    int tile = illegalValue;
     ss >> x;
     ss >> y;
     ss >> z;
@@ -1214,7 +1215,7 @@ void create_area_command(World *world, Player *player, const std::string &params
     ss >> h;
     ss >> tile;
 
-    if (x == -65535 || y == -65535 || z == -65535 || w < 1 || h < 1 || tile < 0) {
+    if (x == illegalValue || y == illegalValue || z == illegalValue || w < 1 || h < 1 || tile < 0) {
         Logger::error(LogFacility::World) << "Error in create_area_command issued by " << *player << "; input: " << x
                                           << " " << y << " " << z << " " << w << " " << h << Log::end;
         return;

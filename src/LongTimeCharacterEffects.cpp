@@ -154,9 +154,10 @@ auto LongTimeCharacterEffects::removeEffect(LongTimeEffect *effect) -> bool {
 
 void LongTimeCharacterEffects::checkEffects() {
     ++time;
+    constexpr auto scriptLimit = 200;
     int emexit = 0;
 
-    while (!effects.empty() && (emexit < 200) && (effects.front()->getExecutionTime() <= time)) {
+    while (!effects.empty() && (emexit < scriptLimit) && (effects.front()->getExecutionTime() <= time)) {
         ++emexit;
         std::pop_heap(effects.begin(), effects.end(), LongTimeEffect::priority);
         LongTimeEffect *effect = effects.back();

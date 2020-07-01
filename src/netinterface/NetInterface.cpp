@@ -48,7 +48,7 @@ void NetInterface::closeConnection() { online = false; }
 auto NetInterface::activate(Player *player) -> bool {
     try {
         owner = player;
-        boost::asio::async_read(socket, boost::asio::buffer(headerBuffer, 6),
+        boost::asio::async_read(socket, boost::asio::buffer(headerBuffer),
                                 [shared_this = shared_from_this()](const auto &error, auto bytes_transferred) {
                                     shared_this->handle_read_header(error);
                                 });
@@ -108,14 +108,14 @@ void NetInterface::handle_read_data(const boost::system::error_code &error) {
             }
 
             cmd.reset();
-            boost::asio::async_read(socket, boost::asio::buffer(headerBuffer, 6),
+            boost::asio::async_read(socket, boost::asio::buffer(headerBuffer),
                                     [shared_this = shared_from_this()](const auto &error, auto bytes_transferred) {
                                         shared_this->handle_read_header(error);
                                     });
         }
     } else {
         closeConnection();
-        boost::asio::async_read(socket, boost::asio::buffer(headerBuffer, 6),
+        boost::asio::async_read(socket, boost::asio::buffer(headerBuffer),
                                 [shared_this = shared_from_this()](const auto &error, auto bytes_transferred) {
                                     shared_this->handle_read_header(error);
                                 });
@@ -124,18 +124,18 @@ void NetInterface::handle_read_data(const boost::system::error_code &error) {
 
 auto NetInterface::nextInactive() -> bool {
     inactive++;
-    return (inactive > 1000);
+    return (inactive > maxInactive);
 }
 
 void NetInterface::handle_read_header(const boost::system::error_code &error) {
     if (!error) {
-        if ((headerBuffer[0] xor 255) == headerBuffer[1]) {
+        if ((headerBuffer[commandPosition] xor 255) == headerBuffer[commandPosition + 1]) { // NOLINT
             // Correcter header decodieren und comand empfangen
-            uint16_t length = headerBuffer[2] << 8;
-            length = length | headerBuffer[3];
-            uint16_t checkSum = headerBuffer[4] << 8;
-            checkSum = checkSum | headerBuffer[5];
-            cmd = commandFactory.getCommand(headerBuffer[0]);
+            uint16_t length = headerBuffer[lengthPosition] << 8; // NOLINT
+            length = length | headerBuffer[lengthPosition + 1];
+            uint16_t checkSum = headerBuffer[crcPosition] << 8; // NOLINT
+            checkSum = checkSum | headerBuffer[crcPosition + 1];
+            cmd = commandFactory.getCommand(headerBuffer[commandPosition]);
 
             if (cmd) {
                 cmd->setHeaderData(length, checkSum);
@@ -151,18 +151,18 @@ void NetInterface::handle_read_header(const boost::system::error_code &error) {
         // no correct header
 
         // look for command id in header
-        for (int i = 1; i < 5; ++i) {
+        for (int i = 1; i < headerSize - 1; ++i) {
             // found correct command id
-            if ((headerBuffer.at(i) xor 255) == headerBuffer.at(i + 1)) {
+            if ((headerBuffer.at(i) xor 255) == headerBuffer.at(i + 1)) { // NOLINT
                 // copy the rest of the correct message to the start of the buffer
                 int start = 0;
 
-                while (i < 6) {
+                while (i < headerSize) {
                     headerBuffer.at(start++) = headerBuffer.at(i++);
                 }
 
                 // restheader empfangen
-                boost::asio::async_read(socket, boost::asio::buffer(&headerBuffer.at(start), 6 - start),
+                boost::asio::async_read(socket, boost::asio::buffer(&headerBuffer.at(start), headerSize - start),
                                         [shared_this = shared_from_this()](const auto &error, auto bytes_transferred) {
                                             shared_this->handle_read_header(error);
                                         });
@@ -172,7 +172,7 @@ void NetInterface::handle_read_header(const boost::system::error_code &error) {
         }
 
         // Keine Command Signature gefunden wieder 6 Byte Header auslesen
-        boost::asio::async_read(socket, boost::asio::buffer(headerBuffer, 6),
+        boost::asio::async_read(socket, boost::asio::buffer(headerBuffer),
                                 [shared_this = shared_from_this()](const auto &error, auto bytes_transferred) {
                                     shared_this->handle_read_header(error);
                                 });

@@ -90,47 +90,47 @@ void World::logGMTicket(Player *player, const std::string &ticket, bool automati
 // !language <language>, language=common, human, dwarfen, elven, lizard, orc, ...
 auto World::active_language_command(Player *cp, const std::string &language) -> bool {
     if (language == "common") {
-        cp->setActiveLanguage(0);
+        cp->setActiveLanguage(languageCommon);
     }
 
     if (language == "human") {
-        cp->setActiveLanguage(1);
+        cp->setActiveLanguage(languageHuman);
     }
 
     if (language == "dwarf") {
-        cp->setActiveLanguage(2);
+        cp->setActiveLanguage(languageDwarf);
     }
 
     if (language == "elf") {
-        cp->setActiveLanguage(3);
+        cp->setActiveLanguage(languageElf);
     }
 
     if (language == "lizard") {
-        cp->setActiveLanguage(4);
+        cp->setActiveLanguage(languageLizard);
     }
 
     if (language == "orc") {
-        cp->setActiveLanguage(5);
+        cp->setActiveLanguage(languageOrc);
     }
 
     if (language == "halfling") {
-        cp->setActiveLanguage(6);
+        cp->setActiveLanguage(languageHalfling);
     }
 
     if (language == "fairy") {
-        cp->setActiveLanguage(7);
+        cp->setActiveLanguage(languageFairy);
     }
 
     if (language == "gnome") {
-        cp->setActiveLanguage(8);
+        cp->setActiveLanguage(languageGnome);
     }
 
     if (language == "goblin") {
-        cp->setActiveLanguage(9);
+        cp->setActiveLanguage(languageGoblin);
     }
 
     if (language == "ancient") {
-        cp->setActiveLanguage(10);
+        cp->setActiveLanguage(languageAncient);
     }
 
     return true;

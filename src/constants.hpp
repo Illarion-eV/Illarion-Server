@@ -25,6 +25,9 @@
 constexpr auto illarionBirthTime = 950742000; // 17.2.2000 (UTC+1)
 constexpr auto illarionTimeFactor = 3;
 
+constexpr auto maxDataKeyLength = 255;
+constexpr auto maxDataValueLength = 255;
+
 constexpr uint32_t DYNNPC_BASE = 0xFF800000;
 constexpr uint32_t NPC_BASE = 0xFF000000;
 constexpr uint32_t MONSTER_BASE = 0xFE000000;
@@ -120,14 +123,15 @@ constexpr auto BELT4 = 15;
 constexpr auto BELT5 = 16;
 constexpr auto BELT6 = 17;
 
-constexpr auto FLAG_HEAD = 1;
-constexpr auto FLAG_NECK = 2;
-constexpr auto FLAG_BREAST = 4;
-constexpr auto FLAG_HANDS = 8;
-constexpr auto FLAG_COAT = 16;
-constexpr auto FLAG_FINGER = 32;
-constexpr auto FLAG_LEGS = 64;
-constexpr auto FLAG_FEET = 128;
+constexpr uint8_t FLAG_HEAD = 0b0000'0001;
+constexpr uint8_t FLAG_NECK = 0b0000'0010;
+constexpr uint8_t FLAG_BREAST = 0b0000'0100;
+constexpr uint8_t FLAG_HANDS = 0b0000'1000;
+constexpr uint8_t FLAG_COAT = 0b0001'0000;
+constexpr uint8_t FLAG_FINGER = 0b0010'0000;
+constexpr uint8_t FLAG_LEGS = 0b0100'0000;
+constexpr uint8_t FLAG_FEET = 0b1000'0000;
+constexpr uint8_t FLAG_ALL_SLOTS = 0b1111'1111;
 
 constexpr auto MAXSHOWCASES = 100;
 constexpr auto MAX_DEPOT_SHOWCASE = 9;
@@ -201,4 +205,22 @@ constexpr auto NOSKILLS = 0x0C;
 //! Grund fuer Verbindungsabbruch: Spielerdaten korrupt
 constexpr auto CORRUPTDATA = 0x0D;
 
+constexpr auto dbStatusNoSkills = 7;
+
+constexpr auto languageCommon = 0;
+constexpr auto languageHuman = 1;
+constexpr auto languageDwarf = 2;
+constexpr auto languageElf = 3;
+constexpr auto languageLizard = 4;
+constexpr auto languageOrc = 5;
+constexpr auto languageHalfling = 6;
+constexpr auto languageFairy = 7;
+constexpr auto languageGnome = 8;
+constexpr auto languageGoblin = 9;
+constexpr auto languageAncient = 10;
+
+constexpr auto maximumMajorSkill = 100;
+constexpr auto maximumMinorSkill = 10000;
+
+constexpr auto BBIWIClientVersion = 200;
 #endif

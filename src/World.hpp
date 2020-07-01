@@ -479,46 +479,23 @@ public:
     void sendMessageToAllPlayers(const std::string &message) const;
     void broadcast(const std::string &german, const std::string &english) const override;
 
-    //! schickt eine Nachricht an alle GM's im Spiel.
-    // \param message die zu schickende Nachricht
     void sendMessageToAdmin(const std::string &message) const;
 
-    //! converts the number of a language to the proper skill name.
-    // \param language number
-    static auto languageNumberToSkillName(int languageNumber) -> std::string;
-
-    //! converts the language number into the proper language prefix for talking
-    //\param language number
-    static auto languagePrefix(int Language) -> std::string;
+    static auto languageNumberToSkillName(int languageId) -> std::string;
+    static auto languagePrefix(int languageId) -> std::string;
 
     static auto getTalkRange(Character::talk_type tt) -> Range;
 
-    //! schickt an alle Spieler auf den Nachbarfeldern von cp dessen Namen
-    // \param cp der Player der sich den anderen bekannt macht
     void introduceMyself(Player *cp) const;
-
-    // Stellt den Player dem entsprechenden Admin vor
     static void forceIntroducePlayer(Player *cp, Player *admin);
-
-    // GM Funktion um eine Vorstellen zu erzwingen.
     void ForceIntroduce(Player *player, const std::string &text) const;
-
-    // GM Funktion um ein Vorstellen aller Personen im Sichtbereich zu erzwingen
     void ForceIntroduceAll(Player *player) const;
 
-    // Sends the current weather to one player
     void sendWeather(Player *cp) const;
-
-    // Sends the current IG time to all players online
-    void sendIGTimeToAllPlayers();
-
-    // Sends the current IG Time to one player
-    void sendIGTime(Player *cp) const;
-
-    /**
-     *sends the current weather to all players online
-     */
     void sendWeatherToAllPlayers();
+
+    void sendIGTimeToAllPlayers();
+    void sendIGTime(Player *cp) const;
 
     ////////// in WorldIMPLAdmin.cpp /////////////
 

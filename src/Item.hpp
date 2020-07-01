@@ -44,6 +44,8 @@ public:
     static constexpr TYPE_OF_VOLUME LARGE_ITEM_VOLUME = 5000;
     static constexpr wear_type PERMANENT_WEAR = 255;
     static constexpr quality_type defaultQuality = 333;
+    static constexpr quality_type maximumQuality = 999;
+    static constexpr quality_type maximumDurability = 99;
 
     Item() = default;
     Item(id_type id, number_type number, wear_type wear, quality_type quality = defaultQuality)
@@ -62,7 +64,7 @@ public:
 
     inline auto getQuality() const -> quality_type { return quality; }
     inline void setQuality(quality_type quality) { this->quality = quality; }
-    inline auto getDurability() const -> quality_type { return quality % 100; }
+    inline auto getDurability() const -> quality_type { return quality % (maximumDurability + 1); }
     void setMinQuality(const Item &item);
 
     // setData actually does either a clear (if the datamap is nil) or a merge of the keys in datamap

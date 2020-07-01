@@ -107,7 +107,7 @@ void PlayerManager::loginLoop(PlayerManager *pmanager) {
                         auto loginData = Connection->getLoginData();
                         if (loginData != nullptr) {
                             unsigned short int clientversion = loginData->getClientVersion();
-                            if (clientversion == 200) {
+                            if (clientversion == BBIWIClientVersion) {
                                 // TODO handle login for BBIWI Clients...
                             } else if (clientversion != acceptVersion) {
                                 Logger::error(LogFacility::Player)

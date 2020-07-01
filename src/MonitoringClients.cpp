@@ -64,10 +64,11 @@ void MonitoringClients::CheckClients() {
         if ((*it)->Connection->online) {
             time_t tempkeepalive = 0;
             time(&tempkeepalive);
-            const int temptime = tempkeepalive - (*it)->lastkeepalive;
+            const int timeSinceLastKeepAlive = tempkeepalive - (*it)->lastkeepalive;
+            const int timeout = 20;
 
             // check if we have a timeout
-            if ((temptime >= 0) && (temptime < 20)) {
+            if ((timeSinceLastKeepAlive >= 0) && (timeSinceLastKeepAlive < timeout)) {
                 (*it)->workoutCommands();
             } else {
                 // timeout so we have to disconnect

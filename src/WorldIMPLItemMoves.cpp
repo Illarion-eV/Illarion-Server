@@ -65,7 +65,7 @@ auto World::putItemOnInvPos(Character *cc, unsigned char pos) -> bool {
                     if (Data::WeaponItems.exists(g_item.getId())) {
                         const auto &weapon = Data::WeaponItems[g_item.getId()];
 
-                        if ((weapon.Type == 4) || (weapon.Type == 5) || (weapon.Type == 6) || (weapon.Type == 13)) {
+                        if (weapon.isTwoHanded()) {
                             if ((pos == RIGHT_TOOL) && (cc->items.at(LEFT_TOOL).getId() == 0)) {
                                 if (cc->items.at(pos).getId() == 0 && g_item.getNumber() == 1) {
                                     cc->items.at(pos) = g_item;
@@ -170,7 +170,7 @@ auto World::putItemOnInvPos(Character *cc, unsigned char pos) -> bool {
                                 return FLAG_COAT;
 
                             default:
-                                return 0xFF;
+                                return FLAG_ALL_SLOTS;
                             }
                         }();
 
@@ -283,7 +283,7 @@ auto World::takeItemFromInvPos(Character *cc, unsigned char pos, Item::number_ty
                     } else {
                         const auto &weapon = Data::WeaponItems[weaponId];
 
-                        if ((weapon.Type == 4) || (weapon.Type == 5) || (weapon.Type == 6) || (weapon.Type == 13)) {
+                        if (weapon.isTwoHanded()) {
                             cc->items.at(LEFT_TOOL).reset();
                             cc->items.at(RIGHT_TOOL).reset();
                         } else {

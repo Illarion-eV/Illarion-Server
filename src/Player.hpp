@@ -490,12 +490,14 @@ public:
 private:
     void handleWarp();
 
+    static constexpr auto dialogLimit = 100;
+
     template <class DialogType, class DialogCommandType> void requestDialog(DialogType *dialog) {
         if (dialog == nullptr) {
             LuaScript::triggerScriptError("Dialog must not be nil!");
         }
 
-        if (dialogs.size() < 100) {
+        if (dialogs.size() < dialogLimit) {
             unsigned int dialogId = dialogCounter;
 
             while (dialogs.find(dialogId) != dialogs.end()) {

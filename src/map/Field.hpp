@@ -31,7 +31,12 @@ namespace map {
 
 class Field {
 private:
-    static const uint16_t TRANSPARENT = 0;
+    static constexpr uint16_t TRANSPARENT = 0;
+    static constexpr uint16_t tileIdBits = 10;
+    static constexpr uint16_t primaryTileIdBits = 5;
+    static constexpr uint16_t overlayTileBitMask = 0b1111'1100'0000'0000;
+    static constexpr uint16_t secondaryTileBitMask = 0b0000'0011'1110'0000;
+    static constexpr uint16_t primaryTileBitMask = 0b0000'0000'0001'1111;
 
     uint16_t tile = 0;
     uint16_t music = 0;

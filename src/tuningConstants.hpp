@@ -21,6 +21,17 @@
 
 #include "types.hpp"
 
+#include <chrono>
+
+using namespace std::chrono_literals;
+
+constexpr auto reduceMentalCapacityInterval = 10s;
+constexpr auto checkMonitoringClientsInterval = 250ms;
+constexpr auto scheduledScriptsInterval = 1s;
+constexpr auto wearReductionInterval = 3min;
+constexpr auto gameLoopInterval = 100ms;
+constexpr auto ingameTimeUpdateInterval = 8h;
+
 constexpr auto CLIENT_TIMEOUT = 50;
 
 // how many players to process each turn (maximum)
@@ -65,15 +76,34 @@ constexpr auto P_SPIN_COST = 1;
 constexpr auto P_REGENERATE_COST = 0;
 constexpr auto NP_REGENERATE_COST = 10;
 
+constexpr auto NP_WALK_COST = 20;
+
 constexpr unsigned short MAX_WALK_AGI = 20;
 constexpr TYPE_OF_WALKINGCOST ADDITIONAL_MONSTER_WALKING_COST = 1;
 constexpr TYPE_OF_WALKINGCOST MIN_WALK_COST = 300;
 constexpr TYPE_OF_WALKINGCOST MAX_WALK_COST = 800;
-
 constexpr auto NP_STANDARDFLYCOST = 5;
+constexpr float overtaxedRelativeLoad = 1.0;
+constexpr float burdenedRelativeLoad = 0.75;
+constexpr int walkNeutralAgility = 10;
+constexpr float walkAgilityWeight = 0.01;
+constexpr float walkLoadWeight = 0.3;
+constexpr float runningMoveTimeMultiplier = 0.6;
+
+constexpr double randomMonsterMoveProbability = 0.2;
+constexpr auto monsterSelfHealAmount = 150;
+constexpr uint8_t monsterViewRange = 9;
+
+constexpr auto screenRange = 14;
+constexpr auto whisperRange = 2;
+constexpr auto talkRange = screenRange;
+constexpr auto yellRange = 30;
+
+constexpr auto nearbyFieldRange = 5;
 
 constexpr auto MAXTHROWDISTANCE = 10;
 constexpr auto MAXTHROWWEIGHT = 99;
 constexpr auto MAXDROPDISTANCE = 2;
-
+constexpr auto minimumCarryWeight = 5000;
+constexpr auto carryWeightPerStrength = 500;
 #endif

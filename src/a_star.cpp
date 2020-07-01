@@ -31,6 +31,8 @@ namespace pathfinding {
 
 using namespace boost;
 
+constexpr auto maximumNodes = 400;
+
 character_out_edge_iterator::character_out_edge_iterator() = default;
 
 character_out_edge_iterator::character_out_edge_iterator(int i, Position p, const world_map_graph &g)
@@ -63,7 +65,7 @@ void character_out_edge_iterator::valid_step() {
     } catch (FieldNotFound &) {
     }
 
-    while (direction < 8 && !moveToPossible && !(new_pos == graph->goal)) {
+    while (direction <= maxDirection && !moveToPossible && !(new_pos == graph->goal)) {
         ++direction;
 
         new_pos = Position(position.first + character_moves[direction].first,
@@ -90,14 +92,14 @@ auto target(const world_map_graph::edge_descriptor &e, const world_map_graph &g)
 auto out_edges(const world_map_graph::vertex_descriptor &v, const world_map_graph &g)
         -> std::pair<world_map_graph::out_edge_iterator, world_map_graph::out_edge_iterator> {
     using Iterator = world_map_graph::out_edge_iterator;
-    return std::make_pair(Iterator(0, v, g), Iterator(8, v, g));
+    return std::make_pair(Iterator(0, v, g), Iterator(maxDirection + 1, v, g));
 }
 
 auto out_degree(const world_map_graph::vertex_descriptor &v, const world_map_graph &g)
         -> world_map_graph::degree_size_type {
     using Iterator = world_map_graph::out_edge_iterator;
     world_map_graph::degree_size_type count = 0;
-    Iterator end(8, v, g);
+    Iterator end(maxDirection + 1, v, g);
 
     for (Iterator it(0, v, g); it != end; ++it) {
         ++count;
@@ -106,7 +108,7 @@ auto out_degree(const world_map_graph::vertex_descriptor &v, const world_map_gra
     return count;
 }
 
-auto num_vertices(const world_map_graph &g) -> int { return 1000; }
+auto num_vertices(const world_map_graph &g) -> int { return numberOfVertices; }
 
 distance_heuristic::distance_heuristic(Vertex goal) : goal(std::move(goal)) {
     Logger::debug(LogFacility::Other) << "heuristic goal (" << this->goal.first << ", " << this->goal.second << ")"
@@ -161,7 +163,7 @@ auto vertex_index_hash::operator[](key_type const &k) -> mapped_type & {
         insert(std::make_pair(k, ++discovery_counter));
     }
 
-    if (discovery_counter > 400) {
+    if (discovery_counter > maximumNodes) {
         Logger::debug(LogFacility::Other) << "[PATH FINDING] No path found in vertex_index_hash!" << Log::end;
         throw not_found();
     }
@@ -181,7 +183,7 @@ void astar_ex_visitor::examine_vertex(const Position &u, const world_map_graph &
 void astar_ex_visitor::discover_vertex(const Position &u, const world_map_graph & /*unused*/) {
     ++node_counter;
 
-    if (node_counter > 400) {
+    if (node_counter > maximumNodes) {
         Logger::debug(LogFacility::Other) << "[PATH FINDING] No path found in astar_ex_visitor!" << Log::end;
         throw not_found();
     }

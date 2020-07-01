@@ -41,10 +41,9 @@
 
 #include <algorithm>
 #include <cmath>
+#include <limits>
 #include <map>
 #include <range/v3/all.hpp>
-
-#define MAJOR_SKILL_GAP 100
 
 extern std::shared_ptr<LuaLearnScript> learnScript;
 extern std::shared_ptr<LuaWeaponScript> standardFightingScript;
@@ -876,8 +875,8 @@ auto Character::increaseSkill(TYPE_OF_SKILL_ID skill, short int amount) -> unsig
         if (amount <= 0) {
             return 0; // Don't add new skill if value <= 0
         }
-        if (amount > MAJOR_SKILL_GAP) {
-            sv.major = MAJOR_SKILL_GAP;
+        if (amount > maximumMajorSkill) {
+            sv.major = maximumMajorSkill;
 
         } else {
             sv.major = amount;
@@ -893,8 +892,8 @@ auto Character::increaseSkill(TYPE_OF_SKILL_ID skill, short int amount) -> unsig
 
         skills.erase(iterator); // L�chen des Eintrags wenn value <= 0
 
-    } else if (temp > MAJOR_SKILL_GAP) {
-        iterator->second.major = MAJOR_SKILL_GAP;
+    } else if (temp > maximumMajorSkill) {
+        iterator->second.major = maximumMajorSkill;
 
     } else {
         iterator->second.major = temp;
@@ -916,14 +915,14 @@ auto Character::increaseMinorSkill(TYPE_OF_SKILL_ID skill, short int amount) -> 
         if (amount <= 0) {
             return 0; // Don't add new skill if value <= 0
         }
-        if (amount > 10000) {
-            sv.minor = 10000;
+        if (amount > maximumMinorSkill) {
+            sv.minor = maximumMinorSkill;
 
         } else {
             sv.minor = amount;
         }
 
-        if (sv.minor >= 10000) {
+        if (sv.minor >= maximumMinorSkill) {
             sv.minor = 0;
             sv.major++;
         }
@@ -942,13 +941,13 @@ auto Character::increaseMinorSkill(TYPE_OF_SKILL_ID skill, short int amount) -> 
             skills.erase(iterator); // delete if major == 0
         }
 
-    } else if (temp >= 10000) {
+    } else if (temp >= maximumMinorSkill) {
         iterator->second.minor = 0;
 
         iterator->second.major++;
 
-        if (iterator->second.major > MAJOR_SKILL_GAP) {
-            iterator->second.major = MAJOR_SKILL_GAP;
+        if (iterator->second.major > maximumMajorSkill) {
+            iterator->second.major = maximumMajorSkill;
         }
 
     } else {
@@ -995,7 +994,7 @@ auto Character::isInScreen(const position &pos) const -> bool {
     return dx + dy <= getScreenRange() && -RANGEDOWN <= dz && dz <= RANGEUP;
 }
 
-auto Character::getScreenRange() const -> unsigned short int { return 14; }
+auto Character::getScreenRange() const -> unsigned short int { return screenRange; }
 
 auto Character::isInRangeToField(const position &m_pos, unsigned short int distancemetric) const -> bool {
     short int dz = abs(m_pos.z - pos.z);
@@ -1017,10 +1016,12 @@ auto Character::distanceMetric(Character *cc) const -> unsigned short int {
     if (cc != nullptr) {
         return distanceMetricToPosition(cc->pos);
     }
-    return 0xFFFF;
+    return std::numeric_limits<unsigned short int>::max();
 }
 
-auto Character::maxLoadWeight() const -> unsigned short int { return getAttribute(Character::strength) * 500 + 5000; }
+auto Character::maxLoadWeight() const -> unsigned short int {
+    return getAttribute(Character::strength) * carryWeightPerStrength + minimumCarryWeight;
+}
 
 auto Character::LoadWeight() const -> int {
     int load = 0;
@@ -1047,10 +1048,11 @@ auto Character::relativeLoad() const -> float { return float(LoadWeight()) / max
 auto Character::loadFactor() const -> LoadLevel {
     auto load = relativeLoad();
 
-    if (load > 1.0) {
+    if (load > overtaxedRelativeLoad) {
         return LoadLevel::overtaxed;
     }
-    if (load > 0.75) {
+
+    if (load > burdenedRelativeLoad) {
         return LoadLevel::burdened;
     }
 
@@ -1132,19 +1134,18 @@ auto Character::alterSpokenMessage(const std::string &message, int languageSkill
     std::string alteredMessage;
 
     alteredMessage = message;
+    constexpr auto minimumUnalteredSkill = 70;
 
-    while (message[counter] != 0) {
-        if (Random::uniform(0, 70) > languageSkill) {
-            alteredMessage[counter] = '*';
+    for (auto &character : alteredMessage) {
+        if (Random::uniform(0, minimumUnalteredSkill) > languageSkill) {
+            character = '*';
         }
-
-        counter++;
     }
 
     return alteredMessage;
 }
 
-auto Character::getLanguageSkill(int languageSkillNumber) -> int { return 100; }
+auto Character::getLanguageSkill(int languageSkillNumber) -> int { return defaultLanguageSkill; }
 
 void Character::talk(talk_type tt, const std::string &message) { // only for say, whisper, shout
     talk(tt, message, message);
@@ -1208,7 +1209,7 @@ void Character::talk(talk_type tt, const std::string &german,
 }
 
 void Character::turn(direction dir) {
-    if (dir < 8 && dir != static_cast<direction>(faceto)) {
+    if (dir <= maxDirection && dir != static_cast<direction>(faceto)) {
         faceto = (Character::face_to)dir;
         _world->sendSpinToAllVisiblePlayers(this);
     }
@@ -1219,9 +1220,9 @@ void Character::turn(const position &posi) {
     short int yoffs = posi.y - pos.y;
 
     if (abs(xoffs) > abs(yoffs)) {
-        turn(static_cast<direction>((xoffs > 0) ? 2 : 6));
+        turn(xoffs > 0 ? dir_east : dir_west);
     } else {
-        turn(static_cast<direction>((yoffs > 0) ? 4 : 0));
+        turn(yoffs > 0 ? dir_south : dir_north);
     }
 }
 
@@ -1244,7 +1245,7 @@ auto Character::move(direction dir, bool active) -> bool {
         if (moveToPossible(newField)) {
             bool diagonalMove = pos.x != newpos.x && pos.y != newpos.y;
             uint16_t movementcost = getMoveTime(newField, diagonalMove, false);
-            actionPoints -= movementcost / 100;
+            actionPoints -= movementcost / actionPointUnit;
 
             oldField.removeChar();
             newField.setChar();
@@ -1277,7 +1278,6 @@ auto Character::moveToPossible(const map::Field &field) const -> bool {
 
 auto Character::getMoveTime(const map::Field &targetField, bool diagonalMove, bool running) const
         -> TYPE_OF_WALKINGCOST {
-    static const float sqrt2 = std::sqrt(2.0);
     TYPE_OF_WALKINGCOST walkcost = 0;
 
     switch (_movement) {
@@ -1290,8 +1290,8 @@ auto Character::getMoveTime(const map::Field &targetField, bool diagonalMove, bo
         break;
     }
 
-    // tile costs are in 1/10s, walk cost in ms
-    walkcost *= 100;
+    constexpr int decisecondOverMillisecond = 100;
+    walkcost *= decisecondOverMillisecond;
 
     auto agility = std::min(getAttribute(Character::agility), MAX_WALK_AGI);
 
@@ -1299,19 +1299,21 @@ auto Character::getMoveTime(const map::Field &targetField, bool diagonalMove, bo
         walkcost += ADDITIONAL_MONSTER_WALKING_COST;
     }
 
-    float agilityModifier = float(10 - agility) / 100.0;
-    float loadModifier = relativeLoad() / 10.0 * 3.0;
+    float agilityPercentageIncrease = static_cast<float>(walkNeutralAgility - agility) * walkAgilityWeight;
+    float loadPercentageIncrease = relativeLoad() * walkLoadWeight;
 
-    walkcost += walkcost * (agilityModifier + loadModifier);
+    walkcost += walkcost * (agilityPercentageIncrease + loadPercentageIncrease);
 
     walkcost = std::min(std::max(walkcost, MIN_WALK_COST), MAX_WALK_COST);
 
+    static const float diagonalMoveTimeMultiplier = std::sqrt(2.0);
+
     if (diagonalMove) {
-        walkcost *= sqrt2;
+        walkcost *= diagonalMoveTimeMultiplier;
     }
 
     if (running) {
-        walkcost *= 0.6;
+        walkcost *= runningMoveTimeMultiplier;
     }
 
     return walkcost;
@@ -1383,11 +1385,12 @@ void Character::changeQualityAt(unsigned char pos, short int amount) {
             return;
         }
 
-        short int tmpQuality = ((amount + items.at(pos).getDurability()) < 100)
-                                       ? (amount + items.at(pos).getQuality())
-                                       : (items.at(pos).getQuality() - items.at(pos).getDurability() + 99);
+        short int tmpQuality =
+                ((amount + items.at(pos).getDurability()) <= Item::maximumDurability)
+                        ? (amount + items.at(pos).getQuality())
+                        : (items.at(pos).getQuality() - items.at(pos).getDurability() + Item::maximumDurability);
 
-        if (tmpQuality % 100 > 1) {
+        if (tmpQuality % (Item::maximumDurability + 1) > 1) {
             items.at(pos).setQuality(tmpQuality);
             return;
         }

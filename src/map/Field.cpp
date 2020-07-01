@@ -53,15 +53,15 @@ void Field::setTileId(uint16_t id) {
 auto Field::getTileCode() const -> uint16_t { return tile; }
 
 auto Field::getTileId() const -> uint16_t {
-    if (((tile & 0xFC00) >> 10) > 0) {
-        return tile & 0x001F;
+    if (((tile & overlayTileBitMask) >> tileIdBits) > 0) {
+        return tile & primaryTileBitMask;
     }
     return tile;
 }
 
 auto Field::getSecondaryTileId() const -> uint16_t {
-    if (((tile & 0xFC00) >> 10) > 0) {
-        return (tile & 0x03E0) >> 5;
+    if (((tile & overlayTileBitMask) >> tileIdBits) > 0) {
+        return (tile & secondaryTileBitMask) >> primaryTileIdBits;
     }
     return tile;
 }

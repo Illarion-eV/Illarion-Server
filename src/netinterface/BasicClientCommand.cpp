@@ -64,20 +64,21 @@ auto BasicClientCommand::getStringFromBuffer() -> std::string {
 }
 
 auto BasicClientCommand::getIntFromBuffer() -> int {
-    int ret = getUnsignedCharFromBuffer() << 24;
-    ret = ret | (getUnsignedCharFromBuffer() << 16);
-    ret = ret | (getUnsignedCharFromBuffer() << 8);
+    int ret = getUnsignedCharFromBuffer() << 24;     // NOLINT
+    ret = ret | (getUnsignedCharFromBuffer() << 16); // NOLINT
+    ret = ret | (getUnsignedCharFromBuffer() << 8);  // NOLINT
     ret = ret | getUnsignedCharFromBuffer();
     return ret;
 }
 
 auto BasicClientCommand::getShortIntFromBuffer() -> short int {
-    short int ret = getUnsignedCharFromBuffer() << 8;
+    short int ret = getUnsignedCharFromBuffer() << 8; // NOLINT
     ret = ret | getUnsignedCharFromBuffer();
     return ret;
 }
 
 auto BasicClientCommand::isDataOk() const -> bool {
-    auto crcCheck = static_cast<uint16_t>(crc % 0xFFFF);
+    constexpr auto allBitsSet = 0xFFFF;
+    auto crcCheck = static_cast<uint16_t>(crc % allBitsSet);
     return (dataOk && (length == bytesRetrieved) && (crcCheck == checkSum));
 }

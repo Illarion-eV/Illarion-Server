@@ -99,9 +99,9 @@ auto Item::increaseNumberBy(Item::number_type count) -> number_type {
 
 void Item::setMinQuality(const Item &item) {
     quality_type minQuality = (quality < item.quality) ? quality : item.quality;
-    minQuality /= 100;
+    minQuality /= maximumDurability + 1;
     quality_type minDurability = (getDurability() < item.getDurability()) ? getDurability() : item.getDurability();
-    quality = minQuality * 100 + minDurability;
+    quality = minQuality * (maximumDurability + 1) + minDurability;
 }
 
 void Item::setData(script_data_exchangemap const *datamap) {
@@ -199,7 +199,7 @@ void Item::load(std::istream &obj) {
     obj.read((char *)&quality, sizeof(quality_type));
     uint8_t tempsize = 0;
     obj.read((char *)&tempsize, sizeof(uint8_t));
-    char readStr[255];
+    char readStr[maxDataValueLength];
 
     for (int i = 0; i < tempsize; ++i) {
         uint8_t sz1 = 0;
@@ -215,7 +215,7 @@ void Item::load(std::istream &obj) {
 }
 
 auto Item::survivesAgeing() -> bool {
-    if (wear != 255 && wear != 0) {
+    if (wear != PERMANENT_WEAR && wear != 0) {
         --wear;
     }
 

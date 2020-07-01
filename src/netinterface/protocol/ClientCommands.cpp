@@ -447,7 +447,7 @@ void CastTS::performAction(Player *player) {
                 const auto weaponId = player->items[LEFT_TOOL].getId();
 
                 if (Data::WeaponItems.exists(weaponId)) {
-                    if (Data::WeaponItems[weaponId].Type == 13) {
+                    if (Data::WeaponItems[weaponId].Type == WeaponStruct::stave) {
                         zauberstab = true;
                     }
                 }
@@ -457,7 +457,7 @@ void CastTS::performAction(Player *player) {
                 const auto weaponId = player->items[RIGHT_TOOL].getId();
 
                 if (Data::WeaponItems.exists(weaponId)) {
-                    if (Data::WeaponItems[weaponId].Type == 13) {
+                    if (Data::WeaponItems[weaponId].Type == WeaponStruct::stave) {
                         zauberstab = true;
                     }
                 }
@@ -520,7 +520,7 @@ void CastTS::performAction(Player *player) {
         Logger::debug(LogFacility::Script) << "try to call magic script" << Log::end;
         player->ltAction->setLastAction(LuaMageScript, Source, Target, LongTimeAction::ACTION_MAGIC);
 
-        if ((paramOK) && player->isAlive() && (player->getStatus() < 10)) {
+        if ((paramOK) && player->isAlive()) {
             switch (Target.Type) {
             case LUA_NONE:
                 LuaMageScript->CastMagic(player, static_cast<unsigned char>(LTS_NOLTACTION));
@@ -1406,30 +1406,28 @@ void AttackPlayerTS::decodeData() { enemyid = getIntFromBuffer(); }
 void AttackPlayerTS::performAction(Player *player) {
     time(&(player->lastaction));
 
-    if (player->isAlive() && player->getStatus() < 10) {
+    if (player->isAlive()) {
         player->ltAction->abortAction();
 
-        if (player->isAlive()) {
-            player->enemyid = enemyid;
-            player->setAttackMode(true);
-            player->enemytype = Character::player;
+        player->enemyid = enemyid;
+        player->setAttackMode(true);
+        player->enemytype = Character::player;
 
-            if (player->enemyid >= MONSTER_BASE) {
-                player->enemytype = Character::monster;
-            }
-
-            if (player->enemyid >= NPC_BASE) {
-                player->enemytype = Character::npc;
-            }
-
-            ServerCommandPointer cmd = std::make_shared<AttackAcknowledgedTC>();
-            player->Connection->addCommand(cmd);
-            // monitoringClientList->sendCommand( new SendActionTS(player->getId(), player->getName(), 0, "Starts an
-            // attack: " + Logger::toString(player->enemyid) ) );
-            World::get()->characterAttacks(player);
-        } else {
-            player->setAttackMode(false);
+        if (player->enemyid >= MONSTER_BASE) {
+            player->enemytype = Character::monster;
         }
+
+        if (player->enemyid >= NPC_BASE) {
+            player->enemytype = Character::npc;
+        }
+
+        ServerCommandPointer cmd = std::make_shared<AttackAcknowledgedTC>();
+        player->Connection->addCommand(cmd);
+        // monitoringClientList->sendCommand( new SendActionTS(player->getId(), player->getName(), 0, "Starts an
+        // attack: " + Logger::toString(player->enemyid) ) );
+        World::get()->characterAttacks(player);
+    } else {
+        player->setAttackMode(false);
     }
 }
 

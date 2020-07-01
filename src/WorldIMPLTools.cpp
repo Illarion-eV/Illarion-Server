@@ -419,7 +419,7 @@ auto World::characterAttacks(Character *cp) const -> bool {
                         // check for turning into attackackers direction
                         std::vector<Character *> temp;
                         temp.clear();
-                        findTargetsInSight(temppl->getPosition(), static_cast<uint8_t>(9), temp, temppl->getFaceTo());
+                        findTargetsInSight(temppl->getPosition(), monsterViewRange, temp, temppl->getFaceTo());
 
                         // add the current attacker to the list
                         if (cp->getType() == Character::player) {
@@ -635,23 +635,25 @@ auto World::getTime(const std::string &timeType) const -> int {
     ++day;
 
     // Calculating month
-    static constexpr auto daysInMonth = 24;
-    auto month = (int)(day / daysInMonth);
-    day -= month * daysInMonth;
+    static constexpr auto daysInIllarionMonth = 24;
+    static constexpr auto daysInLastIllarionMonth = 5;
+    static constexpr auto monthsInIllarionYear = 16;
+    auto month = (int)(day / daysInIllarionMonth);
+    day -= month * daysInIllarionMonth;
 
     // checking for range borders and fixing the date
     if (day == 0) {
-        if (month > 0 && month < 16) {
-            day = 24;
+        if (month > 0 && month < monthsInIllarionYear) {
+            day = daysInIllarionMonth;
         } else {
-            day = 5;
+            day = daysInLastIllarionMonth;
         }
     } else {
         month++;
     }
 
     if (month == 0) {
-        month = 16;
+        month = monthsInIllarionYear;
         --year;
     }
 
