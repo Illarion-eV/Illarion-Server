@@ -1130,7 +1130,6 @@ void Character::increaseMentalCapacity(int value) {
 }
 
 auto Character::alterSpokenMessage(const std::string &message, int languageSkill) const -> std::string {
-    int counter = 0;
     std::string alteredMessage;
 
     alteredMessage = message;
