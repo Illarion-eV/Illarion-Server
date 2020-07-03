@@ -29,6 +29,7 @@
 #include "db/UpdateQuery.hpp"
 #include "globals.hpp"
 #include "netinterface/protocol/ServerCommands.hpp"
+#include "stream.hpp"
 
 #include <algorithm>
 #include <range/v3/all.hpp>
@@ -275,31 +276,31 @@ auto Field::addContainerOnStack(Item item, Container *container) -> bool {
 
 void Field::save(std::ofstream &mapStream, std::ofstream &itemStream, std::ofstream &warpStream,
                  std::ofstream &containerStream) const {
-    mapStream.write((char *)&tile, sizeof tile);
-    mapStream.write((char *)&music, sizeof music);
-    mapStream.write((char *)&flags, sizeof flags);
+    writeToStream(mapStream, tile);
+    writeToStream(mapStream, music);
+    writeToStream(mapStream, flags);
 
-    uint8_t itemsSize = items.size();
-    itemStream.write((char *)&itemsSize, sizeof itemsSize);
+    const uint8_t itemsSize = items.size();
+    writeToStream(itemStream, itemsSize);
 
     for (const auto &item : items) {
         item.save(itemStream);
     }
 
     if (isWarp()) {
-        char b = 1;
-        warpStream.write((char *)&b, sizeof b);
-        warpStream.write((char *)&warptarget, sizeof warptarget);
+        const char b = 1;
+        writeToStream(warpStream, b);
+        writeToStream(warpStream, warptarget);
     } else {
-        char b = 0;
-        warpStream.write((char *)&b, sizeof b);
+        const char b = 0;
+        writeToStream(warpStream, b);
     }
 
-    uint8_t containersSize = containers.size();
-    containerStream.write((char *)&containersSize, sizeof containersSize);
+    const uint8_t containersSize = containers.size();
+    writeToStream(containerStream, containersSize);
 
     for (const auto &container : containers) {
-        containerStream.write((char *)&container.first, sizeof container.first);
+        writeToStream(containerStream, container.first);
         container.second->Save(containerStream);
     }
 }
@@ -327,14 +328,14 @@ auto Field::getExportItems() const -> std::vector<Item> {
 
 void Field::load(std::ifstream &mapStream, std::ifstream &itemStream, std::ifstream &warpStream,
                  std::ifstream &containerStream) {
-    mapStream.read((char *)&tile, sizeof tile);
-    mapStream.read((char *)&music, sizeof music);
-    mapStream.read((char *)&flags, sizeof flags);
+    readFromStream(mapStream, tile);
+    readFromStream(mapStream, music);
+    readFromStream(mapStream, flags);
 
     unsetBits(FLAG_NPCONFIELD | FLAG_MONSTERONFIELD | FLAG_PLAYERONFIELD);
 
     MAXCOUNTTYPE size = 0;
-    itemStream.read((char *)&size, sizeof size);
+    readFromStream(itemStream, size);
 
     items.clear();
 
@@ -345,15 +346,15 @@ void Field::load(std::ifstream &mapStream, std::ifstream &itemStream, std::ifstr
     }
 
     char isWarp = 0;
-    warpStream.read((char *)&isWarp, sizeof isWarp);
+    readFromStream(warpStream, isWarp);
 
     if (isWarp == 1) {
         position target{};
-        warpStream.read((char *)&target, sizeof warptarget);
+        readFromStream(warpStream, target);
         setWarp(target);
     }
 
-    containerStream.read((char *)&size, sizeof size);
+    readFromStream(containerStream, size);
 
     for (auto &container : containers) {
         delete container.second;
@@ -364,7 +365,7 @@ void Field::load(std::ifstream &mapStream, std::ifstream &itemStream, std::ifstr
 
     for (int i = 0; i < size; ++i) {
         MAXCOUNTTYPE key = 0;
-        containerStream.read((char *)&key, sizeof key);
+        readFromStream(containerStream, key);
 
         for (const auto &item : items) {
             if (item.isContainer() && item.getNumber() == key) {

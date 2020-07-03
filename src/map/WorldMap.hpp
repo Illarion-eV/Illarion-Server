@@ -56,6 +56,7 @@ public:
 
 private:
     const std::string worldName{"Illarion"};
+    static constexpr auto coordinateChars = 6;
     auto insert(Map &&newMap) -> bool;
     auto insertPersistent(Field &&newField) -> bool;
     void loadPersistentFields();

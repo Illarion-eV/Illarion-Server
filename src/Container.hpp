@@ -61,8 +61,8 @@ public:
     auto InsertItem(Item item, TYPE_OF_CONTAINERSLOTS /*pos*/) -> bool;
     auto InsertItem(const Item &item) -> bool;
 
-    void Save(std::ofstream &where);
-    void Load(std::istream &where);
+    void Save(std::ofstream &where) const;
+    void Load(std::ifstream &where);
 
     void doAge(bool inventory = false);
     void resetWear();

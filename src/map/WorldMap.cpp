@@ -27,14 +27,17 @@
 #include "World.hpp"
 #include "db/Result.hpp"
 #include "db/SelectQuery.hpp"
+#include "stream.hpp"
 
 #include <algorithm>
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/lexical_cast.hpp>
 #include <chrono>
 #include <filesystem>
+#include <iomanip>
 #include <range/v3/all.hpp>
 #include <regex>
+#include <sstream>
 #include <stdexcept>
 
 namespace map {
@@ -380,39 +383,31 @@ auto WorldMap::loadFromDisk() -> bool {
     }
     unsigned short int size = 0;
 
-    mapinitfile.read((char *)&size, sizeof size);
+    readFromStream(mapinitfile, size);
 
     Logger::info(LogFacility::World) << "Loading " << size << " maps." << Log::end;
 
-    int16_t tZ_Level = 0;
-
-    int16_t tMin_X = 0;
-
-    int16_t tMin_Y = 0;
-
-    uint16_t tWidth = 0;
-
-    uint16_t tHeight = 0;
-
-    constexpr auto mapNameMaxLength = 200;
-    char mname[mapNameMaxLength];
+    int16_t level = 0;
+    int16_t minX = 0;
+    int16_t minY = 0;
+    uint16_t width = 0;
+    uint16_t height = 0;
+    std::ostringstream mapName;
 
     for (int i = 0; i < size; ++i) {
-        mapinitfile.read((char *)&tZ_Level, sizeof tZ_Level);
+        readFromStream(mapinitfile, level);
+        readFromStream(mapinitfile, minX);
+        readFromStream(mapinitfile, minY);
+        readFromStream(mapinitfile, width);
+        readFromStream(mapinitfile, height);
 
-        mapinitfile.read((char *)&tMin_X, sizeof tMin_X);
+        auto map = Map{"previously saved map", position{minX, minY, level}, width, height};
 
-        mapinitfile.read((char *)&tMin_Y, sizeof tMin_Y);
+        mapName.str("");
+        mapName << path << '_' << std::setw(coordinateChars) << level << '_' << std::setw(coordinateChars) << minX
+                << '_' << std::setw(coordinateChars) << minY;
 
-        mapinitfile.read((char *)&tWidth, sizeof tWidth);
-
-        mapinitfile.read((char *)&tHeight, sizeof tHeight);
-
-        auto map = Map{"previously saved map", position{tMin_X, tMin_Y, tZ_Level}, tWidth, tHeight};
-
-        sprintf(mname, "%s_%6d_%6d_%6d", path.c_str(), tZ_Level, tMin_X, tMin_Y);
-
-        if (map.load(mname)) {
+        if (map.load(mapName.str())) {
             insert(std::move(map));
         }
     }
@@ -458,11 +453,10 @@ void WorldMap::saveToDisk() const {
     if (!mapinitfile.good()) {
         Logger::error(LogFacility::World) << "Could not create initmaps!" << Log::end;
     } else {
-        uint16_t size = maps.size();
+        const uint16_t size = maps.size();
         Logger::info(LogFacility::World) << "Saving " << size << " maps." << Log::end;
-        mapinitfile.write((char *)&size, sizeof size);
-        constexpr auto mapNameMaxLength = 200;
-        char mname[mapNameMaxLength];
+        writeToStream(mapinitfile, size);
+        std::ostringstream mapName;
 
         for (const auto &map : maps) {
             const auto level = map.getLevel();
@@ -470,14 +464,17 @@ void WorldMap::saveToDisk() const {
             const auto y = map.getMinY();
             const auto width = map.getWidth();
             const auto height = map.getHeight();
-            mapinitfile.write((char *)&level, sizeof level);
-            mapinitfile.write((char *)&x, sizeof x);
-            mapinitfile.write((char *)&y, sizeof y);
-            mapinitfile.write((char *)&width, sizeof width);
-            mapinitfile.write((char *)&height, sizeof height);
+            writeToStream(mapinitfile, level);
+            writeToStream(mapinitfile, x);
+            writeToStream(mapinitfile, y);
+            writeToStream(mapinitfile, width);
+            writeToStream(mapinitfile, height);
 
-            sprintf(mname, "%s_%6d_%6d_%6d", path.c_str(), level, x, y);
-            map.save(mname);
+            mapName.str("");
+            mapName << path << '_' << std::setw(coordinateChars) << level << '_' << std::setw(coordinateChars) << x
+                    << '_' << std::setw(coordinateChars) << y;
+
+            map.save(mapName.str());
         }
 
         mapinitfile.close();

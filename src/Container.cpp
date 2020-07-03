@@ -21,6 +21,7 @@
 #include "World.hpp"
 #include "constants.hpp"
 #include "data/Data.hpp"
+#include "stream.hpp"
 
 Container::Container(Item::id_type itemId) : itemId(itemId) {}
 
@@ -426,29 +427,29 @@ auto Container::swapAtPos(unsigned char pos, Item::id_type newid, Item::quality_
     return false;
 }
 
-void Container::Save(std::ofstream &where) {
+void Container::Save(std::ofstream &where) const {
     MAXCOUNTTYPE size = items.size();
-    where.write((char *)&size, sizeof size);
+    writeToStream(where, size);
 
-    for (auto &it : items) {
-        Item &item = it.second;
-        where.write((char *)&(it.first), sizeof(TYPE_OF_CONTAINERSLOTS));
-        where.write((char *)&item, sizeof(Item));
+    for (const auto &it : items) {
+        const Item &item = it.second;
+        writeToStream(where, it.first);
+        item.save(where);
 
         if (item.isContainer()) {
-            auto iterat = containers.find(it.first);
+            const auto iterat = containers.find(it.first);
 
-            if (iterat != containers.end()) {
+            if (iterat != containers.cend()) {
                 (*iterat).second->Save(where);
             } else {
                 size = 0;
-                where.write((char *)&size, sizeof size);
+                writeToStream(where, size);
             }
         }
     }
 }
 
-void Container::Load(std::istream &where) {
+void Container::Load(std::ifstream &where) {
     if (!containers.empty()) {
         for (auto &container : containers) {
             delete container.second;
@@ -460,7 +461,7 @@ void Container::Load(std::istream &where) {
     containers.clear();
 
     MAXCOUNTTYPE size = 0;
-    where.read((char *)&size, sizeof size);
+    readFromStream(where, size);
 
     Container *tempc = nullptr;
 
@@ -468,8 +469,8 @@ void Container::Load(std::istream &where) {
     Item tempi;
 
     for (int i = 0; i < size; ++i) {
-        where.read((char *)&slot, sizeof(TYPE_OF_CONTAINERSLOTS));
-        where.read((char *)&tempi, sizeof tempi);
+        readFromStream(where, slot);
+        tempi.load(where);
 
         if (tempi.isContainer()) {
             tempc = new Container(tempi.getId());

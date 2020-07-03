@@ -22,6 +22,7 @@
 #include "data/Data.hpp"
 #include "script/LuaItemScript.hpp"
 #include "script/LuaLookAtItemScript.hpp"
+#include "stream.hpp"
 
 #include <boost/lexical_cast.hpp>
 #include <range/v3/all.hpp>
@@ -174,42 +175,41 @@ void Item::resetWear() {
     }
 }
 
-void Item::save(std::ostream &obj) const {
-    obj.write((char *)&id, sizeof(id_type));
-    obj.write((char *)&number, sizeof(number_type));
-    obj.write((char *)&wear, sizeof(wear_type));
-    obj.write((char *)&quality, sizeof(quality_type));
-    auto mapsize = static_cast<uint8_t>(datamap.size());
-    obj.write((char *)&mapsize, sizeof(uint8_t));
+void Item::save(std::ofstream &obj) const {
+    writeToStream(obj, id);
+    writeToStream(obj, number);
+    writeToStream(obj, wear);
+    writeToStream(obj, quality);
+    const auto mapsize = static_cast<uint8_t>(datamap.size());
+    writeToStream(obj, mapsize);
 
     for (const auto &data : datamap) {
-        auto sz1 = static_cast<uint8_t>(data.first.size());
-        auto sz2 = static_cast<uint8_t>(data.second.size());
-        obj.write((char *)&sz1, sizeof(uint8_t));
-        obj.write((char *)&sz2, sizeof(uint8_t));
-        obj.write((char *)data.first.data(), sz1);
-        obj.write((char *)data.second.data(), sz2);
+        const auto sz1 = static_cast<uint8_t>(data.first.size());
+        const auto sz2 = static_cast<uint8_t>(data.second.size());
+        writeToStream(obj, sz1);
+        writeToStream(obj, sz2);
+        writeToStream(obj, data.first.data(), sz1);
+        writeToStream(obj, data.second.data(), sz2);
     }
 }
 
-void Item::load(std::istream &obj) {
-    obj.read((char *)&id, sizeof(id_type));
-    obj.read((char *)&number, sizeof(number_type));
-    obj.read((char *)&wear, sizeof(wear_type));
-    obj.read((char *)&quality, sizeof(quality_type));
+void Item::load(std::ifstream &obj) {
+    readFromStream(obj, id);
+    readFromStream(obj, number);
+    readFromStream(obj, wear);
+    readFromStream(obj, quality);
     uint8_t tempsize = 0;
-    obj.read((char *)&tempsize, sizeof(uint8_t));
-    char readStr[maxDataValueLength];
+    readFromStream(obj, tempsize);
 
     for (int i = 0; i < tempsize; ++i) {
         uint8_t sz1 = 0;
         uint8_t sz2 = 0;
-        obj.read((char *)&sz1, sizeof(uint8_t));
-        obj.read((char *)&sz2, sizeof(uint8_t));
-        obj.read((char *)readStr, sz1);
-        std::string key(readStr, sz1);
-        obj.read((char *)readStr, sz2);
-        std::string value(readStr, sz2);
+        readFromStream(obj, sz1);
+        readFromStream(obj, sz2);
+        std::string key(sz1, '\0');
+        readFromStream(obj, key.data(), sz1);
+        std::string value(sz2, '\0');
+        readFromStream(obj, value.data(), sz2);
         datamap[key] = value;
     }
 }

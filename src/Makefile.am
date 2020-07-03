@@ -109,7 +109,7 @@ noinst_HEADERS = Showcase.hpp Container.hpp dialog/Dialog.hpp \
 		 netinterface/protocol/BBIWIServerCommands.hpp \
 		 netinterface/protocol/ClientCommands.hpp \
 		 netinterface/protocol/ServerCommands.hpp WaypointList.hpp \
-		 Config.hpp Timer.hpp constants.hpp types.hpp \
+		 Config.hpp Timer.hpp constants.hpp types.hpp stream.hpp \
 		 LongTimeCharacterEffects.hpp LongTimeAction.hpp character_ptr.hpp \
 		 Player.hpp SpawnPoint.hpp LongTimeEffect.hpp Monster.hpp
 

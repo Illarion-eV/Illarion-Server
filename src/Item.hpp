@@ -89,8 +89,8 @@ public:
     void reset();
     void resetWear();
 
-    void save(std::ostream &obj) const;
-    void load(std::istream &obj);
+    void save(std::ofstream &obj) const;
+    void load(std::ifstream &obj);
 
     auto survivesAgeing() -> bool;
     auto isContainer() const -> bool;
