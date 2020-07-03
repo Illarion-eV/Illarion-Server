@@ -222,7 +222,7 @@ ItemUpdate_TC::ItemUpdate_TC(const position &pos, const std::vector<Item> &items
 
     for (const auto &item : items) {
         // we added MAXITEMS items
-        if (size <= 0) {
+        if (size == 0) {
             break;
         }
 
