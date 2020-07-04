@@ -18,24 +18,10 @@
 
 #include "Random.hpp"
 
-#include <sstream>
-#include <stdexcept>
-
 std::mt19937 Random::rng;
 
 auto Random::uniform() -> double {
     std::uniform_real_distribution<double> uniform(0, 1);
-    return uniform(rng);
-}
-
-auto Random::uniform(int min, int max) -> int {
-    if (max < min) {
-        std::stringstream error;
-        error << "Random::uniform: Invalid arguments, min(" << min << ") > max(" << max << ")";
-        throw std::invalid_argument(error.str());
-    }
-
-    std::uniform_int_distribution<int> uniform(min, max);
     return uniform(rng);
 }
 

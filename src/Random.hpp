@@ -20,16 +20,37 @@
 #define RANDOM_HPP
 
 #include <random>
+#include <sstream>
+#include <stdexcept>
+#include <type_traits>
 
 class Random {
 private:
     static std::mt19937 rng;
-    Random() = default;
 
 public:
     static auto uniform() -> double;
-    static auto uniform(int min, int max) -> int;
     static auto normal(double mean, double sd) -> double;
+
+    template <class IntType> static auto uniform(IntType min, IntType max) -> IntType {
+        static_assert(std::is_same_v<IntType, short> || std::is_same_v<IntType, int> || std::is_same_v<IntType, long> ||
+                      std::is_same_v<IntType, long long> || std::is_same_v<IntType, unsigned short> ||
+                      std::is_same_v<IntType, unsigned int> || std::is_same_v<IntType, unsigned long> ||
+                      std::is_same_v<IntType, unsigned long long>);
+        if (max < min) {
+            std::stringstream error;
+            error << "Random::uniform: Invalid arguments, min(" << min << ") > max(" << max << ")";
+            throw std::invalid_argument(error.str());
+        }
+
+        std::uniform_int_distribution<IntType> uniform(min, max);
+        return uniform(rng);
+    }
+
+    template <class IntType> static auto uniform(IntType count) -> IntType {
+        static_assert(std::is_unsigned_v<IntType>);
+        return uniform(IntType{0}, count - 1);
+    }
 };
 
 #endif

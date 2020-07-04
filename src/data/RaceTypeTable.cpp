@@ -155,7 +155,7 @@ auto RaceTypeTable::getRandomRaceConfiguration(TYPE_OF_RACE_ID race) const -> Ra
         return raceConfiguration;
     }
 
-    int selectedSubTypeNumber = Random::uniform(0, subTypeCount - 1);
+    auto selectedSubTypeNumber = Random::uniform(subTypeCount);
     auto it = table.at(race).begin();
 
     // sub types do not need to be sequentiell
@@ -168,22 +168,22 @@ auto RaceTypeTable::getRandomRaceConfiguration(TYPE_OF_RACE_ID race) const -> Ra
     raceConfiguration.subType = subType;
 
     if (!raceType.hair.empty()) {
-        const auto randomHairId = Random::uniform(0, raceType.hair.size() - 1);
+        const auto randomHairId = Random::uniform(raceType.hair.size());
         raceConfiguration.hair = raceType.hair[randomHairId];
     }
 
     if (!raceType.beard.empty()) {
-        const auto randomBeardId = Random::uniform(0, raceType.beard.size() - 1);
+        const auto randomBeardId = Random::uniform(raceType.beard.size());
         raceConfiguration.beard = raceType.beard[randomBeardId];
     }
 
     if (!raceType.hairColour.empty()) {
-        const auto randomHairColourId = Random::uniform(0, raceType.hairColour.size() - 1);
+        const auto randomHairColourId = Random::uniform(raceType.hairColour.size());
         raceConfiguration.hairColour = raceType.hairColour[randomHairColourId];
     }
 
     if (!raceType.skinColour.empty()) {
-        const auto randomSkinColourId = Random::uniform(0, raceType.skinColour.size() - 1);
+        const auto randomSkinColourId = Random::uniform(raceType.skinColour.size());
         raceConfiguration.skinColour = raceType.skinColour[randomSkinColourId];
     }
 
