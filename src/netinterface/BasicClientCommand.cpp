@@ -20,6 +20,8 @@
 
 #include "BasicCommand.hpp"
 
+#include <climits>
+
 BasicClientCommand::BasicClientCommand(unsigned char defByte, uint16_t minAP) : BasicCommand(defByte), minAP(minAP) {}
 
 void BasicClientCommand::setHeaderData(uint16_t mlength, uint16_t mcheckSum) {
@@ -64,15 +66,15 @@ auto BasicClientCommand::getStringFromBuffer() -> std::string {
 }
 
 auto BasicClientCommand::getIntFromBuffer() -> int {
-    int ret = getUnsignedCharFromBuffer() << 24;     // NOLINT
-    ret = ret | (getUnsignedCharFromBuffer() << 16); // NOLINT
-    ret = ret | (getUnsignedCharFromBuffer() << 8);  // NOLINT
+    int ret = getUnsignedCharFromBuffer() << 3 * CHAR_BIT;
+    ret = ret | (getUnsignedCharFromBuffer() << 2 * CHAR_BIT);
+    ret = ret | (getUnsignedCharFromBuffer() << CHAR_BIT);
     ret = ret | getUnsignedCharFromBuffer();
     return ret;
 }
 
 auto BasicClientCommand::getShortIntFromBuffer() -> short int {
-    short int ret = getUnsignedCharFromBuffer() << 8; // NOLINT
+    short int ret = getUnsignedCharFromBuffer() << CHAR_BIT;
     ret = ret | getUnsignedCharFromBuffer();
     return ret;
 }

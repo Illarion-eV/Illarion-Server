@@ -25,6 +25,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <climits>
 #include <iostream>
 #include <sys/socket.h>
 
@@ -41,7 +42,7 @@ BasicServerCommand::BasicServerCommand(unsigned char defByte, uint16_t bsize) : 
 
 void BasicServerCommand::initHeader() {
     addUnsignedCharToBuffer(getDefinitionByte());
-    addUnsignedCharToBuffer(getDefinitionByte() xor static_cast<unsigned char>(255)); // NOLINT
+    addUnsignedCharToBuffer(getDefinitionByte() xor UCHAR_MAX);
     addShortIntToBuffer(0); // dummy for the length
     addShortIntToBuffer(0); // dummy for the checksum
     checkSum = 0;           // reset checksum to 0, since the header is not included in checksum calculation
@@ -53,11 +54,11 @@ void BasicServerCommand::addHeader() {
         const auto crc = static_cast<int16_t>(checkSum % twoBytesSet);
         const auto dataSize = bufferPos - headerSize;
 
-        buffer.at(lengthPosition) = (dataSize >> 8);      // NOLINT
-        buffer.at(lengthPosition + 1) = (dataSize & 255); // NOLINT
+        buffer.at(lengthPosition) = (dataSize >> CHAR_BIT);
+        buffer.at(lengthPosition + 1) = (dataSize & UCHAR_MAX);
 
-        buffer.at(crcPosition) = (crc >> 8);      // NOLINT
-        buffer.at(crcPosition + 1) = (crc & 255); // NOLINT
+        buffer.at(crcPosition) = (crc >> CHAR_BIT);
+        buffer.at(crcPosition + 1) = (crc & UCHAR_MAX);
     }
 }
 
@@ -72,15 +73,15 @@ void BasicServerCommand::addStringToBuffer(const std::string &data) {
 }
 
 void BasicServerCommand::addIntToBuffer(int data) {
-    addUnsignedCharToBuffer((data >> 24));         // NOLINT
-    addUnsignedCharToBuffer(((data >> 16) & 255)); // NOLINT
-    addUnsignedCharToBuffer(((data >> 8) & 255));  // NOLINT
-    addUnsignedCharToBuffer((data & 255));         // NOLINT
+    addUnsignedCharToBuffer((data >> 3 * CHAR_BIT));
+    addUnsignedCharToBuffer(((data >> 2 * CHAR_BIT) & UCHAR_MAX));
+    addUnsignedCharToBuffer(((data >> CHAR_BIT) & UCHAR_MAX));
+    addUnsignedCharToBuffer((data & UCHAR_MAX));
 }
 
 void BasicServerCommand::addShortIntToBuffer(short int data) {
-    addUnsignedCharToBuffer((data >> 8));  // NOLINT
-    addUnsignedCharToBuffer((data & 255)); // NOLINT
+    addUnsignedCharToBuffer((data >> CHAR_BIT));
+    addUnsignedCharToBuffer((data & UCHAR_MAX));
 }
 
 void BasicServerCommand::addUnsignedCharToBuffer(unsigned char data) {

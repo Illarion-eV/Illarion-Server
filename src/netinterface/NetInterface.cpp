@@ -23,6 +23,7 @@
 #include "netinterface/BasicClientCommand.hpp"
 #include "netinterface/protocol/ClientCommands.hpp"
 
+#include <climits>
 #include <iomanip>
 
 NetInterface::NetInterface(boost::asio::io_service &io_servicen)
@@ -129,11 +130,11 @@ auto NetInterface::nextInactive() -> bool {
 
 void NetInterface::handle_read_header(const boost::system::error_code &error) {
     if (!error) {
-        if ((headerBuffer[commandPosition] xor 255) == headerBuffer[commandPosition + 1]) { // NOLINT
+        if ((headerBuffer[commandPosition] xor UCHAR_MAX) == headerBuffer[commandPosition + 1]) {
             // Correcter header decodieren und comand empfangen
-            uint16_t length = headerBuffer[lengthPosition] << 8; // NOLINT
+            uint16_t length = headerBuffer[lengthPosition] << CHAR_BIT;
             length = length | headerBuffer[lengthPosition + 1];
-            uint16_t checkSum = headerBuffer[crcPosition] << 8; // NOLINT
+            uint16_t checkSum = headerBuffer[crcPosition] << CHAR_BIT;
             checkSum = checkSum | headerBuffer[crcPosition + 1];
             cmd = commandFactory.getCommand(headerBuffer[commandPosition]);
 
@@ -153,7 +154,7 @@ void NetInterface::handle_read_header(const boost::system::error_code &error) {
         // look for command id in header
         for (int i = 1; i < headerSize - 1; ++i) {
             // found correct command id
-            if ((headerBuffer.at(i) xor 255) == headerBuffer.at(i + 1)) { // NOLINT
+            if ((headerBuffer.at(i) xor UCHAR_MAX) == headerBuffer.at(i + 1)) {
                 // copy the rest of the correct message to the start of the buffer
                 int start = 0;
 
