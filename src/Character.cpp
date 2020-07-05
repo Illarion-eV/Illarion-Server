@@ -192,13 +192,13 @@ auto Character::getId() const -> TYPE_OF_CHARACTER_ID { return id; }
 
 auto Character::getName() const -> const std::string & { return name; }
 
-auto Character::getActionPoints() const -> short int { return actionPoints; }
+auto Character::getActionPoints() const -> int { return actionPoints; }
 
-auto Character::getMinActionPoints() const -> short int { return NP_MIN_AP; }
+auto Character::getMinActionPoints() const -> int { return NP_MIN_AP; }
 
-auto Character::getMaxActionPoints() const -> short int { return NP_MAX_AP; }
+auto Character::getMaxActionPoints() const -> int { return NP_MAX_AP; }
 
-void Character::setActionPoints(short int ap) {
+void Character::setActionPoints(int ap) {
     if (ap > getMaxActionPoints()) {
         actionPoints = getMaxActionPoints();
     } else {
@@ -206,17 +206,17 @@ void Character::setActionPoints(short int ap) {
     }
 }
 
-void Character::increaseActionPoints(short int ap) { setActionPoints(actionPoints + ap); }
+void Character::increaseActionPoints(int ap) { setActionPoints(actionPoints + ap); }
 
 auto Character::canAct() const -> bool { return actionPoints >= getMaxActionPoints(); }
 
-auto Character::getFightPoints() const -> short int { return fightPoints; }
+auto Character::getFightPoints() const -> int { return fightPoints; }
 
-auto Character::getMinFightPoints() const -> short int { return NP_MIN_FP; }
+auto Character::getMinFightPoints() const -> int { return NP_MIN_FP; }
 
-auto Character::getMaxFightPoints() const -> short int { return NP_MAX_FP; }
+auto Character::getMaxFightPoints() const -> int { return NP_MAX_FP; }
 
-void Character::setFightPoints(short int fp) {
+void Character::setFightPoints(int fp) {
     if (fp > getMaxFightPoints()) {
         fightPoints = getMaxFightPoints();
     } else {
@@ -224,7 +224,7 @@ void Character::setFightPoints(short int fp) {
     }
 }
 
-void Character::increaseFightPoints(short int fp) { setFightPoints(fightPoints + fp); }
+void Character::increaseFightPoints(int fp) { setFightPoints(fightPoints + fp); }
 
 auto Character::canFight() const -> bool { return fightPoints >= getMinFightPoints(); }
 
@@ -528,7 +528,7 @@ auto Character::increaseAtPos(unsigned char pos, int count) -> int {
     return temp;
 }
 
-auto Character::swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t newQuality) -> bool {
+auto Character::swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int newQuality) -> bool {
     if ((pos > 0) && (pos < MAX_BELT_SLOTS + MAX_BODY_ITEMS)) {
         bool updateBrightness = World::get()->getItemStatsFromId(items.at(pos).getId()).Brightness > 0 ||
                                 World::get()->getItemStatsFromId(newid).Brightness > 0;
@@ -840,7 +840,7 @@ auto Character::increaseAttrib(const std::string &name, int amount) -> Attribute
     return 0;
 }
 
-auto Character::setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor) -> unsigned short int {
+auto Character::setSkill(TYPE_OF_SKILL_ID skill, int major, int minor) -> int {
     if (!Data::Skills.exists(skill)) {
         return 0;
     }
@@ -862,7 +862,7 @@ auto Character::setSkill(TYPE_OF_SKILL_ID skill, short int major, short int mino
     }
 }
 
-auto Character::increaseSkill(TYPE_OF_SKILL_ID skill, short int amount) -> unsigned short int {
+auto Character::increaseSkill(TYPE_OF_SKILL_ID skill, int amount) -> int {
     if (!Data::Skills.exists(skill)) {
         return 0;
     }
@@ -902,7 +902,7 @@ auto Character::increaseSkill(TYPE_OF_SKILL_ID skill, short int amount) -> unsig
     return (iterator->second.major);
 }
 
-auto Character::increaseMinorSkill(TYPE_OF_SKILL_ID skill, short int amount) -> unsigned short int {
+auto Character::increaseMinorSkill(TYPE_OF_SKILL_ID skill, int amount) -> int {
     if (!Data::Skills.exists(skill)) {
         return 0;
     }
@@ -1043,7 +1043,7 @@ auto Character::LoadWeight() const -> int {
     return load;
 }
 
-auto Character::relativeLoad() const -> float { return float(LoadWeight()) / maxLoadWeight(); }
+auto Character::relativeLoad() const -> double { return static_cast<double>(LoadWeight()) / maxLoadWeight(); }
 
 auto Character::loadFactor() const -> LoadLevel {
     auto load = relativeLoad();
@@ -1111,7 +1111,7 @@ auto Character::GetMovement() const -> movement_type { return _movement; }
 
 void Character::SetMovement(movement_type tmovement) { _movement = tmovement; }
 
-void Character::increasePoisonValue(short int value) {
+void Character::increasePoisonValue(int value) {
     if ((poisonvalue + value) >= MAXPOISONVALUE) {
         poisonvalue = MAXPOISONVALUE;
     } else if ((poisonvalue + value) <= 0) {
@@ -1298,14 +1298,14 @@ auto Character::getMoveTime(const map::Field &targetField, bool diagonalMove, bo
         walkcost += ADDITIONAL_MONSTER_WALKING_COST;
     }
 
-    float agilityPercentageIncrease = static_cast<float>(walkNeutralAgility - agility) * walkAgilityWeight;
-    float loadPercentageIncrease = relativeLoad() * walkLoadWeight;
+    auto agilityPercentageIncrease = (walkNeutralAgility - agility) * walkAgilityWeight;
+    auto loadPercentageIncrease = relativeLoad() * walkLoadWeight;
 
     walkcost += walkcost * (agilityPercentageIncrease + loadPercentageIncrease);
 
     walkcost = std::min(std::max(walkcost, MIN_WALK_COST), MAX_WALK_COST);
 
-    static const float diagonalMoveTimeMultiplier = std::sqrt(2.0);
+    static const auto diagonalMoveTimeMultiplier = std::sqrt(2.0);
 
     if (diagonalMove) {
         walkcost *= diagonalMoveTimeMultiplier;
@@ -1378,13 +1378,13 @@ void Character::inform(const std::string & /*unused*/, const std::string & /*unu
     // override for char types that need this kind of information
 }
 
-void Character::changeQualityAt(unsigned char pos, short int amount) {
+void Character::changeQualityAt(unsigned char pos, int amount) {
     if (pos < MAX_BODY_ITEMS + MAX_BELT_SLOTS) {
         if ((items.at(pos).getId() == 0) || (items.at(pos).getId() == BLOCKEDITEM)) {
             return;
         }
 
-        short int tmpQuality =
+        int tmpQuality =
                 ((amount + items.at(pos).getDurability()) <= Item::maximumDurability)
                         ? (amount + items.at(pos).getQuality())
                         : (items.at(pos).getQuality() - items.at(pos).getDurability() + Item::maximumDurability);

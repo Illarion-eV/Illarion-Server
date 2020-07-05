@@ -64,8 +64,8 @@ void MonitoringClients::CheckClients() {
         if ((*it)->Connection->online) {
             time_t tempkeepalive = 0;
             time(&tempkeepalive);
-            const int timeSinceLastKeepAlive = tempkeepalive - (*it)->lastkeepalive;
-            const int timeout = 20;
+            const long timeSinceLastKeepAlive = tempkeepalive - (*it)->lastkeepalive;
+            const long timeout = 20;
 
             // check if we have a timeout
             if ((timeSinceLastKeepAlive >= 0) && (timeSinceLastKeepAlive < timeout)) {

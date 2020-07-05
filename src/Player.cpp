@@ -631,7 +631,7 @@ auto Player::createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) ->
     return temp;
 }
 
-auto Player::swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t newQuality) -> bool {
+auto Player::swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int newQuality) -> bool {
     if (Character::swapAtPos(pos, newid, newQuality)) {
         sendCharacterItemAtPos(pos);
         checkBurden();
@@ -647,7 +647,7 @@ void Player::updateBackPackView() {
     }
 }
 
-void Player::sendSkill(TYPE_OF_SKILL_ID skill, unsigned short int major, unsigned short int minor) {
+void Player::sendSkill(TYPE_OF_SKILL_ID skill, int major, int minor) {
     ServerCommandPointer cmd = std::make_shared<UpdateSkillTC>(skill, major, minor);
     Connection->addCommand(cmd);
     cmd = std::make_shared<BBSendSkillTC>(getId(), skill, major, minor);
@@ -1589,7 +1589,7 @@ auto Player::load() noexcept -> bool {
     return dataOK;
 }
 
-void Player::increasePoisonValue(short int value) {
+void Player::increasePoisonValue(int value) {
     if ((poisonvalue == 0) && value > 0) {
         static const std::string german = "Du bist vergiftet.";
         static const std::string english = "You are poisoned.";
@@ -1608,21 +1608,21 @@ void Player::increasePoisonValue(short int value) {
     }
 }
 
-auto Player::getMinActionPoints() const -> short int { return P_MIN_AP; }
+auto Player::getMinActionPoints() const -> int { return P_MIN_AP; }
 
-auto Player::getMaxActionPoints() const -> short int { return P_MAX_AP; }
+auto Player::getMaxActionPoints() const -> int { return P_MAX_AP; }
 
-auto Player::getMinFightPoints() const -> short int { return P_MIN_FP; }
+auto Player::getMinFightPoints() const -> int { return P_MIN_FP; }
 
-auto Player::getMaxFightPoints() const -> short int { return P_MAX_FP; }
+auto Player::getMaxFightPoints() const -> int { return P_MAX_FP; }
 
-auto Player::setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor) -> unsigned short int {
+auto Player::setSkill(TYPE_OF_SKILL_ID skill, int major, int minor) -> int {
     Character::setSkill(skill, major, minor);
     sendSkill(skill, major, minor);
     return major;
 }
 
-auto Player::increaseSkill(TYPE_OF_SKILL_ID skill, short int amount) -> unsigned short int {
+auto Player::increaseSkill(TYPE_OF_SKILL_ID skill, int amount) -> int {
     Character::increaseSkill(skill, amount);
     int major = getSkill(skill);
     int minor = getMinorSkill(skill);
@@ -1958,7 +1958,7 @@ void Player::openDepot(const ScriptItem &item) {
     }
 }
 
-void Player::changeQualityAt(unsigned char pos, short int amount) {
+void Player::changeQualityAt(unsigned char pos, int amount) {
     Character::changeQualityAt(pos, amount);
     sendCharacterItemAtPos(pos);
     sendCharacterItemAtPos(LEFT_TOOL);

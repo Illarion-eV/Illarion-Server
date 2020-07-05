@@ -355,7 +355,7 @@ public:
 
 class UpdateSkillTC : public BasicServerCommand {
 public:
-    UpdateSkillTC(TYPE_OF_SKILL_ID skill, unsigned short int major, unsigned short int minor);
+    UpdateSkillTC(TYPE_OF_SKILL_ID skill, int major, int minor);
 };
 
 class UpdateWeatherTC : public BasicServerCommand {

@@ -166,9 +166,9 @@ public:
     timeb now{}; /**< current time of the server used in @see turntheworld() **/
 
     unsigned long int timeStart;
-    unsigned long int usedAP;
+    long usedAP;
 
-    short int ap{}; /**< actionpoints since the last loop call **/
+    int ap{}; /**< actionpoints since the last loop call **/
 
     ClockBasedScheduler<std::chrono::steady_clock> scheduler;
 
@@ -656,7 +656,7 @@ public:
 
     auto getItemStats(const ScriptItem &item) const -> ItemStruct override;
     auto getItemStatsFromId(TYPE_OF_ITEM_ID id) const -> ItemStruct override;
-    void changeQuality(ScriptItem item, short int amount) override;
+    void changeQuality(ScriptItem item, int amount) override;
     virtual void itemInform(Character *user, const ScriptItem &item, const ItemLookAt &lookAt);
     auto getItemName(TYPE_OF_ITEM_ID itemid, uint8_t language) const -> std::string override;
     auto changeItem(ScriptItem item) -> bool override;
@@ -665,9 +665,9 @@ public:
     auto getCharacterOnField(const position &pos) const -> character_ptr override;
 
     auto erase(ScriptItem item, int amount) -> bool override;
-    auto swap(ScriptItem item, TYPE_OF_ITEM_ID newItem, unsigned short int newQuality = 0) -> bool override;
-    auto increase(ScriptItem item, short int count) -> bool override;
-    auto createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, const position &pos, bool always, int quality,
+    auto swap(ScriptItem item, TYPE_OF_ITEM_ID newItem, int newQuality = 0) -> bool override;
+    auto increase(ScriptItem item, int count) -> bool override;
+    auto createFromId(TYPE_OF_ITEM_ID id, int count, const position &pos, bool always, int quality,
                       script_data_exchangemap const *data) -> ScriptItem override;
 
     auto createFromItem(const ScriptItem &item, const position &pos, bool always) -> bool override;

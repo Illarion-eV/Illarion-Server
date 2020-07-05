@@ -83,12 +83,12 @@ constexpr TYPE_OF_WALKINGCOST ADDITIONAL_MONSTER_WALKING_COST = 1;
 constexpr TYPE_OF_WALKINGCOST MIN_WALK_COST = 300;
 constexpr TYPE_OF_WALKINGCOST MAX_WALK_COST = 800;
 constexpr auto NP_STANDARDFLYCOST = 5;
-constexpr float overtaxedRelativeLoad = 1.0;
-constexpr float burdenedRelativeLoad = 0.75;
+constexpr double overtaxedRelativeLoad = 1.0;
+constexpr double burdenedRelativeLoad = 0.75;
 constexpr int walkNeutralAgility = 10;
-constexpr float walkAgilityWeight = 0.01;
-constexpr float walkLoadWeight = 0.3;
-constexpr float runningMoveTimeMultiplier = 0.6;
+constexpr double walkAgilityWeight = 0.01;
+constexpr double walkLoadWeight = 0.3;
+constexpr double runningMoveTimeMultiplier = 0.6;
 
 constexpr double randomMonsterMoveProbability = 0.2;
 constexpr auto monsterSelfHealAmount = 150;

@@ -30,14 +30,13 @@ public:
     MOCK_METHOD(bool, getNaturalArmor, (TYPE_OF_RACE_ID, MonsterArmor &), (override));
     MOCK_METHOD(bool, getWeaponStruct, (TYPE_OF_ITEM_ID, WeaponStruct &), (override));
     MOCK_METHOD(bool, changeItem, (ScriptItem), (override));
-    MOCK_METHOD(void, changeQuality, (ScriptItem, short int), (override));
+    MOCK_METHOD(void, changeQuality, (ScriptItem, int), (override));
     MOCK_METHOD(ScriptItem, createFromId,
-                (TYPE_OF_ITEM_ID, unsigned short int, const position &, bool, int, script_data_exchangemap const *),
-                (override));
+                (TYPE_OF_ITEM_ID, int, const position &, bool, int, script_data_exchangemap const *), (override));
     MOCK_METHOD(bool, createFromItem, (const ScriptItem &, const position &, bool), (override));
     MOCK_METHOD(bool, erase, (ScriptItem, int), (override));
-    MOCK_METHOD(bool, increase, (ScriptItem, short int), (override));
-    MOCK_METHOD(bool, swap, (ScriptItem, TYPE_OF_ITEM_ID, unsigned short int), (override));
+    MOCK_METHOD(bool, increase, (ScriptItem, int), (override));
+    MOCK_METHOD(bool, swap, (ScriptItem, TYPE_OF_ITEM_ID, int), (override));
     MOCK_METHOD(std::list<BlockingObject>, blockingLineOfSight, (const position &, const position &), (const override));
     MOCK_METHOD(void, changeTile, (short int, const position &), (override));
     MOCK_METHOD(bool, createSavedArea, (uint16_t, const position &, uint16_t, uint16_t), (override));

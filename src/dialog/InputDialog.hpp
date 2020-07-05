@@ -27,16 +27,16 @@ class InputDialog : public Dialog {
 private:
     string description;
     bool multiline{};
-    unsigned short maxChars{};
+    short maxChars{};
     bool success{};
     string input;
 
 public:
-    InputDialog(const string &title, string description, bool multiline, unsigned short maxChars,
+    InputDialog(const string &title, string description, bool multiline, short maxChars,
                 const luabind::object &callback);
     [[nodiscard]] auto getDescription() const -> const string &;
     [[nodiscard]] auto isMultiline() const -> bool;
-    [[nodiscard]] auto getMaxChars() const -> unsigned short;
+    [[nodiscard]] auto getMaxChars() const -> short;
     [[nodiscard]] auto getSuccess() const -> bool;
     void setSuccess(bool success);
     [[nodiscard]] auto getInput() const -> const string &;

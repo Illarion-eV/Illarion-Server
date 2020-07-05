@@ -105,7 +105,7 @@ void World::turntheworld() {
     constexpr auto sToMsFactor = 1000;
     unsigned long timeNow = now.time * sToMsFactor + now.millitm;
 
-    ap = timeNow / MIN_AP_UPDATE - timeStart / MIN_AP_UPDATE - usedAP;
+    ap = static_cast<int>(timeNow / MIN_AP_UPDATE - timeStart / MIN_AP_UPDATE - usedAP);
 
     if (ap > 0) {
         usedAP += ap;
@@ -126,7 +126,7 @@ void World::checkPlayers() {
         Player &player = *playerPointer;
 
         if (player.Connection->online) {
-            int temptime = tempkeepalive - player.lastkeepalive;
+            long temptime = tempkeepalive - player.lastkeepalive;
 
             if (((temptime >= 0) && (temptime <= CLIENT_TIMEOUT))) {
                 player.increaseActionPoints(ap);

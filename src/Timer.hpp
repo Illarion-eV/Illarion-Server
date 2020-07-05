@@ -25,7 +25,7 @@
 class Timer {
 public:
     // \param timegap Anzahl der Sekunden zwischen zwei Timer-Ereignissen
-    explicit Timer(unsigned long int timegap);
+    explicit Timer(long timegap);
 
     //! pr�ft, ob schon gen�gend Zeit seit dem letzten Timer-Ereignis
     // (bzw. dem Konstruktor) vergangen ist

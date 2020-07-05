@@ -74,8 +74,8 @@ auto BasicClientCommand::getIntFromBuffer() -> int {
 }
 
 auto BasicClientCommand::getShortIntFromBuffer() -> short int {
-    short int ret = getUnsignedCharFromBuffer() << CHAR_BIT;
-    ret = ret | getUnsignedCharFromBuffer();
+    auto ret = static_cast<short int>(getUnsignedCharFromBuffer() << CHAR_BIT);
+    ret = static_cast<short int>(ret | getUnsignedCharFromBuffer());
     return ret;
 }
 

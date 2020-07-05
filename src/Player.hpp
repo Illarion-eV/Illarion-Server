@@ -302,12 +302,12 @@ public:
 
     auto actionRunning() const -> bool override;
 
-    void increasePoisonValue(short int value) override;
+    void increasePoisonValue(int value) override;
 
-    auto getMinActionPoints() const -> short int override;
-    auto getMaxActionPoints() const -> short int override;
-    auto getMinFightPoints() const -> short int override;
-    auto getMaxFightPoints() const -> short int override;
+    auto getMinActionPoints() const -> int override;
+    auto getMaxActionPoints() const -> int override;
+    auto getMinFightPoints() const -> int override;
+    auto getMaxFightPoints() const -> int override;
 
     void openShowcase(Container *container, const ScriptItem &item, bool carry);
     void updateShowcase(Container *container) const;
@@ -326,7 +326,7 @@ public:
     auto lookIntoBackPack() -> bool;
     auto lookIntoContainerOnField(direction dir) -> bool;
 
-    void changeQualityAt(unsigned char pos, short int amount) override;
+    void changeQualityAt(unsigned char pos, int amount) override;
 
     inline auto isMonitoringClient() const -> bool { return monitoringClient; }
 
@@ -367,7 +367,7 @@ public:
 
     void learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opponent) override;
 
-    auto increaseSkill(TYPE_OF_SKILL_ID skill, short int amount) -> unsigned short int override;
+    auto increaseSkill(TYPE_OF_SKILL_ID skill, int amount) -> int override;
 
     void deleteAllSkills() override;
 
@@ -393,7 +393,7 @@ public:
     // \param pos die Stelle im Inventory die ge�dert werden soll
     // \param newid die neue Id des Item
     // \return true falls erfolgreich, false sonst
-    auto swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t newQuality = 0) -> bool override;
+    auto swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int newQuality = 0) -> bool override;
 
     //! schickt ein Update der Ansicht des Rucksackinhalts an den Client
     void updateBackPackView();
@@ -405,9 +405,9 @@ public:
     // \param der Magietyp fr den die Flags an den Client gechickt werden sollen
     void sendMagicFlags(int type);
 
-    void sendSkill(TYPE_OF_SKILL_ID skill, unsigned short int major, unsigned short int minor);
+    void sendSkill(TYPE_OF_SKILL_ID skill, int major, int minor);
 
-    auto setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor) -> unsigned short int override;
+    auto setSkill(TYPE_OF_SKILL_ID skill, int major, int minor) -> int override;
 
     auto saveBaseAttributes() -> bool override;
 

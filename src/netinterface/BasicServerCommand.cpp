@@ -67,7 +67,7 @@ auto BasicServerCommand::getLength() const -> int { return bufferPos; }
 auto BasicServerCommand::cmdData() const -> const std::vector<char> & { return buffer; }
 
 void BasicServerCommand::addStringToBuffer(const std::string &data) {
-    unsigned short int count = data.length();
+    auto count = static_cast<short int>(data.length());
     addShortIntToBuffer(count);
     std::for_each(data.cbegin(), data.cend(), [this](auto c) { addUnsignedCharToBuffer(c); });
 }

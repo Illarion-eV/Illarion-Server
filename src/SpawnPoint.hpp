@@ -35,7 +35,7 @@ public:
     explicit SpawnPoint(const position &pos, Coordinate Range = defaultWalkRange, Coordinate Spawnrange = 0,
                         uint16_t Min_Spawntime = 1, uint16_t Max_Spawntime = 1, bool Spawnall = false);
 
-    void addMonster(TYPE_OF_CHARACTER_ID type, short int count);
+    void addMonster(TYPE_OF_CHARACTER_ID type, int count);
 
     //! load spawnpoints from database
     auto load(const int &id) -> bool;
@@ -75,8 +75,8 @@ private:
 
     struct SpawnEntryStruct {
         TYPE_OF_CHARACTER_ID typ;
-        short int max_count;
-        short int akt_count;
+        int max_count;
+        int akt_count;
     };
 
     std::list<struct SpawnEntryStruct> SpawnTypes;

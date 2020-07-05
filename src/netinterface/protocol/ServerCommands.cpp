@@ -83,14 +83,14 @@ InputDialogTC::InputDialogTC(const InputDialog &inputDialog, unsigned int dialog
     addStringToBuffer(inputDialog.getDescription());
     addUnsignedCharToBuffer(inputDialog.isMultiline() ? 1 : 0);
     addShortIntToBuffer(inputDialog.getMaxChars());
-    addIntToBuffer(dialogId);
+    addIntToBuffer(static_cast<int>(dialogId));
 }
 
 MessageDialogTC::MessageDialogTC(const MessageDialog &messageDialog, unsigned int dialogId)
         : BasicServerCommand(SC_MESSAGEDIALOG_TC) {
     addStringToBuffer(messageDialog.getTitle());
     addStringToBuffer(messageDialog.getText());
-    addIntToBuffer(dialogId);
+    addIntToBuffer(static_cast<int>(dialogId));
 }
 
 MerchantDialogTC::MerchantDialogTC(const MerchantDialog &merchantDialog, unsigned int dialogId)
@@ -125,7 +125,7 @@ MerchantDialogTC::MerchantDialogTC(const MerchantDialog &merchantDialog, unsigne
         addIntToBuffer(it->getPrice());
     }
 
-    addIntToBuffer(dialogId);
+    addIntToBuffer(static_cast<int>(dialogId));
 }
 
 SelectionDialogTC::SelectionDialogTC(const SelectionDialog &selectionDialog, unsigned int dialogId)
@@ -140,7 +140,7 @@ SelectionDialogTC::SelectionDialogTC(const SelectionDialog &selectionDialog, uns
         addStringToBuffer(option.getName());
     }
 
-    addIntToBuffer(dialogId);
+    addIntToBuffer(static_cast<int>(dialogId));
 }
 
 CraftingDialogTC::CraftingDialogTC(const CraftingDialog &craftingDialog, unsigned int dialogId)
@@ -175,7 +175,7 @@ CraftingDialogTC::CraftingDialogTC(const CraftingDialog &craftingDialog, unsigne
         }
     }
 
-    addIntToBuffer(dialogId);
+    addIntToBuffer(static_cast<int>(dialogId));
 }
 
 CraftingDialogCraftTC::CraftingDialogCraftTC(uint8_t stillToCraft, uint16_t craftingTime, unsigned int dialogId)
@@ -183,23 +183,23 @@ CraftingDialogCraftTC::CraftingDialogCraftTC(uint8_t stillToCraft, uint16_t craf
     addUnsignedCharToBuffer(0);
     addUnsignedCharToBuffer(stillToCraft);
     addShortIntToBuffer(craftingTime);
-    addIntToBuffer(dialogId);
+    addIntToBuffer(static_cast<int>(dialogId));
 }
 
 CraftingDialogCraftingCompleteTC::CraftingDialogCraftingCompleteTC(unsigned int dialogId)
         : BasicServerCommand(SC_CRAFTINGDIALOGUPDATE_TC) {
     addUnsignedCharToBuffer(1);
-    addIntToBuffer(dialogId);
+    addIntToBuffer(static_cast<int>(dialogId));
 }
 
 CraftingDialogCraftingAbortedTC::CraftingDialogCraftingAbortedTC(unsigned int dialogId)
         : BasicServerCommand(SC_CRAFTINGDIALOGUPDATE_TC) {
     addUnsignedCharToBuffer(2);
-    addIntToBuffer(dialogId);
+    addIntToBuffer(static_cast<int>(dialogId));
 }
 
 CloseDialogTC::CloseDialogTC(unsigned int dialogId) : BasicServerCommand(SC_CLOSEDIALOG_TC) {
-    addIntToBuffer(dialogId);
+    addIntToBuffer(static_cast<int>(dialogId));
 }
 
 void addMovementCostToBuffer(BasicServerCommand *cmd, const position &pos) {
@@ -354,7 +354,7 @@ LookAtMapItemTC::LookAtMapItemTC(const position &pos, uint8_t stackPos, const It
 
 LookAtDialogItemTC::LookAtDialogItemTC(unsigned int dialogId, uint8_t itemIndex, const ItemLookAt &lookAt)
         : BasicServerCommand(SC_LOOKATDIALOGITEM_TC) {
-    addIntToBuffer(dialogId);
+    addIntToBuffer(static_cast<int>(dialogId));
     addUnsignedCharToBuffer(0);
     addUnsignedCharToBuffer(itemIndex);
     addItemLookAt(this, lookAt);
@@ -363,7 +363,7 @@ LookAtDialogItemTC::LookAtDialogItemTC(unsigned int dialogId, uint8_t itemIndex,
 LookAtDialogGroupItemTC::LookAtDialogGroupItemTC(unsigned int dialogId, uint8_t groupIndex, uint8_t itemIndex,
                                                  const ItemLookAt &lookAt)
         : BasicServerCommand(SC_LOOKATDIALOGITEM_TC) {
-    addIntToBuffer(dialogId);
+    addIntToBuffer(static_cast<int>(dialogId));
     addUnsignedCharToBuffer(1);
     addUnsignedCharToBuffer(groupIndex);
     addUnsignedCharToBuffer(itemIndex);
@@ -397,7 +397,7 @@ ItemSwapTC::ItemSwapTC(const position &pos, unsigned short int id, const Item &i
     addShortIntToBuffer(pos.x);
     addShortIntToBuffer(pos.y);
     addShortIntToBuffer(pos.z);
-    addShortIntToBuffer(id);
+    addShortIntToBuffer(static_cast<short>(id));
     addShortIntToBuffer(item.getId());
 
     if (item.isContainer()) {
@@ -417,7 +417,7 @@ ItemRemoveTC::ItemRemoveTC(const position &pos) : BasicServerCommand(SC_ITEMREMO
 }
 
 AdminViewPlayersTC::AdminViewPlayersTC() : BasicServerCommand(SC_ADMINVIEWPLAYERS_TC) {
-    unsigned short int count = World::get()->Players.size();
+    auto count = static_cast<short>(World::get()->Players.size());
     addShortIntToBuffer(count);
 
     World::get()->Players.for_each([this](Player *p) {
@@ -430,14 +430,14 @@ SoundTC::SoundTC(const position &pos, unsigned short int id) : BasicServerComman
     addShortIntToBuffer(pos.x);
     addShortIntToBuffer(pos.y);
     addShortIntToBuffer(pos.z);
-    addShortIntToBuffer(id);
+    addShortIntToBuffer(static_cast<short>(id));
 }
 
 GraphicEffectTC::GraphicEffectTC(const position &pos, unsigned short int id) : BasicServerCommand(SC_GRAPHICEFFECT_TC) {
     addShortIntToBuffer(pos.x);
     addShortIntToBuffer(pos.y);
     addShortIntToBuffer(pos.z);
-    addShortIntToBuffer(id);
+    addShortIntToBuffer(static_cast<short>(id));
 }
 
 UpdateShowcaseTC::UpdateShowcaseTC(unsigned char showcase, const ItemLookAt &lookAt, TYPE_OF_CONTAINERSLOTS volume,
@@ -453,7 +453,7 @@ UpdateShowcaseTC::UpdateShowcaseTC(unsigned char showcase, const ItemLookAt &loo
 
     for (const auto &it : items) {
         const Item &item = it.second;
-        addShortIntToBuffer(it.first);
+        addShortIntToBuffer(static_cast<short>(it.first));
         addShortIntToBuffer(item.getId());
 
         if (item.isContainer()) {
@@ -529,7 +529,7 @@ MoveAckTC::MoveAckTC(TYPE_OF_CHARACTER_ID id, const position &pos, unsigned char
     addShortIntToBuffer(pos.y);
     addShortIntToBuffer(pos.z);
     addUnsignedCharToBuffer(mode);
-    addShortIntToBuffer((duration / Character::actionPointUnit) * Character::actionPointUnit);
+    addShortIntToBuffer(static_cast<short>((duration / Character::actionPointUnit) * Character::actionPointUnit));
 }
 
 IntroduceTC::IntroduceTC(TYPE_OF_CHARACTER_ID id, const std::string &name) : BasicServerCommand(SC_INTRODUCE_TC) {
@@ -571,7 +571,7 @@ UpdateAttribTC::UpdateAttribTC(TYPE_OF_CHARACTER_ID id, const std::string &name,
         : BasicServerCommand(SC_UPDATEATTRIB_TC) {
     addIntToBuffer(id);
     addStringToBuffer(name);
-    addShortIntToBuffer(value);
+    addShortIntToBuffer(static_cast<short>(value));
 }
 
 UpdateLoadTC::UpdateLoadTC(uint16_t currentLoad, uint16_t maxLoad) : BasicServerCommand(SC_UPDATELOAD_TC) {
@@ -589,11 +589,10 @@ ClearShowCaseTC::ClearShowCaseTC(unsigned char id) : BasicServerCommand(SC_CLEAR
     addUnsignedCharToBuffer(id);
 }
 
-UpdateSkillTC::UpdateSkillTC(TYPE_OF_SKILL_ID skill, unsigned short int major, unsigned short int minor)
-        : BasicServerCommand(SC_UPDATESKILL_TC) {
+UpdateSkillTC::UpdateSkillTC(TYPE_OF_SKILL_ID skill, int major, int minor) : BasicServerCommand(SC_UPDATESKILL_TC) {
     addUnsignedCharToBuffer(skill);
-    addShortIntToBuffer(major);
-    addShortIntToBuffer(minor);
+    addShortIntToBuffer(static_cast<short>(major));
+    addShortIntToBuffer(static_cast<short>(minor));
 }
 
 UpdateWeatherTC::UpdateWeatherTC(const WeatherStruct &weather) : BasicServerCommand(SC_UPDATEWEATHER_TC) {

@@ -22,7 +22,7 @@
 
 #include <utility>
 
-InputDialog::InputDialog(const string &title, string description, bool multiline, unsigned short maxChars,
+InputDialog::InputDialog(const string &title, string description, bool multiline, short maxChars,
                          const luabind::object &callback)
         : Dialog(title, "InputDialog", callback), description(std::move(description)), multiline(multiline),
           maxChars(maxChars) {
@@ -33,7 +33,7 @@ auto InputDialog::getDescription() const -> const string & { return description;
 
 auto InputDialog::isMultiline() const -> bool { return multiline; }
 
-auto InputDialog::getMaxChars() const -> unsigned short { return maxChars; }
+auto InputDialog::getMaxChars() const -> short { return maxChars; }
 
 auto InputDialog::getSuccess() const -> bool { return success; }
 

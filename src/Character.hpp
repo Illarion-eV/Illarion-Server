@@ -124,8 +124,8 @@ public:
     };
 
     struct skillvalue {
-        unsigned short int major = 0;
-        unsigned short int minor = 0;
+        int major = 0;
+        int minor = 0;
     };
 
     struct s_magic {
@@ -139,18 +139,18 @@ public:
 
     static constexpr auto actionPointUnit = 100;
 
-    auto getActionPoints() const -> short int;
-    virtual auto getMinActionPoints() const -> short int;
-    virtual auto getMaxActionPoints() const -> short int;
-    void setActionPoints(short int ap);
-    void increaseActionPoints(short int ap);
+    auto getActionPoints() const -> int;
+    virtual auto getMinActionPoints() const -> int;
+    virtual auto getMaxActionPoints() const -> int;
+    void setActionPoints(int ap);
+    void increaseActionPoints(int ap);
     auto canAct() const -> bool;
 
-    auto getFightPoints() const -> short int;
-    virtual auto getMinFightPoints() const -> short int;
-    virtual auto getMaxFightPoints() const -> short int;
-    void setFightPoints(short int fp);
-    void increaseFightPoints(short int fp);
+    auto getFightPoints() const -> int;
+    virtual auto getMinFightPoints() const -> int;
+    virtual auto getMaxFightPoints() const -> int;
+    void setFightPoints(int fp);
+    void increaseFightPoints(int fp);
     auto canFight() const -> bool;
 
     auto getActiveLanguage() const -> short int;
@@ -205,12 +205,12 @@ public:
 
     virtual auto getMonsterType() const -> TYPE_OF_CHARACTER_ID { return 0; }
 
-    virtual void changeQualityAt(unsigned char pos, short int amount);
-    virtual void increasePoisonValue(short int value);
+    virtual void changeQualityAt(unsigned char pos, int amount);
+    virtual void increasePoisonValue(int value);
 
-    virtual auto getPoisonValue() const -> short int { return poisonvalue; }
+    virtual auto getPoisonValue() const -> int { return poisonvalue; }
 
-    virtual void setPoisonValue(short int value) { poisonvalue = value; }
+    virtual void setPoisonValue(int value) { poisonvalue = value; }
 
     /**
      * starts a new longtime action for this character (overloaded in Player)
@@ -261,7 +261,7 @@ public:
                             script_data_exchangemap const *data) -> int;
     virtual auto increaseAtPos(unsigned char pos, int count) -> int;
     virtual auto createAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int count) -> int;
-    virtual auto swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, uint16_t newQuality = 0) -> bool;
+    virtual auto swapAtPos(unsigned char pos, TYPE_OF_ITEM_ID newid, int newQuality = 0) -> bool;
     virtual auto GetItemAt(unsigned char itempos) -> ScriptItem;
     virtual auto GetBackPack() const -> Container *;
     auto GetDepot(uint32_t depotid) const -> Container *;
@@ -301,9 +301,9 @@ public:
     auto increaseBaseAttrib(const std::string &name, int amount) -> bool;
     auto increaseAttrib(const std::string &name, int amount) -> Attribute::attribute_t;
 
-    virtual auto increaseSkill(TYPE_OF_SKILL_ID skill, short int amount) -> unsigned short int;
-    virtual auto increaseMinorSkill(TYPE_OF_SKILL_ID skill, short int amount) -> unsigned short int;
-    virtual auto setSkill(TYPE_OF_SKILL_ID skill, short int major, short int minor) -> unsigned short int;
+    virtual auto increaseSkill(TYPE_OF_SKILL_ID skill, int amount) -> int;
+    virtual auto increaseMinorSkill(TYPE_OF_SKILL_ID skill, int amount) -> int;
+    virtual auto setSkill(TYPE_OF_SKILL_ID skill, int major, int minor) -> int;
     virtual void deleteAllSkills();
     virtual void learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opponent);
     virtual void teachMagic(unsigned char type, unsigned char flag);
@@ -396,7 +396,7 @@ public:
 
     auto maxLoadWeight() const -> unsigned short int;
     auto LoadWeight() const -> int;
-    auto relativeLoad() const -> float;
+    auto relativeLoad() const -> double;
 
     enum class LoadLevel { unburdened, burdened, overtaxed };
 
@@ -477,7 +477,7 @@ protected:
     void setMagicFlags(magic_type type, uint64_t flags);
 
     bool _is_on_route = false;
-    short int poisonvalue = 0;
+    int poisonvalue = 0;
     int mental_capacity = 0;
     World *_world;
 
@@ -495,8 +495,8 @@ private:
     movement_type _movement = movement_type::walk;
     std::vector<Attribute> attributes;
     bool alive = true;
-    short int actionPoints = NP_MAX_AP;
-    short int fightPoints = NP_MAX_FP;
+    int actionPoints = NP_MAX_AP;
+    int fightPoints = NP_MAX_FP;
     short int activeLanguage = 0;
     position pos = {0, 0, 0};
     bool attackmode = false;

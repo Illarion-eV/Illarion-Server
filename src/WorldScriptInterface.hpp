@@ -74,13 +74,13 @@ public:
     // Related to Item
 
     virtual auto changeItem(ScriptItem item) -> bool = 0;
-    virtual void changeQuality(ScriptItem item, short int amount) = 0;
-    virtual auto createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, const position &pos, bool always,
-                              int quality, script_data_exchangemap const *data) -> ScriptItem = 0;
+    virtual void changeQuality(ScriptItem item, int amount) = 0;
+    virtual auto createFromId(TYPE_OF_ITEM_ID id, int count, const position &pos, bool always, int quality,
+                              script_data_exchangemap const *data) -> ScriptItem = 0;
     virtual auto createFromItem(const ScriptItem &item, const position &pos, bool always) -> bool = 0;
     virtual auto erase(ScriptItem item, int amount) -> bool = 0;
-    virtual auto increase(ScriptItem item, short int count) -> bool = 0;
-    virtual auto swap(ScriptItem item, TYPE_OF_ITEM_ID newItem, unsigned short int newQuality = 0) -> bool = 0;
+    virtual auto increase(ScriptItem item, int count) -> bool = 0;
+    virtual auto swap(ScriptItem item, TYPE_OF_ITEM_ID newItem, int newQuality = 0) -> bool = 0;
 
     // Related to WorldMap
 

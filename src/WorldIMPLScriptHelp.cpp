@@ -145,10 +145,10 @@ void World::itemInform(Character *user, const ScriptItem &item, const ItemLookAt
     }
 }
 
-void World::changeQuality(ScriptItem item, short int amount) {
-    short int tmpQuality = ((amount + item.getDurability()) <= Item::maximumDurability)
-                                   ? (amount + item.getQuality())
-                                   : (item.getQuality() - item.getDurability() + Item::maximumDurability);
+void World::changeQuality(ScriptItem item, int amount) {
+    int tmpQuality = ((amount + item.getDurability()) <= Item::maximumDurability)
+                             ? (amount + item.getQuality())
+                             : (item.getQuality() - item.getDurability() + Item::maximumDurability);
 
     if (tmpQuality % (Item::maximumDurability + 1) > 0) {
         item.setQuality(tmpQuality);
@@ -277,7 +277,7 @@ auto World::erase(ScriptItem item, int amount) -> bool {
     return false;
 }
 
-auto World::increase(ScriptItem item, short int count) -> bool {
+auto World::increase(ScriptItem item, int count) -> bool {
     if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
         item.owner->increaseAtPos(item.itempos, count);
         return true;
@@ -314,7 +314,7 @@ auto World::increase(ScriptItem item, short int count) -> bool {
     return false;
 }
 
-auto World::swap(ScriptItem item, TYPE_OF_ITEM_ID newItem, unsigned short int newQuality) -> bool {
+auto World::swap(ScriptItem item, TYPE_OF_ITEM_ID newItem, int newQuality) -> bool {
     if (item.type == ScriptItem::it_inventory || item.type == ScriptItem::it_belt) {
         item.owner->swapAtPos(item.itempos, newItem, newQuality);
         return true;
@@ -366,7 +366,7 @@ auto World::swap(ScriptItem item, TYPE_OF_ITEM_ID newItem, unsigned short int ne
     return false;
 }
 
-auto World::createFromId(TYPE_OF_ITEM_ID id, unsigned short int count, const position &pos, bool always, int quality,
+auto World::createFromId(TYPE_OF_ITEM_ID id, int count, const position &pos, bool always, int quality,
                          script_data_exchangemap const *data) -> ScriptItem {
     ScriptItem sItem;
 
