@@ -19,10 +19,11 @@
 #ifndef NEWCLIENTVIEW_HPP_
 #define NEWCLIENTVIEW_HPP_
 
-#define MAP_DIMENSION 17 // map extends into all 4 directions for this number of tiles
-#define MAP_DOWN_EXTRA 3 // extra downwards extension
-
 #include "globals.hpp"
+#include "types.hpp"
+
+constexpr Coordinate MAP_DIMENSION = 17; // map extends into all 4 directions for this number of tiles
+constexpr Coordinate MAP_DOWN_EXTRA = 3; // extra downwards extension
 
 // forward declarations
 namespace map {
@@ -39,7 +40,7 @@ public:
      */
     enum stripedirection { dir_right, dir_down };
 
-    static constexpr auto mapStripeLength = 100;
+    static constexpr Coordinate mapStripeLength = 100;
     /**
      * defines one mapstripe
      */
@@ -66,7 +67,7 @@ public:
      * returns the number of tiles in the view
      * @return the number of maximal tiles in the view
      */
-    [[nodiscard]] auto getMaxTiles() const -> uint8_t { return maxtiles; }
+    [[nodiscard]] auto getMaxTiles() const -> Coordinate { return maxtiles; }
 
     /**
      * the stripedirection, in which direction the mapstripe shows
@@ -81,7 +82,7 @@ public:
      * @param length number of tiles to be read
      * @param maps the maps from which we want to calculate the stripes
      */
-    void fillStripe(position pos, stripedirection dir, int length);
+    void fillStripe(position pos, stripedirection dir, Coordinate length);
 
     /**
      * clears all current stripe infos
@@ -94,7 +95,7 @@ private:
      * @param length number of tiles to be read
      * @param maps the map vector from which we want to read the fields
      */
-    void readFields(int length);
+    void readFields(Coordinate length);
 
     /**
      * the starting position of the current view
@@ -114,7 +115,7 @@ private:
     /**
      * how many tiles are stored
      */
-    uint8_t maxtiles{0};
+    Coordinate maxtiles{0};
 };
 
 #endif

@@ -32,7 +32,7 @@
 #include <range/v3/all.hpp>
 
 //! Creates a new SpawnPoint at <pos>
-SpawnPoint::SpawnPoint(const position &pos, int Range, uint16_t Spawnrange, uint16_t Min_Spawntime,
+SpawnPoint::SpawnPoint(const position &pos, Coordinate Range, Coordinate Spawnrange, uint16_t Min_Spawntime,
                        uint16_t Max_Spawntime, bool Spawnall)
         : world(World::get()), spawnpos(pos), range(Range), spawnrange(Spawnrange), min_spawntime(Min_Spawntime),
           max_spawntime(Max_Spawntime), spawnall(Spawnall) {
@@ -80,9 +80,9 @@ void SpawnPoint::spawn() {
 
                     for (int i = 0; i < num; ++i) {
                         // set the new spawnpos in the range of the spawnrange around the spawnpoint
-                        const position tempPos((spawnpos.x - spawnrange) + Random::uniform(0, 2 * spawnrange),
-                                               (spawnpos.y - spawnrange) + Random::uniform(0, 2 * spawnrange),
-                                               spawnpos.z);
+                        const position tempPos(
+                                (spawnpos.x - spawnrange) + Random::uniform(Coordinate{0}, 2 * spawnrange),
+                                (spawnpos.y - spawnrange) + Random::uniform(Coordinate{0}, 2 * spawnrange), spawnpos.z);
 
                         // end of setting the new spawnpos
                         try {

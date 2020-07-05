@@ -22,6 +22,8 @@
 #include <cstdint>
 #include <string>
 
+using Coordinate = int_fast16_t;
+
 using TYPE_OF_ITEM_ID = uint16_t;
 using TYPE_OF_TILE_ID = uint16_t;
 using TYPE_OF_CHARACTER_ID = uint32_t;

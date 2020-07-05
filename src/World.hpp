@@ -274,12 +274,12 @@ public:
      * @param range the roung around pos which should be searched for warpfields
      * @param call by reference, returns a hashmap with the warpfields which where found
      */
-    auto findWarpFieldsInRange(const position &pos, short int range, std::vector<position> &warppositions) -> bool;
+    auto findWarpFieldsInRange(const position &pos, Coordinate range, std::vector<position> &warppositions) -> bool;
 
     auto blockingLineOfSight(const position &startingpos, const position &endingpos) const
             -> std::list<BlockingObject> override;
 
-    auto findTargetsInSight(const position &pos, uint8_t range, std::vector<Character *> &ret,
+    auto findTargetsInSight(const position &pos, Coordinate range, std::vector<Character *> &ret,
                             Character::face_to direction) const -> bool;
     auto findCharacterOnField(const position &pos) const -> Character *;
     auto findPlayerOnField(const position &pos) const -> Player *;

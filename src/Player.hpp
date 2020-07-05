@@ -129,7 +129,7 @@ public:
     uint8_t screenwidth{};
     uint8_t screenheight{};
 
-    auto getScreenRange() const -> unsigned short int override;
+    auto getScreenRange() const -> Coordinate override;
 
     //! die Verbindung zum Spieler, -- Achtung ! Die Verbindung wird NICHT im Destruktor gel�cht
     // , da sie auch extern erstellt wird und durch das Einfgen in diverse
@@ -282,7 +282,7 @@ public:
      * sends one area relative to the current z coordinate to the player
      * @param zoffs the offset of the z param of the area which should be sended
      */
-    void sendRelativeArea(int8_t zoffs);
+    void sendRelativeArea(Coordinate zoffs);
 
     /**
      * sends all areas

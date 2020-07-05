@@ -54,7 +54,7 @@ void QuestTable::reloadScripts() {
     }
 }
 
-auto QuestTable::getQuestsInRange(const position &pos, int radius) const -> QuestStartMap {
+auto QuestTable::getQuestsInRange(const position &pos, Coordinate radius) const -> QuestStartMap {
     const auto begin = questStarts.upper_bound(position(pos.x - radius - 1, 0, 0));
     const auto end = questStarts.upper_bound(position(pos.x + radius + 1, 0, 0));
 
@@ -64,9 +64,9 @@ auto QuestTable::getQuestsInRange(const position &pos, int radius) const -> Ques
         const auto id = it->second;
         const auto &start = it->first;
 
-        short int dx = start.x - pos.x;
-        short int dy = start.y - pos.y;
-        short int dz = start.z - pos.z;
+        Coordinate dx = start.x - pos.x;
+        Coordinate dy = start.y - pos.y;
+        Coordinate dz = start.z - pos.z;
 
         if ((abs(dx) + abs(dy) <= radius) && (-RANGEDOWN <= dz) && (dz <= RANGEUP)) {
             result[id] = start;

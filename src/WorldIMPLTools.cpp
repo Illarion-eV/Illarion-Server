@@ -62,7 +62,7 @@ void World::deleteAllLostNPC() {
     LostNpcs.clear();
 }
 
-auto World::findTargetsInSight(const position &pos, uint8_t range, std::vector<Character *> &ret,
+auto World::findTargetsInSight(const position &pos, Coordinate range, std::vector<Character *> &ret,
                                Character::face_to direction) const -> bool {
     bool found = false;
 
@@ -176,17 +176,17 @@ auto World::blockingLineOfSight(const position &startingpos, const position &end
         std::swap(starty, endy);
     }
 
-    short int deltax = endx - startx;
-    short int deltay = std::abs(endy - starty);
-    short int error = 0;
-    short int ystep = 1;
-    short int y = starty;
+    Coordinate deltax = endx - startx;
+    Coordinate deltay = std::abs(endy - starty);
+    Coordinate error = 0;
+    Coordinate ystep = 1;
+    Coordinate y = starty;
 
     if (starty > endy) {
         ystep = -1;
     }
 
-    for (short int x = startx; x <= endx; ++x) {
+    for (Coordinate x = startx; x <= endx; ++x) {
         if (!(x == startx && y == starty) && !(x == endx && y == endy)) {
             BlockingObject bo;
             position pos{x, y, startingpos.z};
@@ -693,9 +693,9 @@ auto World::getTime(const std::string &timeType) const -> int {
     return -1;
 }
 
-auto World::findWarpFieldsInRange(const position &pos, short int range, std::vector<position> &warppositions) -> bool {
-    for (int x = pos.x - range; x <= pos.x + range; ++x) {
-        for (int y = pos.y - range; y <= pos.y + range; ++y) {
+auto World::findWarpFieldsInRange(const position &pos, Coordinate range, std::vector<position> &warppositions) -> bool {
+    for (Coordinate x = pos.x - range; x <= pos.x + range; ++x) {
+        for (Coordinate y = pos.y - range; y <= pos.y + range; ++y) {
             try {
                 const position p(x, y, pos.z);
 
@@ -724,9 +724,9 @@ void World::sendHealthToAllVisiblePlayers(Character *cc, Attribute::attribute_t 
 
         for (const auto &player : Players.findAllCharactersInScreen(cc->getPosition())) {
             const auto &playerPos = player->getPosition();
-            char xoffs = charPos.x - playerPos.x;
-            char yoffs = charPos.y - playerPos.y;
-            char zoffs = charPos.z - playerPos.z + RANGEDOWN;
+            Coordinate xoffs = charPos.x - playerPos.x;
+            Coordinate yoffs = charPos.y - playerPos.y;
+            Coordinate zoffs = charPos.z - playerPos.z + RANGEDOWN;
 
             if ((xoffs != 0) || (yoffs != 0) || (zoffs != RANGEDOWN)) {
                 ServerCommandPointer cmd = std::make_shared<UpdateAttribTC>(cc->getId(), "hitpoints", health);

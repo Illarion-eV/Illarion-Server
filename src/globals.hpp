@@ -31,12 +31,12 @@ struct FieldNotFound : std::exception {};
 struct MapError : std::exception {};
 
 struct position {
-    short int x;
-    short int y;
-    short int z;
+    Coordinate x;
+    Coordinate y;
+    Coordinate z;
 
     position() = default;
-    position(short int x, short int y, short int z) : x(x), y(y), z(z) {}
+    position(Coordinate x, Coordinate y, Coordinate z) : x(x), y(y), z(z) {}
 
     auto operator==(const position &pos) const -> bool { return (x == pos.x && y == pos.y && z == pos.z); }
 
@@ -119,11 +119,11 @@ template <> struct hash<position> {
 } // namespace std
 
 struct MapPosition {
-    short int x;
-    short int y;
+    Coordinate x;
+    Coordinate y;
 
     MapPosition() = default;
-    MapPosition(short int x, short int y) : x(x), y(y) {}
+    MapPosition(Coordinate x, Coordinate y) : x(x), y(y) {}
     explicit MapPosition(const position &pos) : x(pos.x), y(pos.y) {}
 
     auto operator==(const MapPosition &pos) const -> bool { return (x == pos.x && y == pos.y); }
@@ -144,8 +144,8 @@ template <> struct hash<MapPosition> {
 } // namespace std
 
 struct Range {
-    int radius = 0;
-    int zRadius = RANGEUP;
+    Coordinate radius = 0;
+    Coordinate zRadius = RANGEUP;
 };
 
 enum QuestAvailability {

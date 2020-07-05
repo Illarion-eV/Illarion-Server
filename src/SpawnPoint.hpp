@@ -32,7 +32,7 @@ class World;
 class SpawnPoint {
 public:
     //! Creates a new SpawnPoint at <pos>
-    explicit SpawnPoint(const position &pos, int Range = defaultWalkRange, uint16_t Spawnrange = 0,
+    explicit SpawnPoint(const position &pos, Coordinate Range = defaultWalkRange, Coordinate Spawnrange = 0,
                         uint16_t Min_Spawntime = 1, uint16_t Max_Spawntime = 1, bool Spawnall = false);
 
     void addMonster(TYPE_OF_CHARACTER_ID type, short int count);
@@ -45,11 +45,11 @@ public:
     //! callback called by dying monsters belonging to spawnpoint
     void dead(TYPE_OF_CHARACTER_ID type);
 
-    [[nodiscard]] inline auto get_x() const -> int { return spawnpos.x; }
-    [[nodiscard]] inline auto get_y() const -> int { return spawnpos.y; }
-    [[nodiscard]] inline auto get_z() const -> int { return spawnpos.z; }
+    [[nodiscard]] inline auto get_x() const -> Coordinate { return spawnpos.x; }
+    [[nodiscard]] inline auto get_y() const -> Coordinate { return spawnpos.y; }
+    [[nodiscard]] inline auto get_z() const -> Coordinate { return spawnpos.z; }
 
-    [[nodiscard]] inline auto getRange() const -> int { return range; }
+    [[nodiscard]] inline auto getRange() const -> Coordinate { return range; }
 
 private:
     // our link to the world...
@@ -58,10 +58,10 @@ private:
     position spawnpos;
 
     // walkrange of the monsters from the spawn
-    int range;
+    Coordinate range;
 
     // range of the spawns, in this area the creatures can be spawned
-    uint16_t spawnrange;
+    Coordinate spawnrange;
 
     // the number of cycles untlin new monsters are spawned
     uint16_t min_spawntime;
@@ -81,7 +81,7 @@ private:
 
     std::list<struct SpawnEntryStruct> SpawnTypes;
 
-    static constexpr auto defaultWalkRange = 20;
+    static constexpr Coordinate defaultWalkRange = 20;
 };
 
 #endif

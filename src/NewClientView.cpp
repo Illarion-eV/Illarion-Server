@@ -24,7 +24,7 @@
 #include <algorithm>
 #include <iostream>
 
-void NewClientView::fillStripe(position pos, stripedirection dir, int length) {
+void NewClientView::fillStripe(position pos, stripedirection dir, Coordinate length) {
     clearStripe();
     viewPosition = pos;
     stripedir = dir;
@@ -40,13 +40,13 @@ void NewClientView::clearStripe() {
     maxtiles = 0;
 }
 
-void NewClientView::readFields(int length) {
+void NewClientView::readFields(Coordinate length) {
     position pos = viewPosition;
-    int x_inc = (stripedir == dir_right) ? 1 : -1;
+    Coordinate x_inc = (stripedir == dir_right) ? 1 : -1;
     maxtiles = length;
     exists = true;
 
-    for (int i = 0; i < length; ++i) {
+    for (MAPSTRIPE::size_type i = 0; i < length; ++i) {
         try {
             map::Field &field = World::get()->fieldAt(pos);
 

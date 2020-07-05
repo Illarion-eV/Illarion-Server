@@ -211,7 +211,7 @@ void Player::login() {
     Connection->activate(this);
 }
 
-auto Player::getScreenRange() const -> unsigned short int {
+auto Player::getScreenRange() const -> Coordinate {
     return (screenwidth > screenheight) ? 2 * screenwidth : 2 * screenheight;
 }
 
@@ -2144,13 +2144,13 @@ auto Player::getSkillName(TYPE_OF_SKILL_ID s) const -> std::string {
 
 auto Player::getPlayerLanguage() const -> Language { return _player_language; }
 
-void Player::sendRelativeArea(int8_t zoffs) {
+void Player::sendRelativeArea(Coordinate zoffs) {
     if ((screenwidth == 0) && (screenheight == 0)) {
         // static view
-        int x = getPosition().x;
-        int y = getPosition().y - MAP_DIMENSION;
-        int z = getPosition().z + zoffs;
-        int e = zoffs * 3;
+        Coordinate x = getPosition().x;
+        Coordinate y = getPosition().y - MAP_DIMENSION;
+        Coordinate z = getPosition().z + zoffs;
+        Coordinate e = zoffs * 3;
 
         if (zoffs < 0) {
             x -= e;
@@ -2158,10 +2158,9 @@ void Player::sendRelativeArea(int8_t zoffs) {
             e = 0;
         }
 
-        // schleife von 0ben nach unten durch alle tiles
         World *world = World::get();
 
-        for (int i = 0; i <= (MAP_DIMENSION + MAP_DOWN_EXTRA + e) * 2; ++i) {
+        for (Coordinate i = 0; i <= (MAP_DIMENSION + MAP_DOWN_EXTRA + e) * 2; ++i) {
             world->clientview.fillStripe(position(x, y, z), NewClientView::dir_right, MAP_DIMENSION + 1 - (i % 2));
 
             if (world->clientview.getExists()) {
@@ -2176,10 +2175,10 @@ void Player::sendRelativeArea(int8_t zoffs) {
         }
     } else {
         // dynamic view
-        int x = getPosition().x - screenwidth + screenheight;
-        int y = getPosition().y - screenwidth - screenheight;
-        int z = getPosition().z + zoffs;
-        int e = zoffs * 3;
+        Coordinate x = getPosition().x - screenwidth + screenheight;
+        Coordinate y = getPosition().y - screenwidth - screenheight;
+        Coordinate z = getPosition().z + zoffs;
+        Coordinate e = zoffs * 3;
 
         if (zoffs < 0) {
             x -= e;
@@ -2190,7 +2189,7 @@ void Player::sendRelativeArea(int8_t zoffs) {
         // schleife von 0ben nach unten durch alle tiles
         World *world = World::get();
 
-        for (int i = 0; i <= (2 * screenheight + MAP_DOWN_EXTRA + e) * 2; ++i) {
+        for (Coordinate i = 0; i <= (2 * screenheight + MAP_DOWN_EXTRA + e) * 2; ++i) {
             world->clientview.fillStripe(position(x, y, z), NewClientView::dir_right, 2 * screenwidth + 1 - (i % 2));
 
             if (world->clientview.getExists()) {
@@ -2207,7 +2206,7 @@ void Player::sendRelativeArea(int8_t zoffs) {
 }
 
 void Player::sendFullMap() {
-    for (int8_t i = -2; i <= 2; ++i) {
+    for (Coordinate i = -2; i <= 2; ++i) {
         sendRelativeArea(i);
     }
 
@@ -2219,10 +2218,10 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
 
     if ((screenwidth == 0) && (screenheight == 0)) {
         // static view
-        int x = {};
-        int y = {};
+        Coordinate x = {};
+        Coordinate y = {};
         NewClientView::stripedirection dir = {};
-        int length = MAP_DIMENSION + 1;
+        Coordinate length = MAP_DIMENSION + 1;
 
         switch (direction) {
         case upper:
@@ -2274,11 +2273,13 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
 
         NewClientView *view = &(World::get()->clientview);
 
-        for (int z = -2; z <= 2; ++z) {
-            int e = (direction != lower && z > 0) ? z * 3 : 0; // left, right and upper stripes moved up if z>0 to
+        for (Coordinate z = -2; z <= 2; ++z) {
+            Coordinate e =
+                    (direction != lower && z > 0) ? z * 3 : 0; // left, right and upper stripes moved up if z>0 to
                                                                // provide the client with info for detecting roofs
-            int l = (dir == NewClientView::dir_down && z > 0) ? e
-                                                              : 0; // right and left stripes have to become longer then
+            Coordinate l = (dir == NewClientView::dir_down && z > 0)
+                                   ? e
+                                   : 0; // right and left stripes have to become longer then
 
             if (extraStripeForDiagonalMove) {
                 ++l;
@@ -2293,10 +2294,10 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
         }
     } else {
         // dynamic view
-        int x = {};
-        int y = {};
+        Coordinate x = {};
+        Coordinate y = {};
         NewClientView::stripedirection dir = {};
-        int length = {};
+        Coordinate length = {};
 
         switch (direction) {
         case upper:
@@ -2350,11 +2351,13 @@ void Player::sendDirStripe(viewdir direction, bool extraStripeForDiagonalMove) {
 
         NewClientView *view = &(World::get()->clientview);
 
-        for (int z = -2; z <= 2; ++z) {
-            int e = (direction != lower && z > 0) ? z * 3 : 0; // left, right and upper stripes moved up if z>0 to
+        for (Coordinate z = -2; z <= 2; ++z) {
+            Coordinate e =
+                    (direction != lower && z > 0) ? z * 3 : 0; // left, right and upper stripes moved up if z>0 to
                                                                // provide the client with info for detecting roofs
-            int l = (dir == NewClientView::dir_down && z > 0) ? e
-                                                              : 0; // right and left stripes have to become longer then
+            Coordinate l = (dir == NewClientView::dir_down && z > 0)
+                                   ? e
+                                   : 0; // right and left stripes have to become longer then
 
             if (extraStripeForDiagonalMove) {
                 ++l;

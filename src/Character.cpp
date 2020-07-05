@@ -978,7 +978,7 @@ void Character::learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opp
 
 void Character::deleteAllSkills() { skills.clear(); }
 
-auto Character::isInRange(Character *cc, unsigned short int distancemetric) const -> bool {
+auto Character::isInRange(Character *cc, Coordinate distancemetric) const -> bool {
     if (cc != nullptr) {
         return isInRangeToField(cc->pos, distancemetric);
     }
@@ -987,32 +987,32 @@ auto Character::isInRange(Character *cc, unsigned short int distancemetric) cons
 }
 
 auto Character::isInScreen(const position &pos) const -> bool {
-    short int dx = abs(this->pos.x - pos.x);
-    short int dy = abs(this->pos.y - pos.y);
-    short int dz = abs(this->pos.z - pos.z);
+    Coordinate dx = abs(this->pos.x - pos.x);
+    Coordinate dy = abs(this->pos.y - pos.y);
+    Coordinate dz = abs(this->pos.z - pos.z);
 
     return dx + dy <= getScreenRange() && -RANGEDOWN <= dz && dz <= RANGEUP;
 }
 
-auto Character::getScreenRange() const -> unsigned short int { return screenRange; }
+auto Character::getScreenRange() const -> Coordinate { return screenRange; }
 
-auto Character::isInRangeToField(const position &m_pos, unsigned short int distancemetric) const -> bool {
-    short int dz = abs(m_pos.z - pos.z);
-    short int dx = abs(m_pos.x - pos.x);
-    short int dy = abs(m_pos.y - pos.y);
+auto Character::isInRangeToField(const position &m_pos, Coordinate distancemetric) const -> bool {
+    Coordinate dz = abs(m_pos.z - pos.z);
+    Coordinate dx = abs(m_pos.x - pos.x);
+    Coordinate dy = abs(m_pos.y - pos.y);
 
     return dx <= distancemetric && dy <= distancemetric && dz == 0;
 }
 
-auto Character::distanceMetricToPosition(const position &m_pos) const -> unsigned short int {
-    short int dz = abs(pos.z - m_pos.z);
-    short int dx = abs(pos.x - m_pos.x);
-    short int dy = abs(pos.y - m_pos.y);
+auto Character::distanceMetricToPosition(const position &m_pos) const -> Coordinate {
+    Coordinate dz = abs(pos.z - m_pos.z);
+    Coordinate dx = abs(pos.x - m_pos.x);
+    Coordinate dy = abs(pos.y - m_pos.y);
 
     return std::max(dx, std::max(dy, dz));
 }
 
-auto Character::distanceMetric(Character *cc) const -> unsigned short int {
+auto Character::distanceMetric(Character *cc) const -> Coordinate {
     if (cc != nullptr) {
         return distanceMetricToPosition(cc->pos);
     }
@@ -1215,8 +1215,8 @@ void Character::turn(direction dir) {
 }
 
 void Character::turn(const position &posi) {
-    short int xoffs = posi.x - pos.x;
-    short int yoffs = posi.y - pos.y;
+    Coordinate xoffs = posi.x - pos.x;
+    Coordinate yoffs = posi.y - pos.y;
 
     if (abs(xoffs) > abs(yoffs)) {
         turn(xoffs > 0 ? dir_east : dir_west);

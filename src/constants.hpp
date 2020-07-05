@@ -19,6 +19,8 @@
 #ifndef CONSTANTS_HPP
 #define CONSTANTS_HPP
 
+#include "types.hpp"
+
 #include <cstdint>
 #include <string>
 
@@ -83,13 +85,13 @@ const std::string MAPDIR("map/");
 const std::string SCRIPTSDIR("scripts/");
 
 //! Anzahl der maximal sichtbaren Ebenen nach Oben
-constexpr auto RANGEUP = 0x02;
+constexpr Coordinate RANGEUP = 2;
 
 //! Anzahl der maximal sichtbaren Ebenen nach Unten
-constexpr auto RANGEDOWN = 0x02;
+constexpr Coordinate RANGEDOWN = 2;
 
 //! Anzahl der Felder zwischen zwei Ebenen
-constexpr auto LEVELDISTANCE = 0x03;
+constexpr Coordinate LEVELDISTANCE = 3;
 
 //! Typ der maximalen Anzahl von Item in einem Container
 using MAXCOUNTTYPE = unsigned char;

@@ -378,8 +378,8 @@ void World::checkMonsters() {
                                 if (spawn != nullptr) {
                                     position newpos = monster.getPosition();
                                     newpos.move(dir);
-                                    int yoffs = spawn->get_y() - newpos.y;
-                                    int xoffs = spawn->get_x() - newpos.x;
+                                    Coordinate yoffs = spawn->get_y() - newpos.y;
+                                    Coordinate xoffs = spawn->get_x() - newpos.x;
 
                                     // if walking out of range, mirroring dir. at spawn area border lets the char stay
                                     // in range with L_inf metric

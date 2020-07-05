@@ -308,12 +308,12 @@ public:
     virtual void learn(TYPE_OF_SKILL_ID skill, uint32_t actionPoints, uint8_t opponent);
     virtual void teachMagic(unsigned char type, unsigned char flag);
 
-    auto isInRange(Character *cc, unsigned short int distancemetric) const -> bool;
+    auto isInRange(Character *cc, Coordinate distancemetric) const -> bool;
     auto isInScreen(const position &pos) const -> bool;
-    virtual auto getScreenRange() const -> unsigned short int;
-    auto distanceMetric(Character *cc) const -> unsigned short int;
-    auto isInRangeToField(const position &m_pos, unsigned short int distancemetric) const -> bool;
-    auto distanceMetricToPosition(const position &m_pos) const -> unsigned short int;
+    virtual auto getScreenRange() const -> Coordinate;
+    auto distanceMetric(Character *cc) const -> Coordinate;
+    auto isInRangeToField(const position &m_pos, Coordinate distancemetric) const -> bool;
+    auto distanceMetricToPosition(const position &m_pos) const -> Coordinate;
 
     virtual auto alterSpokenMessage(const std::string &message, int languageSkill) const -> std::string;
     static auto getLanguageSkill(int languageSkillNumber) -> int;

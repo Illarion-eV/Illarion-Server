@@ -43,7 +43,7 @@ public:
     void reloadScripts() override;
 
     using QuestStartMap = std::map<TYPE_OF_QUEST_ID, position>;
-    auto getQuestsInRange(const position &pos, int radius) const -> QuestStartMap;
+    auto getQuestsInRange(const position &pos, Coordinate radius) const -> QuestStartMap;
 
 private:
     quest_starts_type questStarts;
