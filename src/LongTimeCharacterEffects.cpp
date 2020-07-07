@@ -37,12 +37,12 @@ LongTimeCharacterEffects::LongTimeCharacterEffects(Character *owner) : owner(own
 
 auto LongTimeCharacterEffects::find(uint16_t effectid, LongTimeEffect *&effect) const -> bool {
     using namespace ranges;
-    auto doesIdMatch = [effectid](LongTimeEffect *e) { return e->getEffectId() == effectid; };
+    auto doesIdMatch = [effectid](const auto &e) { return e->getEffectId() == effectid; };
     auto result = find_if(effects, doesIdMatch);
     bool success = result != effects.end();
 
     if (success) {
-        effect = *result;
+        effect = result->get();
     } else {
         effect = nullptr;
     }
@@ -52,12 +52,12 @@ auto LongTimeCharacterEffects::find(uint16_t effectid, LongTimeEffect *&effect) 
 
 auto LongTimeCharacterEffects::find(const std::string &effectname, LongTimeEffect *&effect) const -> bool {
     using namespace ranges;
-    auto doesNameMatch = [&effectname](LongTimeEffect *e) { return e->getEffectName() == effectname; };
+    auto doesNameMatch = [&effectname](const auto &e) { return e->getEffectName() == effectname; };
     auto result = find_if(effects, doesNameMatch);
     bool success = result != effects.end();
 
     if (success) {
-        effect = *result;
+        effect = result->get();
     } else {
         effect = nullptr;
     }
@@ -65,7 +65,8 @@ auto LongTimeCharacterEffects::find(const std::string &effectname, LongTimeEffec
     return success;
 }
 
-void LongTimeCharacterEffects::addEffect(LongTimeEffect *effect) {
+void LongTimeCharacterEffects::addEffect(LongTimeEffect *effect) { addEffect(std::unique_ptr<LongTimeEffect>(effect)); }
+void LongTimeCharacterEffects::addEffect(std::unique_ptr<LongTimeEffect> effect) {
     LongTimeEffect *foundeffect = nullptr;
 
     if (effect == nullptr) {
@@ -74,16 +75,18 @@ void LongTimeCharacterEffects::addEffect(LongTimeEffect *effect) {
 
     if (!find(effect->getEffectId(), foundeffect)) {
         effect->setExecutionTime(time);
-        effects.push_back(effect);
-        std::push_heap(effects.begin(), effects.end(), LongTimeEffect::priority);
 
         if (effect->isFirstAdd()) {
             const auto &script = Data::LongTimeEffects.script(effect->getEffectId());
 
             if (script) {
-                script->addEffect(effect, owner);
+                script->addEffect(effect.get(), owner);
             }
         }
+
+        effect->firstAdd();
+        effects.push_back(std::move(effect));
+        std::push_heap(effects.begin(), effects.end(), LongTimeEffect::priority);
     } else {
         const auto &script = Data::LongTimeEffects.script(effect->getEffectId());
 
@@ -91,8 +94,6 @@ void LongTimeCharacterEffects::addEffect(LongTimeEffect *effect) {
             script->doubleEffect(foundeffect, owner);
         }
     }
-
-    effect->firstAdd(); // set first add for this effect
 }
 
 auto LongTimeCharacterEffects::removeEffect(uint16_t effectid) -> bool {
@@ -101,10 +102,9 @@ auto LongTimeCharacterEffects::removeEffect(uint16_t effectid) -> bool {
             const auto &script = Data::LongTimeEffects.script(effectid);
 
             if (script) {
-                script->removeEffect(*it, owner);
+                script->removeEffect(it->get(), owner);
             }
 
-            delete *it;
             effects.erase(it);
             std::make_heap(effects.begin(), effects.end(), LongTimeEffect::priority);
             return true;
@@ -120,10 +120,9 @@ auto LongTimeCharacterEffects::removeEffect(const std::string &name) -> bool {
             const auto &script = Data::LongTimeEffects.script((*it)->getEffectId());
 
             if (script) {
-                script->removeEffect(*it, owner);
+                script->removeEffect(it->get(), owner);
             }
 
-            delete *it;
             effects.erase(it);
             std::make_heap(effects.begin(), effects.end(), LongTimeEffect::priority);
             return true;
@@ -135,15 +134,14 @@ auto LongTimeCharacterEffects::removeEffect(const std::string &name) -> bool {
 
 auto LongTimeCharacterEffects::removeEffect(LongTimeEffect *effect) -> bool {
     for (auto it = effects.begin(); it != effects.end(); ++it) {
-        if (*it == effect) {
+        if (it->get() == effect) {
             const auto &script = Data::LongTimeEffects.script((*it)->getEffectId());
 
             if (script) {
-                script->removeEffect(*it, owner);
+                script->removeEffect(it->get(), owner);
             }
 
             effects.erase(it);
-            delete effect;
             std::make_heap(effects.begin(), effects.end(), LongTimeEffect::priority);
             return true;
         }
@@ -160,16 +158,16 @@ void LongTimeCharacterEffects::checkEffects() {
     while (!effects.empty() && (emexit < scriptLimit) && (effects.front()->getExecutionTime() <= time)) {
         ++emexit;
         std::pop_heap(effects.begin(), effects.end(), LongTimeEffect::priority);
-        LongTimeEffect *effect = effects.back();
+        std::unique_ptr<LongTimeEffect> effect = std::move(effects.back());
         effects.pop_back();
 
         if (effect->callEffect(owner)) {
-            addEffect(effect);
+            addEffect(std::move(effect));
         } else {
             const auto &script = Data::LongTimeEffects.script(effect->getEffectId());
 
             if (script) {
-                script->removeEffect(effect, owner);
+                script->removeEffect(effect.get(), owner);
             }
         }
     }
@@ -246,7 +244,7 @@ auto LongTimeCharacterEffects::load() -> bool {
         if (!results.empty()) {
             for (const auto &row : results) {
                 auto effectId = row["plte_effectid"].as<uint16_t>();
-                auto *effect = new LongTimeEffect(effectId, row["plte_nextcalled"].as<int32_t>());
+                auto effect = std::make_unique<LongTimeEffect>(effectId, row["plte_nextcalled"].as<int32_t>());
 
                 effect->setExecutionTime(time);
                 effect->firstAdd();
@@ -268,12 +266,13 @@ auto LongTimeCharacterEffects::load() -> bool {
                     }
                 }
 
-                effects.push_back(effect);
                 const auto &script = Data::LongTimeEffects.script(effectId);
 
                 if (script) {
-                    script->loadEffect(effect, player);
+                    script->loadEffect(effect.get(), player);
                 }
+
+                effects.push_back(std::move(effect));
             }
         }
 

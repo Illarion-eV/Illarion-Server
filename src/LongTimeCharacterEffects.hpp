@@ -21,10 +21,12 @@
 #ifndef LONGTIMECHARACTEREFFECTS_HPP_
 #define LONGTIMECHARACTEREFFECTS_HPP_
 
+#include "LongTimeEffect.hpp"
+
+#include <memory>
 #include <string>
 #include <vector>
 
-class LongTimeEffect;
 class Character;
 
 class LongTimeCharacterEffects {
@@ -32,19 +34,19 @@ public:
     explicit LongTimeCharacterEffects(Character *owner);
 
     void addEffect(LongTimeEffect *effect);
+    void addEffect(std::unique_ptr<LongTimeEffect> effect);
     auto find(uint16_t effectid, LongTimeEffect *&effect) const -> bool;
     auto find(const std::string &effectname, LongTimeEffect *&effect) const -> bool;
     auto removeEffect(uint16_t effectid) -> bool;
     auto removeEffect(const std::string &name) -> bool;
     auto removeEffect(LongTimeEffect *effect) -> bool;
 
-    void push_backEffect(LongTimeEffect *effect);
     void checkEffects();
     auto save() -> bool;
     auto load() -> bool;
 
 private:
-    using EFFECTS = std::vector<LongTimeEffect *>;
+    using EFFECTS = std::vector<std::unique_ptr<LongTimeEffect>>;
     EFFECTS effects;
 
     Character *owner;

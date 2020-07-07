@@ -66,7 +66,7 @@ private:
 };
 
 struct LTEPriority {
-    auto operator()(const LongTimeEffect *lhs, const LongTimeEffect *rhs) const -> bool {
+    template <typename LTEPointer> auto operator()(const LTEPointer &lhs, const LTEPointer &rhs) const -> bool {
         // effects with higher execution time have lower priority
         return lhs->getExecutionTime() > rhs->getExecutionTime();
     }
