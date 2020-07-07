@@ -44,7 +44,7 @@
 #include <string>
 
 extern MonsterTable *monsterDescriptions;
-extern std::shared_ptr<LuaLookAtPlayerScript> lookAtPlayerScript;
+extern std::unique_ptr<LuaLookAtPlayerScript> lookAtPlayerScript;
 
 InputDialogTS::InputDialogTS() : BasicClientCommand(C_INPUTDIALOG_TS) {}
 

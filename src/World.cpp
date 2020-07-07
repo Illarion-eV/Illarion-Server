@@ -54,8 +54,8 @@
 
 extern ScheduledScriptsTable *scheduledScripts;
 extern MonsterTable *monsterDescriptions;
-extern std::shared_ptr<LuaLogoutScript> logoutScript;
-extern std::shared_ptr<LuaWeaponScript> standardFightingScript;
+extern std::unique_ptr<LuaLogoutScript> logoutScript;
+extern std::unique_ptr<LuaWeaponScript> standardFightingScript;
 
 World *World::_self;
 

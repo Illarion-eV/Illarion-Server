@@ -42,7 +42,7 @@
 #include <range/v3/all.hpp>
 
 extern MonsterTable *monsterDescriptions;
-extern std::shared_ptr<LuaWeaponScript> standardFightingScript;
+extern std::unique_ptr<LuaWeaponScript> standardFightingScript;
 
 void World::deleteAllLostNPC() {
     for (const TYPE_OF_CHARACTER_ID &npcToDelete : LostNpcs) {

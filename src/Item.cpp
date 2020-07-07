@@ -28,7 +28,7 @@
 #include <range/v3/all.hpp>
 #include <sstream>
 
-extern std::shared_ptr<LuaLookAtItemScript> lookAtItemScript;
+extern std::unique_ptr<LuaLookAtItemScript> lookAtItemScript;
 
 auto ItemLookAt::operator==(const ItemLookAt &rhs) const -> bool {
     bool equal = true;

@@ -46,7 +46,7 @@
 #include <string>
 #include <vector>
 
-extern std::shared_ptr<LuaLoginScript> loginScript;
+extern std::unique_ptr<LuaLoginScript> loginScript;
 extern ScriptVariablesTable *scriptVariables;
 
 auto main(int argc, char *argv[]) -> int {

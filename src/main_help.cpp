@@ -45,14 +45,14 @@ std::unique_ptr<ScheduledScriptsTable> scheduledScripts;
 std::unique_ptr<MonsterTable> monsterDescriptions;
 std::unique_ptr<RaceTypeTable> raceTypes;
 
-std::shared_ptr<LuaDepotScript> depotScript;
-std::shared_ptr<LuaLookAtPlayerScript> lookAtPlayerScript;
-std::shared_ptr<LuaLookAtItemScript> lookAtItemScript;
-std::shared_ptr<LuaPlayerDeathScript> playerDeathScript;
-std::shared_ptr<LuaLoginScript> loginScript;
-std::shared_ptr<LuaLogoutScript> logoutScript;
-std::shared_ptr<LuaLearnScript> learnScript;
-std::shared_ptr<LuaWeaponScript> standardFightingScript;
+std::unique_ptr<LuaDepotScript> depotScript;
+std::unique_ptr<LuaLookAtPlayerScript> lookAtPlayerScript;
+std::unique_ptr<LuaLookAtItemScript> lookAtItemScript;
+std::unique_ptr<LuaPlayerDeathScript> playerDeathScript;
+std::unique_ptr<LuaLoginScript> loginScript;
+std::unique_ptr<LuaLogoutScript> logoutScript;
+std::unique_ptr<LuaLearnScript> learnScript;
+std::unique_ptr<LuaWeaponScript> standardFightingScript;
 
 // break out of the main loop if false
 volatile bool running;
@@ -130,60 +130,52 @@ void loadData() {
     raceTypes = std::make_unique<RaceTypeTable>();
 
     try {
-        auto tmpScript = std::make_shared<LuaWeaponScript>("server.standardfighting");
-        standardFightingScript = tmpScript;
+        standardFightingScript = std::make_unique<LuaWeaponScript>("server.standardfighting");
     } catch (ScriptException &e) {
         Logger::error(LogFacility::Script)
                 << "Error while loading script: server.standardfighting: " << e.what() << Log::end;
     }
 
     try {
-        auto tmpScript = std::make_shared<LuaLookAtPlayerScript>("server.playerlookat");
-        lookAtPlayerScript = tmpScript;
+        lookAtPlayerScript = std::make_unique<LuaLookAtPlayerScript>("server.playerlookat");
     } catch (ScriptException &e) {
         Logger::error(LogFacility::Script)
                 << "Error while loading script: server.playerlookat: " << e.what() << Log::end;
     }
 
     try {
-        auto tmpScript = std::make_shared<LuaLookAtItemScript>("server.itemlookat");
-        lookAtItemScript = tmpScript;
+        lookAtItemScript = std::make_unique<LuaLookAtItemScript>("server.itemlookat");
     } catch (ScriptException &e) {
         Logger::error(LogFacility::Script) << "Error while loading script: server.itemlookat: " << e.what() << Log::end;
     }
 
     try {
-        auto tmpScript = std::make_shared<LuaPlayerDeathScript>("server.playerdeath");
-        playerDeathScript = tmpScript;
+        playerDeathScript = std::make_unique<LuaPlayerDeathScript>("server.playerdeath");
     } catch (ScriptException &e) {
         Logger::error(LogFacility::Script)
                 << "Error while loading script: server.playerdeath: " << e.what() << Log::end;
     }
 
     try {
-        auto tmpScript = std::make_shared<LuaDepotScript>("server.depot");
-        depotScript = tmpScript;
+        depotScript = std::make_unique<LuaDepotScript>("server.depot");
     } catch (ScriptException &e) {
         Logger::error(LogFacility::Script) << "Error while loading script: server.depot: " << e.what() << Log::end;
     }
 
     try {
-        auto tmpScript = std::make_shared<LuaLoginScript>("server.login");
-        loginScript = tmpScript;
+        loginScript = std::make_unique<LuaLoginScript>("server.login");
     } catch (ScriptException &e) {
         Logger::error(LogFacility::Script) << "Error while loading script: server.login: " << e.what() << Log::end;
     }
 
     try {
-        auto tmpScript = std::make_shared<LuaLogoutScript>("server.logout");
-        logoutScript = tmpScript;
+        logoutScript = std::make_unique<LuaLogoutScript>("server.logout");
     } catch (ScriptException &e) {
         Logger::error(LogFacility::Script) << "Error while loading script: server.logout: " << e.what() << Log::end;
     }
 
     try {
-        auto tmpScript = std::make_shared<LuaLearnScript>("server.learn");
-        learnScript = tmpScript;
+        learnScript = std::make_unique<LuaLearnScript>("server.learn");
     } catch (ScriptException &e) {
         Logger::error(LogFacility::Script) << "Error while loading script: server.learn: " << e.what() << Log::end;
     }

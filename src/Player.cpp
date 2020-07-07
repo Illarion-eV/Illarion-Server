@@ -61,8 +61,8 @@
 #include <unistd.h>
 #include <utility>
 
-extern std::shared_ptr<LuaPlayerDeathScript> playerDeathScript;
-extern std::shared_ptr<LuaDepotScript> depotScript;
+extern std::unique_ptr<LuaPlayerDeathScript> playerDeathScript;
+extern std::unique_ptr<LuaDepotScript> depotScript;
 
 Player::Player(std::shared_ptr<NetInterface> newConnection) : Connection(std::move(newConnection)) {
     screenwidth = 0;

@@ -45,8 +45,8 @@
 #include <map>
 #include <range/v3/all.hpp>
 
-extern std::shared_ptr<LuaLearnScript> learnScript;
-extern std::shared_ptr<LuaWeaponScript> standardFightingScript;
+extern std::unique_ptr<LuaLearnScript> learnScript;
+extern std::unique_ptr<LuaWeaponScript> standardFightingScript;
 extern std::unique_ptr<RaceTypeTable> raceTypes;
 
 Character::attribute_map_t Character::attributeMap = {{"strength", strength},

@@ -24,7 +24,7 @@
 #include "Player.hpp"
 #include "script/LuaLearnScript.hpp"
 
-extern std::shared_ptr<LuaLearnScript> learnScript;
+extern std::unique_ptr<LuaLearnScript> learnScript;
 
 namespace {
 auto reduceMC = [](Character *character) {
