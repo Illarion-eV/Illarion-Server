@@ -105,7 +105,7 @@ MonsterTable::MonsterTable() {
                     const auto scriptname = row["script"].as<std::string>();
 
                     try {
-                        std::shared_ptr<LuaMonsterScript> script(new LuaMonsterScript(scriptname));
+                        auto script = std::make_shared<LuaMonsterScript>(scriptname);
                         temprecord.script = script;
                     } catch (ScriptException &e) {
                         Logger::error(LogFacility::Script)

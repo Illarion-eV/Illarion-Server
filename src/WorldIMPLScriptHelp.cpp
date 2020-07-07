@@ -48,7 +48,7 @@ auto World::createDynamicNPC(const std::string &name, TYPE_OF_RACE_ID type, cons
 
             try {
                 // try to load the script
-                std::shared_ptr<LuaNPCScript> script(new LuaNPCScript(scriptname, newNPC));
+                auto script = std::make_shared<LuaNPCScript>(scriptname, newNPC);
                 newNPC->setScript(script);
             } catch (ScriptException &e) {
                 Logger::error(LogFacility::Script)

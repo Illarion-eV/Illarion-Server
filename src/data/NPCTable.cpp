@@ -101,7 +101,7 @@ void NPCTable::reload() {
                         const auto scriptname = row["npc_script"].as<std::string>();
 
                         try {
-                            std::shared_ptr<LuaNPCScript> script(new LuaNPCScript(scriptname, newNPC));
+                            auto script = std::make_shared<LuaNPCScript>(scriptname, newNPC);
 
                             while (questItr != questEnd && questItr->first == npcID) {
                                 script->addQuestScript(questItr->second.entrypoint, questItr->second.script);
