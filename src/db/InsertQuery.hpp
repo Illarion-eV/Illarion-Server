@@ -29,6 +29,7 @@
 
 #include <boost/cstdint.hpp>
 #include <map>
+#include <optional>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -36,7 +37,7 @@
 namespace Database {
 class InsertQuery : Query, public QueryColumns, public QueryTables {
 private:
-    std::vector<std::vector<std::string *> *> dataStorage;
+    std::vector<std::vector<std::optional<std::string>>> dataStorage;
 
 public:
     enum MapInsertMode { onlyKeys, onlyValues, keysAndValues };
@@ -49,7 +50,7 @@ public:
     auto operator=(const InsertQuery &org) -> InsertQuery & = delete;
     InsertQuery(InsertQuery &&) = default;
     auto operator=(InsertQuery &&) -> InsertQuery & = default;
-    ~InsertQuery() override;
+    ~InsertQuery() override = default;
 
     template <typename T> void addValue(const QueryColumns::columnIndex &column, const T &value) {
         addValues(column, value, 1);
@@ -69,14 +70,13 @@ public:
         std::string strValue = quote<T>(value);
 
         if (!dataStorage.empty()) {
-            for (const auto &dataRow : dataStorage) {
-                dataRow->reserve(columns);
+            for (auto &dataRow : dataStorage) {
+                dataRow.reserve(columns);
 
-                if (!dataRow->at(column)) {
-                    dataRow->at(column) = new std::string(strValue);
+                if (!dataRow.at(column)) {
+                    dataRow.at(column) = strValue;
 
                     if (count <= 1) {
-                        ;
                         return;
                     }
                     if (count != FILL) {
@@ -91,9 +91,8 @@ public:
         }
 
         while (count-- > 0) {
-            auto *dataRow = new std::vector<std::string *>(columns, nullptr);
-            dataStorage.push_back(dataRow);
-            dataRow->at(column) = new std::string(strValue);
+            dataStorage.emplace_back(columns, std::nullopt);
+            dataStorage.back().at(column) = strValue;
         }
     };
 

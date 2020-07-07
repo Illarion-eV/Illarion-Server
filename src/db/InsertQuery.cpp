@@ -36,16 +36,6 @@ InsertQuery::InsertQuery(const PConnection &connection) : Query(connection) {
     setHideTable(true);
 }
 
-InsertQuery::~InsertQuery() {
-    for (const auto &row : dataStorage) {
-        for (const auto &data : *row) {
-            delete data;
-        }
-
-        delete row;
-    }
-}
-
 auto InsertQuery::execute() -> Result {
     if (dataStorage.empty()) {
         Result result;
@@ -69,22 +59,17 @@ auto InsertQuery::execute() -> Result {
             firstDone = true;
         }
 
-        if (columns != dataRow->size()) {
+        if (columns != dataRow.size()) {
             throw std::invalid_argument("Incorrect amount of data supplied.");
         }
 
         for (uint32_t column = 0; column < columns; column++) {
-            ss << *(dataRow->at(column));
+            ss << *(dataRow.at(column));
 
             if (column < columns - 1) {
                 ss << ", ";
             }
-
-            delete dataRow->at(column);
-            dataRow->at(column) = nullptr;
         }
-
-        delete dataRow;
     }
 
     dataStorage.clear();
